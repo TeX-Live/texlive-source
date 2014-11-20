@@ -71,7 +71,7 @@ cnf=fmtutil.cnf   # name of the config file
 ###############################################################################
 # cleanup ERRCODE, where ERRCODE=1 for failure and 0 for success.
 #   clean up the temp area and exit with proper exit status
-###############################################################################
+#
 cleanup()
 {
   rc=$1
@@ -79,12 +79,11 @@ cleanup()
   $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
     && { cd / && rm -rf "$tmpdir"; }
   (exit $rc); exit $rc
-}   
+}
 
 ###############################################################################
-# help() and version()
-#   display help (or version) message and exit
-###############################################################################
+# help() and version() -  display help resp. version message and exit 0.
+#
 help()
 {
   cat <<eof
@@ -111,7 +110,8 @@ Optional behavior:
   --no-error-if-no-engine ENGINE1,ENGINE2,...
                              exit successfully even if the required engine
                                is missing, if it is included in this list
-  --no-error-if-no-format    exit successfully if no format is selected
+  --no-error-if-no-format    exit successfully even if no format is selected;
+                               used in conjunction with --byengine
   --quiet                    be silent
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
@@ -157,9 +157,8 @@ eof
 }
 
 ###############################################################################
-# setupTmpDir()
-#   set up a temp directory and a trap to remove it (via byebye)
-###############################################################################
+# setupTmpDir() - set up a temp directory and a trap to remove it (via byebye)
+#
 setupTmpDir()
 {
   $needsCleanup && return
@@ -174,7 +173,7 @@ setupTmpDir()
 # configReplace(file, pattern, line)
 #   The first line in file that matches pattern gets replaced by line.
 #   line will be added at the end of the file if pattern does not match.
-###############################################################################
+#
 configReplace()
 {
   file=$1; pat=$2; line=$3
@@ -194,28 +193,25 @@ eof
 }
 
 ###############################################################################
-# setmatch(match)
-#   setting the "match state" to true or false. Used to see if there was at
-#   least one match.
-###############################################################################
+# setmatch(MATCH) - set the "match state" to MATCH (true or false).
+#   Used to see if there was at least one match.
+#
 setmatch()
 {
   match=$1
 }
 
 ###############################################################################
-# getmatch()
-#    return success if there was at least one match.
-###############################################################################
+# getmatch() - return success if there was at least one match.
+#
 getmatch()
 {
   test "x$match" = xtrue
 }
 
 ###############################################################################
-# initTexmfMain()
-#   get $MT_TEXMFMAIN from $TEXMFMAIN
-###############################################################################
+# initTexmfMain() - set $MT_TEXMFMAIN from $TEXMFMAIN, if not already set.
+#
 initTexmfMain()
 {
   case $MT_TEXMFMAIN in
@@ -227,8 +223,8 @@ initTexmfMain()
 ###############################################################################
 # cache_vars()
 #   locate files / kpathsea variables and export variables to environment
-#    this speeds up future calls to e.g. mktexupd
-###############################################################################
+#   to speed up future calls to e.g. mktexupd.
+#
 cache_vars()
 {
   : ${MT_VARTEXFONTS=`kpsewhich --expand-var='$VARTEXFONTS' | sed 's%^!!%%'`}
@@ -244,9 +240,8 @@ cache_vars()
 }
 
 ###############################################################################
-# abort(errmsg)
-#   print `errmsg' to stderr and exit with error code 1
-###############################################################################
+# abort(ERRMSG) print ERRMSG to stderr and exit with error code 1
+#
 abort()
 {
   echo "$progname: $1." >&2
@@ -254,10 +249,9 @@ abort()
 }
 
 ###############################################################################
-# maybe_abort(errmsg)
-#   print `errmsg' to stderr and 
-#   unless noAbortFlag is set exit with error code 1
-###############################################################################
+# maybe_abort(ERRMSG) print ERRMSG to stderr; then, if
+#   noAbortFlag is set, do nothing; if not set, exit with error code 1.
+#
 maybe_abort()
 {
   echo "$progname: $1." >&2
@@ -265,25 +259,20 @@ maybe_abort()
 }
 
 ###############################################################################
-# verboseMsg(msg)
-#   print `msg' to stderr is $verbose is true
-###############################################################################
+# verboseMsg(MSG) - print MSG to stderr if $verbose is true
+#
 verboseMsg() {
   $verboseFlag && verbose echo ${1+"$@"}
 }
 
-
 ###############################################################################
-# flush_msg_buffers()
-#
-# Called from byebye() to print accumulated warning and error
-# messages
+# flush_msg_buffers() - Called from byebye() to print accumulated
+# warning and error messages.
 #
 # global variable `flush_msg_buffers_called' is set true to detect
 # recursive calls during error/trap processing. If the redirection of
 # "cat" fails due to full file system, say, we get an error condition.
 #
-###############################################################################
 flush_msg_buffers()
 {
   if $flush_msg_buffers_called; then return; fi
@@ -294,14 +283,12 @@ flush_msg_buffers()
       cat <<eof
 
 ###############################################################################
-$progname: Warning! Some warnings have been issued.
-Visit the log files in directory
-  $destdir
-for details.
+$progname: Warnings issued!
+$progname: See log files in directory: $destdir
 ###############################################################################
-
-This is a summary of all \`warning' messages:
+$progname: Ssummary of all \`warning' messages:
 $log_warning_msg
+###############################################################################
 eof
     } >&2
   fi
@@ -311,19 +298,16 @@ eof
       cat <<eof
 
 ###############################################################################
-$progname: Error! Not all formats have been built successfully.
-Visit the log files in directory
-  $destdir
-for details.
+$progname: Error! Not all formats built successfully.
+$progname: See log files in directory: $destdir
 ###############################################################################
-
-This is a summary of all \`failed' messages:
+$progname: Summary of all \`failed' messages:
 $log_failure_msg
+###############################################################################
 eof
     } >&2
   fi
 }
-
 
 ###############################################################################
 # byebye([RETURNCODE]) - report any failures and exit the program
@@ -331,12 +315,12 @@ eof
 # The argument RETURNCODE is optional.  When byebye is called indirectly
 # through trap processing, it is passed a RETURNCODE of 1, and the
 # program then exits with status 1.
-# 
+#
 # If RETURNCODE is not given, the program exits with status 1 if either
-# log_warning or log_error has been called, and 0 if neither has been called.
+# log_warning or log_failure has been called, and 0 if neither has been called.
 #
 # byebye invokes flush_msg_buffers to print the messages accumulated by
-# the previous calls to log_warning, and log_messages.  Thus, unless
+# the previous calls to log_warning and log_failure.  Thus, unless
 # byebye is called, this flushing does not take place, and the messages
 # are not reported.
 #
@@ -358,8 +342,7 @@ byebye()
 }
 
 ###############################################################################
-# init_log_warning()
-#   reset the list of warning messages
+# init_log_warning() - reset the list of warning messages
 #
 # Usage scenario:
 #   init_log_warning
@@ -367,7 +350,7 @@ byebye()
 #   log_warning
 #   ...
 #   byebye  (will flush the message and exit).
-###############################################################################
+#
 init_log_warning()
 {
   log_warning_msg=
@@ -375,8 +358,7 @@ init_log_warning()
 }
 
 ###############################################################################
-# init_log_failure()
-#   reset the list of failure messages
+# init_log_failure() - reset the list of failure messages
 #
 # Usage scenario:
 #   init_log_failure
@@ -384,7 +366,7 @@ init_log_warning()
 #   log_failure
 #   ...
 #   byebye  (will flush the message and exit).
-###############################################################################
+#
 init_log_failure()
 {
   log_failure_msg=
@@ -392,10 +374,9 @@ init_log_failure()
 }
 
 ###############################################################################
-# log_warning(ERRMSG) - report and save warning message ERRMSG,
-# and global variable `has_warnings' is set to true.
+# log_warning(WARNMSG) - report and save warning message WARNMSG,
+# and set global variable has_warnings to true.
 #
-###############################################################################
 log_warning()
 {
   echo "Warning: $@" >&2
@@ -411,15 +392,9 @@ $@"
 }
 
 ###############################################################################
-# log_failure(errmsg)
-#   report and save failure message `errmsg'
+# log_failure(FAILMSG) - report and save failure message FAILMSG
+# and set global variable has_errors to true.
 #
-# global variable has_errors is set to "true" (a command that is executed later).
-#
-# NOTE: Strange $IFS shuffling is to avoid the shell prompt for input across
-# continued line to concatenate `log_warning_msg' with a new line
-# and a new argument when `log_warning_msg' is non-empty.
-###############################################################################
 log_failure()
 {
   echo "Error: $@" >&2
@@ -435,9 +410,9 @@ $@"
 }
 
 ###############################################################################
-# verbose (CMD) execute CMD, redirecting output to stderr if
-# $mktexfmtMode is true, to stdout otherwise.
-# 
+# verbose(CMD) - execute CMD, redirecting output to stderr if $mktexfmtMode
+#   is true, to stdout otherwise.
+#
 # This is because when we are called as mktexfmt, we want to output one
 # line and one line only to stdout: the name of the generated fmt file,
 # which kpathsea can read and handle.
@@ -452,9 +427,9 @@ verbose()
 }
 
 ###############################################################################
-# mktexdir(args)
-#   call mktexdir script, disable all features (to prevent sticky directories)
-###############################################################################
+# mktexdir(ARGS) - call mktexdir script with ARGS,
+#   disable all features (to prevent sticky directories)
+#
 mktexdir()
 {
   initTexmfMain
@@ -462,9 +437,8 @@ mktexdir()
 }
 
 ###############################################################################
-# tcfmgr(args)
-#   call tcfmgr script
-###############################################################################
+# tcfmgr(ARGS) - call tcfmgr script with ARGS.
+#
 tcfmgr()
 {
   initTexmfMain
@@ -472,9 +446,8 @@ tcfmgr()
 }
 
 ###############################################################################
-# mktexupd(args)
-#   call mktexupd script
-###############################################################################
+# mktexupd(ARGS) - call mktexupd script with ARGS
+#
 mktexupd()
 {
   initTexmfMain
@@ -482,10 +455,9 @@ mktexupd()
 }
 
 ###############################################################################
-# main()
-#   parse commandline arguments, initialize variables,
-#   switch into temp. direcrory, execute desired command
-###############################################################################
+# main() - parse commandline arguments, initialize variables,
+#   switch into temp direcrory, execute desired command.
+#
 main()
 {
   destdir=     # global variable: where do we put the format files?
@@ -715,7 +687,7 @@ main()
 # parse_line(config_line) sets global variables:
 #   format:  name of the format, e.g. pdflatex
 #   engine:  name of the TeX engine, e.g. tex, etex, pdftex
-#   texargs: flags for initex and name of the ini file (e.g. -mltex frlatex.ini)
+#   texargs: flags for initex and name of ini file (e.g. -mltex frlatex.ini)
 #   fmtfile: name of the format file (without directory, but with extension)
 #
 #   Support for building internationalized formats sets:
@@ -729,7 +701,7 @@ main()
 #   inside the 4th field in fmtutil.cnf.
 #
 # exit code: returns error code if the ini file is not installed
-###############################################################################
+#
 parse_line()
 {
   case $1 in
@@ -769,13 +741,14 @@ parse_line()
 }
 
 ###############################################################################
-# find_hyphenfile(format, hyphenation) searches for hyphenation along
-#                                      searchpath of format
-# exit code: returns error is file is not found
-###############################################################################
+# find_hyphenfile(FORMAT, HYPHENATION) - search for HYPHENATION
+#                                        along search path of FORMAT
+# exit code: returns error code if file is not found
+#
 find_hyphenfile()
 {
-  format="$1"; hyphenation="`echo $2 | sed 's/,/ /g'`"
+  format="$1"
+  hyphenation="`echo $2 | sed 's/,/ /g'`"
   case $hyphenation in
     -) ;;
     *) kpsewhich -progname="$format" -format=tex $hyphenation;;
@@ -783,10 +756,9 @@ find_hyphenfile()
 }
 
 ###############################################################################
-# find_info_for_name(format)
-#   Look up the config line for format `format' and call parse_line to set
-#   global variables.
-###############################################################################
+# find_info_for_name(FORMAT) - look up config line for FORMAT
+#   and call parse_line to set global variables.
+#
 find_info_for_name()
 {
   format="$1"
@@ -798,9 +770,9 @@ find_info_for_name()
 }
 
 ###############################################################################
-# run_initex()
-#   Calls initex. Assumes that global variables are set by parse_line.
-###############################################################################
+# run_initex() - run initex.
+# Assumes that global variables are set by parse_line.
+#
 run_initex()
 {
   # install a pool file and set tcx flag if requested in lang= option:
@@ -882,12 +854,12 @@ run_initex()
       # As a special special case, we create mplib-luatex.mem for use by
       # the mplib embedded in luatex if it doesn't already exist.  (We
       # never update it if it does exist.)
-      # 
+      #
       # This is used by the luamplib package.  This way, an expert user
       # who wants to try a new version of luatex (hence with a new
       # version of mplib) can manually update mplib-luatex.mem without
       # having to tamper with mpost itself.
-      # 
+      #
       if test "x$format" = xmpost && test "x$engine" = xmpost; then
         mplib_mem_name=mplib-luatex.mem
         mplib_mem_file=$fulldestdir/$mplib_mem_name
@@ -921,10 +893,9 @@ run_initex()
 }
 
 ###############################################################################
-# recreate_loop()
-#   for each line in config file: check match-condition and recreate format
-#   if there is a match.
-###############################################################################
+# recreate_loop() - for each line in $cnf_file:
+#   call check_match and run_initex if there is a match.
+#
 recreate_loop()
 {
   OIFS=$IFS
@@ -941,10 +912,10 @@ recreate_loop()
 }
 
 ###############################################################################
-# listcfg_loop()
-#   prints all format definitions in config files (enabled and disabled ones)
-#   for supported formats (i.e. for those which have an existing ini file)
-###############################################################################
+# listcfg_loop() - print all format definitions in config files,
+#   both enabled and disabled,
+#   but only for supported formats (= those with an existing ini file)
+#
 listcfg_loop()
 {
   OIFS=$IFS
@@ -959,9 +930,8 @@ listcfg_loop()
 }
 
 ###############################################################################
-# check_match()
-#   recreate all formats
-###############################################################################
+# check_match() - recreate all formats
+#
 check_match()
 {
   $need_find_hyphenfile && \
@@ -971,9 +941,8 @@ check_match()
 }
 
 ###############################################################################
-# recreate_by_fmt(fmtname)
-#   recreate all versions of fmtname
-###############################################################################
+# recreate_by_fmt(FMTNAME) - recreate all versions of FMTNAME
+#
 recreate_by_fmt()
 {
   fmtname=$1
@@ -982,9 +951,8 @@ recreate_by_fmt()
 }
 
 ###############################################################################
-# create_missing()
-#   create all missing format files
-###############################################################################
+# create_missing() - create all missing format files
+#
 create_missing()
 {
   # match_cmd='test ! -f $destdir/$fmtfile'
@@ -993,9 +961,8 @@ create_missing()
 }
 
 ###############################################################################
-# recreate_existing()
-#   recreate only existing format files
-###############################################################################
+# recreate_existing() - recreate only already-existing format files
+#
 recreate_existing()
 {
   match_cmd='test -f "`kpsewhich -engine=$texengine -progname=$format $fmtfile`"'
@@ -1003,9 +970,8 @@ recreate_existing()
 }
 
 ###############################################################################
-# recreate_all()
-#   recreate all formats
-###############################################################################
+# recreate_all() - recreate all formats
+#
 recreate_all()
 {
   match_cmd=true
@@ -1013,9 +979,8 @@ recreate_all()
 }
 
 ###############################################################################
-# recreate_by_hyphenfile(hyphenfile)
-#   recreate all formats that depend on hyphenfile
-###############################################################################
+# recreate_by_hyphenfile(HYPHFILE) - recreate formats depending on HYPHFILE
+#
 recreate_by_hyphenfile()
 {
   hyphenfile=$1
@@ -1044,9 +1009,8 @@ recreate_by_hyphenfile()
 }
 
 ###############################################################################
-# recreate_by_engine(enginename)
-#   recreate all formats that are based on enginename
-###############################################################################
+# recreate_by_engine(ENGINE) - recreate formats based on ENGINE
+#
 recreate_by_engine()
 {
   enginename=$1
@@ -1062,15 +1026,11 @@ recreate_by_engine()
   getmatch || maybe_abort "no format depends on engine \`$enginename'"
 }
 
-
-
 ###############################################################################
-# show_hyphen_file(format)
-#   prints full name of the hyphenfile for format
+# show_hyphen_file(FORMAT) - print full name of the hyphenfile for FORMAT
+#   exit code: returns error code if the ini file is not installed or
+#   if the hyphen file cannot be found
 #
-# exit code: returns error code if the ini file is not installed or if
-#            the hyphen file cannot be found
-###############################################################################
 show_hyphen_file()
 {
   fmtname=$1
@@ -1085,9 +1045,8 @@ show_hyphen_file()
 }
 
 ###############################################################################
-# disablefmt(format)
-#   disables format in configuration file
-###############################################################################
+# disablefmt(FORMAT) - disable FORMAT in configuration file
+#
 disablefmt()
 {
   grep "^$1[ 	]" $cnf_file >/dev/null || { (exit 0); return 0; }
@@ -1101,9 +1060,8 @@ eof
 }
 
 ###############################################################################
-#  enablefmt(format)
-#    enables format in configuration file
-###############################################################################
+# enablefmt(FORMAT) - enable FORMAT in configuration file
+#
 enablefmt()
 {
   grep "^#![ 	]*$1[ 	]" $cnf_file >/dev/null || { (exit 0); return 0; }
@@ -1117,5 +1075,5 @@ eof
 
 main ${1+"$@"}
 
-# we should not get here 
+# we should not get here
 cleanup 0
