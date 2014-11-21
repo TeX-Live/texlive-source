@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current libpng version
-m4_define([libpng_version], [1.6.14])
+m4_define([libpng_version], [1.6.15])
