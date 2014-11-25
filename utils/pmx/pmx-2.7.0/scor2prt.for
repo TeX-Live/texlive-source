@@ -177,7 +177,7 @@ c
       do 22 iv = 1 , nv
         instnum(iv) = insnow
         if (iv .eq. ivlast) then
-          if (iv .lt. nv) botv(iv+1) = .true.	
+          if (iv .lt. nv) botv(iv+1) = .true.      
 c
 c  The previous stmt will set botv true only for bot voice of iinst>1.  It is
 c  used when writing termrpts, but the one in voice one is handled differently,
@@ -213,23 +213,23 @@ c  Must leave insetup=.true. else could bypass ALL instrument names.
 c
       read(10,'(a)')line
       call chkcom(line)
-	backspace(10)
+      backspace(10)
 c
 c  Normally this puts pointer at start of line with 1st inst name
 c  Check if prior line was "%%"
 c
       backspace(10)
-	read(10,'(a)')line
-	if (line(1:2) .eq. '%%') backspace(10)
+      read(10,'(a)')line
+      if (line(1:2) .eq. '%%') backspace(10)
       do 14 iv = 1 , noinst
-	  gotname = .false.
+        gotname = .false.
 16      read(10,'(a)') instrum(iv)
         if (instrum(iv)(1:2) .eq. '%%') then
           read(10,'(a)')line
           go to 16
         else if (instrum(iv)(1:1) .eq. '%') then
           ivq = ichar(instrum(iv)(2:2))-48
-		if (ivq.ne.iv) then
+            if (ivq.ne.iv) then
 c
 c  It's really a comment.  Copy to parts, then get another trial name.
 c
@@ -270,7 +270,7 @@ c  Clef string:  Note insetup is still T, so "%%" will be treated specially
 c
       read(10,'(a)')line
       call chkcom(line)
-	if (replacing) then
+      if (replacing) then
 c
 c  If here, we have next line after "%%", containing score's clef string
 c  Assume all clefs are handled with instrument comments.
@@ -339,7 +339,7 @@ c
       call zapbl(line,128)
       call chkcom(line)
       lenline = lenstr(line,128)
-	if (lenline .eq. 0) go to 4
+      if (lenline .eq. 0) go to 4
       if (line(1:1) .eq. 'T') then
         call allparts(line,128)
         read(10,'(a)')line
@@ -548,7 +548,7 @@ c  Single digit instrument number
 c
                 read(line(3:3),'(i1)')iudpfn
                 idxstartname = 5
-              else		              
+              else                          
                 read(line(3:4),'(i2)')iudpfn
                 idxstartname = 6
               end if
@@ -903,12 +903,12 @@ c
 c  New way with slashes: idxs is index of 1st slash!
 c
               read(line(1)(2:idxs-1),'(i'//char(48+idxs-2)//')')mtrnum
-	        idxb = index(line(1)(idxs+1:),'/')
+              idxb = index(line(1)(idxs+1:),'/')
               read(line(1)(idxs+1:idxs+idxb-1),
-     *          		'(i'//char(48+idxb-1)//')')mtrden
+     *                      '(i'//char(48+idxb-1)//')')mtrden
             end if
           end if
-		lenbeat = ifnodur(mtrden,'x')
+            lenbeat = ifnodur(mtrden,'x')
           lenmult = 1
           if (mtrden .eq. 2) then
             lenbeat = 16

@@ -21,8 +21,8 @@ c along with this program.  If not, see <http://www.gnu.org/licenses/>.
 c
 c
       character*9 date
-	character*5 version,versionc
-	common /comver/ versionc
+      character*5 version,versionc
+      common /comver/ versionc
 c
 c To compile with gfortran:
 c   1. Merge all files using copy *.for epmx[nnnn].for
@@ -726,8 +726,8 @@ c   nmidsec  section starts and stops based on PLAYING macros (not recording).
 c 
 ccccccccccccccccccccccccc
 c
-	data date /'3 Apr 13'/
-	data version /'2.7'/
+      data date /'3 Apr 13'/
+      data version /'2.7'/
 c
 ccccccccccccccccccccccccc
       data maxit,ncalls /200,0/
@@ -1347,7 +1347,7 @@ c
             jacc = iashft(iacc)
             eximacc = .true.
             if (.not.relacc) jacc = jacc+ipsav0-ipsav
-c		   
+c               
 c  (Above) Shift applies to diatonic pitch but will be added to adjusted one
 c
           else if (naccim(icm) .gt. 0) then
@@ -1443,7 +1443,7 @@ c  Bail if this is a chord note on the first call (from docrd)
 c
           if (notmain) then
             call chkimidi(icm)
-		  return
+              return
           end if
         end if
 c
@@ -1787,21 +1787,21 @@ c  In iunit, looks backward for oldq, overwrites newq
 c  Safest if both are same length!
 c
       character*128 lineq(200),nowq
-	character*(*) oldq,newq
+      character*(*) oldq,newq
       linesback = 0
 1     continue
       backspace(iunit)
-	read(iunit,'(a)')nowq
-	ndx = index(nowq,oldq(1:lenold))
+      read(iunit,'(a)')nowq
+      ndx = index(nowq,oldq(1:lenold))
 c
 c  Save the line just read
 c
       linesback = linesback+1
-	lineq(linesback) = nowq
+      lineq(linesback) = nowq
       if (ndx .eq. 0) then
         backspace(iunit)
-	  go to 1
-	end if
+        go to 1
+      end if
 c
 c  If here, it's replacement time.
 c
@@ -2276,7 +2276,7 @@ c
 c
 c  Check for 2nd member of dotted xtup
 c
-	    if (btest(nacc(ivx,ip-1),27)) call ntrbbb(multip+1,'t',
+          if (btest(nacc(ivx,ip-1),27)) call ntrbbb(multip+1,'t',
      *                       ulq(ivx,ibmcnt(ivx)),ivx,notexq,lnote)
         end if
 c
@@ -2896,7 +2896,7 @@ c  Beam segment start.  New start level
 4           continue
           end if
         end if
-	end if
+      end if
       iadj = igetbits(islur(ivx,ipb1),2,27)
       addbrack = .false.
       if (btest(ipl(ivx,ipb1),30)) then
@@ -3091,7 +3091,7 @@ c
       return
       end
       block data
-	parameter (nm=24)
+      parameter (nm=24)
       common /comtol/ tol
       common /comtrans/ cheadq
       common /compage/ widthpt,ptheight,hoffpt,voffpt,
@@ -3153,7 +3153,7 @@ c
      *   .50  ,  .25  , 0.4 , 0.4  , 0.2 , 12. ,21. , 12.,
      *    4   ,   1.6 ,5.,5.7,1.071,2.714,16 ,16 /
       data fracsys /30*0./
-	data ivowg,hoh1,hoh2,hoh2h1 /0,0,0,0,0,1,1,1,1,1,1,1,
+      data ivowg,hoh1,hoh2,hoh2h1 /0,0,0,0,0,1,1,1,1,1,1,1,
 c     *   2.0,1.5,1.0,0.5,1.3,1.3,0.4,0.8,1.2,0.8,1.2,1.6,
      *   2.2,1.7,1.2,0.7,1.3,1.3,0.4,0.8,1.2,0.8,1.2,1.6,
      *   -2.7,-2.2,-1.7,-1.2,-2.3,-2.1,-1.0,-1.7,-2.1,-1.6,-1.9,-2.3,
@@ -3669,7 +3669,7 @@ c           meas value for y, natural is 1.6
      * 0. ,   0.  , 0. ,  0. ,   0. , 0. , 0. ,  0. , 0. , 0. /
       data segal /
 c     *  0.00, 0.00,-1.04, 0. , 0. ,3.15, 2.9,-1.6, 0. , 0. ,
-cc		(meas. value is 3.08)    ^^^^
+cc            (meas. value is 3.08)    ^^^^
 cc  Raise top of flat so it interferes with bottom of sharp        
      * -1.00,-1.02,-0.60,-1.65, -1.2,-1.4,-2.9, -3.0, -1.4, -1.2,   
      *  0.00,-1.20,-1.04, 0.  ,  0. ,3.15,-1.64,-1.48,3.15, 1.2,
@@ -3693,7 +3693,7 @@ c
       nsegrb = nsegrb0
       rmsshift = 0.
       shiftmin = 1000.
-	do 1 iwa = 1 , naccid
+      do 1 iwa = 1 , naccid
 c
 c  Initialize shift for this note
 c
@@ -3719,7 +3719,7 @@ c
 c
 c  Cycle thru segments of right-hand barrier
 c
-	    do 3 isegrb = 1 , nsegrb-1
+          do 3 isegrb = 1 , nsegrb-1
 c
 c  Must find all barrier segments that start below ytopseg & end above ybotseg 
 c
@@ -3911,7 +3911,7 @@ cc
 c
 c  This is the final call on the pre-ask pass, so compute left-shift rqmt.
 c
-	  icashft = nint(-20*shiftmin)
+        icashft = nint(-20*shiftmin)
       end if
 cc
 cc  Temporary printout for boundary segments
@@ -4050,12 +4050,12 @@ c         No auto-ordering, No autoshifts, Observe all manual shifts.
 c      End if
 c   End if
 c
-	maxmanshft = 0
+      maxmanshft = 0
       do 13 i = 1 , naccid
         if (kicrd(i) .eq. 0) then
 c
 c  Main note
-c		
+c            
           manshft = igetbits(nacc,7,10)
           if (manshft .ne. 0) then
             manual = .true.
@@ -4122,7 +4122,7 @@ c
           if (kicrd(i) .eq. 0) then
             irank = icrdot0
             nolev = nolevm
-		else
+            else
             irank = igetbits(icrdot(kicrd(i)),3,27)
             nolev = igetbits(icrdat(kicrd(i)),7,12) 
           end if
@@ -4131,8 +4131,8 @@ c
           else
             micrd(5-irank) = kicrd(i)
           end if
-	    if (irank .eq. 2) then
-		  levmidacc = nolev 
+          if (irank .eq. 2) then
+              levmidacc = nolev 
           end if
 20      continue 
         if (levmaxacc.ne.levmidacc+1 .and. 
@@ -4371,36 +4371,36 @@ c   4. Not a rest (cannot be a rest in a chord!)
 c.  5. Flag (lowdot) is set to true
 c
         if (lowdot .and. nvmx.eq.2 .and. ivx.le.nv) then
-	    if (2**log2(nodu).ne.nodu .and. mod(nolev-ncm,2).eq.0) then
-	      if (btest(icrdat(icrd),26)) then
+          if (2**log2(nodu).ne.nodu .and. mod(nolev-ncm,2).eq.0) then
+            if (btest(icrdat(icrd),26)) then
 c
 c  Note already in movdot list.  Drop by 2.
 c
-	        call setbits(icrdot(icrd),7,0,
+              call setbits(icrdot(icrd),7,0,
      *                      igetbits(icrdot(icrd),7,0)-20)
             else
 c
 c  Not in list so just move it right now
 c
-	        call dotmov(-2.,0.,soutq,lsout,igetbits(islur,1,3))
-	      end if
-	    end if
-	  end if
-	  if (btest(icrdat(icrd),26)) then
+              call dotmov(-2.,0.,soutq,lsout,igetbits(islur,1,3))
+            end if
+          end if
+        end if
+        if (btest(icrdat(icrd),26)) then
 c
 c  Move the dot.
 c
-	    updotc = 0.1*(iand(127,icrdot(icrd))-64)
-	    rtdotc = 0.1*(iand(127,ishft(icrdot(icrd),-7))-64)
-	    call dotmov(updotc,rtdotc,soutq,lsout,igetbits(islur,1,3))
-	  end if
-	  isleft = btest(icrdat(icrd),23)
-	  isright = btest(icrdat(icrd),24)
+          updotc = 0.1*(iand(127,icrdot(icrd))-64)
+          rtdotc = 0.1*(iand(127,ishft(icrdot(icrd),-7))-64)
+          call dotmov(updotc,rtdotc,soutq,lsout,igetbits(islur,1,3))
+        end if
+        isleft = btest(icrdat(icrd),23)
+        isright = btest(icrdat(icrd),24)
 c
 c  Check for ornament in chord.
 c
-	  if (icrdorn(icrd) .gt. 0) then
-	    call putorn(icrdorn(icrd),nolev,nolevm,nodu,nornb,ulq,
+        if (icrdorn(icrd) .gt. 0) then
+          call putorn(icrdorn(icrd),nolev,nolevm,nodu,nornb,ulq,
      *         ibmcnt,ivx,ncm,islur,nvmx,nv,ihornb,stemlen,outq,lout,
      *         ip,0,beamon,.true.)
 c
@@ -4558,11 +4558,11 @@ c
 c        ivxtent = iand(idyndat(idyn),15)        
         ivxtent = iand(idyndat(idyn),15)
      *                 +16*igetbits(idynda2(idyn),1,10)
-	  if (ivxtent .eq. ivx) then
+        if (ivxtent .eq. ivx) then
           iptent = igetbits(idyndat(idyn),8,4)
           if (iptent .eq. ip) then
             numdyn = numdyn+1
-            idynn(numdyn) = idyn	  
+            idynn(numdyn) = idyn        
           else if (iptent .gt. ip) then
 c
 c  I don't think there are any more possible for this ivx,ip, so exit loop
@@ -4640,7 +4640,7 @@ c
 c  Build the command into notex in stages. Insert name & rq'd args in order:
 c
 c    Command name
-c	 hpstrt, hpcend, hpdend, pmxdyn
+c       hpstrt, hpcend, hpdend, pmxdyn
 c    ivx
 c        X       X       X
 c    level
@@ -4690,7 +4690,7 @@ c
           else if (idno .eq.14) then
             notexq = chax(92)//'Idecresc'
             lnote = 9
-          else		         
+          else                     
             notexq = chax(92)//'Tcresc'
           end if
         end if
@@ -4768,8 +4768,8 @@ c
 c  Cases:
 c  numdyn  type1   type2    type3    data used
 c     2    wrd-grp hrpnstrt -        ivowg(1...12),hoh1(1...12)
-c     2	 hrpnend wrd-grp  -		   ivowg,hoh2
-c     2    hrpnend hrpnstrt -		   hoh2h1(1...2)
+c     2       hrpnend wrd-grp  -               ivowg,hoh2
+c     2    hrpnend hrpnstrt -               hoh2h1(1...2)
 c     3    hrpnend wrd-grp  hrpnstrt ivowg,hoh2,hoh1
 c
           if (idno.gt.0 .and. idno.le.12) then
@@ -4796,13 +4796,13 @@ c
 c  Hairpin end then hairpin start, no words, (remember dealing with end now)
 c
               hoff = hoff+hoh2h1(1)
-            else	       
+            else             
 c
 c  Hairpin end then word-group, need idno for w-g to set hp offset
 c
               hoff = hoff +
      *                hoh2(igetbits(idyndat(idynn(icntdyn+1)),4,12))
-            end if	       
+            end if             
 c
 c  Protecting against hp start-stop on same note
 c
@@ -4822,7 +4822,7 @@ c
 c  Hairpin end then hairpin start, (remember dealing with start now)
 c
               hoff = hoff+hoh2h1(2)
-            else	       
+            else             
 c
 c  Hairpin start after word-group, need idno for w-g to set hp offset
 c
@@ -4852,7 +4852,7 @@ c
 c  Postscript hairpin start...inset placeholder for start level.
 
             notexq = notexq(1:lnote)//'{   }'
-		  lnote = lnote+5
+              lnote = lnote+5
           end if
         else 
 c
@@ -5063,8 +5063,8 @@ c
 121   continue
       ngs = ngstrt(ig)
       mg = multg(ig)
-c	wheadpt1 = wheadpt*fullsize(ivx)
-	wheadpt1 = wheadpt*fullsize(instno)
+c      wheadpt1 = wheadpt*fullsize(ivx)
+      wheadpt1 = wheadpt*fullsize(instno)
 c
 c  For way-after-graces at end of bar, must set the octave.
 c
@@ -5166,7 +5166,7 @@ c     *            4+lnoten,soutq,lsout)
 c          end if
           call addstr(notexq(1:lnote)//noteq(1:lnoten),
      *       lnote+lnoten,soutq,lsout)
-	    if (.not.fontslur) then
+          if (.not.fontslur) then
 c
 c  Horizontal tweaks for postscript slur on single grace
 c
@@ -5376,7 +5376,7 @@ c  Start a slur on multiple fore-grace
 c
         if (slurg(ig) .and. .not.isgaft .and. .not.iswaft) then
           call notefq(noteq,lnoten,nolevg(ngs),ncm)
-	    if (fontslur) then
+          if (fontslur) then
             if (upg(ig)) then
               call addstr(sq//'islurd',7,soutq,lsout)
             else
@@ -5517,7 +5517,7 @@ c        lnote = 6
         else if (ptoff .lt. 99.95) then
           write(notexq(lnote+1:lnote+4),'(f4.1)')ptoff
           lnote = lnote+4
-	  else 
+        else 
           write(notexq(lnote+1:lnote+5),'(f5.1)')ptoff
           lnote = lnote+5
         end if
@@ -5778,7 +5778,7 @@ c
               else
                 ihoff = ihoff+2
               end if
-	      end if
+            end if
             if (iscrd) then
 c
 c  Additional horiz shifts for h-shifted noteheads?
@@ -5810,16 +5810,16 @@ c  Check for local adjustment default changes
 c
             if (btest(isdat2(isdat),26)) then
               notexq = chax(92)//'sluradjust'//chax(92)
-	        lnote = 12
+              lnote = 12
             else if (btest(isdat2(isdat),27)) then
               notexq = chax(92)//'nosluradjust'//chax(92)
-	        lnote = 14
+              lnote = 14
             else if (btest(isdat2(isdat),28)) then
               notexq = chax(92)//'tieadjust'//chax(92)
-	        lnote = 11
+              lnote = 11
             else if (btest(isdat2(isdat),29)) then
               notexq = chax(92)//'notieadjust'//chax(92)
-	        lnote = 13
+              lnote = 13
             end if
             if (ihoff .eq. 0) then
 c
@@ -7143,7 +7143,7 @@ c
 c  Start of 32nd gap, lump with following note
 c
             ip = ip+1
-		  nodue(nreal) = 1+nodur(ivx,ip)
+              nodue(nreal) = 1+nodur(ivx,ip)
             itnow = itnow+nodue(nreal)
           else
 c
@@ -7826,7 +7826,7 @@ c
             nacc(ivx,nnl(ivx)) = ibset(nacc(ivx,nnl(ivx)),27)
             call g1etchar(lineq,iccount,durq)
           end if
-		if (durq .eq. 'n') then
+            if (durq .eq. 'n') then
 c
 c  Number alteration stuff.  After 'n', require '+-123456789fs ', no more 'DF'.
 c
@@ -8086,8 +8086,8 @@ c
                     call stop1()
                   end if
                 end if
-                iccount = iccount-1		            
-                go to 15	  
+                iccount = iccount-1                        
+                go to 15        
               else if (dumq .eq. 'H' .and. iposn.gt.1) then
                 if (lineq(iccount+1:iccount+1) .eq. 'H') 
      *                                     iccount=iccount+1
@@ -8113,7 +8113,7 @@ c
      *              'Expected "s" or "t" here!')
                   call stop1()                   
                 end if
-	          go to 15
+                go to 15
               else if (dumq .ne. ' ') then
                 ic = ichar(dumq)
                 if ((ic.ge.48.and.ic.le.57) .or.
@@ -8471,7 +8471,7 @@ c
             iccount = iccount-1
           end if
           go to 2
-	  else if (durq .ne. ' ') then
+        else if (durq .ne. ' ') then
           call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *           'Illegal character!')
           print*,'ASCII code:',ichar(durq)
@@ -8915,7 +8915,7 @@ c
      *          'Cannot reshape postscript ties this way!')
             call stop1()                   
           end if        
-	    if (lineq(iccount+1:iccount+1) .eq. 'H') then
+          if (lineq(iccount+1:iccount+1) .eq. 'H') then
             iccount=iccount+1
             iposn = iposn+1
           end if
@@ -9034,9 +9034,9 @@ c
               call stop1()
             end if
           end if
-          iccount = iccount-1		            
-          go to 8	  
-	  else if (dumq .eq. 'H' .and. iposn.gt.1) then
+          iccount = iccount-1                        
+          go to 8        
+        else if (dumq .eq. 'H' .and. iposn.gt.1) then
           if (lineq(iccount+1:iccount+1) .eq. 'H') iccount=iccount+1
           go to 8
         end if
@@ -9155,7 +9155,7 @@ c
           call stop1()
         end if
         call g1etchar(lineq,iccount,charq)
-	  if (charq .eq. '-') then
+        if (charq .eq. '-') then
           if (lineq(iccount+1:iccount+2) .ne. '[ ') then
             call errmsg(lineq,iccount+1,ibarcnt-ibaroff+nbars+1,
      *        'Only sequence allowed here is "[ "!')
@@ -10500,7 +10500,7 @@ c  Hairpin here.  Check if opposite type from one that's already on
 c
         if (idno.eq.14.and.btest(listdecresc,ivx) .or. 
      *      idno.eq.15.and.btest(listcresc,ivx)) then
-	    call printl(' ')
+          call printl(' ')
           call printl('Started one kind of hairpin while other is on')
           call stop1()
         end if         
@@ -11053,7 +11053,7 @@ c
 c
 c Get volumes for each instrument.  Expect nv of them.  
 c    Follow same pattern as for insttrument numbers above.
-c 	
+c       
 c        do 7 ivx = 1 , nv
         do 7 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
@@ -11076,7 +11076,7 @@ c        do 7 ivx = 1 , nv
 c
 c Get balance for each instrument.  Expect nv of them.  
 c    Follow same pattern as for instrument numbers above.
-c 	
+c       
 c        do 8 ivx = 1 , nv
         do 8 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
@@ -11099,7 +11099,7 @@ c        do 8 ivx = 1 , nv
 c
 c Get transposition for each instrument.  Expect nv of them.  
 c    Follow similar pattern as above, but separator is +|-.
-c 	
+c       
 c        do 9 ivx = 1 , nv
         do 9 ivx = 1 , noinst
           call getchar(lineq,iccount,durq)
@@ -11898,7 +11898,7 @@ c
                 ivf = 2
               end if
               nfig1 = nfigs(ivf)+1
-			call getfig(itoff(ivf,nfig1),charq,lineq,iccount,
+                  call getfig(itoff(ivf,nfig1),charq,lineq,iccount,
      *             isfig(ivf,nnl(ivx)-1),itfig(ivf,nfig1),itsofar(ivx),
      *             0,figq(ivf,nfig1),ivupfig(ivf,nfig1),nfigs(ivf))
               go to 7
@@ -12477,7 +12477,7 @@ c
         numnum = 0
 c        icrdat(ncrd) = ior(nnl(ivx)-1,ishft(ivx,8))
         icrdat(ncrd) = nnl(ivx)
-	  call setbits(icrdat(ncrd),4,8,mod(ivx,16))
+        call setbits(icrdat(ncrd),4,8,mod(ivx,16))
         if (ivx .ge. 16) icrdat(ncrd) = ibset(icrdat(ncrd),28)
         icrdot(ncrd) = 0
         icrdorn(ncrd) = 0
@@ -12497,7 +12497,7 @@ c  Expect +|-|<|> , set tag, loop
 c
           icrdat(ncrd) = ibset(icrdat(ncrd),29)
           go to 25
-	  else if (ndx .gt. 0) then
+        else if (ndx .gt. 0) then
           if (ndx .le. 3) then
             if (.not.btest(icrdat(ncrd),19)) then
               icrdat(ncrd) = ibset(icrdat(ncrd),19)
@@ -13849,7 +13849,7 @@ c
      *            t1fb(ivx,nfb(ivx)) = 
      *                t1fb(ivx,nfb(ivx))+nodur(ivx,nnl(ivx))/2
           end if
-c		
+c            
 c  Change duration of prior note 
 c
           itsofar(ivx) = itsofar(ivx)-nodur(ivx,nnl(ivx))
@@ -13871,7 +13871,7 @@ c  iornq0: Store iorni + bit 23, in case of repeated ornaments
 c  iorni: Internal use, 1st 21 bits of iornq or icrdorn, dep. on notcrd.
 c  noffseg: horiz. offset for segno
 c  nole: level of note w/ orn, used to ID the note/orn if there's a level shift.
-c							
+c                                          
 
       common /comivxudorn/ivxudorn(63)
       common /comtrill/ ntrill,ivtrill(24),iptrill(24),xnsktr(24),
@@ -14615,7 +14615,7 @@ c
           isetvarlen = isetvarlen+2**(8*nbytes+7)
         else 
           return
-        end if	
+        end if      
 1     continue
       print*,'Problem in function isetvarlen'
       call stop1()
@@ -14706,7 +14706,7 @@ c
       logical fontslur,WrotePsslurDefaults,btest,upslur,ispstie,tie
       character*1 udq,chax,sepsymq(nm)
       character*8 noteq
-	character*128 notexq
+      character*128 notexq
 c
 c  This is called twice from pmxb after having input an entire block, before 
 c    making a bar that starts a new system.  So nsdat reflects all slur starts
@@ -14718,8 +14718,8 @@ c    Second (ispstie=.true. on entry) restarts tie at start of new line. Only
 c    need data from original tie-start for both of these. Tie/slur data from
 c    closing of full tie are not used except for shape alterations.
 c
-c	do 1 ndx = 0 , 11
-	do 1 ndx = 0 , 23
+c      do 1 ndx = 0 , 11
+      do 1 ndx = 0 , 23
         if (btest(listslur,ndx)) then
 c
 c  Slur or tie with index ndx is open. Find the one with right ndxb, see if tie
@@ -15098,7 +15098,7 @@ c
             else if (iiip .gt. 1) then
               if (btest(nacc(ivx,iiip-1),19))
      *                mult(ivx,iiip) = mult(ivx,iiip)+1
-            end if		  
+            end if              
 74        continue
           isxtup = .false.
         end if
@@ -15157,7 +15157,7 @@ c
       character*65536 bufq
       integer*2 lbuf(maxblks)
       common /inbuff/ ipbuf,ilbuf,nlbuf,lbuf,bufq
-	lbuf(1) = lbuf(1)
+      lbuf(1) = lbuf(1)
       if (.not.mrecord) then
 c
 c  Starting the macro
@@ -16695,7 +16695,7 @@ c
      *           iornq(ivx,ip),islhgt,tnote(ipl2(ivx,ip)),
      *           nacc(ivx,ip))
                 end if
-	        end if
+              end if
               if (isgrace) then
 c
 c Grace note.
@@ -16796,7 +16796,7 @@ c
 c  Process dynamic marks
 c
             if (btest(irest(ivx,ip),26)) then
-		    call dodyn(ivx,ip,
+                call dodyn(ivx,ip,
      *          nolev(ivx,ip),ncmid(iv,ip),ipl(ivx,ip),islur(ivx,ip),
      *          irest(ivx,ip),nvmx(iv),nv,beamon(ivx),ihornb,nornb,ulq,
      *          ibmcnt(ivx),nodur(ivx,ip).ge.64,soutq,lsout)
@@ -17945,7 +17945,7 @@ c
       common /comcc/ ncc(nm),tcc(nm,10),ncmidcc(nm,10),
      *               ndotmv(nm),updot(nm,20),rtdot(nm,20)
       common /commvl/ nvmx(nm),ivmx(nm,2),ivx
-	common /comtol/ tol
+      common /comtol/ tol
         if (ncc(iv) .eq. 1) then
           ncmid = ncmidcc(iv,1)
         else
@@ -18636,7 +18636,7 @@ ccccccccccccccccccccccccccccccccccc
       mplay = .false.
       lastchar = .false.
       novshrinktop = .false.
-	cstuplet = .false.
+      cstuplet = .false.
       fontslur = .true.
       isligfont = .false.
       fulltrans = .false.
@@ -18833,7 +18833,7 @@ c
         call makeabar()
         elsk(ibarcnt) = elskb+fbar
 10    continue
-      newmeter = .false.		
+      newmeter = .false.            
       firstline = .false.
       go to 30
 20    continue
@@ -19665,7 +19665,7 @@ cccccccccccccccccccccccccccccccc
       ignorenats = .false.
       bcspec = .true.
       topmods = .false.
-	ismbr = .false.
+      ismbr = .false.
       read(12,'(a)')basenameq
       read(12,*)lbase
       read(12,*)fbar,wheadpt,etait,etatc,etacs1,etatop,
@@ -19818,7 +19818,7 @@ c
       nobar1 = .false.
       equalize = .false.
       usevshrink = .true.
-	WrotePsslurDefaults = .false.
+      WrotePsslurDefaults = .false.
       OptLineBreakTies = .false.
       HeaderSpecial = .false.
 c
@@ -20397,7 +20397,7 @@ c              end if
                 lnmq = 12
                 if (movgap .lt. 10) then
                   lnmq = 14
-				write(nmq(13:14),'(2i1)')movgap,indsym
+                        write(nmq(13:14),'(2i1)')movgap,indsym
                 else
                   lnmq = 17
                   write(nmq(13:17),'(a1,i2,a1,i1)')'{',movgap,'}',indsym
@@ -21168,7 +21168,7 @@ c
       minlev = nolevm
       levtabl(nolevm) =  -1
       is2nd = .false.
-	naccid = 0
+      naccid = 0
       levmaxacc = -100
       levminacc = 1000
 c
@@ -21456,7 +21456,7 @@ c      end if
       if (ilvert .gt. 9) then
         write(notexq(lnote+1:lnote+4),'(a1,i2,a1)')'{',ilvert,'}'
         lnote = lnote+4
-	else
+      else
         notexq = notexq(1:lnote)//chax(48+ilvert)
         lnote = lnote+1
       end if
@@ -21503,7 +21503,7 @@ c  or for negative,       ...xyz*ast{-nn.n}*lmnop...
       character*79 notexq
       logical btest
 c      ivxip = ivx+16*ip
-	do 1 ibc = 1 , nbc
+      do 1 ibc = 1 , nbc
 c        if (ivxip .eq. iand(1023,ibcdata(ibc))) go to 2
 c        if (ivx.eq.iand(15,ibcdata(ibc))+16*igetbits(ibcdata(ibc),1,28)
 c     *    .and. ip.eq.iand(1008,ibcdata(ibc))) go to 2
@@ -21565,7 +21565,7 @@ c
         lnote = lnote+1
       end if
       return
-	end
+      end
       subroutine putfig(ivx,ifig,offnsk,figcheck,soutq,lsout)
       parameter (nm=24)
       common /comfig/ itfig(2,74),figqq(2,74),ivupfig(2,74),nfigs(2),
@@ -22984,8 +22984,8 @@ c
       call setbits(isdat1(nsdat),1,12,kv-1)
       call setbits(isdat1(nsdat),8,3,ip)
       isdat3(nsdat) = 0
-	isdat4(nsdat) = 0
-	ilb12 = 0 ! flag for tweaks of 1st or 2nd (0|1) seg of linebreak slur 
+      isdat4(nsdat) = 0
+      ilb12 = 0 ! flag for tweaks of 1st or 2nd (0|1) seg of linebreak slur 
 c
 c  Get ID code
 c
@@ -23170,15 +23170,15 @@ c  28       \tieadjust     (p+t)
 c  29       \notieadjust   (p-t)
         if (durq .eq. '+') then
           if (dumq .eq. 's') then
-	      isdat2(nsdat) = ibset(isdat2(nsdat),26)
+            isdat2(nsdat) = ibset(isdat2(nsdat),26)
           else
-	      isdat2(nsdat) = ibset(isdat2(nsdat),28)
+            isdat2(nsdat) = ibset(isdat2(nsdat),28)
           end if
         else
           if (dumq .eq. 's') then
-	      isdat2(nsdat) = ibset(isdat2(nsdat),27)
+            isdat2(nsdat) = ibset(isdat2(nsdat),27)
           else
-	      isdat2(nsdat) = ibset(isdat2(nsdat),29)
+            isdat2(nsdat) = ibset(isdat2(nsdat),29)
           end if
         end if
         go to 1
@@ -23780,8 +23780,8 @@ c
 c  Used to be icmm(0:nm); did midi fail when nv>16?
 c
       integer*2 iinsiv,icmm(0:15)
-	character*5 versionc
-	common /comver/ versionc
+      character*5 versionc
+      common /comver/ versionc
 c
 c  These are not consecutive because channel 9 is reserved for percussion.
 c
@@ -23968,7 +23968,7 @@ c
       integer*4 iInstTrans(nm),iTransKey(nm)
       character*79 notexq
       character*1 chax
-	logical flag
+      logical flag
 c
 c  Assumes notexq is blank
 c
@@ -23994,7 +23994,7 @@ c
         write(11,'(a)')notexq(1:lnote)//'%'
 1     continue
       flag = .false.
-	return
+      return
       end
       subroutine writflot(x,notexq,lenline)
       character*(*) notexq
