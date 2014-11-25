@@ -21,16 +21,8 @@ struct all_1_ {
     logical botv[24];
     integer nvi[24], nsyst, nvnow;
 };
-struct all_2_ {
-    integer noinow, iorig[24], noinst;
-    logical insetup, replacing;
-    integer instnum[24];
-    logical botv[24];
-    integer nvi[24], nsyst, nvnow;
-};
 
 #define all_1 (*(struct all_1_ *) &all_)
-#define all_2 (*(struct all_2_ *) &all_)
 
 /* Initialized data */
 
@@ -2595,7 +2587,7 @@ L2:
 /*  It's nv */
 
 		s_wsfe(&io___209);
-		do_fio(&c__1, (char *)&all_2.nvi[*iv - 1], (ftnlen)sizeof(
+		do_fio(&c__1, (char *)&all_1.nvi[*iv - 1], (ftnlen)sizeof(
 			integer));
 		e_wsfe();
 	    } else {
@@ -2603,7 +2595,7 @@ L2:
 /*  npages must be computed */
 
 		s_wsfe(&io___210);
-		i__1 = (all_2.nsyst - 1) / 12 + 1;
+		i__1 = (all_1.nsyst - 1) / 12 + 1;
 		do_fio(&c__1, (char *)&i__1, (ftnlen)sizeof(integer));
 		e_wsfe();
 	    }

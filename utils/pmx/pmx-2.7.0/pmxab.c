@@ -48,21 +48,13 @@ struct {
 
 #define commidi_1 commidi_
 
-union {
-    struct {
-	integer midivel[24], midvelc[25], midibal[24], midbc[25], miditran[24]
-		, midtc[25], noinst;
-	shortint iinsiv[24];
-    } _1;
-    struct {
-	integer midivel[24], midvelc[25], midibal[24], midbc[25], miditran[24]
-		, midtc[25], noinstdum;
-	shortint iinsiv[24];
-    } _2;
+struct {
+    integer midivel[24], midvelc[25], midibal[24], midbc[25], miditran[24], 
+	    midtc[25], noinst;
+    shortint iinsiv[24];
 } commvel_;
 
-#define commvel_1 (commvel_._1)
-#define commvel_2 (commvel_._2)
+#define commvel_1 commvel_
 
 struct {
     integer ipbuf, ilbuf, nlbuf;
@@ -6265,7 +6257,7 @@ L18:
 /*     * -0.75,-0.20,-0.80, 0. , 0. , .96,-1.04,1.6, 0. , 0. , */
 /*           meas value for y, natural is 1.6 */
 /*     *  0.00, 0.00,-1.04, 0. , 0. ,3.15, 2.9,-1.6, 0. , 0. , */
-/* c		(meas. value is 3.08)    ^^^^ */
+/* c            (meas. value is 3.08)    ^^^^ */
 /* c  Raise top of flat so it interferes with bottom of sharp */
 
 /*  iacctbl(i) = internal accid # (1-5) when i=extern accid # (1,2,3,5,6) */
@@ -7589,7 +7581,7 @@ L2:
 /*  Build the command into notex in stages. Insert name & rq'd args in order: */
 
 /*    Command name */
-/* 	 hpstrt, hpcend, hpdend, pmxdyn */
+/*       hpstrt, hpcend, hpdend, pmxdyn */
 /*    ivx */
 /*        X       X       X */
 /*    level */
@@ -7774,8 +7766,8 @@ L2:
 /*  Cases: */
 /*  numdyn  type1   type2    type3    data used */
 /*     2    wrd-grp hrpnstrt -        ivowg(1...12),hoh1(1...12) */
-/*     2	 hrpnend wrd-grp  -		   ivowg,hoh2 */
-/*     2    hrpnend hrpnstrt -		   hoh2h1(1...2) */
+/*     2       hrpnend wrd-grp  -               ivowg,hoh2 */
+/*     2    hrpnend hrpnstrt -               hoh2h1(1...2) */
 /*     3    hrpnend wrd-grp  hrpnstrt ivowg,hoh2,hoh1 */
 
 	    if (idno > 0 && idno <= 12) {
@@ -8253,7 +8245,7 @@ L5:
 L121:
     ngs = comgrace_1.ngstrt[*ig - 1];
     mg = comgrace_1.multg[*ig - 1];
-/* 	wheadpt1 = wheadpt*fullsize(ivx) */
+/*      wheadpt1 = wheadpt*fullsize(ivx) */
     wheadpt1 = comask_1.wheadpt * comfig_1.fullsize[*instno - 1];
 
 /*  For way-after-graces at end of bar, must set the octave. */
@@ -17143,9 +17135,9 @@ L1:
     goto L1;
 } /* getitransinfo_ */
 
-/* Subroutine */ int getmidi_(integer *noinst, char *lineq, integer *iccount, 
-	integer *ibarcnt, integer *ibaroff, integer *nbars, integer *lenbar, 
-	integer *mtrdenl, logical *first, ftnlen lineq_len)
+/* Subroutine */ int getmidi_(integer *noinstarg, char *lineq, integer *
+	iccount, integer *ibarcnt, integer *ibaroff, integer *nbars, integer *
+	lenbar, integer *mtrdenl, logical *first, ftnlen lineq_len)
 {
     /* Initialized data */
 
@@ -17272,7 +17264,7 @@ L1:
 /*  Instrument numbers or letters.  Expect noinst of them. */
 
 /*        do 2 ivx = 1 , nv */
-	i__1 = *noinst;
+	i__1 = *noinstarg;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    if (*(unsigned char *)durq > 96) {
@@ -17330,7 +17322,7 @@ L1:
 /*    Follow same pattern as for insttrument numbers above. */
 
 /*        do 7 ivx = 1 , nv */
-	i__1 = *noinst;
+	i__1 = *noinstarg;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    if (i_indx("123456789", durq, (ftnlen)9, (ftnlen)1) == 0) {
@@ -17340,8 +17332,8 @@ L1:
 		stop1_();
 	    }
 	    readnum_(lineq, iccount, durq, &fnum, (ftnlen)128, (ftnlen)1);
-	    commvel_2.midivel[ivx - 1] = i_nint(&fnum) - 1;
-	    if (commvel_2.midivel[ivx - 1] < 0 || commvel_2.midivel[ivx - 1] 
+	    commvel_1.midivel[ivx - 1] = i_nint(&fnum) - 1;
+	    if (commvel_1.midivel[ivx - 1] < 0 || commvel_1.midivel[ivx - 1] 
 		    > 127) {
 		i__3 = *iccount - 1;
 		i__4 = *ibarcnt - *ibaroff + *nbars + 1;
@@ -17361,7 +17353,7 @@ L1:
 /*    Follow same pattern as for instrument numbers above. */
 
 /*        do 8 ivx = 1 , nv */
-	i__1 = *noinst;
+	i__1 = *noinstarg;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    if (i_indx("123456789", durq, (ftnlen)9, (ftnlen)1) == 0) {
@@ -17371,8 +17363,8 @@ L1:
 		stop1_();
 	    }
 	    readnum_(lineq, iccount, durq, &fnum, (ftnlen)128, (ftnlen)1);
-	    commvel_2.midibal[ivx - 1] = i_nint(&fnum) - 1;
-	    if (commvel_2.midibal[ivx - 1] < 0 || commvel_2.midibal[ivx - 1] 
+	    commvel_1.midibal[ivx - 1] = i_nint(&fnum) - 1;
+	    if (commvel_1.midibal[ivx - 1] < 0 || commvel_1.midibal[ivx - 1] 
 		    > 127) {
 		i__3 = *iccount - 1;
 		i__4 = *ibarcnt - *ibaroff + *nbars + 1;
@@ -17392,7 +17384,7 @@ L1:
 /*    Follow similar pattern as above, but separator is +|-. */
 
 /*        do 9 ivx = 1 , nv */
-	i__1 = *noinst;
+	i__1 = *noinstarg;
 	for (ivx = 1; ivx <= i__1; ++ivx) {
 	    getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
 	    ipm = i_indx("-+", durq, (ftnlen)2, (ftnlen)1);
@@ -17411,7 +17403,7 @@ L1:
 		stop1_();
 	    }
 	    readnum_(lineq, iccount, durq, &fnum, (ftnlen)128, (ftnlen)1);
-	    commvel_2.miditran[ivx - 1] = ipm * i_nint(&fnum);
+	    commvel_1.miditran[ivx - 1] = ipm * i_nint(&fnum);
 /*          if (mod(miditran(ivx),12).ne. 0) then */
 /*            call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1, */
 /*     *         'Midi transposition limited to multiples of 12!') */
@@ -22650,7 +22642,7 @@ integer lfmt1_(real *x)
 /*    need data from original tie-start for both of these. Tie/slur data from */
 /*    closing of full tie are not used except for shape alterations. */
 
-/* 	do 1 ndx = 0 , 11 */
+/*      do 1 ndx = 0 , 11 */
     /* Parameter adjustments */
     --sepsymq;
     --isdat4;
@@ -36212,7 +36204,7 @@ L6:
 
 /*  Get ID code */
 
-/* flag for tweaks of 1st or 2nd (0|1) seg of linebreak slur */
+/* flag for tweaks of 1st or 2nd (0|1) seg of linebreak s */
     getchar_(lineq, iccount, durq, (ftnlen)128, (ftnlen)1);
     if (i_indx("uldtb+-hfnHps ", durq, (ftnlen)14, (ftnlen)1) > 0) {
 
