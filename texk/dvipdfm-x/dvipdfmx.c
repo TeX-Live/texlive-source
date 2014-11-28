@@ -186,7 +186,7 @@ show_usage (void)
   printf ("  -p papersize\tSet papersize [a4]\n");
   printf ("  -q \t\tBe quiet\n");
   printf ("  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
-  printf ("  -s pages\tSelect page ranges (-)\n");
+  printf ("  -s pages\tSelect page ranges [all pages]\n");
   printf ("  -t \t\tEmbed thumbnail images of PNG format [DVIFILE.1] \n");
   printf ("  --version\tOutput version information and exit\n");
   printf ("  -v \t\tBe verbose\n");
@@ -199,7 +199,7 @@ show_usage (void)
   printf ("  -C number\tSpecify miscellaneous option flags [0]:\n");
   printf ("\t\t  0x0001 reserved\n");
   printf ("\t\t  0x0002 Use semi-transparent filling for tpic shading command,\n");
-  printf ("\t\t\t instead of opaque gray color. (requires PDF 1.4)\n");
+  printf ("\t\t\t instead of opaque gray color; requires PDF 1.4.\n");
   printf ("\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   printf ("\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
   printf ("\t\t  0x0010 Do not optimize PDF destinations.\n");
