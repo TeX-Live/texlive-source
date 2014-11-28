@@ -168,9 +168,11 @@ show_version (void)
 static void
 show_usage (void)
 {
-  printf ("\nUsage: %s [options] [dvifile[.dvi|.xdv]]\n", my_name);
-  printf ("       %s --extractbb|--xbb|--ebb [options]\tBe \"extractbb\"\n", my_name);
+  printf ("\nUsage: %s [OPTION]... [DVIFILE[.dvi|.xdv]]\n", my_name);
+  printf ("       %s --extractbb|--xbb|--ebb [OPTION]...\tBe \"extractbb\"\n",
+          my_name);
   printf ("       %s --help|--version\n", my_name);
+  printf ("Convert DVI or XDV intput to PDF; defaults given below.\n");
   printf ("\nOptions:\n"); 
   printf ("  -c \t\tIgnore color specials (for B&W printing)\n");
   printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
@@ -180,16 +182,16 @@ show_usage (void)
   printf ("  -h | --help \tShow this help message and exit\n");
   printf ("  -l \t\tLandscape mode\n");
   printf ("  -m number\tSet additional magnification [1.0]\n");
-  printf ("  -o filename\tSet output file name, \"-\" for stdout [dvifile.pdf]\n");
+  printf ("  -o filename\tSet output file name, \"-\" for stdout [DVIFILE.pdf]\n");
   printf ("  -p papersize\tSet papersize [a4]\n");
   printf ("  -q \t\tBe quiet\n");
   printf ("  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
   printf ("  -s pages\tSelect page ranges (-)\n");
-  printf ("  -t \t\tEmbed thumbnail images of PNG format [dvifile.1] \n");
+  printf ("  -t \t\tEmbed thumbnail images of PNG format [DVIFILE.1] \n");
   printf ("  --version\tOutput version information and exit\n");
   printf ("  -v \t\tBe verbose\n");
   printf ("  -vv\t\tBe more verbose\n");
-  printf ("  --kpathsea-debug number\tSet kpathsearch debugging flags [0]\n");
+  printf ("  --kpathsea-debug number\tSet kpathsea debugging flags [0]\n");
   printf ("  -x dimension\tSet horizontal offset [1.0in]\n");
   printf ("  -y dimension\tSet vertical offset [1.0in]\n");
   printf ("  -z number  \tSet zlib compression level (0-9) [9]\n");
@@ -931,6 +933,7 @@ CDECL main (int argc, char *argv[])
 
   if (argc > 1 &&
                (STREQ (argv[1], "--xbb") ||
+                STREQ (argv[1], "--extractbb") ||
                 STREQ (argv[1], "--dvipdfm") ||
                 STREQ (argv[1], "--ebb"))) {
     argc--;

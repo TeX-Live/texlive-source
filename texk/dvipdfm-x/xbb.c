@@ -46,7 +46,6 @@
 static void show_version(void)
 {
   fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " VERSION "\n");
-  fprintf (stdout, "A bounding box extraction utility from PDF, PNG, and JPEG.\n");
   fprintf (stdout, "\nCopyright (C) 2008-2014 by Jin-Hwan Cho and Matthias Franz\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
@@ -56,8 +55,9 @@ static void show_version(void)
 
 static void show_usage(void)
 {
-  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-q|-v] [-O] [-m|-x] file...\n");
+  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-q|-v] [-O] [-m|-x] FILE...\n");
   fprintf (stdout, "       " XBB_PROGRAM " --help|--version\n");
+  fprintf (stdout, "Extract bounding box from PDF, PNG, or JPEG file; default output below.\n");
   fprintf (stdout, "\nOptions:\n");
   fprintf (stdout, "  -h | --help\tShow this help message and exit\n");
   fprintf (stdout, "  --version\tOutput version information and exit\n");

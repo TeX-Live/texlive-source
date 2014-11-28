@@ -1,3 +1,10 @@
+2014-11-28  Karl Berry  <karl@tug.org>
+
+	* dvipdfmx.c (main): accept --extractbb per help message.
+	(show_usage): one line of description.
+	* xbb.c (show_usage): likewise.
+	Suggestion from Tom Schneider, texhax 22 Nov 2014 08:53:19.
+
 2014-11-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfmx.c: Modified support to make DLL(s) in W32TeX.
