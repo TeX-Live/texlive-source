@@ -1,3 +1,8 @@
+2014-11-29  Karl Berry  <karl@tug.org>
+
+	* dvipdfmx.c (show_usage): use [all pages] instead of (-).
+	From peb.
+
 2014-11-28  Karl Berry  <karl@tug.org>
 
 	* dvipdfmx.c (main): accept --extractbb per help message.
