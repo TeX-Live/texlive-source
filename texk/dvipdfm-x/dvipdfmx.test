@@ -24,6 +24,11 @@ echo "*** dvipdfmx --help" \
 	&& echo && echo "dvipdfmx-help tests OK" && echo \
 	|| failed="$failed dvipdfmx-help"
 
+echo "*** dvipdfmx --showpaper" \
+	&& ./dvipdfmx --showpaper \
+	&& echo && echo "dvipdfmx-showpaper tests OK" && echo \
+	|| failed="$failed dvipdfmx-showpaper"
+
 echo "*** dvipdfmx -v -o image1.pdf image" && echo \
 	&& ./dvipdfmx -v -o image1.pdf $srcdir/tests/image \
 	&& echo && echo "dvipdfmx-image tests OK" && echo \
