@@ -1,3 +1,8 @@
+2014-11-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c, dpxconf.c, dpxconf.h: Add an option --showpaper which
+	shows available paper formats and exits.
+
 2014-11-29  Karl Berry  <karl@tug.org>
 
 	* dvipdfmx.c (show_usage): use [all pages] instead of (-).

@@ -53,8 +53,6 @@ extern const struct paper *paperinfo (const char *ppformat);
 #define systempapersizefile()  NULL
 #endif /* HAVE_LIBPAPER */
 
-#if 0
 extern void dumppaperinfo (void);
-#endif
 
 #endif /* _DPXCONF_H_ */

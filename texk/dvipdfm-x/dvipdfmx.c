@@ -171,7 +171,7 @@ show_usage (void)
   printf ("\nUsage: %s [OPTION]... [DVIFILE[.dvi|.xdv]]\n", my_name);
   printf ("       %s --extractbb|--xbb|--ebb [OPTION]...\tBe \"extractbb\"\n",
           my_name);
-  printf ("       %s --help|--version\n", my_name);
+  printf ("       %s --help|--showpaper|--version\n", my_name);
   printf ("Convert DVI or XDV intput to PDF; defaults given below.\n");
   printf ("\nOptions:\n"); 
   printf ("  -c \t\tIgnore color specials (for B&W printing)\n");
@@ -187,6 +187,7 @@ show_usage (void)
   printf ("  -q \t\tBe quiet\n");
   printf ("  -r resolution\tSet resolution (in DPI) for raster fonts [600]\n");
   printf ("  -s pages\tSelect page ranges [all pages]\n");
+  printf ("  --showpaper\tShow available paper formats and exit\n");
   printf ("  -t \t\tEmbed thumbnail images of PNG format [DVIFILE.1] \n");
   printf ("  --version\tOutput version information and exit\n");
   printf ("  -v \t\tBe verbose\n");
@@ -951,13 +952,16 @@ CDECL main (int argc, char *argv[])
     return extractbb (argc, argv);
   }
 
-  /* Special-case single option --help or --version, to avoid possible
-     diagnostics about config files, etc.  */
+  /* Special-case single option --help, --showpaper, or --version, to avoid
+     possible diagnostics about config files, etc.  */
   if (argc == 2 && STREQ (argv[1], "--help")) {
     show_usage();
     exit(0);
   } else if (argc == 2 && STREQ (argv[1], "--version")) {
     show_version();
+    exit(0);
+  } else if (argc == 2 && STREQ (argv[1], "--showpaper")) {
+    dumppaperinfo();
     exit(0);
   }
 
