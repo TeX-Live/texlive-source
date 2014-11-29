@@ -23,6 +23,11 @@ echo "*** xdvipdfmx --help" \
 	&& echo && echo "xdvipdfmx-help tests OK" && echo \
 	|| failed="$failed xdvipdfmx-help"
 
+echo "*** xdvipdfmx --showpaper" \
+	&& ./xdvipdfmx --showpaper \
+	&& echo && echo "xdvipdfmx-showpaper tests OK" && echo \
+	|| failed="$failed xdvipdfmx-showpaper"
+
 echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
 	&& ./xdvipdfmx -v -o image2.pdf $srcdir/tests/image \
 	&& echo && echo "xdvipdfmx-image tests OK" && echo \
