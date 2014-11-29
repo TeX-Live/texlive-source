@@ -92,7 +92,6 @@ paperinfo (const char *ppformat)
 
 #endif /* HAVE_LIBPAPER */
 
-#if 0
 void
 dumppaperinfo (void)
 {
@@ -107,4 +106,3 @@ dumppaperinfo (void)
     ppinfo = papernext(ppinfo);
   }  
 }
-#endif
