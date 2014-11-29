@@ -283,6 +283,7 @@ static char *global_defs = 0;
 static char *page_defs = 0;
 static char *temporary_defs = 0;
 static char *distiller_template = 0;
+static char *pstricks_template = 0;
 static pdf_coord *put_stack;
 static int put_stack_depth = -1;
 static char *gs_in = 0;
@@ -535,8 +536,21 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args)
   const char *clip;
   int error;
 
-  if (!distiller_template)
+  if (!distiller_template) {
+    char *p;
     distiller_template = get_distiller_template();
+    pstricks_template = xmalloc (strlen (distiller_template) + 14);
+    p = strstr (distiller_template, "-dEPSCrop");
+    if (p) {
+      memcpy (pstricks_template, distiller_template, p - distiller_template);
+      pstricks_template[p - distiller_template] = '\0';
+      strcat (pstricks_template, "-sPAPERSIZE=a0");
+      p += 9;
+      strcat (pstricks_template, p);
+    } else {
+      strcpy (pstricks_template, distiller_template);
+    }
+  }
 
   pdf_dev_currentmatrix(&M);
   if (!gs_in) {
@@ -603,7 +617,7 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args)
   fprintf(fp, " showpage\n");
   fclose(fp);
 
-  error = dpx_file_apply_filter(distiller_template, gs_in, gs_out,
+  error = dpx_file_apply_filter(pstricks_template, gs_in, gs_out,
                                (unsigned char) pdf_get_version());
   if (error) {
     WARN("Image format conversion for PSTricks failed.");
@@ -636,8 +650,21 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
   int k;
   pdf_tmatrix M;
 
-  if (!distiller_template)
+  if (!distiller_template) {
+    char *p;
     distiller_template = get_distiller_template();
+    pstricks_template = xmalloc (strlen(distiller_template) + 14);
+    p = strstr (distiller_template, "-dEPSCrop");
+    if(p) {
+      memcpy (pstricks_template, distiller_template, p - distiller_template);
+      pstricks_template[p - distiller_template] = '\0';
+      strcat (pstricks_template, "-sPAPERSIZE=a0");
+      p += 9;
+      strcat (pstricks_template, p);
+    } else {
+      strcpy (pstricks_template, distiller_template);
+    }
+  }
 
   pdf_dev_currentmatrix(&M);
   if (!gs_in) {
@@ -697,7 +724,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
     fprintf(fp, " showpage\n");
     fclose(fp);
 
-    error = dpx_file_apply_filter(distiller_template, gs_in, gs_out,
+    error = dpx_file_apply_filter(pstricks_template, gs_in, gs_out,
                                  (unsigned char) pdf_get_version());
     if (error) {
       WARN("Image format conversion for PSTricks failed.");
@@ -907,6 +934,8 @@ spc_dvips_at_end_document (void)
   }
   dpx_delete_temp_file(global_defs, true);
   dpx_delete_temp_file(page_defs, true);
+  if (pstricks_template)
+    RELEASE(pstricks_template);
 
   return  0;
 }
