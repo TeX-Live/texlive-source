@@ -1,3 +1,9 @@
+2014-11-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_dvips.c: In the case of PSTricks, use -sPAPERSIZE=a0 instead of
+	-dEPSCrop, since Herbert Voss wants it:
+	(http://tug.org/pipermail/xetex/2014-November/025664.html).
+
 2014-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfmx.test, xdvipdfmx.test: Also test --showpaper option.	
