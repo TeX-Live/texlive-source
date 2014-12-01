@@ -172,7 +172,7 @@ show_usage (void)
   printf ("       %s --extractbb|--xbb|--ebb [OPTION]...\tBe \"extractbb\"\n",
           my_name);
   printf ("       %s --help|--showpaper|--version\n", my_name);
-  printf ("Convert DVI or XDV intput to PDF; defaults given below.\n");
+  printf ("Convert DVI or XDV input to PDF; defaults given below.\n");
   printf ("\nOptions:\n"); 
   printf ("  -c \t\tIgnore color specials (for B&W printing)\n");
   printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
