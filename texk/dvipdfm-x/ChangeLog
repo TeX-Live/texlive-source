@@ -1,3 +1,10 @@
+2014-12-01  Karl Berry  <karl@tug.org>
+
+	* data/dvipdfmx.cfg (D): add back -sPAPERSIZE=a0, needed for
+	pstricks under xetex; retain -dEPSCROP, needed for negative llx/lly.
+	From Akira, thread at
+        http://tug.org/pipermail/xetex/2014-November/025664.html.
+
 2014-11-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfmx.test, xdvipdfmx.test: Also test --showpaper option.	
