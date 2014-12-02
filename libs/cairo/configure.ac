@@ -22,10 +22,12 @@ AC_PROG_RANLIB
 AC_PROG_LN_S
 CAIRO_BIGENDIAN
 
+KPSE_COMPILER_VISIBILITY
+
 cairo_attribute_flag=
 if test "x$GCC" = xyes; then
   AS_CASE([`$CC -dumpversion`],
-          [4.@<:@01@:>@.* ], [],
+          [4.[[01]].* ], [],
           [4.* | 5.*], [cairo_attribute_flag=-Wno-attributes])
 fi
 AC_SUBST([CAIRO_ATTRIBUTE_FLAG], [$cairo_attribute_flag])

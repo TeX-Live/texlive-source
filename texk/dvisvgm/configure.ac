@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -27,8 +27,6 @@ dnl Include additional code for dvisvgm.
 m4_include([ac/dvisvgm.ac])
 
 AC_CONFIG_HEADERS([config.h])
-
-KPSE_COMPILER_VISIBILITY
 
 AC_PROG_CXX
 AC_PROG_CXXCPP

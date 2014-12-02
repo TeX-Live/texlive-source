@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -60,8 +60,8 @@ AC_LANG_CONFTEST([AC_LANG_SOURCE([[#include <stdio.h>
                                    extern void foo(void);
                                    void foo(void){printf("foo\n");}]])])
 # FIXME: Add tests for non-GNU compilers
-for kpse_flag in '-fvisibility=hidden'; do
-  AS_TR_CPP($2)="$kpse_save_flags $kpse_flag"
+for kpse_flag in '-fvisibility=hidden -fvisibility-inlines-hidden' '-fvisibility=hidden'; do
+  AS_TR_CPP($2)="$kpse_save_flags -Werror $kpse_flag"
   AC_COMPILE_IFELSE([], [kpse_cv_visibility_$2=$kpse_flag; break])
 done
 AC_LANG_POP([$1])

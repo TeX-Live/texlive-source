@@ -4719,8 +4719,8 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
                                    void foo(void){printf("foo\n");}
 _ACEOF
 # FIXME: Add tests for non-GNU compilers
-for kpse_flag in '-fvisibility=hidden'; do
-  CFLAGS="$kpse_save_flags $kpse_flag"
+for kpse_flag in '-fvisibility=hidden -fvisibility-inlines-hidden' '-fvisibility=hidden'; do
+  CFLAGS="$kpse_save_flags -Werror $kpse_flag"
   if ac_fn_c_try_compile "$LINENO"; then :
   kpse_cv_visibility_cflags=$kpse_flag; break
 fi
