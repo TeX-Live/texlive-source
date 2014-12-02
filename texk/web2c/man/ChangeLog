@@ -1,3 +1,8 @@
+2014-12-02  Karl Berry  <karl@tug.org>
+
+	* patgen.man: Kuiken's ushyphmax.tex not in TL for some years.
+	(Report from Mojca.)
+
 2011-04-12  Taco Hoekwater  <taco@metapost.org>
 
 	* luatex.man: update to version 0.70

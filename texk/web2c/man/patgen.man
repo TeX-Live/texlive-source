@@ -1,4 +1,4 @@
-.TH PATGEN 1 "7 April 2010" "Web2C @VERSION@"
+.TH PATGEN 1 "2 December 2014" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -22,7 +22,9 @@ patgen \- generate patterns for TeX hyphenation
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  
 See also the Info file or manual
-.IR "Web2C: A TeX implementation" .
+.I "Web2C: A TeX implementation" 
+available as part of the TeX Live distribution or at
+.IR http://tug.org/web2c .
 .PP
 The
 .I patgen
@@ -162,11 +164,14 @@ produce a hyphenated word list.
 The original hyphenation patterns for English, by Donald Knuth and Frank
 Liang.
 .TP
-.I $TEXMFMAIN/tex/generic/hyphen/ushyphmax.tex
-Maximal hyphenation patterns for English, extended by Gerard Kuiken.
+.I http://www.ctan.org/pkg/ushyph
+Additional hyphenation patterns for English, extended by Gerard Kuiken.
+.TP
+.I http://www.ctan.org/pkg/hyph-utf8
+Collected hyphenation patterns for many languages in many formats.
 .TP
 .I http://www.ctan.org/tex-archive/language/
-Patterns and support for many other languages
+General CTAN directory for patterns and support for many other languages.
 .\"=====================================================================
 .SH "SEE ALSO"
 Frank Liang and Peter Breitenlohner,
