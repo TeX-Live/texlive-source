@@ -57,13 +57,13 @@ static void show_version(void)
 
 static void show_usage(void)
 {
-  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-f page] [-q|-v] [-O] [-m|-x] FILE...\n");
+  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-p page] [-q|-v] [-O] [-m|-x] FILE...\n");
   fprintf (stdout, "       " XBB_PROGRAM " --help|--version\n");
   fprintf (stdout, "Extract bounding box from PDF, PNG, or JPEG file; default output below.\n");
   fprintf (stdout, "\nOptions:\n");
-  fprintf (stdout, "  -f page\tSpecify a PDF page to extract bounding box\n");
   fprintf (stdout, "  -h | --help\tShow this help message and exit\n");
   fprintf (stdout, "  --version\tOutput version information and exit\n");
+  fprintf (stdout, "  -p page\tSpecify a PDF page to extract bounding box\n");
   fprintf (stdout, "  -q\t\tBe quiet\n");
   fprintf (stdout, "  -v\t\tBe verbose\n");
   fprintf (stdout, "  -O\t\tWrite output to stdout\n");
@@ -305,7 +305,7 @@ int extractbb (int argc, char *argv[])
       case 'h':
         show_usage();
         exit (0);
-      case 'f':
+      case 'p':
         argc--;
         argv++;
         Include_Page = atol (argv[0]);
