@@ -1,3 +1,8 @@
+2014-12-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xbb.c: Support to specify a page in a multi-page PDF to extract
+	bounding box, usage: extractbb -f page foo.pdf.
+
 2014-12-01  Karl Berry  <karl@tug.org>
 
 	* data/dvipdfmx.cfg (D): add back -sPAPERSIZE=a0, needed for

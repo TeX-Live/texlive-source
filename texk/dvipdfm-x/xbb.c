@@ -43,6 +43,8 @@
 
 #define XBB_PROGRAM "extractbb"
 
+static long Include_Page = 1;
+
 static void show_version(void)
 {
   fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " VERSION "\n");
@@ -55,10 +57,11 @@ static void show_version(void)
 
 static void show_usage(void)
 {
-  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-q|-v] [-O] [-m|-x] FILE...\n");
+  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-f page] [-q|-v] [-O] [-m|-x] FILE...\n");
   fprintf (stdout, "       " XBB_PROGRAM " --help|--version\n");
   fprintf (stdout, "Extract bounding box from PDF, PNG, or JPEG file; default output below.\n");
   fprintf (stdout, "\nOptions:\n");
+  fprintf (stdout, "  -f page\tSpecify a PDF page to extract bounding box\n");
   fprintf (stdout, "  -h | --help\tShow this help message and exit\n");
   fprintf (stdout, "  --version\tOutput version information and exit\n");
   fprintf (stdout, "  -q\t\tBe quiet\n");
@@ -234,7 +237,7 @@ static void do_pdf (FILE *fp, char *filename)
 {
   pdf_obj *page;
   pdf_file *pf;
-  long page_no = 1;
+  long page_no = Include_Page;
   long count;
   pdf_rect bbox;
 
@@ -293,12 +296,22 @@ int extractbb (int argc, char *argv[])
       case 'x':
         compat_mode = 0;
         break;
+      case 'q':
+        verbose = 0;
+        break;
       case 'v':
         verbose = 1;
         break;
       case 'h':
         show_usage();
         exit (0);
+      case 'f':
+        argc--;
+        argv++;
+        Include_Page = atol (argv[0]);
+        if (Include_Page == 0)
+          Include_Page = 1;
+        break;
       default:
         fprintf (stderr, "Unknown option in \"%s\"", argv[0]);
         usage();
