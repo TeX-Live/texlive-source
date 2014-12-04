@@ -1,3 +1,8 @@
+2014-12-04  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* mpost.w: fixed exit values to match metafont/old metapost behavior.
+	(thanks to Wojciech A. Koszek <wkoszek@freebsd.org>).
+
 2014-11-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* psout.w: Sync with the trunk. Luigi fixes to avoid enormous number
