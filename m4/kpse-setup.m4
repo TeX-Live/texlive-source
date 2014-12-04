@@ -259,7 +259,7 @@ m4_popdef([Kpse_add])[]dnl
 
 # _KPSE_RECURSE(LIST, TEXT, COND, [PREFIX])
 # -----------------------------------------
-# Internal subroutine.  Determine which of the libraies or programs in
+# Internal subroutine.  Determine which of the libraries or programs in
 # kpse_LIST_pkgs to build, and set output variables MAKE_SUBDIRS and
 # CONF_SUBDIRS.  Cause 'make dist', 'configure -hr', and 'autoreconf'
 # to recurse into all existing ones.
