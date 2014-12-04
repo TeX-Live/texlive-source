@@ -22,6 +22,7 @@ dist-hook:
 SUBDIRS = . include
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(ZLIB_TREE) $(ZLIB_DEFINES)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libz.a
 

@@ -25,6 +25,7 @@ dist-hook:
 SUBDIRS = . include
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(PIXMAN_SRC)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libpixman.a
 

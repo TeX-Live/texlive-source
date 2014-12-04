@@ -629,6 +629,7 @@ LIBOBJS
 PIXMAN_TREE
 build_FALSE
 build_TRUE
+VISIBILITY_CFLAGS
 EGREP
 GREP
 CPP
@@ -5582,6 +5583,56 @@ case $ac_cv_c_inline in
 _ACEOF
     ;;
 esac
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking CFLAGS for C to hide external symbols" >&5
+$as_echo_n "checking CFLAGS for C to hide external symbols... " >&6; }
+if ${kpse_cv_visibility_cflags+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+kpse_cv_visibility_cflags=unknown
+kpse_save_flags=$CFLAGS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <stdio.h>
+                                   extern void foo(void);
+                                   void foo(void){printf("foo\n");}
+_ACEOF
+# FIXME: Add tests for non-GNU compilers
+for kpse_flag in '-fvisibility=hidden -fvisibility-inlines-hidden' '-fvisibility=hidden'; do
+  CFLAGS="$kpse_save_flags -Werror $kpse_flag"
+  if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_visibility_cflags=$kpse_flag; break
+fi
+rm -f core conftest.err conftest.$ac_objext
+done
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_visibility_cflags" >&5
+$as_echo "$kpse_cv_visibility_cflags" >&6; }
+CFLAGS=$kpse_save_flags
+case $kpse_cv_visibility_cflags in #(
+  unknown) :
+     ;; #(
+  *) :
+    VISIBILITY_CFLAGS=$kpse_cv_visibility_cflags
+ ;;
+esac
+
+
+
 
 
 ac_config_headers="$ac_config_headers config.h"

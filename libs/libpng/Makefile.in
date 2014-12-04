@@ -95,6 +95,7 @@ DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-visibility.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
@@ -502,6 +503,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+VISIBILITY_CFLAGS = @VISIBILITY_CFLAGS@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 ZLIB_DEPEND = @ZLIB_DEPEND@
 ZLIB_INCLUDES = @ZLIB_INCLUDES@
@@ -551,7 +553,7 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = $(LIBPNG_TREE) $(LIBPNG_TREE)-PATCHES
 SUBDIRS = . include
 AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES) $(LIBPNG_DEFINES)
-AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpng.a
 nodist_libpng_a_SOURCES = \
 	@LIBPNG_TREE@/png.c \

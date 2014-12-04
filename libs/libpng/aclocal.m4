@@ -1184,5 +1184,6 @@ AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
 m4_include([../../m4/kpse-common.m4])
+m4_include([../../m4/kpse-visibility.m4])
 m4_include([../../m4/kpse-warnings.m4])
 m4_include([../../m4/kpse-zlib-flags.m4])

@@ -103,6 +103,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/gmp-alloca.m4 \
 	$(top_srcdir)/m4/gmp-attribute.m4 \
 	$(top_srcdir)/m4/gmp-double-format.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-visibility.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -651,6 +652,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+VISIBILITY_CFLAGS = @VISIBILITY_CFLAGS@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -706,7 +708,7 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = $(GMP_TREE) $(GMP_TREE)-PATCHES
 SUBDIRS = native . include
 AM_CPPFLAGS = -I$(srcdir)/$(GMP_TREE) -I$(srcdir)/$(GMP_TREE)/mpn/generic -DNO_ASM
-AM_CFLAGS = # $(WARNING_CFLAGS)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
 noinst_LIBRARIES = libgmp.a
 nodist_libgmp_a_SOURCES = \
 	$(basic_sources) \

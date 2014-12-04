@@ -85,6 +85,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ac_sys_largefile_sensitive.m4 \
 	$(top_srcdir)/m4/ax_prefix_config_h.m4 \
 	$(top_srcdir)/m4/zziplib-aligned-access.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
+	$(top_srcdir)/../../m4/kpse-visibility.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
@@ -163,6 +164,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+VISIBILITY_CFLAGS = @VISIBILITY_CFLAGS@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 ZLIB_DEPEND = @ZLIB_DEPEND@
 ZLIB_INCLUDES = @ZLIB_INCLUDES@
