@@ -1,4 +1,4 @@
-% $Id: mpost.w 2007 2014-04-10 11:13:03Z taco $
+% $Id: mpost.w 2048 2014-12-04 10:26:26Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -1380,13 +1380,15 @@ main (int argc, char **argv)
   if (mp==NULL)
 	exit(EXIT_FAILURE);
   history = mp_status(mp);
-  if (history!=0)
+  if (history!=0 && history!=mp_warning_issued)
 	exit(history);
   if (set_list!=NULL) {
     run_set_list(mp);
   }
   history = mp_run(mp);
   (void)mp_finish(mp);
-  exit(history);
+  if (history!=0 && history!=mp_warning_issued)
+	exit(history);
+  else
+     exit(0);
 }
-
