@@ -1,3 +1,8 @@
+2014-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added KPSE_COMPILER_VISIBILITY.
+	* Makefile.am [AM_CFLAGS]: Added $(VISIBILITY_CFLAGS).
+
 2014-06-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Add some files required with CFLAGS='-g3 -g -O0'.

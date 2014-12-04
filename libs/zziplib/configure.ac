@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   based on zziplib-0.13.58:
 dnl     Copyright (C) 2009 Guido Draheim <guido@gmx.de> for ZZipLib.SF.net
@@ -24,6 +24,8 @@ AC_CANONICAL_HOST
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
+
+KPSE_COMPILER_VISIBILITY
 
 # Checks for header files.
 AC_HEADER_STDC

@@ -22,7 +22,7 @@ dist-hook:
 SUBDIRS = . include
 
 AM_CPPFLAGS = -I$(srcdir)/$(MPFR_TREE)/src $(GMP_INCLUDES)
-AM_CFLAGS = # $(WARNING_CFLAGS)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libmpfr.a
 $(libmpfr_a_OBJECTS): $(GMP_DEPEND)

@@ -20,6 +20,8 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
+KPSE_COMPILER_VISIBILITY
+
 AC_CHECK_SIZEOF([long long])
 if test $ac_cv_sizeof_long_long -lt 8; then
   AC_MSG_ERROR([Sorry, your compiler has no `long long' with at least 8 bytes.])

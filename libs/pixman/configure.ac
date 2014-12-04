@@ -29,6 +29,8 @@ AC_CHECK_FUNCS([getisax])
 AC_C_BIGENDIAN
 AC_C_INLINE
 
+KPSE_COMPILER_VISIBILITY
+
 AC_CONFIG_HEADERS([config.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])

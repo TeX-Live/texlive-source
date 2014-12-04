@@ -98,6 +98,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-size-max.m4 \
+	$(top_srcdir)/../../m4/kpse-visibility.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -528,6 +529,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+VISIBILITY_CFLAGS = @VISIBILITY_CFLAGS@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -575,6 +577,7 @@ EXTRA_DIST = $(PIXMAN_TREE) $(PIXMAN_TREE)-PATCHES
 PIXMAN_SRC = $(PIXMAN_TREE)/pixman
 SUBDIRS = . include
 AM_CPPFLAGS = -I$(top_srcdir)/$(PIXMAN_SRC)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpixman.a
 libpixman_sources = \
 	@PIXMAN_TREE@/pixman/pixman.c \

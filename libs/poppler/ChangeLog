@@ -1,3 +1,8 @@
+2014-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added KPSE_COMPILER_VISIBILITY.
+	* Makefile.am [AM_C*FLAGS]: Added $(VISIBILITY_C*FLAGS).
+
 2014-11-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import poppler-0.28.0.

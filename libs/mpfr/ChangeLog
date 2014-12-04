@@ -1,3 +1,8 @@
+2014-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added KPSE_COMPILER_VISIBILITY.
+	* Makefile.am [AM_CFLAGS]: Added $(VISIBILITY_CFLAGS).
+
 2014-09-19  Taco Hoekwater  <taco@elvenkind.com>
 
 	* Makefile.am [Darwin]: Need to compile src/abort_prec_max.c.

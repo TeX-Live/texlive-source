@@ -22,7 +22,7 @@ dist-hook:
 SUBDIRS = native . include
 
 AM_CPPFLAGS = -I$(srcdir)/$(GMP_TREE) -I$(srcdir)/$(GMP_TREE)/mpn/generic -DNO_ASM
-AM_CFLAGS = # $(WARNING_CFLAGS)
+AM_CFLAGS = $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
 
 noinst_LIBRARIES = libgmp.a
 $(libgmp_a_OBJECTS): mp_bases.h fac_table.h fib_table.h
