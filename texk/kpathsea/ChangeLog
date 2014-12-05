@@ -1,3 +1,11 @@
+2014-12-05  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c (help_formats): new fn for new option --help-formats.
+	(help_message): split off code from here.
+	(USAGE): document it.
+	(read_command_line): recognize it.
+	Suggestion from Julian Gilbey, tex-k 4 Dec 2014 13:34:23.
+
 2014-10-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* db.c (db_names): Use initialized non-const strings to avoid warning.

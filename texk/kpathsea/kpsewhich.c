@@ -415,7 +415,7 @@ lookup (kpathsea kpse, string name)
 /* Help message.  */
 
 #define USAGE "\n\
-Standalone path lookup and expansion for Kpathsea.\n\
+Standalone path lookup and expansion for the Kpathsea library.\n\
 The default is to look up each FILENAME in turn and report its\n\
 first match (if any) to standard output.\n\
 \n\
@@ -431,7 +431,8 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -expand-path=STRING    output complete path expansion of STRING.\n\
 -expand-var=STRING     output variable expansion of STRING.\n\
 -format=NAME           use file type NAME (see list below).\n\
--help                  print this message and exit.\n\
+-help                  display this message and exit.\n\
+-help-formats          display information about all supported file formats.\n\
 -interactive           ask for additional filenames to look up.\n\
 [-no]-mktex=FMT        disable/enable mktexFMT generation (FMT=pk/mf/tex/tfm).\n\
 -mode=STRING           set device name for $MAKETEX_MODE to STRING; no default.\n\
@@ -443,23 +444,30 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -show-path=NAME        output search path for file type NAME (list below).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
 -var-value=STRING      output the value of variable $STRING.\n\
--version               print version number and exit.\n \
+-version               display version information number and exit.\n \
 "
 
 static void
 help_message (kpathsea kpse, string *argv)
 {
-  int f; /* kpse_file_format_type */
-
   printf ("Usage: %s [OPTION]... [FILENAME]...\n", argv[0]);
   fputs (USAGE, stdout);
   putchar ('\n');
   fputs (kpathsea_bug_address, stdout);
+  fputs ("Kpathsea home page: http://tug.org/kpathsea/\n", stdout);
+  exit (0);
+}
+
+static void
+help_formats (kpathsea kpse, string *argv)
+{
+  int f; /* kpse_file_format_type */
 
   /* Have to set this for init_format to work.  */
   kpathsea_set_program_name (kpse, argv[0], progname);
 
-  puts ("\nRecognized format names and their (abbreviations) and suffixes:");
+  puts (kpathsea_version_string); 
+  puts ("\nRecognized Kpathsea format names and their (abbreviations) and suffixes:");
   for (f = 0; f < kpse_last_format; f++) {
     const_string *ext;
 
@@ -500,10 +508,10 @@ help_message (kpathsea kpse, string *argv)
     
     printf ("  [original path (from %s) = %s]\n",
             kpse->format_info[f].path_source, kpse->format_info[f].raw_path);
-    printf ("  [expanded path = %s]\n",
-            kpse->format_info[f].path);
   }
 
+  fputs ("\nTo see paths after expansion, use --show-path=FMT.\n\n", stdout);
+  fputs (kpathsea_bug_address, stdout);
   exit (0);
 }
 
@@ -527,6 +535,7 @@ static struct option long_options[]
       { "expand-var",           1, 0, 0 },
       { "format",               1, 0, 0 },
       { "help",                 0, 0, 0 },
+      { "help-formats",         0, 0, 0 },
       { "interactive",          0, (int *) &interactive, 1 },
       { "mktex",                1, 0, 0 },
       { "mode",                 1, 0, 0 },
@@ -582,6 +591,9 @@ read_command_line (kpathsea kpse, int argc, string *argv)
 
     } else if (ARGUMENT_IS ("help")) {
       help_message (kpse, argv);
+
+    } else if (ARGUMENT_IS ("help-formats")) {
+      help_formats (kpse, argv);
 
     } else if (ARGUMENT_IS ("mktex")) {
       kpathsea_maketex_option (kpse, optarg, true);
