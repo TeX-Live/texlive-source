@@ -33,6 +33,7 @@
 // Copyright (C) 2013 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2013 Li Junling <lijunling@sina.com>
 // Copyright (C) 2014 Ed Porras <ed@moto-research.com>
+// Copyright (C) 2014 Richard PALO <richard@netbsd.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -85,7 +86,9 @@ extern "C" int unlink(char *filename);
 
 #ifdef __sun
 #include <ieeefp.h>
+#ifndef isfinite
 #define isfinite(x) finite(x)
+#endif
 #endif
 
 static inline void convertGfxColor(SplashColorPtr dest,
@@ -450,22 +453,26 @@ static void splashOutBlendMultiply(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = (rgbDest[i] * rgbSrc[i]) / 255;
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
       blend[i] = (dest[i] * src[i]) / 255;
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendScreen(SplashColorPtr src, SplashColorPtr dest,
@@ -474,22 +481,26 @@ static void splashOutBlendScreen(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbDest[i] + rgbSrc[i] - (rgbDest[i] * rgbSrc[i]) / 255;
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
       blend[i] = dest[i] + src[i] - (dest[i] * src[i]) / 255;
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendOverlay(SplashColorPtr src, SplashColorPtr dest,
@@ -498,18 +509,11 @@ static void splashOutBlendOverlay(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbDest[i] < 0x80
-                      ? (rgbSrc[i] * 2 * rgbDest[i]) / 255
-                      : 255 - 2 * ((255 - rgbSrc[i]) * (255 - rgbDest[i])) / 255;
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
@@ -518,6 +522,15 @@ static void splashOutBlendOverlay(SplashColorPtr src, SplashColorPtr dest,
                    : 255 - 2 * ((255 - src[i]) * (255 - dest[i])) / 255;
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendDarken(SplashColorPtr src, SplashColorPtr dest,
@@ -526,22 +539,26 @@ static void splashOutBlendDarken(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbDest[i] < rgbSrc[i] ? rgbDest[i] : rgbSrc[i];
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
       blend[i] = dest[i] < src[i] ? dest[i] : src[i];
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendLighten(SplashColorPtr src, SplashColorPtr dest,
@@ -550,22 +567,26 @@ static void splashOutBlendLighten(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbDest[i] > rgbSrc[i] ? rgbDest[i] : rgbSrc[i];
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
       blend[i] = dest[i] > src[i] ? dest[i] : src[i];
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendColorDodge(SplashColorPtr src, SplashColorPtr dest,
@@ -575,21 +596,11 @@ static void splashOutBlendColorDodge(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      if (rgbSrc[i] == 255) {
-        rgbBlend[i] = 255;
-      } else {
-        x = (rgbDest[i] * 255) / (255 - rgbSrc[i]);
-        rgbBlend[i] = x <= 255 ? x : 255;
-      }
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
@@ -601,6 +612,15 @@ static void splashOutBlendColorDodge(SplashColorPtr src, SplashColorPtr dest,
       }
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendColorBurn(SplashColorPtr src, SplashColorPtr dest,
@@ -609,21 +629,11 @@ static void splashOutBlendColorBurn(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      if (rgbSrc[i] == 0) {
-        rgbBlend[i] = 0;
-      } else {
-        x = ((255 - rgbDest[i]) * 255) / rgbSrc[i];
-        rgbBlend[i] = x <= 255 ? 255 - x : 0;
-      }
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
@@ -635,6 +645,15 @@ static void splashOutBlendColorBurn(SplashColorPtr src, SplashColorPtr dest,
       }
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendHardLight(SplashColorPtr src, SplashColorPtr dest,
@@ -643,18 +662,11 @@ static void splashOutBlendHardLight(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbSrc[i] < 0x80
-                      ? (rgbDest[i] * 2 * rgbSrc[i]) / 255
-                      : 255 - 2 * ((255 - rgbDest[i]) * (255 - rgbSrc[i])) / 255;
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
@@ -663,6 +675,15 @@ static void splashOutBlendHardLight(SplashColorPtr src, SplashColorPtr dest,
                    : 255 - 2 * ((255 - dest[i]) * (255 - src[i])) / 255;
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendSoftLight(SplashColorPtr src, SplashColorPtr dest,
@@ -671,25 +692,11 @@ static void splashOutBlendSoftLight(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      if (rgbSrc[i] < 0x80) {
-        rgbBlend[i] = rgbDest[i] - (255 - 2 * rgbSrc[i]) * rgbDest[i] * (255 - rgbDest[i]) / (255 * 255);
-      } else {
-        if (rgbDest[i] < 0x40) {
-          x = (((((16 * rgbDest[i] - 12 * 255) * rgbDest[i]) / 255) + 4 * 255) * rgbDest[i]) / 255;
-        } else {
-          x = (int)sqrt(255.0 * rgbDest[i]);
-        }
-        rgbBlend[i] = rgbDest[i] + (2 * rgbSrc[i] - 255) * (x - rgbDest[i]) / 255;
-      }
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
@@ -705,6 +712,15 @@ static void splashOutBlendSoftLight(SplashColorPtr src, SplashColorPtr dest,
       }
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+#endif
 }
 
 static void splashOutBlendDifference(SplashColorPtr src, SplashColorPtr dest,
@@ -714,22 +730,32 @@ static void splashOutBlendDifference(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbDest[i] < rgbSrc[i] ? rgbSrc[i] - rgbDest[i] : rgbDest[i] - rgbSrc[i];
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
       blend[i] = dest[i] < src[i] ? src[i] - dest[i] : dest[i] - src[i];
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+  if (cm == splashModeDeviceN8) {
+    for (i = 4; i < splashColorModeNComps[cm]; ++i) {
+      if (dest[i] == 0 && src[i] == 0)
+        blend[i] = 0;
+    }
+  }
+#endif
 }
 
 static void splashOutBlendExclusion(SplashColorPtr src, SplashColorPtr dest,
@@ -738,22 +764,32 @@ static void splashOutBlendExclusion(SplashColorPtr src, SplashColorPtr dest,
 
 #if SPLASH_CMYK
   if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
-    SplashColor rgbSrc;
-    SplashColor rgbDest;
-    SplashColor rgbBlend;
-    cmykToRGB(src, rgbSrc);
-    cmykToRGB(dest, rgbDest);
-    for (i = 0; i < 3; ++i) {
-      rgbBlend[i] = rgbDest[i] + rgbSrc[i] - (2 * rgbDest[i] * rgbSrc[i]) / 255;
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
     }
-    rgbToCMYK(rgbBlend, blend);
-  } else
+  }
 #endif
   {
     for (i = 0; i < splashColorModeNComps[cm]; ++i) {
       blend[i] = dest[i] + src[i] - (2 * dest[i] * src[i]) / 255;
     }
   }
+#if SPLASH_CMYK
+  if (cm == splashModeCMYK8 || cm == splashModeDeviceN8) {
+    for (i = 0; i < splashColorModeNComps[cm]; ++i) {
+      dest[i] = 255 - dest[i];
+      src[i] = 255 - src[i];
+      blend[i] = 255 - blend[i];
+    }
+  }
+  if (cm == splashModeDeviceN8) {
+    for (i = 4; i < splashColorModeNComps[cm]; ++i) {
+      if (dest[i] == 0 && src[i] == 0)
+        blend[i] = 0;
+    }
+  }
+#endif
 }
 
 static int getLum(int r, int g, int b) {

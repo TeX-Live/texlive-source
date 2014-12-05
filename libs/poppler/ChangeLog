@@ -1,3 +1,8 @@
+2014-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import poppler-0.29.0.
+	* version.ac: Adjust.
+
 2014-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Added KPSE_COMPILER_VISIBILITY.
