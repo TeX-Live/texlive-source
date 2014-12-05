@@ -707,7 +707,7 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
     annotsObj.free();
   }
   yRef->markUnencrypted();
-  Guint objectsCount = writePageObjects(outStr, yRef, 0);
+  writePageObjects(outStr, yRef, 0);
 
   yRef->add(rootNum,0,outStr->getPos(),gTrue);
   outStr->printf("%d 0 obj\n", rootNum);
@@ -728,7 +728,6 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
   catObj.free();
   pagesObj.free();
   outStr->printf(">>\nendobj\n");
-  objectsCount++;
 
   yRef->add(rootNum + 1,0,outStr->getPos(),gTrue);
   outStr->printf("%d 0 obj\n", rootNum + 1);
@@ -740,7 +739,6 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
   }
   outStr->printf(">>\n");
   outStr->printf("endobj\n");
-  objectsCount++;
 
   yRef->add(rootNum + 2,0,outStr->getPos(),gTrue);
   outStr->printf("%d 0 obj\n", rootNum + 2);
@@ -758,14 +756,13 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
     value.free();
   }
   outStr->printf(" >>\nendobj\n");
-  objectsCount++;
   page.free();
 
   Goffset uxrefOffset = outStr->getPos();
   Ref ref;
   ref.num = rootNum;
   ref.gen = 0;
-  Dict *trailerDict = createTrailerDict(objectsCount, gFalse, 0, &ref, getXRef(),
+  Dict *trailerDict = createTrailerDict(rootNum + 3, gFalse, 0, &ref, getXRef(),
                                         name->getCString(), uxrefOffset);
   writeXRefTableTrailer(trailerDict, yRef, gFalse /* do not write unnecessary entries */,
                         uxrefOffset, outStr, getXRef());

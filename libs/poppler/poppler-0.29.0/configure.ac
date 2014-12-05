@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[28])
+m4_define([poppler_version_minor],[29])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -470,7 +470,7 @@ fi
 
 CAIRO_VERSION="1.10.0"
 AC_SUBST(CAIRO_VERSION)
-CAIRO_DEPS="cairo >= $CAIRO_VERSION cairo-ft >= $CAIRO_VERSION)"
+CAIRO_DEPS="cairo >= $CAIRO_VERSION cairo-ft >= $CAIRO_VERSION"
 AC_ARG_ENABLE(cairo-output,
               AC_HELP_STRING([--disable-cairo-output],
                              [Don't build the cairo graphics backend.]),
@@ -762,6 +762,8 @@ if test x$lcms1 = xyes || test x$lcms2 = xyes; then
     lcms1=yes;
     AC_DEFINE(USE_LCMS1, 1, [Defines if use lcms1])
   fi
+else
+  enable_cms=no
 fi
 
 AM_CONDITIONAL(USE_CMS, test x$enable_cms = xyes)

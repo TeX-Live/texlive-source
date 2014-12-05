@@ -25,7 +25,7 @@
 // Copyright (C) 2008 Brad Hards <bradh@kde.org>
 // Copyright (C) 2008 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
-// Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2013, 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 //
@@ -672,7 +672,7 @@ GBool Page::loadThumb(unsigned char **data_out,
     obj1.free ();
     dict->lookup ("CS", &obj1);
   }
-  colorSpace = GfxColorSpace::parse(&obj1, NULL, NULL);
+  colorSpace = GfxColorSpace::parse(NULL, &obj1, NULL, NULL);
   obj1.free();
   if (!colorSpace) {
     fprintf (stderr, "Error: Cannot parse color space\n");

@@ -1,3 +1,18 @@
+Release 0.29.0
+        core:
+         * Use correct LAB byte array for lcms input. Bug #86388
+         * Write correct size in trailer dict. Bug #86063
+         * Use Default colorspaces if present instead of Device colorspaces
+         * Solve blend mode problem in CYMK and DeviceN for separable blend modes
+         * Compilation/warning fixes on SunOS
+         * Regression test improvements
+
+        glib:
+         * demo: Compilation fixlets
+
+        build system:
+         * cofigure: print "no" instead of "auto" if lcms not found
+
 Release 0.28.0
         core:
          * Fix rendering of file with a wrong embedded font. Bug #84270

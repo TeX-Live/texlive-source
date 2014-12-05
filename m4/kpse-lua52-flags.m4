@@ -18,7 +18,7 @@ _KPSE_LIB_FLAGS([lua52], [texlua52], [lt tree],
 # KPSE_LUA52_DEFINES
 # ------------------
 # Set the make variable LUA52_DEFINES to the CPPFLAGS required when
-# compiling or using the `-llua52' library.
+# compiling or using the `-ltexlua52' library.
 AC_DEFUN([KPSE_LUA52_DEFINES], [dnl
 AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
 AC_SUBST([LUA52_DEFINES], ['-DLUA_COMPAT_MODULE -DLUAI_HASHLIMIT=6'])

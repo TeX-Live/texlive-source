@@ -1,3 +1,171 @@
+commit fee700cfecb9d7d5fa938704a5f457f15aaa4676
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Dec 1 20:52:42 2014 +0100
+
+    Run dos2unix as suggested by Volker Grabsch
+
+ splash/SplashState.h            | 278 ++++++++++----------
+ test/perf-test-preview-dummy.cc |  44 ++--
+ test/perf-test-preview-win.cc   | 544
+ ++++++++++++++++++++--------------------
+ 3 files changed, 433 insertions(+), 433 deletions(-)
+
+commit d3fe0661c6dc6050e14cd5cb4afa089b7d7d66b0
+Author: Richard PALO <richard@netbsd.org>
+Date:   Sun Nov 30 22:46:22 2014 +0100
+
+    warning: "_FILE_OFFSET_BITS" redefined
+
+    Bug #86870
+
+ test/perf-test.cc | 2559
+ +++++++++++++++++++++++++++--------------------------
+ 1 file changed, 1280 insertions(+), 1279 deletions(-)
+
+commit 18884065e11fee82506915095619107a43172ecb
+Author: Richard PALO <richard@netbsd.org>
+Date:   Sun Nov 30 22:36:29 2014 +0100
+
+    The isfinite macro is defined on SunOS under c99
+
+    Bug #86869
+
+ poppler/SplashOutputDev.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit bcb470064dd9f75ab0b0a0d9b7319fe8f1e558ae
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Tue Nov 25 05:53:38 2014 +1030
+
+    cofigure: print "no" instead of "auto" if lcms not found
+
+ configure.ac | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 832046c57ab2909d329340f1c941b29e8246ff73
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Nov 28 11:08:34 2014 +0100
+
+    Use correct LAB byte array for lcms input
+
+    Bug #86388
+
+ poppler/GfxState.cc | 51
+ ++++++++++++++++++++++++++++++++++++++-------------
+ poppler/GfxState.h  |  4 +++-
+ 2 files changed, 41 insertions(+), 14 deletions(-)
+
+commit a604bc3a2ed9f9181aa3b12d795608fcf5e08220
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Nov 14 11:56:50 2014 +0100
+
+    Solve blend mode problem in CYMK and DeviceN for separable blend modes
+
+    Fixes part of #68986
+
+ poppler/SplashOutputDev.cc | 277
+ +++++++++++++++++++++++++--------------------
+ 1 file changed, 155 insertions(+), 122 deletions(-)
+
+commit b7802ff39db270dda2aa20f005fb87c22ed34137
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Nov 14 11:47:38 2014 +0100
+
+    Use Default colorspaces if present instead of Device colorspaces
+
+    Fixes part of #68986
+
+ poppler/CairoOutputDev.cc |   4 +-
+ poppler/Gfx.cc            |  40 +++++-----
+ poppler/GfxState.cc       | 197
+ ++++++++++++++++++++++++++++++++++------------
+ poppler/GfxState.h        |  31 ++++----
+ poppler/Page.cc           |   4 +-
+ 5 files changed, 188 insertions(+), 88 deletions(-)
+
+commit 07aa6f4030418883d8d45a8dfa3d80d2dadca4e7
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Nov 13 12:26:25 2014 +0100
+
+    write correct size in trailer dict
+
+    Bug #86063
+
+ poppler/PDFDoc.cc | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+commit 51e7c29cabedc72e097023e6d8d6d68ed43fa20c
+Author: Carlos Garcia Campos <cgarcia@igalia.com>
+Date:   Fri Nov 7 18:30:36 2014 +0100
+
+    regtest: Update references also for tests that no longer crash
+
+    We are currently updating the refs only when we have checksums to
+    compare, but if a test used to crash there's no md5 file in refs.
+
+ regtest/TestRun.py           |  2 ++
+ regtest/backends/__init__.py | 24 ++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+
+commit d205908930d5dc4ec3a1a1a2c2b93fbb92c2c867
+Author: William Bader <williambader@hotmail.com>
+Date:   Wed Nov 5 20:23:49 2014 +0100
+
+    Make it proper C
+
+ glib/demo/annots.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit fa1d636b00210b9c52787ab3c833fe9aa2e293fa
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Nov 4 20:00:08 2014 +0100
+
+    0.28.1
+
+ configure.ac     | 2 +-
+ cpp/Doxyfile     | 2 +-
+ qt4/src/Doxyfile | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 7debbb05df18afc86df8a4fd37980728ec2e5788
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Nov 4 19:29:58 2014 +0100
+
+    Fix typo
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d5489ef37742227176e800390a990f2b882d9710
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Nov 4 01:27:05 2014 +0100
+
+    0.28.0
+
+ CMakeLists.txt         |  6 +++---
+ NEWS                   | 43 +++++++++++++++++++++++++++++++++++++++++++
+ configure.ac           |  4 ++--
+ cpp/Doxyfile           |  2 +-
+ poppler/Makefile.am    |  2 +-
+ qt4/src/CMakeLists.txt |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt4/src/Makefile.am    |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 11 files changed, 56 insertions(+), 13 deletions(-)
+
+commit f87115a1129e4e03802769181a3392c8dce3192a
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Tue Nov 4 01:25:18 2014 +0100
+
+    Don't ship the moc files
+
+ qt4/demos/Makefile.am | 1 -
+ qt5/demos/Makefile.am | 1 -
+ 2 files changed, 2 deletions(-)
+
 commit 0a9c38076f1555196029372b7e08714b43c7a58d
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Mon Nov 3 21:43:28 2014 +0100

@@ -25,7 +25,7 @@
 // Copyright (C) 2008, 2009 Chris Wilson <chris@chris-wilson.co.uk>
 // Copyright (C) 2008, 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2009, 2010 David Benjamin <davidben@mit.edu>
-// Copyright (C) 2011-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Patrick Pfeifer <p2000@mailinator.com>
 // Copyright (C) 2012 Jason Crain <jason@aquaticape.us>
 //
@@ -2713,7 +2713,7 @@ void CairoOutputDev::setMimeData(GfxState *state, Stream *str, Object *ref,
     return;
 
   str->getDict()->lookup("ColorSpace", &obj);
-  colorSpace = GfxColorSpace::parse(&obj, this, state);
+  colorSpace = GfxColorSpace::parse(NULL, &obj, this, state);
   obj.free();
 
   // colorspace in stream dict may be different from colorspace in jpx
