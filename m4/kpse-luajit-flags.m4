@@ -8,17 +8,17 @@
 # KPSE_LUAJIT_FLAGS
 # -----------------
 # Set the make variables LUAJIT_INCLUDES and LUAJIT_LIBS to the CPPFLAGS and
-# LIBS required for the `-lluajit' library in libs/luajit/ of the TL tree.
+# LIBS required for the `-ltexluajit' library in libs/luajit/ of the TL tree.
 AC_DEFUN([KPSE_LUAJIT_FLAGS], [dnl
-_KPSE_LIB_FLAGS([luajit], [luajit], [tree],
-                [-IBLD/libs/luajit/include], [BLD/libs/luajit/libluajit.a], [],
+_KPSE_LIB_FLAGS([luajit], [texluajit], [lt tree],
+                [-IBLD/libs/luajit/include], [BLD/libs/luajit/libtexluajit.la], [],
                 [], [${top_builddir}/../../libs/luajit/include/luajit.h])[]dnl
 ]) # KPSE_LUAJIT_FLAGS
 
 # KPSE_LUAJIT_DEFINES
 # -------------------
 # Set the make variable LUAJIT_DEFINES to the CPPFLAGS required when
-# compiling or using the `-lluajit' library.
+# compiling or using the `-ltexluajit' library.
 # Set the make variable LUAJIT_LDEXTRA to the LDFLAGS required when
 # linking with the `-lluajit' library.
 AC_DEFUN([KPSE_LUAJIT_DEFINES], [dnl

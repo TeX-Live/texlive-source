@@ -22,6 +22,13 @@ AM_PROG_AS
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
+AC_SUBST([LUAJITVERSION], [luajit_version])
+KPSE_LT_VERSION([luajit])
+
+LT_INIT([win32-dll])
+
+KPSE_DLL_NAME([texluajit], [texluajit])
+
 AC_CHECK_SIZEOF([void *])
 ac_configure_args="$ac_configure_args HOST_PTR_SIZE='$ac_cv_sizeof_void_p'"
 
@@ -63,7 +70,7 @@ AC_SUBST([LUAJIT_TREE], [LuaJIT-]luajit_version)
 dnl Not used but avoids putting a zillion useless -D's on the command line.
 AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_FILES([Makefile include/Makefile])
+AC_CONFIG_FILES([Makefile include/Makefile texluajit.pc])
 
 dnl Pass DASM_ARCH to the subdirectory native,
 dnl which must be configured for the build system.

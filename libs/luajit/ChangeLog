@@ -1,3 +1,9 @@
+2014-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac: Build luajit as (possibly shared)
+	Libtool library, install headers, library, and .pc file.
+	* luajiterror.test: Adapted.
+
 2014-09-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac, native/configure.ac: Improved cross-build.

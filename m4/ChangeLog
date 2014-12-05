@@ -1,3 +1,7 @@
+2014-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-luajit-flags.m4: LuaJIT is now a Libtool library.
+
 2014-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-visibility.m4: Also try -fvisibility-inlines-hidden.
