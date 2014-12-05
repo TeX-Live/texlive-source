@@ -14,16 +14,18 @@ EXTRA_DIST += $(LUAJIT_TREE)-PATCHES
 
 # in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name .libs -o -name '*.o' -o -name '*.lo'`
 
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
 AM_CFLAGS = -Wall
 
 SUBDIRS = . native include
 
-noinst_LIBRARIES = libluajit.a
+lib_LTLIBRARIES = libtexluajit.la
 
-nodist_libluajit_a_SOURCES = \
+libtexluajit_la_LDFLAGS = -bindir @bindir@ -no-undefined -version-info $(LUAJIT_LT_VERSINFO)
+
+nodist_libtexluajit_la_SOURCES = \
 	$(ljlib_sources) \
 	@LUAJIT_TREE@/src/lbitlib.c \
 	@LUAJIT_TREE@/src/lib_aux.c \
@@ -77,11 +79,10 @@ nodist_libluajit_a_SOURCES = \
 	@LUAJIT_TREE@/src/lj_vmevent.c \
 	@LUAJIT_TREE@/src/lj_vmmath.c
 
-
 if PEOBJ
-libluajit_a_LIBADD = lj_vm_obj.o
+libtexluajit_la_LIBADD = lj_vm_obj.lo
 else !PEOBJ
-nodist_libluajit_a_SOURCES += lj_vm_asm.s
+nodist_libtexluajit_la_SOURCES += lj_vm_asm.s
 endif !PEOBJ
 
 ljlib_sources = \
@@ -97,7 +98,7 @@ ljlib_sources = \
 	lib_jit.c \
 	lib_ffi.c
 
-$(libluajit_a_OBJECTS): $(HDRGEN)
+$(libtexluajit_la_OBJECTS): $(HDRGEN)
 
 # When cross-compiling, EXEEXT for the build and host systems may differ.
 # Thus we depend on the auxiliary file native/buildvm-stamp.
@@ -124,6 +125,11 @@ lj_folddef.h: native/buildvm-stamp $(LUAJIT_TREE)/src/lj_opt_fold.c
 lj_vm_obj.o lj_vm_asm.s: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m $(LJVM_MODE) -o $@
 
+lj_vm_obj.lo: lj_vm_obj.o lib_base.lo
+	$(AM_V_GEN)sed 's/lib_base/lj_vm_obj/' lib_base.lo >$@ \
+	  && . ./$@ && test x"$$pic_object" == xnone \
+	  || cp lj_vm_obj.o .libs/lj_vm_obj.o
+
 $(ljlib_sources): config.force
 	@test -f $@ || { rm -f $@; \
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
@@ -133,6 +139,20 @@ $(ljlib_sources): config.force
 CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_vm_asm.s
 
 CONFIG_CLEAN_FILES = dynasm_flags native_flags
+
+luajitincludedir = ${includedir}/texluajit
+
+luajitinclude_HEADERS = \
+	$(LUAJIT_TREE)/src/lauxlib.h \
+	$(LUAJIT_TREE)/src/luaconf.h \
+	$(LUAJIT_TREE)/src/luajit.h \
+	$(LUAJIT_TREE)/src/lua.h \
+	$(LUAJIT_TREE)/src/lua.hpp \
+	$(LUAJIT_TREE)/src/lualib.h
+
+pkgconfigdir = ${libdir}/pkgconfig
+
+pkgconfig_DATA = texluajit.pc
 
 if build
 check_PROGRAMS = jittest luajittry
@@ -149,7 +169,7 @@ nodist_luajittry_SOURCES = @LUAJIT_TREE@/src/luajit.c
 luajittry_CPPFLAGS = -Iinclude
 luajittry_LDFLAGS = $(LUAJIT_LDEXTRA)
 
-LDADD = libluajit.a
+LDADD = libtexluajit.la
 
 EXTRA_DIST += jiterr.exp
 CLEANFILES += jiterr.out jiterr.tmp

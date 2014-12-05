@@ -62,7 +62,6 @@ nodist_libtexlua52_la_SOURCES = \
 	@LUA52_TREE@/src/lvm.c \
 	@LUA52_TREE@/src/lzio.c
 
-
 lua52includedir = ${includedir}/texlua52
 
 lua52include_HEADERS = \

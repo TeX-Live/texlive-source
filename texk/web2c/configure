@@ -23259,11 +23259,11 @@ $(LUA52_DEPEND): ${top_builddir}/../../libs/lua52/include/lua.h
 ${top_builddir}/../../libs/lua52/include/lua.h:
 	cd ${top_builddir}/../../libs/lua52 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 
-## _KPSE_LIB_FLAGS: Setup luajit (-lluajit) flags
+## _KPSE_LIB_FLAGS: Setup luajit (-ltexluajit) flags
   LUAJIT_INCLUDES="-I$kpse_BLD/libs/luajit/include"
-  LUAJIT_LIBS="$kpse_BLD/libs/luajit/libluajit.a"
-  LUAJIT_DEPEND='${top_builddir}/../../libs/luajit/libluajit.a'
-  LUAJIT_RULE='# Rebuild libluajit
+  LUAJIT_LIBS="$kpse_BLD/libs/luajit/libtexluajit.la"
+  LUAJIT_DEPEND='${top_builddir}/../../libs/luajit/libtexluajit.la'
+  LUAJIT_RULE='# Rebuild libtexluajit
 $(LUAJIT_DEPEND): ${top_builddir}/../../libs/luajit/include/luajit.h
 	cd ${top_builddir}/../../libs/luajit && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/luajit/include/luajit.h:

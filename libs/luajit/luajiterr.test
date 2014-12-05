@@ -5,7 +5,8 @@
 
 ./luajittry -e "error('test')" 2>jiterr.tmp && exit 1
 
-sed -e '/\[C]: at 0x/d' jiterr.tmp >jiterr.out
+sed -e 's/lt-luajittry/luajittry/;s,^.*/luajittry,./luajittry,' \
+    -e '/\[C]: at 0x/d' jiterr.tmp >jiterr.out
 
 diff $srcdir/jiterr.exp jiterr.out || exit 1
 
