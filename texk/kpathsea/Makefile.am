@@ -220,15 +220,13 @@ stamp-kpathsea: Makefile paths.h
 	  echo '/* collecting all public kpathsea headers. */'; \
 	  for f in config.h paths.h $(direct_headers); do \
 	    echo "#include <kpathsea/$$f>"; \
-	  done ) >kpathsea.tmp
-	@if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \
+	  done ) >kpathsea.tmp && \
+	if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \
 	  echo "kpathsea.h is unchanged"; \
 	else \
-	  echo "cp kpathsea.tmp kpathsea.h"; \
+	  echo "generated kpathsea.h"; \
 	  cp kpathsea.tmp kpathsea.h; \
-	fi
-	rm -f kpathsea.tmp
-	date >$@
+	fi && rm -f kpathsea.tmp && date >$@
 
 EXTRA_DIST += bsnl.awk cnf-to-paths.awk
 

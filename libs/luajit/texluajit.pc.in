@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: LuaJIT for LuaTeX
-Description: LuaJIT, modified for use with LuaTeX
+Name: LuaJIT for LuaJITTeX
+Description: LuaJIT, modified for use with LuaJITTeX
 Version: @LUAJITVERSION@
 Libs: -L${libdir} -ltexluajit
 Libs.private: @LIBS@

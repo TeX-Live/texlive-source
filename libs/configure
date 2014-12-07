@@ -3284,11 +3284,11 @@ if test "${enable_multiplatform+set}" = set; then :
 fi
 if test "x$enable_multiplatform" = xyes; then
   if test "x$bindir" = 'x${exec_prefix}/bin'; then
-    bindir="$bindir/$host"
+    bindir="$bindir/${host_alias-$host}"
     ac_configure_args="$ac_configure_args '--bindir=$bindir'"
   fi
   if test "x$libdir" = 'x${exec_prefix}/lib'; then
-    libdir="$libdir/$host"
+    libdir="$libdir/${host_alias-$host}"
     ac_configure_args="$ac_configure_args '--libdir=$libdir'"
   fi
 fi

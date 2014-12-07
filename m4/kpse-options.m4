@@ -1,11 +1,9 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
-
-# serial 0
 
 # KPSE_OPTIONS
 # ------------
@@ -18,11 +16,11 @@ AC_ARG_ENABLE([multiplatform],
                              [put executables into bin/PLATFORM and libraries into lib/PLATFORM]))[]dnl
 if test "x$enable_multiplatform" = xyes; then
   if test "x$bindir" = 'x${exec_prefix}/bin'; then
-    bindir="$bindir/$host"
+    bindir="$bindir/${host_alias-$host}"
     ac_configure_args="$ac_configure_args '--bindir=$bindir'"
   fi
   if test "x$libdir" = 'x${exec_prefix}/lib'; then
-    libdir="$libdir/$host"
+    libdir="$libdir/${host_alias-$host}"
     ac_configure_args="$ac_configure_args '--libdir=$libdir'"
   fi
 fi
