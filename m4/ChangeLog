@@ -1,3 +1,7 @@
+2014-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-options.m4: Set platform name to ${host_alias-$host}.
+
 2014-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-luajit-flags.m4: LuaJIT is now a Libtool library.

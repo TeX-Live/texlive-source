@@ -1,3 +1,7 @@
+2014-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am [kpathsea.h]: Improved output for silent rules.
+
 2014-12-05  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c (help_formats): new fn for new option --help-formats.

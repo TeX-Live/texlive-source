@@ -110,8 +110,8 @@ DIST_COMMON = $(top_srcdir)/../../am/bin_links.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/c-auto.in \
-	$(srcdir)/kpathsea.pc.in putenv.c strtol.c strstr.c \
-	strcasecmp.c $(dist_noinst_SCRIPTS) $(dist_web2c_SCRIPTS) \
+	$(srcdir)/kpathsea.pc.in strstr.c strcasecmp.c strtol.c \
+	putenv.c $(dist_noinst_SCRIPTS) $(dist_web2c_SCRIPTS) \
 	$(top_srcdir)/../../build-aux/depcomp $(dist_noinst_DATA) \
 	$(dist_web2c_DATA) $(kpseinclude_HEADERS) $(noinst_HEADERS) \
 	$(top_srcdir)/../../build-aux/test-driver AUTHORS ChangeLog \
@@ -2254,15 +2254,13 @@ stamp-kpathsea: Makefile paths.h
 	  echo '/* collecting all public kpathsea headers. */'; \
 	  for f in config.h paths.h $(direct_headers); do \
 	    echo "#include <kpathsea/$$f>"; \
-	  done ) >kpathsea.tmp
-	@if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \
+	  done ) >kpathsea.tmp && \
+	if cmp -s kpathsea.h kpathsea.tmp 2>/dev/null; then \
 	  echo "kpathsea.h is unchanged"; \
 	else \
-	  echo "cp kpathsea.tmp kpathsea.h"; \
+	  echo "generated kpathsea.h"; \
 	  cp kpathsea.tmp kpathsea.h; \
-	fi
-	rm -f kpathsea.tmp
-	date >$@
+	fi && rm -f kpathsea.tmp && date >$@
 
 install-exec-local: installdirs-am
 @WIN32_FALSE@	@for f in $(dist_noinst_SCRIPTS); do \
