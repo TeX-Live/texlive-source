@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 35326 2014-10-07 21:55:46Z karl $
+# $Id: tlmgr.pl 35700 2014-11-30 18:34:08Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 35326 $';
-my $datrev = '$Date: 2014-10-07 23:55:46 +0200 (Tue, 07 Oct 2014) $';
+my $svnrev = '$Revision: 35700 $';
+my $datrev = '$Date: 2014-11-30 19:34:08 +0100 (Sun, 30 Nov 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -360,7 +360,7 @@ for the full story.\n";
   # --machine-readable is only supported by update.
   if ($::machinereadable && 
     $action ne "update" && $action ne "install" && $action ne "option") {
-    tlwarn("tlmgr: --machine-readable output not supported for $action\n");
+    tlwarn("$prg: --machine-readable output not supported for $action\n");
   }
 
   # check on supported arguments
@@ -777,7 +777,7 @@ sub handle_execute_actions {
       # here we check whether an engine is updated
       my %foo = %{$::execute_actions{'enable'}{'formats'}{$m}};
       if (!defined($foo{'name'}) || !defined($foo{'engine'})) {
-        tlwarn("tlmgr: Very strange error, please report ", %foo);
+        tlwarn("$prg: Very strange error, please report ", %foo);
       } else {
         $format_to_engine{$m} = $foo{'engine'};
         if ($foo{'name'} eq $foo{'engine'}) {
@@ -928,11 +928,11 @@ sub action_remove {
       # that package was asked for to be removed on the cmd line
       my @needed = $localtlpdb->needed_by($p);
       if ($opts{"force"}) {
-        info("tlmgr: $p is needed by " . join(" ", @needed) . "\n");
-        info("tlmgr: removing it anyway, due to --force\n");
+        info("$prg: $p is needed by " . join(" ", @needed) . "\n");
+        info("$prg: removing it anyway, due to --force\n");
       } else {
         delete($packs{$p});
-        tlwarn("tlmgr: not removing $p, needed by " .
+        tlwarn("$prg: not removing $p, needed by " .
           join(" ", @needed) . "\n");
       }
     } else {
@@ -990,9 +990,9 @@ sub action_remove {
     $localtlpdb->save;
     my @foo = sort keys %already_removed;
     if (@foo) {
-      info("tlmgr: ultimately removed these packages: @foo\n");
+      info("$prg: ultimately removed these packages: @foo\n");
     } else {
-      info("tlmgr: no packages removed.\n");
+      info("$prg: no packages removed.\n");
     }
   }
 }
@@ -1018,9 +1018,9 @@ sub action_paper {
   if ($action =~ m/^paper$/i) {  # generic paper
     my $newpaper = shift @ARGV;
     if ($opts{"list"}) {  # tlmgr paper --list => complain.
-      tlwarn("tlmgr: ignoring paper setting to $newpaper with --list\n")
+      tlwarn("$prg: ignoring paper setting to $newpaper with --list\n")
         if $newpaper;  # complain if they tried to set, too.
-      tlwarn("tlmgr: please specify a program before paper --list, ",
+      tlwarn("$prg: please specify a program before paper --list, ",
              "as in: tlmgr pdftex paper --list\n");
 
     } elsif (!defined($newpaper)) {  # tlmgr paper => show all current sizes.
@@ -1028,7 +1028,7 @@ sub action_paper {
 
     } elsif ($newpaper !~ /^(a4|letter)$/) {  # tlmgr paper junk => complain.
       $newpaper = "the empty string" if !defined($newpaper);
-      tlwarn("tlmgr: expected `a4' or `letter' after paper, not $newpaper\n");
+      tlwarn("$prg: expected `a4' or `letter' after paper, not $newpaper\n");
 
     } else { # tlmgr paper {a4|letter} => do it.
       return if !check_on_writable();
@@ -1040,7 +1040,7 @@ sub action_paper {
     my $arg = shift @ARGV;  # get "paper" argument
     if (!defined($arg) || $arg ne "paper") {
       $arg = "the empty string." if ! $arg;
-      tlwarn("tlmgr: expected `paper' after $prog, not $arg\n");
+      tlwarn("$prg: expected `paper' after $prog, not $arg\n");
       return;
     }
     # the do_paper progs check for the argument --list, so if given
@@ -1064,7 +1064,7 @@ sub action_path {
   my $what = shift @ARGV;
   if (!defined($what) || ($what !~ m/^(add|remove)$/i)) {
     $what = "" if ! $what;
-    tlwarn("tlmgr: action path requires add or remove, not: $what\n");
+    tlwarn("$prg: action path requires add or remove, not: $what\n");
     return;
   }
   init_local_db();
@@ -1154,8 +1154,7 @@ sub action_path {
         $localtlpdb->option("sys_info"));
     }
   } else {
-    # that should not happen
-    tlwarn("\ntlmgr: Should not happen, action_path what=$what\n");
+    tlwarn("\n$prg: Should not happen, action_path what=$what\n");
     exit 1;
   }
   return;
@@ -1197,7 +1196,7 @@ sub action_info {
       || $opts{"keyword"}) {
     $taxonomy = load_taxonomy_datafile();
     if (!defined($taxonomy)) {
-      tlwarn("tlmgr: Cannot load taxonomy file, showing taxonomies not supported.\n");
+      tlwarn("$prg: Cannot load taxonomy file, showing taxonomies not supported.\n");
     }
   }
   my ($what, @todo) = @ARGV;
@@ -1225,11 +1224,11 @@ sub action_info {
       }
       if (defined($tag)) {
         if (!$remotetlpdb->is_virtual) {
-          tlwarn("tlmgr: specifying implicit tags is not allowed for non-virtual databases!\n");
+          tlwarn("$prg: specifying implicit tags is not allowed for non-virtual databases!\n");
           next;
         } else {
           if (!$remotetlpdb->is_repository($tag)) {
-            tlwarn("tlmgr: no such repository tag defined: $tag\n");
+            tlwarn("$prg: no such repository tag defined: $tag\n");
             next;
           }
         }
@@ -1239,7 +1238,7 @@ sub action_info {
         if (defined($tag)) {
           # we already searched for the package in a specific tag, don't retry
           # all candidates!
-          tlwarn("tlmgr: Cannot find package $pkg in repository $tag\n");
+          tlwarn("$prg: Cannot find package $pkg in repository $tag\n");
           next;
         }
         if ($remotetlpdb->is_virtual) {
@@ -1277,7 +1276,7 @@ sub action_info {
             next;
           }
         }
-        tlwarn("tlmgr: cannot find package $pkg\n");
+        tlwarn("$prg: cannot find package $pkg\n");
         next;
       }
       # we want to also show the source if it is known
@@ -1463,11 +1462,11 @@ sub load_taxonomy_datafile {
   my $fpath = $localtlpdb->root
               . "/texmf-dist/scripts/texlive/var/texcatalogue.keywords";
   if (! -r $fpath) {
-    tlwarn("tlmgr: taxonomy file $fpath not readable: $!\n");
+    tlwarn("$prg: taxonomy file $fpath not readable: $!\n");
     return;
   }
   if (!open (TAXF, $fpath)) {
-    tlwarn("tlmgr: taxonomy file $fpath cannot be opened: $!\n");
+    tlwarn("$prg: taxonomy file $fpath cannot be opened: $!\n");
     return;
   }
   # suck in the whole file contents
@@ -1512,11 +1511,11 @@ sub action_search {
   #
   if (!$opts{"list"} && (!defined($r) || !$r)) {
 
-    tlwarn("tlmgr: nothing to search for.\n");
+    tlwarn("$prg: nothing to search for.\n");
     return;
   }
   if ($opts{"extended"}) {
-    tlwarn("tlmgr: sorry, extended searching not implemented by now.\n");
+    tlwarn("$prg: sorry, extended searching not implemented by now.\n");
     return;
   }
   # check the arguments
@@ -1528,7 +1527,7 @@ sub action_search {
   $search_type_nr++ if $opts{"keyword"};
   $search_type_nr++ if $opts{"all"};
   if ($search_type_nr > 1) {
-    tlwarn("tlmgr: please specify only one thing to search for!\n");
+    tlwarn("$prg: please specify only one thing to search for!\n");
     return;
   }
   init_local_db();
@@ -1552,7 +1551,7 @@ sub action_search {
       || $opts{"functionality"} || $opts{"keyword"}) {
     $taxonomy = load_taxonomy_datafile();
     if (!defined($taxonomy)) {
-      tlwarn("tlmgr: Cannot load taxonomy file;",
+      tlwarn("$prg: Cannot load taxonomy file;",
              " searching/listing for taxonomies not supported.\n");
       return;
     }
@@ -1710,7 +1709,7 @@ sub check_backupdir_selection {
     my $ob = abs_path($opts{"backupdir"});
     $ob && ($opts{"backupdir"} = $ob);
     if (! -d $opts{"backupdir"}) {
-      $warntext .= "tlmgr: backupdir argument\n";
+      $warntext .= "$prg: backupdir argument\n";
       $warntext .= "  $opts{'backupdir'}\n";
       $warntext .= "is not a directory.\n";
       return (0, $warntext);
@@ -1720,13 +1719,13 @@ sub check_backupdir_selection {
     init_local_db(1);
     $opts{"backupdir"} = norm_tlpdb_path($localtlpdb->option("backupdir"));
     if (!$opts{"backupdir"}) {
-      return (0, "tlmgr: No way to determine backupdir.\n");
+      return (0, "$prg: No way to determine backupdir.\n");
     }
     # we are still here, there is something set in tlpdb
     my $ob = abs_path($opts{"backupdir"});
     $ob && ($opts{"backupdir"} = $ob);
     if (! -d $opts{"backupdir"}) {
-      $warntext =  "tlmgr: backupdir as set in tlpdb\n";
+      $warntext =  "$prg: backupdir as set in tlpdb\n";
       $warntext .= "  $opts{'backupdir'}\n";
       $warntext .= "is not a directory.\n";
       return (0, $warntext);
@@ -1751,7 +1750,7 @@ sub action_restore {
     if (!$a) {
       # in all these cases we want to terminate in the non-gui mode
       tlwarn($b);
-      tlwarn("Exiting.\n");
+      tlwarn("$prg: Terminating.\n");
       exit 1;
     }
   }
@@ -1761,8 +1760,8 @@ sub action_restore {
   my %backups = get_available_backups($opts{"backupdir"}, 1);
   my ($pkg, $rev) = @ARGV;
   if (defined($pkg) && $opts{"all"}) {
-    tlwarn("Do you want to restore all packages or only $pkg?\n");
-    tlwarn("Terminating.\n");
+    tlwarn("$prg: Specify either --all or individual package(s) ($pkg)\n");
+    tlwarn("$prg: to restore, not both.  Terminating.\n");
     exit 1;
   }
   if ($opts{"all"}) {
@@ -1899,7 +1898,7 @@ sub action_backup {
     if (!$a) {
       # in all these cases we want to terminate in the non-gui mode
       tlwarn($b);
-      tlwarn("Exiting.\n");
+      tlwarn("$prg: Terminating.\n");
       exit 1;
     }
   }
@@ -2312,9 +2311,9 @@ sub auto_remove_install_force_packages {
     $forcermpkgs{$p} = 1 if defined($forcermpkgs_full{$p});
     $newpkgs{$p} = 1 if defined($newpkgs_full{$p});
   }
-  debug ("tlmgr: new pkgs: " . join("\n\t",keys %newpkgs) . "\n");
-  debug ("tlmgr: deleted : " . join("\n\t",keys %removals) . "\n");
-  debug ("tlmgr: forced  : " . join("\n\t",keys %forcermpkgs) . "\n");
+  debug ("$prg: new pkgs: " . join("\n\t",keys %newpkgs) . "\n");
+  debug ("$prg: deleted : " . join("\n\t",keys %removals) . "\n");
+  debug ("$prg: forced  : " . join("\n\t",keys %forcermpkgs) . "\n");
 
   return (\%removals, \%newpkgs, \%forcermpkgs, \%new_pkgs_due_forcerm_coll);
 }
@@ -2422,7 +2421,7 @@ sub action_update {
         # return here and don't do any updates
         return;
       } else {
-        die "$prg: Exiting, please read above warning.\n";
+        die "$prg: Terminating; please read above warning.\n";
       }
     }
   }
@@ -2458,7 +2457,7 @@ sub action_update {
     if (!$a) {
       # in all these cases we want to terminate in the non-gui mode
       tlwarn($b);
-      tlwarn("Exiting.\n");
+      tlwarn("$prg: Terminating.\n");
       exit 1;
     }
   }
@@ -2466,7 +2465,7 @@ sub action_update {
   # finally, if we have --backupdir, but no --backup, just enable it
   $opts{"backup"} = 1 if $opts{"backupdir"};
 
-  info("tlmgr: saving backups to $opts{'backupdir'}\n")
+  info("$prg: saving backups to $opts{'backupdir'}\n")
     if $opts{"backup"} && !$::machinereadable;
 
   # these two variables are used throughout this function
@@ -2503,7 +2502,7 @@ sub action_update {
   # don't do anything if we have been invoced in a strange way
   if (!@todo) {
     if ($opts{"self"}) {
-      info("tlmgr: no updates for tlmgr present.\n");
+      info("$prg: no updates for tlmgr present.\n");
     } else {
       tlwarn("tlmgr update: please specify a list of packages, --all, or --self.\n");
     }
@@ -2617,11 +2616,11 @@ sub action_update {
         # and has already been removed
         next;
       } elsif (defined($new_due_to_forcerm_coll{$pkg})) {
-        debug("tlmgr: $pkg seems to be contained in a forcibly removed" .
+        debug("$prg: $pkg seems to be contained in a forcibly removed" .
           " collection, not auto-installing it!\n");
         next;
       } else {
-        tlwarn("\ntlmgr: $pkg mentioned, but neither new nor forcibly removed\n");
+        tlwarn("\n$prg: $pkg mentioned, but neither new nor forcibly removed\n");
         next;
       }
       # install new packages
@@ -2828,7 +2827,7 @@ sub action_update {
           # for creating the backup will create some rubbish!
           # Same as further down in the update part!
           if ($pkg->relocated) {
-            debug("tlmgr: warn, relocated bit set for $p, but that is wrong!\n");
+            debug("$prg: warn, relocated bit set for $p, but that is wrong!\n");
             $pkg->relocated(0);
           }
           if ($opts{"backup"}) {
@@ -2931,8 +2930,8 @@ sub action_update {
       # - then it is tried to be updated here, which is not working!
       # report that and ask for report
       if (!defined($tlp)) {
-        tlwarn("tlmgr: inconsistency on the server:\n");
-        tlwarn("tlmgr: tlp for package $pkg cannot be found, please report.\n");
+        tlwarn("$prg: inconsistency on the server:\n");
+        tlwarn("$prg: tlp for package $pkg cannot be found, please report.\n");
         next;
       }
       my $unwind_package;
@@ -2998,7 +2997,7 @@ sub action_update {
       # for creating an unwind container will create some rubbish
       # TODO for user mode we should NOT clear this bit!
       if ($tlp->relocated) {
-        debug("tlmgr: warn, relocated bit set for $pkg, but that is wrong!\n");
+        debug("$prg: warn, relocated bit set for $pkg, but that is wrong!\n");
         $tlp->relocated(0);
       }
 
@@ -3085,9 +3084,9 @@ sub action_update {
             if (!defined($parentobj)) {
               # well, in this case we might have hit a package that only
               # has .ARCH package, like psv.win32, so do nothing
-              debug("tlmgr: .ARCH package without parent, not announcing postaction\n");
+              debug("$prg: .ARCH package without parent, not announcing postaction\n");
             } else {
-              debug("tlmgr: announcing parent execute action for $pkg\n");
+              debug("$prg: announcing parent execute action for $pkg\n");
               TeXLive::TLUtils::announce_execute_actions("enable", $parentobj);
             }
           }
@@ -3329,7 +3328,7 @@ sub action_update {
   # if a real update from default disk location didn't find anything,
   # warn if nothing is updated.
   if (!(@new || @updated)) {
-    info("tlmgr: no updates available\n");
+    info("$prg: no updates available\n");
     if ($remotetlpdb->media ne "NET"
         && $remotetlpdb->media ne "virtual"
         && !$opts{"dry-run"}
@@ -3337,7 +3336,7 @@ sub action_update {
         && !$ENV{"TEXLIVE_INSTALL_ENV_NOCHECK"}
        ) {
       tlwarn(<<END_DISK_WARN);
-tlmgr: Your installation is set up to look on the disk for updates.
+$prg: Your installation is set up to look on the disk for updates.
 To install from the Internet for this one time only, run:
   tlmgr -repository $TeXLiveURL ACTION ARG...
 where ACTION is install, update, etc.; see tlmgr -help if needed.
@@ -3405,7 +3404,7 @@ sub action_install {
           # return here and don't do any updates
           return;
         } else {
-          die "tlmgr: Not continuing, please see warning above!\n";
+          die "$prg: Not continuing, please see warning above!\n";
         }
       }
     }
@@ -5487,7 +5486,7 @@ sub init_local_db {
     $location = $opts{"location"};
   }
   if (!defined($location)) {
-    die("No installation source found, nor in the texlive.tlpdb nor on the cmd line.\nPlease specify one!");
+    die("$prg: No installation source found: neither in texlive.tlpdb nor on command line.\n$prg: Please specify one!");
   }
   if ($location =~ m/^ctan$/i) {
     $location = "$TeXLive::TLConfig::TeXLiveURL";
