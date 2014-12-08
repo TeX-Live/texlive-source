@@ -31,7 +31,7 @@ many extra hassles, so don't do that, tempting as it may be.
      automake (GNU automake) 1.14.1
      bison (GNU Bison) 3.0.2
      flex 2.5.39
-     ltmain.sh (GNU libtool) 2.4.3
+     ltmain.sh (GNU libtool) 2.4.4
      m4 (GNU M4) 1.4.17
      makeinfo (GNU texinfo) 5.2
 
