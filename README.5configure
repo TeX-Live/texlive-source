@@ -245,7 +245,7 @@ module 'bibtex-x' (extended BibTeX).
 '--disable-bibtex8'
 Do not build the 'bibtex8' program.
 
-   -disable-bibtexu '--disable-bibtexu'
+'--disable-bibtexu'
 Do not build the 'bibtexu' program (building 'bibtexu' requires 'ICU'
 libraries).
 
@@ -276,8 +276,8 @@ PostScript specials.
 
 '--without-libgs'
 Build 'dvisvgm' without PostScript support at all.  Because the dynamic
-loading just mention defeats all attempts at static linking, the result
-can crash due to library incompatibilities, e.g., on CentOS 5.
+loading just mentioned defeats all attempts at static linking, the
+result can crash due to library incompatibilities, e.g., on CentOS 5.
 
 '--with-libgs-includes=DIR', '--with-libgs-libdir=DIR'
 Specify non-standard locations of the Ghostscript headers and library.
@@ -337,8 +337,8 @@ Using a system version implies also using the system versions of all
 libraries (if any) that LIB depends on.
 
    For many libraries '--with-LIB-includes=DIR' and
-'--with-LIB-libdir=DIR' to specify non-standard search locations; others
-use 'pkg-config' or similar to determine the required flags.
+'--with-LIB-libdir=DIR' can specify non-standard search locations;
+others use 'pkg-config' or similar to determine the required flags.
 
    The top-level 'configure' script performs a consistency check for all
 required system libraries and bails out if tests fail.
@@ -369,13 +369,14 @@ overridden by the user in any case.
 7.3.2 Configure options for system 'poppler'
 --------------------------------------------
 
-Building LuaTeX and XeTeX requires 'poppler', either from the TL tree or
-system headers and library.  Building pdfTeX requires either 'xpdf' from
-the TeX Live tree or system 'poppler' headers and library.
+Building LuaTeX (or LuaJITTeX) and XeTeX requires 'poppler', either from
+the TL tree or system headers and library.  Building pdfTeX requires
+either 'xpdf' from the TeX Live tree or system 'poppler' headers and
+library.
 
 '--with-system-poppler'
-Use a system version (0.18 or newer) of 'poppler' for LuaTeX and XeTeX,
-and use 'pkg-config' to obtain the required flags.
+Use a system version (0.18 or newer) of 'poppler' for LuaTeX (or
+LuaJITTeX) and XeTeX, and use 'pkg-config' to obtain the required flags.
 
 '--with-system-xpdf'
 Use a system version (0.12 or better) of 'poppler' (and 'pkg-config')

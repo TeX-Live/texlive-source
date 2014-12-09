@@ -60,7 +60,7 @@ source tree.
 
    As mentioned at the beginning of the chapter (*note Overview of build
 system::), the main source directories are 'texk/' (TeX-specific
-programs and libraries), 'utils/' (additional programs), and 'libs'
+programs and libraries), 'utils/' (additional programs), and 'libs/'
 (generic libraries).
 
    The top-level directories 'am/' and 'm4/' contain 'Makefile.am'
@@ -355,7 +355,7 @@ however, not part of the TL DVD as distributed by TeX user groups, and
 have never been officially released for standalone use.
 
    It is possible, and possibly even useful for distro builds (*note
-Distro builds::, to specify the configure option
+Distro builds::), to specify the configure option
 '--with-system-kpathsea' in order to use a system version of the library
 and it may then be necessary to specify '--with-kpathsea-includes'
 and/or '--with-kpathsea-libdir'.

@@ -441,7 +441,7 @@ make check
 Then you modify source files in @file{mydir/texk/dvipdfm-x} and rerun
 @code{make} in @file{mydir/Work/texk/dvipdfm-x} to rebuild.
 
-The second line the @code{configure} are invocation shows examples of
+The second line the @code{configure} invocation shows examples of
 extra things you likely want to specify if you intend to hack the
 sources (and not just build binaries): the @code{-C} speeds up
 @code{configure}, and the @code{CFLAGS} and @code{CXXFLAGS} are to
@@ -757,7 +757,7 @@ source tree.
 As mentioned at the beginning of the chapter (@pxref{Overview of build
 system}), the main source directories are @file{texk/}
 (@TeX{}-specific programs and libraries), @file{utils/} (additional
-programs), and @file{libs} (generic libraries).
+programs), and @file{libs/} (generic libraries).
 
 @cindex @file{am/} top-level directory
 @cindex @file{m4/} top-level directory
@@ -1185,7 +1185,7 @@ released for standalone use.
 
 @pindex --with-system-kpathsea
 It is possible, and possibly even useful for distro builds
-(@pxref{Distro builds}, to specify the configure option
+(@pxref{Distro builds}), to specify the configure option
 @code{--with-system-kpathsea} in order to use a system version of the
 library and it may then be necessary to specify
 @code{--with-kpathsea-includes} and/or @code{--with-kpathsea-libdir}.
@@ -1821,7 +1821,7 @@ into the module @code{bibtex-x} (extended Bib@TeX{}).
 @vindex --disable-bibtex8
 @noindent @code{--disable-bibtex8}@*Do not build the @file{bibtex8} program.
 
---disable-bibtexu
+@vindex --disable-bibtexu
 @noindent @code{--disable-bibtexu}@*Do not build the @file{bibtexu} program
 (building @file{bibtexu} requires @code{ICU} libraries).
 
@@ -1863,7 +1863,7 @@ possible, or otherwise disable support for PostScript specials.
 
 @vindex --without-libgs
 @noindent @code{--without-libgs}@*Build @file{dvisvgm} without PostScript
-support at all.  Because the dynamic loading just mention defeats all
+support at all.  Because the dynamic loading just mentioned defeats all
 attempts at static linking, the result can crash due to library
 incompatibilities, e.g., on CentOS 5.
 
@@ -1952,7 +1952,7 @@ versions of all libraries (if any) that @var{lib} depends on.
 
 @vindex --with-@var{lib}-includes=@var{dir}@r{,} -libdir
 For many libraries @code{--with-@var{lib}-includes=@var{dir}} and
-@code{--with-@var{lib}-libdir=@var{dir}} to specify non-standard
+@code{--with-@var{lib}-libdir=@var{dir}} can specify non-standard
 search locations; others use @file{pkg-config} or similar to determine
 the required flags.
 
@@ -2001,15 +2001,15 @@ The default can be overridden by the user in any case.
 
 @pindex poppler
 @pindex xpdf @r{as library}
-Building Lua@TeX{} and Xe@TeX{} requires @code{poppler}, either from
-the TL tree or system headers and library.  Building pdf@TeX{}
-requires either @code{xpdf} from the @TL{} tree or system
-@code{poppler} headers and library.
+Building Lua@TeX{} (or LuaJIT@TeX{}) and Xe@TeX{} requires
+@code{poppler}, either from the TL tree or system headers and
+library.  Building pdf@TeX{} requires either @code{xpdf} from
+the @TL{} tree or system @code{poppler} headers and library.
 
 @vindex --with-system-poppler
 @noindent @code{--with-system-poppler}@*Use a system version (0.18 or
-newer) of @code{poppler} for Lua@TeX{} and Xe@TeX{}, and use
-@file{pkg-config} to obtain the required flags.
+newer) of @code{poppler} for Lua@TeX{} (or LuaJIT@TeX{}) and Xe@TeX{},
+and use @file{pkg-config} to obtain the required flags.
 
 @vindex --with-system-xpdf
 @noindent @code{--with-system-xpdf}@*Use a system version (0.12 or better)

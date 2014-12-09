@@ -1,3 +1,11 @@
+2014-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tlbuild.texi: Fixed a few typos.
+
+2014-12-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* build-tools.txt: Using libtool 2.4.4.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* tlbuild.texi: Drop '--with-xindy-recode'.
