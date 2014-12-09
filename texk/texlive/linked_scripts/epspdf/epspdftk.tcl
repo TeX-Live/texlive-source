@@ -3,7 +3,7 @@
 # epspdf conversion utility, GUI frontend
 
 #####
-# Copyright (C) 2006, 2008, 2009, 2010, 2011, 2013 Siep Kroonenberg
+# Copyright (C) 2006, 2008, 2009, 2010, 2011, 2013, 2014 Siep Kroonenberg
 # n dot s dot kroonenberg at rug dot nl
 #
 # This program is free software, licensed under the GNU GPL, >=2.0.
@@ -44,76 +44,33 @@ proc write_log {s} {
 
 proc set_progs {} {
   set scriptfile [file normalize [info script]]
-  set syml 0
-  if {$::tcl_platform(platform) eq "unix" && \
-      ! [catch {file readlink [$scriptfile]}]} {
-    set syml 1
-  }
   set eproot [file dirname $scriptfile]
-  if {$::tcl_platform(platform) eq "unix" && \
-      ! [catch {file readlink $scriptfile}]} {
+  # if symlink, get the directory of the file it points to
+  if {! [catch {file readlink $scriptfile}]} {
     # evaluate readlink from symlink directory
     set savedir [pwd]
     cd $eproot
     set eproot [file dirname [file normalize [file readlink $scriptfile]]]
     cd $savedir
   }
-  if {! [file exists [file join $eproot "epspdf.tlu"]]} {
-    # starpack edition?
-    set starred 0
-    foreach l [info loaded] {
-      if {[lindex $l 1] eq "tclkitpath"} {
-        set starred 1
-        break
-      }
-    }
-    if {$starred} {
-      set eproot [file dirname [file normalize [info nameofexecutable]]]
-      # here no testing for symlink
-    }
-  }
-  set ::texlua "texlua"
+  # find the lua script
   set ::epspdf_tlu [file join $eproot "epspdf.tlu"]
+  if {! [file exists $::epspdf_tlu]} {
+    # if starpack, look in binary directory
+    set eproot [file dirname [file normalize [info nameofexecutable]]]
+    set ::epspdf_tlu [file join $eproot "epspdf.tlu"]
+  }
   if {! [file exists $::epspdf_tlu]} {
     tk_messageBox -type ok -icon error -message "Epspdf.tlu not found"
     exit 1
   }
+  # texlua should be on the searchpath
+  set ::texlua "texlua"
 
-  # no luck with other platforms
-  if {$::tcl_platform(platform) eq "windows"} {
-    wm iconbitmap . [file join $eproot "epspdf.ico"]
-  }
+  # icon for starpack: add with sdx or with Windows utilities
 }
 
 set_progs
-
-# call epspdf.tlu with parameter list $args (should be a list)
-# Return codes success/failure
-# We also need stdout output.
-# Tcl idiom: res is a variable _name_.
-# The upvar construct makes it a reference parameter.
-
-#proc run_epspdf {res args} {
-#  upvar $res result
-#  if {$::ge_85} {
-#    set failed [catch [linsert $args 0 \
-#        exec -ignorestderr $::texlua $::epspdf_tlu --gui=gui] result]
-#  } else {
-#    set failed [catch [linsert $args 0 \
-#        exec $::texlua $::epspdf_tlu --gui=gui] result]
-#  }
-#  if {$failed} {
-#    # wm deiconify .log_t
-#    tk_messageBox -icon error -type ok -message "Error; see log window"
-#  }
-#
-#  # write to log textbox
-#  write_log $result
-#
-#  # it is up to the caller to do anything else about failure or not.
-#  # the user, at least, has been warned.
-#  return [expr ! $failed]
-#}
 
 ### configured and automatic settings ##################################
 
@@ -182,7 +139,7 @@ proc getsettings {} {
     if {$::settings(ps_viewer) ne "" && [is_prog $::settings(ps_viewer)]} {
       lappend ::ps_viewers $::settings(ps_viewer)
     }
-    foreach v {evince okular gv kghostview ghostview} {
+    foreach v {evince okular gv qpdfview} {
       if {$v ne $::settings(ps_viewer) && [is_prog $v]} {
         lappend ::ps_viewers $v
       }
@@ -193,8 +150,7 @@ proc getsettings {} {
     if {$::settings(pdf_viewer) ne "" && [is_prog $::settings(pdf_viewer)]} {
       lappend ::pdf_viewers $::settings(pdf_viewer)
     }
-    foreach v {evince okular kpdf xpdf epdfview acroread \
-        gv kghostview ghostview} {
+    foreach v {evince okular xpdf epdfview qpdfview zathura acroread  gv} {
       if {$v ne $::settings(pdf_viewer) && [is_prog $v]} {
         lappend ::pdf_viewers $v
       }
@@ -423,7 +379,12 @@ wm title . "PostScript- and pdf conversions"
 
 proc readhelp {} {
   .help_t.text configure -state normal
-  set helpfile [regsub {\.tlu$} $::epspdf_tlu {.help}]
+  # this also works for the starpack:
+  set helpfile [file join [file dirname $::epspdf_tlu] "epspdf.help"]
+  if {! [file exists $helpfile]} {
+    # helpfile in starpack
+    set helpfile [file join [file dirname [info script]] "epspdf.help"]
+  }
   if {[catch {set fid [open $helpfile r]}]} {
     .help_t.text insert end "No helpfile $helpfile found\n"
   } else {
