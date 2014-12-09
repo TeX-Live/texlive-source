@@ -118,11 +118,11 @@ finish for working on 'dvipdfmx'.
    Then you modify source files in 'mydir/texk/dvipdfm-x' and rerun
 'make' in 'mydir/Work/texk/dvipdfm-x' to rebuild.
 
-   The second line the 'configure' are invocation shows examples of
-extra things you likely want to specify if you intend to hack the
-sources (and not just build binaries): the '-C' speeds up 'configure',
-and the 'CFLAGS' and 'CXXFLAGS' are to eliminate compiler optimization
-for debugging purposes.
+   The second line the 'configure' invocation shows examples of extra
+things you likely want to specify if you intend to hack the sources (and
+not just build binaries): the '-C' speeds up 'configure', and the
+'CFLAGS' and 'CXXFLAGS' are to eliminate compiler optimization for
+debugging purposes.
 
    Of course, one should actually look at the output and check that
 things are working.  There are many 'configure' options you can tweak as
