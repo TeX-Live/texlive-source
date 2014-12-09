@@ -1,4 +1,3 @@
-# $Id: TLConfig.pm 34040 2014-05-15 12:16:59Z siepo $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 34040 $';
+my $svnrev = '$Revision: 35731 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -59,10 +58,10 @@ $ReleaseYear = 2014;
 
 # users can upgrade from this year to the current year; maybe a spread
 # of more than one year will be useful at some point, but not now.
-# $MinRelease = $ReleaseYear - 1;
+$MinRelease = 2013; # upgrade from 2013 to 2015 might work?
 
 # users can NOT upgrade due to internal changes, force a full installation
-$MinRelease = $ReleaseYear;
+#$MinRelease = $ReleaseYear;
 
 # Meta Categories do not ship files, but only call for other packages.
 our @MetaCategories = qw/Collection Scheme/;
