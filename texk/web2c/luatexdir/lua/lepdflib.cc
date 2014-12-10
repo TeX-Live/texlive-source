@@ -19,10 +19,12 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lepdflib.cc 4847 2014-03-05 18:13:17Z luigi $ "
+    "$Id: lepdflib.cc 5081 2014-11-07 18:38:33Z luigi $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lepdflib.cc $";
 
 #include "image/epdf.h"
+
+
 
 // define DEBUG
 
@@ -65,6 +67,11 @@ static const char *ErrorCodeNames[] = { "None", "OpenFile", "BadCatalog",
 #define M_PDFRectangle     "epdf.PDFRectangle"
 #define M_Ref              "epdf.Ref"
 #define M_Stream           "epdf.Stream"
+#ifdef HAVE_STRUCTTREEROOT_H
+#define M_StructElement    "epdf.StructElement"
+#define M_Attribute        "epdf.Attribute"
+#define M_TextSpan         "epdf.TextSpan"
+#endif
 #define M_StructTreeRoot   "epdf.StructTreeRoot"
 #define M_XRefEntry        "epdf.XRefEntry"
 #define M_XRef             "epdf.XRef"
@@ -97,6 +104,11 @@ new_poppler_userdata(Page);
 new_poppler_userdata(PDFRectangle);
 new_poppler_userdata(Ref);
 new_poppler_userdata(Stream);
+#ifdef HAVE_STRUCTTREEROOT_H
+new_poppler_userdata(StructElement);
+new_poppler_userdata(Attribute);
+new_poppler_userdata(TextSpan);
+#endif
 new_poppler_userdata(StructTreeRoot);
 new_poppler_userdata(XRef);
 
@@ -124,6 +136,7 @@ static int l_open_PDFDoc(lua_State * L)
     if (d == NULL)
         lua_pushnil(L);
     else {
+        globalParams = new GlobalParams();
         uout = new_PDFDoc_userdata(L);
         uout->d = d;
         uout->atype = ALLOC_LEPDF;
@@ -146,6 +159,178 @@ static int l_new_Array(lua_State * L)
     uout->pd = uxref->pd;
     return 1;
 }
+
+#ifdef HAVE_STRUCTTREEROOT_H
+static int l_new_Attribute(lua_State * L)
+{
+    Attribute::Type t;
+    const char *n;
+    int nlen;
+    udstruct *uobj, *uout;
+
+    if (lua_type(L,1)==LUA_TNUMBER) {
+       uobj = (udstruct *) luaL_checkudata(L, 2, M_Object);
+       if (uobj->pd != NULL && uobj->pd->pc != uobj->pc)
+           pdfdoc_changed_error(L);
+       t = (Attribute::Type) luaL_checkint(L, 1);
+       uout = new_Attribute_userdata(L);
+       uout->d = new Attribute(t, (Object *)uobj->d);
+       uout->atype = ALLOC_LEPDF;
+       uout->pc = uobj->pc;
+       uout->pd = uobj->pd;
+
+    } else if (lua_type(L,1)==LUA_TSTRING) {
+       n = luaL_checkstring(L,1);
+       nlen = luaL_checkint(L,2);
+       uobj = (udstruct *) luaL_checkudata(L, 3, M_Object);
+       if (uobj->pd != NULL && uobj->pd->pc != uobj->pc)
+          pdfdoc_changed_error(L);
+       uout = new_Attribute_userdata(L);
+       uout->d = new Attribute(n, nlen, (Object *)uobj->d);
+       uout->atype = ALLOC_LEPDF;
+       uout->pc = uobj->pc;
+       uout->pd = uobj->pd;
+    } else
+       lua_pushnil(L);                                        
+    return 1;
+}
+
+#define ATTRIBUTE_TYPE_ENTRY(name)          \
+   lua_pushstring(L, #name);                \
+   lua_pushinteger(L, Attribute::name);     \
+   lua_settable(L,-3) 
+
+
+#define STRUCTELEMENT_TYPE_ENTRY(name)      \
+   lua_pushstring(L, #name);                \
+   lua_pushinteger(L, StructElement::name); \
+   lua_settable(L,-3) 
+
+
+static int l_Attribute_Type(lua_State * L) {
+   lua_createtable (L, 0, 42);
+   ATTRIBUTE_TYPE_ENTRY(BBox);
+   ATTRIBUTE_TYPE_ENTRY(BackgroundColor);
+   ATTRIBUTE_TYPE_ENTRY(BorderColor);
+   ATTRIBUTE_TYPE_ENTRY(BorderThickness);
+   ATTRIBUTE_TYPE_ENTRY(Color);
+   ATTRIBUTE_TYPE_ENTRY(ColumnGap);
+   ATTRIBUTE_TYPE_ENTRY(ColumnWidths);
+   ATTRIBUTE_TYPE_ENTRY(Desc);
+   ATTRIBUTE_TYPE_ENTRY(Role);
+   ATTRIBUTE_TYPE_ENTRY(TextDecorationColor);
+   ATTRIBUTE_TYPE_ENTRY(TextDecorationThickness);
+   ATTRIBUTE_TYPE_ENTRY(BaselineShift);
+   ATTRIBUTE_TYPE_ENTRY(BlockAlign);
+   ATTRIBUTE_TYPE_ENTRY(BorderStyle);
+   ATTRIBUTE_TYPE_ENTRY(ColSpan);
+   ATTRIBUTE_TYPE_ENTRY(ColumnCount);
+   ATTRIBUTE_TYPE_ENTRY(EndIndent);
+   ATTRIBUTE_TYPE_ENTRY(GlyphOrientationVertical);
+   ATTRIBUTE_TYPE_ENTRY(Headers);
+   ATTRIBUTE_TYPE_ENTRY(Height);
+   ATTRIBUTE_TYPE_ENTRY(InlineAlign);
+   ATTRIBUTE_TYPE_ENTRY(LineHeight);
+   ATTRIBUTE_TYPE_ENTRY(ListNumbering);
+   ATTRIBUTE_TYPE_ENTRY(Padding);
+   ATTRIBUTE_TYPE_ENTRY(Placement);
+   ATTRIBUTE_TYPE_ENTRY(RowSpan);
+   ATTRIBUTE_TYPE_ENTRY(RubyAlign);
+   ATTRIBUTE_TYPE_ENTRY(RubyPosition);
+   ATTRIBUTE_TYPE_ENTRY(Scope);
+   ATTRIBUTE_TYPE_ENTRY(SpaceAfter);
+   ATTRIBUTE_TYPE_ENTRY(SpaceBefore);
+   ATTRIBUTE_TYPE_ENTRY(StartIndent);
+   ATTRIBUTE_TYPE_ENTRY(Summary);
+   ATTRIBUTE_TYPE_ENTRY(TBorderStyle);
+   ATTRIBUTE_TYPE_ENTRY(TPadding);
+   ATTRIBUTE_TYPE_ENTRY(TextAlign);
+   ATTRIBUTE_TYPE_ENTRY(TextDecorationType);
+   ATTRIBUTE_TYPE_ENTRY(TextIndent);
+   ATTRIBUTE_TYPE_ENTRY(Width);
+   ATTRIBUTE_TYPE_ENTRY(WritingMode);
+   ATTRIBUTE_TYPE_ENTRY(Unknown);
+   ATTRIBUTE_TYPE_ENTRY(checked);
+   return 1;
+}
+
+static int l_StructElement_Type(lua_State * L) {
+   lua_createtable (L, 0, 50);
+   STRUCTELEMENT_TYPE_ENTRY(Document);      
+   STRUCTELEMENT_TYPE_ENTRY(Part);          
+   STRUCTELEMENT_TYPE_ENTRY(Art);           
+   STRUCTELEMENT_TYPE_ENTRY(Sect);          
+   STRUCTELEMENT_TYPE_ENTRY(Div);           
+   STRUCTELEMENT_TYPE_ENTRY(BlockQuote);    
+   STRUCTELEMENT_TYPE_ENTRY(Caption);       
+   STRUCTELEMENT_TYPE_ENTRY(NonStruct);     
+   STRUCTELEMENT_TYPE_ENTRY(Index);         
+   STRUCTELEMENT_TYPE_ENTRY(Private);       
+   STRUCTELEMENT_TYPE_ENTRY(Span);          
+   STRUCTELEMENT_TYPE_ENTRY(Quote);         
+   STRUCTELEMENT_TYPE_ENTRY(Note);          
+   STRUCTELEMENT_TYPE_ENTRY(Reference);     
+   STRUCTELEMENT_TYPE_ENTRY(BibEntry);      
+   STRUCTELEMENT_TYPE_ENTRY(Code);          
+   STRUCTELEMENT_TYPE_ENTRY(Link);          
+   STRUCTELEMENT_TYPE_ENTRY(Annot);         
+   STRUCTELEMENT_TYPE_ENTRY(Ruby);          
+   STRUCTELEMENT_TYPE_ENTRY(RB);            
+   STRUCTELEMENT_TYPE_ENTRY(RT);            
+   STRUCTELEMENT_TYPE_ENTRY(RP);            
+   STRUCTELEMENT_TYPE_ENTRY(Warichu);       
+   STRUCTELEMENT_TYPE_ENTRY(WT);            
+   STRUCTELEMENT_TYPE_ENTRY(WP);            
+   STRUCTELEMENT_TYPE_ENTRY(P);             
+   STRUCTELEMENT_TYPE_ENTRY(H);             
+   STRUCTELEMENT_TYPE_ENTRY(H1);            
+   STRUCTELEMENT_TYPE_ENTRY(H2);            
+   STRUCTELEMENT_TYPE_ENTRY(H3);            
+   STRUCTELEMENT_TYPE_ENTRY(H4);            
+   STRUCTELEMENT_TYPE_ENTRY(H5);            
+   STRUCTELEMENT_TYPE_ENTRY(H6);            
+   STRUCTELEMENT_TYPE_ENTRY(L);             
+   STRUCTELEMENT_TYPE_ENTRY(LI);            
+   STRUCTELEMENT_TYPE_ENTRY(Lbl);           
+   STRUCTELEMENT_TYPE_ENTRY(LBody);         
+   STRUCTELEMENT_TYPE_ENTRY(Table);         
+   STRUCTELEMENT_TYPE_ENTRY(TR);            
+   STRUCTELEMENT_TYPE_ENTRY(TH);            
+   STRUCTELEMENT_TYPE_ENTRY(TD);            
+   STRUCTELEMENT_TYPE_ENTRY(THead);         
+   STRUCTELEMENT_TYPE_ENTRY(TFoot);         
+   STRUCTELEMENT_TYPE_ENTRY(TBody);         
+   STRUCTELEMENT_TYPE_ENTRY(Figure);        
+   STRUCTELEMENT_TYPE_ENTRY(Formula);       
+   STRUCTELEMENT_TYPE_ENTRY(Form);          
+   STRUCTELEMENT_TYPE_ENTRY(TOC);           
+   STRUCTELEMENT_TYPE_ENTRY(TOCI);          
+   lua_pushstring(L, "Unknown");
+   lua_pushinteger(L, 0);             
+   lua_settable(L,-3);
+   return 1;
+}
+
+static int l_AttributeOwner_Type(lua_State * L) {
+  lua_createtable (L, 0, 12);
+  lua_pushstring(L, "XML-1.00");       lua_pushinteger(L, Attribute::XML_1_00);      lua_settable(L,-3);  
+  lua_pushstring(L, "HTML-3.20");      lua_pushinteger(L, Attribute::HTML_3_20);     lua_settable(L,-3);  
+  lua_pushstring(L, "HTML-4.01");      lua_pushinteger(L, Attribute::HTML_4_01);     lua_settable(L,-3);  
+  lua_pushstring(L, "OEB-1.00");       lua_pushinteger(L, Attribute::OEB_1_00);      lua_settable(L,-3);  
+  lua_pushstring(L, "RTF-1.05");       lua_pushinteger(L, Attribute::RTF_1_05);      lua_settable(L,-3);  
+  lua_pushstring(L, "CSS-1.00");       lua_pushinteger(L, Attribute::CSS_1_00);      lua_settable(L,-3);  
+  lua_pushstring(L, "CSS-2.00");       lua_pushinteger(L, Attribute::CSS_2_00);      lua_settable(L,-3);  
+  lua_pushstring(L, "Layout");	       lua_pushinteger(L, Attribute::Layout);        lua_settable(L,-3);  
+  lua_pushstring(L, "PrintField");     lua_pushinteger(L, Attribute::PrintField);    lua_settable(L,-3);  
+  lua_pushstring(L, "Table");	       lua_pushinteger(L, Attribute::Table);         lua_settable(L,-3);  
+  lua_pushstring(L, "List");	       lua_pushinteger(L, Attribute::List);          lua_settable(L,-3); 
+  lua_pushstring(L, "UserProperties"); lua_pushinteger(L, Attribute::UserProperties);lua_settable(L,-3);
+  return 1;
+}
+
+
+#endif
+
 
 static int l_new_Dict(lua_State * L)
 {
@@ -188,6 +373,12 @@ static int l_new_PDFRectangle(lua_State * L)
 static const struct luaL_Reg epdflib_f[] = {
     {"open", l_open_PDFDoc},
     {"Array", l_new_Array},
+#ifdef HAVE_STRUCTTREEROOT_H
+    {"Attribute",          l_new_Attribute},
+    {"StructElement_Type", l_StructElement_Type},
+    {"Attribute_Type",     l_Attribute_Type},
+    {"AttributeOwner_Type",l_AttributeOwner_Type},
+#endif
     {"Dict", l_new_Dict},
     {"Object", l_new_Object},
     {"PDFRectangle", l_new_PDFRectangle},
@@ -241,6 +432,25 @@ static int m_##in##_##function(lua_State * L)                  \
     lua_pushinteger(L, i);                                     \
     return 1;                                                  \
 }
+
+
+#define m_poppler_get_GUINT(in, function)                      \
+static int m_##in##_##function(lua_State * L)                  \
+{                                                              \
+    unsigned int i;                                            \
+    udstruct *uin;                                             \
+    uin = (udstruct *) luaL_checkudata(L, 1, M_##in);          \
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)             \
+        pdfdoc_changed_error(L);                               \
+    i = (unsigned int) ((in *) uin->d)->function();            \
+    lua_pushinteger(L, i);                                     \
+    return 1;                                                  \
+}
+
+#define m_poppler_get_UINT(in, function)                       \
+m_poppler_get_GUINT(in, function)                      
+
+
 
 #define m_poppler_get_DOUBLE(in, function)                     \
 static int m_##in##_##function(lua_State * L)                  \
@@ -1875,7 +2085,8 @@ static int m_Object__gc(lua_State * L)
     printf("\n===== Object GC ===== uin=<%p>\n", uin);
 #endif
     if (uin->atype == ALLOC_LEPDF) {
-        ((Object *) uin->d)->free();
+      // free() seems to collide with the lua gc
+      //((Object *) uin->d)->free();
         delete(Object *) uin->d;
     }
     return 0;
@@ -2532,6 +2743,562 @@ static const struct luaL_Reg Stream_m[] = {
     {NULL, NULL}                // sentinel
 };
 
+#ifdef HAVE_STRUCTTREEROOT_H
+//**********************************************************************
+// TextSpan
+
+m_poppler_get_GOOSTRING(TextSpan, getText);                  
+m_poppler__tostring(TextSpan);
+
+static const struct luaL_Reg TextSpan_m[] = {
+    {"getText", m_TextSpan_getText},
+    {"__tostring", m_TextSpan__tostring},
+    {NULL, NULL}                // sentinel
+};
+
+
+
+
+//**********************************************************************
+// Attribute
+m_poppler_get_BOOL(Attribute,isOk);
+m_poppler_get_INT(Attribute,getType);
+m_poppler_get_INT(Attribute,getOwner);
+m_poppler_get_GOOSTRING(Attribute,getName);
+
+static int m_Attribute_getTypeName(lua_State * L)
+{
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    lua_pushstring(L, ((Attribute *) uin->d)->getTypeName());
+    return 1;
+}
+
+static int m_Attribute_getOwnerName(lua_State * L)
+{
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    lua_pushstring(L, ((Attribute *) uin->d)->getOwnerName());
+    return 1;
+}
+
+static int m_Attribute_getValue(lua_State * L)
+{
+    udstruct *uin, *uout;
+    Object *origin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    uout = new_Object_userdata(L);
+    uout->d = new Object();
+    origin = (Object *) (((Attribute *) uin->d)->getValue());
+    origin->copy ( ((Object *)uout->d) );
+    uout->atype = ALLOC_LEPDF;
+    uout->pc = uin->pc;
+    uout->pd = uin->pd;
+    return 1;
+}
+
+
+static int m_Attribute_getDefaultValue(lua_State * L)
+{
+    Attribute::Type t;
+    udstruct *uin, *uout;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    t = (Attribute::Type) luaL_checkint(L, 2);
+    uout = new_Object_userdata(L);
+    uout->d = ((Attribute *)uin->d)->getDefaultValue(t)  ; 
+    //uout->atype = ALLOC_LEPDF;
+    uout->pc = uin->pc;
+    uout->pd = uin->pd;
+    return 1;
+}
+
+
+m_poppler_get_GUINT(Attribute,getRevision);
+
+static int m_Attribute_setRevision(lua_State * L)
+{
+    Guint i;
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (Guint) luaL_checkint(L, 2);
+    ((Attribute *) uin->d)->setRevision(i);
+    return 0;
+}
+
+m_poppler_get_BOOL(Attribute, isHidden);
+
+static int m_Attribute_setHidden(lua_State * L)
+{
+    GBool i;
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (GBool) lua_toboolean(L, 2);
+    ((Attribute *) uin->d)->setHidden(i);
+    return 0;
+}
+
+static int m_Attribute_getFormattedValue(lua_State * L)
+{
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    lua_pushstring(L, ((Attribute *) uin->d)->getFormattedValue());
+    return 1;
+}
+
+
+static int m_Attribute_setFormattedValue(lua_State * L)
+{
+    const char *c;
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    c = luaL_checkstring(L, 2);
+    ((Attribute *) uin->d)->setFormattedValue(c);
+    return 0;
+}
+
+static int m_Attribute__gc(lua_State * L)
+{
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_Attribute);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+#ifdef DEBUG
+    printf("\n===== Attribute GC ===== uin=<%p>\n", uin);
+#endif
+    if (uin->atype == ALLOC_LEPDF) {
+        delete(Attribute *) uin->d;
+    }
+    return 0;
+}
+
+
+m_poppler__tostring(Attribute);
+
+
+static const struct luaL_Reg Attribute_m[] = {
+  {"isOk",m_Attribute_isOk},
+  {"getType",m_Attribute_getType},
+  {"getOwner",m_Attribute_getOwner},
+  {"getTypeName",m_Attribute_getTypeName},
+  {"getOwnerName",m_Attribute_getOwnerName},
+  {"getValue",m_Attribute_getValue},
+  {"getDefaultValue",m_Attribute_getDefaultValue},
+  {"getName",m_Attribute_getName},
+  {"getRevision",m_Attribute_getRevision},
+  {"setRevision",m_Attribute_setRevision},
+  {"istHidden",m_Attribute_isHidden},
+  {"setHidden",m_Attribute_setHidden},
+  {"getFormattedValue",m_Attribute_getFormattedValue},
+  {"setFormattedValue",m_Attribute_setFormattedValue},
+  {"__gc", m_Attribute__gc},
+  {"__tostring", m_Attribute__tostring},
+  {NULL, NULL}                // sentinel
+};
+
+
+
+
+//**********************************************************************
+// StructElement
+
+
+m_poppler_get_INT(StructElement,getType);
+m_poppler_get_BOOL(StructElement,isOk);
+m_poppler_get_BOOL(StructElement,isBlock);
+m_poppler_get_BOOL(StructElement,isInline);
+m_poppler_get_BOOL(StructElement,isGrouping);
+m_poppler_get_BOOL(StructElement,isContent);
+m_poppler_get_BOOL(StructElement,isObjectRef);
+m_poppler_get_BOOL(StructElement,hasPageRef);
+m_poppler_get_INT(StructElement,getMCID);
+m_poppler_get_INT(StructElement, getNumChildren);
+
+m_poppler_get_GUINT(StructElement,getRevision);
+m_poppler_get_UINT(StructElement,getNumAttributes);
+
+m_poppler_get_GOOSTRING(StructElement, getID);                  
+m_poppler_get_GOOSTRING(StructElement, getLanguage);                  
+m_poppler_get_GOOSTRING(StructElement, getTitle);                  
+m_poppler_get_GOOSTRING(StructElement, getExpandedAbbr);
+m_poppler_get_GOOSTRING(StructElement, getAltText);                  
+m_poppler_get_GOOSTRING(StructElement, getActualText);                  
+
+m_poppler_get_poppler(StructElement, StructTreeRoot, getStructTreeRoot);
+m_poppler__tostring(StructElement);
+
+
+static int m_StructElement_getObjectRef(lua_State * L)
+{
+    udstruct *uin, *uout;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    uout = new_Ref_userdata(L);
+    uout->d = (Ref *) gmalloc(sizeof(Ref));
+    ((Ref *) uout->d)->num = ((StructElement *) uin->d)->getObjectRef().num;
+    ((Ref *) uout->d)->gen = ((StructElement *) uin->d)->getObjectRef().gen;
+    uout->atype = ALLOC_LEPDF;
+    uout->pc = uin->pc;
+    uout->pd = uin->pd;
+    return 1;
+}
+
+
+static int m_StructElement_getParentRef(lua_State * L)
+{
+    udstruct *uin, *uout;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    uout = new_Ref_userdata(L);
+    uout->d = (Ref *) gmalloc(sizeof(Ref));
+    ((Ref *) uout->d)->num = ((StructElement *) uin->d)->getParentRef().num;
+    ((Ref *) uout->d)->gen = ((StructElement *) uin->d)->getParentRef().gen;
+    uout->atype = ALLOC_LEPDF;
+    uout->pc = uin->pc;
+    uout->pd = uin->pd;
+    return 1;
+}
+
+// Not exactly as the header: 
+// Ref = StructElement:getPageRef()
+// Ref is false if the C++ functione return false
+static int m_StructElement_getPageRef(lua_State * L)
+{
+    GBool b;
+    Ref *r;
+    udstruct *uin, *uout;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    r = (Ref *) gmalloc(sizeof(Ref));
+    b = ((StructElement *) uin->d)->getPageRef( *r );
+    if (b) {
+      uout = new_Ref_userdata(L);
+      uout->d = r ;
+      //uout->atype = ALLOC_LEPDF;
+      uout->pc = uin->pc;
+      uout->pd = uin->pd;
+    } else
+      lua_pushboolean(L,0);
+    return 1;
+}
+
+
+
+static int m_StructElement_getTypeName(lua_State * L)
+{
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    lua_pushstring(L, ((StructElement *) uin->d)->getTypeName());
+    return 1;
+}
+
+
+static int m_StructElement_setRevision(lua_State * L)
+{
+    Guint i;
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (Guint) luaL_checkint(L, 2);
+    ((StructElement *) uin->d)->setRevision(i);
+    return 0;
+}
+
+static int m_StructElement_getText(lua_State * L)
+{
+    GBool i;
+    GooString *gs;                                             
+    udstruct *uin;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (GBool) lua_toboolean(L, 2);
+    gs =  ((StructElement *) uin->d)->getText(i);
+    if (gs != NULL)                                            
+        lua_pushlstring(L, gs->getCString(), gs->getLength()); 
+    else                                                       
+        lua_pushnil(L);                                        
+    return 1;
+}
+
+
+static int m_StructElement_getChild(lua_State * L)
+{
+    StructElement *c;
+    int i;
+    udstruct *uin, *uout;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (int) luaL_checkint(L, 2);
+    c =  ((StructElement *) uin->d)->getChild(i-1);
+    if (c != NULL) {                                           
+      uout = new_StructElement_userdata(L);
+      uout->d = c ;
+      //uout->atype = ALLOC_LEPDF;
+      uout->pc = uin->pc;
+      uout->pd = uin->pd;
+    }  
+    else                                                       
+        lua_pushnil(L);                                        
+    return 1;
+}
+
+
+static int m_StructElement_appendChild(lua_State * L)
+{
+    udstruct *uin, *uin1;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    uin1 = (udstruct *) luaL_checkudata(L, 2, M_StructElement);
+    if (uin1->pd != NULL && uin1->pd->pc != uin1->pc)
+        pdfdoc_changed_error(L);
+    ((StructElement *) uin->d)->appendChild( (StructElement *)uin1->d );
+    return 0;
+}
+
+
+static int m_StructElement_getAttribute(lua_State * L)
+{
+    Attribute *a;
+    int i;
+    udstruct *uin, *uout;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (int) luaL_checkint(L, 2);
+    a =  ((StructElement *) uin->d)->getAttribute(i-1);
+    if (a != NULL) {                                           
+      uout = new_Attribute_userdata(L);
+      uout->d = a ;
+      uout->pc = uin->pc;
+      uout->pd = uin->pd;
+    }  
+    else                                                       
+        lua_pushnil(L);                                        
+    return 1;
+}
+
+
+
+static int m_StructElement_appendAttribute(lua_State * L)
+{
+
+    udstruct *uin, *uin1;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    uin1 = (udstruct *) luaL_checkudata(L, 2, M_Attribute);
+    if (uin1->pd != NULL && uin1->pd->pc != uin1->pc)
+        pdfdoc_changed_error(L);
+    ((StructElement *) uin->d)->appendAttribute( (Attribute *)uin1->d );
+    return 0;
+}
+
+
+static int m_StructElement_findAttribute(lua_State * L)
+{
+    Attribute::Type t;
+    Attribute::Owner o;
+    GBool g;
+    udstruct *uin, *uout;
+    const Attribute *a;
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    t = (Attribute::Type) luaL_checkint(L,1);
+    o = (Attribute::Owner) luaL_checkint(L,2);
+    g = (GBool) lua_toboolean(L, 3);
+    a = ((StructElement *) uin->d)->findAttribute(t,g,o);
+   
+    if (a!=NULL){
+      uout = new_Attribute_userdata(L);
+      uout->d = new Attribute(a->getType(),a->getValue());
+      uout->atype = ALLOC_LEPDF;
+      uout->pc = uin->pc;
+      uout->pd = uin->pd;
+    } else 
+        lua_pushnil(L);                                        
+    return 1;
+}
+
+// This returns a lua table
+static int m_StructElement_getTextSpans(lua_State * L)
+{
+    int i ;
+    udstruct *uin, *uout;                                      
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructElement);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)             
+        pdfdoc_changed_error(L);                               
+    
+    if ((((StructElement *) uin->d)->getTextSpans()).size()>0) {
+      lua_createtable (L, 
+		       (int) (((StructElement *) uin->d)->getTextSpans()).size(), 
+		       0);
+      for(i=0;i<(int) (((StructElement *) uin->d)->getTextSpans()).size(); i++){
+	uout = new_TextSpan_userdata(L);
+	uout->d = new TextSpan( (((StructElement *) uin->d)->getTextSpans())[i] );
+	uout->atype = ALLOC_LEPDF;
+	uout->pc = uin->pc;
+	uout->pd = uin->pd;
+	lua_rawseti(L,-2,i+1);
+      }  
+    } else                                                     
+      lua_pushnil(L);                                        
+    return 1;
+}
+
+
+
+static const struct luaL_Reg StructElement_m[] = {
+  {"getTypeName", m_StructElement_getTypeName},
+  {"getType",m_StructElement_getType},
+  {"isOk",m_StructElement_isOk},
+  {"isBlock",m_StructElement_isBlock},
+  {"isInline",m_StructElement_isInline},
+  {"isGrouping",m_StructElement_isGrouping},
+  {"isContent",m_StructElement_isContent},
+  {"isObjectRef",m_StructElement_isObjectRef},
+  {"getMCID",m_StructElement_getMCID},
+  {"getObjectRef",m_StructElement_getObjectRef},
+  {"getParentRef",m_StructElement_getParentRef},
+  {"hasPageRef",m_StructElement_hasPageRef},
+  {"getPageRef",m_StructElement_getPageRef},
+  {"getStructTreeRoot",m_StructElement_getStructTreeRoot},
+  {"getID",m_StructElement_getID},
+  {"getLanguage",m_StructElement_getLanguage},
+  {"getRevision",m_StructElement_getRevision},
+  {"setRevision",m_StructElement_setRevision},
+  {"getTitle",m_StructElement_getTitle},
+  {"getExpandedAbbr",m_StructElement_getExpandedAbbr},
+  {"getNumChildren",m_StructElement_getNumChildren},
+  {"getChild",m_StructElement_getChild},
+  {"appendChild",m_StructElement_appendChild},
+  {"getNumAttributes",m_StructElement_getNumAttributes},
+  {"getAttribute",m_StructElement_getAttribute},
+  {"appendAttribute",m_StructElement_appendAttribute},
+  {"findAttribute",m_StructElement_findAttribute},
+  {"getAltText",m_StructElement_getAltText},
+  {"getActualText",m_StructElement_getActualText},
+  {"getText",m_StructElement_getText},
+  {"getTextSpans",m_StructElement_getTextSpans},
+  {"__tostring", m_StructElement__tostring},
+  {NULL, NULL}                // sentinel
+};
+
+
+//**********************************************************************
+// StructTreeRoot
+
+m_poppler_get_INT(StructTreeRoot, getNumChildren);
+m_poppler_get_poppler(StructTreeRoot, PDFDoc, getDoc);
+m_poppler_get_poppler(StructTreeRoot, Dict, getRoleMap);
+m_poppler_get_poppler(StructTreeRoot, Dict, getClassMap);
+m_poppler__tostring(StructTreeRoot);
+
+static int m_StructTreeRoot_getChild(lua_State * L)
+{
+    unsigned int i;
+    udstruct *uin, *uout;
+    StructElement *child ;
+    StructTreeRoot *root ; 
+    
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructTreeRoot);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (unsigned) luaL_checkint(L, 2);
+    root = (StructTreeRoot *) uin->d;
+    if (i-1 < root->getNumChildren() ){
+       child = root->getChild(i-1);
+       uout = new_StructElement_userdata(L);
+       uout->d = child;
+       //uout->atype = ALLOC_LEPDF;
+       uout->pc = uin->pc;
+       uout->pd = uin->pd;
+    } else
+      lua_pushnil(L);
+    return 1;
+}
+
+static int m_StructTreeRoot_appendChild(lua_State * L)
+{
+    udstruct *uin, *uin_child, *uout;
+    StructElement *child ;
+    StructTreeRoot *root ; 
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructTreeRoot);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    uin_child = (udstruct *) luaL_checkudata(L, 2, M_StructElement);
+    if (uin_child->pd != NULL && uin_child->pd->pc != uin_child->pc)
+        pdfdoc_changed_error(L);
+    root = (StructTreeRoot *) uin->d;
+    child = (StructElement *) uin_child->d;
+    root->appendChild(child);
+    return 0;
+}
+
+
+static int m_StructTreeRoot_findParentElement(lua_State * L)
+{
+    unsigned int i;
+    udstruct *uin,  *uout;
+    const StructElement *parent ;
+    StructTreeRoot *root ; 
+    
+    uin = (udstruct *) luaL_checkudata(L, 1, M_StructTreeRoot);
+    if (uin->pd != NULL && uin->pd->pc != uin->pc)
+        pdfdoc_changed_error(L);
+    i = (unsigned) luaL_checkint(L, 2);
+    root = (StructTreeRoot *) uin->d;
+    parent = root->findParentElement(i-1);
+    if (parent != NULL) {
+       uout = new_StructElement_userdata(L);
+       uout->d = new StructElement( *parent );
+       uout->atype = ALLOC_LEPDF;
+       uout->pc = uin->pc;
+       uout->pd = uin->pd;
+    } else 
+      lua_pushnil(L);
+    return 1;
+}
+
+
+static const struct luaL_Reg StructTreeRoot_m[] = {
+  {"findParentElement", m_StructTreeRoot_findParentElement},
+  {"getDoc",m_StructTreeRoot_getDoc},
+  {"getRoleMap",m_StructTreeRoot_getRoleMap},
+  {"getClassMap",m_StructTreeRoot_getClassMap},
+  {"getNumChildren",m_StructTreeRoot_getNumChildren},
+  {"getChild",m_StructTreeRoot_getChild},
+  {"appendChild",m_StructTreeRoot_appendChild},
+  {"findParentElement",m_StructTreeRoot_findParentElement},
+  {"__tostring", m_StructTreeRoot__tostring},
+  {NULL, NULL}                // sentinel
+};
+#endif
+
 //**********************************************************************
 // XRef
 
@@ -2667,6 +3434,12 @@ int luaopen_epdf(lua_State * L)
     setfuncs_meta(PDFRectangle);
     setfuncs_meta(Ref);
     setfuncs_meta(Stream);
+#ifdef HAVE_STRUCTTREEROOT_H
+    setfuncs_meta(Attribute);
+    setfuncs_meta(StructElement);
+    setfuncs_meta(StructTreeRoot);
+    setfuncs_meta(TextSpan);
+#endif
     setfuncs_meta(XRef);
     setfuncs_meta(XRefEntry);
 

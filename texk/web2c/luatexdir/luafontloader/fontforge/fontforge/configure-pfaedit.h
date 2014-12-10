@@ -289,4 +289,13 @@
 /*  fonts */
 #define BACK_LAYER_MAX	256
 
+
+
+#ifdef __MINGW32__
+#include <stdio.h>
+extern FILE *_cairo_win32_tmpfile( void );
+#define tmpfile() _cairo_win32_tmpfile()
+#endif /* __MINGW32__ */
+
+
 #endif

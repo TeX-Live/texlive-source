@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatexcallbackids.h 4956 2014-03-28 12:12:17Z luigi $ */
+/* $Id: luatexcallbackids.h 5081 2014-11-07 18:38:33Z luigi $ */
 
 #ifndef LUATEXCALLBACKIDS_H
 #define LUATEXCALLBACKIDS_H
@@ -62,6 +62,7 @@ typedef enum {
     pre_dump_callback,
     start_file_callback, stop_file_callback,
     show_error_message_callback,show_lua_error_hook_callback,
+    pdf_stream_filter_callback,
     total_callbacks
 } callback_callback_types;
 

@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: errors.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: errors.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/errors.w $";
 
 #include "ptexlib.h"
@@ -60,7 +60,7 @@ char *last_error = NULL;
 int err_old_setting = 0 ;
 int in_error = 0 ;
 
-static void flush_err(void)
+void flush_err(void)
 {
     str_number s_error;
     char *s = NULL;

@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: filename.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/filename.w $";
+    "$Id: filename.w 5081 2014-11-07 18:38:33Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/filename.w $";
 
 #include "ptexlib.h"
 
@@ -236,6 +236,7 @@ char *prompt_file_name(const char *s, const char *e)
 {
     int k;                      /* index into |buffer| */
     str_number saved_cur_name;  /* to catch empty terminal input */
+    int callback_id ;
     char prompt[256];
     char *ar, *na, *ex;
     saved_cur_name = cur_name;
@@ -254,10 +255,16 @@ char *prompt_file_name(const char *s, const char *e)
     free(na);
     free(ex);
     print_err(prompt);
-    if ((strcmp(e, ".tex") == 0) || (strcmp(e, "") == 0))
-        show_context();
-    if (strcmp(s, "input file name") == 0)
-        tprint_nl(promptfilenamehelpmsg ")");
+    callback_id = callback_defined(show_error_hook_callback);
+    if (callback_id > 0) {
+        flush_err();
+        run_callback(callback_id, "->");
+    } else {
+        if ((strcmp(e, ".tex") == 0) || (strcmp(e, "") == 0))
+            show_context();
+        if (strcmp(s, "input file name") == 0)
+            tprint_nl(promptfilenamehelpmsg ")");
+    }
     tprint_nl("Please type another ");
     tprint(s);
     if (interaction < scroll_mode)
@@ -282,6 +289,7 @@ char *prompt_file_name(const char *s, const char *e)
         cur_name = saved_cur_name;
     return pack_file_name(cur_name, cur_area, cur_ext);
 }
+
 
 @ @c
 void tprint_file_name(unsigned char *n, unsigned char *a, unsigned char *e)

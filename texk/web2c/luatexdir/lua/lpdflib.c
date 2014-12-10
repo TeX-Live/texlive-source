@@ -18,7 +18,7 @@
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
 static const char _svn_version[] =
-    "$Id: lpdflib.c 4956 2014-03-28 12:12:17Z luigi $ "
+    "$Id: lpdflib.c 5018 2014-06-06 09:11:09Z taco $ "
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lpdflib.c $";
 
 #include "ptexlib.h"
@@ -576,8 +576,10 @@ static int getpdf(lua_State * L)
         s =  lua_tostring(L, -1);
         if (lua_key_eq(s,h)) {
             lua_pushnumber(L, static_pdf->posstruct->pos.h);
+	    return 1;
         } else if (lua_key_eq(s,v)) {
             lua_pushnumber(L, static_pdf->posstruct->pos.v);
+	    return 1;
         } else if (
                 lua_key_eq(s,catalog) || lua_key_eq(s,info) || lua_key_eq(s,trailer) || lua_key_eq(s,names) ||
                 lua_key_eq(s,pageattributes) || lua_key_eq(s,pagesattributes) || lua_key_eq(s,pageresources)
@@ -587,9 +589,10 @@ static int getpdf(lua_State * L)
             /* [pdf table] [key] [pdf.data table] */
             lua_replace(L, -3);
             /* [pdf.data table] [key] */
+	    lua_rawget(L, -2);
+	    return 1;
         }
     }
-    lua_rawget(L, -2);
     return 0;
 }
 

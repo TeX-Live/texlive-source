@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writefont.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: writefont.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writefont.w $";
 
 #include "ptexlib.h"
@@ -426,6 +426,9 @@ static void register_fo_entry(fo_entry * fo)
 static void write_fontfile(PDF pdf, fd_entry * fd)
 {
     assert(is_included(fd->fm));
+    /* In principle we could replace the pdftex derived ttf.otf inclusion part */
+    /* by using the regular code for this and assigning indices and tounicodes */
+    /* to the character blobs, but for the moment we keep the current approach */
     if (is_cidkeyed(fd->fm)) {
         if (is_opentype(fd->fm))
             writetype0(pdf, fd);

@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: scanning.w 4877 2014-03-14 01:26:05Z luigi $"
+    "$Id: scanning.w 5009 2014-05-26 07:49:59Z taco $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/scanning.w $";
 
 #include "ptexlib.h"
@@ -2089,7 +2089,7 @@ halfword scan_toks(boolean macro_def, boolean xpand)
                         sprint_cs(warning_index);
                         help3("You meant to type ## instead of #, right?",
                               "Or maybe a } was forgotten somewhere earlier, and things",
-                              "are all screwed up? I''m going to assume that you meant ##.");
+                              "are all screwed up? I'm going to assume that you meant ##.");
                         back_error();
                         cur_tok = s;
                     } else {

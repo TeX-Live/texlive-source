@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: nesting.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/nesting.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/nesting.w $";
 
 #include "ptexlib.h"
 

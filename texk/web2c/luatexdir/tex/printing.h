@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: printing.h 4722 2014-01-03 09:32:35Z taco $ */
+/* $Id: printing.h 5002 2014-05-20 09:14:16Z taco $ */
 
 #ifndef PRINTING_H
 #  define PRINTING_H
@@ -60,6 +60,7 @@ by changing |wterm|, |wterm_ln|, and |wterm_cr| in this section.
 extern void print_ln(void);
 extern void print_char(int s);
 extern void print(int s);
+extern void lprint (lstring *ss);
 extern void print_nl(str_number s);
 extern void print_nlp(void);
 extern void print_banner(const char *, int);

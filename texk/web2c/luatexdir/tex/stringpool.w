@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: stringpool.w 4634 2013-04-21 14:45:45Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/stringpool.w $";
+    "$Id: stringpool.w 4599 2013-03-19 15:41:07Z taco $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/stringpool.w $";
 
 #include "ptexlib.h"
 

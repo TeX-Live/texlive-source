@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: unistring.h 4634 2013-04-21 14:45:45Z hhenkel $ */
+/* $Id: unistring.h 5074 2014-10-24 16:57:38Z oneiros $ */
 
 #ifndef UNISTRING_H
 #  define UNISTRING_H

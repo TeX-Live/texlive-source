@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: errors.h 4956 2014-03-28 12:12:17Z luigi $ */
+/* $Id: errors.h 5081 2014-11-07 18:38:33Z luigi $ */
 
 #ifndef ERRORS_H
 #  define ERRORS_H
@@ -97,6 +97,7 @@ extern void tex_error(const char *msg, const char **hlp);
 
 extern void back_error(void);
 extern void ins_error(void);
+extern void flush_err(void);
 
 extern void char_warning(internal_font_number f, int c);
 

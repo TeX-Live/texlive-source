@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfgen.h 4956 2014-03-28 12:12:17Z luigi $ */
+/* $Id: pdfgen.h 5081 2014-11-07 18:38:33Z luigi $ */
 
 #ifndef PDFGEN_H
 #  define PDFGEN_H
@@ -197,6 +197,7 @@ extern char *get_resname_prefix(PDF);
 extern void pdf_begin_page(PDF pdf);
 extern void pdf_end_page(PDF pdf);
 extern void print_pdf_table_string(PDF pdf, const char *s);
+extern const char *get_pdf_table_string(const char *s);
 extern int get_pdf_table_bool(PDF, const char *, int);
 
 extern void fix_o_mode(PDF pdf);

@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: packaging.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$Id: packaging.w 5023 2014-06-18 08:22:44Z taco $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/packaging.w $";
 
 #include "ptexlib.h"
@@ -1216,10 +1216,14 @@ void package(int c)
     halfword p;                 /* first node in a box */
     scaled d;                   /* max depth */
     int grp;
+    halfword saved0, saved2, saved3;
     grp = cur_group;
     d = box_max_depth;
     unsave();
     save_ptr -= 4;
+    saved0 = saved_value(0);
+    saved2 = saved_value(2);
+    saved3 = saved_value(3);
     if (cur_list.mode_field == -hmode) {
         cur_box = filtered_hpack(cur_list.head_field,
                                  cur_list.tail_field, saved_value(1),
@@ -1246,15 +1250,15 @@ void package(int c)
 
         }
     }
-    if (saved_value(2) != null) {
+    if (saved2 != null) {
         /* DIR: Adjust back |text_dir_ptr| for |scan_spec| */
         flush_node_list(text_dir_ptr);
-        text_dir_ptr = saved_value(2);
+        text_dir_ptr = saved2;
 
     }
-    replace_attribute_list(cur_box, saved_value(3));
+    replace_attribute_list(cur_box, saved3);
     pop_nest();
-    box_end(saved_value(0));
+    box_end(saved0);
 }
 
 

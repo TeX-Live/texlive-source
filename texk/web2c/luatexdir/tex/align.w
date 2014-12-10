@@ -21,7 +21,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: align.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: align.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/align.w $";
 
 #include "ptexlib.h"
@@ -1135,6 +1135,7 @@ value is changed to zero and so is the next tabskip.
     if (cur_list.mode_field == mmode) {
         finish_display_alignment(p, q, pd);
     } else {
+	cur_list.prev_depth_field = pd; /* aux:=aux_save; */
         vlink(cur_list.tail_field) = p;
         if (p != null)
             cur_list.tail_field = q;

@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: subfont.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: subfont.w 5017 2014-06-05 15:11:19Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/subfont.w $";
 
 #include "ptexlib.h"
@@ -40,7 +40,7 @@ static int sfd_curbyte = 0;
 
 #define sfd_read_file() readbinfile(sfd_file,&sfd_buffer,&sfd_size)
 #define sfd_getchar()   sfd_buffer[sfd_curbyte++]
-#define sfd_eof()      (sfd_curbyte>sfd_size)
+#define sfd_eof()      (sfd_curbyte>=sfd_size)
 
 
 static FILE *sfd_file;
@@ -102,9 +102,11 @@ static void sfd_getline(boolean expect_eof)
     char c;
   restart:
     if (sfd_eof()) {
-        if (expect_eof)
+        if (expect_eof) {
+            if (*sfd_line == '#')
+                *sfd_line = 10;
             return;
-        else
+        } else
             luatex_fail("unexpected end of file");
     }
     p = sfd_line;

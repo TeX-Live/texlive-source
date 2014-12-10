@@ -19,13 +19,20 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: dumpdata.w 4563 2013-01-21 03:22:53Z khaled $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/dumpdata.w $";
+    "$Id: dumpdata.w 5081 2014-11-07 18:38:33Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/dumpdata.w $";
 
 #include "ptexlib.h"
 
 #define font_id_text(A) cs_text(font_id_base+(A))
 #define prev_depth cur_list.prev_depth_field
+
+/* 907 = sum of the values of the bytes of "don knuth" */
+/* The next FORMAT_ID will be 907+1               */
+#define FORMAT_ID (907+0)  
+#if ((FORMAT_ID>=0) && (FORMAT_ID<=256))
+#error Wrong value for FORMAT_ID.
+#endif
 
 
 @ After \.{INITEX} has seen a collection of fonts and macros, it
@@ -42,8 +49,10 @@ after the |banner| line when \TeX\ is ready to start. For \.{INITEX} this
 string says simply `\.{(INITEX)}'; for other versions of \TeX\ it says,
 for example, `\.{(preloaded format=plain 1982.11.19)}', showing the year,
 month, and day that the format file was created. We have |format_ident=0|
-before \TeX's tables are loaded.
-
+before \TeX's tables are loaded. |FORMAT_ID| is a new field of type int 
+suitable for the identification of a format: values between 0 and 256 
+(included) can not be used because in the previous format they are used
+for the length of  the name of the engine.
 @c
 str_number format_ident;
 str_number format_name;         /* principal file name */
@@ -114,6 +123,8 @@ void store_fmt_file(void)
        dump/undump macros. */
 
     dump_int(0x57325458);       /* Web2C \TeX's magic constant: "W2TX" */
+    dump_int(FORMAT_ID);       
+
     /* Align engine to 4 bytes with one or more trailing NUL */
     x = (int) strlen(engine_name);
     format_engine = xmalloc((unsigned) (x + 4));
@@ -368,11 +379,17 @@ boolean load_fmt_file(const char *fmtname)
     format_debug("format magic number", x);
     if (x != 0x57325458)
         goto BAD_FMT;           /* not a format file */
+
+    undump_int(x);
+    format_debug("format id", x);
+    if (x != FORMAT_ID)
+        goto BAD_FMT;           /* FORMAT_ID mismatch */
+
     undump_int(x);
     format_debug("engine name size", x);
     if ((x < 0) || (x > 256))
         goto BAD_FMT;           /* corrupted format file */
-
+ 
     format_engine = xmalloc((unsigned) x);
     undump_things(format_engine[0], x);
     format_engine[x - 1] = 0;   /* force string termination, just in case */

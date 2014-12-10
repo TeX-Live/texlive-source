@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: luafont.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: luafont.w 5064 2014-10-13 12:47:11Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/luafont.w $";
 
 #include "ptexlib.h"
@@ -173,18 +173,24 @@ static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * c
     lua_pushnumber(L, get_charinfo_depth(co));
     lua_rawset(L, -3);
 
-    lua_pushstring(L, "italic");
-    lua_pushnumber(L, get_charinfo_italic(co));
-    lua_rawset(L, -3);
 
-    lua_pushstring(L, "top_accent");
-    lua_pushnumber(L, get_charinfo_top_accent(co));
-    lua_rawset(L, -3);
+    if (get_charinfo_italic(co) != 0) {
+       lua_pushstring(L, "italic");
+       lua_pushnumber(L, get_charinfo_italic(co));
+       lua_rawset(L, -3);
+    }
 
-    lua_pushstring(L, "bot_accent");
-    lua_pushnumber(L, get_charinfo_bot_accent(co));
-    lua_rawset(L, -3);
+    if (get_charinfo_top_accent(co) !=0) {
+       lua_pushstring(L, "top_accent");
+       lua_pushnumber(L, get_charinfo_top_accent(co));
+       lua_rawset(L, -3);
+    }
 
+    if (get_charinfo_bot_accent(co) != 0) {
+       lua_pushstring(L, "bot_accent")	;
+       lua_pushnumber(L, get_charinfo_bot_accent(co));
+       lua_rawset(L, -3);
+    }      
 
     if (get_charinfo_ef(co) != 0) {
         lua_pushstring(L, "expansion_factor");
@@ -198,12 +204,11 @@ static void font_char_to_lua(lua_State * L, internal_font_number f, charinfo * c
         lua_rawset(L, -3);
     }
 
-    if (get_charinfo_lp(co) != 0) {
+    if (get_charinfo_rp(co) != 0) {
         lua_pushstring(L, "right_protruding");
         lua_pushnumber(L, get_charinfo_rp(co));
         lua_rawset(L, -3);
     }
-
 
     if (font_encodingbytes(f) == 2) {
         lua_pushstring(L, "index");
@@ -1441,6 +1446,7 @@ int font_from_lua(lua_State * L, int f)
         i = maketexstring(s);
         set_pdf_font_attr(f, i);
     }
+    free(s);
 
     i = n_enum_field(L, lua_key_index(type), unknown_font_type, font_type_strings);
     set_font_type(f, i);
@@ -1480,6 +1486,8 @@ int font_from_lua(lua_State * L, int f)
                 /* } */
                 /* lua_pop(L, 1);  /\* pop name *\/ */
 		ss = n_string_field(L, lua_key_index(name));
+                /* string is anchored */
+                lua_pop(L,1);
             }
             if (ss != NULL) {
                 /* lua_getfield(L, -1, "size"); */

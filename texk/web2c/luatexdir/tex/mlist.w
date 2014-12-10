@@ -24,7 +24,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mlist.w 4804 2014-02-12 14:41:14Z luigi $"
+    "$Id: mlist.w 5033 2014-07-05 00:36:59Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.w $";
 
 #include "ptexlib.h"
@@ -1021,6 +1021,7 @@ try_couple_nodes(p,list_ptr(b));
     }
 }
 
+
 static void stack_glue_into_box(pointer b, scaled min, scaled max) {
     pointer p, q;               /* new node placed into |b| */
     q = new_spec(zero_glue);
@@ -1029,10 +1030,8 @@ static void stack_glue_into_box(pointer b, scaled min, scaled max) {
     p = new_glue(q);
     reset_attributes(p, node_attr(b));
     if (type(b) == vlist_node) {
-//        vlink(p) = list_ptr(b);
-try_couple_nodes(p,list_ptr(b));
+        try_couple_nodes(p,list_ptr(b));
         list_ptr(b) = p;
-        height(b) = height(p);
     } else {
         q = list_ptr(b);
         if (q == null) {
@@ -1042,10 +1041,6 @@ try_couple_nodes(p,list_ptr(b));
                 q = vlink(q);
             couple_nodes(q,p);
         }
-        if (height(b) < height(p))
-            height(b) = height(p);
-        if (depth(b) < depth(p))
-            depth(b) = depth(p);
     }
 }
 
@@ -2539,7 +2534,7 @@ static void make_ord(pointer q)
                                 type(nucleus(r)) = math_text_char_node; /* prevent combination */
                             break;
                         default:
-                            couple_nodes(q,vlink(p));
+                            try_couple_nodes(q,vlink(p));
                             math_character(nucleus(q)) = lig_replacement(lig);  /* \.{=:} */
                             s = math_clone(subscr(p));
                             subscr(q) = s;
