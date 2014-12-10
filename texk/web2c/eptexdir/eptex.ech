@@ -19,7 +19,7 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-141119'
+@d epTeX_version_string=='-141210'
 @z
 
 @x e-pTeX: banner
@@ -322,9 +322,42 @@ last_node_type_code: print_esc("lastnodetype");
 last_node_char_code: print_esc("lastnodechar");
 @z
 @x e-pTeX: font_char_{wd,ht,dp,ic}_code l.27306
+  if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
     begin i:=char_info(q)(qi(cur_val));
+    case m of
+    font_char_wd_code: cur_val:=char_width(q)(i);
+    font_char_ht_code: cur_val:=char_height(q)(height_depth(i));
+    font_char_dp_code: cur_val:=char_depth(q)(height_depth(i));
+    font_char_ic_code: cur_val:=char_italic(q)(i);
+    end; {there are no other cases}
+    end
+  else cur_val:=0;
+  end;
 @y
+  if font_dir[q]<>dir_default then {Japanese font}
+    begin if cur_val>=256 then {Japanese Character}
+      begin cur_val:=get_jfm_pos(KANJI(cur_val),q);
+      i:=orig_char_info(q)(qi(cur_val));
+      case m of
+      font_char_wd_code: cur_val:=char_width(q)(i);
+      font_char_ht_code: cur_val:=char_height(q)(height_depth(i));
+      font_char_dp_code: cur_val:=char_depth(q)(height_depth(i));
+      font_char_ic_code: cur_val:=char_italic(q)(i);
+      end; {there are no other cases}
+      end
+    else cur_val:=0;
+    end
+  else if (font_bc[q]<=cur_val)and(font_ec[q]>=cur_val) then
     begin i:=orig_char_info(q)(qi(cur_val));
+    case m of
+    font_char_wd_code: cur_val:=char_width(q)(i);
+    font_char_ht_code: cur_val:=char_height(q)(height_depth(i));
+    font_char_dp_code: cur_val:=char_depth(q)(height_depth(i));
+    font_char_ic_code: cur_val:=char_italic(q)(i);
+    end; {there are no other cases}
+    end
+  else cur_val:=0;
+  end;
 @z
 
 @x e-pTeX: displacement value when typesetting right-to-left l.27798
