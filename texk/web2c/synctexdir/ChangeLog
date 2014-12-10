@@ -1,3 +1,7 @@
+2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* synctex.c: Define SYNCTEX_YES as 1, not -1 (for bitfields).
+
 2014-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex_parser.c: Declare functions with file scope as static.

@@ -1,3 +1,8 @@
+2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdvi.c (set_windowsize): Use "%u" to print unsigned int.
+	* hypertex.h: Correct typo in spelling of header guard.
+
 2014-06-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* encodings.c: Do not compile close_iconv() when not used.

@@ -1270,7 +1270,7 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 		/* warn about bad values */
 		if (flags & WidthValue) {
 		    if (width > (unsigned int)(2 * bwidth + add_w)) {
-			TRACE_GUI((stderr, "width: %hu, bwidth: %hu, add_w: %d",
+			TRACE_GUI((stderr, "width: %u, bwidth: %hu, add_w: %d",
 				   width, bwidth, add_w));
 			reply.width = width - 2 * bwidth - add_w;
 		    }
@@ -1280,7 +1280,7 @@ set_windowsize(Dimension *ret_w, Dimension *ret_h, int add_w, int add_h, Boolean
 		}
 		if (flags & HeightValue) {
 		    if (height > (unsigned int)(2 * bwidth + add_h)) {
-			TRACE_GUI((stderr, "height: %hu, bwidth: %hu, add_h: %d",
+			TRACE_GUI((stderr, "height: %u, bwidth: %hu, add_h: %d",
 				   height, bwidth, add_h));
 			reply.height = height - 2 * bwidth - add_h;
 		    }
