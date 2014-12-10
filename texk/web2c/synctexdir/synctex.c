@@ -330,7 +330,7 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
 
 #   include "synctex.h"
 
-#   define SYNCTEX_YES (-1)
+#   define SYNCTEX_YES (1)
 #   define SYNCTEX_NO  (0)
 #   define SYNCTEX_NO_ERROR  (0)
 

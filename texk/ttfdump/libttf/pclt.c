@@ -76,7 +76,7 @@ void ttfPrintPCLT(FILE *fp,PCLTPtr pclt)
 
     fprintf(fp,"\t characterComplement 0x");
     for (i=0;i<8;i++)
-	fprintf(fp,"%02hx",(unsigned char)pclt->CharacterComplement[i]);
+	fprintf(fp,"%02x",(unsigned char)pclt->CharacterComplement[i]);
     fprintf(fp,"\n");
 
     fprintf(fp,"\t fileName   \t ");

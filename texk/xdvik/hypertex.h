@@ -21,7 +21,7 @@
  */
 
 #ifndef HYPERTEX_H_
-#define HTEXTEX_H_
+#define HYPERTEX_H_
 
 /* fallbacks if parsing user-specified colors fails */
 #define LINK_COLOR_FALLBACK "BLUE2"
