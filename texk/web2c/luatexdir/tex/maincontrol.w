@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: maincontrol.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: maincontrol.w 5011 2014-05-26 08:05:55Z khaled $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/maincontrol.w $";
 
 #include "ptexlib.h"
@@ -2798,19 +2798,15 @@ void assign_internal_value(int a, halfword p, int val)
             if (val > 127) {
                 print_err("Invalid \\newlinechar");
                 help2
-                    ("The value for \\newlinechar has to be between 0 and 127.",
+                    ("The value for \\newlinechar has to be no higher than 127.",
                      "Your invalid assignment will be ignored.");
                 error();
-            } else if (val < 0) {
-                word_define(p, -1);
             } else {
                 word_define(p, val);
             }
             break;
         case end_line_char_code:
-            if (val < 0) {
-                word_define(p, -1);
-            } else if (val > 127) {
+            if (val > 127) {
                 print_err("Invalid \\endlinechar");
                 help2
                     ("The value for \\endlinechar has to be no higher than 127.",

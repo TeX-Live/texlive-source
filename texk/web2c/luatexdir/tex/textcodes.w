@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: textcodes.w 4519 2012-12-14 09:11:19Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/textcodes.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/textcodes.w $";
 
 #include "ptexlib.h"
 

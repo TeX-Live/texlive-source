@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: pdfshipout.w 4451 2012-07-05 21:13:01Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/pdf/pdfshipout.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfshipout.w $";
 
 #include "ptexlib.h"
 

@@ -20,7 +20,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: mapfile.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: mapfile.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/mapfile.w $";
 
 #include "ptexlib.h"
@@ -337,7 +337,8 @@ static void fm_scan_line(void)
     float d;
     fm_entry *fm;
     char fm_line[FM_BUF_SIZE], buf[FM_BUF_SIZE];
-    char *p, *q, *r, *s;
+    char *p, *q, *s; 
+    char *r = NULL;
     switch (mitem->type) {
     case MAPFILE:
         p = fm_line;
@@ -366,15 +367,15 @@ static void fm_scan_line(void)
     fm = new_fm_entry();
     read_field(r, q, buf);
     set_field(tfm_name);
-    if (!isdigit((unsigned char)*r)) {         /* 2nd field ps_name may not start with a digit */
+    if (!isdigit(*r)) {         /* 2nd field ps_name may not start with a digit */
         read_field(r, q, buf);
         set_field(ps_name);
     }
-    if (isdigit((unsigned char)*r)) {          /* font descriptor /Flags given? */
-        for (s = r; isdigit((unsigned char)*s); s++);
+    if (isdigit(*r)) {          /* font descriptor /Flags given? */
+        for (s = r; isdigit(*s); s++);
         if (*s == ' ' || *s == '"' || *s == '<' || *s == '\0') {        /* not e. g. 8r.enc */
             fm->fd_flags = atoi(r);
-            while (isdigit((unsigned char)*r))
+            while (isdigit(*r))
                 r++;
         }
     }

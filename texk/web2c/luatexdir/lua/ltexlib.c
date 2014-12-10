@@ -27,7 +27,7 @@ setter no prev link is created so we can presume that it's not used later on. */
 
 
 static const char _svn_version[] =
-    "$Id: ltexlib.c 4956 2014-03-28 12:12:17Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
+    "$Id: ltexlib.c 5081 2014-11-07 18:38:33Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
 
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh
@@ -288,7 +288,7 @@ void luacstring_close(int n)
         next = next->next;
         if (t==read_spindle.tail) {
 	    read_spindle.tail = NULL; // prevent double-free
-	} 
+	}
         free(t);
     }
     read_spindle.head = NULL;
@@ -2443,7 +2443,7 @@ static int tex_run_boot(lua_State * L)
 
 /* tex random generators */
 static int tex_init_rand(lua_State * L)
-{ 
+{
   int sp;
   if (!lua_isnumber(L, 1)) {
       luaL_error(L, "argument must be a number");
@@ -2455,7 +2455,7 @@ static int tex_init_rand(lua_State * L)
 }
 
 static int tex_unif_rand(lua_State * L)
-{ 
+{
   int sp;
   if (!lua_isnumber(L, 1)) {
       luaL_error(L, "argument must be a number");
@@ -2467,13 +2467,13 @@ static int tex_unif_rand(lua_State * L)
 }
 
 static int tex_norm_rand(lua_State * L)
-{ 
+{
     lua_pushnumber(L, norm_rand());
     return 1;
 }
 
 /* Same as lua but  with tex rng */
-static int lua_math_random (lua_State *L) 
+static int lua_math_random (lua_State *L)
 {
   lua_Number rand_max = 0x7fffffff ;
   lua_Number r =  unif_rand(rand_max) ;
@@ -2503,6 +2503,39 @@ static int lua_math_random (lua_State *L)
 }
 
 
+
+/* Experimental code can either become permanent or disappear. It is
+undocumented and mostly present in the experimental branch but for
+practical reasons we also have the setup code in the regular binary. 
+The experimental_code array is indexed by i with 1<= i <= max_experimental_code,
+position 0 is not used */
+int experimental_code[MAX_EXPERIMENTAL_CODE_SIZE] = { 0 };
+
+
+static int set_experimental_code(lua_State *L)
+{
+    int e, b, i ;
+
+    if (lua_isboolean(L,1)) {
+        e = 0 ;
+        b = lua_toboolean(L,1) ;
+    } else if (lua_isnumber(L,1) && lua_isboolean(L,2)) {
+        e = (int) lua_tonumber(L, 1);
+        b = lua_toboolean(L,2) ;
+    } else {
+        return luaL_error(L, "boolean or number and boolean expected");
+    }
+    if (e==0) {
+        for (i=1;i<=max_experimental_code;i++) {
+            experimental_code[i] = b;
+        }
+    } else if (0<e && e<=max_experimental_code  ) {
+        experimental_code[e] = b;
+    } else {
+      return luaL_error(L, "first number out of range");
+    }
+    return 0;
+}
 
 static int tex_run_main(lua_State * L)
 {
@@ -2609,6 +2642,7 @@ static const struct luaL_Reg texlib[] = {
     {"normal_rand", tex_norm_rand},
     {"lua_math_randomseed", tex_init_rand}, /* syntactic sugar  */
     {"lua_math_random", lua_math_random},
+    {"set_experimental_code",set_experimental_code},
     {"show_context", tex_show_context},
     {NULL, NULL}                /* sentinel */
 };

@@ -77,5 +77,4 @@ extern Encoding *enclist;
 
 #define SCRIPT_MENU_MAX	10
 
-
 #endif

@@ -2,6 +2,26 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.79.2 was released 20141111 (5082)
+==============================================================
+
+
+* WARNING: the structure of the format file is changed.
+  After  the  Web2C \TeX's magic constant: "W2TX"  there is now
+  a FORMAT_ID, a 32bit field that cannot be between 0 and 256 (included)
+  so that there are no conflicts with the preexisting  structure
+  of the format.
+  The value can be seen with --debug-format and currently is
+  907 (the sum of the values of the bytes of the ASCII string "don knuth").
+
+* There is a new set of lua functions for StructElement and Attribute,
+  convenient (even if not indispensable) for tagged pdf.
+  
+
+* several bugfixes and improvements.
+
+
+==============================================================
 Luatex beta-0.79.0 was released 20140328 (4960)
 ==============================================================
 
@@ -2246,7 +2266,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 4962 2014-03-28 15:23:35Z taco $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5082 2014-11-11 09:58:10Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

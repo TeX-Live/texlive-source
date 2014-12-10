@@ -1,3 +1,8 @@
+2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Sync with https://foundry.supelec.fr/svn/luatex/trunk/source/
+	                  texk/web2c/luatexdir/ r5092.
+
 2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luatex.c: Avoid MinGW64 warnings (INVALID_SOCKET => -1).

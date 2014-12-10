@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: memoryword.h 3352 2010-01-10 15:35:31Z hhenkel $ */
+/* $Id: memoryword.h 5031 2014-07-04 07:16:27Z luigi $ */
 
 /* This header file is extra special because it is read in from
    within the pascal source */
@@ -123,7 +123,7 @@ typedef union {
 typedef FILE *word_file;
 
 #  ifdef DEBUG
-extern procedure print_word(memory_word w);
+extern void print_word(memory_word w);
 #  endif
 
 #endif

@@ -29,7 +29,7 @@
 
 static const char _svn_version[] =
     "$Id: ffdummies.c 3738 2010-07-13 10:28:24Z oneiros $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luafontloader/src/ffdummies.c $";
 
 
 /* fix for non-gcc compilation: */

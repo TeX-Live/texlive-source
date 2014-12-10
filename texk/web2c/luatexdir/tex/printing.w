@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: printing.w 4857 2014-03-07 00:01:41Z luigi $"
+    "$Id: printing.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/printing.w $";
 
 #include "ptexlib.h"
@@ -226,8 +226,6 @@ to do the same substraction while typesetting.
 @c
 void print(int s)
 {                               /* prints string |s| */
-    unsigned char *j, *l;       /* current character code position */
-
     if (s >= str_ptr) {
         /* this can't happen */
         print_char('?');
@@ -285,8 +283,13 @@ void print(int s)
         append_string(str_string(s), (unsigned) str_length(s));
         return;
     }
-    j = str_string(s);
-    l = j + str_length(s);
+    lprint(&str_lstring(s));
+}
+
+void lprint (lstring *ss) {
+    unsigned char *j, *l;       /* current character code position */
+    j = ss->s;
+    l = j + ss->l;
     while (j < l) {
         /* 0x110000 in utf=8: 0xF4 0x90 0x80 0x80  */
         /* I don't bother checking the last two bytes explicitly */
@@ -301,7 +304,6 @@ void print(int s)
         }
     }
 }
-
 
 @ The procedure |print_nl| is like |print|, but it makes sure that the
 string appears at the beginning of a new line.
@@ -339,8 +341,9 @@ void tprint(const char *sss)
         break;
     case pseudo:
         while (*sss) {
-           if (tally++ < trick_count) {
+           if (tally < trick_count) {
                trick_buf[tally % error_line] = (packed_ASCII_code) *sss++;
+	       tally++;
            } else {
                return;
            }

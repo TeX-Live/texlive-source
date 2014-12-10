@@ -19,8 +19,8 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: pdfgen.w 4967 2014-03-28 19:44:06Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/tags/beta-0.79.1/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
+    "$Id: pdfgen.w 5081 2014-11-07 18:38:33Z luigi $"
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfgen.w $";
 
 #include "ptexlib.h"
 
@@ -155,8 +155,10 @@ PDF init_pdf_struct(PDF pdf)
 
     os->curbuf = PDFOUT_BUF;
     pdf->buf = os->buf[os->curbuf];
-
-    pdf->fb = new_strbuf(1, 100000000);
+    
+    /* Later  ttf_seek_outbuf(TABDIR_OFF + n * 4 * TTF_ULONG_SIZE) */
+    /* in ttf_init_font will need 236 bytes, so we start with 256 bytes as in pdftex. */
+    pdf->fb = new_strbuf(256, 100000000);
 
     pdf->stream_deflate = false;
     pdf->stream_writing = false;
@@ -235,9 +237,12 @@ static output_mode get_o_mode(void)
 {
     output_mode o_mode;
     if (pdf_output > 0) {
+    /* ls-hh: for the moment disabled ... incomplete old experiment */
+    /* 
         if (pdf_output == 2009)
             o_mode = OMODE_LUA;
         else
+    */
             o_mode = OMODE_PDF;
     } else
         o_mode = OMODE_DVI;
@@ -616,7 +621,7 @@ void pdf_print_str(PDF pdf, const char *s)
         return;
     }
     s++;
-    while (is_hex_char((unsigned char)*s))
+    while (is_hex_char(*s))
         s++;
     if (s != orig + l) {
         pdf_out(pdf, '(');
@@ -639,7 +644,9 @@ void pdf_begin_stream(PDF pdf)
     pdf_puts(pdf, "\nstream\n");
     pdf_save_offset(pdf);
     pdf_flush(pdf);
-    if (os->trigger_luastm) {
+
+    if (callback_defined(pdf_stream_filter_callback)) {
+    /*if (os->trigger_luastm) {*/
         os->trigger_luastm = false;     /* this was just a trigger */
         luaL_buffinit(Luas, &(os->b));
         lbuf->p = lbuf->data = (unsigned char *) luaL_prepbuffer(&(os->b));
@@ -660,9 +667,20 @@ void pdf_begin_stream(PDF pdf)
 @c
 void pdf_end_stream(PDF pdf)
 {
+    typedef struct strbuf_const_s_ {
+    unsigned const char *data;   /* a PDF stream buffer */
+    unsigned const char *p;     /* pointer to the next character in the PDF stream buffer */
+    size_t size;                /* currently allocated size of the PDF stream buffer, grows dynamically */
+    size_t limit;               /* maximum allowed PDF stream buffer size */
+    } strbuf_const_s;
+
+
     os_struct *os = pdf->os;
-    strbuf_s *lbuf = os->buf[LUASTM_BUF];
+    /*  Old code,                             */
+    /*  strbuf_s *lbuf = os->buf[LUASTM_BUF]; */
+    strbuf_const_s *lbuf = (strbuf_const_s * )os->buf[LUASTM_BUF];
     const_lstring ls;
+    int callback_id ;
     assert(pdf->buf == os->buf[os->curbuf]);
     switch (os->curbuf) {
     case PDFOUT_BUF:
@@ -673,12 +691,17 @@ void pdf_end_stream(PDF pdf)
     case LUASTM_BUF:
         luaL_addsize(&(os->b), strbuf_offset(os->buf[LUASTM_BUF]));
         luaL_pushresult(&(os->b));
-
         /* now the complete page stream is on the Lua stack */
         /* TODO: pagestream filter callback here */
 
+        callback_id = callback_defined(pdf_stream_filter_callback);
+        if (callback_id > 0) {
+            run_callback(callback_id, "S->S");
+        }
+
         ls.s = lua_tolstring(Luas, -1, &ls.l);
-        lbuf->data = (unsigned char *) ls.s;
+        /* lbuf->data = (unsigned char *) ls.s; */
+        lbuf->data = (unsigned const char *) ls.s;
         lbuf->p = lbuf->data + ls.l;
         os->curbuf = LUASTM_BUF;
         pdf->buf = os->buf[os->curbuf];
@@ -751,17 +774,19 @@ for optimizations that are not possible in pascal.
 @c
 scaled round_xn_over_d(scaled x, int n, unsigned int d)
 {
-    boolean positive;           /* was |x>=0|? */
+    boolean positive = true;           /* was |x>=0|, |n>=0| ? */
     unsigned t, u, v;           /* intermediate quantities */
-    if (x >= 0) {
-        positive = true;
-    } else {
+    if (x < 0) {
+        positive = !positive;
         x = -(x);
-        positive = false;
     }
-    t = (unsigned) ((x % 0100000) * n);//printf("t=%d\n",t);
-    u = (unsigned) (((unsigned) (x) / 0100000) * (unsigned) n + (t / 0100000));//printf("u=%d\n",u);
-    v = (u % d) * 0100000 + (t % 0100000);//printf("v=%d\n",v);
+    if (n < 0) {
+        positive = !positive;
+        n = -(n);
+    }
+    t = (unsigned) ((x % 0100000) * n);
+    u = (unsigned) (((unsigned) (x) / 0100000) * (unsigned) n + (t / 0100000));
+    v = (u % d) * 0100000 + (t % 0100000);
     if (u / d >= 0100000)
         arith_error = true;
     else
@@ -1901,7 +1926,7 @@ void print_pdf_table_string(PDF pdf, const char *s)
 }
 
 @ @c
-static const char *get_pdf_table_string(const char *s)
+const char *get_pdf_table_string(const char *s)
 {
     const_lstring ls;
     lua_rawgeti(Luas, LUA_REGISTRYINDEX, lua_key_index(pdf_data));
@@ -1910,8 +1935,10 @@ static const char *get_pdf_table_string(const char *s)
     lua_rawget(Luas, -2);     /* s? t ... */
     if (lua_isstring(Luas, -1)) {       /* s t ... */
         ls.s = lua_tolstring(Luas, -1, &ls.l);
+	/*  s is  supposed to be anchored (e.g in the registry)
+	    so it's not garbage collected */
         lua_pop(Luas, 2);           /* ... */
-        return ls.s;
+	return ls.s;
     }
     lua_pop(Luas, 2);           /* ... */
     return NULL ;

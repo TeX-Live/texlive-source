@@ -20,7 +20,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: equivalents.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/tex/equivalents.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/equivalents.w $";
 
 #include "ptexlib.h"
 

@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-api.h 4956 2014-03-28 12:12:17Z luigi $ */
+/* $Id: luatex-api.h 5081 2014-11-07 18:38:33Z luigi $ */
 
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
@@ -1000,6 +1000,29 @@ init_lua_key_alias(term_and_log,"term and log")
         target = 2; /* text by default */ \
     } \
 } while(0)
+
+
+
+
+#ifdef __MINGW32__
+extern FILE *_cairo_win32_tmpfile( void );
+#define tmpfile() _cairo_win32_tmpfile()
+#endif /* __MINGW32__ */
+
+
+
+/*
+* experimental code (no primitive):
+
+   0 = all
+   1 = retain math nodes
+
+*/
+
+#define max_experimental_code 1
+#define MAX_EXPERIMENTAL_CODE_SIZE max_experimental_code+1
+/* to be indexed by i with 1<= i <=max_experimental_code */
+extern int experimental_code[MAX_EXPERIMENTAL_CODE_SIZE] ; 
 
 
 #endif                          /* LUATEX_API_H */

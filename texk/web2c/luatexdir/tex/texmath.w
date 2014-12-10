@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texmath.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: texmath.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texmath.w $";
 
 #include "ptexlib.h"
@@ -1418,7 +1418,10 @@ void math_limit_switch(void)
         NULL
     };
     if (head != tail) {
-        if (type(tail) == simple_noad) {
+         if (type(tail) == simple_noad &&
+             (subtype(tail) == op_noad_type_normal ||
+              subtype(tail) == op_noad_type_limits ||
+              subtype(tail) == op_noad_type_no_limits)) {
             subtype(tail) = (quarterword) cur_chr;
             return;
         }

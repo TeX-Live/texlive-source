@@ -22,7 +22,7 @@
 @ @c
 static const char _svn_version[] =
     "$Id: managed-sa.w 4442 2012-05-25 22:40:34Z hhenkel $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/utils/managed-sa.w $";
+    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/utils/managed-sa.w $";
 
 #include "ptexlib.h"
 

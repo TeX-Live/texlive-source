@@ -23,7 +23,7 @@
 
 
 static const char _svn_version[] =
-    "$Id: llanglib.c 4524 2012-12-20 15:38:02Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/branches/ex-glyph/source/texk/web2c/luatexdir/lua/llanglib.c $";
+    "$Id: llanglib.c 4524 2012-12-20 15:38:02Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llanglib.c $";
 
 #define LANG_METATABLE "luatex.lang"
 

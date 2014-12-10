@@ -30,7 +30,7 @@
 @ Initial identification of this file, and the needed headers.
 @c
 static const char _svn_version[] =
-    "$Id: dvigen.w 4679 2013-12-19 15:47:53Z luigi $"
+    "$Id: dvigen.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/dvi/dvigen.w $";
 
 #include "ptexlib.h"

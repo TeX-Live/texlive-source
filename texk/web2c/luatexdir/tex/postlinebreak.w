@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: postlinebreak.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: postlinebreak.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/postlinebreak.w $";
 
 #include "ptexlib.h"
@@ -98,7 +98,7 @@ void ext_post_line_break(int paragraph_dir,
     halfword cur_line;          /*the current line number being justified */
 
     dir_ptr = cur_list.dirs_field;
-    /* Reverse the links of the relevant passive nodes, setting |cur_p| to 
+    /* Reverse the links of the relevant passive nodes, setting |cur_p| to
        the first breakpoint; */
     /* The job of reversing links in a list is conveniently regarded as the job
        of taking items off one stack and putting them on another. In this case we
@@ -108,7 +108,7 @@ void ext_post_line_break(int paragraph_dir,
      */
     q = break_node(best_bet);
 #if 0
-    used_discs = used_disc(best_bet); 
+    used_discs = used_disc(best_bet);
 #endif
     /* |has_direction| */
     cur_p = null;
@@ -530,17 +530,78 @@ void ext_post_line_break(int paragraph_dir,
                |break_width| values are computed for non-discretionary
                breakpoints. */
             r = temp_head;
-            while (1) {
-                q = vlink(r);
-                if (q == cur_break(cur_p) || is_char_node(q))
-                    break;
-                if (!((type(q) == whatsit_node)
-                      && (subtype(q) == local_par_node))) {
-                    if (non_discardable(q)
-                        || (type(q) == kern_node && subtype(q) != explicit))
+            if (experimental_code[1]) {
+                /* hh-ls: This is a first step to improving symmetry and consistency in the node
+                list. This is normally no issue in tex, but in callbacks it matters. */
+
+                /* Normally we have a matching math open and math close node but when we cross a line
+                the open node is removed, including any glue or penalties following it. This is however
+                not that nice for callbacks that rely on symmetry. Of course this only counts for one
+                liners, as we can still have only a begin or end node on a line. The end_of_math lua
+                helper is made robust against this although there you should be aware of the fact that
+                one can end up in the middle of math in callbacks that don't work on whole paragraphs,
+                but at least this branch makes sure that some proper analysis is possible. (todo: check
+                if math glyphs have the subtype marked done). */
+
+                halfword m = null ;
+                halfword mp, mn, rn ;
+                while (1) {
+                    q = vlink(r);
+                    if (! q) {
+                        /* unlikely */
                         break;
+                    } else if (q == cur_break(cur_p)) {
+                        /* quit */
+                        break;
+                    } else if (type(q) == glyph_node) {
+                        /* quit: is > math_code */
+                        break;
+                    } else if (type(q) == math_node) {
+                        /* we want to keep symmetry */
+                        surround(q) = 0 ;
+                        // fprintf(stdout,"KEEP MATH NODE\n");
+                        m = q ;
+                    } else if (type(q) == kern_node && subtype(q) != explicit) {
+                        /* quit: so we keep \kern but also auto kerns */
+                        break;
+                    } if (non_discardable(q)) {
+                        /* quit: < math_node */
+                        break;
+                    } else {
+                        /* skip: glue, penalty, (font)kern, noads, temp stuff, all kind of left-overs */
+                    }
+                    r = q;
                 }
-                r = q;
+                if (m != null) {
+                    if (r == m) {
+                        /* [a] [b] [m=r] => [a] [b=r] */
+                        r = alink(m) ;
+                    } else {
+                        /* [a] [b] [m] [c] [r] [rn] => [a] [b] [c] [r] [m] [rn] */
+                        mp = alink(m) ;
+                        mn = vlink(m) ;
+                        rn = vlink(r) ;
+                        vlink(r) = m ;
+                        alink(m) = r ;
+                        if (rn) {
+                            alink(rn) = m ;
+                            vlink(m) = rn ;
+                        }
+                        vlink(mp) = mn ;
+                        alink(mn) = mp ;
+                    }
+                }
+            } else {
+                while (1) {
+                    q = vlink(r);
+                    if (q == cur_break(cur_p) || is_char_node(q))
+                        break;
+                    if (!((type(q) == whatsit_node) && (subtype(q) == local_par_node))) {
+                        if (non_discardable(q) || (type(q) == kern_node && subtype(q) != explicit))
+                            break;
+                    }
+                    r = q;
+                }
             }
             if (r != temp_head) {
                 vlink(r) = null;

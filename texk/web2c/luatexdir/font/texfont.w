@@ -32,7 +32,7 @@ problematic |if 0 != null|.
 
 @c
 static const char _svn_version[] =
-    "$Id: texfont.w 4847 2014-03-05 18:13:17Z luigi $"
+    "$Id: texfont.w 5081 2014-11-07 18:38:33Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/texfont.w $";
 
 #include "ptexlib.h"
@@ -1760,6 +1760,10 @@ void undump_font(int f)
         undump_things(*math_param_base(f), (font_math_params(f) + 1));
     }
 
+    font_tables[f]->characters = new_sa_tree(1, 0);     /* stack size 1, default item value 0 */
+    ci = xcalloc(1, sizeof(charinfo));
+    set_charinfo_name(ci, xstrdup(".notdef"));
+    font_tables[f]->charinfo = ci;
     undump_int(x);
     if (x) {
         i = undump_charinfo(f);
@@ -1768,10 +1772,6 @@ void undump_font(int f)
     if (x) {
         i = undump_charinfo(f);
     }                           /* right boundary */
-    font_tables[f]->characters = new_sa_tree(1, 0);     /* stack size 1, default item value 0 */
-    ci = xcalloc(1, sizeof(charinfo));
-    set_charinfo_name(ci, xstrdup(".notdef"));
-    font_tables[f]->charinfo = ci;
 
     i = font_bc(f);
     while (i < font_ec(f)) {

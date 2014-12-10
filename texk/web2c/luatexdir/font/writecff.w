@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: writecff.w 4956 2014-03-28 12:12:17Z luigi $"
+    "$Id: writecff.w 5041 2014-07-16 16:13:03Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writecff.w $";
 
 #include "ptexlib.h"
@@ -169,8 +169,10 @@ cff_index *cff_get_index_header(cff_font * cff)
 
         idx->offset =
             xmalloc((unsigned) (((unsigned) count + 1) * sizeof(l_offset)));
-        for (i = 0; i < count + 1; i++) {
+        for (i = 0; i <count + 1 ; i++) {
             (idx->offset)[i] = get_offset(cff, idx->offsize);
+            if (i == USHRT_MAX)  
+                break;
         }
 
         if (idx->offset[0] != 1)
@@ -3158,7 +3160,7 @@ void write_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     }
 
     /* build the new charstrings entry */
-    charstrings = cff_new_index((card16) (cs_count1 + 1));
+    charstrings = cff_new_index((card16) (cs_count1==USHRT_MAX?cs_count1: cs_count1 + 1));
     max_len = 2 * CS_STR_LEN_MAX;
     charstrings->data = xcalloc((unsigned) max_len, sizeof(card8));
     charstring_len = 0;
@@ -3437,7 +3439,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
     fdselect->num_entries = 0;
     fdselect->data.ranges = xcalloc(num_glyphs, sizeof(cff_range3));
 
-    charstrings = cff_new_index((card16) (cs_count1 + 1));
+    charstrings = cff_new_index((card16) (cs_count1==USHRT_MAX?cs_count1: cs_count1 + 1));
     max_len = 2 * CS_STR_LEN_MAX;
     charstrings->data = xcalloc((unsigned) max_len, sizeof(card8));
     charstring_len = 0;

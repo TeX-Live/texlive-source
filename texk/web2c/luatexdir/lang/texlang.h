@@ -17,7 +17,7 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texlang.h 3394 2010-01-26 14:20:46Z taco $ */
+/* $Id: texlang.h 4664 2013-12-09 13:43:42Z taco $ */
 
 #ifndef TEXLANG_H
 #  define TEXLANG_H
