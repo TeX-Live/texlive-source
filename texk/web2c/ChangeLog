@@ -1,3 +1,9 @@
+2014-12-11  Karl Berry  <karl@tug.org>
+
+	* triptest,
+	* mftraptest: complain early if trip.fmt/trap.base are not created.
+	Original report from vvv, tlbuild 14 Jun 2011 10:25:47.
+
 2014-11-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h (makebinaryfile): Avoid gcc -Wunused-value warning.

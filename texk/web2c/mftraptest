@@ -49,6 +49,10 @@ set -x
 $LN_S $testdir/trap.mf .
 
 ../mf --progname=inimf <$testdir/mftrap1.in >mftrapin.fot
+if test ! -s trap.base; then
+  echo "*** trap.base not created by mftrap1.in, investigate!" >&2
+  exit 1
+fi
 mv trap.log mftrapin.log || exit 1
 diff $testdir/mftrapin.log mftrapin.log
 

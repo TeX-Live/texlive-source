@@ -65,6 +65,10 @@ diff $testdir/trip.pl trip.pl || is_OK=false
 $LN_S $testdir/trip.tex .
 
 ../tex --progname=initex --ini <$testdir/trip1.in >tripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by trip1.in, investigate!" >&2
+  exit 1
+fi
 mv trip.log tripin.log || exit 1
 diff $testdir/tripin.log tripin.log
 
