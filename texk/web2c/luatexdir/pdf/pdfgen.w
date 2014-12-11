@@ -621,7 +621,7 @@ void pdf_print_str(PDF pdf, const char *s)
         return;
     }
     s++;
-    while (is_hex_char(*s))
+    while (is_hex_char((unsigned char)*s))
         s++;
     if (s != orig + l) {
         pdf_out(pdf, '(');

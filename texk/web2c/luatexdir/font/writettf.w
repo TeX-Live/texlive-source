@@ -622,7 +622,7 @@ static char *strip_spaces_and_delims(char *s, int l)
     for (i = 0; i < l; s++, i++) {
         if (*s == '(' || *s == ')' || *s == '<' || *s == '>' ||
             *s == '[' || *s == ']' || *s == '{' || *s == '}' ||
-            *s == '/' || *s == '%' || isspace(*s))
+            *s == '/' || *s == '%' || isspace((unsigned char)*s))
             continue;
         *p++ = *s;
     }

@@ -367,15 +367,15 @@ static void fm_scan_line(void)
     fm = new_fm_entry();
     read_field(r, q, buf);
     set_field(tfm_name);
-    if (!isdigit(*r)) {         /* 2nd field ps_name may not start with a digit */
+    if (!isdigit((unsigned char)*r)) {         /* 2nd field ps_name may not start with a digit */
         read_field(r, q, buf);
         set_field(ps_name);
     }
-    if (isdigit(*r)) {          /* font descriptor /Flags given? */
-        for (s = r; isdigit(*s); s++);
+    if (isdigit((unsigned char)*r)) {          /* font descriptor /Flags given? */
+        for (s = r; isdigit((unsigned char)*s); s++);
         if (*s == ' ' || *s == '"' || *s == '<' || *s == '\0') {        /* not e. g. 8r.enc */
             fm->fd_flags = atoi(r);
-            while (isdigit(*r))
+            while (isdigit((unsigned char)*r))
                 r++;
         }
     }
