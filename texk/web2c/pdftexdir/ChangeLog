@@ -1,3 +1,9 @@
+2014-12-12  Karl Berry  <karl@gnu.org>
+
+	* pdftoepdf.cc (read_pdf_info): do not even warn if
+	pdf_inclusion_errorlevel (aka \pdfinclusionerrorlevel) is negative.
+	Discussed with Thanh, 31 May 2011 10:17:35.
+
 2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* regex/regcomp.c [WIN64]: Use __int64 (not long) as intptr_t.
