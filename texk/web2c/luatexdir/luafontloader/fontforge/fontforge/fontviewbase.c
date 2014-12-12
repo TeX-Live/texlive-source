@@ -32,6 +32,7 @@
 #include <chardata.h>
 #include <math.h>
 #include <unistd.h>
+#include <gfile.h>
 
 static FontViewBase *fv_list=NULL;
 

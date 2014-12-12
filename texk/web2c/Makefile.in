@@ -2998,7 +2998,8 @@ libluasocket_sources = \
 libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a
 libluajitmisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluajitsocket.a
 libluamisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUA_INCLUDES)
-libluajitmisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUAJIT_INCLUDES)
+libluajitmisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) \
+	$(LUAJIT_INCLUDES) -DLuajitTeX -I$(srcdir)/luatexdir
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitmisc_a_CFLAGS = # $(WARNING_CFLAGS)
 nodist_libluamisc_a_SOURCES = $(libluamisc_sources)
@@ -3057,12 +3058,13 @@ libjitff_a_DEPENDENCIES = libunilib.a libluajitmisc.a
 libff_a_postflags = -DLUA_FF_LIB=1 -D_NO_PYTHON=1 -DX_DISPLAY_MISSING=1 \
 	-DUSE_OUR_MEMORY=1 \
 	-I$(top_srcdir)/w2c \
+	-I$(top_srcdir)/luatexdir \
 	-I$(top_srcdir)/luatexdir/unilib \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/inc \
 	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/fontforge
 
 libff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) $(libff_a_postflags)
-libjitff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) $(libff_a_postflags)
+libjitff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DLuajitTeX $(libff_a_postflags)
 libff_a_CFLAGS = # $(WARNING_CFLAGS)
 libjitff_a_CFLAGS = # $(WARNING_CFLAGS)
 nodist_libff_a_SOURCES = $(libff_sources)

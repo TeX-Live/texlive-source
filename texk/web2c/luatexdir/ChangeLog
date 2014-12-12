@@ -1,3 +1,14 @@
+2014-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Avoid implicit function declarations.
+	* am/luafontforge.am (libjitff_a_CPPFLAGS): Add -DLuajitTeX.
+	* am/luamisc.am (libluajitmisc_a_CPPFLAGS: Add -DLuajitTeX.
+	* lua/liolibext.c, lua/lnodelib.c, luafontloader/src/luafflib.c,
+	slnunicode/slnunico.c: Include lauxlib_bridge.h for LuaJITTeX or
+	lauxlib.h for LuaTeX.
+	* luafontloader/fontforge/fontforge/fontviewbase.c:
+	Include gfile.h.	
+
 2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Sync with https://foundry.supelec.fr/svn/luatex/trunk/source/

@@ -88,7 +88,11 @@ http://www.unicode.org/Public/UNIDATA/PropList.txt
 
 #include "lua.h"
 
+#ifdef LuajitTeX
+#include "lua/lauxlib_bridge.h"
+#else
 #include "lauxlib.h"
+#endif
 #include "lualib.h"
 
 #ifndef SLN_UNICODENAME /* unless set it luaconf */
