@@ -16,6 +16,7 @@ $(libluajitmisc_a_OBJECTS): $(libluajitmisc_a_DEPENDENCIES)
 
 libluamisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUA_INCLUDES)
 libluajitmisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUAJIT_INCLUDES)
+libluajitmisc_a_CPPFLAGS += -DLuajitTeX -I$(srcdir)/luatexdir
 
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitmisc_a_CFLAGS = # $(WARNING_CFLAGS)

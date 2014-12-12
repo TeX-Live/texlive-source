@@ -29,7 +29,11 @@
 
 #include <stdio.h>
 #include <lua.h>
+#ifdef LuajitTeX
+#include <lua/lauxlib_bridge.h>
+#else
 #include <lauxlib.h>
+#endif
 #include <locale.h>
 
 static const char _svn_version[] =

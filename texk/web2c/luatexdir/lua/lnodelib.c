@@ -101,7 +101,11 @@ static const char _svn_version[] =
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
+#ifdef LuajitTeX
 #include "lua/lauxlib_bridge.h"
+#else
+#include "lauxlib.h"
+#endif
 
 /*
 
