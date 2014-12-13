@@ -1,3 +1,7 @@
+2014-12-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmf.cnf: Sync with master which is changed by Norbert.
+
 2014-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am [kpathsea.h]: Improved output for silent rules.
