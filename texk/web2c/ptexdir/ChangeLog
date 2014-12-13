@@ -1,3 +1,8 @@
+2014-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptriptest: Complain early if trip.fmt is not created.
+	Inspired by report from vvv, tlbuild 14 Jun 2011 10:25:47.
+
 2014-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: reset inhibit_glue_flag in several places

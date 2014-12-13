@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2010-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 testdir=$abs_srcdir/triptrap
@@ -38,6 +38,10 @@ $LN_S $testdir/trip.tex .
 
 rm -f trip.log
 ../ptex --progname=pinitex --ini <$testdir/trip1.in >ptripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by trip1.in, investigate!" >&2
+  exit 1
+fi
 sed "$P_SED1" trip.log >  ptripin.log || exit 1
 diff $testdir/tripin.log ptripin.log
 
