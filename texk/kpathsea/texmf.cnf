@@ -217,7 +217,11 @@ TEXINPUTS.platex        = .;$TEXMF/tex/{platex,latex,generic,}//
 TEXINPUTS.eptex         = .;$TEXMF/tex/{ptex,plain,generic,}//
 TEX.pmpost = eptex
 
-% (e)up(La)TeX, and for upmpost.
+% p(La)TeX-ng
+TEXINPUTS.ptex-ng   = .;$TEXMF/tex/{uptex,ptex,plain,generic,}//
+TEXINPUTS.platex-ng = .;$TEXMF/tex/{uplatex,platex,latex,generic,}//
+
+% (e)up(La)TeX, and for upmpost
 TEXINPUTS.uplatex = .;$TEXMF/tex/{uplatex,platex,latex,generic,}//
 TEXINPUTS.uptex   = .;$TEXMF/tex/{uptex,ptex,plain,generic,}//
 TEXINPUTS.euptex  = .;$TEXMF/tex/{uptex,ptex,plain,generic}//
