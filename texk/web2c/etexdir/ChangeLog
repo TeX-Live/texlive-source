@@ -1,3 +1,8 @@
+2014-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etriptest: Complain early if (e)trip.fmt is not created.
+	Inspired by report from vvv, tlbuild 14 Jun 2011 10:25:47.
+
 2014-05-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etrip/etrip.diffs: Updated for TL14.

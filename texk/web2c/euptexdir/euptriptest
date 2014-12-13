@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # Copyright (C) 2010 Hironori Kitagawa <tex-live@tug.org>
-# Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 testdir=$abs_srcdir/triptrap
@@ -41,6 +41,10 @@ $LN_S $testdir/trip.tex .
 
 rm -f trip.log
 ../euptex --progname=eupinitex --ini <$testdir/trip1.in >cuptripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by trip1.in, investigate!" >&2
+  exit 1
+fi
 sed "$P_SED1" trip.log >  cuptripin.log || exit 1
 diff $testdir/tripin.log cuptripin.log
 
@@ -57,12 +61,18 @@ $DIFF $DIFFFLAGS $testdir/trip.log cuptrip.log
 eval ../dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
 
+mv trip.fmt ctrip.fmt
+
 # =================================
 
 echo "*** TRIP test for e-upTeX in extended mode ***."
 
 rm -f trip.log
 ../euptex --progname=eupinitex --ini <$etestdir/etrip1.in >xuptripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by etrip1.in, investigate!" >&2
+  exit 1
+fi
 sed "$P_SED1" trip.log >  xuptripin.log || exit 1
 diff $testdir/tripin.log xuptripin.log
 
@@ -79,6 +89,8 @@ $DIFF $DIFFFLAGS $testdir/trip.log xuptrip.log
 eval ../dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ xuptrip.typ
 
+mv trip.fmt xtrip.fmt
+
 # =================================
 
 echo "*** e-TeX specific part of e-TRIP test for e-upTeX ***."
@@ -93,6 +105,10 @@ diff $etestdir/etrip.pl etrip.pl || is_OK=false
 $LN_S $eptestdir/eptrip.tex etrip.tex
 
 ../euptex --progname=eupinitex --ini <$etestdir/etrip2.in >euptripin.fot
+if test ! -s etrip.fmt; then
+  echo "*** etrip.fmt not created by etrip2.in, investigate!" >&2
+  exit 1
+fi
 sed "$P_SED1" etrip.log > euptripin.log || exit 1
 diff $etestdir/etripin.log euptripin.log
 
