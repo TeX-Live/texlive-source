@@ -1,3 +1,16 @@
+2014-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Applied some changes from Version 1.6beta1 (ctan.org/pkg/ps2pk).
+	Renamed ./ps2pkm => ./ps2pk.
+
+	* filenames.c: Drop charptr() and use strchr(). Whitespace.
+	* filenames.[ch]: Constify ps_resource() argument.
+
+	* pkin.c: New function pksbyte().  Replace error() => fatal().
+	Correctly handle flag bytes 5 and 6.
+	* Makefile.am (pk2bm_SOURCES): Add basics.[ch].
+	Use AM_CPPFLAGS, AM_CFLAGS, and LDADD also for pk2bm.
+
 2014-11-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* regions.c [WIN64]: Use __int64 (not long) as intptr_t.

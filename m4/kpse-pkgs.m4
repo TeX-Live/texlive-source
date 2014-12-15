@@ -119,7 +119,7 @@ lcdf-typetools
 makeindexk
 makejvf
 mendexk
-ps2pkm
+ps2pk
 psutils
 seetexk
 tex4htk

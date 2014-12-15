@@ -1,7 +1,7 @@
 /* FILE:    basics.h
  * PURPOSE: basic definitions
  * AUTHOR:  Piet Tutelaers
- * VERSION: 1.0 (September 1995)
+ * VERSION: 1.7 (December 2014)
  */
 
 #ifdef HAVE_CONFIG_H
@@ -94,6 +94,6 @@ extern char *encfile, *afmfile;
  */
 
 #include <stdio.h>
-
+#include <stdlib.h>
 #include <sys/types.h>  /* struct stat */
 #include <sys/stat.h>   /* stat() */

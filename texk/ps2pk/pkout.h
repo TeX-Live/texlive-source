@@ -5,8 +5,7 @@
  *
  * COMMENT: See the pktest.c example program how to use the PK functions.
  *
- * VERSION: Febr. 1992
- *          Dec. 1993
+ * VERSION: 1.7 (December 2014)
  *
  * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
  */

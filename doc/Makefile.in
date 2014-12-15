@@ -154,7 +154,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/makeindexk/ac/withenable.ac \
 	$(top_srcdir)/texk/makejvf/ac/withenable.ac \
 	$(top_srcdir)/texk/mendexk/ac/withenable.ac \
-	$(top_srcdir)/texk/ps2pkm/ac/withenable.ac \
+	$(top_srcdir)/texk/ps2pk/ac/withenable.ac \
 	$(top_srcdir)/texk/psutils/ac/withenable.ac \
 	$(top_srcdir)/texk/seetexk/ac/withenable.ac \
 	$(top_srcdir)/texk/tex4htk/ac/withenable.ac \

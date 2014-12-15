@@ -7,7 +7,7 @@
  * USAGE:    pktest -c<char_code> -W<with> -H<Height> pkname < test.bm
  *	     (test.bm contains the character from `The GFtoPK processor')
  *
- * VERSION:  Febr. 1992
+ * VERSION:  1.7 (December 2014)
  *
  * AUTHOR:   Piet Tutelaers (rcpt@urc.tue.nl)
  */

@@ -1,7 +1,7 @@
 /*
  * FILE:    psearch.c
  * PURPOSE: PATH search module
- * VERSION: 1.0 (Nov. 1995)
+ * VERSION: 1.7 (December 2014)
  * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
  */
 

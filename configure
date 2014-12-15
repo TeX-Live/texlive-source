@@ -882,7 +882,7 @@ enable_updmap
 enable_makeindexk
 enable_makejvf
 enable_mendexk
-enable_ps2pkm
+enable_ps2pk
 enable_psutils
 enable_seetexk
 enable_tex4htk
@@ -1695,7 +1695,7 @@ Optional Features:
   --disable-makeindexk    do not build the makeindexk package
   --disable-makejvf       do not build the makejvf package
   --disable-mendexk       do not build the mendexk package
-  --disable-ps2pkm        do not build the ps2pkm package
+  --disable-ps2pk         do not build the ps2pk package
   --disable-psutils       do not build the psutils package
   --disable-seetexk       do not build the seetexk package
   --disable-tex4htk       do not build the tex4htk package
@@ -5346,25 +5346,25 @@ test "x$enable_mendexk" = xno || {
   need_ptexenc=yes
 }
 
-## texk/ps2pkm/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pkm/
-## configure options and TL libraries required for ps2pkm
-# Check whether --enable-ps2pkm was given.
-if test "${enable_ps2pkm+set}" = set; then :
-  enableval=$enable_ps2pkm;
+## texk/ps2pk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pk/
+## configure options and TL libraries required for ps2pk
+# Check whether --enable-ps2pk was given.
+if test "${enable_ps2pk+set}" = set; then :
+  enableval=$enable_ps2pk;
 fi
-case $enable_ps2pkm in #(
+case $enable_ps2pk in #(
   yes|no) :
      ;; #(
   *) :
 
-   enable_ps2pkm=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ps2pkm=$enable_ps2pkm'" >&5
-$as_echo "$as_me: Assuming \`--enable-ps2pkm=$enable_ps2pkm'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-ps2pkm=$enable_ps2pkm'"
+   enable_ps2pk=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ps2pk=$enable_ps2pk'" >&5
+$as_echo "$as_me: Assuming \`--enable-ps2pk=$enable_ps2pk'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-ps2pk=$enable_ps2pk'"
     ;;
 esac
 
-test "x$enable_ps2pkm" = xno || {
+test "x$enable_ps2pk" = xno || {
   need_kpathsea=yes
 }
 

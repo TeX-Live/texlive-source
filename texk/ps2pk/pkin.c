@@ -27,11 +27,6 @@
 #include "pkin.h"
 
 /*
- * Forward declaration
- */
-static void error(const char *s);
-
-/*
  *   Now we have some routines to get stuff from the pk file.  pkbyte returns
  *   the next byte from the pk file.
  */
@@ -44,8 +39,17 @@ pkbyte(void)
    register shalfword i ;
 
    if ((i=getc(pkfile))==EOF)
-      error("! unexpected eof in pk file") ;
+      fatal("unexpected eof in pk file\n") ;
    return(i) ;
+}
+
+static shalfword
+pksbyte(void)
+{
+   register shalfword i ;
+
+   i = pkbyte() ;
+   return i > 127 ? i -256 : i ;
 }
 
 static integer
@@ -53,9 +57,7 @@ pkquad(void)
 {
    register integer i ;
 
-   i = pkbyte() ;
-   if (i > 127)
-      i -= 256 ;
+   i = pksbyte() ;
    i = i * 256 + pkbyte() ;
    i = i * 256 + pkbyte() ;
    i = i * 256 + pkbyte() ;
@@ -88,14 +90,11 @@ pkspair(void)
 {
   register integer i ;
   
-  i = pkbyte() ;
-  if (i > 127)
-    i -= 256;
+  i = pksbyte() ;
   i = i * 256 + pkbyte();
   return (i);
 }
 
-static char errbuf[80] ;
 /*
  *   pkopen opens the pk file.  This is system dependent.
  */
@@ -104,9 +103,7 @@ static Boolean
 pkopen(const char *name)
 {
    if ((pkfile=fopen(name, RB))==NULL) {
-      (void)sprintf(errbuf, "Could not open %s", name) ;
-      error(errbuf) ;
-      return(0) ;
+      fatal("Could not open %s\n", name) ;
    } else
       return(1) ;
 }
@@ -208,7 +205,7 @@ static halfword rest (void)
          return ( i ) ;
       }
    } else {
-      error("! shouldn't happen") ;
+      fatal("shouldn't happen\n") ;
    }
 
    /*NOTREACHED*/
@@ -254,7 +251,7 @@ unpack(chardesc *cd)
          i = 2 ;
       cd->raster = (halfword *)malloc((unsigned)i) ;
       if (cd->raster == NULL)
-         error("! out of memory during allocation") ;
+         fatal("out of memory during allocation\n") ;
       raster = cd->raster;
       realfunc = pkpackednum ;
       dynf = flagbyte / 16 ; 
@@ -328,7 +325,7 @@ unpack(chardesc *cd)
 	  }
           putchar('\n') ;
           if ( ( rowsleft != 0 ) || ( hbit != cd->cwidth ) ) 
-          error ( "! error while unpacking; more bits than required" ) ; 
+              fatal( "error while unpacking; more bits than required\n" ) ; 
         } 
 }
 
@@ -349,15 +346,15 @@ readchar(char *name, shalfword c, chardesc *cd)
  *   Check the preamble of the pkfile
  */
    if (pkbyte()!=247)
-      error("! bad pk file, expected pre") ;
+      fatal("bad pk file, expected pre\n") ;
    if (pkbyte()!=89)
-      error("! bad version of pk file") ;
+      fatal("bad version of pk file\n") ;
    for(i=pkbyte(); i>0; i--)	/* creator of pkfile */
       (void)pkbyte() ; 		
-   (void)pkquad(); /* design size */
-   k = pkquad() ;  /* checksum    */
-   k = pkquad() ;  /* hppp        */
-   k = pkquad() ;  /* vppp	  */
+   (void) pkquad() ;  /* design size */
+   (void) pkquad() ;  /* checksum    */
+   (void) pkquad() ;  /* hppp        */
+   (void) pkquad() ;  /* vppp	     */
 /*
  *   Now we skip to the desired character definition
  */
@@ -370,24 +367,21 @@ case 0: case 1: case 2: case 3:
             (void) pktrio() ;		/* TFMwidth */
             (void) pkbyte() ; 		/* pixel width */
             break ;
-case 4:
-            length = pkbyte() * 256 ;
-            length = length + pkbyte() - 5 ;
+case 4: case 5: case 6:
+            length = (flagbyte & 3) * 65536 + pkpair() * 256 - 5 ;
             cd->charcode = pkbyte() ;
             (void) pktrio() ;		/* TFMwidth */
-            i = pkbyte() ;
-            i =  i * 256 + pkbyte() ;   /* pixelwidth */
+            (void) pkpair() ;           /* pixelwidth */
             break ;
-case 5: case 6:
-            error("! lost sync in pk file (character too big)") ;
 case 7:
             length = pkquad() - 12 ;
             cd->charcode = pkquad() ;
             (void) pkquad() ;		/* TFMwidth */
-/*          cd->pixelwidth = (pkquad() + 32768) >> 16 ; */
 	    (void) pkquad();		/* pixelwidth */
-            k = pkquad() ;
+	    (void) pkquad();		/* pixelheight */
          }
+         if (length <= 0)
+            fatal("packet length (%d) too small\n", length) ;
          if (cd->charcode == c) {
             if (flagbyte & 4) {
                if ((flagbyte & 7) == 7) { /* long format */
@@ -404,12 +398,8 @@ case 7:
             } else { /* short format */
                cd->cwidth = pkbyte() ;
                cd->cheight = pkbyte() ;
-               cd->xoff = pkbyte() ;
-               cd->yoff = pkbyte() ;
-               if (cd->xoff > 127)
-                  cd->xoff -= 256 ;
-               if (cd->yoff > 127)
-                  cd->yoff -= 256 ;
+               cd->xoff = pksbyte() ;
+               cd->yoff = pksbyte() ;
             }
             unpack(cd);
             (void)fclose(pkfile) ;
@@ -421,9 +411,7 @@ case 7:
          k = 0 ;
          switch (flagbyte) {
 case 243:
-            k = pkbyte() ;
-            if (k > 127)
-               k -= 256 ;
+            k = pksbyte() ;
 case 242:
             k = k * 256 + pkbyte() ;
 case 241:
@@ -439,17 +427,10 @@ case 244:
 case 246:
             break ;
 default:
-            error("! lost sync in pk file") ;
+            fatal("unexpected command (%d)\n", flagbyte) ;
          }
       }
    }
    (void)fclose(pkfile) ;
    return(0); /* character not found */
-}
-
-static void
-error(const char *s)
-{
-   fprintf(stderr, "%s\n", s);
-   exit(1);
 }

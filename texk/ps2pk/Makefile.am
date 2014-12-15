@@ -1,4 +1,4 @@
-## Makefile.am for the TeX Live subdirectory texk/ps2pkm/
+## Makefile.am for the TeX Live subdirectory texk/ps2pk/
 ##
 ## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
@@ -8,10 +8,6 @@ bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)	
-
-pk2bm_CPPFLAGS =
-pk2bm_CFLAGS = $(WARNING_CFLAGS)
-pk2bm_LDADD =
 
 mag_SOURCES = \
 	basics.c \
@@ -26,6 +22,8 @@ pfb2pfa_SOURCES = \
 	pfb2pfa.c
 
 pk2bm_SOURCES = \
+	basics.c \
+	basics.h \
 	pk2bm.c \
 	pkin.c \
 	pkin.h
