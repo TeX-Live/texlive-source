@@ -3,7 +3,7 @@
 
 This file is part of the Aleph project
 
-Copyright (C) 1994--2001 John Plaice and Yannis Haralambous
+Copyright (C) 1994--2001, 2014 John Plaice and Yannis Haralambous
 Copyright (C) 2002 Behdad Esfahbod
 Copyright (C) 2002, 2005, 2006 Roozbeh Pournader
 Copyright (C) 2004 the Aleph team
@@ -86,7 +86,7 @@ runexternalocp (string external_ocp_name)
   for (i=1; i<=otpinputend; i++) {
       c = otpinputbuf[i];
       if (c>0xffff) {
-          fprintf(stderr, "Aleph does not currently support 31-bit chars\n");
+          fprintf(stderr, "aleph: 31-bit chars not supported, goodbye.\n");
           exit(1);
       }
       if (c<0x80) {
@@ -150,7 +150,32 @@ runexternalocp (string external_ocp_name)
   if (out_file == NULL)
     fprintf(stderr, "aleph: error opening file: %s\n", strerror(errno));
   
-  sprintf(command_line, "%s <%s >%s\n",
+  if (strlen(external_ocp_name+1) + strlen(in_file_name)
+      + strlen(out_file_name) + 15 > sizeof(command_line)) { /* random 15 */
+    fprintf(stderr, "aleph: command line would be too long (%d): %s %s %s\n",
+            (int) sizeof(command_line), 
+            external_ocp_name+1, in_file_name, out_file_name);
+    exit(1);
+  }
+  
+  if (strchr(external_ocp_name+1, '\'')) {
+    fprintf(stderr, "aleph: single quote not allowed in ocp name: %s\n",
+            external_ocp_name+1);
+    exit(1);
+  }
+  if (strchr(in_file_name, '\'')) {
+    fprintf(stderr, "aleph: single quote not allowed in in file name: %s\n",
+            in_file_name);
+    exit(1);
+  }
+  if (strchr(out_file_name, '\'')) {
+    fprintf(stderr, "aleph: single quote not allowed in out file name: %s\n",
+            out_file_name);
+    exit(1);
+  }
+
+  /* ok, we've done some basic safety checks. */
+  sprintf(command_line, "'%s' <'%s' >'%s'\n",
           external_ocp_name+1, in_file_name, out_file_name);
   system(command_line);
   otpoutputend = 0;
@@ -210,7 +235,7 @@ end_of_while:
   free(out_file_name);
 }
 
-#else
+#else /* 0 */
 
 void
 runexternalocp (string external_ocp_name)
@@ -336,4 +361,4 @@ fprintf(stderr, "Read (3) %d characters\n", n);
 #endif
 }
 
-#endif
+#endif /* 0 */
