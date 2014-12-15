@@ -1,9 +1,7 @@
 /* FILE:    filenames.c
  * PURPOSE: some handy functions for working with TeXfiles
  * AUTHOR:  Piet Tutelaers (internet: rcpt@urc.tue.nl)
- * VERSION: 1.3 (August 1992)
- * VERSION: 1.4 (January 1994)
- * VERSION: 1.5 (September 1995)
+ * VERSION: 1.7 (December 2014)
  */
 
 #ifdef HAVE_CONFIG_H
@@ -22,30 +20,26 @@
 #include "basics.h"	/* basic definitions and fatal() */
 #include "filenames.h"
 
-/* for those systems that don't provide an ANSI strchr() */
-static char *charptr(char *name, char c)
-{
-   while (*name != c && *name != '\0') name++; 
-   if (*name == '\0') return NULL;
-   else return name;
-}
-
 /* comparing names (system dependant) */
 static int equal(const char *s, const char *t)
 {
 #  ifndef UNIX
    while (tolower(*s) == tolower(*t)) {
-      if (*s == '\0') break;
+      if (*s == '\0')
+         break;
       s++; t++;
    }
 #  else
    while (*s == *t) {
-      if (*s == '\0' || *t == '\0')  break;
+      if (*s == '\0' || *t == '\0')
+         break;
       s++; t++;
    }
 #  endif
-   if (*s == '\0' && *t == '\0') return 1;
-   else return 0;
+   if (*s == '\0' && *t == '\0')
+      return 1;
+   else
+      return 0;
 }
 
 /*
@@ -54,10 +48,12 @@ static int equal(const char *s, const char *t)
 char *extension(char *str) {
    char *p, *base;
    for (p = base = str; *p; ++p)
-     /*      if (*p++ == DIRSEP) base = p; */
-     if (IS_DIR_SEP(*p)) base = p + 1;
+      /*      if (*p++ == DIRSEP) base = p; */
+      if (IS_DIR_SEP(*p))
+         base = p + 1;
    for (p = base ; *p; p++)
-      if (*p == '.') break;
+      if (*p == '.')
+         break;
    return p;
 }
 
@@ -70,11 +66,13 @@ char *newname(char *name, const char *ext)
    char *e, *nn; int len1, len2;
 
    e = extension(name);
-   if (equal(ext, e)) return name;
+   if (equal(ext, e))
+      return name;
    len1 = strlen(name) - strlen(e);
    len2 = len1 + strlen(ext) + 1;
    nn = (char *) malloc(len2);
-   if (nn == NULL) fatal("Out of memory\n");
+   if (nn == NULL)
+      fatal("Out of memory\n");
    strncpy(nn, name, len1);
    strcpy(nn+len1, ext);
    return nn;
@@ -95,20 +93,25 @@ char *basename(char *str, const char *suffix){
 #else
    for (p = base = str; *p; p++) {
 #endif
-     /*      if (*p++ == DIRSEP) { base = p; len = 0; } */
-     if (IS_DIR_SEP(*p)) { base = p+1; len = 0; }
-      else len++;
+      /*      if (*p++ == DIRSEP) { base = p; len = 0; } */
+      if (IS_DIR_SEP(*p)) {
+         base = p+1;
+         len = 0;
+      } else len++;
    }
    printf("%s\n", base);
    if (suffix != NULL) {
       for (t = suffix; *t; ++t);
       do {
-        len--; t--; p--;
-        if (*t != *p) break;
-        if (t == suffix) { char *bn;
-            if (len == 0) return NULL;
+         len--; t--; p--;
+         if (*t != *p) break;
+         if (t == suffix) {
+            char *bn;
+            if (len == 0)
+               return NULL;
             bn = malloc(len+1);
-            if (bn == NULL) fatal("Out of memory\n");
+            if (bn == NULL)
+               fatal("Out of memory\n");
             strncpy(bn, base, len);
             *(bn+len) = '\0'; /* RA */
             return bn;
@@ -122,12 +125,12 @@ char *basename(char *str, const char *suffix){
  * Return true if name can be the name of a PostScript resource
  * (no extension and no absolute pathname).
  */
-int ps_resource(char *name) {
-   if (charptr(name, '.')) return 0 ;
+int ps_resource(const char *name) {
+   if (strchr(name, '.')) return 0 ;
 #ifdef KPATHSEA
    if (kpse_absolute_p(name, true)) return 0;
 #else
-   if (charptr(name, DIRSEP)) return 0 ;
+   if (strchr(name, DIRSEP)) return 0 ;
 #endif
    return 1;
 }

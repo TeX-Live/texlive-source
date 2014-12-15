@@ -1,5 +1,9 @@
 2014-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* kpse-pkgs.m4 (kpse_texk_pkgs): Rename ps2pkm => ps2pk.
+
+2014-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* kpse-options.m4: Set platform name to ${host_alias-$host}.
 
 2014-12-05  Peter Breitenlohner  <peb@mppmu.mpg.de>

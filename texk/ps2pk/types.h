@@ -2,7 +2,7 @@
  * File:    types.h
  * Purpose: define basic types so that program is portable to non 32 bits
  *          platforms
- * Version: 1.0 (Dec. 1993)
+ * Version: 1.7 (December 2014)
  * Author:  Piet Tutelaers
  */
 

@@ -15,8 +15,7 @@
  * globals:    void fatal();
  *
  * Author:     Piet Tutelaers
- *             Version 1.3 (August 1992)
- *             Version 1.4 (December 1993)
+ *             Version 1.7 (December 2014)
  */
 
 #include "types.h"
@@ -106,9 +105,9 @@ static char *nextpsname(void)
       if (!isalpha((unsigned char)*pline)) fatal("invalid name in %s\n", encfile);
       /* pt981009: added '_' Staszek Wawrykiewicz <staw@gust.org.pl> */
       while (isalnum((unsigned char)*pline) || *pline == '-' || *pline == '_') {
-	if (i > MAXSTRLEN-2)
-	  fatal("name too long in %s (%s)\n", line, encfile);
-	the_nextname[i++] = *pline++;
+         if (i > MAXSTRLEN-2)
+            fatal("name too long in %s (%s)\n", line, encfile);
+         the_nextname[i++] = *pline++;
       }
       the_nextname[i] = '\0';
       name = malloc(i+1);

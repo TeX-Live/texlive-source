@@ -8,9 +8,7 @@
  *          (Porting `top-down' WEB code into modular readable C-code is
  *          not a trivial exercise.)
  *
- * VERSION: Febr. 1992
- *          Dec. 1993
- *          Sep. 1995
+ * VERSION: 1.7 (December 2014)
  *
  * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
  */

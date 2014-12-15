@@ -1,8 +1,6 @@
 /* FILE:	filenames.h
  * PURPOSE:	functions for handling file names
- * VERSION: 1.3 (August 1992)
- * VERSION: 1.4 (January 1994)
- * VERSION: 1.5 (September 1995)
+ * VERSION: 1.7 (December 2014)
  */
 
 /*
@@ -27,4 +25,4 @@ char *newname(char *name, const char *ext);
 /*
  * ps_resource returns true if name can be treated as a PS resource
  */
-int ps_resource(char *name);
+int ps_resource(const char *name);
