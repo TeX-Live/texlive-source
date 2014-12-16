@@ -4,6 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 ##
 bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
+noinst_PROGRAMS = pktest
 
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -87,6 +88,13 @@ ps2pk_SOURCES = \
 	types.h \
 	util.c \
 	util.h
+
+pktest_SOURCES = \
+	basics.c \
+	basics.h \
+	pkout.c \
+	pkout.h \
+	pktest.c
 
 $(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
 

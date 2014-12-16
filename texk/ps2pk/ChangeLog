@@ -1,3 +1,13 @@
+2014-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (noinst_PROGRAMS): Build pktest.
+	* pktest.c: ANSI/ISO C.
+	* tests/ps2pk.test: Test PK (pk2bm) BM (pktest) PK (pk2bm) BM.
+
+	* basics.[ch], configure.ac, encoding.c, filenames.[ch],
+	pkout.[ch], pktest.c, ps2pk.c, psearch.c, types.h:
+	Version 1.7 (December 2014).
+
 2014-12-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Applied some changes from Version 1.6beta1 (ctan.org/pkg/ps2pk).

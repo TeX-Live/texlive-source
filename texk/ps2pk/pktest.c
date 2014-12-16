@@ -17,12 +17,13 @@ int testing = 1;
 #include "basics.h"	/* fatal() */
 #include "pkout.h"
 
-main(int argc, char *argv[])
+static int next_pixel(void);
+
+int main(int argc, char *argv[])
 {
    int done, C = 0, W = 0, H = 0, c;
    const char *myname;
    char *pkname, comment[256];
-   int next_pixel();
 	
    myname = argv[0];
    while (--argc > 0 && (*++argv)[0] == '-') {
@@ -64,12 +65,13 @@ main(int argc, char *argv[])
    pk_char(C, 640796, 25, W, H, -2, 28, next_pixel);
    pk_postamble();
    pk_close();
+   return 0;
 }
 
 /* This function delivers the pixels from the character's bounding box
  * from left to right and from top to bottom.
  */
-int next_pixel()
+static int next_pixel(void)
 {  int c;
    do { c = getchar();
       if (c==EOF) fatal("reading past end of file!\n");
