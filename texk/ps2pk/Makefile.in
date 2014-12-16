@@ -80,6 +80,7 @@ build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = mag$(EXEEXT) pfb2pfa$(EXEEXT) pk2bm$(EXEEXT) \
 	ps2pk$(EXEEXT)
+noinst_PROGRAMS = pktest$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
@@ -115,7 +116,7 @@ CONFIG_HEADER = c-auto.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
-PROGRAMS = $(bin_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_mag_OBJECTS = basics.$(OBJEXT) mag.$(OBJEXT)
 mag_OBJECTS = $(am_mag_OBJECTS)
 mag_LDADD = $(LDADD)
@@ -134,6 +135,10 @@ am_pk2bm_OBJECTS = basics.$(OBJEXT) pk2bm.$(OBJEXT) pkin.$(OBJEXT)
 pk2bm_OBJECTS = $(am_pk2bm_OBJECTS)
 pk2bm_LDADD = $(LDADD)
 pk2bm_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_pktest_OBJECTS = basics.$(OBJEXT) pkout.$(OBJEXT) pktest.$(OBJEXT)
+pktest_OBJECTS = $(am_pktest_OBJECTS)
+pktest_LDADD = $(LDADD)
+pktest_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_ps2pk_OBJECTS = arith.$(OBJEXT) basics.$(OBJEXT) bstring.$(OBJEXT) \
 	curves.$(OBJEXT) encoding.$(OBJEXT) filenames.$(OBJEXT) \
 	fontfcn.$(OBJEXT) hints.$(OBJEXT) lines.$(OBJEXT) \
@@ -180,9 +185,9 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(mag_SOURCES) $(pfb2pfa_SOURCES) $(pk2bm_SOURCES) \
-	$(ps2pk_SOURCES)
+	$(pktest_SOURCES) $(ps2pk_SOURCES)
 DIST_SOURCES = $(mag_SOURCES) $(pfb2pfa_SOURCES) $(pk2bm_SOURCES) \
-	$(ps2pk_SOURCES)
+	$(pktest_SOURCES) $(ps2pk_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -634,6 +639,13 @@ ps2pk_SOURCES = \
 	util.c \
 	util.h
 
+pktest_SOURCES = \
+	basics.c \
+	basics.h \
+	pkout.c \
+	pkout.h \
+	pktest.c
+
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
 TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
 TESTS = tests/lmmath.test tests/ps2pk.test
@@ -749,6 +761,15 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+clean-noinstPROGRAMS:
+	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+
 mag$(EXEEXT): $(mag_OBJECTS) $(mag_DEPENDENCIES) $(EXTRA_mag_DEPENDENCIES) 
 	@rm -f mag$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(mag_OBJECTS) $(mag_LDADD) $(LIBS)
@@ -760,6 +781,10 @@ pfb2pfa$(EXEEXT): $(pfb2pfa_OBJECTS) $(pfb2pfa_DEPENDENCIES) $(EXTRA_pfb2pfa_DEP
 pk2bm$(EXEEXT): $(pk2bm_OBJECTS) $(pk2bm_DEPENDENCIES) $(EXTRA_pk2bm_DEPENDENCIES) 
 	@rm -f pk2bm$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(pk2bm_OBJECTS) $(pk2bm_LDADD) $(LIBS)
+
+pktest$(EXEEXT): $(pktest_OBJECTS) $(pktest_DEPENDENCIES) $(EXTRA_pktest_DEPENDENCIES) 
+	@rm -f pktest$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(pktest_OBJECTS) $(pktest_LDADD) $(LIBS)
 
 ps2pk$(EXEEXT): $(ps2pk_OBJECTS) $(ps2pk_DEPENDENCIES) $(EXTRA_ps2pk_DEPENDENCIES) 
 	@rm -f ps2pk$(EXEEXT)
@@ -787,6 +812,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pk2bm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pktest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ps2pk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regions.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scanfont.Po@am__quote@
@@ -1295,7 +1321,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool \
+	clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1372,22 +1399,22 @@ uninstall-man: uninstall-man1
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--refresh check check-TESTS \
 	check-am clean clean-binPROGRAMS clean-cscope clean-generic \
-	clean-libtool cscope cscopelist-am ctags ctags-am dist \
-	dist-all dist-bzip2 dist-gzip dist-lzip dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
-	uninstall uninstall-am uninstall-binPROGRAMS uninstall-man \
-	uninstall-man1
+	clean-libtool clean-noinstPROGRAMS cscope cscopelist-am ctags \
+	ctags-am dist dist-all dist-bzip2 dist-gzip dist-lzip \
+	dist-shar dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-binPROGRAMS install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-man1 install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	recheck tags tags-am uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-man uninstall-man1
 
 
 $(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
