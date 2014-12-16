@@ -77,8 +77,9 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/isnum.c \
 	@MPFR_TREE@/src/isqrt.c \
 	@MPFR_TREE@/src/log.c \
-	@MPFR_TREE@/src/mpn_exp.c \
 	@MPFR_TREE@/src/mpfr-gmp.c \
+	@MPFR_TREE@/src/mpn_exp.c \
+	@MPFR_TREE@/src/mp_clz_tab.c \
 	@MPFR_TREE@/src/mul.c \
 	@MPFR_TREE@/src/mul_2si.c \
 	@MPFR_TREE@/src/mul_2ui.c \
@@ -197,7 +198,6 @@ unused_sources = \
 	@MPFR_TREE@/src/min_prec.c \
 	@MPFR_TREE@/src/minmax.c \
 	@MPFR_TREE@/src/modf.c \
-	@MPFR_TREE@/src/mp_clz_tab.c \
 	@MPFR_TREE@/src/mul_2exp.c \
 	@MPFR_TREE@/src/mul_d.c \
 	@MPFR_TREE@/src/out_str.c \
