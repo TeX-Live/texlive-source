@@ -1,3 +1,8 @@
+2014-12-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am [Sparc Solaris, armel]:
+	Need to compile src/mp_clz_tab.c.
+
 2014-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Added KPSE_COMPILER_VISIBILITY.

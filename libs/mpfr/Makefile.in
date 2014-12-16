@@ -168,8 +168,9 @@ nodist_libmpfr_a_OBJECTS = @MPFR_TREE@/src/abort_prec_max.$(OBJEXT) \
 	@MPFR_TREE@/src/isinteger.$(OBJEXT) \
 	@MPFR_TREE@/src/isnum.$(OBJEXT) \
 	@MPFR_TREE@/src/isqrt.$(OBJEXT) @MPFR_TREE@/src/log.$(OBJEXT) \
-	@MPFR_TREE@/src/mpn_exp.$(OBJEXT) \
 	@MPFR_TREE@/src/mpfr-gmp.$(OBJEXT) \
+	@MPFR_TREE@/src/mpn_exp.$(OBJEXT) \
+	@MPFR_TREE@/src/mp_clz_tab.$(OBJEXT) \
 	@MPFR_TREE@/src/mul.$(OBJEXT) \
 	@MPFR_TREE@/src/mul_2si.$(OBJEXT) \
 	@MPFR_TREE@/src/mul_2ui.$(OBJEXT) \
@@ -697,8 +698,9 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/isnum.c \
 	@MPFR_TREE@/src/isqrt.c \
 	@MPFR_TREE@/src/log.c \
-	@MPFR_TREE@/src/mpn_exp.c \
 	@MPFR_TREE@/src/mpfr-gmp.c \
+	@MPFR_TREE@/src/mpn_exp.c \
+	@MPFR_TREE@/src/mp_clz_tab.c \
 	@MPFR_TREE@/src/mul.c \
 	@MPFR_TREE@/src/mul_2si.c \
 	@MPFR_TREE@/src/mul_2ui.c \
@@ -817,7 +819,6 @@ unused_sources = \
 	@MPFR_TREE@/src/min_prec.c \
 	@MPFR_TREE@/src/minmax.c \
 	@MPFR_TREE@/src/modf.c \
-	@MPFR_TREE@/src/mp_clz_tab.c \
 	@MPFR_TREE@/src/mul_2exp.c \
 	@MPFR_TREE@/src/mul_d.c \
 	@MPFR_TREE@/src/out_str.c \
@@ -1051,9 +1052,11 @@ clean-noinstLIBRARIES:
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/log.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/mpfr-gmp.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/mpn_exp.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@MPFR_TREE@/src/mpfr-gmp.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+@MPFR_TREE@/src/mp_clz_tab.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/mul.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1218,6 +1221,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/isnum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/isqrt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/log.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mpn_exp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mul.Po@am__quote@
