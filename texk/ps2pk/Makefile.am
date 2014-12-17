@@ -96,7 +96,7 @@ pktest_SOURCES = \
 	pkout.h \
 	pktest.c
 
-$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
+$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2m_OBJECTS) $(ps2pk_OBJECTS) $(pktest_OBJECTS): $(KPATHSEA_DEPEND)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
@@ -126,7 +126,6 @@ EXTRA_DIST += \
 	README.type1 \
 	basename.c \
 	flisearch.c \
-	pktest.c \
 	protos.h \
 	psearch.c \
 	sexpr.c \
