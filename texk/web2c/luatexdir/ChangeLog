@@ -1,3 +1,8 @@
+2014-12-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex/texnodes.w: Sync with the upstream.
+	Luigi fixes a bug on cached attributes.
+
 2014-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Avoid implicit function declarations.
