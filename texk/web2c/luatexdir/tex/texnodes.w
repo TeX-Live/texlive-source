@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 5106 2014-12-17 01:54:37Z luigi $"
+    "$Id: texnodes.w 5107 2014-12-17 09:09:38Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
@@ -2290,7 +2290,7 @@ void set_attribute(halfword n, int i, int val)
         vlink(node_attr(n)) = p;
         return;
     }
-    /* we check if we have this attribute already and quit if the value stays the same */
+    /* we check if we have this attribute already and quite if the value stays the same */
     assert(vlink(p) != null);
     while (vlink(p) != null) {
         int t = attribute_id(vlink(p));
@@ -2312,12 +2312,9 @@ void set_attribute(halfword n, int i, int val)
     } else if (attr_list_ref(p) == 1) {
         /* this can really happen HH-LS */
         if (p == attr_list_cache) {
-            /*  FIXME: C code and normal text inside the same comment (PB)
-                attr_list_cache = cache_disabled;
-
-                or (saved a list creation):
-
-            */
+            /* we can invalidate the cache setting */
+            /* attr_list_cache = cache_disabled    */
+            /* or save the list, as done below     */
             p = copy_attribute_list(p);
             node_attr(n) = p;
             /* the copied list gets ref count 1 */
@@ -2333,6 +2330,7 @@ void set_attribute(halfword n, int i, int val)
         attr_list_ref(p) = 1;
     }
 
+
     /* we go to position j in the list */
     while (j-- > 0)
         p = vlink(p);
@@ -2346,6 +2344,9 @@ void set_attribute(halfword n, int i, int val)
     }
     return;
 }
+
+
+
 
 
 @ @c
