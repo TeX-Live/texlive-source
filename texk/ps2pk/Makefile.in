@@ -653,9 +653,8 @@ EXTRA_DIST = $(TESTS) tests/lmmi12.600pk tests/Symbol.afm \
 	tests/Symbol.alpha.hex tests/Symbol.alpha.pix tests/Symbol.pfa \
 	tests/Symbol.pfb tests/Symbol10.300pk CHANGES.type1 \
 	INSTALLATION README.14m README.type1 basename.c flisearch.c \
-	pktest.c protos.h psearch.c sexpr.c strexpr.c strexpr.h \
-	t1imager.h t1stub.c t1test.c texfiles.c texfiles.h trig.h \
-	usenet
+	protos.h psearch.c sexpr.c strexpr.c strexpr.h t1imager.h \
+	t1stub.c t1test.c texfiles.c texfiles.h trig.h usenet
 DISTCLEANFILES = lmmi12.600pk Symbol*
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -1417,7 +1416,7 @@ uninstall-man: uninstall-man1
 	uninstall-binPROGRAMS uninstall-man uninstall-man1
 
 
-$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(ps2pk_OBJECTS): $(KPATHSEA_DEPEND)
+$(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2m_OBJECTS) $(ps2pk_OBJECTS) $(pktest_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 
