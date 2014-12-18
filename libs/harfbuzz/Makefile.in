@@ -83,7 +83,7 @@ DIST_COMMON = $(srcdir)/../../am/reconfig.am \
 	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/Makefile.am $(top_srcdir)/configure \
 	$(am__configure_deps) $(srcdir)/config.h.in \
-	$(top_srcdir)/harfbuzz-0.9.36/src/hb-version.h.in \
+	$(top_srcdir)/harfbuzz-0.9.37/src/hb-version.h.in \
 	$(am__dist_check_SCRIPTS_DIST) \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/test-driver ChangeLog \
@@ -778,7 +778,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.36/src/hb-version.h.in
+hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.37/src/hb-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
