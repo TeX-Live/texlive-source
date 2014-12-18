@@ -1,3 +1,128 @@
+commit 66e37409b3bc1eddc86704ae26d9176677ce6aa6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 17 12:09:17 2014 -0800
+
+    0.9.37
+
+ NEWS         | 8 ++++++++
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+commit 093c520de506aec74f3fb1e195c0ca85813424dd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 21:07:53 2014 -0800
+
+    [otlayout] Mark variables that are C arrays as opposed to OT::ArrayOf
+
+ src/hb-ot-layout-gpos-table.hh       | 24 +++++++--------
+ src/hb-ot-layout-gsubgpos-private.hh | 60
+ ++++++++++++++++++------------------
+ 2 files changed, 42 insertions(+), 42 deletions(-)
+
+commit 9df0a520306a491f973d42965597bfda6023e508
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 20:54:28 2014 -0800
+
+    [otlayout] Avoid invalid access with Context format 3
+
+ src/hb-ot-layout-gsubgpos-private.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 295ef1dd5229f47d8e0eb5b4eb48c90a6b470073
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 20:43:18 2014 -0800
+
+    [ot] Debug get_coverage
+
+ src/hb-ot-layout-gsubgpos-private.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 00f6a8e334ec4c586e4e633a95b411ccb50306d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 20:36:49 2014 -0800
+
+    [ot] Print format in dispatch trace
+
+ src/hb-ot-layout-gpos-table.hh       | 16 ++++++++--------
+ src/hb-ot-layout-gsub-table.hh       | 14 +++++++-------
+ src/hb-ot-layout-gsubgpos-private.hh |  8 ++++----
+ 3 files changed, 19 insertions(+), 19 deletions(-)
+
+commit 5c7d6f02d71362c2b192a7d96e6181977682921c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 20:28:49 2014 -0800
+
+    Minor
+
+ src/hb-private.hh | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 153beebba9b76901b8b62b90ba0dc69462ae2090
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 19:46:09 2014 -0800
+
+    [ot] Make sure all toplevel tables have tableTag
+
+ src/hb-open-file-private.hh | 2 ++
+ src/hb-ot-hhea-table.hh     | 2 ++
+ src/hb-ot-hmtx-table.hh     | 2 ++
+ 3 files changed, 6 insertions(+)
+
+commit 282b13f9b4d86b091714de7fbddc94b3e3ff3d91
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 19:32:46 2014 -0800
+
+    [sanitize] Improve debug output some more
+
+ src/hb-open-type-private.hh | 30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
+
+commit 0766ee1f4e6046598a2e8fb1b167c3942b4a87a0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 12 18:23:20 2014 -0800
+
+    [sanitize] Improve debug output
+
+ src/hb-open-type-private.hh | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+commit e6f80fa1044243898c402ec6a59d6c1b5420be53
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Dec 10 12:05:24 2014 -0800
+
+    [indic] Allow ZWJ/ZWNJ before SM
+
+    In Oriya, a ZWJ/ZWNJ might be added before candrabindu to encourage
+    or stop ligation of the candrabindu.  This is clearly specified in
+    the Unicode section on Oriya.  Allow it there.  Note that Uniscribe
+    doesn't allow this.
+
+    Micro tests added using Noto Sans Oriya draft.
+
+    No changes in numbers.  Currently at:
+
+    BENGALI: 353725 out of 354188 tests passed. 463 failed (0.130722%)
+    DEVANAGARI: 707307 out of 707394 tests passed. 87 failed (0.0122987%)
+    GUJARATI: 366349 out of 366457 tests passed. 108 failed (0.0294714%)
+    GURMUKHI: 60732 out of 60747 tests passed. 15 failed (0.0246926%)
+    KANNADA: 951190 out of 951913 tests passed. 723 failed (0.0759523%)
+    KHMER: 299070 out of 299124 tests passed. 54 failed (0.0180527%)
+    MALAYALAM: 1048147 out of 1048334 tests passed. 187 failed
+    (0.0178378%)
+    ORIYA: 42320 out of 42329 tests passed. 9 failed (0.021262%)
+    SINHALA: 271662 out of 271847 tests passed. 185 failed (0.068053%)
+    TAMIL: 1091753 out of 1091754 tests passed. 1 failed (9.15957e-05%)
+    TELUGU: 970555 out of 970573 tests passed. 18 failed (0.00185457%)
+
+ src/hb-ot-shape-complex-indic-machine.rl                 |   2 +-
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/5028afb650b1bb718ed2131e872fbcce57828fff.ttf | Bin 0 ->
+ 4720 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ test/shaping/tests/MANIFEST                              |   1 +
+ test/shaping/tests/indic-joiner-candrabindu.tests        |   2 ++
+ 6 files changed, 6 insertions(+), 1 deletion(-)
+
 commit c0e95abc5f3f14121483b71f10837828a3a1d73a
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Nov 20 14:42:24 2014 -0800
