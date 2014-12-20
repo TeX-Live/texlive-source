@@ -19,7 +19,7 @@
 
 @ @c
 static const char _svn_version[] =
-    "$Id: texnodes.w 5109 2014-12-17 10:41:30Z luigi $"
+    "$Id: texnodes.w 5112 2014-12-20 08:21:53Z luigi $"
     "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
 
 #include "ptexlib.h"
@@ -2148,8 +2148,6 @@ static halfword new_attribute_node(unsigned int i, int v)
     attribute_value(r) = v;
     /* not used but nicer in print */ 
     subtype(r) = 0; 
-    alink(r) = null;
-    /* we only have forward links */
     return r;
 }
 
