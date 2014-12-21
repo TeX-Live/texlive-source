@@ -1,3 +1,8 @@
+2014-12-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lua/lnodelib.c: Sync with the upstream. Luigi fixes 'print' for
+	alink(n) when n is an attribute node.
+
 2014-12-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex/texnodes.w: Sync with the upstream. Luigi makes minor changes.
