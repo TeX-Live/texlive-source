@@ -84,6 +84,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gmp-alloca.m4 \
 	$(top_srcdir)/m4/gmp-attribute.m4 \
 	$(top_srcdir)/m4/gmp-double-format.m4 \
+	$(top_srcdir)/m4/gmp-extern-inline.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-visibility.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
