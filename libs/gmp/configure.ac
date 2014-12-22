@@ -81,6 +81,8 @@ KPSE_GMP_H
 
 AC_CHECK_SIZEOF([mp_limb_t], , [#include "gmp-tmp.h"])
 
+GMP_H_EXTERN_INLINE
+
 GMP_FUNC_ALLOCA
 
 GMP_C_DOUBLE_FORMAT

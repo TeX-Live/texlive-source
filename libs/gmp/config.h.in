@@ -116,3 +116,9 @@
 /* Define one of these to 1 for the temporary memory allocation method. */
 #undef WANT_TMP_ALLOCA
 #undef WANT_TMP_REENTRANT
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif

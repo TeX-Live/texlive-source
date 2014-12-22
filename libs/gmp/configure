@@ -6027,6 +6027,84 @@ _ACEOF
 
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for inline" >&5
+$as_echo_n "checking for inline... " >&6; }
+if ${ac_cv_c_inline+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_cv_c_inline=no
+for ac_kw in inline __inline__ __inline; do
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#ifndef __cplusplus
+typedef int foo_t;
+static $ac_kw foo_t static_foo () {return 0; }
+$ac_kw foo_t foo () {return 0; }
+#endif
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  ac_cv_c_inline=$ac_kw
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+  test "$ac_cv_c_inline" != no && break
+done
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_c_inline" >&5
+$as_echo "$ac_cv_c_inline" >&6; }
+
+case $ac_cv_c_inline in
+  inline | yes) ;;
+  *)
+    case $ac_cv_c_inline in
+      no) ac_val=;;
+      *) ac_val=$ac_cv_c_inline;;
+    esac
+    cat >>confdefs.h <<_ACEOF
+#ifndef __cplusplus
+#define inline $ac_val
+#endif
+_ACEOF
+    ;;
+esac
+
+
+case $ac_cv_c_inline in #(
+  no) :
+     ;; #(
+  *) :
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#define __GMP_WITHIN_CONFIGURE_INLINE 1
+#include "gmp-tmp.h"
+#ifndef __GMP_EXTERN_INLINE
+die die die
+#endif
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+else
+  case $ac_cv_c_inline in #(
+  yes) :
+    tmp_inline=inline ;; #(
+  *) :
+    tmp_inline=$ac_cv_c_inline ;;
+esac
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: gmp.h doesnt recognise compiler \"$tmp_inline\", inlines will be unavailable" >&5
+$as_echo "$as_me: WARNING: gmp.h doesnt recognise compiler \"$tmp_inline\", inlines will be unavailable" >&2;}
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext ;;
+esac
+
+
 
 # The Ultrix 4.2 mips builtin alloca declared by alloca.h only works
 # for constant arguments.  Useless!

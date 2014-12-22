@@ -1,3 +1,8 @@
+2014-12-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Added GMP_H_EXTERN_INLINE.
+	* m4/gmp-extern-inline.m4 (new): Define GMP_H_EXTERN_INLINE.
+
 2014-12-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Added KPSE_COMPILER_VISIBILITY.
