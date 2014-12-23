@@ -1,8 +1,10 @@
-## Makefile.am for the TeX Live subdirectory texk/devnag/
+## Makefile.am for the TeX Live subdirectory utils/devnag/
 ##
 ## Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
+AM_CPPFLAGS = -DTEXLIVE
+
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = devnag

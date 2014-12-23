@@ -696,6 +696,7 @@ enable_native_texlive_build
 enable_multiplatform
 enable_cxx_runtime_hack
 enable_libtool_hack
+enable_devnag
 enable_m_tx
 enable_pmx
 enable_ps2eps
@@ -757,7 +758,6 @@ enable_bibtexu
 enable_chktex
 enable_cjkutils
 enable_detex
-enable_devnag
 enable_dtl
 enable_dvi2tty
 enable_dvidvi
@@ -1506,6 +1506,7 @@ Optional Features:
                           lib/PLATFORM
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-libtool-hack   ignore libtool dependency_libs
+  --disable-devnag        do not build the devnag package
   --disable-m-tx          do not build the m-tx package
   --disable-pmx           do not build the pmx package
   --disable-ps2eps        do not build the ps2eps package
@@ -1565,7 +1566,6 @@ Optional Features:
   --disable-chktex        do not build the chktex package
   --disable-cjkutils      do not build the cjkutils package
   --disable-detex         do not build the detex package
-  --disable-devnag        do not build the devnag package
   --disable-dtl           do not build the dtl package
   --disable-dvi2tty       do not build the dvi2tty package
   --disable-dvidvi        do not build the dvidvi package
@@ -3381,6 +3381,24 @@ $as_echo "$as_me: $host -> \`--disable-luajittex'" >&6;}
      ;;
 esac ;;
 esac
+## utils/devnag/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/devnag/
+## configure options and TL libraries required for devnag
+# Check whether --enable-devnag was given.
+if test "${enable_devnag+set}" = set; then :
+  enableval=$enable_devnag;
+fi
+case $enable_devnag in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_devnag=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-devnag=$enable_devnag'" >&5
+$as_echo "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-devnag=$enable_devnag'"
+    ;;
+esac
+
 ## utils/m-tx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/m-tx/
 ## configure options and TL libraries required for mtx
 # Check whether --enable-m-tx was given.
@@ -4100,24 +4118,6 @@ esac
 test "x$enable_detex" = xno || {
   need_kpathsea=yes
 }
-
-## texk/devnag/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/devnag/
-## configure options and TL libraries required for devnag
-# Check whether --enable-devnag was given.
-if test "${enable_devnag+set}" = set; then :
-  enableval=$enable_devnag;
-fi
-case $enable_devnag in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_devnag=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-devnag=$enable_devnag'" >&5
-$as_echo "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-devnag=$enable_devnag'"
-    ;;
-esac
 
 ## texk/dtl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dtl/
 ## configure options and TL libraries required for dtl
