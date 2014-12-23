@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2014 Free Software Foundation, Inc.
 
-timestamp='2014-12-03'
+timestamp='2014-12-21'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ case $basic_machine in
 	| c4x | c8051 | clipper \
 	| d10v | d30v | dlx | dsp16xx \
 	| epiphany \
-	| fido | fr30 | frv \
+	| fido | fr30 | frv | ft32 \
 	| h8300 | h8500 | hppa | hppa1.[01] | hppa2.0 | hppa2.0[nw] | hppa64 \
 	| hexagon \
 	| i370 | i860 | i960 | ia64 \
