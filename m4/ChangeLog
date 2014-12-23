@@ -1,3 +1,8 @@
+2014-12-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (kpse_texk_pkgs): Move devnag from here ...
+	(kpse_utils_pkgs): ... to here.
+
 2014-12-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (kpse_texk_pkgs): Rename ps2pkm => ps2pk.

@@ -123,6 +123,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/tardate.ac \
 	$(top_srcdir)/version.ac \
+	$(top_srcdir)/utils/devnag/ac/withenable.ac \
 	$(top_srcdir)/utils/m-tx/ac/withenable.ac \
 	$(top_srcdir)/utils/pmx/ac/withenable.ac \
 	$(top_srcdir)/utils/ps2eps/ac/withenable.ac \
@@ -142,7 +143,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/chktex/ac/withenable.ac \
 	$(top_srcdir)/texk/cjkutils/ac/withenable.ac \
 	$(top_srcdir)/texk/detex/ac/withenable.ac \
-	$(top_srcdir)/texk/devnag/ac/withenable.ac \
 	$(top_srcdir)/texk/dtl/ac/withenable.ac \
 	$(top_srcdir)/texk/dvi2tty/ac/withenable.ac \
 	$(top_srcdir)/texk/dvidvi/ac/withenable.ac \

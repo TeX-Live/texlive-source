@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -14,7 +14,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 KPSE_BASIC([devnag])
 
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([config.h])[]dnl unused, to avoid zillions of -D's on command line
 
 dnl Checks for programs.
 AC_PROG_CC

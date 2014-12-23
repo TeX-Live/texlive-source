@@ -1334,7 +1334,13 @@ int main(int argc, char **argv) {
       }
       if (strcasecmp(infil, outfil) == 0) strcat(outfil, DEFAULT_DEST_EXT);
    }
-   if ((f_out = fopen(outfil, "wb")) == NULL) {
+#ifdef TEXLIVE
+/* In TeX Live we want to share files between Unix and Windows systems.  */
+#define FOPEN_W_MODE "wb"
+#else
+#define FOPEN_W_MODE "w"
+#endif
+   if ((f_out = fopen(outfil, FOPEN_W_MODE)) == NULL) {
       fclose(f_in);
       fprintf(stderr, "cannot open %s for output\n", outfil);
       exit(1);

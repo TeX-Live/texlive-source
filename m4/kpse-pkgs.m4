@@ -80,6 +80,7 @@ AC_REQUIRE([KPSE_HARFBUZZ_SYSTEM_FLAGS])[]dnl
 # Define the list of utility sub-packages, i.e., subdirs 'utils/*'.
 AC_DEFUN([KPSE_UTILS_PKGS], [dnl
 m4_define([kpse_utils_pkgs], [dnl
+devnag
 m-tx
 pmx
 ps2eps
@@ -103,7 +104,6 @@ bibtex-x
 chktex
 cjkutils
 detex
-devnag
 dtl
 dvi2tty
 dvidvi
