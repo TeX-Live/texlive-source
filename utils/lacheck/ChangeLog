@@ -1,3 +1,7 @@
+2014-12-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* lacheck.l, lacheck.c: Do not include win32lib.h.
+
 2014-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Version 1.28, now maintained here, by us.
