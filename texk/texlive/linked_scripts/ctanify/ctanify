@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.4";          # ctanify version number
+our $VERSION = "1.5";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -40,18 +40,24 @@ my $tdsoutdir;                 # Directory name where to output TDS tree
 # Associate file extensions with TDS directories.  "%s" is replaced
 # with the package name.
 my %ext2tds =
-    ("afm"     => "fonts/afm/public/%s",
-     "README"  => "doc/latex/%s",
+    ("README"  => "doc/latex/%s",
+     "afm"     => "fonts/afm/public/%s",
      "bat"     => "scripts/%s",
+     "bbx"     => "tex/latex/%s",
      "bib"     => "bibtex/bib/%s",
      "bst"     => "bibtex/bst/%s",
+     "cbx"     => "tex/latex/%s",
      "cls"     => "tex/latex/%s",
      "dtx"     => "source/latex/%s",
      "dvi"     => "doc/latex/%s",
      "fd"      => "tex/latex/%s",
      "ins"     => "source/latex/%s",
+     "map"     => "fonts/map/dvips/%s",
      "mf"      => "fonts/source/public/%s",
      "mp"      => "metapost/%s",
+     "ofm"     => "fonts/ofm/public/%s",
+     "ovf"     => "fonts/ovf/public/%s",
+     "ovp"     => "fonts/ovp/public/%s",
      "pdf"     => "doc/latex/%s",
      "pfb"     => "fonts/type1/public/%s",
      "pfm"     => "fonts/type1/public/%s",
@@ -660,7 +666,7 @@ Scott Pakin, I<scott+ctify@pakin.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2013 Scott Pakin
+Copyright 2014 Scott Pakin
 
 This work may be distributed and/or modified under the conditions of
 the LaTeX Project Public License, either S<version 1.3c> of this
