@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 35700 2014-11-30 18:34:08Z karl $
+# $Id: tlmgr.pl 35841 2014-12-16 19:11:15Z karl $
 #
 # Copyright 2008-2014 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 35700 $';
-my $datrev = '$Date: 2014-11-30 19:34:08 +0100 (Sun, 30 Nov 2014) $';
+my $svnrev = '$Revision: 35841 $';
+my $datrev = '$Date: 2014-12-16 20:11:15 +0100 (Tue, 16 Dec 2014) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -130,6 +130,8 @@ sub main {
     "gui" => 1,
     "gui-lang" => "=s",
     "debug-translation" => 1,
+    "h|?" => 1,
+    "help" => 1,
     "location|repository|repo" => "=s",
     "machine-readable" => 1,
     "no-execute-actions" => 1,
@@ -141,81 +143,71 @@ sub main {
     "usermode|user-mode" => 1,
     "usertree|user-tree" => "=s",
     "version" => 1,
-    "help" => 1,
-    "h|?" => 1);
+  );
 
   my %actionoptions = (
-    "get-mirror"    => { },
-    "option"        => { },
+    "backup"        => { "all" => 1,
+                         "backupdir" => "=s",
+                         "clean" => ":-99",
+                         "dry-run|n" => 1 },
+    "candidate"     => { },
+    "check"         => { "use-svn" => 1 },
     "conf"          => { "conffile" => "=s", 
                          "delete" => 1 },
-    "version"       => { },
-    "repository"    => { },
-    "candidate"     => { },
-    "backup"        => { "backupdir" => "=s",
-                         "clean" => ":-99",
-                         "all" => 1,
-                         "dry-run|n" => 1 },
-    "check"         => { "use-svn" => 1 },
-    "generate"      => { "localcfg" => "=s",
-                         "dest" => "=s",
+    "dump-tlpdb"    => { "local" => 1,
+                         "remote" => 1 },
+    "generate"      => { "dest" => "=s",
+                         "localcfg" => "=s",
                          "rebuild-sys" => 1 },
+    "get-mirror"    => { },
     "gui"           => { "load" => 1 },
-    "install"       => { "no-depends" => 1,
-                         "no-depends-at-all" => 1,
+    "info"          => { "list" => 1,
+                         "only-installed" => 1 },
+    "install"       => { "dry-run|n" => 1,
                          "file" => 1,
-                         "reinstall" => 1,
                          "force" => 1,
-                         "dry-run|n" => 1 },
+                         "no-depends" => 1,
+                         "no-depends-at-all" => 1,
+                         "reinstall" => 1},
+    "option"        => { },
     "paper"         => { "list" => 1 },
     "path"          => { "w32mode" => "=s" },
     "pinning"       => { "all" => 1 },
     "platform"      => { "dry-run|n" => 1 },
-    "postaction"    => { "w32mode" => "=s",
-                         "all" => 1,
-                         "fileassocmode" => "=i" },
+    "postaction"    => { "all" => 1,
+                         "fileassocmode" => "=i",
+                         "w32mode" => "=s"},
     "recreate-tlpdb"=> { "platform|arch" => "=s" },
-    "remove"        => { "no-depends" => 1,
-                         "no-depends-at-all" => 1,
+    "remove"        => { "dry-run|n" => 1,
                          "force" => 1,
-                         "dry-run|n" => 1 },
+                         "no-depends" => 1,
+                         "no-depends-at-all" => 1 },
     "repository"    => { "with-platforms" => 1 },
-    "restore"       => { "backupdir" => "=s",
+    "restore"       => { "all" => 1,
+                         "backupdir" => "=s",
                          "dry-run|n" => 1,
-                         "all" => 1,
-                         "force" => 1 },
-    "search"        => { "global" => 1,
-                         "word" => 1,
+                         "force" => 1, },
+    "search"        => { "all" => 1, 
                          "file" => 1,
-                         "keyword" => 1,
-                         "list" => 1,
-                         "all" => 1,
-                         "characterization" => 1,
-                         "functionality" => 1,
-                         "taxonomy" => 1 },
-    "info"          => { "list" => 1,
-                         "taxonomy" => 1,
-                         "keyword" => 1,
-                         "characterization" => 1,
-                         "functionality" => 1,
-                         "only-installed" => 1 },
-    "dump-tlpdb"    => { "local" => 1,
-                         "remote" => 1 },
+                         "global" => 1,
+                         "word" => 1 },
+    "repository"    => { },
     "uninstall"     => { "force" => 1 },
-    "update"        => { "no-depends" => 1,
-                         "no-depends-at-all" => 1,
-                         "all" => 1,
-                         "self" => 1,
+    "update"        => { "all" => 1,
+                         "backup" => 1,
+                         "backupdir" => "=s",
+                         "dry-run|n" => 1,
+                         "exclude" => "=s@",
+                         "force" => 1,
                          "list" => 1,
                          "no-auto-remove" => 1,
                          "no-auto-install" => 1,
+                         "no-depends" => 1,
+                         "no-depends-at-all" => 1,
                          "reinstall-forcibly-removed" => 1,
-                         "force" => 1,
-                         "backupdir" => "=s",
-                         "backup" => 1,
-                         "exclude" => "=s@",
-                         "dry-run|n" => 1 },
-    );
+                         "self" => 1 },
+    "version"       => { },
+  );
 
   my %optarg;
   for my $k (keys %globaloptions) {
@@ -1191,15 +1183,7 @@ sub action_dumptlpdb {
 #
 sub action_info {
   init_local_db();
-  my $taxonomy;
-  if ($opts{"taxonomy"} || $opts{"characterization"} || $opts{"functionality"}
-      || $opts{"keyword"}) {
-    $taxonomy = load_taxonomy_datafile();
-    if (!defined($taxonomy)) {
-      tlwarn("$prg: Cannot load taxonomy file, showing taxonomies not supported.\n");
-    }
-  }
-  my ($what, @todo) = @ARGV;
+  my ($what,@todo) = @ARGV;
   #
   # tlmgr info
   # tlmgr info collection
@@ -1213,7 +1197,7 @@ sub action_info {
   # we are still here, so $what is defined and neither collection nor scheme,
   # so assume the arguments are package names
   foreach my $ppp ($what, @todo) {
-    my ($pkg, $tag) = split '@', $ppp, 2;
+    my ($pkg, $tag) = split ('@', $ppp, 2);
     my $tlpdb = $localtlpdb;
     my $source_found;
     my $tlp = $localtlpdb->get_package($pkg);
@@ -1365,36 +1349,6 @@ sub action_info {
     print "cat-license: ", $tlp->cataloguedata->{'license'}, "\n"
       if $tlp->cataloguedata->{'license'};
     print "collection:  ", @colls, "\n" if (@colls);
-    if ($opts{"keyword"} || $opts{"taxonomy"}) {
-      print "keywords:    ";
-      if (defined($taxonomy->{'by-package'}{'keyword'}{$pkg})) {
-        print join(', ',@{$taxonomy->{'by-package'}{'keyword'}{$pkg}}), "\n";
-      } else {
-        print "(none found)\n";
-      }
-    }
-    if ($opts{"functionality"} || $opts{"taxonomy"}) {
-      print "function:    ";
-      if (defined($taxonomy->{'by-package'}{'functionality'}{$pkg})) {
-        print join(', ',@{$taxonomy->{'by-package'}{'functionality'}{$pkg}}), "\n";
-      } else {
-        print "(none found)\n";
-      }
-    }
-    if ($opts{"characterization"} || $opts{"taxonomy"}) {
-      print "primary characterization: ";
-      if (defined($taxonomy->{'by-package'}{'primary'}{$pkg})) {
-        print $taxonomy->{'by-package'}{'primary'}{$pkg}, "\n";
-      } else {
-        print "(none found)\n";
-      }
-      print "secondary characterization: ";
-      if (defined($taxonomy->{'by-package'}{'secondary'}{$pkg})) {
-        print $taxonomy->{'by-package'}{'secondary'}{$pkg}, "\n";
-      } else {
-        print "(none found)\n";
-      }
-    }
     if ($opts{"list"}) {
       if ($tlp->category eq "Collection" || $tlp->category eq "Scheme") {
         # in the case of collections of schemes we list the deps
@@ -1453,83 +1407,26 @@ sub action_info {
 }
 
 
-
-# taxonomy subroutines
-# 
-sub load_taxonomy_datafile {
-  init_local_db();
-  my $taxonomy;
-  my $fpath = $localtlpdb->root
-              . "/texmf-dist/scripts/texlive/var/texcatalogue.keywords";
-  if (! -r $fpath) {
-    tlwarn("$prg: taxonomy file $fpath not readable: $!\n");
-    return;
-  }
-  if (!open (TAXF, $fpath)) {
-    tlwarn("$prg: taxonomy file $fpath cannot be opened: $!\n");
-    return;
-  }
-  # suck in the whole file contents
-  my @foo = <TAXF>;
-  close(TAXF);
-  my $foo = "@foo";
-  no strict "vars";
-  # the no strict "vars" is *ABSOLUTELY* necessary otherwise the file is
-  # not evaluated, no idea why!
-  eval "$foo";
-  use strict "vars";
-  return $taxonomy;
-}
-
-sub walk_level_tree {
-  my $cp = shift;
-  my $prestring = shift;
-  my $print_packages = shift;
-  if (defined($cp->{'_packages_'})) {
-    print "$prestring\n";
-    if ($print_packages) {
-      my @pkgs = sort @{$cp->{'_packages_'}};
-      print "\t@pkgs\n";
-    }
-  }
-  for my $cz (keys %$cp) {
-    if ($cz ne '_packages_') {
-      my $nextstring = "$prestring > $cz";
-      my $np = $cp->{$cz};
-      &walk_level_tree($np,$nextstring);
-    }
-  }
-}
-
 #  SEARCH
 #
 sub action_search {
-  my $r = shift @ARGV;
+  my ($r) = @ARGV;
   my $ret = "";
   my $tlpdb;
-  my $taxonomy;
-  #
-  if (!$opts{"list"} && (!defined($r) || !$r)) {
-
-    tlwarn("$prg: nothing to search for.\n");
-    return;
-  }
-  if ($opts{"extended"}) {
-    tlwarn("$prg: sorry, extended searching not implemented by now.\n");
-    return;
-  }
   # check the arguments
   my $search_type_nr = 0;
   $search_type_nr++ if $opts{"file"};
-  $search_type_nr++ if $opts{"taxonomy"};
-  $search_type_nr++ if $opts{"characterization"};
-  $search_type_nr++ if $opts{"functionality"};
-  $search_type_nr++ if $opts{"keyword"};
   $search_type_nr++ if $opts{"all"};
   if ($search_type_nr > 1) {
-    tlwarn("$prg: please specify only one thing to search for!\n");
+    tlwarn("$prg: please specify only one thing to search for\n");
     return;
   }
+  #
+  if (!defined($r) || !$r) {
+    tlwarn("$prg: nothing to search for.\n");
+    return;
+  }
+
   init_local_db();
   if ($opts{"global"}) {
     init_tlmedia_or_die();
@@ -1537,49 +1434,9 @@ sub action_search {
   } else {
     $tlpdb = $localtlpdb;
   }
-  my $search_characterization = 
-    $opts{"characterization"} || $opts{"taxonomy"} || $opts{"all"};
-  my $search_functionality =
-    $opts{"functionality"} || $opts{"taxonomy"} || $opts{"all"};
-  my $search_keyword =
-    $opts{"keyword"} || $opts{"taxonomy"} || $opts{"all"};
-  my $search_tlpdb =
-    $opts{"all"} ||
-      !($opts{"taxonomy"} || $opts{"characterization"} || 
-        $opts{"functionality"} || $opts{"keyword"});
-  if ($opts{"all"} || $opts{"taxonomy"} || $opts{"characterization"} 
-      || $opts{"functionality"} || $opts{"keyword"}) {
-    $taxonomy = load_taxonomy_datafile();
-    if (!defined($taxonomy)) {
-      tlwarn("$prg: Cannot load taxonomy file;",
-             " searching/listing for taxonomies not supported.\n");
-      return;
-    }
-    if ($opts{"list"}) {
-      if ($search_keyword) {
-        print "\f Keywords:\n";
-        for (sort keys %{$taxonomy->{'by-taxonomy'}{'keyword'}}) {
-          print "\t$_\n";
-        }
-        print "\n";
-      }
-      if ($search_functionality) {
-        print "\f Functionalities:\n";
-        &walk_level_tree($taxonomy->{'by-taxonomy'}{'functionality'}, "", 0);
-        print "\n";
-      }
-      if ($search_characterization) {
-        # Assume all possible characterizations occur under the primary ones!
-        print "\f Characterizations:\n";
-        &walk_level_tree($taxonomy->{'by-taxonomy'}{'primary'}, "", 0);
-        print "\n";
-      }
-      return;
-    }
-  }
   foreach my $pkg ($tlpdb->list_packages) {
     my $tlp = $tlpdb->get_package($pkg);
-    if ($opts{"file"}) {
+    if ($opts{"file"} || $opts{"all"}) {
       my @files = $tlp->all_files;
       if ($tlp->relocated) {
         for (@files) { s:^$RelocPrefix/:$RelocTree/:; }
@@ -1593,36 +1450,14 @@ sub action_search {
       }
     } else {
       next if ($pkg =~ m/\./);
-      # the other searching is done together
-      my $t = "";
-      if ($search_keyword) {
-        $t = $t . join('\n', @{$taxonomy->{'by-package'}{'keyword'}{$pkg}})
-          if (defined($taxonomy->{'by-package'}{'keyword'}{$pkg}));
-      }
-      if ($search_functionality) {
-        $t = $t.join('\n', @{$taxonomy->{'by-package'}{'functionality'}{$pkg}})
-          if (defined($taxonomy->{'by-package'}{'functionality'}{$pkg}));
-      } 
-      if ($search_characterization) {
-        $t = "$t$taxonomy->{'by-package'}{'primary'}{$pkg}\n"
-          if (defined($taxonomy->{'by-package'}{'primary'}{$pkg}));
-        $t = "$t$taxonomy->{'by-package'}{'secondary'}{$pkg}\n"
-          if (defined($taxonomy->{'by-package'}{'secondary'}{$pkg}));
-      }
-      if ($search_tlpdb) {
-        $t .= "$pkg\n";
-        $t = "$t" . $tlp->shortdesc . "\n"
-          if (defined($tlp->shortdesc));
-        $t = "$t" . $tlp->longdesc . "\n"
-          if (defined($tlp->longdesc));
-      }
-      my $shortdesc = $tlp->shortdesc;
-      $shortdesc |= "";
+      # glom description strings together for one search
+      my $t = "$pkg\n";
+      $t = $t . $tlp->shortdesc . "\n" if (defined($tlp->shortdesc));
+      $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
       my $pat = $r;
-      if ($opts{"word"}) {
-        $pat = '\W' . $r . '\W';
-      }
+      $pat = '\W' . $r . '\W' if ($opts{"word"});
       if ($t =~ m/$pat/i) {
+        my $shortdesc = $tlp->shortdesc || "";
         $ret .= " $pkg - $shortdesc\n";
       }
     }
@@ -6587,18 +6422,6 @@ not be used; only locally installed packages, collections, or schemes
 are listed.
 (Does not work for listing of packages for now)
 
-=item B<--taxonomy>
-
-=item B<--keyword>
-
-=item B<--functionality>
-
-=item B<--characterization>
-
-In addition to the normal data displayed, also display information for
-given packages from the corresponding taxonomy (or all of them).  See
-L</TAXONOMIES> below for details.
-
 =back
 
 
@@ -7038,23 +6861,23 @@ otherwise, all operations will fail!
 
 =head3 search [I<option>...] --file I<what>
 
-=head3 search [I<option>...] --taxonomy I<what>
-
-=head3 search [I<option>...] --keyword I<what>
-
-=head3 search [I<option>...] --functionality I<what>
-
-=head3 search [I<option>...] --characterization I<what>
-
 =head3 search [I<option>...] --all I<what>
 
 By default, search the names, short descriptions, and long descriptions
 of all locally installed packages for the argument I<what>, interpreted
-as a regular expression.
+as a (Perl) regular expression.
 
 Options:
 
 =over 4
+
+=item B<--file>
+
+List all filenames containing I<what>.
+
+=item B<--all>
+
+Search everything: package names, descriptions and filenames.
 
 =item B<--global>
 
@@ -7063,41 +6886,10 @@ local installation.
 
 =item B<--word>
 
-Restrict the search to match only full words. For example, searching for
-C<table> with this option will not output packages containing the
-word C<tables> (unless they also contain the word C<table> on its own).
-
-=item B<--list>
-
-If a search for any (or all) taxonomies is done, by specifying one of
-the taxonomy options below, then instead of searching for packages, list
-the entire corresponding taxonomy (or all of them).  See
-L</TAXONOMIES> below.
-
-=back
-
-Other search options are selected by specifying one of the following:
-
-=over 4
-
-=item B<--file>
-
-List all filenames containing I<what>.
-
-=item B<--taxonomy>
-
-=item B<--keyword>
-
-=item B<--functionality>
-
-=item B<--characterization>
-
-Search in the corresponding taxonomy (or all) instead of the package
-descriptions.  See L</TAXONOMIES> below.
-
-=item B<--all>
-
-Search for package names, descriptions, and taxonomies, but not files.
+Restrict the search of package names and descriptions (but not
+filenames) to match only full words.  For example, searching for
+C<table> with this option will not output packages containing the word
+C<tables> (unless they also contain the word C<table> on its own).
 
 =back
 
@@ -7409,52 +7201,6 @@ switches between the full GUI and a simplified GUI with only the
 important and mostly used settings.
 
 
-=head1 TAXONOMIES
-
-tlmgr allows searching and listing of various categorizations, which we
-call I<taxonomies>, as provided by an enhanced TeX Catalogue (available
-for testing at L<http://az.ctan.org>).  This is useful when, for
-example, you don't know a specific package name but have an idea of the
-functionality you need; or when you want to see all packages relating to
-a given area.
-
-There are three different taxonomies, specified by the following
-options:
-
-=over 4
-
-=item C<--keyword>
-
-The keywords, as specified at L<http://az.ctan.org/keyword>.
-
-=item C<--functionality>
-
-The ``by-topic'' categorization created by J\"urgen Fenn, as specified
-at L<http://az.ctan.org/characterization/by-function>.
-
-=item C<--characterization>
-
-Both the primary and secondary functionalities, as specified at
-L<http://az.ctan.org/characterization/choose_dimen>.
-
-=item C<--taxonomy>
-
-Operate on all the taxonomies.
-
-=back
-
-The taxonomies are updated nightly and stored within TeX Live, so
-Internet access is not required to search them.
-
-Examples:
-  
-  tlmgr search --taxonomy exercise      # check all taxonomies for "exercise"
-  tlmgr search --taxonomy --word table  # check for "table" on its own
-  tlmgr search --list --keyword         # dump entire keyword taxonomy
-  tlmgr show --taxonomy pdftex          # show pdftex package information,
-                                        #   including all taxonomy entries
-
-
 =head1 MULTIPLE REPOSITORIES
 
 The main TeX Live repository contains a vast array of packages.
@@ -7595,10 +7341,9 @@ above.
 
 =item Match
 
-Select packages matching for a specific pattern.  By default, this uses
-the same algorithm as C<tlmgr search>, i.e., searches everything:
-descriptions, taxonomies, and/or filenames.  You can also select any
-subset for searching.
+Select packages matching for a specific pattern.  By default, this
+searches both descriptions and filenames.  You can also select a subset
+for searching.
 
 =item Selection
 
