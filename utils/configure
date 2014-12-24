@@ -697,6 +697,7 @@ enable_multiplatform
 enable_cxx_runtime_hack
 enable_libtool_hack
 enable_devnag
+enable_lacheck
 enable_m_tx
 enable_pmx
 enable_ps2eps
@@ -777,7 +778,6 @@ with_system_libgs
 with_libgs_includes
 with_libgs_libdir
 enable_gsftopk
-enable_lacheck
 enable_lcdf_typetools
 enable_cfftot1
 enable_mmafm
@@ -862,6 +862,7 @@ LDFLAGS
 LIBS
 CPPFLAGS'
 ac_subdirs_all='devnag
+lacheck
 m-tx
 pmx
 ps2eps
@@ -1498,6 +1499,7 @@ Optional Features:
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-libtool-hack   ignore libtool dependency_libs
   --disable-devnag        do not build the devnag package
+  --disable-lacheck       do not build the lacheck package
   --disable-m-tx          do not build the m-tx package
   --disable-pmx           do not build the pmx package
   --disable-ps2eps        do not build the ps2eps package
@@ -1571,7 +1573,6 @@ Optional Features:
   --disable-dvipsk        do not build the dvipsk package
   --disable-dvisvgm       do not build the dvisvgm package
   --disable-gsftopk       do not build the gsftopk package
-  --disable-lacheck       do not build the lacheck package
   --disable-lcdf-typetools
                           do not build the lcdf-typetools package
   --disable-cfftot1         do not build the cfftot1 program
@@ -3390,6 +3391,24 @@ $as_echo "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
     ;;
 esac
 
+## utils/lacheck/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/lacheck/
+## configure options and TL libraries required for lacheck
+# Check whether --enable-lacheck was given.
+if test "${enable_lacheck+set}" = set; then :
+  enableval=$enable_lacheck;
+fi
+case $enable_lacheck in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_lacheck=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-lacheck=$enable_lacheck'" >&5
+$as_echo "$as_me: Assuming \`--enable-lacheck=$enable_lacheck'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-lacheck=$enable_lacheck'"
+    ;;
+esac
+
 ## utils/m-tx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/m-tx/
 ## configure options and TL libraries required for mtx
 # Check whether --enable-m-tx was given.
@@ -4413,24 +4432,6 @@ esac
 test "x$enable_gsftopk" = xno || {
   need_kpathsea=yes
 }
-
-## texk/lacheck/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lacheck/
-## configure options and TL libraries required for lacheck
-# Check whether --enable-lacheck was given.
-if test "${enable_lacheck+set}" = set; then :
-  enableval=$enable_lacheck;
-fi
-case $enable_lacheck in #(
-  yes|no) :
-     ;; #(
-  *) :
-
-   enable_lacheck=$enable_all_pkgs
-     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-lacheck=$enable_lacheck'" >&5
-$as_echo "$as_me: Assuming \`--enable-lacheck=$enable_lacheck'" >&6;}
-     ac_configure_args="$ac_configure_args '--enable-lacheck=$enable_lacheck'"
-    ;;
-esac
 
 ## texk/lcdf-typetools/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lcdf-typetools/
 ## configure options and TL libraries required for lcdf-typetools
@@ -6359,6 +6360,14 @@ if test -x $srcdir/devnag/configure; then
   CONF_SUBDIRS="$CONF_SUBDIRS devnag"
   if false; then
     subdirs="$subdirs devnag"
+
+  fi
+fi
+if test -x $srcdir/lacheck/configure; then
+  test "x$enable_lacheck" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
+  CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
+  if false; then
+    subdirs="$subdirs lacheck"
 
   fi
 fi

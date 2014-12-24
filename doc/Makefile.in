@@ -115,6 +115,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/tardate.ac \
 	$(top_srcdir)/version.ac \
 	$(top_srcdir)/utils/devnag/ac/withenable.ac \
+	$(top_srcdir)/utils/lacheck/ac/withenable.ac \
 	$(top_srcdir)/utils/m-tx/ac/withenable.ac \
 	$(top_srcdir)/utils/pmx/ac/withenable.ac \
 	$(top_srcdir)/utils/ps2eps/ac/withenable.ac \
@@ -148,7 +149,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/dvisvgm/ac/dvisvgm.ac \
 	$(top_srcdir)/texk/dvisvgm/ac/libgs.ac \
 	$(top_srcdir)/texk/gsftopk/ac/withenable.ac \
-	$(top_srcdir)/texk/lacheck/ac/withenable.ac \
 	$(top_srcdir)/texk/lcdf-typetools/ac/withenable.ac \
 	$(top_srcdir)/texk/lcdf-typetools/ac/lcdf-typetools.ac \
 	$(top_srcdir)/texk/makeindexk/ac/withenable.ac \

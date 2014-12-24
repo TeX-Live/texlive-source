@@ -81,6 +81,7 @@ AC_REQUIRE([KPSE_HARFBUZZ_SYSTEM_FLAGS])[]dnl
 AC_DEFUN([KPSE_UTILS_PKGS], [dnl
 m4_define([kpse_utils_pkgs], [dnl
 devnag
+lacheck
 m-tx
 pmx
 ps2eps
@@ -114,7 +115,6 @@ dvipos
 dvipsk
 dvisvgm
 gsftopk
-lacheck
 lcdf-typetools
 makeindexk
 makejvf

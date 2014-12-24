@@ -1,4 +1,4 @@
-.TH "LaCheck" "1" "2010-12-10" "%%LACHECKREV%%"
+.TH "LaCheck" "1" "2010-12-10" "Release @REV@"
 .SH NAME
 lacheck - A consistency checker for LaTeX documents.
 .SH SYNOPSIS
@@ -92,8 +92,6 @@ Braces, environments and math mode must be balanced within a file.
 .LP
 LaCheck may be confused by unmatched stuff placed inside verbatim-like
 environments called something else than exactly \`verbatim\'.
-.SH FILES
-%%LACHECKPATH%%
 .SH SEE ALSO
 tex(1), emacs(1), latex(1)
 .SH BUGS
