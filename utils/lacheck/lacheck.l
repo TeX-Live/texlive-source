@@ -120,9 +120,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#if defined(WIN32) && !defined(__MINGW32__)
-#include <win32lib.h>
-#endif
 /* #include <sys/param.h> */
 
 /* extern char *realloc(); */
