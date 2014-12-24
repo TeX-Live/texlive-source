@@ -1,3 +1,8 @@
+2014-12-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Version 1.28, now maintained here, by us.
+	* Makefile.am, configure.ac: Reorganized.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
@@ -10,10 +15,21 @@
 
 	* Makefile.am: Enable silent rules.
 
+2012-06-22  Peter Breitenlohner   <peb@mppmu.mpg.de>
+
+	* lacheck.l: Avoid buffer overrun for long pathnames
+	(detected by Ken Brown <kbrow1i@gmail.com>).
+
+2012-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lacheck.l: Added the never-interactive option to prevent
+	flex from creating a problematic prototype for isatty().
+
 2010-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Import original lacheck-1.26, patches in lacheck-1.26-PATCHES.
-	* Makefile.am, configure.ac, lacheck.test: Adapted.
+	* lacheck.l: Define yywrap() after flex-provided prototype.
+
+	* lacheck.man: Formatting.  Avoid use of build date.
 
 2010-02-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
