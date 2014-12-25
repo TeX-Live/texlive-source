@@ -441,10 +441,10 @@ make check
 Then you modify source files in @file{mydir/texk/dvipdfm-x} and rerun
 @code{make} in @file{mydir/Work/texk/dvipdfm-x} to rebuild.
 
-The second line the @code{configure} invocation shows examples of
+The second line of the @code{configure} invocation shows examples of
 extra things you likely want to specify if you intend to hack the
 sources (and not just build binaries): the @code{-C} speeds up
-@code{configure}, and the @code{CFLAGS} and @code{CXXFLAGS} are to
+@code{configure}, and the @code{CFLAGS} and @code{CXXFLAGS} settings
 eliminate compiler optimization for debugging purposes.
 
 Of course, one should actually look at the output and check that
@@ -2093,9 +2093,14 @@ name, but note that this should @emph{not} be @code{--host=@var{host}}
 (@pxref{Hosts and Cross-Compilation,,, autoconf, GNU Autoconf}).
 
 In order to build, e.g., 32-bit binaries with @command{clang} on a 64-bit
-OSX system one could use @* @ @ @ @code{./Build --build=i386-apple-darwin
-CC='clang -arch i386'} @backslashchar{} @* @ @ @ @ @ @ @ @ @
-@code{CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386'}
+MacOSX system one could use:
+
+@example
+TL_BUILD_ENV="CC='clang -arch i386' \
+  CXX='clang++ -arch i386' \
+  OBJCXX='clang++ -arch i386'" \
+  ./Build --build=i386-apple-darwin
+@end example
 
 @menu
 * Cross configuring::           Configuring for cross compilation.
