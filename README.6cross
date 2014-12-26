@@ -19,10 +19,13 @@ useful to add the configure option '--build=HOST' to get the correct
 canonical host name, but note that this should _not_ be '--host=HOST'
 (*note (autoconf)Hosts and Cross-Compilation::).
 
-   In order to build, e.g., 32-bit binaries with 'clang' on a 64-bit OSX
-system one could use
-   './Build --build=i386-apple-darwin CC='clang -arch i386'' \
-         'CXX='clang++ -arch i386' OBJCXX='clang++ -arch i386''
+   In order to build, e.g., 32-bit binaries with 'clang' on a 64-bit
+MacOSX system one could use:
+
+     TL_BUILD_ENV="CC='clang -arch i386' \
+       CXX='clang++ -arch i386' \
+       OBJCXX='clang++ -arch i386'" \
+       ./Build --build=i386-apple-darwin
 
 8.1 Cross configuring
 =====================
