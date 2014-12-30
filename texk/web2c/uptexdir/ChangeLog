@@ -1,3 +1,11 @@
+2014-12-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-7.0.0.txt Date: 2014-04-03, 23:23:00 GMT [RP, KW]".
+	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
+	uptex_version.h: upTeX version u1.20.
+
 2014-12-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* uptriptest: Complain early if trip.fmt is not created.
@@ -41,7 +49,7 @@
 	* tests/[t]min10.{pl,tfm} (new): Data for yokotate.test.
 	* am/uptex.am: Add the new tests.
 
-2013-08-12  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2013-08-12  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* kanji.h, uptex.defines: Allow file names with 0x5c
 	in (e)pTeX on Windows.
@@ -86,7 +94,7 @@
 	PTEX_KANJI_ENC from the environment.
 	* kanji.c: All programs use init_default_kanji("utf8","uptex"). 
 
-2012-08-13  TANAKA Takuji <KXD02663@nifty.ne.jp>
+2012-08-13  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
 	uptex_version.h: upTeX version u1.11.
@@ -126,7 +134,7 @@
 
 2012-04-29  Takuji Tanaka  <KXD02663@nifty.ne.jp>
 
-	* uptex-m.ch, uppltotf.ch uptftopl.ch, updvitype.ch, upbibtex.ch:
+	* uptex-m.ch, uppltotf.ch, uptftopl.ch, updvitype.ch, upbibtex.ch:
 	Update upTeX version number.
 
 	* uptex-m.ch, kanji.c:
@@ -149,7 +157,7 @@
 
 2012-01-15  Takuji Tanaka  <KXD02663@nifty.ne.jp>
 
-	* uptex-m.ch, uppltotf.ch uptftopl.ch, updvitype.ch, upbibtex.ch:
+	* uptex-m.ch, uppltotf.ch, uptftopl.ch, updvitype.ch, upbibtex.ch:
 	Update upTeX version number.
 
 	* uptex-m.ch, kanji.c:

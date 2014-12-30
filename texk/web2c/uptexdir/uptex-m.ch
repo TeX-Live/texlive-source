@@ -1,4 +1,4 @@
-% This is a change file for upTeX u1.11
+% This is a change file for upTeX u1.20
 % By Takuji Tanaka.
 %
 % (02/26/2007) TTK  upTeX u0.01
@@ -32,16 +32,18 @@
 % (01/15/2012) TTK  upTeX u1.00
 % (04/29/2012) TTK  upTeX u1.10
 % (08/13/2012) TTK  upTeX u1.11
+% (12/29/2014) TTK  upTeX u1.20
 
 @x upTeX: banner
   {printed when p\TeX\ starts}
 @y
   {printed when p\TeX\ starts}
 @#
-@d upTeX_version_string=='-u1.11' {current up\TeX\ version}
+@d upTeX_version=1
+@d upTeX_revision==".20"
+@d upTeX_version_string=='-u1.20' {current up\TeX\ version}
 @#
-@d upTeX_version==pTeX_version_string,upTeX_version_string
-@d upTeX_banner=='This is upTeX, Version 3.14159265',upTeX_version
+@d upTeX_banner=='This is upTeX, Version 3.14159265',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
   {printed when up\TeX\ starts}
 @z
@@ -189,9 +191,17 @@ if (kcode_pos=1)or((kcode_pos>=@'11)and(kcode_pos<=@'12))
 
 @x
 @d cat_code_base=auto_xspacing_code+1
+  {table of 256 command codes (the ``catcodes'')}
+@d kcat_code_base=cat_code_base+256
+  {table of 256 command codes for the wchar's catcodes }
+@d auto_xsp_code_base=kcat_code_base+256 {table of 256 auto spacer flag}
 @y
 @d enable_cjk_token_code=auto_xspacing_code+1
 @d cat_code_base=enable_cjk_token_code+1
+  {table of 256 command codes (the ``catcodes'')}
+@d kcat_code_base=cat_code_base+256
+  {table of 512 command codes for the wchar's catcodes }
+@d auto_xsp_code_base=kcat_code_base+512 {table of 256 auto spacer flag}
 @z
 
 @x
@@ -203,9 +213,24 @@ if (kcode_pos=1)or((kcode_pos>=@'11)and(kcode_pos<=@'12))
 
 @x
 eqtb[auto_xspacing_code]:=eqtb[cat_code_base];
+for k:=0 to 255 do
+  begin cat_code(k):=other_char; kcat_code(k):=other_kchar;
+  math_code(k):=hi(k); sf_code(k):=1000;
+  auto_xsp_code(k):=0; inhibit_xsp_code(k):=0; inhibit_xsp_type(k):=0;
+  kinsoku_code(k):=0; kinsoku_type(k):=0;
+  end;
 @y
 eqtb[auto_xspacing_code]:=eqtb[cat_code_base];
 eqtb[enable_cjk_token_code]:=eqtb[cat_code_base];
+for k:=0 to 255 do
+  begin cat_code(k):=other_char;
+  math_code(k):=hi(k); sf_code(k):=1000;
+  auto_xsp_code(k):=0; inhibit_xsp_code(k):=0; inhibit_xsp_type(k):=0;
+  kinsoku_code(k):=0; kinsoku_type(k):=0;
+  end;
+for k:=0 to 512 do
+  begin kcat_code(k):=other_kchar;
+  end;
 @z
 
 @x
@@ -220,23 +245,23 @@ if (isinternalUPTEX) then begin
   { default: other_kchar }
   @t\hskip10pt@>kcat_code(@"0):=not_cjk;
   @t\hskip10pt@>kcat_code(@"23):=hangul; { Hangul Jamo }
-  @+@t\1@>for k:=@"63 to @"65 do kcat_code(k):=kanji; { CJK Radicals Supplement .. Ideographic Description Characters }
-  @+@t\1@>for k:=@"67 to @"68 do kcat_code(k):=kana;  { Hiragana, Katakana }
-  @t\hskip10pt@>kcat_code(@"69):=kanji; { Bopomofo }
-  @t\hskip10pt@>kcat_code(@"6A):=hangul; { Hangul Compatibility Jamo }
-  @+@t\1@>for k:=@"6B to @"6D do kcat_code(k):=kanji; { Kanbun .. CJK Strokes }
-  @t\hskip10pt@>kcat_code(@"6E):=kana; { Katakana Phonetic Extensions }
-  @t\hskip10pt@>kcat_code(@"71):=kanji; { CJK Unified Ideographs Extension A }
-  @t\hskip10pt@>kcat_code(@"73):=kanji; { CJK Unified Ideographs }
-  @t\hskip10pt@>kcat_code(@"83):=hangul; { Hangul Jamo Extended-A }
-  @t\hskip10pt@>kcat_code(@"8B):=hangul; { Hangul Syllables }
-  @t\hskip10pt@>kcat_code(@"8C):=hangul; { Hangul Jamo Extended-B }
-  @t\hskip10pt@>kcat_code(@"91):=kanji; { CJK Compatibility Ideographs }
-  { @t\hskip10pt@>kcat_code(@"9A):=other_kchar; Halfwidth and Fullwidth Forms }
-  @t\hskip10pt@>kcat_code(@"C3):=kana; { Kana Supplement }
-  @+@t\1@>for k:=@"D4 to @"D7 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. CJK Compatibility Ideographs Supplement }
-  @t\hskip10pt@>kcat_code(@"FE):=kana; { Fullwidth digit and latin alphabet }
-  @t\hskip10pt@>kcat_code(@"FF):=kana; { Halfwidth katakana }
+  @+@t\1@>for k:=@"64 to @"66 do kcat_code(k):=kanji; { CJK Radicals Supplement .. Ideographic Description Characters }
+  @+@t\1@>for k:=@"68 to @"69 do kcat_code(k):=kana;  { Hiragana, Katakana }
+  @t\hskip10pt@>kcat_code(@"6A):=kanji; { Bopomofo }
+  @t\hskip10pt@>kcat_code(@"6B):=hangul; { Hangul Compatibility Jamo }
+  @+@t\1@>for k:=@"6C to @"6E do kcat_code(k):=kanji; { Kanbun .. CJK Strokes }
+  @t\hskip10pt@>kcat_code(@"6F):=kana; { Katakana Phonetic Extensions }
+  @t\hskip10pt@>kcat_code(@"72):=kanji; { CJK Unified Ideographs Extension A }
+  @t\hskip10pt@>kcat_code(@"74):=kanji; { CJK Unified Ideographs }
+  @t\hskip10pt@>kcat_code(@"84):=hangul; { Hangul Jamo Extended-A }
+  @t\hskip10pt@>kcat_code(@"8E):=hangul; { Hangul Syllables }
+  @t\hskip10pt@>kcat_code(@"8F):=hangul; { Hangul Jamo Extended-B }
+  @t\hskip10pt@>kcat_code(@"94):=kanji; { CJK Compatibility Ideographs }
+  { @t\hskip10pt@>kcat_code(@"9D):=other_kchar; Halfwidth and Fullwidth Forms }
+  @t\hskip10pt@>kcat_code(@"DD):=kana; { Kana Supplement }
+  @+@t\1@>for k:=@"F4 to @"F7 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. CJK Compatibility Ideographs Supplement }
+  @t\hskip10pt@>kcat_code(@"1FE):=kana; { Fullwidth digit and latin alphabet }
+  @t\hskip10pt@>kcat_code(@"1FF):=kana; { Halfwidth katakana }
 end else begin
   @t\hskip10pt@>kcat_code(@"20+1):=other_kchar; {1 ku}
   @t\hskip10pt@>kcat_code(@"20+2):=other_kchar; {2 ku}
