@@ -12,16 +12,16 @@ struct ublock {
 /*
  References:
  [1] http://www.unicode.org/Public/UNIDATA/Blocks.txt
-        Blocks-6.1.0.txt
-        Date: 2011-06-14, 18:26:00 GMT [KW, LI]
+        Blocks-7.0.0.txt
+        Date: 2014-04-03, 23:23:00 GMT [RP, KW]
  [2] CMap files
-     http://sourceforge.net/adobe/cmap/home/Home/
+     http://sourceforge.net/adobe/cmap/wiki/Home/
      cmapresources_cns1-6.tar.z     Adobe-CNS1-6 materials
         cid2code.txt (Version 10/25/2010)
      cmapresources_gb1-5.tar.z      Adobe-GB1-5 materials
         cid2code.txt (Version 10/29/2010)
      cmapresources_japan1-6.tar.z   Adobe-Japan1-6 materials
-        cid2code.txt (Version 02/04/2012)
+        cid2code.txt (Version 08/13/2012)
      cmapresources_korean1-2.tar.z  Adobe-Korea1-2 materials
         cid2code.txt (Version 01/31/2012)
 */
@@ -82,6 +82,7 @@ static struct ublock ublock_data[] = {
   {0x19E0, 0x19FF, ENTRY_NO  }, /* Khmer Symbols */
   {0x1A00, 0x1A1F, ENTRY_NO  }, /* Buginese */
   {0x1A20, 0x1AAF, ENTRY_NO  }, /* Tai Tham */
+  {0x1AB0, 0x1AFF, ENTRY_NO  }, /* Combining Diacritical Marks Extended */
   {0x1B00, 0x1B7F, ENTRY_NO  }, /* Balinese */
   {0x1B80, 0x1BBF, ENTRY_NO  }, /* Sundanese */
   {0x1BC0, 0x1BFF, ENTRY_NO  }, /* Batak */
@@ -160,11 +161,13 @@ static struct ublock ublock_data[] = {
   {0xA930, 0xA95F, ENTRY_NO  }, /* Rejang */
   {0xA960, 0xA97F, ENTRY_NO  }, /* Hangul Jamo Extended-A */
   {0xA980, 0xA9DF, ENTRY_NO  }, /* Javanese */
+  {0xA9E0, 0xA9FF, ENTRY_NO  }, /* Myanmar Extended-B */
   {0xAA00, 0xAA5F, ENTRY_NO  }, /* Cham */
   {0xAA60, 0xAA7F, ENTRY_NO  }, /* Myanmar Extended-A */
   {0xAA80, 0xAADF, ENTRY_NO  }, /* Tai Viet */
   {0xAAE0, 0xAAFF, ENTRY_NO  }, /* Meetei Mayek Extensions */
   {0xAB00, 0xAB2F, ENTRY_NO  }, /* Ethiopic Extended-A */
+  {0xAB30, 0xAB6F, ENTRY_NO  }, /* Latin Extended-E */
   {0xABC0, 0xABFF, ENTRY_NO  }, /* Meetei Mayek */
   {0xAC00, 0xD7AF, ENTRY_K   }, /* Hangul Syllables */
   {0xD7B0, 0xD7FF, ENTRY_NO  }, /* Hangul Jamo Extended-B */
@@ -191,54 +194,83 @@ static struct ublock ublock_data[] = {
   {0x101D0, 0x101FF, ENTRY_NO  }, /* Phaistos Disc */
   {0x10280, 0x1029F, ENTRY_NO  }, /* Lycian */
   {0x102A0, 0x102DF, ENTRY_NO  }, /* Carian */
+  {0x102E0, 0x102FF, ENTRY_NO  }, /* Coptic Epact Numbers */
   {0x10300, 0x1032F, ENTRY_NO  }, /* Old Italic */
   {0x10330, 0x1034F, ENTRY_NO  }, /* Gothic */
+  {0x10350, 0x1037F, ENTRY_NO  }, /* Old Permic */
   {0x10380, 0x1039F, ENTRY_NO  }, /* Ugaritic */
   {0x103A0, 0x103DF, ENTRY_NO  }, /* Old Persian */
   {0x10400, 0x1044F, ENTRY_NO  }, /* Deseret */
   {0x10450, 0x1047F, ENTRY_NO  }, /* Shavian */
   {0x10480, 0x104AF, ENTRY_NO  }, /* Osmanya */
+  {0x10500, 0x1052F, ENTRY_NO  }, /* Elbasan */
+  {0x10530, 0x1056F, ENTRY_NO  }, /* Caucasian Albanian */
+  {0x10600, 0x1077F, ENTRY_NO  }, /* Linear A */
   {0x10800, 0x1083F, ENTRY_NO  }, /* Cypriot Syllabary */
   {0x10840, 0x1085F, ENTRY_NO  }, /* Imperial Aramaic */
+  {0x10860, 0x1087F, ENTRY_NO  }, /* Palmyrene */
+  {0x10880, 0x108AF, ENTRY_NO  }, /* Nabataean */
   {0x10900, 0x1091F, ENTRY_NO  }, /* Phoenician */
   {0x10920, 0x1093F, ENTRY_NO  }, /* Lydian */
   {0x10980, 0x1099F, ENTRY_NO  }, /* Meroitic Hieroglyphs */
   {0x109A0, 0x109FF, ENTRY_NO  }, /* Meroitic Cursive */
   {0x10A00, 0x10A5F, ENTRY_NO  }, /* Kharoshthi */
   {0x10A60, 0x10A7F, ENTRY_NO  }, /* Old South Arabian */
+  {0x10A80, 0x10A9F, ENTRY_NO  }, /* Old North Arabian */
+  {0x10AC0, 0x10AFF, ENTRY_NO  }, /* Manichaean */
   {0x10B00, 0x10B3F, ENTRY_NO  }, /* Avestan */
   {0x10B40, 0x10B5F, ENTRY_NO  }, /* Inscriptional Parthian */
   {0x10B60, 0x10B7F, ENTRY_NO  }, /* Inscriptional Pahlavi */
+  {0x10B80, 0x10BAF, ENTRY_NO  }, /* Psalter Pahlavi */
   {0x10C00, 0x10C4F, ENTRY_NO  }, /* Old Turkic */
   {0x10E60, 0x10E7F, ENTRY_NO  }, /* Rumi Numeral Symbols */
   {0x11000, 0x1107F, ENTRY_NO  }, /* Brahmi */
   {0x11080, 0x110CF, ENTRY_NO  }, /* Kaithi */
   {0x110D0, 0x110FF, ENTRY_NO  }, /* Sora Sompeng */
   {0x11100, 0x1114F, ENTRY_NO  }, /* Chakma */
+  {0x11150, 0x1117F, ENTRY_NO  }, /* Mahajani */
   {0x11180, 0x111DF, ENTRY_NO  }, /* Sharada */
+  {0x111E0, 0x111FF, ENTRY_NO  }, /* Sinhala Archaic Numbers*/
+  {0x11200, 0x1124F, ENTRY_NO  }, /* Khojki */
+  {0x112B0, 0x112FF, ENTRY_NO  }, /* Khudawadi */
+  {0x11300, 0x1137F, ENTRY_NO  }, /* Grantha */
+  {0x11480, 0x114DF, ENTRY_NO  }, /* Tirhuta */
+  {0x11580, 0x115FF, ENTRY_NO  }, /* Siddham */
+  {0x11600, 0x1165F, ENTRY_NO  }, /* Modi */
   {0x11680, 0x116CF, ENTRY_NO  }, /* Takri */
+  {0x118A0, 0x118FF, ENTRY_NO  }, /* Warang Citi */
+  {0x11AC0, 0x11AFF, ENTRY_NO  }, /* Pau Cin Hau */
   {0x12000, 0x123FF, ENTRY_NO  }, /* Cuneiform */
   {0x12400, 0x1247F, ENTRY_NO  }, /* Cuneiform Numbers and Punctuation */
   {0x13000, 0x1342F, ENTRY_NO  }, /* Egyptian Hieroglyphs */
   {0x16800, 0x16A3F, ENTRY_NO  }, /* Bamum Supplement */
+  {0x16A40, 0x16A6F, ENTRY_NO  }, /* Mro */
+  {0x16AD0, 0x16AFF, ENTRY_NO  }, /* Bassa Vah */
+  {0x16B00, 0x16B8F, ENTRY_NO  }, /* Pahawh Hmong */
   {0x16F00, 0x16F9F, ENTRY_NO  }, /* Miao */
   {0x1B000, 0x1B0FF, ENTRY_NO  }, /* Kana Supplement */
+  {0x1BC00, 0x1BC9F, ENTRY_NO  }, /* Duployan */
+  {0x1BCA0, 0x1BCAF, ENTRY_NO  }, /* Shorthand Format Controls */
   {0x1D000, 0x1D0FF, ENTRY_NO  }, /* Byzantine Musical Symbols */
   {0x1D100, 0x1D1FF, ENTRY_NO  }, /* Musical Symbols */
   {0x1D200, 0x1D24F, ENTRY_NO  }, /* Ancient Greek Musical Notation */
   {0x1D300, 0x1D35F, ENTRY_NO  }, /* Tai Xuan Jing Symbols */
   {0x1D360, 0x1D37F, ENTRY_NO  }, /* Counting Rod Numerals */
   {0x1D400, 0x1D7FF, ENTRY_NO  }, /* Mathematical Alphanumeric Symbols */
+  {0x1E800, 0x1E8DF, ENTRY_NO  }, /* Mende Kikakui */
   {0x1EE00, 0x1EEFF, ENTRY_NO  }, /* Arabic Mathematical Alphabetic Symbols */
   {0x1F000, 0x1F02F, ENTRY_NO  }, /* Mahjong Tiles */
   {0x1F030, 0x1F09F, ENTRY_NO  }, /* Domino Tiles */
   {0x1F0A0, 0x1F0FF, ENTRY_NO  }, /* Playing Cards */
   {0x1F100, 0x1F1FF, ENTRY_J   }, /* Enclosed Alphanumeric Supplement */
   {0x1F200, 0x1F2FF, ENTRY_J   }, /* Enclosed Ideographic Supplement */
-  {0x1F300, 0x1F5FF, ENTRY_NO  }, /* Miscellaneous Symbols And Pictographs */
+  {0x1F300, 0x1F5FF, ENTRY_NO  }, /* Miscellaneous Symbols and Pictographs */
   {0x1F600, 0x1F64F, ENTRY_NO  }, /* Emoticons */
-  {0x1F680, 0x1F6FF, ENTRY_NO  }, /* Transport And Map Symbols */
+  {0x1F650, 0x1F67F, ENTRY_NO  }, /* Ornamental Dingbats */
+  {0x1F680, 0x1F6FF, ENTRY_NO  }, /* Transport and Map Symbols */
   {0x1F700, 0x1F77F, ENTRY_NO  }, /* Alchemical Symbols */
+  {0x1F780, 0x1F7FF, ENTRY_NO  }, /* Geometric Shapes Extended */
+  {0x1F800, 0x1F8FF, ENTRY_NO  }, /* Supplemental Arrows-C */
   {0x20000, 0x2A6DF, ENTRY_GCJ }, /* CJK Unified Ideographs Extension B */
   {0x2A700, 0x2B73F, ENTRY_CJ  }, /* CJK Unified Ideographs Extension C */
   {0x2B740, 0x2B81F, ENTRY_J   }, /* CJK Unified Ideographs Extension D */
