@@ -376,7 +376,7 @@ for the full story.\n";
   }
   if (@notvalidargs) {
     my $msg =
-      "The following arguments are not supported for the action $action:\n";
+      "The following options are not supported for the action $action:\n";
     for my $c (@notvalidargs) {
       $msg .= " $c";
     }

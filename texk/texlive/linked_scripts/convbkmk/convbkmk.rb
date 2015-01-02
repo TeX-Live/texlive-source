@@ -3,12 +3,12 @@
 
 =begin
 
-= convbkmk Ver.0.10
+= convbkmk Ver.0.10a
 
-  2014.03.08
+  2014.12.29
   Takuji Tanaka
-  KXD02663 (at) nifty.ne.jp
-((<URL:http://homepage3.nifty.com/ttk/comp/tex/uptex_en.html>))
+  ttk (at) t-lab.opal.ne.jp
+((<URL:http://www.t-lab.opal.ne.jp/tex/uptex_en.html>))
 
 
 == Abstract
@@ -113,6 +113,8 @@ THE SOFTWARE.
  * Bug fix: Conversion was not complete in some cases.
 : 2014.03.08  0.10
  * Bug fix: Output of binary data might be broken in filter mode on Windows.
+: 2014.12.29  0.10a
+ * Update the author's mail address and web site.
 
 =end
 
