@@ -1138,7 +1138,7 @@ pdf_dev_grestore (void)
 
   pdf_doc_add_page_content(" Q", 2);  /* op: Q */
 
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(0);
 
   return  0;
 }
@@ -1203,7 +1203,7 @@ pdf_dev_grestore_to (int depth)
     clear_a_gstate(gs);
     RELEASE(gs);
   }
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(0);
 
   return;
 }
