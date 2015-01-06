@@ -205,7 +205,7 @@ extern void   pdf_dev_set_param (int param_type, int value);
 /* Force reselecting font and color:
  * XFrom (content grabbing) and Metapost support want them.
  */
-extern void   pdf_dev_reset_fonts (void);
+extern void   pdf_dev_reset_fonts (int newpage);
 extern void   pdf_dev_reset_color (int force);
 
 /* Initialization of transformation matrix with M and others.

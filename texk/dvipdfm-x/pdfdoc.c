@@ -2596,7 +2596,7 @@ pdf_doc_begin_grabbing (const char *ident,
    * Make sure the object is self-contained by adding the
    * current font and color to the object stream.
    */
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(1);  /* force color operators to be added to stream */
 
   return xobj_id;
@@ -2642,7 +2642,7 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
 
   pdf_dev_pop_gstate();
 
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(0);
 
   RELEASE(fnode);

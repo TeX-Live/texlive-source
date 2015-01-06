@@ -1335,7 +1335,7 @@ pdf_close_device (void)
  * as the font stuff.
  */
 void
-pdf_dev_reset_fonts (void)
+pdf_dev_reset_fonts (int newpage)
 {
   int  i;
 
@@ -1349,7 +1349,8 @@ pdf_dev_reset_fonts (void)
   text_state.matrix.extend = 1.0;
   text_state.matrix.rotate = TEXT_WMODE_HH;
 
-  text_state.bold_param    = 0.0;
+  if (newpage)
+    text_state.bold_param  = 0.0;
 
   text_state.is_mb         = 0;
 }
@@ -1391,7 +1392,7 @@ pdf_dev_bop (const pdf_tmatrix *M)
   pdf_dev_gsave();
   pdf_dev_concat(M);
 
-  pdf_dev_reset_fonts();
+  pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(0);
 }
 

@@ -1,3 +1,12 @@
+2015-01-07  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* pdfdev.c (pdf_dev_reset_fonts): don't reset text_state.bold_param
+	unless called for a new page, otherwise we "forget" that the last font
+	was a fake bold font and don't reset text stroke when this function
+	gets called immediatly after a fake bold font is used
+	(https://sourceforge.net/p/xetex/bugs/105/).
+	* pdfdev.h, pdfdoc.c, pdfdraw.c, spc_xtx.c: adapt.
+
 2014-12-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xbb.c: Support to specify a page in a multi-page PDF to extract
