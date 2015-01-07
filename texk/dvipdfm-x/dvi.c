@@ -1474,13 +1474,13 @@ dvi_end_reflect (void)
     current_font = lr_state.font;
     dvi_page_buf_index = lr_state.buf_index;
     lr_mode = REVERSE(lr_state.state); /* must precede dvi_right */
-    dvi_right(-lr_width);
+    dvi_right(-(int32_t)lr_width);
     lr_width_push();
     break;
   case LTYPESETTING:
   case RTYPESETTING:
     lr_width_pop();
-    dvi_right(-lr_width);
+    dvi_right(-(int32_t)lr_width);
     lr_mode = REVERSE(lr_mode);
     break;
   default:                     /* lr_mode > SKIMMING */

@@ -55,7 +55,7 @@ struct hdr_info {
   unsigned int   offset;
   unsigned int   hsize;
   unsigned int   width;
-  unsigned int   height;
+  int            height;
   int            compression;
   unsigned short bit_count; /* Bits per pix */
   int            psize;     /* Bytes per palette color: 3 for OS2, 4 for Win */
