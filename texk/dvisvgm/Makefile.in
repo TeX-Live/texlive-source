@@ -200,6 +200,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/psdefs.$(OBJEXT) \
 	@DVISVGM_TREE@/src/RangeMap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
+	@DVISVGM_TREE@/src/ShadingPatch.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SpecialManager.$(OBJEXT) \
 	@DVISVGM_TREE@/src/StreamReader.$(OBJEXT) \
@@ -207,9 +208,11 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/Subfont.$(OBJEXT) \
 	@DVISVGM_TREE@/src/System.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TFM.$(OBJEXT) \
+	@DVISVGM_TREE@/src/TensorProductPatch.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Terminal.$(OBJEXT) \
 	@DVISVGM_TREE@/src/ToUnicodeMap.$(OBJEXT) \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/TriangularPatch.$(OBJEXT) \
 	@DVISVGM_TREE@/src/Unicode.$(OBJEXT) \
 	@DVISVGM_TREE@/src/VFReader.$(OBJEXT) \
 	@DVISVGM_TREE@/src/XMLDocument.$(OBJEXT) \
@@ -751,14 +754,18 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/RangeMap.cpp \
 	@DVISVGM_TREE@/src/SVGTree.cpp \
+	@DVISVGM_TREE@/src/ShadingPatch.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
 	@DVISVGM_TREE@/src/SpecialManager.cpp \
 	@DVISVGM_TREE@/src/StreamReader.cpp \
 	@DVISVGM_TREE@/src/StreamWriter.cpp \
 	@DVISVGM_TREE@/src/Subfont.cpp @DVISVGM_TREE@/src/System.cpp \
-	@DVISVGM_TREE@/src/TFM.cpp @DVISVGM_TREE@/src/Terminal.cpp \
+	@DVISVGM_TREE@/src/TFM.cpp \
+	@DVISVGM_TREE@/src/TensorProductPatch.cpp \
+	@DVISVGM_TREE@/src/Terminal.cpp \
 	@DVISVGM_TREE@/src/ToUnicodeMap.cpp \
 	@DVISVGM_TREE@/src/TpicSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/TriangularPatch.cpp \
 	@DVISVGM_TREE@/src/Unicode.cpp @DVISVGM_TREE@/src/VFReader.cpp \
 	@DVISVGM_TREE@/src/XMLDocument.cpp \
 	@DVISVGM_TREE@/src/XMLNode.cpp \
@@ -1025,6 +1032,9 @@ libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libcl
 @DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/ShadingPatch.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SignalHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1045,6 +1055,9 @@ libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libcl
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/TFM.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/TensorProductPatch.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Terminal.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1052,6 +1065,9 @@ libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libcl
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/TriangularPatch.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/Unicode.$(OBJEXT):  \
@@ -1207,6 +1223,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/RangeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGTree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ShadingPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SignalHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SpecialManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/StreamReader.Po@am__quote@
@@ -1214,9 +1231,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Subfont.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/System.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TFM.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TensorProductPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Terminal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ToUnicodeMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TpicSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TriangularPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Unicode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/VFReader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLDocument.Po@am__quote@

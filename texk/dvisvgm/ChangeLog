@@ -1,3 +1,9 @@
+2015-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.9.
+	* version.ac: Adapted.
+	* Makefile.am: Adjusted.
+
 2014-12-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop useless KPSE_COMPILER_VISIBILITY.
