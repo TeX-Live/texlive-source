@@ -15,3 +15,7 @@ Removed:
 	tests/
 	*/Makefile.in
 
+Converted Dos/Win line ends to native:
+	clipper/clipper.cpp
+	clipper/clipper.hpp
+
