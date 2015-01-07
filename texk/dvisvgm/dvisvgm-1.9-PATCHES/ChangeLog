@@ -1,6 +1,7 @@
 2015-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Import release 1.9.
+	* patch-01-mingw32 (new): MinGW32 may not define RRF_RT_REG_SZ.
 
 2014-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

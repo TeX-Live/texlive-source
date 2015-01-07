@@ -1,0 +1,13 @@
+diff -ur dvisvgm-1.9.orig/src/Ghostscript.cpp dvisvgm-1.9/src/Ghostscript.cpp
+--- dvisvgm-1.9.orig/src/Ghostscript.cpp	2014-10-09 16:20:18.000000000 +0200
++++ dvisvgm-1.9/src/Ghostscript.cpp	2015-01-07 12:53:17.108466555 +0100
+@@ -41,6 +41,9 @@
+ #ifdef __WIN32__
+ /** Looks up the path of the Ghostscript DLL in the Windows registry and returns it.
+  *  If there is no proper registry entry, the returned string is empty. */
++#if !defined(RRF_RT_REG_SZ)
++#define RRF_RT_REG_SZ 0x00000002
++#endif
+ static string get_path_from_registry () {
+ 	REGSAM mode = KEY_READ|KEY_QUERY_VALUE;
+ #ifdef KEY_WOW64_64KEY

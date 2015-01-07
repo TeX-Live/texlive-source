@@ -41,6 +41,9 @@ string Ghostscript::LIBGS_NAME;
 #ifdef __WIN32__
 /** Looks up the path of the Ghostscript DLL in the Windows registry and returns it.
  *  If there is no proper registry entry, the returned string is empty. */
+#if !defined(RRF_RT_REG_SZ)
+#define RRF_RT_REG_SZ 0x00000002
+#endif
 static string get_path_from_registry () {
 	REGSAM mode = KEY_READ|KEY_QUERY_VALUE;
 #ifdef KEY_WOW64_64KEY
