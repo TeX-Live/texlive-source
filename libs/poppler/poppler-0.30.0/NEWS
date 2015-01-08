@@ -1,3 +1,21 @@
+Release 0.30.0
+        core:
+         * Openjpeg2 support (openjpeg 1 is preferred). Bug #58906
+         * Fix potential memory corruption on TextSelectionDumper. Bug #84555
+         * Check for invalid matrix in annotation. Bug #84990
+         * Open some not conforming files. Bug #85919
+         * PSOutputDev: Accept a list of pages indeces instead of first, last. Bug #84833
+         * Fix memory leak on error condition
+
+        cpp:
+         * New API to set debug output function
+
+        build system:
+         * configure: Improve support with older clang versions. Bug #76963
+
+        utils:
+         * pdfunite: Support output intents, optional content and acroform
+
 Release 0.29.0
         core:
          * Use correct LAB byte array for lcms input. Bug #86388

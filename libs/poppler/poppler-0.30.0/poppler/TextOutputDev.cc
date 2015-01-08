@@ -30,7 +30,7 @@
 // Copyright (C) 2010 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2011 Sam Liao <phyomh@gmail.com>
 // Copyright (C) 2012 Horst Prote <prote@fmi.uni-stuttgart.de>
-// Copyright (C) 2012, 2013 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2012, 2013, 2014 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2012 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
@@ -4072,6 +4072,11 @@ void TextSelectionDumper::startLine()
 
 void TextSelectionDumper::finishLine()
 {
+  if (nLines == linesSize) {
+    linesSize *= 2;
+    lines = (GooList **)grealloc(lines, linesSize * sizeof(GooList *));
+  }
+
   if (words && words->getLength() > 0)
     lines[nLines++] = words;
   else if (words)
@@ -4087,11 +4092,6 @@ void TextSelectionDumper::visitLine (TextLine *line,
 				     PDFRectangle *selection)
 {
   TextLineFrag frag;
-
-  if (nLines == linesSize) {
-    linesSize *= 2;
-    lines = (GooList **)grealloc(lines, linesSize * sizeof(GooList *));
-  }
 
   frag.init(line, edge_begin, edge_end - edge_begin);
 
