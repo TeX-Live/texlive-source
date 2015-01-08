@@ -6,7 +6,7 @@
 //
 // Copyright 2008, 2010 Albert Astals Cid <aacid@kde.org>
 // Copyright 2011 Daniel Glöckner <daniel-gl@gmx.net>
-// Copyright 2013 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2013,2014 Adrian Johnson <ajohnson@redneon.com>
 //
 // Licensed under GPLv2 or later
 //
@@ -16,11 +16,12 @@
 #ifndef JPEG2000STREAM_H
 #define JPEG2000STREAM_H
 
-#include <openjpeg.h>
-
+#include "config.h"
 #include "goo/gtypes.h"
 #include "Object.h"
 #include "Stream.h"
+
+struct JPXStreamPrivate;
 
 class JPXStream: public FilterStream {
 public:
@@ -37,37 +38,21 @@ public:
   virtual GBool isBinary(GBool last = gTrue);
   virtual void getImageParams(int *bitsPerComponent, StreamColorSpaceMode *csMode);
 
+  int readStream(int nChars, Guchar *buffer) {
+    return str->doGetChars(nChars, buffer);
+  }
 private:
-  void init();
-  void init2(unsigned char *buf, int bufLen, OPJ_CODEC_FORMAT format);
+  JPXStream(const JPXStream &other);
+  JPXStream& operator=(const JPXStream &other);
+  JPXStreamPrivate *priv;
 
+  void init();
   virtual GBool hasGetChars() { return true; }
   virtual int getChars(int nChars, Guchar *buffer);
 
-  inline int doGetChar() {
-    int result = doLookChar();
-    if (++ccounter == ncomps) {
-      ccounter = 0;
-      ++counter;
-    }
-    return result;
-  }
+  int doGetChar();
 
-  inline int doLookChar() {
-    if (unlikely(inited == gFalse)) init();
-
-    if (unlikely(counter >= npixels)) return EOF;
-
-    return ((unsigned char *)image->comps[ccounter].data)[counter];
-  }
-
-  opj_image_t *image;
-  opj_dinfo_t *dinfo;
-  int counter;
-  int ccounter;
-  int npixels;
-  int ncomps;
-  GBool inited;
+  int doLookChar();
 };
 
 #endif

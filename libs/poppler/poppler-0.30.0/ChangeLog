@@ -1,3 +1,189 @@
+commit c13bffe92963c4969037695992f4c2776bbe973f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 4 23:17:42 2015 +0100
+
+    0.30
+
+ CMakeLists.txt                 |  4 ++--
+ NEWS                           | 18 ++++++++++++++++++
+ configure.ac                   |  2 +-
+ cpp/CMakeLists.txt             |  2 +-
+ cpp/Doxyfile                   |  2 +-
+ cpp/Makefile.am                |  2 +-
+ poppler/Makefile.am            |  2 +-
+ poppler/PDFDoc.cc              |  1 +
+ poppler/TextOutputDev.cc       |  2 +-
+ poppler/poppler-config.h.cmake |  2 +-
+ poppler/poppler-config.h.in    |  2 +-
+ qt4/src/Doxyfile               |  2 +-
+ qt5/src/Doxyfile               |  2 +-
+ 13 files changed, 31 insertions(+), 12 deletions(-)
+
+commit e499fdab2e96cb3069db7ac8ffa0df20ccccddc9
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun Jan 4 20:23:39 2015 +0100
+
+    extended openjpeg2 support
+
+ poppler/JPEG2000Stream.cc | 101
+ +++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 78 insertions(+), 23 deletions(-)
+
+commit 2841f3c34dd6366a70e4d6d307a08b3fbc3e9897
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Jan 4 20:22:47 2015 +0100
+
+    Cmake support for openjpeg2
+
+    With some tweaks from Albert
+
+ CMakeLists.txt                       | 56
+ +++++++++++++++++++++++++++++-------
+ cmake/modules/FindLIBOPENJPEG2.cmake | 30 +++++++++++++++++++
+ 2 files changed, 76 insertions(+), 10 deletions(-)
+
+commit 117af9c6bbd923954ef7de63adec8c22d51da1e4
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Jan 4 19:42:34 2015 +0100
+
+    Initial attempt at libopenjpeg2 support
+
+    OpenJPEG 2 has a new pkg-config name and API.
+
+    - Update configure.ac to find openjpeg 2 and provide V1/v2 macros
+    - Update JPEG2000Stream to use new API depending on openjpeg v1/v2
+    macros
+    - OpenJPEG 2.1 changed the API so provide a version macro to make
+    it easier
+      to handle the the 2.1 change and any future changes.
+    - Move openjpeg.h into the .cc file
+
+ configure.ac              |  80 ++++++++----
+ poppler/JPEG2000Stream.cc | 313
+ +++++++++++++++++++++++++++++++++++++---------
+ poppler/JPEG2000Stream.h  |  41 ++----
+ 3 files changed, 323 insertions(+), 111 deletions(-)
+
+commit 9caf7525409d699c16896653528486451123b485
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 4 18:48:02 2015 +0100
+
+    Make PSOutputDev accept a list of pages indeces
+
+    Instead of first, last
+
+    Bug #84833
+
+    Reviewed in the mailing list, see "Can anyone have a look at my
+    patch?"
+
+ glib/poppler-page.cc            | 10 ++++++---
+ poppler/PSOutputDev.cc          | 50
+ ++++++++++++++++++++++++-----------------
+ poppler/PSOutputDev.h           | 14 +++++++-----
+ qt4/src/poppler-ps-converter.cc | 11 ++++++---
+ qt5/src/poppler-ps-converter.cc | 11 ++++++---
+ utils/pdftops.cc                | 15 +++++++++----
+ 6 files changed, 71 insertions(+), 40 deletions(-)
+
+commit 173f182fb568843f97e7d45d1b16bebbd2aa7413
+Author: Li Junling <lijunling@sina.com>
+Date:   Fri Jan 2 17:23:24 2015 +0100
+
+    Find last 'startxref' in the last 24K instead of the last 1K
+
+    Bug #85919
+
+ poppler/PDFDoc.cc | 38 ++++++++++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
+
+commit 0b1cd9403b8a240e58ec4f1832588d25f8295278
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Sat Dec 20 03:22:23 2014 -0600
+
+    Free BBox object on error
+
+ poppler/Gfx.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit acc33a6950031ac4a5c759d043d24df0cfa7e8b6
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Sat Dec 20 02:24:49 2014 -0600
+
+    Check for invalid matrix in annotation
+
+    Bug #84990
+
+ poppler/Gfx.cc | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+commit 56aff7d78658f586e3c4cd41685f189dafb3098a
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue Dec 23 15:49:15 2014 +0100
+
+    pdfunite: Support output intents, optional content and acroform
+
+ utils/pdfunite.cc | 116
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 116 insertions(+)
+
+commit 9e734063e6a6a4b9743c9aa27d3d3127b5a960d7
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Fri Dec 19 01:56:45 2014 -0600
+
+    Move array reallocation from visitLine to startLine
+
+    Fixes potential memory corruption from writing after end of lines
+    array.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=84555
+
+ poppler/TextOutputDev.cc | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 0c47b769a77795bd866b6686b79fd20ad6f554bf
+Author: Daniel Macks <dmacks@netspace.org>
+Date:   Sun Dec 14 18:52:48 2014 +0100
+
+    Only consider adding -fno-check-new if compiler supports it
+
+    Helps compiling on old clang's
+
+    Bug #76963
+
+ configure.ac | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+commit c9c90d50e3708f6fac313aa8b458aef6dba5dcfb
+Author: Hans-Peter Deifel <hpdeifel@gmx.de>
+Date:   Fri Dec 12 13:09:51 2014 +0100
+
+    cpp: New API to set debug output function
+
+    Adds the global function set_debug_error_function, that allows users
+    to install their own function to print internal poppler errors.
+
+ cpp/poppler-global.cpp  | 29 +++++++++++++++++++++++++++++
+ cpp/poppler-global.h    |  5 +++++
+ cpp/poppler-private.cpp | 15 ++++++++++++---
+ cpp/poppler-private.h   |  3 +++
+ 4 files changed, 49 insertions(+), 3 deletions(-)
+
+commit fa8f276a10911c97d2777fff3270771802bc3892
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Dec 4 23:11:12 2014 +0100
+
+    0.29.0
+
+ CMakeLists.txt      |  4 ++--
+ NEWS                | 15 +++++++++++++++
+ configure.ac        |  4 ++--
+ cpp/Doxyfile        |  2 +-
+ poppler/Makefile.am |  2 +-
+ qt4/src/Doxyfile    |  2 +-
+ qt5/src/Doxyfile    |  2 +-
+ 7 files changed, 23 insertions(+), 8 deletions(-)
+
 commit fee700cfecb9d7d5fa938704a5f457f15aaa4676
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Mon Dec 1 20:52:42 2014 +0100

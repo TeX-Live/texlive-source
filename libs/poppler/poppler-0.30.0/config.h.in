@@ -215,6 +215,12 @@
 /* Defines if use lcms1 */
 #undef USE_LCMS1
 
+/* Defined if using openjpeg1 */
+#undef USE_OPENJPEG1
+
+/* Defined if using openjpeg2 */
+#undef USE_OPENJPEG2
+
 /* Version number of package */
 #undef VERSION
 

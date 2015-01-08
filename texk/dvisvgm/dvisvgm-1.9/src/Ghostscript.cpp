@@ -38,12 +38,10 @@ string Ghostscript::LIBGS_NAME;
 
 #ifndef HAVE_LIBGS
 
-#ifdef __WIN32__
+/** RegGetValueA and RRF_RT_REG_SZ may not be defined for some oldish MinGW. */
+#if defined(__WIN32__) && defined(RRF_RT_REG_SZ)
 /** Looks up the path of the Ghostscript DLL in the Windows registry and returns it.
  *  If there is no proper registry entry, the returned string is empty. */
-#if !defined(RRF_RT_REG_SZ)
-#define RRF_RT_REG_SZ 0x00000002
-#endif
 static string get_path_from_registry () {
 	REGSAM mode = KEY_READ|KEY_QUERY_VALUE;
 #ifdef KEY_WOW64_64KEY
@@ -99,7 +97,7 @@ static string get_libgs (const string &fname) {
 	if (const char *gsdll_path = FileFinder::lookup(gsdll))
 		return gsdll_path;
 #endif // MIKTEX
-#if defined(__WIN32__)
+#if defined(__WIN32__) && defined(RRF_RT_REG_SZ)
 	// try to look up the path of the Ghostscript DLL in the Windows registry
 	string gsdll_path = get_path_from_registry();
 	if (!gsdll_path.empty())

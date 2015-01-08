@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Martin Kretzschmar <martink@gnome.org>
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2006-2009, 2011-2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2009, 2011-2013, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2007, 2008 Brad Hards <bradh@kde.org>
 // Copyright (C) 2008, 2009 Koji Otani <sho@bbr.jp>
@@ -1074,7 +1074,7 @@ static void outputToFile(void *stream, const char *data, int len) {
 
 PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
 			 char *psTitle,
-			 int firstPage, int lastPage, PSOutMode modeA,
+			 const std::vector<int> &pages, PSOutMode modeA,
 			 int paperWidthA, int paperHeightA,
                          GBool noCropA, GBool duplexA,
 			 int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
@@ -1136,7 +1136,7 @@ PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
   }
 
   init(outputToFile, f, fileTypeA, psTitle,
-       doc, firstPage, lastPage, modeA,
+       doc, pages, modeA,
        imgLLXA, imgLLYA, imgURXA, imgURYA, manualCtrlA,
        paperWidthA, paperHeightA, noCropA, duplexA);
 }
@@ -1144,7 +1144,7 @@ PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
 PSOutputDev::PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
 			 char *psTitle,
 			 PDFDoc *doc,
-			 int firstPage, int lastPage, PSOutMode modeA,
+			 const std::vector<int> &pages, PSOutMode modeA,
 			 int paperWidthA, int paperHeightA,
                          GBool noCropA, GBool duplexA,
 			 int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
@@ -1174,7 +1174,7 @@ PSOutputDev::PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
   forceRasterize = forceRasterizeA;
 
   init(outputFuncA, outputStreamA, psGeneric, psTitle,
-       doc, firstPage, lastPage, modeA,
+       doc, pages, modeA,
        imgLLXA, imgLLYA, imgURXA, imgURYA, manualCtrlA,
        paperWidthA, paperHeightA, noCropA, duplexA);
 }
@@ -1214,7 +1214,7 @@ static bool pageDimensionEqual(int a, int b) {
 
 void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
 		       PSFileType fileTypeA, char *pstitle, PDFDoc *docA,
-		       int firstPage, int lastPage, PSOutMode modeA,
+		       const std::vector<int> &pagesA, PSOutMode modeA,
 		       int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
 		       GBool manualCtrlA, int paperWidthA, int paperHeightA,
 		       GBool noCropA, GBool duplexA) {
@@ -1222,7 +1222,12 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   PDFRectangle *box;
   PSOutPaperSize *size;
   GooList *names;
-  int pg, w, h, i;
+  int w, h, i;
+
+  if (pagesA.empty()) {
+    ok = gFalse;
+    return;
+  }
 
   // initialize
   displayText = gTrue;
@@ -1249,9 +1254,8 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   }
   Page *page;
   paperSizes = new GooList();
-  for (pg = (firstPage >= 1) ? firstPage : 1;
-       pg <= lastPage && pg <= catalog->getNumPages();
-       ++pg) {
+  for (size_t pgi = 0; pgi < pagesA.size(); ++pgi) {
+    const int pg = pagesA[pgi];
     page = catalog->getPage(pg);
     if (page == NULL)
       paperMatch = gFalse;
@@ -1313,8 +1317,11 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
     imgURY = paperHeight;
   }
   manualCtrl = manualCtrlA;
+  std::vector<int> pages;
   if (mode == psModeForm) {
-    lastPage = firstPage;
+    pages.push_back(pagesA[0]);
+  } else {
+    pages = pagesA;
   }
   processColors = 0;
   inType3Char = gFalse;
@@ -1367,16 +1374,16 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   if (!manualCtrl) {
     Page *page;
     // this check is needed in case the document has zero pages
-    if ((page = doc->getPage(firstPage))) {
-      writeHeader(firstPage, lastPage,
+    if ((page = doc->getPage(pages[0]))) {
+      writeHeader(pages,
 		  page->getMediaBox(),
 		  page->getCropBox(),
 		  page->getRotate(),
 		  pstitle);
     } else {
-      error(errSyntaxError, -1, "Invalid page {0:d}", firstPage);
+      error(errSyntaxError, -1, "Invalid page {0:d}", pages[0]);
       box = new PDFRectangle(0, 0, 1, 1);
-      writeHeader(firstPage, lastPage, box, box, 0, pstitle);
+      writeHeader(pages, box, box, 0, pstitle);
       delete box;
     }
     if (mode != psModeForm) {
@@ -1387,7 +1394,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
       writePS("%%EndProlog\n");
       writePS("%%BeginSetup\n");
     }
-    writeDocSetup(doc, catalog, firstPage, lastPage, duplexA);
+    writeDocSetup(doc, catalog, pages, duplexA);
     if (mode != psModeForm) {
       writePS("%%EndSetup\n");
     }
@@ -1463,7 +1470,7 @@ PSOutputDev::~PSOutputDev() {
   }
 }
 
-void PSOutputDev::writeHeader(int firstPage, int lastPage,
+void PSOutputDev::writeHeader(const std::vector<int> &pages,
 			      PDFRectangle *mediaBox, PDFRectangle *cropBox,
 			      int pageRotate, char *psTitle) {
   Object info, obj1;
@@ -1520,7 +1527,7 @@ void PSOutputDev::writeHeader(int firstPage, int lastPage,
                  i==0 ? "DocumentMedia:" : "+", size->name, size->w, size->h);
     }
     writePSFmt("%%BoundingBox: 0 0 {0:d} {1:d}\n", paperWidth, paperHeight);
-    writePSFmt("%%Pages: {0:d}\n", lastPage - firstPage + 1);
+    writePSFmt("%%Pages: {0:d}\n", static_cast<int>(pages.size()));
     writePS("%%EndComments\n");
     if (!paperMatch) {
       size = (PSOutPaperSize *)paperSizes->get(0);
@@ -1603,7 +1610,7 @@ void PSOutputDev::writeXpdfProcset() {
 }
 
 void PSOutputDev::writeDocSetup(PDFDoc *doc, Catalog *catalog,
-				int firstPage, int lastPage,
+				const std::vector<int> &pages,
                                 GBool duplexA) {
   Page *page;
   Dict *resDict;
@@ -1611,7 +1618,7 @@ void PSOutputDev::writeDocSetup(PDFDoc *doc, Catalog *catalog,
   Object *acroForm;
   Object obj1, obj2, obj3;
   GooString *s;
-  int pg, i;
+  int i;
 
   if (mode == psModeForm) {
     // swap the form and xpdf dicts
@@ -1619,7 +1626,8 @@ void PSOutputDev::writeDocSetup(PDFDoc *doc, Catalog *catalog,
   } else {
     writePS("xpdf begin\n");
   }
-  for (pg = firstPage; pg <= lastPage; ++pg) {
+  for (size_t pgi = 0; pgi < pages.size(); ++pgi) {
+    const int pg = pages[pgi];
     page = doc->getPage(pg);
     if (!page) {
       error(errSyntaxError, -1, "Failed writing resources for page {0:d}", pg);

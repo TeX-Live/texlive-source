@@ -33,95 +33,95 @@
 
 /* Defines the poppler version. */
 #ifndef POPPLER_VERSION
-#define POPPLER_VERSION "${POPPLER_VERSION}"
+#undef POPPLER_VERSION
 #endif
 
 /* Enable multithreading support. */
 #ifndef MULTITHREADED
-#cmakedefine MULTITHREADED 1
+#undef MULTITHREADED
 #endif
 
 /* Use fixedpoint. */
 #ifndef USE_FIXEDPOINT
-#cmakedefine USE_FIXEDPOINT 1
+#undef USE_FIXEDPOINT
 #endif
 
 /* Use single precision arithmetic in the Splash backend */
 #ifndef USE_FLOAT
-#cmakedefine USE_FLOAT 1
+#undef USE_FLOAT
 #endif
 
 /* Include support for OPI comments. */
 #ifndef OPI_SUPPORT
-#cmakedefine OPI_SUPPORT 1
+#undef OPI_SUPPORT
 #endif
 
 /* Enable word list support. */
 #ifndef TEXTOUT_WORD_LIST
-#cmakedefine TEXTOUT_WORD_LIST 1
+#undef TEXTOUT_WORD_LIST
 #endif
 
 /* Support for curl is compiled in. */
 #ifndef POPPLER_HAS_CURL_SUPPORT
-#cmakedefine POPPLER_HAS_CURL_SUPPORT 1
+#undef POPPLER_HAS_CURL_SUPPORT
 #endif
 
 /* Use libjpeg instead of builtin jpeg decoder. */
 #ifndef ENABLE_LIBJPEG
-#cmakedefine ENABLE_LIBJPEG 1
+#undef ENABLE_LIBJPEG
 #endif
 
 /* Build against libtiff. */
 #ifndef ENABLE_LIBTIFF
-#cmakedefine ENABLE_LIBTIFF 1
+#undef ENABLE_LIBTIFF
 #endif
 
 /* Build against libpng. */
 #ifndef ENABLE_LIBPNG
-#cmakedefine ENABLE_LIBPNG 1
+#undef ENABLE_LIBPNG
 #endif
 
 /* Use zlib instead of builtin zlib decoder. */
 #ifndef ENABLE_ZLIB
-#cmakedefine ENABLE_ZLIB 1
+#undef ENABLE_ZLIB
 #endif
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #ifndef HAVE_DIRENT_H
-#cmakedefine HAVE_DIRENT_H 1
+#undef HAVE_DIRENT_H
 #endif
 
 /* Defines if gettimeofday is available on your system */
 #ifndef HAVE_GETTIMEOFDAY
-#cmakedefine HAVE_GETTIMEOFDAY 1
+#undef HAVE_GETTIMEOFDAY
 #endif
 
 /* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
 #ifndef HAVE_NDIR_H
-#cmakedefine HAVE_NDIR_H 1
+#undef HAVE_NDIR_H
 #endif
 
 /* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
    */
 #ifndef HAVE_SYS_DIR_H
-#cmakedefine HAVE_SYS_DIR_H 1
+#undef HAVE_SYS_DIR_H
 #endif
 
 /* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
    */
 #ifndef HAVE_SYS_NDIR_H
-#cmakedefine HAVE_SYS_NDIR_H 1
+#undef HAVE_SYS_NDIR_H
 #endif
 
 /* Have FreeType2 include files */
 #ifndef HAVE_FREETYPE_H
-#cmakedefine HAVE_FREETYPE_H 1
+#undef HAVE_FREETYPE_H
 #endif
 
 /* Defines if use cms */
 #ifndef USE_CMS
-#cmakedefine USE_CMS 1
+#undef USE_CMS
 #endif
 
 // Also, there are preprocessor symbols in the header files
@@ -134,7 +134,7 @@
 //------------------------------------------------------------------------
 
 // copyright notice
-#define popplerCopyright "Copyright 2005-2014 The Poppler Developers - http://poppler.freedesktop.org"
+#define popplerCopyright "Copyright 2005-2015 The Poppler Developers - http://poppler.freedesktop.org"
 #define xpdfCopyright "Copyright 1996-2011 Glyph & Cog, LLC"
 
 //------------------------------------------------------------------------
