@@ -26,6 +26,14 @@
 @d banner=='This is PLtoTF, Version 3.6' {printed when the program starts}
 @z
 
+@x [2] Print all terminal output on stderr.
+@d print(#)==write(#)
+@d print_ln(#)==write_ln(#)
+@y
+@d print(#)==write(stderr,#)
+@d print_ln(#)==write_ln(stderr,#)
+@z
+
 @x [still 2] No banner unless verbose.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -93,6 +101,27 @@ rewritebin (tfm_file, tfm_name);
 @y
 @d char == 0..255
 @d first_ord=0 {ordinal number of the smallest element of |char|}
+@z
+
+@x [25] Non-zero return code in case of problems.
+@!chars_on_line:0..8; {the number of characters printed on the current line}
+@y
+@!chars_on_line:0..8; {the number of characters printed on the current line}
+@!perfect:boolean; {was the file free of errors?}
+@z
+
+@x [26] Non-zero return code in case of problems.
+chars_on_line:=0;
+@y
+chars_on_line:=0;
+perfect:=true; {innocent until proved guilty}
+@z
+
+@x [27] Non-zero return code in case of problems.
+chars_on_line:=0;
+@y
+chars_on_line:=0;
+perfect:=false;
 @z
 
 @x [79] `index' might be a library routine.
@@ -199,6 +228,13 @@ read_input; print_ln('.');@/
 @y
 read_input;
 if verbose then print_ln('.');
+@z
+
+@x [147] Non-zero return code in case of problems,
+end.
+@y
+if not perfect then uexit(1);
+end.
 @z
 
 @x [148] System-dependent changes.

@@ -15,6 +15,14 @@
 @d banner=='This is VPtoVF, Version 1.6' {printed when the program starts}
 @z
 
+@x [2] Print all terminal output on stderr.
+@d print(#)==write(#)
+@d print_ln(#)==write_ln(#)
+@y
+@d print(#)==write(stderr,#)
+@d print_ln(#)==write_ln(stderr,#)
+@z
+
 @x [2] Print the banner later.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -87,6 +95,27 @@ rewritebin (tfm_file, tfm_name);
 @y
 @d char == 0..255
 @d first_ord=0 {ordinal number of the smallest element of |char|}
+@z
+
+@x [31] Non-zero return code in case of problems.
+@!chars_on_line:0..8; {the number of characters printed on the current line}
+@y
+@!chars_on_line:0..8; {the number of characters printed on the current line}
+@!perfect:boolean; {was the file free of errors?}
+@z
+
+@x [32] Non-zero return code in case of problems.
+chars_on_line:=0;
+@y
+chars_on_line:=0;
+perfect:=true; {innocent until proved guilty}
+@z
+
+@x [33] Non-zero return code in case of problems.
+chars_on_line:=0;
+@y
+chars_on_line:=0;
+perfect:=false;
 @z
 
 % [89] `index' is not a good choice for an identifier on Unix systems.
@@ -189,6 +218,13 @@ read_input; print_ln('.');@/
 @y
 read_input;
 if verbose then print_ln('.');
+@z
+
+@x [181] Non-zero return code in case of problems,
+end.
+@y
+if not perfect then uexit(1);
+end.
 @z
 
 @x [182] System-dependent changes.
