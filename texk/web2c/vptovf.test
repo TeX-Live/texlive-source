@@ -1,19 +1,26 @@
 #! /bin/sh
 
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
 
-TEXMFCNF=$srcdir/../kpathsea \
-  ./vptovf $srcdir/tests/ptmr tests/yptmr tests/yptmr || exit 1
+./vptovf -help || exit 1
+
+./vptovf -version || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea
+export TEXMFCNF
+
+./vptovf -verbose $srcdir/tests/badvpl && exit 1
+
+./vptovf -verbose $srcdir/tests/ptmr tests/yptmr tests/yptmr || exit 1
 
 cmp $srcdir/tests/ptmr.vf tests/yptmr.vf || exit 1
 
 cmp $srcdir/tests/ptmr.tfm tests/yptmr.tfm || exit 1
 
-TEXMFCNF=$srcdir/../kpathsea \
-  ./vptovf $srcdir/tests/ptmr tests/yptmr2.vf || exit 1
+./vptovf -verbose $srcdir/tests/ptmr tests/yptmr2.vf || exit 1
 
 cmp $srcdir/tests/ptmr.vf tests/yptmr2.vf || exit 1
 

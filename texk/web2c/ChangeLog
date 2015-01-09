@@ -1,3 +1,11 @@
+2015-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pltotf.ch, vptovf.ch: Send diagnostic messages to stderr.
+	Non-zero return code in case of problems.
+	* pltotf.test, vptovf.test: Add more tests.
+	* tests/badpl.pl, tests/badvpl.vpl: New test input files.
+	* am/web.am: Adjust for additional test input and output files.
+
 2014-12-11  Karl Berry  <karl@tug.org>
 
 	* triptest,

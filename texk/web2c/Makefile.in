@@ -2083,44 +2083,44 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(web_programs:=.web) $(web_programs:=.ch) $(web_tests) \
 	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
 	tests/allbib.aux tests/allbib.tex tests/apalike.bst \
-	tests/batch.tex tests/check.log tests/cmr10.600gf \
-	tests/cmr10.pk tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm \
-	tests/cmr8.tfm tests/cmti10.tfm tests/cmtt10.tfm \
-	tests/cmtt8.tfm tests/dict tests/eight.tex tests/end.tex \
-	tests/exampl.aux tests/exampl.tex tests/gray.tfm \
-	tests/hello.tex tests/io.mf tests/just.texi tests/label.mp \
-	tests/label.mpx tests/logo8.tfm tests/longline.aux \
-	tests/longline.bib tests/longline.tex tests/longtfm.tex \
-	tests/magic.tex tests/memtest.tex tests/mltextst.tex \
-	tests/mptest.mp tests/mptest.mpx tests/one.two.mf \
-	tests/one.two.mp tests/one.two.tex tests/online.mf \
-	tests/openout.mp tests/openout.tex tests/pagenum.dvi \
-	tests/pagenum.tex tests/patgen.in tests/patterns \
-	tests/plain.mft tests/pplr.dvi tests/pplr.tfm tests/ptmr.dvi \
-	tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl tests/rpsyr.tfm \
-	tests/rptmr.tfm tests/story.dvi tests/testex.err \
-	tests/testex.mp tests/testex.tex tests/translate tests/uno.dos \
-	tests/xampl.bib ctiedir tiedir lib/mfmpi386.asm lib/mfmpw32.c \
-	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
-	$(tex_ch_srcs) $(tex_tests) tests/write18-quote.tex \
-	$(mf_ch_src) mftalk.h $(mf_tests) triptrap/README \
-	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
-	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
-	triptrap/mftrapin.log triptrap/mptrap.diffs \
-	triptrap/mptrap.fot triptrap/mptrap.log triptrap/mptrap.pl \
-	triptrap/mptrap.readme triptrap/mptrap1.in triptrap/mptrap2.in \
-	triptrap/mptrapin.log triptrap/mtrap.0 triptrap/mtrap.1 \
-	triptrap/mtrap.log triptrap/mtrap.mp triptrap/texmf.cnf \
-	triptrap/trap.148 triptrap/trap.149 triptrap/trap.150 \
-	triptrap/trap.151 triptrap/trap.197 triptrap/trap.200 \
-	triptrap/trap.5 triptrap/trap.6 triptrap/trap.mf \
-	triptrap/trap.mp triptrap/trap.mpx triptrap/trap.typ \
-	triptrap/trapf.pl triptrap/trapman.tex triptrap/trip.diffs \
-	triptrap/trip.fot triptrap/trip.log triptrap/trip.pl \
-	triptrap/trip.tex triptrap/trip.typ triptrap/trip1.in \
-	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
-	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
-	mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
+	tests/badpl.pl tests/badvpl.vpl tests/batch.tex \
+	tests/check.log tests/cmr10.600gf tests/cmr10.pk \
+	tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm tests/cmr8.tfm \
+	tests/cmti10.tfm tests/cmtt10.tfm tests/cmtt8.tfm tests/dict \
+	tests/eight.tex tests/end.tex tests/exampl.aux \
+	tests/exampl.tex tests/gray.tfm tests/hello.tex tests/io.mf \
+	tests/just.texi tests/label.mp tests/label.mpx tests/logo8.tfm \
+	tests/longline.aux tests/longline.bib tests/longline.tex \
+	tests/longtfm.tex tests/magic.tex tests/memtest.tex \
+	tests/mltextst.tex tests/mptest.mp tests/mptest.mpx \
+	tests/one.two.mf tests/one.two.mp tests/one.two.tex \
+	tests/online.mf tests/openout.mp tests/openout.tex \
+	tests/pagenum.dvi tests/pagenum.tex tests/patgen.in \
+	tests/patterns tests/plain.mft tests/pplr.dvi tests/pplr.tfm \
+	tests/ptmr.dvi tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl \
+	tests/rpsyr.tfm tests/rptmr.tfm tests/story.dvi \
+	tests/testex.err tests/testex.mp tests/testex.tex \
+	tests/translate tests/uno.dos tests/xampl.bib ctiedir tiedir \
+	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c texmfmem.h \
+	texmfmp-help.h texmfmp.h $(tex_ch_srcs) $(tex_tests) \
+	tests/write18-quote.tex $(mf_ch_src) mftalk.h $(mf_tests) \
+	triptrap/README triptrap/mftrap.diffs triptrap/mftrap.fot \
+	triptrap/mftrap.log triptrap/mftrap.pl triptrap/mftrap1.in \
+	triptrap/mftrap2.in triptrap/mftrapin.log \
+	triptrap/mptrap.diffs triptrap/mptrap.fot triptrap/mptrap.log \
+	triptrap/mptrap.pl triptrap/mptrap.readme triptrap/mptrap1.in \
+	triptrap/mptrap2.in triptrap/mptrapin.log triptrap/mtrap.0 \
+	triptrap/mtrap.1 triptrap/mtrap.log triptrap/mtrap.mp \
+	triptrap/texmf.cnf triptrap/trap.148 triptrap/trap.149 \
+	triptrap/trap.150 triptrap/trap.151 triptrap/trap.197 \
+	triptrap/trap.200 triptrap/trap.5 triptrap/trap.6 \
+	triptrap/trap.mf triptrap/trap.mp triptrap/trap.mpx \
+	triptrap/trap.typ triptrap/trapf.pl triptrap/trapman.tex \
+	triptrap/trip.diffs triptrap/trip.fot triptrap/trip.log \
+	triptrap/trip.pl triptrap/trip.tex triptrap/trip.typ \
+	triptrap/trip1.in triptrap/trip2.in triptrap/tripin.log \
+	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
+	triptrap/writeo.2 mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
 	pmpostdir/ChangeLog $(pmpost_web) $(pmpost_tests) \
 	$(upmpost_tests) pmpostdir/tests/psample.mp $(libmplib_web) \
 	$(etex_web_srcs) $(etex_ch_srcs) etexdir/ChangeLog \
@@ -2343,24 +2343,25 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	tests/xpagenum.typ cmr10.dvi tests/xcmr10.dvi cmr10.pk \
 	tests/xcmr10.pk tests/xcmr10.gft1 tests/xcmr10.gft2 io.tex \
 	tests/io.tex tests/xpatout pattmp.4 cmr10.gf \
-	tests/xcmr10.600gf tests/xcmr10.pktyp tests/xcmr10.tfm \
-	tests/xtexpool.typ tests/xcmr10.pl tests/xptmr.vpl \
-	tests/yptmr*.* pooltype.tex ctie.c cweave.c tie.c ctie.outc \
-	ctie.outm common.tex common.scn common.idx tie.outc tie.outm \
-	$(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p tex.pool \
-	tex-tangle trip.diffs write18-quote.log mftrap.diffs \
-	$(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c mf.p mf.pool \
-	mf-tangle $(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs \
-	ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
-	$(nodist_pmpost_SOURCES) pmp.w pmpost.w pmpxout.w ppsout.w \
-	psvgout.w ptfmin.w pmp-tangle pmpxout-tangle ppsout-tangle \
-	psvgout-tangle pmpsamp.* upmpsamp.* \
-	$(nodist_libmplib_a_SOURCES) mp-tangle mpmath-tangle \
-	mpmathbinary-tangle mpmathdecimal-tangle mpmathdouble-tangle \
-	mpstrings-tangle psout-tangle svgout-tangle pngout-tangle \
-	$(nodist_etex_SOURCES) etex.web etex.ch etex-web2c etex.p \
-	etex.pool etex-tangle etrip.diffs ewprob.log ewprob.tex \
-	$(pweb_programs:=.c) $(pweb_programs:=.h) $(pweb_programs:=.p) \
+	tests/xcmr10.600gf tests/xcmr10.pktyp tests/badpl.* \
+	tests/xcmr10.tfm tests/xtexpool.typ tests/xcmr10.pl \
+	tests/xptmr.vpl tests/badvpl.* tests/yptmr*.* pooltype.tex \
+	ctie.c cweave.c tie.c ctie.outc ctie.outm common.tex \
+	common.scn common.idx tie.outc tie.outm $(nodist_tex_SOURCES) \
+	tex-final.ch tex-web2c tex.p tex.pool tex-tangle trip.diffs \
+	write18-quote.log mftrap.diffs $(nodist_libmf_a_SOURCES) \
+	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
+	$(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs ptmr.mpx \
+	tests/xptmr.mpx tests/xstory.mpx $(nodist_pmpost_SOURCES) \
+	pmp.w pmpost.w pmpxout.w ppsout.w psvgout.w ptfmin.w \
+	pmp-tangle pmpxout-tangle ppsout-tangle psvgout-tangle \
+	pmpsamp.* upmpsamp.* $(nodist_libmplib_a_SOURCES) mp-tangle \
+	mpmath-tangle mpmathbinary-tangle mpmathdecimal-tangle \
+	mpmathdouble-tangle mpstrings-tangle psout-tangle \
+	svgout-tangle pngout-tangle $(nodist_etex_SOURCES) etex.web \
+	etex.ch etex-web2c etex.p etex.pool etex-tangle etrip.diffs \
+	ewprob.log ewprob.tex $(pweb_programs:=.c) \
+	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	$(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c ptex.p \
 	ptex.pool ptex-tangle ptests/nissya_bib.* ptests/xexampl.aux \
