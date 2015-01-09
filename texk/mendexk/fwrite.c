@@ -17,16 +17,19 @@ static int range_check(struct index ind, int count, char *lbuff);
 static void linecheck(char *lbuff, char *tmpbuff);
 static void crcheck(char *lbuff, FILE *fp);
 
+/* All buffers have size BUFFERLEN.  */
 #define BUFFERLEN 4096
 
 #ifdef HAVE___VA_ARGS__
 /* Use C99 variadic macros if they are supported.  */
+/* We would like to use sizeof(buf) instead of BUFFERLEN but that fails
+   for, e.g., gcc-4.8.3 on Cygwin and gcc-4.5.3 on NetBSD.  */
 #define SPRINTF(buf, ...) \
-    snprintf(buf, sizeof(buf), __VA_ARGS__)
+    snprintf(buf, BUFFERLEN, __VA_ARGS__)
 #define SAPPENDF(buf, ...) \
-    snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), __VA_ARGS__)
+    snprintf(buf + strlen(buf), BUFFERLEN - strlen(buf), __VA_ARGS__)
 #else
-/* Alternatively use static inline functions (all buffers have size BUFFERLEN).  */
+/* Alternatively use static inline functions.  */
 static inline int SPRINTF(char *buf, const char *format, ...)
 {
     va_list argptr;
