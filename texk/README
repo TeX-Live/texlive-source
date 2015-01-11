@@ -43,11 +43,11 @@ dvi2tty 5.3.4 - checked 10may12
   http://www.mesa.nl/pub/dvi2tty/
   ftp://ftp.mesa.nl/pub/dvi2tty/
 
-dvidvi - ?
+dvidvi - maintained here.
 
 dviljk - maintained here, by Joachim Schrod
 
-dvipdfm-x - maintained here, by Khaled Hosny, Jonathan Kew, contains
+dvipdfm-x - maintained here, by Khaled Hosny, Akira Kakuto, et al., contains
   dvipdfmx
   xdvipdfmx
 

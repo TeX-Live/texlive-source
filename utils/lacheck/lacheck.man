@@ -1,4 +1,4 @@
-.TH "LaCheck" "1" "2010-12-10" "Release @REV@"
+.TH "LaCheck" "1" "2015-01-10" "Release @REV@"
 .SH NAME
 lacheck - A consistency checker for LaTeX documents.
 .SH SYNOPSIS
@@ -101,8 +101,7 @@ off, does not like TeX at all, does not provide any options to turn
 off specific warnings, and is at best a crude approximation.
 .LP
 Ideas for improvements and bug reports are very welcome.  Such
-should be directed to the maintainers, their email address is
-<auc-tex_mgr@sunsite.auc.dk>.
+should be directed to the maintainers; please email tex-live@tug.org.
 .SH AUTHOR
 Kresten Krab Thorup with modifications by Per Abrahamsen.
-
+Currently maintained as part of TeX Live (http://tug.org/texlive).
