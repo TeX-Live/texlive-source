@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 35841 2014-12-16 19:11:15Z karl $
+# $Id: tlmgr.pl 35998 2015-01-08 19:12:31Z karl $
 #
-# Copyright 2008-2014 Norbert Preining
+# Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 35841 $';
-my $datrev = '$Date: 2014-12-16 20:11:15 +0100 (Tue, 16 Dec 2014) $';
+my $svnrev = '$Revision: 35998 $';
+my $datrev = '$Date: 2015-01-08 20:12:31 +0100 (Thu, 08 Jan 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -161,11 +161,14 @@ sub main {
                          "rebuild-sys" => 1 },
     "get-mirror"    => { },
     "gui"           => { "load" => 1 },
+    "help"          => { },
     "info"          => { "list" => 1,
                          "only-installed" => 1 },
     "install"       => { "dry-run|n" => 1,
                          "file" => 1,
                          "force" => 1,
+                         "with-doc" => 1,
+                         "with-src" => 1,
                          "no-depends" => 1,
                          "no-depends-at-all" => 1,
                          "reinstall" => 1},
@@ -273,6 +276,10 @@ sub main {
     exit 0;
   }
 
+  if (defined($action) && $action && !exists $actionoptions{$action}) {
+    die "$prg: unknown action: $action; try --help if you need it.\n";
+  }
+
   if ((!defined($action) || !$action) && !$opts{"help"} && !$opts{"h"}) {
     die "$prg: missing action; try --help if you need it.\n";
   }
@@ -290,9 +297,8 @@ sub main {
         @noperldoc = ("-noperldoc", "1");
       } else {
         # checking only for the existence of perldoc is not enough
-        # because stupid Debian/Ubuntu ships a stub that does nothing
-        # which is very very bad idea
-        # try to check for that, too
+        # because Debian/Ubuntu unfortunately ship a stub that does nothing;
+        # try to check for that, too.
         my $ret = system("perldoc -V >/dev/null 2>&1");
         if ($ret == 0) {
           debug("working perldoc found, using it\n");
@@ -375,17 +381,12 @@ for the full story.\n";
     push @notvalidargs, $k if !$found;
   }
   if (@notvalidargs) {
-    my $msg =
-      "The following options are not supported for the action $action:\n";
+    my $msg = "The action $action does not support the following option(s):\n";
     for my $c (@notvalidargs) {
       $msg .= " $c";
     }
-    $msg .= "\n";
-    my @noperldoc = ();
-    if (win32() || ! TeXLive::TLUtils::which("perldoc")) {
-      @noperldoc = ("-noperldoc", "1");
-    }
-    pod2usage(-msg => $msg, -exitstatus => 1, -verbose => 1, @noperldoc);
+    tlwarn("$prg: $msg\n");
+    tldie("$prg: Try --help if you need it.\n");
   }
 
   #
@@ -607,7 +608,7 @@ sub execute_action {
     action_recreate_tlpdb();
     finish(0);
   } else {
-    die "$prg: unknown action: $action; try --help if you need it.\n";
+    die "$prg: unknown action $action; try --help if you need it.\n";
   }
 
   # close the special log file
@@ -882,7 +883,7 @@ sub action_remove {
   my @more_removal;
   init_local_db();
   return if !check_on_writable();
-  info("remove: dry run, no changes will be made\n") if $opts{"dry-run"};
+  info("$prg remove: dry run, no changes will be made\n") if $opts{"dry-run"};
   my @packs = @ARGV;
   #
   # we have to be carefull not to remove too many packages. The idea is
@@ -1589,7 +1590,7 @@ sub action_restore {
       exit 1;
     }
   }
-  info("restore: dry run, no changes will be made\n") if $opts{"dry"};
+  info("$prg restore: dry run, no changes will be made\n") if $opts{"dry-run"};
 
   # initialize the hash(packages) of hash(revisions), do stat files! (the 1)
   my %backups = get_available_backups($opts{"backupdir"}, 1);
@@ -1614,7 +1615,7 @@ sub action_restore {
       my @tmp = sort {$b <=> $a} (keys %{$backups{$p}});
       my $rev = $tmp[0];
       print "Restoring $p, $rev from $opts{'backupdir'}/${p}.r${rev}.tar.xz\n";
-      if (!$opts{"dry"}) {
+      if (!$opts{"dry-run"}) {
         # first remove the package, then reinstall it
         # this way we get rid of useless files
         restore_one_package($p, $rev, $opts{"backupdir"});
@@ -1675,7 +1676,7 @@ sub action_restore {
       }
     }
     print "Restoring $pkg, $rev from $opts{'backupdir'}/${pkg}.r${rev}.tar.xz\n";
-    if (!$opts{"dry"}) {
+    if (!$opts{"dry-run"}) {
       init_local_db(1);
       # first remove the package, then reinstall it
       # this way we get rid of useless files
@@ -2227,7 +2228,7 @@ sub action_update {
   }
 
   init_tlmedia_or_die();
-  info("update: dry run, no changes will be made\n") if $opts{"dry-run"};
+  info("$prg update: dry run, no changes will be made\n") if $opts{"dry-run"};
 
   my @excluded_pkgs = ();
   if ($opts{"exclude"}) {
@@ -2334,7 +2335,7 @@ sub action_update {
   } else {
     @todo = @ARGV;
   }
-  # don't do anything if we have been invoced in a strange way
+  # don't do anything if we have been invoked in a strange way
   if (!@todo) {
     if ($opts{"self"}) {
       info("$prg: no updates for tlmgr present.\n");
@@ -3217,7 +3218,6 @@ sub action_install {
   init_local_db(1);
   return if !check_on_writable();
 
-  #
   # installation from a .tar.xz
   if ($opts{"file"}) {
     return $localtlpdb->install_package_files(@ARGV);
@@ -3239,25 +3239,29 @@ sub action_install {
           # return here and don't do any updates
           return;
         } else {
-          die "$prg: Not continuing, please see warning above!\n";
+          die "$prg: Terminating; please see warning above!\n";
         }
       }
     }
   }
 
-
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
-  info("install: dry run, no changes will be made\n") if $opts{"dry-run"};
+  info("$prg install: dry run, no changes will be made\n") if $opts{"dry-run"};
 
   my @packs = @ARGV;
   # first expand the .ARCH dependencies unless $opts{"no-depends-at-all"}
-  @packs = $remotetlpdb->expand_dependencies("-only-arch", $localtlpdb, @ARGV) unless $opts{"no-depends-at-all"};
-  # now expand all others unless $opts{"no-depends"}
-  # if $opts{"reinstall"} do not collection->collection dependencies
-  if ($opts{"reinstall"} || $opts{"usermode"}) {
-    @packs = $remotetlpdb->expand_dependencies("-no-collections", $localtlpdb, @packs) unless $opts{"no-depends"};
-  } else {
-    @packs = $remotetlpdb->expand_dependencies($localtlpdb, @packs) unless $opts{"no-depends"};
+  @packs = $remotetlpdb->expand_dependencies("-only-arch", $localtlpdb, @ARGV)
+    unless $opts{"no-depends-at-all"};
+  #
+  # if no-depends, we're done; else get rest of deps.
+  unless ($opts{"no-depends"}) {
+    if ($opts{"reinstall"} || $opts{"usermode"}) {
+      # if reinstall or usermode, omit collection->collection deps
+      @packs = $remotetlpdb->expand_dependencies("-no-collections",
+                                                 $localtlpdb, @packs);
+    } else {
+      @packs = $remotetlpdb->expand_dependencies($localtlpdb, @packs);
+    }
   }
   #
   # expand dependencies returns a list pkg@tag in case of a virtual
@@ -3300,7 +3304,7 @@ sub action_install {
     my $mediatlp = $remotetlpdb->get_package($pkg,
       ($packs{$pkg} ? $packs{$pkg} : undef));
     if (!defined($mediatlp)) {
-      tlwarn("package $pkg not present in package repository.\n");
+      tlwarn("$prg install: package $pkg not present in repository.\n");
       next;
     }
     if (defined($localtlpdb->get_package($pkg))) {
@@ -3309,16 +3313,27 @@ sub action_install {
         $revs{$pkg} = $mediatlp->revision;
         push @todo, $pkg;
       } else {
+        # debug msg that we have this one.
         debug("already installed: $pkg\n");
+        # if explicitly requested by user (not a dep), tell them.
+        info("$prg install: package already present: $pkg\n")
+          if grep { $_ eq $pkg } @ARGV;
       }
     } else {
       $totalnr++;
       $revs{$pkg} = $mediatlp->revision;
-      push @todo, $pkg;
+      push (@todo, $pkg);
     }
   }
   # return if there is nothing to install!
   return if (!@todo);
+
+  my $orig_do_src = $localtlpdb->option("install_srcfiles");
+  my $orig_do_doc = $localtlpdb->option("install_docfiles");
+  if (!$opts{"dry-run"}) {
+    $localtlpdb->option("install_srcfiles", 1) if $opts{'with-src'};
+    $localtlpdb->option("install_docfiles", 1) if $opts{'with-doc'};
+  }
 
   my $currnr = 1;
   # undef here is a ref to array of platforms, if undef all are used
@@ -3386,9 +3401,16 @@ sub action_install {
     $currnr++;
   }
   print "end-of-updates\n" if $::machinereadable;
+
+
   if ($opts{"dry-run"}) {
     # stop here, don't do any postinstall actions
     return(0);
+  } else {
+    # reset option if --with-src argument was given
+    $localtlpdb->option("install_srcfiles", $orig_do_src) if $opts{'with-src'};
+    $localtlpdb->option("install_docfiles", $orig_do_doc) if $opts{'with-doc'};
+    $localtlpdb->save if ($opts{'with-src'} || $opts{'with-doc'});
   }
 }
 
@@ -3998,7 +4020,7 @@ sub action_platform {
   }
   my $what = shift @ARGV;
   init_local_db(1);
-  info("platform: dry run, no changes will be made\n") if $opts{"dry-run"};
+  info("$prg platform: dry run, no changes will be made\n") if $opts{"dry-run"};
   $what || ($what = "list");
   if ($what =~ m/^list$/i) {
     # list the available platforms
@@ -5810,7 +5832,7 @@ sub check_for_critical_updates
       # should it not be present, any anyway, those are so fundamental
       # so they have to be there
       tlwarn("\nFundamental package $pkg not present, uh oh, goodbye");
-      die "Serious error, $pkg not found";
+      die "Should not happen, $pkg not found";
     }
     my $localrev = $tlp->revision;
     my $mtlp = $mediatlpdb->get_package($pkg);
@@ -6434,10 +6456,19 @@ with C<--usertree>.  See L<USER MODE> below.
 
 =head2 install [I<option>]... I<pkg>...
 
-Install each I<pkg> given on the command line. By default this installs
-all packages on which the given I<pkg>s are dependent, also.  Options:
+Install each I<pkg> given on the command line, if it is not already
+installed.  (It does not touch existing packages; see the C<update>
+action for how to get the latest version of a package.)
+
+By default this also installs all packages on which the given I<pkg>s are
+dependent.  Options:
 
 =over 4
+
+=item B<--dry-run>
+
+Nothing is actually installed; instead, the actions to be performed are
+written to the terminal.
 
 =item B<--file>
 
@@ -6445,14 +6476,11 @@ Instead of fetching a package from the installation repository, use
 the package files given on the command line.  These files must
 be standard TeX Live package files (with contained tlpobj file).
 
-=item B<--reinstall>
+=item B<--force>
 
-Reinstall a package (including dependencies for collections) even if it
-already seems to be installed (i.e, is present in the TLPDB).  This is
-useful to recover from accidental removal of files in the hierarchy.
-
-When re-installing, only dependencies on normal packages are followed
-(i.e., not those of category Scheme or Collection).
+If updates to C<tlmgr> itself (or other parts of the basic
+infrastructure) are present, C<tlmgr> will bail out and not perform the
+installation unless this option is given.  Not recommended.
 
 =item B<--no-depends>
 
@@ -6468,16 +6496,27 @@ an C<i386-linux> system.  This option suppresses this behavior, and also
 implies C<--no-depends>.  Don't use it unless you are sure of what you
 are doing.
 
-=item B<--dry-run>
+=item B<--reinstall>
 
-Nothing is actually installed; instead, the actions to be performed are
-written to the terminal.
+Reinstall a package (including dependencies for collections) even if it
+already seems to be installed (i.e, is present in the TLPDB).  This is
+useful to recover from accidental removal of files in the hierarchy.
 
-=item B<--force>
+When re-installing, only dependencies on normal packages are followed
+(i.e., not those of category Scheme or Collection).
 
-If updates to C<tlmgr> itself (or other parts of the basic
-infrastructure) are present, C<tlmgr> will bail out and not perform the
-installation unless this option is given.  Not recommended.
+=item B<--with-doc>
+
+=item B<--with-src>
+
+While not recommended, the C<install-tl> program provides an option to
+omit installation of all documentation and/or source files.  (By
+default, everything is installed.)  After such an installation, you may
+find that you want the documentation or source files for a given package
+after all.  You can get them by using these options in conjunction with
+C<--reinstall>, as in (using the C<fontspec> package as the example):
+
+  tlmgr install --reinstall --with-doc --with-src fontspec
 
 =back
 
@@ -6738,52 +6777,6 @@ Print the TeX Live identifier for the detected platform
 C<--print-arch> is a synonym.
 
 
-=head2 restore [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
-
-Restore a package from a previously-made backup.
-
-If C<--all> is given, try to restore the latest revision of all 
-package backups found in the backup directory.
-
-Otherwise, if neither I<pkg> nor I<rev> are given, list the available backup
-revisions for all packages.
-
-With I<pkg> given but no I<rev>, list all available backup revisions of
-I<pkg>.
-
-When listing available packages tlmgr shows the revision and in 
-parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
-
-With both I<pkg> and I<rev>, tries to restore the package from the
-specified backup.
-
-Options:
-
-=over 4
-
-=item B<--all>
-
-Try to restore the latest revision of all package backups found in the
-backup directory. Additional non-option arguments (like I<pkg>) are not
-allowed.
-
-=item B<--backupdir> I<directory>
-
-Specify the directory where the backups are to be found. If not given it
-will be taken from the configuration setting in the TLPDB.
-
-=item B<--dry-run>
-
-Nothing is actually restored; instead, the actions to be performed are
-written to the terminal.
-
-=item B<--force>
-
-Don't ask questions.
-
-=back
-
-
 =head2 remove [I<option>]... I<pkg>...
 
 Remove each I<pkg> specified.  Removing a collection removes all package
@@ -6853,6 +6846,50 @@ given on the command line, not keeping previous settings
 
 In all cases, one of the repositories must be tagged as C<main>;
 otherwise, all operations will fail!
+
+=back
+
+
+=head2 restore [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
+
+Restore a package from a previously-made backup.
+
+If C<--all> is given, try to restore the latest revision of all 
+package backups found in the backup directory.
+
+Otherwise, if neither I<pkg> nor I<rev> are given, list the available
+backup revisions for all packages.  With I<pkg> given but no I<rev>,
+list all available backup revisions of I<pkg>.
+
+When listing available packages tlmgr shows the revision, and in 
+parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
+
+If (and only if) both I<pkg> and a valid revision number I<rev> are
+specified, try to restore the package from the specified backup.
+
+Options:
+
+=over 4
+
+=item B<--all>
+
+Try to restore the latest revision of all package backups found in the
+backup directory. Additional non-option arguments (like I<pkg>) are not
+allowed.
+
+=item B<--backupdir> I<directory>
+
+Specify the directory where the backups are to be found. If not given it
+will be taken from the configuration setting in the TLPDB.
+
+=item B<--dry-run>
+
+Nothing is actually restored; instead, the actions to be performed are
+written to the terminal.
+
+=item B<--force>
+
+Don't ask questions.
 
 =back
 
@@ -7149,7 +7186,7 @@ installed into a user tree.
 
 Description of changes of actions in user mode:
 
-=head2 user mode install
+=head2 User mode install
 
 In user mode, the C<install> action checks that the package and all
 dependencies are all either relocated or already installed in the system
@@ -7165,13 +7202,13 @@ collection-context> would install C<collection-basic> and other
 collections, while in user mode, I<only> the packages mentioned in
 C<collection-context> are installed.
 
-=head2 user mode backup; restore; remove; update
+=head2 User mode backup, restore, remove, update
 
 In user mode, these actions check that all packages to be acted on are
 installed in the user tree before proceeding; otherwise, they behave
 just as in normal mode.
  
-=head2 user mode generate; option; paper
+=head2 User mode generate, option, paper
 
 In user mode, these actions operate only on the user tree's
 configuration files and/or C<texlive.tlpdb>.

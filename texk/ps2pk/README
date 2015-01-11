@@ -4,6 +4,8 @@ permissive license as the Type 1 interpreter code that it is based on
 source file.
 --Piet Tutelaers and Pierre MacKay, May 2011.
 
+ps2pk is currently maintained as part of TeX Live (http://tug.org/texlive),
+and distributed through TL and CTAN.
 
 			Ps2pk-1.4 available
 			-------------------
