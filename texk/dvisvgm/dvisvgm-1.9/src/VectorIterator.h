@@ -97,7 +97,7 @@ class VectorIterator
 		bool operator > (const VectorIterator &it) const  {return _pos > it._pos;}
 
 		size_t distanceToLast () const {
-			if (valid)
+			if (valid())
 				return _vector.size()-_pos-1;
 			return 0;
 		}
