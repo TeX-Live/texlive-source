@@ -4,12 +4,6 @@
 
 # N.B. !!!!!!!!!!!  See 17 July 2012 comments !!!!!!!!!!!!!!!!!!
 
-# Re -cd issue !!!!!!!!!!!!! SEE "??!!" COMMENTS.
-#     If relative path is given for $out_dir or $aux_dir, and -cd is
-#     used, should it be interpreted w.r.t. initial cwd (i.e., cwd when
-#     latexmk is started), or w.r.t. to document directory???????
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 # On a UNIX-like system, the above enables latexmk to run independently
 #   of the location of the perl executable.  This line relies on the 
 #   existence of the program /usr/bin/env
@@ -118,13 +112,12 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.41';
-$version_details = "$My_name, John Collins, 1 January 2015";
+$version_num = '4.42';
+$version_details = "$My_name, John Collins, 10 January 2015";
 
 use Config;
 use File::Basename;
 use File::Copy;
-use Cwd 'abs_path';
 use File::Glob ':glob';    # Better glob.  Does not use space as item separator.
 use File::Path 2.08 qw( make_path );
 use FileHandle;
@@ -193,6 +186,10 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##     10 Jan 2015  John Collins  Fix -cd-associated bugs
+##      9 Jan 2015  John Collins  V. 4.42
+##                                Add missfont.log and synctex.gz to cleaned
+##                                  up files
 ##      1 Jan 2015  John Collins  V. 4.41
 ##     18 Dec 2014  John Collins  -c also deletes $deps_file if it is used.
 ##     16 Dec 2014  John Collins  Finish change of e-mail
@@ -1796,25 +1793,6 @@ if ( ($out_dir ne '') && ($aux_dir eq '') ){
     $aux_dir = $out_dir;
 }
 
-# Initially $aux_dir and $out_dir are either absolute or relative to CURRENT
-#    directory.
-# If we'll cd to directory of TeX file to do our work, we'll need to convert
-#   any relative directories to absolute, to preserve the user-requested
-#   directories after a cd.
-# Otherwise, we need to normalize them in our standard way (to ensure
-#   standardization in the places we use them.
-
-
-foreach ($out_dir, $aux_dir) {
-    if ($do_cd) {
-	$_ = abs_path( $_ );
-    }
-    else {
-        # Remove aliases to cwd:
-        $_ = normalize_filename( $_ );
-        if ($_ eq '.' ) { $_ = ''; }
-    }
-}
 # Versions terminating in directory/path separator
 $out_dir1 = $out_dir;
 $aux_dir1 = $aux_dir;
@@ -2300,11 +2278,11 @@ foreach $filename ( @file_list )
             show_array( " Yet other generated files:\n",
                         keys %generated_exts_all );
         }
-        &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak',
+        &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak', 'synctex.gz',
                    split('\s+',$clean_ext),
                    keys %generated_exts_all 
                  );
-        unlink_or_move( 'texput.log', "texput.aux", 
+        unlink_or_move( 'texput.log', "texput.aux", "missfont.log",
                 keys %index_bibtex_generated, 
                 keys %aux_files );
         if ( $dependents_list && ( $deps_file ne '-' ) ) {
@@ -4520,12 +4498,12 @@ sub normalize_filename {
    $cwd =~ s(\\)(/)g;
    $file =~ s(\\)(/)g;
 
-   # Remove current directory string:
-   $file =~ s(^\./)();
    # Remove initial component equal to current working directory.
    # Use \Q and \E round directory name in regex to avoid interpretation
    #   of metacharacters in directory name:
    $file =~ s(^\Q$cwd\E/)();
+   # Remove current directory string:
+   $file =~ s(^\./)();
    return $file;
 }
 
