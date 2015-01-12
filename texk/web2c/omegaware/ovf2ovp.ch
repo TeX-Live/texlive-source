@@ -24,6 +24,15 @@
 @d banner=='This is OVF2OVP, Version 1.13' {printed when the program starts}
 @z
 
+@x [2] All terminal output goes to stderr, so we can dump the vpl on stdout.
+@d print(#)==write(#)
+@d print_ln(#)==write_ln(#)
+@y
+@d print(#)==write(stderr,#)
+@d print_ln(#)==write_ln(stderr,#)
+@d print_real(#)==fprint_real(stderr,#)
+@z
+
 % [2] We need to tell web2c about one special variable.
 % Perhaps it would be better to allow @define's
 % anywhere in a source file, but that seemed just as painful as this.

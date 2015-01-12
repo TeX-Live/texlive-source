@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 tests=omegaware/tests
@@ -20,8 +20,8 @@ diff $srcdir/$tests/check.opl $tests/xcheck.opl || exit 1
 echo && echo "*** opl2ofm xcheck xchecked"
 ./wopl2ofm $tests/xcheck $tests/xchecked || exit 1
 
-echo && echo "*** ofm2opl xchecked xchecked"
-./wofm2opl $tests/xchecked $tests/xchecked || exit 1
+echo && echo "*** ofm2opl xchecked stdout (xchecked.opl)"
+./wofm2opl $tests/xchecked >$tests/xchecked.opl || exit 1
 
 echo && echo "*** diff checked.opl xchecked.opl"
 diff $srcdir/$tests/checked.opl $tests/xchecked.opl || exit 1

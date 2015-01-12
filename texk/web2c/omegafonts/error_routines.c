@@ -25,6 +25,8 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 #include "parser.h"
 #include "error_routines.h"
 
+int num_errors = 0;
+
 /* Error routines:
 
 All of the routines in this file have the same general format.
@@ -62,6 +64,7 @@ yyerror(const_string fmt)
     fprintf(stderr, "line %d (parsing): ", line_number);
     fprintf(stderr, fmt);
     fprintf(stderr, "\n");
+    num_errors++;
 }
 
 

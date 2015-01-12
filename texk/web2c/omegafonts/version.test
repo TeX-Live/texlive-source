@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+echo && echo "*** omfonts -version"
+./omfonts -version || exit 1
+
+echo && echo "*** ofm2opl -version"
+./omfonts -ofm2opl -version || exit 1
+
+echo && echo "*** opl2ofm -version"
+./omfonts -opl2ofm -version || exit 1
+
+echo && echo "*** ovf2ovp -version"
+./omfonts -ovf2ovp -version || exit 1
+
+echo && echo "*** ovp2ovf -version"
+./omfonts -ovp2ovf -version || exit 1
+

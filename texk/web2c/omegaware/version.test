@@ -1,0 +1,17 @@
+#! /bin/sh
+
+# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+echo && echo "*** ofm2opl -version"
+./wofm2opl -version || exit 1
+
+echo && echo "*** opl2ofm -version"
+./wopl2ofm -version || exit 1
+
+echo && echo "*** ovf2ovp -version"
+./wovf2ovp -version || exit 1
+
+echo && echo "*** ovp2ovf -version"
+./wovp2ovf -version || exit 1
+
