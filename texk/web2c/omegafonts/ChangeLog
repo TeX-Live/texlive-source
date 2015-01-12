@@ -1,3 +1,13 @@
+2015-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* error_routines.[ch], omfonts.c: Non-zero error return code.
+	* check.test: Also test writung OPL file to stdout.
+	* selectfont.test: Also test writung OVP file to stdout.
+	* bad.test, version.test: Shell scripts for new tests.
+	* tests/badofm.ofm, tests/badopl.opl, tests/badovf.{ofm,ovf},
+	tests/badovp.ovp: New test input files.
+	* Makefile.am: Add new test shell scripts and input files.	
+
 2014-11-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* omfonts.c: Help texts for C and Web2C versions differ.

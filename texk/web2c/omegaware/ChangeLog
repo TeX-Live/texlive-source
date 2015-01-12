@@ -1,3 +1,16 @@
+2015-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ovf2ovp.ch: Send diagnostic messages to stderr.
+	* ofm2opl.ch, opl2ofm.ch, ovp2ovf.ch:
+	Send diagnostic messages to stderr.
+	Non-zero return code in case of problems.
+	* check.test: Also test writung OPL file to stdout.
+	* selectfont.test: Also test writung OVP file to stdout.
+	* bad.test, version.test: Shell scripts for new tests.
+	* tests/badofm.ofm, tests/badopl.opl, tests/badovf.{ofm,ovf},
+	tests/badovp.ovp: New test input files.
+	* am/omegaware.am: Add new test shell scripts and input files.
+
 2014-11-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.ch, ovf2ovp.ch: Add missing space to message.

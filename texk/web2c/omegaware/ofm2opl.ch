@@ -37,6 +37,14 @@
 @d banner=='This is OFM2OPL, Version 1.13' {printed when the program starts}
 @z
 
+@x [2] Print all terminal output on stderr, so the pl can be sent to stdout.
+@d print(#)==write(#)
+@d print_ln(#)==write_ln(#)
+@y
+@d print(#)==write(stderr,#)
+@d print_ln(#)==write_ln(stderr,#)
+@z
+
 % [2] Fix files in program statement.  We need to tell web2c about one
 % special variable.  Perhaps it would be better to allow @define's
 % anywhere in a source file, but that seemed just as painful as this.
@@ -131,15 +139,20 @@ end;
 @!tfm_file_array: pointer_to_byte; {the input data all goes here}
 @z
 
-@x [20] Send error output to stderr.
+% [21] abort() should cause a bad exit code.
+@x
 @d abort(#)==begin print_ln(#);
   print_ln('Sorry, but I can''t go on; are you sure this is a OFM?');
+  goto final_end;
+  end
 @y
-@d abort(#)==begin write_ln(stderr, #);
+@d abort(#)==begin print_ln(#);
   write_ln(stderr, 'Sorry, but I can''t go on; are you sure this is a OFM?');
+  uexit(1);
+  end
 @z
 
-@x [20] Allow arbitrarily large input files.
+@x [21] Allow arbitrarily large input files.
 if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 @.The file is bigger...@>
 @y
@@ -147,7 +160,7 @@ tfm_file_array
   := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
 @z
 
-% [27, 28] Change strings to C char pointers. The Pascal strings are
+% [28, 29] Change strings to C char pointers. The Pascal strings are
 % indexed starting at 1, so we pad with a blank.
 @x
 @!ASCII_04,@!ASCII_10,@!ASCII_14: packed array [1..32] of char;
@@ -163,7 +176,6 @@ tfm_file_array
   {handy string constants for |face| codes}
 @!HEX: const_c_string;
 @z
-
 @x
 ASCII_04:=' !"#$%&''()*+,-./0123456789:;<=>?';@/
 ASCII_10:='@@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_';@/
@@ -181,7 +193,7 @@ MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
 HEX:=' 0123456789ABCDEF';@/
 @z
 
-% [38] How we output the character code depends on |charcode_format|.
+% [39] How we output the character code depends on |charcode_format|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 begin if font_type>vanilla then
@@ -203,7 +215,7 @@ else if (charcode_format = charcode_ascii) and (c > " ") and (c <= "~")
 else out_hex_char(c);
 @z
 
-% [39] Don't output the face code as an integer.
+% [40] Don't output the face code as an integer.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
   out(MBL_string[1+(b mod 3)]);
@@ -215,13 +227,13 @@ else out_hex_char(c);
   put_byte(RCE_string[1+(b div 3)], pl_file);
 @z
 
-@x [40] Force 32-bit constant arithmetic for 16-bit machines.
+@x [41] Force 32-bit constant arithmetic for 16-bit machines.
 f:=((tfm[k+1] mod 16)*@'400+tfm[k+2])*@'400+tfm[k+3];
 @y
 f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 @z
 
-% [78] No progress reports unless verbose.
+% [95] No progress reports unless verbose.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
       incr(chars_on_line);
@@ -249,7 +261,7 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
       end;
 @z
 
-% [89] Change the name of the variable `class', since AIX 3.1's <math.h>
+% [107] Change the name of the variable `class', since AIX 3.1's <math.h>
 % defines a function by that name.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
@@ -260,7 +272,13 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 @d class == class_var
 @z
 
-% [90] Change name of the function `f'.
+@x [108]
+  goto final_end;
+@y
+  uexit(1);
+@z
+
+% [108] Change name of the function `f'.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
      r:=f(r,(hash[r]-1)div xmax_char,(hash[r]-1)mod xmax_char);
@@ -268,7 +286,7 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
      r:=f_fn(r,(hash[r]-1)div xmax_char,(hash[r]-1)mod xmax_char);
 @z
 
-% [94] web2c can't handle these mutually recursive procedures.
+% [112] web2c can't handle these mutually recursive procedures.
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table. We also have to change the name, because there is also a
 % variable named `f', and some C compilers can't deal with that.
@@ -288,7 +306,7 @@ else eval:=f(h,x,y);
 else eval:=f_fn(h,x,y);
 @z
 
-% [95] The real definition of f.
+% [113] The real definition of f.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @p function f;
@@ -301,7 +319,26 @@ f:=lig_z[h];
 f_fn:=lig_z[h];
 @z
 
-% [99] No final newline unless verbose.
+@x [114] Eliminate the |final_end| and |exit| labels.
+label final_end, 30;
+@y
+@z
+@x
+organize:=true; goto 30;
+final_end: organize:=false;
+30: end;
+@y
+organize:=true
+end;
+@z
+
+@x [117]
+if not organize then goto final_end;
+@y
+if not organize then uexit(1);
+@z
+
+% [117] No final newline unless verbose.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 do_characters; print_ln('.');@/
@@ -309,7 +346,13 @@ do_characters; print_ln('.');@/
 do_characters; if verbose then print_ln('.');@/
 @z
 
-@x [100] System-dependent changes.
+@x [117]
+final_end:end.
+@y
+end.
+@z
+
+@x [118] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{TFtoPL} work at a particular installation.
 It is usually best to design your change file so that all changes to

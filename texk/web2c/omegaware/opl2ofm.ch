@@ -33,6 +33,14 @@
 @d banner=='This is OPL2OFM, Version 1.13' {printed when the program starts}
 @z
 
+@x [2] Print all terminal output on stderr.
+@d print(#)==write(#)
+@d print_ln(#)==write_ln(#)
+@y
+@d print(#)==write(stderr,#)
+@d print_ln(#)==write_ln(stderr,#)
+@z
+
 @x [still 2] No banner unless verbose.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -92,6 +100,27 @@ correspond to one-character constants like \.{"A"} in \.{WEB} language.
 @y
 @d char == 0..255
 @d first_ord=0 {ordinal number of the smallest element of |char|}
+@z
+
+@x [25] Non-zero return code in case of problems.
+@!chars_on_line:0..9; {the number of characters printed on the current line}
+@y
+@!chars_on_line:0..9; {the number of characters printed on the current line}
+@!perfect:boolean; {was the file free of errors?}
+@z
+
+@x [26] Non-zero return code in case of problems.
+chars_on_line:=0;
+@y
+chars_on_line:=0;
+perfect:=true; {innocent until proved guilty}
+@z
+
+@x [27] Non-zero return code in case of problems.
+chars_on_line:=0;
+@y
+chars_on_line:=0;
+perfect:=false;
 @z
 
 @x [31] (get_keyword_char) Unnecessary due to previous change.
@@ -235,14 +264,21 @@ var @!krn_ptr:0..max_kerns; {an index into |kern|}
 @y
 @z
 
-@x [147?] Be quiet unless verbose.
+@x [172] Be quiet unless verbose.
 read_input; print('.');@/
 @y
 read_input;
 if verbose then print_ln('.');
 @z
 
-@x [148] System-dependent changes.
+@x [172] Non-zero return code in case of problems,
+end.
+@y
+if not perfect then uexit(1);
+end.
+@z
+
+@x [253] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{PLtoTF} work at a particular installation.
 It is usually best to design your change file so that all changes to
