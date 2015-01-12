@@ -2083,44 +2083,45 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(web_programs:=.web) $(web_programs:=.ch) $(web_tests) \
 	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
 	tests/allbib.aux tests/allbib.tex tests/apalike.bst \
-	tests/badpl.pl tests/badvpl.vpl tests/batch.tex \
-	tests/check.log tests/cmr10.600gf tests/cmr10.pk \
-	tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm tests/cmr8.tfm \
-	tests/cmti10.tfm tests/cmtt10.tfm tests/cmtt8.tfm tests/dict \
-	tests/eight.tex tests/end.tex tests/exampl.aux \
-	tests/exampl.tex tests/gray.tfm tests/hello.tex tests/io.mf \
-	tests/just.texi tests/label.mp tests/label.mpx tests/logo8.tfm \
-	tests/longline.aux tests/longline.bib tests/longline.tex \
-	tests/longtfm.tex tests/magic.tex tests/memtest.tex \
-	tests/mltextst.tex tests/mptest.mp tests/mptest.mpx \
-	tests/one.two.mf tests/one.two.mp tests/one.two.tex \
-	tests/online.mf tests/openout.mp tests/openout.tex \
-	tests/pagenum.dvi tests/pagenum.tex tests/patgen.in \
-	tests/patterns tests/plain.mft tests/pplr.dvi tests/pplr.tfm \
-	tests/ptmr.dvi tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl \
-	tests/rpsyr.tfm tests/rptmr.tfm tests/story.dvi \
-	tests/testex.err tests/testex.mp tests/testex.tex \
-	tests/translate tests/uno.dos tests/xampl.bib ctiedir tiedir \
-	lib/mfmpi386.asm lib/mfmpw32.c lib/texmfmp.c texmfmem.h \
-	texmfmp-help.h texmfmp.h $(tex_ch_srcs) $(tex_tests) \
-	tests/write18-quote.tex $(mf_ch_src) mftalk.h $(mf_tests) \
-	triptrap/README triptrap/mftrap.diffs triptrap/mftrap.fot \
-	triptrap/mftrap.log triptrap/mftrap.pl triptrap/mftrap1.in \
-	triptrap/mftrap2.in triptrap/mftrapin.log \
-	triptrap/mptrap.diffs triptrap/mptrap.fot triptrap/mptrap.log \
-	triptrap/mptrap.pl triptrap/mptrap.readme triptrap/mptrap1.in \
-	triptrap/mptrap2.in triptrap/mptrapin.log triptrap/mtrap.0 \
-	triptrap/mtrap.1 triptrap/mtrap.log triptrap/mtrap.mp \
-	triptrap/texmf.cnf triptrap/trap.148 triptrap/trap.149 \
-	triptrap/trap.150 triptrap/trap.151 triptrap/trap.197 \
-	triptrap/trap.200 triptrap/trap.5 triptrap/trap.6 \
-	triptrap/trap.mf triptrap/trap.mp triptrap/trap.mpx \
-	triptrap/trap.typ triptrap/trapf.pl triptrap/trapman.tex \
-	triptrap/trip.diffs triptrap/trip.fot triptrap/trip.log \
-	triptrap/trip.pl triptrap/trip.tex triptrap/trip.typ \
-	triptrap/trip1.in triptrap/trip2.in triptrap/tripin.log \
-	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
-	triptrap/writeo.2 mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
+	tests/badpl.pl tests/badtfm.tfm tests/badvf.tfm tests/badvf.vf \
+	tests/badvpl.vpl tests/batch.tex tests/check.log \
+	tests/cmr10.600gf tests/cmr10.pk tests/cmr10.pl \
+	tests/cmr10.tfm tests/cmr7.tfm tests/cmr8.tfm tests/cmti10.tfm \
+	tests/cmtt10.tfm tests/cmtt8.tfm tests/dict tests/eight.tex \
+	tests/end.tex tests/exampl.aux tests/exampl.tex tests/gray.tfm \
+	tests/hello.tex tests/io.mf tests/just.texi tests/label.mp \
+	tests/label.mpx tests/logo8.tfm tests/longline.aux \
+	tests/longline.bib tests/longline.tex tests/longtfm.tex \
+	tests/magic.tex tests/memtest.tex tests/mltextst.tex \
+	tests/mptest.mp tests/mptest.mpx tests/one.two.mf \
+	tests/one.two.mp tests/one.two.tex tests/online.mf \
+	tests/openout.mp tests/openout.tex tests/pagenum.dvi \
+	tests/pagenum.tex tests/patgen.in tests/patterns \
+	tests/plain.mft tests/pplr.dvi tests/pplr.tfm tests/ptmr.dvi \
+	tests/ptmr.tfm tests/ptmr.vf tests/ptmr.vpl tests/rpsyr.tfm \
+	tests/rptmr.tfm tests/story.dvi tests/testex.err \
+	tests/testex.mp tests/testex.tex tests/translate tests/uno.dos \
+	tests/xampl.bib ctiedir tiedir lib/mfmpi386.asm lib/mfmpw32.c \
+	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
+	$(tex_ch_srcs) $(tex_tests) tests/write18-quote.tex \
+	$(mf_ch_src) mftalk.h $(mf_tests) triptrap/README \
+	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
+	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
+	triptrap/mftrapin.log triptrap/mptrap.diffs \
+	triptrap/mptrap.fot triptrap/mptrap.log triptrap/mptrap.pl \
+	triptrap/mptrap.readme triptrap/mptrap1.in triptrap/mptrap2.in \
+	triptrap/mptrapin.log triptrap/mtrap.0 triptrap/mtrap.1 \
+	triptrap/mtrap.log triptrap/mtrap.mp triptrap/texmf.cnf \
+	triptrap/trap.148 triptrap/trap.149 triptrap/trap.150 \
+	triptrap/trap.151 triptrap/trap.197 triptrap/trap.200 \
+	triptrap/trap.5 triptrap/trap.6 triptrap/trap.mf \
+	triptrap/trap.mp triptrap/trap.mpx triptrap/trap.typ \
+	triptrap/trapf.pl triptrap/trapman.tex triptrap/trip.diffs \
+	triptrap/trip.fot triptrap/trip.log triptrap/trip.pl \
+	triptrap/trip.tex triptrap/trip.typ triptrap/trip1.in \
+	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
+	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
+	mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
 	pmpostdir/ChangeLog $(pmpost_web) $(pmpost_tests) \
 	$(upmpost_tests) pmpostdir/tests/psample.mp $(libmplib_web) \
 	$(etex_web_srcs) $(etex_ch_srcs) etexdir/ChangeLog \
@@ -2278,47 +2279,50 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/ovf2ovp.up omegaware/ovf2ovp.ch \
 	omegaware/ovp2ovf.web omegaware/ovp2ovf.up \
 	omegaware/ovp2ovf.ch $(OTANGLE_tests) $(OMFONTS_tests) \
-	omegaware/tests/charwd-r.pl omegaware/tests/charwd-v.vpl \
-	omegaware/tests/check.ofm omegaware/tests/check.opl \
-	omegaware/tests/checked.opl omegaware/tests/level1.opl \
-	omegaware/tests/ligall.opl omegaware/tests/ligbch.opl \
-	omegaware/tests/ligbdy.opl omegaware/tests/ligblb.opl \
-	omegaware/tests/ligblv.opl omegaware/tests/ligblv.ovp \
-	omegaware/tests/ligloop1.ofm omegaware/tests/ligloop1.opl \
-	omegaware/tests/ligloop2.opl omegaware/tests/liguse.opl \
-	omegaware/tests/liguse1.opl omegaware/tests/liguse2.opl \
-	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
-	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \
-	omegaware/tests/ofontd3.dvi omegaware/tests/ofontd3.typ \
-	omegaware/tests/ofontr1.vf omegaware/tests/ofontr2.ovf \
-	omegaware/tests/ofontr3.ovf omegaware/tests/ofontv4.vf \
-	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf \
-	omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
-	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \
-	omegaware/tests/ofontr1.tfm omegaware/tests/ofontr2.ofm \
-	omegaware/tests/ofontr3.ofm omegaware/tests/ofontv4.tfm \
-	omegaware/tests/ofontv5.ofm omegaware/tests/ofontv6.ofm \
-	omegaware/tests/ofontr0.pl omegaware/tests/ofontr1.pl \
-	omegaware/tests/ofontr1.vpl omegaware/tests/ofontr2.opl \
-	omegaware/tests/ofontr2.ovp omegaware/tests/ofontr3.opl \
-	omegaware/tests/ofontr3.ovp omegaware/tests/ofontv4.pl \
-	omegaware/tests/ofontv4.vpl omegaware/tests/ofontv5.opl \
-	omegaware/tests/ofontv5.ovp omegaware/tests/ofontv6.opl \
-	omegaware/tests/ofontv6.ovp omegaware/tests/Cherokee.pl \
-	omegaware/tests/OCherokee.ovp omegaware/tests/inbmp.opl \
-	omegaware/tests/overbmp.opl omegaware/tests/overbmp.ovp \
-	omegaware/tests/realnum.opl omegaware/tests/realnum.out \
-	omegaware/tests/repeat.opl omegaware/tests/repeated.opl \
-	omegaware/tests/sample.out omegaware/tests/sample.ovp \
-	omegaware/tests/sample0-h.opl omegaware/tests/shorten.opl \
-	omegaware/tests/specialhex.ovp omegaware/tests/vrepeat0.ofm \
-	omegaware/tests/vrepeat0.opl omegaware/tests/vrepeat1.ofm \
-	omegaware/tests/vrepeat1.opl omegaware/tests/vrepeat1.ovf \
-	omegaware/tests/vrepeat1.ovp omegaware/tests/arabicr.pl \
-	omegaware/tests/arabic.ovp $(aleph_web_srcs) $(aleph_ch_srcs) \
-	alephdir/ChangeLog alephdir/aleph.defines \
-	alephdir/aleph.version $(aleph_tests) synctexdir/ChangeLog \
-	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
+	omegaware/tests/badofm.ofm omegaware/tests/badopl.opl \
+	omegaware/tests/badovf.ofm omegaware/tests/badovf.ovf \
+	omegaware/tests/badovp.ovp omegaware/tests/charwd-r.pl \
+	omegaware/tests/charwd-v.vpl omegaware/tests/check.ofm \
+	omegaware/tests/check.opl omegaware/tests/checked.opl \
+	omegaware/tests/level1.opl omegaware/tests/ligall.opl \
+	omegaware/tests/ligbch.opl omegaware/tests/ligbdy.opl \
+	omegaware/tests/ligblb.opl omegaware/tests/ligblv.opl \
+	omegaware/tests/ligblv.ovp omegaware/tests/ligloop1.ofm \
+	omegaware/tests/ligloop1.opl omegaware/tests/ligloop2.opl \
+	omegaware/tests/liguse.opl omegaware/tests/liguse1.opl \
+	omegaware/tests/liguse2.opl omegaware/tests/ofontd1.dvi \
+	omegaware/tests/ofontd1.typ omegaware/tests/ofontd2.dvi \
+	omegaware/tests/ofontd2.typ omegaware/tests/ofontd3.dvi \
+	omegaware/tests/ofontd3.typ omegaware/tests/ofontr1.vf \
+	omegaware/tests/ofontr2.ovf omegaware/tests/ofontr3.ovf \
+	omegaware/tests/ofontv4.vf omegaware/tests/ofontv5.ovf \
+	omegaware/tests/ofontv6.ovf omegaware/tests/ofontd0.dtl \
+	omegaware/tests/ofontd0.dvi omegaware/tests/ofontd0.typ \
+	omegaware/tests/ofontr0.tfm omegaware/tests/ofontr1.tfm \
+	omegaware/tests/ofontr2.ofm omegaware/tests/ofontr3.ofm \
+	omegaware/tests/ofontv4.tfm omegaware/tests/ofontv5.ofm \
+	omegaware/tests/ofontv6.ofm omegaware/tests/ofontr0.pl \
+	omegaware/tests/ofontr1.pl omegaware/tests/ofontr1.vpl \
+	omegaware/tests/ofontr2.opl omegaware/tests/ofontr2.ovp \
+	omegaware/tests/ofontr3.opl omegaware/tests/ofontr3.ovp \
+	omegaware/tests/ofontv4.pl omegaware/tests/ofontv4.vpl \
+	omegaware/tests/ofontv5.opl omegaware/tests/ofontv5.ovp \
+	omegaware/tests/ofontv6.opl omegaware/tests/ofontv6.ovp \
+	omegaware/tests/Cherokee.pl omegaware/tests/OCherokee.ovp \
+	omegaware/tests/inbmp.opl omegaware/tests/overbmp.opl \
+	omegaware/tests/overbmp.ovp omegaware/tests/realnum.opl \
+	omegaware/tests/realnum.out omegaware/tests/repeat.opl \
+	omegaware/tests/repeated.opl omegaware/tests/sample.out \
+	omegaware/tests/sample.ovp omegaware/tests/sample0-h.opl \
+	omegaware/tests/shorten.opl omegaware/tests/specialhex.ovp \
+	omegaware/tests/vrepeat0.ofm omegaware/tests/vrepeat0.opl \
+	omegaware/tests/vrepeat1.ofm omegaware/tests/vrepeat1.opl \
+	omegaware/tests/vrepeat1.ovf omegaware/tests/vrepeat1.ovp \
+	omegaware/tests/arabicr.pl omegaware/tests/arabic.ovp \
+	$(aleph_web_srcs) $(aleph_ch_srcs) alephdir/ChangeLog \
+	alephdir/aleph.defines alephdir/aleph.version $(aleph_tests) \
+	synctexdir/ChangeLog synctexdir/README.txt \
+	synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
 	synctexdir/synctex-common.h synctexdir/synctex.c \
 	synctexdir/synctex.defines synctexdir/synctex.h \
@@ -2343,11 +2347,11 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	tests/xpagenum.typ cmr10.dvi tests/xcmr10.dvi cmr10.pk \
 	tests/xcmr10.pk tests/xcmr10.gft1 tests/xcmr10.gft2 io.tex \
 	tests/io.tex tests/xpatout pattmp.4 cmr10.gf \
-	tests/xcmr10.600gf tests/xcmr10.pktyp tests/badpl.* \
-	tests/xcmr10.tfm tests/xtexpool.typ tests/xcmr10.pl \
-	tests/xptmr.vpl tests/badvpl.* tests/yptmr*.* pooltype.tex \
-	ctie.c cweave.c tie.c ctie.outc ctie.outm common.tex \
-	common.scn common.idx tie.outc tie.outm $(nodist_tex_SOURCES) \
+	tests/xcmr10.600gf tests/xcmr10.pktyp badpl.* tests/xcmr10.tfm \
+	tests/xtexpool.typ badtfm.* tests/xcmr10*.pl badvf.* \
+	tests/xptmr*.vpl badvpl.* tests/yptmr*.* pooltype.tex ctie.c \
+	cweave.c tie.c ctie.outc ctie.outm common.tex common.scn \
+	common.idx tie.outc tie.outm $(nodist_tex_SOURCES) \
 	tex-final.ch tex-web2c tex.p tex.pool tex-tangle trip.diffs \
 	write18-quote.log mftrap.diffs $(nodist_libmf_a_SOURCES) \
 	mf-final.ch mf-web2c mf.p mf.pool mf-tangle \
@@ -2389,22 +2393,22 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	bug73.log bug73.out bug73.tex $(omegaware_programs:=.c) \
 	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
 	$(omegaware_programs:=-web2c) ofm2opl.web opl2ofm.web \
-	ovf2ovp.web ovp2ovf.web omegaware/tests/charwdr.* \
-	omegaware/tests/charwdv.* omegaware/tests/xcheck* \
-	omegaware/tests/xlevel1.* omegaware/tests/xlig*.* ofont*vf \
-	omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
-	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
-	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
-	omegaware/tests/xOCherokee.* omegaware/tests/xinbmp* \
-	omegaware/tests/xoverbmp* ocftest.* omegaware/tests/xrealnum.* \
-	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
-	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
-	omegaware/tests/xsample*.out omegaware/tests/shortend.* \
-	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
-	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
-	omegaware/tests/yrepeat* omegaware/tests/*yarabic* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	ovf2ovp.web ovp2ovf.web omegaware/bad*.* \
+	omegaware/tests/charwdr.* omegaware/tests/charwdv.* \
+	omegaware/tests/xcheck* omegaware/tests/xlevel1.* \
+	omegaware/tests/xlig*.* ofont*vf omegaware/tests/xofont* \
+	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
+	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
+	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
+	ocftest.* omegaware/tests/xinbmp* omegaware/tests/xoverbmp* \
+	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
+	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
+	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
+	omegaware/tests/shortend.* omegaware/tests/specialhex.ofm \
+	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
+	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
+	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
+	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_43) $(am__append_49) $(am__append_55) \
@@ -3443,13 +3447,14 @@ nodist_wovp2ovf_SOURCES = ovp2ovf.c ovp2ovf.h
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
 
-OMFONTS_tests = omegaware/charwd.test omegaware/check.test \
-	omegaware/help.test omegaware/level1.test \
-	omegaware/ligkern.test omegaware/ofonts.test \
-	omegaware/omfonts.test omegaware/overbmp.test \
-	omegaware/realnum.test omegaware/repeat.test \
-	omegaware/selectfont.test omegaware/shorten.test \
-	omegaware/specialhex.test omegaware/vrepeat.test \
+OMFONTS_tests = omegaware/bad.test omegaware/charwd.test \
+	omegaware/check.test omegaware/help.test \
+	omegaware/level1.test omegaware/ligkern.test \
+	omegaware/ofonts.test omegaware/omfonts.test \
+	omegaware/overbmp.test omegaware/realnum.test \
+	omegaware/repeat.test omegaware/selectfont.test \
+	omegaware/shorten.test omegaware/specialhex.test \
+	omegaware/version.test omegaware/vrepeat.test \
 	omegaware/yannis.test
 
 al_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(OTANGLE)
