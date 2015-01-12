@@ -50,6 +50,11 @@
 program TFtoPL(@!tfm_file,@!pl_file,@!output);
 @z
 
+@x [2] No global label.
+label @<Labels in the outer block@>@/
+@y
+@z
+
 @x [still 2] Don't print banner until later (and unless verbose).
 procedure initialize; {this procedure gets things started properly}
   begin print_ln(banner);@/
@@ -63,6 +68,11 @@ procedure initialize; {this procedure gets things started properly}
      from the negative lower bound.}
     tfm_file_array := cast_to_byte_pointer (xmalloc (1003));
     parse_arguments;
+@z
+
+@x [3] No global label.
+@<Labels...@>=final_end;
+@y
 @z
 
 @x [5] Increase sizes to match vptovf.
@@ -243,12 +253,24 @@ f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
 @d class == class_var
 @z
 
+@x [90]
+  goto final_end;
+@y
+  uexit(1);;
+@z
+
 % [90] Change name of the function `f'.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
      r:=f(r,(hash[r]-1)div 256,(hash[r]-1)mod 256);
 @y
      r:=f_fn(r,(hash[r]-1)div 256,(hash[r]-1)mod 256);
+@z
+
+@x [90]
+  out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); goto final_end;
+@y
+  out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); uexit(1);
 @z
 
 % [94] web2c can't handle these mutually recursive procedures.
@@ -284,12 +306,24 @@ f:=lig_z[h];
 f_fn:=lig_z[h];
 @z
 
+@x [99]
+if not organize then goto final_end;
+@y
+if not organize then uexit(1);
+@z
+
 % [99] No final newline unless verbose.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 do_characters; print_ln('.');@/
 @y
 do_characters; if verbose then print_ln('.');@/
+@z
+
+@x [99]
+final_end:end.
+@y
+end.
 @z
 
 @x [100] System-dependent changes.
