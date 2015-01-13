@@ -142,10 +142,6 @@ typedef FILE *text;
 #define aopenout(f)  open_output (&(f), FOPEN_W_MODE)
 #define aclose close_file
 
-/* For faking arrays in tftopl.  */
-typedef unsigned char *pointertobyte;
-#define casttobytepointer(e) ((pointertobyte) e)
-
 /* How to output to the GF or DVI file.  */
 #define WRITE_OUT(a, b)							\
   if ((size_t) fwrite ((char *) &OUT_BUF[a], sizeof (OUT_BUF[a]),       \

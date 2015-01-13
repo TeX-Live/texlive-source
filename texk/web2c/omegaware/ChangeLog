@@ -1,3 +1,7 @@
+2015-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ofm2opl.ch, ovf2ovp.ch: Use ^byte and x*alloc_array().
+
 2015-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ovf2ovp.ch: Send diagnostic messages to stderr.

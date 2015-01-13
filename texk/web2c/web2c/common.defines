@@ -103,7 +103,6 @@
 @define function atou ();
 @define function basename ();
 @define function basenamechangesuffix ();
-@define function casttobytepointer ();
 @define function chartostring ();
 @define function chr ();
 @define function cmdline ();
@@ -211,7 +210,6 @@
 @define type integer64;
 @define type longinteger;
 @define type memoryword; {for gftodvi, TeX, and Metafont}
-@define type pointertobyte;
 @define type real;
 @define type text;
 @define type w2custring;

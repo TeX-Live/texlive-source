@@ -68,7 +68,7 @@ procedure initialize; {this procedure gets things started properly}
     kpse_init_prog ('OFM2OPL', 0, nil, nil);
     {We |xrealloc| when we know how big the file is.  The 1000 comes
      from the negative lower bound.}
-    tfm_file_array := cast_to_byte_pointer (xmalloc (1009));
+    tfm_file_array := xmalloc_array (byte, 1008);
     parse_arguments;
 @z
 
@@ -136,7 +136,7 @@ end;
 {Kludge here to define |tfm| as a macro which takes care of the negative
  lower bound.  We've defined |tfm| for the benefit of web2c above.}
 @=#define tfm (tfmfilearray + 1001);@>@\
-@!tfm_file_array: pointer_to_byte; {the input data all goes here}
+@!tfm_file_array: ^byte; {the input data all goes here}
 @z
 
 % [21] abort() should cause a bad exit code.
@@ -156,8 +156,7 @@ end;
 if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 @.The file is bigger...@>
 @y
-tfm_file_array
-  := cast_to_byte_pointer (xrealloc (tfm_file_array, 4 * lf - 1 + 1002));
+tfm_file_array := xrealloc_array (tfm_file_array, byte, 4 * lf + 1000);
 @z
 
 % [28, 29] Change strings to C char pointers. The Pascal strings are
