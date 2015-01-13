@@ -228,6 +228,7 @@ for i:=@'177 to @'377 do xchr[i]:=' ';
 
 @d tab = @'11 { ASCII horizontal tab }
 @d form_feed = @'14 { ASCII form feed }
+@d control_z = @'32 { Windows EOF and Unix Suspend }
 
 @<Set init...@>=
 {Initialize |xchr| to the identity mapping.}
@@ -1133,6 +1134,7 @@ for k:=127 to 255 do char_class[k]:=invalid_class;
 for k:=127 to 255 do char_class[k]:=invalid_class;
 char_class[tab]:=space_class;
 char_class[form_feed]:=space_class;
+char_class[control_z]:=space_class;
 @z
 
 @x [232] Use halfp.
