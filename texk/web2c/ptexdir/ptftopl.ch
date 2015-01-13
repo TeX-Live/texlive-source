@@ -26,9 +26,9 @@ var @!k:integer; {all-purpose initiallization index}
 @z
 
 @x [2] l.97 - pTeX:
-    tfm_file_array := cast_to_byte_pointer (xmalloc (1003));
+    tfm_file_array := xmalloc_array (byte, 1002);
 @y
-    tfm_file_array := cast_to_byte_pointer (xmalloc (1003+4));
+    tfm_file_array := xmalloc_array (byte, 1002 + 4);
 @z
 
 @x
@@ -57,9 +57,9 @@ var @!k:integer; {all-purpose initiallization index}
 @z
 
 @x [18.20] l.448 - pTeX:
-@!tfm_file_array: pointer_to_byte; {the input data all goes here}
+@!tfm_file_array: ^byte; {the input data all goes here}
 @y
-@!tfm_file_array: pointer_to_byte; {the input data all goes here}
+@!tfm_file_array: ^byte; {the input data all goes here}
 @!file_format:tfm_format..vfm_format; {format of tfm file}
 @!nt:0..@'77777; {number of words in the character type table}
 @!ng:0..@'77777; {number of words in the glue table}
