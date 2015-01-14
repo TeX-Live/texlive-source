@@ -1,3 +1,11 @@
+2015-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libgd-2.1.1.
+	* version.ac: Adjust.
+	* libgd.test (new): Shell script for a basic test.
+	* gdtest.c (new): Source code for test program.
+	* Makefile.am: Add new libgd files and test program.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

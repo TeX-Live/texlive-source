@@ -1,0 +1,20 @@
+diff -ur libgd-2.1.1.orig/src/gdft.c libgd-2.1.1/src/gdft.c
+--- libgd-2.1.1.orig/src/gdft.c	2015-01-14 02:10:56.000000000 +0100
++++ libgd-2.1.1/src/gdft.c	2015-01-14 10:47:30.790634045 +0100
+@@ -1638,6 +1638,16 @@
+ 	 */
+ 	*fontpath = NULL;
+ 	fontsearchpath = getenv ("GDFONTPATH");
++#ifdef _WIN32
++  if (!fontsearchpath) {
++    char *ffptr = getenv ("SYSTEMROOT");
++    if (ffptr) {
++      fontsearchpath = malloc (strlen(ffptr) + strlen("\\fonts") + 1);
++      strcpy(fontsearchpath, ffptr);
++      strcat(fontsearchpath, "\\fonts");
++    }
++  }
++#endif
+ 	if (!fontsearchpath)
+ 		fontsearchpath = DEFAULT_FONTPATH;
+ 	path = (char *) gdMalloc(sizeof(char) * strlen(fontsearchpath) + 1);

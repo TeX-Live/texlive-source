@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libgd for TeX Live.
 ##
-##   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -17,27 +17,6 @@ EXTRA_DIST += $(GD_TREE)-PATCHES
 # in case of an SVN repository
 dist-hook:
 	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
-	rm -f $(distdir)/$(GD_TREE)/Makefile.in \
-	  $(distdir)/$(GD_TREE)/aclocal.m4 \
-	  $(distdir)/$(GD_TREE)/config/Makefile.in \
-	  $(distdir)/$(GD_TREE)/config/ar-lib \
-	  $(distdir)/$(GD_TREE)/config/compile \
-	  $(distdir)/$(GD_TREE)/config/config.guess \
-	  $(distdir)/$(GD_TREE)/config/config.rpath \
-	  $(distdir)/$(GD_TREE)/config/config.sub \
-	  $(distdir)/$(GD_TREE)/config/depcomp \
-	  $(distdir)/$(GD_TREE)/config/install-sh \
-	  $(distdir)/$(GD_TREE)/config/ltmain.sh \
-	  $(distdir)/$(GD_TREE)/config/missing \
-	  $(distdir)/$(GD_TREE)/configure \
-	  $(distdir)/$(GD_TREE)/m4/libtool.m4 \
-	  $(distdir)/$(GD_TREE)/m4/ltoptions.m4 \
-	  $(distdir)/$(GD_TREE)/m4/ltsugar.m4 \
-	  $(distdir)/$(GD_TREE)/m4/ltversion.m4 \
-	  $(distdir)/$(GD_TREE)/m4/lt~obsolete.m4 \
-	  $(distdir)/$(GD_TREE)/src/Makefile.in \
-	  $(distdir)/$(GD_TREE)/src/depcomp \
-	  $(distdir)/$(GD_TREE)/tests/Makefile.in
 
 SUBDIRS = . include
 
@@ -57,6 +36,7 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/gd_color_map.c \
 	@GD_TREE@/src/gd_color_match.c \
 	@GD_TREE@/src/gd_crop.c \
+	@GD_TREE@/src/gd_filename.c \
 	@GD_TREE@/src/gd_filter.c \
 	@GD_TREE@/src/gd_gd.c \
 	@GD_TREE@/src/gd_gd2.c \
@@ -78,6 +58,7 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/gd_tiff.c \
 	@GD_TREE@/src/gd_topal.c \
 	@GD_TREE@/src/gd_transform.c \
+	@GD_TREE@/src/gd_version.c \
 	@GD_TREE@/src/gd_wbmp.c \
 	@GD_TREE@/src/gd_webp.c \
 	@GD_TREE@/src/gd_xbm.c \
@@ -97,6 +78,18 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/webpimg.c
 
 $(libgd_a_OBJECTS): config.force
+
+if build
+check_PROGRAMS = gdtest
+dist_check_SCRIPTS = libgd.test
+TESTS = libgd.test
+endif build
+
+gdtest_SOURCES = gdtest.c
+
+gdtest_CPPFLAGS = -Iinclude -DBGDWIN32 -DNONDLL
+
+LDADD = libgd.a
 
 ## Rebuild libpng
 @LIBPNG_RULE@

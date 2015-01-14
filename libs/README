@@ -15,7 +15,7 @@ cairo 1.14.0 - checked 15oct14
 freetype2 2.5.5 - checked 7jan15
   http://savannah.nongnu.org/download/freetype/
 
-gd 2.1.0 - checked 26jun13
+gd 2.1.1 - checked 14jan15
   https://bitbucket.org/libgd/gd-libgd/downloads/
 
 gmp 6.0.0 - checked 25mar14

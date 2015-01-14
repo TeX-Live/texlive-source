@@ -1,0 +1,30 @@
+Changes applied to the libgd-2.1.1/ tree as obtained from:
+	https://bitbucket.org/libgd/gd-libgd/downloads
+
+Removed:
+	Makefile.in
+	aclocal.m4
+	config/Makefile.in
+	config/ar-lib
+	config/compile
+	config/config.guess
+	config/config.rpath
+	config/config.sub
+	config/depcomp
+	config/install-sh
+	config/ltmain.sh
+	config/missing
+	configure
+	m4/libtool.m4
+	m4/ltoptions.m4
+	m4/ltsugar.m4
+	m4/ltversion.m4
+	m4/lt~obsolete.m4
+	src/Makefile.in
+	src/depcomp
+	tests/Makefile.in
+
+Removed execute permission:
+	windows/libgd.rc
+	windows/msys/deps.mk
+
