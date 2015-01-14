@@ -60,12 +60,20 @@ procedure initialize; {this procedure gets things started properly}
   print_ln (version_string);
 @z
 
-@x [5] Allow more fonts, more widths, no arbitrary filename length.
+% There were no complaints that these values are too small, and adjusting
+% them dynamically requires to resize a large number of arrays and is not
+% worth the effort (if necessary one can recompile with larger values).
+@x [5] Allow more fonts, more widths, no arbitrary filename length. No dialog.
 @!max_fonts=100; {maximum number of distinct fonts per \.{DVI} file}
 @!max_widths=10000; {maximum number of different characters among all fonts}
 @y
 @!max_fonts=500; {maximum number of distinct fonts per \.{DVI} file}
 @!max_widths=25000; {maximum number of different characters among all fonts}
+@z
+@x
+@!terminal_line_length=150; {maximum number of characters input in a single
+  line of input from the terminal}
+@y
 @z
 @x
 @!name_size=1000; {total length of all font file names}
@@ -493,7 +501,7 @@ endcases;
   if show_opcodes and (o >= 128) then print (' {', o:1, '}');
 @z
 
-@x [106] (main) No dialog; remove unused label.
+@x [107] (main) No dialog; remove unused label.
 dialog; {set up all the options}
 @y
 @<Print all the selected options@>;
@@ -505,7 +513,7 @@ final_end:end.
 end.
 @z
 
-@x [109] Fix another floating point print.
+@x [110] Fix another floating point print.
 print_ln('magnification=',mag:1,'; ',conv:16:8,' pixels per DVI unit')
 @y
 print ('magnification=', mag:1, '; ');
@@ -513,7 +521,7 @@ print_real (conv, 16, 8);
 print_ln (' pixels per DVI unit')
 @z
 
-@x [111] System-dependent changes.
+@x [112] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{DVItype} work at a particular installation.
 It is usually best to design your change file so that all changes to

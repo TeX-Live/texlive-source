@@ -2,6 +2,8 @@
 
 	* mf.ch: Revert the previous change (^Z is again invalid).
 
+	* dvitype.ch: Cosmetic changes.
+
 2015-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mf.ch: Ignore ^Z in input files (as tab and form_feed).
