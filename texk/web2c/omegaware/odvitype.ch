@@ -68,12 +68,20 @@ procedure initialize; {this procedure gets things started properly}
   print_ln (version_string);
 @z
 
-@x [5] Allow more fonts, more widths, no arbitrary filename length.
+% There were no complaints that these values are too small, and adjusting
+% them dynamically requires to resize a large number of arrays and is not
+% worth the effort (if necessary one can recompile with larger values).
+@x [5] Allow more fonts, more widths, no arbitrary filename length. No dialog.
 @!max_fonts=100; {maximum number of distinct fonts per \.{DVI} file}
 @!max_widths=100000; {maximum number of different characters among all fonts}
 @y
 @!max_fonts=500; {maximum number of distinct fonts per \.{DVI} file}
 @!max_widths=100000; {maximum number of different characters among all fonts}
+@z
+@x
+@!terminal_line_length=150; {maximum number of characters input in a single
+  line of input from the terminal}
+@y
 @z
 @x
 @!name_size=1000; {total length of all font file names}
@@ -160,26 +168,26 @@ end;
 @x [27] Make get_n_bytes routines work with 16-bit math.
 get_two_bytes:=a*256+b;
 @y
-get_two_bytes:=intcast(a)*256+intcast(b);
+get_two_bytes:=a*intcast(256)+b;
 @z
 @x
 get_three_bytes:=(a*256+b)*256+c;
 @y
-get_three_bytes:=(intcast(a)*256+intcast(b))*256+intcast(c);
+get_three_bytes:=(a*intcast(256)+b)*256+c;
 @z
 @x
 if a<128 then signed_trio:=(a*256+b)*256+c
 else signed_trio:=((a-256)*256+b)*256+c;
 @y
-if a<128 then signed_trio:=(intcast(a)*256+b)*256+intcast(c)
-else signed_trio:=((intcast(a)-256)*256+intcast(b))*256+intcast(c);
+if a<128 then signed_trio:=(a*intcast(256)+b)*256+c
+else signed_trio:=((a-intcast(256))*256+b)*256+c;
 @z
 @x
 if a<128 then signed_quad:=((a*256+b)*256+c)*256+d
 else signed_quad:=(((a-256)*256+b)*256+c)*256+d;
 @y
-if a<128 then signed_quad:=((intcast(a)*256+b)*256+intcast(c))*256+intcast(d)
-else signed_quad:=(((intcast(a)-256)*256+intcast(b))*256+intcast(c))*256+intcast(d);
+if a<128 then signed_quad:=((a*intcast(256)+b)*256+c)*256+d
+else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 @z
 
 @x [28] dvi_length and move_to_byte.
@@ -212,30 +220,29 @@ nco:=0; extra_words:=0;
 read_tfm_word;
 @z
 
-
 @x [35] Make 16-bit TFM calculations work.
 if (b0*256+b1)<>0 then begin {TFM file}
   ofm_level:=-1;
   lh:=b2*256+b3;
   read_tfm_word; font_bc[nf]:=b0*256+b1; font_ec[nf]:=b2*256+b3;
 @y
-if (intcast(b0)*256+intcast(b1))<>0 then begin {TFM file}
+if (b0*intcast(256)+b1)<>0 then begin {TFM file}
   ofm_level:=-1;
-  lh:=intcast(b2)*256+intcast(b3);
-  read_tfm_word; font_bc[nf]:=intcast(b0)*256+intcast(b1);
-  font_ec[nf]:=intcast(b2)*256+intcast(b3);
+  lh:=b2*intcast(256)+b3;
+  read_tfm_word; font_bc[nf]:=b0*intcast(256)+b1;
+  font_ec[nf]:=b2*intcast(256)+b3;
 @z
 @x
   read_tfm_word; nw:=b0*256+b1;
 @y
-  read_tfm_word; nw:=intcast(b0)*256+intcast(b1);
+  read_tfm_word; nw:=b0*intcast(256)+b1;
 @z
 @x
       if b0<128 then tfm_check_sum:=((b0*256+b1)*256+b2)*256+b3
       else tfm_check_sum:=(((b0-256)*256+b1)*256+b2)*256+b3
 @y
-      if b0<128 then tfm_check_sum:=((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3)
-      else tfm_check_sum:=(((intcast(b0)-256)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3)
+      if b0<128 then tfm_check_sum:=((b0*intcast(256)+b1)*256+b2)*256+b3
+      else tfm_check_sum:=(((b0-256)*intcast(256)+b1)*256+b2)*256+b3
 @z
 @x
   ofm_level:=b2*256+b3;
@@ -244,36 +251,36 @@ if (intcast(b0)*256+intcast(b1))<>0 then begin {TFM file}
   read_tfm_word; font_bc[nf]:=((b0*256+b1)*256+b2)*256+b3;
   read_tfm_word; font_ec[nf]:=((b0*256+b1)*256+b2)*256+b3;
 @y
-  ofm_level:=intcast(b2)*256+intcast(b3);
+  ofm_level:=b2*intcast(256)+b3;
   read_tfm_word;
-  read_tfm_word; lh:=((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3);
-  read_tfm_word; font_bc[nf]:=((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3);
-  read_tfm_word; font_ec[nf]:=((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3);
+  read_tfm_word; lh:=((b0*intcast(256)+b1)*256+b2)*256+b3;
+  read_tfm_word; font_bc[nf]:=((b0*intcast(256)+b1)*256+b2)*256+b3;
+  read_tfm_word; font_ec[nf]:=((b0*intcast(256)+b1)*256+b2)*256+b3;
 @z
 @x
   read_tfm_word; nw:=((b0*256+b1)*256+b2)*256+b3;
 @y
-  read_tfm_word; nw:=((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3);
+  read_tfm_word; nw:=((b0*intcast(256)+b1)*256+b2)*256+b3;
 @z
 @x
     read_tfm_word; extra_words:=(((b0*256+b1)*256+b2)*256+b3) div 2;
 @y
     read_tfm_word;
-    extra_words:=(((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3)) div 2;
+    extra_words:=(((b0*intcast(256)+b1)*256+b2)*256+b3) div 2;
 @z
 @x
       if b0<128 then tfm_check_sum:=((b0*256+b1)*256+b2)*256+b3
       else tfm_check_sum:=(((b0-256)*256+b1)*256+b2)*256+b3
 @y
-      if b0<128 then tfm_check_sum:=((intcast(b0)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3)
-      else tfm_check_sum:=(((intcast(b0)-256)*256+intcast(b1))*256+intcast(b2))*256+intcast(b3)
+      if b0<128 then tfm_check_sum:=((b0*intcast(256)+b1)*256+b2)*256+b3
+      else tfm_check_sum:=(((b0-256)*intcast(256)+b1)*256+b2)*256+b3
 @z
 @x
       if (b0*256+b1)>nw then goto 9997;
       width[k]:=(b0*256+b1);
 @y
-      if (intcast(b0)*256+intcast(b1))>nw then goto 9997;
-      width[k]:=(intcast(b0)*256+intcast(b1));
+      if (b0*intcast(256)+b1)>nw then goto 9997;
+      width[k]:=(b0*intcast(256)+b1);
 @z
 @x
         if (b0*256+b1)>nw then goto 9997;
@@ -281,13 +288,14 @@ if (intcast(b0)*256+intcast(b1))<>0 then begin {TFM file}
         read_tfm_word; read_tfm_word;
         kprime:=k+(b0*256+b1);
 @y
-        if (intcast(b0)*256+intcast(b1))>nw then goto 9997;
-        width[k]:=(intcast(b0)*256+intcast(b1));
+        if (b0*intcast(256)+b1)>nw then goto 9997;
+        width[k]:=(b0*intcast(256)+b1);
         read_tfm_word; read_tfm_word;
-        kprime:=k+(intcast(b0)*256+intcast(b1));
+        kprime:=k+(b0*intcast(256)+b1);
 @z
 
 @x [43] Initialize optional variables sooner.
+@ @<Set init...@>=
 out_mode:=the_works; max_pages:=1000000; start_vals:=0; start_there[0]:=false;
 @y
 @ Initializations are done sooner now.
@@ -380,7 +388,7 @@ out_mode:=the_works; input_ln;
 if buffer[0]<>" " then
   if (buffer[0]>="0")and(buffer[0]<="4") then out_mode:=buffer[0]-"0"
   else  begin write(term_out,'Type 4 for complete listing,');
-    write(term_out,' 0 for errors only,');
+    write(term_out,' 0 for errors and fonts only,');
     write_ln(term_out,' 1 or 2 or 3 for something in between.');
     goto 1;
     end
@@ -572,7 +580,7 @@ endcases;
   if show_opcodes and (o >= 128) then print (' {', o:1, '}');
 @z
 
-@x [106] (main) No dialog; remove unused label.
+@x [107] (main) No dialog; remove unused label.
 dialog; {set up all the options}
 @y
 @<Print all the selected options@>;
@@ -584,7 +592,7 @@ final_end:end.
 end.
 @z
 
-@x [109] Fix another floating point print.
+@x [110] Fix another floating point print.
 print_ln('magnification=',mag:1,'; ',conv:16:8,' pixels per DVI unit')
 @y
 print ('magnification=', mag:1, '; ');
@@ -592,7 +600,7 @@ print_real (conv, 16, 8);
 print_ln (' pixels per DVI unit')
 @z
 
-@x [111] System-dependent changes.
+@x [112] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{DVItype} work at a particular installation.
 It is usually best to design your change file so that all changes to
@@ -633,11 +641,11 @@ begin
         (banner, nil, 'J. Plaice, Y. Haralambous, D.E. Knuth', nil);
 
     end else if argument_is ('output-level') then begin
-      out_mode := atou (optarg);
-      if (out_mode = 0) or (out_mode > 4) then begin
-        write_ln (stderr, 'Value for --output-level must be >= 1 and <= 4.');
+      if (optarg[0] < '0') or (optarg[0] > '4') or (optarg[1] <> 0) then begin
+        write_ln (stderr, 'Value for --output-level must be >= 0 and <= 4.');
         uexit (1);
       end;
+      out_mode := optarg[0] - '0';
 
     end else if argument_is ('page-start') then begin
       @<Determine the desired |start_count| values from |optarg|@>;
