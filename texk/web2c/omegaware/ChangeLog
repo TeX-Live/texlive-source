@@ -1,3 +1,9 @@
+2015-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvitype.web: Avoid useless differences with ../dvitype.web.
+	* odvitype.ch: Allow output level 0 and use intcast() as
+	in ../dvitype.ch.
+
 2015-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ofm2opl.ch, ovf2ovp.ch: Use ^byte and x*alloc_array().

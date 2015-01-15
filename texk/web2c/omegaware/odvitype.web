@@ -1487,7 +1487,7 @@ out_mode:=the_works; input_ln;
 if buffer[0]<>" " then
   if (buffer[0]>="0")and(buffer[0]<="4") then out_mode:=buffer[0]-"0"
   else  begin write(term_out,'Type 4 for complete listing,');
-    write(term_out,' 0 for errors only,');
+    write(term_out,' 0 for errors and fonts only,');
     write_ln(term_out,' 1 or 2 or 3 for something in between.');
     goto 1;
     end
@@ -2268,7 +2268,7 @@ while true do
     end;
   @<Skip until finding |eop|@>;
   bop_seen:=false;
-  end;
+  end;  
 9999:end;
 
 @ @<Skip until finding |eop|@>=
