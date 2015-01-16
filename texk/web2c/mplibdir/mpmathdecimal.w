@@ -358,7 +358,7 @@ static decNumber epsilon_decNumber;
 static decNumber EL_GORDO_decNumber;
 static decNumber **factorials = NULL;
 static int last_cached_factorial = 0;
-
+static boolean initialized = false ;
 @ @c
 void * mp_initialize_decimal_math (MP mp) {
   math_data *math = (math_data *)mp_xmalloc(mp,1,sizeof(math_data));
@@ -371,22 +371,25 @@ void * mp_initialize_decimal_math (MP mp) {
   limitedset.emin = -999999;
   set.digits = DECPRECISION_DEFAULT;
   limitedset.digits = DECPRECISION_DEFAULT;
-  decNumberFromInt32(&one, 1);
-  decNumberFromInt32(&minusone, -1);
-  decNumberFromInt32(&zero, 0);
-  decNumberFromInt32(&two_decNumber, two);
-  decNumberFromInt32(&three_decNumber, three);
-  decNumberFromInt32(&four_decNumber, four);
-  decNumberFromInt32(&fraction_multiplier_decNumber, fraction_multiplier);
-  decNumberFromInt32(&fraction_one_decNumber, fraction_one);
-  decNumberFromInt32(&fraction_one_plus_decNumber, (fraction_one+1));
-  decNumberFromInt32(&angle_multiplier_decNumber, angle_multiplier);
-  decNumberFromString(&PI_decNumber, PI_STRING, &set);
-  decNumberFromString(&epsilon_decNumber, epsilon, &set);
-  decNumberFromString(&EL_GORDO_decNumber, EL_GORDO, &set);
-  factorials = (decNumber **)mp_xmalloc(mp,PRECALC_FACTORIALS_CACHESIZE,sizeof(decNumber *));
-  factorials[0] = (decNumber *)mp_xmalloc(mp,1,sizeof(decNumber));
-  decNumberCopy(factorials[0], &one);
+  if (!initialized) {
+    initialized = true ;
+    decNumberFromInt32(&one, 1);
+    decNumberFromInt32(&minusone, -1);
+    decNumberFromInt32(&zero, 0);
+    decNumberFromInt32(&two_decNumber, two);
+    decNumberFromInt32(&three_decNumber, three);
+    decNumberFromInt32(&four_decNumber, four);
+    decNumberFromInt32(&fraction_multiplier_decNumber, fraction_multiplier);
+    decNumberFromInt32(&fraction_one_decNumber, fraction_one);
+    decNumberFromInt32(&fraction_one_plus_decNumber, (fraction_one+1));
+    decNumberFromInt32(&angle_multiplier_decNumber, angle_multiplier);
+    decNumberFromString(&PI_decNumber, PI_STRING, &set);
+    decNumberFromString(&epsilon_decNumber, epsilon, &set);
+    decNumberFromString(&EL_GORDO_decNumber, EL_GORDO, &set);
+    factorials = (decNumber **)mp_xmalloc(mp,PRECALC_FACTORIALS_CACHESIZE,sizeof(decNumber *));
+    factorials[0] = (decNumber *)mp_xmalloc(mp,1,sizeof(decNumber));
+    decNumberCopy(factorials[0], &one);
+  }
 
   /* alloc */
   math->allocate = mp_new_number;
