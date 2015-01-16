@@ -79,7 +79,7 @@ procedure initialize; {this procedure gets things started properly}
   line of input from the terminal}
 @z
 
-% int_8 conflicts with <sys/inttypes.h> on AIX.
+% [7] int_8 conflicts with <sys/inttypes.h> on AIX.
 % It just gets turned into schar anyway, so use that.
 @x
 @d int_32 == integer {signed 32~bit integers}
@@ -94,7 +94,7 @@ procedure initialize; {this procedure gets things started properly}
 @!int_8_odvicopy = -@"80..@"7F; {signed 8~bit integer}
 @z
 
-% [14] Redirect output, so it can go to either stdout or stderr,
+% [11] Redirect output, so it can go to either stdout or stderr,
 % depending on where the output dvi file is going.
 @x
 @d print(#)==write(output,#)
@@ -260,7 +260,7 @@ while l_cur_name<name_length do
   cur_name[l_cur_name] := 0;
 @z
 
-@x [92]
+@x [91]
 id4(".")("T")("F")("M")(tfm_ext); {file name extension for \.{TFM} files}
 id4(".")("O")("F")("M")(ofm_ext); {file name extension for \.{OFM} files}
 @y
@@ -268,7 +268,7 @@ id4(".")("t")("f")("m")(tfm_ext); {file name extension for \.{TFM} files}
 id4(".")("o")("f")("m")(ofm_ext); {file name extension for \.{OFM} files}
 @z
 
-@x [93] Set default directory name
+@x [92] Set default directory name
 @ If no font directory has been specified, \.{\title} is supposed to use
 the default \.{TFM} directory, which is a system-dependent place where
 the \.{TFM} files for standard fonts are kept.
@@ -287,7 +287,7 @@ The string variable |TFM_default_area| contains the name of this area.
 @ If no font directory has been specified, we search paths.
 @z
 
-@x [94] Remove initialization of now-defunct array
+@x [93] Remove initialization of now-defunct array
 @ @<Set init...@>=
 TFM_default_area:=TFM_default_area_name;
 OFM_default_area:=OFM_default_area_name;
@@ -307,7 +307,7 @@ procedure bad_font;
 noreturn procedure bad_font;
 @z
 
-@x [96] Open TFM file
+@x [95] Open TFM file
 @<TFM: Open |tfm_file|@>=
 make_font_name(TFM_default_area_name_length)(TFM_default_area)(tfm_ext);
 reset(tfm_file,cur_name);
@@ -340,13 +340,13 @@ else begin
   else abort('---not loaded, TFM or OFM file can''t be opened!')
 @z
 
-@x
+@x [99]
 close_in(tfm_file);
 @y
 xfclose(tfm_file, cur_name);
 @z
 
-@x [103] Fix casting problem in C.
+@x [101] Fix casting problem in C.
 @d tfm_b01(#)== {|tfm_b0..tfm_b1| as non-negative integer}
 if tfm_b0>127 then bad_font
 else #:=tfm_b0*256+tfm_b1
@@ -374,14 +374,14 @@ else #:=(((tfm_b0-intcast(256))*intcast(256)+tfm_b1)
 (((tfm_b0*intcast(256)+tfm_b1)*intcast(256)+tfm_b2)*intcast(256)+tfm_b3)
 @z
 
-@x [103] Avoid compiler warnings
+@x [101] Avoid compiler warnings
 read_tfm_word; tfm_b01(first_two);
 @y
 nco:=0; extra_words:=0;
 read_tfm_word; tfm_b01(first_two);
 @z
 
-@x [109] Declare full_name.
+@x [108] Declare full_name.
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
 @y
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
@@ -394,7 +394,7 @@ procedure bad_dvi;
 noreturn procedure bad_dvi;
 @z
 
-@x [111] Fix up opening the binary files
+@x [110] Fix up opening the binary files
 @ To prepare |dvi_file| for input, we |reset| it.
 
 @<Open input file(s)@>=
@@ -407,7 +407,7 @@ dvi_loc:=0;
 dvi_loc:=0;
 @z
 
-@x [113] Make dvi_length() and dvi_move() work.
+@x [112] Make dvi_length() and dvi_move() work.
 @p function dvi_length:int_32;
 begin set_pos(dvi_file,-1); dvi_length:=cur_pos(dvi_file);
 end;
@@ -428,7 +428,7 @@ dvi_loc:=n;
 end;
 @z
 
-@x
+@x [135]
 id3(".")("V")("F")(vf_ext); {file name extension for \.{VF} files}
 id4(".")("O")("V")("F")(ovf_ext); {file name extension for \.{OVF} files}
 @y
@@ -501,7 +501,7 @@ else begin
   end;
 @z
 
-@x
+@x [151]
 close_in(vf_file);
 @y
 xfclose(vf_file,cur_name);
@@ -531,13 +531,13 @@ vf_move_assign;
   vf_move_assign;
 @z
 
-@x [175] break is fflush.
+@x [176] break is fflush.
 @d update_terminal == break(output) {empty the terminal output buffer}
 @y
 @d update_terminal == fflush(stdout) {empty the terminal output buffer}
 @z
 
-@x [175]
+@x [176]
 procedure input_ln; {inputs a line from the terminal}
 var k:0..terminal_line_length;
 begin if n_opt=0 then
@@ -565,7 +565,7 @@ while (k<terminal_line_length)and not eoln(input) do
 end;
 @z
 
-@x [231] No dialog, remove unused final label.
+@x [241] No dialog, remove unused final label.
 dialog; {get options}
 @y
 @z
@@ -575,32 +575,32 @@ final_end:end.
 end.
 @z
 
-@x [236] Do this later, to avoid creating empty files.
+@x [245] Do this later, to avoid creating empty files.
 @<Open output file(s)@>=
 rewrite(out_file); {prepares to write packed bytes to |out_file|}
 @y
 @<Open output file(s)@>=
 @z
 
-@x [238] Use external routine to output bytes.
+@x [247] Use external routine to output bytes.
 @d out_byte(#) == write(out_file,#) {write next \.{DVI} byte}
 @y
 @d out_byte(#) == put_byte(#,out_file) {write next \.{DVI} byte}
 @z
 
-@x [250] String declaration.
+@x [260] String declaration.
 @!comment:packed array[1..comm_length] of char; {preamble comment prefix}
 @y
 @!comment:const_c_string; {preamble comment prefix}
 @z
 
-@x [251] Output the string from 0 to len-1, not 1 to len.
+@x [261] Output the string from 0 to len-1, not 1 to len.
 for k:=1 to comm_length do append_byte(xord[comment[k]]);
 @y
 for k:=0 to comm_length - 1 do append_byte(xord[ucharcast(comment[k])]);
 @z
 
-@x [] System-dependent changes.
+@x [293] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{DVIcopy} work at a particular installation.
 It is usually best to design your change file so that all changes to
@@ -650,6 +650,7 @@ begin
 
     end else if argument_is ('max-pages') then begin
       max_pages := atou (optarg);
+      incr (cur_select);
 
     end else if argument_is ('page-start') then begin
       @<Determine the desired |start_count| values from |optarg|@>;
@@ -764,6 +765,7 @@ while optarg[m] do begin
   end;
 end;
 start_vals := k;
+selected := false;
 
 @ An element with all zeros always ends the list.
 

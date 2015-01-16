@@ -1,3 +1,10 @@
+2015-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.web: Avoid useless differences with ../dvicopy.web.
+	* odvicopy.ch: Bug fix: Respect -page-start and -max-pages.
+	* odvicopy.test: Additional test cases.
+	* am/omegaware.am (DISTCLEANFILES): Additional output files.
+
 2015-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* odvitype.web: Avoid useless differences with ../dvitype.web.
