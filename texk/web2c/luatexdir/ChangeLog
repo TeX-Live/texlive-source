@@ -1,3 +1,12 @@
+2015-01-14 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* tex/mlist.w: mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
+	HH-LS: was cur_mu = x_over_n(get_math_quad(cur_size), 18);
+	This is an old bug so the fix can influence outcome       
+	The current mu is instead
+	cur_mu = x_over_n(get_math_quad(cur_style), 18);
+	Thanks to joseph.wright <joseph.wright@morningstar2.co.uk>
+
 2014-12-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/lnodelib.c: Sync with the upstream. Luigi fixes 'print' for
