@@ -2396,19 +2396,20 @@ DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh tangle.c tangle.h \
 	ovf2ovp.web ovp2ovf.web omegaware/bad*.* \
 	omegaware/tests/charwdr.* omegaware/tests/charwdv.* \
 	omegaware/tests/xcheck* omegaware/tests/xlevel1.* \
-	omegaware/tests/xlig*.* ofont*vf omegaware/tests/xofont* \
-	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
-	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
-	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	ocftest.* omegaware/tests/xinbmp* omegaware/tests/xoverbmp* \
-	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
-	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
-	omegaware/tests/shortend.* omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
-	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
-	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	omegaware/tests/xlig*.* ofont*vf omegaware/tests/xpagenum.* \
+	omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
+	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
+	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
+	omegaware/tests/xOCherokee.* ocftest.* omegaware/tests/xinbmp* \
+	omegaware/tests/xoverbmp* omegaware/tests/xrealnum.* \
+	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
+	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample*.out omegaware/tests/shortend.* \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	omegaware/tests/yrepeat* omegaware/tests/*yarabic* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = 
 TRIPTRAP_CLEAN = $(am__append_9) $(am__append_17) $(am__append_26) \
 	$(am__append_43) $(am__append_49) $(am__append_55) \

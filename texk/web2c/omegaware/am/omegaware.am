@@ -144,7 +144,7 @@ EXTRA_DIST += \
 	omegaware/tests/ofontr1.vf omegaware/tests/ofontr2.ovf \
 	omegaware/tests/ofontr3.ovf omegaware/tests/ofontv4.vf \
 	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf
-DISTCLEANFILES += ofont*vf
+DISTCLEANFILES += ofont*vf omegaware/tests/xpagenum.*
 ## omegaware/odvitype.test (and odvicopy.test, ofonts.test)
 EXTRA_DIST += omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
 	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \

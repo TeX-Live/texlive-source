@@ -2883,8 +2883,7 @@ while cur_parm<>vf_e_fnts[f] do incr(f)
 @p procedure vf_do_font;
 var f:font_number; {where the font is sought}
 @!k:int_31; {general purpose variable}
-begin
-print('VF: font ',cur_parm:1);@/
+begin print('VF: font ',cur_parm:1);@/
 @<VF: Locate font |cur_parm|@>;
 if f<>vf_nf then bad_font;
 font_check(nf):=vf_squad;
@@ -3059,7 +3058,7 @@ begin if cur_cmd<long_char then
   begin vf_limit:=cur_cmd;
   cur_ext:=0; cur_res:=vf_ubyte; vf_wp:=check_width(vf_fix3u);
   end
-else begin vf_limit:=vf_uquad;
+else  begin vf_limit:=vf_uquad;
   cur_ext:=vf_strio; cur_res:=vf_ubyte;
   if font_extend(cur_fnt) then
     begin cur_res:=256*cur_ext+cur_res; cur_ext:=0;
@@ -4691,4 +4690,3 @@ itself will get a new section number.
 @* Index.
 Pointers to error messages appear here together with the section numbers
 where each ident\-i\-fier is used.
-
