@@ -1,3 +1,7 @@
+2015-01-15  Luigi Scarso  <luigi.scarso@gmail.com>
+	* mpmathdecimal.w: better management for static data in mpmathdecimal.w 
+	(thanks to Philipp Gesang <phg@phi-gamma.net>)
+
 2014-12-04  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* mpost.w: fixed exit values to match metafont/old metapost behavior.
