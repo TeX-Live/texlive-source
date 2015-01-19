@@ -152,31 +152,6 @@ end;
 @!cur_name:^char; {external name}
 @z
 
-@x [27] Make get_n_bytes routines work with 16-bit math.
-get_two_bytes:=a*256+b;
-@y
-get_two_bytes:=a*intcast(256)+b;
-@z
-@x
-get_three_bytes:=(a*256+b)*256+c;
-@y
-get_three_bytes:=(a*intcast(256)+b)*256+c;
-@z
-@x
-if a<128 then signed_trio:=(a*256+b)*256+c
-else signed_trio:=((a-256)*256+b)*256+c;
-@y
-if a<128 then signed_trio:=(a*intcast(256)+b)*256+c
-else signed_trio:=((a-intcast(256))*256+b)*256+c;
-@z
-@x
-if a<128 then signed_quad:=((a*256+b)*256+c)*256+d
-else signed_quad:=(((a-256)*256+b)*256+c)*256+d;
-@y
-if a<128 then signed_quad:=((a*intcast(256)+b)*256+c)*256+d
-else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
-@z
-
 @x [28] dvi_length and move_to_byte.
 @p function dvi_length:integer;
 begin set_pos(dvi_file,-1); dvi_length:=cur_pos(dvi_file);
@@ -200,25 +175,14 @@ begin
 end;
 @z
 
-@x [35] Make 16-bit TFM calculations work.
-read_tfm_word; lh:=b2*256+b3;
-read_tfm_word; font_bc[nf]:=b0*256+b1; font_ec[nf]:=b2*256+b3;
-@y
-read_tfm_word; lh:=b2*intcast(256)+b3;
-read_tfm_word; font_bc[nf]:=b0*intcast(256)+b1; font_ec[nf]:=b2*intcast(256)+b3;
-@z
-@x
-    if b0<128 then tfm_check_sum:=((b0*256+b1)*256+b2)*256+b3
-    else tfm_check_sum:=(((b0-256)*256+b1)*256+b2)*256+b3
-@y
-    if b0<128 then tfm_check_sum:=((b0*intcast(256)+b1)*256+b2)*256+b3
-    else tfm_check_sum:=(((b0-256)*intcast(256)+b1)*256+b2)*256+b3
-@z
+@x [42/43] Initialize optional variables sooner.
+@!count:array[0..9] of integer; {the count values on the current page}
 
-@x [43] Initialize optional variables sooner.
 @ @<Set init...@>=
 out_mode:=the_works; max_pages:=1000000; start_vals:=0; start_there[0]:=false;
 @y
+@!count:array[0..9] of integer; {the count values on the current page}
+
 @ Initializations are done sooner now.
 @z
 

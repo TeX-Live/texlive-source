@@ -1028,16 +1028,6 @@ sufficiently large.
 @!zmem : ^memory_word; {the big dynamic storage area}
 @z
 
-% [9.127] Fix casting problem in C.
-% There are several of these.  They come from the rules C uses for
-% comparing signed and unsigned quantities.  Just doing the comparison
-% can result in incorrect evaluation wrt the way Pascal would do it.
-@x [9.127] l.2739 - Fix casting problem in C.
-if r>p+1 then @<Allocate from the top of node |p| and |goto found|@>;
-@y 2738
-if r>intcast(p+1) then @<Allocate from the top of node |p| and |goto found|@>;
-@z
-
 @x [10.144] l.3006 - font numbers can be >255 now.
 @p function new_ligature(@!f,@!c:quarterword; @!q:pointer):pointer;
 @y
@@ -2664,18 +2654,6 @@ if (insert_src_special_every_cr) then insert_src_special;
 if every_cr<>null then begin_token_list(every_cr,every_cr_text);
  @z
 
-@x [38.859] l.16855 - Fix a casting/expression evaluation problem.
-if abs(fit_class-fitness(r))>1 then d:=d+adj_demerits;
-@y
-if abs(intcast(fit_class)-intcast(fitness(r)))>1 then d:=d+adj_demerits;
-@z
-
-@x [39.875] l.17170 - Another casting problem.
-  begin line_diff:=line_number(r)-best_line;
-@y
-  begin line_diff:=intcast(line_number(r))-intcast(best_line);
-@z
-
 @x [42.920] l.18056 - bigtrie: allow larger hyphenation tries.
 Comparatively few different number sequences $n_0\ldots n_k$ actually occur,
 since most of the |n|'s are generally zero. Therefore the number sequences
@@ -2992,8 +2970,7 @@ var h:neg_trie_op_size..trie_op_size; {trial hash location}
 begin h:=abs(n+313*d+361*v+1009*cur_lang) mod (trie_op_size+trie_op_size)
   - trie_op_size;
 @y
-begin h:=abs(intcast(n)+313*intcast(d)+361*intcast(v)+1009*intcast(cur_lang))
-  mod (trie_op_size - neg_trie_op_size)
+begin h:=abs(n+313*d+361*v+1009*cur_lang) mod (trie_op_size-neg_trie_op_size)
   + neg_trie_op_size;
 @z
 
@@ -3055,14 +3032,6 @@ tini
 @t\hskip10pt@>@!trie_hash:^trie_pointer;
   {used to identify equivalent subtries}
 tini
-@z
-
-@x [43.948] l.18471 - Another casting problem.
-begin h:=abs(trie_c[p]+1009*trie_o[p]+@|
-    2718*trie_l[p]+3142*trie_r[p]) mod trie_size;
-@y
-begin h:=abs(intcast(trie_c[p])+1009*intcast(trie_o[p])+@|
-    2718*intcast(trie_l[p])+3142*intcast(trie_r[p])) mod trie_size;
 @z
 
 @x [43.950] l.18521 - Dynamically allocate & larger tries.

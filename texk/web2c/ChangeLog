@@ -1,3 +1,20 @@
+2015-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cpascal.h: Remove intcast.
+
+2015-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvicopy.ch: Drop intcast().
+	* dvitype.ch: Drop intcast().
+	* gftodvi.ch: Drop intcast().
+	* mf.ch: Drop intcast().
+	* pltotf.ch: Drop intcast().
+	* tangle.ch: Drop intcast().
+	* tex.ch: Drop intcast().
+	* tftopl.ch: Drop intcast().
+	* vftovp.ch: Drop intcast().
+	* vptovf.ch: Drop intcast().
+
 2015-01-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mf.ch: Revert the previous change (^Z is again invalid).

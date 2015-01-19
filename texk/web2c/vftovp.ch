@@ -370,12 +370,6 @@ else begin tfm[0]:=c; out_octal(0,1);
   put_byte(RCE_string[1+(b div 3)], vpl_file);
 @z
 
-@x [62] Force 32-bit constant arithmetic for 16-bit machines.
-f:=((tfm[k+1] mod 16)*@'400+tfm[k+2])*@'400+tfm[k+3];
-@y
-f:=((tfm[k+1] mod 16)*intcast(@'400)+tfm[k+2])*@'400+tfm[k+3];
-@z
-
 % [101] No progress reports unless verbose.
 @x
     incr(chars_on_line);

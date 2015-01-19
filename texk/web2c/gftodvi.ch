@@ -227,24 +227,6 @@ end;
 @!name_of_file:^text_char;
 @z
 
-@x [51] Make get_n_bytes routines work with 16-bit math.
-get_two_bytes:=a*256+b;
-@y
-get_two_bytes:=a*intcast(256)+b;
-@z
-@x
-get_three_bytes:=(a*256+b)*256+c;
-@y
-get_three_bytes:=(a*intcast(256)+b)*256+c;
-@z
-@x
-if a<128 then signed_quad:=((a*256+b)*256+c)*256+d
-else signed_quad:=(((a-256)*256+b)*256+c)*256+d;
-@y
-if a<128 then signed_quad:=((a*intcast(256)+b)*256+c)*256+d
-else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
-@z
-
 % [52] The memory_word structure is too hard to translate via web2c, so
 % we use a hand-coded include file.  Also, b0 (et al.) is used both as a
 % field and as a regular variable.  web2c puts field names in the global
@@ -310,35 +292,12 @@ else signed_quad:=(((a-256)*intcast(256)+b)*256+c)*256+d;
 @d rem_byte(#)==#.B3
 @z
 
-% [60] Fix 16-bit arithmetic bugs in TFM calculations.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
-@ @d read_two_halves_end(#)==#:=b2*256+b3
-@d read_two_halves(#)==read_tfm_word; #:=b0*256+b1; read_two_halves_end
-@y
-@ @d read_two_halves_end(#)==#:=b2*intcast(256)+b3
-@d read_two_halves(#)==read_tfm_word; #:=b0*intcast(256)+b1; read_two_halves_end
-@z
-
 % [62] More .b?'s.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
   qw.b0:=qi(b0); qw.b1:=qi(b1); qw.b2:=qi(b2); qw.b3:=qi(b3);
 @y
   qw.B0:=qi(b0); qw.B1:=qi(b1); qw.B2:=qi(b2); qw.B3:=qi(b3);
-@z
-
-% [62] More arithmetic fixes.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
-z:=((b0*256+b1)*256+b2)*16+(b3 div 16);
-@y
-z:=((b0*intcast(256)+b1)*intcast(256)+b2)*16+(b3 div 16);
-@z
-@x
-      else if 256*(b2-128)+b3>=nk then abend;
-@y
-      else if intcast(256)*(b2-128)+b3>=nk then abend;
 @z
 
 @x [78] Change default extension to `.2602gf'.

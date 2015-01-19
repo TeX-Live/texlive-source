@@ -1,3 +1,7 @@
+2015-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* common.defines: Remove intcast.
+
 2015-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines: Remove casttobytepointer and pointertobyte.

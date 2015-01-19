@@ -197,16 +197,6 @@ begin if fabs(x/design_units)>=16.0 then
   end;
 @z
 
-% [141] char_remainder[c] is unsigned, and label_table[sort_ptr].rr
-% might be -1, and if -1 is coerced to being unsigned, it will be bigger
-% than anything else.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
-  while label_table[sort_ptr].rr>char_remainder[c] do
-@y
-  while label_table[sort_ptr].rr>intcast(char_remainder[c]) do
-@z
-
 @x [175] Change VF-byte output to fix ranges.
 @d vout(#)==write(vf_file,#)
 @y
