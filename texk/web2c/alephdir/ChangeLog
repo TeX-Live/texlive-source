@@ -1,3 +1,7 @@
+2015-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* com16bit.ch: Drop intcast().
+
 2014-12-15  Karl Berry  <karl@tug.org>
 
 	* alephbis.c (runexternalocp): quote arguments to system()

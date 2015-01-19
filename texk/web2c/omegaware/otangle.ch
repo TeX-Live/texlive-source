@@ -354,14 +354,6 @@ identifier: begin k:=0; j:=byte_start[cur_val]; w:=cur_val mod ww;
   end;
 @z
 
-@x [??] Fix casting bug
-@d add_in(#)==begin accumulator:=accumulator+next_sign*(#); next_sign:=+1;
-  end
-@y
-@d add_in(#)==begin accumulator:=accumulator+next_sign*intcast(#); next_sign:=+1;
-  end
-@z
-
 @x [179] make term_in = input
 any error stop will set |debug_cycle| to zero.
 @y

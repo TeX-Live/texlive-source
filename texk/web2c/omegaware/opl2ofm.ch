@@ -249,15 +249,6 @@ begin if fabs(x/design_units)>=16.0 then
   end;
 @z
 
-% [141] char_remainder[c] is unsigned, and label_table[sort_ptr].rr
-% might be -1, and if -1 is coerced to being unsigned, it will be bigger
-% than anything else.
-@x
-  while label_table[sort_ptr].rr>char_remainder[c] do
-@y
-  while label_table[sort_ptr].rr>intcast(char_remainder[c]) do
-@z
-
 @x [170] Eliminate unused variables.
 var @!krn_ptr:0..max_kerns; {an index into |kern|}
 @!c:integer; {runs through all character codes}

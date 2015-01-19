@@ -89,7 +89,7 @@ procedure initialize; {this procedure gets things started properly}
 @d int_7 == int_7_t
 @z
 
-% [14] Redirect output, so it can go to either stdout or stderr,
+% [11] Redirect output, so it can go to either stdout or stderr,
 % depending on where the output dvi file is going.
 @x
 @d print(#)==write(output,#)
@@ -156,32 +156,6 @@ noreturn procedure confusion(@!p:pckt_pointer);
 procedure overflow(@!p:pckt_pointer;@!n:int_16u);
 @y
 noreturn procedure overflow(@!p:pckt_pointer;@!n:int_16u);
-@z
-
-@x [51] Fix casting problem in C.
-@d comp_spair(#) == if a<128 then #:=a*256+b @+ else #:=(a-256)*256+b
-@d comp_upair(#) == #:=a*256+b
-@y
-@d comp_spair(#) == if a<128 then #:=a*intcast(256)+b
-                             @+ else #:=(a-intcast(256))*intcast(256)+b
-@d comp_upair(#) == #:=a*intcast(256)+b
-@z
-
-@x [52]
-if a<128 then #:=(a*256+b)*256+c @+ else #:=((a-256)*256+b)*256+c
-@d comp_utrio(#) == #:=(a*256+b)*256+c
-@y
-if a<128 then #:=(a*intcast(256)+b)*intcast(256)+c @+
-else #:=((a-intcast(256))*intcast(256)+b)*intcast(256)+c
-@d comp_utrio(#) == #:=(a*intcast(256)+b)*intcast(256)+c
-@z
-
-@x [53]
-if a<128 then #:=((a*256+b)*256+c)*256+d
-else #:=(((a-256)*256+b)*256+c)*256+d
-@y
-if a<128 then #:=((a*intcast(256)+b)*intcast(256)+c)*intcast(256)+d
-else #:=(((a-intcast(256))*intcast(256)+b)*intcast(256)+c)*intcast(256)+d
 @z
 
 @x [62] cur_name is no longer a fixed-size array.
@@ -255,7 +229,13 @@ while l_cur_name<name_length do
   cur_name[l_cur_name] := 0;
 @z
 
-@x [93] Set default directory name
+@x [91] Lower case file name extensions.
+id4(".")("T")("F")("M")(tfm_ext); {file name extension for \.{TFM} files}
+@y
+id4(".")("t")("f")("m")(tfm_ext); {file name extension for \.{TFM} files}
+@z
+
+@x [92] Set default directory name
 @ If no font directory has been specified, \.{\title} is supposed to use
 the default \.{TFM} directory, which is a system-dependent place where
 the \.{TFM} files for standard fonts are kept.
@@ -271,7 +251,7 @@ The string variable |TFM_default_area| contains the name of this area.
 @ If no font directory has been specified, we search paths.
 @z
 
-@x [94] Remove initialization of now-defunct array
+@x [93] Remove initialization of now-defunct array
 @ @<Set init...@>=
 TFM_default_area:=TFM_default_area_name;
 @y
@@ -290,7 +270,7 @@ procedure bad_font;
 noreturn procedure bad_font;
 @z
 
-@x [96] Open TFM file
+@x [95] Open TFM file
 @<TFM: Open |tfm_file|@>=
 make_font_name(TFM_default_area_name_length)(TFM_default_area)(tfm_ext);
 reset(tfm_file,cur_name);
@@ -301,7 +281,6 @@ be used by |make_font_name|.
 
 @<TFM: Open |tfm_file|@>=
 make_font_name(TFM_default_area_name_length)(TFM_default_area)(tfm_ext);
-
 full_name := kpse_find_tfm (cur_name);
 if full_name then begin
   resetbin (tfm_file, full_name);
@@ -310,35 +289,7 @@ if full_name then begin
 end else
 @z
 
-@x [103] Fix casting problem in C.
-@d tfm_b01(#)== {|tfm_b0..tfm_b1| as non-negative integer}
-if tfm_b0>127 then bad_font
-else #:=tfm_b0*256+tfm_b1
-@d tfm_b23(#)== {|tfm_b2..tfm_b3| as non-negative integer}
-if tfm_b2>127 then bad_font
-else #:=tfm_b2*256+tfm_b3
-@d tfm_squad(#)== {|tfm_b0..tfm_b3| as signed integer}
-if tfm_b0<128 then #:=((tfm_b0*256+tfm_b1)*256+tfm_b2)*256+tfm_b3
-else #:=(((tfm_b0-256)*256+tfm_b1)*256+tfm_b2)*256+tfm_b3
-@d tfm_uquad== {|tfm_b0..tfm_b3| as unsigned integer}
-(((tfm_b0*256+tfm_b1)*256+tfm_b2)*256+tfm_b3)
-@y
-@d tfm_b01(#)== {|tfm_b0..tfm_b1| as non-negative integer}
-if tfm_b0>127 then bad_font
-else #:=tfm_b0*intcast(256)+tfm_b1
-@d tfm_b23(#)== {|tfm_b2..tfm_b3| as non-negative integer}
-if tfm_b2>127 then bad_font
-else #:=tfm_b2*intcast(256)+tfm_b3
-@d tfm_squad(#)== {|tfm_b0..tfm_b3| as signed integer}
-if tfm_b0<128
-then #:=((tfm_b0*intcast(256)+tfm_b1)*intcast(256)+tfm_b2)*intcast(256)+tfm_b3
-else #:=(((tfm_b0-intcast(256))*intcast(256)+tfm_b1)
-        *intcast(256)+tfm_b2)*intcast(256)+tfm_b3
-@d tfm_uquad== {|tfm_b0..tfm_b3| as unsigned integer}
-(((tfm_b0*intcast(256)+tfm_b1)*intcast(256)+tfm_b2)*intcast(256)+tfm_b3)
-@z
-
-@x [109] Declare full_name.
+@x [108] Declare full_name.
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
 @y
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
@@ -383,6 +334,12 @@ procedure dvi_move(n:int_32);
 begin xfseek(dvi_file, n, 0, dvi_name);
 dvi_loc:=n;
 end;
+@z
+
+@x [135] Lower case file name extensions.
+id3(".")("V")("F")(vf_ext); {file name extension for \.{VF} files}
+@y
+id3(".")("v")("f")(vf_ext); {file name extension for \.{VF} files}
 @z
 
 @x [137/138] Set default directory name
@@ -455,13 +412,13 @@ vf_move_assign;
   vf_move_assign;
 @z
 
-@x [175] break is fflush.
+@x [176] break is fflush.
 @d update_terminal == break(output) {empty the terminal output buffer}
 @y
 @d update_terminal == fflush(stdout) {empty the terminal output buffer}
 @z
 
-@x [175]
+@x [176]
 procedure input_ln; {inputs a line from the terminal}
 var k:0..terminal_line_length;
 begin if n_opt=0 then
@@ -489,7 +446,7 @@ while (k<terminal_line_length)and not eoln(input) do
 end;
 @z
 
-@x [231] No dialog, remove unused final label.
+@x [241] No dialog, remove unused final label.
 dialog; {get options}
 @y
 @z
@@ -499,32 +456,32 @@ final_end:end.
 end.
 @z
 
-@x [236] Do this later, to avoid creating empty files.
+@x [245] Do this later, to avoid creating empty files.
 @<Open output file(s)@>=
 rewrite(out_file); {prepares to write packed bytes to |out_file|}
 @y
 @<Open output file(s)@>=
 @z
 
-@x [238] Use external routine to output bytes.
+@x [247] Use external routine to output bytes.
 @d out_byte(#) == write(out_file,#) {write next \.{DVI} byte}
 @y
 @d out_byte(#) == put_byte(#,out_file) {write next \.{DVI} byte}
 @z
 
-@x [250] String declaration.
+@x [260] String declaration.
 @!comment:packed array[1..comm_length] of char; {preamble comment prefix}
 @y
 @!comment:const_c_string; {preamble comment prefix}
 @z
 
-@x [251] Output the string from 0 to len-1, not 1 to len.
+@x [261] Output the string from 0 to len-1, not 1 to len.
 for k:=1 to comm_length do append_byte(xord[comment[k]]);
 @y
 for k:=0 to comm_length - 1 do append_byte(xord[ucharcast(comment[k])]);
 @z
 
-@x [] System-dependent changes.
+@x [293] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{DVIcopy} work at a particular installation.
 It is usually best to design your change file so that all changes to

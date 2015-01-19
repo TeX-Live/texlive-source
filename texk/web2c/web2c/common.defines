@@ -132,7 +132,6 @@
 @define function kpseoutnameok ();
 @define function kpsevarvalue ();
 @define function inputint ();
-@define function intcast ();
 @define function int64cast ();
 @define function isprint ();
 @define function makebinaryfile ();

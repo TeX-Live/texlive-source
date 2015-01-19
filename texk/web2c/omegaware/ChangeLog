@@ -1,3 +1,12 @@
+2015-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* odvicopy.ch: Drop intcast().
+	* odvitype.ch: Drop intcast().
+	* ofm2opl.ch: Drop intcast().
+	* opl2ofm.ch: Drop intcast().
+	* ovf2ovp.ch: Drop intcast().
+	* ovp2ovf.ch: Drop intcast().
+
 2015-01-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* odvicopy.web: Avoid useless differences with ../dvicopy.web.

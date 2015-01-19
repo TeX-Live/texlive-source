@@ -1,3 +1,7 @@
+2015-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdvitype.ch: Drop intcast().
+
 2015-01-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptftopl.ch: Use ^byte and xmalloc_array().

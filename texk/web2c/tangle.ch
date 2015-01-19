@@ -471,14 +471,6 @@ identifier: begin k:=0; j:=byte_start[cur_val]; w:=cur_val mod ww;
   if n>=@"40000000 then err_print('! Constant too big')
 @z
 
-@x [157] Fix casting bug
-@d add_in(#)==begin accumulator:=accumulator+next_sign*(#); next_sign:=+1;
-  end
-@y
-@d add_in(#)==begin accumulator:=accumulator+next_sign*intcast(#); next_sign:=+1;
-  end
-@z
-
 @x [157] Larger numerics.
 if abs(accumulator)>=@'100000 then
 @y

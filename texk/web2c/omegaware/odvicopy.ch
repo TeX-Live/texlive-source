@@ -163,32 +163,6 @@ procedure overflow(@!p:pckt_pointer;@!n:int_16u);
 noreturn procedure overflow(@!p:pckt_pointer;@!n:int_16u);
 @z
 
-@x [51] Fix casting problem in C.
-@d comp_spair(#) == if a<128 then #:=a*256+b @+ else #:=(a-256)*256+b
-@d comp_upair(#) == #:=a*256+b
-@y
-@d comp_spair(#) == if a<128 then #:=a*intcast(256)+b
-                             @+ else #:=(a-intcast(256))*intcast(256)+b
-@d comp_upair(#) == #:=a*intcast(256)+b
-@z
-
-@x [52]
-if a<128 then #:=(a*256+b)*256+c @+ else #:=((a-256)*256+b)*256+c
-@d comp_utrio(#) == #:=(a*256+b)*256+c
-@y
-if a<128 then #:=(a*intcast(256)+b)*intcast(256)+c @+
-else #:=((a-intcast(256))*intcast(256)+b)*intcast(256)+c
-@d comp_utrio(#) == #:=(a*intcast(256)+b)*intcast(256)+c
-@z
-
-@x [53]
-if a<128 then #:=((a*256+b)*256+c)*256+d
-else #:=(((a-256)*256+b)*256+c)*256+d
-@y
-if a<128 then #:=((a*intcast(256)+b)*intcast(256)+c)*intcast(256)+d
-else #:=(((a-intcast(256))*intcast(256)+b)*intcast(256)+c)*intcast(256)+d
-@z
-
 @x [62] cur_name is no longer a fixed-size array.
 @!cur_name:packed array[1..name_length] of char; {external name,
   with no lower case letters}
@@ -260,7 +234,7 @@ while l_cur_name<name_length do
   cur_name[l_cur_name] := 0;
 @z
 
-@x [91]
+@x [91] Lower case file name extensions.
 id4(".")("T")("F")("M")(tfm_ext); {file name extension for \.{TFM} files}
 id4(".")("O")("F")("M")(ofm_ext); {file name extension for \.{OFM} files}
 @y
@@ -346,34 +320,6 @@ close_in(tfm_file);
 xfclose(tfm_file, cur_name);
 @z
 
-@x [101] Fix casting problem in C.
-@d tfm_b01(#)== {|tfm_b0..tfm_b1| as non-negative integer}
-if tfm_b0>127 then bad_font
-else #:=tfm_b0*256+tfm_b1
-@d tfm_b23(#)== {|tfm_b2..tfm_b3| as non-negative integer}
-if tfm_b2>127 then bad_font
-else #:=tfm_b2*256+tfm_b3
-@d tfm_squad(#)== {|tfm_b0..tfm_b3| as signed integer}
-if tfm_b0<128 then #:=((tfm_b0*256+tfm_b1)*256+tfm_b2)*256+tfm_b3
-else #:=(((tfm_b0-256)*256+tfm_b1)*256+tfm_b2)*256+tfm_b3
-@d tfm_uquad== {|tfm_b0..tfm_b3| as unsigned integer}
-(((tfm_b0*256+tfm_b1)*256+tfm_b2)*256+tfm_b3)
-@y
-@d tfm_b01(#)== {|tfm_b0..tfm_b1| as non-negative integer}
-if tfm_b0>127 then bad_font
-else #:=tfm_b0*intcast(256)+tfm_b1
-@d tfm_b23(#)== {|tfm_b2..tfm_b3| as non-negative integer}
-if tfm_b2>127 then bad_font
-else #:=tfm_b2*intcast(256)+tfm_b3
-@d tfm_squad(#)== {|tfm_b0..tfm_b3| as signed integer}
-if tfm_b0<128
-then #:=((tfm_b0*intcast(256)+tfm_b1)*intcast(256)+tfm_b2)*intcast(256)+tfm_b3
-else #:=(((tfm_b0-intcast(256))*intcast(256)+tfm_b1)
-        *intcast(256)+tfm_b2)*intcast(256)+tfm_b3
-@d tfm_uquad== {|tfm_b0..tfm_b3| as unsigned integer}
-(((tfm_b0*intcast(256)+tfm_b1)*intcast(256)+tfm_b2)*intcast(256)+tfm_b3)
-@z
-
 @x [101] Avoid compiler warnings
 read_tfm_word; tfm_b01(first_two);
 @y
@@ -394,7 +340,7 @@ procedure bad_dvi;
 noreturn procedure bad_dvi;
 @z
 
-@x [110] Fix up opening the binary files
+@x [111] Fix up opening the binary files
 @ To prepare |dvi_file| for input, we |reset| it.
 
 @<Open input file(s)@>=
@@ -407,7 +353,7 @@ dvi_loc:=0;
 dvi_loc:=0;
 @z
 
-@x [112] Make dvi_length() and dvi_move() work.
+@x [113] Make dvi_length() and dvi_move() work.
 @p function dvi_length:int_32;
 begin set_pos(dvi_file,-1); dvi_length:=cur_pos(dvi_file);
 end;
@@ -428,7 +374,7 @@ dvi_loc:=n;
 end;
 @z
 
-@x [135]
+@x [135] Lower case file name extensions.
 id3(".")("V")("F")(vf_ext); {file name extension for \.{VF} files}
 id4(".")("O")("V")("F")(ovf_ext); {file name extension for \.{OVF} files}
 @y

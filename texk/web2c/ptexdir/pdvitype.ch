@@ -102,16 +102,16 @@ end;
 @z
 
 @x [35] JFM by K.A.
-read_tfm_word; lh:=b2*intcast(256)+b3;
+read_tfm_word; lh:=b2*256+b3;
 @y
-read_tfm_word; lh:=b0*intcast(256)+b1;
+read_tfm_word; lh:=b0*256+b1;
 if (lh = 11) or (lh = 9) then
   begin
     print(' (JFM');
     fnt_jfm_p[nf] := true;
     if lh = 9 then print(' tate');
     print(')');
-    nt:=b2*intcast(256)+b3;
+    nt:=b2*256+b3;
     read_tfm_word;
   end
 else
@@ -119,7 +119,7 @@ else
     nt:=0;
     fnt_jfm_p[nf] := false;
   end;
-lh:=b2*intcast(256)+b3;
+lh:=b2*256+b3;
 @z
 
 @x [35] JFM by K.A.
@@ -133,8 +133,8 @@ lh:=b2*intcast(256)+b3;
 for k:=1 to nt do
   begin
     read_tfm_word;
-    jfm_char_code[jfm_char_type_count]:=b0*intcast(256)+b1;
-    jfm_char_type[jfm_char_type_count]:=b2*intcast(256)+b3;
+    jfm_char_code[jfm_char_type_count]:=b0*256+b1;
+    jfm_char_type[jfm_char_type_count]:=b2*256+b3;
     jfm_char_font[jfm_char_type_count]:=nf;
     jfm_h:= { hash value }
       (jfm_char_code[jfm_char_type_count]+nf) mod jfm_hash_size;
