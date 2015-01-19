@@ -24559,7 +24559,7 @@ end;
 procedure end_graf;
 begin if mode=hmode then
   begin if head=tail then pop_nest {null paragraphs are ignored}
-  else line_break(widow_penalty);
+  else line_break(false);
   if LR_save<>null then
     begin flush_list(LR_save); LR_save:=null;
     end;
@@ -25190,7 +25190,7 @@ display. Then we can set the proper values of |display_width| and
 begin if head=tail then {`\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}'}
   begin pop_nest; w:=-max_dimen;
   end
-else  begin line_break(display_widow_penalty);@/
+else  begin line_break(true);@/
   @<Calculate the natural width, |w|, by which the characters of the
     final line extend to the right of the reference point,
     plus two ems; or set |w:=max_dimen| if the non-blank information
