@@ -662,6 +662,7 @@ CXXFLAGS
 CXX
 LCDF_TYPETOOLS_VERSION
 CPP
+LT_SYS_LIBRARY_PATH
 OTOOL64
 OTOOL
 LIPO
@@ -822,6 +823,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
+LT_SYS_LIBRARY_PATH
 CPP
 CXX
 CXXFLAGS
@@ -1512,6 +1514,8 @@ Some influential environment variables:
   LIBS        libraries to pass to the linker, e.g. -l<library>
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
+  LT_SYS_LIBRARY_PATH
+              User-defined run-time library search path.
   CPP         C preprocessor
   CXX         C++ compiler command
   CXXFLAGS    C++ compiler flags
@@ -4651,8 +4655,8 @@ esac
 
 
 
-macro_version='2.4.4'
-macro_revision='2.4.4'
+macro_version='2.4.5'
+macro_revision='2.4.5'
 
 
 
@@ -7068,6 +7072,21 @@ $as_echo "$lt_cv_truncate_bin" >&6; }
 
 
 
+
+# Calculate cc_basename.  Skip known compiler wrappers and cross-prefix.
+func_cc_basename ()
+{
+    for cc_temp in $*""; do
+      case $cc_temp in
+        compile | *[\\/]compile | ccache | *[\\/]ccache ) ;;
+        distcc | *[\\/]distcc | purify | *[\\/]purify ) ;;
+        \-*) ;;
+        *) break;;
+      esac
+    done
+    func_cc_basename_result=`$ECHO "$cc_temp" | $SED "s%.*/%%; s%^$host_alias-%%"`
+}
+
 # Check whether --enable-libtool-lock was given.
 if test "${enable_libtool_lock+set}" = set; then :
   enableval=$enable_libtool_lock;
@@ -8074,6 +8093,41 @@ $as_echo "$lt_cv_ld_force_load" >&6; }
     fi
     ;;
   esac
+
+# func_munge_path_list VARIABLE PATH
+# -----------------------------------
+# VARIABLE is name of variable containing _space_ separated list of
+# directories to be munged by the contents of PATH, which is string
+# having a format:
+# "DIR[:DIR]:"
+#       string "DIR[ DIR]" will be prepended to VARIABLE
+# ":DIR[:DIR]"
+#       string "DIR[ DIR]" will be appended to VARIABLE
+# "DIRP[:DIRP]::[DIRA:]DIRA"
+#       string "DIRP[ DIRP]" will be prepended to VARIABLE and string
+#       "DIRA[ DIRA]" will be appended to VARIABLE
+# "DIR[:DIR]"
+#       VARIABLE will be replaced by "DIR[ DIR]"
+func_munge_path_list ()
+{
+    case x$2 in
+    x)
+        ;;
+    *:)
+        eval $1=\"`$ECHO $2 | $SED 's/:/ /g'` \S|@1\"
+        ;;
+    x:*)
+        eval $1=\"\$$1 `$ECHO $2 | $SED 's/:/ /g'`\"
+        ;;
+    *::*)
+        eval $1=\"\$$1\ `$ECHO $2 | $SED -e 's/.*:://' -e 's/:/ /g'`\"
+        eval $1=\"`$ECHO $2 | $SED -e 's/::.*//' -e 's/:/ /g'`\ \$$1\"
+        ;;
+    *)
+        eval $1=\"`$ECHO $2 | $SED 's/:/ /g'`\"
+        ;;
+    esac
+}
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -9184,15 +9238,8 @@ test -z "$LTCFLAGS" && LTCFLAGS=$CFLAGS
 test -z "$LD" && LD=ld
 test -z "$ac_objext" && ac_objext=o
 
-for cc_temp in $compiler""; do
-  case $cc_temp in
-    compile | *[\\/]compile | ccache | *[\\/]ccache ) ;;
-    distcc | *[\\/]distcc | purify | *[\\/]purify ) ;;
-    \-*) ;;
-    *) break;;
-  esac
-done
-cc_basename=`$ECHO "$cc_temp" | $SED "s%.*/%%; s%^$host_alias-%%"`
+func_cc_basename $compiler
+cc_basename=$func_cc_basename_result
 
 
 # Only perform the check for file, if the check method requires it
@@ -11651,6 +11698,8 @@ hardcode_into_libs=no
 # flags to be left without arguments
 need_version=unknown
 
+
+
 case $host_os in
 aix3*)
   version_type=linux # correct to gnu/linux during the next big refactor
@@ -11939,6 +11988,7 @@ freebsd* | dragonfly*)
   case $version_type in
     freebsd-elf*)
       library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
+      soname_spec='$libname$release$shared_ext$major'
       need_version=no
       need_lib_prefix=no
       ;;
@@ -11998,10 +12048,11 @@ hpux9* | hpux10* | hpux11*)
     soname_spec='$libname$release$shared_ext$major'
     if test 32 = "$HPUX_IA64_MODE"; then
       sys_lib_search_path_spec="/usr/lib/hpux32 /usr/local/lib/hpux32 /usr/local/lib"
+      sys_lib_dlsearch_path_spec=/usr/lib/hpux32
     else
       sys_lib_search_path_spec="/usr/lib/hpux64 /usr/local/lib/hpux64"
+      sys_lib_dlsearch_path_spec=/usr/lib/hpux64
     fi
-    sys_lib_dlsearch_path_spec=$sys_lib_search_path_spec
     ;;
   hppa*64*)
     shrext_cmds='.sl'
@@ -12153,7 +12204,12 @@ fi
   # before this can be enabled.
   hardcode_into_libs=yes
 
-  # Append ld.so.conf contents to the search path
+  # Ideally, we could use ldconfig to report *all* directores which are
+  # searched for libraries, however this is still not possible.  Aside from not
+  # being certain /sbin/ldconfig is available, command
+  # 'ldconfig -N -X -v | grep ^/' on 64bit Fedora does not report /usr/lib64,
+  # even though it is searched at run-time.  Try to do the best guess by
+  # appending ld.so.conf contents (and includes) to the search path.
   if test -f /etc/ld.so.conf; then
     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s 2>/dev/null", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;/^[	 ]*hwcap[	 ]/d;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;s/"//g;/^$/d' | tr '\n' ' '`
     sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
@@ -12378,9 +12434,17 @@ fi
 if test set = "${lt_cv_sys_lib_search_path_spec+set}"; then
   sys_lib_search_path_spec=$lt_cv_sys_lib_search_path_spec
 fi
+
 if test set = "${lt_cv_sys_lib_dlsearch_path_spec+set}"; then
   sys_lib_dlsearch_path_spec=$lt_cv_sys_lib_dlsearch_path_spec
 fi
+
+# lt_cv_sys_lib... is unaugmented for libtool script decls...
+lt_cv_sys_lib_dlsearch_path_spec=$sys_lib_dlsearch_path_spec
+
+# ..but sys_lib_... needs LT_SYS_LIBRARY_PATH munging for
+# LT_SYS_DLSEARCH_PATH macro in ltdl.m4 to work with the correct paths:
+func_munge_path_list sys_lib_dlsearch_path_spec "$LT_SYS_LIBRARY_PATH"
 
 
 
@@ -14643,15 +14707,8 @@ $RM -r conftest*
   CFLAGS=$CXXFLAGS
   compiler=$CC
   compiler_CXX=$CC
-  for cc_temp in $compiler""; do
-  case $cc_temp in
-    compile | *[\\/]compile | ccache | *[\\/]ccache ) ;;
-    distcc | *[\\/]distcc | purify | *[\\/]purify ) ;;
-    \-*) ;;
-    *) break;;
-  esac
-done
-cc_basename=`$ECHO "$cc_temp" | $SED "s%.*/%%; s%^$host_alias-%%"`
+  func_cc_basename $compiler
+cc_basename=$func_cc_basename_result
 
 
   if test -n "$compiler"; then
@@ -16038,51 +16095,6 @@ interix[3-9]*)
   postdep_objects_CXX=
   postdeps_CXX=
   ;;
-
-linux*)
-  case `$CC -V 2>&1 | sed 5q` in
-  *Sun\ C*)
-    # Sun C++ 5.9
-
-    # The more standards-conforming stlport4 library is
-    # incompatible with the Cstd library. Avoid specifying
-    # it if it's in CXXFLAGS. Ignore libCrun as
-    # -library=stlport4 depends on it.
-    case " $CXX $CXXFLAGS " in
-    *" -library=stlport4 "*)
-      solaris_use_stlport4=yes
-      ;;
-    esac
-
-    if test yes != "$solaris_use_stlport4"; then
-      postdeps_CXX='-library=Cstd -library=Crun'
-    fi
-    ;;
-  esac
-  ;;
-
-solaris*)
-  case $cc_basename in
-  CC* | sunCC*)
-    # The more standards-conforming stlport4 library is
-    # incompatible with the Cstd library. Avoid specifying
-    # it if it's in CXXFLAGS. Ignore libCrun as
-    # -library=stlport4 depends on it.
-    case " $CXX $CXXFLAGS " in
-    *" -library=stlport4 "*)
-      solaris_use_stlport4=yes
-      ;;
-    esac
-
-    # Adding this requires a known-good setup of shared libraries for
-    # Sun compiler versions before 5.6, else PIC objects from an old
-    # archive will be linked into the output, leading to subtle bugs.
-    if test yes != "$solaris_use_stlport4"; then
-      postdeps_CXX='-library=Cstd -library=Crun'
-    fi
-    ;;
-  esac
-  ;;
 esac
 
 
@@ -16906,6 +16918,8 @@ hardcode_into_libs=no
 # flags to be left without arguments
 need_version=unknown
 
+
+
 case $host_os in
 aix3*)
   version_type=linux # correct to gnu/linux during the next big refactor
@@ -17192,6 +17206,7 @@ freebsd* | dragonfly*)
   case $version_type in
     freebsd-elf*)
       library_names_spec='$libname$release$shared_ext$versuffix $libname$release$shared_ext$major $libname$shared_ext'
+      soname_spec='$libname$release$shared_ext$major'
       need_version=no
       need_lib_prefix=no
       ;;
@@ -17251,10 +17266,11 @@ hpux9* | hpux10* | hpux11*)
     soname_spec='$libname$release$shared_ext$major'
     if test 32 = "$HPUX_IA64_MODE"; then
       sys_lib_search_path_spec="/usr/lib/hpux32 /usr/local/lib/hpux32 /usr/local/lib"
+      sys_lib_dlsearch_path_spec=/usr/lib/hpux32
     else
       sys_lib_search_path_spec="/usr/lib/hpux64 /usr/local/lib/hpux64"
+      sys_lib_dlsearch_path_spec=/usr/lib/hpux64
     fi
-    sys_lib_dlsearch_path_spec=$sys_lib_search_path_spec
     ;;
   hppa*64*)
     shrext_cmds='.sl'
@@ -17406,7 +17422,12 @@ fi
   # before this can be enabled.
   hardcode_into_libs=yes
 
-  # Append ld.so.conf contents to the search path
+  # Ideally, we could use ldconfig to report *all* directores which are
+  # searched for libraries, however this is still not possible.  Aside from not
+  # being certain /sbin/ldconfig is available, command
+  # 'ldconfig -N -X -v | grep ^/' on 64bit Fedora does not report /usr/lib64,
+  # even though it is searched at run-time.  Try to do the best guess by
+  # appending ld.so.conf contents (and includes) to the search path.
   if test -f /etc/ld.so.conf; then
     lt_ld_extra=`awk '/^include / { system(sprintf("cd /etc; cat %s 2>/dev/null", \$2)); skip = 1; } { if (!skip) print \$0; skip = 0; }' < /etc/ld.so.conf | $SED -e 's/#.*//;/^[	 ]*hwcap[	 ]/d;s/[:,	]/ /g;s/=[^=]*$//;s/=[^= ]* / /g;s/"//g;/^$/d' | tr '\n' ' '`
     sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"
@@ -17631,9 +17652,17 @@ fi
 if test set = "${lt_cv_sys_lib_search_path_spec+set}"; then
   sys_lib_search_path_spec=$lt_cv_sys_lib_search_path_spec
 fi
+
 if test set = "${lt_cv_sys_lib_dlsearch_path_spec+set}"; then
   sys_lib_dlsearch_path_spec=$lt_cv_sys_lib_dlsearch_path_spec
 fi
+
+# lt_cv_sys_lib... is unaugmented for libtool script decls...
+lt_cv_sys_lib_dlsearch_path_spec=$sys_lib_dlsearch_path_spec
+
+# ..but sys_lib_... needs LT_SYS_LIBRARY_PATH munging for
+# LT_SYS_DLSEARCH_PATH macro in ltdl.m4 to work with the correct paths:
+func_munge_path_list sys_lib_dlsearch_path_spec "$LT_SYS_LIBRARY_PATH"
 
 
 
@@ -20006,7 +20035,7 @@ finish_cmds='`$ECHO "$finish_cmds" | $SED "$delay_single_quote_subst"`'
 finish_eval='`$ECHO "$finish_eval" | $SED "$delay_single_quote_subst"`'
 hardcode_into_libs='`$ECHO "$hardcode_into_libs" | $SED "$delay_single_quote_subst"`'
 sys_lib_search_path_spec='`$ECHO "$sys_lib_search_path_spec" | $SED "$delay_single_quote_subst"`'
-sys_lib_dlsearch_path_spec='`$ECHO "$sys_lib_dlsearch_path_spec" | $SED "$delay_single_quote_subst"`'
+lt_cv_sys_lib_dlsearch_path_spec='`$ECHO "$lt_cv_sys_lib_dlsearch_path_spec" | $SED "$delay_single_quote_subst"`'
 hardcode_action='`$ECHO "$hardcode_action" | $SED "$delay_single_quote_subst"`'
 enable_dlopen='`$ECHO "$enable_dlopen" | $SED "$delay_single_quote_subst"`'
 enable_dlopen_self='`$ECHO "$enable_dlopen_self" | $SED "$delay_single_quote_subst"`'
@@ -20210,7 +20239,7 @@ postinstall_cmds \
 postuninstall_cmds \
 finish_cmds \
 sys_lib_search_path_spec \
-sys_lib_dlsearch_path_spec \
+lt_cv_sys_lib_dlsearch_path_spec \
 reload_cmds_CXX \
 old_archive_cmds_CXX \
 old_archive_from_new_cmds_CXX \
@@ -20301,6 +20330,9 @@ $as_echo "$as_me: creating $ofile" >&6;}
 
 # The names of the tagged configurations supported by this script.
 available_tags='CXX '
+
+# Configured defaults for sys_lib_dlsearch_path munging.
+: \${LT_SYS_LIBRARY_PATH="$LT_SYS_LIBRARY_PATH"}
 
 # ### BEGIN LIBTOOL CONFIG
 
@@ -20555,7 +20587,7 @@ hardcode_into_libs=$hardcode_into_libs
 sys_lib_search_path_spec=$lt_sys_lib_search_path_spec
 
 # Run-time system search path for libraries.
-sys_lib_dlsearch_path_spec=$lt_sys_lib_dlsearch_path_spec
+sys_lib_dlsearch_path_spec=$lt_lt_cv_sys_lib_dlsearch_path_spec
 
 # Whether dlopen is supported.
 dlopen_support=$enable_dlopen
@@ -20717,6 +20749,64 @@ postdeps=$lt_postdeps
 compiler_lib_search_path=$lt_compiler_lib_search_path
 
 # ### END LIBTOOL CONFIG
+
+_LT_EOF
+
+    cat <<'_LT_EOF' >> "$cfgfile"
+## -------------------------------------- ##
+## Shell functions shared with configure. ##
+## -------------------------------------- ##
+
+# func_munge_path_list VARIABLE PATH
+# -----------------------------------
+# VARIABLE is name of variable containing _space_ separated list of
+# directories to be munged by the contents of PATH, which is string
+# having a format:
+# "DIR[:DIR]:"
+#       string "DIR[ DIR]" will be prepended to VARIABLE
+# ":DIR[:DIR]"
+#       string "DIR[ DIR]" will be appended to VARIABLE
+# "DIRP[:DIRP]::[DIRA:]DIRA"
+#       string "DIRP[ DIRP]" will be prepended to VARIABLE and string
+#       "DIRA[ DIRA]" will be appended to VARIABLE
+# "DIR[:DIR]"
+#       VARIABLE will be replaced by "DIR[ DIR]"
+func_munge_path_list ()
+{
+    case x$2 in
+    x)
+        ;;
+    *:)
+        eval $1=\"`$ECHO $2 | $SED 's/:/ /g'` \S|@1\"
+        ;;
+    x:*)
+        eval $1=\"\$$1 `$ECHO $2 | $SED 's/:/ /g'`\"
+        ;;
+    *::*)
+        eval $1=\"\$$1\ `$ECHO $2 | $SED -e 's/.*:://' -e 's/:/ /g'`\"
+        eval $1=\"`$ECHO $2 | $SED -e 's/::.*//' -e 's/:/ /g'`\ \$$1\"
+        ;;
+    *)
+        eval $1=\"`$ECHO $2 | $SED 's/:/ /g'`\"
+        ;;
+    esac
+}
+
+
+# Calculate cc_basename.  Skip known compiler wrappers and cross-prefix.
+func_cc_basename ()
+{
+    for cc_temp in $*""; do
+      case $cc_temp in
+        compile | *[\\/]compile | ccache | *[\\/]ccache ) ;;
+        distcc | *[\\/]distcc | purify | *[\\/]purify ) ;;
+        \-*) ;;
+        *) break;;
+      esac
+    done
+    func_cc_basename_result=`$ECHO "$cc_temp" | $SED "s%.*/%%; s%^$host_alias-%%"`
+}
+
 
 _LT_EOF
 
@@ -22078,7 +22168,7 @@ finish_cmds='`$ECHO "$finish_cmds" | $SED "$delay_single_quote_subst"`'
 finish_eval='`$ECHO "$finish_eval" | $SED "$delay_single_quote_subst"`'
 hardcode_into_libs='`$ECHO "$hardcode_into_libs" | $SED "$delay_single_quote_subst"`'
 sys_lib_search_path_spec='`$ECHO "$sys_lib_search_path_spec" | $SED "$delay_single_quote_subst"`'
-sys_lib_dlsearch_path_spec='`$ECHO "$sys_lib_dlsearch_path_spec" | $SED "$delay_single_quote_subst"`'
+lt_cv_sys_lib_dlsearch_path_spec='`$ECHO "$lt_cv_sys_lib_dlsearch_path_spec" | $SED "$delay_single_quote_subst"`'
 hardcode_action='`$ECHO "$hardcode_action" | $SED "$delay_single_quote_subst"`'
 enable_dlopen='`$ECHO "$enable_dlopen" | $SED "$delay_single_quote_subst"`'
 enable_dlopen_self='`$ECHO "$enable_dlopen_self" | $SED "$delay_single_quote_subst"`'
@@ -22282,7 +22372,7 @@ postinstall_cmds \
 postuninstall_cmds \
 finish_cmds \
 sys_lib_search_path_spec \
-sys_lib_dlsearch_path_spec \
+lt_cv_sys_lib_dlsearch_path_spec \
 reload_cmds_CXX \
 old_archive_cmds_CXX \
 old_archive_from_new_cmds_CXX \
@@ -23087,6 +23177,9 @@ $as_echo X"$file" |
 # The names of the tagged configurations supported by this script.
 available_tags='CXX '
 
+# Configured defaults for sys_lib_dlsearch_path munging.
+: \${LT_SYS_LIBRARY_PATH="$LT_SYS_LIBRARY_PATH"}
+
 # ### BEGIN LIBTOOL CONFIG
 
 # Which release of libtool.m4 was used?
@@ -23340,7 +23433,7 @@ hardcode_into_libs=$hardcode_into_libs
 sys_lib_search_path_spec=$lt_sys_lib_search_path_spec
 
 # Run-time system search path for libraries.
-sys_lib_dlsearch_path_spec=$lt_sys_lib_dlsearch_path_spec
+sys_lib_dlsearch_path_spec=$lt_lt_cv_sys_lib_dlsearch_path_spec
 
 # Whether dlopen is supported.
 dlopen_support=$enable_dlopen
@@ -23502,6 +23595,64 @@ postdeps=$lt_postdeps
 compiler_lib_search_path=$lt_compiler_lib_search_path
 
 # ### END LIBTOOL CONFIG
+
+_LT_EOF
+
+    cat <<'_LT_EOF' >> "$cfgfile"
+## -------------------------------------- ##
+## Shell functions shared with configure. ##
+## -------------------------------------- ##
+
+# func_munge_path_list VARIABLE PATH
+# -----------------------------------
+# VARIABLE is name of variable containing _space_ separated list of
+# directories to be munged by the contents of PATH, which is string
+# having a format:
+# "DIR[:DIR]:"
+#       string "DIR[ DIR]" will be prepended to VARIABLE
+# ":DIR[:DIR]"
+#       string "DIR[ DIR]" will be appended to VARIABLE
+# "DIRP[:DIRP]::[DIRA:]DIRA"
+#       string "DIRP[ DIRP]" will be prepended to VARIABLE and string
+#       "DIRA[ DIRA]" will be appended to VARIABLE
+# "DIR[:DIR]"
+#       VARIABLE will be replaced by "DIR[ DIR]"
+func_munge_path_list ()
+{
+    case x$2 in
+    x)
+        ;;
+    *:)
+        eval $1=\"`$ECHO $2 | $SED 's/:/ /g'` \S|@1\"
+        ;;
+    x:*)
+        eval $1=\"\$$1 `$ECHO $2 | $SED 's/:/ /g'`\"
+        ;;
+    *::*)
+        eval $1=\"\$$1\ `$ECHO $2 | $SED -e 's/.*:://' -e 's/:/ /g'`\"
+        eval $1=\"`$ECHO $2 | $SED -e 's/::.*//' -e 's/:/ /g'`\ \$$1\"
+        ;;
+    *)
+        eval $1=\"`$ECHO $2 | $SED 's/:/ /g'`\"
+        ;;
+    esac
+}
+
+
+# Calculate cc_basename.  Skip known compiler wrappers and cross-prefix.
+func_cc_basename ()
+{
+    for cc_temp in $*""; do
+      case $cc_temp in
+        compile | *[\\/]compile | ccache | *[\\/]ccache ) ;;
+        distcc | *[\\/]distcc | purify | *[\\/]purify ) ;;
+        \-*) ;;
+        *) break;;
+      esac
+    done
+    func_cc_basename_result=`$ECHO "$cc_temp" | $SED "s%.*/%%; s%^$host_alias-%%"`
+}
+
 
 _LT_EOF
 
