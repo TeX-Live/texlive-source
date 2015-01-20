@@ -1,6 +1,6 @@
 2015-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* build-tools.txt: Using libtool 2.4.5.
+	* build-tools.txt: Using bison 3.0.3 and libtool 2.4.5.
 
 2014-12-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
