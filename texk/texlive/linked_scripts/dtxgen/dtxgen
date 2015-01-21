@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=1.04
+version=1.05
 myname=$(basename $0)
 
 <<'DOC'
@@ -12,10 +12,10 @@ dtxgen [options] basename.[sty,cls]
 = Description
 dtxgen creates a template for a self-extracting .dtx file, based on the model described by
 U{www.texdev.net/2009/10/06/a-model-dtx-file/}{Joseph Wright}. It is useful for
-those who plan to create a new Documented LaTeX Source (.dtx) file. 
+those who plan to create a new Documented LaTeX Source (.dtx) file.
 
 Usage example:
-  
+
   dtxgen -n 'your name' -m 'your@email.ad' myclass.cls
 
 The script takes some variables such as:
@@ -35,7 +35,7 @@ NAME and EMAIL, you could simply type:
 
   dtxgen myclass.cls
 
-and you would end up with five files: |myclass.dtx|, |myclass.cls|, 
+and you would end up with five files: |myclass.dtx|, |myclass.cls|,
 |myclass.pdf|, |README|, and |Makefile|.
 
 = Options
@@ -65,7 +65,7 @@ dtxgen recognizes the following options:
 -q,--quiet	
 	Run quietly
 -V,--version	
-	Prints the script's version and exits. 
+	Prints the script's version and exits.
 -h,--help	
 	Prints help information and exits.
 -H,--Help	
@@ -84,9 +84,9 @@ install		install in the local TeX tree (uses sudo)
 zip		produce a zip file ready for upload to CTAN
 
 = Changes
-Changes with respect version 1.03: 
-- Clearer comments
-- scripts' README information incorporated in the documentation.
+Changes with respect version 1.04:
+- mktemp now works for Mac/BSD too
+- don't include .cls/.sty file in zip
 
 = Author and copyright
 Author	Wybo Dekker
@@ -98,7 +98,7 @@ DOC
    help() { sed -n '/^= Synopsis/,/^= /p' $0|sed '1s/.*/Usage:/;/^= /d'; exit; }
 helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' $0|sed -n '1d;$d;p'|less; exit; }
 version() { echo $version; exit; }
-install() { which instscript>&/dev/null && instscript -zp $myname; exit; }
+install() { which instscript>&/dev/null && instscript --zip --pdf --markdown $myname; exit; }
 
 Nor='\e[0m'    # reset color	]
 Err='\e[31;1m' # light red	]
@@ -163,8 +163,8 @@ case "$ext" in
          (try the --help option)"
 esac
 
-# The short description may contain TeX commands, but then we need 
-# a version without them at some places; note that this removes only 
+# The short description may contain TeX commands, but then we need
+# a version without them at some places; note that this removes only
 # simple contructs:
 shrt=$(sed 's/\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\//g' <<<$short)
 
@@ -191,7 +191,7 @@ exit 0
 NAME  = %base%
 SHELL = bash
 PWD   = $(shell pwd)
-TEMP := $(shell mktemp -d)
+TEMP := $(shell mktemp -d -t dtxgen.XXXXXXXXXX)
 TDIR  = $(TEMP)/$(NAME)
 VERS  = $(shell ltxfileinfo -v $(NAME).dtx)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
@@ -220,7 +220,7 @@ install: all
 	sudo cp $(NAME).pdf $(LOCAL)/doc/latex/$(NAME)
 zip: all
 	mkdir $(TDIR)
-	cp $(NAME).{pdf,%ext%,dtx} README $(TDIR)
+	cp $(NAME).{pdf,dtx} README $(TDIR)
 	cd $(TEMP); zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)
 Makefile
 
@@ -332,7 +332,7 @@ Running "make install" installs the files in the local TeX tree.
 % \GetFileInfo{\jobname.dtx}
 % \DoNotIndex{\newcommand,\newenvironment}
 %
-%\title{\textsf{%base%} --- %short%\thanks{This file 
+%\title{\textsf{%base%} --- %short%\thanks{This file
 %   describes version \fileversion, last revised \filedate.}
 %}
 %\author{%name%\thanks{E-mail: %mail%}}
