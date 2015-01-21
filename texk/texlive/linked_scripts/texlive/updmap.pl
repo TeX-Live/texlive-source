@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 35597 2014-11-17 19:13:51Z karl $
+# $Id: updmap.pl 36067 2015-01-16 00:02:11Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,24 +14,24 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 35597 2014-11-17 19:13:51Z karl $';
+my $svnid = '$Id: updmap.pl 36067 2015-01-16 00:02:11Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
-  $^W=1;
+  $^W = 1;
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($?) {
-    print_error("Cannot find TEXMFROOT, aborting!\n");
+    warn "updmap.pl: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
     exit 1;
   }
   chomp($TEXMFROOT);
-  unshift (@INC, "$TEXMFROOT/tlpkg");
+  unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2014-11-17 20:13:51 +0100 (Mon, 17 Nov 2014) $';
+my $lastchdate = '$Date: 2015-01-16 01:02:11 +0100 (Fri, 16 Jan 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 35597 $';
+my $svnrev = '$Revision: 36067 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
