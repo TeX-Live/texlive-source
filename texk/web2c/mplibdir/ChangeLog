@@ -1,3 +1,10 @@
+2015-01-20  Luigi Scarso  <luigi.scarso@gmail.com>
+	Added cur_sym_mod() == mp_normal_sym 
+	to the cur_sym==0 condition mp_cur_tok 
+
+2015-01-19  Luigi Scarso  <luigi.scarso@gmail.com>
+	fixed a bug in mp_recycle_value with NULL node
+
 2015-01-15  Luigi Scarso  <luigi.scarso@gmail.com>
 	* mpmathdecimal.w: better management for static data in mpmathdecimal.w 
 	(thanks to Philipp Gesang <phg@phi-gamma.net>)

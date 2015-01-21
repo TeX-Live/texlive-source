@@ -1,4 +1,4 @@
-% $Id: mp.w 2037 2014-09-02 14:59:07Z luigi $
+% $Id: mp.w 2054 2015-01-21 09:03:06Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -19,7 +19,7 @@
 \def\section{\mathhexbox278}
 \let\swap=\leftrightarrow
 \def\round{\mathop{\rm round}\nolimits}
-\mathchardef\vbv="026A % synonym for `\|'
+\mathchardef\vbv="026A % synonym for `\|' 
 \def\vb{\relax\ifmmode\vbv\else$\vbv$\fi}
 
 \def\(#1){} % this is used to make section names sort themselves better
@@ -4676,13 +4676,38 @@ static mp_sym mp_frozen_id_lookup (MP mp, char *j, size_t l,
 }
 
 /* see mp_print_sym  (mp_sym sym) */
+@ Get a numeric value from \MP\ is not easy. We have to consider
+the macro and the loops, as also the internal type (this is a
+first attempt, and more work is needed). If we are inside
+a \&{for} loop, then the global |loop_ptr| is not null and the other loops
+eventually nested are available by mean of |loop_ptr->link|.
+The current numeric value is stored in |old_value|.
 
+@c
 double mp_get_numeric_value (MP mp, const char *s, size_t l) {
     char *ss = mp_xstrdup(mp,s);
     if (ss) {
      mp_sym sym = mp_id_lookup(mp,ss,l,false);
      if (sym != NULL) {
-        if (mp_type(sym->v.data.node) == mp_known) {
+        if (mp->loop_ptr != NULL) {
+	   mp_loop_data *s;
+           s = mp->loop_ptr;
+           while (s != NULL && sym != s->var)
+             s = mp->loop_ptr->link;
+           if (s != NULL &&  sym == s->var ){
+	     mp_xfree (ss);
+             return number_to_double(s->old_value) ;
+	   }
+        }
+        if (mp_type(sym) == mp_internal_quantity) {
+          halfword qq = equiv(sym);
+          mp_xfree (ss);
+	  if (internal_type (qq) != mp_string_type) 
+            return number_to_double(internal_value(qq));
+	  else
+	    return 0;
+        }
+        if (sym->v.data.node != NULL && mp_type(sym->v.data.node) == mp_known) {
 	    mp_xfree (ss);
             return number_to_double(sym->v.data.node->data.n) ;
         }
@@ -17591,7 +17616,7 @@ token by the |cur_tok| routine.
 @<Declare the procedure called |make_exp_copy|@>;
 static mp_node mp_cur_tok (MP mp) {
   mp_node p;    /* a new token node */
-  if (cur_sym() == NULL && cur_sym_mod() == 0) {
+  if (cur_sym() == NULL && (cur_sym_mod() == 0 || cur_sym_mod() == mp_normal_sym)) {
     if (cur_cmd() == mp_capsule_token) {
       mp_number save_exp_num; /* possible |cur_exp| numerical to be restored */
       mp_value save_exp = mp->cur_exp;  /* |cur_exp| to be restored */
@@ -20241,11 +20266,13 @@ that edge header.
 
 @<Types...@>=
 typedef struct mp_loop_data {
+  mp_sym  var ; /* the var of the loop */
   mp_node info; /* iterative text of this loop */
   mp_node type; /* the special type of this loop, or a pointer into
                    mem */
   mp_node list; /* the remaining list elements */
   mp_node list_start;   /* head fo the list of elements */
+  mp_number old_value; /* previous value of current arithmetic value */
   mp_number value; /* current arithmetic value */
   mp_number step_size;     /* arithmetic step size */
   mp_number final_value;   /* end arithmetic value */
@@ -20303,8 +20330,8 @@ void mp_begin_iteration (MP mp) {
   n = cur_sym();
   s = xmalloc (1, sizeof (mp_loop_data));
   s->type = s->list = s->info = s->list_start = NULL;
-  s->link = NULL;
-  new_number (s->value);
+  s->link = NULL; s->var = NULL;
+  new_number (s->value);new_number (s->old_value);
   new_number (s->step_size);
   new_number (s->final_value);
   if (m == start_forever) {
@@ -20316,6 +20343,7 @@ void mp_begin_iteration (MP mp) {
     p = xmalloc (1, sizeof (mp_subst_list_item));
     p->link = NULL;
     p->info = cur_sym();
+    s->var  = cur_sym();
     p->info_mod = cur_sym_mod();
     p->value_data = 0;
     if (m == start_for) {
@@ -20398,6 +20426,7 @@ void mp_resume_iteration (MP mp) {
     }
     mp->cur_exp.type = mp_known;
     q = mp_stash_cur_exp (mp);  /* make |q| an \&{expr} argument */
+    number_clone (mp->loop_ptr->old_value, cur_exp_value_number ());
     set_number_from_addition (mp->loop_ptr->value, cur_exp_value_number (), mp->loop_ptr->step_size);   
                                                                        /* set |value(p)| for the next iteration */
     /* detect numeric overflow */
@@ -20434,6 +20463,7 @@ void mp_resume_iteration (MP mp) {
     }
     mp->loop_ptr->list = mp_link (p);
     q = (mp_node)mp_sym_sym (p);
+    number_clone (mp->loop_ptr->old_value, q->data.n);
     mp_free_symbolic_node (mp, p);
   } else if (p == MP_VOID) {
     mp_begin_token_list (mp, mp->loop_ptr->info, (quarterword) forever_text);
@@ -20579,6 +20609,7 @@ CONTINUE:
   if (mp->cur_exp.type != mp_known)
     mp_bad_for (mp, "initial value");
   number_clone (s->value, cur_exp_value_number ());
+  number_clone (s->old_value, cur_exp_value_number ());
   mp_get_x_next (mp);
   mp_scan_expression (mp);
   if (mp->cur_exp.type != mp_known)
@@ -22218,6 +22249,8 @@ static void mp_recycle_value (MP mp, mp_node p);
 static void mp_recycle_value (MP mp, mp_node p) {
   mp_variable_type t;   /* a type code */
   FUNCTION_TRACE2 ("mp_recycle_value(%p)\n", p);
+  if (p==NULL || p==MP_VOID)
+    return;
   t = mp_type (p);
   switch (t) {
   case mp_vacuous:
@@ -29410,9 +29443,9 @@ void mp_set_internal (MP mp, char *n, char *v, int isstring) {
           set_internal_string (equiv (p), mp_rts (mp, v));
         } else if ((internal_type (equiv (p)) == mp_known) && (!isstring)) {
           int test = atoi (v);
-          if (test > 16383) {
+          if (test > 16383 && mp->math_mode==mp_math_scaled_mode) {
             errid = "value is too large";
-          } else if (test < -16383) {
+          } else if (test < -16383 && mp->math_mode==mp_math_scaled_mode) {
             errid = "value is too small";
           } else {
             set_internal_from_number (equiv (p), unity_t);
