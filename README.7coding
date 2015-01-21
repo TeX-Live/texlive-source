@@ -36,7 +36,7 @@ that may or may not be available on a particular system.  It uses
 the perhaps slightly less efficient alternative
 
      #if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
-     #static inline char *stpcpy(char *dest, const char *src)
+     static inline char *stpcpy(char *dest, const char *src)
      {
        return strcpy(dest, src) + strlen(src);
      }

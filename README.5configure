@@ -114,12 +114,11 @@ rebuilds infrastructure files as needed.  *Note 'missing' and
 7.1.8 '--enable-multiplatform'
 ------------------------------
 
-If enabled, install executables and libraries in per-platform
-subdirectories of 'EPREFIX/bin' and 'EPREFIX/lib' where EPREFIX is the
-value given or implied for 'exec_prefix'.  This can be overridden by
-explicitly '--bindir=DIR' or '--libdir=DIR'.  In any case, the values
-for 'bindir' and 'libdir' are automatically propagated to all
-subdirectories.
+If enabled and '--bindir=DIR' or '--libdir=DIR' are not specified,
+install executables and libraries in per-platform subdirectories of
+'EPREFIX/bin' and 'EPREFIX/lib' where EPREFIX is the value given or
+implied for 'exec_prefix'.  In any case, the values for 'bindir' and
+'libdir' are automatically propagated to all subdirectories.
 
 7.1.9 '--enable-shared'
 -----------------------
