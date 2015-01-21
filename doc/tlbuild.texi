@@ -895,7 +895,7 @@ Macros for compiler-related checks:
 @defmac KPSE_COMPILER_WARNINGS
 @vindex WARNING_C[XX]FLAGS
 When using the (Objective) C/C++ compiler, set
-@code{WARNING_[OBJ]C[XX}]FLAGS to suitable warning flags (depending on
+@code{WARNING_[OBJ]C[XX]FLAGS} to suitable warning flags (depending on
 the value given to or implied for @code{--enable-compiler-warnings}).
 Call @code{AC_SUBST} for them.  At the moment this only works for GNU
 compilers, but could be extended to others if necessary.
@@ -985,8 +985,8 @@ KPSE_LIBPNG_FLAGS
 @noindent and its @file{Makefile.am} would be along these lines:
 @example
 bin_PROGRAMS = foo
-AM_CPPFLAGS = $@{ZLIB_INCLUDES@} $@{LIBPNG_INCLUDES@}
-foo_LDADD = $@{ZLIB_LIBS@} $@{LIBPNG_LIBS@}
+AM_CPPFLAGS = $@{LIBPNG_INCLUDES@} $@{ZLIB_INCLUDES@}
+foo_LDADD = $@{LIBPNG_LIBS@} $@{ZLIB_LIBS@}
 foo_DEPENDENCIES = $@{ZLIB_DEPEND@} $@{LIBPNG_DEPEND@}
 ## Rebuild libz
 @@ZLIB_RULE@@
@@ -1625,14 +1625,15 @@ rebuilds infrastructure files as needed.  @xref{maintainer-mode,,
 
 @vindex --enable-multiplatform
 @vindex exec_prefix
-@vindex --libdir
-If enabled, install executables and libraries in per-platform
+@vindex --bindir configure @r{option}
+@vindex --libdir configure @r{option}
+If enabled and @code{--bindir=@var{dir}} or @code{--libdir=@var{dir}}
+are not specified, install executables and libraries in per-platform
 subdirectories of @file{@var{eprefix}/bin} and
 @file{@var{eprefix}/lib} where @var{eprefix} is the value given or
-implied for @code{exec_prefix}.  This can be overridden by explicitly
-@code{--bindir=@var{dir}} or @code{--libdir=@var{dir}}.  In any case,
-the values for @code{bindir} and @code{libdir} are automatically
-propagated to all subdirectories.
+implied for @code{exec_prefix}.  In any case, the values for
+@code{bindir} and @code{libdir} are automatically propagated to all
+subdirectories.
 
 
 @node @code{--enable-shared}
@@ -2281,7 +2282,7 @@ less efficient alternative
 
 @example
 #if !(defined HAVE_DECL_STPCPY && HAVE_DECL_STPCPY)
-#static inline char *stpcpy(char *dest, const char *src)
+static inline char *stpcpy(char *dest, const char *src)
 @{
   return strcpy(dest, src) + strlen(src);
 @}

@@ -28,7 +28,7 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.69
-     automake (GNU automake) 1.14.1
+     automake (GNU automake) 1.15
      bison (GNU Bison) 3.0.3
      flex 2.5.39
      ltmain.sh (GNU libtool) 2.4.5
@@ -151,7 +151,7 @@ Macros for compiler-related checks:
 
  -- Macro: KPSE_COMPILER_WARNINGS
      When using the (Objective) C/C++ compiler, set
-     'WARNING_[OBJ]C[XX']FLAGS to suitable warning flags (depending on
+     'WARNING_[OBJ]C[XX]FLAGS' to suitable warning flags (depending on
      the value given to or implied for '--enable-compiler-warnings').
      Call 'AC_SUBST' for them.  At the moment this only works for GNU
      compilers, but could be extended to others if necessary.
@@ -215,8 +215,8 @@ library.  E.g., for 'libs/libpng':
 
 and its 'Makefile.am' would be along these lines:
      bin_PROGRAMS = foo
-     AM_CPPFLAGS = ${ZLIB_INCLUDES} ${LIBPNG_INCLUDES}
-     foo_LDADD = ${ZLIB_LIBS} ${LIBPNG_LIBS}
+     AM_CPPFLAGS = ${LIBPNG_INCLUDES} ${ZLIB_INCLUDES}
+     foo_LDADD = ${LIBPNG_LIBS} ${ZLIB_LIBS}
      foo_DEPENDENCIES = ${ZLIB_DEPEND} ${LIBPNG_DEPEND}
      ## Rebuild libz
      @ZLIB_RULE@
