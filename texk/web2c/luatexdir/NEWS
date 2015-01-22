@@ -1,6 +1,33 @@
 
 This file is in the public domain.
 
+
+==============================================================
+Luatex beta-0.79.3 was released 20150121 (5130)
+==============================================================
+
+
+* It's now possible with the MinGW compilers to build luatex and luajittex as DLL 
+  for Windows 32bit/64bit.  The files are:
+  libkpathsea-6.dll  luajittex.exe  luatex.exe  texlua52.dll  texluajit.dll
+  In the next release the build.sh script be updated; for the moment just add
+  "--enable-shared -disable-native-texlive-build " after --disable-all-pkgs 
+  in TL_MAKE. 
+  Building as DLL was tested only for Windows.
+
+* When possibile  symbols in the exe are now hidden: 
+  this should avoid conflicts with the loading of dynamic shared object.
+
+* several bugfixes and improvements. The patches for MetaPost
+  fix seg. faults occourred with wrong inputs.
+  The functions:
+   mp_get_numeric_value, mp_get_string_value, mp_get_boolean_value 
+  works if the value is a variable (i.e. not an internal variable, 
+  a loop variable and a macro argument);
+  only mp_get_numeric_value now has support for loop variable
+  and internal variable (but still  not for macro arguments).
+
+
 ==============================================================
 Luatex beta-0.79.2 was released 20141111 (5082)
 ==============================================================
@@ -2266,7 +2293,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5082 2014-11-11 09:58:10Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5081 2014-11-07 18:38:33Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
