@@ -24,6 +24,8 @@ my $show_graphics;
 my $graphics_extensions = ":.pdf:.png:.jpg:.eps";
 my $expand_usepackage;
 my $expand_bbl;
+my $fatal;
+my $version;
 
 GetOptions (
 	'h' => \$help,
@@ -38,9 +40,33 @@ GetOptions (
 	'graphics-extensions' => \$graphics_extensions,
 	'expand-usepackage' => \$expand_usepackage,
 	'expand-bbl=s' => \$expand_bbl,
+	'fatal' => \$fatal,
+	'version' => \$version,
 ) or pod2usage(2);
+version() if $version;
 pod2usage(1) if $help;
 pod2usage(-exitstatus => 0, -verbose => 2) if $long_help;
+
+sub get_version
+{
+	my $VERSION = 'v1.1.1';
+	if ($VERSION == '@LATEXPAND' . '_VERSION@') {
+		my($vol,$dir,$file) = File::Spec->splitpath($0);
+		chdir($dir);
+		$VERSION = `git describe --tags HEAD 2>/dev/null`;
+	}
+	if ($VERSION == '') {
+		$VERSION = '<unknown version>';
+	}
+	$VERSION =~ s/^\s+|\s+$//g;
+	return $VERSION;
+}
+
+sub version
+{
+	print "latexpand version ". get_version() .".\n";
+	exit(0);
+}
 
 my $comment_newline;
 
@@ -71,11 +97,18 @@ sub process_file
 {
 	my $file = shift;
 	my $prefix = (shift || "");
+	my $in_comment = 0;
 	local(*FILE);
 	open(FILE, $file) or die "could not open input file '$file'\n";
 	while (my $line = <FILE>) {
+		if ($line =~ /^[ \t]*\\endinput/) {
+		    $line =~ s/(\\endinput.*)\n/% $1/;
+		    $in_comment = 1;
+		    process_line($line, $prefix);
+		    last;
+		}
 		process_line($line, $prefix);
-		if (/^%.*[^\n]\z/ || /[^\\]%.*[^\n]\z/) {
+		if ($line =~ /^%.*[^\n]\z/ || $line =~ /[^\\]%.*[^\n]\z/) {
 			# file ends with a comment not ending with a newline
 			print "\n";
 		}
@@ -88,11 +121,13 @@ sub process_file
 		}
 	}
 	close(FILE);
+	return $in_comment;
 }
 
 sub process_line
 {
-	my ($_, $prefix) = @_;
+	my $prefix;
+	($_, $prefix) = @_;
 	unless ($keep_comments) {
 		if ($empty_comments) {
 			s/^%.*$/%/;
@@ -107,34 +142,48 @@ sub process_line
 		if (my ($before, $ignored, $full_filename, $after)
 		    = /^(([^%]|[^\\]%)*)\\include[{\s]+(.*?)[\s}](.*)$/) {
 			$full_filename = find_tex_file($full_filename . ".tex");
-			say $prefix . "Found include for file: $full_filename\n";
-			print $before . $nl;
-			print '\clearpage{}' . $nl;
-			print '\makeatletter{}' . $nl;
-			print "% start include $full_filename\n" if ($explain);
-			process_file($full_filename, $prefix . "  ");
-			print "% end include $full_filename\n" if ($explain);
-			print '\clearpage{}' . $nl;
-			print $nl . $after . "\n";
-			$_ = "";
+			if ($full_filename) {
+				say $prefix . "Found include for file: $full_filename\n";
+				print $before . $nl;
+				print '\clearpage{}' . $nl;
+				print "% start include $full_filename\n" if ($explain);
+				my $in_comment = process_file($full_filename, $prefix . "  ");
+				if ($explain) {
+				    print " % end include $full_filename\n";
+				} elsif ($in_comment) {
+				    print "\n";
+				}
+				print '\clearpage{}' . $nl;
+				print $nl . $after . "\n";
+				$_ = "";
+			}
 		} elsif (my ($before, $ignored, $full_filename, $after)
 			 = /^(([^%]|[^\\]%)*)\\input[{\s]+(.*?)[\s}](.*)$/) {
 			$full_filename = find_tex_file($full_filename, ":.tex");
-			say $prefix . "Found input for file: $full_filename\n";
-			print $before . $nl;
-			print '\makeatletter{}' . $nl;
-			print "% start input $full_filename\n" if ($explain);
-			process_file($full_filename, $prefix . "  ");
-			print "% end input $full_filename\n" if ($explain);
-			# LaTeX produces this space, so let's do it also
-			print " " . $nl . $after . "\n";
-			$_ = "";
+			if ($full_filename) {
+				say $prefix . "Found input for file: $full_filename\n";
+				print $before . $nl;
+				print "% start input $full_filename\n" if ($explain);
+				my $in_comment = process_file($full_filename, $prefix . "  ");
+				if ($explain) {
+				    print " % end input $full_filename\n";
+				} elsif ($in_comment) {
+				    print "\n";
+				}
+				if ($after =~ /[^\s]/) {
+				    # LaTeX produces this space, so let's do it also
+				    print " " . $nl . $after . "\n";
+				} else {
+				    print " ";
+				}
+				$_ = "";
+			}
 		}
 	}
 	if ($expand_usepackage) {
 		# Don't bother with before and after text, we just require the
 		# usepackage to be alone on its line.
-		if (my ($package_name) = /^\s*\\usepackage{([^}]*)}\s*$/) {
+		if (my ($package_name) = /^\s*\\usepackage{([^}]*)}\s*(%.*)?$/) {
 			my $full = find_file($package_name . ".sty", $TEXINPUTS);
 			if ($full) {
 				say $prefix . "Found package file: $full\n";
@@ -178,7 +227,12 @@ sub find_tex_file
 			return $full;
 		}
 	}
-	die "ERROR: Could not find file [$file]\n";
+	if ($fatal) {
+		die "ERROR: Could not find file [$file]\n";
+	} else {
+		print STDERR "Warning: Could not find file [$file]\n";
+		return undef;
+	}
 }
 
 sub find_file
@@ -221,7 +275,8 @@ latexpand [options] FILE...
 	--expand-usepackage
 	                 Expand \usepackage{...} directives if the
 	                 corresponding .sty file is found in
-	                 $TEXINPUTS
+	                 $TEXINPUTS (or the current directory if
+	                 $TEXINPUTS is not set)
 	--expand-bbl FILE
 	                 Expand the bibliography by inlining FILE
 	                 (should be a *.bbl file)
@@ -233,6 +288,7 @@ latexpand [options] FILE...
 	--graphics_extensions
 	                 colon-separated list of possible graphics extensions
 	                 (used by --show-graphics to find the actual graphics files)
+	--fatal		 Die in case a file can't be found.
 
 =head1 USES
 
@@ -278,3 +334,13 @@ will produce the incorrect
 
 A workaround is to use --empty-comments when such tricky usage of the
 comments package is done.
+
+=head1 SEE ALSO
+
+Instructions to include only the relevant .bib items (french):
+
+https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
+
+=head1 VERSION
+
+This is latexpand version v1.1.1.
