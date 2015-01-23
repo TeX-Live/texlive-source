@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=2.01
+version=2.02
 myname=$(basename $0)
 
 <<'DOC'
@@ -129,7 +129,7 @@ DOC
    help() { sed -n '/^= Synopsis/,/^= /p' $0|sed '1s/.*/Usage:/;/^= /d'; exit; }
 helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' $0|sed -n '1d;$d;p'|less; exit; }
 version() { echo $version; exit; }
-install() { which instscript>&/dev/null && instscript -zp $myname; exit; }
+install() { which instscript>&/dev/null && instscript --zip --pdf --markdown $myname; exit; }
 
 Nor='\e[0m'    # reset color	]
 Err='\e[31;1m' # light red	]
@@ -287,7 +287,7 @@ prov=$(grep '\\Provides' "$loca") || die "no \\Provides..."
 # \ProvideFile statements in them mostly refer to merlin.mbs, or other names
 [[ $arg =~ \.(mbs|bst)$ ]] && dombsbst
 
-dir=$(mktemp -d)
+dir=$(mktemp -d -t $myname.XXXXXXXXXX)
 $debug && echo Running in $dir || trap "rm -rf $dir" 0 1 2 15
 cp "$loca" $dir
 cd $dir
