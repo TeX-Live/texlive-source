@@ -30,13 +30,16 @@
 # Level 2 PS interpreter should work, although in practice using
 # Ghostscript is near-universal.  Many more details below.
 # 
-# One thing not allowed for: the case of
+# One thing not supported is the case of
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.22";
+my $ver = "2.23";
 
 # History
+#  2015/01/22 v2.23 (Karl Berry)
+#    * use # instead of = to placate msys; report from KUROKI Yusuke,
+#      tex-k mail 20 Jan 2015 12:40:16.
 #  2014/06/18 v2.22 (Karl Berry)
 #    * escape % in $outputfilename; report from William Fischer,
 #      tex-k mail 16 Jun 2014 18:45:12.
@@ -179,7 +182,7 @@ There is NO WARRANTY, to the extent permitted by law.
 END_COPYRIGHT
 my $title = "$program $ident\n";
 
-my $on_windows = $^O =~ /^MSWin/;
+my $on_windows = $^O =~ /^(MSWin|msys$)";
 my $on_windows_or_cygwin = $on_windows || $^O eq "cygwin";
 
 ### ghostscript command name
@@ -570,7 +573,8 @@ if ($::opt_pdfsettings
   warnerr "Invalid value for --pdfsettings: $::opt_pdfsettings";
   $::opt_pdfsettings = '';
 }
-push @GS, "-dPDFSETTINGS=/$::opt_pdfsettings" if $::opt_pdfsettings;
+# use # instead of = to avoid mingw path munging.
+push (@GS, "-dPDFSETTINGS#/$::opt_pdfsettings") if $::opt_pdfsettings;
 
 push @GS, qw[
   -dMaxSubsetPct=100
@@ -596,7 +600,8 @@ if ($::opt_autorotate and
         . "(use 'All', 'None' or 'PageByPage'";
   $::opt_autorotate = '';
 }
-push @GS, "-dAutoRotatePages=/$::opt_autorotate" if $::opt_autorotate;
+# use # instead of = to avoid mingw path munging.
+push (@GS, "-dAutoRotatePages#/$::opt_autorotate") if $::opt_autorotate;
 $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
 
 foreach my $gsopt (@::opt_gsopt) {
