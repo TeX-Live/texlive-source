@@ -23,7 +23,7 @@ KpathseaSupportInfo kp_ist,kp_dict;
 
 int main(int argc, char **argv)
 {
-	int i,j,cc=0,startpagenum=-1,ecount=0;
+	int i,j,cc=0,startpagenum=-1,ecount=0,chkopt=1;
 	const char *envbuff;
 	char *p;
 
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 /*   check options   */
 
 	for (i=1,j=0;i<argc;i++) {
-		if ((argv[i][0]=='-')&&(strlen(argv[i])>=2)) {
+		if ((argv[i][0]=='-')&&(strlen(argv[i])>=2)&&chkopt) {
 			switch (argv[i][1]) {
 			case 'c':
 				bcomp=1;
@@ -192,6 +192,10 @@ int main(int argc, char **argv)
 				}
 				break;
 
+			case '-':
+				if (strlen(argv[i])==2) chkopt=0;
+				break;
+
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS.(ptex-staff@ml.asciimw.jp)\n");
@@ -200,7 +204,7 @@ int main(int argc, char **argv)
 #ifdef WIN32
 					       "T"
 #endif
-					       "U] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [idx0 idx1 ...]\n");
+					       "U] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");
 				fprintf(stderr,"-i      use stdin as the input file.\n");
 				fprintf(stderr,"-l      use letter ordering.\n");
