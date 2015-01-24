@@ -182,7 +182,7 @@ There is NO WARRANTY, to the extent permitted by law.
 END_COPYRIGHT
 my $title = "$program $ident\n";
 
-my $on_windows = $^O =~ /^(MSWin|msys$)";
+my $on_windows = $^O =~ /^(MSWin|msys$)/;
 my $on_windows_or_cygwin = $on_windows || $^O eq "cygwin";
 
 ### ghostscript command name
