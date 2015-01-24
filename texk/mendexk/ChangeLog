@@ -1,3 +1,8 @@
+2015-01-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c, mendex.1, mendex.doc: Add '--' option.
+	Update manuals.
+
 2015-01-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fwrite.c: Some compilers mishandle the use of sizeof(buf)

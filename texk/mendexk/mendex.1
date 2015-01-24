@@ -4,7 +4,7 @@
 .SH 名称
 mendex \- 索引整形ツール
 .SH 使用法
-\fBmendex\fR [-ilqrcgEJS] [\fB-s\fI sty\fR] [\fB-d\fI dic\fR] [\fB-o\fI ind\fR] [\fB-d\fI dic\fR] [\fB-t\fI log\fR] [\fB-p\fI no\fR] [\fB-I\fI enc\fR] [\fI idx0 idx1 idx2 ...\fR]
+\fBmendex\fR [-ilqrcgEJSU] [\fB-s\fI sty\fR] [\fB-d\fI dic\fR] [\fB-o\fI ind\fR] [\fB-d\fI dic\fR] [\fB-t\fI log\fR] [\fB-p\fI no\fR] [\fB-I\fI enc\fR] [\fB--\fR] [\fI idx0 idx1 idx2 ...\fR]
 .SH 解説
 .PP
 \fImendex\fR は文書の索引を作成するツールです。 LaTeX により抽出された索引リストファイル(\fI.idx\fR)を並べ替え、実際の索引のソースファイルの形に整形します。 \fImakeindex\fR と互換性があり、さらに「読み」の扱いの手間を減らすように特殊化されています。
@@ -65,6 +65,8 @@ mendex \- 索引整形ツール
 .TP 10
 \fB-I\fI enc\fR
 内部バッファのコードを\fIenc\fR に指定します。\fIenc\fR には \fIeuc\fR(EUC-JP) または \fIutf8\fR(UTF-8)が指定可能です。
+\fB--\fR
+以降はオプション文字列と解釈しません。
 
 
 .SH スタイルファイル
@@ -490,8 +492,6 @@ indファイル			index sort
 その他、詳細については \fImakeindex\fR に準拠。
 .PP
 .SH 問題点等
-ファイル名の先頭の文字が '-' であるファイルは扱えません。
-
 複数のページ記法を使用する場合、ページ順に.idxファイルを与えないとページ番号を誤認することがあります。
 .PP
 .SH 参照
