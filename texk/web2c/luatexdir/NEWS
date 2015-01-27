@@ -1,6 +1,13 @@
 
 This file is in the public domain.
 
+==============================================================
+Luatex beta-0.79.3.1 was released 20150122 (5140)
+==============================================================
+
+* Fixed a bug in  mp.w with a wrong input that gives a seg. fault.
+
+
 
 ==============================================================
 Luatex beta-0.79.3 was released 20150121 (5130)

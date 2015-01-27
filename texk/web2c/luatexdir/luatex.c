@@ -29,7 +29,7 @@ static const char _svn_version[] =
 
 #define TeX
 
-int luatex_svn = 5130;
+int luatex_svn = 5140;
 int luatex_version = 79;        /* \.{\\luatexversion}  */
 int luatex_revision = '3';      /* \.{\\luatexrevision}  */
 int luatex_date_info = 2015012100;     /* the compile date is now hardwired */
