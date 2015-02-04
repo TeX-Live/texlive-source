@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -30,13 +30,9 @@ AC_PROG_RANLIB
 AC_CHECK_HEADERS([memory.h stddef.h stdlib.h string.h strings.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
-AC_FUNC_ERROR_AT_LINE
-dnl AC_FUNC_MALLOC
-AC_FUNC_STRTOD
 AC_CHECK_FUNCS([memchr memmove memset strchr strrchr strtol])
 
 AC_SUBST([MTX_TREE], [mtx-]mtx_version)
