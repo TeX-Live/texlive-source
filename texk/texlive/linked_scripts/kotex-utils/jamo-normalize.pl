@@ -50,15 +50,15 @@ while (@ARGV) {
 
 ##### variables #####
 
-my $cho		= "\x{1100}-\x{115F}\x{A960}-\x{A97C}";
-my $jung	= "\x{1160}-\x{11A7}\x{D7B0}-\x{D7C6}";
-my $jong	= "\x{11A8}-\x{11FF}\x{D7CB}-\x{D7FB}";
-my $tmrk	= "\x{302E}\x{302F}";
-my $boundary	= "\x{200B}";
-my $syllblock	= "[$cho][$jung][$jong]?[$tmrk]?";
-my $jamos	= "[$cho$jung$jong$tmrk]";
+my $cho       = "\x{1100}-\x{115F}\x{A960}-\x{A97C}";
+my $jung      = "\x{1160}-\x{11A7}\x{D7B0}-\x{D7C6}";
+my $jong      = "\x{11A8}-\x{11FF}\x{D7CB}-\x{D7FB}";
+my $tmrk      = "\x{302E}\x{302F}";
+my $boundary  = "\x{200B}";
+my $syllblock = "[$cho][$jung][$jong]?[$tmrk]?";
+my $jamos     = "[$cho$jung$jong$tmrk]";
 
-my %jamo2cjamo	= (
+my %jamo2cjamo = (
   0x1100 => 0x3131, 0x1101 => 0x3132, 0x1102 => 0x3134, 0x1103 => 0x3137,
   0x1104 => 0x3138, 0x1105 => 0x3139, 0x1106 => 0x3141, 0x1107 => 0x3142,
   0x1108 => 0x3143, 0x1109 => 0x3145, 0x110A => 0x3146, 0x110B => 0x3147,
@@ -182,7 +182,7 @@ sub insert_boundary {
       my @subparts = split /($jamos)/, $parts[$i];
       my @newsubparts;
       for my $i (0 .. $#subparts) {
-	push @newsubparts, $subparts[$i] if $subparts[$i];
+        push @newsubparts, $subparts[$i] if $subparts[$i];
       }
       push @newparts, join ($boundary, @newsubparts);
     }
