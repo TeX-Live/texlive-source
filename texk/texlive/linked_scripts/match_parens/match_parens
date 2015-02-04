@@ -2,29 +2,71 @@
 # encoding: utf-8
 
  MYNAME = File.basename($0)
-Version = '1.41'
+Version = '1.42'
 
 <<'DOC'
-= match_parens - find mismatches of parentheses, braces, (angle) brackets, in texts
+= match_parens - find mismatches of various brackets and quotes
 
 = Synopsis
 match_parens [filename]	
+
+Options:
+-p,--pairs=S	set matching pairs to S (default: |{}[]()""“”''‘’|)
+-n,--number=N	set number of mismatching characters shown to N (default: 10)
+-l,--latex	convert |``...''| to |“...”| before testing
+-V,--version	print version and exit
+-h,--help	print short help information and exit
+   --test	do an internal test and exit
 
 = Description
 Mismatches of parentheses, braces, (angle) brackets, especially in TeX
 sources which may be rich in those, may be difficult to trace. This little
 script helps you by writing your text to standard output, after adding a
 left margin to your text, which will normally be almost empty, but will
-clearly show any mismatches. (Just try me on myself to see that the
+clearly show up to 10 mismatches. (Just try me on myself to see that the
 parenthesis starting this sentence will not appear to be matched at the end
 of the file. If you look at me in the vim editor, then select this
-paragraph and try the command |:!%|.
+paragraph and try the command: |:!%|.
+
+By default, the following pairs are tested:
+()	round brackets or parentheses
+{}	curly brackets or braces
+[]	square brackets
+<>	angle brackets (within html text only)
+""	ASCII double quotes
+“”	Unicode double quotation marks
+''	ASCII single quotes
+‘’	Unicode single quotation marks
 
 The exit value of the script is 0 when there are no mismatches, 1 otherwise.
 
 Angle brackets are only looked for inside HTML text, where HTML is
 supposed to start with |<html>| or |=begin rdoc| and to end with
 |</html>| or |=end|.
+
+= Options
+-p,--pairs=S	
+	Set matching pairs to S (default: |{}[]()""“”''‘’|). For example, if you
+	want to look for mismatching ASCII single quotes /only/, use |--pairs="''"|.
+	Or, if you want to match braces and guillemets only, use |-p «»|.
+	Note that if html is detected in your text, |<>| is automatically added
+	to the pairs list. So by default, |<...>| is tested only in html, but
+	you can test that in other text by specifying the |<>| pair in the
+	|--pairs| option.
+-n,--number=N	
+	Set number of mismatching characters shown to N. By default, only the
+	first 10 are shown.
+-l,--latex	
+	convert |``...''| to |“...”|` before testing.
+-V,--version	
+	print this script's version and exit.
+-h,--help	
+	print short help information and exit.
+   --test	
+	do an internal test and exit. Note that if, with the |--pairs| option,
+	you specify an other pairs list than the default, the test will
+	probably fail, but you can still see the effects of your pairs list on
+	the test data.
 
 = Examples
 Suppose we have two files, |good| and |bad|, containing these texts:
@@ -34,13 +76,13 @@ Suppose we have two files, |good| and |bad|, containing these texts:
 
 then here are some usage examples. First a simple test on these files:
 	$ match_parens good
-	      1 	This is a (simple) test
-	      2 	without mismatches
+	      1 |	| This is a (simple) test
+	      2 |	| without mismatches
 	$ echo $?
 	0
 	$ match_parens bad
-	      1 (	This is a (simple test
-	      2 (	containing mismatches
+	      1 | (	| This is a (simple test
+	      2 | (	| containing mismatches
 	$ echo $?
 	1
 
@@ -57,17 +99,13 @@ Matches must be in correct order:
 	$ echo -e "This is a ([simple)] test\n" | match_parens
 	      1 ([)]	This is a ([simple)] test
 	      2 ([)]	
-= Bugs
-Conversion of ``...'' to “...” should only be done in latex files
-
-= See also
-matchparens: the Bash version, which is 10+ times slower
 
 = Changes
-Changes with respect to version 1.4:
-- clearer output
-- added --help and --version options
-- documentation adapted to gendoc
+Changes with respect to version 1.41:
+- test on more quote characters (single, double, ASCII, Unicode)
+- option for changing the character pairs to be tested
+- conversion of latex' ``...'' is now an option
+- built-in test option |--test|
 
 = Author and copyright
 Author	Wybo Dekker
@@ -77,8 +115,26 @@ DOC
 
 require 'optparse'
 
+number, input, latex, n,  s,  html,  test,  parenstext =
+    10, STDIN, false, 10, '', false, false, %q{{}[]()""“”''‘’}
+
 ARGV.options do |opt|
   opt.banner = "#{MYNAME} - find mismatches of parentheses, braces, (angle) brackets, in texts\n"
+  opt.on('-p','--pairs=S',String,
+    "set matching pairs to S (default: #{parenstext})"
+  ) do |v|
+      parenstext = v
+    end
+  opt.on('-n','--number=N',Integer,
+    "set number of mismatching characters shown to N (default: #{number})"
+  ) do |v|
+      number = v
+    end
+  opt.on('-l','--latex',
+    'convert ``...'' to “...” before testing') do
+      puts opt.to_s.sub(/^ *-I\n/,'')
+      exit
+    end
   opt.on('-V','--version',
     'print version and exit') do
       puts Version
@@ -89,34 +145,69 @@ ARGV.options do |opt|
       puts opt.to_s.sub(/^ *-I\n/,'')
       exit
     end
-  opt.on('-I') do system("instscript -zp #{MYNAME}"); exit; end
+  opt.on('--test',
+    'do an internal test and exit') do
+      input = DATA
+      test = true
+    end
+  opt.on('-I') do system("instscript --zip --pdf --markdown #{MYNAME}"); exit; end
   opt.parse!
 end
-      s=''
-      n=0
-   html=false
- parens='{}[]()“”'
+parenshtml = parenstext =~ /<>/ ? parenstext : parenstext + '<>'
+parens = parenstext
 
 arg = ARGV[0] || ''
 unless arg.empty?
   test(?e,arg) or raise("file #{arg} does not exist")
   test(?r,arg) or raise("file #{arg} is not readable")
+  input = File.new(arg)
 end
-while x = gets()
+while x = input.gets()
+  # convert LaTeX's ``...'' to “...”
   x = x.gsub(/``/,'“').gsub(/''/,'”')
 
+  # only inside html text we check <>, too:
   if html && (x=~/^([# ]*=end)/ || x=~/<\/html>/i)
          html = false
-         parens = '{}[]()'
-  elsif !html && (x=~/^([# ]*=begin rdoc)/ || x=~/<html>/i)
+         parens = parenstext
+  elsif x=~/^([# ]*=begin rdoc)/ || x=~/<html>/i
          html = true
-         parens = '{}[]()“”<>'
-  end   
+         parens = parenshtml
+  end
+  # match any pair like (), {}, [], “”, <> in parens
+  re = Regexp.new(parens.scan(/../).join('|').gsub(/[{}()\[\]]/,'\\\\\&'))
 
   # remove {x} where x in []{}()<>, copy all parens to s
-  s << x.gsub(/“\{[\[\]{}()<>]\}”/,'').tr('^'+parens,'')
+  s << x.tr('^'+parens,'')
   # remove matches from inside
-  while s.gsub!(/\{\}|\(\)|\[\]|<>|“”/,'') do end
-  puts "%4d | %-10s | %s" % [n+=1,s.slice(0..9),x]
+  while s.gsub!(re,'') do end
+  puts "%4d | %-*s | %s" % [n+=1,number,s.slice(0..number-1),x]
 end
-exit s.empty? ? 0 : 1
+
+if test
+  if s != '“{”}'
+    raise("test failed! (final mismatch should be “{”})")
+  else
+    puts "test succeeded"
+  end
+else
+  exit s.empty? ? 0 : 1
+end
+__END__
+This first line “{()}” has no mismatch
+but here ( we have one.
+It is even extended “{() with two more.
+
+Here comes an untested angle bracket <, but here }” all) mismatches are erased.
+
+=begin rdoc
+Inside html text now. ‘{There is an unmatched} single quote here.
+A brace { is added to it here,
+and an angle bracket < is added.
+But > all mismatches <are>}’ cancelled here.
+=end
+
+Four mismatches start ({"'start {here} but
+are cancelled '" here}).
+We end here with a mismatch caused by “{(improper)”} nesting!
+But the test succeeds because we expected that.
