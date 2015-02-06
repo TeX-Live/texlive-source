@@ -30,6 +30,7 @@
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2013 Pino Toscano <pino@kde.org>
+// Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -59,6 +60,7 @@
 #include "Lexer.h"
 #include "GfxState.h"
 #include "Stream.h"
+#include "XRef.h"
 #include "JBIG2Stream.h"
 #include "Stream-CCITT.h"
 #include "CachedFile.h"
@@ -337,10 +339,18 @@ Stream *Stream::makeFilter(char *name, Stream *str, Object *params, int recursio
     str = new FlateStream(str, pred, columns, colors, bits);
   } else if (!strcmp(name, "JBIG2Decode")) {
     if (params->isDict()) {
-      params->dictLookup("JBIG2Globals", &globals, recursion);
+      XRef *xref = params->getDict()->getXRef();
+      params->dictLookupNF("JBIG2Globals", &globals);
+      while (globals.isRef()) {
+        obj.free();
+        globals.copy(&obj);
+        globals.free();
+        obj.fetch(xref, &globals);
+      }
     }
-    str = new JBIG2Stream(str, &globals);
+    str = new JBIG2Stream(str, &globals, &obj);
     globals.free();
+    obj.free();
   } else if (!strcmp(name, "JPXDecode")) {
     str = new JPXStream(str);
   } else if (!strcmp(name, "Crypt")) {

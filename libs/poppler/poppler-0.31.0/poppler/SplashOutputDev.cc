@@ -15,14 +15,14 @@
 //
 // Copyright (C) 2005 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2006 Stefan Schweizer <genstef@gentoo.org>
-// Copyright (C) 2006-2014 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
 // Copyright (C) 2009-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2009 William Bader <williambader@hotmail.com>
+// Copyright (C) 2009, 2014, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2010 Patrick Spendrin <ps_ml@gmx.de>
 // Copyright (C) 2010 Brian Cameron <brian.cameron@oracle.com>
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
@@ -1252,17 +1252,14 @@ SplashOutputDev::SplashOutputDev(SplashColorMode colorModeA,
 				 GBool reverseVideoA,
 				 SplashColorPtr paperColorA,
 				 GBool bitmapTopDownA,
-				 GBool allowAntialiasA, 
-         SplashThinLineMode thinLineMode,
-         GBool overprintPreviewA) {
+				 SplashThinLineMode thinLineMode,
+				 GBool overprintPreviewA) {
   colorMode = colorModeA;
   bitmapRowPad = bitmapRowPadA;
   bitmapTopDown = bitmapTopDownA;
   bitmapUpsideDown = gFalse;
-  allowAntialias = allowAntialiasA;
-  vectorAntialias = allowAntialias &&
-		      globalParams->getVectorAntialias() &&
-		      colorMode != splashModeMono1;
+  fontAntialias = gTrue;
+  vectorAntialias = gTrue;
   overprintPreview = overprintPreviewA;
   enableFreeTypeHinting = gFalse;
   enableSlightHinting = gFalse;
@@ -1383,8 +1380,7 @@ void SplashOutputDev::startDoc(PDFDoc *docA) {
 				    enableFreeTypeHinting,
 				    enableSlightHinting,
 #endif
-				    allowAntialias &&
-				      globalParams->getAntialias() &&
+				      getFontAntialias() &&
 				      colorMode != splashModeMono1);
   for (i = 0; i < nT3Fonts; ++i) {
     delete t3FontCache[i];
@@ -1897,7 +1893,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 
   } else {
 
-    if (!(fontLoc = gfxFont->locateFont((xref) ? xref : doc->getXRef(), gFalse))) {
+    if (!(fontLoc = gfxFont->locateFont((xref) ? xref : doc->getXRef(), NULL))) {
       error(errSyntaxError, -1, "Couldn't find a font for '{0:s}'",
 	    gfxFont->getName() ? gfxFont->getName()->getCString()
 	                       : "(unnamed)");
@@ -4151,6 +4147,7 @@ GBool SplashOutputDev::getVectorAntialias() {
 }
 
 void SplashOutputDev::setVectorAntialias(GBool vaa) {
+  vaa = vaa && colorMode != splashModeMono1;
   vectorAntialias = vaa;
   splash->setVectorAntialias(vaa);
 }

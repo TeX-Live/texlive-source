@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2005 Martin Kretzschmar <martink@gnome.org>
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
-// Copyright (C) 2005, 2007-2010, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2010, 2012, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
 // Copyright (C) 2006, 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
@@ -23,7 +23,7 @@
 // Copyright (C) 2007 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2007, 2009 Jonathan Kew <jonathan_kew@sil.org>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
-// Copyright (C) 2009, 2011, 2012 William Bader <williambader@hotmail.com>
+// Copyright (C) 2009, 2011, 2012, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2010, 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2010 Patrick Spendrin <ps_ml@gmx.de>
@@ -597,18 +597,6 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
   psResidentFonts = new GooHash(gTrue);
   psResidentFonts16 = new GooList();
   psResidentFontsCC = new GooList();
-  psEmbedType1 = gTrue;
-  psEmbedTrueType = gTrue;
-  psEmbedCIDPostScript = gTrue;
-  psEmbedCIDTrueType = gTrue;
-  psFontPassthrough = gFalse;
-  psPreload = gFalse;
-  psOPI = gFalse;
-  psASCIIHex = gFalse;
-  psBinary = gFalse;
-  psUncompressPreloadedImages = gFalse;
-  psRasterResolution = 300;
-  psRasterMono = gFalse;
   textEncoding = new GooString("UTF-8");
 #if defined(_WIN32)
   textEOL = eolDOS;
@@ -620,9 +608,6 @@ GlobalParams::GlobalParams(const char *customPopplerDataDir)
   textPageBreaks = gTrue;
   textKeepTinyChars = gFalse;
   enableFreeType = gTrue;
-  antialias = gTrue;
-  vectorAntialias = gTrue;
-  antialiasPrinting = gFalse;
   strokeAdjust = gTrue;
   screenType = screenUnset;
   screenSize = -1;
@@ -1548,114 +1533,6 @@ PSFontParam16 *GlobalParams::getPSResidentFontCC(GooString *collection,
   return p;
 }
 
-GBool GlobalParams::getPSEmbedType1() {
-  GBool e;
-
-  lockGlobalParams;
-  e = psEmbedType1;
-  unlockGlobalParams;
-  return e;
-}
-
-GBool GlobalParams::getPSEmbedTrueType() {
-  GBool e;
-
-  lockGlobalParams;
-  e = psEmbedTrueType;
-  unlockGlobalParams;
-  return e;
-}
-
-GBool GlobalParams::getPSEmbedCIDPostScript() {
-  GBool e;
-
-  lockGlobalParams;
-  e = psEmbedCIDPostScript;
-  unlockGlobalParams;
-  return e;
-}
-
-GBool GlobalParams::getPSEmbedCIDTrueType() {
-  GBool e;
-
-  lockGlobalParams;
-  e = psEmbedCIDTrueType;
-  unlockGlobalParams;
-  return e;
-}
-
-GBool GlobalParams::getPSFontPassthrough() {
-  GBool e;
-
-  lockGlobalParams;
-  e = psFontPassthrough;
-  unlockGlobalParams;
-  return e;
-}
-
-GBool GlobalParams::getPSPreload() {
-  GBool preload;
-
-  lockGlobalParams;
-  preload = psPreload;
-  unlockGlobalParams;
-  return preload;
-}
-
-GBool GlobalParams::getPSOPI() {
-  GBool opi;
-
-  lockGlobalParams;
-  opi = psOPI;
-  unlockGlobalParams;
-  return opi;
-}
-
-GBool GlobalParams::getPSASCIIHex() {
-  GBool ah;
-
-  lockGlobalParams;
-  ah = psASCIIHex;
-  unlockGlobalParams;
-  return ah;
-}
-
-GBool GlobalParams::getPSBinary() {
-  GBool binary;
-
-  lockGlobalParams;
-  binary = psBinary;
-  unlockGlobalParams;
-  return binary;
-}
-
-GBool GlobalParams::getPSUncompressPreloadedImages() {
-  GBool ah;
-
-  lockGlobalParams;
-  ah = psUncompressPreloadedImages;
-  unlockGlobalParams;
-  return ah;
-}
-
-double GlobalParams::getPSRasterResolution() {
-  double res;
-
-  lockGlobalParams;
-  res = psRasterResolution;
-  unlockGlobalParams;
-  return res;
-}
-
-GBool GlobalParams::getPSRasterMono() {
-  GBool mono;
-
-  lockGlobalParams;
-  mono = psRasterMono;
-  unlockGlobalParams;
-  return mono;
-}
-
 GooString *GlobalParams::getTextEncodingName() {
   GooString *s;
 
@@ -1697,33 +1574,6 @@ GBool GlobalParams::getEnableFreeType() {
 
   lockGlobalParams;
   f = enableFreeType;
-  unlockGlobalParams;
-  return f;
-}
-
-GBool GlobalParams::getAntialias() {
-  GBool f;
-
-  lockGlobalParams;
-  f = antialias;
-  unlockGlobalParams;
-  return f;
-}
-
-GBool GlobalParams::getVectorAntialias() {
-  GBool f;
-
-  lockGlobalParams;
-  f = vectorAntialias;
-  unlockGlobalParams;
-  return f;
-}
-
-GBool GlobalParams::getAntialiasPrinting() {
-  GBool f;
-
-  lockGlobalParams;
-  f = antialiasPrinting;
   unlockGlobalParams;
   return f;
 }
@@ -1973,78 +1823,6 @@ void GlobalParams::setPSLevel(PSLevel level) {
   unlockGlobalParams;
 }
 
-void GlobalParams::setPSEmbedType1(GBool embed) {
-  lockGlobalParams;
-  psEmbedType1 = embed;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSEmbedTrueType(GBool embed) {
-  lockGlobalParams;
-  psEmbedTrueType = embed;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSEmbedCIDPostScript(GBool embed) {
-  lockGlobalParams;
-  psEmbedCIDPostScript = embed;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSEmbedCIDTrueType(GBool embed) {
-  lockGlobalParams;
-  psEmbedCIDTrueType = embed;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSFontPassthrough(GBool passthrough) {
-  lockGlobalParams;
-  psFontPassthrough = passthrough;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSPreload(GBool preload) {
-  lockGlobalParams;
-  psPreload = preload;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSOPI(GBool opi) {
-  lockGlobalParams;
-  psOPI = opi;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSASCIIHex(GBool hex) {
-  lockGlobalParams;
-  psASCIIHex = hex;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSBinary(GBool binary) {
-  lockGlobalParams;
-  psBinary = binary;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSUncompressPreloadedImages(GBool uncomp) {
-  lockGlobalParams;
-  psUncompressPreloadedImages = uncomp;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSRasterResolution(double res) {
-  lockGlobalParams;
-  psRasterResolution = res;
-  unlockGlobalParams;
-}
-
-void GlobalParams::setPSRasterMono(GBool mono) {
-  lockGlobalParams;
-  psRasterMono = mono;
-  unlockGlobalParams;
-}
-
 void GlobalParams::setTextEncoding(char *encodingName) {
   lockGlobalParams;
   delete textEncoding;
@@ -2096,30 +1874,6 @@ GBool GlobalParams::setDisableFreeTypeHinting(char *s) {
   ok = parseYesNo2(s, &disableFreeTypeHinting);
   unlockGlobalParams;
   return ok;
-}
-
-GBool GlobalParams::setAntialias(char *s) {
-  GBool ok;
-
-  lockGlobalParams;
-  ok = parseYesNo2(s, &antialias);
-  unlockGlobalParams;
-  return ok;
-}
-
-GBool GlobalParams::setVectorAntialias(char *s) {
-  GBool ok;
-
-  lockGlobalParams;
-  ok = parseYesNo2(s, &vectorAntialias);
-  unlockGlobalParams;
-  return ok;
-}
-
-void GlobalParams::setAntialiasPrinting(GBool anti) {
-  lockGlobalParams;
-  antialiasPrinting = anti;
-  unlockGlobalParams;
 }
 
 void GlobalParams::setStrokeAdjust(GBool adjust)

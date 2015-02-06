@@ -6,7 +6,8 @@
 //
 // Copyright 2008, 2010 Albert Astals Cid <aacid@kde.org>
 // Copyright 2011 Daniel Glöckner <daniel-gl@gmx.net>
-// Copyright 2013,2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2015 Adam Reichold <adam.reichold@t-online.de>
 //
 // Licensed under GPLv2 or later
 //
@@ -49,10 +50,6 @@ private:
   void init();
   virtual GBool hasGetChars() { return true; }
   virtual int getChars(int nChars, Guchar *buffer);
-
-  int doGetChar();
-
-  int doLookChar();
 };
 
 #endif

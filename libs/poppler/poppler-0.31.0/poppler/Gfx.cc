@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
-// Copyright (C) 2005-2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2013, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Thorkild Stray <thorkild@ifi.uio.no>
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006-2011 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -3355,6 +3355,12 @@ void Gfx::doGouraudTriangleShFill(GfxGouraudTriangleShading *shading) {
   delete reusablePath;
 }
 
+static inline void checkTrue(bool b, const char *message) {
+  if (unlikely(!b)) {
+    error(errSyntaxError, -1, message);
+  }
+}
+
 void Gfx::gouraudFillTriangle(double x0, double y0, GfxColor *color0,
 			      double x1, double y1, GfxColor *color1,
 			      double x2, double y2, GfxColor *color2,
@@ -3373,11 +3379,11 @@ void Gfx::gouraudFillTriangle(double x0, double y0, GfxColor *color0,
     state->setFillColor(color0);
     out->updateFillColor(state);
 
-    path->reset();                         assert(!path->isEnd());
-    path->setCoord(x0,y0);  path->next();  assert(!path->isEnd());
-    path->setCoord(x1,y1);  path->next();  assert(!path->isEnd());
-    path->setCoord(x2,y2);  path->next();  assert(!path->isEnd());
-    path->setCoord(x0,y0);  path->next();  assert( path->isEnd());
+    path->reset();                         checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x0,y0);  path->next();  checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x1,y1);  path->next();  checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x2,y2);  path->next();  checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x0,y0);  path->next();  checkTrue( path->isEnd(), "Path should be at end");
     out->fill(state);
 
   } else {
@@ -3420,11 +3426,11 @@ void Gfx::gouraudFillTriangle(double x0, double y0, double color0,
     state->setFillColor(&color);
     out->updateFillColor(state);
 
-    path->reset();                         assert(!path->isEnd());
-    path->setCoord(x0,y0);  path->next();  assert(!path->isEnd());
-    path->setCoord(x1,y1);  path->next();  assert(!path->isEnd());
-    path->setCoord(x2,y2);  path->next();  assert(!path->isEnd());
-    path->setCoord(x0,y0);  path->next();  assert( path->isEnd());
+    path->reset();                         checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x0,y0);  path->next();  checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x1,y1);  path->next();  checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x2,y2);  path->next();  checkTrue(!path->isEnd(), "Path should not be at end");
+    path->setCoord(x0,y0);  path->next();  checkTrue( path->isEnd(), "Path should be at end");
     out->fill(state);
 
   } else {
