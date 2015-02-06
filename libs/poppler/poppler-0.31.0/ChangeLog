@@ -1,3 +1,215 @@
+commit f932315e559a7857d9c5642eb04efc0d2b717789
+Author: suzuki toshiya <mpsuzuki@hiroshima-u.ac.jp>
+Date:   Tue Jan 20 22:05:29 2015 +1030
+
+    cairo: support embedding JBIG2 image data
+
+    http://lists.freedesktop.org/archives/poppler/2014-December/011183.html
+
+ poppler/CairoOutputDev.cc | 117
+ ++++++++++++++++++++++++++++++++++++++--------
+ poppler/CairoOutputDev.h  |   3 ++
+ poppler/JBIG2Stream.cc    |   9 +++-
+ poppler/JBIG2Stream.h     |   4 +-
+ poppler/Stream.cc         |  13 +++++-
+ 5 files changed, 121 insertions(+), 25 deletions(-)
+
+commit 78abf540057181b708c546aee421f81a1dd58331
+Author: Adam Reichold <adamreichold@myopera.com>
+Date:   Wed Jan 21 22:30:45 2015 +0100
+
+    Worlds -> Words
+
+ qt4/src/poppler-page.cc    | 4 ++--
+ qt4/src/poppler-qt4.h      | 2 +-
+ qt4/tests/check_search.cpp | 4 ++--
+ qt5/src/poppler-page.cc    | 4 ++--
+ qt5/src/poppler-qt5.h      | 2 +-
+ qt5/tests/check_search.cpp | 4 ++--
+ 6 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 027eac4e565576ca2e7042e21426e28abd775d98
+Author: Adam Reichold <adamreichold@myopera.com>
+Date:   Tue Jan 20 00:09:09 2015 +0100
+
+    Expose whole-words search option in Qt frontends
+
+ qt4/src/poppler-page-private.h |   5 +-
+ qt4/src/poppler-page.cc        | 114
+ +++++++++++++++++++++++++------------
+ qt4/src/poppler-qt4.h          |  44 +++++++++++++-
+ qt4/tests/check_search.cpp     | 112 +++++++++++++++++++++++++++++++-----
+ qt5/src/poppler-page-private.h |   5 +-
+ qt5/src/poppler-page.cc        | 116
+ +++++++++++++++++++++++++------------
+ qt5/src/poppler-qt5.h          |  46 +++++++++++++--
+ qt5/tests/check_search.cpp     | 126
+ +++++++++++++++++++++++++++++++++--------
+ 8 files changed, 447 insertions(+), 121 deletions(-)
+
+commit 30a0baa353c374165e5f411efc4203746f14a74d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 18 15:39:53 2015 +0100
+
+    Move more variables from GlobalParams to PSOutputDev
+
+ poppler/CairoFontEngine.cc |   4 +-
+ poppler/GfxFont.cc         |  15 ++---
+ poppler/GfxFont.h          |   7 ++-
+ poppler/GlobalParams.cc    | 144
+ ---------------------------------------------
+ poppler/GlobalParams.h     |  28 ---------
+ poppler/PSOutputDev.cc     | 121 +++++++++++++++++++------------------
+ poppler/PSOutputDev.h      |  30 +++++++++-
+ poppler/SplashOutputDev.cc |   2 +-
+ qt4/src/ArthurOutputDev.cc |   4 +-
+ qt5/src/ArthurOutputDev.cc |   4 +-
+ utils/pdftops.cc           |  36 ++++--------
+ 11 files changed, 116 insertions(+), 279 deletions(-)
+
+commit 8fed995c3457d64669ae12901450b7c811599dba
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 18 14:52:53 2015 +0100
+
+    Forgot to delete this in the previous commit
+
+ poppler/GlobalParams.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 4992ff7fa062462507733494827fdad7eaaa95b3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 18 13:57:36 2015 +0100
+
+    Move raster mono and resolution from GlobalParams to PSOutputDev
+
+ poppler/GlobalParams.cc | 32 --------------------------------
+ poppler/GlobalParams.h  |  7 -------
+ poppler/PSOutputDev.cc  | 18 +++++++-----------
+ poppler/PSOutputDev.h   |  6 ++++++
+ utils/pdftops.cc        |  7 ++++---
+ 5 files changed, 17 insertions(+), 53 deletions(-)
+
+commit 54908f675eda96c363528198e8c530921df2f45a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 18 13:34:45 2015 +0100
+
+    Move psUncompressPreloadedImages from GlobalParams to PSOutputDev
+
+    It belongs there and PSOutputDev is always created by the external
+    user
+    so in case someone wants to set it, it is the same amount of work
+    to set it in GlobalParams than in PSOutputDev
+
+ poppler/GlobalParams.cc | 16 ----------------
+ poppler/GlobalParams.h  |  3 ---
+ poppler/PSOutputDev.cc  |  9 +++++----
+ poppler/PSOutputDev.h   |  2 ++
+ 4 files changed, 7 insertions(+), 23 deletions(-)
+
+commit 136d7aa5e79f153dfcb216c58598e33a8ff16630
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 18 13:28:26 2015 +0100
+
+    Remove declared but not defined function
+
+ poppler/GlobalParams.h | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit fdba9154d9a176759c765180805e608d4959c34e
+Author: Adam Reichold <adamreichold@myopera.com>
+Date:   Fri Jan 16 19:57:59 2015 +0100
+
+    pdftoppm: parse the flags earlier and only once
+
+ utils/pdftoppm.cc | 42 +++++++++++++++---------------------------
+ 1 file changed, 15 insertions(+), 27 deletions(-)
+
+commit 6b072500b5ac936631be6b29b7d5a591848a18f3
+Author: William Bader <williambader@hotmail.com>
+Date:   Wed Jan 14 23:28:03 2015 +0100
+
+    Add rasterization option to pdftops
+
+    Also removes GlobalParams stuff \o/
+
+    Coded in conjuntion with Albert
+
+    Bug #85934
+
+ cpp/poppler-page-renderer.cpp |  5 ++--
+ poppler/GlobalParams.cc       | 58
+ ++-----------------------------------------
+ poppler/GlobalParams.h        | 16 +++---------
+ poppler/PSOutputDev.cc        | 14 +++++------
+ poppler/PSOutputDev.h         |  5 +++-
+ poppler/SplashOutputDev.cc    | 19 ++++++--------
+ poppler/SplashOutputDev.h     | 11 +++++---
+ qt4/src/poppler-page.cc       |  7 +++---
+ qt5/src/poppler-page.cc       |  7 +++---
+ utils/pdftohtml.cc            |  9 +++----
+ utils/pdftoppm.cc             | 49 ++++++++++++++++++++++++++----------
+ utils/pdftops.cc              | 14 ++++++++++-
+ 12 files changed, 96 insertions(+), 118 deletions(-)
+
+commit dc9751e6ac47a708ba6e7a68560bdce6a2e4a010
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jan 9 15:50:02 2015 +0100
+
+    Compile++
+
+ poppler/GfxState.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d91876a0c7a936b1f6f461d80131d7586a6c1a5e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 8 20:13:06 2015 +0100
+
+    Accept malformed documents whose root is a Page instead of a Pages
+
+    gs and Adobe Reader do it so it's "common" enough
+
+    Bug #88172
+
+ poppler/Catalog.cc | 37 ++++++++++++++++++++++++++++++++-----
+ 1 file changed, 32 insertions(+), 5 deletions(-)
+
+commit 7ce86b9be058408eb567d8d0b9747853a66c116f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 8 17:35:28 2015 +0100
+
+    Remove assert in gouraudFillTriangle
+
+    We don't *need* the assert, an error() is fine and the malformed
+    document
+    will just get rendered wrongly instead of "crashing"
+
+    Bugs #85274
+
+ poppler/Gfx.cc | 28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
+
+commit 9e9df4b20d17478996780008bc9802a857d173fc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Jan 8 17:01:52 2015 +0100
+
+    Fix crash on broken document
+
+    Bug #85281
+
+ poppler/GfxState.cc | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+commit 636faafcb84b856580398f7883b6406d645c85d1
+Author: Adam Reichold <adamreichold@myopera.com>
+Date:   Tue Jan 6 22:57:20 2015 +0100
+
+    JPEG2000Stream: Inline doGetChar and doLookChar
+
+ poppler/JPEG2000Stream.cc | 49
+ +++++++++++++++++++++++++----------------------
+ poppler/JPEG2000Stream.h  |  7 ++-----
+ 2 files changed, 28 insertions(+), 28 deletions(-)
+
 commit c13bffe92963c4969037695992f4c2776bbe973f
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sun Jan 4 23:17:42 2015 +0100

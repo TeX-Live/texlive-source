@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2005, 2006, 2008-2010, 2012, 2014 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2006, 2008-2010, 2012, 2014, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006 Takashi Iwai <tiwai@suse.de>
 // Copyright (C) 2007 Julien Rebetez <julienr@svn.gnome.org>
@@ -66,6 +66,7 @@
 #include <fofi/FoFiType1C.h>
 #include <fofi/FoFiTrueType.h>
 #include "GfxFont.h"
+#include "PSOutputDev.h"
 
 //------------------------------------------------------------------------
 
@@ -610,7 +611,7 @@ CharCodeToUnicode *GfxFont::readToUnicodeCMap(Dict *fontDict, int nBits,
   return ctu;
 }
 
-GfxFontLoc *GfxFont::locateFont(XRef *xref, GBool ps) {
+GfxFontLoc *GfxFont::locateFont(XRef *xref, PSOutputDev *ps) {
   GfxFontLoc *fontLoc;
   SysFontType sysFontType;
   GooString *path, *base14Name, *substName;
@@ -640,19 +641,19 @@ GfxFontLoc *GfxFont::locateFont(XRef *xref, GBool ps) {
 	case fontType1:
 	case fontType1C:
 	case fontType1COT:
-	  embed = globalParams->getPSEmbedType1();
+	  embed = ps->getEmbedType1();
 	  break;
 	case fontTrueType:
 	case fontTrueTypeOT:
-	  embed = globalParams->getPSEmbedTrueType();
+	  embed = ps->getEmbedTrueType();
 	  break;
 	case fontCIDType0C:
 	case fontCIDType0COT:
-	  embed = globalParams->getPSEmbedCIDPostScript();
+	  embed = ps->getEmbedCIDPostScript();
 	  break;
 	case fontCIDType2:
 	case fontCIDType2OT:
-	  embed = globalParams->getPSEmbedCIDTrueType();
+	  embed = ps->getEmbedCIDTrueType();
 	  break;
 	default:
 	  break;
@@ -669,7 +670,7 @@ GfxFontLoc *GfxFont::locateFont(XRef *xref, GBool ps) {
   }
 
   //----- PS passthrough
-  if (ps && !isCIDFont() && globalParams->getPSFontPassthrough()) {
+  if (ps && !isCIDFont() && ps->getFontPassthrough()) {
     fontLoc = new GfxFontLoc();
     fontLoc->locType = gfxFontLocResident;
     fontLoc->fontType = fontType1;

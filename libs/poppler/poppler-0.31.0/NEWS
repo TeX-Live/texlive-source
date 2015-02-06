@@ -1,3 +1,20 @@
+Release 0.31.0
+        core:
+         * CairoOutputDev: support embedding JBIG2 image data
+         * Accept malformed documents whose root is a Page instead of a Pages. Bug #88172
+         * Fix crash on broken documents
+         * JPEG2000Stream: Inline doGetChar and doLookChar
+         * GlobalParams cleaning
+        
+        utils:
+         * pdftops: Add rasterization option. Bug #85934
+        
+        qt4:
+         * Expose whole-words search option
+
+        qt5:
+         * Expose whole-words search option
+
 Release 0.30.0
         core:
          * Openjpeg2 support (openjpeg 1 is preferred). Bug #58906

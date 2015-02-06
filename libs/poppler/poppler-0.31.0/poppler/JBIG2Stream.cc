@@ -22,6 +22,7 @@
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013, 2014 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1168,7 +1169,7 @@ JBIG2CodeTable::~JBIG2CodeTable() {
 // JBIG2Stream
 //------------------------------------------------------------------------
 
-JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStreamA):
+JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStreamA, Object *globalsStreamRefA):
   FilterStream(strA)
 {
   pageBitmap = NULL;
@@ -1193,7 +1194,12 @@ JBIG2Stream::JBIG2Stream(Stream *strA, Object *globalsStreamA):
   huffDecoder = new JBIG2HuffmanDecoder();
   mmrDecoder = new JBIG2MMRDecoder();
 
-  globalsStreamA->copy(&globalsStream);
+  if (globalsStreamA->isStream()) {
+    globalsStreamA->copy(&globalsStream);
+    if (globalsStreamRefA->isRef())
+      globalsStreamRef = globalsStreamRefA->getRef();
+  }
+
   segments = globalSegments = NULL;
   curStr = NULL;
   dataPtr = dataEnd = NULL;

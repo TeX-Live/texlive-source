@@ -21,6 +21,7 @@
 // Copyright (C) 2008, 2009, 2011-2014 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2010-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -280,6 +281,9 @@ protected:
 		   GfxImageColorMap *colorMap, cairo_surface_t *image);
   void fillToStrokePathClip(GfxState *state);
   void alignStrokeCoords(GfxSubpath *subpath, int i, double *x, double *y);
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+  GBool setMimeDataForJBIG2Globals (Stream *str, cairo_surface_t *image);
+#endif
 
   GfxRGB fill_color, stroke_color;
   cairo_pattern_t *fill_pattern, *stroke_pattern;

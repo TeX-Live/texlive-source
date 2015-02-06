@@ -16,7 +16,7 @@
 // Copyright (C) 2005 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006, 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2006, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2006-2014 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2006-2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009, 2012 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2009, 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Christian Persch <chpe@gnome.org>
@@ -3048,8 +3048,12 @@ GfxColorSpace *GfxDeviceNColorSpace::copy() {
   int *mappingA = NULL;
 
   GooList *sepsCSA = new GooList(sepsCS->getLength());
-  for (i = 0; i < sepsCS->getLength(); i++)
-    sepsCSA->append(((GfxSeparationColorSpace *) sepsCS->get(i))->copy());
+  for (i = 0; i < sepsCS->getLength(); i++) {
+    GfxSeparationColorSpace *scs = (GfxSeparationColorSpace *) sepsCS->get(i);
+    if (likely(scs != NULL)) {
+      sepsCSA->append(scs->copy());
+    }
+  }
   if (mapping != NULL) {
     mappingA = (int *)gmalloc(sizeof(int) * nComps);
     for (i = 0; i < nComps; i++)

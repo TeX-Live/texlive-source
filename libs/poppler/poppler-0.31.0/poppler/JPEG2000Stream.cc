@@ -7,7 +7,8 @@
 // Copyright 2008-2010, 2012 Albert Astals Cid <aacid@kde.org>
 // Copyright 2011 Daniel Glöckner <daniel-gl@gmx.net>
 // Copyright 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
-// Copyright 2013,2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright 2015 Adam Reichold <adam.reichold@t-online.de>
 //
 // Licensed under GPLv2 or later
 //
@@ -48,6 +49,22 @@ struct JPXStreamPrivate {
   void init2(OPJ_CODEC_FORMAT format, unsigned char *data, int length);
 #endif
 };
+
+static inline int doLookChar(JPXStreamPrivate* priv) {
+  if (unlikely(priv->counter >= priv->npixels))
+    return EOF;
+
+  return ((unsigned char *)priv->image->comps[priv->ccounter].data)[priv->counter];
+}
+
+static inline int doGetChar(JPXStreamPrivate* priv) {
+  const int result = doLookChar(priv);
+  if (++priv->ccounter == priv->ncomps) {
+    priv->ccounter = 0;
+    ++priv->counter;
+  }
+  return result;
+}
 
 JPXStream::JPXStream(Stream *strA) : FilterStream(strA) {
   priv = new JPXStreamPrivate;
@@ -91,8 +108,10 @@ Goffset JPXStream::getPos() {
 }
 
 int JPXStream::getChars(int nChars, Guchar *buffer) {
+  if (unlikely(priv->inited == gFalse)) { init(); }
+
   for (int i = 0; i < nChars; ++i) {
-    const int c = doGetChar();
+    const int c = doGetChar(priv);
     if (likely(c != EOF)) buffer[i] = c;
     else return i;
   }
@@ -100,30 +119,15 @@ int JPXStream::getChars(int nChars, Guchar *buffer) {
 }
 
 int JPXStream::getChar() {
-  return doGetChar();
-}
+  if (unlikely(priv->inited == gFalse)) { init(); }
 
-int JPXStream::doLookChar() {
-  if (unlikely(priv->inited == gFalse))
-    init();
-
-  if (unlikely(priv->counter >= priv->npixels))
-    return EOF;
-
-  return ((unsigned char *)priv->image->comps[priv->ccounter].data)[priv->counter];
+  return doGetChar(priv);
 }
 
 int JPXStream::lookChar() {
-  return doLookChar();
-}
+  if (unlikely(priv->inited == gFalse)) { init(); }
 
-int JPXStream::doGetChar() {
-  int result = doLookChar();
-  if (++priv->ccounter == priv->ncomps) {
-    priv->ccounter = 0;
-    ++priv->counter;
-  }
-  return result;
+  return doLookChar(priv);
 }
 
 GooString *JPXStream::getPSFilter(int psLevel, const char *indent) {
@@ -135,8 +139,7 @@ GBool JPXStream::isBinary(GBool last) {
 }
 
 void JPXStream::getImageParams(int *bitsPerComponent, StreamColorSpaceMode *csMode) {
-  if (priv->inited == gFalse)
-    init();
+  if (unlikely(priv->inited == gFalse)) { init(); }
 
   *bitsPerComponent = 8;
   if (priv->image && priv->image->numcomps == 3)

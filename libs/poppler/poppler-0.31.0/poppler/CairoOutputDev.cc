@@ -28,6 +28,7 @@
 // Copyright (C) 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Patrick Pfeifer <p2000@mailinator.com>
 // Copyright (C) 2012 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -63,6 +64,7 @@
 #include "CairoFontEngine.h"
 #include "CairoRescaleBox.h"
 #include "UnicodeMap.h"
+#include "JBIG2Stream.h"
 //------------------------------------------------------------------------
 
 // #define LOG_CAIRO
@@ -2701,6 +2703,68 @@ static GBool colorMapHasIdentityDecodeMap(GfxImageColorMap *colorMap)
   return gTrue;
 }
 
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 11, 2)
+static cairo_status_t setMimeIdFromRef(cairo_surface_t *surface,
+				       const char *mime_type,
+				       const char *mime_id_prefix,
+				       Ref ref)
+{
+  GooString *mime_id;
+  char *idBuffer;
+  cairo_status_t status;
+
+  mime_id = new GooString;
+
+  if (mime_id_prefix)
+    mime_id->append(mime_id_prefix);
+
+  mime_id->appendf("{0:d}-{1:d}", ref.gen, ref.num);
+
+  idBuffer = copyString(mime_id->getCString());
+  status = cairo_surface_set_mime_data (surface, mime_type,
+                                        (const unsigned char *)idBuffer,
+                                        mime_id->getLength(),
+                                        gfree, idBuffer);
+  delete mime_id;
+  if (status)
+    gfree (idBuffer);
+  return status;
+}
+#endif
+
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+GBool CairoOutputDev::setMimeDataForJBIG2Globals(Stream  *str,
+                                                 cairo_surface_t *image)
+{
+  JBIG2Stream *jb2Str = static_cast<JBIG2Stream *>(str);
+  Object* globalsStr = jb2Str->getGlobalsStream();
+  char *globalsBuffer;
+  int globalsLength;
+
+  // nothing to do for JBIG2 stream without Globals
+  if (!globalsStr->isStream())
+    return gTrue;
+
+  if (setMimeIdFromRef(image, CAIRO_MIME_TYPE_JBIG2_GLOBAL_ID, NULL,
+                       jb2Str->getGlobalsStreamRef()))
+    return gFalse;
+
+  if (!getStreamData(globalsStr->getStream(), &globalsBuffer, &globalsLength))
+    return gFalse;
+
+  if (cairo_surface_set_mime_data (image, CAIRO_MIME_TYPE_JBIG2_GLOBAL,
+                                   (const unsigned char*)globalsBuffer,
+                                   globalsLength,
+                                   gfree, (void*)globalsBuffer))
+  {
+    gfree (globalsBuffer);
+    return gFalse;
+  }
+
+  return gTrue;
+}
+#endif
+
 void CairoOutputDev::setMimeData(GfxState *state, Stream *str, Object *ref,
 				 GfxImageColorMap *colorMap, cairo_surface_t *image)
 {
@@ -2708,9 +2772,27 @@ void CairoOutputDev::setMimeData(GfxState *state, Stream *str, Object *ref,
   int len;
   Object obj;
   GfxColorSpace *colorSpace;
+  StreamKind  strKind = str->getKind();
+  const char *mime_type;
 
-  if (!printing || !(str->getKind() == strDCT || str->getKind() == strJPX))
+  if (!printing)
     return;
+
+  switch (strKind) {
+    case strDCT:
+      mime_type = CAIRO_MIME_TYPE_JPEG;
+      break;
+    case strJPX:
+      mime_type = CAIRO_MIME_TYPE_JP2;
+      break;
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+    case strJBIG2:
+      mime_type = CAIRO_MIME_TYPE_JBIG2;
+      break;
+#endif
+    default:
+      return;
+  }
 
   str->getDict()->lookup("ColorSpace", &obj);
   colorSpace = GfxColorSpace::parse(NULL, &obj, this, state);
@@ -2718,7 +2800,7 @@ void CairoOutputDev::setMimeData(GfxState *state, Stream *str, Object *ref,
 
   // colorspace in stream dict may be different from colorspace in jpx
   // data
-  if (str->getKind() == strJPX && colorSpace)
+  if (strKind == strJPX && colorSpace)
     return;
 
   // only embed mime data for gray, rgb, and cmyk colorspaces.
@@ -2746,31 +2828,27 @@ void CairoOutputDev::setMimeData(GfxState *state, Stream *str, Object *ref,
   if (!colorMapHasIdentityDecodeMap(colorMap))
     return;
 
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
+  if (strKind == strJBIG2 && !setMimeDataForJBIG2Globals(str, image))
+    return;
+#endif
+
   if (getStreamData (str->getNextStream(), &strBuffer, &len)) {
-    cairo_status_t st;
+    cairo_status_t status = CAIRO_STATUS_SUCCESS;
 
 #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 11, 2)
     if (ref && ref->isRef()) {
-      Ref imgRef = ref->getRef();
-      GooString *surfaceId = new GooString("poppler-surface-");
-      surfaceId->appendf("{0:d}-{1:d}", imgRef.gen, imgRef.num);
-      char *idBuffer = copyString(surfaceId->getCString());
-      st = cairo_surface_set_mime_data (image, CAIRO_MIME_TYPE_UNIQUE_ID,
-                                        (const unsigned char *)idBuffer,
-                                        surfaceId->getLength(),
-                                        gfree, idBuffer);
-      if (st)
-        gfree(idBuffer);
-      delete surfaceId;
+      status = setMimeIdFromRef(image, CAIRO_MIME_TYPE_UNIQUE_ID,
+                                "poppler-surface-", ref->getRef());
     }
 #endif
+    if (!status) {
+      status = cairo_surface_set_mime_data (image, mime_type,
+					    (const unsigned char *)strBuffer, len,
+					    gfree, strBuffer);
+    }
 
-    st = cairo_surface_set_mime_data (image,
-				      str->getKind() == strDCT ?
-				      CAIRO_MIME_TYPE_JPEG : CAIRO_MIME_TYPE_JP2,
-				      (const unsigned char *)strBuffer, len,
-				      gfree, strBuffer);
-    if (st)
+    if (status)
       gfree (strBuffer);
   }
 }
