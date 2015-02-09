@@ -104,8 +104,16 @@ find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page)
 		struct JPEG_info	info;
 		err = JPEG_scan_file(&info, fp);
 		if (err == 0) {
+/*
 			bounds->wd = (info.width * 72.27) / info.xdpi;
 			bounds->ht = (info.height * 72.27) / info.ydpi;
+*/
+/*
+  In the new jpegimage.c, info.width and info.height are correct
+  width and height in bp unit
+*/
+			bounds->wd = (info.width * 72.27) / 72.0;
+			bounds->ht = (info.height * 72.27) / 72.0;
 		}
 		goto done;
 	}

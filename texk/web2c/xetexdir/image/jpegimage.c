@@ -22,30 +22,27 @@
 /* this file is derived from the dvipdfmx project;
    the original header follows... */
 
-/*  $Header: /home/cvsroot/dvipdfmx/src/jpegimage.c,v 1.8 2004/09/05 13:30:05 hirata Exp $
+/* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
+    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    the dvipdfmx project team.
 
-    Copyright (C) 2002 by Jin-Hwan Cho and Shunsaku Hirata,
-    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
-    
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
-
 
 /*
  * JPEG SUPPORT
@@ -92,13 +89,10 @@
 #define JPEG_DEBUG_STR "JPEG"
 #define JPEG_DEBUG     3
 
-
 #define HAVE_APPn_JFIF  (1 << 0)
 #define HAVE_APPn_ADOBE (1 << 1)
 #define HAVE_APPn_ICC   (1 << 2)
-
-static void     JPEG_info_init   (struct JPEG_info *j_info);
-static void     JPEG_info_clear  (struct JPEG_info *j_info);
+#define HAVE_APPn_Exif  (1 << 3)
 
 #define RELEASE(p)		free(p)
 #define NEW(n, t)		(t*)xmalloc(n * sizeof(t))
@@ -119,6 +113,38 @@ check_for_jpeg (FILE *fp)
 }
 
 static void
+jpeg_get_density (struct JPEG_info *j_info,
+		  double *xdensity, double *ydensity)
+{
+  *xdensity = *ydensity = 1.0;
+
+  if (j_info->flags & HAVE_APPn_JFIF) {
+    struct JPEG_APPn_JFIF *app_data;
+    int i;
+    for (i = 0; i < j_info->num_appn; i++) {
+      if (j_info->appn[i].marker  == JM_APP0 &&
+	  j_info->appn[i].app_sig == JS_APPn_JFIF)
+        break;
+    }
+    if (i < j_info->num_appn) {
+      app_data = (struct JPEG_APPn_JFIF *)j_info->appn[i].app_data;
+      switch (app_data->units) {
+      case 1: /* pixels per inch */
+        *xdensity = 72.0 / app_data->Xdensity;
+        *ydensity = 72.0 / app_data->Ydensity;
+        break;
+      case 2: /* pixels per centimeter */
+        *xdensity = 72.0 / 2.54 / app_data->Xdensity;
+        *ydensity = 72.0 / 2.54 / app_data->Ydensity;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+}
+
+static void
 JPEG_info_init (struct JPEG_info *j_info)
 {
   j_info->width  = 0;
@@ -135,57 +161,6 @@ JPEG_info_init (struct JPEG_info *j_info)
   j_info->appn     = NULL;
 
   memset(j_info->skipbits, 0, MAX_COUNT / 8 + 1);
-}
-
-static void
-JPEG_release_APPn_data (JPEG_marker marker, JPEG_APPn_sig app_sig, void *app_data)
-{
-  if (marker  == JM_APP0 &&
-      app_sig == JS_APPn_JFIF) {
-    struct JPEG_APPn_JFIF *data;
-
-    data = (struct JPEG_APPn_JFIF *) app_data;
-    if (data->thumbnail)
-      RELEASE(data->thumbnail);
-    data->thumbnail = NULL;
-
-    RELEASE(data);
-  } else if (marker  == JM_APP2 &&
-	     app_sig == JS_APPn_ICC) {
-    struct JPEG_APPn_ICC *data;
-
-    data = (struct JPEG_APPn_ICC *) app_data;
-    if (data->chunk)
-      RELEASE(data->chunk);
-    data->chunk = NULL;
-
-    RELEASE(data);
-  } else if (marker  == JM_APP14 &&
-	     app_sig == JS_APPn_ADOBE) {
-    struct JPEG_APPn_Adobe *data;
-
-    data = (struct JPEG_APPn_Adobe *) app_data;
-
-    RELEASE(data);
-  }
-}
-
-static void
-JPEG_info_clear (struct JPEG_info *j_info)
-{
-  if (j_info->num_appn > 0 &&
-      j_info->appn    != NULL) {
-    int i;
-
-    for (i = 0; i < j_info->num_appn; i++)
-      JPEG_release_APPn_data(j_info->appn[i].marker,
-			     j_info->appn[i].app_sig, j_info->appn[i].app_data);
-    RELEASE(j_info->appn);
-  }
-  j_info->appn     = NULL;
-  j_info->num_appn = 0;
-  j_info->max_appn = 0;
-  j_info->flags    = 0;
 }
 
 static JPEG_marker
@@ -231,7 +206,7 @@ add_APPn_marker (struct JPEG_info *j_info,
 }
 
 static unsigned short
-read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp)
 {
   struct JPEG_APPn_Adobe *app_data;
 
@@ -246,10 +221,10 @@ read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   return 7;
 }
 
-static unsigned long
+static unsigned int
 read_exif_bytes(unsigned char **p, int n, int b)
 {
-  unsigned long rval = 0;
+  unsigned int rval = 0;
   unsigned char *pp = *p;
   if (b) {
     switch (n) {
@@ -288,7 +263,8 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   unsigned char *tiff_header;
   char bigendian;
   int i;
-  int num_fields, tag, type, count, value, num, den;
+  int num_fields, tag, type;
+  int value = 0, num = 0, den = 0;	/* silence uninitialized warnings */
   double xres = 72.0;
   double yres = 72.0;
   double res_unit = 1.0;
@@ -313,7 +289,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   while (num_fields-- > 0) {
     tag = read_exif_bytes(&p, 2, bigendian);
     type = read_exif_bytes(&p, 2, bigendian);
-    count = read_exif_bytes(&p, 4, bigendian);
+    (void)read_exif_bytes(&p, 4, bigendian);
     switch (type) {
       case 1: /* byte */
         value = *p++;
@@ -363,8 +339,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
         }
     }
   }
-  
-  
+
   j_info->xdpi = xres * res_unit;
   j_info->ydpi = yres * res_unit;
 
@@ -374,7 +349,7 @@ err:
 }
 
 static unsigned short
-read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp)
 {
   struct JPEG_APPn_JFIF *app_data;
   unsigned short thumb_data_len;
@@ -415,11 +390,9 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp, unsigned short length)
 }
 
 static unsigned short
-read_APP0_JFXX (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+read_APP0_JFXX (FILE *fp, unsigned short length)
 {
-  unsigned char extension_code;
-
-  extension_code = get_unsigned_byte(fp);
+  (void)get_unsigned_byte(fp);
   /* Extension Code:
    *
    * 0x10: Thumbnail coded using JPEG
@@ -450,7 +423,6 @@ read_APP2_ICC (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   return length;
 }
 
-
 int
 JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 {
@@ -458,6 +430,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   unsigned short length;
   int  found_SOFn, count;
   char app_sig[128];
+  double xdensity, ydensity;
 
   JPEG_info_init(j_info);
 
@@ -465,7 +438,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   count      = 0;
   found_SOFn = 0;
   while (!found_SOFn &&
-	 (marker = JPEG_get_marker(fp)) >= 0) {
+	 (marker = JPEG_get_marker(fp)) != (JPEG_marker) -1) {
     if (marker == JM_SOI  ||
 	(marker >= JM_RST0 && marker <= JM_RST7)) {
       count++;
@@ -490,9 +463,9 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	length -= 5;
 	if (!memcmp(app_sig, "JFIF\000", 5)) {
 	  j_info->flags |= HAVE_APPn_JFIF;
-	  length -= read_APP0_JFIF(j_info, fp, length);
+	  length -= read_APP0_JFIF(j_info, fp);
 	} else if (!memcmp(app_sig, "JFXX", 5)) {
-	  length -= read_APP0_JFXX(j_info, fp, length);
+	  length -= read_APP0_JFXX(fp, length);
 	}
       }
       seek_relative(fp, length);
@@ -503,6 +476,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	  return -1;
 	length -= 5;
 	if (!memcmp(app_sig, "Exif\000", 5)) {
+	  j_info->flags |= HAVE_APPn_Exif;
 	  length -= read_APP1_Exif(j_info, fp, length);
 	}
       }
@@ -530,7 +504,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
 	length -= 5;
 	if (!memcmp(app_sig, "Adobe", 5)) {
 	  j_info->flags |= HAVE_APPn_ADOBE;
-	  length -= read_APP14_Adobe(j_info, fp, length);
+	  length -= read_APP14_Adobe(j_info, fp);
 	} else {
 	  if (count < MAX_COUNT) {
 	    j_info->skipbits[count/8] |= (1 << (7 - (count % 8)));
@@ -552,5 +526,13 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
     count++;
   }
 
+  jpeg_get_density (j_info, &xdensity, &ydensity);
+
+  j_info->width = (unsigned short)(j_info->width * xdensity);
+  j_info->height = (unsigned short)(j_info->height * ydensity);
+/*
+  Now, j_info->width and j_info->height are correct width and
+  height in bp unit
+*/
   return (found_SOFn ? 0 : -1);
 }
