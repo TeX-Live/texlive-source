@@ -1,3 +1,8 @@
+2015-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_pic.c and image/jpegimage.c: Fix a bug to include jpeg images
+	correctly (borrowed from dvipdfm-x).
+
 2014-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/pngimage.c: Avoid PNG warnings.
