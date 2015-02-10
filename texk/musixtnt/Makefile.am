@@ -1,0 +1,49 @@
+## Makefile.am for the TeX Live subdirectory texk/musixtnt/
+##
+## Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+## We want to re-distribute the whole musixtnt source tree.
+##
+EXTRA_DIST = $(MUSIXTNT_TREE)
+
+## Changes applied to the original source tree
+##
+EXTRA_DIST += $(MUSIXTNT_TREE)-PATCHES
+
+# in case of an SVN repository
+dist-hook:
+	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+
+AM_CPPFLAGS = -I$(top_srcdir)/$(MUSIXTNT_TREE) $(KPATHSEA_INCLUDES) -DKPATHSEA
+AM_CFLAGS = $(WARNING_CFLAGS)
+
+bin_PROGRAMS = fixmsxpart msxlint
+
+fixmsxpart_SOURCES = \
+	@MUSIXTNT_TREE@/fixmsxpart.c \
+	@MUSIXTNT_TREE@/utils.c
+
+msxlint_SOURCES = \
+	@MUSIXTNT_TREE@/msxlint.c \
+	@MUSIXTNT_TREE@/utils.c
+
+$(fixmsxpart_OBJECTS) $(msxlint_OBJECTS): $(KPATHSEA_DEPEND)
+
+LDADD = $(KPATHSEA_LIBS)
+
+dist_man_MANS = \
+	$(MUSIXTNT_TREE)/fixmsxpart.1 \
+	$(MUSIXTNT_TREE)/msxlint.1
+
+## Rebuild libkpathsea
+@KPATHSEA_RULE@
+
+## Tests
+##
+TESTS = fixmsxpart.test msxlint.test
+EXTRA_DIST += $(TESTS)
+
+TESTS_ENVIRONMENT = MUSIXTNT_TREE=$(MUSIXTNT_TREE)
+DISTCLEANFILES = fixtest.* linttest.*
+

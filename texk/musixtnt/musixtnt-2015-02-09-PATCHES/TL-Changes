@@ -1,0 +1,16 @@
+Changes applied to the musixtnt-2015-02-09 tree as obtained from:
+	http://mirror.ctan.org/????
+
+Remove:
+	COPYING
+	INSTALL
+	Makefile.in
+	NEWS
+	aclocal.m4
+	compile
+	config.h.in
+	configure
+	depcomp
+	install-sh
+	missing
+
