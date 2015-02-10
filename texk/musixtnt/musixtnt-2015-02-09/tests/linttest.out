@@ -1,0 +1,7 @@
+
+Too few instruments in notes on line 7:
+\Notes\qa J|\qa l\en
+Too few staffs for instrument 1 in notes on line 8:
+\Notes\qa J&\qa n\en
+Too many fields in notes on line 9:
+\Notes\qa J|\qa l&\qa n&\qa q\en
