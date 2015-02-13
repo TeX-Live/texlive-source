@@ -2,7 +2,7 @@
 # encoding: utf-8
 
  MYNAME = File.basename($0)
-Version = '1.42'
+Version = '1.43'
 
 <<'DOC'
 = match_parens - find mismatches of various brackets and quotes
@@ -115,8 +115,8 @@ DOC
 
 require 'optparse'
 
-number, input, latex, n,  s,  html,  test,  parenstext =
-    10, STDIN, false, 10, '', false, false, %q{{}[]()""“”''‘’}
+number, input, latex, lineno,  s,  html,  test,  parenstext =
+    10, STDIN, false,      0, '', false, false, %q{{}[]()""“”''‘’}
 
 ARGV.options do |opt|
   opt.banner = "#{MYNAME} - find mismatches of parentheses, braces, (angle) brackets, in texts\n"
@@ -132,8 +132,7 @@ ARGV.options do |opt|
     end
   opt.on('-l','--latex',
     'convert ``...'' to “...” before testing') do
-      puts opt.to_s.sub(/^ *-I\n/,'')
-      exit
+      latex=true
     end
   opt.on('-V','--version',
     'print version and exit') do
@@ -164,24 +163,26 @@ unless arg.empty?
 end
 while x = input.gets()
   # convert LaTeX's ``...'' to “...”
-  x = x.gsub(/``/,'“').gsub(/''/,'”')
+  if latex
+    x = x.gsub(/``/,'“').gsub(/''/,'”')
+  end
 
   # only inside html text we check <>, too:
   if html && (x=~/^([# ]*=end)/ || x=~/<\/html>/i)
-         html = false
-         parens = parenstext
+    html = false
+    parens = parenstext
   elsif x=~/^([# ]*=begin rdoc)/ || x=~/<html>/i
-         html = true
-         parens = parenshtml
+    html = true
+    parens = parenshtml
   end
   # match any pair like (), {}, [], “”, <> in parens
   re = Regexp.new(parens.scan(/../).join('|').gsub(/[{}()\[\]]/,'\\\\\&'))
 
-  # remove {x} where x in []{}()<>, copy all parens to s
+  # move parens' characters into s
   s << x.tr('^'+parens,'')
   # remove matches from inside
   while s.gsub!(re,'') do end
-  puts "%4d | %-*s | %s" % [n+=1,number,s.slice(0..number-1),x]
+  puts "%4d | %-*s | %s" % [lineno+=1,number,s.slice(0..number-1),x]
 end
 
 if test
