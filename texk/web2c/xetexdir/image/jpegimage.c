@@ -83,7 +83,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 #include "kpathsea/lib.h" /* for xmalloc/xrealloc prototypes */
 
@@ -431,8 +430,6 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
   unsigned short length;
   int  found_SOFn, count;
   char app_sig[128];
-  double xdensity, ydensity;
-  double image_w, image_h;
 
   JPEG_info_init(j_info);
 
@@ -527,19 +524,6 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
     }
     count++;
   }
-
-  jpeg_get_density (j_info, &xdensity, &ydensity);
-
-  image_w = floor((j_info->width * xdensity) + 0.5);
-  image_h = floor((j_info->height * ydensity) + 0.5);
-
-  j_info->width = (unsigned short)(image_w);
-  j_info->height = (unsigned short)(image_h);
-
-/*
-  Now, j_info->width and j_info->height are correct width and
-  height in bp unit
-*/
 
   return (found_SOFn ? 0 : -1);
 }
