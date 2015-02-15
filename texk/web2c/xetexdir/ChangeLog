@@ -1,3 +1,10 @@
+2015-02-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* XeTeX_pic.c and image/jpegimage.c: Revert. The changes in 2015-02-09
+	are discarded. The picture sizes obtained by the previous XeTeX are
+	correct. Problems may be in xdvipdfmx or maybe cmyk colors are not
+	supported.
+
 2015-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_pic.c and image/jpegimage.c: Fix a bug to include jpeg images
