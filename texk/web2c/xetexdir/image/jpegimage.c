@@ -113,38 +113,6 @@ check_for_jpeg (FILE *fp)
 }
 
 static void
-jpeg_get_density (struct JPEG_info *j_info,
-		  double *xdensity, double *ydensity)
-{
-  *xdensity = *ydensity = 1.0;
-
-  if (j_info->flags & HAVE_APPn_JFIF) {
-    struct JPEG_APPn_JFIF *app_data;
-    int i;
-    for (i = 0; i < j_info->num_appn; i++) {
-      if (j_info->appn[i].marker  == JM_APP0 &&
-	  j_info->appn[i].app_sig == JS_APPn_JFIF)
-        break;
-    }
-    if (i < j_info->num_appn) {
-      app_data = (struct JPEG_APPn_JFIF *)j_info->appn[i].app_data;
-      switch (app_data->units) {
-      case 1: /* pixels per inch */
-        *xdensity = 72.0 / app_data->Xdensity;
-        *ydensity = 72.0 / app_data->Ydensity;
-        break;
-      case 2: /* pixels per centimeter */
-        *xdensity = 72.0 / 2.54 / app_data->Xdensity;
-        *ydensity = 72.0 / 2.54 / app_data->Ydensity;
-        break;
-      default:
-        break;
-      }
-    }
-  }
-}
-
-static void
 JPEG_info_init (struct JPEG_info *j_info)
 {
   j_info->width  = 0;
