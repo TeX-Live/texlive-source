@@ -354,8 +354,17 @@ jpeg_get_density (struct JPEG_info *j_info,
     return;
   }
 
-  *xdensity = *ydensity = 1.0;
+/*
+  j_info->xdpi and j_info->ydpi are already determined
+  because jpeg_get_density() is always called after
+  JPEG_scan_file().
+*/
+  *xdensity = 72.0 / j_info->xdpi;
+  *ydensity = 72.0 / j_info->ydpi;
+  return;
 
+#if 0
+  *xdensity = *ydensity = 1.0;
   if (j_info->flags & HAVE_APPn_JFIF) {
     struct JPEG_APPn_JFIF *app_data;
     int i;
@@ -380,6 +389,7 @@ jpeg_get_density (struct JPEG_info *j_info,
       }
     }
   }
+#endif
 }
 
 static void
