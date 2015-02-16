@@ -1,3 +1,8 @@
+2015-02-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* writejpg.c: support JPEG Exif in addition to JFIF.
+	(borrowed from dvipdfm-x).
+
 2014-12-12  Karl Berry  <karl@gnu.org>
 
 	* pdftoepdf.cc (read_pdf_info): do not even warn if
