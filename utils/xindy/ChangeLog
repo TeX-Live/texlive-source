@@ -1,3 +1,7 @@
+2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use the fragment ../../am/dist_hook.am.
+
 2014-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import xindy-2.5.1.

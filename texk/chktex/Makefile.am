@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/chktex/
 ##
-## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -20,9 +20,9 @@ EXTRA_DIST = $(CHKTEX_TREE)
 ##
 EXTRA_DIST += $(CHKTEX_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 AM_CPPFLAGS = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)

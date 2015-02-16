@@ -1,6 +1,6 @@
 ## Wrapper Makefile.am to build ICU for TeX Live.
 ##
-##   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -13,9 +13,8 @@ EXTRA_DIST = $(ICU_TREE)
 ##
 EXTRA_DIST += $(ICU_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
 
 SUBDIRS = .
 

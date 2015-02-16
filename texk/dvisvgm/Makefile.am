@@ -18,9 +18,9 @@ EXTRA_DIST = $(DVISVGM_TREE)
 ##
 EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/clipper -I$(top_srcdir)/$(DVISVGM_TREE)/src
 AM_CPPFLAGS += $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES)

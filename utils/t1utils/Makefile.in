@@ -403,8 +403,9 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/Makefile.in \
-	$(srcdir)/config.h.in $(top_srcdir)/../../build-aux/compile \
+am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
+	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
@@ -529,6 +530,12 @@ top_srcdir = @top_srcdir@
 #************************************************************************
 EXTRA_DIST = $(T1UTILS_TREE) $(T1UTILS_TREE)-PATCHES $(TESTS) \
 	tests/Symbol.pfa tests/Symbol.pfb tests/Symbol.raw
+NEVER_DIST = `find . $(NEVER_NAMES)`
+
+# Files not to be distributed
+NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 AM_CPPFLAGS = -I$(top_srcdir)/$(T1UTILS_TREE)/include
 AM_CFLAGS = $(WARNING_CFLAGS)
 dist_man_MANS = \
@@ -579,7 +586,7 @@ all: config.h
 .SUFFIXES: .c .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -601,6 +608,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../am/dist_hook.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1311,10 +1319,8 @@ uninstall-man: uninstall-man1
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

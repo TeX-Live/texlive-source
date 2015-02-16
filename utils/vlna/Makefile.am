@@ -8,9 +8,8 @@ EXTRA_DIST = $(VLNA_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += $(VLNA_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
 
 AM_CFLAGS = $(WARNING_CFLAGS)
 

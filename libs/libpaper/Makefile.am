@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build libpaper for TeX Live.
 ##
-##   Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright 2013-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -14,9 +14,9 @@ EXTRA_DIST = $(LIBPAPER_TREE)
 ##
 EXTRA_DIST += $(LIBPAPER_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPAPER_TREE)/lib $(WARNING_CFLAGS)
 

@@ -1,3 +1,7 @@
+2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use the fragment ../am/dist_hook.am.
+
 2013-12-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (ACLOCAL): Ensure aclocal.m4 is up to date.

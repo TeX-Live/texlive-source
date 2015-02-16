@@ -1,3 +1,7 @@
+2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use the fragment ../../am/dist_hook.am.
+
 2015-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cpascal.h: Remove intcast.

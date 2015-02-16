@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/lcdf-typetools/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 #************************************************************************
@@ -26,9 +26,8 @@ EXTRA_DIST += \
 	$(LCDF_TYPETOOLS_TREE)/configure.ac \
 	$(LCDF_TYPETOOLS_TREE)/m4
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
 
 all-local: config.force
 

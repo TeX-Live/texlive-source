@@ -1,14 +1,13 @@
 ## Makefile.am for the TeX Live subdirectory texk/tex4htk/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We distribute the whole java tree.
 EXTRA_DIST = java
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
 
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DANSI -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)

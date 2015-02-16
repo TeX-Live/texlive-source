@@ -278,8 +278,8 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/am/recurse.am \
-	$(top_srcdir)/build-aux/compile \
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/am/dist_hook.am \
+	$(srcdir)/am/recurse.am $(top_srcdir)/build-aux/compile \
 	$(top_srcdir)/build-aux/config.guess \
 	$(top_srcdir)/build-aux/config.sub \
 	$(top_srcdir)/build-aux/install-sh \
@@ -481,6 +481,12 @@ EXTRA_DIST = \
 	m4/README \
 	reautoconf
 
+NEVER_DIST = `find . $(NEVER_NAMES)`
+NEVER_NAMES = -name .svn
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
+
+# Files not to be distributed
 SUBDIRS = . doc $(MAKE_SUBDIRS) libs utils texk
 DIST_SUBDIRS = auxdir/auxsub doc $(CONF_SUBDIRS) libs utils texk
 recurse_this = 
@@ -509,7 +515,7 @@ all: all-recursive
 .SUFFIXES:
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/recurse.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/am/dist_hook.am $(srcdir)/am/recurse.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -531,7 +537,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/am/recurse.am $(am__empty):
+$(srcdir)/am/dist_hook.am $(srcdir)/am/recurse.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -973,10 +979,8 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-# just in case a subdirectory has added directories
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 all-local: recurse
 

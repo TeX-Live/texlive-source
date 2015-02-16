@@ -11,9 +11,9 @@ EXTRA_DIST = $(MUSIXTNT_TREE)
 ##
 EXTRA_DIST += $(MUSIXTNT_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(MUSIXTNT_TREE) $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)

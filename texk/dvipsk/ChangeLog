@@ -1,3 +1,7 @@
+2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use the fragment ../../am/dist_hook.am.
+
 2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* t1part.c, t1part.h: Rename _HUGE => BORLAND_HUGE to avoid

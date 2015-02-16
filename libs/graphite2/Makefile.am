@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build graphite2 for TeX Live.
 ##
-##   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -17,9 +17,9 @@ EXTRA_DIST += $(GRAPHITE2_TREE)-PATCHES
 GRAPHITE2_SRC = $(GRAPHITE2_TREE)/src
 GRAPHITE2_INC = $(GRAPHITE2_TREE)/include
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 SUBDIRS = . include/graphite2
 

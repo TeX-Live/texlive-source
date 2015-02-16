@@ -408,9 +408,10 @@ am__set_b = \
       b='$*';; \
   esac
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/../../am/rebuild.am \
-	$(srcdir)/../../am/reconfig.am $(srcdir)/Makefile.in \
-	$(srcdir)/config.h.in $(top_srcdir)/../../build-aux/compile \
+am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/../../am/rebuild.am $(srcdir)/../../am/reconfig.am \
+	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
+	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
@@ -561,6 +562,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = $(LIBPNG_TREE) $(LIBPNG_TREE)-PATCHES
+NEVER_DIST = `find . $(NEVER_NAMES)`
+
+# Files not to be distributed
+NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 SUBDIRS = . include
 AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES) $(LIBPNG_DEFINES)
 AM_CFLAGS = $(VISIBILITY_CFLAGS) $(WARNING_CFLAGS)
@@ -603,7 +610,7 @@ all: config.h
 .SUFFIXES: .c .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -625,7 +632,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__empty):
+$(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1337,17 +1344,8 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
-	rm -f $(distdir)/$(LIBPNG_TREE)/config.sub \
-	  $(distdir)/$(LIBPNG_TREE)/config.guess \
-	  $(distdir)/$(LIBPNG_TREE)/depcomp \
-	  $(distdir)/$(LIBPNG_TREE)/install-sh \
-	  $(distdir)/$(LIBPNG_TREE)/ltmain.sh \
-	  $(distdir)/$(LIBPNG_TREE)/missing \
-	  $(distdir)/$(LIBPNG_TREE)/mkinstalldirs
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libpng_a_OBJECTS): config.force
 

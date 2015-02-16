@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Ensure aclocal.m4 is up to date
@@ -9,9 +9,8 @@ ACLOCAL = @ACLOCAL@ --force
 SUBDIRS = . $(MAKE_SUBDIRS)
 DIST_SUBDIRS = $(CONF_SUBDIRS)
 
-# just in case a subdirectory has added directories
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+# Files not to be distributed
+include $(srcdir)/../am/dist_hook.am
 
 ## Configure and build subdirs.
 ##

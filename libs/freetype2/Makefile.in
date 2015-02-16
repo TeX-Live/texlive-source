@@ -121,7 +121,8 @@ am__can_run_installinfo = \
   esac
 DATA = $(noinst_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
-am__DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
+am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing ../../build-aux/compile \
@@ -235,6 +236,12 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = $(FREETYPE_TREE) $(FREETYPE_TREE)-PATCHES
+NEVER_DIST = `find . $(NEVER_NAMES)`
+NEVER_NAMES = -name .svn
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
+
+# Files not to be distributed
 noinst_DATA = libfreetype.a
 
 # Rebuild
@@ -246,7 +253,7 @@ all: all-am
 .SUFFIXES:
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -268,7 +275,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/rebuild.am $(am__empty):
+$(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/rebuild.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -573,10 +580,8 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 # On MacOSX, using our zlib from TL results in a .a that is unusable; ld
 # warns "file is not of required architecture", and does not read it.

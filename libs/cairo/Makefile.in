@@ -751,10 +751,10 @@ am__set_b = \
       b='$*';; \
   esac
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/../../am/rebuild.am \
-	$(srcdir)/../../am/reconfig.am $(srcdir)/Makefile.in \
-	$(srcdir)/cairo-features.h.in $(srcdir)/config.h.in \
-	$(top_srcdir)/../../build-aux/compile \
+am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/../../am/rebuild.am $(srcdir)/../../am/reconfig.am \
+	$(srcdir)/Makefile.in $(srcdir)/cairo-features.h.in \
+	$(srcdir)/config.h.in $(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/depcomp \
@@ -916,6 +916,12 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = $(CAIRO_TREE) $(CAIRO_TREE)-PATCHES
 CAIRO_SRC = $(CAIRO_TREE)/src
+NEVER_DIST = `find . $(NEVER_NAMES)`
+
+# Files not to be distributed
+NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 SUBDIRS = . cairo
 AM_CPPFLAGS = -I$(top_srcdir)/$(CAIRO_SRC) $(PIXMAN_INCLUDES) -DCAIRO_NO_MUTEX
 AM_CFLAGS = $(CAIRO_ATTRIBUTE_FLAG) $(VISIBILITY_CFLAGS) # $(WARNING_CFLAGS)
@@ -1040,7 +1046,7 @@ all: config.h cairo-features.h
 .SUFFIXES: .c .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1062,7 +1068,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__empty):
+$(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/reconfig.am $(srcdir)/../../am/rebuild.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -2324,10 +2330,8 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.lo' -o -name '*.$(OBJEXT)'`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libcairo_a_OBJECTS): config.force
 
