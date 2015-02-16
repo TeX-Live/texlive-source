@@ -1,7 +1,7 @@
 ## Proxy Makefile.am to build LuaJIT for TeX Live.
 ##
 ## Copyright (C) 2014 Luigi Scarso <luigi.scarso@gmail.com>
-## Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original LuaJIT source tree.
@@ -12,9 +12,9 @@ EXTRA_DIST = $(LUAJIT_TREE)
 ##
 EXTRA_DIST += $(LUAJIT_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name .libs -o -name '*.o' -o -name '*.lo'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB) $(NEVER_NAMES_LT)
 
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES)
 AM_CFLAGS = -Wall

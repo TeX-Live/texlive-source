@@ -224,9 +224,9 @@ ETAGS = etags
 CTAGS = ctags
 CSCOPE = cscope
 AM_RECURSIVE_TARGETS = cscope
-am__DIST_COMMON = $(srcdir)/../../am/script_links.am \
-	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
-	$(top_srcdir)/../../build-aux/compile \
+am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/../../am/script_links.am $(srcdir)/Makefile.in \
+	$(srcdir)/c-auto.in $(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/depcomp \
@@ -393,6 +393,12 @@ EXTRA_DIST = java $(top_builddir)/../../build-aux/relpath dbcontext \
 	wcontext wlatex wmex wtex wtexi wxelatex wxetex xhcontext \
 	xhlatex xhmcontext xhmex xhmlatex xhmmex xhmtex xhmtexi \
 	xhmxelatex xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java
+NEVER_DIST = `find . $(NEVER_NAMES)`
+NEVER_NAMES = -name .svn
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
+
+# Files not to be distributed
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DANSI -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 t4ht_SOURCES = t4ht.c
@@ -416,7 +422,7 @@ all: c-auto.h
 .SUFFIXES: .c .lo .o .obj
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/script_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/script_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -438,7 +444,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/script_links.am $(am__empty):
+$(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/script_links.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1034,10 +1040,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(t4ht_OBJECTS) $(tex4ht_OBJECTS): $(KPATHSEA_DEPEND)
 

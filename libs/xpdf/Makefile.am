@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build xpdf for TeX Live.
 ##
-##   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -32,10 +32,9 @@ EXTRA_DIST += $(XPDF_TREE)-foolabs
 ##
 EXTRA_DIST += $(XPDF_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
-	rm -f $(distdir)/$(XPDF_TREE)/install-sh
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 SUBDIRS = . goo fofi splash xpdf
 

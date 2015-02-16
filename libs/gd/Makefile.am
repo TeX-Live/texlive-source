@@ -14,9 +14,9 @@ EXTRA_DIST = $(GD_TREE)
 ##
 EXTRA_DIST += $(GD_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 SUBDIRS = . include
 

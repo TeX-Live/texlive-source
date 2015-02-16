@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/pmx/
 ##
-## Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original pmx source tree.
@@ -8,12 +8,9 @@ EXTRA_DIST = $(PMX_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += $(PMX_TREE)-PATCHES
 
-dist-hook:
-	cd "$(distdir)" && rm -rf $(NEVER_DIST)
-
-## in case of an SVN repository
-NEVER_DIST = `find . -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
-
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 NEVER_DIST += $(PMX_TREE)/pmx.log $(PMX_TREE)/pmx.trs
 
 AM_CPPFLAGS = -I$(srcdir)/$(PMX_TREE)/libf2c $(PMX_DEFINES)

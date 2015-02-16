@@ -368,7 +368,8 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/autoconf.h.in \
+am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/Makefile.in $(srcdir)/autoconf.h.in \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -576,6 +577,10 @@ EXTRA_DIST = $(LCDF_TYPETOOLS_TREE)-PATCHES \
 	tests/FonetikaDaniaIwonaeBold.ttf tests/texmfhome.otf \
 	tests/Fon.post tests/Fon.t42 tests/tmf.info tests/tmf.pfa \
 	tests/tmf.pfb tests/tmf.tables
+NEVER_DIST = `find . $(NEVER_NAMES)`
+NEVER_NAMES = -name .svn
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 DISTCLEANFILES = config.force CXXLD.sh uhv* Ant* a_enhg3c.enc Fon* \
 	tmf.*
 TESTS = tests/t1.test tests/tfm.test tests/ttf.test
@@ -587,7 +592,7 @@ all: autoconf.h
 .SUFFIXES: .log .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -609,6 +614,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../am/dist_hook.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1227,10 +1233,10 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+
+# Files not to be distributed
 
 all-local: config.force
 

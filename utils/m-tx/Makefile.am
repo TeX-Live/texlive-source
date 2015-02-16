@@ -8,9 +8,9 @@ EXTRA_DIST = $(MTX_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += $(MTX_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 AM_CPPFLAGS = -I$(srcdir)/$(MTX_TREE)/libp2c -DNO_DECLARE_MALLOC
 AM_CFLAGS = #$(WARNING_CFLAGS)

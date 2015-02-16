@@ -1,3 +1,7 @@
+2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Use the fragment ../../am/dist_hook.am.
+
 2014-11-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Replace KPSE_COND_WIN32_WRAP => KPSE_COND_WIN32.

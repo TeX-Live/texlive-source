@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Ensure aclocal.m4 is up to date
@@ -27,9 +27,8 @@ EXTRA_DIST = \
 	m4/README \
 	reautoconf
 
-# just in case a subdirectory has added directories
-dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+# Files not to be distributed
+include $(srcdir)/am/dist_hook.am
 
 SUBDIRS = . doc $(MAKE_SUBDIRS) libs utils texk
 DIST_SUBDIRS = auxdir/auxsub doc $(CONF_SUBDIRS) libs utils texk

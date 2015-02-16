@@ -414,9 +414,9 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-am__DIST_COMMON = $(srcdir)/../../am/script_links.am \
-	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/../../build-aux/compile \
+am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
+	$(srcdir)/../../am/script_links.am $(srcdir)/Makefile.in \
+	$(srcdir)/config.h.in $(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/depcomp \
@@ -578,6 +578,12 @@ top_srcdir = @top_srcdir@
 #************************************************************************
 EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES regex/COPYING.LIB \
 	regex/README $(top_builddir)/../../build-aux/relpath $(TESTS)
+NEVER_DIST = `find . $(NEVER_NAMES)`
+
+# Files not to be distributed
+NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 AM_CPPFLAGS = $(REGEX_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA
 AM_CFLAGS = $(WARNING_CFLAGS)
 chktex_SOURCES = @CHKTEX_TREE@/ChkTeX.c @CHKTEX_TREE@/ChkTeX.h \
@@ -629,7 +635,7 @@ all: config.h
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/script_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/script_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -651,7 +657,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
-$(srcdir)/../../am/script_links.am $(am__empty):
+$(srcdir)/../../am/dist_hook.am $(srcdir)/../../am/script_links.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1541,10 +1547,8 @@ uninstall-man: uninstall-man1
 
 .PRECIOUS: Makefile
 
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(chktex_OBJECTS): $(KPATHSEA_DEPEND)
 .PHONY: install-lua-links install-perl-links install-shell-links install-sh-links \

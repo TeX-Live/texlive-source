@@ -465,8 +465,8 @@ TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(dist_man1_MANS) $(dvips_TEXINFOS) \
-	$(srcdir)/Makefile.in $(srcdir)/c-auto.in \
-	$(top_srcdir)/../../build-aux/compile \
+	$(srcdir)/../../am/dist_hook.am $(srcdir)/Makefile.in \
+	$(srcdir)/c-auto.in $(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/depcomp \
@@ -738,6 +738,10 @@ TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
 	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
 	TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
+NEVER_DIST = `find . $(NEVER_NAMES)`
+NEVER_NAMES = -name .svn
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -745,7 +749,7 @@ all: c-auto.h
 .SUFFIXES: .pro .lpro .c .dvi .html .info .lo .log .o .obj .pdf .ps .test .test$(EXEEXT) .texi .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -767,6 +771,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
 	esac;
+$(srcdir)/../../am/dist_hook.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -1861,10 +1866,10 @@ $(prologues): squeeze/stamp-squeeze
 
 squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
-
-# in case of an SVN repository
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+
+# Files not to be distributed
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

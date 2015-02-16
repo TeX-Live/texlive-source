@@ -1,6 +1,6 @@
 ## Proxy Makefile.am to build harfbuzz for TeX Live.
 ##
-##   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -16,10 +16,9 @@ EXTRA_DIST += $(HARFBUZZ_TREE)-PATCHES
 
 HARFBUZZ_SRC = $(HARFBUZZ_TREE)/src
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
-	rm -f $(distdir)/$(HARFBUZZ_SRC)/harfbuzz-version.h
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 SUBDIRS = . include
 

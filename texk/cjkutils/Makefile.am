@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/cjkutils/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original cjk/utils source tree.
@@ -8,9 +8,9 @@ EXTRA_DIST = $(CJKUTILS_TREE)
 ## Patches applied to the original source tree
 EXTRA_DIST += $(CJKUTILS_TREE)-PATCHES
 
-# in case of an SVN repository
-dist-hook:
-	rm -rf `find $(distdir) -name .svn -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'`
+# Files not to be distributed
+include $(srcdir)/../../am/dist_hook.am
+NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 if do_cweb
 all-local: config.force hbf2gf.dvi

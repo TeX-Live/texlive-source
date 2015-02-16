@@ -1,0 +1,16 @@
+## am/dist_hook.am: Makefile fragment for the dist-hook target.
+##
+## Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+##
+dist-hook:
+	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+
+NEVER_DIST = `find . $(NEVER_NAMES)`
+## Names not to be distributed
+NEVER_NAMES = -name .svn
+## Additional names for subdir-objects
+NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
+## Additional names for libtool
+NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
+
