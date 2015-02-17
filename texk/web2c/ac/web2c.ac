@@ -1,6 +1,6 @@
 ## texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 dnl
-dnl Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options for TeX and MF
@@ -18,7 +18,7 @@ AC_ARG_ENABLE([auto-core],
                              kpse_indent_26))[]dnl
 AC_ARG_ENABLE([dump-share],
               AS_HELP_STRING([--disable-dump-share],
-                             [make fmt/base/mem files architecture-dependent],
+                             [make fmt/base files architecture-dependent],
                              kpse_indent_26))[]dnl
 ## configure options for TeX
 AC_ARG_ENABLE([ipc],
@@ -75,10 +75,9 @@ AC_ARG_ENABLE([web-progs],
               AS_HELP_STRING([--disable-web-progs],
                              [do not build WEB programs bibtex ... weave],
                              kpse_indent_26))[]dnl
-
-## configure option for the SyncTeX tool
+## configure option for the SyncTeX library and tool
 AC_ARG_ENABLE([synctex],
               AS_HELP_STRING([--disable-synctex],
-                             [do not build the SyncTeX tool],
+                             [do not build the SyncTeX library and tool],
                              kpse_indent_26))[]dnl
 

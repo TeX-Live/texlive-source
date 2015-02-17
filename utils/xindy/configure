@@ -719,7 +719,6 @@ enable_compiler_warnings
 enable_xindy_rules
 enable_xindy_docs
 with_clisp_runtime
-with_xindy_recode
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1373,8 +1372,6 @@ Optional Packages:
                           pathname of clisp runtime to install for `xindy',
                           `default' to derive from clisp, or `system' to use
                           installed version
-  --with-xindy-recode     use `recode' instead of `iconv' to build xindy
-                          [default: no]
 
 Some influential environment variables:
   CC          C compiler command
@@ -3752,11 +3749,6 @@ fi
 # Check whether --with-clisp-runtime was given.
 if test "${with_clisp_runtime+set}" = set; then :
   withval=$with_clisp_runtime;
-fi
-
-# Check whether --with-xindy-recode was given.
-if test "${with_xindy_recode+set}" = set; then :
-  withval=$with_xindy_recode;
 fi
 
 
