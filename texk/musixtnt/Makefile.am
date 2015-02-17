@@ -41,9 +41,8 @@ dist_man_MANS = \
 
 ## Tests
 ##
-TESTS = fixmsxpart.test msxlint.test
-EXTRA_DIST += $(TESTS)
-
-TESTS_ENVIRONMENT = MUSIXTNT_TREE=$(MUSIXTNT_TREE)
+TESTS_ENVIRONMENT = testsrc="$(srcdir)/$(MUSIXTNT_TREE)/tests"
+TESTS = $(MUSIXTNT_TREE)/fixmsxpart.test $(MUSIXTNT_TREE)/msxlint.test
 DISTCLEANFILES = fixtest.* linttest.*
+NEVER_DIST += $(TESTS:.test=.log) $(TESTS:.test=.trs)
 

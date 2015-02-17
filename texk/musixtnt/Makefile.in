@@ -549,8 +549,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(MUSIXTNT_TREE) $(MUSIXTNT_TREE)-PATCHES $(TESTS)
-NEVER_DIST = `find . $(NEVER_NAMES)`
+EXTRA_DIST = $(MUSIXTNT_TREE) $(MUSIXTNT_TREE)-PATCHES
+NEVER_DIST = `find . $(NEVER_NAMES)` $(TESTS:.test=.log) \
+	$(TESTS:.test=.trs)
 
 # Files not to be distributed
 NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
@@ -571,8 +572,8 @@ dist_man_MANS = \
 	$(MUSIXTNT_TREE)/fixmsxpart.1 \
 	$(MUSIXTNT_TREE)/msxlint.1
 
-TESTS = fixmsxpart.test msxlint.test
-TESTS_ENVIRONMENT = MUSIXTNT_TREE=$(MUSIXTNT_TREE)
+TESTS_ENVIRONMENT = testsrc="$(srcdir)/$(MUSIXTNT_TREE)/tests"
+TESTS = $(MUSIXTNT_TREE)/fixmsxpart.test $(MUSIXTNT_TREE)/msxlint.test
 DISTCLEANFILES = fixtest.* linttest.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

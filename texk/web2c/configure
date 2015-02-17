@@ -1706,7 +1706,7 @@ Optional Features:
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-libtool-hack   ignore libtool dependency_libs
   --enable-auto-core      cause TeX&MF to dump core, given a certain filename
-  --disable-dump-share    make fmt/base/mem files architecture-dependent
+  --disable-dump-share    make fmt/base files architecture-dependent
   --disable-ipc           disable TeX's --ipc option, i.e., pipe to a program
   --disable-tex           do not compile and install TeX
   --enable-tex-synctex      build TeX with SyncTeX support
@@ -1742,7 +1742,7 @@ Optional Features:
   --enable-tektronixwin     include Tektronix window support
   --enable-unitermwin       include Uniterm window support
   --disable-web-progs     do not build WEB programs bibtex ... weave
-  --disable-synctex       do not build the SyncTeX tool
+  --disable-synctex       do not build the SyncTeX library and tool
   --disable-missing       terminate if a requested program or feature must be
                           disabled, e.g., due to missing libraries
 
@@ -18895,8 +18895,7 @@ fi
 if test "${enable_web_progs+set}" = set; then :
   enableval=$enable_web_progs;
 fi
-
-## configure option for the SyncTeX tool
+## configure option for the SyncTeX library and tool
 # Check whether --enable-synctex was given.
 if test "${enable_synctex+set}" = set; then :
   enableval=$enable_synctex;

@@ -709,7 +709,6 @@ enable_xindy
 enable_xindy_rules
 enable_xindy_docs
 with_clisp_runtime
-with_xindy_recode
 enable_xpdfopen
 enable_web2c
 with_banner_add
@@ -1533,7 +1532,7 @@ Optional Features:
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
                             filename
-  --disable-dump-share      make fmt/base/mem files architecture-dependent
+  --disable-dump-share      make fmt/base files architecture-dependent
   --disable-ipc             disable TeX's --ipc option, i.e., pipe to a
                             program
   --disable-tex             do not compile and install TeX
@@ -1570,7 +1569,7 @@ Optional Features:
   --enable-tektronixwin       include Tektronix window support
   --enable-unitermwin         include Uniterm window support
   --disable-web-progs       do not build WEB programs bibtex ... weave
-  --disable-synctex         do not build the SyncTeX tool
+  --disable-synctex         do not build the SyncTeX library and tool
   --disable-afm2pl        do not build the afm2pl package
   --disable-bibtex-x      do not build the bibtex-x package
   --disable-bibtex8         do not build the bibtex8 program
@@ -1650,8 +1649,6 @@ Optional Packages:
                           pathname of clisp runtime to install for `xindy',
                           `default' to derive from clisp, or `system' to use
                           installed version
-  --with-xindy-recode     use `recode' instead of `iconv' to build xindy
-                          [default: no]
   --with-banner-add=STR   add STR to version string appended to banner lines
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d '%s'] or
                           [texworks --position=%d "%s"]
@@ -3598,11 +3595,6 @@ if test "${with_clisp_runtime+set}" = set; then :
   withval=$with_clisp_runtime;
 fi
 
-# Check whether --with-xindy-recode was given.
-if test "${with_xindy_recode+set}" = set; then :
-  withval=$with_xindy_recode;
-fi
-
 ## utils/xindy/ac/clisp.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
 ## configure checks for xindy and clisp
 case $with_clisp_runtime in #(
@@ -4005,8 +3997,7 @@ fi
 if test "${enable_web_progs+set}" = set; then :
   enableval=$enable_web_progs;
 fi
-
-## configure option for the SyncTeX tool
+## configure option for the SyncTeX library and tool
 # Check whether --enable-synctex was given.
 if test "${enable_synctex+set}" = set; then :
   enableval=$enable_synctex;

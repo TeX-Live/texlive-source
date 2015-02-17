@@ -1,9 +1,0 @@
-#! /bin/sh
-
-# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
-# You may freely use, modify and/or distribute this file.
-
-testsrc="$srcdir/$MUSIXTNT_TREE/tests"
-
-. $srcdir/$MUSIXTNT_TREE/`basename $0`
-

@@ -1,3 +1,8 @@
+2015-02-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better handling of distributed tests.
+	* fixmsxpart.test, msxlint.test: Removed.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
