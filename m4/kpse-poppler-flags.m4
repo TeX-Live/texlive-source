@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -13,6 +13,7 @@
 # LIBS required for the `-lpoppler' library in libs/poppler/ of the TL tree.
 AC_DEFUN([KPSE_POPPLER_FLAGS], [dnl
 AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
+AC_REQUIRE([KPSE_ZLIB_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([poppler], [poppler], [],
                 [-IBLD/libs/poppler/include],
                 [BLD/libs/poppler/libpoppler.a], [],

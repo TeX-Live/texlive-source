@@ -807,8 +807,6 @@ enable_linked_scripts
 with_system_harfbuzz
 with_system_icu
 with_system_teckit
-with_teckit_includes
-with_teckit_libdir
 with_system_graphite2
 with_system_zziplib
 with_system_xpdf
@@ -1649,11 +1647,8 @@ Optional Packages:
                           pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires
                           icu-config)
-  --with-system-teckit    use installed teckit headers and library
-  --with-teckit-includes=DIR
-                          teckit headers installed in DIR
-  --with-teckit-libdir=DIR
-                          teckit library installed in DIR
+  --with-system-teckit    use installed teckit headers and library (requires
+                          pkg-config)
   --with-system-graphite2 use installed graphite2 headers and library
                           (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
@@ -4871,16 +4866,6 @@ fi
 # Check whether --with-system-teckit was given.
 if test "${with_system_teckit+set}" = set; then :
   withval=$with_system_teckit;
-fi
-
-# Check whether --with-teckit-includes was given.
-if test "${with_teckit_includes+set}" = set; then :
-  withval=$with_teckit_includes;
-fi
-
-# Check whether --with-teckit-libdir was given.
-if test "${with_teckit_libdir+set}" = set; then :
-  withval=$with_teckit_libdir;
 fi
 if test "x$with_system_teckit" = x; then
   if test -f $srcdir/../libs/teckit/configure; then

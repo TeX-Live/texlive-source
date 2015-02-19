@@ -1,8 +1,8 @@
 # Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 #
-# This file is free software; the copyright holders
-# give unlimited permission to copy and/or distribute it,
+# This file is free software; the copyright holder
+# gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
 # KPSE_COMPILER_VISIBILITY
