@@ -1,3 +1,8 @@
+2015-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-ppc-darwin (new): Build fix for PPC OS X.
+	From http://permalink.gmane.org/gmane.comp.lang.lua.luajit/5936.
+
 2014-06-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-05-LuaJITTeX (lj_str_new): Replace '6' by LUAI_HASHLIMIT

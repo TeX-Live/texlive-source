@@ -113,7 +113,7 @@ static const char *sym_decorate(BuildCtx *ctx,
       name[0] = '@';
     else
       *p = '\0';
-#elif (LJ_TARGET_PPC  || LJ_TARGET_PPCSPE) && !LJ_TARGET_CONSOLE
+#elif ((LJ_TARGET_PPC && !LJ_TARGET_OSX)  || LJ_TARGET_PPCSPE) && !LJ_TARGET_CONSOLE
     /* Keep @plt. */
 #else
     *p = '\0';
