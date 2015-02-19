@@ -1,3 +1,9 @@
+2015-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-cairo-flags.m4: Require KPSE_PIXMAN_FLAGS.
+	* kpse-poppler-flags.m4: Require KPSE_ZLIB_FLAGS.
+	* kpse-teckit-flags.m4: Use pkg-config.
+
 2015-02-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (kpse_texk_pkgs): Add musixtnt.

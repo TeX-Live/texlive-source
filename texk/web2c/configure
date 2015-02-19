@@ -1038,8 +1038,6 @@ with_system_poppler
 with_system_xpdf
 with_system_zziplib
 with_system_teckit
-with_teckit_includes
-with_teckit_libdir
 with_system_icu
 with_system_graphite2
 with_system_harfbuzz
@@ -1801,11 +1799,8 @@ Optional Packages:
                           xpdf library from TL (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
-  --with-system-teckit    use installed teckit headers and library
-  --with-teckit-includes=DIR
-                          teckit headers installed in DIR
-  --with-teckit-libdir=DIR
-                          teckit library installed in DIR
+  --with-system-teckit    use installed teckit headers and library (requires
+                          pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires
                           icu-config)
   --with-system-graphite2 use installed graphite2 headers and library
@@ -24129,23 +24124,12 @@ fi
 if test "${with_system_teckit+set}" = set; then :
   withval=$with_system_teckit;
 fi
-
-# Check whether --with-teckit-includes was given.
-if test "${with_teckit_includes+set}" = set; then :
-  withval=$with_teckit_includes;
-fi
-
-# Check whether --with-teckit-libdir was given.
-if test "${with_teckit_libdir+set}" = set; then :
-  withval=$with_teckit_libdir;
-fi
 if test "x$with_system_teckit" = xyes; then
-  if test "x$with_teckit_includes" != x && test "x$with_teckit_includes" != xyes; then
-  TECKIT_INCLUDES="-I$with_teckit_includes"
-fi
-TECKIT_LIBS="-lTECkit"
-if test "x$with_teckit_libdir" != x && test "x$with_teckit_libdir" != xyes; then
-  TECKIT_LIBS="-L$with_teckit_libdir $TECKIT_LIBS"
+  if $PKG_CONFIG teckit; then
+  TECKIT_INCLUDES=`$PKG_CONFIG teckit --cflags`
+  TECKIT_LIBS=`$PKG_CONFIG teckit --libs`
+elif test "x$need_teckit:$with_system_teckit" = xyes:yes; then
+  as_fn_error $? "did not find teckit" "$LINENO" 5
 fi
 else
   TECKIT_INCLUDES="-I$kpse_BLD/libs/teckit/include"

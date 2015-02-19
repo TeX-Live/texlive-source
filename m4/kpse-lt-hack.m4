@@ -1,11 +1,9 @@
 # Public macros for the TeX Live (TL) tree.
 # Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
 #
-# This file is free software; the copyright holders
-# give unlimited permission to copy and/or distribute it,
+# This file is free software; the copyright holder
+# gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
-
-# serial 0
 
 # KPSE_ENABLE_LT_HACK
 # -------------------

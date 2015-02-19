@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -7,11 +7,12 @@
 
 # KPSE_CAIRO_FLAGS
 # ----------------
-# Provide the configure options '--with-system-pixman' (if in the TL tree).
+# Provide the configure options '--with-system-cairo' (if in the TL tree).
 #
 # Set the make variables CAIRO_INCLUDES and CAIRO_LIBS to the CPPFLAGS and
 # LIBS required for the `-lcairo' library in libs/cairo/ of the TL tree.
 AC_DEFUN([KPSE_CAIRO_FLAGS], [dnl
+AC_REQUIRE([KPSE_PIXMAN_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([cairo], [cairo], [],
                 [-IBLD/libs/cairo/cairo], [BLD/libs/cairo/libcairo.a], [],
                 [], [${top_builddir}/../../libs/cairo/cairo/cairo.h])[]dnl
