@@ -278,6 +278,7 @@ TESTS += $(dvipdfmx_tests)
 endif DVIPDFMX
 xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
 xdvipdfmx_tests += xdvipdfm-res.test
+xdvipdfmx_tests += xdvipdfm-ttc.test
 if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX
@@ -295,4 +296,5 @@ EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
 EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
 EXTRA_DIST += tests/resrc.dvi tests/resrc.tex
 EXTRA_DIST += tests/xbmc.dvi tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
+EXTRA_DIST += tests/ttc.dvi tests/ttc.tex tests/test.ttc
 DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf

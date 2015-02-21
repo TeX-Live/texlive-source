@@ -836,7 +836,8 @@ TESTS = $(am__append_6) $(am__append_7)
 dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test \
 	dvipdfm-bkm.test dvipdfm-psz.test dvipdfm-res.test
 xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test \
-	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-res.test
+	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-res.test \
+	xdvipdfm-ttc.test
 EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/psfonts.map tests/fullmap.dvi tests/fullmap.tex \
 	tests/image.bmp tests/imgbmp.bb tests/imgbmp.xbb \
@@ -852,7 +853,8 @@ EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests) tests/dvipdfmx.cfg \
 	tests/annot.tex tests/bookm.dvi tests/bookm.tex \
 	tests/paper.dvi tests/paper.tex tests/resrc.dvi \
 	tests/resrc.tex tests/xbmc.dvi tests/xbmc.tex \
-	tests/xbmc10.600pk tests/xbmc10.tfm
+	tests/xbmc10.600pk tests/xbmc10.tfm tests/ttc.dvi \
+	tests/ttc.tex tests/test.ttc
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
