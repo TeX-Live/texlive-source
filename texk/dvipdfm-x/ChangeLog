@@ -12,6 +12,7 @@
 	* dvi.c (dvi_locate_native_font): correctly load vertical glyph
 	metrics.
 	* configure.ac, Makefile.am: drop FreeType dependency.
+	* dvi.c, fontmap.c, fontmap.h: remove the nonop pdf_load_native_font.
 
 2015-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

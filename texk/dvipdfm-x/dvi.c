@@ -951,7 +951,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   sprintf(fontmap_key, "%s/%u/%c/%d/%d/%d", path, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
-    if (pdf_load_native_font(path, index, layout_dir, extend, slant, embolden) == -1) {
+    if (pdf_insert_native_fontmap_record(path, index, layout_dir, extend, slant, embolden) == -1) {
       ERROR("Cannot proceed without the font: %s", filename);
     }
     mrec = pdf_lookup_fontmap_record(fontmap_key);
