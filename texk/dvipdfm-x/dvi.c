@@ -143,10 +143,10 @@ static struct loaded_font
 #ifdef XETEX
   uint32_t rgba_color;
   struct tt_longMetrics *hvmt;
-  FWord ascent;
-  FWord descent;
-  USHORT unitsPerEm;
-  USHORT numGlyphs;
+  int   ascent;
+  int   descent;
+  unsigned unitsPerEm;
+  unsigned numGlyphs;
   int   layout_dir;
   float extend;
   float slant;
@@ -1598,7 +1598,7 @@ do_glyphs (void)
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
     if (glyph_id < font->numGlyphs) {
-      USHORT advance = (font->hvmt)[glyph_id].advance;
+      unsigned advance = (font->hvmt)[glyph_id].advance;
       glyph_width    = (double)font->size * (double)advance / (double)font->unitsPerEm;
       glyph_width    = glyph_width * font->extend;
 
