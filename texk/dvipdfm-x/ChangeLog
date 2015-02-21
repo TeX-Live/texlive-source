@@ -13,6 +13,9 @@
 	metrics.
 	* configure.ac, Makefile.am: drop FreeType dependency.
 	* dvi.c, fontmap.c, fontmap.h: remove the nonop pdf_load_native_font.
+	* fontmap.c, fontmap.h (pdf_insert_{native_}fontmap_record): return
+	the newly inserted record.
+	* dvi.c: adapt.
 
 2015-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
