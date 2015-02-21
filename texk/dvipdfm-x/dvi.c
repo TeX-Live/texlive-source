@@ -940,7 +940,8 @@ dvi_locate_native_font (const char *filename, uint32_t index,
         || (path = dpx_find_type1_file(filename)) != NULL
         || (path = dpx_find_dfont_file(filename)) != NULL) ) {
     fp = fopen(path, "rb");
-  } else {
+  }
+  if (!fp) {
     ERROR("Cannot proceed without the \"native\" font: %s", filename);
   }
   need_more_fonts(1);
