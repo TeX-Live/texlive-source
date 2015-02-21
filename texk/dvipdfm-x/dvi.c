@@ -63,6 +63,7 @@
 #ifdef XETEX
 #include "dpxfile.h"
 #include "pdfximage.h"
+#include "tt_aux.h"
 #include "tt_table.h"
 #endif
 
@@ -924,6 +925,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   FILE         *fp;
   char         *path = strdup(filename);
   sfnt         *sfont;
+  unsigned      offset = 0;
   struct tt_head_table *head;
   struct tt_maxp_table *maxp;
   struct tt_hhea_table *hhea;
@@ -964,7 +966,9 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   free(fontmap_key);
 
   sfont = sfnt_open(fp);
-  sfnt_read_table_directory(sfont, 0);
+  if (sfont->type == SFNT_TYPE_TTC)
+    offset = ttc_read_offset(sfont, index);
+  sfnt_read_table_directory(sfont, offset);
   head = tt_read_head_table(sfont);
   maxp = tt_read_maxp_table(sfont);
   hhea = tt_read_hhea_table(sfont);

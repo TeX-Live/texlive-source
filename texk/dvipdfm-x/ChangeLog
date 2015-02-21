@@ -6,6 +6,9 @@
 	Fixes the xdvipdfmx-bkm test.
 	* dvi.c (dvi_locate_native_font): fix loading files without absolute
 	paths.
+	* dvi.c (dvi_locate_native_font): fix loading TTC fonts.
+	* xdvipdfm-ttc.test, tests/ttc.dvi, tests/ttc.tex, tests/test.ttc,
+	Makefile.am: new test.
 
 2015-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
