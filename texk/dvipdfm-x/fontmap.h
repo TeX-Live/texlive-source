@@ -88,13 +88,13 @@ extern int          pdf_read_fontmap_line     (fontmap_rec *mrec, const char *ml
 
 extern int          pdf_append_fontmap_record (const char  *kp, const fontmap_rec *mrec);
 extern int          pdf_remove_fontmap_record (const char  *kp);
-extern int          pdf_insert_fontmap_record (const char  *kp, const fontmap_rec *mrec);
+extern fontmap_rec *pdf_insert_fontmap_record (const char  *kp, const fontmap_rec *mrec);
 extern fontmap_rec *pdf_lookup_fontmap_record (const char  *kp);
 
 extern int          is_pdfm_mapline           (const char  *mline);
 
 #ifdef XETEX
-extern int          pdf_insert_native_fontmap_record (const char *filename, uint32_t index,
+extern fontmap_rec *pdf_insert_native_fontmap_record (const char *filename, uint32_t index,
                                                       int layout_dir, int extend, int slant, int embolden);
 #endif
 

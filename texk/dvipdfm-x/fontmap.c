@@ -816,7 +816,7 @@ pdf_remove_fontmap_record (const char *kp)
   return  0;
 }
 
-int
+fontmap_rec *
 pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
 {
   fontmap_rec *mrec;
@@ -824,7 +824,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
 
   if (!kp || fontmap_invalid(vp)) {
     WARN("Invalid fontmap record...");
-    return -1;
+    return NULL;
   }
 
   if (verbose > 3)
@@ -839,7 +839,8 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
     if (!subfont_ids) {
       RELEASE(fnt_name);
       RELEASE(sfd_name);
-      return  -1;
+      WARN("Could not open SFD file: %s", sfd_name);
+      return NULL;
     }
     if (verbose > 3)
       MESG("\nfontmap>> Expand @%s@:", sfd_name);
@@ -872,7 +873,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
   if (verbose > 3)
     MESG("\n");
 
-  return  0;
+  return mrec;
 }
 
 
@@ -1035,12 +1036,13 @@ pdf_load_fontmap_file (const char *filename, int mode)
 }
 
 #ifdef XETEX
-int
+fontmap_rec *
 pdf_insert_native_fontmap_record (const char *path, uint32_t index,
                                   int layout_dir, int extend, int slant, int embolden)
 {
   char        *fontmap_key;
   fontmap_rec *mrec;
+  fontmap_rec *ret;
 
   ASSERT(path);
 
@@ -1066,14 +1068,14 @@ pdf_insert_native_fontmap_record (const char *path, uint32_t index,
   mrec->opt.slant  = slant    / 65536.0;
   mrec->opt.bold   = embolden / 65536.0;
   
-  pdf_insert_fontmap_record(mrec->map_name, mrec);
+  ret = pdf_insert_fontmap_record(mrec->map_name, mrec);
   pdf_clear_fontmap_record(mrec);
   RELEASE(mrec);
 
   if (verbose)
     MESG(">");
 
-  return 0;
+  return ret;
 }
 #endif /* XETEX */
 
