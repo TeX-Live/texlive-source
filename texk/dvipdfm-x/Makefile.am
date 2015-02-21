@@ -16,7 +16,7 @@ endif XDVIPDFMX
 EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPAPER_INCLUDES)
-xdvipdfmx_CPPFLAGS = -DXETEX $(FREETYPE2_INCLUDES) $(AM_CPPFLAGS)
+xdvipdfmx_CPPFLAGS = -DXETEX $(AM_CPPFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 dvipdfmx_SOURCES = \
@@ -174,7 +174,7 @@ dvipdfmx_SOURCES = \
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
 dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
-xdvipdfmx_LDADD = $(FREETYPE2_LIBS) $(dvipdfmx_LDADD)
+xdvipdfmx_LDADD = $(dvipdfmx_LDADD)
 
 $(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
 
@@ -251,7 +251,7 @@ endif DVIPDFMX
 
 all-local: config.force
 
-config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND) $(LIBPAPER_DEPEND)
+config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(LIBPAPER_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
@@ -259,8 +259,6 @@ DISTCLEANFILES = config.force
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
-## Rebuild libfreetype
-@FREETYPE2_RULE@
 ## Rebuild libpng
 @LIBPNG_RULE@
 ## Rebuild libz
