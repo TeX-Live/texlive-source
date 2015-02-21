@@ -11,6 +11,7 @@
 	Makefile.am: new test.
 	* dvi.c (dvi_locate_native_font): correctly load vertical glyph
 	metrics.
+	* configure.ac, Makefile.am: drop FreeType dependency.
 
 2015-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
