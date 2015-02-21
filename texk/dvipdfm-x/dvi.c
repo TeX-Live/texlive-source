@@ -797,6 +797,8 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
     subfont_id = sfd_load_record(mrec->charmap.sfd_name, mrec->charmap.subfont_id);
   }
 
+  memset(&loaded_fonts[cur_id], 0, sizeof (struct loaded_font));
+
   /* TFM must exist here. */
   loaded_fonts[cur_id].tfm_id     = tfm_open(tfm_name, 1);
   loaded_fonts[cur_id].subfont_id = subfont_id;
@@ -941,6 +943,9 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     /* FIXME: would be more efficient if pdf_load_native_font returned the mrec ptr (or NULL for error)
               so we could avoid doing a second lookup for the item we just inserted */
   }
+
+  memset(&loaded_fonts[cur_id], 0, sizeof (struct loaded_font));
+
   loaded_fonts[cur_id].font_id = pdf_dev_locate_font(fontmap_key, ptsize);
   loaded_fonts[cur_id].size    = ptsize;
   loaded_fonts[cur_id].type    = NATIVE;

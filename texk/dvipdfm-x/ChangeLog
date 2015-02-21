@@ -1,3 +1,10 @@
+2015-02-21  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* dvi.c (dvi_locate_font, dvi_locate_native_font): make sure the
+	all members of loaded font struct are initialized, avoid crash in
+	dvi_close for simple fonts because hvmt member is not initialized.
+	Fixes the xdvipdfmx-bkm test.
+
 2015-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c: Read glyph advances without the need for FreeType, based on
