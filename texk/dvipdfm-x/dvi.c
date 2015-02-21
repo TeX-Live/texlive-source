@@ -972,12 +972,19 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   head = tt_read_head_table(sfont);
   maxp = tt_read_maxp_table(sfont);
   hhea = tt_read_hhea_table(sfont);
-  sfnt_locate_table(sfont, layout_dir == 0 ? "hmtx" : "vmtx");
   loaded_fonts[cur_id].ascent = hhea->ascent;
   loaded_fonts[cur_id].descent = hhea->descent;
   loaded_fonts[cur_id].unitsPerEm = head->unitsPerEm;
   loaded_fonts[cur_id].numGlyphs = maxp->numGlyphs;
-  loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+  if (layout_dir == 1 && sfnt_find_table_pos(sfont, "vmtx") > 0) {
+    struct tt_vhea_table *vhea = tt_read_vhea_table(sfont);
+    sfnt_locate_table(sfont, "vmtx");
+    loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
+    RELEASE(vhea);
+  } else {
+    sfnt_locate_table(sfont, "hmtx");
+    loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+  }
   RELEASE(hhea);
   RELEASE(maxp);
   RELEASE(head);
