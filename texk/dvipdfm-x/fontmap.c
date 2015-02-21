@@ -1035,8 +1035,8 @@ pdf_load_fontmap_file (const char *filename, int mode)
 }
 
 #ifdef XETEX
-static int
-pdf_insert_native_fontmap_record (const char *path, int index,
+int
+pdf_insert_native_fontmap_record (const char *path, uint32_t index,
                                   int layout_dir, int extend, int slant, int embolden)
 {
   char        *fontmap_key;
@@ -1074,14 +1074,6 @@ pdf_insert_native_fontmap_record (const char *path, int index,
     MESG(">");
 
   return 0;
-}
-
-int
-pdf_load_native_font (const char *filename, unsigned long index,
-                      int layout_dir, int extend, int slant, int embolden)
-{
-  return pdf_insert_native_fontmap_record(filename, index,
-                                           layout_dir, extend, slant, embolden);
 }
 #endif /* XETEX */
 
