@@ -62,7 +62,7 @@
 
 #ifdef XETEX
 #include "pdfximage.h"
-#include FT_ADVANCES_H
+#include "tt_table.h"
 #endif
 
 #define DVI_STACK_DEPTH_MAX  256u
@@ -142,7 +142,11 @@ static struct loaded_font
   int   source;     /* Source is either DVI or VF */
 #ifdef XETEX
   uint32_t rgba_color;
-  FT_Face ft_face;
+  struct tt_longMetrics *hvmt;
+  FWord ascent;
+  FWord descent;
+  USHORT unitsPerEm;
+  USHORT numGlyphs;
   int   layout_dir;
   float extend;
   float slant;
@@ -914,6 +918,11 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   int           cur_id = -1;
   fontmap_rec  *mrec;
   char         *fontmap_key = malloc(strlen(filename) + 40); // CHECK this is enough
+  FILE         *fp;
+  sfnt         *sfont;
+  struct tt_head_table *head;
+  struct tt_maxp_table *maxp;
+  struct tt_hhea_table *hhea;
 
   if (verbose)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
@@ -937,7 +946,24 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].type    = NATIVE;
   free(fontmap_key);
 
-  loaded_fonts[cur_id].ft_face = mrec->opt.ft_face;
+  fp = fopen(filename, "rb");
+  sfont = sfnt_open(fp);
+  sfnt_read_table_directory(sfont, 0);
+  head = tt_read_head_table(sfont);
+  maxp = tt_read_maxp_table(sfont);
+  hhea = tt_read_hhea_table(sfont);
+  sfnt_locate_table(sfont, layout_dir == 0 ? "hmtx" : "vmtx");
+  loaded_fonts[cur_id].ascent = hhea->ascent;
+  loaded_fonts[cur_id].descent = hhea->descent;
+  loaded_fonts[cur_id].unitsPerEm = head->unitsPerEm;
+  loaded_fonts[cur_id].numGlyphs = maxp->numGlyphs;
+  loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+  RELEASE(hhea);
+  RELEASE(maxp);
+  RELEASE(head);
+  sfnt_close(sfont);
+  fclose(fp);
+
   loaded_fonts[cur_id].layout_dir = layout_dir;
   loaded_fonts[cur_id].extend = mrec->opt.extend;
   loaded_fonts[cur_id].slant = mrec->opt.slant;
@@ -1566,24 +1592,15 @@ do_glyphs (void)
 
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
-    if (glyph_id < font->ft_face->num_glyphs) {
-      FT_Error error;
-      FT_Fixed advance;
-      int flags = FT_LOAD_NO_SCALE;
+    if (glyph_id < font->numGlyphs) {
+      USHORT advance = (font->hvmt)[glyph_id].advance;
+      glyph_width    = (double)font->size * (double)advance / (double)font->unitsPerEm;
+      glyph_width    = glyph_width * font->extend;
 
-      if (font->layout_dir == 1)
-        flags |= FT_LOAD_VERTICAL_LAYOUT;
-
-      error = FT_Get_Advance(font->ft_face, glyph_id, flags, &advance);
-      if (error)
-        advance = 0;
-
-      glyph_width = (double)font->size * (double)advance / (double)font->ft_face->units_per_EM;
-      glyph_width = glyph_width * font->extend;
       if (dvi_is_tracking_boxes()) {
         pdf_rect rect;
-        height = (double)font->size * (double)font->ft_face->ascender / (double)font->ft_face->units_per_EM;
-        depth  = (double)font->size * -(double)font->ft_face->descender / (double)font->ft_face->units_per_EM;
+        height = (double)font->size * (double)font->ascent / (double)font->unitsPerEm;
+        depth  = (double)font->size * -(double)font->descent / (double)font->unitsPerEm;
         pdf_dev_set_rect(&rect, dvi_state.h + xloc[i], -dvi_state.v - yloc[i], glyph_width, height, depth);
         pdf_doc_expand_box(&rect);
       }
@@ -1867,6 +1884,16 @@ dvi_close (void)
     RELEASE(page_loc);
   page_loc  = NULL;
   num_pages = 0;
+
+#ifdef XETEX
+  for (i = 0; i < num_loaded_fonts; i++)
+  {
+    if (loaded_fonts[i].hvmt != NULL)
+      RELEASE(loaded_fonts[i].hvmt);
+
+    loaded_fonts[i].hvmt = NULL;
+  }
+#endif
 
   if (loaded_fonts)
     RELEASE(loaded_fonts);

@@ -35,11 +35,6 @@
 #define FONTMAP_STYLE_ITALIC     2
 #define FONTMAP_STYLE_BOLDITALIC 3
 
-#ifdef XETEX
-#include "ft2build.h"
-#include FT_FREETYPE_H
-#endif
-
 /* Options */
 typedef struct fontmap_opt {
   /* Synthetic font */
@@ -58,9 +53,6 @@ typedef struct fontmap_opt {
   int    index;       /* TTC index */
   int    style;       /* ,Bold, etc. */
   int    stemv;       /* StemV value especially for CJK fonts */
-#ifdef XETEX
-  FT_Face ft_face;
-#endif
 } fontmap_opt;
 
 typedef struct fontmap_rec {
