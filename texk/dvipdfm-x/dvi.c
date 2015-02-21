@@ -942,7 +942,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     fp = fopen(path, "rb");
   }
   if (!fp) {
-    ERROR("Cannot proceed without the \"native\" font: %s", filename);
+    ERROR("Cannot proceed without the font: %s", filename);
   }
   need_more_fonts(1);
 
@@ -952,7 +952,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
     if (pdf_load_native_font(path, index, layout_dir, extend, slant, embolden) == -1) {
-      ERROR("Cannot proceed without the \"native\" font: %s", filename);
+      ERROR("Cannot proceed without the font: %s", filename);
     }
     mrec = pdf_lookup_fontmap_record(fontmap_key);
     /* FIXME: would be more efficient if pdf_load_native_font returned the mrec ptr (or NULL for error)
