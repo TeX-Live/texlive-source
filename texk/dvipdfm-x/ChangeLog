@@ -4,6 +4,8 @@
 	all members of loaded font struct are initialized, avoid crash in
 	dvi_close for simple fonts because hvmt member is not initialized.
 	Fixes the xdvipdfmx-bkm test.
+	* dvi.c (dvi_locate_native_font): fix loading files without absolute
+	paths.
 
 2015-02-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

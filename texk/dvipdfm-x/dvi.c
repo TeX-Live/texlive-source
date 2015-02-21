@@ -61,6 +61,7 @@
 #include "dvipdfmx.h"
 
 #ifdef XETEX
+#include "dpxfile.h"
 #include "pdfximage.h"
 #include "tt_table.h"
 #endif
@@ -921,6 +922,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   fontmap_rec  *mrec;
   char         *fontmap_key = malloc(strlen(filename) + 40); // CHECK this is enough
   FILE         *fp;
+  char         *path = strdup(filename);
   sfnt         *sfont;
   struct tt_head_table *head;
   struct tt_maxp_table *maxp;
@@ -929,14 +931,24 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   if (verbose)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
 
+  fp = fopen(path, "rb");
+  if (!fp &&
+      ((path = dpx_find_opentype_file(filename)) != NULL
+        || (path = dpx_find_truetype_file(filename)) != NULL
+        || (path = dpx_find_type1_file(filename)) != NULL
+        || (path = dpx_find_dfont_file(filename)) != NULL) ) {
+    fp = fopen(path, "rb");
+  } else {
+    ERROR("Cannot proceed without the \"native\" font: %s", filename);
+  }
   need_more_fonts(1);
 
   cur_id = num_loaded_fonts++;
 
-  sprintf(fontmap_key, "%s/%u/%c/%d/%d/%d", filename, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
+  sprintf(fontmap_key, "%s/%u/%c/%d/%d/%d", path, index, layout_dir == 0 ? 'H' : 'V', extend, slant, embolden);
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
-    if (pdf_load_native_font(filename, index, layout_dir, extend, slant, embolden) == -1) {
+    if (pdf_load_native_font(path, index, layout_dir, extend, slant, embolden) == -1) {
       ERROR("Cannot proceed without the \"native\" font: %s", filename);
     }
     mrec = pdf_lookup_fontmap_record(fontmap_key);
@@ -951,7 +963,6 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].type    = NATIVE;
   free(fontmap_key);
 
-  fp = fopen(filename, "rb");
   sfont = sfnt_open(fp);
   sfnt_read_table_directory(sfont, 0);
   head = tt_read_head_table(sfont);
@@ -967,6 +978,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   RELEASE(maxp);
   RELEASE(head);
   sfnt_close(sfont);
+  free(path);
   fclose(fp);
 
   loaded_fonts[cur_id].layout_dir = layout_dir;
