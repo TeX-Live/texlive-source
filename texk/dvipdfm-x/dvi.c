@@ -952,7 +952,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   mrec = pdf_lookup_fontmap_record(fontmap_key);
   if (mrec == NULL) {
     if ((mrec = pdf_insert_native_fontmap_record(path, index, layout_dir, extend, slant, embolden)) == NULL) {
-      ERROR("Cannot proceed without the font: %s", filename);
+      ERROR("Failed to insert font record for font: %s", filename);
     }
   }
 
