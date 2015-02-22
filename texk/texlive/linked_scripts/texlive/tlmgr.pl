@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 35998 2015-01-08 19:12:31Z karl $
+# $Id: tlmgr.pl 36286 2015-02-15 23:24:23Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 35998 $';
-my $datrev = '$Date: 2015-01-08 20:12:31 +0100 (Thu, 08 Jan 2015) $';
+my $svnrev = '$Revision: 36286 $';
+my $datrev = '$Date: 2015-02-16 00:24:23 +0100 (Mon, 16 Feb 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -25,6 +25,7 @@ our $packagelogfile;
 our $packagelogged;
 our $tlmgr_config_file;
 our $pinfile;
+our $action; # for the pod2usage -sections call
 
 BEGIN {
   $^W = 1;
@@ -150,7 +151,7 @@ sub main {
                          "backupdir" => "=s",
                          "clean" => ":-99",
                          "dry-run|n" => 1 },
-    "candidate"     => { },
+    "candidates"    => { },
     "check"         => { "use-svn" => 1 },
     "conf"          => { "conffile" => "=s", 
                          "delete" => 1 },
@@ -243,7 +244,7 @@ sub main {
   $::machinereadable = $opts{"machine-readable"}
     if (defined($opts{"machine-readable"}));
 
-  my $action = shift @ARGV;
+  $action = shift @ARGV;
   if (!defined($action)) {
     if ($opts{"gui"}) {			# -gui = gui
       $action = "gui";
@@ -320,8 +321,13 @@ sub main {
     delete $ENV{'LESSPIPE'};
     delete $ENV{'LESSOPEN'};
     if ($action && ($action ne "help")) {
+      # 1) Must use [...] form for -sections arg because otherwise the
+      #    /$action subsection selector applies to all sections.
+      #    https://rt.cpan.org/Public/Bug/Display.html?id=102116
+      # 2) Must use "..." for that so the $action value is interpolated.
       pod2usage(-exitstatus => 0, -verbose => 99,
-                -sections => "NAME|SYNOPSIS|ACTIONS/$action.*" , @noperldoc);
+                -sections => [ 'NAME', 'SYNOPSIS', "ACTIONS/$::action.*" ],
+                @noperldoc);
     } else {
       if ($opts{"help"}) {
         pod2usage(-exitstatus => 0, -verbose => 2, @noperldoc);

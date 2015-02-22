@@ -112,8 +112,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.42';
-$version_details = "$My_name, John Collins, 10 January 2015";
+$version_num = '4.43a';
+$version_details = "$My_name, John Collins, 5 February 2015";
 
 use Config;
 use File::Basename;
@@ -186,6 +186,14 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##      5 Feb 2015  John Collins  Deletion of synctex.gz file is with full clean
+##                                  (-C option), not with the small clean (-c)
+##     27 Jan 2015  John Collins  Comments added.
+##     25,26 Jan 2015  John Collins  Complete MiKTeX fix.
+##     16 Jan 2015  John Collins  V. 4.43
+##                                Try to fix issues caused
+##                                  by MiKTeX's absolute pathnames in 
+##                                  .fls and .log file
 ##     10 Jan 2015  John Collins  Fix -cd-associated bugs
 ##      9 Jan 2015  John Collins  V. 4.42
 ##                                Add missfont.log and synctex.gz to cleaned
@@ -2278,7 +2286,7 @@ foreach $filename ( @file_list )
             show_array( " Yet other generated files:\n",
                         keys %generated_exts_all );
         }
-        &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak', 'synctex.gz',
+        &cleanup1( $aux_dir1, $fdb_ext, 'blg', 'ilg', 'log', 'aux.bak', 'idx.bak',
                    split('\s+',$clean_ext),
                    keys %generated_exts_all 
                  );
@@ -2295,7 +2303,7 @@ foreach $filename ( @file_list )
             &cleanup_cusdep_generated;
         }
         if ( $cleanup_mode == 1 ) { 
-            &cleanup1( $out_dir1, 'dvi', 'dviF', 'ps', 'psF', 'pdf',
+            &cleanup1( $out_dir1, 'dvi', 'dviF', 'ps', 'psF', 'pdf', 'synctex.gz',
                        split('\s+', $clean_full_ext)
                      );
         }
@@ -3815,6 +3823,24 @@ sub parse_log {
     %conversions = ();
     @missing_subdirs = ();
 
+
+    # Filenames given in log file may be preceded by a pathname
+    #   denoting current directory.  In MiKTeX, this is an absolute
+    #   pathname; in TeXLive, it is './'. Either way, we'll want to
+    #   remove this pathname string --- see the comments in sub
+    #   rdb_set_latex_deps.  In order of reliability for use in
+    #   normalizing filenames from the log file, the following forms
+    #   of the cwd are used:
+    # (a) internally deduced pwd from log file from sequence of lines
+    #                  **file
+    #                  (dir/file
+    #     if possible
+    # (b) from PWD line in fls file (if available), passed as $pwd_latex
+    # (c) system-given cwd as interpreted by sub good_cwd.
+    # We'll put the first two in  @pwd_log
+    my @pwd_log = ();
+    if ($pwd_latex) { push @pwd_log, $pwd_latex; }
+
     # $primary_out is actual output file (dvi or pdf)
     # It is initialized before the call to this routine, to ensure
     # a sensible default in case of misparsing
@@ -3860,6 +3886,9 @@ sub parse_log {
               # are always terminated by non-block line, rather than eof.
     
     my $line = 0;
+    my $state = 0;   # 0 => before ** line,
+                     # 1 => after **filename line, before next line (first file-reading line)
+                     # 2 => pwd_log determined.
     # For parsing multiple line blocks of info
     my $current_pkg = "";   # non-empty string for package name, if in 
                             # middle of parsing multi-line block of form:
@@ -3912,6 +3941,31 @@ LINE:
                 return 0;
             }
         }
+
+        if ( ($state == 0) && /^\*\*(.*)$/ ) {
+            # Line containing first line specified to tex
+            # It's either a filename or a command starting with \
+            my $first = $1;
+            $state = 1;
+            if ( ! /^\\/ ) {
+                $source_log = $first;
+                if ( -e "$source_log.tex" ) { $source_log .= '.tex'; }
+            }
+            else {
+                $state = 2;
+            }
+            next LINE;
+        }
+        elsif ( $state == 1 ) {
+            $state = 2;
+            if ( m{^\("([^"]*)[/\\]\Q$source_log\E"} ) {
+                unshift @pwd_log, $1;
+	    }
+            elsif ( m{^\((.*)[/\\]\Q$source_log\E} ) {
+                unshift @pwd_log, $1;
+            }
+        }
+
         if ( $block_type ) {
             # In middle of parsing block
             if ( /^\($current_pkg\)/ ) {
@@ -3919,7 +3973,7 @@ LINE:
                 if ( ($block_type eq 'conversion') 
                      && /^\($current_pkg\)\s+Output file: <([^>]+)>/ ) 
                 {
-                    $delegated_output = normalize_clean_filename($1);
+                    $delegated_output = normalize_clean_filename($1, @pwd_log);
                 }
                 next LINE;
             }
@@ -3968,7 +4022,7 @@ print "=== $delegated_source -> $delegated_output\n";
             next LINE;
         }
         elsif ( /^Output written on\s+(.*)\s+\(\d+\s+page/ ) {
-            $primary_out = normalize_clean_filename($1);
+            $primary_out = normalize_clean_filename($1, @pwd_log);
             warn "$My_name: Log file says output to '$primary_out'\n"
                unless $silent;
             next LINE;
@@ -3992,8 +4046,8 @@ print "=== $delegated_source -> $delegated_output\n";
         elsif ( /^Package (\S+) Info: Source file: <([^>]+)>/ ) {
             # Info. produced by epstopdf (and possibly others) 
             #    about file conversion
-            $current_pkg = normalize_clean_filename($1);
-            $delegated_source = normalize_clean_filename($2);
+            $current_pkg = normalize_clean_filename($1, @pwd_log);
+            $delegated_source = normalize_clean_filename($2, @pwd_log);
             $block_type = 'conversion';
             next LINE;
         }
@@ -4063,7 +4117,7 @@ print "=== $delegated_source -> $delegated_output\n";
                 my $file = clean_filename($1);
                 warn "$My_name: Missing input file: '$file' from line\n  '$_'\n"
                     unless $silent;
-                $dependents{normalize_filename($file)} = 0;
+                $dependents{normalize_filename($file, @pwd_log)} = 0;
                 my $file1 = $file;
                 if ( $aux_dir ) {
                       # Allow for the possibility that latex generated
@@ -4081,7 +4135,7 @@ print "=== $delegated_source -> $delegated_output\n";
         }
         if ( /^File: (.+) Graphic file \(type / ) {
             # First line of message from includegraphics/x
-            $dependents{normalize_clean_filename($1)} = 1;
+            $dependents{normalize_clean_filename($1, @pwd_log)} = 1;
             next LINE;
         }
         # Now test for generic lines to ignore, only after special cases!
@@ -4228,7 +4282,7 @@ print "=== $delegated_source -> $delegated_output\n";
             }
         INCLUDE_NAME:
             foreach my $include_name (@new_includes) {
-                $include_name = normalize_filename( $include_name );
+                $include_name = normalize_filename( $include_name, @pwd_log );
                 my ($base, $path, $ext) = fileparseB( $include_name );
                 if ( ($path eq './') || ($path eq '.\\') ) {
                     $include_name = $base.$ext;
@@ -4426,7 +4480,7 @@ CANDIDATE_PAIR:
 #************************************************************
 
 sub parse_fls {
-    my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write ) = @_;
+    my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write, $Ppwd_latex ) = @_;
     %$Pinputs = %$Poutputs = %$Pfirst_read_after_write = ();
     my $fls_file = new FileHandle;
     # Make a note of current working directory
@@ -4436,6 +4490,14 @@ sub parse_fls {
     # giving (pdf)latex's best view of the cwd.  Note that the
     # value given by the cwd() function may be mangled, e.g., by cygwin
     # compared with native MSWin32.
+    #
+    # Two relevant forms of cwd exist: The system one, which we can find, and
+    # the one reported by (pdf)latex in the fls file.  It will be
+    # useful to remove leading part of cwd in filenames --- see the
+    # comments in sub rdb_set_latex_deps.  Given the possible multiplicity
+    # of representations of cwd, the one reported in the fls file should
+    # be definitive in the fls file.
+
     my $cwd = good_cwd();
     if ( ! open ($fls_file, "<$fls_name") ) {
         return 1;
@@ -4448,10 +4510,18 @@ sub parse_fls {
         $_ =~ s/[\n\r]*$//;
         if (/^\s*PWD\s+(.*)$/) {
             $cwd = $1;
+            $$Ppwd_latex = $cwd;
         }
         elsif (/^\s*INPUT\s+(.*)$/) {
             # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
-            my $file = normalize_filename( $1 );
+            my $file = $1;
+            # Remove exactly pwd reported in this file, and following separator.
+            # MiKTeX reports absolute pathnames, and this way of removing PWD insulates
+            #   us from coding issues if the PWD contains non-ASCII characters.  What
+            #   coding scheme (UTF-8, code page, etc) is used depends on OS, TeX
+            #   implementation, ...
+            $file =~ s(^\Q$$Ppwd_latex\E[\\/])();
+            $file = normalize_filename( $file );
             if ( (exists $$Poutputs{$file}) && (! exists $$Pinputs{$file}) ) {
                 $$Pfirst_read_after_write{$file} = 1;
             }
@@ -4459,7 +4529,9 @@ sub parse_fls {
         }
         elsif (/^\s*OUTPUT\s+(.*)$/) {
             # Take precautions against aliasing of foo, ./foo and other possibilities for cwd.
-            $$Poutputs{ normalize_filename( $1 )} = 1;
+            my $file = $1;
+            $file =~ s(^\Q$$Ppwd_latex\E[\\/])();
+            $$Poutputs{ normalize_filename( $file )} = 1;
         }
     }
     close( $fls_file );
@@ -4488,32 +4560,38 @@ sub clean_filename {
 # ------------------------------
 
 sub normalize_filename {
-   # Remove various forms for cwd at start of filename.
-   # Convert to have directory separator = '/' only
-   my $file = $_[0];
+   # Usage: normalize_filename( filename [, extra forms of name of cwd] )
+   # Returns filename with removal of various forms for cwd, and
+   # with conversion of directory separator to '/' only
+   #
+   my ( $file, @dirs ) = @_;
    my $file1 = $file;   # Saved original value
    my $cwd = good_cwd();
    # Normalize files to use / to separate directory components:
    # (Note both / and \ are allowed under MSWin.)
-   $cwd =~ s(\\)(/)g;
-   $file =~ s(\\)(/)g;
-
+   foreach ($cwd, $file,  @dirs) {
+       s(\\)(/)g;
+   }
    # Remove initial component equal to current working directory.
    # Use \Q and \E round directory name in regex to avoid interpretation
    #   of metacharacters in directory name:
-   $file =~ s(^\Q$cwd\E/)();
-   # Remove current directory string:
-   $file =~ s(^\./)();
+   foreach my $dir ( @dirs, './', $cwd ) {
+     if ( $file =~ s(^\Q$dir\E/)() ) {
+#print "===normalize_filename: '$file1' changed to '$file'\n";
+        last;
+     }
+   }
    return $file;
 }
 
 # ------------------------------
 
 sub normalize_clean_filename {
-    # Remove quotes around filename --- see clean_filename --- as from log file.
-    # Then remove any string for cwd, and convert to use '/' for directory separator,
-    # (and any other standardization) done by normalize_filename.
-    return normalize_filename( clean_filename( $_[0] ));
+   # Usage: normalize_clean_filename( filename [, extra forms of name of cwd] )
+   # Same as normalize_filename, but first remove any double quotes, as
+   # done by clean_filename, which is appropriate for filenames from log file.
+    my ($file, @dirs) = @_;
+    return normalize_filename( clean_filename( $file ) , @dirs );
 }
 
 #************************************************************
@@ -5018,6 +5096,99 @@ sub rdb_set_latex_deps {
     # Use fls file only if $recorder is set, and the fls file was generated
     # on this run.
 
+    # N.B.  A complication which we try and handle in determining
+    #   dependent files is that there may be aliasing of file names,
+    #   especially when characters are used in file and directory
+    #   names that are not pure 7-bit-ASCII.  Here is a list of some
+    #   of the difficulties that do arise, between, on the one hand,
+    #   the filenames specified on latexmk's and the cwd found by
+    #   latexmk from the system, and, on the other hand, the filenames
+    #   and their components reported by (pdf)latex in the fls and log
+    #   files:
+    #      1. Whether the separator of path components is / or \ in
+    #         MSWin.
+    #      2. Whether the LFN or the SFN is provided.
+    #      3. Whether the filenames include the cwd or whether they
+    #         are relative to the current directory.
+    #      4. Under cygwin, whether the absolute filenames are
+    #         specified by UNIX or native MSWin conventions.
+    #         (With cygin, the programs used, including the Perl that
+    #         executes latexmk, can be any combination of native MSWin
+    #         programs and cygwin programs with their UNIX-like
+    #         behavior.)
+    #      5. Whether UTF-8 or some other coding is used, and under
+    #         which circumstances: e.g., in calls to the OS to access
+    #         files, in files output by programs, on latexmk's command
+    #         line, on other programs' command lines, by the command
+    #         interpreterS. 
+    #      6. If UTF-8 is used, what kind of canonicalization is used,
+    #         if any.  (This is a particular bugbear when files are
+    #         transferred between different OSes.)
+    #      7. Whether the name of a file in the current directory is
+    #         reported as the simple filename or whether it is
+    #         preceeded by ".\" or "./".
+    #      8. How is it determined whether a pathname is absolute or
+    #         relative?  An absolute pathname in MSWin may start with
+    #         a drive letter and a colon, but under UNIX-type systems,
+    #         the colon is an ordinary character.
+    #      9. Whether a filename reported in an fls or log file can be
+    #         used as is by perl to access a file, or on the command
+    #         line to invoke another program, and whether the use on a
+    #         command line depends on whether the command line is
+    #         executed by a CLI, and by which CLI.  (E.g., cmd.exe,
+    #         v. sh v. tcsh, etc.)
+    #     10. Whether such a filename for the filename on (pdf)latex's
+    #         file agrees with the one on the command line.
+    #   The above questions have arisen from actual experiences and
+    #   tests.
+    #
+    #   In any case, when determining dependent files, we will try to
+    #   remove an initial directory string from filenames found in the
+    #   fls and log files, whenever it denotes the current
+    #   directory. The directory string may be an absolute pathname,
+    #   such as MiKTeX writes in both fls and log files, or it may be
+    #   simply "./" as given by TeXLive in its log file. There are
+    #   several reasons for removing a directory string when possible:
+    #
+    #      1. To avoid having multiple names referring to the same
+    #         file in the list of dependents.
+    #      2. Because the name may be in a different coding.  Thus
+    #         under MSWin 7, cmd.exe and perl (by default) work in an
+    #         "ANSI" coding with some code page, but the filenames
+    #         written by MiKTeX are UTF-8 coded (and if they are non-ASCII
+    #         can't be used for file-processing by Perl without some
+    #         trouble).  This is a particular problem if the pathname
+    #         contains non-ASCII characters; the directory names may not
+    #         even be under the user's control, unlike typical filenames.
+    #      3. When it comes to filenames that are then used in calls to
+    #         bibtex and makeindex, it is bad to use absolute pathnames
+    #         instead of clearly relative pathnames, because the default
+    #         security settings are to prohibit writing files to the
+    #         corresponding directories, which makes the calls to these
+    #         programs unnecessarily fail.
+    #
+    #   In removing unnecessary directory-specifying strings, to
+    #   convert a filename to a simple specification relative to the
+    #   current directory, it will be important to preferentially use
+    #   a determination of the current directory from the file being
+    #   processed.  In the fls file, there is normally a PWD line.  In
+    #   the log file, if (pdf)latex is started with a filename instead
+    #   of a command-executing first line, then this can be determined
+    #   from the first few lines of the log file -- see parse_log.
+    #   This gives a more reliable determination of the relevant path
+    #   string; this is especially important in cases where there is a
+    #   mismatch of coding of the current directory, particularly
+    #   notable in the above-mentioned case of non-ASCII characters
+    #   under MSWin.  Other inconsistencies happen when there is a
+    #   mixure of cygwin and native MSWin software. There can also be
+    #   inconsistencies between whether the separator of pathname
+    #   components is "/" or "\".  So we will allow for this.  The
+    #   necessary normalizations of filenames are handled by the
+    #   subroutines normalize_filename and normalize_clean_filename.
+    #
+    #   I have not tried to handle the (currently rare) cases that the
+    #   OS is neither UNIX-like nor MSWin-like.
+
     # Rules should only be primary
     if ( $$Pcmd_type ne 'primary' ) {
         warn "\n$My_name: ==========$My_name: Probable BUG======= \n   ",
@@ -5047,6 +5218,8 @@ sub rdb_set_latex_deps {
                      #    to source file of conversion.
     local @missing_subdirs = ();  # Missing subdirectories in aux_dir
 
+    local $pwd_latex = undef;     # Cwd as reported in fls file by (pdf)latex
+
     # The following are also returned, but are global, to be used by caller
     # $reference_changed, $bad_reference $bad_citation, $mult_defined
 
@@ -5056,6 +5229,14 @@ sub rdb_set_latex_deps {
         if ( /^eps pdf / ) { $epspdf_cusdep = 1; last; }
     }
 
+    # Analyze fls file first.  It tells us the working directory as seen by (pdf)latex
+    # But we'll use the results later, so that they take priority over the findings
+    # from the log file.
+    my $fls_file = "$aux_dir1$root_filename.fls";
+    if ($recorder && test_gen_file($fls_file) ) {
+        parse_fls( $fls_file, \%source_fls, \%generated_fls, \%first_read_after_write, \$pwd_latex );
+    }
+ 
     &parse_log;
     $missing_dirs = 'none';      # Status of missing directories
     if (@missing_subdirs) {
@@ -5093,20 +5274,19 @@ sub rdb_set_latex_deps {
             }
        }
     }
-
-    my $fls_file = "$aux_dir1$root_filename.fls";
-    if ($recorder && test_gen_file($fls_file) ) {
-        parse_fls( $fls_file, \%source_fls, \%generated_fls, \%first_read_after_write );
-        foreach (keys %source_fls) {
-            $dependents{$_} = 4;
-        }
-        foreach (keys %generated_fls) {
-            rdb_add_generated( $_ );
-            if ( exists($dependents{$_}) ) {
-               $dependents{$_} = 6;
-            }
-        }
+    # Use results from fls file.  (N.B. The hashes will be empty if the fls file
+    # wasn't used/analyzed, so we don't need a test as to whether the fls file was
+    # used.
+    foreach (keys %source_fls) {
+        $dependents{$_} = 4;
     }
+    foreach (keys %generated_fls) {
+        rdb_add_generated( $_ );
+        if ( exists($dependents{$_}) ) {
+            $dependents{$_} = 6;
+        }
+     }
+
 
     for my $conv (sort keys %conversions) {
         my $conv_source = $conversions{$conv};
@@ -8343,7 +8523,7 @@ sub cache_good_cwd {
                  "  to get MSWin version of cygwin path\n",
                  "     '$cwd'\n",
                  "  The result was\n",
-                 "     'Win_cwd'\n";
+                 "     '$Win_cwd'\n";
         }
     }
     $cache{cwd} = $cwd;
