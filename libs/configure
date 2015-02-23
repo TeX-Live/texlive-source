@@ -4033,7 +4033,8 @@ test "x$enable_bibtex_x" = xno || {
   need_kpathsea=yes
 }
 
-## Define configure options for bibtex-x.
+## texk/bibtex-x/ac/bibtex-x.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex-x/
+## configure options for bibtex-x
 # Check whether --enable-bibtex8 was given.
 if test "${enable_bibtex8+set}" = set; then :
   enableval=$enable_bibtex8;
@@ -4237,7 +4238,8 @@ test "x$enable_dvipdfm_x" = xno || {
   need_libpaper=yes
 }
 
-## Define configure options for dvipdfm-x.
+## texk/dvipdfm-x/ac/dvipdfm-x.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm-x/
+## configure options for dvipdfm-x
 # Check whether --enable-dvipdfmx was given.
 if test "${enable_dvipdfmx+set}" = set; then :
   enableval=$enable_dvipdfmx;
@@ -4261,7 +4263,6 @@ case enable_xdvipdfmx in #(
     enable_xdvipdfmx=yes ;;
 esac
 
-test "x$enable_dvipdfm_x:$enable_xdvipdfmx" = xyes:yes && need_freetype2=yes
 
 ## texk/dvipng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options and TL libraries required for dvipng

@@ -13646,7 +13646,8 @@ fi
 
 
 
-## Define configure options for bibtex-x.
+## texk/bibtex-x/ac/bibtex-x.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex-x/
+## configure options for bibtex-x
 # Check whether --enable-bibtex8 was given.
 if test "${enable_bibtex8+set}" = set; then :
   enableval=$enable_bibtex8;
