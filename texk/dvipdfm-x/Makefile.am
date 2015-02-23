@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipdfm-x/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 bin_PROGRAMS =
@@ -173,8 +173,7 @@ dvipdfmx_SOURCES = \
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
 
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
-xdvipdfmx_LDADD = $(dvipdfmx_LDADD)
+LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
 
 $(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
 
@@ -295,4 +294,4 @@ EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
 EXTRA_DIST += tests/resrc.dvi tests/resrc.tex
 EXTRA_DIST += tests/xbmc.dvi tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
 EXTRA_DIST += tests/ttc.dvi tests/ttc.tex tests/test.ttc
-DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf
+DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf

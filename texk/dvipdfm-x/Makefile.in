@@ -107,7 +107,6 @@ EXTRA_PROGRAMS = dvipdfmx$(EXEEXT) xdvipdfmx$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpaper-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
@@ -143,6 +142,10 @@ PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 nodist_call_dvipdfmx_OBJECTS = call_dvipdfmx-callexe.$(OBJEXT)
 call_dvipdfmx_OBJECTS = $(nodist_call_dvipdfmx_OBJECTS)
 call_dvipdfmx_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+call_dvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -172,7 +175,7 @@ am_dvipdfmx_OBJECTS = agl.$(OBJEXT) bmpimage.$(OBJEXT) cff.$(OBJEXT) \
 	type1.$(OBJEXT) type1c.$(OBJEXT) unicode.$(OBJEXT) \
 	vf.$(OBJEXT) xbb.$(OBJEXT)
 dvipdfmx_OBJECTS = $(am_dvipdfmx_OBJECTS)
-am__DEPENDENCIES_1 =
+dvipdfmx_LDADD = $(LDADD)
 dvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am__objects_1 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-bmpimage.$(OBJEXT) \
@@ -213,9 +216,9 @@ am__objects_1 = xdvipdfmx-agl.$(OBJEXT) xdvipdfmx-bmpimage.$(OBJEXT) \
 	xdvipdfmx-xbb.$(OBJEXT)
 nodist_xdvipdfmx_OBJECTS = $(am__objects_1)
 xdvipdfmx_OBJECTS = $(nodist_xdvipdfmx_OBJECTS)
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+xdvipdfmx_LDADD = $(LDADD)
+xdvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-xdvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am__dist_bin_SCRIPTS_DIST = dvipdft
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -811,8 +814,7 @@ dvipdfmx_SOURCES = \
 	xbb.c
 
 nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
-dvipdfmx_LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
-xdvipdfmx_LDADD = $(dvipdfmx_LDADD)
+LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
 bin_links = $(am__append_3)
 call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
 nodist_call_dvipdfmx_SOURCES = callexe.c
@@ -827,7 +829,7 @@ dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force img*.* pic*.* image*.pdf annot*.pdf \
-	bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf
+	bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf
 TESTS = $(am__append_6) $(am__append_7)
 dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test \
 	dvipdfm-bkm.test dvipdfm-psz.test dvipdfm-res.test
