@@ -1,3 +1,10 @@
+2015-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tests/ttfdump.test: Add a TrueType Collection test.
+	* tests/test.ttc (new): Additional test input.
+	* tests/ttfdump.gasp, tests/ttfdump.maxp (new): Expected output.
+	* Makefile.am: Adapted.
+
 2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* libttf/pclt.c: Repalce "%02hx" => "%02x" for unsigned char.
@@ -27,7 +34,7 @@
 	* libttf/os2.c: Index checking for string array elements.
 	* tests/ttfdump.test: Add a test case for invalid array indices.
 	* tests/bad.otf (new): Additional test input.
-	* tests/ttfdump.bad (new): Expected output..
+	* tests/ttfdump.bad (new): Expected output.
 	* Makefile.am: Adapted.
 
 2013-01-31  Akihiro Sagawa  <sagawa.aki@gmail.com>

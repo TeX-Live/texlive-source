@@ -619,15 +619,15 @@ libttf_a_SOURCES = \
 EXTRA_DIST = include/stack.h libttf/fixed.c libttf/interp.c \
 	libttf/stack.c docs/ttfdump.dvi docs/ttfdump.html \
 	docs/ttfdump.ps $(TESTS) tests/FonetikaDaniaIwonaeRegular.ttf \
-	tests/bad.otf tests/texmfhome.otf tests/ttfdump.bad \
-	tests/ttfdump.glyf tests/ttfdump.gpos tests/ttfdump.gsub \
-	tests/ttfdump.head tests/ttfdump.os_2 ILX NOTE README.bg5
+	tests/bad.otf tests/test.ttc tests/texmfhome.otf \
+	tests/ttfdump.bad tests/ttfdump.gasp tests/ttfdump.glyf \
+	tests/ttfdump.gpos tests/ttfdump.gsub tests/ttfdump.head \
+	tests/ttfdump.os_2 tests/ttfdump.maxp ILX NOTE README.bg5
 ttfdump_SOURCES = src/ttfdump.c
 LDADD = libttf.a $(KPATHSEA_LIBS)
 dist_man1_MANS = docs/ttfdump.1
 TESTS = tests/ttfdump.test
-DISTCLEANFILES = FonetikaDaniaIwonaeRegular.ttf texmfhome.otf bad.otf \
-	ttftest.*
+DISTCLEANFILES = ttftest.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

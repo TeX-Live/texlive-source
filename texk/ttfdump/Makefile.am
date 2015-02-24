@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttfdump/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
@@ -91,18 +91,17 @@ DISTCLEANFILES =
 EXTRA_DIST += \
 	tests/FonetikaDaniaIwonaeRegular.ttf \
 	tests/bad.otf \
+	tests/test.ttc \
 	tests/texmfhome.otf \
 	tests/ttfdump.bad \
+	tests/ttfdump.gasp \
 	tests/ttfdump.glyf \
 	tests/ttfdump.gpos \
 	tests/ttfdump.gsub \
 	tests/ttfdump.head \
-	tests/ttfdump.os_2
-DISTCLEANFILES += \
-	FonetikaDaniaIwonaeRegular.ttf \
-	texmfhome.otf \
-	bad.otf \
-	ttftest.*
+	tests/ttfdump.os_2 \
+	tests/ttfdump.maxp
+DISTCLEANFILES += ttftest.*
 
 ## Not used
 ##
