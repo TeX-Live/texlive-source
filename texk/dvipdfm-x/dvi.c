@@ -923,7 +923,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   fontmap_rec  *mrec;
   char         *fontmap_key;
   FILE         *fp;
-  char         *path = strdup(filename);
+  char         *path;
   sfnt         *sfont;
   unsigned      offset = 0;
   struct tt_head_table *head;
@@ -933,15 +933,13 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   if (verbose)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
 
-  fp = fopen(path, "rb");
-  if (!fp &&
-      ((path = dpx_find_opentype_file(filename)) != NULL
-        || (path = dpx_find_truetype_file(filename)) != NULL
-        || (path = dpx_find_type1_file(filename)) != NULL
-        || (path = dpx_find_dfont_file(filename)) != NULL) ) {
-    fp = fopen(path, "rb");
-  }
-  if (!fp) {
+  if ((fp = fopen(filename, "rb")) != NULL)
+    path = strdup(filename);
+  else if (((path = dpx_find_opentype_file(filename)) == NULL
+         && (path = dpx_find_truetype_file(filename)) == NULL
+         && (path = dpx_find_type1_file(filename)) == NULL
+         && (path = dpx_find_dfont_file(filename)) == NULL)
+         || (fp = fopen(path, "rb")) == NULL) {
     ERROR("Cannot proceed without the font: %s", filename);
   }
   need_more_fonts(1);
