@@ -1,3 +1,7 @@
+2015-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi.c (dvi_locate_native_font): Avoid buffer overflow.
+
 2015-02-21  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* dvi.c (dvi_locate_font, dvi_locate_native_font): make sure the
