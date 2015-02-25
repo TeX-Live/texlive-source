@@ -1035,7 +1035,6 @@ pdf_load_fontmap_file (const char *filename, int mode)
   return  error;
 }
 
-#ifdef XETEX
 fontmap_rec *
 pdf_insert_native_fontmap_record (const char *path, uint32_t index,
                                   int layout_dir, int extend, int slant, int embolden)
@@ -1057,7 +1056,7 @@ pdf_insert_native_fontmap_record (const char *path, uint32_t index,
 
   mrec->map_name  = fontmap_key;
   mrec->enc_name  = mstrdup(layout_dir == 0 ? "Identity-H" : "Identity-V");
-  mrec->font_name = (path != NULL) ? mstrdup(path) : NULL;
+  mrec->font_name = mstrdup(path);
   mrec->opt.index = index;
   if (layout_dir != 0)
     mrec->opt.flags |= FONTMAP_OPT_VERT;
@@ -1077,7 +1076,6 @@ pdf_insert_native_fontmap_record (const char *path, uint32_t index,
 
   return ret;
 }
-#endif /* XETEX */
 
 #if 0
 /* tfm_name="dmjhira10", map_name="dmj@DNP@10", sfd_name="DNP"

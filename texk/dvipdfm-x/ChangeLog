@@ -1,3 +1,10 @@
+2015-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fontmap.h (pdf_insert_native_fontmap_record): Declare also
+	without '#ifdef XETEX'.
+	* fontmap.c (pdf_insert_native_fontmap_record): Define also
+	without '#ifdef XETEX'; drop redundant test for path==NULL.
+
 2015-02-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi.c (dvi_locate_native_font): Avoid sprintf() buffer overrun.
