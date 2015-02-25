@@ -93,9 +93,7 @@ extern fontmap_rec *pdf_lookup_fontmap_record (const char  *kp);
 
 extern int          is_pdfm_mapline           (const char  *mline);
 
-#ifdef XETEX
 extern fontmap_rec *pdf_insert_native_fontmap_record (const char *filename, uint32_t index,
                                                       int layout_dir, int extend, int slant, int embolden);
-#endif
 
 #endif /* _FONTMAP_H_ */
