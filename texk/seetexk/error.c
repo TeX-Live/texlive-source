@@ -31,7 +31,7 @@
 
 #include <stdio.h>
 
-#include "types.h"		/* for HAVE_VPRINTF */
+#include "types.h"
 #include "error.h"
 #include "tempfile.h"
 

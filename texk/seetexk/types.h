@@ -67,14 +67,6 @@
  */
 /* #define void int */
 
-/*
- * Define the following if and only if vfprintf is in your C library.
- * If not, lib/error.c will make assumptions about the implementation
- * of stdio.  If neither works, you may have to come up with something
- * yourself.
- */
-#define HAVE_VPRINTF
-
 #endif /* KPATHSEA */
 
 /*
@@ -87,10 +79,10 @@
  * Define the following types and macros as required by your system.
  */
 
-typedef short i16;		/* a 16 bit integer (signed) */
+typedef int16_t i16;		/* a 16 bit integer (signed) */
 
-typedef long i32;		/* a 32 bit integer (signed) */
-typedef unsigned long ui32;	/* a 32 bit integer (unsigned) */
+typedef int32_t i32;		/* a 32 bit integer (signed) */
+typedef uint32_t ui32;		/* a 32 bit integer (unsigned) */
 
 /* macros to sign extend quantities that are less than 32 bits long */
 

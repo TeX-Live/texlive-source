@@ -85,9 +85,6 @@
 /* Define to 1 if you have the `strstr' function. */
 #undef HAVE_STRSTR
 
-/* Define to 1 if you have the `strtod' function. */
-#undef HAVE_STRTOD
-
 /* Define to 1 if you have the `strtol' function. */
 #undef HAVE_STRTOL
 
@@ -114,9 +111,6 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `vprintf' function. */
-#undef HAVE_VPRINTF
-
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
@@ -141,9 +135,6 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
@@ -164,6 +155,11 @@
 /* Define for large files, on AIX-style hosts. */
 #undef _LARGE_FILES
 
+/* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   #define below would cause a syntax error. */
+#undef _UINT32_T
+
 /* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
    <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
@@ -178,12 +174,24 @@
 #undef inline
 #endif
 
+/* Define to the type of a signed integer type of width exactly 16 bits if
+   such a type exists and the standard includes do not define it. */
+#undef int16_t
+
+/* Define to the type of a signed integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef int32_t
+
 /* Define to the type of a signed integer type of width exactly 64 bits if
    such a type exists and the standard includes do not define it. */
 #undef int64_t
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
+
+/* Define to the type of an unsigned integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint32_t
 
 /* Define to the type of an unsigned integer type of width exactly 64 bits if
    such a type exists and the standard includes do not define it. */
