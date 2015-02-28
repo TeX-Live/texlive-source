@@ -1,11 +1,11 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.7"
+VERSION = "0.9"
 
 --[[
      musixtex.lua: processes MusiXTeX files (and deletes intermediate files)
 
-     (c) Copyright 2012 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2012-14 Bob Tennent rdt@cs.queensu.ca
 
      This program is free software; you can redistribute it and/or modify it
      under the terms of the GNU General Public License as published by the
@@ -26,6 +26,13 @@ VERSION = "0.7"
 --[[
 
   ChangeLog:
+     version 0.9 2015-02-13 RDT
+      Add an additional latex pass to resolve cross-references.
+      Add -e0 option to dvips as given in musixdoc.tex
+      Add -x option to call makeindex
+
+     version 0.8 2014-05-18 RDT
+      Add -g option
 
      version 0.7  2013-12-11 RDT
       Add -F fmt option
@@ -58,9 +65,11 @@ function usage()
   print("         -p  pdfetex (or pdflatex)")
   print("         -d  dvipdfm")
   print("         -s  stop at dvi")
+  print("         -g  stop at ps")
   print("         -i  retain intermediate files")
   print("         -1  one-pass [pdf][la]tex processing")
   print("         -F fmt  use fmt as the TeX processor")
+  print("         -x  run makeindex")
   print("         -f  restore default processing")
 end
 
@@ -77,10 +86,12 @@ end
 -- defaults:
 tex = "etex"  
 musixflx = "musixflx"
-dvi = "dvips"
+dvips = "dvips -e0 "
+dvi = dvips
 ps2pdf = "ps2pdf"
 intermediate = 1
 passes = 2
+index = 0
 
 exit_code = 0
 narg = 1
@@ -113,7 +124,11 @@ repeat
   elseif this_arg == "-1" then
     passes = 1
   elseif this_arg == "-f" then
-    tex = "etex"; dvi = "dvips"; ps2pdf = "ps2pdf"; intermediate = 1; passes = 2
+    tex = "etex"; dvi = dvips; ps2pdf = "ps2pdf"; intermediate = 1; passes = 2; index = 0
+  elseif this_arg == "-g" then
+    dvi = dvips; ps2pdf = ""
+  elseif this_arg == "-x" then
+    index = 1
   elseif this_arg == "-F" then
     narg = narg+1
     tex = arg[narg]
@@ -130,7 +145,14 @@ repeat
       if (passes == 1 or os.execute(tex .. " " .. filename) == 0) and
          (passes == 1 or os.execute(musixflx .. " " .. filename) == 0) and
          (os.execute(tex .. " " .. filename) == 0) and
-         ((tex ~= "latex" and tex ~= "pdflatex") 
+         ((tex ~= "latex" and tex ~="pdflatex")
+           or (index == 0)
+           or (os.execute("makeindex -q " .. filename) == 0)) and
+         ((tex ~= "latex" and tex ~= "pdflatex")
+           or (os.execute(tex .. " " .. filename) == 0)) and
+         ((tex ~= "latex" and tex ~= "pdflatex")
+           or (os.execute(tex .. " " .. filename) == 0)) and
+         ((tex ~= "latex" and tex ~= "pdflatex")
            or (os.execute(tex .. " " .. filename) == 0)) and
          (dvi == "" or  (os.execute(dvi .. " " .. filename) == 0)) and
          (ps2pdf == "" or (os.execute(ps2pdf .. " " .. filename .. ".ps") == 0) )
