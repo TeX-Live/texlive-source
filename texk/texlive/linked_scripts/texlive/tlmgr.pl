@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 36286 2015-02-15 23:24:23Z karl $
+# $Id: tlmgr.pl 36352 2015-02-22 13:05:56Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 36286 $';
-my $datrev = '$Date: 2015-02-16 00:24:23 +0100 (Mon, 16 Feb 2015) $';
+my $svnrev = '$Revision: 36352 $';
+my $datrev = '$Date: 2015-02-22 14:05:56 +0100 (Sun, 22 Feb 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3016,7 +3016,8 @@ sub action_update {
           if ($opts{"list"}) {
             upd_info($pkg, $kb, "<absent>", $mediarevstr, "autoinst");
           } else {
-            info("[$currnr/$totalnr, $estrem/$esttot] auto-install: $pkg ($mediarevstr) [${kb}k] ... ");
+            info("[" . sprintf ('%*2$s', $currnr, $totalnrdigits) .
+              "/$totalnr, $estrem/$esttot] auto-install: $pkg ($mediarevstr) [${kb}k] ... ");
           }
         }
         $currnr++;
