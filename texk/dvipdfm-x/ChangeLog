@@ -1,3 +1,9 @@
+2015-03-01  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_tpic.c: Make tpic "ar" command dvips compatible to fix the problem
+	that an excess line is drawn when "ar" command is used along
+	with dvips transformation commands.
+
 2015-02-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* fontmap.h (pdf_insert_native_fontmap_record): Declare also
