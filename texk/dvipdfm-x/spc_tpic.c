@@ -381,6 +381,16 @@ tpic__arc (struct spc_tpic_ *tp,
 
     set_styles(tp, c, f_fs, f_vp, pn, da);
 
+    /* The arcx operator here draws an excess straight line from current
+     * point to the starting point of the arc if they are different, as in
+     * PostScript language. It may cuase an unexpected behavior when DVIPS
+     * transformation command is inserted before TPIC ar command: it invokes
+     * moveto and sets currentpoint which may be different from the starting
+     * point of arc to be drawn. We use newpath here to avoid drawing an
+     * excess line. I'm not sure if it is proper TPIC implementation but this
+     * seems to be DVIPS compatible behavior.
+     */
+    pdf_dev_newpath();
     pdf_dev_arcx(v[0], v[1], v[2], v[3], v[4], v[5], +1, 0.0);
 
     showpath(f_vp, f_fs);
