@@ -9,9 +9,9 @@ t1ascii_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
 t1binary_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
 	clp.c t1lib.h t1lib.c t1binary.c
 t1asm_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1asm.c
+	clp.c t1lib.h t1asmhelp.h t1lib.c t1asm.c
 t1disasm_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
-	clp.c t1lib.h t1lib.c t1disasm.c
+	clp.c t1lib.h t1asmhelp.h t1lib.c t1disasm.c
 t1unmac_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \
 	clp.c t1lib.h t1lib.c t1unmac.c
 t1mac_SOURCES = include/lcdf/clp.h include/lcdf/inttypes.h \

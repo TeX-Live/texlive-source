@@ -370,10 +370,11 @@ t1mac_output_ascii(char *s, int len)
     s[len-1] = '\r';
   t1mac_output_data((byte *)s, len);
   if (strncmp(s, "/FontName", 9) == 0) {
-    for (s += 9; isspace((unsigned char)*s); s++) ;
+    for (s += 9; isspace((unsigned char) *s); s++)
+        /* skip */;
     if (*s == '/') {
       const char *t = ++s;
-      while (*t && !isspace((unsigned char)*t)) t++;
+      while (*t && !isspace((unsigned char) *t)) t++;
       free(font_name);
       font_name = (char *)malloc(t - s + 1);
       memcpy(font_name, s, t - s);
@@ -770,6 +771,7 @@ fatal_error(const char *message, ...)
   fprintf(stderr, "%s: ", program_name);
   vfprintf(stderr, message, val);
   putc('\n', stderr);
+  va_end(val);
   exit(1);
 }
 
@@ -781,6 +783,7 @@ error(const char *message, ...)
   fprintf(stderr, "%s: ", program_name);
   vfprintf(stderr, message, val);
   putc('\n', stderr);
+  va_end(val);
 }
 
 
@@ -992,11 +995,11 @@ particular purpose.\n");
     int part = 0, len = 0;
     char *x, *s;
     for (x = s = font_name; *s; s++)
-      if (isupper((unsigned char)*s) || isdigit((unsigned char)*s)) {
+      if (isupper((unsigned char) *s) || isdigit((unsigned char) *s)) {
 	*x++ = *s;
 	part++;
 	len = 1;
-      } else if (islower((unsigned char)*s)) {
+      } else if (islower((unsigned char) *s)) {
 	if (len < (part <= 1 ? 5 : 3))
 	  *x++ = *s;
 	len++;

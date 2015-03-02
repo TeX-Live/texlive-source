@@ -1,3 +1,10 @@
+2015-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import t1utils-1.39.
+	* patch-03-warnings, patch-04-TL-binary, patch-05-getopt:
+	Adapted.	
+	* patch-06-unsigned (removed): Now handled in original sources.
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-unsigned (new): Avoid undefined behaviour.
