@@ -4,6 +4,7 @@
 	* patch-03-warnings, patch-04-TL-binary, patch-05-getopt:
 	Adapted.	
 	* patch-06-unsigned (removed): Now handled in original sources.
+	* patch-07-warnings (new): Avoid compiler warnings.
 
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
