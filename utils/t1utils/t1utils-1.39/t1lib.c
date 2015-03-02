@@ -59,7 +59,7 @@ translate_hex_string(char *s, char *saved_orphan)
   char *start = s;
   char *t = s;
   for (; *s; s++) {
-    if (isspace((unsigned char)*s))
+    if (isspace((unsigned char) *s))
       continue;
     if (c1) {
       *t++ = (hexval(c1) << 4) + hexval(*s);
@@ -136,10 +136,10 @@ process_pfa(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 
 	/* now that we have the line, handle it */
 	if (blocktyp == PFA_ASCII) {
-	    if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char)line[17])) {
+	    if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char) line[17])) {
 		char saved_p;
 		/* assert(line == buffer); */
-		for (line += 18; isspace((unsigned char)*line); line++)
+		for (line += 18; isspace((unsigned char) *line); line++)
 		    /* nada */;
 		saved_p = *line;
 		*line = 0;
@@ -158,12 +158,14 @@ process_pfa(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 	if (blocktyp == PFA_EEXEC_TEST) {
 	    /* 8.Feb.2004: fix bug if first character in a binary eexec block
 	       is 0, reported by Werner Lemberg */
-	    for (; line < last && isspace((unsigned char)*line); line++)
+	    for (; line < last && isspace((unsigned char) *line); line++)
 		/* nada */;
 	    if (line == last)
 		continue;
-	    else if (last >= line + 4 && isxdigit((unsigned char)line[0]) && isxdigit((unsigned char)line[1])
-		     && isxdigit((unsigned char)line[2]) && isxdigit((unsigned char)line[3]))
+	    else if (last >= line + 4 && isxdigit((unsigned char) line[0])
+                     && isxdigit((unsigned char) line[1])
+		     && isxdigit((unsigned char) line[2])
+                     && isxdigit((unsigned char) line[3]))
 		blocktyp = PFA_HEX;
 	    else
 		blocktyp = PFA_BINARY;
@@ -244,9 +246,9 @@ void
 process_pfb(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 {
   int blocktyp = 0;
-  int block_len = 0;
+  unsigned block_len = 0;
   int c = 0;
-  int filepos = 0;
+  unsigned filepos = 0;
   int linepos = 0;
   char line[LINESIZE];
 
@@ -260,7 +262,7 @@ process_pfb(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 	if (c == EOF || blocktyp == EOF)
 	  error("%s corrupted: no end-of-file marker", ifp_filename);
 	else
-	  error("%s corrupted: bad block marker at position %d",
+	  error("%s corrupted: bad block marker at position %u",
 		ifp_filename, filepos);
 	blocktyp = PFB_DONE;
       }
@@ -270,9 +272,9 @@ process_pfb(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
       block_len = getc(ifp) & 0xFF;
       block_len |= (getc(ifp) & 0xFF) << 8;
       block_len |= (getc(ifp) & 0xFF) << 16;
-      block_len |= (getc(ifp) & 0xFF) << 24;
+      block_len |= (unsigned) (getc(ifp) & 0xFF) << 24;
       if (feof(ifp)) {
-	error("%s corrupted: bad block length at position %d",
+	error("%s corrupted: bad block length at position %u",
 	      ifp_filename, filepos);
 	blocktyp = PFB_DONE;
 	goto done;
@@ -282,11 +284,11 @@ process_pfb(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
 
     /* read the block in its entirety, in LINESIZE chunks */
     while (block_len > 0) {
-      int rest = LINESIZE - 1 - linepos; /* leave space for '\0' */
-      int n = (block_len > rest ? rest : block_len);
+      unsigned rest = LINESIZE - 1 - linepos; /* leave space for '\0' */
+      unsigned n = (block_len > rest ? rest : block_len);
       int actual = fread(line + linepos, 1, n, ifp);
-      if (actual != n) {
-	error("%s corrupted: block short by %d bytes at position %d",
+      if (actual != (int) n) {
+	error("%s corrupted: block short by %u bytes at position %u",
 	      ifp_filename, block_len - actual, filepos);
 	block_len = actual;
       }
@@ -311,7 +313,7 @@ process_pfb(FILE *ifp, const char *ifp_filename, struct font_reader *fr)
  done:
   c = getc(ifp);
   if (c != EOF)
-    error("%s corrupted: data after PFB end marker at position %d",
+    error("%s corrupted: data after PFB end marker at position %u",
 	  ifp_filename, filepos - 2);
   fr->output_end();
 }

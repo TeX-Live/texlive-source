@@ -1,8 +1,8 @@
 	Avoid compiler warnings (gcc's -Wcast-qual).
 
-diff -ur t1utils-1.38.orig/clp.c t1utils-1.38/clp.c
---- t1utils-1.38.orig/clp.c	2013-09-29 15:23:22.000000000 +0200
-+++ t1utils-1.38/clp.c	2013-10-03 13:53:56.000000000 +0200
+diff -ur t1utils-1.39.orig/clp.c t1utils-1.39/clp.c
+--- t1utils-1.39.orig/clp.c	2014-12-11 18:20:22.000000000 +0100
++++ t1utils-1.39/clp.c	2015-03-02 08:50:06.829885555 +0100
 @@ -1075,21 +1075,27 @@
  parse_int(Clp_Parser *clp, const char *arg, int complain, void *user_data)
  {
@@ -53,10 +53,10 @@ diff -ur t1utils-1.38.orig/clp.c t1utils-1.38/clp.c
      if (*arg != 0 && *val == 0)
  	return 1;
      else if (complain)
-diff -ur t1utils-1.38.orig/t1disasm.c t1utils-1.38/t1disasm.c
---- t1utils-1.38.orig/t1disasm.c	2013-09-29 15:33:53.000000000 +0200
-+++ t1utils-1.38/t1disasm.c	2013-10-03 13:53:56.000000000 +0200
-@@ -341,11 +341,11 @@
+diff -ur t1utils-1.39.orig/t1disasm.c t1utils-1.39/t1disasm.c
+--- t1utils-1.39.orig/t1disasm.c	2015-02-26 21:25:22.000000000 +0100
++++ t1utils-1.39/t1disasm.c	2015-03-02 08:50:06.000000000 +0100
+@@ -302,11 +302,11 @@
  /* 23.Feb.2004 - use 'memstr', not strstr, because the strings input to
     eexec_line aren't null terminated! Reported by Werner Lemberg. */
  
@@ -72,7 +72,7 @@ diff -ur t1utils-1.38.orig/t1disasm.c t1utils-1.38/t1disasm.c
      while (line < last
  	   && (try = memchr(line, (unsigned char)*pattern, last - line))) {
  	if (memcmp(try, pattern, pattern_len) == 0)
-@@ -440,7 +440,7 @@
+@@ -401,7 +401,7 @@
         badly: a charstring definition follows "/Charstrings ... begin", ON THE
         SAME LINE. */
      {

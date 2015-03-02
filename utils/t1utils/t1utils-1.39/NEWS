@@ -1,5 +1,11 @@
 T1utils NEWS
 
+Version 1.39   26.Feb.2015
+
+* t1disasm: Security fixes for buffer overrun reported by Jakub Wilk
+  and Niels Thykier.
+
+
 Version 1.38   29.Sep.2013
 
 * t1disasm: Fix an infinite loop on some fonts reported by Niels

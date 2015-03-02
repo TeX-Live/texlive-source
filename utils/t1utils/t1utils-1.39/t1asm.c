@@ -66,6 +66,7 @@
 #include <errno.h>
 #include <lcdf/clp.h>
 #include "t1lib.h"
+#include "t1asmhelp.h"
 
 #define LINESIZE 512
 
@@ -89,10 +90,6 @@ static int in_eexec = 0;
 
 /* need to add 1 as space for \0 */
 static char line[LINESIZE + 1];
-
-/* lenIV and charstring start command */
-static int lenIV = 4;
-static char cs_start[10];
 
 /* for charstring buffering */
 static byte *charstring_buf, *charstring_bp;
@@ -273,7 +270,7 @@ static void eexec_start(char *string)
 static int check_line_charstring(void)
 {
   char *p = line;
-  while (isspace((unsigned char)*p))
+  while (isspace((unsigned char) *p))
     p++;
   return (*p == '/' || (p[0] == 'd' && p[1] == 'u' && p[2] == 'p'));
 }
@@ -359,8 +356,8 @@ static int CDECL command_compare(const void *key, const void *item)
 
 static int is_integer(char *string)
 {
-  if (isdigit((unsigned char)string[0]) || string[0] == '-' || string[0] == '+') {
-    while (*++string && isdigit((unsigned char)*string))
+  if (isdigit((unsigned char) string[0]) || string[0] == '-' || string[0] == '+') {
+    while (*++string && isdigit((unsigned char) *string))
       ;                                           /* deliberately empty */
     if (!*string)
       return 1;
@@ -573,6 +570,7 @@ fatal_error(const char *message, ...)
   fprintf(stderr, "%s: ", program_name);
   vfprintf(stderr, message, val);
   putc('\n', stderr);
+  va_end(val);
   exit(1);
 }
 
@@ -584,6 +582,7 @@ error(const char *message, ...)
   fprintf(stderr, "%s: ", program_name);
   vfprintf(stderr, message, val);
   putc('\n', stderr);
+  va_end(val);
 }
 
 static void
@@ -624,7 +623,7 @@ Report bugs to <ekohler@gmail.com>.\n", program_name);
 
 int main(int argc, char *argv[])
 {
-  char *p, *q, *r;
+  char *p, *q;
 
   Clp_Parser *clp =
     Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
@@ -738,36 +737,25 @@ particular purpose.\n");
     t1utils_getline();
 
     if (!ever_active) {
-      if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char)line[17])) {
+      if (strncmp(line, "currentfile eexec", 17) == 0 && isspace((unsigned char) line[17])) {
 	/* Allow arbitrary whitespace after "currentfile eexec".
 	   Thanks to Tom Kacvinsky <tjk@ams.org> for reporting this.
 	   Note: strlen("currentfile eexec") == 17. */
-	for (p = line + 18; isspace((unsigned char)*p); p++)
+	for (p = line + 18; isspace((unsigned char) *p); p++)
 	  ;
 	eexec_start(p);
 	continue;
       } else if (strncmp(line, "/lenIV", 6) == 0) {
-	lenIV = atoi(line + 6);
-      } else if ((p = strstr(line, "string currentfile"))
-		 && strstr(line, "readstring")) { /* enforce `readstring' */
-	/* locate the name of the charstring start command */
-	*p = '\0';                                  /* damage line[] */
-	q = strrchr(line, '/');
-	if (q) {
-	  r = cs_start;
-	  ++q;
-	  while (!isspace((unsigned char)*q) && *q != '{')
-	    *r++ = *q++;
-	  *r = '\0';
-	}
-	*p = 's';                                   /* repair line[] */
+        set_lenIV(line);
+      } else if ((p = strstr(line, "string currentfile"))) {
+        set_cs_start(line);
       }
     }
 
     if (!active) {
-      if ((p = strstr(line, "/Subrs")) && isdigit((unsigned char)p[7]))
+      if ((p = strstr(line, "/Subrs")) && isdigit((unsigned char) p[7]))
 	ever_active = active = 1;
-      else if ((p = strstr(line, "/CharStrings")) && isdigit((unsigned char)p[13]))
+      else if ((p = strstr(line, "/CharStrings")) && isdigit((unsigned char) p[13]))
 	ever_active = active = 1;
     }
     if ((p = strstr(line, "currentfile closefile"))) {
@@ -776,7 +764,7 @@ particular purpose.\n");
       /* 1/3/2002 -- happy new year! -- Luc Devroye reports a failure with
          some printers when `currentfile closefile' is followed by space */
       p += sizeof("currentfile closefile") - 1;
-      for (q = p; isspace((unsigned char)*q) && *q != '\n'; q++)
+      for (q = p; isspace((unsigned char) *q) && *q != '\n'; q++)
 	/* nada */;
       if (q == p && !*q)
 	error("warning: `currentfile closefile' line too long");
