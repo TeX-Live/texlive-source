@@ -1,0 +1,25 @@
+	Avoid compiler warnings (gcc's -Wcast-qual).
+
+diff -ur t1utils-1.39.orig/t1asmhelp.h t1utils-1.39/t1asmhelp.h
+--- t1utils-1.39.orig/t1asmhelp.h	2015-02-26 21:31:27.000000000 +0100
++++ t1utils-1.39/t1asmhelp.h	2015-03-02 11:09:49.000000000 +0100
+@@ -18,8 +18,8 @@
+   }
+ }
+ 
+-
+-static const char* cs_start = "";
++static char cs_start_init[] = "";
++static char *cs_start = cs_start_init;
+ 
+ static void
+ set_cs_start(const char* line)
+@@ -36,7 +36,7 @@
+             for (r = q; r != p && !isspace((unsigned char) *r) && *r != '{'; ++r)
+                 /* nada */;
+             if (cs_start_set)
+-                free((char*) cs_start);
++                free(cs_start);
+             cs_start = p = malloc(r - q + 1);
+             memcpy(p, q, r - q);
+             p[r - q] = 0;

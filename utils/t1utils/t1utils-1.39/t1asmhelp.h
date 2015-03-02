@@ -18,8 +18,8 @@ set_lenIV(const char* line)
   }
 }
 
-
-static const char* cs_start = "";
+static char cs_start_init[] = "";
+static char *cs_start = cs_start_init;
 
 static void
 set_cs_start(const char* line)
@@ -36,7 +36,7 @@ set_cs_start(const char* line)
             for (r = q; r != p && !isspace((unsigned char) *r) && *r != '{'; ++r)
                 /* nada */;
             if (cs_start_set)
-                free((char*) cs_start);
+                free(cs_start);
             cs_start = p = malloc(r - q + 1);
             memcpy(p, q, r - q);
             p[r - q] = 0;
