@@ -1,0 +1,21 @@
+Changes applied to the dvisvgm-1.9.1 tree as obtained from:
+	http://downloads.sourceforge.net/dvisvgm/
+
+Removed:
+	Makefile.in
+	aclocal.m4
+	compile
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	missing
+	test-driver
+	tests/
+	*/Makefile.in
+
+Converted Dos/Win line ends to native:
+	clipper/clipper.cpp
+	clipper/clipper.hpp
+

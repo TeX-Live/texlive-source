@@ -111,6 +111,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/psdefs.cpp \
 	@DVISVGM_TREE@/src/RangeMap.cpp \
+	@DVISVGM_TREE@/src/SVGOutput.cpp \
 	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/ShadingPatch.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \

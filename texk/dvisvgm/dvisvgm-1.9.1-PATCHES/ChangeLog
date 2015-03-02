@@ -1,0 +1,105 @@
+2015-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.9.1.
+	* patch-01-mingw32, patch-09-funccall, patch-10-pow-int-int
+	(removed): Included upstream.
+
+2015-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-10-pow-int-int (new): Build fix for ppc-darwin gcc-4.2,
+	  from Mojca Miklavec <mojca.miklavec.lists@gmail.com>.
+
+2015-01-11  Karl Berry  <karl@tug.org>
+
+	* patch-09-funccall (new): LLVM/Clang build (or bug) fix.
+	  problem found by Richard Koch <koch@math.uoregon.edu>.
+
+2015-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.9.
+	* patch-01-mingw32 (new): Oldish MinGW32 may not define this.
+
+2014-09-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.8.1.
+
+2014-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.8.
+	* patch-01-cygwin (removed): Included upstream.
+
+2014-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-cygwin (new): Cygwin soname for gs library.
+
+2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.7.
+
+2014-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.6.
+
+2014-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.5.3.
+
+2014-01-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.5.2.
+
+2013-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.5.1.
+
+2013-09-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-01-MSVC (removed): Instead compile with -DNOMINMAX.
+
+2013-09-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-01-MSVC (new): Build fix for Visual Studio 2010.
+
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.5.
+	* patch-01-cpp, patch-02-config_h: Removed.
+
+2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.4.
+	* patch-01-cpp, patch-02-config_h: Adapted.
+
+2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-config_h (new): Include <config.h> always first.
+
+2013-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-cpp: New version for kpathsea adapted to C++.
+
+2013-05-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.3.
+	* patch-01-cpp: Adapted.
+
+2013-04-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.2.1.
+	* patch-1-cpp (removed): Renamed ...
+	* patch-01-cpp (new): ... and adapted.
+
+2013-04-02  Karl Berry  <karl@tug.org>
+
+	* patch-1-cpp (new): Force __cplusplus to be 1,
+	for sake of g++ 4.7.x and including c-memstr.h and Solaris.
+        Patch from Apostolos, tlbuild 1 Apr 2013 00:34:43.
+
+2013-03-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.2.
+
+2013-01-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Import release 1.1.
+
