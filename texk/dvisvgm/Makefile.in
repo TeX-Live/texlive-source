@@ -196,6 +196,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/psdefs.$(OBJEXT) \
 	@DVISVGM_TREE@/src/RangeMap.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGOutput.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
 	@DVISVGM_TREE@/src/ShadingPatch.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
@@ -772,6 +773,7 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/Process.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/RangeMap.cpp \
+	@DVISVGM_TREE@/src/SVGOutput.cpp \
 	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/ShadingPatch.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
@@ -1048,6 +1050,9 @@ libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libcl
 @DVISVGM_TREE@/src/RangeMap.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGOutput.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1241,6 +1246,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/RangeMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGOutput.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ShadingPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SignalHandler.Po@am__quote@

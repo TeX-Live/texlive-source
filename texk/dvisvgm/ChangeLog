@@ -1,3 +1,9 @@
+2015-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.9.1.
+	* version.ac: Adapted.
+	* Makefile.am: Adjusted.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
