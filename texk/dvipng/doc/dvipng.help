@@ -1,4 +1,4 @@
-This is ./dvipng (TeX Live) 1.14 Copyright 2002-2010 Jan-Ake Larsson
+This is ./dvipng (TeX Live) 1.15 Copyright 2002-2015 Jan-Ake Larsson
 
 Usage: ./dvipng [OPTION]... FILENAME[.dvi]
 Options are chosen to be similar to dvips' options where possible:
@@ -34,7 +34,7 @@ These do not correspond to dvips options:
   --png        Output PNG images (dvipng default)
   --strict     When a warning occurs, exit
   --truecolor* Truecolor output
-  -Q #         Quality (T1lib and PK subsampling)
+  -Q #         Quality (PK subsampling)
   --width*     Output the image width on stdout
   -z #         PNG compression level
 

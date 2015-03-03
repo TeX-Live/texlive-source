@@ -1,4 +1,4 @@
-This is dvipng.info, produced by makeinfo version 5.1 from dvipng.texi.
+This is dvipng.info, produced by makeinfo version 5.2 from dvipng.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -15,7 +15,7 @@ dvipng
 This manual documents dvipng, a program to translate a DVI (DeVice
 Independent) file into PNG (Portable Network Graphics).
 
-   This file documents dvipng version 1.14
+   This file documents dvipng version 1.15
 
    Corrections or perhaps rewrites of sections are _very welcome_.
 
@@ -98,11 +98,11 @@ Installing dvipng should be simple: merely './configure', 'make', and
 
 * Menu:
 
-* Prerequisites::               
-* Configure::                   
-* Build/install::               
+* Prerequisites::
+* Configure::
+* Build/install::
 * Installation outside the texmf tree::
-* Advice for non-privileged users::  
+* Advice for non-privileged users::
 
 
 File: dvipng.info,  Node: Prerequisites,  Next: Configure,  Up: Installation
@@ -143,15 +143,6 @@ File: dvipng.info,  Node: Prerequisites,  Next: Configure,  Up: Installation
      Finally, it will enable subfont support in dvipng.  That is, if you
      want to render CJK-LaTeX characters, you must have FreeType 2
      installed.
-
-   * The font-rendering library T1lib
-
-     An alternative to FreeType 2 is T1lib, but this will enable only
-     PostScript fonts in dvipng and will not include subfont support.
-     Also here, you can render images at different (and unusual)
-     resolutions without cluttering the disk with lots of bitmapped
-     fonts.  If both FreeType 2 and T1lib are present, FreeType will be
-     internally preferred by dvipng but T1lib can be chosen at runtime.
 
    * libpng and libz
 
@@ -286,15 +277,15 @@ format.  If there are four pages in 'foo.dvi', those pages will be
 output as 'foo1.png', 'foo2.png', 'foo3.png', and 'foo4.png',
 respectively.
 
-   If you have enabled the PostScript font support (via FreeType or
-T1lib), fonts will be rendered as they are needed.  Otherwise, dvipng
-will use bitmapped (PK) fonts, and if you use PK fonts that have not
-been used on your system before, they may be automatically generated;
-this process can take a few minutes, so progress reports appear by
-default.  The next time the same font is used, it will have been saved
-on disk, so rendering will go much faster.  (If dvipng tries to
-endlessly generate the same fonts over and over again, something is
-wrong.  *Note (kpathsea)Unable to generate fonts::.)
+   If you have enabled the PostScript font support (via FreeType), fonts
+will be rendered as they are needed.  Otherwise, dvipng will use
+bitmapped (PK) fonts, and if you use PK fonts that have not been used on
+your system before, they may be automatically generated; this process
+can take a few minutes, so progress reports appear by default.  The next
+time the same font is used, it will have been saved on disk, so
+rendering will go much faster.  (If dvipng tries to endlessly generate
+the same fonts over and over again, something is wrong.  *Note
+(kpathsea)Unable to generate fonts::.)
 
    Many options are available (see the next section).  For a brief
 summary of available options, just type
@@ -324,7 +315,7 @@ File: dvipng.info,  Node: Option summary,  Next: Option details,  Up: Command-li
 Here is a handy summary of the options; it is printed out when you run
 dvipng with no arguments or with the standard '--help' option.
 
-     This is ./dvipng (TeX Live) 1.14 Copyright 2002-2010 Jan-Ake Larsson
+     This is ./dvipng (TeX Live) 1.15 Copyright 2002-2015 Jan-Ake Larsson
 
      Usage: ./dvipng [OPTION]... FILENAME[.dvi]
      Options are chosen to be similar to dvips' options where possible:
@@ -360,12 +351,13 @@ dvipng with no arguments or with the standard '--help' option.
        --png        Output PNG images (dvipng default)
        --strict     When a warning occurs, exit
        --truecolor* Truecolor output
-       -Q #         Quality (T1lib and PK subsampling)
+       -Q #         Quality (PK subsampling)
        --width*     Output the image width on stdout
        -z #         PNG compression level
 
         # = number   f = file   s = string  * = suffix, '0' to turn off
             c = comma-separated dimension pair (e.g., 3.2in,-32.1cm)
+
 
 
 File: dvipng.info,  Node: Option details,  Prev: Option summary,  Up: Command-line options
@@ -480,10 +472,7 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
      PostScript versions of Computer Modern installed, there will be no
      need to generate bitmapped (PK) variants on disk of these.  Then,
      you can render images at different (and unusual) resolutions
-     without cluttering the disk with lots of bitmapped fonts.  Note
-     that if you have both FreeType and T1lib on your system, FreeType
-     will be preferred by dvipng.  If you for some reason would want to
-     use T1lib rendering, use this option.
+     without cluttering the disk with lots of bitmapped fonts.
 
 '--gamma NUM'
      Control the interpolation of colors in the greyscale anti-aliasing
@@ -614,10 +603,10 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
 
 '-Q NUM'
      Set the quality to NUM.  That is, choose the number of antialiasing
-     levels for bitmapped fonts (PK) and fonts rendered using T1lib, to
-     be NUM*NUM+1.  The default value is 4 which gives 17 levels of
-     antialiasing for antialiased fonts from these two.  If FreeType is
-     available, its rendering is unaffected by this option.
+     levels for bitmapped fonts (PK), to be NUM*NUM+1.  The default
+     value is 4 which gives 17 levels of antialiasing for antialiased
+     fonts from these two.  If FreeType is available, its rendering is
+     unaffected by this option.
 
 '-r*'
      Toggle output of pages in reverse/forward order.  By default, the
@@ -639,20 +628,6 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
      This usually gives whitespace above and to the left in the produced
      image.  The value 'tight' will make dvipng only include all ink put
      on the page, producing neat images.
-
-'--t1lib*'
-     Enable T1lib font rendering (default on).  This option is available
-     if the T1lib font library was present at compilation time.  If this
-     is the case, dvipng will have direct support for PostScript Type1
-     fonts internally, rather than using 'gsftopk' for rendering the
-     fonts.  If you have PostScript versions of Computer Modern
-     installed, there will be no need to generate bitmapped variants on
-     disk of these.  Then, you can render images at different (and
-     unusual) resolutions without cluttering the disk with lots of
-     bitmapped fonts.  Note that if you have both FreeType and T1lib on
-     your system, FreeType will be preferred by dvipng, and if you for
-     some reason rather want to use T1lib, give the option '--freetype0'
-     (see above).
 
 '--truecolor*'
      This will make 'dvipng' generate truecolor output.  Note that
@@ -823,8 +798,8 @@ color specification.
 
 * Menu:
 
-* Color specifications::        
-* Color specials::              
+* Color specifications::
+* Color specials::
 
 
 File: dvipng.info,  Node: Color specifications,  Next: Color specials,  Up: Color
@@ -954,14 +929,12 @@ track all classes, you can use '-1'.
 256
      GhostScript specials
 512
-     T1lib calls
-1024
      Kpathsea 'stat' calls
-2048
+1024
      Kpathsea hash table lookups
-4096
+2048
      Kpathsea path element expansion
-8192
+4096
      Kpathsea path searches
 
 
@@ -987,61 +960,6 @@ Ridderstro"m, Ezra Peisach, William H Wheeler, Thomas Klausner, Harald
 Koenig, Adrian Bunk, Kevin Smith, Jason Riedy, Wolfram Krause, Reinhard
 Kotucha, Takeshi Abe, and Waldeck Schutzer.
 
-   Use of the 'gd' library requires inclusion of the following copyright
-notice, which applies to the 'gd' library:
-
-     Portions copyright 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
-     2002 by Cold Spring Harbor Laboratory.  Funded under Grant
-     P41-RR02188 by the National Institutes of Health.
-
-     Portions copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002 by
-     Boutell.Com, Inc.
-
-     Portions relating to GD2 format copyright 1999, 2000, 2001, 2002
-     Philip Warner.
-
-     Portions relating to PNG copyright 1999, 2000, 2001, 2002 Greg
-     Roelofs.
-
-     Portions relating to gdttf.c copyright 1999, 2000, 2001, 2002 John
-     Ellson (ellson@lucent.com).
-
-     Portions relating to gdft.c copyright 2001, 2002 John Ellson
-     (ellson@lucent.com).
-
-     Portions copyright 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
-     Pierre-Alain Joye (pierre@libgd.org).
-
-     Portions relating to JPEG and to color quantization copyright 2000,
-     2001, 2002, Doug Becker and copyright (C) 1994, 1995, 1996, 1997,
-     1998, 1999, 2000, 2001, 2002, Thomas G. Lane.  This software is
-     based in part on the work of the Independent JPEG Group.  See the
-     file README-JPEG.TXT for more information.
-
-     Portions relating to WBMP copyright 2000, 2001, 2002 Maurice
-     Szmurlo and Johan Van den Brande.
-
-     Permission has been granted to copy, distribute and modify gd in
-     any context without fee, including a commercial application,
-     provided that this notice is present in user-accessible supporting
-     documentation.
-
-     This does not affect your ownership of the derived work itself, and
-     the intent is to assure proper credit for the authors of gd, not to
-     interfere with your productive use of gd.  If you have questions,
-     ask.  "Derived works" includes all programs that utilize the
-     library.  Credit must be given in user-accessible documentation.
-
-     This software is provided "AS IS." The copyright holders disclaim
-     all warranties, either express or implied, including but not
-     limited to implied warranties of merchantability and fitness for a
-     particular purpose, with respect to this code and accompanying
-     documentation.
-
-     Although their code does not appear in gd, the authors wish to
-     thank David Koblas, David Rowley, and Hutchison Avenue Software
-     Corporation for their prior contributions.
-
 
 File: dvipng.info,  Node: Copying,  Next: Index,  Prev: Credits,  Up: Top
 
@@ -1064,7 +982,7 @@ License along with this program.  If not, see
 
 
 
-Copyright (C) 2002-2010 Jan-AAke Larsson
+Copyright (C) 2002-2015 Jan-AAke Larsson
 
 
 File: dvipng.info,  Node: Index,  Prev: Copying,  Up: Top
@@ -1075,79 +993,78 @@ Index
  [index ]
 * Menu:
 
-* -dSAFER:                               Option details.      (line 166)
-* absolute page number, and '-l':        Option details.      (line 140)
-* absolute page number, and '-p':        Option details.      (line 193)
-* antialiasing levels, number of:        Option details.      (line 246)
+* -dSAFER:                               Option details.      (line 163)
+* absolute page number, and '-l':        Option details.      (line 137)
+* absolute page number, and '-p':        Option details.      (line 190)
+* antialiasing levels, number of:        Option details.      (line 243)
 * background color (option):             Option details.      (line  40)
 * base resolution, setting:              Option details.      (line  33)
 * baseline reporting:                    Option details.      (line  76)
-* baseline reporting <1>:                Option details.      (line 132)
+* baseline reporting <1>:                Option details.      (line 129)
 * color specifications:                  Color specifications.
                                                               (line   6)
 * command-line options:                  Command-line options.
                                                               (line   6)
 * compilation:                           Installation.        (line   6)
-* compression:                           Option details.      (line 312)
+* compression:                           Option details.      (line 295)
 * configuration, of dvipng:              Installation.        (line   6)
-* dark fonts:                            Option details.      (line 119)
+* dark fonts:                            Option details.      (line 116)
 * debugging:                             Option details.      (line  54)
 * debugging <1>:                         Diagnosing problems. (line   6)
 * depth reporting:                       Option details.      (line  76)
-* exit on erroneous images:              Option details.      (line 257)
-* first page printed:                    Option details.      (line 193)
+* exit on erroneous images:              Option details.      (line 254)
+* first page printed:                    Option details.      (line 190)
 * follow mode:                           Option details.      (line  97)
-* font generation, avoiding:             Option details.      (line 158)
-* forcing palette output:                Option details.      (line 202)
+* font generation, avoiding:             Option details.      (line 155)
+* forcing palette output:                Option details.      (line 199)
 * foreground color (option):             Option details.      (line  91)
 * FreeType font rendering:               Option details.      (line 105)
-* fuzzy images:                          Option details.      (line 119)
-* gamma:                                 Option details.      (line 119)
-* GhostScript and -dSAFER:               Option details.      (line 166)
-* GhostScript, turning off:              Option details.      (line 162)
-* GIF image format:                      Option details.      (line 125)
-* height reporting:                      Option details.      (line 132)
+* fuzzy images:                          Option details.      (line 116)
+* gamma:                                 Option details.      (line 116)
+* GhostScript and -dSAFER:               Option details.      (line 163)
+* GhostScript, turning off:              Option details.      (line 159)
+* GIF image format:                      Option details.      (line 122)
+* height reporting:                      Option details.      (line 129)
 * installation, of dvipng:               Installation.        (line   6)
 * invoking dvipng:                       Basic usage.         (line   6)
-* last page printed:                     Option details.      (line 140)
-* light fonts:                           Option details.      (line 119)
-* magnification, overriding DVI:         Option details.      (line 302)
-* Metafont mode, specifying:             Option details.      (line 149)
-* mktexpk, avoiding:                     Option details.      (line 158)
-* mode name, specifying:                 Option details.      (line 149)
-* no erroneous images:                   Option details.      (line 211)
-* offset pages:                          Option details.      (line 187)
+* last page printed:                     Option details.      (line 137)
+* light fonts:                           Option details.      (line 116)
+* magnification, overriding DVI:         Option details.      (line 285)
+* Metafont mode, specifying:             Option details.      (line 146)
+* mktexpk, avoiding:                     Option details.      (line 155)
+* mode name, specifying:                 Option details.      (line 146)
+* no erroneous images:                   Option details.      (line 208)
+* offset pages:                          Option details.      (line 184)
 * option, details of:                    Option details.      (line   6)
 * options, dvipng:                       Command-line options.
                                                               (line   6)
 * options, reading from standard input:  Option details.      (line  11)
 * options, summary:                      Option summary.      (line   6)
 * output resolution, setting:            Option details.      (line  60)
-* output, redirecting:                   Option details.      (line 180)
-* page range:                            Option details.      (line 224)
-* page, first printed:                   Option details.      (line 193)
-* page, last printed:                    Option details.      (line 140)
-* physical page number, and '-l':        Option details.      (line 140)
-* physical page number, and '-p':        Option details.      (line 193)
-* PNG image format:                      Option details.      (line 220)
+* output, redirecting:                   Option details.      (line 177)
+* page range:                            Option details.      (line 221)
+* page, first printed:                   Option details.      (line 190)
+* page, last printed:                    Option details.      (line 137)
+* physical page number, and '-l':        Option details.      (line 137)
+* physical page number, and '-p':        Option details.      (line 190)
+* PNG image format:                      Option details.      (line 217)
 * PostScript inclusion problems:         Encapsulated PostScript.
                                                               (line  21)
 * PostScript, turning off raw PostScript specials: Option details.
-                                                              (line 174)
+                                                              (line 171)
 * problems:                              Diagnosing problems. (line   6)
-* quality:                               Option details.      (line 246)
-* quiet operation:                       Option details.      (line 242)
-* reverse pagination:                    Option details.      (line 253)
-* silent operation:                      Option details.      (line 242)
+* quality:                               Option details.      (line 243)
+* quiet operation:                       Option details.      (line 239)
+* reverse pagination:                    Option details.      (line 250)
+* silent operation:                      Option details.      (line 239)
 * standard input, reading options from:  Option details.      (line  11)
-* standard output, output to:            Option details.      (line 180)
-* T1lib font rendering:                  Option details.      (line 274)
+* standard output, output to:            Option details.      (line 177)
 * transparent border fallback color:     Option details.      (line  23)
 * transparent border width:              Option details.      (line  23)
 * trouble:                               Diagnosing problems. (line   6)
-* truecolor output:                      Option details.      (line 288)
-* warnings, suppressing:                 Option details.      (line 242)
-* width reporting:                       Option details.      (line 299)
+* truecolor output:                      Option details.      (line 271)
+* warnings, suppressing:                 Option details.      (line 239)
+* width reporting:                       Option details.      (line 282)
 
 
 
@@ -1155,27 +1072,27 @@ Tag Table:
 Node: Top296
 Node: Introduction1191
 Node: Installation3436
-Node: Prerequisites3834
-Node: Configure6331
-Node: Build/install8378
-Node: Installation outside the texmf tree8846
-Node: Advice for non-privileged users9556
-Node: Basic usage10567
-Node: Command-line options11720
-Node: Option summary12143
-Node: Option details14526
-Node: Graphics30489
-Node: Encapsulated PostScript31244
-Node: Bitmapped graphics32594
-Node: Raw PostScript33822
-Node: Color36075
-Node: Color specifications36486
-Node: Color specials37589
-Node: Diagnosing problems39006
-Node: Contact information39490
-Node: Debug options40218
-Node: Credits41229
-Node: Copying44830
-Node: Index45611
+Node: Prerequisites3783
+Node: Configure5823
+Node: Build/install7870
+Node: Installation outside the texmf tree8338
+Node: Advice for non-privileged users9048
+Node: Basic usage10059
+Node: Command-line options11203
+Node: Option summary11626
+Node: Option details14000
+Node: Graphics28938
+Node: Encapsulated PostScript29693
+Node: Bitmapped graphics31043
+Node: Raw PostScript32271
+Node: Color34524
+Node: Color specifications34913
+Node: Color specials36016
+Node: Diagnosing problems37433
+Node: Contact information37917
+Node: Debug options38645
+Node: Credits39634
+Node: Copying40840
+Node: Index41621
 
 End Tag Table
