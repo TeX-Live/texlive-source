@@ -1,0 +1,126 @@
+dvipng
+******
+
+This program makes PNG and/or GIF graphics from DVI files as obtained
+from TeX and its relatives.
+
+   If GIF support is enabled, GIF output is chosen by using the 'dvigif'
+binary or with the '--gif' option.
+
+   It is intended to produce anti-aliased screen-resolution images as
+fast as is possible.  The target audience is people who need to generate
+and regenerate many images again and again.  The primary target is the
+preview-latex (X)Emacs package, a package to preview formulas from
+within (X)Emacs.  Yes, you get to see your formulas in the (X)Emacs
+buffer, see <http://www.gnu.org/software/auctex/preview-latex.html>.
+
+   Another example is WeBWorK, an internet-based method for delivering
+homework problems to students over the internet, giving students instant
+feedback as to whether or not their answers are correct, see
+<http://webwork.math.rochester.edu>.
+
+   A more recent addition to the dvipng-using applications out there is
+MediaWiki, the software behind Wikipedia and many other wikis out there.
+Dvipng is used to render mathematical formulae from version 1.8.0 of
+MediaWiki, see <http://www.mediawiki.org>.
+
+   Other applications may also benefit, like web applications as
+latex2html and WYSIWYG editors like LyX.
+
+Benefits of dvipng
+==================
+
+The benefits of 'dvipng'/'dvigif' include
+
+   * Speed.  It is a very fast bitmap-rendering code for DVI files,
+     which makes it suitable for generating large amounts of images
+     on-the-fly, as needed in preview-latex, WeBWorK and others.
+
+   * It does not read the postamble, so it can be started before TeX
+     finishes.  There is a '--follow' switch that makes dvipng wait at
+     end-of-file for further output, unless it finds the POST marker
+     that indicates the end of the DVI.
+
+   * Interactive query of options.  dvipng can read options
+     interactively through stdin, and all options are usable.  It is
+     even possible to change the input file through this interface.
+
+   * Supports PK, VF, PostScript Type1, and TrueType fonts, subfonts
+     (i.e., as used in CJK-LaTeX), color specials, and inclusion of
+     PostScript, PNG, JPEG or GIF images.
+
+   * and more...
+
+Installation
+============
+
+Read 'INSTALL', included in the distribution.
+
+Usage
+=====
+
+To use dvipng at its simplest, simply type
+
+     dvipng foo
+
+where 'foo.dvi' is the output of TeX that you want to convert to PNG
+format.  If there are four pages in 'foo.dvi', those pages will be
+output as 'foo1.png', 'foo2.png', 'foo3.png', and 'foo4.png',
+respectively.
+
+   Many options are available (see the info manual).  For a brief
+summary of available options, just type
+
+     dvipng --help
+
+Availability
+============
+
+The dvipng package is available at Savannah, the GNU project site.
+Since dvipng is not part of the GNU project, although released under the
+GNU GPL, the web address is
+<http://savannah.nongnu.org/projects/dvipng>.  Instructions for
+anonymous CVS access can be found at
+<http://savannah.nongnu.org/cvs/?group=dvipng>.
+
+Contacts
+========
+
+Bug reports should be sent to <dvipng@nongnu.org>.
+
+   Questions, suggestions for new features, pleas for help, and/or
+praise should go to <dvipng@nongnu.org>.  For more information on this
+mailing list, send a message with just the word 'help' as subject or
+body to <dvipng-request@nongnu.org> or look at
+<http://lists.nongnu.org/mailman/listinfo/dvipng>.
+
+   Offers to support further development will be appreciated.  For
+developer access, ask on <dvipng@nongnu.org>.
+
+Copying
+=======
+
+This program is released under the GNU Lesser General Public License
+version 3, see the COPYING file in the dvipng distribution or
+<http://www.gnu.org/licenses/>.
+
+   Copyright (C) 2002-2014 Jan-AAke Larsson
+
+Todo
+====
+
+   * Use gs interpreter library for speed and possibly for
+     functionality.
+
+   * Add more color models for xcolor compatibility
+
+   * Enable a named pipe as DVI
+
+   * Further speed improvements.
+
+   * Other output specials and source specials.
+
+   * Clean internal structures.  Overhaul file handling.
+
+   * Fix the SELFAUTO stuff at runtime rather than at build time
+

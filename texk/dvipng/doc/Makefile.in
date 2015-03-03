@@ -357,7 +357,6 @@ info_TEXINFOS = \
 	dvipng.texi
 
 dvipng_TEXINFOS = \
-	COPYING.gd \
 	dvipng.help \
 	install.texi \
 	macros.texi \

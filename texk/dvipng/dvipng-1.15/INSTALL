@@ -1,0 +1,157 @@
+Installing dvipng
+*****************
+
+Installing dvipng should be simple: merely './configure', 'make', and
+'make install'.
+
+Prerequisites
+=============
+
+   * The GD Graphics Draw library, libgd
+
+     The drawing library 'libgd' is necessary, and is downloadable at
+     <http://www.boutell.com/gd>, and there are binary packages for most
+     operating systems from their respective distributors.  In any case,
+     the latest version of the library installs using 'autoconf' so it
+     should not be difficult for you to install it from source, and then
+     proceed with installing dvipng.
+
+   * The path-searching library kpathsea
+
+     Kpathsea is most likely included in your LaTeX installation, but it
+     may happen that ./configure does not find it; see below.  If you do
+     not have it, download it from <http://www.ctan.org> and compile it.
+     I have no experience with this, so I cannot help much here.
+
+   * The font-rendering library FreeType 2
+
+     While not strictly necessary, a recent FreeType 2 is recommended
+     since dvipng currently will produce better-quality images when this
+     library is available.  To take advantage of this, you should have
+     at least FreeType 2.1.9.
+
+     FreeType 2 will enable direct support for PostScript and TrueType
+     fonts, so that dvipng will not need to generate bitmapped variants
+     on disk of the TeX fonts since modern TeX distributions include
+     PostScript versions of them.  Then, you can render images at
+     different (and unusual) resolutions without cluttering the disk
+     with lots of bitmapped fonts.
+
+     Finally, it will enable subfont support in dvipng.  That is, if you
+     want to render CJK-LaTeX characters, you must have FreeType 2
+     installed.
+
+   * libpng and libz
+
+     To be able to compress and write PNG files to disk, dvipng (or
+     really libgd) uses libpng which in turn uses libz.  These should be
+     available on any modern system, if not, download them and install
+     them.
+
+   * The 'texinfo' package
+
+     This is needed for building the documentation.
+
+Configure
+=========
+
+The first step is to configure the source code, telling it where various
+files will be.  To do so, run
+
+     ./configure OPTIONS
+
+   (Note: if you have fetched dvipng from CVS rather than a regular
+release, you will have to first generate './configure' by running
+'autoconf' 2.53 or later.)
+
+   On many machines, you will not need to specify any options, but if
+'configure' cannot determine something on its own, you'll need to help
+it out.  For a list of the options type
+
+     ./configure --help
+
+   On some machines, the libraries will be installed in directories that
+are not in the linker's search path.  This will generate an error when
+running './configure', indicating that it cannot find libgd or
+libkpathsea (most likely).  You then need to specify the path to the
+respective library's object files.  They are typically called e.g.,
+'libgd.a' or 'libgd.so'.  If they are located in e.g., '/sw/local/lib',
+do
+
+     ./configure LDFLAGS=-L/sw/local/lib
+
+   If the library is available as a shared object file ('.so'), the
+runtime linker may also need to be told where to find the library, then
+use
+
+     ./configure LDFLAGS='-L/sw/local/lib -R/sw/local/lib'
+
+   When either of these is necessary, it is likely that the C header
+files are also installed in directories that are not in the C
+preprocessor's search path.  This will also generate an error when
+running './configure', indicating that it cannot find e.g., 'gd.h' or
+'kpathsea.h' (most likely).  You then need to specify the path to the
+respective library's C header files.  If they are located in e.g.,
+'/sw/local/include', do
+
+     ./configure CPPFLAGS=-I/sw/local/include
+
+   On my SUN Solaris workstation, I had to combine this into
+
+     ./configure CPPFLAGS='-I/sw/local/include -I/sw/tex/teTeX/1.0/include'\
+         LDFLAGS='-L/sw/local/lib -R/sw/local/lib -L/sw/tex/teTeX/1.0/lib/'
+
+where the backslash denotes a continuation of the line.
+
+Build/install
+=============
+
+Once 'configure' has been run, simply enter
+
+     make
+
+at the prompt to compile the C code, and build the documentation files.
+To install the files into the locations chosen earlier, type
+
+     make install
+
+You may need special privileges to install, e.g., if you are installing
+into system directories.
+
+Installation outside the texmf tree
+===================================
+
+In some cases, a dvipng binary installed outside the texmf tree will not
+be able to find virtual fonts, or the PostScript font maps (normally
+used by dvips).  This may be because _only_ $SELFAUTOLOC, $SELFAUTODIR,
+and $SELFAUTOPARENT are used in the texmf tree configuration file
+'texmf.cnf'.  If so, give the switch '--enable-selfauto-set' to
+'./configure'.  This will make dvipng adjust these three internally so
+that kpathsea thinks that dvipng _is_ installed in the texmf tree.
+
+Installation for non-privileged users
+=====================================
+
+Often people without system administration privileges want to install
+software for their private use.  In that case you need to specify more
+options to the 'configure' script, usually this is done by using the
+'--prefix' option to the 'configure' script, and let it point to the
+personal home directory.  In that way, resulting binaries will be
+installed under the 'bin' subdirectory of your home directory, manual
+pages under 'man' and so on.  That way, it is reasonably easy to
+maintain a bunch of additional packages, since the prefix argument is
+supported by most 'configure' scripts.
+
+   You'll have to add something like '/home/myself/bin' to your 'PATH'
+shell variable, if it isn't there already, and similarly set the
+'INFOPATH' and 'MANPATH' variables to be able to access the
+documentation.
+
+Copying
+=======
+
+This program is released under the GNU Lesser General Public License
+version 3, see the COPYING file in the dvipng distribution or
+<http://www.gnu.org/licenses/>.
+
+   Copyright (C) 2002-2015 Jan-AAke Larsson
