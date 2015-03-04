@@ -1,3 +1,7 @@
+2015-03-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-w64-ptr: Better handling of WIN64 ptr->long.
+
 2015-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.15 from savannah.nongnu.org.
