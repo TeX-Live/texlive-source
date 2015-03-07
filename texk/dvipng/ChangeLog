@@ -1,3 +1,9 @@
+2015-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check for texlive_gs_init(), if Windows.
+	* Makefile.am: Add '-DTEXLIVE' to AM_CPPFLAGS.
+	Drop unused DVIPS and TEXI2HTML.
+
 2015-03-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Imported release 1.15 from savannah.nongnu.org.

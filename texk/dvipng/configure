@@ -16471,6 +16471,21 @@ fi
 done
 
 
+if test "x$kpse_cv_have_win32" != xno; then :
+  for ac_func in texlive_gs_init
+do :
+  ac_fn_c_check_func "$LINENO" "texlive_gs_init" "ac_cv_func_texlive_gs_init"
+if test "x$ac_cv_func_texlive_gs_init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_TEXLIVE_GS_INIT 1
+_ACEOF
+
+fi
+done
+
+fi
+
+
 # We need enc, cmap, and sfd formats.
 # Introduced together with opentype format (Dec 2003).
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether kpathsea declares the kpse_opentype_format" >&5
