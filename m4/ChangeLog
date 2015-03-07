@@ -1,3 +1,7 @@
+2015-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-win32.m4: Define KPSE_DO_IF_WIN32 for WIN32 only tests.
+
 2015-02-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-cairo-flags.m4: Require KPSE_PIXMAN_FLAGS.

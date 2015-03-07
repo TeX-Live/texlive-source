@@ -25,14 +25,10 @@ EXTRA_DIST += $(DVIPNG_TREE)-PATCHES
 include $(srcdir)/../../am/dist_hook.am
 NEVER_NAMES += $(NEVER_NAMES_SUB)
 
-AM_CPPFLAGS = -I$(top_srcdir)/$(DVIPNG_TREE)
+AM_CPPFLAGS = -DTEXLIVE -I$(top_srcdir)/$(DVIPNG_TREE)
 AM_CPPFLAGS += $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES)
 AM_CPPFLAGS += $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
-
-DVIPS = dvips -Ppdf
-
-TEXI2HTML = texi2html
 
 # In order that `make distcheck' succeeds, we must not attempt to rebuild
 # dvipng.info if dvipng.help has not changed,  Thus we delegate rebuilding

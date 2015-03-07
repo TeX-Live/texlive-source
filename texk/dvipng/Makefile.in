@@ -647,12 +647,10 @@ NEVER_DIST = `find . $(NEVER_NAMES)`
 NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
-AM_CPPFLAGS = -I$(top_srcdir)/$(DVIPNG_TREE) $(KPATHSEA_INCLUDES) \
-	$(FREETYPE2_INCLUDES) $(GD_INCLUDES) $(LIBPNG_INCLUDES) \
-	$(ZLIB_INCLUDES)
+AM_CPPFLAGS = -DTEXLIVE -I$(top_srcdir)/$(DVIPNG_TREE) \
+	$(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) $(GD_INCLUDES) \
+	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
-DVIPS = dvips -Ppdf
-TEXI2HTML = texi2html
 
 # In order that `make distcheck' succeeds, we must not attempt to rebuild
 # dvipng.info if dvipng.help has not changed,  Thus we delegate rebuilding

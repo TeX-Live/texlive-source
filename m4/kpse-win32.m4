@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -68,3 +68,11 @@ AM_CONDITIONAL([WIN32_CALL],
 AM_COND_IF([WIN32],
            [AC_CONFIG_LINKS([callexe.c:../texlive/w32_wrapper/callexe.c])])
 ]) # KPSE_WIN32_CALL
+
+# KPSE_DO_IF_WIN32(COMMAND)
+# -------------------------
+# Execute COMMAND, if Windows.
+AC_DEFUN([KPSE_DO_IF_WIN32], [dnl
+AC_REQUIRE([KPSE_CHECK_WIN32])[]dnl
+AS_IF([test "x$kpse_cv_have_win32" != xno], [$1])
+]) # KPSE_DO_IF_WIN32

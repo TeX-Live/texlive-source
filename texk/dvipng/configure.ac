@@ -131,6 +131,8 @@ AC_CHECK_FUNC([kpse_set_program_name],
 
 AC_CHECK_FUNCS([kpse_program_basename])
 
+KPSE_DO_IF_WIN32([AC_CHECK_FUNCS([texlive_gs_init])])
+
 # We need enc, cmap, and sfd formats.
 # Introduced together with opentype format (Dec 2003).
 KPSE_CHECK_KPSE_FORMAT([opentype],
