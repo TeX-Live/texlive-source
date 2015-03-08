@@ -1,3 +1,7 @@
+2015-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tardate.ac: Switch to 2015-03-07.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/dist_hook.am (new): Makefile fragment for dist-hook target.
