@@ -24,6 +24,7 @@
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012 Pino Toscano <pino@kde.org>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2015 William Bader <williambader@hotmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -320,10 +321,11 @@ GooString *GooString::appendfv(const char *fmt, va_list argList) {
   int len, i;
   const char *p0, *p1;
   char *str;
+  GooStringFormatArg argsBuf[ 8 ];
 
   argsLen = 0;
-  argsSize = 8;
-  args = (GooStringFormatArg *)gmallocn(argsSize, sizeof(GooStringFormatArg));
+  argsSize = sizeof(argsBuf) / sizeof(argsBuf[0]);
+  args = argsBuf;
 
   p0 = fmt;
   while (*p0) {
@@ -392,8 +394,13 @@ GooString *GooString::appendfv(const char *fmt, va_list argList) {
 	if (idx == argsLen) {
 	  if (argsLen == argsSize) {
 	    argsSize *= 2;
-	    args = (GooStringFormatArg *)greallocn(args, argsSize,
+	    if (args == argsBuf) {
+	      args = (GooStringFormatArg *)gmallocn(argsSize, sizeof(GooStringFormatArg));
+	      memcpy(args, argsBuf, argsLen * sizeof(GooStringFormatArg));
+	    } else {
+	      args = (GooStringFormatArg *)greallocn(args, argsSize,
 						 sizeof(GooStringFormatArg));
+	    }
 	  }
 	  switch (ft) {
 	  case fmtIntDecimal:
@@ -632,7 +639,10 @@ GooString *GooString::appendfv(const char *fmt, va_list argList) {
     }
   }
 
-  gfree(args);
+  if (args != argsBuf) {
+    gfree(args);
+  }
+
   return this;
 }
 

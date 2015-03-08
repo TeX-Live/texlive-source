@@ -1,3 +1,19 @@
+Release 0.32.0
+        core:
+         * Annotations: Fix rendering of empty BG/BC arrays
+         * Splash: Fix wrong colour shown when GouraudTriangleShFill uses a DeviceN colorspace. Bug #89182
+         * Splash: Fix use of uninitialized variable in Splash::pipeRun
+         * Remove unnecesary check for font validity. Bug #88939
+         * Small optimization in GooString::appendfv(). Bug #89096
+         * Fix crashes in malformed files
+
+        utils:
+         * pdftops: Make colorpsace optimization an option instead of default
+         * pdfseparate: use always an unique instance for PDFDoc for savePageAs
+
+        build system:
+         * cmake: If extra-cmake-modules is around include the Sanitizers module
+
 Release 0.31.0
         core:
          * CairoOutputDev: support embedding JBIG2 image data
@@ -5,10 +21,10 @@ Release 0.31.0
          * Fix crash on broken documents
          * JPEG2000Stream: Inline doGetChar and doLookChar
          * GlobalParams cleaning
-        
+
         utils:
          * pdftops: Add rasterization option. Bug #85934
-        
+
         qt4:
          * Expose whole-words search option
 

@@ -20,7 +20,7 @@
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
-// Copyright (C) 2009-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2014, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2010 Patrick Spendrin <ps_ml@gmx.de>
@@ -4048,8 +4048,8 @@ void SplashOutputDev::setSoftMask(GfxState *state, double *bbox,
   p = softMask->getDataPtr() + ty * softMask->getRowSize() + tx;
   int xMax = tBitmap->getWidth();
   int yMax = tBitmap->getHeight();
-  if (xMax + tx > bitmap->getWidth()) xMax = bitmap->getWidth() - tx;
-  if (yMax + ty > bitmap->getHeight()) yMax = bitmap->getHeight() - ty;
+  if (xMax > bitmap->getWidth() - tx) xMax = bitmap->getWidth() - tx;
+  if (yMax > bitmap->getHeight() - ty) yMax = bitmap->getHeight() - ty;
   for (y = 0; y < yMax; ++y) {
     for (x = 0; x < xMax; ++x) {
       if (alpha) {
@@ -4364,7 +4364,7 @@ GBool SplashOutputDev::gouraudTriangleShadedFill(GfxState *state, GfxGouraudTria
 #if SPLASH_CMYK
     case splashModeCMYK8:
     case splashModeDeviceN8:
-      bDirectColorTranslation = (shadingMode == csDeviceCMYK || shadingMode == csDeviceN);
+      bDirectColorTranslation = (shadingMode == csDeviceCMYK);
     break;
 #endif
     default:

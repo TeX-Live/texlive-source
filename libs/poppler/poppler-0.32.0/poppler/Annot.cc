@@ -32,6 +32,7 @@
 // Copyright (C) 2014 Marek Kasik <mkasik@redhat.com>
 // Copyright (C) 2014 Jiri Slaby <jirislaby@gmail.com>
 // Copyright (C) 2014 Anuj Khare <khareanuj18@gmail.com>
+// Copyright (C) 2015 Petr Gajdos <pgajdos@suse.cz>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1045,14 +1046,24 @@ AnnotAppearanceCharacs::AnnotAppearanceCharacs(Dict *dict) {
   obj1.free();
 
   if (dict->lookup("BC", &obj1)->isArray()) {
-    borderColor = new AnnotColor(obj1.getArray());
+    Array *colorComponents = obj1.getArray();
+    if (colorComponents->getLength() > 0) {
+      borderColor = new AnnotColor(colorComponents);
+    } else {
+      borderColor = NULL;
+    }
   } else {
     borderColor = NULL;
   }
   obj1.free();
 
   if (dict->lookup("BG", &obj1)->isArray()) {
-    backColor = new AnnotColor(obj1.getArray());
+    Array *colorComponents = obj1.getArray();
+    if (colorComponents->getLength() > 0) {
+      backColor = new AnnotColor(colorComponents);
+    } else {
+      backColor = NULL;
+    }
   } else {
     backColor = NULL;
   }
