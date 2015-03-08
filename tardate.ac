@@ -1,5 +1,5 @@
 dnl
-dnl   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current TeX Live tarball version
-m4_define([tex_live_tardate], [2014-11-24])
+m4_define([tex_live_tardate], [2015-03-07])
