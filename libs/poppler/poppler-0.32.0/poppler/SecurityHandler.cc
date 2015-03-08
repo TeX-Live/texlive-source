@@ -13,7 +13,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2010, 2012 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2010, 2012, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2014 Fabio D'Urso <fabiodurso@hotmail.it>
 //
@@ -288,12 +288,16 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
 	ok = gTrue;
       } else if (encVersion == 5 && encRevision == 5) {
 	fileID = new GooString(); // unused for V=R=5
-	ownerEnc = ownerEncObj.getString()->copy();
-	userEnc = userEncObj.getString()->copy();
-	if (fileKeyLength > 32 || fileKeyLength < 0) {
-	  fileKeyLength = 32;
+	if (ownerEncObj.isString() && userEncObj.isString()) {
+	  ownerEnc = ownerEncObj.getString()->copy();
+	  userEnc = userEncObj.getString()->copy();
+	  if (fileKeyLength > 32 || fileKeyLength < 0) {
+	    fileKeyLength = 32;
+	  }
+	  ok = gTrue;
+	} else {
+	  error(errSyntaxError, -1, "Weird encryption owner/user info");
 	}
-	ok = gTrue;
       } else if (!(encVersion == -1 && encRevision == -1)) {
 	error(errUnimplemented, -1,
 	      "Unsupported version/revision ({0:d}/{1:d}) of Standard security handler",

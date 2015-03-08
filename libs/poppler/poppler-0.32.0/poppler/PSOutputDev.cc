@@ -1235,6 +1235,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   embedCIDPostScript = gTrue;
   embedCIDTrueType = gTrue;
   fontPassthrough = gFalse;
+  optimizeColorSpace = gFalse;
   preloadImagesForms = gFalse;
   generateOPI = gFalse;
   useASCIIHex = gFalse;
@@ -1899,7 +1900,7 @@ void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
 	switch (fontLoc->fontType) {
 	case fontType1:
 	  // this assumes that the PS font name matches the PDF font name
-	  psName = font->getEmbeddedFontName()->copy();
+	  psName = font->getEmbeddedFontName() ? font->getEmbeddedFontName()->copy() : new GooString();
 	  setupEmbeddedType1Font(&fontLoc->embFontID, psName);
 	  break;
 	case fontType1C:
@@ -3312,16 +3313,20 @@ GBool PSOutputDev::checkPageSlice(Page *page, double /*hDPI*/, double /*vDPI*/,
     case psLevel1Sep:
       p = bitmap->getDataPtr();
       // Check for an all gray image
-      isGray = gTrue;
-      for (y = 0; y < h; ++y) {
-	for (x = 0; x < w; ++x) {
-	  if (p[4*x] != p[4*x + 1] || p[4*x] != p[4*x + 2]) {
-	    isGray = gFalse;
-	    y = h;
-	    break;
+      if (getOptimizeColorSpace()) {
+        isGray = gTrue;
+        for (y = 0; y < h; ++y) {
+	  for (x = 0; x < w; ++x) {
+	    if (p[4*x] != p[4*x + 1] || p[4*x] != p[4*x + 2]) {
+	      isGray = gFalse;
+	      y = h;
+	      break;
+	    }
 	  }
+	  p += bitmap->getRowSize();
 	}
-	p += bitmap->getRowSize();
+      } else {
+	isGray = gFalse;
       }
       writePSFmt("{0:d} {1:d} 8 [{2:d} 0 0 {3:d} 0 {4:d}] pdfIm1{5:s}{6:s}\n",
 		 w, h, w, -h, h,
@@ -3468,7 +3473,9 @@ GBool PSOutputDev::checkPageSlice(Page *page, double /*hDPI*/, double /*vDPI*/,
       p = bitmap->getDataPtr() + (h - 1) * bitmap->getRowSize();
       str0 = new MemStream((char *)p, 0, w * h * numComps, &obj);
       // Check for a color image that uses only gray
-      if (numComps == 4) {
+      if (!getOptimizeColorSpace()) {
+	isGray = gFalse;
+      } else if (numComps == 4) {
         int compCyan;
         isGray = gTrue;
         while ((compCyan = str0->getChar()) != EOF) {

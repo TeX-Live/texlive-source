@@ -319,11 +319,13 @@ public:
   GBool getEmbedCIDPostScript() const { return embedCIDPostScript; }
   GBool getEmbedCIDTrueType() const { return embedCIDTrueType; }
   GBool getFontPassthrough() const { return fontPassthrough; }
+  GBool getOptimizeColorSpace() const { return optimizeColorSpace; }
   void setEmbedType1(GBool b) { embedType1 = b; }
   void setEmbedTrueType(GBool b) { embedTrueType = b; }
   void setEmbedCIDPostScript(GBool b) { embedCIDPostScript = b; }
   void setEmbedCIDTrueType(GBool b) { embedCIDTrueType = b; }
   void setFontPassthrough(GBool b) { fontPassthrough = b; }
+  void setOptimizeColorSpace(GBool b) { optimizeColorSpace = b; }
   void setPreloadImagesForms(GBool b) { preloadImagesForms = b; }
   void setGenerateOPI(GBool b) { generateOPI = b; }
   void setUseASCIIHex(GBool b) { useASCIIHex = b; }
@@ -518,6 +520,8 @@ private:
   GBool embedCIDPostScript;	// embed CID PostScript fonts?
   GBool embedCIDTrueType;	// embed CID TrueType fonts?
   GBool fontPassthrough;	// pass all fonts through as-is?
+  GBool optimizeColorSpace;	// false to keep gray RGB images in their original color space
+				// true to optimize gray images to DeviceGray color space
   GBool preloadImagesForms;	// preload PostScript images and forms into
 				//   memory
   GBool generateOPI;		// generate PostScript OPI comments?

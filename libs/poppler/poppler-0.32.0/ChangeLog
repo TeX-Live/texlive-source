@@ -1,3 +1,235 @@
+commit d7cc90a8b60d7e353db6e0acdd0b789485e32972
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Mar 7 15:04:52 2015 +0100
+
+    0.32.0
+
+ CMakeLists.txt      |  4 ++--
+ NEWS                | 16 ++++++++++++++++
+ configure.ac        |  2 +-
+ cpp/Doxyfile        |  2 +-
+ poppler/Makefile.am |  2 +-
+ qt4/src/Doxyfile    |  2 +-
+ qt5/src/Doxyfile    |  2 +-
+ 7 files changed, 23 insertions(+), 7 deletions(-)
+
+commit c13297d154ded11721fe7d3abdba459ca628cef8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Mar 7 14:58:10 2015 +0100
+
+    Update (C)
+
+ poppler/SecurityHandler.cc | 2 +-
+ poppler/SplashOutputDev.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit c909964bff671d5ff0d8eee5f613ded4562f8afd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Mar 7 14:54:43 2015 +0100
+
+    Do not assert on broken document
+
+    Bug #89422
+
+ poppler/SecurityHandler.cc | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+commit 3705fcee0309c50b5fecd563e8e466cbe2c5972b
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri Mar 6 15:19:58 2015 +0100
+
+    Fix  Wrong colour shown when GouraudTriangleShFill uses a DeviceN
+    colorspace
+
+    Bug #89182
+
+ poppler/SplashOutputDev.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b7fde1ec83a5fff9bec73becc22e581583a30d43
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Feb 25 21:51:34 2015 +0100
+
+    Fix last commit regression
+
+    It seems it actually needs to be pipe->shape and not pipe->usesShape
+    (i.e. it seems at some point we use pipe->shape with useShape
+    being false)
+    Otherwise we had a regression on
+    eci_altona-test-suite-v2_technical2_x4.pdf
+
+ splash/Splash.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 7980fe868a8ef2ee3315f0bcb606c448d6604039
+Author: William Bader <williambader@hotmail.com>
+Date:   Wed Feb 25 15:00:33 2015 +0100
+
+    Fix uninitialized variable in Splash::pipeRun
+
+    Use useShape is actually the guard for shape, so use it in the if
+
+ splash/Splash.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 57b6b78a0831fb31c06fd1bc6e9803de524f9d2d
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue Feb 24 23:34:57 2015 +0100
+
+    pdfseparate: use always an unique instance for PDFDoc for savePageAs
+
+ utils/pdfseparate.cc | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit 8a30d219df71ead323649ff0dfd4a724b5e7bd18
+Author: William Bader <williambader@hotmail.com>
+Date:   Sat Feb 21 23:55:10 2015 +0100
+
+    Fix memcpy introduced in ec956ab8552dbe10fac4e649951042bddc424b7d
+
+ goo/GooString.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ec956ab8552dbe10fac4e649951042bddc424b7d
+Author: William Bader <williambader@hotmail.com>
+Date:   Tue Feb 17 22:55:14 2015 +0100
+
+    Reduce use of gmalloc() in GooString::appendfv()
+
+    Bug #89096
+
+ goo/GooString.cc | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+commit 132ef18324f62c1f2a08dcd794b379fadaa4daf5
+Author: Petr Gajdos <pgajdos@suse.cz>
+Date:   Wed Feb 11 19:37:21 2015 +0100
+
+    Annot BG/BC: Empty Array means no color
+
+ poppler/Annot.cc | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+commit bf4aae25a244b1033a2479b9a8f633224f7d5de5
+Author: William Bader <williambader@hotmail.com>
+Date:   Wed Feb 11 17:35:40 2015 +0100
+
+    Off by one fix to the previous crash fix
+
+ fofi/FoFiTrueType.cc | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 97dd46bae5424818ca808c20506d7d96f7b85fb5
+Author: William Bader <williambader@hotmail.com>
+Date:   Mon Feb 9 22:30:51 2015 +0100
+
+    pdftops: Add aaRaster and overprint to man file
+
+ utils/pdftops.1 | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit c114a90063d755639d2b0dbf816690a66b54bee0
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Feb 8 00:24:11 2015 +0100
+
+    Fix crash in fuzzed file from Bug #84988
+
+ poppler/TextOutputDev.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 22895623e6cd2a5923f552421d44cc80cab77dd8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Feb 7 22:28:21 2015 +0100
+
+    Fix malformed file crash from bug #86854
+
+ poppler/PSOutputDev.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit cdb7ad95f7c8fbf63ade040d8a07ec96467042fc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Feb 7 22:21:16 2015 +0100
+
+    Fix malformed file crash in bug #85243
+
+ fofi/FoFiTrueType.cc | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+commit 6641b935e1fc0c4151a723b6b476d987b8324ed2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Feb 7 21:58:23 2015 +0100
+
+    If ECM is around include the sanitizers module
+
+    This way you can run
+      cmake -DECM_ENABLE_SANITIZERS='address'
+    and get an ASAN built poppler
+
+ CMakeLists.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit 92e41685dcef538a7fc669ca357ce9f448a8078e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Feb 7 21:54:39 2015 +0100
+
+    Fix crash in malformed file from bug #85275
+
+ poppler/SplashOutputDev.cc |  4 ++--
+ splash/Splash.cc           | 10 +++++++++-
+ splash/SplashBitmap.cc     |  4 ++--
+ 3 files changed, 13 insertions(+), 5 deletions(-)
+
+commit 9842b3b00492eda21297d5d65f769f77a565f6ac
+Author: Aleksei Volkov <Aleksei Volkov>
+Date:   Sat Feb 7 20:46:26 2015 +0100
+
+    No need to check for hmtx, freetype does for us
+
+    Bug #88939
+
+ fofi/FoFiTrueType.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4849eb43892640062c485e48ba7a29b5a0cc9587
+Author: William Bader <williambader@hotmail.com>
+Date:   Sat Feb 7 16:41:53 2015 +0100
+
+    Make the colorpsace optimization and option and not the default
+
+    Bug #88971
+
+ poppler/PSOutputDev.cc | 25 ++++++++++++++++---------
+ poppler/PSOutputDev.h  |  4 ++++
+ utils/pdftops.1        | 10 +++++++++-
+ utils/pdftops.cc       |  4 ++++
+ 4 files changed, 33 insertions(+), 10 deletions(-)
+
+commit 8e16e423a718b92514885e771e31048f1ae2a766
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Feb 5 20:18:13 2015 +0100
+
+    0.31.0
+
+    And copyright updating
+
+ CMakeLists.txt            |  4 ++--
+ NEWS                      | 17 +++++++++++++++++
+ configure.ac              |  2 +-
+ cpp/Doxyfile              |  2 +-
+ poppler/CairoOutputDev.cc |  1 +
+ poppler/CairoOutputDev.h  |  1 +
+ poppler/JBIG2Stream.cc    |  1 +
+ poppler/JBIG2Stream.h     |  1 +
+ poppler/Makefile.am       |  2 +-
+ poppler/Stream.cc         |  1 +
+ qt4/src/CMakeLists.txt    |  2 +-
+ qt4/src/Doxyfile          |  2 +-
+ qt4/src/Makefile.am       |  2 +-
+ qt5/src/CMakeLists.txt    |  2 +-
+ qt5/src/Doxyfile          |  2 +-
+ qt5/src/Makefile.am       |  2 +-
+ 16 files changed, 33 insertions(+), 11 deletions(-)
+
 commit f932315e559a7857d9c5642eb04efc0d2b717789
 Author: suzuki toshiya <mpsuzuki@hiroshima-u.ac.jp>
 Date:   Tue Jan 20 22:05:29 2015 +1030
