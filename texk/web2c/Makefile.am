@@ -17,15 +17,18 @@ proglib = lib/lib.a
 
 ## Below we will add to these
 EXTRA_PROGRAMS =
+EXTRA_LIBRARIES =
+EXTRA_LTLIBRARIES =
 bin_PROGRAMS =
+lib_LIBRARIES =
+lib_LTLIBRARIES =
 noinst_PROGRAMS =
 dist_man_MANS =
 nodist_man_MANS =
 check_PROGRAMS =
 TESTS =
-EXTRA_LIBRARIES =
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h
-DISTCLEANFILES = $(EXTRA_LIBRARIES) CXXLD.sh
+DISTCLEANFILES = CXXLD.sh
 CLEANFILES =
 TRIPTRAP_CLEAN =
 TRIPTRAP =

@@ -1,3 +1,7 @@
+2015-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ac/synctex.a, am/synctex.am: Reorganize rules for libsynctex.
+
 2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* synctex.c: Define SYNCTEX_YES as 1, not -1 (for bitfields).

@@ -1,42 +1,30 @@
 ## texk/web2c/synctexdir/am/synctex.am: Makefile fragment for SyncTeX.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## The SyncTeX tool
 
 if SYNCTEX
 bin_PROGRAMS += synctex
+lib_LTLIBRARIES += $(LTLIBSYNCTEX)
+lib_LIBRARIES += $(LIBSYNCTEX)
 endif SYNCTEX
 EXTRA_PROGRAMS += synctex
+EXTRA_LTLIBRARIES += libsynctex.la
+EXTRA_LIBRARIES += libsynctex.a
 
 synctex_SOURCES = \
 	synctexdir/synctex_main.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir
 
-if SYSTEM_ZLIB
-libsynctex = libsynctex.la
-else !SYSTEM_ZLIB
-libsynctex = libsynctex.a
-endif !SYSTEM_ZLIB
-
 synctex_LDADD =  $(libsynctex) $(ZLIB_LIBS)
 
 $(synctex_OBJECTS): $(libsynctex)
 
 ## The (shared or nonshared) SyncTeX parser library
-
-EXTRA_LTLIBRARIES = libsynctex.la
-EXTRA_LIBRARIES += libsynctex.a
-
-if SYNCTEX
-if SYSTEM_ZLIB
-lib_LTLIBRARIES = $(WANTEDLIBS)
-else !SYSTEM_ZLIB
-lib_LIBRARIES = libsynctex.a
-endif !SYSTEM_ZLIB
-endif SYNCTEX
+libsynctex = $(LTLIBSYNCTEX) $(LIBSYNCTEX)
 
 libsynctex_la_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
 libsynctex_a_CPPFLAGS = $(libsynctex_la_CPPFLAGS)

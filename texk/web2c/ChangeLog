@@ -1,3 +1,7 @@
+2015-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Initialize {EXTRA,lib}_{,LT}LIBRARIES.
+
 2015-02-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/web2c.ac: Update some help texts.
