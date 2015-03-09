@@ -638,13 +638,12 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
 subdirs
-WANTEDLIBS
-SYNCTEX_LT_VERSINFO
-SYNCTEXVERSION
+LIBSYNCTEX
+LTLIBSYNCTEX
 SYNCTEX_FALSE
 SYNCTEX_TRUE
-SYSTEM_ZLIB_FALSE
-SYSTEM_ZLIB_TRUE
+SYNCTEX_LT_VERSINFO
+SYNCTEXVERSION
 OTANGLE
 TIE
 CTANGLE
@@ -24788,13 +24787,11 @@ ac_config_files="$ac_config_files silent-sh"
 
 
 ## texk/web2c/synctexdir/ac/synctex.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
- if test "x$with_system_zlib" = xyes; then
-  SYSTEM_ZLIB_TRUE=
-  SYSTEM_ZLIB_FALSE='#'
-else
-  SYSTEM_ZLIB_TRUE='#'
-  SYSTEM_ZLIB_FALSE=
-fi
+
+SYNCTEXVERSION=1.17.0
+
+
+SYNCTEX_LT_VERSINFO=18:0:17
 
 
  if test "x$enable_synctex" != xno; then
@@ -24806,14 +24803,11 @@ else
 fi
 
 
+if test "x$with_system_zlib" = xyes; then :
+  LTLIBSYNCTEX=libsynctex.la
 
-SYNCTEXVERSION=1.17.0
-
-
-SYNCTEX_LT_VERSINFO=18:0:17
-
-if test "x$enable_synctex" != xno; then :
-  WANTEDLIBS=libsynctex.la
+else
+  LIBSYNCTEX=libsynctex.a
 
 fi
 
@@ -25120,10 +25114,6 @@ if test -z "${UPWEB_TRUE}" && test -z "${UPWEB_FALSE}"; then
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
-if test -z "${SYSTEM_ZLIB_TRUE}" && test -z "${SYSTEM_ZLIB_FALSE}"; then
-  as_fn_error $? "conditional \"SYSTEM_ZLIB\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${SYNCTEX_TRUE}" && test -z "${SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
