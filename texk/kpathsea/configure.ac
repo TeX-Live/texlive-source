@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -36,8 +36,8 @@ AC_PROG_AWK
 AC_CHECK_SIZEOF([long])
 
 dnl Replacement functions that may be required on ancient broken system.
-AC_CHECK_DECLS([putenv, strstr])
-AC_REPLACE_FUNCS([putenv strcasecmp strtol strstr])
+AC_CHECK_DECLS([putenv])
+AC_REPLACE_FUNCS([putenv])
 
 if test "x$ac_cv_func_getcwd" = xyes; then
 # We only need to run this if we have getcwd.

@@ -13463,13 +13463,12 @@ fi
 
 done
 
-for ac_func in putenv strcasecmp strtol strstr
+for ac_func in putenv
 do :
-  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
-ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
-if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  ac_fn_c_check_func "$LINENO" "putenv" "ac_cv_func_putenv"
+if test "x$ac_cv_func_putenv" = xyes; then :
   cat >>confdefs.h <<_ACEOF
-#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+#define HAVE_PUTENV 1
 _ACEOF
 
 fi
@@ -13884,16 +13883,6 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_PUTENV $ac_have_decl
 _ACEOF
-ac_fn_c_check_decl "$LINENO" "strstr" "ac_cv_have_decl_strstr" "$ac_includes_default"
-if test "x$ac_cv_have_decl_strstr" = xyes; then :
-  ac_have_decl=1
-else
-  ac_have_decl=0
-fi
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_DECL_STRSTR $ac_have_decl
-_ACEOF
 
 ac_fn_c_check_func "$LINENO" "putenv" "ac_cv_func_putenv"
 if test "x$ac_cv_func_putenv" = xyes; then :
@@ -13903,45 +13892,6 @@ else
   case " $LIBOBJS " in
   *" putenv.$ac_objext "* ) ;;
   *) LIBOBJS="$LIBOBJS putenv.$ac_objext"
- ;;
-esac
-
-fi
-
-ac_fn_c_check_func "$LINENO" "strcasecmp" "ac_cv_func_strcasecmp"
-if test "x$ac_cv_func_strcasecmp" = xyes; then :
-  $as_echo "#define HAVE_STRCASECMP 1" >>confdefs.h
-
-else
-  case " $LIBOBJS " in
-  *" strcasecmp.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS strcasecmp.$ac_objext"
- ;;
-esac
-
-fi
-
-ac_fn_c_check_func "$LINENO" "strtol" "ac_cv_func_strtol"
-if test "x$ac_cv_func_strtol" = xyes; then :
-  $as_echo "#define HAVE_STRTOL 1" >>confdefs.h
-
-else
-  case " $LIBOBJS " in
-  *" strtol.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS strtol.$ac_objext"
- ;;
-esac
-
-fi
-
-ac_fn_c_check_func "$LINENO" "strstr" "ac_cv_func_strstr"
-if test "x$ac_cv_func_strstr" = xyes; then :
-  $as_echo "#define HAVE_STRSTR 1" >>confdefs.h
-
-else
-  case " $LIBOBJS " in
-  *" strstr.$ac_objext "* ) ;;
-  *) LIBOBJS="$LIBOBJS strstr.$ac_objext"
  ;;
 esac
 

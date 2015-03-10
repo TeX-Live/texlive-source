@@ -1,3 +1,7 @@
+2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop checks for strstr and strtol.
+
 2015-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Check for texlive_gs_init(), if Windows.

@@ -70,7 +70,7 @@ AC_TYPE_PID_T
 AC_FUNC_MMAP
 AC_FUNC_STRTOD
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr strtol strstr])
+AC_CHECK_FUNCS([dup2 memset munmap pow putenv strchr strrchr])
 
 if test "x$enable_timing" = xyes; then
   AC_CHECK_FUNCS([ftime gettimeofday])

@@ -18,7 +18,6 @@ KPSE_COMMON([makejvfk], [no-define])
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 AC_CHECK_HEADERS([strings.h])
-AC_CHECK_FUNCS([strdup strtol])
 
 KPSE_KPATHSEA_FLAGS
 KPSE_PTEXENC_FLAGS

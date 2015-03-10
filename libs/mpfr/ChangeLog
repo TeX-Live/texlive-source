@@ -1,3 +1,8 @@
+2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* m4/mpfr-configs.m4: Drop useless checks for memmove, memset,
+	and strtol.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
