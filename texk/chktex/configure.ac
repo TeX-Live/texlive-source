@@ -29,7 +29,7 @@ AC_CHECK_HEADERS([stat.h stdarg.h sys/stat.h])
 
 dnl Checks for library functions.
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr strtol])
+AC_CHECK_FUNCS([access closedir fileno isatty opendir readdir stat strcasecmp strdup strlwr])
 
 dnl Checks for declarations.
 AC_CHECK_DECLS([stpcpy])

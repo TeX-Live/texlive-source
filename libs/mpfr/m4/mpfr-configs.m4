@@ -2,7 +2,7 @@
 # Copyright (C) 2000-2013 Free Software Foundation, Inc.
 # Contributed by the AriC and Caramel projects, INRIA.
 #
-# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 # Extracted from mpfr-3.1.2/acinclude.m4 and adapted for TeX Live.
 #
 # This file is free software; the copyright holders
@@ -52,12 +52,6 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 ]])], [AC_DEFINE([HAVE___VA_COPY], 1, [Define to 1 if you have the `__va_copy' function.])
        AC_MSG_RESULT([__va_copy])],
    [AC_MSG_RESULT([memcpy])])])
-
-dnl FIXME: The functions memmove, memset and strtol are really needed by
-dnl MPFR, but if they are implemented as macros, this is also OK (in our
-dnl case).  So, we do not return an error, but their tests are currently
-dnl useless.
-AC_CHECK_FUNCS([memmove memset strtol])
 
 dnl Check for IEEE-754 switches on Alpha
 AS_CASE([$host],

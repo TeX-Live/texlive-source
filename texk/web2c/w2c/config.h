@@ -1,6 +1,7 @@
 /* w2c/config.h: All .c files include this first.
 
-Copyright 1995, 1996, 2006, 2007, 2009, 2010, 2012, 2014 Karl Berry.
+Copyright 1995, 1996, 2006, 2007, 2009, 2010, 2012, 2014,
+          2015 Karl Berry.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -124,11 +125,6 @@ typedef unsigned long uintptr_t;
 /* Window support for WIN32 machines. */
 #ifdef WIN32
 #define WIN32WIN
-#endif
-
-/* strtol.c */
-#ifndef HAVE_STRTOL
-extern long strtol (const char *, char **, int);
 #endif
 
 #if defined __GNUC__ && __GNUC__ >=3

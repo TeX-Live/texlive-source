@@ -1,3 +1,9 @@
+2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop checks for strcasecmp, strtol, and strstr.
+	* lib.h: Drop the strstr() prototype.
+	* Makefile.am: No need to distribute the replacement functions.
+
 2014-12-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmf.cnf: Sync with master which is changed by Norbert.

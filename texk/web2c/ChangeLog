@@ -1,3 +1,7 @@
+2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* w2c/config.h: Drop the strtol() prototype.
+
 2015-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Initialize {EXTRA,lib}_{,LT}LIBRARIES.

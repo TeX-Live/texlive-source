@@ -527,8 +527,7 @@ am__DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS ChangeLog NEWS README putenv.c \
-	strcasecmp.c strstr.c strtol.c
+	../../build-aux/ylwrap AUTHORS ChangeLog NEWS README putenv.c
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -694,8 +693,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . doc man $(am__append_6)
-EXTRA_DIST = PROJECTS putenv.c strcasecmp.c strtol.c strstr.c bsnl.awk \
-	cnf-to-paths.awk $(TESTS) tests/cnfnewline/texmf.cnf mktex.cnf
+EXTRA_DIST = PROJECTS putenv.c bsnl.awk cnf-to-paths.awk $(TESTS) \
+	tests/cnfnewline/texmf.cnf mktex.cnf
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
 lib_LTLIBRARIES = libkpathsea.la
@@ -1018,9 +1017,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/putenv.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strcasecmp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strstr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@$(DEPDIR)/strtol.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/access.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kpsestat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/kpsewhich.Po@am__quote@

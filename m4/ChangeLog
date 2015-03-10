@@ -1,3 +1,8 @@
+2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-common.m4 (KPSE_COMMON): Drop checks for strcasecmp,
+	strtol, and strstr.
+
 2015-03-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-win32.m4: Define KPSE_DO_IF_WIN32 for WIN32 only tests.

@@ -1,7 +1,7 @@
 /* lib.h: declarations for common, low-level routines in kpathsea.
 
    Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010, 2011,
-             2012 Karl Berry.
+             2012, 2015 Karl Berry.
    Copyright 1999, 2000, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -150,10 +150,6 @@ extern KPSEDLL const_string xbasename (const_string name);
 
 /* Return directory part of NAME. This returns a new string. */
 extern KPSEDLL string xdirname (const_string name);
-
-#if !HAVE_DECL_STRSTR
-extern string strstr (const_string haystack, const_string needle);
-#endif
 
 /* If NAME has a suffix, return a pointer to its first character (i.e.,
    the one after the `.'); otherwise, return NULL.  */
