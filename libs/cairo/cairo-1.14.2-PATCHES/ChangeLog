@@ -1,0 +1,29 @@
+2015-03-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.14.2.
+
+2014-10-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.14.0.
+
+2013-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.12.16.
+
+2013-05-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.12.14.
+
+2012-11-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.12.8.
+	* patch-01-mingw (removed): Obsolete.
+
+2012-11-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cairo-1.10.2.
+	* patch-01-mingw (new): Build fix for MinGW.
+
+2012-11-10  Taco Hoekwater  <taco@metatex.org>
+
+	Import cairo-1.12.8.
