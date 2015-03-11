@@ -1,6 +1,6 @@
-diff -ur lua-5.2.3.orig/src/lctype.h lua-5.2.3/src/lctype.h
---- lua-5.2.3.orig/src/lctype.h	2013-04-12 20:48:47.000000000 +0200
-+++ lua-5.2.3/src/lctype.h	2014-02-13 13:17:33.000000000 +0100
+diff -ur lua-5.2.4.orig/src/lctype.h lua-5.2.4/src/lctype.h
+--- lua-5.2.4.orig/src/lctype.h	2013-04-12 20:48:47.000000000 +0200
++++ lua-5.2.4/src/lctype.h	2014-02-13 13:17:33.000000000 +0100
 @@ -7,6 +7,8 @@
  #ifndef lctype_h
  #define lctype_h
