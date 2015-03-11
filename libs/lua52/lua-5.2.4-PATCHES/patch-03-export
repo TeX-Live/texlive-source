@@ -1,6 +1,6 @@
-diff -ur lua-5.2.3.orig/src/lopcodes.h lua-5.2.3/src/lopcodes.h
---- lua-5.2.3.orig/src/lopcodes.h	2013-04-12 20:48:47.000000000 +0200
-+++ lua-5.2.3/src/lopcodes.h	2014-10-22 11:14:59.000000000 +0200
+diff -ur lua-5.2.4.orig/src/lopcodes.h lua-5.2.4/src/lopcodes.h
+--- lua-5.2.4.orig/src/lopcodes.h	2014-10-20 20:32:09.000000000 +0200
++++ lua-5.2.4/src/lopcodes.h	2015-03-11 08:31:42.000000000 +0100
 @@ -269,7 +269,7 @@
    OpArgK   /* argument is a constant or register/constant */
  };
@@ -19,9 +19,9 @@ diff -ur lua-5.2.3.orig/src/lopcodes.h lua-5.2.3/src/lopcodes.h
  
  
  /* number of list items to accumulate before a SETLIST instruction */
-diff -ur lua-5.2.3.orig/src/lundump.h lua-5.2.3/src/lundump.h
---- lua-5.2.3.orig/src/lundump.h	2013-04-12 20:48:47.000000000 +0200
-+++ lua-5.2.3/src/lundump.h	2014-10-22 11:14:59.000000000 +0200
+diff -ur lua-5.2.4.orig/src/lundump.h lua-5.2.4/src/lundump.h
+--- lua-5.2.4.orig/src/lundump.h	2013-04-12 20:48:47.000000000 +0200
++++ lua-5.2.4/src/lundump.h	2014-10-22 11:14:59.000000000 +0200
 @@ -17,7 +17,7 @@
  LUAI_FUNC void luaU_header (lu_byte* h);
  

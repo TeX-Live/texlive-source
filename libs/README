@@ -37,7 +37,7 @@ libpng 1.6.16 - checked 22dec14
   http://www.libpng.org/ - used by many
   http://www.libpng.org/pub/png/pngcode.html
 
-lua 5.2.3 - checked 7dec13
+lua 5.2.3 - checked 11mar15
   http://www.lua.org/ftp/
 
 luajit 2.0.3 - checked 14mar14
