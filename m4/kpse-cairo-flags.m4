@@ -25,11 +25,4 @@ AC_DEFUN([KPSE_CAIRO_OPTIONS], [_KPSE_LIB_OPTIONS([cairo], [$1], [pkg-config])])
 # KPSE_CAIRO_SYSTEM_FLAGS
 # -----------------------
 AC_DEFUN([KPSE_CAIRO_SYSTEM_FLAGS], [dnl
-AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG cairo --atleast-version=1.12; then
-  CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
-  CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
-elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
-  AC_MSG_ERROR([did not find cairo-1.12 or better])
-fi
-]) # KPSE_CAIRO_SYSTEM_FLAGS
+_KPSE_PKG_CONFIG_FLAGS([cairo], [cairo], [1.12])])

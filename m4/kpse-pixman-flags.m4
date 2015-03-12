@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -24,11 +24,4 @@ AC_DEFUN([KPSE_PIXMAN_OPTIONS], [_KPSE_LIB_OPTIONS([pixman], [$1], [pkg-config])
 # KPSE_PIXMAN_SYSTEM_FLAGS
 # ------------------------
 AC_DEFUN([KPSE_PIXMAN_SYSTEM_FLAGS], [dnl
-AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG pixman-1 --atleast-version=0.18; then
-  PIXMAN_INCLUDES=`$PKG_CONFIG pixman-1 --cflags`
-  PIXMAN_LIBS=`$PKG_CONFIG pixman-1 --libs`
-elif test "x$need_pixman:$with_system_pixman" = xyes:yes; then
-  AC_MSG_ERROR([did not find pixman-0.18 or better])
-fi
-]) # KPSE_PIXMAN_SYSTEM_FLAGS
+_KPSE_PKG_CONFIG_FLAGS([pixman], [pixman-1], [0.18])])

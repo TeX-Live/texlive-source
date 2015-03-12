@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -7,8 +7,7 @@
 
 # KPSE_PTEXENC_FLAGS
 # ------------------
-# Provide the configure options '--with-system-ptexenc' (if in the TL tree),
-# '--with-ptexenc-includes', and '--with-ptexenc-libdir'.
+# Provide the configure options '--with-system-ptexenc' (if in the TL tree).
 #
 # Set the make variables PTEXENC_INCLUDES and PTEXENC_LIBS to the CPPFLAGS and
 # LIBS required for the `-lptexenc' library in texk/ptexenc/ of the TL tree.
@@ -21,8 +20,9 @@ _KPSE_TEXLIB_FLAGS([ptexenc], [ptexenc], [lt],
 
 # KPSE_PTEXENC_OPTIONS([WITH-SYSTEM])
 # -----------------------------------
-AC_DEFUN([KPSE_PTEXENC_OPTIONS], [_KPSE_LIB_OPTIONS([ptexenc], [$1])])
+AC_DEFUN([KPSE_PTEXENC_OPTIONS], [_KPSE_LIB_OPTIONS([ptexenc], [$1], [pkg-config])])
 
 # KPSE_PTEXENC_SYSTEM_FLAGS
 # -------------------------
-AC_DEFUN([KPSE_PTEXENC_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([ptexenc], [ptexenc])])
+AC_DEFUN([KPSE_PTEXENC_SYSTEM_FLAGS], [dnl
+_KPSE_PKG_CONFIG_FLAGS([ptexenc], [ptexenc])])

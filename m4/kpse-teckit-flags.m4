@@ -25,11 +25,4 @@ AC_DEFUN([KPSE_TECKIT_OPTIONS], [_KPSE_LIB_OPTIONS([teckit], [$1], [pkg-config])
 # KPSE_TECKIT_SYSTEM_FLAGS
 # -------------------------
 AC_DEFUN([KPSE_TECKIT_SYSTEM_FLAGS], [dnl
-AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG teckit; then
-  TECKIT_INCLUDES=`$PKG_CONFIG teckit --cflags`
-  TECKIT_LIBS=`$PKG_CONFIG teckit --libs`
-elif test "x$need_teckit:$with_system_teckit" = xyes:yes; then
-  AC_MSG_ERROR([did not find teckit])
-fi
-]) # KPSE_TECKIT_SYSTEM_FLAGS
+_KPSE_PKG_CONFIG_FLAGS([teckit], [teckit])])

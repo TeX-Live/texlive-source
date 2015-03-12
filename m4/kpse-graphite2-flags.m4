@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -11,8 +11,8 @@
 #
 # Set the make variables GRAPHITE2_INCLUDES and GRAPHITE2_LIBS to the CPPFLAGS and
 # LIBS required for the `-lgraphite2' library in libs/graphite2/ of the TL tree.
-AC_DEFUN([KPSE_GRAPHITE2_FLAGS],
-[AC_REQUIRE([KPSE_FREETYPE2_FLAGS])[]dnl
+AC_DEFUN([KPSE_GRAPHITE2_FLAGS], [dnl
+AC_REQUIRE([KPSE_FREETYPE2_FLAGS])[]dnl
 AC_REQUIRE([KPSE_ICU_FLAGS])[]dnl
 _KPSE_LIB_FLAGS([graphite2], [graphite2], [],
                 [-IBLD/libs/graphite2/include -DGRAPHITE2_STATIC],
@@ -26,12 +26,5 @@ AC_DEFUN([KPSE_GRAPHITE2_OPTIONS], [_KPSE_LIB_OPTIONS([graphite2], [$1], [pkg-co
 
 # KPSE_GRAPHITE2_SYSTEM_FLAGS
 # ---------------------------
-AC_DEFUN([KPSE_GRAPHITE2_SYSTEM_FLAGS],
-[AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG graphite2; then
-  GRAPHITE2_INCLUDES=`$PKG_CONFIG graphite2 --cflags`
-  GRAPHITE2_LIBS=`$PKG_CONFIG graphite2 --libs`
-elif test "x$need_graphite2:$with_system_graphite2" = xyes:yes; then
-  AC_MSG_ERROR([did not find graphite2])
-fi
-]) # KPSE_GRAPHITE2_SYSTEM_FLAGS
+AC_DEFUN([KPSE_GRAPHITE2_SYSTEM_FLAGS], [dnl
+_KPSE_PKG_CONFIG_FLAGS([graphite2], [graphite2])])
