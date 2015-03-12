@@ -288,10 +288,23 @@ AC_DEFUN([_KPSE_MSG_WARN_PREPARE],
 # _KPSE_CHECK_PKG_CONFIG
 # ----------------------
 # Check for pkg-config
-AC_DEFUN([_KPSE_CHECK_PKG_CONFIG],
-[AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
+AC_DEFUN([_KPSE_CHECK_PKG_CONFIG], [dnl
+AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_CHECK_TOOL([PKG_CONFIG], [pkg-config], [false])[]dnl
 ]) # _KPSE_CHECK_PKG_CONFIG
+
+# _KPSE_PKG_CONFIG_FLAGS(PACKAGE-NAME, PKG_CONFIG_NAME, [AT_LEAST])
+# -----------------------------------------------------------------
+# Use pkg-config to determine INCLUDES and LIBS for a system library.
+AC_DEFUN([_KPSE_PKG_CONFIG_FLAGS], [dnl
+AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl  
+if $PKG_CONFIG $2[]m4_ifval([$3], [ --atleast-version=$3]); then
+  AS_TR_CPP($1)_INCLUDES=`$PKG_CONFIG $2 --cflags`
+  AS_TR_CPP($1)_LIBS=`$PKG_CONFIG $2 --libs`
+elif test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = xyes:yes; then
+  AC_MSG_ERROR([did not find $2[]m4_ifval([$3], [ $3 or better])]) 
+fi
+]) # _KPSE_PKG_CONFIG_FLAGS
 
 # KPSE_CANONICAL_HOST
 # -------------------

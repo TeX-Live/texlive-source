@@ -923,11 +923,7 @@ with_system_zlib
 with_zlib_includes
 with_zlib_libdir
 with_system_ptexenc
-with_ptexenc_includes
-with_ptexenc_libdir
 with_system_kpathsea
-with_kpathsea_includes
-with_kpathsea_libdir
 enable_mktexmf_default
 enable_mktexpk_default
 enable_mktextfm_default
@@ -1798,16 +1794,10 @@ Optional Packages:
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
   --with-zlib-libdir=DIR  zlib library installed in DIR
-  --with-system-ptexenc   use installed ptexenc headers and library
-  --with-ptexenc-includes=DIR
-                          ptexenc headers installed in DIR
-  --with-ptexenc-libdir=DIR
-                          ptexenc library installed in DIR
-  --with-system-kpathsea  use installed kpathsea headers and library
-  --with-kpathsea-includes=DIR
-                          kpathsea headers installed in DIR
-  --with-kpathsea-libdir=DIR
-                          kpathsea library installed in DIR
+  --with-system-ptexenc   use installed ptexenc headers and library (requires
+                          pkg-config)
+  --with-system-kpathsea  use installed kpathsea headers and library (requires
+                          pkg-config)
   --with-pic[=PKGS]       try to use only PIC/non-PIC objects [default=use
                           both]
   --with-aix-soname=aix|svr4|both
@@ -6294,16 +6284,6 @@ fi
 if test "${with_system_ptexenc+set}" = set; then :
   withval=$with_system_ptexenc;
 fi
-
-# Check whether --with-ptexenc-includes was given.
-if test "${with_ptexenc_includes+set}" = set; then :
-  withval=$with_ptexenc_includes;
-fi
-
-# Check whether --with-ptexenc-libdir was given.
-if test "${with_ptexenc_libdir+set}" = set; then :
-  withval=$with_ptexenc_libdir;
-fi
 if test "x$with_system_ptexenc" = x; then
   if test -f $srcdir/texk/ptexenc/configure; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`ptexenc' headers and library from TL tree" >&5
@@ -6347,16 +6327,6 @@ test "x$need_ptexenc" = xyes && {
 # Check whether --with-system-kpathsea was given.
 if test "${with_system_kpathsea+set}" = set; then :
   withval=$with_system_kpathsea;
-fi
-
-# Check whether --with-kpathsea-includes was given.
-if test "${with_kpathsea_includes+set}" = set; then :
-  withval=$with_kpathsea_includes;
-fi
-
-# Check whether --with-kpathsea-libdir was given.
-if test "${with_kpathsea_libdir+set}" = set; then :
-  withval=$with_kpathsea_libdir;
 fi
 if test "x$with_system_kpathsea" = x; then
   if test -f $srcdir/texk/kpathsea/configure; then
@@ -21000,38 +20970,6 @@ kpse_save_LIBS=$LIBS
 
 syslib_status=yes
 syslib_used=no
-if test "x$with_kpathsea_includes" != x && test "x$with_kpathsea_includes" != xyes; then
-  KPATHSEA_INCLUDES="-I$with_kpathsea_includes"
-fi
-KPATHSEA_LIBS="-lkpathsea"
-if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; then
-  KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
-fi
-
-if test "x$with_ptexenc_includes" != x && test "x$with_ptexenc_includes" != xyes; then
-  PTEXENC_INCLUDES="-I$with_ptexenc_includes"
-fi
-PTEXENC_LIBS="-lptexenc"
-if test "x$with_ptexenc_libdir" != x && test "x$with_ptexenc_libdir" != xyes; then
-  PTEXENC_LIBS="-L$with_ptexenc_libdir $PTEXENC_LIBS"
-fi
-
-if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
-  ZLIB_INCLUDES="-I$with_zlib_includes"
-fi
-ZLIB_LIBS="-lz"
-if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
-  ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
-fi
-
-if test "x$with_libpaper_includes" != x && test "x$with_libpaper_includes" != xyes; then
-  LIBPAPER_INCLUDES="-I$with_libpaper_includes"
-fi
-LIBPAPER_LIBS="-lpaper"
-if test "x$with_libpaper_libdir" != x && test "x$with_libpaper_libdir" != xyes; then
-  LIBPAPER_LIBS="-L$with_libpaper_libdir $LIBPAPER_LIBS"
-fi
-
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
@@ -21122,6 +21060,36 @@ esac
   fi
 else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
+fi
+
+if $PKG_CONFIG kpathsea; then
+  KPATHSEA_INCLUDES=`$PKG_CONFIG kpathsea --cflags`
+  KPATHSEA_LIBS=`$PKG_CONFIG kpathsea --libs`
+elif test "x$need_kpathsea:$with_system_kpathsea" = xyes:yes; then
+  as_fn_error $? "did not find kpathsea" "$LINENO" 5
+fi
+
+if $PKG_CONFIG ptexenc; then
+  PTEXENC_INCLUDES=`$PKG_CONFIG ptexenc --cflags`
+  PTEXENC_LIBS=`$PKG_CONFIG ptexenc --libs`
+elif test "x$need_ptexenc:$with_system_ptexenc" = xyes:yes; then
+  as_fn_error $? "did not find ptexenc" "$LINENO" 5
+fi
+
+if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ZLIB_INCLUDES="-I$with_zlib_includes"
+fi
+ZLIB_LIBS="-lz"
+if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
+  ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
+fi
+
+if test "x$with_libpaper_includes" != x && test "x$with_libpaper_includes" != xyes; then
+  LIBPAPER_INCLUDES="-I$with_libpaper_includes"
+fi
+LIBPAPER_LIBS="-lpaper"
+if test "x$with_libpaper_libdir" != x && test "x$with_libpaper_libdir" != xyes; then
+  LIBPAPER_LIBS="-L$with_libpaper_libdir $LIBPAPER_LIBS"
 fi
 
 if $PKG_CONFIG libpng; then
@@ -21249,14 +21217,14 @@ if $PKG_CONFIG pixman-1 --atleast-version=0.18; then
   PIXMAN_INCLUDES=`$PKG_CONFIG pixman-1 --cflags`
   PIXMAN_LIBS=`$PKG_CONFIG pixman-1 --libs`
 elif test "x$need_pixman:$with_system_pixman" = xyes:yes; then
-  as_fn_error $? "did not find pixman-0.18 or better" "$LINENO" 5
+  as_fn_error $? "did not find pixman-1 0.18 or better" "$LINENO" 5
 fi
 
 if $PKG_CONFIG cairo --atleast-version=1.12; then
   CAIRO_INCLUDES=`$PKG_CONFIG cairo --cflags`
   CAIRO_LIBS=`$PKG_CONFIG cairo --libs`
 elif test "x$need_cairo:$with_system_cairo" = xyes:yes; then
-  as_fn_error $? "did not find cairo-1.12 or better" "$LINENO" 5
+  as_fn_error $? "did not find cairo 1.12 or better" "$LINENO" 5
 fi
 
 if test "x$with_gmp_includes" != x && test "x$with_gmp_includes" != xyes; then
@@ -21276,26 +21244,30 @@ if test "x$with_mpfr_libdir" != x && test "x$with_mpfr_libdir" != xyes; then
 fi
 
 if $PKG_CONFIG poppler --atleast-version=0.18; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  POPPLER_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  POPPLER_INCLUDES=`$PKG_CONFIG poppler --cflags`
   POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
 elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.18 or better" "$LINENO" 5
+  as_fn_error $? "did not find poppler 0.18 or better" "$LINENO" 5
 fi
 
+POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+POPPLER_INCLUDES="$POPPLER_VERSION $POPPLER_INCLUDES"
+
 if $PKG_CONFIG poppler --atleast-version=0.12; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
+  XPDF_INCLUDES=`$PKG_CONFIG poppler --cflags`
   XPDF_LIBS=`$PKG_CONFIG poppler --libs`
 elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
-  as_fn_error $? "did not find poppler-0.12 or better" "$LINENO" 5
+  as_fn_error $? "did not find poppler 0.12 or better" "$LINENO" 5
 fi
+
+POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+XPDF_INCLUDES="$POPPLER_VERSION $XPDF_INCLUDES"
 
 if $PKG_CONFIG zziplib --atleast-version=0.12; then
   ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
   ZZIPLIB_LIBS=`$PKG_CONFIG zziplib --libs`
 elif test "x$need_zziplib:$with_system_zziplib" = xyes:yes; then
-  as_fn_error $? "did not find zziplib-0.12 or better" "$LINENO" 5
+  as_fn_error $? "did not find zziplib 0.12 or better" "$LINENO" 5
 fi
 
 if $PKG_CONFIG graphite2; then

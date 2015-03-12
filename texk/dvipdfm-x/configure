@@ -651,7 +651,6 @@ LIBPNG_RULE
 LIBPNG_DEPEND
 LIBPNG_LIBS
 LIBPNG_INCLUDES
-PKG_CONFIG
 ZLIB_RULE
 ZLIB_DEPEND
 ZLIB_LIBS
@@ -660,6 +659,7 @@ KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
 KPATHSEA_INCLUDES
+PKG_CONFIG
 LIBOBJS
 CPP
 LT_SYS_LIBRARY_PATH
@@ -798,8 +798,6 @@ enable_largefile
 enable_dvipdfmx
 enable_xdvipdfmx
 with_system_kpathsea
-with_kpathsea_includes
-with_kpathsea_libdir
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
@@ -1469,11 +1467,8 @@ Optional Packages:
   --with-gnu-ld           assume the C compiler uses GNU ld [default=no]
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
-  --with-system-kpathsea  use installed kpathsea headers and library
-  --with-kpathsea-includes=DIR
-                          kpathsea headers installed in DIR
-  --with-kpathsea-libdir=DIR
-                          kpathsea library installed in DIR
+  --with-system-kpathsea  use installed kpathsea headers and library (requires
+                          pkg-config)
   --with-system-zlib      use installed zlib headers and library
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
@@ -15665,153 +15660,6 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_link="./libtool --mode=link --tag=CC $ac_link"
 
-## _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags
-
-# Check whether --with-system-kpathsea was given.
-if test "${with_system_kpathsea+set}" = set; then :
-  withval=$with_system_kpathsea;
-fi
-
-# Check whether --with-kpathsea-includes was given.
-if test "${with_kpathsea_includes+set}" = set; then :
-  withval=$with_kpathsea_includes;
-fi
-
-# Check whether --with-kpathsea-libdir was given.
-if test "${with_kpathsea_libdir+set}" = set; then :
-  withval=$with_kpathsea_libdir;
-fi
-if test "x$with_system_kpathsea" = xyes; then
-  if test "x$with_kpathsea_includes" != x && test "x$with_kpathsea_includes" != xyes; then
-  KPATHSEA_INCLUDES="-I$with_kpathsea_includes"
-fi
-KPATHSEA_LIBS="-lkpathsea"
-if test "x$with_kpathsea_libdir" != x && test "x$with_kpathsea_libdir" != xyes; then
-  KPATHSEA_LIBS="-L$with_kpathsea_libdir $KPATHSEA_LIBS"
-fi
-else
-  KPATHSEA_INCLUDES="-I$kpse_BLD/texk -I$kpse_SRC/texk"
-  KPATHSEA_LIBS="$kpse_BLD/texk/kpathsea/libkpathsea.la"
-  KPATHSEA_DEPEND='${top_builddir}/../kpathsea/libkpathsea.la'
-  KPATHSEA_RULE='# Rebuild libkpathsea
-$(KPATHSEA_DEPEND): ${top_srcdir}/../kpathsea/*.[ch] ${top_builddir}/../kpathsea/paths.h
-	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../kpathsea/paths.h:
-	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
-$as_echo_n "checking if libkpathsea supports debugging... " >&6; }
-if ${kpse_cv_kpse_debug+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  eval CPPFLAGS=\"$KPATHSEA_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$KPATHSEA_LIBS \$LIBS\"
-
-                 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <kpathsea/kpathsea.h>
-int
-main ()
-{
-FILE *f = fopen("f", "r")
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  kpse_cv_kpse_debug=yes
-else
-  kpse_cv_kpse_debug=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-                 CPPFLAGS=$kpse_save_CPPFLAGS
-LIBS=$kpse_save_LIBS
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_kpse_debug" >&5
-$as_echo "$kpse_cv_kpse_debug" >&6; }
-if test "x$kpse_cv_kpse_debug" != xyes; then :
-  KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
-fi
-
-## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
-
-# Check whether --with-system-zlib was given.
-if test "${with_system_zlib+set}" = set; then :
-  withval=$with_system_zlib;
-fi
-
-# Check whether --with-zlib-includes was given.
-if test "${with_zlib_includes+set}" = set; then :
-  withval=$with_zlib_includes;
-fi
-
-# Check whether --with-zlib-libdir was given.
-if test "${with_zlib_libdir+set}" = set; then :
-  withval=$with_zlib_libdir;
-fi
-if test "x$with_system_zlib" = xyes; then
-  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
-  ZLIB_INCLUDES="-I$with_zlib_includes"
-fi
-ZLIB_LIBS="-lz"
-if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
-  ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
-fi
-else
-  ZLIB_INCLUDES="-I$kpse_BLD/libs/zlib/include"
-  ZLIB_LIBS="$kpse_BLD/libs/zlib/libz.a"
-  ZLIB_DEPEND='${top_builddir}/../../libs/zlib/libz.a'
-  ZLIB_RULE='# Rebuild libz
-$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
-	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/zlib/include/zconf.h:
-	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
-$as_echo_n "checking if <zlib.h> defines 'z_const'... " >&6; }
-if ${kpse_cv_have_decl_z_const+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$ZLIB_LIBS \$LIBS\"
-
-                cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <zlib.h>
-int
-main ()
-{
-z_const char * foo();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  kpse_cv_have_decl_z_const=yes
-else
-  kpse_cv_have_decl_z_const=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-                CPPFLAGS=$kpse_save_CPPFLAGS
-LIBS=$kpse_save_LIBS
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_decl_z_const" >&5
-$as_echo "$kpse_cv_have_decl_z_const" >&6; }
-case $kpse_cv_have_decl_z_const in #(
-  yes) :
-
-$as_echo "#define ZLIB_CONST 1" >>confdefs.h
- ;; #(
-  *) :
-
-$as_echo "#define z_const /**/" >>confdefs.h
- ;;
-esac
-
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
@@ -15903,6 +15751,142 @@ esac
 else
   PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
 fi
+
+## _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags
+
+# Check whether --with-system-kpathsea was given.
+if test "${with_system_kpathsea+set}" = set; then :
+  withval=$with_system_kpathsea;
+fi
+if test "x$with_system_kpathsea" = xyes; then
+  if $PKG_CONFIG kpathsea; then
+  KPATHSEA_INCLUDES=`$PKG_CONFIG kpathsea --cflags`
+  KPATHSEA_LIBS=`$PKG_CONFIG kpathsea --libs`
+elif test "x$need_kpathsea:$with_system_kpathsea" = xyes:yes; then
+  as_fn_error $? "did not find kpathsea" "$LINENO" 5
+fi
+else
+  KPATHSEA_INCLUDES="-I$kpse_BLD/texk -I$kpse_SRC/texk"
+  KPATHSEA_LIBS="$kpse_BLD/texk/kpathsea/libkpathsea.la"
+  KPATHSEA_DEPEND='${top_builddir}/../kpathsea/libkpathsea.la'
+  KPATHSEA_RULE='# Rebuild libkpathsea
+$(KPATHSEA_DEPEND): ${top_srcdir}/../kpathsea/*.[ch] ${top_builddir}/../kpathsea/paths.h
+	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../kpathsea/paths.h:
+	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
+$as_echo_n "checking if libkpathsea supports debugging... " >&6; }
+if ${kpse_cv_kpse_debug+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  eval CPPFLAGS=\"$KPATHSEA_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$KPATHSEA_LIBS \$LIBS\"
+
+                cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <kpathsea/kpathsea.h>
+int
+main ()
+{
+FILE *f = fopen("f", "r")
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  kpse_cv_kpse_debug=yes
+else
+  kpse_cv_kpse_debug=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+                CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_kpse_debug" >&5
+$as_echo "$kpse_cv_kpse_debug" >&6; }
+if test "x$kpse_cv_kpse_debug" != xyes; then :
+  KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
+fi
+
+## _KPSE_LIB_FLAGS: Setup zlib (-lz) flags
+
+# Check whether --with-system-zlib was given.
+if test "${with_system_zlib+set}" = set; then :
+  withval=$with_system_zlib;
+fi
+
+# Check whether --with-zlib-includes was given.
+if test "${with_zlib_includes+set}" = set; then :
+  withval=$with_zlib_includes;
+fi
+
+# Check whether --with-zlib-libdir was given.
+if test "${with_zlib_libdir+set}" = set; then :
+  withval=$with_zlib_libdir;
+fi
+if test "x$with_system_zlib" = xyes; then
+  if test "x$with_zlib_includes" != x && test "x$with_zlib_includes" != xyes; then
+  ZLIB_INCLUDES="-I$with_zlib_includes"
+fi
+ZLIB_LIBS="-lz"
+if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
+  ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
+fi
+else
+  ZLIB_INCLUDES="-I$kpse_BLD/libs/zlib/include"
+  ZLIB_LIBS="$kpse_BLD/libs/zlib/libz.a"
+  ZLIB_DEPEND='${top_builddir}/../../libs/zlib/libz.a'
+  ZLIB_RULE='# Rebuild libz
+$(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
+	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/zlib/include/zconf.h:
+	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
+$as_echo_n "checking if <zlib.h> defines 'z_const'... " >&6; }
+if ${kpse_cv_have_decl_z_const+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$ZLIB_LIBS \$LIBS\"
+
+                cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <zlib.h>
+int
+main ()
+{
+z_const char * foo();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  kpse_cv_have_decl_z_const=yes
+else
+  kpse_cv_have_decl_z_const=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+                CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_decl_z_const" >&5
+$as_echo "$kpse_cv_have_decl_z_const" >&6; }
+case $kpse_cv_have_decl_z_const in #(
+  yes) :
+
+$as_echo "#define ZLIB_CONST 1" >>confdefs.h
+ ;; #(
+  *) :
+
+$as_echo "#define z_const /**/" >>confdefs.h
+ ;;
+esac
 
 ## _KPSE_LIB_FLAGS: Setup libpng (-lpng) flags
 

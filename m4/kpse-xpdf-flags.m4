@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -31,13 +31,8 @@ AC_DEFUN([KPSE_XPDF_OPTIONS],
 
 # KPSE_XPDF_SYSTEM_FLAGS
 # ----------------------
-AC_DEFUN([KPSE_XPDF_SYSTEM_FLAGS],
-[AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])[]dnl
-if $PKG_CONFIG poppler --atleast-version=0.12; then
-  POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-  XPDF_INCLUDES="$POPPLER_VERSION `$PKG_CONFIG poppler --cflags`"
-  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
-  AC_MSG_ERROR([did not find poppler-0.12 or better])
-fi
+AC_DEFUN([KPSE_XPDF_SYSTEM_FLAGS], [dnl
+_KPSE_PKG_CONFIG_FLAGS([xpdf], [poppler], [0.12])
+POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
+XPDF_INCLUDES="$POPPLER_VERSION $XPDF_INCLUDES"
 ]) # KPSE_XPDF_SYSTEM_FLAGS
