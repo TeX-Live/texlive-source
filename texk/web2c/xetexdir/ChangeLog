@@ -1,3 +1,7 @@
+2015-03-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* image/jpegimage.c: Fix a bug introduced by me on 2015-02-15.
+
 2015-02-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_pic.c and image/jpegimage.c: Revert. The changes in 2015-02-09

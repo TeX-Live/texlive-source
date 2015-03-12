@@ -120,8 +120,8 @@ JPEG_info_init (struct JPEG_info *j_info)
   j_info->bits_per_component = 0;
   j_info->num_components = 0;
 
-  j_info->xdpi = 72.0;
-  j_info->ydpi = 72.0;
+  j_info->xdpi = 0.0;
+  j_info->ydpi = 0.0;
 
   j_info->flags    = 0;
   j_info->num_appn = 0;
@@ -307,9 +307,14 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
         }
     }
   }
-
-  j_info->xdpi = xres * res_unit;
-  j_info->ydpi = yres * res_unit;
+/*
+  Do not overwrite if j_info->xdpi and j_info->ydpi are
+  already determined as JFIF
+*/
+  if (j_info->xdpi < 0.1 && j_info->ydpi < 0.1) {
+    j_info->xdpi = xres * res_unit;
+    j_info->ydpi = yres * res_unit;
+  }
 
 err:
   RELEASE(buffer);
