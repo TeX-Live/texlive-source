@@ -669,9 +669,14 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
         }
     }
   }
-
-  j_info->xdpi = xres * res_unit;
-  j_info->ydpi = yres * res_unit;
+/*
+  Do not overwrite if j_info->xdpi and j_info->ydpi are
+  already determined as JFIF
+*/
+  if (j_info->xdpi < 0.1 && j_info->ydpi < 0.1) {
+    j_info->xdpi = xres * res_unit;
+    j_info->ydpi = yres * res_unit;
+  }
 
 err:
   RELEASE(buffer);
