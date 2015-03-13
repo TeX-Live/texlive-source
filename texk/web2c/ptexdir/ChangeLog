@@ -1,3 +1,7 @@
+2015-03-14  Karl Berry  <karl@tug.org>
+
+	* ptex-base.ch (pTeX_version_string): bump to 3.6 (per Akira).
+
 2015-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdvitype.ch: Drop intcast().
