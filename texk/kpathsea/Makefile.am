@@ -111,9 +111,13 @@ EXTRA_DIST += \
 kpseincludedir = ${includedir}/kpathsea
 
 nodist_kpseinclude_HEADERS = \
-	c-auto.h \
 	kpathsea.h \
 	paths.h
+
+kpselibincludedir = ${libdir}/kpathsea
+
+nodist_kpselibinclude_HEADERS = \
+	c-auto.h
 
 kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
 

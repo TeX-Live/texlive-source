@@ -7,5 +7,5 @@ Name: kpathsea
 Description: Kpathsea filename lookup library
 Version: @KPSEVERSION@
 Libs: -L${libdir} -lkpathsea
-Cflags: -I${includedir}
+Cflags: -I${libdir} -I${includedir}
 

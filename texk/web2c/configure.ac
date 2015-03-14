@@ -207,32 +207,6 @@ AS_IF([test "x$enable_uptex:$enable_euptex" = xno:no],
       [enable_upweb_progs=$enable_web_progs])
 AM_CONDITIONAL([UPWEB], [test "x$enable_upweb_progs" != xno])
 
-dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
-dnl using installed (system) kpathsea headers and library.
-dnl In that case we need the location of <kpathsea/paths.h>.
-if test "x$with_system_kpathsea" = xyes; then
-  if test "x$with_kpathsea_includes" = x; then
-    list="/usr/include /usr/local/include"
-  else
-    list=$with_kpathsea_includes
-  fi
-  found=no
-  for KPATHSEA_PATHS_H in $list; do
-    if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
-      found=yes
-      break
-    fi
-  done
-  if test "x$found" = xno; then
-    AC_MSG_NOTICE([You requested to build `web2c' using an installed `kpathsea' version,])
-    AC_MSG_NOTICE([    which requires to locate the <kpathsea/paths.h> header file.])
-    AC_MSG_ERROR([Sorry, not found under any of: $list *****])
-  fi
-else
-  KPATHSEA_PATHS_H='${top_builddir}/..'
-fi
-AC_SUBST([KPATHSEA_PATHS_H])
-
 AC_PROG_YACC
 KPSE_PROG_LEX
 
@@ -286,6 +260,28 @@ KPSE_GRAPHITE2_FLAGS
 KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
 [#include <kpathsea/config.h>])
+
+if test "x$with_system_kpathsea" = xyes; then
+dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
+dnl using installed (system) kpathsea headers and library.
+dnl In that case we need the location of <kpathsea/paths.h>.
+  list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
+  found=no
+  for KPATHSEA_PATHS_H in $list; do
+    if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
+      found=yes
+      break
+    fi
+  done
+  if test "x$found" = xno; then
+    AC_MSG_NOTICE([You requested to build `web2c' using an installed `kpathsea' version,])
+    AC_MSG_NOTICE([    which requires to locate the <kpathsea/paths.h> header file.])
+    AC_MSG_ERROR([Sorry, not found under any of: $list *****])
+  fi
+else
+  KPATHSEA_PATHS_H='${top_builddir}/..'
+fi
+AC_SUBST([KPATHSEA_PATHS_H])
 
 # Check of poppler 0.25 or better
 AS_CASE([$with_system_poppler],
