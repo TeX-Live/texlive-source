@@ -1,3 +1,8 @@
+2015-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, kpathsea.pc.in: Install <kpathsea/c-auto.h> under
+	${libdir}.
+
 2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop checks for strcasecmp, strtol, and strstr.

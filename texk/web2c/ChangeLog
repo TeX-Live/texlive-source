@@ -1,3 +1,7 @@
+2015-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Correctly locate installed <kpathsea/paths.h>.
+
 2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w2c/config.h: Drop the strtol() prototype.

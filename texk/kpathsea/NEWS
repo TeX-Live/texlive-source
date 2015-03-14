@@ -1,9 +1,11 @@
 This file records noteworthy changes.  (Public domain.)
 
-(for TeX Live 2015)
+6.2.1 (for TeX Live 2015)
 * kpsewhich --help outputs more information the search paths.
+* install <kpatsea/c-auto.h> in an architecture dependent location
+  and use pkg-config to get the required flags.
 
-6.2.0 (for TeX Live 2014)
+6.2.0 (for TeX Live 2014, 30 May 2013)
 * mktexlsr outputs normal msgs to stdout instead of stderr.
 * do not ignore a non-terminated last line of a file.
 * new texmf.cnf variables SELFAUTOGRANDPARENT, guess_input_kanji_encoding.
