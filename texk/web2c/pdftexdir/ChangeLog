@@ -1,3 +1,10 @@
+2014-03-07  Karl Berry  <karl@tug.org>
+
+	* NEWS,
+	* pdftex_version.h,
+	* pdftex.web (pdftex_revision, pdftex_version_string): [1.40.]16
+	for TL'15.
+
 2015-02-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writejpg.c: support JPEG Exif in addition to JFIF.
@@ -927,3 +934,5 @@
 	* pdfetex.ch2: Adapt to eTeX changes.
 
 	* ChangeLog: New file.
+
+(This file public domain.)
