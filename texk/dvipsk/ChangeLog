@@ -1,3 +1,12 @@
+2015-03-15  Karl Berry  <karl@tug.org>
+
+	* configure.ac,
+	* NEWS
+	* dvips.c,
+	* dvips.h,
+	* afm2tfm.c,
+	* dvips.texi: version 5.995 for TL'15.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.

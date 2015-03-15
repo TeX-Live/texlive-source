@@ -58,7 +58,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 2014, released in May 2014.
+corresponds to Web2c version 2015, released in May 2015.
 
 * Menu:
 
@@ -82,7 +82,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 2014 of Web2c, released in May 2014.
+This manual corresponds to version 2015 of Web2c, released in May 2015.
 
    "Web2c" is the name of a TeX implementation, originally for Unix, but
 now also running under DOS, Amiga, and other operating systems.  By "TeX

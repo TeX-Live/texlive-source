@@ -1,6 +1,6 @@
 This is dvips.info, produced by makeinfo version 5.2 from dvips.texi.
 
-This manual documents Dvips version 5.994 (April 2014), a program to
+This manual documents Dvips version 5.995 (April 2015), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 INFO-DIR-SECTION TeX
@@ -16,7 +16,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 5.994 (April 2014), a program to
+This manual documents Dvips version 5.995 (April 2015), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 
@@ -222,21 +222,17 @@ File: dvips.info,  Node: Ghostscript installation,  Next: Diagnosing problems,  
 ============================
 
 Ghostscript is a PostScript interpreter freely available to end-users,
-written by Peter Deutsch.  It can read the PostScript produced by Dvips
-and render it on your monitor, or for another device (e.g., an Epson
-printer) that does not support PostScript, or in PDF format.  The latest
-version is available via <http://www.cs.wisc.edu/~ghost/index.html> and
-<ftp://ftp.cs.wisc.edu/pub/ghost/aladdin/>.
+originally written by Peter Deutsch.  It can read the PostScript
+produced by Dvips and render it on your monitor, or for another device
+(e.g., an Epson printer) that does not support PostScript, or in PDF
+format.  The latest version is available via <http://ghostscript.com>.
 
-   A somewhat older version of Ghostscript is available under the GNU
-General Public License, free to everyone.  You can get that from
-<ftp://prep.ai.mit.edu/pub/gnu/>.
-
-   The program Ghostview, written by Tim Theisen, provides typical
-previewing capabilities (next page/previous page, magnification, etc.).
-It requires Ghostscript to run, and files in structured Postscript,
-specifically with '%%Page' comments (no 'N' in 'config.ps').  You can
-get Ghostview from the same places as Ghostscript.
+   The program Ghostview, originally written by Johannes Plass and Tim
+Theisen, provides typical previewing capabilities (next page/previous
+page, magnification, etc.).  It requires Ghostscript to run, and files
+in structured Postscript, specifically with '%%Page' comments (no 'N' in
+'config.ps').  The current version is known as GV, and is available from
+<http://www.gnu.org/software/gv>.
 
 
 File: dvips.info,  Node: Diagnosing problems,  Prev: Ghostscript installation,  Up: Installation
@@ -3712,7 +3708,7 @@ Index
 * %%Page, not generating:                Option details.      (line 203)
 * %%Page, removing:                      Option details.      (line 160)
 * %%Page, required by Ghostview:         Ghostscript installation.
-                                                              (line  17)
+                                                              (line  12)
 * %%VMusage:                             Headers and memory usage.
                                                               (line  12)
 * %*Font:                                Fonts in figures.    (line   6)
@@ -4066,7 +4062,7 @@ Index
 * EOF:                                   Option details.      (line 110)
 * eop-hook:                              PostScript hooks.    (line  11)
 * EPS, and Ghostview:                    Ghostscript installation.
-                                                              (line  17)
+                                                              (line  12)
 * EPSF macros:                           EPSF macros.         (line   6)
 * EPSF, generating:                      Option details.      (line  82)
 * epsf.sty:                              EPSF macros.         (line  15)
@@ -4132,14 +4128,12 @@ Index
 * Ghostscript installation:              Ghostscript installation.
                                                               (line   6)
 * ghostview:                             Ghostscript installation.
-                                                              (line  17)
+                                                              (line  12)
 * Ghostview, and no 'N':                 Ghostscript installation.
-                                                              (line  17)
+                                                              (line  12)
 * glyph files:                           Glyph files.         (line   6)
 * GLYPHFONTS, overrides P:               Configuration file commands.
                                                               (line 126)
-* GNU Ghostscript:                       Ghostscript installation.
-                                                              (line  13)
 * gnuplot:                               Dynamic creation of graphics.
                                                               (line  25)
 * graphics inclusion fails:              Including graphics fails.
@@ -4510,7 +4504,7 @@ Index
 * standard input, reading options from:  Option details.      (line  11)
 * standard output, output to:            Option details.      (line 233)
 * standard PostScript, required by Ghostview: Ghostscript installation.
-                                                              (line  17)
+                                                              (line  12)
 * start-hook:                            PostScript hooks.    (line  11)
 * structured comments:                   Option details.      (line 203)
 * system in config file:                 Configuration file commands.
@@ -4552,7 +4546,7 @@ Index
                                                               (line 168)
 * tftopl:                                Metric files.        (line  39)
 * Theisen, Tim:                          Ghostscript installation.
-                                                              (line  17)
+                                                              (line  12)
 * tight bounding box, finding:           Option details.      (line  82)
 * too-small output:                      Small or inverted.   (line   6)
 * trademark character, accessing:        Changing PostScript encodings.
@@ -4626,76 +4620,76 @@ Node: Installation4711
 Node: config.ps installation5714
 Node: PostScript font installation8321
 Node: Ghostscript installation9241
-Node: Diagnosing problems10338
-Node: Debug options11429
-Node: No output12433
-Node: Small or inverted13899
-Node: Printer errors14617
-Node: Long documents fail15949
-Node: Including graphics fails16290
-Node: Invoking Dvips17529
-Node: Basic usage18151
-Node: Command-line options19155
-Node: Option summary19603
-Node: Option details21797
-Node: Environment variables41442
-Node: Config files44303
-Node: Configuration file searching44973
-Node: Configuration file commands48226
-Node: Paper size and landscape55883
-Node: papersize special57481
-Node: Config file paper sizes58890
-Node: Paper trays63046
-Node: Interaction with PostScript64380
-Node: PostScript figures65033
-Node: Bounding box65759
-Node: \includegraphics69131
-Node: EPSF macros71424
-Node: EPSF scaling73424
-Node: EPSF clipping75994
-Node: psfile special76636
-Node: Dynamic creation of graphics79028
-Node: Fonts in figures80346
-Node: Header files81996
-Node: Including headers from TeX83206
-Node: Including headers from the command line85244
-Node: Headers and memory usage86343
-Node: Literal PS87554
-Node: " special88136
-Node: ps special88877
-Node: Literal headers90375
-Node: PostScript hooks91084
-Node: Literal examples93180
-Node: Hypertext94634
-Node: Hypertext caveats96182
-Node: Hypertext specials100570
-Node: PostScript fonts103204
-Node: Font concepts104321
-Node: Metric files105488
-Node: Glyph files108268
-Node: Virtual fonts110627
-Node: Encodings112453
-Node: PostScript typesetting114856
-Node: Making a font available117941
-Node: Invoking afm2tfm122975
-Node: Changing font encodings123933
-Node: Changing TeX encodings124724
-Node: Changing PostScript encodings125826
-Node: Changing both encodings127170
-Node: Reencoding with Afm2tfm127844
-Node: Encoding file format130947
-Node: Special font effects135151
-Node: Afm2tfm options137411
-Node: psfonts.map140397
-Node: Color145127
-Node: Color macro files146171
-Node: User-definable colors149364
-Node: Color subtleties150640
-Node: Ted Turner152292
-Node: Color device configuration153517
-Node: Color support details155961
-Node: Color specifications156339
-Node: Color specials157743
-Node: Index159872
+Node: Diagnosing problems10178
+Node: Debug options11269
+Node: No output12273
+Node: Small or inverted13739
+Node: Printer errors14457
+Node: Long documents fail15789
+Node: Including graphics fails16130
+Node: Invoking Dvips17369
+Node: Basic usage17991
+Node: Command-line options18995
+Node: Option summary19443
+Node: Option details21637
+Node: Environment variables41282
+Node: Config files44143
+Node: Configuration file searching44813
+Node: Configuration file commands48066
+Node: Paper size and landscape55723
+Node: papersize special57321
+Node: Config file paper sizes58730
+Node: Paper trays62886
+Node: Interaction with PostScript64220
+Node: PostScript figures64873
+Node: Bounding box65599
+Node: \includegraphics68971
+Node: EPSF macros71264
+Node: EPSF scaling73264
+Node: EPSF clipping75834
+Node: psfile special76476
+Node: Dynamic creation of graphics78868
+Node: Fonts in figures80186
+Node: Header files81836
+Node: Including headers from TeX83046
+Node: Including headers from the command line85084
+Node: Headers and memory usage86183
+Node: Literal PS87394
+Node: " special87976
+Node: ps special88717
+Node: Literal headers90215
+Node: PostScript hooks90924
+Node: Literal examples93020
+Node: Hypertext94474
+Node: Hypertext caveats96022
+Node: Hypertext specials100410
+Node: PostScript fonts103044
+Node: Font concepts104161
+Node: Metric files105328
+Node: Glyph files108108
+Node: Virtual fonts110467
+Node: Encodings112293
+Node: PostScript typesetting114696
+Node: Making a font available117781
+Node: Invoking afm2tfm122815
+Node: Changing font encodings123773
+Node: Changing TeX encodings124564
+Node: Changing PostScript encodings125666
+Node: Changing both encodings127010
+Node: Reencoding with Afm2tfm127684
+Node: Encoding file format130787
+Node: Special font effects134991
+Node: Afm2tfm options137251
+Node: psfonts.map140237
+Node: Color144967
+Node: Color macro files146011
+Node: User-definable colors149204
+Node: Color subtleties150480
+Node: Ted Turner152132
+Node: Color device configuration153357
+Node: Color support details155801
+Node: Color specifications156179
+Node: Color specials157583
+Node: Index159712
 
 End Tag Table
