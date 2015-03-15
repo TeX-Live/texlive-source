@@ -1,3 +1,7 @@
+2015-03-15  Karl Berry  <karl@tug.org>
+
+	* configure.ac: version 20150315 for TL'15.
+
 2015-03-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* jpegimage.c: Fix a bug introduced by me on 2015-02-16.

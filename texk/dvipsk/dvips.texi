@@ -2,8 +2,8 @@
 @setfilename dvips.info
 @settitle Dvips: A DVI-to-PostScript translator
 
-@set version 5.994
-@set month-year April 2014
+@set version 5.995
+@set month-year April 2015
 
 @copying
 This manual documents Dvips version @value{version}
@@ -242,16 +242,11 @@ for lots of information about how it works.
 @cindex PDF files, making
 @cindex Aladdin Ghostscript
 Ghostscript is a PostScript interpreter freely available to end-users,
-written by Peter Deutsch.  It can read the PostScript produced by Dvips
-and render it on your monitor, or for another device (e.g., an Epson
-printer) that does not support PostScript, or in PDF format.  The latest
-version is available via @url{http://www.cs.wisc.edu/~ghost/index.html}
-and @url{ftp://ftp.cs.wisc.edu/pub/ghost/aladdin/}.
-
-@cindex GNU Ghostscript
-A somewhat older version of Ghostscript is available under the GNU
-General Public License, free to everyone.  You can get that from
-@url{ftp://prep.ai.mit.edu/pub/gnu/}.
+originally written by Peter Deutsch.  It can read the PostScript
+produced by Dvips and render it on your monitor, or for another device
+(e.g., an Epson printer) that does not support PostScript, or in PDF
+format.  The latest version is available via
+@url{http://ghostscript.com}.
 
 @cindex Theisen, Tim
 @pindex ghostview
@@ -259,12 +254,12 @@ General Public License, free to everyone.  You can get that from
 @cindex EPS, and Ghostview
 @cindex standard PostScript, required by Ghostview
 @findex %%Page@r{, required by Ghostview}
-The program Ghostview, written by Tim Theisen, provides typical
-previewing capabilities (next page/previous page, magnification, etc.).
-It requires Ghostscript to run, and files in structured Postscript,
-specifically with @samp{%%Page} comments (no @samp{N} in
-@file{config.ps}).  You can get Ghostview from the same places as
-Ghostscript.
+The program Ghostview, originally written by Johannes Plass and Tim
+Theisen, provides typical previewing capabilities (next page/previous
+page, magnification, etc.).  It requires Ghostscript to run, and files
+in structured Postscript, specifically with @samp{%%Page} comments (no
+@samp{N} in @file{config.ps}).  The current version is known as GV,
+and is available from @url{http://www.gnu.org/software/gv}.
 
 
 @node Diagnosing problems
