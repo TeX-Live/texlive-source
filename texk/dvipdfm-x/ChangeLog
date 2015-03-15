@@ -1,3 +1,7 @@
+2015-03-15  Khaled Hosny  <khaledhosny@eglug.org>
+
+	* tests/*.{bb,xbb}: Update version number.
+
 2015-03-15  Karl Berry  <karl@tug.org>
 
 	* configure.ac: version 20150315 for TL'15.
