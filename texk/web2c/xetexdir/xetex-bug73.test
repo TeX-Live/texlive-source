@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2014-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -19,7 +19,7 @@ $LN_S $srcdir/xetexdir/tests/bug73.tex .
 
 ./xetex -fmt=bug73 bug73 || exit 1
 
-tail -n+2 bug73.log >bug73.out
+sed 1,2d bug73.log >bug73.out
 
 diff $srcdir/xetexdir/tests/bug73.log bug73.out || exit 1
 

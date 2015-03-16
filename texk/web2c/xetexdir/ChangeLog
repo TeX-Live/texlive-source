@@ -1,3 +1,9 @@
+2015-03-16  Karl Berry  <karl@tug.org>
+
+	* xetex-bug73.test: sed 1,2d instead of tail -n+2, which
+	is not supported on Solaris 10.  tlbuild mail from Mojca,
+	16 Mar 2015 17:03:25.
+
 2015-03-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* image/jpegimage.c: Fix a bug introduced by me on 2015-02-15.
