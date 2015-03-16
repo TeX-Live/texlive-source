@@ -172,7 +172,7 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(web2cdir)" \
 	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(kpseincludedir)" \
-	"$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpselibincludedir)"
+	"$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpselibdir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libkpathsea_la_DEPENDENCIES = $(LTLIBOBJS)
 am__libkpathsea_la_SOURCES_DIST = tex-file.c absolute.c atou.c cnf.c \
@@ -307,7 +307,7 @@ am__can_run_installinfo = \
   esac
 DATA = $(dist_noinst_DATA) $(dist_web2c_DATA) $(pkgconfig_DATA)
 HEADERS = $(kpseinclude_HEADERS) $(nodist_kpseinclude_HEADERS) \
-	$(nodist_kpselibinclude_HEADERS) $(noinst_HEADERS)
+	$(nodist_kpselib_HEADERS) $(noinst_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 am__recursive_targets = \
@@ -719,11 +719,11 @@ nodist_kpseinclude_HEADERS = \
 	kpathsea.h \
 	paths.h
 
-kpselibincludedir = ${libdir}/kpathsea
-nodist_kpselibinclude_HEADERS = \
+kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
+kpselibdir = ${libdir}/kpathsea
+nodist_kpselib_HEADERS = \
 	c-auto.h
 
-kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
 
 # Headers included directly into kpathsea.h
 #
@@ -1621,27 +1621,27 @@ uninstall-nodist_kpseincludeHEADERS:
 	@list='$(nodist_kpseinclude_HEADERS)'; test -n "$(kpseincludedir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(kpseincludedir)'; $(am__uninstall_files_from_dir)
-install-nodist_kpselibincludeHEADERS: $(nodist_kpselibinclude_HEADERS)
+install-nodist_kpselibHEADERS: $(nodist_kpselib_HEADERS)
 	@$(NORMAL_INSTALL)
-	@list='$(nodist_kpselibinclude_HEADERS)'; test -n "$(kpselibincludedir)" || list=; \
+	@list='$(nodist_kpselib_HEADERS)'; test -n "$(kpselibdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(kpselibincludedir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(kpselibincludedir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(kpselibdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(kpselibdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(kpselibincludedir)'"; \
-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(kpselibincludedir)" || exit $$?; \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(kpselibdir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(kpselibdir)" || exit $$?; \
 	done
 
-uninstall-nodist_kpselibincludeHEADERS:
+uninstall-nodist_kpselibHEADERS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(nodist_kpselibinclude_HEADERS)'; test -n "$(kpselibincludedir)" || list=; \
+	@list='$(nodist_kpselib_HEADERS)'; test -n "$(kpselibdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(kpselibincludedir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(kpselibdir)'; $(am__uninstall_files_from_dir)
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run 'make' without going through this Makefile.
@@ -2103,7 +2103,7 @@ install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpselibincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(web2cdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpseincludedir)" "$(DESTDIR)$(kpselibdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -2170,7 +2170,7 @@ info-am:
 install-data-am: install-data-local install-dist_web2cDATA \
 	install-dist_web2cSCRIPTS install-kpseincludeHEADERS \
 	install-nodist_kpseincludeHEADERS \
-	install-nodist_kpselibincludeHEADERS install-pkgconfigDATA
+	install-nodist_kpselibHEADERS install-pkgconfigDATA
 
 install-dvi: install-dvi-recursive
 
@@ -2224,7 +2224,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	uninstall-dist_web2cSCRIPTS uninstall-kpseincludeHEADERS \
 	uninstall-libLTLIBRARIES uninstall-local \
 	uninstall-nodist_kpseincludeHEADERS \
-	uninstall-nodist_kpselibincludeHEADERS uninstall-pkgconfigDATA
+	uninstall-nodist_kpselibHEADERS uninstall-pkgconfigDATA
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 .MAKE: $(am__recursive_targets) all check check-am install install-am \
@@ -2246,18 +2246,17 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_web2cDATA \
 	install-info-am install-kpseincludeHEADERS \
 	install-libLTLIBRARIES install-man \
 	install-nodist_kpseincludeHEADERS \
-	install-nodist_kpselibincludeHEADERS install-pdf \
-	install-pdf-am install-pkgconfigDATA install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
-	uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-dist_web2cDATA uninstall-dist_web2cSCRIPTS \
-	uninstall-hook uninstall-kpseincludeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-local \
-	uninstall-nodist_kpseincludeHEADERS \
-	uninstall-nodist_kpselibincludeHEADERS uninstall-pkgconfigDATA
+	install-nodist_kpselibHEADERS install-pdf install-pdf-am \
+	install-pkgconfigDATA install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-dist_web2cDATA \
+	uninstall-dist_web2cSCRIPTS uninstall-hook \
+	uninstall-kpseincludeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-local uninstall-nodist_kpseincludeHEADERS \
+	uninstall-nodist_kpselibHEADERS uninstall-pkgconfigDATA
 
 .PRECIOUS: Makefile
 

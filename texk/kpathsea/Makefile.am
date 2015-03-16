@@ -114,12 +114,12 @@ nodist_kpseinclude_HEADERS = \
 	kpathsea.h \
 	paths.h
 
-kpselibincludedir = ${libdir}/kpathsea
-
-nodist_kpselibinclude_HEADERS = \
-	c-auto.h
-
 kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
+
+kpselibdir = ${libdir}/kpathsea
+
+nodist_kpselib_HEADERS = \
+	c-auto.h
 
 # Headers included directly into kpathsea.h
 #
