@@ -46,7 +46,8 @@ pdf_color_set_verbose (void)
 }
 
 /* This function returns PDF_COLORSPACE_TYPE_GRAY,
- * PDF_COLORSPACE_TYPE_RGB or PDF_COLORSPACE_TYPE_CMYK.
+ * PDF_COLORSPACE_TYPE_RGB, PDF_COLORSPACE_TYPE_CMYK or
+ * PDF_COLORSPACE_TYPE_SPOT.
  */
 int
 pdf_color_type (const pdf_color *color)
@@ -78,6 +79,8 @@ pdf_color_rgbcolor (pdf_color *color, double r, double g, double b)
   color->values[2] = b;
 
   color->num_components = 3;
+
+  color->spot_color_name = NULL;
 
   return 0;
 }
@@ -112,6 +115,8 @@ pdf_color_cmykcolor (pdf_color *color,
 
   color->num_components = 4;
 
+  color->spot_color_name = NULL;
+
   return 0;
 }
 
@@ -128,6 +133,28 @@ pdf_color_graycolor (pdf_color *color, double g)
   color->values[0] = g;
 
   color->num_components = 1;
+
+  color->spot_color_name = NULL;
+
+  return 0;
+}
+
+int
+pdf_color_spotcolor (pdf_color *color, char* name, double c)
+{
+  ASSERT(color);
+
+  if (c < 0.0 || c > 1.0) {
+    WARN("Invalid color value specified: grade=%g", c);
+    return -1;
+  }
+
+  color->values[0] = c;
+  color->values[1] = 0.0; /* Dummy */
+
+  color->num_components = 2;
+
+  color->spot_color_name = name;
 
   return 0;
 }
@@ -191,23 +218,34 @@ pdf_color_is_white (const pdf_color *color)
 }
 
 int
-pdf_color_to_string (const pdf_color *color, char *buffer)
+pdf_color_to_string (const pdf_color *color, char *buffer, char mask)
 {
   int i, len = 0;
 
-  for (i = 0; i < color->num_components; i++) {
-    len += sprintf(buffer+len, " %g", ROUND(color->values[i], 0.001));
+  if (pdf_color_type(color) == PDF_COLORSPACE_TYPE_SPOT) {
+    len = sprintf(buffer, " /%s %c%c %g %c%c",
+                          color->spot_color_name,
+                          'C' | mask, 'S' | mask,
+                          ROUND(color->values[0], 0.001),
+                          'S' | mask, 'C' | mask);
+  } else {
+     for (i = 0; i < color->num_components; i++) {
+       len += sprintf(buffer+len, " %g", ROUND(color->values[i], 0.001));
+      }
   }
+
   return len;
 }
 
 pdf_color current_fill   = {
   1,
+  NULL,
   {0.0, 0.0, 0.0, 0.0}
 };
 
 pdf_color current_stroke = {
   1,
+  NULL,
   {0.0, 0.0, 0.0, 0.0}
 };
 
@@ -222,6 +260,7 @@ pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
   n = color1->num_components;
   switch (n) {
   case 1:  /* Gray */
+  case 2:  /* Spot */
   case 3:  /* RGB */
   case 4:  /* CMYK */
     break;
@@ -236,6 +275,9 @@ pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
     if (color1->values[n] != color2->values[n])
       return -1;
 
+  if (color1->spot_color_name && color2->spot_color_name)
+    return strcmp(color1->spot_color_name, color2->spot_color_name);
+
   return 0;
 }
 
@@ -247,6 +289,7 @@ pdf_color_is_valid (const pdf_color *color)
   n = color->num_components;
   switch (n) {
   case 1:  /* Gray */
+  case 2:  /* Spot */
   case 3:  /* RGB */
   case 4:  /* CMYK */
     break;
@@ -260,12 +303,20 @@ pdf_color_is_valid (const pdf_color *color)
       return 0;
     }
 
+  if (pdf_color_type(color) == PDF_COLORSPACE_TYPE_SPOT) {
+    if (!color->spot_color_name || color->spot_color_name[0] == '\0') {
+      WARN("Invalid spot color: empty name");
+      return 0;
+    }
+  }
+
   return 1;
 }
 
 /* Dvipdfm special */
 pdf_color default_color = {
   1,
+  NULL,
   {0.0, 0.0, 0.0, 0.0}
 };
 
@@ -290,6 +341,10 @@ pdf_color_clear_stack (void)
 {
   if (color_stack.current > 0) {
     WARN("You've mistakenly made a global color change within nested colors.");
+  }
+  while (color_stack.current--) {
+    free(color_stack.stroke[color_stack.current].spot_color_name);
+    free(color_stack.fill[color_stack.current].spot_color_name);
   }
   color_stack.current = 0;
   pdf_color_black(color_stack.stroke);

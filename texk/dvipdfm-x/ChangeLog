@@ -1,3 +1,8 @@
+2015-03-17  Khaled Hosny  <khaledhosny@eglug.org>
+
+	*  pdfcolor.c, pdfcolor.h, pdfdoc.c, pdfdraw.c, spc_util.c: Add sopt
+	colors support, based on patch by Apostolos Syropoulos.
+
 2015-03-15  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* tests/*.{bb,xbb}: Update version number.
