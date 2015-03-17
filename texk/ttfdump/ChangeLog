@@ -1,3 +1,8 @@
+2015-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* include/ttc.h, libttf/ttc.c: Avoid segfault (NULL filename).
+	* tests/ttfdump.gasp, tests/ttfdump.maxp: Adapt.
+
 2015-02-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/withenable.ac: Require kpathsea.
