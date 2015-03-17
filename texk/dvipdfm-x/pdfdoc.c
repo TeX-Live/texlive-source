@@ -2279,7 +2279,7 @@ pdf_doc_finish_page (pdf_doc *p)
   return;
 }
 
-static pdf_color bgcolor = { 1, { 1.0 } };
+static pdf_color bgcolor = { 1, NULL, { 1.0 } };
 
 void
 pdf_doc_set_bgcolor (const pdf_color *color)

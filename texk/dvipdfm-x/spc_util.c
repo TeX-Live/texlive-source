@@ -145,6 +145,21 @@ spc_read_color_color (struct spc_env *spe, pdf_color *colorspec, struct spc_arg 
     } else {
       pdf_color_graycolor(colorspec, cv[0]);
     }
+  } else if (!strcmp(q, "spot")) { /* Handle spot colors */
+    char *color_name = parse_c_ident(&ap->curptr, ap->endptr);
+    if (!color_name) {
+      spc_warn(spe, "No valid spot color name specified?");
+      return  -1;
+    }
+    skip_blank(&ap->curptr, ap->endptr);
+    nc = spc_util_read_numbers(cv, 1, ap);
+    if (nc != 1) {
+      spc_warn(spe, "Invalid value for spot color specification.");
+      error = -1;
+      free(color_name);
+    } else {
+      pdf_color_spotcolor(colorspec, color_name, cv[0]);
+    }
   } else if (!strcmp(q, "hsb")) {
     nc = spc_util_read_numbers(cv, 3, ap);
     if (nc != 3) {
@@ -704,9 +719,9 @@ spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *
 #ifdef  cmyk
 #undef  cmyk
 #endif
-#define gray(g)       {1, {g}}
-#define rgb8(r,g,b)   {3, {((r)/255.0), ((g)/255.0), ((b)/255.0), 0.0}}
-#define cmyk(c,m,y,k) {4, {(c), (m), (y), (k)}}
+#define gray(g)       {1, NULL, {g}}
+#define rgb8(r,g,b)   {3, NULL, {((r)/255.0), ((g)/255.0), ((b)/255.0), 0.0}}
+#define cmyk(c,m,y,k) {4, NULL, {(c), (m), (y), (k)}}
 
 static struct colordef_
 {
