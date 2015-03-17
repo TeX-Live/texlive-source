@@ -1,3 +1,7 @@
+2015-03-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xetex-bug73.test: The equivalent of 'tail -n+2' is 'sed 1d'.
+
 2015-03-16  Karl Berry  <karl@tug.org>
 
 	* xetex-bug73.test: sed 1,2d instead of tail -n+2, which

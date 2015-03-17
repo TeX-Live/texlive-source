@@ -19,7 +19,7 @@ $LN_S $srcdir/xetexdir/tests/bug73.tex .
 
 ./xetex -fmt=bug73 bug73 || exit 1
 
-sed 1,2d bug73.log >bug73.out
+sed 1d bug73.log >bug73.out
 
 diff $srcdir/xetexdir/tests/bug73.log bug73.out || exit 1
 
