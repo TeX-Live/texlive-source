@@ -45,10 +45,10 @@ done unless some source files have been modified.
 4.2 Build problems
 ==================
 
-If configuring or building a module fails, you could either (a) find and
-fix the problem, or (b) remove the subdirectory for that module from the
-build tree, and rerun the top-level 'make' (or 'Build' with '--no-clean'
-as its first argument).
+If configuring or building a module fails, you should first find and fix
+the problem, then perhaps remove the subdirectory for that module from
+the build tree, and finally rerun the top-level 'make' (or 'Build' with
+'--no-clean' as its first argument).
 
 4.3 Build in parallel
 =====================
@@ -93,7 +93,7 @@ comparably simple way to install e-TeX).
 
    If you want to work on a single program within the TL sources, this
 is the recommended way to do it.  Here is an example from start to
-finish for working on 'dvipdfmx'.
+finish for working on 'dvipdfm-x'.
 
      mkdir mydir && cd mydir  # new working directory
 
@@ -112,7 +112,7 @@ finish for working on 'dvipdfmx'.
      make >&outm
 
      # Test:
-     cd texk/dvipdfmx
+     cd texk/dvipdfm-x
      make check
 
    Then you modify source files in 'mydir/texk/dvipdfm-x' and rerun

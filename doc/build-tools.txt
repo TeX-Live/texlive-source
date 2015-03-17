@@ -1,7 +1,7 @@
 autoconf (GNU Autoconf) 2.69
 automake (GNU automake) 1.15
-bison (GNU Bison) 3.0.3
+bison (GNU Bison) 3.0.4
 flex 2.5.39
-ltmain.sh (GNU libtool) 2.4.5
+ltmain.sh (GNU libtool) 2.4.6
 m4 (GNU M4) 1.4.17
 makeinfo (GNU texinfo) 5.2

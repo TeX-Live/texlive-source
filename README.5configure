@@ -261,8 +261,7 @@ created by default.  In addition, 'dvipdfm' is created as a symlink to
 Do not build the 'dvipdfmx' program or create the 'dvipdfm' symlink.
 
 '--disable-xdvipdfmx'
-Do not build the 'xdvipdfmx' program (building 'xdvipdfmx' requires the
-'freetype' library).
+Do not build the 'xdvipdfmx' program.
 
 7.2.6 Configure options for 'texk/dvisvgm'
 ------------------------------------------

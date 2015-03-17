@@ -29,9 +29,9 @@ many extra hassles, so don't do that, tempting as it may be.
 
      autoconf (GNU Autoconf) 2.69
      automake (GNU automake) 1.15
-     bison (GNU Bison) 3.0.3
+     bison (GNU Bison) 3.0.4
      flex 2.5.39
-     ltmain.sh (GNU libtool) 2.4.5
+     ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.17
      makeinfo (GNU texinfo) 5.2
 
@@ -278,8 +278,8 @@ structure and variation.
 ----------------------------------------
 
 This generic library uses the source tree in, e.g., the subdirectory
-'libpng-1.5.17' with all modifications for TL recorded in
-'libpng-1.5.17-PATCHES/*'.  The 'configure.ac' fragment
+'libpng-1.6.16' with all modifications for TL recorded in
+'libpng-1.6.16-PATCHES/*'.  The 'configure.ac' fragment
 'ac/withenable.ac' contains
 
      KPSE_WITH_LIB([libpng], [zlib])
@@ -377,8 +377,8 @@ for a few of the programs in TL.
 6.5.1 The 't1utils' package in 'utils/t1utils'
 ----------------------------------------------
 
-Once again we use the distributed source tree 't1utils-1.38' with
-modifications documented in 't1utils-1.38-PATCHES/*' and a proxy build
+Once again we use the distributed source tree 't1utils-1.39' with
+modifications documented in 't1utils-1.39-PATCHES/*' and a proxy build
 system consisting of 'configure.ac' and 'Makefile.am'.  The fragment
 'ac/withenable.ac' contains
 
@@ -390,10 +390,10 @@ configure option '--disable-t1utils'.
 6.5.2 The 'xindy' package in 'utils/xindy'
 ------------------------------------------
 
-This module uses the distributed source tree 'xindy-2.4' with
-modifications documented in 'xindy-2.4-PATCHES/*', a proxy
+This module uses the distributed source tree 'xindy-2.5.1' with
+modifications documented in 'xindy-2.5.1-PATCHES/*', a proxy
 'configure.ac', and a wrapper 'Makefile.am' that descends into
-'xindy-2.4'.  The 'xindy' build requires that the distributed
+'xindy-2.5.1'.  The 'xindy' build requires that the distributed
 'Makefile's allow a 'VPATH' build, can handle all targets, and do not
 refer to '${top_srcdir}' or '${top_builddir}'.  The fragment
 'ac/withenable.ac' contains
