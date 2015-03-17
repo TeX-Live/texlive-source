@@ -15,6 +15,8 @@
 
 /* 	$Id: ttc.c,v 1.1.1.1 1998/06/05 07:47:52 robert Exp $	 */
 
+static void ttfLoadTTCFont(TTCHeaderPtr ttc, FILE *fp, const char *filename);
+
 TTCHeaderPtr ttfLoadTTCHeader(char * filename)
 {
     ULONG tag =  FT_MAKE_TAG ('t', 't', 'c', 'f');
@@ -34,7 +36,7 @@ TTCHeaderPtr ttfLoadTTCHeader(char * filename)
 	    ttc->version = ttfGetFixed(fp);
 	    ttc->DirCount = (USHORT) ttfGetULONG(fp);
 	    ttc->offset = ttfMakeULONG (ttc->DirCount, fp);
-	    ttfLoadTTCFont(ttc,fp);
+	    ttfLoadTTCFont(ttc,fp,filename);
 	    return ttc;
 	}
     else
@@ -42,9 +44,9 @@ TTCHeaderPtr ttfLoadTTCHeader(char * filename)
 	return NULL;
 }
 
-void ttfLoadTTCFont(TTCHeaderPtr ttc,FILE *fp)
+static void ttfLoadTTCFont(TTCHeaderPtr ttc,FILE *fp,const char *filename)
 {
-    int i;
+    unsigned int i;
     
     ttc->font = XCALLOC (ttc->DirCount, TTFont);
 
@@ -53,6 +55,8 @@ void ttfLoadTTCFont(TTCHeaderPtr ttc,FILE *fp)
     for (i=0;i<ttc->DirCount;i++)
 	{
 	    (ttc->font+i) -> fp = fp;
+	    (ttc->font+i) -> ttfname = XTALLOC (strlen(filename)+16, char);
+	    sprintf ((ttc->font+i)->ttfname, "%s:%u", filename, i);
 	    ttfLoadFont((ttc->font+i),(ttc->offset)[i]);
 	}
 }

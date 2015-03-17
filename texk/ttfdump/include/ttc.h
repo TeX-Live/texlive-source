@@ -16,7 +16,6 @@ typedef struct
 TTCHeader, *TTCHeaderPtr;
 
 TTCHeaderPtr ttfLoadTTCHeader(char *filename);
-void ttfLoadTTCFont(TTCHeaderPtr ttc, FILE *fp);
 void ttfFreeTTCFont(TTCHeaderPtr ttc);
 
 #endif /* __TTF_TTC_H */
