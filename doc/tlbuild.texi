@@ -1,8 +1,8 @@
 \input texinfo
 @setfilename tlbuild.info
 
-@set version 2014
-@set month-year May 2014
+@set version 2015
+@set month-year May 2015
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -14,7 +14,7 @@
 @copying
 This file documents the @TL{} build system and more.
 
-Copyright @copyright{} 2013, 2014 Karl Berry & Peter Breitenlohner.
+Copyright @copyright{} 2013, 2014, 2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -344,11 +344,10 @@ to be done unless some source files have been modified.
 @cindex problems with build
 @cindex failure to build
 @vindex --no-clean Build @r{option}
-If configuring or building a module fails, you could either
-(a)@tie{}find and fix the problem, or (b)@tie{}remove the subdirectory
-for that module from the build tree, and rerun the top-level
-@code{make} (or @file{Build} with @code{--no-clean} as its first
-argument).
+If configuring or building a module fails, you should first find and fix the
+problem, then perhaps remove the subdirectory for that module from the build
+tree, and finally rerun the top-level @code{make} (or @file{Build} with
+@code{--no-clean} as its first argument).
 
 
 @node Build in parallel
@@ -414,7 +413,7 @@ e-@TeX{}).
 
 If you want to work on a single program within the TL sources, this is
 the recommended way to do it.  Here is an example from start to
-finish for working on @code{dvipdfmx}.
+finish for working on @code{dvipdfm-x}.
 
 @example
 mkdir mydir && cd mydir  # new working directory
@@ -434,7 +433,7 @@ mkdir Work && cd Work
 make >&outm
 
 # Test:
-cd texk/dvipdfmx
+cd texk/dvipdfm-x
 make check
 @end example
 
@@ -1078,9 +1077,10 @@ structure and variation.
 
 @pindex png @r{library}
 @pindex libpng @r{library}
+@set libpngversion libpng-1.6.16
 This generic library uses the source tree in, e.g., the subdirectory
-@file{libpng-1.5.17} with all modifications for TL recorded in
-@file{libpng-1.5.17-PATCHES/*}.  The @file{configure.ac} fragment
+@file{@value{libpngversion}} with all modifications for TL recorded in
+@file{@value{libpngversion}-PATCHES/*}.  The @file{configure.ac} fragment
 @file{ac/withenable.ac} contains
 
 @example
@@ -1224,11 +1224,12 @@ details for a few of the programs in TL.
 @subsection The @code{t1utils} package in @file{utils/t1utils}
 
 @pindex t1utils @r{package}
+@set t1utilsversion t1utils-1.39
 
-Once again we use the distributed source tree @file{t1utils-1.38} with
-modifications documented in @file{t1utils-1.38-PATCHES/*} and a proxy
-build system consisting of @file{configure.ac} and @file{Makefile.am}.
-The fragment @file{ac/withenable.ac} contains
+Once again we use the distributed source tree @file{@value{t1utilsversion}}
+with modifications documented in @file{@value{t1utilsversion}-PATCHES/*} and
+a proxy build system consisting of @file{configure.ac} and
+@file{Makefile.am}.  The fragment @file{ac/withenable.ac} contains
 
 @example
 KPSE_ENABLE_PROG([t1utils])
@@ -1242,15 +1243,15 @@ supplies the configure option @code{--disable-t1utils}.
 @subsection The @code{xindy} package in @file{utils/xindy}
 
 @pindex xindy
+@set xindyversion xindy-2.5.1
 
-This module uses the distributed source tree @file{xindy-2.4} with
-modifications documented in @file{xindy-2.4-PATCHES/*}, a proxy
-@file{configure.ac}, and a wrapper @file{Makefile.am} that descends
-into @file{xindy-2.4}.  The @code{xindy} build requires that the
-distributed @file{Makefile}s allow a @code{VPATH} build, can handle
-all targets, and do not refer to @code{$@{top_srcdir@}} or
-@code{$@{top_builddir@}}.  The fragment @code{ac/withenable.ac}
-contains
+This module uses the distributed source tree @file{@value{xindyversion}}
+with modifications documented in @file{@value{xindyversion}-PATCHES/*}, a
+proxy @file{configure.ac}, and a wrapper @file{Makefile.am} that descends
+into @file{@value{xindyversion}}.  The @code{xindy} build requires that the
+distributed @file{Makefile}s allow a @code{VPATH} build, can handle all
+targets, and do not refer to @code{$@{top_srcdir@}} or
+@code{$@{top_builddir@}}.  The fragment @code{ac/withenable.ac} contains
 
 @example
 KPSE_ENABLE_PROG([xindy], , [disable native])
@@ -1847,7 +1848,7 @@ program or create the @file{dvipdfm} symlink.
 
 @vindex --disable-xdvipdfmx
 @noindent @code{--disable-xdvipdfmx}@*Do not build the @file{xdvipdfmx}
-program (building @file{xdvipdfmx} requires the @code{freetype} library).
+program.
 
 
 @node Configure options for @file{texk/dvisvgm}
