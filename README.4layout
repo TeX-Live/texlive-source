@@ -197,13 +197,13 @@ library.  E.g., for 'libs/libpng':
      Provide the configure option '--with-system-libpng'.  Set and
      'AC_SUBST' 'make' variables for modules using this library (either
      an installed version or from the TeX Live tree): 'LIBPNG_INCLUDES'
-     for use in CPPFLAGS, 'LIBPNG_LIBS' for use in LDADD,
+     for use in 'CPPFLAGS', 'LIBPNG_LIBS' for use in 'LDADD',
      'LIBPNG_DEPEND' for use as dependency, and 'LIBPNG_RULE' defining
      'make' rules to rebuild the library.
 
  -- Macro: KPSE_ADD_FLAGS (NAME)
-     Temporarily extend CPPFLAGS and LIBS with the values required for
-     the library module 'NAME'.
+     Temporarily extend 'CPPFLAGS' and 'LIBS' with the values required
+     for the library module 'NAME'.
 
  -- Macro: KPSE_RESTORE_FLAGS
      Restore 'CPPFLAGS' and 'LIBS' to their original values.
@@ -354,11 +354,11 @@ installed by 'make install' together with the programs.  They are,
 however, not part of the TL DVD as distributed by TeX user groups, and
 have never been officially released for standalone use.
 
-   It is possible, and possibly even useful for distro builds (*note
+   It is possible, and perhaps even useful for distro builds (*note
 Distro builds::), to specify the configure option
-'--with-system-kpathsea' in order to use a system version of the library
-and it may then be necessary to specify '--with-kpathsea-includes'
-and/or '--with-kpathsea-libdir'.
+'--with-system-kpathsea' in order to use a system version of the
+library.  Programs outside the TL tree should use 'pkg-config' for the
+required flags.
 
    In addition to 'ac/withenable.ac' and 'ac/kpathsea.ac' there is a
 third fragment 'ac/mktex.ac' included by both 'ac/withenable.ac' and

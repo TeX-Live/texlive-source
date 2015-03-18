@@ -1,3 +1,8 @@
+2015-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* build-tools.txt: Using bison 3.0.4 and libtool 2.4.6.
+	* tlbuild.texi: Minor updates.
+
 2015-01-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* build-tools.txt: Using bison 3.0.3 and libtool 2.4.5.
