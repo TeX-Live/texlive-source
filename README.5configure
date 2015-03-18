@@ -238,8 +238,8 @@ native TeX Live build, defaults are again defined in
 7.2.4 Configure options for 'texk/bibtex-x'
 -------------------------------------------
 
-The former programs 'bibtex8' and 'bibtexu' have been merged into the
-module 'bibtex-x' (extended BibTeX).
+The programs 'bibtex8' and 'bibtexu' have been merged into the module
+'bibtex-x' (extended BibTeX).
 
 '--disable-bibtex8'
 Do not build the 'bibtex8' program.
@@ -258,7 +258,7 @@ created by default.  In addition, 'dvipdfm' is created as a symlink to
 'dvipdfmx', with backward-compatible (very slightly different) behavior.
 
 '--disable-dvipdfmx'
-Do not build the 'dvipdfmx' program or create the 'dvipdfm' symlink.
+Do not build the 'dvipdfmx' program with the 'dvipdfm' symlink.
 
 '--disable-xdvipdfmx'
 Do not build the 'xdvipdfmx' program.

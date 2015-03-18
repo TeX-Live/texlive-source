@@ -959,14 +959,14 @@ that provides make variables for that library.  E.g., for
 Provide the configure option @code{--with-system-libpng}.  Set and
 @code{AC_SUBST} @code{make} variables for modules using this library (either
 an installed version or from the @TL{} tree): @code{LIBPNG_INCLUDES} for use
-in CPPFLAGS, @code{LIBPNG_LIBS} for use in LDADD, @code{LIBPNG_DEPEND} for
-use as dependency, and @code{LIBPNG_RULE} defining @code{make} rules to
-rebuild the library.
+in @code{CPPFLAGS}, @code{LIBPNG_LIBS} for use in @code{LDADD},
+@code{LIBPNG_DEPEND} for use as dependency, and @code{LIBPNG_RULE} defining
+@code{make} rules to rebuild the library.
 @end defmac
 
 @defmac KPSE_ADD_FLAGS (@var{name})
-Temporarily extend CPPFLAGS and LIBS with the values required for the
-library module @code{@var{name}}.
+Temporarily extend @code{CPPFLAGS} and @code{LIBS} with the values required
+for the library module @code{@var{name}}.
 @end defmac
 
 @defmac KPSE_RESTORE_FLAGS
@@ -1184,11 +1184,10 @@ distributed by @TeX{} user groups, and have never been officially
 released for standalone use.
 
 @pindex --with-system-kpathsea
-It is possible, and possibly even useful for distro builds
-(@pxref{Distro builds}), to specify the configure option
-@code{--with-system-kpathsea} in order to use a system version of the
-library and it may then be necessary to specify
-@code{--with-kpathsea-includes} and/or @code{--with-kpathsea-libdir}.
+It is possible, and perhaps even useful for distro builds (@pxref{Distro
+builds}), to specify the configure option @code{--with-system-kpathsea} in
+order to use a system version of the library.  Programs outside the TL tree
+should use @code{pkg-config} for the required flags.
 
 @pindex kpathsea.ac
 @pindex mktex.ac
@@ -1817,8 +1816,8 @@ in @file{texk/web2c/ac/web2c.ac}.
 @pindex bibtex8
 @pindex bibtexu
 @pindex bibtex-x
-The former programs @code{bibtex8} and @code{bibtexu} have been merged
-into the module @code{bibtex-x} (extended Bib@TeX{}).
+The programs @code{bibtex8} and @code{bibtexu} have been merged into the
+module @code{bibtex-x} (extended Bib@TeX{}).
 
 @vindex --disable-bibtex8
 @noindent @code{--disable-bibtex8}@*Do not build the @file{bibtex8} program.
@@ -1844,7 +1843,7 @@ different) behavior.
 
 @vindex --disable-dvipdfmx
 @noindent @code{--disable-dvipdfmx}@*Do not build the @file{dvipdfmx}
-program or create the @file{dvipdfm} symlink.
+program with the @file{dvipdfm} symlink.
 
 @vindex --disable-xdvipdfmx
 @noindent @code{--disable-xdvipdfmx}@*Do not build the @file{xdvipdfmx}
