@@ -1,3 +1,8 @@
+2015-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex.c: Support multi-byte characters in file names in SyncTeX
+	for (e)upTeX (win32 only).
+
 2015-03-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/synctex.a, am/synctex.am: Reorganize rules for libsynctex.
