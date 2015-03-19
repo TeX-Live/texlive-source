@@ -733,7 +733,9 @@ void synctexstartinput(void)
          *  to store the file name, because we will need it later.
          *  This is necessary because \jobname can be different */
 #ifdef W32UPTEXSYNCTEX
-        synctex_ctxt.root_name = chgto_oem(SYNCTEX_GET_CURRENT_NAME());
+        char *tmpa = SYNCTEX_GET_CURRENT_NAME();
+        synctex_ctxt.root_name = chgto_oem(tmpa);
+        free(tmpa);
 #else
         synctex_ctxt.root_name = SYNCTEX_GET_CURRENT_NAME();
 #endif
@@ -749,7 +751,9 @@ void synctexstartinput(void)
     if (SYNCTEX_FILE
         || (SYNCTEX_NO_ERROR != synctex_dot_open())) {
 #ifdef W32UPTEXSYNCTEX
-        char *tmp = chgto_oem(SYNCTEX_GET_CURRENT_NAME());
+        char *tmpb = SYNCTEX_GET_CURRENT_NAME();
+        char *tmp = chgto_oem(tmpb);
+        free(tmpb);
 #else
         char *tmp = SYNCTEX_GET_CURRENT_NAME();
 #endif
