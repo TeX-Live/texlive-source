@@ -1,3 +1,7 @@
+2015-03-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex.c: Avoid minor memory leaks (win32 only).
+
 2015-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex.c: Support multi-byte characters in file names in SyncTeX
