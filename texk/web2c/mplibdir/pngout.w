@@ -1,5 +1,3 @@
-% $Id: pngout.w 1706 2012-09-28 08:12:34Z taco $
-%
 % Copyright 2012 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify

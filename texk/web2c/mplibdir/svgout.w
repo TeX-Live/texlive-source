@@ -1,5 +1,3 @@
-% $Id: svgout.w 2003 2014-04-09 09:48:26Z taco $
-%
 % Copyright 2008-2009 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify

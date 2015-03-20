@@ -1,4 +1,4 @@
-% $Id: mp.w 2055 2015-01-22 15:39:12Z luigi $
+% $Id: mp.w 2057 2015-03-20 01:33:59Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -331,6 +331,7 @@ typedef struct mp_number_data mp_number;
 typedef void (*convert_func) (mp_number *r);
 typedef void (*m_log_func) (MP mp, mp_number *r, mp_number a);
 typedef void (*m_exp_func) (MP mp, mp_number *r, mp_number a);
+typedef void (*m_norm_rand_func) (MP mp, mp_number *ret); 
 typedef void (*pyth_add_func) (MP mp, mp_number *r, mp_number a, mp_number b);
 typedef void (*pyth_sub_func) (MP mp, mp_number *r, mp_number a, mp_number b);
 typedef void (*n_arg_func) (MP mp, mp_number *r, mp_number a, mp_number b);
@@ -471,9 +472,10 @@ typedef struct math_data {
   velocity_func velocity;
   ab_vs_cd_func ab_vs_cd;
   crossing_point_func crossing_point;
-  n_arg_func n_arg;
-  m_log_func m_log;
-  m_exp_func m_exp;
+  n_arg_func  n_arg;
+  m_log_func  m_log;
+  m_exp_func  m_exp;
+  m_norm_rand_func m_norm_rand;
   pyth_add_func pyth_add;
   pyth_sub_func pyth_sub;
   fraction_to_round_scaled_func fraction_to_round_scaled;
@@ -2603,9 +2605,14 @@ static void mp_unif_rand (MP mp, mp_number *ret, mp_number x_orig) {
 
 @ Finally, a normal deviate with mean zero and unit standard deviation
 can readily be obtained with the ratio method (Algorithm 3.4.1R in
-{\sl The Art of Computer Programming\/}).
+{\sl The Art of Computer Programming\/}). This is the original one,
+that stays as reference:
+Now each number system has its own implementation,
+true to the original as much as possibile.
+.
 
 @c
+/*  Unused.
 static void mp_norm_rand (MP mp, mp_number *ret) {
   mp_number ab_vs_cd; 
   mp_number abs_x;
@@ -2623,7 +2630,7 @@ static void mp_norm_rand (MP mp, mp_number *ret) {
       mp_number v;
       new_number (v);
       mp_next_random(mp, &v);
-      number_substract (v, fraction_half_t);
+      number_substract (v, fraction_half_t); 
       take_fraction (xa, sqrt_8_e_k, v); 
       free_number (v);
       mp_next_random(mp, &u);
@@ -2644,6 +2651,7 @@ static void mp_norm_rand (MP mp, mp_number *ret) {
   free_number (xa);
   free_number (u);
 }
+*/
 
 
 @* Packed data.
@@ -10940,6 +10948,7 @@ This first set goes into the header
 @d n_arg(R,A,B)                        (((math_data *)(mp->math))->n_arg)(mp,&(R),A,B)
 @d m_log(R,A)                          (((math_data *)(mp->math))->m_log)(mp,&(R),A)
 @d m_exp(R,A)                          (((math_data *)(mp->math))->m_exp)(mp,&(R),A)
+@d m_norm_rand(R)                      (((math_data *)(mp->math))->m_norm_rand)(mp,&(R))
 @d velocity(R,A,B,C,D,E)               (((math_data *)(mp->math))->velocity)(mp,&(R),A,B,C,D,E)
 @d ab_vs_cd(R,A,B,C,D)                 (((math_data *)(mp->math))->ab_vs_cd)(mp,&(R),A,B,C,D)
 @d crossing_point(R,A,B,C)             (((math_data *)(mp->math))->crossing_point)(mp,&(R),A,B,C)
@@ -24536,7 +24545,8 @@ static void mp_do_nullary (MP mp, quarterword c) {
     {
       mp_number r;
       new_number (r);
-      mp_norm_rand (mp, &r);
+      /*mp_norm_rand (mp, &r);*/
+      m_norm_rand (r);
       mp->cur_exp.type = mp_known;
       set_cur_exp_value_number (r);
       free_number (r);
@@ -30002,7 +30012,6 @@ Here's one of the simplest:
 
 @ @<Declare action procedures for use by |do_statement|@>=
 static void mp_do_random_seed (MP mp);
-
 @ @c
 void mp_do_random_seed (MP mp) {
   mp_value new_expr;

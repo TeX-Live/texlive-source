@@ -1,5 +1,3 @@
-% $Id: tfmin.w 1682 2011-05-30 07:24:45Z taco $
-%
 % Copyright 2008-2009 Taco Hoekwater.
 %
 % This program is free software: you can redistribute it and/or modify
