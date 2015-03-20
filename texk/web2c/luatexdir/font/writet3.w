@@ -19,9 +19,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: writet3.w 4956 2014-03-28 12:12:17Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/writet3.w $";
+
 
 #include "ptexlib.h"
 #include <kpathsea/tex-glyph.h>

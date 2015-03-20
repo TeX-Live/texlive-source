@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: pdfimage.w 4718 2014-01-02 15:35:31Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/pdf/pdfimage.w $";
+
 
 #include "ptexlib.h"
 

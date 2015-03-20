@@ -19,7 +19,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: tt_glyf.h 2271 2009-04-12 23:42:21Z oneiros $ */
 
 #ifndef _TT_GLYF_H_
 #  define _TT_GLYF_H_

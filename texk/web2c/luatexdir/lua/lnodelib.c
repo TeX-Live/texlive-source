@@ -95,9 +95,6 @@
 
 */
 
-static const char _svn_version[] =
-    "$Id: lnodelib.c 5115 2014-12-21 17:46:00Z luigi $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lnodelib.c $";
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -216,6 +213,8 @@ static const char _svn_version[] =
 /*     } */
 /* } */
 
+
+#define nodelib_setattr(L, s, n)     reassign_attribute(n,nodelib_getlist(L,s)) 
 
 #define nodelib_gettoks(L,a)   tokenlist_from_lua(L)
 
@@ -2447,18 +2446,6 @@ static str_number nodelib_getstring(lua_State * L, int a)
     return maketexlstring(s, k);
 }
 
-static void nodelib_setattr(lua_State * L, int stackindex, halfword n)
-{
-    halfword p;
-    p = nodelib_getlist(L, stackindex);
-    if (node_attr(n) != p) {
-        if (node_attr(n) != null)
-            delete_attribute_ref(node_attr(n));
-        node_attr(n) = p;
-    if (p != null)
-        attr_list_ref(p)++;
-    }
-}
 
 static int nodelib_cantset(lua_State * L, int n, const char *s)
 {
@@ -3960,9 +3947,11 @@ static int lua_nodelib_equal(lua_State * L)
 static int font_tex_ligaturing(lua_State * L)
 {
     /* on the stack are two nodes and a direction */
+    /* hh-ls: we need to deal with prev nodes when a range starts with a ligature */
     halfword tmp_head;
     halfword *h;
     halfword t = null;
+    halfword p ; /* hh-ls */
     if (lua_gettop(L) < 1) {
         lua_pushnil(L);
         lua_pushboolean(L, 0);
@@ -3973,10 +3962,14 @@ static int font_tex_ligaturing(lua_State * L)
         t = *(check_isnode(L, 2));
     }
     tmp_head = new_node(nesting_node, 1);
+    p = alink(*h); /* hh-ls */
     couple_nodes(tmp_head, *h);
     tlink(tmp_head) = t;
     t = handle_ligaturing(tmp_head, t);
-    alink(vlink(tmp_head)) = null ; /* hh-ls */
+    if (p != null) {
+        vlink(p) = vlink(tmp_head) ; /* hh-ls */
+    }
+    alink(vlink(tmp_head)) = p ; /* hh-ls */
     lua_pushnumber(L, vlink(tmp_head));
     /* can be: lua_nodelib_push_fast(L, head); */
     flush_node(tmp_head);
@@ -3988,6 +3981,8 @@ static int font_tex_ligaturing(lua_State * L)
     return 3;
 }
 
+
+
 /* node.kerning */
 
 static int font_tex_kerning(lua_State * L)
@@ -3997,6 +3992,7 @@ static int font_tex_kerning(lua_State * L)
     halfword tmp_head;
     halfword *h;
     halfword t = null;
+    halfword p ; /* hh-ls */
     if (lua_gettop(L) < 1) {
         lua_pushnil(L);
         lua_pushboolean(L, 0);
@@ -4007,10 +4003,14 @@ static int font_tex_kerning(lua_State * L)
         t = *(check_isnode(L, 2));
     }
     tmp_head = new_node(nesting_node, 1);
+    p = alink(*h); /* hh-ls */
     couple_nodes(tmp_head, *h);
     tlink(tmp_head) = t;
     t = handle_kerning(tmp_head, t);
-    alink(vlink(tmp_head)) = null ; /* hh-ls */
+    if (p != null) {
+        vlink(p) = vlink(tmp_head) ; /* hh-ls */
+    }
+    alink(vlink(tmp_head)) = p ; /* hh-ls */
     lua_pushnumber(L, vlink(tmp_head));
     /* can be: lua_nodelib_push_fast(L, head); */
     flush_node(tmp_head);
@@ -4318,28 +4318,25 @@ static int lua_nodelib_direct_cp_skipable(lua_State * L)
     return 1;
 }
 
+
 /* node.currentattr(node m) */
 
 static int lua_nodelib_currentattr(lua_State * L)
 {
-    int n = lua_gettop(L);
-    if (n == null) {
-        /* query */
-        if (max_used_attr >= 0) {
-            if (attr_list_cache == cache_disabled) {
-                update_attribute_cache();
-                if (attr_list_cache == null) {
-                    lua_pushnil (L);
-                    return 1;
-                }
-            }
-            attr_list_ref(attr_list_cache)++;
-            lua_pushnumber(L, attr_list_cache);
-            lua_nodelib_push(L);
-        } else {
-            lua_pushnil(L);
-        }
-        return 1;
+    int u = lua_gettop(L);
+    if (u == null) {
+       /* query */
+       halfword n ;
+      /* current_attribute_list() return attr_list_cache */
+      /* or null  (attr_list_cache can also be null)     */
+       n = current_attribute_list();
+       if (n) {
+          lua_pushnumber(L, n);
+          lua_nodelib_push(L);
+       }
+       else
+          lua_pushnil(L);
+       return 1;
     } else {
         /* assign */
         luatex_warn("Assignment via node.current_attr(<list>) is not supported (yet)");
@@ -4347,25 +4344,22 @@ static int lua_nodelib_currentattr(lua_State * L)
     }
 }
 
+
 /* node.direct.currentattr(node m) */
 
 static int lua_nodelib_direct_currentattr(lua_State * L)
 {
-    if (max_used_attr >= 0) {
-        if (attr_list_cache == cache_disabled) {
-            update_attribute_cache();
-            if (attr_list_cache == null) {
-                lua_pushnil (L);
-                return 1;
-            }
-        }
-        attr_list_ref(attr_list_cache)++;
-        lua_pushnumber(L, attr_list_cache);
-    } else {
+    halfword n ;
+    /* current_attribute_list() return attr_list_cache */
+    /* or null  (attr_list_cache can also be null)     */
+    n = current_attribute_list();
+    if (n)
+        lua_pushnumber(L, n);
+    else
         lua_pushnil(L);
-    }
     return 1;
 }
+
 
 /* node.direct.todirect */
 

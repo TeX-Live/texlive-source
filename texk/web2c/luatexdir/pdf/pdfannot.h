@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfannot.h 2772 2009-07-07 22:16:42Z hhenkel $ */
 
 #ifndef PDFANNOT_H
 #  define PDFANNOT_H

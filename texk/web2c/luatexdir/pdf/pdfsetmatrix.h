@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfsetmatrix.h 3217 2009-12-03 16:52:01Z taco $ */
 
 #ifndef PDFSETMATRIX_H
 #  define PDFSETMATRIX_H

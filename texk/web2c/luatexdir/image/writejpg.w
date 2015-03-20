@@ -19,9 +19,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: writejpg.w 4847 2014-03-05 18:13:17Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejpg.w $";
+
 
 #include "ptexlib.h"
 #include <assert.h>
@@ -101,6 +99,152 @@ typedef enum {                  /* JPEG marker codes                    */
 } JPEG_MARKER;
 
 @ @c
+static unsigned char
+myget_unsigned_byte (FILE *file)
+{
+    int ch;
+    ch = fgetc (file);
+    return (unsigned char) ch;
+}
+
+@ @c
+static unsigned short
+myget_unsigned_pair (FILE *file)
+{
+    unsigned short pair = myget_unsigned_byte(file);
+    pair = (pair << 8) | myget_unsigned_byte(file);
+    return pair;
+}
+
+@ @c
+static unsigned int
+read_exif_bytes(unsigned char **p, int n, int b)
+{
+    unsigned int rval = 0;
+    unsigned char *pp = *p;
+    if (b) {
+        switch (n) {
+        case 4:
+            rval += *pp++; rval <<= 8;
+            rval += *pp++; rval <<= 8;
+        case 2:
+            rval += *pp++; rval <<= 8;
+            rval += *pp;
+            break;
+        }
+    } else {
+        pp += n;
+        switch (n) {
+        case 4:
+            rval += *--pp; rval <<= 8;
+            rval += *--pp; rval <<= 8;
+        case 2:
+            rval += *--pp; rval <<= 8;
+            rval += *--pp;
+            break;
+        }
+    }
+    *p += n;
+    return rval;
+}
+
+@ @c
+static void
+read_APP1_Exif (FILE *fp, unsigned short length, int *xx, int *yy)
+{
+    /* this doesn't save the data, just reads the tags we need */
+    /* based on info from http://www.exif.org/Exif2-2.PDF */
+    unsigned char *buffer = (unsigned char *)xmalloc(length);
+    unsigned char *p, *rp;
+    unsigned char *tiff_header;
+    char bigendian;
+    int i;
+    int num_fields, tag, type;
+    int value = 0, num = 0, den = 0;	/* silence uninitialized warnings */
+    double xres = 72.0;
+    double yres = 72.0;
+    double res_unit = 1.0;
+    fread(buffer, length, 1, fp);
+    p = buffer;
+    while ((p < buffer + length) && (*p == 0))
+        ++p;
+    tiff_header = p;
+    if ((*p == 'M') && (*(p+1) == 'M'))
+        bigendian = 1;
+    else if ((*p == 'I') && (*(p+1) == 'I'))
+        bigendian = 0;
+    else
+        goto err;
+    p += 2;
+    i = read_exif_bytes(&p, 2, bigendian);
+    if (i != 42)
+        goto err;
+    i = read_exif_bytes(&p, 4, bigendian);
+    p = tiff_header + i;
+    num_fields = read_exif_bytes(&p, 2, bigendian);
+    while (num_fields-- > 0) {
+        tag = read_exif_bytes(&p, 2, bigendian);
+        type = read_exif_bytes(&p, 2, bigendian);
+        read_exif_bytes(&p, 4, bigendian);
+        switch (type) {
+        case 1: /* byte */
+            value = *p++;
+            p += 3;
+            break;
+        case 3: /* short */
+            value = read_exif_bytes(&p, 2, bigendian);
+            p += 2;
+            break;
+        case 4: /* long */
+        case 9: /* slong */
+            value = read_exif_bytes(&p, 4, bigendian);
+            break;
+        case 5: /* rational */
+        case 10: /* srational */
+            value = read_exif_bytes(&p, 4, bigendian);
+            rp = tiff_header + value;
+            num = read_exif_bytes(&rp, 4, bigendian);
+            den = read_exif_bytes(&rp, 4, bigendian);
+            break;
+        case 7: /* undefined */
+            value = *p++;
+            p += 3;
+            break;
+        case 2: /* ascii */
+        default:
+            p += 4;
+            break;
+	}
+        switch (tag) {
+        case 282: /* x res */
+            if (den != 0)
+                xres = num / den;
+            break;
+        case 283: /* y res */
+            if (den != 0)
+                yres = num / den;
+            break;
+        case 296: /* res unit */
+            switch (value) {
+            case 2:
+                res_unit = 1.0;
+                break;
+            case 3:
+                res_unit = 2.54;
+                break;
+            }
+        }
+    }
+
+    *xx = (int)(xres * res_unit);
+    *yy = (int)(yres * res_unit);
+
+err:
+    free(buffer);
+    return;
+}
+
+@ @c
 static void close_and_cleanup_jpg(image_dict * idict)
 {
     assert(idict != NULL);
@@ -116,6 +260,7 @@ static void close_and_cleanup_jpg(image_dict * idict)
 void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
 {
     int i, units = 0;
+    unsigned short appmk, length;
     unsigned char jpg_id[] = "JFIF";
     assert(idict != NULL);
     assert(img_type(idict) == IMG_TYPE_JPG);
@@ -131,8 +276,9 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     if ((unsigned int) read2bytes(img_file(idict)) != 0xFFD8)
         luatex_fail("reading JPEG image failed (no JPEG header found)");
-    /* currently only true JFIF files allow extracting |img_xres| and |img_yres| */
-    if ((unsigned int) read2bytes(img_file(idict)) == 0xFFE0) { /* check for JFIF */
+    /* currently JFIF and Exif files allow extracting |img_xres| and |img_yres| */
+    appmk = read2bytes(img_file(idict));
+    if (appmk == 0xFFE0) {     /* check for JFIF */
         (void) read2bytes(img_file(idict));
         for (i = 0; i < 5; i++) {
             if (xgetc(img_file(idict)) != jpg_id[i])
@@ -155,13 +301,30 @@ void read_jpg_info(PDF pdf, image_dict * idict, img_readtype_e readtype)
                 break;
             }
         }
-        /* if either xres or yres is 0 but the other isn't, set it to the value of the other */
+        /* if either xres or yres is 0 but the other isn't,
+           set it to the value of the other */
         if ((img_xres(idict) == 0) && (img_yres(idict) != 0)) {
             img_xres(idict) = img_yres(idict);
         }
         if ((img_yres(idict) == 0) && (img_xres(idict) != 0)) {
             img_yres(idict) = img_xres(idict);
         }
+    } else if (appmk == 0xFFE1) {  /* check for Exif */
+        FILE *fp = img_file(idict);
+        int xxres = 0;
+        int yyres = 0;
+        char app_sig[32];
+        length = myget_unsigned_pair(fp) - 2;
+        if (length > 5) {
+            if (fread(app_sig, sizeof(char), 5, fp) != 5)
+                return;
+            length -= 5;
+            if (!memcmp(app_sig, "Exif\000", 5)) {
+                read_APP1_Exif(fp, length, &xxres, &yyres);
+            }
+        }
+        img_xres(idict) = xxres;
+        img_yres(idict) = yyres;
     }
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     while (1) {

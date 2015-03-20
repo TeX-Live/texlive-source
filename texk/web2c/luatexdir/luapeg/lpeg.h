@@ -1,9 +1,14 @@
 /*
-** $Id: lptypes.h,v 1.8 2013/04/12 16:26:38 roberto Exp $
+** $Id: lptypes.h,v 1.11 2015/03/04 16:38:00 roberto Exp $
 ** LPeg - PEG pattern matching for Lua
-** Copyright 2007, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
+** Copyright 2007-2014, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 ** written by Roberto Ierusalimschy
 */
+
+/*
+ "Amalgamated" version for LuaTeX written by Scarso Luigi.
+*/
+
 
 #if !defined(lptypes_h)
 #define lptypes_h
@@ -20,22 +25,21 @@
 #include <string.h> 
 
 #include "lauxlib.h" 
-#include "lua.h" 
+#include "lua.h"
 
 
 
+#define VERSION         "0.12.2"
 
-#define VERSION         "0.12"
 
-
-#define PATTERN_T	"lpeg.pattern"
-#define MAXSTACKIDX	"lpeg.maxstack"
+#define PATTERN_T	"lpeg-pattern"
+#define MAXSTACKIDX	"lpeg-maxstack"
 
 
 /*
 ** compatibility with Lua 5.2
 */
-#if (LUA_VERSION_NUM == 502)
+#if (LUA_VERSION_NUM >= 502)
 
 #undef lua_equal
 #define lua_equal(L,idx1,idx2)  lua_compare(L,(idx1),(idx2),LUA_OPEQ)
@@ -62,7 +66,9 @@
 
 
 /* maximum number of rules in a grammar */
-#define MAXRULES        200
+#if !defined(MAXRULES)
+#define MAXRULES        1000
+#endif
 
 
 
@@ -152,14 +158,14 @@ typedef struct Charset {
 #endif
 
 /*
-** $Id: lpcap.h,v 1.1 2013/03/21 20:25:12 roberto Exp $
+** $Id: lpcap.h,v 1.2 2015/02/27 17:13:17 roberto Exp $
 */
 
 #if !defined(lpcap_h)
 #define lpcap_h
 
 
-/* include "lptypes.h" */
+/* #include "lptypes.h"*/
 
 
 /* kinds of captures */
@@ -171,7 +177,7 @@ typedef enum CapKind {
 
 typedef struct Capture {
   const char *s;  /* subject position */
-  short idx;  /* extra info about capture (group name, arg index, etc.) */
+  unsigned short idx;  /* extra info (group name, arg index, etc.) */
   byte kind;  /* kind of capture */
   byte siz;  /* size of full capture + 1 (0 = not a full capture) */
 } Capture;
@@ -202,7 +208,7 @@ int finddyncap (Capture *cap, Capture *last);
 #define lptree_h
 
 
-/*#include "lptypes.h" */
+/* #include "lptypes.h" */
 
 
 /*
@@ -267,16 +273,18 @@ extern const byte numsiblings[];
 
 
 
+
+
 #endif
 
 /*
-** $Id: lpvm.h,v 1.2 2013/04/03 20:37:18 roberto Exp $
+** $Id: lpvm.h,v 1.3 2014/02/21 13:06:41 roberto Exp $
 */
 
 #if !defined(lpvm_h)
 #define lpvm_h
 
-/*#include "lpcap.h"*/
+/* #include "lpcap.h"*/
 
 
 /* Virtual Machine's instructions */
@@ -320,30 +328,25 @@ typedef union Instruction {
 } Instruction;
 
 
-int getposition (lua_State *L, int t, int i);
 void printpatt (Instruction *p, int n);
 const char *match (lua_State *L, const char *o, const char *s, const char *e,
                    Instruction *op, Capture *capture, int ptop);
-int verify (lua_State *L, Instruction *op, const Instruction *p,
-            Instruction *e, int postable, int rule);
-void checkrule (lua_State *L, Instruction *op, int from, int to,
-                int postable, int rule);
 
 
 #endif
 
 /*
-** $Id: lpcode.h,v 1.5 2013/04/04 21:24:45 roberto Exp $
+** $Id: lpcode.h,v 1.6 2013/11/28 14:56:02 roberto Exp $
 */
 
 #if !defined(lpcode_h)
 #define lpcode_h
 
-/*#include "lua.h"*/
+/* #include "lua.h"*/
 
-/*#include "lptypes.h"*/
-/*#include "lptree.h"*/
-/*#include "lpvm.h"*/
+/* #include "lptypes.h"*/
+/* #include "lptree.h"*/
+/* #include "lpvm.h"*/
 
 int tocharset (TTree *tree, Charset *cs);
 int checkaux (TTree *tree, int pred);
@@ -351,7 +354,7 @@ int fixedlenx (TTree *tree, int count, int len);
 int hascaptures (TTree *tree);
 int lp_gc (lua_State *L);
 Instruction *compile (lua_State *L, Pattern *p);
-void reallocprog (lua_State *L, Pattern *p, int nsize);
+void realloccode (lua_State *L, Pattern *p, int nsize);
 int sizei (const Instruction *i);
 
 
@@ -375,8 +378,8 @@ int sizei (const Instruction *i);
 #define lpprint_h
 
 
-/*#include "lptree.h"*/
-/*#include "lpvm.h"*/
+/* #include "lptree.h"*/
+/* #include "lpvm.h"*/
 
 
 #if defined(LPEG_DEBUG)

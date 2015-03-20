@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writeimg.h 4405 2012-05-07 21:16:45Z hhenkel $ */
 
 #ifndef WRITEIMG_H
 #  define WRITEIMG_H

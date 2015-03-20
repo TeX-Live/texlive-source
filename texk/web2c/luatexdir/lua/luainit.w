@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: luainit.w 5081 2014-11-07 18:38:33Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luainit.w $";
+
 
 #include "ptexlib.h"
 
@@ -263,6 +261,20 @@ int lua_numeric_field_by_index(lua_State * L, int name_index, int dflt)
     return i;
 }
 
+@ @c
+unsigned int lua_unsigned_numeric_field_by_index(lua_State * L, int name_index, int dflt)
+{
+    register unsigned int i = dflt;
+    lua_rawgeti(L, LUA_REGISTRYINDEX, name_index);      /* fetch the stringptr */
+    lua_rawget(L, -2);
+    if (lua_type(L, -1) == LUA_TNUMBER) {
+        i = lua_uroundnumber(L, -1);
+    }
+    lua_pop(L, 1);
+    return i;
+}
+
+
 
 @ @c
 static void parse_options(int ac, char **av)
@@ -430,8 +442,8 @@ static void parse_options(int ac, char **av)
                  "aleph     by Giuseppe Bilotta\n"
                  "pdftex    by Han The Thanh and friends\n"
                  "kpathsea  by Karl Berry, Olaf Weber and others\n"
-                 "lua       by Roberto Ierusalimschy, Waldemar Celes,\n"
-                 "             Luiz Henrique de Figueiredo\n"
+                 "lua       by Roberto Ierusalimschy, Waldemar Celes\n"
+                 "             and Luiz Henrique de Figueiredo\n"
                  "metapost  by John Hobby, Taco Hoekwater and friends.\n"
                  "poppler   by Derek Noonburg, Kristian H\\ogsberg (partial)\n"
 #ifdef LuajitTeX
@@ -775,6 +787,7 @@ static void setup_lua_path(lua_State * L)
 @c
 int tex_table_id;
 int pdf_table_id;
+int newtoken_table_id;
 int token_table_id;
 int node_table_id;
 
@@ -951,6 +964,7 @@ void lua_initialize(int ac, char **av)
         char *v1;
         /* hide the 'tex' and 'pdf' table */
         tex_table_id = hide_lua_table(Luas, "tex");
+        newtoken_table_id = hide_lua_table(Luas, "newtoken");
         token_table_id = hide_lua_table(Luas, "token");
         node_table_id = hide_lua_table(Luas, "node");
         pdf_table_id = hide_lua_table(Luas, "pdf");
@@ -983,6 +997,7 @@ void lua_initialize(int ac, char **av)
         /* unhide the 'tex' and 'pdf' table */
         unhide_lua_table(Luas, "tex", tex_table_id);
         unhide_lua_table(Luas, "pdf", pdf_table_id);
+        unhide_lua_table(Luas, "newtoken", newtoken_table_id);
         unhide_lua_table(Luas, "token", token_table_id);
         unhide_lua_table(Luas, "node", node_table_id);
 

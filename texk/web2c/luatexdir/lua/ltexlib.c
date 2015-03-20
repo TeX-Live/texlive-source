@@ -25,10 +25,6 @@ setter no prev link is created so we can presume that it's not used later on. */
 #include "lua/luatex-api.h"
 
 
-
-static const char _svn_version[] =
-    "$Id: ltexlib.c 5081 2014-11-07 18:38:33Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/ltexlib.c $";
-
 #define attribute(A) eqtb[attribute_base+(A)].hh.rh
 #define dimen(A) eqtb[scaled_base+(A)].hh.rh
 #undef skip
@@ -2433,6 +2429,7 @@ static int tex_run_boot(lua_State * L)
     /* tex is ready to go, now */
     unhide_lua_table(Luas, "tex", tex_table_id);
     unhide_lua_table(Luas, "pdf", pdf_table_id);
+    unhide_lua_table(Luas, "newtoken", newtoken_table_id);
     unhide_lua_table(Luas, "token", token_table_id);
     unhide_lua_table(Luas, "node", node_table_id);
 

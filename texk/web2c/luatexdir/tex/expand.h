@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: expand.h 2728 2009-07-04 11:33:51Z oneiros $ */
 
 #ifndef EXPAND_H
 #  define EXPAND_H

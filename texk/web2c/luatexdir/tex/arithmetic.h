@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: arithmetic.h 3853 2010-09-03 18:05:14Z oneiros $ */
 
 #ifndef ARITHMETIC_H
 #  define ARITHMETIC_H

@@ -80,9 +80,7 @@ object exists, reference it. Else create fresh one.
 09 Dec. 2002: JBIG2 seg. page numbers > 0 are now set to 1, see PDF Ref.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: writejbig2.w 4847 2014-03-05 18:13:17Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/image/writejbig2.w $";
+
 
 #undef DEBUG
 

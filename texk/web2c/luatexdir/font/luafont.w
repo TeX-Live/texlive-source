@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: luafont.w 5064 2014-10-13 12:47:11Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/luafont.w $";
+
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -1412,8 +1410,7 @@ int font_from_lua(lua_State * L, int f)
     set_font_dsize(f, i);
     i = lua_numeric_field_by_index(L,lua_key_index(size), font_dsize(f));
     set_font_size(f, i);
-    i = lua_numeric_field_by_index(L,lua_key_index(checksum), 0);
-    set_font_checksum(f, (unsigned) i);
+    set_font_checksum(f, (unsigned)(lua_unsigned_numeric_field_by_index(L,lua_key_index(checksum), 0))) ;
     i = lua_numeric_field_by_index(L,lua_key_index(direction), 0);
     set_font_natural_dir(f, i);
     i = lua_numeric_field_by_index(L,lua_key_index(encodingbytes), 0);

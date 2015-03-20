@@ -21,10 +21,6 @@
 #include "lua/luatex-api.h"
 
 
-
-static const char _svn_version[] =
-    "$Id: llanglib.c 4524 2012-12-20 15:38:02Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llanglib.c $";
-
 #define LANG_METATABLE "luatex.lang"
 
 #define check_islang(L,b) (struct tex_language **)luaL_checkudata(L,b,LANG_METATABLE)

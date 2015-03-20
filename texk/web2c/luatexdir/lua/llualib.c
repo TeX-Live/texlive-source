@@ -20,8 +20,6 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
-static const char _svn_version[] =
-    "$Id: llualib.c 4878 2014-03-14 10:48:03Z taco $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/llualib.c $";
 
 #define LOAD_BUF_SIZE 256
 #define UINT_MAX32 0xFFFFFFFF

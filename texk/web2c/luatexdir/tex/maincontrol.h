@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: maincontrol.h 4562 2013-01-21 02:58:59Z khaled $ */
 
 #ifndef MAINCONTROL_H
 #  define MAINCONTROL_H
@@ -117,6 +116,7 @@ extern void adjust_space_factor(void);
 extern void main_control(void);
 extern void app_space(void);
 extern void insert_dollar_sign(void);
+extern void insert_dollar_sign_par_end(void);
 extern void you_cant(void);
 extern void report_illegal_case(void);
 extern boolean privileged(void);

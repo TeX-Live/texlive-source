@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: stringpool.h 4599 2013-03-19 15:41:07Z taco $ */
 
 #ifndef STRINGPOOL_H
 #  define STRINGPOOL_H

@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex.h 5081 2014-11-07 18:38:33Z luigi $ */
 
 #ifndef LUATEX_H
 #  define LUATEX_H

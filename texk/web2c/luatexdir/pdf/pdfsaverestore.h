@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfsaverestore.h 3003 2009-08-16 19:55:55Z hhenkel $ */
 
 #ifndef PDFSAVERESTORE_H
 #  define PDFSAVERESTORE_H

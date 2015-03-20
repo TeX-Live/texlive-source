@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdftoepdf.h 4351 2011-10-03 22:22:01Z hhenkel $ */
 
 #ifndef PDFTOEPDF_H
 #  define PDFTOEPDF_H

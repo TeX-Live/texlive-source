@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfaction.h 3891 2010-09-14 23:02:24Z hhenkel $ */
 
 #ifndef PDFACTION_H
 #  define PDFACTION_H

@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: texnodes.w 5112 2014-12-20 08:21:53Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/texnodes.w $";
+
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -2199,7 +2197,7 @@ void update_attribute_cache(void)
 void build_attribute_list(halfword b)
 {
     if (max_used_attr >= 0) {
-        if (attr_list_cache == cache_disabled) {
+        if (attr_list_cache == cache_disabled|| attr_list_cache == null) {
             update_attribute_cache();
             if (attr_list_cache == null)
                 return;
@@ -2212,6 +2210,43 @@ void build_attribute_list(halfword b)
 #endif
     }
 }
+
+
+@ @c
+halfword current_attribute_list(void) 
+{
+    if (max_used_attr >= 0) {
+      if (attr_list_cache == cache_disabled) {
+            update_attribute_cache();
+      } 
+      return attr_list_cache ; 
+    }
+    return null ;
+}
+
+
+@ @c
+void reassign_attribute(halfword n, halfword new) 
+{
+    halfword old;
+    old = node_attr(n);
+    if (new == null) {
+         /* there is nothing to assign but we need to check for an old value */
+        if (old != null) 
+            delete_attribute_ref(old); /* also nulls attr field of n */
+    } else if (old == null) {
+         /* nothing is assigned so we just do that now */
+        assign_attribute_ref(n,new);
+    } else if (old != new) { 
+         /* something is assigned so we need to clean up and assign then */
+        delete_attribute_ref(old);
+        assign_attribute_ref(n,new);
+    }
+     /* else: same value so there is no need to assign and change the refcount */
+    node_attr(n) = new ; 
+}
+
+
 
 @ @c
 void delete_attribute_ref(halfword b)

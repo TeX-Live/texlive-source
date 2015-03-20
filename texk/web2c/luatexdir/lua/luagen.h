@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luagen.h 4679 2013-12-19 15:47:53Z luigi $ */
 
 extern void lua_begin_page(PDF pdf);
 extern void lua_end_page(PDF pdf);
