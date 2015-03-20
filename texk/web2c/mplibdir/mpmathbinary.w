@@ -47,6 +47,7 @@ First, here are some very important constants.
 #define DEBUG 0
 static void mp_binary_scan_fractional_token (MP mp, int n);
 static void mp_binary_scan_numeric_token (MP mp, int n);
+static void mp_binary_ab_vs_cd (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c, mp_number d);
 static void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c, mp_number d);
 static void mp_binary_crossing_point (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c);
 static void mp_binary_number_modulo (mp_number *a, mp_number b);
@@ -60,6 +61,7 @@ static void mp_number_angle_to_scaled (mp_number *A);
 static void mp_number_fraction_to_scaled (mp_number *A);
 static void mp_number_scaled_to_fraction (mp_number *A);
 static void mp_number_scaled_to_angle (mp_number *A);
+static void mp_binary_m_norm_rand (MP mp, mp_number *ret);
 static void mp_binary_m_exp (MP mp, mp_number *ret, mp_number x_orig);
 static void mp_binary_m_log (MP mp, mp_number *ret, mp_number x_orig);
 static void mp_binary_pyth_sub (MP mp, mp_number *r, mp_number a, mp_number b);
@@ -298,7 +300,7 @@ void * mp_initialize_binary_math (MP mp) {
   mpfr_set_si(math->one_eighty_deg_t.data.num, 180 * angle_multiplier, ROUNDING);
   /* various approximations */
   mp_new_number (mp, &math->one_k, mp_scaled_type);
-  mpfr_set_si(math->one_k.data.num, 1024, ROUNDING);
+  mpfr_set_d(math->one_k.data.num, 1.0/64, ROUNDING);
   mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type); 
   {
     mpfr_set_d(math->sqrt_8_e_k.data.num, 112428.82793 / 65536.0, ROUNDING);
@@ -394,6 +396,7 @@ void * mp_initialize_binary_math (MP mp) {
   math->n_arg = mp_binary_n_arg;
   math->m_log = mp_binary_m_log;
   math->m_exp = mp_binary_m_exp;
+  math->m_norm_rand = mp_binary_m_norm_rand;
   math->pyth_add = mp_binary_pyth_add;
   math->pyth_sub = mp_binary_pyth_sub;
   math->fraction_to_scaled = mp_number_fraction_to_scaled;
@@ -1525,3 +1528,100 @@ void mp_init_randoms (MP mp, int seed) {
 void mp_binary_number_modulo (mp_number *a, mp_number b) {
    mpfr_remainder (a->data.num, a->data.num, b.data.num, ROUNDING);
 }
+
+
+
+@ To consume a random fraction, the program below will say `|next_random|'.
+
+@c 
+static void mp_next_random (MP mp, mp_number *ret) { 
+  if ( mp->j_random==0 ) 
+    mp_new_randoms(mp);
+  else 
+    mp->j_random = mp->j_random-1;
+  mp_number_clone (ret, mp->randoms[mp->j_random]);
+}
+
+
+@ Finally, a normal deviate with mean zero and unit standard deviation
+can readily be obtained with the ratio method (Algorithm 3.4.1R in
+{\sl The Art of Computer Programming\/}).
+
+@c
+static void mp_binary_m_norm_rand (MP mp, mp_number *ret) {
+  mp_number ab_vs_cd; 
+  mp_number abs_x;
+  mp_number u;
+  mp_number r;
+  mp_number la, xa;
+  new_number (ab_vs_cd);
+  new_number (la);
+  new_number (xa);
+  new_number (abs_x);
+  new_number (u);
+  new_number (r);
+  
+  do {
+    do {
+      mp_number v;
+      new_number (v);
+      mp_next_random(mp, &v);
+      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t); 
+      mp_binary_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v); 
+      free_number (v);
+      mp_next_random(mp, &u);
+      mp_number_clone (&abs_x, xa);
+      mp_binary_abs (&abs_x);
+    } while (!mp_number_less(abs_x, u));
+    mp_binary_number_make_fraction (mp, &r, xa, u);
+    mp_number_clone (&xa, r);
+    mp_binary_m_log (mp,&la, u);
+    mp_set_binary_from_substraction(&la, ((math_data *)mp->math)->twelve_ln_2_k, la);
+    mp_binary_ab_vs_cd (mp,&ab_vs_cd, ((math_data *)mp->math)->one_k, la, xa, xa);
+    /*mp_ab_vs_cd (mp,&ab_vs_cd, ((math_data *)mp->math)->one_k, la, xa, xa);*/
+  } while (mp_number_less(ab_vs_cd,((math_data *)mp->math)->zero_t));
+  mp_number_clone (ret, xa);
+  free_number (ab_vs_cd);
+  free_number (r);
+  free_number (abs_x);
+  free_number (la);
+  free_number (xa);
+  free_number (u);
+}
+
+
+
+@ The following subroutine is used only in norm_rand and tests  if $ab$ is
+greater than, equal to, or less than~$cd$.
+The result is $+1$, 0, or~$-1$ in the three respective cases.
+
+@c
+static void mp_binary_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_number c_orig, mp_number d_orig) {
+  mpfr_t a, b, c, d;
+  mpfr_t ab, cd;
+
+  int cmp = 0;
+  (void)mp;
+  mpfr_inits2(precision_bits, a,b,c,d,ab,cd,(mpfr_ptr)0);
+  mpfr_set(a, (mpfr_ptr )a_orig.data.num, ROUNDING);
+  mpfr_set(b, (mpfr_ptr )b_orig.data.num, ROUNDING);
+  mpfr_set(c, (mpfr_ptr )c_orig.data.num, ROUNDING);
+  mpfr_set(d, (mpfr_ptr )d_orig.data.num, ROUNDING);
+
+  mpfr_mul(ab,a,b, ROUNDING);
+  mpfr_mul(cd,c,d, ROUNDING);
+ 
+  mpfr_set(ret->data.num, zero, ROUNDING);
+  cmp = mpfr_cmp(ab,cd);
+  if (cmp) {
+   if (cmp>0) 
+     mpfr_set(ret->data.num, one, ROUNDING);
+   else 
+     mpfr_set(ret->data.num, minusone, ROUNDING);
+  }
+  mp_check_mpfr_t(mp, ret->data.num);
+  mpfr_clears(a,b,c,d,ab,cd,(mpfr_ptr)0);
+  return;
+}
+
+

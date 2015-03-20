@@ -1,4 +1,3 @@
-% $Id: mpxout.w 2031 2014-06-24 13:38:58Z luigi $
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.

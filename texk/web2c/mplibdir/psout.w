@@ -1,4 +1,3 @@
-% $Id: psout.w 2045 2014-11-05 11:33:13Z luigi $
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code in mpost.w for more info.

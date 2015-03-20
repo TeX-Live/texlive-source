@@ -1,4 +1,4 @@
-% $Id: mpmathdouble.w 2037 2014-09-02 14:59:07Z luigi $
+% $Id: mpmathdouble.w 2057 2015-03-20 01:33:59Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -51,6 +51,7 @@ First, here are some very important constants.
 static void mp_double_scan_fractional_token (MP mp, int n);
 static void mp_double_scan_numeric_token (MP mp, int n);
 static void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c, mp_number d);
+static void mp_double_ab_vs_cd (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c, mp_number d);
 static void mp_double_crossing_point (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c);
 static void mp_number_modulo (mp_number *a, mp_number b);
 static void mp_double_print_number (MP mp, mp_number n);
@@ -63,6 +64,7 @@ static void mp_number_angle_to_scaled (mp_number *A);
 static void mp_number_fraction_to_scaled (mp_number *A);
 static void mp_number_scaled_to_fraction (mp_number *A);
 static void mp_number_scaled_to_angle (mp_number *A);
+static void mp_double_m_norm_rand (MP mp, mp_number *ret);
 static void mp_double_m_exp (MP mp, mp_number *ret, mp_number x_orig);
 static void mp_double_m_log (MP mp, mp_number *ret, mp_number x_orig);
 static void mp_double_pyth_sub (MP mp, mp_number *r, mp_number a, mp_number b);
@@ -182,11 +184,11 @@ void * mp_initialize_double_math (MP mp) {
   math->one_eighty_deg_t.data.dval = one_eighty_deg;
   /* various approximations */
   mp_new_number (mp, &math->one_k, mp_scaled_type);
-  math->one_k.data.dval = 1024;
+  math->one_k.data.dval = 1.0/64 ; 
   mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type); 
-  math->sqrt_8_e_k.data.dval = 112429 / 65536.0; /* $2^{16}\sqrt{8/e}\approx 112428.82793$ */
+  math->sqrt_8_e_k.data.dval = 1.71552776992141359295 ;   /* $2^{16}\sqrt{8/e}\approx 112428.82793$ */
   mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type); 
-  math->twelve_ln_2_k.data.dval = 139548960 / 65536.0; /* $2^{24}\cdot12\ln2\approx139548959.6165$ */
+  math->twelve_ln_2_k.data.dval = 8.31776616671934371292 *256;  /* $2^{24}\cdot12\ln2\approx139548959.6165$ */
   mp_new_number (mp, &math->coef_bound_k, mp_fraction_type);
   math->coef_bound_k.data.dval = coef_bound;
   mp_new_number (mp, &math->coef_bound_minus_1, mp_fraction_type);
@@ -260,6 +262,7 @@ void * mp_initialize_double_math (MP mp) {
   math->n_arg = mp_double_n_arg;
   math->m_log = mp_double_m_log;
   math->m_exp = mp_double_m_exp;
+  math->m_norm_rand = mp_double_m_norm_rand;
   math->pyth_add = mp_double_pyth_add;
   math->pyth_sub = mp_double_pyth_sub;
   math->fraction_to_scaled = mp_number_fraction_to_scaled;
@@ -1249,3 +1252,86 @@ double modulus(double left, double right) {
 void mp_number_modulo (mp_number *a, mp_number b) {
    a->data.dval = modulus (a->data.dval, b.data.dval);
 }
+
+
+
+
+
+@ To consume a random fraction, the program below will say `|next_random|'.
+
+@c 
+static void mp_next_random (MP mp, mp_number *ret) { 
+  if ( mp->j_random==0 ) 
+    mp_new_randoms(mp);
+  else 
+    mp->j_random = mp->j_random-1;
+  mp_number_clone (ret, mp->randoms[mp->j_random]);
+}
+
+
+@ Finally, a normal deviate with mean zero and unit standard deviation
+can readily be obtained with the ratio method (Algorithm 3.4.1R in
+{\sl The Art of Computer Programming\/}).
+
+@c
+static void mp_double_m_norm_rand (MP mp, mp_number *ret) {
+  mp_number ab_vs_cd; 
+  mp_number abs_x;
+  mp_number u;
+  mp_number r;
+  mp_number la, xa;
+  new_number (ab_vs_cd);
+  new_number (la);
+  new_number (xa);
+  new_number (abs_x);
+  new_number (u);
+  new_number (r);
+  
+  do {
+    do {
+      mp_number v;
+      new_number (v);
+      mp_next_random(mp, &v);
+      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t); 
+      mp_double_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v); 
+      free_number (v);
+      mp_next_random(mp, &u);
+      mp_number_clone (&abs_x, xa);
+      mp_double_abs (&abs_x);
+    } while (!mp_number_less(abs_x, u));
+    mp_double_number_make_fraction (mp, &r, xa, u);
+    mp_number_clone (&xa, r);
+    mp_double_m_log (mp,&la, u);
+    mp_set_double_from_substraction(&la, ((math_data *)mp->math)->twelve_ln_2_k, la);
+    mp_double_ab_vs_cd (mp,&ab_vs_cd, ((math_data *)mp->math)->one_k, la, xa, xa);
+  } while (mp_number_less(ab_vs_cd,((math_data *)mp->math)->zero_t));
+  mp_number_clone (ret, xa);
+  free_number (ab_vs_cd);
+  free_number (r);
+  free_number (abs_x);
+  free_number (la);
+  free_number (xa);
+  free_number (u);
+}
+
+
+
+
+@ The following subroutine is used only in norm_rand and tests  if $ab$ is
+greater than, equal to, or less than~$cd$.
+The result is $+1$, 0, or~$-1$ in the three respective cases.
+
+@c
+void mp_double_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_number c_orig, mp_number d_orig) {
+  double ab, cd;
+  (void)mp;
+  ret->data.dval = 0 ;
+  ab = a_orig.data.dval*b_orig.data.dval;
+  cd = c_orig.data.dval*d_orig.data.dval;
+  if (ab > cd ) 
+       ret->data.dval = 1 ;
+  else if (ab < cd ) 
+       ret->data.dval = -1 ;
+  return ;
+}
+

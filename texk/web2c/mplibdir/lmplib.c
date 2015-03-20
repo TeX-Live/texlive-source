@@ -52,9 +52,6 @@
 #include "mplibsvg.h"
 #include "mplibpng.h"
 
-   /*@unused@*/ static const char _svn_version[] =
-    "$Id: lmplib.c 2036 2014-06-26 18:44:57Z luigi $";
-
 int luaopen_mplib(lua_State * L); /* forward */
 
 /* metatable identifiers and tests */

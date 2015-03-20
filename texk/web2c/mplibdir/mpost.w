@@ -1,5 +1,3 @@
-% $Id: mpost.w 2048 2014-12-04 10:26:26Z luigi $
-%
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
 % See the <Show version...> code below for more info.
