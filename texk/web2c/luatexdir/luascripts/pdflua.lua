@@ -1,5 +1,3 @@
--- $Id: pdflua.lua 3949 2010-11-07 00:09:19Z hhenkel $
--- $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luascripts/pdflua.lua $
 
 -- this is early work in progress...
 

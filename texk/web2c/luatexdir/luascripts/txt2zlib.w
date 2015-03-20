@@ -17,9 +17,7 @@
 %
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
-%
-% $Id: txt2zlib.w 4479 2012-11-07 16:38:55Z taco $
-% $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luascripts/txt2zlib.w $
+
 
 @
 @c

@@ -1,6 +1,17 @@
 
 This file is in the public domain.
 
+
+==============================================================
+Luatex beta-0.80.0 was released 20150319 (5195)
+==============================================================
+
+* New library newtokenlib. It will replace the current token lib.
+* Fixed a bug on the normal random generator for double/decimal/binary
+  number systems.
+* Several others bugs fixed.
+
+
 ==============================================================
 Luatex beta-0.79.3.1 was released 20150122 (5140)
 ==============================================================

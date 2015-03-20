@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfglyph.h 5073 2014-10-24 16:54:52Z oneiros $ */
 
 #ifndef PDFGLYPH_H
 #  define PDFGLYPH_H

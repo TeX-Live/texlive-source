@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: dumpdata.h 4479 2012-11-07 16:38:55Z taco $ */
 
 #ifndef DUMPDATA_H
 #  define DUMPDATA_H

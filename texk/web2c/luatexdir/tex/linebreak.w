@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: linebreak.w 4777 2014-02-10 10:09:39Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/linebreak.w $";
+
 
 #include "ptexlib.h"
 
@@ -1951,8 +1949,11 @@ ext_do_line_break(int paragraph_dir,
                 /* Try to break after a discretionary fragment, then |goto done5|; */
                 /* The following code knows that discretionary texts contain
                    only character nodes, kern nodes, box nodes, and rule
-                   nodes. */
-                if (second_pass) {
+                   nodes. This branch differs a bit from older engines because in LuaTeX we
+                   already have hyphenated the list. This means that we need to skip
+                   automatic disc nodes. Of better, we need to treat discretionaries
+                   and explicit hyphens always, even in the first pass (HH). */
+                if (second_pass || subtype(cur_p) <= automatic_disc) {
                     int actual_penalty = hyphen_penalty;
                     if (subtype(cur_p) == automatic_disc)
                         actual_penalty = ex_hyphen_penalty;

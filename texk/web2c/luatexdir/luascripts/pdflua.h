@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdflua.h 3937 2010-11-01 21:58:54Z hhenkel $ */
 
 #ifndef PDFLUA_H
 #  define PDFLUA_H

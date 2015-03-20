@@ -22,9 +22,7 @@
 \def\pdfTeX{pdf\TeX}
 
 @ @c
-static const char _svn_version[] =
-    "$Id: mainbody.w 4956 2014-03-28 12:12:17Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mainbody.w $";
+
 
 #include "ptexlib.h"
 

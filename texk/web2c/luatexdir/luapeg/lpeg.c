@@ -7,14 +7,14 @@
 ** Copyright 2007, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 */
 
-/* #include <ctype.h> */
-/* #include <limits.h> */
-/* #include <stdio.h> */
+/* #include <ctype.h>*/
+/* #include <limits.h>*/
+/* #include <stdio.h>*/
 
 
-/* #include "lptypes.h" */
-/* #include "lpprint.h" */
-/* #include "lpcode.h" */
+/* #include "lptypes.h"*/
+/* #include "lpprint.h"*/
+/* #include "lpcode.h"*/
 
 
 #if defined(LPEG_DEBUG)
@@ -246,24 +246,22 @@ void printktable (lua_State *L, int idx) {
 /* }====================================================== */
 
 #endif
-
-
 /*
 ** $Id: lpvm.c,v 1.5 2013/04/12 16:29:49 roberto Exp $
 ** Copyright 2007, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 */
 
-/* #include <limits.h> */
-/* #include <string.h> */
+/* #include <limits.h>*/
+/* #include <string.h>*/
 
 
-/* #include "lua.h" */
-/* #include "lauxlib.h" */
+/* #include "lua.h"*/
+/* #include "lauxlib.h"*/
 
-/* #include "lpcap.h" */
-/* #include "lptypes.h" */
-/* #include "lpvm.h" */
-/* #include "lpprint.h" */
+/* #include "lpcap.h"*/
+/* #include "lptypes.h"*/
+/* #include "lpvm.h"*/
+/* #include "lpprint.h"*/
 
 
 /* initial size for call/backtrack stack */
@@ -603,21 +601,19 @@ const char *match (lua_State *L, const char *o, const char *s, const char *e,
 /* }====================================================== */
 
 
-
-
 /*
-** $Id: lpcode.c,v 1.18 2013/04/12 16:30:33 roberto Exp $
+** $Id: lpcode.c,v 1.21 2014/12/12 17:01:29 roberto Exp $
 ** Copyright 2007, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 */
 
-/* #include <limits.h> */
+/* #include <limits.h>*/
 
 
-/* #include "lua.h" */
-/* #include "lauxlib.h" */
+/* #include "lua.h"*/
+/* #include "lauxlib.h"*/
 
-/* #include "lptypes.h" */
-/* #include "lpcode.h" */
+/* #include "lptypes.h"*/
+/* #include "lpcode.h"*/
 
 
 /* signals a "no-instruction */
@@ -640,26 +636,30 @@ static const Charset *fullset = &fullset_;
 */
 
 /*
-** Check whether a charset is empty (IFail), singleton (IChar),
-** full (IAny), or none of those (ISet).
+** Check whether a charset is empty (returns IFail), singleton (IChar),
+** full (IAny), or none of those (ISet). When singleton, '*c' returns
+** which character it is. (When generic set, the set was the input,
+** so there is no need to return it.)
 */
 static Opcode charsettype (const byte *cs, int *c) {
-  int count = 0;
+  int count = 0;  /* number of characters in the set */
   int i;
-  int candidate = -1;  /* candidate position for a char */
-  for (i = 0; i < CHARSETSIZE; i++) {
+  int candidate = -1;  /* candidate position for the singleton char */
+  for (i = 0; i < CHARSETSIZE; i++) {  /* for each byte */
     int b = cs[i];
-    if (b == 0) {
-      if (count > 1) return ISet;  /* else set is still empty */
+    if (b == 0) {  /* is byte empty? */
+      if (count > 1)  /* was set neither empty nor singleton? */
+        return ISet;  /* neither full nor empty nor singleton */
+      /* else set is still empty or singleton */
     }
-    else if (b == 0xFF) {
-      if (count < (i * BITSPERCHAR))
-        return ISet;
+    else if (b == 0xFF) {  /* is byte full? */
+      if (count < (i * BITSPERCHAR))  /* was set not full? */
+        return ISet;  /* neither full nor empty nor singleton */
       else count += BITSPERCHAR;  /* set is still full */
     }
-    else if ((b & (b - 1)) == 0) {  /* byte has only one bit? */
-      if (count > 0)
-        return ISet;  /* set is neither full nor empty */
+    else if ((b & (b - 1)) == 0) {  /* has byte only one bit? */
+      if (count > 0)  /* was set not empty? */
+        return ISet;  /* neither full nor empty nor singleton */
       else {  /* set has only one char till now; track it */
         count++;
         candidate = i;
@@ -684,6 +684,7 @@ static Opcode charsettype (const byte *cs, int *c) {
   }
 }
 
+
 /*
 ** A few basic operations on Charsets
 */
@@ -691,16 +692,11 @@ static void cs_complement (Charset *cs) {
   loopset(i, cs->cs[i] = ~cs->cs[i]);
 }
 
-
 static int cs_equal (const byte *cs1, const byte *cs2) {
   loopset(i, if (cs1[i] != cs2[i]) return 0);
   return 1;
 }
 
-
-/*
-** computes whether sets cs1 and cs2 are disjoint
-*/
 static int cs_disjoint (const Charset *cs1, const Charset *cs2) {
   loopset(i, if ((cs1->cs[i] & cs2->cs[i]) != 0) return 0;)
   return 1;
@@ -708,7 +704,8 @@ static int cs_disjoint (const Charset *cs1, const Charset *cs2) {
 
 
 /*
-** Convert a 'char' pattern (TSet, TChar, TAny) to a charset
+** If 'tree' is a 'char' pattern (TSet, TChar, TAny), convert it into a
+** charset and return 1; else return 0.
 */
 int tocharset (TTree *tree, Charset *cs) {
   switch (tree->tag) {
@@ -723,7 +720,7 @@ int tocharset (TTree *tree, Charset *cs) {
       return 1;
     }
     case TAny: {
-      loopset(i, cs->cs[i] = 0xFF);  /* add all to the set */
+      loopset(i, cs->cs[i] = 0xFF);  /* add all characters to the set */
       return 1;
     }
     default: return 0;
@@ -732,13 +729,16 @@ int tocharset (TTree *tree, Charset *cs) {
 
 
 /*
-** Checks whether a pattern has captures
+** Check whether a pattern tree has captures
 */
 int hascaptures (TTree *tree) {
  tailcall:
   switch (tree->tag) {
     case TCapture: case TRunTime:
       return 1;
+    case TCall:
+      tree = sib2(tree); goto tailcall;  /* return hascaptures(sib2(tree)); */
+    case TOpenCall: assert(0);
     default: {
       switch (numsiblings[tree->tag]) {
         case 1:  /* return hascaptures(sib1(tree)); */
@@ -768,7 +768,7 @@ int hascaptures (TTree *tree) {
 **    p is nullable => nullable(p)
 **    nofail(p) => p cannot fail
 ** The function assumes that TOpenCall is not nullable;
-** this will be checked again when the grammar is fixed.)
+** this will be checked again when the grammar is fixed.
 ** Run-time captures can do whatever they want, so the result
 ** is conservative.
 */
@@ -805,7 +805,7 @@ int checkaux (TTree *tree, int pred) {
     case TCall:  /* return checkaux(sib2(tree), pred); */
       tree = sib2(tree); goto tailcall;
     default: assert(0); return 0;
-  };
+  }
 }
 
 
@@ -852,16 +852,20 @@ int fixedlenx (TTree *tree, int count, int len) {
 /*
 ** Computes the 'first set' of a pattern.
 ** The result is a conservative aproximation:
-**   match p ax -> x' for some x ==> a in first(p).
+**   match p ax -> x (for some x) ==> a belongs to first(p)
+** or
+**   a not in first(p) ==> match p ax -> fail (for all x)
+**
 ** The set 'follow' is the first set of what follows the
 ** pattern (full set if nothing follows it).
-** The function returns 0 when this set can be used for
-** tests that avoid the pattern altogether.
+**
+** The function returns 0 when this resulting set can be used for
+** test instructions that avoid the pattern altogether.
 ** A non-zero return can happen for two reasons:
-** 1) match p '' -> ''            ==> returns 1.
-** (tests cannot be used because they always fail for an empty input)
-** 2) there is a match-time capture ==> returns 2.
-** (match-time captures should not be avoided by optimizations)
+** 1) match p '' -> ''            ==> return has bit 1 set
+** (tests cannot be used because they would always fail for an empty input);
+** 2) there is a match-time capture ==> return has bit 2 set
+** (optimizations should not bypass match-time captures).
 */
 static int getfirst (TTree *tree, const Charset *follow, Charset *firstset) {
  tailcall:
@@ -872,7 +876,7 @@ static int getfirst (TTree *tree, const Charset *follow, Charset *firstset) {
     }
     case TTrue: {
       loopset(i, firstset->cs[i] = follow->cs[i]);
-      return 1;
+      return 1;  /* accepts the empty string */
     }
     case TFalse: {
       loopset(i, firstset->cs[i] = 0);
@@ -887,7 +891,8 @@ static int getfirst (TTree *tree, const Charset *follow, Charset *firstset) {
     }
     case TSeq: {
       if (!nullable(sib1(tree))) {
-        /* return getfirst(sib1(tree), fullset, firstset); */
+        /* when p1 is not nullable, p2 has nothing to contribute;
+           return getfirst(sib1(tree), fullset, firstset); */
         tree = sib1(tree); follow = fullset; goto tailcall;
       }
       else {  /* FIRST(p1 p2, fl) = FIRST(p1, FIRST(p2, fl)) */
@@ -931,7 +936,7 @@ static int getfirst (TTree *tree, const Charset *follow, Charset *firstset) {
       /* else go through */
     }
     case TBehind: {  /* instruction gives no new information */
-      /* call 'getfirst' to check for math-time captures */
+      /* call 'getfirst' only to check for math-time captures */
       int e = getfirst(sib1(tree), follow, firstset);
       loopset(i, firstset->cs[i] = follow->cs[i]);  /* uses follow */
       return e | 1;  /* always can accept the empty string */
@@ -942,8 +947,8 @@ static int getfirst (TTree *tree, const Charset *follow, Charset *firstset) {
 
 
 /*
-** If it returns true, then pattern can fail only depending on the next
-** character of the subject
+** If 'headfail(tree)' true, then 'tree' can fail only depending on the
+** next character of the subject.
 */
 static int headfail (TTree *tree) {
  tailcall:
@@ -1010,9 +1015,9 @@ int sizei (const Instruction *i) {
   switch((Opcode)i->i.code) {
     case ISet: case ISpan: return CHARSETINSTSIZE;
     case ITestSet: return CHARSETINSTSIZE + 1;
-    case ITestChar: case ITestAny: case IChoice: case IJmp: 
-    case ICall: case IOpenCall: case ICommit: case IPartialCommit:
-    case IBackCommit: return 2;
+    case ITestChar: case ITestAny: case IChoice: case IJmp: case ICall:
+    case IOpenCall: case ICommit: case IPartialCommit: case IBackCommit:
+      return 2;
     default: return 1;
   }
 }
@@ -1030,7 +1035,8 @@ typedef struct CompileState {
 
 /*
 ** code generation is recursive; 'opt' indicates that the code is
-** being generated under a 'IChoice' operator jumping to its end.
+** being generated under a 'IChoice' operator jumping to its end
+** (that is, the match is "optional").
 ** 'tt' points to a previous test protecting this code. 'fl' is
 ** the follow set of the pattern.
 */
@@ -1038,7 +1044,7 @@ static void codegen (CompileState *compst, TTree *tree, int opt, int tt,
                      const Charset *fl);
 
 
-void reallocprog (lua_State *L, Pattern *p, int nsize) {
+void realloccode (lua_State *L, Pattern *p, int nsize) {
   void *ud;
   lua_Alloc f = lua_getallocf(L, &ud);
   void *newblock = f(ud, p->code, p->codesize * sizeof(Instruction),
@@ -1053,7 +1059,7 @@ void reallocprog (lua_State *L, Pattern *p, int nsize) {
 static int nextinstruction (CompileState *compst) {
   int size = compst->p->codesize;
   if (compst->ncode >= size)
-    reallocprog(compst->L, compst->p, size * 2);
+    realloccode(compst->L, compst->p, size * 2);
   return compst->ncode++;
 }
 
@@ -1069,6 +1075,9 @@ static int addinstruction (CompileState *compst, Opcode op, int aux) {
 }
 
 
+/*
+** Add an instruction followed by space for an offset (to be set later)
+*/
 static int addoffsetinst (CompileState *compst, Opcode op) {
   int i = addinstruction(compst, op, 0);  /* instruction */
   addinstruction(compst, (Opcode)0, 0);  /* open space for offset */
@@ -1077,6 +1086,9 @@ static int addoffsetinst (CompileState *compst, Opcode op) {
 }
 
 
+/*
+** Set the offset of an instruction
+*/
 static void setoffset (CompileState *compst, int instruction, int offset) {
   getinstr(compst, instruction + 1).offset = offset;
 }
@@ -1085,7 +1097,7 @@ static void setoffset (CompileState *compst, int instruction, int offset) {
 /*
 ** Add a capture instruction:
 ** 'op' is the capture instruction; 'cap' the capture kind;
-** 'key' the key into ktable; 'aux' is optional offset
+** 'key' the key into ktable; 'aux' is the optional capture offset
 **
 */
 static int addinstcap (CompileState *compst, Opcode op, int cap, int key,
@@ -1101,12 +1113,18 @@ static int addinstcap (CompileState *compst, Opcode op, int cap, int key,
 #define target(code,i)		((i) + code[i + 1].offset)
 
 
+/*
+** Patch 'instruction' to jump to 'target'
+*/
 static void jumptothere (CompileState *compst, int instruction, int target) {
   if (instruction >= 0)
     setoffset(compst, instruction, target - instruction);
 }
 
 
+/*
+** Patch 'instruction' to jump to current position
+*/
 static void jumptohere (CompileState *compst, int instruction) {
   jumptothere(compst, instruction, gethere(compst));
 }
@@ -1470,7 +1488,8 @@ static int codeseq1 (CompileState *compst, TTree *p1, TTree *p2,
 
 /*
 ** Main code-generation function: dispatch to auxiliar functions
-** according to kind of tree
+** according to kind of tree. ('needfollow' should return true
+** only for consructions that use 'fl'.)
 */
 static void codegen (CompileState *compst, TTree *tree, int opt, int tt,
                      const Charset *fl) {
@@ -1513,6 +1532,7 @@ static void peephole (CompileState *compst) {
   Instruction *code = compst->p->code;
   int i;
   for (i = 0; i < compst->ncode; i += sizei(&code[i])) {
+   redo:
     switch (code[i].i.code) {
       case IChoice: case ICall: case ICommit: case IPartialCommit:
       case IBackCommit: case ITestChar: case ITestSet:
@@ -1534,8 +1554,7 @@ static void peephole (CompileState *compst) {
             int fft = finallabel(code, ft);
             code[i] = code[ft];  /* jump becomes that instruction... */
             jumptothere(compst, i, fft);  /* but must correct its offset */
-            i--;  /* reoptimize its label */
-            break;
+            goto redo;  /* reoptimize its label */
           }
           default: {
             jumptothere(compst, i, ft);  /* optimize label */
@@ -1557,10 +1576,10 @@ static void peephole (CompileState *compst) {
 Instruction *compile (lua_State *L, Pattern *p) {
   CompileState compst;
   compst.p = p;  compst.ncode = 0;  compst.L = L;
-  reallocprog(L, p, 2);  /* minimum initial size */
+  realloccode(L, p, 2);  /* minimum initial size */
   codegen(&compst, p->tree, 0, NOINST, fullset);
   addinstruction(&compst, IEnd, 0);
-  reallocprog(L, p, compst.ncode);  /* set final size */
+  realloccode(L, p, compst.ncode);  /* set final size */
   peephole(&compst);
   return p->code;
 }
@@ -1568,17 +1587,16 @@ Instruction *compile (lua_State *L, Pattern *p) {
 
 /* }====================================================== */
 
-
 /*
-** $Id: lpcap.c,v 1.4 2013/03/21 20:25:12 roberto Exp $
+** $Id: lpcap.c,v 1.5 2014/12/12 16:58:47 roberto Exp $
 ** Copyright 2007, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 */
 
-/* #include "lua.h" */
-/* #include "lauxlib.h" */
+/* #include "lua.h"*/
+/* #include "lauxlib.h"*/
 
-/* #include "lpcap.h" */
-/* #include "lptypes.h" */
+/* #include "lpcap.h"*/
+/* #include "lptypes.h"*/
 
 
 #define captype(cap)	((cap)->kind)
@@ -2033,7 +2051,7 @@ static int pushcapture (CapState *cs) {
     case Carg: {
       int arg = (cs->cap++)->idx;
       if (arg + FIXEDARGS > cs->ptop)
-        return luaL_error(L, "reference to absent argument #%d", arg);
+        return luaL_error(L, "reference to absent extra argument #%d", arg);
       lua_pushvalue(L, arg + FIXEDARGS);
       return 1;
     }
@@ -2107,23 +2125,23 @@ int getcaptures (lua_State *L, const char *s, const char *r, int ptop) {
 
 
 /*
-** $Id: lptree.c,v 1.10 2013/04/12 16:30:33 roberto Exp $
+** $Id: lptree.c,v 1.15 2015/03/04 17:23:00 roberto Exp $
 ** Copyright 2013, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 */
 
-/* #include <ctype.h> */
-/* #include <limits.h> */
-/* #include <string.h> */
+/* #include <ctype.h>*/
+/* #include <limits.h>*/
+/* #include <string.h>*/
 
 
-/* #include "lua.h" */
-/* #include "lauxlib.h" */
+/* #include "lua.h"*/
+/* #include "lauxlib.h"*/
 
-/* #include "lptypes.h" */
-/* #include "lpcap.h" */
-/* #include "lpcode.h" */
-/* #include "lpprint.h" */
-/* #include "lptree.h" */
+/* #include "lptypes.h"*/
+/* #include "lpcap.h"*/
+/* #include "lpcode.h"*/
+/* #include "lpprint.h"*/
+/* #include "lptree.h"*/
 
 
 /* number of siblings for each tree */
@@ -2234,6 +2252,189 @@ static void finalfix (lua_State *L, int postable, TTree *g, TTree *t) {
 }
 
 
+
+/*
+** {===================================================================
+** KTable manipulation
+**
+** - The ktable of a pattern 'p' can be shared by other patterns that
+** contain 'p' and no other constants. Because of this sharing, we
+** should not add elements to a 'ktable' unless it was freshly created
+** for the new pattern.
+**
+** - The maximum index in a ktable is USHRT_MAX, because trees and
+** patterns use unsigned shorts to store those indices.
+** ====================================================================
+*/
+
+/*
+** Create a new 'ktable' to the pattern at the top of the stack.
+*/
+static void newktable (lua_State *L, int n) {
+  lua_createtable(L, n, 0);  /* create a fresh table */
+  lua_setfenv(L, -2);  /* set it as 'ktable' for pattern */
+}
+
+
+/*
+** Add element 'idx' to 'ktable' of pattern at the top of the stack;
+** Return index of new element.
+** If new element is nil, does not add it to table (as it would be
+** useless) and returns 0, as ktable[0] is always nil.
+*/
+static int addtoktable (lua_State *L, int idx) {
+  if (lua_isnil(L, idx))  /* nil value? */
+    return 0;
+  else {
+    int n;
+    lua_getfenv(L, -1);  /* get ktable from pattern */
+    n = lua_objlen(L, -1);
+    if (n >= USHRT_MAX)
+      luaL_error(L, "too many Lua values in pattern");
+    lua_pushvalue(L, idx);  /* element to be added */
+    lua_rawseti(L, -2, ++n);
+    lua_pop(L, 1);  /* remove 'ktable' */
+    return n;
+  }
+}
+
+
+/*
+** Return the number of elements in the ktable at 'idx'.
+** In Lua 5.2/5.3, default "environment" for patterns is nil, not
+** a table. Treat it as an empty table. In Lua 5.1, assumes that
+** the environment has no numeric indices (len == 0)
+*/
+static int ktablelen (lua_State *L, int idx) {
+  if (!lua_istable(L, idx)) return 0;
+  else return lua_objlen(L, idx);
+}
+
+
+/*
+** Concatentate the contents of table 'idx1' into table 'idx2'.
+** (Assume that both indices are negative.)
+** Return the original length of table 'idx2' (or 0, if no
+** element was added, as there is no need to correct any index).
+*/
+static int concattable (lua_State *L, int idx1, int idx2) {
+  int i;
+  int n1 = ktablelen(L, idx1);
+  int n2 = ktablelen(L, idx2);
+  if (n1 + n2 > USHRT_MAX)
+    luaL_error(L, "too many Lua values in pattern");
+  if (n1 == 0) return 0;  /* nothing to correct */
+  for (i = 1; i <= n1; i++) {
+    lua_rawgeti(L, idx1, i);
+    lua_rawseti(L, idx2 - 1, n2 + i);  /* correct 'idx2' */
+  }
+  return n2;
+}
+
+
+/*
+** When joining 'ktables', constants from one of the subpatterns must
+** be renumbered; 'correctkeys' corrects their indices (adding 'n'
+** to each of them)
+*/
+static void correctkeys (TTree *tree, int n) {
+  if (n == 0) return;  /* no correction? */
+ tailcall:
+  switch (tree->tag) {
+    case TOpenCall: case TCall: case TRunTime: case TRule: {
+      if (tree->key > 0)
+        tree->key += n;
+      break;
+    }
+    case TCapture: {
+      if (tree->key > 0 && tree->cap != Carg && tree->cap != Cnum)
+        tree->key += n;
+      break;
+    }
+    default: break;
+  }
+  switch (numsiblings[tree->tag]) {
+    case 1:  /* correctkeys(sib1(tree), n); */
+      tree = sib1(tree); goto tailcall;
+    case 2:
+      correctkeys(sib1(tree), n);
+      tree = sib2(tree); goto tailcall;  /* correctkeys(sib2(tree), n); */
+    default: assert(numsiblings[tree->tag] == 0); break;
+  }
+}
+
+
+/*
+** Join the ktables from p1 and p2 the ktable for the new pattern at the
+** top of the stack, reusing them when possible.
+*/
+static void joinktables (lua_State *L, int p1, TTree *t2, int p2) {
+  int n1, n2;
+  lua_getfenv(L, p1);  /* get ktables */
+  lua_getfenv(L, p2);
+  n1 = ktablelen(L, -2);
+  n2 = ktablelen(L, -1);
+  if (n1 == 0 && n2 == 0)  /* are both tables empty? */
+    lua_pop(L, 2);  /* nothing to be done; pop tables */
+  else if (n2 == 0 || lua_equal(L, -2, -1)) {  /* 2nd table empty or equal? */
+    lua_pop(L, 1);  /* pop 2nd table */
+    lua_setfenv(L, -2);  /* set 1st ktable into new pattern */
+  }
+  else if (n1 == 0) {  /* first table is empty? */
+    lua_setfenv(L, -3);  /* set 2nd table into new pattern */
+    lua_pop(L, 1);  /* pop 1st table */
+  }
+  else {
+    lua_createtable(L, n1 + n2, 0);  /* create ktable for new pattern */
+    /* stack: new p; ktable p1; ktable p2; new ktable */
+    concattable(L, -3, -1);  /* from p1 into new ktable */
+    concattable(L, -2, -1);  /* from p2 into new ktable */
+    lua_setfenv(L, -4);  /* new ktable becomes 'p' environment */
+    lua_pop(L, 2);  /* pop other ktables */
+    correctkeys(t2, n1);  /* correction for indices from p2 */
+  }
+}
+
+
+/*
+** copy 'ktable' of element 'idx' to new tree (on top of stack)
+*/
+static void copyktable (lua_State *L, int idx) {
+  lua_getfenv(L, idx);
+  lua_setfenv(L, -2);
+}
+
+
+/*
+** merge 'ktable' from 'stree' at stack index 'idx' into 'ktable'
+** from tree at the top of the stack, and correct corresponding
+** tree.
+*/
+static void mergektable (lua_State *L, int idx, TTree *stree) {
+  int n;
+  lua_getfenv(L, -1);  /* get ktables */
+  lua_getfenv(L, idx);
+  n = concattable(L, -1, -2);
+  lua_pop(L, 2);  /* remove both ktables */
+  correctkeys(stree, n);
+}
+
+
+/*
+** Create a new 'ktable' to the pattern at the top of the stack, adding
+** all elements from pattern 'p' (if not 0) plus element 'idx' to it.
+** Return index of new element.
+*/
+static int addtonewktable (lua_State *L, int p, int idx) {
+  newktable(L, 1);
+  if (p)
+    mergektable(L, p, NULL);
+  return addtoktable(L, idx);
+}
+
+/* }====================================================== */
+
+
 /*
 ** {======================================================
 ** Tree generation
@@ -2315,29 +2516,6 @@ static TTree *seqaux (TTree *tree, TTree *sib, int sibsize) {
 
 
 /*
-** Add element 'idx' to 'ktable' of pattern at the top of the stack;
-** create new 'ktable' if necessary. Return index of new element.
-*/
-static int addtoktable (lua_State *L, int idx) {
-  if (idx == 0 || lua_isnil(L, idx))  /* no actual value to insert? */
-    return 0;
-  else {
-    int n;
-    lua_getfenv(L, -1);  /* get ktable from pattern */
-    n = lua_objlen(L, -1);
-    if (n == 0) {  /* is it empty/non-existent? */
-      lua_pop(L, 1);  /* remove it */
-      lua_createtable(L, 1, 0);  /* create a fresh table */
-    }
-    lua_pushvalue(L, idx);  /* element to be added */
-    lua_rawseti(L, -2, n + 1);
-    lua_setfenv(L, -2);  /* set it as ktable for pattern */
-    return n + 1;
-  }
-}
-
-
-/*
 ** Build a sequence of 'n' nodes, each with tag 'tag' and 'u.n' got
 ** from the array 's' (or 0 if array is NULL). (TSeq is binary, so it
 ** must build a sequence of sequence of sequence...)
@@ -2412,7 +2590,7 @@ static TTree *getpatt (lua_State *L, int idx, int *len) {
     case LUA_TFUNCTION: {
       tree = newtree(L, 2);
       tree->tag = TRunTime;
-      tree->key = addtoktable(L, idx);
+      tree->key = addtonewktable(L, 0, idx);
       sib1(tree)->tag = TTrue;
       break;
     }
@@ -2424,123 +2602,6 @@ static TTree *getpatt (lua_State *L, int idx, int *len) {
   if (len)
     *len = getsize(L, idx);
   return tree;
-}
-
-
-/*
-** Return the number of elements in the ktable of pattern at 'idx'.
-** In Lua 5.2, default "environment" for patterns is nil, not
-** a table. Treat it as an empty table. In Lua 5.1, assumes that
-** the environment has no numeric indices (len == 0)
-*/
-static int ktablelen (lua_State *L, int idx) {
-  if (!lua_istable(L, idx)) return 0;
-  else return lua_objlen(L, idx);
-}
-
-
-/*
-** Concatentate the contents of table 'idx1' into table 'idx2'.
-** (Assume that both indices are negative.)
-** Return the original length of table 'idx2'
-*/
-static int concattable (lua_State *L, int idx1, int idx2) {
-  int i;
-  int n1 = ktablelen(L, idx1);
-  int n2 = ktablelen(L, idx2);
-  if (n1 == 0) return 0;  /* nothing to correct */
-  for (i = 1; i <= n1; i++) {
-    lua_rawgeti(L, idx1, i);
-    lua_rawseti(L, idx2 - 1, n2 + i);  /* correct 'idx2' */
-  }
-  return n2;
-}
-
-
-/*
-** Make a merge of ktables from p1 and p2 the ktable for the new
-** pattern at the top of the stack.
-*/
-static int joinktables (lua_State *L, int p1, int p2) {
-  int n1, n2;
-  lua_getfenv(L, p1);  /* get ktables */
-  lua_getfenv(L, p2);
-  n1 = ktablelen(L, -2);
-  n2 = ktablelen(L, -1);
-  if (n1 == 0 && n2 == 0) {  /* are both tables empty? */
-    lua_pop(L, 2);  /* nothing to be done; pop tables */
-    return 0;  /* nothing to correct */
-  }
-  if (n2 == 0 || lua_equal(L, -2, -1)) {  /* second table is empty or equal? */
-    lua_pop(L, 1);  /* pop 2nd table */
-    lua_setfenv(L, -2);  /* set 1st ktable into new pattern */
-    return 0;  /* nothing to correct */
-  }
-  if (n1 == 0) {  /* first table is empty? */
-    lua_setfenv(L, -3);  /* set 2nd table into new pattern */
-    lua_pop(L, 1);  /* pop 1st table */
-    return 0;  /* nothing to correct */
-  }
-  else {
-    lua_createtable(L, n1 + n2, 0);  /* create ktable for new pattern */
-    /* stack: new p; ktable p1; ktable p2; new ktable */
-    concattable(L, -3, -1);  /* from p1 into new ktable */
-    concattable(L, -2, -1);  /* from p2 into new ktable */
-    lua_setfenv(L, -4);  /* new ktable becomes p env */
-    lua_pop(L, 2);  /* pop other ktables */
-    return n1;  /* correction for indices from p2 */
-  }
-}
-
-
-static void correctkeys (TTree *tree, int n) {
-  if (n == 0) return;  /* no correction? */
- tailcall:
-  switch (tree->tag) {
-    case TOpenCall: case TCall: case TRunTime: case TRule: {
-      if (tree->key > 0)
-        tree->key += n;
-      break;
-    }
-    case TCapture: {
-      if (tree->key > 0 && tree->cap != Carg && tree->cap != Cnum)
-        tree->key += n;
-      break;
-    }
-    default: break;
-  }
-  switch (numsiblings[tree->tag]) {
-    case 1:  /* correctkeys(sib1(tree), n); */
-      tree = sib1(tree); goto tailcall;
-    case 2:
-      correctkeys(sib1(tree), n);
-      tree = sib2(tree); goto tailcall;  /* correctkeys(sib2(tree), n); */
-    default: assert(numsiblings[tree->tag] == 0); break;
-  }
-}
-
-
-/*
-** copy 'ktable' of element 'idx' to new tree (on top of stack)
-*/
-static void copyktable (lua_State *L, int idx) {
-  lua_getfenv(L, idx);
-  lua_setfenv(L, -2);
-}
-
-
-/*
-** merge 'ktable' from rule at stack index 'idx' into 'ktable'
-** from tree at the top of the stack, and correct corresponding
-** tree.
-*/
-static void mergektable (lua_State *L, int idx, TTree *rule) {
-  int n;
-  lua_getfenv(L, -1);  /* get ktables */
-  lua_getfenv(L, idx);
-  n = concattable(L, -1, -2);
-  lua_pop(L, 2);  /* remove both ktables */
-  correctkeys(rule, n);
 }
 
 
@@ -2572,7 +2633,7 @@ static TTree *newroot2sib (lua_State *L, int tag) {
   tree->u.ps =  1 + s1;
   memcpy(sib1(tree), tree1, s1 * sizeof(TTree));
   memcpy(sib2(tree), tree2, s2 * sizeof(TTree));
-  correctkeys(sib2(tree), joinktables(L, 1, 2));
+  joinktables(L, 1, sib2(tree), 2);
   return tree;
 }
 
@@ -2632,8 +2693,8 @@ static int lp_choice (lua_State *L) {
 */
 static int lp_star (lua_State *L) {
   int size1;
-  int n = luaL_checkint(L, 2);
-  TTree *tree1 = gettree(L, 1, &size1);
+  int n = (int)luaL_checkinteger(L, 2);
+  TTree *tree1 = getpatt(L, 1, &size1);
   if (n >= 0) {  /* seq tree1 (seq tree1 ... (seq tree1 (rep tree1))) */
     TTree *tree = newtree(L, (n + 1) * (size1 + 1));
     if (nullable(tree1))
@@ -2701,7 +2762,7 @@ static int lp_sub (lua_State *L) {
     sib1(tree)->tag = TNot;  /* ...not... */
     memcpy(sib1(sib1(tree)), t2, s2 * sizeof(TTree));  /* ...t2 */
     memcpy(sib2(tree), t1, s1 * sizeof(TTree));  /* ... and t1 */
-    correctkeys(sib1(tree), joinktables(L, 1, 2));
+    joinktables(L, 1, sib1(tree), 2);
   }
   return 1;
 }
@@ -2742,8 +2803,8 @@ static int lp_behind (lua_State *L) {
   TTree *tree;
   TTree *tree1 = getpatt(L, 1, NULL);
   int n = fixedlen(tree1);
-  luaL_argcheck(L, !hascaptures(tree1), 1, "pattern have captures");
   luaL_argcheck(L, n > 0, 1, "pattern may not have fixed length");
+  luaL_argcheck(L, !hascaptures(tree1), 1, "pattern have captures");
   luaL_argcheck(L, n <= MAXBEHIND, 1, "pattern too long to look behind");
   tree = newroot1sib(L, TBehind);
   tree->u.n = n;
@@ -2757,7 +2818,7 @@ static int lp_behind (lua_State *L) {
 static int lp_V (lua_State *L) {
   TTree *tree = newleaf(L, TOpenCall);
   luaL_argcheck(L, !lua_isnoneornil(L, 1), 1, "non-nil value expected");
-  tree->key = addtoktable(L, 1);
+  tree->key = addtonewktable(L, 0, 1);
   return 1;
 }
 
@@ -2770,7 +2831,7 @@ static int lp_V (lua_State *L) {
 static int capture_aux (lua_State *L, int cap, int labelidx) {
   TTree *tree = newroot1sib(L, TCapture);
   tree->cap = cap;
-  tree->key = addtoktable(L, labelidx);
+  tree->key = (labelidx == 0) ? 0 : addtonewktable(L, 1, labelidx);
   return 1;
 }
 
@@ -2778,10 +2839,9 @@ static int capture_aux (lua_State *L, int cap, int labelidx) {
 /*
 ** Fill a tree with an empty capture, using an empty (TTrue) sibling.
 */
-static TTree *auxemptycap (lua_State *L, TTree *tree, int cap, int idx) {
+static TTree *auxemptycap (TTree *tree, int cap) {
   tree->tag = TCapture;
   tree->cap = cap;
-  tree->key = addtoktable(L, idx);
   sib1(tree)->tag = TTrue;
   return tree;
 }
@@ -2790,8 +2850,18 @@ static TTree *auxemptycap (lua_State *L, TTree *tree, int cap, int idx) {
 /*
 ** Create a tree for an empty capture
 */
-static TTree *newemptycap (lua_State *L, int cap, int idx) {
-  return auxemptycap(L, newtree(L, 2), cap, idx);
+static TTree *newemptycap (lua_State *L, int cap) {
+  return auxemptycap(newtree(L, 2), cap);
+}
+
+
+/*
+** Create a tree for an empty capture with an associated Lua value
+*/
+static TTree *newemptycapkey (lua_State *L, int cap, int idx) {
+  TTree *tree = auxemptycap(newtree(L, 2), cap);
+  tree->key = addtonewktable(L, 0, idx);
+  return tree;
 }
 
 
@@ -2849,14 +2919,14 @@ static int lp_simplecapture (lua_State *L) {
 
 
 static int lp_poscapture (lua_State *L) {
-  newemptycap(L, Cposition, 0);
+  newemptycap(L, Cposition);
   return 1;
 }
 
 
 static int lp_argcapture (lua_State *L) {
-  int n = luaL_checkint(L, 1);
-  TTree *tree = newemptycap(L, Carg, 0);
+  int n = (int)luaL_checkinteger(L, 1);
+  TTree *tree = newemptycap(L, Carg);
   tree->key = n;
   luaL_argcheck(L, 0 < n && n <= SHRT_MAX, 1, "invalid argument index");
   return 1;
@@ -2865,7 +2935,7 @@ static int lp_argcapture (lua_State *L) {
 
 static int lp_backref (lua_State *L) {
   luaL_checkstring(L, 1);
-  newemptycap(L, Cbackref, 1);
+  newemptycapkey(L, Cbackref, 1);
   return 1;
 }
 
@@ -2879,9 +2949,10 @@ static int lp_constcapture (lua_State *L) {
   if (n == 0)  /* no values? */
     newleaf(L, TTrue);  /* no capture */
   else if (n == 1)
-    newemptycap(L, Cconst, 1);  /* single constant capture */
+    newemptycapkey(L, Cconst, 1);  /* single constant capture */
   else {  /* create a group capture with all values */
     TTree *tree = newtree(L, 1 + 3 * (n - 1) + 2);
+    newktable(L, n);  /* create a 'ktable' for new tree */
     tree->tag = TCapture;
     tree->cap = Cgroup;
     tree->key = 0;
@@ -2889,10 +2960,12 @@ static int lp_constcapture (lua_State *L) {
     for (i = 1; i <= n - 1; i++) {
       tree->tag = TSeq;
       tree->u.ps = 3;  /* skip TCapture and its sibling */
-      auxemptycap(L, sib1(tree), Cconst, i);
+      auxemptycap(sib1(tree), Cconst);
+      sib1(tree)->key = addtoktable(L, i);
       tree = sib2(tree);
     }
-    auxemptycap(L, tree, Cconst, i);
+    auxemptycap(tree, Cconst);
+    tree->key = addtoktable(L, i);
   }
   return 1;
 }
@@ -2902,7 +2975,7 @@ static int lp_matchtime (lua_State *L) {
   TTree *tree;
   luaL_checktype(L, 2, LUA_TFUNCTION);
   tree = newroot1sib(L, TRunTime);
-  tree->key = addtoktable(L, 2);
+  tree->key = addtonewktable(L, 1, 2);
   return 1;
 }
 
@@ -3247,7 +3320,7 @@ static int lp_type (lua_State *L) {
 int lp_gc (lua_State *L) {
   Pattern *p = getpattern(L, 1);
   if (p->codesize > 0)
-    reallocprog(L, p, 0);
+    realloccode(L, p, 0);
   return 0;
 }
 

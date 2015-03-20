@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfthread.h 4935 2014-03-26 08:17:57Z taco $ */
 
 #ifndef PDFTHREAD_H
 #  define PDFTHREAD_H

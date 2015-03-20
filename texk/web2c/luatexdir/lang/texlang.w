@@ -18,15 +18,13 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: texlang.w 4880 2014-03-14 12:01:16Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lang/texlang.w $";
+
 
 #include "ptexlib.h"
 #include <string.h>
 #include "lua/luatex-api.h"
 
-@ Low-level helpers 
+@ Low-level helpers
 
 @ @c
 #define noVERBOSE
@@ -203,7 +201,7 @@ const char *clean_hyphenation(const char *buff, char **cleaned)
             return s;
         }
     }
-    /* now convert the input to unicode */	
+    /* now convert the input to unicode */
     word[i] = '\0';
     utf2uni_strcpy(uword, (const char *)word);
 
@@ -310,9 +308,9 @@ void load_tex_hyphenation(int curlang, halfword head)
     load_hyphenation(get_language(curlang), (unsigned char *) s);
 }
 
-@ TODO: clean this up. The |delete_attribute_ref()| statements are not very 
-   nice, but needed. Also, in the post-break, it would be nicer to get the 
-   attribute list from |vlink(n)|. No rush, as it is currently not used much. 
+@ TODO: clean this up. The |delete_attribute_ref()| statements are not very
+   nice, but needed. Also, in the post-break, it would be nicer to get the
+   attribute list from |vlink(n)|. No rush, as it is currently not used much.
 
 @c
 halfword insert_discretionary(halfword t, halfword pre, halfword post,
@@ -516,8 +514,8 @@ char *exception_strings(struct tex_language *lang)
 }
 
 
-@ the sequence from |wordstart| to |r| can contain only normal characters 
-it could be faster to modify a halfword pointer and return an integer 
+@ the sequence from |wordstart| to |r| can contain only normal characters
+it could be faster to modify a halfword pointer and return an integer
 
 @c
 static halfword find_exception_part(unsigned int *j, unsigned int *uword, int len)
@@ -627,7 +625,7 @@ static void do_exception(halfword wordstart, halfword r, char *replacement)
     }
 }
 
-@ This is a documentation section from the pascal web file. It is not 
+@ This is a documentation section from the pascal web file. It is not
 true any more, but I do not have time right now to rewrite it -- Taco
 
 When the line-breaking routine is unable to find a feasible sequence of
@@ -702,6 +700,8 @@ static halfword find_next_wordstart(halfword r)
     register int l;
     register int start_ok = 1;
     int mathlevel = 1;
+    int chr ;
+    halfword t ;
     while (r != null) {
         switch (type(r)) {
         case whatsit_node:
@@ -724,13 +724,19 @@ static halfword find_next_wordstart(halfword r)
             }
             break;
         case glyph_node:
-            if (start_ok && 
-	        is_simple_character(r) &&
-                (l = get_lc_code(character(r))) > 0) {
-		if (char_uchyph(r) || l == character(r)) {
-                  return r;
-                } else {
-                  start_ok = 0;
+            if (is_simple_character(r)) {
+                chr = character(r) ;
+                if (chr == ex_hyphen_char) {
+                    /* maybe add a test if prev and next are glyphs */
+                    t = compound_word_break(r, char_lang(r));
+                    subtype(t) = automatic_disc;
+                    start_ok = 1 ;
+                } else if (start_ok && (l = get_lc_code(chr)) > 0) {
+                    if (char_uchyph(r) || l == chr) {
+                        return r;
+                    } else {
+                        start_ok = 0;
+                    }
                 }
             }
             break;
@@ -780,9 +786,9 @@ void hnj_hyphenation(halfword head, halfword tail)
     halfword s, r = head, wordstart = null, save_tail1 = null, left =
         null, right = null;
 
-    /* this first movement assures two things: 
+    /* this first movement assures two things:
      \item{a)} that we won't waste lots of time on something that has been
-      handled already (in that case, none of the glyphs match |simple_character|).  
+      handled already (in that case, none of the glyphs match |simple_character|).
      \item{b)} that the first word can be hyphenated. if the movement was
      not explicit, then the indentation at the start of a paragraph
      list would make |find_next_wordstart()| look too far ahead.
@@ -815,13 +821,8 @@ void hnj_hyphenation(halfword head, halfword tail)
         rhmin = char_rhmin(wordstart);
         langdata.pre_hyphen_char = get_pre_hyphen_char(clang);
         langdata.post_hyphen_char = get_post_hyphen_char(clang);
-        while (r != null &&
-               type(r) == glyph_node &&
-               is_simple_character(r) &&
-               clang == char_lang(r) &&
-               (((lchar = get_lc_code(character(r))) > 0)
-                ||
-                (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
+        while (r != null && type(r) == glyph_node && is_simple_character(r) && clang == char_lang(r) &&
+              (((lchar = get_lc_code(character(r))) > 0) || (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
             if (character(r) == ex_hyphen_char)
     	        explicit_hyphen = true;
             wordlen++;
@@ -844,7 +845,7 @@ void hnj_hyphenation(halfword head, halfword tail)
                 do_exception(wordstart, r, replacement);
                 free(replacement);
             } else if (explicit_hyphen == true) {
-                /* insert an explicit discretionary after each of the last in a 
+                /* insert an explicit discretionary after each of the last in a
 	           set of explicit hyphens */
                 halfword rr = r;
                 halfword t = null;
@@ -856,9 +857,9 @@ void hnj_hyphenation(halfword head, halfword tail)
                         if (character(rr) == ex_hyphen_char) {
                             t = compound_word_break(rr, clang);
                             subtype(t) = automatic_disc;
-	                    while(character(alink(rr)) == ex_hyphen_char) 
+	                    while(character(alink(rr)) == ex_hyphen_char)
 	                       rr = alink(rr);
-	                    if (rr == wordstart) 
+	                    if (rr == wordstart)
 	                       break;
                         }
                     }

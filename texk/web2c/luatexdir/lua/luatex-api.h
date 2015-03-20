@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-api.h 5081 2014-11-07 18:38:33Z luigi $ */
 
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
@@ -114,6 +113,7 @@ extern int font_to_lua(lua_State * L, int f);
 extern int font_from_lua(lua_State * L, int f); /* return is boolean */
 
 extern int luaopen_token(lua_State * L);
+extern int luaopen_newtoken(lua_State * L);
 extern void tokenlist_to_lua(lua_State * L, int p);
 extern void tokenlist_to_luastring(lua_State * L, int p);
 extern int tokenlist_from_lua(lua_State * L);
@@ -207,6 +207,7 @@ extern void init_tex_table(lua_State * L);
 
 extern int tex_table_id;
 extern int pdf_table_id;
+extern int newtoken_table_id;
 extern int token_table_id;
 extern int node_table_id;
 extern int main_initialize(void);
@@ -280,9 +281,18 @@ extern char **environ;
   lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_##a##_index);\
   lua_rawget(L, -1+n)
 
-#define lua_roundnumber(a,b) (int)floor((double)lua_tonumber(L,-1)+0.5)
-extern int lua_numeric_field_by_index(lua_State *, int , int);
+/*
+Unfortunately floor is already redefined as 
+#define floor ((integer)floor((double)(a)))
+so 
+#define lua_uroundnumber(a,b) (unsigned int)floor((double)(lua_tonumber(a,b)+0.5))
+is useless.
+*/
 
+#define lua_roundnumber(a,b)  (int)floor((double)lua_tonumber(a,b)+0.5)
+#define lua_uroundnumber(a,b) (unsigned int)((double)(lua_tonumber(a,b)+0.5))
+extern int lua_numeric_field_by_index(lua_State *, int , int);
+extern unsigned int lua_unsigned_numeric_field_by_index(lua_State *, int , int);
 
 
 /* Currently we sometimes use numbers and sometimes strings in node properties. We can
@@ -378,6 +388,7 @@ l_dir_text_index[88] = lua_key_index(pRTT);\
 
 
 #define set_make_keys \
+make_lua_key(cmdname);make_lua_key(expandable);make_lua_key(protected);\
 make_lua_key(LTL);\
 make_lua_key(MathConstants);\
 make_lua_key(RTT);\
@@ -387,6 +398,7 @@ make_lua_key(accent);\
 make_lua_key(action);\
 make_lua_key(action_id);\
 make_lua_key(action_type);\
+make_lua_key(active);\
 make_lua_key(additional);\
 make_lua_key(adjust);\
 make_lua_key(adjust_head);\
@@ -440,6 +452,7 @@ make_lua_key(crampeddisplay);\
 make_lua_key(crampedscript);\
 make_lua_key(crampedscriptscript);\
 make_lua_key(crampedtext);\
+make_lua_key(csname);\
 make_lua_key(data);\
 make_lua_key(degree);\
 make_lua_key(delim);\
@@ -520,6 +533,7 @@ make_lua_key(log);\
 make_lua_key(lua);\
 make_lua_key(lua_functions);\
 make_lua_key(luatex);\
+make_lua_key(luatex_newtoken);\
 make_lua_key(luatex_node);\
 make_lua_key(mLTL);\
 make_lua_key(mRTT);\
@@ -645,6 +659,8 @@ make_lua_key(tex);\
 make_lua_key(text);\
 make_lua_key(thread_attr);\
 make_lua_key(thread_id);\
+make_lua_key(tok);\
+make_lua_key(token);\
 make_lua_key(top);\
 make_lua_key(top_accent);\
 make_lua_key(top_left);\
@@ -674,7 +690,8 @@ make_lua_key(xyz_zoom);\
 make_lua_key(yoffset)
 
 
- #define set_init_keys \
+#define set_init_keys \
+init_lua_key(cmdname);init_lua_key(expandable);init_lua_key(protected);\
 init_lua_key(LTL);\
 init_lua_key(MathConstants);\
 init_lua_key(RTT);\
@@ -684,6 +701,7 @@ init_lua_key(accent);\
 init_lua_key(action);\
 init_lua_key(action_id);\
 init_lua_key(action_type);\
+init_lua_key(active);\
 init_lua_key(additional);\
 init_lua_key(adjust);\
 init_lua_key(adjust_head);\
@@ -737,6 +755,7 @@ init_lua_key(crampeddisplay);\
 init_lua_key(crampedscript);\
 init_lua_key(crampedscriptscript);\
 init_lua_key(crampedtext);\
+init_lua_key(csname);\
 init_lua_key(data);\
 init_lua_key(degree);\
 init_lua_key(delim);\
@@ -815,6 +834,7 @@ init_lua_key(local_box);\
 init_lua_key(log);\
 init_lua_key(lua);\
 init_lua_key(luatex);\
+init_lua_key(luatex_newtoken);\
 init_lua_key(mark);\
 init_lua_key(math);\
 init_lua_key(math_choice);\
@@ -927,6 +947,8 @@ init_lua_key(tex);\
 init_lua_key(text);\
 init_lua_key(thread_attr);\
 init_lua_key(thread_id);\
+init_lua_key(tok);\
+init_lua_key(token);\
 init_lua_key(top);\
 init_lua_key(top_accent);\
 init_lua_key(top_left);\
@@ -1035,6 +1057,8 @@ extern int experimental_code[MAX_EXPERIMENTAL_CODE_SIZE] ;
 /*                                                 */
 
 
+use_lua_key(cmdname);use_lua_key(expandable);use_lua_key(protected);
+
 use_lua_key(LTL);
 use_lua_key(MathConstants);
 use_lua_key(RTT);
@@ -1044,6 +1068,7 @@ use_lua_key(accent);
 use_lua_key(action);
 use_lua_key(action_id);
 use_lua_key(action_type);
+use_lua_key(active);
 use_lua_key(additional);
 use_lua_key(adjust);
 use_lua_key(adjust_head);
@@ -1097,6 +1122,7 @@ use_lua_key(crampeddisplay);
 use_lua_key(crampedscript);
 use_lua_key(crampedscriptscript);
 use_lua_key(crampedtext);
+use_lua_key(csname);
 use_lua_key(data);
 use_lua_key(degree);
 use_lua_key(delim);
@@ -1177,6 +1203,7 @@ use_lua_key(log);
 use_lua_key(lua);
 use_lua_key(lua_functions);
 use_lua_key(luatex);
+use_lua_key(luatex_newtoken);
 use_lua_key(luatex_node);
 use_lua_key(mLTL);
 use_lua_key(mRTT);
@@ -1302,6 +1329,8 @@ use_lua_key(tex);
 use_lua_key(text);
 use_lua_key(thread_attr);
 use_lua_key(thread_id);
+use_lua_key(tok);
+use_lua_key(token);
 use_lua_key(top);
 use_lua_key(top_accent);
 use_lua_key(top_left);

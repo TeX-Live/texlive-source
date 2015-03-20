@@ -36,9 +36,6 @@
 #endif
 #include <locale.h>
 
-static const char _svn_version[] =
-    "$Id: luafflib.c 4884 2014-03-14 13:21:17Z taco $ "
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/luafontloader/src/luafflib.c $";
 
 extern char **gww_errors;
 extern int gww_error_count;

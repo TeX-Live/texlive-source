@@ -19,9 +19,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: vfpacket.w 4679 2013-12-19 15:47:53Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/font/vfpacket.w $";
+
 
 #include "ptexlib.h"
 

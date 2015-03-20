@@ -23,9 +23,7 @@
 \def\LuaTeX{Lua\TeX}
 
 @ @c
-static const char _svn_version[] =
-    "$Id: mlist.w 5125 2015-01-15 18:36:42Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/mlist.w $";
+
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -2748,14 +2746,64 @@ will be horizontally shifted over |delta1|, the subscript over |delta2|.
 We set |shift_down| and |shift_up| to the minimum amounts to shift the
 baseline of subscripts and superscripts based on the given nucleus.
 
-@c
+Note: We need to look at a character but also at the first one in a sub list
+and there we ignore leading kerns and glue. Elsewhere is code that removes
+kerns assuming that is italic correction. The heuristics are unreliable for
+the new fonts so eventualy there will be an option to ignore such corrections.
+
+@ @c
+#define analyze_script(init,su_n,su_f,su_c) do {                                   \
+      su_n = init;                                                                 \
+      if (su_n != null) {                                                          \
+          if (type(su_n) == sub_mlist_node) {                                      \
+              su_n = math_list(su_n);                                              \
+              if (su_n != null) {                                                  \
+                  while (su_n) {                                                   \
+                      if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) {\
+                          su_n = vlink(su_n);                                      \
+                      } else if (type(su_n) == simple_noad) {                      \
+                          su_n = nucleus(su_n);                                    \
+                          if (type(su_n) != math_char_node) {                      \
+                              su_n = null;                                         \
+                          }                                                        \
+                          break;                                                   \
+                      } else {                                                     \
+                          su_n = null;                                             \
+                          break;                                                   \
+                      }                                                            \
+                  }                                                                \
+              }                                                                    \
+          }                                                                        \
+          if (su_n != null) {                                                      \
+              fetch(su_n);                                                         \
+              if (char_exists(cur_f, cur_c)) {                                     \
+                  su_f = cur_f;                                                    \
+                  su_c = cur_c;                                                    \
+              } else {                                                             \
+                  su_n = null;                                                     \
+              }                                                                    \
+          }                                                                        \
+      }                                                                            \
+  } while (0)
+
+
 static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
 {
     pointer x, y, z;            /* temporary registers for box construction */
     scaled shift_up, shift_down, clr;   /* dimensions in the calculation */
     scaled delta1, delta2;
+    halfword sub_n, sup_n;
+    internal_font_number sub_f, sup_f;
+    int sub_c, sup_c;
+    sub_n = null;
+    sup_n = null;
+    sub_f = 0;
+    sup_f = 0;
+    sub_c = 0;
+    sup_c = 0;
     delta1 = it;
     delta2 = 0;
+
 #ifdef DEBUG
     printf("it: %d\n", it);
     dump_simple_node(q);
@@ -2782,7 +2830,16 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         list_ptr(z) = null;
         flush_node(z);
     }
+
+    if (is_char_node(p)) {
+        /* we look at the subscript character (_i) or first character in a list (_{ij}) */
+        analyze_script(subscr(q),sub_n,sub_f,sub_c);
+        /* we look at the superscript character (^i) or first character in a list (^{ij}) */
+        analyze_script(supscr(q),sup_n,sup_f,sup_c);
+    }
+
     if (supscr(q) == null) {
+
         /* Construct a subscript box |x| when there is no superscript */
         /* When there is a subscript without a superscript, the top of the subscript
            should not exceed the baseline plus four-fifths of the x-height. */
@@ -2796,16 +2853,10 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         shift_amount(x) = shift_down;
 
         /* now find and correct for horizontal shift */
-        if (is_char_node(p) && subscr(q) != null
-            && type(subscr(q)) == math_char_node) {
-            fetch(subscr(q));
-            if (char_exists(cur_f, cur_c)) {
-                delta2 =
-                    find_math_kern(font(p), character(p), cur_f, cur_c,
-                                   sub_mark_cmd, shift_down);
-                if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
-                    p = attach_hkern_to_new_hlist(q, delta2);
-                }
+        if (sub_n != null) {
+            delta2 = find_math_kern(font(p), character(p),sub_f,sub_c,sub_mark_cmd, shift_down);
+            if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
+                p = attach_hkern_to_new_hlist(q, delta2);
             }
         }
 
@@ -2825,15 +2876,10 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         if (subscr(q) == null) {
             shift_amount(x) = -shift_up;
             /* now find and correct for horizontal shift */
-            if (is_char_node(p) && type(supscr(q)) == math_char_node) {
-                fetch(supscr(q));
-                if (char_exists(cur_f, cur_c)) {
-                    clr =
-                        find_math_kern(font(p), character(p), cur_f, cur_c,
-                                       sup_mark_cmd, shift_up);
-                    if (clr != MATH_KERN_NOT_FOUND && clr != 0) {
-                        p = attach_hkern_to_new_hlist(q, clr);
-                    }
+            if (sup_n != null) {
+                clr = find_math_kern(font(p),character(p),sup_f,sup_c,sup_mark_cmd,shift_up);
+                if (clr != MATH_KERN_NOT_FOUND && clr != 0) {
+                    p = attach_hkern_to_new_hlist(q, clr);
                 }
             }
         } else {
@@ -2849,8 +2895,7 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
             width(y) = width(y) + space_after_script(cur_style);
             if (shift_down < sub_sup_shift_down(cur_style))
                 shift_down = sub_sup_shift_down(cur_style);
-            clr = subsup_vgap(cur_style) -
-                ((shift_up - depth(x)) - (height(y) - shift_down));
+                clr = subsup_vgap(cur_style) - ((shift_up - depth(x)) - (height(y) - shift_down));
             if (clr > 0) {
                 shift_down = shift_down + clr;
                 clr = sup_sub_bottom_max(cur_style) - (shift_up - depth(x));
@@ -2860,30 +2905,19 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
                 }
             }
             /* now find and correct for horizontal shift */
-            if (is_char_node(p) && subscr(q) != null
-                && type(subscr(q)) == math_char_node) {
-                fetch(subscr(q));
-                if (char_exists(cur_f, cur_c)) {
-                    delta2 =
-                        find_math_kern(font(p), character(p), cur_f, cur_c,
-                                       sub_mark_cmd, shift_down);
-                    if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
-                        p = attach_hkern_to_new_hlist(q, delta2);
-                    }
+            if (sub_n != null) {
+                delta2 = find_math_kern(font(p), character(p),sub_f,sub_c,sub_mark_cmd, shift_down);
+                if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
+                    p = attach_hkern_to_new_hlist(q, delta2);
                 }
             }
             /* now the horizontal shift for the superscript. */
             /* the superscript is also to be shifted by |delta1| (the italic correction) */
             clr = MATH_KERN_NOT_FOUND;
-            if (is_char_node(p) && supscr(q) != null
-                && type(supscr(q)) == math_char_node) {
-                fetch(supscr(q));
-                if (char_exists(cur_f, cur_c)) {
-                    clr =
-                        find_math_kern(font(p), character(p), cur_f, cur_c,
-                                       sup_mark_cmd, shift_up);
-                }
+            if (sup_n != null) {
+                clr = find_math_kern(font(p),character(p),sup_f,sup_c,sup_mark_cmd,shift_up);
             }
+
             if (delta2 == MATH_KERN_NOT_FOUND)
                 delta2 = 0;
             if (clr != MATH_KERN_NOT_FOUND) {

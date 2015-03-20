@@ -19,7 +19,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writecff.h 3400 2010-01-27 16:10:42Z taco $ */
 
 #ifndef _CFF_LIMITS_H_
 #  define _CFF_LIMITS_H_

@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: luatex-common.h 4054 2011-01-10 19:05:54Z hhenkel $ */
 
 /* This file contains declarations used in C code as well as in C++ code.
 */

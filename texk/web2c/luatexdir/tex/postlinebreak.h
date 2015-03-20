@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: postlinebreak.h 3493 2010-03-15 11:49:49Z taco $ */
 
 #ifndef POSTLINEBREAK_H
 #  define POSTLINEBREAK_H

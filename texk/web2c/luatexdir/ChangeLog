@@ -1,6 +1,10 @@
+2015-03-19 Luigi Scarso <luigi.scarso@gmail.com>
+	New library newtokenlib; several bugs fixed.
+	
+
 2015-01-14 Luigi Scarso <luigi.scarso@gmail.com>
 
-	* tex/mlist.w: mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
+	tex/mlist.w: mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
 	HH-LS: was cur_mu = x_over_n(get_math_quad(cur_size), 18);
 	This is an old bug so the fix can influence outcome       
 	The current mu is instead

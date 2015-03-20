@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: filename.h 3376 2010-01-25 16:50:23Z taco $ */
 
 #ifndef FILENAME_H
 #  define FILENAME_H

@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: texnodes.h 4847 2014-03-05 18:13:17Z luigi $ */
 
 #include <stdarg.h>
 
@@ -90,8 +89,10 @@ extern void undump_node_mem(void);
 
 #  define attribute_node_size 2
 
+
 #  define attr_list_ref(a)   vinfo((a)+1)
                                         /* the reference count */
+#  define assign_attribute_ref(n,p) do { node_attr(n) = p;attr_list_ref(p)++;} while (0)
 #  define attribute_id(a)    vinfo((a)+1)
 #  define attribute_value(a) vlink((a)+1)
 
@@ -679,17 +680,22 @@ typedef enum {
 #  define cache_disabled max_halfword
 
 extern void delete_attribute_ref(halfword b);
+extern void reassign_attribute(halfword n,halfword new);
+extern void delete_attribute_ref(halfword b);
 extern void build_attribute_list(halfword b);
+extern halfword current_attribute_list(void);
 
 extern int unset_attribute(halfword n, int c, int w);
 extern void set_attribute(halfword n, int c, int w);
 extern int has_attribute(halfword n, int c, int w);
+
 
 extern halfword new_span_node(halfword n, int c, scaled w);
 
 extern void print_short_node_contents(halfword n);
 extern void show_node_list(int i);
 extern pointer actual_box_width(pointer r, scaled base_width);
+
 
 /* TH: these two defines still need checking. The node ordering in luatex is not
    quite the same as in tex82 */

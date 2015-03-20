@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: dumpdata.w 5081 2014-11-07 18:38:33Z luigi $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/dumpdata.w $";
+
 
 #include "ptexlib.h"
 
@@ -28,8 +26,8 @@ static const char _svn_version[] =
 #define prev_depth cur_list.prev_depth_field
 
 /* 907 = sum of the values of the bytes of "don knuth" */
-/* The next FORMAT_ID will be 907+1               */
-#define FORMAT_ID (907+0)  
+/* The next FORMAT_ID will be 907+2               */
+#define FORMAT_ID (907+1)  
 #if ((FORMAT_ID>=0) && (FORMAT_ID<=256))
 #error Wrong value for FORMAT_ID.
 #endif

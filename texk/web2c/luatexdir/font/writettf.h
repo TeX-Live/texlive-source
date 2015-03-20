@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: writettf.h 3400 2010-01-27 16:10:42Z taco $ */
 
 #ifndef WRITETTF_H
 #  define WRITETTF_H 1

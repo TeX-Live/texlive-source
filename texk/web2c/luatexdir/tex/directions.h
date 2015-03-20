@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: directions.h 4569 2013-01-30 10:08:33Z taco $ */
 
 #ifndef DIRECTIONS_H
 #  define DIRECTIONS_H

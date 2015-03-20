@@ -20,8 +20,6 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
-static const char _svn_version[] =
-    "$Id: lcallbacklib.c 5081 2014-11-07 18:38:33Z luigi $ $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/lcallbacklib.c $";
 
 int callback_count = 0;
 int saved_callback_count = 0;

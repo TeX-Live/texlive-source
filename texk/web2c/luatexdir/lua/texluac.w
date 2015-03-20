@@ -25,9 +25,7 @@
 % This file is part of LuaTeX.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: texluac.w 4718 2014-01-02 15:35:31Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/texluac.w $";
+
 
 #include <ctype.h>
 #include <errno.h>

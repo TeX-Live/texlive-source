@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdflistout.h 3386 2010-01-26 06:41:37Z taco $ */
 
 #ifndef PDFLISTOUT_H
 #  define PDFLISTOUT_H

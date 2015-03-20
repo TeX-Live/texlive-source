@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: primitive.h 4564 2013-01-21 13:25:53Z khaled $ */
 
 #ifndef LUATEX_PRIMITIVE_H
 #  define LUATEX_PRIMITIVE_H 1

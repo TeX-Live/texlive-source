@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfcolorstack.h 3676 2010-05-02 20:04:49Z hhenkel $ */
 
 #ifndef PDFCOLORSTACK_H
 #  define PDFCOLORSTACK_H

@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: memoryword.h 5031 2014-07-04 07:16:27Z luigi $ */
 
 /* This header file is extra special because it is read in from
    within the pascal source */

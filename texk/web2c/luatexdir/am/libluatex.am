@@ -245,6 +245,7 @@ dist_libluatex_sources += \
 	luatexdir/lua/ltexiolib.c \
 	luatexdir/lua/ltexlib.c \
 	luatexdir/lua/ltokenlib.c \
+	luatexdir/lua/lnewtokenlib.c \
 	luatexdir/lua/luagen.h \
 	luatexdir/lua/luatex-api.h
 

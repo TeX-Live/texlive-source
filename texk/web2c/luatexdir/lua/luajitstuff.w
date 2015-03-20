@@ -18,9 +18,7 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-static const char _svn_version[] =
-    "$Id: luastuff.w 4730 2014-01-03 14:44:14Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/lua/luastuff.w $";
+
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -311,6 +309,7 @@ void luainterpreter(void)
     /* our own libraries */
     luaopen_ff(L);
     luaopen_tex(L);
+    luaopen_newtoken(L);
     luaopen_token(L);
     luaopen_node(L);
     luaopen_texio(L);
@@ -661,7 +660,7 @@ LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) {
 }
 
 @ @c
-/* It's not ok. See lua-users.org/wiki/CompatibilityWithLuafive for another solution */
+/* It's not ok. See lua-users.org/wiki/CompatibilityWithLuaFive for another solution */
 LUALIB_API void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
   /*luaL_checkversion(L);*/
   luaL_checkstack(L, nup, "too many upvalues");

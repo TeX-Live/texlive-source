@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: pdfimage.h 3160 2009-11-16 16:29:11Z hhenkel $ */
 
 #ifndef PDFIMAGE_H
 #  define PDFIMAGE_H

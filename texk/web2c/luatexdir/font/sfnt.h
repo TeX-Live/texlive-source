@@ -19,7 +19,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: sfnt.h 4847 2014-03-05 18:13:17Z luigi $ */
 
 #ifndef _SFNT_H_
 #  define _SFNT_H_

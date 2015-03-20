@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: mlist.h 3265 2009-12-18 16:21:40Z taco $ */
 
 #ifndef MLIST_H
 #  define MLIST_H 1

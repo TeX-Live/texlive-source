@@ -20,9 +20,7 @@
 \def\eTeX{e-\TeX}
 
 @ @c
-static const char _svn_version[] =
-    "$Id: commands.w 4878 2014-03-14 10:48:03Z taco $"
-    "$URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/tex/commands.w $";
+
 
 #include "ptexlib.h"
 
@@ -1060,6 +1058,8 @@ void initialize_etex_commands(void)
                      int_base + suppress_fontnotfound_error_code, int_base);
     primitive_luatex("suppresslongerror", assign_int_cmd,
                      int_base + suppress_long_error_code, int_base);
+    primitive_luatex("suppressmathparerror", assign_int_cmd,
+                     int_base + suppress_mathpar_error_code, int_base);
     primitive_luatex("suppressifcsnameerror", assign_int_cmd,
                      int_base + suppress_ifcsname_error_code, int_base);
     primitive_luatex("suppressoutererror", assign_int_cmd,

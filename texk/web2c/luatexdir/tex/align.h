@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-/* $Id: align.h 3100 2009-11-04 15:09:57Z taco $ */
 
 #ifndef ALIGN_H
 #  define ALIGN_H 1
