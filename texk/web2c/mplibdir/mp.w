@@ -1,4 +1,4 @@
-% $Id: mp.w 2057 2015-03-20 01:33:59Z luigi $
+% $Id: mp.w 2055 2015-01-22 15:39:12Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -2609,7 +2609,6 @@ can readily be obtained with the ratio method (Algorithm 3.4.1R in
 that stays as reference:
 Now each number system has its own implementation,
 true to the original as much as possibile.
-.
 
 @c
 /*  Unused.
