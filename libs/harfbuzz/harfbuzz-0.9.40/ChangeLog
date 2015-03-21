@@ -1,3 +1,50 @@
+commit 9e401f6890f2bea1d11914bca436c2230f8d0f1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 20 16:08:38 2015 -0400
+
+    Fix reverse_range() for empty range
+
+    Fixes coretext notdef loop consisting of all default_ignorable glyphs
+
+    https://code.google.com/p/chromium/issues/detail?id=464755
+
+ src/hb-buffer.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7481bd49d56d4e814ab1f85fc2df8bf934d520f4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 4 15:47:25 2015 -0800
+
+    Fix previous commit
+
+    I misunderstood how which works.
+
+ autogen.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6763e21afb77b250ad4416ff921d46c63ea12443
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 4 15:43:05 2015 -0800
+
+    Accept glibtoolize as libtoolize
+
+    Of course, we don't really run it, autoreconf does.  We just
+    err if neither is available.  glibtoolize is the name it is
+    shipped under on OS X.  Reported by Adam.
+
+ autogen.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 02a04e6afb1a76894f3723a467716607970d95d3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Mar 4 12:32:03 2015 -0800
+
+    0.9.39
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
 commit 98e3ea8e34c798ce003e946c9a150bb41be9d09b
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Mar 4 12:03:39 2015 -0800
