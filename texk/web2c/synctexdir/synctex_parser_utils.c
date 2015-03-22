@@ -67,6 +67,7 @@ authorization from the copyright holder.
 
 #ifdef SYNCTEX_WINDOWS
 #include <windows.h>
+#include <shlwapi.h> /* Use shlwapi.lib */
 #endif
 
 void *_synctex_malloc(size_t size) {
@@ -116,6 +117,15 @@ void _synctex_strip_last_path_extension(char * string) {
 		char * last_component = NULL;
 		char * last_extension = NULL;
 		char * next = NULL;
+#       if defined(SYNCTEX_WINDOWS)
+		last_component = PathFindFileName(string);
+		last_extension = PathFindExtension(string);
+		if(last_extension == NULL)return;
+		if(last_component == NULL)last_component = string;
+		if(last_extension>last_component){/* filter out paths like "my/dir/.hidden" */
+			last_extension[0] = '\0';
+		}
+#       else
 		/*  first we find the last path component */
 		if(NULL == (last_component = strstr(string,"/"))){
 			last_component = string;
@@ -125,12 +135,12 @@ void _synctex_strip_last_path_extension(char * string) {
 				last_component = next+1;
 			}
 		}
-#       if defined(SYNCTEX_WINDOWS) || defined(SYNCTEX_OS2)
-		/*  On Windows, the '\' is also a path separator. */
+#               if defined(SYNCTEX_OS2)
+		/*  On OS2, the '\' is also a path separator. */
 		while((next = strstr(last_component,"\\"))){
 			last_component = next+1;
 		}
-#       endif
+#               endif /* SYNCTEX_OS2 */
 		/*  then we find the last path extension */
 		if((last_extension = strstr(last_component,"."))){
 			++last_extension;
@@ -142,6 +152,7 @@ void _synctex_strip_last_path_extension(char * string) {
 				last_extension[0] = '\0';
 			}
 		}
+#       endif /* SYNCTEX_WINDOWS */
 	}
 }
 

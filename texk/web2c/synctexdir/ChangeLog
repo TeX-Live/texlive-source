@@ -1,3 +1,11 @@
+2015-03-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex_parser_utils.c: Use WIN32API PathFindFileName() and
+	PathFindExtension() for last_component and last_extension, respectively,
+	in _synctex_strip_last_path_extension(), in order to support multi-byte
+	characters in SyncTeX applications (win32 only).
+	From Noriyuki Abe (2015-03-22).
+
 2015-03-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex.c: Avoid minor memory leaks (win32 only).
