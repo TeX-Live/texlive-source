@@ -2635,7 +2635,7 @@ open_dvi_output(FILE** fptr)
 #if defined(WIN32)
         {
             wchar_t *tmp1w;
-            char *p, *pp, *bindir, *fullcmd, *prgnam;
+            char *p, *pp, *fullcmd, *prgnam;
             bindir = kpse_var_value("SELFAUTOLOC");
             for(pp = bindir; *pp; pp++) {
                 if(*pp == '/') *pp = '\\';
