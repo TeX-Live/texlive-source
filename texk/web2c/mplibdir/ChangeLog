@@ -1,3 +1,7 @@
+2015-03-21  Luigi Scarso  <luigi.scarso@gmail.com>
+	make_text for mplib only.
+
+
 2015-03-19  Luigi Scarso  <luigi.scarso@gmail.com>
 	Fixed normal rand. generator for double/decimal/binary
 	systems.
