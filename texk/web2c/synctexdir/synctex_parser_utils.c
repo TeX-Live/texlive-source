@@ -161,7 +161,7 @@ synctex_bool_t synctex_ignore_leading_dot_slash_in_path(const char ** name_ref)
     if (SYNCTEX_IS_DOT((*name_ref)[0]) && SYNCTEX_IS_PATH_SEPARATOR((*name_ref)[1])) {
         do {
             (*name_ref) += 2;
-            while (SYNCTEX_IS_PATH_SEPARATOR((*name_ref)[1])) {
+            while (SYNCTEX_IS_PATH_SEPARATOR((*name_ref)[0])) {
                 ++(*name_ref);
             }
         } while(SYNCTEX_IS_DOT((*name_ref)[0]) && SYNCTEX_IS_PATH_SEPARATOR((*name_ref)[1]));

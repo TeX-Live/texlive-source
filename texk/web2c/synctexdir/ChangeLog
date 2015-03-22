@@ -1,3 +1,9 @@
+2015-03-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* synctex_parser_utils.c: Fix a bug in
+	synctex_bool_t synctex_ignore_leading_dot_slash_in_path().
+	From Noriyuki Abe (2015-03-23).
+
 2015-03-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex_parser_utils.c: Use WIN32API PathFindFileName() and
