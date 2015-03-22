@@ -3,7 +3,7 @@
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009-2012 by Jonathan Kew
  Copyright (c) 2010-2014 by Han The Thanh
- Copyright (c) 2012-2014 by Khaled Hosny
+ Copyright (c) 2012-2015 by Khaled Hosny
  Copyright (c) 2014 by Peter Breitenlohner
 
  SIL Author(s): Jonathan Kew

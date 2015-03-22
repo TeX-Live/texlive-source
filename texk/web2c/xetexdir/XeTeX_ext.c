@@ -2,7 +2,7 @@
  Part of the XeTeX typesetting system
  Copyright (c) 1994-2008 by SIL International
  Copyright (c) 2009, 2011 by Jonathan Kew
- Copyright (c) 2012, 2013 by Khaled Hosny
+ Copyright (c) 2012-2015 by Khaled Hosny
  Copyright (c) 2012, 2013 by Jiang Jiang
 
  SIL Author(s): Jonathan Kew
@@ -2573,12 +2573,16 @@ open_dvi_output(FILE** fptr)
         return open_output(fptr, FOPEN_WBIN_MODE);
     } else {
         const char *p = (const char*)nameoffile+1;
-        char    *cmd, *q;
+        char    *cmd, *q, *bindir = NULL;
         int len = strlen(p);
         while (*p)
             if (*p++ == '\"')
                 ++len;
         len += strlen(outputdriver);
+        if (!kpse_absolute_p(outputdriver, true))
+            bindir = kpse_var_value("SELFAUTOLOC");
+        if (bindir)
+            len += strlen(bindir) + 1;
         if (output_directory)
             len += strlen(output_directory);
         len += 10; /* space for -o flag, quotes, NUL */
@@ -2586,7 +2590,13 @@ open_dvi_output(FILE** fptr)
             if (*p == '\"')
                 ++len;  /* allow extra space to escape quotes in filename */
         cmd = xmalloc(len);
-        strcpy(cmd, outputdriver);
+        if (bindir) {
+            strcpy(cmd, bindir);
+            strcat(cmd, "/");
+            strcat(cmd, outputdriver);
+        } else {
+            strcpy(cmd, outputdriver);
+        }
         strcat(cmd, " -o \"");
         if (output_directory) {
             len = strlen(output_directory);
