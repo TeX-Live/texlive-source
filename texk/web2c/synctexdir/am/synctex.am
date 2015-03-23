@@ -20,6 +20,9 @@ synctex_SOURCES = \
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir
 
 synctex_LDADD =  $(libsynctex) $(ZLIB_LIBS)
+if MINGW32
+synctex_LDADD += -lshlwapi
+endif MINGW32
 
 $(synctex_OBJECTS): $(libsynctex)
 
@@ -32,6 +35,9 @@ libsynctex_a_CPPFLAGS = $(libsynctex_la_CPPFLAGS)
 libsynctex_la_LDFLAGS = -rpath @libdir@ -bindir @bindir@ -no-undefined -version-info $(SYNCTEX_LT_VERSINFO)
 
 libsynctex_la_LIBADD = $(ZLIB_LIBS)
+if MINGW32
+libsynctex_la_LIBADD += -lshlwapi
+endif MINGW32
 
 libsynctex_la_SOURCES = \
 	synctexdir/synctex_parser.c \
