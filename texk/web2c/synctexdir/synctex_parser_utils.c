@@ -116,7 +116,6 @@ void _synctex_strip_last_path_extension(char * string) {
 	if(NULL != string){
 		char * last_component = NULL;
 		char * last_extension = NULL;
-		char * next = NULL;
 #       if defined(SYNCTEX_WINDOWS)
 		last_component = PathFindFileName(string);
 		last_extension = PathFindExtension(string);
@@ -126,6 +125,7 @@ void _synctex_strip_last_path_extension(char * string) {
 			last_extension[0] = '\0';
 		}
 #       else
+		char * next = NULL;
 		/*  first we find the last path component */
 		if(NULL == (last_component = strstr(string,"/"))){
 			last_component = string;

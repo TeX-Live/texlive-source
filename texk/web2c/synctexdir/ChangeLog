@@ -1,3 +1,8 @@
+2015-03-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am [MinGW]: SyncTeX requires libshlwapi.a.
+	* synctex_parser_utils.c: Avoid an unused variable.
+
 2015-03-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex_parser_utils.c: Fix a bug in
