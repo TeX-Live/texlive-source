@@ -1,3 +1,7 @@
+2015-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* tlbuild.texi: Add '--disable-synctex'.
+
 2015-03-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* build-tools.txt: Using bison 3.0.4 and libtool 2.4.6.
