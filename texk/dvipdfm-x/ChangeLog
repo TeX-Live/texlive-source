@@ -1,3 +1,9 @@
+2015-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* bmpimage.c, dpxcrypt.c, dvi.c, fontmap.[ch], jpegimage.c,
+	pdfcolor.[ch], pdfdev.[ch], pdfdoc.c, pdfdraw.c, spc_tpic.c,
+	spc_util.c, spc_xtx.c, xbb.c: Copyright "2014" => "2015".
+
 2015-03-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvipdfmx.c: Change "Copyright (C) 2002-2014" to
