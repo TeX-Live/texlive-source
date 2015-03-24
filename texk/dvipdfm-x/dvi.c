@@ -3,7 +3,7 @@
     Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
-    Copyright (C) 2012-2014 by Khaled Hosny <khaledhosny@eglug.org>
+    Copyright (C) 2012-2015 by Khaled Hosny <khaledhosny@eglug.org>
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
 
