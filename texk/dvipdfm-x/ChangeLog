@@ -1,3 +1,8 @@
+2015-03-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c: Change "Copyright (C) 2002-2014" to
+	"Copyright (C) 2002-2015".
+
 2015-03-17  Khaled Hosny  <khaledhosny@eglug.org>
 
 	* pdfcolor.c, pdfcolor.h, pdfdoc.c, pdfdraw.c, spc_util.c: Add spot
