@@ -523,7 +523,7 @@ otherwise, they are given by their usual Autoconf defaults:
 @var{infodir}                 @var{datarootdir}/info
 @end example
 
-@noindent @dots{} except possibly modified as follows:
+@noindent except possibly modified as follows:
 
 @itemize @bullet
 @item
@@ -753,8 +753,8 @@ To avoid unnecessary runs of @code{bison}, @code{flex}, or
 Here is a brief description of the top-level directories in the @TL{}
 source tree.
 
-As mentioned at the beginning of the chapter (@pxref{Overview of build
-system}), the main source directories are @file{texk/}
+As mentioned at the beginning of @pxref{Overview of build
+system}, the main source directories are @file{texk/}
 (@TeX{}-specific programs and libraries), @file{utils/} (additional
 programs), and @file{libs/} (generic libraries).
 
@@ -1467,8 +1467,8 @@ described here.  The command@*@ @ @ @code{configure --help}@*at the
 top level gives an exhaustive list of all global options and a few
 important module-specific ones, whereas, e.g.,@*@ @ @
 @code{texk/lcdf-typetools/configure --help}@* also displays the
-@code{lcdf-typetools} specific options, which are not shown by the
-top-level @code{--help}.
+@code{lcdf-typetools} specific options, which are not shown at the
+top-level.
 
 @cindex environment variables, for @code{configure}
 The help text also mentions several influential environment variables,
@@ -1807,6 +1807,11 @@ support for Metafont (EPSF output, @code{mftalk}, old terminals, @dots{}).
 @dots{}@*Build the @TeX{} engines with or without @code{SyncTeX}
 support; ignored for a native @TL{} build, defaults are again defined
 in @file{texk/web2c/ac/web2c.ac}.
+
+@vindex --disable-synctex
+@cindex synctex
+@noindent @code{--disable-synctex}
+@*Do not build the @code{SyncTeX} library and tool.
 
 
 @node Configure options for @file{texk/bibtex-x}

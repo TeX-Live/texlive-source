@@ -41,7 +41,7 @@ defaults:
      MANDIR                  DATAROOTDIR/man
      INFODIR                 DATAROOTDIR/info
 
-... except possibly modified as follows:
+except possibly modified as follows:
 
    * If the option '--enable-multiplatform' is given, '/PLATFORM' (i.e.,
      the canonical platform name) is appended to 'BINDIR' and 'LIBDIR'.

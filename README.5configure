@@ -13,7 +13,7 @@ at the top level gives an exhaustive list of all global options and a
 few important module-specific ones, whereas, e.g.,
    'texk/lcdf-typetools/configure --help'
 also displays the 'lcdf-typetools' specific options, which are not shown
-by the top-level '--help'.
+at the top-level.
 
    The help text also mentions several influential environment
 variables, but for TeX Live it is better to specify them as assigments
@@ -234,6 +234,9 @@ Include various types of other window support for Metafont (EPSF output,
 Build the TeX engines with or without 'SyncTeX' support; ignored for a
 native TeX Live build, defaults are again defined in
 'texk/web2c/ac/web2c.ac'.
+
+'--disable-synctex'
+Do not build the 'SyncTeX' library and tool.
 
 7.2.4 Configure options for 'texk/bibtex-x'
 -------------------------------------------

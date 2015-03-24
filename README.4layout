@@ -58,10 +58,10 @@ finally all 'Makefile.in' files.  Perhaps 'make -t' will help.
 Here is a brief description of the top-level directories in the TeX Live
 source tree.
 
-   As mentioned at the beginning of the chapter (*note Overview of build
-system::), the main source directories are 'texk/' (TeX-specific
-programs and libraries), 'utils/' (additional programs), and 'libs/'
-(generic libraries).
+   As mentioned at the beginning of *note Overview of build system::,
+the main source directories are 'texk/' (TeX-specific programs and
+libraries), 'utils/' (additional programs), and 'libs/' (generic
+libraries).
 
    The top-level directories 'am/' and 'm4/' contain 'Makefile.am'
 fragments and Autoconf macros, respectively, used in many places.
