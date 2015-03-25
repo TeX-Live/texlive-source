@@ -326,6 +326,7 @@ boolean lua_a_open_in(alpha_file * f, char *fn, int n)
     return ret;
 }
 
+
 @ @c
 boolean lua_a_open_out(alpha_file * f, char *fn, int n)
 {
@@ -338,15 +339,25 @@ boolean lua_a_open_out(alpha_file * f, char *fn, int n)
         fnam = 0;
         test = run_callback(callback_id, "dS->s", n, fn, &fnam);
         if ((test) && (fnam != 0) && (str_length(fnam) > 0)) {
+            /* There is no message here because if that is needed the macro package */
+            /* should do that in the callback code. As elsewhere, messaging is left */
+            /* to lua then. */
             ret = open_outfile(f, fn, FOPEN_W_MODE);
         }
     } else {
         if (openoutnameok(fn)) {
-            ret = open_out_or_pipe(f, fn, FOPEN_W_MODE);
+            if (n > 0 && selector != term_only) {
+                /* This message to the log is for downward compatibility with other tex's  */
+                /* as there are scripts out there that act on this message. An alternative */
+                /* is to let a macro package write an explicit message. */
+                fprintf(log_file,"\n\\openout%i = %s\n",n-1,fn);
+             }
+             ret = open_out_or_pipe(f, fn, FOPEN_W_MODE);
         }
     }
     return ret;
 }
+
 
 @ @c
 boolean lua_b_open_out(alpha_file * f, char *fn)
