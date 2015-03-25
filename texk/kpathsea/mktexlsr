@@ -73,7 +73,7 @@ if tty -s; then verbose=true; else verbose=false; fi
 dry_run=false
 trees=
 
-treefile="${TMPDIR-/tmp}/mktexlsrtrees$$.tmp"
+treefile=`mktemp --tmpdir mktexlsrtrees.XXXXXXXXXX` || exit 1
 trap 'cd /; rm -f $treefile; test -z "$db_dir_tmp" || rm -rf "$db_dir_tmp"; 
       exit' 0 1 2 3 7 13 15
 
