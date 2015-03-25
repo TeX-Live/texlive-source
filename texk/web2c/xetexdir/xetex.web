@@ -25132,6 +25132,7 @@ hmode+math_shift:init_math;
 procedure init_math;
 label reswitch,found,not_found,done;
 var w:scaled; {new or partial |pre_display_size|}
+@!x:integer; {new |pre_display_direction|}
 @!l:scaled; {new |display_width|}
 @!s:scaled; {new |display_indent|}
 @!p:pointer; {current node when calculating |pre_display_size|}
@@ -25189,6 +25190,7 @@ display. Then we can set the proper values of |display_width| and
 @<Go into display math mode@>=
 begin if head=tail then {`\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}'}
   begin pop_nest; w:=-max_dimen;
+  @<Set the value of |x| to the text direction before the display@>;
   end
 else  begin line_break(true);@/
   @<Calculate the natural width, |w|, by which the characters of the
@@ -25201,6 +25203,7 @@ else  begin line_break(true);@/
 push_math(math_shift_group); mode:=mmode;
 eq_word_define(int_base+cur_fam_code,-1);@/
 eq_word_define(dimen_base+pre_display_size_code,w);
+eq_word_define(int_base+pre_display_direction_code,x);
 eq_word_define(dimen_base+display_width_code,l);
 eq_word_define(dimen_base+display_indent_code,s);
 if every_display<>null then begin_token_list(every_display,every_display_text);
@@ -25209,6 +25212,7 @@ end
 
 @ @<Calculate the natural width, |w|, by which...@>=
 v:=shift_amount(just_box)+2*quad(cur_font); w:=-max_dimen;
+@<Set the value of |x| to the text direction before the display@>;
 p:=list_ptr(just_box);
 while p<>null do
   begin @<Let |d| be the natural width of node |p|;
@@ -32558,6 +32562,14 @@ else if safe_info(LR_ptr)=begin_LR_type(p) then
   end
 else confusion("LR")
 @:this can't happen LR}{\quad LR@>
+
+@ Some special actions are required for displayed equation in paragraphs
+with mixed direction texts.  First of all we have to set the text
+direction preceding the display.
+
+@<Set the value of |x|...@>=
+if LR_save=null then x:=0
+else if info(LR_save)>=begin_R_code then x:=-1@+else x:=1
 
 @* \[54] System-dependent changes.
 This section should be replaced, if necessary, by any special
