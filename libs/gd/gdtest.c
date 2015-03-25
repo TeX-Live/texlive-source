@@ -1,6 +1,6 @@
 /* pixtest.c: Basic test for libpixman
  *
- * Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
+ * Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
  * You may freely use, modify and/or distribute this file.
  */
 

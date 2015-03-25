@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
 ./teckit_compile $srcdir/tex-text.map -o xtex-text.tec || exit 1
 
 cmp $srcdir/tex-text.tec xtex-text.tec || exit 1
