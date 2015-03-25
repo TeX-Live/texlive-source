@@ -1,3 +1,12 @@
+2015-03-25  Karl Berry  <karl@tug.org>
+
+	* mktexlsr (treefile): use shell mktemp; patch from Debian
+	via tlbuild mail from Norbert, 6 Mar 2015 09:13:06.
+	Per Nelson Beebe, the program is available on a wide variety of
+	systems nowadays, excluding only SGI IRIX MIPS, which we have
+	not built binaries for in several years.
+	(tlbuild reply, 6 Mar 2015 06:22:21)
+
 2015-03-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, kpathsea.pc.in: Install <kpathsea/c-auto.h> under
