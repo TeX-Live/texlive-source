@@ -1,6 +1,6 @@
 dnl Process this file with Autoconf to produce a configure script for Web2c.
 dnl
-dnl   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
