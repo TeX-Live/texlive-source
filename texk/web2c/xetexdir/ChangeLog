@@ -1,3 +1,10 @@
+2015-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/jpegimage.c: Drop redundant #include directives.
+	* image/{mfileio,numbers}.c: First '#include <w2c/config.h>'.
+	* image/mfileio.h, image/numbers.[ch]: Drop unused types and
+	functions.
+
 2015-03-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: The SELFAUTOLOC issue has been considered on W32
