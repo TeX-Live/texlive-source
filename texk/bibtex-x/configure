@@ -19410,9 +19410,7 @@ else
 fi
 if $ICU_CONFIG --version >/dev/null 2>&1; then
   ICU_INCLUDES=`$ICU_CONFIG --cppflags`
-  # Work around bug in icu-config version 4.4
-  ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath --ldflags-icuio`
-  ICU_LIBS="$ICU_LIBS `$ICU_CONFIG --ldflags-libsonly --ldflags-system`"
+  ICU_LIBS=`$ICU_CONFIG --ldflags-searchpath --ldflags-icuio --ldflags-libsonly --ldflags-system`
 elif test "x$need_icu:$with_system_icu" = xyes:yes; then
   as_fn_error $? "did not find icu-config required for system icu libraries" "$LINENO" 5
 fi

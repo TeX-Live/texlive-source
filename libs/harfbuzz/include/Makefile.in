@@ -90,12 +90,10 @@ host_triplet = @host@
 subdir = include
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
-	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-graphite2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
-	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
 	$(top_srcdir)/version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -151,10 +149,6 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
-FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
-FREETYPE2_LIBS = @FREETYPE2_LIBS@
-FT2_CONFIG = @FT2_CONFIG@
 GRAPHITE2_DEPEND = @GRAPHITE2_DEPEND@
 GRAPHITE2_INCLUDES = @GRAPHITE2_INCLUDES@
 GRAPHITE2_LIBS = @GRAPHITE2_LIBS@
@@ -198,9 +192,6 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
-ZLIB_DEPEND = @ZLIB_DEPEND@
-ZLIB_INCLUDES = @ZLIB_INCLUDES@
-ZLIB_LIBS = @ZLIB_LIBS@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
