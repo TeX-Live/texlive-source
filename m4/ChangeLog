@@ -1,3 +1,8 @@
+2015-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-graphite2-flags.m4: Does not depend on other libraries.
+	* kpse-icu-flags.m4: Drop handling of a historic bug from V4.4.
+
 2015-03-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-{kpathsea,ptexenc}-flags.m4: Use pkg-config.

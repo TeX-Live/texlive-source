@@ -128,9 +128,3 @@
 
 /* Version number of package */
 #undef VERSION
-
-/* Define to 1 if <zlib.h> declares 'z_const'. */
-#undef ZLIB_CONST
-
-/* Define as empty if not declared in <zlib.h>. */
-#undef z_const
