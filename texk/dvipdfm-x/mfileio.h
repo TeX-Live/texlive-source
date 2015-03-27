@@ -59,7 +59,7 @@ extern long file_size (FILE *file);
 
 extern off_t xfile_size (FILE *file, const char *name);
 
-extern char *mfgets (char *buffer, unsigned long size, FILE *file);
+extern char *mfgets (char *buffer, int length, FILE *file);
 
 extern char work_buffer[];
 

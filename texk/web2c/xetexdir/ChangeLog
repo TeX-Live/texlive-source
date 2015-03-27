@@ -1,3 +1,7 @@
+2015-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/mfileio.[ch]: Use mfgets() parameters as for fgets().
+
 2015-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/jpegimage.c: Drop redundant #include directives.
