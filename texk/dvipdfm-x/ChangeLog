@@ -1,3 +1,7 @@
+2015-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mfileio.[ch]: Use mfgets() parameters as for fgets().
+
 2015-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* bmpimage.c, dpxcrypt.c, dvi.c, fontmap.[ch], jpegimage.c,
