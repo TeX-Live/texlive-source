@@ -1,0 +1,21 @@
+diff -ur zziplib-0.13.62.orig/zzip/zip.c zziplib-0.13.62/zzip/zip.c
+--- zziplib-0.13.62.orig/zzip/zip.c 2015-03-27 21:16:01.101333013 +0100
++++ zziplib-0.13.62/zzip/zip.c      2015-03-27 21:19:06.037340680 +0100
+@@ -628,6 +628,17 @@
+     return zzip_dir_alloc_ext_io(fileext, 0);
+ }
+ 
++
++
++/**
++ * returns the refcount 
++ */
++int
++zzip_dir_refcount(ZZIP_DIR * dir)
++{
++    return dir->refcount;
++}
++
+ /**
+  * will free the zzip_dir handle unless there are still
+  * zzip_files attached (that may use its cache buffer).
