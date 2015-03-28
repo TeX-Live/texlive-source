@@ -628,6 +628,17 @@ zzip_dir_alloc(zzip_strings_t * fileext)
     return zzip_dir_alloc_ext_io(fileext, 0);
 }
 
+
+
+/**
+ * returns the refcount 
+ */
+int
+zzip_dir_refcount(ZZIP_DIR * dir)
+{
+    return dir->refcount;
+}
+
 /**
  * will free the zzip_dir handle unless there are still
  * zzip_files attached (that may use its cache buffer).
