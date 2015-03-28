@@ -1650,8 +1650,8 @@ static boolean print_convert_string(halfword c, int i)
     case luatex_date_code:
         print_int(get_luatex_date_info());
         break;
-    case pdftex_banner_code:
-        tprint(pdftex_banner);
+    case luatex_banner_code:
+        tprint(luatex_banner);
         break;
     case uniform_deviate_code:
         print_int(unif_rand(i));
@@ -1782,7 +1782,7 @@ void conv_toks(void)
     case pdftex_revision_code:
     case luatex_revision_code:
     case luatex_date_code:
-    case pdftex_banner_code:
+    case luatex_banner_code:
         break;
     case pdf_font_name_code:
     case pdf_font_objnum_code:
