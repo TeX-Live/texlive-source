@@ -35,7 +35,7 @@ const char *last_lua_error;
 
 static const char *getbanner(void)
 {
-    return (const char *) ptexbanner;
+    return (const char *) luatex_banner;
 }
 
 static const char *getlogname(void)
@@ -43,10 +43,11 @@ static const char *getlogname(void)
     return (const char *) texmf_log_name;
 }
 
-static const char *get_pdftex_banner(void)
-{
-    return (const char *) pdftex_banner;
-}
+/* Obsolete in 0.80.0                         */
+/* static const char *get_pdftex_banner(void) */
+/* { */
+/*     return (const char *) pdftex_banner; */
+/* } */
 
 static const char *get_output_file_name(void)
 {
@@ -84,15 +85,15 @@ static const char *luatexrevision(void)
     return (const char *) (strrchr(luatex_version_string, '.') + 1);
 }
 
-static lua_Number get_luatexhashchars(void) 
+static lua_Number get_luatexhashchars(void)
 {
   return (lua_Number) LUAI_HASHLIMIT;
 }
 
-static const char *get_luatexhashtype(void) 
+static const char *get_luatexhashtype(void)
 {
 #ifdef LuajitTeX
-     return (const char *)jithash_hashname; 
+     return (const char *)jithash_hashname;
 #else
   return "lua";
 #endif
@@ -181,6 +182,21 @@ static int luastate_max = 1;    /* fixed value */
 static int init_pool_ptr = 0;
 
 static struct statistic stats[] = {
+
+    /* most likely accessed */
+
+    {"output_active", 'b', &output_active},
+    {"best_page_break", 'n', &best_page_break},
+
+    {"filename", 'S', (void *) &getfilename},
+    {"inputid", 'g', &(iname)},
+    {"linenumber", 'g', &line},
+
+    {"lasterrorstring", 'S', (void *) &getlasterror},
+    {"lastluaerrorstring", 'S', (void *) &getlastluaerror},
+
+    /* seldom or never accessed */
+
     {"pdf_gone", 'N', &get_pdf_gone},
     {"pdf_ptr", 'N', &get_pdf_ptr},
     {"dvi_gone", 'g', &dvi_offset},
@@ -189,13 +205,12 @@ static struct statistic stats[] = {
     {"output_file_name", 'S', (void *) &get_output_file_name},
     {"log_name", 'S', (void *) &getlogname},
     {"banner", 'S', (void *) &getbanner},
-    {"pdftex_banner", 'S', (void *) &get_pdftex_banner},
+    {"pdftex_banner", 'S', (void *) &getbanner},
     {"luatex_svn", 'G', &get_luatexsvn},
     {"luatex_version", 'G', &get_luatexversion},
     {"luatex_revision", 'S', (void *) &luatexrevision},
     {"luatex_hashtype", 'S', (void *) &get_luatexhashtype},
     {"luatex_hashchars", 'N',  &get_luatexhashchars},
-
 
     {"ini_version", 'b', &ini_version},
     /*
@@ -243,12 +258,6 @@ static struct statistic stats[] = {
 
     {"largest_used_mark", 'g', &biggest_used_mark},
 
-    {"filename", 'S', (void *) &getfilename},
-    {"inputid", 'g', &(iname)},
-    {"linenumber", 'g', &line},
-    {"lasterrorstring", 'S', (void *) &getlasterror},
-    {"lastluaerrorstring", 'S', (void *) &getlastluaerror},
-
     {"luabytecodes", 'g', &luabytecode_max},
     {"luabytecode_bytes", 'g', &luabytecode_bytes},
     {"luastates", 'g', &luastate_max},
@@ -256,8 +265,6 @@ static struct statistic stats[] = {
     {"callbacks", 'g', &callback_count},
     {"indirect_callbacks", 'g', &saved_callback_count},
 
-    {"output_active", 'b', &output_active},
-    {"best_page_break", 'n', &best_page_break},
     {NULL, 0, 0}
 };
 
@@ -268,7 +275,7 @@ static int stats_name_to_id(const char *name)
         if (strcmp(stats[i].name, name) == 0)
             return i;
     }
-    return 0;
+    return -1;
 }
 
 static int do_getstat(lua_State * L, int i)
@@ -333,7 +340,7 @@ static int getstats(lua_State * L)
     if (lua_isstring(L, -1)) {
         st = lua_tostring(L, -1);
         i = stats_name_to_id(st);
-        if (i > 0) {
+        if (i >= 0) {
             return do_getstat(L, i);
         }
     }

@@ -21,7 +21,7 @@
 
 
 #include "ptexlib.h"
-#include "lua/luatex-api.h"     /* for ptexbanner */
+#include "lua/luatex-api.h"     /* for luatex_banner */
 
 @ @c
 #define font_id_text(A) cs_text(font_id_base+(A))
@@ -533,7 +533,7 @@ void log_banner(const char *v, int ver)
 @ @c
 void print_version_banner(void)
 {
-    fprintf(term_out, "%s", ptexbanner);
+    fprintf(term_out, "%s", luatex_banner);
 }
 
 @ The procedure |print_esc| prints a string that is preceded by

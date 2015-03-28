@@ -852,6 +852,7 @@ static void mk_suffixlist(void)
 }
 #endif
 
+
 @ @c
 void lua_initialize(int ac, char **av)
 {
@@ -882,8 +883,7 @@ void lua_initialize(int ac, char **av)
         banner = xmalloc(len);
         sprintf(banner, fmt, luatex_version_string, luatex_svn);
     }
-    ptexbanner = banner;
-
+    luatex_banner = banner;
     kpse_invocation_name = kpse_program_basename(argv[0]);
 
     /* be 'luac' */

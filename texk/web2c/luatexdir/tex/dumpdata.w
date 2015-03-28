@@ -506,7 +506,7 @@ boolean load_fmt_file(const char *fmtname)
         undump_font(k);
     }
     undump_math_data();
-    make_pdftex_banner();
+    /*make_pdftex_banner();*/
 
     /* Undump the hyphenation tables */
     undump_language_data();

@@ -26,7 +26,7 @@
 
 #define TeX
 
-int luatex_svn = 5195;
+int luatex_svn = 5208;
 int luatex_version = 80;        /* \.{\\luatexversion}  */
 int luatex_revision = '0';      /* \.{\\luatexrevision}  */
 int luatex_date_info = 2015031900;     /* the compile date is now hardwired */
@@ -442,7 +442,7 @@ string dump_name;
 /* The C version of the jobname, if given. */
 const_string c_job_name;
 
-const char *ptexbanner;
+const char *luatex_banner;
 
 #ifdef _MSC_VER
 /* Invalid parameter handler */

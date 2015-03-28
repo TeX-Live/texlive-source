@@ -2415,8 +2415,8 @@ static int tex_run_boot(lua_State * L)
         zwclose(fmt_file);
     }
     fix_date_and_time();
-    if (format == NULL)
-        make_pdftex_banner();
+    /* if (format == NULL) */
+    /*     make_pdftex_banner(); */
     random_seed = (microseconds * 1000) + (epochseconds % 1000000);
     init_randoms(random_seed);
     initialize_math();
