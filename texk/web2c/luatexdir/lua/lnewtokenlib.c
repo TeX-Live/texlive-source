@@ -218,7 +218,7 @@ static int run_scan_dimen(lua_State * L)
     if (t>0)
       inf = lua_toboolean(L,1); /* inf values allowed ?*/
     if (t>1)
-      mu = lua_toboolean(L,2); /* mu units required ?*/
+      mu = lua_toboolean(L,2);  /* mu units required ?*/
     save_tex_scanner(texstate);
     scan_dimen( mu,inf, false); /* arg3 = shortcut */
     v = cur_val;
@@ -572,10 +572,11 @@ static int run_scan_token(lua_State * L)
 
 /* experiment */
 
-/* [catcodetable] csname content        :  \def\csname{content} */
+/* [catcodetable] csname content        : \def\csname{content}  */
 /* [catcodetable] csname content global : \gdef\csname{content} */
-/* [catcodetable] csname                :  \def\csname{} */
+/* [catcodetable] csname                : \def\csname{}         */
 
+/* TODO: check for a quick way to set a macro to empty (HH) */
 static int set_macro(lua_State * L)
 {
     const char *name = null;
@@ -632,9 +633,9 @@ static int set_macro(lua_State * L)
             t = (halfword) str2uni((const unsigned char *) str);
             str += utf8_size(t);
             cc = get_cat_code(ct,t);
-            /* this is a relating simple converter; if more is needed one can just use */
+            /* this is a relating simple converter; if more is needed one can just use     */
             /* tex.print with a regular \def or \gdef and feed the string into the regular */
-            /* scanner; */
+            /* scanner;                                                                    */
             if (cc == 0) {
                 /* we have a potential control sequence so we check for it */
                 int _lname = 0 ;
@@ -669,7 +670,7 @@ static int set_macro(lua_State * L)
                     }
                 } else {
                     /* just a character with some meaning, so \unknown becomes effectively */
-                    /* \\unknown assuming that \\ has some useful meaning of course */
+                    /* \\unknown assuming that \\ has some useful meaning of course        */
                     t = cc * (1<<21) + t ;
                     str = _name ;
                 }
@@ -684,10 +685,17 @@ static int set_macro(lua_State * L)
         /* there is no fast_store_new_token(right_brace_token) needed */
         define(cs, call_cmd + (a % 4), token_link(temp_token_head));
     } else {
-        define(cs, call_cmd + (a % 4), null);
+        halfword p ;
+        halfword q; /* new node being added to the token list via |store_new_token| */
+        p = temp_token_head;
+        set_token_info(p,null);
+        fast_store_new_token(left_brace_token);
+        fast_store_new_token(end_match_token);
+        define(cs, call_cmd + (a % 4), token_link(temp_token_head));
     }
     return 0;
 }
+
 
 static const struct luaL_Reg tokenlib[] = {
     {"is_token", lua_tokenlib_is_token},

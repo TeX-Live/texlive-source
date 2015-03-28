@@ -446,8 +446,8 @@ void main_body(void)
     else
         buffer[ilimit] = (packed_ASCII_code) int_par(end_line_char_code);
     fix_date_and_time();
-    if (ini_version)
-        make_pdftex_banner();
+    /*if (ini_version)*/
+    /*    make_pdftex_banner();*/
     random_seed = (microseconds * 1000) + (epochseconds % 1000000);
     init_randoms(random_seed);
     initialize_math();

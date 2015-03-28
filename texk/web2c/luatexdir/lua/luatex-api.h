@@ -170,7 +170,7 @@ extern int luastate_bytes;
 extern int callback_count;
 extern int saved_callback_count;
 
-extern const char *ptexbanner;
+extern const char *luatex_banner;
 
 extern const char *last_lua_error;
 

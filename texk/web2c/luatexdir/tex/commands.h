@@ -235,9 +235,10 @@ typedef enum {
     font_name_code,             /* command code for \.{\\fontname} */
     etex_code,                  /* command code for \.{\\eTeXVersion} */
     format_name_code,           /* command code for \.{\\AlephVersion} */
-    pdftex_revision_code,       /* command code for \.{\\pdftexrevision} */
+    pdftex_revision_code,       /* command code for \.{\\pdftexrevision}: OBSOLETE  */
 #  define pdftex_first_expand_code pdftex_revision_code /* base for \pdfTeX's command codes */
-    pdftex_banner_code,         /* command code for \.{\\pdftexbanner} */
+    /*pdftex_banner_code,*/         /* command code for \.{\\pdftexbanner}: OBSOLETE */
+    luatex_banner_code,         /* command code for \.{\\luatexbanner}: */
     pdf_font_name_code,         /* command code for \.{\\pdffontname} */
     pdf_font_objnum_code,       /* command code for \.{\\pdffontobjnum} */
     pdf_font_size_code,         /* command code for \.{\\pdffontsize} */
@@ -273,7 +274,7 @@ typedef enum {
     last_node_type_code,        /* code for \.{\\lastnodetype} */
     input_line_no_code,         /* code for \.{\\inputlineno} */
     badness_code,               /* code for \.{\\badness} */
-    pdftex_version_code,        /* code for \.{\\pdftexversion} */
+    pdftex_version_code,        /* code for \.{\\pdftexversion} */ /*OBSOLETE */
 #  define pdftex_first_rint_code   pdftex_version_code  /* base for \pdfTeX's command codes */
     pdf_last_obj_code,          /* code for \.{\\pdflastobj} */
     pdf_last_xform_code,        /* code for \.{\\pdflastxform} */

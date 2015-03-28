@@ -97,15 +97,22 @@ static int zip_open (lua_State *L) {
   return 1;
 }
 
+
 static int zip_close (lua_State *L) {
   ZZIP_DIR* f = tofile(L, 1);
-  if (zzip_dir_close(f) == 0)
+  if (zzip_dir_refcount(f) != 0)  
   {
-    *(ZZIP_DIR**)lua_touserdata(L, 1) = NULL; /* mark file as close */
-    lua_pushboolean(L, 1);
-  }
-  else
     lua_pushboolean(L, 0);
+  } else {
+    if (zzip_dir_close(f) == 0)
+    {
+      *(ZZIP_DIR**)lua_touserdata(L, 1) = NULL; /* mark file as close */
+      lua_pushboolean(L, 1);
+    }
+    else {
+      lua_pushboolean(L, 0);
+    }
+  }
   return 1;
 }
 
