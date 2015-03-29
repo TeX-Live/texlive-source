@@ -77,7 +77,7 @@ static void*  win32_mmap (long* user, int fd, zzip_off_t offs, size_t len)
     {
 	char* p = 0;
 	p = MapViewOfFile(*(HANDLE*)user, FILE_MAP_READ, 0, offs, len);
-	if (p) return p + offs;
+	if (p) return p;
 	CloseHandle (*(HANDLE*)user); *user = 1;
     } 
     return MAP_FAILED;
