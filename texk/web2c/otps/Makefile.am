@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/otps/
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES)
@@ -28,11 +28,12 @@ SUBDIRS = win32
 else !WIN32
 bin_SCRIPTS = $(otps_scripts)
 endif !WIN32
-dist_man1_MANS = $(otps_programs:=.man) $(otps_scripts:=.man)
+man1_MANS = $(otps_mans)
 endif OTANGLE
 EXTRA_PROGRAMS = $(otps_programs)
+otps_mans = $(otps_programs:=.man) $(otps_scripts:=.man)
 
-EXTRA_DIST = $(otps_scripts)
+EXTRA_DIST = $(otps_scripts) $(otps_mans)
 
 otp2ocp_SOURCES = \
 	otp-parser.y \

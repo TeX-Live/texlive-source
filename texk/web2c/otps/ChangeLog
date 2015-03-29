@@ -1,3 +1,7 @@
+2015-03-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Unconditionally distribute manpages.
+
 2013-06-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* otp-lexer.l: First #include <w2c/config.h> via "routines.h".
