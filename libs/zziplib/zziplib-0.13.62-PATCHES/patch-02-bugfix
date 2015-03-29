@@ -1,7 +1,7 @@
 diff -ur zziplib-0.13.62.orig/zzip/__mmap.h zziplib-0.13.62/zzip/__mmap.h
 --- zziplib-0.13.62.orig/zzip/__mmap.h	2009-08-23 13:38:22.000000000 +0200
-+++ zziplib-0.13.62/zzip/__mmap.h	2014-07-14 11:27:20.000000000 +0200
-@@ -50,21 +50,29 @@
++++ zziplib-0.13.62/zzip/__mmap.h	2015-03-29 12:44:43.000000000 +0200
+@@ -50,43 +50,60 @@
  #define MAP_FAILED 0
  #endif
  /* we (ab)use the "*user" variable to store the FileMapping handle */
@@ -33,7 +33,11 @@ diff -ur zziplib-0.13.62.orig/zzip/__mmap.h zziplib-0.13.62/zzip/__mmap.h
      if (*user)
      {
  	char* p = 0;
-@@ -75,18 +83,27 @@
+ 	p = MapViewOfFile(*(HANDLE*)user, FILE_MAP_READ, 0, offs, len);
+-	if (p) return p + offs;
++	if (p) return p;
+ 	CloseHandle (*(HANDLE*)user); *user = 1;
+     } 
      return MAP_FAILED;
    }
  }
