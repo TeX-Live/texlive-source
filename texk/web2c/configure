@@ -1723,8 +1723,8 @@ Optional Features:
   --disable-upmp          do not compile and install upMetaPost
   --disable-xetex         do not compile and install XeTeX
   --disable-xetex-synctex   build XeTeX without SyncTeX support
-  --disable-mf            do not build METAFONT
-  --disable-mf-nowin        do not build a separate non-windows-capable
+  --disable-mf            do not compile and install METAFONT
+  --disable-mf-nowin        do not build a separate non-window-capable
                             METAFONT
   --enable-epsfwin          include EPSF pseudo window support
   --enable-hp2627win        include HP 2627 window support
@@ -18832,6 +18832,13 @@ test "x$enable_web2c:$enable_xetex" = xyes:yes && {
 if test "${enable_mf+set}" = set; then :
   enableval=$enable_mf;
 fi
+case $enable_mf in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_mf=yes ;;
+esac
+
 # Check whether --enable-mf-nowin was given.
 if test "${enable_mf_nowin+set}" = set; then :
   enableval=$enable_mf_nowin;
@@ -20180,25 +20187,7 @@ else
   OTANGLE_FALSE=
 fi
 
- if test "x$enable_mf" != xno; then
-  MF_TRUE=
-  MF_FALSE='#'
-else
-  MF_TRUE='#'
-  MF_FALSE=
-fi
-
- if test "x$enable_mf_nowin" != xno; then
-  MFN_TRUE=
-  MFN_FALSE='#'
-else
-  MFN_TRUE='#'
-  MFN_FALSE=
-fi
-
-
 # Handle --with-mf-x-toolkit and --with-x
-test "x$enable_mf" = xno || enable_mf=yes
 case $with_mf_x_toolkit in #(
   yes|no) :
      ;; #(
@@ -20215,7 +20204,24 @@ $as_echo "$as_me: WARNING: unknown --with-mf-x-toolkit argument \`$with_mf_x_too
 esac
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no
-: ${with_x=$enable_mf} # tell PATH_XTRA to use X for Metafont, if not specified.
+
+ if test "x$enable_mf" != xno; then
+  MF_TRUE=
+  MF_FALSE='#'
+else
+  MF_TRUE='#'
+  MF_FALSE=
+fi
+test "x$enable_mf" = xyes && : ${with_x=yes}
+
+ if test "x$enable_mf_nowin" != xno; then
+  MFN_TRUE=
+  MFN_FALSE='#'
+else
+  MFN_TRUE='#'
+  MFN_FALSE=
+fi
+: ${with_x=yes}
 
 # Distinguish no X at all, no toolkit, or toolkit.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for X" >&5

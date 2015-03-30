@@ -1,5 +1,5 @@
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -13,12 +13,12 @@ AC_DEFUN([KPSE_WEB2C_PREPARE], [])
 # KPSE_WITH_XTEX(PROG, BUILD-OR-NO, SYNC-OR-NO, TEXT, REQUIRED-LIBS)
 # ------------------------------------------------------------------
 # Provide and normalize the configure options --enable-*tex.
-m4_define([KPSE_WITH_XTEX],
-[AC_ARG_ENABLE([$1],
-               AS_HELP_STRING([--]m4_if([$2], [yes], [dis], [en])[able-$1],
-                              m4_if([$2], [yes],
-                                    [do not ])[compile and install $4],
-                              kpse_indent_26))[]dnl
+m4_define([KPSE_WITH_XTEX], [dnl
+AC_ARG_ENABLE([$1],
+              AS_HELP_STRING([--]m4_if([$2], [yes], [dis], [en])[able-$1],
+                             m4_if([$2], [yes],
+                                   [do not ])[compile and install $4],
+                             kpse_indent_26))[]dnl
 AS_CASE([$enable_$1],
         [yes | no], ,
         [enable_$1=$2])
@@ -38,8 +38,8 @@ AC_FOREACH([Kpse_Lib], [$5], [  need_[]AS_TR_SH(Kpse_Lib)=yes
 # KPSE_XTEX_COND(PROG, BUILD-OR-NO, SYNC-OR-NO, TEXT, REQUIRED-LIBS)
 # ------------------------------------------------------------------
 # Normalize --enable-*tex-synctex configure option and build conditionals.
-m4_define([KPSE_XTEX_COND],
-[AM_CONDITIONAL(AS_TR_CPP($1), [test "x$enable_$1" = xyes])[]dnl
+m4_define([KPSE_XTEX_COND], [dnl
+AM_CONDITIONAL(AS_TR_CPP($1), [test "x$enable_$1" = xyes])[]dnl
 m4_ifval([$3], [
 AS_CASE([$enable_native_texlive_build:$enable_$1_synctex],
         [yes:$3 | no:yes | no:no], ,
@@ -51,21 +51,58 @@ AM_CONDITIONAL(AS_TR_CPP($1)[_SYNCTEX], [test "x$enable_$1_synctex" = xyes])[]dn
 ])[]dnl m4_ifval
 ]) # KPSE_XTEX_COND
 
+# KPSE_WITH_XMF(PROG, BUILD-OR-NO, NOWIN-OR-NO, TEXT, REQUIRED-LIBS)
+# ------------------------------------------------------------------
+# Provide and normalize the configure options --enable-mf*.
+m4_define([KPSE_WITH_XMF], [dnl
+AC_ARG_ENABLE([$1],
+              AS_HELP_STRING([--]m4_if([$2], [yes], [dis], [en])[able-$1],
+                             m4_if([$2], [yes],
+                                   [do not ])[compile and install $4],
+                             kpse_indent_26))[]dnl
+AS_CASE([$enable_$1],
+        [yes | no], ,
+        [enable_$1=$2])
+m4_ifval([$3], [
+AC_ARG_ENABLE([$1-nowin],
+              AS_HELP_STRING([--]m4_if([$3], [yes], [dis], [en])[able-$1-nowin],
+                             m4_if([$3], [yes],
+                                   [do not ])[build a separate non-window-capable $4],
+                             m4_eval(kpse_indent_26+2)))[]dnl
+])[]dnl m4_ifval
+m4_ifval([$5], [
+test "x$enable_web2c:$enable_$1" = xyes:yes && {
+AC_FOREACH([Kpse_Lib], [$5], [  need_[]AS_TR_SH(Kpse_Lib)=yes
+])}
+])[]dnl m4_ifval
+]) # KPSE_WITH_XMF
+
+# KPSE_XMF_COND(PROG, BUILD-OR-NO, NOWIN-OR-NO, TEXT, REQUIRED-LIBS)
+# ------------------------------------------------------------------
+# Build conditionals and adjust with_x.
+m4_define([KPSE_XMF_COND], [dnl
+AM_CONDITIONAL(AS_TR_CPP($1), [test "x$enable_$1" != xno])[]dnl
+test "x$enable_$1" = xyes && : ${with_x=yes}
+m4_ifval([$3], [
+AM_CONDITIONAL(AS_TR_CPP($1)[N], [test "x$enable_$1_nowin" != xno])[]dnl
+])[]dnl m4_ifval
+]) # KPSE_XMF_COND
+
 # KPSE_WITH_MFWIN(WINDOW, DEFINE, TEXT)
 # -------------------------------------
 # Provide configure options --enable-*win.
-m4_define([KPSE_WITH_MFWIN],
-[AC_ARG_ENABLE([$1win],
-               AS_HELP_STRING([--enable-$1win],
-                              [include $3 window support],
-                              m4_eval(kpse_indent_26+2)))[]dnl
+m4_define([KPSE_WITH_MFWIN], [dnl
+AC_ARG_ENABLE([$1win],
+              AS_HELP_STRING([--enable-$1win],
+                             [include $3 window support],
+                             m4_eval(kpse_indent_26+2)))[]dnl
 ]) # KPSE_WITH_MFWIN
 
 # KPSE_MFWIN_DEFINE(WINDOW, DEFINE, TEXT)
 # ---------------------------------------
 # Defines for enable-*win
-m4_define([KPSE_MFWIN_DEFINE],
-[AS_IF([test "x$enable_$1win" = xyes],
-       [AC_DEFINE([$2WIN], ,
-                  [metafont: Define to include $3 window support.])])
+m4_define([KPSE_MFWIN_DEFINE], [dnl
+AS_IF([test "x$enable_$1win" = xyes],
+      [AC_DEFINE([$2WIN], ,
+                 [metafont: Define to include $3 window support.])])
 ]) # KPSE_MFWIN_DEFINE
