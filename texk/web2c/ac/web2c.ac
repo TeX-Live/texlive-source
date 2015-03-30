@@ -46,14 +46,13 @@ m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],
                      [KPSE_WITH_XTEX(Kpse_Prog)])])[]dnl
 ## configure options for MF
-AC_ARG_ENABLE([mf],
-              AS_HELP_STRING([--disable-mf],
-                             [do not build METAFONT],
-                             kpse_indent_26))[]dnl
-AC_ARG_ENABLE([mf-nowin],
-              AS_HELP_STRING([--disable-mf-nowin],
-                             [do not build a separate non-windows-capable METAFONT],
-                             m4_eval(kpse_indent_26+2)))[]dnl
+dnl [PROG, BUILD-OR-NO, NOWIN-OR-NO, TEXT, REQUIRED-LIBS]
+m4_define([kpse_mf_progs], [dnl
+[[mf],    [yes], [yes], [METAFONT], []],
+])[]dnl
+m4_foreach([Kpse_Prog], [kpse_mf_progs],
+           [m4_ifset([Kpse_Prog],
+                     [KPSE_WITH_XMF(Kpse_Prog)])])[]dnl
 AC_ARG_WITH([mf-x-toolkit],
             AS_HELP_STRING([--with-mf-x-toolkit],
                            [use X toolkit for METAFONT]))[]dnl

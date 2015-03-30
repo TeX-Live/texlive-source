@@ -153,11 +153,7 @@ AS_IF([test "x$enable_aleph:$enable_xetex:$enable_omfonts" = xno:no:yes],
 AM_CONDITIONAL([OTANGLE],
                [test "x$enable_otangle" = xyes])[]dnl
 
-AM_CONDITIONAL([MF], [test "x$enable_mf" != xno])
-AM_CONDITIONAL([MFN], [test "x$enable_mf_nowin" != xno])
-
 # Handle --with-mf-x-toolkit and --with-x
-test "x$enable_mf" = xno || enable_mf=yes
 AS_CASE([$with_mf_x_toolkit],
         [yes|no], [],
         [''], [with_mf_x_toolkit=no],
@@ -167,7 +163,12 @@ AS_CASE([$with_mf_x_toolkit],
              with_mf_x_toolkit=no])
 test "x$with_x_toolkit" = xyes && with_x=yes
 test "x$with_x" = xno && with_x_toolkit=no
-: ${with_x=$enable_mf} # tell PATH_XTRA to use X for Metafont, if not specified.
+
+dnl Generate MF* conditionals and set with_x.
+m4_foreach([Kpse_Prog], [kpse_mf_progs],
+           [m4_ifset([Kpse_Prog],
+                     [KPSE_XMF_COND(Kpse_Prog)])])[]dnl
+: ${with_x=yes}
 
 # Distinguish no X at all, no toolkit, or toolkit.
 AC_PATH_XTRA

@@ -1533,8 +1533,8 @@ Optional Features:
   --disable-upmp            do not compile and install upMetaPost
   --disable-xetex           do not compile and install XeTeX
   --disable-xetex-synctex     build XeTeX without SyncTeX support
-  --disable-mf              do not build METAFONT
-  --disable-mf-nowin          do not build a separate non-windows-capable
+  --disable-mf              do not compile and install METAFONT
+  --disable-mf-nowin          do not build a separate non-window-capable
                               METAFONT
   --enable-epsfwin            include EPSF pseudo window support
   --enable-hp2627win          include HP 2627 window support
@@ -3918,6 +3918,13 @@ test "x$enable_web2c:$enable_xetex" = xyes:yes && {
 if test "${enable_mf+set}" = set; then :
   enableval=$enable_mf;
 fi
+case $enable_mf in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_mf=yes ;;
+esac
+
 # Check whether --enable-mf-nowin was given.
 if test "${enable_mf_nowin+set}" = set; then :
   enableval=$enable_mf_nowin;
