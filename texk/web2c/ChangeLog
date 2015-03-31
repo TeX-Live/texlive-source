@@ -1,3 +1,8 @@
+2015-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mftalk.h (removed): Moved from here to window/mftalk.h.
+	* am/texmf.am: Adapted.
+
 2015-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ac/web2c.ac: Define kpse_mf_progs and use KPSE_WITH_XMF.

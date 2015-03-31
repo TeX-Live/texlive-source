@@ -2119,24 +2119,23 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	tests/xampl.bib ctiedir tiedir lib/mfmpi386.asm lib/mfmpw32.c \
 	lib/texmfmp.c texmfmem.h texmfmp-help.h texmfmp.h \
 	$(tex_ch_srcs) $(tex_tests) tests/write18-quote.tex \
-	$(mf_ch_src) mftalk.h $(mf_tests) triptrap/README \
-	triptrap/mftrap.diffs triptrap/mftrap.fot triptrap/mftrap.log \
-	triptrap/mftrap.pl triptrap/mftrap1.in triptrap/mftrap2.in \
-	triptrap/mftrapin.log triptrap/mptrap.diffs \
-	triptrap/mptrap.fot triptrap/mptrap.log triptrap/mptrap.pl \
-	triptrap/mptrap.readme triptrap/mptrap1.in triptrap/mptrap2.in \
-	triptrap/mptrapin.log triptrap/mtrap.0 triptrap/mtrap.1 \
-	triptrap/mtrap.log triptrap/mtrap.mp triptrap/texmf.cnf \
-	triptrap/trap.148 triptrap/trap.149 triptrap/trap.150 \
-	triptrap/trap.151 triptrap/trap.197 triptrap/trap.200 \
-	triptrap/trap.5 triptrap/trap.6 triptrap/trap.mf \
-	triptrap/trap.mp triptrap/trap.mpx triptrap/trap.typ \
-	triptrap/trapf.pl triptrap/trapman.tex triptrap/trip.diffs \
-	triptrap/trip.fot triptrap/trip.log triptrap/trip.pl \
-	triptrap/trip.tex triptrap/trip.typ triptrap/trip1.in \
-	triptrap/trip2.in triptrap/tripin.log triptrap/tripman.tex \
-	triptrap/tripos.tex triptrap/writeo triptrap/writeo.2 \
-	mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
+	$(mf_ch_src) $(mf_tests) triptrap/README triptrap/mftrap.diffs \
+	triptrap/mftrap.fot triptrap/mftrap.log triptrap/mftrap.pl \
+	triptrap/mftrap1.in triptrap/mftrap2.in triptrap/mftrapin.log \
+	triptrap/mptrap.diffs triptrap/mptrap.fot triptrap/mptrap.log \
+	triptrap/mptrap.pl triptrap/mptrap.readme triptrap/mptrap1.in \
+	triptrap/mptrap2.in triptrap/mptrapin.log triptrap/mtrap.0 \
+	triptrap/mtrap.1 triptrap/mtrap.log triptrap/mtrap.mp \
+	triptrap/texmf.cnf triptrap/trap.148 triptrap/trap.149 \
+	triptrap/trap.150 triptrap/trap.151 triptrap/trap.197 \
+	triptrap/trap.200 triptrap/trap.5 triptrap/trap.6 \
+	triptrap/trap.mf triptrap/trap.mp triptrap/trap.mpx \
+	triptrap/trap.typ triptrap/trapf.pl triptrap/trapman.tex \
+	triptrap/trip.diffs triptrap/trip.fot triptrap/trip.log \
+	triptrap/trip.pl triptrap/trip.tex triptrap/trip.typ \
+	triptrap/trip1.in triptrap/trip2.in triptrap/tripin.log \
+	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
+	triptrap/writeo.2 mplibdir/ChangeLog $(mpost_web) $(mp_tests) \
 	pmpostdir/ChangeLog $(pmpost_web) $(pmpost_tests) \
 	$(upmpost_tests) pmpostdir/tests/psample.mp $(libmplib_web) \
 	$(etex_web_srcs) $(etex_ch_srcs) etexdir/ChangeLog \

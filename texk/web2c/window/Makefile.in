@@ -148,8 +148,8 @@ am__v_AR_1 =
 libwindow_a_AR = $(AR) $(ARFLAGS)
 libwindow_a_LIBADD =
 am__libwindow_a_SOURCES_DIST = amiga.c epsf.c hp2627.c mfdisplay.h \
-	mftalk.c next.c regis.c suntools.c tek.c trap.c uniterm.c \
-	win32.c x11-Xt.c x11-Xlib.c
+	mftalk.c mftalk.h next.c regis.c suntools.c tek.c trap.c \
+	uniterm.c win32.c x11-Xt.c x11-Xlib.c
 @MFXT_TRUE@am__objects_1 = x11-Xt.$(OBJEXT)
 @MFXT_FALSE@am__objects_2 = x11-Xlib.$(OBJEXT)
 am_libwindow_a_OBJECTS = amiga.$(OBJEXT) epsf.$(OBJEXT) \
@@ -450,8 +450,8 @@ AM_CPPFLAGS = -I$(top_srcdir) $(KPATHSEA_INCLUDES) $(X_CFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 EXTRA_LIBRARIES = libwindow.a
 libwindow_a_SOURCES = amiga.c epsf.c hp2627.c mfdisplay.h mftalk.c \
-	next.c regis.c suntools.c tek.c trap.c uniterm.c win32.c \
-	$(am__append_1) $(am__append_2)
+	mftalk.h next.c regis.c suntools.c tek.c trap.c uniterm.c \
+	win32.c $(am__append_1) $(am__append_2)
 DISTCLEANFILES = libwindow.a
 all: all-am
 

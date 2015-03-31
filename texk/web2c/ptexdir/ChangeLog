@@ -340,7 +340,7 @@
 2011-03-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptex-base.ch: Fix a bug in begin_box introduced on 2011-03-24,
-        mail from Hironori Kitagawa, Sat, 26 Mar 2011 21:42:49.
+	mail from Hironori Kitagawa, Sat, 26 Mar 2011 21:42:49.
 
 2011-03-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

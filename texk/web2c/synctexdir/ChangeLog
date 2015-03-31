@@ -115,15 +115,15 @@
     as well as 3rd parties developers. The various TeX engines are not affected.
     
 	* synctex_parser.c:
-        - cosmetic changes to enhance code readability
-        - Adding the notiong of mean line and weight to hbox nodes
-          in order to enhance forward synchronization
-        - function synctex_scanner_get_name:
-            + Adding support for the new file naming convention with './'
+	- cosmetic changes to enhance code readability
+	- Adding the notiong of mean line and weight to hbox nodes
+	  in order to enhance forward synchronization
+	- function synctex_scanner_get_name:
+	    + Adding support for the new file naming convention with './'
     * synctex_parser_utils.c:
-        - Adding support for the new file naming convention with './'
-            + function synctex_ignore_leading_dot_slash_in_path replaces synctex_ignore_leading_dot_slash
-            + function _synctex_is_equivalent_file_name is more permissive
+	- Adding support for the new file naming convention with './'
+	    + function synctex_ignore_leading_dot_slash_in_path replaces synctex_ignore_leading_dot_slash
+	    + function _synctex_is_equivalent_file_name is more permissive
 
     See the synctex_parser_readme.txt for more details
 
@@ -281,19 +281,19 @@
 
 	* synctex_parser.c: in the _synctex_smallest_container() function,
 			SYNCTEX_WIDTH is replaced with SYNCTEX_ABS_WIDTH
-            to take into account h boxes with negative width.
-            Solves a problem with amsmath's gather environment
+	    to take into account h boxes with negative width.
+	    Solves a problem with amsmath's gather environment
 	* synctex_parser.c: enhancements in comments to better explain the code
 
 2009-12-30  Jérôme Laurens  <jerome.laurens@u-bourgogne.fr>
 
 	* synctex_parser_utils.c: in the _synctex_malloc() function,
-            memset() is used unconditionally (suggested by J. Kew).
+	    memset() is used unconditionally (suggested by J. Kew).
 	* synctex_parser_utils.c: in the _synctex_error() function,
-            - all 3 instances of OutputDebugString() replaced with OutputDebugStringA()
-            such that unicode is ignored (also suggested by J. Kew).
-            - _WIN32 flag replaced by SYNCTEX_RECENT_WINDOWS because older windows systems
-            may have _WIN32 defined but no OutputDebugString().
+	    - all 3 instances of OutputDebugString() replaced with OutputDebugStringA()
+	    such that unicode is ignored (also suggested by J. Kew).
+	    - _WIN32 flag replaced by SYNCTEX_RECENT_WINDOWS because older windows systems
+	    may have _WIN32 defined but no OutputDebugString().
 
 2009-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
