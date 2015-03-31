@@ -1,6 +1,10 @@
+2015-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* luazip/src/luazip.c (zip_close): Sync with the upstream.
+
 2015-03-19 Luigi Scarso <luigi.scarso@gmail.com>
+
 	New library newtokenlib; several bugs fixed.
-	
 
 2015-01-14 Luigi Scarso <luigi.scarso@gmail.com>
 
@@ -864,12 +868,12 @@
 	
 2010-05-06  Taco Hoekwater <taco@luatex.org>
 
-        * luatex.c (calledit): use ifdef __MINGW32__ instead of WIN32.
+	* luatex.c (calledit): use ifdef __MINGW32__ instead of WIN32.
 	* luatex_svnversion.h: updated to reflect the version of 0.60.x branch
 
 2010-04-28  Taco Hoekwater <taco@luatex.org>
 
-        * tex/maincontrol.w: Fixed the error message for improper 
+	* tex/maincontrol.w: Fixed the error message for improper 
 	use of \protected, reported by Heiko Oberdiek 
 	<heiko.oberdiek@googlemail.com>.
 
@@ -1193,7 +1197,7 @@
 
 2009-06-26  Taco Hoekwater <taco@luatex.org>
 
-        * lua51/lcoco.c, lua51/lcoco.h: disable the coco patch on
+	* lua51/lcoco.c, lua51/lcoco.h: disable the coco patch on
 	linux+ppc because it crashes the executable.
 
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
@@ -1231,7 +1235,7 @@
 2009-06-03  Taco Hoekwater <taco@luatex.org>
  	
 	* luatexdir/luafontloader/fontforge/fontforge/namelist.c (psaltnames): add
-        a dimension specifier, for AIX portability.
+	a dimension specifier, for AIX portability.
 
 2009-06-03  Taco Hoekwater <taco@luatex.org>
  	
