@@ -1,6 +1,6 @@
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Common for MF and TeX
@@ -174,7 +174,7 @@ mf_ch_src = \
 	mf.ch \
 	mf-binpool.ch
 ##
-EXTRA_DIST += $(mf_ch_src) mftalk.h
+EXTRA_DIST += $(mf_ch_src)
 
 DISTCLEANFILES += $(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c \
 	mf.p mf.pool mf-tangle

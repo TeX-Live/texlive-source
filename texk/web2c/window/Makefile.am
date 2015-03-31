@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/web2c/window/
 ##
-## Copyright (C) 2009, 2010 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = -I$(top_srcdir) $(KPATHSEA_INCLUDES) $(X_CFLAGS)
@@ -18,6 +18,7 @@ libwindow_a_SOURCES = \
 	hp2627.c \
 	mfdisplay.h \
 	mftalk.c \
+	mftalk.h \
 	next.c \
 	regis.c \
 	suntools.c \

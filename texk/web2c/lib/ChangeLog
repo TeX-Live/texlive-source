@@ -1515,454 +1515,454 @@ Sat Jun  1 13:17:09 1996  Karl Berry  <karl@cs.umb.edu>
 
 Fri May 24 11:38:59 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (main): Initialize extend_jobname.
-        (parse_options) [TeX]: New option -extend-jobname.
+	* texmfmp.c (main): Initialize extend_jobname.
+	(parse_options) [TeX]: New option -extend-jobname.
 
 Sun Apr 28 15:13:22 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * mfmpi386.asm [ASM_NEEDS_UNDERSCORE]: #ifdef labels on new
-        configure condition.
-        From: Peter Breitenlohner <peb@MPPMU.MPG.DE>.
+	* mfmpi386.asm [ASM_NEEDS_UNDERSCORE]: #ifdef labels on new
+	configure condition.
+	From: Peter Breitenlohner <peb@MPPMU.MPG.DE>.
 
 Tue Apr 23 08:26:11 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (callmakempx): Always pass -troff, even if we got the
-        command name from texmf.cnf.
+	* texmfmp.c (callmakempx): Always pass -troff, even if we got the
+	command name from texmf.cnf.
 
 Sun Apr 21 16:59:44 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (parse_options): New options -maketex and -no-maketex
-        for TeX and MF.
+	* texmfmp.c (parse_options): New options -maketex and -no-maketex
+	for TeX and MF.
 
 Sat Apr 20 17:55:37 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c [IPC_DEBUG]: Text changes.
+	* texmfmp.c [IPC_DEBUG]: Text changes.
 
 Fri Mar 22 15:30:45 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * Remove GPL from these files; Web2c proper can stay p.d.
+	* Remove GPL from these files; Web2c proper can stay p.d.
 
 Sun Mar 10 16:12:14 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * openclose.c: Oops, forgot to #include variable.h.
+	* openclose.c: Oops, forgot to #include variable.h.
 
 Fri Mar  8 16:00:20 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (init_maketex): Remove this; we will do it in Kpathsea
-        instead now, in the format initialization tex-file.c.
+	* texmfmp.c (init_maketex): Remove this; we will do it in Kpathsea
+	instead now, in the format initialization tex-file.c.
 
-        * openclose.c (open_output): Look for TEXMFOUTPUT in texmf.cnf.
+	* openclose.c (open_output): Look for TEXMFOUTPUT in texmf.cnf.
 
 Wed Feb 21 11:45:02 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * openclose.c: Don't abort if the TFM file is empty.
+	* openclose.c: Don't abort if the TFM file is empty.
 
 Sat Feb 17 15:22:52 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (openoutnameok): New function.
+	* texmfmp.c (openoutnameok): New function.
 
 Fri Feb 16 17:51:53 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (long_options) [NONASCII]: Include --translate
-        conditionally.  (Really should change the help message, too.)
+	* texmfmp.c (long_options) [NONASCII]: Include --translate
+	conditionally.  (Really should change the help message, too.)
 
 Sat Feb 10 15:22:59 1996  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (parse_options): Make DUMP_OPTION also set the user
-        progname, since -progname sets the dump name.
+	* texmfmp.c (parse_options): Make DUMP_OPTION also set the user
+	progname, since -progname sets the dump name.
 
 Fri Dec 29 17:16:42 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in: misc.make is now clean.make.
+	* Makefile.in: misc.make is now clean.make.
 
 Sun Dec 17 15:09:44 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (long_options): New option --debug-format, suggested
-        by David Carlisle.
+	* texmfmp.c (long_options): New option --debug-format, suggested
+	by David Carlisle.
 
 Sun Dec 10 16:13:46 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * mfmpi386.asm: Remove _'s. From Wayne.
+	* mfmpi386.asm: Remove _'s. From Wayne.
 
-        * texmfmp.c (PROGRAM_VERSION) [MP]: Now at 0.631.
-        [TeX] No asm stuff. From Gregor Hoffleit, et al.
+	* texmfmp.c (PROGRAM_VERSION) [MP]: Now at 0.631.
+	[TeX] No asm stuff. From Gregor Hoffleit, et al.
 
 Sun Nov 26 13:39:00 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (main): Enable mltex extensions if --mltex option or
-        the program name is mltex.
+	* texmfmp.c (main): Enable mltex extensions if --mltex option or
+	the program name is mltex.
 
 Fri Nov 17 14:35:45 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (-program): New option for TeX, MF, MP. Suggested by Bernd.
+	* texmfmp.c (-program): New option for TeX, MF, MP. Suggested by Bernd.
 
 Thu Nov 16 16:20:03 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (argv, argc): Do not define as static, as we declare
-        them extern in cpascal.h. From Andreas Scherer.
+	* texmfmp.c (argv, argc): Do not define as static, as we declare
+	them extern in cpascal.h. From Andreas Scherer.
 
 Sun Nov 12 16:32:27 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (sysopt_o): Remove this stuff. From Wayne.
-        * texmfmp.c [i386 && GNUC && !NO_MF_ASM]: #include mfmpi386.asm
-        instead of using the C code.
+	* Makefile.in (sysopt_o): Remove this stuff. From Wayne.
+	* texmfmp.c [i386 && GNUC && !NO_MF_ASM]: #include mfmpi386.asm
+	instead of using the C code.
 
-        * texmfmp.c: Disable shell escapes by default.
+	* texmfmp.c: Disable shell escapes by default.
 
 Fri Oct  6 16:23:03 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (maybe_set_dump_default_from_input): Make %&ini set
-        iniversion. Suggested by Wayne.
+	* texmfmp.c (maybe_set_dump_default_from_input): Make %&ini set
+	iniversion. Suggested by Wayne.
 
 Mon Oct  2 15:48:21 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (init_maketex): Really disable if the value is zero.
+	* texmfmp.c (init_maketex): Really disable if the value is zero.
 
 Sat Sep 30 16:02:56 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (main) [TeX]: Look up the `noshell' config variable.
-        (parse_options): No options -noshell and -output-comment.
+	* texmfmp.c (main) [TeX]: Look up the `noshell' config variable.
+	(parse_options): No options -noshell and -output-comment.
 
 Sat Sep 23 15:04:54 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (objects): Remove strtol.o, this is in kpathsea now.
+	* Makefile.in (objects): Remove strtol.o, this is in kpathsea now.
 
 Fri Sep 22 15:51:13 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (init_maketex): New routine.
-        (main): Call it, instead of repeating the weird code.
+	* texmfmp.c (init_maketex): New routine.
+	(main): Call it, instead of repeating the weird code.
 
 Mon Sep  4 17:16:06 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (objects): Remove xopenfile.o.
-        * xopenfile.c: Move to kpathsea.
+	* Makefile.in (objects): Remove xopenfile.o.
+	* xopenfile.c: Move to kpathsea.
 
 Thu Aug 31 13:35:47 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c [!MF_ASM_FRACTION] (takefraction, ...): Conditionalize
-        the floating-point definitions on this, too.
-        * Makefile.in (optx86.o): New target.
-        * optx86.s: New file.
+	* texmfmp.c [!MF_ASM_FRACTION] (takefraction, ...): Conditionalize
+	the floating-point definitions on this, too.
+	* Makefile.in (optx86.o): New target.
+	* optx86.s: New file.
 
 Tue Aug 22 14:11:27 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in: Include rdepend.make, instead of repeating the code.
+	* Makefile.in: Include rdepend.make, instead of repeating the code.
 
 Mon Jul 31 17:46:31 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (setupboundvariable): Call kpse_var_value, so we don't
-        have to pass in the $. Similarly everywhere else.
+	* texmfmp.c (setupboundvariable): Call kpse_var_value, so we don't
+	have to pass in the $. Similarly everywhere else.
 
 Sat Jul 29 19:26:33 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (callmakempx): Rewrite to pass -troff flag, instead of
-        invoking troff script. And use new kpse_var_value.
+	* texmfmp.c (callmakempx): Rewrite to pass -troff flag, instead of
+	invoking troff script. And use new kpse_var_value.
 
 Fri Jul 28 11:10:26 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (depend): Comment out this target in the
-        distribution, it doesn't work when $srcdir != build-dir.
+	* Makefile.in (depend): Comment out this target in the
+	distribution, it doesn't work when $srcdir != build-dir.
 
-        * texmfmp.c (callmakempx): Don't call anything if the command is
-        `none'.
+	* texmfmp.c (callmakempx): Don't call anything if the command is
+	`none'.
 
 Tue Jul 25 13:39:04 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (callmakempx): Free the variable expansion.
+	* texmfmp.c (callmakempx): Free the variable expansion.
 
 Mon Jul 24 11:48:35 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (callmakempx): New fn.
+	* texmfmp.c (callmakempx): New fn.
 
 Sun Jul 23 11:39:51 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmfmp.c (edit_value): Remove this #define.
-        (calledit): Call kpse_var_expand for TEXEDIT et al., instead of
-        just getenv.
-        (ztakefraction, zmakefraction, ztakescaled, zmakescaled): Include
-        Hobby's C code from mpmath.c.
+	* texmfmp.c (edit_value): Remove this #define.
+	(calledit): Call kpse_var_expand for TEXEDIT et al., instead of
+	just getenv.
+	(ztakefraction, zmakefraction, ztakescaled, zmakescaled): Include
+	Hobby's C code from mpmath.c.
 
 Sat Jul 22 14:20:38 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * openclose.c (open_input) [FUNNY_CORE_DUMP]: Recognize
-        HackyInput... for MetaPost. Doc fixes.
+	* openclose.c (open_input) [FUNNY_CORE_DUMP]: Recognize
+	HackyInput... for MetaPost. Doc fixes.
 
-        * texmf.c: Rename to texmfmp.c for MetaPost support.
-        (long_options) [MP]: Add -T and -troff.
+	* texmf.c: Rename to texmfmp.c for MetaPost support.
+	(long_options) [MP]: Add -T and -troff.
 
 Thu Jul 20 13:40:39 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (setupboundvariable) [TeX]: Remove conditional, since MF
-        sets a couple simple variables dynamically now.
-        (initscreen): Get MFTERM from texmf.cnf file if it's there,
-        instead of just calling getenv.
+	* texmf.c (setupboundvariable) [TeX]: Remove conditional, since MF
+	sets a couple simple variables dynamically now.
+	(initscreen): Get MFTERM from texmf.cnf file if it's there,
+	instead of just calling getenv.
 
 Tue Jul 18 13:40:25 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (initscreen): Give warning if they're using X, but there
-        is no X support.
+	* texmf.c (initscreen): Give warning if they're using X, but there
+	is no X support.
 
 Mon Jul 17 13:10:37 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (NO_FMTBASE_SHARE): Rename to NO_DUMP_SHARE.
-        [MF]: Declare return types for window routines.
-        Also, move trap support to another file, window/trap.c.
+	* texmf.c (NO_FMTBASE_SHARE): Rename to NO_DUMP_SHARE.
+	[MF]: Declare return types for window routines.
+	Also, move trap support to another file, window/trap.c.
 
 Sun Jul 16 14:35:33 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (main): Rewrite enabling of MakeTeX* to match new
-        configure stuff.
+	* texmf.c (main): Rewrite enabling of MakeTeX* to match new
+	configure stuff.
 
 Sat Jul 15 16:05:37 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c: Doc fix.
+	* texmf.c: Doc fix.
 
 Fri Jul 14 14:31:57 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (read_char_translation_file): Compute `charssavedbycharset'.
-        (setupcharset): Do not allow dynamic translation in initex.
+	* texmf.c (read_char_translation_file): Compute `charssavedbycharset'.
+	(setupcharset): Do not allow dynamic translation in initex.
 
 Thu Jul 13 14:05:24 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (setupcharset, read_char_translation_file,
-        tcx_get_num): New functions to implement dynamic char translations.
-        (parse_options): Add -translate-file option.
+	* texmf.c (setupcharset, read_char_translation_file,
+	tcx_get_num): New functions to implement dynamic char translations.
+	(parse_options): Add -translate-file option.
 
 Sun Jul  9 15:28:09 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (maybe_set_dump_default_from_input): Don't index
-        argv[optind] if optind is >= argc.
+	* texmf.c (maybe_set_dump_default_from_input): Don't index
+	argv[optind] if optind is >= argc.
 
 Tue Jul  4 16:58:54 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (maybe_set_dump_default_from_input): Finish implementing
-        this (%&FNAME on first line => use FNAME for dump file).
+	* texmf.c (maybe_set_dump_default_from_input): Finish implementing
+	this (%&FNAME on first line => use FNAME for dump file).
 
 Thu Jun 29 17:50:38 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (parse_options) [TeX && IPC]: Concatenate TEX_IPC_HELP
-        to the help string.
+	* texmf.c (parse_options) [TeX && IPC]: Concatenate TEX_IPC_HELP
+	to the help string.
 
-        * openclose.c (open_input): Detect nonexistent files correctly again.
+	* openclose.c (open_input): Detect nonexistent files correctly again.
 
 Wed Jun 21 15:54:45 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (parse_options): Add --fmt (TeX) and --base (MF).
-        (DUMP_OPTION): #ifdef'd #define to determine which.
+	* texmf.c (parse_options): Add --fmt (TeX) and --base (MF).
+	(DUMP_OPTION): #ifdef'd #define to determine which.
 
 Mon Jun 19 20:09:34 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c: Add IPC support.
-        From: Shamim Mohamed <shamim@howland.isu.edu>
-        From: Tomas G. Rokicki <rokicki@CS.Stanford.EDU>
+	* texmf.c: Add IPC support.
+	From: Shamim Mohamed <shamim@howland.isu.edu>
+	From: Tomas G. Rokicki <rokicki@CS.Stanford.EDU>
 
 Sat Jun 10 16:06:06 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * openclose.c: Doc fix.
+	* openclose.c: Doc fix.
 
 Fri Jun  9 19:36:12 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * main.c, texmf.c (main) [__EMX__]: Add _wildcard and _response calls.
-        * texmf.c: Add mftalk support.
-        (funny_core_dump, catch_interrupt) [__EMX__]: OS2 support.
-        From: rs@purple.in-ulm.de (Ralph Schleicher).
+	* main.c, texmf.c (main) [__EMX__]: Add _wildcard and _response calls.
+	* texmf.c: Add mftalk support.
+	(funny_core_dump, catch_interrupt) [__EMX__]: OS2 support.
+	From: rs@purple.in-ulm.de (Ralph Schleicher).
 
 Sun Jun  4 10:30:36 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * eofeoln.c (eof): Return true if the file doesn't exist.
+	* eofeoln.c (eof): Return true if the file doesn't exist.
 
-        * texmf.c: Add support for AMIGAWIN.  From Andreas Scherer.
+	* texmf.c: Add support for AMIGAWIN.  From Andreas Scherer.
 
-        * alloca.c (NULL, xmalloc): Do not define these here, they're
-        (indirectly) in config.h. From Andreas Scherer.
+	* alloca.c (NULL, xmalloc): Do not define these here, they're
+	(indirectly) in config.h. From Andreas Scherer.
 
-        * texmf.c (setupboundvariable): Don't complain about 0 in the cnf
-        file if the default is also 0.
+	* texmf.c (setupboundvariable): Don't complain about 0 in the cnf
+	file if the default is also 0.
 
 Sat Jun  3 11:54:28 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * xopenfile.c: Include the program name in the error message.
+	* xopenfile.c: Include the program name in the error message.
 
-        * texmf.c (setupboundvariable): If the variable is unset in
-        texmf.cnf, the expansion is the empty string, not NULL. Also, free
-        the expansion.
+	* texmf.c (setupboundvariable): If the variable is unset in
+	texmf.cnf, the expansion is the empty string, not NULL. Also, free
+	the expansion.
 
 Fri Jun  2 13:41:41 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (DUMP_EXT) [DOSISH]: Must be `.bas'.  From Wayne.
-        (input_line): Cast buf_size in printf to avoid warning.
-        (setupboundvariable): New routine for lookup of dynamic bounds.
+	* texmf.c (DUMP_EXT) [DOSISH]: Must be `.bas'.  From Wayne.
+	(input_line): Cast buf_size in printf to avoid warning.
+	(setupboundvariable): New routine for lookup of dynamic bounds.
 
 Sun May 28 17:41:49 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * zround.c: Compare against TeX's boundary integers (as floating
-        point constants), instead of INTEGER_{MIN,MAX}.
+	* zround.c: Compare against TeX's boundary integers (as floating
+	point constants), instead of INTEGER_{MIN,MAX}.
 
 Fri May 26 17:47:47 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * strtol.c: New file, from textutils.
-        * Makefile.in (objects): Add strtol.o.
+	* strtol.c: New file, from textutils.
+	* Makefile.in (objects): Add strtol.o.
 
 Wed May 24 17:07:39 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c (parse_options): New routine for TeX & MF.
-        (PROGRAM_VERSION, PROGRAM_HELP): Define these.
-        (main): Call it.
+	* texmf.c (parse_options): New routine for TeX & MF.
+	(PROGRAM_VERSION, PROGRAM_HELP): Define these.
+	(main): Call it.
 
 Sat May 20 17:28:51 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * xopenfile.c: Do perror if we had a full filename to try.
+	* xopenfile.c: Do perror if we had a full filename to try.
 
-        * basechsuffix.c: Take old suffix, and only do the change if the
-        old suffix matches.
+	* basechsuffix.c: Take old suffix, and only do the change if the
+	old suffix matches.
 
-        * usage.c (usage): If bad status, construct the --help message.
+	* usage.c (usage): If bad status, construct the --help message.
 
 Tue May  9 15:46:25 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * usage.c: Doc fix.
+	* usage.c: Doc fix.
 
 Sat May  6 11:23:23 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * usage.c: New file.
-        * Makefile.in (objects): Add it.
+	* usage.c: New file.
+	* Makefile.in (objects): Add it.
 
 Tue Apr 25 14:02:10 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (library): Set to lib instead of lib.a, to match the
-        other Makefile conventions.
+	* Makefile.in (library): Set to lib instead of lib.a, to match the
+	other Makefile conventions.
 
 Sun Apr 23 10:54:35 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * texmf.c: Have to include {tex,mf}d.h before #ifdef TeX, so do it
-        from the Makefile.
+	* texmf.c: Have to include {tex,mf}d.h before #ifdef TeX, so do it
+	from the Makefile.
 
 Sat Apr 22 10:26:10 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * main.c (main): Call mainbody, not main_body.
+	* main.c (main): Call mainbody, not main_body.
 
-        * openclose.c (aclose): Don't complain if the file is already closed.
-        (texinputtype): Define this.
+	* openclose.c (aclose): Don't complain if the file is already closed.
+	(texinputtype): Define this.
 
-        * texmf.c (main): Do program_name stuff unconditionally, not just
-        in vir*, and rewrite it to use program_invocation_short_name.
+	* texmf.c (main): Do program_name stuff unconditionally, not just
+	in vir*, and rewrite it to use program_invocation_short_name.
 
 Fri Apr 21 11:39:14 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * main.c: Doc fix.
+	* main.c: Doc fix.
 
-        * input2int.c: Split off from inputint.c.
+	* input2int.c: Split off from inputint.c.
 
 Sun Apr 16 11:47:37 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * openclose.c (open_input, open_output): Retrieve and store the
-        filename from name_of_file + 1, not name_of_file, to avoid extra
-        hassles in the change files.
+	* openclose.c (open_input, open_output): Retrieve and store the
+	filename from name_of_file + 1, not name_of_file, to avoid extra
+	hassles in the change files.
 
 Fri Apr 14 15:28:47 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (objects): Include openclose.o.
-        * openclose.c: New file, from openinout.c.
+	* Makefile.in (objects): Include openclose.o.
+	* openclose.c: New file, from openinout.c.
 
 Tue Feb 21 13:51:58 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * xopenfile.c: Have to take another arg, the original name.
+	* xopenfile.c: Have to take another arg, the original name.
 
 Mon Feb 20 17:18:59 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * xopenfile.c: New file.
-        * Makefile.in (objects): Add it, and remove xfopen-pas.o.
+	* xopenfile.c: New file.
+	* Makefile.in (objects): Add it, and remove xfopen-pas.o.
 
 Sun Feb  5 15:33:29 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * basechsuffix.c: New file.
-        * Makefile.in (objects): Add it.
+	* basechsuffix.c: New file.
+	* Makefile.in (objects): Add it.
 
 Tue Jan 10 13:20:47 1995  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (objects): Remove strpascal.o (no longer needed) and
-        getopt.o (in kpathsea).
+	* Makefile.in (objects): Remove strpascal.o (no longer needed) and
+	getopt.o (in kpathsea).
 
 Sun Dec 18 16:38:03 1994  Karl Berry  <karl@cs.umb.edu>
 
-        * strpascal.c (errprintpascalstring, etc.): Don't need these any more?
+	* strpascal.c (errprintpascalstring, etc.): Don't need these any more?
 
 Sat Dec 17 13:42:03 1994  Karl Berry  <karl@cs.umb.edu>
 
-        * mksuffixchar.c: This was short-lived.
-        * chartostring.c: This replaces it.
-        * Makefile.in (objects): Ditto. Also remove ourpaths.o.
+	* mksuffixchar.c: This was short-lived.
+	* chartostring.c: This replaces it.
+	* Makefile.in (objects): Ditto. Also remove ourpaths.o.
 
 Mon Nov 14 15:13:50 1994  Karl Berry  <karl@cs.umb.edu>
 
-        * mksuffixchar.c: New file.
-        * Makefile.in (objects): Add it.
+	* mksuffixchar.c: New file.
+	* Makefile.in (objects): Add it.
 
 Sun Nov 13 16:43:40 1994  Karl Berry  <karl@cs.umb.edu>
 
-        * Makefile.in (objects): Add w*.o.
-        (wsun.c, wx11.c): Add links for these.
+	* Makefile.in (objects): Add w*.o.
+	(wsun.c, wx11.c): Add links for these.
 
 Fri Oct 28 11:14:08 1994  Karl Berry  <karl@cs.umb.edu>
 
-        * strpascal.c (extendfilename): Remove this.
+	* strpascal.c (extendfilename): Remove this.
 
 Thu Oct 27 17:59:07 1994  Karl Berry  <karl@cs.umb.edu>
 
-        * main.c (argv): Return a regular C string, instead of a Pascal string.
+	* main.c (argv): Return a regular C string, instead of a Pascal string.
 
 Fri May 27 09:50:14 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * texmf.c (main): Don't look for USE_MAKETEX*.
+	* texmf.c (main): Don't look for USE_MAKETEX*.
 
-        * c-auto.h.top, texmf.c (NO_FMTBASE_SHARE): Rename from
-        NO_FMTBASE_SWAP.
+	* c-auto.h.top, texmf.c (NO_FMTBASE_SHARE): Rename from
+	NO_FMTBASE_SWAP.
 
 Thu May 26 20:37:24 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * c-auto.h.top: Why did I take out the #ifndef's? Put them back.
+	* c-auto.h.top: Why did I take out the #ifndef's? Put them back.
 
 Tue May 24 14:43:12 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * texmf.c (funny_core_dump): No need to declare, since we define
-        it later in this file.
+	* texmf.c (funny_core_dump): No need to declare, since we define
+	it later in this file.
 
 Mon Apr 18 17:31:59 1994  Karl Berry  (karl@ra.cs.umb.edu)
 
-        * c-auto.h.top: Rename from c-auto.h.in for autoheader convention,
-        and don't #ifndef the #undef's.
-        * Makefile.in: autoheader/autoconf changes.
+	* c-auto.h.top: Rename from c-auto.h.in for autoheader convention,
+	and don't #ifndef the #undef's.
+	* Makefile.in: autoheader/autoconf changes.
 
 Thu Feb 24 11:00:53 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * ourpaths.c: Include tex-file.h instead of init-path.h.
+	* ourpaths.c: Include tex-file.h instead of init-path.h.
 
 Mon Feb 21 14:29:52 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * Makefile.in: srcdir changes from simon.
+	* Makefile.in: srcdir changes from simon.
 
-        * gftodmem.h: Move here from fontutil, to simplify srcdir stuff.
+	* gftodmem.h: Move here from fontutil, to simplify srcdir stuff.
 
 Wed Feb  2 11:00:47 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * Version 6.1.
+	* Version 6.1.
 
 Tue Feb  1 11:25:44 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * Makefile.in (c-auto.h.in): New target.
+	* Makefile.in (c-auto.h.in): New target.
 
-        * common.defines (rh): Declare as a field, for TeX--Xet.
+	* common.defines (rh): Declare as a field, for TeX--Xet.
 
 Mon Jan 24 07:33:49 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * Version 6.0.
+	* Version 6.0.
 
 Thu Jan 20 14:22:07 1994  Karl Berry  (karl@cs.umb.edu)
 
-        * c-auto.h.in: Doc fix.
+	* c-auto.h.in: Doc fix.
 
-        * MakeTeX{TFM,MF}: Include these as samples, from
-        pnoma@wk.estec.esa.nl.
+	* MakeTeX{TFM,MF}: Include these as samples, from
+	pnoma@wk.estec.esa.nl.
 
 Fri Dec 24 13:48:46 1993  Karl Berry  (karl@cs.umb.edu)
 
@@ -2170,22 +2170,22 @@ Sat Apr 10 15:20:25 1993  Karl Berry  (karl@cs.umb.edu)
 	* openinout.c (make_tex_file): Throw away all output.
 
 	* texmf.c (swap_items): Add case for 16-byte items.  
-        (From james@miller.cs.uwm.edu.)
+	(From james@miller.cs.uwm.edu.)
 
 	* texmf.c (get_date_and_time): Cast arg to time_t *, not long *.
-        (From james@miller.cs.uwm.edu.)
+	(From james@miller.cs.uwm.edu.)
 
 	* texmf.c (get_date_and_time) [SA_INTERRUPT]: Add code for SunOS
-        4.1, from ken@cs.toronto.edu.
+	4.1, from ken@cs.toronto.edu.
 
 	* pathsrch.c (expand_subdir) [UNIX_ST_NLINK]: Don't check st_link
-        if we don't have Unix semantics.
-        * c-auto.h.in (UNIX_ST_NLINK): Define if not DOS or VMS or VMCMS.
-        (Suggested by buers@dg1.chemie.uni-konstanz.de.)
+	if we don't have Unix semantics.
+	* c-auto.h.in (UNIX_ST_NLINK): Define if not DOS or VMS or VMCMS.
+	(Suggested by buers@dg1.chemie.uni-konstanz.de.)
 
 	* texmf.c (catch_interrupt): Declare a(n unused) parameter `arg'
-        (from beebe).
-        (get_date_and_time): Don't do assignment in if condition.
+	(from beebe).
+	(get_date_and_time): Don't do assignment in if condition.
 
 Fri Apr  9 16:10:06 1993  Karl Berry  (karl@cs.umb.edu)
 
@@ -2208,7 +2208,7 @@ Sat Mar 13 10:22:54 1993  Karl Berry  (karl@cs.umb.edu)
 	* common.h: Merge into config.h and remove.
 
 	* common.h (pascal.h): Don't include this.
-        * cpascal.h: Rename from pascal.h.
+	* cpascal.h: Rename from pascal.h.
 
 	* convert: Exit with bad status if the pipeline failed; use
 	cpascal.h instead of config.h.
@@ -2267,7 +2267,7 @@ Tue Jan 26 16:07:21 1993  Karl Berry  (karl@cs.umb.edu)
 	* version.c: New file to define web2c version.
 	* common.h (versionstring): Declare it here.
 	* common.defines (versionstring): And here.
-        * Makefile.in (objs): Add it.
+	* Makefile.in (objs): Add it.
 
 	* c-auto.h.in (X11WIN) [XVIEWWIN]: Undefine.
 
@@ -2281,8 +2281,8 @@ Sun Jan 24 11:04:37 1993  Karl Berry  (karl@cs.umb.edu)
 	* lib.h (FATAL*, WARNING*): Use `str' instead of `s' for macro formals.
 
 	* xcalloc.c: Remove prototypes.
-        * remove-suffx.c, line.c, fontmap.c: Cast *alloc calls to avoid
-          silly warnings.
+	* remove-suffx.c, line.c, fontmap.c: Cast *alloc calls to avoid
+	  silly warnings.
 
 	* texmf.c (swap_items): Rewrite as four while loops, since `size'
 	is invariant.  (From Tom.)
@@ -2294,7 +2294,7 @@ Sat Jan 23 10:13:51 1993  Karl Berry  (karl@cs.umb.edu)
 Thu Jan 21 11:21:14 1993  Karl Berry  (karl@cs.umb.edu)
 
 	* Makefile.in (objs5): New variable.
-        ($(lib)): Include it in the archive.
+	($(lib)): Include it in the archive.
 
 	* extend-fname.c, find-suffix.c, xfopen.c, fontmap.[ch]: New files.
 
@@ -2309,7 +2309,7 @@ Sun Jan  3 13:27:37 1993  Karl Berry  (karl@cs.umb.edu)
 	* config.h: Move some includes to c-std.h.
 
 	* xcalloc.c: New file.
-        * Makefile.in (objs): Add it.
+	* Makefile.in (objs): Add it.
 
 	* Makefile.in (distclean): Remove Makefile; depend on clean.
 
@@ -2335,8 +2335,8 @@ Mon Dec 14 07:25:03 1992  Karl Berry  (karl@cs.umb.edu)
 Sun Dec 13 17:06:15 1992  Karl Berry  (karl@cs.umb.edu)
 
 	* c-auto.h.in: Merge stuff from site.h.
-        * site.h: Delete.
-        * config.h: Don't include site.h.
+	* site.h: Delete.
+	* config.h: Don't include site.h.
 
 Sat Dec 12 13:08:52 1992  Karl Berry  (karl@cs.umb.edu)
 
@@ -2372,21 +2372,21 @@ Mon Nov 16 08:12:16 1992  Karl Berry  (karl@cs.umb.edu)
 Tue Nov 10 06:49:33 1992  Karl Berry  (karl@cs.umb.edu)
 
 	* texmf.c (main): Change '/' to PATH_SEP.
-        * openinout.c (open_input): Likewise.
+	* openinout.c (open_input): Likewise.
 	* strpascal.c (makesuffixpas): And here.
 
 Mon Nov  9 09:38:58 1992  Karl Berry  (karl@cs.umb.edu)
 
 	* openinout.c (open_input): Use FOPEN_RBIN_MODE instead of simply "r".
-        (open_output): Analogously.
+	(open_output): Analogously.
 
 	* c-auto.h.in (DOS): New definition, #undef'd by default.
 
 Fri Nov  6 14:52:34 1992  Karl Berry  (karl@cs.umb.edu)
 
 	* Makefile (lib): Use $(AR) and $(ARFLAGS) several times.
-        (AR, ARFLAGS): New variables.
-        (objs1..4): New variables, breaking up the old $(objs).
+	(AR, ARFLAGS): New variables.
+	(objs1..4): New variables, breaking up the old $(objs).
 
 Tue Oct 27 08:16:41 1992  Karl Berry  (karl@cs.umb.edu)
 
@@ -2406,357 +2406,357 @@ Tue Oct  6 08:17:45 1992  Karl Berry  (karl@cs.umb.edu)
 
 Thu Sep 24 11:06:14 1992  Karl Berry  (karl@cs.umb.edu)
 
-        * site.h.in: change instructions for OpenWindows.  (mroth@afit.af.mil)
+	* site.h.in: change instructions for OpenWindows.  (mroth@afit.af.mil)
 
 Thu Sep 17 08:29:53 1992  Karl Berry  (karl@hayley)
 
-        * texmf.c (initscreen): if DISPLAY is set, assume we're running
-          under X11 for MF online output.
+	* texmf.c (initscreen): if DISPLAY is set, assume we're running
+	  under X11 for MF online output.
 
-        * texmf.c: remove BibTeX conditionals.
+	* texmf.c: remove BibTeX conditionals.
 
 Tue Sep  8 17:06:54 1992  Karl Berry  (karl@hayley)
 
-        * c-auto.h.in (_MINIX, _{ALL,POSIX,POSIX_1}_SOURCE): add #undef's
-          for configure to define.
+	* c-auto.h.in (_MINIX, _{ALL,POSIX,POSIX_1}_SOURCE): add #undef's
+	  for configure to define.
 
 Fri Sep  4 09:01:59 1992  Karl Berry  (karl@hayley)
 
-        * Makefile (extraclean): new target.
+	* Makefile (extraclean): new target.
 
 Fri Aug 14 07:02:41 1992  Karl Berry  (karl@hayley)
 
-        * ourpaths.h (path_constant_type): remove trailing comma from
-          enum, since ANSI stupidly disallows this.
+	* ourpaths.h (path_constant_type): remove trailing comma from
+	  enum, since ANSI stupidly disallows this.
 
 Wed Aug 12 16:20:10 1992  Karl Berry  (karl@hayley)
 
-        * texmf.c (catch_interrupt): change return type to `RETSIGTYPE'.
+	* texmf.c (catch_interrupt): change return type to `RETSIGTYPE'.
 
-        * config.h: remove conditional include of c-memstr if `index' is
-          defined.
+	* config.h: remove conditional include of c-memstr if `index' is
+	  defined.
 
 Sat Aug  8 10:11:18 1992  Karl Berry  (karl@hayley)
 
-        * openinout.c (EXTERN) [!BibTeX]: define as `extern'.  How did
-          this ever work?
+	* openinout.c (EXTERN) [!BibTeX]: define as `extern'.  How did
+	  this ever work?
 
 Fri Jul  3 11:23:32 1992  Karl Berry  (karl@hayley)
 
-        * texmf.c (input_line): ignore \r's at the end of the line.
+	* texmf.c (input_line): ignore \r's at the end of the line.
 
-        * site.h.in (XVIEWWIN): undef by default.
-        * texmf.c (X11WIN) [MF && (TRAP || INI)]: #undef.
+	* site.h.in (XVIEWWIN): undef by default.
+	* texmf.c (X11WIN) [MF && (TRAP || INI)]: #undef.
 
 Thu Jul  2 16:11:46 1992  Karl Berry  (karl@hayley)
 
-        * Makefile (CPPFLAGS): new variable
-        (.c.o): use it.
-        (cflags): change to CFLAGS.
+	* Makefile (CPPFLAGS): new variable
+	(.c.o): use it.
+	(cflags): change to CFLAGS.
 
 Tue Jun 23 09:09:49 1992  Karl Berry  (karl@hayley)
 
-        * Makefile (CC): change default to `gcc -posix'.
+	* Makefile (CC): change default to `gcc -posix'.
 
-        * site.h.in (NONASCII): document that xord and xchr are ignored
-          unless this is defined.
+	* site.h.in (NONASCII): document that xord and xchr are ignored
+	  unless this is defined.
 
 Thu Jun 11 09:20:51 1992  Karl Berry  (karl@hayley)
 
-        * zround.c (zround): return LONG_MAX or LONG_MIN if the double
-          being rounded is outside the range of `integer'.
-        * c-minmax.h (LONG_{MIN,MAX}): define these if they aren't defined
-          by the system.
+	* zround.c (zround): return LONG_MAX or LONG_MIN if the double
+	  being rounded is outside the range of `integer'.
+	* c-minmax.h (LONG_{MIN,MAX}): define these if they aren't defined
+	  by the system.
 
 Fri May 15 10:23:47 1992  Karl Berry  (karl@hayley)
 
-        * getopt.[ch]: new versions.
+	* getopt.[ch]: new versions.
 
 Thu May 14 19:21:40 1992  Karl Berry  (karl@claude.cs.umb.edu)
 
-        * Version 5.851c.
+	* Version 5.851c.
 
 Wed May 13 14:32:14 1992  Karl Berry  (karl@hayley)
 
-        * pathsrch.c (initalize_path_list): initialize path to the
-          original path.
+	* pathsrch.c (initalize_path_list): initialize path to the
+	  original path.
 
 Mon May  4 14:50:20 1992  Karl Berry  (karl@hayley)
 
-        * c-auto.h.in: doc fix.
+	* c-auto.h.in: doc fix.
 
 Sun May  3 08:06:07 1992  Karl Berry  (karl@hayley)
 
-        * main.c (argv): use a prototype if possibile.
+	* main.c (argv): use a prototype if possibile.
 
-        * texmf.ch (*dumpthings): parenthesize `len'.
+	* texmf.ch (*dumpthings): parenthesize `len'.
 
 Wed Apr 29 16:07:52 1992  Karl Berry  (karl@hayley)
 
-        * texmfmem.h (memoryword): had mutually exclusive #if's.
-        (twohalves.u): don't need junk at the end?
+	* texmfmem.h (memoryword): had mutually exclusive #if's.
+	(twohalves.u): don't need junk at the end?
 
 Sat Apr 25 08:55:34 1992  Karl Berry  (karl@hayley)
 
-        * c-auto.h.in (__CHAR_UNSIGNED__): protect with #ifndef.
+	* c-auto.h.in (__CHAR_UNSIGNED__): protect with #ifndef.
 
-        * site.h.in: remove #ifndef's from around the #define's.  I don't
-          think these help anything.
+	* site.h.in: remove #ifndef's from around the #define's.  I don't
+	  think these help anything.
 
 Thu Apr 23 07:49:18 1992  Karl Berry  (karl@hayley)
 
-        * c-auto.h.in: new file.
+	* c-auto.h.in: new file.
 
 Wed Apr 22 12:43:30 1992  Karl Berry  (karl@hayley)
 
-        * texmf.c: SIGTYPE is now RETSIGTYPE.
+	* texmf.c: SIGTYPE is now RETSIGTYPE.
 
 Sun Apr 19 10:26:16 1992  Karl Berry  (karl@hayley)
 
-        * texmf.c: had sense of tests on FMTBASE_SWAP reversed.
+	* texmf.c: had sense of tests on FMTBASE_SWAP reversed.
 
 Thu Apr 16 13:49:36 1992  Karl Berry  (karl@ra.cs.umb.edu)
 
-        * Version 5.851b.
+	* Version 5.851b.
 
 Tue Apr 14 17:06:57 1992  Karl Berry  (karl@hayley)
 
-        * common.defines (BSTINPUTPATHBIT): define.
+	* common.defines (BSTINPUTPATHBIT): define.
 
 Sun Apr 12 11:42:14 1992  Karl Berry  (karl@hayley)
 
-        * common.defines (BSTINPUTPATH): define.
-        * ourpaths.h (path_constant_type): add BSTINPUTPATH.
-        (BSTINPUTPATHBIT): define.
-        * site.h-dist (BSTINPUTS): default is TEXINPUTS.
-        * ourpaths.c (setpaths): add stuff for BSTINPUTS.
+	* common.defines (BSTINPUTPATH): define.
+	* ourpaths.h (path_constant_type): add BSTINPUTPATH.
+	(BSTINPUTPATHBIT): define.
+	* site.h-dist (BSTINPUTS): default is TEXINPUTS.
+	* ourpaths.c (setpaths): add stuff for BSTINPUTS.
 
 Sat Apr 11 09:26:55 1992  Karl Berry  (karl@hayley)
 
-        * uexit.c: include config.h, for EXIT_SUCCESS_CODE.
+	* uexit.c: include config.h, for EXIT_SUCCESS_CODE.
 
 Fri Apr 10 16:56:18 1992  Karl Berry  (karl@hayley)
 
-        * ourpaths.c (setpaths): don't pass cwd to initialize_path_list.
+	* ourpaths.c (setpaths): don't pass cwd to initialize_path_list.
 
-        * site.h-dist (*INPUTS, TEXFONTS): add . to these paths.
+	* site.h-dist (*INPUTS, TEXFONTS): add . to these paths.
 
 Wed Apr  8 15:34:21 1992  Karl Berry  (karl@hayley)
 
-        * texmf.c [FMTBASE_SWAP]: make swapping conditional.
-        * site.h-dist: add it here for configuration.
+	* texmf.c [FMTBASE_SWAP]: make swapping conditional.
+	* site.h-dist: add it here for configuration.
 
-        * main.c (do_undump) [VMS]: add code from joe.
+	* main.c (do_undump) [VMS]: add code from joe.
 
-        * main.c: use exit, not exit.
+	* main.c: use exit, not exit.
 
-        * Makefile (objs): add uexit.o.
-        * uexit.c: new file.
-        * pascal.h (uexit): remove this, as it's now a function.
+	* Makefile (objs): add uexit.o.
+	* uexit.c: new file.
+	* pascal.h (uexit): remove this, as it's now a function.
 
 Fri Apr  3 09:55:00 1992  Karl Berry  (karl at hayley)
 
-        * Version 5.851a.
+	* Version 5.851a.
 
 Thu Apr  2 11:57:06 1992  Karl Berry  (karl at apollo.cs.umb.edu)
 
-        * c-memstr.h (memcpy) [!NEED_MEMORY_H]: conditionalize.
+	* c-memstr.h (memcpy) [!NEED_MEMORY_H]: conditionalize.
 
 Thu Apr  2 10:51:11 1992  Karl Berry  (karl at ra.cs.umb.edu)
 
-        * xstat.c (xlstat): (un)prototype-ize.
+	* xstat.c (xlstat): (un)prototype-ize.
 
-        * c-limits.h: test for FLOAT_H_MISSING instead of relying on
-          _POSIX_VERSION to include <float.h>.
+	* c-limits.h: test for FLOAT_H_MISSING instead of relying on
+	  _POSIX_VERSION to include <float.h>.
 
-        * c-pathmx.h [_POSIX_VERSION]: don't do pathconf stuff.
+	* c-pathmx.h [_POSIX_VERSION]: don't do pathconf stuff.
 
 Wed Apr  1 16:57:30 1992  Karl Berry  (karl at hayley)
 
-        * common.h (FATAL): use `str' as the arg name, not `s', since we
-          need to do `%s'.
+	* common.h (FATAL): use `str' as the arg name, not `s', since we
+	  need to do `%s'.
 
-        * xopendir.c (xclosedir): prototype-ize it.
+	* xopendir.c (xclosedir): prototype-ize it.
 
-        * dir-p (leaf_dir_p): don't initialize a structure (!).
+	* dir-p (leaf_dir_p): don't initialize a structure (!).
 
-        * {concat,pathsrch,texmf,xmalloc,xstrdup,xrealloc}.c: cast results from
-          xmalloc/malloc/realloc (argh).
+	* {concat,pathsrch,texmf,xmalloc,xstrdup,xrealloc}.c: cast results from
+	  xmalloc/malloc/realloc (argh).
 
-        * alloca.c: comment things after #endif.
+	* alloca.c: comment things after #endif.
 
-        * site.h-dist (REGFIX): put this back.
+	* site.h-dist (REGFIX): put this back.
 
-        * c-proto.h (P5C) [!__STDC__]: insert missing backslash.
+	* c-proto.h (P5C) [!__STDC__]: insert missing backslash.
 
 Mon Mar 30 07:28:25 1992  Karl Berry  (karl at hayley)
 
-        * texmfmem.h (u, v, twohalves) [big MF]: define the halfword junks
-          again.
+	* texmfmem.h (u, v, twohalves) [big MF]: define the halfword junks
+	  again.
 
 Sun Mar 29 15:33:29 1992  Karl Berry  (karl at hayley)
 
-        * alloca.c: new version from gcc 2.1.
+	* alloca.c: new version from gcc 2.1.
 
 Sat Mar 28 09:46:53 1992  Karl Berry  (karl at hayley)
 
-        * main.c (main): return int, exit (EXIT_SUCCESS_CODE).
-        * texmf.c (main): likewise.
+	* main.c (main): return int, exit (EXIT_SUCCESS_CODE).
+	* texmf.c (main): likewise.
 
-        * config.h (SCHAR_TYPE): use `__CHAR_UNSIGNED__' again.
+	* config.h (SCHAR_TYPE): use `__CHAR_UNSIGNED__' again.
 
 Thu Mar 26 06:57:38 1992  Karl Berry  (karl at hayley)
 
-        * Makefile (clean, realclean): depend on mostlyclean.
+	* Makefile (clean, realclean): depend on mostlyclean.
 
 Sun Mar 22 09:16:04 1992  Karl Berry  (karl at hayley)
 
-        * common.h [BibTeX]: remove the include of <setjmp.h>, as
-          bibtex/convert does it.
+	* common.h [BibTeX]: remove the include of <setjmp.h>, as
+	  bibtex/convert does it.
 
 Sat Mar 21 11:09:55 1992  Karl Berry  (karl at hayley)
 
-        * common.defines (input2ints): for patgen2.
-        * inputint.c (zinput2ints): new routine.
-        * pascal.h (input2ints): new macro to call it.
+	* common.defines (input2ints): for patgen2.
+	* inputint.c (zinput2ints): new routine.
+	* pascal.h (input2ints): new macro to call it.
 
-        * config.h: include c-pathmx.h.
+	* config.h: include c-pathmx.h.
 
-        * common.defines (TEXPOOLNAME): declare as a constant.
+	* common.defines (TEXPOOLNAME): declare as a constant.
 
 Fri Mar 20 16:10:44 1992  Karl Berry  (karl at hayley)
 
-        * paths.h: new file.
+	* paths.h: new file.
 
-        * config.h: update for new files c-*.h.
-        * common.h: remove stuff that is now in lib.h.
+	* config.h: update for new files c-*.h.
+	* common.h: remove stuff that is now in lib.h.
 
 Thu Mar 19 11:52:17 1992  Karl Berry  (karl at hayley)
 
-        * ourpaths.c (append_path_list): remove this.
+	* ourpaths.c (append_path_list): remove this.
 
-        * ourpaths.c (setpaths): use the envvar TEXFONTS if VFFONTS isn't set.
+	* ourpaths.c (setpaths): use the envvar TEXFONTS if VFFONTS isn't set.
 
 Tue Feb 11 10:27:38 1992  Karl Berry  (karl at hayley)
 
-        * config.h [NEED_MEMORY_H]: include <memory.h>.
+	* config.h [NEED_MEMORY_H]: include <memory.h>.
 
-        * config.h [LIMITS_H_MISSING]: include <sys/param.h>.
+	* config.h [LIMITS_H_MISSING]: include <sys/param.h>.
 
 Sun Feb  2 07:54:53 1992  Karl Berry  (karl at hayley)
 
-        * pathsearch.c (parse_envpath): remove the second / before doing
-          subdirectories.
+	* pathsearch.c (parse_envpath): remove the second / before doing
+	  subdirectories.
 
-        * pascal.h (optiontable): remove, as getopt no longer has a global
-          table for the long options.
+	* pascal.h (optiontable): remove, as getopt no longer has a global
+	  table for the long options.
 
 Sat Feb  1 15:32:50 1992  Karl Berry  (karl at hayley)
 
-        * ourpaths.c (setpaths): use TEXFONTS if PKFONTS/GFFONTS is not
-          set for GF/PK files, as the documentation claims.
+	* ourpaths.c (setpaths): use TEXFONTS if PKFONTS/GFFONTS is not
+	  set for GF/PK files, as the documentation claims.
 
-        * ourpaths.c (setpaths): remove subdirectory stuff.
-        * pathsearch.[ch]: new versions to integrate subdirectories into
-          the main paths.
+	* ourpaths.c (setpaths): remove subdirectory stuff.
+	* pathsearch.[ch]: new versions to integrate subdirectories into
+	  the main paths.
 
-        * texmf{,mem}.c (WEB2C_BIGENDIAN): rename to WORDS_BIGENDIAN.
+	* texmf{,mem}.c (WEB2C_BIGENDIAN): rename to WORDS_BIGENDIAN.
 
 Fri Jan 31 11:54:46 1992  Karl Berry  (karl at hayley)
 
-        * strpascal.c ({null,space}_terminate): do not translate using
-          xord/xchr (from raichle@azu.informatik.uni-stuttgart.de).
+	* strpascal.c ({null,space}_terminate): do not translate using
+	  xord/xchr (from raichle@azu.informatik.uni-stuttgart.de).
 
 Fri Jan 24 07:14:05 1992  Karl Berry  (karl at hayley)
 
-        * Makefile (cflags): don't include -I../config.
+	* Makefile (cflags): don't include -I../config.
 
-        * config.h (__CHAR_UNSIGNED__) [CHAR_UNSIGNED]: define as autoconf
-          uses the latter and gcc sometimes the former.
+	* config.h (__CHAR_UNSIGNED__) [CHAR_UNSIGNED]: define as autoconf
+	  uses the latter and gcc sometimes the former.
 
-        * config.h: move from config.
+	* config.h: move from config.
 
-        * openinout.c (extensionirrelevantp): new function.
-        * common.defines: declare it.
+	* openinout.c (extensionirrelevantp): new function.
+	* common.defines: declare it.
 
-        * ourpaths.h (path_constant_type): rename from `path_constants'.
-        * openinout.c (open_input): use it for the path arg.
+	* ourpaths.h (path_constant_type): rename from `path_constants'.
+	* openinout.c (open_input): use it for the path arg.
 
 Wed Jan 15 11:13:45 1992  Karl Berry  (karl at hayley)
 
-        * xgetcwd.c, xchdir.c: don't need these.
-        * Makefile (objs): remove from list.
-        * dirio.h: remove decls.
+	* xgetcwd.c, xchdir.c: don't need these.
+	* Makefile (objs): remove from list.
+	* dirio.h: remove decls.
 
-        * pathsearch.c (check_subdir): do not cd to the directory we're
-          testing.
-        (add_directory): test if the name is a directory before adding it
-          to the list.
-        (parse_envpath): don't test if the names are directories here.
-        (initialize_path_list): don't find and cd to the current directory
-          between each subdirectory.
+	* pathsearch.c (check_subdir): do not cd to the directory we're
+	  testing.
+	(add_directory): test if the name is a directory before adding it
+	  to the list.
+	(parse_envpath): don't test if the names are directories here.
+	(initialize_path_list): don't find and cd to the current directory
+	  between each subdirectory.
 
 Tue Jan 14 16:06:24 1992  Karl Berry  (karl at hayley)
 
-        * texmf.c: do not include <sys/types.h>; it's in config.h now.
-        * types.h: likewise.
+	* texmf.c: do not include <sys/types.h>; it's in config.h now.
+	* types.h: likewise.
 
 Sun Jan 12 07:41:34 1992  Karl Berry  (karl at hayley)
 
-        * pathsearch.c (initialize_path_list): cd back to . after checking
-          each subdirectory.
+	* pathsearch.c (initialize_path_list): cd back to . after checking
+	  each subdirectory.
 
-        * dirio.h: change directory header stuff as suggested in the
-          autoconf manual.
+	* dirio.h: change directory header stuff as suggested in the
+	  autoconf manual.
 
-        * ourpaths.h: make the path list an enumeration type.
+	* ourpaths.h: make the path list an enumeration type.
 
-        * openinout.c (open_input): correctly compute namelength.
+	* openinout.c (open_input): correctly compute namelength.
 
-        * texmfmem.h (memoryword) [TeX]: make declaration of `glueratio'
-          conditional.
+	* texmfmem.h (memoryword) [TeX]: make declaration of `glueratio'
+	  conditional.
 
-        * openinout.c: rearrange ifdefs for coherency.
+	* openinout.c: rearrange ifdefs for coherency.
 
-        * ourpaths.c (append_path_list): overwrite the null in the first
-          list.
+	* ourpaths.c (append_path_list): overwrite the null in the first
+	  list.
 
-        * pathsearch.c (initialize_path_list): unconditionally call
-          parse_envpath.
-        (parse_envpath): if the envvar name is null, don't call getenv.
-        If both args are null, do nothing.
+	* pathsearch.c (initialize_path_list): unconditionally call
+	  parse_envpath.
+	(parse_envpath): if the envvar name is null, don't call getenv.
+	If both args are null, do nothing.
 
-        * ourpaths.c (setpaths): initialize the TFM path.
+	* ourpaths.c (setpaths): initialize the TFM path.
 
-        * common.h (FATAL*): new macros.
+	* common.h (FATAL*): new macros.
 
-        * pascal.h (real): define to be `double'.
+	* pascal.h (real): define to be `double'.
 
-        * xfopen-pas.c: new file.
+	* xfopen-pas.c: new file.
 
-        * eofeoln.c (test_eof): rename to `eof'.
-        * pascal.h (eof): remove.       
+	* eofeoln.c (test_eof): rename to `eof'.
+	* pascal.h (eof): remove.       
 
-        * pascal.h (reset, rewrite): `checked_fopen' => `xfopen_pas'.
+	* pascal.h (reset, rewrite): `checked_fopen' => `xfopen_pas'.
 
-        * common.h (link): define as `link_var', to avoid conflicts
-          between the system call and the web var.
+	* common.h (link): define as `link_var', to avoid conflicts
+	  between the system call and the web var.
 
-        * common.defines (FILENAMESIZE): rename to `PATHMAX'.
+	* common.defines (FILENAMESIZE): rename to `PATHMAX'.
 
 Tue Jan  7 11:26:02 1992  Karl Berry  (karl at hayley)
 
-        * getopt*: new versions.
+	* getopt*: new versions.
 
-        * extra.c (getwd) [GETWD_MISSING]: conditionalize.
+	* extra.c (getwd) [GETWD_MISSING]: conditionalize.
 
-        * extra.c (zinput3ints): new implementation, from jmr@nada.kth.se.
+	* extra.c (zinput3ints): new implementation, from jmr@nada.kth.se.
 
-        * texmf.c (swap_items) [!WEB2C_BIG_ENDIAN]: ifdef on this.
-        * texmfmem.h (twohalves, fourquarters): incorporate changes from
-          raichle@azu.informatik.uni-stuttgart.de which he says make
-          format files finally work.
+	* texmf.c (swap_items) [!WEB2C_BIG_ENDIAN]: ifdef on this.
+	* texmfmem.h (twohalves, fourquarters): incorporate changes from
+	  raichle@azu.informatik.uni-stuttgart.de which he says make
+	  format files finally work.
 
-        * common.h (SCHAR_TYPE): use `signed_char' if ANSI, `short' if
-          char is unsigned, otherwise `char'.
+	* common.h (SCHAR_TYPE): use `signed_char' if ANSI, `short' if
+	  char is unsigned, otherwise `char'.
 
