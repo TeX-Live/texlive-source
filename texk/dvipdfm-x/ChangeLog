@@ -1,3 +1,7 @@
+2015-04-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pngimage.c: XMP Metadata support for PNG images.
+
 2015-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mfileio.[ch]: Use mfgets() parameters as for fgets().

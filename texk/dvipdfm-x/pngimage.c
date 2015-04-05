@@ -41,8 +41,6 @@
  *   images are automatically converted to 8 bit bitpedth image.
  *
  * TODO
- *
- *  sBIT ? iTXT, tEXT and tIME as MetaData ?, pHYS (see below)
  *  16 bpc support for PDF-1.5. JBIG compression for monochrome image.
  *  Predictor for deflate ?
  */
@@ -346,6 +344,54 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
       pdf_release_obj(mask);
     }
   }
+
+  /* Finally read XMP Metadata
+   * See, XMP Specification Part 3, Storage in Files
+   * http://www.adobe.com/jp/devnet/xmp.html
+   *
+   * We require libpng version >= 1.6.14 since prior versions
+   * of libpng had a bug that incorrectly treat the compression
+   * flag of iTxt chunks.
+   */
+#if PNG_LIBPNG_VER >= 10614
+  if (pdf_get_version() >= 4) {
+    png_textp text_ptr;
+    pdf_obj  *XMP_stream, *XMP_stream_dict;
+    int       i, num_text;
+    int       have_XMP = 0;
+
+    num_text = png_get_text(png_ptr, png_info_ptr, &text_ptr, NULL);
+    for (i = 0; i < num_text; i++) {
+      if (!memcmp(text_ptr[i].key, "XML:com.adobe.xmp", 17)) {
+        /* XMP found */
+        if (text_ptr[i].compression != PNG_ITXT_COMPRESSION_NONE ||
+            text_ptr[i].itxt_length == 0)
+          WARN("%s: Invalid value(s) in iTXt chunk for XMP Metadata.", PNG_DEBUG_STR);
+        else if (have_XMP)
+          WARN("%s: Multiple XMP Metadata. Don't know how to treat it.", PNG_DEBUG_STR);
+        else {
+          /* We compress XMP metadata for included images here.
+           * It is not recommended to compress XMP metadata for PDF documents but
+           * we compress XMP metadata for included images here to avoid confusing
+           * application programs that only want PDF document global XMP metadata
+           * and scan for that.
+           */
+          XMP_stream = pdf_new_stream(STREAM_COMPRESS);
+          XMP_stream_dict = pdf_stream_dict(XMP_stream);
+          pdf_add_dict(XMP_stream_dict,
+                       pdf_new_name("Type"), pdf_new_name("Metadata"));
+          pdf_add_dict(XMP_stream_dict,
+                       pdf_new_name("Subtype"), pdf_new_name("XML"));
+          pdf_add_stream(XMP_stream, text_ptr[i].text, text_ptr[i].itxt_length);
+          pdf_add_dict(stream_dict,
+                       pdf_new_name("Metadata"), pdf_ref_obj(XMP_stream));
+          pdf_release_obj(XMP_stream);
+          have_XMP = 1;
+        }
+      }
+    }
+  }
+#endif /* PNG_LIBPNG_VER */
 
   png_read_end(png_ptr, NULL);
 
@@ -833,13 +879,6 @@ create_cspace_Indexed (png_structp png_ptr, png_infop info_ptr)
 
   return colorspace;
 }
-
-/*
- * pHYs: no support
- *
- *  pngimage.c is not responsible for adjusting image size.
- *  Higher layer must do something for this.
- */
 
 /*
  * Colorkey Mask: array
