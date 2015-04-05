@@ -291,7 +291,7 @@ mem[NODE+TYPE##_node_size-synchronization_field_size+1].cint
 #       define SYNCTEX_OFFSET_IS_PDF 0
 #   endif
 
-#if defined(_WIN32) && (defined(upTeX) || defined(eupTeX))
+#if defined(_WIN32) && (defined(upTeX) || defined(eupTeX) || defined(XeTeX))
 #define W32UPTEXSYNCTEX 1
 #include <wchar.h>
 static char *chgto_oem(char *src);
