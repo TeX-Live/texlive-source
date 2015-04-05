@@ -101,10 +101,12 @@ void luafunctioncall(int slot)
     lua_gettable(Luas, LUA_REGISTRYINDEX);
     lua_rawgeti(Luas, -1,slot);
     if (lua_isfunction(Luas,-1)) {
-        lua_pushcfunction(Luas, lua_traceback);     /* push traceback function */
-        lua_insert(Luas, -2);     /* put it under chunk  */
+        int base = lua_gettop(Luas); /* function index */
         lua_pushnumber(Luas, slot);
-        i = lua_pcall(Luas, 1, 0, -2);
+        lua_pushcfunction(Luas, lua_traceback); /* push traceback function */
+        lua_insert(Luas, base); /* put it under chunk  */
+        i = lua_pcall(Luas, 1, 0, base);
+        lua_remove(Luas, base); /* remove traceback function */
         if (i != 0) {
             lua_gc(Luas, LUA_GCCOLLECT, 0);
             Luas = luatex_error(Luas, (i == LUA_ERRRUN ? 0 : 1));
@@ -113,6 +115,9 @@ void luafunctioncall(int slot)
     lua_settop(Luas,stacktop);
     lua_active--;
 }
+
+
+
 
 
 @ @c
