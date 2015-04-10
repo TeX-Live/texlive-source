@@ -148,7 +148,7 @@ static uint64_t UserLineSuppressions;
 static unsigned long Line;
 
 static const char *RealBuf;
-static char *LineCpy;
+static char *LineCpy = NULL;
 static char *BufPtr;
 
 static int ItFlag = efNone;
@@ -657,6 +657,7 @@ static void PerformBigCmd(char *CmdPtr)
         }
     }
 
+    /* LaTeX environment tracking */
     if (!strcmp(CmdBuffer, "\\begin") || !strcmp(CmdBuffer, "\\end"))
     {
         if (ArgEndPtr)
@@ -693,6 +694,41 @@ static void PerformBigCmd(char *CmdPtr)
         }
         else
             PSERR(CmdPtr - Buf, CmdLen, emNoArgFound);
+    }
+
+    /* ConTeXt \start \stop tracking */
+    if (!strncmp(CmdBuffer, "\\start", 6) || !strncmp(CmdBuffer, "\\stop", 5))
+    {
+        if (CmdBuffer[3] == 'a') /* start */
+        {
+            TmpPtr = CmdBuffer + 6;
+            if (!(PushErr(TmpPtr, Line, CmdPtr - Buf + 6,
+                          CmdLen - 6, MakeCpy(), &EnvStack)))
+                PrintPrgErr(pmNoStackMem);
+        }
+        else
+        {
+            TmpPtr = CmdBuffer + 5;
+            if ((ei = PopErr(&EnvStack)))
+            {
+                if (strcmp(ei->Data, TmpPtr))
+                    PrintError(CurStkName(&InputStack), RealBuf,
+                               CmdPtr - Buf + 5,
+                               (long) strlen(TmpPtr),
+                               Line, emExpectC, ei->Data, TmpPtr);
+
+                FreeErrInfo(ei);
+            }
+            else
+            {
+                PrintError(CurStkName(&InputStack), RealBuf,
+                           CmdPtr - Buf,
+                           (long) strlen(CmdBuffer),
+                           Line, emSoloC, TmpPtr);
+            }
+        }
+        /* TODO: Do I need to call PerformEnv? */
+        /* It handles math and verbatim environments */
     }
 
     CheckItal(CmdBuffer);
@@ -1009,6 +1045,42 @@ static void CheckDash(void)
                     break;
                 }
             }
+
+            if (Errored)
+            {
+                struct WordList *el = &DashExcpt;
+
+                FORWL(i, *el)
+                {
+                    char *exception = el->Stack.Data[i];
+
+                    char *e = exception;
+                    while ( *e )
+                    {
+                        if ( *e == '-' && 0 == strncmp( BufPtr, e, strlen(e) ) )
+                        {
+                            TmpPtr = BufPtr;
+                            char *f = e;
+                            while ( f > exception && *(--f) == *(--TmpPtr) )
+                            {
+                                /* Nothing */
+                            }
+
+                            if ( f <= exception && *f == *TmpPtr )
+                            {
+                                Errored = FALSE;
+                                break;
+                            }
+                        }
+
+                        ++e;
+                    }
+
+                    if ( !Errored )
+                        break;
+                }
+            }
+
             if (Errored)
                 HERE(TmpCount, emWrongDash);
         }
@@ -1237,8 +1309,6 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
     enum DotLevel dotlev;
 
-    LineCpy = NULL;
-
     if (_RealBuf)
     {
         RealBuf = _RealBuf;
@@ -1371,15 +1441,12 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 break;
 
             case '.':
-                /* .. or ... should be ellipses */
-                if ((Char == *BufPtr) && (Char != PrePtr[0]))
+                if ((Char == *BufPtr) && (Char == BufPtr[1]))
                 {
                     const char *cTmpPtr;
-                    const int NumDots = (Char == BufPtr[1]) ? 3 : 2;
-                    dotlev = CheckDots(&PrePtr[1],
-                                       &BufPtr[NumDots-1]);
+                    dotlev = CheckDots(&PrePtr[1], &BufPtr[2]);
                     cTmpPtr = Dot2Str(dotlev);
-                    HEREA(NumDots, emEllipsis, cTmpPtr);
+                    HEREA(3, emEllipsis, cTmpPtr);
                 }
 
                 /* Regexp: "([^A-Z@.])\.[.!?:]*\s+[a-z]" */
@@ -1631,6 +1698,12 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
     }
 
+    /* Free and reset LineCpy if it was used */
+    if ( LineCpy != NULL )
+    {
+        free(LineCpy);
+        LineCpy = NULL;
+    }
     return (TRUE);
 }
 
@@ -1704,6 +1777,11 @@ void PrintStatus(unsigned long Lines)
         Transit(stderr, WarnPrint, "warning%s printed; ");
         Transit(stderr, UserSupp, "user suppressed warning%s; ");
         Transit(stderr, LineSupp, "line suppressed warning%s.\n");
+
+        /* Print how to suppress warnings. */
+        if ( ErrPrint + WarnPrint > 0 ) {
+            fprintf(stderr, "See the manual for how to suppress some or all of these warnings/errors.\n" );
+        }
     }
 }
 

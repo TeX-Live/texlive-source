@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2012 TeX Users Group.
+Copyright 2006-2015 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -27,7 +27,7 @@ bibtex-x - maintained here, contains
   bibtexu
     http://omega.enstb.org/yannis/bibtexu/
 
-chktex 1.7.2 - checked 30may13
+chktex 1.7.3 - checked 11apr15
   http://mirror.ctan.org/support/chktex/
   http://download.savannah.gnu.org/releases/chktex/
 

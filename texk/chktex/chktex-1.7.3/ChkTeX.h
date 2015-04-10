@@ -255,7 +255,9 @@ DEBUGBITS(Debug_BIT)
  MSG(pmSuppTooHigh,  etWarn,  TRUE, 0,\
      "Warning %d is numbered too high (max %d) and won't be suppressed.\n") \
 MSG(pmLongLines,  etWarn,  TRUE, 0,\
-     "ChkTeX does not handle lines over %d bytes correctly.  Some errors and line numbers may be wrong in this file.")
+     "ChkTeX does not handle lines over %d bytes correctly.  Some errors and line numbers may be wrong in this file.") \
+MSG(pmTabExpands,  etWarn,  TRUE, 0,\
+     "ChkTeX could not fully expand tabs because the resulting line would be more than %d bytes.  Some errors and line numbers may be wrong in this file.")
 
 #undef MSG
 #define MSG(num, type, inuse, ctxt, text) num,

@@ -13,6 +13,9 @@ Message 22 in Test.tex: Comment displayed.
 Message 1 in Test.tex: Command terminated with space.
 \foo This is an error.  
     ^
+Message 9 in Test.tex: `section' expected, found `text'.
+\stoptext  
+     ^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 2  
 ^
@@ -103,6 +106,15 @@ Message 22 in Test.tex: Comment displayed.
 Message 22 in Test.tex: Comment displayed.
 % "How TeX Breaks Paragraphs into Lines", fourth paragraph:  
 ^
+Message 22 in Test.tex: Comment displayed.
+% Using DashExcpt  
+^
+Message 8 in Test.tex: Wrong length of dash may have been used.
+The Birch--Swinnerton--Dyer conjecture is not correct.  
+         ^^
+Message 8 in Test.tex: Wrong length of dash may have been used.
+The Birch--Swinnerton--Dyer conjecture is not correct.  
+                     ^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 9-10  
 ^
@@ -199,15 +211,9 @@ Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                                                                          ^
-Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
-1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
-                                                                                ^^
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                                                                                  ^
-Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
-1st.\ foo Inc.\ ab.cd.\ foo ab.cd.\ Foo.\ bar baz., billy.; bob.:\ joe.!\ frank.?\ james..\ george  
-                                                                                        ^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 13  
 ^
@@ -424,9 +430,6 @@ This one triggers warning 22 $\left\{x\right\}$.
 Message 22 in Test.tex: Comment displayed.
 % Warning 44 -- user regex -- default message  
 ^
-Message 44 in Test.tex: User Regex:  intro..
-You should always write a good intro.  
-                              ^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 44 -- user regex -- user message  
 ^
