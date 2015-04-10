@@ -73,7 +73,7 @@
      "Number of `%c' doesn't match the number of `%c'!")\
  MSG(emUseQuoteLiga, etWarn, iuOK, ctNone,\
      "Use either `` or '' as an alternative to `\"'.")\
- MSG(emUseOtherQuote, etWarn, iuOK, ctNone,\
+ MSG(emUseOtherQuote, etWarn, iuNotSys, ctNone,\
      "Use \"'\" (ASCII 39) instead  of \"\xB4\" (ASCII 180).")\
  MSG(emUserWarn, etWarn, iuOK, ctNone,\
      "User-specified pattern found: %s.")\

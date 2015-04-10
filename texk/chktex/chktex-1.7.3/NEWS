@@ -1,6 +1,19 @@
 Development of ChkTeX is now in a maintainance mode.  All versions
 1.6.x are essentially bug fixes.  Version 1.7 added some new features.
 
+1.7.3 (2015-04-09), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Fixed memory leaks and a crashing bug #42813
+  * Added ConTeXt \start... \stop... tracking #44517
+  * Added DashExcpt list for exceptions to dash rules #42237
+  * Support \cite with two optional arguments (biblatex) #44413
+  * Removed warning about using \dots instead of .. #40731
+      This incorrectly warns about relative paths
+  * Removed check for intro since it's common in file names #43013
+  * Turn off warning 19 by default #44226
+      Warning 19 is about Latin-1 quotes, but gives false positives
+      for some utf-8 characters.
+
 1.7.2 (2013-04-17), released by Ivan Andrus <darthandrus@gmail.com>
 
   * Fixed display bug on platforms where sizeof(int) != sizeof(regoff_t)

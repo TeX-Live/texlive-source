@@ -44,7 +44,7 @@
   LCASE(Silent)    LIST(Linker)     LIST(IJAccent) LIST(Italic)\
   LIST(ItalCmd)    LIST(PostLink)   LIST(WipeArg)  LIST(VerbEnvir)\
   LIST(MathEnvir)  LIST(MathCmd)    LIST(TextCmd)  LIST(MathRoman)\
-  LIST(HyphDash)   LIST(NumDash)    LIST(WordDash)\
+  LIST(HyphDash)   LIST(NumDash)    LIST(WordDash) LIST(DashExcpt)\
   LIST(CenterDots) LIST(LowDots)    LIST(OutFormat)\
   LIST(Primitives) LIST(NotPreSpaced) LIST(NonItalic) LIST(NoCharNext)\
   LNEMPTY(CmdLine) LNEMPTY(TeXInputs)\

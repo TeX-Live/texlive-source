@@ -292,11 +292,12 @@ NoCommon(struct WordList *a, const char *aName,
  * TSize.
  */
 
-static void ExpandTabs(char *From, char *To, long TSize)
+static void ExpandTabs(char *From, char *To, long TSize, long MaxDiff)
 {
     char *Next;
     char *Orig;
     unsigned long Diff;
+    static short HasExpandedTooLong = 0;
 
     Next = From;
     Orig = To;
@@ -311,6 +312,19 @@ static void ExpandTabs(char *From, char *To, long TSize)
         }
         else
             Diff = TSize;
+
+        /* Make sure we don't expand this buffer out of the memory we
+         * have allocated for it. */
+        if ( Diff > MaxDiff+1 )
+        {
+            Diff = MaxDiff+1;
+            if ( !HasExpandedTooLong )
+            {
+                PrintPrgErr(pmTabExpands, BUFSIZ);
+            }
+            HasExpandedTooLong = 1;
+        }
+        MaxDiff -= (Diff-1);
 
         memset(To, ' ', Diff);
         To += Diff;
@@ -473,7 +487,7 @@ int main(int argc, char **argv)
 
                             strrep(ReadBuffer, '\n', ' ');
                             strrep(ReadBuffer, '\r', ' ');
-                            ExpandTabs(ReadBuffer, TmpBuffer, Tab);
+                            ExpandTabs(ReadBuffer, TmpBuffer, Tab, BUFSIZ - 1 - strlen(ReadBuffer) );
                             strcpy(ReadBuffer, TmpBuffer);
 
                             strcat(ReadBuffer, " ");

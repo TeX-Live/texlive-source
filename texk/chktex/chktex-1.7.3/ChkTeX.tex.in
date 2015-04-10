@@ -109,8 +109,8 @@ Full source included.
 
 The program also supports output formats suitable for further
 processing by editors or other programs, making errors easy to cycle through.
-Software is provided for beautifully interfacing with the
-AUC\TeX\ Emacs mode.
+For example, recent versions of AUC\TeX\ (the Emacs mode) interface
+beautifully with \chktex.
 
 The program itself does not have any machine requirements; However compiling
 for other platforms has not been done for a long time now so the code has been
@@ -183,7 +183,7 @@ and configurations.
 \item Flexible output handling. Has some predefined formats and lets
   the user specify his own format.  Uses a \Cmd{printf()} similar
   syntax. \Cmd{lacheck} compatible mode included for interfacing with
-  the AUC\TeX\ Emacs mode.
+  systems which only support lacheck.
 \item Written in ANSI C\@. \Cmd{configure} script included for easy
   setup and installation on UNIX systems.
 \end{itemize}
@@ -272,30 +272,11 @@ A few words on installation on various platforms:
       \texttt{UserWarnRegex} in the \rsrc\ file.  See warning~44 for
       more information.
 
-    \item[\Cmd{-{}-enable-emacs-hack}:] Install a small file which
-      adds \chktex\ to the command menu of AUC\TeX. This is to be
-      considered as a hack, and may break in future versions of
-      AUC\TeX. It works fine under AUC\TeX\ v2.9, though.
-
-      This option needs the path of your elisp directory as argument,
-      e.g. \Cmd{-{}-enable-emacs-hack=/home/myself/elisp} or similar.
-
-      You'll also have to add the following line to your \Cmd{.emacs}
-      file:
-\begin{verbatim}
-(require 'chktex)
-\end{verbatim}
-      You can now access \chktex\ from the \Cmd{Command} menu in
-      AUC\TeX. To cycle through the messages, type \verb#C-x `#.
-
     \item[\Cmd{-{}-enable-lacheck-replace}] This enables a quick
-      hack for making the AUC\TeX\ Emacs mode use \chktex\ instead of
-      lacheck. This is done by installing a stub script which
-      ``overrides'' the original lacheck executable.
-
-      While more stable than the previous solution, this is also
-      significantly less elegant --- in computing terms, this is the
-      ``brute force'' approach.
+      hack for using \chktex\ instead of lacheck. This is done by
+      installing a stub script which ``overrides'' the original
+      lacheck executable. In this way, tools which support lacheck
+      can be easily made to support chktex instead.
 
     \item[\Cmd{-{}-enable-debug-info}] \chktex\ has an ability to spit
       out various diagnostic messages using the \Cmd{-d} flag. This
@@ -719,7 +700,7 @@ can use \LaTeX{} comments to suppress a certain message on a single
 line.  This can be done by adding a (case-insensitive) comment at the
 end of the line of the form
 \begin{center}
-  \verb+% checktex ##+
+  \verb+% chktex ##+
 \end{center}
 where \verb+##+ is the number of the message to be suppressed.
 For example the line
@@ -755,7 +736,7 @@ In addition to line-specific suppressions, you can create a suppression which wi
 This can be used, for example, to turn off warning 18 (about \verb+"+) in a file which uses a package (like \Cmd{babel}) where \verb+"+ is an active character.
 The syntax is nearly the same, namely
 \begin{center}
-  \verb+% checktex-file ##+
+  \verb+% chktex-file ##+
 \end{center}
 
 \subsubsection{Hints}
@@ -767,7 +748,7 @@ favourite hint, feel free to send it to me!
   which use \verb+"+ as an active character; it may be wise to put \Cmd{-n18} in
   the \Cmd{CmdLine} entry in the \rsrc\ file. This will probably reduce
   the amount of false warnings significantly. Alternately, you can put
-  \verb+% checktex-file 18+ in your files which use one of these packages so
+  \verb+% chktex-file 18+ in your files which use one of these packages so
   that other files will still have these checks performed.
 \item Put \Cmd{-v} in the \Cmd{CmdLine} entry of the \rsrc\ file; this
   makes the fancy printing the default.
@@ -894,10 +875,11 @@ keyword in the \rsrc\ file which controls the discussed warning.
   You can also specify regular expressions to match commands which can
   safely be terminated with a space.  They are specified in the
   \rsrc\ file in \texttt{[]}, which in some other cases is used to
-  indicate case-insensitive matching.
+  indicate case-insensitive matching.  This is used for example to
+  support the \verb+\startXXX+ macros of Con\TeX t.
 
   \begin{errexam}
-    \verb@\LaTeX@\underline{\tt }\verb@is a typesetter.@ \\*
+    \verb@\LaTeX@\underline{\tt\ }\verb@is a typesetter.@ \\*
     \LaTeX is a typesetter. \\*
     \smallskip
     \verb@\LaTeX\ is a typesetter.@ \\*
@@ -995,7 +977,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\Keyword{HyphDash\\NumDash\\WordDash}
+\Keyword{HyphDash\\NumDash\\WordDash\\DashExcpt}
 \begin{errdesc}{Wrong length of dash may have been used.}
   This warning suggests that a wrong number of dashes may have been
   used.  It does this by classifying the dash according to the the
@@ -1018,9 +1000,14 @@ keyword in the \rsrc\ file which controls the discussed warning.
   required.  This is the case for theorems named after two people
   e.g.\ Jordan--H\"older.  A hyphen would indicate that it was one
   person with a hyphenated name e.g.\ Gregorio Ricci-Curbastro.
-  In my experience this is rare enough to be dealt with via line
-  based suppressions.  There is still the problem that no warning
-  will be raised for Jordan-H\"older, so care must still be taken.
+  If this is rare enough, it can be dealt with via line based suppressions.
+  However, exceptions can also be handled by adding them to the
+  \texttt{DashExcpt} list.  The ``words'' in this list are
+  considered to be correct regardless of any other settings.
+  Adding \verb+Jordan--H\"older+ to this list will cause no warning
+  to be issued.  There is still the problem that no warning will be
+  raised for Jordan-H\"older (unless added explicitly via regular
+  expression), so care must still be taken.
 
   Some manuals---particularly American manuals---also suggest
   \emph{not} adding space around an m-dash (triple dash).
@@ -1833,7 +1820,6 @@ Have fun.
 
 \end{document}
 
-% Rudimentary support for AUCTeX.
 % The "Make" target is my own.
 % Local Variables:
 % TeX-command-default: "Make"
