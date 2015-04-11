@@ -1,3 +1,8 @@
+2015-04-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c:  Fix some problems in reading cross-reference streams.
+	* pngimage.c: Support PNG gAMA chunk.
+
 2015-04-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pngimage.c: XMP Metadata support for PNG images.

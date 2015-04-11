@@ -29,11 +29,10 @@
  *
  *  All bitdepth less than 16 is supported.
  *  Supported color types are: PALETTE, RGB, GRAY, RGB_ALPHA, GRAY_ALPHA.
- *  Supported ancillary chunks: tRNS, cHRM + gAMA, (sRGB), (iCCP)
+ *  Supported ancillary chunks: tRNS, cHRM, gAMA, (sRGB), (iCCP)
  *
- *  gAMA support is available only when cHRM exists. cHRM support is not
- *  tested well. CalRGB/CalGray colorspace is used for PNG images that
- *  have cHRM chunk (but not sRGB).
+ *  cHRM support is not tested well. CalRGB/CalGray colorspace is used for
+ *  PNG images that have cHRM chunk.
  *
  * LIMITATIONS
  *
@@ -82,18 +81,15 @@
 /* ColorSpace */
 static pdf_obj *create_cspace_Indexed  (png_structp png_ptr, png_infop info_ptr);
 
-/* CIE-Based: CalRGB/CalGray
- *
- * We ignore gAMA if cHRM is not found.
- */
+/* CIE-Based: CalRGB/CalGray */
 static pdf_obj *create_cspace_CalRGB   (png_structp png_ptr, png_infop info_ptr);
 static pdf_obj *create_cspace_CalGray  (png_structp png_ptr, png_infop info_ptr);
 static pdf_obj *make_param_Cal         (png_byte color_type,
-					double G,
-					double xw, double yw,
-					double xr, double yr,
-					double xg, double yg,
-					double xb, double yb);
+                                        double G,
+                                        double xw, double yw,
+                                        double xr, double yr,
+                                        double xg, double yg,
+                                        double xb, double yb);
 
 /* sRGB:
  *
@@ -124,17 +120,32 @@ static pdf_obj *create_ckey_mask   (png_structp png_ptr, png_infop info_ptr);
  * An object representing mask itself is returned.
  */
 static pdf_obj *create_soft_mask   (png_structp png_ptr, png_infop info_ptr,
-				    png_bytep image_data_ptr,
-				    png_uint_32 width, png_uint_32 height);
+                                    png_bytep image_data_ptr,
+                                    png_uint_32 width, png_uint_32 height);
 static pdf_obj *strip_soft_mask    (png_structp png_ptr, png_infop info_ptr,
-				    png_bytep image_data_ptr,
-				    png_uint_32p rowbytes_ptr,
-				    png_uint_32 width, png_uint_32 height);
+                                    png_bytep image_data_ptr,
+                                    png_uint_32p rowbytes_ptr,
+                                    png_uint_32 width, png_uint_32 height);
+
+/* Gamma correction
+ *
+ * NOTE: It fails reproducing "Browser Gamma-Consistency Test"
+ *
+ *   http://www.libpng.org/pub/png/colorcube/gamma-consistency-test.html
+ *
+ * correctly.
+ */
+static void gamma_correct_bpc8 (double gamma, png_bytep image_data_ptr,
+                                png_uint_32 height, png_uint_32 rowbytes);
+static void gamma_correct_bpc4 (double gamma, png_bytep image_data_ptr,
+                                png_uint_32 height, png_uint_32 rowbytes);
+static void gamma_correct_bpc2 (double gamma, png_bytep image_data_ptr,
+                                png_uint_32 height, png_uint_32 rowbytes);
 
 /* Read image body */
 static void read_image_data (png_structp png_ptr,
-			     png_bytep dest_ptr,
-			     png_uint_32 height, png_uint_32 rowbytes);
+                             png_bytep dest_ptr,
+                             png_uint_32 height, png_uint_32 rowbytes);
 
 int
 check_for_png (FILE *png_file)
@@ -277,16 +288,12 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
 
     switch (trans_type) {
     case PDF_TRANS_TYPE_BINARY:
-      if (color_type != PNG_COLOR_TYPE_RGB)
-	ERROR("Unexpected error in png_include_image().");
       mask = create_ckey_mask(png_ptr, png_info_ptr);
       break;
     /* rowbytes changes 4 to 3 at here */
     case PDF_TRANS_TYPE_ALPHA:
-      if (color_type != PNG_COLOR_TYPE_RGB_ALPHA)
-	ERROR("Unexpected error in png_include_image().");
       mask = strip_soft_mask(png_ptr, png_info_ptr,
-			     stream_data_ptr, &rowbytes, width, height);
+                             stream_data_ptr, &rowbytes, width, height);
       break;
     default:
       mask = NULL;
@@ -309,15 +316,11 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
 
     switch (trans_type) {
     case PDF_TRANS_TYPE_BINARY:
-      if (color_type != PNG_COLOR_TYPE_GRAY)
-	ERROR("Unexpected error in png_include_image().");
       mask = create_ckey_mask(png_ptr, png_info_ptr);
       break;
     case PDF_TRANS_TYPE_ALPHA:
-      if (color_type != PNG_COLOR_TYPE_GRAY_ALPHA)
-	ERROR("Unexpected error in png_include_image().");
       mask = strip_soft_mask(png_ptr, png_info_ptr,
-			     stream_data_ptr, &rowbytes, width, height);
+                             stream_data_ptr, &rowbytes, width, height);
       break;
     default:
       mask = NULL;
@@ -330,6 +333,26 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   }
   pdf_add_dict(stream_dict, pdf_new_name("ColorSpace"), colorspace);
 
+  /* Gamma correction for DeviceRGB and DeviceGray
+   * We apply gamma correction here when gAMA chunk exists but NOT cHRM chunk.
+   */
+  if ( color_type != PNG_COLOR_TYPE_PALETTE &&
+       png_get_valid(png_ptr, png_info_ptr, PNG_INFO_gAMA) &&
+      !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_cHRM)) {
+    double G = 1.0;
+    png_get_gAMA(png_ptr, png_info_ptr, &G);
+    if (G < 1.0e-5) {
+      WARN("%s: Unexpected Gamma value: 1.0 / %g", PNG_DEBUG_STR, G);
+      G = 1.0;
+    }
+    if (bpc == 8)
+      gamma_correct_bpc8(1.0 / G, stream_data_ptr, height, rowbytes);
+    else if (bpc == 4)
+      gamma_correct_bpc4(1.0 / G, stream_data_ptr, height, rowbytes);
+    else if (bpc == 2)
+      gamma_correct_bpc2(1.0 / G, stream_data_ptr, height, rowbytes);
+  }
+
   pdf_add_stream(stream, stream_data_ptr, rowbytes*height);
   RELEASE(stream_data_ptr);
 
@@ -340,7 +363,7 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
       pdf_add_dict(stream_dict, pdf_new_name("SMask"), pdf_ref_obj(mask));
       pdf_release_obj(mask);
     } else {
-      WARN("%s: You found a bug in pngimage.c.", PNG_DEBUG_STR);
+      WARN("%s: Unknown transparency type...???", PNG_DEBUG_STR);
       pdf_release_obj(mask);
     }
   }
@@ -671,7 +694,7 @@ create_cspace_CalRGB (png_structp png_ptr, png_infop info_ptr)
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA) &&
       png_get_gAMA (png_ptr, info_ptr, &G)) {
     if (G < 1.0e-2) {
-      WARN("%s: Unusual Gamma value: %g", PNG_DEBUG_STR, G);
+      WARN("%s: Unusual Gamma value: 1.0 / %g", PNG_DEBUG_STR, G);
       return NULL;
     }
     G = 1.0 / G; /* Gamma is inverted. */
@@ -712,7 +735,7 @@ create_cspace_CalGray (png_structp png_ptr, png_infop info_ptr)
   if (png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA) &&
       png_get_gAMA (png_ptr, info_ptr, &G)) {
     if (G < 1.0e-2) {
-      WARN("%s: Unusual Gamma value: %g", PNG_DEBUG_STR, G);
+      WARN("%s: Unusual Gamma value: 1.0 / %g", PNG_DEBUG_STR, G);
       return NULL;
     }
     G = 1.0 / G; /* Gamma is inverted. */
@@ -782,7 +805,7 @@ make_param_Cal (png_byte color_type,
   }
 
   if (G < 1.0e-2) {
-    WARN("Unusual Gamma specified: %g", G);
+    WARN("Unusual Gamma specified: 1.0 / %g", G);
     return NULL;
   }
 
@@ -873,6 +896,18 @@ create_cspace_Indexed (png_structp png_ptr, png_infop info_ptr)
     data_ptr[3*i+1] = plte[i].green;
     data_ptr[3*i+2] = plte[i].blue;
   }
+  /* Gamma correction */
+  if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA) &&
+      !png_get_valid(png_ptr, info_ptr, PNG_INFO_cHRM) ) {
+    double G = 1.0;
+    png_get_gAMA(png_ptr, info_ptr, &G);
+    if (G < 1.0e-5) {
+      WARN("%s: Ignoring unusual Gamma value: 1.0 / %g", PNG_DEBUG_STR, G);
+      G = 1.0;
+    }
+    if (G != 1.0)
+      gamma_correct_bpc8(1.0 / G, (png_bytep) data_ptr, 1, num_plte*3);
+  }
   lookup = pdf_new_string(data_ptr, num_plte*3);
   RELEASE(data_ptr);
   pdf_add_array(colorspace, lookup);
@@ -909,10 +944,10 @@ create_ckey_mask (png_structp png_ptr, png_infop info_ptr)
   case PNG_COLOR_TYPE_PALETTE:
     for (i = 0; i < num_trans; i++) {
       if (trans[i] == 0x00) {
-	pdf_add_array(colorkeys, pdf_new_number(i));
-	pdf_add_array(colorkeys, pdf_new_number(i));
+        pdf_add_array(colorkeys, pdf_new_number(i));
+        pdf_add_array(colorkeys, pdf_new_number(i));
       } else if (trans[i] != 0xff) {
-	WARN("%s: You found a bug in pngimage.c.", PNG_DEBUG_STR);
+        WARN("%s: You found a bug in pngimage.c.", PNG_DEBUG_STR);
       }
     }
     break;
@@ -1050,6 +1085,63 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
   RELEASE(smask_data_ptr);
 
   return smask;
+}
+
+/* Gamma correction stuff
+ * bpc4 and bpc2 is untested.
+ */
+static void
+gamma_correct_bpc8 (double G, png_bytep stream_data_ptr,
+                                png_uint_32 height, png_uint_32 rowbytes)
+{
+    png_uint_32 i, j;
+
+    for (i = 0; i < height; i++) {
+      for (j = 0; j < rowbytes; j++) {
+        stream_data_ptr[i * rowbytes + j] =
+          (png_byte) (255.0 * pow(stream_data_ptr[i * rowbytes + j] / 255.0, G) + 0.5);
+      }
+    }
+}
+
+static void
+gamma_correct_bpc4 (double G, png_bytep stream_data_ptr,
+                                png_uint_32 height, png_uint_32 rowbytes)
+{
+    png_uint_32 i, j;
+
+    for (i = 0; i < height; i++) {
+      for (j = 0; j < rowbytes; j++) {
+        png_byte v1, v2;
+        v1 = (stream_data_ptr[i * rowbytes + j] >> 4) & 0x0f;
+        v2 =  stream_data_ptr[i * rowbytes + j]       & 0x0f;
+        v1 = (png_byte) (15.0 * pow(v1 / 15.0, G) + 0.5);
+        v2 = (png_byte) (15.0 * pow(v2 / 15.0, G) + 0.5);
+        stream_data_ptr[i * rowbytes + j] = (v1 << 4) + v2;
+      }
+    }
+}
+
+static void
+gamma_correct_bpc2 (double G, png_bytep stream_data_ptr,
+                                png_uint_32 height, png_uint_32 rowbytes)
+{
+    png_uint_32 i, j;
+
+    for (i = 0; i < height; i++) {
+      for (j = 0; j < rowbytes; j++) {
+        png_byte v1, v2, v3, v4;
+        v1 = (stream_data_ptr[i * rowbytes + j] >> 6) & 0x03;
+        v2 = (stream_data_ptr[i * rowbytes + j] >> 4) & 0x03;
+        v3 = (stream_data_ptr[i * rowbytes + j] >> 2) & 0x03;
+        v4 =  stream_data_ptr[i * rowbytes + j]       & 0x03;
+        v1 = (png_byte) (3.0 * pow(v1 / 3.0, G) + 0.5);
+        v2 = (png_byte) (3.0 * pow(v2 / 3.0, G) + 0.5);
+        v3 = (png_byte) (3.0 * pow(v3 / 3.0, G) + 0.5);
+        v4 = (png_byte) (3.0 * pow(v4 / 3.0, G) + 0.5);
+        stream_data_ptr[i * rowbytes + j] = (v1 << 6) + (v2 << 4) + (v3 << 2) + v4;
+      }
+    }
 }
 
 static void
