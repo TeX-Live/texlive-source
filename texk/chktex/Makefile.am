@@ -92,7 +92,7 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 # documentation
 pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex
 
-dist_pdfdoc_DATA = $(CHKTEX_TREE)/ChkTeX.pdf
+dist_pdfdoc_DATA = ChkTeX.pdf
 
 CLEANFILES = $(nodist_bin_SCRIPTS)
 

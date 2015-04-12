@@ -112,6 +112,7 @@ texdef/texdef.pl
 texdiff/texdiff
 texdirflatten/texdirflatten
 texfot/texfot.pl
+texlive/fmtutil.pl
 texlive/rungs.tlu
 texlive/tlmgr.pl
 texlive/updmap.pl

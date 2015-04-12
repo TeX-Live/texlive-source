@@ -164,10 +164,10 @@ texmf_other_scripts = \
 	texdiff/texdiff \
 	texdirflatten/texdirflatten \
 	texfot/texfot.pl \
+	texlive/fmtutil.pl \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl \
 	texlive/updmap.pl \
-	texlive/fmtutil.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
