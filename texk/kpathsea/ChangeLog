@@ -1,3 +1,7 @@
+2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: 6.2.1 (without the dev) for 2015 pretest.
+
 2015-03-25  Karl Berry  <karl@tug.org>
 
 	* mktexlsr (treefile): use shell mktemp; patch from Debian

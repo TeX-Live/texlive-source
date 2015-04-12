@@ -1,4 +1,4 @@
-dnl   Copyright 2011-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -18,4 +18,4 @@ dnl     append "dev", to distinguish binaries built between releases.
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current kpathsea version
-m4_define([kpse_version], [6.2.1dev])
+m4_define([kpse_version], [6.2.1])
