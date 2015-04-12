@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 33766 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2014-04-30 18:03:08 +0200 (Wed, 30 Apr 2014) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 36770 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2015-04-12 04:41:15 +0200 (Sun, 12 Apr 2015) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -77,7 +77,7 @@ local helpstr = [[
       runscript <script-name> [script arguments]
     
     If you prefer to call the script program simply by its name, copy 
-    and rename bin/win64/runscript.exe to <script-name>.exe and put it 
+    and rename bin/win32/runscript.exe to <script-name>.exe and put it 
     somewhere on the search path.]]
 
 local docstr = [[
@@ -246,6 +246,8 @@ local docstr = [[
         - add TEXMFDIST/fonts to the GS_LIB path. Patch by Yusuke KUROKI
     2014/04/30
         - fix for argument duplication in fmtutil
+    2015/04/12
+        - handle fmtutil-sys via fmtutil --sys
 ]]
 
 -- HELPER SUBROUTINES --
@@ -457,7 +459,9 @@ end
 local scripts4tlperl = {
   tlperl = true, 
   updmap = true, 
+  fmtutil = true,
   ['updmap-sys'] = true, 
+  ['fmtutil-sys'] = true, 
 }
 local try_extern_perl = (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL') == '1') and 
                         not (guimode or is_restricted_progname or scripts4tlperl[progname])
@@ -523,7 +527,7 @@ PATH = prepend_path(PATH, GSDIR, BINDIR)
 os.setenv('PATH', PATH);
 
 -- sys stuff
-if (sysprog and not (progname == 'updmap')) then
+if (sysprog and not (progname == 'updmap') and not (progname == 'fmtutil')) then
   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
   os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
 end
@@ -571,6 +575,10 @@ elseif progname == 'updmap' then
   if sysprog then
     argline = progname .. ' --sys ' .. argline
   end
+elseif progname == 'fmtutil' then 
+  if sysprog then
+    argline = progname .. ' --sys ' .. argline
+  end
 elseif progname == 'asy' then
   os.setenv('ASYMPTOTE_GS', GSEXE)
   os.setenv('CYGWIN', 'nodosfilewarning')
@@ -593,8 +601,6 @@ elseif progname == 'dviout' then
               [[\tlpkg\dviout\gen_pk'" "-TEXROOT=']] ..
               table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. [['"]];
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
-elseif progname == 'fmtutil' and sysprog then
-  ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil'}
 elseif progname == 'mkluatexfontdb' then
   progname = 'luaotfload-tool'
   table.insert(arg, '--alias=mkluatexfontdb')
