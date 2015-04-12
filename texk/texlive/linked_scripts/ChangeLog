@@ -1,3 +1,7 @@
+2015-04-12  Norbert Preining  <norbert@preining.info>
+
+	* Makefile.am (texmf_other_scripts): add fmtutil
+
 2014-11-17  Karl Berry  <karl@tug.org>
 
 	* Makefile.am: Use WIN_WRAPPER (w32_wrapper or w64_wrapper).

@@ -5,4 +5,4 @@ You may freely use, modify and/or distribute this file.
 This directory contains scripts which originated in teTeX, but with
 teTeX's demise, are now maintained as part of TeX Live.  Some have been
 significantly or completely rewritten from the teTeX versions; most
-notably, updmap is now implemented in Perl.
+notably, updmap and fmtutil are now implemented in Perl.

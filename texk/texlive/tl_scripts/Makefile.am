@@ -30,7 +30,6 @@ sh_scripts = \
 	allneeded \
 	dvi2fax \
 	dvired \
-	fmtutil \
 	fontinst \
 	kpsetool \
 	kpsewhere \
