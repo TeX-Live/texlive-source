@@ -1,0 +1,12 @@
+--- FindErrs.c.orig	Sat Apr 11 13:59:46 2015
++++ FindErrs.c	Sat Apr 11 16:26:04 2015
+@@ -1059,8 +1059,8 @@
+                     {
+                         if ( *e == '-' && 0 == strncmp( BufPtr, e, strlen(e) ) )
+                         {
+-                            TmpPtr = BufPtr;
+                             char *f = e;
++                            TmpPtr = BufPtr;
+                             while ( f > exception && *(--f) == *(--TmpPtr) )
+                             {
+                                 /* Nothing */

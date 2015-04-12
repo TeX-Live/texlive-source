@@ -1059,8 +1059,8 @@ static void CheckDash(void)
                     {
                         if ( *e == '-' && 0 == strncmp( BufPtr, e, strlen(e) ) )
                         {
-                            TmpPtr = BufPtr;
                             char *f = e;
+                            TmpPtr = BufPtr;
                             while ( f > exception && *(--f) == *(--TmpPtr) )
                             {
                                 /* Nothing */
