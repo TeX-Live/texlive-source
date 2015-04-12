@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 36352 2015-02-22 13:05:56Z preining $
+# $Id: tlmgr.pl 36770 2015-04-12 02:41:15Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 36352 $';
-my $datrev = '$Date: 2015-02-22 14:05:56 +0100 (Sun, 22 Feb 2015) $';
+my $svnrev = '$Revision: 36770 $';
+my $datrev = '$Date: 2015-04-12 04:41:15 +0200 (Sun, 12 Apr 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -789,10 +789,9 @@ sub handle_execute_actions {
     }
     my $opt_fmt = $localtlpdb->option("create_formats");
     if ($do_full) {
-      info("regenerating fmtutil.cnf in $TEXMFSYSVAR\n");
+      info("regenerating fmtutil.cnf in $TEXMFDIST\n");
       TeXLive::TLUtils::create_fmtutil($localtlpdb,
-                                       "$TEXMFSYSVAR/web2c/fmtutil.cnf",
-                                       "$TEXMFLOCAL/web2c/fmtutil-local.cnf");
+                                       "$TEXMFDIST/web2c/fmtutil.cnf");
     }
     if ($opt_fmt && !$::regenerate_all_formats) {
       # first regenerate all formats --byengine 
@@ -4260,10 +4259,9 @@ sub action_generate {
     }
 
   } elsif ($what =~ m/^fmtutil$/i) {
-    my $dest = $opts{"dest"} || "$TEXMFSYSVAR/web2c/fmtutil.cnf";
-    my $localcfg = $opts{"localcfg"} || "$TEXMFLOCAL/web2c/fmtutil-local.cnf";
+    my $dest = $opts{"dest"} || "$TEXMFDIST/web2c/fmtutil.cnf";
     debug("$prg: writing new fmtutil.cnf to $dest\n");
-    TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest, $localcfg);
+    TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest);
 
     if ($opts{"rebuild-sys"}) {
       do_cmd_and_check("fmtutil-sys $common_fmtutil_args --all");
@@ -6304,8 +6302,6 @@ Line endings may be either LF or CRLF depending on the current platform.
 
 =item B<generate language.dat.lua>
 
-=item B<generate fmtutil>
-
 =back
 
 The C<generate> action overwrites any manual changes made in the
@@ -6317,36 +6313,39 @@ all of these files.
 For managing your own fonts, please read the C<updmap --help>
 information and/or L<http://tug.org/fonts/fontinstall.html>.
 
+For managing your own formats, please read the C<fmtutil --help>
+information.
+
 In more detail: C<generate> remakes any of the configuration files
-C<language.dat>, C<language.def>, C<language.dat.lua>, and
-C<fmtutil.cnf>, from the information present in the local TLPDB, plus
+C<language.dat>, C<language.def>, and C<language.dat.lua>
+from the information present in the local TLPDB, plus
 locally-maintained files.
 
 The locally-maintained files are C<language-local.dat>,
-C<language-local.def>, C<language-local.dat.lua>, or
-C<fmtutil-local.cnf>, searched for in C<TEXMFLOCAL> in the respective
+C<language-local.def>, or C<language-local.dat.lua>,
+searched for in C<TEXMFLOCAL> in the respective
 directories.  If local additions are present, the final file is made by
 starting with the main file, omitting any entries that the local file
 specifies to be disabled, and finally appending the local file.
 
-(Historical note: The formerly supported C<updmap-local.cfg> is no longer
-read, since C<updmap> now supports multiple C<updmap.cfg> files.  Thus,
-local additions can and should be put into an C<updmap.cfg> file in
-C<TEXMFLOCAL>.  The C<generate updmap> action no longer exists.)
+(Historical note: The formerly supported C<updmap-local.cfg> and
+C<fmtutil-local.cnf> are no longer read, since C<updmap> and C<fmtutil>
+now reads and supports multiple configuration files.  Thus,
+local additions can and should be put into an C<updmap.cfg> of C<fmtutil.cnf>
+file in C<TEXMFLOCAL>.  The C<generate updmap> and C<generate fmtutil> actions
+no longer exist.)
 
 Local files specify entries to be disabled with a comment line, namely
 one of these:
 
-  #!NAME
   %!NAME
   --!NAME
 
-where C<fmtutil.cnf> uses C<#>, C<language.dat> and C<language.def> use
-C<%>, and C<language.dat.lua> use C<-->.  In all cases, the I<name> is
+where C<language.dat> and C<language.def> use C<%>, 
+and C<language.dat.lua> use C<-->.  In all cases, the I<name> is
 the respective format name or hyphenation pattern identifier.
 Examples:
 
-  #!pdflatex
   %!german
   --!usenglishmax
 
@@ -6403,7 +6402,6 @@ The respective locations are as follows:
   tex/generic/config/language.dat (and language-local.dat);
   tex/generic/config/language.def (and language-local.def);
   tex/generic/config/language.dat.lua (and language-local.dat.lua);
-  web2c/fmtutil.cnf (and fmtutil-local.cnf);
 
 
 =head2 gui

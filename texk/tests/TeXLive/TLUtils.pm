@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 35719 $';
+my $svnrev = '$Revision: 35937 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -2032,8 +2032,8 @@ sub add_link_dir_dir {
       }
       #
       # try to make the link.
-      if (system ("ln -s '$from/$f' '$to'") != 0) {
-        tlwarn ("add_link_dir_dir: linking $f from $from to $to failed: $!\n");
+      if (symlink ("$from/$f", "$to/$f") == 0) {
+        tlwarn ("add_link_dir_dir: symlink of $f from $from to $to failed: $!\n");
         $ret = 0;
       }
     }

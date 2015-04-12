@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 36067 2015-01-16 00:02:11Z karl $
+# $Id: updmap.pl 36787 2015-04-12 15:20:30Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011, 2012, 2013, 2014 Norbert Preining
+# Copyright 2011-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 36067 2015-01-16 00:02:11Z karl $';
+my $svnid = '$Id: updmap.pl 36787 2015-04-12 15:20:30Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -28,10 +28,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2015-01-16 01:02:11 +0100 (Fri, 16 Jan 2015) $';
+my $lastchdate = '$Date: 2015-04-12 17:20:30 +0200 (Sun, 12 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36067 $';
+my $svnrev = '$Revision: 36787 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
