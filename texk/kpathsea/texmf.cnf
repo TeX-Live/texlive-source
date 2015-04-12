@@ -4,8 +4,8 @@
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy! -- in ../../texmf.cnf.  That is, if this file is
-% installed in /some/path/to/texlive/2014/texmf-dist/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2014/texmf.cnf.
+% installed in /some/path/to/texlive/2015/texmf-dist/web2c/texmf.cnf,
+% add your custom settings to /some/path/to/texlive/2015/texmf.cnf.
 % 
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
@@ -76,10 +76,10 @@ TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
-TEXMFVAR = ~/.texlive2014/texmf-var
+TEXMFVAR = ~/.texlive2015/texmf-var
 
 % TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
-TEXMFCONFIG = ~/.texlive2014/texmf-config
+TEXMFCONFIG = ~/.texlive2015/texmf-config
 
 % List all the texmf trees. For an explanation of what they are, see the
 % TeX Live manual.
@@ -561,6 +561,7 @@ shell_escape = p
 % 
 shell_escape_commands = \
 bibtex,bibtex8,\
+extractbb,\
 kpsewhich,\
 makeindex,\
 mpost,\
@@ -647,6 +648,9 @@ file_line_error_style = f
 % Used by makempx to run TeX.  We use "etex" because MetaPost is
 % expecting DVI, and not "tex" because we want first line parsing.
 TEX = etex
+#
+# Use Japanese eptex for Japanese pmpost.
+TEX.pmpost = eptex
 
 % These variables specify the external program called for the
 % interactive `e' option.  %d is replaced by the line number and %s by
