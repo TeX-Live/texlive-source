@@ -6,7 +6,6 @@ allcm.sh
 allneeded.sh
 dvi2fax.sh
 dvired.sh
-fmtutil.sh
 fontinst.sh
 kpsetool.sh
 kpsewhere.sh

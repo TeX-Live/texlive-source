@@ -1,5 +1,6 @@
---- FindErrs.c.orig	Sat Apr 11 13:59:46 2015
-+++ FindErrs.c	Sat Apr 11 16:26:04 2015
+diff -ur chktex-1.7.4.orig/FindErrs.c chktex-1.7.4/FindErrs.c
+--- chktex-1.7.4.orig/FindErrs.c	2015-04-11 20:37:49.000000000 +0200
++++ chktex-1.7.4/FindErrs.c	2015-04-12 03:17:11.000000000 +0200
 @@ -1059,8 +1059,8 @@
                      {
                          if ( *e == '-' && 0 == strncmp( BufPtr, e, strlen(e) ) )
