@@ -2,6 +2,10 @@
 
 	* pdfobj.c:  Fix some problems in reading cross-reference streams.
 	* pngimage.c: Support PNG gAMA chunk.
+	* jpegimage.c: Various fixes in handling JPEG Exif data
+	(possible overflow and buffer overrun), adjusting indent and spaces.
+	* jp2image.c: JPEG2000 opacity channel support.
+	* pdfcolor.c: Update for PDF 1.7 in pdfcolor.c.
 
 2015-04-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
