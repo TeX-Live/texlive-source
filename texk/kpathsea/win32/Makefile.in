@@ -88,9 +88,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = fmtutil$(EXEEXT) mktexfmt$(EXEEXT) mktexlsr$(EXEEXT) \
-	mktexmf$(EXEEXT) mktexpk$(EXEEXT) mktextfm$(EXEEXT) \
-	mktexupd$(EXEEXT)
+bin_PROGRAMS = mktexfmt$(EXEEXT) mktexlsr$(EXEEXT) mktexmf$(EXEEXT) \
+	mktexpk$(EXEEXT) mktextfm$(EXEEXT) mktexupd$(EXEEXT)
 subdir = win32
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -114,19 +113,14 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_fmtutil_OBJECTS = dirutil.$(OBJEXT) fmtutil.$(OBJEXT) \
-	mktexupd.$(OBJEXT)
-fmtutil_OBJECTS = $(am_fmtutil_OBJECTS)
-fmtutil_LDADD = $(LDADD)
-fmtutil_DEPENDENCIES = ../libkpathsea.la
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 am_mktexfmt_OBJECTS = mktexfmt.$(OBJEXT)
 mktexfmt_OBJECTS = $(am_mktexfmt_OBJECTS)
 mktexfmt_LDADD = $(LDADD)
 mktexfmt_DEPENDENCIES = ../libkpathsea.la
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am_mktexlsr_OBJECTS = dirutil.$(OBJEXT) mktexlsr.$(OBJEXT)
 mktexlsr_OBJECTS = $(am_mktexlsr_OBJECTS)
 mktexlsr_LDADD = $(LDADD)
@@ -184,12 +178,11 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(fmtutil_SOURCES) $(mktexfmt_SOURCES) $(mktexlsr_SOURCES) \
+SOURCES = $(mktexfmt_SOURCES) $(mktexlsr_SOURCES) $(mktexmf_SOURCES) \
+	$(mktexpk_SOURCES) $(mktextfm_SOURCES) $(mktexupd_SOURCES)
+DIST_SOURCES = $(mktexfmt_SOURCES) $(mktexlsr_SOURCES) \
 	$(mktexmf_SOURCES) $(mktexpk_SOURCES) $(mktextfm_SOURCES) \
 	$(mktexupd_SOURCES)
-DIST_SOURCES = $(fmtutil_SOURCES) $(mktexfmt_SOURCES) \
-	$(mktexlsr_SOURCES) $(mktexmf_SOURCES) $(mktexpk_SOURCES) \
-	$(mktextfm_SOURCES) $(mktexupd_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -343,13 +336,6 @@ AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/.. \
 	-DWEB2C_KPSE_VERSION='"Web2C-$(WEB2CVERSION) \
 	Kpathsea-$(KPSEVERSION)"'
 AM_CFLAGS = $(WARNING_CFLAGS)
-fmtutil_SOURCES = \
-	dirutil.c \
-	dirutil.h \
-	fmtutil.c \
-	mktexupd.c \
-	mktexupd.h
-
 mktexfmt_SOURCES = \
 	mktexfmt.c
 
@@ -475,10 +461,6 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-fmtutil$(EXEEXT): $(fmtutil_OBJECTS) $(fmtutil_DEPENDENCIES) $(EXTRA_fmtutil_DEPENDENCIES) 
-	@rm -f fmtutil$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(fmtutil_OBJECTS) $(fmtutil_LDADD) $(LIBS)
-
 mktexfmt$(EXEEXT): $(mktexfmt_OBJECTS) $(mktexfmt_DEPENDENCIES) $(EXTRA_mktexfmt_DEPENDENCIES) 
 	@rm -f mktexfmt$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(mktexfmt_OBJECTS) $(mktexfmt_LDADD) $(LIBS)
@@ -510,7 +492,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirutil.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fmtutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/getdestdir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexfmt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mktexlsr.Po@am__quote@

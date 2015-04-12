@@ -1,3 +1,8 @@
+2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (bin_PROGRAMS): Drop fmtutil, now a perl script.
+	* fmtutil.c: Removed.
+
 2014-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mktexfmt.c, mktexpk.c, mktextfm.c: Replace the deprecated
