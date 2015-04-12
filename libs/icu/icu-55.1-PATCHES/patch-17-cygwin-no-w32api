@@ -1,6 +1,6 @@
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/common/putilimp.h icu-55.1/source/common/putilimp.h
---- icu-55.1.orig/source/common/putilimp.h	2015-03-19 09:20:51.000000000 +0100
-+++ icu-55.1/source/common/putilimp.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/common/putilimp.h	2015-04-12 13:28:58.139960891 +0200
++++ icu-55.1/source/common/putilimp.h	2015-04-12 13:34:24.776724702 +0200
 @@ -148,7 +148,7 @@
  
  #ifdef U_HAVE_MMAP
@@ -20,8 +20,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/com
  #else
  #   define U_HAVE_DIRENT_H 1
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/common/umutex.cpp icu-55.1/source/common/umutex.cpp
---- icu-55.1.orig/source/common/umutex.cpp	2015-03-18 19:40:04.000000000 +0100
-+++ icu-55.1/source/common/umutex.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/common/umutex.cpp	2015-03-27 22:10:38.000000000 +0100
++++ icu-55.1/source/common/umutex.cpp	2015-04-12 13:34:24.776724702 +0200
 @@ -37,7 +37,7 @@
  // Build time user mutex hook: #include "U_USER_MUTEX_CPP"
  #include U_MUTEX_XSTR(U_USER_MUTEX_CPP)
@@ -32,8 +32,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/com
  //-------------------------------------------------------------------------------------------
  //
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/common/umutex.h icu-55.1/source/common/umutex.h
---- icu-55.1.orig/source/common/umutex.h	2015-03-18 19:39:56.000000000 +0100
-+++ icu-55.1/source/common/umutex.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/common/umutex.h	2015-03-27 22:10:32.000000000 +0100
++++ icu-55.1/source/common/umutex.h	2015-04-12 13:34:24.776724702 +0200
 @@ -74,7 +74,7 @@
  }
  U_NAMESPACE_END
@@ -53,8 +53,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/com
  /* Windows Definitions.
   *    Windows comes first in the platform chain.
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/common/wintz.c icu-55.1/source/common/wintz.c
---- icu-55.1.orig/source/common/wintz.c	2015-03-18 19:39:58.000000000 +0100
-+++ icu-55.1/source/common/wintz.c	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/common/wintz.c	2015-03-27 22:10:34.000000000 +0100
++++ icu-55.1/source/common/wintz.c	2015-04-12 13:34:24.776724702 +0200
 @@ -11,7 +11,7 @@
  
  #include "unicode/utypes.h"
@@ -71,8 +71,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/com
 -#endif /* U_PLATFORM_HAS_WIN32_API */
 +#endif /* U_PLATFORM_USES_ONLY_WIN32_API */
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/common/wintz.h icu-55.1/source/common/wintz.h
---- icu-55.1.orig/source/common/wintz.h	2015-03-18 19:39:58.000000000 +0100
-+++ icu-55.1/source/common/wintz.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/common/wintz.h	2015-03-27 22:10:34.000000000 +0100
++++ icu-55.1/source/common/wintz.h	2015-04-12 13:34:24.776724702 +0200
 @@ -14,7 +14,7 @@
  
  #include "unicode/utypes.h"
@@ -91,8 +91,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/com
  
  #endif /* __WINTZ */
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18n/datefmt.cpp icu-55.1/source/i18n/datefmt.cpp
---- icu-55.1.orig/source/i18n/datefmt.cpp	2015-03-18 19:39:30.000000000 +0100
-+++ icu-55.1/source/i18n/datefmt.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/i18n/datefmt.cpp	2015-03-27 22:10:06.000000000 +0100
++++ icu-55.1/source/i18n/datefmt.cpp	2015-04-12 13:34:24.776724702 +0200
 @@ -419,7 +419,7 @@
  DateFormat::create(EStyle timeStyle, EStyle dateStyle, const Locale& locale)
  {
@@ -103,8 +103,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18
      int32_t count = locale.getKeywordValue("compat", buffer, sizeof(buffer), status);
  
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18n/windtfmt.cpp icu-55.1/source/i18n/windtfmt.cpp
---- icu-55.1.orig/source/i18n/windtfmt.cpp	2015-03-18 19:39:30.000000000 +0100
-+++ icu-55.1/source/i18n/windtfmt.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/i18n/windtfmt.cpp	2015-03-27 22:10:08.000000000 +0100
++++ icu-55.1/source/i18n/windtfmt.cpp	2015-04-12 13:34:24.776724702 +0200
 @@ -11,7 +11,7 @@
  
  #include "unicode/utypes.h"
@@ -122,8 +122,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18
 +#endif // U_PLATFORM_USES_ONLY_WIN32_API
  
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18n/windtfmt.h icu-55.1/source/i18n/windtfmt.h
---- icu-55.1.orig/source/i18n/windtfmt.h	2015-03-18 19:39:28.000000000 +0100
-+++ icu-55.1/source/i18n/windtfmt.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/i18n/windtfmt.h	2015-03-27 22:10:06.000000000 +0100
++++ icu-55.1/source/i18n/windtfmt.h	2015-04-12 13:34:24.776724702 +0200
 @@ -14,7 +14,7 @@
  
  #include "unicode/utypes.h"
@@ -142,8 +142,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18
  
  #endif // __WINDTFMT
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18n/wintzimpl.cpp icu-55.1/source/i18n/wintzimpl.cpp
---- icu-55.1.orig/source/i18n/wintzimpl.cpp	2015-03-18 19:39:32.000000000 +0100
-+++ icu-55.1/source/i18n/wintzimpl.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/i18n/wintzimpl.cpp	2015-03-27 22:10:10.000000000 +0100
++++ icu-55.1/source/i18n/wintzimpl.cpp	2015-04-12 13:34:24.777724668 +0200
 @@ -11,7 +11,7 @@
  
  #include "unicode/utypes.h"
@@ -154,8 +154,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18
  #include "wintzimpl.h"
  
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18n/wintzimpl.h icu-55.1/source/i18n/wintzimpl.h
---- icu-55.1.orig/source/i18n/wintzimpl.h	2015-03-18 19:39:28.000000000 +0100
-+++ icu-55.1/source/i18n/wintzimpl.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/i18n/wintzimpl.h	2015-03-27 22:10:06.000000000 +0100
++++ icu-55.1/source/i18n/wintzimpl.h	2015-04-12 13:34:24.777724668 +0200
 @@ -14,7 +14,7 @@
  
  #include "unicode/utypes.h"
@@ -174,8 +174,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/i18
  
  #endif /* __WINTZIMPL */
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/intltest/dtfmttst.cpp icu-55.1/source/test/intltest/dtfmttst.cpp
---- icu-55.1.orig/source/test/intltest/dtfmttst.cpp	2015-03-18 19:38:30.000000000 +0100
-+++ icu-55.1/source/test/intltest/dtfmttst.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/intltest/dtfmttst.cpp	2015-03-27 22:09:06.000000000 +0100
++++ icu-55.1/source/test/intltest/dtfmttst.cpp	2015-04-12 13:34:24.777724668 +0200
 @@ -23,7 +23,7 @@
  #include "caltest.h"  // for fieldName
  #include <stdio.h> // for sprintf
@@ -195,8 +195,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
  #endif
  }
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/intltest/uobjtest.cpp icu-55.1/source/test/intltest/uobjtest.cpp
---- icu-55.1.orig/source/test/intltest/uobjtest.cpp	2015-03-18 19:38:32.000000000 +0100
-+++ icu-55.1/source/test/intltest/uobjtest.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/intltest/uobjtest.cpp	2015-03-27 22:09:08.000000000 +0100
++++ icu-55.1/source/test/intltest/uobjtest.cpp	2015-04-12 13:34:24.778724633 +0200
 @@ -382,13 +382,11 @@
      TESTCLASSID_FACTORY(IndianCalendar, Calendar::createInstance(Locale("@calendar=indian"), status));
      TESTCLASSID_FACTORY(ChineseCalendar, Calendar::createInstance(Locale("@calendar=chinese"), status));
@@ -213,8 +213,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
  #if !UCONFIG_NO_BREAK_ITERATION && !UCONFIG_NO_FILE_IO
      /* TESTCLASSID_ABSTRACT(BreakIterator); No staticID!  */
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/intltest/windttst.cpp icu-55.1/source/test/intltest/windttst.cpp
---- icu-55.1.orig/source/test/intltest/windttst.cpp	2015-03-18 19:38:32.000000000 +0100
-+++ icu-55.1/source/test/intltest/windttst.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/intltest/windttst.cpp	2015-03-27 22:09:08.000000000 +0100
++++ icu-55.1/source/test/intltest/windttst.cpp	2015-04-12 13:34:24.778724633 +0200
 @@ -11,7 +11,7 @@
  
  #include "unicode/utypes.h"
@@ -231,8 +231,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
 -#endif /* U_PLATFORM_HAS_WIN32_API */
 +#endif /* U_PLATFORM_USES_ONLY_WIN32_API */
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/intltest/windttst.h icu-55.1/source/test/intltest/windttst.h
---- icu-55.1.orig/source/test/intltest/windttst.h	2015-03-18 19:38:22.000000000 +0100
-+++ icu-55.1/source/test/intltest/windttst.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/intltest/windttst.h	2015-03-27 22:09:02.000000000 +0100
++++ icu-55.1/source/test/intltest/windttst.h	2015-04-12 13:34:24.778724633 +0200
 @@ -14,7 +14,7 @@
  
  #include "unicode/utypes.h"
@@ -251,8 +251,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
  
  #endif // __WINDTTST
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/intltest/winutil.cpp icu-55.1/source/test/intltest/winutil.cpp
---- icu-55.1.orig/source/test/intltest/winutil.cpp	2015-03-18 19:38:22.000000000 +0100
-+++ icu-55.1/source/test/intltest/winutil.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/intltest/winutil.cpp	2015-03-27 22:09:00.000000000 +0100
++++ icu-55.1/source/test/intltest/winutil.cpp	2015-04-12 13:34:24.778724633 +0200
 @@ -11,7 +11,7 @@
  
  #include "unicode/utypes.h"
@@ -269,8 +269,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
 -#endif /* U_PLATFORM_HAS_WIN32_API */
 +#endif /* U_PLATFORM_USES_ONLY_WIN32_API */
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/intltest/winutil.h icu-55.1/source/test/intltest/winutil.h
---- icu-55.1.orig/source/test/intltest/winutil.h	2015-03-18 19:38:20.000000000 +0100
-+++ icu-55.1/source/test/intltest/winutil.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/intltest/winutil.h	2015-03-27 22:09:00.000000000 +0100
++++ icu-55.1/source/test/intltest/winutil.h	2015-04-12 13:34:24.778724633 +0200
 @@ -14,7 +14,7 @@
  
  #include "unicode/utypes.h"
@@ -289,8 +289,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
  
  #endif // __WINUTIL
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/perf/collperf/collperf.cpp icu-55.1/source/test/perf/collperf/collperf.cpp
---- icu-55.1.orig/source/test/perf/collperf/collperf.cpp	2015-03-18 19:38:56.000000000 +0100
-+++ icu-55.1/source/test/perf/collperf/collperf.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/perf/collperf/collperf.cpp	2015-03-27 22:09:32.000000000 +0100
++++ icu-55.1/source/test/perf/collperf/collperf.cpp	2015-04-12 13:34:24.778724633 +0200
 @@ -112,7 +112,7 @@
              ucol_getSortKey(col, data[i].icu_data, data[i].icu_data_len, icu_key, MAX_KEY_LENGTH);
          }
@@ -391,8 +391,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
          SORT(ord_win_key, win_cmpkey);
          SORT(ord_win_wcscmp, win_wcscmp);
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/test/perf/normperf/normperf.h icu-55.1/source/test/perf/normperf/normperf.h
---- icu-55.1.orig/source/test/perf/normperf/normperf.h	2015-03-18 19:38:52.000000000 +0100
-+++ icu-55.1/source/test/perf/normperf/normperf.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/test/perf/normperf/normperf.h	2015-03-27 22:09:28.000000000 +0100
++++ icu-55.1/source/test/perf/normperf/normperf.h	2015-04-12 13:34:24.778724633 +0200
 @@ -315,7 +315,7 @@
  }
  #endif
@@ -403,8 +403,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tes
  int32_t WinNormNFD(const UChar* src, int32_t srcLen, UChar* dest, int32_t dstLen, int32_t options, UErrorCode* status) {
      return FoldStringW(MAP_COMPOSITE,src,srcLen,dest,dstLen);
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tools/ctestfw/unicode/utimer.h icu-55.1/source/tools/ctestfw/unicode/utimer.h
---- icu-55.1.orig/source/tools/ctestfw/unicode/utimer.h	2015-03-18 19:40:08.000000000 +0100
-+++ icu-55.1/source/tools/ctestfw/unicode/utimer.h	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/tools/ctestfw/unicode/utimer.h	2015-03-27 22:10:44.000000000 +0100
++++ icu-55.1/source/tools/ctestfw/unicode/utimer.h	2015-04-12 13:34:24.778724633 +0200
 @@ -10,7 +10,7 @@
  
  #include "unicode/utypes.h"
@@ -424,8 +424,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/too
      struct UTimer{
          LARGE_INTEGER start;
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tools/genrb/derb.c icu-55.1/source/tools/genrb/derb.c
---- icu-55.1.orig/source/tools/genrb/derb.c	2015-03-18 19:40:14.000000000 +0100
-+++ icu-55.1/source/tools/genrb/derb.c	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/tools/genrb/derb.c	2015-03-27 22:10:50.000000000 +0100
++++ icu-55.1/source/tools/genrb/derb.c	2015-04-12 13:34:24.779724599 +0200
 @@ -209,7 +209,7 @@
  
          if (!(fromICUData = !uprv_strcmp(inputDir, "-"))) {
@@ -436,8 +436,8 @@ diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/too
                  absfilename = (uprv_strlen(arg) > 2 && isalpha(arg[0])
                      && arg[1] == ':' && arg[2] == U_FILE_SEP_CHAR);
 diff -ur -N -x config.guess -x config.sub -x install-sh icu-55.1.orig/source/tools/toolutil/udbgutil.cpp icu-55.1/source/tools/toolutil/udbgutil.cpp
---- icu-55.1.orig/source/tools/toolutil/udbgutil.cpp	2015-03-18 19:40:22.000000000 +0100
-+++ icu-55.1/source/tools/toolutil/udbgutil.cpp	2015-03-19 09:31:03.000000000 +0100
+--- icu-55.1.orig/source/tools/toolutil/udbgutil.cpp	2015-03-27 22:10:56.000000000 +0100
++++ icu-55.1/source/tools/toolutil/udbgutil.cpp	2015-04-12 13:34:24.779724599 +0200
 @@ -340,8 +340,10 @@
   */
  U_CAPI const char *udbg_getPlatform(void)
