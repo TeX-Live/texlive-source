@@ -4,7 +4,7 @@
 # This is DVIasm, a DVI utility for editing DVI files directly.
 #
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
-# Copyright (C) 2011-2014 by Khaled Hosny <khaledhosny@eglug.org>
+# Copyright (C) 2011-2015 by Khaled Hosny <khaledhosny@eglug.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -54,27 +54,17 @@ PRE = 247; POST = 248; POST_POST = 249;
 # DVIV opcodes
 DIR = 255;
 # XDV opcodes
-REFLECT = 250;
-PIC_FILE = 251;
+BEGIN_REFLECT = 250; END_REFLECT = 251;
 NATIVE_FONT_DEF = 252;
-GLYPH_ARRAY = 253; GLYPH_STRING = 254;
+GLYPHS = 253;
 # XDV flags
 XDV_FLAG_VERTICAL = 0x0100;
 XDV_FLAG_COLORED = 0x0200;
-XDV_FLAG_VARIATIONS = 0x0800;
 XDV_FLAG_EXTEND = 0x1000;
 XDV_FLAG_SLANT = 0x2000;
 XDV_FLAG_EMBOLDEN = 0x4000;
-# PIC_FILE PDF box types
-PDFBOX_TYPES = {
-  1: "crop",
-  2: "media",
-  3: "bleed",
-  4: "trim",
-  5: "art",
-}
 # DVI identifications
-DVI_ID = 2; DVIV_ID = 3; XDV_ID = 5;
+DVI_ID = 2; DVIV_ID = 3; XDV_ID = 6;
 
 def warning(msg):
   sys.stderr.write('%s\n' % msg)
@@ -151,30 +141,17 @@ def PutSigned(q):
   if q < -0x80:       q += 0x10000;   return (1, Put2Bytes(q))
   return (0, PutByte(q))
 
-def PutGlyphs(cmd, width, glyphs):
+def PutGlyphs(width, glyphs):
   s = []
   length = len(glyphs)
-  s.append(PutByte(cmd))
+  s.append(PutByte(GLYPHS))
   s.append(PutSignedQuad(width))
   s.append(Put2Bytes(length))
   for glyph in glyphs:
     s.append(PutSignedQuad(glyph["x"]))
-    if cmd == GLYPH_ARRAY:
-      s.append(PutSignedQuad(glyph["y"]))
+    s.append(PutSignedQuad(glyph["y"]))
   for glyph in glyphs:
     s.append(Put2Bytes(glyph["id"]))
-
-  return ''.join(s)
-
-def PutPicFile(pic):
-  s = []
-  s.append(PutByte(PIC_FILE))
-  s.append(PutByte(pic["boxtype"]))
-  for v in pic["matrix"]:
-    s.append(PutSignedQuad(int(v * 65536)))
-  s.append(Put2Bytes(pic["page"]))
-  s.append(Put2Bytes(len(pic["path"])))
-  s.append(pic["path"])
 
   return ''.join(s)
 
@@ -410,12 +387,9 @@ class DVI(object):
   def DefineNativeFont(self, e, fp):
     size = Get4Bytes(fp) # scaled size
     flags = Get2Bytes(fp)
-    plen = GetByte(fp) # PS name length
-    flen = GetByte(fp) # family name length
-    slen = GetByte(fp) # style name length
-    fnt_name = fp.read(plen)
-    fam_name = fp.read(flen)
-    sty_name = fp.read(slen)
+    l = GetByte(fp) # name length
+    fnt_name = fp.read(l)
+    index = Get4Bytes(fp) # face index
     ext = []
     embolden = 0
     if flags & XDV_FLAG_VERTICAL: ext.append("vertical")
@@ -423,11 +397,11 @@ class DVI(object):
     if flags & XDV_FLAG_EXTEND: ext.append("extend=%d" % SignedQuad(fp))
     if flags & XDV_FLAG_SLANT: ext.append("slant=%d" % SignedQuad(fp))
     if flags & XDV_FLAG_EMBOLDEN: ext.append("embolden=%d" % SignedQuad(fp))
-    if flags & XDV_FLAG_VARIATIONS:
-      pass # XXX
     try:
       f = self.font_def[e]
     except KeyError:
+      if index > 0:
+        fnt_name += "[%d]" % index
       name = '"%s"' % fnt_name
       if ext:
         name = '"%s:%s"' % (fnt_name, ";".join(ext))
@@ -437,8 +411,6 @@ class DVI(object):
         'checksum': 0,
         'scaled_size': size,
         'design_size': 655360, # hardcoded
-        'family_name': fam_name,
-        'style_name': sty_name,
         }
 
   def ProcessPage(self, fp):
@@ -502,14 +474,14 @@ class DVI(object):
         self.DefineFont(p, fp)
       elif o == NATIVE_FONT_DEF:
         self.DefineNativeFont(p, fp)
-      elif o in (GLYPH_STRING, GLYPH_ARRAY):
-        s.append([GLYPH_STRING, self.GetGlyphs(o, fp)])
-      elif o == PIC_FILE:
-        s.append([PIC_FILE, self.GetPicFile(fp)])
+      elif o == GLYPHS:
+        s.append([GLYPHS, self.GetGlyphs(fp)])
       elif o == DIR:
         s.append([DIR, p])
-      elif o == REFLECT:
-        s.append([REFLECT, p])
+      elif o == BEGIN_REFLECT:
+        s.append([BEGIN_REFLECT])
+      elif o == END_REFLECT:
+        s.append([END_REFLECT])
       elif o == PRE:
         warning('preamble command within a page!')
         break
@@ -524,7 +496,7 @@ class DVI(object):
   def Get1Arg(self, o, fp):
     if o < SET_CHAR_0 + 128:
       return o - SET_CHAR_0
-    if o in (SET1, PUT1, FNT1, XXX1, FNT_DEF1, DIR, REFLECT):
+    if o in (SET1, PUT1, FNT1, XXX1, FNT_DEF1, DIR):
       return GetByte(fp)
     if o in (SET2, PUT2, FNT2, XXX2, FNT_DEF2):
       return Get2Bytes(fp)
@@ -540,75 +512,28 @@ class DVI(object):
       return SignedQuad(fp)
     if o in (NOP, BOP, EOP, PUSH, POP, PRE, POST, POST_POST) or o > POST_POST:
       return 0
-    if o in (W0, X0, Y0, Z0):
+    if o in (W0, X0, Y0, Z0, BEGIN_REFLECT, END_REFLECT):
       return 0
     if o < FNT_NUM_0 + 64:
       return o - FNT_NUM_0
 
-  def GetGlyphs(self, cmd, fp):
+  def GetGlyphs(self, fp):
     width = SignedQuad(fp)
     length = Get2Bytes(fp)
     glyphs = {}
     for i in range(length):
       glyphs[i] = {}
       glyphs[i]["x"] = SignedQuad(fp)
-      if cmd == GLYPH_ARRAY:
-        glyphs[i]["y"] = SignedQuad(fp)
-      else:
-        glyphs[i]["y"] = 0
+      glyphs[i]["y"] = SignedQuad(fp)
 
     for i in range(length):
       glyphs[i]["id"] = Get2Bytes(fp)
 
     return (width, glyphs)
 
-  def GetPicFile(self, fp):
-    boxtype = GetByte(fp)
-    matrix = []
-    matrix.append(str(SignedQuad(fp) / 65536.0))
-    matrix.append(str(SignedQuad(fp) / 65536.0))
-    matrix.append(str(SignedQuad(fp) / 65536.0))
-    matrix.append(str(SignedQuad(fp) / 65536.0))
-    matrix.append(str(SignedQuad(fp) / 65536.0))
-    matrix.append(str(SignedQuad(fp) / 65536.0))
-    matrix = " ".join(matrix)
-    page = SignedPair(fp)
-    length = SignedPair(fp)
-    path = fp.read(length)
-    if boxtype in PDFBOX_TYPES:
-      boxtype = PDFBOX_TYPES[boxtype] + " "
-    else:
-      boxtype = ""
-
-    return "matrix %s page %d %s(%s)" % (matrix, page, boxtype, path)
-
-  def ReadPicFile(self, val):
-    pic = {"matrix":(1,0,0,1,0,0), "boxtype":0, "page":0, "path":""}
-    toks = val.split(" ")
-    i = 0
-    while i < len(toks):
-      tok = toks[i]
-      i += 1
-      if tok == "matrix":
-        matrix = []
-        for j in range(6):
-          matrix.append(float(toks[i + j]))
-        i += 6
-        pic["matrix"] = matrix
-      elif tok == "page":
-        pic["page"] = int(toks[i])
-        i += 1
-      elif tok in PDFBOX_TYPES.values():
-        pic["boxtype"] = next(key for key, value in PDFBOX_TYPES.items() if value == tok)
-      elif tok.startswith("(") and tok.endswith(")"):
-        pic["path"] = tok[1:-1]
-
-    return pic
-
   def ReadGlyphs(self, val):
     import re
     glyphs = []
-    yPresent = False
     w, g = val.split(" ", 1)
     for m in re.finditer(r"gid(?P<id>\d+?)\((?P<pos>.*?.)\)", g):
       gid = m.group("id")
@@ -616,18 +541,12 @@ class DVI(object):
 
       if "," in pos:
         x, y = pos.split(",")
-        yPresent = True
       else:
         x, y = pos, "0sp"
 
       glyphs.append({"id": int(gid), 'x': self.ConvLen(x), 'y': self.ConvLen(y)})
 
-    if yPresent:
-      cmd = GLYPH_ARRAY
-    else:
-      cmd = GLYPH_STRING
-
-    return (cmd, self.ConvLen(w), glyphs)
+    return (self.ConvLen(w), glyphs)
 
   ##########################################################
   # Save: Internal Format -> DVI
@@ -686,12 +605,12 @@ class DVI(object):
           else:       s.append(chr(XXX4) + PutSignedQuad(l) + cmd[1])
         elif cmd[0] == DIR:
           s.append(chr(DIR) + chr(cmd[1]))
-        elif cmd[0] == REFLECT:
-          s.append(chr(REFLECT) + chr(cmd[1]))
-        elif cmd[0] in (GLYPH_ARRAY, GLYPH_STRING):
-          s.append(PutGlyphs(cmd[0], cmd[1], cmd[2]))
-        elif cmd[0] == PIC_FILE:
-          s.append(PutPicFile(cmd[1]))
+        elif cmd[0] == BEGIN_REFLECT:
+          s.append(chr(BEGIN_REFLECT))
+        elif cmd[0] == END_REFLECT:
+          s.append(chr(END_REFLECT))
+        elif cmd[0] == GLYPHS:
+          s.append(PutGlyphs(cmd[1], cmd[2]))
         else:
           warning('invalid command %s!' % cmd[0])
       s.append(chr(EOP))
@@ -717,17 +636,14 @@ class DVI(object):
         s.append(PutSignedQuad(e))
         s.append(PutSignedQuad(self.font_def[e]['scaled_size']))
         s.append(Put2Bytes(flags))
-        s.append(PutByte(len(self.font_def[e]['psname'])))
-        s.append(PutByte(len(self.font_def[e]['famname'])))
-        s.append(PutByte(len(self.font_def[e]['styname'])))
-        s.append(self.font_def[e]['psname'])
-        s.append(self.font_def[e]['famname'])
-        s.append(self.font_def[e]['styname'])
+        s.append(PutByte(len(self.font_def[e]['name'])))
+        s.append(self.font_def[e]['name'])
+        s.append(PutSignedQuad(self.font_def[e]['index']))
+        print >> sys.stderr, self.font_def[e]['name'], self.font_def[e]['index']
         if flags & XDV_FLAG_COLORED: s.append(PutSignedQuad(self.font_def[e]['color']))
         if flags & XDV_FLAG_EXTEND: s.append(PutSignedQuad(self.font_def[e]['extend']))
         if flags & XDV_FLAG_SLANT: s.append(PutSignedQuad(self.font_def[e]['slant']))
         if flags & XDV_FLAG_EMBOLDEN: s.append(PutSignedQuad(self.font_def[e]['embolden']))
-        if flags & XDV_FLAG_VARIATIONS: s.append(PutSignedQuad(self.font_def[e]['vars']))
       else:
         l, q = PutUnsigned(e)
         s.append(PutByte(FNT_DEF1 + l))
@@ -892,13 +808,13 @@ class DVI(object):
         self.cur_page.append([Z0])
       elif key == 'dir':
         self.cur_page.append([DIR, GetInt(val)])
-      elif key == 'reflect':
-        self.cur_page.append([REFLECT, GetInt(val)])
+      elif key == 'begin_reflect':
+        self.cur_page.append([BEGIN_REFLECT])
+      elif key == 'end_reflect':
+        self.cur_page.append([END_REFLECT])
       elif key == 'setglyphs':
-        cmd, w, glyphs = self.ReadGlyphs(val)
-        self.cur_page.append([cmd, w, glyphs])
-      elif key == 'picfile':
-        self.cur_page.append([PIC_FILE, self.ReadPicFile(val)])
+        w, glyphs = self.ReadGlyphs(val)
+        self.cur_page.append([GLYPHS, w, glyphs])
       else:
         warning('invalid command %s!' % key)
 
@@ -963,8 +879,10 @@ class DVI(object):
           fp.write("xxx: %s\n" % repr(cmd[1]))
         elif cmd[0] == DIR:
           fp.write("dir: %d\n" % cmd[1])
-        elif cmd[0] == REFLECT:
-          fp.write("reflect: %d\n" % cmd[1])
+        elif cmd[0] == BEGIN_REFLECT:
+          fp.write("begin_reflect:\n")
+        elif cmd[0] == END_REFLECT:
+          fp.write("end_reflect:\n")
         elif cmd[0] == SET_RULE:
           fp.write("setrule: %s %s\n" % (self.byconv(cmd[1][0]), self.byconv(cmd[1][1])))
         elif cmd[0] == PUT_RULE:
@@ -981,10 +899,8 @@ class DVI(object):
             if self.font_def[cmd[1]]['design_size'] != self.font_def[cmd[1]]['scaled_size']:
               fp.write("(%s) " % self.by_pt_conv(self.font_def[cmd[1]]['design_size']))
             fp.write("at %s\n" % self.by_pt_conv(cur_ssize))
-        elif cmd[0] in (GLYPH_STRING, GLYPH_ARRAY):
+        elif cmd[0] == GLYPHS:
           fp.write("setglyphs: %s\n" % self.DumpGlyphs(cmd[1][0], cmd[1][1]))
-        elif cmd[0] == PIC_FILE:
-          fp.write("picfile: %s\n" % cmd[1])
         elif cmd[0] == RIGHT1:
           fp.write("right: %s\n" % self.byconv(cmd[1]))
         elif cmd[0] == DOWN1:
@@ -1068,9 +984,15 @@ class DVI(object):
       slant = 0
       embolden = 0
       try:
-        psname, ext = n.split(':')
+        name, ext = n.split(':')
       except:
-        psname, ext = n, ""
+        name, ext = n, ""
+
+      try:
+        name, index = name.split('[')
+        index = index.split(']')[0]
+      except:
+        index = 0
 
       if ext:
         ext = ext.split(';')
@@ -1094,24 +1016,22 @@ class DVI(object):
             flags |= XDV_FLAG_EMBOLDEN
             embolden = int(value)
 
-      f['psname'] = psname
-      f['famname'] = "" # XXX
-      f['styname'] = "" # XXX
+      f['name'] = name
+      f['index'] = int(index)
       f['flags'] = flags
       f['color'] = color
       f['extend'] = extend
       f['slant'] = slant
       f['embolden'] = embolden
-      f['vars'] = 0     # XXX
     else:
       f['native'] = False
+      f['name'] = n
 
     if q[:2] == "at": q = q[2:]
     q = self.ConvLen(q.strip())
     try:    d = self.ConvLen(d.strip())
     except: d = q
 
-    f['name'] = n
     f['design_size'] = d
     f['scaled_size'] = q
     f['checksum'] = 0
@@ -1160,10 +1080,10 @@ binary format. It is fully documented at
 http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf 
 http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf"""
 
-  version = """This is %prog-20140802 by Jin-Hwan Cho (Korean TeX Society)
+  version = """This is %prog-20150412 by Jin-Hwan Cho (Korean TeX Society)
   
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
-Copyright (C) 2011-2014 by Khaled Hosny <khaledhosny@eglug.org>
+Copyright (C) 2011-2015 by Khaled Hosny <khaledhosny@eglug.org>
 
 This is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
