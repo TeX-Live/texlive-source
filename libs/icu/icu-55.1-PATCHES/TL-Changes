@@ -1,19 +1,9 @@
 Changes applied to the icu-55.1/ tree as obtained from:
-	http://download.icu-project.org/files/icu4c/54rc/icu4c-55_rc-src.tgz
-
-Added:
-	source/data/in/icudt54l.dat
+	http://download.icu-project.org/files/icu4c/54.1/icu4c-1_rc-src.tgz
 
 Removed:
 	as_is/
 	packaging/
-	source/data/brkitr/
-	source/data/coll/
-	source/data/locales/
-	source/data/mappings/
-	source/data/rbnf/
-	source/data/translit/
-	source/data/xml/
 
 Removed empty directory:
 	source/config/m4/
