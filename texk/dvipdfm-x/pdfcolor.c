@@ -599,7 +599,9 @@ static struct
   {0, 0}, /* PDF-1.2, we don't support them */
   {0x02, 0x10}, /* PDF-1.3 */
   {0x02, 0x20}, /* PDF-1.4 */
-  {0x04, 0x00}  /* PDF-1.5 */
+  {0x04, 0x00}, /* PDF-1.5 */
+  {0x04, 0x00}, /* PDF-1.6 */
+  {0x04, 0x20}, /* PDF-1.7 */
 };
 
 static int
@@ -608,11 +610,11 @@ iccp_version_supported (int major, int minor)
   int  pdf_ver;
 
   pdf_ver = pdf_get_version();
-  if (pdf_ver < 6) {
+  if (pdf_ver < 8) {
     if (icc_versions[pdf_ver].major < major)
       return 0;
     else if (icc_versions[pdf_ver].major == major &&
-	     icc_versions[pdf_ver].minor <  minor)
+             icc_versions[pdf_ver].minor <  minor)
       return 0;
     else {
       return 1;

@@ -25,7 +25,10 @@
 #endif
 
 /*
- * JP2 & JPX baseline SUPPORT:
+ * JP2 & JPX baseline support
+ *
+ * 20150412 Added opacity (transparency) support.
+ * TODO: XMP Metadata
  */
 
 #include <math.h>
@@ -69,11 +72,11 @@ read_box_hdr (FILE *fp, unsigned int *lbox, unsigned int *tbox)
   bytesread += 8;
   if (*lbox == 1) {
     if (get_unsigned_quad(fp) != 0)
-      ERROR("LBox value in JP2 file >32 bits.\nI can't handle this!");
+      ERROR("JPEG2000: LBox value in JP2 file >32 bits.\nI can't handle this!");
     *lbox = get_unsigned_quad(fp);
     bytesread += 8;
   } else if (*lbox > 1 && *lbox < 8) {
-    WARN("Unknown LBox value %lu in JP2 file!", lbox);
+    WARN("JPEG2000: Unknown LBox value %lu in JP2 file!", lbox);
   }
 
   return bytesread;
@@ -121,7 +124,7 @@ check_ftyp_data (FILE *fp, unsigned int size)
     }
     break;
   default:
-    WARN("Unknown JPEG 2000 File Type box Brand field value.");
+    WARN("JPEG2000: Unknown JPEG 2000 File Type box Brand field value.");
     seek_relative(fp, size);
     size = 0;
     supported = 0;
@@ -160,7 +163,7 @@ scan_res_ (ximage_info *info, FILE *fp, unsigned int size)
   while (size > 0) {
     len = read_box_hdr(fp, &lbox, &tbox);
     if (lbox == 0) {
-      WARN("Unexpected lbox value 0 in JP2 Resolution box.");
+      WARN("JPEG2000: Unexpected lbox value 0 in JP2 Resolution box.");
       break;
     }
     switch (tbox) {
@@ -176,7 +179,7 @@ scan_res_ (ximage_info *info, FILE *fp, unsigned int size)
       have_resd = 1;
       break;
     default:
-      WARN("Unknown JPEG 2000 box type in Resolution box.");
+      WARN("JPEG2000: Unknown JPEG 2000 box type in Resolution box.");
       seek_relative(fp, lbox - len);
     }
     size -= lbox;
@@ -185,8 +188,50 @@ scan_res_ (ximage_info *info, FILE *fp, unsigned int size)
   return size == 0 ? 0 : -1;
 }
 
+/* Acrobat seems require Channel Definition box to be defined when image data
+ * contains opacity channel. However, OpenJPEG (and maybe most of JPEG 2000 coders?)
+ * does not write Channel Definition box so transparency will be ignored.
+ */
 static int
-scan_jp2h (ximage_info *info, FILE *fp, unsigned int size)
+scan_cdef (ximage_info *info, int *smask, FILE *fp, unsigned int size)
+{
+  int opacity_channels = 0;
+  int have_type0       = 0;
+  unsigned int i, Cn, N, Typ, Asoc;
+
+  *smask = 0;
+
+  N = get_unsigned_pair(fp);
+  if (size < N * 6 + 2) {
+    WARN("JPEG2000: Inconsistent N value in Channel Definition box.");
+    return -1;
+  }
+  for (i = 0; i < N; i++) {
+    Cn   = get_unsigned_pair(fp); /* Cn */
+    Typ  = get_unsigned_pair(fp);
+    Asoc = get_unsigned_pair(fp); /* must be 0 for SMask */
+    if (Cn > N)
+      WARN("JPEG2000: Invalid Cn value in Channel Definition box.");
+    if (Typ == 1) {
+      if (Asoc == 0)
+        have_type0 = 1;
+      opacity_channels++;
+    } else if (Typ == 2) {
+      opacity_channels++;
+    }
+  }
+ 
+  if (opacity_channels == 1)
+    *smask = have_type0 ? 1 : 0; 
+  else if (opacity_channels > 1) {
+    WARN("JPEG2000: Unsupported transparency type. (ignored)");
+  }
+
+  return 0;
+}
+
+static int
+scan_jp2h (ximage_info *info, int *smask, FILE *fp, unsigned int size)
 {
   int error = 0, have_ihdr = 0;
   unsigned int len, lbox, tbox;
@@ -194,7 +239,7 @@ scan_jp2h (ximage_info *info, FILE *fp, unsigned int size)
   while (size > 0 && !error) {
     len = read_box_hdr(fp, &lbox, &tbox);
     if (lbox == 0) {
-      WARN("Unexpected lbox value 0 in JP2 Header box...");
+      WARN("JPEG2000: Unexpected lbox value 0 in JP2 Header box...");
       error = -1;
       break;
     }
@@ -212,13 +257,16 @@ scan_jp2h (ximage_info *info, FILE *fp, unsigned int size)
     case JP2_BOX_RES_:
       error = scan_res_(info, fp, lbox - len);
       break;
+    case JP2_BOX_CDEF:
+      error = scan_cdef(info, smask, fp, lbox - len);
+      break;
     case JP2_BOX_BPCC: case JP2_BOX_COLR: case JP2_BOX_PCLR:
-    case JP2_BOX_CMAP: case JP2_BOX_CDEF:
+    case JP2_BOX_CMAP:
     case JPX_BOX_LBL_:
       seek_relative(fp, lbox - len);
       break;
     default:
-      WARN("Unknown JPEG 2000 box in JP2 Header box.");
+      WARN("JPEG2000: Unknown JPEG 2000 box in JP2 Header box.");
       seek_relative(fp, lbox - len);
       error = -1;
     }
@@ -226,12 +274,12 @@ scan_jp2h (ximage_info *info, FILE *fp, unsigned int size)
   }
 
   if (!have_ihdr)
-    WARN("Expecting JPEG 2000 Image Header box but could not find.");
+    WARN("JPEG2000: Expecting JPEG 2000 Image Header box but could not find.");
   return (!error && have_ihdr && size == 0) ? 0 : -1;
 }
 
 static int
-scan_file (ximage_info *info, FILE *fp)
+scan_file (ximage_info *info, int *smask, FILE *fp)
 {
   int  error = 0, have_jp2h = 0;
   int  size;
@@ -260,13 +308,13 @@ scan_file (ximage_info *info, FILE *fp)
       lbox = size;
     switch (tbox) {
     case JP2_BOX_JP2H:
-      error = scan_jp2h(info, fp, lbox - len);
+      error = scan_jp2h(info, smask, fp, lbox - len);
       have_jp2h = 1;
       break;
     case JP2_BOX_JP2C:
       /* JP2 requires JP2H appears before JP2C. */
       if (!have_jp2h)
-        WARN("JPEG 2000 Codestream box found before JP2 Header box.");
+        WARN("JPEG2000: JPEG 2000 Codestream box found before JP2 Header box.");
       seek_relative(fp, lbox - len);
       break;
     default:
@@ -276,12 +324,12 @@ scan_file (ximage_info *info, FILE *fp)
   }
 
   /* From ISO/IEC 15444-2 M.9.2.7
-     The JP2 Header box shall be found in the file before the first
-     Contiguous Codestream box, Fragment Table box, Media Data box,
-     Codestream Header box, and Compositing Layer Header box. ...
-  */
+   * The JP2 Header box shall be found in the file before the first
+   * Contiguous Codestream box, Fragment Table box, Media Data box,
+   * Codestream Header box, and Compositing Layer Header box. ...
+   */
   if (!have_jp2h && !error) {
-    WARN("No JP2 Header box found. Not a JP2/JPX baseline file?");
+    WARN("JPEG2000: No JP2 Header box found. Not a JP2/JPX baseline file?");
     error = -1;
   }
   return error;
@@ -315,6 +363,7 @@ int
 jp2_include_image (pdf_ximage *ximage, FILE *fp)
 {
   unsigned pdf_version;
+  int      smask = 0;
   pdf_obj *stream, *stream_dict;
   ximage_info info;
 
@@ -328,15 +377,18 @@ jp2_include_image (pdf_ximage *ximage, FILE *fp)
   stream = stream_dict = NULL;
 
   rewind(fp);
-  if (scan_file(&info, fp) < 0) {
-    WARN("Reading JPEG 2000 file failed.");
+  if (scan_file(&info, &smask, fp) < 0) {
+    WARN("JPEG2000: Reading JPEG 2000 file failed.");
     return -1;
   }
 
   stream      = pdf_new_stream(0);
   stream_dict = pdf_stream_dict(stream);
   pdf_add_dict(stream_dict,
-        pdf_new_name("Filter"), pdf_new_name("JPXDecode"));
+               pdf_new_name("Filter"), pdf_new_name("JPXDecode"));
+  if (smask)
+    pdf_add_dict(stream_dict,
+                 pdf_new_name("SMaskInData"), pdf_new_number(1));
   /* Read whole file */
   {
     size_t nb_read;
@@ -355,13 +407,13 @@ int
 jp2_get_bbox (FILE *fp, int *width, int *height,
          double *xdensity, double *ydensity)
 {
-  int r;
+  int r, smask = 0;
   ximage_info info;
 
   pdf_ximage_init_image_info(&info);
 
   rewind(fp);
-  r = scan_file(&info, fp);
+  r = scan_file(&info, &smask, fp);
 
   *width  = info.width;
   *height = info.height;
