@@ -601,8 +601,6 @@ elseif progname == 'dviout' then
               [[\tlpkg\dviout\gen_pk'" "-TEXROOT=']] ..
               table.concat(texrt, ';') .. [['" "-gsx=']] .. GSEXE .. [['"]];
   ARGV = {[0]=TEXDIR..'/tlpkg/dviout/dviout.exe', 'dviout', par}
-elseif progname == 'fmtutil' and sysprog then
-  ARGV = {[0]=BINDIR..'/fmtutil.exe', 'fmtutil'}
 elseif progname == 'mkluatexfontdb' then
   progname = 'luaotfload-tool'
   table.insert(arg, '--alias=mkluatexfontdb')
