@@ -1,3 +1,8 @@
+2015-04-12  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf: update for TL'15.
+	(shell_escape_commands): include extractbb, fingers crossed.
+
 2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: 6.2.1 (without the dev) for 2015 pretest.
