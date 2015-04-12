@@ -1,3 +1,8 @@
+2015-04-12  Norbert Preining  <norbert@preining.info>
+
+	* Makefile.am: remove fmtutil.sh, it is now handled via
+	linked_scripts and fmtutil.pl
+
 2014-11-20  Karl Berry  <karl@tug.org>
 
 	* fmtutil.sh: (init_log_warnings, log_warning): remove.

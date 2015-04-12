@@ -167,6 +167,7 @@ texmf_other_scripts = \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl \
 	texlive/updmap.pl \
+	texlive/fmtutil.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
