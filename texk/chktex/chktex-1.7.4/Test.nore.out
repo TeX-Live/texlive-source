@@ -13,6 +13,12 @@ Message 22 in Test.tex: Comment displayed.
 Message 1 in Test.tex: Command terminated with space.
 \foo This is an error.  
     ^
+Message 1 in Test.tex: Command terminated with space.
+\stoptext  
+         ^
+Message 9 in Test.tex: `section' expected, found `text'.
+\stoptext  
+     ^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 2  
 ^
@@ -103,6 +109,15 @@ Message 22 in Test.tex: Comment displayed.
 Message 22 in Test.tex: Comment displayed.
 % "How TeX Breaks Paragraphs into Lines", fourth paragraph:  
 ^
+Message 22 in Test.tex: Comment displayed.
+% Using DashExcpt  
+^
+Message 8 in Test.tex: Wrong length of dash may have been used.
+The Birch--Swinnerton--Dyer conjecture is not correct.  
+         ^^
+Message 8 in Test.tex: Wrong length of dash may have been used.
+The Birch--Swinnerton--Dyer conjecture is not correct.  
+                     ^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 9-10  
 ^
@@ -199,15 +214,9 @@ Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                                                                          ^
-Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
-1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
-                                                                                ^^
 Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                                                                                  ^
-Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
-1st.\ foo Inc.\ ab.cd.\ foo ab.cd.\ Foo.\ bar baz., billy.; bob.:\ joe.!\ frank.?\ james..\ george  
-                                                                                        ^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 13  
 ^
@@ -424,15 +433,9 @@ This one triggers warning 22 $\left\{x\right\}$.
 Message 22 in Test.tex: Comment displayed.
 % Warning 44 -- user regex -- default message  
 ^
-Message 44 in Test.tex: User Regex: intro.
-You should always write a good intro.  
-                               ^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 44 -- user regex -- user message  
 ^
-Message 44 in Test.tex: User Regex: Always use \nmid.
-For every $p\not|n$ you have an ugly prime which doesn't divide $n$.  
-            ^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Math mode check  
 ^
@@ -463,21 +466,12 @@ Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36
 Message 36 in Test.tex: You should put a space after parenthesis.
 Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
                        ^
-Message 44 in Test.tex: User Regex: -1:Capitalize before references.
-In section~\ref{sec:3} we have a warning.  
-   ^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 In section~\ref{sec:4} it is suppressed. % chktex -1  
                                          ^
 Message 22 in Test.tex: Comment displayed.
 % In section~\ref{sec:5} we don't have a warning.  
 ^
-Message 44 in Test.tex: User Regex: -2:Vertical rules in tables are ugly.
-\begin{tabular*}{1.0\linewidth}[h]{|c|cc|}  
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Message 44 in Test.tex: User Regex: -2:Use \toprule, midrule, or \bottomrule from booktabs.
-  \hline  
-  ^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Verb check  
 ^

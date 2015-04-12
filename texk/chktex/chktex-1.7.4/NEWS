@@ -1,6 +1,10 @@
 Development of ChkTeX is now in a maintainance mode.  All versions
 1.6.x are essentially bug fixes.  Version 1.7 added some new features.
 
+1.7.4 (2015-04-11), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Fixed undefined behavior (patch from TeXLive)
+
 1.7.3 (2015-04-09), released by Ivan Andrus <darthandrus@gmail.com>
 
   * Fixed memory leaks and a crashing bug #42813

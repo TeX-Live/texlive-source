@@ -1,3 +1,10 @@
+2015-04-12  Karl Berry  <karl@tug.org>
+
+	* Import chktex-1.7.4.
+	* patch-01-sequence-point,
+	* patch-02-unsigned: remove, since now applied.
+	* patch-03-late-decl: new, from Akira.
+
 2015-04-11  Karl Berry  <karl@tug.org>
 
 	* Import chktex-1.7.3.
