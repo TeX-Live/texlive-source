@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 36561 2015-03-19 14:35:59Z preining $
+# $Id: fmtutil.pl 36788 2015-04-12 15:53:26Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -33,11 +33,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 36561 2015-03-19 14:35:59Z preining $';
-my $lastchdate = '$Date: 2015-03-19 23:35:59 +0900 (Thu, 19 Mar 2015) $';
+my $svnid = '$Id: fmtutil.pl 36788 2015-04-12 15:53:26Z karl $';
+my $lastchdate = '$Date: 2015-04-12 17:53:26 +0200 (Sun, 12 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36561 $';
+my $svnrev = '$Revision: 36788 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
@@ -914,12 +914,14 @@ sub determine_config_files {
     }
   }
   if (!$opts{'quiet'}) {
-    print "$prg is using the following $fn files (in precedence order):\n";
+    print_verbose("$prg is using the following $fn files"
+                  . " (in precedence order):\n");
     for my $f (@{$opts{'cnffile'}}) {
-      print "  $f\n";
+      print_verbose("  $f\n");
     }
-    print "$prg is using the following $fn file for writing changes:\n";
-    print "  $changes_config_file\n";
+    print_verbose("$prg is using the following $fn file"
+                  . " for writing changes:\n");
+    print_verbose("  $changes_config_file\n");
   }
   if ($opts{'listfiles'}) {
     # we listed it above, so be done
@@ -972,10 +974,10 @@ sub reset_root_home {
 #
 # printing to stdout (in mktexfmtMode also going to stderr!)
 #   print_info    can be supressed with --quiet
-#   print_verbose cannot be supressed
+#   print_verbose cannot be suppressed
 # printing to stderr
 #   print_warning can be supressed with --quiet
-#   print_error   cannot be supressed
+#   print_error   cannot be suppressed
 #
 sub print_info {
   if ($mktexfmtMode) {
