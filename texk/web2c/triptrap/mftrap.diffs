@@ -2,12 +2,13 @@
 >>> See SRCDIR/triptrap/mftrap.diffs for example of acceptable diffs.
 + ln -s SRCDIR/triptrap/trap.mf .
 + ./mf --progname=inimf
++ test '!' -s trap.base
 + mv trap.log mftrapin.log
 + diff SRCDIR/triptrap/mftrapin.log mftrapin.log
 1c1
 < This is METAFONT, Version 2.7182818 (INIMF)  7 JAN 2014 17:51
 ---
-> This is METAFONT, Version 2.7182818 (TeX Live 2014) (INIMF)  1 MAY 2014 13:44
+> This is METAFONT, Version 2.7182818 (TeX Live 2015) (INIMF)  12 APR 2015 16:22
 150c150
 < String usage 26&83 (891&11438 still untouched)
 ---
@@ -16,8 +17,8 @@
 <  (preloaded base=trap 2014.1.7)
 < 1117 strings of total length 20614
 ---
->  (preloaded base=trap 2014.5.1)
-> 1123 strings of total length 20612
+>  (preloaded base=trap 2015.4.12)
+> 1123 strings of total length 20613
 + ./mf --progname=inimf
 + mv trap.log mftrap.log
 + mv trap.tfm mftrap.tfm
@@ -27,21 +28,21 @@
 < ** &trap  trap 
 < (trap.mf
 ---
-> This is METAFONT, Version 2.7182818 (TeX Live 2014) (INIMF)
+> This is METAFONT, Version 2.7182818 (TeX Live 2015) (INIMF)
 > **(trap.mf
 39c38
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6300&75595 still untouched)
+> String usage 50&202 (6300&75594 still untouched)
 + diff SRCDIR/triptrap/mftrap.log mftrap.log
 1c1
 < This is METAFONT, Version 2.7182818 (preloaded base=trap 2014.1.7)  7 JAN 2014 18:11
 ---
-> This is METAFONT, Version 2.7182818 (TeX Live 2014) (preloaded base=trap 2014.5.1)  1 MAY 2014 13:44
+> This is METAFONT, Version 2.7182818 (TeX Live 2015) (preloaded base=trap 2015.4.12)  12 APR 2015 16:22
 1825c1825
 < String usage 24&92 (858&11309 still untouched)
 ---
-> String usage 30&119 (6346&79263 still untouched)
+> String usage 30&119 (6346&79262 still untouched)
 3693,3695c3693,3695
 < xpart %CAPSULE1359=xx
 < %CAPSULE1367=2yy-2
@@ -141,13 +142,13 @@
 4235c4235
 < String usage 41&161 (815&7634 still untouched)
 ---
-> String usage 50&202 (6300&75595 still untouched)
+> String usage 50&202 (6300&75594 still untouched)
 4251,4252c4251,4252
 <  68 strings out of 883
 <  3752 string characters out of 11386
 ---
 >  77 strings out of 6377
->  3793 string characters out of 79388
+>  3793 string characters out of 79387
 4254,4255c4254,4255
 <  289 symbolic tokens out of 2100
 <  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
@@ -165,11 +166,11 @@
 1c1
 < This is GFtype, Version 3.1
 ---
-> This is GFtype, Version 3.1 (TeX Live 2014)
+> This is GFtype, Version 3.1 (TeX Live 2015)
 3c3
 < ' METAFONT output 2014.01.07:1811'
 ---
-> ' METAFONT output 2014.05.01:1344'
+> ' METAFONT output 2015.04.12:1622'
 + for f in mftrapin.log mftrap.fot mftrap.log trap.typ
 + sed SRCDIR/triptrap/mftrapin.log -f filter
 + sed mftrapin.log -f filter

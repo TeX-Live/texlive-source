@@ -8,12 +8,13 @@
 + ln -s SRCDIR/triptrap/trip.tex .
 + rm -f trip.log
 + ./uptex --progname=upinitex --ini
++ test '!' -s trip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
 + diff SRCDIR/triptrap/tripin.log uptripin.log
 1c1
 < This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is upTeX, Version 3.14159265-p3.5-u1.11 (utf8.uptex) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is upTeX, Version 3.14159265-p3.6-u1.20 (utf8.uptex) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -37,8 +38,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.5.1)
-> 1461 strings of total length 25501
+>  (preloaded format=trip 2015.4.12)
+> 1462 strings of total length 25505
 > 485 memory locations dumped; current usage is 106&278
 > 383 multiletter control sequences
 461c454
@@ -54,7 +55,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is upTeX, Version 3.14159265-p3.5-u1.11 (utf8.uptex) (TeX Live 2014) (preloaded format=uptex)
+> This is upTeX, Version 3.14159265-p3.6-u1.20 (utf8.uptex) (TeX Live 2015) (preloaded format=uptex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +69,7 @@
 1c1
 < This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is upTeX, Version 3.14159265-p3.5-u1.11 (utf8.uptex) (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:45
+> This is upTeX, Version 3.14159265-p3.6-u1.20 (utf8.uptex) (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:22
 3c3
 < (trip.tex ##
 ---
@@ -304,8 +305,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1539
->  261 string characters out of 14499
+>  44 strings out of 1538
+>  261 string characters out of 14495
 >  4259 words of memory out of 4500
 >  414 multiletter control sequences out of 15000+0
 7301c7312
@@ -318,11 +319,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2014)
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 419c419
 < 1121: down4 639342208 
 ---

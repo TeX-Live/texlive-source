@@ -7,12 +7,13 @@
 + diff SRCDIR/triptrap/trip.pl trip.pl
 + ln -s SRCDIR/triptrap/trip.tex .
 + ./etex --progname=einitex --ini
++ test '!' -s trip.fmt
 + mv trip.log ctripin.log
 + diff SRCDIR/triptrap/tripin.log ctripin.log
 1c1
 < This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2015) (INITEX)  12 APR 2015 16:23
 3c3
 < (trip.tex
 ---
@@ -23,8 +24,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.5.1)
-> 1490 strings of total length 26226
+>  (preloaded format=trip 2015.4.12)
+> 1490 strings of total length 26227
 > 479 memory locations dumped; current usage is 104&278
 > 342 multiletter control sequences
 461c461
@@ -39,7 +40,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etex)
+> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2015) (preloaded format=etex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -53,7 +54,7 @@
 1c1
 < This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:45
+> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:23
 3c3
 < (trip.tex ##
 ---
@@ -174,7 +175,7 @@
 <  372 multiletter control sequences out of 2100
 ---
 >  44 strings out of 1810
->  261 string characters out of 7774
+>  261 string characters out of 7773
 >  3821 words of memory out of 3999
 >  373 multiletter control sequences out of 15000+0
 7301c7305
@@ -187,11 +188,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2014)
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1623'
 419c419
 < 1121: down4 639342208 
 ---
@@ -202,9 +203,11 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
++ mv trip.fmt ctrip.fmt
 + echo '*** TRIP test for e-TeX in extended mode ***.'
 *** TRIP test for e-TeX in extended mode ***.
 + ./etex --progname=einitex --ini
++ test '!' -s trip.fmt
 + mv trip.log xtripin.log
 + diff ctripin.log xtripin.log
 2c2,3
@@ -328,6 +331,7 @@
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
 + diff ctrip.typ xtrip.typ
++ mv trip.fmt xtrip.fmt
 + echo '*** e-TeX specific part of e-TRIP test ***.'
 *** e-TeX specific part of e-TRIP test ***.
 + ./pltotf SRCDIR/etexdir/etrip/etrip.pl etrip.tfm
@@ -335,35 +339,38 @@
 + diff SRCDIR/etexdir/etrip/etrip.pl etrip.pl
 + ln -s SRCDIR/etexdir/etrip/etrip.tex .
 + ./etex --progname=einitex --ini
++ test '!' -s etrip.fmt
 + mv etrip.log etripin.log
 + diff SRCDIR/etexdir/etrip/etripin.log etripin.log
 1c1
 < This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (INITEX)  22 JAN 2014 11:25
 ---
-> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
-26,27c26,27
+> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2015) (INITEX)  12 APR 2015 16:23
+26c26
 <  (preloaded format=etrip 2014.1.22)
-< 1491 strings of total length 26258
 ---
->  (preloaded format=etrip 2014.5.1)
-> 1491 strings of total length 26257
+>  (preloaded format=etrip 2015.4.12)
 + ./etex --progname=etex
 + diff SRCDIR/etexdir/etrip/etrip.fot etrip.fot
+1c1
+< This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etex)
+---
+> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2015) (preloaded format=etex)
 + diff SRCDIR/etexdir/etrip/etrip.log etrip.log
 1c1
 < This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etrip 2014.1.22)  22 JAN 2014 11:25
 ---
-> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etrip 2014.5.1)  1 MAY 2014 13:45
-4422c4422
-<  145 string characters out of 7742
----
->  145 string characters out of 7743
+> This is e-TeX, Version 3.14159265-2.6 (TeX Live 2015) (preloaded format=etrip 2015.4.12)  12 APR 2015 16:23
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ etrip.typ
+1c1
+< This is DVItype, Version 3.6 (TeX Live 2014)
+---
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.22:1125'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1623'
 + :
 PASS: etexdir/etriptest
