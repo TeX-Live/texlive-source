@@ -8,12 +8,13 @@
 + ln -s SRCDIR/triptrap/trip.tex .
 + rm -f trip.log
 + ./eptex --progname=epinitex --ini
++ test '!' -s trip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
 + diff SRCDIR/triptrap/tripin.log cptripin.log
 1c1
 < This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 3c3
 < (trip.tex
 ---
@@ -33,8 +34,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.5.1)
-> 1607 strings of total length 27811
+>  (preloaded format=trip 2015.4.12)
+> 1616 strings of total length 27981
 > 489 memory locations dumped; current usage is 110&278
 > 387 multiletter control sequences
 461c462
@@ -50,7 +51,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=eptex)
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (preloaded format=eptex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -64,7 +65,7 @@
 1c1
 < This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:45
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:22
 3c3
 < (trip.tex ##
 ---
@@ -298,8 +299,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1693
->  261 string characters out of 8189
+>  44 strings out of 1684
+>  261 string characters out of 8019
 >  4017 words of memory out of 4500
 >  418 multiletter control sequences out of 15000+0
 7301c7310
@@ -312,11 +313,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2014)
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 419c419
 < 1121: down4 639342208 
 ---
@@ -327,10 +328,12 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
++ mv trip.fmt ctrip.fmt
 + echo '*** TRIP test for e-pTeX in extended mode ***.'
 *** TRIP test for e-pTeX in extended mode ***.
 + rm -f trip.log
 + ./eptex --progname=epinitex --ini
++ test '!' -s trip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
 + diff SRCDIR/triptrap/tripin.log xptripin.log
 1,3c1,4
@@ -338,7 +341,7 @@
 < **\input trip
 < (trip.tex
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 > entering extended mode
 > ***\input trip
 > (./trip.tex
@@ -364,10 +367,10 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.5.1)
-> 1607 strings of total length 27811
+>  (preloaded format=trip 2015.4.12)
+> 1616 strings of total length 27981
 > 536 memory locations dumped; current usage is 157&278
-> 462 multiletter control sequences
+> 465 multiletter control sequences
 461c457
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
@@ -381,7 +384,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=eptex)
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (preloaded format=eptex)
 > **entering extended mode
 > ## (./trip.tex
 17c17
@@ -402,7 +405,7 @@
 < ** &trip  trip
 < (trip.tex ##
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:45
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:22
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
@@ -700,10 +703,10 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1693
->  261 string characters out of 8189
+>  44 strings out of 1684
+>  261 string characters out of 8019
 >  4017 words of memory out of 4500
->  493 multiletter control sequences out of 15000+0
+>  496 multiletter control sequences out of 15000+0
 7301,7302c7307,7308
 <  2 hyphenation exceptions out of 307
 <  7i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
@@ -716,11 +719,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2014)
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 419c419
 < 1121: down4 639342208 
 ---
@@ -731,6 +734,7 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
++ mv trip.fmt xtrip.fmt
 + echo '*** e-TeX specific part of e-TRIP test for e-pTeX ***.'
 *** e-TeX specific part of e-TRIP test for e-pTeX ***.
 + ./pltotf SRCDIR/etexdir/etrip/etrip.pl etrip.tfm
@@ -738,44 +742,55 @@
 + diff SRCDIR/etexdir/etrip/etrip.pl etrip.pl
 + ln -s SRCDIR/eptexdir/eptrip/eptrip.tex etrip.tex
 + ./eptex --progname=epinitex --ini
++ test '!' -s etrip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etripin.log eptripin.log
 1c1
 < This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (INITEX)  22 JAN 2014 11:25
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 26,29c26,29
 <  (preloaded format=etrip 2014.1.22)
 < 1491 strings of total length 26258
 < 281 memory locations dumped; current usage is 36&167
 < 408 multiletter control sequences
 ---
->  (preloaded format=etrip 2014.5.1)
-> 1608 strings of total length 27842
+>  (preloaded format=etrip 2015.4.12)
+> 1617 strings of total length 28012
 > 284 memory locations dumped; current usage is 40&167
-> 462 multiletter control sequences
+> 465 multiletter control sequences
 + ./eptex --progname=eptex
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etrip.fot eptrip.fot
 1c1
 < This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etex)
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=eptex)
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (preloaded format=eptex)
 + diff SRCDIR/eptexdir/eptrip/eptrip.log eptrip.log
 1c1
 < This is e-pTeX, Version 3.14159265-p3.4-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=etrip 2014.1.22)  22 JAN 2014 11:25
 ---
-> This is e-pTeX, Version 3.14159265-p3.5-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=etrip 2014.5.1)  1 MAY 2014 13:45
-4422c4422
+> This is e-pTeX, Version 3.14159265-p3.6-141210-2.6 (utf8.euc) (TeX Live 2015) (preloaded format=etrip 2015.4.12)  12 APR 2015 16:22
+4421,4422c4421,4422
+<  19 strings out of 1692
 <  145 string characters out of 8157
 ---
->  145 string characters out of 8158
+>  19 strings out of 1683
+>  145 string characters out of 7988
+4424c4424
+<  463 multiletter control sequences out of 15000+0
+---
+>  466 multiletter control sequences out of 15000+0
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ eptrip.typ
+1c1
+< This is DVItype, Version 3.6 (TeX Live 2014)
+---
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.22:1125'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 + :
 PASS: eptexdir/eptriptest

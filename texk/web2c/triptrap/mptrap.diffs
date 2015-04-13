@@ -3,13 +3,13 @@
 + ./pltotf SRCDIR/triptrap/trapf.pl trapf.tfm
 + ln -s SRCDIR/triptrap/mtrap.mp .
 + ./mpost --ini mtrap
-This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
+This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 (./mtrap.mp
 + diff SRCDIR/triptrap/mtrap.log mtrap.log
 1c1
 < This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)  1 MAY 2014 13:44
+> This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)  12 APR 2015 16:22
 4,5c4,5
 < Memory usage 19&13 (3972 still untouched)
 < String usage 3&12 (101&7774 now untouched)
@@ -185,7 +185,7 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 929c929
 < >> "%%Creator: MetaPost 1.203"
 ---
-> >> "%%Creator: MetaPost 1.902"
+> >> "%%Creator: MetaPost 1.999"
 931c931
 < >> "%*Font: trapf 9.9628 9.96265 35:c008"
 ---
@@ -227,7 +227,7 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 978c978
 < >> "%%CreationDate: 2009.05.25:1247"
 ---
-> >> "%%CreationDate: 2014.05.01:1344"
+> >> "%%CreationDate: 2015.04.12:1622"
 982,984c982,984
 < >> "%*Font: trapf 9.9628 9.96265 35:c008"
 < Memory usage 359&13 (2867 still untouched)
@@ -278,7 +278,7 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 ---
 >  173 strings using 2917 characters
 >  18856 bytes of node memory
->  315 symbolic tokens
+>  317 symbolic tokens
 >  6i,48n,6p,99b,2f stack positions out of 16i,96n,7p,200b,4f
 1082a1081
 > 
@@ -287,8 +287,8 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 < %%Creator: MetaPost 1.203
 < %%CreationDate: 2009.05.25:1247
 ---
-> %%Creator: MetaPost 1.902
-> %%CreationDate: 2014.05.01:1344
+> %%Creator: MetaPost 1.999
+> %%CreationDate: 2015.04.12:1622
 7c7
 < %*Font: trapf 9.9628 9.96265 35:c008
 ---
@@ -308,8 +308,8 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 < %%Creator: MetaPost 1.203
 < %%CreationDate: 2009.05.25:1247
 ---
-> %%Creator: MetaPost 1.902
-> %%CreationDate: 2014.05.01:1344
+> %%Creator: MetaPost 1.999
+> %%CreationDate: 2015.04.12:1622
 23,25c23,24
 <  0 0 0 setrgbcolor 1
 <  0 dtransform exch truncate exch idtransform pop setlinewidth [] 0 setdash
@@ -337,14 +337,8 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 1c1
 < This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)  1 MAY 2014 13:44
-32,34c32
-< << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}(([][]))=numeric
-< << == >> ::: ||`` ''--!! ??## && @@ $$[[]]{{ }}((5.5 0.5))=<< == >> ::: ||`` ''
-< --!! ??## && @@ $$[[]]{{ }}((5.5 0.5))
----
-> > <<=tag
-40,60c38,45
+> This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)  12 APR 2015 16:22
+40,60c40,47
 < ! Missing `:' has been inserted.
 < <to be read again> 
 <                    ;
@@ -373,13 +367,13 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 > I'm not currently working on a for loop,
 > so I had better not try to end anything.
 > 
-> Memory usage 14048
+> Memory usage 14128
 > String usage 6&49
-62c47
+62c49
 < l.9 ... tracingcommands>2 endfor; showtoken |=:|>;
 ---
 > l.17 ...gspecs step 1 until $:fi endfor showstats;
-65,98c50,52
+65,98c52,54
 < ! Arithmetic overflow.
 < l.10   tracinglostchars:=1/.00001
 <                                  ; tracingequations:=$+1; p~=tracinglostchar...
@@ -418,7 +412,7 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 > >> unknown path p~
 > >> (0
 > ! Equation cannot be performed (unknown path=numeric).
-100,148c54,58
+100,148c56,60
 <                    ;
 < l.12 ...utput:=tracingmacros:=1; $:=ASCII""; $:=x;
 <                                                    p~:=p~;
@@ -474,12 +468,12 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 >                                     0)..controls (15,4) and (-15,-12)..(4,0);
 > I'm sorry, but I don't know how to make such things equal.
 > (See the two expressions just above the error message.)
-150,151c60
+150,151c62
 < >> 4
 < ! OK.
 ---
 > ! Extra tokens will be flushed.
-153,165c62,71
+153,165c64,73
 <                    endgroup
 < l.17   ),2+2endtext
 <                    ; for n=tracingspecs step 1 until $:fi endfor showstats;
@@ -504,7 +498,7 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 > now in front of anything that you don't want me to delete.
 > (See Chapter 27 of The METAFONTbook for an example.)
 > 
-167,191d72
+167,191d74
 < {let}
 < {path}
 < {-(15)}
@@ -530,7 +524,7 @@ This is MetaPost, version 1.902 (TeX Live 2014) (kpathsea version 6.2.0)
 < {elseif}
 < {endinput}
 < {\}
-194,198c75
+194,198c77
 < Beginning to dump on file trap.mem
 <  (mem=trap 2009.05.25)
 < at most 553 strings of total length 2302

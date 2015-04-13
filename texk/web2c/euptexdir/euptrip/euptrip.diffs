@@ -8,12 +8,13 @@
 + ln -s SRCDIR/triptrap/trip.tex .
 + rm -f trip.log
 + ./euptex --progname=eupinitex --ini
++ test '!' -s trip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
 + diff SRCDIR/triptrap/tripin.log cuptripin.log
 1c1
 < This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 3,11c3
 < (trip.tex
 < ! Bad character code (256).
@@ -37,8 +38,8 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.5.1)
-> 1617 strings of total length 27832
+>  (preloaded format=trip 2015.4.12)
+> 1627 strings of total length 28005
 > 489 memory locations dumped; current usage is 110&278
 > 393 multiletter control sequences
 461c454
@@ -54,7 +55,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (preloaded format=euptex)
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (preloaded format=euptex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
@@ -68,7 +69,7 @@
 1c1
 < This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:45
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:22
 3c3
 < (trip.tex ##
 ---
@@ -332,8 +333,8 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1683
->  261 string characters out of 8168
+>  44 strings out of 1673
+>  261 string characters out of 7995
 >  4017 words of memory out of 4500
 >  424 multiletter control sequences out of 15000+0
 7301c7310
@@ -346,11 +347,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2014)
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 419c419
 < 1121: down4 639342208 
 ---
@@ -361,10 +362,12 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
++ mv trip.fmt ctrip.fmt
 + echo '*** TRIP test for e-upTeX in extended mode ***.'
 *** TRIP test for e-upTeX in extended mode ***.
 + rm -f trip.log
 + ./euptex --progname=eupinitex --ini
++ test '!' -s trip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
 + diff SRCDIR/triptrap/tripin.log xuptripin.log
 1,11c1,4
@@ -380,7 +383,7 @@
 < I changed this one to zero.
 < 
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 > entering extended mode
 > ***\input trip
 > (./trip.tex
@@ -402,10 +405,10 @@
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2014.5.1)
-> 1617 strings of total length 27832
+>  (preloaded format=trip 2015.4.12)
+> 1627 strings of total length 28005
 > 536 memory locations dumped; current usage is 157&278
-> 468 multiletter control sequences
+> 471 multiletter control sequences
 461c449
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
@@ -419,7 +422,7 @@
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (preloaded format=euptex)
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (preloaded format=euptex)
 > **entering extended mode
 > ## (./trip.tex
 17c17
@@ -440,7 +443,7 @@
 < ** &trip  trip
 < (trip.tex ##
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (preloaded format=trip 2014.5.1)  1 MAY 2014 13:45
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:22
 > entering extended mode
 > **&trip \toksdef\tokens=0 \input trip
 >  (./trip.tex
@@ -768,10 +771,10 @@
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1683
->  261 string characters out of 8168
+>  44 strings out of 1673
+>  261 string characters out of 7995
 >  4017 words of memory out of 4500
->  499 multiletter control sequences out of 15000+0
+>  502 multiletter control sequences out of 15000+0
 7301,7302c7307,7308
 <  2 hyphenation exceptions out of 307
 <  7i,7n,9p,113b,38s stack positions out of 200i,40n,60p,500b,600s
@@ -784,11 +787,11 @@
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2014)
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.07:0959'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 419c419
 < 1121: down4 639342208 
 ---
@@ -799,6 +802,7 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
++ mv trip.fmt xtrip.fmt
 + echo '*** e-TeX specific part of e-TRIP test for e-upTeX ***.'
 *** e-TeX specific part of e-TRIP test for e-upTeX ***.
 + ./pltotf SRCDIR/etexdir/etrip/etrip.pl etrip.tfm
@@ -806,34 +810,35 @@
 + diff SRCDIR/etexdir/etrip/etrip.pl etrip.pl
 + ln -s SRCDIR/eptexdir/eptrip/eptrip.tex etrip.tex
 + ./euptex --progname=eupinitex --ini
++ test '!' -s etrip.fmt
 + sed 's/, yoko direction//;s/yoko direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etripin.log euptripin.log
 1c1
 < This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (INITEX)  22 JAN 2014 11:25
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (INITEX)  1 MAY 2014 13:45
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
 26,29c26,29
 <  (preloaded format=etrip 2014.1.22)
 < 1491 strings of total length 26258
 < 281 memory locations dumped; current usage is 36&167
 < 408 multiletter control sequences
 ---
->  (preloaded format=etrip 2014.5.1)
-> 1618 strings of total length 27863
+>  (preloaded format=etrip 2015.4.12)
+> 1628 strings of total length 28036
 > 284 memory locations dumped; current usage is 40&167
-> 468 multiletter control sequences
+> 471 multiletter control sequences
 + ./euptex --progname=euptex
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' etrip.log
 + diff SRCDIR/etexdir/etrip/etrip.fot euptrip.fot
 1c1
 < This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etex)
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (preloaded format=euptex)
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (preloaded format=euptex)
 + diff SRCDIR/eptexdir/eptrip/eptrip.log euptrip.log
 1c1
 < This is e-pTeX, Version 3.14159265-p3.4-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=etrip 2014.1.22)  22 JAN 2014 11:25
 ---
-> This is e-upTeX, Version 3.14159265-p3.5-u1.11-130605-2.6 (utf8.uptex) (TeX Live 2014) (preloaded format=etrip 2014.5.1)  1 MAY 2014 13:45
+> This is e-upTeX, Version 3.14159265-p3.6-u1.20-141210-2.6 (utf8.uptex) (TeX Live 2015) (preloaded format=etrip 2015.4.12)  12 APR 2015 16:22
 2210,2215d2209
 < ! Bad character code (256).
 < l.676   \iffontchar\font 256 
@@ -845,18 +850,22 @@
 <  19 strings out of 1692
 <  145 string characters out of 8157
 ---
->  19 strings out of 1682
->  145 string characters out of 8137
+>  19 strings out of 1672
+>  145 string characters out of 7964
 4424c4418
 <  463 multiletter control sequences out of 15000+0
 ---
->  469 multiletter control sequences out of 15000+0
+>  472 multiletter control sequences out of 15000+0
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' etrip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' etrip.dvi
 + diff SRCDIR/etexdir/etrip/etrip.typ euptrip.typ
+1c1
+< This is DVItype, Version 3.6 (TeX Live 2014)
+---
+> This is DVItype, Version 3.6 (TeX Live 2015)
 9c9
 < ' TeX output 2014.01.22:1125'
 ---
-> ' TeX output 2014.05.01:1345'
+> ' TeX output 2015.04.12:1622'
 + :
 PASS: euptexdir/euptriptest

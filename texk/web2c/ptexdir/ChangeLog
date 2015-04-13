@@ -1,3 +1,7 @@
+2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptrip/ptrip.diffs: Updated for TL 2015.
+
 2015-03-14  Karl Berry  <karl@tug.org>
 
 	* ptex-base.ch (pTeX_version_string): bump to 3.6 (per Akira).
