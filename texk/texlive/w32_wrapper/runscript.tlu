@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 36770 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2015-04-12 04:41:15 +0200 (Sun, 12 Apr 2015) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 36823 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2015-04-13 08:30:56 +0200 (Mon, 13 Apr 2015) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -77,8 +77,9 @@ local helpstr = [[
       runscript <script-name> [script arguments]
     
     If you prefer to call the script program simply by its name, copy 
-    and rename bin/win32/runscript.exe to <script-name>.exe and put it 
-    somewhere on the search path.]]
+    and rename bin/win32/runscript.exe (or bin/win64/runscript.exe for
+    64-bit Windows) to <script-name>.exe and put it somewhere on the
+    search path.]]
 
 local docstr = [[
 

@@ -673,7 +673,7 @@ install-data-hook: installdirs-local
 @WIN32_TRUE@	done
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.dll $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe $(DESTDIR)$(bindir)
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.tlu $(DESTDIR)$(bindir)
+@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/win32/runscript.tlu $(DESTDIR)$(bindir)
 @WIN32_TRUE@	@for s in $(texmf_context_scripts); do \
 @WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
 @WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
