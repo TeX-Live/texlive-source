@@ -99,16 +99,19 @@ dist_texconfig_DATA = tcfmgr.map
 web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
 
-## Generate the updmap man page using help2man plus a bit of
-## handwritten material.  But don't actually update updmap.1,
+## Generate the updmap/fmtutil man page using help2man plus a bit of
+## handwritten material.  But don't actually update updmap/fmtutil.1,
 ## we don't want to require help2man for an install.  Leave that to be
 ## done by hand.
-.PHONY: xupdmap.1
-updmap_dir = $(top_srcdir)/linked_scripts/texlive
-xupdmap.1: updmap.help2man $(updmap_dir)/updmap.pl
+.PHONY: xupdmap.1 xfmtutil.1
+linked_scripts_dir = $(top_srcdir)/linked_scripts/texlive
+xupdmap.1: updmap.help2man $(linked_scripts_dir)/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
-	  $(updmap_dir)/updmap.pl >/tmp/$@
-EXTRA_DIST += updmap.help2man
+	  $(linked_scripts_dir)/updmap.pl >/tmp/$@
+xfmtutil.1: fmtutil.help2man $(linked_scripts_dir)/fmtutil.pl
+	help2man --include=$< --source="TeX Live" --no-info \
+	  $(linked_scripts_dir)/fmtutil.pl >/tmp/$@
+EXTRA_DIST += updmap.help2man fmtutil.help2man
 
 
 ## 

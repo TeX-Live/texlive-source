@@ -1,0 +1,22 @@
+# $Id: fmtutil.help2man 31440 2013-08-15 22:39:10Z karl $
+# This help2man auxiliary file is in the public domain.
+# Originally created by Karl Berry.
+# See the Makefile for the help2man invocation.
+# do not fill the long TEXMF* tables.
+
+[NAME]
+fmtutil \- manage TeX formats, Metafont bases and Metapost mems, per-user
+.br
+fmtutil-sys \- manage TeX formats, Metafont bases and Metapost mems, system-wide
+.br
+mktexfmt \- create a TeX format, Metafont base, or Metapost mem
+
+/show this message and exit/
+.SH ENVIRONMENT
+
+/in the given order/
+.nf
+
+/where YYYY is/
+.fi
+
