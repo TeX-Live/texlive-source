@@ -60,9 +60,14 @@ And the following configuration was used to get rid of dependencies (which are n
 The binary was built with gcc 4.9.2.
 
 > pvs Master/tlpkg/installer/wget/wget.sparc-solaris
-        libsocket.so.1 (SUNW_1.4);
-        libnsl.so.1 (SUNW_1.7);
-        librt.so.1 (SUNW_1.2);
-        libc.so.1 (SUNW_1.22.5, SUNWprivate_1.1);
+    libsocket.so.1 (SUNW_1.4);
+    libnsl.so.1 (SUNW_1.7);
+    librt.so.1 (SUNW_1.2);
+    libc.so.1 (SUNW_1.22.5, SUNWprivate_1.1);
+
+> ./Master/tlpkg/installer/wget/wget.sparc-solaris --version
+    GNU Wget 1.16.3 built on solaris2.10.
+    +digest -https +ipv6 -iri +large-file -nls -ntlm +opie -psl -ssl 
 
 In case that binaries should run on even older systems, users should report problems and we can target even older systems by patching the mapfile.
+
