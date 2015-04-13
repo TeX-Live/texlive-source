@@ -100,6 +100,7 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-progs.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
@@ -111,12 +112,12 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(dist_pdfdoc_DATA) $(am__DIST_COMMON)
+	$(am__configure_deps) $(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES = deweb.pl
+CONFIG_CLEAN_FILES = ChkTeX.t deweb.pl
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
 	"$(DESTDIR)$(texmfdir)" "$(DESTDIR)$(texmfdir)" \
@@ -217,7 +218,7 @@ am__can_run_installinfo = \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man_MANS)
-DATA = $(config_DATA) $(dist_pdfdoc_DATA)
+DATA = $(config_DATA) $(pdfdoc_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
 	$(LISP)config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -424,6 +425,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
+	$(top_srcdir)/chktex-1.7.4/ChkTeX.tex.in \
 	$(top_srcdir)/chktex-1.7.4/deweb.in ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
@@ -467,6 +469,7 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
+DVIPS = @DVIPS@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -482,6 +485,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 KPATHSEA_DEPEND = @KPATHSEA_DEPEND@
 KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
+LATEX = @LATEX@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -511,6 +515,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL5 = @PERL5@
 PKG_CONFIG = @PKG_CONFIG@
+PS2PDF = @PS2PDF@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -578,7 +583,8 @@ top_srcdir = @top_srcdir@
 #
 #************************************************************************
 EXTRA_DIST = $(CHKTEX_TREE) $(CHKTEX_TREE)-PATCHES regex/COPYING.LIB \
-	regex/README $(top_builddir)/../../build-aux/relpath $(TESTS)
+	regex/README $(top_builddir)/../../build-aux/relpath \
+	ChkTeX.pdf ChkTeX.tex $(TESTS)
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
@@ -625,8 +631,9 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 
 # documentation
 pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex
-dist_pdfdoc_DATA = ChkTeX.pdf
-CLEANFILES = $(nodist_bin_SCRIPTS) chktest
+pdfdoc_DATA = ChkTeX.pdf
+CLEANFILES = $(nodist_bin_SCRIPTS) ChkTeX.aux ChkTeX.dvi ChkTeX.log \
+	ChkTeX.ps stamp-ChkTeX chktest
 TESTS = chktex.test
 TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE) TEXMFCNF=$(abs_srcdir)/../kpathsea
 all: config.h
@@ -683,6 +690,8 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+ChkTeX.t: $(top_builddir)/config.status $(top_srcdir)/chktex-1.7.4/ChkTeX.tex.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 deweb.pl: $(top_builddir)/config.status $(top_srcdir)/chktex-1.7.4/deweb.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
@@ -988,9 +997,9 @@ uninstall-configDATA:
 	@list='$(config_DATA)'; test -n "$(configdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(configdir)'; $(am__uninstall_files_from_dir)
-install-dist_pdfdocDATA: $(dist_pdfdoc_DATA)
+install-pdfdocDATA: $(pdfdoc_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(dist_pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
+	@list='$(pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
 	if test -n "$$list"; then \
 	  echo " $(MKDIR_P) '$(DESTDIR)$(pdfdocdir)'"; \
 	  $(MKDIR_P) "$(DESTDIR)$(pdfdocdir)" || exit 1; \
@@ -1004,9 +1013,9 @@ install-dist_pdfdocDATA: $(dist_pdfdoc_DATA)
 	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pdfdocdir)" || exit $$?; \
 	done
 
-uninstall-dist_pdfdocDATA:
+uninstall-pdfdocDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
+	@list='$(pdfdoc_DATA)'; test -n "$(pdfdocdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pdfdocdir)'; $(am__uninstall_files_from_dir)
 
@@ -1460,8 +1469,9 @@ info: info-am
 
 info-am:
 
-install-data-am: install-configDATA install-dist_pdfdocDATA \
-	install-man install-nodist_texmfSCRIPTS install-texmfSCRIPTS
+install-data-am: install-configDATA install-man \
+	install-nodist_texmfSCRIPTS install-pdfdocDATA \
+	install-texmfSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
 install-dvi: install-dvi-am
@@ -1510,10 +1520,9 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-configDATA \
-	uninstall-dist_pdfdocDATA uninstall-man \
+uninstall-am: uninstall-binPROGRAMS uninstall-configDATA uninstall-man \
 	uninstall-nodist_binSCRIPTS uninstall-nodist_texmfSCRIPTS \
-	uninstall-texmfSCRIPTS
+	uninstall-pdfdocDATA uninstall-texmfSCRIPTS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -1530,21 +1539,20 @@ uninstall-man: uninstall-man1
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-configDATA \
-	install-data install-data-am install-data-hook \
-	install-dist_pdfdocDATA install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-man1 \
-	install-nodist_binSCRIPTS install-nodist_texmfSCRIPTS \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip install-texmfSCRIPTS installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-configDATA \
-	uninstall-dist_pdfdocDATA uninstall-hook uninstall-man \
-	uninstall-man1 uninstall-nodist_binSCRIPTS \
-	uninstall-nodist_texmfSCRIPTS uninstall-texmfSCRIPTS
+	install-data install-data-am install-data-hook install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-man1 install-nodist_binSCRIPTS \
+	install-nodist_texmfSCRIPTS install-pdf install-pdf-am \
+	install-pdfdocDATA install-ps install-ps-am install-strip \
+	install-texmfSCRIPTS installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-configDATA \
+	uninstall-hook uninstall-man uninstall-man1 \
+	uninstall-nodist_binSCRIPTS uninstall-nodist_texmfSCRIPTS \
+	uninstall-pdfdocDATA uninstall-texmfSCRIPTS
 
 .PRECIOUS: Makefile
 
@@ -1597,6 +1605,20 @@ uninstall-links:
 
 install-data-hook: install-perl-links install-sh-links
 uninstall-hook: uninstall-links
+
+@MAINTAINER_MODE_TRUE@ChkTeX.pdf: ChkTeX.tex
+@MAINTAINER_MODE_TRUE@	$(LATEX) ChkTeX.tex
+@MAINTAINER_MODE_TRUE@	$(DVIPS) -o ChkTeX.ps ChkTeX.dvi
+@MAINTAINER_MODE_TRUE@	$(PS2PDF) ChkTeX.ps $@
+@MAINTAINER_MODE_TRUE@ChkTeX.tex: stamp-ChkTeX
+@MAINTAINER_MODE_TRUE@stamp-ChkTeX: ChkTeX.t
+@MAINTAINER_MODE_TRUE@	@if cmp -s $(srcdir)/ChkTeX.tex ChkTeX.t 2>/dev/null; then \
+@MAINTAINER_MODE_TRUE@	echo "ChkTeX.tex is unchanged"; \
+@MAINTAINER_MODE_TRUE@	else \
+@MAINTAINER_MODE_TRUE@	  echo "cp ChkTeX.t ChkTeX.tex"; \
+@MAINTAINER_MODE_TRUE@	  cp ChkTeX.t ChkTeX.tex; \
+@MAINTAINER_MODE_TRUE@	fi
+@MAINTAINER_MODE_TRUE@	date >$@
 
 @KPATHSEA_RULE@
 
