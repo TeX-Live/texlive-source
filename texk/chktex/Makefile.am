@@ -92,9 +92,26 @@ config_DATA = $(CHKTEX_TREE)/chktexrc
 # documentation
 pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex
 
-dist_pdfdoc_DATA = ChkTeX.pdf
+pdfdoc_DATA = ChkTeX.pdf
 
-CLEANFILES = $(nodist_bin_SCRIPTS)
+if MAINTAINER_MODE
+ChkTeX.pdf: ChkTeX.tex
+	$(LATEX) ChkTeX.tex
+	$(DVIPS) -o ChkTeX.ps ChkTeX.dvi
+	$(PS2PDF) ChkTeX.ps $@
+ChkTeX.tex: stamp-ChkTeX
+stamp-ChkTeX: ChkTeX.t
+	@if cmp -s $(srcdir)/ChkTeX.tex ChkTeX.t 2>/dev/null; then \
+	echo "ChkTeX.tex is unchanged"; \
+	else \
+	  echo "cp ChkTeX.t ChkTeX.tex"; \
+	  cp ChkTeX.t ChkTeX.tex; \
+	fi
+	date >$@
+endif MAINTAINER_MODE
+
+EXTRA_DIST += ChkTeX.pdf ChkTeX.tex
+CLEANFILES = $(nodist_bin_SCRIPTS) ChkTeX.aux ChkTeX.dvi ChkTeX.log ChkTeX.ps stamp-ChkTeX
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@

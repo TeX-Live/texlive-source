@@ -1,3 +1,8 @@
+2015-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ChkTeX.tex (new): Source of ChkTeX.pdf.
+	* Makefile.am, configure.ac: Rules to build ChkTeX.pdf.
+
 2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ChkTeX.pdf (new): Moved from chktex-1.7.2/ChkTeX.pdf to here.
