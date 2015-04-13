@@ -253,7 +253,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 DISTCLEANFILES = scripts-list
 EXTRA_DIST = scripts.lst $(top_builddir)/../../build-aux/relpath \
-	updmap.help2man
+	updmap.help2man fmtutil.help2man
 
 # These first variable definitions are what scripts_links.am requires.
 perl_scripts = e2pall
@@ -324,7 +324,7 @@ dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
 web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
-updmap_dir = $(top_srcdir)/linked_scripts/texlive
+linked_scripts_dir = $(top_srcdir)/linked_scripts/texlive
 #
 texlinks_prog = $(DESTDIR)$(bindir)/texlinks
 #
@@ -861,10 +861,13 @@ uninstall-man1-links:
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
 
-.PHONY: xupdmap.1
-xupdmap.1: updmap.help2man $(updmap_dir)/updmap.pl
+.PHONY: xupdmap.1 xfmtutil.1
+xupdmap.1: updmap.help2man $(linked_scripts_dir)/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
-	  $(updmap_dir)/updmap.pl >/tmp/$@
+	  $(linked_scripts_dir)/updmap.pl >/tmp/$@
+xfmtutil.1: fmtutil.help2man $(linked_scripts_dir)/fmtutil.pl
+	help2man --include=$< --source="TeX Live" --no-info \
+	  $(linked_scripts_dir)/fmtutil.pl >/tmp/$@
 
 .PHONY: run-texlinks
 #
