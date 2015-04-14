@@ -39,10 +39,6 @@ runexternalocp (string external_ocp_name)
   char *out_file_name;
   FILE *in_file;
   FILE *out_file;
-#if HAVE_MKSTEMP
-  int in_file_fd;
-  int out_file_fd;
-#endif
   char command_line[400];
   int i;
   unsigned c;
@@ -63,8 +59,10 @@ runexternalocp (string external_ocp_name)
   mktemp(in_file_name);
   in_file = fopen(in_file_name, FOPEN_WBIN_MODE);
 #else
-
 #if HAVE_MKSTEMP
+  int in_file_fd;
+  int out_file_fd;
+
   in_file_name = xstrdup("/tmp/__aleph__in__XXXXXX");
   in_file_fd = mkstemp(in_file_name);
   in_file = fdopen(in_file_fd, FOPEN_WBIN_MODE);

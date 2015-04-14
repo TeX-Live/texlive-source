@@ -1,3 +1,7 @@
+2015-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* alephbis.c: Declare {in,out}_file_fd only when used (!WIN32).
+
 2015-01-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* com16bit.ch: Drop intcast().
