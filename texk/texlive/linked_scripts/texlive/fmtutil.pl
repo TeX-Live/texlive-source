@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 36788 2015-04-12 15:53:26Z karl $
+# $Id: fmtutil.pl 36821 2015-04-13 00:30:41Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -33,11 +33,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 36788 2015-04-12 15:53:26Z karl $';
-my $lastchdate = '$Date: 2015-04-12 17:53:26 +0200 (Sun, 12 Apr 2015) $';
+my $svnid = '$Id: fmtutil.pl 36821 2015-04-13 00:30:41Z preining $';
+my $lastchdate = '$Date: 2015-04-13 02:30:41 +0200 (Mon, 13 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36788 $';
+my $svnrev = '$Revision: 36821 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
@@ -1051,7 +1051,7 @@ nothing else.
 If not operating in mktexfmt mode, the command line can be more general,
 and multiple formats can be generated, as follows.
 
-Optional behavior:
+Options:
   --cnffile FILE             read FILE instead of fmtutil.cnf
                              (can be given multiple times, in which case
                              all the files are used)
@@ -1066,7 +1066,7 @@ Optional behavior:
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
 
-Valid commands for fmtutil:
+Commands:
   --all                      recreate all format files
   --missing                  create all missing format files
   --refresh                  recreate only existing format files
@@ -1155,12 +1155,18 @@ Disabling formats:
   and call $prg.
 
 
-MORE DOCUMENTATION STILL TO COME ...
+fmtutil vs. fmtutil-sys (fmtutil --sys):
+
+  When fmtutil-sys is run or the command line option --sys is used, 
+  TEXMFSYSCONFIG and TEXMFSYSVAR are used instead of TEXMFCONFIG and 
+  TEXMFVAR, respectively.  This is the primary difference between 
+  fmtutil-sys and fmtutil.
+
+  Other locations may be used if you give them on the command line, or
+  these trees don't exist, or you are not using the original TeX Live.
 
 Report bugs to: tex-k\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
-
-
 EOF
 ;
   print &version();

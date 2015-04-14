@@ -22,6 +22,7 @@ EXTRA_DIST = \
 	README.5configure \
 	README.6cross \
 	README.7coding \
+	README.solaris \
 	build-aux/README.TL \
 	m4/ChangeLog \
 	m4/README \
