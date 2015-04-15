@@ -2,7 +2,7 @@
 
 	* mktexlsr (treefile): switch back to hard-coded path, as
 	indeed it seems there are several systems without support for
-	mktexmp --tmpdir, just mktemp. TL2015 pretest emails.
+	mktemp --tmpdir, just mktemp. TL2015 pretest emails.
 
 2015-04-12  Karl Berry  <karl@tug.org>
 
