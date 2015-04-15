@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 36770 2015-04-12 02:41:15Z preining $
+# $Id: tlmgr.pl 36854 2015-04-14 12:08:59Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 36770 $';
-my $datrev = '$Date: 2015-04-12 04:41:15 +0200 (Sun, 12 Apr 2015) $';
+my $svnrev = '$Revision: 36854 $';
+my $datrev = '$Date: 2015-04-14 14:08:59 +0200 (Tue, 14 Apr 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -211,6 +211,7 @@ sub main {
                          "reinstall-forcibly-removed" => 1,
                          "self" => 1 },
     "version"       => { },
+    "_include_tlpobj" => { },
   );
 
   my %optarg;

@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 36821 2015-04-13 00:30:41Z preining $
+# $Id: fmtutil.pl 36861 2015-04-15 02:44:03Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -33,11 +33,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 36821 2015-04-13 00:30:41Z preining $';
-my $lastchdate = '$Date: 2015-04-13 02:30:41 +0200 (Mon, 13 Apr 2015) $';
+my $svnid = '$Id: fmtutil.pl 36861 2015-04-15 02:44:03Z preining $';
+my $lastchdate = '$Date: 2015-04-15 04:44:03 +0200 (Wed, 15 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36821 $';
+my $svnrev = '$Revision: 36861 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
@@ -111,6 +111,7 @@ our @cmdline_options = (
   "fmtdir=s",
   "no-engine-subdir",
   "no-error-if-no-engine=s",
+  "no-error-if-no-format",
   "quiet|silent|q",
   "test",
   "dolinks",
