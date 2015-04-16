@@ -23,6 +23,19 @@
 # Detailed usage information at the end of the file
 #
 # ToDo:
+#      DONE
+#
+# Version 1.1.0
+#    - treat diacritics (\",\', etc) as safe commands
+#    - treat \_ and \& correctly as safe commands, even if used without spacing to the next word
+#    - Add a BOLD markup type that sets added text in bold face (Contribution by Victor Zabalza via pull request )
+#    - add append-mboxsafecmd list option to be able to specify special safe commands which need to be surrounded by mbox to avoid breaking (mostly this is needed with ulem package)
+#    - support for siunitx and cleveref packages: protect \SI command in siunitx package and \cref,\Cref{range}{*} in cleveref packages (thanks to Stefan Pinnow for testing)
+#    - experimental support for chemformula, mhchem packages: define \ch and \ce in packages as safe (but not \ch,\cee in equation array environments) - these unfortunately will not be marked up (thanks to Stefan Pinnow for testing)
+#    - bug fix: packages identified correctly even if \usepackage command options extend over several lines (previously \usepackage command needed to be fully contained in one line)
+#    - new subtype ONLYCHANGEDPAGE outputs only changed pages (might not work well for floating material)
+#    - new subtype ZLABEL operates similarly to LABEL but uses absolute page numbers (needs zref package)
+#    - undocumented option --debug/--nodebug to override default setting for debug mode (Default: 0 for release version, 1: for development version
 #
 # Version 1.0.4
 #    - introduce list UNSAFEMATHCMD, which holds list of commands which cannot be marked up with \DIFadd or \DIFdel commands  (only relevant for WHOLE and COARSE math markup modes)
@@ -569,8 +582,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.0.4  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2014 F J Tilmann
+This is LATEXDIFF 1.1.0  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2015 F J Tilmann
 EOF
 
 # Configuration variables: these have to be visible from the subroutines
@@ -589,8 +602,6 @@ my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragr
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
 my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up (amsmath qedhere only tested to not work with UNDERLINE markup)
-my $CITECMD=0 ;  # \cite-type commands which need to be protected within an mbox in UNDERLINE and other modes using ulem; pattern simply designed to never match; will be overwritten later for selected styles
-my $CITE2CMD=0;  # \cite-type commands which should be reinstated in deleted blocks
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
                       # problems between some maths packages and ulem package
 
@@ -637,6 +648,9 @@ my @MATHTEXTCMDEXCL=();  #
 # Note I need to declare this with "our" instead of "my" because later in the code I have to "local"ise these  
 our @SAFECMDLIST=();  # array containing patterns of safe commands (which do not break when in the argument of DIFadd or DIFDEL)
 our @SAFECMDEXCL=();
+my @MBOXCMDLIST=();   # patterns for commands which are in principle safe but which need to be surrounded by an \mbox
+my @MBOXCMDEXCL=();           # all the patterns in MBOXCMDLIST will be appended to SAFECMDLIST
+
 
 my ($i,$j,$l);
 my ($old,$new);
@@ -656,6 +670,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $replacecontext2,$appendcontext2,
     $help,$verbose,$driver,$version,$ignorewarnings,
     $enablecitmark,$disablecitmark,$allowspaces,$flatten,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
+my ($mboxsafe);
 # MNEMNONICS for mathmarkup
 my $mathmarkup;
 use constant {
@@ -665,9 +680,11 @@ use constant {
   FINE => 3
 };
 
+my ($mboxcmd);
 
 my (@configlist,@labels,
     @appendsafelist,@excludesafelist,
+    @appendmboxsafelist,@excludemboxsafelist,
     @appendtextlist,@excludetextlist,
     @appendcontext1list,@appendcontext2list,
     @packagelist);
@@ -676,9 +693,6 @@ my ($assign,@config);
 # the optional arguments to the package are the values of the hash elements
 my ($pkg,%packages);
 # Defaults
-$type='UNDERLINE';
-$subtype='SAFE';
-$floattype='FLOATSAFE';
 $mathmarkup=COARSE;
 
 $verbose=0;
@@ -724,6 +738,8 @@ GetOptions('type|t=s' => \$type,
 	   'append-context1cmd=s' => \@appendcontext1list,
 	   'replace-context2cmd=s' => \$replacecontext2,
 	   'append-context2cmd=s' => \@appendcontext2list,
+	   'exclude-mboxsafecmd=s' => \@excludemboxsafelist,
+	   'append-mboxsafecmd=s' => \@appendmboxsafelist,
 	   'show-preamble' => \$showpreamble,
 	   'show-safecmd' => \$showsafe,
 	   'show-textcmd' => \$showtext,
@@ -732,14 +748,15 @@ GetOptions('type|t=s' => \$type,
            'packages=s' => \@packagelist,
 	   'allow-spaces' => \$allowspaces,
            'math-markup=s' => \$mathmarkup,
-           'enable-citation-markup' => \$enablecitmark,
-           'disable-citation-markup' => \$disablecitmark,
+           'enable-citation-markup|enforce-auto-mbox' => \$enablecitmark,
+           'disable-citation-markup|disable-auto-mbox' => \$disablecitmark,
 	   'verbose|V' => \$verbose,
 	   'ignore-warnings' => \$ignorewarnings,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'version' => \$version,
-	   'help|h|H' => \$help);
+	   'help|h|H' => \$help,
+	   'debug!' => \$debug );
 
 if ( $help ) {
   usage() ;
@@ -754,6 +771,14 @@ print STDERR $versionstring if $verbose;
 
 if (defined($showall)){
   $showpreamble=$showsafe=$showtext=$showconfig=1;
+}
+# Default types
+$type='UNDERLINE' unless defined($type);
+$subtype='SAFE' unless defined($subtype);
+# set floattype to IDENTICAL for LABEL and ONLYCHANGEDPAGE subtype, unless it has been set explicitly on the command line
+$floattype=($subtype eq 'LABEL' || $subtype eq 'ONLYCHANGEDPAGE') ? 'IDENTICAL' : 'FLOATSAFE' unless defined($floattype);
+if ( $subtype eq 'LABEL' ) {
+  print STDERR "Note that LABEL subtype is deprecated. If possible, use ZLABEL instead (requires zref package)";
 }
 
 if (defined($mathmarkup)) {
@@ -795,6 +820,15 @@ foreach $appendsafe ( @appendsafelist ) {
 foreach $excludesafe ( @excludesafelist ) {
   init_regex_arr_ext(\@SAFECMDEXCL, $excludesafe);
 }
+# setting up @MBOXCMDLIST and @MBOXCMDEXCL
+foreach $mboxsafe ( @appendmboxsafelist ) {
+  init_regex_arr_ext(\@MBOXCMDLIST, $mboxsafe);
+}
+foreach $mboxsafe ( @excludemboxsafelist ) {
+  init_regex_arr_ext(\@MBOXCMDEXCL, $mboxsafe);
+}
+
+
 
 # setting up @TEXTCMDLIST and @TEXTCMDEXCL
 if (defined($replacetext)) {
@@ -953,18 +987,19 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $mathpunct='[+=<>\-\|]';
   my $and = '&';
   my $coords= '[\-.,\s\d]*';
+# quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
+# such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
+  my $quotedunderscore='\\\\_';
 # word: sequence of letters or accents followed by letter
   my $word='(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])+';
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
-
   my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat0.'\]|\{'. $pat6 . '\}|\(' . $coords .'\))'.$extraspace.')*';
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat6 . '\})*';
   my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
 ## the current maths command cannot cope with newline within the math expression
-
   my $comment='%.*?\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 # now we are done setting up and can start working   
 my ($oldfile, $newfile) = @ARGV;
@@ -1023,6 +1058,10 @@ if ($flatten) {
 
 
 my @auxlines;
+
+# boolean variab
+my ($ulem)=0;
+
 if ( length $oldpreamble && length $newpreamble ) {
   # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
   # and marking up content with latexdiff markup
@@ -1036,22 +1075,19 @@ if ( length $oldpreamble && length $newpreamble ) {
   add_safe_commands($newpreamble);
 
   # get a list of packages from preamble if not predefine
-  %packages=list_packages(@newpreamble) unless %packages;
-  ###  if ( %packages ) {print STDERR "DEBUG Packages: ",%packages,"\n" ;}
+  %packages=list_packages($newpreamble) unless %packages;
+  if ( %packages && $debug ) { my $key ; foreach $key (keys %packages) { print STDERR "DEBUG \\usepackage[",$packages{$key},"]{",$key,"}\n" ;} }
+
   if (defined $packages{"hyperref"} ) {
     # deleted lines should not generate or appear in link names:
     print STDERR "hyperref package detected.\n" if $verbose ;
     $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
     $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
     $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
-  }
-
-  if (defined $packages{"units"}  && ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ ) ) {
-    # protect inlined maths environments by surrounding with an \mbox
-    # this is done to get around an incompatibility between the ulem and units package
-    # where spaces in the argument to underlined or crossed-out \unit commands cause an error message
-    print STDERR "units package detected at the same time as style using ulem.\n" if $verbose ;
-    $MBOXINLINEMATH=1;
+    ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+    ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
+    ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
+    ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
   }
 
   print STDERR "Differencing preamble.\n" if $verbose;
@@ -1093,45 +1129,116 @@ elsif ( !length $oldpreamble && !length $newpreamble ) {
 # package documentation)
 # Use post-processing
 # and $packages{"apacite"}!~/natbibpapa/
-my ($citpat,$citpatsafe);
+
+$ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat0\])?\{ulem\}/ || defined $packages{"ulem"});
+
+
+if (defined $packages{"units"}  && $ulem ) {
+  # protect inlined maths environments by surrounding with an \mbox
+  # this is done to get around an incompatibility between the ulem and units package
+  # where spaces in the argument to underlined or crossed-out \unit commands cause an error message
+  print STDERR "units package detected at the same time as style using ulem.\n" if $verbose ;
+  $MBOXINLINEMATH=1;
+}
+
+if (defined $packages{"siunitx"} ) {
+  # protect SI command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between the ulem and siunitx package
+  print STDERR "siunitx package detected.\n" if $verbose ;
+  my $mboxcmds='SI,ang,numlist,numrange,SIlist,SIrange';
+  init_regex_arr_ext(\@SAFECMDLIST,'num,si');
+  if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
+    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+  } else {
+    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+  }
+}
+
+if (defined $packages{"cleveref"} ) {
+  # protect selected command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between ulem and cleveref package
+  print STDERR "cleveref package detected.\n" if $verbose ;
+  my $mboxcmds='[Cc]ref(?:range)?\*?,labelcref,(?:lc)?name[cC]refs?' ;
+  if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
+    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+  } else {
+    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+  }
+}
+
+if (defined $packages{"glossaries"} ) {
+  # protect selected command by surrounding them with an \mbox
+  # this is done to get around an incompatibility between ulem and glossaries package 
+  print STDERR "glossaries package detected.\n" if $verbose ;
+  my $mboxcmds='[gG][lL][sS](?:|pl|disp|link|first|firstplural|desc|user[iv][iv]?[iv]?),[aA][cC][rR](?:long|longpl|full|fullpl),[aA][cC][lfp]?[lfp]?';
+  init_regex_arr_ext(\@SAFECMDLIST,'[gG][lL][sS](?:(?:entry)?(?:text|plural|name|symbol)|displaynumberlist|entryfirst|entryfirstplural|entrydesc|entrydescplural|entrysymbolplural|entryuser[iv][iv]?[iv]?|entrynumberlist|entrydisplaynumberlist|entrylong|entrylongpl|entryshort|entryshortpl|entryfull|entryfullpl),[gG]lossentry(?:name|desc|symbol),[aA][cC][rR](?:short|shortpl),[aA]csp?');
+  if ( $enablecitmark || ( $ulem  && ! $disablecitmark )) {
+    init_regex_arr_ext(\@MBOXCMDLIST,$mboxcmds);
+  } else {
+    init_regex_arr_ext(\@SAFECMDLIST,$mboxcmds);
+  }
+}
+
+if (defined $packages{"chemformula"} ) {
+  print STDERR "chemformula package detected.\n" if $verbose ;
+  init_regex_arr_ext(\@SAFECMDLIST,'ch');
+  push(@UNSAFEMATHCMD,'ch');
+  # The next command would be needed to allow highlighting the interior of \ch commands in math environments
+  # but the redefinitions in chemformula are too deep to make this viable
+  # push(@MATHTEXTCMDLIST,'ch');
+}
+
+if (defined $packages{"mhchem"} ) {
+  print STDERR "mhchem package detected.\n" if $verbose ;
+  init_regex_arr_ext(\@SAFECMDLIST,'ce');
+  push(@UNSAFEMATHCMD,'cee');
+  # The next command would be needed to allow highlighting the interior of \cee commands in math environments
+  # but the redefinitions in chemformula are too deep to make this viable
+  # push(@MATHTEXTCMDLIST,'cee');
+}
+
+
+my ( $citpat);
 
 if ( defined $packages{"apacite"}  ) {
-  print STDERR "DEBUG apacite citation commands\n"  if $debug;
-  $citpatsafe=qr/^(?:mask)?(?:full|short)?cite(?:A|author|year)?(?:NP)?$/;
+  print STDERR "apacite package detected.\n" if $verbose ;
   $citpat='(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)?(?:NP)?';
 } else {
   # citation command pattern for all other citation schemes
-  $citpatsafe=qr/^cite.*$/;
   $citpat='(?:cite\w*|nocite)';
 };
 
-if ( uc($type) ne "UNDERLINE" && uc($type) ne "FONTSTRIKE" && uc($type) ne "CULINECHBAR" ) {
-  push (@SAFECMDLIST, $citpatsafe);
+if ( ! $ulem ) {
+  # modes not using ulem: citation is safe
+  push (@SAFECMDLIST, $citpat);
 } else {
   ### Experimental: disable text and emph commands
-  push (@SAFECMDLIST, $citpatsafe) unless $disablecitmark;
   push(@SAFECMDEXCL, qr/^emph$/, qr/^text..$/);
   # replace \cite{..} by \mbox{\cite{..}} in added or deleted blocks in post-processing
+  push(@MBOXCMDLIST,$citpat) unless $disablecitmark;
   if ( uc($subtype) eq "COLOR" or uc($subtype) eq "DVIPSCOL" ) {
     # remove \cite command again from list of safe commands
-    pop @SAFECMDLIST;
+    pop @MBOXCMDLIST;
     # deleted cite commands
-    $CITE2CMD=$citpat unless $disablecitmark ; # \cite-type commands which should be reinstated in deleted blocks
-  } else {
-    $CITECMD=$citpat unless $disablecitmark ; # \cite commands which need to be protected within an mbox in UNDERLINE and other modes using ulem
   }
 }
-$CITECMD=$citpat if $enablecitmark ; # as above for explicit selection
+push(@MBOXCMDLIST,$citpat) if $enablecitmark ;
 
-print STDERR "CITECMD:|$CITECMD|\n" if $debug;
 
 if (defined $packages{"amsmath"}  or defined $packages{"amsart"} or defined $packages{"amsbook"} ) {
   print STDERR "amsmath package detected.\n" if $verbose ;
   $MATHARRREPL='align*';
 }
 
+# add commands in MBOXCMDLIST to SAFECMDLIST
+foreach $mboxcmd ( @MBOXCMDLIST ) {
+  init_regex_arr_ext(\@SAFECMDLIST, $mboxcmd);
+}
+
+
+
 print STDERR "Preprocessing body.  " if $verbose;
-my ($oldleadin,$newleadin)=preprocess($oldbody,$newbody);
+preprocess($oldbody,$newbody);
 
 
 # run difference algorithm
@@ -1153,7 +1260,7 @@ if (defined($visiblelabel)) {
   $diffbo = "\\begin{verbatim}LATEXDIFF comparison\nOld: $oldlabel\nNew: $newlabel\\end{verbatim}\n$diffbo"   ;
 }
 
-$diffall .= "$newleadin$diffbo" ;
+$diffall .= "$diffbo" ;
 $diffall .= "\\end{document}$newpost" if length $newpreamble ;
 if ( lc($encoding) ne "utf8" && lc($encoding) ne "ascii" ) {
   print STDERR "Encoding output file to $encoding\n" if $verbose;
@@ -1215,22 +1322,43 @@ sub read_file_with_encoding {
   return $output;
 }
 
-# %packages=list_packages(@preamble)
+## %packages=list_packages(@preamble)
+## scans the arguments for \documentclass,\RequirePackage and \usepackage statements and constructs a hash
+## whose keys are the included packages, and whose values are the associated optional arguments
+#sub list_packages {
+#  my (@preamble)=@_;
+#  my %packages=();
+#  foreach $line ( @preamble ) {
+#    # get rid of comments
+#    $line=~s/(?<!\\)%.*$// ;
+#    if ( $line =~ m/\\(?:documentclass|usepackage|RequirePackage)(?:\[(.+?)\])?\{(.*?)\}/ ) {
+##      print STDERR "Found something: |$line|\n" if $debug;
+#      if (defined($1)) {
+#	$packages{$2}=$1;
+#      } else {
+#	$packages{$2}="";
+#      }
+#    }
+#  }
+#  return (%packages);
+#}
+
+
+# %packages=list_packages($preamble)
 # scans the arguments for \documentclass,\RequirePackage and \usepackage statements and constructs a hash
 # whose keys are the included packages, and whose values are the associated optional arguments
 sub list_packages {
-  my (@preamble)=@_;
+  my ($preamble)=@_;
   my %packages=();
-  foreach $line ( @preamble ) {
-    # get rid of comments
-    $line=~s/(?<!\\)%.*$// ;
-    if ( $line =~ m/\\(?:documentclass|usepackage|RequirePackage)(?:\[(.+?)\])?\{(.*?)\}/ ) {
-#      print STDERR "Found something: |$line|\n";
-      if (defined($1)) {
-	$packages{$2}=$1;
-      } else {
-	$packages{$2}="";
-      }
+
+  # remove comments 
+  $preamble=~s/(?<!\\)%.*$//mg ;
+
+  while ( $preamble =~  m/\\(?:documentclass|usepackage|RequirePackage)(?:\[($brat0)\])?\{(.*?)\}/gs ) {
+    if (defined($1)) {
+      $packages{$2}=$1;
+    } else {
+      $packages{$2}="";
     }
   }
   return (%packages);
@@ -1316,6 +1444,7 @@ sub flatten {
 
   # recursively replace \\input and \\include files
   $text=~s/(^(?:[^%\n]|\\%)*)\\input{(.*?)}|\\include{(${includeonly}(?:\.tex)?)}/{ 
+	    $begline=(defined($1)? $1 : "") ;
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
             #      # add tex extension unless there is a three letter extension already 
@@ -1327,7 +1456,6 @@ sub flatten {
             ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
 	    $replacement=flatten(read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding), $preamble,$filename,$encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
 	    # \include always starts a new page; use explicit \newpage command to simulate this
-	    $begline=(defined($1)? $1 : "") ;
 	    $newpage=(defined($3)? " \\newpage " : "") ;
 	    "$begline$newpage$replacement$newpage";
           }/exgm;
@@ -1344,19 +1472,17 @@ sub flatten {
   }/exgm;
   # replace subfile with contents (subfile package)
   $text=~s/(^(?:[^%\n]|\\%)*)\\subfile{(.*?)}/{ 
-	   $fname = $2; 
+           $begline=(defined($1)? $1 : "") ;
+     	   $fname = $2; 
            #      # add tex extension unless there is a three letter extension already 
            $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
-           print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
            print STDERR "Include file as subfile $fname\n" if $verbose;
-           print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
            # content of file becomes replacement value (use recursion)
            # now strip away everything outside and including \begin{document} and \end{document} pair#
 	   #             # note: no checking for comments is made
            $subfile=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
            ($subpreamble,$subbody,$subpost)=splitdoc($subfile,'\\\\begin\{document\}','\\\\end\{document\}');
 	   $replacement=flatten($subbody, $preamble,$filename,$encoding);
-           $begline=(defined($1)? $1 : "") ;
 	   "$begline$replacement";
   }/exgm;
 
@@ -1481,10 +1607,10 @@ sub bodydiff {
 
   print STDERR "(",exetime()," s)\n","Pass 2: inserting DIF tokens and mark up.  " if $verbose;
   if ( $debug ) {
-    open(TOKENOLD,">","latexdiff.debug.tokenold2.tex");
+    open(TOKENOLD,">","latexdiff.debug.tokenold2");
     print TOKENOLD join("***\n",@oldwords);
     close(TOKENOLD);
-    open(TOKENNEW,">","latexdiff.debug.tokennew2.tex");
+    open(TOKENNEW,">","latexdiff.debug.tokennew2");
     print TOKENNEW join("***\n",@newwords);
     close(TOKENNEW);
   }
@@ -1502,10 +1628,15 @@ sub bodydiff {
 # Each element of words is either
 # a word (including trailing spaces and punctuation)
 # a latex command
+# if there is white space in the beginning return that as first token
 sub splitlatex {
-  my ($string) = @_ ;
+  my ($inputstring) = @_ ;
+  my $string=$inputstring ;
   # if input is empty, return empty list
   length($string)>0 or return ();
+  $string=~s/^(\s*)//s;
+  my $leadin=$1;
+  length($string)>0 or return ($leadin);
 
   my @retval=($string =~ m/$pat/osg);  
 
@@ -1543,6 +1674,7 @@ sub splitlatex {
     }
 
   }
+  unshift(@retval,$leadin) if (length($leadin)>0);
   return @retval;
 }
 
@@ -1592,7 +1724,7 @@ sub pass1 {
 #			print STDERR "Unchanged block $cnt, $last1,$last2 \n";
                         if ($cnt < $MINWORDSBLOCK 
 			    && $cnt==scalar (
-				     grep { /^$wpat/ || ( /^\\([\w\d\*]+)((?:\[$brat0\]|\{$pat6\})*)/o 
+				     grep { /^$wpat/ || ( /^\\((?:[`'^"~=.]|[\w\d@*]+))((?:\[$brat0\]|\{$pat6\})*)/o 
 							   && iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 							   && scalar(@dummy=split(" ",$2))<3 ) }
 					     @$block) )  {
@@ -1724,7 +1856,7 @@ sub extracttextblocks {
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\([\w\d\*]+)((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat0\]${extraspace}|${extraspace}\{$pat6\})*)/o 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -1868,7 +2000,7 @@ sub pass2 {
 }
 
 # marktags($openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment,\@block)
-# returns ($openmark,$open,$block,$close,$closemark) if @block only contains no commands (except white-listed ones),
+# returns ($openmark,$open,$block,$close,$closemark) if @block contains no commands (except white-listed ones),
 # braces, ampersands, or comments
 # mark comments with $comment
 # exclude all other exceptions from scope of open, close like this
@@ -1888,8 +2020,11 @@ sub marktags {
 
 # split this block to flatten out sequences joined in pass1
   @$block=splitlatex(join "",@$block);
+  ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
+  ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
   foreach (@$block) {
     $word=$_; 
+    ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
     if ( $word =~ s/^%/%$comment/ ) {
       # a comment
       if ($cmd==1) {
@@ -1899,16 +2034,25 @@ sub marktags {
       push (@$retval,$word); 
       next;
     }
+    if ( $word =~ m/^\s*$/ ) {
+      ### print STDERR "DEBUG MARKTAGS: whitespace detected |$word| cmdcom |$cmdcomment| |$opencmd|\n" if $debug;
+      # a sequence of white-space characters - this should only ever happen for the first element of block.
+      # in deleted block, omit, otherwise just copy it in 
+      if ( ! $cmdcomment) {   # ignore in deleted blocks
+	push(@$retval,$word);
+      }
+      next;
+    }
     if (! $noncomment) {
       push (@$retval,$openmark); 
       $noncomment=1;
     }
-    # negative lookahead pattern (?!) in second clause is put in to avoid mathcing \( .. \) patterns
+    # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
-    # Note: the second pattern should really be $word =~ /^\\(?!\()(\\|[\w*@]+)/, ie * replaced by +
-    # and then all commands \" \' etc declared safe. But as I don't have a complete list of one letter 
-    # commands, and nobody has complained so far, I will eave this as is
-    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[\w*@]*)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+    ### print STDERR "DEBUG marktags: Considering word |$word|\n";
+    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
+      ###print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
+      ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
 	## same conditions as in subroutine extractcommand:
 	# check if token is an alphanumeric command sequence with at least one non-optional argument
@@ -1953,6 +2097,7 @@ sub marktags {
 	  # ""
 	  local @SAFECMDLIST=(".*"); 
 	  local @SAFECMDEXCL=('\\','\\\\',@UNSAFEMATHCMD);
+	  ### print STDERR "DEBUG: Command $command argtext ",join(",",@argtext),"\n" if $debug;
 	  push(@$retval,$command,marktags("","",$open,$close,"","",$comment,\@argtext)#@argtext
                        ,$closingbracket);
         } else {
@@ -1970,10 +2115,21 @@ sub marktags {
 	$cmd=1;
       }
     } else {
-      # just an ordinary word or word in SAFECMD
+      ###print STDERR "DEBUG MARKTAGS is an ordinary word or SAFECMD command \n" if $debug;
+      # just an ordinary word or command in SAFECMD
       push (@$retval,$open) if $cmd==-1 ;
       push (@$retval,$closecmd,$open) if $cmd==1 ;
-      push (@$retval,$word);
+      ###TODO:  check here if it is a command in MBOXCMD list, and surround it with \mbox{...}
+      ### $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL))
+      ### but actually this check has been carried out already so can simply check if word begins with backslash
+      if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
+	# $word is a safe command in MBOXCMDLIST
+	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
+	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}$AUXCMD\n" );
+      } else {
+	# $word is a normal word or a safe command (not in MBOXCMDLIST
+	push (@$retval,$word);
+      }
       $cmd=0;
     }
   }
@@ -1987,7 +2143,7 @@ sub marktags {
 # preprocess($string, ..)
 # carry out the following pre-processing steps for all arguments:
 # 1. Remove leading white-space
-#    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
+#    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE and \& to \AMPERSAND
 # #.   Change {,} in comments to \CLEFTBRACE, \CRIGHTBRACE
 # 2. mark all first empty line (in block of several) with \PAR tokens
 # 3. Convert all '\%' into '\PERCENTAGE ' and all '\$' into \DOLLAR to make parsing regular expressions easier
@@ -2008,13 +2164,11 @@ sub marktags {
 #     names or labels but it does not matter because they are converted back in the postprocessing step
 # Returns: leading white space removed in step 1
 sub preprocess {
-  my @leadin=() ;
   for (@_) { 
-    s/^(\s*)//s;
-    push(@leadin,$1);
     #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE
     s/(?<!\\)\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
+    s/(?<!\\)\\&/\\AMPERSAND /sg;
 # replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
     1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
     1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
@@ -2047,7 +2201,6 @@ sub preprocess {
     # add final token " STOP"
     $_ .= " STOP"
   }
-  return(@leadin);
 }
 
 #hashstring=tohash(\%hash,$string)
@@ -2131,7 +2284,7 @@ sub fromhash {
 # 10.  package specific processing:  endfloat: make sure \begin{figure} and \end{figure} are always
 #      on a line by themselves, similarly for table environment
 #  4, undo renaming of the \begin, \end,{,}  in comments
-#    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
+#    Change \QLEFTBRACE, \QRIGHTBRACE,\AMPERSAND to \{,\},\&
 #
 # Note have to manually synchronize substitution commands below and 
 # DIF.. command names in the header
@@ -2150,10 +2303,6 @@ sub postprocess {
     # Replace \RIGHTBRACE by }    
     s/\\RIGHTBRACE/}/g;
 
-    # change citation commands within comments to protect from processing
-    if ($CITECMD){
-      1 while s/(%.*)\\($CITECMD)/$1\\CITEDIF$2/m ;
-    }
     # Check all deleted blocks: where a deleted block contains a matching \begin and
     #    \end environment (these will be disabled by a %DIFDELCMD statements), enable
     #    these commands again (such that for example displayed math in a deleted equation
@@ -2246,18 +2395,6 @@ sub postprocess {
 	substr($delblock,$begin2,$len2)=$mathblock;
 	pos($delblock) = $begin2 + length($mathblock);
       }
-      if ($CITE2CMD) {
-	$delblock=~s/($DELCMDOPEN\s*\\($CITE2CMD)(.*)$DELCMDCLOSE)/
-	  # Replacement code 
-	  {my ($aux,$all);
-	   $aux=$all=$1;
-	   $aux=~s#\n?($DELCMDOPEN|$DELCMDCLOSE)##g;
-	   $all."$aux$AUXCMD\n";}/sge;
-      }
-      # or protect \cite commands with \mbox
-      if ($CITECMD) {
-	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat6\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-      } 
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
@@ -2282,14 +2419,6 @@ sub postprocess {
         next unless $mathblock =~ m/\{$ARRENV\}/ ;
 	substr($addblock,$begin2,$len2)=$mathblock;
 	pos($addblock) = $begin2 + length($mathblock);
-      }
-      if ($CITECMD) {
-	my $addblockbefore=$addblock;
-	#(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)(?:NP)?$/
-	###my $CITECMD; $CITECMD="cite(?:A)$";
-	$addblock=~ s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat2\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
-	print STDERR "DEBUG: CITECMD $CITECMD\nDEBUG: addblock before:|$addblockbefore|\n" if $debug;
-	print STDERR "DEBUG: addblock after: |$addblock|\n" if $debug;
       }
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
       if ( $MBOXINLINEMATH ) {
@@ -2394,10 +2523,6 @@ sub postprocess {
     }
     # undo renaming of the \begin and \end,{,}  and dollars in comments 
     1 while s/(%.*)DOLLARDIF/$1\$/mg ;
-    # undo renaming of the \cite.. commands in comments 
-    if ( $CITECMD ) {
-      1 while s/(%.*)\\CITEDIF($CITECMD)/$1\\$2/mg ;
-    }
 #   Convert \begin{SQUAREBRACKET} \end{SQUAREBRACKET} into \[ \]
     s/\\end{SQUAREBRACKET}/\\\]/sg;
     s/\\begin{SQUAREBRACKET}/\\\[/sg;
@@ -2416,6 +2541,7 @@ sub postprocess {
 #    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
     s/\\QLEFTBRACE /\\{/sg;
     s/\\QRIGHTBRACE /\\}/sg;
+    s/\\AMPERSAND /\\&/sg;
 
   return;
   }
@@ -2669,14 +2795,15 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
                        Available styles: UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR
+                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD
                        [ Default: UNDERLINE ]
 
 --subtype=markstyle
 -s markstyle           Add code to preamble for selected style for bracketing
                        commands (e.g. to mark changes in  margin)
-                       Available styles: SAFE MARGINAL DVIPSCOL COLOR LABEL
+                       Available styles: SAFE MARGINAL DVIPSCOL COLOR ZLABEL ONLYCHANGEDPAGE (LABEL)*
                        [ Default: SAFE ]
+                       * LABEL subtype is deprecated
 
 --floattype=markstyle
 -f markstyle           Add code to preamble for selected style which 
@@ -2751,6 +2878,16 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        context2 commands are completely disabled in deleted sections, including
                        their arguments.
 
+--exclude-mboxsafecmd=exclude-file
+--exclude-mboxsafecmd="cmd1,cmd2,..."
+--append-mboxsafecmd=append-file
+--append-mboxsafecmd="cmd1,cmd2,..."
+                       Define safe commands, which additionally need to be protected by encapsulating
+                       in an \\mbox{..}. This is sometimes needed to get around incompatibilities 
+                       between external packages and the ulem package, which is  used for highlighting
+                       in the default style UNDERLINE as well as CULINECHBAR CFONTSTRIKE
+                       
+
 
 --config var1=val1,var2=val2,...
 -c var1=val1,..        Set configuration variables.
@@ -2774,7 +2911,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                        Use of the --packages option disables automatic scanning, so if for any
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
-                       endfloat hyperref amsmath apacite
+                       endfloat hyperref amsmath apacite siunitx cleveref glossaries mhchem chemformula
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -2815,10 +2952,15 @@ Other configuration options:
                                This mode is most suitable, if only minor changes to equations are
                                expected, e.g. correction of typos. 
 
---disable-citation-markup  Suppress citation markup in styles using ulem (UNDERLINE, 
-                       FONTSTRIKE, CULINECHBAR)
---enable-citation-markup   Protect citation commands in changed sections with \\mbox command
-                       [i.e. use default behaviour for ulem package for other packages]
+--disable-citation-markup 
+--disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
+                       using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+                       (the two options are identical and are simply aliases)
+
+--enable-citation-markup
+--enforce-auto-mbox    Protect citation commands and other vulnerable commands in changed sections 
+                       with \\mbox command, i.e. use default behaviour for ulem package for other packages
+                       (the two options are identical and are simply aliases)
 
 Miscelleneous options
 
@@ -3007,7 +3149,7 @@ C<\DIFadd> and C<\DIFdel> commands.
 Available styles: 
 
 C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR>
+CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD>
 
 [ Default: C<UNDERLINE> ]
 
@@ -3017,9 +3159,10 @@ B<-s markstyle>
 Add code to preamble for selected style for bracketing
 commands (e.g. to mark changes in  margin). This option defines
 C<\DIFaddbegin>, C<\DIFaddend>, C<\DIFdelbegin> and C<\DIFdelend> commands.
-Available styles: C<SAFE MARGINAL COLOR DVIPSCOL LABEL>
+Available styles: C<SAFE MARGINAL COLOR DVIPSCOL  ZLABEL ONLYCHANGEDPAGE (LABEL)*>
 
 [ Default: C<SAFE> ]
+* Subtype C<LABEL> is deprecated
 
 =item B<--floattype=markstyle> or
 B<-f markstyle>
@@ -3073,7 +3216,8 @@ The following packages trigger special behaviour:
 
 =item C<amsmath> 
 
-Configuration variable amsmath is set to C<align*> (Default: C<eqnarray*>)
+Configuration variable MATHARRREPL is set to C<align*> (Default: C<eqnarray*>). (Note that many of the 
+amsmath array environments are already recognised by default as such)
 
 =item C<endfloat> 
 
@@ -3090,10 +3234,31 @@ errors).
 
 Redefine the commands recognised as citation commands.
 
+=item C<siunitx>
+
+Treat C<\SI> as equivalent to citation commands (i.e. protect with C<\mbox> if markup style uses ulem package.
+
+=item C<cleveref>
+
+Treat C<\cref,\Cref>, etc as equivalent to citation commands (i.e. protect with C<\mbox> if markup style uses ulem package.
+
+=item C<glossaries>
+
+Define most of the glossaries commands as safe, protecting them with \mbox'es where needed
+
+=item C<mhchem>
+
+Treat C<\ce> as a safe command, i.e. it will be highlighted (note that C<\cee> will not be highlighted in equations as this leads to processing errors)
+
+=item C<chemformula>
+
+Treat C<\ch> as a safe command outside equations, i.e. it will be highlighted (note that C<\ch> will not be highlighted in equations as this leads to processing errors)
+
+
 =back
 
-[ Default: scan the preamble for C<\\usepackage> commands to determine
-  loaded packages.]
+[ Default: scan the preamble for C<\usepackage> commands to determine
+  loaded packages. ]
 
 
 
@@ -3159,9 +3324,22 @@ argument is shown as deleted text.
 
 =item B<--append-context2cmd=append-file> or
 =item B<--append-context2cmd="cmd1,cmd2,...">
+
 As corresponding commands for context1.  The only difference is that
 context2 commands are completely disabled in deleted sections, including
 their arguments.
+
+
+=item B<--exclude-mboxsafecmd=exclude-file> or B<--exclude-mboxsafecmd="cmd1,cmd2,...">
+
+=item B<--append-mboxsafecmd=append-file> or B<--append-mboxsafecmd="cmd1,cmd2,...">
+
+Define safe commands, which additionally need to be protected by encapsulating
+in an \\mbox{..}. This is sometimes needed to get around incompatibilities 
+between external packages and the ulem package, which is  used for highlighting
+in the default style UNDERLINE as well as CULINECHBAR CFONTSTRIKE
+
+
 
 
 
@@ -3248,14 +3426,17 @@ C<fine> or C<3>: Detect small change in equations and mark up at fine granularit
 This mode is most suitable, if only minor changes to equations are
 expected, e.g. correction of typos. 
 
-=item B<--disable-citation-markup>
+=item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
-Suppress citation markup in styles using ulem (UNDERLINE, 
-FONTSTRIKE, CULINECHBAR)
+Suppress citation markup and markup of other vulnerable commands in styles 
+using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
+(the two options are identical and are simply aliases)
 
-=item B<--enable-citation-markup>
+=item B<--enable-citation-markup> or B<--enforce-auto-mbox>
 
-Protect citation commands in changed sections with \\mbox command [i.e. use default behaviour for ulem package for other packages]
+Protect citation commands and other vulnerable commands in changed sections 
+with C<\mbox> command, i.e. use default behaviour for ulem package for other packages
+(the two options are identical and are simply aliases)
 
 =back
 
@@ -3299,7 +3480,7 @@ Suppress inclusion of old and new file names as comment in output file
 
 =item B<--visble-label>
 
-Include old and new filenames (or labels set with --label option) as 
+Include old and new filenames (or labels set with C<--label> option) as 
 visible output.
 
 =item B<--flatten>
@@ -3381,6 +3562,10 @@ No mark up of text, but mark margins with changebars (Requires changebar package
 
 No visible markup (but generic markup commands will still be inserted.
 
+=item C<BOLD>
+
+Added text is set in bold face, discarded is not shown.
+
 =back
 
 =head2 Subtypes
@@ -3412,6 +3597,20 @@ An alternative way of marking added passages in blue, and deleted ones in red. N
 that C<DVIPSCOL> only works with the dvips converter, e.g. not pdflatex.
 (it is recommeneded to use instead the main types to effect colored markup,
 although in some cases coloring with dvipscol can be more complete).
+
+
+=item C<ZLABEL>
+
+can be used to highlight only changed pages, but requires post-processing. It is recommend to not call this option manually but use C<latexdiff-vc> with C<--only-changes> option. Alternatively, use the script given within preamble of diff files made using this style.
+
+=item C<ONLYCHANGEDPAGE> 
+
+also highlights changed pages, without the need for post-processing, but might not work reliably if
+there is floating material (figures, tables).
+
+=item C<LABEL> 
+
+is similar to C<ZLABEL>, but does not need the zref package and works less reliably (deprecated).
 
 =back
 
@@ -3499,25 +3698,33 @@ C<|subsubsection|paragraph|subparagraph)>  ]
 
 =back
 
-=head1 COMMON PROBLEMS
+=head1 COMMON PROBLEMS AND FAQ
 
 =over 10
 
 =item Citations result in overfull boxes
 
 There is an incompatibility between the C<ulem> package, which C<latexdiff> uses for underlining and striking out in the UNDERLINE style,
-the default style. In order to be able to mark up citations properly, they are placed with an C<\mbox> command in post-processing. As mboxes
-cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin. If this is a problem, you have two possibilities:
+the default style, and the way citations are generated. In order to be able to mark up citations properly, they are enclosed with an C<\mbox> 
+command. As mboxes cannot be broken across lines, this procedure frequently results in overfull boxes, possibly obscuring the content as it extends beyond the right margin.  The same occurs for some other packages (e.g., siunitx). If this is a problem, you have two possibilities.
 
-1. Use C<COLOR> or C<DVIPSCOL> subtype markup (option C<-s COLOR>): If this markup is chosen, then changed citations are no longer marked up
-with the wavy line (additions) or struck out (deletions), but are still highlighted in the appropriate color.
+1. Use C<CFONT> type markup (option C<-t CFONT>): If this markup is chosen, then changed citations are no longer marked up
+with the wavy line (additions) or struck out (deletions), but are still highlighted in the appropriate color, and deleted text is shown with a different font. Other styles not using the C<ulem> package will also work. 
 
 2. Choose option C<--disable-citation-markup> which turns off the marking up of citations: deleted citations are no longer shown, and
-added ctations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
+added citations are shown without markup. (This was the default behaviour of latexdiff at versions 0.6 and older)
+
+For custom packages you can define the commands which need to be protected by C<\mbox> with C<--append-mboxsafecmd> and C<--excludemboxsafecmd> options
+(submit your lists of command as feature request at github page to set the default behaviour of future versions, see section 6)
 
 =item Changes in complicated mathematical equations result in latex processing errors
 
 Try options C<--math-markup=whole>.   If even that fails, you can turn off mark up for equations with C<--math-markup=off>.
+
+=item How can I just show the pages 
+
+Use options -C<-s ZLABEL>  (some postprocessing required) or C<-s ONLYCHANGEDPAGE>. C<latexdiff-vc --ps|--pdf> with C<--only-changes> option takes care of
+the post-processing for you (requires zref packages).
 
 =back
 
@@ -3528,7 +3735,7 @@ the rules that number and type of white space does not matter, as
 different numbers of inter-argument spaces are treated as significant.
 
 Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
-or send them to I<tilmann@gfz-potsdam.de>.  Include the serial number of I<latexdiff>
+or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the serial number of I<latexdiff>
 (from comments at the top of the source or use B<--version>).  If you come across latex
 files that are error-free and conform to the specifications set out
 above, and whose differencing still does not result in error-free
@@ -3555,8 +3762,8 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.0.4
-Copyright (C) 2004-2012 Frederik Tilmann
+Version 1.1.0
+Copyright (C) 2004-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
@@ -3780,7 +3987,10 @@ min
 Pr
 sec
 sup
-[Hclbdruvt]
+[Hclbkdruvt]
+[`'^"~=.]
+_
+AMPERSAND
 (SUPER|SUB)SCRIPTNB
 (SUPER|SUB)SCRIPT
 PERCENTAGE
@@ -3821,12 +4031,12 @@ sqrt
 %%END TEXT COMMANDS 
 
 %%BEGIN CONTEXT1 COMMANDS
-% Regex matching commands with a text argument (leave out the \), which will fail out of context, but whose argument should be printed as plain text
+% Regex matching commands with a text argument (leave out the \), which will fail out of context. These commands behave like text commands, except when they occur in a deleted section, where they are disabled, but their argument is shown as deleted text.
 caption
 %%END CONTEXT1 COMMANDS 
 
 %%BEGIN CONTEXT2 COMMANDS
-% Regex matching commands with a text argument (leave out the \), which will fail out of context, but whose argument should be printed as plain text
+% Regex matching commands with a text argument (leave out the \), which will fail out of context.  As corresponding commands for context1.  The only difference is that context2 commands are completely disabled in deleted sections, including their arguments.
 title
 author
 date
@@ -3901,6 +4111,10 @@ institute
 \providecommand{\DIFdel}[1]{}
 %DIF END INVISIBLE PREAMBLE
 
+%DIF BOLD PREAMBLE
+\providecommand{\DIFadd}[1]{{\bf #1}}
+\providecommand{\DIFdel}[1]{}
+%DIF END BOLD PREAMBLE
 
 %% SUBTYPES (Markers for beginning and end of changed blocks)
 
@@ -3938,24 +4152,94 @@ institute
 
 %DIF LABEL PREAMBLE
 % To show only pages with changes (pdf) (external program pdftk needs to be installed)
-% (only works for simple documents with non-repeated page numbers)
+% (only works for simple documents with non-repeated page numbers, otherwise use ZLABEL)
 % pdflatex diff.tex
 % pdflatex diff.tex
-% pdftk diff.pdf cat `perl -lne 'if (m/\\newlabel{DIFchg[be]\d*}{{.*}{(.*)}}/) { print $1 }' diff.aux | uniq | tr -s \\n ' '` output diff-changedpages.pdf
+%pdftk diff.pdf cat \
+%`perl -lne '\
+% if (m/\\newlabel{DIFchg[b](\d*)}{{.*}{(.*)}}/) { $start{$1}=$2; print $2}\
+% if (m/\\newlabel{DIFchg[e](\d*)}{{.*}{(.*)}}/) { \
+%      if (defined($start{$1})) { \
+%         for ($j=$start{$1}; $j<=$2; $j++) {print "$j";}\
+%      } else { \
+%         print "$2"\
+%      }\
+% }' diff.aux \
+% | uniq \
+% | tr  \\n ' '` \
+% output diff-changedpages.pdf
 % To show only pages with changes (dvips/dvipdf)
-% latex diff.tex
-% latex diff.tex
-% dvips -pp `perl -lne 'if (m/\\newlabel{DIFchg[be]\d*}{{.*}{(.*)}}/) { print $1 }' diff.aux | uniq | tr -s \\n ','` diff.dvi 
+% dvips -pp `\
+% [ put here the perl script from above]
+% | uniq | tr -s \\n ','`
 \typeout{Check comments in preamble of output for instructions how to show only pages where changes have been made}
 \newcount\DIFcounterb
 \global\DIFcounterb 0\relax
 \newcount\DIFcountere
 \global\DIFcountere 0\relax
-\providecommand{\DIFaddbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}} %DIF PREAMBLE
-\providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}} %DIF PREAMBLE
-\providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}} %DIF PREAMBLE
-\providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}} %DIF PREAMBLE
+\providecommand{\DIFaddbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
+\providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\label{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\label{DIFchge\the\DIFcountere}}
 %DIF END LABEL PREAMBLE
+
+%DIF ZLABEL PREAMBLE
+% To show only pages with changes (pdf) (external program pdftk needs to be installed)
+% (uses zref for reference to absolute page numbers)
+% pdflatex diff.tex
+% pdflatex diff.tex
+%pdftk diff.pdf cat \
+%`perl -lne 'if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { $start{$1}=$2; print $2 } \
+%  if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { \
+%      if (defined($start{$1})) { \
+%         for ($j=$start{$1}; $j<=$2; $j++) {print "$j";}\
+%      } else { \
+%         print "$2"\
+%      }\
+% }' diff.aux \
+% | uniq \
+% | tr  \\n ' '` \
+% output diff-changedpages.pdf
+% To show only pages with changes (dvips/dvipdf)
+% latex diff.tex
+% latex diff.tex
+% dvips -pp `perl -lne 'if (m/\\newlabel{DIFchg[be]\d*}{{.*}{(.*)}}/) { print $1 }' diff.aux | uniq | tr -s \\n ','` diff.dvi 
+\typeout{Check comments in preamble of output for instructions how to show only pages where changes have been made}
+\usepackage[user,abspage]{zref}
+\newcount\DIFcounterb
+\global\DIFcounterb 0\relax
+\newcount\DIFcountere
+\global\DIFcountere 0\relax
+\providecommand{\DIFaddbegin}{\global\advance\DIFcounterb 1\relax\zlabel{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFaddend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
+\providecommand{\DIFdelbegin}{\global\advance\DIFcounterb 1\relax\zlabel{DIFchgb\the\DIFcounterb}}
+\providecommand{\DIFdelend}{\global\advance\DIFcountere 1\relax\zlabel{DIFchge\the\DIFcountere}}
+%DIF END ZLABEL PREAMBLE
+
+%DIF ONLYCHANGEDPAGE PREAMBLE
+\RequirePackage{atbegshi}
+\RequirePackage{etoolbox}
+\RequirePackage{zref}
+% redefine label command to write immediately to aux file - page references will be lost
+\makeatletter \let\oldlabel\label% Store \label 
+\renewcommand{\label}[1]{% Update \label to write to the .aux immediately 
+\zref@wrapper@immediate{\oldlabel{#1}}} 
+\makeatother 
+\newbool{DIFkeeppage}
+\newbool{DIFchange}
+\boolfalse{DIFkeeppage}
+\boolfalse{DIFchange}
+\AtBeginShipout{%
+  \ifbool{DIFkeeppage}
+        {\global\boolfalse{DIFkeeppage}}  % True DIFkeeppage
+         {\ifbool{DIFchange}{\global\boolfalse{DIFkeeppage}}{\global\boolfalse{DIFkeeppage}\AtBeginShipoutDiscard}} % False DIFkeeppage
+}
+\providecommand{\DIFaddbegin}{\global\booltrue{DIFkeeppage}\global\booltrue{DIFchange}}
+\providecommand{\DIFaddend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
+\providecommand{\DIFdelbegin}{\global\booltrue{DIFkeeppage}\global\booltrue{DIFchange}}
+\providecommand{\DIFdelend}{\global\booltrue{DIFkeeppage}\global\boolfalse{DIFchange}}
+%DIF END ONLYCHANGEDPAGE PREAMBLE
+
 %% FLOAT TYPES 
 
 %DIF FLOATSAFE PREAMBLE

@@ -1,3 +1,13 @@
+2015-04-17  Karl Berry  <karl@tug.org>
+
+	* contrib/PSTricks: remove this ancient copy of a PSTricks README.
+	* special.lpro (/psfts, /startTexFig, /doclip, /endTexFig):
+	remove these defns from (obsolete and nonfree) psfig.
+	* testdata/special.pro: regenerate.
+	* dvips.texi (Why Dvips): remove paragraph about psfig and
+	other features that are no longer especially interesting.
+	Report from Werner Fink, 14 Apr 2015 17:16:23.
+
 2015-03-15  Karl Berry  <karl@tug.org>
 
 	* configure.ac,
