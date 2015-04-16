@@ -1,3 +1,9 @@
+2015-04-17  Karl Berry  <karl@tug.org>
+
+	* psheader.txt (/psfts, /startTexFig, /doclip, /endTexFig):
+	remove these defns from (obsolete and nonfree) psfig.
+	Report from Werner Fink, 14 Apr 2015 17:16:23.
+
 2014-12-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xdvi.c (set_windowsize): Use "%u" to print unsigned int.

@@ -509,7 +509,7 @@ which should have been removed already.
 
 The current version is a beta version which has not yet been
 extensively tested, but worked fine locally.  Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
-or send them to I<tilmann@gfz-potsdam.de>..  Include the serial number of I<latexrevise>
+or send them to I<tilmann -- AT -- gfz-potsdam.de>..  Include the serial number of I<latexrevise>
 (Option --version).  If you come across latexdiff
 output which is not processed correctly by I<latexrevise> please include the
 problem file as well as the old and new files on which it is based,

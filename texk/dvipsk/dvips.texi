@@ -106,14 +106,6 @@ on demand.  If a font cannot be generated, a scaled version of the same
 font at a different size can be used instead, although Dvips will
 complain loudly about the poor aesthetics of the resulting output.
 
-Users will appreciate features such as collated copies and support for
-@file{tpic}, @file{psfig}, @file{emtex}, and @file{METAPOST}; system
-administrators will love the support for multiple printers, each with
-their own configuration file, and the ability to pipe the output
-directly to a program such as @file{lpr}.  Support for MS-DOS, OS/2, and
-VMS in addition to Unix is provided in the standard distribution, and
-porting to other systems is easy.
-
 One of the most important features is the support of virtual fonts,
 which add an entirely new level of flexibility to @TeX{}.  Virtual fonts
 are used to give Dvips its excellent PostScript font support, handling
