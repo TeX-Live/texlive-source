@@ -6,25 +6,11 @@ XeTeX:
 * Various image handling fixes by Akira Kakuto.
 * Fix off-by-one error in display of \every... token registers, thanks to Bruno
   Le Floch.
-* The right to left support have been switched from e-TeX's TeX--XeT extension
-  to, a slightly modified version of, the original TeX-XeT extension, which
-  fixes several issues related to the handling of specials in right to left
-  text (colors and hyper links mainly).
-* \TeXXeTstate have been deprecated and does not do anything now, the TeX-XeT
-  support is always enabled.
-* XeTeX still reads/updates the \predisplaydirection but the value is otherwise
-  ignored. The old functionality can be emulated by macro code, and it might be
-  resuscitated in the future.
-* It is now possible to use direction switching primitives inside math mode.
-* The XDV opcodes have been simplified slightly, and support for DVI-IVD opcodes
-  (used by TeX-XeT) was added. The DVI id have been bumped to 6 to reflect this.
+* The XDV opcodes have been simplified slightly. The DVI id have been bumped to
+  6 to reflect this.
 * XeTeX now looks for the xdvipdfmx binary installed next to it and no longer
   requires that it is installed in the system PATH (this was previously done
   only on Windows).
-
-xdvipdfmx:
-* DVI-IVD opcodes are now supported, as well as XDV 6.
-* Various changes shared with dvipdfmx, check its change log for details.
 
 ==============================================================
 XeTeX 0.99991 was released 20140614
