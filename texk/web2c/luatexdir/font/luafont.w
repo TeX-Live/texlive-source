@@ -2018,7 +2018,8 @@ static halfword handle_lig_word(halfword cur)
                         /* Building an |init_disc| followed by a |select_disc|
                           \.{{a-}{b}{AB} {-}{}{}} 'c'
                          */
-                        halfword last1 = vlink(next), tail;
+                        /* is it tail necessary ? */
+                        halfword last1 = vlink(next), tail ; 
                         uncouple_node(next);
                         try_couple_nodes(fwd, last1);
                         /* \.{{a-}{b}{AB} {-}{c}{}} */
@@ -2050,6 +2051,7 @@ static halfword handle_lig_word(halfword cur)
                         /* and set the subtypes */
                         subtype(cur) = init_disc;
                         subtype(fwd) = select_disc;
+                        return cur ;
                     }
                 }
             }
