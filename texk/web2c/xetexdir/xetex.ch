@@ -141,7 +141,7 @@ if translate_filename then begin
 @x [15.209] l.4165
 @d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @y
-@d shorthand_def=98 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+@d shorthand_def=97 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @z
 
 @x [17.222] l.4523 - frozen_special, for source specials.

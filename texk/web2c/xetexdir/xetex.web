@@ -306,12 +306,6 @@ helping to determine whether a particular implementation deserves to be
 known as `\TeX' [cf.~Stanford Computer Science report CS1027,
 November 1984].
 
-This program contains code for mixed left-to-right and right-to-left
-typesetting, based on \TeXeT\ as presented by Donald~E. Knuth and Pierre
-MacKay in {\sl TUGboat\/} {\bf 8}, 14--25, 1987.
-@^Knuth, Donald Ervin@>
-@^MacKay, Pierre@>
-
 A similar test suite called the ``\.{e-TRIP} test'' is available for
 helping to determine whether a particular implementation deserves to be
 known as `\eTeX'.
@@ -331,7 +325,7 @@ known as `\eTeX'.
 @#
 @d TEX==XETEX {change program name into |XETEX|}
 @#
-@d TeXXeT_code=0 {for backward compatibility, ignored in \XeTeX}
+@d TeXXeT_code=0 {the \TeXXeT\ feature is optional}
 @#
 @d XeTeX_dash_break_code=1 {non-zero to enable breaks after en- and em-dashes}
 @#
@@ -372,6 +366,7 @@ made here to avoid using several idiosyncratic features of standard
 into other high-level languages. For example, the `\&{with}' and `\\{new}'
 features are not used, nor are pointer types, set types, or enumerated
 scalar types; there are no `\&{var}' parameters, except in the case of files
+--- \eTeX, however, does use `\&{var}' parameters for the |reverse| function;
 there are no tag fields on variant records; there are no assignments
 |real:=integer|; no procedures are declared local to other procedures.)
 
@@ -3115,7 +3110,8 @@ the proportionality constant for glue setting; |glue_sign(p)| is
 |stretching| or |shrinking| or |normal| depending on whether or not the
 glue should stretch or shrink or remain rigid; and |glue_order(p)|
 specifies the order of infinity to which glue setting applies (|normal|,
-|fil|, |fill|, or |filll|). The |subtype| field is not used.
+|fil|, |fill|, or |filll|). The |subtype| field is not used in \TeX.
+In \eTeX\ the |subtype| field records the box direction mode |box_lr|.
 
 @d hlist_node=0 {|type| of hlist nodes}
 @d box_node_size=7 {number of words to allocate for a box node}
@@ -3385,9 +3381,28 @@ after mathematical formulas. The |subtype| field is |before| before the
 formula and |after| after it. There is a |width| field, which represents
 the amount of surrounding space inserted by \.{\\mathsurround}.
 
+In addition a |math_node| with |subtype>after| and |width=0| will be
+(ab)used to record a regular |math_node| reinserted after being
+discarded at a line break or one of the text direction primitives (
+\.{\\beginL}, \.{\\endL}, \.{\\beginR}, and \.{\\endR} ).
+
 @d math_node=9 {|type| of a math node}
 @d before=0 {|subtype| for math node that introduces a formula}
 @d after=1 {|subtype| for math node that winds up a formula}
+@#
+@d M_code=2
+@d begin_M_code=M_code+before {|subtype| for \.{\\beginM} node}
+@d end_M_code=M_code+after {|subtype| for \.{\\endM} node}
+@d L_code=4
+@d begin_L_code=L_code+begin_M_code {|subtype| for \.{\\beginL} node}
+@d end_L_code=L_code+end_M_code {|subtype| for \.{\\endL} node}
+@d R_code=L_code+L_code
+@d begin_R_code=R_code+begin_M_code {|subtype| for \.{\\beginR} node}
+@d end_R_code=R_code+end_M_code {|subtype| for \.{\\endR} node}
+@#
+@d end_LR(#)==odd(subtype(#))
+@d end_LR_type(#)==(L_code*(subtype(#) div L_code)+end_M_code)
+@d begin_LR_type(#)==(#-after+before)
 
 @p function new_math(@!w:scaled;@!s:small_number):pointer;
 var p:pointer; {the new node}
@@ -3624,7 +3639,6 @@ However, other references to the nodes are made symbolically in terms of
 the \.{WEB} macro definitions above, so that format changes will leave
 \TeX's other algorithms intact.
 @^system dependencies@>
-@p@<Declare functions needed for special kinds of nodes@>
 
 @* \[11] Memory layout.
 Some areas of |mem| are dedicated to fixed usage, since static allocation is
@@ -3953,7 +3967,8 @@ whatsit_node:
   endcases;
 rule_node: print_char("|");
 glue_node: if glue_ptr(p)<>zero_glue then print_char(" ");
-math_node: print_char("$");
+math_node: if subtype(p)>=L_code then print("[]")
+  else print_char("$");
 ligature_node: short_display(lig_ptr(p));
 disc_node: begin short_display(pre_break(p));
   short_display(post_break(p));@/
@@ -4131,6 +4146,7 @@ else  begin @<Display the value of |glue_set(p)|@>;
   if shift_amount(p)<>0 then
     begin print(", shifted "); print_scaled(shift_amount(p));
     end;
+  if eTeX_ex then @<Display if this box is never to be reversed@>;
   end;
 node_list_display(list_ptr(p)); {recursive call}
 end
@@ -4227,6 +4243,13 @@ else  begin print_esc("mkern"); print_scaled(width(p)); print("mu");
   end
 
 @ @<Display math node |p|@>=
+if subtype(p)>after then
+  begin if end_LR(p) then print_esc("end")
+  else print_esc("begin");
+  if subtype(p)>R_code then print_char("R")
+  else if subtype(p)>L_code then print_char("L")
+  else print_char("M");
+  end else
 begin print_esc("math");
 if subtype(p)=before then print("on")
 else print("off");
@@ -4529,6 +4552,7 @@ expanded by `\.{\\the}'.
 @d leader_ship=31 {use a box ( \.{\\shipout}, \.{\\leaders}, etc.~)}
 @d halign=32 {horizontal table alignment ( \.{\\halign} )}
 @d valign=33 {vertical table alignment ( \.{\\valign} )}
+  {or text direction directives ( \.{\\beginL}, etc.~)}
 @d no_align=34 {temporary escape from alignment ( \.{\\noalign} )}
 @d vrule=35 {vertical rule ( \.{\\vrule} )}
 @d hrule=36 {horizontal rule ( \.{\\hrule} )}
@@ -4570,53 +4594,52 @@ expanded by `\.{\\the}'.
 @d XeTeX_math_given=70 {extended math code defined by \.{\\Umathchardef}}
 @d last_item=71 {most recent item ( \.{\\lastpenalty},
   \.{\\lastkern}, \.{\\lastskip} )}
-@d LR=72 {text direction ( \.{\\beginL}, \.{\\beginR}, \.{\\endL}, \.{\\endR} )}
-@d max_non_prefixed_command=72 {largest command code that can't be \.{\\global}}
+@d max_non_prefixed_command=71 {largest command code that can't be \.{\\global}}
 
 @ The next codes are special; they all relate to mode-independent
 assignment of values to \TeX's internal registers or tables.
 Codes that are |max_internal| or less represent internal quantities
 that might be expanded by `\.{\\the}'.
 
-@d toks_register=73 {token list register ( \.{\\toks} )}
-@d assign_toks=74 {special token list ( \.{\\output}, \.{\\everypar}, etc.~)}
-@d assign_int=75 {user-defined integer ( \.{\\tolerance}, \.{\\day}, etc.~)}
-@d assign_dimen=76 {user-defined length ( \.{\\hsize}, etc.~)}
-@d assign_glue=77 {user-defined glue ( \.{\\baselineskip}, etc.~)}
-@d assign_mu_glue=78 {user-defined muglue ( \.{\\thinmuskip}, etc.~)}
-@d assign_font_dimen=79 {user-defined font dimension ( \.{\\fontdimen} )}
-@d assign_font_int=80 {user-defined font integer ( \.{\\hyphenchar},
+@d toks_register=72 {token list register ( \.{\\toks} )}
+@d assign_toks=73 {special token list ( \.{\\output}, \.{\\everypar}, etc.~)}
+@d assign_int=74 {user-defined integer ( \.{\\tolerance}, \.{\\day}, etc.~)}
+@d assign_dimen=75 {user-defined length ( \.{\\hsize}, etc.~)}
+@d assign_glue=76 {user-defined glue ( \.{\\baselineskip}, etc.~)}
+@d assign_mu_glue=77 {user-defined muglue ( \.{\\thinmuskip}, etc.~)}
+@d assign_font_dimen=78 {user-defined font dimension ( \.{\\fontdimen} )}
+@d assign_font_int=79 {user-defined font integer ( \.{\\hyphenchar},
   \.{\\skewchar} )}
-@d set_aux=81 {specify state info ( \.{\\spacefactor}, \.{\\prevdepth} )}
-@d set_prev_graf=82 {specify state info ( \.{\\prevgraf} )}
-@d set_page_dimen=83 {specify state info ( \.{\\pagegoal}, etc.~)}
-@d set_page_int=84 {specify state info ( \.{\\deadcycles},
+@d set_aux=80 {specify state info ( \.{\\spacefactor}, \.{\\prevdepth} )}
+@d set_prev_graf=81 {specify state info ( \.{\\prevgraf} )}
+@d set_page_dimen=82 {specify state info ( \.{\\pagegoal}, etc.~)}
+@d set_page_int=83 {specify state info ( \.{\\deadcycles},
   \.{\\insertpenalties} )}
   {( or \.{\\interactionmode} )}
-@d set_box_dimen=85 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
-@d set_shape=86 {specify fancy paragraph shape ( \.{\\parshape} )}
+@d set_box_dimen=84 {change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} )}
+@d set_shape=85 {specify fancy paragraph shape ( \.{\\parshape} )}
   {(or \.{\\interlinepenalties}, etc.~)}
-@d def_code=87 {define a character code ( \.{\\catcode}, etc.~)}
-@d XeTeX_def_code=88 {\.{\\Umathcode}, \.{\\Udelcode}}
-@d def_family=89 {declare math fonts ( \.{\\textfont}, etc.~)}
-@d set_font=90 {set current font ( font identifiers )}
-@d def_font=91 {define a font file ( \.{\\font} )}
-@d register=92 {internal register ( \.{\\count}, \.{\\dimen}, etc.~)}
-@d max_internal=92 {the largest code that can follow \.{\\the}}
-@d advance=93 {advance a register or parameter ( \.{\\advance} )}
-@d multiply=94 {multiply a register or parameter ( \.{\\multiply} )}
-@d divide=95 {divide a register or parameter ( \.{\\divide} )}
-@d prefix=96 {qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} )}
+@d def_code=86 {define a character code ( \.{\\catcode}, etc.~)}
+@d XeTeX_def_code=87 {\.{\\Umathcode}, \.{\\Udelcode}}
+@d def_family=88 {declare math fonts ( \.{\\textfont}, etc.~)}
+@d set_font=89 {set current font ( font identifiers )}
+@d def_font=90 {define a font file ( \.{\\font} )}
+@d register=91 {internal register ( \.{\\count}, \.{\\dimen}, etc.~)}
+@d max_internal=91 {the largest code that can follow \.{\\the}}
+@d advance=92 {advance a register or parameter ( \.{\\advance} )}
+@d multiply=93 {multiply a register or parameter ( \.{\\multiply} )}
+@d divide=94 {divide a register or parameter ( \.{\\divide} )}
+@d prefix=95 {qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} )}
   {( or \.{\\protected} )}
-@d let=97 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
-@d shorthand_def=98 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
-@d read_to_cs=99 {read into a control sequence ( \.{\\read} )}
+@d let=96 {assign a command code ( \.{\\let}, \.{\\futurelet} )}
+@d shorthand_def=97 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
+@d read_to_cs=98 {read into a control sequence ( \.{\\read} )}
   {( or \.{\\readline} )}
-@d def=100 {macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} )}
-@d set_box=101 {set a box ( \.{\\setbox} )}
-@d hyph_data=102 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
-@d set_interaction=103 {define level of interaction ( \.{\\batchmode}, etc.~)}
-@d max_command=103 {the largest command code seen at |big_switch|}
+@d def=99 {macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} )}
+@d set_box=100 {set a box ( \.{\\setbox} )}
+@d hyph_data=101 {hyphenation data ( \.{\\hyphenation}, \.{\\patterns} )}
+@d set_interaction=102 {define level of interaction ( \.{\\batchmode}, etc.~)}
+@d max_command=102 {the largest command code seen at |big_switch|}
 
 @ The remaining command codes are extra special, since they cannot get through
 \TeX's scanner to the main control routine. They have been given values higher
@@ -6449,7 +6472,8 @@ the: if chr_code=0 then print_esc("the")
   @<Cases of |the| for |print_cmd_chr|@>;
 toks_register: @<Cases of |toks_register| for |print_cmd_chr|@>;
 vadjust: print_esc("vadjust");
-valign: print_esc("valign");
+valign: if chr_code=0 then print_esc("valign")@/
+  @<Cases of |valign| for |print_cmd_chr|@>;
 vcenter: print_esc("vcenter");
 vrule: print_esc("vrule");
 
@@ -9274,6 +9298,7 @@ label exit;
 var m:halfword; {|chr_code| part of the operand token}
     n, k, kk: integer; {accumulators}
 @!q,@!r:pointer; {general purpose indices}
+@!tx:pointer; {effective tail node}
 @!i:four_quarters; {character info}
 @!p:0..nest_size; {index into |nest|}
 begin m:=cur_chr;
@@ -9575,6 +9600,21 @@ implemented. The reference count for \.{\\lastskip} will be updated later.
 We also handle \.{\\inputlineno} and \.{\\badness} here, because they are
 legal in similar contexts.
 
+The macro |find_effective_tail_eTeX| sets |tx| to the last non-\.{\\endM}
+node of the current list.
+
+@d find_effective_tail_eTeX==
+tx:=tail;
+if not is_char_node(tx) then
+  if (type(tx)=math_node)and(subtype(tx)=end_M_code) then
+    begin r:=head;
+    repeat q:=r; r:=link(q);
+    until r=tx;
+    tx:=q;
+    end
+@#
+@d find_effective_tail==find_effective_tail_eTeX
+
 @<Fetch an item in the current node...@>=
 if m>=input_line_no_code then
  if m>=eTeX_glue then @<Process an expression and |return|@>@;
@@ -9600,23 +9640,24 @@ if m>=input_line_no_code then
   cur_val_level:=int_val;
   end
 else begin if cur_chr=glue_val then cur_val:=zero_glue@+else cur_val:=0;
+  find_effective_tail;
   if cur_chr=last_node_type_code then
     begin cur_val_level:=int_val;
-    if (tail=head)or(mode=0) then cur_val:=-1;
+    if (tx=head)or(mode=0) then cur_val:=-1;
     end
   else cur_val_level:=cur_chr;
-  if not is_char_node(tail)and(mode<>0) then
+  if not is_char_node(tx)and(mode<>0) then
     case cur_chr of
-    int_val: if type(tail)=penalty_node then cur_val:=penalty(tail);
-    dimen_val: if type(tail)=kern_node then cur_val:=width(tail);
-    glue_val: if type(tail)=glue_node then
-      begin cur_val:=glue_ptr(tail);
-      if subtype(tail)=mu_glue then cur_val_level:=mu_val;
+    int_val: if type(tx)=penalty_node then cur_val:=penalty(tx);
+    dimen_val: if type(tx)=kern_node then cur_val:=width(tx);
+    glue_val: if type(tx)=glue_node then
+      begin cur_val:=glue_ptr(tx);
+      if subtype(tx)=mu_glue then cur_val_level:=mu_val;
       end;
-    last_node_type_code: if type(tail)<=unset_node then cur_val:=type(tail)+1
+    last_node_type_code: if type(tx)<=unset_node then cur_val:=type(tx)+1
       else cur_val:=unset_node+2;
     end {there are no other cases}
-  else if (mode=vmode)and(tail=head) then
+  else if (mode=vmode)and(tx=head) then
     case cur_chr of
     int_val: cur_val:=last_penalty;
     dimen_val: cur_val:=last_kern;
@@ -13009,10 +13050,6 @@ file. Parameters |i|, |num|, |den|, |mag|, |k|, and |x| are explained below.
 \yskip\noindent Commands 250--255 are undefined in normal \.{DVI} files, but
 the following commands are used in \.{XDV} files.
 
-\yskip\hang|begin_reflect| 250. Begin a (possibly recursive) reflected segment.
-
-\yskip\hang|end_reflect| 251. End a (possibly recursive) reflected segment.
-
 \yskip\hang\vbox{\halign{#&#\hfil\cr
 |define_native_font| 252 & |k[4]| |s[4]| |flags[2]| |l[1]| |n[l]| |i[4]|\cr
 & |if (flags and COLORED) then| |rgba[4]|\cr
@@ -13023,7 +13060,7 @@ the following commands are used in \.{XDV} files.
 
 \yskip\hang|set_glyphs| 253 |w[4]| |k[2]| |xy[8k]| |g[2k]|.
 
-\yskip\noindent Commands 254--255 is undefined in normal \.{XDV} files.
+\yskip\noindent Commands 250 and 255 are undefined in normal \.{XDV} files.
 
 @ @d set_char_0=0 {typeset character 0 and move right}
 @d set1=128 {typeset a character and move right}
@@ -13052,8 +13089,7 @@ the following commands are used in \.{XDV} files.
 @d pre=247 {preamble}
 @d post=248 {postamble beginning}
 @d post_post=249 {postamble ending}
-@d begin_reflect=250 {begin a reflected segment (not normally allowed)}
-@d end_reflect=251 {end a reflected segment (not normally allowed)}
+
 @d define_native_font=252 {define native font}
 @d set_glyphs=253 {sequence of glyphs with individual x-y coordinates}
 
@@ -13691,6 +13727,33 @@ there is no need for a `\\{cur\_f}' variable.
 The depth of nesting of |hlist_out| and |vlist_out| is called |cur_s|;
 this is essentially the depth of |push| commands in the \.{DVI} output.
 
+For mixed direction text (\TeXXeT) the current text direction is called
+|cur_dir|. As the box being shipped out will never be used again and
+soon be recycled, we can simply reverse any R-text (i.e., right-to-left)
+segments of hlist nodes as well as complete hlist nodes embedded in such
+segments. Moreover this can be done iteratively rather than recursively.
+There are, however, two complications related to leaders that require
+some additional bookkeeping: (1)~One and the same hlist node might be
+used more than once (but never inside both L- and R-text); and
+(2)~leader boxes inside hlists must be aligned with respect to the left
+edge of the original hlist.
+
+A math node is changed into a kern node whenever the text direction
+remains the same, it is replaced by an |edge_node| if the text direction
+changes; the subtype of an an |hlist_node| inside R-text is changed to
+|reversed| once its hlist has been reversed.
+@!@^data structure assumptions@>
+
+@d reversed=1 {subtype for an |hlist_node| whose hlist has been reversed}
+@d dlist=2 {subtype for an |hlist_node| from display math mode}
+@d box_lr(#) == (qo(subtype(#))) {direction mode of a box}
+@d set_box_lr(#) ==  subtype(#):=set_box_lr_end
+@d set_box_lr_end(#) == qi(#)
+@#
+@d left_to_right=0
+@d right_to_left=1
+@d reflected==1-cur_dir {the opposite of |cur_dir|}
+@#
 @d synch_h==if cur_h<>dvi_h then
     begin movement(cur_h-dvi_h,right1); dvi_h:=cur_h;
     end
@@ -13763,7 +13826,7 @@ var base_line: scaled; {the baseline coordinate for this box}
 @!leader_wd:scaled; {width of leader box being replicated}
 @!lx:scaled; {extra space between leader boxes}
 @!outer_doing_leaders:boolean; {were we doing leaders?}
-@!edge:scaled; {left edge of sub-box, or right edge of leader space}
+@!edge:scaled; {right edge of sub-box or leader space}
 @!prev_p:pointer; {one step behind |p|}
 @!len: integer; {length of scratch string for native word output}
 @!q,@!r: pointer;
@@ -13779,9 +13842,13 @@ p:=list_ptr(this_box);
 incr(cur_s);
 if cur_s>0 then dvi_out(push);
 if cur_s>max_push then max_push:=cur_s;
-save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v; left_edge:=cur_h;
+save_loc:=dvi_offset+dvi_ptr; base_line:=cur_v;
+prev_p:=this_box+list_offset;
+@<Initialize |hlist_out| for mixed direction typesetting@>;
+left_edge:=cur_h;
 while p<>null do @<Output node |p| for |hlist_out| and move to the next node,
   maintaining the condition |cur_v=base_line|@>;
+@<Finish |hlist_out| for mixed direction typesetting@>;
 prune_movements(save_loc);
 if cur_s>0 then dvi_pop(save_loc);
 decr(cur_s);
@@ -13894,6 +13961,7 @@ reswitch: if is_char_node(p) then
   if c>=qi(128) then dvi_out(set1);
   dvi_out(qo(c));@/
   cur_h:=cur_h+char_width(f)(char_info(f)(c));
+  prev_p:=link(prev_p); {N.B.: not |prev_p:=p|, |p| might be |lig_trick|}
   p:=link(p);
   until not is_char_node(p);
   dvi_h:=cur_h;
@@ -13922,24 +13990,27 @@ glue_node: @<Move right or output leaders@>;
 margin_kern_node: begin
   cur_h:=cur_h+width(p);
 end;
-kern_node,math_node:cur_h:=cur_h+width(p);
+kern_node:cur_h:=cur_h+width(p);
+math_node: @<Handle a math node in |hlist_out|@>;
 ligature_node: @<Make node |p| look like a |char_node| and |goto reswitch|@>;
+@/@<Cases of |hlist_out| that arise in mixed direction text only@>@;
 othercases do_nothing
 endcases;@/
 goto next_p;
 fin_rule: @<Output a rule in an hlist@>;
 move_past: cur_h:=cur_h+rule_wd;
-next_p:p:=link(p);
+next_p:prev_p:=p; p:=link(p);
 end
 
 @ @<Output a box in an hlist@>=
 if list_ptr(p)=null then cur_h:=cur_h+width(p)
 else  begin save_h:=dvi_h; save_v:=dvi_v;
   cur_v:=base_line+shift_amount(p); {shift the box down}
-  temp_ptr:=p; edge:=cur_h;
+  temp_ptr:=p; edge:=cur_h+width(p);
+  if cur_dir=right_to_left then cur_h:=edge;
   if type(p)=vlist_node then vlist_out@+else hlist_out;
   dvi_h:=save_h; dvi_v:=save_v;
-  cur_h:=edge+width(p); cur_v:=base_line;
+  cur_h:=edge; cur_v:=base_line;
   end
 
 @ @<Output a rule in an hlist@>=
@@ -13958,9 +14029,8 @@ if (rule_ht>0)and(rule_wd>0) then {we don't output empty rules}
            glue_temp:=billion
   else if glue_temp<-billion then
            glue_temp:=-billion
-
-@<Move right or output leaders@>=
-begin g:=glue_ptr(p); rule_wd:=width(g)-cur_g;
+@#
+@d round_glue==g:=glue_ptr(p); rule_wd:=width(g)-cur_g;
 if g_sign<>normal then
   begin if g_sign=stretching then
     begin if stretch_order(g)=g_order then
@@ -13976,7 +14046,11 @@ if g_sign<>normal then
       cur_g:=round(glue_temp);
       end;
   end;
-rule_wd:=rule_wd+cur_g;
+rule_wd:=rule_wd+cur_g
+
+@<Move right or output leaders@>=
+begin round_glue;
+if eTeX_ex then @<Handle a glue node for mixed direction typesetting@>;
 if subtype(p)>=a_leaders then
   @<Output leaders in an hlist, |goto fin_rule| if a rule
     or to |next_p| if done@>;
@@ -13992,13 +14066,16 @@ if type(leader_box)=rule_node then
 leader_wd:=width(leader_box);
 if (leader_wd>0)and(rule_wd>0) then
   begin rule_wd:=rule_wd+10; {compensate for floating-point rounding}
+  if cur_dir=right_to_left then cur_h:=cur_h-10;
   edge:=cur_h+rule_wd; lx:=0;
   @<Let |cur_h| be the position of the first box, and set |leader_wd+lx|
     to the spacing between corresponding parts of boxes@>;
   while cur_h+leader_wd<=edge do
     @<Output a leader box at |cur_h|,
       then advance |cur_h| by |leader_wd+lx|@>;
-  cur_h:=edge-10; goto next_p;
+  if cur_dir=right_to_left then cur_h:=edge
+  else cur_h:=edge-10;
+  goto next_p;
   end;
 end
 
@@ -14038,6 +14115,7 @@ bytes needed to specify horizontal and vertical motion in the \.{DVI} output.
 @<Output a leader box at |cur_h|, ...@>=
 begin cur_v:=base_line+shift_amount(leader_box); synch_v; save_v:=dvi_v;@/
 synch_h; save_h:=dvi_h; temp_ptr:=leader_box;
+if cur_dir=right_to_left then cur_h:=cur_h+leader_wd;
 outer_doing_leaders:=doing_leaders; doing_leaders:=true;
 if type(leader_box)=vlist_node then vlist_out@+else hlist_out;
 doing_leaders:=outer_doing_leaders;
@@ -14114,7 +14192,8 @@ usually be constant.
 if list_ptr(p)=null then cur_v:=cur_v+height(p)+depth(p)
 else  begin if upwards then cur_v:=cur_v-depth(p) else cur_v:=cur_v+height(p); synch_v;
   save_h:=dvi_h; save_v:=dvi_v;
-  cur_h:=left_edge+shift_amount(p); {shift the box right}
+  if cur_dir=right_to_left then cur_h:=left_edge-shift_amount(p)
+  else cur_h:=left_edge+shift_amount(p); {shift the box right}
   temp_ptr:=p;
   if type(p)=vlist_node then vlist_out@+else hlist_out;
   dvi_h:=save_h; dvi_v:=save_v;
@@ -14126,8 +14205,10 @@ if is_running(rule_wd) then rule_wd:=width(this_box);
 rule_ht:=rule_ht+rule_dp; {this is the rule thickness}
 if upwards then cur_v:=cur_v-rule_ht else cur_v:=cur_v+rule_ht;
 if (rule_ht>0)and(rule_wd>0) then {we don't output empty rules}
-  begin synch_h; synch_v;
+  begin if cur_dir=right_to_left then cur_h:=cur_h-rule_wd;
+  synch_h; synch_v;
   dvi_out(put_rule); dvi_four(rule_ht); dvi_four(rule_wd);
+  cur_h:=left_edge;
   end;
 goto next_p
 
@@ -14192,7 +14273,10 @@ else  begin lq:=rule_ht div leader_ht; {the number of box copies}
 leader box, not its baseline.
 
 @<Output a leader box at |cur_v|, ...@>=
-begin cur_h:=left_edge+shift_amount(leader_box); synch_h; save_h:=dvi_h;@/
+begin if cur_dir=right_to_left then
+  cur_h:=left_edge-shift_amount(leader_box)
+  else cur_h:=left_edge+shift_amount(leader_box);
+synch_h; save_h:=dvi_h;@/
 cur_v:=cur_v+height(leader_box); synch_v; save_v:=dvi_v;
 temp_ptr:=leader_box;
 outer_doing_leaders:=doing_leaders; doing_leaders:=true;
@@ -14213,7 +14297,6 @@ var page_loc:integer; {location of the current |bop|}
 @!old_setting:0..max_selector; {saved |selector| setting}
 begin
 if job_name=0 then open_log_file;
-LR_ptr:=get_avail; info(LR_ptr):=0; {|begin_L_code| at outer level}
 if tracing_output>0 then
   begin print_nl(""); print_ln;
   print("Completed box being shipped out");
@@ -14233,6 +14316,7 @@ if tracing_output>0 then
   begin_diagnostic; show_box(p); end_diagnostic(true);
   end;
 @<Ship box |p| out@>;
+if eTeX_ex then @<Check for LR anomalies at the end of |ship_out|@>;
 if tracing_output<=0 then print_char("]");
 dead_cycles:=0;
 update_terminal; {progress report}
@@ -14247,7 +14331,7 @@ end;
   print_int(dyn_used); print_char(";");
   end;
 tats@/
-flush_node_list(p); @<Flush the LR stack@>;
+flush_node_list(p);
 @!stat if tracing_stats>1 then
   begin print(" after: ");
   print_int(var_used); print_char("&");
@@ -14534,13 +14618,11 @@ var r:pointer; {the box node that will be returned}
 @!hd:eight_bits; {height and depth indices for a character}
 @!pp,@!ppp: pointer;
 @!total_chars, @!k: integer;
-@!LR_ptr,@!LR_tmp:pointer; {for LR stack maintenance}
-@!LR_problems:integer; {counts missing begins and ends}
-begin LR_ptr:=null; LR_problems:=0;
-last_badness:=0; r:=get_node(box_node_size); type(r):=hlist_node;
+begin last_badness:=0; r:=get_node(box_node_size); type(r):=hlist_node;
 subtype(r):=min_quarterword; shift_amount(r):=0;
 q:=r+list_offset; link(q):=p;@/
 h:=0; @<Clear dimensions to zero@>;
+if TeXXeT_en then @<Initialize the LR stack@>;
 while p<>null do @<Examine node |p| in the hlist, taking account of its effect
   on the dimensions of the new box, or moving it to the adjustment list;
   then advance |p| to the next node@>;
@@ -14551,7 +14633,7 @@ height(r):=h; depth(r):=d;@/
   then |return| or |goto common_ending|@>;
 common_ending: @<Finish issuing a diagnostic message
       for an overfull or underfull hbox@>;
-exit: @<Check for LR anomalies at the end of |hpack|@>;
+exit: if TeXXeT_en then @<Check for LR anomalies at the end of |hpack|@>;
 hpack:=r;
 end;
 
@@ -14576,8 +14658,11 @@ if p<>null then
     @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
   glue_node:@<Incorporate glue into the horizontal totals@>;
-  kern_node,math_node: x:=x+width(p);
+  kern_node: x:=x+width(p);
   margin_kern_node: x:=x+width(p);
+  math_node: begin x:=x+width(p);
+    if TeXXeT_en then @<Adjust \(t)the LR stack for the |hpack| routine@>;
+    end;
   ligature_node: @<Make node |p| look like a |char_node|
     and |goto reswitch|@>;
   othercases do_nothing
@@ -18482,6 +18567,7 @@ depending on how soon \.{\\cr} occurred in that row.
 @<Set the unset box |q| and the unset boxes in it@>=
 begin if mode=-vmode then
   begin type(q):=hlist_node; width(q):=width(p);
+  if nest[nest_ptr-1].mode_field=mmode then set_box_lr(q)(dlist); {for |ship_out|}
   end
 else  begin type(q):=vlist_node; height(q):=height(p);
   end;
@@ -18500,6 +18586,7 @@ arithmetic from entering into the dimensions of any boxes.
 
 @<Set the glue in node |r|...@>=
 n:=span_count(r); t:=width(s); w:=t; u:=hold_head;
+set_box_lr(r)(0); {for |ship_out|}
 while n>min_quarterword do
   begin decr(n);
   @<Append tabskip glue and an empty box to list |u|,
@@ -19864,7 +19951,8 @@ ligature_node: begin f:=font(lig_char(cur_p));
   act_width:=act_width+char_width(f)(char_info(f)(character(lig_char(cur_p))));
   end;
 disc_node: @<Try to break after a discretionary fragment, then |goto done5|@>;
-math_node: begin auto_breaking:=(subtype(cur_p)=after); kern_break;
+math_node: begin if subtype(cur_p)<L_code then auto_breaking:=odd(subtype(cur_p));
+  kern_break;
   end;
 penalty_node: try_break(penalty(cur_p),unhyphenated);
 mark_node,ins_node,adjust_node: do_nothing;
@@ -20070,7 +20158,7 @@ var q,@!r,@!s:pointer; {temporary registers for list manipulation}
 @!t:quarterword; {used for replacement counts in discretionary nodes}
 @!pen:integer; {use when calculating penalties between lines}
 @!cur_line: halfword; {the current line number being justified}
-@!LR_ptr,@!LR_tmp:pointer; {for LR stack maintenance}
+@!LR_ptr:pointer; {stack of LR codes}
 begin LR_ptr:=LR_save;
 @<Reverse the links of the relevant passive nodes, setting |cur_p| to the
   first breakpoint@>;
@@ -20117,6 +20205,8 @@ loop@+  begin q:=link(r);
   if non_discardable(q) then goto done1;
   if type(q)=kern_node then if subtype(q)<>explicit then goto done1;
   r:=q; {now |type(q)=glue_node|, |kern_node|, |math_node| or |penalty_node|}
+  if type(q)=math_node then if TeXXeT_en then
+    @<Adjust \(t)the LR stack for the |post_line_break| routine@>;
   end;
 done1: if r<>temp_head then
   begin link(r):=null; flush_node_list(link(temp_head));
@@ -20133,11 +20223,12 @@ is compulsory, and we set |disc_break| to |true|. We also append
 the |left_skip| glue at the left of the line, unless it is zero.
 
 @<Justify the line ending at breakpoint |cur_p|, and append it...@>=
-@<Insert LR nodes at the beginning of the current line@>;
-@<Adjust the LR stack based on LR nodes in this line@>;
+if TeXXeT_en then
+  @<Insert LR nodes at the beginning of the current line and adjust
+    the LR stack based on LR nodes in this line@>;
 @<Modify the end of the line to reflect the nature of the break and to include
   \.{\\rightskip}; also set the proper value of |disc_break|@>;
-@<Insert LR nodes at the end of the current line@>;
+if TeXXeT_en then @<Insert LR nodes at the end of the current line@>;
 @<Put the \(l)\.{\\leftskip} glue at the left and detach this line@>;
 @<Call the packaging subroutine, setting |just_box| to the justified box@>;
 @<Append the new box to the current vertical list, followed by the list of
@@ -20161,7 +20252,11 @@ if q<>null then {|q| cannot be a |char_node|}
   else  begin if type(q)=disc_node then
       @<Change discretionary to compulsory and set
         |disc_break:=true|@>
-    else if (type(q)=math_node)or(type(q)=kern_node) then width(q):=0;
+    else if type(q)=kern_node then width(q):=0
+    else if type(q)=math_node then
+      begin width(q):=0;
+      if TeXXeT_en then @<Adjust \(t)the LR stack for the |p...@>;
+      end;
     end
 else  begin q:=temp_head;
   while link(q)<>null do q:=link(q);
@@ -20347,7 +20442,8 @@ A sequence of characters will be considered for hyphenation only if it
 belongs to a ``potentially hyphenatable part'' of the current paragraph.
 This is a sequence of nodes $p_0p_1\ldots p_m$ where $p_0$ is a glue node,
 $p_1\ldots p_{m-1}$ are either character or ligature or whatsit or
-implicit kern nodes, and $p_m$ is a glue or penalty or insertion or adjust
+implicit kern or text direction nodes, and $p_m$ is a glue or penalty or
+insertion or adjust
 or mark or whatsit or explicit kern node.  (Therefore hyphenation is
 disabled by boxes, math formulas, and discretionary nodes already inserted
 by the user.) The ligature nodes among $p_1\ldots p_{m-1}$ are effectively
@@ -20533,6 +20629,7 @@ loop@+  begin if is_char_node(s) then
     else begin q:=lig_ptr(s); c:=qo(character(q)); hf:=font(q);
       end
   else if (type(s)=kern_node)and(subtype(s)=normal) then goto continue
+  else if (type(s)=math_node)and(subtype(s)>=L_code) then goto continue
   else if type(s)=whatsit_node then
     begin
       if subtype(s) = native_word_node then begin
@@ -20616,6 +20713,7 @@ loop@+  begin if not(is_char_node(s)) then
     kern_node: if subtype(s)<>normal then goto done4;
     whatsit_node,glue_node,penalty_node,ins_node,adjust_node,mark_node:
       goto done4;
+    math_node: if subtype(s)>=L_code then goto done4@+else goto done1;
     othercases goto done1
     endcases;
   s:=link(s);
@@ -24319,6 +24417,9 @@ box desired, and |cur_cmd=make_box|.
 procedure begin_box(@!box_context:integer);
 label exit, done;
 var @!p,@!q:pointer; {run through the current list}
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
 @!m:quarterword; {the length of a replacement list}
 @!k:halfword; {0 or |vmode| or |hmode|}
 @!n:halfword; {a box number}
@@ -24339,6 +24440,28 @@ exit:end;
 @ Note that the condition |not is_char_node(tail)| implies that |head<>tail|,
 since |head| is a one-word node.
 
+@d fetch_effective_tail_eTeX(#)== {extract |tx|,
+  drop \.{\\beginM} \.{\\endM} pair}
+q:=head; p:=null;
+repeat r:=p; p:=q; fm:=false;
+if not is_char_node(q) then
+  if type(q)=disc_node then
+    begin for m:=1 to replace_count(q) do p:=link(p);
+    if p=tx then #;
+    end
+  else if (type(q)=math_node)and(subtype(q)=begin_M_code) then fm:=true;
+q:=link(p);
+until q=tx; {found |r|$\to$|p|$\to$|q=tx|}
+q:=link(tx); link(p):=q; link(tx):=null;
+if q=null then if fm then confusion("tail1")
+@:this can't happen tail1}{\quad tail1@>
+  else tail:=p
+else if fm then {|r|$\to$|p=begin_M|$\to$|q=end_M|}
+  begin tail:=r; link(r):=null; flush_node_list(p);@+end
+@#
+@d check_effective_tail(#)==find_effective_tail_eTeX
+@d fetch_effective_tail==fetch_effective_tail_eTeX
+
 @<If the current list ends with a box node, delete it...@>=
 begin cur_box:=null;
 if abs(mode)=mmode then
@@ -24349,24 +24472,17 @@ else if (mode=vmode)and(head=tail) then
   help2("Sorry...I usually can't take things from the current page.")@/
     ("This \lastbox will therefore be void."); error;
   end
-else  begin if not is_char_node(tail) then
-    if (type(tail)=hlist_node)or(type(tail)=vlist_node) then
+else  begin check_effective_tail(goto done);
+  if not is_char_node(tx) then
+    if (type(tx)=hlist_node)or(type(tx)=vlist_node) then
       @<Remove the last box, unless it's part of a discretionary@>;
-  end;
+  done:end;
 end
 
 @ @<Remove the last box...@>=
-begin q:=head;
-repeat p:=q;
-if not is_char_node(q) then if type(q)=disc_node then
-  begin for m:=1 to replace_count(q) do p:=link(p);
-  if p=tail then goto done;
-  end;
-q:=link(p);
-until q=tail;
-cur_box:=tail; shift_amount(cur_box):=0;
-tail:=p; link(p):=null;
-done:end
+begin fetch_effective_tail(goto done);
+cur_box:=tx; shift_amount(cur_box):=0;
+end
 
 @ Here we deal with things like `\.{\\vsplit 13 to 100pt}'.
 
@@ -24485,7 +24601,7 @@ vmode+start_par: new_graf(cur_chr>0);
 vmode+letter,vmode+other_char,vmode+char_num,vmode+char_given,
    vmode+math_shift,vmode+un_hbox,vmode+vrule,
    vmode+accent,vmode+discretionary,vmode+hskip,vmode+valign,
-   vmode+ex_space,vmode+no_boundary,vmode+LR:@t@>@;@/
+   vmode+ex_space,vmode+no_boundary:@t@>@;@/
   begin back_input; new_graf(true);
   end;
 
@@ -24662,20 +24778,17 @@ will be deleted, if present.
 procedure delete_last;
 label exit;
 var @!p,@!q:pointer; {run through the current list}
+@!r:pointer; {running behind |p|}
+@!fm:boolean; {a final \.{\\beginM} \.{\\endM} node pair?}
+@!tx:pointer; {effective tail node}
 @!m:quarterword; {the length of a replacement list}
 begin if (mode=vmode)and(tail=head) then
   @<Apologize for inability to do the operation now,
     unless \.{\\unskip} follows non-glue@>
-else  begin if not is_char_node(tail) then if type(tail)=cur_chr then
-    begin q:=head;
-    repeat p:=q;
-    if not is_char_node(q) then if type(q)=disc_node then
-      begin for m:=1 to replace_count(q) do p:=link(p);
-      if p=tail then return;
-      end;
-    q:=link(p);
-    until q=tail;
-    link(p):=null; flush_node_list(tail); tail:=p;
+else  begin check_effective_tail(return);
+  if not is_char_node(tx) then if type(tx)=cur_chr then
+    begin fetch_effective_tail(return);
+    flush_node_list(tx);
     end;
   end;
 exit:end;
@@ -25050,7 +25163,8 @@ end;
 Let's take a look at what happens when they are used correctly.
 
 @<Cases of |main_control| that build...@>=
-vmode+halign,hmode+valign:init_align;
+vmode+halign:init_align;
+hmode+valign:@<Cases of |main_control| for |hmode+valign|@>@; init_align;
 mmode+halign: if privileged then
   if cur_group=math_shift_group then init_align
   else off_save;
@@ -25129,9 +25243,11 @@ called for.
 hmode+math_shift:init_math;
 
 @ @<Declare act...@>=
+@t\4@>@<Declare subprocedures for |init_math|@>@;
 procedure init_math;
 label reswitch,found,not_found,done;
 var w:scaled; {new or partial |pre_display_size|}
+@!j:pointer; {prototype box for display}
 @!x:integer; {new |pre_display_direction|}
 @!l:scaled; {new |display_width|}
 @!s:scaled; {new |display_indent|}
@@ -25188,10 +25304,9 @@ display. Then we can set the proper values of |display_width| and
 |display_indent| and |pre_display_size|.
 
 @<Go into display math mode@>=
-begin if head=tail then {`\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}'}
-  begin pop_nest; w:=-max_dimen;
-  @<Set the value of |x| to the text direction before the display@>;
-  end
+begin j:=null; w:=-max_dimen;
+if head=tail then {`\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}'}
+  @<Prepare for display after an empty paragraph@>
 else  begin line_break(true);@/
   @<Calculate the natural width, |w|, by which the characters of the
     final line extend to the right of the reference point,
@@ -25203,7 +25318,8 @@ else  begin line_break(true);@/
 push_math(math_shift_group); mode:=mmode;
 eq_word_define(int_base+cur_fam_code,-1);@/
 eq_word_define(dimen_base+pre_display_size_code,w);
-eq_word_define(int_base+pre_display_direction_code,x);
+LR_box:=j;
+if eTeX_ex then eq_word_define(int_base+pre_display_direction_code,x);
 eq_word_define(dimen_base+display_width_code,l);
 eq_word_define(dimen_base+display_indent_code,s);
 if every_display<>null then begin_token_list(every_display,every_display_text);
@@ -25211,9 +25327,7 @@ if nest_ptr=1 then build_page;
 end
 
 @ @<Calculate the natural width, |w|, by which...@>=
-v:=shift_amount(just_box)+2*quad(cur_font); w:=-max_dimen;
-@<Set the value of |x| to the text direction before the display@>;
-p:=list_ptr(just_box);
+@<Prepare for display after a non-empty paragraph@>;
 while p<>null do
   begin @<Let |d| be the natural width of node |p|;
     if the node is ``visible,'' |goto found|;
@@ -25228,6 +25342,7 @@ while p<>null do
   not_found: p:=link(p);
   end;
 done:
+@<Finish the natural width computation@>
 
 @ @<Let |d| be the natural width of node |p|...@>=
 reswitch: if is_char_node(p) then
@@ -25238,8 +25353,9 @@ case type(p) of
 hlist_node,vlist_node,rule_node: begin d:=width(p); goto found;
   end;
 ligature_node:@<Make node |p| look like a |char_node|...@>;
-kern_node,math_node: d:=width(p);
+kern_node: d:=width(p);
 margin_kern_node: d:=width(p);
+@t\4@>@<Cases of `Let |d| be the natural width' that need special treatment@>@;
 glue_node:@<Let |d| be the natural width of this glue; if stretching
   or shrinking, set |v:=max_dimen|; |goto found| in the case of leaders@>;
 whatsit_node: @<Let |d| be the width of the whatsit |p|, and |goto found| if ``visible''@>;
@@ -25953,6 +26069,7 @@ mmode+math_shift: if cur_group=math_shift_group then after_math
   else off_save;
 
 @ @<Declare act...@>=
+@t\4@>@<Declare subprocedures for |after_math|@>@;
 procedure after_math;
 var l:boolean; {`\.{\\leqno}' instead of `\.{\\eqno}'}
 @!danger:boolean; {not enough symbol fonts are present}
@@ -25961,6 +26078,7 @@ var l:boolean; {`\.{\\leqno}' instead of `\.{\\eqno}'}
 @!a:pointer; {box containing equation number}
 @<Local variables for finishing a displayed formula@>@;
 begin danger:=false;
+@<Retrieve the prototype box@>;
 @<Check that the necessary fonts for math symbols are present;
   if not, flush the current math lists and set |danger:=true|@>;
 m:=mode; l:=false; p:=fin_mlist(null); {this pops the nest}
@@ -25968,9 +26086,11 @@ if mode=-m then {end of equation number}
   begin @<Check that another \.\$ follows@>;
   cur_mlist:=p; cur_style:=text_style; mlist_penalties:=false;
   mlist_to_hlist; a:=hpack(link(temp_head),natural);
+  set_box_lr(a)(dlist);
   unsave; decr(save_ptr); {now |cur_group=math_shift_group|}
   if saved(0)=1 then l:=true;
   danger:=false;
+  @<Retrieve the prototype box@>;
   @<Check that the necessary fonts for math symbols are present;
     if not, flush the current math lists and set |danger:=true|@>;
   m:=mode; p:=fin_mlist(null);
@@ -26017,11 +26137,9 @@ space above that display.
 
 @<Finish math in text@>=
 begin tail_append(new_math(math_surround,before));
-@<Append a |begin_L| to the tail of the current list@>;
 cur_mlist:=p; cur_style:=text_style; mlist_penalties:=(mode>0); mlist_to_hlist;
 link(tail):=link(temp_head);
 while link(tail)<>null do tail:=link(tail);
-@<Append an |end_L| to the tail of the current list@>;
 tail_append(new_math(math_surround,after));
 space_factor:=1000; unsave;
 end
@@ -26069,6 +26187,7 @@ b:=hpack(p,natural); p:=list_ptr(b);
 t:=adjust_tail; adjust_tail:=null;@/
 pre_t:=pre_adjust_tail; pre_adjust_tail:=null;@/
 w:=width(b); z:=display_width; s:=display_indent;
+if pre_display_direction<0 then s:=-s-z;
 if (a=null)or danger then
   begin e:=0; q:=0;
   end
@@ -26083,6 +26202,7 @@ if w+q>z then
 @<Append the glue or equation number preceding the display@>;
 @<Append the display and perhaps also the equation number@>;
 @<Append the glue or equation number following the display@>;
+@<Flush the prototype box@>;
 resume_after_display
 
 @ @<Declare act...@>=
@@ -26125,6 +26245,7 @@ is taken only if the display begins with glue, since we assume that the
 user put glue there to control the spacing precisely.
 
 @<Determine the displacement, |d|, of the left edge of the equation...@>=
+set_box_lr(b)(dlist);
 d:=half(z-w);
 if (e>0)and(d<2*e) then {too close}
   begin d:=half(z-w-e);
@@ -26146,7 +26267,7 @@ else  begin g1:=above_display_short_skip_code;
   g2:=below_display_short_skip_code;
   end;
 if l and(e=0) then {it follows that |type(a)=hlist_node|}
-  begin shift_amount(a):=s; append_to_vlist(a);
+  begin app_display(j,a,0);
   tail_append(new_penalty(inf_penalty));
   end
 else tail_append(new_param_glue(g1))
@@ -26161,13 +26282,12 @@ if e<>0 then
     end;
   b:=hpack(b,natural);
   end;
-shift_amount(b):=s+d; append_to_vlist(b)
+app_display(j,b,d)
 
 @ @<Append the glue or equation number following the display@>=
 if (a<>null)and(e=0)and not l then
   begin tail_append(new_penalty(inf_penalty));
-  shift_amount(a):=s+z-width(a);
-  append_to_vlist(a);
+  app_display(j,a,z-width(a));
   g2:=0;
   end;
 if t<>adjust_head then {migrating material comes after equation number}
@@ -26188,6 +26308,7 @@ resulting list, and with |aux_save| holding the |prev_depth| value.
 begin do_assignments;
 if cur_cmd<>math_shift then @<Pontificate about improper alignment in display@>
 else @<Check that another \.\$ follows@>;
+flush_node_list(LR_box);
 pop_nest;
 tail_append(new_penalty(pre_display_penalty));
 tail_append(new_param_glue(above_display_skip_code));
@@ -28395,9 +28516,7 @@ to hold the string numbers for name, area, and extension.
 @d write_node=1 {|subtype| in whatsits that represent things to \.{\\write}}
 @d close_node=2 {|subtype| in whatsits that represent streams to \.{\\closeout}}
 @d special_node=3 {|subtype| in whatsits that represent \.{\\special} things}
-@d LR_node=4 {|subtype| in whatsits that represent \.{\\beginL}, etc.}
-@d LR_type(#)==mem[#+1].int {the sub-subtype}
-@d language_node=5 {|subtype| in whatsits that change the current language}
+@d language_node=4 {|subtype| in whatsits that change the current language}
 @d what_lang(#)==link(#+1) {language number, in the range |0..255|}
 @d what_lhm(#)==type(#+1) {minimum left fragment, in the range |1..63|}
 @d what_rhm(#)==subtype(#+1) {minimum right fragment, in the range |1..63|}
@@ -28427,13 +28546,6 @@ stays the same.
 @d immediate_code=4 {command modifier for \.{\\immediate}}
 @d set_language_code=5 {command modifier for \.{\\setlanguage}}
 
-@d begin_L_code=0 {command modifier for \.{\\beginL}}
-@d begin_R_code=1 {command modifier for \.{\\beginR}}
-@d end_L_code=2 {command modifier for \.{\\endL}}
-@d end_R_code=3 {command modifier for \.{\\endR}}
-@d begin_LR(#)==(LR_type(#)<end_L_code)
-@d begin_LR_type(#)==(LR_type(#)-end_L_code)
-
 @d pdftex_first_extension_code = 6
 @d pdf_save_pos_node           == pdftex_first_extension_code + 0
 
@@ -28446,14 +28558,6 @@ stays the same.
 @d XeTeX_linebreak_locale_extension_code=46
 
 @<Put each...@>=
-primitive("beginL",LR,begin_L_code);@/
-@!@:begin_L_}{\.{\\beginL} primitive@>
-primitive("beginR",LR,begin_R_code);@/
-@!@:begin_R_}{\.{\\beginR} primitive@>
-primitive("endL",LR,end_L_code);@/
-@!@:end_L_}{\.{\\endL} primitive@>
-primitive("endR",LR,end_R_code);@/
-@!@:end_R_}{\.{\\endR} primitive@>
 primitive("openout",extension,open_node);@/
 @!@:open_out_}{\.{\\openout} primitive@>
 primitive("write",extension,write_node); write_loc:=cur_val;@/
@@ -28491,12 +28595,6 @@ appropriate error message in case of ``runaway'' write texts.
 @!write_loc:pointer; {|eqtb| address of \.{\\write}}
 
 @ @<Cases of |print_cmd_chr|...@>=
-LR: case chr_code of
-begin_L_code: print_esc("beginL");
-begin_R_code: print_esc("beginR");
-end_L_code: print_esc("endL");
-othercases print_esc("endR")
-endcases;
 extension: case chr_code of
   open_node:print_esc("openout");
   write_node:print_esc("write");
@@ -28725,12 +28823,6 @@ pic_node,pdf_node: begin
   print("""");
   end;
 pdf_save_pos_node: print_esc("pdfsavepos");
-LR_node: case LR_type(p) of
-begin_L_code: print_esc("beginL");
-begin_R_code: print_esc("beginR");
-end_L_code: print_esc("endL");
-othercases print_esc("endR")
-endcases;
 othercases print("whatsit?")
 endcases
 
@@ -28744,7 +28836,7 @@ open_node: begin r:=get_node(open_node_size); words:=open_node_size;
 write_node,special_node: begin r:=get_node(write_node_size);
   add_token_ref(write_tokens(p)); words:=write_node_size;
   end;
-close_node,language_node,LR_node: begin r:=get_node(small_node_size);
+close_node,language_node: begin r:=get_node(small_node_size);
   words:=small_node_size;
   end;
 native_word_node: begin words:=native_size(p);
@@ -28772,7 +28864,7 @@ open_node: free_node(p,open_node_size);
 write_node,special_node: begin delete_token_ref(write_tokens(p));
   free_node(p,write_node_size); goto done;
   end;
-close_node,language_node,LR_node: free_node(p,small_node_size);
+close_node,language_node: free_node(p,small_node_size);
 native_word_node: begin free_native_glyph_info(p); free_node(p,native_size(p)); end;
 glyph_node: free_node(p,glyph_node_size);
 pic_node,pdf_node: free_node(p,total_pic_node_size(p));
@@ -28877,7 +28969,6 @@ begin
       d:=depth(p);
     x:=x + width(p);
     end;
-  LR_node: @<Adjust the LR stack for the |hpack| routine@>;
   othercases do_nothing
   endcases;
 end
@@ -28962,7 +29053,6 @@ begin
     cur_v:=save_v+depth(p); cur_h:=left_edge;
     end;
   pdf_save_pos_node: @<Save current position to |pdf_last_x_pos|, |pdf_last_y_pos|@>;
-  LR_node: @<Output a reflection instruction if the direction has changed@>;
   othercases out_what(p)
   endcases
 end
@@ -29026,7 +29116,6 @@ begin
     cur_h:=edge; cur_v:=base_line;
   end;
   pdf_save_pos_node: @<Save current position to |pdf_last_x_pos|, |pdf_last_y_pos|@>;
-  LR_node: @<Output a reflection instruction if the direction has changed@>;
   othercases out_what(p)
   endcases
 end
@@ -30582,7 +30671,81 @@ primitive("middle",left_right,middle_noad);
 @ @<Cases of |left_right| for |print_cmd_chr|@>=
 else if chr_code=middle_noad then print_esc("middle")
 
-@ 
+@ In constructions such as
+$$\vbox{\halign{\.{#}\hfil\cr
+{}\\hbox to \\hsize\{\cr
+\hskip 25pt \\hskip 0pt plus 0.0001fil\cr
+\hskip 25pt ...\cr
+\hskip 25pt \\hfil\\penalty-200\\hfilneg\cr
+\hskip 25pt ...\}\cr}}$$
+the stretch components of \.{\\hfil} and \.{\\hfilneg} compensate; they may,
+however, get modified in order to prevent arithmetic overflow during
+|hlist_out| when each of them is multiplied by a large |glue_set| value.
+
+Since this ``glue rounding'' depends on state variables |cur_g| and
+|cur_glue| and \TeXXeT\ is supposed to emulate the behaviour of \TeXeT\
+(plus a suitable postprocessor) as close as possible the glue rounding
+cannot be postponed until (segments of) an hlist has been reversed.
+
+The code below is invoked after the effective width, |rule_wd|, of a glue
+node has been computed. The glue node is either converted into a kern node
+or, for leaders, the glue specification is replaced by an equivalent rigid
+one; the subtype of the glue node remains unchanged.
+
+@<Handle a glue node for mixed...@>=
+if (((g_sign=stretching) and (stretch_order(g)=g_order)) or
+    ((g_sign=shrinking) and (shrink_order(g)=g_order))) then
+  begin fast_delete_glue_ref(g);
+  if subtype(p)<a_leaders then
+    begin type(p):=kern_node; width(p):=rule_wd;
+    end
+  else  begin g:=get_node(glue_spec_size);@/
+    stretch_order(g):=filll+1; shrink_order(g):=filll+1; {will never match}
+    width(g):=rule_wd; stretch(g):=0; shrink(g):=0; glue_ptr(p):=g;
+    end;
+  end
+
+@ The optional |TeXXeT| feature of \eTeX\ contains the code for mixed
+left-to-right and right-to-left typesetting.  This code is inspired by
+but different from \TeXeT\ as presented by Donald~E. Knuth and Pierre
+MacKay in {\sl TUGboat\/} {\bf 8}, 14--25, 1987.
+@^Knuth, Donald Ervin@>
+@^MacKay, Pierre@>
+
+In order to avoid confusion with \TeXeT\ the present implementation of
+mixed direction typesetting is called \TeXXeT.  It differs from \TeXeT\
+in several important aspects:  (1)~Right-to-left text is reversed
+explicitly by the |ship_out| routine and is written to a normal \.{DVI}
+file without any |begin_reflect| or |end_reflect| commands; (2)~a
+|math_node| is (ab)used instead of a |whatsit_node| to record the
+\.{\\beginL}, \.{\\endL}, \.{\\beginR}, and \.{\\endR} text direction
+primitives in order to keep the influence on the line breaking algorithm
+for pure left-to-right text as small as possible; (3)~right-to-left text
+interrupted by a displayed equation is automatically resumed after that
+equation; and (4)~the |valign| command code with a non-zero command
+modifier is (ab)used for the text direction primitives.
+
+Nevertheless there is a subtle difference between \TeX\ and \TeXXeT\
+that may influence the line breaking algorithm for pure left-to-right
+text.  When a paragraph containing math mode material is broken into
+lines \TeX\ may generate lines where math mode material is not enclosed
+by properly nested \.{\\mathon} and \.{\\mathoff} nodes.  Unboxing such
+lines as part of a new paragraph may have the effect that hyphenation is
+attempted for `words' originating from math mode or that hyphenation is
+inhibited for words originating from horizontal mode.
+
+In \TeXXeT\ additional \.{\\beginM}, resp.\ \.{\\endM} math nodes are
+supplied at the start, resp.\ end of lines such that math mode material
+inside a horizontal list always starts with either \.{\\mathon} or
+\.{\\beginM} and ends with \.{\\mathoff} or \.{\\endM}.  These
+additional nodes are transparent to operations such as \.{\\unskip},
+\.{\\lastpenalty}, or \.{\\lastbox} but they do have the effect that
+hyphenation is never attempted for `words' originating from math mode
+and is never inhibited for words originating from horizontal mode.
+
+@d TeXXeT_state==eTeX_state(TeXXeT_code)
+@d TeXXeT_en==(TeXXeT_state>0) {is \TeXXeT\ enabled?}
+
 @d XeTeX_upwards_state==eTeX_state(XeTeX_upwards_code)
 @d XeTeX_upwards==(XeTeX_upwards_state>0)
 
@@ -30614,7 +30777,7 @@ eTeX_state_code+XeTeX_tracing_fonts_code:print_esc("XeTeXtracingfonts");
 @ @<Generate all \eTeX...@>=
 primitive("suppressfontnotfounderror",assign_int,int_base+suppress_fontnotfound_error_code);@/
 primitive("TeXXeTstate",assign_int,eTeX_state_base+TeXXeT_code);
-@!@:TeXXeT_state_}{\.{\\TeXXeTstate} primitive@>
+@!@:TeXXeT_state_}{\.{\\TeXXeT_state} primitive@>
 primitive("XeTeXupwardsmode",assign_int,eTeX_state_base+XeTeX_upwards_code);
 @!@:XeTeX_upwards_mode_}{\.{\\XeTeXupwardsmode} primitive@>
 primitive("XeTeXuseglyphmetrics",assign_int,eTeX_state_base+XeTeX_use_glyph_metrics_code);
@@ -30632,6 +30795,631 @@ primitive("XeTeXtracingfonts",assign_int,eTeX_state_base+XeTeX_tracing_fonts_cod
 
 primitive("XeTeXinputencoding",extension,XeTeX_input_encoding_extension_code);
 primitive("XeTeXdefaultencoding",extension,XeTeX_default_encoding_extension_code);
+primitive("beginL",valign,begin_L_code);
+@!@:beginL_}{\.{\\beginL} primitive@>
+primitive("endL",valign,end_L_code);
+@!@:endL_}{\.{\\endL} primitive@>
+primitive("beginR",valign,begin_R_code);
+@!@:beginR_}{\.{\\beginR} primitive@>
+primitive("endR",valign,end_R_code);
+@!@:endR_}{\.{\\endR} primitive@>
+
+@ @<Cases of |valign| for |print_cmd_chr|@>=
+else case chr_code of
+  begin_L_code: print_esc("beginL");
+  end_L_code: print_esc("endL");
+  begin_R_code: print_esc("beginR");
+  othercases print_esc("endR")
+  endcases
+
+@ @<Cases of |main_control| for |hmode+valign|@>=
+if cur_chr>0 then
+  begin if eTeX_enabled(TeXXeT_en,cur_cmd,cur_chr) then
+@.Improper \\beginL@>
+@.Improper \\endL@>
+@.Improper \\beginR@>
+@.Improper \\endR@>
+    tail_append(new_math(0,cur_chr));
+  end
+else
+
+@ An hbox with subtype dlist will never be reversed, even when embedded
+in right-to-left text.
+
+@<Display if this box is never to be reversed@>=
+if (type(p)=hlist_node)and(box_lr(p)=dlist) then print(", display")
+
+@ A number of routines are based on a stack of one-word nodes whose
+|info| fields contain |end_M_code|, |end_L_code|, or |end_R_code|.  The
+top of the stack is pointed to by |LR_ptr|.
+
+When the stack manipulation macros of this section are used below,
+variable |LR_ptr| might be the global variable declared here for |hpack|
+and |ship_out|, or might be local to |post_line_break|.
+
+@d put_LR(#)==begin temp_ptr:=get_avail; info(temp_ptr):=#;
+  link(temp_ptr):=LR_ptr; LR_ptr:=temp_ptr;
+  end
+@#
+@d push_LR(#)==put_LR(end_LR_type(#))
+@#
+@d pop_LR==begin temp_ptr:=LR_ptr; LR_ptr:=link(temp_ptr);
+  free_avail(temp_ptr);
+  end
+
+@<Glob...@>=
+@!LR_ptr:pointer; {stack of LR codes for |hpack|, |ship_out|, and |init_math|}
+@!LR_problems:integer; {counts missing begins and ends}
+@!cur_dir:small_number; {current text direction}
+
+@ @<Set init...@>=
+LR_ptr:=null; LR_problems:=0; cur_dir:=left_to_right;
+
+@ @<Insert LR nodes at the beg...@>=
+begin q:=link(temp_head);
+if LR_ptr<>null then
+  begin temp_ptr:=LR_ptr; r:=q;
+  repeat s:=new_math(0,begin_LR_type(info(temp_ptr))); link(s):=r; r:=s;
+  temp_ptr:=link(temp_ptr);
+  until temp_ptr=null;
+  link(temp_head):=r;
+  end;
+while q<>cur_break(cur_p) do
+  begin if not is_char_node(q) then
+    if type(q)=math_node then @<Adjust \(t)the LR stack for the |p...@>;
+  q:=link(q);
+  end;
+end
+
+@ @<Adjust \(t)the LR stack for the |p...@>=
+if end_LR(q) then
+  begin if LR_ptr<>null then if info(LR_ptr)=end_LR_type(q) then pop_LR;
+  end
+else push_LR(q)
+
+@ We use the fact that |q| now points to the node with \.{\\rightskip} glue.
+
+@<Insert LR nodes at the end...@>=
+if LR_ptr<>null then
+  begin s:=temp_head; r:=link(s);
+  while r<>q do
+    begin s:=r; r:=link(s);
+    end;
+  r:=LR_ptr;
+  while r<>null do
+    begin temp_ptr:=new_math(0,info(r));
+    link(s):=temp_ptr; s:=temp_ptr; r:=link(r);
+    end;
+  link(s):=q;
+  end
+
+@ @<Initialize the LR stack@>=
+put_LR(before) {this will never match}
+
+@ @<Adjust \(t)the LR stack for the |hp...@>=
+if end_LR(p) then
+  if info(LR_ptr)=end_LR_type(p) then pop_LR
+  else  begin incr(LR_problems); type(p):=kern_node; subtype(p):=explicit;
+    end
+else push_LR(p)
+
+@ @<Check for LR anomalies at the end of |hp...@>=
+begin if info(LR_ptr)<>before then
+  begin while link(q)<>null do q:=link(q);
+  repeat temp_ptr:=q; q:=new_math(0,info(LR_ptr)); link(temp_ptr):=q;
+  LR_problems:=LR_problems+10000; pop_LR;
+  until info(LR_ptr)=before;
+  end;
+if LR_problems>0 then
+  begin @<Report LR problems@>; goto common_ending;
+  end;
+pop_LR;
+if LR_ptr<>null then confusion("LR1");
+@:this can't happen LR1}{\quad LR1@>
+end
+
+@ @<Report LR problems@>=
+begin print_ln; print_nl("\endL or \endR problem (");@/
+print_int(LR_problems div 10000); print(" missing, ");@/
+print_int(LR_problems mod 10000); print(" extra");@/
+LR_problems:=0;
+end
+
+@ @<Initialize |hlist_out| for mixed...@>=
+if eTeX_ex then
+  begin @<Initialize the LR stack@>;
+  if box_lr(this_box)=dlist then
+    if cur_dir=right_to_left then
+      begin cur_dir:=left_to_right; cur_h:=cur_h-width(this_box);
+      end
+    else set_box_lr(this_box)(0);
+  if (cur_dir=right_to_left)and(box_lr(this_box)<>reversed) then
+    @<Reverse the complete hlist and set the subtype to |reversed|@>;
+  end
+
+@ @<Finish |hlist_out| for mixed...@>=
+if eTeX_ex then
+  begin @<Check for LR anomalies at the end of |hlist_out|@>;
+  if box_lr(this_box)=dlist then cur_dir:=right_to_left;
+  end
+
+@ @<Handle a math node in |hlist_out|@>=
+begin if eTeX_ex then
+    @<Adjust \(t)the LR stack for the |hlist_out| routine; if necessary
+      reverse an hlist segment and |goto reswitch|@>;
+  cur_h:=cur_h+width(p);
+  end
+
+@ Breaking a paragraph into lines while \TeXXeT\ is disabled may result
+in lines whith unpaired math nodes.  Such hlists are silently accepted
+in the absence of text direction directives.
+
+@d LR_dir(#)==(subtype(#) div R_code) {text direction of a `math node'}
+
+@<Adjust \(t)the LR stack for the |hl...@>=
+begin if end_LR(p) then
+  if info(LR_ptr)=end_LR_type(p) then pop_LR
+  else  begin if subtype(p)>L_code then incr(LR_problems);
+    end
+else  begin push_LR(p);
+  if LR_dir(p)<>cur_dir then
+    @<Reverse an hlist segment and |goto reswitch|@>;
+  end;
+type(p):=kern_node;
+end
+
+@ @<Check for LR anomalies at the end of |hl...@>=
+begin while info(LR_ptr)<>before do
+  begin if info(LR_ptr)>L_code then LR_problems:=LR_problems+10000;
+  pop_LR;
+  end;
+pop_LR;
+end
+
+@ @d edge_node=style_node {a |style_node| does not occur in hlists}
+@d edge_node_size=style_node_size {number of words in an edge node}
+@d edge_dist(#)==depth(#) {new |left_edge| position relative to |cur_h|
+   (after |width| has been taken into account)}
+
+@<Declare procedures needed in |hlist_out|, |vlist_out|@>=
+function new_edge(@!s:small_number;@!w:scaled):pointer;
+  {create an edge node}
+var p:pointer; {the new node}
+begin p:=get_node(edge_node_size); type(p):=edge_node; subtype(p):=s;
+width(p):=w; edge_dist(p):=0; {the |edge_dist| field will be set later}
+new_edge:=p;
+end;
+
+@ @<Cases of |hlist_out| that arise...@>=
+edge_node: begin cur_h:=cur_h+width(p);
+  left_edge:=cur_h+edge_dist(p); cur_dir:=subtype(p);
+  end;
+
+@ We detach the hlist, start a new one consisting of just one kern node,
+append the reversed list, and set the width of the kern node.
+
+@<Reverse the complete hlist...@>=
+begin save_h:=cur_h; temp_ptr:=p; p:=new_kern(0); link(prev_p):=p;
+cur_h:=0; link(p):=reverse(this_box,null,cur_g,cur_glue); width(p):=-cur_h;
+cur_h:=save_h; set_box_lr(this_box)(reversed);
+end
+
+@ We detach the remainder of the hlist, replace the math node by
+an edge node, and append the reversed hlist segment to it; the tail of
+the reversed segment is another edge node and the remainder of the
+original list is attached to it.
+
+@<Reverse an hlist segment...@>=
+begin save_h:=cur_h; temp_ptr:=link(p); rule_wd:=width(p);
+free_node(p,small_node_size);
+cur_dir:=reflected; p:=new_edge(cur_dir,rule_wd); link(prev_p):=p;
+cur_h:=cur_h-left_edge+rule_wd;
+link(p):=reverse(this_box,new_edge(reflected,0),cur_g,cur_glue);
+edge_dist(p):=cur_h; cur_dir:=reflected; cur_h:=save_h;
+goto reswitch;
+end
+
+@ The |reverse| function defined here is responsible to reverse the
+nodes of an hlist (segment). The first parameter |this_box| is the enclosing
+hlist node, the second parameter |t| is to become the tail of the reversed
+list, and the global variable |temp_ptr| is the head of the list to be
+reversed. Finally |cur_g| and |cur_glue| are the current glue rounding state
+variables, to be updated by this function. We remove nodes from the original
+list and add them to the head of the new one.
+
+@<Declare procedures needed in |hlist_out|, |vlist_out|@>=
+function reverse(@!this_box,@!t:pointer; var cur_g:scaled;
+  var cur_glue:real):pointer;
+label reswitch,next_p,done;
+var l:pointer; {the new list}
+@!p:pointer; {the current node}
+@!q:pointer; {the next node}
+@!g_order: glue_ord; {applicable order of infinity for glue}
+@!g_sign: normal..shrinking; {selects type of glue}
+@!glue_temp:real; {glue value before rounding}
+@!m,@!n:halfword; {count of unmatched math nodes}
+begin g_order:=glue_order(this_box); g_sign:=glue_sign(this_box);
+l:=t; p:=temp_ptr; m:=min_halfword; n:=min_halfword;
+loop@+  begin while p<>null do
+    @<Move node |p| to the new list and go to the next node;
+    or |goto done| if the end of the reflected segment has been reached@>;
+  if (t=null)and(m=min_halfword)and(n=min_halfword) then goto done;
+  p:=new_math(0,info(LR_ptr)); LR_problems:=LR_problems+10000;
+    {manufacture one missing math node}
+  end;
+done:reverse:=l;
+end;
+
+@ @<Move node |p| to the new list...@>=
+reswitch: if is_char_node(p) then
+  repeat f:=font(p); c:=character(p);
+  cur_h:=cur_h+char_width(f)(char_info(f)(c));
+  q:=link(p); link(p):=l; l:=p; p:=q;
+  until not is_char_node(p)
+else @<Move the non-|char_node| |p| to the new list@>
+
+@ @<Move the non-|char_node| |p| to the new list@>=
+begin q:=link(p);
+case type(p) of
+hlist_node,vlist_node,rule_node,kern_node: rule_wd:=width(p);
+@t\4@>@<Cases of |reverse| that need special treatment@>@;
+edge_node: confusion("LR2");
+@:this can't happen LR2}{\quad LR2@>
+othercases goto next_p
+endcases;@/
+cur_h:=cur_h+rule_wd;
+next_p: link(p):=l;
+if type(p)=kern_node then if (rule_wd=0)or(l=null) then
+  begin free_node(p,small_node_size); p:=l;
+  end;
+l:=p; p:=q;
+end
+
+@ Need to measure |native_word| and picture nodes when reversing!
+@<Cases of |reverse|...@>=
+whatsit_node:
+  if (subtype(p)=native_word_node)
+  or (subtype(p)=glyph_node)
+  or (subtype(p)=pic_node)
+  or (subtype(p)=pdf_node)
+  then
+    rule_wd:=width(p)
+  else
+    goto next_p;
+
+@ Here we compute the effective width of a glue node as in |hlist_out|.
+
+@<Cases of |reverse|...@>=
+glue_node: begin round_glue;
+  @<Handle a glue node for mixed...@>;
+  end;
+
+@ A ligature node is replaced by a char node.
+
+@<Cases of |reverse|...@>=
+ligature_node: begin flush_node_list(lig_ptr(p));
+  temp_ptr:=p; p:=get_avail; mem[p]:=mem[lig_char(temp_ptr)]; link(p):=q;
+  free_node(temp_ptr,small_node_size); goto reswitch;
+  end;
+
+@ Math nodes in an inner reflected segment are modified, those at the
+outer level are changed into kern nodes.
+
+@<Cases of |reverse|...@>=
+math_node: begin rule_wd:=width(p);
+if end_LR(p) then
+  if info(LR_ptr)<>end_LR_type(p) then
+    begin type(p):=kern_node; incr(LR_problems);
+    end
+  else  begin pop_LR;
+    if n>min_halfword then
+      begin decr(n); decr(subtype(p)); {change |after| into |before|}
+      end
+    else  begin type(p):=kern_node;
+      if m>min_halfword then decr(m)
+      else @<Finish the reversed hlist segment and |goto done|@>;
+      end;
+    end
+else  begin push_LR(p);
+  if (n>min_halfword)or(LR_dir(p)<>cur_dir) then
+    begin incr(n); incr(subtype(p)); {change |before| into |after|}
+    end
+  else  begin type(p):=kern_node; incr(m);
+    end;
+  end;
+end;
+
+@ Finally we have found the end of the hlist segment to be reversed; the
+final math node is released and the remaining list attached to the
+edge node terminating the reversed segment.
+
+@<Finish the reversed...@>=
+begin free_node(p,small_node_size);
+link(t):=q; width(t):=rule_wd; edge_dist(t):=-cur_h-rule_wd; goto done;
+end
+
+@ @<Check for LR anomalies at the end of |s...@>=
+begin if LR_problems>0 then
+  begin @<Report LR problems@>; print_char(")"); print_ln;
+  end;
+if (LR_ptr<>null)or(cur_dir<>left_to_right) then confusion("LR3");
+@:this can't happen LR3}{\quad LR3@>
+end
+
+@ Some special actions are required for displayed equation in paragraphs
+with mixed direction texts.  First of all we have to set the text
+direction preceding the display.
+
+@<Set the value of |x| to the text direction before the display@>=
+if LR_save=null then x:=0
+else if info(LR_save)>=R_code then x:=-1@+else x:=1
+
+@ @<Prepare for display after an empty...@>=
+begin pop_nest; @<Set the value of |x|...@>;
+end
+
+@ When calculating the natural width, |w|, of the final line preceding
+the display, we may have to copy all or part of its hlist.  We copy,
+however, only those parts of the original list that are relevant for the
+computation of |pre_display_size|.
+@^data structure assumptions@>
+
+@<Declare subprocedures for |init_math|@>=
+procedure just_copy(@!p,@!h,@!t:pointer);
+label found,not_found;
+var @!r:pointer; {current node being fabricated for new list}
+@!words:0..5; {number of words remaining to be copied}
+begin while p<>null do
+  begin words:=1; {this setting occurs in more branches than any other}
+  if is_char_node(p) then r:=get_avail
+  else case type(p) of
+  hlist_node,vlist_node: begin r:=get_node(box_node_size);
+    mem[r+6]:=mem[p+6]; mem[r+5]:=mem[p+5]; {copy the last two words}
+    words:=5; list_ptr(r):=null; {this affects |mem[r+5]|}
+    end;
+  rule_node: begin r:=get_node(rule_node_size); words:=rule_node_size;
+    end;
+  ligature_node: begin r:=get_avail; {only |font| and |character| are needed}
+    mem[r]:=mem[lig_char(p)]; goto found;
+    end;
+  kern_node,math_node: begin r:=get_node(small_node_size);
+    words:=small_node_size;
+    end;
+  glue_node: begin r:=get_node(small_node_size); add_glue_ref(glue_ptr(p));
+    glue_ptr(r):=glue_ptr(p); leader_ptr(r):=null;
+    end;
+  whatsit_node:@<Make a partial copy of the whatsit...@>;
+  othercases goto not_found
+  endcases;
+  while words>0 do
+    begin decr(words); mem[r+words]:=mem[p+words];
+    end;
+  found: link(h):=r; h:=r;
+  not_found: p:=link(p);
+  end;
+link(h):=t;
+end;
+
+@ When the final line ends with R-text, the value |w| refers to the line
+reflected with respect to the left edge of the enclosing vertical list.
+
+@<Prepare for display after a non-empty...@>=
+if eTeX_ex then @<Let |j| be the prototype box for the display@>;
+v:=shift_amount(just_box);
+@<Set the value of |x|...@>;
+if x>=0 then
+  begin p:=list_ptr(just_box); link(temp_head):=null;
+  end
+else  begin v:=-v-width(just_box);
+  p:=new_math(0,begin_L_code); link(temp_head):=p;
+  just_copy(list_ptr(just_box),p,new_math(0,end_L_code));
+  cur_dir:=right_to_left;
+  end;
+v:=v+2*quad(cur_font);
+if TeXXeT_en then @<Initialize the LR stack@>
+
+@ @<Finish the natural width computation@>=
+if TeXXeT_en then
+  begin while LR_ptr<>null do pop_LR;
+  if LR_problems<>0 then
+    begin w:=max_dimen; LR_problems:=0;
+    end;
+  end;
+cur_dir:=left_to_right; flush_node_list(link(temp_head))
+
+@ In the presence of text direction directives we assume that any LR
+problems have been fixed by the |hpack| routine.  If the final line
+contains, however, text direction directives while \TeXXeT\ is disabled,
+then we set |w:=max_dimen|.
+
+@<Cases of `Let |d| be the natural...@>=
+math_node: begin d:=width(p);
+  if TeXXeT_en then @<Adjust \(t)the LR stack for the |init_math| routine@>
+  else if subtype(p)>=L_code then
+    begin w:=max_dimen; goto done;
+    end;
+  end;
+edge_node: begin d:=width(p); cur_dir:=subtype(p);
+  end;
+
+@ @<Adjust \(t)the LR stack for the |i...@>=
+if end_LR(p) then
+  begin if info(LR_ptr)=end_LR_type(p) then pop_LR
+  else if subtype(p)>L_code then
+    begin w:=max_dimen; goto done;
+    end
+  end
+else  begin push_LR(p);
+  if LR_dir(p)<>cur_dir then
+    begin just_reverse(p); p:=temp_head;
+    end;
+  end
+
+@ @<Declare subprocedures for |init_math|@>=
+procedure just_reverse(@!p:pointer);
+label found,done;
+var l:pointer; {the new list}
+@!t:pointer; {tail of reversed segment}
+@!q:pointer; {the next node}
+@!m,@!n:halfword; {count of unmatched math nodes}
+begin m:=min_halfword; n:=min_halfword;
+if link(temp_head)=null then
+  begin just_copy(link(p),temp_head,null); q:=link(temp_head);
+  end
+else  begin q:=link(p); link(p):=null; flush_node_list(link(temp_head));
+  end;
+t:=new_edge(cur_dir,0); l:=t; cur_dir:=reflected;
+while q<>null do
+  if is_char_node(q) then
+    repeat p:=q; q:=link(p); link(p):=l; l:=p;
+    until not is_char_node(q)
+  else  begin p:=q; q:=link(p);
+    if type(p)=math_node then
+      @<Adjust \(t)the LR stack for the |just_reverse| routine@>;
+    link(p):=l; l:=p;
+    end;
+goto done;
+found:width(t):=width(p); link(t):=q; free_node(p,small_node_size);
+done:link(temp_head):=l;
+end;
+
+@ @<Adjust \(t)the LR stack for the |j...@>=
+if end_LR(p) then
+  if info(LR_ptr)<>end_LR_type(p) then
+    begin type(p):=kern_node; incr(LR_problems);
+    end
+  else  begin pop_LR;
+    if n>min_halfword then
+      begin decr(n); decr(subtype(p)); {change |after| into |before|}
+      end
+    else  begin if m>min_halfword then decr(m)@+else goto found;
+      type(p):=kern_node;
+      end;
+    end
+else  begin push_LR(p);
+  if (n>min_halfword)or(LR_dir(p)<>cur_dir) then
+    begin incr(n); incr(subtype(p)); {change |before| into |after|}
+    end
+  else  begin type(p):=kern_node; incr(m);
+    end;
+  end
+
+@ The prototype box is an hlist node with the width, glue set, and shift
+amount of |just_box|, i.e., the last line preceding the display.  Its
+hlist reflects the current \.{\\leftskip} and \.{\\rightskip}.
+
+@<Let |j| be the prototype box for the display@>=
+begin if right_skip=zero_glue then j:=new_kern(0)
+else j:=new_param_glue(right_skip_code);
+if left_skip=zero_glue then p:=new_kern(0)
+else p:=new_param_glue(left_skip_code);
+link(p):=j; j:=new_null_box; width(j):=width(just_box);
+shift_amount(j):=shift_amount(just_box); list_ptr(j):=p;
+glue_order(j):=glue_order(just_box); glue_sign(j):=glue_sign(just_box);
+glue_set(j):=glue_set(just_box);
+end
+
+@ At the end of a displayed equation we retrieve the prototype box.
+
+@<Local variables for finishing...@>=
+@!j:pointer; {prototype box}
+
+@ @<Retrieve the prototype box@>=
+if mode=mmode then j:=LR_box
+
+@ @<Flush the prototype box@>=
+flush_node_list(j)
+
+@ The |app_display| procedure used to append the displayed equation
+and\slash or equation number to the current vertical list has three
+parameters:  the prototype box, the hbox to be appended, and the
+displacement of the hbox in the display line.
+
+@<Declare subprocedures for |after_math|@>=
+procedure app_display(@!j,@!b:pointer;@!d:scaled);
+var z:scaled; {width of the line}
+@!s:scaled; {move the line right this much}
+@!e:scaled; {distance from right edge of box to end of line}
+@!x:integer; {|pre_display_direction|}
+@!p,@!q,@!r,@!t,@!u:pointer; {for list manipulation}
+begin s:=display_indent; x:=pre_display_direction;
+if x=0 then shift_amount(b):=s+d
+else  begin z:=display_width; p:=b;
+  @<Set up the hlist for the display line@>;
+  @<Package the display line@>;
+  end;
+append_to_vlist(b);
+end;
+
+@ Here we construct the hlist for the display, starting with node |p|
+and ending with node |q|. We also set |d| and |e| to the amount of
+kerning to be added before and after the hlist (adjusted for the
+prototype box).
+
+@<Set up the hlist for the display line@>=
+if x>0 then e:=z-d-width(p)
+else  begin e:=d; d:=z-e-width(p);
+  end;
+if j<>null then
+  begin b:=copy_node_list(j); height(b):=height(p); depth(b):=depth(p);
+  s:=s-shift_amount(b); d:=d+s; e:=e+width(b)-z-s;
+  end;
+if box_lr(p)=dlist then q:=p {display or equation number}
+else  begin {display and equation number}
+  r:=list_ptr(p); free_node(p,box_node_size);
+  if r=null then confusion("LR4");
+  if x>0 then
+    begin p:=r;
+    repeat q:=r; r:=link(r); {find tail of list}
+    until r=null;
+    end
+  else  begin p:=null; q:=r;
+    repeat t:=link(r); link(r):=p; p:=r; r:=t; {reverse list}
+    until r=null;
+    end;
+  end
+
+@ In the presence of a prototype box we use its shift amount and width
+to adjust the values of kerning and add these values to the glue nodes
+inserted to cancel the \.{\\leftskip} and \.{\\rightskip}.  If there is
+no prototype box (because the display is preceded by an empty
+paragraph), or if the skip parameters are zero, we just add kerns.
+
+The |cancel_glue| macro creates and links a glue node that is, together
+with another glue node, equivalent to a given amount of kerning.  We can
+use |j| as temporary pointer, since all we need is |j<>null|.
+
+@d cancel_glue(#)==j:=new_skip_param(#); cancel_glue_cont
+@d cancel_glue_cont(#)==link(#):=j; cancel_glue_cont_cont
+@d cancel_glue_cont_cont(#)==link(j):=#; cancel_glue_end
+@d cancel_glue_end(#)==j:=glue_ptr(#); cancel_glue_end_end
+@d cancel_glue_end_end(#)==
+stretch_order(temp_ptr):=stretch_order(j);
+shrink_order(temp_ptr):=shrink_order(j); width(temp_ptr):=#-width(j);
+stretch(temp_ptr):=-stretch(j); shrink(temp_ptr):=-shrink(j)
+
+@<Package the display line@>=
+if j=null then
+  begin r:=new_kern(0); t:=new_kern(0); {the widths will be set later}
+  end
+else  begin r:=list_ptr(b); t:=link(r);
+  end;
+u:=new_math(0,end_M_code);
+if type(t)=glue_node then {|t| is \.{\\rightskip} glue}
+  begin cancel_glue(right_skip_code)(q)(u)(t)(e); link(u):=t;
+  end
+else  begin width(t):=e; link(t):=u; link(q):=t;
+  end;
+u:=new_math(0,begin_M_code);
+if type(r)=glue_node then {|r| is \.{\\leftskip} glue}
+  begin cancel_glue(left_skip_code)(u)(p)(r)(d); link(r):=u;
+  end
+else  begin width(r):=d; link(r):=p; link(u):=r;
+  if j=null then
+    begin b:=hpack(u,natural); shift_amount(b):=s;
+    end
+  else list_ptr(b):=u;
+  end
 
 @ The |scan_tokens| feature of \eTeX\ defines the \.{\\scantokens}
 primitive.
@@ -32447,129 +33235,6 @@ else  begin if cur_val>penalty(equiv(m)) then cur_val:=penalty(equiv(m));
   cur_val:=penalty(equiv(m)+cur_val);
   end;
 end
-
-@ Now we do the main work required for mixed-direction texts.
-
-@<Cases of |main_control| that build...@>=
-hmode+LR,mmode+LR: begin new_whatsit(LR_node,small_node_size); LR_type(tail):=cur_chr;
-  end;
-
-@ A number of routines are based on a stack of one-word nodes whose |info|
-fields contain either |begin_L_code| or |begin_R_code|. The top of the
-stack is pointed to by |LR_ptr|, and an auxiliary variable |LR_tmp| is
-available for stack manipulation.
-
-@<Glob...@>=
-@!LR_ptr,@!LR_tmp:pointer; {stack of LR codes and temp for manipulation}
-
-@ @<Declare functions needed for special kinds of nodes@>=
-function new_LR(@!s:small_number): pointer;
-var p: pointer; {the new node}
-begin p:=get_node(small_node_size); type(p):=whatsit_node; subtype(p):=LR_node;
-LR_type(p):=s; new_LR:=p;
-end;
-
-@ @<Declare functions needed for special kinds of nodes@>=
-function safe_info(@!p:pointer): integer;
-begin if p=null then safe_info:=-1@+else safe_info:=info(p);
-end;
-
-@ @<Append a |begin_L| to the tail of the current list@>=
-tail_append(new_LR(begin_L_code))
-
-@ @<Append an |end_L| to the tail of the current list@>=
-tail_append(new_LR(end_L_code))
-
-@ When the stack-manipulation macros of this section are used below, variables
-|LR_ptr| and |LR_tmp| might be the global variables declared above, or they
-might be local to |hpack| or |post_line_break|.
-
-@d push_LR(#)==begin LR_tmp:=get_avail; info(LR_tmp):=LR_type(#);
-  link(LR_tmp):=LR_ptr; LR_ptr:=LR_tmp;
-  end
-@d pop_LR==begin LR_tmp:=LR_ptr; LR_ptr:=link(LR_tmp); free_avail(LR_tmp);
-  end
-
-@<Flush the LR stack@>=while LR_ptr<>null do pop_LR
-
-@ @<Insert LR nodes at the beginning of the current line@>=
-while LR_ptr<>null do
-  begin LR_tmp:=new_LR(info(LR_ptr)); link(LR_tmp):=link(temp_head);
-  link(temp_head):=LR_tmp; pop_LR;
-  end
-
-@ @<Adjust the LR stack based on LR nodes in this line@>=
-q:=link(temp_head);
-while q<>cur_break(cur_p) do
-  begin if not is_char_node(q) then if type(q)=whatsit_node then
-   if subtype(q)=LR_node then
-    if begin_LR(q) then push_LR(q)
-    else if LR_ptr<>null then
-     if info(LR_ptr)=begin_LR_type(q) then pop_LR;
-  q:=link(q);
-  end
-
-@ We use the fact that |q| now points to the node with \.{\\rightskip} glue.
-
-@<Insert LR nodes at the end of the current line@>=
-if LR_ptr<>null then
-  begin s:=temp_head; r:=link(s);
-  while r<>q do
-    begin s:=r; r:=link(s);
-    end;
-  r:=LR_ptr;
-  while r<>null do
-    begin LR_tmp:=new_LR(info(r)+end_L_code);
-    link(s):=LR_tmp; s:=LR_tmp; r:=link(r);
-    end;
-  link(s):=q;
-  end
-
-@ @<Adjust the LR stack for the |hpack| routine@>=
-if begin_LR(p) then push_LR(p)
-else if safe_info(LR_ptr)=begin_LR_type(p) then pop_LR
-else  begin incr(LR_problems);
-  while link(q)<>p do q:=link(q);
-  link(q):=link(p); free_node(p,small_node_size); p:=q;
-  end
-
-@ @<Check for LR anomalies at the end of |hpack|@>=
-if LR_ptr<>null then
-  begin while link(q)<>null do q:=link(q);
-  repeat link(q):=new_LR(info(LR_ptr)+end_L_code); q:=link(q);
-  LR_problems:=LR_problems+10000; pop_LR;
-  until LR_ptr=null;
-  end;
-if LR_problems>0 then
-  begin print_ln; print_nl("\endL or \endR problem (");@/
-  print_int(LR_problems div 10000); print(" missing, ");@/
-  print_int(LR_problems mod 10000); print(" extra");@/
-  LR_problems:=0; goto common_ending;
-  end
-
-@ @<Output a reflection instruction if the direction has changed@>=
-if begin_LR(p) then
-  begin if safe_info(LR_ptr)<>LR_type(p) then
-    begin synch_h; synch_v; dvi_out(begin_reflect);
-    end;
-  push_LR(p);
-  end
-else if safe_info(LR_ptr)=begin_LR_type(p) then
-  begin pop_LR;
-  if info(LR_ptr)+end_L_code<>LR_type(p) then
-    begin synch_h; synch_v; dvi_out(end_reflect);
-    end;
-  end
-else confusion("LR")
-@:this can't happen LR}{\quad LR@>
-
-@ Some special actions are required for displayed equation in paragraphs
-with mixed direction texts.  First of all we have to set the text
-direction preceding the display.
-
-@<Set the value of |x|...@>=
-if LR_save=null then x:=0
-else if info(LR_save)>=begin_R_code then x:=-1@+else x:=1
 
 @* \[54] System-dependent changes.
 This section should be replaced, if necessary, by any special

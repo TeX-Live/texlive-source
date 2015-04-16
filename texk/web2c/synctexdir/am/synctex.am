@@ -315,9 +315,10 @@ xetex_CPPFLAGS += -I$(srcdir)/synctexdir
 xetex_ch_synctex = \
 	synctexdir/synctex-xe-def.ch0 \
 	synctexdir/synctex-mem.ch0 \
+	synctexdir/synctex-e-mem.ch0 \
 	synctexdir/synctex-e-mem.ch1 \
 	synctexdir/synctex-rec.ch0 \
-	synctexdir/synctex-xe-rec.ch0
+	synctexdir/synctex-e-rec.ch0
 
 xetex_post_ch_synctex = \
 	synctexdir/synctex-xe-rec.ch3
