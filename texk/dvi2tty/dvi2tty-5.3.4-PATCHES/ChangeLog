@@ -1,3 +1,7 @@
+2015-04-17  Karl Berry  <karl@tug.org>
+
+	* patch-10-ChangeLog (new): Remove obsolete part of ChangeLog.
+
 2014-02-01  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
 	* patch-09-win32 (new): Allow Unicode filename (Windows only).
