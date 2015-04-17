@@ -1,3 +1,8 @@
+2015-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Test if isascii is declared.
+	* c-ctype.h: Correctly define isascii, if not declared.
+
 2015-04-14  Norbert Preining  <norbert@preining.info>
 
 	* mktexlsr (treefile): switch back to hard-coded path, as

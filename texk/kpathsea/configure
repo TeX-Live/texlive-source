@@ -13873,6 +13873,19 @@ _ACEOF
 
 
 
+ac_fn_c_check_decl "$LINENO" "isascii" "ac_cv_have_decl_isascii" "#include <ctype.h>
+"
+if test "x$ac_cv_have_decl_isascii" = xyes; then :
+  ac_have_decl=1
+else
+  ac_have_decl=0
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_ISASCII $ac_have_decl
+_ACEOF
+
+
 ac_fn_c_check_decl "$LINENO" "putenv" "ac_cv_have_decl_putenv" "$ac_includes_default"
 if test "x$ac_cv_have_decl_putenv" = xyes; then :
   ac_have_decl=1

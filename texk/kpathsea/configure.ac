@@ -35,6 +35,9 @@ AC_PROG_AWK
 
 AC_CHECK_SIZEOF([long])
 
+dnl Check if <ctype.h> declares isascii.
+AC_CHECK_DECLS([isascii], [], [], [[#include <ctype.h>]])
+
 dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_DECLS([putenv])
 AC_REPLACE_FUNCS([putenv])
@@ -117,7 +120,7 @@ AC_CONFIG_HEADERS([c-auto.h:c-auto.in],
 
 AH_TOP([/* c-auto.h: defines for kpathsea, as determined by configure.
 
-   Copyright 1994-97, 2008, 2009, 2010 Karl Berry.
+   Copyright 1994-97, 2008-2015 Karl Berry.
    Copyright 1997-99, 2002, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
