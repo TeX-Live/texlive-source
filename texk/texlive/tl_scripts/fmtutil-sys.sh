@@ -1,6 +1,6 @@
 #!/bin/sh
 # $Id$
-# fmtutil-sys - arrange for fmtutil to affect system directories. 
+# fmtutil-sys - arrange for fmtutil to affect system directories.
 # Public domain.  Originally written by Thomas Esser.
 
 test -f /bin/ksh && test -z "$RUNNING_KSH" \
@@ -13,19 +13,12 @@ test -f /bin/bsh && test -z "$RUNNING_BSH" \
   && { RUNNING_BSH=true; export RUNNING_BSH; exec /bin/bsh $0 ${1+"$@"}; }
 unset RUNNING_BSH
 
-# hack around a bug in zsh:
-test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
-
 # preferentially use subprograms from our own directory.
 mydir=`echo "$0" | sed 's,/[^/]*$,,'`
 mydir=`cd "$mydir" && pwd`
 PATH="$mydir:$PATH"; export PATH
 
-v=`kpsewhich -var-value TEXMFSYSVAR`
-c=`kpsewhich -var-value TEXMFSYSCONFIG`
+# hack around a bug in zsh:
+test -n "${ZSH_VERSION+set}" && alias -g '${1+"$@"}'='"$@"'
 
-TEXMFVAR="$v"
-TEXMFCONFIG="$c"
-export TEXMFVAR TEXMFCONFIG
-
-exec fmtutil ${1+"$@"}
+exec fmtutil --sys ${1+"$@"}
