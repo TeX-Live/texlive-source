@@ -64,6 +64,7 @@ void error(const char *);
 #endif
 
 #ifdef KPATHSEA
+#include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
 #define READBIN         FOPEN_RBIN_MODE
 #ifdef VMS
