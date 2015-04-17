@@ -178,7 +178,6 @@ EXTRA_DIST += \
 	atari \
 	cmfonts.map \
 	config.ps \
-	contrib/PSTricks \
 	contrib/afm-extra \
 	contrib/colorsep.lpro \
 	contrib/configs \
