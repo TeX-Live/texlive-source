@@ -727,12 +727,12 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/quotecmd.tex testdata/dvipstst.tex \
 	testdata/dvipstst.xdv testdata/dvipstst.xps NEWS TODO \
 	testdata/intoverflow.dvi testdata/vfnameoverflow.dvi atari \
-	cmfonts.map config.ps contrib/PSTricks contrib/afm-extra \
-	contrib/colorsep.lpro contrib/configs contrib/crop.lpr \
-	contrib/latex209 contrib/treen.sh contrib/treen2.sh \
-	contrib/volker contrib/whichinpath cyrfonts.map eufonts.map \
-	flib.c hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map \
-	makefont.c mvs psfonts.map tex vmcms vms
+	cmfonts.map config.ps contrib/afm-extra contrib/colorsep.lpro \
+	contrib/configs contrib/crop.lpr contrib/latex209 \
+	contrib/treen.sh contrib/treen2.sh contrib/volker \
+	contrib/whichinpath cyrfonts.map eufonts.map flib.c \
+	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
+	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro
 TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips
