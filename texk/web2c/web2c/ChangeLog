@@ -1,3 +1,7 @@
+2015-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Test if isascii is declared.
+
 2015-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* common.defines: Remove intcast.
