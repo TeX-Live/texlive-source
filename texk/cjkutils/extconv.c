@@ -1,8 +1,8 @@
 #define banner  \
-"extconv (CJK ver. 4.8.3)" \
+"extconv (CJK ver. 4.8.4)" \
 
 /*2:*/
-#line 94 "./cjkutils-4.8.3/extconv/extconv.w"
+#line 94 "./cjkutils-4.8.4/extconv/extconv.w"
 
 #include <stdio.h> 
 #include <stdlib.h> 

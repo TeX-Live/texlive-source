@@ -1,3 +1,8 @@
+2015-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import cjk-4.8.4/utils as cjkutils-4.8.4.
+	* version.ac, tests/*.cjk: Adapted.
+
 2015-03-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop checks for strdup, strstr, strtol, strtoul.

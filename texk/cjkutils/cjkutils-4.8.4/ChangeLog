@@ -1,0 +1,2486 @@
+2015-04-18  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.8.4 released
+	======================
+
+	Set version to 4.8.4.
+
+	* doc/history.txt: Updated.
+
+	* Makefile (distsrc, distdoc): Use tar's `ustar' format.
+	Compress better.
+
+	Update headers in all text files.
+
+2015-04-18  Werner LEMBERG  <wl@gnu.org>
+
+	[hbf2gf] Update aux scripts.
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub,
+	utils/hbf2gf/install-sh: Updated to current versions.
+
+2014-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[hbf2gf]: Avoid undefined behaviour when `char' is signed.
+
+	* utils/hbf2gf/hbf.c (match, add_property, skip_word, get_line): Use
+	proper cast.
+	* utils/hbf2gf/hbf2gf.w (fsearch, <Check for environment
+	variables>): Ditto.
+
+2014-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* utils/hbf2gf/hbf2hf.w (path_open): Drop unused variable.
+
+2014-06-28  Leo Liu  <leoliu.pku@gmail.com>
+
+	[CJKutf8] Fix space handing of non-CJK characters.
+
+	* texinput/CJKutf8.sty (\CJK@XX, \CJK@XXp, \CJK@XXX, \CJK@XXXp):
+	Only apply \CJK@ignorespaces for CJK characters (or rather, only for
+	multibyte sequences that don't map to a `\u8:...' macro).
+
+2012-09-13  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/CJKutf8.tex: Add Greek.
+
+	This finally works due to the recent lgrx package which delivers
+	good Babel UTF8 support for LGR encoding.
+
+	An unsolved problem yet, however, is proper cut-and-paste support. 
+	While dvipdfmx properly generates CMaps for CJK encodings (even
+	for virtual fonts which pdftex doesn't handle at all), it doesn't
+	handle encodings like LGR correctly, something the `cmap' package
+	provides for pdflatex.
+
+2012-08-26  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\Unicode): Fix conditional to allow line breaks.
+
+	Problem reported by Jinsong Zhao <jszhao@yeah.net>; it seems that
+	this bug has been there since from the beginning.
+
+2012-06-21  Werner LEMBERG  <wl@gnu.org>
+
+	Make some commands robust.
+
+	* texinput/CJK.sty (\CJKtilde, \standardtilde, \CJKspace,
+	\CJKnospace): Use \DeclareRobustCommand.
+
+2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[hbf2gf] Build fix for 64-bit Mac OS X 10.7.3.
+
+	* utils/hbf2gf/hbf2gf.w: Clang does not like non-static inline
+	functions as used here.  While at it, all local functions are
+	declared static.
+	Do not extend #ifdef HAVE_EMTEXDIR...#endif over several sections.
+
+2012-05-08  Werner LEMBERG  <wl@gnu.org>
+
+	* texlive/cjk.pl: Add missing file.
+
+2012-05-07  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.8.3 released
+	======================
+
+	Set version to 4.8.3.
+
+	* doc/history.txt: Updated.
+
+	* Makefile (CJK2DVI, LATEX2DVI): Set TFMFONTS.
+
+	Update headers in all text files.
+
+2012-05-07  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub,
+	utils/hbf2gf/install-sh, utils/hbf2gf/mkinstalldirs: Updated to
+	current versions.
+
+	* utils/hbf2gf/configure: Regenerated with autoconf 2.69.
+
+2012-05-07  Werner LEMBERG  <wl@gnu.org>
+
+	[thai] Update to font-tlwg 0.5.
+
+	* doc/thaifont.txt, utils/thaifont/tools/INSTALL: Updated.
+
+	* utils/thaifont/texmf/fonts/tfm/public/norasi/ftnr8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnb8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnbo8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftno8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdr8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdb8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdbo8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdo8z.tfm: Regenerated
+	with fontinst.
+
+2012-05-05  Hin-Tak Leung  <htl10@users.sourceforge.net>
+
+	[cjk-enc.el] Accept Thai input in utf-8 encoding.
+
+	* utils/lisp/emacs/cjk-enc.el: Treat Unicode 0x0EXX inputs as Thai.
+
+	* examples/thai_utf8.tex: New sample file.
+
+	* Makefile (DISTTARGETS): Add `thai_utf8.tex'.
+	(thai_utf8): New target.
+
+	* MANIFEST, texlive/cjk.pl: Updated.
+
+2012-05-05  Werner LEMBERG  <wl@gnu.org>
+
+	Remove xCJK files.
+
+	The stuff is obsolete and no longer works out of the box.  Given
+	that there exists the `xeCJK' package, those files are really
+	useless today.
+
+	* examples/xCJK.tex, texinput/UTF8/xUTF8.chr,
+	texinput/UTF8/xUTF8.enc, texinput/xCJK.sty, texinput/xpmC.chr,
+	texinput/xpmC.enc, doc/xCJK.txt: Removed.
+
+	* MANIFEST, texlive/cjk.pl: Updated.
+
+	* Makefile (XELATEX, xCJK): Removed.
+	(DISTTARGETS): Updated.
+
+2012-05-05  Qing Lee  <sobenlee@gmail.com>
+
+	[CJKfntef] Fix incompatibility with `ulem.sty'.
+
+	* texinput/CJKfntef.tex (\CJKunderdot): Version 2010-01-21 of
+	`ulem.sty' silently adds a line which redefines \par (its author
+	says this was an oversight).  This exhibits a bug in \CJKunderdot
+	which implicitly emits \par by inserting an \hskip command in
+	vertical mode.  Simply omitting this \hskip fixes the issue.
+
+2012-04-20  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/Bg5/Bg5.cpx, texinput/JIS/JIS.cpx: Fix typos.
+
+2012-04-20  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/UTF8/zh-Hans.cpx: Synchronize.
+
+2012-04-20  Jiangsheng Yu  <yujs@ittc.ku.edu>
+
+	* texinput/GB/GB.cap, texinput/GB/GB.cpx: Improve.
+
+2011-12-16 Hin-Tak Leung <htl10@users.sourceforge.net>
+
+	[cjk-enc.el] Make it work with emacs 23 and newer.
+
+	Emacs 23+ introduces native Unicode support and uses a new charset
+	priority system: `char-charset' and `split-char' preferably now
+	return the Unicode charset and code points, respectively;
+	non-Unicode charsets and code points are only used if they have a
+	higher charset priority.  On the other hand, information on the
+	original charset is preserved in the text property `charset'.
+
+	Another change is the new charset/text-property called `tis620-2533'
+	(a superset of `ascii' and `thai-tis620'), introduced in emacs 23. 
+	This has the tendency of swallowing up every ASCII character and
+	goes into an infinite loop with `examples/thai.tex', so we have to
+	handle this also.
+
+	Tested with emacs 22.3 and 23.3, and
+	EMACS_PRETEST_24_0_92-142-g559675b on examples/{CJKbabel.tex,
+	muletest.tex, rubytest.tex, thai.tex}.
+
+	* utils/lisp/emacs/cjk-enc.el [emacs version >= 23]:
+	`make-coding-system' is deprecated -- use `define-coding-system'
+	instead.
+
+	Use the `charset' text property instead of the outcome of
+	`char-charset' to explicitly set the charset priority; this makes
+	`split-char' work as with emacs 22 and earlier.
+
+	Set new optional `restriction' argument of `char-charset' to avoid
+	problems with `tis620-2533'.
+
+2011-12-03  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/thai.tex: Improve prologue comments.
+
+2011-10-04  Werner LEMBERG  <wl@gnu.org>
+
+	[CEFconv, SJISconv] Document missing range 0xF0-0xFC.
+
+	* utils/CEFconv/cefsconv.w, utils/SJISconv/sjisconv.w: Do it.
+
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[cjklatex] Don't include `kpathsea/win32lib.h'.
+	This is already done from `kpathsea/config.h'.
+
+	* utils/cjklatex/cjklatex.c: Implement it.
+
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[cefconv] Various fixes.
+
+	* utils/CEFconv/cef5conv.w: Fix output so that it really works as
+	bg5conv + cefconv.
+	* utils/CEFconv/cefsconv.w: Fix output so that it really works as
+	sjisconv + cefconv.
+	* utils/CEFconv/cefconv.w: Typo.
+
+2011-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[cjklatex] Introduce `LATEX' preprocessor macro.
+
+	* utils/cjklatex/cjklatex.c (LATEX): New macro.  Use it where
+	appropriate to remove the hardcoded usage of `latex'.  For example,
+	LATEX can be defined as `pdflatex' (as done in TeXLive).
+
+2011-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[cjklatex] Various updates to stay in sync with TeXLive.
+
+	* utils/cjklatex/cjklatex.c: Include kpathsea/win32lib.h instead of
+	win32lib.h directly.
+	Decorate with `const'.
+	(usage_str, CJKtable): Updated.
+
+2011-09-03  Werner LEMBERG  <wl@gnu.org>
+
+	[hbf2gf] Update manpage.
+
+	* utils/hbf2gf/hbf2gf.1, doc/hbf2gf.txt: Remove information on
+	ancient kpathsea versions.
+
+2011-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[hbf2gf] Update kpathsea support.
+
+	* utils/hbf2gf/hbf2gf.w (OLD_KPATHSEA, VERY_OLD_KPATHSEA): Removed.
+	(DllImport, KPSEDLL): Removed.
+	[HAVE_CONFIG_H]: Include `c-auto.h'.
+
+2011-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	[hbf2gf] Decorate with `const'.
+
+	* utils/hbf2gf/hbf2gf.w, utils/hbf2gf/hbf.c: Do it.
+
+2011-09-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt utility programs to ANSI C.
+
+	* utils/Bg5conv/bg5conv.w, utils/CEFconv/cefconv.w,
+	utils/CEFconv/cef5conv.w, utils/CEFconv/cefsconv.w,
+	utils/SJISconv/sjisconv.w, utils/extconv/extconv.w,
+	utils/hbf2gf/hbf.c, utils/hbf2gf/hbf2gf.w: Do it.
+
+2011-02-07  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.txt: Document possible problems in `tabular' environment.
+	Problem reported by LI Ruo-Meng <15003990378@163.com>.
+
+2010-01-04  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.txt: Document Babel bug related to ^^xx notation.
+	Problem reported by Peter Grzybek <peter.grzybek@uni-graz.at>.
+
+2009-11-07  Werner LEMBERG  <wl@gnu.org>
+
+	Fix line breaks with furigana.
+
+	* texinput/ruby.txt (\ruby): If the furigana is smaller than
+	the base glyph, really behave as documented, this is, behave like an
+	ordinary CJK character.
+
+2009-08-25  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/CJKfntef.tex: Updated.
+
+2009-08-25  Wenchang Sun  <sunwch@hotmail.com>
+
+	New macros for CJKfntef.sty.
+
+	* texinput/CJKfntef.sty (\varCJKunderline, \CJKunderanyline,
+	\CJKunderanysymbol): New macros.
+	(\CJKunderdot): Fix interaction with XeTeX.
+
+	* doc/history.txt: Document it.
+
+2009-08-25  Wenchang Sun  <sunwch@hotmail.com>
+
+	* texinput/CJKfntef.sty: Replace \global with \CJKf@global.
+
+2009-01-19  Werner LEMBERG  <wl@gnu.org>
+
+	* texlive/cjk-build.pl: Remove unused stuff.
+	From Karl Berry.
+
+2009-01-05  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.txt: Document usage of CJKutf8.sty with beamer class.
+
+2008-12-29  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.8.2 released
+	======================
+
+	Set version to 4.8.2.
+
+	* doc/history.txt: Updated.
+
+	Update headers in all text files.
+
+2008-12-29  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub,
+	utils/hbf2gf/install-sh, utils/hbf2gf/mkinstalldirs: Updated to
+	current versions.
+
+	* utils/hbf2gf/configure: Regenerated with autoconf 2.63.
+
+2008-12-29  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/TeXLive.txt: Replaced with...
+	* texlive/*.pl: These new files which define the various TeXLive
+	packages derived from the CJK bundle.
+
+	* MANIFEST: Updated.
+
+2008-12-28  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/history.txt: Updated.
+
+	* doc/CJKnumb.txt: New file.
+
+	* MANIFEST: Updated.
+
+2008-12-28  Werner LEMBERG  <wl@gnu.org>
+
+	Rename garuda & norasi stuff to garuda-c90 & norasi-c90.
+
+	* MANIFEST, doc/thaifont.txt, utils/thaifont/tools/INSTALL: Updated.
+
+	* utils/thaifont/texmf/dvips/garuda/config.garuda: Moved to...
+	* utils/thaifont/texmf/dvips/garuda-c90/config.garuda-c90: This
+	file.  Updated.
+	* utils/thaifont/texmf/dvips/norasi/config.norasi: Moved to...
+	* utils/thaifont/texmf/dvips/norasi-c90/config.norasi-c90: This
+	file.  Updated.
+	* utils/thaifont/texmf/fonts/map/dvips/garuda/garuda.map: Moved
+	to...
+	* utils/thaifont/texmf/fonts/map/dvips/garuda-c90/garuda-c90.map:
+	This file.
+	* utils/thaifont/texmf/fonts/map/dvips/norasi/norasi.map: Moved
+	to...
+	* utils/thaifont/texmf/fonts/map/dvips/norasi-c90/norasi-c90.map:
+	This file.
+	* utils/thaifont/texmf/fonts/tfm/public/garuda/*: Moved to...
+	* utils/thaifont/texmf/fonts/tfm/public/garuda-c90/*: This
+	directory.
+	* utils/thaifont/texmf/fonts/tfm/public/norasi/*: Moved to...
+	* utils/thaifont/texmf/fonts/tfm/public/norasi-c90/*: This
+	directory.
+	* utils/thaifont/tools/garuda.fontinst: Moved to...
+	* utils/thaifont/tools/garuda-c90.fontinst: This file.
+	* utils/thaifont/tools/norasi.fontinst: Moved to...
+	* utils/thaifont/tools/norasi-c90.fontinst: This file.
+
+2008-12-28  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/DNP.txt: Renamed to...
+	* contrib/wadalab/wadalab.txt: This.
+	* MANIFEST: Updated.
+
+2008-12-28  Werner LEMBERG  <wl@gnu.org>
+
+	Use same font names as in thailatex.
+
+	* doc/thaifont.txt,
+	utils/thaifont/texmf/fonts/map/dvips/garuda/garuda.map,
+	utils/thaifont/texmf/fonts/map/dvips/norasi/norasi.map: Updated.
+
+
+	Update to thailatex 0.4.2.
+
+	* doc/thaifont.txt,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnr8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnb8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnbo8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftno8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdr8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdb8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdbo8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdo8z.tfm: Regenerated
+	with fontinst.
+
+2008-11-25  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKnumb.sty: Use U+3007 (IDEOGRAPHIC NUMBER ZERO),
+	not U+25CB (WHITE CIRCLE).
+
+	* texinput/UTF8/c70bkai.fdx, texinput/UTF8/c70bsmi.fdx: Map U+25CB
+	to U+3007.
+	* texinput/UTF8/c70gbsn.fdx, texinput/UTF8/c70gkai.fdx,
+	texinput/UTF8/c70mj.fdx: New files which do the same.
+
+	* MANIFEST: Updated.
+
+2008-11-25  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\Unicode): Use vertical glyph representation
+	forms.
+
+2008-11-25  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKnumb.sty (\CJKdigits*): New command to use traditional
+	form of glyph zero.
+
+	* doc/history.txt: Updated.
+
+2008-10-01  Werner LEMBERG  <wl@gnu.org>
+
+	* *.fd: Add \CJKnormal to all font families which use \CJKbold.  This
+	is necessary because NFSS doesn't call \selectfont if a font gets
+	substituted by another one (and \selectfont resets the \CJK@bold@
+	flag).  Here an example (where `gbsn' uses \CJKbold for boldface
+	emulation):
+
+	  \begin{CJK*}{GB}{gbsn}
+	  {\bf\CJKchar{"D6}{"D0}}
+	  {\em\CJKchar{"D6}{"D0}}
+	  \end{CJK*}
+
+2008-09-23  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/subfonts.pe: Fix error message for too-old
+	FontForge versions.
+
+2008-08-21  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/subfonts.pe: Handle CID-keyed fonts.
+
+2008-08-10  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.8.1 released
+	======================
+
+	Set version to 4.8.1.
+
+	* doc/history.txt, README: Updated.
+
+	* doc/TeXLive.txt: Updated.
+	PDF man pages are now autogenerated in TeXLive.
+
+	Update headers in all text files.
+
+	* utils/hbf2gf/config.sub: Updated to current version.
+
+2008-08-03  Werner LEMBERG  <wl@gnu.org>
+
+	Add some missing files.  Found by Daniel Flipo.
+
+	* texinput/Bg5/c00bkai.fd, texinput/GB/c10gkai.fd,
+	texinput/GB/c10gkai.fdx: New files.
+
+	* MANIFEST: Updated.
+
+2008-07-11  Werner LEMBERG  <wl@gnu.org>
+
+	Make macros in pinyin.sty robust.
+
+	Problem reported by Denis Roegel <roegel@loria.fr>.
+
+	* texinput/pinyin.sty (\py@macron): Make it work again with Plain
+	TeX.
+	(\py@@@): No longer needed.
+	(\py@): Do what \py@@@ did formerly.
+	(py@DRC): New macro to make the pinyin syllables robust.
+	Update all pinyin syllable macro definitions to use it.
+
+	* doc/history.txt: Updated.
+
+2008-07-11  Werner LEMBERG  <wl@gnu.org>
+
+	Incorporate Wen-Chang's CJKspace package.
+
+	* texinput/CJKspace.sty, examples/CJKspace.tex, doc/CJKspace.txt:
+	New files.
+	* texinput/CJK.sty (\CJK@@@): New signature macro for CJKspace.sty.
+	(\CJK@namedef, \CJK@namepdef, \CJK@nameppdef, \CJK@namepppdef,
+	\CJK@nameppppdef): Use it.
+
+	* Makefile, doc/history.txt, MANIFEST: Updated.
+
+2008-05-22  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.8.0 released
+	======================
+
+	Set version to 4.8.0.
+
+	* doc/history.txt, doc/INSTALL, doc/TeXLive.txt, README: Updated.
+
+	Update headers in all text files.
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	current versions.
+
+	* utils/hbf2gf/configure: Regenerated with autoconf 2.62.
+
+2008-05-18  Werner LEMBERG  <wl@gnu.org>
+
+	* Makefile (DISTDIRS): We are now using git, not CVS.
+
+2008-05-18  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/history.txt: Mention xCJK.sty.
+
+2008-05-17  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\CJK@UnicodeEnc): New macro (so that xCJK.sty
+	can overwrite it).
+	* texinput/CJKnumb.sty: Use it.
+
+	* texinput/xCJK.sty: Simplify -- unicode mappings to other encodings
+	are no longer supported (since it hasn't worked for Big5 or GBK
+	anyway).
+
+	(\xCJK@xUTF): Removed.
+	(\CJKsymbol): Simplified.
+	(\toutf@XXX): Removed.
+	(\xCJK@CJKenc, \CJKenc): Removed.
+	(\CJK@envStart): Produce error if encoding is not `UTF8'.
+	Simplified.
+	(\xCJK@setenc, \CJK@xpmC, \xCJK@enc@UTF8, \xCJK@xUTF8@hook):
+	Removed.
+	(\CJK@xUTF8@hook, \CJK@UnicodeEnc): New macros.
+	(\xCJK@@char): Removed.
+	(\CJK@XXpdf): Simplified.
+	(\CJK@@XXpdf): Removed.
+
+	Add support for non-BMP Unicode.
+
+	(\CJK@nameppppdef): New macro.
+	(\xCJK@char): Redefined.
+	(\xCJK@@char, \xCJK@@@char): New macros.
+	(\CJK@XXp, \CJK@XXXp): Redefined.
+	(\CJK@XXXXp): New macro.
+
+	xdvipdfmx automatically handles UTF-8 encoded bookmarks.
+
+	(\xCJK@four, \xCJK@@@char, <\if@filesw>): Removed.
+
+	(\special): Use \utfout.
+
+2008-05-12  Danai SAE-HAN  <danai.sae-han@edpnet.be>
+
+	* utils/hbf2gf/hbf2gf.1: Replace some `-' with `\-'.
+
+2008-03-10  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/hbf2gf.1: s|-|\-| where appropriate.
+
+2008-03-09  Werner LEMBERG  <wl@gnu.org>
+
+	* Makefile (XELATEX): Call xelatex twice.
+	(manpages): Increase font size to 11pt for DVI and PDF output.
+
+2008-03-09  Werner LEMBERG  <wl@gnu.org>
+
+	Add support for EUC-JP with DNP font encoding.
+
+	* texinput/CJK.enc (\CJK@@@EUC-JPdnp@hook, \CJK@EUC-JPdnp@enc): New
+	macros.
+
+	* texinput/JIS/EUC-JPdnp.enc: New file.
+
+	* texinput/JIS/EUC-JP.chr (\CJK@shiftchar): Define \CJK@plane as
+	empty.
+
+	* doc/history.txt, MANIFEST: Updated.
+
+2008-03-09  Werner LEMBERG  <wl@gnu.org>
+
+	Make \CJK@bold work with C49 encoding too.  The idea is to handle
+	the font as a CJK font but with \CJK@plane set to empty.
+
+	* texinput/SJIS/SJIS.chr, texinput/SJIS/SJIdnp.chr (\CJK@sjischar):
+	Define \CJK@plane as empty.
+
+	* texinput/SJIS/c49song.fd: Use `CJK' size function.
+
+	* doc/history.txt: Updated.
+
+2008-03-03  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKutf8.sty, texinput/xCJK.sty,
+	texinput/mule/MULEenc.sty: Use \ProvidesPackage, not \ProvidesFile.
+
+2008-03-03  Werner LEMBERG  <wl@gnu.org>
+
+	Better control for \baselinestretch with CJKvert.sty.
+
+	* texinput/CJKvert.sty (usebaselinestretch): New option.
+	(\CJKbaselinestretch): New macro.
+
+	* doc/history.txt, doc/vertical.txt: Document it.
+
+2008-02-11  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/xCJK.txt: New file.
+	* MANIFEST: Updated.
+
+2008-02-11  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/fonts.txt: Document installation of cyberbit.ttf.
+
+2008-02-05  Werner LEMBERG  <wl@gnu.org>
+
+	Add SUN Wen-Chang's xCJK bundle.
+
+	* examples/xCJK.tex, texinput/UTF8/xUTF8.chr,
+	texinput/UTF8/xUTF8.enc, texinput/xCJK.sty, texinput/xpmC.chr,
+	texinput/xpmC.enc: New files.
+
+	* MANIFEST: Updated.
+
+	* Makefile (XELATEX): New macro.
+	(xCJK): New target.
+	(CJK2DVI, LATE2DVI): Simplify.
+
+2008-01-15  Gernot Hassenpflug  <aikishugyo@gmail.com>
+
+	* contrib/wadalab/c70goth.fdx, contrib/wadalab/c70min.fdx,
+	contrib/wadalab/c70maru.fdx: Rotate more glyphs for vertical
+	typesetting.
+	Shift small kana for vertical typesetting.
+	Other minor improvements.
+
+2007-12-27  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/vertical.pe, utils/subfonts/vertref.pe: Abort if no
+	vertical glyph representation forms are available.
+
+2006-12-05  Werner LEMBERG  <wl@gnu.org>
+
+	Make pinyin syllables work with \MakeUppercase and \MakeLowercase.
+
+	* pinyin.sty: Almost completely rewrite macro logic to replace e.g.
+	`\py@@@a' with `\py@ a' so that the argument gets handled by
+	\MakeUppercase.
+
+2006-12-04  Werner LEMBERG  <wl@gnu.org>
+
+	Make pinyin syllables work with hyperref bookmarks.
+
+	* pinyin.sty: Use \AtBeginDocument hook to add missing characters to
+	PU encoding needed for pinyin syllables.
+	Use \AtBeginDocument hook to set up some replacement macros for
+	bookmarks.
+	(\py@hr@macron, \py@hr@v): New replacement macros for
+	bookmarks.
+
+2007-11-23  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.enc: Add punctuation tables for GBK encoding.
+
+2007-11-06  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/subfonts.pe, utils/subfonts/vertical.pe,
+	utils/subfonts/vertref.pe: Put current time stamp into copyright
+	string.
+	Need FontForge 20071105 or newer.
+
+2007-11-02  SUN Wenchang  <sunwch@hotmail.com>
+
+	* texinput/CJKfntef.sty (\CJK@preUnderdot): Use \cdot (in math mode).
+	(\CJKxout): Use `/' in math mode.
+	(\CJKunderdotbasesep, \CJKunderdotsep): Adjusted.
+
+2007-10-26  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/vertical.pe: Use glyph names of the horizontal
+	representation glyphs with an appended `.vert'.  This makes dvipdfmx
+	automatically create a correct /ToUnicode CMap.
+
+2007-10-25  Werner LEMBERG  <wl@gnu.org>
+
+	Provide final fix for patch 2007-10-04.
+
+	* utils/subfonts/makefdx.pl: Provide flag `-u' to produce a CMap
+	macro in the FDX file.
+	Don't specify FDX file directly on the command line but give family
+	name and encoding separately which are then concatenated to give the
+	FDX name (we need the family name separately).
+	Add code to produce a macro which provides a /ToUnicode CMap entry
+	as needed by pdfTeX.
+	Fix loop to not omit last glyph.
+
+	* texinput/UTF8/c70bsmi.fdx, texinput/UTF8/c70bkai.fdx: Regenerated.
+	These now provide the macros \CJK@cmap@bsmiv and \CJK@cmap@bkaiv,
+	respectively.
+
+	* texinput/CJKutf8.sty (\pickup@font): Call `\CJK@cmap@...' if it
+	exists.
+
+2007-10-04  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKutf8.sty (\pickup@font): Disable generation of
+	ToUnicode cmap for `v' subfont (which holds vertical representation
+	glyphs).  This is a temporary hack; the right solution is to modify
+	makefdx.pl so that it creates a ToUnicode macro for the specific
+	font; \CJK@addcmap should be then modified to use this macro instead
+	of autogenerating a cmap.
+
+	Problem reported by Edward G.J. Lee.
+
+2007-09-10  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/vertical.pe, utils.subfonts/vertref.pe: Adapt to
+	FontForge version 2007-Sep-10 and newer.
+
+2007-07-26  Gernot Hassenpflug  <gernot@nict.go.jp>
+
+	* contrib/wadalab/c70goth.fdx, contrib/wadalab/c70min.fdx,
+	contrib/wadalab/c70maru.fdx: New files to support vertical writing
+	with Unicode encoded Wadalab fonts.
+
+2007-07-07  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty (\ding): Rename to...
+	(\py@ding): This to make \ding work actually.
+
+2007-05-04  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKvert.sty (\CJKsymbol): Honour \CJKhdef{offset}{...}.
+	* doc/fdxfiles.txt, doc/history.txt: Document it.
+
+2007-04-08  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/pyhyphen/pyhyph.tex: Replace latin-1 characters with
+	^^xx sequences.  Suggested by David Kastrup.
+
+	* doc/cjk-enc.txt: Document special space handling for Emacs quail
+	input methods.
+
+2006-11-06  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty (\py@macron, \py@@@v): Support T5 encoding.
+	* doc/history.txt: Document it.
+
+2006-10-31  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.txt, doc/CJKutf8.txt: Mention Byte Order Mark in UTF-8.
+
+2006-10-19  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/TeXLive.txt, MANIFEST: Minor fixes.
+
+	* Makefile (DVI2PDF): Add argument for paper format.
+	(CONVERT, MULE, LATEX): Add optional argument for paper format;
+	default to `letter'.
+	(manpages, cweb): Use letter paper format.
+	(READMEb5): Use A4 paper.
+
+	* examples/README: Minor fix.
+
+2006-10-17  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.7.0 released
+	======================
+
+	Set version to 4.7.0.
+
+	* doc/history.txt, doc/INSTALL, doc/TeXLive.txt, README: Updated.
+
+	Update headers in all text files.
+
+2006-10-09  Werner LEMBERG  <wl@gnu.org>
+
+	* Makefile (abs-distdir): Fix assignment.
+	(distdoc): Remove generated C files.
+
+	* utils/hbf2gf/hbf2gf.1: s/`/\(oq/ and s/'/\(cq/ where appropriate.
+
+2006-10-06  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJKutf8.txt, doc/history.txt: Minor additions.
+	* MANIFEST: Sorted and updated.
+
+2006-10-05  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKutf8.sty (\CJK@surr): Use \expandafter to make
+	\uppercase work actually.
+
+	* texinput/CJK.sty (\CJK@makeActive, \CJK@makeInactive): Handle 0x80
+	also (which is needed for UTF8).
+
+2006-10-05  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKutf8.sty (\CJK@surr): New function.
+	(\CJK@addcmap): Use \CJK@surr so that values > U+FFFF are correctly
+	represented as surrogates.
+
+2006-09-30  Werner LEMBERG  <wl@gnu.org>
+
+	In CJKutf8.sty, add ToUnicode cmaps for pdfTeX.  Note, however, that
+	it currently fails with virtual fonts: pdftex 3.141592-1.30.4-2.2
+	can't resolve them to the used base fonts.
+
+	* texinput/CJKutf8.sty: Require ifpdf package.
+	(\pickup@font) [\ifpdf]: Redefine, adding a call to CJK@addcmap.
+	(\CJK@addcmap) [\ifpdf]: New function.
+
+	* doc/history.txt: Updated.
+
+2006-09-16  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\CJK@ifundefined): New macro.
+	Update all affected files where possible to use it instead of
+	\@ifundefined.  This fixes a bug reported by Danai which made
+	\chapter work in the `scrartcl' article class (instead of
+	reporting an error) after using a CJK caption file.
+
+	* *.cap, *.cpx: Don't redefine \thepart but use its previous
+	definition for \partformat.  This fixes a bug reported by Danai
+	which produced bad TOC entries.
+
+	* doc/history.txt: Updated.
+
+2006-09-12  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/UTF8/ko-Hanj.cpx: Renamed to...
+	* texinput/UTF8/ko-Hani.cpx: This to use the correct ISO 15924
+	script tag.
+
+	* doc/history.txt, doc/CJK.txt: Updated.
+
+2006-09-08  Werner LEMBERG  <wl@gnu.org>
+
+	Add caption files for UTF8 encoding.
+
+	* texinput/UTF8/{ja,ko-Hang,ko-Hang2,ko-Hanj,zh-Hans,zh-Hant}.cap:
+	New files.
+
+	* doc/history.txt, doc/CJK.txt: Mention them.
+
+2006-08-31  Werner LEMBERG  <wl@gnu.org>
+
+	Reimplement the \CJKbold mechanism to call the last argument of
+	\DeclareFontShape each time the font is selected only if a CJK size
+	function has been used.  This fixes shape declarations like the ones
+	in the fourier package which rely on being called only once.
+
+	* texinput/CJK.sty (\CJK@curr@fontshape): New macro.
+	(\CJK@empty, \CJK@fixed, \CJK@sub, \CJK@DNPgen, \CJK@DNP): Define a
+	macro where the name is the argument of \CJK@curr@fontshape.
+	(\selectfont): Execute macro where the name is the argument of
+	\CJK@curr@fontshape only if it exists.
+
+	* doc/history.txt, doc/CJK.txt: Mention it.
+
+2006-08-29  Danai SAE-HAN  <danai.sae-han@skynet.be>
+
+	* utils/subfonts/hlatex2agl.pl: Make it accept a third parameter
+	which specifies the used SFD file.
+	(process_afmfile, process_pfbfile): Add minor tweaks to handle fonts
+	generated with other tools than FontForge.
+
+2006-08-29  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/Bg5conv/bg5conv.w, utils/extconv/extconv.w,
+	utils/hbf2gf/hbf2gf.w, utils/CEFconv/cefconv.w,
+	utils/CEFconv/cef5conv.w, utils/CEFconv/cefsconv.w,
+	utils/SJISconv/sjisconv.w: s/@/@@/ in email address.
+
+	* utils/Bg5conv/bg5conv.c, utils/extconv/extconv.c,
+	utils/hbf2gf/hbf2gf.c, utils/CEFconv/cefconv.c,
+	utils/CEFconv/cef5conv.c, utils/CEFconv/cefsconv.c,
+	utils/SJISconv/sjisconv.c: Removed.  These files are now generated
+	by the Makefile.
+
+	* Makefile (version): Set to 4.7.0.
+	(CJK2DVI, LATEX2DVI): Add `texlive' subdirectory
+	(distsrc): Build .c from .w files.
+
+2006-08-28  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/*: Add various replacement files for TeXLive.
+
+2006-08-17  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.txt: Mention problem with fourier.sty.
+
+2006-08-01  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.txt: Mention problems with UTF-8.
+
+2006-07-30  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/DNP.txt: Fix patch for wftodm.c.
+
+2006-04-25  Danai SAE-HAN  <danai.sae-han@skynet.be>
+
+	* <many files>: Add GPL.
+	* MANIFEST: New file.
+
+2006-03-25  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKutf8.sty (\pdfstringdefPreHook): Don't overwrite but
+	prepend to this macro.
+
+2006-03-23  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/hlatex2agl.pl: New script (which has been used
+	to create the Korean fonts in TeXLive 2005).
+
+
+	* texinput/CJKutf8.sty: Add support for Unicode bookmarks.
+	(\CJK@UnicodeFourBytesFirst, \CJK@UnicodeFourBytesSecond,
+	\CJK@UnicodeFourBytesThird, \CJK@UnicodeThreeBytesFirst,
+	\CJK@UnicodeThreeBytesSecond, \CJK@UnicodeTwoBytesFirst,
+	\CJK@UnicodeLast): New macros to convert UTF-8 into UTF-16BE.
+	(\CJK@XXpdf, \CJK@XXXpdf, \CJK@XXXXpdf): Replacements for the
+	\CJK@XX, \CJK@XXX, and \CJK@XXXX macros, respectively.
+	(\pdfstringdefPreHook): Activate them.
+
+2006-03-22  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/KS/HLaTeX/c63sh.fd, texinput/KS/HLaTeX/c64sh.fd,
+	texinput/KS/HLaTeX/c65sh.fd: Fix font declaration.  Bug reported by
+	Danai SAE-HAN <danai.sae-han@skynet.be>.
+
+2006-02-20  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/UTF8/UTF8.bdg: Bugfix: Handle 0x80 also.
+
+	* doc/history.txt: Mention it.
+
+2006-02-09  Werner LEMBERG  <wl@gnu.org>
+
+	Support complete Unicode range (up to U+10FFFF).
+
+	* texinput/UTF8/UTF8.bdg: Handle leading characters 0xF0-0xF4.
+
+	* texinput/UTF8/UTF8.enc: Ditto.
+
+	* texinput/UTF8/UTF8.chr (\CJK@altxchar): New macro for four-byte
+	Unicode values.
+
+	* texinput/CJK.enc (\CJK@unicodexError): New error macro.
+
+	* texinput/CJK.sty (\CJK@numbxToHex): New auxiliary macro to convert
+	a number to a four-digit hex number string.
+	(\Unicode): Accept values greater than U+FFFF.
+
+	* doc/command.txt, doc/CJK.txt: Document extended \Unicode (and
+	\CJKchar) command.
+	* doc/history.txt: Updated.
+
+2006-01-23  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.enc (\CJK@HK@enc): Load `HK' encoding, not `Bg5'.
+	Use \def, not \@namedef.
+
+	* doc/CJK.txt: Mention `HKtext' environment.
+
+2006-01-22  Werner LEMBERG  <wl@gnu.org>
+
+	Add new encoding `HK' (C05) for Hong Kong's HKSCS-2004.
+
+	* texinput/Bg5/HK.enc, texinput/Bg5/c05song.fd: New files.
+	* texinput/CJK.enc: Add support for `HK' (C05).
+	* texinput/CJKnumb.sty: Handle `HK'.
+
+	* doc/CJK.txt: Bg5+ *cannot* be used for HKSCS.  Fix this.
+	* doc/history.txt: Document `HK' encoding.
+
+2006-01-19  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.txt: Mention usage of Bg5+ for HKSCS-2001/HKSCS-2004.
+
+2006-01-04  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty (\PYding): New \let.
+	(\PYactivate, \PYdeacticate): Handle \ding (from pifont.sty).
+
+	* doc/pinyin.tex: Document possible problems with pifont.sty.
+
+	* doc/history.txt: Updated.
+
+2005-12-27  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/cfg/csso12.cfg: Fix typo.
+
+2005-10-31  Danai SAE-HAN  <danai.sae-han@skynet.be>
+
+	* utils/subfonts/makefdx.pl: Provide header for output.
+	Add \CJKvlet lines.
+
+2005-08-19  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/TeXLive.txt: New file, describing the relationship between
+	CJK files and TeXLive packages.
+
+2005-08-18  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: Define \CJK@verbatim correctly if not
+	already defined.  Reported by Andre Dierker.
+
+	* doc/pdf/*: Move to...
+	* doc/pdfhowto/*: This.
+
+2005-08-11  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.6.0 released
+	======================
+
+	Set version to 4.6.0.
+
+	* doc/history.txt, doc/INSTALL, Makefile (version): Updated.
+
+	Update headers in all text files.
+
+2005-08-10  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CEF.txt, doc/CJK.txt, doc/CJKutf8.txt, doc/INSTALL,
+	doc/TDS.txt, doc/cjk-enc.txt, doc/commands.txt, doc/dvidrv.txt,
+	doc/fonts.txt, doc/hbf2gf.txt, doc/history.2_5, doc/history.txt,
+	doc/pinyin.txt, doc/pyhyphen.txt, doc/ruby.txt, doc/thaifont.txt,
+	doc/vertical.txt: Updated and revised.
+
+2005-08-05  Werner LEMBERG  <wl@gnu.org>
+
+	* COPYING: Updated to new FSF address.
+
+2005-08-05  Werner LEMBERG  <wl@gnu.org>
+
+	After email exchange with Ross Paterson, the old (too restrictive)
+	license of the hbf module has been changed to the three-clause BSD
+	license -- Ross no longer maintains and distributes this code.
+
+	* utils/hbf2gf/hbf.c: Change license to BSD.
+	(strdup) [WIN32]: Define.  Change taken from teTeX distribution.
+
+	* utils/hbf2gf/hbf.h: Change license to BSD.
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	current versions.
+
+	* utils/hbf2gf/configure: Regenerated with autoconf 2.59b.
+
+2005-08-04  Werner LEMBERG  <wl@gnu.org>
+
+	Update files to compile with the forthcoming TeXLive 2005.
+
+	* doc/README: Updated, extended.
+
+	* examples/muletest.tex: Updated to new VnTeX (for Vietnamese).
+	Use type1ec.sty.
+	Suppress hyphenation.
+
+	* examples/CJKbabel.tex: Don't use t5.sty but `vietnam' option of
+	babel.
+	Use type1ec.sty.
+
+	* examples/CJKmixed.tex: Define and use `TChinese' environment.
+	Call \CJKhorz at the beginning of document.
+
+	* examples/CJKutf8.tex: Don't use cyberbit but the new Unicode
+	(virtual) fonts of gbsn, bsmi, and mj.
+
+	* texinput/Bg5/c00bsmi.fdx: Updated to new bsmi vertical glyph font.
+
+	* texinput/Bg5/c00bkai.fdx: New file.
+
+	* texinput/UTF8/c70bkai.fd, texinput/UTF8/c70bkai.fdx,
+	texinput/UTF8/c70bsmi.fd, texinput/UTF8/c70bsmi.fdx,
+	texinput/UTF8/c60gbsn.fd, texinput/UTF8/c70gkai.fd,
+	texinput/UTF8/c70mj.fd: New files.
+
+	* utils/pyhyphen/pytest.tex: Usae type1ec.sty.
+
+	* Makefile: Add rules for new example and documentation files.
+	(version): Set top 4.5.3.
+	(CJK2DVI, LATEX2DVI): Add `utils/pyhyphen' to TEXINPUTS variable.
+	(DVI2PS): Replace it with...
+	(DVI2PDF): New variable.
+	Update all callers.
+	(MULE): Add path to `cjk-enc.el' while calling emacs.
+	(DISTTARGETS): Add new example and documentation files.
+	(predistdoc): Don't create `ps' but `pdf' subdirectories.
+	(manpages): Add `-ww' option to groff.
+	Don't create `ps' but `pdf' files.
+	(cweb): Don't create `ps' but `pdf' file.
+
+2005-08-04  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/*.doc, doc/japanese/*.doc, doc/chinese/*.doc,
+	contrib/wadalab/DNP.doc: Renamed to ...
+	* doc/*.txt, doc/japanese/*.txt, doc/chinese/*.txt,
+	contrib/wadalab/DNP.txt: This.
+
+	Update all references.
+
+2005-08-03  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKvert.sty (\CJKvert, \CJKhorz): Make commands act
+	completely local.
+	* doc/history.txt: Mention it.
+
+	* doc/pdf/HOWTO.txt: Mention new $SFDFONTS variable from TDS 1.1.
+
+2005-08-02  Werner LEMBERG  <wl@gnu.org>
+
+	Update of HLaTeX support to version 1.0.1.
+
+	* texinput/KS/HLaTeX/c63mg.fd, texinput/KS/HLaTeX/c63mgt.fd,
+	texinput/KS/HLaTeX/c63mmj.fd, texinput/KS/HLaTeX/c63mnv.fd,
+	texinput/KS/HLaTeX/c63msr.fd, texinput/KS/HLaTeX/c63ol.fd,
+	texinput/KS/HLaTeX/c63pbm.fd, texinput/KS/HLaTeX/c63pgr.fd,
+	texinput/KS/HLaTeX/c63pgs.fd, texinput/KS/HLaTeX/c63pgt.fd,
+	texinput/KS/HLaTeX/c63pmg.fd, texinput/KS/HLaTeX/c63pmgt.fd,
+	texinput/KS/HLaTeX/c63pmj.fd, texinput/KS/HLaTeX/c63pmmj.fd,
+	texinput/KS/HLaTeX/c63pmnv.fd, texinput/KS/HLaTeX/c63pmsr.fd,
+	texinput/KS/HLaTeX/c63pol.fd, texinput/KS/HLaTeX/c63ppg.fd,
+	texinput/KS/HLaTeX/c63ppn.fd, texinput/KS/HLaTeX/c63psm.fd,
+	texinput/KS/HLaTeX/c63ptt.fd, texinput/KS/HLaTeX/c63pyt.fd,
+	texinput/KS/HLaTeX/c63sm.fd, texinput/KS/HLaTeX/c63tt.fd,
+	texinput/KS/HLaTeX/c64mg.fd, texinput/KS/HLaTeX/c64mgt.fd,
+	texinput/KS/HLaTeX/c64mmj.fd, texinput/KS/HLaTeX/c64mnv.fd,
+	texinput/KS/HLaTeX/c64msr.fd, texinput/KS/HLaTeX/c64ol.fd,
+	texinput/KS/HLaTeX/c64pbm.fd, texinput/KS/HLaTeX/c64pgr.fd,
+	texinput/KS/HLaTeX/c64pgs.fd, texinput/KS/HLaTeX/c64pgt.fd,
+	texinput/KS/HLaTeX/c64pmg.fd, texinput/KS/HLaTeX/c64pmgt.fd,
+	texinput/KS/HLaTeX/c64pmj.fd, texinput/KS/HLaTeX/c64pmmj.fd,
+	texinput/KS/HLaTeX/c64pmnv.fd, texinput/KS/HLaTeX/c64pmsr.fd,
+	texinput/KS/HLaTeX/c64pol.fd, texinput/KS/HLaTeX/c64ppg.fd,
+	texinput/KS/HLaTeX/c64ppn.fd, texinput/KS/HLaTeX/c64psm.fd,
+	texinput/KS/HLaTeX/c64ptt.fd, texinput/KS/HLaTeX/c64pyt.fd,
+	texinput/KS/HLaTeX/c64sm.fd, texinput/KS/HLaTeX/c64tt.fd,
+	texinput/KS/HLaTeX/c65mg.fd, texinput/KS/HLaTeX/c65mgt.fd,
+	texinput/KS/HLaTeX/c65mmj.fd, texinput/KS/HLaTeX/c65mnv.fd,
+	texinput/KS/HLaTeX/c65msr.fd, texinput/KS/HLaTeX/c65ol.fd,
+	texinput/KS/HLaTeX/c65pbm.fd, texinput/KS/HLaTeX/c65pgr.fd,
+	texinput/KS/HLaTeX/c65pgs.fd, texinput/KS/HLaTeX/c65pgt.fd,
+	texinput/KS/HLaTeX/c65pmg.fd, texinput/KS/HLaTeX/c65pmgt.fd,
+	texinput/KS/HLaTeX/c65pmj.fd, texinput/KS/HLaTeX/c65pmmj.fd,
+	texinput/KS/HLaTeX/c65pmnv.fd, texinput/KS/HLaTeX/c65pmsr.fd,
+	texinput/KS/HLaTeX/c65pol.fd, texinput/KS/HLaTeX/c65ppg.fd,
+	texinput/KS/HLaTeX/c65ppn.fd, texinput/KS/HLaTeX/c65psm.fd,
+	texinput/KS/HLaTeX/c65ptt.fd, texinput/KS/HLaTeX/c65pyt.fd,
+	texinput/KS/HLaTeX/c65sm.fd, texinput/KS/HLaTeX/c65tt.fd: Removed.
+
+	* texinput/KS/HLaTeX/c63dn.fd, texinput/KS/HLaTeX/c63jgt.fd,
+	texinput/KS/HLaTeX/c63jmj.fd, texinput/KS/HLaTeX/c63jnv.fd,
+	texinput/KS/HLaTeX/c63jsr.fd, texinput/KS/HLaTeX/c63pga.fd,
+	texinput/KS/HLaTeX/c63ph.fd, texinput/KS/HLaTeX/c63sh.fd,
+	texinput/KS/HLaTeX/c63tz.fd, texinput/KS/HLaTeX/c63vd.fd,
+	texinput/KS/HLaTeX/c64dn.fd, texinput/KS/HLaTeX/c64jgt.fd,
+	texinput/KS/HLaTeX/c64jmj.fd, texinput/KS/HLaTeX/c64jnv.fd,
+	texinput/KS/HLaTeX/c64jsr.fd, texinput/KS/HLaTeX/c64pga.fd,
+	texinput/KS/HLaTeX/c64ph.fd, texinput/KS/HLaTeX/c64sh.fd,
+	texinput/KS/HLaTeX/c64tz.fd, texinput/KS/HLaTeX/c64vd.fd,
+	texinput/KS/HLaTeX/c65dn.fd, texinput/KS/HLaTeX/c65jgt.fd,
+	texinput/KS/HLaTeX/c65jmj.fd, texinput/KS/HLaTeX/c65jnv.fd,
+	texinput/KS/HLaTeX/c65jsr.fd, texinput/KS/HLaTeX/c65pga.fd,
+	texinput/KS/HLaTeX/c65ph.fd, texinput/KS/HLaTeX/c65sh.fd,
+	texinput/KS/HLaTeX/c65tz.fd, texinput/KS/HLaTeX/c65vd.fd: New files.
+
+	* texinput/KS/HLaTeX/c63bm.fd, texinput/KS/HLaTeX/c63gr.fd,
+	texinput/KS/HLaTeX/c63gs.fd, texinput/KS/HLaTeX/c63gt.fd,
+	texinput/KS/HLaTeX/c63mj.fd, texinput/KS/HLaTeX/c63pg.fd,
+	texinput/KS/HLaTeX/c63pn.fd, texinput/KS/HLaTeX/c63yt.fd,
+	texinput/KS/HLaTeX/c64bm.fd, texinput/KS/HLaTeX/c64gr.fd,
+	texinput/KS/HLaTeX/c64gs.fd, texinput/KS/HLaTeX/c64gt.fd,
+	texinput/KS/HLaTeX/c64mj.fd, texinput/KS/HLaTeX/c64pg.fd,
+	texinput/KS/HLaTeX/c64pn.fd, texinput/KS/HLaTeX/c64yt.fd,
+	texinput/KS/HLaTeX/c65bm.fd, texinput/KS/HLaTeX/c65gr.fd,
+	texinput/KS/HLaTeX/c65gs.fd, texinput/KS/HLaTeX/c65gt.fd,
+	texinput/KS/HLaTeX/c65mj.fd, texinput/KS/HLaTeX/c65pg.fd,
+	texinput/KS/HLaTeX/c65pn.fd, texinput/KS/HLaTeX/c65yt.fd: Updated.
+
+	* texinput/KS/HLaTeX/pshan.sty: No longer needed.  Make it empty for
+	backwards compatibility.
+
+	* texinput/CJK.enc (\CJK@KSHL@enc): Updated.
+
+	* doc/history.txt, doc/CJK.doc: Updated.
+
+2005-08-01  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfont/uni2sfd.pl (read_tfmfile): Fix reading CHARWD,
+	CHARHT, and CHARDP.
+
+2005-07-31  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfont/sfd2uni.pl: New script to produce Unicode virtual
+	subfonts from encoding specific subfonts.
+
+2005-07-29  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/DNP.sfd: Fix typo.  Found by Shunsaku Hirata.
+	* contrib/wadalab/fixwada2.pl: Since Wadalab fonts have already
+	been uploaded to CTAN, and the bug in DNP.sfd makes it necessary to
+	regenerate the fonts, and to update the version number and creation
+	date.
+
+2005-07-18  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/makefdx.pl, utils/subfonts/uni2sfd.pl: Fix typos.
+
+	* utils/subfonts/clonevf.pl: New script to produce a VF clone of
+	a TFM file.
+
+2005-07-18  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/makefdx.pl: New script to create FDX entries.
+
+2005-07-17  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/subfonts/subfonts.pe, utils/subfonts/uni2sfd.pl,
+	utils/subfonts/vertical.pe, utils/vertref.pe: New perl and FontForge
+	scripts for creating and handling subfonts.
+
+2005-07-12  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/fixwada2.pl, contrib/wadalab/makeuniwada.pl: New
+	scripts which fix glyph names and create virtual Unicode fonts for
+	the Wadalab font families.
+
+	* contrib/wadalab/DNP.sfd: A subfont definition file used by
+	`fixwada2.pl' and `makeuniwada.pl'.
+
+	* contrib/wadalab/c70goth.fd, contrib/wadalab/c70maru.fd,
+	contrib/wadalab/c70min.fd: New font definition files for Wadalab
+	fonts in Unicode encoding.
+
+	* contrib/wadalab/DNP.doc: Completely revised and updated.
+
+2005-07-07  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/history.txt: Updated.
+
+2005-07-05  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/thaifont/tools/c90.etx: Fix some typos.
+
+2005-07-04  Werner LEMBERG  <wl@gnu.org>
+
+	Update Thai support:
+
+	. Use fontinst.  We no longer need virtual fonts.
+	. Replace support for dbtt (which has an uncertain license) with
+	  garuda.
+	. Update to TDS 1.1.
+
+	* utils/thaifont/texmf/dvips/base/dbtt.enc: Removed.
+	* utils/thaifont/texmf/dvips/config/config.dbtt: Removed.
+	* utils/thaifont/texmf/dvips/config/dbtt.map: Removed.
+	* utils/thaifont/texmf/fonts/tfm/public/dbtt/*: Removed.
+	* utils/thaifont/texmf/fonts/vf/public/dbtt/*: Removed.
+
+	* utils/thaifont/texmf/dvips/base/norasi.enc: Removed.
+	* utils/thaifont/texmf/dvips/config/config.norasi: Move to...
+	* utils/thaifont/texmf/dvips/norasi/config.norasi: Here.
+	* utils/thaifont/texmf/dvips/config/norasi.map: Moved to...
+	* utils/thai/font/texmf/fonts/map/dvips/norasi/norasi.map: Here.
+	Updated.
+	* utils/thaifont/texmf/fonts/tfm/public/norasi/ftnr9z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnb9z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnbo9z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftno9z.tfm: Removed.
+	* utils/thaifont/texmf/fonts/tfm/public/norasi/ftnr8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnb8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftnbo8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/norasi/ftno8z.tfm: Updated.
+	* utils/thaifont/texmf/fonts/vf/public/norasi/*: Removed.
+
+	* utils/thaifont/texmf/dvips/garuda/config.garuda: New file.
+	* utils/thaifont/texmf/fonts/map/dvips/garuda/garuda.map: New file.
+	* utils/thaifont/texmf/fonts/tfm/public/garuda/fgdr8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdb8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdbo8z.tfm,
+	utils/thaifont/texmf/fonts/tfm/public/garuda/fgdo8z.tfm: New files.
+
+	* utils/thaifont/texmf/fonts/enc/dvips/thai/c90.enc: New file,
+	generated by fontinst.
+
+	* utils/thaifont/tools/c90.etx: New file.
+	* utils/thaifont/tools/c90.mtx: New file.
+	* utils/thaifont/tools/garuda.fontinst: New file.
+	* utils/thaifont/tools/norasi.fontinst: New file.
+	* utils/thaifont/tools/INSTALL: New file.
+	* utils/thaifont/tools/dbtt-old/*: New files.
+	* utils/thaifont/tools/README: Removed.
+	* utils/thaifont/tools/thai-dummy.afm: Removed.
+	* utils/thaifont/tools/thai.enc: Removed.
+	* utils/thaifont/tools/thailigs.vpl: Removed.
+
+	* texinput/thai/c90cmss.fd, texinput/thai/c90cmtt.fd,
+	texinput/thai/c90nrsr.fd: Updated.
+	* texinput/thai/c90dbss.fd: Removed.
+	* texinput/thai/c90gar.fd: New file.
+
+2005-06-27  Werner LEMBERG  <wl@gnu.org>
+
+	Remove the `rotate' keyword for vertical typesetting and introduce
+	the opposite, `norotate'.
+
+	* texinput/Bg5/c00bsmir.fdx, texinput/Bg5/c00kair.fdx: New files.
+
+	* doc/fdxfiles.doc, doc/vertical.doc, texinput/Bg5/c00bsmi.fdx,
+	texinput/GB/c10gbsn.fdx, texinput/CJKvert.sty: Updated.
+
+2005-06-25  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/CJKmixed.tex: New example file to demonstrate how to
+	use CJK scripts vertically and horizontally at the same time.
+
+2005-06-24  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/vertical.doc: Mention that you need an `.fdx' file if you
+	want to use rotated glyphs for vertical typesetting.
+
+2005-05-23  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.doc: Improve documentation of `encapsulated' option.
+	Suggested by Brian Murphy.
+
+2005-04-26  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/UTF8/UTF8.chr (\CJK@punctchar): Wrap code after \usefont
+	into three groups to make it work with CJKulem.sty.
+
+	* texinput/CJKutf8.sty, examples/CJKutf8.tex, doc/CJKutf8.doc: New
+	files.
+
+	* doc/history.txt: Updated.
+
+2005-04-22  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs/cjk-enc.el (cjk-viscii-lower, cjk-viscii-upper),
+	utils/lisp/mule-2.3/cjk-enc.el (cjk-viscii-lower, cjk-viscii-upper):
+	Update to next vntex version which no longer uses dblaccnt.sty.
+
+2005-03-27  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\CJKspace): Don't use \relax but \@empty.
+
+2005-03-02  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.doc: Mention `CJKbookmarks' option of hyperref package.
+
+2005-02-23  Werner LEMBERG  <wl@gnu.org>
+
+	* README: Updated.  No public CVS access possible currently.
+
+2004-07-26  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs/thai-word.el (thai-word-table): Use Thai word
+	list from IBM's ICU4J project; it is slightly larger and uses an
+	X license.
+
+2004-07-25  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs-20.3/*: Moved to...
+	* utils/lisp/emacs/*: This.
+
+	* utils/thaifont/tools/thai.enc: Minor updates.  Will be replaced
+	with a fontinst solution soon.
+
+2004-06-08  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/reftex.doc: New file.
+	* doc/history.txt: Updated.
+
+2004-06-07  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (cjk-write-all-files): Handle
+	case where files are in other directories.  Bug reported by Hartwig
+	Crailsheim.
+
+	* doc/cjk-enc.doc, doc/history.txt: Updated.
+
+2004-06-04  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/c42goth.fdx, contrib/wadalab/c42maru.fdx,
+	contrib/wadalab/c42min.fdx: Don't rotate the Hiragana-Katagana
+	prolongation mark.
+
+	* doc/vertical.doc: Updated.
+	Move text describing .fdx files to...
+	* doc/fdxfiles.doc: New file.
+
+	* texinput/CJK.sty: Minor spelling improvements.
+
+2004-06-03  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/DNP.doc: Improve patch for wftodm.c.
+
+2004-04-29  Werner LEMBERG  <wl@gnu.org
+	    Wenchang Sun  <sunwch@hotmail.com>
+
+	Add a style file for various CJK font effects.
+
+	* texinput/CJKfntef.sty, examples/CJKfntef.tex: New files.
+	* doc/CJK.doc, doc/history.txt: Document it.
+
+2004-03-13  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/*.enc: Replace \relax with \@empty in the \CJK@namegdef
+	assignments to assure that we only have expansion at this macro
+	level.
+
+	* doc/history.txt: Updated.
+
+2004-02-08  Werner LEMBERG  <wl@gnu.org>
+
+	Bug fix: Umlaut u with diacritic appears bold.
+
+	* texinput/pinyin.sty (\py@@@v): Apply kerning at correct place.
+
+2004-02-07  Werner LEMBERG  <wl@gnu.org>
+
+	Bug fix: Umlaut u with macron above was broken.
+
+	* texinput/pinyin.sty (\py@macron): Add second argument to
+	initialize \dimen@.  Update all callers.
+
+2004-02-06  Werner LEMBERG  <wl@gnu.org>
+
+	Bug fix: Use user-defined \CJKglue value.
+
+	* texinput/CJKulem.sty (\CJK@skip): New skip register.
+	(\UL@CJKglue): Use it.
+	(\UL@hook): Initialize \CJK@skip.
+	Move assignments of \LA@CJKglue, \LA@Thaiglue, and \LA@Thaibreak
+	to here.
+
+2004-02-05  Wenchang Sun  <sunwch@hotmail.com>
+
+	Bug fix: Disable line breaks before a post-punctuation CJK glyph
+	when \uline, \uwave, etc., are used.
+
+	* texinput/CJK.sty (\CJKnobreakglue): New macro.
+	(\Unicode): Use it.
+
+	* texinput/CJKulem.sty (\UL@CJKnobreakglue): New macro.
+
+	* texinput/standard.chr, texinput/extended.chr, texinput/pmC.chr,
+	texinput/Bg5/bg5.chr, texinput/JIS/EUC-JP.chr,
+	texinput/SJIS/SJIS.chr, texinput/SJIS/SJISdnp.chr,
+	texinput/UTF8/UTF8.chr, texinput/CNS/EUC-TW.chr (\CJK@char,
+	\CJK@charx, \CJK@punctchar, \CJK@punctcharx): Use \CJKnobreakglue.
+
+2004-02-02  Hin-Tak Leung  <htl10@users.sourceforge.net>
+
+	* doc/pdf/*: New directory tree documenting usage of CJK for
+	improved PDF output.
+	* doc/history.txt: Document it.
+
+2004-01-29  Wenchang Sun  <sunwch@hotmail.com>
+
+	* texinput/CJK.sty (\CJKpunctsymbol): New \let to \CJKsymbol.
+
+	* texinput/standard.chr, texinput/extended.chr, texinput/pmC.chr,
+	texinput/Bg5/bg5.chr, texinput/JIS/EUC-JP.chr, texinput/KS/KS.chr,
+	texinput/SJIS/SJIS.chr, texinput/SJIS/SJISdnp.chr,
+	texinput/UTF8/UTF8.chr, texinput/CNS/EUC-TW.chr (\CJK@punctchar,
+	\CJK@punctcharx): Replace \CJKsymbol with \CJKpunctsymbol.
+
+2003-10-12  Werner LEMBERG  <wl@gnu.org>
+
+	A first step to allow modification of horizontal character widths
+	which is needed for CJK fonts which don't have punctuation glyphs
+	centered within the CJK square.  The same mechanism will work with
+	vertical glyphs also; since a common interface will differ from the
+	current implementation, *.fdv files are renamed to *.fdx.  Note that
+	special character width handling of punctuation characters is still
+	missing.
+
+	* texinput/CJK.sty (\CJK@load@fdx): New function, used as a hook
+	for \try@load@fontshape.  It defines the macros \CJKhdef, \CJKhlet,
+	\CJKvdef, and \CJKvlet.  The writing direction is appended to the
+	character macros -- this also fixes a bug for vertical writing
+	support with Big5 encoding (some characters disappeared in the
+	output without any warning due to character macro name clashes with
+	the subfont macro names).
+	(\CJK@direction): New macro to select the writing direction.
+	(\ifCJK@vertical@): Moved to CJKvert.sty.
+
+	* texinput/CJKvert.sty (\ifCJK@vertical@): Moved from CJK.sty.
+	(\CJKvert, \CJKhorz): Set \CJK@direction.
+	(\CJKsymbol): Updated to use writing direction.
+	(\CJK@load@fdv): Removed.
+
+	* texinput/*.chr: Simplified since \ifCJK@vertical@ is no longer
+	needed.
+
+	* texinput/*.fdv, contrib/wadalab/*.fdv: Renamed to...
+	* texinput/*.fdx, contrib/wadalab/*.fdx: This.
+
+2003-10-25  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: Fix positions of \texordfeminine and
+	\textordmasculine.
+
+2003-09-20  Werner LEMBERG  <wl@gnu.org>
+
+	With the help of Paul Eggert <eggert@twinsum.com> and Edward G.J.
+	Lee <edt1023@ms17.hinet.net>, the conversion scripts now accept
+	parameters.
+
+	* utils/Bg5conv/bg5{pdf,}latex,
+	utils/CEFconv/{cef5{pdf,}latex,cef{pdf,}latex,cefs{pdf,}latex},
+	utils/SJISconv/sjis{pdf,}latex,
+	utils/extconv/{bg5+{pdf,}latex,gbk{pdf,}latex}: Rewritten to accept
+	arguments.
+	* doc/history.txt: Updated.
+
+2003-09-16  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/Bg5conv/bg5pdflatex,
+	utils/CEFconv/{cef5pdflatex,cefpdflatex,cefspdflatex},
+	utils/SJISconv/sjispdflatex,
+	utils/extconv/{bg5+pdflatex,gbkpdflatex}: New scripts to call
+	pdflatex.
+	* doc/history.txt: Updated.
+
+2003-07-06  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: Add some \@gobble macros in commands
+	defined with \mule@def.
+	Change definition of Thai EOL macro to make it really work.
+	(\mule@ignorespaces, \Thaispace, \Thainospace): New macros.
+
+	* doc/cjk-enc.doc, doc/history.txt: Document \Thaispace and
+	\Thainospace.
+
+2003-03-30  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.doc: Add item how to handle \bibliography which has
+	author names containing CJK characters.
+
+	* utils/hbf2gf/hbf2gf.1: Minor workarounds for current grohtml bugs.
+
+2003-03-28  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.5.2 released
+	======================
+
+	Update version numbers and time stamps in all non-binary files.
+
+2003-03-19  Werner LEMBERG  <wl@gnu.org>
+
+	Add improved support for pseudo-vertical typesetting.  Based on
+	ideas by Robert Fendt <robert.fendt@epost.de>.
+
+	* texinput/CJK.sty (\ifCJK@vertical@): New if.
+
+	* texinput/CJKvert.sty: Require `graphicx' package.
+	(\CJKvert, \CJKhorz, \CJKvdef, \CJKvlet, \CJKsymbolsimple): New
+	commands.
+	(\CJKsymbol): Add support for vertical parameters (`rotate',
+	`offset', `fullheight, `height') in the new *.fdv files.
+	(\CJK@load@fdv): New command to be appended to LaTeX's
+	\try@load@fontshape.
+
+	* texinput/*/*.chr: Replace calls to \CJKsymbol with an extended
+	version which, if \CJKvert is active, checks the existence of a
+	macro
+
+	  \<encoding>/<family>/<series>/<shape>/<plane>/<code>
+
+	This macro is then called if it exists, instead of calling
+	\CJKsymbol.  For halfwidth katakana, the macro is called
+
+	  \<encoding>/<family>/<series>/<shape>/<code>
+
+	For HLaTeX, the macro is called
+
+	  \<encoding>/<family>/<series>/<shape>/<first byte>/<second byte>
+
+	For UTF8, only characters in the range 0x800-0xFFFF get the new
+	code.
+
+	<code>, <first byte>, and <second byte> are decimal numbers.
+
+	* contrib/wadalab/c42{goth,maru,min}.fdv,
+	contrib/wadalab/c52{maru,min}.fdv, texinput/Bg5/c00bsmi.fdv,
+	texinput/GB/c10gbsn.fdv: New files containing information for
+	vertical typesetting.
+
+	* examples/Big5vert.tex: Use font shape `bsmi'.
+
+	* doc/history.txt, doc/chinese/README, contrib/wadalab/DNP.doc,
+	doc/vertical.doc, examples/README, README: Updated.
+
+	* Makefile (DVI2PS): Load bsmilp.map and gbsnlp.map.
+	(cweb): Fix typo (cms->cmz).
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	current versions.
+
+	* utils/extconv/extconv.w: Remove duplicated lines.
+	Fix incorrect use of \@.
+	* utils/extconv/extconv.c: Regenerated.
+
+2003-03-18  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty (\rua): New syllable.  While only dialect, it
+	actually is used...
+
+2003-03-12  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty (\den, \chua): Add missing syllables (found by
+	Jean-Luc Koning <Jean-Luc.Koning@esisar.inpg.fr>).
+
+2003-03-07  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty (\py@hy): Assure horizontal mode.
+
+2003-02-10  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\CJKchar): Make \CJKchar accept 7bit input for
+	character definitions other than standard.chr.
+	* doc/history.txt: Updated.
+
+2003-02-06  Werner LEMBERG  <wl@gnu.org>
+
+	Horizontal hints in Wadalab fonts weren't shifted vertically,
+	causing inferior results at small sizes.
+
+	* contrib/wadalab/makefont: Rewritten using awk.
+	* contrib/wadalab/fixwada: New.
+	* contrib/wadalab/DNP.doc, doc/history.txt: Updated.
+	* doc/INSTALL: Minor fixes.  Mention wadalab.doc and pfaedit.
+
+2003-01-31  Werner LEMBERG  <wl@gnu.org>
+
+	Add two commands \CJKhwkatakana and \CJKnohwkatakana to control
+	whether C49 encoding is used or whether SJIS half-width katakana are
+	mapped to full-width glyphs instead.
+
+	* texinput/CJK.sty (\CJKhwkatakana, \CJK@nohwkatakana): New commands.
+	(\ifCJK@hwkatakana@): New if-macro.
+
+	* texinput/SJIS/SJIS.chr, texinput/SJIS/SJISdnp.chr (\CJK@sjischar):
+	Add second and third parameter to call \CJK@XXX conditionally.
+	* texinput/SJIS/SJIS.enc (\CJK@SJISEncoding): Fill second and
+	third parameters for half-width katakana.
+	* texinput/SJIS/SJISdnp.enc (\CJK@SJISdnpEncoding): Ditto.
+	* doc/commands.doc, doc/CJK.doc, doc/history.txt: Updated.
+
+	* examples/README: New file.
+
+2002-07-29  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CNS/EUC-TW.chr (\CJK@shiftchar): Pass correct parameters
+	to \CJKchar.
+
+2002-06-19  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.5.1 released
+	======================
+
+	Update version numbers and time stamps in all non-binary files.
+
+2002-06-17  Werner LEMBERG  <wl@gnu.org>
+
+	Preparation of release 4.5.1.
+
+	* README: Updated.
+	* texinput/CJK.sty, doc/CJK.doc: Require LaTeX 2001/06/01 to have
+	support for \textkra, \texttstroke, and \textTstroke.
+	Other minor documentation updates.
+	* doc/*: Updated.
+
+2002-06-16  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/chinese/READMEgb.tex: Use `gbsn' font.
+	* Makefile (CJK2DVI): Remove *.toc also.
+	(LATEX2DVI): Take two arguments.
+	(LATEX): Ditto.
+	(DISTTARGETS): Add READMEb5 and pytest.
+	(READMEgb, pytest): New rules
+	(GB...): Updated.
+	(predistdoc): Create README file.
+	(distdoc): Depend also on `cweb'.
+	(cweb): New target.
+
+2002-06-14  Edward Lee  <edt1023@ms17.hinet.net>
+
+	* texinput/Bg5/c00bsmi.fd, texinput/Bg5/c00bsmir.fd: Fix typo.
+
+2002-06-13  Werner LEMBERG  <wl@gnu.org>
+
+	* Makefile: New file, used for creating the tarballs.
+	* README: Updated.
+	* texinput/GB/c10gbsn.fd, texinput/Bg5/c00bsmi.fd,
+	texinput/Bg5/c00bsmir.fd: New files for fonts from the TeXLive CD.
+	* doc/chinese/READMEb5.tex, examples/*: Changed to use the fonts
+	provided by the TeXLive CD.
+
+2002-06-12  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/JISdnp.enc (\CJK@JISdnpEncoding): Fix position of closing
+	brace.
+
+2002-06-07  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/thai/c90enc.def: New file, contributed by Dominique
+	Unruh <dominique@unruh.de>.
+	* texinput/thai/thaicjk.ldf: Use it.
+	* doc/history.txt: Updated.
+
+2002-05-16  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.doc: Document behaviour for master files without CJK
+	characters.
+	* doc/CJK.doc: Explain usage of `~' for BibTeX.
+
+2002-05-10  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKnumb.sty (\CJKnullspace): New macro to control the
+	additional space inserted before and after a circle used as a
+	CJK zero digit.
+	* doc/history.txt: Updated.
+
+2002-05-09  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKnumb.sty (\CJK@traditionalNumbers,
+	\CJK@simplifiedNumbers): New macros.
+	Use them for GB, GBK, Bg5, Bg5+ hooks.
+
+2002-05-01  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/commands.doc: Minor fix.
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	current versions.
+	* utils/hbf2gf/configure.in: Renamed to...
+	* utils/hbf2gf/configure.ac: This.
+	Updated to autoconf 2.53.
+	* utils/hbf2gf/configure: Regenerated with autoconf 2.53.
+	* utils/hbf2gf/README: Text improved.
+	* utils/hbf2gf/hbf2gf.1: Minor typographical fixes.
+
+2002-04-30  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\CJK@errxx, \CJKindent): New macros.
+	* texinput/CJK.enc (\CJK@spaceChar): Define it for all encodings.
+	It is used by \CJKindent.
+	(\CJK@KSHL@enc): Add \CJK@min and \CJK@max.
+	* texinput/SJIS/SJISdnp.enc (\CJK@SJISdnpEncoding),
+	texinput/JIS/JISdnp.enc (\CJK@JISdnpEncoding),
+	texinput/KS/HLaTeX/KSHL.enc (\CJK@KSHLEncoding): Use \CJK@errxx
+	for unused slots.
+
+	* doc/history.txt, doc/commands.doc: Document \CJKindent.
+
+	* utils/CEFconv/cef5conv.w, utils/CEFconv/cefconv.w: Fix
+	documentation errors.
+	* utils/CEFconv/cef5conv.c, utils/CEFconv/cefconv.c: Regenerated.
+
+2002-04-29  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\pickup@font): Add comment character.
+
+2002-04-28  Werner LEMBERG  <wl@gnu.org>
+
+	Preparation of release 4.5.0.
+
+	* README: Updated.
+
+2002-04-27  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty (\CJKsymbol, \CJKsymbols): Simplified.
+	(\Unicode, \CJKenc): Fix error text.
+
+2001-10-08  Mike Fabian <mfabian@suse.de>
+
+	* contrib/wadalab/c42goth.fd: Use `dgj' for normal series and add
+	`\CJKbold' for bold series.
+
+2001-07-31  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.doc: Note use of \cleardoublepage if problems occur with
+	two-column printing.
+
+2001-07-27  Fabrice Popineau  <Fabrice.Popineau@supelec.fr>
+
+	* utils/cjklatex/cjklatex.c: New file.
+
+2001-06-27  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CJK.doc: Add info how to use a CJK environment in the
+	preamble.
+	* doc/cjk-enc.doc: Simplify usage of AUC TeX.
+	Modify definition of `TeX-run-CJK-LaTeX' to handle directories
+	properly.
+
+2001-06-15  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.enc (\CJK@disableMakeUppercase): Define it as \relax
+	if in preprocessed mode.
+
+2001-06-14  HANDA Ken'ichi  <handa@etl.go.jp>
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (cjk-set-buffer-multibyte):
+	Use backquote operator to make cjk-enc.elc work correctly.
+
+2001-06-08  Werner LEMBERG  <wl@gnu.org>
+
+	The next LaTeX release will use \textkra, \texttstroke, and
+	\textTstroke for the missing latin-4 characters.
+
+	* texinput/mule/MULEenc.sty: Use \textkra.  Add \TEXTTSTROKE.
+	* utils/lisp/emacs-20.3/cjk-enc.el, utils/lisp/mule-2.3/cjk-enc.el:
+	Use \texttstroke and \TEXTTSTROKE.
+
+2001-05-26  Werner LEMBERG  <wl@gnu.org>
+
+	* texinputs/CJK.sty: Restore EOL character before loading `CJK.cfg'.
+
+2001-05-18  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/DNP.doc: Document installation for pdfTeX.
+	* contrib/wadalab/makefont: Updated to normalize font matrix of
+	PS fonts.
+
+2001-04-24  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	latest version from gnu.org.
+
+2001-04-21  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/muletest.tex: Remove Thai support so that this file can
+	really be run with Mule 2.3.
+	Update comment.
+	* example/CJKbabel.tex, example/rubytest.tex: Update comment.
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (cjk-format-spec-table): Fix
+	Thai.
+	* texinput/mule/MULEenc.sty (\mule@char): Don't use delimiter.
+	* texinput/SJIS/sjisdnp.enc: Update this file also to the changes
+	introduced 2001-03-15.
+
+2001-04-17  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/*.tex: Added local variables for Emacs to specify
+	encoding.
+	* doc/history.txt: Emphasize the need of local variables for the
+	encoding if `cjk-enc.el' is used.
+
+2001-04-02  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs-20.3/cjk-enc.el: Fix documentation to follow
+	Elisp documentation conventions.
+
+2001-04-01  Werner LEMBERG  <wl@gnu.org>
+
+	Make UTF8 encoding work in TOC.
+
+	* texinput/CJK.sty (\CJK@namedef): New macro.
+	* texinput/UTF8/UTF8.bdg: Use it.
+
+2001-03-28  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: Use \textnumero instead of \CYRNo
+	(found by Vladimir Volovich).
+
+2001-03-18  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/cjkspace.el, INSTALL: Fix documentation.
+
+2001-03-15  Werner LEMBERG  <wl@gnu.org>
+
+	A major change: Preprocessed and non-preprocessed mode can be used
+	simultaneously!  For example, you can now use include a file encoded
+	in UTF-8 in another file encoded in Big5.
+
+	To achieve this, ^^7f will always start a command in preprocessed
+	mode, even for CJK macros.
+
+	* texinput/CJK.sty: Require MULEenc.sty.
+	Remove ^^7f handling.
+	Remove preprocessed versions of \CJK@XX, \CJK@XXX, and \CJK@XXXX.
+	(\CJKcaption): Always include .cpx files.
+
+	* texinput/CJK.enc (\CJK@disableMakeUppercase): New macro.
+	(\CJK@shiftError): New macro.
+	(\CJK@unicodeError): New macro.
+	(\CJK@makeEnvironment): Don't handle \MakeUppercase.
+	(\CJK@*@enc): Always use `true' branch in \CJKpreproc conditionals.
+
+	* texinput/mule/MULEenc.sty (\mule@@@arg, \mule@def): Use \string.
+	(\mule@@def): New function to set up macros for leading bytes in the
+	range ^^81-^^fe.
+	* texinput/extended.enc (\CJK@extendedEncoding),
+	texinput/Bg5/Bg5.enc (\CJK@Bg5Encoding), texinput/SJIS/SJIS.enc
+	(\CJK@SJISEncoding): Use \CJK@disableMakeUppercase.
+	* texinput/pmCbig.enc (\CJK@pmCbigEncoding), texinput/pmCsmall.enc
+	(\CJK@pmCsmallEncoding), texinput/standard.enc
+	(\CJK@standardEncoding): Add \relax.
+	* texinput/CNS/EUC-TW.enc (\CJK@EUC-TWEncoding),
+	texinput/JIS/EUC-JP.enc (\CJK@EUC-JPEncoding): Use \CJK@shiftError
+	for single shifts.  Add	\relax for all other macros.
+	* texinput/UTF8/UTF8.enc (\CJK@UTF8Encoding): Use \CJK@unicodeError
+	for three-byte sequences.  Add \relax for all other macros.
+
+	* texinput/*/*.cpx: Updated to new preprocessing scheme.
+
+	* utils/*conv/*conv.w: Updated to new preprocessing scheme.
+	* utils/*conv/*conv.c: Regenerated.
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (cjk-format-spec-table): Updated
+	to new preprocessing scheme.
+	(cjk-encode): Fix file header insertion strings.
+	* utils/lisp/mule-2.3/cjk-enc.el (cjk-enc-table): Updated to new
+	preprocessing scheme.
+	(cjk-encode): Fix file header insertion strings.
+
+	* doc/*: Updated and revised.
+
+2001-03-13  Werner LEMBERG  <wl@gnu.org>
+
+	Implement \CJKinput.
+
+	* mule/MULEenc.sty (\CJKinput): New macro.
+	(\CJKinclude): Fix error message.
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (cjk-write-all-files): Update
+	docstring.
+	(tex-input-regexp): New test for \CJKinput.
+	(do-batch-cjk-write-file): Fix typo.
+
+	* texinput/thai/thaicjk.ldf: Fix typo.
+
+2001-02-21  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/INSTALL: Minor improvements.
+
+2001-02-13  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/config.{guess,sub}: Updated (from ftp.gnu.org).
+
+2000-12-17  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/SJISconv/sjisconv.w: Fix typo ff -> 7f.
+	* utils/CEFconv/cef5conv.w, utils/CEFconv/cefconv.w: Ditto.
+
+	* utils/*conv/*conv.w: \XXXpreproc will now contain the version of
+	the conversion program.
+	* utils/*conv/*conv.c: Updated.
+
+	* doc/history.txt: Updated.
+
+	* all files: Version number changed to 4.4.0.
+
+2000-12-03  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/configure.in: Fix kpathsea checking message.
+	* utils/hbf2gf/configure: Updated.
+
+2000-12-02  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.doc: Clarify usage of cjk-coding.
+	* doc/INSTALL: Add hints how to use kpsewhich to check
+	configuration.
+
+2000-12-01  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/INSTALL: Fix documentation of --with-kpathsea-include.
+	* doc/cjk-enc.doc: Fix typo.
+
+2000-09-21  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/{CJK.sty, CJKulem.sty, pinyin.sty, ruby.sty}: Replacing
+	some \ifdim with \ifnum.
+
+2000-09-20  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKulem.sty: Fixed two nasty bugs (spotted by Sim Ing
+	<sim@ubs-aptsocap.org>): No underlining for \CJKglue and no \CJKglue
+	before and after \uline.
+
+2000-08-28  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/thaifont/texmf/dvips/config/config.{norasi,dbtt}: New files.
+	* doc/thaifont.doc: Added info about PS font configuration.
+
+2000-08-24  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs-20.3/thai-word.el (thai-update-word-table): Add
+	documentation string.
+
+2000-08-24  HANDA Ken'ichi  <handa@etl.go.jp>
+
+	* utils/lisp/emacs-20.3/thai-word.el (thai-update-word-table): New
+	function.
+	(thai-find-word-ends): Fix loop.
+
+2000-08-23  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/thai/thaicjk.ldf: Remove warning about nonexistent
+	hyphenation patterns.
+
+2000-08-20  Werner LEMBERG  <wl@gnu.org>
+
+	Another big sigh.  Wrong glyph names for Norasi's Thai digits.
+	Additionally, all ligature rules no longer use `>' to make kerning
+	possible.
+
+	* utils/thaifont/texmf/dvips/base/norasi.enc: Fixed.
+	* utils/thaifont/tools/{thai.enc,thailigs.vpl}: Updated.
+	* utils/thaifont/texmf/fonts/{tfm,vf}/public/{dbtt,norasi}/*:
+	Regenerated.
+
+2000-08-19  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/thai.tex: New file.
+	* doc/history.txt: Updated.
+
+	* examples/CJKbabel.tex: Doc fixes.
+
+2000-08-17  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.el, doc/thaifont.doc: Give better URL for thailatex
+	package.
+
+2000-08-15  Werner LEMBERG  <wl@gnu.org>
+
+	Sigh, another forgotten Thai ligature rule.
+
+	* utils/thaifont/tools/{thai.enc,thailigs.vpl}: Updated.
+	* utils/thaifont/texmf/fonts/{tfm,vf}/public/{dbtt,norasi}/*:
+	Regenerated.
+
+2000-08-15  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/thai/c90{cmr,cmss.cmtt}.fd: Make font substitution
+	silent.
+
+	* utils/thaifont/texmf/dvips/base/norasi.enc: Fixing typo.
+	* utils/thaifont/texmf/fonts/{tfm,vf}/public/norasi/*: Updated.
+
+2000-08-13  Werner LEMBERG  <wl@gnu.org>
+
+	Improved support for Thai.
+
+	* doc/thaifont.doc: New file.
+
+	* utils/thaifont/*: Metrics and support files for Thai fonts.
+
+	* texinput/thai/c90{nrsr,dbss}.fd: New font definition files for
+	dbtt and norasi font families.
+	* texinput/thai/c90{cmr,cmss,cmtt}.fd: Font alias files.
+	* texinput/thai/thaicjk.ldf: New file for thai support in Babel.
+	* texinput/thai/thai.sty: Removed.
+
+	* utils/lisp/emacs20.3/cjk-enc.el: Redesigned Thai support by
+	HANDA Ken'ichi <handa@etl.go.jp>.
+	Will now run under XEmacs also (with help of Martin Buchholz
+	<martin@xemacs.org>).  No Thai support yet due to limitations in
+	current XEmacs version (21.2).
+	(cjk-write-all-files): New optional argument to force the processing
+	of all files.
+	(do-batch-cjk-write-file): New function.
+	(batch-cjk-write-file): Use do-batch-cjk-write-file.
+	(batch-force-cjk-write-file): New function.  Uses
+	do-batch-cjk-write-file also.
+	* utils/lisp/mule-2.3/cjk-enc.el: Rename write-cjk-file to
+	cjk-write-file for consistency.
+	* utils/lisp/emacs20.3/thai-word.el: New file written by HANDA
+	Ken'ichi for Thai word breaking support.  Replaces thaiconv.
+	* utils/thaiconv: Removed.
+
+	* utils/lisp/emacs20/cjk-enc.el: Removed.  No longer supported.
+
+	* texinput/mule/MULEenc.sty: Adapted to new cjk-enc.el version.
+	Make it robust for CJKulem.sty.
+
+	* examples/CJKbabel.tex: Use CJKulem.sty and thaicjk module for
+	Babel.
+	* examples/muletest.tex: Remove \if... \fi clause for Thai.
+
+	* doc/history.txt, doc/INSTALL: Updated.
+
+2000-08-12  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJKulem.sty: New file which provides CJK support for
+	ulem.sty.
+	* doc/history.txt, doc/CJK.doc: Updated.
+
+2000-08-09  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/configure.in: Replaced --with-kpathsea-dir with
+	--with-kpathsea-lib and --with-kpathsea-include.
+	* utils/hbf2gf/configure, doc/history.txt, doc/INSTALL,
+	doc/hbf2gf.doc: Updated.
+
+	* texinput/CJK.sty, texinput/mule/MULEenc.sty: New command
+	\CJKverbatim which disables \Thaiglue and \CJKglue in verbatim
+	environments if the `verbatim' package is loaded.
+	* doc/history.txt, doc/CJK.doc, doc/commands.doc: Updated.
+
+2000-07-30  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	latest version from ftp.gnu.org.
+
+2000-07-27  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/thaiconv/thaiconv.c: Improve comment.
+
+	* *.fd: Set \hyphenchar to -1 for all CJK fonts.
+
+2000-06-23  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub: Updated to
+	latest version from ftp.gnu.org.
+
+	* texinput/CJK.enc: Removed redefinition of C42 and C49.
+
+2000-05-03  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty: Specifying an optional argument to the `CJK'
+	size function will no longer produce a warning message for each
+	subfont.
+
+	* contrib/wadalab/*.fd, doc/CJK.doc, doc/fonts.doc: Wadalab PS fonts
+	now use `CJK' size functions instead of `DNP' ones.
+
+	* doc/history.txt: Updated.
+
+2000-05-02  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/*/*.cpx: Replace incorrect 0xFF with 0x7F.
+
+2000-04-18  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty, texinput/pinyin.sty, texinput/ruby.sty:
+	Balancing the small kern control values, e.g. using
+	`\kern -1sp\kern 1sp' instead of `\kern 1sp' only.
+
+	Replacing kern value of 3sp with 5sp to avoid clash with ulem.sty.
+
+2000-04-01  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.3.0 released
+	======================
+
+	This version exists on the Tex Live CD 5 only; a lot of files have
+	been adapted to the special needs of the CD's texmf tree -- these
+	changes are not in the CVS tree.
+
+2000-03-15  Werner LEMBERG  <wl@gnu.org>
+
+	* contrib/wadalab/wadalab.map: Renamed from Wadalab.map
+	* contrib/wadalab/DNP.doc: Updated accordingly.
+
+	* utils/hbf2gf/cfg/*: Updated -- if possible, the foundry is used
+	as the target directory instead of the encoding, e.g.
+	`tfm/ntu/b5ka12'.
+
+2000-03-14  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/SJIS/SJISdnp.{chr,enc}: New files to support SJIS
+	encoding with DNP fontencoding.
+	* texinput/CJK.enc: Add SJISdnp.
+	Add forgotten punctuation pattern macro to KSHL encoding.
+	* doc/history.txt, doc/CJK.doc, doc/command.doc: Update.
+
+2000-03-13  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty: Fixing definition of ^^7f to do nothing if
+	written to the TOC file.
+
+2000-03-12  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/KS/HLaTeX/pshan.sty: Fix typo.
+
+	Call \mj to activate default family correctly.
+
+	* contrib/wadalab/makefont: Add echo commands.
+	* contrib/wadalab/DNP.doc: Updated. Add info about gsftopk.
+
+2000-03-03  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/README: New file.
+	* utils/hbf2gf/hbf2gf.1, doc/hbf2gf.doc: Small improvements.
+
+	* README: Removed `romaji environment' from TODO section.  According
+	to HANDA Ken'ichi <handa@etl.go.jp> it is impossible to provide
+	hyphenation patterns for transcribed Japanese without semantic
+	analysis.
+
+2000-03-02  Werner LEMBERG  <wl@gnu.org>
+
+	* README, doc/INSTALL: Slight improvements.
+
+	* utils/hbf2gf/Makefile.in, utils/hbf2gf/configure.in: Fix incorrect
+	test for NO_STRDUP.  Thanks to <Andries.Brouwer@cwi.nl>.
+
+2000-02-06  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/CJK.sty, texinput/mule/MULEenc.sty,
+	utils/lisp/*/cjk-enc.el, utils/*conv/*conv.[cw], history.txt,
+	CJK.doc, cjk-enc.doc: Use 0x7F both as the multiplex character and
+	as a delimiter -- apparently no package uses this character...
+	This solves all problems with \uppercase and \lowercase.
+
+	* utils/hbf2gf/cfg/j2so12.cfg: Added `min_char' parameter to get
+	correct offsets (thanks to Martin Minich
+	<minich5@kepler.fmph.uniba.sk> for finding this bug).
+
+2000-01-26  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.doc, doc/history.txt, examples/CJKbabel.tex,
+	examples/muletest.tex, texinput/mule/MULEenc.sty,
+	utils/lisp/*/cjk-enc.el: Change X5 to T5.
+
+2000-01-20  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/muletest.tex: Greek added; updated to X5 encoding.
+	* examples/CJKbabel.tex: Greek added; updated to X5 encoding.
+
+	* texinput/mule/MULEenc.sty: Use \AtBeginDocument for \mule@<accent>
+	definitions.
+
+2000-01-14  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.doc: Added info about file variables to specify
+	document encoding.
+
+2000-01-03  Ching-Mo CHANG  <chingmo@mail.onweb.com.tw>
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (cjk-write-all-files): Always
+	returned nul for include and bib file names due to incorrect
+	pattern matching.
+
+1999-12-18  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/configure.in: Removed `-pedantic' flag which causes
+	problems with newer gcc versions.
+
+1999-11-19  Werner LEMBERG  <wl@gnu.org>
+
+	* examples/muletest.tex, examples/CJKbabel.tex: Fixing a typo.
+
+1999-11-07  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/CEF.doc: Minor fixes.
+
+	* doc/CJK.doc: Updated; minor fixes.
+
+1999-11-06  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.doc, doc/commands.doc, doc/fonts.doc: Minor fixes.
+
+	* doc/vertical.doc, doc/history.txt: Updated.
+
+1999-11-05  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: Added \CJKinclude{<file>} and
+	\CJKbibliography{<file>}.  These functions act identically to
+	\include resp. \bibliography but load <file>.cjk
+	resp. <file>-cjk.bib.
+
+	* utils/lisp/emacs-20.3/cjk-enc.el: Using `cjk' throughout as the
+	prefix to variable and function names.  This causes a renaming of
+	virtually all functions.  Some other local variables were renamed
+	also for consistency.
+
+	Changing ET5 to X5 encoding for Vietnamese.
+
+	(decompose-char): Removed.  Not needed at all.
+
+	(cjk-tex-in-comment): New function.  Similar to AUC TeX's
+	TeX-in-comment function; has been added to be independent from AUC
+	TeX.
+
+	(cjk-write-all-files): New function.  It checks for \CJKinclude
+	and \CJKbibliography commands in the master file and converts the
+	referenced files accordingly if necessary.  Intended as a hook to
+	AUC TeX to make multiple files work as expected.
+
+1999-11-02  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/cjk-enc.doc: Small improvement in explanation of usage with
+	AUC TeX.
+
+1999-10-24  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs-20.3/cjk-enc.el (get-cjk-name): New function.
+
+	(file-write-cjk-file, batch-write-cjk-file): New functions which
+	do the same as write-cjk-file but operate on a given file (resp. a
+	suite of files and directories given on the command line).
+
+	(write-cjk-file): Will now properly ask for a file name if the
+	current buffer is not visiting a file.
+
+	* doc/cjk-enc.doc: Expanded TeX-translate-location-hook to cover
+	CJK BibTeX input files also.
+
+	TeX-run-CJK-LaTeX now checks whether it must call write-cjk-file
+	at all (emacs > 20.3 only).
+
+1999-10-07  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: Removed \textendash wrapper macro.
+
+	* utils/lisp/{emacs-20.3,emacs-20,mule-2.3}/cjk-enc.el: Added
+	iso-8859-9 (Greek) support (mapped to LGR encoding as used in the
+	Babel package).
+
+	Fixed character `SOFT-HYPHEN' in iso-8859-x encodings (using `\-'
+	instead of \textendash).
+
+	* README, doc/cjk-enc.doc, doc/history.txt: Updated.
+
+	* doc/CJK.doc: Fixed a typo.
+
+	* texinput/CJK.enc, texinput/CJK.sty, texinput/*/{*.cap,*.cpx}:
+	Replaced `\ifx\foo \undefined' with `\@ifundefined{}{}' to fix the
+	case that a not-defined macro has been tested with \@ifundefined
+	before.  In this case, it is no longer undefined but identical to
+	\relax.
+
+	* texinput/pmC.chr: Fixed punctuation macros for pmC.
+
+1999-10-02  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty: The method with appending `\-' to all
+	syllables fails (stupid I am :-), so here a solution which really
+	works.  It uses a small kern (4sp, similar to the ruby and CJK
+	packages) to tell the following pinyin syllable that a
+	discretionary has to be inserted.
+
+1999-10-01  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/mule/MULEenc.sty: \lccode and \uccode of ^^ff must not
+	be modified, otherwise hyphenation patterns containing \ss will
+	fail (which happens e.g. in German).
+
+1999-09-28  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/history.txt: Updated.
+
+	* utils/pyhyphen/pyhyph.tex, utils/pyhyphen/pytest.tex,
+	utils/pyhyphen/pinyin.ldf, doc/pyhpyhen.doc: Hyphenation patterns
+	for unaccented pinyin syllables to be used with the Babel package.
+
+	* utils/pyhyphen/pinyin.c, utils/pyhpyhen/pinyin.tr: Utility files
+	for creating pinyin hyphenation patterns.
+
+1999-09-27  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/history.txt: Updated.
+
+1999-09-21  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty: Adding hyphenation points at the end of all
+	syllables.
+
+1999-09-18  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/pinyin.sty: Making accent commands like \py@a robust.
+
+	Added option `useCMmacron' (for LaTeX only) to use a macron accent
+	from the CM fonts in case the used font doesn't have it
+	(e.g. some versions of virtual files for Palatino).
+
+1999-08-26  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/hbf2gf.1: Added some documentation how to find out
+	the expanded value of a kpathsea variable (like $MISCFONT).
+
+1999-08-07  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/thaiconv/thaiconv.c (adj): Fixed invalid array index in
+	case of marks without base characters.
+
+1999-07-07  Werner LEMBERG  <wl@gnu.org>
+
+	* texinput/Bg5/Bg5.chr,
+	  texinput/extended.chr: Fixed a typo \CJK@temp->\CJK@gtemp
+
+1999-06-30  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/lisp/emacs-20/cjk-enc.el,
+	  utils/lisp/emacs-20.3/cjk-enc.el,
+	  utils/lisp/mule-2.3: Fixed code for 0x80 multiplex character.
+
+1999-06-22  Werner LEMBERG  <wl@gnu.org>
+
+	* doc/TDS.doc: Completely revised.
+
+1999-06-10  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/configure.in: Removed `-ansi' flag which can cause
+	problems with the kpathsea library (which is not compiled with
+	-ansi).
+
+1999-06-07  Werner LEMBERG  <wl@gnu.org>
+
+	* utils/hbf2gf/hbf2gf.1: Added documentation about MiKTeX.
+
+	* utils/hbf2gf/hbf2gf.w: Added support for MiKTeX file search
+	library.
+
+	* texinput/CEF/*.fd: Removed -- these files were erroneously
+	included into the CVS repository.
+
+1999-06-04  Werner LEMBERG  <wl@gnu.org>
+
+	* *.fd files: minor documentation addition regarding font
+	encoding.
+
+	* all files: Changed date/version to 4.3.0.
+
+1999-06-02  Werner LEMBERG  <wl@gnu.org>
+
+	* README: Added info about http and ftp home sites and how to
+	access the CVS repository.
+
+1999-06-01  Werner LEMBERG  <wl@gnu.org>
+
+	* README: Added info about CVS mailing list.
+
+1999-05-29  Werner LEMBERG  <wl@gnu.org>
+
+	* README: Added mailing list.
+
+	* doc/INSTALL: Small correction.
+
+	* README: Small additions.
+
+;; Local Variables:
+;; coding: utf-8
+;; End:
+
+    Copyright (C) 1999, 2001-2012
+      Werner Lemberg <wl@gnu.org>
+
+  This file is part of the CJK package for using Asian logographs
+  (Chinese/Japanese/Korean) with LaTeX2e.
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2, or (at your option)
+  any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with GNU Emacs; see the file COPYING.  If not, write to the
+  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  Boston, MA 02110-1301, USA.

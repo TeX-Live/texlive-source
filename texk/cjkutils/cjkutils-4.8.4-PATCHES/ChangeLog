@@ -1,0 +1,71 @@
+2015-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported cjk-4.8.4/utils source tree from:
+	  http://cjk.ffii.org/cjk-4.8.4.tar.gz
+	* patch-01-static, patch-02-unused, patch-03-unsigned (removed):
+	Now included upstream.
+	* patch-04-mingw64: Adapted.
+
+2014-11-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-04-mingw64 (new): Required for MinGW64, but why?
+
+2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-unsigned (new): Avoid undefined behaviour.
+
+2012-12-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-unused (new): Drop unused variable (gcc-4.6 warning).
+
+2012-05-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-static (new): Build fix for 64-bit Mac OS X 10.7.3.
+	Clang does not like non-static inline functions as used here.
+	While at it, all local functions are declared static.
+	Do not extend #ifdef HAVE_EMTEXDIR...#endif over several sections.
+
+2012-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported cjk-4.8.3/utils source tree from:
+	  http://cjk.ffii.org/cjk-4.8.3.tar.gz
+	* patch-01-ANSI-C, patch-02-const, patch-03-kpathsea,
+	patch-04-cjklatex, patch-05-cjkpdflatex, patch-06-cjklatex,
+	patch-07-CEFconv, patch-09-from-git (removed): All included. 
+
+2011-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-08-SJISconv (removed): The user-defined character area of
+	SJIS is not supported because it is not portable.
+
+	Updates from http://git.savannah.gnu.org/r/cjk.git.
+	* patch-09-from-git (new): From Werner Lemberg <wl@gnu.org>.
+	Update test results tests/{cefs,sjis}conv.cjk.
+
+2011-09-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-CEFconv (new): Make sure that, as advertised,
+	cef5conv acts as bg5conv + cefconv and cefsconv as sjisconv +
+	cefconv; make TeX description of cefconv agree with the code.
+	* patch-08-SJISconv (new): Correct upper limit for first byte of
+	Kanji SJIS (CP 292) codes.
+
+2011-09-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-cjklatex (new): Drop #include <kpathsea/win32lib.h>.
+
+2010-12-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Adapt to cjk-4.8.2/utils.
+	* patch-01-ANSI-C (new): ANSI C function declarations.
+	* patch-02-const (new): Declare numerous strings as const.
+	* patch-03-kpathsea (new): Require recent kpathsea version.
+
+	* patch-04-cjklatex (new): Merge upstream versions with changes
+	  from Akira (mail 18 Dec 2010 09:12:01).
+	  Return type of main is int. ANSI C function declarations.
+	  Declare functions as static. Declare various strings as const.
+
+	* patch-05-cjkpdflatex (new) [LATEX]: Allow to build both
+	  gbklatex.exe and gbkpdflatex.exe from cjklatex.c.
+
