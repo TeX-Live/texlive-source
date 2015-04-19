@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 36861 2015-04-15 02:44:03Z preining $
+# $Id: fmtutil.pl 36909 2015-04-18 16:43:48Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -33,11 +33,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 36861 2015-04-15 02:44:03Z preining $';
-my $lastchdate = '$Date: 2015-04-15 04:44:03 +0200 (Wed, 15 Apr 2015) $';
+my $svnid = '$Id: fmtutil.pl 36909 2015-04-18 16:43:48Z preining $';
+my $lastchdate = '$Date: 2015-04-18 18:43:48 +0200 (Sat, 18 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36861 $';
+my $svnrev = '$Revision: 36909 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "svn$svnrev ($lastchdate)";
@@ -362,6 +362,7 @@ sub callback_build_formats {
   print_info("Not selected formats: $nobuild\n") if ($nobuild);
   print_info("Not available formats: $notavail\n") if ($notavail);
   print_info("Failure during builds: $err\n") if ($err);
+  chdir($thisdir);
   return 0;
 }
 
