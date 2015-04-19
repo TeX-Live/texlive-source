@@ -17,10 +17,13 @@
 use strict;
 use warnings;
 
+# list of modules
+my @listOfModules = ('FindBin','YAML::Tiny','File::Copy','File::Basename','Getopt::Long','File::HomeDir');
+
 # check the other modules are available
-foreach my $moduleName ('FindBin','YAML::Tiny','File::Copy','File::Basename','Getopt::Long','File::HomeDir')
+foreach my $moduleName (@listOfModules)
 {
-    # references: 
+    # references:
     #       http://stackoverflow.com/questions/251694/how-can-i-check-if-i-have-a-perl-module-before-using-it
     #       http://stackoverflow.com/questions/1917261/how-can-i-dynamically-include-perl-modules-without-using-eval
     eval {
@@ -60,7 +63,7 @@ GetOptions ("w"=>\$overwrite,
 );
 
 # version number
-my $versionNumber = "2.0R";
+my $versionNumber = "2.1R";
 
 # Check the number of input arguments- if it is 0 then simply
 # display the list of options (like a manual)
@@ -83,7 +86,7 @@ ENDQUOTE
     exit(2);
 }
 
-# set up default for cruftDirectory using the one from the input file, 
+# set up default for cruftDirectory using the one from the input file,
 # unless it has been specified using -c="/some/directory"
 $cruftDirectory=dirname $ARGV[0] unless(defined($cruftDirectory));
 
@@ -103,14 +106,40 @@ print $logfile $time;
 # output version to log file
 print $logfile <<ENDQUOTE
 
-latexindent.pl version $versionNumber, a script to indent .tex files
-latexindent.pl lives here: $FindBin::RealBin/
+$FindBin::Script version $versionNumber, a script to indent .tex files
+$FindBin::Script lives here: $FindBin::RealBin/
 
-Directory for backup files and indent.log: $cruftDirectory
-
-file: $ARGV[0]
 ENDQUOTE
 ;
+
+# latexindent.exe is a standalone executable, and caches 
+# the required perl modules onto the users system; they will
+# only be displayed if the user specifies the trace option
+if($FindBin::Script eq 'latexindent.exe' and !$tracingMode )
+{
+print $logfile <<ENDQUOTE
+$FindBin::Script is a standalone script and caches the required perl modules
+onto your system. If you'd like to see their location in your log file, indent.log, 
+call the script with the tracing option, e.g latexindent.exe -t myfile.tex
+
+ENDQUOTE
+;
+}
+
+# output location of modules
+if($FindBin::Script eq 'latexindent.pl' or ($FindBin::Script eq 'latexindent.exe' and $tracingMode ))
+{
+    print $logfile "Modules are being loaded from the following directories:\n ";
+    foreach my $moduleName (@listOfModules)
+    {
+            (my $file = $moduleName) =~ s|::|/|g;
+            require $file . '.pm';
+            print $logfile "\t",$INC{$file .'.pm'},"\n";
+          }
+}
+
+# cruft directory
+print $logfile "Directory for backup files and indent.log: $cruftDirectory\n";
 
 # a quick options check
 if($outputToFile and $overwrite)
@@ -179,15 +208,22 @@ ENDQUOTE
     exit(2);
 }
 
-
-# Read in YAML file
+# Read in defaultSettings.YAML file
 my $defaultSettings = YAML::Tiny->new;
-
-print $logfile "Reading defaultSettings.yaml from $FindBin::RealBin/defaultSettings.yaml\n\n";
 
 # Open defaultSettings.yaml
 $defaultSettings = YAML::Tiny->read( "$FindBin::RealBin/defaultSettings.yaml" );
+print $logfile "Reading defaultSettings.yaml from $FindBin::RealBin/defaultSettings.yaml\n\n" if($defaultSettings);
 
+# if latexindent.exe is invoked from TeXLive, then defaultSettings.yaml won't be in 
+# the same directory as it; we need to navigate to it
+if(!$defaultSettings)
+{
+    $defaultSettings = YAML::Tiny->read( "$FindBin::RealBin/../../texmf-dist/scripts/latexindent/defaultSettings.yaml");
+    print $logfile "Reading defaultSettings.yaml (2nd attempt, TeXLive, Windows) from $FindBin::RealBin/../../texmf-dist/scripts/latexindent/defaultSettings.yaml\n\n" if($defaultSettings);
+}
+
+# if both of the above attempts have failed, we need to exit
 if(!$defaultSettings)
 {
   for my $fh ($out,$logfile) {
@@ -255,9 +291,26 @@ my $userSettings;
 
 # get information about user settings- first check if indentconfig.yaml exists
 my $indentconfig = File::HomeDir->my_home . "/indentconfig.yaml";
+# if indentconfig.yaml doesn't exist, check for the hidden file, .indentconfig.yaml
+$indentconfig = File::HomeDir->my_home . "/.indentconfig.yaml" if(! -e $indentconfig);
+
 if ( -e $indentconfig and !$onlyDefault )
 {
-      print $logfile "Reading path information from ",File::HomeDir->my_home,"/indentconfig.yaml\n";
+      print $logfile "Reading path information from $indentconfig\n";
+      # if both indentconfig.yaml and .indentconfig.yaml exist
+      if ( -e File::HomeDir->my_home . "/indentconfig.yaml" and  -e File::HomeDir->my_home . "/.indentconfig.yaml")
+      {
+            print $logfile File::HomeDir->my_home,"/.indentconfig.yaml has been found, but $indentconfig takes priority\n";
+      }
+      elsif ( -e File::HomeDir->my_home . "/indentconfig.yaml" )
+      {
+            print $logfile "Alternatively, ",File::HomeDir->my_home,"/.indentconfig.yaml can be used\n";
+
+      }
+      elsif ( -e File::HomeDir->my_home . "/.indentconfig.yaml" )
+      {
+            print $logfile "Alternatively, ",File::HomeDir->my_home,"/indentconfig.yaml can be used\n";
+      }
 
       # read the absolute paths from indentconfig.yaml
       $userSettings = YAML::Tiny->read( "$indentconfig" );
@@ -284,15 +337,16 @@ else
 {
       if($onlyDefault)
       {
-        print $logfile "Only default settings requested, not reading USER settings from indentconfig.yaml \n";
+        print $logfile "Only default settings requested, not reading USER settings from $indentconfig\n";
         print $logfile "Ignoring localSettings.yaml\n" if($readLocalSettings);
         $readLocalSettings = 0;
       }
       else
       {
-        # give the user instructions on where to put indentconfig.yaml
+        # give the user instructions on where to put indentconfig.yaml or .indentconfig.yaml
         print $logfile "Home directory is ",File::HomeDir->my_home,"\n";
         print $logfile "To specify user settings you would put indentconfig.yaml here: \n\t",File::HomeDir->my_home,"/indentconfig.yaml\n\n";
+        print $logfile "Alternatively, you can use the hidden file .indentconfig.yaml as: \n\t",File::HomeDir->my_home,"/.indentconfig.yaml\n\n";
       }
 }
 
@@ -1561,7 +1615,7 @@ sub at_beg_of_env_or_eq{
     #  ()       empty just so that $1 and $2 are defined
     #  (\\\[)   \[  there are lots of \ because both \ and [ need escaping
     #  \\begin{\\?(.*?)}  \begin{something} where something could start
-    #                     with a backslash, e.g \my@env@ which can happen 
+    #                     with a backslash, e.g \my@env@ which can happen
     #                     in a style or class file, for example
 
     if( (   ( $_ =~ m/^\s*(\$)?\\begin{\\?(.*?)}/ and $_ !~ m/\\end{$2}/)
@@ -1648,9 +1702,9 @@ sub at_end_of_env_or_eq{
             &decrease_indent($indentNames[-1]);
        }
 
-       # some commands contain \end{environmentname}, which 
-       # can cause a problem if \begin{environmentname} was not 
-       # started previously; if @environmentStack is empty, 
+       # some commands contain \end{environmentname}, which
+       # can cause a problem if \begin{environmentname} was not
+       # started previously; if @environmentStack is empty,
        # then we don't need to check for \end{environmentname}
        if(@environmentStack)
        {
