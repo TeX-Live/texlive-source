@@ -1,3 +1,8 @@
+2015-04-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pngimage.c: Ask libpng to do gamma correction with assumed
+	screen gamma 2.2.
+
 2015-04-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c:  Fix some problems in reading cross-reference streams.
