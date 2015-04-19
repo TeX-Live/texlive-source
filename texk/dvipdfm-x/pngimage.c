@@ -127,21 +127,6 @@ static pdf_obj *strip_soft_mask    (png_structp png_ptr, png_infop info_ptr,
                                     png_uint_32p rowbytes_ptr,
                                     png_uint_32 width, png_uint_32 height);
 
-/* Gamma correction
- *
- * NOTE: It fails reproducing "Browser Gamma-Consistency Test"
- *
- *   http://www.libpng.org/pub/png/colorcube/gamma-consistency-test.html
- *
- * correctly.
- */
-static void gamma_correct_bpc8 (double gamma, png_bytep image_data_ptr,
-                                png_uint_32 height, png_uint_32 rowbytes);
-static void gamma_correct_bpc4 (double gamma, png_bytep image_data_ptr,
-                                png_uint_32 height, png_uint_32 rowbytes);
-static void gamma_correct_bpc2 (double gamma, png_bytep image_data_ptr,
-                                png_uint_32 height, png_uint_32 rowbytes);
-
 /* Read image body */
 static void read_image_data (png_structp png_ptr,
                              png_bytep dest_ptr,
@@ -216,6 +201,19 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   if (bpc > 8) {
     png_set_strip_16(png_ptr);
     bpc = 8;
+  }
+  /* Ask libpng to gamma-correct.
+   * It is wrong to assume screen gamma value 2.2 but...
+   * We do gamma correction here only when uncalibrated color space is used. 
+   */
+  if (!png_get_valid(png_ptr, png_info_ptr, PNG_INFO_iCCP) &&
+      !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_sRGB) &&
+      !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_cHRM) &&
+      !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_sRGB) &&
+       png_get_valid(png_ptr, png_info_ptr, PNG_INFO_gAMA)) {
+    double G = 1.0;
+    png_get_gAMA (png_ptr, png_info_ptr, &G);
+    png_set_gamma(png_ptr, 2.2, G);
   }
 
   trans_type = check_transparency(png_ptr, png_info_ptr);
@@ -332,26 +330,6 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
     WARN("%s: Unknown PNG colortype %d.", PNG_DEBUG_STR, color_type);
   }
   pdf_add_dict(stream_dict, pdf_new_name("ColorSpace"), colorspace);
-
-  /* Gamma correction for DeviceRGB and DeviceGray
-   * We apply gamma correction here when gAMA chunk exists but NOT cHRM chunk.
-   */
-  if ( color_type != PNG_COLOR_TYPE_PALETTE &&
-       png_get_valid(png_ptr, png_info_ptr, PNG_INFO_gAMA) &&
-      !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_cHRM)) {
-    double G = 1.0;
-    png_get_gAMA(png_ptr, png_info_ptr, &G);
-    if (G < 1.0e-5) {
-      WARN("%s: Unexpected Gamma value: 1.0 / %g", PNG_DEBUG_STR, G);
-      G = 1.0;
-    }
-    if (bpc == 8)
-      gamma_correct_bpc8(1.0 / G, stream_data_ptr, height, rowbytes);
-    else if (bpc == 4)
-      gamma_correct_bpc4(1.0 / G, stream_data_ptr, height, rowbytes);
-    else if (bpc == 2)
-      gamma_correct_bpc2(1.0 / G, stream_data_ptr, height, rowbytes);
-  }
 
   pdf_add_stream(stream, stream_data_ptr, rowbytes*height);
   RELEASE(stream_data_ptr);
@@ -896,18 +874,6 @@ create_cspace_Indexed (png_structp png_ptr, png_infop info_ptr)
     data_ptr[3*i+1] = plte[i].green;
     data_ptr[3*i+2] = plte[i].blue;
   }
-  /* Gamma correction */
-  if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_gAMA) &&
-      !png_get_valid(png_ptr, info_ptr, PNG_INFO_cHRM) ) {
-    double G = 1.0;
-    png_get_gAMA(png_ptr, info_ptr, &G);
-    if (G < 1.0e-5) {
-      WARN("%s: Ignoring unusual Gamma value: 1.0 / %g", PNG_DEBUG_STR, G);
-      G = 1.0;
-    }
-    if (G != 1.0)
-      gamma_correct_bpc8(1.0 / G, (png_bytep) data_ptr, 1, num_plte*3);
-  }
   lookup = pdf_new_string(data_ptr, num_plte*3);
   RELEASE(data_ptr);
   pdf_add_array(colorspace, lookup);
@@ -1085,63 +1051,6 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
   RELEASE(smask_data_ptr);
 
   return smask;
-}
-
-/* Gamma correction stuff
- * bpc4 and bpc2 is untested.
- */
-static void
-gamma_correct_bpc8 (double G, png_bytep stream_data_ptr,
-                                png_uint_32 height, png_uint_32 rowbytes)
-{
-    png_uint_32 i, j;
-
-    for (i = 0; i < height; i++) {
-      for (j = 0; j < rowbytes; j++) {
-        stream_data_ptr[i * rowbytes + j] =
-          (png_byte) (255.0 * pow(stream_data_ptr[i * rowbytes + j] / 255.0, G) + 0.5);
-      }
-    }
-}
-
-static void
-gamma_correct_bpc4 (double G, png_bytep stream_data_ptr,
-                                png_uint_32 height, png_uint_32 rowbytes)
-{
-    png_uint_32 i, j;
-
-    for (i = 0; i < height; i++) {
-      for (j = 0; j < rowbytes; j++) {
-        png_byte v1, v2;
-        v1 = (stream_data_ptr[i * rowbytes + j] >> 4) & 0x0f;
-        v2 =  stream_data_ptr[i * rowbytes + j]       & 0x0f;
-        v1 = (png_byte) (15.0 * pow(v1 / 15.0, G) + 0.5);
-        v2 = (png_byte) (15.0 * pow(v2 / 15.0, G) + 0.5);
-        stream_data_ptr[i * rowbytes + j] = (v1 << 4) + v2;
-      }
-    }
-}
-
-static void
-gamma_correct_bpc2 (double G, png_bytep stream_data_ptr,
-                                png_uint_32 height, png_uint_32 rowbytes)
-{
-    png_uint_32 i, j;
-
-    for (i = 0; i < height; i++) {
-      for (j = 0; j < rowbytes; j++) {
-        png_byte v1, v2, v3, v4;
-        v1 = (stream_data_ptr[i * rowbytes + j] >> 6) & 0x03;
-        v2 = (stream_data_ptr[i * rowbytes + j] >> 4) & 0x03;
-        v3 = (stream_data_ptr[i * rowbytes + j] >> 2) & 0x03;
-        v4 =  stream_data_ptr[i * rowbytes + j]       & 0x03;
-        v1 = (png_byte) (3.0 * pow(v1 / 3.0, G) + 0.5);
-        v2 = (png_byte) (3.0 * pow(v2 / 3.0, G) + 0.5);
-        v3 = (png_byte) (3.0 * pow(v3 / 3.0, G) + 0.5);
-        v4 = (png_byte) (3.0 * pow(v4 / 3.0, G) + 0.5);
-        stream_data_ptr[i * rowbytes + j] = (v1 << 6) + (v2 << 4) + (v3 << 2) + v4;
-      }
-    }
 }
 
 static void
