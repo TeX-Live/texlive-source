@@ -1,3 +1,8 @@
+2015-04-19  Karl Berry  <karl@tug.org>
+
+	* texlinks.sh (install_link): use $exeext for pdfcsplain too,
+	for Cygwin.  From Ken Brown.	
+
 2015-04-12  Norbert Preining  <norbert@preining.info>
 
 	* Makefile.am: remove fmtutil.sh, it is now handled via
