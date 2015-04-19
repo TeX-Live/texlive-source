@@ -69,10 +69,7 @@ Report bugs to: tex-k@tug.org
 TeX Live home page: <http://tug.org/texlive/>
 '
 
-###############################################################################
-# abort(errmsg)
-#   print `errmsg' to stderr and exit with error code 1
-###############################################################################
+# print `errmsg' to stderr and exit with error code 1:
 abort() { errmsg "texlinks: $1."; cleanup 1; }
 
 # error message to stderr:
@@ -84,10 +81,7 @@ verbose_echo() { $verbose && errmsg "$@"; }
 # in verbose mode: show command that is executed:
 verbose_do() { verbose_echo "$@"; "$@"; }
 
-###############################################################################
-# cleanup()
-#   clean up the temp area and exit with proper exit status
-###############################################################################
+# clean up the temp area and exit with proper exit status:
 cleanup()
 {
   rc=$1
@@ -177,7 +171,7 @@ install_link()
           # fmtutil.cnf with different engines, but the executable link
           # must point to pdftex.
           verbose_echo "forcing pdfcsplain destination to be pdftex"
-          dest=pdftex
+          dest=pdftex$exeext
         fi
         verbose_do ln -s "$dest" "$src"
       fi
