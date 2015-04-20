@@ -1,3 +1,8 @@
+2015-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am (texmf_other_scripts): Add fmtutil-sys.sh and
+	updmap-sys.sh (maintained under Master).
+
 2015-04-12  Norbert Preining  <norbert@preining.info>
 
 	* Makefile.am (texmf_other_scripts): add fmtutil

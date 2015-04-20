@@ -383,9 +383,11 @@ texmf_other_scripts = \
 	texdirflatten/texdirflatten \
 	texfot/texfot.pl \
 	texlive/fmtutil.pl \
+	texlive/fmtutil-sys.sh \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl \
 	texlive/updmap.pl \
+	texlive/updmap-sys.sh \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
 	thumbpdf/thumbpdf.pl \
