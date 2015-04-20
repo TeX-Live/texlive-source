@@ -1,6 +1,7 @@
 #!/bin/sh
-# $Id$
+# $Id: fmtutil-sys.sh 36962 2015-04-20 01:48:35Z preining $
 # fmtutil-sys - arrange for fmtutil to affect system directories.
+# Maintained in Master/texmf-dist/scripts/texlive/
 # Public domain.  Originally written by Thomas Esser.
 
 test -f /bin/ksh && test -z "$RUNNING_KSH" \
