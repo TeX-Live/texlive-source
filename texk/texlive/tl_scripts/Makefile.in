@@ -257,7 +257,6 @@ EXTRA_DIST = scripts.lst $(top_builddir)/../../build-aux/relpath \
 
 # These first variable definitions are what scripts_links.am requires.
 perl_scripts = e2pall
-shell_scripts = fmtutil-sys updmap-sys
 sh_scripts = \
 	allcm \
 	allneeded \
@@ -283,7 +282,7 @@ all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
 #
 #
 texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh) $(sh_scripts:=.sh)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(sh_scripts:=.sh)
 dist_man_MANS = \
   	allcm.1 \
 	allec.1 \
@@ -332,7 +331,6 @@ run_texlinks = $(texlinks_prog) -v \
 	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 
-all_shell_scripts = $(shell_scripts) $(sh_scripts)
 all: all-am
 
 .SUFFIXES:
@@ -824,7 +822,7 @@ uninstall-links:
 @WIN32_FALSE@	  rm -f "$(DESTDIR)$(bindir)/$$f"; \
 @WIN32_FALSE@	done
 
-install-data-hook: install-bin-links install-man1-links install-perl-links install-shell-links install-sh-links
+install-data-hook: install-bin-links install-man1-links install-perl-links install-sh-links
 uninstall-hook: uninstall-bin-links uninstall-man1-links uninstall-links
 .PHONY: install-bin-links uninstall-bin-links
 
@@ -880,7 +878,7 @@ $(DESTDIR)$(web2cdir)/fmtutil.cnf:
 
 .PHONY: echo-shell-scripts
 echo-shell-scripts:
-	@echo $(all_shell_scripts)
+	@echo $(sh_scripts)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

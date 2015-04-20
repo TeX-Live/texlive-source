@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/texlive/tl_scripts/
 ##
-## Copyright 2013-2014 Karl Berry <tex-live@tug.org>
+## Copyright 2013-2015 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Build lists of scripts.
@@ -24,7 +24,6 @@ EXTRA_DIST = scripts.lst
 
 # These first variable definitions are what scripts_links.am requires.
 perl_scripts = e2pall
-shell_scripts = fmtutil-sys updmap-sys
 sh_scripts = \
 	allcm \
 	allneeded \
@@ -47,9 +46,9 @@ scriptsdir = texmf-dist/scripts/texlive
 include $(top_srcdir)/../../am/script_links.am
 #
 texmfdir = $(datarootdir)/$(scriptsdir)
-dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(shell_scripts:=.sh) $(sh_scripts:=.sh)
+dist_texmf_SCRIPTS = $(perl_scripts:=.pl) $(sh_scripts:=.sh)
 
-install-data-hook: install-bin-links install-man1-links install-perl-links install-shell-links install-sh-links
+install-data-hook: install-bin-links install-man1-links install-perl-links install-sh-links
 uninstall-hook: uninstall-bin-links uninstall-man1-links uninstall-links
 
 dist_man_MANS = \
@@ -141,6 +140,5 @@ $(DESTDIR)$(web2cdir)/fmtutil.cnf:
 ## 
 ## This target is invoked by check-wrapper-consistency (run from cron).
 .PHONY: echo-shell-scripts
-all_shell_scripts = $(shell_scripts) $(sh_scripts)
 echo-shell-scripts:
-	@echo $(all_shell_scripts)
+	@echo $(sh_scripts)

@@ -1,3 +1,8 @@
+2015-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Remove fmtutil-sys.sh and updmap-sys.sh, they are
+	maintained under Master and now handled via linked_scripts.
+
 2015-04-19  Karl Berry  <karl@tug.org>
 
 	* texlinks.sh (install_link): use $exeext for pdfcsplain too,

@@ -1,7 +1,5 @@
 tl_scripts='
 e2pall.pl
-fmtutil-sys.sh
-updmap-sys.sh
 allcm.sh
 allneeded.sh
 dvi2fax.sh
