@@ -929,16 +929,17 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   struct tt_head_table *head;
   struct tt_maxp_table *maxp;
   struct tt_hhea_table *hhea;
+  int           is_dfont = 0;
 
   if (verbose)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
 
-  if ((fp = fopen(filename, "rb")) != NULL)
-    path = strdup(filename);
+  if ((path = dpx_find_dfont_file(filename)) != NULL &&
+      (fp = fopen(path, "rb")) != NULL)
+    is_dfont = 1;
   else if (((path = dpx_find_opentype_file(filename)) == NULL
          && (path = dpx_find_truetype_file(filename)) == NULL
-         && (path = dpx_find_type1_file(filename)) == NULL
-         && (path = dpx_find_dfont_file(filename)) == NULL)
+         && (path = dpx_find_type1_file(filename)) == NULL)
          || (fp = fopen(path, "rb")) == NULL) {
     ERROR("Cannot proceed without the font: %s", filename);
   }
@@ -962,9 +963,14 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].type    = NATIVE;
   free(fontmap_key);
 
-  sfont = sfnt_open(fp);
+  if (is_dfont)
+    sfont = dfont_open(fp, index);
+  else
+    sfont = sfnt_open(fp);
   if (sfont->type == SFNT_TYPE_TTC)
     offset = ttc_read_offset(sfont, index);
+  else if (sfont->type == SFNT_TYPE_DFONT)
+    offset = sfont->offset;
   sfnt_read_table_directory(sfont, offset);
   head = tt_read_head_table(sfont);
   maxp = tt_read_maxp_table(sfont);

@@ -1,3 +1,8 @@
+2015-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi.c, tt_cmap.c: Fixed a dfont bug, from Akira,
+	  bug found by Dohyun Kim <nomosnomos@gmail.com>.
+
 2015-04-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pngimage.c: Ask libpng to do gamma correction with assumed

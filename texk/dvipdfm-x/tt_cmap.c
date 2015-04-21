@@ -1208,23 +1208,25 @@ otf_create_ToUnicode_stream (const char *font_name,
     MESG("otf_cmap>> Creating ToUnicode CMap for \"%s\"...\n", font_name);
   }
 
-  fp = DPXFOPEN(font_name, DPX_RES_TYPE_TTFONT);
-  if (!fp) {
-    fp = DPXFOPEN(font_name, DPX_RES_TYPE_OTFONT);
-  }
 
-  if (!fp) {
+  if ((fp = DPXFOPEN(font_name, DPX_RES_TYPE_TTFONT)) ||
+      (fp = DPXFOPEN(font_name, DPX_RES_TYPE_OTFONT))) {
+    sfont = sfnt_open(fp);
+  } else if ((fp = DPXFOPEN(font_name, DPX_RES_TYPE_DFONT))) {
+    sfont = dfont_open(fp, ttc_index);
+  } else  {
     RELEASE(cmap_name);
     return NULL;
   }
-
-  sfont = sfnt_open(fp);
 
   if (!sfont) {
     ERROR("Could not open OpenType/TrueType font file \"%s\"", font_name);
   }
 
   switch (sfont->type) {
+  case SFNT_TYPE_DFONT:
+    offset = sfont->offset;
+    break;
   case SFNT_TYPE_TTC:
     offset = ttc_read_offset(sfont, ttc_index);
     if (offset == 0) {
