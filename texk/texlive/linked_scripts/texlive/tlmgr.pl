@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 36929 2015-04-19 12:26:46Z preining $
+# $Id: tlmgr.pl 36997 2015-04-22 00:21:41Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 36929 $';
-my $datrev = '$Date: 2015-04-19 14:26:46 +0200 (Sun, 19 Apr 2015) $';
+my $svnrev = '$Revision: 36997 $';
+my $datrev = '$Date: 2015-04-22 02:21:41 +0200 (Wed, 22 Apr 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -279,6 +279,24 @@ sub main {
     exit 0;
   }
 
+  #
+  # ACTION massaging
+  # for backward compatibility and usability
+
+  # unify arguments so that the $action contains paper in all cases
+  # and push the first arg back to @ARGV for action_paper processing
+  if ($action =~ /^(paper|xdvi|psutils|pdftex|dvips|dvipdfmx?|context)$/) {
+    unshift(@ARGV, $action);
+    $action = "paper";
+  }
+
+  # backward compatibility with action "show" and "list" from before
+  if ($action =~ /^(show|list)$/) {
+    $action = "info";
+  }
+
+  # now $action should be part of %actionoptions, otherwise this is
+  # an error
   if (defined($action) && $action && !exists $actionoptions{$action}) {
     die "$prg: unknown action: $action; try --help if you need it.\n";
   }
@@ -349,18 +367,6 @@ for the full story.\n";
         exit 0;
       }
     }
-  }
-
-  # unify arguments so that the $action contains paper in all cases
-  # and push the first arg back to @ARGV for action_paper processing
-  if ($action =~ /^(paper|xdvi|psutils|pdftex|dvips|dvipdfmx?|context)$/) {
-    unshift(@ARGV, $action);
-    $action = "paper";
-  }
-
-  # backward compatibility with action "show" and "list" from before
-  if ($action =~ /^(show|list)$/) {
-    $action = "info";
   }
 
   # --machine-readable is only supported by update.
