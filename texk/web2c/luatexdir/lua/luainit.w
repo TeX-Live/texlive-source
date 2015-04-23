@@ -1,6 +1,6 @@
 % luainit.w
 %
-% Copyright 2006-2014 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2015 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -422,10 +422,10 @@ static void parse_options(int ac, char **av)
                  "any later version. For more information about these matters, see the file\n"
                  "named COPYING and the LuaTeX source.\n\n"
 #ifdef LuajitTeX
-                 "LuaTeX is Copyright 2014 Taco Hoekwater, the LuaTeX Team.\n"
+                 "LuaTeX is Copyright 2015 Taco Hoekwater, the LuaTeX Team.\n"
                  "Libraries and JIT extensions by Luigi Scarso, the LuaTeX SwigLib team.\n");
 #else
-                 "Copyright 2014 Taco Hoekwater, the LuaTeX Team.\n");
+                 "Copyright 2015 Taco Hoekwater, the LuaTeX Team.\n");
 #endif
             /* *INDENT-ON* */
             uexit(0);
