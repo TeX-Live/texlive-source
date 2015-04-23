@@ -29763,7 +29763,10 @@ XeTeX_variation_min_code,
 XeTeX_variation_max_code,
 XeTeX_variation_default_code,
 XeTeX_count_variations_code:
-  cur_val:=0; {Deprecated}
+  begin
+    scan_font_ident; n:=cur_val;
+    cur_val:=0; {Deprecated}
+  end;
 
 XeTeX_feature_code_code,
 XeTeX_is_exclusive_feature_code,
