@@ -349,7 +349,7 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp)
     break;
   default: /* FIXME: not sure what to do with this.... */
     j_info->xdpi = 72.0;
-    j_info->ydpi = 72.0 * app_data->Ydensity / app_data->Xdensity;
+    j_info->ydpi = 72.0;
     break;
   }
 
