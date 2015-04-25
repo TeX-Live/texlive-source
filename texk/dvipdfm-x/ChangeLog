@@ -1,5 +1,10 @@
 2015-04-25  Jiang Jiang  <gzjjgod@gmail.com>
 
+	* cff_dict.c: Be more permissive in CFF dict parsing, fix Yuppy SC
+	and Yuppy TC fonts support.
+
+2015-04-25  Jiang Jiang  <gzjjgod@gmail.com>
+
 	* sfnt.c: Fix Mac TrueType font support.
 	  bug found by Richard Koch <richardmoncriefkoch@icloud.com>.
 
