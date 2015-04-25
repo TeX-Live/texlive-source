@@ -1,3 +1,8 @@
+2015-04-25  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* sfnt.c: Fix Mac TrueType font support.
+	  bug found by Richard Koch <richardmoncriefkoch@icloud.com>.
+
 2015-04-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi.c, tt_cmap.c: Fixed a dfont bug, from Akira,

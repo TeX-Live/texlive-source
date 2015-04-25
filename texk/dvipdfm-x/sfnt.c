@@ -64,7 +64,7 @@ sfnt_open (FILE *fp)
 
   type = sfnt_get_ulong(sfont);
 
-  if (type == SFNT_TRUETYPE) {
+  if (type == SFNT_TRUETYPE || type == SFNT_MAC_TRUE) {
     sfont->type = SFNT_TYPE_TRUETYPE;
   } else if (type == SFNT_OPENTYPE) {
     sfont->type = SFNT_TYPE_OPENTYPE;
