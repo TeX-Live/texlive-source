@@ -301,7 +301,8 @@ static void add_dict (cff_dict *dict,
 
   argtype = dict_operator[id].argtype;
   if (dict_operator[id].opname == NULL || argtype < 0) {
-    *status = CFF_ERROR_PARSE_ERROR;
+    /* YuppySC-Regular.otf from OS X for instance uses op id 37, simply ignore
+       this dict instead of treat it as parsing error. */
     return;
   }
 
