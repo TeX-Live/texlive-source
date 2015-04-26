@@ -1,4 +1,4 @@
-.TH LATEX 1 "14 May 2010" "Web2C @VERSION@"
+.TH LATEX 1 "27 April 2015" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -13,7 +13,7 @@
 .if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
-latex, elatex, lambda, pdflatex \- structured text formatting and typesetting
+latex, pdflatex, lualatex, xelatex, lamed \- structured text formatting and typesetting
 .SH SYNOPSIS
 .B latex
 .RI [ first-line ]
@@ -45,14 +45,14 @@ or
 .I local.tex
 or some such.
 .PP
-.B elatex
-is the e-\*(TX extended mode version of \*(LX format.
-.PP
-.B lambda
-is the Omega version of the \*(LX format.
-.PP
-.B pdflatex
-is the pdf\*(TX version of the \*(LX format.
+.BR pdflatex ,
+.BR lualatex ,
+and
+.BR xelatex ,
+are \*(LX formats based on the respective engines.  All output PDF by default.
+.br
+.B lambed
+is the Aleph-based \*(LX format (DVI output).
 .PP
 On some systems
 .B latex209
@@ -78,9 +78,7 @@ and Chris Rowley,
 .IR "LaTeX Companion" ,
 Addison-Wesley, 2004, ISBN 0201362996 (2nd edition).
 .PP
-\fILaTeX Graphics Companion\fP, available as part of a boxed set:
-\fIThe LaTeX Companions, Revised Boxed Set : A Complete Guide and
-Reference for Preparing, Illustrating, and Publishing Technical
-Documents\fP (2nd Edition), by Frank Mittelbach, Michel Goossens,
-Sebastian Rahtz, Helmut Kopka, Patrick W. Daly (Addison-Wesley, 2004,
-ISBN 0321269446).
+The \*(LX home page is http://latex-project.org.  A list of some \*(LX
+tutorials is at
+http://www.tex.ac.uk/cgi-bin/texfaq2html?label=man-latex.  An unofficial
+reference manual for \*(LX is at http://home.gna.org/latexrefman.

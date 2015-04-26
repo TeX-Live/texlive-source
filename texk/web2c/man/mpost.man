@@ -1,4 +1,4 @@
-.TH MPOST 1 "5 April 2011" "MetaPost 1.504"
+.TH MPOST 1 "27 April 2015" "Web2C @VERSION@"
 .\"=====================================================================
 .de URL
 \\$2 \(laURL: \\$1 \(ra\\$3
@@ -151,17 +151,16 @@ incorporating system-dependent routines from
 .BR web2c ,
 while not relying on it except for the actual \*(WB-to-C translator.
 .PP
+The primary author of the current \*(MP was Taco Hoekwater, with
+assistance from Hans Hagen and many others.  It is currently maintained
+by Luigi Scarso.
+.PP
 Ulrik Vieth adapted \*(MP to take advantage of the advanced path 
 searching features in more recent versions of
 .B web2c
 and worked towards fully integrating \*(MP into the canonical Unix 
 \*(TX distribution.
-.PP
-The current, CWEB based version of MetaPost is maintained by 
-Taco Hoekwater.
-.PP
-The manual and tutorial are maintained by Stephan Hennig and
-Troy Henderson.
 .\"=====================================================================
 .SH BUGS
-Email bug reports to metapost@tug.org.
+The MetaPost home page is http://tug.org/metapost.
+

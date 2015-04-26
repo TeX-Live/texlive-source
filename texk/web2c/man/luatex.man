@@ -1,4 +1,4 @@
-.TH LUATEX 1 "12 April 2011" "luatex 0.70" "Web2C @VERSION@"
+.TH LUATEX 1 "27 April 2015" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
@@ -234,13 +234,12 @@ These are always off.
 .BR pdftex (1),
 .BR etex (1),
 .BR aleph (1),
-.BR omega (1),
 .BR lua (1).
 .\"=====================================================================
 .SH "AUTHORS"
-The primary authors of Lua\*(TX are Hartmut Henkel, Taco Hoekwater,
-and Hans Hagen, with help from Martin Schr\[:o]der, Karel Skoupy, and
-Han The Thanh.
+The primary authors of Lua\*(TX are Taco Hoekwater, Hartmut Henkel,
+Hans Hagen, and Luigi Scarso, with help from Martin Schr\[:o]der, Karel
+Skoupy, and Han The Thanh.
 .PP
 \*(TX was designed by Donald E. Knuth, who implemented it using his
 \*(WB system for Pascal programs.
@@ -249,3 +248,5 @@ Pavel Curtis.
 The version now offered with the Unix \*(TX distribution is that generated
 by the \*(WB to C system (\fBweb2c\fR), originally written by Tomas
 Rokicki and Tim Morgan.
+.PP
+The Lua\*(TX home page is http://luatex.org.
