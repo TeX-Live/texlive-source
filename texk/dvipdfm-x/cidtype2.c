@@ -975,6 +975,14 @@ CIDFont_type2_open (CIDFont *font, const char *name,
     ERROR("Reading TrueType table directory failed.");
   }
 
+  /* Ignore TrueType Collection with CFF table. */
+  if (sfont->type == SFNT_TYPE_TTC && sfnt_find_table_pos(sfont, "CFF ")) {
+    sfnt_close(sfont);
+    if (fp)
+      DPXFCLOSE(fp);
+    return -1;
+  }
+
   {
     char *shortname;
     long  namelen;

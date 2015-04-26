@@ -1,3 +1,10 @@
+2015-04-26  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* cidtype0.c, cidtype2.c: Support loading CID type 0 font from
+	TrueType Collection.
+
+	* truetype.c: Fix offset in offset for TrueType loading.
+
 2015-04-25  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cff_dict.c: Be more permissive in CFF dict parsing, fix Yuppy SC
