@@ -919,7 +919,7 @@ pdf_font_load_truetype (pdf_font *font)
     unsigned long offset;
     offset = ttc_read_offset(sfont, index);
     if (offset == 0) ERROR("Invalid TTC index in %s.", ident);
-    error = sfnt_read_table_directory(sfont, ttc_read_offset(sfont, offset));
+    error = sfnt_read_table_directory(sfont, offset);
   } else {
     error = sfnt_read_table_directory(sfont, sfont->offset);
   }
