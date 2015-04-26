@@ -3,7 +3,7 @@
 .\"
 .\" $Id: pdftosrc.1,v 1.5 2006/12/22 23:46:23 hhenkel Exp $
 .\"
-.TH pdftosrc 1 "23 December 2006" "User Manuals"
+.TH pdftosrc 1 "27 April 2015" "Web2C @VERSION@"
 .SH NAME
 pdftosrc \- extract source file or stream from PDF file
 .SH SYNOPSIS
