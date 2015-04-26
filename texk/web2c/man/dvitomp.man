@@ -1,5 +1,5 @@
-.TH DVITOMP 1 "5 April 2011" "dvitomp 1.504"
-.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>         -*- nroff -*-
+.TH DVITOMP 1 "27 April 2015" "Web2C @VERSION@"
+.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>
 .SH NAME
 dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE
 .SH SYNOPSIS

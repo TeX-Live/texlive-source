@@ -1,4 +1,4 @@
-.TH PDFETEX 1 "14 May 2010" "pdftex 1.40" "Web2C @VERSION@"
+.TH PDFETEX 1 "27 April 2015" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF M\s-2ETAFONT\s0
