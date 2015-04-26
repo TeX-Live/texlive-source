@@ -13,7 +13,7 @@
 .if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
-latex, pdflatex, lualatex, xelatex, lamed \- structured text formatting and typesetting
+latex, pdflatex, lualatex, dvilualatex, xelatex, lamed \- structured text formatting and typesetting
 .SH SYNOPSIS
 .B latex
 .RI [ first-line ]

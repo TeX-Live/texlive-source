@@ -8,7 +8,7 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-luatex, texlua, texluac \- An extended version of pdfTeX using Lua as
+luatex, dviluatex, luajittex, texlua, texluac \- An extended version of pdfTeX using Lua as
 an embedded scripting language
 .\"=====================================================================
 .SH SYNOPSIS

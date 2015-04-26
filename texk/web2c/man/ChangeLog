@@ -1,9 +1,16 @@
 2015-04-27  Karl Berry  <karl@tug.org>
 
-	* aleph.man,
+ 	* aleph.man,
+	* dvitomp.man,
 	* latex.man,
 	* luatex.man,
+	* mf.man,
 	* mpost.man,
+	* ofm2opl.man,
+	* opl2ofm.man,
+	* ovf2ovp.man,
+	* ovp2ovf.man,
+	* pdfetex.man,
 	* pdftex.man,
 	* pdftosrc.man,
 	* tex.man,

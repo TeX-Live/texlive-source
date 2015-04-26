@@ -23,7 +23,7 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-pdftex, pdfinitex, pdfvirtex \- PDF output from TeX
+pdftex \- PDF output from TeX
 .SH SYNOPSIS
 .B pdftex
 .RI [ options ]
@@ -454,10 +454,11 @@ mailing list web site.
 .BR epstopdf (1),
 .BR etex (1),
 .BR latex (1),
+.BR luatex (1),
 .BR mptopdf (1),
 .BR tex (1),
 .BR mf (1).
-http://tug.org/applications/pdftex, http://tug.org/web2c.
+http://pdftex.org, http://tug.org/web2c.
 .\"=====================================================================
 .SH AUTHORS
 The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka,

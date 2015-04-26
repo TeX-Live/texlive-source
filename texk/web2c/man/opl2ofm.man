@@ -1,4 +1,4 @@
-.TH "opl2ofm" "1" "September 2000" "Omega" "Omega" 
+.TH "OPL2OFM" "27 April 2015" "Web2C @VERSION@"
 .PP 
 .SH "NAME" 
 opl2ofm \- convert Omega and TeX property-list files to font-metric files

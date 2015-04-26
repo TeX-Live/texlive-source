@@ -1,3 +1,7 @@
+2015-04-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (xmans): new phony target.
+
 2015-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Remove fmtutil-sys.sh and updmap-sys.sh, they are

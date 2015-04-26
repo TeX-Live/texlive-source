@@ -858,8 +858,8 @@ uninstall-man1-links:
 	  link=`echo $$s | sed 's,.*:,,'`; \
 	  rm -f $(DESTDIR)$(man1dir)/$$link.1; \
 	done
-
-.PHONY: xupdmap.1 xfmtutil.1
+.PHONY: xmans xupdmap.1 xfmtutil.1
+xmans: xupdmap.1 xfmtutil.1
 xupdmap.1: updmap.help2man $(linked_scripts_dir)/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(linked_scripts_dir)/updmap.pl >/tmp/$@

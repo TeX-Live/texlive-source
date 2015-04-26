@@ -102,15 +102,18 @@ dist_web2c_DATA = fmtutil.cnf
 ## handwritten material.  But don't actually update updmap/fmtutil.1,
 ## we don't want to require help2man for an install.  Leave that to be
 ## done by hand.
-.PHONY: xupdmap.1 xfmtutil.1
+EXTRA_DIST += updmap.help2man fmtutil.help2man
+.PHONY: xmans xupdmap.1 xfmtutil.1
+xmans: xupdmap.1 xfmtutil.1
 linked_scripts_dir = $(top_srcdir)/linked_scripts/texlive
+##
 xupdmap.1: updmap.help2man $(linked_scripts_dir)/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(linked_scripts_dir)/updmap.pl >/tmp/$@
+##
 xfmtutil.1: fmtutil.help2man $(linked_scripts_dir)/fmtutil.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(linked_scripts_dir)/fmtutil.pl >/tmp/$@
-EXTRA_DIST += updmap.help2man fmtutil.help2man
 
 
 ## 
