@@ -510,14 +510,20 @@ CIDFont_type0_dofont (CIDFont *font)
     ERROR("Unexpected error: Font not actually used???");
 
   fp = DPXFOPEN(font->ident, DPX_RES_TYPE_OTFONT);
-  if (!fp)
-    ERROR("Could not open OpenType font file: %s", font->ident);
+  if (!fp) {
+    fp = DPXFOPEN(font->ident, DPX_RES_TYPE_TTFONT);
+    if (!fp)
+      ERROR("Could not open OpenType font file: %s", font->ident);
+  }
   sfont = sfnt_open(fp);
   if (!sfont)
     ERROR("Could not open OpenType font file: %s", font->ident);
 
-  if (sfnt_read_table_directory(sfont, 0) < 0 ||
-      sfont->type != SFNT_TYPE_POSTSCRIPT)
+  if (sfont->type == SFNT_TYPE_TTC)
+    offset = ttc_read_offset(sfont, CIDFont_get_opt_index(font));
+
+  if ((sfont->type != SFNT_TYPE_TTC && sfont->type != SFNT_TYPE_POSTSCRIPT) ||
+      sfnt_read_table_directory(sfont, offset) < 0)
     ERROR("Not a CFF/OpenType font (1)?");
   offset = sfnt_find_table_pos(sfont, "CFF ");
   if (offset == 0)
@@ -727,15 +733,21 @@ CIDFont_type0_open (CIDFont *font, const char *name,
   ASSERT(font);
 
   fp = DPXFOPEN(name, DPX_RES_TYPE_OTFONT);
-  if (!fp)
-    return -1;
+  if (!fp) {
+    fp = DPXFOPEN(name, DPX_RES_TYPE_TTFONT);
+    if (!fp) return -1;
+  }
 
   sfont = sfnt_open(fp);
   if (!sfont) {
     ERROR("Not a CFF/OpenType font (3)?");
   }
-  if (sfont->type != SFNT_TYPE_POSTSCRIPT     ||
-      sfnt_read_table_directory(sfont, 0) < 0 ||
+
+  if (sfont->type == SFNT_TYPE_TTC)
+    offset = ttc_read_offset(sfont, opt->index);
+
+  if ((sfont->type != SFNT_TYPE_TTC && sfont->type != SFNT_TYPE_POSTSCRIPT) ||
+      sfnt_read_table_directory(sfont, offset) < 0 ||
       (offset = sfnt_find_table_pos(sfont, "CFF ")) == 0) {
     ERROR("Not a CFF/OpenType font (4)?");
   }
