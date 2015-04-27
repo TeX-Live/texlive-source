@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 36956 2015-04-19 23:28:01Z preining $
+# $Id: fmtutil.pl 37076 2015-04-27 17:08:10Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -20,27 +20,26 @@
 my $TEXMFROOT;
 
 BEGIN {
-  $^W=1;
+  $^W = 1;
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($?) {
-    print STDERR "fmtutil: Cannot find TEXMFROOT, aborting!\n";
-    exit 1;
+    die "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
   }
   chomp($TEXMFROOT);
-  unshift (@INC, "$TEXMFROOT/tlpkg", "$TEXMFROOT/texmf-dist/scripts/texlive");
+  unshift(@INC, "$TEXMFROOT/tlpkg", "$TEXMFROOT/texmf-dist/scripts/texlive");
   require "mktexlsr.pl";
   TeX::Update->import();
 }
 
 
-my $svnid = '$Id: fmtutil.pl 36956 2015-04-19 23:28:01Z preining $';
-my $lastchdate = '$Date: 2015-04-20 01:28:01 +0200 (Mon, 20 Apr 2015) $';
+my $svnid = '$Id: fmtutil.pl 37076 2015-04-27 17:08:10Z karl $';
+my $lastchdate = '$Date: 2015-04-27 19:08:10 +0200 (Mon, 27 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36956 $';
+my $svnrev = '$Revision: 37076 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
-my $version = "svn$svnrev ($lastchdate)";
+my $version = "r$svnrev ($lastchdate)";
 
 use strict;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
@@ -1136,7 +1135,7 @@ Where changes are saved:
   In general, the idea is that if a given config file is not writable, a
   higher-level one can be used.  That way, the distribution's settings
   can be overridden for system-wide using TEXMFLOCAL, and then system
-  settings can be overridden again for a particular using using TEXMFHOME.
+  settings can be overridden again in a particular user's TEXMFHOME.
 
 Resolving multiple definitions of a format:
 
@@ -1149,13 +1148,18 @@ Disabling formats:
   formats mentioned in lower priority (listed later) fmtutil.cnf files by
   writing, e.g.,
     \#! <fmtname> <enginename> <hyphen> <args>
-  in the higher-priority fmtutil.cnf file. 
+  in the higher-priority fmtutil.cnf file.   (The \#! must be at the
+  beginning of the line, with at least one space or tab afterward, and
+  whitespace between each word on the list.)
 
   As an example, suppose you have want to disable the luajitlatex format.
   You can create the file \$TEXMFCONFIG/web2c/fmtutil.cnf with the content
     #! luajitlatex luajittex language.dat,language.dat.lua lualatex.ini
   and call $prg.
-
+  
+  (As it happens, the luajittex-related formats are precisely why the
+  --no-error-if-no-engine option exists, since luajittex cannot be
+  compiled on all platforms.)
 
 fmtutil vs. fmtutil-sys (fmtutil --sys):
 
@@ -1167,7 +1171,7 @@ fmtutil vs. fmtutil-sys (fmtutil --sys):
   Other locations may be used if you give them on the command line, or
   these trees don't exist, or you are not using the original TeX Live.
 
-Report bugs to: tex-k\@tug.org
+Report bugs to: tex-live\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
 EOF
 ;

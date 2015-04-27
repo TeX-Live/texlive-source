@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 36787 2015-04-12 15:20:30Z karl $
+# $Id: updmap.pl 37076 2015-04-27 17:08:10Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,27 +14,26 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 36787 2015-04-12 15:20:30Z karl $';
+my $svnid = '$Id: updmap.pl 37076 2015-04-27 17:08:10Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
   $^W = 1;
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($?) {
-    warn "updmap.pl: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
-    exit 1;
+    die "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
   }
   chomp($TEXMFROOT);
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2015-04-12 17:20:30 +0200 (Sun, 12 Apr 2015) $';
+my $lastchdate = '$Date: 2015-04-27 19:08:10 +0200 (Mon, 27 Apr 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 36787 $';
+my $svnrev = '$Revision: 37076 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
-my $version = "svn$svnrev ($lastchdate)";
+my $version = "r$svnrev ($lastchdate)";
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
@@ -2321,10 +2320,10 @@ Where and which updmap.cfg changes are saved:
     new config file is created in \$TEXMFCONFIG/web2c/updmap.cfg.
   
   In general, the idea is that if the user cannot write to a given
-  config file, a higher-level one can be used.  As a typical example,
-  the distribution's settings can be overridden system-wide using
-  TEXMFLOCAL, and system settings can be overridden again for a
-  particular user with TEXMFHOME.
+  config file, a higher-level one can be used.  That way, the
+  distribution's settings can be overridden system-wide using
+  TEXMFLOCAL, and system settings can be overridden again in a
+  particular user's TEXMFHOME.
 
 Resolving multiple definitions of a font:
 
@@ -2341,7 +2340,9 @@ Disabling maps:
     \#! Map mapname.map
   or
     \#! MixedMap mapname.map
-  in the higher-priority updmap.cfg file. 
+  in the higher-priority updmap.cfg file.  (The \#! must be at the
+  beginning of the line, with at least one space or tab afterward, and
+  whitespace between each word on the list.)
 
   As an example, suppose you have a copy of MathTime Pro fonts
   and want to disable the Belleek version of the fonts; that is,
