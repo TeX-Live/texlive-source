@@ -20,7 +20,7 @@ README* files here (which are generated from that document).
 
 Build information for some of the platforms.
 
-i386-linux: gcc 4.8.2, Linux 2.6.18-* (CentOS 5.10, tug.org:~karl/bin/mybuild)
+i386-linux: gcc 4.9.2, Linux 2.6.18-* (CentOS 5.10, tug.org:~karl/bin/mybuild)
   Except for dvisvgm, where we must use the system compiler (gcc 4.1.2,
   Red Hat 4.1.2-54) or libgs.so crashes trying to use gcc 4.8.2's
   libstdc++.  On the other hand, the system compiler has an optimization
@@ -61,7 +61,7 @@ powerpc-linux (Debian Squeeze)
   ppc64 Debian GNU/Linux 6.0
   (only the kernel is 64bit, the entire userland is 32bit)
 
-sparc-solaris: gcc-4.5.0, Solaris 5.10 (Utah).
+sparc-solaris: Solaris 10, gcc.  Detailed wget/xz info in doc/README.solaris.
 
 universal-darwin, x86_64-darwin: a menagerie of versions.
   See Master/source/mactexdoc.tar.xz.

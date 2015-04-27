@@ -1,14 +1,17 @@
+(This file public domain.  Originally written by Mojca Miklavec, 2015.)
+
 Compiling TeX binaries on Solaris
 
-(The document describes the procedures used on Sparc Solaris binaries, but the same
-rules should apply to i386 and x86_64 as well.)
+(The document describes the procedures used on Sparc Solaris binaries,
+but the same rules should apply to i386 and x86_64 as well.)
 
-Solaris 9 has been out of official support for a while and making software compile
-on that platform is challenging, so it hardly make any sense to try to support it.
+Solaris 9 has been out of official support for a while and making
+software compile on that platform is challenging, so it hardly make any
+sense to try to support it.
 
-Solaris 10 reaches end of support in January 2021.
+Solaris 10 reaches end of support in January 2021:
     http://en.wikipedia.org/wiki/Solaris_(operating_system)#Version_history
-an TeX Live binaries try to stay compatible with that OS version.
+and TeX Live binaries try to stay compatible with that OS version.
 
 Every once in a while a new Update is shipped:
     U1  2006-01
@@ -22,7 +25,8 @@ Every once in a while a new Update is shipped:
     U9  2010-09
     U10 2011-08
     U11 2013-01
-and the problem is that binaries compiled on an updated system might not run on an older one.
+and the problem is that binaries compiled on an updated system might not
+run on an older one.
 
 You can check the libc version with
 > pvs -no /usr/lib/libc.so
@@ -46,7 +50,8 @@ useless on older Updates of Solaris 10 as it would depend on SUNW_1.22.7.
 One option to build wget in a "compatible way" would be to build it on
 Solaris 9 with "cc".  The other hack is the usage of map files.
 
-To make it work on older systems the following hack was used (thanks to the OpenCSW community):
+To make it work on older systems the following hack was used (thanks to
+the OpenCSW community):
     https://buildfarm.opencsw.org/source/xref/opencsw/csw/mgar/pkg/wget/trunk/files/map.wget
 
 > cat mapfile
@@ -74,11 +79,14 @@ The binary was built with gcc 4.9.2.
     GNU Wget 1.16.3 built on solaris2.10.
     +digest -https +ipv6 -iri +large-file -nls -ntlm +opie -psl -ssl 
 
+(That list of configure options is current as of the above version of
+wget; not all those dependencies are present in earlier versions.)
+
 Building xz
 ===========
 
-The version 5.2.1 of xz would likewise depend on SUNW_1.22.6 by default, so
-we used the same hack with a map file to make it work on slightly older
+The xz binaries would likewise depend on SUNW_1.22.6 by default, so we
+used the same hack with a map file to make it work on slightly older
 systems.
 
 > export LD_OPTIONS="-M $PWD/mapfile"
@@ -91,7 +99,5 @@ systems.
 > pvs Master/tlpkg/installer/xz/xzdec.sparc-solaris
     libc.so.1 (SUNW_1.22);
 
-
-In case that binaries should run on even older systems, users should report
-problems and we can target even older systems by patching the mapfile.
-
+If users need binaries to run on even older systems, we can target what
+is desired by changing the map file.
