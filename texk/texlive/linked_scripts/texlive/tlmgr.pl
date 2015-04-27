@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37011 2015-04-22 23:10:04Z preining $
+# $Id: tlmgr.pl 37030 2015-04-24 02:45:40Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 37011 $';
-my $datrev = '$Date: 2015-04-23 01:10:04 +0200 (Thu, 23 Apr 2015) $';
+my $svnrev = '$Revision: 37030 $';
+my $datrev = '$Date: 2015-04-24 04:45:40 +0200 (Fri, 24 Apr 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4409,7 +4409,7 @@ sub action_platform {
 sub action_generate {
   if ($opts{"usermode"}) {
     tlwarn("action `generate' not supported in usermode!\n");
-    exit 1;
+    return $F_ERROR;
   }
   my $what = shift @ARGV;
   init_local_db();
@@ -4491,6 +4491,12 @@ sub action_generate {
     }
 
   } elsif ($what =~ m/^fmtutil$/i) {
+    tlwarn("$prg: generate fmtutil is no longer needed or supported.\n");
+    tlwarn("$prg: Please read the documentation of the `fmtutil' program.\n");
+    tlwarn("$prg: Goodbye.\n");
+    return $F_ERROR;
+
+  } elsif ($what =~ m/^_fmtutil$/i) {
     my $dest = $opts{"dest"} || "$TEXMFDIST/web2c/fmtutil.cnf";
     debug("$prg: writing new fmtutil.cnf to $dest\n");
     TeXLive::TLUtils::create_fmtutil($localtlpdb, $dest);
@@ -4506,7 +4512,7 @@ sub action_generate {
     tlwarn("$prg: generate updmap is no longer needed or supported.\n");
     tlwarn("$prg: Please read the documentation of the `updmap' program.\n");
     tlwarn("$prg: Goodbye.\n");
-    exit(1);
+    return $F_ERROR;
 
   } elsif ($what =~ m/^_updmap$/i) {
     my $dest = $opts{"dest"} || "$TEXMFDIST/web2c/updmap.cfg";
@@ -4521,10 +4527,11 @@ sub action_generate {
     }
 
   } else {
-    die "$prg: Unknown option for generate: $what; try --help if you need it.\n";
+    tlwarn("$prg: Unknown option for generate: $what; try --help if you need it.\n");
+    return $F_ERROR;
   }
 
-  return;
+  return $F_OK;
 }
 
 
