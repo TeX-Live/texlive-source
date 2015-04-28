@@ -70,6 +70,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
   cff->flag     = 0;
 
   cff->name     = NULL;
+  cff->topdict  = NULL;
   cff->gsubr    = NULL;
   cff->encoding = NULL;
   cff->charsets = NULL;
@@ -81,6 +82,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
 
   cff->num_glyphs = 0;
   cff->num_fds    = 0;
+  cff->string     = NULL;
   cff->_string    = NULL;
 
   cff_seek_set(cff, 0);
