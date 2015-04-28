@@ -13,3 +13,5 @@ Added newline at end of file:
 	builds/wince/vc2005-ce/freetype.vcproj
 	builds/windows/vc2005/freetype.vcproj
 
+Backported a fix from git (3cc076dae):
+    src/cff/cffdrivr.c
