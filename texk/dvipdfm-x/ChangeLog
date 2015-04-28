@@ -1,5 +1,9 @@
 2015-04-27  Jiang Jiang  <gzjjgod@gmail.com>
 
+	* cidtype0.c: Fix TTC support for Type 1 Composite and Type 0 fonts.
+
+2015-04-27  Jiang Jiang  <gzjjgod@gmail.com>
+
 	* dpxfile.c: Ignore empty file in filetype checking.
 
 2015-04-26  Jiang Jiang  <gzjjgod@gmail.com>
