@@ -1,3 +1,8 @@
+2015-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* README.solaris (removed): Moved from here to doc/.
+	* Makefile.am: Adapted.
+
 2015-04-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* README.solaris: New file from Mojca (without very long lines).

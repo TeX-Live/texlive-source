@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory ./doc/
 ##
-## Copyright 2013-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2013-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## The info files
@@ -8,7 +8,9 @@ info_TEXINFOS = tlbuild.texi
 tlbuild_TEXINFOS = build-tools.txt \
   tlbuild-incl/install-tl.texi tlbuild-incl/tlmgr.texi
 
-EXTRA_DIST = splitinfo.gawk
+EXTRA_DIST = \
+	README.solaris \
+	splitinfo.gawk
 
 # no reasonable way to avoid it with the pod doc.
 MAKEINFOFLAGS = --set INFO_SPECIAL_CHARS_WARNING=0
