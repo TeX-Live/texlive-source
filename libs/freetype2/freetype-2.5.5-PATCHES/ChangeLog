@@ -1,3 +1,8 @@
+2015-04-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-cff (new): Backport patch from upstream
+	commit 3cc076dae by Jiang Jiang <gzjjgod@gmail.com>.
+
 2015-01-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported freetype-2.5.5 source tree from:
