@@ -621,12 +621,13 @@ CIDFont_cache_find (const char *map_name,
 
   if (font_id == __cache->num) {
     font = CIDFont_new();
-    if (CIDFont_type0_open(font, map_name, cmap_csi, opt)    < 0 &&
-	CIDFont_type2_open(font, map_name, cmap_csi, opt)    < 0 &&
-	CIDFont_type0_t1open(font, map_name, cmap_csi, opt)  < 0 &&
-	CIDFont_type0_t1copen(font, map_name, cmap_csi, opt) < 0 &&
-	CIDFont_base_open (font, map_name, cmap_csi, opt)    < 0
-	) {
+    if (CIDFont_type0_open(font, map_name, cmap_csi, opt, 0) < 0 &&
+        CIDFont_type2_open(font, map_name, cmap_csi, opt)    < 0 &&
+        CIDFont_type0_open(font, map_name, cmap_csi, opt,
+                           CIDFONT_FLAG_TYPE1)               < 0 &&
+        CIDFont_type0_open(font, map_name, cmap_csi, opt,
+                           CIDFONT_FLAG_TYPE1C)              < 0 &&
+        CIDFont_base_open (font, map_name, cmap_csi, opt)    < 0) {
       CIDFont_release(font);
       release_opt(opt);
       return -1;

@@ -29,16 +29,13 @@ extern void CIDFont_type0_set_verbose (void);
 extern void CIDFont_type0_set_flags   (long flags);
 
 extern int  CIDFont_type0_open    (CIDFont *font, const char *name,
-				   CIDSysInfo *cmap_csi, cid_opt *opt);
+                                   CIDSysInfo *cmap_csi, cid_opt *opt,
+                                   int expected_flag);
 extern void CIDFont_type0_dofont  (CIDFont *font);
 
 /* Type1 --> CFF CIDFont */
 extern int  t1_load_UnicodeCMap  (const char *font_name, const char *otl_tags, int wmode);
-extern int  CIDFont_type0_t1open (CIDFont *font, const char *name,
-				  CIDSysInfo *cmap_csi, cid_opt *opt);
 extern void CIDFont_type0_t1dofont (CIDFont *font);
-extern int  CIDFont_type0_t1copen (CIDFont *font, const char *name,
-				   CIDSysInfo *cmap_csi, cid_opt *opt);
 extern void CIDFont_type0_t1cdofont (CIDFont *font);
 
 #endif /* _CIDTYPE0_H_ */
