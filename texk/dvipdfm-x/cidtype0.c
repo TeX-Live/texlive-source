@@ -551,6 +551,7 @@ CIDFont_type0_try_open (const char *name,
                         CIDType0Info *info)
 {
   unsigned long offset = 0;
+  int is_cid;
 
   CIDFontInfo_init(info);
 
@@ -580,7 +581,7 @@ CIDFont_type0_try_open (const char *name,
   if (!info->cffont)
     return CID_OPEN_ERROR_CANNOT_OPEN_CFF_FONT;
 
-  int is_cid = info->cffont->flag & FONTTYPE_CIDFONT;
+  is_cid = info->cffont->flag & FONTTYPE_CIDFONT;
   if (required_cid != is_cid) {
     CIDFontInfo_close(info);
     return required_cid ? CID_OPEN_ERROR_NOT_CIDFONT
@@ -623,6 +624,7 @@ CIDFont_type0_dofont (CIDFont *font)
   char  *used_chars;
   unsigned char *CIDToGIDMap = NULL;
   CIDType0Error error;
+  CIDType0Info info;
 
   ASSERT(font);
 
@@ -645,7 +647,6 @@ CIDFont_type0_dofont (CIDFont *font)
 
   used_chars = CIDFont_type0_get_used_chars(font);
 
-  CIDType0Info info;
   error = CIDFont_type0_try_open(font->ident, CIDFont_get_opt_index(font),
                                  1, &info);
   if (error != CID_OPEN_ERROR_NO_ERROR) {
@@ -1056,6 +1057,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
   char  *used_chars;
   double default_width, nominal_width;
   CIDType0Error error;
+  CIDType0Info info;
 
   ASSERT(font);
 
@@ -1068,7 +1070,6 @@ CIDFont_type0_t1cdofont (CIDFont *font)
 
   used_chars = CIDFont_type0_get_used_chars(font);
 
-  CIDType0Info info;
   error = CIDFont_type0_try_open(font->ident, CIDFont_get_opt_index(font),
                                  0, &info);
   if (error != CID_OPEN_ERROR_NO_ERROR) {

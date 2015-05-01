@@ -1,3 +1,7 @@
+2015-05-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* cidtype0.c: Support old compilers.
+
 2015-05-01  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cidtype0.c, cidtype0.h, cid.c: Combine all Type 0 open functions
