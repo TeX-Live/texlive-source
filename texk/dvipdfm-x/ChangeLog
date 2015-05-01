@@ -1,3 +1,8 @@
+2015-05-01  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* cidtype0.c, cidtype0.h, cid.c: Combine all Type 0 open functions
+	into one.
+
 2015-04-27  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* cidtype0.c: Fix TTC support for Type 1 Composite and Type 0 fonts.
