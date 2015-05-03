@@ -3,7 +3,7 @@ kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
 
-   Copyright (C) 1996-2014 Karl Berry & Olaf Weber.
+   Copyright (C) 1996-2015 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.2.0, released in May 2014.
+corresponds to version 6.2.1, released in May 2015.
 
 * Menu:
 
@@ -61,8 +61,8 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 1 Introduction
 **************
 
-This manual corresponds to version 6.2.0 of the Kpathsea library,
-released in May 2014.
+This manual corresponds to version 6.2.1 of the Kpathsea library,
+released in May 2015.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -980,7 +980,7 @@ accepted.
 * Path searching options::      Changing the mode, resolution, etc.
 * Specially-recognized files::  Default formats for texmf.cnf, etc.
 * Auxiliary tasks::             Path and variable expansion.
-* Standard options::            -help and -version.
+* Standard options::            -help and -version and -help-formats.
 
 
 File: kpathsea.info,  Node: Path searching options,  Next: Specially-recognized files,  Up: Invoking kpsewhich
@@ -1134,13 +1134,6 @@ filename, and returns the first file found.
      affect the search paths via the '.PROGNAM' feature in configuration
      files (*note Config files::).
 
-'--safe-in-name=NAME'
-'--safe-out-name=NAME'
-     Exit successfully if NAME is safe to open for reading or writing,
-     respectively, else unsuccessfully.  No output is written.  These
-     tests take account of the related Kpathsea configuration settings
-     (*note Calling sequence::).
-
 '--subdir=STRING'
      Report only those matches whose directory part _ends_ with STRING
      (compared literally, except case is ignored on a case-insensitive
@@ -1258,30 +1251,22 @@ File: kpathsea.info,  Node: Auxiliary tasks,  Next: Standard options,  Prev: Spe
 5.5.3 Auxiliary tasks
 ---------------------
 
-Kpsewhich provides some additional features not strictly related to path
-lookup:
+Kpsewhich provides some features in addition to path lookup as such:
 
-   * '--debug=NUM' sets the debugging options to NUM.  *Note
-     Debugging::.
+'--debug=NUM'
+     Set debugging options to NUM.  *Note Debugging::.
 
-   * '--var-value=VARIABLE' outputs the value of VARIABLE, expanding '$'
-     (*note Variable expansion:: and '~' (*note Tilde expansion::)
-     constructs, but not performing other expansions.
+'--expand-braces=STRING'
+     Output variable and brace expansion of STRING.  *Note Path
+     expansion::.
 
-   * '--expand-braces=STRING' outputs the variable and brace expansion
-     of STRING.  *Note Path expansion::.
-
-   * '--expand-var=STRING' outputs the variable and tilde expansion of
-     STRING.  For example, the 'mktex...' scripts run 'kpsewhich
-     --expand-var='$TEXMF'' to find the root of the TeX system
-     hierarchy.  *Note Path expansion::.
-
-   * '--expand-path=STRING' outputs the complete expansion of STRING,
-     with each element separated by the usual path separator on the
-     current system (';' on Windows, ':' otherwise).  This may be useful
-     to construct a custom search path for a format not otherwise
-     supported.  To retrieve the search path for a format that is
-     already supported, see '--show-path', next.
+'--expand-path=STRING'
+     Output the complete expansion of STRING, with each element
+     separated by the usual path separator on the current system (';' on
+     Windows, ':' otherwise).  This may be useful to construct a custom
+     search path for a format not otherwise supported.  To retrieve the
+     search path for a format that is already supported, see
+     '--show-path'.
 
      Nonexistent directories are culled from the output:
 
@@ -1291,12 +1276,36 @@ lookup:
           =>
 
      For one-shot uses of an arbitrary (not built in to Kpathsea) path,
-     see '--path' in the previous section.
+     see '--path' (*note Path searching options::)
 
-   * '--show-path=NAME' shows the path that would be used for file
-     lookups of file type NAME.  Either a filename extension ('pk',
-     '.vf', etc.)  or an integer can be used, just as with '--format',
-     described in the previous section.
+'--expand-var=STRING'
+     Output the variable and tilde expansion of STRING the 'mktex...'
+     scripts run 'kpsewhich --expand-var='$TEXMF'' to find the root of
+     the TeX system hierarchy.  *Note Path expansion::.
+
+'--help-formats'
+     Output information about each supported format (*note Supported
+     file formats::), including the names and abbreviations, variables
+     looked for, and the original path.
+
+'--safe-in-name=NAME'
+'--safe-out-name=NAME'
+     Exit successfully if NAME is safe to open for reading or writing,
+     respectively, else unsuccessfully.  No output is written.  These
+     tests take account of the related Kpathsea configuration settings
+     (*note Calling sequence::).
+
+'--show-path=NAME'
+     Show the path that would be used for file lookups of file type
+     NAME.  Either a filename extension ('pk', '.vf', etc.)  or an
+     integer can be used, just as with '--format', described in the
+     previous section.
+
+'--var-value=VARIABLE'
+     Outputs the value of VARIABLE (a simple identifier like 'TEXMF',
+     with no '$' or other constructs), expanding '$' (*note Variable
+     expansion:: and '~' (*note Tilde expansion::) constructs, but not
+     performing other expansions.
 
 
 File: kpathsea.info,  Node: Standard options,  Prev: Auxiliary tasks,  Up: Invoking kpsewhich
@@ -1360,7 +1369,9 @@ suffixes, and/or a program to be run to create missing files on the fly.
 environment variables with an underscore, e.g., 'TEXINPUTS_latex' (*note
 Config files::).
 
-   The following table lists the above information.
+   The following table lists the above information.  You can also get
+the list by giving the '--help-formats' option to 'kpsewhich' (*note
+Auxiliary tasks::).
 
 'afm'
      (Adobe font metrics, *note (dvips)Metric files::) 'AFMFONTS';
@@ -1374,9 +1385,17 @@ Config files::).
      (BibTeX bibliography source, *note (web2c)bibtex invocation::)
      'BIBINPUTS', 'TEXBIB'; suffix '.bib'.
 
+'bltxml'
+     (BibLaTeXML bibliography files for Biber,
+     <http://ctan.org/pkg/biber>) 'BLTXMLINPUTS' suffix '.bltxml'.
+
 'bst'
      (BibTeX style, *note Basic BibTeX style files: (web2c)Basic BibTeX
      style files.) 'BSTINPUTS'; suffix '.bst'.
+
+'clua'
+     (dynamic libraries for Lua, <http://ctan.org/pkg/luatex>)
+     'CLUAINPUTS' suffixes '.dll' and '.so'.
 
 'cmap'
      (character map files) 'CMAPFONTS'; suffix '.cmap'.
@@ -1504,6 +1523,10 @@ Config files::).
 'PostScript header'
      (downloadable PostScript, *note (dvips)Header files::)
      'TEXPSHEADERS', 'PSHEADERS'; additional suffix '.pro'.
+
+'ris'
+     (RIS bibliography files, primarily for Biber,
+     <http://ctan.org/pkg/biber>) 'RISINPUTS' suffix '.ris'.
 
 'subfont definition files'
      (subfont definition files) 'SFDFONTS' suffix '.sfd'.
@@ -2746,12 +2769,13 @@ Index
                                                               (line  17)
 * --engine=NAME:                         Path searching options.
                                                               (line  21)
-* --expand-braces=STRING:                Auxiliary tasks.     (line  16)
-* --expand-path=STRING:                  Auxiliary tasks.     (line  24)
-* --expand-var=STRING:                   Auxiliary tasks.     (line  19)
+* --expand-braces=STRING:                Auxiliary tasks.     (line  12)
+* --expand-path=STRING:                  Auxiliary tasks.     (line  16)
+* --expand-var=STRING:                   Auxiliary tasks.     (line  34)
 * --format=NAME:                         Path searching options.
                                                               (line  37)
 * --help:                                Standard options.    (line   8)
+* --help-formats:                        Auxiliary tasks.     (line  39)
 * --interactive:                         Path searching options.
                                                               (line 119)
 * --mktex=FILETYPE:                      Path searching options.
@@ -2766,14 +2790,12 @@ Index
                                                               (line 140)
 * --progname=NAME:                       Path searching options.
                                                               (line 148)
-* --safe-in-name=NAME:                   Path searching options.
-                                                              (line 154)
-* --safe-out-name=NAME:                  Path searching options.
-                                                              (line 154)
-* --show-path=NAME:                      Auxiliary tasks.     (line  41)
+* --safe-in-name=NAME:                   Auxiliary tasks.     (line  45)
+* --safe-out-name=NAME:                  Auxiliary tasks.     (line  45)
+* --show-path=NAME:                      Auxiliary tasks.     (line  51)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 160)
-* --var-value=VARIABLE:                  Auxiliary tasks.     (line  12)
+                                                              (line 153)
+* --var-value=VARIABLE:                  Auxiliary tasks.     (line  57)
 * --version:                             Standard options.    (line  11)
 * --with-mktextex-default:               mktex configuration. (line  12)
 * --without-mktexfmt-default:            mktex configuration. (line  12)
@@ -2792,93 +2814,101 @@ Index
 * .2602gf:                               Unable to generate fonts.
                                                               (line  36)
 * .afm:                                  Supported file formats.
-                                                              (line  20)
+                                                              (line  22)
 * .base:                                 Supported file formats.
-                                                              (line  24)
+                                                              (line  26)
 * .bib:                                  Supported file formats.
-                                                              (line  28)
+                                                              (line  30)
+* .bltxml:                               Supported file formats.
+                                                              (line  34)
 * .bst:                                  Supported file formats.
-                                                              (line  32)
+                                                              (line  38)
 * .cid:                                  Supported file formats.
-                                                              (line  58)
+                                                              (line  68)
 * .cmap:                                 Supported file formats.
-                                                              (line  36)
+                                                              (line  46)
 * .cnf:                                  Supported file formats.
-                                                              (line  39)
+                                                              (line  49)
+* .dll:                                  Supported file formats.
+                                                              (line  42)
 * .enc:                                  Supported file formats.
-                                                              (line  51)
-* .eps:                                  Supported file formats.
-                                                              (line  69)
-* .epsi:                                 Supported file formats.
-                                                              (line  69)
-* .fea:                                  Supported file formats.
                                                               (line  61)
+* .eps:                                  Supported file formats.
+                                                              (line  79)
+* .epsi:                                 Supported file formats.
+                                                              (line  79)
+* .fea:                                  Supported file formats.
+                                                              (line  71)
 * .fmt:                                  Supported file formats.
-                                                              (line  54)
+                                                              (line  64)
 * .ist:                                  Supported file formats.
-                                                              (line  74)
-* .lig:                                  Supported file formats.
-                                                              (line  78)
-* .map:                                  Supported file formats.
                                                               (line  84)
+* .lig:                                  Supported file formats.
+                                                              (line  88)
+* .map:                                  Supported file formats.
+                                                              (line  94)
 * .mem:                                  Supported file formats.
-                                                              (line  87)
+                                                              (line  97)
 * .mf:                                   Supported file formats.
-                                                              (line  95)
+                                                              (line 105)
 * .mft:                                  Supported file formats.
-                                                              (line 103)
+                                                              (line 113)
 * .mlbib:                                Supported file formats.
-                                                              (line 111)
+                                                              (line 121)
 * .mlbst:                                Supported file formats.
-                                                              (line 115)
+                                                              (line 125)
 * .mp:                                   Supported file formats.
-                                                              (line 119)
+                                                              (line 129)
 * .ocp:                                  Supported file formats.
-                                                              (line 127)
+                                                              (line 137)
 * .ofm:                                  Supported file formats.
-                                                              (line 131)
-* .opl:                                  Supported file formats.
-                                                              (line 138)
-* .otp:                                  Supported file formats.
                                                               (line 141)
+* .opl:                                  Supported file formats.
+                                                              (line 148)
+* .otp:                                  Supported file formats.
+                                                              (line 151)
 * .ovf:                                  Supported file formats.
-                                                              (line 144)
-* .ovp:                                  Supported file formats.
-                                                              (line 147)
-* .pfa:                                  Supported file formats.
-                                                              (line 197)
-* .pfb:                                  Supported file formats.
-                                                              (line 197)
-* .pk:                                   Supported file formats.
                                                               (line 154)
+* .ovp:                                  Supported file formats.
+                                                              (line 157)
+* .pfa:                                  Supported file formats.
+                                                              (line 211)
+* .pfb:                                  Supported file formats.
+                                                              (line 211)
+* .pk:                                   Supported file formats.
+                                                              (line 164)
 * .pool:                                 Supported file formats.
-                                                              (line  99)
+                                                              (line 109)
 * .pool <1>:                             Supported file formats.
-                                                              (line 123)
+                                                              (line 133)
 * .pool <2>:                             Supported file formats.
-                                                              (line 181)
+                                                              (line 195)
 * .pro:                                  Supported file formats.
-                                                              (line 159)
+                                                              (line 169)
 * .rhosts, writable by TeX:              Security.            (line  10)
+* .ris:                                  Supported file formats.
+                                                              (line 173)
 * .sfd:                                  Supported file formats.
-                                                              (line 163)
+                                                              (line 177)
+* .so:                                   Supported file formats.
+                                                              (line  42)
 * .tex:                                  Supported file formats.
-                                                              (line 166)
+                                                              (line 180)
 * .tex file, included in 'ls-R':         ls-R.                (line  33)
 * .tfm:                                  Supported file formats.
-                                                              (line 185)
+                                                              (line 199)
 * .ttc:                                  Supported file formats.
-                                                              (line 193)
+                                                              (line 207)
 * .ttf:                                  Supported file formats.
-                                                              (line 193)
+                                                              (line 207)
 * .vf:                                   Supported file formats.
-                                                              (line 205)
+                                                              (line 219)
 * .w:                                    Supported file formats.
-                                                              (line  43)
+                                                              (line  53)
 * .web:                                  Supported file formats.
-                                                              (line  43)
+                                                              (line  53)
 * .web <1>:                              Supported file formats.
-                                                              (line 209)
+                                                              (line 223)
 * / may not be /:                        Searching overview.  (line  13)
 * /, trailing in home directory:         Tilde expansion.     (line  19)
 * //:                                    Subdirectory expansion.
@@ -2901,7 +2931,7 @@ Index
 * absolute filenames:                    Searching overview.  (line  52)
 * access warnings:                       Searching overview.  (line  56)
 * AFMFONTS:                              Supported file formats.
-                                                              (line  20)
+                                                              (line  22)
 * aliases for fonts:                     Fontmap.             (line   6)
 * aliases, for filenames:                Filename aliases.    (line   6)
 * all:                                   Suppressing warnings.
@@ -2926,16 +2956,18 @@ Index
 * basic glyph lookup:                    Basic glyph lookup.  (line   6)
 * Berry, Karl:                           History.             (line  12)
 * BIBINPUTS:                             Supported file formats.
-                                                              (line  28)
+                                                              (line  30)
 * BIBINPUTS <1>:                         Supported file formats.
-                                                              (line 111)
+                                                              (line 121)
 * blank lines, in 'texmf.cnf':           Config files.        (line  35)
+* BLTXMLINPUTS:                          Supported file formats.
+                                                              (line  34)
 * brace expansion:                       Brace expansion.     (line   6)
 * Breitenlohner, Peter:                  History.             (line  78)
 * BSTINPUTS:                             Supported file formats.
-                                                              (line  32)
+                                                              (line  38)
 * BSTINPUTS <1>:                         Supported file formats.
-                                                              (line 115)
+                                                              (line 125)
 * bug address:                           Reporting bugs.      (line   6)
 * bug checklist:                         Bug checklist.       (line   6)
 * bug mailing list:                      Mailing lists.       (line   6)
@@ -2951,8 +2983,10 @@ Index
                                                               (line  16)
 * circle fonts:                          Fontmap.             (line  19)
 * client_path in 'kpse->format_info':    Calling sequence.    (line  47)
+* CLUAINPUTS:                            Supported file formats.
+                                                              (line  42)
 * CMAPFONTS:                             Supported file formats.
-                                                              (line  36)
+                                                              (line  46)
 * cmr10, as fallback font:               Fallback font.       (line  15)
 * cmr10.vf:                              Searching overview.  (line  31)
 * cnf.c:                                 Config files.        (line  86)
@@ -2980,7 +3014,7 @@ Index
 * config.ps:                             Specially-recognized files.
                                                               (line  16)
 * config.ps, search path for:            Supported file formats.
-                                                              (line  47)
+                                                              (line  57)
 * config.status:                         Bug checklist.       (line  27)
 * configuration bugs:                    Bug checklist.       (line  27)
 * configuration file, source for path:   Path sources.        (line  17)
@@ -2993,7 +3027,7 @@ Index
 * core dumps, reporting:                 Bug checklist.       (line  58)
 * crashes, reporting:                    Bug checklist.       (line  58)
 * CWEBINPUTS:                            Supported file formats.
-                                                              (line  43)
+                                                              (line  53)
 * database search:                       Searching overview.  (line  17)
 * database, for filenames:               Filename database.   (line   6)
 * database, format of:                   Database format.     (line   6)
@@ -3016,7 +3050,7 @@ Index
 * disk searching, avoiding:              ls-R.                (line  51)
 * disk usage, reducing:                  Logging.             (line   6)
 * doc files:                             Supported file formats.
-                                                              (line 171)
+                                                              (line 185)
 * DOS compatible names:                  mktex configuration. (line  68)
 * dosnames:                              mktex configuration. (line  67)
 * dot files:                             ls-R.                (line  33)
@@ -3027,9 +3061,9 @@ Index
 * dvipdfmx.cfg:                          Specially-recognized files.
                                                               (line  19)
 * DVIPSFONTS:                            Supported file formats.
-                                                              (line 240)
+                                                              (line 254)
 * DVIPSHEADERS:                          Supported file formats.
-                                                              (line 197)
+                                                              (line 211)
 * DVIPSMAKEPK:                           mktex script names.  (line  32)
 * DVIPSSIZES:                            Fallback font.       (line   6)
 * dynamic creation of files:             mktex scripts.       (line   6)
@@ -3040,7 +3074,7 @@ Index
                                                               (line  48)
 * enabling 'mktex' scripts:              mktex configuration. (line   6)
 * ENCFONTS:                              Supported file formats.
-                                                              (line  51)
+                                                              (line  61)
 * engine name:                           Path searching options.
                                                               (line  21)
 * environment variable, source for path: Path sources.        (line   9)
@@ -3095,18 +3129,18 @@ Index
 * font of last resort:                   Fallback font.       (line   6)
 * font set, infinite:                    mktex scripts.       (line   6)
 * FONTCIDMAPS:                           Supported file formats.
-                                                              (line  58)
+                                                              (line  68)
 * FONTFEATURES:                          Supported file formats.
-                                                              (line  61)
+                                                              (line  71)
 * fontmap files:                         Fontmap.             (line   6)
 * fontmaps:                              mktex configuration. (line  86)
 * fontmaps <1>:                          mktex configuration. (line  87)
 * fontname:                              mktex configuration. (line  87)
 * fontnames, arbitrary length:           Fontmap.             (line  15)
 * FOOINPUTS:                             Supported file formats.
-                                                              (line 222)
+                                                              (line 236)
 * FOOINPUTS <1>:                         Supported file formats.
-                                                              (line 225)
+                                                              (line 239)
 * fopen, redefined:                      Debugging.           (line  54)
 * format of external database:           Database format.     (line   6)
 * ftp.cs.stanford.edu:                   unixtex.ftp.         (line  20)
@@ -3114,16 +3148,16 @@ Index
 * fundamental purpose of Kpathsea:       Introduction.        (line   6)
 * gdb, recommended:                      Bug checklist.       (line  58)
 * gf:                                    Supported file formats.
-                                                              (line  65)
+                                                              (line  75)
 * GFFONTS:                               Supported file formats.
-                                                              (line  65)
+                                                              (line  75)
 * globally writable directories:         Security.            (line  30)
 * glyph lookup:                          Glyph lookup.        (line   6)
 * glyph lookup bitmap tolerance:         Basic glyph lookup.  (line  15)
 * GLYPHFONTS:                            Supported file formats.
-                                                              (line  65)
+                                                              (line  75)
 * GLYPHFONTS <1>:                        Supported file formats.
-                                                              (line 154)
+                                                              (line 164)
 * glyphlist.txt:                         Specially-recognized files.
                                                               (line  25)
 * GNU C compiler bugs:                   TeX or Metafont failing.
@@ -3141,7 +3175,7 @@ Index
 * identifiers, characters valid in:      Config files.        (line  47)
 * include fontmap directive:             Fontmap.             (line  30)
 * INDEXSTYLE:                            Supported file formats.
-                                                              (line  74)
+                                                              (line  84)
 * input lines, reading:                  Calling sequence.    (line 110)
 * interactive query:                     Path searching options.
                                                               (line 119)
@@ -3200,7 +3234,7 @@ Index
                                                               (line  22)
 * license for using the library:         Introduction.        (line  31)
 * LIGFONTS:                              Supported file formats.
-                                                              (line  78)
+                                                              (line  88)
 * lines, reading arbitrary-length:       Calling sequence.    (line 110)
 * Linux File System Standard:            mktex configuration. (line 113)
 * local cache of fonts:                  Security.            (line  22)
@@ -3210,7 +3244,7 @@ Index
 * lostchar:                              Suppressing warnings.
                                                               (line  19)
 * ls-R:                                  Supported file formats.
-                                                              (line  81)
+                                                              (line  91)
 * ls-R database file:                    ls-R.                (line   6)
 * ls-R, simplest build:                  ls-R.                (line  18)
 * MacKenzie, David:                      History.             (line  44)
@@ -3231,15 +3265,15 @@ Index
 * Metafont using the wrong device:       Unable to generate fonts.
                                                               (line  29)
 * MFBASES:                               Supported file formats.
-                                                              (line  24)
+                                                              (line  26)
 * MFINPUTS:                              Supported file formats.
-                                                              (line  95)
+                                                              (line 105)
 * MFPOOL:                                Supported file formats.
-                                                              (line  99)
+                                                              (line 109)
 * MFTINPUTS:                             Supported file formats.
-                                                              (line 103)
+                                                              (line 113)
 * MISCFONTS:                             Supported file formats.
-                                                              (line 107)
+                                                              (line 117)
 * mismatched checksum warnings:          Suppressing warnings.
                                                               (line  17)
 * missfont.log:                          mktex script names.  (line  35)
@@ -3265,19 +3299,19 @@ Index
 * mktextex:                              mktex script names.  (line  27)
 * mktextfm:                              mktex script names.  (line  30)
 * MLBIBINPUTS:                           Supported file formats.
-                                                              (line 111)
+                                                              (line 121)
 * MLBSTINPUTS:                           Supported file formats.
-                                                              (line 115)
+                                                              (line 125)
 * mode directory, omitting:              mktex configuration. (line  98)
 * Morgan, Tim:                           History.             (line  12)
 * MPINPUTS:                              Supported file formats.
-                                                              (line 119)
+                                                              (line 129)
 * MPMEMS:                                Supported file formats.
-                                                              (line  87)
+                                                              (line  97)
 * MPPOOL:                                Supported file formats.
-                                                              (line 123)
+                                                              (line 133)
 * MPSUPPORT:                             Supported file formats.
-                                                              (line  91)
+                                                              (line 101)
 * MT_FEATURES:                           mktex configuration. (line  39)
 * multiple TeX hierarchies:              Brace expansion.     (line  20)
 * must exist:                            Searching overview.  (line  31)
@@ -3292,25 +3326,25 @@ Index
 * numeric debugging values:              Debugging.           (line  34)
 * obtaining TeX:                         unixtex.ftp.         (line   6)
 * OCPINPUTS:                             Supported file formats.
-                                                              (line 127)
+                                                              (line 137)
 * OFMFONTS:                              Supported file formats.
-                                                              (line 131)
+                                                              (line 141)
 * online Metafont display, spurious:     Unable to generate fonts.
                                                               (line  36)
 * OPENTYPEFONTS:                         Supported file formats.
-                                                              (line 135)
+                                                              (line 145)
 * optimization caveat:                   TeX or Metafont failing.
                                                               (line  15)
 * options for debugging:                 Debugging.           (line   6)
 * OTPINPUTS:                             Supported file formats.
-                                                              (line 141)
+                                                              (line 151)
 * overview of path searching:            Searching overview.  (line   6)
 * overview of programming with Kpathsea: Programming overview.
                                                               (line   6)
 * OVFFONTS:                              Supported file formats.
-                                                              (line 144)
+                                                              (line 154)
 * OVPFONTS:                              Supported file formats.
-                                                              (line 147)
+                                                              (line 157)
 * path expansion:                        Path expansion.      (line   6)
 * path searching:                        Path searching.      (line   6)
 * path searching options:                Path searching options.
@@ -3326,14 +3360,14 @@ Index
 * pdftex.cfg:                            Specially-recognized files.
                                                               (line  34)
 * PDFTEXCONFIG:                          Supported file formats.
-                                                              (line 151)
+                                                              (line 161)
 * pdftexconfig.tex:                      Specially-recognized files.
                                                               (line  34)
 * permission denied:                     Searching overview.  (line  56)
 * permissions, directory:                Security.            (line  51)
 * permissions, file:                     Security.            (line  47)
 * PKFONTS:                               Supported file formats.
-                                                              (line 154)
+                                                              (line 164)
 * plain.base:                            Unable to generate fonts.
                                                               (line  46)
 * privacy, semblance of:                 Logging.             (line  32)
@@ -3350,7 +3384,7 @@ Index
 * proof mode:                            Unable to generate fonts.
                                                               (line  36)
 * PSHEADERS:                             Supported file formats.
-                                                              (line 159)
+                                                              (line 169)
 * pxp Pascal preprocessor:               History.             (line  12)
 * quoting variable values:               Variable expansion.  (line  17)
 * re-entrant API:                        Programming overview.
@@ -3367,6 +3401,8 @@ Index
 * resolutions, last-resort:              Fallback font.       (line   6)
 * retrieving TeX:                        unixtex.ftp.         (line   6)
 * right-hand side of variable assignments: Config files.      (line  56)
+* RISINPUTS:                             Supported file formats.
+                                                              (line 173)
 * Rokicki, Tom:                          History.             (line  12)
 * root user:                             Tilde expansion.     (line  19)
 * runtime configuration files:           Config files.        (line   6)
@@ -3386,7 +3422,7 @@ Index
 * sending patches:                       Bug checklist.       (line  52)
 * setgid scripts:                        Security.            (line  40)
 * SFDFONTS:                              Supported file formats.
-                                                              (line 163)
+                                                              (line 177)
 * shell scripts as configuration files:  Config files.        (line  79)
 * shell variables:                       Variable expansion.  (line  17)
 * shell_escape, example for code:        Programming with config files.
@@ -3396,7 +3432,7 @@ Index
                                                               (line   6)
 * slow startup time:                     Slow path searching. (line   6)
 * source files:                          Supported file formats.
-                                                              (line 174)
+                                                              (line 188)
 * sources for search paths:              Path sources.        (line   6)
 * special:                               Suppressing warnings.
                                                               (line  30)
@@ -3431,11 +3467,11 @@ Index
 * system C compiler bugs:                TeX or Metafont failing.
                                                               (line  19)
 * T1FONTS:                               Supported file formats.
-                                                              (line 197)
+                                                              (line 211)
 * T1INPUTS:                              Supported file formats.
-                                                              (line 197)
+                                                              (line 211)
 * T42FONTS:                              Supported file formats.
-                                                              (line 202)
+                                                              (line 216)
 * tcfmgr.map:                            Specially-recognized files.
                                                               (line  46)
 * TDS:                                   TeX directory structure.
@@ -3460,32 +3496,32 @@ Index
 * tex-k@tug.org (bug address):           Reporting bugs.      (line   6)
 * tex.web:                               unixtex.ftp.         (line  20)
 * TEXBIB:                                Supported file formats.
-                                                              (line  28)
+                                                              (line  30)
 * TEXBIB <1>:                            Supported file formats.
-                                                              (line 111)
+                                                              (line 121)
 * TEXCONFIG:                             Supported file formats.
-                                                              (line  47)
+                                                              (line  57)
 * TEXDOCS:                               Supported file formats.
-                                                              (line 171)
-* TEXFONTMAPS:                           Supported file formats.
-                                                              (line  84)
-* TEXFONTS:                              Supported file formats.
-                                                              (line  65)
-* TEXFONTS <1>:                          Supported file formats.
-                                                              (line 154)
-* TEXFONTS <2>:                          Supported file formats.
                                                               (line 185)
+* TEXFONTMAPS:                           Supported file formats.
+                                                              (line  94)
+* TEXFONTS:                              Supported file formats.
+                                                              (line  75)
+* TEXFONTS <1>:                          Supported file formats.
+                                                              (line 164)
+* TEXFONTS <2>:                          Supported file formats.
+                                                              (line 199)
 * TEXFONTS <3>:                          Supported file formats.
-                                                              (line 205)
+                                                              (line 219)
 * texfonts.map:                          Fontmap.             (line   6)
 * TEXFORMATS:                            Supported file formats.
-                                                              (line  54)
+                                                              (line  64)
 * TEXINDEXSTYLE:                         Supported file formats.
-                                                              (line  74)
+                                                              (line  84)
 * TEXINPUTS:                             Supported file formats.
-                                                              (line  69)
+                                                              (line  79)
 * TEXINPUTS <1>:                         Supported file formats.
-                                                              (line 166)
+                                                              (line 180)
 * TEXMF:                                 TeX directory structure.
                                                               (line   6)
 * texmf.cnf:                             Specially-recognized files.
@@ -3496,40 +3532,40 @@ Index
 * texmf.cnf, source for path:            Path sources.        (line  17)
 * TEXMFCNF:                              Config files.        (line   6)
 * TEXMFCNF <1>:                          Supported file formats.
-                                                              (line  39)
+                                                              (line  49)
 * TEXMFDBS:                              ls-R.                (line   6)
 * TEXMFDBS <1>:                          Supported file formats.
-                                                              (line  81)
+                                                              (line  91)
 * TEXMFINI:                              Supported file formats.
-                                                              (line  24)
+                                                              (line  26)
 * TEXMFINI <1>:                          Supported file formats.
-                                                              (line  54)
+                                                              (line  64)
 * TEXMFINI <2>:                          Supported file formats.
-                                                              (line  87)
+                                                              (line  97)
 * TEXMFLOG:                              Logging.             (line  10)
 * TEXMFOUTPUT:                           mktex script names.  (line  40)
 * TEXMFSCRIPTS:                          Supported file formats.
-                                                              (line 177)
+                                                              (line 191)
 * texmfvar:                              mktex configuration. (line 122)
 * TEXMFVAR:                              mktex configuration. (line 123)
 * TEXPICTS:                              Supported file formats.
-                                                              (line  69)
+                                                              (line  79)
 * TEXPKS:                                Supported file formats.
-                                                              (line 154)
+                                                              (line 164)
 * TEXPOOL:                               Supported file formats.
-                                                              (line 181)
+                                                              (line 195)
 * TEXPSHEADERS:                          Supported file formats.
-                                                              (line 159)
+                                                              (line 169)
 * TEXPSHEADERS <1>:                      Supported file formats.
-                                                              (line 197)
+                                                              (line 211)
 * TEXSIZES:                              Fallback font.       (line   6)
 * TEXSOURCES:                            Supported file formats.
-                                                              (line 174)
+                                                              (line 188)
 * TEX_HUSH:                              Searching overview.  (line  56)
 * TEX_HUSH <1>:                          Suppressing warnings.
                                                               (line   6)
 * TFMFONTS:                              Supported file formats.
-                                                              (line 185)
+                                                              (line 199)
 * tilde expansion:                       Tilde expansion.     (line   6)
 * tilde.c:                               Tilde expansion.     (line  25)
 * time system call:                      Logging.             (line  15)
@@ -3537,13 +3573,13 @@ Index
 * trailing '/' in home directory:        Tilde expansion.     (line  19)
 * trailing colons:                       Default expansion.   (line   6)
 * TRFONTS:                               Supported file formats.
-                                                              (line 189)
+                                                              (line 203)
 * trick for detecting leaf directories:  Subdirectory expansion.
                                                               (line  22)
 * trojan horse attack:                   Security.            (line  10)
 * try_std_extension_first:               File lookup.         (line  24)
 * TTFONTS:                               Supported file formats.
-                                                              (line 193)
+                                                              (line 207)
 * tug.org:                               unixtex.ftp.         (line   6)
 * typeface directory, omitting:          mktex configuration. (line 105)
 * typeface directory, omitting <1>:      mktex configuration. (line 108)
@@ -3573,7 +3609,7 @@ Index
 * version numbers, determining:          Bug checklist.       (line  15)
 * VF files, not found:                   Searching overview.  (line  31)
 * VFFONTS:                               Supported file formats.
-                                                              (line 205)
+                                                              (line 219)
 * Vojta, Paul:                           History.             (line  30)
 * Walsh, Norman:                         History.             (line  56)
 * warning about unusable 'ls-R':         ls-R.                (line  45)
@@ -3582,10 +3618,10 @@ Index
 * warnings, suppressing:                 Suppressing warnings.
                                                               (line   6)
 * WEB2C:                                 Supported file formats.
-                                                              (line 213)
+                                                              (line 227)
 * Weber, Olaf:                           History.             (line  73)
 * WEBINPUTS:                             Supported file formats.
-                                                              (line 209)
+                                                              (line 223)
 * whitespace, in fontmap files:          Fontmap.             (line  27)
 * whitespace, not ignored on continuation lines: Config files.
                                                               (line  37)
@@ -3593,7 +3629,7 @@ Index
 * XDvi:                                  Specially-recognized files.
                                                               (line  41)
 * XDVIFONTS:                             Supported file formats.
-                                                              (line 240)
+                                                              (line 254)
 * XDVIMAKEPK:                            mktex script names.  (line  32)
 * XDVISIZES:                             Fallback font.       (line   6)
 * zuhn, david:                           History.             (line  50)
@@ -3623,37 +3659,37 @@ Node: ls-R36130
 Node: Filename aliases39025
 Node: Database format40203
 Node: Invoking kpsewhich41216
-Node: Path searching options42160
-Node: Specially-recognized files50371
-Node: Auxiliary tasks51726
-Node: Standard options53551
-Node: TeX support53907
-Node: Supported file formats55259
-Node: File lookup62458
-Node: Glyph lookup64207
-Node: Basic glyph lookup65331
-Node: Fontmap66211
-Node: Fallback font68632
-Node: Suppressing warnings69544
-Node: mktex scripts70671
-Node: mktex configuration71886
-Node: mktex script names77689
-Node: mktex script arguments79075
-Node: Programming79954
-Node: Programming overview80476
-Node: Calling sequence83173
-Node: Program-specific files89705
-Node: Programming with config files90728
-Node: Reporting bugs92040
-Node: Bug checklist92718
-Node: Mailing lists96190
-Node: Debugging96865
-Node: Logging101942
-Node: Common problems103809
-Node: Unable to find files104286
-Node: Slow path searching106696
-Node: Unable to generate fonts108071
-Node: TeX or Metafont failing110542
-Node: Index111895
+Node: Path searching options42178
+Node: Specially-recognized files50098
+Node: Auxiliary tasks51453
+Node: Standard options53792
+Node: TeX support54148
+Node: Supported file formats55500
+Node: File lookup63165
+Node: Glyph lookup64914
+Node: Basic glyph lookup66038
+Node: Fontmap66918
+Node: Fallback font69339
+Node: Suppressing warnings70251
+Node: mktex scripts71378
+Node: mktex configuration72593
+Node: mktex script names78396
+Node: mktex script arguments79782
+Node: Programming80661
+Node: Programming overview81183
+Node: Calling sequence83880
+Node: Program-specific files90412
+Node: Programming with config files91435
+Node: Reporting bugs92747
+Node: Bug checklist93425
+Node: Mailing lists96897
+Node: Debugging97572
+Node: Logging102649
+Node: Common problems104516
+Node: Unable to find files104993
+Node: Slow path searching107403
+Node: Unable to generate fonts108778
+Node: TeX or Metafont failing111249
+Node: Index112602
 
 End Tag Table

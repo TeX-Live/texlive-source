@@ -2,13 +2,13 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.2.0
-@set month-year May 2014
+@set version 6.2.1
+@set month-year May 2015
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2014 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2015 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -1233,8 +1233,8 @@ abbreviation is accepted.
 @menu
 * Path searching options::      Changing the mode, resolution, etc.
 * Specially-recognized files::  Default formats for texmf.cnf, etc.
-* Auxiliary tasks::             Path and variable expansion.
-* Standard options::            --help and --version.
+* Auxiliary tasks::             Path and variable expansion, etc.
+* Standard options::            @samp{--help} and @samp{--version}.
 @end menu
 
 
@@ -1409,15 +1409,6 @@ Set the program name to @var{name}; default is @samp{kpsewhich}.  This
 can affect the search paths via the @samp{.@var{prognam}} feature in
 configuration files (@pxref{Config files}).
 
-@item --safe-in-name=@var{name}
-@itemx --safe-out-name=@var{name}
-@opindex --safe-in-name=@var{name}
-@opindex --safe-out-name=@var{name}
-Exit successfully if @var{name} is safe to open for reading or
-writing, respectively, else unsuccessfully.  No output is written.
-These tests take account of the related Kpathsea configuration
-settings (@pxref{Calling sequence}).
-
 @item --subdir=@var{string}
 @opindex --subdir=@var{string}
 Report only those matches whose directory part @emph{ends} with
@@ -1572,41 +1563,26 @@ information about the above configuration files (among others).
 
 @cindex auxiliary tasks
 
-Kpsewhich provides some additional features not strictly related to path
-lookup:
+Kpsewhich provides some features in addition to path lookup as such:
 
-@itemize @bullet
-@item
+@table @samp
+@item --debug=@var{num}
 @opindex --debug=@var{num}
-@samp{--debug=@var{num}} sets the debugging options to @var{num}.
-@xref{Debugging}.
+Set debugging options to @var{num}.  @xref{Debugging}.
 
-@item
-@opindex --var-value=@var{variable}
-@samp{--var-value=@var{variable}} outputs the value of @var{variable},
-expanding @samp{$} (@pxref{Variable expansion} and @samp{~} (@pxref{Tilde
-expansion}) constructs, but not performing other expansions.
-
-@item
+@item --expand-braces=@var{string}
 @opindex --expand-braces=@var{string}
-@samp{--expand-braces=@var{string}} outputs the variable and brace
-expansion of @var{string}.  @xref{Path expansion}.
+Output variable and brace expansion of @var{string}.  @xref{Path
+expansion}.
 
-@item
-@opindex --expand-var=@var{string}
-@samp{--expand-var=@var{string}} outputs the variable and tilde
-expansion of @var{string}.  For example, the @samp{mktex@dots{}}
-scripts run @samp{kpsewhich --expand-var='$TEXMF'} to find the root of
-the @TeX{} system hierarchy.  @xref{Path expansion}.
-
-@item
+@item --expand-path=@var{string}
 @opindex --expand-path=@var{string}
-@samp{--expand-path=@var{string}} outputs the complete expansion of
-@var{string}, with each element separated by the usual path separator
-on the current system (@samp{;} on Windows, @samp{:} otherwise).
-This may be useful to construct a custom search path for a format not
-otherwise supported.  To retrieve the search path for a format that is
-already supported, see @samp{--show-path}, next.
+Output the complete expansion of @var{string}, with each element
+separated by the usual path separator on the current system (@samp{;}
+on Windows, @samp{:} otherwise).  This may be useful to construct a
+custom search path for a format not otherwise supported.  To retrieve
+the search path for a format that is already supported, see
+@samp{--show-path}.
 
 Nonexistent directories are culled from the output:
 
@@ -1618,16 +1594,45 @@ $ kpsewhich --expand-path '/nonesuch'
 @end example
 
 For one-shot uses of an arbitrary (not built in to Kpathsea) path, see
-@samp{--path} in the previous section.
+@samp{--path} (@pxref{Path searching options})
 
-@item
+@item --expand-var=@var{string}
+@opindex --expand-var=@var{string}
+Output the variable and tilde expansion of @var{string}
+the @samp{mktex@dots{}} scripts run @samp{kpsewhich
+--expand-var='$TEXMF'} to find the root of the @TeX{} system
+hierarchy.  @xref{Path expansion}.
+
+@item --help-formats
+@opindex --help-formats
+Output information about each supported format (@pxref{Supported file
+formats}), including the names and abbreviations, variables
+looked for, and the original path.
+
+@item --safe-in-name=@var{name}
+@itemx --safe-out-name=@var{name}
+@opindex --safe-in-name=@var{name}
+@opindex --safe-out-name=@var{name}
+Exit successfully if @var{name} is safe to open for reading or
+writing, respectively, else unsuccessfully.  No output is written.
+These tests take account of the related Kpathsea configuration
+settings (@pxref{Calling sequence}).
+
+@item --show-path=@var{name}
 @opindex --show-path=@var{name}
-@samp{--show-path=@var{name}} shows the path that would be used for file
-lookups of file type @var{name}.  Either a filename extension
-(@samp{pk}, @samp{.vf}, etc.) or an integer can be used, just as with
-@samp{--format}, described in the previous section.
+Show the path that would be used for file lookups of file type
+@var{name}.  Either a filename extension (@samp{pk}, @samp{.vf}, etc.)
+or an integer can be used, just as with @samp{--format}, described in
+the previous section.
 
-@end itemize
+@item --var-value=@var{variable}
+@opindex --var-value=@var{variable}
+Outputs the value of @var{variable} (a simple identifier like
+@samp{TEXMF}, with no @samp{$} or other constructs), expanding
+@samp{$} (@pxref{Variable expansion} and @samp{~} (@pxref{Tilde
+expansion}) constructs, but not performing other expansions.
+
+@end table
 
 
 @node Standard options
@@ -1701,7 +1706,9 @@ Since environment variables containing periods, such as
 for environment variables with an underscore, e.g.,
 @samp{TEXINPUTS_latex} (@pxref{Config files}).
 
-The following table lists the above information.
+The following table lists the above information.  You can also get the
+list by giving the @samp{--help-formats} option to @code{kpsewhich}
+(@pxref{Auxiliary tasks}).
 
 @table @samp
 @item afm
@@ -1727,6 +1734,13 @@ suffix @samp{.base}.
 @code{BIBINPUTS}, @code{TEXBIB};
 suffix @samp{.bib}.
 
+@item bltxml
+@flindex .bltxml
+@vindex BLTXMLINPUTS
+(Bib@LaTeX{}ML bibliography files for Biber, @url{http://ctan.org/pkg/biber})
+@code{BLTXMLINPUTS}
+suffix @samp{.bltxml}.
+
 @item bst
 @flindex .bst
 @vindex BSTINPUTS
@@ -1734,6 +1748,14 @@ suffix @samp{.bib}.
 style files, web2c, Web2c})
 @code{BSTINPUTS};
 suffix @samp{.bst}.
+
+@item clua
+@flindex .dll
+@flindex .so
+@vindex CLUAINPUTS
+(dynamic libraries for Lua, @url{http://ctan.org/pkg/luatex})
+@code{CLUAINPUTS}
+suffixes @samp{.dll} and @samp{.so}.
 
 @item cmap
 @flindex .cmap
@@ -1983,6 +2005,13 @@ dynamic creation program: @code{mktexpk}.
 (downloadable PostScript, @pxref{Header files,,, dvips, Dvips})
 @code{TEXPSHEADERS}, @code{PSHEADERS};
 additional suffix @samp{.pro}.
+
+@item ris
+@flindex .ris
+@vindex RISINPUTS
+(RIS bibliography files, primarily for Biber, @url{http://ctan.org/pkg/biber})
+@code{RISINPUTS}
+suffix @samp{.ris}.
 
 @item subfont definition files
 @flindex .sfd
