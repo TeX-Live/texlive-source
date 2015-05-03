@@ -979,8 +979,8 @@ accepted.
 
 * Path searching options::      Changing the mode, resolution, etc.
 * Specially-recognized files::  Default formats for texmf.cnf, etc.
-* Auxiliary tasks::             Path and variable expansion.
-* Standard options::            -help and -version and -help-formats.
+* Auxiliary tasks::             Path and variable expansion, etc.
+* Standard options::            '--help' and '--version'.
 
 
 File: kpathsea.info,  Node: Path searching options,  Next: Specially-recognized files,  Up: Invoking kpsewhich
@@ -3659,37 +3659,37 @@ Node: ls-R36130
 Node: Filename aliases39025
 Node: Database format40203
 Node: Invoking kpsewhich41216
-Node: Path searching options42178
-Node: Specially-recognized files50098
-Node: Auxiliary tasks51453
-Node: Standard options53792
-Node: TeX support54148
-Node: Supported file formats55500
-Node: File lookup63165
-Node: Glyph lookup64914
-Node: Basic glyph lookup66038
-Node: Fontmap66918
-Node: Fallback font69339
-Node: Suppressing warnings70251
-Node: mktex scripts71378
-Node: mktex configuration72593
-Node: mktex script names78396
-Node: mktex script arguments79782
-Node: Programming80661
-Node: Programming overview81183
-Node: Calling sequence83880
-Node: Program-specific files90412
-Node: Programming with config files91435
-Node: Reporting bugs92747
-Node: Bug checklist93425
-Node: Mailing lists96897
-Node: Debugging97572
-Node: Logging102649
-Node: Common problems104516
-Node: Unable to find files104993
-Node: Slow path searching107403
-Node: Unable to generate fonts108778
-Node: TeX or Metafont failing111249
-Node: Index112602
+Node: Path searching options42171
+Node: Specially-recognized files50091
+Node: Auxiliary tasks51446
+Node: Standard options53785
+Node: TeX support54141
+Node: Supported file formats55493
+Node: File lookup63158
+Node: Glyph lookup64907
+Node: Basic glyph lookup66031
+Node: Fontmap66911
+Node: Fallback font69332
+Node: Suppressing warnings70244
+Node: mktex scripts71371
+Node: mktex configuration72586
+Node: mktex script names78389
+Node: mktex script arguments79775
+Node: Programming80654
+Node: Programming overview81176
+Node: Calling sequence83873
+Node: Program-specific files90405
+Node: Programming with config files91428
+Node: Reporting bugs92740
+Node: Bug checklist93418
+Node: Mailing lists96890
+Node: Debugging97565
+Node: Logging102642
+Node: Common problems104509
+Node: Unable to find files104986
+Node: Slow path searching107396
+Node: Unable to generate fonts108771
+Node: TeX or Metafont failing111242
+Node: Index112595
 
 End Tag Table
