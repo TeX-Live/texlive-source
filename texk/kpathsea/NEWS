@@ -1,8 +1,9 @@
 This file records noteworthy changes.  (Public domain.)
 
 6.2.1 (for TeX Live 2015)
-* kpsewhich --help outputs more information the search paths.
-* install <kpatsea/c-auto.h> in an architecture dependent location
+* search path information output with new option --help-formats to kpsewhich,
+  no longer with --help.
+* install <kpathsea/c-auto.h> in an architecture dependent location
   and use pkg-config to get the required flags.
 
 6.2.0 (for TeX Live 2014, 30 May 2013)
