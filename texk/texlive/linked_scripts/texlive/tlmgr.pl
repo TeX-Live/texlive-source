@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37030 2015-04-24 02:45:40Z preining $
+# $Id: tlmgr.pl 37141 2015-05-01 15:56:19Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 37030 $';
-my $datrev = '$Date: 2015-04-24 04:45:40 +0200 (Fri, 24 Apr 2015) $';
+my $svnrev = '$Revision: 37141 $';
+my $datrev = '$Date: 2015-05-01 17:56:19 +0200 (Fri, 01 May 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -637,7 +637,7 @@ for the full story.\n";
   my $ret = execute_action($action, @ARGV);
 
   if ($ret & $F_ERROR) {
-    tlwarn("tlmgr: an error has occurred. See above messages. Exiting.\n");
+    tlwarn("$prg: An error has occurred. See above messages. Exiting.\n");
   }
 
   # end of main program, returns also error codes 
@@ -701,12 +701,12 @@ sub execute_action {
       return($foo);
     }
     if ($foo & $F_WARNING) {
-      tlwarn("tlmgr: action $action returned a warning.\n");
+      tlwarn("$prg: action $action returned a warning.\n");
       $ret = $foo;
     }
   } else {
     $ret = $F_OK;
-    tlwarn("tlmgr: didn't get return value from action $action, assuming ok.\n");
+    tlwarn("$prg: didn't get return value from action $action, assuming ok.\n");
   }
   my $run_post = 1;
   if ($ret & $F_NOPOSTACTION) {
@@ -1610,7 +1610,6 @@ sub action_info {
 #
 sub action_search {
   my ($r) = @ARGV;
-  my $ret = $F_OK | $F_NOPOSTACTION;
   my $tlpdb;
   # check the arguments
   my $search_type_nr = 0;
@@ -1633,8 +1632,11 @@ sub action_search {
   } else {
     $tlpdb = $localtlpdb;
   }
+
   foreach my $pkg ($tlpdb->list_packages) {
     my $tlp = $tlpdb->get_package($pkg);
+    
+    # --file or --all -> search (full) file names
     if ($opts{"file"} || $opts{"all"}) {
       my @files = $tlp->all_files;
       if ($tlp->relocated) {
@@ -1647,7 +1649,10 @@ sub action_search {
           print "\t$_\n";
         }
       }
-    } else {
+    }
+    #
+    # no options or --all -> search package names/descriptions
+    if ($search_type_nr == 0 || $opts{"all"}) {
       next if ($pkg =~ m/\./);
       # glom description strings together for one search
       my $t = "$pkg\n";
@@ -1655,13 +1660,15 @@ sub action_search {
       $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
       my $pat = $r;
       $pat = '\W' . $r . '\W' if ($opts{"word"});
+      my $matched = "";
       if ($t =~ m/$pat/i) {
         my $shortdesc = $tlp->shortdesc || "";
-        $ret .= " $pkg - $shortdesc\n";
+        $matched .= " $pkg - $shortdesc\n";
       }
+      print $matched;
     }
   }
-  print $ret;
+
   return ($F_OK | $F_NOPOSTACTION);
 }
 
