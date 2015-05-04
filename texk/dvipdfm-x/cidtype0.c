@@ -473,7 +473,8 @@ write_fontfile (CIDFont *font, cff_font *cffont)
   return destlen;
 }
 
-char *CIDFont_type0_get_used_chars(CIDFont *font) {
+static char *
+CIDFont_type0_get_used_chars(CIDFont *font) {
   int parent_id;
   char *used_chars;
 
@@ -505,7 +506,8 @@ typedef enum {
   CID_OPEN_ERROR_IS_CIDFONT           = -6,
 } CIDType0Error;
 
-void CIDType0Error_Show (CIDType0Error error, const char *name)
+static void
+CIDType0Error_Show (CIDType0Error error, const char *name)
 {
   switch (error) {
     case CID_OPEN_ERROR_CANNOT_OPEN_FILE:
@@ -525,12 +527,14 @@ void CIDType0Error_Show (CIDType0Error error, const char *name)
   }
 }
 
-void CIDFontInfo_init (CIDType0Info *info)
+static void
+CIDFontInfo_init (CIDType0Info *info)
 {
   memset(info, 0, sizeof(CIDType0Info));
 }
 
-void CIDFontInfo_close (CIDType0Info *info)
+static void
+CIDFontInfo_close (CIDType0Info *info)
 {
   if (info->cffont)
     cff_close(info->cffont);
@@ -544,7 +548,7 @@ void CIDFontInfo_close (CIDType0Info *info)
   CIDFontInfo_init(info);
 }
 
-CIDType0Error
+static CIDType0Error
 CIDFont_type0_try_open (const char *name,
                         int index,
                         int required_cid,
@@ -591,7 +595,7 @@ CIDFont_type0_try_open (const char *name,
   return CID_OPEN_ERROR_NO_ERROR;
 }
 
-void
+static void
 CIDFont_type0_add_CIDSet(CIDFont *font, char *used_chars, card16 last_cid) {
   /*
    * CIDSet:
@@ -617,9 +621,9 @@ CIDFont_type0_dofont (CIDFont *font)
   long   destlen = 0;
   long   size, offset = 0;
   card8 *data;
-  card16 num_glyphs, gid;
+  card16 num_glyphs = 0, gid;
   long cid;
-  card16 cs_count, last_cid;
+  card16 cs_count, last_cid = 0;
   int    fd, prev_fd;
   char  *used_chars;
   unsigned char *CIDToGIDMap = NULL;
@@ -677,7 +681,6 @@ CIDFont_type0_dofont (CIDFont *font)
     CIDToGIDMap = NEW(2 * cid_count, unsigned char);
     memset(CIDToGIDMap, 0, 2 * cid_count);
     add_to_used_chars2(used_chars, 0); /* .notdef */
-    cid = 0; last_cid = 0; num_glyphs = 0;
     for (cid = 0; cid <= CID_MAX; cid++) {
       if (is_used_char2(used_chars, cid)) {
         gid = cff_charsets_lookup(cffont, (card16)cid);
@@ -830,7 +833,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
 {
   CIDSysInfo *csi;
   char       *fontname;
-  sfnt       *sfont;
+  sfnt       *sfont = NULL;
   cff_font   *cffont;
   FILE       *fp = NULL;
   unsigned long offset = 0;
@@ -894,8 +897,6 @@ CIDFont_type0_open (CIDFont *font, const char *name,
       cffont->charsets = NULL;
     }
   } else {
-    char *shortname;
-
     if (!fp)
       return -1;
 
