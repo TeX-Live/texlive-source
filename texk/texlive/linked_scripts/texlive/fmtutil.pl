@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37076 2015-04-27 17:08:10Z karl $
+# $Id: fmtutil.pl 37175 2015-05-04 02:00:42Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -10,12 +10,6 @@
 # History:
 # Original shell script (C) 2001 Thomas Esser, public domain
 #
-# TODO
-# not really here:
-# in main texlive, we need to ensure that the texmf-dist/web2c/fmtutil.cnf
-# file consists only of those formats that are actually installed, 
-# NOT as of now of all!!
-# We are reading ALL fmtutil.cnf now!
 
 my $TEXMFROOT;
 
@@ -32,11 +26,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37076 2015-04-27 17:08:10Z karl $';
-my $lastchdate = '$Date: 2015-04-27 19:08:10 +0200 (Mon, 27 Apr 2015) $';
+my $svnid = '$Id: fmtutil.pl 37175 2015-05-04 02:00:42Z preining $';
+my $lastchdate = '$Date: 2015-05-04 04:00:42 +0200 (Mon, 04 May 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37076 $';
+my $svnrev = '$Revision: 37175 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -759,14 +753,10 @@ sub read_fmtutil_file {
   for (@lines) {
     $i++;
     chomp;
-    next if /^\s*$/;
-    next if /^\s*#$/;
-    next if /^\s*#[^!]/;
-    next if /^\s*##/;
-    next if /^#![^ ]/;
-    # allow for comments on the line itself
-    s/([^#].*)#.*$/$1/;
-    my ($a, $b, $c, @rest) = split ' ';
+    next if /^\s*#?\s*$/; # ignore empty and all-blank and just-# lines
+    next if /^\s*#[^!]/;  # ignore whole-line comment that is not a disable
+    s/#[^!].*//;          # remove within-line comment that is not a disable
+    my ($a, $b, $c, @rest) = split ' '; # special split rule, leading ws ign
     my $disabled = 0;
     if ($a eq "#!") {
       # we cannot determine whether a line is a proper fmtline or
