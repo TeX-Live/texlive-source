@@ -1,3 +1,12 @@
+2015-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* cidtype0.c: Avoid compiler warnings:
+	(CIDFont_type0_get_used_chars, CIDType0Error_Show,
+	CIDFontInfo_init, CIDFontInfo_close, -CIDType0Error,
+	CIDFont_type0_add_CIDSet): Declare as static.
+	(CIDFont_type0_add_CIDSet): Initialize num_glyphs, last_cid.
+	(CIDFont_type0_open): Always initialize sfont, drop unused.
+
 2015-05-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* cidtype0.c: Support old compilers.
