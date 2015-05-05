@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37175 2015-05-04 02:00:42Z preining $
+# $Id: fmtutil.pl 37190 2015-05-04 23:36:23Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -26,11 +26,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37175 2015-05-04 02:00:42Z preining $';
-my $lastchdate = '$Date: 2015-05-04 04:00:42 +0200 (Mon, 04 May 2015) $';
+my $svnid = '$Id: fmtutil.pl 37190 2015-05-04 23:36:23Z karl $';
+my $lastchdate = '$Date: 2015-05-05 01:36:23 +0200 (Tue, 05 May 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37175 $';
+my $svnrev = '$Revision: 37190 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -756,7 +756,8 @@ sub read_fmtutil_file {
     next if /^\s*#?\s*$/; # ignore empty and all-blank and just-# lines
     next if /^\s*#[^!]/;  # ignore whole-line comment that is not a disable
     s/#[^!].*//;          # remove within-line comment that is not a disable
-    my ($a, $b, $c, @rest) = split ' '; # special split rule, leading ws ign
+    s/#$//;               # remove # at end of line
+    my ($a,$b,$c,@rest) = split (' '); # special split rule, leading ws ign
     my $disabled = 0;
     if ($a eq "#!") {
       # we cannot determine whether a line is a proper fmtline or
