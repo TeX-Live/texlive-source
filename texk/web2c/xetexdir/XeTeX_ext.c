@@ -88,6 +88,16 @@ authorization from the copyright holders.
 
 #include <assert.h>
 
+/* for reading input files, we don't need the default locking routines
+   as xetex is a single-threaded program */
+#ifdef WIN32
+#define GETC(f)      _getc_nolock(f)
+#define UNGETC(c,f)  _ungetc_nolock(c,f)
+#else
+#define GETC(f)      getc_unlocked(f)
+#define UNGETC(c,f)  ungetc(c,f)
+#endif
+
 /* tables/values used in UTF-8 interpretation -
    code is based on ConvertUTF.[ch] sample code
    published by the Unicode consortium */
@@ -342,17 +352,17 @@ static uint32_t *utf32Buf = NULL;
             byteBuffer = (char*) xmalloc(bufsize + 1);
 
         /* Recognize either LF or CR as a line terminator; skip initial LF if prev line ended with CR.  */
-        i = getc(f->f);
+        i = GETC(f->f);
         if (f->skipNextLF) {
             f->skipNextLF = 0;
             if (i == '\n')
-                i = getc(f->f);
+                i = GETC(f->f);
         }
 
         if (i != EOF && i != '\n' && i != '\r')
             byteBuffer[bytesRead++] = i;
         if (i != EOF && i != '\n' && i != '\r')
-            while (bytesRead < bufsize && (i = getc(f->f)) != EOF && i != '\n' && i != '\r')
+            while (bytesRead < bufsize && (i = GETC(f->f)) != EOF && i != '\n' && i != '\r')
                 byteBuffer[bytesRead++] = i;
 
         if (i == EOF && errno != EINTR && bytesRead == 0)
@@ -2530,8 +2540,8 @@ u_open_in(unicodefile* f, integer filefmt, const_string fopen_mode, integer mode
         int B1, B2;
         if (mode == AUTO) {
             /* sniff encoding form */
-            B1 = getc((*f)->f);
-            B2 = getc((*f)->f);
+            B1 = GETC((*f)->f);
+            B2 = GETC((*f)->f);
             if (B1 == 0xfe && B2 == 0xff)
                 mode = UTF16BE;
             else if (B2 == 0xfe && B1 == 0xff)
@@ -2543,7 +2553,7 @@ u_open_in(unicodefile* f, integer filefmt, const_string fopen_mode, integer mode
                 mode = UTF16LE;
                 rewind((*f)->f);
             } else if (B1 == 0xef && B2 == 0xbb) {
-                int B3 = getc((*f)->f);
+                int B3 = GETC((*f)->f);
                 if (B3 == 0xbf)
                     mode = UTF8;
             }
@@ -2696,17 +2706,17 @@ get_uni_c(UFILE* f)
 
     switch (f->encodingMode) {
         case UTF8:
-            c = rval = getc(f->f);
+            c = rval = GETC(f->f);
             if (rval != EOF) {
                 uint16_t extraBytes = bytesFromUTF8[rval];
                 switch (extraBytes) {   /* note: code falls through cases! */
-                    case 3: c = getc(f->f);
+                    case 3: c = GETC(f->f);
                         if (c < 0x80 || c >= 0xc0) goto bad_utf8;
                         rval <<= 6; rval += c;
-                    case 2: c = getc(f->f);
+                    case 2: c = GETC(f->f);
                         if (c < 0x80 || c >= 0xc0) goto bad_utf8;
                         rval <<= 6; rval += c;
-                    case 1: c = getc(f->f);
+                    case 1: c = GETC(f->f);
                         if (c < 0x80 || c >= 0xc0) goto bad_utf8;
                         rval <<= 6; rval += c;
                     case 0:
@@ -2714,7 +2724,7 @@ get_uni_c(UFILE* f)
 
                     bad_utf8:
                         if (c != EOF)
-                            ungetc(c, f->f);
+                            UNGETC(c, f->f);
                     case 5:
                     case 4:
                         badutf8warning();
@@ -2725,14 +2735,14 @@ get_uni_c(UFILE* f)
             break;
 
         case UTF16BE:
-            rval = getc(f->f);
+            rval = GETC(f->f);
             if (rval != EOF) {
                 rval <<= 8;
-                rval += getc(f->f);
+                rval += GETC(f->f);
                 if (rval >= 0xd800 && rval <= 0xdbff) {
-                    int lo = getc(f->f);
+                    int lo = GETC(f->f);
                     lo <<= 8;
-                    lo += getc(f->f);
+                    lo += GETC(f->f);
                     if (lo >= 0xdc00 && lo <= 0xdfff)
                         rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
                     else {
@@ -2745,12 +2755,12 @@ get_uni_c(UFILE* f)
             break;
 
         case UTF16LE:
-            rval = getc(f->f);
+            rval = GETC(f->f);
             if (rval != EOF) {
-                rval += (getc(f->f) << 8);
+                rval += (GETC(f->f) << 8);
                 if (rval >= 0xd800 && rval <= 0xdbff) {
-                    int lo = getc(f->f);
-                    lo += (getc(f->f) << 8);
+                    int lo = GETC(f->f);
+                    lo += (GETC(f->f) << 8);
                     if (lo >= 0xdc00 && lo <= 0xdfff)
                         rval = 0x10000 + (rval - 0xd800) * 0x400 + (lo - 0xdc00);
                     else {
@@ -2789,7 +2799,7 @@ get_uni_c(UFILE* f)
 #endif
 
         case RAW:
-            rval = getc(f->f);
+            rval = GETC(f->f);
             break;
 
         default:
