@@ -91,8 +91,14 @@ authorization from the copyright holders.
 /* for reading input files, we don't need the default locking routines
    as xetex is a single-threaded program */
 #ifdef WIN32
+#ifdef __MINGW32__
+/* MinGW (both 32- and 64-bit) has problems with _getc_nolock() and/or _ungetc_nolock() */
+#define GETC(f)      getc(f)
+#define UNGETC(c,f)  ungetc(c,f)
+#else
 #define GETC(f)      _getc_nolock(f)
 #define UNGETC(c,f)  _ungetc_nolock(c,f)
+#endif
 #else
 #define GETC(f)      getc_unlocked(f)
 #define UNGETC(c,f)  ungetc(c,f)
