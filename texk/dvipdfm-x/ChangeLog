@@ -1,3 +1,7 @@
+2015-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: Do not identify Type1 fonts as TrueType or OpenType.
+
 2015-05-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* cidtype0.c: Avoid compiler warnings:
