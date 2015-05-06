@@ -85,6 +85,7 @@ texmf_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
+	cjk-gs-integrate/cjk-gs-integrate.pl \
 	context/perl/mptopdf.pl \
 	convbkmk/convbkmk.rb \
 	crossrefware/bibdoiadd.pl \
