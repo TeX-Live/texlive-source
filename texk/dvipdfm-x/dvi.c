@@ -929,7 +929,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   struct tt_head_table *head;
   struct tt_maxp_table *maxp;
   struct tt_hhea_table *hhea;
-  int           is_dfont = 0;
+  int is_dfont = 0, is_type1 = 0;
 
   if (verbose)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
@@ -937,9 +937,10 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   if ((path = dpx_find_dfont_file(filename)) != NULL &&
       (fp = fopen(path, "rb")) != NULL)
     is_dfont = 1;
+  else if ((path = dpx_find_type1_file(filename)) != NULL)
+    is_type1 = 1;
   else if (((path = dpx_find_opentype_file(filename)) == NULL
-         && (path = dpx_find_truetype_file(filename)) == NULL
-         && (path = dpx_find_type1_file(filename)) == NULL)
+         && (path = dpx_find_truetype_file(filename)) == NULL)
          || (fp = fopen(path, "rb")) == NULL) {
     ERROR("Cannot proceed without the font: %s", filename);
   }
@@ -963,37 +964,40 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].type    = NATIVE;
   free(fontmap_key);
 
-  if (is_dfont)
-    sfont = dfont_open(fp, index);
-  else
-    sfont = sfnt_open(fp);
-  if (sfont->type == SFNT_TYPE_TTC)
-    offset = ttc_read_offset(sfont, index);
-  else if (sfont->type == SFNT_TYPE_DFONT)
-    offset = sfont->offset;
-  sfnt_read_table_directory(sfont, offset);
-  head = tt_read_head_table(sfont);
-  maxp = tt_read_maxp_table(sfont);
-  hhea = tt_read_hhea_table(sfont);
-  loaded_fonts[cur_id].ascent = hhea->ascent;
-  loaded_fonts[cur_id].descent = hhea->descent;
-  loaded_fonts[cur_id].unitsPerEm = head->unitsPerEm;
-  loaded_fonts[cur_id].numGlyphs = maxp->numGlyphs;
-  if (layout_dir == 1 && sfnt_find_table_pos(sfont, "vmtx") > 0) {
-    struct tt_vhea_table *vhea = tt_read_vhea_table(sfont);
-    sfnt_locate_table(sfont, "vmtx");
-    loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
-    RELEASE(vhea);
-  } else {
-    sfnt_locate_table(sfont, "hmtx");
-    loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+  if (is_type1 == 0) {
+    if (is_dfont)
+      sfont = dfont_open(fp, index);
+    else
+      sfont = sfnt_open(fp);
+    if (sfont->type == SFNT_TYPE_TTC)
+      offset = ttc_read_offset(sfont, index);
+    else if (sfont->type == SFNT_TYPE_DFONT)
+      offset = sfont->offset;
+    sfnt_read_table_directory(sfont, offset);
+    head = tt_read_head_table(sfont);
+    maxp = tt_read_maxp_table(sfont);
+    hhea = tt_read_hhea_table(sfont);
+    loaded_fonts[cur_id].ascent = hhea->ascent;
+    loaded_fonts[cur_id].descent = hhea->descent;
+    loaded_fonts[cur_id].unitsPerEm = head->unitsPerEm;
+    loaded_fonts[cur_id].numGlyphs = maxp->numGlyphs;
+    if (layout_dir == 1 && sfnt_find_table_pos(sfont, "vmtx") > 0) {
+      struct tt_vhea_table *vhea = tt_read_vhea_table(sfont);
+      sfnt_locate_table(sfont, "vmtx");
+      loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
+      RELEASE(vhea);
+    } else {
+      sfnt_locate_table(sfont, "hmtx");
+      loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+    }
+    RELEASE(hhea);
+    RELEASE(maxp);
+    RELEASE(head);
+    sfnt_close(sfont);
+    fclose(fp);
   }
-  RELEASE(hhea);
-  RELEASE(maxp);
-  RELEASE(head);
-  sfnt_close(sfont);
+
   free(path);
-  fclose(fp);
 
   loaded_fonts[cur_id].layout_dir = layout_dir;
   loaded_fonts[cur_id].extend = mrec->opt.extend;
