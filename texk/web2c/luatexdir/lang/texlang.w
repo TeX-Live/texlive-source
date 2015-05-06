@@ -727,10 +727,20 @@ static halfword find_next_wordstart(halfword r)
             if (is_simple_character(r)) {
                 chr = character(r) ;
                 if (chr == ex_hyphen_char) {
-                    /* maybe add a test if prev and next are glyphs */
-                    t = compound_word_break(r, char_lang(r));
-                    subtype(t) = automatic_disc;
-                    start_ok = 1 ;
+                    /* We only accept an explicit hyphen when there is a preceding glyph and  */
+                    /* we skip a sequence of explicit hyphens as that normally indicates a    */
+                    /* -- or --- ligature in which case we can in a worse case usage get bad  */
+                    /* node lists later on due to messed up ligature building as these dashes */
+                    /* ligatures in base fonts. This is a side effect of the separating the   */
+                    /* hyphenation, ligaturing and kerning steps. A test is cmr with ------.  */                            
+                    t = vlink(r) ;
+                    if ((start_ok > 0) && (t!=null) && (type(t) == glyph_node) && (character(t) != ex_hyphen_char)) {
+                        t = compound_word_break(r, char_lang(r));
+                        subtype(t) = automatic_disc;
+                        start_ok = 1 ;
+                    } else {
+                        start_ok = 0;
+                    }
                 } else if (start_ok && (l = get_lc_code(chr)) > 0) {
                     if (char_uchyph(r) || l == chr) {
                         return r;

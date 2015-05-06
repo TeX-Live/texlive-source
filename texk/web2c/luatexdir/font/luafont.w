@@ -2051,16 +2051,11 @@ static halfword handle_lig_word(halfword cur)
                         /* and set the subtypes */
                         subtype(cur) = init_disc;
                         subtype(fwd) = select_disc;
-                        return cur ;
                     }
                 }
             }
 
         } else {                /* NO GLYPH NOR DISC */
-#if 0
-            fprintf(stdout,"This is a %d node\n",type(cur));
-            assert(0); /* TODO howcome there can be a glue here? */
-#endif
             return cur;
         }
         /* step-to-next-node */
