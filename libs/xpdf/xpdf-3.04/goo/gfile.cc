@@ -44,6 +44,11 @@
 #endif
 
 //------------------------------------------------------------------------
+#ifdef _MSC_VER
+extern "C" {
+char *kpse_var_value (char *);
+}
+#endif
 
 GString *getHomeDir() {
 #ifdef VMS
@@ -55,7 +60,11 @@ GString *getHomeDir() {
   char *s;
   GString *ret;
 
+#ifdef _MSC_VER
+  if ((s = kpse_var_value("HOME")))
+#else
   if ((s = getenv("HOME")))
+#endif
     ret = new GString(s);
   else
     ret = new GString(".");
@@ -559,7 +568,7 @@ GBool openTempFile(GString **name, FILE **f,
 
 GBool createDir(char *path, int mode) {
 #ifdef _WIN32
-  return !mkdir(path);
+  return !_mkdir(path);
 #else
   return !mkdir(path, mode);
 #endif

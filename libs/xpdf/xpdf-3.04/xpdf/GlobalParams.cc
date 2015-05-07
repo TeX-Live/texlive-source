@@ -16,7 +16,9 @@
 #endif
 
 #ifdef _WIN32
+#  ifndef _WIN32_WINNT
 #  define _WIN32_WINNT 0x0500 // for GetSystemWindowsDirectory
+#  endif
 #  include <windows.h>
 #endif
 #include <string.h>
@@ -54,8 +56,8 @@
 #ifdef _WIN32
 #  undef strcasecmp
 #  undef strncasecmp
-#  define strcasecmp stricmp
-#  define strncasecmp strnicmp
+#  define strcasecmp _stricmp
+#  define strncasecmp _strnicmp
 #else
 #  include <strings.h>
 #endif
@@ -2138,8 +2140,11 @@ void GlobalParams::setupBaseFonts(char *dir) {
 				   base14->fontNum,
 				   displayFontTab[i].obliqueFactor));
       } else {
+// Do not display unnecessary looking message on W32
+#ifndef _WIN32
 	error(errConfig, -1, "No display font for '{0:s}'",
 	      displayFontTab[i].name);
+#endif
       }
     }
   }
