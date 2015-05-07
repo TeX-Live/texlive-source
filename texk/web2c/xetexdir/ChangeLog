@@ -1,3 +1,8 @@
+2015-05-07  Jonathan Kew  <jfkthame@gmail.com>
+
+	* xetex.web: Merged UTF-16 surrogate-handling fixes from github.
+	* xetex.web: New \Uchar and \Ucharcat primitives.
+
 2015-05-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* XeTeX_ext.c: Can not use non-locking getc() for MinGW.
