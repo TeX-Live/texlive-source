@@ -1,3 +1,7 @@
+2015-05-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-41-W32TeX: On Windows use USERPROFILE instead of HOME.
+
 2015-05-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-41-W32TeX (new): More changes from Akira.
