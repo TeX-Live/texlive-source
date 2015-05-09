@@ -44,11 +44,6 @@
 #endif
 
 //------------------------------------------------------------------------
-#ifdef _MSC_VER
-extern "C" {
-char *kpse_var_value (char *);
-}
-#endif
 
 GString *getHomeDir() {
 #ifdef VMS
@@ -60,12 +55,8 @@ GString *getHomeDir() {
   char *s;
   GString *ret;
 
-#ifdef_WIN32
-#ifdef _MSC_VER
-  if ((s = kpse_var_value("USERPROFILE")))
-#else
+#ifdef _WIN32
   if ((s = getenv("USERPROFILE")))
-#endif
 #else
   if ((s = getenv("HOME")))
 #endif
