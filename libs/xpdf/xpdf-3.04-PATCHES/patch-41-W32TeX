@@ -1,6 +1,6 @@
 diff -ur -N xpdf-3.04.orig/goo/gfile.cc xpdf-3.04/goo/gfile.cc
 --- xpdf-3.04.orig/goo/gfile.cc	2014-05-30 19:42:41.000000000 +0200
-+++ xpdf-3.04/goo/gfile.cc	2015-05-07 08:43:30.000000000 +0200
++++ xpdf-3.04/goo/gfile.cc	2015-05-09 15:26:58.000000000 +0200
 @@ -44,6 +44,11 @@
  #endif
  
@@ -13,19 +13,23 @@ diff -ur -N xpdf-3.04.orig/goo/gfile.cc xpdf-3.04/goo/gfile.cc
  
  GString *getHomeDir() {
  #ifdef VMS
-@@ -55,7 +60,11 @@
+@@ -55,7 +60,15 @@
    char *s;
    GString *ret;
  
++#ifdef_WIN32
 +#ifdef _MSC_VER
-+  if ((s = kpse_var_value("HOME")))
++  if ((s = kpse_var_value("USERPROFILE")))
++#else
++  if ((s = getenv("USERPROFILE")))
++#endif
 +#else
    if ((s = getenv("HOME")))
 +#endif
      ret = new GString(s);
    else
      ret = new GString(".");
-@@ -559,7 +568,7 @@
+@@ -559,7 +572,7 @@
  
  GBool createDir(char *path, int mode) {
  #ifdef _WIN32
