@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.31],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.33],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -51,7 +51,7 @@ else
 fi
 ])
 
-AC_CHECK_PROGS(TEXI2DVI,[texi2dvi texi2dvi4a2ps],
+AC_CHECK_PROGS(TEXI2DVI,[texi2dvi],
 [echo texi2dvi is missing! Please put http://asymptote.sourceforge.net/asymptote.pdf in the doc directory, touch doc/asymptote.pdf, and run configure again; exit 1;])
 
 AC_SUBST(TEXI2DVI)
@@ -121,7 +121,7 @@ AC_CHECK_HEADER(unordered_map,AC_DEFINE(HAVE_UNORDERED_MAP,1,
 			      [Define to 1 if you have tr1/unordered_map]),
 	[AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
 
-GCVERSION=7.4.0
+GCVERSION=7.4.2
 GCFILE=gc-$GCVERSION
 
 AC_CHECK_FILE($GCFILE.tar.gz,
@@ -375,7 +375,8 @@ if test "x$GCDIR" != "x" ; then
    echo FOR EXAMPLE, USE THE COMMANDS:
    echo
    echo wget http://hboehm.info/gc/gc_source/$GCFILE.tar.gz
-   echo wget http://hboehm.info/gc/gc_source/libatomic_ops-$GCVERSION.tar.gz
+   echo wget http://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-$GCVERSION.tar.gz
+
    echo
    exit 1
    ])

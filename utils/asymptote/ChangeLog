@@ -1,4 +1,340 @@
 ------------------------------------------------------------------------
+r5707 | jcbowman | 2015-05-10 22:35:32 -0600 (Sun, 10 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/smoothcontour3.asy
+
+Enable progress reporting if verbose > 1.
+
+------------------------------------------------------------------------
+r5706 | jcbowman | 2015-05-10 22:09:46 -0600 (Sun, 10 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update to gc-7.4.2.
+
+------------------------------------------------------------------------
+r5705 | jcbowman | 2015-05-10 21:30:56 -0600 (Sun, 10 May 2015) | 3 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/settings.cc
+
+Implement aligndir option for aligning picture to arbitrary point of page
+boundary.
+
+------------------------------------------------------------------------
+r5704 | jcbowman | 2015-05-10 17:50:49 -0600 (Sun, 10 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/latexusage.tex
+
+Fix default.
+
+------------------------------------------------------------------------
+r5703 | jcbowman | 2015-05-10 17:47:40 -0600 (Sun, 10 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asy-latex.dtx
+   M /trunk/asymptote/doc/latexusage.tex
+
+Add \def\asylatexdir{DIR} option to support pdflatex -output-directory=DIR.
+
+------------------------------------------------------------------------
+r5702 | jcbowman | 2015-05-08 12:43:31 -0600 (Fri, 08 May 2015) | 2 lines
+Changed paths:
+   A /trunk/asymptote/base/smoothcontour3.asy
+   A /trunk/asymptote/examples/lemniscate.asy
+
+Added Charles Staats' smoothcontour3 module, with example.
+
+------------------------------------------------------------------------
+r5701 | jcbowman | 2015-05-08 11:42:00 -0600 (Fri, 08 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/plain_arrows.asy
+
+Fix definition of SimpleHead.
+
+------------------------------------------------------------------------
+r5700 | jcbowman | 2015-05-08 09:01:42 -0600 (Fri, 08 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/trembling.asy
+
+Remove outdated comments.
+
+------------------------------------------------------------------------
+r5699 | jcbowman | 2015-05-08 08:52:49 -0600 (Fri, 08 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/palette.asy
+
+Fix image dimensions.
+
+------------------------------------------------------------------------
+r5698 | jcbowman | 2015-05-08 08:42:04 -0600 (Fri, 08 May 2015) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Change default meshlight to nolight so that mesh lines with positive width
+appear consistent with default single pixel width mesh lines.
+
+------------------------------------------------------------------------
+r5697 | jcbowman | 2015-05-07 19:00:00 -0600 (Thu, 07 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_tube.asy
+
+Fix cond handling in parametric surfaces.
+
+------------------------------------------------------------------------
+r5696 | jcbowman | 2015-05-07 12:25:16 -0600 (Thu, 07 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix sign.
+
+------------------------------------------------------------------------
+r5695 | jcbowman | 2015-05-07 12:22:07 -0600 (Thu, 07 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/geometry.asy
+
+Fix path arc(pair B, pair A, pair C, real r).
+
+------------------------------------------------------------------------
+r5694 | jcbowman | 2015-04-26 20:03:36 -0600 (Sun, 26 Apr 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/texfile.cc
+
+Work around backwards incompatible dvisvgm pt to bp unit change on 2014-04-09.
+
+------------------------------------------------------------------------
+r5693 | jcbowman | 2015-04-08 16:55:28 -0600 (Wed, 08 Apr 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runpicture.in
+
+Force deconstruct to use the C locale.
+
+------------------------------------------------------------------------
+r5692 | jcbowman | 2015-04-06 23:07:04 -0600 (Mon, 06 Apr 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runarray.in
+
+Fix mismatched array delete operator.
+
+------------------------------------------------------------------------
+r5691 | jcbowman | 2015-04-06 18:18:26 -0600 (Mon, 06 Apr 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/picture.cc
+   M /trunk/asymptote/picture.h
+   M /trunk/asymptote/runlabel.in
+
+Work around missing epswrite driver in ghostscript-9.15.
+
+------------------------------------------------------------------------
+r5690 | jcbowman | 2015-03-26 15:01:22 -0600 (Thu, 26 Mar 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/texfile.cc
+
+Remove obsolete workaround for an Adobe Reader transparency artifact.
+
+------------------------------------------------------------------------
+r5689 | jcbowman | 2014-12-10 09:29:51 -0700 (Wed, 10 Dec 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asy-latex.dtx
+   M /trunk/asymptote/texfile.cc
+
+Fix inline option when importing asymptote.sty with xelatex.
+
+------------------------------------------------------------------------
+r5688 | jcbowman | 2014-12-10 09:09:16 -0700 (Wed, 10 Dec 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/Bode.asy
+   M /trunk/asymptote/doc/asymptote.texi
+
+Fix documentation and example.
+
+------------------------------------------------------------------------
+r5687 | jcbowman | 2014-12-10 09:08:50 -0700 (Wed, 10 Dec 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/ode.asy
+
+Rename function argument of integrate in ode.asy to correspond to documentation.
+
+------------------------------------------------------------------------
+r5686 | jcbowman | 2014-12-10 09:01:12 -0700 (Wed, 10 Dec 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runarray.in
+
+Simplify code.
+
+------------------------------------------------------------------------
+r5685 | jcbowman | 2014-09-24 15:20:00 -0600 (Wed, 24 Sep 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runpath.in
+
+Remove ambiguity from min(guide) and max(guide).
+
+------------------------------------------------------------------------
+r5684 | jcbowman | 2014-09-24 14:43:54 -0600 (Wed, 24 Sep 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/slide.asy
+
+Indexed figures should always be stepped.
+
+------------------------------------------------------------------------
+r5683 | jcbowman | 2014-08-29 16:44:23 -0600 (Fri, 29 Aug 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Fix overlap fuzz parameter.
+
+------------------------------------------------------------------------
+r5682 | jcbowman | 2014-06-20 14:51:28 -0600 (Fri, 20 Jun 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/path3.cc
+   M /trunk/asymptote/path3.h
+   M /trunk/asymptote/runpath3d.in
+
+Implement and document intersect(path, surface).
+
+------------------------------------------------------------------------
+r5681 | jcbowman | 2014-06-06 16:59:31 -0600 (Fri, 06 Jun 2014) | 4 lines
+Changed paths:
+   M /trunk/asymptote/glrender.cc
+
+Fix zoom/menu button.
+
+Fix play option.
+
+------------------------------------------------------------------------
+r5680 | jcbowman | 2014-05-26 10:57:02 -0600 (Mon, 26 May 2014) | 4 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/pair.h
+   M /trunk/asymptote/runpair.in
+
+Implement 2D scalar cross product.
+
+Improve documentation of orient and insphere functions.
+
+------------------------------------------------------------------------
+r5679 | jcbowman | 2014-05-23 00:39:03 -0600 (Fri, 23 May 2014) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.33svn.
+------------------------------------------------------------------------
+r5678 | jcbowman | 2014-05-22 09:40:58 -0600 (Thu, 22 May 2014) | 3 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+
+Allow overriding CXXFLAGS with CFLAGS so that make CFLAGS="-g" disables
+optimization (for debugging).
+
+------------------------------------------------------------------------
+r5677 | jcbowman | 2014-05-22 01:12:56 -0600 (Thu, 22 May 2014) | 5 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/runpath.in
+   M /trunk/asymptote/runpath3d.in
+
+Rename side(pair,pair,pair) to orient(pair,pair,pair).
+Also provide interfaces to orient(triple,triple,triple,triple) and 
+insphere(triple,triple,triple,triple,triple).
+Fix and update documentation of orient, incircle, and insphere.
+
+------------------------------------------------------------------------
+r5676 | jcbowman | 2014-05-19 13:16:29 -0600 (Mon, 19 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/png/Makefile.in
+
+Use gs instead of convert to generate latexusage.png.
+
+------------------------------------------------------------------------
+r5675 | jcbowman | 2014-05-19 08:27:39 -0600 (Mon, 19 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/tests/arith/random.asy
+
+Guard agains random() returning a 16-bit result.
+
+------------------------------------------------------------------------
+r5674 | jcbowman | 2014-05-19 00:53:09 -0600 (Mon, 19 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/drawlabel.cc
+
+Use random() instead of rand() everywhere.
+
+------------------------------------------------------------------------
+r5673 | jcbowman | 2014-05-19 00:44:20 -0600 (Mon, 19 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/builtin.cc
+   M /trunk/asymptote/common.h
+   M /trunk/asymptote/drawlabel.cc
+   M /trunk/asymptote/runmath.in
+
+Use RANDOM_MAX rather than nonportable RAND_MAX.
+
+------------------------------------------------------------------------
+r5672 | jcbowman | 2014-05-19 00:43:14 -0600 (Mon, 19 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/Makefile.in
+   D /trunk/asymptote/svnrevision
+
+Fix version mismatches when releases are imported via svn.
+
+------------------------------------------------------------------------
+r5671 | jcbowman | 2014-05-18 15:19:31 -0600 (Sun, 18 May 2014) | 2 lines
+Changed paths:
+   A /trunk/asymptote/tests/arith/random.asy
+
+Test that unitrand is in [0,1].
+
+------------------------------------------------------------------------
+r5670 | jcbowman | 2014-05-18 12:14:26 -0600 (Sun, 18 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Remove obsolete test for texi2dvi4a2ps.
+
+------------------------------------------------------------------------
+r5669 | jcbowman | 2014-05-18 11:16:55 -0600 (Sun, 18 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runpair.in
+   M /trunk/asymptote/stack.cc
+
+Suppress compiler warnings.
+
+------------------------------------------------------------------------
+r5668 | jcbowman | 2014-05-17 13:24:35 -0600 (Sat, 17 May 2014) | 1 line
+Changed paths:
+   M /trunk/asymptote/settings.cc
+
+Document context tex engine.
+------------------------------------------------------------------------
+r5667 | jcbowman | 2014-05-17 09:54:46 -0600 (Sat, 17 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Enable libc++ workaround also for FreeBSD.
+
+------------------------------------------------------------------------
+r5666 | jcbowman | 2014-05-17 02:43:23 -0600 (Sat, 17 May 2014) | 2 lines
+Changed paths:
+   M /trunk/asymptote/base/math.asy
+
+Fix segment(bool[] b).
+
+------------------------------------------------------------------------
+r5665 | jcbowman | 2014-05-17 02:02:09 -0600 (Sat, 17 May 2014) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.32svn.
+------------------------------------------------------------------------
 r5664 | jcbowman | 2014-05-16 23:32:06 -0600 (Fri, 16 May 2014) | 3 lines
 Changed paths:
    M /trunk/asymptote/runlabel.in

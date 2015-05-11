@@ -484,7 +484,7 @@ void gen_runpath31(stack *Stack)
 }
 
 #line 266 "runpath.in"
-// pair min(path p);
+// pair min(explicit path p);
 void gen_runpath32(stack *Stack)
 {
   path p=vm::pop<path>(Stack);
@@ -493,7 +493,7 @@ void gen_runpath32(stack *Stack)
 }
 
 #line 271 "runpath.in"
-// pair max(path p);
+// pair max(explicit path p);
 void gen_runpath33(stack *Stack)
 {
   path p=vm::pop<path>(Stack);
@@ -698,22 +698,35 @@ void gen_runpath44(stack *Stack)
   {Stack->push<bool>(fillrule.inside(g.windingnumber(z))); return;}
 }
 
-// Determine the side of a--b that c lies on
-// (negative=left, zero=on line, positive=right).
-#line 421 "runpath.in"
-// real side(pair a, pair b, pair c);
+// Return a positive (negative) value if a--b--c--cycle is oriented
+// counterclockwise (clockwise) or zero if all three points are colinear.
+// Equivalently, return a positive (negative) value if c lies to the
+// left (right) of the line through a and b or zero if c lies on this line.
+// The value returned is the determinant
+// |a.x a.y 1|
+// |b.x b.y 1|
+// |c.x c.y 1|
+// 
+#line 428 "runpath.in"
+// real orient(pair a, pair b, pair c);
 void gen_runpath45(stack *Stack)
 {
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 422 "runpath.in"
+#line 429 "runpath.in"
   {Stack->push<real>(orient2d(a,b,c)); return;}
 }
 
-// Determine the side of the counterclockwise circle through a,b,c that d
-// lies on (negative=inside, 0=on circle, positive=right). 
-#line 428 "runpath.in"
+// Return a positive (negative) value if d lies inside (outside)
+// the circle passing through the counterclockwise-oriented points a,b,c
+// or zero if d lies on this circle.
+// The value returned is the determinant
+// |a.x a.y a.x^2+a.y^2 1|
+// |b.x b.y b.x^2+b.y^2 1|
+// |c.x c.y c.x^2+c.y^2 1|
+// |d.x d.y d.x^2+d.y^2 1|
+#line 441 "runpath.in"
 // real incircle(pair a, pair b, pair c, pair d);
 void gen_runpath46(stack *Stack)
 {
@@ -721,7 +734,7 @@ void gen_runpath46(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 429 "runpath.in"
+#line 442 "runpath.in"
   {Stack->push<real>(incircle(a.getx(),a.gety(),b.getx(),b.gety(),c.getx(),c.gety(),
                   d.getx(),d.gety())); return;}
 }
@@ -797,9 +810,9 @@ void gen_runpath_venv(venv &ve)
 #line 261 "runpath.in"
   addFunc(ve, run::gen_runpath31, primPath(), SYM_AMPERSAND, formal(primPath(), SYM(p), false, false), formal(primPath(), SYM(q), false, false));
 #line 266 "runpath.in"
-  addFunc(ve, run::gen_runpath32, primPair(), SYM(min), formal(primPath(), SYM(p), false, false));
+  addFunc(ve, run::gen_runpath32, primPair(), SYM(min), formal(primPath(), SYM(p), false, true));
 #line 271 "runpath.in"
-  addFunc(ve, run::gen_runpath33, primPair(), SYM(max), formal(primPath(), SYM(p), false, false));
+  addFunc(ve, run::gen_runpath33, primPair(), SYM(max), formal(primPath(), SYM(p), false, true));
 #line 276 "runpath.in"
   addFunc(ve, run::gen_runpath34, primInt(), SYM(size), formal(pathArray()  , SYM(p), false, false));
 #line 285 "runpath.in"
@@ -823,8 +836,8 @@ void gen_runpath_venv(venv &ve)
 #line 414 "runpath.in"
   addFunc(ve, run::gen_runpath44, primBoolean(), SYM(inside), formal(primPath(), SYM(g), false, false), formal(primPair(), SYM(z), false, false), formal(primPen(), SYM(fillrule), true, false));
 #line 419 "runpath.in"
-  addFunc(ve, run::gen_runpath45, primReal(), SYM(side), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false));
-#line 426 "runpath.in"
+  addFunc(ve, run::gen_runpath45, primReal(), SYM(orient), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false));
+#line 433 "runpath.in"
   addFunc(ve, run::gen_runpath46, primReal(), SYM(incircle), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false));
 }
 

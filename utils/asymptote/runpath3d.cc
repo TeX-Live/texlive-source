@@ -63,6 +63,7 @@ function *realRealFunction();
 #include "path3.h"
 #include "array.h"
 #include "drawsurface.h"
+#include "predicates.h"
 
 using namespace camp;
 using namespace vm;
@@ -88,7 +89,7 @@ using types::tripleArray2;
 
 #endif
 namespace run {
-#line 39 "runpath3d.in"
+#line 40 "runpath3d.in"
 // path3 path3(triplearray *pre, triplearray *point, triplearray *post,            boolarray *straight, bool cyclic);
 void gen_runpath3d0(stack *Stack)
 {
@@ -97,7 +98,7 @@ void gen_runpath3d0(stack *Stack)
   triplearray * post=vm::pop<triplearray *>(Stack);
   triplearray * point=vm::pop<triplearray *>(Stack);
   triplearray * pre=vm::pop<triplearray *>(Stack);
-#line 41 "runpath3d.in"
+#line 42 "runpath3d.in"
   size_t n=checkArrays(pre,point);
   checkEqual(n,checkArray(post));
   checkEqual(n,checkArray(straight));
@@ -112,94 +113,94 @@ void gen_runpath3d0(stack *Stack)
   {Stack->push<path3>(path3(nodes,(Int) n,cyclic)); return;}
 }
 
-#line 56 "runpath3d.in"
+#line 57 "runpath3d.in"
 void nullPath3(stack *Stack)
 {
-#line 57 "runpath3d.in"
+#line 58 "runpath3d.in"
   {Stack->push<path3>(nullpath3); return;}
 }
 
-#line 61 "runpath3d.in"
+#line 62 "runpath3d.in"
 // bool ==(path3 a, path3 b);
 void gen_runpath3d2(stack *Stack)
 {
   path3 b=vm::pop<path3>(Stack);
   path3 a=vm::pop<path3>(Stack);
-#line 62 "runpath3d.in"
+#line 63 "runpath3d.in"
   {Stack->push<bool>(a == b); return;}
 }
 
-#line 66 "runpath3d.in"
+#line 67 "runpath3d.in"
 // bool !=(path3 a, path3 b);
 void gen_runpath3d3(stack *Stack)
 {
   path3 b=vm::pop<path3>(Stack);
   path3 a=vm::pop<path3>(Stack);
-#line 67 "runpath3d.in"
+#line 68 "runpath3d.in"
   {Stack->push<bool>(!(a == b)); return;}
 }
 
-#line 71 "runpath3d.in"
+#line 72 "runpath3d.in"
 // triple point(path3 p, Int t);
 void gen_runpath3d4(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 72 "runpath3d.in"
+#line 73 "runpath3d.in"
   {Stack->push<triple>(p.point((Int) t)); return;}
 }
 
-#line 76 "runpath3d.in"
+#line 77 "runpath3d.in"
 // triple point(path3 p, real t);
 void gen_runpath3d5(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 77 "runpath3d.in"
+#line 78 "runpath3d.in"
   {Stack->push<triple>(p.point(t)); return;}
 }
 
-#line 81 "runpath3d.in"
+#line 82 "runpath3d.in"
 // triple precontrol(path3 p, Int t);
 void gen_runpath3d6(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 82 "runpath3d.in"
+#line 83 "runpath3d.in"
   {Stack->push<triple>(p.precontrol((Int) t)); return;}
 }
 
-#line 86 "runpath3d.in"
+#line 87 "runpath3d.in"
 // triple precontrol(path3 p, real t);
 void gen_runpath3d7(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 87 "runpath3d.in"
+#line 88 "runpath3d.in"
   {Stack->push<triple>(p.precontrol(t)); return;}
 }
 
-#line 91 "runpath3d.in"
+#line 92 "runpath3d.in"
 // triple postcontrol(path3 p, Int t);
 void gen_runpath3d8(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 92 "runpath3d.in"
+#line 93 "runpath3d.in"
   {Stack->push<triple>(p.postcontrol((Int) t)); return;}
 }
 
-#line 96 "runpath3d.in"
+#line 97 "runpath3d.in"
 // triple postcontrol(path3 p, real t);
 void gen_runpath3d9(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 97 "runpath3d.in"
+#line 98 "runpath3d.in"
   {Stack->push<triple>(p.postcontrol(t)); return;}
 }
 
-#line 101 "runpath3d.in"
+#line 102 "runpath3d.in"
 // triple dir(path3 p, Int t, Int sign=0, bool normalize=true);
 void gen_runpath3d10(stack *Stack)
 {
@@ -207,49 +208,49 @@ void gen_runpath3d10(stack *Stack)
   Int sign=vm::pop<Int>(Stack,0);
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 102 "runpath3d.in"
+#line 103 "runpath3d.in"
   {Stack->push<triple>(p.dir(t,sign,normalize)); return;}
 }
 
-#line 106 "runpath3d.in"
+#line 107 "runpath3d.in"
 // triple dir(path3 p, real t, bool normalize=true);
 void gen_runpath3d11(stack *Stack)
 {
   bool normalize=vm::pop<bool>(Stack,true);
   real t=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 107 "runpath3d.in"
+#line 108 "runpath3d.in"
   {Stack->push<triple>(p.dir(t,normalize)); return;}
 }
 
-#line 111 "runpath3d.in"
+#line 112 "runpath3d.in"
 // triple accel(path3 p, Int t, Int sign=0);
 void gen_runpath3d12(stack *Stack)
 {
   Int sign=vm::pop<Int>(Stack,0);
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 112 "runpath3d.in"
+#line 113 "runpath3d.in"
   {Stack->push<triple>(p.accel(t,sign)); return;}
 }
 
-#line 116 "runpath3d.in"
+#line 117 "runpath3d.in"
 // triple accel(path3 p, real t);
 void gen_runpath3d13(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 117 "runpath3d.in"
+#line 118 "runpath3d.in"
   {Stack->push<triple>(p.accel(t)); return;}
 }
 
-#line 121 "runpath3d.in"
+#line 122 "runpath3d.in"
 // real radius(path3 p, real t);
 void gen_runpath3d14(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 122 "runpath3d.in"
+#line 123 "runpath3d.in"
   triple v=p.dir(t,false);
   triple a=p.accel(t);
   real d=dot(a,v);
@@ -260,7 +261,7 @@ void gen_runpath3d14(stack *Stack)
   {Stack->push<real>(denom > 0 ? r/sqrt(denom) : 0.0); return;}
 }
 
-#line 133 "runpath3d.in"
+#line 134 "runpath3d.in"
 // real radius(triple z0, triple c0, triple c1, triple z1, real t);
 void gen_runpath3d15(stack *Stack)
 {
@@ -269,7 +270,7 @@ void gen_runpath3d15(stack *Stack)
   triple c1=vm::pop<triple>(Stack);
   triple c0=vm::pop<triple>(Stack);
   triple z0=vm::pop<triple>(Stack);
-#line 134 "runpath3d.in"
+#line 135 "runpath3d.in"
   triple v=(3.0*(z1-z0)+9.0*(c0-c1))*t*t+(6.0*(z0+c1)-12.0*c0)*t+3.0*(c0-z0);
   triple a=6.0*(z1-z0+3.0*(c0-c1))*t+6.0*(z0+c1)-12.0*c0;
   real d=dot(a,v);
@@ -280,83 +281,83 @@ void gen_runpath3d15(stack *Stack)
   {Stack->push<real>(denom > 0 ? r/sqrt(denom) : 0.0); return;}
 }
 
-#line 145 "runpath3d.in"
+#line 146 "runpath3d.in"
 // path3 reverse(path3 p);
 void gen_runpath3d16(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 146 "runpath3d.in"
+#line 147 "runpath3d.in"
   {Stack->push<path3>(p.reverse()); return;}
 }
 
-#line 150 "runpath3d.in"
+#line 151 "runpath3d.in"
 // path3 subpath(path3 p, Int a, Int b);
 void gen_runpath3d17(stack *Stack)
 {
   Int b=vm::pop<Int>(Stack);
   Int a=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 151 "runpath3d.in"
+#line 152 "runpath3d.in"
   {Stack->push<path3>(p.subpath((Int) a, (Int) b)); return;}
 }
 
-#line 155 "runpath3d.in"
+#line 156 "runpath3d.in"
 // path3 subpath(path3 p, real a, real b);
 void gen_runpath3d18(stack *Stack)
 {
   real b=vm::pop<real>(Stack);
   real a=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 156 "runpath3d.in"
+#line 157 "runpath3d.in"
   {Stack->push<path3>(p.subpath(a,b)); return;}
 }
 
-#line 160 "runpath3d.in"
+#line 161 "runpath3d.in"
 // Int length(path3 p);
 void gen_runpath3d19(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 161 "runpath3d.in"
+#line 162 "runpath3d.in"
   {Stack->push<Int>(p.length()); return;}
 }
 
-#line 165 "runpath3d.in"
+#line 166 "runpath3d.in"
 // bool cyclic(path3 p);
 void gen_runpath3d20(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 166 "runpath3d.in"
+#line 167 "runpath3d.in"
   {Stack->push<bool>(p.cyclic()); return;}
 }
 
-#line 170 "runpath3d.in"
+#line 171 "runpath3d.in"
 // bool straight(path3 p, Int t);
 void gen_runpath3d21(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 171 "runpath3d.in"
+#line 172 "runpath3d.in"
   {Stack->push<bool>(p.straight(t)); return;}
 }
 
-#line 175 "runpath3d.in"
+#line 176 "runpath3d.in"
 // path3 unstraighten(path3 p);
 void gen_runpath3d22(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 176 "runpath3d.in"
+#line 177 "runpath3d.in"
   {Stack->push<path3>(p.unstraighten()); return;}
 }
 
 // Return the maximum perpendicular deviation of segment i of path3 g
 // from a straight line.
-#line 182 "runpath3d.in"
+#line 183 "runpath3d.in"
 // real straightness(path3 p, Int t);
 void gen_runpath3d23(stack *Stack)
 {
   Int t=vm::pop<Int>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 183 "runpath3d.in"
+#line 184 "runpath3d.in"
   if(p.straight(t)) {Stack->push<real>(0); return;}
   triple z0=p.point(t);
   triple u=unit(p.point(t+1)-z0);
@@ -366,7 +367,7 @@ void gen_runpath3d23(stack *Stack)
 
 // Return the maximum perpendicular deviation of z0..controls c0 and c1..z1
 // from a straight line.
-#line 193 "runpath3d.in"
+#line 194 "runpath3d.in"
 // real straightness(triple z0, triple c0, triple c1, triple z1);
 void gen_runpath3d24(stack *Stack)
 {
@@ -374,47 +375,47 @@ void gen_runpath3d24(stack *Stack)
   triple c1=vm::pop<triple>(Stack);
   triple c0=vm::pop<triple>(Stack);
   triple z0=vm::pop<triple>(Stack);
-#line 194 "runpath3d.in"
+#line 195 "runpath3d.in"
   triple u=unit(z1-z0);
   {Stack->push<real>(::max(length(perp(c0-z0,u)),length(perp(c1-z0,u)))); return;}
 }
 
-#line 199 "runpath3d.in"
+#line 200 "runpath3d.in"
 // bool piecewisestraight(path3 p);
 void gen_runpath3d25(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 200 "runpath3d.in"
+#line 201 "runpath3d.in"
   {Stack->push<bool>(p.piecewisestraight()); return;}
 }
 
-#line 204 "runpath3d.in"
+#line 205 "runpath3d.in"
 // real arclength(path3 p);
 void gen_runpath3d26(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 205 "runpath3d.in"
+#line 206 "runpath3d.in"
   {Stack->push<real>(p.arclength()); return;}
 }
 
-#line 209 "runpath3d.in"
+#line 210 "runpath3d.in"
 // real arctime(path3 p, real dval);
 void gen_runpath3d27(stack *Stack)
 {
   real dval=vm::pop<real>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 210 "runpath3d.in"
+#line 211 "runpath3d.in"
   {Stack->push<real>(p.arctime(dval)); return;}
 }
 
-#line 214 "runpath3d.in"
+#line 215 "runpath3d.in"
 // realarray* intersect(path3 p, path3 q, real fuzz=-1);
 void gen_runpath3d28(stack *Stack)
 {
   real fuzz=vm::pop<real>(Stack,-1);
   path3 q=vm::pop<path3>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 215 "runpath3d.in"
+#line 216 "runpath3d.in"
   bool exact=fuzz <= 0.0;
   if(fuzz < 0)
     fuzz=BigFuzz*::max(::max(length(p.max()),length(p.min())),
@@ -431,14 +432,14 @@ void gen_runpath3d28(stack *Stack)
     {Stack->push<realarray*>(new array(0)); return;}
 }
 
-#line 232 "runpath3d.in"
+#line 233 "runpath3d.in"
 // realarray2* intersections(path3 p, path3 q, real fuzz=-1);
 void gen_runpath3d29(stack *Stack)
 {
   real fuzz=vm::pop<real>(Stack,-1);
   path3 q=vm::pop<path3>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 233 "runpath3d.in"
+#line 234 "runpath3d.in"
   bool exact=fuzz <= 0.0;
   if(fuzz < 0)
     fuzz=BigFuzz*::max(::max(length(p.max()),length(p.min())),
@@ -470,20 +471,45 @@ void gen_runpath3d29(stack *Stack)
   {Stack->push<realarray2*>(V); return;}
 }
 
-#line 265 "runpath3d.in"
-// realarray2* intersections(path3 p, triplearray2 *P, real fuzz=-1);
+#line 266 "runpath3d.in"
+// realarray* intersect(path3 p, triplearray2 *P, real fuzz=-1);
 void gen_runpath3d30(stack *Stack)
 {
   real fuzz=vm::pop<real>(Stack,-1);
   triplearray2 * P=vm::pop<triplearray2 *>(Stack);
   path3 p=vm::pop<path3>(Stack);
-#line 266 "runpath3d.in"
+#line 267 "runpath3d.in"
   triple *A;
   copyArray2C(A,P,true,4);
   if(fuzz <= 0) fuzz=BigFuzz*::max(::max(length(p.max()),length(p.min())),
                                    norm(A,16));
   std::vector<real> T,U,V;
-  intersections(T,U,V,p,A,fuzz);
+  bool found=intersections(T,U,V,p,A,fuzz,true);
+  delete[] A;
+  if(found) {
+    array *W=new array(3);
+    (*W)[0]=T[0];
+    (*W)[1]=U[0];
+    (*W)[2]=V[0];
+    {Stack->push<realarray*>(W); return;}
+  } else
+    {Stack->push<realarray*>(new array(0)); return;}
+}
+
+#line 285 "runpath3d.in"
+// realarray2* intersections(path3 p, triplearray2 *P, real fuzz=-1);
+void gen_runpath3d31(stack *Stack)
+{
+  real fuzz=vm::pop<real>(Stack,-1);
+  triplearray2 * P=vm::pop<triplearray2 *>(Stack);
+  path3 p=vm::pop<path3>(Stack);
+#line 286 "runpath3d.in"
+  triple *A;
+  copyArray2C(A,P,true,4);
+  if(fuzz <= 0) fuzz=BigFuzz*::max(::max(length(p.max()),length(p.min())),
+                                   norm(A,16));
+  std::vector<real> T,U,V;
+  intersections(T,U,V,p,A,fuzz,false);
   delete[] A;
   size_t n=T.size();
   array *W=new array(n);
@@ -497,49 +523,49 @@ void gen_runpath3d30(stack *Stack)
   {Stack->push<realarray2*>(W); return;} // Sorting will done in asy.
 }
 
-#line 286 "runpath3d.in"
-// Int size(path3 p);
-void gen_runpath3d31(stack *Stack)
-{
-  path3 p=vm::pop<path3>(Stack);
-#line 287 "runpath3d.in"
-  {Stack->push<Int>(p.size()); return;}
-}
-
-#line 291 "runpath3d.in"
-// path3 &(path3 p, path3 q);
-void gen_runpath3d32(stack *Stack)
-{
-  path3 q=vm::pop<path3>(Stack);
-  path3 p=vm::pop<path3>(Stack);
-#line 292 "runpath3d.in"
-  {Stack->push<path3>(camp::concat(p,q)); return;}
-}
-
-#line 296 "runpath3d.in"
-// triple min(path3 p);
-void gen_runpath3d33(stack *Stack)
-{
-  path3 p=vm::pop<path3>(Stack);
-#line 297 "runpath3d.in"
-  {Stack->push<triple>(p.min()); return;}
-}
-
-#line 301 "runpath3d.in"
-// triple max(path3 p);
-void gen_runpath3d34(stack *Stack)
-{
-  path3 p=vm::pop<path3>(Stack);
-#line 302 "runpath3d.in"
-  {Stack->push<triple>(p.max()); return;}
-}
-
 #line 306 "runpath3d.in"
-// realarray* mintimes(path3 p);
-void gen_runpath3d35(stack *Stack)
+// Int size(path3 p);
+void gen_runpath3d32(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
 #line 307 "runpath3d.in"
+  {Stack->push<Int>(p.size()); return;}
+}
+
+#line 311 "runpath3d.in"
+// path3 &(path3 p, path3 q);
+void gen_runpath3d33(stack *Stack)
+{
+  path3 q=vm::pop<path3>(Stack);
+  path3 p=vm::pop<path3>(Stack);
+#line 312 "runpath3d.in"
+  {Stack->push<path3>(camp::concat(p,q)); return;}
+}
+
+#line 316 "runpath3d.in"
+// triple min(path3 p);
+void gen_runpath3d34(stack *Stack)
+{
+  path3 p=vm::pop<path3>(Stack);
+#line 317 "runpath3d.in"
+  {Stack->push<triple>(p.min()); return;}
+}
+
+#line 321 "runpath3d.in"
+// triple max(path3 p);
+void gen_runpath3d35(stack *Stack)
+{
+  path3 p=vm::pop<path3>(Stack);
+#line 322 "runpath3d.in"
+  {Stack->push<triple>(p.max()); return;}
+}
+
+#line 326 "runpath3d.in"
+// realarray* mintimes(path3 p);
+void gen_runpath3d36(stack *Stack)
+{
+  path3 p=vm::pop<path3>(Stack);
+#line 327 "runpath3d.in"
   array *V=new array(3);
   triple v=p.mintimes();
   (*V)[0]=v.getx();
@@ -548,12 +574,12 @@ void gen_runpath3d35(stack *Stack)
   {Stack->push<realarray*>(V); return;}
 }
 
-#line 316 "runpath3d.in"
+#line 336 "runpath3d.in"
 // realarray* maxtimes(path3 p);
-void gen_runpath3d36(stack *Stack)
+void gen_runpath3d37(stack *Stack)
 {
   path3 p=vm::pop<path3>(Stack);
-#line 317 "runpath3d.in"
+#line 337 "runpath3d.in"
   array *V=new array(3);
   triple v=p.maxtimes();
   (*V)[0]=v.getx();
@@ -562,32 +588,84 @@ void gen_runpath3d36(stack *Stack)
   {Stack->push<realarray*>(V); return;}
 }
 
-#line 326 "runpath3d.in"
+#line 346 "runpath3d.in"
 // path3 *(realarray2 *t, path3 g);
-void gen_runpath3d37(stack *Stack)
-{
-  path3 g=vm::pop<path3>(Stack);
-  realarray2 * t=vm::pop<realarray2 *>(Stack);
-#line 327 "runpath3d.in"
-  {Stack->push<path3>(transformed(*t,g)); return;}
-}
-
-#line 331 "runpath3d.in"
-// pair minratio(path3 g);
 void gen_runpath3d38(stack *Stack)
 {
   path3 g=vm::pop<path3>(Stack);
-#line 332 "runpath3d.in"
-  {Stack->push<pair>(g.ratio(::min)); return;}
+  realarray2 * t=vm::pop<realarray2 *>(Stack);
+#line 347 "runpath3d.in"
+  {Stack->push<path3>(transformed(*t,g)); return;}
 }
 
-#line 336 "runpath3d.in"
-// pair maxratio(path3 g);
+#line 351 "runpath3d.in"
+// pair minratio(path3 g);
 void gen_runpath3d39(stack *Stack)
 {
   path3 g=vm::pop<path3>(Stack);
-#line 337 "runpath3d.in"
+#line 352 "runpath3d.in"
+  {Stack->push<pair>(g.ratio(::min)); return;}
+}
+
+#line 356 "runpath3d.in"
+// pair maxratio(path3 g);
+void gen_runpath3d40(stack *Stack)
+{
+  path3 g=vm::pop<path3>(Stack);
+#line 357 "runpath3d.in"
   {Stack->push<pair>(g.ratio(::max)); return;}
+}
+
+// Return a negative (positive) value if a--b--c--cycle is oriented
+// counterclockwise (clockwise) when viewed from d or zero if all four
+// points are coplanar. 
+// The value returned is the determinant
+// |a.x a.y a.z 1|
+// |b.x b.y b.z 1|
+// |c.x c.y c.z 1|
+// |d.x d.y d.z 1|
+#line 369 "runpath3d.in"
+// real orient(triple a, triple b, triple c, triple d);
+void gen_runpath3d41(stack *Stack)
+{
+  triple d=vm::pop<triple>(Stack);
+  triple c=vm::pop<triple>(Stack);
+  triple b=vm::pop<triple>(Stack);
+  triple a=vm::pop<triple>(Stack);
+#line 370 "runpath3d.in"
+  real A[]={a.getx(),a.gety(),a.getz()};
+  real B[]={b.getx(),b.gety(),b.getz()};
+  real C[]={c.getx(),c.gety(),c.getz()};
+  real D[]={d.getx(),d.gety(),d.getz()};
+  {Stack->push<real>(orient3d(A,B,C,D)); return;}
+}
+
+// Return a positive (negative) value if e lies inside (outside)
+// the sphere passing through the points a,b,c,d oriented so that
+// a--b--c--cycle appears in clockwise order when viewed from d
+// or zero if all five points are cospherical.
+// The value returned is the determinant
+// |a.x a.y a.z a.x^2+a.y^2+a.z^2 1|
+// |b.x b.y b.z b.x^2+b.y^2+b.z^2 1|
+// |c.x c.y c.z c.x^2+c.y^2+c.z^2 1|
+// |d.x d.y d.z d.x^2+d.y^2+d.z^2 1|
+// |e.x e.y e.z e.x^2+e.y^2+e.z^2 1|
+#line 388 "runpath3d.in"
+// real insphere(triple a, triple b, triple c, triple d, triple e);
+void gen_runpath3d42(stack *Stack)
+{
+  triple e=vm::pop<triple>(Stack);
+  triple d=vm::pop<triple>(Stack);
+  triple c=vm::pop<triple>(Stack);
+  triple b=vm::pop<triple>(Stack);
+  triple a=vm::pop<triple>(Stack);
+#line 389 "runpath3d.in"
+  real A[]={a.getx(),a.gety(),a.getz()};
+  real B[]={b.getx(),b.gety(),b.getz()};
+  real C[]={c.getx(),c.gety(),c.getz()};
+  real D[]={d.getx(),d.gety(),d.getz()};
+  real E[]={e.getx(),e.gety(),e.getz()};
+  {Stack->push<real>(insphere(A,B,C,D,E)); return;}
 }
 
 } // namespace run
@@ -596,86 +674,92 @@ namespace trans {
 
 void gen_runpath3d_venv(venv &ve)
 {
-#line 39 "runpath3d.in"
+#line 40 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d0, primPath3(), SYM(path3), formal(tripleArray(), SYM(pre), false, false), formal(tripleArray(), SYM(point), false, false), formal(tripleArray(), SYM(post), false, false), formal(booleanArray(), SYM(straight), false, false), formal(primBoolean(), SYM(cyclic), false, false));
-#line 56 "runpath3d.in"
+#line 57 "runpath3d.in"
   REGISTER_BLTIN(run::nullPath3,"nullPath3");
-#line 61 "runpath3d.in"
+#line 62 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d2, primBoolean(), SYM_EQ, formal(primPath3(), SYM(a), false, false), formal(primPath3(), SYM(b), false, false));
-#line 66 "runpath3d.in"
+#line 67 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d3, primBoolean(), SYM_NEQ, formal(primPath3(), SYM(a), false, false), formal(primPath3(), SYM(b), false, false));
-#line 71 "runpath3d.in"
+#line 72 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d4, primTriple(), SYM(point), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false));
-#line 76 "runpath3d.in"
+#line 77 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d5, primTriple(), SYM(point), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(t), false, false));
-#line 81 "runpath3d.in"
+#line 82 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d6, primTriple(), SYM(precontrol), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false));
-#line 86 "runpath3d.in"
+#line 87 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d7, primTriple(), SYM(precontrol), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(t), false, false));
-#line 91 "runpath3d.in"
+#line 92 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d8, primTriple(), SYM(postcontrol), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false));
-#line 96 "runpath3d.in"
+#line 97 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d9, primTriple(), SYM(postcontrol), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(t), false, false));
-#line 101 "runpath3d.in"
+#line 102 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d10, primTriple(), SYM(dir), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false), formal(primInt(), SYM(sign), true, false), formal(primBoolean(), SYM(normalize), true, false));
-#line 106 "runpath3d.in"
+#line 107 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d11, primTriple(), SYM(dir), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(t), false, false), formal(primBoolean(), SYM(normalize), true, false));
-#line 111 "runpath3d.in"
+#line 112 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d12, primTriple(), SYM(accel), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false), formal(primInt(), SYM(sign), true, false));
-#line 116 "runpath3d.in"
+#line 117 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d13, primTriple(), SYM(accel), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(t), false, false));
-#line 121 "runpath3d.in"
+#line 122 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d14, primReal(), SYM(radius), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(t), false, false));
-#line 133 "runpath3d.in"
+#line 134 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d15, primReal(), SYM(radius), formal(primTriple(), SYM(z0), false, false), formal(primTriple(), SYM(c0), false, false), formal(primTriple(), SYM(c1), false, false), formal(primTriple(), SYM(z1), false, false), formal(primReal(), SYM(t), false, false));
-#line 145 "runpath3d.in"
+#line 146 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d16, primPath3(), SYM(reverse), formal(primPath3(), SYM(p), false, false));
-#line 150 "runpath3d.in"
+#line 151 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d17, primPath3(), SYM(subpath), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(a), false, false), formal(primInt(), SYM(b), false, false));
-#line 155 "runpath3d.in"
+#line 156 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d18, primPath3(), SYM(subpath), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(a), false, false), formal(primReal(), SYM(b), false, false));
-#line 160 "runpath3d.in"
+#line 161 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d19, primInt(), SYM(length), formal(primPath3(), SYM(p), false, false));
-#line 165 "runpath3d.in"
+#line 166 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d20, primBoolean(), SYM(cyclic), formal(primPath3(), SYM(p), false, false));
-#line 170 "runpath3d.in"
+#line 171 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d21, primBoolean(), SYM(straight), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false));
-#line 175 "runpath3d.in"
+#line 176 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d22, primPath3(), SYM(unstraighten), formal(primPath3(), SYM(p), false, false));
-#line 180 "runpath3d.in"
+#line 181 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d23, primReal(), SYM(straightness), formal(primPath3(), SYM(p), false, false), formal(primInt(), SYM(t), false, false));
-#line 191 "runpath3d.in"
+#line 192 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d24, primReal(), SYM(straightness), formal(primTriple(), SYM(z0), false, false), formal(primTriple(), SYM(c0), false, false), formal(primTriple(), SYM(c1), false, false), formal(primTriple(), SYM(z1), false, false));
-#line 199 "runpath3d.in"
+#line 200 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d25, primBoolean(), SYM(piecewisestraight), formal(primPath3(), SYM(p), false, false));
-#line 204 "runpath3d.in"
+#line 205 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d26, primReal(), SYM(arclength), formal(primPath3(), SYM(p), false, false));
-#line 209 "runpath3d.in"
+#line 210 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d27, primReal(), SYM(arctime), formal(primPath3(), SYM(p), false, false), formal(primReal(), SYM(dval), false, false));
-#line 214 "runpath3d.in"
+#line 215 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d28, realArray(), SYM(intersect), formal(primPath3(), SYM(p), false, false), formal(primPath3(), SYM(q), false, false), formal(primReal(), SYM(fuzz), true, false));
-#line 232 "runpath3d.in"
+#line 233 "runpath3d.in"
   addFunc(ve, run::gen_runpath3d29, realArray2(), SYM(intersections), formal(primPath3(), SYM(p), false, false), formal(primPath3(), SYM(q), false, false), formal(primReal(), SYM(fuzz), true, false));
-#line 265 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d30, realArray2(), SYM(intersections), formal(primPath3(), SYM(p), false, false), formal(tripleArray2(), SYM(p), false, false), formal(primReal(), SYM(fuzz), true, false));
-#line 286 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d31, primInt(), SYM(size), formal(primPath3(), SYM(p), false, false));
-#line 291 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d32, primPath3(), SYM_AMPERSAND, formal(primPath3(), SYM(p), false, false), formal(primPath3(), SYM(q), false, false));
-#line 296 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d33, primTriple(), SYM(min), formal(primPath3(), SYM(p), false, false));
-#line 301 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d34, primTriple(), SYM(max), formal(primPath3(), SYM(p), false, false));
+#line 266 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d30, realArray(), SYM(intersect), formal(primPath3(), SYM(p), false, false), formal(tripleArray2(), SYM(p), false, false), formal(primReal(), SYM(fuzz), true, false));
+#line 285 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d31, realArray2(), SYM(intersections), formal(primPath3(), SYM(p), false, false), formal(tripleArray2(), SYM(p), false, false), formal(primReal(), SYM(fuzz), true, false));
 #line 306 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d35, realArray(), SYM(mintimes), formal(primPath3(), SYM(p), false, false));
+  addFunc(ve, run::gen_runpath3d32, primInt(), SYM(size), formal(primPath3(), SYM(p), false, false));
+#line 311 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d33, primPath3(), SYM_AMPERSAND, formal(primPath3(), SYM(p), false, false), formal(primPath3(), SYM(q), false, false));
 #line 316 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d36, realArray(), SYM(maxtimes), formal(primPath3(), SYM(p), false, false));
+  addFunc(ve, run::gen_runpath3d34, primTriple(), SYM(min), formal(primPath3(), SYM(p), false, false));
+#line 321 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d35, primTriple(), SYM(max), formal(primPath3(), SYM(p), false, false));
 #line 326 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d37, primPath3(), SYM_TIMES, formal(realArray2(), SYM(t), false, false), formal(primPath3(), SYM(g), false, false));
-#line 331 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d38, primPair(), SYM(minratio), formal(primPath3(), SYM(g), false, false));
+  addFunc(ve, run::gen_runpath3d36, realArray(), SYM(mintimes), formal(primPath3(), SYM(p), false, false));
 #line 336 "runpath3d.in"
-  addFunc(ve, run::gen_runpath3d39, primPair(), SYM(maxratio), formal(primPath3(), SYM(g), false, false));
+  addFunc(ve, run::gen_runpath3d37, realArray(), SYM(maxtimes), formal(primPath3(), SYM(p), false, false));
+#line 346 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d38, primPath3(), SYM_TIMES, formal(realArray2(), SYM(t), false, false), formal(primPath3(), SYM(g), false, false));
+#line 351 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d39, primPair(), SYM(minratio), formal(primPath3(), SYM(g), false, false));
+#line 356 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d40, primPair(), SYM(maxratio), formal(primPath3(), SYM(g), false, false));
+#line 361 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d41, primReal(), SYM(orient), formal(primTriple(), SYM(a), false, false), formal(primTriple(), SYM(b), false, false), formal(primTriple(), SYM(c), false, false), formal(primTriple(), SYM(d), false, false));
+#line 378 "runpath3d.in"
+  addFunc(ve, run::gen_runpath3d42, primReal(), SYM(insphere), formal(primTriple(), SYM(a), false, false), formal(primTriple(), SYM(b), false, false), formal(primTriple(), SYM(c), false, false), formal(primTriple(), SYM(d), false, false), formal(primTriple(), SYM(e), false, false));
 }
 
 } // namespace trans

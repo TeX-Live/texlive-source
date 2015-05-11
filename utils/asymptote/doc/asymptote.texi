@@ -589,8 +589,8 @@ cd asymptote-x.xx
 @end verbatim
 By default the system version of the Boehm garbage collector will be
 used; if it is old we recommend first putting
-@url{http://hboehm.info/gc/gc_source/gc-7.4.0.tar.gz}
-@url{http://hboehm.info/gc/gc_source/libatomic_ops-7.4.0.tar.gz}
+@url{http://hboehm.info/gc/gc_source/gc-7.4.2.tar.gz}
+@url{http://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-7.4.2.tar.gz}
 in the @code{Asymptote} source directory.
 
 On @code{UNIX} platforms (other than @code{MacOS X}), we recommend
@@ -1495,7 +1495,7 @@ be specified as an absolute compass direction (pair) or a direction
 in the local direction of the path. For convenience @code{LeftSide},
 @code{Center}, and @code{RightSide} are defined as @code{Relative(W)},
 @code{Relative((0,0))}, and @code{Relative(E)}, respectively.
-Multiplying @code{LeftSide}, @code{Center}, @code{RightSide} on the
+Multiplying @code{LeftSide} and @code{RightSide} on the
 left by a real scaling factor will move the label further away from or
 closer to the path.
 
@@ -1897,6 +1897,38 @@ returns the element-by-element product @code{(z.x*w.x,z.y*w.y)};
 @cindex @code{dot}
 returns the dot product @code{z.x*w.x+z.y*w.y};
 
+@item real cross(explicit pair z, explicit pair w)
+@cindex @code{cross}
+returns the 2D scalar product @code{z.x*w.y-z.y*w.x};
+
+@cindex @code{orient}
+@item real orient(pair a, pair b, pair c);
+returns a positive (negative) value if @code{a--b--c--cycle} is oriented
+counterclockwise (clockwise) or zero if all three points are colinear.
+Equivalently, a positive (negative) value is returned if
+@code{c} lies to the left (right) of the line through @code{a} and @code{b}
+or zero if @code{c} lies on this line. 
+The value returned can be expressed in terms of the 2D scalar cross product
+as @code{cross(a-c,b-c)}, which is the determinant
+@verbatim
+|a.x a.y 1|
+|b.x b.y 1|
+|c.x c.y 1|
+@end verbatim
+ 
+@cindex @code{incircle}
+@item real incircle(pair a, pair b, pair c, pair d);
+returns a positive (negative) value if @code{d} lies inside (outside)
+the circle passing through the counterclockwise-oriented points @code{a,b,c}
+or zero if @code{d} lies on the this circle.
+The value returned is the determinant
+@verbatim
+|a.x a.y a.x^2+a.y^2 1|
+|b.x b.y b.x^2+b.y^2 1|
+|c.x c.y c.x^2+c.y^2 1|
+|d.x d.y d.x^2+d.y^2 1|
+@end verbatim
+
 @item pair minbound(pair z, pair w) 
 @cindex @code{minbound}
 returns @code{(min(z.x,w.x),min(z.y,w.y))};
@@ -2262,7 +2294,8 @@ path arc(pair c, real r, real angle1, real angle2, bool direction);
 Here the direction can be specified as CCW (counter-clockwise) or CW
 (clockwise). For convenience, an arc centered at @code{c} from pair
 @code{z1} to @code{z2} (assuming @code{|z2-c|=|z1-c|}) in the may also
-be constructed with @verbatim
+be constructed with 
+@verbatim
 path arc(pair c, explicit pair z1, explicit pair z2,
          bool direction=CCW)
 @end verbatim
@@ -2576,11 +2609,6 @@ otherwise.
 @item pair inside(path p, pen fillrule=currentpen);
 returns an arbitrary point strictly inside a cyclic path @code{p}
 according to the fill rule @code{fillrule} (@pxref{fillrule}).
-
-@cindex @code{incircle}
-@item real incircle(pair a, pair b, pair c, pair d);
-determines the side of the counterclockwise circle through @code{a,b,c} that
-@code{d} lies on (negative=inside, 0=on circle, positive=right). 
 
 @cindex @code{strokepath}
 @item path[] strokepath(path g, pen p=currentpen);
@@ -5322,7 +5350,7 @@ For arrays @code{x} and @code{y} of the same length, returns the pair array
 
 @cindex @code{fft}
 @item pair[] fft(pair[] a, int sign=1)
-returns the Fast Fourier Transform of @code{a} (if the optional
+returns the unnormalized Fast Fourier Transform of @code{a} (if the optional
 @code{FFTW} package is installed), using the given @code{sign}. Here
 is a simple example:
 @verbatim
@@ -6243,7 +6271,7 @@ line through @code{(0,z.y)}.
 returns the @code{n}th @code{y} value of @code{g} at @code{x}.
 
 @cindex @code{value}
-@item real value(path g, real x, int n=0)
+@item real value(path g, explicit pair z, int n=0)
 returns the @code{n}th @code{x} value of @code{g} at @code{y=z.y}.
 
 @cindex @code{slope}
@@ -7658,15 +7686,15 @@ the routines
 @verbatim
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender);
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen meshpen,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender);
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender);
 
 @end verbatim
@@ -8308,11 +8336,19 @@ Three-dimensional versions of the path functions @code{length},
 The routine
 @cindex @code{intersections}
 @verbatim
+real[] intersect(path3 p, surface s, real fuzz=-1);
+@end verbatim
+@noindent
+returns a real array of length 3 containing the intersection times, if any,
+of a path @code{p} with a surface @code{s}.
+The routine
+@verbatim
 real[][] intersections(path3 p, surface s, real fuzz=-1);
 @end verbatim
 @noindent
-returns the intersection times of a path @code{p} with a surface
-@code{s} as a sorted array of real arrays of length 3, and
+returns all (unless there are infinitey many) intersection times of a
+path @code{p} with a surface @code{s} as a sorted array of real arrays
+of length 3, and 
 @cindex @code{intersectionpoints}
 @verbatim
 triple[] intersectionpoints(path3 p, surface s, real fuzz=-1);
@@ -8321,6 +8357,39 @@ triple[] intersectionpoints(path3 p, surface s, real fuzz=-1);
 returns the corresponding intersection points.
 Here, the computations are performed to the absolute error specified by
 @code{fuzz}, or if @code{fuzz < 0}, to machine precision.
+The routine
+@cindex @code{orient}
+@verbatim
+real orient(triple a, triple b, triple c, triple d);
+@end verbatim
+@noindent
+is a numerically robust computation of @code{dot(cross(a-d,b-d),c-d)},
+which is the determinant
+@verbatim
+|a.x a.y a.z 1|
+|b.x b.y b.z 1|
+|c.x c.y c.z 1|
+|d.x d.y d.z 1|
+@end verbatim
+ 
+The routine
+@cindex @code{insphere}
+@verbatim
+real insphere(triple a, triple b, triple c, triple d, triple e);
+@end verbatim
+@noindent
+returns a positive (negative) value if @code{e} lies inside (outside)
+the sphere passing through points @code{a,b,c,d} oriented so that
+@code{dot(cross(a-d,b-d),c-d)} is positive,
+or zero if all five points are cospherical.
+The value returned is the determinant
+@verbatim
+|a.x a.y a.z a.x^2+a.y^2+a.z^2 1|
+|b.x b.y b.z b.x^2+b.y^2+b.z^2 1|
+|c.x c.y c.z c.x^2+c.y^2+c.z^2 1|
+|d.x d.y d.z d.x^2+d.y^2+d.z^2 1|
+|e.x e.y e.z e.x^2+e.y^2+e.z^2 1|
+@end verbatim
 
 Here is an example showing all five guide3 connectors:
 @verbatiminclude join3.asy
@@ -9080,7 +9149,7 @@ produced using the @code{-f} option (or @code{outformat} setting).
 @cindex @code{dvisvgm}
 @cindex @code{libgs}
 To produce @acronym{SVG} output, you will need @code{dvisvgm} (version
-0.8.7 or later) from @url{http://dvisvgm.sourceforge.net} and must use
+1.5.3 or later) from @url{http://dvisvgm.sourceforge.net} and must use
 the @code{latex} or @code{tex} tex engine. You might need to adjust
 the configuration variable @code{libgs} to point to the location of
 your @code{Ghostscript} library @code{libgs.so} (or to an empty
@@ -9113,15 +9182,17 @@ to execute arbitrary shell commands. The default mode, @code{-safe},
 disables this call.
 
 @cindex offset
-@cindex @code{align}
+@cindex @code{aligndir}
 A @code{PostScript} offset may be specified as a pair (in @code{bp}
 units) with the @code{-O} option:
 @verbatim
 asy -O 0,0 file
 @end verbatim
 @noindent
-The default offset is zero. The default value of the page alignment
-setting @code{align} is @code{Center}.
+The default offset is zero. The pair @code{aligndir} specifies
+an optional direction on the boundary of the page (mapped to the
+rectangle [-1,1]@math{\times}[-1,1]) to which the picture should be aligned; the
+default value @code{(0,0)} species center alignment.
 
 @cindex @code{-c}
 The @code{-c} (@code{command}) option may be used to execute arbitrary
@@ -9568,7 +9639,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  latexusage tex bbox PostScript subdirectory gcc emacs ASYDIR
 @c  LocalWords:  documentclass usepackage subpath shipout sqrt xN  Mx bw AcroRd
 @c  LocalWords:  xscale xaxis yaxis BeginBar GIF postprocessing fpu de rpair xy
-@c  LocalWords:  ImageMagick cd asymptote Hy
+@c  LocalWords:  ImageMagick cd asymptote Hy 0pt 1filll 's 3D 2D 'asy
 @c  LocalWords:  startup natively xasy tkinter VxN yingyang currentpicture toc
 @c  LocalWords:  MetaPost MetaFont Hammerlindl Healy texinfo autoload setq setf
 @c  LocalWords:  printindex setfilename settitle dircategory direntry titlepage
@@ -9750,6 +9821,8 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  generalaxis3 vectorfield3 margin3 grid3xyz 5unit 2D
 @c  LocalWords:  slopefield1 144x144 1filll 'load 'asy 'lasy 'auto 4g
 @c  LocalWords:  libgs 'load 'asy 'lasy 'auto 5bp 1cm 2S 100pt 3t 5mm
-@c  LocalWords:  bracedefaultratio incircle 12pt 25cm 3x 5x 3y 602e
-@c  LocalWords:  2x 2y 3sin 10cm 204e 10x Ai 5E
+@c  LocalWords:  bracedefaultratio incircle 12pt 25cm 3x 5x 3y 602e '
+@c  LocalWords:  2x 2y 3sin 10cm 204e 10x Ai 5E offaxis 'load 'lasy
 @c  LocalWords:  5cm 2N 2E 2n 100d 5z 5y 5unit dvisvgmOptions 144x144
+@c  LocalWords:  4g texengines coplanar
+@c  LocalWords:  insphere cospherical 5unit luatex lualatex
