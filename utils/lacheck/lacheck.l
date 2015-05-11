@@ -1030,7 +1030,8 @@ void e_checkend(int n, char *name)
      if (  CG_TYPE != n  ||  strcmp( CG_NAME, name ) != 0 )
     	print_bad_match(name,n);
 
-     pop();
+     if ( CG_TYPE != 3 )
+        pop();
 
     }
 }
