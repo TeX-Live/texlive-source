@@ -748,6 +748,8 @@ static int fm_getchar (MP mp) {
     byte_ptr = (void *)mp->ps->fm_bytes;
     (mp->read_binary_file)(mp,mp->ps->fm_file,&byte_ptr,&mp->ps->fm_byte_length);
   } 
+  if(mp->ps->fm_byte_waiting >= mp->ps->fm_byte_length)
+    return 10;
   return *(mp->ps->fm_bytes+mp->ps->fm_byte_waiting++);
 }
 
@@ -1239,6 +1241,8 @@ static int check_fm_entry (MP mp, fm_entry * fm, boolean warn) {
         while (mp_isdigit (*r))
             r++;
     }
+    if(fm->ps_name == NULL)
+        fm->ps_name = xstrdup(fm->tfm_name);
     while (1) {                 /* loop through "specials", encoding, font file */
         skip (r, ' ');
         switch (*r) {
@@ -1584,7 +1588,7 @@ void mp_read_psname_table (MP mp) ;
 void mp_read_psname_table (MP mp) {
   font_number k;
   char *s;
-  static boolean isread = false;
+  static int isread = 0;
   if (mp->ps->mitem == NULL) {
     mp->ps->mitem = mp_xmalloc (mp,1,sizeof(mapitem));
     mp->ps->mitem->mode = FM_DUPIGNORE;
@@ -1593,8 +1597,8 @@ void mp_read_psname_table (MP mp) {
   }
   s = mp_xstrdup (mp,ps_tab_name);
   mp->ps->mitem->map_line = s;
-  if (!isread) {
-    isread = true; 
+  if (isread == 0) {
+    isread++;
     fm_read_info (mp);
   }
   for (k=mp->last_ps_fnum+1;k<=mp->last_fnum;k++) {
