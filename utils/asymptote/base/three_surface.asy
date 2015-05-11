@@ -1115,6 +1115,21 @@ patch subpatch(patch s, pair a, pair b)
   return patch(subpatch(s.P,a,b),s.straight,s.planar);
 }
 
+// return an array containing an intersection times of path p and surface s.
+real[] intersect(path3 p, patch s, real fuzz=-1)
+{
+  return intersect(p,s.P,fuzz);
+}
+
+// return an array containing an intersection times of path p and surface s.
+real[] intersect(path3 p, surface s, real fuzz=-1)
+{
+  for(int i=0; i < s.s.length; ++i) {
+    real[] T=intersect(p,s.s[i].P,fuzz);
+    if(T.length > 0) return T;
+  }
+  return new real[];
+}
 
 // return an array containing all intersection times of path p and patch s.
 real[][] intersections(path3 p, patch s, real fuzz=-1)
@@ -1168,8 +1183,8 @@ bool overlap(triple[][] p, triple[][] q, real fuzz=-1)
   triple qmin=minbound(q);
   triple qmax=maxbound(q);
 
-  static real Fuzz=1000*realEpsilon;
-  real fuzz=max(10*fuzz,Fuzz*max(abs(pmin),abs(pmax)));
+  if(fuzz == -1)
+    fuzz=1000*realEpsilon*max(abs(pmin),abs(pmax),abs(qmin),abs(qmax));
   
   return
     pmax.x+fuzz >= qmin.x &&
@@ -1363,7 +1378,7 @@ nullpens.cyclic=true;
 
 void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender, projection P=currentprojection)
 {
   bool is3D=is3D();
@@ -1450,7 +1465,7 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
 
 void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender, projection P=currentprojection)
 {
   material[] surfacepen={surfacepen};
@@ -1462,7 +1477,7 @@ void draw(transform t=identity(), frame f, surface s, int nu=1, int nv=1,
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen[] meshpen=nullpens,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender)
 {
   if(s.empty()) return;
@@ -1507,7 +1522,7 @@ void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material surfacepen=currentpen, pen meshpen=nullpen,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender)
 {
   material[] surfacepen={surfacepen};
@@ -1519,7 +1534,7 @@ void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
 
 void draw(picture pic=currentpicture, surface s, int nu=1, int nv=1,
           material[] surfacepen, pen meshpen,
-          light light=currentlight, light meshlight=light, string name="",
+          light light=currentlight, light meshlight=nolight, string name="",
           render render=defaultrender)
 {
   pen[] meshpen={meshpen};

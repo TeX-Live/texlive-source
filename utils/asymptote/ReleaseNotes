@@ -1,3 +1,34 @@
+Release Notes for Version 2.33
+
+A work around was implemented for the missing epswrite driver in
+ghostscript-9.15. Deconstruction is now always done in the C locale.
+A work around for a unit change in dvisvgm-1.5.3 was implemented.
+The path arc(pair B, pair A, pair C, real r) function was fixed.
+The handling of the boolean condition in parametric surfaces was fixed.
+The default meshlight was changed to nolight so that mesh lines with
+positive width appear consistent with the default mesh lines.
+A nonsquare image dimension error was fixed. The definition of the
+SimpleHead arrowhead was fixed. The zoom/menu button and play option were
+fixed. An intersect(path, surface) function was implemented.
+A smoothcontour3 module written by Charles Staats and leminiscate example
+were added. The inline asymptote.sty option now works with xelatex.
+An obsolete workaround for an Adobe Reader transparency artifact
+was removed. A asylatexdir option was added to support the pdflatex
+-output-directory option. An aligndir option for aligning the picture to
+an arbitrary point of the page boundary was added. The garbage collector was
+updated to gc-7.4.2. The documentation was updated.
+
+Release Notes for Version 2.32
+
+The libc++ stringstream workaround was also enabled for FreeBSD.
+The segment(bool[] b) function was fixed. The side(pair,pair,pair) function
+was renamed to orient(pair,pair,pair) and an error in its documentation was
+corrected. New functions orient(triple,triple,triple,triple) and
+insphere(triple,triple,triple,triple,triple) were implemented. A random
+number generator incompatibility on some platforms was fixed. Support was
+removed for the obsolete utility texi2dvi4a2ps. Compiler warnings were
+suppressed.
+
 Release Notes for Version 2.31
 
 Hangs in 3D font generation and also in the "none" tex engine were fixed.
@@ -1917,3 +1948,7 @@ the frame for filling with a background color; they also return the boundary
 as a guide. A workaround was added for a bug in gcc version 3.3 to
 facilitate compilation under Darwin (MacOS). Many internal coding
 improvements were made.
+
+LocalWords:  epswrite ghostscript boolean meshlight nolight nonsquare asy
+LocalWords:  SimpleHead smoothcontour3 writtten Staats lemniscate xelatex
+LocalWords:  asymptote asylatexdir pdflatex aligndir

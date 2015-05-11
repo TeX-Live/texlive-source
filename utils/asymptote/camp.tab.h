@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 2.6.1.  */
+/* A Bison parser, made by GNU Bison 2.7.  */
 
 /* Bison interface for Yacc-like parsers in C
    
@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_CAMP_TAB_H
-# define YY_CAMP_TAB_H
+#ifndef YY_YY_CAMP_TAB_H_INCLUDED
+# define YY_YY_CAMP_TAB_H_INCLUDED
 /* Enabling traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 1
@@ -108,7 +108,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
 {
-/* Line 2049 of yacc.c  */
+/* Line 2058 of yacc.c  */
 #line 60 "camp.y"
 
   position pos;
@@ -157,7 +157,7 @@ typedef union YYSTYPE
   absyntax::formals *fls;
 
 
-/* Line 2049 of yacc.c  */
+/* Line 2058 of yacc.c  */
 #line 162 "camp.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
@@ -181,4 +181,4 @@ int yyparse ();
 #endif
 #endif /* ! YYPARSE_PARAM */
 
-#endif /* !YY_CAMP_TAB_H  */
+#endif /* !YY_YY_CAMP_TAB_H_INCLUDED  */

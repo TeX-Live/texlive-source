@@ -98,7 +98,7 @@ void texfile::prologue()
     }
   }
   
-  if(settings::xe(texengine))
+  if(settings::xe(texengine) && !inlinetex)
     *out << "\\usepackage{everypage}%" << newl;
   
   if(settings::latex(texengine)) {
@@ -134,14 +134,6 @@ void texfile::prologue()
         }
       }
     }
-  }
-  
-// Workaround Adobe Reader transparency artifact:
-  if(settings::pdf(texengine)) {
-    if(settings::xe(texengine))
-      *out << "\\AddEverypageHook{\\special{pdf: put @thispage <</Group << /S /Transparency /I true /CS /DeviceRGB>> >>}}%" << newl;
-    else
-      *out << "\\pdfpageattr{/Group <</S /Transparency /I true /CS /DeviceRGB>>}%" << newl;
   }
   
   beginpage();
@@ -357,9 +349,9 @@ void svgtexfile::endspecial()
   
 void svgtexfile::begintransform()
 {
-  *out << "<g transform='matrix(1 0 0 1 "
-       << (-Hoffset+1.99*settings::cm)*ps2tex << " " 
-       << (1.9*settings::cm+box.top)*ps2tex 
+  *out << "<g transform='matrix(" << tex2ps << " 0 0 " << tex2ps <<" "
+       << (-Hoffset+1.99*settings::cm) << " " 
+       << (1.9*settings::cm+box.top) 
        << ")'>" << nl;
 }
     

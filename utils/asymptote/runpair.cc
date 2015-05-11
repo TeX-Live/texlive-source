@@ -234,7 +234,7 @@ void gen_runpair13(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
 #line 122 "runpair.in"
-  int n=deg/90.0;
+  int n=(int) (deg/90.0);
   if(deg == n*90.0) {
     int m=n % 4;
     if(m < 0) m += 4;
@@ -251,7 +251,7 @@ void gen_runpair14(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
 #line 135 "runpair.in"
-  int n=deg/90.0;
+  int n=(int) (deg/90.0);
   if(deg == n*90.0) {
     int m=n % 4;
     if(m < 0) m += 4;
@@ -268,7 +268,7 @@ void gen_runpair15(stack *Stack)
 {
   real deg=vm::pop<real>(Stack);
 #line 148 "runpair.in"
-  int n=deg/90.0;
+  int n=(int) (deg/90.0);
   if(deg == n*90.0) {
     int m=n % 4;
     if(m < 0) m += 4;
@@ -418,23 +418,19 @@ void gen_runpair30(stack *Stack)
   {Stack->push<real>(dot(z,w)); return;}
 }
 
-#line 237 "runpair.in"
-// pair bezier(pair a, pair b, pair c, pair d, real t);
+// Return the 2D scalar cross product z.x*w.y-z.y*w.x.
+#line 238 "runpair.in"
+// real cross(explicit pair z, explicit pair w);
 void gen_runpair31(stack *Stack)
 {
-  real t=vm::pop<real>(Stack);
-  pair d=vm::pop<pair>(Stack);
-  pair c=vm::pop<pair>(Stack);
-  pair b=vm::pop<pair>(Stack);
-  pair a=vm::pop<pair>(Stack);
-#line 238 "runpair.in"
-  real onemt=1-t;
-  real onemt2=onemt*onemt;
-  {Stack->push<pair>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
+  pair w=vm::pop<pair>(Stack);
+  pair z=vm::pop<pair>(Stack);
+#line 239 "runpair.in"
+  {Stack->push<real>(cross(z,w)); return;}
 }
 
-#line 244 "runpair.in"
-// pair bezierP(pair a, pair b, pair c, pair d, real t);
+#line 243 "runpair.in"
+// pair bezier(pair a, pair b, pair c, pair d, real t);
 void gen_runpair32(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
@@ -442,12 +438,14 @@ void gen_runpair32(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 245 "runpair.in"
-  {Stack->push<pair>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
+#line 244 "runpair.in"
+  real onemt=1-t;
+  real onemt2=onemt*onemt;
+  {Stack->push<pair>(onemt2*onemt*a+t*(3.0*(onemt2*b+t*onemt*c)+t*t*d)); return;}
 }
 
-#line 249 "runpair.in"
-// pair bezierPP(pair a, pair b, pair c, pair d, real t);
+#line 250 "runpair.in"
+// pair bezierP(pair a, pair b, pair c, pair d, real t);
 void gen_runpair33(stack *Stack)
 {
   real t=vm::pop<real>(Stack);
@@ -455,19 +453,32 @@ void gen_runpair33(stack *Stack)
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 250 "runpair.in"
+#line 251 "runpair.in"
+  {Stack->push<pair>(3.0*(t*t*(d-a+3.0*(b-c))+t*(2.0*(a+c)-4.0*b)+b-a)); return;}
+}
+
+#line 255 "runpair.in"
+// pair bezierPP(pair a, pair b, pair c, pair d, real t);
+void gen_runpair34(stack *Stack)
+{
+  real t=vm::pop<real>(Stack);
+  pair d=vm::pop<pair>(Stack);
+  pair c=vm::pop<pair>(Stack);
+  pair b=vm::pop<pair>(Stack);
+  pair a=vm::pop<pair>(Stack);
+#line 256 "runpair.in"
   {Stack->push<pair>(6.0*(t*(d-a+3.0*(b-c))+a+c-2.0*b)); return;}
 }
 
-#line 254 "runpair.in"
+#line 260 "runpair.in"
 // pair bezierPPP(pair a, pair b, pair c, pair d);
-void gen_runpair34(stack *Stack)
+void gen_runpair35(stack *Stack)
 {
   pair d=vm::pop<pair>(Stack);
   pair c=vm::pop<pair>(Stack);
   pair b=vm::pop<pair>(Stack);
   pair a=vm::pop<pair>(Stack);
-#line 255 "runpair.in"
+#line 261 "runpair.in"
   {Stack->push<pair>(6.0*(d-a+3.0*(b-c))); return;}
 }
 
@@ -540,13 +551,15 @@ void gen_runpair_venv(venv &ve)
 #line 231 "runpair.in"
   addFunc(ve, run::gen_runpair30, primReal(), SYM(dot), formal(primPair(), SYM(z), false, true), formal(primPair(), SYM(w), false, true));
 #line 237 "runpair.in"
-  addFunc(ve, run::gen_runpair31, primPair(), SYM(bezier), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
-#line 244 "runpair.in"
-  addFunc(ve, run::gen_runpair32, primPair(), SYM(bezierP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
-#line 249 "runpair.in"
-  addFunc(ve, run::gen_runpair33, primPair(), SYM(bezierPP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
-#line 254 "runpair.in"
-  addFunc(ve, run::gen_runpair34, primPair(), SYM(bezierPPP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false));
+  addFunc(ve, run::gen_runpair31, primReal(), SYM(cross), formal(primPair(), SYM(z), false, true), formal(primPair(), SYM(w), false, true));
+#line 243 "runpair.in"
+  addFunc(ve, run::gen_runpair32, primPair(), SYM(bezier), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
+#line 250 "runpair.in"
+  addFunc(ve, run::gen_runpair33, primPair(), SYM(bezierP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
+#line 255 "runpair.in"
+  addFunc(ve, run::gen_runpair34, primPair(), SYM(bezierPP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false), formal(primReal(), SYM(t), false, false));
+#line 260 "runpair.in"
+  addFunc(ve, run::gen_runpair35, primPair(), SYM(bezierPPP), formal(primPair(), SYM(a), false, false), formal(primPair(), SYM(b), false, false), formal(primPair(), SYM(c), false, false), formal(primPair(), SYM(d), false, false));
 }
 
 } // namespace trans

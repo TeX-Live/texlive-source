@@ -18,7 +18,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_SUBMINOR_VERSION 37
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -217,7 +217,6 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_LAST_MATCH 2
 
     #define YY_LESS_LINENO(n)
-    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -422,8 +421,6 @@ int yylineno = 1;
 extern char *yytext;
 #define yytext_ptr yytext
 
-/* %% [1.5] DFA */
-
 /* %if-c-only Standard (non-C++) definition */
 
 static yy_state_type yy_get_previous_state (void );
@@ -439,7 +436,7 @@ static void yy_fatal_error (yyconst char msg[]  );
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
 /* %% [2.0] code to fiddle yytext and yyleng for yymore() goes here \ */\
-	yyleng = (int) (yy_cp - yy_bp); \
+	yyleng = (size_t) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 /* %% [3.0] code to copy yytext_ptr to yytext[] goes here, if %array \ */\
@@ -496,7 +493,7 @@ static yyconst flex_int16_t yy_accept[335] =
       117,  117,  100,    0
     } ;
 
-static yyconst YY_CHAR yy_ec[256] =
+static yyconst flex_int32_t yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    4,    1,    1,    1,    1,    1,    1,    1,
@@ -528,7 +525,7 @@ static yyconst YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst YY_CHAR yy_meta[62] =
+static yyconst flex_int32_t yy_meta[62] =
     {   0,
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    3,    3,
@@ -996,7 +993,7 @@ void getstring(void)
 
 
 
-#line 1000 "lex.yy.cc"
+#line 997 "lex.yy.cc"
 
 #define INITIAL 0
 #define lexcomment 1
@@ -1242,6 +1239,12 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
+/* %% [7.0] user's declarations go here */
+#line 209 "camp.l"
+
+
+#line 1247 "lex.yy.cc"
+
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -1276,13 +1279,6 @@ YY_DECL
 		yy_load_buffer_state( );
 		}
 
-	{
-/* %% [7.0] user's declarations go here */
-#line 209 "camp.l"
-
-
-#line 1285 "lex.yy.cc"
-
 	while ( 1 )		/* loops until end-of-file is reached */
 		{
 /* %% [8.0] yymore()-related code goes here */
@@ -1301,7 +1297,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
+			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)];
 			if ( yy_accept[yy_current_state] )
 				{
 				(yy_last_accepting_state) = yy_current_state;
@@ -1396,7 +1392,6 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
-YY_LINENO_REWIND_TO(yy_bp + 1);
 (yy_c_buf_p) = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
@@ -1446,7 +1441,6 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
-YY_LINENO_REWIND_TO(yy_bp + 1);
 (yy_c_buf_p) = yy_cp = yy_bp + 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
@@ -2098,7 +2092,7 @@ YY_RULE_SETUP
 #line 443 "camp.l"
 ECHO;
 	YY_BREAK
-#line 2102 "lex.yy.cc"
+#line 2096 "lex.yy.cc"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2228,7 +2222,6 @@ ECHO;
 			"fatal flex scanner internal error--no action found" );
 	} /* end of action switch */
 		} /* end of scanning one token */
-	} /* end of user's declarations */
 } /* end of yylex */
 /* %ok-for-header */
 

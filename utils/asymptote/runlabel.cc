@@ -64,7 +64,7 @@ function *realRealFunction();
 #include "drawlabel.h"
 #include "locate.h"
 
-  using namespace camp;
+using namespace camp;
 using namespace vm;
 using namespace settings;
 
@@ -131,7 +131,7 @@ void showpath(std::ostream& ps)
   fillpath(ps);
 }
 
-array *readpath(const string& psname, bool keep,
+array *readpath(const string& psname, bool keep, bool pdf=false,
                 double hscale=1.0, double vsign=1.0)
 {
   double vscale=vsign*hscale;
@@ -155,15 +155,15 @@ array *readpath(const string& psname, bool keep,
 #else
   const string null="/dev/null";
 #endif
-  cmd.push_back("-sDEVICE=epswrite");
+  cmd.push_back("-sDEVICE=eps2write");
   cmd.push_back("-sOutputFile="+null);
   cmd.push_back(stripDir(psname));
   iopipestream gs(cmd,"gs","Ghostscript");
-  while(true) {
+  while(gs.running()) {
     stringstream buf;
     string s=gs.readline();
-    if(s.empty() || !gs.running()) break;
-    gs << newl;
+    if(s.empty()) break;
+    if(!pdf) gs << newl;
 
 // Workaround broken stringstream container in MacOS 10.9 libc++.
 #if defined(__APPLE__) || defined(__FreeBSD__) || defined(__FreeBSD_kernel__ )
@@ -332,7 +332,7 @@ void gen_runlabel3(stack *Stack)
   string dviname=auxname(prefix,"dvi");
   bbox b;
   string texengine=getSetting<string>("tex");
-  bool pdf=settings::pdf(texengine);
+  bool xe=settings::xe(texengine);
   texfile tex(texname,b,true);
   tex.miniprologue();
   
@@ -347,7 +347,7 @@ void gen_runlabel3(stack *Stack)
       else
         tex.verbatimline("\\newpage");
     }
-    if(!pdf) {
+    if(!xe) {
       tex.verbatimline("\\special{ps:");
       tex.verbatimline(ASYx);
       tex.verbatimline(ASYy);
@@ -363,35 +363,48 @@ void gen_runlabel3(stack *Stack)
   tex.epilogue(true);
   tex.close();
   
-  int status=opentex(texname,prefix);
+  int status=opentex(texname,prefix,!xe);
   
-  string pdfname;
+  string pdfname,pdfname2,psname2;
   if(!status) {
-    if(pdf) {
+    if(xe) {
       pdfname=auxname(prefix,"pdf");
+      pdfname2=auxname(prefix+"_","pdf");
+      psname2=auxname(prefix+"_","ps");
       if(!fs::exists(pdfname)) {Stack->push<patharray2*>(new array(n)); return;}
-      std::ofstream ps(psname.c_str());
+      std::ofstream ps(psname.c_str(),std::ios::binary);
       if(!ps) cannotwrite(psname);
       
       showpath(ps);
 
-      mem::vector<string> cmd;
-      cmd.push_back(getSetting<string>("gs"));
-      cmd.push_back("-q");
-      cmd.push_back("-dNOCACHE");
-      cmd.push_back("-dNOPAUSE");
-      cmd.push_back("-dBATCH");
-      if(safe) cmd.push_back("-dSAFER");
-      cmd.push_back("-sDEVICE=epswrite");
-      cmd.push_back("-sOutputFile=-");
-      cmd.push_back(pdfname);
-      iopipestream gs(cmd,"gs","Ghostscript");
-      while(true) {
-        string line=gs.readline();
-        if(line.empty() || !gs.running()) break;
-        ps << line;
+      mem::vector<string> pcmd;
+      pcmd.push_back(getSetting<string>("gs"));
+      pcmd.push_back("-q");
+      pcmd.push_back("-dNOCACHE");
+      pcmd.push_back("-dNOPAUSE");
+      pcmd.push_back("-dBATCH");
+      if(safe) pcmd.push_back("-dSAFER");
+      pcmd.push_back("-sDEVICE=pdfwrite");
+      pcmd.push_back("-sOutputFile="+pdfname2);
+      pcmd.push_back(pdfname);
+      status=System(pcmd,0,true,"gs");
+      if(status == 0) {
+        mem::vector<string> cmd;
+        cmd.push_back(getSetting<string>("gs"));
+        cmd.push_back("-q");
+        cmd.push_back("-dNOCACHE");
+        cmd.push_back("-dNOPAUSE");
+        cmd.push_back("-dBATCH");
+        if(safe) cmd.push_back("-dSAFER");
+        cmd.push_back("-sDEVICE=eps2write");
+        cmd.push_back("-sOutputFile="+psname2);
+        cmd.push_back(pdfname2);
+        status=System(cmd,0,true,"gs");
+      
+        std::ifstream in(psname2.c_str(),std::ios::binary);
+        ps << in.rdbuf();
+        ps.close();
       }
-      ps.close();
     } else {
       if(!fs::exists(dviname)) {Stack->push<patharray2*>(new array(n)); return;}
       mem::vector<string> dcmd;
@@ -416,9 +429,11 @@ void gen_runlabel3(stack *Stack)
     if(!getSetting<bool>("keepaux"))
       unlink(auxname(prefix,"aux").c_str());
     unlink(auxname(prefix,"log").c_str());
-    if(pdf)
+    if(xe) {
       unlink(pdfname.c_str());
-    else
+      unlink(pdfname2.c_str());
+      unlink(psname2.c_str());
+    } else
       unlink(dviname.c_str());
     if(settings::context(texengine)) {
       unlink(auxname(prefix,"top").c_str());
@@ -426,16 +441,17 @@ void gen_runlabel3(stack *Stack)
       unlink(auxname(prefix,"tui").c_str());
     }
   }
-  {Stack->push<patharray2*>(pdf ? readpath(psname,keep,0.1) : readpath(psname,keep,0.12,-1.0)); return;}
+  {Stack->push<patharray2*>(xe ? readpath(psname,keep,true,0.1) : 
+    readpath(psname,keep,false,0.12,-1.0)); return;}
 }
 
-#line 359 "runlabel.in"
+#line 375 "runlabel.in"
 // patharray2* textpath(stringarray *s, penarray *p);
 void gen_runlabel4(stack *Stack)
 {
   penarray * p=vm::pop<penarray *>(Stack);
   stringarray * s=vm::pop<stringarray *>(Stack);
-#line 360 "runlabel.in"
+#line 376 "runlabel.in"
   size_t n=checkArrays(s,p);
   if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
@@ -476,7 +492,7 @@ void gen_runlabel4(stack *Stack)
   cmd2.push_back("-dBATCH");
   cmd2.push_back("-P");
   if(safe) cmd2.push_back("-dSAFER");
-  cmd2.push_back("-sDEVICE=epswrite");
+  cmd2.push_back("-sDEVICE=eps2write");
   cmd2.push_back("-sOutputFile=-");
   cmd2.push_back("-");
   iopipestream gs(cmd2,"gs","Ghostscript");
@@ -505,16 +521,16 @@ void gen_runlabel4(stack *Stack)
   bool keep=getSetting<bool>("keep");
   if(!keep) // Delete temporary files.
     unlink(textname.c_str());
-  {Stack->push<patharray2*>(readpath(psname,keep,0.1)); return;}
+  {Stack->push<patharray2*>(readpath(psname,keep,false,0.1)); return;}
 }
 
-#line 433 "runlabel.in"
+#line 449 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 434 "runlabel.in"
+#line 450 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
@@ -552,9 +568,9 @@ void gen_runlabel_venv(venv &ve)
   addFunc(ve, run::gen_runlabel2, realArray(), SYM(texsize), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
 #line 251 "runlabel.in"
   addFunc(ve, run::gen_runlabel3, pathArray2() , SYM(_texpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 359 "runlabel.in"
+#line 375 "runlabel.in"
   addFunc(ve, run::gen_runlabel4, pathArray2() , SYM(textpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 433 "runlabel.in"
+#line 449 "runlabel.in"
   addFunc(ve, run::gen_runlabel5, pathArray() , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
 }
 
