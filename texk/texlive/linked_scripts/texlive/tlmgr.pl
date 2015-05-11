@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37221 2015-05-06 01:49:18Z preining $
+# $Id: tlmgr.pl 37289 2015-05-09 02:43:37Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37221 $';
-my $datrev = '$Date: 2015-05-06 03:49:18 +0200 (Wed, 06 May 2015) $';
+my $svnrev = '$Revision: 37289 $';
+my $datrev = '$Date: 2015-05-09 04:43:37 +0200 (Sat, 09 May 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1457,8 +1457,14 @@ sub action_info {
             next;
           }
         }
-        tlwarn("$prg: cannot find package $pkg\n");
-        $ret |= $F_WARNING;
+        # we didn't find a package like this, so use search
+        info("$prg: cannot find package $pkg, searching for other matches:\n");
+        my ($foundfile, $founddesc) = search_tlpdb($remotetlpdb, $pkg, 1, 1, 0);
+        print "\nPackages containing \`$pkg\' in their title/description:\n";
+        print $founddesc;
+        print "\nPackages containing files matching \`$pkg\':\n";
+        print $foundfile;
+        #$ret |= $F_WARNING;
         next;
       }
       # we want to also show the source if it is known
@@ -1634,45 +1640,70 @@ sub action_search {
     $tlpdb = $localtlpdb;
   }
 
+  my ($foundfile, $founddesc) = search_tlpdb($tlpdb, $r, 
+    $opts{'file'} || $opts{'all'}, 
+    (!$opts{'file'} || $opts{'all'}), 
+    $opts{'word'});
+ 
+  print $founddesc;
+  print $foundfile;
+
+  return ($F_OK | $F_NOPOSTACTION);
+}
+
+sub search_tlpdb {
+  my ($tlpdb, $what, $dofile, $dodesc, $inword) = @_;
+  my $retfile = '';
+  my $retdesc = '';
   foreach my $pkg ($tlpdb->list_packages) {
     my $tlp = $tlpdb->get_package($pkg);
     
     # --file or --all -> search (full) file names
-    if ($opts{"file"} || $opts{"all"}) {
-      my @files = $tlp->all_files;
-      if ($tlp->relocated) {
-        for (@files) { s:^$RelocPrefix/:$RelocTree/:; }
-      }
-      my @ret = grep(m;$r;, @files);
+    if ($dofile) {
+      my @ret = search_pkg_files($tlp, $what);
       if (@ret) {
-        print "$pkg:\n";
+        $retfile .= "$pkg:\n";
         foreach (@ret) {
-          print "\t$_\n";
+          $retfile .= "\t$_\n";
         }
       }
     }
     #
     # no options or --all -> search package names/descriptions
-    if ($search_type_nr == 0 || $opts{"all"}) {
+    if ($dodesc) {
       next if ($pkg =~ m/\./);
-      # glom description strings together for one search
-      my $t = "$pkg\n";
-      $t = $t . $tlp->shortdesc . "\n" if (defined($tlp->shortdesc));
-      $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
-      my $pat = $r;
-      $pat = '\W' . $r . '\W' if ($opts{"word"});
-      my $matched = "";
-      if ($t =~ m/$pat/i) {
-        my $shortdesc = $tlp->shortdesc || "";
-        $matched .= " $pkg - $shortdesc\n";
-      }
-      print $matched;
+      my $matched = search_pkg_desc($tlp, $what, $inword);
+      $retdesc .= "$matched\n" if ($matched);
     }
   }
-
-  return ($F_OK | $F_NOPOSTACTION);
+  return($retfile, $retdesc);
 }
 
+sub search_pkg_desc {
+  my ($tlp, $what, $inword) = @_;
+  my $pkg = $tlp->name;
+  my $t = "$pkg\n";
+  $t = $t . $tlp->shortdesc . "\n" if (defined($tlp->shortdesc));
+  $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
+  my $pat = $what;
+  $pat = '\W' . $what . '\W' if ($inword);
+  my $matched = "";
+  if ($t =~ m/$pat/i) {
+    my $shortdesc = $tlp->shortdesc || "";
+    $matched .= "$pkg - $shortdesc";
+  }
+  return $matched;
+}
+
+sub search_pkg_files {
+  my ($tlp, $what) = @_;
+  my @files = $tlp->all_files;
+  if ($tlp->relocated) {
+    for (@files) { s:^$RelocPrefix/:$RelocTree/:; }
+  }
+  my @ret = grep(m;$what;, @files);
+  return @ret;
+}
 
 #  RESTORE
 #
@@ -6213,10 +6244,10 @@ Report what would be updated without actually updating anything.
 Make your local TeX installation correspond to what is in the package
 repository (typically useful when updating from CTAN).
 
-=item C<tlmgr info> I<pkg>
+=item C<tlmgr info> I<what>
 
-Display detailed information about I<pkg>, such as the installation
-status and description.
+Display detailed information about a package I<what>, such as the installation
+status and description, of searches for I<what> in all packages.
 
 =back
 
@@ -6668,6 +6699,9 @@ With any other arguments, display information about I<pkg>: the name,
 category, short and long description, installation status, and TeX Live
 revision number.  If I<pkg> is not locally installed, searches in the
 remote installation source.
+
+If I<pkg> is not found locally or remotely, the search action is used
+and lists matching packages and files.
 
 It also displays information taken from the TeX Catalogue, namely the
 package version, date, and license.  Consider these, especially the
