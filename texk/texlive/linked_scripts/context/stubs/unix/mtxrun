@@ -1372,7 +1372,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-table"] = package.loaded["l-table"] or true
 
--- original size: 33830, stripped down to: 21894
+-- original size: 35724, stripped down to: 21525
 
 if not modules then modules={} end modules ['l-table']={
   version=1.001,
@@ -1405,7 +1405,7 @@ end
 function table.keys(t)
   if t then
     local keys,k={},0
-    for key,_ in next,t do
+    for key in next,t do
       k=k+1
       keys[k]=key
     end
@@ -1416,32 +1416,51 @@ function table.keys(t)
 end
 local function compare(a,b)
   local ta=type(a) 
-  local tb=type(b) 
-  if ta==tb and ta=="number" then
-    return a<b
-  else
-    return tostring(a)<tostring(b) 
+  if ta=="number" then
+    local tb=type(b) 
+    if ta==tb then
+      return a<b
+    elseif tb=="string" then
+      return tostring(a)<b
+    end
+  elseif ta=="string" then
+    local tb=type(b) 
+    if ta==tb then
+      return a<b
+    else
+      return a<tostring(b)
+    end
   end
+  return tostring(a)<tostring(b) 
 end
 local function sortedkeys(tab)
   if tab then
     local srt,category,s={},0,0 
-    for key,_ in next,tab do
+    for key in next,tab do
       s=s+1
       srt[s]=key
       if category==3 then
+      elseif category==1 then
+        if type(key)~="string" then
+          category=3
+        end
+      elseif category==2 then
+        if type(key)~="number" then
+          category=3
+        end
       else
         local tkey=type(key)
         if tkey=="string" then
-          category=(category==2 and 3) or 1
+          category=1
         elseif tkey=="number" then
-          category=(category==1 and 3) or 2
+          category=2
         else
           category=3
         end
       end
     end
-    if category==0 or category==3 then
+    if s<2 then
+    elseif category==3 then
       sort(srt,compare)
     else
       sort(srt)
@@ -1454,13 +1473,15 @@ end
 local function sortedhashonly(tab)
   if tab then
     local srt,s={},0
-    for key,_ in next,tab do
+    for key in next,tab do
       if type(key)=="string" then
         s=s+1
         srt[s]=key
       end
     end
-    sort(srt)
+    if s>1 then
+      sort(srt)
+    end
     return srt
   else
     return {}
@@ -1469,13 +1490,15 @@ end
 local function sortedindexonly(tab)
   if tab then
     local srt,s={},0
-    for key,_ in next,tab do
+    for key in next,tab do
       if type(key)=="number" then
         s=s+1
         srt[s]=key
       end
     end
-    sort(srt)
+    if s>1 then
+      sort(srt)
+    end
     return srt
   else
     return {}
@@ -1484,13 +1507,15 @@ end
 local function sortedhashkeys(tab,cmp) 
   if tab then
     local srt,s={},0
-    for key,_ in next,tab do
+    for key in next,tab do
       if key then
         s=s+1
         srt[s]=key
       end
     end
-    sort(srt,cmp)
+    if s>1 then
+      sort(srt,cmp)
+    end
     return srt
   else
     return {}
@@ -1499,7 +1524,7 @@ end
 function table.allkeys(t)
   local keys={}
   for k,v in next,t do
-    for k,v in next,v do
+    for k in next,v do
       keys[k]=true
     end
   end
@@ -1518,19 +1543,21 @@ local function sortedhash(t,cmp)
     else
       s=sortedkeys(t) 
     end
-    local n=0
     local m=#s
-    local function kv() 
-      if n<m then
-        n=n+1
-        local k=s[n]
-        return k,t[k]
+    if m==1 then
+      return next,t
+    elseif m>0 then
+      local n=0
+      return function()
+        if n<m then
+          n=n+1
+          local k=s[n]
+          return k,t[k]
+        end
       end
     end
-    return kv 
-  else
-    return nothing
   end
+  return nothing
 end
 table.sortedhash=sortedhash
 table.sortedpairs=sortedhash 
@@ -1672,39 +1699,36 @@ function table.fromhash(t)
   end
   return hsh
 end
-local noquotes,hexify,handle,reduce,compact,inline,functions
+local noquotes,hexify,handle,compact,inline,functions
 local reserved=table.tohash { 
   'and','break','do','else','elseif','end','false','for','function','if',
   'in','local','nil','not','or','repeat','return','then','true','until','while',
   'NaN','goto',
 }
 local function simple_table(t)
-  if #t>0 then
+  local nt=#t
+  if nt>0 then
     local n=0
     for _,v in next,t do
       n=n+1
     end
-    if n==#t then
-      local tt,nt={},0
-      for i=1,#t do
+    if n==nt then
+      local tt={}
+      for i=1,nt do
         local v=t[i]
         local tv=type(v)
         if tv=="number" then
-          nt=nt+1
           if hexify then
-            tt[nt]=format("0x%X",v)
+            tt[i]=format("0x%X",v)
           else
-            tt[nt]=tostring(v) 
+            tt[i]=tostring(v) 
           end
         elseif tv=="string" then
-          nt=nt+1
-          tt[nt]=format("%q",v)
+          tt[i]=format("%q",v)
         elseif tv=="boolean" then
-          nt=nt+1
-          tt[nt]=v and "true" or "false"
+          tt[i]=v and "true" or "false"
         else
-          tt=nil
-          break
+          return nil
         end
       end
       return tt
@@ -1758,7 +1782,8 @@ local function do_serialize(root,name,depth,level,indexed)
     for i=1,#sk do
       local k=sk[i]
       local v=root[k]
-      local tv,tk=type(v),type(k)
+      local tv=type(v)
+      local tk=type(k)
       if compact and first and tk=="number" and k>=first and k<=last then
         if tv=="number" then
           if hexify then
@@ -1767,11 +1792,7 @@ local function do_serialize(root,name,depth,level,indexed)
             handle(format("%s %s,",depth,v)) 
           end
         elseif tv=="string" then
-          if reduce and tonumber(v) then
-            handle(format("%s %s,",depth,v))
-          else
-            handle(format("%s %q,",depth,v))
-          end
+          handle(format("%s %q,",depth,v))
         elseif tv=="table" then
           if next(v)==nil then
             handle(format("%s {},",depth))
@@ -1827,34 +1848,18 @@ local function do_serialize(root,name,depth,level,indexed)
           end
         end
       elseif tv=="string" then
-        if reduce and tonumber(v) then
-          if tk=="number" then
-            if hexify then
-              handle(format("%s [0x%X]=%s,",depth,k,v))
-            else
-              handle(format("%s [%s]=%s,",depth,k,v))
-            end
-          elseif tk=="boolean" then
-            handle(format("%s [%s]=%s,",depth,k and "true" or "false",v))
-          elseif noquotes and not reserved[k] and lpegmatch(propername,k) then
-            handle(format("%s %s=%s,",depth,k,v))
+        if tk=="number" then
+          if hexify then
+            handle(format("%s [0x%X]=%q,",depth,k,v))
           else
-            handle(format("%s [%q]=%s,",depth,k,v))
+            handle(format("%s [%s]=%q,",depth,k,v))
           end
+        elseif tk=="boolean" then
+          handle(format("%s [%s]=%q,",depth,k and "true" or "false",v))
+        elseif noquotes and not reserved[k] and lpegmatch(propername,k) then
+          handle(format("%s %s=%q,",depth,k,v))
         else
-          if tk=="number" then
-            if hexify then
-              handle(format("%s [0x%X]=%q,",depth,k,v))
-            else
-              handle(format("%s [%s]=%q,",depth,k,v))
-            end
-          elseif tk=="boolean" then
-            handle(format("%s [%s]=%q,",depth,k and "true" or "false",v))
-          elseif noquotes and not reserved[k] and lpegmatch(propername,k) then
-            handle(format("%s %s=%q,",depth,k,v))
-          else
-            handle(format("%s [%q]=%q,",depth,k,v))
-          end
+          handle(format("%s [%q]=%q,",depth,k,v))
         end
       elseif tv=="table" then
         if next(v)==nil then
@@ -1951,7 +1956,6 @@ local function serialize(_handle,root,name,specification)
     noquotes=specification.noquotes
     hexify=specification.hexify
     handle=_handle or specification.handle or print
-    reduce=specification.reduce or false
     functions=specification.functions
     compact=specification.compact
     inline=specification.inline and compact
@@ -1968,7 +1972,6 @@ local function serialize(_handle,root,name,specification)
     noquotes=false
     hexify=false
     handle=_handle or print
-    reduce=false
     compact=true
     inline=true
     functions=true
@@ -5882,7 +5885,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-tab"] = package.loaded["util-tab"] or true
 
--- original size: 24267, stripped down to: 16260
+-- original size: 25338, stripped down to: 16247
 
 if not modules then modules={} end modules ['util-tab']={
   version=1.001,
@@ -5895,7 +5898,7 @@ utilities=utilities or {}
 utilities.tables=utilities.tables or {}
 local tables=utilities.tables
 local format,gmatch,gsub,sub=string.format,string.gmatch,string.gsub,string.sub
-local concat,insert,remove=table.concat,table.insert,table.remove
+local concat,insert,remove,sort=table.concat,table.insert,table.remove,table.sort
 local setmetatable,getmetatable,tonumber,tostring=setmetatable,getmetatable,tonumber,tostring
 local type,next,rawset,tonumber,tostring,load,select=type,next,rawset,tonumber,tostring,load,select
 local lpegmatch,P,Cs,Cc=lpeg.match,lpeg.P,lpeg.Cs,lpeg.Cc
@@ -6325,7 +6328,8 @@ function table.serialize(root,name,specification)
   local t 
   local n=1
   local function simple_table(t)
-    if #t>0 then
+    local nt=#t
+    if nt>0 then
       local n=0
       for _,v in next,t do
         n=n+1
@@ -6333,19 +6337,17 @@ function table.serialize(root,name,specification)
           return nil
         end
       end
-      if n==#t then
+      if n==nt then
         local tt={}
-        local nt=0
-        for i=1,#t do
+        for i=1,nt do
           local v=t[i]
           local tv=type(v)
-          nt=nt+1
           if tv=="number" then
-            tt[nt]=v
+            tt[i]=v 
           elseif tv=="string" then
-            tt[nt]=format("%q",v) 
+            tt[i]=format("%q",v) 
           elseif tv=="boolean" then
-            tt[nt]=v and "true" or "false"
+            tt[i]=v and "true" or "false"
           else
             return nil
           end
@@ -6393,7 +6395,7 @@ function table.serialize(root,name,specification)
         local v=root[k]
         local tv=type(v)
         local tk=type(k)
-        if first and tk=="number" and k>=first and k<=last then
+        if first and tk=="number" and k<=last and k>=first then
           if tv=="number" then
             n=n+1 t[n]=f_val_num(depth,v)
           elseif tv=="string" then
@@ -6431,11 +6433,11 @@ function table.serialize(root,name,specification)
         elseif tv=="table" then
           if next(v)==nil then
             if tk=="number" then
-              n=n+1 t[n]=f_key_num_value_not(depth,k,v)
+              n=n+1 t[n]=f_key_num_value_not(depth,k)
             elseif tk=="string" then
-              n=n+1 t[n]=f_key_str_value_not(depth,k,v)
+              n=n+1 t[n]=f_key_str_value_not(depth,k)
             elseif tk=="boolean" then
-              n=n+1 t[n]=f_key_boo_value_not(depth,k,v)
+              n=n+1 t[n]=f_key_boo_value_not(depth,k)
             end
           else
             local st=simple_table(v)
@@ -6650,7 +6652,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-prs"] = package.loaded["util-prs"] or true
 
--- original size: 21751, stripped down to: 15108
+-- original size: 21780, stripped down to: 15121
 
 if not modules then modules={} end modules ['util-prs']={
   version=1.001,
@@ -6672,6 +6674,8 @@ local patterns=parsers.patterns or {}
 parsers.patterns=patterns
 local setmetatableindex=table.setmetatableindex
 local sortedhash=table.sortedhash
+local sortedkeys=table.sortedkeys
+local tohash=table.tohash
 local digit=R("09")
 local space=P(' ')
 local equal=P("=")
@@ -6721,9 +6725,7 @@ patterns.settings_to_hash_a=pattern_a_s
 patterns.settings_to_hash_b=pattern_b_s
 patterns.settings_to_hash_c=pattern_c_s
 function parsers.make_settings_to_hash_pattern(set,how)
-  if type(str)=="table" then
-    return set
-  elseif how=="strict" then
+  if how=="strict" then
     return (pattern_c/set)^1
   elseif how=="tolerant" then
     return (pattern_b/set)^1
@@ -6732,7 +6734,9 @@ function parsers.make_settings_to_hash_pattern(set,how)
   end
 end
 function parsers.settings_to_hash(str,existing)
-  if type(str)=="table" then
+  if not str or str=="" then
+    return {}
+  elseif type(str)=="table" then
     if existing then
       for k,v in next,str do
         existing[k]=v
@@ -6741,16 +6745,16 @@ function parsers.settings_to_hash(str,existing)
     else
       return str
     end
-  elseif str and str~="" then
+  else
     hash=existing or {}
     lpegmatch(pattern_a_s,str)
     return hash
-  else
-    return {}
   end
 end
 function parsers.settings_to_hash_tolerant(str,existing)
-  if type(str)=="table" then
+  if not str or str=="" then
+    return {}
+  elseif type(str)=="table" then
     if existing then
       for k,v in next,str do
         existing[k]=v
@@ -6759,16 +6763,16 @@ function parsers.settings_to_hash_tolerant(str,existing)
     else
       return str
     end
-  elseif str and str~="" then
+  else
     hash=existing or {}
     lpegmatch(pattern_b_s,str)
     return hash
-  else
-    return {}
   end
 end
 function parsers.settings_to_hash_strict(str,existing)
-  if type(str)=="table" then
+  if not str or str=="" then
+    return nil
+  elseif type(str)=="table" then
     if existing then
       for k,v in next,str do
         existing[k]=v
@@ -6781,8 +6785,6 @@ function parsers.settings_to_hash_strict(str,existing)
     hash=existing or {}
     lpegmatch(pattern_c_s,str)
     return next(hash) and hash
-  else
-    return nil
   end
 end
 local separator=comma*space^0
@@ -6790,10 +6792,10 @@ local value=P(lbrace*C((nobrace+nestedbraces)^0)*rbrace)+C((nestedbraces+(1-comm
 local pattern=spaces*Ct(value*(separator*value)^0)
 patterns.settings_to_array=pattern
 function parsers.settings_to_array(str,strict)
-  if type(str)=="table" then
-    return str
-  elseif not str or str=="" then
+  if not str or str=="" then
     return {}
+  elseif type(str)=="table" then
+    return str
   elseif strict then
     if find(str,"{",1,true) then
       return lpegmatch(pattern,str)
@@ -6854,8 +6856,8 @@ function parsers.add_settings_to_array(t,str)
 end
 function parsers.hash_to_string(h,separator,yes,no,strict,omit)
   if h then
-    local t,tn,s={},0,table.sortedkeys(h)
-    omit=omit and table.tohash(omit)
+    local t,tn,s={},0,sortedkeys(h)
+    omit=omit and tohash(omit)
     for i=1,#s do
       local key=s[i]
       if not omit or not omit[key] then
@@ -7001,7 +7003,7 @@ function parsers.keq_to_hash(str)
 end
 local defaultspecification={ separator=",",quote='"' }
 function parsers.csvsplitter(specification)
-  specification=specification and table.setmetatableindex(specification,defaultspecification) or defaultspecification
+  specification=specification and setmetatableindex(specification,defaultspecification) or defaultspecification
   local separator=specification.separator
   local quotechar=specification.quote
   local separator=S(separator~="" and separator or ",")
@@ -7025,7 +7027,7 @@ function parsers.csvsplitter(specification)
   end
 end
 function parsers.rfc4180splitter(specification)
-  specification=specification and table.setmetatableindex(specification,defaultspecification) or defaultspecification
+  specification=specification and setmetatableindex(specification,defaultspecification) or defaultspecification
   local separator=specification.separator 
   local quotechar=P(specification.quote) 
   local dquotechar=quotechar*quotechar  
@@ -7084,9 +7086,9 @@ function parsers.unittoxml(str)
   return lpegmatch(pattern,str)
 end
 local cache={}
-local spaces=lpeg.patterns.space^0
+local spaces=lpegpatterns.space^0
 local dummy=function() end
-table.setmetatableindex(cache,function(t,k)
+setmetatableindex(cache,function(t,k)
   local separator=P(k)
   local value=(1-separator)^0
   local pattern=spaces*C(value)*separator^0*Cp()
@@ -14060,7 +14062,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-tmp"] = package.loaded["data-tmp"] or true
 
--- original size: 15681, stripped down to: 11761
+-- original size: 15618, stripped down to: 11629
 
 if not modules then modules={} end modules ['data-tmp']={
   version=1.100,
@@ -14070,7 +14072,7 @@ if not modules then modules={} end modules ['data-tmp']={
   license="see context related readme files"
 }
 local format,lower,gsub,concat=string.format,string.lower,string.gsub,table.concat
-local concat,serialize,serializetofile=table.concat,table.serialize,table.tofile
+local concat=table.concat
 local mkdirs,isdir,isfile=dir.mkdirs,lfs.isdir,lfs.isfile
 local addsuffix,is_writable,is_readable=file.addsuffix,file.is_writable,file.is_readable
 local formatters=string.formatters
@@ -14339,15 +14341,11 @@ end
 local saveoptions={ compact=true }
 function caches.savedata(filepath,filename,data,raw)
   local tmaname,tmcname=caches.setluanames(filepath,filename)
-  local reduce,simplify=true,true
-  if raw then
-    reduce,simplify=false,false
-  end
   data.cache_uuid=os.uuid()
   if caches.direct then
-    file.savedata(tmaname,serialize(data,true,saveoptions))
+    file.savedata(tmaname,table.serialize(data,true,saveoptions))
   else
-    serializetofile(tmaname,data,true,saveoptions)
+    table.tofile(tmaname,data,true,saveoptions)
   end
   utilities.lua.compile(tmaname,tmcname)
 end
@@ -14412,7 +14410,7 @@ function caches.savecontent(cachename,dataname,content,filename)
     content=content,
     uuid=os.uuid(),
   }
-  local ok=io.savedata(luaname,serialize(data,true))
+  local ok=io.savedata(luaname,table.serialize(data,true))
   if ok then
     if trace_locating then
       report_resolvers("category %a, cachename %a saved in %a",dataname,cachename,luaname)
@@ -17938,8 +17936,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 742687
--- stripped bytes    : 265759
+-- original bytes    : 745618
+-- stripped bytes    : 269191
 
 -- end library merge
 
