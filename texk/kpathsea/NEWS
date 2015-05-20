@@ -1,6 +1,6 @@
 This file records noteworthy changes.  (Public domain.)
 
-6.2.1 (for TeX Live 2015)
+6.2.1 (for TeX Live 2015, 21 May 2015)
 * search path information output with new option --help-formats to kpsewhich,
   no longer with --help.
 * install <kpathsea/c-auto.h> in an architecture dependent location

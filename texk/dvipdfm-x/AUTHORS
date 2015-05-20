@@ -1,3 +1,5 @@
+(This file public domain.)
+
 Principal authors of dvipdfmx: Jin-Hwan Cho, Matthias Franz, and
 Shunsaku Hirata, the dvipdfmx project team.
 
@@ -7,6 +9,8 @@ Kettering University, Flint, Michigan, USA.
 Additional support for xetex (aka xdvipdfmx, .xdv) originally by
 Jonathan Kew and Jin-Hwan Cho, with updates by Khaled Hosny.
 
-Other updates by TeX Live developers: Peter Breitenlohner,
-Karl Berry, et al.
+Additional CJK and other support from Akira Kakuto, Jiang Jiang,
+Takuji Tanaka, and others.
 
+Other updates by TeX Live developers: Peter Breitenlohner,
+Karl Berry, and others.
