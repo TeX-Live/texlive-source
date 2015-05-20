@@ -1,3 +1,17 @@
+Release Notes for Version 2.35
+
+A work around was implemented for a ghostscript eps2write bug that forces
+all postscript to the first page, breaking multiple 3D XeLaTeX and ConTeXt
+labels.
+
+Release Notes for Version 2.34
+
+The readability of named pen colors was improved in the documentation.
+A surface cone(path3 base, triple vertex) routine was added for
+constructing an approximate cone over an arbitrary base. A test for
+Ghostscript 9.14 or later was added to the build process. The documentation
+was updated. A CYGWIN warning message under Windows 8 was fixed.
+
 Release Notes for Version 2.33
 
 A work around was implemented for the missing epswrite driver in
@@ -13,7 +27,7 @@ fixed. An intersect(path, surface) function was implemented.
 A smoothcontour3 module written by Charles Staats and leminiscate example
 were added. The inline asymptote.sty option now works with xelatex.
 An obsolete workaround for an Adobe Reader transparency artifact
-was removed. A asylatexdir option was added to support the pdflatex
+was removed. An asylatexdir option was added to support the pdflatex
 -output-directory option. An aligndir option for aligning the picture to
 an arbitrary point of the page boundary was added. The garbage collector was
 updated to gc-7.4.2. The documentation was updated.

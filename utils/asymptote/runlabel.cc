@@ -332,7 +332,7 @@ void gen_runlabel3(stack *Stack)
   string dviname=auxname(prefix,"dvi");
   bbox b;
   string texengine=getSetting<string>("tex");
-  bool xe=settings::xe(texengine);
+  bool xe=settings::xe(texengine) || settings::context(texengine);
   texfile tex(texname,b,true);
   tex.miniprologue();
   
@@ -366,6 +366,8 @@ void gen_runlabel3(stack *Stack)
   int status=opentex(texname,prefix,!xe);
   
   string pdfname,pdfname2,psname2;
+  bool keep=getSetting<bool>("keep");
+  
   if(!status) {
     if(xe) {
       pdfname=auxname(prefix,"pdf");
@@ -397,12 +399,20 @@ void gen_runlabel3(stack *Stack)
         cmd.push_back("-dBATCH");
         if(safe) cmd.push_back("-dSAFER");
         cmd.push_back("-sDEVICE=eps2write");
-        cmd.push_back("-sOutputFile="+psname2);
+        // Work around eps2write bug that forces all postscript to first page.
+        cmd.push_back("-sOutputFile="+psname2+"%d");
         cmd.push_back(pdfname2);
         status=System(cmd,0,true,"gs");
       
-        std::ifstream in(psname2.c_str(),std::ios::binary);
-        ps << in.rdbuf();
+        for(unsigned int i=1; i <= n ; ++i) {
+          ostringstream buf;
+          buf << psname2.c_str() << i;
+          const char *name=buf.str().c_str();
+          std::ifstream in(name,std::ios::binary);
+          ps << in.rdbuf();
+          ps << "(>\n) print flush\n";
+          if(!keep) unlink(name);
+        }
         ps.close();
       }
     } else {
@@ -423,7 +433,6 @@ void gen_runlabel3(stack *Stack)
   if(status != 0)
     error("texpath failed");
     
-  bool keep=getSetting<bool>("keep");
   if(!keep) { // Delete temporary files.
     unlink(texname.c_str());
     if(!getSetting<bool>("keepaux"))
@@ -432,12 +441,12 @@ void gen_runlabel3(stack *Stack)
     if(xe) {
       unlink(pdfname.c_str());
       unlink(pdfname2.c_str());
-      unlink(psname2.c_str());
     } else
       unlink(dviname.c_str());
     if(settings::context(texengine)) {
       unlink(auxname(prefix,"top").c_str());
       unlink(auxname(prefix,"tua").c_str());
+      unlink(auxname(prefix,"tuc").c_str());
       unlink(auxname(prefix,"tui").c_str());
     }
   }
@@ -445,13 +454,13 @@ void gen_runlabel3(stack *Stack)
     readpath(psname,keep,false,0.12,-1.0)); return;}
 }
 
-#line 375 "runlabel.in"
+#line 384 "runlabel.in"
 // patharray2* textpath(stringarray *s, penarray *p);
 void gen_runlabel4(stack *Stack)
 {
   penarray * p=vm::pop<penarray *>(Stack);
   stringarray * s=vm::pop<stringarray *>(Stack);
-#line 376 "runlabel.in"
+#line 385 "runlabel.in"
   size_t n=checkArrays(s,p);
   if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
@@ -524,13 +533,13 @@ void gen_runlabel4(stack *Stack)
   {Stack->push<patharray2*>(readpath(psname,keep,false,0.1)); return;}
 }
 
-#line 449 "runlabel.in"
+#line 458 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 450 "runlabel.in"
+#line 459 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
@@ -568,9 +577,9 @@ void gen_runlabel_venv(venv &ve)
   addFunc(ve, run::gen_runlabel2, realArray(), SYM(texsize), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
 #line 251 "runlabel.in"
   addFunc(ve, run::gen_runlabel3, pathArray2() , SYM(_texpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 375 "runlabel.in"
+#line 384 "runlabel.in"
   addFunc(ve, run::gen_runlabel4, pathArray2() , SYM(textpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 449 "runlabel.in"
+#line 458 "runlabel.in"
   addFunc(ve, run::gen_runlabel5, pathArray() , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
 }
 
