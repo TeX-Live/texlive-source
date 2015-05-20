@@ -1,4 +1,89 @@
 ------------------------------------------------------------------------
+r5718 | jcbowman | 2015-05-19 16:19:23 -0600 (Tue, 19 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update documentation.
+
+------------------------------------------------------------------------
+r5717 | jcbowman | 2015-05-19 15:43:15 -0600 (Tue, 19 May 2015) | 3 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Work around eps2write bug that forces all postscript to first page,
+breaking multiple 3D xelatex and context labels.
+
+------------------------------------------------------------------------
+r5716 | jcbowman | 2015-05-19 14:31:06 -0600 (Tue, 19 May 2015) | 2 lines
+Changed paths:
+   R /trunk/asymptote/doc/FAQ/install-sh
+   R /trunk/asymptote/doc/install-sh
+
+Replace duplicate files with symbolic links.
+
+------------------------------------------------------------------------
+r5715 | jcbowman | 2015-05-18 13:51:02 -0600 (Mon, 18 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/runlabel.in
+
+Support rendered 3D context images.
+
+------------------------------------------------------------------------
+r5714 | jcbowman | 2015-05-17 11:04:51 -0600 (Sun, 17 May 2015) | 1 line
+Changed paths:
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.35svn.
+------------------------------------------------------------------------
+r5713 | jcbowman | 2015-05-16 12:41:33 -0600 (Sat, 16 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+
+Update ghostscript URL.
+
+------------------------------------------------------------------------
+r5712 | jcbowman | 2015-05-14 00:45:17 -0600 (Thu, 14 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/colors.asy
+
+Improve readability of named pen colors documentation.
+
+------------------------------------------------------------------------
+r5711 | jcbowman | 2015-05-14 00:39:39 -0600 (Thu, 14 May 2015) | 3 lines
+Changed paths:
+   M /trunk/asymptote/base/three_surface.asy
+
+Add surface cone(path3 base, triple vertex) to construct an approximate
+cone over an arbitrary base, courtesy of Charles Staats.
+
+------------------------------------------------------------------------
+r5710 | jcbowman | 2015-05-14 00:07:11 -0600 (Thu, 14 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/README
+   M /trunk/asymptote/asymptote.spec
+   M /trunk/asymptote/patches/README
+   D /trunk/asymptote/patches/cygwin_xdr.patch
+
+Update documentation; remove obsolete cygwin patch.
+
+------------------------------------------------------------------------
+r5709 | jcbowman | 2015-05-13 09:00:23 -0600 (Wed, 13 May 2015) | 2 lines
+Changed paths:
+   M /trunk/asymptote/doc/asymptote.texi
+   M /trunk/asymptote/tests/Makefile
+   A /trunk/asymptote/tests/gs
+   A /trunk/asymptote/tests/gs/ghostscript.asy
+
+Add test for Ghostscript 9.14 or later.
+
+------------------------------------------------------------------------
+r5708 | jcbowman | 2015-05-10 23:45:09 -0600 (Sun, 10 May 2015) | 1 line
+Changed paths:
+   M /trunk/asymptote/configure.ac
+
+Increment version to 2.34svn.
+------------------------------------------------------------------------
 r5707 | jcbowman | 2015-05-10 22:35:32 -0600 (Sun, 10 May 2015) | 2 lines
 Changed paths:
    M /trunk/asymptote/base/smoothcontour3.asy
