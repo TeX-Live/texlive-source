@@ -1,3 +1,7 @@
+2015-05-21  Karl Berry  <karl@tug.org>
+
+	* version 5.995 for TL'15.
+
 2015-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (EXTRA_DIST): Adapted.

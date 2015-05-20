@@ -1,3 +1,7 @@
+2015-05-21  Karl Berry  <karl@tug.org>
+
+	* version 20150515 for TL'15.
+
 2015-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c: Do not identify Type1 fonts as TrueType or OpenType.
