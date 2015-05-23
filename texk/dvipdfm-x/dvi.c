@@ -152,6 +152,7 @@ static struct loaded_font
   int   descent;
   unsigned unitsPerEm;
   cff_font *cffont;
+  int cff_is_standard_encoding;
   unsigned numGlyphs;
   int   layout_dir;
   float extend;
@@ -970,6 +971,8 @@ dvi_locate_native_font (const char *filename, uint32_t index,
 
   if (is_type1) {
     cff_font *cffont;
+    char    **enc_vec;
+    int       code;
 
     fp = DPXFOPEN(filename, DPX_RES_TYPE_T1FONT);
     if (!fp)
@@ -978,11 +981,16 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     if (!is_pfb(fp))
       ERROR("Failed to read Type 1 font \"%s\".", filename);
 
-    cffont = t1_load_font(NULL, 0, fp);
+    enc_vec = NEW(256, char *);
+    for (code = 0; code <= 0xff; code++) {
+      enc_vec[code] = NULL;
+    }
+    cffont = t1_load_font(enc_vec, 0, fp);
     if (!cffont)
       ERROR("Failed to read Type 1 font \"%s\".", filename);
 
     loaded_fonts[cur_id].cffont = cffont;
+    loaded_fonts[cur_id].cff_is_standard_encoding = enc_vec[0] == NULL;
 
     if (cff_dict_known(cffont->topdict, "FontBBox")) {
       loaded_fonts[cur_id].ascent = cff_dict_get(cffont->topdict, "FontBBox", 3);
@@ -1665,10 +1673,12 @@ do_glyphs (void)
       double descent = (double)font->descent;
 
       if (font->cffont) {
-        /* Type1 glyph id is FreeType glyph index + 1. */
-        glyph_id += 1;
         cff_index *cstrings = font->cffont->cstrings;
         t1_ginfo gm;
+
+        /* For standard encoding, Type1 glyph id is FreeType glyph index + 1. */
+        if (font->cff_is_standard_encoding)
+          glyph_id += 1;
 
         t1char_get_metrics(cstrings->data + cstrings->offset[glyph_id] - 1,
                            cstrings->offset[glyph_id + 1] - cstrings->offset[glyph_id],
