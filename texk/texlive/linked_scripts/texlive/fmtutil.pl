@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37190 2015-05-04 23:36:23Z karl $
+# $Id: fmtutil.pl 37485 2015-05-23 16:52:36Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -9,7 +9,6 @@
 #
 # History:
 # Original shell script (C) 2001 Thomas Esser, public domain
-#
 
 my $TEXMFROOT;
 
@@ -26,11 +25,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37190 2015-05-04 23:36:23Z karl $';
-my $lastchdate = '$Date: 2015-05-05 01:36:23 +0200 (Tue, 05 May 2015) $';
+my $svnid = '$Id: fmtutil.pl 37485 2015-05-23 16:52:36Z karl $';
+my $lastchdate = '$Date: 2015-05-23 18:52:36 +0200 (Sat, 23 May 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37190 $';
+my $svnrev = '$Revision: 37485 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -285,8 +284,27 @@ sub callback_build_formats {
   my $notavail = 0;
   #
   # set up a tmp dir
-  my $tmpdir = File::Temp::tempdir(CLEANUP => 1);
-  #my $tmpdir = File::Temp::tempdir();
+  # On W32 it seems that File::Temp creates restrictive permissions (ok)
+  # that are copied over with the files created inside it (not ok).
+  # So make our own temp dir.
+  my $tmpdir;
+  if (win32()) {
+    my $foo;
+    for my $i (1..5) {
+      $foo = "$texmfvar/temp.$$." . int(rand(1000000));
+      if (! -d $foo) {
+        if (mkdir($foo)) {
+          $tmpdir = $foo;
+          last;
+        }
+      }
+    }
+    if (! $tmpdir) {
+      die "Cannot get a temporary directory after five iterations ... sorry!";
+    }
+  } else {
+    $tmpdir = File::Temp::tempdir(CLEANUP => 1);
+  }
   # set up destination directory
   $opts{'fmtdir'} || ( $opts{'fmtdir'} = "$texmfvar/web2c" ) ;
   TeXLive::TLUtils::mkdirhier($opts{'fmtdir'}) if (! -d $opts{'fmtdir'});
@@ -295,12 +313,11 @@ sub callback_build_formats {
     exit (1);
   }
   # since the directory does not exist, we can make it absolute with abs_path
-  # without andy trickery around non-existing dirs
+  # without any trickery around non-existing dirs
   $opts{'fmtdir'} = Cwd::abs_path($opts{'fmtdir'});
   # for safety, check again
   die ("abs_path didn't succeed, that is strange: $?") if !$opts{'fmtdir'};
    
-  #
   # code taken over from the original shell script for KPSE_DOT etc
   my $thisdir = cwd();
   $ENV{'KPSE_DOT'} = $thisdir;
@@ -356,6 +373,10 @@ sub callback_build_formats {
   print_info("Not available formats: $notavail\n") if ($notavail);
   print_info("Failure during builds: $err\n") if ($err);
   chdir($thisdir) || warn("chdir($thisdir) failed: $!");
+  if (win32()) {
+    # try to remove the tmpdir with all files
+    TeXLive::TLUtils::rmtree($tmpdir);
+  }
   return 0;
 }
 

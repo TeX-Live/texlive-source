@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37289 2015-05-09 02:43:37Z preining $
+# $Id: tlmgr.pl 37488 2015-05-23 17:58:40Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37289 $';
-my $datrev = '$Date: 2015-05-09 04:43:37 +0200 (Sat, 09 May 2015) $';
+my $svnrev = '$Revision: 37488 $';
+my $datrev = '$Date: 2015-05-23 19:58:40 +0200 (Sat, 23 May 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4880,7 +4880,7 @@ sub check_files {
   # 00texlive.image, q.v.  The ones here are not included in the
   # archival source/ tarball;
   my @IgnorePatterns = qw!
-    source/
+    release-texlive.txt source/
     texmf-dist/ls-R$ texmf-doc/ls-R$
     tlpkg/archive tlpkg/backups tlpkg/installer
     tlpkg/texlive.tlpdb tlpkg/tlpobj tlpkg/texlive.profile
