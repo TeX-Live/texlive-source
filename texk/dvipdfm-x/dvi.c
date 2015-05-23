@@ -65,6 +65,9 @@
 #include "pdfximage.h"
 #include "tt_aux.h"
 #include "tt_table.h"
+#include "t1_load.h"
+#include "t1_char.h"
+#include "cff_dict.h"
 #endif
 
 #define DVI_STACK_DEPTH_MAX  256u
@@ -148,6 +151,7 @@ static struct loaded_font
   int   ascent;
   int   descent;
   unsigned unitsPerEm;
+  cff_font *cffont;
   unsigned numGlyphs;
   int   layout_dir;
   float extend;
@@ -964,7 +968,35 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].type    = NATIVE;
   free(fontmap_key);
 
-  if (is_type1 == 0) {
+  if (is_type1) {
+    cff_font *cffont;
+
+    fp = DPXFOPEN(filename, DPX_RES_TYPE_T1FONT);
+    if (!fp)
+      return -1;
+
+    if (!is_pfb(fp))
+      ERROR("Failed to read Type 1 font \"%s\".", filename);
+
+    cffont = t1_load_font(NULL, 0, fp);
+    if (!cffont)
+      ERROR("Failed to read Type 1 font \"%s\".", filename);
+
+    loaded_fonts[cur_id].cffont = cffont;
+
+    if (cff_dict_known(cffont->topdict, "FontBBox")) {
+      loaded_fonts[cur_id].ascent = cff_dict_get(cffont->topdict, "FontBBox", 3);
+      loaded_fonts[cur_id].descent = cff_dict_get(cffont->topdict, "FontBBox", 1);
+    } else {
+      loaded_fonts[cur_id].ascent = 690;
+      loaded_fonts[cur_id].descent = -190;
+    }
+
+    loaded_fonts[cur_id].unitsPerEm = 1000;
+    loaded_fonts[cur_id].numGlyphs = cffont->num_glyphs;
+
+    DPXFCLOSE(fp);
+  } else {
     if (is_dfont)
       sfont = dfont_open(fp, index);
     else
@@ -1628,14 +1660,34 @@ do_glyphs (void)
   for (i = 0; i < slen; i++) {
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
     if (glyph_id < font->numGlyphs) {
-      unsigned advance = (font->hvmt)[glyph_id].advance;
+      unsigned advance;
+      double ascent = (double)font->ascent;
+      double descent = (double)font->descent;
+
+      if (font->cffont) {
+        /* Type1 glyph id is FreeType glyph index + 1. */
+        glyph_id += 1;
+        cff_index *cstrings = font->cffont->cstrings;
+        t1_ginfo gm;
+
+        t1char_get_metrics(cstrings->data + cstrings->offset[glyph_id] - 1,
+                           cstrings->offset[glyph_id + 1] - cstrings->offset[glyph_id],
+                           font->cffont->subrs[0], &gm);
+
+        advance = font->layout_dir == 0 ? gm.wx : gm.wy;
+        ascent = gm.bbox.ury;
+        descent = gm.bbox.lly;
+      } else {
+        advance = font->hvmt[glyph_id].advance;
+      }
+
       glyph_width    = (double)font->size * (double)advance / (double)font->unitsPerEm;
       glyph_width    = glyph_width * font->extend;
 
       if (dvi_is_tracking_boxes()) {
         pdf_rect rect;
-        height = (double)font->size * (double)font->ascent / (double)font->unitsPerEm;
-        depth  = (double)font->size * -(double)font->descent / (double)font->unitsPerEm;
+        height = (double)font->size * ascent / (double)font->unitsPerEm;
+        depth  = (double)font->size * -descent / (double)font->unitsPerEm;
         pdf_dev_set_rect(&rect, dvi_state.h + xloc[i], -dvi_state.v - yloc[i], glyph_width, height, depth);
         pdf_doc_expand_box(&rect);
       }
@@ -1927,6 +1979,11 @@ dvi_close (void)
       RELEASE(loaded_fonts[i].hvmt);
 
     loaded_fonts[i].hvmt = NULL;
+
+    if (loaded_fonts[i].cffont != NULL)
+      cff_close(loaded_fonts[i].cffont);
+
+    loaded_fonts[i].cffont = NULL;
   }
 #endif
 
