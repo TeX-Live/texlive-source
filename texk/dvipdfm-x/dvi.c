@@ -971,7 +971,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
 
   if (is_type1) {
     cff_font *cffont;
-    char    **enc_vec;
+    char     *enc_vec[256];
     int       code;
 
     fp = DPXFOPEN(filename, DPX_RES_TYPE_T1FONT);
@@ -981,10 +981,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     if (!is_pfb(fp))
       ERROR("Failed to read Type 1 font \"%s\".", filename);
 
-    enc_vec = NEW(256, char *);
-    for (code = 0; code <= 0xff; code++) {
-      enc_vec[code] = NULL;
-    }
+    memset(enc_vec, 0, 256 * sizeof(char *));
     cffont = t1_load_font(enc_vec, 0, fp);
     if (!cffont)
       ERROR("Failed to read Type 1 font \"%s\".", filename);
