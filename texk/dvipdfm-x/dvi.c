@@ -972,7 +972,6 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   if (is_type1) {
     cff_font *cffont;
     char     *enc_vec[256];
-    int       code;
 
     fp = DPXFOPEN(filename, DPX_RES_TYPE_T1FONT);
     if (!fp)
