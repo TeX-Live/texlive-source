@@ -111,10 +111,10 @@ double get_origin (int x)
   return x ? dev_origin_x : dev_origin_y;
 }
 
-#define LTYPESETTING	0 /* typesetting from left to right */
-#define RTYPESETTING	1 /* typesetting from right to left */
-#define SKIMMING	2 /* skimming through reflected segment measuring its width */
-#define REVERSE(MODE)	(LTYPESETTING + RTYPESETTING - MODE)
+#define LTYPESETTING    0 /* typesetting from left to right */
+#define RTYPESETTING    1 /* typesetting from right to left */
+#define SKIMMING        2 /* skimming through reflected segment measuring its width */
+#define REVERSE(MODE)   (LTYPESETTING + RTYPESETTING - MODE)
 
 struct dvi_lr
 {
@@ -139,8 +139,8 @@ static struct loaded_font
 {
   int    type;     /* Type is physical or virtual */
   int    font_id;  /* id returned by dev (for PHYSICAL fonts)
-		    * or by vf module for (VIRTUAL fonts)
-		    */
+                    * or by vf module for (VIRTUAL fonts)
+                    */
   int   subfont_id; /* id returned by subfont_locate_font() */
   int   tfm_id;
   spt_t size;
@@ -194,16 +194,16 @@ static struct font_def
 #define XDV_FLAG_VERTICAL       0x0100
 #define XDV_FLAG_COLORED        0x0200
 #define XDV_FLAG_FEATURES       0x0400
-#define XDV_FLAG_EXTEND		0x1000
-#define XDV_FLAG_SLANT		0x2000
-#define XDV_FLAG_EMBOLDEN	0x4000
+#define XDV_FLAG_EXTEND         0x1000
+#define XDV_FLAG_SLANT          0x2000
+#define XDV_FLAG_EMBOLDEN       0x4000
 #endif
 
 static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
 static int verbose       = 0;
 
-#define DVI_PAGE_BUF_CHUNK		0x10000U	/* 64K should be plenty for most pages */
+#define DVI_PAGE_BUF_CHUNK              0x10000U        /* 64K should be plenty for most pages */
 
 static unsigned char* dvi_page_buffer;
 static unsigned int   dvi_page_buf_size;
@@ -344,7 +344,7 @@ find_post (void)
   do {
     xseek_absolute (dvi_file, --current, "DVI");
   } while ((ch = fgetc(dvi_file)) == PADDING &&
-	   current > 0);
+           current > 0);
 
   /* file_position now points to last non padding character or
    * beginning of file */
@@ -471,7 +471,7 @@ get_preamble_dvi_info (void)
 
   ch = get_unsigned_byte(dvi_file);
   if (fread(dvi_info.comment,
-	    1, ch, dvi_file) != ch) {
+            1, ch, dvi_file) != ch) {
     ERROR(invalid_signature);
   }
   dvi_info.comment[ch] = '\0';
@@ -632,10 +632,10 @@ get_dvi_fonts (int32_t post_location)
     MESG("DVI file font info\n");
     for (i = 0; i < num_def_fonts; i++) {
       MESG("TeX Font: %10s loaded at ID=%5d, ",
-	   def_fonts[i].font_name, def_fonts[i].tex_id);
+           def_fonts[i].font_name, def_fonts[i].tex_id);
       MESG("size=%5.2fpt (scaled %4.1f%%)",
-	   def_fonts[i].point_size * dvi2pts,
-	   100.0 * ((double) def_fonts[i].point_size / def_fonts[i].design_size));
+           def_fonts[i].point_size * dvi2pts,
+           100.0 * ((double) def_fonts[i].point_size / def_fonts[i].design_size));
       MESG("\n");
     }
   }
@@ -648,7 +648,7 @@ static void get_comment (void)
   xseek_absolute (dvi_file, 14, "DVI");
   length = get_unsigned_byte(dvi_file);
   if (fread(dvi_info.comment,
-	    1, length, dvi_file) != length) {
+            1, length, dvi_file) != length) {
     ERROR(invalid_signature);
   }
   dvi_info.comment[length] = '\0';
@@ -1143,22 +1143,22 @@ dvi_set (int32_t ch)
       wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
       wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
-			 width, font->font_id, 2);
+                         width, font->font_id, 2);
     } else if (ch > 255) { /* _FIXME_ */
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
-			 width, font->font_id, 2);
+                         width, font->font_id, 2);
     } else if (font->subfont_id >= 0) {
       unsigned short uch = lookup_sfd_record(font->subfont_id, (unsigned char) ch);
       wbuf[0] = (uch >> 8) & 0xff;
       wbuf[1] =  uch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
-			 width, font->font_id, 2);
+                         width, font->font_id, 2);
     } else {
       wbuf[0] = (unsigned char) ch;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 1,
-			 width, font->font_id, 1);
+                         width, font->font_id, 1);
     }
     if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
@@ -1169,7 +1169,7 @@ dvi_set (int32_t ch)
       depth  = sqxfw(font->size, depth);
 
       pdf_dev_set_rect  (&rect, dvi_state.h, -dvi_state.v,
-			 width, height, depth);
+                         width, height, depth);
       pdf_doc_expand_box(&rect);
     }
     break;
@@ -1215,12 +1215,12 @@ dvi_put (int32_t ch)
       wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
       wbuf[3] =  UTF32toUTF16LS(ch)       & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 4,
-			 width, font->font_id, 2);
+                         width, font->font_id, 2);
     } else if (ch > 255) { /* _FIXME_ */
       wbuf[0] = (ch >> 8) & 0xff;
       wbuf[1] =  ch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
-			 width, font->font_id, 2);
+                         width, font->font_id, 2);
     } else if (font->subfont_id >= 0) {
       unsigned int uch;
 
@@ -1228,11 +1228,11 @@ dvi_put (int32_t ch)
       wbuf[0] = (uch >> 8) & 0xff;
       wbuf[1] =  uch & 0xff;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 2,
-			 width, font->font_id, 2);
+                         width, font->font_id, 2);
     } else {
       wbuf[0] = (unsigned char) ch;
       pdf_dev_set_string(dvi_state.h, -dvi_state.v, wbuf, 1,
-			 width, font->font_id, 1);
+                         width, font->font_id, 1);
     }
     if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
@@ -1243,7 +1243,7 @@ dvi_put (int32_t ch)
       depth  = sqxfw(font->size, depth);
 
       pdf_dev_set_rect  (&rect, dvi_state.h, -dvi_state.v,
-			 width, height, depth);
+                         width, height, depth);
       pdf_doc_expand_box(&rect);
     }
     break;
@@ -1463,7 +1463,7 @@ do_fnt (int32_t tex_id)
                                        def_fonts[i].embolden);
     } else {
       font_id = dvi_locate_font(def_fonts[i].font_name,
-	                        def_fonts[i].point_size);
+                                def_fonts[i].point_size);
     }
     loaded_fonts[font_id].rgba_color = def_fonts[i].rgba_color;
 #else
@@ -1896,7 +1896,7 @@ dvi_init (char *dvi_filename, double mag)
 
   if (!dvi_filename) { /* no filename: reading from stdin, probably a pipe */
 #ifdef WIN32
-	setmode(fileno(stdin), _O_BINARY);
+        setmode(fileno(stdin), _O_BINARY);
 #endif
     dvi_file = stdin;
     linear = 1;
@@ -2121,9 +2121,9 @@ read_length (double *vp, double mag, const char **pp, const char *endptr)
 
 static int
 scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
-	      unsigned *minorversion,
-	      int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw,
-	      const char *buf, uint32_t size)
+              unsigned *minorversion,
+              int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw,
+              const char *buf, uint32_t size)
 {
   char  *q;
   const char *p = buf, *endptr;
@@ -2238,36 +2238,36 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
         if (!kp)
           break;
         else {
-	  pdf_obj *obj;
+          pdf_obj *obj;
           skip_white(&p, endptr);
           if (!strcmp(kp, "ownerpw")) {
             if ((obj = parse_pdf_string(&p, endptr))) {
-	      strncpy(owner_pw, pdf_string_value(obj), MAX_PWD_LEN); 
-	      pdf_release_obj(obj);
-	    } else
-	      error = -1;
+              strncpy(owner_pw, pdf_string_value(obj), MAX_PWD_LEN); 
+              pdf_release_obj(obj);
+            } else
+              error = -1;
           } else if (!strcmp(kp, "userpw")) {
             if ((obj = parse_pdf_string(&p, endptr))) {
-	      strncpy(user_pw, pdf_string_value(obj), MAX_PWD_LEN);
-	      pdf_release_obj(obj);
-	    } else
-	      error = -1;
+              strncpy(user_pw, pdf_string_value(obj), MAX_PWD_LEN);
+              pdf_release_obj(obj);
+            } else
+              error = -1;
           } else if (!strcmp(kp, "length")) {
             if ((obj = parse_pdf_number(&p, endptr)) && PDF_OBJ_NUMBERTYPE(obj)) {
-	      *key_bits = (unsigned) pdf_number_value(obj);
-	    } else
-	      error = -1;
-	    if (obj)
-	      pdf_release_obj(obj);
+              *key_bits = (unsigned) pdf_number_value(obj);
+            } else
+              error = -1;
+            if (obj)
+              pdf_release_obj(obj);
           } else if (!strcmp(kp, "perm")) {
             if ((obj = parse_pdf_number(&p, endptr)) && PDF_OBJ_NUMBERTYPE(obj)) {
-	      *permission = (unsigned) pdf_number_value(obj);
-	    } else
-	      error = -1;
-	    if (obj)
-	      pdf_release_obj(obj);
+              *permission = (unsigned) pdf_number_value(obj);
+            } else
+              error = -1;
+            if (obj)
+              pdf_release_obj(obj);
           } else
-	    error = -1;
+            error = -1;
           RELEASE(kp);
         }
         skip_white(&p, endptr);
@@ -2285,7 +2285,7 @@ dvi_scan_specials (int page_no,
                    double *page_width, double *page_height,
                    double *x_offset, double *y_offset, char *landscape,
                    unsigned *minorversion,
-		   int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw)
+                   int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw)
 {
   FILE          *fp = dvi_file;
   int32_t        offset;

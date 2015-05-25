@@ -236,8 +236,8 @@ add_ToUnicode (Type0Font *font)
       if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1C)) { /* FIXME */
         tounicode = Type0Font_create_ToUnicode_stream(font);
       } else if (CIDFont_get_flag(cidfont, CIDFONT_FLAG_TYPE1)) { /* FIXME */
-	/* Font loader will create ToUnicode and set. */
-	return;
+        /* Font loader will create ToUnicode and set. */
+        return;
       } else {
         tounicode = Type0Font_try_load_ToUnicode_stream(font, fontname);
       }
@@ -252,7 +252,7 @@ add_ToUnicode (Type0Font *font)
 
   if (tounicode) {
     pdf_add_dict(font->fontdict,
-		 pdf_new_name("ToUnicode"), tounicode);
+                 pdf_new_name("ToUnicode"), tounicode);
   } else {
     WARN("Failed to load ToUnicode CMap for font \"%s\"", fontname);
   }
@@ -266,7 +266,7 @@ Type0Font_set_ToUnicode (Type0Font *font, pdf_obj *cmap_ref)
   ASSERT(font);
 
   pdf_add_dict(font->fontdict,
-	       pdf_new_name("ToUnicode"), cmap_ref);
+               pdf_new_name("ToUnicode"), cmap_ref);
 }
 
 static void

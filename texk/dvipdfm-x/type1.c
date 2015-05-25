@@ -103,7 +103,7 @@ pdf_font_open_type1 (pdf_font *font)
     pdf_font_set_fontname(font, ident);
     pdf_font_set_subtype (font, PDF_FONT_FONTTYPE_TYPE1);
     pdf_font_set_flags   (font,
-			  (PDF_FONT_FLAG_NOEMBED|PDF_FONT_FLAG_BASEFONT));
+                          (PDF_FONT_FLAG_NOEMBED|PDF_FONT_FLAG_BASEFONT));
   } else {
     fp = DPXFOPEN(ident, DPX_RES_TYPE_T1FONT);
     if (!fp)
@@ -187,8 +187,8 @@ get_font_attr (pdf_font *font, cff_font *cffont)
   gid = cff_glyph_lookup(cffont, "space");
   if (gid >= 0 && gid < cffont->cstrings->count) {
     t1char_get_metrics(cffont->cstrings->data + cffont->cstrings->offset[gid] - 1,
-		       cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
-		       cffont->subrs[0], &gm);
+                       cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
+                       cffont->subrs[0], &gm);
     defaultwidth = gm.wx;
   }
 
@@ -196,8 +196,8 @@ get_font_attr (pdf_font *font, cff_font *cffont)
     gid = cff_glyph_lookup(cffont, L_c[i]);
     if (gid >= 0 && gid < cffont->cstrings->count) {
       t1char_get_metrics(cffont->cstrings->data + cffont->cstrings->offset[gid] - 1,
-		      cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
-		      cffont->subrs[0], &gm);
+                      cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
+                      cffont->subrs[0], &gm);
       capheight = gm.bbox.ury;
       break;
     }
@@ -207,8 +207,8 @@ get_font_attr (pdf_font *font, cff_font *cffont)
     gid = cff_glyph_lookup(cffont, L_d[i]);
     if (gid >= 0 && gid < cffont->cstrings->count) {
       t1char_get_metrics(cffont->cstrings->data + cffont->cstrings->offset[gid] - 1,
-			 cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
-			 cffont->subrs[0], &gm);
+                         cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
+                         cffont->subrs[0], &gm);
       descent = gm.bbox.lly;
       break;
     }
@@ -218,8 +218,8 @@ get_font_attr (pdf_font *font, cff_font *cffont)
     gid = cff_glyph_lookup(cffont, L_a[i]);
     if (gid >= 0 && gid < cffont->cstrings->count) {
       t1char_get_metrics(cffont->cstrings->data + cffont->cstrings->offset[gid] - 1,
-			 cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
-			 cffont->subrs[0], &gm);
+                         cffont->cstrings->offset[gid+1] - cffont->cstrings->offset[gid],
+                         cffont->subrs[0], &gm);
       ascent = gm.bbox.ury;
       break;
     }
@@ -254,17 +254,17 @@ get_font_attr (pdf_font *font, cff_font *cffont)
   flags |= FONT_FLAG_SYMBOLIC; /* FIXME */
 
   pdf_add_dict(descriptor,
-	       pdf_new_name("CapHeight"), pdf_new_number(capheight));
+               pdf_new_name("CapHeight"), pdf_new_number(capheight));
   pdf_add_dict(descriptor,
-	       pdf_new_name("Ascent"), pdf_new_number(ascent));
+               pdf_new_name("Ascent"), pdf_new_number(ascent));
   pdf_add_dict(descriptor,
-	       pdf_new_name("Descent"), pdf_new_number(descent));
+               pdf_new_name("Descent"), pdf_new_number(descent));
   pdf_add_dict(descriptor,
-	       pdf_new_name("ItalicAngle"), pdf_new_number(italicangle));
+               pdf_new_name("ItalicAngle"), pdf_new_number(italicangle));
   pdf_add_dict(descriptor,
-	       pdf_new_name("StemV"), pdf_new_number(stemv));
+               pdf_new_name("StemV"), pdf_new_number(stemv));
   pdf_add_dict(descriptor,
-	       pdf_new_name("Flags"), pdf_new_number(flags));
+               pdf_new_name("Flags"), pdf_new_number(flags));
 }
 
 static void
@@ -315,8 +315,8 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
   } else {
     for (firstchar = 255, lastchar = 0, code = 0; code < 256; code++) {
       if (usedchars[code]) {
-	if (code < firstchar) firstchar = code;
-	if (code > lastchar)  lastchar  = code;
+        if (code < firstchar) firstchar = code;
+        if (code > lastchar)  lastchar  = code;
       }
     }
     if (firstchar > lastchar) {
@@ -329,27 +329,27 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
       if (usedchars[code]) {
         double width;
         if (tfm_id < 0) /* tfm is not found */
-	  width = scaling * widths[cff_glyph_lookup(cffont, enc_vec[code])];
+          width = scaling * widths[cff_glyph_lookup(cffont, enc_vec[code])];
         else
           width = 1000. * tfm_get_width(tfm_id, code);
-	pdf_add_array(tmp_array,
-		      pdf_new_number(ROUND(width, 0.1)));
+        pdf_add_array(tmp_array,
+                      pdf_new_number(ROUND(width, 0.1)));
       } else {
-	pdf_add_array(tmp_array, pdf_new_number(0.0));
+        pdf_add_array(tmp_array, pdf_new_number(0.0));
       }
     }
   }
 
   if (pdf_array_length(tmp_array) > 0) {
     pdf_add_dict(fontdict,
-		 pdf_new_name("Widths"),  pdf_ref_obj(tmp_array));
+                 pdf_new_name("Widths"),  pdf_ref_obj(tmp_array));
   }
   pdf_release_obj(tmp_array);
 
   pdf_add_dict(fontdict,
-	       pdf_new_name("FirstChar"), pdf_new_number(firstchar));
+               pdf_new_name("FirstChar"), pdf_new_number(firstchar));
   pdf_add_dict(fontdict,
-	       pdf_new_name("LastChar"),  pdf_new_number(lastchar));
+               pdf_new_name("LastChar"),  pdf_new_number(lastchar));
 
   return;
 }
@@ -412,38 +412,38 @@ write_fontfile (pdf_font *font, cff_font *cffont)
   offset = 0;
   /* Header */
   offset += cff_put_header(cffont,
-			   stream_data_ptr + offset, stream_data_len - offset);
+                           stream_data_ptr + offset, stream_data_len - offset);
   /* Name */
   offset += cff_pack_index(cffont->name,
-			   stream_data_ptr + offset, stream_data_len - offset);
+                           stream_data_ptr + offset, stream_data_len - offset);
   /* Top DICT */
   topdict_offset = offset;
   offset += cff_index_size(topdict);
   /* Strings */
   offset += cff_pack_index(cffont->string,
-			   stream_data_ptr + offset, stream_data_len - offset);
+                           stream_data_ptr + offset, stream_data_len - offset);
   /* Global Subrs */
   offset += cff_pack_index(cffont->gsubr,
-			   stream_data_ptr + offset, stream_data_len - offset);
+                           stream_data_ptr + offset, stream_data_len - offset);
   /* Encoding */
   /* TODO: don't write Encoding entry if the font is always used
    * with PDF Encoding information. Applies to type1c.c as well.
    */
   cff_dict_set(cffont->topdict, "Encoding", 0, offset);
   offset += cff_pack_encoding(cffont,
-			      stream_data_ptr + offset, stream_data_len - offset);
+                              stream_data_ptr + offset, stream_data_len - offset);
   /* charset */
   cff_dict_set(cffont->topdict, "charset", 0, offset);
   offset += cff_pack_charsets(cffont,
-			      stream_data_ptr + offset, stream_data_len - offset);
+                              stream_data_ptr + offset, stream_data_len - offset);
   /* CharStrings */
   cff_dict_set(cffont->topdict, "CharStrings", 0, offset);
   offset += cff_pack_index(cffont->cstrings,
-			   stream_data_ptr + offset, charstring_len);
+                           stream_data_ptr + offset, charstring_len);
   /* Private */
   if ((cffont->private)[0] && private_size > 0) {
     private_size = cff_dict_pack(cffont->private[0],
-				 stream_data_ptr + offset, private_size);
+                                 stream_data_ptr + offset, private_size);
     cff_dict_set(cffont->topdict, "Private", 1, offset);
     cff_dict_set(cffont->topdict, "Private", 0, private_size);
   }
@@ -453,7 +453,7 @@ write_fontfile (pdf_font *font, cff_font *cffont)
   topdict->data = NEW(topdict->offset[1] - 1, card8);
   cff_dict_pack (cffont->topdict, topdict->data, topdict->offset[1] - 1);
   cff_pack_index(topdict,
-		 stream_data_ptr + topdict_offset, cff_index_size(topdict));
+                 stream_data_ptr + topdict_offset, cff_index_size(topdict));
   cff_release_index(topdict);
 
   /* Copyright and Trademark Notice ommited. */
@@ -462,9 +462,9 @@ write_fontfile (pdf_font *font, cff_font *cffont)
   fontfile    = pdf_new_stream(STREAM_COMPRESS);
   stream_dict = pdf_stream_dict(fontfile);
   pdf_add_dict(descriptor,
-	       pdf_new_name("FontFile3"), pdf_ref_obj (fontfile));
+               pdf_new_name("FontFile3"), pdf_ref_obj (fontfile));
   pdf_add_dict(stream_dict,
-	       pdf_new_name("Subtype"),   pdf_new_name("Type1C"));
+               pdf_new_name("Subtype"),   pdf_new_name("Type1C"));
   pdf_add_stream (fontfile, (void *) stream_data_ptr,  offset);
   pdf_release_obj(fontfile);
 
@@ -551,7 +551,7 @@ pdf_font_load_type1 (pdf_font *font)
      */
     if (!pdf_lookup_dict(fontdict, "ToUnicode")) {
     tounicode = pdf_create_ToUnicode_CMap(fullname,
-					  enc_vec, usedchars);
+                                          enc_vec, usedchars);
     if (tounicode) {
       pdf_add_dict(fontdict,
                      pdf_new_name("ToUnicode"),
@@ -609,49 +609,49 @@ pdf_font_load_type1 (pdf_font *font)
       glyph = enc_vec[code];
 
       if (!usedchars[code])
-	continue;
+        continue;
       if (glyph && !strcmp(glyph, ".notdef")) {
-	WARN("Character mapped to .notdef used in font: %s",
-	     fontname);
-	usedchars[code] = 0;
-	continue;
+        WARN("Character mapped to .notdef used in font: %s",
+             fontname);
+        usedchars[code] = 0;
+        continue;
       }
 
       gid = cff_glyph_lookup(cffont, glyph);
       if (gid < 1 || gid >= cffont->cstrings->count) {
-	WARN("Glyph \"%s\" missing in font \"%s\".", glyph, fontname);
-	usedchars[code] = 0;
-	continue;
+        WARN("Glyph \"%s\" missing in font \"%s\".", glyph, fontname);
+        usedchars[code] = 0;
+        continue;
       }
 
       for (duplicate = 0; duplicate < code; duplicate++) {
-	if (usedchars[duplicate] &&
-	    enc_vec[duplicate]   && !strcmp(enc_vec[duplicate], glyph))
-	  break;
+        if (usedchars[duplicate] &&
+            enc_vec[duplicate]   && !strcmp(enc_vec[duplicate], glyph))
+          break;
       }
 
       sid = cff_add_string(cffont, glyph, 1); /* FIXME */
       if (duplicate < code) { /* found duplicates */
-	cffont->encoding->supp[cffont->encoding->num_supps].code  = duplicate;
-	cffont->encoding->supp[cffont->encoding->num_supps].glyph = sid;
-	cffont->encoding->num_supps += 1;
+        cffont->encoding->supp[cffont->encoding->num_supps].code  = duplicate;
+        cffont->encoding->supp[cffont->encoding->num_supps].glyph = sid;
+        cffont->encoding->num_supps += 1;
       } else {
-	GIDMap[num_glyphs] = (card16) gid;
-	charset->data.glyphs[charset->num_entries] = sid;
-	charset->num_entries += 1;
-	if (code != prev + 1) {
-	  cffont->encoding->num_entries += 1;
-	  cffont->encoding->data.range1[cffont->encoding->num_entries-1].first  = code;
-	  cffont->encoding->data.range1[cffont->encoding->num_entries-1].n_left = 0;
-	} else {
-	  cffont->encoding->data.range1[cffont->encoding->num_entries-1].n_left += 1;
-	}
-	prev = code;
-	num_glyphs++;
+        GIDMap[num_glyphs] = (card16) gid;
+        charset->data.glyphs[charset->num_entries] = sid;
+        charset->num_entries += 1;
+        if (code != prev + 1) {
+          cffont->encoding->num_entries += 1;
+          cffont->encoding->data.range1[cffont->encoding->num_entries-1].first  = code;
+          cffont->encoding->data.range1[cffont->encoding->num_entries-1].n_left = 0;
+        } else {
+          cffont->encoding->data.range1[cffont->encoding->num_entries-1].n_left += 1;
+        }
+        prev = code;
+        num_glyphs++;
 
-	if (verbose > 2) {
-	  MESG("/%s", glyph);
-	}
+        if (verbose > 2) {
+          MESG("/%s", glyph);
+        }
 
       }
     }
@@ -689,8 +689,8 @@ pdf_font_load_type1 (pdf_font *font)
     /* The num_glyphs increases if "seac" operators are used. */
     for (gid = 0; gid < num_glyphs; gid++) {
       if (offset + CS_STR_LEN_MAX >= dstlen_max) {
-	dstlen_max += CS_STR_LEN_MAX * 2;
-	cstring->data = RENEW(cstring->data, dstlen_max, card8);
+        dstlen_max += CS_STR_LEN_MAX * 2;
+        cstring->data = RENEW(cstring->data, dstlen_max, card8);
       }
       gid_orig = GIDMap[gid];
 
@@ -699,57 +699,57 @@ pdf_font_load_type1 (pdf_font *font)
       srclen   = cffont->cstrings->offset[gid_orig + 1] - cffont->cstrings->offset[gid_orig];
 
       offset  += t1char_convert_charstring(dstptr, CS_STR_LEN_MAX,
-					   srcptr, srclen,
-					   cffont->subrs[0], defaultwidth, nominalwidth, &gm);
+                                           srcptr, srclen,
+                                           cffont->subrs[0], defaultwidth, nominalwidth, &gm);
       cstring->offset[gid + 1] = offset + 1;
       if (gm.use_seac) {
-	long  bchar_gid, achar_gid, i;
-	const char *bchar_name, *achar_name;
+        long  bchar_gid, achar_gid, i;
+        const char *bchar_name, *achar_name;
 
-	/*
-	 * NOTE:
-	 *  1. seac.achar and seac.bchar must be contained in the CFF standard string.
-	 *  2. Those characters need not to be encoded.
-	 *  3. num_glyphs == charsets->num_entries + 1.
-	 */
-	achar_name = t1_get_standard_glyph(gm.seac.achar);
-	achar_gid  = cff_glyph_lookup(cffont, achar_name);
-	bchar_name = t1_get_standard_glyph(gm.seac.bchar);
-	bchar_gid  = cff_glyph_lookup(cffont, bchar_name);
-	if (achar_gid < 0) {
-	  WARN("Accent char \"%s\" not found. Invalid use of \"seac\" operator.",
-	       achar_name);
-	  continue;
-	}
-	if (bchar_gid < 0) {
-	  WARN("Base char \"%s\" not found. Invalid use of \"seac\" operator.",
-	       bchar_name);
-	  continue;
-	}
+        /*
+         * NOTE:
+         *  1. seac.achar and seac.bchar must be contained in the CFF standard string.
+         *  2. Those characters need not to be encoded.
+         *  3. num_glyphs == charsets->num_entries + 1.
+         */
+        achar_name = t1_get_standard_glyph(gm.seac.achar);
+        achar_gid  = cff_glyph_lookup(cffont, achar_name);
+        bchar_name = t1_get_standard_glyph(gm.seac.bchar);
+        bchar_gid  = cff_glyph_lookup(cffont, bchar_name);
+        if (achar_gid < 0) {
+          WARN("Accent char \"%s\" not found. Invalid use of \"seac\" operator.",
+               achar_name);
+          continue;
+        }
+        if (bchar_gid < 0) {
+          WARN("Base char \"%s\" not found. Invalid use of \"seac\" operator.",
+               bchar_name);
+          continue;
+        }
 
-	for (i = 0; i < num_glyphs; i++) {
-	  if (GIDMap[i] == achar_gid)
-	    break;
-	}
-	if (i == num_glyphs) {
-	  if (verbose > 2)
-	    MESG("/%s", achar_name);
-	  GIDMap[num_glyphs++] = achar_gid;
-	  charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, achar_name);
-	  charset->num_entries += 1;
-	}
+        for (i = 0; i < num_glyphs; i++) {
+          if (GIDMap[i] == achar_gid)
+            break;
+        }
+        if (i == num_glyphs) {
+          if (verbose > 2)
+            MESG("/%s", achar_name);
+          GIDMap[num_glyphs++] = achar_gid;
+          charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, achar_name);
+          charset->num_entries += 1;
+        }
 
-	for (i = 0; i < num_glyphs; i++) {
-	  if (GIDMap[i] == bchar_gid)
-	    break;
-	}
-	if (i == num_glyphs) {
-	  if (verbose > 2)
-	    MESG("/%s", bchar_name);
-	  GIDMap[num_glyphs++] = bchar_gid;
-	  charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, bchar_name);
-	  charset->num_entries += 1;
-	}
+        for (i = 0; i < num_glyphs; i++) {
+          if (GIDMap[i] == bchar_gid)
+            break;
+        }
+        if (i == num_glyphs) {
+          if (verbose > 2)
+            MESG("/%s", bchar_name);
+          GIDMap[num_glyphs++] = bchar_gid;
+          charset->data.glyphs[charset->num_entries] = cff_get_seac_sid(cffont, bchar_name);
+          charset->num_entries += 1;
+        }
       }
       widths[gid] = gm.wx;
     }
@@ -786,7 +786,7 @@ pdf_font_load_type1 (pdf_font *font)
   if (encoding_id < 0 && enc_vec) {
     for (code = 0; code < 256; code++) {
       if (enc_vec[code])
-	RELEASE(enc_vec[code]);
+        RELEASE(enc_vec[code]);
       enc_vec[code] = NULL;
     }
     RELEASE(enc_vec);
