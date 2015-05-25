@@ -75,8 +75,8 @@ static void t1_crypt_init (unsigned short key)
 
 static void
 t1_decrypt (unsigned short key,
-	    unsigned char *dst, const unsigned char *src,
-	    long skip, long len)
+            unsigned char *dst, const unsigned char *src,
+            long skip, long len)
 {
   len -= skip;
   while (skip--)
@@ -104,7 +104,7 @@ get_next_key (unsigned char **start, unsigned char *end)
   pst_obj *tok;
 
   while (*start < end &&
-	 (tok = pst_get_token(start, end)) != NULL) {
+         (tok = pst_get_token(start, end)) != NULL) {
     if (PST_NAMETYPE(tok)) {
       key = (char *) pst_getSV(tok);
       RELEASE_TOK(tok);
@@ -122,7 +122,7 @@ seek_operator (unsigned char **start, unsigned char *end, const char *op)
   pst_obj *tok = NULL;
 
   while (*start < end &&
-	 (tok = pst_get_token(start, end)) != NULL) {
+         (tok = pst_get_token(start, end)) != NULL) {
     if (MATCH_OP(tok, op)) {
       break;
     }
@@ -194,8 +194,8 @@ parse_nvalue (unsigned char **start, unsigned char *end, double *value, int max)
     /* It does not distinguish '[' and '{'... */
     RELEASE_TOK(tok);
     while (*start < end &&
-	   (tok = pst_get_token(start, end)) != NULL &&
-	   PST_NUMBERTYPE(tok) && argn < max) {
+           (tok = pst_get_token(start, end)) != NULL &&
+           PST_NUMBERTYPE(tok) && argn < max) {
       value[argn++] = (double) pst_getRV(tok);
       RELEASE_TOK(tok);
     }
@@ -343,26 +343,26 @@ parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
     RELEASE_TOK(tok);
     if (enc_vec) {
       for (code = 0; code < 256; code++) {
-	if (StandardEncoding[code] &&
-	    strcmp(StandardEncoding[code], ".notdef") != 0) {
-	  enc_vec[code] = NEW(strlen(StandardEncoding[code])+1, char);
-	  strcpy(enc_vec[code], StandardEncoding[code]);
-	} else {
-	  enc_vec[code] = NULL;
-	}
+        if (StandardEncoding[code] &&
+            strcmp(StandardEncoding[code], ".notdef") != 0) {
+          enc_vec[code] = NEW(strlen(StandardEncoding[code])+1, char);
+          strcpy(enc_vec[code], StandardEncoding[code]);
+        } else {
+          enc_vec[code] = NULL;
+        }
       }
     }
   } else if (MATCH_OP(tok, "ISOLatin1Encoding")) {
     RELEASE_TOK(tok);
     if (enc_vec) {
       for (code = 0; code < 256; code++) {
-	if (ISOLatin1Encoding[code] &&
-	    strcmp(ISOLatin1Encoding[code], ".notdef") != 0) {
-	  enc_vec[code] = NEW(strlen(ISOLatin1Encoding[code])+1, char);
-	  strcpy(enc_vec[code], ISOLatin1Encoding[code]);
-	} else {
-	  enc_vec[code] = NULL;
-	}
+        if (ISOLatin1Encoding[code] &&
+            strcmp(ISOLatin1Encoding[code], ".notdef") != 0) {
+          enc_vec[code] = NEW(strlen(ISOLatin1Encoding[code])+1, char);
+          strcpy(enc_vec[code], ISOLatin1Encoding[code]);
+        } else {
+          enc_vec[code] = NULL;
+        }
       }
     }
   } else if (MATCH_OP(tok, "ExpertEncoding")) {
@@ -383,44 +383,44 @@ parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
      * occurrence of "def" or "readonly".
      */
     while (*start < end &&
-	   (tok = pst_get_token(start, end)) != NULL) {
+           (tok = pst_get_token(start, end)) != NULL) {
       if (MATCH_OP(tok, "def") || MATCH_OP(tok, "readonly")) {
-	RELEASE_TOK(tok);
-	break;
+        RELEASE_TOK(tok);
+        break;
       } else if (!MATCH_OP(tok, "dup")) {
-	RELEASE_TOK(tok);
-	continue;
+        RELEASE_TOK(tok);
+        continue;
       }
       RELEASE_TOK(tok);
 
       tok = pst_get_token(start, end);
       if (!tok || !PST_INTEGERTYPE(tok) ||
-	  (code = pst_getIV(tok)) > 255 || code < 0) {
-	RELEASE_TOK(tok);
-	continue;
+          (code = pst_getIV(tok)) > 255 || code < 0) {
+        RELEASE_TOK(tok);
+        continue;
       }
       RELEASE_TOK(tok);
 
       tok = pst_get_token(start, end);
       if (!tok || !PST_NAMETYPE(tok)) {
-	RELEASE_TOK(tok);
-	continue;
+        RELEASE_TOK(tok);
+        continue;
       }
       if (enc_vec) {
-	if (enc_vec[code])
-	  RELEASE(enc_vec[code]);
-	enc_vec[code] = (char *) pst_getSV(tok);
+        if (enc_vec[code])
+          RELEASE(enc_vec[code]);
+        enc_vec[code] = (char *) pst_getSV(tok);
       }
       RELEASE_TOK(tok);
 
       tok = pst_get_token(start, end);
       if (!MATCH_OP(tok, "put")) {
-	if (enc_vec[code]) {
-	  RELEASE(enc_vec[code]);
-	  enc_vec[code] = NULL;
-	}
-	RELEASE_TOK(tok);
-	continue;
+        if (enc_vec[code]) {
+          RELEASE(enc_vec[code]);
+          enc_vec[code] = NULL;
+        }
+        RELEASE_TOK(tok);
+        continue;
       }
       RELEASE_TOK(tok);
     }
@@ -438,7 +438,7 @@ parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
 
 static int
 parse_subrs (cff_font *font,
-	     unsigned char **start, unsigned char *end, int lenIV, int mode)
+             unsigned char **start, unsigned char *end, int lenIV, int mode)
 {
   cff_index *subrs;
   pst_obj   *tok;
@@ -494,7 +494,7 @@ parse_subrs (cff_font *font,
       if (lengths) RELEASE(lengths);
       return -1;
     } else if (MATCH_OP(tok, "ND") ||
-	       MATCH_OP(tok, "|-") || MATCH_OP(tok, "def")) {
+               MATCH_OP(tok, "|-") || MATCH_OP(tok, "def")) {
       RELEASE_TOK(tok);
       break;
     } else if (!MATCH_OP(tok, "dup")) {
@@ -506,7 +506,7 @@ parse_subrs (cff_font *font,
     /* Found "dup" */
     tok = pst_get_token(start, end);
     if (!PST_INTEGERTYPE(tok) || pst_getIV(tok) < 0 ||
-	pst_getIV(tok) >= count) {
+        pst_getIV(tok) >= count) {
       RELEASE_TOK(tok);
       if (data)    RELEASE(data);
       if (offsets) RELEASE(offsets);
@@ -518,7 +518,7 @@ parse_subrs (cff_font *font,
 
     tok = pst_get_token(start, end);
     if (!PST_INTEGERTYPE(tok) || pst_getIV(tok) < 0 ||
-	pst_getIV(tok) > CS_STR_LEN_MAX) {
+        pst_getIV(tok) > CS_STR_LEN_MAX) {
       RELEASE_TOK(tok);
       return -1;
     }
@@ -527,7 +527,7 @@ parse_subrs (cff_font *font,
 
     tok = pst_get_token(start, end);
     if (!MATCH_OP(tok, "RD") && !MATCH_OP(tok, "-|") &&
-	seek_operator(start, end, "readstring") < 0) {
+        seek_operator(start, end, "readstring") < 0) {
       RELEASE_TOK(tok);
       if (data)    RELEASE(data);
       if (offsets) RELEASE(offsets);
@@ -545,18 +545,18 @@ parse_subrs (cff_font *font,
     }
     if (mode != 1) {
       if (offset + len >= max_size) {
-	max_size += CS_STR_LEN_MAX;
-	data = RENEW(data, max_size, card8);
+        max_size += CS_STR_LEN_MAX;
+        data = RENEW(data, max_size, card8);
       }
       if (lenIV >= 0) {
-	t1_decrypt(T1_CHARKEY, data+offset, *start, lenIV, len);
-	offsets[idx] = offset;
-	offset += (lengths[idx] = len - lenIV);
+        t1_decrypt(T1_CHARKEY, data+offset, *start, lenIV, len);
+        offsets[idx] = offset;
+        offset += (lengths[idx] = len - lenIV);
       } else if (len > 0) {
-	offsets[idx] = offset;
-	lengths[idx] = len;
-	memcpy(&data[offset], *start, len);
-	offset += len;
+        offsets[idx] = offset;
+        lengths[idx] = len;
+        memcpy(&data[offset], *start, len);
+        offset += len;
       }
     }
     *start += len;
@@ -571,8 +571,8 @@ parse_subrs (cff_font *font,
       for (i = 0; i < count; i++) {
         subrs->offset[i] = offset + 1;
         if (lengths[i] > 0) {
-	  memcpy(subrs->data + offset, data + offsets[i], lengths[i]);
-	  offset += lengths[i];
+          memcpy(subrs->data + offset, data + offsets[i], lengths[i]);
+          offset += lengths[i];
         }
       }
       subrs->offset[count] = offset + 1;
@@ -592,7 +592,7 @@ parse_subrs (cff_font *font,
 
 static int
 parse_charstrings (cff_font *font,
-		   unsigned char **start, unsigned char *end, int lenIV, int mode)
+                   unsigned char **start, unsigned char *end, int lenIV, int mode)
 {
   cff_index    *charstrings;
   cff_charsets *charset;
@@ -683,7 +683,7 @@ parse_charstrings (cff_font *font,
 
     tok = pst_get_token(start, end);
     if (!PST_INTEGERTYPE(tok) ||
-	pst_getIV(tok) < 0 || pst_getIV(tok) > CS_STR_LEN_MAX) {
+        pst_getIV(tok) < 0 || pst_getIV(tok) > CS_STR_LEN_MAX) {
       RELEASE_TOK(tok);
       return -1;
     }
@@ -692,8 +692,8 @@ parse_charstrings (cff_font *font,
 
     tok = pst_get_token(start, end);
     if (!MATCH_OP(tok, "RD") &&
-	!MATCH_OP(tok, "-|") &&
-	seek_operator(start, end, "readstring") < 0) {
+        !MATCH_OP(tok, "-|") &&
+        seek_operator(start, end, "readstring") < 0) {
       RELEASE_TOK(tok);
       return -1;
     }
@@ -704,40 +704,40 @@ parse_charstrings (cff_font *font,
     }
     if (mode != 1) {
       if (offset + len >= max_size) {
-	max_size += MAX(len, CS_STR_LEN_MAX);
-	charstrings->data = RENEW(charstrings->data, max_size, card8);
+        max_size += MAX(len, CS_STR_LEN_MAX);
+        charstrings->data = RENEW(charstrings->data, max_size, card8);
       }
       if (gid == 0) {
-	if (lenIV >= 0) {
-	  memmove(charstrings->data + len - lenIV, charstrings->data, offset);
-	  for (j = 1; j <= i; j++) {
-	    charstrings->offset[j] += len - lenIV;
-	  }
-	} else {
-	  memmove(charstrings->data + len, charstrings->data, offset);
-	  for (j = 1; j <= i; j++) {
-	    charstrings->offset[j] += len;
-	  }
-	}
+        if (lenIV >= 0) {
+          memmove(charstrings->data + len - lenIV, charstrings->data, offset);
+          for (j = 1; j <= i; j++) {
+            charstrings->offset[j] += len - lenIV;
+          }
+        } else {
+          memmove(charstrings->data + len, charstrings->data, offset);
+          for (j = 1; j <= i; j++) {
+            charstrings->offset[j] += len;
+          }
+        }
       }
     }
 
     *start += 1;
     if (mode != 1) {
       if (lenIV >= 0) {
-	long offs = gid ? offset : 0;
-	charstrings->offset[gid] = offs + 1; /* start at 1 */
-	t1_decrypt(T1_CHARKEY, charstrings->data+offs, *start, lenIV, len);
-	offset += len - lenIV;
+        long offs = gid ? offset : 0;
+        charstrings->offset[gid] = offs + 1; /* start at 1 */
+        t1_decrypt(T1_CHARKEY, charstrings->data+offs, *start, lenIV, len);
+        offset += len - lenIV;
       } else {
-	if (gid == 0) {
-	  charstrings->offset[gid] = 1;
-	  memcpy(&charstrings->data[0], *start, len);
-	} else {
-	  charstrings->offset[gid] = offset + 1;
-	  memcpy(&charstrings->data[offset], *start, len);
-	}
-	offset += len;
+        if (gid == 0) {
+          charstrings->offset[gid] = 1;
+          memcpy(&charstrings->data[0], *start, len);
+        } else {
+          charstrings->offset[gid] = offset + 1;
+          memcpy(&charstrings->data[offset], *start, len);
+        }
+        offset += len;
       }
     }
     *start += len;
@@ -776,28 +776,28 @@ parse_part2 (cff_font *font, unsigned char **start, unsigned char *end, int mode
   int    argn, lenIV = 4;
 
   while (*start < end &&
-	 (key = get_next_key(start, end)) != NULL) {
+         (key = get_next_key(start, end)) != NULL) {
     if (!strcmp(key, "Subrs")) {
       /* levIV must appear before Subrs */
       if (parse_subrs(font, start, end, lenIV, mode) < 0) {
-	RELEASE(key);
-	return -1;
+        RELEASE(key);
+        return -1;
       }
     } else if (!strcmp(key, "CharStrings")) {
       if (parse_charstrings(font, start, end, lenIV, mode) < 0) {
-	RELEASE(key);
-	return -1;
+        RELEASE(key);
+        return -1;
       }
     } else if (!strcmp(key, "lenIV")) {
       argn = parse_nvalue(start, end, argv, 1);
       CHECK_ARGN_EQ(1);
       lenIV = (int) argv[0];
     } else if (!strcmp(key, "BlueValues") ||
-	       !strcmp(key, "OtherBlues") ||
-	       !strcmp(key, "FamilyBlues") ||
-	       !strcmp(key, "FamilyOtherBlues") ||
-	       !strcmp(key, "StemSnapH") ||
-	       !strcmp(key, "StemSnapV")) {
+               !strcmp(key, "OtherBlues") ||
+               !strcmp(key, "FamilyBlues") ||
+               !strcmp(key, "FamilyOtherBlues") ||
+               !strcmp(key, "StemSnapH") ||
+               !strcmp(key, "StemSnapV")) {
       /*
        * Operand values are delta in CFF font dictionary encoding.
        */
@@ -805,16 +805,16 @@ parse_part2 (cff_font *font, unsigned char **start, unsigned char *end, int mode
       CHECK_ARGN_GE(0);
       cff_dict_add(font->private[0], key, argn);
       while (argn-- > 0) {
-	cff_dict_set(font->private[0], key, argn,
-		     (argn == 0) ? argv[argn] : argv[argn] - argv[argn-1]);
+        cff_dict_set(font->private[0], key, argn,
+                     (argn == 0) ? argv[argn] : argv[argn] - argv[argn-1]);
       }
     } else if (!strcmp(key, "StdHW") ||
-	       !strcmp(key, "StdVW") ||
-	       !strcmp(key, "BlueScale") ||
-	       !strcmp(key, "BlueShift") ||
-	       !strcmp(key, "BlueFuzz")  ||
-	       !strcmp(key, "LanguageGroup") ||
-	       !strcmp(key, "ExpansionFactor")) {
+               !strcmp(key, "StdVW") ||
+               !strcmp(key, "BlueScale") ||
+               !strcmp(key, "BlueShift") ||
+               !strcmp(key, "BlueFuzz")  ||
+               !strcmp(key, "LanguageGroup") ||
+               !strcmp(key, "ExpansionFactor")) {
       /*
        * Value of StdHW and StdVW is described as an array in the
        * Type 1 Font Specification but is a number in CFF format.
@@ -827,8 +827,8 @@ parse_part2 (cff_font *font, unsigned char **start, unsigned char *end, int mode
       argn = parse_bvalue(start, end, &(argv[0]));
       CHECK_ARGN_EQ(1);
       if (argv[0] != 0) {
-	cff_dict_add(font->private[0], key, 1);
-	cff_dict_set(font->private[0], key, 0, 1);
+        cff_dict_add(font->private[0], key, 1);
+        cff_dict_set(font->private[0], key, 0, 1);
       }
     }
     /*
@@ -846,7 +846,7 @@ parse_part2 (cff_font *font, unsigned char **start, unsigned char *end, int mode
 
 static long
 parse_part1 (cff_font *font, char **enc_vec,
-	     unsigned char **start, unsigned char *end)
+             unsigned char **start, unsigned char *end)
 {
   char  *key, *strval;
   double argv[MAX_ARGS];
@@ -861,18 +861,18 @@ parse_part1 (cff_font *font, char **enc_vec,
     return -1;
 
   while (*start < end &&
-	 (key = get_next_key(start, end)) != NULL) {
+         (key = get_next_key(start, end)) != NULL) {
     if (!strcmp(key, "Encoding")) {
       if (parse_encoding(enc_vec, start, end) < 0) {
-	RELEASE(key);
-	return -1;
+        RELEASE(key);
+        return -1;
       }
     } else if (!strcmp(key, "FontName")) {
       argn = parse_svalue(start, end, &strval);
       CHECK_ARGN_EQ(1);
       if (strlen(strval) > TYPE1_NAME_LEN_MAX) {
-	WARN("FontName too long: %s (%d bytes)", strval, strlen(strval));
-	strval[TYPE1_NAME_LEN_MAX] = '\0';
+        WARN("FontName too long: %s (%d bytes)", strval, strlen(strval));
+        strval[TYPE1_NAME_LEN_MAX] = '\0';
       }
       cff_set_name(font, strval);
       RELEASE(strval);
@@ -880,9 +880,9 @@ parse_part1 (cff_font *font, char **enc_vec,
       argn = parse_nvalue(start, end, argv, 1);
       CHECK_ARGN_EQ(1);
       if (argv[0] != 1.0) {
-	WARN("FontType %d not supported.", (int) argv[0]);
-	RELEASE(key);
-	return -1;
+        WARN("FontType %d not supported.", (int) argv[0]);
+        RELEASE(key);
+        return -1;
       }
 #if 0
       /* DISABLED:
@@ -896,25 +896,25 @@ parse_part1 (cff_font *font, char **enc_vec,
       cff_dict_set(font->topdict, key, 0, argv[0]);
 #endif
     } else if (!strcmp(key, "ItalicAngle") ||
-	       !strcmp(key, "StrokeWidth") ||
-	       !strcmp(key, "PaintType")) {
+               !strcmp(key, "StrokeWidth") ||
+               !strcmp(key, "PaintType")) {
       argn = parse_nvalue(start, end, argv, 1);
       CHECK_ARGN_EQ(1);
       if (argv[0] != 0.0) {
 #if 0
-	/*
-	 * Positive value in Bitstream CharterBT-Italic ???
-	 */
-	if (!strcmp(key, "ItalicAngle") && argv[0] > 0) {
-	  WARN("Positive ItalicAngle value: %g", argv[0]);
-	  argv[0] *= -1;
-	}
+        /*
+         * Positive value in Bitstream CharterBT-Italic ???
+         */
+        if (!strcmp(key, "ItalicAngle") && argv[0] > 0) {
+          WARN("Positive ItalicAngle value: %g", argv[0]);
+          argv[0] *= -1;
+        }
 #endif
-	cff_dict_add(font->topdict, key, 1);
-	cff_dict_set(font->topdict, key, 0, argv[0]);
+        cff_dict_add(font->topdict, key, 1);
+        cff_dict_set(font->topdict, key, 0, argv[0]);
       }
     } else if (!strcmp(key, "UnderLinePosition") ||
-	       !strcmp(key, "UnderLineThickness")) {
+               !strcmp(key, "UnderLineThickness")) {
       argn = parse_nvalue(start, end, argv, 1);
       CHECK_ARGN_EQ(1);
       cff_dict_add(font->topdict, key, 1);
@@ -924,45 +924,45 @@ parse_part1 (cff_font *font, char **enc_vec,
       CHECK_ARGN_EQ(4);
       cff_dict_add(font->topdict, key, 4);
       while (argn-- > 0) {
-	cff_dict_set(font->topdict, key, argn, argv[argn]);
+        cff_dict_set(font->topdict, key, argn, argv[argn]);
       }
     } else if (!strcmp(key, "FontMatrix")) {
       argn = parse_nvalue(start, end, argv, 6);
       CHECK_ARGN_EQ(6);
       if (argv[0] != 0.001 || argv[1] != 0.0 || argv[2] != 0.0 ||
-	  argv[3] != 0.001 || argv[4] != 0.0 || argv[5] != 0.0) {
-	cff_dict_add(font->topdict, key, 6);
-	while (argn-- > 0) {
-	  cff_dict_set(font->topdict, key, argn, argv[argn]);
-	}
+          argv[3] != 0.001 || argv[4] != 0.0 || argv[5] != 0.0) {
+        cff_dict_add(font->topdict, key, 6);
+        while (argn-- > 0) {
+          cff_dict_set(font->topdict, key, argn, argv[argn]);
+        }
       }
     } else if (!strcmp(key, "version")  || !strcmp(key, "Notice") ||
-	       !strcmp(key, "FullName") || !strcmp(key, "FamilyName") ||
-	       !strcmp(key, "Weight")   || !strcmp(key, "Copyright")) {
+               !strcmp(key, "FullName") || !strcmp(key, "FamilyName") ||
+               !strcmp(key, "Weight")   || !strcmp(key, "Copyright")) {
       /*
        * FontInfo
        */
       argn = parse_svalue(start, end, &strval);
       CHECK_ARGN_EQ(1);
       {
-	s_SID sid;
+        s_SID sid;
 
-	cff_dict_add(font->topdict, key, 1);
-	if ((sid = cff_get_sid(font, strval)) == CFF_STRING_NOTDEF)
-	  sid = cff_add_string(font, strval, 0); /* FIXME */
-	/*
-	 * We don't care about duplicate strings here since
-	 * later a subset font of this font will be generated.
-	 */
-	cff_dict_set(font->topdict, key, 0, sid);
+        cff_dict_add(font->topdict, key, 1);
+        if ((sid = cff_get_sid(font, strval)) == CFF_STRING_NOTDEF)
+          sid = cff_add_string(font, strval, 0); /* FIXME */
+        /*
+         * We don't care about duplicate strings here since
+         * later a subset font of this font will be generated.
+         */
+        cff_dict_set(font->topdict, key, 0, sid);
       }
       RELEASE(strval);
     } else if (!strcmp(key, "IsFixedPitch")) {
       argn = parse_bvalue(start, end, &(argv[0]));
       CHECK_ARGN_EQ(1);
       if (argv[0] != 0.0) {
-	cff_dict_add(font->private[0], key, 1);
-	cff_dict_set(font->private[0], key, 0, 1);
+        cff_dict_add(font->private[0], key, 1);
+        cff_dict_set(font->private[0], key, 0, 1);
       }
     }
     RELEASE(key);
@@ -1037,23 +1037,23 @@ get_pfb_segment (FILE *fp, int expected_type, long *length)
 
       slen = 0;
       for (i = 0; i < 4; i++) {
-	if ((ch = fgetc(fp)) < 0) {
-	  if (buffer)
-	    RELEASE(buffer);
-	  return NULL;
-	}
-	slen = slen + (ch << (8*i));
+        if ((ch = fgetc(fp)) < 0) {
+          if (buffer)
+            RELEASE(buffer);
+          return NULL;
+        }
+        slen = slen + (ch << (8*i));
       }
       buffer = RENEW(buffer, bytesread + slen, unsigned char);
       while (slen > 0) {
-	rlen = fread(buffer + bytesread, sizeof(unsigned char), slen, fp);
-	if (rlen < 0) {
-	  if (buffer)
-	    RELEASE(buffer);
-	  return NULL;
-	}
-	slen -= rlen;
-	bytesread += rlen;
+        rlen = fread(buffer + bytesread, sizeof(unsigned char), slen, fp);
+        if (rlen < 0) {
+          if (buffer)
+            RELEASE(buffer);
+          return NULL;
+        }
+        slen -= rlen;
+        bytesread += rlen;
       }
     }
   }
@@ -1099,17 +1099,17 @@ t1_get_fontname (FILE *fp, char *fontname)
   }
 
   while (!fn_found && start < end &&
-	 (key = get_next_key(&start, end)) != NULL) {
+         (key = get_next_key(&start, end)) != NULL) {
     if (!strcmp(key, "FontName")) {
       char *strval;
       if (parse_svalue(&start, end, &strval) == 1) {
-	if (strlen(strval) > TYPE1_NAME_LEN_MAX) {
-	  WARN("FontName \"%s\" too long. (%d bytes)", strval, strlen(strval));
-	  strval[TYPE1_NAME_LEN_MAX] = '\0';
-	}
-	strcpy(fontname, strval);
-	RELEASE(strval);
-	fn_found = 1;
+        if (strlen(strval) > TYPE1_NAME_LEN_MAX) {
+          WARN("FontName \"%s\" too long. (%d bytes)", strval, strlen(strval));
+          strval[TYPE1_NAME_LEN_MAX] = '\0';
+        }
+        strcpy(fontname, strval);
+        RELEASE(strval);
+        fn_found = 1;
       }
     }
     RELEASE(key);

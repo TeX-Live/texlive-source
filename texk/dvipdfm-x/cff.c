@@ -97,7 +97,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
   if (cff->header.major > 1 ||
       cff->header.minor > 0) {
     WARN("%s: CFF version %u.%u not supported.",
-	 CFF_DEBUG_STR, cff->header.major, cff->header.minor);
+         CFF_DEBUG_STR, cff->header.major, cff->header.minor);
     cff_close(cff);
     return NULL;
   }
@@ -121,7 +121,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
   if (n > idx->count - 1)
     ERROR("CFF Top DICT not exist...");
   cff->topdict = cff_dict_unpack(idx->data + idx->offset[n] - 1,
-				 idx->data + idx->offset[n + 1] - 1);
+                                 idx->data + idx->offset[n + 1] - 1);
   if (!cff->topdict)
     ERROR("Parsing CFF Top DICT data failed...");
   cff_release_index(idx);
@@ -205,19 +205,19 @@ cff_close (cff_font *cff)
     if (cff->cstrings) cff_release_index(cff->cstrings);
     if (cff->fdarray) {
       for (i=0;i<cff->num_fds;i++) {
-	if (cff->fdarray[i]) cff_release_dict(cff->fdarray[i]);
+        if (cff->fdarray[i]) cff_release_dict(cff->fdarray[i]);
       }
       RELEASE(cff->fdarray);
     }
     if (cff->private) {
       for (i=0;i<cff->num_fds;i++) {
-	if (cff->private[i]) cff_release_dict(cff->private[i]);
+        if (cff->private[i]) cff_release_dict(cff->private[i]);
       }
       RELEASE(cff->private);
     }
     if (cff->subrs) {
       for (i=0;i<cff->num_fds;i++) {
-	if (cff->subrs[i]) cff_release_index(cff->subrs[i]);
+        if (cff->subrs[i]) cff_release_index(cff->subrs[i]);
       }
       RELEASE(cff->subrs);
     }
@@ -278,8 +278,8 @@ cff_put_header (cff_font *cff, card8 *dest, long destlen)
   *(dest++) = cff->header.major;
   *(dest++) = cff->header.minor;
   *(dest++) = 4; /* Additional data in between header and
-		  * Name INDEX ignored.
-		  */
+                  * Name INDEX ignored.
+                  */
   /* We will set all offset (0) to four-byte integer. */
   *(dest++) = 4;
   cff->header.offsize = 4;
@@ -517,8 +517,8 @@ long cff_get_sid (cff_font *cff, const char *str)
     cff_index *idx = cff->string;
     for (i = 0; i < idx->count; i++) {
       if (strlen(str) == (idx->offset)[i+1] - (idx->offset)[i] &&
-	  !memcmp(str, (idx->data)+(idx->offset)[i]-1, strlen(str)))
-	return (i + CFF_STDSTR_MAX);
+          !memcmp(str, (idx->data)+(idx->offset)[i]-1, strlen(str)))
+        return (i + CFF_STDSTR_MAX);
     }
   }
 
@@ -557,8 +557,8 @@ int cff_match_string (cff_font *cff, const char *str, s_SID sid)
       ERROR("Invalid SID");
     if (strlen(str) == (cff->string->offset)[i+1] - (cff->string->offset)[i])
       return (!memcmp(str,
-		      (cff->string->data)+(cff->string->offset)[i]-1,
-		      strlen(str))) ? 1 : 0;
+                      (cff->string->data)+(cff->string->offset)[i]-1,
+                      strlen(str))) ? 1 : 0;
   }
 
   return 0;
@@ -594,13 +594,13 @@ s_SID cff_add_string (cff_font *cff, const char *str, int unique)
     /* TODO: do binary search to speed things up */
     for (idx = 0; idx < CFF_STDSTR_MAX; idx++) {
       if (cff_stdstr[idx] && !strcmp(cff_stdstr[idx], str))
-	return idx;
+        return idx;
     }
     for (idx = 0; idx < strings->count; idx++) {
       size   = strings->offset[idx+1] - strings->offset[idx];
       offset = strings->offset[idx];
       if (size == len && !memcmp(strings->data+offset-1, str, len))
-	return (idx + CFF_STDSTR_MAX);
+        return (idx + CFF_STDSTR_MAX);
     }
   }
 
@@ -668,10 +668,10 @@ long cff_read_encoding (cff_font *cff)
       cff_range1 *ranges;
       encoding->num_entries = get_unsigned_byte(cff->stream);
       encoding->data.range1 = ranges
-	= NEW(encoding->num_entries, cff_range1);
+        = NEW(encoding->num_entries, cff_range1);
       for (i=0;i<(encoding->num_entries);i++) {
-	ranges[i].first = get_unsigned_byte(cff->stream);
-	ranges[i].n_left = get_unsigned_byte(cff->stream);
+        ranges[i].first = get_unsigned_byte(cff->stream);
+        ranges[i].n_left = get_unsigned_byte(cff->stream);
       }
       length += (encoding->num_entries) * 2 + 1;
     }
@@ -727,10 +727,10 @@ long cff_pack_encoding (cff_font *cff, card8 *dest, long destlen)
   case 1:
     {
       if (destlen < len + (encoding->num_entries)*2)
-	ERROR("in cff_pack_encoding(): Buffer overflow");
+        ERROR("in cff_pack_encoding(): Buffer overflow");
       for (i=0;i<(encoding->num_entries);i++) {
-	dest[len++] = (encoding->data).range1[i].first & 0xff;
-	dest[len++] = (encoding->data).range1[i].n_left;
+        dest[len++] = (encoding->data).range1[i].first & 0xff;
+        dest[len++] = (encoding->data).range1[i].n_left;
       }
     }
     break;
@@ -773,15 +773,15 @@ card16 cff_encoding_lookup (cff_font *cff, card8 code)
   case 0:
     for (i = 0; i < encoding->num_entries; i++) {
       if (code == (encoding->data).codes[i]) {
-	gid = i + 1;
-	break;
+        gid = i + 1;
+        break;
       }
     }
     break;
   case 1:
     for (i = 0; i < encoding->num_entries; i++) {
       if (code >= (encoding->data).range1[i].first &&
-	  code <= (encoding->data).range1[i].first + (encoding->data).range1[i].n_left) {
+          code <= (encoding->data).range1[i].first + (encoding->data).range1[i].n_left) {
         gid += code - (encoding->data).range1[i].first + 1;
         break;
       }
@@ -802,8 +802,8 @@ card16 cff_encoding_lookup (cff_font *cff, card8 code)
     map = encoding->supp;
     for (i=0;i<(encoding->num_supps);i++) {
       if (code == map[i].code) {
-	gid = cff_charsets_lookup(cff, map[i].glyph);
-	break;
+        gid = cff_charsets_lookup(cff, map[i].glyph);
+        break;
       }
     }
   }
@@ -817,18 +817,18 @@ void cff_release_encoding (cff_encoding *encoding)
     switch (encoding->format & (~0x80)) {
     case 0:
       if (encoding->data.codes)
-	RELEASE(encoding->data.codes);
+        RELEASE(encoding->data.codes);
       break;
     case 1:
       if (encoding->data.range1)
-	RELEASE(encoding->data.range1);
+        RELEASE(encoding->data.range1);
       break;
     default:
       ERROR("Unknown Encoding format.");
     }
     if (encoding->format & 0x80) {
       if (encoding->supp)
-	RELEASE(encoding->supp);
+        RELEASE(encoding->supp);
     }
     RELEASE(encoding);
   }
@@ -888,12 +888,12 @@ long cff_read_charsets (cff_font *cff)
     {
       cff_range1 *ranges = NULL;
       while (count > 0 && charset->num_entries < cff->num_glyphs) {
-	ranges = RENEW(ranges, charset->num_entries + 1, cff_range1);
-	ranges[charset->num_entries].first = get_unsigned_pair(cff->stream);
-	ranges[charset->num_entries].n_left = get_unsigned_byte(cff->stream);
-	count -= ranges[charset->num_entries].n_left + 1; /* no-overrap */
-	charset->num_entries += 1;
-	charset->data.range1 = ranges;
+        ranges = RENEW(ranges, charset->num_entries + 1, cff_range1);
+        ranges[charset->num_entries].first = get_unsigned_pair(cff->stream);
+        ranges[charset->num_entries].n_left = get_unsigned_byte(cff->stream);
+        count -= ranges[charset->num_entries].n_left + 1; /* no-overrap */
+        charset->num_entries += 1;
+        charset->data.range1 = ranges;
       }
       length += (charset->num_entries) * 3;
     }
@@ -902,11 +902,11 @@ long cff_read_charsets (cff_font *cff)
     {
       cff_range2 *ranges = NULL;
       while (count > 0 && charset->num_entries < cff->num_glyphs) {
-	ranges = RENEW(ranges, charset->num_entries + 1, cff_range2);
-	ranges[charset->num_entries].first = get_unsigned_pair(cff->stream);
-	ranges[charset->num_entries].n_left = get_unsigned_pair(cff->stream);
-	count -= ranges[charset->num_entries].n_left + 1; /* non-overrapping */
-	charset->num_entries += 1;
+        ranges = RENEW(ranges, charset->num_entries + 1, cff_range2);
+        ranges[charset->num_entries].first = get_unsigned_pair(cff->stream);
+        ranges[charset->num_entries].n_left = get_unsigned_pair(cff->stream);
+        count -= ranges[charset->num_entries].n_left + 1; /* non-overrapping */
+        charset->num_entries += 1;
       }
       charset->data.range2 = ranges;
       length += (charset->num_entries) * 4;
@@ -952,23 +952,23 @@ long cff_pack_charsets (cff_font *cff, card8 *dest, long destlen)
   case 1:
     {
       if (destlen < len + (charset->num_entries)*3)
-	ERROR("in cff_pack_charsets(): Buffer overflow");
+        ERROR("in cff_pack_charsets(): Buffer overflow");
       for (i=0;i<(charset->num_entries);i++) {
-	dest[len++] = ((charset->data).range1[i].first >> 8) & 0xff;
-	dest[len++] = (charset->data).range1[i].first & 0xff;
-	dest[len++] = (charset->data).range1[i].n_left;
+        dest[len++] = ((charset->data).range1[i].first >> 8) & 0xff;
+        dest[len++] = (charset->data).range1[i].first & 0xff;
+        dest[len++] = (charset->data).range1[i].n_left;
       }
     }
     break;
   case 2:
     {
       if (destlen < len + (charset->num_entries)*4)
-	ERROR("in cff_pack_charsets(): Buffer overflow");
+        ERROR("in cff_pack_charsets(): Buffer overflow");
       for (i=0;i<(charset->num_entries);i++) {
-	dest[len++] = ((charset->data).range2[i].first >> 8) & 0xff;
-	dest[len++] = (charset->data).range2[i].first & 0xff;
-	dest[len++] = ((charset->data).range2[i].n_left >> 8) & 0xff;
-	dest[len++] = (charset->data).range2[i].n_left & 0xff;
+        dest[len++] = ((charset->data).range2[i].first >> 8) & 0xff;
+        dest[len++] = (charset->data).range2[i].first & 0xff;
+        dest[len++] = ((charset->data).range2[i].n_left >> 8) & 0xff;
+        dest[len++] = (charset->data).range2[i].n_left & 0xff;
       }
     }
     break;
@@ -1013,31 +1013,31 @@ card16 cff_glyph_lookup (cff_font *cff, const char *glyph)
     for (i = 0; i < charset->num_entries; i++) {
       gid++;
       if (cff_match_string(cff, glyph, charset->data.glyphs[i])) {
-	return gid;
+        return gid;
       }
     }
     break;
   case 1:
     for (i = 0; i < charset->num_entries; i++) {
       for (n = 0;
-	   n <= charset->data.range1[i].n_left; n++) {
-	gid++;
-	if (cff_match_string(cff, glyph,
-			     (s_SID)(charset->data.range1[i].first + n))) {
-	  return gid;
-	}
+           n <= charset->data.range1[i].n_left; n++) {
+        gid++;
+        if (cff_match_string(cff, glyph,
+                             (s_SID)(charset->data.range1[i].first + n))) {
+          return gid;
+        }
       }
     }
     break;
   case 2:
     for (i = 0; i <charset->num_entries; i++) {
       for (n = 0;
-	   n <= charset->data.range2[i].n_left; n++) {
-	gid++;
-	if (cff_match_string(cff, glyph,
-			     (s_SID)(charset->data.range2[i].first + n))) {
-	  return gid;
-	}
+           n <= charset->data.range2[i].n_left; n++) {
+        gid++;
+        if (cff_match_string(cff, glyph,
+                             (s_SID)(charset->data.range2[i].first + n))) {
+          return gid;
+        }
       }
     }
     break;
@@ -1076,17 +1076,17 @@ card16 cff_charsets_lookup_gid (cff_charsets *charset, card16 cid)
   case 0:
     for (i = 0; i <charset->num_entries; i++) {
       if (cid == charset->data.glyphs[i]) {
-	gid = i + 1;
-	return gid;
+        gid = i + 1;
+        return gid;
       }
     }
     break;
   case 1:
     for (i = 0; i < charset->num_entries; i++) {
       if (cid >= charset->data.range1[i].first &&
-	  cid <= charset->data.range1[i].first + charset->data.range1[i].n_left) {
+          cid <= charset->data.range1[i].first + charset->data.range1[i].n_left) {
         gid += cid - charset->data.range1[i].first + 1;
-	return gid;
+        return gid;
       }
       gid += charset->data.range1[i].n_left + 1;
     }
@@ -1094,9 +1094,9 @@ card16 cff_charsets_lookup_gid (cff_charsets *charset, card16 cid)
   case 2:
     for (i = 0; i < charset->num_entries; i++) {
       if (cid >= charset->data.range2[i].first &&
-	  cid <= charset->data.range2[i].first + charset->data.range2[i].n_left) {
+          cid <= charset->data.range2[i].first + charset->data.range2[i].n_left) {
         gid += cid - charset->data.range2[i].first + 1;
-	return gid;
+        return gid;
       }
       gid += charset->data.range2[i].n_left + 1;
     }
@@ -1142,7 +1142,7 @@ cff_charsets_lookup_cid(cff_charsets *charset, card16 gid)
   case 1:
     for (i = 0; i < charset->num_entries; i++) {
       if (gid <= charset->data.range1[i].n_left + 1) {
-	sid = gid + charset->data.range1[i].first - 1;
+        sid = gid + charset->data.range1[i].first - 1;
         break;
       }
       gid -= charset->data.range1[i].n_left + 1;
@@ -1153,7 +1153,7 @@ cff_charsets_lookup_cid(cff_charsets *charset, card16 gid)
   case 2:
     for (i = 0; i < charset->num_entries; i++) {
       if (gid <= charset->data.range2[i].n_left + 1) {
-	sid = gid + charset->data.range2[i].first - 1;
+        sid = gid + charset->data.range2[i].first - 1;
         break;
       }
       gid -= charset->data.range2[i].n_left + 1;
@@ -1175,15 +1175,15 @@ cff_release_charsets (cff_charsets *charset)
     switch (charset->format) {
     case 0:
       if (charset->data.glyphs)
-	RELEASE(charset->data.glyphs);
+        RELEASE(charset->data.glyphs);
       break;
     case 1:
       if (charset->data.range1)
-	RELEASE(charset->data.range1);
+        RELEASE(charset->data.range1);
       break;
     case 2:
       if (charset->data.range2)
-	RELEASE(charset->data.range2);
+        RELEASE(charset->data.range2);
       break;
     default:
       break;
@@ -1227,13 +1227,13 @@ long cff_read_fdselect (cff_font *cff)
       fdsel->num_entries = get_unsigned_pair(cff->stream);
       fdsel->data.ranges = ranges = NEW(fdsel->num_entries, cff_range3);
       for (i=0;i<(fdsel->num_entries);i++) {
-	ranges[i].first = get_unsigned_pair(cff->stream);
-	ranges[i].fd = get_unsigned_byte(cff->stream);
+        ranges[i].first = get_unsigned_pair(cff->stream);
+        ranges[i].fd = get_unsigned_byte(cff->stream);
       }
       if (ranges[0].first != 0)
-	ERROR("Range not starting with 0.");
+        ERROR("Range not starting with 0.");
       if (cff->num_glyphs != get_unsigned_pair(cff->stream))
-	ERROR("Sentinel value mismatched with number of glyphs.");
+        ERROR("Sentinel value mismatched with number of glyphs.");
       length += (fdsel->num_entries) * 3 + 4;
     }
     break;
@@ -1274,17 +1274,17 @@ long cff_pack_fdselect (cff_font *cff, card8 *dest, long destlen)
   case 3:
     {
       if (destlen < len + 2)
-	ERROR("in cff_pack_fdselect(): Buffer overflow");
+        ERROR("in cff_pack_fdselect(): Buffer overflow");
       len += 2;
       for (i=0;i<(fdsel->num_entries);i++) {
-	if (destlen < len + 3)
-	  ERROR("in cff_pack_fdselect(): Buffer overflow");
-	dest[len++] = ((fdsel->data).ranges[i].first >> 8) & 0xff;
-	dest[len++] = (fdsel->data).ranges[i].first & 0xff;
-	dest[len++] = (fdsel->data).ranges[i].fd;
+        if (destlen < len + 3)
+          ERROR("in cff_pack_fdselect(): Buffer overflow");
+        dest[len++] = ((fdsel->data).ranges[i].first >> 8) & 0xff;
+        dest[len++] = (fdsel->data).ranges[i].first & 0xff;
+        dest[len++] = (fdsel->data).ranges[i].fd;
       }
       if (destlen < len + 2)
-	ERROR("in cff_pack_fdselect(): Buffer overflow");
+        ERROR("in cff_pack_fdselect(): Buffer overflow");
       dest[len++]  = (cff->num_glyphs >> 8) & 0xff;
       dest[len++]  = cff->num_glyphs & 0xff;
       dest[1] = ((len/3 - 1) >> 8) & 0xff;
@@ -1331,14 +1331,14 @@ card8 cff_fdselect_lookup (cff_font *cff, card16 gid)
   case 3:
     {
       if (gid == 0) {
-	fd = (fdsel->data).ranges[0].fd;
+        fd = (fdsel->data).ranges[0].fd;
       } else {
-	card16 i;
-	for (i=1;i<(fdsel->num_entries);i++) {
-	  if (gid < (fdsel->data).ranges[i].first)
-	    break;
-	}
-	fd = (fdsel->data).ranges[i-1].fd;
+        card16 i;
+        for (i=1;i<(fdsel->num_entries);i++) {
+          if (gid < (fdsel->data).ranges[i].first)
+            break;
+        }
+        fd = (fdsel->data).ranges[i-1].fd;
       }
     }
     break;
@@ -1375,19 +1375,19 @@ long cff_read_subrs (cff_font *cff)
   if (cff->flag & FONTTYPE_CIDFONT) {
     for (i=0;i<cff->num_fds;i++) {
       if (cff->private[i] == NULL ||
-	  !cff_dict_known(cff->private[i], "Subrs")) {
-	(cff->subrs)[i] = NULL;
+          !cff_dict_known(cff->private[i], "Subrs")) {
+        (cff->subrs)[i] = NULL;
       } else {
-	offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
-	offset += (long) cff_dict_get(cff->private[i], "Subrs", 0);
-	cff_seek_set(cff, offset);
-	(cff->subrs)[i] = cff_get_index(cff);
-	len += cff_index_size((cff->subrs)[i]);
+        offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
+        offset += (long) cff_dict_get(cff->private[i], "Subrs", 0);
+        cff_seek_set(cff, offset);
+        (cff->subrs)[i] = cff_get_index(cff);
+        len += cff_index_size((cff->subrs)[i]);
       }
     }
   } else {
     if (cff->private[0] == NULL ||
-	!cff_dict_known(cff->private[0], "Subrs")) {
+        !cff_dict_known(cff->private[0], "Subrs")) {
       (cff->subrs)[0] = NULL;
     } else {
       offset = (long) cff_dict_get(cff->topdict, "Private", 1);
@@ -1450,31 +1450,31 @@ long cff_read_private (cff_font *cff)
     cff->private = NEW(cff->num_fds, cff_dict *);
     for (i=0;i<cff->num_fds;i++) {
       if (cff->fdarray[i] != NULL &&
-	  cff_dict_known(cff->fdarray[i], "Private") &&
-	  (size = (long) cff_dict_get(cff->fdarray[i], "Private", 0))
-	  > 0) {
-	offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
-	cff_seek_set(cff, offset);
-	data = NEW(size, card8);
-	if (cff_read_data(data, size, cff) != size)
-	  ERROR("reading file failed");
-	(cff->private)[i] = cff_dict_unpack(data, data+size);
-	RELEASE(data);
-	len += size;
+          cff_dict_known(cff->fdarray[i], "Private") &&
+          (size = (long) cff_dict_get(cff->fdarray[i], "Private", 0))
+          > 0) {
+        offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
+        cff_seek_set(cff, offset);
+        data = NEW(size, card8);
+        if (cff_read_data(data, size, cff) != size)
+          ERROR("reading file failed");
+        (cff->private)[i] = cff_dict_unpack(data, data+size);
+        RELEASE(data);
+        len += size;
       } else {
-	(cff->private)[i] = NULL;
+        (cff->private)[i] = NULL;
       }
     }
   } else {
     cff->num_fds = 1;
     cff->private = NEW(1, cff_dict *);
     if (cff_dict_known(cff->topdict, "Private") &&
-	(size = (long) cff_dict_get(cff->topdict, "Private", 0)) > 0) {
+        (size = (long) cff_dict_get(cff->topdict, "Private", 0)) > 0) {
       offset = (long) cff_dict_get(cff->topdict, "Private", 1);
       cff_seek_set(cff, offset);
       data = NEW(size, card8);
       if (cff_read_data(data, size, cff) != size)
-	ERROR("reading file failed");
+        ERROR("reading file failed");
       cff->private[0] = cff_dict_unpack(data, data+size);
       RELEASE(data);
       len += size;

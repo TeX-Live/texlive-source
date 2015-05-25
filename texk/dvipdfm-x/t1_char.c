@@ -270,9 +270,9 @@ stem_compare (const void *v1, const void *v2)
   if (s1->dir == s2->dir) {
     if (s1->pos == s2->pos) {
       if (s1->del == s2->del)
-	cmp = 0;
+        cmp = 0;
       else
-	cmp = (s1->del < s2->del) ? -1 : 1;
+        cmp = (s1->del < s2->del) ? -1 : 1;
     } else {
       cmp = (s1->pos < s2->pos) ? -1 : 1;
     }
@@ -308,8 +308,8 @@ add_stem (t1_chardesc *cd, double pos, double del, int dir)
   pos += (dir == HSTEM) ? cd->sbw.sby : cd->sbw.sbx;
   for (i = 0; i < cd->num_stems; i++) {
     if (cd->stems[i].dir == dir &&
-	cd->stems[i].pos == pos &&
-	cd->stems[i].del == del)
+        cd->stems[i].pos == pos &&
+        cd->stems[i].del == del)
       break;
   }
   if (i == cd->num_stems) {
@@ -455,13 +455,13 @@ do_operator1 (t1_chardesc *cd, card8 **data)
     {
       int stem_id;
       stem_id = add_stem(cd,
-			 cs_arg_stack[cs_stack_top-2],
-			 cs_arg_stack[cs_stack_top-1],
-			 ((op == cs_hstem) ? HSTEM : VSTEM));
+                         cs_arg_stack[cs_stack_top-2],
+                         cs_arg_stack[cs_stack_top-1],
+                         ((op == cs_hstem) ? HSTEM : VSTEM));
       if (stem_id < 0) {
-	WARN("Too many hints...");
-	status = CS_PARSE_ERROR;
-	return;
+        WARN("Too many hints...");
+        status = CS_PARSE_ERROR;
+        return;
       }
       /* Put stem_id onto the stack... */
       cs_arg_stack[cs_stack_top++] = stem_id;
@@ -476,8 +476,8 @@ do_operator1 (t1_chardesc *cd, card8 **data)
     CHECKSTACK(2);
     {
       if (phase < T1_CS_PHASE_PATH) {
-	cs_arg_stack[cs_stack_top-2] += cd->sbw.sbx;
-	cs_arg_stack[cs_stack_top-1] += cd->sbw.sby;
+        cs_arg_stack[cs_stack_top-2] += cd->sbw.sbx;
+        cs_arg_stack[cs_stack_top-1] += cd->sbw.sby;
       }
       ADD_PATH(cd, op, 2);
     }
@@ -489,27 +489,27 @@ do_operator1 (t1_chardesc *cd, card8 **data)
     {
       int argn = 1;
       if (phase < T1_CS_PHASE_PATH) {
-	/*
-	 * The reference point for the first moveto operator is diferrent
-	 * between Type 1 charstring and Type 2 charstring. We compensate it.
-	 */
-	if (op == cs_hmoveto) {
-	  cs_arg_stack[cs_stack_top-1] += cd->sbw.sbx;
-	  if (cd->sbw.sby != 0.0) {
-	    cs_arg_stack[cs_stack_top++] = cd->sbw.sby;
-	    argn = 2;
-	    op = cs_rmoveto;
-	  }
-	} else {
-	  cs_arg_stack[cs_stack_top-1] += cd->sbw.sby;
-	  if (cd->sbw.sbx != 0.0) {
-	    cs_arg_stack[cs_stack_top]   = cs_arg_stack[cs_stack_top-1];
-	    cs_arg_stack[cs_stack_top-1] = cd->sbw.sbx;
-	    cs_stack_top++;
-	    argn = 2;
-	    op = cs_rmoveto;
-	  }
-	}
+        /*
+         * The reference point for the first moveto operator is diferrent
+         * between Type 1 charstring and Type 2 charstring. We compensate it.
+         */
+        if (op == cs_hmoveto) {
+          cs_arg_stack[cs_stack_top-1] += cd->sbw.sbx;
+          if (cd->sbw.sby != 0.0) {
+            cs_arg_stack[cs_stack_top++] = cd->sbw.sby;
+            argn = 2;
+            op = cs_rmoveto;
+          }
+        } else {
+          cs_arg_stack[cs_stack_top-1] += cd->sbw.sby;
+          if (cd->sbw.sbx != 0.0) {
+            cs_arg_stack[cs_stack_top]   = cs_arg_stack[cs_stack_top-1];
+            cs_arg_stack[cs_stack_top-1] = cd->sbw.sbx;
+            cs_stack_top++;
+            argn = 2;
+            op = cs_rmoveto;
+          }
+        }
       }
       ADD_PATH(cd, op, argn);
     }
@@ -601,15 +601,15 @@ do_othersubr0 (t1_chardesc *cd)
     cur = cur->next;
     for (i = 1; i < 7; i++) {
       if (cur == NULL || cur->type != CS_FLEX_CTRL ||
-	  cur->num_args != 2) {
-	status = CS_PARSE_ERROR;
-	return;
+          cur->num_args != 2) {
+        status = CS_PARSE_ERROR;
+        return;
       }
       if (i == 1) {
-	flex->args[0] += cur->args[0];
-	flex->args[1] += cur->args[1];
+        flex->args[0] += cur->args[0];
+        flex->args[1] += cur->args[1];
       } else {
-	copy_args(&(flex->args[2*i-2]), cur->args, 2);
+        copy_args(&(flex->args[2*i-2]), cur->args, 2);
       }
       next = cur->next;
       RELEASE(cur);
@@ -716,9 +716,9 @@ do_othersubr13 (t1_chardesc *cd)
     pos += ps_arg_stack[--ps_stack_top];
     del  = ps_arg_stack[--ps_stack_top];
     stem_id = add_stem(cd,
-		       (del < 0.0) ? pos + del : pos,
-		       (del < 0.0) ? -del : del,
-		       HSTEM);
+                       (del < 0.0) ? pos + del : pos,
+                       (del < 0.0) ? -del : del,
+                       HSTEM);
     stemgroups[n].stems[stemgroups[n].num_stems] = stem_id;
     stemgroups[n].num_stems += 1;
     pos += del;
@@ -743,9 +743,9 @@ do_othersubr13 (t1_chardesc *cd)
     pos += ps_arg_stack[--ps_stack_top];
     del  = ps_arg_stack[--ps_stack_top];
     stem_id = add_stem(cd,
-		       (del < 0.0) ? pos + del : pos,
-		       (del < 0.0) ? -del : del,
-		       VSTEM);
+                       (del < 0.0) ? pos + del : pos,
+                       (del < 0.0) ? -del : del,
+                       VSTEM);
     stemgroups[n].stems[stemgroups[n].num_stems] = stem_id;
     stemgroups[n].num_stems += 1;
     pos += del;
@@ -761,7 +761,7 @@ do_othersubr13 (t1_chardesc *cd)
 
   for (n = 0; n < MAX(num_hgroups, num_vgroups); n++) {
     add_charpath(cd, cs_cntrmask,
-		 stemgroups[n].stems, stemgroups[n].num_stems);
+                 stemgroups[n].stems, stemgroups[n].num_stems);
   }
 
   cd->flags |= T1_CS_FLAG_USE_CNTRMASK;
@@ -832,20 +832,20 @@ do_operator2 (t1_chardesc *cd, card8 **data, card8 *endptr)
     {
       int i;
       for (i = 2; i >= 0; i--) {
-	int stem_id;
-	stem_id = add_stem(cd,
-			   cs_arg_stack[cs_stack_top-2*i-2],
-			   cs_arg_stack[cs_stack_top-2*i-1],
-			   ((op == cs_hstem3) ? HSTEM : VSTEM));
-	if (stem_id < 0) {
-	  WARN("Too many hints...");
-	  status = CS_PARSE_ERROR;
-	  return;
-	}
-	/* Put stem_id onto the stack... */
-	cs_arg_stack[cs_stack_top++] = stem_id;
-	ADD_PATH(cd, CS_HINT_DECL, 1);
-	cs_stack_top--;
+        int stem_id;
+        stem_id = add_stem(cd,
+                           cs_arg_stack[cs_stack_top-2*i-2],
+                           cs_arg_stack[cs_stack_top-2*i-1],
+                           ((op == cs_hstem3) ? HSTEM : VSTEM));
+        if (stem_id < 0) {
+          WARN("Too many hints...");
+          status = CS_PARSE_ERROR;
+          return;
+        }
+        /* Put stem_id onto the stack... */
+        cs_arg_stack[cs_stack_top++] = stem_id;
+        ADD_PATH(cd, CS_HINT_DECL, 1);
+        cs_stack_top--;
       }
     }
     CLEARSTACK();
@@ -886,7 +886,7 @@ do_operator2 (t1_chardesc *cd, card8 **data, card8 *endptr)
      */
     if (!(cd->flags & T1_CS_FLAG_USE_HINTMASK)) {
       if (__verbose > 1)
-	WARN("Obsolete Type 1 charstring operator \"dotsection\" not supported.");
+        WARN("Obsolete Type 1 charstring operator \"dotsection\" not supported.");
     }
 #endif
     /* noop */
@@ -1057,7 +1057,7 @@ get_longint (card8 **data, card8 *endptr)
 /* Parse charstring and build charpath. */
 static void
 t1char_build_charpath (t1_chardesc *cd,
-		       card8 **data, card8 *endptr, cff_index *subrs)
+                       card8 **data, card8 *endptr, cff_index *subrs)
 {
   card8 b0 = 0, *subr;
   long len;
@@ -1074,17 +1074,17 @@ t1char_build_charpath (t1_chardesc *cd,
       status = CS_SUBR_RETURN;
     } else if (b0 == cs_callsubr) {
       if (cs_stack_top < 1) {
-	status = CS_STACK_ERROR;
+        status = CS_STACK_ERROR;
       } else {
-	int idx;
+        int idx;
 
-	idx = cs_arg_stack[--cs_stack_top];
-	if (!subrs || idx >= subrs->count)
-	  ERROR("Invalid Subr#.");
-	subr = subrs->data + subrs->offset[idx] - 1;
-	len  = subrs->offset[idx+1] - subrs->offset[idx];
-	t1char_build_charpath(cd, &subr, subr+len, subrs);
-	*data += 1;
+        idx = cs_arg_stack[--cs_stack_top];
+        if (!subrs || idx >= subrs->count)
+          ERROR("Invalid Subr#.");
+        subr = subrs->data + subrs->offset[idx] - 1;
+        len  = subrs->offset[idx+1] - subrs->offset[idx];
+        t1char_build_charpath(cd, &subr, subr+len, subrs);
+        *data += 1;
       }
     } else if (b0 == cs_escape) {
       do_operator2(cd, data, endptr);
@@ -1154,18 +1154,18 @@ do_postproc (t1_chardesc *cd)
       x += cur->args[0]; y += cur->args[1];
       UPDATE_BBOX(cd->bbox, x, y);
       if (TRY_COMPACT) {
-	if (prev->type == cs_rlineto) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	} else if (prev->type == cs_rrcurveto) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->type = cs_rcurveline;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	}
+        if (prev->type == cs_rlineto) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        } else if (prev->type == cs_rrcurveto) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->type = cs_rcurveline;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        }
       }
       break;
     case cs_hmoveto:
@@ -1176,13 +1176,13 @@ do_postproc (t1_chardesc *cd)
       x += cur->args[0];
       UPDATE_BBOX(cd->bbox, x, y);
       if (TRY_COMPACT) {
-	if ((prev->type == cs_vlineto && (prev->num_args % 2) == 1) ||
-	    (prev->type == cs_hlineto && (prev->num_args % 2) == 0)) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	}
+        if ((prev->type == cs_vlineto && (prev->num_args % 2) == 1) ||
+            (prev->type == cs_hlineto && (prev->num_args % 2) == 0)) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        }
       }
       break;
     case cs_vmoveto:
@@ -1193,33 +1193,33 @@ do_postproc (t1_chardesc *cd)
       y += cur->args[0];
       UPDATE_BBOX(cd->bbox, x, y);
       if (TRY_COMPACT) {
-	if ((prev->type == cs_hlineto && (prev->num_args % 2) == 1) ||
-	    (prev->type == cs_vlineto && (prev->num_args % 2) == 0)) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	}
+        if ((prev->type == cs_hlineto && (prev->num_args % 2) == 1) ||
+            (prev->type == cs_vlineto && (prev->num_args % 2) == 0)) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        }
       }
       break;
     case cs_rrcurveto:
       for (i = 0; i < 3; i++) {
-	x += cur->args[2*i]; y += cur->args[2*i+1];
-	UPDATE_BBOX(cd->bbox, x, y);
+        x += cur->args[2*i]; y += cur->args[2*i+1];
+        UPDATE_BBOX(cd->bbox, x, y);
       }
       if (TRY_COMPACT) {
-	if (prev->type == cs_rrcurveto) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	} else if (prev->type == cs_rlineto) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->type = cs_rlinecurve;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	}
+        if (prev->type == cs_rrcurveto) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        } else if (prev->type == cs_rlineto) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->type = cs_rlinecurve;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        }
       }
       break;
     case cs_vhcurveto:
@@ -1230,13 +1230,13 @@ do_postproc (t1_chardesc *cd)
       x += cur->args[3];
       UPDATE_BBOX(cd->bbox, x, y);
       if (TRY_COMPACT) {
-	if ((prev->type == cs_hvcurveto && ((prev->num_args / 4) % 2) == 1) ||
-	    (prev->type == cs_vhcurveto && ((prev->num_args / 4) % 2) == 0)) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	}
+        if ((prev->type == cs_hvcurveto && ((prev->num_args / 4) % 2) == 1) ||
+            (prev->type == cs_vhcurveto && ((prev->num_args / 4) % 2) == 0)) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        }
       }
       break;
     case cs_hvcurveto:
@@ -1247,48 +1247,48 @@ do_postproc (t1_chardesc *cd)
       y += cur->args[3];
       UPDATE_BBOX(cd->bbox, x, y);
       if (TRY_COMPACT) {
-	if ((prev->type == cs_vhcurveto && ((prev->num_args / 4) % 2) == 1) ||
-	    (prev->type == cs_hvcurveto && ((prev->num_args / 4) % 2) == 0)) {
-	  copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
-	  prev->num_args += cur->num_args;
-	  prev->next = next;
-	  RELEASE(cur); cur = NULL;
-	}
+        if ((prev->type == cs_vhcurveto && ((prev->num_args / 4) % 2) == 1) ||
+            (prev->type == cs_hvcurveto && ((prev->num_args / 4) % 2) == 0)) {
+          copy_args(prev->args+prev->num_args, cur->args, cur->num_args);
+          prev->num_args += cur->num_args;
+          prev->next = next;
+          RELEASE(cur); cur = NULL;
+        }
       }
       break;
     case cs_flex:
       for (i = 0; i < 6; i++) {
-	x += cur->args[2*i]; y += cur->args[2*1+1];
-	UPDATE_BBOX(cd->bbox, x, y);
+        x += cur->args[2*i]; y += cur->args[2*1+1];
+        UPDATE_BBOX(cd->bbox, x, y);
       }
       if (cur->args[12] == 50.0) {
-	if (cur->args[1] == 0.0 && cur->args[11] == 0.0 &&
-	    cur->args[5] == 0.0 && cur->args[7] == 0.0 &&
-	    cur->args[3] + cur->args[9] == 0.0) {
-	  /* cur->args[0] = cur->args[0];  dx1 */
-	  cur->args[1] = cur->args[2];  /* dx2 */
-	  cur->args[2] = cur->args[3];  /* dy2 */
-	  cur->args[3] = cur->args[4];  /* dx3 */
-	  cur->args[4] = cur->args[6];  /* dx4 */
-	  cur->args[5] = cur->args[8];  /* dx5 */
-	  cur->args[6] = cur->args[10]; /* dx6 */
-	  cur->num_args = 7;
-	  cur->type = cs_hflex;
-	} else if (cur->args[5] == 0.0 && cur->args[7] == 0.0 &&
-		   (cur->args[1] + cur->args[3] +
-		    cur->args[9] + cur->args[11]) == 0) {
-	  /* cur->args[0] = cur->args[0];  dx1 */
-	  /* cur->args[1] = cur->args[1];  dy1 */
-	  /* cur->args[2] = cur->args[2];  dx2 */
-	  /* cur->args[3] = cur->args[3];  dy2 */
-	  /* cur->args[4] = cur->args[4];  dx3 */
-	  cur->args[5] = cur->args[6];  /* dx4 */
-	  cur->args[6] = cur->args[8];  /* dx5 */
-	  cur->args[7] = cur->args[9];  /* dy5 */
-	  cur->args[8] = cur->args[10]; /* dx6 */
-	  cur->num_args = 9;
-	  cur->type = cs_hflex1;
-	}
+        if (cur->args[1] == 0.0 && cur->args[11] == 0.0 &&
+            cur->args[5] == 0.0 && cur->args[7] == 0.0 &&
+            cur->args[3] + cur->args[9] == 0.0) {
+          /* cur->args[0] = cur->args[0];  dx1 */
+          cur->args[1] = cur->args[2];  /* dx2 */
+          cur->args[2] = cur->args[3];  /* dy2 */
+          cur->args[3] = cur->args[4];  /* dx3 */
+          cur->args[4] = cur->args[6];  /* dx4 */
+          cur->args[5] = cur->args[8];  /* dx5 */
+          cur->args[6] = cur->args[10]; /* dx6 */
+          cur->num_args = 7;
+          cur->type = cs_hflex;
+        } else if (cur->args[5] == 0.0 && cur->args[7] == 0.0 &&
+                   (cur->args[1] + cur->args[3] +
+                    cur->args[9] + cur->args[11]) == 0) {
+          /* cur->args[0] = cur->args[0];  dx1 */
+          /* cur->args[1] = cur->args[1];  dy1 */
+          /* cur->args[2] = cur->args[2];  dx2 */
+          /* cur->args[3] = cur->args[3];  dy2 */
+          /* cur->args[4] = cur->args[4];  dx3 */
+          cur->args[5] = cur->args[6];  /* dx4 */
+          cur->args[6] = cur->args[8];  /* dx5 */
+          cur->args[7] = cur->args[9];  /* dy5 */
+          cur->args[8] = cur->args[10]; /* dx6 */
+          cur->num_args = 9;
+          cur->type = cs_hflex1;
+        }
       }
       break;
     case CS_HINT_DECL:
@@ -1367,8 +1367,8 @@ t1char_get_metrics (card8 *src, long srclen, cff_index *subrs, t1_ginfo *ginfo)
  */
 static long
 t1char_encode_charpath (t1_chardesc *cd,
-			double default_width, double nominal_width,
-			card8 *dst, card8 *endptr)
+                        double default_width, double nominal_width,
+                        card8 *dst, card8 *endptr)
 {
   card8    *save;
   t1_cpath *curr;
@@ -1399,16 +1399,16 @@ t1char_encode_charpath (t1_chardesc *cd,
     for (i = 0; i < cd->num_stems && cd->stems[i].dir == HSTEM; i++) {
       num_hstems++;
       stem[0] = (reset ?
-		 (cd->stems[i].pos) :
-		 (cd->stems[i].pos - (cd->stems[i-1].pos + cd->stems[i-1].del)));
+                 (cd->stems[i].pos) :
+                 (cd->stems[i].pos - (cd->stems[i-1].pos + cd->stems[i-1].del)));
       stem[1] = cd->stems[i].del;
       put_numbers(stem, 2, &dst, endptr);
       CHECK_STATUS();
       reset = 0;
       if (2*num_hstems > CS_ARG_STACK_MAX - 3) {
-	CHECK_BUFFER(1);
-	*dst++ = (card8) ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ? cs_hstemhm : cs_hstem);
-	reset = 1;
+        CHECK_BUFFER(1);
+        *dst++ = (card8) ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ? cs_hstemhm : cs_hstem);
+        reset = 1;
       }
     }
     if (reset == 0) {
@@ -1418,36 +1418,36 @@ t1char_encode_charpath (t1_chardesc *cd,
     reset = 1;
     if (cd->num_stems - num_hstems > 0) {
       for (i = num_hstems; i < cd->num_stems; i++) {
-	num_vstems++;
-	stem[0] = (reset ?
-		   (cd->stems[i].pos) :
-		   (cd->stems[i].pos - (cd->stems[i-1].pos + cd->stems[i-1].del)));
-	stem[1] = cd->stems[i].del;
-	put_numbers(stem, 2, &dst, endptr);
-	CHECK_STATUS();
-	reset = 0;
-	if (2*num_vstems > CS_ARG_STACK_MAX - 3) {
-	  CHECK_BUFFER(1);
-	  *dst++ = (card8) ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ? cs_vstemhm : cs_vstem);
-	  reset = 1;
-	}
+        num_vstems++;
+        stem[0] = (reset ?
+                   (cd->stems[i].pos) :
+                   (cd->stems[i].pos - (cd->stems[i-1].pos + cd->stems[i-1].del)));
+        stem[1] = cd->stems[i].del;
+        put_numbers(stem, 2, &dst, endptr);
+        CHECK_STATUS();
+        reset = 0;
+        if (2*num_vstems > CS_ARG_STACK_MAX - 3) {
+          CHECK_BUFFER(1);
+          *dst++ = (card8) ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ? cs_vstemhm : cs_vstem);
+          reset = 1;
+        }
       }
       if (reset == 0) {
-	CHECK_BUFFER(1);
-	if ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ||
-	    (cd->flags & T1_CS_FLAG_USE_CNTRMASK)) {
-	  /*
-	   * The vstem hint operator can be ommited if hstem and vstem hints
-	   * are both declared at the beginning of a charstring, and is
-	   * followed directly by the hintmask or cntrmask operators.
-	   */
-	  if (curr->type != CS_HINT_DECL &&
-	      curr->type != cs_cntrmask) {
-	    *dst++ = (card8) cs_vstemhm;
-	  }
-	} else {
-	  *dst++ = (card8) cs_vstem;
-	}
+        CHECK_BUFFER(1);
+        if ((cd->flags & T1_CS_FLAG_USE_HINTMASK) ||
+            (cd->flags & T1_CS_FLAG_USE_CNTRMASK)) {
+          /*
+           * The vstem hint operator can be ommited if hstem and vstem hints
+           * are both declared at the beginning of a charstring, and is
+           * followed directly by the hintmask or cntrmask operators.
+           */
+          if (curr->type != CS_HINT_DECL &&
+              curr->type != cs_cntrmask) {
+            *dst++ = (card8) cs_vstemhm;
+          }
+        } else {
+          *dst++ = (card8) cs_vstem;
+        }
       }
     }
   }
@@ -1458,41 +1458,41 @@ t1char_encode_charpath (t1_chardesc *cd,
     switch (curr->type) {
     case CS_HINT_DECL:
       {
-	card8 hintmask[(CS_STEM_ZONE_MAX+7)/8];
+        card8 hintmask[(CS_STEM_ZONE_MAX+7)/8];
 
-	memset(hintmask, 0, (cd->num_stems+7)/8);
-	while (curr != NULL && curr->type == CS_HINT_DECL) {
-	  int stem_idx;
+        memset(hintmask, 0, (cd->num_stems+7)/8);
+        while (curr != NULL && curr->type == CS_HINT_DECL) {
+          int stem_idx;
 
-	  stem_idx = get_stem(cd, (int) curr->args[0]);
-	  ASSERT(stem_idx < cd->num_stems);
-	  hintmask[stem_idx/8] |= (1 << (7 - (stem_idx % 8)));
-	  curr = curr->next;
-	}
-	if (cd->flags & T1_CS_FLAG_USE_HINTMASK) {
-	  CHECK_BUFFER((cd->num_stems+7)/8 + 1);
-	  *dst++ = (card8) cs_hintmask;
-	  memcpy(dst, hintmask, (cd->num_stems+7)/8);
-	  dst += (cd->num_stems+7)/8;
-	}
+          stem_idx = get_stem(cd, (int) curr->args[0]);
+          ASSERT(stem_idx < cd->num_stems);
+          hintmask[stem_idx/8] |= (1 << (7 - (stem_idx % 8)));
+          curr = curr->next;
+        }
+        if (cd->flags & T1_CS_FLAG_USE_HINTMASK) {
+          CHECK_BUFFER((cd->num_stems+7)/8 + 1);
+          *dst++ = (card8) cs_hintmask;
+          memcpy(dst, hintmask, (cd->num_stems+7)/8);
+          dst += (cd->num_stems+7)/8;
+        }
       }
       break;
     case cs_cntrmask:
       {
-	card8 cntrmask[(CS_STEM_ZONE_MAX+7)/8];
-	int   stem_idx, i;
+        card8 cntrmask[(CS_STEM_ZONE_MAX+7)/8];
+        int   stem_idx, i;
 
-	memset(cntrmask, 0, (cd->num_stems+7)/8);
-	for (i = 0; i < curr->num_args; i++) {
-	  stem_idx = get_stem(cd, (int) curr->args[i]);
-	  ASSERT(stem_idx < cd->num_stems);
-	  cntrmask[stem_idx/8] |= (1 << (7 - (stem_idx % 8)));
-	}
-	CHECK_BUFFER((cd->num_stems+7)/8 + 1);
-	*dst++ = (card8) cs_cntrmask;
-	memcpy(dst, cntrmask, (cd->num_stems+7)/8);
-	dst += (cd->num_stems+7)/8;
-	curr = curr->next;
+        memset(cntrmask, 0, (cd->num_stems+7)/8);
+        for (i = 0; i < curr->num_args; i++) {
+          stem_idx = get_stem(cd, (int) curr->args[i]);
+          ASSERT(stem_idx < cd->num_stems);
+          cntrmask[stem_idx/8] |= (1 << (7 - (stem_idx % 8)));
+        }
+        CHECK_BUFFER((cd->num_stems+7)/8 + 1);
+        *dst++ = (card8) cs_cntrmask;
+        memcpy(dst, cntrmask, (cd->num_stems+7)/8);
+        dst += (cd->num_stems+7)/8;
+        curr = curr->next;
       }
       break;
     case cs_rmoveto: case cs_hmoveto: case cs_vmoveto:
@@ -1500,22 +1500,22 @@ t1char_encode_charpath (t1_chardesc *cd,
     case cs_rrcurveto:  case cs_hvcurveto: case cs_vhcurveto:
     case cs_rlinecurve: case cs_rcurveline:
       {
-	put_numbers(curr->args, curr->num_args, &dst, endptr);
-	CHECK_STATUS();
-	CHECK_BUFFER(1);
-	*dst++ = (card8) curr->type;
-	curr = curr->next;
+        put_numbers(curr->args, curr->num_args, &dst, endptr);
+        CHECK_STATUS();
+        CHECK_BUFFER(1);
+        *dst++ = (card8) curr->type;
+        curr = curr->next;
       }
       break;
     case cs_flex: case cs_hflex:
     case cs_hflex1:
       {
-	put_numbers(curr->args, curr->num_args, &dst, endptr);
-	CHECK_STATUS();
-	CHECK_BUFFER(2);
-	*dst++ = (card8) cs_escape;
-	*dst++ = (card8) curr->type;
-	curr = curr->next;
+        put_numbers(curr->args, curr->num_args, &dst, endptr);
+        CHECK_STATUS();
+        CHECK_BUFFER(2);
+        *dst++ = (card8) cs_escape;
+        *dst++ = (card8) curr->type;
+        curr = curr->next;
       }
       break;
     default:
@@ -1546,9 +1546,9 @@ t1char_encode_charpath (t1_chardesc *cd,
 
 long
 t1char_convert_charstring (card8 *dst, long dstlen,
-			   card8 *src, long srclen, cff_index *subrs,
-			   double default_width, double nominal_width,
-			   t1_ginfo *ginfo)
+                           card8 *src, long srclen, cff_index *subrs,
+                           double default_width, double nominal_width,
+                           t1_ginfo *ginfo)
 {
   long length;
   t1_chardesc t1char, *cd;
