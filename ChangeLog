@@ -1,3 +1,8 @@
+2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: Switch 2015 => 2016/dev.
+	* tardate.ac: Switch to 2015-06-12.
+
 2015-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* README.solaris (removed): Moved from here to doc/.
@@ -41,7 +46,7 @@
 
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* version.ac: Switch 2014 => 2015/dev'
+	* version.ac: Switch 2014 => 2015/dev.
 	* tardate.ac: Switch to 2014-06-16.
 
 2014-04-28  Peter Breitenlohner  <peb@mppmu.mpg.de>

@@ -15,6 +15,10 @@
 /* Define to 1 if you have the `close' function. */
 #undef HAVE_CLOSE
 
+/* Define to 1 if you have the declaration of `isascii', and to 0 if you
+   don't. */
+#undef HAVE_DECL_ISASCII
+
 /* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
    */
 #undef HAVE_DECL_TZNAME

@@ -261,6 +261,9 @@ AC_TYPE_UINT64_T
 AS_CASE([:$ac_cv_c_int64_t:$ac_cv_c_int64_t:],
         [*':no:'*], [AC_MSG_ERROR([Sorry, your compiler does not support 64-bit integer types.])])
 dnl
+dnl Check if <ctype.h> declares isascii.
+AC_CHECK_DECLS([isascii], [], [], [[#include <ctype.h>]])
+dnl
 dnl Check whether struct stat provides high-res time.
 AC_CHECK_MEMBERS([struct stat.st_mtim])
 ]) # KPSE_COMMON

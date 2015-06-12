@@ -18,4 +18,4 @@ dnl     append "dev", to distinguish binaries built between releases.
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current kpathsea version
-m4_define([kpse_version], [6.2.1])
+m4_define([kpse_version], [6.2.2dev])

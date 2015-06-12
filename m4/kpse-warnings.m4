@@ -1,5 +1,5 @@
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -148,10 +148,10 @@ m4_define([_KPSE_WARNING_GNU_CFLAGS],
 if test "x$enable_compiler_warnings" != xno; then
   kpse_cv_warning_$2="-Wimplicit -Wreturn-type"
   AS_CASE([`$[]$1 -dumpversion`],
-          [3.4.* | 4.*],
+          [3.4.* | 4.* | 5.*],
           [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wdeclaration-after-statement"])
   AS_CASE([`$[]$1 -dumpversion`],
-          [3.@<:@234@:>@.* | 4.*],
+          [3.@<:@234@:>@.* | 4.* | 5.*],
           [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
   if test "x$enable_compiler_warnings" != xmin; then
     kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"
@@ -160,7 +160,7 @@ if test "x$enable_compiler_warnings" != xno; then
       kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
       kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wcast-qual -Wcast-align -Wwrite-strings"
       AS_CASE([`$[]$1 -dumpversion`],
-              [3.4.* | 4.*],
+              [3.4.* | 4.* | 5.*],
               [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wold-style-definition"])
       if test "x$enable_compiler_warnings" != xmax; then
         kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wshadow"
@@ -183,7 +183,7 @@ if test "x$enable_compiler_warnings" != xno; then
           [3.* | 4.@<:@012345@:>@.*],
           [kpse_cv_warning_$2="-Wimplicit $kpse_cv_warning_$2"])
   AS_CASE([`$[]$1 -dumpversion`],
-          [3.@<:@234@:>@.* | 4.*],
+          [3.@<:@234@:>@.* | 4.* | 5.*],
           [kpse_cv_warning_$2="$kpse_cv_warning_$2 -Wno-unknown-pragmas"])
   if test "x$enable_compiler_warnings" != xmin; then
     kpse_cv_warning_$2="-Wall -Wunused $kpse_cv_warning_$2"

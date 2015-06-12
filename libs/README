@@ -12,7 +12,7 @@ See also comments in ../texk/README.
 cairo 1.14.2 - checked 11mar15
   http://cairographics.org/releases/
 
-freetype2 2.5.5 - checked 7jan15
+freetype2 2.6 - checked 12jun15
   http://savannah.nongnu.org/download/freetype/
 
 gd 2.1.1 - checked 14jan15
@@ -40,8 +40,8 @@ libpng 1.6.17 - checked 27mar15
 lua 5.2.3 - checked 11mar15
   http://www.lua.org/ftp/
 
-luajit 2.0.3 - checked 14mar14
-  http://luajit.org/download/LuaJIT-2.0.3.tar.gz
+luajit 2.0.4 - checked 12jun15
+  http://luajit.org/download/LuaJIT-2.0.4.tar.gz
 
 mpfr 3.1.2 - checked 13mar13
   http://ftp.gnu.org/gnu/mpfr/
@@ -49,7 +49,7 @@ mpfr 3.1.2 - checked 13mar13
 pixman 0.32.6 - checked 7jul14
   http://cairographics.org/releases/
 
-poppler 0.32.0 - checked 8mar15
+poppler 0.33.0 - checked 12jun15
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 potrace 1.12 - checked 27mar15

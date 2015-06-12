@@ -69,6 +69,9 @@ AC_ARG_ENABLE([$1-nowin],
                              m4_if([$3], [yes],
                                    [do not ])[build a separate non-window-capable $4],
                              m4_eval(kpse_indent_26+2)))[]dnl
+AS_CASE([$enable_$1_nowin],
+        [yes | no], ,
+        [enable_$1_nowin=$3])
 ])[]dnl m4_ifval
 m4_ifval([$5], [
 test "x$enable_web2c:$enable_$1" = xyes:yes && {

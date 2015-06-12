@@ -7,4 +7,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current TeX Live version
-m4_define([tex_live_version], [2015])
+m4_define([tex_live_version], [2016/dev])

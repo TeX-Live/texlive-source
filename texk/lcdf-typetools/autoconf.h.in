@@ -42,6 +42,10 @@
 /* Define to 1 if you have the `ctime' function. */
 #undef HAVE_CTIME
 
+/* Define to 1 if you have the declaration of `isascii', and to 0 if you
+   don't. */
+#undef HAVE_DECL_ISASCII
+
 /* Define to 1 if you have the declaration of `kpse_enc_format', and to 0 if
    you don't. */
 #undef HAVE_DECL_KPSE_ENC_FORMAT

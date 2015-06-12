@@ -1,3 +1,9 @@
+2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-warnings.m4: Warning flags for gcc 5.x.
+	* kpse-web2c.m4: Better handling of --disable-mf-nowin.
+	* kpse-common.m4: Check if <ctype.h> declares isascii.
+
 2015-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-web2c.m4: Add KPSE_WITH_XMF and KPSE_XMF_COND.

@@ -35,9 +35,6 @@ AC_PROG_AWK
 
 AC_CHECK_SIZEOF([long])
 
-dnl Check if <ctype.h> declares isascii.
-AC_CHECK_DECLS([isascii], [], [], [[#include <ctype.h>]])
-
 dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_DECLS([putenv])
 AC_REPLACE_FUNCS([putenv])
