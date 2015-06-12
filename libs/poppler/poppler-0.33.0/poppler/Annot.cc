@@ -33,6 +33,7 @@
 // Copyright (C) 2014 Jiri Slaby <jirislaby@gmail.com>
 // Copyright (C) 2014 Anuj Khare <khareanuj18@gmail.com>
 // Copyright (C) 2015 Petr Gajdos <pgajdos@suse.cz>
+// Copyright (C) 2015 Philipp Reinkemeier <philipp.reinkemeier@offis.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -2089,6 +2090,16 @@ void AnnotMarkup::setLabel(GooString *new_label) {
 }
 
 void AnnotMarkup::setPopup(AnnotPopup *new_popup) {
+  // If there exists an old popup annotation that is already
+  // associated with a page, then we need to remove that
+  // popup annotation from the page. Otherwise we would have
+  // dangling references to it.
+  if (popup != NULL && popup->getPageNum() != 0) {
+    Page *pageobj = doc->getPage(popup->getPageNum());
+    if (pageobj) {
+      pageobj->removeAnnot(popup);
+    }
+  }
   delete popup;
 
   if (new_popup) {
@@ -2100,6 +2111,15 @@ void AnnotMarkup::setPopup(AnnotPopup *new_popup) {
 
     new_popup->setParent(this);
     popup = new_popup;
+
+    // If this annotation is already added to a page, then we
+    // add the new popup annotation to the same page.
+    if (page != 0) {
+      Page *pageobj = doc->getPage(page);
+      assert(pageobj != NULL); // pageobj should exist in doc (see setPage())
+
+      pageobj->addAnnot(popup);
+    }
   } else {
     popup = NULL;
   }

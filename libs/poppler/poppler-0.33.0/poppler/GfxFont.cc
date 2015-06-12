@@ -30,7 +30,7 @@
 // Copyright (C) 2012 Yi Yang <ahyangyi@gmail.com>
 // Copyright (C) 2012 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
-// Copyright (C) 2013, 2014 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2013-2015 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2014 Olly Betts <olly@survex.com>
 //
 // To see a description of the changes please see the Changelog file that
@@ -2207,30 +2207,14 @@ int GfxCIDFont::getNextChar(char *s, int len, CharCode *code,
 
   // horizontal
   if (cMap->getWMode() == 0) {
-    w = widths.defWidth;
+    w = getWidth(cid);
     h = vx = vy = 0;
-    if (widths.nExceps > 0 && cid >= widths.exceps[0].first) {
-      a = 0;
-      b = widths.nExceps;
-      // invariant: widths.exceps[a].first <= cid < widths.exceps[b].first
-      while (b - a > 1) {
-	m = (a + b) / 2;
-	if (widths.exceps[m].first <= cid) {
-	  a = m;
-	} else {
-	  b = m;
-	}
-      }
-      if (cid <= widths.exceps[a].last) {
-	w = widths.exceps[a].width;
-      }
-    }
 
   // vertical
   } else {
     w = 0;
     h = widths.defHeight;
-    vx = widths.defWidth / 2;
+    vx = getWidth(cid) / 2;
     vy = widths.defVY;
     if (widths.nExcepsV > 0 && cid >= widths.excepsV[0].first) {
       a = 0;
@@ -2534,13 +2518,9 @@ int *GfxCIDFont::getCodeToGIDMap(FoFiTrueType *ff, int *mapsizep) {
   return codeToGID;
 }
 
-double GfxCIDFont::getWidth (char* s, int len) {
-  int nUsed;
+double GfxCIDFont::getWidth(CID cid) {
   double w;
   int a, b, m;
-  CharCode c;
-
-  CID cid = cMap->getCID(s, len, &c, &nUsed);
 
   w = widths.defWidth;
   if (widths.nExceps > 0 && cid >= widths.exceps[0].first) {
@@ -2560,6 +2540,14 @@ double GfxCIDFont::getWidth (char* s, int len) {
     }
   }
   return w;
+}
+
+double GfxCIDFont::getWidth (char* s, int len) {
+  int nUsed;
+  CharCode c;
+
+  CID cid = cMap->getCID(s, len, &c, &nUsed);
+  return getWidth(cid);
 }
 
 //------------------------------------------------------------------------

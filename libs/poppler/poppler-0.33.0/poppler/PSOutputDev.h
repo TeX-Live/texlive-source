@@ -96,7 +96,7 @@ public:
   // Open a PostScript output file, and write the prolog.
   // pages has to be sorted in increasing order
   PSOutputDev(const char *fileName, PDFDoc *docA,
-	      char *psTitle,
+	      char *psTitleA,
 	      const std::vector<int> &pages, PSOutMode modeA,
 	      int paperWidthA = -1, int paperHeightA = -1,
               GBool noCrop = gFalse,
@@ -111,7 +111,7 @@ public:
   // Open a PSOutputDev that will write to a generic stream.
   // pages has to be sorted in increasing order
   PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
-	      char *psTitle,
+	      char *psTitleA,
 	      PDFDoc *docA,
 	      const std::vector<int> &pages, PSOutMode modeA,
 	      int paperWidthA = -1, int paperHeightA = -1,
@@ -334,11 +334,12 @@ public:
 private:
 
   void init(PSOutputFunc outputFuncA, void *outputStreamA,
-	    PSFileType fileTypeA, char *pstitle, PDFDoc *doc,
+	    PSFileType fileTypeA, char *psTitleA, PDFDoc *doc,
 	    const std::vector<int> &pages, PSOutMode modeA,
 	    int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
 	    GBool manualCtrlA, int paperWidthA, int paperHeightA,
             GBool noCropA, GBool duplexA);
+  void postInit();
   void setupResources(Dict *resDict);
   void setupFonts(Dict *resDict);
   void setupFont(GfxFont *font, Dict *parentResDict);
@@ -434,6 +435,10 @@ private:
   int imgLLX, imgLLY,		// imageable area, in pts
       imgURX, imgURY;
   GBool noCrop;
+  GBool duplex;
+  std::vector<int> pages;
+  char *psTitle;
+  GBool postInitDone;		// true if postInit() was called
 
   PSOutputFunc outputFunc;
   void *outputStream;

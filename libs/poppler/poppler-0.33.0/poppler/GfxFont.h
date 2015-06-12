@@ -21,6 +21,7 @@
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2011 Axel Strübing <axel.struebing@freenet.de>
 // Copyright (C) 2011, 2012, 2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2015 Jason Crain <jason@aquaticape.us>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -401,6 +402,7 @@ private:
 
   int mapCodeToGID(FoFiTrueType *ff, int cmapi,
     Unicode unicode, GBool wmode);
+  double getWidth(CID cid);	// Get width of a character.
 
   GooString *collection;		// collection name
   CMap *cMap;			// char code --> CID

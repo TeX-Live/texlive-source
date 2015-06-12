@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current poppler version
-m4_define([poppler_version], [0.32.0])
+m4_define([poppler_version], [0.33.0])
