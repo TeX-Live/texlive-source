@@ -1,3 +1,8 @@
+2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaJIT-2.0.4.
+	* version.ac: Adjust.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
