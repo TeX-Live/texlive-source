@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[32])
+m4_define([poppler_version_minor],[33])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -231,7 +231,7 @@ CPPFLAGS="$CPPFLAGS $LIBTIFF_CFLAGS"
 CXXFLAGS="$CXXFLAGS $LIBTIFF_CFLAGS"
 LIBS="$LIBS $LIBTIFF_LIBS"
 if test x$enable_libtiff = xyes; then
-  if test x"$LIBTIFF_LIBS" != ; then
+  if test x"$LIBTIFF_LIBS" != x; then
     AC_CHECK_FUNC([TIFFOpen],,
 		  AC_MSG_ERROR("*** libtiff library not found ***"))
   else

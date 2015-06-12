@@ -1073,7 +1073,7 @@ static void outputToFile(void *stream, const char *data, int len) {
 }
 
 PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
-			 char *psTitle,
+			 char *psTitleA,
 			 const std::vector<int> &pages, PSOutMode modeA,
 			 int paperWidthA, int paperHeightA,
                          GBool noCropA, GBool duplexA,
@@ -1105,6 +1105,7 @@ PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
   haveTextClip = gFalse;
   t3String = NULL;
   forceRasterize = forceRasterizeA;
+  psTitle = NULL;
 
   // open file or pipe
   if (!strcmp(fileName, "-")) {
@@ -1135,14 +1136,14 @@ PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
     }
   }
 
-  init(outputToFile, f, fileTypeA, psTitle,
+  init(outputToFile, f, fileTypeA, psTitleA,
        doc, pages, modeA,
        imgLLXA, imgLLYA, imgURXA, imgURYA, manualCtrlA,
        paperWidthA, paperHeightA, noCropA, duplexA);
 }
 
 PSOutputDev::PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
-			 char *psTitle,
+			 char *psTitleA,
 			 PDFDoc *doc,
 			 const std::vector<int> &pages, PSOutMode modeA,
 			 int paperWidthA, int paperHeightA,
@@ -1172,8 +1173,9 @@ PSOutputDev::PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
   haveTextClip = gFalse;
   t3String = NULL;
   forceRasterize = forceRasterizeA;
+  psTitle = NULL;
 
-  init(outputFuncA, outputStreamA, psGeneric, psTitle,
+  init(outputFuncA, outputStreamA, psGeneric, psTitleA,
        doc, pages, modeA,
        imgLLXA, imgLLYA, imgURXA, imgURYA, manualCtrlA,
        paperWidthA, paperHeightA, noCropA, duplexA);
@@ -1212,17 +1214,16 @@ static bool pageDimensionEqual(int a, int b) {
   return (abs (a - b) < 5);
 }
 
+// Shared initialization of PSOutputDev members.
+//   Store the values but do not process them so the function that
+//   created the PSOutputDev can use the various setters to change defaults.
+
 void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
-		       PSFileType fileTypeA, char *pstitle, PDFDoc *docA,
+		       PSFileType fileTypeA, char *psTitleA, PDFDoc *docA,
 		       const std::vector<int> &pagesA, PSOutMode modeA,
 		       int imgLLXA, int imgLLYA, int imgURXA, int imgURYA,
 		       GBool manualCtrlA, int paperWidthA, int paperHeightA,
 		       GBool noCropA, GBool duplexA) {
-  Catalog *catalog;
-  PDFRectangle *box;
-  PSOutPaperSize *size;
-  GooList *names;
-  int w, h, i;
 
   if (pagesA.empty()) {
     ok = gFalse;
@@ -1230,6 +1231,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   }
 
   // initialize
+  postInitDone = gFalse;
   embedType1 = gTrue;
   embedTrueType = gTrue;
   embedCIDPostScript = gTrue;
@@ -1249,18 +1251,64 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   outputFunc = outputFuncA;
   outputStream = outputStreamA;
   fileType = fileTypeA;
+  psTitle = (psTitleA? strdup(psTitleA): NULL);
   doc = docA;
-  xref = doc->getXRef();
-  catalog = doc->getCatalog();
   level = globalParams->getPSLevel();
+  pages = pagesA;
   mode = modeA;
   paperWidth = paperWidthA;
   paperHeight = paperHeightA;
   noCrop = noCropA;
+  duplex = duplexA;
   imgLLX = imgLLXA;
   imgLLY = imgLLYA;
   imgURX = imgURXA;
   imgURY = imgURYA;
+  manualCtrl = manualCtrlA;
+
+  xref = NULL;
+
+  processColors = 0;
+  inType3Char = gFalse;
+  inUncoloredPattern = gFalse;
+  t3FillColorOnly = gFalse;
+
+#if OPI_SUPPORT
+  // initialize OPI nesting levels
+  opi13Nest = 0;
+  opi20Nest = 0;
+#endif
+
+  tx0 = ty0 = -1;
+  xScale0 = yScale0 = 0;
+  rotate0 = -1;
+  clipLLX0 = clipLLY0 = 0;
+  clipURX0 = clipURY0 = -1;
+
+  // initialize sequential page number
+  seqPage = 1;
+}
+
+// Complete the initialization after the function that created the PSOutputDev
+//   has had a chance to modify default values with the various setters.
+
+void PSOutputDev::postInit()
+{
+  Catalog *catalog;
+  PDFRectangle *box;
+  PSOutPaperSize *size;
+  GooList *names;
+  int w, h, i;
+
+  if (postInitDone || !ok) {
+    return;
+  }
+
+  postInitDone = gTrue;
+
+  xref = doc->getXRef();
+  catalog = doc->getCatalog();
+
   if (paperWidth < 0 || paperHeight < 0) {
     paperMatch = gTrue;
   } else {
@@ -1268,8 +1316,8 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   }
   Page *page;
   paperSizes = new GooList();
-  for (size_t pgi = 0; pgi < pagesA.size(); ++pgi) {
-    const int pg = pagesA[pgi];
+  for (size_t pgi = 0; pgi < pages.size(); ++pgi) {
+    const int pg = pages[pgi];
     page = catalog->getPage(pg);
     if (page == NULL)
       paperMatch = gFalse;
@@ -1283,7 +1331,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
         w = 595;
         h = 842;
       }
-    } else if (noCropA) {
+    } else if (noCrop) {
       w = (int)ceil(page->getMediaWidth());
       h = (int)ceil(page->getMediaHeight());
     } else {
@@ -1329,29 +1377,12 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
     imgURX = paperWidth;
     imgURY = paperHeight;
   }
-  manualCtrl = manualCtrlA;
-  std::vector<int> pages;
+  std::vector<int> pageList;
   if (mode == psModeForm) {
-    pages.push_back(pagesA[0]);
+    pageList.push_back(pages[0]);
   } else {
-    pages = pagesA;
+    pageList = pages;
   }
-  processColors = 0;
-  inType3Char = gFalse;
-  inUncoloredPattern = gFalse;
-  t3FillColorOnly = gFalse;
-
-#if OPI_SUPPORT
-  // initialize OPI nesting levels
-  opi13Nest = 0;
-  opi20Nest = 0;
-#endif
-
-  tx0 = ty0 = -1;
-  xScale0 = yScale0 = 0;
-  rotate0 = -1;
-  clipLLX0 = clipLLY0 = 0;
-  clipURX0 = clipURY0 = -1;
 
   // initialize fontIDs, fontFileIDs, and fontFileNames lists
   fontIDSize = 64;
@@ -1387,16 +1418,16 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   if (!manualCtrl) {
     Page *page;
     // this check is needed in case the document has zero pages
-    if ((page = doc->getPage(pages[0]))) {
-      writeHeader(pages,
+    if ((page = doc->getPage(pageList[0]))) {
+      writeHeader(pageList,
 		  page->getMediaBox(),
 		  page->getCropBox(),
 		  page->getRotate(),
-		  pstitle);
+		  psTitle);
     } else {
-      error(errSyntaxError, -1, "Invalid page {0:d}", pages[0]);
+      error(errSyntaxError, -1, "Invalid page {0:d}", pageList[0]);
       box = new PDFRectangle(0, 0, 1, 1);
-      writeHeader(pages, box, box, 0, pstitle);
+      writeHeader(pageList, box, box, 0, psTitle);
       delete box;
     }
     if (mode != psModeForm) {
@@ -1407,14 +1438,11 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
       writePS("%%EndProlog\n");
       writePS("%%BeginSetup\n");
     }
-    writeDocSetup(doc, catalog, pages, duplexA);
+    writeDocSetup(doc, catalog, pageList, duplex);
     if (mode != psModeForm) {
       writePS("%%EndSetup\n");
     }
   }
-
-  // initialize sequential page number
-  seqPage = 1;
 }
 
 PSOutputDev::~PSOutputDev() {
@@ -1422,6 +1450,9 @@ PSOutputDev::~PSOutputDev() {
   int i;
 
   if (ok) {
+    if (!postInitDone) {
+      postInit();
+    }
     if (!manualCtrl) {
       writePS("%%Trailer\n");
       writeTrailer();
@@ -1481,6 +1512,7 @@ PSOutputDev::~PSOutputDev() {
     customColors = cc->next;
     delete cc;
   }
+  gfree(psTitle);
 }
 
 void PSOutputDev::writeHeader(const std::vector<int> &pages,
@@ -1511,14 +1543,14 @@ void PSOutputDev::writeHeader(const std::vector<int> &pages,
   obj1.free();
   info.free();
   if(psTitle) {
-    char *sanitizedTile = strdup(psTitle);
-    for (Guint i = 0; i < strlen(sanitizedTile); ++i) {
-      if (sanitizedTile[i] == '\n' || sanitizedTile[i] == '\r') {
-        sanitizedTile[i] = ' ';
+    char *sanitizedTitle = strdup(psTitle);
+    for (Guint i = 0; i < strlen(sanitizedTitle); ++i) {
+      if (sanitizedTitle[i] == '\n' || sanitizedTitle[i] == '\r') {
+        sanitizedTitle[i] = ' ';
       }
     }
-    writePSFmt("%%Title: {0:s}\n", sanitizedTile);
-    free(sanitizedTile);
+    writePSFmt("%%Title: {0:s}\n", sanitizedTitle);
+    free(sanitizedTitle);
   }
   writePSFmt("%%LanguageLevel: {0:d}\n",
 	     (level == psLevel1 || level == psLevel1Sep) ? 1 :
@@ -3174,6 +3206,9 @@ GBool PSOutputDev::checkPageSlice(Page *page, double /*hDPI*/, double /*vDPI*/,
   Guchar digit;
   GBool isGray;
 
+  if (!postInitDone) {
+    postInit();
+  }
   if (forceRasterize) {
     rasterize = gTrue;
   } else {
@@ -3596,6 +3631,9 @@ void PSOutputDev::startPage(int pageNum, GfxState *state, XRef *xrefA) {
   GooString *s;
   PSOutPaperSize *paperSize;
 
+  if (!postInitDone) {
+    postInit();
+  }
   xref = xrefA;
   if (mode == psModePS) {
     GooString pageLabel;

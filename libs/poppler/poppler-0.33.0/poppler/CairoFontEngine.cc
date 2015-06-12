@@ -27,6 +27,7 @@
 // Copyright (C) 2010 Jan Kümmel <jan+freedesktop@snorc.org>
 // Copyright (C) 2012 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2015 Jason Crain <jason@aquaticape.us>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -256,12 +257,16 @@ _ft_done_face (void *closure)
   else
     _ft_open_faces = data->next;
 
+  if (data->fd != -1) {
 #if defined(__SUNPRO_CC) && defined(__sun) && defined(__SVR4)
-  munmap ((char*)data->bytes, data->size);
+    munmap ((char*)data->bytes, data->size);
 #else
-  munmap (data->bytes, data->size);
+    munmap (data->bytes, data->size);
 #endif
-  close (data->fd);
+    close (data->fd);
+  } else {
+    gfree (data->bytes);
+  }
 
   FT_Done_Face (data->face);
   gfree (data);
@@ -318,6 +323,8 @@ _ft_new_face (FT_Library lib,
         munmap (tmpl.bytes, tmpl.size);
 #endif
         close (tmpl.fd);
+      } else {
+	gfree (tmpl.bytes);
       }
       *face_out = l->face;
       *font_face_out = cairo_font_face_reference (l->font_face);
@@ -533,8 +540,6 @@ CairoFreeTypeFont *CairoFreeTypeFont::create(GfxFont *gfxFont, XRef *xref,
     }
 
     if (! _ft_new_face (lib, fileNameC, font_data, font_data_len, &face, &font_face)) {
-      gfree(codeToGID);
-      codeToGID = NULL;
       error(errSyntaxError, -1, "could not create cid face\n");
       goto err2;
     }
@@ -555,6 +560,8 @@ CairoFreeTypeFont *CairoFreeTypeFont::create(GfxFont *gfxFont, XRef *xref,
  err2:
   /* hmm? */
   delete fontLoc;
+  gfree (codeToGID);
+  gfree (font_data);
   fprintf (stderr, "some font thing failed\n");
   return NULL;
 }

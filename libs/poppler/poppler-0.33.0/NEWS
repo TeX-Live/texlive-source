@@ -1,3 +1,28 @@
+Release 0.33.0
+        core:
+         * Fix regression in pdftops parameter passing. Bug #89827
+         * Combine base characters and diacritical marks. Bug #87215
+         * Use width from W array for WMode positioning. Bug #89621
+         * Fixed adding annotation of Subtype Popup to pdf page. Bug #89136
+         * CairoOutputDev: Fix memory leak in CairoFreeTypeFont::create
+         * SplashOutputDev: memset on error to have reproducible outputs
+
+        qt4:
+         * Fix PDF Text String -> QString conversion. KDE Bug #344849
+
+        qt5:
+         * Fix PDF Text String -> QString conversion. KDE Bug #344849
+
+        glib:
+         * Add poppler_annot_markup_set_popup_rectangle()
+         * Fix segfault when creating PopplerAction. Bug #90093
+
+        utils:
+         * pdftohtml: Set exit status adecuately. Bug #83609
+
+        build system:
+         * configure: Fix invalid shell comparaison in libtiff test
+
 Release 0.32.0
         core:
          * Annotations: Fix rendering of empty BG/BC arrays
