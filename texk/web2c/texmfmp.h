@@ -92,7 +92,7 @@ typedef void* voidpointer;
 #if defined(MFLua)
 #define TEXMFPOOLNAME "mflua.pool"
 #define TEXMFENGINENAME "mflua"
-#elif defined(MFLua)
+#elif defined(MFLuaJIT)
 #define TEXMFPOOLNAME "mfluajit.pool"
 #define TEXMFENGINENAME "mfluajit"
 #else
