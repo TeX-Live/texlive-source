@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current TeX Live tarball version
-m4_define([tex_live_tardate], [2015-03-07])
+m4_define([tex_live_tardate], [2015-06-12])

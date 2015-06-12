@@ -3575,13 +3575,13 @@ else
 if test "x$enable_compiler_warnings" != xno; then
   kpse_cv_warning_cflags="-Wimplicit -Wreturn-type"
   case `$CC -dumpversion` in #(
-  3.4.* | 4.*) :
+  3.4.* | 4.* | 5.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wdeclaration-after-statement" ;; #(
   *) :
      ;;
 esac
   case `$CC -dumpversion` in #(
-  3.[234].* | 4.*) :
+  3.[234].* | 4.* | 5.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wno-unknown-pragmas" ;; #(
   *) :
      ;;
@@ -3593,7 +3593,7 @@ esac
       kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wparentheses -Wswitch -Wtrigraphs -Wpointer-arith"
       kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wcast-qual -Wcast-align -Wwrite-strings"
       case `$CC -dumpversion` in #(
-  3.4.* | 4.*) :
+  3.4.* | 4.* | 5.*) :
     kpse_cv_warning_cflags="$kpse_cv_warning_cflags -Wold-style-definition" ;; #(
   *) :
      ;;

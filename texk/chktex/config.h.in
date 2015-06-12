@@ -12,6 +12,10 @@
 /* Define to 1 if you have the `closedir' function. */
 #undef HAVE_CLOSEDIR
 
+/* Define to 1 if you have the declaration of `isascii', and to 0 if you
+   don't. */
+#undef HAVE_DECL_ISASCII
+
 /* Define to 1 if you have the declaration of `stpcpy', and to 0 if you don't.
    */
 #undef HAVE_DECL_STPCPY

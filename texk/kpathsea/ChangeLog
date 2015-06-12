@@ -1,3 +1,8 @@
+2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* version.ac: Update version number 6.2.1 => 6.2.2dev.
+	* configure.ac: Drop test for isascii (now in KPSE_COMMON).
+
 2015-05-21  Karl Berry  <karl@tug.org>
 
 	* TL'15.

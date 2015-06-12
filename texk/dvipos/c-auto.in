@@ -6,6 +6,10 @@
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
+/* Define to 1 if you have the declaration of `isascii', and to 0 if you
+   don't. */
+#undef HAVE_DECL_ISASCII
+
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
 #undef HAVE_DIRENT_H
