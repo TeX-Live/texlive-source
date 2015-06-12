@@ -48,7 +48,9 @@ m4_foreach([Kpse_Prog], [kpse_tex_progs],
 ## configure options for MF
 dnl [PROG, BUILD-OR-NO, NOWIN-OR-NO, TEXT, REQUIRED-LIBS]
 m4_define([kpse_mf_progs], [dnl
-[[mf],    [yes], [yes], [METAFONT], []],
+[[mf],       [yes], [yes], [METAFONT], []],
+[[mflua],    [yes], [no],  [MFLua],    [lua52]],
+[[mfluajit], [yes], [no],  [MFLuaJIT], [luajit]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_mf_progs],
            [m4_ifset([Kpse_Prog],

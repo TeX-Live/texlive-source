@@ -1,0 +1,203 @@
+>>> Running TRAP test for MFLuaJIT.
+>>> See SRCDIR/mfluajitdir/mfluajittrap/mfluajittrap.diffs for example of acceptable diffs.
++ ln -s SRCDIR/triptrap/trap.mf .
++ ./mfluajit --progname=inimfluajit
++ test '!' -s trap.base
++ mv trap.log mftrapin.log
++ diff SRCDIR/triptrap/mftrapin.log mftrapin.log
+1c1
+< This is METAFONT, Version 2.7182818 (INIMF)  7 JAN 2014 17:51
+---
+> This is MFLuaJIT, Version 2.7182818-0.5 (TeX Live 2015) (INIMF)  17 APR 2015 11:16
+150c150
+< String usage 26&83 (891&11438 still untouched)
+---
+> String usage 30&98 (6384&979377 still untouched)
+176,177c176,177
+<  (preloaded base=trap 2014.1.7)
+< 1117 strings of total length 20614
+---
+>  (preloaded base=trap 2015.4.17)
+> 1125 strings of total length 20684
+179c179
+< 265 symbolic tokens
+---
+> 266 symbolic tokens
++ ./mfluajit --progname=inimfluajit
++ mv trap.log mftrap.log
++ mv trap.tfm mftrap.tfm
++ diff SRCDIR/triptrap/mftrap.fot mftrap.fot
+1,3c1,2
+< This is METAFONT, Version 2.7182818 (INIMF)
+< ** &trap  trap 
+< (trap.mf
+---
+> This is MFLuaJIT, Version 2.7182818-0.5 (TeX Live 2015) (INIMF)
+> **(trap.mf
+39c38
+< String usage 41&161 (815&7634 still untouched)
+---
+> String usage 50&202 (6298&975523 still untouched)
++ diff SRCDIR/triptrap/mftrap.log mftrap.log
+1c1
+< This is METAFONT, Version 2.7182818 (preloaded base=trap 2014.1.7)  7 JAN 2014 18:11
+---
+> This is MFLuaJIT, Version 2.7182818-0.5 (TeX Live 2015) (preloaded base=trap 2015.4.17)  17 APR 2015 11:16
+133,134c133,134
+< <scantokens> pair
+<                   p[],';^^ff
+---
+> <scantokens> or <runscript> pair
+>                                  p[],';^^ff
+145,146c145,146
+< <scantokens> pair
+<                   p[],';^^ff
+---
+> <scantokens> or <runscript> pair
+>                                  p[],';^^ff
+158,159c158,159
+< <scantokens> pair
+<                   p[],';^^ff
+---
+> <scantokens> or <runscript> pair
+>                                  p[],';^^ff
+169,170c169,170
+< <scantokens> pair p[],';^^ff
+<                             
+---
+> <scantokens> or <runscript> ...f
+>                                 
+1825c1825
+< String usage 24&92 (858&11309 still untouched)
+---
+> String usage 30&119 (6344&979191 still untouched)
+3693,3695c3693,3695
+< xpart %CAPSULE1359=xx
+< %CAPSULE1367=2yy-2
+< %CAPSULE1375 = 3.3333xx+3.3333
+---
+> xpart %CAPSULE1370=xx
+> %CAPSULE1378=2yy-2
+> %CAPSULE1386 = 3.3333xx+3.3333
+3755,3757c3755,3757
+< xpart %CAPSULE1049 = 8000o2-4000o1+1000o3+9
+< xpart %CAPSULE1383=xpart '
+< ypart %CAPSULE1383=ypart '
+---
+> xpart %CAPSULE604 = 8000o2-4000o1+1000o3+9
+> xpart %CAPSULE1394=xpart '
+> ypart %CAPSULE1394=ypart '
+3760,3761c3760,3761
+< ### 4000o1 = -xpart %CAPSULE1049+8000o2+1000o3+9
+< ### -4.87383o2 = -oo-0.0004xpart %CAPSULE1049+0.39673o3-17.99643
+---
+> ### 4000o1 = -xpart %CAPSULE604+8000o2+1000o3+9
+> ### -4.87383o2 = -oo-0.0004xpart %CAPSULE604+0.39673o3-17.99643
+3768c3768
+< ### -alfa=-xpart %CAPSULE1494
+---
+> ### -alfa=-xpart %CAPSULE368
+3770,3771c3770,3771
+< {xpart((xpart %CAPSULE1494,0))}
+< ### -xpart %CAPSULE17=-%CAPSULE1176
+---
+> {xpart((xpart %CAPSULE368,0))}
+> ### -xpart %CAPSULE17=-%CAPSULE1376
+3773,3775c3773,3775
+< {(%CAPSULE382)+(%CAPSULE1176)}
+< ### -%CAPSULE382=-%CAPSULE1893+%CAPSULE1176
+< ### -%CAPSULE1893=-ypart %CAPSULE1049
+---
+> {(%CAPSULE382)+(%CAPSULE1376)}
+> ### -%CAPSULE382=-%CAPSULE1364+%CAPSULE1376
+> ### -%CAPSULE1364=-ypart %CAPSULE604
+3780c3780
+< ### p$=-ypart %CAPSULE604+1
+---
+> ### p$=-ypart %CAPSULE1360+1
+3782,3793c3782,3793
+< {(2/3)*((-ypart %CAPSULE604+1,ypart %CAPSULE604))}
+< ### ypart %CAPSULE604=-xpart %CAPSULE604+1
+< ### -0.66667xpart %CAPSULE604=-xpart %CAPSULE1889
+< {-((xpart %CAPSULE1889,-xpart %CAPSULE1889+0.66667))}
+< ### xpart %CAPSULE1889=-xpart %CAPSULE1172
+< {((xpart %CAPSULE1049,ypart %CAPSULE1049))=((xpart %CAPSULE1172,-xpart %
+< CAPSULE1172-0.66667))}
+< ## xpart %CAPSULE1172=-ypart %CAPSULE1049-0.66667
+< ## ypart %CAPSULE1049=-xpart %CAPSULE1049-0.66667
+< ### -xpart %CAPSULE1049=-xpart %CAPSULE1172
+< {((xpart ',ypart '))=((xpart %CAPSULE1172,-xpart %CAPSULE1172-0.66667))}
+< ## xpart %CAPSULE1172=-ypart '-0.66667
+---
+> {(2/3)*((-ypart %CAPSULE1360+1,ypart %CAPSULE1360))}
+> ### ypart %CAPSULE1360=-xpart %CAPSULE1360+1
+> ### -0.66667xpart %CAPSULE1360=-xpart %CAPSULE1744
+> {-((xpart %CAPSULE1744,-xpart %CAPSULE1744+0.66667))}
+> ### xpart %CAPSULE1744=-xpart %CAPSULE1675
+> {((xpart %CAPSULE604,ypart %CAPSULE604))=((xpart %CAPSULE1675,-xpart %CA
+> PSULE1675-0.66667))}
+> ## xpart %CAPSULE1675=-ypart %CAPSULE604-0.66667
+> ## ypart %CAPSULE604=-xpart %CAPSULE604-0.66667
+> ### -xpart %CAPSULE604=-xpart %CAPSULE1675
+> {((xpart ',ypart '))=((xpart %CAPSULE1675,-xpart %CAPSULE1675-0.66667))}
+> ## xpart %CAPSULE1675=-ypart '-0.66667
+3799c3799
+< ### -ooo=-%CAPSULE1494
+---
+> ### -ooo=-%CAPSULE1051
+3801,3810c3801,3810
+< {(%CAPSULE1494)+(1)}
+< ### -%CAPSULE1494=-%CAPSULE1350+1
+< {(1/2)*(%CAPSULE1350)}
+< ### -0.5%CAPSULE1350=-%CAPSULE1367
+< {-(%CAPSULE1367)}
+< ### %CAPSULE1367=-%CAPSULE1893
+< {(2)*(%CAPSULE1893)}
+< ### -2%CAPSULE1893=-%CAPSULE1885
+< {(-0.5%CAPSULE1885-0.5)=(%CAPSULE1885)}
+< ## %CAPSULE1885=-0.33333
+---
+> {(%CAPSULE1051)+(1)}
+> ### -%CAPSULE1051=-%CAPSULE1378+1
+> {(1/2)*(%CAPSULE1378)}
+> ### -0.5%CAPSULE1378=-%CAPSULE1370
+> {-(%CAPSULE1370)}
+> ### %CAPSULE1370=-%CAPSULE1362
+> {(2)*(%CAPSULE1362)}
+> ### -2%CAPSULE1362=-%CAPSULE1354
+> {(-0.5%CAPSULE1354-0.5)=(%CAPSULE1354)}
+> ## %CAPSULE1354=-0.33333
+4235c4235
+< String usage 41&161 (815&7634 still untouched)
+---
+> String usage 50&202 (6298&975523 still untouched)
+4251,4252c4251,4252
+<  68 strings out of 883
+<  3752 string characters out of 11386
+---
+>  77 strings out of 6375
+>  3793 string characters out of 979316
+4254,4255c4254,4255
+<  289 symbolic tokens out of 2100
+<  8i,43n,14r,8p,167b stack positions out of 30i,100n,300r,150p,500b
+---
+>  290 symbolic tokens out of 9500
+>  8i,43n,14r,8p,167b stack positions out of 300i,300n,1000r,150p,3000b
+4263c4263
+<   out of 256w,16h,16d,64i,5000l,500k,256e,50p)
+---
+>   out of 256w,16h,16d,64i,15000l,2500k,256e,60p)
++ ./tftopl ./mftrap.tfm mftrap.pl
++ diff SRCDIR/triptrap/mftrap.pl mftrap.pl
++ ./gftype -m -i ./trap.72270gf
++ diff SRCDIR/triptrap/trap.typ trap.typ
+1c1
+< This is GFtype, Version 3.1
+---
+> This is GFtype, Version 3.1 (TeX Live 2015)
+3c3
+< ' METAFONT output 2014.01.07:1811'
+---
+> ' METAFONT output 2015.04.17:1116'
++ :
+PASS: mfluajitdir/mfluajittraptest

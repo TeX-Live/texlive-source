@@ -89,6 +89,11 @@
 #define edit_var "TEXEDIT"
 #endif /* TeX */
 #ifdef MF
+#if defined(MFLua)
+#include <mfluadir/mfluaextra.h>
+#elif defined(MFLuaJIT)
+#include <mfluajitdir/mfluajitextra.h>
+#else
 #define BANNER "This is Metafont, Version 2.7182818"
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
@@ -105,6 +110,7 @@
 #define INPUT_FORMAT kpse_mf_format
 #define INI_PROGRAM "inimf"
 #define VIR_PROGRAM "virmf"
+#endif
 #define edit_var "MFEDIT"
 #endif /* MF */
 

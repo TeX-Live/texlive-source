@@ -81,12 +81,14 @@ AS_CASE([$with_x:$kpse_cv_have_win32],
         [with_x=no
          AC_MSG_NOTICE([WIN32 -> `--without-x'])
          ac_configure_args="$ac_configure_args '--without-x'"])
-AS_CASE([$enable_luajittex],
+AC_FOREACH([Kpse_Pkg], [luajittex mfluajit], [dnl
+AS_CASE([$enable_]Kpse_Pkg,
         [yes | no], [:],
           [AS_CASE([$host],
                    [alpha* | sparc* | x86_64-*-cygwin | powerpc-*-darwin* ],
-                     [AC_MSG_NOTICE([$host -> `--disable-luajittex'])
-                      ac_configure_args="$ac_configure_args '--disable-luajittex'"])])        
+                     [AC_MSG_NOTICE([$host -> `--disable-]Kpse_Pkg['])
+                      ac_configure_args="$ac_configure_args '--disable-]Kpse_Pkg['"])])
+])
 KPSE_FOR_PKGS([utils], [m4_sinclude(kpse_TL[utils/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([texk], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])

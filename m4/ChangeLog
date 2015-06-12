@@ -3,6 +3,8 @@
 	* kpse-warnings.m4: Warning flags for gcc 5.x.
 	* kpse-web2c.m4: Better handling of --disable-mf-nowin.
 	* kpse-common.m4: Check if <ctype.h> declares isascii.
+	* kpse-setup.m4: MFLuaJIT requires LuaJIT.
+	* kpse-poppler-flags.m4: LuaTeX requires poppler 0.30 or better.
 
 2015-03-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

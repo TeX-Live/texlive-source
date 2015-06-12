@@ -182,6 +182,12 @@ include $(srcdir)/am/cweb.am
 ## TeX and MF
 include $(srcdir)/am/texmf.am
 
+## MFLua
+include $(srcdir)/mfluadir/am/mflua.am
+
+## MFLuaJIT
+include $(srcdir)/mfluajitdir/am/mfluajit.am
+
 ## MetaPost
 include $(srcdir)/mplibdir/am/mplib.am
 

@@ -1,3 +1,8 @@
+2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Integrate MFLua and MFLuaJIT.
+	* texmfmp.c: Adapted.
+
 2015-03-16  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* printversion.c: 2014 ---> 2015.

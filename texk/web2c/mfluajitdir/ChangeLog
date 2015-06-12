@@ -1,0 +1,5 @@
+2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported MFLuaJIT into TeX Live, based on the SVN repository
+	  https://foundry.supelec.fr/projects/mflua
+	  from Luigi Scarso <luigi.scarso@gmail.com>.

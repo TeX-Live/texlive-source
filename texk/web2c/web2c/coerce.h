@@ -36,6 +36,9 @@ extern void calledit (packedASCIIcode *, poolpointer, integer, integer);
 #ifdef MF
 extern void blankrectangle (screencol, screencol, screenrow, screenrow);
 extern void paintrow (screenrow, pixelcolor, transspec, screencol);
+#if defined(MFLua) || defined(MFLuaJIT)
+#include <mfluadir/mfluac.h>
+#endif
 #endif
 
 extern strnumber makefullnamestring(void);

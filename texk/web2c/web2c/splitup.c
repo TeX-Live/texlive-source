@@ -118,8 +118,14 @@ main (int argc, string *argv)
   fputs ("#define STAT\n#define INI\n", out);
   
   if (STREQ (output_name, "mf")) {
-    fputs ("#define INIMF\n#define MF\n", out);
+    fputs ("#define INIMF\n#define MF\n#define onlyMF\n", out);
     coerce = "mfcoerce.h";
+  } else if (STREQ (output_name, "mflua")) {
+    fputs ("#define INIMF\n#define MF\n#define MFLua\n", out);
+    coerce = "mfluacoerce.h";
+  } else if (STREQ (output_name, "mfluajit")) {
+    fputs ("#define INIMF\n#define MF\n#define MFLuaJIT\n", out);
+    coerce = "mfluajitcoerce.h";
   } else if (STREQ (output_name, "tex")) {
     fputs ("#define INITEX\n#define TeX\n#define onlyTeX\n", out);
     coerce = "texcoerce.h";
