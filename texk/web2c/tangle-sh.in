@@ -38,7 +38,7 @@ do_tangle () {
   else
     case $base in
       aleph | xetex) echo "  OTANGLE " $base;;
-      *tex | mf) echo "  TANGLE  " $base;;
+      *tex | mf*) echo "  TANGLE  " $base;;
       *) echo "  CTANGLE " $base;;
     esac
     $tangle "$@" >$base.out 2>&1; rc=$?

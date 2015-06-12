@@ -1,7 +1,7 @@
 #! /bin/sh
 # shell script to run TRIP and TRAP tests and create diffs.
 #
-#   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -22,6 +22,8 @@ do
   case $file in
   trip.diffs) tst=triptest; msg='TRIP test for TeX';;
   mftrap.diffs) tst=mftraptest; msg='TRAP test for Metafont';;
+  mfluatrap.diffs) tst=mfluadir/mfluatraptest; msg='TRAP test for MFLua';;
+  mfluajittrap.diffs) tst=mfluajitdir/mfluajittraptest; msg='TRAP test for MFLuaJIT';;
   mptrap.diffs) tst=mplibdir/mptraptest; msg='MPTRAP test for MetaPost';;
   etrip.diffs) tst=etexdir/etriptest; msg='e-TRIP test for e-TeX';;
   ptrip.diffs) tst=ptexdir/ptriptest; msg='TRIP test for pTeX';;

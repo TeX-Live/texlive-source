@@ -64,9 +64,9 @@ case $basefile in
     midcmd="| sed -f $srcdir/web2c/cvtbib.sed"
     ;;
 
-  mf|tex|aleph|etex|pdftex|ptex|eptex|euptex|uptex|xetex)
+  mf|mflua|mfluajit|tex|aleph|etex|pdftex|ptex|eptex|euptex|uptex|xetex)
     case $basefile in
-      mf)
+      mf*)
         more_defines="$srcdir/web2c/texmf.defines $srcdir/web2c/mfmp.defines"
         precmd="| sed -f $srcdir/web2c/cvtmf1.sed"
         web2c_options="-m -c${basefile}coerce"
@@ -75,14 +75,14 @@ case $basefile in
 
       *)
         more_defines="$srcdir/web2c/texmf.defines $srcdir/synctexdir/synctex.defines"
-        prog_defines="$srcdir/${basefile}dir/$basefile.defines"
-        if test -f $prog_defines; then
-          more_defines="$more_defines $prog_defines"
-        fi
         web2c_options="-t -c${basefile}coerce"
         fixwrites_options=-t
         ;;
     esac
+    prog_defines="$srcdir/${basefile}dir/$basefile.defines"
+    if test -f $prog_defines; then
+      more_defines="$more_defines $prog_defines"
+    fi
     hfile=texmfmp.h
     postcmd="| ./web2c/splitup $splitup_options $basefile"
     cfile=${basefile}0.c # last output file, or thereabouts
@@ -121,7 +121,7 @@ case $basefile in
     sed -e 's/(buftype)//g' -e 's/(pdstype)//g' <$basefile.h >x$basefile.h
     mv x$basefile.h $basefile.h
     ;;
-  mf|tex|aleph|etex|pdftex|ptex|eptex|euptex|uptex|xetex)
+  mf|mflua|mfluajit|tex|aleph|etex|pdftex|ptex|eptex|euptex|uptex|xetex)
     sleep 2 # so timestamps are definitely later, to avoid make weirdness
     cat $srcdir/web2c/coerce.h >>${basefile}coerce.h
     touch ${basefile}d.h

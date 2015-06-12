@@ -38,7 +38,7 @@
 @d gubed==endif('TEXMF_DEBUG')
 @z
 
-@x
+@x [1.7]
 @d stat==@{ {change this to `$\\{stat}\equiv\null$' when gathering
   usage statistics}
 @d tats==@t@>@} {change this to `$\\{tats}\equiv\null$' when gathering
@@ -235,7 +235,7 @@ for i:=0 to @'37 do xchr[i]:=i;
 for i:=@'177 to @'377 do xchr[i]:=i;
 @z
 
-@x [2.24]
+@x [2.23]
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 @y
 for i:=0 to @'176 do xord[xchr[i]]:=i;
@@ -715,13 +715,13 @@ noreturn procedure confusion(@!s:str_number);
 @y
 @z
 
-@x [102] Use halfp.
+@x [7.102] Use halfp.
 round_decimals:=half(a+1);
 @y
 round_decimals:=halfp(a+1);
 @z
 
-@x [7.107-7.115] Optionally replace make_fraction etc. with external routines
+@x [7.107-7.114] Optionally replace make_fraction etc. with external routines
 @p function make_fraction(@!p,@!q:integer):fraction;
 @y
 In the C version, there are external routines that use double precision
@@ -736,7 +736,7 @@ don't expect anyone will actually notice.)
 @p ifdef('FIXPT')@/
 function make_fraction(@!p,@!q:integer):fraction;
 @z
-@x
+@x [7.107]
   if negative then make_fraction:=-(f+n)@+else make_fraction:=f+n;
   end;
 end;
@@ -746,13 +746,13 @@ end;
 end;@/
 endif('FIXPT')
 @z
-@x
+@x [7.109]
 @p function take_fraction(@!q:integer;@!f:fraction):integer;
 @y
 @p ifdef('FIXPT')@/
 function take_fraction(@!q:integer;@!f:fraction):integer;
 @z
-@x
+@x [7.109]
 else take_fraction:=n+p;
 end;
 @y
@@ -761,35 +761,27 @@ end;@/
 endif('FIXPT')
 @z
 
-@x [111]
-@<Compute $p=\lfloor qf/2^{28}+{1\over2}\rfloor-q$@>=
-p:=fraction_half; {that's $2^{27}$; the invariants hold now with $k=28$}
-if q<fraction_four then
+@x [7.111] Use halfp.
   repeat if odd(f) then p:=half(p+q)@+else p:=half(p);
   f:=half(f);
   until f=1
 else  repeat if odd(f) then p:=p+half(q-p)@+else p:=half(p);
   f:=half(f);
-  until f=1
 @y
-@<Compute $p=\lfloor qf/2^{28}+{1\over2}\rfloor-q$@>=
-p:=fraction_half; {that's $2^{27}$; the invariants hold now with $k=28$}
-if q<fraction_four then
   repeat if odd(f) then p:=halfp(p+q)@+else p:=halfp(p);
   f:=halfp(f);
   until f=1
 else  repeat if odd(f) then p:=p+halfp(q-p)@+else p:=halfp(p);
   f:=halfp(f);
-  until f=1
 @z
 
-@x
+@x [7.112]
 @p function take_scaled(@!q:integer;@!f:scaled):integer;
 @y
 @p ifdef('FIXPT')@/
 function take_scaled(@!q:integer;@!f:scaled):integer;
 @z
-@x
+@x [7.112]
 else take_scaled:=n+p;
 end;
 @y
@@ -798,31 +790,21 @@ end;@/
 endif('FIXPT')
 @z
 
-@x [113]
-@ @<Compute $p=\lfloor qf/2^{16}+{1\over2}\rfloor-q$@>=
-p:=half_unit; {that's $2^{15}$; the invariants hold now with $k=16$}
-@^inner loop@>
-if q<fraction_four then
+@x [7.113] Use halfp.
   repeat if odd(f) then p:=half(p+q)@+else p:=half(p);
   f:=half(f);
   until f=1
 else  repeat if odd(f) then p:=p+half(q-p)@+else p:=half(p);
   f:=half(f);
-  until f=1
 @y
-@ @<Compute $p=\lfloor qf/2^{16}+{1\over2}\rfloor-q$@>=
-p:=half_unit; {that's $2^{15}$; the invariants hold now with $k=16$}
-@^inner loop@>
-if q<fraction_four then
   repeat if odd(f) then p:=halfp(p+q)@+else p:=halfp(p);
   f:=halfp(f);
   until f=1
 else  repeat if odd(f) then p:=p+halfp(q-p)@+else p:=halfp(p);
   f:=halfp(f);
-  until f=1
 @z
 
-@x
+@x [7.114]
 operands are positive. \ (This procedure is not used especially often,
 so it is not part of \MF's inner loop.)
 
@@ -835,7 +817,7 @@ an external C routine.)
 @p ifdef('FIXPT')@/
 function make_scaled(@!p,@!q:integer):scaled;
 @z
-@x
+@x [7.114]
   if negative then make_scaled:=-(f+n)@+else make_scaled:=f+n;
   end;
 end;
@@ -886,116 +868,34 @@ end;
 @y
 @z
 
-@x [121]
+@x [8.121] Use halfp.
   square_rt:=half(q);
 @y
   square_rt:=halfp(q);
 @z
 
-@x [126]
-@p function pyth_sub(@!a,@!b:integer):integer;
-label done;
-var @!r:fraction; {register used to transform |a| and |b|}
-@!big:boolean; {is the input dangerously near $2^{31}$?}
-begin a:=abs(a); b:=abs(b);
-if a<=b then @<Handle erroneous |pyth_sub| and set |a:=0|@>
-else  begin if a<fraction_four then big:=false
+@x [8.126] Use halfp.
   else  begin a:=half(a); b:=half(b); big:=true;
-    end;
-  @<Replace |a| by an approximation to $\psqrt{a^2-b^2}$@>;
-  if big then a:=a+a;
-  end;
-pyth_sub:=a;
-end;
 @y
-@p function pyth_sub(@!a,@!b:integer):integer;
-label done;
-var @!r:fraction; {register used to transform |a| and |b|}
-@!big:boolean; {is the input dangerously near $2^{31}$?}
-begin a:=abs(a); b:=abs(b);
-if a<=b then @<Handle erroneous |pyth_sub| and set |a:=0|@>
-else  begin if a<fraction_four then big:=false
   else  begin a:=halfp(a); b:=halfp(b); big:=true;
-    end;
-  @<Replace |a| by an approximation to $\psqrt{a^2-b^2}$@>;
-  if big then a:=a+a;
-  end;
-pyth_sub:=a;
-end;
 @z
 
-@x [133]
-@ @<Increase |k| until |x| can...@>=
-begin z:=((x-1) div two_to_the[k])+1; {$z=\lceil x/2^k\rceil$}
-while x<fraction_four+z do
+@x [8.133] Use halfp.
   begin z:=half(z+1); k:=k+1;
-  end;
-y:=y+spec_log[k]; x:=x-z;
-end
 @y
-@ @<Increase |k| until |x| can...@>=
-begin z:=((x-1) div two_to_the[k])+1; {$z=\lceil x/2^k\rceil$}
-while x<fraction_four+z do
   begin z:=halfp(z+1); k:=k+1;
-  end;
-y:=y+spec_log[k]; x:=x-z;
-end
 @z
 
-@x [142]
-@<Set variable |z| to the arg...@>=
-while x>=fraction_two do
+@x [8.142] Use halfp.
   begin x:=half(x); y:=half(y);
-  end;
-z:=0;
-if y>0 then
-  begin while x<fraction_one do
-    begin double(x); double(y);
-    end;
-  @<Increase |z| to the arg of $(x,y)$@>;
-  end
 @y
-@<Set variable |z| to the arg...@>=
-while x>=fraction_two do
   begin x:=halfp(x); y:=halfp(y);
-  end;
-z:=0;
-if y>0 then
-  begin while x<fraction_one do
-    begin double(x); double(y);
-    end;
-  @<Increase |z| to the arg of $(x,y)$@>;
-  end
 @z
 
-@x [150]
-@p procedure init_randoms(@!seed:scaled);
-var @!j,@!jj,@!k:fraction; {more or less random integers}
-@!i:0..54; {index into |randoms|}
-begin j:=abs(seed);
+@x [8.150] Use halfp.
 while j>=fraction_one do j:=half(j);
-k:=1;
-for i:=0 to 54 do
-  begin jj:=k; k:=j-k; j:=jj;
-  if k<0 then k:=k+fraction_one;
-  randoms[(i*21)mod 55]:=j;
-  end;
-new_randoms; new_randoms; new_randoms; {``warm up'' the array}
-end;
 @y
-@p procedure init_randoms(@!seed:scaled);
-var @!j,@!jj,@!k:fraction; {more or less random integers}
-@!i:0..54; {index into |randoms|}
-begin j:=abs(seed);
 while j>=fraction_one do j:=halfp(j);
-k:=1;
-for i:=0 to 54 do
-  begin jj:=k; k:=j-k; j:=jj;
-  if k<0 then k:=k+fraction_one;
-  randoms[(i*21)mod 55]:=j;
-  end;
-new_randoms; new_randoms; new_randoms; {``warm up'' the array}
-end;
 @z
 
 @x [9.153] Increase memory size.
@@ -1129,26 +1029,10 @@ char_class[tab]:=space_class;
 char_class[form_feed]:=space_class;
 @z
 
-@x [232] Use halfp.
-@p procedure init_big_node(@!p:pointer);
-var @!q:pointer; {the new node}
-@!s:small_number; {its size}
-begin s:=big_node_size[type(p)]; q:=get_node(s);
-repeat s:=s-2; @<Make variable |q+s| newly independent@>;
+@x [15.232] Use halfp.
 name_type(q+s):=half(s)+x_part_sector; link(q+s):=null;
-until s=0;
-link(q):=p; value(p):=q;
-end;
 @y
-@p procedure init_big_node(@!p:pointer);
-var @!q:pointer; {the new node}
-@!s:small_number; {its size}
-begin s:=big_node_size[type(p)]; q:=get_node(s);
-repeat s:=s-2; @<Make variable |q+s| newly independent@>;
 name_type(q+s):=halfp(s)+x_part_sector; link(q+s):=null;
-until s=0;
-link(q):=p; value(p):=q;
-end;
 @z
 
  [20.329] |valid_range| uses |abs|, which we have defined as a C
@@ -1162,7 +1046,6 @@ var @!delta:halfword; {amount of change}
 var @!delta:halfword; {amount of change}
 temp:integer;
 @z
-
 @x
 if not valid_range(m_min(cur_edges)+m_offset(cur_edges)-zero_field) or@|
  not valid_range(m_max(cur_edges)+m_offset(cur_edges)-zero_field) then
@@ -1173,24 +1056,12 @@ if not valid_range (m_min (cur_edges) + temp)
 then
 @z
 
-@x [442] Use halfp.
-@<Compute a good coordinate at a diagonal transition@>=
-begin if cur_pen=null_pen then pen_edge:=0
-else if cur_path_type=double_path_code then @<Compute a compromise |pen_edge|@>
-else if right_type(q)<=switch_x_and_y then pen_edge:=diag_offset(right_type(q))
-else pen_edge:=-diag_offset(right_type(q));
+@x [21.442] Use halfp.
 if odd(right_type(q)) then a:=good_val(b,pen_edge+half(cur_gran))
 else a:=good_val(b-1,pen_edge+half(cur_gran));
-end
 @y
-@<Compute a good coordinate at a diagonal transition@>=
-begin if cur_pen=null_pen then pen_edge:=0
-else if cur_path_type=double_path_code then @<Compute a compromise |pen_edge|@>
-else if right_type(q)<=switch_x_and_y then pen_edge:=diag_offset(right_type(q))
-else pen_edge:=-diag_offset(right_type(q));
 if odd(right_type(q)) then a:=good_val(b,pen_edge+halfp(cur_gran))
 else a:=good_val(b-1,pen_edge+halfp(cur_gran));
-end
 @z
 
 @x [24.509] i18n fix
@@ -1222,82 +1093,16 @@ else print(" offset");
   gamma := pyth_add (take_fraction (major_axis, n_cos), gamma);
 @z
 
-@x [556]
-@p procedure cubic_intersection(@!p,@!pp:pointer);
-label continue, not_found, exit;
-var @!q,@!qq:pointer; {|link(p)|, |link(pp)|}
-begin time_to_go:=max_patience; max_t:=2;
-@<Initialize for intersections at level zero@>;
-loop@+  begin continue:
-  if delx-tol<=stack_max(x_packet(xy))-stack_min(u_packet(uv)) then
-   if delx+tol>=stack_min(x_packet(xy))-stack_max(u_packet(uv)) then
-   if dely-tol<=stack_max(y_packet(xy))-stack_min(v_packet(uv)) then
-   if dely+tol>=stack_min(y_packet(xy))-stack_max(v_packet(uv)) then
-    begin if cur_t>=max_t then
-      begin if max_t=two then {we've done 17 bisections}
+@x [26.556] Use halfp.
         begin cur_t:=half(cur_t+1); cur_tt:=half(cur_tt+1); return;
-        end;
-      double(max_t); appr_t:=cur_t; appr_tt:=cur_tt;
-      end;
-    @<Subdivide for a new level of intersection@>;
-    goto continue;
-    end;
-  if time_to_go>0 then decr(time_to_go)
-  else  begin while appr_t<unity do
-      begin double(appr_t); double(appr_tt);
-      end;
-    cur_t:=appr_t; cur_tt:=appr_tt; return;
-    end;
-  @<Advance to the next pair |(cur_t,cur_tt)|@>;
-  end;
-exit:end;
 @y
-@p procedure cubic_intersection(@!p,@!pp:pointer);
-label continue, not_found, exit;
-var @!q,@!qq:pointer; {|link(p)|, |link(pp)|}
-begin time_to_go:=max_patience; max_t:=2;
-@<Initialize for intersections at level zero@>;
-loop@+  begin continue:
-  if delx-tol<=stack_max(x_packet(xy))-stack_min(u_packet(uv)) then
-   if delx+tol>=stack_min(x_packet(xy))-stack_max(u_packet(uv)) then
-   if dely-tol<=stack_max(y_packet(xy))-stack_min(v_packet(uv)) then
-   if dely+tol>=stack_min(y_packet(xy))-stack_max(v_packet(uv)) then
-    begin if cur_t>=max_t then
-      begin if max_t=two then {we've done 17 bisections}
         begin cur_t:=halfp(cur_t+1); cur_tt:=halfp(cur_tt+1); return;
-        end;
-      double(max_t); appr_t:=cur_t; appr_tt:=cur_tt;
-      end;
-    @<Subdivide for a new level of intersection@>;
-    goto continue;
-    end;
-  if time_to_go>0 then decr(time_to_go)
-  else  begin while appr_t<unity do
-      begin double(appr_t); double(appr_tt);
-      end;
-    cur_t:=appr_t; cur_tt:=appr_tt; return;
-    end;
-  @<Advance to the next pair |(cur_t,cur_tt)|@>;
-  end;
-exit:end;
 @z
 
-@x [561]
-@ @<Descend to the previous level...@>=
+@x [26.561] Use halfp.
 begin cur_t:=half(cur_t); cur_tt:=half(cur_tt);
-if cur_t=0 then return;
-bisect_ptr:=bisect_ptr-int_increment; three_l:=three_l-tol_step;
-delx:=stack_dx; dely:=stack_dy; tol:=stack_tol; uv:=stack_uv; xy:=stack_xy;@/
-goto not_found;
-end
 @y
-@ @<Descend to the previous level...@>=
 begin cur_t:=halfp(cur_t); cur_tt:=halfp(cur_tt);
-if cur_t=0 then return;
-bisect_ptr:=bisect_ptr-int_increment; three_l:=three_l-tol_step;
-delx:=stack_dx; dely:=stack_dy; tol:=stack_tol; uv:=stack_uv; xy:=stack_xy;@/
-goto not_found;
-end
 @z
 
 @x [27.564] The window functions are defined externally, in C.
@@ -1360,32 +1165,10 @@ end;
 {Same thing}
 @z
 
-@x [596] Use halfp.
-@ @<Contribute a term from |q|, multiplied by~|f|@>=
-begin if tt=dependent then v:=take_fraction(f,value(q))
-else v:=take_scaled(f,value(q));
+@x [28.596] Use halfp.
 if abs(v)>half(threshold) then
-  begin s:=get_node(dep_node_size); info(s):=qq; value(s):=v;
-  if abs(v)>=coef_bound then if watch_coefs then
-    begin type(qq):=independent_needing_fix; fix_needed:=true;
-    end;
-  link(r):=s; r:=s;
-  end;
-q:=link(q); qq:=info(q);
-end
 @y
-@ @<Contribute a term from |q|, multiplied by~|f|@>=
-begin if tt=dependent then v:=take_fraction(f,value(q))
-else v:=take_scaled(f,value(q));
 if abs(v)>halfp(threshold) then
-  begin s:=get_node(dep_node_size); info(s):=qq; value(s):=v;
-  if abs(v)>=coef_bound then if watch_coefs then
-    begin type(qq):=independent_needing_fix; fix_needed:=true;
-    end;
-  link(r):=s; r:=s;
-  end;
-q:=link(q); qq:=info(q);
-end
 @z
 
 @x [31.631] l.13346 - Add datastructures for file:line:error.
@@ -1787,32 +1570,14 @@ if name=str_ptr-1 then {we can conserve string pool space now}
 @y
 @z
 
-@x [866] Use halfp.
-@<Change node |q|...@>=
-begin tx:=x_coord(q); ty:=y_coord(q);
-txx:=left_x(q)-tx; tyx:=left_y(q)-ty;
-txy:=right_x(q)-tx; tyy:=right_y(q)-ty;
-a_minus_b:=pyth_add(txx-tyy,tyx+txy); a_plus_b:=pyth_add(txx+tyy,tyx-txy);
+@x [41.866] Use halfp.
 major_axis:=half(a_minus_b+a_plus_b); minor_axis:=half(abs(a_plus_b-a_minus_b));
 if major_axis=minor_axis then theta:=0 {circle}
 else theta:=half(n_arg(txx-tyy,tyx+txy)+n_arg(txx+tyy,tyx-txy));
-free_node(q,knot_node_size);
-q:=make_ellipse(major_axis,minor_axis,theta);
-if (tx<>0)or(ty<>0) then @<Shift the coordinates of path |q|@>;
-end
 @y
-@<Change node |q|...@>=
-begin tx:=x_coord(q); ty:=y_coord(q);
-txx:=left_x(q)-tx; tyx:=left_y(q)-ty;
-txy:=right_x(q)-tx; tyy:=right_y(q)-ty;
-a_minus_b:=pyth_add(txx-tyy,tyx+txy); a_plus_b:=pyth_add(txx+tyy,tyx-txy);
 major_axis:=halfp(a_minus_b+a_plus_b); minor_axis:=halfp(abs(a_plus_b-a_minus_b));
 if major_axis=minor_axis then theta:=0 {circle}
 else theta:=half(n_arg(txx-tyy,tyx+txy)+n_arg(txx+tyy,tyx-txy));
-free_node(q,knot_node_size);
-q:=make_ellipse(major_axis,minor_axis,theta);
-if (tx<>0)or(ty<>0) then @<Shift the coordinates of path |q|@>;
-end
 @z
 
 @x [44.1023] if batchmode, MakeTeX... scripts should be silent.
@@ -1852,30 +1617,10 @@ begin d:=threshold(m); perturbation:=0;
 begin d:=threshold_fn(m); perturbation:=0;
 @z
 
-@x [1122]
-@ @<Replace an interval...@>=
-begin repeat p:=link(p); info(p):=m;
-decr(excess);@+if excess=0 then d:=0;
-until value(link(p))>l+d;
+@x [45.1122] Use halfp.
 v:=l+half(value(p)-l);
-if value(p)-v>perturbation then perturbation:=value(p)-v;
-r:=q;
-repeat r:=link(r); value(r):=v;
-until r=p;
-link(q):=p; {remove duplicate values from the current list}
-end
 @y
-@ @<Replace an interval...@>=
-begin repeat p:=link(p); info(p):=m;
-decr(excess);@+if excess=0 then d:=0;
-until value(link(p))>l+d;
 v:=l+halfp(value(p)-l);
-if value(p)-v>perturbation then perturbation:=value(p)-v;
-r:=q;
-repeat r:=link(r); value(r):=v;
-until r=p;
-link(q):=p; {remove duplicate values from the current list}
-end
 @z
 
 @x [45.1133] Use C macros to do the TFM writing, to avoid casting(?) problems.
@@ -1908,7 +1653,7 @@ I don't know why not. Some casting problem?
 @p procedure tfm_qqqq(@!x:four_quarters); {output four quarterwords to |tfm_file|}
 @z
 
-@x [47.1134] print_file_name
+@x [45.1134] print_file_name
 print_nl("Font metrics written on "); slow_print(metric_file_name);
 @y
 print_nl("Font metrics written on "); print_file_name(0,metric_file_name,0);
@@ -2165,7 +1910,7 @@ end;
 tini@/
 @z
 
-@x
+@x [49.1204]
 end_of_MF: close_files_and_terminate;
 final_end: ready_already:=0;
 @y

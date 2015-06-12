@@ -1,0 +1,129 @@
+## texk/web2c/mfluajitdir/am/mfluajit.am: Makefile fragment for MFLuaJIT.
+##
+## Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## MFLua
+##
+if MFLUAJIT
+bin_PROGRAMS += mfluajit
+if MFLUAJITN
+bin_PROGRAMS += mfluajit-nowin
+endif MFLUAJITN
+if WIN32
+bin_PROGRAMS += inimfluajit
+else !WIN32
+bin_links += mfluajit$(EXEEXT):inimfluajit
+endif !WIN32
+endif MFLUAJIT
+EXTRA_PROGRAMS += mfluajit mfluajit-nowin
+DISTCLEANFILES += mfluajittrap.diffs
+
+inimfluajit_CPPFLAGS = -DEXEPROG=\"mfluajit.exe\"
+nodist_inimfluajit_SOURCES = callexe.c
+inimfluajit_LDADD =
+
+dist_mfluajit_SOURCES = mfluajitdir/mfluajitextra.c mfluajitdir/mfluajitextra.h mfluadir/mflua_version.h
+mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+mfluajit_LDADD = libmfluajit.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS)
+mfluajit_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
+nodist_mfluajit_nowin_SOURCES = $(dist_mfluajit_SOURCES)
+mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+mfluajit_nowin_LDADD = libmfluajit.a $(LDADD) $(windowlib) $(LUAJIT_LIBS)
+mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
+
+# We must create mfluajitd.h and mfluadir/mflua_version.h before compiling mfluajitextra.c.
+$(mfluajit_OBJECTS) $(mfluajit_nowin_OBJECTS): mfluajitd.h mfluadir/mflua_version.h
+
+## mfluajit and mfluajit-nowin compile mfluajitextra.c with different CPPFLAGS.
+## Automake, however, does not support CPPFLAGS for individual source files.
+## To avoid compiling everything twice, the common objects are in a library.
+EXTRA_LIBRARIES += libmfluajit.a
+
+# MFLua C sources
+mfluajit_c_h = mfluajitini.c mfluajit0.c mfluajitcoerce.h mfluajitd.h
+dist_libmfluajit_a_SOURCES = mfluadir/mfluac.c  mfluadir/mfluac.h
+nodist_libmfluajit_a_SOURCES = $(mfluajit_c_h) mfluajit-pool.c
+libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DJIT
+
+# We must create mfluajitd.h before building the libmfluajit_a_OBJECTS.
+$(libmfluajit_a_OBJECTS): mfluajitd.h
+
+$(mfluajit_c_h): mfluajit-web2c $(LUAJIT_LIBS)
+	@$(web2c) mfluajit
+mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluajitdir/mfluajit.defines
+	@$(web2c) mfluajit
+
+mfluajit-pool.c: mfluajit.pool mfluajitd.h $(makecpool_stamp)
+	$(makecpool) mfluajit >$@ || rm -f $@
+
+# Tangling MFLua
+mfluajit.p mfluajit.pool: mfluajit-tangle
+	@$(texmf_tangle) mfluajit mfluajit
+mfluajit-tangle: tangle$(EXEEXT) mfluajit.web mfluajit.ch tangle-sh
+	@$(texmf_tangle) mfluajit mfluajit
+
+# Generate mfluajit.web
+mfluajit.web: tie$(EXEEXT) $(mfluajit_web_srcs)
+	$(tie) -m mfluajit.web $(mfluajit_web_srcs)
+mfluajit_web_srcs = \
+	mf.web \
+	mfluadir/mf-lua.ch \
+	mfluajitdir/mf-luajit.ch
+
+# Generate mfluajit.ch
+mfluajit.ch: tie$(EXEEXT) mfluajit.web $(mfluajit_ch_src)
+	$(tie) -c $@ mfluajit.web $(mfluajit_ch_src)
+mfluajit_ch_src = \
+	mf.ch \
+	mfluadir/mflua-m.ch \
+	mf-binpool.ch
+##
+EXTRA_DIST += $(mfluajit_web_srcs) $(mfluajit_ch_src) mfluajitdir/mfluajit.defines
+
+DISTCLEANFILES += $(nodist_libmfluajit_a_SOURCES) mfluajit.web mfluajit.ch mfluajit-web2c \
+	mfluajit.p mfluajit.pool mfluajit-tangle
+
+EXTRA_DIST += \
+	mfluajitdir/ChangeLog
+
+# MFLua tests
+#
+mfluajit_tests = mfluajitdir/mfluajittraptest
+EXTRA_DIST += $(mfluajit_tests)
+
+if MFLUAJIT
+TESTS += $(mfluajit_tests)
+check_PROGRAMS += gftype tftopl
+TRIPTRAP += mfluajittrap.diffs
+TRIPTRAP_CLEAN += mfluajittrap-clean
+endif MFLUAJIT
+DISTCLEANFILES += mfluajittrap.diffs
+
+## mfluajitdir/mfluajittraptest
+mfluajittrap.diffs: mfluajit$(EXEEXT)
+	$(triptrap_diffs) $@
+.PHONY: mfluajittrap-clean
+mfluajittrap-clean:
+	rm -rf mfluajittrapdir
+
+## Test data 
+##
+EXTRA_DIST += \
+	mfluadir/mfluatrap/begin_program.lua \
+	mfluadir/mfluatrap/do_add_to.lua \
+	mfluadir/mfluatrap/end_program.lua \
+	mfluadir/mfluatrap/fill_envelope.lua \
+	mfluadir/mfluatrap/fill_spec.lua \
+	mfluadir/mfluatrap/final_cleanup.lua \
+	mfluadir/mfluatrap/main_control.lua \
+	mfluadir/mfluatrap/make_ellipse.lua \
+	mfluadir/mfluatrap/mfluaini.lua \
+	mfluadir/mfluatrap/offset_prep.lua \
+	mfluadir/mfluatrap/print_edges.lua \
+	mfluadir/mfluatrap/print_path.lua \
+	mfluadir/mfluatrap/scan_direction.lua \
+	mfluadir/mfluatrap/skew_line_edges.lua \
+	mfluadir/mfluatrap/start_of_MF.lua \
+	mfluadir/mfluatrap/texmf.cnf \
+	mfluajitdir/mfluajittrap/mfluajittrap.diffs

@@ -1,0 +1,25 @@
+{ Additional symbols for MFLuaJIT.  Public domain.}
+
+@define procedure mfluainitialize;
+@define procedure mfluaprintpath();
+@define procedure mfluaprintedges();
+@define procedure mfluaPREoffsetprep();
+@define procedure mfluaPOSToffsetprep();
+@define procedure mfluaPREfillenveloperhs();
+@define procedure mfluaPOSTfillenveloperhs();
+@define procedure mfluaPREfillenvelopelhs();
+@define procedure mfluaPOSTfillenvelopelhs();
+@define procedure mfluaPREfillspecrhs();
+@define procedure mfluaPOSTfillspecrhs();
+@define procedure mfluaPREfillspeclhs();
+@define procedure mfluaPOSTfillspeclhs();
+@define procedure mfluaPREmovetoedges();
+@define procedure mfluaPOSTmovetoedges();
+@define procedure mfluaPREmakechoices();
+@define procedure mfluaPOSTmakechoices();
+@define procedure mfluaprintretrogradeline();
+@define procedure mfluaprinttransitionlinefrom();
+@define procedure mfluaprinttransitionlineto();
+@define procedure mfluaPREmakeellipse();
+@define procedure mfluaPOSTmakeellipse();
+@define procedure mfluarunscript();

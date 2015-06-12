@@ -1,6 +1,6 @@
 /* The help messages for TeX & MF family of programs.
 
-Copyright 1995, 1996, 2008 - 2011 Karl Berry.
+Copyright 1995, 1996, 2008-2015 Karl Berry.
 Copyright 2001-05 Olaf Weber.
 
 This program is free software; you can redistribute it and/or modify
@@ -269,7 +269,7 @@ const_string EUPTEXHELP[] = {
 };
 #endif /* eupTeX */
 
-#ifdef MF
+#ifdef onlyMF
 const_string MFHELP[] = {
     "Usage: mf [OPTION]... [MFNAME[.mf]] [COMMANDS]",
     "   or: mf [OPTION]... \\FIRST-LINE",
@@ -312,7 +312,97 @@ const_string MFHELP[] = {
     "-version                output version information and exit",
     NULL
 };
-#endif /* MF */
+#endif /* onlyMF */
+
+#ifdef MFLua
+const_string MFLUAHELP[] = {
+    "Usage: mflua [OPTION]... [MFNAME[.mf]] [COMMANDS]",
+    "   or: mflua [OPTION]... \\FIRST-LINE",
+    "   or: mflua [OPTION]... &BASE ARGS",
+    "  Run MFLua on MFNAME, usually creating MFNAME.tfm and MFNAME.NNNNgf,",
+    "  where NNNN is the resolution of the specified mode (2602 by default).",
+    "  Any following COMMANDS are processed as Metafont input,",
+    "  after MFNAME is read.",
+    "  If the first line of MFNAME is %&BASE, and BASE is an existing .base file,",
+    "  use it.  Else use `NAME.base', where NAME is the program invocation name,",
+    "  most commonly `mf'.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a backslash,",
+    "  interpret all non-option arguments as a line of Metafont input.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a &, the",
+    "  next word is taken as the BASE to read, overriding all else. Any",
+    "  remaining arguments are processed as above.",
+    "",
+    "  If no arguments or options are specified, prompt for input.",
+    "",
+    "-base=BASENAME          use BASENAME instead of program name or a %& line",
+    "[-no]-file-line-error   disable/enable file:line:error style messages",
+    "-halt-on-error          stop processing at the first error",
+    "-ini                    be inimf, for dumping bases; this is implicitly",
+    "                          true if the program name is `inimf'",
+    "-interaction=STRING     set interaction mode (STRING=batchmode/nonstopmode/",
+    "                          scrollmode/errorstopmode)",
+    "-jobname=STRING         set the job name to STRING",
+    "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
+    "                          the bits of NUMBER",
+    "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=mflua)",
+    "-output-directory=DIR   use existing DIR as the directory to write files in",
+    "[-no]-parse-first-line  disable/enable parsing of first line of input file",
+    "-progname=STRING        set program (and base) name to STRING",
+    "-recorder               enable filename recorder",
+    "-translate-file=TCXNAME use the TCX file TCXNAME",
+    "-8bit                   make all characters printable by default",
+    "-help                   display this help and exit",
+    "-version                output version information and exit",
+    NULL
+};
+#endif /* MFLua */
+
+#ifdef MFLuaJIT
+const_string MFLUAJITHELP[] = {
+    "Usage: mfluajit [OPTION]... [MFNAME[.mf]] [COMMANDS]",
+    "   or: mfluajit [OPTION]... \\FIRST-LINE",
+    "   or: mfluajit [OPTION]... &BASE ARGS",
+    "  Run MFLuaJIT on MFNAME, usually creating MFNAME.tfm and MFNAME.NNNNgf,",
+    "  where NNNN is the resolution of the specified mode (2602 by default).",
+    "  Any following COMMANDS are processed as Metafont input,",
+    "  after MFNAME is read.",
+    "  If the first line of MFNAME is %&BASE, and BASE is an existing .base file,",
+    "  use it.  Else use `NAME.base', where NAME is the program invocation name,",
+    "  most commonly `mf'.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a backslash,",
+    "  interpret all non-option arguments as a line of Metafont input.",
+    "",
+    "  Alternatively, if the first non-option argument begins with a &, the",
+    "  next word is taken as the BASE to read, overriding all else. Any",
+    "  remaining arguments are processed as above.",
+    "",
+    "  If no arguments or options are specified, prompt for input.",
+    "",
+    "-base=BASENAME          use BASENAME instead of program name or a %& line",
+    "[-no]-file-line-error   disable/enable file:line:error style messages",
+    "-halt-on-error          stop processing at the first error",
+    "-ini                    be inimf, for dumping bases; this is implicitly",
+    "                          true if the program name is `inimf'",
+    "-interaction=STRING     set interaction mode (STRING=batchmode/nonstopmode/",
+    "                          scrollmode/errorstopmode)",
+    "-jobname=STRING         set the job name to STRING",
+    "-kpathsea-debug=NUMBER  set path searching debugging flags according to",
+    "                          the bits of NUMBER",
+    "[-no]-mktex=FMT         disable/enable mktexFMT generation (FMT=mflua)",
+    "-output-directory=DIR   use existing DIR as the directory to write files in",
+    "[-no]-parse-first-line  disable/enable parsing of first line of input file",
+    "-progname=STRING        set program (and base) name to STRING",
+    "-recorder               enable filename recorder",
+    "-translate-file=TCXNAME use the TCX file TCXNAME",
+    "-8bit                   make all characters printable by default",
+    "-help                   display this help and exit",
+    "-version                output version information and exit",
+    NULL
+};
+#endif /* MFLuaJIT */
 
 #ifdef pdfTeX
 const_string PDFTEXHELP[] = {
