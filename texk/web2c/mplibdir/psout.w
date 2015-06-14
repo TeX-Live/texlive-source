@@ -734,19 +734,21 @@ mp->ps->fm_bytes=NULL;
    mp->ps->fm_byte_length=1;
 } while (0)
 @d valid_code(c)   (c >= 0 && c < 256)
+@d unwrap_file(ff)  ( mp->noninteractive ? ((File *) ff)->f : ff) 
+   
 
 @c
 static int fm_getchar (MP mp) {
   if (mp->ps->fm_bytes == NULL) {
     void *byte_ptr ;
-    (void)fseek(mp->ps->fm_file,0,SEEK_END);
-    mp->ps->fm_byte_length = (size_t)ftell(mp->ps->fm_file);
-    (void)fseek(mp->ps->fm_file,0,SEEK_SET);
+    (void)fseek( unwrap_file(mp->ps->fm_file), 0,SEEK_END);
+    mp->ps->fm_byte_length = (size_t)ftell( unwrap_file(mp->ps->fm_file) );
+    (void)fseek( unwrap_file(mp->ps->fm_file), 0,SEEK_SET);
     if (mp->ps->fm_byte_length==0)
       return EOF;
     mp->ps->fm_bytes = mp_xmalloc(mp, mp->ps->fm_byte_length, 1);
     byte_ptr = (void *)mp->ps->fm_bytes;
-    (mp->read_binary_file)(mp,mp->ps->fm_file,&byte_ptr,&mp->ps->fm_byte_length);
+    (mp->read_binary_file)(mp, mp->ps->fm_file, &byte_ptr,&mp->ps->fm_byte_length);
   } 
   if(mp->ps->fm_byte_waiting >= mp->ps->fm_byte_length)
     return 10;
@@ -1806,9 +1808,9 @@ mp->ps->t1_bytes=NULL;
 static int t1_getchar (MP mp) {
   if (mp->ps->t1_bytes == NULL) {
     void *byte_ptr ;
-    (void)fseek(mp->ps->t1_file,0,SEEK_END);
-    mp->ps->t1_byte_length = (size_t)ftell(mp->ps->t1_file);
-    (void)fseek(mp->ps->t1_file,0,SEEK_SET);
+    (void)fseek( unwrap_file(mp->ps->t1_file), 0,SEEK_END);
+    mp->ps->t1_byte_length = (size_t)ftell( unwrap_file(mp->ps->t1_file) );
+    (void)fseek( unwrap_file(mp->ps->t1_file), 0,SEEK_SET);
     mp->ps->t1_bytes = mp_xmalloc(mp, mp->ps->t1_byte_length, 1);
     byte_ptr = (void *)mp->ps->t1_bytes;
     (mp->read_binary_file)(mp,mp->ps->t1_file,&byte_ptr,&mp->ps->t1_byte_length);
@@ -3551,6 +3553,9 @@ void mp_ps_font_free (MP mp, mp_ps_font *f);
 @ Parsing Charstrings.
 
 @<Variables for the charstring parser@>=
+double flex_hint_data[14]; /* store temp. coordinates of flex hints */ 
+unsigned int  flex_hint_index ;  /* index for flex_hint_data */
+boolean ignore_flex_hint; /* skip hint for flex */
 double cur_x, cur_y; /* current point */
 double orig_x, orig_y; /* origin (for seac) */
 mp_edge_object *h; /* the whole picture */
@@ -3561,7 +3566,7 @@ mp_gr_knot pp; /* the last known knot in the subpath */
 @ @c
 mp_edge_object *mp_ps_do_font_charstring (MP mp, mp_ps_font *f, char *nam) {
   mp_edge_object *h = NULL;
-  f->h = NULL; f->p = NULL; f->pp = NULL; /* just in case */
+  f->h = NULL; f->p = NULL; f->pp = NULL; f->ignore_flex_hint=0; f->flex_hint_index=0 ;/* just in case */
   f->cur_x = f->cur_y = 0.0;
   f->orig_x = f->orig_y = 0.0;
   if (nam==NULL) {
@@ -3846,10 +3851,15 @@ boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr)
         break;
       case CS_RMOVETO:  /* |- dx dy RMOVETO |- */
         cs_debug(CS_RMOVETO);
-        if (f->pp == NULL) { /* this is the first */
-           start_subpath(mp,f,cc_get(-2),cc_get(-1));
-        } else {  
-           add_line_segment(mp,f,cc_get(-2),cc_get(-1));
+	if (f->ignore_flex_hint == 1) {
+          f->flex_hint_data[f->flex_hint_index++] = cc_get(-2);
+          f->flex_hint_data[f->flex_hint_index++] = cc_get(-1);
+	} else  {
+          if (f->pp == NULL) { /* this is the first */
+       	     start_subpath(mp,f,cc_get(-2),cc_get(-1));
+          } else {  
+             add_line_segment(mp,f,cc_get(-2),cc_get(-1));
+          }
         }
         cc_clear ();
         break;
@@ -3948,7 +3958,46 @@ boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr)
         /* subrs */
       case CS_CALLSUBR: /* subr CALLSUBR - */
         cs_debug(CS_CALLSUBR);
-        a1 = (integer)cc_get (-1);
+        a1 = (integer)cc_get (-1); 
+        if (a1==1) 
+           f->ignore_flex_hint = 1; 
+        if (a1==0) {
+           /* double first_x,first_y,first_r_x,first_r_y;  */
+           /* double join_x,join_y,join_l_x,join_l_y,join_r_x,join_r_y; */
+           /* double last_x,last_y,last_l_x,last_l_y; */
+           /* /\* a := glyph "q" of "cmti12"; *\/ */
+	   /* first_x = 206.0; first_y = -194.0; */
+           /* double ref_x,ref_y ; */
+	   /* ref_x = first_x+f->flex_hint_data[0]; */
+	   /* ref_y = first_y+f->flex_hint_data[1]; */
+           /* printf("1:(%f, %f) 2:(%f,%f) 3:(%f,%f) 4:(%f,%f) 5:(%f,%f) 6:(%f,%f) 7:(%f,%f)\n", */
+	   /* f->flex_hint_data[0],f->flex_hint_data[1], */
+	   /* f->flex_hint_data[2],f->flex_hint_data[3], */
+	   /* f->flex_hint_data[4],f->flex_hint_data[5], */
+	   /* f->flex_hint_data[6],f->flex_hint_data[7], */
+	   /* f->flex_hint_data[8],f->flex_hint_data[9], */
+	   /* f->flex_hint_data[10],f->flex_hint_data[11], */
+	   /* f->flex_hint_data[12],f->flex_hint_data[13]); */
+ 	   /* printf("Reference=(%f,%f)\n",ref_x,ref_y); */
+	   /* first_r_x = ref_x + f->flex_hint_data[2]; first_r_y    = ref_y + f->flex_hint_data[3];  */
+	   /* join_l_x  = first_r_x + f->flex_hint_data[4]; join_l_y = first_r_y + f->flex_hint_data[5];  */
+	   /* join_x    = join_l_x + f->flex_hint_data[6]; join_y    = join_l_y + f->flex_hint_data[7]; */
+	   /* join_r_x  = join_x + f->flex_hint_data[8]; join_r_y    = join_y + f->flex_hint_data[9]; */
+	   /* last_l_x  = join_r_x + f->flex_hint_data[10]; last_l_y = join_r_y + f->flex_hint_data[11]; */
+	   /* last_x    = last_l_x + f->flex_hint_data[12]; last_y   = last_l_y + f->flex_hint_data[13]; */
+	   /* printf("(%f,%f) .. (%f,%f) and (%f,%f) .. (%f,%f) .. (%f,%f) and (%f,%f) .. (%f,%f)\n", */
+           /*   first_x,first_y,first_r_x,first_r_y, join_l_x,join_l_y, join_x,join_y, join_r_x,join_r_y, */
+	   /*   last_l_x,last_l_y,last_x,last_y); */
+
+           f->ignore_flex_hint = 0; 
+	   f->flex_hint_index = 0;
+	   add_curve_segment(mp,f,f->flex_hint_data[0]+ f->flex_hint_data[2],f->flex_hint_data[1]+ f->flex_hint_data[3],
+	   	   	          f->flex_hint_data[4],f->flex_hint_data[5],
+	   	   	          f->flex_hint_data[6],f->flex_hint_data[7]);
+	   add_curve_segment(mp,f,f->flex_hint_data[8],f->flex_hint_data[9],
+	   	   	          f->flex_hint_data[10],f->flex_hint_data[11],
+	   	   	          f->flex_hint_data[12],f->flex_hint_data[13]);
+        }    
         cc_pop (1);
         (void)cs_parse(mp,f,NULL,a1);
         break;
@@ -3957,6 +4006,7 @@ boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr)
         return true;
         break;
       case CS_CALLOTHERSUBR: /* arg1 ... argn n othersubr CALLOTHERSUBR - */
+        cs_debug(CS_CALLOTHERSUBR);
         a1 = (integer)cc_get (-1);
         if (a1 == 3)
           lastargOtherSubr3 = (integer)cc_get (-3);
@@ -3967,7 +4017,7 @@ boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr)
         cc_push (lastargOtherSubr3);
         break;
       case CS_SETCURRENTPOINT: /* |- x y SETCURRENTPOINT |- */
-        cs_debug(CS_SETCURRENTPOINT);
+        cs_debug(CS_SETCURRENTPOINT)  ;
 	/* totally ignoring setcurrentpoint actually works better for most fonts ? */
         cc_clear ();
         break;

@@ -607,7 +607,7 @@ int mp_number_to_boolean(mp_number A) {
   if (mpfr_fits_sint_p(A.data.num, ROUNDING)) {
     result = mpfr_get_si(A.data.num, ROUNDING);
   }
-  return (result ? 1 : 0);
+  return result;
 }
 double mp_number_to_double(mp_number A) {
   double res = 0.0;
