@@ -787,9 +787,9 @@ int mp_number_to_boolean(mp_number A) {
   if (set.status == DEC_Invalid_operation) {
      set.status = 0;
      // mp->arith_error = 1;
-     return 0; // whatever
+     return mp_false_code; // whatever
   } else {
-     return (result ? 1 : 0);
+     return result ;
   }
 }
 double mp_number_to_double(mp_number A) {
