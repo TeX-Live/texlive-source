@@ -731,9 +731,6 @@ maininit (int ac, string *av)
 #endif
 
 #if defined(MF)
-  /* If the program name is "mf-nowin", then reset the name as "mf". */
-  if (strncasecmp (kpse_invocation_name, "mf-nowin", 8) == 0)
-    kpse_reset_program_name ("mf");
 #if defined(MFLua)
   /* If the program name is "mflua-nowin", then reset the name as "mflua". */
   if (strncasecmp (kpse_invocation_name, "mflua-nowin", 11) == 0)
@@ -742,6 +739,10 @@ maininit (int ac, string *av)
   /* If the program name is "mfluajit-nowin", then reset the name as "mfluajit". */
   if (strncasecmp (kpse_invocation_name, "mfluajit-nowin", 14) == 0)
     kpse_reset_program_name ("mfluajit");
+#else
+  /* If the program name is "mf-nowin", then reset the name as "mf". */
+  if (strncasecmp (kpse_invocation_name, "mf-nowin", 8) == 0)
+    kpse_reset_program_name ("mf");
 #endif
 #endif
 
