@@ -88,6 +88,7 @@ musixtex/musixflx.lua
 musixtex/musixtex.lua
 oberdiek/pdfatfi.pl
 pax/pdfannotextractor.pl
+pdfbook2/pdfbook2
 pdfcrop/pdfcrop.pl
 pedigree-perl/pedigree.pl
 perltex/perltex.pl
