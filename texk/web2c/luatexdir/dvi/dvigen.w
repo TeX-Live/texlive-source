@@ -1261,9 +1261,10 @@ void ensure_dvi_header_written(PDF pdf)
     dvi_four(473628672);        /* conversion ratio for sp */
     prepare_mag();
     dvi_four(mag);              /* magnification factor is frozen */
-    if (output_comment && (l = (unsigned) strlen(output_comment)) ) {
+    if (output_comment) {
+        l = (unsigned) strlen(output_comment);
         dvi_out(l);
-        for (s = 0; s <= l - 1; s++)
+        for (s = 0; s < l; s++)
             dvi_out(output_comment[s]);
     } else {                    /* the default code is unchanged */
         old_setting = selector;
