@@ -47,6 +47,8 @@ installdirs-local:
 ## 
 ## Some /bin/sh scripts are listed as `other' or `context'
 ## scripts because they are correctly handled by the wrapper binaries.
+## Conversely, some non-sh scripts are listed as `shell' because they
+## depend on shell scripts or otherwise aren't useful on Windows.
 ## 
 texmf_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_shell_scripts = \
@@ -59,6 +61,7 @@ texmf_shell_scripts = \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
 	lua2dox/lua2dox_filter \
+	pdfbook2/pdfbook2 \
 	pdfjam/pdf180 \
 	pdfjam/pdf270 \
 	pdfjam/pdf90 \
@@ -140,7 +143,6 @@ texmf_other_scripts = \
 	musixtex/musixtex.lua \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
-	pdfbook2/pdfbook2 \
 	pdfcrop/pdfcrop.pl \
 	pedigree-perl/pedigree.pl \
 	perltex/perltex.pl \
