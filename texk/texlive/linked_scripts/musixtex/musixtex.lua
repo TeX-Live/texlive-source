@@ -1,11 +1,11 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.9"
+VERSION = "0.10"
 
 --[[
      musixtex.lua: processes MusiXTeX files (and deletes intermediate files)
 
-     (c) Copyright 2012-14 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2012-15 Bob Tennent rdt@cs.queensu.ca
 
      This program is free software; you can redistribute it and/or modify it
      under the terms of the GNU General Public License as published by the
@@ -26,6 +26,9 @@ VERSION = "0.9"
 --[[
 
   ChangeLog:
+     version 0.10 2015-04-23 RDT
+      Add -a option to preprocess using autosp
+
      version 0.9 2015-02-13 RDT
       Add an additional latex pass to resolve cross-references.
       Add -e0 option to dvips as given in musixdoc.tex
@@ -70,6 +73,7 @@ function usage()
   print("         -1  one-pass [pdf][la]tex processing")
   print("         -F fmt  use fmt as the TeX processor")
   print("         -x  run makeindex")
+  print("         -a  preprocess using autosp")
   print("         -f  restore default processing")
 end
 
@@ -92,6 +96,7 @@ ps2pdf = "ps2pdf"
 intermediate = 1
 passes = 2
 index = 0
+preprocess = 0
 
 exit_code = 0
 narg = 1
@@ -124,22 +129,41 @@ repeat
   elseif this_arg == "-1" then
     passes = 1
   elseif this_arg == "-f" then
-    tex = "etex"; dvi = dvips; ps2pdf = "ps2pdf"; intermediate = 1; passes = 2; index = 0
+    tex = "etex"; dvi = dvips; ps2pdf = "ps2pdf"; intermediate = 1; passes = 2; index = 0; preprocess = 0
   elseif this_arg == "-g" then
     dvi = dvips; ps2pdf = ""
   elseif this_arg == "-x" then
     index = 1
+  elseif this_arg == "-a" then
+    preprocess = 1
   elseif this_arg == "-F" then
     narg = narg+1
     tex = arg[narg]
   else
-    filename = this_arg 
-    if filename ~= "" and string.sub(filename, -4, -1) == ".tex" then
-        filename = string.sub(filename, 1, -5)
-    end
-    if not io.open(filename .. ".tex", "r") then
-      print("Non-existent file: ", filename .. ".tex")
-    else
+    repeat  -- pseudo loop to get effect of "continue" using "break"
+      filename = this_arg 
+      if preprocess == 1 then
+        if filename ~= "" and string.sub(filename, -5, -1) == ".aspc" then
+          filename = string.sub(filename, 1, -6)
+        end
+        if not io.open(filename .. ".aspc", "r") then
+          print("Non-existent file: ", filename .. ".aspc")
+          break -- out of pseudo loop
+        end
+        print("Processing ".. filename .. ".aspc.")
+        if (os.execute("autosp " .. filename ) ~= 0) then
+          print ("Preprocessing fails.")
+          break -- out of pseudo loop
+        end
+      else -- preprocess == 0
+        if filename ~= "" and string.sub(filename, -4, -1) == ".tex" then
+          filename = string.sub(filename, 1, -5)
+        end
+      end
+      if not io.open(filename .. ".tex", "r") then
+        print("Non-existent file: ", filename .. ".tex")
+        break -- out of pseudo loop
+      end
       print("Processing ".. filename .. ".tex.")
       os.remove( filename .. ".mx2" )
       if (passes == 1 or os.execute(tex .. " " .. filename) == 0) and
@@ -179,8 +203,8 @@ repeat
         print("ps2pdf = ", ps2pdf)
         --]]
       end
+    until true  -- end of pseudo loop
 
-    end --if not io.open ...
   end --if this_arg == ...
   narg = narg+1
 until narg > #arg 
