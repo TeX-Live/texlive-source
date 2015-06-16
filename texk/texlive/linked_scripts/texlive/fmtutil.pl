@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37485 2015-05-23 16:52:36Z karl $
+# $Id: fmtutil.pl 37541 2015-06-15 00:00:42Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -25,11 +25,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37485 2015-05-23 16:52:36Z karl $';
-my $lastchdate = '$Date: 2015-05-23 18:52:36 +0200 (Sat, 23 May 2015) $';
+my $svnid = '$Id: fmtutil.pl 37541 2015-06-15 00:00:42Z preining $';
+my $lastchdate = '$Date: 2015-06-15 02:00:42 +0200 (Mon, 15 Jun 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37485 $';
+my $svnrev = '$Revision: 37541 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -228,11 +228,11 @@ sub main {
     print_warning("--catcfg command not supported anymore!\n");
     exit(1);
   } elsif ($opts{'listcfg'}) {
-    print_warning("--listcfg currently not implemented, be patient!\n");
+    return callback_list_cfg();
     exit(1);
   } elsif ($opts{'disablefmt'}) {
     return callback_enable_disable_format($changes_config_file, 
-                                          $opts{'enablefmt'}, 'disabled');
+                                          $opts{'disablefmt'}, 'disabled');
   } elsif ($opts{'enablefmt'}) {
     return callback_enable_disable_format($changes_config_file, 
                                           $opts{'enablefmt'}, 'enabled');
@@ -665,14 +665,14 @@ sub enable_disable_format_engine {
       my $origin = $alldata->{'merged'}{$fmt}{$eng}{'origin'};
       if ($origin ne $tc) {
         $alldata->{'fmtutil'}{$tc}{'formats'}{$fmt}{$eng} =
-          {%{$alldata->{'fmtutil'}{$origin}{'formats'}{$fmt}{$eng}}}
+          {%{$alldata->{'fmtutil'}{$origin}{'formats'}{$fmt}{$eng}}};
+        $alldata->{'fmtutil'}{$tc}{'formats'}{$fmt}{$eng}{'line'} = -1;
       }
       $alldata->{'fmtutil'}{$tc}{'formats'}{$fmt}{$eng}{'status'} = $mode;
-      $alldata->{'fmtutil'}{$tc}{'formats'}{$fmt}{$eng}{'line'} = -1;
-      $alldata->{'fmtutil'}{$tc}{'formats'}{$fmt}{$eng}{'changed'} = 1;
+      $alldata->{'fmtutil'}{$tc}{'changed'} = 1;
       $alldata->{'merged'}{$fmt}{$eng}{'status'} = $mode;
       $alldata->{'merged'}{$fmt}{$eng}{'origin'} = $tc;
-      dump_data();
+      # dump_data();
       return save_fmtutil($tc);
     }
   } else {
@@ -732,12 +732,34 @@ sub callback_enable_disable_format {
   }
 }
 
+sub callback_list_cfg {
+  my @lines;
+  for my $f (keys %{$alldata->{'merged'}}) {
+    for my $e (keys %{$alldata->{'merged'}{$f}}) {
+      my $orig = $alldata->{'merged'}{$f}{$e}{'origin'};
+      my $hyph = $alldata->{'merged'}{$f}{$e}{'hyphen'};
+      my $stat = $alldata->{'merged'}{$f}{$e}{'status'};
+      my $args = $alldata->{'merged'}{$f}{$e}{'args'};
+      push @lines,
+        [ "$f/$e/$hyph",
+          "$f (engine=$e) $stat\n  hyphen=$hyph, args=$args\n  origin=$orig\n" ];
+    }
+  }
+  # sort lines
+  @lines = map { $_->[1] } sort { $a->[0] cmp $b->[0] } @lines;
+  print "List of all formats:\n";
+  print @lines;
+}
+
 sub read_fmtutil_files {
   my (@l) = @_;
   for my $l (@l) { read_fmtutil_file($l); }
   # in case the changes_config is a new one read it in and initialize it here
+  # the file might be already readable but not in ls-R so not found by
+  # kpsewhich. That means we need to check that it is readable and whether
+  # the lines entry is already defined
   my $cc = $alldata->{'changes_config'};
-  if (! -r $cc) {
+  if ((! -r $cc) || (!$alldata->{'fmtutil'}{$cc}{'lines'}) ) {
     $alldata->{'fmtutil'}{$cc}{'lines'} = [ ];
   }
   #
@@ -944,6 +966,67 @@ sub determine_config_files {
   $alldata->{'changes_config'} = $changes_config_file;
 }
 
+
+
+# returns 1 if actually saved due to changes
+sub save_fmtutil {
+  my $fn = shift;
+  return if $opts{'dry-run'};
+  my %fmtf = %{$alldata->{'fmtutil'}{$fn}};
+  if ($fmtf{'changed'}) {
+    TeXLive::TLUtils::mkdirhier(dirname($fn));
+    open (FN, ">$fn") || die "$prg: can't write to $fn: $!";
+    my @lines = @{$fmtf{'lines'}};
+    if (!@lines) {
+      print "Creating new config file $fn\n";
+      # update lsR database
+      $updLSR->add($fn);
+      $updLSR->exec();
+      $updLSR->reset();
+    }
+    # collect the lines with data
+    my %line_to_fmt;
+    my @add_fmt;
+    if (defined($fmtf{'formats'})) {
+      for my $f (keys %{$fmtf{'formats'}}) {
+        for my $e (keys %{$fmtf{'formats'}{$f}}) {
+          if ($fmtf{'formats'}{$f}{$e}{'line'} == -1) {
+            push @add_fmt, [ $f, $e ];
+          } else {
+            $line_to_fmt{$fmtf{'formats'}{$f}{$e}{'line'}} = [ $f, $e ];
+          }
+        }
+      }
+    }
+    for my $i (0..$#lines) {
+      if (defined($line_to_fmt{$i})) {
+        my $f = $line_to_fmt{$i}->[0];
+        my $e = $line_to_fmt{$i}->[1];
+        my $mode = $fmtf{'formats'}{$f}{$e}{'status'};
+        my $args = $fmtf{'formats'}{$f}{$e}{'args'};
+        my $hyph = $fmtf{'formats'}{$f}{$e}{'hyphen'};
+        my $p = ($mode eq 'disabled' ? "#! " : "");
+        print FN "$p$f $e $hyph $args\n";
+      } else {
+        print FN "$lines[$i]\n";
+      }
+    }
+    # add the new settings and maps
+    for my $m (@add_fmt) {
+      my $f = $m->[0];
+      my $e = $m->[1];
+      my $mode = $fmtf{'formats'}{$f}{$e}{'status'};
+      my $args = $fmtf{'formats'}{$f}{$e}{'args'};
+      my $hyph = $fmtf{'formats'}{$f}{$e}{'hyphen'};
+      my $p = ($mode eq 'disabled' ? "#! " : "");
+      print FN "$p$f $e $hyph $args\n";
+    }
+    close(FN) || warn("$prg: Cannot close file handle for $fn: $!");
+    delete $alldata->{'fmtutil'}{$fn}{'changed'};
+    return 1;
+  }
+  return 0;
+}
 
 
 #
