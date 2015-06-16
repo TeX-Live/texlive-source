@@ -25,9 +25,11 @@ lib_LTLIBRARIES = libtexluajit.la
 
 libtexluajit_la_LDFLAGS = -bindir @bindir@ -no-undefined -version-info $(LUAJIT_LT_VERSINFO)
 
+dist_libtexluajit_la_SOURCES = \
+	lbitlib.c
+
 nodist_libtexluajit_la_SOURCES = \
 	$(ljlib_sources) \
-	@LUAJIT_TREE@/src/lbitlib.c \
 	@LUAJIT_TREE@/src/lib_aux.c \
 	@LUAJIT_TREE@/src/lib_init.c \
 	@LUAJIT_TREE@/src/lj_alloc.c \

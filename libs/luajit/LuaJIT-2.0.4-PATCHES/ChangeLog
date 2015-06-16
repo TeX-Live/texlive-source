@@ -1,3 +1,11 @@
+2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaJIT-2.0.4.
+
+	* patch-01-LuaJITTeX: Adapted.
+	* patch-05-LuaJITTeX: Adapted.
+	* patch-06-ppc-darwin: Adapted.
+
 2015-01-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-06-ppc-darwin (new): Build fix for PPC OS X.

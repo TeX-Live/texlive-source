@@ -1,6 +1,0 @@
-Changes applied to the LuaJIT-2.0.3/ tree as obtained from:
-	http://luajit.org/download/LuaJIT-2.0.3.tar.gz
-
-Added:
-	src/lbitlib.c
-

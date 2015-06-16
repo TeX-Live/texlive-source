@@ -1,3 +1,7 @@
+2015-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lbitlib.c (new): Moved from LuaJIT-2.0.4/src/ to here.
+
 2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import LuaJIT-2.0.4.
@@ -11,7 +15,7 @@
 
 	* Makefile.am, configure.ac: Build luajit as (possibly shared)
 	Libtool library, install headers, library, and .pc file.
-	* luajiterror.test: Adapted.
+	* luajiterr.test: Adapted.
 
 2014-09-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
