@@ -1,7 +1,7 @@
-.TH LUATEX 1 "27 April 2015" "Web2C @VERSION@"
+.TH LUATEX 1 "16 June 2015" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
-.if t .ds MF M\s-2ETAFONT\s0
+.if t .ds MF Metafont
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
 .if n .ds WB Web

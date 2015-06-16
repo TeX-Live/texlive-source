@@ -1,4 +1,4 @@
-.TH TTF2AFM 1 "27 April 2015" "Web2C @VERSION@"
+.TH TTF2AFM 1 "16 June 2015" "Web2C @VERSION@"
 .PP 
 .SH "NAME" 
 ttf2afm \- utility to generate AFM files for TrueType fonts

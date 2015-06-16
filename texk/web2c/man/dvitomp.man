@@ -1,4 +1,4 @@
-.TH DVITOMP 1 "27 April 2015" "Web2C @VERSION@"
+.TH DVITOMP 1 "16 June 2015" "Web2C @VERSION@"
 .\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>
 .SH NAME
 dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE
