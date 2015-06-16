@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37488 2015-05-23 17:58:40Z karl $
+# $Id: tlmgr.pl 37523 2015-06-14 13:37:20Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37488 $';
-my $datrev = '$Date: 2015-05-23 19:58:40 +0200 (Sat, 23 May 2015) $';
+my $svnrev = '$Revision: 37523 $';
+my $datrev = '$Date: 2015-06-14 15:37:20 +0200 (Sun, 14 Jun 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1553,6 +1553,10 @@ sub action_info {
       if $tlp->cataloguedata->{'date'};
     print "cat-license: ", $tlp->cataloguedata->{'license'}, "\n"
       if $tlp->cataloguedata->{'license'};
+    print "cat-topics:  ", $tlp->cataloguedata->{'topics'}, "\n"
+      if $tlp->cataloguedata->{'topics'};
+    print "cat-related: ", $tlp->cataloguedata->{'also'}, "\n"
+      if $tlp->cataloguedata->{'also'};
     print "collection:  ", @colls, "\n" if (@colls);
     if ($opts{"list"}) {
       if ($tlp->category eq "Collection" || $tlp->category eq "Scheme") {
@@ -1685,6 +1689,7 @@ sub search_pkg_desc {
   my $t = "$pkg\n";
   $t = $t . $tlp->shortdesc . "\n" if (defined($tlp->shortdesc));
   $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
+  $t = $t . $tlp->cataloguedata->{'topics'} . "\n" if (defined($tlp->cataloguedata->{'topics'}));
   my $pat = $what;
   $pat = '\W' . $what . '\W' if ($inword);
   my $matched = "";
