@@ -1,3 +1,9 @@
+2015-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* c-auto.in (removed): Unused, replaced ...
+	* config.h.in (new): ... by this.
+	* configure.ac: Adapted
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

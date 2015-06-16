@@ -13462,8 +13462,7 @@ fi
 
 
 
-ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
-
+ac_config_headers="$ac_config_headers config.h"
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing floor" >&5
 $as_echo_n "checking for library containing floor... " >&6; }
@@ -16002,7 +16001,7 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
+    "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
