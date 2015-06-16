@@ -1,3 +1,14 @@
+2015-06-16  Karl Berry  <karl@tug.org>
+
+	* *.man: remove spurious "for troff" and "for nroff" non-comments.
+	https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=663157
+	Report from Tom Yan, tex-live mail 2 Jun 2015 03:28:32.
+	Also replace pseudo-smallcaps M\s-2ETAFONT\s0 with standard "Metafont".
+	* *.min: remove these long-gone programs.
+	* Makefile.am (EXTRA_DIST): remove *.min.
+	(man1_links) [TEX]: include initex.
+	(man1_links) [MF]: include inimf.
+
 2015-04-27  Karl Berry  <karl@tug.org>
 
  	* aleph.man,

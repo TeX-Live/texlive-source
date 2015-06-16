@@ -1,4 +1,4 @@
-.TH "OVF2OVP" "27 April 2015" "Web2C @VERSION@"
+.TH OVF2OVP "16 June 2015" "Web2C @VERSION@"
 .PP 
 .SH "NAME" 
 ovf2ovp \- convert a virtual font file and its associated font metric file into property-list format

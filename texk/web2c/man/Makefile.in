@@ -89,19 +89,21 @@ build_triplet = @build@
 host_triplet = @host@
 @WEB_TRUE@am__append_1 = $(web_man_sources)
 @TEX_TRUE@am__append_2 = tex.man
-@MF_TRUE@am__append_3 = mf.man
-@MFN_TRUE@@MF_TRUE@am__append_4 = mf:mf-nowin
-@MP_TRUE@am__append_5 = mpost.man
-@ETEX_TRUE@am__append_6 = etex.man
-@PDFTEX_TRUE@am__append_7 = $(pdftex_man_sources)
-@PDFTEX_TRUE@am__append_8 = pdftex:pdflatex
-@LUATEX_TRUE@am__append_9 = luatex.man
-@LUATEX_TRUE@am__append_10 = luatex:texlua luatex:texluac
-@XETEX_TRUE@am__append_11 = # xetex.man
-@OTANGLE_TRUE@am__append_12 = $(otangle_man_sources)
-@OTANGLE_TRUE@am__append_13 = dvicopy:odvicopy dvitype:odvitype tangle:otangle
-@ALEPH_TRUE@am__append_14 = aleph.man
-@ALEPH_TRUE@am__append_15 = aleph:lamed
+@TEX_TRUE@am__append_3 = tex:initex
+@MF_TRUE@am__append_4 = mf.man
+@MF_TRUE@am__append_5 = mf:inimf
+@MFN_TRUE@@MF_TRUE@am__append_6 = mf:mf-nowin
+@MP_TRUE@am__append_7 = mpost.man
+@ETEX_TRUE@am__append_8 = etex.man
+@PDFTEX_TRUE@am__append_9 = $(pdftex_man_sources)
+@PDFTEX_TRUE@am__append_10 = pdftex:pdflatex
+@LUATEX_TRUE@am__append_11 = luatex.man
+@LUATEX_TRUE@am__append_12 = luatex:texlua luatex:texluac
+@XETEX_TRUE@am__append_13 = # xetex.man
+@OTANGLE_TRUE@am__append_14 = $(otangle_man_sources)
+@OTANGLE_TRUE@am__append_15 = dvicopy:odvicopy dvitype:odvitype tangle:otangle
+@ALEPH_TRUE@am__append_16 = aleph.man
+@ALEPH_TRUE@am__append_17 = aleph:lamed
 subdir = man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
@@ -429,19 +431,18 @@ wlibs = @wlibs@
 x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
 man_sources = $(bootstrap_man_sources) $(am__append_1) $(am__append_2) \
-	$(am__append_3) $(am__append_5) $(am__append_6) \
-	$(am__append_7) $(am__append_9) $(am__append_11) \
-	$(am__append_12) $(am__append_14) $(misc_man_sources)
+	$(am__append_4) $(am__append_7) $(am__append_8) \
+	$(am__append_9) $(am__append_11) $(am__append_13) \
+	$(am__append_14) $(am__append_16) $(misc_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) tex.man \
 	mf.man mpost.man etex.man $(pdftex_man_sources) luatex.man \
-	$(otangle_man_sources) aleph.man $(misc_man_sources) \
-	amslatex.min initex.min lamstex.min slitex.min spell.add \
-	virtex.min
+	$(otangle_man_sources) aleph.man $(misc_man_sources) spell.add
 bootstrap_man_sources = ctie.man cweb.man tangle.man tie.man
 
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
-man1_links = cweb:ctangle cweb:cweave $(am__append_4) $(am__append_8) \
-	$(am__append_10) $(am__append_13) $(am__append_15)
+man1_links = cweb:ctangle cweb:cweave $(am__append_3) $(am__append_5) \
+	$(am__append_6) $(am__append_10) $(am__append_12) \
+	$(am__append_15) $(am__append_17)
 web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
 	gftopk.man gftype.man mft.man patgen.man pktogf.man pktype.man \
 	pltotf.man pooltype.man tftopl.man vftovp.man vptovf.man weave.man

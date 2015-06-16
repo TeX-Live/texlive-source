@@ -1,9 +1,4 @@
-.\" Process this file with
-.\" groff -man -Tascii pdftosrc.1
-.\"
-.\" $Id: pdftosrc.1,v 1.5 2006/12/22 23:46:23 hhenkel Exp $
-.\"
-.TH pdftosrc 1 "27 April 2015" "Web2C @VERSION@"
+.TH pdftosrc 1 "16 June 2015" "Web2C @VERSION@"
 .SH NAME
 pdftosrc \- extract source file or stream from PDF file
 .SH SYNOPSIS

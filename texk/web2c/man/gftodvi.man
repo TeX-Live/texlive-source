@@ -1,12 +1,11 @@
-.TH GFTODVI 1 "20 April 2007" "Web2C @VERSION@"
+.TH GFTODVI 1 "16 June 2015" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
-.if t .ds MF M\s-2ETAFONT\s0
+.if t .ds MF Metafont
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP for troff
-.el .ds OX TeX for nroff
-.\" the same but obliqued
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.el .ds OX TeX
 .\" BX definition must follow TX so BX can use TX
 .if t .ds BX \fRB\s-2IB\s0\fP\*(TX
 .if n .ds BX BibTeX
