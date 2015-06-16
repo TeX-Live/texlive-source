@@ -1,3 +1,7 @@
+2015-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvidvi.c: Drop <kpathsea/config.h> (isascii via KPSE_COMMON).
+
 2015-04-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvidvi.c: #include <kpathsea/config.h> (for isascii).
