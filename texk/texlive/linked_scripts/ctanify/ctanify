@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.5";          # ctanify version number
+our $VERSION = "1.6";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -36,6 +36,7 @@ my $pkgdir = "";               # Absolute directory of the package directory
 my $zipname;                   # Name of the TDS zip file
 my $tarname;                   # Name of the package tar file
 my $tdsoutdir;                 # Directory name where to output TDS tree
+my $texmacros = "latex";       # TeX macro package
 
 # Associate file extensions with TDS directories.  "%s" is replaced
 # with the package name.
@@ -143,6 +144,7 @@ GetOptions("p|pkgname=s"   => \$pkgname,
            "t|tdsonly=s"   => \@tdsonly,
            "a|auto!"       => \$autoinclude,
            "d|tdsdir=s"    => \$tdsoutdir,
+           "T|tex=s"       => \$texmacros,
            "V|version"     => \$wantversion,
            "h|help"        => \$wanthelp)
     || pod2usage(-verbose => 0,
@@ -169,6 +171,13 @@ foreach my $fname (@ARGV) {
     }
 }
 @tdsonly = map {File::Spec->abs2rel($_)} map {glob} @tdsonly;
+
+# Replace "latex" with something else if --tex was specified.
+if ($texmacros ne "latex") {
+    foreach my $ext (keys %ext2tds) {
+        $ext2tds{$ext} =~ s,\blatex\b,$texmacros,g;
+    }
+}
 
 # Determine the package name if not explicitly specified.
 if (!defined $pkgname) {
@@ -293,7 +302,7 @@ if ($unixify) {
 my @bad_docs;
 find(sub {
     return if !-f;
-    push @bad_docs, $_ if $File::Find::name =~ m,\bdoc/latex/$pkgname/.*\.(ps|dvi)$,;
+    push @bad_docs, $_ if $File::Find::name =~ m,\bdoc/[^/]+/$pkgname/.*\.(ps|dvi)$,;
 }, $tdsdir);
 if (@bad_docs) {
     my $bad_docs = join ", ", @bad_docs;
@@ -390,6 +399,9 @@ ctanify
 [B<--tdsonly>=I<filespec> ...]
 [B<-->[B<no>]B<unixify>]
 [B<-->[B<no>]B<skip>]
+[B<--tdsdir>=I<dirname> ...]
+[B<--tex>=I<macro_pkg>]
+[B<-->[B<no>]B<miscify>]
 I<filespec>[=I<dirname>] ...
 
 ctanify
@@ -464,6 +476,12 @@ They are provided for special circumstances that may arise.
 
 Instead of creating a tarball for CTAN, merely create the package TDS
 tree rooted in directory I<dirname>.
+
+=item B<-T> I<macro_pkg>, B<--tex>=I<macro_pkg>
+
+Assert that the files being packaged for CTAN target a TeX macro
+package other than LaTeX.  Some common examples of I<macro_pkg> are
+C<generic>, C<plain>, and C<context>.
 
 =item B<-nou>, B<--no-unixify>
 
@@ -666,7 +684,7 @@ Scott Pakin, I<scott+ctify@pakin.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2014 Scott Pakin
+Copyright 2015 Scott Pakin
 
 This work may be distributed and/or modified under the conditions of
 the LaTeX Project Public License, either S<version 1.3c> of this
