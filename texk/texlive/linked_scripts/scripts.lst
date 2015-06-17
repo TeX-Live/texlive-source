@@ -8,6 +8,7 @@ listbib/listbib
 listings-ext/listings-ext.sh
 ltxfileinfo/ltxfileinfo
 lua2dox/lua2dox_filter
+pdfbook2/pdfbook2
 pdfjam/pdf180
 pdfjam/pdf270
 pdfjam/pdf90
@@ -88,7 +89,6 @@ musixtex/musixflx.lua
 musixtex/musixtex.lua
 oberdiek/pdfatfi.pl
 pax/pdfannotextractor.pl
-pdfbook2/pdfbook2
 pdfcrop/pdfcrop.pl
 pedigree-perl/pedigree.pl
 perltex/perltex.pl
