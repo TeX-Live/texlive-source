@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37541 2015-06-15 00:00:42Z preining $
+# $Id: fmtutil.pl 37563 2015-06-16 13:21:24Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -25,11 +25,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37541 2015-06-15 00:00:42Z preining $';
-my $lastchdate = '$Date: 2015-06-15 02:00:42 +0200 (Mon, 15 Jun 2015) $';
+my $svnid = '$Id: fmtutil.pl 37563 2015-06-16 13:21:24Z preining $';
+my $lastchdate = '$Date: 2015-06-16 15:21:24 +0200 (Tue, 16 Jun 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37541 $';
+my $svnrev = '$Revision: 37563 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -717,7 +717,8 @@ sub callback_enable_disable_format {
       my @engs = keys %{$alldata->{'merged'}{$fmt}};
       if (($#engs > 0) || ($#engs == -1)) {
         print_warning("More engines given for format $fmt.\n");
-        print_warning("Please specify one of the engines: @engs\n");
+        print_warning("Possible engines: @engs\n");
+        print_warning("Please select one by passing in $fmt/ENGINE\n");
         print_warning("No changes done.\n");
         return 0;
       } else {
@@ -1169,8 +1170,11 @@ Commands:
   --byengine ENGINENAME      (re)create formats using ENGINENAME
   --byfmt FORMATNAME         (re)create format for FORMATNAME
   --byhyphen HYPHENFILE      (re)create formats that depend on HYPHENFILE
-  --enablefmt FORMATNAME     enable formatname in config file
-  --disablefmt FORMATNAME    disable formatname in config file
+  --enablefmt FORMATNAME[/ENGINE] enable formatname in config file
+  --disablefmt FORMATNAME[/ENGINE] disable formatname in config file
+                             If more formats share the same name but have
+                             different engines, the ENGINE parameter is
+                             obligatory.
   --listcfg                  list (enabled and disabled) configurations,
                              filtered to available formats
   --catcfg                   output the content of the config file
