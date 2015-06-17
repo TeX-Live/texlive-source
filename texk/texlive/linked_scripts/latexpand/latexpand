@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # Inspired by latexpand by D. Musliner, University of Michigan
-# 2012, 2013, 2014 Matthieu Moy <Matthieu.Moy@imag.fr>
+# 2012, 2013, 2014, 2015: Matthieu Moy <Matthieu.Moy@imag.fr>
 # BSD License
 
 use strict;
@@ -26,6 +26,7 @@ my $expand_usepackage;
 my $expand_bbl;
 my $fatal;
 my $version;
+my $makeatletter;
 
 GetOptions (
 	'h' => \$help,
@@ -42,6 +43,7 @@ GetOptions (
 	'expand-bbl=s' => \$expand_bbl,
 	'fatal' => \$fatal,
 	'version' => \$version,
+        'makeatletter' => \$makeatletter,
 ) or pod2usage(2);
 version() if $version;
 pod2usage(1) if $help;
@@ -49,13 +51,15 @@ pod2usage(-exitstatus => 0, -verbose => 2) if $long_help;
 
 sub get_version
 {
-	my $VERSION = 'v1.1.1';
-	if ($VERSION == '@LATEXPAND' . '_VERSION@') {
+	# $VERSION's value will be substituted by 'make dist', but the
+	# next line won't (the string has to be broken to avoid it).
+	my $VERSION = 'v1.2-1-g47e2cee';
+	if ($VERSION eq '@LATEXPAND' . '_VERSION@') {
 		my($vol,$dir,$file) = File::Spec->splitpath($0);
 		chdir($dir);
 		$VERSION = `git describe --tags HEAD 2>/dev/null`;
 	}
-	if ($VERSION == '') {
+	if ($VERSION eq '') {
 		$VERSION = '<unknown version>';
 	}
 	$VERSION =~ s/^\s+|\s+$//g;
@@ -67,8 +71,6 @@ sub version
 	print "latexpand version ". get_version() .".\n";
 	exit(0);
 }
-
-my $comment_newline;
 
 my $nl = "";
 if ($empty_comments) {
@@ -87,9 +89,14 @@ sub say
 	}
 }
 
+my $makeatletter_found;
+my $in_preamble;
+
 foreach my $file (@ARGV)
 {
 	say "processing $file\n";
+	$makeatletter_found = 0;
+	$in_preamble = 1;
 	process_file($file, "  ");
 }
 
@@ -102,12 +109,12 @@ sub process_file
 	open(FILE, $file) or die "could not open input file '$file'\n";
 	while (my $line = <FILE>) {
 		if ($line =~ /^[ \t]*\\endinput/) {
-		    $line =~ s/(\\endinput.*)\n/% $1/;
-		    $in_comment = 1;
-		    process_line($line, $prefix);
-		    last;
+			$line =~ s/(\\endinput.*)\n/% $1/;
+			$in_comment = 1;
+			process_line($line, $prefix);
+			last;
 		}
-		process_line($line, $prefix);
+		process_line($line, $prefix, $file);
 		if ($line =~ /^%.*[^\n]\z/ || $line =~ /[^\\]%.*[^\n]\z/) {
 			# file ends with a comment not ending with a newline
 			print "\n";
@@ -117,7 +124,7 @@ sub process_file
 		# to avoid e.g. \verb|\end{document}| from terminating
 		# the file.
 		if (!$keep_comments && $line =~ /^[ \t]*\\end{document}/) {
-		    last;
+			last;
 		}
 	}
 	close(FILE);
@@ -126,8 +133,21 @@ sub process_file
 
 sub process_line
 {
-	my $prefix;
-	($_, $prefix) = @_;
+	my ($_, $prefix, $file) = @_;
+	# Consider \makeatletter only in preamble, because we do want
+	# to warn on \someCommand{\makeatletter\command@with@arobase}.
+	if ($in_preamble && /^[^%]*\\makeatletter/) {
+		$makeatletter_found = 1;
+	}
+	if ($in_preamble && /^[^%]*\\makeatother/) {
+		$makeatletter_found = 0;
+	}
+	if (!$makeatletter && !$makeatletter_found
+	    && (my ($command) = /^[^%]*(\\[[:alpha:]]*@[[:alpha:]]*)/)) {
+		print STDERR "Warning: command $command containing @ found in\n";
+		print STDERR "Warning: $file.\n";
+		print STDERR "Warning: consider using --makeatletter if the result is not compilable.\n";
+	}
 	unless ($keep_comments) {
 		if ($empty_comments) {
 			s/^%.*$/%/;
@@ -213,6 +233,12 @@ sub process_line
 			print STDERR "$full\n";
 		}
 	}
+	if (/^[ \t]*\\begin{document}/) {
+		$in_preamble = 0;
+		if ($makeatletter) {
+			print '\makeatletter' . $nl;
+		}
+	}
 	print;
 }
 
@@ -270,7 +296,7 @@ latexpand [options] FILE...
 	--keep-comments  don't strip comments (comments are lines
                          starting with %, and anything below
                          \end{document})
-    	--empty-comments keep empty comments (i.e. % at end of lines) for clarity
+	--empty-comments keep empty comments (i.e. % at end of lines) for clarity
 	--keep-includes  don't expand \input and \include directives
 	--expand-usepackage
 	                 Expand \usepackage{...} directives if the
@@ -288,7 +314,11 @@ latexpand [options] FILE...
 	--graphics_extensions
 	                 colon-separated list of possible graphics extensions
 	                 (used by --show-graphics to find the actual graphics files)
-	--fatal		 Die in case a file can't be found.
+	--fatal          Die in case a file can't be found.
+	--makeatletter   Insert a \makeatletter in the preamble. In some
+	                 rare cases it may break your document, but it
+	                 may help fixing bad interactions between
+	                 @-commands and inclusion (see BUGS section).
 
 =head1 USES
 
@@ -316,9 +346,13 @@ Please, report bugs to Matthieu Moy <Matthieu.Moy@imag.fr>.
 
 =head2 Known bugs
 
+=head3 Verbatim
+
 latexpand currently ignores \begin{verbatim} ... \end{verbatim}, and
 will therefore process any \include, \input, ... directives that
 appear within verbatim environments (while it shouldn't).
+
+=head3 Comment environment
 
 It would be nice to remove code between \begin{comment} and
 \end{comment} too if \usepackage{comment} is used.
@@ -335,6 +369,30 @@ will produce the incorrect
 A workaround is to use --empty-comments when such tricky usage of the
 comments package is done.
 
+=head3 \makeatletter and use with transfig/xfig with \scalebox{}
+
+If \input{} or \include{} appears as argument to a command, and the
+file included contains \makeatletter, then after expansion, the
+\makeatletter and the @-command appear as argument to the command,
+which is forbidden because the argument is parsed (and the @-command
+badly tokenized) before being executed.
+
+This happens with
+
+	\scalebox{ \input{file-generated-by-xfig.pdf_t} }
+
+Workaround: add \makeatletter before the scalebox manually in your
+code, like
+
+        \makeatletter{}
+	\scalebox{ \input{file-generated-by-xfig.pdf_t} }
+        \makeatother{}
+
+In the case of xfig generated files, it is necessary only for the
+first occurence.
+
+A more brute-force workaround is to use latexpand --makeatletter.
+
 =head1 SEE ALSO
 
 Instructions to include only the relevant .bib items (french):
@@ -343,4 +401,4 @@ https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
 
 =head1 VERSION
 
-This is latexpand version v1.1.1.
+This is latexpand version v1.2-1-g47e2cee.
