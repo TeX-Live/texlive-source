@@ -723,6 +723,7 @@ am__isrc
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+WEB2CVERSION
 KPSE_LT_VERSINFO
 KPSEVERSION
 target_alias
@@ -2763,8 +2764,7 @@ KPSE_LT_VERSINFO=8:2:2
 
 
 
-
-$as_echo "#define WEB2CVERSION \" (TeX Live 2016/dev)\"" >>confdefs.h
+ WEB2CVERSION=" (TeX Live 2016/dev)"
 
 
 am__api_version='1.15'

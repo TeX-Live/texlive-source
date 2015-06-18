@@ -194,9 +194,6 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define to the current TeX Live version string. */
-#undef WEB2CVERSION
-
 /* Define to 1 if we need (v)snprintf wrapper functions. */
 #undef WRAP_SNPRINTF
 
