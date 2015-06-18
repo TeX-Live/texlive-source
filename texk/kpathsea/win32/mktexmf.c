@@ -1,7 +1,19 @@
-/*
- * mktexmf.c (Borrowed from Fabrice)
- * (2006 --ak)
- *
+/* mktexmf.c
+
+   Copyright 2000, 2015 Akira Kakuto.
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public License
+   along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <kpathsea/kpathsea.h>
@@ -10,9 +22,7 @@
 #include "getdestdir.h"
 #include "mktexupd.h"
 
-#define SBUF 256
-
-char *progname;
+#define SBUF 512
 
 static int
 test_file(char c, char * name)
@@ -51,6 +61,7 @@ test_file(char c, char * name)
     if (_access(name, 4) == 0) return 1;
     else return 0;
   }
+  /* never reaches here */
   return 0;
 }
 
@@ -59,7 +70,7 @@ usage(void)
 {
   fprintf(stderr, "Usage : mktexmf FONT.\n\n");
   fprintf(stderr, "Makes the Metafont source file for FONT,"
-	  " if possible. For example,\n");
+          " if possible. For example,\n");
   fprintf(stderr, "`ecr12' or `cmr11'.\n");
 }
 
@@ -113,15 +124,27 @@ main (int argc, char **argv)
   FILE *f;
   size_t ptsz_len;
   char font[SBUF];
+  char *progname;
   char mfname[SBUF];
   char *arg[4];
   int  i;
   char *ptr;
 
-  progname = argv[0];
-  kpse_set_program_name (progname, NULL);
+  kpse_set_program_name (argv[0], NULL);
+  progname = kpse_program_name;
+
   if (argc != 2) {
     usage();
+    return 0;
+  }
+
+  if (strncmp(argv[1], "-v",2) == 0 || strncmp(argv[1], "--v",3) == 0) {
+    fprintf ( stderr, "%s, (C version 1.1 --ak 2006-2015)\n", progname);
+    return 0;
+  }
+
+  if (strncmp(argv[1], "-h",2) == 0 || strncmp(argv[1], "--h",3) == 0) {
+    fprintf ( stderr, "%s, Usage: %s FontBaseName\n", progname, progname);
     return 0;
   }
 
@@ -140,11 +163,11 @@ main (int argc, char **argv)
 
 
   fprintf(stderr, "name = %s, rootname = %s, pointsize = %s\n",
-	  name, rootname, pointsize);      
+          name, rootname, pointsize);      
 
 
   sauterroot = kpse_find_file(concat3("b-", rootname, ".mf"),
-			      kpse_mf_format, false);
+                              kpse_mf_format, false);
 
   if (sauterroot && *sauterroot) {
     rootfile = sauterroot;
@@ -160,30 +183,30 @@ main (int argc, char **argv)
     destdir = ptr;
   }
   else if (strlen(name) == 8
-	   && FILESTRNCASEEQ(name, "csso12", 6)
-	   && (name[6] >= '0' && name[6] <= '5')
-	   && isdigit(name[7])) {
+           && FILESTRNCASEEQ(name, "csso12", 6)
+           && (name[6] >= '0' && name[6] <= '5')
+           && isdigit(name[7])) {
     rootfile = xstrdup("");
   }
   else if (FILESTRNCASEEQ(rootname, "cs", 2)
-	   || FILESTRNCASEEQ(rootname, "lcsss", 5)
-	   || FILESTRNCASEEQ(rootname, "icscsc", 6)
-	   || FILESTRNCASEEQ(rootname, "icstt", 5)
-	   || FILESTRNCASEEQ(rootname, "ilcsss", 6)
-	   ) {
+           || FILESTRNCASEEQ(rootname, "lcsss", 5)
+           || FILESTRNCASEEQ(rootname, "icscsc", 6)
+           || FILESTRNCASEEQ(rootname, "icstt", 5)
+           || FILESTRNCASEEQ(rootname, "ilcsss", 6)
+           ) {
     rootfile = kpse_find_file("cscode.mf",
-			      kpse_mf_format, false);
+                              kpse_mf_format, false);
   }
   else if (strlen(rootname) >= 3
-	   && ((FILESTRNCASEEQ(rootname, "wn", 2)
-		&& strchr("bBcCdDfFiIrRsStTuUvV", rootname[2]))
-	       || (FILESTRNCASEEQ(rootname, "rx", 2)
-		   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", rootname[2])
-		   && strlen(rootname) >= 4
-		   && strchr("bBcCfFhHiIlLmMoOsStTxX", rootname[3]))
-	       || ((rootname[0] == 'l' || rootname[0] == 'L')
-		   && strchr("aAbBcCdDhHlL", rootname[1])
-		   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", rootname[2])))) {
+           && ((FILESTRNCASEEQ(rootname, "wn", 2)
+                && strchr("bBcCdDfFiIrRsStTuUvV", rootname[2]))
+               || (FILESTRNCASEEQ(rootname, "rx", 2)
+                   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", rootname[2])
+                   && strlen(rootname) >= 4
+                   && strchr("bBcCfFhHiIlLmMoOsStTxX", rootname[3]))
+               || ((rootname[0] == 'l' || rootname[0] == 'L')
+                   && strchr("aAbBcCdDhHlL", rootname[1])
+                   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", rootname[2])))) {
     char lhprefix[64];
     strncpy(lhprefix, name, 2);
     lhprefix[2] = '\0';
@@ -193,7 +216,7 @@ main (int argc, char **argv)
   else {
     string tem;
     rootfile = kpse_find_file(tem = concat(rootname, ".mf"),
-			      kpse_mf_format, false);
+                              kpse_mf_format, false);
     free(tem);
   }
 
@@ -214,9 +237,9 @@ main (int argc, char **argv)
       strcpy (arg[1], "source");
       strcpy (arg[2], rootfile);
       if (!(ptr = getdestdir (3, arg))) {
-	fprintf(stderr, "Cannot get destination directory name.\n");
-	relmem (arg);
-	return 1;
+        fprintf(stderr, "Cannot get destination directory name.\n");
+        relmem (arg);
+        return 1;
       }
       destdir = ptr;
     }
@@ -234,19 +257,19 @@ main (int argc, char **argv)
     return 1;
   } else if (ptsz_len == 2) {
     if (pointsize[0] == '1' && pointsize[1] == '1')
-      realsize = "10.95";		/* \magstephalf */
+      realsize = "10.95";               /* \magstephalf */
     else if (pointsize[0] == '1' && pointsize[1] == '4')
-      realsize = "14.4";		/* \magstep2 */
+      realsize = "14.4";                /* \magstep2 */
     else if (pointsize[0] == '1' && pointsize[1] == '7')
-      realsize = "17.28";		/* \magstep3 */
+      realsize = "17.28";               /* \magstep3 */
     else if (pointsize[0] == '2' && pointsize[1] == '0')
-      realsize = "20.74";		/* \magstep4 */
+      realsize = "20.74";               /* \magstep4 */
     else if (pointsize[0] == '2' && pointsize[1] == '5')
-      realsize = "24.88";		/* \magstep5 */
+      realsize = "24.88";               /* \magstep5 */
     else if (pointsize[0] == '3' && pointsize[1] == '0')
-      realsize = "29.86";		/* \magstep6 */
+      realsize = "29.86";               /* \magstep6 */
     else if (pointsize[0] == '3' && pointsize[1] == '6')
-      realsize = "35.83";		/* \magstep7 */
+      realsize = "35.83";               /* \magstep7 */
     else
       realsize = pointsize;
   }
@@ -260,7 +283,7 @@ main (int argc, char **argv)
     strcpy(tempsize, pointsize);
     /* The script doesn't check for last chars being digits, but we do!  */
     if (isdigit(tempsize[ptsz_len-1])
-	&& isdigit(tempsize[ptsz_len-2])) {
+        && isdigit(tempsize[ptsz_len-2])) {
       tempsize[ptsz_len+1] = '\0';
       tempsize[ptsz_len]   = tempsize[ptsz_len-1];
       tempsize[ptsz_len-1] = tempsize[ptsz_len-2];
@@ -272,7 +295,7 @@ main (int argc, char **argv)
 
 /* mfname is the full name */
   strcpy (mfname, destdir);
-  i = strlen (mfname);
+  i = (int)strlen (mfname);
   if (mfname[i-1] != '/') {
     mfname[i] = '/';
     mfname[i+1] = '\0';
@@ -291,7 +314,7 @@ main (int argc, char **argv)
 
   if ((f = fopen(mfname, "wb")) == NULL) {
     fprintf(stderr, "%s: can't write into the file %s/%s.\n",
-	    progname, destdir, name);
+            progname, destdir, name);
     if (destdir) free (destdir);
     relmem (arg);
     return 1;
@@ -308,29 +331,29 @@ main (int argc, char **argv)
 
   }
   else if (FILESTRNCASEEQ(name, "cs", 2)
-	   || FILESTRNCASEEQ(name, "lcsss", 5)
-	   || FILESTRNCASEEQ(name, "icscsc", 6)
-	   || FILESTRNCASEEQ(name, "icstt", 5)
-	   || FILESTRNCASEEQ(name, "ilcsss", 6)
-	   ) {
+           || FILESTRNCASEEQ(name, "lcsss", 5)
+           || FILESTRNCASEEQ(name, "icscsc", 6)
+           || FILESTRNCASEEQ(name, "icstt", 5)
+           || FILESTRNCASEEQ(name, "ilcsss", 6)
+           ) {
     fprintf(f, "input cscode\nuse_driver;\n");
   }
   else if (strlen(name) >= 3
-	   && ((FILESTRNCASEEQ(name, "wn", 2)
-		&& strchr("bBcCdDfFiIrRsStTuUvV", name[2]))
-	       || (FILESTRNCASEEQ(name, "rx", 2)
-		   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", name[2])
-		   && strlen(name) >= 4
-		   && strchr("bBcCfFhHiIlLmMoOsStTxX", name[3]))
-	       || ((name[0] == 'l' || name[0] == 'L')
-		   && strchr("aAbBcCdDhHlL", name[1])
-		   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", name[2])))) {
+           && ((FILESTRNCASEEQ(name, "wn", 2)
+                && strchr("bBcCdDfFiIrRsStTuUvV", name[2]))
+               || (FILESTRNCASEEQ(name, "rx", 2)
+                   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", name[2])
+                   && strlen(name) >= 4
+                   && strchr("bBcCfFhHiIlLmMoOsStTxX", name[3]))
+               || ((name[0] == 'l' || name[0] == 'L')
+                   && strchr("aAbBcCdDhHlL", name[1])
+                   && strchr("bBcCdDfFiIoOrRsStTuUvVxX", name[2])))) {
     fprintf(f, "input fikparm;\n");
   }
   else if (strlen(name) >= 4 && strchr("gG", name[0])
-	   && strchr("lLmMoOrRsStT", name[1]) 
-	   && strchr("bBiIjJmMtTwWxX", name[2]) 
-	   && strchr("cCiIlLnNoOrRuU", name[3])) {
+           && strchr("lLmMoOrRsStT", name[1]) 
+           && strchr("bBiIjJmMtTwWxX", name[2]) 
+           && strchr("cCiIlLnNoOrRuU", name[3])) {
     /* A small superset of the names of the cbgreek fonts:
        pattern `g[lmorst][bijmtwx][cilnou]*'. 
        This is only slightly more general than the exact set of patterns.
@@ -341,7 +364,7 @@ main (int argc, char **argv)
     /* FIXME: this was in the previous versions */
     /* fprintf(f, "if unknown %s: input %s fi;\n", base, base); */
       fprintf(f, "design_size := %s;\ninput %s;\n",
-	      realsize, rootname);
+              realsize, rootname);
   }
 
   fclose(f);
