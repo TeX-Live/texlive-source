@@ -1,6 +1,6 @@
 2015-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* Makefile.am (AM_CPPFLAGS): Drop WEB2C_KPSE_VERSION.
+	* Makefile.am (AM_CPPFLAGS): WEB2C_KPSE_VERSION => WEB2CVERSION.
 	* dirutil.[ch], getdestdir.h, mktexupd.h: Add W32TeX Copyright.
 	* getdestdir.c, mktexfmt.c, mktexlsr.c, mktexmf.c, mktexupd.c,
 	mktexupdmain.c: Sync with W32TeX.

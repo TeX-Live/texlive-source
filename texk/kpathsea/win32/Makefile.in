@@ -279,6 +279,7 @@ SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
+WEB2CVERSION = @WEB2CVERSION@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -331,7 +332,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
+AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/.. \
+	-DWEB2CVERSION='"$(WEB2CVERSION)"'
 AM_CFLAGS = $(WARNING_CFLAGS)
 mktexfmt_SOURCES = \
 	mktexfmt.c

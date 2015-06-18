@@ -4,6 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
+AM_CPPFLAGS += -DWEB2CVERSION='"$(WEB2CVERSION)"'
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 # Build WIN32 replacements for Unix shell scripts.
