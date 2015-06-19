@@ -1,3 +1,8 @@
+2015-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import harfbuzz-0.9.41.
+	* version.ac: Adjust.
+
 2015-03-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import harfbuzz-0.9.40.
