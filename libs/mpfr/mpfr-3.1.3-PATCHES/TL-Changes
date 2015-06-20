@@ -1,0 +1,26 @@
+Changes applied to the mpfr-3.1.3/ tree as obtained from:
+	http://ftp.gnu.org/gnu/mpfr/
+
+Removed:
+	COPYING
+	COPYING.LESSER
+	Makefile.in
+	aclocal.m4
+	ar-lib
+	compile
+	config.guess
+	config.sub
+	configure
+	depcomp
+	doc/
+	examples/
+	install-sh
+	ltmain.sh
+	m4/
+	missing
+	src/Makefile.in
+	test-driver
+	tests/
+	tools/
+	tune/
+
