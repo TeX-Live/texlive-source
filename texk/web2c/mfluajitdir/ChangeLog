@@ -1,3 +1,7 @@
+2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mfluajit.am: Use $(tie_c) and $(tie_m).
+
 2015-04-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported MFLuaJIT into TeX Live, based on the SVN repository

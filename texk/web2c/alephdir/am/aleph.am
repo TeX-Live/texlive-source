@@ -1,6 +1,6 @@
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Aleph
@@ -69,7 +69,7 @@ aleph_web_srcs = \
 	alephdir/eopage.ch \
 	alephdir/eochar.ch
 aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
-	$(tie) -m aleph.web $(aleph_web_srcs)
+	$(tie_m) $(aleph_web_srcs)
 
 # Generate aleph.ch
 aleph_ch_srcs = \
@@ -86,7 +86,7 @@ aleph_ch_srcs = \
 	alephdir/comsrcspec.ch \
 	alephdir/ceostuff.ch
 aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
-	$(tie) -c aleph.ch aleph.web $(aleph_ch_srcs)
+	$(tie_c) aleph.web $(aleph_ch_srcs)
 
 ##
 EXTRA_DIST += $(aleph_web_srcs) $(aleph_ch_srcs)

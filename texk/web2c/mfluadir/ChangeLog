@@ -1,3 +1,7 @@
+2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mflua.am: Use $(tie_c) and $(tie_m).
+
 2015-04-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported MFLua into TeX Live, based on the SVN repository

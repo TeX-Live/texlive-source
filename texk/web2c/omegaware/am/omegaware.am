@@ -1,6 +1,6 @@
 ## texk/web2c/omegaware/am/omegaware.am: Makefile fragment for omegaware web programs.
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 omegaware_programs = odvicopy odvitype otangle wofm2opl wopl2ofm wovf2ovp wovp2ovf
@@ -45,7 +45,7 @@ ofm2opl-web2c: ofm2opl.p $(web2c_depend)
 ofm2opl.p: otangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
 	$(tangle_silent)$(ow_otangle) ofm2opl ofm2opl
 ofm2opl.web: tie$(EXEEXT) omegaware/ofm2opl.web omegaware/ofm2opl.up
-	$(tie) -m ofm2opl.web omegaware/ofm2opl.web omegaware/ofm2opl.up
+	$(tie_m) omegaware/ofm2opl.web omegaware/ofm2opl.up
 EXTRA_DIST += omegaware/ofm2opl.web omegaware/ofm2opl.up omegaware/ofm2opl.ch
 DISTCLEANFILES += ofm2opl.web
 
@@ -57,7 +57,7 @@ opl2ofm-web2c: opl2ofm.p $(web2c_depend)
 opl2ofm.p: otangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
 	$(tangle_silent)$(ow_otangle) opl2ofm opl2ofm
 opl2ofm.web: tie$(EXEEXT) omegaware/opl2ofm.web omegaware/opl2ofm.up
-	$(tie) -m opl2ofm.web omegaware/opl2ofm.web omegaware/opl2ofm.up
+	$(tie_m) omegaware/opl2ofm.web omegaware/opl2ofm.up
 EXTRA_DIST += omegaware/opl2ofm.web omegaware/opl2ofm.up omegaware/opl2ofm.ch
 DISTCLEANFILES += opl2ofm.web
 
@@ -79,7 +79,7 @@ ovf2ovp-web2c: ovf2ovp.p $(web2c_depend)
 ovf2ovp.p: otangle$(EXEEXT) ovf2ovp.web omegaware/ovf2ovp.ch
 	$(tangle_silent)$(ow_otangle) ovf2ovp ovf2ovp
 ovf2ovp.web: tie$(EXEEXT) omegaware/ovf2ovp.web omegaware/ovf2ovp.up
-	$(tie) -m ovf2ovp.web omegaware/ovf2ovp.web omegaware/ovf2ovp.up
+	$(tie_m) omegaware/ovf2ovp.web omegaware/ovf2ovp.up
 EXTRA_DIST += omegaware/ovf2ovp.web omegaware/ovf2ovp.up omegaware/ovf2ovp.ch
 DISTCLEANFILES += ovf2ovp.web
 	
@@ -91,7 +91,7 @@ ovp2ovf-web2c: ovp2ovf.p $(web2c_depend)
 ovp2ovf.p: otangle$(EXEEXT) ovp2ovf.web omegaware/ovp2ovf.ch
 	$(tangle_silent)$(ow_otangle) ovp2ovf ovp2ovf
 ovp2ovf.web: tie$(EXEEXT) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
-	$(tie) -m ovp2ovf.web omegaware/ovp2ovf.web omegaware/ovp2ovf.up
+	$(tie_m) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
 EXTRA_DIST += omegaware/ovp2ovf.web omegaware/ovp2ovf.up omegaware/ovp2ovf.ch
 DISTCLEANFILES += ovp2ovf.web
 

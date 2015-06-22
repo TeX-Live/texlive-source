@@ -1,6 +1,6 @@
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
-## Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -74,14 +74,14 @@ $(srcdir)/uptexdir/uptex_version.h: @MAINTAINER_MODE_TRUE@ uptexdir/uptex-m.ch
 
 # Generate uptex.web
 uptex.web: tie$(EXEEXT) $(uptex_web_srcs)
-	$(tie) -m uptex.web $(uptex_web_srcs)
+	$(tie_m) $(uptex_web_srcs)
 uptex_web_srcs = \
 	tex.web \
 	tex.ch
 
 # Generate uptex.ch
 uptex.ch: tie$(EXEEXT) uptex.web $(uptex_ch_srcs)
-	$(tie) -c uptex.ch uptex.web $(uptex_ch_srcs)
+	$(tie_c) uptex.web $(uptex_ch_srcs)
 uptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
 	uptexdir/uptex-m.ch \
@@ -107,7 +107,7 @@ upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines web2c/cvtbib.s
 upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
 	$(up_tangle) upbibtex upbibtex
 upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch ptexdir/pbibtex.ch
-	$(tie) -m upbibtex.web bibtex.web bibtex.ch ptexdir/pbibtex.ch
+	$(tie_m) bibtex.web bibtex.ch ptexdir/pbibtex.ch
 EXTRA_DIST += ptexdir/pbibtex.ch uptexdir/upbibtex.ch
 
 ## upDVItype
@@ -124,7 +124,7 @@ updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
 updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 	$(up_tangle) updvitype updvitype
 updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
-	$(tie) -m updvitype.web dvitype.web dvitype.ch ptexdir/pdvitype.ch
+	$(tie_m) dvitype.web dvitype.ch ptexdir/pdvitype.ch
 EXTRA_DIST += ptexdir/pdvitype.ch uptexdir/updvitype.ch
 
 ## upPLtoTF
@@ -141,7 +141,7 @@ uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
 uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
 	$(up_tangle) uppltotf uppltotf
 uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch ptexdir/ppltotf.ch
-	$(tie) -m uppltotf.web pltotf.web pltotf.ch ptexdir/ppltotf.ch
+	$(tie_m) pltotf.web pltotf.ch ptexdir/ppltotf.ch
 EXTRA_DIST += ptexdir/ppltotf.ch uptexdir/uppltotf.ch
 
 ## upTFtoPL
@@ -158,7 +158,7 @@ uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
 uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 	$(up_tangle) uptftopl uptftopl
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
-	$(tie) -m uptftopl.web tftopl.web tftopl.ch ptexdir/ptftopl.ch
+	$(tie_m) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch uptexdir/uptftopl.ch
 
 upweb_tests += uptexdir/yokotate.test

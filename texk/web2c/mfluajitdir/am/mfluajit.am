@@ -65,7 +65,7 @@ mfluajit-tangle: tangle$(EXEEXT) mfluajit.web mfluajit.ch tangle-sh
 
 # Generate mfluajit.web
 mfluajit.web: tie$(EXEEXT) $(mfluajit_web_srcs)
-	$(tie) -m mfluajit.web $(mfluajit_web_srcs)
+	$(tie_m) $(mfluajit_web_srcs)
 mfluajit_web_srcs = \
 	mf.web \
 	mfluadir/mf-lua.ch \
@@ -73,7 +73,7 @@ mfluajit_web_srcs = \
 
 # Generate mfluajit.ch
 mfluajit.ch: tie$(EXEEXT) mfluajit.web $(mfluajit_ch_src)
-	$(tie) -c $@ mfluajit.web $(mfluajit_ch_src)
+	$(tie_c) mfluajit.web $(mfluajit_ch_src)
 mfluajit_ch_src = \
 	mf.ch \
 	mfluadir/mflua-m.ch \

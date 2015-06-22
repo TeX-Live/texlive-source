@@ -2627,6 +2627,8 @@ tie_silent = $(tie_silent_@AM_V@)
 tie_silent_ = $(tie_silent_@AM_DEFAULT_V@)
 tie_silent_0 = @echo "  TIE     " $@; $(SHELL) ./silent-sh $@ #
 tie_silent_1 = 
+tie_c = $(tie) -c $@
+tie_m = $(tie) -m $@
 
 # Calling tangle & Co. via tangle-sh (several output files)
 texmf_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(TANGLE)
@@ -15351,7 +15353,7 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 
 # Generate tex-final.ch
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
-	$(tie) -c $@ $(tex_ch_srcs)
+	$(tie_c) $(tex_ch_srcs)
 
 trip.diffs: tex$(EXEEXT)
 	$(triptrap_diffs) $@
@@ -15383,7 +15385,7 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 
 # Generate mf-final.ch
 mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
-	$(tie) -c $@ $(mf_ch_src)
+	$(tie_c) $(mf_ch_src)
 
 mftrap.diffs: mf$(EXEEXT)
 	$(triptrap_diffs) $@
@@ -15418,11 +15420,11 @@ $(srcdir)/mfluadir/mflua_version.h: @MAINTAINER_MODE_TRUE@ mfluadir/mf-lua.ch
 
 # Generate mflua.web
 mflua.web: tie$(EXEEXT) $(mflua_web_srcs)
-	$(tie) -m mflua.web $(mflua_web_srcs)
+	$(tie_m) $(mflua_web_srcs)
 
 # Generate mflua.ch
 mflua.ch: tie$(EXEEXT) mflua.web $(mflua_ch_src)
-	$(tie) -c $@ mflua.web $(mflua_ch_src)
+	$(tie_c) mflua.web $(mflua_ch_src)
 
 mfluatrap.diffs: mflua$(EXEEXT)
 	$(triptrap_diffs) $@
@@ -15452,11 +15454,11 @@ mfluajit-tangle: tangle$(EXEEXT) mfluajit.web mfluajit.ch tangle-sh
 
 # Generate mfluajit.web
 mfluajit.web: tie$(EXEEXT) $(mfluajit_web_srcs)
-	$(tie) -m mfluajit.web $(mfluajit_web_srcs)
+	$(tie_m) $(mfluajit_web_srcs)
 
 # Generate mfluajit.ch
 mfluajit.ch: tie$(EXEEXT) mfluajit.web $(mfluajit_ch_src)
-	$(tie) -c $@ mfluajit.web $(mfluajit_ch_src)
+	$(tie_c) mfluajit.web $(mfluajit_ch_src)
 
 mfluajittrap.diffs: mfluajit$(EXEEXT)
 	$(triptrap_diffs) $@
@@ -15640,11 +15642,11 @@ $(srcdir)/etexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ etexdir/etex.ch
 
 # Generate etex.web
 etex.web: tie$(EXEEXT) $(etex_web_srcs)
-	$(tie) -m etex.web $(etex_web_srcs)
+	$(tie_m) $(etex_web_srcs)
 
 # Generate etex.ch
 etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
-	$(tie) -c etex.ch etex.web $(etex_ch_srcs)
+	$(tie_c) etex.web $(etex_ch_srcs)
 etrip.diffs: etex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: etrip-clean
@@ -15676,11 +15678,11 @@ $(srcdir)/ptexdir/ptex_version.h: @MAINTAINER_MODE_TRUE@ ptexdir/ptex-base.ch
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
-	$(tie) -m ptex.web $(ptex_web_srcs)
+	$(tie_m) $(ptex_web_srcs)
 
 # Generate ptex.ch
 ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
-	$(tie) -c ptex.ch ptex.web $(ptex_ch_srcs)
+	$(tie_c) ptex.web $(ptex_ch_srcs)
 pbibtex.c pbibtex.h: pbibtex-web2c
 	@$(web2c) pbibtex
 pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
@@ -15688,7 +15690,7 @@ pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
 pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
 	$(p_tangle) pbibtex pbibtex
 pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
-	$(tie) -m pbibtex.web bibtex.web bibtex.ch
+	$(tie_m) bibtex.web bibtex.ch
 pdvitype.c pdvitype.h: pdvitype-web2c
 	@$(web2c) pdvitype
 pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
@@ -15696,7 +15698,7 @@ pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
 pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
 	$(p_tangle) pdvitype pdvitype
 pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
-	$(tie) -m pdvitype.web dvitype.web dvitype.ch
+	$(tie_m) dvitype.web dvitype.ch
 ppltotf.c ppltotf.h: ppltotf-web2c
 	@$(web2c) ppltotf
 ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
@@ -15704,7 +15706,7 @@ ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
 ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
 	$(p_tangle) ppltotf ppltotf
 ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
-	$(tie) -m ppltotf.web pltotf.web pltotf.ch
+	$(tie_m) pltotf.web pltotf.ch
 ptftopl.c ptftopl.h: ptftopl-web2c
 	@$(web2c) ptftopl
 ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
@@ -15712,7 +15714,7 @@ ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
 ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 	$(p_tangle) ptftopl ptftopl
 ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
-	$(tie) -m ptftopl.web tftopl.web tftopl.ch
+	$(tie_m) tftopl.web tftopl.ch
 ptrip.diffs: ptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: ptrip-clean
@@ -15741,11 +15743,11 @@ $(srcdir)/eptexdir/eptex_version.h: @MAINTAINER_MODE_TRUE@ eptexdir/eptex.ech
 
 # Generate eptex.web
 eptex.web: tie$(EXEEXT) $(eptex_web_srcs)
-	$(tie) -m eptex.web $(eptex_web_srcs)
+	$(tie_m) $(eptex_web_srcs)
 
 # Generate eptex.ch
 eptex.ch: tie$(EXEEXT) eptex.web $(eptex_ch_srcs)
-	$(tie) -c eptex.ch eptex.web $(eptex_ch_srcs)
+	$(tie_c) eptex.web $(eptex_ch_srcs)
 eptrip.diffs: eptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
@@ -15774,11 +15776,11 @@ $(srcdir)/uptexdir/uptex_version.h: @MAINTAINER_MODE_TRUE@ uptexdir/uptex-m.ch
 
 # Generate uptex.web
 uptex.web: tie$(EXEEXT) $(uptex_web_srcs)
-	$(tie) -m uptex.web $(uptex_web_srcs)
+	$(tie_m) $(uptex_web_srcs)
 
 # Generate uptex.ch
 uptex.ch: tie$(EXEEXT) uptex.web $(uptex_ch_srcs)
-	$(tie) -c uptex.ch uptex.web $(uptex_ch_srcs)
+	$(tie_c) uptex.web $(uptex_ch_srcs)
 upbibtex.c upbibtex.h: upbibtex-web2c
 	@$(web2c) upbibtex
 upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines web2c/cvtbib.sed
@@ -15786,7 +15788,7 @@ upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines web2c/cvtbib.s
 upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
 	$(up_tangle) upbibtex upbibtex
 upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch ptexdir/pbibtex.ch
-	$(tie) -m upbibtex.web bibtex.web bibtex.ch ptexdir/pbibtex.ch
+	$(tie_m) bibtex.web bibtex.ch ptexdir/pbibtex.ch
 updvitype.c updvitype.h: updvitype-web2c
 	@$(web2c) updvitype
 updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
@@ -15794,7 +15796,7 @@ updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
 updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 	$(up_tangle) updvitype updvitype
 updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
-	$(tie) -m updvitype.web dvitype.web dvitype.ch ptexdir/pdvitype.ch
+	$(tie_m) dvitype.web dvitype.ch ptexdir/pdvitype.ch
 uppltotf.c uppltotf.h: uppltotf-web2c
 	@$(web2c) uppltotf
 uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
@@ -15802,7 +15804,7 @@ uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
 uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
 	$(up_tangle) uppltotf uppltotf
 uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch ptexdir/ppltotf.ch
-	$(tie) -m uppltotf.web pltotf.web pltotf.ch ptexdir/ppltotf.ch
+	$(tie_m) pltotf.web pltotf.ch ptexdir/ppltotf.ch
 uptftopl.c uptftopl.h: uptftopl-web2c
 	@$(web2c) uptftopl
 uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
@@ -15810,7 +15812,7 @@ uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
 uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 	$(up_tangle) uptftopl uptftopl
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
-	$(tie) -m uptftopl.web tftopl.web tftopl.ch ptexdir/ptftopl.ch
+	$(tie_m) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 uptrip.diffs: uptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
@@ -15834,11 +15836,11 @@ euptex-tangle: tangle$(EXEEXT) euptex.web euptex.ch tangle-sh
 
 # Generate euptex.web
 euptex.web: tie$(EXEEXT) $(euptex_web_srcs)
-	$(tie) -m euptex.web $(euptex_web_srcs)
+	$(tie_m) $(euptex_web_srcs)
 
 # Generate euptex.ch
 euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
-	$(tie) -c euptex.ch euptex.web $(euptex_ch_srcs)
+	$(tie_c) euptex.web $(euptex_ch_srcs)
 euptrip.diffs: euptex$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: euptrip-clean
@@ -15871,7 +15873,7 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
-	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
+	$(tie_c) $(pdftex_ch_srcs)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND)
 
@@ -16144,7 +16146,7 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
-	$(tie) -c xetex.ch $(xetex_ch_srcs)
+	$(tie_c) $(xetex_ch_srcs)
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
 odvicopy.c odvicopy.h: odvicopy-web2c
 	@$(web2c) odvicopy
@@ -16165,7 +16167,7 @@ ofm2opl-web2c: ofm2opl.p $(web2c_depend)
 ofm2opl.p: otangle$(EXEEXT) ofm2opl.web omegaware/ofm2opl.ch
 	$(tangle_silent)$(ow_otangle) ofm2opl ofm2opl
 ofm2opl.web: tie$(EXEEXT) omegaware/ofm2opl.web omegaware/ofm2opl.up
-	$(tie) -m ofm2opl.web omegaware/ofm2opl.web omegaware/ofm2opl.up
+	$(tie_m) omegaware/ofm2opl.web omegaware/ofm2opl.up
 opl2ofm.c opl2ofm.h: opl2ofm-web2c
 	@$(web2c) opl2ofm
 opl2ofm-web2c: opl2ofm.p $(web2c_depend)
@@ -16173,7 +16175,7 @@ opl2ofm-web2c: opl2ofm.p $(web2c_depend)
 opl2ofm.p: otangle$(EXEEXT) opl2ofm.web omegaware/opl2ofm.ch
 	$(tangle_silent)$(ow_otangle) opl2ofm opl2ofm
 opl2ofm.web: tie$(EXEEXT) omegaware/opl2ofm.web omegaware/opl2ofm.up
-	$(tie) -m opl2ofm.web omegaware/opl2ofm.web omegaware/opl2ofm.up
+	$(tie_m) omegaware/opl2ofm.web omegaware/opl2ofm.up
 otangle.c otangle.h: otangle-web2c
 	@$(web2c) otangle
 otangle-web2c: otangle.p $(web2c_depend)
@@ -16187,7 +16189,7 @@ ovf2ovp-web2c: ovf2ovp.p $(web2c_depend)
 ovf2ovp.p: otangle$(EXEEXT) ovf2ovp.web omegaware/ovf2ovp.ch
 	$(tangle_silent)$(ow_otangle) ovf2ovp ovf2ovp
 ovf2ovp.web: tie$(EXEEXT) omegaware/ovf2ovp.web omegaware/ovf2ovp.up
-	$(tie) -m ovf2ovp.web omegaware/ovf2ovp.web omegaware/ovf2ovp.up
+	$(tie_m) omegaware/ovf2ovp.web omegaware/ovf2ovp.up
 ovp2ovf.c ovp2ovf.h: ovp2ovf-web2c
 	@$(web2c) ovp2ovf
 ovp2ovf-web2c: ovp2ovf.p $(web2c_depend)
@@ -16195,7 +16197,7 @@ ovp2ovf-web2c: ovp2ovf.p $(web2c_depend)
 ovp2ovf.p: otangle$(EXEEXT) ovp2ovf.web omegaware/ovp2ovf.ch
 	$(tangle_silent)$(ow_otangle) ovp2ovf ovp2ovf
 ovp2ovf.web: tie$(EXEEXT) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
-	$(tie) -m ovp2ovf.web omegaware/ovp2ovf.web omegaware/ovp2ovf.up
+	$(tie_m) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
 
 # We must create alephd.h before building the aleph_OBJECTS.
 $(aleph_OBJECTS): alephd.h
@@ -16213,9 +16215,9 @@ aleph.p aleph.pool: aleph-tangle
 aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch tangle-sh
 	@$(al_tangle) aleph aleph
 aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
-	$(tie) -m aleph.web $(aleph_web_srcs)
+	$(tie_m) $(aleph_web_srcs)
 aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
-	$(tie) -c aleph.ch aleph.web $(aleph_ch_srcs)
+	$(tie_c) aleph.web $(aleph_ch_srcs)
 
 $(synctex_OBJECTS): $(libsynctex)
 

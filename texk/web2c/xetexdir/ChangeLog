@@ -1,3 +1,7 @@
+2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Use $(tie_c).
+
 2015-05-07  Jonathan Kew  <jfkthame@gmail.com>
 
 	* xetex.web: Merged UTF-16 surrogate-handling fixes from github.

@@ -70,14 +70,14 @@ $(srcdir)/mfluadir/mflua_version.h: @MAINTAINER_MODE_TRUE@ mfluadir/mf-lua.ch
 
 # Generate mflua.web
 mflua.web: tie$(EXEEXT) $(mflua_web_srcs)
-	$(tie) -m mflua.web $(mflua_web_srcs)
+	$(tie_m) $(mflua_web_srcs)
 mflua_web_srcs = \
 	mf.web \
 	mfluadir/mf-lua.ch
 
 # Generate mflua.ch
 mflua.ch: tie$(EXEEXT) mflua.web $(mflua_ch_src)
-	$(tie) -c $@ mflua.web $(mflua_ch_src)
+	$(tie_c) mflua.web $(mflua_ch_src)
 mflua_ch_src = \
 	mf.ch \
 	mfluadir/mflua-m.ch \
