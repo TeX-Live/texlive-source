@@ -17,10 +17,7 @@
 */
 
 #include <kpathsea/kpathsea.h>
-
-#include "dirutil.h"
-#include "getdestdir.h"
-#include "mktexupd.h"
+#include "mktex.h"
 
 #define SBUF 512
 

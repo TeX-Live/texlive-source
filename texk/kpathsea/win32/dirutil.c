@@ -17,8 +17,7 @@
 */
 
 #include <kpathsea/kpathsea.h>
-
-#include "dirutil.h"
+#include "mktex.h"
 
 /* check a directory */
 int

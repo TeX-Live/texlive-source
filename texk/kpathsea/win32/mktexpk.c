@@ -47,10 +47,7 @@
 #ifndef __MINGW32__
 #include <web2c/w2c/c-auto.h>
 #endif
-
-#include "dirutil.h"
-#include "getdestdir.h"
-#include "mktexupd.h"
+#include "mktex.h"
 
 #define LLBUF 1024
 #define LBUF  512
@@ -300,16 +297,11 @@ main (int ac, char **av)
     return (100);
   }
   tmp = xstrdup(tmp);
+
 /*
  * normalize directory separators
  */
-
-  for (fpp = tmp; *fpp; fpp++) {
-    if (IS_KANJI(fpp))
-      fpp++;
-    else if (*fpp == '\\')
-      *fpp = '/';
-  }
+  normalize (tmp);
 
   for (i = 0; i < 4; i++)
     arg[i] = (char *) malloc (SBUF);
@@ -679,12 +671,7 @@ main (int ac, char **av)
     free(tmp);
     return (100);
   }
-  for (fpp = currdir; *fpp; fpp++) {
-    if (IS_KANJI(fpp))
-      fpp++;
-    else if (*fpp == '\\')
-      *fpp = '/';
-  }
+  normalize (currdir);
 
   i = (int)strlen (currdir);
   if (currdir[i - 1] == '/')
@@ -717,13 +704,7 @@ main (int ac, char **av)
 /*
  * Change backslash into slash
  */
-
-  for (p = rbuff; *p; p++) {
-    if (IS_KANJI(p))
-      p++;
-    else if (*p == '\\')
-      *p = '/';
-  }
+  normalize (rbuff);
 
   p = rbuff;
   i = (int)strlen (p);

@@ -19,12 +19,10 @@
 */
 
 #include <kpathsea/kpathsea.h>
-
-#ifdef __MINGW32__
-#include "dirutil.h"
-#else
+#ifndef __MINGW32__
 #include <kpathsea/dirent.h>
 #endif
+#include "mktex.h"
 
 /* magic header */
 #define HDL "%% ls-R -- filename database for kpathsea; do not change this line.\n"
@@ -39,15 +37,9 @@ search(char *name)
   DIR *dp;
   struct dirent *de;
   char   buff[256];
-  char   *p;
   int    len;
 
-  for(p = name; *p; p++) {
-    if(IS_KANJI(p))
-      p++;
-    else if (*p == '\\')
-      *p = '/';
-  }
+  normalize (name);
 
   if((dp = opendir(name))) {
     fprintf(ls_R, "\n%s:\n", name);
@@ -110,14 +102,12 @@ char first_name[] = "./";
 
 int main(int ac, char **av)
 {
-  char *texmfdbs = NULL;
   int cdrive, tdrive;
   char ls_R_name[512];
   int i, numtree;
   size_t len;
   char *progname;
-  char **pathbuff = NULL;
-  char *p, *pa, *pc;
+  char **pathbuff;
 
   kpse_set_program_name(av[0], NULL);
   progname = kpse_program_name;
@@ -151,74 +141,12 @@ int main(int ac, char **av)
     pathbuff = xmalloc(numtree * sizeof(char *));
     for(i=0; i < numtree; i++) {
       pathbuff[i] = xstrdup(av[i+1]);
-      for(p = pathbuff[i]; *p; p++) {
-        if(IS_KANJI(p))
-          p++;
-        else if(*p == '\\')
-          *p = '/';
-      }
+      normalize (pathbuff[i]);
     }
   } else {
-    if(!(p = kpse_var_value("TEXMFDBS"))) {
-      fprintf(stderr, "TEXMFDBS is not defined in texmf.cnf.\n");
+    if (!(pathbuff = mkpaths (&numtree))) {
+      fprintf (stderr, "Maybe you are not using ls-R.\n");
       exit (100);
-    }
-
-    texmfdbs = kpse_brace_expand(p);
-    free(p);
-
-    p = texmfdbs;
-    i = 0;
-
-    while(*p) {
-      if(*p == '!' && *(p+1) == '!')
-        p += 2;
-      if(*p == ';')
-        while(*p == ';')
-          p++;
-      if(*p && *p != '!') {
-        while(*p != ';' && *p)
-          p++;
-        if(*p == ';') {
-          i++;
-          while(*p == ';')
-            p++;
-        } else if(*p == '\0') {
-          i++;
-          break;
-        }
-      }
-    }
-
-    numtree = i;
-
-    pathbuff = malloc(numtree * sizeof(char *));
-
-    i = 0;
-    pa = texmfdbs;
-
-    while (*pa) {
-      if (*pa == '!' && *(pa + 1) == '!')
-        pa += 2;
-      if (*pa == ';') {
-        while (*pa == ';')
-          pa++;
-      }
-      if(*pa && *pa != '!') {
-        pathbuff[i] = malloc(strlen(pa) + 1);
-        pc = pathbuff[i];
-        while (*pa != ';' && *pa)
-          *pc++ = *pa++;
-        *pc = '\0';
-        if (*pa == ';') {
-          while (*pa == ';')
-            pa++;
-          i++;
-        } else if (*pa == '\0') {
-          i++;
-          break;
-        }
-      }
     }
   }
 
@@ -263,9 +191,6 @@ int main(int ac, char **av)
   }
 
   free (pathbuff);
-
-  if(texmfdbs)
-    free(texmfdbs);
 
   return 0;
 }

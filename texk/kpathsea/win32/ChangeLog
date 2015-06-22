@@ -1,3 +1,12 @@
+2015-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dirutil.h, getdestdir.h, mktexupd.h (removed): Merged ...
+	* mktex.h (new): ... into this and define normalize().
+	* mkpaths.c (new): Define mkpaths() to handle TEXMFDBS.
+	* getdestdir.c, mktexpk.c, mktexupdmain.c: Use normalize().
+	* mktexlsr.c: Use normalize() and mkpaths().
+	* mktexupd.c: Use mkpaths().
+
 2015-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (AM_CPPFLAGS): WEB2C_KPSE_VERSION => WEB2CVERSION.
