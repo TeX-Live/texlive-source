@@ -1,6 +1,6 @@
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## e-upTeX
@@ -48,7 +48,7 @@ euptex-tangle: tangle$(EXEEXT) euptex.web euptex.ch tangle-sh
 
 # Generate euptex.web
 euptex.web: tie$(EXEEXT) $(euptex_web_srcs)
-	$(tie) -m euptex.web $(euptex_web_srcs)
+	$(tie_m) $(euptex_web_srcs)
 euptex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -58,7 +58,7 @@ euptex_web_srcs = \
 
 # Generate euptex.ch
 euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
-	$(tie) -c euptex.ch euptex.web $(euptex_ch_srcs)
+	$(tie_c) euptex.web $(euptex_ch_srcs)
 euptex_ch_srcs = \
 	eptexdir/etex.ch0 \
 	ptexdir/ptex-base.ch \

@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS)
@@ -82,14 +82,14 @@ $(srcdir)/ptexdir/ptex_version.h: @MAINTAINER_MODE_TRUE@ ptexdir/ptex-base.ch
 
 # Generate ptex.web
 ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
-	$(tie) -m ptex.web $(ptex_web_srcs)
+	$(tie_m) $(ptex_web_srcs)
 ptex_web_srcs = \
 	tex.web \
 	tex.ch
 
 # Generate ptex.ch
 ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
-	$(tie) -c ptex.ch ptex.web $(ptex_ch_srcs)
+	$(tie_c) ptex.web $(ptex_ch_srcs)
 ptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
 	$(ptex_ch_synctex) \
@@ -114,7 +114,7 @@ pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
 pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
 	$(p_tangle) pbibtex pbibtex
 pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
-	$(tie) -m pbibtex.web bibtex.web bibtex.ch
+	$(tie_m) bibtex.web bibtex.ch
 EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
 
 pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
@@ -134,7 +134,7 @@ pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
 pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
 	$(p_tangle) pdvitype pdvitype
 pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
-	$(tie) -m pdvitype.web dvitype.web dvitype.ch
+	$(tie_m) dvitype.web dvitype.ch
 EXTRA_DIST += ptexdir/pdvitype.ch
 
 pweb_tests += ptexdir/sample.test
@@ -153,7 +153,7 @@ ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
 ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
 	$(p_tangle) ppltotf ppltotf
 ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
-	$(tie) -m ppltotf.web pltotf.web pltotf.ch
+	$(tie_m) pltotf.web pltotf.ch
 EXTRA_DIST += ptexdir/ppltotf.ch
 
 ## pTFtoPL
@@ -170,7 +170,7 @@ ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
 ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
 	$(p_tangle) ptftopl ptftopl
 ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
-	$(tie) -m ptftopl.web tftopl.web tftopl.ch
+	$(tie_m) tftopl.web tftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch
 
 pweb_tests += ptexdir/yokotate.test

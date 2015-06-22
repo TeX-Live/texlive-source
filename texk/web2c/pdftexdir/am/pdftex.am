@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 pdftex_cppflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(XPDF_INCLUDES)
@@ -63,7 +63,7 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
-	$(tie) -c pdftex.ch $(pdftex_ch_srcs)
+	$(tie_c) $(pdftex_ch_srcs)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \

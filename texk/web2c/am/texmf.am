@@ -58,7 +58,7 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 
 # Generate tex-final.ch
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
-	$(tie) -c $@ $(tex_ch_srcs)
+	$(tie_c) $(tex_ch_srcs)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -168,7 +168,7 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 
 # Generate mf-final.ch
 mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
-	$(tie) -c $@ $(mf_ch_src)
+	$(tie_c) $(mf_ch_src)
 mf_ch_src = \
 	mf.web \
 	mf.ch \
