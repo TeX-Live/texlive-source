@@ -21,40 +21,39 @@ mktexfmt_SOURCES = \
 
 mktexlsr_SOURCES = \
 	dirutil.c \
-	dirutil.h \
+	mkpaths.c \
+	mktex.h \
 	mktexlsr.c
 
 mktexmf_SOURCES = \
 	dirutil.c \
-	dirutil.h \
 	getdestdir.c \
-	getdestdir.h \
+	mkpaths.c \
+	mktex.h \
 	mktexmf.c \
-	mktexupd.c \
-	mktexupd.h
+	mktexupd.c
 
 mktexpk_SOURCES = \
 	dirutil.c \
-	dirutil.h \
 	getdestdir.c \
-	getdestdir.h \
+	mkpaths.c \
+	mktex.h \
 	mktexpk.c \
-	mktexupd.c \
-	mktexupd.h
+	mktexupd.c
 
 mktextfm_SOURCES = \
 	dirutil.c \
-	dirutil.h \
 	getdestdir.c \
-	getdestdir.h \
+	mkpaths.c \
+	mktex.h \
 	mktextfm.c \
-	mktexupd.c \
-	mktexupd.h
+	mktexupd.c
 
 mktexupd_SOURCES = \
+	mkpaths.c \
+	mktex.h \
 	mktexupdmain.c \
-	mktexupd.c \
-	mktexupd.h
+	mktexupd.c
 
 LDADD = ../libkpathsea.la
 

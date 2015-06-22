@@ -15,6 +15,8 @@
    You should have received a copy of the GNU Lesser General Public License
    along with this library; if not, see <http://www.gnu.org/licenses/>.
 
+   from mktexmf:
+   argv[0] = "Dummy", argv[1] = "source", argv[2] = path
    from mktexpk:
    argv[0] = "Dummy", argv[1] = "pk", argv[2] = path, argv[3] = mode
    from mktextfm:
@@ -22,9 +24,7 @@
 */
 
 #include <kpathsea/kpathsea.h>
-
-#include "dirutil.h"
-#include "getdestdir.h"
+#include "mktex.h"
 
 #define NUMBUF   32
 #define LENBUF   128
@@ -66,12 +66,7 @@ getdestdir (int ac, char **av)
 
   strcpy (spec, av[1]);
 
-  for (p = av[2]; *p; p++) {    /* path */
-    if (IS_KANJI(p))
-      p++;
-    else if (*p == '\\')
-      *p = '/';
-  }
+  normalize (av[2]);            /* path */
 
   p = av[2];
   q = buff;
@@ -143,12 +138,7 @@ getdestdir (int ac, char **av)
 
   topdir = kpse_var_value ("MAKETEXPK_TOP_DIR");
   if (topdir && *topdir && ispk) {
-    for (i = 0; topdir[i]; i++) {
-      if (IS_KANJI(topdir+i))
-        i++;
-      else if (topdir[i] == '\\')
-        topdir[i] = '/';
-    }
+    normalize (topdir);
     i = (int)strlen (topdir);
     while(topdir[i - 1] == '/')
       i--;
@@ -178,12 +168,7 @@ getdestdir (int ac, char **av)
     free(topdir);
   } else {
     if((topdir = kpse_var_value("TEXMFVAR")) != NULL) {
-      for (i = 0; topdir[i]; i++) {
-        if (IS_KANJI(topdir+i))
-          i++;
-        else if (topdir[i] == '\\')
-          topdir[i] = '/';
-      }
+      normalize (topdir);
       i = (int)strlen (topdir);
       while(topdir[i - 1] == '/')
         i--;

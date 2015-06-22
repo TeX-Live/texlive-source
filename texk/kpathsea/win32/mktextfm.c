@@ -23,10 +23,7 @@
 #ifndef __MINGW32__
 #include <web2c/w2c/c-auto.h>
 #endif
-
-#include "dirutil.h"
-#include "getdestdir.h"
-#include "mktexupd.h"
+#include "mktex.h"
 
 #define LBUF 512
 #define SBUF 512

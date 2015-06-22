@@ -1,4 +1,4 @@
-/* mktexupd.h
+/* mktex.h
 
    Copyright 2000, 2015 Akira Kakuto.
 
@@ -16,4 +16,39 @@
    along with this library; if not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MKTEX_H
+#define MKTEX_H
+
+static inline void
+normalize (char *p) {
+  for (; *p; p++) {
+    if (IS_KANJI(p))
+      p++;
+    else if (*p == '\\')
+      *p = '/';
+  }
+}
+
+/* dirutil.c */
+extern int is_dir (char *buff);
+extern int make_dir (char *buff);
+extern int make_dir_p (char *buff);
+
+/* getdestdir.c
+
+   from mktexmf:
+   argv[0] = "Dummy", argv[1] = "source", argv[2] = path
+   from mktexpk:
+   argv[0] = "Dummy", argv[1] = "pk", argv[2] = path, argv[3] = mode
+   from mktextfm:
+   argv[0] = "Dummy", argv[1] = "tfm", argv[2] = path
+*/
+extern char *getdestdir (int ac, char **av);
+
+/* mkpaths.c */
+extern char **mkpaths (int *numptr);
+
+/* mktexupd.c*/
 extern void mktexupd (char *s);
+
+#endif

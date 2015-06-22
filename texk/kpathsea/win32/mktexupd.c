@@ -17,13 +17,11 @@
 */
 
 #include <kpathsea/kpathsea.h>
-
-#include "mktexupd.h"
+#include "mktex.h"
 
 #define  MBUF     512
 #define  SBUF     512
 #define  LBUF     512
-#define  DBS      "TEXMFDBS"
 
 void
 mktexupd (char *s)
@@ -31,82 +29,16 @@ mktexupd (char *s)
   char fname[MBUF];
   char lsrname[SBUF];
   char path[LBUF];
-  char **pathbuff = NULL;
+  char **pathbuff;
   int i, j, numtree;
-  char *pa, *pb, *pc;
+  char *pa, *pb;
   int existflag = 0;
   FILE *f;
 
-  pa = kpse_var_value (DBS);
-  if (pa == NULL) {
-    fprintf (stderr, "No definition of TEXMFDBS.\n");
+  if (!(pathbuff = mkpaths (&numtree))) {
     fprintf (stderr, "Maybe you are not using ls-R.\n");
     return;
   }
-
-  pb = kpse_brace_expand (pa);
-  free (pa);
-  if (pb == NULL) {
-    fprintf (stderr, "I cannot expand braces in TEXMFDBS.\n");
-    fprintf (stderr, "Maybe you are not using ls-R.\n");
-    return;
-  }
-
-  pa = pb;
-  i = 0;
-
-  while(*pa) {
-    if(*pa == '!' && *(pa+1) == '!')
-      pa += 2;
-    if(*pa == ';')
-      while(*pa == ';')
-        pa++;
-    if(*pa && *pa != '!') {
-      while(*pa != ';' && *pa)
-        pa++;
-      if(*pa == ';') {
-        i++;
-        while(*pa == ';')
-          pa++;
-      } else if(*pa == '\0') {
-        i++;
-        break;
-      }
-    }
-  }
-
-  numtree = i;
-
-  pathbuff = xmalloc(numtree * sizeof(char *));
-
-  pa = pb;
-  i = 0;
-
-  while (*pa) {
-    if (*pa == '!' && *(pa + 1) == '!')
-      pa += 2;
-    if (*pa == ';') {
-      while (*pa == ';')
-        pa++;
-    }
-    if(*pa && *pa != '!') {
-      pathbuff[i] = malloc(strlen(pa) + 1);
-      pc = pathbuff[i];
-      while (*pa != ';' && *pa)
-        *pc++ = *pa++;
-      *pc = '\0';
-      if (*pa == ';') {
-        while (*pa == ';')
-          pa++;
-        i++;
-      } else if (*pa == '\0') {
-        i++;
-        break;
-      }
-    }
-  }
-
-  free (pb);
 
   for (i = 0; i < numtree; i++) {
     j = (int)strlen (pathbuff[i]);
@@ -154,9 +86,8 @@ mktexupd (char *s)
     f = fopen (lsrname, "ab");
     fprintf (f, "\n.%s:\n%s\n", pa, fname);
     fclose (f);
-  } else {
+  } else
     fprintf(stderr, "mktexupd failed\n");
-  }
   for (i = 0; i < numtree; i++)
     free (pathbuff[i]);
   free (pathbuff);

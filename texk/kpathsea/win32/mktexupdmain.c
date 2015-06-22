@@ -17,15 +17,13 @@
 */
 
 #include <kpathsea/kpathsea.h>
-
-#include "mktexupd.h"
+#include "mktex.h"
 
 int main(int argc, char **argv)
 {
   char dir[256];
   char file[256];
   char path[256];
-  char *p;
   size_t i;
 
   kpse_set_program_name (argv[0], NULL);
@@ -35,11 +33,7 @@ int main(int argc, char **argv)
   }
   strcpy(dir, argv[1]);
   strcpy(file, argv[2]);
-  for(p = dir; *p; ++p) {
-    if(IS_KANJI(p))
-      p++;
-    else if(*p == '\\') *p = '/';
-  }
+  normalize (dir);
   i = strlen(dir);
   while(dir[i-1] == '/')
     i--;
