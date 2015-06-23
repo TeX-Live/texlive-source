@@ -97,6 +97,7 @@ texmf_other_scripts = \
 	ctanify/ctanify \
 	ctanupload/ctanupload.pl \
 	de-macro/de-macro \
+	diadia/diadia.lua \
 	dosepsbin/dosepsbin.pl \
 	dviasm/dviasm.py \
 	ebong/ebong.py \
