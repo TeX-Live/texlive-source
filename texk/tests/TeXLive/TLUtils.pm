@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 36818 $';
+my $svnrev = '$Revision: 37234 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -1875,9 +1875,15 @@ sub _do_postaction_shortcut {
     # $cmd can be an URL, in which case we do NOT want to convert it to
     # w32 paths!
     if ($cmd !~ m!^\s*(http://|ftp://)!) {
+      if (!(-e $cmd) or !(-r $cmd)) {
+        tlwarn("Target of shortcut action does not exist: $cmd\n")
+            if $cmd =~ /\.(exe|bat|cmd)$/i;
+        # if not an executable, just omit shortcut silently
+        return 0;
+      }
       $cmd = conv_to_w32_path($cmd);
     }
-    if ($type eq "menu") {
+    if ($type eq "menu" ) {
       TeXLive::TLWinGoo::add_menu_shortcut(
                         $TeXLive::TLConfig::WindowsMainMenuName,
                         $name, $icon, $cmd, $args, $hide);
@@ -3521,7 +3527,7 @@ sub conv_to_w32_path {
   my $p = shift;
   # we need absolute paths, too
   my $pabs = tl_abs_path($p);
-  if (not defined $pabs) {
+  if (not $pabs) {
     $pabs = $p;
     tlwarn ("sorry, could not determine absolute path of $p!\n".
       "using original path instead");
