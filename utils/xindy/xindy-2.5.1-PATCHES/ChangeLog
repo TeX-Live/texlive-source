@@ -1,5 +1,11 @@
 2014-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-02-win32-paths-with-spaces (new): Patch from Akira.
+	See <http://tex.stackexchange.com/questions/251221/
+	     miktex-and-xindy-problems>.
+
+2014-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* patch-01-xindy-needs-language (new): It seems xindy requires
 	that language is set, patch from Akira.
 

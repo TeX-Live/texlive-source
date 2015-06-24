@@ -1,0 +1,24 @@
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.5.1.orig/user-commands/xindy.1 xindy-2.5.1/user-commands/xindy.1
+--- xindy-2.5.1.orig/user-commands/xindy.1	2014-05-29 22:26:05.000000000 +0200
++++ xindy-2.5.1/user-commands/xindy.1	2014-10-24 11:06:44.000000000 +0200
+@@ -133,7 +133,7 @@
+ .\" ========================================================================
+ .\"
+ .IX Title "xindy 1"
+-.TH xindy 1 "2014-05-29" "Release 2.5.1" "xindy"
++.TH xindy 1 "2014-10-24" "Release 2.5.1" "xindy"
+ .\" For nroff, turn off justification.  Always turn off hyphenation; it makes
+ .\" way too many mistakes in technical documents.
+ .if n .ad l
+diff -ur -N -x Makefile.in -x autom4te.cache xindy-2.5.1.orig/user-commands/xindy.in xindy-2.5.1/user-commands/xindy.in
+--- xindy-2.5.1.orig/user-commands/xindy.in	2014-10-24 10:38:47.000000000 +0200
++++ xindy-2.5.1/user-commands/xindy.in	2015-06-24 08:35:39.000000000 +0200
+@@ -765,7 +765,7 @@
+ 	@codepages = qw(latin cp iso8859 ascii utf8)  unless @codepages;
+ 	my @styles;
+ 	foreach my $cp ( @codepages ) {
+-	    @styles = glob("$lang_dir/$variant$cp*-lang.xdy");
++	    @styles = glob("'$lang_dir/$variant$cp*-lang.xdy'");
+ 	    last  if @styles;
+ 	}
+ 	unless ( @styles ) {
