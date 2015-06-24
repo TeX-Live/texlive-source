@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 36787 $';
+my $svnrev = '$Revision: 37643 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -48,6 +48,7 @@ BEGIN {
     %TLPDBConfigs
     $NetworkTimeout
     $PartialEngineSupport
+    $F_OK $F_WARNING $F_ERROR $F_NOPOSTACTION
   );
   @EXPORT = @EXPORT_OK;
 }
@@ -196,6 +197,20 @@ our $PartialEngineSupport = "luajittex";
 
 # timeout for network connections (wget, LWP) in seconds
 our $NetworkTimeout = 30;
+
+# Flags for error handling across the scripts and modules
+# all fine
+our $F_OK = 0;
+#
+# some warnings, but we still try to run post actions
+our $F_WARNING = 1;
+#
+# error, terminating
+our $F_ERROR = 2;
+#
+# all fine, but no need to run post actions
+our $F_NOPOSTACTION = 4;
+
 
 1;
 
