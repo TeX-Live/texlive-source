@@ -4,22 +4,53 @@
 # This script can be sourced with "synctex" command available
 # The test is a SUCCESS if no "FAILURE" appears in the output
 
+echo "This is test file.sh"
+echo "You can source this file or execute it"
+echo "[SYNCTEX_PATH=/the/path/to/synctex ][SYNCTEX_TEST_DIR=/the/path/to/the/test/folder ](source |./)\"test file.sh\""
+
+if test -z "$SYNCTEX_PATH"
+then
+SYNCTEX_PATH="$(which synctex)"
+elif ! test -f "$SYNCTEX_PATH" || ! test -x "$SYNCTEX_PATH"
+then
+    echo "No executable file at $SYNCTEX_PATH"
+exit -1
+fi
+echo "synctex command used: $SYNCTEX_PATH"
+if ! test -x "$SYNCTEX_PATH"
+then
+    echo "No executable file at $SYNCTEX_PATH"
+    exit -1
+fi
+
 mkdir -p synctex_tests/foo/bar
 mkdir -p synctex_tests/bar
-cp ../source/texk/web2c/synctexdir/unit\ tests/footest.synctex synctex_tests
-cp ../source/texk/web2c/synctexdir/unit\ tests/bartest.synctex.gz synctex_tests
+
+if test -z "$SYNCTEX_TEST_DIR"
+then
+SYNCTEX_TEST_DIR="../source/texk/web2c/synctexdir/unit\ tests"
+fi
+if ! test -d "$SYNCTEX_TEST_DIR"
+then
+    echo "No directory file at $SYNCTEX_TEST_DIR"
+    exit -1
+fi
+echo "synctex test directory: $SYNCTEX_TEST_DIR"
+
+cp "$SYNCTEX_TEST_DIR/footest.synctex" synctex_tests
+cp "$SYNCTEX_TEST_DIR/bartest.synctex.gz" synctex_tests
 rm synctex_tests/bartest.synctex
-cp ../source/texk/web2c/synctexdir/unit\ tests/story-zapfino.tex synctex_tests
+cp "$SYNCTEX_TEST_DIR/story-zapfino.tex" synctex_tests
 cd synctex_tests
-which synctex
-synctex test file -o footest.pdf
+
+"$SYNCTEX_PATH" test file -o footest.pdf
 #
 echo "--------------------------------  A-1"
-synctex view -i 1:0:test.tex -o footest
-synctex edit -o 1:0:0:bartest.pdf
-synctex update -o footest.pdf -m 2000 -x 212 -y 734
+"$SYNCTEX_PATH" view -i 1:0:test.tex -o footest
+"$SYNCTEX_PATH" edit -o 1:0:0:bartest.pdf
+"$SYNCTEX_PATH" update -o footest.pdf -m 2000 -x 212 -y 734
 cat test.synctex
-synctex update -o bartest.pdf -m 2000 -x 212 -y 734
+"$SYNCTEX_PATH" update -o bartest.pdf -m 2000 -x 212 -y 734
 gunzip bartest.synctex.gz
 echo "test diff"
 diff footest.synctex bartest.synctex
