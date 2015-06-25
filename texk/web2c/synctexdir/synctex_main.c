@@ -5,7 +5,7 @@ This file is part of the SyncTeX package.
 
 Latest Revision: Tue Jan 14 09:55:00 UTC 2014
 
-Version: 1.17
+Version: 1.18
 
 License:
 --------
@@ -59,11 +59,17 @@ This file is named "synctex_main.c".
 This is the command line interface to the synctex_parser.c.
 */
 
-#ifdef __linux__
-#define _ISOC99_SOURCE /* to get the fmax() prototype */
-#endif
+#   define SYNCTEX_CLI_VERSION_STRING "1.3"
 
-#   include <w2c/c-auto.h> /* for inline && HAVE_xxx */
+#   ifdef __linux__
+#       define _ISOC99_SOURCE /* to get the fmax() prototype */
+#   endif
+
+#   ifdef __SYNCTEX_WORK__
+#       include <synctex_parser_c-auto.h> /* for inline && HAVE_xxx */
+#   else
+#       include <w2c/c-auto.h> /* for inline && HAVE_xxx */
+#   endif
 
 #   include <stdlib.h>
 #   include <stdio.h>
@@ -116,7 +122,7 @@ int synctex_test(int argc, char *argv[]);
 int main(int argc, char *argv[])
 {
 	int arg_index = 1;
-	printf("This is SyncTeX command line utility, version 1.2\n");
+	printf("This is SyncTeX command line utility, version " SYNCTEX_CLI_VERSION_STRING "\n");
 	if(arg_index<argc) {
 		if(0==strcmp("help",argv[arg_index])) {
 			if(++arg_index<argc) {
@@ -155,8 +161,8 @@ static void synctex_usage(const char * error,va_list ap) {
 	}
 	fprintf((error?stderr:stdout),
 		"usage: synctex <subcommand> [options] [args]\n"
-		"Synchronize TeXnology command-line client, version 1.17\n\n"
-		"The Synchronization TeXnology by Jérôme Laurens is a new feature of recent TeX engines.\n"
+		"Synchronize TeXnology command-line client, version " SYNCTEX_VERSION_STRING "\n\n"
+		"The Synchronization TeXnology by Jérôme Laurens is a rather new feature of recent TeX engines.\n"
 		"It allows to synchronize between input and output, which means to\n"
 		"navigate from the source document to the typeset material and vice versa.\n\n"
 	);
@@ -276,10 +282,10 @@ int synctex_view(int argc, char *argv[]) {
 		return -1;
 	}
 	start = argv[arg_index];
-	Ps.line = strtol(start,&end,10);
+	Ps.line = (int)strtol(start,&end,10);
 	if(end>start && strlen(end)>0 && *end==':') {
 		start = end+1;
-		Ps.column = strtol(start,&end,10);
+		Ps.column = (int)strtol(start,&end,10);
 		if(end == start || Ps.column < 0) {
 			Ps.column = 0;
 		}
@@ -340,7 +346,7 @@ option_hint:
 				Ps.before = argv[arg_index];
 				*Ps.after = '\0';
 				++Ps.after;
-				Ps.offset = strtoul(Ps.after,&Ps.middle,10);
+				Ps.offset = (int)strtoul(Ps.after,&Ps.middle,10);
 				if(Ps.middle>Ps.after && strlen(Ps.middle)>2) {
 					Ps.after = strstr(++Ps.middle,"/");
 					if(NULL != Ps.after) {
@@ -390,7 +396,6 @@ int synctex_view_proceed(synctex_view_params_t * Ps) {
 				char * where = NULL;
 				char * buffer = NULL;
 				char * buffer_cur = NULL;
-				int printed = 0;
 				int status = 0;
 				/* Preparing the buffer where everything will be printed */
 				size = strlen(viewer)+3*sizeof(int)+6*sizeof(float)+4*(SYNCTEX_STR_SIZE);
@@ -425,7 +430,7 @@ int synctex_view_proceed(synctex_view_params_t * Ps) {
 				while(viewer && (where = strstr(viewer,"&{"))) {
 					#define TEST(KEY,FORMAT,WHAT)\
 					if(!strncmp(where,KEY,strlen(KEY))) {\
-						printed = where-viewer;\
+						size_t printed = where-viewer;\
 						if(buffer_cur != memcpy(buffer_cur,viewer,(size_t)printed)) {\
 							synctex_help_view("Memory copy problem");\
 							free(buffer);\
@@ -583,7 +588,7 @@ int synctex_edit(int argc, char *argv[]) {
 		return -1;
 	}
 	start = argv[arg_index];
-	Ps.page = strtol(start,&end,10);
+	Ps.page = (int)strtol(start,&end,10);
 	if(end>start && strlen(end)>1 && *end==':') {
 		start = end+1;
 		Ps.x = strtod(start,&end);
@@ -640,7 +645,7 @@ option_hint:
 			
 			start = argv[arg_index];
 			end = NULL;
-			Ps.offset = strtol(start,&end,10);
+			Ps.offset = (int)strtol(start,&end,10);
 			if(end>start && strlen(end)>1 && *end==':') {
 				Ps.context = end+1;
 				return synctex_edit_proceed(&Ps);
@@ -680,7 +685,6 @@ int synctex_edit_proceed(synctex_edit_params_t * Ps) {
 				char * where = NULL;
 				char * buffer = NULL;
 				char * buffer_cur = NULL;
-				int printed;
 				int status;
 				size = strlen(Ps->editor)+3*sizeof(int)+3*SYNCTEX_STR_SIZE;
 				buffer = malloc(size+1);
@@ -709,7 +713,7 @@ int synctex_edit_proceed(synctex_edit_params_t * Ps) {
 				while(Ps->editor && (where = strstr(Ps->editor,"&{"))) {
 					#define TEST(KEY,FORMAT,WHAT)\
 					if(!strncmp(where,KEY,strlen(KEY))) {\
-						printed = where-Ps->editor;\
+						size_t printed = where-Ps->editor;\
 						if(buffer_cur != memcpy(buffer_cur,Ps->editor,(size_t)printed)) {\
 							synctex_help_edit("Memory copy problem");\
 							free(buffer);\

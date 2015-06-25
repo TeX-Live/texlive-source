@@ -1,9 +1,9 @@
 /* 
-Copyright (c) 2008, 2009, 2010 , 2011 jerome DOT laurens AT u-bourgogne DOT fr
+Copyright (c) 2005 jerome DOT laurens AT u-bourgogne DOT fr
 
 This file is part of the SyncTeX package.
 
-Latest Revision: Tue Jun 14 08:23:30 UTC 2011
+Latest Revision: Jeu 25 jui 2015 10:10:58 UTC
 
 Version: 1.18
 
@@ -39,7 +39,6 @@ authorization from the copyright holder.
 
 */
 
-/* This local header file is for TEXLIVE, use your own header to fit your system */
-#   include <w2c/c-auto.h> /* for inline && HAVE_xxx */
-/*	No inlining for synctex tool in texlive. */
-#	define SYNCTEX_INLINE
+/* This local header file is for OS X, use your own header to fit your system */
+#define HAVE_STRLCAT
+#define HAVE_STRLCPY
