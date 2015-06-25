@@ -5,7 +5,7 @@ This file is part of the SyncTeX package.
 
 Latest Revision: Tue Jun 14 08:23:30 UTC 2011
 
-Version: 1.17
+Version: 1.18
 
 See synctex_parser_readme.txt for more details
 
@@ -1075,7 +1075,7 @@ static void _synctex_display_boundary(synctex_node_t node) {
  *  status == SYNCTEX_STATUS_EOF means the function did not work as expected and there is no more material.
  *  status<SYNCTEX_STATUS_EOF means an error
  */
-typedef int synctex_status_t;
+
 /*  When the end of the synctex file has been reached: */
 #   define SYNCTEX_STATUS_EOF 0
 /*  When the function could not return the value it was asked for: */
@@ -1108,7 +1108,7 @@ synctex_status_t _synctex_scan_input(synctex_scanner_t scanner);
 synctex_status_t _synctex_scan_preamble(synctex_scanner_t scanner);
 synctex_status_t _synctex_scan_float_and_dimension(synctex_scanner_t scanner, float * value_ref);
 synctex_status_t _synctex_scan_post_scriptum(synctex_scanner_t scanner);
-int _synctex_scan_postamble(synctex_scanner_t scanner);
+synctex_status_t _synctex_scan_postamble(synctex_scanner_t scanner);
 synctex_status_t _synctex_setup_visible_box(synctex_node_t box);
 synctex_status_t _synctex_hbox_setup_visible(synctex_node_t node,int h, int v);
 synctex_status_t _synctex_scan_sheet(synctex_scanner_t scanner, synctex_node_t parent);
@@ -1118,7 +1118,6 @@ int synctex_scanner_pre_x_offset(synctex_scanner_t scanner);
 int synctex_scanner_pre_y_offset(synctex_scanner_t scanner);
 const char * synctex_scanner_get_output_fmt(synctex_scanner_t scanner);
 int _synctex_node_is_box(synctex_node_t node);
-int _synctex_bail(void);
 
 /*  Try to ensure that the buffer contains at least size bytes.
  *  Passing a huge size argument means the whole buffer length.
@@ -1157,7 +1156,7 @@ synctex_status_t _synctex_buffer_get_available_size(synctex_scanner_t scanner, s
 		}
 		SYNCTEX_CUR = SYNCTEX_START + available; /*  the next character after the move, will change. */
 		/*  Fill the buffer up to its end */
-		already_read = gzread(SYNCTEX_FILE,(void *)SYNCTEX_CUR,SYNCTEX_BUFFER_SIZE - available);
+		already_read = gzread(SYNCTEX_FILE,(void *)SYNCTEX_CUR,(int)(SYNCTEX_BUFFER_SIZE - available));
 		if (already_read>0) {
 			/*  We assume that 0<already_read<=SYNCTEX_BUFFER_SIZE - available, such that
 			 *  SYNCTEX_CUR + already_read = SYNCTEX_START + available  + already_read <= SYNCTEX_START + SYNCTEX_BUFFER_SIZE */
@@ -1824,8 +1823,8 @@ report_record_problem:
  *  a negative error otherwise
  *  The postamble comprises the post scriptum section.
  */
-int _synctex_scan_postamble(synctex_scanner_t scanner) {
-	int status = 0;
+synctex_status_t _synctex_scan_postamble(synctex_scanner_t scanner) {
+	synctex_status_t status = 0;
 	if (NULL == scanner) {
 		return SYNCTEX_STATUS_BAD_ARGUMENT;
 	}
@@ -2081,7 +2080,6 @@ scan_anchor:
 		}
         goto prepare_loop;
 	}
-	_synctex_bail();
 /*  The child loop means that we go down one level, when we just created a box node,
  *  the next node created is a child of this box. */
 child_loop:
@@ -2340,7 +2338,6 @@ scan_xobh:
 			goto child_loop;
 		}
 	}
-	_synctex_bail();
 /*  The vertical loop means that we are on the same level, for example when we just ended a box.
  *  If a node is created now, it will be a sibling of the current node, sharing the same parent. */
 sibling_loop:
@@ -3428,7 +3425,7 @@ synctex_node_t synctex_sheet_content(synctex_scanner_t scanner,int page) {
 #       pragma mark Query
 #   endif
 
-int synctex_display_query(synctex_scanner_t scanner,const char * name,int line,int column) {
+synctex_status_t synctex_display_query(synctex_scanner_t scanner,const char * name,int line,int column) {
 #	ifdef __DARWIN_UNIX03
 #       pragma unused(column)
 #   endif
@@ -3644,7 +3641,7 @@ SYNCTEX_INLINE static synctex_node_t _synctex_eq_closest_child(synctex_point_t h
 #define SYNCTEX_MASK_LEFT 1
 #define SYNCTEX_MASK_RIGHT 2
 
-int synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
+synctex_status_t synctex_edit_query(synctex_scanner_t scanner,int page,float h,float v) {
 	synctex_node_t sheet = NULL;
 	synctex_node_t node = NULL; /*  placeholder */
 	synctex_node_t other_node = NULL; /*  placeholder */
@@ -3747,10 +3744,6 @@ end:
 #       pragma mark Utilities
 #   endif
 
-int _synctex_bail(void) {
-		_synctex_error("SyncTeX ERROR\n");
-		return -1;
-}
 /*  Rougly speaking, this is:
  *  node's h coordinate - hitPoint's h coordinate.
  *  If node is to the right of the hit point, then this distance is positive,

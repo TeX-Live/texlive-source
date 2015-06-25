@@ -162,6 +162,12 @@ TeX and friends are not concerned by these changes.
 - fixed a segfault, from Sebastian Ramacher
 1.17: Mon Aug 04
 - fixed a memory leak
+1.18: Thu Jun 25 11:36:05 UTC 2015
+- nested sheets now fully supported (does it make sense in TeX)
+- cosmetic changes: uniform indentation
+- suppression of warnings, mainly long/int ones. In short, zlib likes ints when size_t likes longs.
+- CLI synctex tool can build out of TeXLive (modulo appropriate options passed to the compiler)
+
 Acknowledgments:
 ----------------
 The author received useful remarks from the pdfTeX developers, especially Hahn The Thanh,
