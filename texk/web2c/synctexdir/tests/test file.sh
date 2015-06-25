@@ -16,7 +16,9 @@ then
     echo "No executable file at $SYNCTEX_PATH"
 exit -1
 fi
+SYNCTEX_PATH="$(cd "$(dirname "$SYNCTEX_PATH")"; pwd)/$(basename "$SYNCTEX_PATH")"
 echo "synctex command used: $SYNCTEX_PATH"
+
 if ! test -x "$SYNCTEX_PATH"
 then
     echo "No executable file at $SYNCTEX_PATH"
@@ -43,13 +45,13 @@ rm synctex_tests/bartest.synctex
 cp "$SYNCTEX_TEST_DIR/story-zapfino.tex" synctex_tests
 cd synctex_tests
 
-"$SYNCTEX_PATH" test file -o footest.pdf
+$SYNCTEX_PATH test file -o footest.pdf
 #
 echo "--------------------------------  A-1"
 "$SYNCTEX_PATH" view -i 1:0:test.tex -o footest
 "$SYNCTEX_PATH" edit -o 1:0:0:bartest.pdf
 "$SYNCTEX_PATH" update -o footest.pdf -m 2000 -x 212 -y 734
-cat test.synctex
+cat footest.synctex
 "$SYNCTEX_PATH" update -o bartest.pdf -m 2000 -x 212 -y 734
 gunzip bartest.synctex.gz
 echo "test diff"
