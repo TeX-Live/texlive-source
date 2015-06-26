@@ -7449,6 +7449,12 @@ end
 %
 % \anythingelse will almost certainly be an error of some kind.
 
+\def\macrolineargctxt{% used for whole-line arguments without braces
+  \scanctxt
+  \catcode`\{=\other
+  \catcode`\}=\other
+}
+
 % \mbodybackslash is the definition of \ in @macro bodies.
 % It maps \foo\ => \csname macarg.foo\endcsname => #N
 % where N is the macro parameter number.
@@ -7795,7 +7801,7 @@ end
         \noexpand\scanmacro{\temp}}%
     \or % 1
       \expandafter\xdef\csname\the\macname\endcsname{%
-         \bgroup\noexpand\macroargctxt
+         \bgroup
          \noexpand\braceorline
          \expandafter\noexpand\csname\the\macname xxx\endcsname}%
       \expandafter\xdef\csname\the\macname xxx\endcsname##1{%
@@ -7828,7 +7834,7 @@ end
         \noexpand\scanmacro{\temp}\egroup}%
     \or % 1
       \expandafter\xdef\csname\the\macname\endcsname{%
-         \bgroup\noexpand\macroargctxt
+         \bgroup
          \noexpand\braceorline
          \expandafter\noexpand\csname\the\macname xxx\endcsname}%
       \expandafter\xdef\csname\the\macname xxx\endcsname##1{%
@@ -7871,8 +7877,8 @@ end
 % 
 \def\braceorline#1{\let\macnamexxx=#1\futurelet\nchar\braceorlinexxx}
 \def\braceorlinexxx{%
-  \ifx\nchar\bgroup\else
-    \expandafter\parsearg
+  \ifx\nchar\bgroup\macroargctxt\else
+    \macrolineargctxt\expandafter\parsearg
   \fi \macnamexxx}
 
 
