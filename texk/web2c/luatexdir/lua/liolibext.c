@@ -193,6 +193,9 @@ static void opencheck (lua_State *L, const char *fname, const char *mode) {
   if (p->f == NULL) {
     luaL_error(L, "cannot open file " LUA_QS " (%s)", fname, strerror(errno));
   } else {
+#ifdef WIN32
+    _setmode (fileno (p->f), _O_BINARY);
+#endif
     if (mode[0]=='r') 
        recorder_record_input(fname);
     else
@@ -217,6 +220,9 @@ static int io_open (lua_State *L) {
   if (p->f == NULL) {
       return luaL_fileresult(L, 0, filename) ;
   } else {
+#ifdef WIN32
+      _setmode (fileno (p->f), _O_BINARY);
+#endif
       if (mode[0]=='r') 
 	  recorder_record_input(filename);
       else
