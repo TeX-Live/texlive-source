@@ -1,5 +1,9 @@
 2014-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* patch-02-win32-paths-with-spaces: Also quotify filter.
+
+2014-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* patch-02-win32-paths-with-spaces (new): Patch from Akira.
 	See <http://tex.stackexchange.com/questions/251221/
 	     miktex-and-xindy-problems>.
