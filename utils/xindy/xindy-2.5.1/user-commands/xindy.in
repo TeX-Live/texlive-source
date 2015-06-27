@@ -706,6 +706,7 @@ sub filter_index ( $$ ) {
     my $output = tmpnam();
     push (@temp_files, $output);
     $output=quotify($output);
+    $filter=quotify($filter);
     print "Running filter: $filter <$input >$output\n"  if $verbose;
     system "$filter <$input >$output";
     print "filtered xindy input file: $output\n"  if $debug{script};
