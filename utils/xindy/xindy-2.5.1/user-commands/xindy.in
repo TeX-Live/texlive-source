@@ -394,7 +394,7 @@ $TMPDIR = ".";
 # FIXME: In standalone installations, modules are still placed in lib
 # directory. This is not conformant to FHS.
 
-if ( $is_TL ) { # TeX Live and MikTeX
+if ( $is_TL ) { # TeX Live, MiKTeX, or W32TeX
 
     $modules_dir = Cwd::realpath("$cmd_dir/../../xindy/modules");
     die "$cmd: Cannot locate xindy modules directory"  unless -d $modules_dir;
@@ -402,8 +402,12 @@ if ( $is_TL ) { # TeX Live and MikTeX
     if ( $is_w32 ) {
        if ( -d "$cmd_dir/../../../bin/win32" ) {	# TeX Live
 	   $cmd_dir = "$cmd_dir/../../../bin/win32";
-       } elsif ( -d "$cmd_dir/../../miktex/bin" ) {	# MikTeX
-	   $cmd_dir = "$cmd_dir/../../miktex/bin";
+       } elsif ( -d "$cmd_dir/../../miktex/bin/x64/internal" ) {	# MiKTeX 64-bit
+	   $cmd_dir = "$cmd_dir/../../miktex/bin/x64/internal";
+       } elsif ( -d "$cmd_dir/../../miktex/bin/internal" ) {	# MiKTeX 32-bit
+	   $cmd_dir = "$cmd_dir/../../miktex/bin/internal";
+       } elsif ( -d "$cmd_dir/../../../../bin" ) {	# W32TeX
+	   $cmd_dir = "$cmd_dir/../../../../bin";
        } else {
 	   die "$cmd: Cannot locate bin directory";
        }
@@ -626,7 +630,11 @@ sub parse_options() {
 	    usage(1);
 	}
 	my ($name, $path, $suffix) = fileparse ($ARGV[0], '\.[^\.]+');
+        if ($path eq ".\\") {
+	   $outfile = "$name.ind";
+        } else {
 	$outfile = "$path$name.ind";
+        }
     }
 
     # FIXME: xindy wants a log file. Really?
