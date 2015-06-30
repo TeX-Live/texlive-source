@@ -1,3 +1,7 @@
+2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-win32-paths-with-spaces: Quotify lang_dir.
+
 2014-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces: Sync with MikTeX.

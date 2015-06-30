@@ -773,8 +773,9 @@ sub xindy_expression () {
 	# "latin", "cp", "iso8859", "ascii", or "utf8".
 	@codepages = qw(latin cp iso8859 ascii utf8)  unless @codepages;
 	my @styles;
+	my $quotified_lang_dir = quotify($lang_dir);
 	foreach my $cp ( @codepages ) {
-	    @styles = glob("'$lang_dir/$variant$cp*-lang.xdy'");
+	    @styles = glob("$quotified_lang_dir/$variant$cp*-lang.xdy");
 	    last  if @styles;
 	}
 	unless ( @styles ) {
