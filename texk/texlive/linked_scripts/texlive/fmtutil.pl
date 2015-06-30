@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37563 2015-06-16 13:21:24Z preining $
+# $Id: fmtutil.pl 37583 2015-06-17 05:51:36Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -25,11 +25,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37563 2015-06-16 13:21:24Z preining $';
-my $lastchdate = '$Date: 2015-06-16 15:21:24 +0200 (Tue, 16 Jun 2015) $';
+my $svnid = '$Id: fmtutil.pl 37583 2015-06-17 05:51:36Z preining $';
+my $lastchdate = '$Date: 2015-06-17 07:51:36 +0200 (Wed, 17 Jun 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37563 $';
+my $svnrev = '$Revision: 37583 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -716,9 +716,12 @@ sub callback_enable_disable_format {
     if ($alldata->{'merged'}{$fmt}) {
       my @engs = keys %{$alldata->{'merged'}{$fmt}};
       if (($#engs > 0) || ($#engs == -1)) {
-        print_warning("More engines given for format $fmt.\n");
-        print_warning("Possible engines: @engs\n");
-        print_warning("Please select one by passing in $fmt/ENGINE\n");
+        print_warning("Selected format $fmt not uniquely defined,\n");
+        print_warning("possible format/engines combinations:\n");
+        for my $e (@engs) {
+          print_warning("  $fmt/$e (currently " . $alldata->{'merged'}{$fmt}{$e}{'status'} . ")\n");
+        }
+        print_warning("Please select one by fully specifying $fmt/ENGINE\n");
         print_warning("No changes done.\n");
         return 0;
       } else {
