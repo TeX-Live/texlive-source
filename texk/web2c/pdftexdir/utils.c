@@ -762,6 +762,23 @@ void printID(strnumber filename)
     pdf_printf("/ID [<%s> <%s>]", id, id);
 }
 
+void printIDalt(integer toks)
+{
+    md5_state_t state;
+    md5_byte_t digest[16];
+    char id[64];
+    char *s = makecstring(tokenstostring(toks));
+    flushstr(lasttokensstring);
+    if (strlen(s) == 0)
+        return;
+    md5_init(&state);
+    md5_append(&state, (const md5_byte_t *) s, strlen(s));
+    md5_finish(&state, digest);
+    convertStringToHexString((char *) digest, id, 16);
+    pdf_printf("/ID [<%s> <%s>]", id, id);
+}
+
+
 /* Print the /CreationDate entry.
 
   PDF Reference, third edition says about the expected date format:

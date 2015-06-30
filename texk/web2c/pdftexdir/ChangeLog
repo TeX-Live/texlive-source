@@ -1,3 +1,8 @@
+2015-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdftex.defines, ptexlib.h, pdftex.web, utils.c: Sync with
+	upstream r724.
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am: Use $(tie_c).

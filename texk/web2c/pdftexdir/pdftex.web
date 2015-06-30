@@ -5688,7 +5688,8 @@ that will be defined later.
 @d pdf_suppress_warning_dup_dest_code    = pdftex_first_integer_code + 27 {suppress warning about duplicated destinations}
 @d pdf_suppress_warning_dup_map_code     = pdftex_first_integer_code + 28 {suppress warning about duplicated map lines}
 @d pdf_suppress_warning_page_group_code  = pdftex_first_integer_code + 29 {suppress warning about multiple pdfs with page group}
-@d pdf_int_pars=pdftex_first_integer_code + 30 {total number of \pdfTeX's integer parameters}
+@d pdf_info_omit_date_code  = pdftex_first_integer_code + 30 {omit generating CreationDate and ModDate}
+@d pdf_int_pars=pdftex_first_integer_code + 31 {total number of \pdfTeX's integer parameters}
 @#
 @d etex_int_base=pdf_int_pars {base for \eTeX's integer parameters}
 @d tracing_assigns_code=etex_int_base {show assignments}
@@ -5797,6 +5798,7 @@ that will be defined later.
 @d pdf_suppress_warning_dup_dest == int_par(pdf_suppress_warning_dup_dest_code)
 @d pdf_suppress_warning_dup_map == int_par(pdf_suppress_warning_dup_map_code)
 @d pdf_suppress_warning_page_group == int_par(pdf_suppress_warning_page_group_code)
+@d pdf_info_omit_date == int_par(pdf_info_omit_date_code)
 @#
 @d tracing_assigns==int_par(tracing_assigns_code)
 @d tracing_groups==int_par(tracing_groups_code)
@@ -5902,6 +5904,7 @@ pdf_inclusion_copy_font_code:   print_esc("pdfinclusioncopyfonts");
 pdf_suppress_warning_dup_dest_code:  print_esc("pdfsuppresswarningdupdest");
 pdf_suppress_warning_dup_map_code:   print_esc("pdfsuppresswarningdupmap");
 pdf_suppress_warning_page_group_code:print_esc("pdfsuppresswarningpagegroup");
+pdf_info_omit_date_code:print_esc("pdfinfoomitdate");
 @/@<Cases for |print_param|@>@/
 othercases print("[unknown integer parameter!]")
 endcases;
@@ -6088,6 +6091,8 @@ primitive("pdfsuppresswarningdupmap",assign_int,int_base+pdf_suppress_warning_du
 
 primitive("pdfsuppresswarningpagegroup",assign_int,int_base+pdf_suppress_warning_page_group_code);@/
 @!@:pdf_suppress_warning_page_group_}{\.{\\pdfsuppresswarningpagegroup} primitive@>
+primitive("pdfinfoomitdate",assign_int,int_base+pdf_info_omit_date_code);@/
+@!@:pdf_info_omit_date_}{\.{\\pdfinfoomitdate} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
 assign_int: if chr_code<count_base then print_param(chr_code-int_base)
@@ -20007,11 +20012,13 @@ begin
     end;
     if not creator_given then
         pdf_str_entry_ln("Creator", "TeX");
-    if not creationdate_given then begin
-        @<Print the CreationDate key@>;
-    end;
-    if not moddate_given then begin
-        @<Print the ModDate key@>;
+    if pdf_info_omit_date = 0 then begin
+        if not creationdate_given then begin
+            @<Print the CreationDate key@>;
+        end;
+        if not moddate_given then begin
+            @<Print the ModDate key@>;
+        end;
     end;
     if not trapped_given then begin
         pdf_print_ln("/Trapped /False");
@@ -20091,7 +20098,10 @@ if pdf_trailer_toks <> null then begin
     pdf_print_toks_ln(pdf_trailer_toks);
     delete_toks(pdf_trailer_toks);
 end;
-print_ID(output_file_name);
+if pdf_trailer_id_toks <> null then
+    print_ID_alt(pdf_trailer_id_toks)
+else
+    print_ID(output_file_name);
 pdf_print_nl;
 pdf_begin_stream;
 for k := 0 to sys_obj_ptr do begin
@@ -20124,7 +20134,10 @@ if not pdf_os_enable then begin
         pdf_print_toks_ln(pdf_trailer_toks);
         delete_toks(pdf_trailer_toks);
     end;
-    print_ID(output_file_name);
+    if pdf_trailer_id_toks <> null then
+        print_ID_alt(pdf_trailer_id_toks)
+    else
+        print_ID(output_file_name);
     pdf_print_ln(" >>");
 end;
 pdf_print_ln("startxref");
@@ -33381,22 +33394,23 @@ stays the same.
 @d pdf_map_file_code           == pdftex_first_extension_code + 21
 @d pdf_map_line_code           == pdftex_first_extension_code + 22
 @d pdf_trailer_code            == pdftex_first_extension_code + 23
-@d reset_timer_code            == pdftex_first_extension_code + 24
-@d pdf_font_expand_code        == pdftex_first_extension_code + 25
-@d set_random_seed_code        == pdftex_first_extension_code + 26
-@d pdf_snap_ref_point_node     == pdftex_first_extension_code + 27
-@d pdf_snapy_node              == pdftex_first_extension_code + 28
-@d pdf_snapy_comp_node         == pdftex_first_extension_code + 29
-@d pdf_glyph_to_unicode_code   == pdftex_first_extension_code + 30
-@d pdf_colorstack_node         == pdftex_first_extension_code + 31
-@d pdf_setmatrix_node          == pdftex_first_extension_code + 32
-@d pdf_save_node               == pdftex_first_extension_code + 33
-@d pdf_restore_node            == pdftex_first_extension_code + 34
-@d pdf_nobuiltin_tounicode_code== pdftex_first_extension_code + 35
-@d pdf_interword_space_on_node == pdftex_first_extension_code + 36
-@d pdf_interword_space_off_node== pdftex_first_extension_code + 37
-@d pdf_fake_space_node         == pdftex_first_extension_code + 38
-@d pdftex_last_extension_code  == pdftex_first_extension_code + 38
+@d pdf_trailer_id_code         == pdftex_first_extension_code + 24
+@d reset_timer_code            == pdftex_first_extension_code + 25
+@d pdf_font_expand_code        == pdftex_first_extension_code + 26
+@d set_random_seed_code        == pdftex_first_extension_code + 27
+@d pdf_snap_ref_point_node     == pdftex_first_extension_code + 28
+@d pdf_snapy_node              == pdftex_first_extension_code + 29
+@d pdf_snapy_comp_node         == pdftex_first_extension_code + 30
+@d pdf_glyph_to_unicode_code   == pdftex_first_extension_code + 31
+@d pdf_colorstack_node         == pdftex_first_extension_code + 32
+@d pdf_setmatrix_node          == pdftex_first_extension_code + 33
+@d pdf_save_node               == pdftex_first_extension_code + 34
+@d pdf_restore_node            == pdftex_first_extension_code + 35
+@d pdf_nobuiltin_tounicode_code== pdftex_first_extension_code + 36
+@d pdf_interword_space_on_node == pdftex_first_extension_code + 37
+@d pdf_interword_space_off_node== pdftex_first_extension_code + 38
+@d pdf_fake_space_node         == pdftex_first_extension_code + 39
+@d pdftex_last_extension_code  == pdftex_first_extension_code + 39
 
 @<Put each...@>=
 primitive("openout",extension,open_node);@/
@@ -33473,6 +33487,8 @@ primitive("pdfmapline",extension,pdf_map_line_code);@/
 @!@:pdf_map_line_}{\.{\\pdfmapline} primitive@>
 primitive("pdftrailer",extension,pdf_trailer_code);@/
 @!@:pdf_trailer_}{\.{\\pdftrailer} primitive@>
+primitive("pdftrailerid",extension,pdf_trailer_id_code);@/
+@!@:pdf_trailer_id_}{\.{\\pdftrailerid} primitive@>
 primitive("pdfresettimer",extension,reset_timer_code);@/
 @!@:reset_timer_}{\.{\\pdfresettimer} primitive@>
 primitive("pdfsetrandomseed",extension,set_random_seed_code);@/
@@ -33534,6 +33550,7 @@ extension: case chr_code of
   pdf_start_thread_node: print_esc("pdfstartthread");
   pdf_thread_node: print_esc("pdfthread");
   pdf_trailer_code: print_esc("pdftrailer");
+  pdf_trailer_id_code: print_esc("pdftrailerid");
   pdf_xform_code: print_esc("pdfxform");
   pdf_ximage_code: print_esc("pdfximage");
   reset_timer_code: print_esc("pdfresettimer");
@@ -33594,6 +33611,7 @@ begin case cur_chr of
   pdf_start_thread_node: @<Implement \.{\\pdfstartthread}@>;
   pdf_thread_node: @<Implement \.{\\pdfthread}@>;
   pdf_trailer_code: @<Implement \.{\\pdftrailer}@>;
+  pdf_trailer_id_code: @<Implement \.{\\pdftrailerid}@>;
   pdf_xform_code: @<Implement \.{\\pdfxform}@>;
   pdf_ximage_code: @<Implement \.{\\pdfximage}@>;
   reset_timer_code: @<Implement \.{\\pdfresettimer}@>;
@@ -34789,6 +34807,14 @@ begin
         pdf_trailer_toks := concat_tokens(pdf_trailer_toks, def_ref);
 end
 
+@ @<Implement \.{\\pdftrailerid}@>=
+begin
+    check_pdfoutput("\pdftrailerid", false);
+    scan_pdf_ext_toks;
+    if pdf_output > 0 then
+        pdf_trailer_id_toks := concat_tokens(pdf_trailer_id_toks, def_ref);
+end
+
 @ @<Glob...@>=
 @!pdf_retval: integer; {global multi-purpose return value}
 
@@ -35747,6 +35773,7 @@ thread}
 @!pk_dpi: integer; {PK pixel density value from \.{texmf.cnf}}
 @!image_orig_x, image_orig_y: integer; {origin of cropped PDF images}
 @!pdf_trailer_toks: pointer; {additional keys of Trailer dictionary}
+@!pdf_trailer_id_toks: pointer; {custom Trailer ID}
 @!gen_faked_interword_space: boolean; {flag to turn on/off faked interword spaces}
 
 @ @<Set init...@>=
@@ -35762,6 +35789,7 @@ pdf_catalog_toks := null;
 pdf_names_toks := null;
 pdf_catalog_openaction := 0;
 pdf_trailer_toks := null;
+pdf_trailer_id_toks := null;
 gen_faked_interword_space := false;
 
 @ The following procedures are needed for outputing whatsit nodes for
