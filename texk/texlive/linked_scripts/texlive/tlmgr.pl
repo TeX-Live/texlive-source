@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37523 2015-06-14 13:37:20Z preining $
+# $Id: tlmgr.pl 37643 2015-06-23 04:33:46Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37523 $';
-my $datrev = '$Date: 2015-06-14 15:37:20 +0200 (Sun, 14 Jun 2015) $';
+my $svnrev = '$Revision: 37643 $';
+my $datrev = '$Date: 2015-06-23 06:33:46 +0200 (Tue, 23 Jun 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -124,20 +124,6 @@ our $FLAG_REINSTALL = "I";
 # keep in sync with install-tl.
 our $common_fmtutil_args = 
   "--no-error-if-no-engine=$TeXLive::TLConfig::PartialEngineSupport";
-
-# return flags for error handling
-#
-# all fine
-our $F_OK = 0;
-#
-# some warnings, but we still try to run post actions
-our $F_WARNING = 1;
-#
-# error, terminating
-our $F_ERROR = 2;
-#
-# all fine, but no need to run post actions
-our $F_NOPOSTACTION = 4;
 
 # option variables
 $::gui_mode = 0;
