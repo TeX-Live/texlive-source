@@ -1,3 +1,7 @@
+2015-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mfluajittraptest: Use ../mfluadir/mfluatrap/*.lua files.
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mfluajit.am: Use $(tie_c) and $(tie_m).

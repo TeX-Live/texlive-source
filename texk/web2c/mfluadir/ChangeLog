@@ -1,3 +1,11 @@
+2015-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mfluatraptest: Directly use mfluatrap/*.lua files.
+
+2015-07-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mflua.c: Use kpse_find_file() to locate .lua files.
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mflua.am: Use $(tie_c) and $(tie_m).
