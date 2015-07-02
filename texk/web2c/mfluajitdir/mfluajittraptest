@@ -7,13 +7,13 @@ testdir=$abs_srcdir/triptrap
 ltestdir=$abs_srcdir/mfluadir/mfluatrap
 jtestdir=$abs_srcdir/mfluajitdir/mfluajittrap
 
-TEXMFCNF=$ltestdir; export TEXMFCNF
+TEXMFCNF=$ltestdir
+LUAINPUTS=$ltestdir
+export TEXMFCNF LUAINPUTS
 
 rm -rf mfluajittrapdir
 mkdir mfluajittrapdir
 cd mfluajittrapdir
-
-cp $ltestdir/*.lua .
 
 echo ">>> Running TRAP test for MFLuaJIT." >&2
 echo ">>> See $jtestdir/mfluajittrap.diffs for example of acceptable diffs." >&2
