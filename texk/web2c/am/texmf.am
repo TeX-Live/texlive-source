@@ -102,17 +102,36 @@ if MFN
 bin_PROGRAMS += mf-nowin
 endif MFN
 if WIN32
-bin_PROGRAMS += inimf
+noinst_PROGRAMS += call_mf
+install_exe_links += install-mf-links
+uninstall_exe_links += uninstall-mf-links
 else !WIN32
+if !MFN
+bin_links += mf$(EXEEXT):mf-nowin
+endif !MFN
 bin_links += mf$(EXEEXT):inimf
 endif !WIN32
 endif MF
 EXTRA_PROGRAMS += mf mf-nowin
 DISTCLEANFILES += mftrap.diffs
 
-inimf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
-nodist_inimf_SOURCES = callexe.c
-inimf_LDADD =
+call_mf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
+nodist_call_mf_SOURCES = callexe.c
+call_mf_LDADD =
+
+.PHONY: install-mf-links uninstall-mf-links
+if WIN32
+install-mf-links: call_mf$(EXEEXT)
+if !MFN
+	$(INSTALL_PROGRAM) call_mf$(EXEEXT) $(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)
+endif !MFN
+	$(INSTALL_PROGRAM) call_mf$(EXEEXT) $(DESTDIR)$(bindir)/inimf$(EXEEXT)
+uninstall-mf-links:
+if !MFN
+	rm -f $(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)
+endif !MFN
+	rm -f $(DESTDIR)$(bindir)/inimf$(EXEEXT)
+endif WIN32
 
 dist_mf_SOURCES = mfextra.c
 mf_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS)

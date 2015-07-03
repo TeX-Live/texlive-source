@@ -1,3 +1,8 @@
+2015-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mflua.am: Always create mflua-nowin, either as extra
+	program or as symlink.
+
 2015-07-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mfluatraptest: Directly use mfluatrap/*.lua files.

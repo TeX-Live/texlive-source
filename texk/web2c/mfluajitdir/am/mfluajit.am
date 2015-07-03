@@ -11,17 +11,36 @@ if MFLUAJITN
 bin_PROGRAMS += mfluajit-nowin
 endif MFLUAJITN
 if WIN32
-bin_PROGRAMS += inimfluajit
+noinst_PROGRAMS += call_mfluajit
+install_exe_links += install-mfluajit-links
+uninstall_exe_links += uninstall-mfluajit-links
 else !WIN32
+if !MFLUAJITN
+bin_links += mfluajit$(EXEEXT):mfluajit-nowin
+endif !MFLUAJITN
 bin_links += mfluajit$(EXEEXT):inimfluajit
 endif !WIN32
 endif MFLUAJIT
 EXTRA_PROGRAMS += mfluajit mfluajit-nowin
 DISTCLEANFILES += mfluajittrap.diffs
 
-inimfluajit_CPPFLAGS = -DEXEPROG=\"mfluajit.exe\"
-nodist_inimfluajit_SOURCES = callexe.c
-inimfluajit_LDADD =
+call_mfluajit_CPPFLAGS = -DEXEPROG=\"mfluajit.exe\"
+nodist_call_mfluajit_SOURCES = callexe.c
+call_mfluajit_LDADD =
+
+.PHONY: install-mfluajit-links uninstall-mfluajit-links
+if WIN32
+install-mfluajit-links: call_mfluajit$(EXEEXT)
+if !MFLUAJITN
+	$(INSTALL_PROGRAM) call_mfluajit$(EXEEXT) $(DESTDIR)$(bindir)/mfluajit-nowin$(EXEEXT)
+endif !MFLUAJITN
+	$(INSTALL_PROGRAM) call_mfluajit$(EXEEXT) $(DESTDIR)$(bindir)/inimfluajit$(EXEEXT)
+uninstall-mfluajit-links:
+if !MFLUAJITN
+	rm -f $(DESTDIR)$(bindir)/mfluajit-nowin$(EXEEXT)
+endif !MFLUAJITN
+	rm -f $(DESTDIR)$(bindir)/inimfluajit$(EXEEXT)
+endif WIN32
 
 dist_mfluajit_SOURCES = mfluajitdir/mfluajitextra.c mfluajitdir/mfluajitextra.h mfluadir/mflua_version.h
 mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
