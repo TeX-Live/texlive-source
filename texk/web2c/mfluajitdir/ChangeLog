@@ -1,5 +1,9 @@
 2015-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* am/mfluajit.am, mfluac.[ch]: Use lkpselib.c.
+
+2015-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* am/mfluajit.am: Always create mfluajit-nowin, either as extra
 	program or as symlink.
 

@@ -17,8 +17,19 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
+#ifdef MF_LUA
+#define EXTERN extern
+#if defined(JIT)
+#include "mfluajitd.h"
+#else
+#include "mfluad.h"
+#endif
+#include <kpathsea/version.h>
+#define xfree(p) do { if (p != NULL) free(p); p = NULL; } while (0)
+#else
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
+#endif
 #include <kpathsea/expand.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/tex-glyph.h>
@@ -151,11 +162,19 @@ static const char *const filetypenames[] = {
 };
 
 
+#ifdef MF
+#define KPATHSEA_METATABLE  "mflua.kpathsea"
+#else
 #define KPATHSEA_METATABLE  "luatex.kpathsea"
+#endif
 
 /* set to 1 by the |program_name| function */
 
+#ifdef MF
+int program_name_set = 1;
+#else
 int program_name_set = 0;
+#endif
 
 #define TEST_PROGRAM_NAME_SET do {                                      \
     if (! program_name_set) {                                           \
