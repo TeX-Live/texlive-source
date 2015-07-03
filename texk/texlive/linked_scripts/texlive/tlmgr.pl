@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37643 2015-06-23 04:33:46Z preining $
+# $Id: tlmgr.pl 37738 2015-07-02 23:10:09Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37643 $';
-my $datrev = '$Date: 2015-06-23 06:33:46 +0200 (Tue, 23 Jun 2015) $';
+my $svnrev = '$Revision: 37738 $';
+my $datrev = '$Date: 2015-07-03 01:10:09 +0200 (Fri, 03 Jul 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1386,7 +1386,7 @@ sub action_info {
       }
       if (defined($tag)) {
         if (!$remotetlpdb->is_virtual) {
-          tlwarn("$prg: specifying implicit tags is not allowed for non-virtual databases!\n");
+          tlwarn("$prg: specifying implicit tags not allowed for non-virtual databases!\n");
           $ret |= $F_WARNING;
           next;
         } else {
@@ -1445,7 +1445,7 @@ sub action_info {
         }
         # we didn't find a package like this, so use search
         info("$prg: cannot find package $pkg, searching for other matches:\n");
-        my ($foundfile, $founddesc) = search_tlpdb($remotetlpdb, $pkg, 1, 1, 0);
+        my ($foundfile, $founddesc) = search_tlpdb($remotetlpdb,$pkg,1,1,0);
         print "\nPackages containing \`$pkg\' in their title/description:\n";
         print $founddesc;
         print "\nPackages containing files matching \`$pkg\':\n";
@@ -4958,6 +4958,7 @@ sub check_runfiles {
             |README
             |cid2code\.txt
             |etex\.src
+            |fithesis.*
             |kinsoku\.tex
             |language\.dat
             |language\.def
