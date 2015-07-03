@@ -133,6 +133,7 @@ texmf_other_scripts = \
 	ltximg/ltximg.pl \
 	luaotfload/luaotfload-tool.lua \
 	m-tx/m-tx.lua \
+	make4ht/make4ht \
 	match_parens/match_parens \
 	mathspic/mathspic.pl \
 	mf2pt1/mf2pt1.pl \
