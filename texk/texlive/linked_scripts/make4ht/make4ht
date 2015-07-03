@@ -1,0 +1,62 @@
+#!/usr/bin/env texlua
+kpse.set_program_name("luatex")
+
+
+local make4ht = require("make4ht-lib")
+local lapp    = require("lapp-mk4")
+local mkutils = require("mkutils")
+local mkparams = require("mkparams")
+-- args string is here just as sample, we dont pass it it to 
+-- mkparams.get_args() so default args string is used
+local args    =  [[
+make4ht - build system for tex4ht
+Usage:
+make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
+-c,--config (default xhtml) Custom config file
+-d,--output-dir (default nil)  Output directory
+-l,--lua  Use lualatex for document compilation
+-s,--shell-escape Enables running external programs from LaTeX
+-u,--utf8  For output documents in utf8 encoding
+-x,--xetex Use xelatex for document compilation
+<filename> (string) Input file name
+]]
+
+local args = mkparams.get_args()
+
+local parameters = mkparams.process_args(args) 
+
+local mode = parameters.mode
+local build_file = parameters.build_file 
+
+local make = mkutils.load_config(parameters, build_file)["Make"]
+make.params = parameters
+if make:length() < 1 then
+	if mode == "draft" then
+		make:htlatex()
+	else
+		make:htlatex()
+		make:htlatex()
+		make:htlatex()
+	end
+end
+
+
+if not args["no-tex4ht"] then
+  make:tex4ht()
+end
+
+local ext = args.xetex and "xdv" or "dvi"
+if #make.image_patterns > 0 then
+  make.params.t4ht_par = make.params.t4ht_par .. " -p"
+end
+make:t4ht {ext = ext}
+make:match("tmp$", function() return false,"tmp file" end)
+make:match(".*",function(filename,par)
+	local outdir =  '' --par["outdir"] and par["outdir"] .."/" or ''
+	if par['outdir'] ~= "" then outdir = par['outdir'] .. '/' end
+	print("outdir: "..outdir)
+	local outfilename = outdir .. filename
+	mkutils.copy(filename,outfilename)
+	return true
+end)
+make:run()
