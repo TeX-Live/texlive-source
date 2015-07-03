@@ -845,7 +845,8 @@ nodist_libmf_a_OBJECTS = $(am__objects_11) mf-pool.$(OBJEXT)
 libmf_a_OBJECTS = $(nodist_libmf_a_OBJECTS)
 libmflua_a_AR = $(AR) $(ARFLAGS)
 libmflua_a_LIBADD =
-dist_libmflua_a_OBJECTS = mfluadir/libmflua_a-mfluac.$(OBJEXT)
+dist_libmflua_a_OBJECTS = luatexdir/lua/libmflua_a-lkpselib.$(OBJEXT) \
+	mfluadir/libmflua_a-mfluac.$(OBJEXT)
 am__objects_12 = libmflua_a-mfluaini.$(OBJEXT) \
 	libmflua_a-mflua0.$(OBJEXT)
 nodist_libmflua_a_OBJECTS = $(am__objects_12) \
@@ -854,7 +855,9 @@ libmflua_a_OBJECTS = $(dist_libmflua_a_OBJECTS) \
 	$(nodist_libmflua_a_OBJECTS)
 libmfluajit_a_AR = $(AR) $(ARFLAGS)
 libmfluajit_a_LIBADD =
-dist_libmfluajit_a_OBJECTS = mfluadir/libmfluajit_a-mfluac.$(OBJEXT)
+dist_libmfluajit_a_OBJECTS =  \
+	luatexdir/lua/libmfluajit_a-lkpselib.$(OBJEXT) \
+	mfluadir/libmfluajit_a-mfluac.$(OBJEXT)
 am__objects_13 = libmfluajit_a-mfluajitini.$(OBJEXT) \
 	libmfluajit_a-mfluajit0.$(OBJEXT)
 nodist_libmfluajit_a_OBJECTS = $(am__objects_13) \
@@ -2767,9 +2770,9 @@ mflua_nowin_LDFLAGS = -export-dynamic
 
 # MFLua C sources
 mflua_c_h = mfluaini.c mflua0.c mfluacoerce.h mfluad.h
-dist_libmflua_a_SOURCES = mfluadir/mfluac.c  mfluadir/mfluac.h
+dist_libmflua_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmflua_a_SOURCES = $(mflua_c_h) mflua-pool.c
-libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES)
+libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) -DMF_LUA
 mflua_web_srcs = \
 	mf.web \
 	mfluadir/mf-lua.ch
@@ -2797,9 +2800,9 @@ mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 # MFLua C sources
 mfluajit_c_h = mfluajitini.c mfluajit0.c mfluajitcoerce.h mfluajitd.h
-dist_libmfluajit_a_SOURCES = mfluadir/mfluac.c  mfluadir/mfluac.h
+dist_libmfluajit_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmfluajit_a_SOURCES = $(mfluajit_c_h) mfluajit-pool.c
-libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DJIT
+libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DMF_LUA -DJIT
 mfluajit_web_srcs = \
 	mf.web \
 	mfluadir/mf-lua.ch \
@@ -4691,6 +4694,9 @@ libmf.a: $(libmf_a_OBJECTS) $(libmf_a_DEPENDENCIES) $(EXTRA_libmf_a_DEPENDENCIES
 	$(AM_V_at)-rm -f libmf.a
 	$(AM_V_AR)$(libmf_a_AR) libmf.a $(libmf_a_OBJECTS) $(libmf_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libmf.a
+luatexdir/lua/libmflua_a-lkpselib.$(OBJEXT):  \
+	luatexdir/lua/$(am__dirstamp) \
+	luatexdir/lua/$(DEPDIR)/$(am__dirstamp)
 mfluadir/$(am__dirstamp):
 	@$(MKDIR_P) mfluadir
 	@: > mfluadir/$(am__dirstamp)
@@ -4704,6 +4710,9 @@ libmflua.a: $(libmflua_a_OBJECTS) $(libmflua_a_DEPENDENCIES) $(EXTRA_libmflua_a_
 	$(AM_V_at)-rm -f libmflua.a
 	$(AM_V_AR)$(libmflua_a_AR) libmflua.a $(libmflua_a_OBJECTS) $(libmflua_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libmflua.a
+luatexdir/lua/libmfluajit_a-lkpselib.$(OBJEXT):  \
+	luatexdir/lua/$(am__dirstamp) \
+	luatexdir/lua/$(DEPDIR)/$(am__dirstamp)
 mfluadir/libmfluajit_a-mfluac.$(OBJEXT): mfluadir/$(am__dirstamp) \
 	mfluadir/$(DEPDIR)/$(am__dirstamp)
 
@@ -5838,6 +5847,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libluatex_a-ltexiolib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libluatex_a-ltexlib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libluatex_a-ltokenlib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luafilesystem/src/$(DEPDIR)/libluajitmisc_a-lfs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luafilesystem/src/$(DEPDIR)/libluamisc_a-lfs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR)/libff_a-autohint.Po@am__quote@
@@ -11392,6 +11403,20 @@ libmd5/libmd5_a-md5.obj: libmd5/md5.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmd5_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmd5/libmd5_a-md5.obj `if test -f 'libmd5/md5.c'; then $(CYGPATH_W) 'libmd5/md5.c'; else $(CYGPATH_W) '$(srcdir)/libmd5/md5.c'; fi`
 
+luatexdir/lua/libmflua_a-lkpselib.o: luatexdir/lua/lkpselib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmflua_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT luatexdir/lua/libmflua_a-lkpselib.o -MD -MP -MF luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Tpo -c -o luatexdir/lua/libmflua_a-lkpselib.o `test -f 'luatexdir/lua/lkpselib.c' || echo '$(srcdir)/'`luatexdir/lua/lkpselib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Tpo luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/lua/lkpselib.c' object='luatexdir/lua/libmflua_a-lkpselib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmflua_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatexdir/lua/libmflua_a-lkpselib.o `test -f 'luatexdir/lua/lkpselib.c' || echo '$(srcdir)/'`luatexdir/lua/lkpselib.c
+
+luatexdir/lua/libmflua_a-lkpselib.obj: luatexdir/lua/lkpselib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmflua_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT luatexdir/lua/libmflua_a-lkpselib.obj -MD -MP -MF luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Tpo -c -o luatexdir/lua/libmflua_a-lkpselib.obj `if test -f 'luatexdir/lua/lkpselib.c'; then $(CYGPATH_W) 'luatexdir/lua/lkpselib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/lua/lkpselib.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Tpo luatexdir/lua/$(DEPDIR)/libmflua_a-lkpselib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/lua/lkpselib.c' object='luatexdir/lua/libmflua_a-lkpselib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmflua_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatexdir/lua/libmflua_a-lkpselib.obj `if test -f 'luatexdir/lua/lkpselib.c'; then $(CYGPATH_W) 'luatexdir/lua/lkpselib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/lua/lkpselib.c'; fi`
+
 mfluadir/libmflua_a-mfluac.o: mfluadir/mfluac.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmflua_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mfluadir/libmflua_a-mfluac.o -MD -MP -MF mfluadir/$(DEPDIR)/libmflua_a-mfluac.Tpo -c -o mfluadir/libmflua_a-mfluac.o `test -f 'mfluadir/mfluac.c' || echo '$(srcdir)/'`mfluadir/mfluac.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/$(DEPDIR)/libmflua_a-mfluac.Tpo mfluadir/$(DEPDIR)/libmflua_a-mfluac.Po
@@ -11447,6 +11472,20 @@ libmflua_a-mflua-pool.obj: mflua-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mflua-pool.c' object='libmflua_a-mflua-pool.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmflua_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmflua_a-mflua-pool.obj `if test -f 'mflua-pool.c'; then $(CYGPATH_W) 'mflua-pool.c'; else $(CYGPATH_W) '$(srcdir)/mflua-pool.c'; fi`
+
+luatexdir/lua/libmfluajit_a-lkpselib.o: luatexdir/lua/lkpselib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluajit_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT luatexdir/lua/libmfluajit_a-lkpselib.o -MD -MP -MF luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Tpo -c -o luatexdir/lua/libmfluajit_a-lkpselib.o `test -f 'luatexdir/lua/lkpselib.c' || echo '$(srcdir)/'`luatexdir/lua/lkpselib.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Tpo luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/lua/lkpselib.c' object='luatexdir/lua/libmfluajit_a-lkpselib.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluajit_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatexdir/lua/libmfluajit_a-lkpselib.o `test -f 'luatexdir/lua/lkpselib.c' || echo '$(srcdir)/'`luatexdir/lua/lkpselib.c
+
+luatexdir/lua/libmfluajit_a-lkpselib.obj: luatexdir/lua/lkpselib.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluajit_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT luatexdir/lua/libmfluajit_a-lkpselib.obj -MD -MP -MF luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Tpo -c -o luatexdir/lua/libmfluajit_a-lkpselib.obj `if test -f 'luatexdir/lua/lkpselib.c'; then $(CYGPATH_W) 'luatexdir/lua/lkpselib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/lua/lkpselib.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Tpo luatexdir/lua/$(DEPDIR)/libmfluajit_a-lkpselib.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/lua/lkpselib.c' object='luatexdir/lua/libmfluajit_a-lkpselib.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluajit_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o luatexdir/lua/libmfluajit_a-lkpselib.obj `if test -f 'luatexdir/lua/lkpselib.c'; then $(CYGPATH_W) 'luatexdir/lua/lkpselib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/lua/lkpselib.c'; fi`
 
 mfluadir/libmfluajit_a-mfluac.o: mfluadir/mfluac.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluajit_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mfluadir/libmfluajit_a-mfluac.o -MD -MP -MF mfluadir/$(DEPDIR)/libmfluajit_a-mfluac.Tpo -c -o mfluadir/libmfluajit_a-mfluac.o `test -f 'mfluadir/mfluac.c' || echo '$(srcdir)/'`mfluadir/mfluac.c

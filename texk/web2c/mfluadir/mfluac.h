@@ -1,3 +1,6 @@
+#ifndef MFLUAC_H
+#define MFLUAC_H
+
 extern int mfluabeginprogram(void);
 extern int mfluaPREstartofMF(void);
 extern int mfluaPREmaincontrol(void);
@@ -36,3 +39,8 @@ extern int mfluaprinttransitionlineto(integer, integer);
 
 extern int mfluaPREmakeellipse(integer, integer, integer, integer, integer, integer);
 extern int mfluaPOSTmakeellipse(integer, integer, integer, integer, integer, integer);
+
+#include <lauxlib.h>
+extern int luaopen_kpse(lua_State * L);
+
+#endif /* MFLUAC_H */

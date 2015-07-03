@@ -1,3 +1,7 @@
+2015-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/lkpselib.c: Also used for MFLua and MFLuaJIT.
+
 2015-03-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* luazip/src/luazip.c (zip_close): Sync with the upstream.

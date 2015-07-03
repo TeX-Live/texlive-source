@@ -61,9 +61,9 @@ EXTRA_LIBRARIES += libmflua.a
 
 # MFLua C sources
 mflua_c_h = mfluaini.c mflua0.c mfluacoerce.h mfluad.h
-dist_libmflua_a_SOURCES = mfluadir/mfluac.c  mfluadir/mfluac.h
+dist_libmflua_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmflua_a_SOURCES = $(mflua_c_h) mflua-pool.c
-libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES)
+libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) -DMF_LUA
 
 # We must create mfluad.h before building the libmflua_a_OBJECTS.
 $(libmflua_a_OBJECTS): mfluad.h

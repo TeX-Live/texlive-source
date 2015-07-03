@@ -549,6 +549,7 @@ int mfluainitialize(void)
   char* file = kpse_find_file("mfluaini.lua", kpse_lua_format, 0);
   int res ;
   /* register lua functions */
+  luaopen_kpse(L);
   lua_pushcfunction(L, priv_mfweb_link);lua_setglobal(L, "link");
   lua_pushcfunction(L, priv_mfweb_info);lua_setglobal(L, "info");
   lua_pushcfunction(L, priv_mfweb_x_coord);lua_setglobal(L, "x_coord");
