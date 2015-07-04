@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2014 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2015 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -29,15 +29,15 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <time.h>
 #include <float.h>              /* for DBL_EPSILON */
 #include "md5.h"
-#include "zlib.h"
+#include <zlib.h>
 #include "ptexlib.h"
-#include "png.h"
+#include <png.h>
 #ifdef POPPLER_VERSION
-#include "poppler-config.h"
+#include <poppler-config.h>
 #define xpdfVersion POPPLER_VERSION
 #define xpdfString "poppler"
 #else
-#include "xpdf/config.h"        /* just to get the xpdf version */
+#include <xpdf/config.h>        /* just to get the xpdf version */
 #define xpdfString "xpdf"
 #endif
 
@@ -670,26 +670,6 @@ void unescapehex(poolpointer in)
     }
 }
 
-
-/* Converts any string given in in in an allowed PDF string which is
- * hexadecimal encoded;
- * sizeof(out) should be at least lin*2+1.
- */
-static void convertStringToHexString(const char *in, char *out, int lin)
-{
-    int i, j, k;
-    char buf[3];
-    j = 0;
-    for (i = 0; i < lin; i++) {
-        k = snprintf(buf, sizeof(buf),
-                     "%02X", (unsigned int) (unsigned char) in[i]);
-        check_nprintf(k, sizeof(buf));
-        out[j++] = buf[0];
-        out[j++] = buf[1];
-    }
-    out[j] = '\0';
-}
-
 /* Compute the ID string as per PDF1.4 9.3:
   <blockquote>
     File identifers are defined by the optional ID entry in a PDF file's
@@ -839,60 +819,6 @@ void printmoddate(void)
 {
     initstarttime();
     pdf_printf("/ModDate (%s)\n", start_time_str);
-}
-
-#define DIGEST_SIZE 16
-#define FILE_BUF_SIZE 1024
-
-void getmd5sum(strnumber s, boolean file)
-{
-    md5_state_t state;
-    md5_byte_t digest[DIGEST_SIZE];
-    char outbuf[2 * DIGEST_SIZE + 1];
-    int len = 2 * DIGEST_SIZE;
-
-    if (file) {
-        char file_buf[FILE_BUF_SIZE];
-        int read = 0;
-        FILE *f;
-
-        char *file_name = kpse_find_tex(makecfilename(s));
-        if (file_name == NULL) {
-            return;             /* empty string */
-        }
-        /* in case of error the empty string is returned,
-           no need for xfopen that aborts on error.
-         */
-        f = fopen(file_name, FOPEN_RBIN_MODE);
-        if (f == NULL) {
-            xfree(file_name);
-            return;
-        }
-        recorder_record_input(file_name);
-        md5_init(&state);
-        while ((read = fread(&file_buf, sizeof(char), FILE_BUF_SIZE, f)) > 0) {
-            md5_append(&state, (const md5_byte_t *) file_buf, read);
-        }
-        md5_finish(&state, digest);
-        fclose(f);
-
-        xfree(file_name);
-    } else {
-        /* s contains the data */
-        md5_init(&state);
-        md5_append(&state,
-                   (const md5_byte_t *) &strpool[strstart[s]],
-                   strstart[s + 1] - strstart[s]);
-        md5_finish(&state, digest);
-    }
-
-    if (poolptr + len >= poolsize) {
-        /* error by str_toks that calls str_room(1) */
-        return;
-    }
-    convertStringToHexString((char *) digest, outbuf, DIGEST_SIZE);
-    memcpy(&strpool[poolptr], outbuf, len);
-    poolptr += len;
 }
 
 #define DEFAULT_SUB_MATCH_COUNT 10

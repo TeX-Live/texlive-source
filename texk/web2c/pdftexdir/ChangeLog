@@ -1,3 +1,8 @@
+2015-07-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* utils.c: Moved convertStringToHexString() and getmd5sum()
+	from here to ../lib/texmfmp.c.
+
 2015-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdftex.defines, ptexlib.h, pdftex.web, utils.c: Sync with

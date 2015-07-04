@@ -1,3 +1,7 @@
+2015-07-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.h: Declare convertStringToHexString() and getmd5sum().
+
 2015-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/texmf.am: Always create mf-nowin, either as extra program

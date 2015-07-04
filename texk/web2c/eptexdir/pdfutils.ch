@@ -14,6 +14,9 @@
 %%
 %% \pdfshellescape: by doraTeX's request
 %%
+%% \pdfmdfivesum: by Akira's request
+%%   As \pdfstrcmp, Japanese characters will be always encoded in UTF-8 in
+%%   \pdfmdfivesum {...}. (no conversion for \pdfmdfivesum file <filename>)
 
 @x
 @* \[12] Displaying boxes.
@@ -69,8 +72,9 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 @d pdf_creation_date_code   = etex_convert_base+2 {command code for \.{\\pdfcreationdate}}
 @d pdf_file_mod_date_code   = etex_convert_base+3 {command code for \.{\\pdffilemoddate}}
 @d pdf_file_size_code       = etex_convert_base+4 {command code for \.{\\pdffilesize}}
-@d pdf_file_dump_code       = etex_convert_base+5 {command code for \.{\\pdffiledump}}
-@d etex_convert_codes=etex_convert_base+6 {end of \eTeX's command codes}
+@d pdf_mdfive_sum_code      = etex_convert_base+5 {command code for \.{\\pdfmdfivesum}}
+@d pdf_file_dump_code       = etex_convert_base+6 {command code for \.{\\pdffiledump}}
+@d etex_convert_codes=etex_convert_base+7 {end of \eTeX's command codes}
 @z
 
 @x
@@ -81,6 +85,7 @@ pdf_page_height_code:   print_esc("pdfpageheight");
   pdf_creation_date_code: print_esc("pdfcreationdate");
   pdf_file_mod_date_code: print_esc("pdffilemoddate");
   pdf_file_size_code:     print_esc("pdffilesize");
+  pdf_mdfive_sum_code:    print_esc("pdfmdfivesum");
   pdf_file_dump_code:     print_esc("pdffiledump");
 @z
 
@@ -104,6 +109,7 @@ we have to create a temporary string that is destroyed immediately after.
 @!save_scanner_status:small_number; {|scanner_status| upon entry}
 @!save_def_ref: pointer; {|def_ref| upon entry, important if inside `\.{\\message}'}
 @!save_warning_index: pointer;
+@!bool: boolean; {temp boolean}
 @!u: str_number; {saved current string string}
 @!s: str_number; {first temp string}
 @!i: integer;
@@ -179,7 +185,30 @@ pdf_file_size_code:
     restore_cur_string;
     return;
   end;
-
+pdf_mdfive_sum_code:
+  begin
+    save_scanner_status := scanner_status;
+    save_warning_index := warning_index;
+    save_def_ref := def_ref;
+    save_cur_string;
+    bool := scan_keyword("file");
+    scan_pdf_ext_toks;
+    if bool then s := tokens_to_string(def_ref)
+    else begin
+      isprint_utf8:=true; s := tokens_to_string(def_ref); isprint_utf8:=false;
+    end;
+    delete_token_ref(def_ref);
+    def_ref := save_def_ref;
+    warning_index := save_warning_index;
+    scanner_status := save_scanner_status;
+    b := pool_ptr;
+    getmd5sum(s, bool);
+    link(garbage) := str_toks(b);
+    flush_str(s);
+    ins_list(link(temp_head));
+    restore_cur_string;
+    return;
+  end;
 pdf_file_dump_code:
   begin
     save_scanner_status := scanner_status;
@@ -354,6 +383,8 @@ primitive("pdffilemoddate",convert,pdf_file_mod_date_code);@/
 @!@:pdf_file_mod_date_}{\.{\\pdffilemoddate} primitive@>
 primitive("pdffilesize",convert,pdf_file_size_code);@/
 @!@:pdf_file_size_}{\.{\\pdffilesize} primitive@>
+primitive("pdfmdfivesum",convert,pdf_mdfive_sum_code);@/
+@!@:pdf_mdfive_sum_}{\.{\\pdfmdfivesum} primitive@>
 primitive("pdffiledump",convert,pdf_file_dump_code);@/
 @!@:pdf_file_dump_}{\.{\\pdffiledump} primitive@>
 primitive("pdfsavepos",extension,pdf_save_pos_node);@/
