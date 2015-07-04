@@ -1,3 +1,8 @@
+2015-07-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/euptex.am: Add libmd5.a.
+	* euptex.defines: Add getmd5sum().
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/euptex.am: Use $(tie_c) and $(tie_m).

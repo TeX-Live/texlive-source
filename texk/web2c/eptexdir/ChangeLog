@@ -1,3 +1,10 @@
+2015-07-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/eptex.am: Add libmd5.a.
+	* pdfutils.ch: Add primitive \pdfmdfivesum to e-(u)pTeX.
+	* eptex.defines: Add getmd5sum().
+	* eptex.ech, eptex_version.h: Change version to 150702.
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/eptx.am: Use $(tie_c) and $(tie_m).

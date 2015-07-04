@@ -41,3 +41,4 @@
 @define procedure getfilemoddate();
 @define procedure getfilesize();
 @define procedure getfiledump();
+@define procedure getmd5sum();

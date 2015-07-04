@@ -19,7 +19,7 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-141210'
+@d epTeX_version_string=='-150702'
 @z
 
 @x e-pTeX: banner
