@@ -103,3 +103,44 @@ UC_is_valid (long ucv)
   return 1;
 }
 
+int32_t
+UC_UTF8_decode_char (const unsigned char **pp, const unsigned char *endptr)
+{
+  const unsigned char *p = *pp;
+  int32_t  ucv;
+  unsigned char c = *p++;
+  int      nbytes;
+
+  if (c <= 0x7f) {
+    ucv    = c;
+    nbytes = 0;
+  } else if ((c & 0xe0) == 0xc0) { /* 110x xxxx */
+    ucv    = c & 31;
+    nbytes = 1;
+  } else if ((c & 0xf0) == 0xe0) { /* 1110 xxxx */
+    ucv    = c & 0x0f;
+    nbytes = 2;
+  } else if ((c & 0xf8) == 0xf0) { /* 1111 0xxx */
+    ucv    = c & 0x07;
+    nbytes = 3;
+  } else if ((c & 0xfc) == 0xf8) { /* 1111 10xx */
+    ucv    = c & 0x03;
+    nbytes = 4;
+  } else if ((c & 0xfe) == 0xfc) { /* 1111 110x */
+    ucv    = c & 0x01;
+    nbytes = 5;
+  } else {
+    return -1;
+  }
+  if (p + nbytes > endptr)
+    return -1;
+  while (nbytes-- > 0) {
+    c = *p++;
+    if ((c & 0xc0) != 0x80)
+      return -1;
+    ucv = (ucv << 6) | (c & 0x3f);
+  }
+
+  *pp = p;
+  return ucv;
+}

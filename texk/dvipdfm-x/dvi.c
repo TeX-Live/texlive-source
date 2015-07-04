@@ -2120,9 +2120,10 @@ read_length (double *vp, double mag, const char **pp, const char *endptr)
 
 
 static int
-scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
-              unsigned *minorversion,
-              int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw,
+scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
+              int *majorversion, int *minorversion,
+              int *do_enc, int *key_bits, int32_t *permission,
+              char *owner_pw, char *user_pw,
               const char *buf, uint32_t size)
 {
   char  *q;
@@ -2227,7 +2228,16 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
       skip_white(&p, endptr);
       kv = parse_float_decimal(&p, endptr);
       if (kv) {
-        *minorversion = (unsigned)strtol(kv, NULL, 10);
+        *minorversion = (int)strtol(kv, NULL, 10);
+        RELEASE(kv);
+      }
+    } else if (majorversion && ns_pdf && !strcmp(q, "majorversion")) {
+      char *kv;
+      if (*p == '=') p++;
+      skip_white(&p, endptr);
+      kv = parse_float_decimal(&p, endptr);
+      if (kv) {
+        *majorversion = (int)strtol(kv, NULL, 10);
         RELEASE(kv);
       }
     } else if (ns_pdf && !strcmp(q, "encrypt") && do_enc) {
@@ -2283,9 +2293,10 @@ scan_special (double *wd, double *ht, double *xo, double *yo, char *lm,
 void
 dvi_scan_specials (int page_no,
                    double *page_width, double *page_height,
-                   double *x_offset, double *y_offset, char *landscape,
-                   unsigned *minorversion,
-                   int *do_enc, unsigned *key_bits, unsigned *permission, char *owner_pw, char *user_pw)
+                   double *x_offset, double *y_offset, int *landscape,
+                   int *majorversion, int *minorversion,
+                   int *do_enc, int *key_bits, int32_t *permission,
+                   char *owner_pw, char *user_pw)
 {
   FILE          *fp = dvi_file;
   int32_t        offset;
@@ -2328,11 +2339,12 @@ dvi_scan_specials (int page_no,
         dvi_page_buf_size = (dvi_page_buf_index + size + DVI_PAGE_BUF_CHUNK);
         dvi_page_buffer = RENEW(dvi_page_buffer, dvi_page_buf_size, unsigned char);
       }
-#define buf (char*)dvi_page_buffer + dvi_page_buf_index
+#define buf ((char*)(dvi_page_buffer + dvi_page_buf_index))
       if (fread(buf, sizeof(char), size, fp) != size)
         ERROR("Reading DVI file failed!");
       if (scan_special(page_width, page_height, x_offset, y_offset, landscape,
-                       minorversion, do_enc, key_bits, permission, owner_pw, user_pw,
+                       majorversion, minorversion,
+                       do_enc, key_bits, permission, owner_pw, user_pw,
                        buf, size))
         WARN("Reading special command failed: \"%.*s\"", size, buf);
 #undef buf
@@ -2407,4 +2419,3 @@ dvi_scan_specials (int page_no,
 
   return;
 }
-

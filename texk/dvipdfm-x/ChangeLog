@@ -1,3 +1,11 @@
+2015-07-04  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* jpegimage.c: Use size_t, uint32_t,... instead of short/long int.
+	* dpxcrypt.c/h, dvi.c/h, pdfencrypt.c/h, dvipdfmx.c, pdfobj.c:
+	Add AES encryption support in PDF ecryption.
+	* pngimage.c : Support images with 16 bit depth.
+	* unicode.c/h: Add UTF-8 decoding function.
+
 2015-05-23  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* dvi.c: Fix Type1 font encoding and metrics.

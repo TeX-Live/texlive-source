@@ -36,40 +36,56 @@
 
 #include "system.h"
 #include "mem.h"
+#include "numbers.h"
 #include "error.h"
 #include "pdfobj.h"
+#include "unicode.h"
 #include "dpxcrypt.h"
 
-#include "pdfencrypt.h"
+/* Encryption support
+ *
+ * Supported: 40-128 bit RC4, 128 bit AES, 256 bit AES
+ *
+ * TODO: Convert password to PDFDocEncoding. SASLPrep stringpref for AESV3.
+ */
+
+/* PDF-2.0 is not published yet. */
+#define USE_ADOBE_EXTENSION 1
+
+#ifdef USE_ADOBE_EXTENSION
+#include "pdfdoc.h"
+#endif
 
 #include "dvipdfmx.h"
+#include "pdfencrypt.h"
 
-#define MAX_KEY_LEN 16
-#define MAX_STR_LEN 32
+static struct pdf_sec {
+   unsigned char key[32];
+   int           key_size;
 
-static unsigned char algorithm, revision, key_size;
-static long permission;
+   unsigned char ID[16];
+   unsigned char O[48], U[48];
+   unsigned char OE[32], UE[32];
+   int     V, R;
+   int32_t P;
 
-static unsigned char key_data[MAX_KEY_LEN], id_string[MAX_KEY_LEN];
-static unsigned char opwd_string[MAX_STR_LEN], upwd_string[MAX_STR_LEN];
+   struct {
+     int use_aes;
+     int encrypt_metadata;
+   } setting;
 
-static unsigned long current_label = 0;
-static unsigned current_generation = 0;
+   struct {
+     uint64_t objnum;
+     uint16_t gennum;
+   } label;
+} sec_data;
 
-static ARC4_KEY key;
-static MD5_CONTEXT md5_ctx;
-
-static unsigned char md5_buf[MAX_KEY_LEN], key_buf[MAX_KEY_LEN];
-static unsigned char in_buf[MAX_STR_LEN], out_buf[MAX_STR_LEN];
-
-static const unsigned char padding_string[MAX_STR_LEN] = {
+static const unsigned char padding_bytes[32] = {
   0x28, 0xbf, 0x4e, 0x5e, 0x4e, 0x75, 0x8a, 0x41,
   0x64, 0x00, 0x4e, 0x56, 0xff, 0xfa, 0x01, 0x08,
   0x2e, 0x2e, 0x00, 0xb6, 0xd0, 0x68, 0x3e, 0x80,
   0x2f, 0x0c, 0xa9, 0xfe, 0x64, 0x53, 0x69, 0x7a
 };
-
-static char owner_passwd[MAX_PWD_LEN], user_passwd[MAX_PWD_LEN];
 
 static unsigned char verbose = 0;
 
@@ -78,277 +94,344 @@ void pdf_enc_set_verbose (void)
   if (verbose < 255) verbose++;
 }
 
-#define PRODUCER "%s-%s, Copyright 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
-void pdf_enc_compute_id_string (char *dviname, char *pdfname)
+void
+pdf_enc_init (int use_aes, int encrypt_metadata)
 {
+  struct pdf_sec *p = &sec_data;
+
+  srand((unsigned) time(NULL)); /* For AES IV */
+  p->setting.use_aes = use_aes;
+  p->setting.encrypt_metadata = encrypt_metadata;
+}
+
+#define PRODUCER \
+"%s-%s, Copyright 2002-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata"
+
+void
+pdf_enc_compute_id_string (char *dviname, char *pdfname)
+{
+  struct pdf_sec *p = &sec_data;
   char *date_string, *producer;
   time_t current_time;
   struct tm *bd_time;
+  MD5_CONTEXT     md5;
 
-  MD5_init(&md5_ctx);
+  /* FIXME: This should be placed in main() or somewhere. */
+  pdf_enc_init(1, 1);
 
-  date_string = NEW (15, char);
+  MD5_init(&md5);
+
+  date_string = NEW(15, char);
   time(&current_time);
   bd_time = localtime(&current_time);
-  sprintf (date_string, "%04d%02d%02d%02d%02d%02d",
-	   bd_time -> tm_year+1900, bd_time -> tm_mon+1, bd_time -> tm_mday,
-	   bd_time -> tm_hour, bd_time -> tm_min, bd_time -> tm_sec);
-  MD5_write(&md5_ctx, (unsigned char *)date_string, strlen(date_string));
-  RELEASE (date_string);
+  sprintf(date_string, "%04d%02d%02d%02d%02d%02d",
+          bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
+          bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec);
+  MD5_write(&md5, (unsigned char *)date_string, strlen(date_string));
+  RELEASE(date_string);
 
-  producer = NEW (strlen(PRODUCER)+strlen(my_name)+strlen(VERSION), char);
+  producer = NEW(strlen(PRODUCER)+strlen(my_name)+strlen(VERSION), char);
   sprintf(producer, PRODUCER, my_name, VERSION);
-  MD5_write(&md5_ctx, (unsigned char *)producer, strlen(producer));
-  RELEASE (producer);
+  MD5_write(&md5, (unsigned char *)producer, strlen(producer));
+  RELEASE(producer);
 
   if (dviname)
-    MD5_write(&md5_ctx, (unsigned char *)dviname, strlen(dviname));
+    MD5_write(&md5, (unsigned char *)dviname, strlen(dviname));
   if (pdfname)
-    MD5_write(&md5_ctx, (unsigned char *)pdfname, strlen(pdfname));
-  MD5_final(id_string, &md5_ctx);
+    MD5_write(&md5, (unsigned char *)pdfname, strlen(pdfname));
+  MD5_final(p->ID, &md5);
 }
 
-static void passwd_padding (unsigned char *src, unsigned char *dst)
+static void
+passwd_padding (const char *src, unsigned char *dst)
 {
-  register int len = strlen((char *)src);
+  int len;
 
-  if (len > MAX_STR_LEN)
-    len = MAX_STR_LEN;
+  len = MIN(32, strlen((char *)src));
 
   memcpy(dst, src, len);
-  memcpy(dst+len, padding_string, MAX_STR_LEN-len);
+  memcpy(dst + len, padding_bytes, 32 - len);
 }
 
-static void compute_owner_password (void)
+static void
+compute_owner_password (struct pdf_sec *p,
+                        const char *opasswd, const char *upasswd)
 {
-  register unsigned char i, j;
-  /*
-   * Algorithm 3.3 Computing the encryption dictionary's O (owner password)
-   *               value
-   *
-   * 1. Pad or truncate the owner password string as described in step 1
-   *    of Algorithm 3.2. If there is no owner password, use the user
-   *    password instead. (See implementation note 17 in Appendix H.)
-   */
-  passwd_padding((unsigned char *)(strlen(owner_passwd) > 0 ? owner_passwd : user_passwd), in_buf);
-  /*
-   * 2. Initialize the MD5 hash function and pass the result of step 1
-   *    as input to this function.
-   */
-  MD5_init(&md5_ctx);
-  MD5_write(&md5_ctx, in_buf, MAX_STR_LEN);
-  MD5_final(md5_buf, &md5_ctx);
-  /*
-   * 3. (Revision 3 only) Do the following 50 times: Take the output
-   *    from the previous MD5 hash and pass it as input into a new
-   *    MD5 hash.
-   */
-  if (revision == 3)
+  int  i, j;
+  unsigned char padded[32];
+  MD5_CONTEXT   md5;
+  ARC4_CONTEXT  arc4;
+  unsigned char hash[16];
+
+  passwd_padding((strlen(opasswd) > 0 ? opasswd : upasswd), padded);
+
+  MD5_init (&md5);
+  MD5_write(&md5, padded, 32);
+  MD5_final(hash, &md5);
+  if (p->R >= 3) {
     for (i = 0; i < 50; i++) {
       /*
        * NOTE: We truncate each MD5 hash as in the following step.
        *       Otherwise Adobe Reader won't decrypt the PDF file.
        */
-      MD5_init(&md5_ctx);
-      MD5_write(&md5_ctx, md5_buf, key_size);
-      MD5_final(md5_buf, &md5_ctx);
+      MD5_init (&md5);
+      MD5_write(&md5, hash, p->key_size);
+      MD5_final(hash, &md5);
     }
-  /*
-   * 4. Create an RC4 encryption key using the first n bytes of the output
-   *    from the final MD5 hash, where n is always 5 for revision 2 but
-   *    for revision 3 depends on the value of the encryption dictionary's
-   *    Length entry.
-   */
-  ARC4_set_key(&key, key_size, md5_buf);
-  /*
-   * 5. Pad or truncate the user password string as described in step 1
-   *    of Algorithm 3.2.
-   */
-  passwd_padding((unsigned char *)user_passwd, in_buf);
-  /*
-   * 6. Encrypt the result of step 5, using an RC4 encryption function
-   *    with the encryption key obtained in step 4.
-   */
-  ARC4(&key, MAX_STR_LEN, in_buf, out_buf);
-  /*
-   * 7. (Revision 3 only) Do the following 19 times: Take the output
-   *    from the previous invocation of the RC4 function and pass it
-   *    as input to a new invocation of the function; use an encryption
-   *    key generated by taking each byte of the encryption key obtained
-   *    in step 4 and performing an XOR (exclusive or) operation between
-   *    that byte and the single-byte value of the iteration counter
-   *    (from 1 to 19).
-   */
-  if (revision == 3)
+  }
+  ARC4_set_key(&arc4, p->key_size, hash);
+  passwd_padding(upasswd, padded);
+  {
+    unsigned char tmp1[32], tmp2[32];
+    unsigned char key[16];
+
+    ARC4(&arc4, 32, padded, tmp1);
+    if (p->R >= 3) {
     for (i = 1; i <= 19; i++) {
-      memcpy(in_buf, out_buf, MAX_STR_LEN);
-      for (j = 0; j < key_size; j++)
-        key_buf[j] = md5_buf[j] ^ i;
-      ARC4_set_key(&key, key_size, key_buf);
-      ARC4(&key, MAX_STR_LEN, in_buf, out_buf);
+        memcpy(tmp2, tmp1, 32);
+        for (j = 0; j < p->key_size; j++)
+          key[j] = hash[j] ^ i;
+        ARC4_set_key(&arc4, p->key_size, key);
+        ARC4(&arc4, 32, tmp2, tmp1);
     }
-  /*
-   * 8. Store the output from the final invocation of the RC4 function
-   *    as the value of the O entry in the encryption dictionary.
-   */
-  memcpy(opwd_string, out_buf, MAX_STR_LEN);
+    }
+  }
+  memcpy(p->O, hash, 32);
 }
 
-static void compute_encryption_key (unsigned char *pwd)
+static void
+compute_encryption_key (struct pdf_sec *p, const char *passwd)
 {
-  register unsigned char i;
-  /*
-   * Algorithm 3.2 Computing an encryption key
-   *
-   * 1. Pad or truncate the password string to exactly 32 bytes. If the
-   *    password string is more than 32 bytes long, use only its first
-   *    32 bytes; if it is less than 32 bytes long, pad it by appending
-   *    the required number of additional bytes from the beginning of
-   *    the following padding string:
-   *
-   *    < 28 BF 4E 5E 4E 75 8A 41 64 00 4E 56 FF FA 01 08
-   *      2E 2E 00 B6 D0 68 3E 80 2F 0C A9 FE 64 53 69 7A >
-   *
-   *    That is, if the password string is n bytes long, append the
-   *    first 32 - n bytes of the padding string to the end of the
-   *    password string. If the password string is empty (zero-length),
-   *	meaning there is no user password, substitute the entire
-   *	padding string in its place.
-   */
-  passwd_padding(pwd, in_buf);
-  /*
-   * 2. Initialize the MD5 hash function and pass the result of step 1
-   *    as input to this fuction.
-   */
-  MD5_init(&md5_ctx);
-  MD5_write(&md5_ctx, in_buf, MAX_STR_LEN);
-  /*
-   * 3. Pass the value of the encryption dictionary's O entry to the
-   *    MD5 hash function. (Algorithm 3.3 shows how the O value is
-   *    computed.)
-   */
-  MD5_write(&md5_ctx, opwd_string, MAX_STR_LEN);
-  /*
-   * 4. Treat the value of the P entry as an unsigned 4-byte integer
-   *    and pass these bytes to the MD5 hash function, low-order byte
-   *    first.
-   */
-  in_buf[0] = (unsigned char)(permission) & 0xFF;
-  in_buf[1] = (unsigned char)(permission >> 8) & 0xFF;
-  in_buf[2] = (unsigned char)(permission >> 16) & 0xFF;
-  in_buf[3] = (unsigned char)(permission >> 24) & 0xFF;
-  MD5_write(&md5_ctx, in_buf, 4);
-  /*
-   * 5. Pass the first element of the file's file identifier array
-   *    (the value of the ID entry in the document's trailer dictionary;
-   *    see Table 3.12 on page 68) to the MD5 hash function and
-   *    finish the hash.
-   */
-  MD5_write(&md5_ctx, id_string, MAX_KEY_LEN);
-  MD5_final(md5_buf, &md5_ctx);
-  /*
-   * 6. (Revision 3 only) Do the following 50 times; Take the output from
-   *    the previous MD5 hash and pass it as input into a new MD5 hash.
-   */
-  if (revision == 3)
+  int  i;
+  unsigned char hash[32], padded[32];
+  MD5_CONTEXT   md5;
+
+  passwd_padding(passwd, padded);
+  MD5_init (&md5);
+  MD5_write(&md5, padded, 32);
+  MD5_write(&md5, p->O, 32);
+  {
+    unsigned char tmp[4];
+
+    tmp[0] = (unsigned char)(p->P) & 0xFF;
+    tmp[1] = (unsigned char)(p->P >> 8) & 0xFF;
+    tmp[2] = (unsigned char)(p->P >> 16) & 0xFF;
+    tmp[3] = (unsigned char)(p->P >> 24) & 0xFF;
+    MD5_write(&md5, tmp, 4);
+  }
+  MD5_write(&md5, p->ID, 16);
+#if 0
+  /* Not Supported Yet */
+  if (!p->setting.encrypt_metadata) {
+    unsigned char tmp[4] = {0xff, 0xff, 0xff, 0xff};
+    MD5_write(&md5, tmp, 4);
+  }
+#endif
+  MD5_final(hash, &md5);
+
+  if (p->R >= 3) {
     for (i = 0; i < 50; i++) {
       /*
        * NOTE: We truncate each MD5 hash as in the following step.
        *       Otherwise Adobe Reader won't decrypt the PDF file.
        */
-      MD5_init(&md5_ctx);
-      MD5_write(&md5_ctx, md5_buf, key_size);
-      MD5_final(md5_buf, &md5_ctx);
+      MD5_init (&md5);
+      MD5_write(&md5, hash, p->key_size);
+      MD5_final(hash, &md5);
     }
-  /*
-   * 7. Set the encryption key to the first n bytes of the output from
-   *    the final MD5 hash, where n is always 5 for revision 2 but for
-   *    revision 3 depends on the value of the encryption dictionary's
-   *    Length entry.
-   */
-  memcpy(key_data, md5_buf, key_size);
+  }
+  memcpy(p->key, hash, p->key_size);
 }
 
-static void compute_user_password (void)
+static void
+compute_user_password (struct pdf_sec *p, const char *uplain)
 {
-  register unsigned char i, j;
-  /*
-   * Algorithm 3.4 Computing the encryption dictionary's U (user password)
-   *               value (Revision 2)
-   *
-   * 1. Create an encryption key based on the user password string, as
-   *    described in Algorithm 3.2.
-   *
-   * 2. Encrypt the 32-byte padding string shown in step 1 of Algorithm
-   *    3.2, using an RC4 encryption fuction with the encryption key from
-   *    the preceeding step.
-   *
-   * 3. Store the result of step 2 as the value of the U entry in the
-   *    encryption dictionary.
-   */
-  /*
-   * Algorithm 3.5 Computing the encryption dictionary's U (user password)
-   *               value (Revision 3)
-   *
-   * 1. Create an encryption key based on the user password string, as
-   *    described in Algorithm 3.2.
-   *
-   * 2. Initialize the MD5 hash function and pass the 32-byte padding
-   *    string shown in step 1 of Algorithm 3.2 as input to this function.
-   *
-   * 3. Pass the first element of the file's file identifier array (the
-   *    value of the ID entry in the document's trailer dictionary; see
-   *    Table 3.12 on page 68) to the hash function and finish the hash.
-   *
-   * 4. Encrypt the 16-byte result of the hash, using an RC4 encryption
-   *    function with the encryption key from step 1.
-   *
-   * 5. Do the following 19 times: Take the output from the previous
-   *    invocation of the RC4 function and pass it as input to a new
-   *    invocation of the function; use an encryption key generated by
-   *    taking each byte of the original encryption key (obtained in
-   *    step 1) and performing an XOR (exclusive or) operation between
-   *    that byte and the single-byte value of the iteration counter
-   *    (from 1 to 19).
-   *
-   * 6. Append 16 bytes of arbitrary padding to the output from the
-   *    final invocation of the RC4 function and store the 32-byte
-   *    result as the value of the U entry in the encryption dictionary.
-   */
-  compute_encryption_key((unsigned char *)user_passwd);
+  int           i, j;
+  ARC4_CONTEXT  arc4;
+  MD5_CONTEXT   md5;
+  unsigned char upasswd[32];
 
-  switch (revision) {
+  compute_encryption_key(p, uplain);
+
+  switch (p->R) {
   case 2:
-    ARC4_set_key(&key, key_size, key_data);
-    ARC4(&key, MAX_STR_LEN, padding_string, out_buf);
+    ARC4_set_key(&arc4, p->key_size, p->key);
+    ARC4(&arc4, 32, padding_bytes, upasswd);
     break;
-  case 3:
-    MD5_init(&md5_ctx);
-    MD5_write(&md5_ctx, padding_string, MAX_STR_LEN);
+  case 3: case 4:
+    {
+      unsigned char hash[32];
+      unsigned char tmp1[32], tmp2[32];
 
-    MD5_write(&md5_ctx, id_string, MAX_KEY_LEN);
-    MD5_final(md5_buf, &md5_ctx);
+      MD5_init (&md5);
+      MD5_write(&md5, padding_bytes, 32);
 
-    ARC4_set_key(&key, key_size, key_data);
-    ARC4(&key, MAX_KEY_LEN, md5_buf, out_buf);
+      MD5_write(&md5, p->ID, 16);
+      MD5_final(hash, &md5);
+
+      ARC4_set_key(&arc4, p->key_size, p->key);
+      ARC4(&arc4, 16, hash, tmp1);
 
     for (i = 1; i <= 19; i++) {
-      memcpy(in_buf, out_buf, MAX_KEY_LEN);
-      for (j = 0; j < key_size; j++)
-        key_buf[j] = key_data[j] ^ i;
-      ARC4_set_key(&key, key_size, key_buf);
-      ARC4(&key, MAX_KEY_LEN, in_buf, out_buf);
+        unsigned char key[16];
+
+        memcpy(tmp2, tmp1, 16);
+        for (j = 0; j < p->key_size; j++)
+          key[j] = p->key[j] ^ i;
+        ARC4_set_key(&arc4, p->key_size, key);
+        ARC4(&arc4, 16, tmp2, tmp1);
+      }
+      memcpy(upasswd, tmp1, 32);
     }
     break;
   default:
-    ERROR("Invalid revision number.\n");
+    ERROR("Invalid revision number.");
   }
 
-  memcpy(upwd_string, out_buf, MAX_STR_LEN);
+  memcpy(p->U, upasswd, 32);
+}
+
+/* Algorithm 2.B from ISO 32000-1 chapter 7 */
+static void
+compute_hash_V5 (unsigned char       *hash,
+                 const char          *passwd,
+                 const unsigned char *salt,
+                 const unsigned char *user_key, int R /* revision */)
+{
+  SHA256_CONTEXT sha;
+  unsigned char  K[64];
+  size_t         K_len;
+  int            nround;
+
+  SHA256_init (&sha);
+  SHA256_write(&sha, (const unsigned char *)passwd, strlen(passwd));
+  SHA256_write(&sha, salt, 8);
+  if (user_key)
+    SHA256_write(&sha, user_key, 48);
+  SHA256_final(hash, &sha);
+
+  ASSERT( R ==5 || R == 6 );
+
+  if (R == 5)
+    return;
+
+  memcpy(K, hash, 32); K_len = 32;
+  for (nround = 1; ; nround++) { /* Initial K count as nround 0. */
+    unsigned char K1[256], *Kr, *E;
+    size_t        K1_len, E_len;
+    int           i, c, E_mod3 = 0;
+
+    K1_len = strlen(passwd) + K_len + (user_key ? 48 : 0);
+    ASSERT(K1_len < 240);
+    memcpy(K1, passwd, strlen(passwd));
+    memcpy(K1 + strlen(passwd), K, K_len);
+    if (user_key)
+      memcpy(K1 + strlen(passwd) + K_len, user_key, 48);
+
+    Kr = NEW(K1_len * 64, unsigned char);
+    for (i = 0; i < 64; i++)
+      memcpy(Kr + i * K1_len, K1, K1_len);
+    AES_cbc_encrypt(K, 16, K + 16, 0, Kr, K1_len * 64, &E, &E_len);
+    RELEASE(Kr);
+
+    for (i = 0; i < 16; i++)
+      E_mod3 += E[i];
+    E_mod3 %= 3;
+
+    switch (E_mod3) {
+    case 0:
+      {
+        SHA256_CONTEXT sha;
+
+        SHA256_init (&sha);
+        SHA256_write(&sha, E, E_len);
+        SHA256_final(K, &sha);
+        K_len = 32;
+      }
+      break;
+    case 1:
+      {
+        SHA512_CONTEXT sha;
+
+        SHA384_init (&sha);
+        SHA384_write(&sha, E, E_len);
+        SHA384_final(K, &sha);
+        K_len = 48;
+      }
+      break;
+    case 2:
+      {
+        SHA512_CONTEXT sha;
+
+        SHA512_init (&sha);
+        SHA512_write(&sha, E, E_len);
+        SHA512_final(K, &sha);
+        K_len = 64;
+      }
+      break;
+    }
+    c = (uint8_t) E[E_len - 1];
+    RELEASE(E);
+    if (nround >= 64 && c <= nround - 32)
+        break;
+  }
+  memcpy(hash, K, 32);
+}
+
+static void
+compute_owner_password_V5 (struct pdf_sec *p, const char *oplain)
+{
+  unsigned char  vsalt[8], ksalt[8], hash[32];
+  unsigned char *OE, iv[AES_BLOCKSIZE];
+  size_t         OE_len;
+  int  i;
+
+  for (i = 0; i < 8 ; i++) {
+    vsalt[i] = rand() % 256;
+    ksalt[i] = rand() % 256;
+  }
+
+  compute_hash_V5(hash, oplain, vsalt, p->U, p->R);
+  memcpy(p->O,      hash,  32);
+  memcpy(p->O + 32, vsalt,  8);
+  memcpy(p->O + 40, ksalt,  8);
+
+  compute_hash_V5(hash, oplain, ksalt, p->U, p->R);
+  memset(iv, 0, AES_BLOCKSIZE);
+  AES_cbc_encrypt(hash, 32, iv, 0, p->key, p->key_size, &OE, &OE_len);
+  memcpy(p->OE, OE, 32);
+  RELEASE(OE);
+}
+
+static void
+compute_user_password_V5 (struct pdf_sec *p, const char *uplain)
+{
+  unsigned char  vsalt[8], ksalt[8], hash[32];
+  unsigned char *UE, iv[AES_BLOCKSIZE];
+  size_t         UE_len;
+  int  i;
+
+  for (i = 0; i < 8 ; i++) {
+    vsalt[i] = rand() % 256;
+    ksalt[i] = rand() % 256;
+  }
+
+  compute_hash_V5(hash, uplain, vsalt, NULL, p->R);
+  memcpy(p->U,      hash,  32);
+  memcpy(p->U + 32, vsalt,  8);
+  memcpy(p->U + 40, ksalt,  8);
+
+  compute_hash_V5(hash, uplain, ksalt, NULL, p->R);
+  memset(iv, 0, AES_BLOCKSIZE);
+  AES_cbc_encrypt(hash, 32, iv, 0, p->key, p->key_size, &UE, &UE_len);
+  memcpy(p->UE, UE, 32);
+  RELEASE(UE);
 }
 
 #ifdef WIN32
-static char *getpass (const char *prompt)
+/* Broken on mintty? */
+static char *
+getpass (const char *prompt)
 {
   static char pwd_buf[128];
   size_t i;
@@ -357,7 +440,7 @@ static char *getpass (const char *prompt)
   fflush(stderr);
   for (i = 0; i < sizeof(pwd_buf)-1; i++) {
     pwd_buf[i] = getch();
-    if (pwd_buf[i] == '\r')
+    if (pwd_buf[i] == '\r' || pwd_buf[i] == '\n')
       break;
     fputs("*", stderr);
     fflush(stderr);
@@ -368,172 +451,369 @@ static char *getpass (const char *prompt)
 }
 #endif
 
-void pdf_enc_set_passwd (unsigned bits, unsigned perm, const char *owner_pw, const char *user_pw)
+static void
+check_version (struct pdf_sec *p, int version)
 {
+  if (p->V > 2 && version < 4) {
+    WARN("Current encryption setting requires PDF version >= 1.4.");
+    p->V = 1;
+    p->key_size = 5;
+  } else if (p->V == 4 && version < 5) {
+    WARN("Current encryption setting requires PDF version >= 1.5.");
+    p->V = 2;
+  } else if (p->V ==5 && version < 7) {
+    WARN("Current encryption setting requires PDF version >= 1.7" \
+         " (plus Adobe Extension Level 3).");
+    p->V = 4;
+  }
+}
+
+/* Dummy routine for stringprep - NOT IMPLEMENTED YET
+ *
+ * Preprocessing of a user-provided password consists first of
+ * normalizing its representation by applying the "SASLPrep" profile (RFC 4013)
+ * of the "stringprep" algorithm (RFC 3454) to the supplied password using the
+ * Normalize and BiDi options.
+ */
+typedef int Stringprep_profile_flags;
+#define STRINGPREP_OK     0
+#define STRINGPREP_ERROR -1
+static int
+stringprep_profile(const char *input, char **output, const char *profile,
+                   Stringprep_profile_flags flags)
+{
+  const char *p, *endptr;
+
+  p = input; endptr = p + strlen(p);
+  while (p < endptr) {
+    int32_t ucv = UC_UTF8_decode_char((const unsigned char **)&p,
+                                      (const unsigned char *)endptr);
+    if (!UC_is_valid(ucv))
+      return STRINGPREP_ERROR;
+  }
+
+  *output = NEW(strlen(input) + 1, char);
+  strcpy(*output, input);
+
+  (void) profile;
+  (void) flags;
+
+  return STRINGPREP_OK;
+}
+
+static int
+preproc_password (const char *passwd, char *outbuf, int V)
+{
+  char *saslpwd = NULL;
+  int   error   = 0;
+
+  memset(outbuf, 0, 128);
+  switch (V) {
+  case 1: case 2: case 3: case 4:
+    {
+      int i;
+       /* Need to be converted to PDFDocEncoding - UNIMPLEMENTED */
+      for (i = 0; i < strlen(passwd); i++) {
+        if (passwd[i] < 0x20 || passwd[i] > 0x7e)
+          WARN("Non-ASCII-printable character found in password.");
+      }
+      memcpy(outbuf, passwd, MIN(127, strlen(passwd)));
+    }
+    break;
+  case 5:
+    /* This is a dummy routine - not actually stringprep password... */
+    if (stringprep_profile(passwd, &saslpwd,
+                           "SASLprep", 0) != STRINGPREP_OK)
+       return -1;
+    else if (saslpwd) {
+      memcpy(outbuf, saslpwd, MIN(127, strlen(saslpwd)));
+      RELEASE(saslpwd);
+    }
+    break;
+  default:
+    error = -1;
+    break;
+  }
+
+  return error;
+}
+
+void
+pdf_enc_set_passwd (unsigned int bits, unsigned int perm,
+                    const char *oplain, const char *uplain)
+{
+  struct pdf_sec *p = &sec_data;
+  char            input[128], opasswd[128], upasswd[128];
   char *retry_passwd;
+  int             version;
 
-  if (owner_pw) {
-    strncpy(owner_passwd, owner_pw, MAX_PWD_LEN);
-  } else
+  version = pdf_get_version();
+
+  p->key_size = (int) (bits / 8);
+  if (p->key_size == 5) /* 40bit */
+    p->V = 1;
+  else if (p->key_size <= 16) {
+    p->V = p->setting.use_aes ? 4 : 2;
+  } else if (p->key_size == 32) {
+    p->V = 5;
+  } else {
+    WARN("Key length %d unsupported.", bits);
+    p->key_size = 5;
+    p->V = 2;
+  }
+  check_version(p, version);
+
+  p->P = (int32_t) (perm | 0xC0U);
+  switch (p->V) {
+  case 1:
+    p->R = (p->P < 0x100L) ? 2 : 3;
+    break;
+  case 2: case 3:
+    p->R = 3;
+    break;
+  case 4:
+    p->R = 4;
+    break;
+  case 5:
+#if USE_ADOBE_EXTENSION
+    p->R = 6;
+#else
+    WARN("Encryption V 5 unsupported.");
+    p->R = 4; p->V = 4;
+#endif
+    break;
+  default:
+    p->R = 3;
+    break;
+  }
+
+  memset(opasswd, 0, 128);
+  memset(upasswd, 0, 128);
+  /* Password must be preprocessed. */
+  if (oplain) {
+    if (preproc_password(oplain, opasswd, p->V) < 0)
+      WARN("Invaid UTF-8 string for password.");
+  } else {
     while (1) {
-      strncpy(owner_passwd, getpass("Owner password: "), MAX_PWD_LEN);
+      strncpy(input, getpass("Owner password: "), MAX_PWD_LEN);
       retry_passwd = getpass("Re-enter owner password: ");
-      if (!strncmp(owner_passwd, retry_passwd, MAX_PWD_LEN))
+      if (!strncmp(input, retry_passwd, MAX_PWD_LEN))
 	break;
       fputs("Password is not identical.\nTry again.\n", stderr);
       fflush(stderr);
     }
-  
-  if (user_pw) {
-    strncpy(user_passwd, user_pw, MAX_PWD_LEN);
-  } else
+    if (preproc_password(input, opasswd, p->V) < 0)
+      WARN("Invaid UTF-8 string for password.");
+  }
+  if (uplain) {
+    if (preproc_password(uplain, upasswd, p->V) < 0)
+      WARN("Invalid UTF-8 string for passowrd.");
+  } else {
     while (1) {
-      strncpy(user_passwd, getpass("User password: "), MAX_PWD_LEN);
+      strncpy(input, getpass("User password: "), MAX_PWD_LEN);
       retry_passwd = getpass("Re-enter user password: ");
-      if (!strncmp(user_passwd, retry_passwd, MAX_PWD_LEN))
+      if (!strncmp(input, retry_passwd, MAX_PWD_LEN))
 	break;
       fputs("Password is not identical.\nTry again.\n", stderr);
       fflush(stderr);
     }
+    if (preproc_password(input, upasswd, p->V) < 0)
+      WARN("Invaid UTF-8 string for password.");
+  }
 
-  key_size = (unsigned char)(bits / 8);
-  algorithm = (key_size == 5 ? 1 : 2);
-  permission = (long) (perm | 0xC0U);
-  revision = ((algorithm == 1 && permission < 0x100L) ? 2 : 3);
-  if (revision == 3)
-    permission |= ~0xFFFL;
+  if (p->R >= 3)
+    p->P |= 0xFFFFF000U;
 
-  compute_owner_password();
-  compute_user_password();
+  if (p->V < 5) {
+    compute_owner_password(p, opasswd, upasswd);
+    compute_user_password (p, upasswd);
+  } else if (p->V == 5) {
+    int i;
+
+    for (i = 0; i < 32; i++)
+      p->key[i] = rand() % 256;
+    p->key_size = 32;
+    /* Order is important here */
+    compute_user_password_V5 (p, upasswd);
+    compute_owner_password_V5(p, opasswd); /* uses p->U */
+  }
 }
 
-void pdf_encrypt_data (unsigned char *data, unsigned long len)
+static void
+calculate_key (struct pdf_sec *p, unsigned char *key)
 {
-  unsigned char *result;
+  int           len = p->key_size + 5;
+  unsigned char tmp[25];
+  MD5_CONTEXT   md5;
 
-  memcpy(in_buf, key_data, key_size);
-  in_buf[key_size]   = (unsigned char)(current_label) & 0xFF;
-  in_buf[key_size+1] = (unsigned char)(current_label >> 8) & 0xFF;
-  in_buf[key_size+2] = (unsigned char)(current_label >> 16) & 0xFF;
-  in_buf[key_size+3] = (unsigned char)(current_generation) & 0xFF;
-  in_buf[key_size+4] = (unsigned char)(current_generation >> 8) & 0xFF;
-
-  MD5_init(&md5_ctx);
-  MD5_write(&md5_ctx, in_buf, key_size+5);
-  MD5_final(md5_buf, &md5_ctx);
-  
-  result = NEW (len, unsigned char);
-  ARC4_set_key(&key, (key_size > 10 ? MAX_KEY_LEN : key_size+5), md5_buf);
-  ARC4(&key, len, data, result);
-  memcpy(data, result, len);
-  RELEASE (result);
+  memcpy(tmp, p->key, p->key_size);
+  tmp[p->key_size  ] = (unsigned char) p->label.objnum        & 0xFF;
+  tmp[p->key_size+1] = (unsigned char)(p->label.objnum >>  8) & 0xFF;
+  tmp[p->key_size+2] = (unsigned char)(p->label.objnum >> 16) & 0xFF;
+  tmp[p->key_size+3] = (unsigned char)(p->label.gennum)       & 0xFF;
+  tmp[p->key_size+4] = (unsigned char)(p->label.gennum >>  8) & 0xFF;
+  if (p->V >= 4) {
+    tmp[p->key_size + 5] = 0x73;
+    tmp[p->key_size + 6] = 0x41;
+    tmp[p->key_size + 7] = 0x6c;
+    tmp[p->key_size + 8] = 0x54;
+    len += 4;
+  }
+  MD5_init (&md5);
+  MD5_write(&md5, tmp, len);
+  MD5_final(key, &md5);
 }
 
-pdf_obj *pdf_encrypt_obj (void)
+void
+pdf_encrypt_data (const unsigned char *plain, size_t plain_len,
+                  unsigned char **cipher, size_t *cipher_len)
 {
+  struct pdf_sec *p = &sec_data;
+  unsigned char   key[32];
+
+  switch (p->V) {
+  case 1: case 2:
+    calculate_key(p, key);
+    {
+      ARC4_CONTEXT arc4;
+
+      *cipher_len = plain_len;
+      *cipher     = NEW(*cipher_len, unsigned char);
+      ARC4_set_key(&arc4, MIN(16, p->key_size + 5), key);
+      ARC4(&arc4, plain_len, plain, *cipher);
+    }
+    break;
+  case 4:
+    calculate_key(p, key);
+    AES_cbc_encrypt(key, MIN(16, p->key_size + 5), NULL, 1,
+                    plain, plain_len, cipher, cipher_len);
+    break;
+  case 5:
+    AES_cbc_encrypt(p->key, p->key_size, NULL, 1,
+                    plain, plain_len, cipher, cipher_len);
+    break;
+  default:
+    ERROR("pdfencrypt: Unexpected V value: %d", p->V);
+    break;
+  }
+}
+
+pdf_obj *
+pdf_encrypt_obj (void)
+{
+  struct pdf_sec *p = &sec_data;
   pdf_obj *doc_encrypt;
 
-#ifdef DEBUG
-  fprintf (stderr, "(pdf_encrypt_obj)");
+  doc_encrypt = pdf_new_dict();
+
+  pdf_add_dict(doc_encrypt,  pdf_new_name("Filter"), pdf_new_name("Standard"));
+  pdf_add_dict(doc_encrypt,  pdf_new_name("V"),      pdf_new_number(p->V));
+#if 0
+  /* PDF reference describes it as:
+   *
+   *   (Optional; PDF 1.4; only if V is 2 or 3)
+   *
+   * but Acrobat *requires* this even for V 5!
+   */
+  if (p->V > 1 && p->V < 4)
 #endif
+    pdf_add_dict(doc_encrypt,
+                 pdf_new_name("Length"), pdf_new_number(p->key_size * 8));
+  if (p->V >= 4) {
+    pdf_obj *CF, *StdCF;
+    CF    = pdf_new_dict();
+    StdCF = pdf_new_dict();
+    pdf_add_dict(StdCF, pdf_new_name("CFM"),
+                 pdf_new_name( (p->V == 4) ? "AESV2" : "AESV3" ));
+    pdf_add_dict(StdCF, pdf_new_name("AuthEvent"), pdf_new_name("DocOpen"));
+    pdf_add_dict(StdCF, pdf_new_name("Length"),    pdf_new_number(p->key_size));
+    pdf_add_dict(CF, pdf_new_name("StdCF"), StdCF);
+    pdf_add_dict(doc_encrypt, pdf_new_name("CF"), CF);
+    pdf_add_dict(doc_encrypt, pdf_new_name("StmF"), pdf_new_name("StdCF"));
+    pdf_add_dict(doc_encrypt, pdf_new_name("StrF"), pdf_new_name("StdCF"));
+#if 0
+    /* NOT SUPPORTED YET */
+    if (!p->setting.encrypt_metadata)
+      pdf_add_dict(doc_encrypt,
+                   pdf_new_name("EncryptMetadata"), pdf_new_boolean(false));
+#endif
+  }
+  pdf_add_dict(doc_encrypt, pdf_new_name("R"), pdf_new_number(p->R));
+  if (p->V < 5) {
+    pdf_add_dict(doc_encrypt, pdf_new_name("O"), pdf_new_string(p->O, 32));
+    pdf_add_dict(doc_encrypt, pdf_new_name("U"), pdf_new_string(p->U, 32));
+  } else if (p->V == 5) {
+    pdf_add_dict(doc_encrypt, pdf_new_name("O"), pdf_new_string(p->O, 48));
+    pdf_add_dict(doc_encrypt, pdf_new_name("U"), pdf_new_string(p->U, 48));
+  }
+  pdf_add_dict(doc_encrypt,	pdf_new_name("P"), pdf_new_number(p->P));
 
-  doc_encrypt = pdf_new_dict ();
+  if (p->V == 5) {
+    unsigned char perms[16], *cipher = NULL;
+    size_t        cipher_len = 0;
 
-  /* KEY  : Filter
-   * TYPE : name
-   * VALUE: (Required) The name of the security handler for this document;
-   *        see below. Default value: Standard, for the built-in security
-   *        handler.
-   */
-  pdf_add_dict (doc_encrypt, 
-		pdf_new_name ("Filter"),
-		pdf_new_name ("Standard"));
-  /* KEY  : V
-   * TYPE : number
-   * VALUE: (Optional but strongly recommended) A code specifying the
-   *        algorithm to be used in encrypting and decrypting the document:
-   *        0  An algorithm that is undocumented and no longer supported,
-   *           and whose use is strongly discouraged.
-   *        1  Algorithm 3.1 on page 73, with an encryption key length
-   *           of 40 bits; see below.
-   *        2  (PDF 1.4) Algorithm 3.1 on page 73, but allowing encryption
-   *           key lengths greater than 40 bits.
-   *        3  (PDF 1.4) An unpublished algorithm allowing encryption key
-   *           lengths ranging from 40 to 128 bits. (This algorithm is
-   *           unpublished as an export requirement of the U.S. Department
-   *           of Commerce.)
-   *        The default value if this entry is omitted is 0, but a value
-   *        of 1 or greater is strongly recommended.
-   */
-  pdf_add_dict (doc_encrypt, 
-		pdf_new_name ("V"),
-		pdf_new_number (algorithm));
-  /* KEY  : Length
-   * TYPE : integer
-   * VALUE: (Optional; PDF 1.4; only if V is 2 or 3) The length of the
-   *        encryption key, in bits. The value must be a multiple of 8,
-   *        in the range 40 to 128. Default value: 40.
-   */
-  if (algorithm > 1)
-    pdf_add_dict (doc_encrypt, 
-		  pdf_new_name ("Length"),
-		  pdf_new_number (key_size * 8));
-  /* KEY  : R
-   * TYPE : number
-   * VALUE: (Required) A number specifying which revision of the standard
-   *        security handler should be used to interpret this dictionary.
-   *        The revison number should be 2 if the document is encrypted
-   *        with a V value less than 2; otherwise this value should be 3.
-   */
-  pdf_add_dict (doc_encrypt, 
-		pdf_new_name ("R"),
-		pdf_new_number (revision));
-  /* KEY  : O
-   * TYPE : string
-   * VALUE: (Required) A 32-byte string, based on both the owner and
-   *        user passwords, that is used in computing the encryption
-   *        key and in determining whether a valid owner password was
-   *        entered.
-   */
-  pdf_add_dict (doc_encrypt, 
-		pdf_new_name ("O"),
-		pdf_new_string (opwd_string, 32));
-  /* KEY  : U
-   * TYPE : string
-   * VALUE: (Required) A 32-byte string, based on the user password,
-   *        that is used in determining whether to prompt the user
-   *        for a password and, if so, whether a valid user or owner
-   *        password was entered.
-   */
-  pdf_add_dict (doc_encrypt, 
-		pdf_new_name ("U"),
-		pdf_new_string (upwd_string, 32));
-  /* KEY  : P
-   * TYPE : (signed 32 bit) integer
-   * VALUE: (Required) A set of flags specifying which operations are
-   *        permitted when the document is opened with user access.
-   */
-  pdf_add_dict (doc_encrypt, 
-		pdf_new_name ("P"),
-		pdf_new_number (permission));
+    pdf_add_dict(doc_encrypt, pdf_new_name("OE"), pdf_new_string(p->OE, 32));
+    pdf_add_dict(doc_encrypt, pdf_new_name("UE"), pdf_new_string(p->UE, 32));
+    perms[0] =  p->P        & 0xff;
+    perms[1] = (p->P >>  8) & 0xff;
+    perms[2] = (p->P >> 16) & 0xff;
+    perms[3] = (p->P >> 24) & 0xff;
+    perms[4] = 0xff;
+    perms[5] = 0xff;
+    perms[6] = 0xff;
+    perms[7] = 0xff;
+    perms[8] = p->setting.encrypt_metadata ? 'T' : 'F';
+    perms[9]  = 'a';
+    perms[10] = 'd';
+    perms[11] = 'b';
+    perms[12] = 0;
+    perms[13] = 0;
+    perms[14] = 0;
+    perms[15] = 0;
+    AES_ecb_encrypt(p->key, p->key_size, perms, 16, &cipher, &cipher_len);
+    pdf_add_dict(doc_encrypt,
+                 pdf_new_name("Perms"), pdf_new_string(cipher, cipher_len));
+    RELEASE(cipher);
+  }
+
+#ifdef USE_ADOBE_EXTENSION
+  if (p->R > 5) {
+    pdf_obj *catalog = pdf_doc_catalog();
+    pdf_obj *ext  = pdf_new_dict();
+    pdf_obj *adbe = pdf_new_dict();
+
+    pdf_add_dict(adbe, pdf_new_name("BaseVersion"), pdf_new_name("1.7"));
+    pdf_add_dict(adbe, pdf_new_name("ExtensionLevel"),
+                       pdf_new_number(p->R == 5 ? 3 : 8));
+    pdf_add_dict(ext, pdf_new_name("ADBE"), adbe);
+    pdf_add_dict(catalog, pdf_new_name("Extensions"), ext);
+  }
+#endif
 
   return doc_encrypt;
 }
 
 pdf_obj *pdf_enc_id_array (void)
 {
+  struct pdf_sec *p = &sec_data;
   pdf_obj *id = pdf_new_array();
-  pdf_add_array(id, pdf_new_string(id_string, MAX_KEY_LEN));
-  pdf_add_array(id, pdf_new_string(id_string, MAX_KEY_LEN));
+
+  pdf_add_array(id, pdf_new_string(p->ID, 16));
+  pdf_add_array(id, pdf_new_string(p->ID, 16));
+
   return id;
 }
 
 void pdf_enc_set_label (unsigned long label)
 {
-  current_label = label;
+  struct pdf_sec *p = &sec_data;
+
+  p->label.objnum = label;
 }
 
 void pdf_enc_set_generation (unsigned generation)
 {
-  current_generation = generation;
+  struct pdf_sec *p = &sec_data;
+
+  p->label.gennum = generation;
 }

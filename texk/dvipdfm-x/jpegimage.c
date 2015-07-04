@@ -129,34 +129,34 @@ typedef enum {
 
 struct JPEG_APPn_JFIF  /* APP0 */
 {
-  unsigned short version;
-  unsigned char  units;      /* 0: only aspect ratio
+  uint16_t       version;
+  uint8_t        units;      /* 0: only aspect ratio
                               * 1: dots per inch
                               * 2: dots per cm
                               */
-  unsigned short Xdensity;
-  unsigned short Ydensity;
-  unsigned char  Xthumbnail;
-  unsigned char  Ythumbnail;
+  uint16_t       Xdensity;
+  uint16_t       Ydensity;
+  uint8_t        Xthumbnail;
+  uint8_t        Ythumbnail;
   unsigned char *thumbnail;  /* Thumbnail data. */
 };
 
 struct JPEG_APPn_ICC   /* APP2 */
 {
-  unsigned char  seq_id;
-  unsigned char  num_chunks;
+  uint8_t        seq_id;
+  uint8_t        num_chunks;
   unsigned char *chunk;
 
   /* Length of ICC profile data in this chunk. */
-  unsigned short length;
+  size_t         length;
 };
 
 struct JPEG_APPn_Adobe /* APP14 */
 {
-  unsigned short version;
-  unsigned short flag0;
-  unsigned short flag1;
-  unsigned char  transform; /* color transform code */
+  uint16_t version;
+  uint16_t flag0;
+  uint16_t flag1;
+  uint8_t  transform; /* color transform code */
 };
 
 struct JPEG_APPn_XMP   /* APP1 */
@@ -164,7 +164,7 @@ struct JPEG_APPn_XMP   /* APP1 */
   unsigned char *packet; /* XMP packet */
 
   /* Length of XMP packet data */
-  unsigned short length;
+  size_t         length;
 };
 
 struct JPEG_ext
@@ -177,11 +177,11 @@ struct JPEG_ext
 #define MAX_COUNT 1024
 struct  JPEG_info
 {
-  unsigned short height;
-  unsigned short width;
+  uint16_t height;
+  uint16_t width;
 
-  unsigned char  bits_per_component;
-  unsigned char  num_components;
+  uint8_t  bits_per_component;
+  uint8_t  num_components;
 
   double xdpi;
   double ydpi;
@@ -608,8 +608,8 @@ read_exif_bytes (unsigned char **pp, int n, int endian)
 #define JPEG_EXIF_TAG_XRESOLUTION     282
 #define JPEG_EXIF_TAG_YRESOLUTION     283
 #define JPEG_EXIF_TAG_RESOLUTIONUNIT  296
-static unsigned short
-read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+static size_t
+read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
 {
   /* this doesn't save the data, just reads the tags we need */
   /* based on info from http://www.exif.org/Exif2-2.PDF */
@@ -630,6 +630,8 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   while ((p < endptr) && (*p == 0))
     p++;
 
+  if (p + 8 >= endptr)
+    goto err;
   /* TIFF header */
   tiff_header = p;
   if ((p[0] == 'M') && (p[1] == 'M'))
@@ -650,6 +652,8 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   offset = read_exif_bytes(&p, 4, endian);
 
   p = tiff_header + offset;
+  if (p + 2 >= endptr)
+    goto err;
   num_fields = read_exif_bytes(&p, 2, endian);
   while (num_fields-- > 0 && p < endptr) {
     int            tag, type;
@@ -742,11 +746,11 @@ err:
   return length;
 }
 
-static unsigned short
+static size_t
 read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp)
 {
   struct JPEG_APPn_JFIF *app_data;
-  unsigned short thumb_data_len;
+  size_t thumb_data_len;
 
   app_data = NEW(1, struct JPEG_APPn_JFIF);
   app_data->version    = get_unsigned_pair(fp);
@@ -783,8 +787,8 @@ read_APP0_JFIF (struct JPEG_info *j_info, FILE *fp)
   return (9 + thumb_data_len);
 }
 
-static unsigned short
-read_APP0_JFXX (FILE *fp, unsigned short length)
+static size_t
+read_APP0_JFXX (FILE *fp, size_t length)
 {
   get_unsigned_byte(fp);
   /* Extension Code:
@@ -800,8 +804,8 @@ read_APP0_JFXX (FILE *fp, unsigned short length)
   return length;
 }
 
-static unsigned short
-read_APP1_XMP (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+static size_t
+read_APP1_XMP (struct JPEG_info *j_info, FILE *fp, size_t length)
 {
   struct JPEG_APPn_XMP *app_data;
 
@@ -815,8 +819,8 @@ read_APP1_XMP (struct JPEG_info *j_info, FILE *fp, unsigned short length)
   return length;
 }
 
-static unsigned short
-read_APP2_ICC (struct JPEG_info *j_info, FILE *fp, unsigned short length)
+static size_t
+read_APP2_ICC (struct JPEG_info *j_info, FILE *fp, size_t length)
 {
   struct JPEG_APPn_ICC *app_data;
 
@@ -836,7 +840,7 @@ static int
 JPEG_copy_stream (struct JPEG_info *j_info, pdf_obj *stream, FILE *fp)
 {
   JPEG_marker marker;
-  long        length;
+  size_t      length;
   int         found_SOFn, count;
 
 #define SKIP_CHUNK(j,c) ((j)->skipbits[(c) / 8] & (1 << (7 - (c) % 8)))
