@@ -25,15 +25,17 @@
 
 #include "pdfobj.h"
 
-#define MAX_PWD_LEN 128
+#define MAX_PWD_LEN 127
 
 extern void pdf_enc_set_verbose (void);
 extern pdf_obj *pdf_enc_id_array (void);
 extern void pdf_enc_compute_id_string (char *dviname, char *pdfname);
 extern void pdf_enc_set_label (unsigned long label);
 extern void pdf_enc_set_generation (unsigned generation);
-extern void pdf_enc_set_passwd (unsigned size, unsigned perm, const char *owner, const char *user);
-extern void pdf_encrypt_data (unsigned char *data, unsigned long len);
+extern void pdf_enc_set_passwd (unsigned int size, unsigned int perm,
+                                const char *owner, const char *user);
+extern void pdf_encrypt_data (const unsigned char *plain, size_t plain_len,
+                              unsigned char **cipher, size_t *cipher_len);
 extern pdf_obj *pdf_encrypt_obj (void);
 
 #endif /* _PDFENCRYPT_H_ */

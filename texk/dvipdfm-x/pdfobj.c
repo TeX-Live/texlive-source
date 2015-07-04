@@ -939,19 +939,22 @@ pdfobj_escape_str (char *buffer, int bufsize, const unsigned char *s, int len)
 static void
 write_string (pdf_string *str, FILE *file)
 {
-  unsigned char *s;
+  unsigned char *s = NULL;
   char wbuf[FORMAT_BUF_SIZE]; /* Shouldn't use format_buffer[]. */
   int  nescc = 0, i, count;
+  size_t len = 0;
 
+  if (enc_mode) {
+    pdf_encrypt_data(str->string, str->length, &s, &len);
+  } else {
   s = str->string;
-
-  if (enc_mode)
-    pdf_encrypt_data(s, str->length);
+    len = str->length;
+  }
 
   /*
    * Count all ASCII non-printable characters.
    */
-  for (i = 0; i < str->length; i++) {
+  for (i = 0; i < len; i++) {
     if (!isprint(s[i]))
       nescc++;
   }
@@ -959,9 +962,9 @@ write_string (pdf_string *str, FILE *file)
    * If the string contains much escaped chars, then we write it as
    * ASCII hex string.
    */
-  if (nescc > str->length / 3) {
+  if (nescc > len / 3) {
     pdf_out_char(file, '<');
-    for (i = 0; i < str->length; i++) {
+    for (i = 0; i < len; i++) {
       pdf_out_xchar(file, s[i]);
     }
     pdf_out_char(file, '>');
@@ -975,12 +978,14 @@ write_string (pdf_string *str, FILE *file)
      * is also used for strings of text with no kerning.  These must be
      * handled as quickly as possible since there are so many of them.
      */ 
-    for (i = 0; i < str->length; i++) {
+    for (i = 0; i < len; i++) {
       count = pdfobj_escape_str(wbuf, FORMAT_BUF_SIZE, &(s[i]), 1);
       pdf_out(file, wbuf, count);
     }
     pdf_out_char(file, ')');
   }
+  if (enc_mode && s)
+    RELEASE(s);
 }
 
 static void
@@ -1640,7 +1645,17 @@ write_stream (pdf_stream *stream, FILE *file)
   }
 #endif /* HAVE_ZLIB */
 
-#if 0
+  /* AES will change the size of data! */
+  if (enc_mode) {
+    unsigned char *cipher = NULL;
+    size_t         cipher_len = 0;
+    pdf_encrypt_data(filtered, filtered_length, &cipher, &cipher_len);
+    RELEASE(filtered);
+    filtered        = cipher;
+    filtered_length = cipher_len;
+  }
+
+  #if 0
   /*
    * An optional end-of-line marker preceding the "endstream" is
    * not part of stream data. See, PDF Reference 4th ed., p. 38.
@@ -1652,6 +1667,7 @@ write_stream (pdf_stream *stream, FILE *file)
     filtered_length++;
   }
 #endif
+
   pdf_add_dict(stream->dict,
 	       pdf_new_name("Length"), pdf_new_number(filtered_length));
 
@@ -1659,12 +1675,8 @@ write_stream (pdf_stream *stream, FILE *file)
 
   pdf_out(file, "\nstream\n", 8);
 
-  if (enc_mode)
-    pdf_encrypt_data(filtered, filtered_length);
-
-  if (filtered_length > 0) {
+  if (filtered_length > 0)
     pdf_out(file, filtered, filtered_length);
-  }
   RELEASE(filtered);
 
   /*

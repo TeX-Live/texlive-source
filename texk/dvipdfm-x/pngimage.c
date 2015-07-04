@@ -20,6 +20,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -27,21 +28,13 @@
 /*
  * PNG SUPPORT
  *
- *  All bitdepth less than 16 is supported.
+ *  All bitdepth supported.
  *  Supported color types are: PALETTE, RGB, GRAY, RGB_ALPHA, GRAY_ALPHA.
  *  Supported ancillary chunks: tRNS, cHRM, gAMA, (sRGB), (iCCP)
  *
  *  cHRM support is not tested well. CalRGB/CalGray colorspace is used for
  *  PNG images that have cHRM chunk.
  *
- * LIMITATIONS
- *
- *   Recent version of PDF (>= 1.5) support 16 bpc, but 16 bit bitdepth PNG
- *   images are automatically converted to 8 bit bitpedth image.
- *
- * TODO
- *  16 bpc support for PDF-1.5. JBIG compression for monochrome image.
- *  Predictor for deflate ?
  */
 
 #include "system.h"
@@ -64,10 +57,6 @@
 #define PNG_NO_WRITE_SUPPORTED
 #define PNG_NO_MNG_FEATURES
 #define PNG_NO_PROGRESSIVE_READ
-#if 0
-/* 16_TO_8 required. */
-#define PNG_NO_READ_TRANSFORMS
-#endif
 
 #include <png.h>
 #include "pngimage.h"
@@ -197,10 +186,13 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   height     = png_get_image_height(png_ptr, png_info_ptr);
   bpc        = png_get_bit_depth   (png_ptr, png_info_ptr);
 
-  /* We do not need 16-bpc color. Ask libpng to convert down to 8-bpc. */
+  /* Ask libpng to convert down to 8-bpc. */
   if (bpc > 8) {
+    if (pdf_get_version() < 5) {
+      WARN("%s: 16-bpc PNG requires PDF version 1.5.", PNG_DEBUG_STR);
     png_set_strip_16(png_ptr);
     bpc = 8;
+  }
   }
   /* Ask libpng to gamma-correct.
    * It is wrong to assume screen gamma value 2.2 but...
@@ -209,7 +201,6 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
   if (!png_get_valid(png_ptr, png_info_ptr, PNG_INFO_iCCP) &&
       !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_sRGB) &&
       !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_cHRM) &&
-      !png_get_valid(png_ptr, png_info_ptr, PNG_INFO_sRGB) &&
        png_get_valid(png_ptr, png_info_ptr, PNG_INFO_gAMA)) {
     double G = 1.0;
     png_get_gAMA (png_ptr, png_info_ptr, &G);
@@ -996,19 +987,21 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
 		 png_uint_32 width, png_uint_32 height)
 {
   pdf_obj    *smask, *dict;
-  png_byte    color_type;
+  png_byte    color_type, bpc;
   png_bytep   smask_data_ptr;
   png_uint_32 i;
 
   color_type = png_get_color_type(png_ptr, info_ptr);
-
+  bpc        = png_get_bit_depth (png_ptr, info_ptr);
   if (color_type & PNG_COLOR_MASK_COLOR) {
-    if (*rowbytes_ptr != 4*width*sizeof(png_byte)) { /* Something wrong */
+    int bps = (bpc == 8) ? 4 : 8;
+    if (*rowbytes_ptr != bps*width*sizeof(png_byte)) { /* Something wrong */
       WARN("%s: Inconsistent rowbytes value.", PNG_DEBUG_STR);
       return NULL;
     }
   } else {
-    if (*rowbytes_ptr != 2*width*sizeof(png_byte)) { /* Something wrong */
+    int bps = (bpc == 8) ? 2 : 4;
+    if (*rowbytes_ptr != bps*width*sizeof(png_byte)) { /* Something wrong */
       WARN("%s: Inconsistent rowbytes value.", PNG_DEBUG_STR);
       return NULL;
     }
@@ -1021,24 +1014,43 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
   pdf_add_dict(dict, pdf_new_name("Width"),      pdf_new_number(width));
   pdf_add_dict(dict, pdf_new_name("Height"),     pdf_new_number(height));
   pdf_add_dict(dict, pdf_new_name("ColorSpace"), pdf_new_name("DeviceGray"));
-  pdf_add_dict(dict, pdf_new_name("BitsPerComponent"), pdf_new_number(8));
+  pdf_add_dict(dict, pdf_new_name("BitsPerComponent"), pdf_new_number(bpc));
 
-  smask_data_ptr = (png_bytep) NEW(width*height, png_byte);
+  smask_data_ptr = (png_bytep) NEW((bpc/8)*width*height, png_byte);
 
   switch (color_type) {
   case PNG_COLOR_TYPE_RGB_ALPHA:
+    if (bpc == 8) {
     for (i = 0; i < width*height; i++) {
       memmove(image_data_ptr+(3*i), image_data_ptr+(4*i), 3);
       smask_data_ptr[i] = image_data_ptr[4*i+3];
     }
     *rowbytes_ptr = 3*width*sizeof(png_byte);
+    } else {
+      for (i = 0; i < width*height; i++) {
+        memmove(image_data_ptr+(6*i), image_data_ptr+(8*i), 6);
+        smask_data_ptr[2*i]   = image_data_ptr[8*i+6];
+        smask_data_ptr[2*i+1] = image_data_ptr[8*i+7];
+      }
+      *rowbytes_ptr = 6*width*sizeof(png_byte);
+    }
     break;
   case PNG_COLOR_TYPE_GRAY_ALPHA:
+    if (bpc == 8) {
     for (i = 0; i < width*height; i++) {
       image_data_ptr[i] = image_data_ptr[2*i];
       smask_data_ptr[i] = image_data_ptr[2*i+1];
     }
     *rowbytes_ptr = width*sizeof(png_byte);
+    } else {
+      for (i = 0; i < width*height; i++) {
+        image_data_ptr[2*i]   = image_data_ptr[4*i];
+        image_data_ptr[2*i+1] = image_data_ptr[4*i+1];
+        smask_data_ptr[2*i]   = image_data_ptr[4*i+2];
+        smask_data_ptr[2*i+1] = image_data_ptr[4*i+3];
+      }
+      *rowbytes_ptr = 2*width*sizeof(png_byte);      
+    }
     break;
   default:
     WARN("You found a bug in pngimage.c!");
@@ -1047,7 +1059,7 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
     return NULL;
   }
 
-  pdf_add_stream(smask, smask_data_ptr, width*height);
+  pdf_add_stream(smask, smask_data_ptr, (bpc/8)*width*height);
   RELEASE(smask_data_ptr);
 
   return smask;
