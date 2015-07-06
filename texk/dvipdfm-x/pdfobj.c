@@ -1064,7 +1064,8 @@ write_name (pdf_name *name, FILE *file)
    */
 #ifndef is_delim
   /* Avoid '{' and '}' for PostScript compatibility? */
-#define is_delim(c) ((c) == '(' || (c) == '/' || \
+#define is_delim(c) ((c) == '(' || (c) == ')' || \
+                     (c) == '/' || \
                      (c) == '<' || (c) == '>' || \
                      (c) == '[' || (c) == ']' || \
                      (c) == '{' || (c) == '}' || \
