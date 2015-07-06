@@ -1,3 +1,7 @@
+2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/euptex.am: Add libmd5.a to euptex_DEPENDENCIES.
+
 2015-07-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/euptex.am: Add libmd5.a.
