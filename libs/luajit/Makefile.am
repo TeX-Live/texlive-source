@@ -161,6 +161,8 @@ check_PROGRAMS = jittest luajittry
 dist_check_SCRIPTS = luajit.test luajiterr.test
 TESTS = luajit.test luajiterr.test
 endif build
+luajit.log: jittest$(EXEEXT)
+luajiterr.log: luajittry$(EXEEXT)
 
 jittest_SOURCES = jittest.c
 

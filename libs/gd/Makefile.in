@@ -1535,6 +1535,7 @@ dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libgd_a_OBJECTS): config.force
+libgd.log: gdtest$(EXEEXT)
 
 @LIBPNG_RULE@
 @FREETYPE2_RULE@

@@ -2334,6 +2334,7 @@ dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libcairo_a_OBJECTS): config.force
+cairo.log: cairotst$(EXEEXT)
 
 @PIXMAN_RULE@
 config.force: $(reconfig_prereq)

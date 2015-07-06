@@ -1354,6 +1354,7 @@ dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libzzip_a_OBJECTS): config.force
+zziplib.log: unzzip$(EXEEXT)
 
 distclean-local:
 	rm -rf test

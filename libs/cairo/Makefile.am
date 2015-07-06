@@ -224,6 +224,7 @@ check_PROGRAMS = cairotst
 dist_check_SCRIPTS = cairo.test
 TESTS = cairo.test
 endif build
+cairo.log: cairotst$(EXEEXT)
 
 cairotst_SOURCES = cairotst.c
 

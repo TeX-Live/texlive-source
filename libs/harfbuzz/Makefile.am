@@ -122,6 +122,7 @@ check_PROGRAMS = hbtest
 dist_check_SCRIPTS = harfbuzz.test
 TESTS = harfbuzz.test
 endif build
+harfbuzz.log: hbtest$(EXEEXT)
 
 hbtest_SOURCES = hbtest.c
 

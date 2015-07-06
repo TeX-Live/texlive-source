@@ -84,6 +84,7 @@ check_PROGRAMS = gdtest
 dist_check_SCRIPTS = libgd.test
 TESTS = libgd.test
 endif build
+libgd.log: gdtest$(EXEEXT)
 
 gdtest_SOURCES = gdtest.c
 

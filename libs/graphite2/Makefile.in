@@ -1648,6 +1648,7 @@ uninstall-am:
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+graphite2.log: gr2test$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

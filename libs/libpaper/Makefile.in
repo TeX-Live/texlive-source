@@ -14,7 +14,6 @@
 
 @SET_MAKE@
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -87,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-noinst_PROGRAMS = paperconf$(EXEEXT)
+@build_TRUE@check_PROGRAMS = paperconf$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -117,7 +116,6 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_libpaper_a_OBJECTS = @LIBPAPER_TREE@/lib/dimen.$(OBJEXT) \
 	@LIBPAPER_TREE@/lib/paper.$(OBJEXT)
 libpaper_a_OBJECTS = $(am_libpaper_a_OBJECTS)
-PROGRAMS = $(noinst_PROGRAMS)
 am_paperconf_OBJECTS = @LIBPAPER_TREE@/src/paperconf.$(OBJEXT)
 paperconf_OBJECTS = $(am_paperconf_OBJECTS)
 paperconf_LDADD = $(LDADD)
@@ -651,8 +649,8 @@ libpaper.a: $(libpaper_a_OBJECTS) $(libpaper_a_DEPENDENCIES) $(EXTRA_libpaper_a_
 	$(AM_V_AR)$(libpaper_a_AR) libpaper.a $(libpaper_a_OBJECTS) $(libpaper_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libpaper.a
 
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 @LIBPAPER_TREE@/src/$(am__dirstamp):
 	@$(MKDIR_P) @LIBPAPER_TREE@/src
 	@: > @LIBPAPER_TREE@/src/$(am__dirstamp)
@@ -931,7 +929,7 @@ check-TESTS:
 	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
 	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
 	exit $$?;
-recheck: all $(dist_check_SCRIPTS)
+recheck: all $(check_PROGRAMS) $(dist_check_SCRIPTS)
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@set +e; $(am__set_TESTS_bases); \
 	bases=`for i in $$bases; do echo $$i; done \
@@ -1149,11 +1147,12 @@ distcleancheck: distclean
 	       $(distcleancheck_listfiles) ; \
 	       exit 1; } >&2
 check-am: all-am
-	$(MAKE) $(AM_MAKEFLAGS) $(dist_check_SCRIPTS)
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS) \
+	  $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) config.h
+all-am: Makefile $(LIBRARIES) config.h
 installdirs: installdirs-recursive
 installdirs-am:
 install: $(BUILT_SOURCES)
@@ -1198,7 +1197,7 @@ maintainer-clean-generic:
 	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
-clean-am: clean-generic clean-noinstLIBRARIES clean-noinstPROGRAMS \
+clean-am: clean-checkPROGRAMS clean-generic clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-recursive
@@ -1273,27 +1272,28 @@ uninstall-am:
 	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
-	am--refresh check check-TESTS check-am clean clean-cscope \
-	clean-generic clean-noinstLIBRARIES clean-noinstPROGRAMS \
-	cscope cscopelist-am ctags ctags-am dist dist-all dist-bzip2 \
-	dist-gzip dist-hook dist-lzip dist-shar dist-tarZ dist-xz \
-	dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-tags distcleancheck \
-	distdir distuninstallcheck dvi dvi-am html html-am info \
-	info-am install install-am install-data install-data-am \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am recheck tags tags-am \
-	uninstall uninstall-am
+	am--refresh check check-TESTS check-am clean \
+	clean-checkPROGRAMS clean-cscope clean-generic \
+	clean-noinstLIBRARIES cscope cscopelist-am ctags ctags-am dist \
+	dist-all dist-bzip2 dist-gzip dist-hook dist-lzip dist-shar \
+	dist-tarZ dist-xz dist-zip distcheck distclean \
+	distclean-compile distclean-generic distclean-hdr \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	recheck tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+paper.log: paperconf$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

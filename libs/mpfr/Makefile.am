@@ -254,6 +254,7 @@ check_PROGRAMS = mpfrtest
 dist_check_SCRIPTS = mpfr.test
 TESTS = mpfr.test
 endif build
+mpfr.log: mpfrtest$(EXEEXT)
 
 mpfrtest_SOURCES = mpfrtest.c
 

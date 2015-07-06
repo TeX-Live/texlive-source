@@ -33,8 +33,6 @@ libpaper_a_SOURCES = \
 
 LDADD = libpaper.a
 
-noinst_PROGRAMS = paperconf
-
 paperconf_SOURCES = @LIBPAPER_TREE@/src/paperconf.c
 
 noinst_MANS = paperconf.1
@@ -42,9 +40,11 @@ noinst_MANS = paperconf.1
 ## Tests
 ##
 if build
+check_PROGRAMS = paperconf
 dist_check_SCRIPTS = paper.test
 TESTS = paper.test
 endif build
+paper.log: paperconf$(EXEEXT)
 
 # Rebuild
 rebuild_prereq =

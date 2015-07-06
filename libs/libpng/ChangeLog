@@ -1,3 +1,7 @@
+2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-03-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libpng-1.6.17.

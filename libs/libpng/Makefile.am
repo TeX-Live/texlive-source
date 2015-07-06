@@ -52,6 +52,7 @@ TESTS = libpng.test
 check_PROGRAMS = pngtest
 dist_check_SCRIPTS = libpng.test
 endif build
+libpng.log: pngtest$(EXEEXT)
 
 CLEANFILES = pngout.png
 

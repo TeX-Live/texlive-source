@@ -80,6 +80,8 @@ check_PROGRAMS = luatest luatry
 dist_check_SCRIPTS = lua52.test luaerror.test
 TESTS = lua52.test luaerror.test
 endif build
+lua52.log: luatest$(EXEEXT)
+luaerror.log: luatry$(EXEEXT)
 
 luatest_SOURCES = luatest.c
 

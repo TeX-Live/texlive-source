@@ -37,6 +37,7 @@ check_PROGRAMS = pixtest
 dist_check_SCRIPTS = pixman.test
 TESTS = pixman.test
 endif build
+pixman.log: pixtest$(EXEEXT)
 
 pixtest_SOURCES = pixtest.c
 

@@ -123,6 +123,7 @@ check_PROGRAMS = gr2test
 dist_check_SCRIPTS = graphite2.test
 TESTS = graphite2.test
 endif build
+graphite2.log: gr2test$(EXEEXT)
 
 gr2test_SOURCES = gr2test.c
 

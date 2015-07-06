@@ -465,6 +465,7 @@ check_PROGRAMS = gmptest
 dist_check_SCRIPTS = gmp.test
 TESTS = gmp.test
 endif build
+gmp.log: gmptest$(EXEEXT)
 
 gmptest_SOURCES = gmptest.c
 
