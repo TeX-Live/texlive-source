@@ -29,10 +29,6 @@
 # include <stdint.h>
 #endif
 
-typedef uint64_t u64;
-typedef uint32_t u32;
-typedef uint8_t  u8;
-
 /* libgcrypt md5 */
 typedef struct {
   uint32_t      A, B, C, D; /* chaining variables */
@@ -46,7 +42,7 @@ void MD5_write(MD5_CONTEXT *ctx, const unsigned char *inbuf, unsigned long inlen
 void MD5_final(unsigned char *outbuf, MD5_CONTEXT *ctx);
 
 typedef struct {
-  u32           h0,h1,h2,h3,h4,h5,h6,h7;
+  uint32_t      h0,h1,h2,h3,h4,h5,h6,h7;
   size_t        nblocks;
   unsigned char buf[64];
   int           count;
@@ -54,7 +50,7 @@ typedef struct {
 
 typedef struct
 {
-  u64 h0, h1, h2, h3, h4, h5, h6, h7;
+  uint64_t h0, h1, h2, h3, h4, h5, h6, h7;
 } SHA512_STATE;
 
 typedef struct

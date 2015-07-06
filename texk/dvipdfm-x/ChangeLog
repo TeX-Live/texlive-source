@@ -1,3 +1,11 @@
+2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dpxcrypt.c: Bugfix: Replace byte => uint8_t.
+	* dpxcrypt.[ch]: Replace u{8,32,64} => uint{8,32,64}_t.
+	* pdfencrypt.c: Declare pdf_enc_init() as static.
+	drop useless cast (const char *) => (char *).
+	* unicode.h: Drop unnecessary #include <inttypes.h>.
+
 2015-07-04  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* jpegimage.c: Use size_t, uint32_t,... instead of short/long int.

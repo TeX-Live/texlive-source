@@ -94,7 +94,7 @@ void pdf_enc_set_verbose (void)
   if (verbose < 255) verbose++;
 }
 
-void
+static void
 pdf_enc_init (int use_aes, int encrypt_metadata)
 {
   struct pdf_sec *p = &sec_data;
@@ -147,7 +147,7 @@ passwd_padding (const char *src, unsigned char *dst)
 {
   int len;
 
-  len = MIN(32, strlen((char *)src));
+  len = MIN(32, strlen(src));
 
   memcpy(dst, src, len);
   memcpy(dst + len, padding_bytes, 32 - len);
