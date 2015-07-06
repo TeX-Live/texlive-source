@@ -320,59 +320,59 @@ void MD5_final (unsigned char *outbuf, MD5_CONTEXT *hd)
  */
 
 
-static u32
-_gcry_bswap32(u32 x)
+static uint32_t
+_gcry_bswap32(uint32_t x)
 {
   return ((rol(x, 8) & 0x00ff00ffL) | (ror(x, 8) & 0xff00ff00L));
 }
 
-static u64
-_gcry_bswap64(u64 x)
+static uint64_t
+_gcry_bswap64(uint64_t x)
 {
-  return ((u64)_gcry_bswap32(x) << 32) | (_gcry_bswap32(x >> 32));
+  return ((uint64_t)_gcry_bswap32(x) << 32) | (_gcry_bswap32(x >> 32));
 }
 
 /* Endian dependent byte swap operations.  */
 #ifdef WORDS_BIGENDIAN
 # define le_bswap32(x) _gcry_bswap32(x)
-# define be_bswap32(x) ((u32)(x))
+# define be_bswap32(x) ((uint32_t)(x))
 # define le_bswap64(x) _gcry_bswap64(x)
-# define be_bswap64(x) ((u64)(x))
+# define be_bswap64(x) ((uint64_t)(x))
 #else
-# define le_bswap32(x) ((u32)(x))
+# define le_bswap32(x) ((uint32_t)(x))
 # define be_bswap32(x) _gcry_bswap32(x)
-# define le_bswap64(x) ((u64)(x))
+# define le_bswap64(x) ((uint64_t)(x))
 # define be_bswap64(x) _gcry_bswap64(x)
 #endif
 
-static u32 buf_get_be32(const void *_buf)
+static uint32_t buf_get_be32(const void *_buf)
 {
-  const byte *in = _buf;
-  return ((u32)in[0] << 24) | ((u32)in[1] << 16) | \
-         ((u32)in[2] << 8) | (u32)in[3];
+  const uint8_t *in = _buf;
+  return ((uint32_t)in[0] << 24) | ((uint32_t)in[1] << 16) | \
+         ((uint32_t)in[2] << 8) | (uint32_t)in[3];
 }
 
-static void buf_put_be32(void *_buf, u32 val)
+static void buf_put_be32(void *_buf, uint32_t val)
 {
-  byte *out = _buf;
+  uint8_t *out = _buf;
   out[0] = val >> 24;
   out[1] = val >> 16;
   out[2] = val >> 8;
   out[3] = val;
 }
 
-static u64 buf_get_be64(const void *_buf)
+static uint64_t buf_get_be64(const void *_buf)
 {
-  const byte *in = _buf;
-  return ((u64)in[0] << 56) | ((u64)in[1] << 48) | \
-         ((u64)in[2] << 40) | ((u64)in[3] << 32) | \
-         ((u64)in[4] << 24) | ((u64)in[5] << 16) | \
-         ((u64)in[6] << 8) | (u64)in[7];
+  const uint8_t *in = _buf;
+  return ((uint64_t)in[0] << 56) | ((uint64_t)in[1] << 48) | \
+         ((uint64_t)in[2] << 40) | ((uint64_t)in[3] << 32) | \
+         ((uint64_t)in[4] << 24) | ((uint64_t)in[5] << 16) | \
+         ((uint64_t)in[6] << 8) | (uint64_t)in[7];
 }
 
-static void buf_put_be64(void *_buf, u64 val)
+static void buf_put_be64(void *_buf, uint64_t val)
 {
-  byte *out = _buf;
+  uint8_t *out = _buf;
   out[0] = val >> 56;
   out[1] = val >> 48;
   out[2] = val >> 40;
@@ -427,7 +427,7 @@ SHA256_init (SHA256_CONTEXT *hd)
 static unsigned int
 _SHA256_transform (SHA256_CONTEXT *hd, const unsigned char *data)
 {
-  static const u32 K[64] = {
+  static const uint32_t K[64] = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
     0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
     0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -446,8 +446,8 @@ _SHA256_transform (SHA256_CONTEXT *hd, const unsigned char *data)
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
   };
 
-  u32 a,b,c,d,e,f,g,h,t1,t2;
-  u32 w[64];
+  uint32_t a,b,c,d,e,f,g,h,t1,t2;
+  uint32_t w[64];
   int i;
 
   a = hd->h0;
@@ -567,7 +567,7 @@ void SHA256_write (SHA256_CONTEXT *hd, const unsigned char *inbuf, unsigned long
 void
 SHA256_final(unsigned char *outbuf, SHA256_CONTEXT *hd)
 {
-  u32            t, msb, lsb;
+  uint32_t       t, msb, lsb;
   unsigned char *p;
   unsigned int   burn;
 
@@ -609,7 +609,7 @@ SHA256_final(unsigned char *outbuf, SHA256_CONTEXT *hd)
   _gcry_burn_stack(burn);
 
   p = outbuf;
-#define X(a) do { *(u32*)p = be_bswap32(hd->h##a); p += 4; } while(0)
+#define X(a) do { *(uint32_t*)p = be_bswap32(hd->h##a); p += 4; } while(0)
   X(0);
   X(1);
   X(2);
@@ -691,7 +691,7 @@ SHA384_init (SHA512_CONTEXT *ctx)
 }
 
 
-static const u64 k[] =
+static const uint64_t k[] =
   {
     U64_C(0x428a2f98d728ae22), U64_C(0x7137449123ef65cd),
     U64_C(0xb5c0fbcfec4d3b2f), U64_C(0xe9b5dba58189dbbc),
@@ -741,8 +741,8 @@ static const u64 k[] =
 static unsigned int
 __transform (SHA512_STATE *hd, const unsigned char *data)
 {
-  u64 a, b, c, d, e, f, g, h;
-  u64 w[16];
+  uint64_t a, b, c, d, e, f, g, h;
+  uint64_t w[16];
   int t;
 
   /* get values from the chaining vars */
@@ -764,7 +764,7 @@ __transform (SHA512_STATE *hd, const unsigned char *data)
 
   for (t = 0; t < 80 - 16; )
     {
-      u64 t1, t2;
+      uint64_t t1, t2;
 
       /* Performance on a AMD Athlon(tm) Dual Core Processor 4050e
          with gcc 4.3.3 using gcry_md_hash_buffer of each 10000 bytes
@@ -890,7 +890,7 @@ __transform (SHA512_STATE *hd, const unsigned char *data)
 
   for (; t < 80; )
     {
-      u64 t1, t2;
+      uint64_t t1, t2;
 
 #if 0 /* Not unrolled.  */
       t1 = h + Sum1 (e) + Ch (e, f, g) + k[t] + w[t%16];
@@ -999,7 +999,7 @@ __transform (SHA512_STATE *hd, const unsigned char *data)
   hd->h6 += g;
   hd->h7 += h;
 
-  return /* burn_stack */ (8 + 16) * sizeof(u64) + sizeof(u32) +
+  return /* burn_stack */ (8 + 16) * sizeof(uint64_t) + sizeof(uint32_t) +
                           3 * sizeof(void*);
 }
 
@@ -1052,7 +1052,7 @@ void
 SHA512_final (unsigned char *outbuf, SHA512_CONTEXT *hd)
 {
   unsigned int   stack_burn_depth;
-  u64            t, msb, lsb;
+  uint64_t       t, msb, lsb;
   unsigned char *p;
 
   SHA512_write(hd, NULL, 0); /* flush */ ;
@@ -1092,7 +1092,7 @@ SHA512_final (unsigned char *outbuf, SHA512_CONTEXT *hd)
   _gcry_burn_stack(stack_burn_depth);
 
   p = outbuf;
-#define X(a) do { *(u64*)p = be_bswap64(hd->state.h##a) ; p += 8; } while (0)
+#define X(a) do { *(uint64_t*)p = be_bswap64(hd->state.h##a) ; p += 8; } while (0)
   X (0);
   X (1);
   X (2);
@@ -1190,9 +1190,9 @@ void ARC4_set_key (ARC4_CONTEXT *ctx, unsigned int keylen, const unsigned char *
 
 /* AES Support */
 
-static int  rijndaelSetupEncrypt(u32 *rk, const u8 *key, int keybits);
-static void rijndaelEncrypt(const u32 *rk, int nrounds,
-                            const u8 plaintext[16], u8 ciphertext[16]);
+static int  rijndaelSetupEncrypt(uint32_t *rk, const uint8_t *key, int keybits);
+static void rijndaelEncrypt(const uint32_t *rk, int nrounds,
+                            const uint8_t plaintext[16], uint8_t ciphertext[16]);
 
 #define KEYLENGTH(keybits) ((keybits)/8)
 #define RKLENGTH(keybits)  ((keybits)/8+28)
@@ -1202,7 +1202,7 @@ static void rijndaelEncrypt(const u32 *rk, int nrounds,
 
 typedef struct {
   int           nrounds;
-  u32           rk[60];
+  uint32_t      rk[60];
   unsigned char iv[AES_BLOCKSIZE];
 } AES_CONTEXT;
 
@@ -1311,7 +1311,7 @@ AES_cbc_encrypt (const unsigned char *key,    size_t  key_len,
 
 #define FULL_UNROLL
 
-static const u32 Te0[256] =
+static const uint32_t Te0[256] =
 {
   0xc66363a5U, 0xf87c7c84U, 0xee777799U, 0xf67b7b8dU,
   0xfff2f20dU, 0xd66b6bbdU, 0xde6f6fb1U, 0x91c5c554U,
@@ -1379,7 +1379,7 @@ static const u32 Te0[256] =
   0x7bb0b0cbU, 0xa85454fcU, 0x6dbbbbd6U, 0x2c16163aU,
 };
 
-static const u32 Te1[256] =
+static const uint32_t Te1[256] =
 {
   0xa5c66363U, 0x84f87c7cU, 0x99ee7777U, 0x8df67b7bU,
   0x0dfff2f2U, 0xbdd66b6bU, 0xb1de6f6fU, 0x5491c5c5U,
@@ -1447,7 +1447,7 @@ static const u32 Te1[256] =
   0xcb7bb0b0U, 0xfca85454U, 0xd66dbbbbU, 0x3a2c1616U,
 };
 
-static const u32 Te2[256] =
+static const uint32_t Te2[256] =
 {
   0x63a5c663U, 0x7c84f87cU, 0x7799ee77U, 0x7b8df67bU,
   0xf20dfff2U, 0x6bbdd66bU, 0x6fb1de6fU, 0xc55491c5U,
@@ -1515,7 +1515,7 @@ static const u32 Te2[256] =
   0xb0cb7bb0U, 0x54fca854U, 0xbbd66dbbU, 0x163a2c16U,
 };
 
-static const u32 Te3[256] =
+static const uint32_t Te3[256] =
 {
   0x6363a5c6U, 0x7c7c84f8U, 0x777799eeU, 0x7b7b8df6U,
   0xf2f20dffU, 0x6b6bbdd6U, 0x6f6fb1deU, 0xc5c55491U,
@@ -1583,7 +1583,7 @@ static const u32 Te3[256] =
   0xb0b0cb7bU, 0x5454fca8U, 0xbbbbd66dU, 0x16163a2cU,
 };
 
-static const u32 Te4[256] =
+static const uint32_t Te4[256] =
 {
   0x63636363U, 0x7c7c7c7cU, 0x77777777U, 0x7b7b7b7bU,
   0xf2f2f2f2U, 0x6b6b6b6bU, 0x6f6f6f6fU, 0xc5c5c5c5U,
@@ -1651,7 +1651,7 @@ static const u32 Te4[256] =
   0xb0b0b0b0U, 0x54545454U, 0xbbbbbbbbU, 0x16161616U,
 };
 
-static const u32 rcon[] =
+static const uint32_t rcon[] =
 {
   0x01000000, 0x02000000, 0x04000000, 0x08000000,
   0x10000000, 0x20000000, 0x40000000, 0x80000000,
@@ -1659,25 +1659,25 @@ static const u32 rcon[] =
   /* for 128-bit blocks, Rijndael never uses more than 10 rcon values */
 };
 
-#define GETU32(plaintext) (((u32)(plaintext)[0] << 24) ^ \
-                    ((u32)(plaintext)[1] << 16) ^ \
-                    ((u32)(plaintext)[2] <<  8) ^ \
-                    ((u32)(plaintext)[3]))
+#define GETU32(plaintext) (((uint32_t)(plaintext)[0] << 24) ^ \
+                    ((uint32_t)(plaintext)[1] << 16) ^ \
+                    ((uint32_t)(plaintext)[2] <<  8) ^ \
+                    ((uint32_t)(plaintext)[3]))
 
-#define PUTU32(ciphertext, st) { (ciphertext)[0] = (u8)((st) >> 24); \
-                         (ciphertext)[1] = (u8)((st) >> 16); \
-                         (ciphertext)[2] = (u8)((st) >>  8); \
-                         (ciphertext)[3] = (u8)(st); }
+#define PUTU32(ciphertext, st) { (ciphertext)[0] = (uint8_t)((st) >> 24); \
+                         (ciphertext)[1] = (uint8_t)((st) >> 16); \
+                         (ciphertext)[2] = (uint8_t)((st) >>  8); \
+                         (ciphertext)[3] = (uint8_t)(st); }
 
 /**
  * Expand the cipher key into the encryption key schedule.
  *
  * @return the number of rounds for the given cipher key size.
  */
-int rijndaelSetupEncrypt(u32 *rk, const u8 *key, int keybits)
+int rijndaelSetupEncrypt(uint32_t *rk, const uint8_t *key, int keybits)
 {
-  int  i = 0;
-  u32  temp;
+  int       i = 0;
+  uint32_t  temp;
 
   rk[0] = GETU32(key     );
   rk[1] = GETU32(key +  4);
@@ -1758,10 +1758,10 @@ int rijndaelSetupEncrypt(u32 *rk, const u8 *key, int keybits)
   return 0;
 }
 
-void rijndaelEncrypt(const u32 *rk, int nrounds,
-                     const u8 plaintext[16], u8 ciphertext[16])
+void rijndaelEncrypt(const uint32_t *rk, int nrounds,
+                     const uint8_t plaintext[16], uint8_t ciphertext[16])
 {
-  u32 s0, s1, s2, s3, t0, t1, t2, t3;
+  uint32_t s0, s1, s2, s3, t0, t1, t2, t3;
   #ifndef FULL_UNROLL
     int r;
   #endif /* ?FULL_UNROLL */
