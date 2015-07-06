@@ -1624,6 +1624,8 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-lua52includeHEADERS \
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+lua52.log: luatest$(EXEEXT)
+luaerror.log: luatry$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

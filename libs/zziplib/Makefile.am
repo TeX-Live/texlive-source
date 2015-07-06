@@ -47,6 +47,7 @@ TESTS = zziplib.test
 check_PROGRAMS = unzzip
 dist_check_SCRIPTS = zziplib.test
 endif build
+zziplib.log: unzzip$(EXEEXT)
 
 distclean-local:
 	rm -rf test

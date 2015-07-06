@@ -60,6 +60,7 @@ check_PROGRAMS = example minigzip
 dist_check_SCRIPTS = zlib.test
 TESTS = zlib.test
 endif build
+zlib.log: example$(EXEEXT) minigzip$(EXEEXT)
 CLEANFILES = foo.gz foo_gz
 
 LDADD = libz.a

@@ -1911,6 +1911,7 @@ uninstall-am:
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 $(libmpfr_a_OBJECTS): $(GMP_DEPEND)
+mpfr.log: mpfrtest$(EXEEXT)
 
 @GMP_RULE@
 config.force: $(reconfig_prereq)

@@ -2488,6 +2488,7 @@ native/stamp-trialdivtab:
 	cd native && $(MAKE) $(AM_MAKEFLAGS) stamp-trialdivtab
 trialdivtab.h: native/stamp-trialdivtab
 	$(AM_V_GEN)native/gen-trialdivtab $(GMP_LIMB_BITS) 8000 >$@ || (rm -f $@; exit 1)
+gmp.log: gmptest$(EXEEXT)
 config.force: $(reconfig_prereq)
 	@if test -f $@; then :; else \
 	  trap 'rm -rf reconfig.lock' 1 2 13 15; \

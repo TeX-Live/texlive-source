@@ -53,6 +53,7 @@ DISTCLEANFILES = CXXLD.sh
 if build
 TESTS = teckit.test
 endif build
+teckit.log: teckit_compile$(EXEEXT)
 
 EXTRA_DIST += \
 	teckit.test \

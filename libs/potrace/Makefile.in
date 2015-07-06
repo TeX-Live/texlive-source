@@ -1306,6 +1306,7 @@ uninstall-am:
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+potrace.log: potracetst$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

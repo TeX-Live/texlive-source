@@ -1797,6 +1797,8 @@ $(ljlib_sources): config.force
 	  if $(AM_V_P); then echo "$(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@"; \
 	    else echo "  LINK     $@"; fi; \
 	  $(LN_S) $(srcdir)/$(LUAJIT_TREE)/src/$@ $@; } || exit 1
+luajit.log: jittest$(EXEEXT)
+luajiterr.log: luajittry$(EXEEXT)
 config.force: $(reconfig_prereq)
 	@if test -f $@; then :; else \
 	  trap 'rm -rf reconfig.lock' 1 2 13 15; \

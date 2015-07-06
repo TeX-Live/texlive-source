@@ -1620,6 +1620,7 @@ dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libharfbuzz_a_OBJECTS): config.force
+harfbuzz.log: hbtest$(EXEEXT)
 
 @ICU_RULE@
 @GRAPHITE2_RULE@

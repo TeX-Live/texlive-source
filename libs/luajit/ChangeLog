@@ -1,3 +1,7 @@
+2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lbitlib.c (new): Moved from LuaJIT-2.0.4/src/ to here.

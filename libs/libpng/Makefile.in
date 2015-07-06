@@ -1348,6 +1348,7 @@ dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
 $(libpng_a_OBJECTS): config.force
+libpng.log: pngtest$(EXEEXT)
 
 @ZLIB_RULE@
 config.force: $(reconfig_prereq)

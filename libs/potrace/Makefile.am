@@ -43,6 +43,7 @@ check_PROGRAMS = potracetst
 dist_check_SCRIPTS = potrace.test
 TESTS = potrace.test
 endif build
+potrace.log: potracetst$(EXEEXT)
 
 potracetst_SOURCES = potracetst.c
 

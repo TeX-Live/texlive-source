@@ -1479,6 +1479,7 @@ uninstall-am:
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+pixman.log: pixtest$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 
