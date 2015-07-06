@@ -1,3 +1,7 @@
+2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/eptex.am: Add libmd5.a to eptex_DEPENDENCIES.
+
 2015-07-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/eptex.am: Add libmd5.a.
