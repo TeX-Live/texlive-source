@@ -96,6 +96,7 @@ dist_configdata_DATA = data/paper.cfg
 ## Tests
 ##
 TESTS = psutils.test
+psutils.log: epsffit$(EXEEXT) psbook$(EXEEXT) psnup$(EXEEXT) psresize$(EXEEXT) psselect$(EXEEXT) pstops$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## psutils.test

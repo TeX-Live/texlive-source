@@ -73,6 +73,7 @@ LDADD = @LIBOBJS@
 ##
 TESTS = t1utils.test
 EXTRA_DIST += $(TESTS)
+t1utils.log: t1ascii$(EXEEXT) t1binary$(EXEEXT) t1asm$(EXEEXT) t1disasm$(EXEEXT)
 
 ## t1utils.test
 EXTRA_DIST += tests/Symbol.pfa tests/Symbol.pfb tests/Symbol.raw

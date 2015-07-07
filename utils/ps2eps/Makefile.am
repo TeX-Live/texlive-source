@@ -41,6 +41,7 @@ CLEANFILES = $(nodist_bin_SCRIPTS)
 ##
 TESTS = bbox.test
 EXTRA_DIST += $(TESTS)
+bbox.log: bbox$(EXEEXT)
 
 ## bbox.test
 EXTRA_DIST += tests/plot.pbm tests/plot.out

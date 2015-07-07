@@ -1888,6 +1888,7 @@ config.force: $(dvisvgm_dependencies)
 @POTRACE_RULE@
 @FREETYPE2_RULE@
 @ZLIB_RULE@
+tests/dvisvgm.log: dvisvgm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1316,6 +1316,8 @@ dist-hook:
 $(fixmsxpart_OBJECTS) $(msxlint_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
+$(MUSIXTNT_TREE)/fixmsxpart.log: fixmsxpart$(EXEEXT)
+$(MUSIXTNT_TREE)/msxlint.log: msxlint$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-04-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ChkTeX.tex (new): Source of ChkTeX.pdf.

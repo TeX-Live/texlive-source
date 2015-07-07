@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ttf2pk2/
 ##
-## Copyright (C) 2011-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = -I$(top_srcdir)/include $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES)
@@ -97,6 +97,7 @@ dist_sfddata_DATA = \
 ## Tests.
 ##
 TESTS = tests/ttf2pk.test
+tests/ttf2pk.log: ttf2pk$(EXEEXT) ttf2tfm$(EXEEXT)
 EXTRA_DIST = $(TESTS)
 ## tests/ttf2pk.test
 EXTRA_DIST += tests/GenR102.ttf tests/gentium-ec.enc tests/ttf2pk.cfg \

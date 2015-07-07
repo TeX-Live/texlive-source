@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-01-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* error_routines.[ch], omfonts.c: Non-zero error return code.

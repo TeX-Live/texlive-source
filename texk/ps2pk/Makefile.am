@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/ps2pk/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
@@ -107,6 +107,8 @@ dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
 ##
 TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
 TESTS = tests/lmmath.test tests/ps2pk.test
+tests/lmmath.log: ps2pk$(EXEEXT)
+tests/ps2pk.log: pfb2pfa$(EXEEXT) ps2pk$(EXEEXT) pk2bm$(EXEEXT) pktest$(EXEEXT) mag$(EXEEXT)
 EXTRA_DIST = $(TESTS)
 DISTCLEANFILES =
 ## tests/lmmath.test

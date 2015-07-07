@@ -1273,6 +1273,7 @@ uninstall-man: uninstall-man1
 $(dt2dv_OBJECTS) $(dv2dt_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
+dtl.log: dt2dv$(EXEEXT) dv2dt$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

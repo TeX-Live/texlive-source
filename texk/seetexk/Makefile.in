@@ -1347,6 +1347,7 @@ $(libtex_a_OBJECTS): $(KPATHSEA_DEPEND)
 $(dvibook_OBJECTS) $(dviconcat_OBJECTS) $(dviselect_OBJECTS) $(dvitodvi_OBJECTS): libtex.a
 
 @KPATHSEA_RULE@
+seetexk.log: dvibook$(EXEEXT) dviconcat$(EXEEXT) dviselect$(EXEEXT) dvitodvi$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

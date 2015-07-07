@@ -181,6 +181,12 @@ endif do_cweb
 ## Tests
 ##
 TESTS = bg5conv.test cefconv.test cef5conv.test cefsconv.test extconv.test sjisconv.test
+bg5conv.log: bg5conv$(EXEEXT)
+cefconv.log: cefconv$(EXEEXT)
+cef5conv.log: cef5conv$(EXEEXT) bg5conv$(EXEEXT) cefconv$(EXEEXT)
+cefsconv.log: cefsconv$(EXEEXT) sjisconv$(EXEEXT) cefconv$(EXEEXT)
+extconv.log: extconv$(EXEEXT)
+sjisconv.log: sjisconv$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## bg5conv.test

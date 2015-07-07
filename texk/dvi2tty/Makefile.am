@@ -49,6 +49,8 @@ man1_MANS = \
 ## Tests.
 ##
 TESTS = disdvi.test dvi2tty.test
+disdvi.log: disdvi$(EXEXET)
+dvi2tty.log: dvi2tty$(EXEEXT)
 
 TESTS_ENVIRONMENT = DVI2TTY_TREE=$(DVI2TTY_TREE)
 EXTRA_DIST += $(TESTS)

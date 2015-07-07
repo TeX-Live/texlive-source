@@ -1295,6 +1295,7 @@ $(mendex_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
 @KPATHSEA_RULE@
 @PTEXENC_RULE@
+tests/mendex.log: mendex$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

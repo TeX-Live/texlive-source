@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/afm2pl/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
@@ -33,6 +33,7 @@ EXTRA_DIST = \
 ## Tests
 ##
 TESTS = afm2pl.test
+afm2pl.log: afm2pl$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## afm2pl.test

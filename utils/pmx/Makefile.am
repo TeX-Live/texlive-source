@@ -239,6 +239,7 @@ dist_man1_MANS = pmxab.1 scor2prt.1
 ## Tests
 ##
 TESTS = $(PMX_TREE)/pmx.test
+$(PMX_TREE)/pmx.log: pmxab$(EXEEXT) scor2prt$(EXEEXT)
 
 TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
 

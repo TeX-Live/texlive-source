@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/mendexk/
 ##
-## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
@@ -51,6 +51,7 @@ EXTRA_DIST += \
 ## Tests
 ##
 TESTS = tests/mendex.test
+tests/mendex.log: mendex$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## tests/mendex.test

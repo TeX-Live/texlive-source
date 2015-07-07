@@ -2350,6 +2350,10 @@ uninstall-bin-links:
 install-exec-hook: install-bin-links
 
 uninstall-hook: uninstall-bin-links
+tests/cnfnewline.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
+tests/kpseaccess.log: kpseaccess$(EXEEXT)
+tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
+tests/kpsestat.log: kpsestat$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

@@ -1433,6 +1433,8 @@ uninstall-man: uninstall-man1
 $(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2m_OBJECTS) $(ps2pk_OBJECTS) $(pktest_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
+tests/lmmath.log: ps2pk$(EXEEXT)
+tests/ps2pk.log: pfb2pfa$(EXEEXT) ps2pk$(EXEEXT) pk2bm$(EXEEXT) pktest$(EXEEXT) mag$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

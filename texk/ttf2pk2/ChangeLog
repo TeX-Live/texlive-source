@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2014-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ligkern.c, parse.c, subfont.c, ttf2pk.c, vplaux.c: Avoid
