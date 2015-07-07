@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-04-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import cjk-4.8.4/utils as cjkutils-4.8.4.

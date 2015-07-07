@@ -85,6 +85,7 @@ EXTRA_DIST += \
 ## Tests.
 ##
 TESTS = tests/ttfdump.test
+tests/ttfdump.log: ttfdump$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 DISTCLEANFILES =
 ## tests/ttfdump.test

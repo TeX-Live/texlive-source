@@ -1143,6 +1143,7 @@ $(devnag_OBJECTS): config.force
 config.force: $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
+tests/devnag.log: devnag$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

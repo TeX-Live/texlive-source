@@ -1416,6 +1416,8 @@ $(proglib): ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
 @KPATHSEA_RULE@
+otp2ocp.log: otp2ocp$(EXEEXT)
+outocp.log: outocp$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

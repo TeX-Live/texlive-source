@@ -1632,6 +1632,12 @@ do-cweave: $(CWEB_SRC) .FORCE
 @do_cweb_TRUE@	$(CTANGLE) $<
 @do_cweb_TRUE@hbf2gf.c: $(CWEB_SRC)
 @do_cweb_TRUE@	$(CTANGLE) $<
+bg5conv.log: bg5conv$(EXEEXT)
+cefconv.log: cefconv$(EXEEXT)
+cef5conv.log: cef5conv$(EXEEXT) bg5conv$(EXEEXT) cefconv$(EXEEXT)
+cefsconv.log: cefsconv$(EXEEXT) sjisconv$(EXEEXT) cefconv$(EXEEXT)
+extconv.log: extconv$(EXEEXT)
+sjisconv.log: sjisconv$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

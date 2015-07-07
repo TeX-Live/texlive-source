@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-05-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lacheck.l: Avoid segfault on "\end{a}$", i.e., do not

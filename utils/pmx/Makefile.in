@@ -2051,6 +2051,7 @@ uninstall-man: uninstall-man1
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+$(PMX_TREE)/pmx.log: pmxab$(EXEEXT) scor2prt$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

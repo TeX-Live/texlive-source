@@ -101,6 +101,7 @@ endif !WIN32
 endif have_gif
 
 TESTS = dvipng.test
+dvipng.log: dvipng$(EXEEXT)
 
 EXTRA_DIST += dvipng.test dvipng-test.dvi
 

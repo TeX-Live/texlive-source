@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2014-06-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* afm2pl.c: Avoid undefined behaviour when char is signed.

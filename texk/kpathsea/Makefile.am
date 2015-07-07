@@ -309,6 +309,10 @@ uninstall-hook: uninstall-bin-links
 TESTS  = tests/cnfnewline.test tests/kpseaccess.test
 TESTS += tests/kpsereadlink.test tests/kpsestat.test tests/kpsewhich.test
 TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
+tests/cnfnewline.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
+tests/kpseaccess.log: kpseaccess$(EXEEXT)
+tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
+tests/kpsestat.log: kpsestat$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 EXTRA_DIST += tests/cnfnewline/texmf.cnf
 

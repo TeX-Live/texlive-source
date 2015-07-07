@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-03-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* include/ttc.h, libttf/ttc.c: Avoid segfault (NULL filename).

@@ -1321,6 +1321,7 @@ uninstall-man: uninstall-man1
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
+t1utils.log: t1ascii$(EXEEXT) t1binary$(EXEEXT) t1asm$(EXEEXT) t1disasm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

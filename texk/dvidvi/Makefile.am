@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvidvi/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA -DUNIX
@@ -32,6 +32,7 @@ EXTRA_DIST = \
 ## Tests
 ##
 TESTS = dvidvi.test
+dvidvi.log: dvidvi$(EXEXXT)
 EXTRA_DIST += $(TESTS)
 
 ## dvidvi.test

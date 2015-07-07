@@ -1356,6 +1356,15 @@ uninstall-bin-links:
 @OTANGLE_TRUE@@WIN32_TRUE@	for f in $(linked_programs); do \
 @OTANGLE_TRUE@@WIN32_TRUE@	  rm -f $(DESTDIR)$(bindir)/$$f$(EXEEXT); \
 @OTANGLE_TRUE@@WIN32_TRUE@	done
+bad.log charwd.log check.log help.log level1.log ligkern.log \
+	ofonts.log overbmp.log realnum.log repeat.log \
+	selectfont.log specialhex.log version.log: omfonts$(EXEEXT)
+omfonts.log: omfonts$(EXEEXT) ../pltotf$(EXEEXT) ../tftopl$(EXEEXT)
+shorten.log yannis.log: omfonts$(EXEEXT) ../pltotf$(EXEEXT)
+../pltotf$(EXEEXT):
+	cd .. && $(MAKE) $(AM_MAKEFLAGS) pltotf$(EXEEXT)
+../tftopl$(EXEEXT):
+	cd .. && $(MAKE) $(AM_MAKEFLAGS) tftopl$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

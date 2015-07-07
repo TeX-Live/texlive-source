@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory utils/lacheck/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -15,6 +15,7 @@ nodist_man1_MANS = lacheck.1
 ## Test
 TESTS = lacheck.test
 dist_check_SCRIPTS = $(TESTS)
+lacheck.log: lacheck$(EXEEXT)
 EXTRA_DIST = test.old test.tex
 CLEANFILES = test.out
 

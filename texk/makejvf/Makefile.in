@@ -1228,6 +1228,7 @@ $(makejvf_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
 @KPATHSEA_RULE@
 @PTEXENC_RULE@
+makejvf.log: makejvf$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

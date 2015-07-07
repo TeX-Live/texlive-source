@@ -160,5 +160,6 @@ DISTCLEANFILES = config.force CXXLD.sh
 ## Tests.
 ##
 TESTS = tests/dvisvgm.test
+tests/dvisvgm.log: dvisvgm$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 

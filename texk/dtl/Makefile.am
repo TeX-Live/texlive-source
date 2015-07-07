@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/dtl/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
@@ -24,6 +24,7 @@ dist_man1_MANS = dt2dv.man dv2dt.man
 dist_check_SCRIPTS = dtl.test
 
 TESTS = dtl.test
+dtl.log: dt2dv$(EXEEXT) dv2dt$(EXEEXT)
 
 EXTRA_DIST = edited.txt
 

@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/makejvfk/
 ##
-## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
@@ -24,6 +24,7 @@ EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt
 dist_check_SCRIPTS = makejvf.test
 
 TESTS = makejvf.test
+makejvf.log: makejvf$(EXEEXT)
 
 EXTRA_DIST += \
 	tests/min10.tfm \

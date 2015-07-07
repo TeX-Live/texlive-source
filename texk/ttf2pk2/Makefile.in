@@ -1472,6 +1472,7 @@ config.force: $(KPATHSEA_DEPEND) $(FREETYPE2_DEPEND)
 
 @KPATHSEA_RULE@
 @FREETYPE2_RULE@
+tests/ttf2pk.log: ttf2pk$(EXEEXT) ttf2tfm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

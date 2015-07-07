@@ -58,6 +58,7 @@ dist_man1_MANS = prepmx.1
 ##
 TESTS = m-tx.test
 EXTRA_DIST += $(TESTS)
+m-tx.log: prepmx$(EXEEXT)
 
 ## m-tx.test
 EXTRA_DIST += tests/mozart.mtx tests/mozart.pmx

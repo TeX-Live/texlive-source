@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/makeindexk/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
@@ -39,6 +39,7 @@ EXTRA_DIST = CONTRIB NOTES ind-src
 ## Tests
 ##
 TESTS = tests/nested-range-test.pl tests/makeindex.test
+tests/nested-range-test.pl.log tests/makeindex.log: makeindex$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## tests/nested-range-test.pl

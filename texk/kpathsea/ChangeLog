@@ -1,3 +1,7 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2015-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Define WEB2CVERSION for WIN32 programs.

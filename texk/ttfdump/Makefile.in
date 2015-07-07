@@ -1465,6 +1465,7 @@ uninstall-man: uninstall-man1
 $(libttf_a_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
+tests/ttfdump.log: ttfdump$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

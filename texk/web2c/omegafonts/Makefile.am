@@ -102,6 +102,15 @@ OMFONTS_tests = bad.test charwd.test check.test help.test level1.test ligkern.te
 if OTANGLE
 TESTS = $(OMFONTS_tests)
 endif OTANGLE
+bad.log charwd.log check.log help.log level1.log ligkern.log \
+	ofonts.log overbmp.log realnum.log repeat.log \
+	selectfont.log specialhex.log version.log: omfonts$(EXEEXT)
+omfonts.log: omfonts$(EXEEXT) ../pltotf$(EXEEXT) ../tftopl$(EXEEXT)
+shorten.log yannis.log: omfonts$(EXEEXT) ../pltotf$(EXEEXT)
+../pltotf$(EXEEXT):
+	cd .. && $(MAKE) $(AM_MAKEFLAGS) pltotf$(EXEEXT)
+../tftopl$(EXEEXT):
+	cd .. && $(MAKE) $(AM_MAKEFLAGS) tftopl$(EXEEXT)
 
 EXTRA_DIST = $(OMFONTS_tests)
 
