@@ -269,13 +269,16 @@ DISTCLEANFILES = config.force
 ##
 TESTS =
 dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test dvipdfm-bkm.test dvipdfm-psz.test
-dvipdfmx_tests += dvipdfm-res.test
+dvipdfmx_tests += dvipdfm-res.test 
+dvipdfmx.log dvipdfm-ann.log dvipdfm-bb.log dvipdfm-bkm.log dvipdfm-psz.log \
+	dvipdfm-res.log: dvipdfmx$(EXEEXT)
 if DVIPDFMX
 TESTS += $(dvipdfmx_tests)
 endif DVIPDFMX
 xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
-xdvipdfmx_tests += xdvipdfm-res.test
-xdvipdfmx_tests += xdvipdfm-ttc.test
+xdvipdfmx_tests += xdvipdfm-res.test xdvipdfm-ttc.test
+xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
+	xdvipdfm-res.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
 if XDVIPDFMX
 TESTS += $(xdvipdfmx_tests)
 endif XDVIPDFMX

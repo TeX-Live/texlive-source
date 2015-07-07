@@ -1,3 +1,9 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+	* ac/dvipdfm-x.ac: Fixed a typo.
+	* xdvipdfmx.test: Fixed a typo.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dpxcrypt.c: Bugfix: Replace byte => uint8_t.

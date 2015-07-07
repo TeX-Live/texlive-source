@@ -1,6 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/bibtex-x/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
@@ -78,9 +78,11 @@ TESTS =
 if BIBTEX8
 TESTS += $(bibtex8_tests)
 endif BIBTEX8
+tests/bibtex8.log tests/bibtex8-mem.log tests/sort.log: bibtex8$(EXEEXT)
 if BIBTEXU
 TESTS += $(bibtexu_tests)
 endif BIBTEXU
+tests/bibtexu.log: bibtexu$(EXEEXT)
 
 EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests)
 DISTCLEANFILES =

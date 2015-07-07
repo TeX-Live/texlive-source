@@ -2923,6 +2923,10 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(LIBPAPER_DEPE
 @LIBPNG_RULE@
 @ZLIB_RULE@
 @LIBPAPER_RULE@
+dvipdfmx.log dvipdfm-ann.log dvipdfm-bb.log dvipdfm-bkm.log dvipdfm-psz.log \
+	dvipdfm-res.log: dvipdfmx$(EXEEXT)
+xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
+	xdvipdfm-res.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

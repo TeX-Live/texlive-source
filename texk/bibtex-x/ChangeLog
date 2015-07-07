@@ -1,3 +1,8 @@
+2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+	* ac/bibtex-x.ac: Fixed a typo.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.
