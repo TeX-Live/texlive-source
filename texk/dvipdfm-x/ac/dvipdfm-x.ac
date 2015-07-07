@@ -11,7 +11,7 @@ AC_ARG_ENABLE(Kpse_Prog,
               AS_HELP_STRING([--disable-]Kpse_Prog,
                              [do not build the ]Kpse_Prog[ program],
                              kpse_indent_26))
-AS_CASE([enable_]Kpse_Prog,
+AS_CASE([$enable_]Kpse_Prog,
         [yes | no], ,
         [enable_]Kpse_Prog[=yes])
 ])

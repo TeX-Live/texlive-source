@@ -4115,7 +4115,7 @@ if test "${enable_bibtex8+set}" = set; then :
   enableval=$enable_bibtex8;
 fi
 
-case enable_bibtex8 in #(
+case $enable_bibtex8 in #(
   yes | no) :
      ;; #(
   *) :
@@ -4126,7 +4126,7 @@ if test "${enable_bibtexu+set}" = set; then :
   enableval=$enable_bibtexu;
 fi
 
-case enable_bibtexu in #(
+case $enable_bibtexu in #(
   yes | no) :
      ;; #(
   *) :
@@ -4320,7 +4320,7 @@ if test "${enable_dvipdfmx+set}" = set; then :
   enableval=$enable_dvipdfmx;
 fi
 
-case enable_dvipdfmx in #(
+case $enable_dvipdfmx in #(
   yes | no) :
      ;; #(
   *) :
@@ -4331,7 +4331,7 @@ if test "${enable_xdvipdfmx+set}" = set; then :
   enableval=$enable_xdvipdfmx;
 fi
 
-case enable_xdvipdfmx in #(
+case $enable_xdvipdfmx in #(
   yes | no) :
      ;; #(
   *) :

@@ -13694,7 +13694,7 @@ if test "${enable_dvipdfmx+set}" = set; then :
   enableval=$enable_dvipdfmx;
 fi
 
-case enable_dvipdfmx in #(
+case $enable_dvipdfmx in #(
   yes | no) :
      ;; #(
   *) :
@@ -13705,7 +13705,7 @@ if test "${enable_xdvipdfmx+set}" = set; then :
   enableval=$enable_xdvipdfmx;
 fi
 
-case enable_xdvipdfmx in #(
+case $enable_xdvipdfmx in #(
   yes | no) :
      ;; #(
   *) :

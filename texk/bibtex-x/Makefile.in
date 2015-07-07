@@ -1578,6 +1578,8 @@ $(bibtexu_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
 
 @KPATHSEA_RULE@
 @ICU_RULE@
+tests/bibtex8.log tests/bibtex8-mem.log tests/sort.log: bibtex8$(EXEEXT)
+tests/bibtexu.log: bibtexu$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
