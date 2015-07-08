@@ -963,7 +963,7 @@ create_soft_mask (png_structp png_ptr, png_infop info_ptr,
   smask = pdf_new_stream(STREAM_COMPRESS);
   dict  = pdf_stream_dict(smask);
   smask_data_ptr = (png_bytep) NEW(width*height, png_byte);
-  pdf_add_dict(dict, pdf_new_name("Type"),    pdf_new_name("XObjcect"));
+  pdf_add_dict(dict, pdf_new_name("Type"),    pdf_new_name("XObject"));
   pdf_add_dict(dict, pdf_new_name("Subtype"), pdf_new_name("Image"));
   pdf_add_dict(dict, pdf_new_name("Width"),      pdf_new_number(width));
   pdf_add_dict(dict, pdf_new_name("Height"),     pdf_new_number(height));
@@ -1009,7 +1009,7 @@ strip_soft_mask (png_structp png_ptr, png_infop info_ptr,
 
   smask = pdf_new_stream(STREAM_COMPRESS);
   dict  = pdf_stream_dict(smask);
-  pdf_add_dict(dict, pdf_new_name("Type"),    pdf_new_name("XObjcect"));
+  pdf_add_dict(dict, pdf_new_name("Type"),    pdf_new_name("XObject"));
   pdf_add_dict(dict, pdf_new_name("Subtype"), pdf_new_name("Image"));
   pdf_add_dict(dict, pdf_new_name("Width"),      pdf_new_number(width));
   pdf_add_dict(dict, pdf_new_name("Height"),     pdf_new_number(height));
