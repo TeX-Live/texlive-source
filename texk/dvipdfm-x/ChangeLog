@@ -1,3 +1,7 @@
+2015-07-08  Simon Cozens  <simon@simon-cozens.org>
+
+	* pngimage.c: Fixed a typo "XObjcect" => "XObject".
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
