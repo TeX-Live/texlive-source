@@ -1867,6 +1867,7 @@ $(prologues): squeeze/stamp-squeeze
 
 squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
+beginfontk1.log eepic-nan.log pfbincl.log same-name.log: dvips$(EXEEXT)
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
