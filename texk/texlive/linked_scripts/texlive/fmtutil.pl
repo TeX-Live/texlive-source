@@ -716,10 +716,11 @@ sub callback_enable_disable_format {
     if ($alldata->{'merged'}{$fmt}) {
       my @engs = keys %{$alldata->{'merged'}{$fmt}};
       if (($#engs > 0) || ($#engs == -1)) {
-        print_warning("Selected format $fmt not uniquely defined,\n");
-        print_warning("possible format/engines combinations:\n");
+        print_warning("Selected format $fmt not uniquely defined;\n");
+        print_warning("possible format/engine combinations:\n");
         for my $e (@engs) {
-          print_warning("  $fmt/$e (currently " . $alldata->{'merged'}{$fmt}{$e}{'status'} . ")\n");
+          print_warning("  $fmt/$e (currently "
+                        . $alldata->{'merged'}{$fmt}{$e}{'status'} . ")\n");
         }
         print_warning("Please select one by fully specifying $fmt/ENGINE\n");
         print_warning("No changes done.\n");
@@ -729,8 +730,8 @@ sub callback_enable_disable_format {
         return enable_disable_format_engine($tc, $fmt, $engs[0], $mode);
       }
     } else {
-      print_warning("Format $fmt is not defined.\n");
-      print_warning("Cannot (de)activate it.\n");
+      print_warning("Format $fmt is not defined;\n");
+      print_warning("cannot (de)activate it.\n");
       return -1;
     }
   }
@@ -1175,9 +1176,9 @@ Commands:
   --byhyphen HYPHENFILE      (re)create formats that depend on HYPHENFILE
   --enablefmt FORMATNAME[/ENGINE] enable formatname in config file
   --disablefmt FORMATNAME[/ENGINE] disable formatname in config file
-                             If more formats share the same name but have
-                             different engines, the ENGINE parameter is
-                             obligatory.
+                             If multiple formats have the same name but
+                             different engines, the /ENGINE specifier is
+                             required.
   --listcfg                  list (enabled and disabled) configurations,
                              filtered to available formats
   --catcfg                   output the content of the config file

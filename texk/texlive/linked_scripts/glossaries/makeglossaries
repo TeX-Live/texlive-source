@@ -2,7 +2,6 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.15 (2014/07/30)
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +26,13 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.15 (2014-07-30)";
+my $version="2.16 (2015-06-28)";
 
 # History:
+# v2.16 (2015/06/28)
+#   * Added check for "german" and codepage that doesn't contain
+#   "din5007", "duden" or "braille". If missing, "din5007-" is
+#   prefixed to the codepage.
 # v2.15 (2014/07/30)
 #   * Removed hard-coded three character extension assumption
 #     www.dickimaw-books.com/cgi-bin/bugtracker.cgi?action=view&key=55
@@ -143,6 +146,7 @@ my %languagemap =
   'magyar'    => 'hungarian',
   'naustrian' => 'german',
   'ngermanb'  => 'german',
+  'ngerman'   => 'german', # v2.16
   'norsk'     => 'norwegian',
   'portuges'  => 'portuguese',
   'russianb'  => 'russian',
@@ -943,7 +947,7 @@ sub xindy{
       }
       elsif ($language eq 'german')
       {
-         $codepage = "din";
+         $codepage = "din5007";
       }
       elsif ($language eq 'gypsy')
       {
@@ -978,6 +982,13 @@ sub xindy{
          $codepage = "utf";
       }
    }
+   elsif ($language eq 'german' and $codepage!~/(din5007|duden|braille)/)
+   {
+#v2.16 added check for german din/duden
+
+      $codepage = "din5007-$codepage";
+   }
+
 
    my $codepageparam = "";
 
@@ -1141,6 +1152,7 @@ sub HELP_MESSAGE{
    print "-q\t\tQuiet mode.\n";
    print "-Q\t\tSilence unable to fork warning.\n";
    print "-k\t\tDon't try to use piped redirection.\n";
+   print "-l\t\tLetter ordering.\n";   
    print "-s <sty>\tEmploy <sty> as the style file.\n";
    print "-t <log>\tEmploy <log> as the transcript file.\n";
    print "\t\t(Don't use -t if you have more than one glossary\n";
@@ -1160,7 +1172,6 @@ sub HELP_MESSAGE{
    print "options.)\n\n";
    print "-c\t\tCompress intermediate blanks.\n";
    print "-g\t\tEmploy German word ordering.\n";
-   print "-l\t\tLetter ordering.\n";   
    print "-p <num>\tSet the starting page number to be <num>.\n";
    print "-r\t\tDisable implicit page range formation.\n";
    print "-m <file>\tFull path to makeindex executable.\n",
@@ -1230,6 +1241,10 @@ they have different style files.
 
 Use I<file> as the transcript file.
 
+=item B<-l>
+
+Letter ordering.
+
 =item B<-L> I<language>
 
 This option only has an effect if B<xindy> is called. Sets the
@@ -1242,10 +1257,6 @@ Compress intermediate blanks (B<makeindex> only).
 =item B<-g>
 
 Employ German word ordering (B<makeindex> only).
-
-=item B<-l>
-
-Letter ordering (B<makeindex> only).
 
 =item B<-p> I<num>
 

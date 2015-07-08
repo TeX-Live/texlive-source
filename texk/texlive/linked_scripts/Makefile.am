@@ -113,6 +113,7 @@ texmf_other_scripts = \
 	fragmaster/fragmaster.pl \
 	getmap/getmapdl.lua \
 	glossaries/makeglossaries \
+	glossaries/makeglossaries-lite.lua \
 	jfontmaps/kanji-config-updmap-sys.sh \
 	jfontmaps/kanji-config-updmap.pl \
 	jfontmaps/kanji-fontmap-creator.pl \
