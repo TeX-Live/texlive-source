@@ -110,6 +110,7 @@ CLEANFILES = $(prologues) texc.lpro
 TESTS = afm2tfm-test.pl
 TESTS += beginfontk1.test eepic-nan.test \
          pfbincl.test quotecmd-test.pl same-name.test test-dvips
+beginfontk1.log eepic-nan.log pfbincl.log same-name.log: dvips$(EXEEXT)
 
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea
 TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata
