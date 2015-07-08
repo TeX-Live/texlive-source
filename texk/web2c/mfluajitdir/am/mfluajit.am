@@ -68,7 +68,7 @@ libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DMF_LUA -DJIT
 # We must create mfluajitd.h before building the libmfluajit_a_OBJECTS.
 $(libmfluajit_a_OBJECTS): mfluajitd.h
 
-$(mfluajit_c_h): mfluajit-web2c $(LUAJIT_LIBS)
+$(mfluajit_c_h): mfluajit-web2c $(LUAJIT_DEPEND)
 	@$(web2c) mfluajit
 mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluajitdir/mfluajit.defines
 	@$(web2c) mfluajit

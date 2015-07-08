@@ -15381,6 +15381,7 @@ weave-web2c: weave.p $(web2c_depend)
 	@$(web2c) weave
 weave.p: tangle$(EXEEXT) weave.web weave.ch
 	$(tangle) weave weave
+pooltype.log: pooltype$(EXEEXT) tex.pool
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 $(cweave_OBJECTS): cweb.h
@@ -15468,7 +15469,7 @@ $(mflua_OBJECTS) $(mflua_nowin_OBJECTS): mfluad.h mfluadir/mflua_version.h
 # We must create mfluad.h before building the libmflua_a_OBJECTS.
 $(libmflua_a_OBJECTS): mfluad.h
 
-$(mflua_c_h): mflua-web2c $(LUA_LIBS)
+$(mflua_c_h): mflua-web2c $(LUA_DEPEND)
 	@$(web2c) mflua
 mflua-web2c: mflua.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluadir/mflua.defines
 	@$(web2c) mflua
@@ -15515,7 +15516,7 @@ $(mfluajit_OBJECTS) $(mfluajit_nowin_OBJECTS): mfluajitd.h mfluadir/mflua_versio
 # We must create mfluajitd.h before building the libmfluajit_a_OBJECTS.
 $(libmfluajit_a_OBJECTS): mfluajitd.h
 
-$(mfluajit_c_h): mfluajit-web2c $(LUAJIT_LIBS)
+$(mfluajit_c_h): mfluajit-web2c $(LUAJIT_DEPEND)
 	@$(web2c) mfluajit
 mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluajitdir/mfluajit.defines
 	@$(web2c) mfluajit
@@ -16275,6 +16276,9 @@ ovp2ovf.p: otangle$(EXEEXT) ovp2ovf.web omegaware/ovp2ovf.ch
 	$(tangle_silent)$(ow_otangle) ovp2ovf ovp2ovf
 ovp2ovf.web: tie$(EXEEXT) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
 	$(tie_m) omegaware/ovp2ovf.web omegaware/ovp2ovf.up
+omegaware/odvicopy.log: odvicopy$(EXEEXT) odvitype$(EXEEXT)
+omegaware/odvitype.log: odvitype$(EXEEXT)
+omegaware/otangle.log: otangle$(EXEEXT)
 
 # We must create alephd.h before building the aleph_OBJECTS.
 $(aleph_OBJECTS): alephd.h
