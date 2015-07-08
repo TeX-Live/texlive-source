@@ -137,6 +137,7 @@ EXTRA_DIST += \
 	omegaware/tests/liguse.opl omegaware/tests/liguse1.opl omegaware/tests/liguse2.opl
 DISTCLEANFILES += omegaware/tests/xlig*.*
 ## omegaware/odvicopy.test (and ofonts.test)
+omegaware/odvicopy.log: odvicopy$(EXEEXT) odvitype$(EXEEXT)
 EXTRA_DIST += \
 	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
 	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \
@@ -146,6 +147,7 @@ EXTRA_DIST += \
 	omegaware/tests/ofontv5.ovf omegaware/tests/ofontv6.ovf
 DISTCLEANFILES += ofont*vf omegaware/tests/xpagenum.*
 ## omegaware/odvitype.test (and odvicopy.test, ofonts.test)
+omegaware/odvitype.log: odvitype$(EXEEXT)
 EXTRA_DIST += omegaware/tests/ofontd0.dtl omegaware/tests/ofontd0.dvi \
 	omegaware/tests/ofontd0.typ omegaware/tests/ofontr0.tfm \
 	omegaware/tests/ofontr1.tfm omegaware/tests/ofontr2.ofm \
@@ -166,6 +168,7 @@ DISTCLEANFILES += omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
 	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
 	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.*
 ## omegaware/otangle.test
+omegaware/otangle.log: otangle$(EXEEXT)
 DISTCLEANFILES += ocftest.*
 ## omegaware/overbmp.test
 EXTRA_DIST += omegaware/tests/inbmp.opl omegaware/tests/overbmp.opl \

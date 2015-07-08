@@ -1,3 +1,7 @@
+2015-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/omegaware.am: Fix dependencies for 'make check'.
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/omegaware.am: Use $(tie_m).

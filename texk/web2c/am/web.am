@@ -185,6 +185,7 @@ DISTCLEANFILES += tests/xcmr10.pktyp
 ## pltotf.test
 DISTCLEANFILES += badpl.* tests/xcmr10.tfm
 ## pooltype.test
+pooltype.log: pooltype$(EXEEXT) tex.pool
 DISTCLEANFILES += tests/xtexpool.typ
 ## tftopl.test
 DISTCLEANFILES += badtfm.* tests/xcmr10*.pl

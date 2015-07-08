@@ -1,3 +1,7 @@
+2015-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/mfluajit.am: Fix dependencies.
+
 2015-07-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mfluajit.am, mfluac.[ch]: Use lkpselib.c.
