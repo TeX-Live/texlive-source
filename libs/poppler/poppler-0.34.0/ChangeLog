@@ -1,3 +1,128 @@
+commit 2fc1f540754391ffa87d7fe9f3438e134d821207
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue Jul 7 18:48:51 2015 +0200
+
+    [Splash] Fix crash in PDF with nested softmasks
+
+    Bug #91240
+
+ poppler/SplashOutputDev.cc | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
+
+commit 0b8919f19dd501c9962bca05c9b0559464e923c3
+Author: Dmytro Morgun <lztoad@gmail.com>
+Date:   Mon Jul 6 00:28:27 2015 +0200
+
+    Fix pedantic memory leak
+
+ poppler/StructElement.cc | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+commit 2ef22af960d3d800087209fea047009a8419134c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 5 16:03:57 2015 +0200
+
+    [cmake] Make sure ENABLE_LIBOPENJPEG is either 0 or 1
+
+    Otherwise if it was auto it gets translated to 1 for the cmakedefine
+    boolean
+    which is wrong when the auto ends up meaning "i din't find it"
+
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 50455bcf4f1644060b2187d4e60c3798793041cc
+Author: Tamas Szekeres <szekerest@gmail.com>
+Date:   Fri Jul 3 20:24:01 2015 +0200
+
+    std::max/min need <algorithm>
+
+    Bug #88511
+
+ cpp/poppler-font.cpp       | 3 +++
+ cpp/poppler-global.cpp     | 3 +++
+ poppler/Annot.cc           | 2 ++
+ poppler/SplashOutputDev.cc | 2 ++
+ 4 files changed, 10 insertions(+)
+
+commit 346fc70dbf2803e23e70b093401aa2cda216492b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jul 3 20:19:01 2015 +0200
+
+    Forgot the (C)
+
+ poppler/PSOutputDev.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit df09c1a84dfe80d2e6cfde3308c79da5b2ea7428
+Author: Marek Kasik <mkasik@redhat.com>
+Date:   Fri Jul 3 20:14:23 2015 +0200
+
+    Embed Type1 fonts to PostScript files correctly
+
+    Remove PFB headers from embedded Type1 fonts
+    before embedding them into a PostScript file.
+
+    Bug #19747
+
+ poppler/PSOutputDev.cc | 57
+ +++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 50 insertions(+), 7 deletions(-)
+
+commit 11f117cc71641b89783b207232171f850a2b64ff
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Thu Jun 4 10:51:36 2015 +0200
+
+    regtest: Disable pretty diffs for text files in HTML reports
+
+    difflib is entering in an infinite loop with some files, so disable it
+    for now. We need to either fix that somehow or find a different way to
+    generate pretty diffs of text files.
+
+ regtest/HTMLReport.py | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit 3db4cb6f07229e26405bfb512c626a272f6351f5
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun May 24 18:41:30 2015 +0200
+
+    Splash: Speed up of rendering icc based images
+
+    Bug #90171
+
+ poppler/SplashOutputDev.cc | 142
+ +++++++++++++++++++++++++++++++++++++++++++--
+ poppler/SplashOutputDev.h  |   8 ++-
+ splash/Splash.cc           |  17 ++++--
+ splash/Splash.h            |   9 ++-
+ 4 files changed, 163 insertions(+), 13 deletions(-)
+
+commit c50720dcc9e15516e0e19072c0df03fbdee63dec
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Fri May 22 21:44:55 2015 +0930
+
+    glib: update new symbols section
+
+ glib/reference/poppler-docs.sgml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit b271a19ec30b20bc11f2240ae6b96672e3cafafb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu May 14 21:56:47 2015 +0200
+
+    Poppler 0.33
+
+ CMakeLists.txt      |  4 ++--
+ NEWS                | 25 +++++++++++++++++++++++++
+ configure.ac        |  2 +-
+ cpp/Doxyfile        |  2 +-
+ glib/CMakeLists.txt |  2 +-
+ glib/Makefile.am    |  2 +-
+ poppler/Makefile.am |  2 +-
+ qt4/src/Doxyfile    |  2 +-
+ qt5/src/Doxyfile    |  2 +-
+ 9 files changed, 34 insertions(+), 9 deletions(-)
+
 commit 2b2fb719aa5ffe32fbc3fb500444b1643b1c6099
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu May 14 20:17:12 2015 +0200

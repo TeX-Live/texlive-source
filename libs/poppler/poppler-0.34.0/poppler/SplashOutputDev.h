@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Takashi Iwai <tiwai@suse.de>
-// Copyright (C) 2009-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
@@ -383,6 +383,12 @@ private:
 			  GBool dropEmptySubpaths);
   void drawType3Glyph(GfxState *state, T3FontCache *t3Font,
 		      T3FontCacheTag *tag, Guchar *data);
+#ifdef USE_CMS
+  GBool useIccImageSrc(void *data);
+  static void iccTransform(void *data, SplashBitmap *bitmap);
+  static GBool iccImageSrc(void *data, SplashColorPtr colorLine,
+			Guchar *alphaLine);
+#endif
   static GBool imageMaskSrc(void *data, SplashColorPtr line);
   static GBool imageSrc(void *data, SplashColorPtr colorLine,
 			Guchar *alphaLine);

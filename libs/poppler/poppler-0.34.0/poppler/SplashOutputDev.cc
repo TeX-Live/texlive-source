@@ -34,6 +34,7 @@
 // Copyright (C) 2013 Li Junling <lijunling@sina.com>
 // Copyright (C) 2014 Ed Porras <ed@moto-research.com>
 // Copyright (C) 2014 Richard PALO <richard@netbsd.org>
+// Copyright (C) 2015 Tamas Szekeres <szekerest@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -72,6 +73,7 @@
 #include "splash/SplashFontFileID.h"
 #include "splash/Splash.h"
 #include "SplashOutputDev.h"
+#include <algorithm>
 
 #ifdef VMS
 #if (__VMS_VER < 70000000)
@@ -1227,6 +1229,7 @@ struct T3GlyphStack {
 struct SplashTransparencyGroup {
   int tx, ty;			// translation coordinates
   SplashBitmap *tBitmap;	// bitmap for transparency group
+  SplashBitmap *softmask;	// bitmap for softmasks
   GfxColorSpace *blendingColorSpace;
   GBool isolated;
 
@@ -2778,8 +2781,8 @@ void SplashOutputDev::setSoftMaskFromImageMask(GfxState *state,
   imgMaskData.height = height;
   imgMaskData.y = 0;
 
-  maskBitmap = new SplashBitmap(bitmap->getWidth(), bitmap->getHeight(), 1, splashModeMono8, gFalse);
-  maskSplash = new Splash(maskBitmap, vectorAntialias);
+  transpGroupStack->softmask = new SplashBitmap(bitmap->getWidth(), bitmap->getHeight(), 1, splashModeMono8, gFalse);
+  maskSplash = new Splash(transpGroupStack->softmask, vectorAntialias);
   maskColor[0] = 0;
   maskSplash->clear(maskColor);
   maskColor[0] = 0xff;
@@ -2796,13 +2799,15 @@ void SplashOutputDev::unsetSoftMaskFromImageMask(GfxState *state, double *baseMa
   /* transfer mask to alpha channel! */
   // memcpy(maskBitmap->getAlphaPtr(), maskBitmap->getDataPtr(), bitmap->getRowSize() * bitmap->getHeight());
   // memset(maskBitmap->getDataPtr(), 0, bitmap->getRowSize() * bitmap->getHeight());
-  Guchar *dest = bitmap->getAlphaPtr();
-  Guchar *src = maskBitmap->getDataPtr();
-  for (int c= 0; c < maskBitmap->getRowSize() * maskBitmap->getHeight(); c++) {
-    dest[c] = src[c];
+  if (transpGroupStack->softmask != NULL) {
+    Guchar *dest = bitmap->getAlphaPtr();
+    Guchar *src = transpGroupStack->softmask->getDataPtr();
+    for (int c= 0; c < transpGroupStack->softmask->getRowSize() * transpGroupStack->softmask->getHeight(); c++) {
+      dest[c] = src[c];
+    }
+    delete transpGroupStack->softmask;
+    transpGroupStack->softmask = NULL;
   }
-  delete maskBitmap;
-  maskBitmap = NULL;
   endTransparencyGroup(state);
   baseMatrix[4] += transpGroupStack->tx;
   baseMatrix[5] += transpGroupStack->ty;
@@ -2817,6 +2822,37 @@ struct SplashOutImageData {
   SplashColorMode colorMode;
   int width, height, y;
 };
+
+#ifdef USE_CMS
+GBool SplashOutputDev::useIccImageSrc(void *data) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+
+  if (!imgData->lookup && imgData->colorMap->getColorSpace()->getMode() == csICCBased) {
+    GfxICCBasedColorSpace *colorSpace = (GfxICCBasedColorSpace *) imgData->colorMap->getColorSpace();
+    switch (imgData->colorMode) {
+    case splashModeMono1:
+    case splashModeMono8:
+      if (colorSpace->getAlt() != NULL && colorSpace->getAlt()->getMode() == csDeviceGray)
+        return gTrue;
+      break;
+    case splashModeXBGR8:
+    case splashModeRGB8:
+    case splashModeBGR8:
+      if (colorSpace->getAlt() != NULL && colorSpace->getAlt()->getMode() == csDeviceRGB)
+        return gTrue;
+      break;
+#if SPLASH_CMYK
+    case splashModeCMYK8:
+      if (colorSpace->getAlt() != NULL && colorSpace->getAlt()->getMode() == csDeviceCMYK)
+        return gTrue;
+      break;
+#endif
+    }
+  }
+
+  return gFalse;
+}
+#endif
 
 GBool SplashOutputDev::imageSrc(void *data, SplashColorPtr colorLine,
 				Guchar * /*alphaLine*/) {
@@ -2964,6 +3000,100 @@ GBool SplashOutputDev::imageSrc(void *data, SplashColorPtr colorLine,
   ++imgData->y;
   return gTrue;
 }
+
+#ifdef USE_CMS
+GBool SplashOutputDev::iccImageSrc(void *data, SplashColorPtr colorLine,
+				Guchar * /*alphaLine*/) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+  Guchar *p;
+  int nComps;
+
+  if (imgData->y == imgData->height) {
+    return gFalse;
+  }
+  if (!(p = imgData->imgStr->getLine())) {
+    int destComps = 1;
+    if (imgData->colorMode == splashModeRGB8 || imgData->colorMode == splashModeBGR8)
+        destComps = 3;
+    else if (imgData->colorMode == splashModeXBGR8)
+        destComps = 4;
+#if SPLASH_CMYK
+    else if (imgData->colorMode == splashModeCMYK8)
+        destComps = 4;
+    else if (imgData->colorMode == splashModeDeviceN8)
+        destComps = SPOT_NCOMPS + 4;
+#endif
+    memset(colorLine, 0, imgData->width * destComps);
+    return gFalse;
+  }
+
+  if (imgData->colorMode == splashModeXBGR8) {
+    SplashColorPtr q;
+    int x;
+    for (x = 0, q = colorLine; x < imgData->width; ++x) {
+      *q++ = *p++;
+      *q++ = *p++;
+      *q++ = *p++;
+      *q++ = 255;
+    }
+  } else {
+    nComps = imgData->colorMap->getNumPixelComps();
+    memcpy(colorLine, p, imgData->width * nComps);
+  }
+
+  ++imgData->y;
+  return gTrue;
+}
+
+void SplashOutputDev::iccTransform(void *data, SplashBitmap *bitmap) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+  int nComps = imgData->colorMap->getNumPixelComps();
+
+  Guchar *colorLine = (Guchar *) gmalloc(nComps * bitmap->getWidth());
+  Guchar *rgbxLine = (imgData->colorMode == splashModeXBGR8) ? (Guchar *) gmalloc(3 * bitmap->getWidth()) : NULL;
+  for (int i = 0; i < bitmap->getHeight(); i++) {
+    Guchar *p = bitmap->getDataPtr() + i * bitmap->getRowSize();
+    switch (imgData->colorMode) {
+    case splashModeMono1:
+    case splashModeMono8:
+      imgData->colorMap->getGrayLine(p, colorLine, bitmap->getWidth());
+      memcpy(p, colorLine, nComps * bitmap->getWidth());
+      break;
+    case splashModeRGB8:
+    case splashModeBGR8:
+      imgData->colorMap->getRGBLine(p, colorLine, bitmap->getWidth());
+      memcpy(p, colorLine, nComps * bitmap->getWidth());
+      break;
+#if SPLASH_CMYK
+    case splashModeCMYK8:
+      imgData->colorMap->getCMYKLine(p, colorLine, bitmap->getWidth());
+      memcpy(p, colorLine, nComps * bitmap->getWidth());
+      break;
+#endif
+    case splashModeXBGR8:
+      Guchar *q;
+      Guchar *b = p;
+      int x;
+      for (x = 0, q = rgbxLine; x < bitmap->getWidth(); ++x, ++b) {
+        *q++ = *b++;
+        *q++ = *b++;
+        *q++ = *b++;
+      }
+      imgData->colorMap->getRGBLine(rgbxLine, colorLine, bitmap->getWidth());
+      b = p;
+      for (x = 0, q = colorLine; x < bitmap->getWidth(); ++x, ++b) {
+        *b++ = *q++;
+        *b++ = *q++;
+        *b++ = *q++;
+      }
+      break;
+    }
+  }
+  gfree(colorLine);
+  if (rgbxLine != NULL) 
+    gfree(rgbxLine);
+}
+#endif
 
 GBool SplashOutputDev::alphaImageSrc(void *data, SplashColorPtr colorLine,
 				     Guchar *alphaLine) {
@@ -3176,6 +3306,7 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   SplashOutImageData imgData;
   SplashColorMode srcMode;
   SplashImageSource src;
+  SplashICCTransform tf;
   GfxGray gray;
   GfxRGB rgb;
 #if SPLASH_CMYK
@@ -3293,8 +3424,14 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   } else {
     srcMode = colorMode;
   }
+#ifdef USE_CMS
+  src = maskColors ? &alphaImageSrc : useIccImageSrc(&imgData) ? &iccImageSrc : &imageSrc;
+  tf = maskColors == NULL && useIccImageSrc(&imgData) ? &iccTransform : NULL;
+#else
   src = maskColors ? &alphaImageSrc : &imageSrc;
-  splash->drawImage(src, &imgData, srcMode, maskColors ? gTrue : gFalse,
+  tf = NULL;
+#endif
+  splash->drawImage(src, tf, &imgData, srcMode, maskColors ? gTrue : gFalse,
 		    width, height, mat, interpolate);
   if (inlineImg) {
     while (imgData.y < height) {
@@ -3596,7 +3733,7 @@ void SplashOutputDev::drawMaskedImage(GfxState *state, Object *ref,
     } else {
       srcMode = colorMode;
     }
-    splash->drawImage(&maskedImageSrc, &imgData, srcMode, gTrue,
+    splash->drawImage(&maskedImageSrc, NULL, &imgData, srcMode, gTrue,
 		      width, height, mat, interpolate);
     delete maskBitmap;
     gfree(imgData.lookup);
@@ -3671,7 +3808,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
   maskSplash = new Splash(maskBitmap, vectorAntialias);
   maskColor[0] = 0;
   maskSplash->clear(maskColor);
-  maskSplash->drawImage(&imageSrc, &imgMaskData, splashModeMono8, gFalse,
+  maskSplash->drawImage(&imageSrc, NULL, &imgMaskData, splashModeMono8, gFalse,
 			maskWidth, maskHeight, mat, maskInterpolate);
   delete imgMaskData.imgStr;
   maskStr->close();
@@ -3759,7 +3896,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
   } else {
     srcMode = colorMode;
   }
-  splash->drawImage(&imageSrc, &imgData, srcMode, gFalse, width, height, mat, interpolate);
+  splash->drawImage(&imageSrc, NULL, &imgData, srcMode, gFalse, width, height, mat, interpolate);
   splash->setSoftMask(NULL);
   gfree(imgData.lookup);
   delete imgData.imgStr;
@@ -3852,6 +3989,7 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
 
   // push a new stack entry
   transpGroup = new SplashTransparencyGroup();
+  transpGroup->softmask = NULL;
   transpGroup->tx = tx;
   transpGroup->ty = ty;
   transpGroup->blendingColorSpace = blendingColorSpace;
@@ -4358,7 +4496,7 @@ GBool SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfxA, Catalog *ca
     }
     retValue = gTrue;
   } else {
-    retValue = splash->drawImage(&tilingBitmapSrc, &imgData, colorMode, gTrue, result_width, result_height, matc, gFalse, gTrue) == splashOk;
+    retValue = splash->drawImage(&tilingBitmapSrc, NULL, &imgData, colorMode, gTrue, result_width, result_height, matc, gFalse, gTrue) == splashOk;
   }
   delete tBitmap;
   delete gfx;

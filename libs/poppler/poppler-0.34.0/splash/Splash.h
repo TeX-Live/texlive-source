@@ -13,7 +13,7 @@
 //
 // Copyright (C) 2005 Marco Pesenti Gritti <mpg@redhat.com>
 // Copyright (C) 2007, 2011 Albert Astals Cid <aacid@kde.org>
-// Copyright (C) 2010-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2010-2013, 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
 //
@@ -55,6 +55,9 @@ typedef GBool (*SplashImageMaskSource)(void *data, SplashColorPtr pixel);
 // returns false.
 typedef GBool (*SplashImageSource)(void *data, SplashColorPtr colorLine,
 				   Guchar *alphaLine);
+
+// Use ICCColorSpace to transform a bitmap
+typedef void (*SplashICCTransform)(void *data, SplashBitmap *bitmap);
 
 //------------------------------------------------------------------------
 
@@ -211,7 +214,7 @@ public:
   //    BGR8         BGR8
   //    CMYK8        CMYK8
   // The matrix behaves as for fillImageMask.
-  SplashError drawImage(SplashImageSource src, void *srcData,
+  SplashError drawImage(SplashImageSource src, SplashICCTransform tf, void *srcData,
 			SplashColorMode srcMode, GBool srcAlpha,
 			int w, int h, SplashCoord *mat, GBool interpolate,
 			GBool tilingPattern = gFalse);
@@ -357,7 +360,7 @@ private:
 		     SplashBitmap *dest);
   void blitMask(SplashBitmap *src, int xDest, int yDest,
 		SplashClipResult clipRes);
-  SplashError arbitraryTransformImage(SplashImageSource src, void *srcData,
+  SplashError arbitraryTransformImage(SplashImageSource src, SplashICCTransform tf, void *srcData,
 			       SplashColorMode srcMode, int nComps,
 			       GBool srcAlpha,
 			       int srcWidth, int srcHeight,
