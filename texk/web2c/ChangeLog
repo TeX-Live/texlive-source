@@ -1,3 +1,7 @@
+2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.h: Add \pdfmdfivesum to XeTeX.
+
 2015-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/web.am: Fix dependencies for 'make check'.

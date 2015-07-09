@@ -1,3 +1,7 @@
+2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Add \pdfmdfivesum to XeTeX.
+
 2015-07-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* texmfmp.c: Moved convertStringToHexString() and getmd5sum()

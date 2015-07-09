@@ -29,6 +29,7 @@ xetex_cppflags += $(GRAPHITE2_INCLUDES)
 xetex_cppflags += $(POPPLER_INCLUDES)
 xetex_cppflags += $(LIBPNG_INCLUDES)
 xetex_cppflags += $(ZLIB_INCLUDES)
+xetex_cppflags += -I$(srcdir)/libmd5
 xetex_ldadd = $(libxetex)
 xetex_ldadd += $(HARFBUZZ_LIBS)
 xetex_ldadd += $(GRAPHITE2_LIBS)
@@ -38,6 +39,7 @@ xetex_ldadd += $(POPPLER_LIBS)
 xetex_ldadd += $(LIBPNG_LIBS)
 xetex_ldadd += $(FREETYPE2_LIBS)
 xetex_ldadd += $(ZLIB_LIBS)
+xetex_ldadd += libmd5.a
 xetex_dependencies = $(proglib)
 xetex_dependencies += $(KPATHSEA_DEPEND)
 xetex_dependencies += $(ICU_DEPEND)
@@ -48,6 +50,7 @@ xetex_dependencies += $(POPPLER_DEPEND)
 xetex_dependencies += $(LIBPNG_DEPEND)
 xetex_dependencies += $(FREETYPE2_DEPEND)
 xetex_dependencies += $(ZLIB_DEPEND)
+xetex_dependencies += libmd5.a
 
 if XETEX_MACOSX
 
