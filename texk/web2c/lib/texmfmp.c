@@ -3168,7 +3168,7 @@ void getmd5sum(strnumber s, boolean file)
     char outbuf[2 * DIGEST_SIZE + 1];
     int len = 2 * DIGEST_SIZE;
 #if defined(XeTeX)
-    unsigned char *xname;
+    char *xname;
     int i;
 #endif
 
