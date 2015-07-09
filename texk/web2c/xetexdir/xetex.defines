@@ -177,3 +177,5 @@ authorization from the copyright holders.
 @define procedure setcpcode();
 @define function getcpcode();
 @define function getnativewordcp();
+
+@define procedure getmd5sum();

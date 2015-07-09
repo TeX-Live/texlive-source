@@ -119,10 +119,13 @@ typedef void* voidpointer;
 /* Hacks for TeX that are better not to #ifdef, see lib/openclose.c.  */
 extern int tfmtemp, texinputtype;
 
-/* pdfTeX routines also used for e-pTeX and e-upTeX */
-#if defined (pdfTeX) || defined (epTeX) || defined (eupTeX)
-extern char start_time_str[];
+/* pdfTeX routines also used for e-pTeX, e-upTeX, and XeTeX */
+#if defined (pdfTeX) || defined (epTeX) || defined (eupTeX) || defined(XeTeX)
+#if !defined (pdfTeX)
 extern void pdftex_fail(const char *fmt, ...);
+#endif
+#if !defined(XeTeX)
+extern char start_time_str[];
 extern void initstarttime(void);
 extern char *makecstring(integer s);
 extern char *makecfilename(integer s);
@@ -130,6 +133,7 @@ extern void getcreationdate(void);
 extern void getfilemoddate(integer s);
 extern void getfilesize(integer s);
 extern void getfiledump(integer s, int offset, int length);
+#endif
 extern void convertStringToHexString(const char *in, char *out, int lin);
 extern void getmd5sum(integer s, int file);
 #endif

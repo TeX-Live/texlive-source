@@ -1,1 +1,1 @@
-#define XETEX_VERSION "0.99992"
+#define XETEX_VERSION "0.99993"

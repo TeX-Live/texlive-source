@@ -2832,8 +2832,8 @@ makesrcspecial (strnumber srcfilename, int lineno)
   return (oldpoolptr);
 }
 
-/* pdfTeX routines also used for e-pTeX and e-upTeX */
-#if defined (pdfTeX) || defined (epTeX) || defined (eupTeX)
+/* pdfTeX routines also used for e-pTeX, e-upTeX, and XeTeX */
+#if defined (pdfTeX) || defined (epTeX) || defined (eupTeX) || defined(XeTeX)
 
 #include <kpathsea/c-stat.h>
 #include "md5.h"
@@ -2888,6 +2888,7 @@ void pdftex_fail(const char *fmt, ...)
 }
 #endif /* not pdfTeX */
 
+#if !defined(XeTeX)
 static time_t start_time = 0;
 #define TIME_STR_SIZE 30
 char start_time_str[TIME_STR_SIZE];
@@ -3136,7 +3137,7 @@ void getfiledump(integer s, int offset, int length)
     }
     xfree(file_name);
 }
-
+#endif /* not XeTeX */
 
 /* Converts any given string in into an allowed PDF string which is
  * hexadecimal encoded;
@@ -3166,13 +3167,24 @@ void getmd5sum(strnumber s, boolean file)
     md5_byte_t digest[DIGEST_SIZE];
     char outbuf[2 * DIGEST_SIZE + 1];
     int len = 2 * DIGEST_SIZE;
+#if defined(XeTeX)
+    unsigned char *xname;
+    int i;
+#endif
 
     if (file) {
         char file_buf[FILE_BUF_SIZE];
         int read = 0;
         FILE *f;
+        char *file_name;
 
-        char *file_name = kpse_find_tex(makecfilename(s));
+#if defined(XeTeX)
+        xname = gettexstring (s);
+        file_name = kpse_find_tex (xname);
+        xfree (xname);
+#else
+        file_name = kpse_find_tex(makecfilename(s));
+#endif
         if (file_name == NULL) {
             return;             /* empty string */
         }
@@ -3196,9 +3208,17 @@ void getmd5sum(strnumber s, boolean file)
     } else {
         /* s contains the data */
         md5_init(&state);
+#if defined(XeTeX)
+        xname = gettexstring (s);
         md5_append(&state,
-                   (const md5_byte_t *) &strpool[strstart[s]],
+                   (md5_byte_t *) xname,
+                   strlen (xname));
+        xfree (xname);
+#else
+        md5_append(&state,
+                   (md5_byte_t *) &strpool[strstart[s]],
                    strstart[s + 1] - strstart[s]);
+#endif
         md5_finish(&state, digest);
     }
 
@@ -3207,11 +3227,16 @@ void getmd5sum(strnumber s, boolean file)
         return;
     }
     convertStringToHexString((char *) digest, outbuf, DIGEST_SIZE);
+#if defined(XeTeX)
+    for (i = 0; i < 2 * DIGEST_SIZE; i++)
+        strpool[poolptr++] = (uint16_t)outbuf[i];
+#else
     memcpy(&strpool[poolptr], outbuf, len);
     poolptr += len;
+#endif
 }
 
-#endif /* pdfTeX or e-pTeX or e-upTeX */
+#endif /* pdfTeX or e-pTeX or e-upTeX or XeTeX */
 #endif /* TeX */
 
 /* Metafont/MetaPost fraction routines. Replaced either by assembler or C.
