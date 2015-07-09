@@ -7,6 +7,7 @@
 // Copyright 2013, 2014 Igalia S.L.
 // Copyright 2014 Luigi Scarso <luigi.scarso@gmail.com>
 // Copyright 2014 Albert Astals Cid <aacid@kde.org>
+// Copyright 2015 Dmytro Morgun <lztoad@gmail.com>
 //
 //========================================================================
 
@@ -278,6 +279,20 @@ struct AttributeDefaults {
     None.initName("None");
     Before.initName("Before");
     Nat1.initInt(1);
+  }
+
+  ~AttributeDefaults() {
+    Inline.free();
+    LrTb.free();
+    Normal.free();
+    Distribute.free();
+    off.free();
+    Zero.free();
+    Auto.free();
+    Start.free();
+    None.free();
+    Before.free();
+    Nat1.free();
   }
 };
 

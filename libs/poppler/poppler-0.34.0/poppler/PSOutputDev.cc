@@ -29,6 +29,7 @@
 // Copyright (C) 2012, 2014 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2014 Till Kamppeter <till.kamppeter@gmail.com>
+// Copyright (C) 2015 Marek Kasik <mkasik@redhat.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -2122,7 +2123,7 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GooString *psName) {
   static const char hexChar[17] = "0123456789abcdef";
   Object refObj, strObj, obj1, obj2, obj3;
   Dict *dict;
-  int length1, length2, length3;
+  long length1, length2, length3;
   int c;
   int start[4];
   GBool binMode;
@@ -2172,8 +2173,18 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GooString *psName) {
   embFontList->append(psName->getCString());
   embFontList->append("\n");
 
-  // copy ASCII portion of font
   strObj.streamReset();
+  if (strObj.streamGetChar() == 0x80 &&
+      strObj.streamGetChar() == 1) {
+    // PFB format
+    length1 = strObj.streamGetChar() |
+             (strObj.streamGetChar() << 8) |
+             (strObj.streamGetChar() << 16) |
+             (strObj.streamGetChar() << 24);
+  } else {
+    strObj.streamReset();
+  }
+  // copy ASCII portion of font
   for (i = 0; i < length1 && (c = strObj.streamGetChar()) != EOF; ++i) {
     writePSChar(c);
   }
@@ -2206,9 +2217,18 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GooString *psName) {
 
   // convert binary data to ASCII
   if (binMode) {
-    for (i = 0; i < 4; ++i) {
-      writePSChar(hexChar[(start[i] >> 4) & 0x0f]);
-      writePSChar(hexChar[start[i] & 0x0f]);
+    if (start[0] == 0x80 &&
+        start[1] == 2) {
+      length2 = start[2] |
+               (start[3] << 8) |
+               (strObj.streamGetChar() << 16) |
+               (strObj.streamGetChar() << 24);
+      i = 0;
+    } else {
+      for (i = 0; i < 4; ++i) {
+        writePSChar(hexChar[(start[i] >> 4) & 0x0f]);
+        writePSChar(hexChar[start[i] & 0x0f]);
+      }
     }
 #if 0 // this causes trouble for various PostScript printers
     // if Length2 is incorrect (too small), font data gets chopped, so
@@ -2246,8 +2266,32 @@ void PSOutputDev::setupEmbeddedType1Font(Ref *id, GooString *psName) {
   {
     if (length3 > 0) {
       // write fixed-content portion
-      while ((c = strObj.streamGetChar()) != EOF) {
-	writePSChar(c);
+      c = strObj.streamGetChar();
+      if (c == 0x80) {
+        c = strObj.streamGetChar();
+        if (c == 1) {
+          length3 = strObj.streamGetChar() |
+                   (strObj.streamGetChar() << 8) |
+                   (strObj.streamGetChar() << 16) |
+                   (strObj.streamGetChar() << 24);
+
+          i = 0;
+          while (i < length3) {
+            if ((c = strObj.streamGetChar()) == EOF) {
+              break;
+            }
+            writePSChar(c);
+            ++i;
+          }
+        }
+      } else {
+        if (c != EOF) {
+          writePSChar(c);
+
+          while ((c = strObj.streamGetChar()) != EOF) {
+	    writePSChar(c);
+	  }
+        }
       }
     } else {
       // write padding and "cleartomark"

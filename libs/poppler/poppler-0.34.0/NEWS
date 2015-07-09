@@ -1,3 +1,16 @@
+Release 0.34.0
+        core:
+         * Splash: Fix crash in PDF with nested softmasks. Bug #91240
+         * Splash: Speed up of rendering icc based images. Bug #90171
+         * PSOutputDev: Embed Type1 fonts to PostScript files correctly. Bug #19747
+         * Fix pedantic memory leak
+
+        glib:
+         * update new symbols section
+
+        build system:
+         * cmake: Make sure ENABLE_LIBOPENJPEG is either 0 or 1
+
 Release 0.33.0
         core:
          * Fix regression in pdftops parameter passing. Bug #89827

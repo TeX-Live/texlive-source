@@ -13,7 +13,7 @@
 //
 // Copyright (C) 2005-2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2005 Marco Pesenti Gritti <mpg@redhat.com>
-// Copyright (C) 2010-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2010-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011-2013, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2012 Markus Trippelsdorf <markus@trippelsdorf.de>
@@ -3659,7 +3659,7 @@ void Splash::blitMask(SplashBitmap *src, int xDest, int yDest,
   }
 }
 
-SplashError Splash::drawImage(SplashImageSource src, void *srcData,
+SplashError Splash::drawImage(SplashImageSource src, SplashICCTransform tf, void *srcData,
 			      SplashColorMode srcMode, GBool srcAlpha,
 			      int w, int h, SplashCoord *mat, GBool interpolate,
 			      GBool tilingPattern) {
@@ -3750,6 +3750,9 @@ SplashError Splash::drawImage(SplashImageSource src, void *srcData,
       if (scaledImg == NULL) {
         return splashErrBadArg;
       }
+      if  (tf != NULL) {
+	(*tf)(srcData, scaledImg);
+      }
       blitImage(scaledImg, srcAlpha, x0, y0, clipRes);
       delete scaledImg;
     }
@@ -3788,6 +3791,9 @@ SplashError Splash::drawImage(SplashImageSource src, void *srcData,
       if (scaledImg == NULL) {
         return splashErrBadArg;
       }
+      if  (tf != NULL) {
+	(*tf)(srcData, scaledImg);
+      }
       vertFlipImage(scaledImg, scaledWidth, scaledHeight, nComps);
       blitImage(scaledImg, srcAlpha, x0, y0, clipRes);
       delete scaledImg;
@@ -3795,14 +3801,14 @@ SplashError Splash::drawImage(SplashImageSource src, void *srcData,
 
   // all other cases
   } else {
-    return arbitraryTransformImage(src, srcData, srcMode, nComps, srcAlpha,
+    return arbitraryTransformImage(src, tf, srcData, srcMode, nComps, srcAlpha,
 			    w, h, mat, interpolate, tilingPattern);
   }
 
   return splashOk;
 }
 
-SplashError Splash::arbitraryTransformImage(SplashImageSource src, void *srcData,
+SplashError Splash::arbitraryTransformImage(SplashImageSource src, SplashICCTransform tf, void *srcData,
 				     SplashColorMode srcMode, int nComps,
 				     GBool srcAlpha,
 				     int srcWidth, int srcHeight,
@@ -3937,6 +3943,9 @@ SplashError Splash::arbitraryTransformImage(SplashImageSource src, void *srcData
     return splashErrBadArg;
   }
 
+  if  (tf != NULL) {
+    (*tf)(srcData, scaledImg);
+  }
   // construct the three sections
   i = 0;
   if (vy[1] < vy[i]) {
