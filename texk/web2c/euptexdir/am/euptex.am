@@ -10,12 +10,6 @@ bin_PROGRAMS += euptex
 endif EUPTEX
 EXTRA_PROGRAMS += euptex
 
-# e-upTeX Tests
-#
-euptex_tests = euptexdir/euptriptest
-
-EXTRA_DIST += $(euptex_tests)
-
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
@@ -86,9 +80,15 @@ EXTRA_DIST += \
 	euptexdir/ChangeLog \
 	euptexdir/EUPTEX.txt
 
+# e-upTeX Tests
+#
+euptex_tests = euptexdir/euptriptest.test
+euptexdir/euptriptest.log: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+
+EXTRA_DIST += $(euptex_tests)
+
 if EUPTEX
 TESTS += $(euptex_tests)
-check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += euptrip.diffs
 TRIPTRAP_CLEAN += euptrip-clean
 endif EUPTEX
@@ -101,7 +101,7 @@ EXTRA_DIST += \
 	eptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs \
 	euptexdir/euptrip/texmf.cnf
-euptrip.diffs: euptex$(EXEEXT)
+euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: euptrip-clean
 euptrip-clean:

@@ -10,12 +10,6 @@ bin_PROGRAMS += eptex
 endif EPTEX
 EXTRA_PROGRAMS += eptex
 
-# e-pTeX Tests
-#
-eptex_tests = eptexdir/eptriptest
-
-EXTRA_DIST += $(eptex_tests)
-
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5
 
 # With --enable-ipc, e-pTeX may need to link with -lsocket.
@@ -85,9 +79,15 @@ EXTRA_DIST += \
 	eptexdir/Changes.txt \
 	eptexdir/README.txt
 
+# e-pTeX Tests
+#
+eptex_tests = eptexdir/eptriptest.test
+eptexdir/eptriptest.log: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+
+EXTRA_DIST += $(eptex_tests)
+
 if EPTEX
 TESTS += $(eptex_tests)
-check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += eptrip.diffs
 TRIPTRAP_CLEAN += eptrip-clean
 endif EPTEX
@@ -100,7 +100,7 @@ EXTRA_DIST += \
 	eptexdir/eptrip/eptrip.log \
 	eptexdir/eptrip/eptrip.tex \
 	eptexdir/eptrip/texmf.cnf
-eptrip.diffs: eptex$(EXEEXT)
+eptrip.diffs: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
 eptrip-clean:

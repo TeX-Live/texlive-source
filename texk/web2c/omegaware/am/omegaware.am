@@ -99,6 +99,9 @@ DISTCLEANFILES += ovp2ovf.web
 ##
 OTANGLE_tests = omegaware/odvicopy.test omegaware/odvitype.test \
 	omegaware/otangle.test
+omegaware/odvicopy.log: odvicopy$(EXEEXT) odvitype$(EXEEXT)
+omegaware/odvitype.log: odvitype$(EXEEXT)
+omegaware/odvitype.log: odvitype$(EXEEXT)
 OMFONTS_tests = omegaware/bad.test omegaware/charwd.test \
 	omegaware/check.test omegaware/help.test \
 	omegaware/level1.test omegaware/ligkern.test \
@@ -108,6 +111,14 @@ OMFONTS_tests = omegaware/bad.test omegaware/charwd.test \
 	omegaware/shorten.test omegaware/specialhex.test \
 	omegaware/version.test omegaware/vrepeat.test \
 	omegaware/yannis.test
+omegaware/bad.log omegaware/charwd.log omegaware/help.log omegaware/overbmp.log omegaware/repeat.log \
+	omegaware/selectfont.log omegaware/specialhex.log omegaware/version.log omegaware/vrepeat.log: \
+	wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT) wovf2ovp$(EXEEXT) wovp2ovf$(EXEEXT)
+omegaware/check.log omegaware/level1.log omegaware/realnum.log: wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT)
+omegaware/ligkern.log: wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT) wovp2ovf$(EXEEXT)
+omegaware/omfonts.log: wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT) wovf2ovp$(EXEEXT) wovp2ovf$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+omegaware/shorten.log: wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT) pltotf$(EXEEXT)
+omegaware/yannis.log: wofm2opl$(EXEEXT) wopl2ofm$(EXEEXT) wovf2ovp$(EXEEXT) wovp2ovf$(EXEEXT) pltotf$(EXEEXT)
 EXTRA_DIST += $(OTANGLE_tests) $(OMFONTS_tests)
 
 if OTANGLE
@@ -137,7 +148,6 @@ EXTRA_DIST += \
 	omegaware/tests/liguse.opl omegaware/tests/liguse1.opl omegaware/tests/liguse2.opl
 DISTCLEANFILES += omegaware/tests/xlig*.*
 ## omegaware/odvicopy.test (and ofonts.test)
-omegaware/odvicopy.log: odvicopy$(EXEEXT) odvitype$(EXEEXT)
 EXTRA_DIST += \
 	omegaware/tests/ofontd1.dvi omegaware/tests/ofontd1.typ \
 	omegaware/tests/ofontd2.dvi omegaware/tests/ofontd2.typ \

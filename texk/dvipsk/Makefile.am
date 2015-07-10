@@ -107,10 +107,13 @@ EXTRA_DIST = $(dist_prologues) texc.script
 CLEANFILES = $(prologues) texc.lpro
 
 ## dvips tests
+TEST_EXTENSIONS = .pl .test
 TESTS = afm2tfm-test.pl
-TESTS += beginfontk1.test eepic-nan.test \
-         pfbincl.test quotecmd-test.pl same-name.test test-dvips
-beginfontk1.log eepic-nan.log pfbincl.log same-name.log: dvips$(EXEEXT)
+afm2tfm-test.log: afm2tfm$(EXEEXT)
+TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
+	quotecmd-test.pl same-name.test test-dvips.test
+beginfontk1.log eepic-nan.log pfbincl.log \
+	quotecmd-test.log same-name.log test-dvips.log: dvips$(EXEEXT)
 
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea
 TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata

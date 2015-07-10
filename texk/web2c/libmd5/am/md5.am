@@ -1,6 +1,6 @@
 ## texk/web2c/libmd5/am/md5.am: Makefile fragment for md5.
 ##
-## Copyright (C) 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libmd5
@@ -13,10 +13,11 @@ libmd5_a_SOURCES = libmd5/md5.c libmd5/md5.h
 
 ## Tests
 ##
-check_PROGRAMS += md5main
+EXTRA_PROGRAMS += md5main
 EXTRA_DIST += libmd5/md5.test
 
 TESTS += libmd5/md5.test
+libmd5/md5.log: md5main$(EXEEXT)
 
 md5main_CPPFLAGS = -I$(srcdir)/libmd5
 

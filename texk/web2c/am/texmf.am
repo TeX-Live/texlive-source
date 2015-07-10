@@ -73,12 +73,13 @@ DISTCLEANFILES += $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
 
 # TeX tests
 #
-tex_tests = triptest tests/write18-quote-test.pl
+tex_tests = triptest.test tests/write18-quote-test.pl
+triptest.log: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+tests/write18-quote-test.log: tex$(EXEEXT)
 EXTRA_DIST += $(tex_tests)
 EXTRA_DIST += tests/write18-quote.tex
 if TEX
 TESTS += $(tex_tests)
-check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += trip.diffs
 TRIPTRAP_CLEAN += trip-clean
 endif TEX
@@ -88,7 +89,7 @@ DISTCLEANFILES += trip.diffs
 DISTCLEANFILES += write18-quote.log
 
 ## triptest
-trip.diffs: tex$(EXEEXT)
+trip.diffs: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trip-clean
 trip-clean:
@@ -200,17 +201,17 @@ DISTCLEANFILES += $(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c \
 
 # Metafont tests
 #
-mf_tests = mftraptest
+mf_tests = mftraptest.test
+mftraptest.log: mf$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
 EXTRA_DIST += $(mf_tests)
 if MF
 TESTS += $(mf_tests)
-check_PROGRAMS += gftype tftopl
 TRIPTRAP += mftrap.diffs
 TRIPTRAP_CLEAN += trap-clean
 endif MF
 
 ## mftraptest
-mftrap.diffs: mf$(EXEEXT)
+mftrap.diffs: mf$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: trap-clean
 trap-clean:

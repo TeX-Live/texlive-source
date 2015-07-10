@@ -1,3 +1,9 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptriptest (removed): Renamed ...
+	* eptriptest.test (new):  ... into this.
+	* am/eptex.am: Better dependencies for 'make check'.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/eptex.am: Add libmd5.a to eptex_DEPENDENCIES.

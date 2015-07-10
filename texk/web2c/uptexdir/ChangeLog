@@ -1,3 +1,9 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* uptriptest (removed): Renamed ...
+	* uptriptest.test (new):  ... into this.
+	* am/uptex.am: Better dependencies for 'make check'.
+
 2015-06-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/uptex.am: Use $(tie_c) and $(tie_m).

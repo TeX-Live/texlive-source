@@ -1,21 +1,29 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mptraptest (removed): Renamed ...
+	* mptraptest.test (new):  ... into this.
+	* am/mplib.am: Better dependencies for 'make check'.
+
 2015-03-21  Luigi Scarso  <luigi.scarso@gmail.com>
+
 	make_text for mplib only.
 
-
 2015-03-19  Luigi Scarso  <luigi.scarso@gmail.com>
+
 	Fixed normal rand. generator for double/decimal/binary
 	systems.
 
 2015-01-20  Luigi Scarso  <luigi.scarso@gmail.com>
+
 	Added cur_sym_mod() == mp_normal_sym 
 	to the cur_sym==0 condition mp_cur_tok 
 
-
 2015-01-19  Luigi Scarso  <luigi.scarso@gmail.com>
+
 	fixed a bug in mp_recycle_value with NULL node
 
-
 2015-01-15  Luigi Scarso  <luigi.scarso@gmail.com>
+
 	 mpmathdecimal.w: better management for static data in mpmathdecimal.w 
 	(thanks to Philipp Gesang <phg@phi-gamma.net>)
 

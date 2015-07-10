@@ -1,6 +1,6 @@
 ## texk/web2c/am/cweb.am: Makefile fragment for cweb programs (except ctangle).
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 bin_PROGRAMS += ctie cweave tie
@@ -31,6 +31,9 @@ DISTCLEANFILES += tie.c
 ## Tests
 ##
 TESTS += ctiedir/ctie.test cwebdir/cweave.test tiedir/tie.test
+ctiedir/ctie.log: ctie$(EXEEXT)
+cwebdir/cweave.log: cweave$(EXEEXT)
+tiedir/tie.log: tie$(EXEEXT)
 
 ## ctiedir/ctie.test
 DISTCLEANFILES += ctie.outc ctie.outm

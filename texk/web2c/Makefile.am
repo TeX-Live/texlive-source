@@ -4,7 +4,7 @@
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
-## Not yet for C, C++, and ObjC++ (too many warnings or not yet implemented)
+## Not yet for C++ and ObjC++ (too many warnings)
 AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CXXFLAGS = ## $(WARNING_CXXFLAGS)
 AM_OBJCXXFLAGS = ## $(WARNING_OBJCXXFLAGS)
@@ -25,11 +25,11 @@ lib_LTLIBRARIES =
 noinst_PROGRAMS =
 dist_man_MANS =
 nodist_man_MANS =
-check_PROGRAMS =
+TEST_EXTENSIONS = .pl .test
 TESTS =
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h
 DISTCLEANFILES = CXXLD.sh
-CLEANFILES =
+CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN =
 TRIPTRAP =
 bin_links =
@@ -235,11 +235,6 @@ include $(srcdir)/xetexdir/am/xetex.am
 
 ## omegaware web programs
 include $(srcdir)/omegaware/am/omegaware.am
-
-## programs required for 'make check' in omegafonts/ and omegaware/
-if OTANGLE
-check_PROGRAMS += pltotf tftopl
-endif OTANGLE
 
 ## Aleph
 include $(srcdir)/alephdir/am/aleph.am
