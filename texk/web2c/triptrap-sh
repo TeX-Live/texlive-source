@@ -34,17 +34,17 @@ do
   esac
   echo ">>> Running $msg."
   is_OK=:
-  $MAKE TESTS=$tst check-am >$tmp 2>&1 \
-    && grep "PASS: $tst" $tmp >/dev/null 2>&1 \
-    || { echo "FAIL: $tst"; is_OK=false; }
+  $MAKE TESTS=$tst.test check-am >$tmp 2>&1 \
+    && grep "PASS: $tst.test" $tmp >/dev/null 2>&1 \
+    || { echo "FAIL: $tst.test"; is_OK=false; }
   sed -e "s%$abs_srcdir/%SRCDIR/%" \
       -e "s%\.\./%./%" \
       $tst.log >$file
   $is_OK && {
-    echo "PASS: $tst" >>$file
-    echo "PASS: $tst"
+    echo "PASS: $tst.test" >>$file
+    echo "PASS: $tst.test"
   } || {
-    echo "FAIL: $tst" >>$file
+    echo "FAIL: $tst.test" >>$file
     rc=1
   }
   rm -f $tmp

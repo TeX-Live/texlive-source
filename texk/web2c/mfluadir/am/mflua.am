@@ -112,19 +112,19 @@ EXTRA_DIST += \
 
 # MFLua tests
 #
-mflua_tests = mfluadir/mfluatraptest
+mflua_tests = mfluadir/mfluatraptest.test
+mfluadir/mfluatraptest.log: mflua$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
 EXTRA_DIST += $(mflua_tests)
 
 if MFLUA
 TESTS += $(mflua_tests)
-check_PROGRAMS += gftype tftopl
 TRIPTRAP += mfluatrap.diffs
 TRIPTRAP_CLEAN += mfluatrap-clean
 endif MFLUA
 DISTCLEANFILES += mfluatrap.diffs
 
 ## mfluadir/mfluatraptest
-mfluatrap.diffs: mflua$(EXEEXT)
+mfluatrap.diffs: mflua$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: mfluatrap-clean
 mfluatrap-clean:

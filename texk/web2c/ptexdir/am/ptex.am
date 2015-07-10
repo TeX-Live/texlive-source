@@ -10,19 +10,6 @@ p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $
 
 pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
-# pTeX Tests
-#
-ptex_tests = ptexdir/ptriptest
-pweb_tests = \
-	ptexdir/pbibtex.test \
-	ptexdir/pdvitype.test \
-	ptexdir/ppltotf.test \
-	ptexdir/ptftopl.test
-
-EXTRA_DIST += $(ptex_tests) $(pweb_tests)
-DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
-	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
-
 ## pTeX library
 ##
 pproglib = lib/libp.a
@@ -117,9 +104,6 @@ pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
 	$(tie_m) bibtex.web bibtex.ch
 EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
 
-pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
-pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
-
 ## pDVItype
 ## 
 nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
@@ -136,8 +120,6 @@ pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
 pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
 	$(tie_m) dvitype.web dvitype.ch
 EXTRA_DIST += ptexdir/pdvitype.ch
-
-pweb_tests += ptexdir/sample.test
 
 ## pPLtoTF
 ## 
@@ -173,8 +155,6 @@ ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie_m) tftopl.web tftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch
 
-pweb_tests += ptexdir/yokotate.test
-
 ## 
 EXTRA_DIST += \
 	ptexdir/COPYRIGHT \
@@ -184,9 +164,32 @@ EXTRA_DIST += \
 	ptexdir/INSTALL.txt \
 	ptexdir/README.txt
 
+# pTeX Tests
+#
+ptex_tests = ptexdir/ptriptest.test
+ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+pweb_tests = \
+	ptexdir/pbibtex.test \
+	ptexdir/pdvitype.test \
+	ptexdir/ppltotf.test \
+	ptexdir/ptftopl.test
+pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
+pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
+pweb_tests += ptexdir/sample.test
+pweb_tests += ptexdir/yokotate.test
+ptexdir/pbibtex.log ptexdir/pbibtex-openout-test.log ptexdir/pbibtex-longline-test.log \
+	ptexdir/pbibtex-mem.log ptexdir/nissya.log: pbibtex$(EXEEXT)
+ptexdir/pdvitype.log ptexdir/sample.log: pdvitype$(EXEEXT)
+ptexdir/ppltotf.log: ppltotf$(EXEEXT)
+ptexdir/ptftopl.log: ptftopl$(EXEEXT)
+ptexdir/yokotate.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
+
+EXTRA_DIST += $(ptex_tests) $(pweb_tests)
+DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
+	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
+
 if PTEX
 TESTS += $(ptex_tests)
-check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += ptrip.diffs
 TRIPTRAP_CLEAN += ptrip-clean
 endif PTEX
@@ -219,7 +222,7 @@ EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
 DISTCLEANFILES += ptests/x*min10.*
 ## ptexdir/ptriptest
 EXTRA_DIST += ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf
-ptrip.diffs: ptex$(EXEEXT)
+ptrip.diffs: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: ptrip-clean
 ptrip-clean:

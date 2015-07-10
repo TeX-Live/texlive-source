@@ -73,13 +73,14 @@ EXTRA_DIST += \
 
 # e-TeX Tests
 #
-etex_tests = etexdir/wprob.test etexdir/etriptest
+etex_tests = etexdir/wprob.test etexdir/etriptest.test
+etexdir/wprob.test: etex$(EXEEXT)
+etexdir/etriptest.log: etex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 
 EXTRA_DIST += $(etex_tests)
 
 if ETEX
 TESTS += $(etex_tests)
-check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += etrip.diffs
 TRIPTRAP_CLEAN += etrip-clean
 endif ETEX
@@ -89,7 +90,7 @@ DISTCLEANFILES += etrip.diffs
 EXTRA_DIST += tests/wprob.tex
 DISTCLEANFILES += ewprob.log ewprob.tex
 ## etriptest
-etrip.diffs: etex$(EXEEXT)
+etrip.diffs: etex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: etrip-clean
 etrip-clean:

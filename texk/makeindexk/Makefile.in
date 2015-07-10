@@ -379,9 +379,11 @@ am__set_TESTS_bases = \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
 TEST_SUITE_LOG = test-suite.log
-TEST_EXTENSIONS = @EXEEXT@ .test
-LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
-LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
+am__test_logs1 = $(TESTS:=.log)
+am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
+am__test_logs3 = $(am__test_logs2:.pl.log=.log)
+PL_LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
+PL_LOG_COMPILE = $(PL_LOG_COMPILER) $(AM_PL_LOG_FLAGS) $(PL_LOG_FLAGS)
 am__set_b = \
   case '$@' in \
     */*) \
@@ -392,9 +394,7 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-am__test_logs1 = $(TESTS:=.log)
-am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
-TEST_LOGS = $(am__test_logs2:.test.log=.log)
+TEST_LOGS = $(am__test_logs3:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
@@ -572,13 +572,14 @@ dist_man1_MANS = makeindex.1 mkindex.1
 EXTRA_DIST = CONTRIB NOTES ind-src $(TESTS) tests/nested-range.tex \
 	tests/nested-range.idx tests/nested-range-bb.tex \
 	tests/nested-range-bb.idx tests/sample.idx tests/sample.ind
+TEST_EXTENSIONS = .pl .test
 TESTS = tests/nested-range-test.pl tests/makeindex.test
 DISTCLEANFILES = nested-range.ilg nested-range.ind sample.*
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .c .lo .log .o .obj .pl .pl$(EXEEXT) .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -1003,13 +1004,20 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-tests/nested-range-test.pl.log: tests/nested-range-test.pl
-	@p='tests/nested-range-test.pl'; \
-	b='tests/nested-range-test.pl'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+.pl.log:
+	@p='$<'; \
+	$(am__set_b); \
+	$(am__check_pre) $(PL_LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	$(am__common_driver_flags) $(AM_PL_LOG_DRIVER_FLAGS) $(PL_LOG_DRIVER_FLAGS) -- $(PL_LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+@am__EXEEXT_TRUE@.pl$(EXEEXT).log:
+@am__EXEEXT_TRUE@	@p='$<'; \
+@am__EXEEXT_TRUE@	$(am__set_b); \
+@am__EXEEXT_TRUE@	$(am__check_pre) $(PL_LOG_DRIVER) --test-name "$$f" \
+@am__EXEEXT_TRUE@	--log-file $$b.log --trs-file $$b.trs \
+@am__EXEEXT_TRUE@	$(am__common_driver_flags) $(AM_PL_LOG_DRIVER_FLAGS) $(PL_LOG_DRIVER_FLAGS) -- $(PL_LOG_COMPILE) \
+@am__EXEEXT_TRUE@	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1334,7 +1342,7 @@ uninstall-man: uninstall-man1
 $(makeindex_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
-tests/nested-range-test.pl.log tests/makeindex.log: makeindex$(EXEEXT)
+tests/nested-range-test.log tests/makeindex.log: makeindex$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

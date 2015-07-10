@@ -28,6 +28,8 @@ bibtex.p: tangle$(EXEEXT) bibtex.web bibtex.ch
 	$(tangle) bibtex bibtex
 web_tests += tests/bibtex-openout-test.pl tests/bibtex-longline-test.pl
 web_tests += tests/bibtex-mem.test
+bibtex.log tests/bibtex-openout-test.log tests/bibtex-longline-test.log \
+	tests/bibtex-mem.log: bibtex$(EXEEXT)
 
 nodist_dvicopy_SOURCES = dvicopy.c dvicopy.h
 dvicopy.c dvicopy.h: dvicopy-web2c
@@ -36,6 +38,7 @@ dvicopy-web2c: dvicopy.p $(web2c_depend)
 	@$(web2c) dvicopy
 dvicopy.p: tangle$(EXEEXT) dvicopy.web dvicopy.ch
 	$(tangle) dvicopy dvicopy
+dvicopy.log: dvicopy$(EXEEXT)
 
 nodist_dvitype_SOURCES = dvitype.c dvitype.h
 dvitype.c dvitype.h: dvitype-web2c
@@ -44,6 +47,7 @@ dvitype-web2c: dvitype.p $(web2c_depend)
 	@$(web2c) dvitype
 dvitype.p: tangle$(EXEEXT) dvitype.web dvitype.ch
 	$(tangle) dvitype dvitype
+dvitype.log: dvitype$(EXEEXT)
 
 nodist_gftodvi_SOURCES = gftodvi.c gftodvi.h
 gftodvi.c gftodvi.h: gftodvi-web2c
@@ -53,6 +57,7 @@ gftodvi-web2c: gftodvi.p $(web2c_depend)
 gftodvi.p: tangle$(EXEEXT) gftodvi.web gftodvi.ch
 	$(tangle) gftodvi gftodvi
 gftodvi_SOURCES = gftodmem.h
+gftodvi.log: gftodvi$(EXEEXT)
 
 nodist_gftopk_SOURCES = gftopk.c gftopk.h
 gftopk.c gftopk.h: gftopk-web2c
@@ -61,6 +66,7 @@ gftopk-web2c: gftopk.p $(web2c_depend)
 	@$(web2c) gftopk
 gftopk.p: tangle$(EXEEXT) gftopk.web gftopk.ch
 	$(tangle) gftopk gftopk
+gftopk.log: gftopk$(EXEEXT)
 
 nodist_gftype_SOURCES = gftype.c gftype.h
 gftype.c gftype.h: gftype-web2c
@@ -69,6 +75,7 @@ gftype-web2c: gftype.p $(web2c_depend)
 	@$(web2c) gftype
 gftype.p: tangle$(EXEEXT) gftype.web gftype.ch
 	$(tangle) gftype gftype
+gftype.log: gftype$(EXEEXT)
 
 nodist_mft_SOURCES = mft.c mft.h
 mft.c mft.h: mft-web2c
@@ -77,6 +84,7 @@ mft-web2c: mft.p $(web2c_depend)
 	@$(web2c) mft
 mft.p: tangle$(EXEEXT) mft.web mft.ch
 	$(tangle) mft mft
+mft.log: mft$(EXEEXT)
 
 nodist_patgen_SOURCES = patgen.c patgen.h
 patgen.c patgen.h: patgen-web2c
@@ -85,6 +93,7 @@ patgen-web2c: patgen.p $(web2c_depend)
 	@$(web2c) patgen
 patgen.p: tangle$(EXEEXT) patgen.web patgen.ch
 	$(tangle) patgen patgen
+patgen.log: patgen$(EXEEXT)
 
 nodist_pktogf_SOURCES = pktogf.c pktogf.h
 pktogf.c pktogf.h: pktogf-web2c
@@ -93,6 +102,7 @@ pktogf-web2c: pktogf.p $(web2c_depend)
 	@$(web2c) pktogf
 pktogf.p: tangle$(EXEEXT) pktogf.web pktogf.ch
 	$(tangle) pktogf pktogf
+pktogf.log: pktogf$(EXEEXT)
 
 nodist_pktype_SOURCES = pktype.c pktype.h
 pktype.c pktype.h: pktype-web2c
@@ -101,6 +111,7 @@ pktype-web2c: pktype.p $(web2c_depend)
 	@$(web2c) pktype
 pktype.p: tangle$(EXEEXT) pktype.web pktype.ch
 	$(tangle) pktype pktype
+pktype.log: pktype$(EXEEXT)
 
 nodist_pltotf_SOURCES = pltotf.c pltotf.h
 pltotf.c pltotf.h: pltotf-web2c
@@ -109,6 +120,7 @@ pltotf-web2c: pltotf.p $(web2c_depend)
 	@$(web2c) pltotf
 pltotf.p: tangle$(EXEEXT) pltotf.web pltotf.ch
 	$(tangle) pltotf pltotf
+pltotf.log: pltotf$(EXEEXT)
 
 nodist_pooltype_SOURCES = pooltype.c pooltype.h
 pooltype.c pooltype.h: pooltype-web2c
@@ -117,6 +129,7 @@ pooltype-web2c: pooltype.p $(web2c_depend)
 	@$(web2c) pooltype
 pooltype.p: tangle$(EXEEXT) pooltype.web pooltype.ch
 	$(tangle) pooltype pooltype
+pooltype.log: pooltype$(EXEEXT) tex.pool
 
 nodist_tftopl_SOURCES = tftopl.c tftopl.h
 tftopl.c tftopl.h: tftopl-web2c
@@ -125,6 +138,7 @@ tftopl-web2c: tftopl.p $(web2c_depend)
 	@$(web2c) tftopl
 tftopl.p: tangle$(EXEEXT) tftopl.web tftopl.ch
 	$(tangle) tftopl tftopl
+tftopl.log: tftopl$(EXEEXT)
 
 nodist_vftovp_SOURCES = vftovp.c vftovp.h
 vftovp.c vftovp.h: vftovp-web2c
@@ -133,6 +147,7 @@ vftovp-web2c: vftovp.p $(web2c_depend)
 	@$(web2c) vftovp
 vftovp.p: tangle$(EXEEXT) vftovp.web vftovp.ch
 	$(tangle) vftovp vftovp
+vftovp.log: vftovp$(EXEEXT)
 
 nodist_vptovf_SOURCES = vptovf.c vptovf.h
 vptovf.c vptovf.h: vptovf-web2c
@@ -141,6 +156,7 @@ vptovf-web2c: vptovf.p $(web2c_depend)
 	@$(web2c) vptovf
 vptovf.p: tangle$(EXEEXT) vptovf.web vptovf.ch
 	$(tangle) vptovf vptovf
+vptovf.log: vptovf$(EXEEXT)
 
 nodist_weave_SOURCES = weave.c weave.h
 weave.c weave.h: weave-web2c
@@ -149,6 +165,7 @@ weave-web2c: weave.p $(web2c_depend)
 	@$(web2c) weave
 weave.p: tangle$(EXEEXT) weave.web weave.ch
 	$(tangle) weave weave
+weave.log: weave$(EXEEXT)
 
 ## Tests.
 ##
@@ -185,7 +202,6 @@ DISTCLEANFILES += tests/xcmr10.pktyp
 ## pltotf.test
 DISTCLEANFILES += badpl.* tests/xcmr10.tfm
 ## pooltype.test
-pooltype.log: pooltype$(EXEEXT) tex.pool
 DISTCLEANFILES += tests/xtexpool.typ
 ## tftopl.test
 DISTCLEANFILES += badtfm.* tests/xcmr10*.pl

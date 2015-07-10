@@ -444,9 +444,11 @@ am__set_TESTS_bases = \
   bases=`echo $$bases`
 RECHECK_LOGS = $(TEST_LOGS)
 TEST_SUITE_LOG = test-suite.log
-TEST_EXTENSIONS = @EXEEXT@ .test
-LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
-LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
+am__test_logs1 = $(TESTS:=.log)
+am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
+am__test_logs3 = $(am__test_logs2:.pl.log=.log)
+PL_LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
+PL_LOG_COMPILE = $(PL_LOG_COMPILER) $(AM_PL_LOG_FLAGS) $(PL_LOG_FLAGS)
 am__set_b = \
   case '$@' in \
     */*) \
@@ -457,9 +459,7 @@ am__set_b = \
     *) \
       b='$*';; \
   esac
-am__test_logs1 = $(TESTS:=.log)
-am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
-TEST_LOGS = $(am__test_logs2:.test.log=.log)
+TEST_LOGS = $(am__test_logs3:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/../../build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
@@ -734,8 +734,9 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
 	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro
+TEST_EXTENSIONS = .pl .test
 TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
-	quotecmd-test.pl same-name.test test-dvips
+	quotecmd-test.pl same-name.test test-dvips.test
 TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
 	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
 	TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
@@ -747,7 +748,7 @@ all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .pro .lpro .c .dvi .html .info .lo .log .o .obj .pdf .ps .test .test$(EXEEXT) .texi .trs
+.SUFFIXES: .pro .lpro .c .dvi .html .info .lo .log .o .obj .pdf .pl .pl$(EXEEXT) .ps .test .test$(EXEEXT) .texi .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
@@ -1377,27 +1378,20 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-afm2tfm-test.pl.log: afm2tfm-test.pl
-	@p='afm2tfm-test.pl'; \
-	b='afm2tfm-test.pl'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+.pl.log:
+	@p='$<'; \
+	$(am__set_b); \
+	$(am__check_pre) $(PL_LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	$(am__common_driver_flags) $(AM_PL_LOG_DRIVER_FLAGS) $(PL_LOG_DRIVER_FLAGS) -- $(PL_LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-quotecmd-test.pl.log: quotecmd-test.pl
-	@p='quotecmd-test.pl'; \
-	b='quotecmd-test.pl'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-test-dvips.log: test-dvips
-	@p='test-dvips'; \
-	b='test-dvips'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
+@am__EXEEXT_TRUE@.pl$(EXEEXT).log:
+@am__EXEEXT_TRUE@	@p='$<'; \
+@am__EXEEXT_TRUE@	$(am__set_b); \
+@am__EXEEXT_TRUE@	$(am__check_pre) $(PL_LOG_DRIVER) --test-name "$$f" \
+@am__EXEEXT_TRUE@	--log-file $$b.log --trs-file $$b.trs \
+@am__EXEEXT_TRUE@	$(am__common_driver_flags) $(AM_PL_LOG_DRIVER_FLAGS) $(PL_LOG_DRIVER_FLAGS) -- $(PL_LOG_COMPILE) \
+@am__EXEEXT_TRUE@	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1867,7 +1861,9 @@ $(prologues): squeeze/stamp-squeeze
 
 squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
-beginfontk1.log eepic-nan.log pfbincl.log same-name.log: dvips$(EXEEXT)
+afm2tfm-test.log: afm2tfm$(EXEEXT)
+beginfontk1.log eepic-nan.log pfbincl.log \
+	quotecmd-test.log same-name.log test-dvips.log: dvips$(EXEEXT)
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 

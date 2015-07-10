@@ -10,18 +10,6 @@ up_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv)
 
 upweb_programs = upbibtex updvitype uppltotf uptftopl
 
-# upTeX Tests
-uptex_tests = uptexdir/uptriptest
-upweb_tests = \
-	uptexdir/upbibtex.test \
-	uptexdir/updvitype.test \
-	uptexdir/uppltotf.test \
-	uptexdir/uptftopl.test
-
-EXTRA_DIST += $(uptex_tests) $(upweb_tests)
-DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
-	$(upweb_programs:=.p) $(upweb_programs:=-web2c) $(upweb_programs:=.web)
-
 ## libukanji.a for upTeX and e-upTeX
 ##
 EXTRA_LIBRARIES += libukanji.a
@@ -161,17 +149,33 @@ uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 	$(tie_m) tftopl.web tftopl.ch ptexdir/ptftopl.ch
 EXTRA_DIST += ptexdir/ptftopl.ch uptexdir/uptftopl.ch
 
-upweb_tests += uptexdir/yokotate.test
-
 ##
 EXTRA_DIST += \
 	uptexdir/COPYRIGHT \
 	uptexdir/COPYRIGHT.jis \
 	uptexdir/ChangeLog
 
+# upTeX Tests
+uptex_tests = uptexdir/uptriptest.test
+uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+upweb_tests = \
+	uptexdir/upbibtex.test \
+	uptexdir/updvitype.test \
+	uptexdir/uppltotf.test \
+	uptexdir/uptftopl.test \
+	uptexdir/yokotate.test
+uptexdir/upbibtex.log: upbibtex$(EXEEXT)
+uptexdir/updvitype.log: updvitype$(EXEEXT)
+uptexdir/uppltotf.log: uppltotf$(EXEEXT)
+uptexdir/uptftopl.log: uptftopl$(EXEEXT)
+uptexdir/yokotate.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+
+EXTRA_DIST += $(uptex_tests) $(upweb_tests)
+DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
+	$(upweb_programs:=.p) $(upweb_programs:=-web2c) $(upweb_programs:=.web)
+
 if UPTEX
 TESTS += $(uptex_tests)
-check_PROGRAMS += dvitype pltotf tftopl
 TRIPTRAP += uptrip.diffs
 TRIPTRAP_CLEAN += uptrip-clean
 endif UPTEX
@@ -195,7 +199,7 @@ EXTRA_DIST += uptexdir/tests/tmin10.pl uptexdir/tests/tmin10.tfm
 DISTCLEANFILES += uptests/x*min10.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
-uptrip.diffs: uptex$(EXEEXT)
+uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
 uptrip-clean:

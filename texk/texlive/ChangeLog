@@ -1,3 +1,7 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am: Better dependencies for 'make check'.
+
 2014-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* w64_wrapper/runscript.{dll,exe}: Now compiled with Mingw64 to

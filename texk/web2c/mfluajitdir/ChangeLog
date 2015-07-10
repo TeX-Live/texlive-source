@@ -1,3 +1,9 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* mfluajittraptest (removed): Renamed ...
+	* mfluajittraptest.test (new):  ... into this.
+	* am/mfluajit.am: Better dependencies for 'make check'.
+
 2015-07-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/mfluajit.am: Fix dependencies.

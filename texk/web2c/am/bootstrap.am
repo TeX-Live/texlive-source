@@ -1,6 +1,6 @@
 ## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 cp_silent = $(cp_silent_@AM_V@)
@@ -92,6 +92,7 @@ DISTCLEANFILES += ctangleboot.c cwebboot.c cwebboot.h
 EXTRA_DIST += tangle.test
 
 TESTS += tangle.test
+tangle.log: tangle$(EXEEXT)
 
 DISTCLEANFILES += cftest.p
 

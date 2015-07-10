@@ -38,8 +38,9 @@ EXTRA_DIST = CONTRIB NOTES ind-src
 
 ## Tests
 ##
+TEST_EXTENSIONS = .pl .test
 TESTS = tests/nested-range-test.pl tests/makeindex.test
-tests/nested-range-test.pl.log tests/makeindex.log: makeindex$(EXEEXT)
+tests/nested-range-test.log tests/makeindex.log: makeindex$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## tests/nested-range-test.pl
