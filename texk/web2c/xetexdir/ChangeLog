@@ -1,3 +1,8 @@
+2015-07-11  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* xetex.web: Change \pdfmdfivesum to \mdfivesum, to be consistent
+	with \strcmp and \shellescape.
+
 2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* xetex.web: Added \pdfmdfivesum, version 0.99993.
