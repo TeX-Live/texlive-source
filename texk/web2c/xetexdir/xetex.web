@@ -10546,7 +10546,7 @@ convert: case chr_code of
   meaning_code: print_esc("meaning");
   font_name_code:  print_esc("fontname");
   pdf_strcmp_code: print_esc("strcmp");
-  pdf_mdfive_sum_code: print_esc("pdfmdfivesum");
+  pdf_mdfive_sum_code: print_esc("mdfivesum");
   left_margin_kern_code:    print_esc("leftmarginkern");
   right_margin_kern_code:   print_esc("rightmarginkern");
   @/@<Cases of |convert| for |print_cmd_chr|@>@/
@@ -29754,7 +29754,7 @@ primitive("XeTeXlastfontchar", last_item, XeTeX_last_char_code);
 primitive("pdflastxpos",last_item,pdf_last_x_pos_code);
 primitive("pdflastypos",last_item,pdf_last_y_pos_code);
 primitive("strcmp",convert,pdf_strcmp_code);
-primitive("pdfmdfivesum",convert,pdf_mdfive_sum_code);
+primitive("mdfivesum",convert,pdf_mdfive_sum_code);
 primitive("shellescape",last_item,pdf_shell_escape_code);
 
 primitive("XeTeXpdfpagecount",last_item,XeTeX_pdf_page_count_code);
