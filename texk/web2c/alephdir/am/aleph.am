@@ -102,6 +102,7 @@ EXTRA_DIST += \
 # Aleph Tests
 #
 aleph_tests = alephdir/aleph.test
+alephdir/aleph.log: aleph$(EXEEXT)
 
 EXTRA_DIST += $(aleph_tests)
 

@@ -1,3 +1,7 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/synctex.am: Dependencies for 'make check'.
+
 2015-04-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex.c: Support file names with multi-byte characters in SyncTeX

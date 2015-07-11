@@ -1,3 +1,7 @@
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/pmpost.am: Dependencies for 'make check'.
+
 2014-10-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pmpost.ch, pmpxout.ch: Cleanup for pdvitomp and updvitomp.

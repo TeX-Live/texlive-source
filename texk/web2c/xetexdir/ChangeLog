@@ -3,6 +3,10 @@
 	* xetex.web: Change \pdfmdfivesum to \mdfivesum, to be consistent
 	with \strcmp and \shellescape.
 
+2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am: Dependencies for 'make check'.
+
 2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* xetex.web: Added \pdfmdfivesum, version 0.99993.
