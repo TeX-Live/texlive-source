@@ -200,6 +200,7 @@ EXTRA_DIST += \
 xetex_tests = \
 	xetexdir/xetex-bug73.test \
 	xetexdir/xetex.test
+xetexdir/xetex-bug73.log xetexdir/xetex.log: xetex$(EXEEXT)
 
 EXTRA_DIST += $(xetex_tests)
 

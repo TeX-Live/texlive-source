@@ -1,6 +1,6 @@
 ## texk/web2c/pmpostdir/am/pmpost.am: Makefile fragment for pMetaPost.
 ##
-## Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## pMetaPost and upMetaPost
@@ -168,7 +168,9 @@ DISTCLEANFILES += $(nodist_pmpost_SOURCES) \
 ## (u)pMetaPost Tests
 ##
 pmpost_tests = pmpostdir/pmpost.test pmpostdir/pmpsamp.test
+pmpostdir/pmpost.log pmpostdir/pmpsamp.log: pmpost$(EXEEXT)
 upmpost_tests = pmpostdir/upmpost.test pmpostdir/upmpsamp.test
+pmpostdir/upmpost.log pmpostdir/upmpsamp.log: upmpost$(EXEEXT)
 
 EXTRA_DIST += $(pmpost_tests) $(upmpost_tests)
 

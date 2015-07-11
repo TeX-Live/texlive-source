@@ -15545,6 +15545,8 @@ psvgout-tangle: ctangle$(EXEEXT) psvgout.w pmpostdir/psvgout.ch tangle-sh
 
 $(pmpost_OBJECTS) $(upmpost_OBJECTS): $(nodist_pmpost_SOURCES) $(PTEXENC_DEPEND) \
 	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+pmpostdir/pmpost.log pmpostdir/pmpsamp.log: pmpost$(EXEEXT)
+pmpostdir/upmpost.log pmpostdir/upmpsamp.log: upmpost$(EXEEXT)
 
 # Creating one file: just one rule
 tfmin.c: ctangle$(EXEEXT) mplibdir/tfmin.w
@@ -15869,8 +15871,11 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 # Generate pdftex.ch
 pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie_c) $(pdftex_ch_srcs)
+pdftexdir/wprob.log pdftexdir/pdftex.log pdftexdir/pdfimage.log: pdftex$(EXEEXT)
+pdftexdir/ttf2afm.log: ttf2afm$(EXEEXT)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND)
+pdftexdir/pdftosrc.log: pdftosrc$(EXEEXT)
 
 $(libluasocket_a_OBJECTS): $(LUA_DEPEND)
 $(libluajitsocket_a_OBJECTS): $(LUAJIT_DEPEND)
@@ -16116,6 +16121,8 @@ $(luajittex_OBJECTS): libluajittex.a
 @WIN32_TRUE@uninstall-luajittex-links:
 @WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
 @WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
+luatexdir/luatex.log luatexdir/luaimage.log: luatex$(EXEEXT)
+luatexdir/luajittex.log luatexdir/luajitimage.log: luajittex$(EXEEXT)
 $(xetex_OBJECTS): $(xetex_prereq)
 
 $(xetex_c_h): xetex-web2c
@@ -16143,6 +16150,7 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
 	$(tie_c) $(xetex_ch_srcs)
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
+xetexdir/xetex-bug73.log xetexdir/xetex.log: xetex$(EXEEXT)
 odvicopy.c odvicopy.h: odvicopy-web2c
 	@$(web2c) odvicopy
 odvicopy-web2c: odvicopy.p $(web2c_depend)
@@ -16226,11 +16234,13 @@ aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 	$(tie_m) $(aleph_web_srcs)
 aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
 	$(tie_c) aleph.web $(aleph_ch_srcs)
+alephdir/aleph.log: aleph$(EXEEXT)
 
 $(synctex_OBJECTS): $(libsynctex)
 
 $(libsynctex_la_OBJECTS): $(ZLIB_DEPEND)
 $(libsynctex_a_OBJECTS): $(ZLIB_DEPEND)
+synctexdir/synctex.log: synctex$(EXEEXT)
 libmd5/md5.log: md5main$(EXEEXT)
 .PHONY: install-bin-links uninstall-bin-links
 

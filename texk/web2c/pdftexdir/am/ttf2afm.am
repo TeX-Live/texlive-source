@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/ttf2afm.am: Makefile fragment for ttf2afm.
 ##
-## Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## ttf2afm
@@ -22,6 +22,8 @@ EXTRA_ttf2afm_SOURCES = pdftexdir/macnames.c
 ## Tests
 ##
 ttf2afm_tests = pdftexdir/ttf2afm.test
+pdftexdir/ttf2afm.log: ttf2afm$(EXEEXT)
+
 EXTRA_DIST += $(ttf2afm_tests)
 
 ## pdftexdir/ttf1afm.test

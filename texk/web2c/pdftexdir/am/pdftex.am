@@ -87,6 +87,7 @@ EXTRA_DIST += \
 # pdfTeX Tests
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test pdftexdir/pdfimage.test
+pdftexdir/wprob.log pdftexdir/pdftex.log pdftexdir/pdfimage.log: pdftex$(EXEEXT)
 
 EXTRA_DIST += $(pdftex_tests)
 

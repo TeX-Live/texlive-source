@@ -340,6 +340,7 @@ EXTRA_DIST += \
 # SyncTeX Tests
 #
 synctex_tests = synctexdir/synctex.test
+synctexdir/synctex.log: synctex$(EXEEXT)
 
 EXTRA_DIST += $(synctex_tests)
 
