@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 37076 2015-04-27 17:08:10Z karl $
+# $Id: updmap.pl 37863 2015-07-17 00:28:48Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 37076 2015-04-27 17:08:10Z karl $';
+my $svnid = '$Id: updmap.pl 37863 2015-07-17 00:28:48Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2015-04-27 19:08:10 +0200 (Mon, 27 Apr 2015) $';
+my $lastchdate = '$Date: 2015-07-17 02:28:48 +0200 (Fri, 17 Jul 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37076 $';
+my $svnrev = '$Revision: 37863 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -39,9 +39,6 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname 
   sort_uniq member touch);
-
-#use Data::Dumper;
-#$Data::Dumper::Indent = 1;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
 
@@ -110,6 +107,7 @@ my @cmdline_options = (
   "help|h",
   # some debugging invocations
   "_readsave=s",
+  "_dump",
   );
 
 my %settings = (
@@ -202,7 +200,6 @@ sub main {
     read_updmap_files($opts{'_readsave'});
     merge_settings_replace_kanji();
     print "READING DONE ============================\n";
-    #print Dumper($alldata);
     $alldata->{'updmap'}{$opts{'_readsave'}}{'changed'} = 1;
     save_updmap($opts{'_readsave'});
     exit 0;
@@ -339,6 +336,18 @@ sub main {
 
   read_updmap_files(@{$opts{'cnffile'}});
 
+  if ($opts{'_dump'}) {
+    merge_settings_replace_kanji();
+    read_map_files();
+    require Data::Dumper;
+    # two times to silence perl warnings!
+    $Data::Dumper::Indent = 1;
+    $Data::Dumper::Indent = 1;
+    print "READING DONE ============================\n";
+    print Data::Dumper::Dumper($alldata);
+    exit 0;
+  }
+
   if ($opts{'showoption'}) {
     merge_settings_replace_kanji();
     for my $o (@{$opts{'showoption'}}) {
@@ -353,12 +362,22 @@ sub main {
     exit 0;
   }
 
-  if ($opts{'listmaps'}) {
+  if ($opts{'listmaps'} || $opts{'listavailablemaps'}) {
     merge_settings_replace_kanji();
-    for my $m (keys %{$alldata->{'maps'}}) {
+    # only check for missing map files 
+    # (pass in true argument to read_map_files)
+    my %missing = map { $_ => 1 } read_map_files(1);
+    for my $m (sort keys %{$alldata->{'maps'}}) {
+      next if ($missing{$m} && $opts{'listavailablemaps'});
       my $origin = $alldata->{'maps'}{$m}{'origin'};
-      print $alldata->{'updmap'}{$origin}{'maps'}{$m}{'type'}, " $m ",
-      $alldata->{'updmap'}{$origin}{'maps'}{$m}{'status'}, " in $origin\n";
+      my $type = ($origin eq 'builtin' ? 'Map' :
+        $alldata->{'updmap'}{$origin}{'maps'}{$m}{'type'});
+      my $status = ($origin eq 'builtin' ? 'enabled' :
+        $alldata->{'updmap'}{$origin}{'maps'}{$m}{'status'});
+      my $avail = ($missing{$m} ? "\t(not available)" : '');
+      print "$type\t$m\t$status\t$origin$avail\n";
+      #print $alldata->{'updmap'}{$origin}{'maps'}{$m}{'type'}, " $m ",
+      #$alldata->{'updmap'}{$origin}{'maps'}{$m}{'status'}, " in $origin\n";
     }
     exit 0;
   }
@@ -1020,6 +1039,7 @@ sub mkMaps {
   for my $m (keys %{$alldata->{'maps'}}) {
     my $origin = $alldata->{'maps'}{$m}{'origin'};
     next if !defined($origin);
+    next if ($origin eq 'builtin');
     next if ($alldata->{'updmap'}{$origin}{'maps'}{$m}{'status'} eq "disabled");
     push @mixedmaps, $m
       if ($alldata->{'updmap'}{$origin}{'maps'}{$m}{'type'} eq "MixedMap");
@@ -1956,6 +1976,7 @@ sub read_updmap_file {
 }
 
 sub read_map_files {
+  my $quick = shift;
   if (!defined($alldata->{'updmap'})) {
     return;
   }
@@ -1974,6 +1995,7 @@ sub read_map_files {
   for my $m (qw/dvips35.map pdftex35.map ps2pk35.map/) {
     push @maps, $m;
     $alldata->{'maps'}{$m}{'status'} = 'enabled';
+    $alldata->{'maps'}{$m}{'origin'} = 'builtin';
   }
   @maps = sort_uniq(@maps);
   my @fullpath = `kpsewhich --format=map @maps`;
@@ -1988,6 +2010,7 @@ sub read_map_files {
       push @missing, $map;
     }
   }
+  return @missing if $quick;
 
   #
   # read in the three basic fonts definition maps
@@ -2081,6 +2104,7 @@ sub merge_data {
   for my $m (keys %{$alldata->{'maps'}}) {
     my $origin = $alldata->{'maps'}{$m}{'origin'};
     next if !defined($origin);
+    next if ($origin eq 'builtin');
     next if ($alldata->{'updmap'}{$origin}{'maps'}{$m}{'status'} eq "disabled");
     for my $f (keys %{$alldata->{'maps'}{$m}{'fonts'}}) {
       # use the font definition only for those fonts where the origin matches
@@ -2219,9 +2243,8 @@ Commands:
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
   --disable MAPFILE         disable MAPFILE, of whatever type
-  --listmaps                list all active and inactive maps
-  --listavailablemaps       same as --listmaps, but without
-                             unavailable map files
+  --listmaps                list all maps (details below) (details below)
+  --listavailablemaps       list available maps (details below)
   --syncwithtrees           disable unavailable map files in updmap.cfg
 
 Explanation of the map types: the (only) difference between Map and
@@ -2367,6 +2390,20 @@ The main output:
   only and are not like other map files.  dvipdfmx reads pdftex.map for
   the map entries for non-Kanji fonts.
 
+Listing of maps:
+
+  The two options --listmaps and --listavailablemaps list all maps
+  defined in any of the updmap.cfg files (for --listmaps), and 
+  only those actually found on the system (for --listavailablemaps).
+  The output format is one line per font map, with the following
+  fields separated by tabs: map, type (Map, MixedMap, KanjiMap),
+  status (enabled, disabled), origin (the updmap.cfg file where
+  it is mentioned, or 'builtin' for the three basic maps).
+
+  In the case of --listmaps there can be one additional fields
+  (again separated by tab) containing '(not available)' for those
+  map files that cannot be found.
+ 
 updmap vs. updmap-sys:
 
   When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used

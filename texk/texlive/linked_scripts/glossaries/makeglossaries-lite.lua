@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env texlua
 --[[
    File   : makeglossaries.lua
    Author : Nicola Talbot
@@ -25,9 +25,11 @@
   
    This work has the LPPL maintenance status `maintained'.
   
+   History:
+   * 1.1 changed first line from lua to texlua
 --]]
 
-thisversion = "1.0 2015-06-20"
+thisversion = "1.1 2015-07-17"
 
 quiet = false
 dryrun = false
