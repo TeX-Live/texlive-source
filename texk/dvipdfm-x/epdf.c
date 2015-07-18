@@ -547,6 +547,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 
   return -1;
 
+#if 0
  too_recent:
   pdf_close(pf);
   WARN("PDF version of input file more recent than in output file.");
@@ -557,6 +558,7 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
     WARN("Use \"-V\" switch to change output PDF version.");
     return -1;
   }
+#endif
 }
 
 typedef enum {
