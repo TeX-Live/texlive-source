@@ -1,3 +1,8 @@
+2015-07-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* epdf.c, pdfobj.c: Try to embed a PDF image, even if the PDF version
+	is newer than the setting.
+
 2015-07-08  Simon Cozens  <simon@simon-cozens.org>
 
 	* pngimage.c: Fixed a typo "XObjcect" => "XObject".
