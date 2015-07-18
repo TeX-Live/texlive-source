@@ -3238,7 +3238,11 @@ pdf_open (const char *ident, FILE *file)
 
     if (version < 1 || version > pdf_version) {
       WARN("pdf_open: Not a PDF 1.[1-%u] file.", pdf_version);
+/*
+  Try to embed the PDF image, even if the PDF version is newer than
+  the setting.
       return NULL;
+*/
     }
 
     pf = pdf_file_new(file);

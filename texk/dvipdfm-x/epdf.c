@@ -404,8 +404,13 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   if (!pf)
     return -1;
 
+  /*
+   * Try to embed the PDF, even if the PDF version is newer than the setting.
+   */
+#if 0
   if (pdf_file_get_version(pf) > pdf_get_version())
     goto too_recent;
+#endif
 
   pdf_ximage_init_form_info(&info);
 
