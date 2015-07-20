@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 37863 2015-07-17 00:28:48Z preining $
+# $Id: updmap.pl 37866 2015-07-17 19:00:04Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 37863 2015-07-17 00:28:48Z preining $';
+my $svnid = '$Id: updmap.pl 37866 2015-07-17 19:00:04Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2015-07-17 02:28:48 +0200 (Fri, 17 Jul 2015) $';
+my $lastchdate = '$Date: 2015-07-17 21:00:04 +0200 (Fri, 17 Jul 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37863 $';
+my $svnrev = '$Revision: 37866 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -2243,7 +2243,7 @@ Commands:
   --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
   --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
   --disable MAPFILE         disable MAPFILE, of whatever type
-  --listmaps                list all maps (details below) (details below)
+  --listmaps                list all maps (details below)
   --listavailablemaps       list available maps (details below)
   --syncwithtrees           disable unavailable map files in updmap.cfg
 
