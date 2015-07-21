@@ -112,8 +112,8 @@ static struct ic_  _ic = {
 
 static void
 pdf_init_ximage_struct (pdf_ximage *I,
-			const char *ident, const char *filename,
-			long page_no, pdf_obj *dict)
+                        const char *ident, const char *filename,
+                        long page_no, pdf_obj *dict)
 {
   if (ident) {
     I->ident = NEW(strlen(ident)+1, char);
@@ -186,18 +186,18 @@ pdf_close_images (void)
     for (i = 0; i < ic->count; i++) {
       pdf_ximage *I = ic->ximages+i;
       if (I->tempfile) {
-	/*
-	 * It is important to remove temporary files at the end because
-	 * we cache file names. Since we use mkstemp to create them, we
-	 * might get the same file name again if we delete the first file.
-	 * (This happens on NetBSD, reported by Jukka Salmi.)
-	 * We also use this to convert a PS file only once if multiple
-	 * pages are imported from that file.
-	 */
-	if (_opts.verbose > 1 && keep_cache != 1)
-	  MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
-	dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
-	I->filename = NULL;
+        /*
+         * It is important to remove temporary files at the end because
+         * we cache file names. Since we use mkstemp to create them, we
+         * might get the same file name again if we delete the first file.
+         * (This happens on NetBSD, reported by Jukka Salmi.)
+         * We also use this to convert a PS file only once if multiple
+         * pages are imported from that file.
+         */
+        if (_opts.verbose > 1 && keep_cache != 1)
+          MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
+        dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
+        I->filename = NULL;
       }
       pdf_clean_ximage_struct(I);
     }
@@ -306,16 +306,18 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
     {
       int result = pdf_include_page(I, fp, fullname);
       if (result > 0)
-	/* PDF version too recent */
-	result = ps_include_page(I, fullname);
+        /* PDF version too recent */
+        result = ps_include_page(I, fullname);
       if (result < 0)
-	goto error;
+        goto error;
     }
     if (_opts.verbose)
       MESG(",Page:%ld", I->page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
     break;
-  // case  IMAGE_TYPE_EPS:
+/*
+  case  IMAGE_TYPE_EPS:
+*/
   default:
     if (_opts.verbose)
       MESG(format == IMAGE_TYPE_EPS ? "[PS]" : "[UNKNOWN]");
@@ -366,10 +368,15 @@ pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
     I = &ic->ximages[id];
     if (I->ident && !strcmp(ident, I->ident)) {
       f = I->filename;
+/*
+    PageBox can be differrent. So we retry.
+*/
+#if 0
       if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
           I->attr_dict == dict) {
-	return  id;
+        return  id;
       }
+#endif
     }
   }
 
@@ -523,8 +530,8 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   pdf_add_dict(dict, pdf_new_name("Width"),   pdf_new_number(info->width));
   pdf_add_dict(dict, pdf_new_name("Height"),  pdf_new_number(info->height));
   if (info->bits_per_component > 0) /* Ignored for JPXDecode filter. FIXME */
-	pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
-                     pdf_new_number(info->bits_per_component));
+    pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
+                 pdf_new_number(info->bits_per_component));
   if (I->attr_dict)
     pdf_merge_dict(dict, I->attr_dict);
 
@@ -581,7 +588,7 @@ pdf_ximage_get_reference (int id)
 /* called from pdfdoc.c only for late binding */
 int
 pdf_ximage_defineresource (const char *ident,
-			   int subtype, void *info, pdf_obj *resource)
+                           int subtype, void *info, pdf_obj *resource)
 {
   struct ic_ *ic = &_ic;
   int         id;

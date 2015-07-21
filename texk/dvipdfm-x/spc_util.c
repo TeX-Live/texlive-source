@@ -533,6 +533,8 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
     "page",
 #define  K__HIDE       11
     "hide",
+#define  K__PAGEBOX    12
+    "pagebox",
      NULL
   };
   double xscale, yscale, rotate;
@@ -638,24 +640,39 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
       if (!vp)
         error = -1;
       else {
-	if (atof(vp))
-	  p->flags |= INFO_DO_CLIP;
-	else
-	  p->flags &= ~INFO_DO_CLIP;
-	RELEASE(vp);
+        if (atof(vp))
+          p->flags |= INFO_DO_CLIP;
+        else
+          p->flags &= ~INFO_DO_CLIP;
+        RELEASE(vp);
       }
       break;
     case  K__PAGE:
       {
-	double page;
-	if (page_no && spc_util_read_numbers(&page, 1, ap) == 1)
-	  *page_no = (long) page;
-	else
-	  error = -1;
+        double page;
+        if (page_no && spc_util_read_numbers(&page, 1, ap) == 1)
+          *page_no = (long) page;
+        else
+          error = -1;
       }
       break;
     case  K__HIDE:
       p->flags |= INFO_DO_HIDE;
+      break;
+    case  K__PAGEBOX:
+      {
+        char *q;
+        q = parse_c_ident (&ap->curptr, ap->endptr);
+        if (q) {
+          if (strcasecmp(q, "cropbox") == 0) PageBox = 1;
+          else if (strcasecmp(q, "mediabox") == 0) PageBox = 2;
+          else if (strcasecmp(q, "artbox") == 0) PageBox = 3;
+          else if (strcasecmp(q, "trimbox") == 0) PageBox = 4;
+          else if (strcasecmp(q, "bleedbox") == 0) PageBox = 5;
+        } else {
+          PageBox = 1;
+        }
+      }
       break;
     default:
       error = -1;
@@ -682,7 +699,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
       spc_warn(spe, "Can't supply overall scale along with axis scales.");
       error = -1;
     } else if (has_matrix &&
-	       (has_scale || has_xscale || has_yscale || has_rotate)) {
+               (has_scale || has_xscale || has_yscale || has_rotate)) {
       spc_warn(spe, "Can't supply transform matrix along with scales or rotate. Ignore scales and rotate.");
     }
   }
@@ -816,4 +833,3 @@ pdf_color_namedcolor (pdf_color *color, const char *name)
   }
   return  -1;
 }
-
