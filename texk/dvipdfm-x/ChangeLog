@@ -1,3 +1,8 @@
+2015-07-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfdoc.c, pdfobj.h, pdfximage.c, spc_util.c, xbb.c: Support
+	pagebox=artbox etc. in PDF inclusion. It works with a new dvipdfmx.def.
+
 2015-07-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* epdf.c, pdfobj.c: Try to embed a PDF image, even if the PDF version

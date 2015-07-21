@@ -43,6 +43,15 @@
 
 #define XBB_PROGRAM "extractbb"
 
+int PageBox = 1;
+/*
+ PageBox=1 :cropbox
+ PageBox=2 :mediabox
+ PageBox=3 :artbox
+ PageBox=4 :trimbox
+ PageBox=5 :bleedbox
+*/
+
 static long Include_Page = 1;
 
 static void show_version(void)
@@ -57,18 +66,20 @@ static void show_version(void)
 
 static void show_usage(void)
 {
-  fprintf (stdout, "\nUsage: " XBB_PROGRAM " [-p page] [-q|-v] [-O] [-m|-x] FILE...\n");
-  fprintf (stdout, "       " XBB_PROGRAM " --help|--version\n");
-  fprintf (stdout, "Extract bounding box from PDF, PNG, or JPEG file; default output below.\n");
-  fprintf (stdout, "\nOptions:\n");
-  fprintf (stdout, "  -h | --help\tShow this help message and exit\n");
-  fprintf (stdout, "  --version\tOutput version information and exit\n");
-  fprintf (stdout, "  -p page\tSpecify a PDF page to extract bounding box\n");
-  fprintf (stdout, "  -q\t\tBe quiet\n");
-  fprintf (stdout, "  -v\t\tBe verbose\n");
-  fprintf (stdout, "  -O\t\tWrite output to stdout\n");
-  fprintf (stdout, "  -m\t\tOutput .bb  file used in DVIPDFM%s\n", compat_mode ? " (default)" : "");
-  fprintf (stdout, "  -x\t\tOutput .xbb file used in DVIPDFMx%s\n", compat_mode ? "" : " (default)");
+  printf ("\nUsage: " XBB_PROGRAM " [-B pagebox] [-p page] [-q|-v] [-O] [-m|-x] FILE...\n");
+  printf ("       " XBB_PROGRAM " --help|--version\n");
+  printf ("Extract bounding box from PDF, PNG, or JPEG file; default output below.\n");
+  printf ("\nOptions:\n");
+  printf ("  -B pagebox\tSpecify a PDF pagebox for bounding box\n");
+  printf ("            \tpagebox=cropbox, mediabox, artbox, trimbox, bleedbox\n");
+  printf ("  -h | --help\tShow this help message and exit\n");
+  printf ("  --version\tOutput version information and exit\n");
+  printf ("  -p page\tSpecify a PDF page to extract bounding box\n");
+  printf ("  -q\t\tBe quiet\n");
+  printf ("  -v\t\tBe verbose\n");
+  printf ("  -O\t\tWrite output to stdout\n");
+  printf ("  -m\t\tOutput .bb  file used in DVIPDFM%s\n", compat_mode ? " (default)" : "");
+  printf ("  -x\t\tOutput .xbb file used in DVIPDFMx%s\n", compat_mode ? "" : " (default)");
 }
 
 static void usage(void)
@@ -103,7 +114,7 @@ static char *make_xbb_filename(const char *name)
 
   for (i = 0; i < sizeof(extensions) / sizeof(extensions[0]); i++) {
     if (strlen(extensions[i]) < strlen(name) &&
-	strncmp(name+strlen(name)-strlen(extensions[i]), extensions[i], strlen(extensions[i])) == 0)
+        strncmp(name+strlen(name)-strlen(extensions[i]), extensions[i], strlen(extensions[i])) == 0)
       break;
   }
   if (i == sizeof(extensions) / sizeof(extensions[0])) {
@@ -120,9 +131,9 @@ static char *make_xbb_filename(const char *name)
 }
 
 static void write_xbb(char *fname,
-		      double bbllx_f, double bblly_f,
-		      double bburx_f, double bbury_f,
-		      int pdf_version, long pagecount)
+                      double bbllx_f, double bblly_f,
+                      double bburx_f, double bbury_f,
+                      int pdf_version, long pagecount)
 {
   char *outname = NULL;
   FILE *fp = NULL;
@@ -160,7 +171,7 @@ static void write_xbb(char *fname,
      * it seems illegal to replace "0.0" by "0".
      */
     fprintf(fp, "%%%%HiResBoundingBox: %f %f %f %f\n",
-	    bbllx_f, bblly_f, bburx_f, bbury_f);
+            bbllx_f, bblly_f, bburx_f, bbury_f);
     if (pdf_version >= 0) {
       fprintf(fp, "%%%%PDFVersion: 1.%d\n", pdf_version);
       fprintf(fp, "%%%%Pages: %ld\n", pagecount);
@@ -256,7 +267,7 @@ static void do_pdf (FILE *fp, char *filename)
 
   pdf_release_obj(page);
   write_xbb(filename, bbox.llx, bbox.lly, bbox.urx, bbox.ury,
-	    pdf_file_get_version(pf), count);
+            pdf_file_get_version(pf), count);
 }
 
 int extractbb (int argc, char *argv[])
@@ -285,6 +296,15 @@ int extractbb (int argc, char *argv[])
         }
         fprintf(stderr, "Unknown option \"%s\"", argv[0]);
         usage();
+      case 'B':
+        argc--;
+        argv++;
+        if (strcasecmp (argv[0], "cropbox") == 0) PageBox = 1; 
+        else if (strcasecmp (argv[0], "mediabox") == 0) PageBox = 2; 
+        else if (strcasecmp (argv[0], "artbox") == 0) PageBox = 3; 
+        else if (strcasecmp (argv[0], "trimbox") == 0) PageBox = 4; 
+        else if (strcasecmp (argv[0], "bleedbox") == 0) PageBox = 5; 
+        break;
       case 'O':
         xbb_to_file = 0;
         break;

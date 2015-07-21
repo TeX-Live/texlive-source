@@ -27,15 +27,15 @@
 
 /* Here is the complete list of PDF object types */
 
-#define	PDF_BOOLEAN	1
-#define	PDF_NUMBER	2
-#define PDF_STRING	3
-#define PDF_NAME	4
-#define PDF_ARRAY	5
-#define PDF_DICT	6
-#define PDF_STREAM	7
+#define PDF_BOOLEAN     1
+#define PDF_NUMBER      2
+#define PDF_STRING      3
+#define PDF_NAME        4
+#define PDF_ARRAY       5
+#define PDF_DICT        6
+#define PDF_STREAM      7
 #define PDF_NULL        8
-#define PDF_INDIRECT	9
+#define PDF_INDIRECT    9
 #define PDF_UNDEFINED   10
 
 #define PDF_OBJ_INVALID 0
@@ -140,17 +140,17 @@ extern void     pdf_put_dict     (pdf_obj *dict, const char *key, pdf_obj *value
  * key to allow modification (fix) of key.
  */
 extern int      pdf_foreach_dict (pdf_obj *dict,
-				  int (*proc) (pdf_obj *, pdf_obj *, void *),
-				  void *pdata);
+                                  int (*proc) (pdf_obj *, pdf_obj *, void *),
+                                  void *pdata);
 
 extern pdf_obj    *pdf_new_stream        (int flags);
 extern void        pdf_add_stream        (pdf_obj *stream,
-					  const void *stream_data_ptr,
-					  long stream_data_len);
+                                          const void *stream_data_ptr,
+                                          long stream_data_len);
 #if HAVE_ZLIB
 extern int         pdf_add_stream_flate  (pdf_obj *stream,
-					  const void *stream_data_ptr,
-					  long stream_data_len);
+                                          const void *stream_data_ptr,
+                                          long stream_data_len);
 #endif
 extern int         pdf_concat_stream     (pdf_obj *dst, pdf_obj *src);
 extern pdf_obj    *pdf_stream_dict       (pdf_obj *stream);
@@ -195,4 +195,5 @@ extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *
 
 extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
 
+extern int PageBox;
 #endif  /* _PDFOBJ_H_ */
