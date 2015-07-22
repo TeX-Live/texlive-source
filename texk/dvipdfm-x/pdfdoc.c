@@ -936,7 +936,7 @@ pdf_obj *
 pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
                   pdf_rect *bbox, pdf_obj **resources_p) {
   pdf_obj *page_tree = NULL;
-  pdf_obj *resources = NULL, *box = NULL, *rotate = NULL;
+  pdf_obj *resources = NULL, *box = NULL, *rotate = NULL, *medbox = NULL;
   pdf_obj *catalog;
 
   catalog = pdf_file_get_catalog(pf);
@@ -1063,7 +1063,8 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
         pdf_release_obj(crop_box);
       goto error;
     }
-    if (PageBox == 1) {
+
+    if (PageBox == 0) {
       if (crop_box)
         box = crop_box;
       else
@@ -1076,56 +1077,58 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
         }
       if (media_box)
         pdf_release_obj(media_box);
+    } else if (PageBox == 1) {
+      if (crop_box)
+        box = crop_box;
+      else
+        if (!(box = media_box) &&
+            !(box = art_box) &&
+            !(box = trim_box) &&
+            bleed_box) {
+            box = bleed_box;
+        }
     } else if (PageBox == 2) {
       if (media_box)
         box = media_box;
       else
-        if (!(box = art_box) &&
+        if (!(box = crop_box) &&
+            !(box = art_box) &&
             !(box = trim_box) &&
-            !(box = bleed_box) &&
-            crop_box) {
-            box = crop_box;
+            bleed_box) {
+            box = bleed_box;
         }
     } else if (PageBox == 3) {
       if (art_box)
         box = art_box;
       else
         if (!(box = crop_box) &&
+            !(box = media_box) &&
             !(box = trim_box) &&
-            !(box = bleed_box) &&
-            media_box) {
-            box = media_box;
-            media_box = NULL;
+            bleed_box) {
+            box = bleed_box;
         }
-      if (media_box)
-        pdf_release_obj(media_box);
     } else if (PageBox == 4) {
       if (trim_box)
         box = trim_box;
       else
-        if (!(box = art_box) &&
-            !(box = crop_box) &&
-            !(box = bleed_box) &&
-            media_box) {
-            box = media_box;
-            media_box = NULL;
+        if (!(box = crop_box) &&
+            !(box = media_box) &&
+            !(box = art_box) &&
+            bleed_box) {
+            box = bleed_box;
         }
-      if (media_box)
-        pdf_release_obj(media_box);
     } else if (PageBox == 5) {
       if (bleed_box)
         box = bleed_box;
       else
-        if (!(box = art_box) &&
-            !(box = trim_box) &&
-            !(box = crop_box) &&
-            media_box) {
-            box = media_box;
-            media_box = NULL;
+        if (!(box = crop_box) &&
+            !(box = media_box) &&
+            !(box = art_box) &&
+            trim_box) {
+            box = trim_box;
         }
-      if (media_box)
-        pdf_release_obj(media_box);
     }
+    medbox = media_box;
   }
 
   if (!PDF_OBJ_ARRAYTYPE(box) || pdf_array_length(box) != 4 ||
@@ -1159,6 +1162,30 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       case 3: bbox->ury = x; break;
       }
       pdf_release_obj(tmp);
+    }
+
+    if (medbox && PageBox) {
+      double mllx, mlly, murx, mury;
+      for (i = 4; i--; ) {
+        double x;
+        pdf_obj *tmp = pdf_deref_obj(pdf_get_array(medbox, i));
+        if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+          pdf_release_obj(tmp);
+          goto error;
+        }
+        x = pdf_number_value(tmp);
+        switch (i) {
+        case 0: mllx = x; break;
+        case 1: mlly = x; break;
+        case 2: murx = x; break;
+        case 3: mury = x; break;
+        }
+        pdf_release_obj(tmp);
+      }
+      if (bbox->llx < mllx) bbox->llx = mllx;
+      if (bbox->lly < mlly) bbox->lly = mlly;
+      if (bbox->urx > murx) bbox->urx = murx;
+      if (bbox->ury > mury) bbox->ury = mury;
     }
   }
 
