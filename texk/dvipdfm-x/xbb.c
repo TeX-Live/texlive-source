@@ -43,8 +43,9 @@
 
 #define XBB_PROGRAM "extractbb"
 
-int PageBox = 1;
+int PageBox = 0;
 /*
+ PageBox=0 :default
  PageBox=1 :cropbox
  PageBox=2 :mediabox
  PageBox=3 :artbox

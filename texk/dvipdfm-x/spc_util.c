@@ -670,7 +670,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
           else if (strcasecmp(q, "trimbox") == 0) PageBox = 4;
           else if (strcasecmp(q, "bleedbox") == 0) PageBox = 5;
         } else {
-          PageBox = 1;
+          PageBox = 0;
         }
       }
       break;

@@ -997,7 +997,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
 /*
   Initialize the PageBox as the default value
 */
-  PageBox = 1;
+  PageBox = 0;
 
   skip_white(&args->curptr, args->endptr);
   if (args->curptr[0] == '@') {
