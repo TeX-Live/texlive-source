@@ -1,3 +1,7 @@
+2015-07-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_pdfm.c: Fix a bug. Forgot to initialize PageBox. Thanks Y. Terada.
+
 2015-07-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfdoc.c, pdfobj.h, pdfximage.c, spc_util.c, xbb.c: Support

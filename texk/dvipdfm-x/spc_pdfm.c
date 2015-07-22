@@ -994,6 +994,11 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
   transform_info   ti;
   long             page_no;
 
+/*
+  Initialize the PageBox as the default value
+*/
+  PageBox = 1;
+
   skip_white(&args->curptr, args->endptr);
   if (args->curptr[0] == '@') {
     ident = parse_opt_ident(&args->curptr, args->endptr);
