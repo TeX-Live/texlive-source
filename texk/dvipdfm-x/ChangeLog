@@ -1,15 +1,8 @@
 2015-07-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* pdfdoc.c, spc_pdfm.c, spc_util.c, xbb.c: Improve obtaining BoundingBox.
-
-2015-07-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* spc_pdfm.c: Fix a bug. Forgot to initialize PageBox. Thanks Y. Terada.
-
-2015-07-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
-
-	* pdfdoc.c, pdfobj.h, pdfximage.c, spc_util.c, xbb.c: Support
-	pagebox=artbox etc. in PDF inclusion. It works with a new dvipdfmx.def.
+	* epdf.c. pdfdoc.c, pdfobj.h, pdfximage.c, spc_pdfm.c, spc_util.c, xbb.c:
+	Support pagebox=artbox etc. in PDF inclusion. It works with a new
+	dvipdfmx.def. Thanks Y. Terada.
 
 2015-07-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
