@@ -369,14 +369,14 @@ pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
     if (I->ident && !strcmp(ident, I->ident)) {
       f = I->filename;
 /*
-    PageBox can be differrent. So we retry.
+    PageBox can be differrent. So we retry if PageBox != 0
 */
-#if 0
-      if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
-          I->attr_dict == dict) {
-        return  id;
+      if (PageBox == 0) { 
+        if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
+            I->attr_dict == dict) {
+          return  id;
+        }
       }
-#endif
     }
   }
 

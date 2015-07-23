@@ -422,6 +422,11 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
     page_no = 1;
 
   page = pdf_doc_get_page(pf, page_no, NULL, &info.bbox, &resources);
+/*
+  Recover the default value of PageBox
+*/
+  PageBox = 0;
+
   if(!page)
     goto error_silent;
 
