@@ -1069,30 +1069,30 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
         box = crop_box;
       else
         if (!(box = media_box) &&
-            !(box = art_box) &&
+            !(box = bleed_box) &&
             !(box = trim_box) &&
-            bleed_box) {
-            box = bleed_box;
+            art_box) {
+            box = art_box;
         }
     } else if (PageBox == 1) {
       if (crop_box)
         box = crop_box;
       else
         if (!(box = media_box) &&
-            !(box = art_box) &&
+            !(box = bleed_box) &&
             !(box = trim_box) &&
-            bleed_box) {
-            box = bleed_box;
+            art_box) {
+            box = art_box;
         }
     } else if (PageBox == 2) {
       if (media_box)
         box = media_box;
       else
         if (!(box = crop_box) &&
-            !(box = art_box) &&
+            !(box = bleed_box) &&
             !(box = trim_box) &&
-            bleed_box) {
-            box = bleed_box;
+            art_box) {
+            box = art_box;
         }
     } else if (PageBox == 3) {
       if (art_box)
@@ -1100,9 +1100,9 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       else
         if (!(box = crop_box) &&
             !(box = media_box) &&
-            !(box = trim_box) &&
-            bleed_box) {
-            box = bleed_box;
+            !(box = bleed_box) &&
+            trim_box) {
+            box = trim_box;
         }
     } else if (PageBox == 4) {
       if (trim_box)
@@ -1110,9 +1110,9 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       else
         if (!(box = crop_box) &&
             !(box = media_box) &&
-            !(box = art_box) &&
-            bleed_box) {
-            box = bleed_box;
+            !(box = bleed_box) &&
+            art_box) {
+            box = art_box;
         }
     } else if (PageBox == 5) {
       if (bleed_box)
@@ -1120,9 +1120,9 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       else
         if (!(box = crop_box) &&
             !(box = media_box) &&
-            !(box = art_box) &&
-            trim_box) {
-            box = trim_box;
+            !(box = trim_box) &&
+            art_box) {
+            box = art_box;
         }
     }
     medbox = media_box;
