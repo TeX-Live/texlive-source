@@ -1,3 +1,9 @@
+2015-07-24  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* xetex.web, xetex.h: Support pagebox=artbox etc. as in pdfTeX
+	in PDF inclusion. It works with a new xetex.def and xdvipdfmx.
+	Nothing changes if the present xetex.def is used.
+
 2015-07-11  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* xetex.web: Change \pdfmdfivesum to \mdfivesum, to be consistent

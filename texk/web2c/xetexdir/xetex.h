@@ -62,7 +62,7 @@ authorization from the copyright holders.
 #define setcpcode       set_cp_code
 #define getnativewordcp(p,s)                    get_native_word_cp(&(mem[p]), s)
 
-#define pic_node_size                           8
+#define pic_node_size                           9
 
 #define deref(p)                                (*(p))
 

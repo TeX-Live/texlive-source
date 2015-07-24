@@ -3367,7 +3367,7 @@ A |pdf_node| is just like |pic_node|, but generate a different \.{XDV} file code
 @d pic_node=42 {|subtype| in whatsits that hold picture file references}
 @d pdf_node=43 {|subtype| in whatsits that hold PDF page references}
 @#
-@d pic_node_size=8 {must sync with \.{xetex.h}}
+@d pic_node_size=9 {must sync with \.{xetex.h}}
 @d pic_path_length(#)==mem[#+4].hh.b0
 @d pic_page(#)==mem[#+4].hh.b1
 @d pic_transform1(#)==mem[#+5].hh.lh
@@ -3376,6 +3376,7 @@ A |pdf_node| is just like |pic_node|, but generate a different \.{XDV} file code
 @d pic_transform4(#)==mem[#+6].hh.rh
 @d pic_transform5(#)==mem[#+7].hh.lh
 @d pic_transform6(#)==mem[#+7].hh.rh
+@d pic_pdf_box(#)==mem[#+8].hh.b0
 
 @ A |math_node|, which occurs only in horizontal lists, appears before and
 after mathematical formulas. The |subtype| field is |before| before the
@@ -23279,6 +23280,7 @@ consideration of the other cases until later.
 @d pdfbox_bleed=3
 @d pdfbox_trim=4
 @d pdfbox_art=5
+@d pdfbox_none=6
 
 @p @t\4@>@<Declare action procedures for use by |main_control|@>@;
 @t\4@>@<Declare the procedure called |handle_right_brace|@>@;
@@ -29300,6 +29302,14 @@ print_scaled(pic_transform4(p)); print(" ");
 print_scaled(pic_transform5(p)); print(" ");
 print_scaled(pic_transform6(p)); print(" ");
 print("page "); print_int(pic_page(p)); print(" ");
+case pic_pdf_box(p) of
+  pdfbox_crop:  print("pagebox cropbox ");
+  pdfbox_media: print("pagebox mediabox ");
+  pdfbox_bleed: print("pagebox bleedbox ");
+  pdfbox_art:   print("pagebox artbox ");
+  pdfbox_trim:  print("pagebox trimbox ");
+  others:       do_nothing;
+endcases;
 print("(");
 for i:=0 to pic_path_length(p)-1 do
   print_visible_char(pic_path_byte(p, i));
@@ -29490,8 +29500,8 @@ begin
       scan_int;
       page:=cur_val;
     end;
-    pdf_box_type:=pdfbox_crop;
-    if scan_keyword("crop") then do_nothing
+    pdf_box_type:=pdfbox_none;
+    if scan_keyword("crop") then pdf_box_type:=pdfbox_crop
     else if scan_keyword("media") then pdf_box_type:=pdfbox_media
     else if scan_keyword("bleed") then pdf_box_type:=pdfbox_bleed
     else if scan_keyword("trim") then pdf_box_type:=pdfbox_trim
@@ -29499,7 +29509,10 @@ begin
   end;
 
   { access the picture file and check its size }
-  result:=find_pic_file(addressof(pic_path), addressof(bounds), pdf_box_type, page);
+  if pdf_box_type=pdfbox_none then
+    result:=find_pic_file(addressof(pic_path), addressof(bounds), pdfbox_crop, page)
+  else
+    result:=find_pic_file(addressof(pic_path), addressof(bounds), pdf_box_type, page);
 
   setPoint(corners[0], xField(bounds), yField(bounds));
   setPoint(corners[1], xField(corners[0]), yField(bounds) + htField(bounds));
@@ -29587,6 +29600,7 @@ begin
     end;
     pic_path_length(tail):=strlen(pic_path);
     pic_page(tail):=page;
+    pic_pdf_box(tail):=pdf_box_type;
 
     width(tail):=D2Fix(xmax - xmin);
     height(tail):=D2Fix(ymax - ymin);
