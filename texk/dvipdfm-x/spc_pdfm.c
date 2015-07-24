@@ -984,6 +984,8 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   return 0;
 }
 
+ImageSpecial = 0;
+
 static int
 spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
 {
@@ -1042,7 +1044,9 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     }
   }
 
+  ImageSpecial = 1;
   xobj_id = pdf_ximage_findresource(pdf_string_value(fspec), page_no, attr);
+  ImageSpecial = 0;
   if (xobj_id < 0) {
     spc_warn(spe, "Could not find image resource...");
     pdf_release_obj(fspec);

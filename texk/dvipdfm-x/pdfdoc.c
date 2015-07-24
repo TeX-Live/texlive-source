@@ -1068,15 +1068,12 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       if (crop_box)
         box = crop_box;
       else
-        if (!(box = art_box) &&
+        if (!(box = media_box) &&
+            !(box = art_box) &&
             !(box = trim_box) &&
-            !(box = bleed_box) &&
-            media_box) {
-            box = media_box;
-            media_box = NULL;
+            bleed_box) {
+            box = bleed_box;
         }
-      if (media_box)
-        pdf_release_obj(media_box);
     } else if (PageBox == 1) {
       if (crop_box)
         box = crop_box;
@@ -1164,7 +1161,7 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       pdf_release_obj(tmp);
     }
 
-    if (medbox && PageBox) {
+    if (medbox) {
       double mllx, mlly, murx, mury;
       for (i = 4; i--; ) {
         double x;
