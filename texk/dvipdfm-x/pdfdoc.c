@@ -1064,6 +1064,7 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       goto error;
     }
 
+#ifdef XETEX
     if (PageBox == 0) {
       if (crop_box)
         box = crop_box;
@@ -1074,6 +1075,21 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
             art_box) {
             box = art_box;
         }
+#else
+/*
+ Backward compatibility
+*/
+    if (PageBox == 0) {
+      if (crop_box)
+        box = crop_box;
+      else
+        if (!(box = art_box) &&
+            !(box = trim_box) &&
+            !(box = bleed_box) &&
+            media_box) {
+            box = media_box;
+        }
+#endif
     } else if (PageBox == 1) {
       if (crop_box)
         box = crop_box;
@@ -1161,7 +1177,14 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       pdf_release_obj(tmp);
     }
 
+#ifdef XETEX
     if (medbox) {
+#else
+/*
+ Backward compatibility
+*/
+    if (medbox && PageBox) {
+#endif
       double mllx, mlly, murx, mury;
       for (i = 4; i--; ) {
         double x;
