@@ -984,7 +984,7 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   return 0;
 }
 
-ImageSpecial = 0;
+ImageSpecial = 0; /* default value */
 
 static int
 spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
@@ -1047,6 +1047,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
   ImageSpecial = 1;
   xobj_id = pdf_ximage_findresource(pdf_string_value(fspec), page_no, attr);
   ImageSpecial = 0;
+
   if (xobj_id < 0) {
     spc_warn(spe, "Could not find image resource...");
     pdf_release_obj(fspec);
@@ -1054,6 +1055,16 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
       RELEASE(ident);
     return  -1;
   }
+
+  if (xobj_id > 4999) {
+    spc_warn(spe, "Too many images...");
+    pdf_release_obj(fspec);
+    if (ident)
+      RELEASE(ident);
+    return  -1;
+  }
+
+  PageBox_of_id[xobj_id] = (uint8_t)PageBox;
 
   if (!(ti.flags & INFO_DO_HIDE))
     pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
