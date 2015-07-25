@@ -354,6 +354,8 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
 #define dpx_fopen(n,m) (MFOPEN((n),(m)))
 #define dpx_fclose(f)  (MFCLOSE((f)))
 
+uint8_t PageBox_of_id[5000]; /* 5000 may be enough */
+
 int
 pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
 {
@@ -368,13 +370,13 @@ pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
     I = &ic->ximages[id];
     if (I->ident && !strcmp(ident, I->ident)) {
       f = I->filename;
-/*
-    PageBox can be differrent. So we retry if ImageSpecial != 0
-*/
-      if (ImageSpecial == 0) { 
-        if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
-            I->attr_dict == dict) {
-          return  id;
+      if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
+          I->attr_dict == dict) {
+        if (ImageSpecial) {
+          if ((int)PageBox_of_id[id] == PageBox)
+            return id;
+        } else {
+          return id;
         }
       }
     }
