@@ -984,7 +984,7 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   return 0;
 }
 
-ImageSpecial = 0; /* default value */
+int ImageSpecial = 0; /* default value */
 
 static int
 spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
