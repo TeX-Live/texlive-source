@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.10"
+VERSION = "0.11"
 
 --[[
      musixtex.lua: processes MusiXTeX files (and deletes intermediate files)
@@ -26,6 +26,9 @@ VERSION = "0.10"
 --[[
 
   ChangeLog:
+     version 0.11 2015-07-16 RDT
+      Automatic autosp preprocessing. 
+
      version 0.10 2015-04-23 RDT
       Add -a option to preprocess using autosp
 
@@ -61,7 +64,7 @@ VERSION = "0.10"
 --]]
 
 function usage()
-  print("Usage:  [texlua] musixtex.lua { option | basename[.tex] } ... ")
+  print("Usage:  [texlua] musixtex.lua { option | basename[.tex] | basename[.aspc] } ... ")
   print("options: -v  version")
   print("         -h  help")
   print("         -l  latex (or pdflatex)")
@@ -142,29 +145,36 @@ repeat
   else
     repeat  -- pseudo loop to get effect of "continue" using "break"
       filename = this_arg 
-      if preprocess == 1 then
-        if filename ~= "" and string.sub(filename, -5, -1) == ".aspc" then
-          filename = string.sub(filename, 1, -6)
-        end
-        if not io.open(filename .. ".aspc", "r") then
-          print("Non-existent file: ", filename .. ".aspc")
+      if filename ~= "" and string.sub(filename, -5, -1) == ".aspc" then
+        if io.open(filename, "r") then
+          print("Processing ".. filename )
+        else
+          print("No file: " .. filename )
           break -- out of pseudo loop
         end
-        print("Processing ".. filename .. ".aspc.")
-        if (os.execute("autosp " .. filename ) ~= 0) then
-          print ("Preprocessing fails.")
+        preprocess = 1
+        filename = string.sub(filename, 1, -6)
+      elseif filename ~= "" and string.sub(filename, -4, -1) == ".tex" then
+        if io.open(filename, "r") then
+          print("Processing ".. filename )
+        else
+          print("No file: " .. filename )
           break -- out of pseudo loop
         end
-      else -- preprocess == 0
-        if filename ~= "" and string.sub(filename, -4, -1) == ".tex" then
-          filename = string.sub(filename, 1, -5)
-        end
-      end
-      if not io.open(filename .. ".tex", "r") then
-        print("Non-existent file: ", filename .. ".tex")
+        filename = string.sub(filename, 1, -5)
+      elseif io.open(filename .. ".aspc", "r") then
+        preprocess = 1
+        print("Processing ".. filename .. ".aspc")
+      elseif io.open(filename .. ".tex", "r") then
+        print("Processing ".. filename .. ".tex")
+      else
+        print("No file: " .. filename )
         break -- out of pseudo loop
       end
-      print("Processing ".. filename .. ".tex.")
+      if preprocess == 1 and os.execute("autosp " .. filename) ~= 0 then
+        print ("Preprocessing fails.")
+        break -- out of pseudo loop
+      end
       os.remove( filename .. ".mx2" )
       if (passes == 1 or os.execute(tex .. " " .. filename) == 0) and
          (passes == 1 or os.execute(musixflx .. " " .. filename) == 0) and
