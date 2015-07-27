@@ -1056,7 +1056,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  if (xobj_id > 4999) {
+  if (xobj_id > MAX_IMAGES - 1) {
     spc_warn(spe, "Too many images...");
     pdf_release_obj(fspec);
     if (ident)

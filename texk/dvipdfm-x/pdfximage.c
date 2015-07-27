@@ -354,7 +354,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
 #define dpx_fopen(n,m) (MFOPEN((n),(m)))
 #define dpx_fclose(f)  (MFCLOSE((f)))
 
-uint8_t PageBox_of_id[5000]; /* 5000 may be enough */
+uint8_t PageBox_of_id[MAX_IMAGES];
 
 int
 pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
