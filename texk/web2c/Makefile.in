@@ -15627,7 +15627,7 @@ etex.web: tie$(EXEEXT) $(etex_web_srcs)
 # Generate etex.ch
 etex.ch: tie$(EXEEXT) etex.web $(etex_ch_srcs)
 	$(tie_c) etex.web $(etex_ch_srcs)
-etexdir/wprob.test: etex$(EXEEXT)
+etexdir/wprob.log: etex$(EXEEXT)
 etexdir/etriptest.log: etex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 etrip.diffs: etex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@

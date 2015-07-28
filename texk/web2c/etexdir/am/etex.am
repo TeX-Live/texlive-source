@@ -74,7 +74,7 @@ EXTRA_DIST += \
 # e-TeX Tests
 #
 etex_tests = etexdir/wprob.test etexdir/etriptest.test
-etexdir/wprob.test: etex$(EXEEXT)
+etexdir/wprob.log: etex$(EXEEXT)
 etexdir/etriptest.log: etex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 
 EXTRA_DIST += $(etex_tests)
