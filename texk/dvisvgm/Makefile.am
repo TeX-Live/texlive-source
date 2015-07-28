@@ -23,6 +23,7 @@ include $(srcdir)/../../am/dist_hook.am
 NEVER_NAMES += $(NEVER_NAMES_SUB)
 
 AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/clipper -I$(top_srcdir)/$(DVISVGM_TREE)/src
+AM_CPPFLAGS += -I$(top_srcdir)/$(DVISVGM_TREE)/xxHash
 AM_CPPFLAGS += $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES)
 AM_CPPFLAGS += $(ZLIB_INCLUDES) $(LIBGS_INCLUDES)
 if WIN32
@@ -47,7 +48,7 @@ $(dvisvgm_OBJECTS): $(noinst_LIBRARIES)
 LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(POTRACE_LIBS) $(FREETYPE2_LIBS)
 LDADD += $(ZLIB_LIBS) $(LIBGS_LIBS)
 
-noinst_LIBRARIES = libdvisvgm.a libclipper.a
+noinst_LIBRARIES = libdvisvgm.a libclipper.a libxxhash.a
 
 nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/BasicDVIReader.cpp \
@@ -141,6 +142,9 @@ $(libdvisvgm_a_OBJECTS): $(POTRACE_DEPEND)
 
 nodist_libclipper_a_SOURCES = \
 	@DVISVGM_TREE@/clipper/clipper.cpp
+
+nodist_libxxhash_a_SOURCES = \
+	@DVISVGM_TREE@/xxHash/xxhash.c
 
 config.force: $(dvisvgm_dependencies)
 	echo timestamp >config.force
