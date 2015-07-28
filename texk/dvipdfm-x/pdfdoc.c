@@ -1185,7 +1185,6 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
 */
     if (medbox && PageBox) {
 #endif
-      double mllx, mlly, murx, mury;
       for (i = 4; i--; ) {
         double x;
         pdf_obj *tmp = pdf_deref_obj(pdf_get_array(medbox, i));
@@ -1195,17 +1194,13 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
         }
         x = pdf_number_value(tmp);
         switch (i) {
-        case 0: mllx = x; break;
-        case 1: mlly = x; break;
-        case 2: murx = x; break;
-        case 3: mury = x; break;
+        case 0: if (bbox->llx < x) bbox->llx = x; break;
+        case 1: if (bbox->lly < x) bbox->lly = x; break;
+        case 2: if (bbox->urx > x) bbox->urx = x; break;
+        case 3: if (bbox->ury > x) bbox->ury = x; break;
         }
         pdf_release_obj(tmp);
       }
-      if (bbox->llx < mllx) bbox->llx = mllx;
-      if (bbox->lly < mlly) bbox->lly = mlly;
-      if (bbox->urx > murx) bbox->urx = murx;
-      if (bbox->ury > mury) bbox->ury = mury;
     }
   }
 
