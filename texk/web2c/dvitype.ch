@@ -668,7 +668,6 @@ long_options[current_option].has_arg := 0;
 long_options[current_option].flag := address_of (show_opcodes);
 long_options[current_option].val := 1;
 incr (current_option);
-new_mag := 0; {default is to keep the old one}
 
 @ @<Glob...@> =
 @!show_opcodes: c_int_type;
