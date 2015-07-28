@@ -143,11 +143,12 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-tibetan.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-icu.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-graphite2.$(OBJEXT)
 libharfbuzz_a_OBJECTS = $(am_libharfbuzz_a_OBJECTS)
@@ -460,7 +461,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/harfbuzz-0.9.41/src/hb-version.h.in \
+	$(top_srcdir)/harfbuzz-1.0.1/src/hb-version.h.in \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
@@ -693,6 +694,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-hangul.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-hebrew.cc \
@@ -702,15 +704,17 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar-machine.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-tibetan.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-private.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-private.hh \
 	@HARFBUZZ_TREE@/src/hb-icu.cc \
 	@HARFBUZZ_TREE@/src/hb-graphite2.cc
@@ -785,7 +789,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-0.9.41/src/hb-version.h.in
+hb-version.h: $(top_builddir)/config.status $(top_srcdir)/harfbuzz-1.0.1/src/hb-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
@@ -871,19 +875,22 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-ot-shape-complex-sea.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-tibetan.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT):  \
+@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-fallback.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-icu.$(OBJEXT):  \
@@ -933,9 +940,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic-table.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-myanmar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-sea.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-thai.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-tibetan.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use-table.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-fallback.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-normalize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape.Po@am__quote@
