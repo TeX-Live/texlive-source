@@ -1,3 +1,9 @@
+2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptexmac.h: Avoid possible integer overflow.
+	* writettf.h: No reason to use 'long' for 32-bit integers.
+	* writettf.c: No reason to use the (possibly 64-bit) 'integer'.
+
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/pdftex.am, am/pdftosrc.am, am/ttf2afm.am: Dependencies for

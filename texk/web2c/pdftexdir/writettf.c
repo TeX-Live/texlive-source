@@ -921,7 +921,7 @@ static void ttf_write_dirtab(void)
     dirtab_entry *tab;
     TTF_ULONG i, k;
     char *p;
-    const integer save_offset = ttf_offset();
+    const uint32_t save_offset = ttf_offset();
     ttf_seek_outbuf(TABDIR_OFF);
     if (is_subsetted(fd_cur->fm)) {
         for (i = 0; i < DEFAULT_NTABS; i++) {
@@ -946,7 +946,7 @@ static void ttf_write_dirtab(void)
     /* adjust checkSumAdjustment */
     tmp_ulong = 0;
     checksum = 0;
-    for (p = fb_array, i = 0; i < (unsigned) save_offset;) {
+    for (p = fb_array, i = 0; i < save_offset;) {
         tmp_ulong = (tmp_ulong << 8) + *p++;
         i++;
         if (i % 4 == 0) {
@@ -955,7 +955,7 @@ static void ttf_write_dirtab(void)
         }
     }
     if (i % 4 != 0) {
-        pdftex_warn("font length is not a multiple of 4 (%li)", i);
+        pdftex_warn("font length is not a multiple of 4 (%d)", i);
         checksum <<= 8 * (4 - i % 4);
     }
     k = 0xB1B0AFBA - checksum;

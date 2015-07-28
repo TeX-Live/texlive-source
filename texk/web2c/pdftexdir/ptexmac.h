@@ -113,6 +113,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         T##_limit *= 2;                                     \
         if ((unsigned)(T##_ptr - T##_array + (n)) > (unsigned)(T##_limit))      \
             T##_limit = T##_ptr - T##_array + (n);          \
+        if ((unsigned)(T##_limit) > INT_MAX)                \
+            pdftex_fail(#T "_array exceeds size limit");    \
         xretalloc(T##_array, T##_limit, T##_entry);         \
         T##_ptr = T##_array + last_ptr_index;               \
     }                                                       \
