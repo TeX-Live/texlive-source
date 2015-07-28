@@ -217,6 +217,10 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/XMLNode.$(OBJEXT) \
 	@DVISVGM_TREE@/src/XMLString.$(OBJEXT) $(am__objects_1)
 libdvisvgm_a_OBJECTS = $(nodist_libdvisvgm_a_OBJECTS)
+libxxhash_a_AR = $(AR) $(ARFLAGS)
+libxxhash_a_LIBADD =
+nodist_libxxhash_a_OBJECTS = @DVISVGM_TREE@/xxHash/xxhash.$(OBJEXT)
+libxxhash_a_OBJECTS = $(nodist_libxxhash_a_OBJECTS)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 nodist_dvisvgm_OBJECTS = @DVISVGM_TREE@/src/dvisvgm.$(OBJEXT) \
@@ -247,23 +251,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_CXX = $(am__v_CXX_@AM_V@)
-am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
-am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
-CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
-am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
-am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -282,8 +269,26 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 SOURCES = $(nodist_libclipper_a_SOURCES) \
-	$(nodist_libdvisvgm_a_SOURCES) $(nodist_dvisvgm_SOURCES)
+	$(nodist_libdvisvgm_a_SOURCES) $(nodist_libxxhash_a_SOURCES) \
+	$(nodist_dvisvgm_SOURCES)
 DIST_SOURCES =
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -705,7 +710,8 @@ NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/clipper \
-	-I$(top_srcdir)/$(DVISVGM_TREE)/src $(KPATHSEA_INCLUDES) \
+	-I$(top_srcdir)/$(DVISVGM_TREE)/src \
+	-I$(top_srcdir)/$(DVISVGM_TREE)/xxHash $(KPATHSEA_INCLUDES) \
 	$(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \
 	$(LIBGS_INCLUDES) $(am__append_1)
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -720,7 +726,7 @@ nodist_dvisvgm_SOURCES = \
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(POTRACE_LIBS) \
 	$(FREETYPE2_LIBS) $(ZLIB_LIBS) $(LIBGS_LIBS)
-noinst_LIBRARIES = libdvisvgm.a libclipper.a
+noinst_LIBRARIES = libdvisvgm.a libclipper.a libxxhash.a
 nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/Bezier.cpp \
 	@DVISVGM_TREE@/src/BgColorSpecialHandler.cpp \
@@ -795,13 +801,16 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 nodist_libclipper_a_SOURCES = \
 	@DVISVGM_TREE@/clipper/clipper.cpp
 
+nodist_libxxhash_a_SOURCES = \
+	@DVISVGM_TREE@/xxHash/xxhash.c
+
 DISTCLEANFILES = config.force CXXLD.sh
 TESTS = tests/dvisvgm.test
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .c .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
@@ -1118,6 +1127,20 @@ libdvisvgm.a: $(libdvisvgm_a_OBJECTS) $(libdvisvgm_a_DEPENDENCIES) $(EXTRA_libdv
 	$(AM_V_at)-rm -f libdvisvgm.a
 	$(AM_V_AR)$(libdvisvgm_a_AR) libdvisvgm.a $(libdvisvgm_a_OBJECTS) $(libdvisvgm_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libdvisvgm.a
+@DVISVGM_TREE@/xxHash/$(am__dirstamp):
+	@$(MKDIR_P) @DVISVGM_TREE@/xxHash
+	@: > @DVISVGM_TREE@/xxHash/$(am__dirstamp)
+@DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @DVISVGM_TREE@/xxHash/$(DEPDIR)
+	@: > @DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/xxHash/xxhash.$(OBJEXT):  \
+	@DVISVGM_TREE@/xxHash/$(am__dirstamp) \
+	@DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp)
+
+libxxhash.a: $(libxxhash_a_OBJECTS) $(libxxhash_a_DEPENDENCIES) $(EXTRA_libxxhash_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libxxhash.a
+	$(AM_V_AR)$(libxxhash_a_AR) libxxhash.a $(libxxhash_a_OBJECTS) $(libxxhash_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libxxhash.a
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -1182,6 +1205,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f @DVISVGM_TREE@/clipper/*.$(OBJEXT)
 	-rm -f @DVISVGM_TREE@/src/*.$(OBJEXT)
+	-rm -f @DVISVGM_TREE@/xxHash/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -1270,6 +1294,31 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/dvisvgm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/gzstream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/psdefs.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/xxHash/$(DEPDIR)/xxhash.Po@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1769,6 +1818,8 @@ distclean-generic:
 	-rm -f @DVISVGM_TREE@/clipper/$(am__dirstamp)
 	-rm -f @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 	-rm -f @DVISVGM_TREE@/src/$(am__dirstamp)
+	-rm -f @DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp)
+	-rm -f @DVISVGM_TREE@/xxHash/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
@@ -1781,7 +1832,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool \
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR)
+	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR) @DVISVGM_TREE@/xxHash/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -1829,7 +1880,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR)
+	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR) @DVISVGM_TREE@/xxHash/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

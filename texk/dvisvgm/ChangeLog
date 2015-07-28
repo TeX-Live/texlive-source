@@ -1,3 +1,9 @@
+2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Imported release 1.10.
+	* version.ac: Adapted.
+	* Makefile.am: Adjusted.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

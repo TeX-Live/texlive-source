@@ -1,3 +1,44 @@
+2015-07-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .travis.yml, configure.ac, src/Doxyfile: 
+  set version to 1.10 
+
+2015-07-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README.md, doc/dvisvgm.txt.in, src/BasicDVIReader.cpp, 
+    src/BasicDVIReader.h, src/DVIReader.cpp, src/DVIReader.h, src/Font.h, 
+    src/FontManager.cpp, src/FontManager.h: 
+  added support for new XDV format 6 
+
+2015-07-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README, README.md: 
+  updated README 
+
+2015-07-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/MiKTeXCom.cpp: 
+  added some comments to MiKTeXCom.cpp 
+
+  * src/dvisvgm.cpp: 
+  check for option --help before initializing the FileFinder 
+
+2015-07-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Font.cpp, src/Makefile.am, src/Unicode.cpp, src/Unicode.h, 
+    tests/Makefile.am, tests/create-makefile: 
+  added mapping from character names to unicode for PostScript fonts 
+
+  * Makefile.am, configure.ac, xxHash/LICENSE, xxHash/Makefile.am, 
+    xxHash/xxhash.c, xxHash/xxhash.h: 
+  added xxHash library (https://github.com/Cyan4973/xxHash) 
+
+  * tests/BezierTest.cpp: 
+  removed #include "debug.h" from test 
+
 2015-04-07  Martin Gieseking  <martin.gieseking@uos.de>
 
   * src/SVGTree.cpp: 

@@ -4,8 +4,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[1.9.2],[martin.gieseking@uos.de])
-DATE="April 2015"
+AC_INIT([dvisvgm],[1.10],[martin.gieseking@uos.de])
+DATE="July 2015"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
@@ -171,6 +171,6 @@ AS_IF([ test "$enable_code_coverage" = "yes" ], [
 AC_SUBST(DATE)
 AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_LDFLAGS)
-AC_CONFIG_FILES([Makefile clipper/Makefile src/Makefile tests/Makefile doc/dvisvgm.txt doc/Makefile])
+AC_CONFIG_FILES([Makefile clipper/Makefile xxHash/Makefile src/Makefile tests/Makefile doc/dvisvgm.txt doc/Makefile])
 AC_OUTPUT
 
