@@ -1,3 +1,7 @@
+2015-07-28  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* fam256.ch: Fix delcode initialization.
+
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptriptest (removed): Renamed ...
