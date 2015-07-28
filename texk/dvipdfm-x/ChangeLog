@@ -1,3 +1,7 @@
+2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfdoc.c: Somewhat simplify to avoid compiler warnings.
+
 2015-07-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* epdf.c. pdfdoc.c, pdfobj.h, pdfximage.c, spc_pdfm.c, spc_util.c, xbb.c:
