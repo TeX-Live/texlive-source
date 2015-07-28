@@ -134,8 +134,12 @@ else  begin print_esc("scriptscriptfont");
 @z
 %-----------------------------------------------
 @x
+for k:=0 to 255 do del_code(k):=-1;
 del_code("."):=0; {this null delimiter is used in error recovery}
 @y
+for k:=0 to 255 do
+  begin del_code(k):=-1; setintone(eqtb[del_code_base+k],-1);
+  end;
 del_code("."):=0; setintone(eqtb[del_code_base+"."],0);
       {this null delimiter is used in error recovery}
 @z
