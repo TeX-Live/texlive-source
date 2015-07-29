@@ -1174,7 +1174,7 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
     }
 
     /* New scheme only for XDV files */
-    if (medbox && (!is_xdv || PageBox)) {
+    if (medbox && (is_xdv || PageBox)) {
       for (i = 4; i--; ) {
         double x;
         pdf_obj *tmp = pdf_deref_obj(pdf_get_array(medbox, i));
