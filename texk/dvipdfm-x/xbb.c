@@ -41,8 +41,6 @@
 #include "dvipdfmx.h"
 #include "pdflimits.h"
 
-#define XBB_PROGRAM "extractbb"
-
 int PageBox = 0;
 /*
  PageBox=0 :default
@@ -57,7 +55,7 @@ static long Include_Page = 1;
 
 static void show_version(void)
 {
-  fprintf (stdout, "\nThis is " XBB_PROGRAM " Version " VERSION "\n");
+  fprintf (stdout, "\nThis is %s Version " VERSION "\n", my_name);
   fprintf (stdout, "\nCopyright (C) 2008-2015 by Jin-Hwan Cho and Matthias Franz\n");
   fprintf (stdout, "\nThis is free software; you can redistribute it and/or modify\n");
   fprintf (stdout, "it under the terms of the GNU General Public License as published by\n");
@@ -67,9 +65,9 @@ static void show_version(void)
 
 static void show_usage(void)
 {
-  printf ("\nUsage: " XBB_PROGRAM " [-B pagebox] [-p page] [-q|-v] [-O] [-m|-x] FILE...\n");
-  printf ("       " XBB_PROGRAM " --help|--version\n");
-  printf ("Extract bounding box from PDF, PNG, or JPEG file; default output below.\n");
+  printf ("\nUsage: %s [-B pagebox] [-p page] [-q|-v] [-O] [-m|-x] FILE...\n", my_name);
+  printf ("       %s --help|--version\n", my_name);
+  printf ("Extract bounding box from PDF, PNG, JPEG, JP2, or BMP file; default output below.\n");
   printf ("\nOptions:\n");
   printf ("  -B pagebox\tSpecify a PDF pagebox for bounding box\n");
   printf ("            \tpagebox=cropbox, mediabox, artbox, trimbox, bleedbox\n");
@@ -79,13 +77,13 @@ static void show_usage(void)
   printf ("  -q\t\tBe quiet\n");
   printf ("  -v\t\tBe verbose\n");
   printf ("  -O\t\tWrite output to stdout\n");
-  printf ("  -m\t\tOutput .bb  file used in DVIPDFM%s\n", compat_mode ? " (default)" : "");
-  printf ("  -x\t\tOutput .xbb file used in DVIPDFMx%s\n", compat_mode ? "" : " (default)");
+  printf ("  -m\t\tOutput .bb  file used in DVIPDFM%s\n", my_name[1] == 'b' ? " (default)" : "");
+  printf ("  -x\t\tOutput .xbb file used in DVIPDFMx%s\n", my_name[1] == 'b' ? "" : " (default)");
 }
 
 static void usage(void)
 {
-  fprintf(stdout, "\nTry \"" XBB_PROGRAM " --help\" for more information.\n");
+  fprintf(stdout, "\nTry \"%s --help\" for more information.\n", my_name);
   exit(1);
 }
 
@@ -160,7 +158,7 @@ static void write_xbb(char *fname,
   }
 
   fprintf(fp, "%%%%Title: %s\n", fname);
-  fprintf(fp, "%%%%Creator: %s %s\n", XBB_PROGRAM, VERSION);
+  fprintf(fp, "%%%%Creator: extractbb %s\n", VERSION);
   fprintf(fp, "%%%%BoundingBox: %ld %ld %ld %ld\n", bbllx, bblly, bburx, bbury);
 
   if (!compat_mode) {

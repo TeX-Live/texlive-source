@@ -635,10 +635,6 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
-XDVIPDFMX_FALSE
-XDVIPDFMX_TRUE
-DVIPDFMX_FALSE
-DVIPDFMX_TRUE
 WIN32_CALL_FALSE
 WIN32_CALL_TRUE
 WIN32_FALSE
@@ -795,8 +791,6 @@ with_gnu_ld
 with_sysroot
 enable_libtool_lock
 enable_largefile
-enable_dvipdfmx
-enable_xdvipdfmx
 with_system_kpathsea
 with_system_zlib
 with_zlib_includes
@@ -1453,8 +1447,6 @@ Optional Features:
                           optimize for fast installation [default=yes]
   --disable-libtool-lock  avoid locking (might break parallel builds)
   --disable-largefile     omit support for large files
-  --disable-dvipdfmx      do not build the dvipdfmx program
-  --disable-xdvipdfmx     do not build the xdvipdfmx program
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -13687,33 +13679,6 @@ fi
 
 
 
-## texk/dvipdfm-x/ac/dvipdfm-x.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm-x/
-## configure options for dvipdfm-x
-# Check whether --enable-dvipdfmx was given.
-if test "${enable_dvipdfmx+set}" = set; then :
-  enableval=$enable_dvipdfmx;
-fi
-
-case $enable_dvipdfmx in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_dvipdfmx=yes ;;
-esac
-# Check whether --enable-xdvipdfmx was given.
-if test "${enable_xdvipdfmx+set}" = set; then :
-  enableval=$enable_xdvipdfmx;
-fi
-
-case $enable_xdvipdfmx in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_xdvipdfmx=yes ;;
-esac
-
-
-
 ac_config_headers="$ac_config_headers config.h"
 
 
@@ -16113,23 +16078,6 @@ if test -z "$WIN32_TRUE"; then :
 fi
 
 
- if test "x$enable_dvipdfmx" != xno; then
-  DVIPDFMX_TRUE=
-  DVIPDFMX_FALSE='#'
-else
-  DVIPDFMX_TRUE='#'
-  DVIPDFMX_FALSE=
-fi
-
- if test "x$enable_xdvipdfmx" != xno; then
-  XDVIPDFMX_TRUE=
-  XDVIPDFMX_FALSE='#'
-else
-  XDVIPDFMX_TRUE='#'
-  XDVIPDFMX_FALSE=
-fi
-
-
 ac_config_files="$ac_config_files Makefile"
 
 
@@ -16277,14 +16225,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${WIN32_CALL_TRUE}" && test -z "${WIN32_CALL_FALSE}"; then
   as_fn_error $? "conditional \"WIN32_CALL\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${DVIPDFMX_TRUE}" && test -z "${DVIPDFMX_FALSE}"; then
-  as_fn_error $? "conditional \"DVIPDFMX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${XDVIPDFMX_TRUE}" && test -z "${XDVIPDFMX_FALSE}"; then
-  as_fn_error $? "conditional \"XDVIPDFMX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

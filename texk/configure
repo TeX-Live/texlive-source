@@ -767,8 +767,6 @@ enable_dvi2tty
 enable_dvidvi
 enable_dviljk
 enable_dvipdfm_x
-enable_dvipdfmx
-enable_xdvipdfmx
 enable_dvipng
 enable_debug
 enable_timing
@@ -1584,8 +1582,6 @@ Optional Features:
   --disable-dvidvi        do not build the dvidvi package
   --disable-dviljk        do not build the dviljk package
   --disable-dvipdfm-x     do not build the dvipdfm-x package
-  --disable-dvipdfmx        do not build the dvipdfmx program
-  --disable-xdvipdfmx       do not build the xdvipdfmx program
   --disable-dvipng        do not build the dvipng package
   --disable-debug           Compile without debug (-d) option
   --enable-timing           Output execution time of dvipng
@@ -4322,32 +4318,6 @@ test "x$enable_dvipdfm_x" = xno || {
   need_libpng=yes
   need_libpaper=yes
 }
-
-## texk/dvipdfm-x/ac/dvipdfm-x.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm-x/
-## configure options for dvipdfm-x
-# Check whether --enable-dvipdfmx was given.
-if test "${enable_dvipdfmx+set}" = set; then :
-  enableval=$enable_dvipdfmx;
-fi
-
-case $enable_dvipdfmx in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_dvipdfmx=yes ;;
-esac
-# Check whether --enable-xdvipdfmx was given.
-if test "${enable_xdvipdfmx+set}" = set; then :
-  enableval=$enable_xdvipdfmx;
-fi
-
-case $enable_xdvipdfmx in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_xdvipdfmx=yes ;;
-esac
-
 
 ## texk/dvipng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options and TL libraries required for dvipng
