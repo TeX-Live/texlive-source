@@ -1,5 +1,13 @@
 2015-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* Makefile.am, ac/withenable.ac, configure.ac, dvipdfmx.c,
+	xbb.c: Only one binary and a symlink dvipdfmx->xdvipdfmx.
+	* ac/dvipdfm-x.ac (removed): Obsolete configure options.
+	* dvipdfm*.test (removed): Obsolete tests.
+	* tests/img*.{bb,bbx} (removed): Obsolete test data.
+
+2015-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	Make dvipdfmx and xdvipdfmx essentially the same.
 	* dvicodes.h: Slightly reformat.
 	* dvi.c: Run-time decision to hanlde XeTeX extensions only for

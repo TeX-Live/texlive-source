@@ -65,11 +65,7 @@
 
 int is_xdv = 0;
 
-#ifdef XETEX
-const char *my_name = "xdvipdfmx";
-#else
-const char *my_name = "dvipdfmx";
-#endif
+const char *my_name;
 
 int compat_mode = 0;     /* 0 = dvipdfmx, 1 = dvipdfm */
 
@@ -153,9 +149,8 @@ show_version (void)
   printf ("This is %s Version " VERSION " by the DVIPDFMx project team,\n",
                    my_name);
   printf ("modified for TeX Live,\n");
-#ifdef XETEX
-  printf ("an extended version of DVIPDFMx, which in turn was\n");
-#endif
+  if (*my_name == 'x')
+    printf ("an extended version of DVIPDFMx, which in turn was\n");
   printf ("an extended version of dvipdfm-0.13.2c developed by Mark A. Wicks.\n");
   printf ("\nCopyright (C) 2002-2015 the DVIPDFMx project team\n");
   printf ("Copyright (C) 2006 SIL International.\n");
@@ -888,13 +883,9 @@ do_mps_pages (void)
   }
 }
 
-#if defined(XETEX)
-/* At present no DLL for xdvipdfmx */
-#undef DLLPROC
-#else
 /* Support to make DLL in W32TeX */
 #define DLLPROC dlldvipdfmxmain
-#endif
+
 #if defined(WIN32) && !defined(__MINGW32__) && !defined(MIKTEX) && defined(DLLPROC)
 extern __declspec(dllexport) int DLLPROC (int argc, char *argv[]);
 #else
@@ -937,6 +928,7 @@ CDECL main (int argc, char *argv[])
                (STREQ (argv[1], "--xbb") ||
                 STREQ (argv[1], "--extractbb") ||
                 STREQ (argv[1], "--dvipdfm") ||
+                STREQ (argv[1], "--dvipdfmx") ||
                 STREQ (argv[1], "--ebb"))) {
     argc--;
     base = argv++[1]+2;
@@ -952,6 +944,13 @@ CDECL main (int argc, char *argv[])
     compat_mode = 1;
     return extractbb (argc, argv);
   }
+  if (FILESTRCASEEQ (base, "dvipdfm"))
+    compat_mode = 1;
+  if (FILESTRCASEEQ (base, "dvipdfmx"))
+    my_name = "dvipdfmx";
+  else
+    my_name = "xdvipdfmx";
+  
 
   /* Special-case single option --help, --showpaper, or --version, to avoid
      possible diagnostics about config files, etc.  */
@@ -966,10 +965,6 @@ CDECL main (int argc, char *argv[])
     exit(0);
   }
 
-  if (FILESTRCASEEQ (base, "dvipdfm"))
-    compat_mode = 1;
-  else
-    free (base);
 
   paperinit();
   system_default();

@@ -3,23 +3,15 @@
 ## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-bin_PROGRAMS =
-if DVIPDFMX
-bin_PROGRAMS += dvipdfmx
+bin_PROGRAMS = xdvipdfmx
 if !WIN32
 dist_bin_SCRIPTS = dvipdft
 endif !WIN32
-endif DVIPDFMX
-if XDVIPDFMX
-bin_PROGRAMS += xdvipdfmx
-endif XDVIPDFMX
-EXTRA_PROGRAMS = dvipdfmx xdvipdfmx
 
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(LIBPAPER_INCLUDES)
-xdvipdfmx_CPPFLAGS = -DXETEX $(AM_CPPFLAGS)
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-dvipdfmx_SOURCES = \
+xdvipdfmx_SOURCES = \
 	agl.c \
 	agl.h \
 	bmpimage.c \
@@ -171,47 +163,34 @@ dvipdfmx_SOURCES = \
 	vf.h \
 	xbb.c
 
-nodist_xdvipdfmx_SOURCES = $(dvipdfmx_SOURCES)
-
 LDADD = $(KPATHSEA_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBPAPER_LIBS)
 
-$(dvipdfmx_OBJECTS) $(xdvipdfmx_OBJECTS): config.force
+$(xdvipdfmx_OBJECTS): config.force
 
 ## Links
 ##
-bin_links =
+bin_links = \
+	xdvipdfmx$(EXEEXT):dvipdfm \
+	xdvipdfmx$(EXEEXT):dvipdfmx \
+	xdvipdfmx$(EXEEXT):ebb \
+	xdvipdfmx$(EXEEXT):extractbb
 
-if DVIPDFMX
 if WIN32
-noinst_PROGRAMS = call_dvipdfmx
+noinst_PROGRAMS = call_xdvipdfmx
 endif WIN32
-bin_links += \
-	dvipdfmx$(EXEEXT):dvipdfm \
-	dvipdfmx$(EXEEXT):ebb \
-	dvipdfmx$(EXEEXT):extractbb
-endif DVIPDFMX
 
-call_dvipdfmx_CPPFLAGS = -DEXEPROG=\"dvipdfmx.exe\"
-nodist_call_dvipdfmx_SOURCES = callexe.c
+call_xdvipdfmx_CPPFLAGS = -DEXEPROG=\"xdvipdfmx.exe\"
+nodist_call_xdvipdfmx_SOURCES = callexe.c
 
 include $(top_srcdir)/../../am/bin_links.am
 
 ## Manpages
 
-man1_links =
-if DVIPDFMX
 dist_man1_MANS = man/dvipdfmx.1 man/dvipdft.1 man/extractbb.1
-man1_links += extractbb:ebb
-man1_links += dvipdfmx:dvipdfm
-endif DVIPDFMX
-
-## doesn't seem worth worrying about the broken man page link
-## if only xdvipdfmx is being built.  not like there is x*x-specific
-## documentation anywhere anyway.
-if XDVIPDFMX
-man1_links += dvipdfmx:xdvipdfmx
-endif XDVIPDFMX
-
+man1_links = \
+	dvipdfmx:dvipdfm \
+	dvipdfmx:xdvipdfmx \
+	extractbb:ebb
 include $(top_srcdir)/../../am/man1_links.am
 
 ## Data
@@ -229,24 +208,22 @@ cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 
 install-exec-hook: install-bin-links
-if DVIPDFMX
 if WIN32
-	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
-	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
-	$(INSTALL_PROGRAM) call_dvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfmx$(EXEEXT)
+	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
+	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
 endif WIN32
-endif DVIPDFMX
 
 install-data-hook: install-man1-links
 
 uninstall-hook: uninstall-bin-links uninstall-man1-links
-if DVIPDFMX
 if WIN32
 	rm -f $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
+	rm -f $(DESTDIR)$(bindir)/dvipdfmx$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/ebb$(EXEEXT)
 	rm -f $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
 endif WIN32
-endif DVIPDFMX
 
 all-local: config.force
 
@@ -267,34 +244,23 @@ DISTCLEANFILES = config.force
 
 ## Tests
 ##
-TESTS =
-dvipdfmx_tests = dvipdfmx.test dvipdfm-ann.test dvipdfm-bb.test dvipdfm-bkm.test dvipdfm-psz.test
-dvipdfmx_tests += dvipdfm-res.test 
-dvipdfmx.log dvipdfm-ann.log dvipdfm-bb.log dvipdfm-bkm.log dvipdfm-psz.log \
-	dvipdfm-res.log: dvipdfmx$(EXEEXT)
-if DVIPDFMX
-TESTS += $(dvipdfmx_tests)
-endif DVIPDFMX
-xdvipdfmx_tests = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
-xdvipdfmx_tests += xdvipdfm-res.test xdvipdfm-ttc.test
+TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
+TESTS += xdvipdfm-res.test xdvipdfm-ttc.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
 	xdvipdfm-res.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
-if XDVIPDFMX
-TESTS += $(xdvipdfmx_tests)
-endif XDVIPDFMX
-EXTRA_DIST = $(dvipdfmx_tests) $(xdvipdfmx_tests)
+EXTRA_DIST = $(TESTS)
 ## Test Data
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
 EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex
-EXTRA_DIST += tests/image.bmp tests/imgbmp.bb tests/imgbmp.xbb tests/picbmp.bb tests/picbmp.xbb
-EXTRA_DIST += tests/image.jp2 tests/imgjp2.bb tests/imgjp2.xbb tests/picjp2.bb tests/picjp2.xbb
-EXTRA_DIST += tests/image.jpeg tests/imgjpeg.bb tests/imgjpeg.xbb tests/picjpeg.bb tests/picjpeg.xbb
-EXTRA_DIST += tests/image.png tests/imgpng.bb tests/imgpng.xbb tests/picpng.bb tests/picpng.xbb
-EXTRA_DIST += tests/image.pdf tests/imgpdf.bb tests/imgpdf.xbb tests/picpdf.bb tests/picpdf.xbb
+EXTRA_DIST += tests/image.bmp tests/picbmp.bb tests/picbmp.xbb
+EXTRA_DIST += tests/image.jp2 tests/picjp2.bb tests/picjp2.xbb
+EXTRA_DIST += tests/image.jpeg tests/picjpeg.bb tests/picjpeg.xbb
+EXTRA_DIST += tests/image.png tests/picpng.bb tests/picpng.xbb
+EXTRA_DIST += tests/image.pdf tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.dvi tests/image.tex
 EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
 EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
 EXTRA_DIST += tests/resrc.dvi tests/resrc.tex
 EXTRA_DIST += tests/xbmc.dvi tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
 EXTRA_DIST += tests/ttc.dvi tests/ttc.tex tests/test.ttc
-DISTCLEANFILES += img*.* pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf
+DISTCLEANFILES += pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf
