@@ -1045,11 +1045,7 @@ handle_multibyte_string (struct dev_font *font,
    * encoding.
    * TODO: A character decomposed to multiple characters.
    */
-#ifdef XETEX
   if (ctype != -1 && font->enc_id >= 0) {
-#else
-  if (font->enc_id >= 0) {
-#endif
     const unsigned char *inbuf;
     unsigned char *outbuf;
     long           inbytesleft, outbytesleft;
@@ -1109,9 +1105,8 @@ void pdf_dev_pop_coord(void)
 
 /*
  * ctype:
-#ifdef XETEX
  *  -1 input string contains 2-byte Freetype glyph index values
-#endif
+ *     (XeTeX only)
  *  0  byte-width of char can be variable and input string
  *     is properly encoded.
  *  n  Single character cosumes n bytes in input string.
@@ -1891,7 +1886,6 @@ pdf_dev_put_image (int             id,
                             res_name,
                             pdf_ximage_get_reference(id));
 
-#ifdef XETEX
   if (dvi_is_tracking_boxes()) {
     pdf_tmatrix P;
     int i;
@@ -1932,7 +1926,6 @@ pdf_dev_put_image (int             id,
 
     pdf_doc_expand_box(&rect);
   }
-#endif
 
   return 0;
 }
