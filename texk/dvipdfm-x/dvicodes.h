@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -31,7 +31,7 @@
 #define SET1   128 /* Typesets its single operand between 128 and 255 */
 #define SET2   129 /* Typesets its single two byte unsigned operand */
 #define SET3   130 /* Typesets its single three byte unsigned operand */
-#define SET4   131 /* Typesets its single four byte unsigned operand */
+#define SET4   131 /* Typesets its single four byte signed operand */
 #define SET_RULE 132 /* Sets a rule of height param1(four bytes) and width param2(four bytes) */
                      /* These are *signed*.  Nothing typeset for nonpositive values */
                      /* However, negative value *do* change current point */
@@ -86,20 +86,20 @@
 #define XXX2       240 /* Two byte operand */
 #define XXX3       241 /* Three byte operand */ 
 #define XXX4       242 /* Four byte operand (Knuth says TeX uses only XXX1 and XXX4 */
-#define FNT_DEF1  243 /* One byte font number, four byte checksum, four byte magnified size (DVI units),
+#define FNT_DEF1   243 /* One byte font number, four byte checksum, four byte magnified size (DVI units),
                           four byte designed size, single byte directory length, single byte name length,
                           followed by complete name (area+name) */
-#define FNT_DEF2  244 /* Same for two byte font number */
-#define FNT_DEF3  245 /* Same for three byte font number */
-#define FNT_DEF4  246 /* Four byte font number (Knuth says signed) */
+#define FNT_DEF2   244 /* Same for two byte font number */
+#define FNT_DEF3   245 /* Same for three byte font number */
+#define FNT_DEF4   246 /* Four byte font number (Knuth says signed) */
 #define PRE        247 /* Preamble:
                               one byte DVI version (should be 2)
                               four byte unsigned numerator
                               four byte unsigned denominator -- one DVI unit = den/num*10^(-7) m
                               four byte magnification (multiplied by 1000)
                               one byte unsigned comment length followed by comment. */
-#define DVI_ID             2    /* ID Byte for current DVI file */
-#define DVIV_ID             3    /* with Ascii pTeX VW mode extension */
+#define DVI_ID     2    /* ID Byte for current DVI file */
+#define DVIV_ID    3    /* with Ascii pTeX VW mode extension */
 #define XDV_ID     6    /* XeTeX ".xdv" output that uses XDV opcodes below */
 #define POST       248  /* Postamble- -- similar to preamble
                               four byte pointer to final bop
@@ -117,11 +117,13 @@
 #define PADDING    223
 
 #define BEGIN_REFLECT       250 /* TeX-XeT begin_reflect */
-#define END_REFLECT         251 /* TeX-XeT begin_reflect */
+#define END_REFLECT         251 /* TeX-XeT end_reflect */
 
                     /* XeTeX ".xdv" codes */
 #define XDV_NATIVE_FONT_DEF 252 /* fontdef for native platform font */
 #define XDV_GLYPHS          253 /* string of glyph IDs with X and Y positions */
+
+#define NOT_USED            254 /* not used */
 
 #define PTEXDIR             255 /* Ascii pTeX DIR command */
 

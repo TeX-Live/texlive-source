@@ -1,3 +1,13 @@
+2015-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Make dvipdfmx and xdvipdfmx essentially the same.
+	* dvicodes.h: Slightly reformat.
+	* dvi.c: Run-time decision to hanlde XeTeX extensions only for
+	id_byte 6 and Ascii pTeX extension only for post_id_byte 3.
+	* pdfdev.c: Remove '#ifdef XETEX' (one probably a mistake).
+	* pdfdoc.c: New artbox handling only for XDV files (from XeTeX).
+	* system.h: Drop redundant #include <kpathsea/c-auto.h>.
+
 2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfdoc.c: Somewhat simplify to avoid compiler warnings.

@@ -1064,32 +1064,28 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       goto error;
     }
 
-#ifdef XETEX
     if (PageBox == 0) {
       if (crop_box)
         box = crop_box;
-      else
-        if (!(box = media_box) &&
-            !(box = bleed_box) &&
-            !(box = trim_box) &&
-            art_box) {
-            box = art_box;
+      else {
+        if (is_xdv) {
+          /* New scheme only for XDV files */
+          if (!(box = media_box) &&
+              !(box = bleed_box) &&
+              !(box = trim_box) &&
+              art_box) {
+              box = art_box;
+          }
+        } else {
+          /* Backward compatibility */
+          if (!(box = art_box) &&
+              !(box = trim_box) &&
+              !(box = bleed_box) &&
+              media_box) {
+              box = media_box;
+          }
         }
-#else
-/*
- Backward compatibility
-*/
-    if (PageBox == 0) {
-      if (crop_box)
-        box = crop_box;
-      else
-        if (!(box = art_box) &&
-            !(box = trim_box) &&
-            !(box = bleed_box) &&
-            media_box) {
-            box = media_box;
-        }
-#endif
+      }
     } else if (PageBox == 1) {
       if (crop_box)
         box = crop_box;
@@ -1177,14 +1173,8 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       pdf_release_obj(tmp);
     }
 
-#ifdef XETEX
-    if (medbox) {
-#else
-/*
- Backward compatibility
-*/
-    if (medbox && PageBox) {
-#endif
+    /* New scheme only for XDV files */
+    if (medbox && (!is_xdv || PageBox)) {
       for (i = 4; i--; ) {
         double x;
         pdf_obj *tmp = pdf_deref_obj(pdf_get_array(medbox, i));
