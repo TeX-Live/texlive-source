@@ -1,3 +1,10 @@
+2015-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* xdvipdfm-ptx.test: New shell script to test Ascii pTeX output.
+	* xdvipdfm-rev.test: New shell script to test TeX-XeT output.
+	* tests/ptex.dvi, tests/reverse.dvi: New test input data.
+	* Makefile.am: Add the new tests and input data.
+
 2015-07-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, ac/withenable.ac, configure.ac, dvipdfmx.c,
