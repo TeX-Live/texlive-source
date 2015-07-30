@@ -245,9 +245,9 @@ DISTCLEANFILES = config.force
 ## Tests
 ##
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
-TESTS += xdvipdfm-res.test xdvipdfm-ttc.test
+TESTS += xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test xdvipdfm-ttc.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
-	xdvipdfm-res.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
+	xdvipdfm-ptx.log xdvipdfm-res.log xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
 EXTRA_DIST = $(TESTS)
 ## Test Data
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
@@ -260,7 +260,8 @@ EXTRA_DIST += tests/image.pdf tests/picpdf.bb tests/picpdf.xbb
 EXTRA_DIST += tests/image.dvi tests/image.tex
 EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
 EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
-EXTRA_DIST += tests/resrc.dvi tests/resrc.tex
+EXTRA_DIST += tests/resrc.dvi tests/resrc.tex tests/ptex.dvi tests/reverse.dvi
 EXTRA_DIST += tests/xbmc.dvi tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
 EXTRA_DIST += tests/ttc.dvi tests/ttc.tex tests/test.ttc
-DISTCLEANFILES += pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf
+DISTCLEANFILES += pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf
+DISTCLEANFILES +=  xbmc*.pdf ttc*.pdf ptex*.pdf reverse.pdf

@@ -780,10 +780,10 @@ dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force pic*.* image*.pdf annot*.pdf bookm*.pdf \
-	paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf
+	paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf ptex*.pdf reverse.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test \
-	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-res.test \
-	xdvipdfm-ttc.test
+	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test \
+	xdvipdfm-res.test xdvipdfm-rev.test xdvipdfm-ttc.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/fullmap.dvi tests/fullmap.tex tests/image.bmp \
 	tests/picbmp.bb tests/picbmp.xbb tests/image.jp2 \
@@ -794,7 +794,8 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/image.tex tests/cmr10.pfb tests/cmr10.tfm \
 	tests/annot.dvi tests/annot.tex tests/bookm.dvi \
 	tests/bookm.tex tests/paper.dvi tests/paper.tex \
-	tests/resrc.dvi tests/resrc.tex tests/xbmc.dvi tests/xbmc.tex \
+	tests/resrc.dvi tests/resrc.tex tests/ptex.dvi \
+	tests/reverse.dvi tests/xbmc.dvi tests/xbmc.tex \
 	tests/xbmc10.600pk tests/xbmc10.tfm tests/ttc.dvi \
 	tests/ttc.tex tests/test.ttc
 all: config.h
@@ -1801,7 +1802,7 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(LIBPAPER_DEPE
 @ZLIB_RULE@
 @LIBPAPER_RULE@
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
-	xdvipdfm-res.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
+	xdvipdfm-ptx.log xdvipdfm-res.log xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
