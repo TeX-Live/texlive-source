@@ -269,97 +269,94 @@ static void do_pdf (FILE *fp, char *filename)
             pdf_file_get_version(pf), count);
 }
 
+static const char *optstrig = ":hB:p:qvObmx";
+
+static struct option long_options[] = {
+  {"help", 0, 0, 'h'},
+  {"version", 0, 0, 130},
+  {0, 0, 0, 0}
+};
+
 int extractbb (int argc, char *argv[])
 {
+  int c;
+
   pdf_files_init();
 
   pdf_set_version(PDF_VERSION_MAX);
 
-  argc -= 1; argv += 1;
+  opterr = 0;
+  
+  while ((c = getopt_long(argc, argv, optstrig, long_options, NULL)) != -1) {
+    switch(c) {
+    case 'h':
+      show_usage();
+      exit(0);
 
-  while (argc > 0 && *argv[0] == '-') {
-    char *flag;
+    case 130:
+      show_version();
+      exit(0);
 
-    for (flag = argv[0] + 1; *flag != 0; flag++) {
-      switch (*flag) {
-      case '-':
-        if (flag == argv[0] + 1) {
-          ++flag;
-          if (!strcmp(flag, "help")) {
-            show_usage();
-            exit(0);
-          } else if (!strcmp(flag, "version")) {
-            show_version();
-            exit(0);
-          }
-        }
-        fprintf(stderr, "Unknown option \"%s\"", argv[0]);
-        usage();
-      case 'B':
-        argc--;
-        argv++;
-        if (strcasecmp (argv[0], "cropbox") == 0) PageBox = 1; 
-        else if (strcasecmp (argv[0], "mediabox") == 0) PageBox = 2; 
-        else if (strcasecmp (argv[0], "artbox") == 0) PageBox = 3; 
-        else if (strcasecmp (argv[0], "trimbox") == 0) PageBox = 4; 
-        else if (strcasecmp (argv[0], "bleedbox") == 0) PageBox = 5; 
-        break;
-      case 'O':
-        xbb_to_file = 0;
-        break;
-      case 'b':  /* Ignored for backward compatibility */
-        break;
-      case 'm':
-        compat_mode = 1;
-        break;
-      case 'x':
-        compat_mode = 0;
-        break;
-      case 'q':
-        verbose = 0;
-        break;
-      case 'v':
-        verbose = 1;
-        break;
-      case 'h':
-        show_usage();
-        exit (0);
-      case 'p':
-        argc--;
-        argv++;
-        Include_Page = atol (argv[0]);
-        if (Include_Page == 0)
-          Include_Page = 1;
-        break;
-      default:
-        fprintf (stderr, "Unknown option in \"%s\"", argv[0]);
+    case 'B':
+      if (strcasecmp (optarg, "cropbox") == 0) PageBox = 1;
+      else if (strcasecmp (optarg, "mediabox") == 0) PageBox = 2;
+      else if (strcasecmp (optarg, "artbox") == 0) PageBox = 3; 
+      else if (strcasecmp (optarg, "trimbox") == 0) PageBox = 4;
+      else if (strcasecmp (optarg, "bleedbox") == 0) PageBox = 5;
+      else {
+        fprintf(stderr, "%s: Invalid argument \"-B %s\"", my_name, optarg);
         usage();
       }
+      break;
+
+    case 'p':
+      Include_Page = atol(optarg);
+      if (Include_Page == 0)
+        Include_Page = 1;
+      break;
+
+    case 'q': case 'v':
+      verbose = c == 'v';
+      break;
+
+    case 'O':
+      xbb_to_file = 0;
+    case 'b':  /* Ignored for backward compatibility */
+      break;
+
+    case 'm': case 'x':
+      compat_mode = c == 'm';
+      break;
+
+    default:
+      fprintf(stderr, "%s: %s \"-%c\"", my_name,
+              c == ':' ? "Missing argument for" : "Unknown option",
+              optopt); 
+      usage();
     }
-    argc -= 1; argv += 1;
   }
 
-  if (argc == 0) {
-    fprintf (stderr, "Missing filename argument\n");
+  if (optind >= argc) {
+    fprintf (stderr, "%s: Missing filename argument", my_name);
     usage();
   }
 
-  for (; argc > 0; argc--, argv++) {
+  for (; optind < argc; optind++) {
     FILE *infile = NULL;
     char *kpse_file_name = NULL;
 
-    if (kpse_in_name_ok(argv[0])) {
-      infile = MFOPEN(argv[0], FOPEN_RBIN_MODE);
+    if (kpse_in_name_ok(argv[optind])) {
+      infile = MFOPEN(argv[optind], FOPEN_RBIN_MODE);
       if (infile) {
-        kpse_file_name = xstrdup(argv[0]);
+        kpse_file_name = xstrdup(argv[optind]);
       } else {
-        kpse_file_name = kpse_find_pict(argv[0]);
+        kpse_file_name = kpse_find_pict(argv[optind]);
         if (kpse_file_name && kpse_in_name_ok(kpse_file_name))
           infile = MFOPEN(kpse_file_name, FOPEN_RBIN_MODE);
       }
     }
     if (infile == NULL) {
-      WARN("Can't find file (%s), or it is forbidden to read ...skipping\n", argv[0]);
+      WARN("Can't find file (%s), or it is forbidden to read ...skipping\n", argv[optind]);
       goto cont;
     }
     if (check_for_bmp(infile)) {
@@ -384,7 +381,7 @@ int extractbb (int argc, char *argv[])
       goto cont;
     }
 #endif /* HAVE_LIBPNG */
-    WARN("Can't handle file type for file named %s\n", argv[0]);
+    WARN("Can't handle file type for file named %s\n", argv[optind]);
   cont:
     if (kpse_file_name)
       RELEASE(kpse_file_name);

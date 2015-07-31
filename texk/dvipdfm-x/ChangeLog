@@ -1,3 +1,7 @@
+2015-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipdfmx.c, xbb.c: Use getopt_long() for option parsing.
+
 2015-07-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* xdvipdfm-ptx.test: New shell script to test Ascii pTeX output.
