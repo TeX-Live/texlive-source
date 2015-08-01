@@ -1,3 +1,8 @@
+2015-08-01 Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import libpng-1.6.18.
+	* version.ac: Adjust.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
