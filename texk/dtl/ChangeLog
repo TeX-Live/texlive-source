@@ -1,3 +1,8 @@
+2015-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dt2dv.c: Fixed typo in program name ("dv2dt" => "dt2dv").
+	* dv2dt.c: Backpointers are always signed.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

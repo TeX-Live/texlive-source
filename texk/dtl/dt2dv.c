@@ -346,7 +346,7 @@ main
   int i;
 
 #ifdef KPATHSEA
-  kpse_set_program_name(argv[0], "dv2dt");
+  kpse_set_program_name(argv[0], "dt2dv");
   progname = kpse_program_name;
 #else
   progname = argv[0];  /* name of this program */
