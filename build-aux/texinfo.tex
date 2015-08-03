@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-07-01.07}
+\def\texinfoversion{2015-08-01.14}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -2880,9 +2880,6 @@ end
 %
 \def\sup{\ifmmode \expandafter\ptexsp \else \expandafter\finishsup\fi}
 \def\finishsup#1{$\ptexsp{\hbox{\selectfonts\lllsize #1}}$}%
-
-% ctrl is no longer a Texinfo command, but leave this definition for fun.
-\def\ctrl #1{{\tt \rawbackslash \hat}#1}
 
 % @inlinefmt{FMTNAME,PROCESSED-TEXT} and @inlineraw{FMTNAME,RAW-TEXT}.
 % Ignore unless FMTNAME == tex; then it is like @iftex and @tex,
@@ -10186,8 +10183,8 @@ directory should work if nowhere else does.}
 \def\activedoublequote{{\tt\char34}}
 \let"=\activedoublequote
 \catcode`\~=\active \def\activetilde{{\tt\char126}} \let~ = \activetilde
-\chardef\hat=`\^
-\catcode`\^=\active \def\activehat{{\tt \hat}} \let^ = \activehat
+\chardef\hatchar=`\^
+\catcode`\^=\active \def\activehat{{\tt \hatchar}} \let^ = \activehat
 
 \catcode`\_=\active
 \def_{\ifusingtt\normalunderscore\_}
