@@ -244,24 +244,50 @@ DISTCLEANFILES = config.force
 
 ## Tests
 ##
-TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test
-TESTS += xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test xdvipdfm-ttc.test
-xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
-	xdvipdfm-ptx.log xdvipdfm-res.log xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
+TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test xdvipdfm-bb.test
+TESTS += xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test
+TESTS += xdvipdfm-rev.test xdvipdfm-ttc.test
+xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
+	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
+	xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
 EXTRA_DIST = $(TESTS)
-## Test Data
+## xdvipdfmx.test
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
-EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex
+EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm
+EXTRA_DIST += tests/image.dvi tests/image.tex
+EXTRA_DIST += tests/xbmc.dvi tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
+DISTCLEANFILES += image*.pdf xbmc*.pdf
+## xdvipdfm-ann.test
+EXTRA_DIST += tests/annot.dvi tests/annot.tex
+DISTCLEANFILES += annot*.pdf
+## xdvipdfm-bad.test
+EXTRA_DIST += tests/ids_2_6.dvi tests/ids_3_2.dvi tests/ids_a_b.dvi tests/opc_fe.dvi
+EXTRA_DIST += tests/ptx_2_2.dvi tests/ptx_6_6.dvi tests/rev_2_2.dvi tests/rev_2_3.dvi
+EXTRA_DIST += tests/void.dvi
+## xdvipdfm-bb.test
 EXTRA_DIST += tests/image.bmp tests/picbmp.bb tests/picbmp.xbb
 EXTRA_DIST += tests/image.jp2 tests/picjp2.bb tests/picjp2.xbb
 EXTRA_DIST += tests/image.jpeg tests/picjpeg.bb tests/picjpeg.xbb
 EXTRA_DIST += tests/image.png tests/picpng.bb tests/picpng.xbb
 EXTRA_DIST += tests/image.pdf tests/picpdf.bb tests/picpdf.xbb
-EXTRA_DIST += tests/image.dvi tests/image.tex
-EXTRA_DIST += tests/cmr10.pfb tests/cmr10.tfm tests/annot.dvi tests/annot.tex
-EXTRA_DIST += tests/bookm.dvi tests/bookm.tex tests/paper.dvi tests/paper.tex
-EXTRA_DIST += tests/resrc.dvi tests/resrc.tex tests/ptex.dvi tests/reverse.dvi
-EXTRA_DIST += tests/xbmc.dvi tests/xbmc.tex tests/xbmc10.600pk tests/xbmc10.tfm
+DISTCLEANFILES += pic*.*
+## xdvipdfm-bkm.test
+EXTRA_DIST += tests/bookm.dvi tests/bookm.tex
+DISTCLEANFILES += bookm*.pdf
+## xdvipdfm-psz.test
+EXTRA_DIST += tests/paper.dvi tests/paper.tex
+DISTCLEANFILES += paper*.pdf
+## xdvipdfm-ptx.test
+EXTRA_DIST += tests/ptex.dvi
+DISTCLEANFILES += ptex*.pdf
+## xdvipdfm-res.test
+EXTRA_DIST += tests/resrc.dvi tests/resrc.tex
+DISTCLEANFILES += resrc*.pdf
+## xdvipdfm-rev.test
+EXTRA_DIST += tests/reverse.dvi
+DISTCLEANFILES += reverse.pdf
+## xdvipdfm-ttc.test
 EXTRA_DIST += tests/ttc.dvi tests/ttc.tex tests/test.ttc
-DISTCLEANFILES += pic*.* image*.pdf annot*.pdf bookm*.pdf paper*.pdf resrc*.pdf
-DISTCLEANFILES +=  xbmc*.pdf ttc*.pdf ptex*.pdf reverse.pdf
+DISTCLEANFILES += ttc*.pdf
+##
+EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex

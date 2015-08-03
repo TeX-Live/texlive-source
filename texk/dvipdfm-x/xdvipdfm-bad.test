@@ -1,0 +1,37 @@
+#! /bin/sh
+
+# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
+
+failed=
+
+list="ids_2_6 ids_3_2 ids_a_b opc_fe ptx_2_2 ptx_6_6 rev_2_2 rev_2_3 void"
+
+for f in $list
+do
+
+echo "*** xdvipdfmx -v -z0 -o bad.pdf $f" && echo \
+	&& ./xdvipdfmx -v -z0 -o bad.pdf $srcdir/tests/$f \
+	&& failed="$failed xdvipdfmx-$f" \
+	|| { echo && echo "xdvipdfmx-$f tests OK" && echo; }
+
+echo "*** xdvipdfmx -v -z0 -o bad.pdf <$f.dvi" && echo \
+	&& ./xdvipdfmx -v -z0 -o bad.pdf <$srcdir/tests/$f.dvi \
+	&& failed="$failed xdvipdfmx-$f (stdin)" \
+	|| { echo && echo "xdvipdfmx-$f (stdin) tests OK" && echo; }
+
+done
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1
+

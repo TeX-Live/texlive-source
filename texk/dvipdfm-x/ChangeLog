@@ -1,3 +1,13 @@
+2015-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvi.c: Better detection of bad (inconsistent) DVI files.
+	* xdvipdfm-bad.test: New shell script to test bad DVI files.
+	* tests/ids_2_6.dvi, tests/ids_3_2.dvi, tests/ids_a_b.dvi,
+	tests/opc_fe.dvi, tests/ptx_2_2.dvi, tests/ptx_6_6.dvi,
+	tests/rev_2_2.dvi, tests/rev_2_3.dvi, tests/void.dvi: New test
+	input data (bad DVI files).
+	* Makefile.am: Add the new test and input data.
+
 2015-07-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfmx.c, xbb.c: Use getopt_long() for option parsing.

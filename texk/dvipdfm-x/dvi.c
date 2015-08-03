@@ -319,7 +319,7 @@ static int pre_id_byte, post_id_byte, is_ptex = 0, has_ptex = 0;
 static void
 check_id_bytes (void) {
   if (pre_id_byte != post_id_byte && (pre_id_byte != DVI_ID || post_id_byte != DVIV_ID))
-    ERROR ("Inconsistent DVI id_bytes in preamble (%i) and postamble (%i)");
+    ERROR ("Inconsistent DVI id_bytes %d (pre) and %d (post)", pre_id_byte, post_id_byte);
 }
 
 static void
@@ -366,12 +366,6 @@ find_post (void)
   post_id_byte = ch;
   is_xdv = ch == XDV_ID;
   is_ptex = ch == DVIV_ID;
-  if (pre_id_byte) {
-    check_id_bytes();
-    if (has_ptex && !is_ptex) {
-      ERROR ("DVI opcode %i only valid for Ascii pTeX", PTEXDIR);
-    }
-  }
 
   /* Make sure post_post is really there */
   current = current - 5;
@@ -386,6 +380,21 @@ find_post (void)
     MESG("Found %d where post_post opcode should be\n", ch);
     ERROR(invalid_signature);
   }
+
+  /* Finally check the ID byte in the preamble */
+  /* An Ascii pTeX DVI file has id_byte DVI_ID in the preamble but DVIV_ID in the postamble. */
+  xseek_absolute (dvi_file, 0, "DVI");
+  if ((ch = get_unsigned_byte(dvi_file)) != PRE) {
+    MESG("Found %d where PRE was expected\n", ch);
+    ERROR(invalid_signature);
+  }
+  ch = get_unsigned_byte(dvi_file);
+  if (!(ch == DVI_ID || ch == XDV_ID)) {
+    MESG("DVI ID = %d\n", ch);
+    ERROR(invalid_signature);
+  }
+  pre_id_byte = ch;
+  check_id_bytes();
 
   return current;
 }
@@ -474,7 +483,7 @@ get_preamble_dvi_info (void)
     ERROR(invalid_signature);
   }
   
-  /* A DVI file Ascii pTeX has id_byte DVI_ID in the preamble but DVIV_ID in the postamble. */
+  /* An Ascii pTeX DVI file has id_byte DVI_ID in the preamble but DVIV_ID in the postamble. */
   ch = get_unsigned_byte(dvi_file);
   if (!(ch == DVI_ID || ch == XDV_ID)) {
     MESG("DVI ID = %d\n", ch);
@@ -483,10 +492,7 @@ get_preamble_dvi_info (void)
 
   pre_id_byte = ch;
   is_xdv = ch == XDV_ID;
-  if (post_id_byte)
-    check_id_bytes();
-  else
-    is_ptex = ch == DVI_ID; /* maybe */
+  is_ptex = ch == DVI_ID; /* maybe */
   
   dvi_info.unit_num = get_positive_quad(dvi_file, "DVI", "unit_num");
   dvi_info.unit_den = get_positive_quad(dvi_file, "DVI", "unit_den");
@@ -1598,24 +1604,26 @@ dvi_end_reflect (void)
 }
 
 static void
+skip_native_font_def (void)
+{
+  unsigned int flags;
+  int name_length;
+
+  skip_bytes(4, dvi_file); /* skip point size */
+  flags = get_unsigned_pair(dvi_file);
+  name_length = get_unsigned_byte(dvi_file);
+  skip_bytes(name_length + 4, dvi_file);
+  if (flags & XDV_FLAG_COLORED)
+    skip_bytes(4, dvi_file);
+ }
+
+static void
 do_native_font_def (int32_t tex_id)
 {
-  if (linear) {
+  if (linear)
     read_native_font_record(tex_id);
-  } else {
-    unsigned int flags;
-    int name_length, i;
-
-    get_unsigned_quad(dvi_file); /* skip point size */
-    flags = get_unsigned_pair(dvi_file);
-    name_length = (int) get_unsigned_byte(dvi_file);
-    for (i = 0; i < name_length; ++i)
-      get_unsigned_byte(dvi_file);
-    get_unsigned_quad(dvi_file);
-    if (flags & XDV_FLAG_COLORED) {
-      get_unsigned_quad(dvi_file);
-    }
-  }
+  else
+    skip_native_font_def();
   --dvi_page_buf_index; /* don't buffer the opcode */
 }
 
@@ -1728,13 +1736,38 @@ do_glyphs (void)
   return;
 }
 
-/* Note to be absolutely certain that the string escape buffer doesn't
- * hit its limit, FORMAT_BUF_SIZE should set to 4 times S_BUFFER_SIZE
- * in pdfobj.c.  Is there any application that genenerate words with
- * 1k characters?
- */
+static void
+check_postamble (void)
+{
+  int code;
 
-#define SBUF_SIZE 1024
+  skip_bytes(28, dvi_file);
+  while ((code = get_unsigned_byte(dvi_file)) != POST_POST) {
+    switch (code) {
+    case FNT_DEF1: case FNT_DEF2: case FNT_DEF3: case FNT_DEF4:
+      skip_bytes(code + 1 - FNT_DEF1, dvi_file);
+      skip_fntdef();
+      break;
+    case XDV_NATIVE_FONT_DEF:
+      skip_bytes(4, dvi_file);
+      skip_native_font_def();
+      break;
+    default:
+      ERROR("Unexpected op code (%u) in postamble", code);
+    }
+  }
+  skip_bytes(4, dvi_file);
+  post_id_byte = get_unsigned_byte(dvi_file);
+  if (!(post_id_byte == DVI_ID || post_id_byte == DVIV_ID || post_id_byte == XDV_ID)) {
+    MESG("DVI ID = %d\n", post_id_byte);
+    ERROR(invalid_signature);
+  }
+  check_id_bytes();
+  if (has_ptex && post_id_byte != DVIV_ID)
+    ERROR ("Saw opcode %i in DVI file not for Ascii pTeX", PTEXDIR);
+
+  num_pages = 0; /* force loop to terminate */
+}
 
 /* Most of the work of actually interpreting
  * the dvi file is here.
@@ -1798,6 +1831,12 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
       break;
     case EOP:
       do_eop();
+      if (linear) {
+        if ((opcode = get_unsigned_byte(dvi_file)) == POST)
+          check_postamble();
+        else
+          ungetc(opcode, dvi_file);
+      }
       return;
 
     case PUSH:
@@ -1908,6 +1947,7 @@ dvi_init (char *dvi_filename, double mag)
   int32_t post_location;
 
   if (!dvi_filename) { /* no filename: reading from stdin, probably a pipe */
+    int ch;
 #ifdef WIN32
         setmode(fileno(stdin), _O_BINARY);
 #endif
@@ -1916,6 +1956,10 @@ dvi_init (char *dvi_filename, double mag)
 
     get_preamble_dvi_info();
     do_scales(mag);
+    if ((ch = get_unsigned_byte(dvi_file)) == POST)
+      check_postamble();
+    else
+      ungetc(ch, dvi_file);
   } else {
     dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
     if (!dvi_file) {
@@ -2315,7 +2359,7 @@ dvi_scan_specials (int page_no,
   static int     buffered_page = -1;
   unsigned int len;
 
-  if (page_no == buffered_page)
+  if (page_no == buffered_page || num_pages == 0)
     return; /* because dvipdfmx wants to scan first page twice! */
   buffered_page = page_no;
 

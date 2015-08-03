@@ -779,25 +779,29 @@ mapdatadir = $(datarootdir)/texmf-dist/fonts/map/dvipdfmx
 dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
-DISTCLEANFILES = config.force pic*.* image*.pdf annot*.pdf bookm*.pdf \
-	paper*.pdf resrc*.pdf xbmc*.pdf ttc*.pdf ptex*.pdf reverse.pdf
-TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bb.test \
-	xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test \
-	xdvipdfm-res.test xdvipdfm-rev.test xdvipdfm-ttc.test
+DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
+	bookm*.pdf paper*.pdf ptex*.pdf resrc*.pdf reverse.pdf \
+	ttc*.pdf
+TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
+	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test \
+	xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test \
+	xdvipdfm-ttc.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
-	tests/fullmap.dvi tests/fullmap.tex tests/image.bmp \
-	tests/picbmp.bb tests/picbmp.xbb tests/image.jp2 \
-	tests/picjp2.bb tests/picjp2.xbb tests/image.jpeg \
-	tests/picjpeg.bb tests/picjpeg.xbb tests/image.png \
-	tests/picpng.bb tests/picpng.xbb tests/image.pdf \
-	tests/picpdf.bb tests/picpdf.xbb tests/image.dvi \
-	tests/image.tex tests/cmr10.pfb tests/cmr10.tfm \
-	tests/annot.dvi tests/annot.tex tests/bookm.dvi \
-	tests/bookm.tex tests/paper.dvi tests/paper.tex \
-	tests/resrc.dvi tests/resrc.tex tests/ptex.dvi \
-	tests/reverse.dvi tests/xbmc.dvi tests/xbmc.tex \
-	tests/xbmc10.600pk tests/xbmc10.tfm tests/ttc.dvi \
-	tests/ttc.tex tests/test.ttc
+	tests/cmr10.pfb tests/cmr10.tfm tests/image.dvi \
+	tests/image.tex tests/xbmc.dvi tests/xbmc.tex \
+	tests/xbmc10.600pk tests/xbmc10.tfm tests/annot.dvi \
+	tests/annot.tex tests/ids_2_6.dvi tests/ids_3_2.dvi \
+	tests/ids_a_b.dvi tests/opc_fe.dvi tests/ptx_2_2.dvi \
+	tests/ptx_6_6.dvi tests/rev_2_2.dvi tests/rev_2_3.dvi \
+	tests/void.dvi tests/image.bmp tests/picbmp.bb \
+	tests/picbmp.xbb tests/image.jp2 tests/picjp2.bb \
+	tests/picjp2.xbb tests/image.jpeg tests/picjpeg.bb \
+	tests/picjpeg.xbb tests/image.png tests/picpng.bb \
+	tests/picpng.xbb tests/image.pdf tests/picpdf.bb \
+	tests/picpdf.xbb tests/bookm.dvi tests/bookm.tex \
+	tests/paper.dvi tests/paper.tex tests/ptex.dvi tests/resrc.dvi \
+	tests/resrc.tex tests/reverse.dvi tests/ttc.dvi tests/ttc.tex \
+	tests/test.ttc tests/fullmap.dvi tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1801,8 +1805,9 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(LIBPAPER_DEPE
 @LIBPNG_RULE@
 @ZLIB_RULE@
 @LIBPAPER_RULE@
-xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bb.log xdvipdfm-bkm.log xdvipdfm-psz.log \
-	xdvipdfm-ptx.log xdvipdfm-res.log xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
+xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
+	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
+	xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
