@@ -944,6 +944,34 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
 }
 
 static int
+is_notdef_notzero (char *path)
+{
+  FILE *f;
+  char buf[2014];
+  char cmd[512];
+  char *p;
+  int  ret = 0;
+
+  strcpy (cmd, "t1disasm ");
+  strcat (cmd, path);
+  f = popen (cmd, "r");
+  if (f) {
+    while ((fgets (buf, 2000, f))) {
+      p = strstr (buf, "CharStrings");
+      if (p) {
+        fgets (buf, 2000, f);
+        if (strncmp (buf, "/.notdef", 8) != 0)
+          ret = 1;
+        break;
+      }
+    }
+    fclose(f);
+  }
+
+  return ret;
+}
+
+static int
 dvi_locate_native_font (const char *filename, uint32_t index,
                         spt_t ptsize, int layout_dir, int extend, int slant, int embolden)
 {
@@ -1023,6 +1051,9 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     loaded_fonts[cur_id].numGlyphs = cffont->num_glyphs;
 
     DPXFCLOSE(fp);
+    if (loaded_fonts[cur_id].cff_is_standard_encoding) {
+      loaded_fonts[cur_id].cff_is_standard_encoding = is_notdef_notzero (path);
+    }
   } else {
     if (is_dfont)
       sfont = dfont_open(fp, index);
