@@ -947,19 +947,23 @@ static int
 is_notdef_notzero (char *path)
 {
   FILE *f;
-  char buf[2014];
-  char cmd[512];
+  char buf[2048];
+  char *cmd;
   char *p;
   int  ret = 0;
 
-  strcpy (cmd, "t1disasm ");
-  strcat (cmd, path);
+  p = kpse_var_value("SELFAUTOLOC");
+  if (p == NULL)
+    return ret;
+  cmd = concat3 (p, "/t1disasm ", path);
+  free (p);
   f = popen (cmd, "r");
+  free (cmd);
   if (f) {
-    while ((fgets (buf, 2000, f))) {
+    while ((fgets (buf, 2047, f))) {
       p = strstr (buf, "CharStrings");
       if (p) {
-        fgets (buf, 2000, f);
+        fgets (buf, 2047, f);
         if (strncmp (buf, "/.notdef", 8) != 0)
           ret = 1;
         break;
