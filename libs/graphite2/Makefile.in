@@ -127,14 +127,19 @@ libgraphite2_a_LIBADD =
 am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/Bidi.cpp \
 	@GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/CmapCache.cpp \
-	@GRAPHITE2_TREE@/src/Code.cpp @GRAPHITE2_TREE@/src/Face.cpp \
+	@GRAPHITE2_TREE@/src/Code.cpp \
+	@GRAPHITE2_TREE@/src/Collider.cpp \
+	@GRAPHITE2_TREE@/src/Decompressor.cpp \
+	@GRAPHITE2_TREE@/src/Face.cpp \
 	@GRAPHITE2_TREE@/src/FeatureMap.cpp \
 	@GRAPHITE2_TREE@/src/Font.cpp \
 	@GRAPHITE2_TREE@/src/GlyphCache.cpp \
 	@GRAPHITE2_TREE@/src/GlyphFace.cpp \
+	@GRAPHITE2_TREE@/src/Intervals.cpp \
 	@GRAPHITE2_TREE@/src/Justifier.cpp \
 	@GRAPHITE2_TREE@/src/NameTable.cpp \
-	@GRAPHITE2_TREE@/src/Pass.cpp @GRAPHITE2_TREE@/src/Rule.cpp \
+	@GRAPHITE2_TREE@/src/Pass.cpp \
+	@GRAPHITE2_TREE@/src/Position.cpp \
 	@GRAPHITE2_TREE@/src/Segment.cpp @GRAPHITE2_TREE@/src/Silf.cpp \
 	@GRAPHITE2_TREE@/src/Slot.cpp @GRAPHITE2_TREE@/src/Sparse.cpp \
 	@GRAPHITE2_TREE@/src/TtfUtil.cpp \
@@ -146,41 +151,6 @@ am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/Bidi.cpp \
 	@GRAPHITE2_TREE@/src/gr_logging.cpp \
 	@GRAPHITE2_TREE@/src/gr_segment.cpp \
 	@GRAPHITE2_TREE@/src/gr_slot.cpp \
-	@GRAPHITE2_TREE@/src/inc/CachedFace.h \
-	@GRAPHITE2_TREE@/src/inc/CharInfo.h \
-	@GRAPHITE2_TREE@/src/inc/CmapCache.h \
-	@GRAPHITE2_TREE@/src/inc/Code.h \
-	@GRAPHITE2_TREE@/src/inc/Endian.h \
-	@GRAPHITE2_TREE@/src/inc/Face.h \
-	@GRAPHITE2_TREE@/src/inc/FeatureMap.h \
-	@GRAPHITE2_TREE@/src/inc/FeatureVal.h \
-	@GRAPHITE2_TREE@/src/inc/FileFace.h \
-	@GRAPHITE2_TREE@/src/inc/Font.h \
-	@GRAPHITE2_TREE@/src/inc/GlyphCache.h \
-	@GRAPHITE2_TREE@/src/inc/GlyphFace.h \
-	@GRAPHITE2_TREE@/src/inc/List.h \
-	@GRAPHITE2_TREE@/src/inc/Machine.h \
-	@GRAPHITE2_TREE@/src/inc/Main.h \
-	@GRAPHITE2_TREE@/src/inc/NameTable.h \
-	@GRAPHITE2_TREE@/src/inc/Pass.h \
-	@GRAPHITE2_TREE@/src/inc/Position.h \
-	@GRAPHITE2_TREE@/src/inc/Rule.h \
-	@GRAPHITE2_TREE@/src/inc/SegCache.h \
-	@GRAPHITE2_TREE@/src/inc/SegCacheEntry.h \
-	@GRAPHITE2_TREE@/src/inc/SegCacheStore.h \
-	@GRAPHITE2_TREE@/src/inc/Segment.h \
-	@GRAPHITE2_TREE@/src/inc/Silf.h \
-	@GRAPHITE2_TREE@/src/inc/Slot.h \
-	@GRAPHITE2_TREE@/src/inc/Sparse.h \
-	@GRAPHITE2_TREE@/src/inc/TtfTypes.h \
-	@GRAPHITE2_TREE@/src/inc/TtfUtil.h \
-	@GRAPHITE2_TREE@/src/inc/UtfCodec.h \
-	@GRAPHITE2_TREE@/src/inc/bits.h \
-	@GRAPHITE2_TREE@/src/inc/debug.h \
-	@GRAPHITE2_TREE@/src/inc/json.h \
-	@GRAPHITE2_TREE@/src/inc/locale2lcid.h \
-	@GRAPHITE2_TREE@/src/inc/opcode_table.h \
-	@GRAPHITE2_TREE@/src/inc/opcodes.h \
 	@GRAPHITE2_TREE@/src/direct_machine.cpp \
 	@GRAPHITE2_TREE@/src/call_machine.cpp \
 	@GRAPHITE2_TREE@/src/SegCache.cpp \
@@ -203,15 +173,18 @@ am_libgraphite2_a_OBJECTS = @GRAPHITE2_TREE@/src/Bidi.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/CmapCache.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Code.$(OBJEXT) \
+	@GRAPHITE2_TREE@/src/Collider.$(OBJEXT) \
+	@GRAPHITE2_TREE@/src/Decompressor.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Face.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/FeatureMap.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Font.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/GlyphCache.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/GlyphFace.$(OBJEXT) \
+	@GRAPHITE2_TREE@/src/Intervals.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Justifier.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/NameTable.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Pass.$(OBJEXT) \
-	@GRAPHITE2_TREE@/src/Rule.$(OBJEXT) \
+	@GRAPHITE2_TREE@/src/Position.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Segment.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Silf.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Slot.$(OBJEXT) \
@@ -691,14 +664,19 @@ AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE2_SRC) \
 libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/Bidi.cpp \
 	@GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/CmapCache.cpp \
-	@GRAPHITE2_TREE@/src/Code.cpp @GRAPHITE2_TREE@/src/Face.cpp \
+	@GRAPHITE2_TREE@/src/Code.cpp \
+	@GRAPHITE2_TREE@/src/Collider.cpp \
+	@GRAPHITE2_TREE@/src/Decompressor.cpp \
+	@GRAPHITE2_TREE@/src/Face.cpp \
 	@GRAPHITE2_TREE@/src/FeatureMap.cpp \
 	@GRAPHITE2_TREE@/src/Font.cpp \
 	@GRAPHITE2_TREE@/src/GlyphCache.cpp \
 	@GRAPHITE2_TREE@/src/GlyphFace.cpp \
+	@GRAPHITE2_TREE@/src/Intervals.cpp \
 	@GRAPHITE2_TREE@/src/Justifier.cpp \
 	@GRAPHITE2_TREE@/src/NameTable.cpp \
-	@GRAPHITE2_TREE@/src/Pass.cpp @GRAPHITE2_TREE@/src/Rule.cpp \
+	@GRAPHITE2_TREE@/src/Pass.cpp \
+	@GRAPHITE2_TREE@/src/Position.cpp \
 	@GRAPHITE2_TREE@/src/Segment.cpp @GRAPHITE2_TREE@/src/Silf.cpp \
 	@GRAPHITE2_TREE@/src/Slot.cpp @GRAPHITE2_TREE@/src/Sparse.cpp \
 	@GRAPHITE2_TREE@/src/TtfUtil.cpp \
@@ -709,42 +687,7 @@ libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/Bidi.cpp \
 	@GRAPHITE2_TREE@/src/gr_font.cpp \
 	@GRAPHITE2_TREE@/src/gr_logging.cpp \
 	@GRAPHITE2_TREE@/src/gr_segment.cpp \
-	@GRAPHITE2_TREE@/src/gr_slot.cpp \
-	@GRAPHITE2_TREE@/src/inc/CachedFace.h \
-	@GRAPHITE2_TREE@/src/inc/CharInfo.h \
-	@GRAPHITE2_TREE@/src/inc/CmapCache.h \
-	@GRAPHITE2_TREE@/src/inc/Code.h \
-	@GRAPHITE2_TREE@/src/inc/Endian.h \
-	@GRAPHITE2_TREE@/src/inc/Face.h \
-	@GRAPHITE2_TREE@/src/inc/FeatureMap.h \
-	@GRAPHITE2_TREE@/src/inc/FeatureVal.h \
-	@GRAPHITE2_TREE@/src/inc/FileFace.h \
-	@GRAPHITE2_TREE@/src/inc/Font.h \
-	@GRAPHITE2_TREE@/src/inc/GlyphCache.h \
-	@GRAPHITE2_TREE@/src/inc/GlyphFace.h \
-	@GRAPHITE2_TREE@/src/inc/List.h \
-	@GRAPHITE2_TREE@/src/inc/Machine.h \
-	@GRAPHITE2_TREE@/src/inc/Main.h \
-	@GRAPHITE2_TREE@/src/inc/NameTable.h \
-	@GRAPHITE2_TREE@/src/inc/Pass.h \
-	@GRAPHITE2_TREE@/src/inc/Position.h \
-	@GRAPHITE2_TREE@/src/inc/Rule.h \
-	@GRAPHITE2_TREE@/src/inc/SegCache.h \
-	@GRAPHITE2_TREE@/src/inc/SegCacheEntry.h \
-	@GRAPHITE2_TREE@/src/inc/SegCacheStore.h \
-	@GRAPHITE2_TREE@/src/inc/Segment.h \
-	@GRAPHITE2_TREE@/src/inc/Silf.h \
-	@GRAPHITE2_TREE@/src/inc/Slot.h \
-	@GRAPHITE2_TREE@/src/inc/Sparse.h \
-	@GRAPHITE2_TREE@/src/inc/TtfTypes.h \
-	@GRAPHITE2_TREE@/src/inc/TtfUtil.h \
-	@GRAPHITE2_TREE@/src/inc/UtfCodec.h \
-	@GRAPHITE2_TREE@/src/inc/bits.h \
-	@GRAPHITE2_TREE@/src/inc/debug.h \
-	@GRAPHITE2_TREE@/src/inc/json.h \
-	@GRAPHITE2_TREE@/src/inc/locale2lcid.h \
-	@GRAPHITE2_TREE@/src/inc/opcode_table.h \
-	@GRAPHITE2_TREE@/src/inc/opcodes.h $(am__append_1) \
+	@GRAPHITE2_TREE@/src/gr_slot.cpp $(am__append_1) \
 	$(am__append_2) $(am__append_3) $(am__append_5) \
 	$(am__append_7)
 @build_TRUE@dist_check_SCRIPTS = graphite2.test
@@ -835,6 +778,12 @@ clean-noinstLIBRARIES:
 @GRAPHITE2_TREE@/src/Code.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@GRAPHITE2_TREE@/src/Collider.$(OBJEXT):  \
+	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
+	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@GRAPHITE2_TREE@/src/Decompressor.$(OBJEXT):  \
+	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
+	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GRAPHITE2_TREE@/src/Face.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -850,6 +799,9 @@ clean-noinstLIBRARIES:
 @GRAPHITE2_TREE@/src/GlyphFace.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@GRAPHITE2_TREE@/src/Intervals.$(OBJEXT):  \
+	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
+	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GRAPHITE2_TREE@/src/Justifier.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -859,7 +811,7 @@ clean-noinstLIBRARIES:
 @GRAPHITE2_TREE@/src/Pass.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GRAPHITE2_TREE@/src/Rule.$(OBJEXT):  \
+@GRAPHITE2_TREE@/src/Position.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GRAPHITE2_TREE@/src/Segment.$(OBJEXT):  \
@@ -948,16 +900,19 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/CachedFace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/CmapCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Code.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Collider.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Decompressor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Face.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/FeatureMap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/FileFace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/GlyphCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/GlyphFace.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Intervals.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Justifier.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/NameTable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Pass.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Rule.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Position.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/SegCacheStore.Po@am__quote@

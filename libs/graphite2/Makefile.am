@@ -33,15 +33,18 @@ libgraphite2_a_SOURCES =  \
 	@GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/CmapCache.cpp \
 	@GRAPHITE2_TREE@/src/Code.cpp \
+	@GRAPHITE2_TREE@/src/Collider.cpp \
+	@GRAPHITE2_TREE@/src/Decompressor.cpp \
 	@GRAPHITE2_TREE@/src/Face.cpp \
 	@GRAPHITE2_TREE@/src/FeatureMap.cpp \
 	@GRAPHITE2_TREE@/src/Font.cpp \
 	@GRAPHITE2_TREE@/src/GlyphCache.cpp \
 	@GRAPHITE2_TREE@/src/GlyphFace.cpp \
+	@GRAPHITE2_TREE@/src/Intervals.cpp \
 	@GRAPHITE2_TREE@/src/Justifier.cpp \
 	@GRAPHITE2_TREE@/src/NameTable.cpp \
 	@GRAPHITE2_TREE@/src/Pass.cpp \
-	@GRAPHITE2_TREE@/src/Rule.cpp \
+	@GRAPHITE2_TREE@/src/Position.cpp \
 	@GRAPHITE2_TREE@/src/Segment.cpp \
 	@GRAPHITE2_TREE@/src/Silf.cpp \
 	@GRAPHITE2_TREE@/src/Slot.cpp \
@@ -54,42 +57,7 @@ libgraphite2_a_SOURCES =  \
 	@GRAPHITE2_TREE@/src/gr_font.cpp \
 	@GRAPHITE2_TREE@/src/gr_logging.cpp \
 	@GRAPHITE2_TREE@/src/gr_segment.cpp \
-	@GRAPHITE2_TREE@/src/gr_slot.cpp \
-	@GRAPHITE2_TREE@/src/inc/CachedFace.h \
-	@GRAPHITE2_TREE@/src/inc/CharInfo.h \
-	@GRAPHITE2_TREE@/src/inc/CmapCache.h \
-	@GRAPHITE2_TREE@/src/inc/Code.h \
-	@GRAPHITE2_TREE@/src/inc/Endian.h \
-	@GRAPHITE2_TREE@/src/inc/Face.h \
-	@GRAPHITE2_TREE@/src/inc/FeatureMap.h \
-	@GRAPHITE2_TREE@/src/inc/FeatureVal.h \
-	@GRAPHITE2_TREE@/src/inc/FileFace.h \
-	@GRAPHITE2_TREE@/src/inc/Font.h \
-	@GRAPHITE2_TREE@/src/inc/GlyphCache.h \
-	@GRAPHITE2_TREE@/src/inc/GlyphFace.h \
-	@GRAPHITE2_TREE@/src/inc/List.h \
-	@GRAPHITE2_TREE@/src/inc/Machine.h \
-	@GRAPHITE2_TREE@/src/inc/Main.h \
-	@GRAPHITE2_TREE@/src/inc/NameTable.h \
-	@GRAPHITE2_TREE@/src/inc/Pass.h \
-	@GRAPHITE2_TREE@/src/inc/Position.h \
-	@GRAPHITE2_TREE@/src/inc/Rule.h \
-	@GRAPHITE2_TREE@/src/inc/SegCache.h \
-	@GRAPHITE2_TREE@/src/inc/SegCacheEntry.h \
-	@GRAPHITE2_TREE@/src/inc/SegCacheStore.h \
-	@GRAPHITE2_TREE@/src/inc/Segment.h \
-	@GRAPHITE2_TREE@/src/inc/Silf.h \
-	@GRAPHITE2_TREE@/src/inc/Slot.h \
-	@GRAPHITE2_TREE@/src/inc/Sparse.h \
-	@GRAPHITE2_TREE@/src/inc/TtfTypes.h \
-	@GRAPHITE2_TREE@/src/inc/TtfUtil.h \
-	@GRAPHITE2_TREE@/src/inc/UtfCodec.h \
-	@GRAPHITE2_TREE@/src/inc/bits.h \
-	@GRAPHITE2_TREE@/src/inc/debug.h \
-	@GRAPHITE2_TREE@/src/inc/json.h \
-	@GRAPHITE2_TREE@/src/inc/locale2lcid.h \
-	@GRAPHITE2_TREE@/src/inc/opcode_table.h \
-	@GRAPHITE2_TREE@/src/inc/opcodes.h
+	@GRAPHITE2_TREE@/src/gr_slot.cpp
 
 if DIRECT_TYPE
 libgraphite2_a_SOURCES += @GRAPHITE2_TREE@/src/direct_machine.cpp
