@@ -1,3 +1,9 @@
+2015-08-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: Introduce a new static function static int is_notdef_notzero()
+	to fix the support of native type1 fonts. The t1disasm is required.
+	The fix is intended as an intermediate one until more fine fix is given.
+
 2015-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvi.c: Better detection of bad (inconsistent) DVI files.
