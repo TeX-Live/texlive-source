@@ -1,0 +1,23 @@
+%#!euptex pdfprimitive-test.tex
+\catcode`\{=1\catcode`\}=2
+\scrollmode
+\def\relax{\message{RELAX}}
+\def\fuga{\message{FUGA}}
+\let\input=\halign
+
+\relax                   % ==> RELAX
+\pdfprimitive\relax      % ==> (no output)
+\message{\meaning\relax} % ==> macro:->\message {RELAX}
+
+\fuga              % ==> FUGA
+\pdfprimitive\fuga % ==> ``! Missing primitive name.'' error
+
+\ifpdfprimitive\relax\message{T}\else\message{F}\fi % ==> F (macro)
+\ifpdfprimitive\par\message{T}\else\message{F}\fi   % ==> T
+\ifpdfprimitive\input\message{T}\else\message{F}\fi % ==> F
+ % (This \input is not ``primitive \input''.)
+\ifpdfprimitive\hoge\message{T}\else\message{F}\fi  % ==> F (undefined)
+\ifpdfprimitive\fuga\message{T}\else\message{F}\fi  % ==> F (macro)
+
+\show\pdfstrcmp % ==> \pdfstrcmp
+\end

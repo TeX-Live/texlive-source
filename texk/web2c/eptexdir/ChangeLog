@@ -1,3 +1,16 @@
+2015-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pdfprimitive.test: New shell script testing \pdfprimitive.
+	* tests/pdfprimitive-test.tex tests/pdfprimitive-eptex.log:
+	New test input and expected output data.
+	* am/eptex.am: Added the new files.
+
+2015-08-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Add primitives \pdfprimitive and \ifpdfprimitive 
+	to e-(u)pTeX.
+	* eptex.ech, eptex_version.h: Change version to 150805.
+
 2015-07-28  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* fam256.ch: Fix delcode initialization.

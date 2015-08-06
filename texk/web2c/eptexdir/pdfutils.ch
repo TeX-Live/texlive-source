@@ -17,6 +17,8 @@
 %% \pdfmdfivesum: by Akira's request
 %%   As \pdfstrcmp, Japanese characters will be always encoded in UTF-8 in
 %%   \pdfmdfivesum {...}. (no conversion for \pdfmdfivesum file <filename>)
+%%
+%% \pdfprimitive and \ifpdfprimitive: for LaTeX3 (2015/07/15)
 
 @x
 @* \[12] Displaying boxes.
@@ -24,6 +26,20 @@
 @<Declare procedures that need to be declared forward for \pdfTeX@>@;
 
 @* \[12] Displaying boxes.
+@z
+
+@x \[if]pdfprimitive
+@d frozen_special=frozen_control_sequence+10
+  {permanent `\.{\\special}'}
+@d frozen_null_font=frozen_control_sequence+11
+  {permanent `\.{\\nullfont}'}
+@y
+@d frozen_special=frozen_control_sequence+10
+  {permanent `\.{\\special}'}
+@d frozen_primitive=frozen_control_sequence+11
+  {permanent `\.{\\pdfprimitive}'}
+@d frozen_null_font=frozen_control_sequence+12
+  {permanent `\.{\\nullfont}'}
 @z
 
 @x
@@ -34,7 +50,7 @@
 @d dimen_pars=25 {total number of dimension parameters}
 @z
 
-@x
+@x \pdfpage{width,height}
 @d emergency_stretch==dimen_par(emergency_stretch_code)
 @y
 @d emergency_stretch==dimen_par(emergency_stretch_code)
@@ -42,12 +58,299 @@
 @d pdf_page_height==dimen_par(pdf_page_height_code)
 @z
 
-@x
+@x \pdfpage{width,height}
 emergency_stretch_code:print_esc("emergencystretch");
 @y
 emergency_stretch_code:print_esc("emergencystretch");
 pdf_page_width_code:    print_esc("pdfpagewidth");
 pdf_page_height_code:   print_esc("pdfpageheight");
+@z
+
+@x \[if]pdfprimitive
+@!cs_count:integer; {total number of known identifiers}
+@y
+@!cs_count:integer; {total number of known identifiers}
+
+@ Primitive support needs a few extra variables and definitions
+
+@d prim_size=2100 {maximum number of primitives }
+@d prim_prime=1777 {about 85\pct! of |primitive_size|}
+@d prim_base=1
+@d prim_next(#) == prim[#].lh {link for coalesced lists}
+@d prim_text(#) == prim[#].rh {string number for control sequence name}
+@d prim_is_full == (prim_used=prim_base) {test if all positions are occupied}
+@d prim_eq_level_field(#)==#.hh.b1
+@d prim_eq_type_field(#)==#.hh.b0
+@d prim_equiv_field(#)==#.hh.rh
+@d prim_eq_level(#)==prim_eq_level_field(prim_eqtb[#]) {level of definition}
+@d prim_eq_type(#)==prim_eq_type_field(prim_eqtb[#]) {command code for equivalent}
+@d prim_equiv(#)==prim_equiv_field(prim_eqtb[#]) {equivalent value}
+@d undefined_primitive=0
+
+@<Glob...@>=
+@!prim: array [0..prim_size] of two_halves;  {the primitives table}
+@!prim_used:pointer; {allocation pointer for |prim|}
+@!prim_eqtb:array[0..prim_size] of memory_word;
+@z
+
+@x \[if]pdfprimitive
+@ @<Set init...@>=
+no_new_control_sequence:=true; {new identifiers are usually forbidden}
+@y
+@ @<Set init...@>=
+no_new_control_sequence:=true; {new identifiers are usually forbidden}
+prim_next(0):=0; prim_text(0):=0;
+for k:=1 to prim_size do prim[k]:=prim[0];
+prim_eq_level(0) := level_zero;
+prim_eq_type(0) := undefined_cs;
+prim_equiv(0) := null;
+for k:=1 to prim_size do prim_eqtb[k]:=prim_eqtb[0];
+@z
+
+@x \[if]pdfprimitive
+text(frozen_dont_expand):="notexpanded:";
+@.notexpanded:@>
+@y
+prim_used:=prim_size; {nothing is used}
+text(frozen_dont_expand):="notexpanded:";
+@.notexpanded:@>
+eq_type(frozen_primitive):=ignore_spaces;
+equiv(frozen_primitive):=1;
+eq_level(frozen_primitive):=level_one;
+text(frozen_primitive):="pdfprimitive";
+@z
+
+@x \[if]pdfprimitive
+@ Single-character control sequences do not need to be looked up in a hash
+table, since we can use the character code itself as a direct address.
+@y
+@ Here is the subroutine that searches the primitive table for an identifier
+
+@p function prim_lookup(@!s:str_number):pointer; {search the primitives table}
+label found; {go here if you found it}
+var h:integer; {hash code}
+@!p:pointer; {index in |hash| array}
+@!k:pointer; {index in string pool}
+@!j,@!l:integer;
+begin
+if s<256 then begin
+  p := s;
+  if (p<0) or (prim_eq_level(p)<>level_one) then
+    p := undefined_primitive;
+end
+else begin
+  j:=str_start[s];
+  if s = str_ptr then l := cur_length else l := length(s);
+  @<Compute the primitive code |h|@>;
+  p:=h+prim_base; {we start searching here; note that |0<=h<hash_prime|}
+  loop@+begin if prim_text(p)>0 then if length(prim_text(p))=l then
+    if str_eq_str(prim_text(p),s) then goto found;
+    if prim_next(p)=0 then
+      begin if no_new_control_sequence then
+        p:=undefined_primitive
+      else @<Insert a new primitive after |p|, then make
+        |p| point to it@>;
+      goto found;
+      end;
+    p:=prim_next(p);
+    end;
+  end;
+found: prim_lookup:=p;
+end;
+
+@ @<Insert a new primitive...@>=
+begin if prim_text(p)>0 then
+  begin repeat if prim_is_full then overflow("primitive size",prim_size);
+@:TeX capacity exceeded primitive size}{\quad primitive size@>
+  decr(prim_used);
+  until prim_text(prim_used)=0; {search for an empty location in |prim|}
+  prim_next(p):=prim_used; p:=prim_used;
+  end;
+prim_text(p):=s;
+end
+
+@ The value of |prim_prime| should be roughly 85\pct! of
+|prim_size|, and it should be a prime number.
+
+@<Compute the primitive code |h|@>=
+h:=str_pool[j];
+for k:=j+1 to j+l-1 do
+  begin h:=h+h+str_pool[k];
+  while h>=prim_prime do h:=h-prim_prime;
+  end
+
+@ Single-character control sequences do not need to be looked up in a hash
+table, since we can use the character code itself as a direct address.
+@z
+
+@x \[if]pdfprimitive
+@p @!init procedure primitive(@!s:str_number;@!c:quarterword;@!o:halfword);
+var k:pool_pointer; {index into |str_pool|}
+@y
+@p @!init procedure primitive(@!s:str_number;@!c:quarterword;@!o:halfword);
+var k:pool_pointer; {index into |str_pool|}
+@!prim_val:integer; {needed to fill |prim_eqtb|}
+@z
+
+@x \[if]pdfprimitive
+begin if s<256 then cur_val:=s+single_base
+@y
+begin if s<256 then begin
+  cur_val:=s+single_base;
+  prim_val:=s;
+end
+@z
+
+@x \[if]pdfprimitive
+  flush_string; text(cur_val):=s; {we don't want to have the string twice}
+  end;
+eq_level(cur_val):=level_one; eq_type(cur_val):=c; equiv(cur_val):=o;
+end;
+tini
+@y
+  flush_string; text(cur_val):=s; {we don't want to have the string twice}
+  prim_val:=prim_lookup(s);
+  end;
+eq_level(cur_val):=level_one; eq_type(cur_val):=c; equiv(cur_val):=o;
+prim_eq_level(prim_val):=level_one;
+prim_eq_type(prim_val):=c;
+prim_equiv(prim_val):=o;
+end;
+tini
+@z
+
+@x \[if]pdfprimitive
+ignore_spaces: print_esc("ignorespaces");
+@y
+ignore_spaces: if chr_code=0 then print_esc("ignorespaces") else print_esc("pdfprimitive");
+@z
+
+@x \[if]pdfprimitive
+no_expand: print_esc("noexpand");
+@y
+no_expand: if chr_code=0 then print_esc("noexpand")
+   else print_esc("pdfprimitive");
+@z
+
+@x
+no_expand:@<Suppress expansion of the next token@>;
+@y
+no_expand: if cur_chr=0 then @<Suppress expansion of the next token@>
+  else @<Implement \.{\\pdfprimitive}@>;
+@z
+
+@x
+@<Suppress expansion...@>=
+begin save_scanner_status:=scanner_status; scanner_status:=normal;
+get_token; scanner_status:=save_scanner_status; t:=cur_tok;
+back_input; {now |start| and |loc| point to the backed-up token |t|}
+if t>=cs_token_flag then
+  begin p:=get_avail; info(p):=cs_token_flag+frozen_dont_expand;
+  link(p):=loc; start:=p; loc:=p;
+  end;
+end
+@y
+@<Suppress expansion...@>=
+begin save_scanner_status:=scanner_status; scanner_status:=normal;
+get_token; scanner_status:=save_scanner_status; t:=cur_tok;
+back_input; {now |start| and |loc| point to the backed-up token |t|}
+if t>=cs_token_flag then
+  begin p:=get_avail; info(p):=cs_token_flag+frozen_dont_expand;
+  link(p):=loc; start:=p; loc:=p;
+  end;
+end
+
+@ The \.{\\pdfprimitive} handling. If the primitive meaning of the next
+token is an expandable command, it suffices to replace the current
+token with the primitive one and restart |expand|/
+
+Otherwise, the token we just read has to be pushed back, as well
+as a token matching the internal form of \.{\\pdfprimitive}, that is
+sneaked in as an alternate form of |ignore_spaces|.
+@!@:pdfprimitive_}{\.{\\pdfprimitive} primitive (internalized)@>
+
+Simply pushing back a token that matches the correct internal command
+does not work, because approach would not survive roundtripping to a
+temporary file.
+
+@<Implement \.{\\pdfprimitive}@>=
+begin save_scanner_status := scanner_status; scanner_status:=normal;
+get_token; scanner_status:=save_scanner_status;
+if cur_cs < hash_base then
+  cur_cs := prim_lookup(cur_cs-257)
+else
+  cur_cs := prim_lookup(text(cur_cs));
+if cur_cs<>undefined_primitive then begin
+  t := prim_eq_type(cur_cs);
+  if t>max_command then begin
+    cur_cmd := t;
+    cur_chr := prim_equiv(cur_cs);
+    cur_tok := (cur_cmd*@'400)+cur_chr;
+    cur_cs  := 0;
+    goto reswitch;
+    end
+  else begin
+    back_input; { now |loc| and |start| point to a one-item list }
+    p:=get_avail; info(p):=cs_token_flag+frozen_primitive;
+    link(p):=loc; loc:=p; start:=p;
+    end;
+  end
+else begin
+  print_err("Missing primitive name");
+  help2("The control sequence marked <to be read again> does not")@/
+    ("represent any known primitive.");
+  back_error;
+  end;
+end
+
+@ This block deals with unexpandable \.{\\primitive} appearing at a spot where
+an integer or an internal values should have been found. It fetches the
+next token then resets |cur_cmd|, |cur_cs|, and |cur_tok|, based on the
+primitive value of that token. No expansion takes place, because the
+next token may be all sorts of things. This could trigger further
+expansion creating new errors.
+
+@<Reset |cur_tok| for unexpandable primitives, goto restart @>=
+begin
+get_token;
+cur_cs := prim_lookup(text(cur_cs));
+if cur_cs<>undefined_primitive then begin
+  cur_cmd := prim_eq_type(cur_cs);
+  cur_chr := prim_equiv(cur_cs);
+  cur_tok := (cur_cmd*@'400)+cur_chr;
+  end
+else begin
+  cur_cmd := relax;
+  cur_chr := 0;
+  cur_tok := cs_token_flag+frozen_relax;
+  cur_cs  := frozen_relax;
+  end;
+goto restart;
+end
+@z
+
+@x \[if]pdfprimitive : scan_something_internal
+procedure scan_something_internal(@!level:small_number;@!negative:boolean);
+  {fetch an internal parameter}
+label exit;
+@y
+procedure scan_something_internal(@!level:small_number;@!negative:boolean);
+  {fetch an internal parameter}
+label exit, restart;
+@z
+
+@x \[if]pdfprimitive : scan_something_internal
+begin m:=cur_chr;
+@y
+begin restart: m:=cur_chr;
+@z
+
+@x \[if]pdfprimitive : scan_something_internal
+last_item: @<Fetch an item in the current node, if appropriate@>;
+@y
+last_item: @<Fetch an item in the current node, if appropriate@>;
+ignore_spaces: {trap unexpandable primitives}
+  if cur_chr=1 then @<Reset |cur_tok| for unexpandable primitives, goto restart@>;
 @z
 
 @x
@@ -63,6 +366,23 @@ pdf_page_height_code:   print_esc("pdfpageheight");
 @d eTeX_int=badness_code+1 {first of \eTeX\ codes for integers}
 @y
 @d eTeX_int=pdf_shell_escape_code+1 {first of \eTeX\ codes for integers}
+@z
+
+@x \[if]pdfprimitive: scan_int
+@p procedure scan_int; {sets |cur_val| to an integer}
+label done;
+@y
+@p procedure scan_int; {sets |cur_val| to an integer}
+label done, restart;
+@z
+
+@x \[if]pdfprimitive: scan_int
+if cur_tok=alpha_token then @<Scan an alphabetic character code into |cur_val|@>
+@y
+restart:
+if cur_tok=alpha_token then @<Scan an alphabetic character code into |cur_val|@>
+else if cur_tok=cs_token_flag+frozen_primitive then
+  @<Reset |cur_tok| for unexpandable primitives, goto restart@>
 @z
 
 @x
@@ -267,6 +587,43 @@ eTeX_revision_code: print(eTeX_revision);
 pdf_strcmp_code: print_int(cur_val);
 @z
 
+@x \[if]pdfprimitive
+@d if_dbox_code=if_ybox_code+1 { `\.{\\ifdbox}' }
+@y
+@d if_dbox_code=if_ybox_code+1 { `\.{\\ifdbox}' }
+@#
+@d if_pdfprimitive_code=if_dbox_code+1 { `\.{\\ifpdfprimitive}' }
+@z
+
+@x \[if]pdfprimitive
+  if_dbox_code:print_esc("ifdbox");
+@y
+  if_dbox_code:print_esc("ifdbox");
+  if_pdfprimitive_code:print_esc("ifpdfprimitive");
+@z
+
+@x \[if]pdfprimitive
+if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code:
+  @<Test box register status@>;
+@y
+if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code:
+  @<Test box register status@>;
+if_pdfprimitive_code: begin
+  save_scanner_status:=scanner_status;
+  scanner_status:=normal;
+  get_next;
+  scanner_status:=save_scanner_status;
+  if cur_cs < hash_base then
+    m := prim_lookup(cur_cs-257)
+  else
+    m := prim_lookup(text(cur_cs));
+  b :=((cur_cmd<>undefined_cs) and
+       (m<>undefined_primitive) and
+       (cur_cmd=prim_eq_type(m)) and
+       (cur_chr=prim_equiv(m)));
+  end;
+@z
+
 @x
 @ @<Initialize variables as |ship_out| begins@>=
 @y
@@ -279,6 +636,50 @@ pdf_strcmp_code: print_int(cur_val);
 @y
 @!old_setting:0..max_selector; {saved |selector| setting}
 @!t: scaled;
+@z
+
+@x \[if]pdfprimitive: main_loop
+any_mode(ignore_spaces): begin @<Get the next non-blank non-call...@>;
+  goto reswitch;
+  end;
+@y
+any_mode(ignore_spaces): begin
+  if cur_chr = 0 then begin
+    @<Get the next non-blank non-call...@>;
+    goto reswitch;
+  end
+  else begin
+    t:=scanner_status;
+    scanner_status:=normal;
+    get_next;
+    scanner_status:=t;
+    if cur_cs < hash_base then
+      cur_cs := prim_lookup(cur_cs-257)
+    else
+      cur_cs  := prim_lookup(text(cur_cs));
+    if cur_cs<>undefined_primitive then begin
+      cur_cmd := prim_eq_type(cur_cs);
+      cur_chr := prim_equiv(cur_cs);
+      goto reswitch;
+      end;
+    end;
+  end;
+@z
+
+@x \[if]pdfprimitive: dump prim table
+@<Dump the hash table@>=
+@y
+@<Dump the hash table@>=
+for p:=0 to prim_size do dump_hh(prim[p]);
+for p:=0 to prim_size do dump_wd(prim_eqtb[p]);
+@z
+
+@x \[if]pdfprimitive: undump prim table
+@ @<Undump the hash table@>=
+@y
+@ @<Undump the hash table@>=
+for p:=0 to prim_size do undump_hh(prim[p]);
+for p:=0 to prim_size do undump_wd(prim_eqtb[p]);
 @z
 
 @x
@@ -310,7 +711,7 @@ set_language_code:@<Implement \.{\\setlanguage}@>;
 pdf_save_pos_node: @<Implement \.{\\pdfsavepos}@>;
 @z
 
-@x
+@x \pdfsavepos
   print_int(what_lhm(p)); print_char(",");
   print_int(what_rhm(p)); print_char(")");
   end;
@@ -321,7 +722,7 @@ pdf_save_pos_node: @<Implement \.{\\pdfsavepos}@>;
 pdf_save_pos_node: print_esc("pdfsavepos");
 @z
 
-@x
+@x \pdfsavepos
 close_node,language_node: begin r:=get_node(small_node_size);
   words:=small_node_size;
   end;
@@ -333,7 +734,7 @@ pdf_save_pos_node:
    r := get_node(small_node_size);
 @z
 
-@x
+@x \pdfsavepos
 close_node,language_node: free_node(p,small_node_size);
 @y
 close_node,language_node: free_node(p,small_node_size);
@@ -375,6 +776,8 @@ primitive("eTeXrevision",convert,eTeX_revision_code);@/
 @y
 primitive("eTeXrevision",convert,eTeX_revision_code);@/
 @!@:eTeX_revision_}{\.{\\eTeXrevision} primitive@>
+primitive("pdfprimitive",no_expand,1);@/
+@!@:pdfprimitive_}{\.{\\pdfprimitive} primitive@>
 primitive("pdfstrcmp",convert,pdf_strcmp_code);@/
 @!@:pdf_strcmp_}{\.{\\pdfstrcmp} primitive@>
 primitive("pdfcreationdate",convert,pdf_creation_date_code);@/
@@ -399,6 +802,8 @@ primitive("pdflastypos",last_item,pdf_last_y_pos_code);@/
 @!@:pdf_last_y_pos_}{\.{\\pdflastypos} primitive@>
 primitive("pdfshellescape",last_item,pdf_shell_escape_code);
 @!@:pdf_shell_escape_}{\.{\\pdfshellescape} primitive@>
+primitive("ifpdfprimitive",if_test,if_pdfprimitive_code);
+@!@:if_pdfprimitive_}{\.{\\ifpdfprimitive} primitive@>
 @z
 
 @x
