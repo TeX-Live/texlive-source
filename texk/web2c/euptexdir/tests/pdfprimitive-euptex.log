@@ -1,0 +1,21 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**pdfprimitive-euptex
+(./pdfprimitive-euptex.tex
+RELAX macro:->\message {RELAX} FUGA
+! Missing primitive name.
+<to be read again> 
+                   \fuga 
+l.13 \pdfprimitive\fuga
+                        % ==> ``! Missing primitive name.'' error
+The control sequence marked <to be read again> does not
+represent any known primitive.
+
+FUGA F T F F F
+> \pdfstrcmp=\pdfstrcmp.
+l.22 \show\pdfstrcmp
+                     % ==> \pdfstrcmp
+
+ )
+No pages of output.

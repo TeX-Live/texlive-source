@@ -81,8 +81,9 @@ EXTRA_DIST += \
 
 # e-pTeX Tests
 #
-eptex_tests = eptexdir/eptriptest.test
+eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test
 eptexdir/eptriptest.log: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+eptexdir/pdfprimitive.log: eptex$(EXEEXT)
 
 EXTRA_DIST += $(eptex_tests)
 
@@ -94,7 +95,7 @@ endif EPTEX
 
 ## Test data and results
 ##
-## eptexdir/eptriptest
+## eptexdir/eptriptest.test
 EXTRA_DIST += \
 	eptexdir/eptrip/eptrip.diffs \
 	eptexdir/eptrip/eptrip.log \
@@ -105,6 +106,11 @@ eptrip.diffs: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 .PHONY: eptrip-clean
 eptrip-clean:
 	rm -rf eptripdir
-
 DISTCLEANFILES += eptrip.diffs
+## eptexdir/pdfprimitive.test
+EXTRA_DIST += \
+	eptexdir/pdfprimitive.test \
+	eptexdir/tests/pdfprimitive-test.tex \
+	eptexdir/tests/pdfprimitive-eptex.log
+DISTCLEANFILES += pdfprimitive-eptex.*
 

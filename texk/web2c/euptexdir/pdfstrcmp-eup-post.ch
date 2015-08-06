@@ -1,4 +1,15 @@
 @x
+    cur_tok := (cur_cmd*@'400)+cur_chr;
+@y
+    cur_tok := (cur_cmd*max_char_val)+cur_chr;
+@z
+@x
+  cur_tok := (cur_cmd*@'400)+cur_chr;
+@y
+  cur_tok := (cur_cmd*max_char_val)+cur_chr;
+@z
+
+@x
 procedure print_kanji(@!s:integer); {prints a single character}
 begin
 if s>255 then begin
