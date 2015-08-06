@@ -955,7 +955,11 @@ is_notdef_notzero (char *path)
   p = kpse_var_value("SELFAUTOLOC");
   if (p == NULL)
     return ret;
+#if defined(_WIN32)
+  cmd = concatn ("\"", p, "/t1disasm.exe\" \"", path, "\"", NULL);
+#else
   cmd = concat3 (p, "/t1disasm ", path);
+#endif
   free (p);
   f = popen (cmd, "r");
   free (cmd);
@@ -964,7 +968,10 @@ is_notdef_notzero (char *path)
       p = strstr (buf, "CharStrings");
       if (p) {
         fgets (buf, 2047, f);
-        if (strncmp (buf, "/.notdef", 8) != 0)
+        p = buf;
+        while (*p == ' ' || *p == '\t')
+          p++;
+        if (strncmp (p, "/.notdef", 8) != 0)
           ret = 1;
         break;
       }
