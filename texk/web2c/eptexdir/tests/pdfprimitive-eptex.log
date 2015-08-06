@@ -1,8 +1,8 @@
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**pdfprimitive-test
-(./pdfprimitive-test.tex
+**pdfprimitive-eptex
+(./pdfprimitive-eptex.tex
 RELAX macro:->\message {RELAX} FUGA
 ! Missing primitive name.
 <to be read again> 
