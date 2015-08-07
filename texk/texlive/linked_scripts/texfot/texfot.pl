@@ -1,21 +1,23 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.25 2014/10/10 17:52:53 karl Exp $
+# $Id: texfot,v 1.28 2015/08/07 00:48:23 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
-# Tee the complete (unfiltered) output to (by default) /tmp/fot.
+# Tee the complete (unfiltered) standard output and standard error to
+# (by default) /tmp/fot.
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.25 2014/10/10 17:52:53 karl Exp $';
+my $ident = '$Id: texfot,v 1.28 2015/08/07 00:48:23 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
 
 use IPC::Open3; # control what happens with stderr from the child.
+use IO::File;   # use new_tmpfile for that stderr.
 
 # require_order because we don't want getopt to permute anything;
-# arguments to the tex invocation must remain in order, not be handled here.
+# arguments to the tex invocation must remain in order, not handled by us.
 use Getopt::Long qw(:config require_order);
 use Pod::Usage;
 
@@ -23,6 +25,7 @@ my $opt_debug = 0;
 my @opt_ignore = ();
 my $opt_interactive = 0;
 my $opt_quiet = 0;
+my $opt_stderr = 1;
 my $opt_tee = ($ENV{"TMPDIR"} || "/tmp") . "/fot";
 my $opt_version = 0;
 my $opt_help = 0;
@@ -37,6 +40,7 @@ sub main {
     "ignore=s"     => \@opt_ignore,
     "interactive!" => \$opt_interactive,
     "quiet!"       => \$opt_quiet,
+    "stderr!"	   => \$opt_stderr,
     "tee=s"        => \$opt_tee,
     "version"      => \$opt_version,
     "help|?"       => \$opt_help) || pod2usage (2);
@@ -61,32 +65,40 @@ sub main {
   $FOTTMP = ">$opt_tee";
   open (FOTTMP) || die "$prg: aborting, open($FOTTMP) failed: $!";
 
-  # We want to grab stderr, otherwise it gets merged with stdout, not
-  # necessarily at line breaks, hence can lose useful messages.
+  # We need to separate stderr from stdout.  Otherwise they are randomly
+  # merged, not always at line breaks, hence we can lose useful messages.
   print "$0: invoking: @ARGV\n" unless $opt_quiet;
-  local *TEXOUT, *TEXERR;
-  my $pid = open3 (undef, \*TEXOUT, \*TEXERR, @ARGV)
-            || die "$prg: fork(TeX) failed: $! [cmd=@ARGV]\n";
-  
-  # For what it's worth, some other approaches to stderr I investigated:
-  # "safe pipe open" in perlipc
-  # http://www.perlmonks.org/?node_id=757524
-  # http://stackoverflow.com/questions/3486575/direct-stderr-when-opening-pipe-in-perl
 
-  # It's not ideal to read all of stdout and then all of stderr, would
-  # be better to intermix them in the original order of child output, but
-  # it's simpler than other ways of avoiding possible deadlock (select,
-  # sysread, etc.).
+  # In order to avoid deadlock when there is lots of stuff on stderr,
+  # we must write it to a temporary file
+  # http://perldoc.perl.org/perlfaq8.html#How-can-I-capture-STDERR-from-an-external-command 
+  local *TEXERR = IO::File->new_tmpfile
+  || die "IO::File->new_tmpfile failed: $!";
+  
+  # But we can process stdout as it comes.
+  local *TEXOUT;
+  my $pid = open3 (undef, \*TEXOUT, ">&TEXERR", @ARGV)
+            || die "$prg: fork(TeX) failed: $! [cmd=@ARGV]\n";
+  &debug ("open3() returned pid $pid [cmd=@ARGV]");
+  
+  # It's not ideal to read all of stdout and then all of stderr; it would
+  # be better to intermix them in the original order of child output.
+  # this is simpler than other ways of avoiding possible deadlock (such
+  # as select, sysread, etc.).
   &debug ("processing stdout from child");
   &process_output (\*TEXOUT, "");
   
-  &debug ("processing stderr from child");
-  &process_output (\*TEXERR, "[stderr] ");
-  
   # Be sure everything is drained.
+  &debug ("starting waitpid() for $pid")  ;
   waitpid ($pid, 0) || die "$prog: waitpid($pid) failed: $!\n";
   my $child_exit_status = $? >> 8;
   &debug ("child exit status = $exit_status\n");
+
+  &debug ("processing stderr from child");
+  seek (TEXERR, 0, 0) || warn "seek(stderr) failed: $!";
+  &process_output (\*TEXERR, "[stderr] ");
+  close (TEXERR) || warn "close(stderr tmpfile) failed: $!";
+  
   return $child_exit_status;
 }
 
@@ -123,7 +135,7 @@ sub process_output {
      |Package\ caption\ Warning:\ Unsupported\ document\ class
      |Package\ frenchb\.ldf\ Warning:\ (Figures|The\ definition)
      |Reloading\ Xunicode\ for\ encoding  # spurious ***
-     |This\ is.*epsf\.tex                 # so what
+     |This\ is.*(epsf\.tex|\.sty)         # so what
      |pdfTeX\ warning:.*inclusion:\ fou   #nd PDF version ...
      |pdfTeX\ warning:.*inclusion:\ mul   #tiple pdfs with page group
      |libpng\ warning:\ iCCP:\ Not\ recognizing
@@ -157,7 +169,7 @@ sub process_output {
      |Output\ written
      |No\ pages\ of\ output
      |(Und|Ov)erfull
-     |(LaTeX|Package).*(Error|Warning)
+     |(LaTeX|Package|Class).*(Error|Warning)
      |.*Citation.*undefined
      |.*\ Error           # as in \Url Error ->...
      |Missing\ character: # good to show (need \tracinglostchars=1)
@@ -175,12 +187,12 @@ sub process_output {
 
     &debug ("done with all checks\n");
     
-    if ($prefix) {
+    if ($prefix && $opt_stderr) {
       &debug ("prefix (stderr), showing line by default: $_");
       print $prefix;
       print $line;
     } else {
-      &debug ("no prefix (stdout), ignoring line by default: $_");
+      &debug ("no prefix (stdout) or no stderr, ignoring line by default: $_");
     }
   }
 }
@@ -249,9 +261,9 @@ see below), in that order, ignore it.
 =item 3.
 
 Otherwise, if the line matches the list of regexps for which the next
-line (two lines in all) should be shown, set the ``next line'' flag for
-the next time around the loop and show this line.  Examples are the
-usual C<!> and C<filename:lineno:> error messages, which are generally
+line (two lines in all) should be shown, show this line and set the
+``next line'' flag for the next time around the loop.  Examples are the
+common C<!> and C<filename:lineno:> error messages, which are generally
 followed by a line with specific detail about the error.
 
 =item 4.
@@ -318,7 +330,7 @@ altered), simply used as-is.
 
 By default, standard input to the TeX process is closed so that TeX's
 interactive mode (waiting for input upon error, the C<*> prompt, etc.)
-never happens.  Giving C<--interactive> allows interaction to happen.
+is never entered.  Giving C<--interactive> allows interaction to happen.
 
 =item C<--quiet>
 
@@ -326,6 +338,14 @@ never happens.  Giving C<--interactive> allows interaction to happen.
 
 By default, the TeX command being invoked is reported on standard output.
 C<--quiet> omits that reporting.
+
+=item C<--stderr>
+
+=item C<--no-stderr>
+
+The default is for C<texfot> to report everything written to stderr by
+the TeX command (on stdout).  C<--no-stderr> omits that reporting.
+(Some programs, C<dvisvgm> is one, can be rather verbose on stderr.)
 
 =item C<--tee> I<file>
 
@@ -348,12 +368,12 @@ Display this help and exit successfully.
 =head1 RATIONALE
 
 I wrote this because, in my work as a TUGboat editor
-(L<http://tug.org/TUGboat>, submissions welcome, by the way), I end up
-running and rerunning many papers, many times each.  It was too easy to
-lose warnings I needed to see in the mass of unvarying and uninteresting
-output from TeX, such as all the style files being read and all the
-fonts being used.  I wanted to see all and only those messages which
-actually needed some action by me.
+(L<http://tug.org/TUGboat>, journal submissions always welcome!), I end
+up running and rerunning many papers, many times each.  It was too easy
+to lose warnings I needed to see in the mass of unvarying and
+uninteresting output from TeX, such as all the style files being read
+and all the fonts being used.  I wanted to see all and only those
+messages which needed some action by me.
 
 I found some other programs of a similar nature, the C<silence> LaTeX
 package, and plenty of other (La)TeX wrappers, but it seemed none of
@@ -370,7 +390,7 @@ searching for C<log> at L<http://ctan.org/search>.
 C<texfot> is written in Perl, and runs on Unix, and does not work on
 Windows.  (If by some chance anyone wants to use this program on
 Windows, please make your own fork; I'm not interested in supporting
-it.)
+that os.)
 
 The name comes from the C<trip.fot> and C<trap.fot> files that are part
 of Knuth's trip and trap torture tests, which record the online output
@@ -386,17 +406,3 @@ bug reports.  There is no home page beyond the package on CTAN:
 L<http://www.ctan.org/pkg/texfot>.
 
 =cut
-
-# doesn't survive forks, have to use shell to rediret.
-
-#  if ($pid == 0) { # child
-#    # Unfortunately, the stderr lines are typically concatenated onto
-#    # however much of the TeX output line has happened.  Should somehow
-#    # prepend a newline to stderr lines.
-#    #open (STDERR, ">&", \*STDOUT) || die "$prg: open(STDERR) failed: $!";
-#    #warn "tying stderr";
-#    open (E, "-|", "echo-stderr", "fromerr") || die "xopen fil";
-#    close (E) || die "xclo fil";
-#    #exec (@ARGV, "2>&1") || die "$prg: exec(TeX) failed: $! [cmd=@ARGV]\n";
-#    die "$prg: after exec, shouldn't happen: $!";
-#  }

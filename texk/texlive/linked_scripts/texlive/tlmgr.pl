@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37738 2015-07-02 23:10:09Z karl $
+# $Id: tlmgr.pl 37974 2015-07-28 06:42:13Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37738 $';
-my $datrev = '$Date: 2015-07-03 01:10:09 +0200 (Fri, 03 Jul 2015) $';
+my $svnrev = '$Revision: 37974 $';
+my $datrev = '$Date: 2015-07-28 08:42:13 +0200 (Tue, 28 Jul 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1185,7 +1185,15 @@ sub action_paper {
       return($F_ERROR)
 
     } elsif (!defined($newpaper)) {  # tlmgr paper => show all current sizes.
-      return TeXLive::TLPaper::paper_all($texmfconfig,undef);
+      my $ret = $F_OK;
+      for my $prog (sort keys %TeXLive::TLPaper::paper) {
+        my $pkg = $TeXLive::TLPaper::paper{$prog}{'pkg'};
+        if ($localtlpdb->get_package($pkg)) {
+          $ret |= TeXLive::TLPaper::do_paper($prog,$texmfconfig,undef);
+        }
+      }
+      return($ret);
+      # return TeXLive::TLPaper::paper_all($texmfconfig,undef);
 
     } elsif ($newpaper !~ /^(a4|letter)$/) {  # tlmgr paper junk => complain.
       $newpaper = "the empty string" if !defined($newpaper);
@@ -1194,11 +1202,24 @@ sub action_paper {
 
     } else { # tlmgr paper {a4|letter} => do it.
       return ($F_ERROR) if !check_on_writable();
-      return (TeXLive::TLPaper::paper_all($texmfconfig,$newpaper));
+      my $ret = $F_OK;
+      for my $prog (sort keys %TeXLive::TLPaper::paper) {
+        my $pkg = $TeXLive::TLPaper::paper{$prog}{'pkg'};
+        if ($localtlpdb->get_package($pkg)) {
+          $ret |= TeXLive::TLPaper::do_paper($prog,$texmfconfig,$newpaper);
+        }
+      }
+      return($ret);
+      # return (TeXLive::TLPaper::paper_all($texmfconfig,$newpaper));
     }
 
   } else {  # program-specific paper
     my $prog = $action;     # first argument is the program to change
+    my $pkg = $TeXLive::TLPaper::paper{$prog}{'pkg'};
+    if (!$localtlpdb->get_package($pkg)) {
+      tlwarn("$prg: package $pkg is not installed - cannot adjust paper size!\n");
+      return ($F_ERROR);
+    }
     my $arg = shift @ARGV;  # get "paper" argument
     if (!defined($arg) || $arg ne "paper") {
       $arg = "the empty string." if ! $arg;
