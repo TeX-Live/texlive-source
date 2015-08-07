@@ -1048,7 +1048,8 @@ dvi_locate_native_font (const char *filename, uint32_t index,
       ERROR("Failed to read Type 1 font \"%s\".", filename);
 
     loaded_fonts[cur_id].cffont = cffont;
-    loaded_fonts[cur_id].cff_is_standard_encoding = enc_vec[0] == NULL;
+    loaded_fonts[cur_id].cff_is_standard_encoding =
+      (enc_vec[0] == NULL || !strcmp (enc_vec[0], ".notdef"));
 
     if (cff_dict_known(cffont->topdict, "FontBBox")) {
       loaded_fonts[cur_id].ascent = cff_dict_get(cffont->topdict, "FontBBox", 3);
