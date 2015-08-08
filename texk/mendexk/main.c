@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 
 			case '-':
 				if (strlen(argv[i])==2) chkopt=0;
-				break;
+				if (strcmp(argv[i],"--help")!=0) break;
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);

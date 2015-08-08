@@ -1,3 +1,7 @@
+2015-08-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c: Add '--help' option.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
