@@ -32,6 +32,7 @@
 @y
 @d print(#)==write(stderr,#)
 @d print_ln(#)==write_ln(stderr,#)
+@d print_real(#)==fprint_real(stderr,#)
 @z
 
 @x [still 2] No banner unless verbose.
