@@ -605,7 +605,7 @@ void Splash::pipeRun(SplashPipe *pipe) {
     //----- blend function
 
     if (state->blendFunc) {
-#ifdef SPLASH_CMYK
+#if SPLASH_CMYK
       if (bitmap->mode == splashModeDeviceN8) {
         for (int k = 4; k < 4 + SPOT_NCOMPS; k++) {
           cBlend[k] = 0;

@@ -143,6 +143,61 @@ static inline void convertGfxColor(SplashColorPtr dest,
   splashColorCopy(dest, color);
 }
 
+// Copy a color according to the color mode.
+// Use convertGfxShortColor() below when the destination is a bitmap
+// to avoid overwriting cells.
+// Calling this in SplashGouraudPattern::getParameterizedColor() fixes bug 90570.
+// Use convertGfxColor() above when the destination is an array of SPOT_NCOMPS+4 bytes,
+// to ensure that everything is initialized.
+
+static inline void convertGfxShortColor(SplashColorPtr dest,
+                                   SplashColorMode colorMode,
+                                   GfxColorSpace *colorSpace,
+                                   GfxColor *src) {
+  switch (colorMode) {
+    case splashModeMono1:
+    case splashModeMono8:
+    {
+      GfxGray gray;
+      colorSpace->getGray(src, &gray);
+      dest[0] = colToByte(gray);
+    }
+    break;
+    case splashModeXBGR8:
+      dest[3] = 255;
+    case splashModeBGR8:
+    case splashModeRGB8:
+    {
+      GfxRGB rgb;
+      colorSpace->getRGB(src, &rgb);
+      dest[0] = colToByte(rgb.r);
+      dest[1] = colToByte(rgb.g);
+      dest[2] = colToByte(rgb.b);
+    }
+    break;
+#if SPLASH_CMYK
+    case splashModeCMYK8:
+    {
+      GfxCMYK cmyk;
+      colorSpace->getCMYK(src, &cmyk);
+      dest[0] = colToByte(cmyk.c);
+      dest[1] = colToByte(cmyk.m);
+      dest[2] = colToByte(cmyk.y);
+      dest[3] = colToByte(cmyk.k);
+    }
+    break;
+    case splashModeDeviceN8:
+    {
+      GfxColor deviceN;
+      colorSpace->getDeviceN(src, &deviceN);
+      for (int i = 0; i < SPOT_NCOMPS + 4; i++)
+        dest[i] = colToByte(deviceN.c[i]);
+    }
+    break;
+#endif
+  }
+}
+
 //------------------------------------------------------------------------
 // SplashGouraudPattern
 //------------------------------------------------------------------------
@@ -179,7 +234,7 @@ void SplashGouraudPattern::getParameterizedColor(double colorinterp, SplashColor
     for (int m = 0; m < colorComps; ++m)
       dest[m] = colToByte(src.c[m]);
   } else {
-    convertGfxColor(dest, mode, srcColorSpace, &src);
+    convertGfxShortColor(dest, mode, srcColorSpace, &src);
   }
 }
 
@@ -888,7 +943,7 @@ static void setSat(Guchar rIn, Guchar gIn, Guchar bIn, int sat,
 static void splashOutBlendHue(SplashColorPtr src, SplashColorPtr dest,
 			      SplashColorPtr blend, SplashColorMode cm) {
   Guchar r0, g0, b0;
-#ifdef SPLASH_CMYK
+#if SPLASH_CMYK
   Guchar r1, g1, b1;
   int i;
   SplashColor src2, dest2;
@@ -938,7 +993,7 @@ static void splashOutBlendSaturation(SplashColorPtr src, SplashColorPtr dest,
 				     SplashColorPtr blend,
 				     SplashColorMode cm) {
   Guchar r0, g0, b0;
-#ifdef SPLASH_CMYK
+#if SPLASH_CMYK
   Guchar r1, g1, b1;
   int i;
   SplashColor src2, dest2;
