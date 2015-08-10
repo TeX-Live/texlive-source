@@ -1,3 +1,8 @@
+2015-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* pltotf.ch, vptovf.ch: Send also real numbers to stderr,
+	completing the change from 2015-01-09 (report from Norbert).
+
 2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvitype.ch: Removed a spurious duplicate statement.
