@@ -20,6 +20,7 @@
 // Copyright (C) 2008-2010, 2012, 2014 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012-2014 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
+// Copyright (C) 2015 Adam Reichold <adam.reichold@t-online.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -129,13 +130,14 @@ public:
   ~GooString();
 
   // Get length.
-  int getLength() { return length; }
+  int getLength() const { return length; }
 
   // Get C string.
-  char *getCString() const { return s; }
+  char *getCString() { return s; }
+  const char *getCString() const { return s; }
 
   // Get <i>th character.
-  char getChar(int i) { return s[i]; }
+  char getChar(int i) const { return s[i]; }
 
   // Change <i>th character.
   void setChar(int i, char c) { s[i] = c; }
@@ -185,11 +187,17 @@ private:
   GooString(const GooString &other);
   GooString& operator=(const GooString &other);
 
-  // you can tweak this number for a different speed/memory usage tradeoffs.
-  // In libc malloc() rounding is 16 so it's best to choose a value that
-  // results in sizeof(GooString) be a multiple of 16.
-  // 24 makes sizeof(GooString) to be 32.
-  static const int STR_STATIC_SIZE = 24;
+  // You can tweak the final object size for different time/space tradeoffs.
+  // In libc malloc(), rounding is 16 so it's best to choose a value that
+  // is a multiple of 16.
+  class MemoryLayout {
+      char c[sizeof(char*)];
+      int i;
+      char* s;
+  };
+
+  static const int STR_FINAL_SIZE = 32;
+  static const int STR_STATIC_SIZE = STR_FINAL_SIZE - sizeof(MemoryLayout) + sizeof(char*);
 
   int  roundedSize(int len);
 

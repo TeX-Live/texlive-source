@@ -17,6 +17,7 @@
 // Copyright (C) 2009 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Andreas Hartmetz <ahartmetz@gmail.com>
 // Copyright (C) 2013 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2015 Dmytro Morgun <lztoad@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -149,14 +150,12 @@ SplashFontFile *SplashFontEngine::loadType1Font(SplashFontFileID *idA,
   }
 #endif
 
-#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
   // loadXYZFont failed, the file will always be deleted)
   if (src->isFile)
     src->unref();
-#endif
 
   return fontFile;
 }
@@ -178,14 +177,12 @@ SplashFontFile *SplashFontEngine::loadType1CFont(SplashFontFileID *idA,
   }
 #endif
 
-#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
   // loadXYZFont failed, the file will always be deleted)
   if (src->isFile)
     src->unref();
-#endif
 
   return fontFile;
 }
@@ -223,14 +220,12 @@ SplashFontFile *SplashFontEngine::loadCIDFont(SplashFontFileID *idA,
   }
 #endif
 
-#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
   // loadXYZFont failed, the file will always be deleted)
   if (src->isFile)
     src->unref();
-#endif
 
   return fontFile;
 }
@@ -277,14 +272,12 @@ SplashFontFile *SplashFontEngine::loadTrueTypeFont(SplashFontFileID *idA,
     gfree(codeToGID);
   }
 
-#ifndef _WIN32
   // delete the (temporary) font file -- with Unix hard link
   // semantics, this will remove the last link; otherwise it will
   // return an error, leaving the file to be deleted later (if
   // loadXYZFont failed, the file will always be deleted)
   if (src->isFile)
     src->unref();
-#endif
 
   return fontFile;
 }

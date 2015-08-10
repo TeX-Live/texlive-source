@@ -1,3 +1,430 @@
+commit 1213501882cf2ec6e3dcb3c078391040c8cb0a57
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Aug 9 18:27:06 2015 +0200
+
+    0.35.0
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 29 +++++++++++++++++++++++++++++
+ configure.ac           |  2 +-
+ cpp/Doxyfile           |  2 +-
+ poppler/Makefile.am    |  2 +-
+ qt4/src/CMakeLists.txt |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt4/src/Makefile.am    |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 11 files changed, 40 insertions(+), 11 deletions(-)
+
+commit a7b1151ce7a14d359d85bacfe02352cdeb8d9a8f
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jul 26 10:38:37 2015 +0200
+
+    glib-demo: Prefer gtk_label_set_{x,y}align() over deprecated
+    gtk_misc_set_alignment()
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=88788
+
+ glib/demo/main.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+commit e6e7d1492b518d57136031a94069a994182693cc
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun May 31 12:32:36 2015 +0200
+
+    pdftocairo: Fix cast to pointer from integer of different size
+    on win64
+
+    Fixes warning:
+
+    [  322s]   CXX      pdftocairo-pdftocairo-win32.o
+    [  324s] In file included from
+    /usr/x86_64-w64-mingw32/sys-root/mingw/include/windows.h:72:0,
+    [  324s]                  from
+    /usr/x86_64-w64-mingw32/sys-root/mingw/include/cairo/cairo-win32.h:44,
+    [  324s]                  from pdftocairo-win32.cc:16:
+    [  324s] pdftocairo-win32.cc: In function 'HWND__*
+    createGroupBox(HWND, HINSTANCE, int, const char*, RECT*)':
+    [  324s] pdftocairo-win32.cc:170:23: warning: cast to pointer from
+    integer of different size [-Wint-to-pointer-cast]
+    [  324s]         parent, (HMENU)id,
+    [  324s]                        ^
+    [  324s] pdftocairo-win32.cc: In function 'HWND__*
+    createCheckBox(HWND, HINSTANCE, int, const char*, RECT*)':
+    [  324s] pdftocairo-win32.cc:186:23: warning: cast to pointer from
+    integer of different size [-Wint-to-pointer-cast]
+    [  324s]         parent, (HMENU)id,
+    [  324s]                        ^
+    [  324s] pdftocairo-win32.cc: In function 'HWND__*
+    createStaticText(HWND, HINSTANCE, int, const char*, RECT*)':
+    [  324s] pdftocairo-win32.cc:202:23: warning: cast to pointer from
+    integer of different size [-Wint-to-pointer-cast]
+    [  324s]         parent, (HMENU)id,
+    [  324s]                        ^
+    [  324s] pdftocairo-win32.cc: In function 'HWND__*
+    createPageScaleComboBox(HWND, HINSTANCE, int, RECT*)':
+    [  324s] pdftocairo-win32.cc:219:23: warning: cast to pointer from
+    integer of different size [-Wint-to-pointer-cast]
+    [  324s]         parent, (HMENU)id,
+    [  324s]                        ^
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=91465
+
+ utils/pdftocairo-win32.cc | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
+
+commit f3a0191abbf67c8b0f83739e1844a2fabe4138a4
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Thu Jul 23 21:44:57 2015 +0200
+
+    Explicitly link poppler-glib against pthread
+
+    Debian complains about missing symbols:
+
+    dpkg-shlibdeps: warning: symbol pthread_mutexattr_destroy used by
+    debian/libpoppler-glib8/usr/lib/i386-linux-gnu/libpoppler-glib.so.8.6.0
+    found in none of the libraries
+    dpkg-shlibdeps: warning: symbol pthread_mutexattr_init used by
+    debian/libpoppler-glib8/usr/lib/i386-linux-gnu/libpoppler-glib.so.8.6.0
+    found in none of the libraries
+    dpkg-shlibdeps: warning: symbol pthread_mutexattr_settype used by
+    debian/libpoppler-glib8/usr/lib/i386-linux-gnu/libpoppler-glib.so.8.6.0
+    found in none of the libraries
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=91450
+
+ glib/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit fb264bfa8bf7142cabc8d94a86594cf0e7c9f134
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Fri Jul 24 22:18:26 2015 +0200
+
+    glib-demo: Remove code for no longer supported gtk versions
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=88788
+
+ glib/demo/annots.c     |  8 --------
+ glib/demo/selections.c | 16 ----------------
+ 2 files changed, 24 deletions(-)
+
+commit dd0883649ac296c6033474fe5991c534ac2ce594
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Fri Jul 24 22:09:57 2015 +0200
+
+    glib-demo: Remove use of deprecated
+    gtk_dialog_set_alternative_button_order()
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=88788
+
+ glib/demo/main.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit ffc798a7fcf95d2aaf123772072ef956ceb2dff7
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jan 25 18:16:04 2015 +0100
+
+    glib-demo: Remove deprecated use of gtk_misc_set_alignment()
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=88788
+
+ glib/demo/main.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+commit 56915b2989fc244b58a454fe40412eb731e706bd
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jan 25 13:10:31 2015 +0100
+
+    glib-demo: Remove use of deprecated GtkAlignment
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=88788
+
+ glib/demo/annots.c | 23 +++++++++++---------
+ glib/demo/forms.c  | 23 +++++++++++---------
+ glib/demo/info.cc  | 18 +++++++++------
+ glib/demo/main.c   | 12 +---------
+ glib/demo/page.c   | 34 ++++++++++++++++++-----------
+ glib/demo/text.c   | 18 +++++++++------
+ glib/demo/utils.c  | 64
+ +++++++++++++++++++++++++++++++-----------------------
+ 7 files changed, 107 insertions(+), 85 deletions(-)
+
+commit 49e33e1213a7957d4814656960bf269abcabc7c3
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jan 25 12:21:41 2015 +0100
+
+    glib-demo: Remove deprecated use of gtk_tree_view_set_rules_hint()
+
+    The use of rules-hint is deprecated in gtk because it is
+    considered bad application API and is not really usefull.
+
+    See
+    https://git.gnome.org/browse/gtk+/commit/?id=0ed766ec866a2da7e3db05b1db2fc2519d6b1cdc
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=88788
+
+ glib/demo/attachments.c | 1 -
+ glib/demo/find.c        | 1 -
+ glib/demo/fonts.c       | 1 -
+ glib/demo/transitions.c | 1 -
+ 4 files changed, 4 deletions(-)
+
+commit 70f3c5ff0010775e5fcd590db1b8d475694fe3a4
+Author: William Bader <williambader@hotmail.com>
+Date:   Sat Jul 18 16:36:30 2015 +0200
+
+    Updated patch to add configure --enable-build-type
+
+    Bug #90796
+
+ configure.ac | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+
+commit 1aa2f6e8a41a6a86dc02bf7c5cbc62355e780961
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jul 17 00:40:56 2015 +0200
+
+    Silly micro optimization: Move vars inside case {}
+
+ poppler/SplashOutputDev.cc | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
+
+commit 705615f7569bbadb555bbf45c15c7c01f1690db5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Jul 17 00:38:58 2015 +0200
+
+    More typo fix
+
+ poppler/Catalog.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3b6b3fefe97b885e42966fece84a123fc4671b20
+Author: William Bader <williambader@hotmail.com>
+Date:   Fri Jul 17 00:37:46 2015 +0200
+
+    [Splash] Fix wrong writes on non rgb outputs
+
+    Bug #90570
+
+ poppler/SplashOutputDev.cc | 52
+ +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 51 insertions(+), 1 deletion(-)
+
+commit 885b23bfd16a3e4970a52956493e92a160b2d0a8
+Author: Dmytro Morgun <lztoad@gmail.com>
+Date:   Fri Jul 17 00:30:08 2015 +0200
+
+    GlobalParamsWin bug/fixes
+
+    Bug #91053
+
+ poppler/GlobalParamsWin.cc | 57
+ ++++++++++++++++++++++++++--------------------
+ 1 file changed, 32 insertions(+), 25 deletions(-)
+
+commit 0ce4da8ab16b4a5497688a6cf86175aaec0f585f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jul 15 23:59:11 2015 +0200
+
+    Make sure pageRootRef is a ref before using it
+
+    Bug #91344
+
+ poppler/Catalog.cc | 32 ++++++++++++++++++--------------
+ 1 file changed, 18 insertions(+), 14 deletions(-)
+
+commit b71431513b45f8a1aa4154332dae56af241258f8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jul 15 13:10:27 2015 +0200
+
+    Typo fix in warning
+
+ poppler/Catalog.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ccd780f9504f5b077ea12370fd5380ff7da5cd23
+Author: Dmytro Morgun <lztoad@gmail.com>
+Date:   Wed Jul 15 00:26:55 2015 +0200
+
+    [Windows] remove ifndef
+
+ splash/SplashFontEngine.cc | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+commit 2ed8465074c4fc2c88f745b29bdae92410751327
+Author: William Bader <williambader@hotmail.com>
+Date:   Wed Jul 15 00:07:48 2015 +0200
+
+    Allow configuring SPLASH_CMYK support from cmake/configure
+
+    Bug #90795
+
+ CMakeLists.txt              | 4 ++++
+ config.h.cmake              | 3 +++
+ configure.ac                | 7 +++++++
+ poppler/SplashOutputDev.cc  | 4 ++--
+ qt4/src/poppler-document.cc | 3 ++-
+ qt4/src/poppler-page.cc     | 4 ++--
+ qt5/src/poppler-document.cc | 3 ++-
+ qt5/src/poppler-page.cc     | 4 ++--
+ splash/Splash.cc            | 2 +-
+ splash/SplashBitmap.cc      | 4 ++--
+ 10 files changed, 27 insertions(+), 11 deletions(-)
+
+commit 334dc56f2f9adf4daa33c20ce034a5b1f8259baf
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 12 23:29:30 2015 +0200
+
+    [qt] KeepAlphaChannel -> IgnorePaperColor
+
+ qt4/src/poppler-page.cc | 13 ++++++-------
+ qt4/src/poppler-qt4.h   |  4 ++--
+ qt5/src/poppler-page.cc | 13 ++++++-------
+ qt5/src/poppler-qt5.h   |  4 ++--
+ 4 files changed, 16 insertions(+), 18 deletions(-)
+
+commit 2a1363a4a3129fe4b5e4fae1018dc8919a2d796a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 12 23:22:32 2015 +0200
+
+    Update (C)
+
+ splash/SplashBitmap.cc | 1 +
+ splash/SplashBitmap.h  | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit e903b2364f55c4f6417d826ab85dcb60cd240563
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 12 23:20:20 2015 +0200
+
+    [qt] fix spacing in header
+
+ qt4/src/poppler-qt4.h | 4 ++--
+ qt5/src/poppler-qt5.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 810c659faea542c3bd6e9c48c9a7c60b886a9269
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Fri Jul 3 00:31:56 2015 +0200
+
+    Switch default image format of Qt frontends
+
+    This changes the Poppler::Page::renderToImage method w.r.t. to
+    the image
+    formats used to render using Splash, i.e. the default will be RGB8. If
+    overprint preview is requested, DeviceN8 will be used and converted to
+    XBGR8 for display. If the internal alpha channel is requested,
+    XBGR8 will
+    be used and augmented by Splash's separate alpha channel.
+
+    This yields some improvements w.r.t. to rendering including alpha
+    blending
+    with the paper colour, i.e. synthetic benchmarks using structurally
+    simple
+    documents yield more than two percent improvement.
+
+ qt4/src/poppler-page.cc | 115
+ +++++++++++++++++++++++++++++-------------------
+ qt5/src/poppler-page.cc | 114
+ ++++++++++++++++++++++++++++-------------------
+ 2 files changed, 138 insertions(+), 91 deletions(-)
+
+commit 8fea54e48ec9ba35122c565f761e7e7f016a34f9
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Thu Jul 2 21:08:38 2015 +0200
+
+    Improve efficiency of Poppler::Page::renderToImage
+
+    Improves the efficiency of rendering into a QImage using
+    the Splash output device by removing a copy of the raw bitmap data
+    since Qt5 will properly free this data using a function supplied
+    during construction, i.e. in this case gfree.
+
+    This improves performance in synthentic rendering benchmarks
+    by approximately four percent and reduces the maximum working
+    set size.
+
+ qt5/src/poppler-page.cc | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit 09db5a71fff4b7a0ed1d5d7e76c8270e2f6e9a8d
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Thu Jul 2 21:02:59 2015 +0200
+
+    Add KeepAlphaChannel render flag to Qt frontends
+
+    Adds a new render flag which will indicate that the image return by
+    Poppler::Page::renderToImage will not be opaque and alpha blended with
+    the paper colour, but retain its actually background transparency.
+
+    This improves performance in synthentic rendering benchmarks by almost
+    five percent and the additional alpha blending that is then done
+    by the
+    consuming application is often a hardware-accellerated operation.
+
+ qt4/src/poppler-page.cc | 6 ++++--
+ qt4/src/poppler-qt4.h   | 3 ++-
+ qt5/src/poppler-page.cc | 6 ++++--
+ qt5/src/poppler-qt5.h   | 3 ++-
+ 4 files changed, 12 insertions(+), 6 deletions(-)
+
+commit d604a075c6b171d5c3fe26c146d3469c4bc0af3f
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Thu Jul 2 21:00:16 2015 +0200
+
+    Make SplashBitmap XBGR transfer alpha channel
+
+    Adds an option to SplashBitmap::convertToXBGR and
+    SplashBitmap::getXBGRLine
+    so that both optionally transfer Splash's internal alpha channel
+    into the
+    fourth component of the resulting bitmap data.
+
+ splash/SplashBitmap.cc | 27 ++++++++++++++++++++++-----
+ splash/SplashBitmap.h  |  4 ++--
+ 2 files changed, 24 insertions(+), 7 deletions(-)
+
+commit 17adfc848f99a5c5bfad35c94289ccf03fba1a16
+Author: Adam Reichold <adamreichold@myopera.com>
+Date:   Sun Jul 12 17:05:24 2015 +0200
+
+    Adjust memory layout computation of GooString
+
+    GooString uses the small string optimization but the static buffer
+    size is
+    hard-coded and hence the final object size becomes dependent on
+    architecture.
+    This adds a helper class to compute the memory layout at compile
+    time so that
+    the target object size of e.g. 32 or another multiple of 16 is
+    achieved.
+
+    This also adds an overload so that the C string returned by
+    GooString's
+    getCString method respect the constness of this and fixes a constness
+    issue
+    in the lexer tests.
+
+ goo/GooString.h           | 24 ++++++++++++++++--------
+ qt4/tests/check_lexer.cpp |  2 +-
+ qt5/tests/check_lexer.cpp |  2 +-
+ 3 files changed, 18 insertions(+), 10 deletions(-)
+
+commit d1720740f3381f489f1ee83ce1ce53e73aafd537
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jul 8 23:22:13 2015 +0200
+
+    Poppler 0.34
+
+ CMakeLists.txt      |  4 ++--
+ NEWS                | 13 +++++++++++++
+ configure.ac        |  2 +-
+ poppler/Makefile.am |  2 +-
+ qt4/src/Doxyfile    |  2 +-
+ qt5/src/Doxyfile    |  2 +-
+ 6 files changed, 19 insertions(+), 6 deletions(-)
+
 commit 2fc1f540754391ffa87d7fe9f3438e134d821207
 Author: Thomas Freitag <Thomas.Freitag@alfa.de>
 Date:   Tue Jul 7 18:48:51 2015 +0200

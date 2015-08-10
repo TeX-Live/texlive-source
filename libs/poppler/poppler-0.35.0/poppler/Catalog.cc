@@ -825,24 +825,28 @@ int Catalog::getNumPages()
 	Object pageRootRef;
 	catDict.dictLookupNF("Pages", &pageRootRef);
 
-	error(errSyntaxError, -1, "Pages top-level is a single Page. The document is mal-formet, trying to recover...");
+	error(errSyntaxError, -1, "Pages top-level is a single Page. The document is malformed, trying to recover...");
 
 	Dict *pageDict = pagesDict.getDict();
-	const Ref pageRef = pageRootRef.getRef();
-	Page *p = new Page(doc, 1, pageDict, pageRef, new PageAttrs(NULL, pageDict), form);
-	if (p->isOk()) {
-	  pages = (Page **)gmallocn(1, sizeof(Page *));
-	  pageRefs = (Ref *)gmallocn(1, sizeof(Ref));
+	if (pageRootRef.isRef()) {
+	  const Ref pageRef = pageRootRef.getRef();
+	  Page *p = new Page(doc, 1, pageDict, pageRef, new PageAttrs(NULL, pageDict), form);
+	  if (p->isOk()) {
+	    pages = (Page **)gmallocn(1, sizeof(Page *));
+	    pageRefs = (Ref *)gmallocn(1, sizeof(Ref));
 
-	  pages[0] = p;
-	  pageRefs[0].num = pageRef.num;
-	  pageRefs[0].gen = pageRef.gen;
+	    pages[0] = p;
+	    pageRefs[0].num = pageRef.num;
+	    pageRefs[0].gen = pageRef.gen;
 
-	  numPages = 1;
-	  lastCachedPage = 1;
-	  pagesSize = 1;
+	    numPages = 1;
+	    lastCachedPage = 1;
+	    pagesSize = 1;
+	  } else {
+	    delete p;
+	    numPages = 0;
+	  }
 	} else {
-	  delete p;
 	  numPages = 0;
 	}
       } else {
