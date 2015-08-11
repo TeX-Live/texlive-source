@@ -1,16 +1,20 @@
-2014-10-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2015-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-win32-paths-with-spaces: Use File::Glob::bsd_glob().
+
+2015-06-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces: Quotify lang_dir.
 
-2014-10-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2015-06-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces: Sync with MikTeX.
 
-2014-10-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2015-06-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces: Also quotify filter.
 
-2014-10-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2015-06-24  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces (new): Patch from Akira.
 	See <http://tex.stackexchange.com/questions/251221/
