@@ -353,6 +353,7 @@ our $VERSION = sprintf "%d.%02d", q$Revision: 1.18 $ =~ /: (\d+)\.(\d+)/ ;
 
 use Cwd;
 use File::Basename;
+use File::Glob qw(:bsd_glob);
 use File::Spec;
 use File::Temp qw(tempfile tmpnam);
 use Getopt::Long qw(:config bundling);
@@ -773,9 +774,8 @@ sub xindy_expression () {
 	# "latin", "cp", "iso8859", "ascii", or "utf8".
 	@codepages = qw(latin cp iso8859 ascii utf8)  unless @codepages;
 	my @styles;
-	my $quotified_lang_dir = quotify($lang_dir);
 	foreach my $cp ( @codepages ) {
-	    @styles = glob("$quotified_lang_dir/$variant$cp*-lang.xdy");
+	    @styles = bsd_glob("$lang_dir/$variant$cp*-lang.xdy");
 	    last  if @styles;
 	}
 	unless ( @styles ) {
