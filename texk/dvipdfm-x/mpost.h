@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -26,8 +26,6 @@
 #include  "mfileio.h"
 #include  "pdfximage.h"
 #include  "pdfdev.h"
-
-extern int  check_for_mp     (FILE *fp);
 
 extern int  mps_scan_bbox    (const char **pp, const char *endptr, pdf_rect *bbox);
 

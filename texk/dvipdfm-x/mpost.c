@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -1657,27 +1657,4 @@ mps_do_page (FILE *image_file)
    * PDF inclusion may not be made so.
    */
   return (error ? -1 : 0);
-}
-
-int
-check_for_mp (FILE *image_file) 
-{
-  int try_count = 10;
-
-  rewind (image_file);
-  mfgets(work_buffer, WORK_BUFFER_SIZE, image_file);
-  if (strncmp(work_buffer, "%!PS", 4))
-    return 0;
-
-  while (try_count > 0) {
-    mfgets(work_buffer, WORK_BUFFER_SIZE, image_file);
-    if (!strncmp(work_buffer, "%%Creator:", 10)) {
-      if (strlen(work_buffer+10) >= 8 &&
-	  strstr(work_buffer+10, "MetaPost"))
-	break;
-    }
-    try_count--;
-  }
-
-  return ((try_count > 0) ? 1 : 0);
 }
