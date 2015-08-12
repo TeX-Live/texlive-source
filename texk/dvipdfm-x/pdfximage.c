@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -45,8 +45,8 @@
 
 #include "pdfximage.h"
 
-/* From psimage.h */
-static int  check_for_ps    (FILE *fp);
+static int  check_for_ps    (FILE *image_file);
+static int  check_for_mp    (FILE *image_file);
 static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
 
 
@@ -978,4 +978,26 @@ static int check_for_ps (FILE *image_file)
   if (!strncmp (work_buffer, "%!", 2))
     return 1;
   return 0;
+}
+
+static int check_for_mp (FILE *image_file) 
+{
+  int try_count = 10;
+
+  rewind (image_file);
+  mfgets(work_buffer, WORK_BUFFER_SIZE, image_file);
+  if (strncmp(work_buffer, "%!PS", 4))
+    return 0;
+
+  while (try_count > 0) {
+    mfgets(work_buffer, WORK_BUFFER_SIZE, image_file);
+    if (!strncmp(work_buffer, "%%Creator:", 10)) {
+      if (strlen(work_buffer+10) >= 8 &&
+	  strstr(work_buffer+10, "MetaPost"))
+	break;
+    }
+    try_count--;
+  }
+
+  return ((try_count > 0) ? 1 : 0);
 }
