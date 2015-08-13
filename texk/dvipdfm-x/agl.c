@@ -50,6 +50,8 @@
 
 #include "agl.h"
 
+static int agl_load_listfile (const char *filename, int format);
+
 static int verbose = 0;
 
 void
@@ -389,7 +391,7 @@ agl_close_map (void)
 
 #define WBUF_SIZE 1024
 
-int
+static int
 agl_load_listfile (const char *filename, int is_predef)
 {
   int   count = 0;

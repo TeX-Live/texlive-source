@@ -597,7 +597,7 @@ pst_name_release (pst_name *obj)
 }
 
 #if 0
-int
+static int
 pst_name_is_valid (const char *name)
 {
   static const char *valid_chars =
@@ -608,7 +608,19 @@ pst_name_is_valid (const char *name)
     return 0;
 }
 
-char *
+static int
+putxpair (unsigned char c, char **s)
+{
+  char hi = (c >> 4), lo = c & 0x0f;
+
+  **s = (hi < 10) ? hi + '0' : hi + '7';
+  *(*s+1) = (lo < 10) ? lo + '0' : lo + '7';
+  *s += 2;
+
+  return 2;
+}
+
+static char *
 pst_name_encode (const char *name)
 {
   char *encoded_name, *p;
@@ -637,6 +649,21 @@ pst_name_encode (const char *name)
   return encoded_name;
 }
 #endif
+
+static int
+getxpair (unsigned char **s)
+{
+  int hi, lo;
+  hi = xtoi(**s);
+  if (hi < 0)
+    return hi;
+  (*s)++;
+  lo = xtoi(**s);
+  if (lo < 0)
+    return lo;
+  (*s)++;
+  return ((hi << 4)| lo);
+}
 
 pst_obj *
 pst_parse_name (unsigned char **inbuf, unsigned char *inbufend) /* / is required */
@@ -758,6 +785,68 @@ pst_parse_string (unsigned char **inbuf, unsigned char *inbufend)
   else if (**inbuf == '<')
     return pst_new_obj(PST_TYPE_STRING, pst_string_parse_hex(inbuf, inbufend));
   return NULL;
+}
+
+/* Overflowed value is set to invalid char.  */
+static unsigned char
+ostrtouc (unsigned char **inbuf, unsigned char *inbufend, unsigned char *valid)
+{
+  unsigned char *cur = *inbuf;
+  unsigned int   val = 0;
+
+  while (cur < inbufend && cur < *inbuf + 3 &&
+	 (*cur >= '0' && *cur <= '7')) {
+    val = (val << 3) | (*cur - '0');
+    cur++;
+  }
+  if (val > 255 || cur == *inbuf)
+    *valid = 0;
+  else
+    *valid = 1;
+
+  *inbuf = cur;
+  return (unsigned char) val;
+}
+
+static unsigned char
+esctouc (unsigned char **inbuf, unsigned char *inbufend, unsigned char *valid)
+{
+  unsigned char unescaped, escaped;
+
+  escaped = **inbuf;
+  *valid    = 1;
+  switch (escaped) {
+    /* Backslash, unbalanced paranthes */
+  case '\\': case ')': case '(':
+    unescaped = escaped;
+    (*inbuf)++;
+    break;
+    /* Other escaped char */ 
+  case 'n': unescaped = '\n'; (*inbuf)++; break;
+  case 'r': unescaped = '\r'; (*inbuf)++; break;
+  case 't': unescaped = '\t'; (*inbuf)++; break;
+  case 'b': unescaped = '\b'; (*inbuf)++; break;
+  case 'f': unescaped = '\f'; (*inbuf)++; break;
+    /*
+     * An end-of-line marker preceeded by backslash is not part of a
+     * literal string
+     */
+  case '\r':
+    unescaped = 0;
+    *valid    = 0;
+    *inbuf   += (*inbuf < inbufend - 1 && *(*inbuf+1) == '\n') ? 2 : 1;
+    break;
+  case '\n':
+    unescaped = 0;
+    *valid    = 0;
+    (*inbuf)++;
+    break;
+    /* Possibly octal notion */ 
+  default:
+    unescaped = ostrtouc(inbuf, inbufend, valid);
+  }
+
+  return unescaped;
 }
 
 static pst_string *

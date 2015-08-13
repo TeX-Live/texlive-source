@@ -105,6 +105,20 @@ block_count (mapDef *mtab, int c)
 }
 
 static int
+sputx (unsigned char c, char **s, char *end)
+{
+  char hi = (c >> 4), lo = c & 0x0f;
+
+  if (*s + 2 > end)
+    ERROR("Buffer overflow.");
+  **s = (hi < 10) ? hi + '0' : hi + '7';
+  *(*s+1) = (lo < 10) ? lo + '0' : lo + '7';
+  *s += 2;
+
+  return 2;
+}
+
+static int
 write_map (mapDef *mtab, int count,
 	   unsigned char *codestr, int depth,
 	   struct sbuf *wbuf, pdf_obj *stream)

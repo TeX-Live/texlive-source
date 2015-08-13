@@ -53,7 +53,6 @@ extern long  agl_name_convert_unicode (const char *glyphname);
 extern const char *agl_suffix_to_otltag (const char *suffix);
 
 extern agl_name   *agl_lookup_list     (const char *glyphname);
-extern int         agl_load_listfile   (const char *filename, int format);
 
 #if 0
 extern int         agl_select_listfile (const char *mapfile);

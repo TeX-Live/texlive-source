@@ -31,9 +31,4 @@ extern pst_obj *pst_parse_name   (unsigned char **inbuf, unsigned char *inbufend
 extern pst_obj *pst_parse_number (unsigned char **inbuf, unsigned char *inbufend);
 extern pst_obj *pst_parse_string (unsigned char **inbuf, unsigned char *inbufend);
 
-#if 0
-extern int   pst_name_is_valid (const char *name);
-extern char *pst_name_encode   (const char *name);
-#endif
-
 #endif /* _PST_OBJ_H_ */
