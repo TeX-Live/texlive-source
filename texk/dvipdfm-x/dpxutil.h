@@ -45,14 +45,6 @@
 
 extern void skip_white_spaces (unsigned char **s, unsigned char *endptr);
 extern int  xtoi     (char c);
-extern int  getxpair (unsigned char **str);
-extern int  putxpair (unsigned char c, char **str);
-extern int  sputx    (unsigned char c, char **buf, char *endptr);
-
-extern unsigned char ostrtouc (unsigned char **inbuf,
-			       unsigned char *inbufend, unsigned char *valid);
-extern unsigned char esctouc  (unsigned char **inbuf,
-			       unsigned char *inbufend, unsigned char *valid);
 
 #define HASH_TABLE_SIZE 503
 

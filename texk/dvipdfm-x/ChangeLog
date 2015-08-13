@@ -1,3 +1,12 @@
+2015-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* agl.[ch]: Declare agl_load_listfile() as static.
+
+	* dpxutil.[ch]: Extern sputx(), getxpair(), putxpair(),
+	ostrtouc(), and esctouc() moved from here ...
+	* cmap_write.c: ... to here or ...
+	* pst_obj.c: ... to here as static.
+
 2015-08-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* mpost.[ch]: Extern check_for_mp() moved from here ...
