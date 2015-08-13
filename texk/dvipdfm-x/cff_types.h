@@ -46,8 +46,6 @@ typedef unsigned char  c_offsize; /* 1-byte unsigned number specifies the size
 typedef unsigned long  l_offset;  /* 1, 2, 3, or 4-byte offset */
 typedef unsigned short s_SID;       /* 2-byte string identifier  */
 
-typedef unsigned long  l_size;
-
 typedef struct {
   card16    count;   /* number of objects stored in INDEX */
   c_offsize offsize; /* Offset array element size, 1-4    */

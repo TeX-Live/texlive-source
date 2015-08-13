@@ -2,6 +2,8 @@
 
 	* agl.[ch]: Declare agl_load_listfile() as static.
 
+	* cff_types.h: Drop unused type l_size.
+
 	* dpxutil.[ch]: Extern sputx(), getxpair(), putxpair(),
 	ostrtouc(), and esctouc() moved from here ...
 	* cmap_write.c: ... to here or ...
