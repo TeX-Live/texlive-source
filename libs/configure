@@ -3246,10 +3246,10 @@ case $enable_libtool_hack in #(
 esac
          ac_configure_args="$ac_configure_args '--enable-libtool-hack=$enable_libtool_hack'" ;;
 esac
-case $enable_shared in #(
-  no) :
+case $enable_shared:$host_os in #(
+  no:* | yes:mingw* | yes:cygwin*) :
     : ;; #(
-  yes ) :
+  yes:* ) :
     if test "x$enable_native_texlive_build" = xyes; then :
   as_fn_error $? "you can not use a shared Kpathsea library for a native TeX Live build" "$LINENO" 5
 fi ;; #(
