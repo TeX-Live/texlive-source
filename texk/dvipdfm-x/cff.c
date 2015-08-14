@@ -545,7 +545,7 @@ long cff_get_seac_sid (cff_font *cff, const char *str)
   return -1;
 }
 
-int cff_match_string (cff_font *cff, const char *str, s_SID sid)
+static int cff_match_string (cff_font *cff, const char *str, s_SID sid)
 {
   card16 i;
 

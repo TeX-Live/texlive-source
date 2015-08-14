@@ -53,10 +53,6 @@ extern void CIDFont_set_flags       (long flags);
 #define CIDFONT_FLAG_TYPE1C     (1 << 9)
 #define CIDFONT_FLAG_TRUETYPE   (1 << 10)
 
-extern CIDFont *CIDFont_new     (void);
-extern void     CIDFont_release (CIDFont *font);
-extern void     CIDFont_flush   (CIDFont *font);
-
 extern char       *CIDFont_get_fontname   (CIDFont *font);
 
 extern char       *CIDFont_get_ident      (CIDFont *font); /* FIXME */
@@ -77,7 +73,6 @@ extern int      CIDFont_is_ACCFont  (CIDFont *font);
 extern int      CIDFont_is_UCSFont  (CIDFont *font);
 
 #include "fontmap.h"
-extern void     CIDFont_cache_init  (void);
 extern int      CIDFont_cache_find  (const char *map_name, CIDSysInfo *cmap_csi, fontmap_opt *fmap_opt);
 extern CIDFont *CIDFont_cache_get   (int fnt_id);
 extern void     CIDFont_cache_close (void);

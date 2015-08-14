@@ -495,7 +495,7 @@ CMap_set_usecmap (CMap *cmap, CMap *ucmap)
 }
 
 /* Test the validity of character c. */
-int
+static int
 CMap_match_codespace (CMap *cmap, const unsigned char *c, int dim)
 {
   int i, pos;
