@@ -127,7 +127,7 @@ CIDFont_require_version (void)
 }
 #endif
 
-CIDFont *
+static CIDFont *
 CIDFont_new (void)
 {
   CIDFont *font = NULL;
@@ -159,7 +159,7 @@ CIDFont_new (void)
 }
 
 /* It does write PDF objects. */
-void
+static void
 CIDFont_flush (CIDFont *font)
 {
   if (font) {
@@ -172,7 +172,7 @@ CIDFont_flush (CIDFont *font)
   }
 }
 
-void
+static void
 CIDFont_release (CIDFont *font)
 {
   if (font) {
@@ -522,7 +522,7 @@ static struct FontCache *__cache   = NULL;
                            ERROR("%s: Invalid ID %d", CIDFONT_DEBUG_STR, (n));\
                     } while (0)
 
-void
+static void
 CIDFont_cache_init (void)
 {
   if (__cache)
