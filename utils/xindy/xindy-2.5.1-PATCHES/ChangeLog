@@ -1,3 +1,7 @@
+2015-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-02-win32-paths-with-spaces: Fix from Joachim Schrod.
+
 2015-08-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces: Use File::Glob::bsd_glob().
