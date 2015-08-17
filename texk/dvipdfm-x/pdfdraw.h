@@ -117,11 +117,6 @@ extern int    pdf_dev_rectadd       (double x, double y, double w, double h);
  
 extern int    pdf_dev_flushpath     (char p_op, int fill_rule);
 
-#define pdf_dev_fill()       pdf_dev_flushpath('f', PDF_FILL_RULE_NONZERO)
-#define pdf_dev_eofill()     pdf_dev_flushpath('f', PDF_FILL_RULE_EVENODD)
-#define pdf_dev_stroke()     pdf_dev_flushpath('S', PDF_FILL_RULE_NONZERO)
-#define pdf_dev_fillstroke() pdf_dev_flushpath('B', PDF_FILL_RULE_NONZERO)
-
 extern int    pdf_dev_concat        (const pdf_tmatrix *M);
 /* NULL pointer of M mean apply current transformation */
 extern void   pdf_dev_dtransform    (pdf_coord *p, const pdf_tmatrix *M);
@@ -160,7 +155,6 @@ extern void   pdf_invertmatrix      (pdf_tmatrix *M);
  */
 extern int    pdf_dev_current_depth (void);
 extern void   pdf_dev_grestore_to   (int depth);
-#define pdf_dev_grestoreall() pdf_dev_grestore_to(0);
 
 #if 0
 extern int    pdf_dev_currentcolor  (pdf_color *color, int is_fill);

@@ -424,7 +424,7 @@ tt_read_os2__table (sfnt *sfont)
   return table;
 }
 
-USHORT
+static USHORT
 tt_get_name (sfnt *sfont, char *dest, USHORT destlen,
 	     USHORT plat_id, USHORT enco_id,
 	     USHORT lang_id, USHORT name_id)

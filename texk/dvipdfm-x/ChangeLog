@@ -1,5 +1,25 @@
 2015-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* pdfcolor.[ch]: Drop unused pdf_color_set_default().
+
+	* pdfdev.h: Drop pdf_dev_setfont() and pdf_dev_set_colormode().
+
+	* pdfdoc.[ch]: Drop unused pdf_doc_{end,make}_article().
+	Declare pdf_doc_get_mediabox() as static.
+
+	* pdfdraw.h: Drop pdf_dev_{fill,eofill,stroke,fillstroke}(), and
+	pdf_dev_grestoreall().
+
+	* pdfnames.[ch]: Declare printable_key() as static.
+
+	* pdfximage.h: Drop pdf_ximage_disable_ebb().
+
+	* tfm.[ch]: Drop tfm_get_space(). Skip tfm_string_{depth,height}.
+
+	* tt_table.[ch]: Declare tt_get_name() as static.
+
+2015-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* cff.[ch]: Declare cff_match_string() as static.
 	* cff.h: Drop unused '#define cff_is_stdstr(s)'.
 

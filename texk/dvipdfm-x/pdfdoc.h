@@ -79,7 +79,6 @@ extern void     pdf_doc_begin_page   (double scale, double x_origin, double y_or
 extern void     pdf_doc_end_page     (void);
 
 extern void     pdf_doc_set_mediabox (unsigned page_no, const pdf_rect *mediabox);
-extern void     pdf_doc_get_mediabox (unsigned page_no, pdf_rect *mediabox);
 
 extern void     pdf_doc_add_page_content  (const char *buffer, unsigned length);
 extern void     pdf_doc_add_page_resource (const char *category,
@@ -87,11 +86,6 @@ extern void     pdf_doc_add_page_resource (const char *category,
 
 /* Article thread */
 extern void     pdf_doc_begin_article (const char *article_id, pdf_obj *info);
-#if 0
-extern void     pdf_doc_end_article   (const char *article_id);  /* Do nothing... */
-#endif
-extern void     pdf_doc_make_article  (const char *article_id,
-				       const char **bead_order, int num_beads);
 extern void     pdf_doc_add_bead      (const char *article_id,
 				       const char *bead_id,
 				       long page_no, const pdf_rect *rect);

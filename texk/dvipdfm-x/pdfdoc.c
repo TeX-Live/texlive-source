@@ -1747,6 +1747,7 @@ pdf_doc_close_names (pdf_doc *p)
   return;
 }
 
+static void pdf_doc_get_mediabox (unsigned page_no, pdf_rect *mediabox);
 
 void
 pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
@@ -1844,14 +1845,6 @@ pdf_doc_begin_article (const char *article_id, pdf_obj *article_info)
 
   return;
 }
-
-#if 0
-void
-pdf_doc_end_article (const char *article_id)
-{
-  return; /* no-op */
-}
-#endif
 
 static pdf_bead *
 find_bead (pdf_article *article, const char *bead_id)
@@ -2105,7 +2098,7 @@ pdf_doc_set_mediabox (unsigned page_no, const pdf_rect *mediabox)
   return;
 }
 
-void
+static void
 pdf_doc_get_mediabox (unsigned page_no, pdf_rect *mediabox)
 {
   pdf_doc  *p = &pdoc;

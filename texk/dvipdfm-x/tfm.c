@@ -1113,6 +1113,7 @@ tfm_string_width (int font_id, const unsigned char *s, unsigned len)
   return result;
 }
 
+#if 0
 fixword
 tfm_string_depth (int font_id, const unsigned char *s, unsigned len)
 {
@@ -1166,6 +1167,7 @@ tfm_string_height (int font_id, const unsigned char *s, unsigned len)
 
   return result;
 }
+#endif
 
 double
 tfm_get_design_size (int font_id)
