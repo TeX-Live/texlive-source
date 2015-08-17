@@ -45,6 +45,4 @@ extern pdf_obj *pdf_names_create_tree      (struct ht_table *names,
 					    long *count,
 					    struct ht_table *filter);
 
-extern char    *printable_key (const char *key, int keylen);
-
 #endif /*  _PDF_NAMES_H_ */

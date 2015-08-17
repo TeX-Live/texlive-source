@@ -48,7 +48,7 @@ struct obj_data
   int closed;            /* 1 if object is closed */
 };
 
-char *
+static char *
 printable_key (const char *key, int keylen)
 {
 #define MAX_KEY 32

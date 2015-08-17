@@ -320,12 +320,6 @@ pdf_color default_color = {
   {0.0, 0.0, 0.0, 0.0}
 };
 
-void
-pdf_color_set_default (const pdf_color *color)
-{
-  pdf_color_copycolor(&default_color, color);
-}
-
 #define DEV_COLOR_STACK_MAX 128
 
 static struct {

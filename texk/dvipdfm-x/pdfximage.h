@@ -83,9 +83,6 @@ pdf_ximage_scale_image (int            id,
                         transform_info *p  /* arg */
                        );
 
-/* from dvipdfmx.c */
-extern void pdf_ximage_disable_ebb (void);
-
 /* from spc_pdfm.c */
 extern int      pdf_ximage_get_subtype    (int xobj_id);
 extern void

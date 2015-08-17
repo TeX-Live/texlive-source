@@ -41,10 +41,10 @@ extern fixword tfm_get_fw_height (int font_id, int32_t ch);
 extern fixword tfm_get_fw_depth  (int font_id, int32_t ch);
 
 extern fixword tfm_string_width  (int font_id, const unsigned char *s, unsigned len);
+#if 0
 extern fixword tfm_string_depth  (int font_id, const unsigned char *s, unsigned len);
 extern fixword tfm_string_height (int font_id, const unsigned char *s, unsigned len);
-
-extern double tfm_get_space (int font_id);
+#endif
 
 /* From TFM header */
 extern double tfm_get_design_size  (int font_id);
