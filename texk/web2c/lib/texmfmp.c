@@ -2888,6 +2888,7 @@ void pdftex_fail(const char *fmt, ...)
 }
 #endif /* not pdfTeX */
 
+static boolean start_time_set = false;
 #if !defined(XeTeX)
 static time_t start_time = 0;
 #define TIME_STR_SIZE 30
@@ -2895,7 +2896,7 @@ char start_time_str[TIME_STR_SIZE];
 static char time_str[TIME_STR_SIZE];
     /* minimum size for time_str is 24: "D:YYYYmmddHHMMSS+HH'MM'" */
 
-static void makepdftime(time_t t, char *time_str)
+static void makepdftime(time_t t, char *time_str, boolean utc)
 {
 
     struct tm lt, gmt;
@@ -2903,7 +2904,12 @@ static void makepdftime(time_t t, char *time_str)
     int i, off, off_hours, off_mins;
 
     /* get the time */
-    lt = *localtime(&t);
+    if (utc) {
+        lt = *gmtime(&t);
+    }
+    else {
+        lt = *localtime(&t);
+    }
     size = strftime(time_str, TIME_STR_SIZE, "D:%Y%m%d%H%M%S", &lt);
     /* expected format: "YYYYmmddHHMMSS" */
     if (size == 0) {
@@ -2943,11 +2949,32 @@ static void makepdftime(time_t t, char *time_str)
     }
 }
 
+#if defined(_MSC_VER)
+#define strtoll _strtoi64
+#endif
+
 void initstarttime(void)
 {
-    if (start_time == 0) {
-        start_time = time((time_t *) NULL);
-        makepdftime(start_time, start_time_str);
+    char *source_date_epoch;
+    int64_t epoch;
+    char *endptr;
+    if (!start_time_set) {
+        start_time_set = true;
+        source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+        if (source_date_epoch) {
+            errno = 0;
+            epoch = strtoll(source_date_epoch, &endptr, 10);
+            if (epoch < 0 || *endptr != '\0' || errno != 0) {
+                fprintf(stderr, "Environment variable $SOURCE_DATE_EPOCH: invalid value: %s\n", source_date_epoch);
+                uexit(EXIT_FAILURE);
+            }
+            start_time = epoch;
+            makepdftime(start_time, start_time_str, /* utc= */true);
+        }
+        else {
+            start_time = time((time_t *) NULL);
+            makepdftime(start_time, start_time_str, /* utc= */false);
+        }
     }
 }
 
@@ -3034,7 +3061,7 @@ void getfilemoddate(integer s)
     if (stat(file_name, &file_data) == 0) {
         size_t len;
 
-        makepdftime(file_data.st_mtime, time_str);
+        makepdftime(file_data.st_mtime, time_str, /* utc= */false);
         len = strlen(time_str);
         if ((unsigned) (poolptr + len) >= (unsigned) (poolsize)) {
             poolptr = poolsize;

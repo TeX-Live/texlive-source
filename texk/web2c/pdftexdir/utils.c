@@ -703,9 +703,6 @@ void unescapehex(poolpointer in)
  */
 void printID(strnumber filename)
 {
-    time_t t;
-    size_t size;
-    char time_str[32];
     md5_state_t state;
     md5_byte_t digest[16];
     char id[64];
@@ -714,9 +711,8 @@ void printID(strnumber filename)
     /* start md5 */
     md5_init(&state);
     /* get the time */
-    t = time(NULL);
-    size = strftime(time_str, sizeof(time_str), "%Y%m%dT%H%M%SZ", gmtime(&t));
-    md5_append(&state, (const md5_byte_t *) time_str, size);
+    initstarttime();
+    md5_append(&state, (const md5_byte_t *) start_time_str, strlen(start_time_str));
     /* get the file name */
     if (getcwd(pwd, sizeof(pwd)) == NULL)
         pdftex_fail("getcwd() failed (%s), path too long?", strerror(errno));
