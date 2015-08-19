@@ -13989,7 +13989,6 @@ end_node_run: {now |r| points to first |native_word_node| of the run, and |p| to
           if q = p then break
           else q:=link(q);
         end;
-done:
         q:=new_native_word_node(native_font(r), cur_length);
         link(prev_p):=q;
         for j:=0 to cur_length - 1 do

@@ -1,3 +1,11 @@
+2015-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* texmfmp.c: Another minor modification (unused static).
+
+2015-08-18  The Thanh Han  <hanthethanh@gmail.com>
+
+	* texmfmp.c: Patch from Maria with some minor modification.
+
 2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Add \pdfmdfivesum to XeTeX.

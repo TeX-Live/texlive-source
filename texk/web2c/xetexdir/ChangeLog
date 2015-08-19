@@ -1,3 +1,8 @@
+2015-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am (xetex_CFLAGS): Enable compiler warnings.
+	* xetex.web: Drop unused label 'done'.
+
 2015-07-24  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* xetex.web, xetex.h: Support pagebox=artbox etc. as in pdfTeX
