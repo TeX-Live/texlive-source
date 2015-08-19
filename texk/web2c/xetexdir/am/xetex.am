@@ -66,7 +66,7 @@ endif !XETEX_MACOSX
 
 
 xetex_CPPFLAGS = $(xetex_cppflags)
-xetex_CFLAGS = # $(WARNING_CFLAGS)
+xetex_CFLAGS = $(WARNING_CFLAGS)
 xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 
 ## With --enable-ipc, XeTeX may need to link with -lsocket.

@@ -2888,8 +2888,8 @@ void pdftex_fail(const char *fmt, ...)
 }
 #endif /* not pdfTeX */
 
-static boolean start_time_set = false;
 #if !defined(XeTeX)
+static boolean start_time_set = false;
 static time_t start_time = 0;
 #define TIME_STR_SIZE 30
 char start_time_str[TIME_STR_SIZE];
