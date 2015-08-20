@@ -1,3 +1,213 @@
+commit 958c268fa3a520666436e77a2111a3b564a36d96
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 19 13:22:12 2015 +0100
+
+    [coretext] Add TODO item
+
+ src/hb-coretext.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 7c5bee09d9c7c25672c7c77572ebae0b731892d0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 19 13:20:31 2015 +0100
+
+    [uniscribe] Fix font scale handling
+
+    By default shape at upem (or ppem), and scale results.
+    Similar to work done in CoreText backend, but using upem as default.
+
+ src/hb-uniscribe.cc | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+commit 902e74a098dad8c3b487856284f9fdf99b04f9f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 18:55:03 2015 +0100
+
+    Commented-out code to print buffer before each lookup
+
+    To be turned into a useful HB_DEBUG_SHAPE infrastructure...
+
+ src/hb-ot-layout.cc | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 75504a50488a6aac0b9789f728fb5b87e641d4c3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 18:47:02 2015 +0100
+
+    Allow serializing buffer with output-buffer being used
+
+    Ie, don't call get_positions() if positions are not
+    requested for serialization.
+
+ src/hb-buffer-serialize.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit e47b772a56af44a9a4f9ec907ee2091b725b94c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 18:42:47 2015 +0100
+
+    [ot] Change buffer content type right after we map to glyphs
+
+    Needed for upcoming debug output changes.
+
+ src/hb-ot-shape.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit d104415e4c1e0f9140f794cd8d09c6460c63e966
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 17:33:34 2015 +0100
+
+    [Android.mk] Update for SEA removal and USE addition
+
+ Android.mk | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit ddd6bf12f1cabaa298feed820313483b9893528c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 15:55:09 2015 +0100
+
+    Don't declare dependency on freetype in harfbuzz.pc
+
+    See comments.
+
+ src/Makefile.am | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 2c8b3b2e5312c9858584f568b1528c57e5bb8a10
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 14:36:43 2015 +0100
+
+    [debug] Print lookup index in debug-apply output
+
+ src/hb-ot-layout-gpos-table.hh       | 5 ++++-
+ src/hb-ot-layout-gsub-table.hh       | 5 ++++-
+ src/hb-ot-layout-gsubgpos-private.hh | 7 +++++--
+ src/hb-ot-layout.cc                  | 3 ++-
+ 4 files changed, 15 insertions(+), 5 deletions(-)
+
+commit 50ad7788eeb7160caef4ec78e65c7c630e601b06
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 18 10:22:16 2015 +0100
+
+    [coretext] Remove assert that kicks in on Mac OS 10.6
+
+    http://crbug.com/419769
+
+ src/hb-coretext.cc | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+commit 2b646fa07f5f9d4d10d563a91d22a2750b5fc771
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 17 16:03:28 2015 +0200
+
+    Remove unused function
+
+ src/hb-ot-shape-complex-use.cc | 8 --------
+ 1 file changed, 8 deletions(-)
+
+commit 539a610e2e72375e598ab29fd390ed9ec93816d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 11 12:58:49 2015 +0200
+
+    Add Libs.private and Requires.private to harfbuzz.pc
+
+    Fixes https://bugs.freedesktop.org/show_bug.cgi?id=64501
+
+ configure.ac       | 12 +++++++++---
+ src/Makefile.am    | 15 ++++++++++++---
+ src/harfbuzz.pc.in |  2 ++
+ 3 files changed, 23 insertions(+), 6 deletions(-)
+
+commit c7dfe316f8c0fc04b7976fca5e58eb46d91b4821
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Fri Aug 7 17:55:03 2015 +0100
+
+    Don't rely on .cluster in _hb_ot_shape_normalize()
+
+    Fixes https://github.com/behdad/harfbuzz/pull/124
+
+ src/hb-ot-shape-normalize.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9099e48e29fe5cfdf8566c8f1ba6ddc8c0799e7e
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Fri Aug 7 17:51:28 2015 +0100
+
+    Don't rely on .cluster field in fallback_position
+
+    Fixes tests/cluster.
+
+    Fixes https://github.com/behdad/harfbuzz/pull/123
+
+ src/hb-ot-shape-fallback.cc | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit f3792342f670978cdc3f8512fb5e80314ca0678d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Aug 8 18:02:18 2015 +0200
+
+    [tests] Add test for fallback positioning with cluster_level > 0
+
+    For https://github.com/behdad/harfbuzz/pull/123
+    Currently fails.  Fix coming.
+
+ test/shaping/Makefile.am                                  |   1 +
+ .../sha1sum/6466d38c62e73a39202435a4f73bf5d6acbb73c0.ttf  | Bin 0 ->
+ 824 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                       |   1 +
+ test/shaping/tests/MANIFEST                               |   1 +
+ test/shaping/tests/cluster.tests                          |   1 +
+ 5 files changed, 4 insertions(+)
+
+commit bd22a5cfae24b3b9253bccaeb139e698e74cd0c3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 7 11:13:27 2015 +0200
+
+    Bug 91559 - HarfBuzz 1.0.1: Inconsistent DLL files
+    specified/created...
+
+    Fixes https://bugs.freedesktop.org/show_bug.cgi?id=91559
+
+ src/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 02d6439f420d959183dd446abd0b0118ee1ee061
+Merge: 9002c27 160f635
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 3 22:47:18 2015 +0300
+
+    Merge pull request #122 from RomainNaour/static-fix
+
+    fix static linking with icu-uc
+
+commit 160f635523d596f61e292776f638d4eb09673463
+Author: Romain Naour <romain.naour@openwide.fr>
+Date:   Wed Jul 22 23:26:23 2015 +0200
+
+    fix static linking with icu-uc
+
+    When linking test-unicode statically it needs $(ICU_LIBS)
+    which contains all required flags.
+    Especially -lstdc++.
+
+    Fixes:
+    http://autobuild.buildroot.net/results/210/2107f9dfb39eeb6559fb4271c7af8b39aef521ca/
+
+    Signed-off-by: Romain Naour <romain.naour@openwide.fr>
+
+ test/api/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 9002c27b2f54bb5135db92045c0d770b47317577
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jul 27 12:17:54 2015 +0200
+
+    1.0.1
+
+ NEWS         | 9 ++++++++-
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
 commit f1c20e1ba5bf218df7dc3e198bdcf1f449fc9387
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Jul 27 12:16:02 2015 +0200
