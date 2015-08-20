@@ -156,6 +156,7 @@ _hb_coretext_shaper_font_data_create (hb_font_t *font)
   hb_coretext_shaper_face_data_t *face_data = HB_SHAPER_DATA_GET (face);
 
   /* Choose a CoreText font size and calculate multipliers to convert to HarfBuzz space. */
+  /* TODO: use upem instead of 36? */
   CGFloat font_size = 36.; /* Default... */
   /* No idea if the following is even a good idea. */
   if (font->y_ppem)
@@ -1034,10 +1035,20 @@ retry:
       buffer->len += num_glyphs;
     }
 
-    /* Make sure all runs had the expected direction. */
-    bool backward = HB_DIRECTION_IS_BACKWARD (buffer->props.direction);
-    assert (bool (status_and & kCTRunStatusRightToLeft) == backward);
-    assert (bool (status_or  & kCTRunStatusRightToLeft) == backward);
+    /* Mac OS 10.6 doesn't have kCTTypesetterOptionForcedEmbeddingLevel,
+     * or if it does, it doesn't resepct it.  So we get runs with wrong
+     * directions.  As such, disable the assert...  It wouldn't crash, but
+     * cursoring will be off...
+     *
+     * http://crbug.com/419769
+     */
+    if (0)
+    {
+      /* Make sure all runs had the expected direction. */
+      bool backward = HB_DIRECTION_IS_BACKWARD (buffer->props.direction);
+      assert (bool (status_and & kCTRunStatusRightToLeft) == backward);
+      assert (bool (status_or  & kCTRunStatusRightToLeft) == backward);
+    }
 
     buffer->clear_positions ();
 
