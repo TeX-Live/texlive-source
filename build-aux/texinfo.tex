@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-01.14}
+\def\texinfoversion{2015-08-17.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1884,6 +1884,7 @@ end
 % Section fonts (14.4pt).
 \def\secnominalsize{14pt}
 \setfont\secrm\rmbshape{12}{\magstep1}{OT1}
+\setfont\secrmnotbold\rmshape{12}{\magstep1}{OT1}
 \setfont\secit\itbshape{10}{\magstep2}{OT1IT}
 \setfont\secsl\slbshape{10}{\magstep2}{OT1}
 \setfont\sectt\ttbshape{12}{\magstep1}{OT1TT}
@@ -5023,10 +5024,39 @@ end
 % These macros are used by the sorted index file itself.
 % Change them to control the appearance of the index.
 
-\def\initial#1{{%
-  % Some minor font changes for the special characters.
-  \let\tentt=\sectt \let\tt=\sectt \let\sf=\sectt
-  %
+\let\normalhyphen=-
+{\catcode`\/=13 \catcode`\-=13 \catcode`\^=13 \catcode`\~=13 \catcode`\_=13
+\catcode`\|=13 \catcode`\<=13 \catcode`\>=13 \catcode`\+=13 \catcode`\"=13
+\catcode`\$=3
+\gdef\initialfonts{%
+  \usemathbackslash
+  \secfonts
+  % Some changes for non-alphabetic characters.  Using the glyphs from the
+  % math fonts looks more consistent than the typewriter font used elsewhere
+  % for these characters.
+  % Can't get bold backslash so don't use bold forward slash
+  \catcode`\/=13
+  \def/{{\secrmnotbold \normalslash}}
+  \catcode`\-=13
+  \def-{{\normalhyphen\normalhyphen}}
+  \let^=\normalcaret
+  \let~=\normaltilde
+  \def\_{%
+    \leavevmode \kern.07em \vbox{\hrule width.33em height.06ex}\kern .07em }
+  \def|{$\vert$}
+  \def<{$\less$}
+  \def>{$\gtr$}
+  \def+{$\normalplus$}
+  \let"=\normaldoublequote
+}}
+
+\def\initial{%
+  \bgroup
+  \initialfonts
+  \initialx
+}
+
+\def\initialx#1{%
   % Remove any glue we may have, we'll be inserting our own.
   \removelastskip
   %
@@ -5047,7 +5077,8 @@ end
   % Do our best not to break after the initial.
   \nobreak
   \vskip .33\baselineskip plus .1\baselineskip
-}}
+  \egroup % \initialfonts
+}
 
 % \entry typesets a paragraph consisting of the text (#1), dot leaders, and
 % then page number (#2) flushed to the right margin.  It is used for index
@@ -7312,6 +7343,11 @@ end
   }
 \fi
 
+% Used to remove a category 13 newline, added to the end of the last
+% line read in by \scantokens.
+{\catcode`\^^M=13 \gdef\gobblecr^^M{}}
+
+% Argument is macro body with arguments substituted
 \def\scanmacro#1{\begingroup
   \newlinechar`\^^M
   \let\xeatspaces\eatspaces
@@ -7326,15 +7362,14 @@ end
   % ... and for \example:
   \spaceisspace
   %
-  % The \empty here causes a following catcode 5 newline to be eaten as
-  % part of reading whitespace after a control sequence.  It does not
-  % eat a catcode 13 newline.  There's no good way to handle the two
-  % cases (untried: maybe e-TeX's \everyeof could help, though plain TeX
-  % would then have different behavior).  See the Macro Details node in
-  % the manual for the workaround we recommend for macros and
-  % line-oriented commands.
-  % 
-  \scantokens{#1\empty}%
+  \ifnum\catcode`\^^M=5
+    % The \empty here causes a following catcode 5 newline to be eaten as
+    % part of reading whitespace after a control sequence.
+    \scantokens{#1\empty}%
+  \else
+    \catcode`\^^M=13
+    \scantokens{#1\gobblecr}%
+  \fi
 \endgroup}
 
 \def\scanexp#1{%
@@ -7421,31 +7456,22 @@ end
 
 \def\macrobodyctxt{% used for @macro definitions
   \scanctxt
+  \catcode`\ =\other
   \catcode`\{=\other
   \catcode`\}=\other
   \catcode`\^^M=\other
   \usembodybackslash
 }
 
-\def\macroargctxt{% used when scanning invocations
+% Used when scanning braced macro arguments.  Note, however, that catcode
+% changes here are ineffectual if the macro invocation was nested inside
+% an argument to another Texinfo command.
+\def\macroargctxt{%
   \scanctxt
-  \catcode`\\=0
+  \catcode`\\=\active
 }
-% why catcode 0 for \ in the above?  To recognize \\ \{ \} as "escapes"
-% for the single characters \ { }.  Thus, we end up with the "commands"
-% that would be written @\ @{ @} in a Texinfo document.
-% 
-% We already have @{ and @}.  For @\, we define it here, and only for
-% this purpose, to produce a typewriter backslash (so, the @\ that we
-% define for @math can't be used with @macro calls):
-%
+
 \def\\{\normalbackslash}%
-% 
-% We would like to do this for \, too, since that is what makeinfo does.
-% But it is not possible, because Texinfo already has a command @, for a
-% cedilla accent.  Documents must use @comma{} instead.
-%
-% \anythingelse will almost certainly be an error of some kind.
 
 \def\macrolineargctxt{% used for whole-line arguments without braces
   \scanctxt
@@ -7607,12 +7633,12 @@ end
 
 % These two commands read recursive and nonrecursive macro bodies.
 % (They're different since rec and nonrec macros end differently.)
-%
+% Set \temp to the body of the macro, and call \defmacro.
 \catcode `\@\texiatcatcode
-\long\def\parsemacbody#1@end macro%
-{\xdef\temp{\eatcr{#1}}\endgroup\defmacro}%
-\long\def\parsermacbody#1@end rmacro%
-{\xdef\temp{\eatcr{#1}}\endgroup\defmacro}%
+{\catcode`\ =\other\long\gdef\parsemacbody#1@end macro{%
+\xdef\temp{\eatcr{#1}}\endgroup\defmacro}}%
+{\catcode`\ =\other\long\gdef\parsermacbody#1@end rmacro{%
+\xdef\temp{\eatcr{#1}}\endgroup\defmacro}}%
 \catcode `\@=11\relax
 
 \let\endargs@\relax
@@ -7792,8 +7818,9 @@ end
    \long\def#2{#4}%
 }
 
-% This defines a Texinfo @macro. There are eight cases: recursive and
-% nonrecursive macros of zero, one, up to nine, and many arguments.
+% This defines a Texinfo @macro.  \temp has the body of the macro in it.
+% There are eight cases: recursive and nonrecursive macros of zero, one,
+% up to nine, and many arguments.
 % Much magic with \expandafter here.
 % \xdef is used so that macro definitions will survive the file
 % they're defined in; @include reads the file inside a group.
@@ -7876,16 +7903,86 @@ end
 
 \def\norecurse#1{\bgroup\cslet{#1}{macsave.#1}}
 
+
+{\catcode`\@=0 \catcode`\\=13
+@catcode`@_=11
+
+% Call #1 with a list of tokens #2, with any doubled backslashes in #2
+% compressed to one.
+@gdef@passargtomacro#1#2{%
+  @def@the_macro{#1}%
+  @def@pending_backslash{}%
+  @def@finish{@finish}%
+  @def@arg_result{}%
+  @let@next_token=@relax
+  @add_segment#2\@finish\%
+}
+
+% Input stream is just after a backslash.  If the next token is not a
+% backslash, process the rest of the argument; otherwise, remove the next
+% token.
+@gdef@look_ahead{%
+  @futurelet@next_token@look_aheadzzz}
+@gdef@look_aheadzzz{%
+  @ifx@next_token\%
+   @let@next=@gobble_and_check_finish 
+  @else
+   @let@next=@add_segment
+  @fi@next
+}
+
+% Double backslash found.  Add a single backslash here.
+@gdef@gobble_and_check_finish#1{%
+  @add_the_backslash
+  @def@pending_backslash{}%
+  @futurelet@next_token@add_segment
+}
+
+% append a backslash to \arg_result
+@gdef@add_the_backslash{%
+  @expandafter@gdef@expandafter@arg_result@expandafter{@arg_result\}%
+}
+
+% Input stream is either at the start of the argument, or just after a 
+% backslash sequence, either a lone backslash, or a doubled backslash.  
+% \next_token contains the first token in the input stream: if it is \finish, 
+% finish; otherwise, append to \arg_result the segment of the argument up until
+% the next backslash.  \pending_backslash contains a backslash to represent
+% a backslash just before the start of the input stream that has not been
+% added to \arg_result.
+@gdef@add_segment#1\{%
+@ifx@next_token@finish
+  @let@next=@call_the_macro%
+@else
+  @let@next=@look_ahead
+  %
+  % append to @arg_result
+  % token list registers might be better
+  @expandafter@expandafter@expandafter@gdef
+  @expandafter@expandafter@expandafter@arg_result
+  @expandafter@expandafter@expandafter{%
+  @expandafter@arg_result
+  @pending_backslash#1}%
+  @def@pending_backslash{\}%
+@fi@next}
+
+@gdef@call_the_macro{@expandafter@the_macro@expandafter{@arg_result}}
+
+}
+
 % \braceorline MAC is used for a one-argument macro MAC.  It checks
 % whether the next non-whitespace character is a {.  It sets the context
 % for reading the argument (slightly different in the two cases).  Then,
-% to read the argument, in the whole-line case, it then calls the
-% regular \parsearg MAC; in the lbrace case, it just calls MAC itself.
+% to read the argument, in the whole-line case, it then calls the regular
+% \parsearg MAC; in the lbrace case, it calls \passargtomacro MAC.
 % 
 \def\braceorline#1{\let\macnamexxx=#1\futurelet\nchar\braceorlinexxx}
 \def\braceorlinexxx{%
-  \ifx\nchar\bgroup\macroargctxt
-  \else\macrolineargctxt\expandafter\parsearg
+  \ifx\nchar\bgroup
+    \macroargctxt
+    \expandafter\passargtomacro
+  \else
+    \macrolineargctxt\expandafter\parsearg
   \fi \macnamexxx}
 
 
@@ -10261,6 +10358,8 @@ directory should work if nowhere else does.}
 % catcode other.  We switch back and forth between these.
 @gdef@rawbackslash{@let\=@backslashcurfont}
 @gdef@otherbackslash{@let\=@realbackslash}
+
+@gdef@usemathbackslash{@def@backslashcurfont{@math{@backslash}}}
 
 % Same as @turnoffactive except outputs \ as {\tt\char`\\} instead of
 % the literal character `\'.  Also revert - to its normal character, in
