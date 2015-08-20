@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2015 Free Software Foundation, Inc.
 
-timestamp='2015-07-28'
+timestamp='2015-08-18'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -306,7 +306,7 @@ case $basic_machine in
 	| riscv32 | riscv64 \
 	| rl78 | rx \
 	| score \
-	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[34]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
+	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[234]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
 	| sh64 | sh64le \
 	| sparc | sparc64 | sparc64b | sparc64v | sparc86x | sparclet | sparclite \
 	| sparcv8 | sparcv9 | sparcv9b | sparcv9v \
