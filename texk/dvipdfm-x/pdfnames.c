@@ -73,7 +73,7 @@ printable_key (const char *key, int keylen)
   return (char *) pkey;
 }
 
-static void CDECL
+static inline void
 hval_free (void *hval)
 {
   struct obj_data *value;
@@ -249,7 +249,7 @@ struct named_object
   pdf_obj *value;
 };
 
-static int CDECL
+static inline int
 cmp_key (const void *d1, const void *d2)
 {
   const struct named_object *sd1, *sd2;

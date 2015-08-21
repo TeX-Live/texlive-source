@@ -1,3 +1,11 @@
+2015-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvipdfmx.c (main): Drop CDECL.
+	* agl.c, otl_opt.c, pdfencoding.c, pdfnames.c, pdfobj.c,
+	t1_char.c, tt_cmap.c, tt_glyf.c:
+	Replace 'static <TYPE> CDECL' => 'static inline <TYPE>'.
+	* system.h: Drop __cdecl and CDECL.
+
 2015-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfcolor.[ch]: Drop unused pdf_color_set_default().

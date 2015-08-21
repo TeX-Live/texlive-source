@@ -163,7 +163,7 @@ tt_build_finish (struct tt_glyphs *g)
   }
 }
 
-static int CDECL 
+static inline int 
 glyf_cmp (const void *v1, const void *v2)
 {
   int cmp = 0;

@@ -3332,7 +3332,7 @@ check_for_pdf (FILE *file)
   return 1;
 }
 
-static int CDECL
+static inline int
 import_dict (pdf_obj *key, pdf_obj *value, void *pdata)
 {
   pdf_obj *copy;

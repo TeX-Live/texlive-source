@@ -1743,7 +1743,7 @@ handle_gsub (pdf_obj *conf,
 
 }
 
-static void CDECL
+static inline void
 hval_free (void *hval)
 {
   RELEASE(hval);
