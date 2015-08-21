@@ -246,7 +246,7 @@ struct uc_coverage
   struct lv_range *ranges;
 };
 
-static int CDECL
+static inline int
 range_cmp (const void *v1, const void *v2)
 {
   struct lv_range *sv1, *sv2;
@@ -262,7 +262,7 @@ range_cmp (const void *v1, const void *v2)
   return 0;
 }
 
-static int CDECL
+static inline int
 range_overlap (const void *v1, const void *v2)
 {
   struct lv_range *sv1, *sv2;

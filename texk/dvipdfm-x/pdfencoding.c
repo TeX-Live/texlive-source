@@ -201,7 +201,7 @@ pdf_clean_encoding_struct (pdf_encoding *encoding)
 }
 
 #if 0
-static int CDECL
+static inline int
 glycmp (const void *pv1, const void *pv2)
 {
   char *v1, *v2;

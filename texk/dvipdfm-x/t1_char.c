@@ -259,7 +259,7 @@ static double ps_arg_stack[PS_ARG_STACK_MAX];
  *  Convert ghost hint to edge hint, Counter control for hstem3/vstem3.
  */
 
-static int CDECL
+static inline int
 stem_compare (const void *v1, const void *v2)
 {
   int cmp = 0;

@@ -364,7 +364,7 @@ agl_normalized_name (char *glyphname)
 
 static struct ht_table aglmap;
 
-static void CDECL
+static inline void
 hval_free (void *hval)
 {
   agl_release_name((struct agl_name *) hval);

@@ -40,11 +40,6 @@
 #  undef SETLINEJOIN
 #  undef SETMITERLIMIT
 #  pragma warning(disable : 4101 4018)
-#else
-#  ifndef __cdecl
-#  define __cdecl
-#  endif
-#  define CDECL
 #endif /* WIN32 */
 
 #endif /* _SYSTEM_H_ */

@@ -876,7 +876,7 @@ int
 #if defined(DLLPROC)
 DLLPROC (int argc, char *argv[])
 #else
-CDECL main (int argc, char *argv[])
+main (int argc, char *argv[])
 #endif
 {
   double dvi2pts;
