@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-17.16}
+\def\texinfoversion{2015-08-19.20}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -939,12 +939,20 @@ where each line of input produces a line of output.}
 % @c is the same as @comment
 % @ignore ... @end ignore  is another way to write a comment
 %
-\def\comment{\begingroup \catcode`\^^M=\other%
+\def\comment{\begingroup \catcode`\^^M=\active%
+\catcode`\@=\other \catcode`\{=\other \catcode`\}=\other\commentxxx}%
+
+{\catcode`\^^M=\active%
+\gdef\commentxxx#1^^M{\endgroup%
+\futurelet\nexttoken\commentxxxx}%
+\gdef\commentxxxx{\ifx\nexttoken\aftermacro\expandafter\comment\fi}%
+}
+
+\def\c{\begingroup \catcode`\^^M=\active%
 \catcode`\@=\other \catcode`\{=\other \catcode`\}=\other%
-\commentxxx}
-{\catcode`\^^M=\other \gdef\commentxxx#1^^M{\endgroup}}
-%
-\let\c=\comment
+\cxxx}
+{\catcode`\^^M=\active \gdef\cxxx#1^^M{\endgroup}}
+% See comment in \scanmacro about why the definitions of @c and @comment differ
 
 % @paragraphindent NCHARS
 % We'll use ems for NCHARS, close enough.
@@ -7343,38 +7351,38 @@ end
   }
 \fi
 
-% Used to remove a category 13 newline, added to the end of the last
-% line read in by \scantokens.
-{\catcode`\^^M=13 \gdef\gobblecr^^M{}}
+\let\aftermacroxxx\relax
+\def\aftermacro{\aftermacroxxx}
 
 % Argument is macro body with arguments substituted
-\def\scanmacro#1{\begingroup
+\def\scanmacro#1{%
   \newlinechar`\^^M
   \let\xeatspaces\eatspaces
   %
-  % Undo catcode changes of \startcontents and \doprintindex
-  % When called from @insertcopying or (short)caption, we need active
-  % backslash to get it printed correctly.  Previously, we had
-  % \catcode`\\=\other instead.  We'll see whether a problem appears
-  % with macro expansion.				--kasal, 19aug04
-  \catcode`\@=0 \catcode`\\=\active \escapechar=`\@
+  % Process the macro body under the current catcode regime.
+  \scantokens{#1\c}\aftermacro%
   %
-  % ... and for \example:
-  \spaceisspace
-  %
-  \ifnum\catcode`\^^M=5
-    % The \empty here causes a following catcode 5 newline to be eaten as
-    % part of reading whitespace after a control sequence.
-    \scantokens{#1\empty}%
-  \else
-    \catcode`\^^M=13
-    \scantokens{#1\gobblecr}%
-  \fi
-\endgroup}
+  % The \c is to remove the \newlinechar added by \scantokens, and
+  % can be noticed by \parsearg.
+  %   The \aftermacro allows a \comment at the end of the macro definition
+  % to duplicate itself past the final \newlinechar added by \scantokens:
+  % this is used in the definition of \group to comment out a newline.  We
+  % don't do the same for \c to support Texinfo files with macros that ended
+  % with a @c, which should no longer be necessary.
+  %   We avoid surrounding the call to \scantokens with \bgroup and \egroup
+  % to allow macros to open or close groups themselves.
+}
 
 \def\scanexp#1{%
+  \bgroup
+  % Undo catcode changes of \startcontents and \printindex
+  % When called from @insertcopying or (short)caption, we need active
+  % backslash to get it printed correctly.
+  % FIXME: This may not be needed.
+  %\catcode`\@=0 \catcode`\\=\active \escapechar=`\@
   \edef\temp{\noexpand\scanmacro{#1}}%
   \temp
+  \egroup
 }
 
 \newcount\paramno   % Count of parameters
@@ -7440,7 +7448,6 @@ end
   \catcode`\+=\other
   \catcode`\<=\other
   \catcode`\>=\other
-  \catcode`\@=\other
   \catcode`\^=\other
   \catcode`\_=\other
   \catcode`\|=\other
@@ -7450,6 +7457,7 @@ end
 
 \def\scanargctxt{% used for copying and captions, not macros.
   \scanctxt
+  \catcode`\@=\other
   \catcode`\\=\other
   \catcode`\^^M=\other
 }
@@ -7457,6 +7465,7 @@ end
 \def\macrobodyctxt{% used for @macro definitions
   \scanctxt
   \catcode`\ =\other
+  \catcode`\@=\other
   \catcode`\{=\other
   \catcode`\}=\other
   \catcode`\^^M=\other
@@ -7827,7 +7836,7 @@ end
 %
 \def\defmacro{%
   \let\hash=##% convert placeholders to macro parameter chars
-  \ifrecursive
+  \ifrecursive   %%%%%%%%%%%%%% Recursive %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \ifcase\paramno
     % 0
       \expandafter\xdef\csname\the\macname\endcsname{%
@@ -7859,12 +7868,11 @@ end
         \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\gobble
       \fi
     \fi
-  \else
+  \else  %%%%%%%%%%%%%%%%%%%%%% Non-recursive %%%%%%%%%%%%%%%%%%%%%%%%%%
     \ifcase\paramno
     % 0
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \noexpand\norecurse{\the\macname}%
-        \noexpand\scanmacro{\temp}\egroup}%
+        \noexpand\scanmacro{\temp}}%
     \or % 1
       \expandafter\xdef\csname\the\macname\endcsname{%
          \bgroup
@@ -7872,8 +7880,8 @@ end
          \expandafter\noexpand\csname\the\macname xxx\endcsname}%
       \expandafter\xdef\csname\the\macname xxx\endcsname##1{%
         \egroup
-        \noexpand\norecurse{\the\macname}%
-        \noexpand\scanmacro{\temp}\egroup}%
+        \noexpand\scanmacro{\temp}%
+        }%
     \else % at most 9
       \ifnum\paramno<10\relax
         \expandafter\xdef\csname\the\macname\endcsname{%
@@ -7887,8 +7895,8 @@ end
         \csname\the\macname xxx\endcsname
         \paramlist{%
             \egroup
-            \noexpand\norecurse{\the\macname}%
-            \noexpand\scanmacro{\temp}\egroup}%
+            \noexpand\scanmacro{\temp}%
+            }%
       \else % 10 or more:
         \expandafter\xdef\csname\the\macname\endcsname{%
           \noexpand\getargvals@{\the\macname}{\argl}%
