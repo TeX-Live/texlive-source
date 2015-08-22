@@ -1,3 +1,7 @@
+2015-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c: Accept long file name for a log file and a index file.
+
 2015-08-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* main.c: Add '--help' option.
