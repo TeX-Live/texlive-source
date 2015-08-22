@@ -8,7 +8,7 @@
 
 #include "kp.h"
 
-char *styfile,*idxfile[256],indfile[256],*dicfile,logfile[256];
+char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 
 /* default paths */
 #ifndef DEFAULT_INDEXSTYLES
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 
 /*   check options   */
 
-	for (i=1,j=0;i<argc;i++) {
+	for (i=1,j=0;i<argc && j<256;i++) {
 		if ((argv[i][0]=='-')&&(strlen(argv[i])>=2)&&chkopt) {
 			switch (argv[i][1]) {
 			case 'c':
@@ -98,10 +98,10 @@ int main(int argc, char **argv)
 
 			case 'o':
 				if ((argv[i][2]=='\0')&&(i+1<argc)) {
-					strcpy(indfile,argv[++i]);
+					indfile=xstrdup(argv[++i]);
 				}
 				else {
-					strcpy(indfile,&argv[i][2]);
+					indfile=xstrdup(&argv[i][2]);
 				}
 				break;
 
@@ -133,10 +133,10 @@ int main(int argc, char **argv)
 
 			case 't':
 				if ((argv[i][2]=='\0')&&(i+1<argc)) {
-					strcpy(logfile,argv[++i]);
+					logfile=xstrdup(argv[++i]);
 				}
 				else {
-					strcpy(logfile,&argv[i][2]);
+					logfile=xstrdup(&argv[i][2]);
 				}
 				break;
 
@@ -255,7 +255,8 @@ int main(int argc, char **argv)
 
 	if (styfile!=NULL) styread(styfile);
 
-	if ((indfile[0]=='\0')&&(idxcount-fsti>0)) {
+	if (!indfile &&(idxcount-fsti>0)) {
+		indfile=xmalloc(strlen(idxfile[0]+6));
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
 				strncpy(indfile,idxfile[0],i);
@@ -266,7 +267,8 @@ int main(int argc, char **argv)
 		if (i==-1) sprintf(indfile,"%s.ind",idxfile[0]);
 	}
 
-	if ((logfile[0] == '\0') && (idxcount-fsti > 0)) {
+	if (!logfile && (idxcount-fsti > 0)) {
+		logfile=xmalloc(strlen(idxfile[0]+6));
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
 				strncpy(logfile,idxfile[0],i);
