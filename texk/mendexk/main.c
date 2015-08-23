@@ -278,11 +278,11 @@ int main(int argc, char **argv)
 		}
 		if (i==-1) sprintf(logfile,"%s.ilg",idxfile[0]);
 		}
-	if ((logfile[0] != '\0') && kpse_out_name_ok(logfile))
+	if (logfile && kpse_out_name_ok(logfile))
 		efp=fopen(logfile,"wb");
 	if(efp == NULL) {
 		efp=stderr;
-		strcpy(logfile,"stderr");
+		logfile=xstrdup("stderr");
 	}
 
 	if (strcmp(argv[0],"makeindex")==0) {
@@ -399,7 +399,7 @@ int main(int argc, char **argv)
 
 	verb_printf(efp,"...done.\n");
 
-	if (idxcount-fsti==0) strcpy(indfile,"stdout");
+	if (idxcount-fsti==0) indfile=xstrdup("stdout");
 
 	verb_printf(efp,"%d warnings, written in %s.\n",warn,logfile);
 	verb_printf(efp,"Output written in %s.\n",indfile);
