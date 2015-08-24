@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-19.20}
+\def\texinfoversion{2015-08-21.13}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -427,9 +427,13 @@
 \def\nsbot{\vbox
   {\hrule height\cornerlong depth\cornerthick width\cornerthick}}
 
+
+% Argument parsing
+
 % Parse an argument, then pass it to #1.  The argument is the rest of
 % the input line (except we remove a trailing comment).  #1 should be a
 % macro which expects an ordinary undelimited TeX argument.
+% For example, \def\foo{\parsearg\fooxxx}.
 %
 \def\parsearg{\parseargusing{}}
 \def\parseargusing#1#2{%
@@ -448,9 +452,11 @@
   }%
 }
 
-% First remove any @comment, then any @c comment.
+% First remove any @comment, then any @c comment.  Also remove a @texinfoc
+% comment (see \scanmacro for details).  Pass the result on to \argcheckspaces.
 \def\argremovecomment#1\comment#2\ArgTerm{\argremovec #1\c\ArgTerm}
-\def\argremovec#1\c#2\ArgTerm{\argcheckspaces#1\^^M\ArgTerm}
+\def\argremovec#1\c#2\ArgTerm{\argremovetexinfoc #1\texinfoc\ArgTerm}
+\def\argremovetexinfoc#1\texinfoc#2\ArgTerm{\argcheckspaces#1\^^M\ArgTerm}
 
 % Each occurrence of `\^^M' or `<space>\^^M' is replaced by a single space.
 %
@@ -4461,31 +4467,6 @@ end
   \def\{{{\tt\char123}}%
   \def\}{{\tt\char125}}%
   %
-  % I don't entirely understand this, but when an index entry is
-  % generated from a macro call, the \endinput which \scanmacro inserts
-  % causes processing to be prematurely terminated.  This is,
-  % apparently, because \indexsorttmp is fully expanded, and \endinput
-  % is an expandable command.  The redefinition below makes \endinput
-  % disappear altogether for that purpose -- although logging shows that
-  % processing continues to some further point.  On the other hand, it
-  % seems \endinput does not hurt in the printed index arg, since that
-  % is still getting written without apparent harm.
-  %
-  % Sample source (mac-idx3.tex, reported by Graham Percival to
-  % help-texinfo, 22may06):
-  % @macro funindex {WORD}
-  % @findex xyz
-  % @end macro
-  % ...
-  % @funindex commtest
-  % This is not enough to reproduce the bug, but it gives the flavor.
-  %
-  % Sample whatsit resulting:
-  % .@write3{\entry{xyz}{@folio }{@code {xyz@endinput }}}
-  %
-  % So:
-  \let\endinput = \empty
-  %
   % Do the redefinitions.
   \commondummies
 }
@@ -7354,13 +7335,17 @@ end
 \let\aftermacroxxx\relax
 \def\aftermacro{\aftermacroxxx}
 
+% alias because \c means cedilla in @tex or @math
+\let\texinfoc=\c
+
+% Used at the time of macro expansion.
 % Argument is macro body with arguments substituted
 \def\scanmacro#1{%
   \newlinechar`\^^M
   \let\xeatspaces\eatspaces
   %
   % Process the macro body under the current catcode regime.
-  \scantokens{#1\c}\aftermacro%
+  \scantokens{#1\texinfoc}\aftermacro%
   %
   % The \c is to remove the \newlinechar added by \scantokens, and
   % can be noticed by \parsearg.
