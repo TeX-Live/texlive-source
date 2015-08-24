@@ -103,7 +103,7 @@ ht_clear_table (struct ht_table *ht)
   ht->hval_free_fn = NULL;
 }
 
-long ht_table_size (struct ht_table *ht)
+int ht_table_size (struct ht_table *ht)
 {
   ASSERT(ht);
 

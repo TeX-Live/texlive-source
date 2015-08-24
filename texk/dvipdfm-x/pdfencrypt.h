@@ -30,7 +30,7 @@
 extern void pdf_enc_set_verbose (void);
 extern pdf_obj *pdf_enc_id_array (void);
 extern void pdf_enc_compute_id_string (char *dviname, char *pdfname);
-extern void pdf_enc_set_label (unsigned long label);
+extern void pdf_enc_set_label (unsigned label);
 extern void pdf_enc_set_generation (unsigned generation);
 extern void pdf_enc_set_passwd (unsigned int size, unsigned int perm,
                                 const char *owner, const char *user);

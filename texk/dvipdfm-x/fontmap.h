@@ -40,7 +40,7 @@ typedef struct fontmap_opt {
   /* Synthetic font */
   double slant, extend, bold;
   /* comaptibility and other flags */
-  long   mapc,  flags;
+  int    mapc,  flags;
 
   char  *otl_tags;    /* currently unused */
   char  *tounicode;   /* not implemented yet */
@@ -84,7 +84,7 @@ extern void         pdf_init_fontmap_record   (fontmap_rec *mrec);
 extern void         pdf_clear_fontmap_record  (fontmap_rec *mrec);
 
 extern int          pdf_load_fontmap_file     (const char  *filename, int mode);
-extern int          pdf_read_fontmap_line     (fontmap_rec *mrec, const char *mline, long mline_strlen, int format);
+extern int          pdf_read_fontmap_line     (fontmap_rec *mrec, const char *mline, int mline_strlen, int format);
 
 extern int          pdf_append_fontmap_record (const char  *kp, const fontmap_rec *mrec);
 extern int          pdf_remove_fontmap_record (const char  *kp);

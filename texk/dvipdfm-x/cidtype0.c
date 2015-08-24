@@ -71,7 +71,7 @@
 #include "fontmap.h"
 
 static int  verbose   = 0;
-static long opt_flags = 0;
+static int  opt_flags = 0;
 
 void
 CIDFont_type0_set_verbose (void)
@@ -80,7 +80,7 @@ CIDFont_type0_set_verbose (void)
 }
 
 void
-CIDFont_type0_set_flags (long flags)
+CIDFont_type0_set_flags (int flags)
 {
   opt_flags = flags;
 }
@@ -554,7 +554,7 @@ CIDFont_type0_try_open (const char *name,
                         int required_cid,
                         CIDType0Info *info)
 {
-  unsigned long offset = 0;
+  ULONG offset = 0;
   int is_cid;
 
   CIDFontInfo_init(info);
@@ -836,7 +836,7 @@ CIDFont_type0_open (CIDFont *font, const char *name,
   sfnt       *sfont = NULL;
   cff_font   *cffont;
   FILE       *fp = NULL;
-  unsigned long offset = 0;
+  ULONG       offset = 0;
   int         is_cid_font = 0;
   int         expect_cid_font = expected_flag == 0;
   int         expect_type1_font = expected_flag & CIDFONT_FLAG_TYPE1;
@@ -1308,7 +1308,7 @@ load_base_CMap (const char *font_name, int wmode, cff_font *cffont)
   RELEASE(cmap_name);
 
   for (gid = 1; gid < cffont->num_glyphs; gid++) {
-    long      ucv;
+    int32_t   ucv;
     s_SID     sid;
     char     *glyph, *name, *suffix;
     unsigned char  srcCode[4];
@@ -1449,7 +1449,7 @@ create_ToUnicode_stream (cff_font *cffont,
   for (cid = 1; cid < cffont->num_glyphs; cid++) { /* Skip .notdef */
     if (is_used_char2(used_glyphs, cid)) {
       char *glyph;
-      long  len;
+      int32_t len;
       int   fail_count;
 
       wbuf[0] = (cid >> 8) & 0xff;

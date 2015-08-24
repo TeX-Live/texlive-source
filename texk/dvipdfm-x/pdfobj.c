@@ -59,7 +59,7 @@ struct pdf_obj
 {
   int type;
 
-  unsigned long  label;  /* Only used for indirect objects
+  unsigned int   label;  /* Only used for indirect objects
 			    all other "label" to zero */
   unsigned short generation;  /* Only used if "label" is used */
   unsigned refcount;  /* Number of links to this object */
@@ -1734,7 +1734,7 @@ pdf_stream_dataptr (pdf_obj *stream)
   return (const void *) data->stream;
 }
 
-long
+int
 pdf_stream_length (pdf_obj *stream)
 {
   pdf_stream *data;
@@ -1743,7 +1743,7 @@ pdf_stream_length (pdf_obj *stream)
 
   data = stream->data;
 
-  return (long) data->stream_length;
+  return (int) data->stream_length;
 }
 
 static void
@@ -2280,7 +2280,7 @@ pdf_flush_obj (pdf_obj *object, FILE *file)
    */
   add_xref_entry(object->label, 1,
 		 pdf_output_file_position, object->generation);
-  length = sprintf(format_buffer, "%lu %hu obj\n", object->label, object->generation);
+  length = sprintf(format_buffer, "%u %hu obj\n", object->label, object->generation);
   enc_mode = doc_enc_mode && !(object->flags & OBJ_NO_ENCRYPT);
   pdf_enc_set_label(object->label);
   pdf_enc_set_generation(object->generation);

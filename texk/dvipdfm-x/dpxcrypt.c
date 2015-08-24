@@ -208,7 +208,7 @@ static void transform (MD5_CONTEXT *ctx, const unsigned char *data)
 /* The routine updates the message-digest context to
  * account for the presence of each of the characters inBuf[0..inLen-1]
  * in the message whose digest is being computed. */
-void MD5_write (MD5_CONTEXT *hd, const unsigned char *inbuf, unsigned long inlen)
+void MD5_write (MD5_CONTEXT *hd, const unsigned char *inbuf, unsigned int inlen)
 {
   if (hd->count == 64) { /* flush the buffer */
     transform(hd, hd->buf);
@@ -529,7 +529,7 @@ _SHA256_transform (SHA256_CONTEXT *hd, const unsigned char *data)
 #undef S1
 #undef R
 
-void SHA256_write (SHA256_CONTEXT *hd, const unsigned char *inbuf, unsigned long inlen)
+void SHA256_write (SHA256_CONTEXT *hd, const unsigned char *inbuf, unsigned int inlen)
 {
   unsigned int stack_burn = 0;
 
@@ -1018,7 +1018,7 @@ _SHA512_transform (SHA512_CONTEXT *ctx, const unsigned char *data)
  * we take the leftmost 48 of those bytes.
  */
 
-void SHA512_write (SHA512_CONTEXT *hd, const unsigned char *inbuf, unsigned long inlen)
+void SHA512_write (SHA512_CONTEXT *hd, const unsigned char *inbuf, unsigned int inlen)
 {
   unsigned int stack_burn = 0;
 
@@ -1138,7 +1138,7 @@ SHA512_final (unsigned char *outbuf, SHA512_CONTEXT *hd)
  * heavily modified for GnuPG by Werner Koch <wk@gnupg.org> 
  */
 
-static void do_encrypt_stream (ARC4_CONTEXT *ctx, unsigned char *outbuf, const unsigned char *inbuf, unsigned long len)
+static void do_encrypt_stream (ARC4_CONTEXT *ctx, unsigned char *outbuf, const unsigned char *inbuf, unsigned int len)
 {
   int i = ctx->idx_i;
   int j = ctx->idx_j;
@@ -1158,7 +1158,7 @@ static void do_encrypt_stream (ARC4_CONTEXT *ctx, unsigned char *outbuf, const u
   ctx->idx_j = j;
 }
 
-void ARC4 (ARC4_CONTEXT *ctx, unsigned long len, const unsigned char *inbuf, unsigned char *outbuf)
+void ARC4 (ARC4_CONTEXT *ctx, unsigned int len, const unsigned char *inbuf, unsigned char *outbuf)
 {
   do_encrypt_stream(ctx, outbuf, inbuf, len);
   _gcry_burn_stack(64);

@@ -38,7 +38,7 @@ typedef struct {
 } MD5_CONTEXT;
 
 void MD5_init (MD5_CONTEXT *ctx);
-void MD5_write(MD5_CONTEXT *ctx, const unsigned char *inbuf, unsigned long inlen);
+void MD5_write(MD5_CONTEXT *ctx, const unsigned char *inbuf, unsigned int inlen);
 void MD5_final(unsigned char *outbuf, MD5_CONTEXT *ctx);
 
 typedef struct {
@@ -63,7 +63,7 @@ typedef struct
 
 void SHA256_init (SHA256_CONTEXT *ctx);
 void SHA256_write(SHA256_CONTEXT *ctx,
-                  const unsigned char *inbuf, unsigned long inlen);
+                  const unsigned char *inbuf, unsigned int inlen);
 void SHA256_final(unsigned char *outbuf, SHA256_CONTEXT *ctx);
 
 void SHA384_init (SHA512_CONTEXT *ctx);
@@ -71,7 +71,7 @@ void SHA384_init (SHA512_CONTEXT *ctx);
 #define SHA384_final(b,c)   SHA512_final((b),(c))
 void SHA512_init (SHA512_CONTEXT *ctx);
 void SHA512_write(SHA512_CONTEXT *ctx,
-                  const unsigned char *inbuf, unsigned long inlen);
+                  const unsigned char *inbuf, unsigned int inlen);
 void SHA512_final(unsigned char *outbuf, SHA512_CONTEXT *ctx);
 
 /* libgcrypt arcfour */
@@ -82,7 +82,7 @@ typedef struct {
 
 #define AES_BLOCKSIZE 16
 
-void ARC4 (ARC4_CONTEXT *ctx, unsigned long len, const unsigned char *inbuf, unsigned char *outbuf);
+void ARC4 (ARC4_CONTEXT *ctx, unsigned int len, const unsigned char *inbuf, unsigned char *outbuf);
 void ARC4_set_key (ARC4_CONTEXT *ctx, unsigned int keylen, const unsigned char *key);
 
 void AES_ecb_encrypt (const unsigned char *key,    size_t  key_len,

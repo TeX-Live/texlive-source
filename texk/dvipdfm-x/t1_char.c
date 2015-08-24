@@ -1321,7 +1321,7 @@ do_postproc (t1_chardesc *cd)
 } while (0)
 
 int
-t1char_get_metrics (card8 *src, long srclen, cff_index *subrs, t1_ginfo *ginfo)
+t1char_get_metrics (card8 *src, int srclen, cff_index *subrs, t1_ginfo *ginfo)
 {
   t1_chardesc t1char, *cd;
 
@@ -1365,7 +1365,7 @@ t1char_get_metrics (card8 *src, long srclen, cff_index *subrs, t1_ginfo *ginfo)
 /*
  * Encode Charpath as a Type 2 Charstring
  */
-static long
+static int
 t1char_encode_charpath (t1_chardesc *cd,
                         double default_width, double nominal_width,
                         card8 *dst, card8 *endptr)
@@ -1541,16 +1541,16 @@ t1char_encode_charpath (t1_chardesc *cd,
   CHECK_BUFFER(1);
   *dst++ = (card8) cs_endchar;
 
-  return (long) (dst - save);
+  return (int) (dst - save);
 }
 
-long
-t1char_convert_charstring (card8 *dst, long dstlen,
-                           card8 *src, long srclen, cff_index *subrs,
+int
+t1char_convert_charstring (card8 *dst, int dstlen,
+                           card8 *src, int srclen, cff_index *subrs,
                            double default_width, double nominal_width,
                            t1_ginfo *ginfo)
 {
-  long length;
+  int length;
   t1_chardesc t1char, *cd;
 
   cd = &t1char;

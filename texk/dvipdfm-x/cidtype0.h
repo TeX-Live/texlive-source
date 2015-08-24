@@ -26,7 +26,7 @@
 #include "fontmap.h"
 
 extern void CIDFont_type0_set_verbose (void);
-extern void CIDFont_type0_set_flags   (long flags);
+extern void CIDFont_type0_set_flags   (int flags);
 
 extern int  CIDFont_type0_open    (CIDFont *font, const char *name,
                                    CIDSysInfo *cmap_csi, cid_opt *opt,

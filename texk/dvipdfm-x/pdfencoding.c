@@ -670,7 +670,7 @@ pdf_create_ToUnicode_CMap (const char *enc_name,
       continue;
 
     if (enc_vec[code]) {
-      long   len;
+      int32_t len;
       int    fail_count = 0;
       agl_name *agln = agl_lookup_list(enc_vec[code]);
       /* Adobe glyph naming conventions are not used by viewers,

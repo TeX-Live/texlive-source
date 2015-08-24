@@ -40,7 +40,7 @@ extern void CIDFont_set_verbose     (void);
 #if 0
 extern int  CIDFont_require_version (void);
 #endif
-extern void CIDFont_set_flags       (long flags);
+extern void CIDFont_set_flags       (int flags);
 
 #define CIDFONT_FORCE_FIXEDPITCH (1 << 1)
 

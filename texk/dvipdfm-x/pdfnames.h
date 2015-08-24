@@ -42,7 +42,7 @@ extern int      pdf_names_close_object     (struct ht_table *names,
 
 /* Really create name tree... */
 extern pdf_obj *pdf_names_create_tree      (struct ht_table *names,
-					    long *count,
+					    int *count,
 					    struct ht_table *filter);
 
 #endif /*  _PDF_NAMES_H_ */

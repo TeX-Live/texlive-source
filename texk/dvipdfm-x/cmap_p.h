@@ -61,9 +61,9 @@ typedef struct mapDef {
 
 #define MEM_ALLOC_SIZE  4096
 typedef struct mapData {
-  long            pos;  /* Position of next free data segment */
   unsigned char  *data; /* CID, Code... MEM_ALLOC_SIZE bytes  */
   struct mapData *prev; /* Previous mapData data segment      */
+  int             pos;  /* Position of next free data segment */
 } mapData;
 
 struct CMap {

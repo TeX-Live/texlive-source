@@ -1,3 +1,15 @@
+2015-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* agl.[ch], cid.[ch], cidtype0.[ch], cidtype2.[ch], cmap_p.h,
+	cs_type2.[ch], dpxcrypt.[ch], dpxutil.[ch], dvi.c, fontmap.[ch],
+	otl_conf.c, pdfcolor..[ch], pdfdev.h, pdfdoc.c, pdfencoding.c,
+	pdfencrypt.[ch], pdfnames.[ch], pdfobj.[ch], sfnt.h, spc_pdfm.c,
+	spc_xtx.c, truetype.c, t1_char.[ch], tt_cmap.[ch], unicode.[ch]:
+	No reason to use 'long' for 32-bit integers.
+
+	* system.h: Moved #undef's for Win32 symbols from here ...
+	* error.h, mpost.c: ... to here.
+
 2015-08-21  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvipdfmx.c (main): Drop CDECL.

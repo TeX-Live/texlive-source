@@ -25,7 +25,7 @@
 
 extern void UC_set_verbose (void);
 
-extern int UC_sput_UTF16BE  (long ucv, unsigned char **dstpp, unsigned char *endptr);
-extern int UC_is_valid      (long ucv);
+extern int UC_sput_UTF16BE  (int32_t ucv, unsigned char **dstpp, unsigned char *endptr);
+extern int UC_is_valid      (int32_t ucv);
 extern int32_t UC_UTF8_decode_char(const unsigned char **pp, const unsigned char *endptr);
 #endif /* _UNICODE_H_ */

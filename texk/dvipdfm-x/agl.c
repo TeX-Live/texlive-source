@@ -415,7 +415,7 @@ agl_load_listfile (const char *filename, int is_predef)
     agl_name *agln, *duplicate;
     char     *name;
     int       n_unicodes, i;
-    long      unicodes[AGL_MAX_UNICODES];
+    int32_t   unicodes[AGL_MAX_UNICODES];
 
     endptr = p + strlen(p);
     skip_white(&p, endptr);
@@ -555,10 +555,10 @@ agl_name_is_unicode (const char *glyphname)
   return 0;
 }
 
-long
+int32_t
 agl_name_convert_unicode (const char *glyphname)
 {
-  long  ucv = -1;
+  int32_t ucv = -1;
   const char *p;
 
   if (!agl_name_is_unicode(glyphname))
@@ -623,12 +623,12 @@ xtol (const char *start, int len)
   ((u) >= 0x100000L && (u) <= 0x10FFFDL) \
 )
 
-static long
+static int32_t
 put_unicode_glyph (const char *name,
 		   unsigned char **dstpp, unsigned char *limptr)
 {
   const char *p;
-  long  len = 0, ucv;
+  int32_t len = 0, ucv;
 
   p   = name;
   ucv = 0;
@@ -649,12 +649,12 @@ put_unicode_glyph (const char *name,
   return len;
 }
 
-long
+int32_t
 agl_sput_UTF16BE (const char *glyphstr,
 		  unsigned char **dstpp, unsigned char *limptr,
 		  int *fail_count)
 {
-  long  len   = 0;
+  int32_t len   = 0;
   int   count = 0;
   const char *p, *endptr;
 
@@ -668,7 +668,7 @@ agl_sput_UTF16BE (const char *glyphstr,
   while (p < endptr) {
     char     *name;
     const char *delim;
-    long      sub_len;
+    int32_t   sub_len;
     int       i;
     agl_name *agln0, *agln1 = NULL;
 
@@ -686,7 +686,7 @@ agl_sput_UTF16BE (const char *glyphstr,
     } else if (!delim || delim > endptr) {
       delim = endptr;
     }
-    sub_len = (long) (delim - p);
+    sub_len = (int32_t) (delim - p);
 
     name = NEW(sub_len+1, char);
     memcpy(name, p, sub_len);
@@ -735,7 +735,7 @@ agl_sput_UTF16BE (const char *glyphstr,
 
 int
 agl_get_unicodes (const char *glyphstr,
-		  long *unicodes, int max_unicodes)
+		  int32_t *unicodes, int max_unicodes)
 {
   int   count = 0;
   const char *p, *endptr;
@@ -748,7 +748,7 @@ agl_get_unicodes (const char *glyphstr,
   while (p < endptr) {
     char     *name;
     const char *delim;
-    long      sub_len;
+    int32_t   sub_len;
     int       i;
     agl_name *agln0, *agln1 = NULL;
 
@@ -763,7 +763,7 @@ agl_get_unicodes (const char *glyphstr,
     } else if (!delim || delim > endptr) {
       delim = endptr;
     }
-    sub_len = (long) (delim - p);
+    sub_len = (int32_t) (delim - p);
 
     name = NEW(sub_len+1, char);
     memcpy(name, p, sub_len);

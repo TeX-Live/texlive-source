@@ -27,7 +27,7 @@
 #include "pdfobj.h"
 #include "pdfcolor.h"
 
-typedef signed long spt_t;
+typedef int spt_t;
 
 typedef struct pdf_tmatrix
 {

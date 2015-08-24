@@ -779,9 +779,9 @@ cs_parse_init (void)
 /*
  * Not just copying...
  */
-long
-cs_copy_charstring (card8 *dst, long dstlen,
-		    card8 *src, long srclen,
+int
+cs_copy_charstring (card8 *dst, int dstlen,
+		    card8 *src, int srclen,
 		    cff_index *gsubr, cff_index *subr,
 		    double default_width, double nominal_width, cs_ginfo *ginfo)
 {
@@ -804,5 +804,5 @@ cs_copy_charstring (card8 *dst, long dstlen,
     }
   }
 
-  return (long)(dst - save);
+  return (int)(dst - save);
 }
