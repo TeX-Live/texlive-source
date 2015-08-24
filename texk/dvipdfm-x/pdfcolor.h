@@ -74,13 +74,13 @@ extern int        pdf_color_is_white      (const pdf_color *color);
 extern int        pdf_color_is_valid      (const pdf_color *color);
 
 /* Not check size */
-extern pdf_obj *iccp_get_rendering_intent (const void *profile, long proflen);
+extern pdf_obj *iccp_get_rendering_intent (const void *profile, int proflen);
 extern int      iccp_check_colorspace     (int colortype,
-					   const void *profile, long proflen);
+					   const void *profile, int proflen);
 
 /* returns colorspace ID */
 extern int      iccp_load_profile (const char *ident,
-				   const void *profile, long proflen);
+				   const void *profile, int proflen);
 
 extern void     pdf_init_colors  (void);
 extern void     pdf_close_colors (void);

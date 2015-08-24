@@ -154,7 +154,7 @@ extern int         pdf_add_stream_flate  (pdf_obj *stream,
 #endif
 extern int         pdf_concat_stream     (pdf_obj *dst, pdf_obj *src);
 extern pdf_obj    *pdf_stream_dict       (pdf_obj *stream);
-extern long        pdf_stream_length     (pdf_obj *stream);
+extern int         pdf_stream_length     (pdf_obj *stream);
 #if 0
 extern void        pdf_stream_set_flags  (pdf_obj *stream, int flags);
 extern int         pdf_stream_get_flags  (pdf_obj *stream);

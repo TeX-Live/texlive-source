@@ -25,21 +25,21 @@
 #include "numbers.h"
 #include "pdfobj.h"
 
-/* Acoid conflict with CHAR from <winnt.h>.  */
+/* Acoid conflict with CHAR ... from <winnt.h>.  */
 #define CHAR SFNT_CHAR
+#define ULONG SFNT_ULONG
+#define LONG SFNT_LONG
 
 /* Data Types as described in Apple's TTRefMan */
 typedef unsigned char  BYTE;
 typedef signed char    CHAR;
 typedef unsigned short USHORT;
 typedef signed short   SHORT;
-typedef unsigned long  ULONG;
-typedef signed long    LONG;
-typedef unsigned long  Fixed;   /* 16.16-bit signed fixed-point number */
+typedef uint32_t       ULONG;
+typedef int32_t        LONG;
+typedef uint32_t       Fixed;   /* 16.16-bit signed fixed-point number */
 typedef short          FWord;
 typedef unsigned short uFWord;
-typedef short          F2Dot14; /* 16-bit signed fixed number with the low
-				   14 bits representing fraction. */
 
 struct sfnt_table
 {

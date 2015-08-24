@@ -292,6 +292,11 @@ skip_prolog (const char **start, const char *end)
 
 /* PostScript Operators */
 
+/* Acoid conflict with SET... from <wingdi.h>.  */
+#undef SETLINECAP
+#undef SETLINEJOIN
+#undef SETMITERLIMIT
+
 #define ADD          	1
 #define SUB		2
 #define MUL		3

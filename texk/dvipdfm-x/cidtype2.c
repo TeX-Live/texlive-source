@@ -67,7 +67,7 @@ CIDFont_type2_set_verbose (void)
 }
 
 void
-CIDFont_type2_set_flags (long flags)
+CIDFont_type2_set_flags (int32_t flags)
 {
   opt_flags = flags;
 }
@@ -499,7 +499,7 @@ CIDFont_type2_dofont (CIDFont *font)
   struct tt_glyphs *glyphs;
   CMap    *cmap = NULL;
   tt_cmap *ttcmap = NULL;
-  unsigned long offset = 0;
+  ULONG    offset = 0;
   CID      cid, last_cid;
   unsigned char *cidtogidmap;
   USHORT   num_glyphs;
@@ -933,7 +933,7 @@ CIDFont_type2_open (CIDFont *font, const char *name,
 {
   char    *fontname;
   sfnt    *sfont;
-  unsigned long offset = 0;
+  ULONG    offset = 0;
   FILE    *fp = NULL;
 
   ASSERT(font && opt);

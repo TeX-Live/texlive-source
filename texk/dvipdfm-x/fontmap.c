@@ -878,7 +878,7 @@ pdf_insert_fontmap_record (const char *kp, const fontmap_rec *vp)
 
 
 int
-pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, long mline_len, int format)
+pdf_read_fontmap_line (fontmap_rec *mrec, const char *mline, int mline_len, int format)
 {
   int    error;
   char  *q;

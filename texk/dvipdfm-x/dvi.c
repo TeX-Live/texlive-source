@@ -992,7 +992,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   FILE         *fp;
   char         *path;
   sfnt         *sfont;
-  unsigned      offset = 0;
+  ULONG         offset = 0;
   struct tt_head_table *head;
   struct tt_maxp_table *maxp;
   struct tt_hhea_table *hhea;

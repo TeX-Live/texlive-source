@@ -109,7 +109,7 @@ static void release_opt (cid_opt *opt);
 static CIDSysInfo *get_cidsysinfo (const char *map_name, fontmap_opt *fmap_opt);
 
 static int   __verbose   = 0;
-static long  cidoptflags = 0;
+static int   cidoptflags = 0;
 
 void
 CIDFont_set_verbose (void)
@@ -799,7 +799,7 @@ get_cidsysinfo (const char *map_name, fontmap_opt *fmap_opt)
 }
 
 void
-CIDFont_set_flags (long flags)
+CIDFont_set_flags (int flags)
 {
   CIDFont_type0_set_flags(flags);
   CIDFont_type2_set_flags(flags);

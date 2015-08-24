@@ -60,7 +60,7 @@ typedef struct
 
 extern tt_cmap *tt_cmap_read    (sfnt *sfont, USHORT platform, USHORT encoding);
 
-extern USHORT   tt_cmap_lookup  (tt_cmap *cmap, long cc);
+extern USHORT   tt_cmap_lookup  (tt_cmap *cmap, ULONG cc);
 extern void     tt_cmap_release (tt_cmap *cmap);
 
 #include "pdfobj.h"

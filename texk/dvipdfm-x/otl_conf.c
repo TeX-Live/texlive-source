@@ -48,7 +48,7 @@ parse_uc_coverage (pdf_obj *gclass, const char **pp, const char *endptr)
 {
   pdf_obj *coverage;
   pdf_obj *value;
-  long     ucv = 0;
+  int32_t  ucv = 0;
   char    *glyphname, *glyphclass;
 
   if (*pp + 1 >= endptr)
@@ -131,7 +131,7 @@ add_rule (pdf_obj *rule, pdf_obj *gclass,
 {
   pdf_obj *glyph1, *glyph2;
 #define MAX_UNICODES 16
-  long     unicodes[MAX_UNICODES];
+  int32_t  unicodes[MAX_UNICODES];
   int      i, n_unicodes;
 
   if (first[0] == '@') {

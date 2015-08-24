@@ -59,7 +59,7 @@ UC_set_verbose (void)
 #define UC_SUR_HIGH_START 0xD800UL
 
 int
-UC_sput_UTF16BE (long ucv, unsigned char **pp, unsigned char *limptr)
+UC_sput_UTF16BE (int32_t ucv, unsigned char **pp, unsigned char *limptr)
 {
   int count = 0;
   unsigned char *p = *pp;
@@ -96,7 +96,7 @@ UC_sput_UTF16BE (long ucv, unsigned char **pp, unsigned char *limptr)
 }
 
 int
-UC_is_valid (long ucv)
+UC_is_valid (int32_t ucv)
 {
   if (ucv < 0 || (ucv >= 0x0000D800L && ucv <= 0x0000DFFFL))
     return 0;

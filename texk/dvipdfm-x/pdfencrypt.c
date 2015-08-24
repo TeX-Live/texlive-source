@@ -804,7 +804,7 @@ pdf_obj *pdf_enc_id_array (void)
   return id;
 }
 
-void pdf_enc_set_label (unsigned long label)
+void pdf_enc_set_label (unsigned label)
 {
   struct pdf_sec *p = &sec_data;
 

@@ -1628,7 +1628,7 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
     /* We use hexadecimal notation for our numeric destinations.
      * Other bases (e.g., 10+26 or 10+2*26) would be more efficient.
      */
-    sprintf(buf, "%lx", ht_table_size(&pdoc.gotos));
+    sprintf(buf, "%x", ht_table_size(&pdoc.gotos));
     D_new = pdf_new_string(buf, strlen(buf));
     ht_append_table(&pdoc.gotos, dest, strlen(dest), D_new);
   }
@@ -1694,7 +1694,7 @@ pdf_doc_close_names (pdf_doc *p)
     if (p->names[i].data) {
       struct ht_table *data = p->names[i].data;
       pdf_obj  *name_tree;
-      long count;
+      int count;
 
       if (!pdoc.check_gotos || strcmp(p->names[i].category, "Dests"))
         name_tree = pdf_names_create_tree(data, &count, NULL);

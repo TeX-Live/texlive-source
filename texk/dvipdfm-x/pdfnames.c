@@ -275,7 +275,7 @@ cmp_key (const void *d1, const void *d2)
 
 #define NAME_CLUSTER 4
 static pdf_obj *
-build_name_tree (struct named_object *first, long num_leaves, int is_root)
+build_name_tree (struct named_object *first, int num_leaves, int is_root)
 {
   pdf_obj *result;
   int      i;
@@ -351,12 +351,12 @@ build_name_tree (struct named_object *first, long num_leaves, int is_root)
 }
 
 static struct named_object *
-flat_table (struct ht_table *ht_tab, long *num_entries,
+flat_table (struct ht_table *ht_tab, int *num_entries,
 	    struct ht_table *filter)
 {
   struct named_object *objects;
   struct ht_iter       iter;
-  long   count;
+  int    count;
 
   ASSERT(ht_tab);
 
@@ -405,7 +405,7 @@ flat_table (struct ht_table *ht_tab, long *num_entries,
 }
 
 pdf_obj *
-pdf_names_create_tree (struct ht_table *names, long *count,
+pdf_names_create_tree (struct ht_table *names, int *count,
 		       struct ht_table *filter)
 {
   pdf_obj *name_tree;

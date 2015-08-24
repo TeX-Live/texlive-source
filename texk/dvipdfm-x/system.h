@@ -32,13 +32,6 @@
 #endif
 
 #ifdef WIN32
-#  undef ERROR
-#  undef NO_ERROR
-#  undef RGB
-#  undef CMYK
-#  undef SETLINECAP
-#  undef SETLINEJOIN
-#  undef SETMITERLIMIT
 #  pragma warning(disable : 4101 4018)
 #endif /* WIN32 */
 
