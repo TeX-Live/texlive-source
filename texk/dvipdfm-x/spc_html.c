@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -55,7 +55,7 @@
 struct spc_html_
 {
   struct {
-    long  extensions;
+    int  extensions;
   } opts;
 
   pdf_obj  *link_dict;
@@ -899,7 +899,7 @@ spc_html_at_end_document (void)
 
 
 int
-spc_html_check_special (const char *buffer, long size)
+spc_html_check_special (const char *buffer, int size)
 {
   const char *p, *endptr;
 
@@ -907,7 +907,7 @@ spc_html_check_special (const char *buffer, long size)
   endptr = p + size;
 
   for ( ; p < endptr && isspace((unsigned char)*p); p++);
-  size   = (long) (endptr - p);
+  size   = (int) (endptr - p);
   if (size >= strlen("html:") &&
       !memcmp(p, "html:", strlen("html:"))) {
     return  1;

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -662,7 +662,7 @@ static pdf_obj *
 pdf_read_ToUnicode_file (const char *cmap_name)
 {
   pdf_obj *stream;
-  long     res_id = -1;
+  int      res_id = -1;
 
   ASSERT(cmap_name);
 

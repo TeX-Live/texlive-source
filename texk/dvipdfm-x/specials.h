@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -26,7 +26,7 @@
 struct spc_env {
   double x_user, y_user;
   double mag;
-  long   pg;  /* current page in PDF */
+  int    pg;  /* current page in PDF */
 };
 
 struct spc_arg {

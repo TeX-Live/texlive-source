@@ -1,3 +1,9 @@
+2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Most .c and .h files: Update Copyright years.
+	Replace '(unsigned) long' by '(unsigned) int' or '(u)int32_t'
+	except when needed with for ftell() and fseek().
+
 2015-08-23  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* agl.[ch], cid.[ch], cidtype0.[ch], cidtype2.[ch], cmap_p.h,

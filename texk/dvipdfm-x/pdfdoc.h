@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -54,13 +54,13 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
-extern pdf_obj *pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
+extern pdf_obj *pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
 				  pdf_rect *bbox, pdf_obj **resources_p);
 
-extern long     pdf_doc_current_page_number    (void);
+extern int      pdf_doc_current_page_number    (void);
 extern pdf_obj *pdf_doc_current_page_resources (void);
 
-extern pdf_obj *pdf_doc_ref_page (unsigned long page_no);
+extern pdf_obj *pdf_doc_ref_page (unsigned page_no);
 #define pdf_doc_this_page_ref() pdf_doc_get_reference("@THISPAGE")
 #define pdf_doc_next_page_ref() pdf_doc_get_reference("@NEXTPAGE")
 #define pdf_doc_prev_page_ref() pdf_doc_get_reference("@PREVPAGE")
@@ -88,7 +88,7 @@ extern void     pdf_doc_add_page_resource (const char *category,
 extern void     pdf_doc_begin_article (const char *article_id, pdf_obj *info);
 extern void     pdf_doc_add_bead      (const char *article_id,
 				       const char *bead_id,
-				       long page_no, const pdf_rect *rect);
+				       int page_no, const pdf_rect *rect);
 
 /* Bookmarks */
 extern int      pdf_doc_bookmarks_up    (void);
@@ -122,10 +122,10 @@ extern void     pdf_doc_enable_manual_thumbnails (void);
 
 #if 0
 /* PageLabels - */
-extern void     pdf_doc_set_pagelabel (long  page_start,
+extern void     pdf_doc_set_pagelabel (int  page_start,
                                        const char *type,
                                        const void *prefix, int pfrx_len,
-                                       long  counter_start);
+                                       int  counter_start);
 #endif
 
 /* Similar to bop_content */

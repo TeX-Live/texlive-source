@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ struct clt_range
   USHORT  StartCoverageIndex; /* Converage Index of first GID */
 };
 
-static long
+static int
 clt_read_record (struct clt_record *rec, sfnt *sfont)
 {
   int i;
@@ -81,7 +81,7 @@ clt_read_record (struct clt_record *rec, sfnt *sfont)
   return 6;
 }
 
-static long
+static int
 clt_read_range (struct clt_range *rec, sfnt *sfont)
 {
   ASSERT(rec && sfont);
@@ -111,10 +111,10 @@ struct clt_number_list
   USHORT *value;
 };
 
-static long
+static int
 clt_read_record_list (struct clt_record_list *list, sfnt *sfont)
 {
-  long len, i;
+  int len, i;
 
   ASSERT(list && sfont);
 
@@ -144,10 +144,10 @@ clt_release_record_list (struct clt_record_list *list)
   }
 }
 
-static long
+static int
 clt_read_number_list (struct clt_number_list *list, sfnt *sfont)
 {
-  long i;
+  int i;
 
   ASSERT(list && sfont);
 
@@ -281,10 +281,10 @@ struct clt_script_table
   struct clt_record_list LangSysRecord;
 };
 
-static long
+static int
 clt_read_script_table (struct clt_script_table *tab, sfnt *sfont)
 {
-  long len;
+  int len;
 
   ASSERT(tab && sfont);
 
@@ -312,10 +312,10 @@ struct clt_langsys_table
                                         */
 };
 
-static long
+static int
 clt_read_langsys_table (struct clt_langsys_table *tab, sfnt *sfont)
 {
-  long len;
+  int len;
 
   ASSERT(tab && sfont);
 
@@ -342,10 +342,10 @@ struct clt_feature_table
   struct clt_number_list LookupListIndex; /* LookupListIndex List */
 };
 
-static long
+static int
 clt_read_feature_table (struct clt_feature_table *tab, sfnt *sfont)
 {
-  long len;
+  int len;
 
   ASSERT(tab && sfont);
 
@@ -375,10 +375,10 @@ struct clt_lookup_table
   /* offset is from beginning of Lookup table */
 };
 
-static long
+static int
 clt_read_lookup_table (struct clt_lookup_table *tab, sfnt *sfont)
 {
-  long len;
+  int len;
 
   ASSERT(tab && sfont);
 
@@ -397,10 +397,10 @@ clt_release_lookup_table (struct clt_lookup_table *tab)
     clt_release_number_list(&tab->SubTableList);
 }
 
-static long
+static int
 clt_read_coverage (struct clt_coverage *cov, sfnt *sfont)
 {
-  long len, i;
+  int len, i;
 
   ASSERT(cov && sfont);
 
@@ -462,10 +462,10 @@ clt_release_coverage (struct clt_coverage *cov)
 }
 
 /* returns -1 if not found */
-static long
+static int
 clt_lookup_coverage (struct clt_coverage *cov, USHORT gid)
 {
-  long i;
+  int i;
 
   ASSERT(cov);
 
@@ -496,10 +496,10 @@ clt_lookup_coverage (struct clt_coverage *cov, USHORT gid)
   return -1; /* not found */
 }
 
-static long
+static int
 otl_gsub_read_single (struct otl_gsub_subtab *subtab, sfnt *sfont)
 {
-  long   len;
+  int    len;
   ULONG  offset;     /* not Offset which is USHORT */
   Offset cov_offset; /* subtable offset, offset to Coverage table */
 
@@ -552,10 +552,10 @@ otl_gsub_read_single (struct otl_gsub_subtab *subtab, sfnt *sfont)
   return len;
 }
 
-static long
+static int
 otl_gsub_read_alternate (struct otl_gsub_subtab *subtab, sfnt *sfont)
 {
-  long   len;
+  int    len;
   USHORT i, j;
   ULONG  offset;     /* not Offset which is USHORT */
   Offset cov_offset; /* subtable offset, offset to Coverage table */
@@ -619,10 +619,10 @@ otl_gsub_read_alternate (struct otl_gsub_subtab *subtab, sfnt *sfont)
   return  len;
 }
 
-static long
+static int
 otl_gsub_read_ligature (struct otl_gsub_subtab *subtab, sfnt *sfont)
 {
-  long   len;
+  int    len;
   USHORT i, j;
   ULONG  offset;     /* not Offset which is USHORT */
   Offset cov_offset; /* subtable offset, offset to Coverage table */
@@ -797,7 +797,7 @@ otl_gsub_release_alternate (struct otl_gsub_subtab *subtab)
   }
 }
 
-static long
+static int
 otl_gsub_read_header (struct otl_gsub_header *head, sfnt *sfont)
 {
   ASSERT(head && sfont);
@@ -832,7 +832,7 @@ struct otl_gsub_tab
 static int
 otl_gsub_read_feat (struct otl_gsub_tab *gsub, sfnt *sfont)
 {
-  long   feat_idx, script_idx;
+  int    feat_idx, script_idx;
   ULONG  gsub_offset, offset;
   struct otl_gsub_header  head;
   struct otl_gsub_subtab *subtab = NULL;
@@ -877,7 +877,7 @@ otl_gsub_read_feat (struct otl_gsub_tab *gsub, sfnt *sfont)
     if (otl_match_optrule(script,
                           script_list.record[script_idx].tag)) {
       struct clt_script_table script_tab;
-      long   langsys_idx;
+      int    langsys_idx;
 
       offset = gsub_offset +
         head.ScriptList + script_list.record[script_idx].offset;
@@ -966,7 +966,7 @@ otl_gsub_read_feat (struct otl_gsub_tab *gsub, sfnt *sfont)
         (otl_match_optrule(feature,
                            feature_list.record[feat_idx].tag))) {
       struct clt_feature_table feature_table;
-      long   i;
+      int    i;
 
       if(verbose > VERBOSE_LEVEL_MIN) {
         MESG(" %c%c%c%c",
@@ -989,7 +989,7 @@ otl_gsub_read_feat (struct otl_gsub_tab *gsub, sfnt *sfont)
       /* Lookup table */
       for (i = 0; i < feature_table.LookupListIndex.count; i++) {
         struct clt_lookup_table lookup_table;
-        long ll_idx, st_idx, r, n_st;
+        int ll_idx, st_idx, r, n_st;
 
         ll_idx = feature_table.LookupListIndex.value[i];
         if (ll_idx >= lookup_list.count)
@@ -1156,7 +1156,7 @@ otl_gsub_read_feat (struct otl_gsub_tab *gsub, sfnt *sfont)
 static int
 otl_gsub_apply_single (struct otl_gsub_subtab *subtab, USHORT *gid)
 {
-  long idx;
+  int idx;
 
   ASSERT(subtab && gid);
 
@@ -1188,7 +1188,7 @@ static int
 otl_gsub_apply_alternate (struct otl_gsub_subtab *subtab,
                           USHORT alt_idx, USHORT *gid)
 {
-  long  idx;
+  int  idx;
 
   ASSERT(subtab && gid);
 
@@ -1237,7 +1237,7 @@ otl_gsub_apply_ligature (struct otl_gsub_subtab *subtab,
                          USHORT *gid_in,  USHORT num_gids,
                          USHORT *gid_out)
 {
-  long idx;
+  int idx;
 
   ASSERT(subtab && gid_out);
 
@@ -1514,7 +1514,7 @@ otl_gsub_select (otl_gsub *gsub_list,
 static int
 otl_gsub_dump_single (struct otl_gsub_subtab *subtab)
 {
-  long  gid, idx;
+  int  gid, idx;
 
   ASSERT(subtab);
 
@@ -1549,7 +1549,7 @@ otl_gsub_dump_single (struct otl_gsub_subtab *subtab)
 static int
 otl_gsub_dump_alternate (struct otl_gsub_subtab *subtab)
 {
-  long  gid, idx;
+  int  gid, idx;
 
   ASSERT(subtab);
 
@@ -1580,7 +1580,7 @@ otl_gsub_dump_alternate (struct otl_gsub_subtab *subtab)
 static int
 otl_gsub_dump_ligature (struct otl_gsub_subtab *subtab)
 {
-  long  gid, idx;
+  int  gid, idx;
 
   ASSERT(subtab);
 

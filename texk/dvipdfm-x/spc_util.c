@@ -509,7 +509,7 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
 
 
 static int
-spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap, long *page_no)
+spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap, int *page_no)
 {
   int     has_scale, has_xscale, has_yscale, has_rotate, has_matrix;
   const char *_dtkeys[] = {
@@ -651,7 +651,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
       {
         double page;
         if (page_no && spc_util_read_numbers(&page, 1, ap) == 1)
-          *page_no = (long) page;
+          *page_no = (int) page;
         else
           error = -1;
       }
@@ -716,7 +716,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 }
 
 int
-spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, long *page_no, int syntax)
+spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, int *page_no, int syntax)
 {
   ASSERT(ti && spe && args);
 

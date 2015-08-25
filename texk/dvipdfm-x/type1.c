@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2008-2015 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -130,7 +130,7 @@ get_font_attr (pdf_font *font, cff_font *cffont)
   double   capheight, ascent, descent;
   double   italicangle, stemv;
   double   defaultwidth, nominalwidth;
-  long     flags = 0, gid, i;
+  int      flags = 0, gid, i;
   static const char *L_c[] = {
     "H", "P", "Pi", "Rho", NULL
   };
@@ -268,7 +268,7 @@ get_font_attr (pdf_font *font, cff_font *cffont)
 }
 
 static void
-add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, long num_glyphs)
+add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, int num_glyphs)
 {
   pdf_obj *fontdict, *descriptor;
   pdf_obj *tmp_array;
@@ -355,14 +355,14 @@ add_metrics (pdf_font *font, cff_font *cffont, char **enc_vec, double *widths, l
 }
 
 
-static long
+static int
 write_fontfile (pdf_font *font, cff_font *cffont)
 {
   pdf_obj   *descriptor;
   pdf_obj   *fontfile, *stream_dict;
   cff_index *topdict;
-  long       private_size, stream_data_len, charstring_len;
-  long       topdict_offset, offset;
+  int        private_size, stream_data_len, charstring_len;
+  int        topdict_offset, offset;
 #define  WBUF_SIZE 1024
   card8     *stream_data_ptr, wbuf[WBUF_SIZE];
 
@@ -489,7 +489,7 @@ pdf_font_load_type1 (pdf_font *font)
   double       *widths;
   card16       *GIDMap, num_glyphs = 0;
   FILE         *fp;
-  long          offset;
+  int           offset;
   int           code, verbose;
 
   ASSERT(font);
@@ -582,7 +582,7 @@ pdf_font_load_type1 (pdf_font *font)
   GIDMap = NEW(MAX_GLYPHS, card16);
   {
     int     prev, duplicate;
-    long    gid;
+    int     gid;
     char   *glyph;
     s_SID   sid;
 
@@ -678,7 +678,7 @@ pdf_font_load_type1 (pdf_font *font)
     cff_index *cstring;
     t1_ginfo   gm;
     card16     gid, gid_orig;
-    long       dstlen_max, srclen;
+    int        dstlen_max, srclen;
     card8     *srcptr, *dstptr;
 
     offset  = dstlen_max = 0L;
@@ -703,7 +703,7 @@ pdf_font_load_type1 (pdf_font *font)
                                            cffont->subrs[0], defaultwidth, nominalwidth, &gm);
       cstring->offset[gid + 1] = offset + 1;
       if (gm.use_seac) {
-        long  bchar_gid, achar_gid, i;
+        int  bchar_gid, achar_gid, i;
         const char *bchar_name, *achar_name;
 
         /*

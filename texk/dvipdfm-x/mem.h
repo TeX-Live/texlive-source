@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -24,12 +24,18 @@
 #define _MEM_H_
 
 #include <stdlib.h>
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 
-extern void *new (size_t size);
-extern void *renew (void *p, size_t size);
+extern void *new (uint32_t size);
+extern void *renew (void *p, uint32_t size);
 
-#define NEW(n,type)     (type *) new(((size_t)(n))*sizeof(type))
-#define RENEW(p,n,type) (type *) renew(p,(n)*sizeof(type))
+#define NEW(n,type)     (type *) new(((uint32_t)(n))*sizeof(type))
+#define RENEW(p,n,type) (type *) renew(p,((uint32_t)(n))*sizeof(type))
 #define RELEASE(p)      free(p)
 
 #endif /* _MEM_H_ */

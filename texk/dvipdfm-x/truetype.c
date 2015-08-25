@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ pdf_font_open_truetype (pdf_font *font)
        * "builtin" encoding means "MacRoman" here.
        */
       pdf_obj  *tmp;
-      long      flags;
+      int       flags;
 
 #ifndef  ENABLE_NOEMBED
       ERROR("Font file=\"%s\" can't be embedded due to liscence restrictions.", ident);
@@ -178,7 +178,7 @@ pdf_font_open_truetype (pdf_font *font)
       pdf_font_set_flags(font, PDF_FONT_FLAG_NOEMBED);
       tmp = pdf_lookup_dict(descriptor, "Flags");
       if (tmp && pdf_obj_typeof(tmp) == PDF_NUMBER) {
-        flags  = (long) pdf_number_value(tmp);
+        flags  = (int) pdf_number_value(tmp);
         flags &= (1 << 2); /* clear Symbolic */
         flags |= (1 << 5); /* set Nonsymbolic */
         pdf_add_dict(descriptor, pdf_new_name("Flags"), pdf_new_number(flags));

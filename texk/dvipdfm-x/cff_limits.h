@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 #define CFF_INT_MAX 0x7fffffff
 #define CFF_INT_MIN (-0x7fffffff - 1)
 
-#if (LONG_MAX < CFF_INT_MAX || LONG_MIN > CFF_INT_MIN)
+#if (INT_MAX < CFF_INT_MAX || INT_MIN > CFF_INT_MIN)
 #error "CFF support won't work on this system."
 #endif
 

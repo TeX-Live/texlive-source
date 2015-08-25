@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -336,7 +336,7 @@ build_name_tree (struct named_object *first, int num_leaves, int is_root)
     kids = pdf_new_array();
     for (i = 0; i < NAME_CLUSTER; i++) {
       pdf_obj *subtree;
-      long     start, end;
+      int      start, end;
 
       start = (i*num_leaves) / NAME_CLUSTER;
       end   = ((i+1)*num_leaves) / NAME_CLUSTER;

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -40,9 +40,9 @@
 #define CFF_DEBUG     5
 #define CFF_DEBUG_STR "CFF"
 
-static unsigned long get_unsigned (FILE *stream, int n)
+static unsigned get_unsigned (FILE *stream, int n)
 {
-  unsigned long v = 0;
+  unsigned v = 0;
 
   while (n-- > 0)
     v = v*0x100u + get_unsigned_byte(stream);
@@ -55,7 +55,7 @@ static unsigned long get_unsigned (FILE *stream, int n)
 /*
  * Read Header, Name INDEX, Top DICT INDEX, and String INDEX.
  */
-cff_font *cff_open(FILE *stream, long offset, int n)
+cff_font *cff_open(FILE *stream, int offset, int n)
 {
   cff_font  *cff;
   cff_index *idx;
@@ -146,7 +146,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
   cff->gsubr_offset = tell_position(cff->stream) - offset;
 
   /* Number of glyphs */
-  offset = (long) cff_dict_get(cff->topdict, "CharStrings", 0);
+  offset = cff_dict_get(cff->topdict, "CharStrings", 0);
   cff_seek_set(cff, offset);
   cff->num_glyphs = get_unsigned_pair(cff->stream);
 
@@ -159,7 +159,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
 
   /* Check for encoding */
   if (cff_dict_known(cff->topdict, "Encoding")) {
-    offset = (long) cff_dict_get(cff->topdict, "Encoding", 0);
+    offset = cff_dict_get(cff->topdict, "Encoding", 0);
     if (offset == 0) { /* predefined */
       cff->flag |= ENCODING_STANDARD;
     } else if (offset == 1) {
@@ -171,7 +171,7 @@ cff_font *cff_open(FILE *stream, long offset, int n)
 
   /* Check for charset */
   if (cff_dict_known(cff->topdict, "charset")) {
-    offset = (long) cff_dict_get(cff->topdict, "charset", 0);
+    offset = cff_dict_get(cff->topdict, "charset", 0);
     if (offset == 0) { /* predefined */
       cff->flag |= CHARSETS_ISOADOBE;
     } else if (offset == 1) {
@@ -246,7 +246,7 @@ cff_get_name (cff_font *cff)
   return fontname;
 }
 
-long
+int
 cff_set_name (cff_font *cff, char *name)
 {
   cff_index *idx;
@@ -269,8 +269,8 @@ cff_set_name (cff_font *cff, char *name)
   return 5 + strlen(name);
 }
 
-long
-cff_put_header (cff_font *cff, card8 *dest, long destlen)
+int
+cff_put_header (cff_font *cff, card8 *dest, int destlen)
 {
   if (destlen < 4)
     ERROR("Not enough space available...");
@@ -329,7 +329,7 @@ cff_get_index (cff_font *cff)
 {
   cff_index *idx;
   card16     i, count;
-  long       length, nb_read, offset;
+  int        length, nb_read, offset;
 
   idx = NEW(1, cff_index);
 
@@ -365,11 +365,11 @@ cff_get_index (cff_font *cff)
   return idx;
 }
 
-long
-cff_pack_index (cff_index *idx, card8 *dest, long destlen)
+int
+cff_pack_index (cff_index *idx, card8 *dest, int destlen)
 {
-  long    len = 0;
-  long    datalen;
+  int     len = 0;
+  int     datalen;
   card16  i;
 
   if (idx->count < 1) {
@@ -425,7 +425,7 @@ cff_pack_index (cff_index *idx, card8 *dest, long destlen)
   return len;
 }
 
-long
+int 
 cff_index_size (cff_index *idx)
 {
   if (idx->count > 0) {
@@ -484,7 +484,7 @@ void cff_release_index (cff_index *idx)
 char *cff_get_string (cff_font *cff, s_SID id)
 {
   char *result = NULL;
-  long len;
+  int len;
 
   if (id < CFF_STDSTR_MAX) {
     len = strlen(cff_stdstr[id]);
@@ -505,7 +505,7 @@ char *cff_get_string (cff_font *cff, s_SID id)
   return result;
 }
 
-long cff_get_sid (cff_font *cff, const char *str)
+int cff_get_sid (cff_font *cff, const char *str)
 {
   card16 i;
 
@@ -530,7 +530,7 @@ long cff_get_sid (cff_font *cff, const char *str)
   return -1;
 }
 
-long cff_get_seac_sid (cff_font *cff, const char *str)
+int cff_get_seac_sid (cff_font *cff, const char *str)
 {
   card16 i;
 
@@ -581,7 +581,7 @@ s_SID cff_add_string (cff_font *cff, const char *str, int unique)
   card16 idx;
   cff_index *strings;
   l_offset offset, size;
-  long len = strlen(str);
+  int len = strlen(str);
 
   if (cff == NULL)
     ERROR("CFF font not opened.");
@@ -622,10 +622,10 @@ s_SID cff_add_string (cff_font *cff, const char *str, int unique)
  *
  *  Encoding and Charset arrays always begin with GID = 1.
  */
-long cff_read_encoding (cff_font *cff)
+int cff_read_encoding (cff_font *cff)
 {
   cff_encoding *encoding;
-  long offset, length;
+  int offset, length;
   card8 i;
 
   if (cff->topdict == NULL) {
@@ -638,7 +638,7 @@ long cff_read_encoding (cff_font *cff)
     return 0;
   }
 
-  offset = (long) cff_dict_get(cff->topdict, "Encoding", 0);
+  offset = cff_dict_get(cff->topdict, "Encoding", 0);
   if (offset == 0) { /* predefined */
     cff->flag |= ENCODING_STANDARD;
     cff->encoding = NULL;
@@ -700,9 +700,9 @@ long cff_read_encoding (cff_font *cff)
   return length;
 }
 
-long cff_pack_encoding (cff_font *cff, card8 *dest, long destlen)
+int cff_pack_encoding (cff_font *cff, card8 *dest, int destlen)
 {
-  long len = 0;
+  int len = 0;
   cff_encoding *encoding;
   card16 i;
 
@@ -834,10 +834,10 @@ void cff_release_encoding (cff_encoding *encoding)
   }
 }
 
-long cff_read_charsets (cff_font *cff)
+int cff_read_charsets (cff_font *cff)
 {
   cff_charsets *charset;
-  long offset, length;
+  int offset, length;
   card16 count, i;
 
   if (cff->topdict == NULL)
@@ -849,7 +849,7 @@ long cff_read_charsets (cff_font *cff)
     return 0;
   }
 
-  offset = (long) cff_dict_get(cff->topdict, "charset", 0);
+  offset = cff_dict_get(cff->topdict, "charset", 0);
 
   if (offset == 0) { /* predefined */
     cff->flag |= CHARSETS_ISOADOBE;
@@ -924,9 +924,9 @@ long cff_read_charsets (cff_font *cff)
   return length;
 }
 
-long cff_pack_charsets (cff_font *cff, card8 *dest, long destlen)
+int cff_pack_charsets (cff_font *cff, card8 *dest, int destlen)
 {
-  long len = 0;
+  int len = 0;
   card16 i;
   cff_charsets *charset;
 
@@ -1193,10 +1193,10 @@ cff_release_charsets (cff_charsets *charset)
 }
 
 /* CID-Keyed font specific */
-long cff_read_fdselect (cff_font *cff)
+int cff_read_fdselect (cff_font *cff)
 {
   cff_fdselect *fdsel;
-  long offset, length;
+  int offset, length;
   card16 i;
 
   if (cff->topdict == NULL)
@@ -1205,7 +1205,7 @@ long cff_read_fdselect (cff_font *cff)
   if (!(cff->flag & FONTTYPE_CIDFONT))
     return 0;
 
-  offset = (long) cff_dict_get(cff->topdict, "FDSelect", 0);
+  offset = cff_dict_get(cff->topdict, "FDSelect", 0);
   cff_seek_set(cff, offset);
   cff->fdselect = fdsel = NEW(1, cff_fdselect);
   fdsel->format = get_unsigned_byte(cff->stream);
@@ -1246,10 +1246,10 @@ long cff_read_fdselect (cff_font *cff)
   return length;
 }
 
-long cff_pack_fdselect (cff_font *cff, card8 *dest, long destlen)
+int cff_pack_fdselect (cff_font *cff, card8 *dest, int destlen)
 {
   cff_fdselect *fdsel;
-  long len = 0;
+  int len = 0;
   card16 i;
 
   if (cff->fdselect == NULL)
@@ -1353,10 +1353,10 @@ card8 cff_fdselect_lookup (cff_font *cff, card16 gid)
   return fd;
 }
 
-long cff_read_subrs (cff_font *cff)
+int cff_read_subrs (cff_font *cff)
 {
-  long len = 0;
-  long offset;
+  int len = 0;
+  int offset;
   int i;
 
   if ((cff->flag & FONTTYPE_CIDFONT) && cff->fdarray == NULL) {
@@ -1378,8 +1378,8 @@ long cff_read_subrs (cff_font *cff)
           !cff_dict_known(cff->private[i], "Subrs")) {
         (cff->subrs)[i] = NULL;
       } else {
-        offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
-        offset += (long) cff_dict_get(cff->private[i], "Subrs", 0);
+        offset = cff_dict_get(cff->fdarray[i], "Private", 1);
+        offset += cff_dict_get(cff->private[i], "Subrs", 0);
         cff_seek_set(cff, offset);
         (cff->subrs)[i] = cff_get_index(cff);
         len += cff_index_size((cff->subrs)[i]);
@@ -1390,8 +1390,8 @@ long cff_read_subrs (cff_font *cff)
         !cff_dict_known(cff->private[0], "Subrs")) {
       (cff->subrs)[0] = NULL;
     } else {
-      offset = (long) cff_dict_get(cff->topdict, "Private", 1);
-      offset += (long) cff_dict_get(cff->private[0], "Subrs", 0);
+      offset = cff_dict_get(cff->topdict, "Private", 1);
+      offset += cff_dict_get(cff->private[0], "Subrs", 0);
       cff_seek_set(cff, offset);
       (cff->subrs)[0] = cff_get_index(cff);
       len += cff_index_size((cff->subrs)[0]);
@@ -1401,11 +1401,11 @@ long cff_read_subrs (cff_font *cff)
   return len;
 }
 
-long cff_read_fdarray (cff_font *cff)
+int cff_read_fdarray (cff_font *cff)
 {
-  long len = 0;
+  int len = 0;
   cff_index *idx;
-  long offset, size;
+  int offset, size;
   card16 i;
 
   if (cff->topdict == NULL)
@@ -1415,7 +1415,7 @@ long cff_read_fdarray (cff_font *cff)
     return 0;
 
   /* must exist */
-  offset = (long) cff_dict_get(cff->topdict, "FDArray", 0);
+  offset = cff_dict_get(cff->topdict, "FDArray", 0);
   cff_seek_set(cff, offset);
   idx = cff_get_index(cff);
   cff->num_fds = (card8)idx->count;
@@ -1435,11 +1435,11 @@ long cff_read_fdarray (cff_font *cff)
   return len;
 }
 
-long cff_read_private (cff_font *cff)
+int cff_read_private (cff_font *cff)
 {
-  long len = 0;
+  int len = 0;
   card8 *data;
-  long offset, size;
+  int offset, size;
 
   if (cff->flag & FONTTYPE_CIDFONT) {
     int i;
@@ -1451,9 +1451,9 @@ long cff_read_private (cff_font *cff)
     for (i=0;i<cff->num_fds;i++) {
       if (cff->fdarray[i] != NULL &&
           cff_dict_known(cff->fdarray[i], "Private") &&
-          (size = (long) cff_dict_get(cff->fdarray[i], "Private", 0))
+          (size = cff_dict_get(cff->fdarray[i], "Private", 0))
           > 0) {
-        offset = (long) cff_dict_get(cff->fdarray[i], "Private", 1);
+        offset = cff_dict_get(cff->fdarray[i], "Private", 1);
         cff_seek_set(cff, offset);
         data = NEW(size, card8);
         if (cff_read_data(data, size, cff) != size)
@@ -1469,8 +1469,8 @@ long cff_read_private (cff_font *cff)
     cff->num_fds = 1;
     cff->private = NEW(1, cff_dict *);
     if (cff_dict_known(cff->topdict, "Private") &&
-        (size = (long) cff_dict_get(cff->topdict, "Private", 0)) > 0) {
-      offset = (long) cff_dict_get(cff->topdict, "Private", 1);
+        (size = cff_dict_get(cff->topdict, "Private", 0)) > 0) {
+      offset = cff_dict_get(cff->topdict, "Private", 1);
       cff_seek_set(cff, offset);
       data = NEW(size, card8);
       if (cff_read_data(data, size, cff) != size)

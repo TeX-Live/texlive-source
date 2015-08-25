@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -938,10 +938,10 @@ put_numbers (double *argv, int argn, card8 **dest, card8 *limit)
 
   for (i = 0; i < argn; i++) {
     double value;
-    long   ivalue;
+    int    ivalue;
     value  = argv[i];
     /* Nearest integer value */
-    ivalue = (long) floor(value+0.5);
+    ivalue = (int) floor(value+0.5);
     if (value >= 0x8000L || value <= (-0x8000L - 1)) {
       /*
        * This number cannot be represented as a single operand.
@@ -952,10 +952,10 @@ put_numbers (double *argv, int argn, card8 **dest, card8 *limit)
       /* 16.16-bit signed fixed value  */
       DST_NEED(limit, *dest + 5);
       *(*dest)++ = 255;
-      ivalue = (long) floor(value); /* mantissa */
+      ivalue = (int) floor(value); /* mantissa */
       *(*dest)++ = (ivalue >> 8) & 0xff;
       *(*dest)++ = ivalue & 0xff;
-      ivalue = (long)((value - ivalue) * 0x10000l); /* fraction */
+      ivalue = (int)((value - ivalue) * 0x10000l); /* fraction */
       *(*dest)++ = (ivalue >> 8) & 0xff;
       *(*dest)++ = ivalue & 0xff;
       /* Everything else are integers. */
@@ -988,7 +988,7 @@ put_numbers (double *argv, int argn, card8 **dest, card8 *limit)
 static void
 get_integer (card8 **data, card8 *endptr)
 {
-  long result = 0;
+  int result = 0;
   card8 b0 = **data, b1, b2;
 
   *data += 1;
@@ -1028,7 +1028,7 @@ get_integer (card8 **data, card8 *endptr)
 static void
 get_longint (card8 **data, card8 *endptr)
 {
-  long result = 0;
+  int  result = 0;
   int  i;
 
   *data += 1;
@@ -1060,7 +1060,7 @@ t1char_build_charpath (t1_chardesc *cd,
                        card8 **data, card8 *endptr, cff_index *subrs)
 {
   card8 b0 = 0, *subr;
-  long len;
+  int len;
 
   if (nest > CS_SUBR_NEST_MAX)
     ERROR("Subroutine nested too deeply.");
@@ -1101,7 +1101,7 @@ t1char_build_charpath (t1_chardesc *cd,
     status = CS_PARSE_OK;
   } else if (status == CS_CHAR_END && *data < endptr) {
     if (!(*data == endptr - 1 && **data == cs_return))
-      WARN("Garbage after endchar. (%ld bytes)", (long) (endptr - *data));
+      WARN("Garbage after endchar. (%d bytes)", (int) (endptr - *data));
   } else if (status < CS_PARSE_OK) { /* error */
     ERROR("Parsing charstring failed: (status=%d, stack=%d)", status, cs_stack_top);
   }

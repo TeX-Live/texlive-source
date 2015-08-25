@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -50,12 +50,12 @@ static const char *pst_const_false = "false";
 
 typedef char *                     pst_null;
 typedef struct { char    value; }  pst_boolean;
-typedef struct { long    value; }  pst_integer;
+typedef struct { int     value; }  pst_integer;
 typedef struct { double  value; }  pst_real;
 typedef struct { char   *value; }  pst_name;
 typedef struct
 {
-  long    length;
+  unsigned int   length;
   unsigned char *value;
 } pst_string;
 
@@ -63,16 +63,16 @@ typedef struct
 /* BOOLEAN */
 static pst_boolean *pst_boolean_new     (char value)      ;
 static void         pst_boolean_release (pst_boolean *obj);
-static long         pst_boolean_IV      (pst_boolean *obj);
+static int          pst_boolean_IV      (pst_boolean *obj);
 static double       pst_boolean_RV      (pst_boolean *obj);
 static unsigned char *pst_boolean_SV      (pst_boolean *obj);
-static long         pst_boolean_length  (void);
+static unsigned int pst_boolean_length  (void);
 static void        *pst_boolean_data_ptr(pst_boolean *obj);
 
 /* NUMBERS */
-static pst_integer *pst_integer_new     (long value)      ;
+static pst_integer *pst_integer_new     (int value)       ;
 static void         pst_integer_release (pst_integer *obj);
-static long         pst_integer_IV      (pst_integer *obj);
+static int          pst_integer_IV      (pst_integer *obj);
 static double       pst_integer_RV      (pst_integer *obj);
 static unsigned char      *pst_integer_SV      (pst_integer *obj);
 static unsigned int        pst_integer_length  (void);
@@ -80,7 +80,7 @@ static void        *pst_integer_data_ptr(pst_integer *obj);
 
 static pst_real *pst_real_new      (double value) ;
 static void      pst_real_release  (pst_real *obj);
-static long      pst_real_IV       (pst_real *obj);
+static int       pst_real_IV       (pst_real *obj);
 static double    pst_real_RV       (pst_real *obj);
 static unsigned char   *pst_real_SV       (pst_real *obj);
 static void     *pst_real_data_ptr (pst_real *obj);
@@ -89,7 +89,7 @@ static unsigned int     pst_real_length   (void);
 /* NAME */
 static pst_name *pst_name_new      (const char *name) ;
 static void      pst_name_release  (pst_name *obj);
-static long      pst_name_IV       (void);
+static int       pst_name_IV       (void);
 static double    pst_name_RV       (void);
 static unsigned char   *pst_name_SV       (pst_name *obj);
 static void     *pst_name_data_ptr (pst_name *obj);
@@ -101,7 +101,7 @@ static pst_string *pst_string_parse_hex     (unsigned char **inbuf, unsigned cha
 
 static pst_string *pst_string_new      (unsigned char *str, unsigned int len);
 static void        pst_string_release  (pst_string *obj)       ;
-static long        pst_string_IV       (pst_string *obj)       ;
+static int         pst_string_IV       (pst_string *obj)       ;
 static double      pst_string_RV       (pst_string *obj)       ;
 static unsigned char     *pst_string_SV       (pst_string *obj)       ;
 static void       *pst_string_data_ptr (pst_string *obj)       ;
@@ -161,10 +161,10 @@ pst_type_of (pst_obj *obj)
   return obj->type;
 }
 
-long
+int
 pst_length_of (pst_obj *obj)
 {
-  long len = 0;
+  int len = 0;
 
   ASSERT(obj);
   switch (obj->type) {
@@ -187,10 +187,10 @@ pst_length_of (pst_obj *obj)
   return len;
 }
 
-long
+int
 pst_getIV (pst_obj *obj)
 {
-  long iv = 0;
+  int iv = 0;
 
   ASSERT(obj);
   switch (obj->type) {
@@ -258,7 +258,7 @@ pst_getSV (pst_obj *obj)
     break;
   case PST_TYPE_UNKNOWN:
     {
-      long len;
+      int len;
 
       len = strlen((char *) obj->data);
       if (len > 0) {
@@ -320,11 +320,11 @@ pst_boolean_release (pst_boolean *obj)
   RELEASE(obj);
 }
 
-static long
+static int
 pst_boolean_IV (pst_boolean *obj)
 {
   ASSERT(obj);
-  return (long) obj->value;
+  return (int) obj->value;
 }
 
 static double
@@ -354,7 +354,7 @@ pst_boolean_SV (pst_boolean *obj)
   return str;
 }
 
-static long
+static unsigned int
 pst_boolean_length (void)
 {
   TYPE_ERROR();
@@ -405,7 +405,7 @@ pst_parse_null (unsigned char **inbuf, unsigned char *inbufend)
 
 /* INTEGER */
 static pst_integer *
-pst_integer_new (long value)
+pst_integer_new (int value)
 {
   pst_integer *obj;
   obj = NEW(1, pst_integer);
@@ -420,11 +420,11 @@ pst_integer_release (pst_integer *obj)
   RELEASE(obj);
 }
 
-static long
+static int
 pst_integer_IV (pst_integer *obj)
 {
   ASSERT(obj);
-  return (long) obj->value;
+  return (int) obj->value;
 }
 
 static double
@@ -443,9 +443,9 @@ pst_integer_SV (pst_integer *obj)
 
   ASSERT(obj);
 
-  len = sprintf(fmt_buf, "%ld", obj->value);
+  len = sprintf(fmt_buf, "%d", obj->value);
 
-  value = NEW(len, char);
+  value = NEW(len + 1, char);
   strcpy(value, fmt_buf);
 
   return (unsigned char *) value;
@@ -484,11 +484,11 @@ pst_real_release (pst_real *obj)
   RELEASE(obj);
 }
 
-static long
+static int
 pst_real_IV (pst_real *obj)
 {
   ASSERT(obj);
-  return (long) obj->value;
+  return (int) obj->value;
 }
 
 static double
@@ -536,7 +536,7 @@ pst_obj *
 pst_parse_number (unsigned char **inbuf, unsigned char *inbufend)
 {
   unsigned char  *cur;
-  long    lval;
+  int     lval;
   double  dval;
 
   errno = 0;
@@ -704,7 +704,7 @@ pst_parse_name (unsigned char **inbuf, unsigned char *inbufend) /* / is required
   return pst_new_obj(PST_TYPE_NAME, pst_name_new((char *)wbuf));
 }
 
-static long
+static int
 pst_name_IV (void)
 {
   TYPE_ERROR();
@@ -854,7 +854,7 @@ pst_string_parse_literal (unsigned char **inbuf, unsigned char *inbufend)
 {
   unsigned char  wbuf[PST_STRING_LEN_MAX];
   unsigned char *cur = *inbuf, c = 0;
-  long    len = 0, balance = 1;
+  int len = 0, balance = 1;
 
   if (cur + 2 > inbufend || *cur != '(')
     return NULL;
@@ -905,7 +905,7 @@ pst_string_parse_hex (unsigned char **inbuf, unsigned char *inbufend)
 {
   unsigned char  wbuf[PST_STRING_LEN_MAX];
   unsigned char *cur = *inbuf;
-  unsigned long  len = 0;
+  unsigned int   len = 0;
 
   if (cur + 2 > inbufend || *cur != '<' ||
       (*cur == '<' && *(cur+1) == '<'))
@@ -941,10 +941,10 @@ pst_string_parse_hex (unsigned char **inbuf, unsigned char *inbufend)
   return pst_string_new(wbuf, len);
 }
 
-static long
+static int
 pst_string_IV (pst_string *obj)
 {
-  return (long) pst_string_RV(obj);
+  return (int) pst_string_RV(obj);
 }
 
 static double

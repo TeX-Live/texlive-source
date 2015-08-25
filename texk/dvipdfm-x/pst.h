@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -44,9 +44,9 @@ extern void     pst_release_obj(pst_obj *obj);
 extern pst_obj *pst_new_mark   (void);
 
 extern pst_type pst_type_of   (pst_obj *obj);
-extern long     pst_length_of (pst_obj *obj);
+extern int      pst_length_of (pst_obj *obj);
 
-extern long     pst_getIV (pst_obj *obj);
+extern int      pst_getIV (pst_obj *obj);
 extern double   pst_getRV (pst_obj *obj);
 extern unsigned char  *pst_getSV (pst_obj *obj);
 

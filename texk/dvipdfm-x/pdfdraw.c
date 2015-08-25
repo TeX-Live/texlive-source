@@ -808,7 +808,7 @@ pdf_dev__flushpath (pdf_path  *pa,
 {
   pa_elem   *pe, *pe1;
   char      *b      = fmt_buf;
-  long       b_len  = FORMAT_BUFF_LEN;
+  int        b_len  = FORMAT_BUFF_LEN;
   pdf_rect   r; /* FIXME */
   pdf_coord *pt;
   int        n_pts, n_seg;
@@ -906,7 +906,7 @@ typedef struct pdf_gstate_
 
   /* internal */
   pdf_path  path;
-  long      flags;
+  int       flags;
   /* bookkeeping the origin of the last transform applied */
   pdf_coord pt_fixee;
 } pdf_gstate;

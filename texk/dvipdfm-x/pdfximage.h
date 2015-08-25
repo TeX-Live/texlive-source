@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -31,13 +31,13 @@
 typedef struct {
   int  flags;
 
-  long width;
-  long height;
+  int  width;
+  int  height;
 
   int  bits_per_component;
   int  num_components;
 
-  long min_dpi; /* NOT USED YET */
+  int  min_dpi; /* NOT USED YET */
 
   double xdensity, ydensity; /* scale factor for bp */
 } ximage_info;
@@ -60,7 +60,7 @@ extern char    *pdf_ximage_get_resname    (int xobj_id);
 extern pdf_obj *pdf_ximage_get_reference  (int xobj_id);
 
 
-extern int      pdf_ximage_findresource   (const char *ident, long page_no,
+extern int      pdf_ximage_findresource   (const char *ident, int page_no,
                                            pdf_obj *dict);
 extern int      pdf_ximage_defineresource (const char *ident, int subtype,
                                            void *cdata, pdf_obj *resource);
@@ -70,7 +70,7 @@ extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
 extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
 extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
-extern long pdf_ximage_get_page  (pdf_ximage *I);
+extern int  pdf_ximage_get_page  (pdf_ximage *I);
 
 /* from pdfximage.c */
 extern void set_distiller_template (char *s);
@@ -87,7 +87,7 @@ pdf_ximage_scale_image (int            id,
 extern int      pdf_ximage_get_subtype    (int xobj_id);
 extern void
 pdf_ximage_set_attr (int xobj_id,
-                     long width, long height, double xdensity, double ydensity,
+                     int width, int height, double xdensity, double ydensity,
                      double llx, double lly, double urx, double ury);
 
 #endif /* _PDFXIMAGE_H_ */

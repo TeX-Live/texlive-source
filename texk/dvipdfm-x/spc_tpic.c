@@ -404,7 +404,7 @@ tpic__arc (struct spc_tpic_ *tp,
 
 #if  1
 static int
-spc_currentpoint (struct spc_env *spe, long *pg, pdf_coord *cp)
+spc_currentpoint (struct spc_env *spe, int *pg, pdf_coord *cp)
 {
   *pg = 0;
   cp->x = spe->x_user;
@@ -479,7 +479,7 @@ spc_handler_tpic_fp (struct spc_env *spe,
 {
   struct spc_tpic_ *tp = &_tpic_state;
   pdf_coord  cp;
-  long       pg;
+  int        pg;
 
   ASSERT(spe && ap && tp);
 
@@ -499,7 +499,7 @@ spc_handler_tpic_ip (struct spc_env *spe,
 {
   struct spc_tpic_ *tp = &_tpic_state;
   pdf_coord  cp;
-  long       pg;
+  int        pg;
 
   ASSERT(spe && ap && tp);
 
@@ -521,7 +521,7 @@ spc_handler_tpic_da (struct spc_env *spe,
   char      *q;
   double     da = 0.0;
   pdf_coord  cp;
-  long       pg;
+  int        pg;
 
   ASSERT(spe && ap && tp);
 
@@ -549,7 +549,7 @@ spc_handler_tpic_dt (struct spc_env *spe,
   char      *q;
   double     da = 0.0;
   pdf_coord  cp;
-  long       pg;
+  int        pg;
 
   ASSERT(spe && ap && tp);
 
@@ -577,7 +577,7 @@ spc_handler_tpic_sp (struct spc_env *spe,
   char      *q;
   double     da = 0.0;
   pdf_coord  cp;
-  long       pg;
+  int        pg;
 
   ASSERT(spe && ap && tp);
 
@@ -604,7 +604,7 @@ spc_handler_tpic_ar (struct spc_env *spe,
   struct  spc_tpic_ *tp = &_tpic_state;
   double     v[6];
   pdf_coord  cp;
-  long       pg;
+  int        pg;
   char      *q;
   int        i;
 
@@ -644,7 +644,7 @@ spc_handler_tpic_ia (struct spc_env *spe,
   struct  spc_tpic_ *tp = &_tpic_state;
   double     v[6];
   pdf_coord  cp;
-  long       pg;
+  int        pg;
   char      *q;
   int        i;
 
@@ -985,7 +985,7 @@ static struct spc_handler tpic_handlers[] = {
 };
 
 int
-spc_tpic_check_special (const char *buf, long len)
+spc_tpic_check_special (const char *buf, int len)
 {
   int    istpic = 0;
   char  *q;

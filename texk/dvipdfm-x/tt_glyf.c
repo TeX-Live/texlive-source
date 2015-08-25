@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
   struct tt_os2__table  *os2;
   /* temp */
   ULONG  *location, offset;
-  long    i;
+  int     i;
   USHORT *w_stat; /* Estimate most frequently appeared width */
 
   ASSERT(g);
@@ -448,8 +448,8 @@ tt_build_tables (sfnt *sfont, struct tt_glyphs *g)
 
     offset = 0UL; prev = 0;
     for (i = 0; i < g->num_glyphs; i++) {
-      long gap, j;
-      gap = (long) g->gd[i].gid - prev - 1;
+      int gap, j;
+      gap = g->gd[i].gid - prev - 1;
       for (j = 1; j <= gap; j++) {
 	if (prev + j == hhea->numOfLongHorMetrics - 1) {
 	  p += sfnt_put_ushort(p, last_advw);
@@ -518,7 +518,7 @@ tt_get_metrics (sfnt *sfont, struct tt_glyphs *g)
   struct tt_os2__table  *os2;
   /* temp */
   ULONG  *location, offset;
-  long    i;
+  int     i;
   USHORT *w_stat;
 
   ASSERT(g);

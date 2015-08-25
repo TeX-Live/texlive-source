@@ -145,9 +145,9 @@ static const char * const modifiers[] = {
 static int
 skip_capital (const char **p, const char *endptr)
 {
-  long slen = 0, len;
+  int slen = 0, len;
 
-  len = (long) (endptr - (*p));
+  len = (int) (endptr - (*p));
 
   if (len >= 2 &&
       ((**p == 'A' && *(*p+1) == 'E') ||
@@ -180,10 +180,10 @@ skip_capital (const char **p, const char *endptr)
 static int
 skip_modifier (const char **p, const char *endptr)
 {
-  long slen = 0, len;
+  int  slen = 0, len;
   int  i;
 
-  len = (long) (endptr - (*p));
+  len = (int) (endptr - (*p));
 
   for (i = 0; modifiers[i] != NULL; i++) {
     if ((len >= strlen(modifiers[i]) &&
@@ -200,7 +200,7 @@ skip_modifier (const char **p, const char *endptr)
 static int
 is_smallcap (const char *glyphname)
 {
-  long  len, slen;
+  int  len, slen;
   const char *p, *endptr;
 
   if (!glyphname)
@@ -598,10 +598,10 @@ agl_name_convert_unicode (const char *glyphname)
 
 
 
-static long
+static int
 xtol (const char *start, int len)
 {
-  long v = 0;
+  int v = 0;
 
   while (len-- > 0) {
     v <<= 4;

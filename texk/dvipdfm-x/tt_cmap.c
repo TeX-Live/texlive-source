@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -617,7 +617,7 @@ load_cmap4 (struct cmap4 *map,
   USHORT  c0, c1, gid, cid;
   USHORT  j, d, segCount;
   USHORT  ch;
-  long    i;
+  int     i;
 
   segCount = map->segCountX2 / 2;
   for (i = segCount - 1; i >= 0 ; i--) {
@@ -667,7 +667,7 @@ load_cmap12 (struct cmap12 *map,
     for (ch  = map->groups[i].startCharCode;
 	 ch <= map->groups[i].endCharCode;
 	 ch++) {
-      long  d = ch - map->groups[i].startCharCode;
+      int  d = ch - map->groups[i].startCharCode;
       gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
       if (GIDToCIDMap) {
 	cid = ((GIDToCIDMap[2*gid] << 8)|GIDToCIDMap[2*gid+1]);
@@ -704,7 +704,7 @@ handle_CIDFont (sfnt *sfont,
 		unsigned char **GIDToCIDMap, CIDSysInfo *csi)
 {
   cff_font *cffont;
-  long      offset, i;
+  int       offset, i;
   card16    num_glyphs, gid;
   cff_charsets  *charset;
   unsigned char *map;
@@ -877,7 +877,7 @@ handle_subst_glyphs (CMap *cmap,
   for (count = 0, i = 0; i < 8192; i++) {
     int   j;
     int32_t  len;
-    long  inbytesleft, outbytesleft;
+    int  inbytesleft, outbytesleft;
     const unsigned char *inbuf;
     unsigned char *outbuf;
 
@@ -938,7 +938,7 @@ handle_subst_glyphs (CMap *cmap,
           count++;
 
           if (verbose > VERBOSE_LEVEL_MIN) {
-            long _i;
+            int _i;
 
             MESG("otf_cmap>> Additional ToUnicode mapping: <%04X> <", gid);
             for (_i = 0; _i < len; _i++) {
@@ -961,7 +961,7 @@ static cff_font *
 prepare_CIDFont_from_sfnt(sfnt* sfont)
 {
   cff_font *cffont;
-  unsigned long offset = 0;
+  unsigned  offset = 0;
 
   if (sfont->type != SFNT_TYPE_POSTSCRIPT     ||
       sfnt_read_table_directory(sfont, 0) < 0 ||
@@ -1058,7 +1058,7 @@ create_ToUnicode_cmap12 (CMap *cmap,
   for (i = 0; i < map->nGroups; i++) {
     for (ch  = map->groups[i].startCharCode;
          ch <= map->groups[i].endCharCode; ch++) {
-      long d = ch - map->groups[i].startCharCode;
+      int d = ch - map->groups[i].startCharCode;
       USHORT gid = (USHORT) ((map->groups[i].startGlyphID + d) & 0xffff);
       count += add_to_cmap_if_used(cmap, cffont, used_chars, gid, ch);
     }
@@ -1171,7 +1171,7 @@ otf_create_ToUnicode_stream (const char *font_name,
                              int cmap_id)
 {
   pdf_obj    *cmap_ref = NULL;
-  long        res_id;
+  int         res_id;
   pdf_obj    *cmap_obj = NULL;
   CMap       *cmap_add, *code_to_cid_cmap;
   int         cmap_add_id;
@@ -1294,10 +1294,10 @@ otf_create_ToUnicode_stream (const char *font_name,
 struct gent
 {
   USHORT gid;
-  long   ucv; /* assigned PUA unicode */
+  int32_t ucv; /* assigned PUA unicode */
 
-  int    num_unicodes;
-  long   unicodes[MAX_UNICODES];
+  int     num_unicodes;
+  int32_t unicodes[MAX_UNICODES];
 };
 
 static void
@@ -1382,7 +1382,7 @@ add_glyph (struct ht_table *unencoded,
 
 /* This seriously affects speed... */
 static struct gent *
-find_glyph (struct ht_table *unencoded, long ucv)
+find_glyph (struct ht_table *unencoded, int32_t ucv)
 {
   ASSERT(unencoded);
 
@@ -1619,7 +1619,7 @@ load_gsub (pdf_obj *conf, otl_gsub *gsub_list, sfnt *sfont)
 {
   pdf_obj  *rule;
   char     *script, *language, *feature;
-  long      i, size;
+  int       i, size;
 
   rule = otl_conf_get_rule(conf);
   if (!rule)
@@ -1632,7 +1632,7 @@ load_gsub (pdf_obj *conf, otl_gsub *gsub_list, sfnt *sfont)
   for (i = 0; i < size; i += 2) {
     pdf_obj   *tmp, *commands;
     int        flag;
-    long       j, num_comms;
+    int        j, num_comms;
 
     tmp  = pdf_get_array(rule, i);
     flag = (int) pdf_number_value(tmp);
@@ -1668,7 +1668,7 @@ handle_gsub (pdf_obj *conf,
 {
   pdf_obj *rule;
   char    *script, *language, *feature;
-  long     i, size;
+  int      i, size;
 
   if (!conf)
     return;
@@ -1688,7 +1688,7 @@ handle_gsub (pdf_obj *conf,
   size = pdf_array_length(rule);
   for (i = 0; i < size; i += 2) {
     pdf_obj  *tmp, *commands;
-    long      j, num_comms;
+    int       j, num_comms;
     int       flag;
 
     tmp  = pdf_get_array(rule, i);
