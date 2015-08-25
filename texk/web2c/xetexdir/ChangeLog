@@ -1,3 +1,8 @@
+2015-08-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* XeTeXFontInst.cpp: Support pair kerning for native type1 fonts.
+	Thanks Werner Lemberg and Jiang Jiang.
+
 2015-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/xetex.am (xetex_CFLAGS): Enable compiler warnings.
