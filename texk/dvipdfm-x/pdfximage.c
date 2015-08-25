@@ -62,7 +62,7 @@ static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
 
 struct attr_
 {
-  long     width, height;
+  int      width, height;
   double   xdensity, ydensity;
   pdf_rect bbox;
 };
@@ -71,7 +71,7 @@ struct pdf_ximage_
 {
   char        *ident;
   char         res_name[16];
-  long         page_no, page_count;
+  int          page_no, page_count;
 
   int          subtype;
 
@@ -113,7 +113,7 @@ static struct ic_  _ic = {
 static void
 pdf_init_ximage_struct (pdf_ximage *I,
                         const char *ident, const char *filename,
-                        long page_no, pdf_obj *dict)
+                        int page_no, pdf_obj *dict)
 {
   if (ident) {
     I->ident = NEW(strlen(ident)+1, char);
@@ -254,7 +254,7 @@ source_image_type (FILE *fp)
 
 static int
 load_image (const char *ident, const char *fullname, int format, FILE  *fp,
-            long page_no, pdf_obj *dict)
+            int page_no, pdf_obj *dict)
 {
   struct ic_ *ic = &_ic;
   int         id = -1; /* ret */
@@ -357,7 +357,7 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
 uint8_t PageBox_of_id[MAX_IMAGES];
 
 int
-pdf_ximage_findresource (const char *ident, long page_no, pdf_obj *dict)
+pdf_ximage_findresource (const char *ident, int page_no, pdf_obj *dict)
 {
   struct ic_ *ic = &_ic;
   int         id = -1;
@@ -559,7 +559,7 @@ pdf_ximage_set_form (pdf_ximage *I, void *form_info, pdf_obj *resource)
   I->resource  = NULL;
 }
 
-long
+int
 pdf_ximage_get_page (pdf_ximage *I)
 {
   return I->page_no;
@@ -651,7 +651,7 @@ pdf_ximage_get_subtype (int id)
 }
 
 void
-pdf_ximage_set_attr (int id, long width, long height, double xdensity, double ydensity, double llx, double lly, double urx, double ury)
+pdf_ximage_set_attr (int id, int width, int height, double xdensity, double ydensity, double llx, double lly, double urx, double ury)
 {
   struct ic_ *ic = &_ic;
   pdf_ximage *I;

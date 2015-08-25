@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ add_CIDHMetrics (pdf_obj *fontdict,
                  struct tt_head_table *head, struct tt_longMetrics *hmtx)
 {
   pdf_obj *w_array, *an_array = NULL;
-  long   cid, start = 0, prev = 0;
+  int    cid, start = 0, prev = 0;
   double defaultAdvanceWidth;
   int    empty = 1;
 
@@ -170,9 +170,9 @@ add_CIDVMetrics (sfnt *sfont, pdf_obj *fontdict,
                  struct tt_head_table *head, struct tt_longMetrics *hmtx)
 {
   pdf_obj *w2_array, *an_array = NULL;
-  long cid;
+  int    cid;
 #if 0
-  long prev = 0, start = 0;
+  int    prev = 0, start = 0;
 #endif
   struct tt_VORG_table *vorg;
   struct tt_vhea_table *vhea  = NULL;
@@ -344,13 +344,13 @@ add_CIDMetrics (sfnt *sfont, pdf_obj *fontdict,
 /*
  * Create an instance of embeddable font.
  */
-static long
+static int
 write_fontfile (CIDFont *font, cff_font *cffont)
 {
   cff_index *topdict, *fdarray, *private;
   unsigned char *dest;
-  long destlen = 0, i, size;
-  long offset, topdict_offset, fdarray_offset;
+  int destlen = 0, i, size;
+  int offset, topdict_offset, fdarray_offset;
 
   /*  DICT sizes (offset set to long int) */
   topdict = cff_new_index(1);
@@ -617,12 +617,12 @@ CIDFont_type0_dofont (CIDFont *font)
   cff_index    *charstrings, *idx;
   cff_charsets *charset = NULL;
   cff_fdselect *fdselect = NULL;
-  long   charstring_len, max_len;
-  long   destlen = 0;
-  long   size, offset = 0;
+  int    charstring_len, max_len;
+  int    destlen = 0;
+  int    size, offset = 0;
   card8 *data;
   card16 num_glyphs = 0, gid;
-  long cid;
+  int    cid;
   card16 cs_count, last_cid = 0;
   int    fd, prev_fd;
   char  *used_chars;
@@ -670,10 +670,10 @@ CIDFont_type0_dofont (CIDFont *font)
     pdf_add_dict(font->fontdict,
                  pdf_new_name("DW"), pdf_new_number(1000.0));
   } else {
-    long cid_count;
+    int cid_count;
 
     if (cff_dict_known(cffont->topdict, "CIDCount")) {
-      cid_count = (long) cff_dict_get(cffont->topdict, "CIDCount", 0);
+      cid_count = (int) cff_dict_get(cffont->topdict, "CIDCount", 0);
     } else {
       cid_count = CID_MAX + 1;
     }
@@ -716,7 +716,7 @@ CIDFont_type0_dofont (CIDFont *font)
 
   cff_read_subrs(cffont);
 
-  offset = (long) cff_dict_get(cffont->topdict, "CharStrings", 0);
+  offset = (int) cff_dict_get(cffont->topdict, "CharStrings", 0);
   cff_seek_set(cffont, offset);
   idx = cff_get_index_header(cffont);
   /* offset is now absolute offset ... bad */
@@ -1049,12 +1049,12 @@ CIDFont_type0_t1cdofont (CIDFont *font)
 {
   cff_font  *cffont;
   cff_index *charstrings, *idx;
-  long   charstring_len, max_len;
-  long   destlen = 0;
-  long   size, offset = 0;
+  int    charstring_len, max_len;
+  int    destlen = 0;
+  int    size, offset = 0;
   card8 *data;
   card16 num_glyphs, gid, last_cid;
-  long   i, cid;
+  int    i, cid;
   char  *used_chars;
   double default_width, nominal_width;
   CIDType0Error error;
@@ -1170,7 +1170,7 @@ CIDFont_type0_t1cdofont (CIDFont *font)
 
 
   /* */
-  offset = (long) cff_dict_get(cffont->topdict, "CharStrings", 0);
+  offset = (int) cff_dict_get(cffont->topdict, "CharStrings", 0);
   cff_seek_set(cffont, offset);
   idx = cff_get_index_header(cffont);
   /* offset is now absolute offset ... bad */
@@ -1418,7 +1418,7 @@ create_ToUnicode_stream (cff_font *cffont,
   CMap    *cmap;
   CID      cid;
   card16   gid;
-  long     glyph_count, total_fail_count;
+  int      glyph_count, total_fail_count;
   char    *cmap_name;
 #define WBUF_SIZE 1024
   unsigned char  wbuf[WBUF_SIZE];
@@ -1506,8 +1506,8 @@ get_font_attr (CIDFont *font, cff_font *cffont)
   double capheight, ascent, descent;
   double italicangle, stemv;
   double defaultwidth, nominalwidth;
-  long   flags = 0;
-  long   gid;
+  int    flags = 0;
+  int    gid;
   int    i;
   static const char *L_c[] = {
     "H", "P", "Pi", "Rho", NULL
@@ -1704,9 +1704,9 @@ CIDFont_type0_t1dofont (CIDFont *font)
 {
   cff_font *cffont;
   double    defaultwidth, nominalwidth;
-  long      num_glyphs = 0;
+  int       num_glyphs = 0;
   FILE     *fp;
-  long      i, offset;
+  int       i, offset;
   char     *used_chars = NULL;
   card16    last_cid, gid, cid;
   unsigned char *CIDToGIDMap;
@@ -1862,7 +1862,7 @@ CIDFont_type0_t1dofont (CIDFont *font)
   {
     cff_index *cstring;
     t1_ginfo   gm;
-    long       max = 0;
+    int        max = 0;
     double    *widths;
     int        w_stat[1001], max_count, dw;
 

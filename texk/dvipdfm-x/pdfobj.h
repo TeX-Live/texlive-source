@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -109,7 +109,7 @@ extern void     pdf_add_array     (pdf_obj *array, pdf_obj *object);
 #if 0
 extern void     pdf_put_array     (pdf_obj *array, unsigned idx, pdf_obj *object);
 #endif
-extern pdf_obj *pdf_get_array     (pdf_obj *array, long idx);
+extern pdf_obj *pdf_get_array     (pdf_obj *array, int idx);
 extern unsigned pdf_array_length  (pdf_obj *array);
 
 #if 0
@@ -146,11 +146,11 @@ extern int      pdf_foreach_dict (pdf_obj *dict,
 extern pdf_obj    *pdf_new_stream        (int flags);
 extern void        pdf_add_stream        (pdf_obj *stream,
                                           const void *stream_data_ptr,
-                                          long stream_data_len);
+                                          int stream_data_len);
 #if HAVE_ZLIB
 extern int         pdf_add_stream_flate  (pdf_obj *stream,
                                           const void *stream_data_ptr,
-                                          long stream_data_len);
+                                          int stream_data_len);
 #endif
 extern int         pdf_concat_stream     (pdf_obj *dst, pdf_obj *src);
 extern pdf_obj    *pdf_stream_dict       (pdf_obj *stream);
@@ -193,7 +193,7 @@ extern pdf_obj *pdf_import_object (pdf_obj *object);
 
 extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *s, int len);
 
-extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned long label, unsigned short generation);
+extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned label, unsigned short generation);
 
 #define MAX_IMAGES 5000 /* This may be enough */
 extern int PageBox;

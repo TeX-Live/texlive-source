@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -38,7 +38,7 @@ extern int    cff_dict_known  (cff_dict *dict, const char *key);
 
 /* decode/encode DICT */
 extern cff_dict *cff_dict_unpack (card8 *data, card8 *endptr);
-extern long      cff_dict_pack (cff_dict *dict, card8 *dest, long destlen);
+extern int       cff_dict_pack (cff_dict *dict, card8 *dest, int destlen);
 
 extern void      cff_dict_update (cff_dict *dict, cff_font *cff);
 

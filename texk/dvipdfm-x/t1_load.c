@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -76,7 +76,7 @@ static void t1_crypt_init (unsigned short key)
 static void
 t1_decrypt (unsigned short key,
             unsigned char *dst, const unsigned char *src,
-            long skip, long len)
+            int skip, int len)
 {
   len -= skip;
   while (skip--)
@@ -442,8 +442,8 @@ parse_subrs (cff_font *font,
 {
   cff_index *subrs;
   pst_obj   *tok;
-  long       i, count, offset, max_size;
-  long      *offsets, *lengths;
+  int        i, count, offset, max_size;
+  int       *offsets, *lengths;
   card8     *data;
 
   tok = pst_get_token(start, end);
@@ -471,10 +471,10 @@ parse_subrs (cff_font *font,
   if (mode != 1) {
     max_size = CS_STR_LEN_MAX;
     data     = NEW(max_size, card8);
-    offsets  = NEW(count, long);
-    lengths  = NEW(count, long);
-    memset(offsets, 0, sizeof(long)*count);
-    memset(lengths, 0, sizeof(long)*count);
+    offsets  = NEW(count, int);
+    lengths  = NEW(count, int);
+    memset(offsets, 0, sizeof(int)*count);
+    memset(lengths, 0, sizeof(int)*count);
   } else {
     max_size = 0;
     data     = NULL;
@@ -485,7 +485,7 @@ parse_subrs (cff_font *font,
   offset = 0;
   /* dup subr# n-bytes RD n-binary-bytes NP */
   for (i = 0; i < count;) {
-    long idx, len;
+    int idx, len;
 
     tok = pst_get_token(start, end);
     if (!tok) {
@@ -597,8 +597,8 @@ parse_charstrings (cff_font *font,
   cff_index    *charstrings;
   cff_charsets *charset;
   pst_obj      *tok;
-  long          i, count, have_notdef;
-  long          max_size, offset;
+  int           i, count, have_notdef;
+  int           max_size, offset;
 
   /* /CharStrings n dict dup begin
    * /GlyphName n-bytes RD -n-binary-bytes- ND
@@ -640,7 +640,7 @@ parse_charstrings (cff_font *font,
   seek_operator(start, end, "begin");
   for (i = 0; i < count; i++) {
     char *glyph_name;
-    long  len, gid, j;
+    int   len, gid, j;
 
     /* BUG-20061126 (by ChoF):
      * Some fonts (e.g., belleek/blsy.pfb) does not have the correct number
@@ -725,7 +725,7 @@ parse_charstrings (cff_font *font,
     *start += 1;
     if (mode != 1) {
       if (lenIV >= 0) {
-        long offs = gid ? offset : 0;
+        int offs = gid ? offset : 0;
         charstrings->offset[gid] = offs + 1; /* start at 1 */
         t1_decrypt(T1_CHARKEY, charstrings->data+offs, *start, lenIV, len);
         offset += len - lenIV;
@@ -844,7 +844,7 @@ parse_part2 (cff_font *font, unsigned char **start, unsigned char *end, int mode
 #define TYPE1_NAME_LEN_MAX 127
 #endif
 
-static long
+static int
 parse_part1 (cff_font *font, char **enc_vec,
              unsigned char **start, unsigned char *end)
 {
@@ -1011,10 +1011,10 @@ is_pfb (FILE *fp)
 #define PFB_SEG_TYPE_BINARY 2
 
 static unsigned char *
-get_pfb_segment (FILE *fp, int expected_type, long *length)
+get_pfb_segment (FILE *fp, int expected_type, int *length)
 {
   unsigned char *buffer;
-  long bytesread;
+  int bytesread;
 
   buffer = NULL; bytesread = 0;
   for (;;) {
@@ -1032,7 +1032,7 @@ get_pfb_segment (FILE *fp, int expected_type, long *length)
       break;
     }
     {
-      long slen, rlen;
+      int  slen, rlen;
       int  i;
 
       slen = 0;
@@ -1082,7 +1082,7 @@ int
 t1_get_fontname (FILE *fp, char *fontname)
 {
   unsigned char *buffer, *start, *end;
-  long  length;
+  int   length;
   char *key;
   int   fn_found = 0;
 
@@ -1156,7 +1156,7 @@ init_cff_font (cff_font *cff)
 cff_font *
 t1_load_font (char **enc_vec, int mode, FILE *fp)
 {
-  long length;
+  int length;
   cff_font *cff;
   unsigned char *buffer, *start, *end;
 

@@ -1534,7 +1534,7 @@ mps_include_page (const char *ident, FILE *fp)
   int        st_depth, gs_depth;
   char      *buffer;
   const char *p, *endptr;
-  long       length, nb_read;
+  int        length, nb_read;
   int        dirmode, autorotate, error;
 
   rewind(fp);
@@ -1612,7 +1612,7 @@ mps_do_page (FILE *image_file)
   pdf_rect  bbox;
   char     *buffer;
   const char *start, *end;
-  long      size;
+  int       size;
   int       dir_mode;
 
   rewind(image_file);

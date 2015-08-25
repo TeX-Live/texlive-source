@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -32,7 +32,7 @@
 
 #ifdef IODEBUG 
 static FILE *iodebug_file = NULL;
-static long event = 0;
+static int  event = 0;
 static void io_debug_init(void)
 {
   if (!iodebug_file) {
@@ -56,7 +56,7 @@ FILE *mfopen(const char *name, const char *mode, const char *function, int line)
   tmp = fopen (name, mode);
 #endif
   event += 1;
-  fprintf(iodebug_file, "%p %07ld [fopen] %s:%d\n", tmp, event,
+  fprintf(iodebug_file, "%p %07d [fopen] %s:%d\n", tmp, event,
 	  function, line);
   return tmp;
 }
@@ -64,7 +64,7 @@ int mfclose(FILE *file, const char *function, int line)
 {
   io_debug_init();
   event += 1;
-  fprintf(iodebug_file, "%p %07ld [fclose] %s:%d\n", file, event,
+  fprintf(iodebug_file, "%p %07d [fclose] %s:%d\n", file, event,
 	  function, line);
   return fclose(file);
 }
@@ -75,16 +75,16 @@ static void os_error(void)
   ERROR ("io:  An OS command failed that should not have.\n");
 }
 
-void seek_absolute (FILE *file, long pos) 
+void seek_absolute (FILE *file, int32_t pos) 
 {
-  if (fseek(file, pos, SEEK_SET)) {
+  if (fseek(file, (long)pos, SEEK_SET)) {
     os_error();
   }
 }
 
-void seek_relative (FILE *file, long pos)
+void seek_relative (FILE *file, int32_t pos)
 {
-  if (fseek(file, pos, SEEK_CUR)) {
+  if (fseek(file, (long)pos, SEEK_CUR)) {
     os_error();
   }
 }
@@ -97,23 +97,26 @@ void seek_end (FILE *file)
   }
 }
 
-long tell_position (FILE *file) 
+int32_t tell_position (FILE *file) 
 {
-  long size;
-  if ((size = ftell (file)) < 0) {
+  long size = ftell (file);
+  if (size < 0)
     os_error();
-  }
+#if LONG_MAX > 0x7fffffff
+  if (size > 0x7fffffff)
+    ERROR ("ftell: file size %ld exceeds 0x7fffffff.\n", size);
+#endif
   return size;
 }
 
-long file_size (FILE *file)
+int32_t file_size (FILE *file)
 {
-  long size;
+  int32_t size;
   /* Seek to end */
   seek_end (file);
   size = tell_position (file);
   rewind (file);
-  return (size);
+  return size;
 }
 
 off_t xfile_size (FILE *file, const char *name)

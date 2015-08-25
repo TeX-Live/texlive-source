@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -32,7 +32,7 @@ extern int  spc_tpic_at_end_page       (void);
 extern int  spc_tpic_at_begin_document (void);
 extern int  spc_tpic_at_end_document   (void);
 
-extern int  spc_tpic_check_special (const char *buffer, long size);
+extern int  spc_tpic_check_special (const char *buffer, int size);
 extern int  spc_tpic_setup_handler (struct spc_handler *handle,
 				    struct spc_env *spe, struct spc_arg *args);
 

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -30,16 +30,16 @@
 extern void     pdf_init_resources  (void);
 extern void     pdf_close_resources (void);
 
-extern long     pdf_defineresource (const char *category,
+extern int      pdf_defineresource (const char *category,
 				    const char *resname,  pdf_obj *object, int flags);
-extern long     pdf_findresource   (const char *category, const char *resname);
+extern int      pdf_findresource   (const char *category, const char *resname);
 #if 0
 extern int      pdf_resource_exist (const char *category, const char *resname);
 #endif
 
-extern pdf_obj *pdf_get_resource_reference (long res_id);
+extern pdf_obj *pdf_get_resource_reference (int res_id);
 #if 0
-extern pdf_obj *pdf_get_resource           (long res_id);
+extern pdf_obj *pdf_get_resource           (int res_id);
 #endif
 
 #endif /* _PDF_RESOURCE_H_ */

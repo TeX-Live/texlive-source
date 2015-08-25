@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     This program is free software; you can redistribute it and/or modify
@@ -99,12 +99,12 @@ extern int  CMap_add_codespacerange (CMap *cmap,
 				     const unsigned char *codelo, const unsigned char *codehi, int dim);
 
 extern void CMap_decode_char (CMap *cmap,
-			      const unsigned char **inbuf, long *inbytesleft,
-			      unsigned char **outbuf, long *outbytesleft);
+			      const unsigned char **inbuf, int *inbytesleft,
+			      unsigned char **outbuf, int *outbytesleft);
 
-extern long CMap_decode (CMap *cmap,
-			 const unsigned char **inbuf,  long *inbytesleft,
-			 unsigned char **outbuf, long *outbytesleft);
+extern int  CMap_decode (CMap *cmap,
+			 const unsigned char **inbuf,  int *inbytesleft,
+			 unsigned char **outbuf, int *outbytesleft);
 
 extern int  CMap_reverse_decode(CMap *cmap, CID cid);
 

@@ -73,7 +73,7 @@ static int verbose = 0;
 
 static int mp_mode = 0;
 
-static long opt_flags = 0;
+static int opt_flags = 0;
 
 #define OPT_TPIC_TRANSPARENT_FILL (1 << 1)
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
@@ -320,7 +320,7 @@ select_paper (const char *paperspec)
 
 struct page_range 
 {
-  long first, last;
+  int first, last;
 } *page_ranges = NULL;
 
 int num_page_ranges = 0;
@@ -589,7 +589,7 @@ do_args (int argc, char *argv[], const char *source)
 
     case 'C':
     {
-      long flags = (unsigned) strtol(optarg, &nextptr, 0);
+      int flags = (unsigned) strtol(optarg, &nextptr, 0);
       if (nextptr == optarg)
         ERROR("Invalid flag: %s", optarg);
       if (flags < 0)
@@ -822,7 +822,7 @@ do_mps_pages (void)
     mps_do_page(fp);
     MFCLOSE(fp);
   } else {
-    long  i, page_no, step, page_count = 0;
+    int  i, page_no, step, page_count = 0;
     char *filename;
     /* Process filename.1, filename.2,... */
     filename = NEW(strlen(dvi_filename) + 16 + 1, char);
@@ -833,7 +833,7 @@ do_mps_pages (void)
         if (page_no < 0)
           ERROR("Invalid page number for MPS input: %d", page_no);
 
-        sprintf(filename, "%s.%ld", dvi_filename, page_no + 1);
+        sprintf(filename, "%s.%d", dvi_filename, page_no + 1);
         fp = MFOPEN(filename, FOPEN_RBIN_MODE);
         if (fp) {
           MESG("[%ld<%s>", page_no + 1, filename);

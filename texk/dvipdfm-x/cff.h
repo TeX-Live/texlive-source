@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ typedef struct
   int           flag;     /* Flag: see above */
 } cff_font;
 
-extern cff_font *cff_open  (FILE *file, long offset, int idx);
+extern cff_font *cff_open  (FILE *file, int offset, int idx);
 #define cff_seek_set(c, p) seek_absolute (((c)->stream), ((c)->offset) + (p));
 #define cff_read_data(d, l, c)   fread(d, 1, l, (c)->stream)
 #define cff_tell(c) ftell((c)->stream)
@@ -88,32 +88,32 @@ extern cff_font *cff_open  (FILE *file, long offset, int idx);
 extern void      cff_close (cff_font *cff);
 
 /* CFF Header */
-extern long cff_put_header (cff_font *cff, card8 *dest, long destlen);
+extern int cff_put_header (cff_font *cff, card8 *dest, int destlen);
 
 /* CFF INDEX */
 extern cff_index *cff_get_index        (cff_font *cff);
 extern cff_index *cff_get_index_header (cff_font *cff);
 extern void       cff_release_index    (cff_index *idx);
 extern cff_index *cff_new_index        (card16 count);
-extern long       cff_index_size       (cff_index *idx);
-extern long       cff_pack_index       (cff_index *idx, card8 *dest, long destlen);
+extern int        cff_index_size       (cff_index *idx);
+extern int        cff_pack_index       (cff_index *idx, card8 *dest, int destlen);
 
 /* Name INDEX */
 extern char *cff_get_name (cff_font *cff);
-extern long  cff_set_name (cff_font *cff, char *name);
+extern int   cff_set_name (cff_font *cff, char *name);
 
 /* Global and Local Subrs INDEX */
-extern long  cff_read_subrs (cff_font *cff);
+extern int   cff_read_subrs (cff_font *cff);
 
 /* Encoding */
-extern long   cff_read_encoding    (cff_font *cff);
-extern long   cff_pack_encoding    (cff_font *cff, card8 *dest, long destlen);
+extern int    cff_read_encoding    (cff_font *cff);
+extern int    cff_pack_encoding    (cff_font *cff, card8 *dest, int destlen);
 extern card16 cff_encoding_lookup  (cff_font *cff, card8 code);
 extern void   cff_release_encoding (cff_encoding *encoding);
 
 /* Charsets */
-extern long   cff_read_charsets    (cff_font *cff);
-extern long   cff_pack_charsets    (cff_font *cff, card8 *dest, long destlen);
+extern int    cff_read_charsets    (cff_font *cff);
+extern int    cff_pack_charsets    (cff_font *cff, card8 *dest, int destlen);
 
 /* Returns GID of PS name "glyph" */
 extern card16 cff_glyph_lookup     (cff_font *cff, const char *glyph);
@@ -128,21 +128,21 @@ extern card16 cff_charsets_lookup_inverse (cff_font *cff, card16 gid);
 extern card16 cff_charsets_lookup_cid(cff_charsets *charset, card16 gid);
 
 /* FDSelect */
-extern long  cff_read_fdselect    (cff_font *cff);
-extern long  cff_pack_fdselect    (cff_font *cff, card8 *dest, long destlen);
+extern int   cff_read_fdselect    (cff_font *cff);
+extern int   cff_pack_fdselect    (cff_font *cff, card8 *dest, int destlen);
 extern card8 cff_fdselect_lookup  (cff_font *cff, card16 gid);
 extern void  cff_release_fdselect (cff_fdselect *fdselect);
 
 /* Font DICT(s) */
-extern long  cff_read_fdarray (cff_font *cff);
+extern int   cff_read_fdarray (cff_font *cff);
 
 /* Private DICT(s) */
-extern long  cff_read_private (cff_font *cff);
+extern int  cff_read_private (cff_font *cff);
 
 /* String */
 extern char *cff_get_string    (cff_font *cff, s_SID id);
-extern long  cff_get_sid       (cff_font *cff, const char *str);
-extern long  cff_get_seac_sid  (cff_font *cff, const char *str);
+extern int   cff_get_sid       (cff_font *cff, const char *str);
+extern int   cff_get_seac_sid  (cff_font *cff, const char *str);
 extern s_SID cff_add_string    (cff_font *cff, const char *str, int unique);
 extern void  cff_update_string (cff_font *cff);
 

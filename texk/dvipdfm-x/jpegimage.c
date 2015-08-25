@@ -572,10 +572,10 @@ read_APP14_Adobe (struct JPEG_info *j_info, FILE *fp)
 
 #define JPEG_EXIF_BIGENDIAN    0
 #define JPEG_EXIF_LITTLEENDIAN 1
-static long
+static int
 read_exif_bytes (unsigned char **pp, int n, int endian)
 {
-  long           rval = 0;
+  int            rval = 0;
   unsigned char *p   = *pp;
   int            i;
 
@@ -618,7 +618,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
   unsigned char *tiff_header;
   int            endian;
   int            num_fields;
-  long           value = 0, offset;
+  int            value = 0, offset;
   double         xres = 72.0, yres = 72.0;
   double         res_unit = 1.0;
 
@@ -657,8 +657,8 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
   num_fields = read_exif_bytes(&p, 2, endian);
   while (num_fields-- > 0 && p < endptr) {
     int            tag, type;
-    long           count;
-    unsigned long  den, num;
+    int            count;
+    unsigned int   den, num;
 
     if (p + 12 > endptr) {
       WARN("%s: Truncated Exif data...", JPEG_DEBUG_STR);
@@ -680,8 +680,8 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
         goto err;
       } else {
         unsigned char *vp = tiff_header + offset;
-        num = (unsigned long) read_exif_bytes(&vp, 4, endian);
-        den = (unsigned long) read_exif_bytes(&vp, 4, endian);
+        num = (unsigned int) read_exif_bytes(&vp, 4, endian);
+        den = (unsigned int) read_exif_bytes(&vp, 4, endian);
       }
       if (den > 0)
         xres = (double) num / den;
@@ -697,8 +697,8 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
         goto err;
       } else {
         unsigned char *vp = tiff_header + offset;
-        num = (unsigned long) read_exif_bytes(&vp, 4, endian);
-        den = (unsigned long) read_exif_bytes(&vp, 4, endian);
+        num = (unsigned int) read_exif_bytes(&vp, 4, endian);
+        den = (unsigned int) read_exif_bytes(&vp, 4, endian);
       } 
       if (den > 0)
         yres = (double) num / den;
@@ -840,12 +840,12 @@ static int
 JPEG_copy_stream (struct JPEG_info *j_info, pdf_obj *stream, FILE *fp)
 {
   JPEG_marker marker;
-  size_t      length;
+  int         length;
   int         found_SOFn, count;
 
 #define SKIP_CHUNK(j,c) ((j)->skipbits[(c) / 8] & (1 << (7 - (c) % 8)))
 #define COPY_CHUNK(f,s,l) while ((l) > 0) { \
-  size_t nb_read = fread(work_buffer, sizeof(char), MIN((l), WORK_BUFFER_SIZE), (f)); \
+  int nb_read = fread(work_buffer, sizeof(char), MIN((l), WORK_BUFFER_SIZE), (f)); \
   if (nb_read > 0) \
     pdf_add_stream((s), work_buffer, nb_read); \
   (l) -= nb_read; \
@@ -915,7 +915,7 @@ JPEG_scan_file (struct JPEG_info *j_info, FILE *fp)
          (marker = JPEG_get_marker(fp)) != (JPEG_marker) -1) {
     if ( marker != JM_SOI  &&
         (marker  < JM_RST0 || marker > JM_RST7)) {
-      long length = get_unsigned_pair(fp) - 2;
+      int length = get_unsigned_pair(fp) - 2;
       switch (marker) {
       case JM_SOF0:  case JM_SOF1:  case JM_SOF2:  case JM_SOF3:
       case JM_SOF5:  case JM_SOF6:  case JM_SOF7:  case JM_SOF9:

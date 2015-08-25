@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -45,7 +45,7 @@ pst_parse_any (unsigned char **inbuf, unsigned char *inbufend)
 {
   unsigned char *data;
   unsigned char *cur = *inbuf;
-  unsigned long  len;
+  unsigned int   len;
 
   while (cur < inbufend && !PST_TOKEN_END(cur, inbufend))
     cur++;
@@ -85,7 +85,7 @@ pst_parse_comment (unsigned char **inbuf, unsigned char *inbufend)
 {
   unsigned char *data;
   unsigned char *cur = *inbuf;
-  unsigned long  len;
+  unsigned int   len;
 
   if (*cur != '%')
     return NULL;

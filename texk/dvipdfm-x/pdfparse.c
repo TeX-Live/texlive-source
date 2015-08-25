@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -583,7 +583,7 @@ static pdf_obj *
 parse_pdf_hex_string (const char **pp, const char *endptr)
 {
   const char  *p;
-  long   len;
+  int   len;
 
   p = *pp;
 
@@ -772,7 +772,7 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict)
   pdf_obj *result = NULL;
   const char *p;
   pdf_obj *stream_dict;
-  long     stream_length;
+  int      stream_length;
 
   p = *pp;
   skip_white(&p, endptr);
@@ -807,7 +807,7 @@ parse_pdf_stream (const char **pp, const char *endptr, pdf_obj *dict)
       if (pdf_obj_typeof(tmp2) != PDF_NUMBER)
         stream_length = -1;
       else {
-        stream_length = (long) pdf_number_value(tmp2);
+        stream_length = (int) pdf_number_value(tmp2);
       }
       pdf_release_obj(tmp2);
     }
@@ -901,7 +901,7 @@ parse_pdf_reference (const char **start, const char *end)
 static pdf_obj *
 try_pdf_reference (const char *start, const char *end, const char **endptr, pdf_file *pf)
 {
-  unsigned long id = 0;
+  unsigned id = 0;
   unsigned short gen = 0;
 
   ASSERT(pf);

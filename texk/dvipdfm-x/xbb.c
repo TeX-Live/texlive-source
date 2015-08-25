@@ -51,7 +51,7 @@ int PageBox = 0;
  PageBox=5 :bleedbox
 */
 
-static long Include_Page = 1;
+static int Include_Page = 1;
 
 static void show_version(void)
 {
@@ -132,13 +132,13 @@ static char *make_xbb_filename(const char *name)
 static void write_xbb(char *fname,
                       double bbllx_f, double bblly_f,
                       double bburx_f, double bbury_f,
-                      int pdf_version, long pagecount)
+                      int pdf_version, int pagecount)
 {
   char *outname = NULL;
   FILE *fp = NULL;
 
-  long bbllx = ROUND(bbllx_f, 1.0), bblly = ROUND(bblly_f, 1.0);
-  long bburx = ROUND(bburx_f, 1.0), bbury = ROUND(bbury_f, 1.0);
+  int bbllx = ROUND(bbllx_f, 1.0), bblly = ROUND(bblly_f, 1.0);
+  int bburx = ROUND(bburx_f, 1.0), bbury = ROUND(bbury_f, 1.0);
 
   if (xbb_to_file) {
     outname = make_xbb_filename(fname);
@@ -159,7 +159,7 @@ static void write_xbb(char *fname,
 
   fprintf(fp, "%%%%Title: %s\n", fname);
   fprintf(fp, "%%%%Creator: extractbb %s\n", VERSION);
-  fprintf(fp, "%%%%BoundingBox: %ld %ld %ld %ld\n", bbllx, bblly, bburx, bbury);
+  fprintf(fp, "%%%%BoundingBox: %d %d %d %d\n", bbllx, bblly, bburx, bbury);
 
   if (!compat_mode) {
     /* Note:
@@ -173,7 +173,7 @@ static void write_xbb(char *fname,
             bbllx_f, bblly_f, bburx_f, bbury_f);
     if (pdf_version >= 0) {
       fprintf(fp, "%%%%PDFVersion: 1.%d\n", pdf_version);
-      fprintf(fp, "%%%%Pages: %ld\n", pagecount);
+      fprintf(fp, "%%%%Pages: %d\n", pagecount);
     }
   }
 
@@ -247,8 +247,8 @@ static void do_pdf (FILE *fp, char *filename)
 {
   pdf_obj *page;
   pdf_file *pf;
-  long page_no = Include_Page;
-  long count;
+  int page_no = Include_Page;
+  int count;
   pdf_rect bbox;
 
   pf = pdf_open(filename, fp);

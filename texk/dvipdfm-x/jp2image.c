@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Matthias Franz,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Matthias Franz,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -391,7 +391,7 @@ jp2_include_image (pdf_ximage *ximage, FILE *fp)
                  pdf_new_name("SMaskInData"), pdf_new_number(1));
   /* Read whole file */
   {
-    size_t nb_read;
+    int nb_read;
     rewind(fp);
     while ((nb_read =
         fread(work_buffer, sizeof(char), WORK_BUFFER_SIZE, fp)) > 0)

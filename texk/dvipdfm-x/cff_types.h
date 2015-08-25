@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ typedef unsigned char  card8;     /* 1-byte unsigned number */
 typedef unsigned short card16;    /* 2-byte unsigned number */
 typedef unsigned char  c_offsize; /* 1-byte unsigned number specifies the size
 				     of an Offset field or fields, range 1-4 */
-typedef unsigned long  l_offset;  /* 1, 2, 3, or 4-byte offset */
+typedef uint32_t       l_offset;  /* 1, 2, 3, or 4-byte offset */
 typedef unsigned short s_SID;       /* 2-byte string identifier  */
 
 typedef struct {

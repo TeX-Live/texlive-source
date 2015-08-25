@@ -636,7 +636,7 @@ typedef struct
 
 typedef struct
 {
-  long          size;
+  int           size;
   iccSig        CMMType;
   int32_t       version;
   iccSig        devClass;
@@ -1261,7 +1261,7 @@ pdf_colorspace_load_ICCBased (const char *ident, const char *filename)
   pdf_obj  *stream_dict;
   iccHeader icch;
   int       colorspace;
-  long      size;
+  int       size;
   unsigned char checksum[16];
   struct iccbased_cdata *cdata;
 

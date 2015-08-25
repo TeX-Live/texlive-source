@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008-2014 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2008-2015 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -73,7 +73,7 @@ pdf_font_open_type1c (pdf_font *font)
   sfnt     *sfont;
   cff_font *cffont;
   pdf_obj  *descriptor, *tmp;
-  unsigned long offset = 0;
+  unsigned  offset = 0;
   int       encoding_id, embedding;
 
   ASSERT(font);
@@ -240,10 +240,10 @@ pdf_font_load_type1c (pdf_font *font)
   cff_index    *charstrings, *topdict, *cs_idx;
   cff_charsets *charset  = NULL;
   cff_encoding *encoding = NULL;
-  long          topdict_offset, private_size;
-  long          charstring_len, max_len;
-  long          size, offset = 0;
-  long          stream_data_len = 0;
+  int           topdict_offset, private_size;
+  int           charstring_len, max_len;
+  int           size, offset = 0;
+  int           stream_data_len = 0;
   card8        *stream_data_ptr, *data;
   card16        num_glyphs, cs_count, code;
   cs_ginfo      ginfo;
@@ -378,7 +378,7 @@ pdf_font_load_type1c (pdf_font *font)
   /*
    * Charastrings.
    */
-  offset = (long) cff_dict_get(cffont->topdict, "CharStrings", 0);
+  offset = cff_dict_get(cffont->topdict, "CharStrings", 0);
   cff_seek_set(cffont, offset);
   cs_idx = cff_get_index_header(cffont);
 

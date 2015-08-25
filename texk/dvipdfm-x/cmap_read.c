@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -225,7 +225,7 @@ handle_codearray (CMap *cmap, ifreader *input, unsigned char *codeLo, int dim, i
     if ((tok = pst_get_token(&(input->cursor), input->endptr)) == NULL)
       return -1;
     else if (PST_STRINGTYPE(tok)) {
-      CMap_add_bfchar(cmap, codeLo, dim, (unsigned char *) pst_data_ptr(tok), (int) pst_length_of(tok));
+      CMap_add_bfchar(cmap, codeLo, dim, (unsigned char *) pst_data_ptr(tok), pst_length_of(tok));
     } else if (PST_MARKTYPE(tok) || !PST_NAMETYPE(tok))
       ERROR("%s: Invalid CMap mapping record.", CMAP_PARSE_DEBUG_STR);
     else
@@ -242,7 +242,7 @@ do_notdefrange (CMap *cmap, ifreader *input, int count)
 {
   pst_obj *tok;
   unsigned char   codeLo[TOKEN_LEN_MAX], codeHi[TOKEN_LEN_MAX];
-  long     dstCID;
+  int      dstCID;
   int      dim;
 
   while (count-- > 0) { 
@@ -278,7 +278,7 @@ do_bfrange (CMap *cmap, ifreader *input, int count)
       return -1;
     if (PST_STRINGTYPE(tok)) {
       CMap_add_bfrange(cmap, codeLo, codeHi, srcdim,
-		       (unsigned char *) pst_data_ptr(tok), (int) pst_length_of(tok));
+		       (unsigned char *) pst_data_ptr(tok), pst_length_of(tok));
     } else if (PST_MARKTYPE(tok)) {
       if (handle_codearray(cmap, input, codeLo, srcdim,
 			   codeHi[srcdim-1] - codeLo[srcdim-1] + 1) < 0) {
@@ -298,7 +298,7 @@ do_cidrange (CMap *cmap, ifreader *input, int count)
 {
   pst_obj *tok;
   unsigned char   codeLo[TOKEN_LEN_MAX], codeHi[TOKEN_LEN_MAX];
-  long     dstCID;
+  int      dstCID;
   int      dim;
 
   while (count-- > 0) { 
@@ -323,7 +323,7 @@ static int
 do_notdefchar (CMap *cmap, ifreader *input, int count)
 {
   pst_obj *tok1, *tok2;
-  long     dstCID;
+  int      dstCID;
 
   while (count-- > 0) { 
     if (ifreader_need(input, TOKEN_LEN_MAX*2) == 0)
@@ -364,8 +364,8 @@ do_bfchar (CMap *cmap, ifreader *input, int count)
     /* We only support single CID font as descendant font, charName should not come here. */
     if (PST_STRINGTYPE(tok1) && PST_STRINGTYPE(tok2)) {
       CMap_add_bfchar(cmap,
-		      (unsigned char *) pst_data_ptr(tok1), (int) pst_length_of(tok1),
-		      (unsigned char *) pst_data_ptr(tok2), (int) pst_length_of(tok2));
+		      (unsigned char *) pst_data_ptr(tok1), pst_length_of(tok1),
+		      (unsigned char *) pst_data_ptr(tok2), pst_length_of(tok2));
     } else if (PST_NAMETYPE(tok2))
       ERROR("%s: Mapping to charName not supported.", CMAP_PARSE_DEBUG_STR);
     else
@@ -381,7 +381,7 @@ static int
 do_cidchar (CMap *cmap, ifreader *input, int count)
 {
   pst_obj *tok1, *tok2;
-  long     dstCID;
+  int      dstCID;
 
   while (count-- > 0) { 
     if (ifreader_need(input, TOKEN_LEN_MAX*2) == 0)

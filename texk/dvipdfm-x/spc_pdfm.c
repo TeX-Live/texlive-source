@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -193,7 +193,7 @@ spc_handler_pdfm_bop (struct spc_env *spe, struct spc_arg *args)
 {
   if (args->curptr < args->endptr) {
     pdf_doc_set_bop_content(args->curptr,
-			    (long) (args->endptr - args->curptr));
+			    (int) (args->endptr - args->curptr));
   }
 
   args->curptr = args->endptr;
@@ -206,7 +206,7 @@ spc_handler_pdfm_eop (struct spc_env *spe, struct spc_arg *args)
 {
   if (args->curptr < args->endptr) {
     pdf_doc_set_eop_content(args->curptr,
-			    (long) (args->endptr - args->curptr));
+			    (int) (args->endptr - args->curptr));
   }
 
   args->curptr = args->endptr;
@@ -373,7 +373,7 @@ reencodestring (CMap *cmap, pdf_obj *instring)
   unsigned char  wbuf[WBUF_SIZE];
   unsigned char *obufcur;
   const unsigned char *inbufcur;
-  long inbufleft, obufleft;
+  int inbufleft, obufleft;
 
   if (!cmap || !instring)
     return 0;
@@ -402,14 +402,14 @@ reencodestring (CMap *cmap, pdf_obj *instring)
 /* tables/values used in UTF-8 interpretation -
    code is based on ConvertUTF.[ch] sample code
    published by the Unicode consortium */
-static unsigned long
+static uint32_t
 offsetsFromUTF8[6] =    {
-        0x00000000UL,
-        0x00003080UL,
-        0x000E2080UL,
-        0x03C82080UL,
-        0xFA082080UL,
-        0x82082080UL
+        0x00000000U,
+        0x00003080U,
+        0x000E2080U,
+        0x03C82080U,
+        0xFA082080U,
+        0x82082080U
 };
 
 static unsigned char
@@ -457,7 +457,7 @@ maybe_reencode_utf8(pdf_obj *instring)
   *op++ = 0xfe;
   *op++ = 0xff;
   while (cp < inbuf + inlen) {
-    unsigned long usv = *cp++;
+    uint32_t usv = *cp++;
     int extraBytes = bytesFromUTF8[usv];
     if (cp + extraBytes > inbuf + inlen)
       return -1; /* ill-formed, so give up reencoding */
@@ -474,7 +474,7 @@ maybe_reencode_utf8(pdf_obj *instring)
       return -1; /* out of valid Unicode range, give up */
     if (usv > 0xFFFF) {
       /* supplementary-plane character: generate high surrogate */
-      unsigned long hi = 0xdc00 + (usv - 0x10000) % 0x0400;
+      uint32_t hi = 0xdc00 + (usv - 0x10000) % 0x0400;
       if (op > wbuf + WBUF_SIZE - 2)
         return -1; /* out of space */
       *op++ = hi / 256;
@@ -911,7 +911,7 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   pdf_obj         *article_info;
   char            *article_name;
   pdf_rect         rect;
-  long             page_no;
+  int              page_no;
   transform_info   ti;
   pdf_coord        cp;
 
@@ -994,7 +994,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
   char            *ident = NULL;
   pdf_obj         *fspec, *attr = NULL;
   transform_info   ti;
-  long             page_no;
+  int              page_no;
 
 /*
   Initialize the PageBox as the default value
@@ -1295,7 +1295,7 @@ spc_handler_pdfm_object (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_content (struct spc_env *spe, struct spc_arg *args)
 {
-  long  len = 0;
+  int  len = 0;
 
   skip_white(&args->curptr, args->endptr);
   if (args->curptr < args->endptr) {
@@ -1312,7 +1312,7 @@ spc_handler_pdfm_content (struct spc_env *spe, struct spc_arg *args)
     work_buffer[len++] = ' ';
 
     pdf_doc_add_page_content(work_buffer, len);  /* op: q cm */
-    len = (long) (args->endptr - args->curptr);
+    len = (int) (args->endptr - args->curptr);
     pdf_doc_add_page_content(args->curptr, len);  /* op: ANY */
     pdf_doc_add_page_content(" Q", 2);  /* op: Q */
   }
@@ -1350,7 +1350,7 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
       pdf_dev_concat(&M);
     }
     pdf_doc_add_page_content(" ", 1);  /* op: */
-    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));  /* op: ANY */
+    pdf_doc_add_page_content(args->curptr, (int) (args->endptr - args->curptr));  /* op: ANY */
     if (!direct) {
       M.e = -spe->x_user; M.f = -spe->y_user;
       pdf_dev_concat(&M);
@@ -1393,7 +1393,7 @@ spc_handler_pdfm_code (struct spc_env *spe, struct spc_arg *args)
 
   if (args->curptr < args->endptr) {
     pdf_doc_add_page_content(" ", 1);  /* op: */
-    pdf_doc_add_page_content(args->curptr, (long) (args->endptr - args->curptr));  /* op: ANY */
+    pdf_doc_add_page_content(args->curptr, (int) (args->endptr - args->curptr));  /* op: ANY */
     args->curptr = args->endptr;
   }
 
@@ -1414,7 +1414,7 @@ static int
 spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, int type)
 {
   pdf_obj *fstream;
-  long     nb_read;
+  int      nb_read;
   char    *ident, *instring, *fullname;
   pdf_obj *tmp;
   FILE    *fp;
@@ -2010,7 +2010,7 @@ static struct spc_handler pdfm_handlers[] = {
 };
 
 int
-spc_pdfm_check_special (const char *buf, long len)
+spc_pdfm_check_special (const char *buf, int len)
 {
   int    r = 0;
   const char *p, *endptr;

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -936,7 +936,7 @@ spc_dvips_at_end_page (void)
 }
 
 int
-spc_dvips_check_special (const char *buf, long len)
+spc_dvips_check_special (const char *buf, int len)
 {
   const char *p, *endptr;
   int   i;
@@ -948,7 +948,7 @@ spc_dvips_check_special (const char *buf, long len)
   if (p >= endptr)
     return  0;
 
-  len = (long) (endptr - p);
+  len = (int) (endptr - p);
   for (i = 0;
        i < sizeof(dvips_handlers)/sizeof(struct spc_handler); i++) {
     if (len >= strlen(dvips_handlers[i].key) &&

@@ -179,7 +179,7 @@ typedef struct pdf_olitem
 typedef struct pdf_bead
 {
   char    *id;
-  long     page_no;
+  int      page_no;
   pdf_rect rect;
 } pdf_bead;
 
@@ -187,8 +187,8 @@ typedef struct pdf_article
 {
   char     *id;
   pdf_obj  *info;
-  long      num_beads;
-  long      max_beads;
+  int       num_beads;
+  int       max_beads;
   pdf_bead *beads;
 } pdf_article;
 
@@ -217,8 +217,8 @@ typedef struct pdf_doc
     pdf_rect mediabox;
     pdf_obj *bop, *eop;
 
-    long      num_entries; /* This is not actually total number of pages. */
-    long      max_entries;
+    int       num_entries; /* This is not actually total number of pages. */
+    int       max_entries;
     pdf_page *entries;
   } pages;
 
@@ -229,8 +229,8 @@ typedef struct pdf_doc
   } outlines;
 
   struct {
-    long         num_entries;
-    long         max_entries;
+    int          num_entries;
+    int          max_entries;
     pdf_article *entries;
   } articles;
 
@@ -322,10 +322,10 @@ pdf_doc_close_catalog (pdf_doc *p)
 #define MAXPAGES(p)  (p->pages.max_entries)
 
 static void
-doc_resize_page_entries (pdf_doc *p, long size)
+doc_resize_page_entries (pdf_doc *p, int size)
 {
   if (size > MAXPAGES(p)) {
-    long i;
+    int i;
 
     p->pages.entries = RENEW(p->pages.entries, size, struct pdf_page);
     for (i = p->pages.max_entries; i < size; i++) {
@@ -349,7 +349,7 @@ doc_resize_page_entries (pdf_doc *p, long size)
 }
 
 static pdf_page *
-doc_get_page_entry (pdf_doc *p, unsigned long page_no)
+doc_get_page_entry (pdf_doc *p, unsigned int page_no)
 {
   pdf_page *page;
 
@@ -433,7 +433,7 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
    systems that do not support the tm_gmtoff in struct tm,
    or have a timezone variable.  Such as i386-solaris.  */
 
-static long
+static int32_t
 compute_timezone_offset()
 {
   const time_t now = time(NULL);
@@ -452,10 +452,10 @@ compute_timezone_offset()
 /*
  * Docinfo
  */
-static long
+static int
 asn_date (char *date_string)
 {
-  long        tz_offset;
+  int32_t     tz_offset;
   time_t      current_time;
   struct tm  *bd_time;
 
@@ -472,11 +472,11 @@ asn_date (char *date_string)
 #  endif /* HAVE_TIMEZONE */
 #endif /* HAVE_TM_GMTOFF */
 
-  sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%c%02ld'%02ld'",
+  sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%c%02d'%02d'",
           bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
           bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,
-          (tz_offset > 0) ? '+' : '-', labs(tz_offset) / 3600,
-                                      (labs(tz_offset) / 60) % 60);
+          (tz_offset > 0) ? '+' : '-', abs(tz_offset) / 3600,
+                                      (abs(tz_offset) / 60) % 60);
 
   return strlen(date_string);
 }
@@ -605,7 +605,7 @@ pdf_doc_add_page_resource (const char *category,
   resources = pdf_doc_get_page_resources(p, category);
   duplicate = pdf_lookup_dict(resources, resource_name);
   if (duplicate && pdf_compare_reference(duplicate, resource_ref)) {
-    WARN("Conflicting page resource found (page: %ld, category: %s, name: %s).",
+    WARN("Conflicting page resource found (page: %d, category: %s, name: %s).",
          pdf_doc_current_page_number(), category, resource_name);
     WARN("Ignoring...");
     pdf_release_obj(resource_ref);
@@ -712,11 +712,11 @@ doc_flush_page (pdf_doc *p, pdf_page *page, pdf_obj *parent_ref)
 #define PAGE_CLUSTER 4
 static pdf_obj *
 build_page_tree (pdf_doc  *p,
-                 pdf_page *firstpage, long num_pages,
+                 pdf_page *firstpage, int num_pages,
                  pdf_obj  *parent_ref)
 {
   pdf_obj *self, *self_ref, *kids;
-  long     i;
+  int      i;
 
   self = pdf_new_dict();
   /*
@@ -746,7 +746,7 @@ build_page_tree (pdf_doc  *p,
     }
   } else if (num_pages > 0) {
     for (i = 0; i < PAGE_CLUSTER; i++) {
-      long start, end;
+      int start, end;
 
       start = (i*num_pages)/PAGE_CLUSTER;
       end   = ((i+1)*num_pages)/PAGE_CLUSTER;
@@ -804,7 +804,7 @@ pdf_doc_close_page_tree (pdf_doc *p)
 {
   pdf_obj *page_tree_root;
   pdf_obj *mediabox;
-  long     page_no;
+  int      page_no;
 
   /*
    * Do consistency check on forward references to pages.
@@ -933,7 +933,7 @@ pdf_doc_close_page_tree (pdf_doc *p)
  */
 
 pdf_obj *
-pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
+pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
                   pdf_rect *bbox, pdf_obj **resources_p) {
   pdf_obj *page_tree = NULL;
   pdf_obj *resources = NULL, *box = NULL, *rotate = NULL, *medbox = NULL;
@@ -947,7 +947,7 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
     goto error;
 
   {
-    long count;
+    int count;
     pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
     if (!PDF_OBJ_NUMBERTYPE(tmp)) {
       if (tmp)
@@ -972,7 +972,7 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
     pdf_obj *art_box = NULL, *trim_box = NULL, *bleed_box = NULL;
     pdf_obj *media_box = NULL, *crop_box = NULL, *kids, *tmp;
     int depth = PDF_OBJ_MAX_DEPTH;
-    long page_idx = page_no-1, kids_length = 1, i = 0;
+    int page_idx = page_no-1, kids_length = 1, i = 0;
 
     while (--depth && i != kids_length) {
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "MediaBox")))) {
@@ -1027,7 +1027,7 @@ pdf_doc_get_page (pdf_file *pf, long page_no, long *count_p,
       kids_length = pdf_array_length(kids);
 
       for (i = 0; i < kids_length; i++) {
-        long count;
+        int count;
 
         pdf_release_obj(page_tree);
         page_tree = pdf_deref_obj(pdf_get_array(kids, i));
@@ -1850,7 +1850,7 @@ static pdf_bead *
 find_bead (pdf_article *article, const char *bead_id)
 {
   pdf_bead *bead;
-  long      i;
+  int       i;
 
   bead = NULL;
   for (i = 0; i < article->num_beads; i++) {
@@ -1865,12 +1865,12 @@ find_bead (pdf_article *article, const char *bead_id)
 
 void
 pdf_doc_add_bead (const char *article_id,
-                  const char *bead_id, long page_no, const pdf_rect *rect)
+                  const char *bead_id, int page_no, const pdf_rect *rect)
 {
   pdf_doc     *p = &pdoc;
   pdf_article *article;
   pdf_bead    *bead;
-  long         i;
+  int          i;
 
   if (!article_id) {
     ERROR("No article identifier specified.");
@@ -1925,7 +1925,7 @@ make_article (pdf_doc *p,
 {
   pdf_obj *art_dict;
   pdf_obj *first, *prev, *last;
-  long     i, n;
+  int      i, n;
 
   if (!article)
     return NULL;
@@ -2018,7 +2018,7 @@ clean_article (pdf_article *article)
     return;
     
   if (article->beads) {
-    long  i;
+    int   i;
 
     for (i = 0; i < article->num_beads; i++) {
       if (article->beads[i].id)
@@ -2191,16 +2191,16 @@ pdf_doc_get_dictionary (const char *category)
   return dict;
 }
 
-long
+int
 pdf_doc_current_page_number (void)
 {
   pdf_doc *p = &pdoc;
 
-  return (long) (PAGECOUNT(p) + 1);
+  return (int) (PAGECOUNT(p) + 1);
 }
 
 pdf_obj *
-pdf_doc_ref_page (unsigned long page_no)
+pdf_doc_ref_page (unsigned page_no)
 {
   pdf_doc  *p = &pdoc;
   pdf_page *page;
@@ -2218,7 +2218,7 @@ pdf_obj *
 pdf_doc_get_reference (const char *category)
 {
   pdf_obj *ref = NULL;
-  long     page_no;
+  int      page_no;
 
   ASSERT(category);
 
@@ -2806,9 +2806,9 @@ pdf_doc_expand_box (const pdf_rect *rect)
 #if 0
 /* This should be number tree */
 void
-pdf_doc_set_pagelabel (long  pg_start,
+pdf_doc_set_pagelabel (int  pg_start,
                        const char *type,
-                       const void *prefix, int prfx_len, long start)
+                       const void *prefix, int prfx_len, int start)
 {
   pdf_doc *p = &pdoc;
   pdf_obj *label_dict;

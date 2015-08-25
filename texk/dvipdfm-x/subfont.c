@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -169,7 +169,7 @@ read_sfd_record (struct sfd_rec_ *rec, const char *lbuf)
   const char *p = lbuf, *q;
   char  *r;
   int    repos  = 0;
-  long   c,  v1 = 0, v2 = 0;
+  int    c,  v1 = 0, v2 = 0;
   int    curpos = 0;
   int    error  = 0;
 

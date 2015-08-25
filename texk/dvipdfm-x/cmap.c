@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     This program is free software; you can redistribute it and/or modify
@@ -65,10 +65,10 @@ CMap_set_silent (int value)
 }
 
 /* Private funcs. */
-static int  bytes_consumed   (CMap *cmap, const unsigned char *instr, long inbytes);
+static int  bytes_consumed   (CMap *cmap, const unsigned char *instr, int inbytes);
 static void handle_undefined (CMap *cmap,
-			      const unsigned char **inbuf, long *inbytesleft,
-			      unsigned char **outbuf, long *outbytesleft);
+			      const unsigned char **inbuf, int *inbytesleft,
+			      unsigned char **outbuf, int *outbytesleft);
 
 static int  check_range      (CMap *cmap,
 			      const unsigned char *srclo, const unsigned char *srchi, int srcdim,
@@ -223,10 +223,10 @@ CMap_get_profile (CMap *cmap, int type)
  */
 static void
 handle_undefined (CMap *cmap,
-		  const unsigned char **inbuf,  long *inbytesleft,
-		  unsigned char **outbuf, long *outbytesleft)
+		  const unsigned char **inbuf,  int *inbytesleft,
+		  unsigned char **outbuf, int *outbytesleft)
 {
-  long len = 0;
+  int len = 0;
 
   if (*outbytesleft < 2)
     ERROR("%s: Buffer overflow.", CMAP_DEBUG_STR);
@@ -254,13 +254,13 @@ handle_undefined (CMap *cmap,
 
 void
 CMap_decode_char (CMap *cmap,
-		  const unsigned char **inbuf, long *inbytesleft,
-		  unsigned char **outbuf, long *outbytesleft)
+		  const unsigned char **inbuf, int *inbytesleft,
+		  unsigned char **outbuf, int *outbytesleft)
 {
   mapDef *t;
   const unsigned char *p, *save;
   unsigned char c = 0;
-  long    count = 0;
+  int     count = 0;
 
   p = save = *inbuf;
   /*
@@ -350,10 +350,10 @@ CMap_decode_char (CMap *cmap,
 /*
  * For convenience, it does not do decoding to CIDs.
  */
-long
+int
 CMap_decode (CMap *cmap,
-	     const unsigned char **inbuf,  long *inbytesleft,
-	     unsigned char **outbuf, long *outbytesleft)
+	     const unsigned char **inbuf,  int *inbytesleft,
+	     unsigned char **outbuf, int *outbytesleft)
 {
   int count;
 
@@ -797,7 +797,7 @@ locate_tbl (mapDef **cur, const unsigned char *code, int dim)
  * a `single' character by CMap_decode().
  */
 static int
-bytes_consumed (CMap *cmap, const unsigned char *instr, long inbytes)
+bytes_consumed (CMap *cmap, const unsigned char *instr, int inbytes)
 {
   int i, pos, longest = 0, bytesconsumed;
 

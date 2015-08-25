@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -43,14 +43,14 @@ int mfclose (FILE *file, const char *function, int line);
 #define MFCLOSE(file) fclose(file)
 #endif
 
-extern void seek_absolute (FILE *file, long pos);
-extern void seek_relative (FILE *file, long pos);
+extern void seek_absolute (FILE *file, int32_t pos);
+extern void seek_relative (FILE *file, int32_t pos);
 
 extern void seek_end (FILE *file);
 
-extern long tell_position (FILE *file);
+extern int32_t tell_position (FILE *file);
 
-extern long file_size (FILE *file);
+extern int32_t file_size (FILE *file);
 
 #define xseek_absolute(file, pos, name) xfseeko (file, (off_t)(pos), SEEK_SET, name)
 #define xseek_relative(file, pos, name) xfseeko (file, (off_t)(pos), SEEK_CUR, name)

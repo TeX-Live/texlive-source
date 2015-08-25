@@ -358,7 +358,7 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
   while (p + 1 < endptr &&
          *p != '\r' && *p != '\n' && *p == '-') {
     char  *q, mopt = p[1];
-    long   v;
+    int    v;
 
     p += 2; skip_blank(&p, endptr);
     switch (mopt) {
@@ -965,7 +965,7 @@ pdf_load_fontmap_file (const char *filename, int mode)
   fontmap_rec *mrec;
   FILE        *fp;
   const char  *p = NULL, *endptr;
-  long         llen, lpos  = 0;
+  int          llen, lpos  = 0;
   int          error = 0, format = 0;
 
   ASSERT(filename);

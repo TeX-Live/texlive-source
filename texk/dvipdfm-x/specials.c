@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -362,7 +362,7 @@ static struct {
   int (*eodhk_func) (void);
   int (*bophk_func) (void);
   int (*eophk_func) (void);
-  int (*check_func) (const char *, long);
+  int (*check_func) (const char *, int);
   int (*setup_func) (struct spc_handler *, struct spc_env *, struct spc_arg *);
 } known_specials[] = {
 
@@ -506,7 +506,7 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
   const char *p;
   char      ebuf[64];
   int       i;
-  long      pg = spe->pg;
+  int       pg = spe->pg;
   pdf_coord c;
 
   c.x = spe->x_user; c.y = spe->y_user;

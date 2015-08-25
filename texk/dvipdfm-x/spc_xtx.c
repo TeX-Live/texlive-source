@@ -396,7 +396,7 @@ static struct spc_handler xtx_handlers[] = {
 };
 
 int
-spc_xtx_check_special (const char *buf, long len)
+spc_xtx_check_special (const char *buf, int len)
 {
   int    r = 0;
   const char *p, *endptr;

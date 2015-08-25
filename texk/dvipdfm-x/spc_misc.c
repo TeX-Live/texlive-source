@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -139,7 +139,7 @@ static struct spc_handler misc_handlers[] = {
 
 
 int
-spc_misc_check_special (const char *buffer, long size)
+spc_misc_check_special (const char *buffer, int size)
 {
   const char *p, *endptr;
   int    i;
@@ -148,7 +148,7 @@ spc_misc_check_special (const char *buffer, long size)
   endptr = p + size;
 
   skip_white(&p, endptr);
-  size   = (long) (endptr - p);
+  size   = (int) (endptr - p);
   for (i = 0;
        i < sizeof(misc_handlers)/sizeof(struct spc_handler); i++) {
     if (size >= strlen(misc_handlers[i].key) &&

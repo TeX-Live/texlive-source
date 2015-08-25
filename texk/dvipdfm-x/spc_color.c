@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -115,7 +115,7 @@ skip_blank (const char **pp, const char *endptr)
 }
 
 int
-spc_color_check_special (const char *buf, long len)
+spc_color_check_special (const char *buf, int len)
 {
   int   r = 0;
   const char *p, *endptr;

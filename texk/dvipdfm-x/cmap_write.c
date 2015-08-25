@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     This program is free software; you can redistribute it and/or modify
@@ -183,7 +183,7 @@ write_map (mapDef *mtab, int count,
       sprintf(fmt_buf, "%d beginbfchar\n", count);
       pdf_add_stream(stream, fmt_buf,  strlen(fmt_buf));
       pdf_add_stream(stream,
-		     wbuf->buf, (long) (wbuf->curptr - wbuf->buf));
+		     wbuf->buf, (int) (wbuf->curptr - wbuf->buf));
       wbuf->curptr = wbuf->buf;
       pdf_add_stream(stream,
 		     "endbfchar\n", strlen("endbfchar\n"));
@@ -198,7 +198,7 @@ write_map (mapDef *mtab, int count,
       sprintf(fmt_buf, "%d beginbfchar\n", count);
       pdf_add_stream(stream, fmt_buf,  strlen(fmt_buf));
       pdf_add_stream(stream,
-		     wbuf->buf, (long) (wbuf->curptr - wbuf->buf));
+		     wbuf->buf, (int) (wbuf->curptr - wbuf->buf));
       wbuf->curptr = wbuf->buf;
       pdf_add_stream(stream,
 		     "endbfchar\n", strlen("endbfchar\n"));
@@ -229,7 +229,7 @@ write_map (mapDef *mtab, int count,
       *(wbuf->curptr)++ = '\n';
     }
     pdf_add_stream(stream,
-		   wbuf->buf, (long) (wbuf->curptr - wbuf->buf));
+		   wbuf->buf, (int) (wbuf->curptr - wbuf->buf));
     wbuf->curptr = wbuf->buf;
     pdf_add_stream(stream,
 		   "endbfrange\n", strlen("endbfrange\n"));
@@ -323,7 +323,7 @@ CMap_create_stream (CMap *cmap)
 		     pdf_new_name("Identity-H"));
       }
     } else {
-      long     res_id;
+      int      res_id;
       pdf_obj *ucmap_ref;
 
       res_id = pdf_findresource("CMap", CMap_get_name(cmap->useCMap));
@@ -371,7 +371,7 @@ CMap_create_stream (CMap *cmap)
 >> def\n"
   wbuf.curptr += sprintf(wbuf.curptr, CMAP_CSI_FMT,
 			 csi->registry, csi->ordering, csi->supplement);
-  pdf_add_stream(stream, wbuf.buf, (long)(wbuf.curptr - wbuf.buf));
+  pdf_add_stream(stream, wbuf.buf, (int)(wbuf.curptr - wbuf.buf));
   wbuf.curptr = wbuf.buf;
 
   /* codespacerange */
@@ -392,7 +392,7 @@ CMap_create_stream (CMap *cmap)
     *(wbuf.curptr)++ = '>';
     *(wbuf.curptr)++ = '\n';
   }
-  pdf_add_stream(stream, wbuf.buf, (long)(wbuf.curptr - wbuf.buf));
+  pdf_add_stream(stream, wbuf.buf, (int)(wbuf.curptr - wbuf.buf));
   wbuf.curptr = wbuf.buf;
   pdf_add_stream(stream,
 		 "endcodespacerange\n", strlen("endcodespacerange\n"));
@@ -408,7 +408,7 @@ CMap_create_stream (CMap *cmap)
       sprintf(fmt_buf, "%d beginbfchar\n", count);
       pdf_add_stream(stream, fmt_buf,  strlen(fmt_buf));
       pdf_add_stream(stream,
-		     wbuf.buf, (long) (wbuf.curptr - wbuf.buf));
+		     wbuf.buf, (int) (wbuf.curptr - wbuf.buf));
       pdf_add_stream(stream,
 		     "endbfchar\n", strlen("endbfchar\n"));
       count = 0;

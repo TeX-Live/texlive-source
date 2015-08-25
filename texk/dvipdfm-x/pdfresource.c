@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -189,7 +189,7 @@ get_category (const char *category)
   return -1;
 }
 
-long
+int
 pdf_defineresource (const char *category,
 		    const char *resname, pdf_obj *object, int flags)
 {
@@ -221,7 +221,7 @@ pdf_defineresource (const char *category,
 	} else {
 	  res->object = object;
 	}
-	return (long) ((cat_id << 16)|(res_id));
+	return (cat_id << 16) | res_id;
       }
     }
   } else {
@@ -251,7 +251,7 @@ pdf_defineresource (const char *category,
     rc->count++;
   }
 
-  return (long) ((cat_id << 16)|(res_id));
+  return (cat_id << 16) | res_id;
 }
 
 #if 0
@@ -282,7 +282,7 @@ pdf_resource_exist (const char *category, const char *resname)
 }
 #endif
 
-long
+int
 pdf_findresource (const char *category, const char *resname)
 {
   pdf_res *res;
@@ -301,7 +301,7 @@ pdf_findresource (const char *category, const char *resname)
   for (res_id = 0; res_id < rc->count; res_id++) {
     res = &rc->resources[res_id];
     if (!strcmp(resname, res->ident)) {
-      return (long) (cat_id << 16|res_id);
+      return cat_id << 16 | res_id;
     }
   }
 
@@ -309,7 +309,7 @@ pdf_findresource (const char *category, const char *resname)
 }
 
 pdf_obj *
-pdf_get_resource_reference (long rc_id)
+pdf_get_resource_reference (int rc_id)
 {
   int  cat_id, res_id;
   struct res_cache *rc;
@@ -344,7 +344,7 @@ pdf_get_resource_reference (long rc_id)
 
 #if 0
 pdf_obj *
-pdf_get_resource (long rc_id)
+pdf_get_resource (int rc_id)
 {
   int  cat_id, res_id;
   struct res_cache *rc;
