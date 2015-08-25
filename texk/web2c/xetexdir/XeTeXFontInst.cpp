@@ -40,6 +40,7 @@ authorization from the copyright holders.
  */
 
 #include <w2c/config.h>
+#include <kpathsea/kpathsea.h>
 
 #include "XeTeXFontInst.h"
 #include "XeTeXLayoutInterface.h"
@@ -174,7 +175,7 @@ _get_glyph_h_kerning(hb_font_t*, void *font_data, hb_codepoint_t gid1, hb_codepo
     FT_Vector kerning;
     hb_position_t ret;
 
-    error = FT_Get_Kerning (face, gid1, gid2, FT_KERNING_UNFITTED, &kerning);
+    error = FT_Get_Kerning (face, gid1, gid2, FT_KERNING_UNSCALED, &kerning);
     if (error)
         ret = 0;
     else
@@ -313,15 +314,17 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 
     /* for non-sfnt-packaged fonts (presumably Type 1), see if there is an AFM file we can attach */
     if (index == 0 && !FT_IS_SFNT(m_ftFace)) {
-        char* afm = new char[strlen((const char*)pathname) + 5]; // room to append ".afm"
-        strcpy(afm, (const char*)pathname);
-        char* p = strrchr(afm, '.');
-        if (p == NULL || strlen(p) != 4 || tolower(*(p+1)) != 'p' || tolower(*(p+2)) != 'f')
-            strcat(afm, ".afm");   // append .afm if the extension didn't seem to be .pf[ab]
-        else
-            strcpy(p, ".afm");     // else replace extension with .afm
-        FT_Attach_File(m_ftFace, afm); // ignore error code; AFM might not exist
-        delete[] afm;
+        char* afm = xstrdup ((char *)xbasename (pathname));
+        char* p = strrchr (afm, '.');
+        if (p != NULL && strlen(p) == 4 && tolower(*(p+1)) == 'p' &&
+            tolower(*(p+2)) == 'f')
+            strcpy(p, ".afm");
+        char *fullafm = kpse_find_file (afm, kpse_afm_format, 0);
+        free (afm);
+        if (fullafm) {
+            FT_Attach_File(m_ftFace, fullafm);
+            free (fullafm);
+        }
     }
 
     m_filename = xstrdup(pathname);
