@@ -2752,38 +2752,38 @@ kerns assuming that is italic correction. The heuristics are unreliable for
 the new fonts so eventualy there will be an option to ignore such corrections.
 
 @ @c
-#define analyze_script(init,su_n,su_f,su_c) do {                                   \
-      su_n = init;                                                                 \
-      if (su_n != null) {                                                          \
-          if (type(su_n) == sub_mlist_node) {                                      \
-              su_n = math_list(su_n);                                              \
-              if (su_n != null) {                                                  \
-                  while (su_n) {                                                   \
-                      if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) {\
-                          su_n = vlink(su_n);                                      \
-                      } else if (type(su_n) == simple_noad) {                      \
-                          su_n = nucleus(su_n);                                    \
-                          if (type(su_n) != math_char_node) {                      \
-                              su_n = null;                                         \
-                          }                                                        \
-                          break;                                                   \
-                      } else {                                                     \
-                          su_n = null;                                             \
-                          break;                                                   \
-                      }                                                            \
-                  }                                                                \
-              }                                                                    \
-          }                                                                        \
-          if (su_n != null) {                                                      \
-              fetch(su_n);                                                         \
-              if (char_exists(cur_f, cur_c)) {                                     \
-                  su_f = cur_f;                                                    \
-                  su_c = cur_c;                                                    \
-              } else {                                                             \
-                  su_n = null;                                                     \
-              }                                                                    \
-          }                                                                        \
-      }                                                                            \
+#define analyze_script(init,su_n,su_f,su_c) do {                                 \
+    su_n = init;                                                                 \
+    if (su_n != null) {                                                          \
+        if (type(su_n) == sub_mlist_node && math_list(su_n)) {                   \
+            su_n = math_list(su_n);                                              \
+            if (su_n != null) {                                                  \
+                while (su_n) {                                                   \
+                    if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) {\
+                        su_n = vlink(su_n);                                      \
+                    } else if (type(su_n) == simple_noad) {                      \
+                        su_n = nucleus(su_n);                                    \
+                        if (type(su_n) != math_char_node) {                      \
+                            su_n = null;                                         \
+                        }                                                        \
+                        break;                                                   \
+                    } else {                                                     \
+                        su_n = null;                                             \
+                        break;                                                   \
+                    }                                                            \
+                }                                                                \
+            }                                                                    \
+        }                                                                        \
+        if ((su_n != null) && (type(su_n) == math_char_node)) {                  \
+            fetch(su_n);                                                         \
+            if (char_exists(cur_f, cur_c)) {                                     \
+                su_f = cur_f;                                                    \
+                su_c = cur_c;                                                    \
+            } else {                                                             \
+                su_n = null;                                                     \
+            }                                                                    \
+        }                                                                        \
+    }                                                                            \
   } while (0)
 
 
