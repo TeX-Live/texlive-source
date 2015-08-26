@@ -54,7 +54,7 @@ XeTeX_pic.c
 
 
 int
-countpdffilepages()
+countpdffilepages(void)
 {
 	int	rval = 0;
 

@@ -74,7 +74,7 @@ char getReqEngine();
 void setReqEngine(char reqEngine);
 const char* getFullName(PlatformFontRef fontRef);
 
-const char* getFontFilename(XeTeXLayoutEngine engine, uint32_t* index);
+char* getFontFilename(XeTeXLayoutEngine engine, uint32_t* index);
 
 double getDesignSize(XeTeXFont font);
 

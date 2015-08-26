@@ -197,8 +197,8 @@ extern "C" {
 
     void setinputfileencoding(unicodefile f, integer mode, integer encodingData);
     void uclose(unicodefile f);
-    void linebreakstart(int f, integer localeStrNum, const uint16_t* text, integer textLength);
-    int linebreaknext();
+    void linebreakstart(int f, integer localeStrNum, uint16_t* text, integer textLength);
+    int linebreaknext(void);
     int getencodingmodeandinfo(integer* info);
     void printutf8str(const unsigned char* str, int len);
     void printchars(const unsigned short* str, int len);
@@ -225,7 +225,7 @@ extern "C" {
     integer otfontget3(integer what, void* engine, integer param1, integer param2, integer param3);
     int makeXDVGlyphArrayData(void* p);
     int makefontdef(integer f);
-    int applymapping(void* cnv, const uint16_t* txtPtr, int txtLen);
+    int applymapping(void* cnv, uint16_t* txtPtr, int txtLen);
     void store_justified_native_glyphs(void* node);
     void measure_native_node(void* node, int use_glyph_metrics);
     Fixed get_native_italic_correction(void* node);
@@ -245,20 +245,20 @@ extern "C" {
     double read_double(const char** s);
     unsigned int read_rgb_a(const char** cp);
 
-    int countpdffilepages();
+    int countpdffilepages(void);
     int find_pic_file(char** path, realrect* bounds, int pdfBoxType, int page);
     int u_open_in(unicodefile* f, integer filefmt, const char* fopen_mode, integer mode, integer encodingData);
     int open_dvi_output(FILE** fptr);
     int dviclose(FILE* fptr);
     int get_uni_c(UFILE* f);
     int input_line(UFILE* f);
-    void makeutf16name();
+    void makeutf16name(void);
 
-    void terminatefontmanager();
+    void terminatefontmanager(void);
     int maketexstring(const char* s);
 
-    void checkfortfmfontmapping();
-    void* loadtfmfontmapping();
+    void checkfortfmfontmapping(void);
+    void* loadtfmfontmapping(void);
     int applytfmfontmapping(void* mapping, int c);
 
 #ifndef XETEX_MAC

@@ -55,8 +55,8 @@ FT_Library gFreeTypeLibrary = 0;
 static hb_font_funcs_t* hbFontFuncs = NULL;
 
 XeTeXFontInst::XeTeXFontInst(const char* pathname, int index, float pointSize, int &status)
-    : m_pointSize(pointSize)
-    , m_unitsPerEM(0)
+    : m_unitsPerEM(0)
+    , m_pointSize(pointSize)
     , m_ascent(0)
     , m_descent(0)
     , m_capHeight(0)
@@ -81,7 +81,7 @@ XeTeXFontInst::~XeTeXFontInst()
     }
     hb_font_destroy(m_hbFont);
     delete[] m_filename;
-    free((void*) m_math);
+    free(m_math);
 }
 
 /* HarfBuzz font functions */
@@ -301,7 +301,7 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
         }
     }
 
-    error = FT_New_Face(gFreeTypeLibrary, (char*)pathname, index, &m_ftFace);
+    error = FT_New_Face(gFreeTypeLibrary, pathname, index, &m_ftFace);
     if (error) {
         status = 1;
         return;
@@ -314,7 +314,7 @@ XeTeXFontInst::initialize(const char* pathname, int index, int &status)
 
     /* for non-sfnt-packaged fonts (presumably Type 1), see if there is an AFM file we can attach */
     if (index == 0 && !FT_IS_SFNT(m_ftFace)) {
-        char* afm = xstrdup ((char *)xbasename (pathname));
+        char* afm = xstrdup (xbasename (pathname));
         char* p = strrchr (afm, '.');
         if (p != NULL && strlen(p) == 4 && tolower(*(p+1)) == 'p' &&
             tolower(*(p+2)) == 'f')
@@ -368,7 +368,7 @@ XeTeXFontInst::setLayoutDirVertical(bool vertical)
     m_vertical = vertical;
 }
 
-const void *
+void *
 XeTeXFontInst::getFontTable(OTTag tag) const
 {
     FT_ULong tmpLength = 0;
@@ -388,15 +388,15 @@ XeTeXFontInst::getFontTable(OTTag tag) const
     return table;
 }
 
-const char *
+char *
 XeTeXFontInst::getMathTable()
 {
     if (m_math == NULL)
-        m_math = (const char*) getFontTable(MATH_TAG);
+        m_math = (char*) getFontTable(MATH_TAG);
     return m_math;
 }
 
-const void *
+void *
 XeTeXFontInst::getFontTable(FT_Sfnt_Tag tag) const
 {
     return FT_Get_Sfnt_Table(m_ftFace, tag);

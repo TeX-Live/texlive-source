@@ -130,7 +130,7 @@ DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c \
 EXTRA_LIBRARIES += libxetex.a
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
-libxetex_a_CFLAGS = # $(WARNING_CFLAGS)
+libxetex_a_CFLAGS = $(WARNING_CFLAGS)
 libxetex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libxetex_a_OBJCXXFLAGS = # $(WARNING_OBJCXXFLAGS)
 

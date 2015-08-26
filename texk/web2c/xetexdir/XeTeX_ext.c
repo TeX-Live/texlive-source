@@ -276,7 +276,7 @@ uclose(UFILE* f)
 }
 
 static void
-buffer_overflow()
+buffer_overflow(void)
 {
     fprintf (stderr, "! Unable to read an entire line---bufsize=%u.\n",
                              (unsigned) bufsize);
@@ -484,7 +484,7 @@ static UBreakIterator* brkIter = NULL;
 static int brkLocaleStrNum = 0;
 
 void
-linebreakstart(int f, integer localeStrNum, const uint16_t* text, integer textLength)
+linebreakstart(int f, integer localeStrNum, uint16_t* text, integer textLength)
 {
     UErrorCode status = U_ZERO_ERROR;
     char* locale = (char*)gettexstring(localeStrNum);
@@ -529,7 +529,7 @@ linebreakstart(int f, integer localeStrNum, const uint16_t* text, integer textLe
 }
 
 int
-linebreaknext()
+linebreaknext(void)
 {
     if (brkIter != NULL)
         return ubrk_next((UBreakIterator*)brkIter);
@@ -625,7 +625,7 @@ load_mapping_file(const char* s, const char* e, char byteMapping)
         if (mapFile) {
             uint32_t mappingSize;
             Byte* mapping;
-            TECkit_Status status;
+            /* TECkit_Status status; */
             fseek(mapFile, 0, SEEK_END);
             mappingSize = ftell(mapFile);
             fseek(mapFile, 0, SEEK_SET);
@@ -633,12 +633,12 @@ load_mapping_file(const char* s, const char* e, char byteMapping)
             fread(mapping, 1, mappingSize, mapFile);
             fclose(mapFile);
             if (byteMapping != 0)
-                status = TECkit_CreateConverter(mapping, mappingSize,
+                /* status = */ TECkit_CreateConverter(mapping, mappingSize,
                                             false,
                                             UTF16_NATIVE, kForm_Bytes,
                                             &cnv);
             else
-                status = TECkit_CreateConverter(mapping, mappingSize,
+                /* status = */ TECkit_CreateConverter(mapping, mappingSize,
                                             true,
                                             UTF16_NATIVE, UTF16_NATIVE,
                                             &cnv);
@@ -659,7 +659,7 @@ load_mapping_file(const char* s, const char* e, char byteMapping)
 
 char *saved_mapping_name = NULL;
 void
-checkfortfmfontmapping()
+checkfortfmfontmapping(void)
 {
     char* cp = strstr((char*)nameoffile + 1, ":mapping=");
     if (saved_mapping_name != NULL) {
@@ -677,7 +677,7 @@ checkfortfmfontmapping()
 }
 
 void*
-loadtfmfontmapping()
+loadtfmfontmapping(void)
 {
     void* rval = NULL;
     if (saved_mapping_name != NULL) {
@@ -695,7 +695,8 @@ applytfmfontmapping(void* cnv, int c)
     UniChar in = c;
     Byte out[2];
     UInt32 inUsed, outUsed;
-    TECkit_Status status = TECkit_ConvertBuffer((TECkit_Converter)cnv,
+    /* TECkit_Status status; */
+    /* status = */ TECkit_ConvertBuffer((TECkit_Converter)cnv,
             (const Byte*)&in, sizeof(in), &inUsed, out, sizeof(out), &outUsed, 1);
     if (outUsed < 1)
         return 0;
@@ -899,9 +900,9 @@ readFeatureNumber(const char* s, const char* e, hb_tag_t* f, int* v)
 }
 
 static void*
-loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const char* cp1)
+loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, char* cp1)
 {
-    XeTeXLayoutEngine engine;
+    XeTeXLayoutEngine engine = NULL;
     hb_tag_t script = HB_TAG_NONE;
     char * language = NULL;
     hb_feature_t* features = NULL;
@@ -909,8 +910,8 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
     int nFeatures = 0;
     int nShapers = 0;
 
-    const char* cp2;
-    const char* cp3;
+    char* cp2;
+    char* cp3;
 
     hb_tag_t tag;
 
@@ -927,10 +928,13 @@ loadOTfont(PlatformFontRef fontRef, XeTeXFont font, Fixed scaled_size, const cha
 
     if (reqEngine == 'O' || reqEngine == 'G') {
         shapers = (char**) xrealloc(shapers, (nShapers + 1) * sizeof(char *));
-        if (reqEngine == 'O')
-            shapers[nShapers] = "ot";
-        else if (reqEngine == 'G')
-            shapers[nShapers] = "graphite2";
+        if (reqEngine == 'O') {
+            static char ot_const[] = "ot";
+            shapers[nShapers] = ot_const;
+        } else if (reqEngine == 'G') {
+            static char graphite2_const[] = "graphite2";
+            shapers[nShapers] = graphite2_const;
+        }
         nShapers++;
     }
 
@@ -1584,12 +1588,12 @@ makefontdef(integer f)
     uint16_t flags = 0;
     uint32_t rgba;
     Fixed size;
-    const char* filename;
+    char* filename;
     uint32_t index;
     uint8_t filenameLen;
     int fontDefLength;
     char* cp;
-    PlatformFontRef fontRef = 0;
+    /* PlatformFontRef fontRef = 0; */
     float extend = 1.0;
     float slant = 0.0;
     float embolden = 0.0;
@@ -1633,7 +1637,7 @@ makefontdef(integer f)
         XeTeXLayoutEngine engine;
 
         engine = (XeTeXLayoutEngine)fontlayoutengine[f];
-        fontRef = getFontRef(engine);
+        /* fontRef = */ getFontRef(engine);
         filename = getFontFilename(engine, &index);
         assert(filename);
 
@@ -1735,7 +1739,7 @@ makefontdef(integer f)
 }
 
 int
-applymapping(void* pCnv, const uint16_t* txtPtr, int txtLen)
+applymapping(void* pCnv, uint16_t* txtPtr, int txtLen)
 {
     TECkit_Converter cnv = (TECkit_Converter)pCnv;
     UInt32 inUsed, outUsed;
@@ -1758,7 +1762,7 @@ retry:
 
     switch (status) {
         case kStatus_NoError:
-            txtPtr = (const UniChar*)mappedtext;
+            txtPtr = (UniChar*)mappedtext;
             return outUsed / sizeof(UniChar);
 
         case kStatus_OutputBufferFull:
@@ -1960,9 +1964,9 @@ measure_native_node(void* pNode, int use_glyph_metrics)
 
         XeTeXLayoutEngine engine = (XeTeXLayoutEngine)(fontlayoutengine[f]);
 
-        FixedPoint* locations;
+        FixedPoint* locations = NULL;
         uint16_t* glyphIDs;
-        Fixed* glyphAdvances;
+        Fixed* glyphAdvances = NULL;
         int totalGlyphCount = 0;
 
         /* need to find direction runs within the text, and call layoutChars separately for each */
@@ -2514,7 +2518,7 @@ aatprintfontname(int what, CFDictionaryRef attributes, int param1, int param2)
 void
 printglyphname(integer font, integer gid)
 {
-    char* s;
+    const char* s;
     int len = 0;
 #ifdef XETEX_MAC
     if (fontarea[font] == AAT_FONT_FLAG) {
@@ -2523,7 +2527,7 @@ printglyphname(integer font, integer gid)
 #endif
     if (fontarea[font] == OTGR_FONT_FLAG) {
         XeTeXLayoutEngine engine = (XeTeXLayoutEngine)fontlayoutengine[font];
-        s = (char*)getGlyphName(getFont(engine), gid, &len);
+        s = getGlyphName(getFont(engine), gid, &len);
     } else {
         fprintf(stderr, "\n! Internal error: bad native font flag in `print_glyph_name'\n");
         exit(3);
@@ -2818,7 +2822,7 @@ get_uni_c(UFILE* f)
 }
 
 void
-makeutf16name()
+makeutf16name(void)
 {
     unsigned char* s = nameoffile + 1;
     uint32_t rval;

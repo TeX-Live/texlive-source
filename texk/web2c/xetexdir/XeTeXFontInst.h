@@ -72,7 +72,7 @@ protected:
 
     FT_Face m_ftFace;
     hb_font_t* m_hbFont;
-    const char *m_math;
+    char *m_math;
 
 public:
     XeTeXFontInst(float pointSize, int &status);
@@ -82,9 +82,9 @@ public:
 
     void initialize(const char* pathname, int index, int &status);
 
-    const void *getFontTable(OTTag tableTag) const;
-    const void *getFontTable(FT_Sfnt_Tag tableTag) const;
-    const char *getMathTable();
+    void *getFontTable(OTTag tableTag) const;
+    void *getFontTable(FT_Sfnt_Tag tableTag) const;
+    char *getMathTable();
 
     const char *getFilename(uint32_t* index) const
     {
