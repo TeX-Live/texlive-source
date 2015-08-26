@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-21.13}
+\def\texinfoversion{2015-08-24.13}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -310,7 +310,9 @@
 \def\prevsectiondefs{}
 \def\lastcolordefs{}
 
+
 % Main output routine.
+%
 \chardef\PAGE = 255
 \output = {\onepageout{\pagecontents\PAGE}}
 
@@ -1055,7 +1057,6 @@ where each line of input produces a line of output.}
 % So open here the files we need to have open while reading the input.
 % This makes it possible to make a .fmt file for texinfo.
 \def\setfilename{%
-   \fixbackslash  % Turn off hack to swallow `\input texinfo'.
    \iflinks
      \tryauxfile
      % Open the new aux file.  TeX will close it automatically at exit.
@@ -5013,30 +5014,32 @@ end
 % These macros are used by the sorted index file itself.
 % Change them to control the appearance of the index.
 
+{\catcode`\@=0 \catcode`\\=13
+@gdef@usemathbackslash{@def@\{@math{@backslash}}}}
+
 \let\normalhyphen=-
 {\catcode`\/=13 \catcode`\-=13 \catcode`\^=13 \catcode`\~=13 \catcode`\_=13
 \catcode`\|=13 \catcode`\<=13 \catcode`\>=13 \catcode`\+=13 \catcode`\"=13
 \catcode`\$=3
 \gdef\initialfonts{%
-  \usemathbackslash
-  \secfonts
   % Some changes for non-alphabetic characters.  Using the glyphs from the
   % math fonts looks more consistent than the typewriter font used elsewhere
   % for these characters.
+  \usemathbackslash
+  %
   % Can't get bold backslash so don't use bold forward slash
   \catcode`\/=13
-  \def/{{\secrmnotbold \normalslash}}
+  \def/{{\secrmnotbold \normalslash}}%
   \catcode`\-=13
-  \def-{{\normalhyphen\normalhyphen}}
+  \def-{{\normalhyphen\normalhyphen}}%
   \let^=\normalcaret
   \let~=\normaltilde
   \def\_{%
     \leavevmode \kern.07em \vbox{\hrule width.33em height.06ex}\kern .07em }
-  \def|{$\vert$}
-  \def<{$\less$}
-  \def>{$\gtr$}
-  \def+{$\normalplus$}
-  \let"=\normaldoublequote
+  \def|{$\vert$}%
+  \def<{$\less$}%
+  \def>{$\gtr$}%
+  \def+{$\normalplus$}%
 }}
 
 \def\initial{%
@@ -5050,9 +5053,11 @@ end
   \removelastskip
   %
   % We like breaks before the index initials, so insert a bonus.
+  % The glue before the bonus allows a little bit of space at the
+  % bottom of a column to reduce an increase in inter-line spacing.
   \nobreak
   \vskip 0pt plus 3\baselineskip
-  \penalty 0
+  \penalty -300 
   \vskip 0pt plus -3\baselineskip
   %
   % Typeset the initial.  Making this add up to a whole number of
@@ -5062,7 +5067,9 @@ end
   %
   % No shrink because it confuses \balancecolumns.
   \vskip 1.67\baselineskip plus .5\baselineskip
+  \bgroup \secfonts % Initial is the same size as section headings
   \leftline{\secbf #1}%
+  \egroup
   % Do our best not to break after the initial.
   \nobreak
   \vskip .33\baselineskip plus .1\baselineskip
@@ -5326,12 +5333,17 @@ end
   \pagegoal = \vsize
 }
 %
-% Called at the end of the double column material.
+% Only called for the last of the double column material.
 \def\balancecolumns{%
   \setbox0 = \vbox{\unvbox255}% like \box255 but more efficient, see p.120.
   \dimen@ = \ht0
   \advance\dimen@ by \topskip
   \advance\dimen@ by-\baselineskip
+  \ifdim\dimen@<14\baselineskip
+    % Don't split a short final column in two.
+    \global\setbox1 = \copy0
+    \global\setbox3 = \vbox{}%
+  \else
   \divide\dimen@ by 2 % target to split to
   %debug\message{final 2-column material height=\the\ht0, target=\the\dimen@.}%
   \splittopskip = \topskip
@@ -5345,9 +5357,10 @@ end
       \global\advance\dimen@ by 1pt
     \repeat
   }%
+  \fi
   %debug\message{split to \the\dimen@, column heights: \the\ht1, \the\ht3.}%
-  \setbox0=\vbox to\dimen@{\unvbox1}%
-  \setbox2=\vbox to\dimen@{\unvbox3}%
+  \setbox0=\vbox to\dimen@{\unvbox1\vfill}%
+  \setbox2=\vbox to\dimen@{\unvbox3\vfill}%
   %
   \pagesofar
 }
@@ -7464,8 +7477,6 @@ end
   \scanctxt
   \catcode`\\=\active
 }
-
-\def\\{\normalbackslash}%
 
 \def\macrolineargctxt{% used for whole-line arguments without braces
   \scanctxt
@@ -10305,12 +10316,6 @@ directory should work if nowhere else does.}
   % in principle, all other definitions in \tex have to be undone too.
 }
 
-% If a .fmt file is being used, characters that might appear in a file
-% name cannot be active until we have parsed the command line.
-% So turn them off again, and have \everyjob (or @setfilename) turn them on.
-% \otherifyactive is called near the end of this file.
-\def\otherifyactive{\catcode`+=\other \catcode`\_=\other}
-
 % Used sometimes to turn off (effectively) the active characters even after
 % parsing them.
 \def\turnoffactive{%
@@ -10329,30 +10334,27 @@ directory should work if nowhere else does.}
 % \doublebackslash is two of them (for the pdf outlines).
 {\catcode`\\=\other @gdef@realbackslash{\} @gdef@doublebackslash{\\}}
 
-% In texinfo, backslash is an active character; it prints the backslash
+% In Texinfo, backslash is an active character; it prints the backslash
 % in fixed width font.
 \catcode`\\=\active  % @ for escape char from now on.
 
-% The story here is that in math mode, the \char of \backslashcurfont
-% ends up printing the roman \ from the math symbol font (because \char
-% in math mode uses the \mathcode, and plain.tex sets
-% \mathcode`\\="026E).  It seems better for @backslashchar{} to always
-% print a typewriter backslash, hence we use an explicit \mathchar,
+% Print a typewriter backslash.  For math mode, we can't simply use
+% \backslashcurfont: the story here is that in math mode, the \char
+% of \backslashcurfont ends up printing the roman \ from the math symbol
+% font (because \char in math mode uses the \mathcode, and plain.tex
+% sets \mathcode`\\="026E).  Hence we use an explicit \mathchar,
 % which is the decimal equivalent of "715c (class 7, e.g., use \fam;
 % ignored family value; char position "5C).  We can't use " for the
 % usual hex value because it has already been made active.
-@def@normalbackslash{{@tt @ifmmode @mathchar29020 @else @backslashcurfont @fi}}
-@let@backslashchar = @normalbackslash % @backslashchar{} is for user documents.
 
-% On startup, @fixbackslash assigns:
-%  @let \ = @normalbackslash
+@def@ttbackslash{{@tt @ifmmode @mathchar29020 @else @backslashcurfont @fi}}
+@let@backslashchar = @ttbackslash % @backslashchar{} is for user documents.
+
 % \rawbackslash defines an active \ to do \backslashcurfont.
 % \otherbackslash defines an active \ to be a literal `\' character with
 % catcode other.  We switch back and forth between these.
 @gdef@rawbackslash{@let\=@backslashcurfont}
 @gdef@otherbackslash{@let\=@realbackslash}
-
-@gdef@usemathbackslash{@def@backslashcurfont{@math{@backslash}}}
 
 % Same as @turnoffactive except outputs \ as {\tt\char`\\} instead of
 % the literal character `\'.  Also revert - to its normal character, in
@@ -10367,39 +10369,52 @@ directory should work if nowhere else does.}
    @let+=@normalplus
    @let<=@normalless
    @let>=@normalgreater
-   @let\=@normalbackslash
    @let^=@normalcaret
    @let_=@normalunderscore
    @let|=@normalverticalbar
    @let~=@normaltilde
+   @let\=@ttbackslash
    @markupsetuplqdefault
    @markupsetuprqdefault
    @unsepspaces
  }
 }
 
-% Make _ and + \other characters, temporarily.
-% This is canceled by @fixbackslash.
-@otherifyactive
+% If a .fmt file is being used, characters that might appear in a file
+% name cannot be active until we have parsed the command line.
+% So turn them off again, and have @fixbackslash turn them back on.
+@catcode`+=@other @catcode`@_=@other
 
+% \enablebackslashhack - allow file to begin `\input texinfo'
+%
 % If a .fmt file is being used, we don't want the `\input texinfo' to show up.
 % That is what \eatinput is for; after that, the `\' should revert to printing
 % a backslash.
-%
-@gdef@eatinput input texinfo{@fixbackslash}
-@global@let\ = @eatinput
+% If the file did not have a `\input texinfo', then it is turned off after
+% the first line; otherwise the first `\' in the file would cause an error.
+% This is used on the very last line of this file, texinfo.tex.
+{
+@catcode`@^=7
+@catcode`@^^M=13@gdef@enablebackslashhack{%
+  @global@let\ = @eatinput%
+  @catcode`@^^M=13%
+  @def ^^M{@let^^M@secondlinenl}%
+  @gdef @secondlinenl{@let^^M@thirdlinenl}%
+  @gdef @thirdlinenl{@fixbackslash}%
+}}
 
-% On the other hand, perhaps the file did not have a `\input texinfo'. Then
-% the first `\' in the file would cause an error. This macro tries to fix
-% that, assuming it is called before the first `\' could plausibly occur.
-% Also turn back on active characters that might appear in the input
-% file name, in case not using a pre-dumped format.
-%
+{@catcode`@^=7 @catcode`@^^M=13%
+@gdef@eatinput input texinfo#1^^M{@fixbackslash}}
+
 @gdef@fixbackslash{%
-  @ifx\@eatinput @let\ = @normalbackslash @fi
+  @ifx\@eatinput @let\ = @ttbackslash @fi
+  @catcode13=5 % regular end of line
+  % Also turn back on active characters that might appear in the input
+  % file name, in case not using a pre-dumped format.
   @catcode`+=@active
   @catcode`@_=@active
 }
+
 
 % Say @foo, not \foo, in error messages.
 @escapechar = `@@
@@ -10440,3 +10455,4 @@ directory should work if nowhere else does.}
 @ignore
    arch-tag: e1b36e32-c96e-4135-a41a-0b2efa2ea115
 @end ignore
+@enablebackslashhack
