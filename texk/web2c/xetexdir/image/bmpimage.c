@@ -104,10 +104,10 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
 {
   unsigned char  buf[DIB_HEADER_SIZE_MAX+4];
   unsigned char *p;
-  long offset, fsize, hsize, compression;
+  long offset, hsize;
   long psize; /* Bytes per palette color: 3 for OS2, 4 for Win */
   unsigned short bit_count; /* Bits per pix */
-  int  num_palette, flip;
+  int  num_palette;
   unsigned long biXPelsPerMeter, biYPelsPerMeter;
 
   p = buf;
@@ -128,7 +128,7 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
 		      ((b)[2] << 16) + ((b)[3] << 24))
 #define USHORT_LE(b) ((b)[0] + ((b)[1] << 8))
 
-  fsize  = ULONG_LE(p); p += 4;
+  /* ignore fsize */ p += 4;
   if (ULONG_LE(p) != 0) {
     WARN("Not a BMP file???");
     return -1;
@@ -142,7 +142,6 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
     WARN("Could not read BMP file header...");
     return -1;
   }
-  flip = 1;
   if (hsize == DIB_CORE_HEADER_SIZE) {
     info->width  = USHORT_LE(p); p += 2;
     info->height = USHORT_LE(p); p += 2;
@@ -154,7 +153,6 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
     }
     p += 2;
     bit_count   = USHORT_LE(p); p += 2;
-    compression = DIB_COMPRESS_NONE;
     psize = 3;
   } else if (hsize == DIB_INFO_HEADER_SIZE ||
              hsize == DIB_INFO_HEADER_SIZE2 ||
@@ -168,7 +166,7 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
     }
     p += 2;
     bit_count   = USHORT_LE(p); p += 2;
-    compression = ULONG_LE(p);  p += 4;
+    /* ignore compression */ p += 4;
     /* ignore biSizeImage */ p += 4;
     biXPelsPerMeter = ULONG_LE(p); p += 4;
     biYPelsPerMeter = ULONG_LE(p); p += 4;
@@ -176,7 +174,6 @@ bmp_scan_file(struct bmp_info *info, FILE *fp)
     info->ydpi = biYPelsPerMeter * 0.0254;
     if (info->height < 0) {
       info->height = -info->height;
-      flip = 0;
     }
     psize = 4;
   } else {

@@ -1,5 +1,10 @@
 2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* image/bmpimage.c, image/pngimage.c: Drop set but unused vars.
+	* image/mfileio.c: ANSI C function definition.
+
+2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* am/xetex.am (libxetex_a_CFLAGS): Enable gcc warnings.
 
 	* XeTeX_ext.[ch], XeTeXFontInst{cpp,h}, XeTeXFontMgr.cpp,
