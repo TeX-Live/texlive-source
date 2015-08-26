@@ -119,7 +119,7 @@ png_scan_file (struct png_info *info, FILE *png_file)
   /* Libpng stuff */
   png_structp png_ptr;
   png_infop   png_info_ptr;
-  png_byte    bpc, color_type;
+  png_byte    bpc;
   png_uint_32 width, height;
   
   rewind (png_file);
@@ -137,7 +137,6 @@ png_scan_file (struct png_info *info, FILE *png_file)
 
   /* Read PNG info-header and get some info. */
   png_read_info(png_ptr, png_info_ptr);
-  color_type = png_get_color_type  (png_ptr, png_info_ptr);
   width      = png_get_image_width (png_ptr, png_info_ptr);
   height     = png_get_image_height(png_ptr, png_info_ptr);
   bpc        = png_get_bit_depth   (png_ptr, png_info_ptr);
