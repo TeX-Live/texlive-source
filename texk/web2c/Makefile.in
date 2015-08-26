@@ -3623,7 +3623,7 @@ xetex_ch_srcs = \
 	tex-binpool.ch
 
 libxetex_a_CPPFLAGS = $(xetex_cppflags)
-libxetex_a_CFLAGS = # $(WARNING_CFLAGS)
+libxetex_a_CFLAGS = $(WARNING_CFLAGS)
 libxetex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libxetex_a_OBJCXXFLAGS = # $(WARNING_OBJCXXFLAGS)
 libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/XeTeXFontInst.cpp \

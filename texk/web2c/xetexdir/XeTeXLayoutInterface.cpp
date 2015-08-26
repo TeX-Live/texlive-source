@@ -172,7 +172,7 @@ getDesignSize(XeTeXFont font)
     return XeTeXFontMgr::GetFontManager()->getDesignSize(font);
 }
 
-const char*
+char*
 getFontFilename(XeTeXLayoutEngine engine, uint32_t* index)
 {
     return xstrdup(engine->font->getFilename(index));

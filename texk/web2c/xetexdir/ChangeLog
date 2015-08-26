@@ -1,3 +1,12 @@
+2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/xetex.am (libxetex_a_CFLAGS): Enable gcc warnings.
+
+	* XeTeX_ext.[ch], XeTeXFontInst{cpp,h}, XeTeXFontMgr.cpp,
+	XeTeXLayoutInterface.{cpp,h}, XeTeX_pic.c:
+	ANSI C prototypes, unconstify, drop (set but) unused variable,
+	remove useless or misleading casts.
+
 2015-08-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* XeTeXFontInst.cpp: Support pair kerning for native type1 fonts.
