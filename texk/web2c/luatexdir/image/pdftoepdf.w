@@ -1,7 +1,7 @@
 % pdftoepdf.w
 %
 % Copyright 1996-2006 Han The Thanh <thanh@@pdftex.org>
-% Copyright 2006-2012 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2015 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -691,14 +691,14 @@ void write_epdf(PDF pdf, image_dict * idict)
     // Now all relevant parts of the Page dictionary are copied:
 
     // Metadata validity check (as a stream it must be indirect)
-    pageDict->lookupNF((char *) "Metadata", &obj1);
+    pageDict->lookupNF("Metadata", &obj1);
     if (!obj1.isNull() && !obj1.isRef())
         luatex_warn("PDF inclusion: /Metadata must be indirect object");
     obj1.free();
 
     // copy selected items in Page dictionary
     for (i = 0; pagedictkeys[i] != NULL; i++) {
-        pageDict->lookupNF((char *) pagedictkeys[i], &obj1);
+        pageDict->lookupNF(pagedictkeys[i], &obj1);
         if (!obj1.isNull()) {
             pdf_add_name(pdf, pagedictkeys[i]);
             copyObject(pdf, pdf_doc, &obj1);    // preserves indirection
@@ -710,20 +710,20 @@ void write_epdf(PDF pdf, image_dict * idict)
     // try to inherit the Resources from the Pages tree of the embedded
     // PDF file, climbing up the tree until the Resources are found.
     // (This fixes a problem with Scribus 1.3.3.14.)
-    pageDict->lookupNF((char *) "Resources", &obj1);
+    pageDict->lookupNF("Resources", &obj1);
     if (obj1.isNull()) {
         op1 = &pagesobj1;
         op2 = &pagesobj2;
-        pageDict->lookup((char *) "Parent", op1);
+        pageDict->lookup("Parent", op1);
         while (op1->isDict()) {
             obj1.free();
-            op1->dictLookupNF((char *) "Resources", &obj1);
+            op1->dictLookupNF("Resources", &obj1);
             if (!obj1.isNull()) {
-                pdf_add_name(pdf, (const char *) "Resources");
+                pdf_add_name(pdf, "Resources");
                 copyObject(pdf, pdf_doc, &obj1);
                 break;
             }
-            op1->dictLookup((char *) "Parent", op2);
+            op1->dictLookup("Parent", op2);
             optmp = op1;
             op1 = op2;
             op2 = optmp;
@@ -747,24 +747,24 @@ void write_epdf(PDF pdf, image_dict * idict)
 
         // Variant B: copy stream without recompressing
         //
-        contents.streamGetDict()->lookup((char *) "F", &obj1);
+        contents.streamGetDict()->lookup("F", &obj1);
         if (!obj1.isNull()) {
             luatex_fail("PDF inclusion: Unsupported external stream");
         }
         obj1.free();
-        contents.streamGetDict()->lookup((char *) "Length", &obj1);
+        contents.streamGetDict()->lookup("Length", &obj1);
         assert(!obj1.isNull());
-        pdf_add_name(pdf, (const char *) "Length");
+        pdf_add_name(pdf, "Length");
         copyObject(pdf, pdf_doc, &obj1);
         obj1.free();
-        contents.streamGetDict()->lookup((char *) "Filter", &obj1);
+        contents.streamGetDict()->lookup("Filter", &obj1);
         if (!obj1.isNull()) {
-            pdf_add_name(pdf, (const char *) "Filter");
+            pdf_add_name(pdf, "Filter");
             copyObject(pdf, pdf_doc, &obj1);
             obj1.free();
-            contents.streamGetDict()->lookup((char *) "DecodeParms", &obj1);
+            contents.streamGetDict()->lookup("DecodeParms", &obj1);
             if (!obj1.isNull()) {
-                pdf_add_name(pdf, (const char *) "DecodeParms");
+                pdf_add_name(pdf, "DecodeParms");
                 copyObject(pdf, pdf_doc, &obj1);
             }
         }

@@ -980,7 +980,7 @@ static int m_Dict_lookup(lua_State * L)
     s = luaL_checkstring(L, 2);
     uout = new_Object_userdata(L);
     uout->d = new Object();
-    ((Dict *) uin->d)->lookup((char *) s, (Object *) uout->d);
+    ((Dict *) uin->d)->lookup(s, (Object *) uout->d);
     uout->atype = ALLOC_LEPDF;
     uout->pc = uin->pc;
     uout->pd = uin->pd;
@@ -997,7 +997,7 @@ static int m_Dict_lookupNF(lua_State * L)
     s = luaL_checkstring(L, 2);
     uout = new_Object_userdata(L);
     uout->d = new Object();
-    ((Dict *) uin->d)->lookupNF((char *) s, (Object *) uout->d);
+    ((Dict *) uin->d)->lookupNF(s, (Object *) uout->d);
     uout->atype = ALLOC_LEPDF;
     uout->pc = uin->pc;
     uout->pd = uin->pd;
@@ -1858,7 +1858,7 @@ static int m_Object_dictSet(lua_State * L)
         pdfdoc_changed_error(L);
     if (!((Object *) uin->d)->isDict())
         luaL_error(L, "Object is not a Dict");
-    ((Object *) uin->d)->dictSet((char *) s, (Object *) uobj->d);
+    ((Object *) uin->d)->dictSet(s, (Object *) uobj->d);
     return 0;
 }
 
@@ -1873,7 +1873,7 @@ static int m_Object_dictLookup(lua_State * L)
     if (((Object *) uin->d)->isDict()) {
         uout = new_Object_userdata(L);
         uout->d = new Object();
-        ((Object *) uin->d)->dictLookup((char *) s, (Object *) uout->d);
+        ((Object *) uin->d)->dictLookup(s, (Object *) uout->d);
         uout->atype = ALLOC_LEPDF;
         uout->pc = uin->pc;
         uout->pd = uin->pd;
@@ -1893,7 +1893,7 @@ static int m_Object_dictLookupNF(lua_State * L)
     if (((Object *) uin->d)->isDict()) {
         uout = new_Object_userdata(L);
         uout->d = new Object();
-        ((Object *) uin->d)->dictLookupNF((char *) s, (Object *) uout->d);
+        ((Object *) uin->d)->dictLookupNF(s, (Object *) uout->d);
         uout->atype = ALLOC_LEPDF;
         uout->pc = uin->pc;
         uout->pd = uin->pd;
@@ -3241,7 +3241,7 @@ static int m_StructTreeRoot_getChild(lua_State * L)
 
 static int m_StructTreeRoot_appendChild(lua_State * L)
 {
-    udstruct *uin, *uin_child, *uout;
+    udstruct *uin, *uin_child;
     StructElement *child ;
     StructTreeRoot *root ; 
     uin = (udstruct *) luaL_checkudata(L, 1, M_StructTreeRoot);
