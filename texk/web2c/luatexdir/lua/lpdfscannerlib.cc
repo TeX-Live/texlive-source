@@ -73,7 +73,7 @@ typedef enum {
 typedef struct Token {
   pdf_token_type type;
   double value;
-  const char *string;
+  char *string;
 } Token;
 
 typedef struct ObjectList {
@@ -165,7 +165,7 @@ static scannerdata *scanner_check (lua_State *L, int index)
 static void free_token (Token *token) 
 {
   if (token->string) {
-    free((void *)token->string);
+    free(token->string);
   }
   free(token);
 }

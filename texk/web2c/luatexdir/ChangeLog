@@ -1,3 +1,9 @@
+2015-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/pdftoepdf.w: Drop useless casts to avoid warnings.
+	* lua/lpdfscannerlib.cc: Unconstify Token.string to avoid warning.
+	* lua/lepdflib.cc: Drop useless casts to avoid some warnings.
+
 2015-08-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex/mlist.w: Sync with the trunk.
