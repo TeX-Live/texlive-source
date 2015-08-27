@@ -3114,7 +3114,7 @@ euptex_ch_srcs = \
 #
 euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test
 libpdftex_a_CPPFLAGS = $(REGEX_INCLUDES) $(pdftex_cppflags)
-libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
+libpdftex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/avlstuff.c pdftexdir/avlstuff.h pdftexdir/epdf.c \
 	pdftexdir/image.h pdftexdir/mapfile.c pdftexdir/pdftex.h \
@@ -3178,7 +3178,7 @@ ttf2afm_tests = pdftexdir/ttf2afm.test
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftosrc_SOURCES = dummy.cxx
 pdftosrc_CPPFLAGS = $(pdftex_cppflags)
-pdftosrc_CXXFLAGS = # $(WARNING_CXXFLAGS)
+pdftosrc_CXXFLAGS = $(WARNING_CXXFLAGS)
 pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
 pdftosrc_LDADD = $(pdftex_ldadd) $(LDADD)
 pdftosrc_DEPENDENCIES = $(pdftex_dependencies)

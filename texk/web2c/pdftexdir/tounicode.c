@@ -273,8 +273,8 @@ static void set_glyph_unicode(const char *s, const char* tfmname,
     }
 
     /* lookup for glyph name in the main database */
-    tmp.name = (char *)s; /* this is okay since we're not calling
-                             destroy_glyph_unicode_entry on this */
+    snprintf(buf2, SMALL_BUF_SIZE, "%s", s);
+    tmp.name = buf2;
     tmp.code = UNI_UNDEF;
     ptmp = (glyph_unicode_entry *) avl_find(glyph_unicode_tree, &tmp);
     if (ptmp != NULL) {

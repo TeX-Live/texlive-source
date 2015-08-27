@@ -1,3 +1,9 @@
+2015-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libpdftex.am, am/pdftosrc.am: Enable g++ warnings.
+	* pdftoepdf.cc, pdftosrc.cc: Avoid g++ warnings.
+	* tounicode.c: Avoid gcc warnings.
+
 2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptexmac.h: Avoid possible integer overflow.
