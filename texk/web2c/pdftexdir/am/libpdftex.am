@@ -1,6 +1,6 @@
 ## texk/web2c/pdftexdir/am/libpdftex.am: Makefile fragment for libpdftex.
 ##
-## Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libpdftex
@@ -8,7 +8,7 @@
 EXTRA_LIBRARIES += libpdftex.a
 
 libpdftex_a_CPPFLAGS = $(REGEX_INCLUDES) $(pdftex_cppflags)
-libpdftex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
+libpdftex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 libpdftex_a_SOURCES = \
 	pdftexdir/avl.c \

@@ -14,7 +14,7 @@ EXTRA_PROGRAMS += pdftosrc
 nodist_EXTRA_pdftosrc_SOURCES = dummy.cxx
 
 pdftosrc_CPPFLAGS = $(pdftex_cppflags)
-pdftosrc_CXXFLAGS = # $(WARNING_CXXFLAGS)
+pdftosrc_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 pdftosrc_SOURCES = pdftexdir/pdftosrc.cc
 

@@ -275,6 +275,7 @@ static int addInObj(InObjType type, Ref ref, fd_entry * fd, int e)
     return n->num;
 }
 
+#if 0 /* unusewd */
 static int getNewObjectNumber(Ref ref)
 {
     InObj *p;
@@ -294,6 +295,7 @@ static int getNewObjectNumber(Ref ref)
     return -60000;
 #endif
 }
+#endif
 
 static void copyObject(Object *);
 
@@ -405,22 +407,22 @@ static void copyFont(char *tag, Object * fontRef)
     // Only handle included Type1 (and Type1C) fonts; anything else will be copied.
     // Type1C fonts are replaced by Type1 fonts, if REPLACE_TYPE1C is true.
     if (!fixedinclusioncopyfont && fontRef->fetch(xref, &fontdict)->isDict()
-        && fontdict->dictLookup((char *)"Subtype", &subtype)->isName()
+        && fontdict->dictLookup("Subtype", &subtype)->isName()
         && !strcmp(subtype->getName(), "Type1")
-        && fontdict->dictLookup((char *)"BaseFont", &basefont)->isName()
-        && fontdict->dictLookupNF((char *)"FontDescriptor", &fontdescRef)->isRef()
+        && fontdict->dictLookup("BaseFont", &basefont)->isName()
+        && fontdict->dictLookupNF("FontDescriptor", &fontdescRef)->isRef()
         && fontdescRef->fetch(xref, &fontdesc)->isDict()
-        && (fontdesc->dictLookup((char *)"FontFile", &fontfile)->isStream()
+        && (fontdesc->dictLookup("FontFile", &fontfile)->isStream()
             || (REPLACE_TYPE1C
-                && fontdesc->dictLookup((char *)"FontFile3", &fontfile)->isStream()
-                && fontfile->streamGetDict()->lookup((char *)"Subtype",
+                && fontdesc->dictLookup("FontFile3", &fontfile)->isStream()
+                && fontfile->streamGetDict()->lookup("Subtype",
                                                      &ffsubtype)->isName()
                 && !strcmp(ffsubtype->getName(), "Type1C")))
         && (fontmap = lookup_fontmap(basefont->getName())) != NULL) {
         // copy the value of /StemV
-        fontdesc->dictLookup((char *)"StemV", &stemV);
+        fontdesc->dictLookup("StemV", &stemV);
         fd = epdf_create_fontdescriptor(fontmap, stemV->getInt());
-        if (fontdesc->dictLookup((char *)"CharSet", &charset) &&
+        if (fontdesc->dictLookup("CharSet", &charset) &&
             charset->isString() && is_subsetable(fontmap))
             epdf_mark_glyphs(fd, charset->getString()->getCString());
         else
@@ -924,13 +926,13 @@ void write_epdf(void)
     pdf_puts(stripzeros(s));
 
     // Metadata validity check (as a stream it must be indirect)
-    pageDict->lookupNF((char *)"Metadata", &dictObj);
+    pageDict->lookupNF("Metadata", &dictObj);
     if (!dictObj->isNull() && !dictObj->isRef())
         pdftex_warn("PDF inclusion: /Metadata must be indirect object");
 
     // copy selected items in Page dictionary except Resources & Group
     for (i = 0; pageDictKeys[i] != NULL; i++) {
-        pageDict->lookupNF((char *)pageDictKeys[i], &dictObj);
+        pageDict->lookupNF(pageDictKeys[i], &dictObj);
         if (!dictObj->isNull()) {
             pdf_newline();
             pdf_printf("/%s ", pageDictKeys[i]);
@@ -939,7 +941,7 @@ void write_epdf(void)
     } 
 
     // handle page group
-    pageDict->lookupNF((char *)"Group", &dictObj);
+    pageDict->lookupNF("Group", &dictObj);
     if (!dictObj->isNull()) {
         if (pdfpagegroupval == 0) { 
             // another pdf with page group was included earlier on the
@@ -954,12 +956,12 @@ void write_epdf(void)
             copyObject(&dictObj);
         } else {
             // write Group dict as a separate object, since the Page dict also refers to it
-            pageDict->lookup((char *) "Group", &dictObj);
+            pageDict->lookup("Group", &dictObj);
             if (!dictObj->isDict())
                 pdftex_fail("PDF inclusion: /Group dict missing");
             writeSepGroup = true;
             initDictFromDict(groupDict, page->getGroup());
-            pdf_printf("/Group %d 0 R\n", pdfpagegroupval);
+            pdf_printf("/Group %ld 0 R\n", (long)pdfpagegroupval);
         }
     }
 
@@ -1003,21 +1005,21 @@ void write_epdf(void)
 
         // Variant B: copy stream without recompressing
         //
-        contents->streamGetDict()->lookup((char *)"F", &obj1);
+        contents->streamGetDict()->lookup("F", &obj1);
         if (!obj1->isNull()) {
             pdftex_fail("PDF inclusion: Unsupported external stream");
         }
-        contents->streamGetDict()->lookup((char *)"Length", &obj1);
+        contents->streamGetDict()->lookup("Length", &obj1);
         assert(!obj1->isNull());
         pdf_puts("/Length ");
         copyObject(&obj1);
         pdf_puts("\n");
-        contents->streamGetDict()->lookup((char *)"Filter", &obj1);
+        contents->streamGetDict()->lookup("Filter", &obj1);
         if (!obj1->isNull()) {
             pdf_puts("/Filter ");
             copyObject(&obj1);
             pdf_puts("\n");
-            contents->streamGetDict()->lookup((char *)"DecodeParms", &obj1);
+            contents->streamGetDict()->lookup("DecodeParms", &obj1);
             if (!obj1->isNull()) {
                 pdf_puts("/DecodeParms ");
                 copyObject(&obj1);

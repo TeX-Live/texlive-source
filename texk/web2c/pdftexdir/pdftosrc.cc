@@ -88,19 +88,20 @@ int main(int argc, char *argv[])
     xref = doc->getXRef();
     catalogDict.initNull();
     xref->getCatalog(&catalogDict);
-    if (!catalogDict.isDict((char *)"Catalog")) {
+    if (!catalogDict.isDict("Catalog")) {
         fprintf(stderr, "No Catalog found\n");
         exit(1);
     }
     srcStream.initNull();
     if (objnum == 0) {
-        catalogDict.dictLookup((char *)"SourceObject", &srcStream);
-        if (!srcStream.isStream((char *)"SourceFile")) {
+        catalogDict.dictLookup("SourceObject", &srcStream);
+        static char const_SourceFile[] = "SourceFile";
+        if (!srcStream.isStream(const_SourceFile)) {
             fprintf(stderr, "No SourceObject found\n");
             exit(1);
         }
         srcName.initNull();
-        srcStream.getStream()->getDict()->lookup((char *)"SourceName", &srcName);
+        srcStream.getStream()->getDict()->lookup("SourceName", &srcName);
         if (!srcName.isString()) {
             fprintf(stderr, "No SourceName found\n");
             exit(1);
