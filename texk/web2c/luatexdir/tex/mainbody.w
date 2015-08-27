@@ -214,6 +214,7 @@ int nest_size;                  /* maximum number of semantic levels simultaneou
 int save_size;                  /* space for saving values outside of current group; must be
                                    at most |max_halfword| */
 int expand_depth;               /* limits recursive calls of the |expand| procedure */
+int parsefirstlinep;            /* parse the first line for options */
 int filelineerrorstylep;        /* format messages as file:line:error */
 int haltonerrorp;               /* stop at first error */
 boolean quoted_filename;        /* current filename is quoted */
