@@ -524,10 +524,6 @@ void log_banner(const char *v, int ver)
         wlog_cr();
         fprintf(log_file, " file:line:error style messages enabled.");
     }
-    if (parsefirstlinep) {
-        wlog_cr();
-        fprintf(log_file, " %%&-line parsing enabled.");
-    }
 }
 
 @ @c

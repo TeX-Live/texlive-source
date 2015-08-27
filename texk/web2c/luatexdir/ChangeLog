@@ -2,6 +2,9 @@
 
 	* tex/mlist.w: Sync with the trunk.
 	See http://tug.org/pipermail/luatex/2015-August/005319.html
+	* tex/mainbody.h, tex/mainbody.w, tex/printing.w, lua/luainit.w:
+	Remove the option --[no-]parse-first-line, since it does not
+	exist in lua(jit)tex.
 
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

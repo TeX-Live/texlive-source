@@ -136,7 +136,6 @@ extern int param_size;
 extern int nest_size;
 extern int save_size;
 extern int expand_depth;
-extern int parsefirstlinep;
 extern int filelineerrorstylep;
 extern int haltonerrorp;
 extern boolean quoted_filename;
