@@ -129,7 +129,7 @@ static int l_open_PDFDoc(lua_State * L)
     udstruct *uout;
     PdfDocument *d;
     file_path = luaL_checkstring(L, 1); // path
-    d = refPdfDocument((char *) file_path, FE_RETURN_NULL);
+    d = refPdfDocument(file_path, FE_RETURN_NULL);
     if (d == NULL)
         lua_pushnil(L);
     else {
@@ -525,7 +525,7 @@ static int m_##in##_##function(lua_State * L)                  \
     if (uin->pd != NULL && uin->pd->pc != uin->pc)             \
         pdfdoc_changed_error(L);                               \
     s = luaL_checkstring(L, 2);                                \
-    if (((in *) uin->d)->function((char *) s))                 \
+    if (((in *) uin->d)->function(s))                          \
         lua_pushboolean(L, 1);                                 \
     else                                                       \
         lua_pushboolean(L, 0);                                 \
@@ -937,7 +937,7 @@ static int m_Dict_add(lua_State * L)
     uin = (udstruct *) luaL_checkudata(L, 1, M_Dict);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
-    s = copyString((char *) luaL_checkstring(L, 2));
+    s = copyString(luaL_checkstring(L, 2));
     uobj = (udstruct *) luaL_checkudata(L, 3, M_Object);
     ((Dict *) uin->d)->add(s, ((Object *) uobj->d));
     return 0;
@@ -945,12 +945,12 @@ static int m_Dict_add(lua_State * L)
 
 static int m_Dict_set(lua_State * L)
 {
-    char *s;
+    const char *s;
     udstruct *uin, *uobj;
     uin = (udstruct *) luaL_checkudata(L, 1, M_Dict);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
-    s = (char *) luaL_checkstring(L, 2);
+    s = luaL_checkstring(L, 2);
     uobj = (udstruct *) luaL_checkudata(L, 3, M_Object);
     ((Dict *) uin->d)->set(s, ((Object *) uobj->d));
     return 0;
@@ -958,12 +958,12 @@ static int m_Dict_set(lua_State * L)
 
 static int m_Dict_remove(lua_State * L)
 {
-    char *s;
+    const char *s;
     udstruct *uin;
     uin = (udstruct *) luaL_checkudata(L, 1, M_Dict);
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
-    s = (char *) luaL_checkstring(L, 2);
+    s = luaL_checkstring(L, 2);
     ((Dict *) uin->d)->remove(s);
     return 0;
 }
@@ -1294,7 +1294,7 @@ static const struct luaL_Reg Links_m[] = {
 // Object
 
 // Special type checking.
-#define m_Object_isType(function)                                          \
+#define m_Object_isType(function, cast)                                    \
 static int m_Object_##function(lua_State * L)                              \
 {                                                                          \
     udstruct *uin;                                                         \
@@ -1303,7 +1303,7 @@ static int m_Object_##function(lua_State * L)                              \
         pdfdoc_changed_error(L);                                           \
     if (lua_gettop(L) >= 2) {                                              \
         if (lua_isstring(L, 2)                                             \
-            && ((Object *) uin->d)->function((char *) lua_tostring(L, 2))) \
+            && ((Object *) uin->d)->function(cast lua_tostring(L, 2)))     \
             lua_pushboolean(L, 1);                                         \
         else                                                               \
             lua_pushboolean(L, 0);                                         \
@@ -1377,7 +1377,7 @@ static int m_Object_initName(lua_State * L)
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
     s = luaL_checkstring(L, 2);
-    ((Object *) uin->d)->initName((char *) s);
+    ((Object *) uin->d)->initName(s);
     return 0;
 }
 
@@ -1528,13 +1528,13 @@ m_poppler_get_BOOL(Object, isInt);
 m_poppler_get_BOOL(Object, isReal);
 m_poppler_get_BOOL(Object, isNum);
 m_poppler_get_BOOL(Object, isString);
-m_Object_isType(isName);
+m_Object_isType(isName, );
 m_poppler_get_BOOL(Object, isNull);
 m_poppler_get_BOOL(Object, isArray);
-m_Object_isType(isDict);
-m_Object_isType(isStream);
+m_Object_isType(isDict, );
+m_Object_isType(isStream, (char *));
 m_poppler_get_BOOL(Object, isRef);
-m_Object_isType(isCmd);
+m_Object_isType(isCmd, );
 m_poppler_get_BOOL(Object, isError);
 m_poppler_get_BOOL(Object, isEOF);
 m_poppler_get_BOOL(Object, isNone);

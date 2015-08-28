@@ -46,20 +46,21 @@ static int CompPdfDocument(const void *pa, const void *pb, void * /*p */ )
 
 // Returns pointer to PdfDocument structure for PDF file.
 
-static PdfDocument *findPdfDocument(char *file_path)
+static PdfDocument *findPdfDocument(const char *file_path)
 {
     PdfDocument *pdf_doc, tmp;
     assert(file_path != NULL);
     if (PdfDocumentTree == NULL)
         return NULL;
-    tmp.file_path = file_path;
+    tmp.file_path = xstrdup(file_path);
     pdf_doc = (PdfDocument *) avl_find(PdfDocumentTree, &tmp);
+    free(tmp.file_path);
     return pdf_doc;
 }
 
 #define PDF_CHECKSUM_SIZE 32
 
-static char *get_file_checksum(char *a, file_error_mode fe)
+static char *get_file_checksum(const char *a, file_error_mode fe)
 {
     struct stat finfo;
     char *ck = NULL;
@@ -93,7 +94,7 @@ static char *get_file_checksum(char *a, file_error_mode fe)
 // Creates a new PdfDocument structure if it doesn't exist yet.
 // When fe = FE_RETURN_NULL, the function returns NULL in error case.
 
-PdfDocument *refPdfDocument(char *file_path, file_error_mode fe)
+PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe)
 {
     char *checksum;
     PdfDocument *pdf_doc;

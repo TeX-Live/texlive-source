@@ -3382,8 +3382,8 @@ libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) \
 	$(LUAJIT_DEFINES) -DLuajitTeX
-libluatex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
-libluajittex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
+libluatex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
+libluajittex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 dist_libluatex_a_SOURCES = \
 	luatexdir/lua/lstrlibext.c
 

@@ -194,6 +194,6 @@ struct PdfDocument {
     unsigned int pc;            // counter to track PDFDoc generation or deletion
 };
 
-PdfDocument *refPdfDocument(char *file_path, file_error_mode fe);
+PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe);
 
 #endif                          /* EPDF_H */
