@@ -91,7 +91,7 @@ const_string LUATEX_IHELP[] = {
     "   --output-comment=STRING       use STRING for DVI file comment instead of date (no effect for PDF)",
     "   --output-directory=DIR        use existing DIR as the directory to write files in",
     "   --output-format=FORMAT        use FORMAT for job output; FORMAT is 'dvi' or 'pdf'",
-    "   --[no-]parse-first-line       disable/enable parsing of the first line of the input file",
+    "   --[no-]parse-first-line       ignored",
     "   --progname=STRING             set the program name to STRING",
     "   --recorder                    enable filename recorder",
     "   --safer                       disable easily exploitable lua commands",
