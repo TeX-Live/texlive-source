@@ -1,5 +1,11 @@
 2015-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
+	* am/libluatex.am: Enable g++ warnings.
+	* image/epdf.h, image/pdftoepdf.w, lua/lepdflib.cc: Avoid most
+	g++ warnings.
+
+2015-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
 	* image/pdftoepdf.w: Drop useless casts to avoid warnings.
 	* lua/lpdfscannerlib.cc: Unconstify Token.string to avoid warning.
 	* lua/lepdflib.cc: Drop useless casts to avoid some warnings.
