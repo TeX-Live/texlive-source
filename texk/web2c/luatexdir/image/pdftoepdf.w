@@ -46,15 +46,14 @@ static int CompPdfDocument(const void *pa, const void *pb, void * /*p */ )
 
 // Returns pointer to PdfDocument structure for PDF file.
 
-static PdfDocument *findPdfDocument(const char *file_path)
+static PdfDocument *findPdfDocument(char *file_path)
 {
     PdfDocument *pdf_doc, tmp;
     assert(file_path != NULL);
     if (PdfDocumentTree == NULL)
         return NULL;
-    tmp.file_path = xstrdup(file_path);
+    tmp.file_path = file_path;
     pdf_doc = (PdfDocument *) avl_find(PdfDocumentTree, &tmp);
-    free(tmp.file_path);
     return pdf_doc;
 }
 
@@ -96,7 +95,7 @@ static char *get_file_checksum(const char *a, file_error_mode fe)
 
 PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe)
 {
-    char *checksum;
+    char *checksum, *path_copy;
     PdfDocument *pdf_doc;
     PDFDoc *doc = NULL;
     GooString *docName = NULL;
@@ -106,13 +105,14 @@ PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe)
         return (PdfDocument *) NULL;
     }
     assert(checksum != NULL);
-    if ((pdf_doc = findPdfDocument(file_path)) == NULL) {
+    path_copy = xstrdup(file_path);
+    if ((pdf_doc = findPdfDocument(path_copy)) == NULL) {
 #ifdef DEBUG
         fprintf(stderr, "\nDEBUG: New PdfDocument %s\n", file_path);
 #endif
         new_flag = 1;
         pdf_doc = new PdfDocument;
-        pdf_doc->file_path = xstrdup(file_path);
+        pdf_doc->file_path = path_copy;
         pdf_doc->checksum = checksum;
         pdf_doc->doc = NULL;
         pdf_doc->inObjList = NULL;
@@ -129,6 +129,7 @@ PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe)
             luatex_fail("PDF inclusion: file has changed '%s'", file_path);
         }
         free(checksum);
+        free(path_copy);
     }
     assert(pdf_doc != NULL);
     if (pdf_doc->doc == NULL) {
