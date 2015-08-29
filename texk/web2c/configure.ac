@@ -283,27 +283,6 @@ else
   KPATHSEA_PATHS_H='${top_builddir}/..'
 fi
 AC_SUBST([KPATHSEA_PATHS_H])
-
-# Check of poppler 0.25 or better
-AS_CASE([$with_system_poppler],
-        [yes], [dnl
-KPSE_ADD_FLAGS([poppler])
-AC_LANG_PUSH([C++])
-AC_MSG_CHECKING([for StructTreeRoot.h (poppler 0.25 or better)])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdio.h>
-#include <StructTreeRoot.h>]],
-                                   [[PDFDoc *doc;
-                                     Dict *dict;
-                                     StructTreeRoot root(doc, dict);]])],
-                  [kpse_cv_have_StructTreeRoot_h=yes],
-                  [kpse_cv_have_StructTreeRoot_h=no])
-AC_MSG_RESULT([$kpse_cv_have_StructTreeRoot_h])
-AC_LANG_POP([C++])],
-        [kpse_cv_have_StructTreeRoot_h=yes])
-if test "x$kpse_cv_have_StructTreeRoot_h" = xyes; then
-  AC_DEFINE([HAVE_STRUCTTREEROOT_H], 1,
-            [Define to 1 if you have the <StructTreeRoot.h> header file.])
-fi
 KPSE_RESTORE_FLAGS
 
 dnl Write output here, instead of putting a zillion -D's on the command line.

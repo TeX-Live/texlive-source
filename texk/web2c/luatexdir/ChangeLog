@@ -1,4 +1,9 @@
-2015-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2015-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* image/epdf.h, lua/lepdflib.cc: Drop HAVE_STRUCTTREEROOT_H,
+	we now require poppler 0.30 better.
+	
+2015-08-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libluatex.am: Enable g++ warnings.
 	* image/epdf.h, image/pdftoepdf.w, lua/lepdflib.cc: Avoid most
