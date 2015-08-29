@@ -1,3 +1,8 @@
+2015-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Drop check for <StructTreeRoot.h>, we now
+	require poppler 0.30 better.
+	
 2015-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pltotf.ch, vptovf.ch: Send also real numbers to stderr,

@@ -181,9 +181,6 @@
 /* Define to 1 if you have the `strrchr' function. */
 #undef HAVE_STRRCHR
 
-/* Define to 1 if you have the <StructTreeRoot.h> header file. */
-#undef HAVE_STRUCTTREEROOT_H
-
 /* Define to 1 if `st_mtim' is a member of `struct stat'. */
 #undef HAVE_STRUCT_STAT_ST_MTIM
 
