@@ -1826,7 +1826,7 @@ static int m_Object_dictAdd(lua_State * L)
         pdfdoc_changed_error(L);
     if (!((Object *) uin->d)->isDict())
         luaL_error(L, "Object is not a Dict");
-    ((Object *) uin->d)->dictAdd((char *) s, (Object *) uobj->d);
+    ((Object *) uin->d)->dictAdd(copyString(s), (Object *) uobj->d);
     return 0;
 }
 
