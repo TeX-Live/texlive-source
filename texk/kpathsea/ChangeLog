@@ -1,3 +1,7 @@
+2015-00-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpsewhich.c (USGAE): Say "list shown by -help-formats".
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
