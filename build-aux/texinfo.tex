@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-25.18}
+\def\texinfoversion{2015-08-27.20}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4707,7 +4707,7 @@ end
   \def\L{L}%
   \def\OE{OE}%
   \def\O{O}%
-  \def\TH{ZZZ}%
+  \def\TH{TH}%
   \def\aa{aa}%
   \def\ae{ae}%
   \def\dh{dzz}%
@@ -4719,7 +4719,7 @@ end
   \def\o{o}%
   \def\questiondown{?}%
   \def\ss{ss}%
-  \def\th{zzz}%
+  \def\th{th}%
   %
   \def\LaTeX{LaTeX}%
   \def\TeX{TeX}%
@@ -4826,7 +4826,7 @@ end
 }
 
 % Definition for writing index entry text.
-\def\sortas#1{\eatspaces}%
+\def\sortas#1{\ignorespaces}%
 
 % Definition for writing index entry sort key.  @sortas{} must occur at
 % the beginning of the index entry, like
@@ -8117,9 +8117,12 @@ end
 % node name, #4 the name of the Info file, #5 the name of the printed
 % manual.  All but the node name can be omitted.
 %
-\def\pxref#1{\putwordsee{} \xrefX[#1,,,,,,,]}
-\def\xref#1{\putwordSee{} \xrefX[#1,,,,,,,]}
-\def\ref#1{\xrefX[#1,,,,,,,]}
+\def\pxref{\putwordsee{} \xrefXX}
+\def\xref{\putwordSee{} \xrefXX}
+\def\ref{\xrefXX}
+
+\def\xrefXX#1{\def\xrefXXarg{#1}\futurelet\tokenafterxref\xrefXXX}
+\def\xrefXXX{\expandafter\xrefX\expandafter[\xrefXXarg,,,,,,,]}
 %
 \newbox\toprefbox
 \newbox\printedrefnamebox
@@ -8263,6 +8266,12 @@ end
       %
       % output the `page 3'.
       \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
+           \ifx,\tokenafterxref
+      \else\ifx.\tokenafterxref
+      \else\ifx;\tokenafterxref
+      \else\ifx)\tokenafterxref
+      \else,% add a , if xref not followed by punctuation
+      \fi\fi\fi\fi
     \fi\fi
   \fi
   \endlink
@@ -10403,11 +10412,13 @@ directory should work if nowhere else does.}
 % If the file did not have a `\input texinfo', then it is turned off after
 % the first line; otherwise the first `\' in the file would cause an error.
 % This is used on the very last line of this file, texinfo.tex.
+% We also use @c to call @fixbackslash, in case ends of lines are hidden.
 {
 @catcode`@^=7
 @catcode`@^^M=13@gdef@enablebackslashhack{%
   @global@let\ = @eatinput%
   @catcode`@^^M=13%
+  @def@c{@fixbackslash@c}%
   @def ^^M{@let^^M@secondlinenl}%
   @gdef @secondlinenl{@let^^M@thirdlinenl}%
   @gdef @thirdlinenl{@fixbackslash}%
@@ -10419,6 +10430,7 @@ directory should work if nowhere else does.}
 @gdef@fixbackslash{%
   @ifx\@eatinput @let\ = @ttbackslash @fi
   @catcode13=5 % regular end of line
+  @let@c=@texinfoc
   % Also turn back on active characters that might appear in the input
   % file name, in case not using a pre-dumped format.
   @catcode`+=@active
