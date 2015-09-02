@@ -1279,8 +1279,16 @@ static const struct luaL_Reg Links_m[] = {
 //**********************************************************************
 // Object
 
+#ifdef HAVE_OBJECT_INITCMD_CONST_CHARP
+#define CHARP_CAST
+#else
+// must cast arg of Object::initCmd, Object::isStream, and Object::streamIs
+// from 'const char *' to 'char *', although they are not modified.
+#define CHARP_CAST (char *)
+#endif
+
 // Special type checking.
-#define m_Object_isType(function, cast)                                    \
+#define m_Object_isType_(function, cast)                                   \
 static int m_Object_##function(lua_State * L)                              \
 {                                                                          \
     udstruct *uin;                                                         \
@@ -1301,6 +1309,8 @@ static int m_Object_##function(lua_State * L)                              \
     }                                                                      \
     return 1;                                                              \
 }
+#define m_Object_isType(function) m_Object_isType_(function, )
+#define m_Object_isType_nonconst(function) m_Object_isType_(function, CHARP_CAST)
 
 static int m_Object_initBool(lua_State * L)
 {
@@ -1444,7 +1454,7 @@ static int m_Object_initCmd(lua_State * L)
     if (uin->pd != NULL && uin->pd->pc != uin->pc)
         pdfdoc_changed_error(L);
     s = luaL_checkstring(L, 2);
-    ((Object *) uin->d)->initCmd((char *) s);
+    ((Object *) uin->d)->initCmd(CHARP_CAST s);
     return 0;
 }
 
@@ -1514,13 +1524,13 @@ m_poppler_get_BOOL(Object, isInt);
 m_poppler_get_BOOL(Object, isReal);
 m_poppler_get_BOOL(Object, isNum);
 m_poppler_get_BOOL(Object, isString);
-m_Object_isType(isName, );
+m_Object_isType(isName);
 m_poppler_get_BOOL(Object, isNull);
 m_poppler_get_BOOL(Object, isArray);
-m_Object_isType(isDict, );
-m_Object_isType(isStream, (char *));
+m_Object_isType(isDict);
+m_Object_isType_nonconst(isStream);
 m_poppler_get_BOOL(Object, isRef);
-m_Object_isType(isCmd, );
+m_Object_isType(isCmd);
 m_poppler_get_BOOL(Object, isError);
 m_poppler_get_BOOL(Object, isEOF);
 m_poppler_get_BOOL(Object, isNone);
@@ -1964,7 +1974,7 @@ static int m_Object_streamIs(lua_State * L)
         pdfdoc_changed_error(L);
     s = luaL_checkstring(L, 2);
     if (((Object *) uin->d)->isStream()) {
-        if (((Object *) uin->d)->streamIs((char *) s))
+        if (((Object *) uin->d)->streamIs(CHARP_CAST s))
             lua_pushboolean(L, 1);
         else
             lua_pushboolean(L, 0);

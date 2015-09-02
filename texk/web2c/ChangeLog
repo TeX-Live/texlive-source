@@ -1,3 +1,7 @@
+2015-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* configure.ac: Check poppler for Object::initCmd(const char*).
+
 2015-08-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* configure.ac: Drop check for <StructTreeRoot.h>, we now

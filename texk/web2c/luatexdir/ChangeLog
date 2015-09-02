@@ -1,3 +1,8 @@
+2015-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* lua/lepdflib.cc: Drop useless casts 'const char *' -> 'char *'
+	when poppler has Object::initCmd(const char*).
+
 2015-08-31  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/lepdflib.cc: Bugfix: m_Object_dictAdd() must use a copy of

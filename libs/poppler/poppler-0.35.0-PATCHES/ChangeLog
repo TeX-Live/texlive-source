@@ -1,3 +1,8 @@
+2015-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-03-Object-functions (new): Declare parameter of Object
+	member functions initCmd, isStream, and streamIs as const.
+
 2015-08-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported poppler-0.35.0 source tree from:
