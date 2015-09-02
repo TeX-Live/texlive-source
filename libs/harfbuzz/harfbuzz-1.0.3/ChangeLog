@@ -1,3 +1,440 @@
+commit 5828c45d7a816ccd0a7f10a665ea3cf8cfd63b05
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:26:35 2015 +0100
+
+    [indic] Add comments to merge_clusters calls
+
+ src/hb-ot-shape-complex-indic.cc | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+commit bdc8215949a7add742cc800b4fdea6acaa37d152
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:24:54 2015 +0100
+
+    [thai] Respect cluster-level > 0
+
+ src/hb-ot-shape-complex-thai.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 5b31fe383ead726ec77062501ed3bb24c02842b3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:24:34 2015 +0100
+
+    [use] Merge /before/ reordering
+
+ src/hb-ot-shape-complex-use.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0d438f89bd9422c66838c776eb4aa867de0a2ad8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:24:13 2015 +0100
+
+    [hangul] Merge /before/ reordering
+
+ src/hb-ot-shape-complex-hangul.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f883de664fc4bfe01e30c89e07e31dc113f906d9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:23:40 2015 +0100
+
+    [OT] Merge /before/ reordering
+
+ src/hb-ot-shape.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit c403d6320074455a5e8e48902c0ac4ee9685e33d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:15:25 2015 +0100
+
+    [myanmar] Use buffer->sort() to sort cluster
+
+    This can possibly produce more granular clusters.
+
+ src/hb-ot-shape-complex-myanmar.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit e995d33c10a4bd9404699d01bddb2b69d811e9ed
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:13:32 2015 +0100
+
+    [OT] Merge clusters when reordering marks for normalization
+
+    Fixes https://bugzilla.gnome.org/show_bug.cgi?id=541608
+    and cluster test.
+
+ src/hb-buffer-private.hh     |  2 ++
+ src/hb-buffer.cc             | 21 +++++++++++++++++++++
+ src/hb-ot-shape-normalize.cc |  2 +-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+
+commit b6d7d161a87b5dde710924e5c557d39c302f5630
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:12:44 2015 +0100
+
+    [tests] Add Hebrew test for normalization under cluster-level=1
+
+    Currently fails.
+    https://bugzilla.gnome.org/show_bug.cgi?id=541608
+
+ .../sha1sum/43ef465752be9af900745f72fe29cb853a1401a5.ttf | Bin 0 ->
+ 4272 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ test/shaping/tests/cluster.tests                         |   1 +
+ 3 files changed, 2 insertions(+)
+
+commit 93099748e39740a3f6f003c83d9dec1d21660ce8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 16:11:27 2015 +0100
+
+    Minor
+
+ src/hb-private.hh | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+commit 85846b3de7491b6a07fed6a2c0c6c1b09943b249
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 15:07:52 2015 +0100
+
+    Use insertion-sort instead of bubble-sort
+
+    Needed for upcoming merge-clusters fix.
+
+ src/hb-buffer.cc                           |  4 +--
+ src/hb-ot-shape-complex-arabic-fallback.hh |  6 ++--
+ src/hb-ot-shape-complex-indic.cc           |  2 +-
+ src/hb-ot-shape-complex-myanmar.cc         |  2 +-
+ src/hb-ot-shape-normalize.cc               |  6 ++--
+ src/hb-private.hh                          | 56
+ +++++++++++++-----------------
+ 6 files changed, 34 insertions(+), 42 deletions(-)
+
+commit fad2674874591b4a1df822603144c8864f5364c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 1 14:45:46 2015 +0100
+
+    Minor
+
+ test/Makefile.am         | 4 ++++
+ test/api/Makefile.am     | 4 ++++
+ test/shaping/Makefile.am | 4 ++++
+ 3 files changed, 12 insertions(+)
+
+commit 23e4fac6de913201f263a73e13d3c1fab31d1bdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 31 19:41:01 2015 +0100
+
+    Update git.mk from upstream
+
+ git.mk | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+commit 5783e05f81bbf6debf2618c8994d6852630d9847
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 31 19:18:10 2015 +0100
+
+    [docs] Move docs/reference/ contents into docs/
+
+ configure.ac                          |   3 +-
+ docs/Makefile.am                      | 117 +++++++-
+ docs/harfbuzz-docs.xml                |  78 ++++++
+ docs/harfbuzz-overrides.txt           |   0
+ docs/harfbuzz-sections.txt            | 498
+ ++++++++++++++++++++++++++++++++++
+ docs/reference/Makefile.am            | 118 --------
+ docs/reference/harfbuzz-docs.xml      |  78 ------
+ docs/reference/harfbuzz-overrides.txt |   0
+ docs/reference/harfbuzz-sections.txt  | 498
+ ----------------------------------
+ docs/reference/usermanual-ch01.xml    | 115 --------
+ docs/reference/usermanual-ch02.xml    | 183 -------------
+ docs/reference/usermanual-ch03.xml    |  77 ------
+ docs/reference/usermanual-ch04.xml    |  18 --
+ docs/reference/usermanual-ch05.xml    |  13 -
+ docs/reference/usermanual-ch06.xml    |   8 -
+ docs/reference/version.xml.in         |   1 -
+ docs/usermanual-ch01.xml              | 115 ++++++++
+ docs/usermanual-ch02.xml              | 183 +++++++++++++
+ docs/usermanual-ch03.xml              |  77 ++++++
+ docs/usermanual-ch04.xml              |  18 ++
+ docs/usermanual-ch05.xml              |  13 +
+ docs/usermanual-ch06.xml              |   8 +
+ docs/version.xml.in                   |   1 +
+ 23 files changed, 1108 insertions(+), 1112 deletions(-)
+
+commit cd5e3a13a6e0b6606d3a421f8cd44cdfb8314907
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 31 19:16:41 2015 +0100
+
+    [docs] Fix out-of-tree build
+
+ docs/reference/Makefile.am         |   9 +-
+ docs/reference/harfbuzz-docs.xml   |  12 +--
+ docs/reference/usermanual-ch01.xml | 115 +++++++++++++++++++++++
+ docs/reference/usermanual-ch02.xml | 183
+ +++++++++++++++++++++++++++++++++++++
+ docs/reference/usermanual-ch03.xml |  77 ++++++++++++++++
+ docs/reference/usermanual-ch04.xml |  18 ++++
+ docs/reference/usermanual-ch05.xml |  13 +++
+ docs/reference/usermanual-ch06.xml |   8 ++
+ docs/usermanual-ch01.xml           | 115 -----------------------
+ docs/usermanual-ch02.xml           | 183
+ -------------------------------------
+ docs/usermanual-ch03.xml           |  77 ----------------
+ docs/usermanual-ch04.xml           |  18 ----
+ docs/usermanual-ch05.xml           |  13 ---
+ docs/usermanual-ch06.xml           |   8 --
+ 14 files changed, 428 insertions(+), 421 deletions(-)
+
+commit 3899795fa3c3e058e3885ec7a6638f0597a752cc
+Merge: d205965 01e16e8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 31 10:46:01 2015 +0100
+
+    Merge pull request #131 from simoncozens/docs
+
+    Use gtk-doc to build user's manual as well as reference
+
+commit 01e16e88f50b65b82dcb84773f532f18a351319f
+Author: Simon Cozens <simon@simon-cozens.org>
+Date:   Mon Aug 31 10:40:17 2015 +0100
+
+    Combine user / reference information into gtk-doc generated manual.
+
+ docs/reference/harfbuzz-docs.xml | 91
+ +++++++++++++++++++++++-----------------
+ 1 file changed, 52 insertions(+), 39 deletions(-)
+
+commit 11a07c4729174e1d4af028103ecb0a351e4c2707
+Author: Simon Cozens <simon@simon-cozens.org>
+Date:   Mon Aug 31 10:39:10 2015 +0100
+
+    Correct tag hierarchy, to allow for table-of-contents entries.
+
+ docs/usermanual-ch01.xml | 12 ++++++------
+ docs/usermanual-ch02.xml |  8 ++++----
+ docs/usermanual-ch03.xml | 24 ++++++++++++------------
+ docs/usermanual-ch04.xml | 16 ++++++++--------
+ docs/usermanual-ch05.xml | 12 ++++++------
+ 5 files changed, 36 insertions(+), 36 deletions(-)
+
+commit 387d6af428ddd5d4f211fe5748412011013a3826
+Author: Simon Cozens <simon@simon-cozens.org>
+Date:   Mon Aug 31 10:31:09 2015 +0100
+
+    Missing tag (oops).
+
+ docs/usermanual-ch02.xml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit d205965286798af4b7ad07e1eafa58288bee4bdb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 31 10:12:05 2015 +0100
+
+    [docs] Fix typo
+
+ docs/usermanual-ch03.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c424b41705b50055c7f92b268cf78a2680af73af
+Merge: 31594b9 5470e74
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 31 09:53:16 2015 +0100
+
+    Merge pull request #129 from simoncozens/docs
+
+    First two chapters. More to follow.
+
+commit 31594b98af0c9181982c77d8d3803753007f8fd4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 30 17:33:04 2015 +0100
+
+    [test] Fix test-object
+
+    See previous commit.
+
+ test/api/test-object.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit 326b5ebf5748f547e4eb7388d66b79fe23130e2a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 30 17:29:21 2015 +0100
+
+    Poison freed objects such that double-free is detected
+
+    Previously we were setting refcount of freed objects to the inert
+    value, which
+    was harmful because it caused further destroy()s of the freed object
+    to NOT
+    call free() and hence hide the bug.  Indeed, after eb0bf3ae6688b7
+    test-object
+    was double-free'ing objects and this was never caught on Linux.
+    It only was
+    caught as crashing on Mac.
+
+    Now we poison refcount upon freeing and check that it's valid
+    whenever reading
+    it.  Makes test-object fail now.
+
+ src/hb-object-private.hh | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+commit 5470e744dd264c2dc33437a68d20bcf7c5ffb905
+Author: Simon Cozens <simon@simon-cozens.org>
+Date:   Sat Aug 29 08:21:18 2015 +0100
+
+    Current state and skeleton outline
+
+ docs/usermanual-ch03.xml | 77
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ docs/usermanual-ch04.xml | 18 +++++++++++
+ docs/usermanual-ch05.xml | 13 ++++++++
+ docs/usermanual-ch06.xml |  8 +++++
+ 4 files changed, 116 insertions(+)
+
+commit 6578575cc8aeb05341f2053039acfcd735707674
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 25 20:24:59 2015 +0100
+
+    [GPOS] Fix cursive connection with mix of RTL and non-RTL lookups
+
+    See thread "Issue with cursive attachment" started by Khaled.
+    Turned out fixing this wasn't as bad as I had assumed.  I like the
+    new code better; we now have a theoretical model of cursive
+    connections that is easier to reason about.
+
+ src/hb-ot-layout-gpos-table.hh | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+commit 7368da67244ea53195cd9b95a5c57485df695732
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 25 20:28:39 2015 +0100
+
+    [test] Add test for cursive-positioning with mixed directions
+
+    Fails now.  Fix coming.  See thread "Issue with cursive attachment"
+    started by Khaled.  Test fonts were made by modifying test font
+    from Khaled to add more anchors.
+
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/298c9e1d955f10f6f72c6915c3c6ff9bf9695cec.ttf | Bin 0 ->
+ 2520 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   2 ++
+ .../sha1sum/c4e48b0886ef460f532fb49f00047ec92c432ec0.ttf | Bin 0 ->
+ 2512 bytes
+ test/shaping/tests/MANIFEST                              |   1 +
+ test/shaping/tests/cursive-positioning.tests             |   2 ++
+ 6 files changed, 6 insertions(+)
+
+commit f0807654da160bd7ceb9aff5b8338ec0b643171c
+Author: Simon Cozens <simon@simon-cozens.org>
+Date:   Tue Aug 25 19:57:15 2015 +0100
+
+    First two chapters. More to follow.
+
+ docs/usermanual-ch01.xml | 115 ++++++++++++++++++++++++++++++
+ docs/usermanual-ch02.xml | 182
+ +++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 297 insertions(+)
+
+commit 58f2a73fb95af42e264a91cdef7bb5a89e965601
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 25 18:55:34 2015 +0100
+
+    [GPOS] Rewrite cursive attachment slightly differently
+
+    In anticipation for upcoming fix for bug reported by
+    Khaled in thread "Issue with cursive attachment".
+
+ src/hb-ot-layout-gpos-table.hh | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
+
+commit fdd1770e006ca2d2973c049177ceda87a575e07f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 24 13:49:55 2015 +0100
+
+    Add API/cmdline to show glyph extents when serializing buffer
+
+    New API: HB_BUFFER_SERIALIZE_FLAG_GLYPH_EXTENTS
+
+    hb-shape now accepts --show-extents.
+
+    Patch from Simon Cozens.
+
+ src/hb-buffer-serialize.cc | 17 +++++++++++++++++
+ src/hb-buffer.h            |  3 ++-
+ util/hb-shape.cc           |  2 ++
+ util/options.cc            |  1 +
+ util/options.hh            |  2 ++
+ 5 files changed, 24 insertions(+), 1 deletion(-)
+
+commit 2cee5b68a07b99214ef9428fe5d03e7b378a558f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 24 13:45:12 2015 +0100
+
+    [ot-font] Fix short-offset calculation
+
+ src/hb-ot-font.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit b50fcfa82994f93568a54dd1eb7fd327f6db5586
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Aug 23 14:42:20 2015 +0100
+
+    [ot-font] Implement glyph_extents() for TrueType fonts
+
+    This brings ot-fonts into almost-complete shape and mostly in par with
+    ft font.
+
+ src/Makefile.am         |   1 +
+ src/hb-font.h           |   9 +++--
+ src/hb-ot-font.cc       |  90 +++++++++++++++++++++++++++++++++++++++--
+ src/hb-ot-glyf-table.hh | 104
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-head-table.hh |   3 +-
+ 5 files changed, 198 insertions(+), 9 deletions(-)
+
+commit 0299b45000b5047c0b9bf0fe51f3b8b68a7982f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Aug 21 12:44:36 2015 +0100
+
+    Make BYTE a real type
+
+ src/hb-open-type-private.hh | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+commit ed6962c795ae7c54aaee9ed5667fa65ccf7412bf
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 20 15:39:53 2015 +0100
+
+    [coretext] Use i32 instead of u32 as well
+
+    Shouldn't cause *any* functional changes, but is more correct.
+
+ src/hb-coretext.cc | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+commit 163c435f1807c138da9f74f09d29d913eb9e29e9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Aug 20 15:39:06 2015 +0100
+
+    [uniscribe] Fix negative offsets
+
+    Ouch!
+
+ src/hb-uniscribe.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 789b89ef7130ffe5f22c571fc3cb4e6d35456654
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Aug 19 13:39:57 2015 +0100
+
+    1.0.2
+
+ NEWS         | 13 +++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
 commit 958c268fa3a520666436e77a2111a3b564a36d96
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Aug 19 13:22:12 2015 +0100
