@@ -1,0 +1,46 @@
+% !TEX TS-program = LuaLaTeX+se
+
+% This is a simple template for a LuaLaTeX document using gregorio scores.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+% usual packages loading:
+\usepackage{fontspec}
+\usepackage{graphicx} % support the \includegraphics command and options
+\usepackage{geometry} % See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+\usepackage{gregoriotex} % for gregorio score inclusion
+\usepackage{gregoriosyms} % to be able to define \ABar, \VBar, etc.
+\usepackage{fullpage} % to reduce the margins
+\usepackage{libertine} % Decent (free) font for Gregorian, but should be changed if you have high standards
+
+\begin{document}
+
+% The title:
+\begin{center}\begin{huge}\textsc{Populus Sion}\end{huge}\end{center}
+
+% Here we set the space around the initial.
+% Please report to http://home.gna.org/gregorio/gregoriotex/details for more details and options
+\setspaceafterinitial{2.2mm}{1}
+\setspacebeforeinitial{2.2mm}{1}
+
+% Here we set the initial font. Change 43 if you want a bigger initial.
+\def\greinitialformat#1{%
+{\fontsize{43}{43}\selectfont #1}%
+}
+
+% We set red lines here, comment it if you want black ones.
+\redlines
+
+% We set VII above the initial.
+\gresetfirstlineaboveinitial{\small \textsc{\textbf{VII}}}{\small \textsc{\textbf{VII}}}
+
+% We type a text in the top right corner of the score:
+\commentary{{\small \emph{Cf. Is. 30, 19 . 30 ; Ps. 79}}}
+
+% and finally we include the scores. The file must be in the same directory as this one.
+\includescore[a]{PopulusSion}
+
+\includescore[a]{FactusEst}
+
+\end{document}

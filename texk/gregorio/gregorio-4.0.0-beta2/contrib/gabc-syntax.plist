@@ -1,0 +1,82 @@
+<!--
+GABC syntax file for BBedit and TextWrangler
+Copyright Tomasz Grabowski <zzzygzak@gmail.com>, 2013
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--><plist version="1.0">
+<dict>
+<key>BBEditDocumentType</key>
+	<string>CodelessLanguageModule</string>
+<key>BBLMLanguageCode</key>
+	<string>0079</string>
+<key>BBLMLanguageCode</key>
+	<string>GABC</string>
+<key>BBLMLanguageDisplayName</key>
+	<string>Gregorio GABC</string>
+<key>BBLMSuffixMap</key>
+	<array>
+		<dict>
+			<key>BBLMIsSourceKind</key>
+				<true/>
+			<key>BBLMLanguageSuffix</key>
+				<string>.gabc</string>
+		</dict>
+	</array>
+<key>BBLMColorsSyntax</key><true/>
+<key>BBLMIsCaseSensitive</key><true/>
+<key>BBLMScansFunctions</key><false/>
+<key>BBLMSupportsTextCompletion</key><true/>
+<key>BBLMCanSpellCheckCodeRuns</key><false/>
+
+<key>BBLMPredefinedNameList</key>
+	<array>
+		<string>name</string>
+		<string>gabc-copyright</string>
+		<string>score-copyright</string>
+		<string>office-part</string>
+		<string>occasion</string>
+		<string>meter</string>
+		<string>commentary</string>
+		<string>arranger</string>
+		<string>gabc-version</string>
+		<string>author</string>
+		<string>date</string>
+		<string>manuscript</string>
+		<string>manuscript-reference</string>
+		<string>manuscript-storage-place</string>
+		<string>book</string>
+		<string>transcriber</string>
+		<string>transcription-date</string>
+		<string>gregoriotex-font</string>
+		<string>mode</string>
+		<string>initial-style</string>
+		<string>centering-scheme</string>
+		<string>user-notes</string>
+		<string>annotation</string>
+	</array>
+<key>BBLMCommentLineDefault</key><string>%</string>
+<key>Language Features</key>
+	<dict>
+		<key>Open Strings 1</key><string>(</string>
+		<key>Close Strings 1</key><string>)</string>
+		<key>Open Strings 2</key><string> &lt;</string>
+		<key>Close Strings 2</key><string>&gt; </string>
+		<key>End-of-line Ends Strings 1</key>	<false/>
+		<key>Identifier and Keyword Characters</key>
+			<string>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-</string>
+		<key>Open Statement Blocks</key> <string>\</string>
+		<key>Close Statement Blocks</key> <string>}</string>
+	</dict>
+</dict>
+</plist>

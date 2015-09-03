@@ -114,6 +114,7 @@ dvipng
 dvipos
 dvipsk
 dvisvgm
+gregorio
 gsftopk
 lcdf-typetools
 makeindexk

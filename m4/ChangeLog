@@ -1,3 +1,7 @@
+2015-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-pkgs.m4 (kpse_texk_pkgs): Add gregorio.
+
 2015-08-13  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-setup.m4: Allow shared libraries (DLLs) in native TeXLive

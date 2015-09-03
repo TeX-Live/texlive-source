@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!--
+ 
+ XML file for using gregorio inside scribus.
+ Copyright (C) 2009 Pierre Couderc <pierre@couderc.eu>.
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+ See the different comments in the file to change the default configuration.
+-->
+<editorsettings description="gregorio" icon="gregorio.png">
+    <!-- change the path to gregorio-scribus.lua here. -->
+	<executable command='texlua /usr/share/scribus/editorconfig/gregorio-scribus.lua "%file" "%dir"'/>
+	<imagefile extension=".pdf"/>
+	<highlighter>
+        <rule name="gabc header" regex="[a-zA-Z]+:" color="blue" minimal="true"/>
+        <rule name="gabc delimiter" regex="%%" color="green" minimal="true"/>
+        <rule name="gabc notes" regex="\([^)]*\)" color="red" minimal="true"/>
+	</highlighter>
+    <empty-frame-text>
+name: myscore;
+%%
+(c3) Pó(eh/hi)pu(h)lus(h) Si(hi)on,(hgh.)
+    </empty-frame-text>
+    <!-- you can change the basic headers there -->
+    <preamble>
+\documentclass[a4paper,$scribus_grefontsize$]{extarticle}
+\usepackage[left=0cm,top=0cm,right=0cm,bottom=0cm,nohead,nofoot]{geometry}
+\usepackage{color}
+\title{Scribus-Latex-gregorio-File}
+$scribus_additionalgreheaders$
+\usepackage{gregoriotex}
+\author{Scribus}
+\pagestyle{empty}
+\setlength{\textwidth}{$scribus_realwidth$ pt}
+\begin{document}
+$scribus_greconf$
+</preamble>
+<postamble>
+</postamble>
+	<tab type="settings">
+		<title><i18n>
+				<en>Headers</en>
+				<fr>En-tête</fr>
+		</i18n></title>
+        		<list name="grefontsize" default="11pt">
+			<title><i18n>
+					<en>Fontsize:</en>
+					<de>Schriftgröße:</de>
+					<fr>Taille police :</fr>
+					<pl>Stopień pisma:</pl>
+					<ru>Кегль шрифт:</ru>
+			</i18n></title>
+			<option value="8pt">8pt</option>
+			<option value="9pt">9pt</option>
+			<option value="10pt">10pt</option>
+			<option value="11pt">11pt</option>
+			<option value="12pt">12pt</option>
+			<option value="14pt">14pt</option>
+			<option value="17pt">17pt</option>
+			<option value="20pt">20pt</option>
+		</list>
+		<text name="additionalgreheaders" type="long" default="\usepackage[utf8]{luainputenc}
+\usepackage[T1]{fontenc}
+\usepackage{times}"><i18n>
+			<en>Additional LaTeX Headers:</en>
+			<de>Zusätzliche LaTeX Header:</de>
+			<fr>En-tête LaTeX additionnel :</fr>
+		</i18n></text>
+	</tab>
+	<tab type="settings">
+		<title><i18n>
+				<en>Gregorio Options</en>
+				<fr>Conf. gregorio</fr>
+		</i18n></title>
+        <comment><i18n>
+			<en>Input here your additional gregorio-specific TeX commands.
+</en><fr>Ajoutez ici vos commandes additionelles pour GregorioTeX.
+</fr>
+		</i18n></comment>
+        <text name="greconf" type="long" default="\grechangestaffsize{17}"></text>
+	</tab>
+</editorsettings>

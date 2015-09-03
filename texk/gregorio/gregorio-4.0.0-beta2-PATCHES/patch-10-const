@@ -1,0 +1,38 @@
+	Replace string constant by non-const char array to avoid warning.
+
+diff -ur gregorio-4.0.0-beta2.orig/src/gabc/gabc-score-determination.y gregorio-4.0.0-beta2/src/gabc/gabc-score-determination.y
+--- gregorio-4.0.0-beta2.orig/src/gabc/gabc-score-determination.y	2015-08-25 20:17:26.000000000 +0200
++++ gregorio-4.0.0-beta2/src/gabc/gabc-score-determination.y	2015-09-02 10:45:09.000000000 +0200
+@@ -340,7 +340,8 @@
+     }
+ 
+     if (!got_language) {
+-        gregorio_set_centering_language("Latin");
++        static char lang_Latin[] = "Latin";
++        gregorio_set_centering_language(lang_Latin);
+     }
+ }
+ 
+diff -ur gregorio-4.0.0-beta2.orig/src/gabc/gabc-score-determination-y.c gregorio-4.0.0-beta2/src/gabc/gabc-score-determination-y.c
+--- gregorio-4.0.0-beta2.orig/src/gabc/gabc-score-determination-y.c	2015-08-26 22:44:34.000000000 +0200
++++ gregorio-4.0.0-beta2/src/gabc/gabc-score-determination-y.c	2015-09-02 10:46:15.000000000 +0200
+@@ -414,7 +414,8 @@
+     }
+ 
+     if (!got_language) {
+-        gregorio_set_centering_language("Latin");
++        static char lang_Latin[] = "Latin";
++        gregorio_set_centering_language(lang_Latin);
+     }
+ }
+ 
+diff -ur gregorio-4.0.0-beta2.orig/src/gabc/gabc-score-determination-y.h gregorio-4.0.0-beta2/src/gabc/gabc-score-determination-y.h
+--- gregorio-4.0.0-beta2.orig/src/gabc/gabc-score-determination-y.h	2015-08-26 22:44:34.000000000 +0200
++++ gregorio-4.0.0-beta2/src/gabc/gabc-score-determination-y.h	2015-09-02 10:46:15.000000000 +0200
+@@ -1,5 +1,6 @@
+ /* A Bison parser, made by GNU Bison 3.0.4.  */
+ 
++/* Make sure this file is newer than gabc-score-determinatio.y */
+ /* Bison interface for Yacc-like parsers in C
+ 
+    Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.

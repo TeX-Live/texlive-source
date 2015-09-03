@@ -867,6 +867,7 @@ with_libgs
 with_system_libgs
 with_libgs_includes
 with_libgs_libdir
+enable_gregorio
 enable_gsftopk
 enable_lcdf_typetools
 enable_cfftot1
@@ -1673,6 +1674,7 @@ Optional Features:
   --disable-dvipos        do not build the dvipos package
   --disable-dvipsk        do not build the dvipsk package
   --disable-dvisvgm       do not build the dvisvgm package
+  --disable-gregorio      do not build the gregorio package
   --disable-gsftopk       do not build the gsftopk package
   --disable-lcdf-typetools
                           do not build the lcdf-typetools package
@@ -5254,6 +5256,28 @@ fi
 if test "x$enable_native_texlive_build:$with_system_libgs" = xyes:yes; then
   as_fn_error $? "you can not use system libraries for a native TeX Live build" "$LINENO" 5
 fi
+
+## texk/gregorio/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gregorio/
+## configure options and TL libraries required for gregorio
+# Check whether --enable-gregorio was given.
+if test "${enable_gregorio+set}" = set; then :
+  enableval=$enable_gregorio;
+fi
+case $enable_gregorio in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_gregorio=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-gregorio=$enable_gregorio'" >&5
+$as_echo "$as_me: Assuming \`--enable-gregorio=$enable_gregorio'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-gregorio=$enable_gregorio'"
+    ;;
+esac
+
+test "x$enable_gregorio" = xno || {
+  need_kpathsea=yes
+}
 
 ## texk/gsftopk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gsftopk/
 ## configure options and TL libraries required for gsftopk
