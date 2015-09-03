@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+
+ Author: Elie Roux <elie.roux@telecom-bretagne.fr>
+ Copyright (C) 2008 Elie Roux <elie.roux@telecom-bretagne.fr>
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-->
+<language id="gabc" _name="Gabc" version="2.0" _section="Sources">
+  <metadata>
+    <property name="globs">*.gabc</property>
+  </metadata>
+  <styles>
+    <style id="attribute-name" _name="Attribute Name" map-to="def:keyword"/>
+    <style id="text" _name="Text" map-to="def:keyword"/>
+    <style id="text-markups" _name="Text Markups" map-to="def:statement"/>
+    <style id="translation" _name="Translation" map-to="def:doc-comment-element"/>
+    <style id="comment" _name="Comment" map-to="def:doc-comment-element"/>
+    <style id="notes" _name="Notes"/>
+    <style id="notes-base" _name="Basic Notes" map-to="def:constant"/>
+    <style id="alterations" _name="Alterations" map-to="def:identifier"/>
+    <style id="spaces" _name="Spaces" map-to="def:special-char"/>
+  </styles>
+  <definitions>
+    <context id="gabc">
+      <include>
+        <context id="header">
+          <include>
+            <context id="attribute-name" style-ref="attribute-name">
+              <match>[^:]+:|;</match>
+            </context>
+          </include>
+        </context>
+        <context id="score">
+          <start>%%</start>
+          <end>%%</end>
+          <include>
+            <context id="text" style-ref="text">
+              <match>[^\(\[&lt;]+</match>
+            </context>
+            <context id="comment" style-ref="comment">
+              <!--<start>%</start>
+              <end>&#x0a;</end>-->
+              <match>\%[^%]\n</match>
+            </context>
+            <context id="translation" style-ref="translation">
+              <start>\[</start>
+              <end>\]</end>
+            </context>
+            <context id="specials-symbol" style-ref="text-markups">
+              <prefix>&lt;</prefix>
+              <suffix>&gt;</suffix>
+              <keyword>v</keyword>
+              <keyword>/v</keyword>
+              <keyword>i</keyword>
+              <keyword>/i</keyword>
+              <keyword>b</keyword>
+              <keyword>/b</keyword>
+              <keyword>tt</keyword>
+              <keyword>/tt</keyword>
+              <keyword>sp</keyword>
+              <keyword>/sp</keyword>
+            </context>
+            <context id="notes" style-ref="notes">
+              <start>\(</start>
+              <end>\)</end>
+              <include>
+                <context id="notes-normal" style-ref="notes-base">
+                  <match>[a-mA-M]+</match>
+                </context>
+                <context id="alterations" style-ref="alterations">
+                  <match>[&gt;&lt;\~xXyYvVoOwWqQ-Ss\._'1234]+</match>
+                </context>
+                <context id="spaces" style-ref="spaces">
+                  <match>[`,;!: /zZ]+</match>
+                </context>
+              </include>
+            </context>
+          </include>
+        </context>
+      </include>
+    </context>
+  </definitions>
+</language>

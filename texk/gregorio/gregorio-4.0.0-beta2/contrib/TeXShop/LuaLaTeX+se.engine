@@ -1,0 +1,4 @@
+#!/bin/tcsh
+
+set path= ($path /usr/texbin /usr/local/bin)
+lualatex --shell-escape -file-line-error -synctex=1 "$1"

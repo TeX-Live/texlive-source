@@ -1,0 +1,21 @@
+2015-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import gregorio-4.0.0-beta2.
+	* patch-0[1-6]-* (removed): Included upstream.
+	* patch-10-const (new): Replace string constant by non-const
+	char array.
+
+2015-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-06-const (new): Avoid more const warnings.
+
+2015-08-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import gregorio-4.0.0-beta.
+	* patch-01-kpathsea (new): Use <getopt.h> or <kpathsea/getopt.h>.
+	* patch-02-warnings (new): Avoid all static, prototype, C99
+	warnings and almost all const warnings.
+	* patch-03-flex_2_5_39 (new): Avoid gcc -Wsign-compare warnings.
+	* patch-04-unsigned (new): Avoid undefined behaviour.
+	* patch-05-return_non_void (new): Avoid gcc 5.1 warning.
+

@@ -1,0 +1,25 @@
+% !TEX TS-program = LuaLaTeX+se
+% !TEX root = main-lualatex.tex
+
+% This example demonstrates the use of nabc
+
+name: Factus est cum Alleluia;
+office-part: Communio;
+mode: 7;
+book: Graduale Romanum, 1961, p. 296;
+transcriber: Andrew Hinkley, Jakub Jelínek;
+initial-style: 1;
+
+% You have to put the number of nabc lines here, only 1 is allowed for now
+
+nabc-lines: 1;
+%%
+(c3)
+FAc(e|talsi8)tus(ei|pe) est(i|vi) re(i|vihh)pén(i|vihi)te(e.|tahglsi9) de(i|vihhlsl2) cæ(i|vihhlse1)lo(h|ta) so(kjki|pfhhlsl2lsc2)nus(i.|ta) (,)
+ad(i|talse8)ve(i|ta)ni(ij|pe)én(ji~|vi>lst2)tis(j_i|cl-hh) spí(hj|````peSlsl3lsm7lsi8)ri(i|vi)tus(h|ta) ve(h.|cl-lse4)he(f!gwh|ql)mén(hi~|ta>)tis,(h.|vi) (;)
+u(hg|tolsi7lsc2)bi(h|vi) e(iji|to)rant(hih|tolst2lss9lsc7) se(hg|cllsc3lse7)dén(fhG'E|to>lsc2lsi9)tes,(fe..|cl-) (,)
+al(eg~|````ta>lse4)le(gv./fhg|vi-tohhlsi7lss6)lú(efe___|toS)ia:(e.|ta) (:)
+et(e|talse4) re(f|vilsc1)plé(h!i'j|vi-hhpehjlss7)ti(i|ta) sunt(i|ta) om(ij~|ta>)nes(i|talse6) Spí(j|vihh)ri(i|vi)tu(h|talsc3) Sanc(ij~|ta>lss1)to,(j.|vi) (;)
+lo(i|vilsim2)quén(hg/h_ih~|cllsc2pq>lst2)tes(f|ta) ma(eg~|```ta>lse4lsl3)gná(ghg___//e!f'g|vicl-sahhlsi7)li(fd|clMlsc3lsi9)a(f|vi) De(efe___|toS)i,(e.|ta) (;)
+al(eg~|ta>lsl1lsp2)le(g|vi)lú(hih|to>)ia,(f.|vi) (,)
+al(eg~|ta>lsi8)le(gv.fhg|vi-tohi)lú(efe___|toS)ia.(e.|ta) (::)

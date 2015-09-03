@@ -1,0 +1,38 @@
+#! /bin/sh
+
+# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+
+export TEXMFCNF
+
+DOCSRC=$srcdir/$GREGORIO_TREE/doc
+
+failed=
+
+echo "*** gregorio --version" \
+	&& ./gregorio --version \
+	&& echo && echo "gregorio-version tests OK" && echo \
+	|| failed="$failed gregorio-version"
+
+echo "*** gregorio --help" \
+	&& ./gregorio --help \
+	&& echo && echo "gregorio-help tests OK" && echo \
+	|| failed="$failed gregorio-help"
+
+echo "*** gregorio -o factus.gtex factus.gabc" \
+	&& ./gregorio -o factus.gtex $DOCSRC/factus.gabc \
+	&& echo && echo "gregorio-factus tests OK" && echo \
+	|| failed="$failed gregorio-factus"
+
+echo "*** gregorio -o veni.gtex veni.gabc" \
+	&& ./gregorio -o veni.gtex $DOCSRC/veni.gabc \
+	&& echo && echo "gregorio-veni tests OK" && echo \
+	|| failed="$failed gregorio-veni"
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1
+

@@ -1,0 +1,11 @@
+2015-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import gregorio-4.0.0-beta2.
+	* Makefile.am, configure.ac, version.ac: Adapted.
+
+	* Makefile.am, gregorio.test: Create factus.gtex and veni.gtex.
+
+2015-08-03  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import gregorio-4.0.0-beta.
+

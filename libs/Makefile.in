@@ -152,6 +152,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../texk/dvisvgm/ac/withenable.ac \
 	$(top_srcdir)/../texk/dvisvgm/ac/dvisvgm.ac \
 	$(top_srcdir)/../texk/dvisvgm/ac/libgs.ac \
+	$(top_srcdir)/../texk/gregorio/ac/withenable.ac \
 	$(top_srcdir)/../texk/gsftopk/ac/withenable.ac \
 	$(top_srcdir)/../texk/lcdf-typetools/ac/withenable.ac \
 	$(top_srcdir)/../texk/lcdf-typetools/ac/lcdf-typetools.ac \
