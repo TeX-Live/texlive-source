@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-27.20}
+\def\texinfoversion{2015-08-31.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -5030,7 +5030,7 @@ end
 {\catcode`\/=13 \catcode`\-=13 \catcode`\^=13 \catcode`\~=13 \catcode`\_=13
 \catcode`\|=13 \catcode`\<=13 \catcode`\>=13 \catcode`\+=13 \catcode`\"=13
 \catcode`\$=3
-\gdef\initialfonts{%
+\gdef\initialglyphs{%
   % Some changes for non-alphabetic characters.  Using the glyphs from the
   % math fonts looks more consistent than the typewriter font used elsewhere
   % for these characters.
@@ -5045,7 +5045,7 @@ end
   \let^=\normalcaret
   \let~=\normaltilde
   \def\_{%
-    \leavevmode \kern.07em \vbox{\hrule width.33em height.06ex}\kern .07em }
+    \leavevmode \kern.07em \vbox{\hrule width.33em height.06ex}\kern .07em }%
   \def|{$\vert$}%
   \def<{$\less$}%
   \def>{$\gtr$}%
@@ -5054,7 +5054,7 @@ end
 
 \def\initial{%
   \bgroup
-  \initialfonts
+  \initialglyphs
   \initialx
 }
 
@@ -5261,7 +5261,7 @@ end
 }
 
 % The double-column output routine for all double-column pages except
-% the last.
+% the last, which is done by \balancecolumns.
 %
 \def\doublecolumnout{%
   \splittopskip=\topskip \splitmaxdepth=\maxdepth
@@ -5343,7 +5343,8 @@ end
   \pagegoal = \vsize
 }
 %
-% Only called for the last of the double column material.
+% Only called for the last of the double column material.  \doublecolumnout 
+% does the others.
 \def\balancecolumns{%
   \setbox0 = \vbox{\unvbox255}% like \box255 but more efficient, see p.120.
   \dimen@ = \ht0
@@ -5351,26 +5352,33 @@ end
   \advance\dimen@ by-\baselineskip
   \ifdim\dimen@<14\baselineskip
     % Don't split a short final column in two.
-    \global\setbox1 = \copy0
-    \global\setbox3 = \vbox{}%
+    \setbox2=\vbox{}%
   \else
-  \divide\dimen@ by 2 % target to split to
-  %debug\message{final 2-column material height=\the\ht0, target=\the\dimen@.}%
-  \splittopskip = \topskip
-  % Loop until we get a decent breakpoint.
-  {%
-    \vbadness = 10000
-    \loop
-      \global\setbox3 = \copy0
-      \global\setbox1 = \vsplit3 to \dimen@
-    \ifdim\ht3>\dimen@
-      \global\advance\dimen@ by 1pt
-    \repeat
-  }%
+    \divide\dimen@ by 2 % target to split to
+    \dimen@ii = \dimen@
+    \splittopskip = \topskip
+    % Loop until the second column is no higher than the first
+    {%
+      \vbadness = 10000
+      \loop
+        \global\setbox3 = \copy0
+        \global\setbox1 = \vsplit3 to \dimen@
+      \ifdim\ht3>\dimen@
+        \global\advance\dimen@ by 1pt
+      \repeat
+    }%
+    \multiply\dimen@ii by 4
+    \divide\dimen@ii by 5
+    \ifdim\ht3<\dimen@ii
+      % Column heights are too different, so don't make their bottoms
+      % flush with each other
+      \setbox0=\vbox to\dimen@{\unvbox1\vfill}%
+      \setbox2=\vbox to\dimen@{\unvbox3\vfill}%
+    \else
+      \setbox0=\vbox to\dimen@{\unvbox1}%
+      \setbox2=\vbox to\dimen@{\unvbox3}%
+    \fi
   \fi
-  %debug\message{split to \the\dimen@, column heights: \the\ht1, \the\ht3.}%
-  \setbox0=\vbox to\dimen@{\unvbox1\vfill}%
-  \setbox2=\vbox to\dimen@{\unvbox3\vfill}%
   %
   \pagesofar
 }
