@@ -1,3 +1,8 @@
+2015-09-044  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-lib-version.m4 (KPSE_LIB_VERSION): Allow more general
+	version number suffix strings, e.g., "-beta1".
+
 2015-08-14  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-pkgs.m4 (kpse_texk_pkgs): Add gregorio.
