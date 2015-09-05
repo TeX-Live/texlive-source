@@ -54,6 +54,7 @@ texmf_scriptsdir = $(datarootdir)/texmf-dist/scripts
 texmf_shell_scripts = \
 	adhocfilelist/adhocfilelist.sh \
 	bibexport/bibexport.sh \
+	checklistings/checklistings.sh \
 	dtxgen/dtxgen \
 	installfont/installfont-tl \
 	latexfileversion/latexfileversion \
