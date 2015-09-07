@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-08-31.16}
+\def\texinfoversion{2015-09-04.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4667,6 +4667,28 @@ end
 \let\indexlbrace\relax
 \let\indexrbrace\relax
 
+{\catcode`\@=0
+\catcode`\\=13
+  @gdef@backslashdisappear{@def\{}}
+}
+
+{
+\catcode`\<=13
+\catcode`\-=13
+  \gdef\indexnonalnumdisappear{%
+    \backslashdisappear
+    \def-{}%
+    \def<{}%
+  }
+
+  \gdef\indexnonalnumreappear{%
+    \useindexbackslash
+    \let-\normaldash
+    \let<\normalless
+  }
+}
+
+
 % \indexnofonts is used when outputting the strings to sort the index
 % by, and when constructing control sequence names.  It eliminates all
 % control sequences and just writes whatever the best ASCII sort string
@@ -4828,13 +4850,23 @@ end
 % Definition for writing index entry text.
 \def\sortas#1{\ignorespaces}%
 
-% Definition for writing index entry sort key.  @sortas{} must occur at
+% Definition for writing index entry sort key.  Should occur at the at
 % the beginning of the index entry, like
-% @cindex @sortas{september} \september
-\def\indexwritesortas#1#2\endofindexentry{#1}
+%     @cindex @sortas{september} \september
+% The \ignorespaces takes care of following space, but there's no way
+% to remove space before it.
+{
+\catcode`\-=13
+\gdef\indexwritesortas{%
+  \begingroup
+  \indexnonalnumreappear
+  \indexwritesortasxxx}
+\gdef\indexwritesortasxxx#1{%
+  \xdef\indexsortkey{#1}\endgroup}
+}
 
 
-% Write the entry in \toks0 to the index file:
+% Write the entry in \toks0 to the index file.
 %
 \def\dosubindwrite{%
   % Put the index entry in the margin if desired.
@@ -4849,10 +4881,15 @@ end
   % Get the string to sort by, by processing the index entry with all
   % font commands turned off.
   {\indexnofonts
-   \def\endofindexentry{}%
+   \xdef\indexsortkey{}%
    \let\sortas=\indexwritesortas
-   \edef\temp{\the\toks0 \noexpand\endofindexentry}%
-   \xdef\indexsortkey{\temp}%
+   \indexnonalnumdisappear
+   \edef\temp{\the\toks0}%
+   \setbox\dummybox = \hbox{\temp}% Make sure to execute any \sortas
+   \ifx\indexsortkey\empty
+     \xdef\indexsortkey{\temp}%
+     \ifx\indexsortkey\empty\xdef\indexsortkey{ }\fi
+   \fi
   }%
   %
   % Set up the complete index entry, with both the sort key and
@@ -4866,6 +4903,7 @@ end
   }%
   \temp
 }
+\newbox\dummybox % used above
 
 % Take care of unwanted page breaks/skips around a whatsit:
 %
@@ -5026,7 +5064,6 @@ end
 % These macros are used by the sorted index file itself.
 % Change them to control the appearance of the index.
 
-\let\normalhyphen=-
 {\catcode`\/=13 \catcode`\-=13 \catcode`\^=13 \catcode`\~=13 \catcode`\_=13
 \catcode`\|=13 \catcode`\<=13 \catcode`\>=13 \catcode`\+=13 \catcode`\"=13
 \catcode`\$=3
@@ -5040,8 +5077,7 @@ end
   % Can't get bold backslash so don't use bold forward slash
   \catcode`\/=13
   \def/{{\secrmnotbold \normalslash}}%
-  \catcode`\-=13
-  \def-{{\normalhyphen\normalhyphen}}%
+  \def-{{\normaldash\normaldash}}% en dash `--'
   \let^=\normalcaret
   \let~=\normaltilde
   \def\_{%
@@ -10329,6 +10365,8 @@ directory should work if nowhere else does.}
 \catcode`\>=\active \def\activegtr{{\tt \gtr}}\let> = \activegtr
 \catcode`\+=\active \def+{{\tt \char 43}}
 \catcode`\$=\active \def${\ifusingit{{\sl\$}}\normaldollar}%$ font-lock fix
+\catcode`\-=\active \let-=\normaldash
+
 
 % used for headline/footline in the output routine, in case the page
 % breaks in the middle of an @tex block.
@@ -10384,8 +10422,7 @@ directory should work if nowhere else does.}
 @gdef@otherbackslash{@let\=@realbackslash}
 
 % Same as @turnoffactive except outputs \ as {\tt\char`\\} instead of
-% the literal character `\'.  Also revert - to its normal character, in
-% case the active - from code has slipped in.
+% the literal character `\'.
 %
 {@catcode`- = @active
  @gdef@normalturnoffactive{%
