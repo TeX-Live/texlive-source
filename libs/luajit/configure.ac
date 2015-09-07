@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -18,6 +18,7 @@ KPSE_BASIC([luajit])
 KPSE_CANONICAL_HOST
 
 AC_PROG_CC
+AC_PROG_CC_C99
 AM_PROG_AS
 AC_PROG_RANLIB
 AC_PROG_LN_S
@@ -47,13 +48,18 @@ AS_CASE([$host_os],
 LJ_ARCH()
 AS_CASE([$LJHOST],
         [Windows], [LJVM_MODE=peobj
-                    LUAJIT_DEFINES="$LUAJIT_DEFINES -malign-double"],
+                    LUAJIT_CFLAGS=-malign-double],
         [Darwin | iOS], [LJVM_MODE=machasm],
                         [LJVM_MODE=elfasm])
 AM_CONDITIONAL([PEOBJ], [test "x$LJVM_MODE" = xpeobj])
 
+AC_SUBST([LUAJIT_CFLAGS])
 AC_SUBST([LJHOST])
 AC_SUBST([LJVM_MODE])
+
+AS_CASE([$host_os:$host_cpu],
+        [*darwin*:x86_64], [LIBLUAJIT_LDEXTRA='-image_base 7fff04c4a000'])
+AC_SUBST([LIBLUAJIT_LDEXTRA])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 

@@ -1,5 +1,5 @@
 # Autoconf macros for luajit.
-# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -16,24 +16,28 @@ AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x64],
       [grep 'LJ_TARGET_X86 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x86
-         LUAJIT_DEFINES="$LUAJIT_DEFINES -march=i686"],
+         LUAJIT_CFLAGS='-march=i686 -msse -msse2 -mfpmath=sse'],
       [grep 'LJ_TARGET_ARM ' conftest.i >/dev/null 2>&1],
         [LJARCH=arm],
+      [grep 'LJ_TARGET_ARM64 ' conftest.i >/dev/null 2>&1],
+        [LJARCH=arm64],
       [grep 'LJ_TARGET_PPC ' conftest.i >/dev/null 2>&1],
-        [LJARCH=ppc],
-      [grep 'LJ_TARGET_PPCSPE ' conftest.i >/dev/null 2>&1],
-        [LJARCH=ppcspe],
+        [LJARCH=ppc
+         AS_IF([grep 'LJ_LE 1' conftest.i >/dev/null 2>&1],
+                 [echo '-DLJ_ARCH_ENDIAN=LUAJIT_LE' >>native_flags],
+                 [echo '-DLJ_ARCH_ENDIAN=LUAJIT_BE' >>native_flags])],
       [grep 'LJ_TARGET_MIPS ' conftest.i >/dev/null 2>&1],
         [LJARCH=mips
          AS_IF([grep 'MIPSEL ' conftest.i >/dev/null 2>&1],
-                 [echo '-D__MPISEL__=1' >>native_flags])],
+                 [echo '-D__MIPSEL__=1' >>native_flags])],
         [AC_MSG_ERROR([Sorry, unsupported architecture])])
 AS_IF([grep 'LJ_TARGET_PS3 1'conftest.i >/dev/null 2>&1],
         [LJHOST='PS3'
          echo '-D__CELLOS_LV2__' >>native_flags
          LUAJIT_DEFINES="$LUAJIT_DEFINES -DLUAJIT_USE_SYSMALLOC"])
-AS_IF([grep 'LJ_NO_UNWIND 1'conftest.i >/dev/null 2>&1],
-        [echo '-DLUAJIT_NO_UNWIND' >>native_flags])
+AS_IF([grep 'LJ_NO_UNWIND 1' conftest.i >/dev/null 2>&1],
+        [echo '-D NO_UNWIND' >>dynasm_flags
+         echo '-DLUAJIT_NO_UNWIND' >>native_flags])
 echo "-DLUAJIT_TARGET=LUAJIT_ARCH_$LJARCH" >>native_flags
 AS_IF([grep 'LJ_ARCH_BITS 64' conftest.i >/dev/null 2>&1],
         [echo '-D P64' >>dynasm_flags
@@ -61,17 +65,18 @@ DASM_ARCH=$LJARCH
 AS_CASE([$LJARCH],
         [x86], [AS_IF([grep '__SSE2__ 1' conftest.i >/dev/null 2>&1],
                       [echo '-D SSE' >>dynasm_flags])],
-        [x64], [DASM_ARCH=x86],
+        [x64], [AS_IF([grep 'LJ_FR2 1' conftest.i >/dev/null 2>&1],
+                      [], [DASM_ARCH=x86])],
         [arm], [AS_IF([test "x$LJHOST" = xiOS],
                       [echo '-D IOS' >>dynasm_flags])],
         [ppc], [AS_IF([grep 'LJ_ARCH_SQRT 1' conftest.i >/dev/null 2>&1],
                       [echo '-D SQRT' >>dynasm_flags])
-                AS_IF([grep 'LJ_ARCH_SQRT 1' conftest.i >/dev/null 2>&1],
-                      [echo '-D SQRT' >>dynasm_flags])
                 AS_IF([grep 'LJ_ARCH_ROUND 1' conftest.i >/dev/null 2>&1],
                       [echo '-D ROUND' >>dynasm_flags])
-                AS_IF([grep 'LJ_ARCH_PPC64 1' conftest.i >/dev/null 2>&1],
+                AS_IF([grep 'LJ_ARCH_PPC32ON64 1' conftest.i >/dev/null 2>&1],
                       [echo '-D GPR64' >>dynasm_flags])
+                AS_IF([grep 'LJ_ARCH_PPC64 ' conftest.i >/dev/null 2>&1],
+                      [DASM_ARCH=ppc64])
                 AS_IF([test "x$LJHOST" = xPS3],
                       [echo '-D PPE -D TOC' >>dynasm_flags])])
 AS_CASE([$LJHOST],

@@ -1,3 +1,9 @@
+2015-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import LuaJIT-2.1.0-beta1.
+	* version.ac: Adjusted.
+	* Makefile.am, configure.ac, m4/lj-system.m4: Adapted.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

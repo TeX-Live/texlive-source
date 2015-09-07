@@ -1,0 +1,175 @@
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lauxlib.h LuaJIT-2.1.0-beta1/src/lauxlib.h
+--- LuaJIT-2.1.0-beta1.orig/src/lauxlib.h	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lauxlib.h	2015-09-04 08:42:39.000000000 +0200
+@@ -86,6 +86,32 @@
+ 				int level);
+ 
+ 
++
++/*
++** {======================================================
++** File handles for IO library
++** =======================================================
++*/
++
++/*
++** A file handle is a userdata with metatable 'LUA_FILEHANDLE' and
++** initial structure 'luaL_Stream' (it may contain other fields
++** after that initial structure).
++*/
++
++#define LUA_FILEHANDLE          "FILE*"
++
++
++typedef struct luaL_Stream {
++  FILE *f;  /* stream (NULL for incompletely created streams) */
++  lua_CFunction closef;  /* to close stream (NULL for closed streams) */
++} luaL_Stream;
++
++/* }====================================================== */
++
++
++
++
+ /*
+ ** ===============================================================
+ ** some useful macros
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lib_init.c LuaJIT-2.1.0-beta1/src/lib_init.c
+--- LuaJIT-2.1.0-beta1.orig/src/lib_init.c	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lib_init.c	2015-09-04 08:42:39.000000000 +0200
+@@ -26,6 +26,7 @@
+   { LUA_DBLIBNAME,	luaopen_debug },
+   { LUA_BITLIBNAME,	luaopen_bit },
+   { LUA_JITLIBNAME,	luaopen_jit },
++  { LUA_BITLIBNAME_32,	luaopen_bit32 },
+   { NULL,		NULL }
+ };
+ 
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lib_package.c LuaJIT-2.1.0-beta1/src/lib_package.c
+--- LuaJIT-2.1.0-beta1.orig/src/lib_package.c	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lib_package.c	2015-09-04 08:42:39.000000000 +0200
+@@ -362,6 +362,29 @@
+   return 1;  /* library loaded successfully */
+ }
+ 
++#define LUA_POF		"luaopen_"
++#define LUA_OFSEP	"_"
++#define POF		LUA_POF
++
++static const char *mkfuncname (lua_State *L, const char *modname) {
++  const char *funcname;
++  const char *mark = strchr(modname, *LUA_IGMARK);
++  if (mark) modname = mark + 1;
++  funcname = luaL_gsub(L, modname, ".", LUA_OFSEP);
++  funcname = lua_pushfstring(L, POF"%s", funcname);
++  lua_remove(L, -2);  /* remove 'gsub' result */
++  return funcname;
++}
++
++
++int loader_C_luatex (lua_State *L, const char *name, const char *filename) {
++  const char *funcname;
++  funcname = mkfuncname(L, name);
++  if (ll_loadfunc(L, filename, funcname,0) != 0)
++    loaderror(L, filename);
++  return 1;  /* library loaded successfully */
++}
++
+ static int lj_cf_package_loader_croot(lua_State *L)
+ {
+   const char *filename;
+@@ -381,6 +404,21 @@
+   return 1;
+ }
+ 
++int loader_Call_luatex (lua_State *L, const char *name, const char *filename) {
++  const char *funcname;
++  int stat;
++  if (filename == NULL) return 1;  /* root not found */
++  funcname = mkfuncname(L, name);
++  if ((stat = ll_loadfunc(L, filename, funcname,0)) != 0) {
++    if (stat != PACKAGE_ERR_FUNC) loaderror(L, filename);  /* real error */
++    lua_pushfstring(L, "\n\tno module " LUA_QS " in file " LUA_QS,
++                       name, filename);
++    return 1;  /* function not found */
++  }
++  return 1;  /* library loaded successfully */
++}
++
++
+ static int lj_cf_package_loader_preload(lua_State *L)
+ {
+   const char *name = luaL_checkstring(L, 1);
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lua.h LuaJIT-2.1.0-beta1/src/lua.h
+--- LuaJIT-2.1.0-beta1.orig/src/lua.h	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lua.h	2015-09-04 08:42:39.000000000 +0200
+@@ -348,6 +348,16 @@
+ 		       const char *chunkname, const char *mode);
+ 
+ 
++#define LUA_OPEQ 0
++#define LUA_OPLT 1
++#define LUA_OPLE 2
++#define LUA_OK  0
++
++/* see http://comments.gmane.org/gmane.comp.programming.swig/18673 */
++# define lua_rawlen lua_objlen 
++
++
++
+ struct lua_Debug {
+   int event;
+   const char *name;	/* (n) */
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lualib.h LuaJIT-2.1.0-beta1/src/lualib.h
+--- LuaJIT-2.1.0-beta1.orig/src/lualib.h	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lualib.h	2015-09-04 08:42:39.000000000 +0200
+@@ -22,6 +22,8 @@
+ #define LUA_JITLIBNAME	"jit"
+ #define LUA_FFILIBNAME	"ffi"
+ 
++#define LUA_BITLIBNAME_32  "bit32"
++
+ LUALIB_API int luaopen_base(lua_State *L);
+ LUALIB_API int luaopen_math(lua_State *L);
+ LUALIB_API int luaopen_string(lua_State *L);
+@@ -34,6 +36,8 @@
+ LUALIB_API int luaopen_jit(lua_State *L);
+ LUALIB_API int luaopen_ffi(lua_State *L);
+ 
++LUALIB_API int luaopen_bit32(lua_State *L);
++
+ LUALIB_API void luaL_openlibs(lua_State *L);
+ 
+ #ifndef lua_assert
+diff -ur LuaJIT-2.1.0-beta1.orig/src/Makefile LuaJIT-2.1.0-beta1/src/Makefile
+--- LuaJIT-2.1.0-beta1.orig/src/Makefile	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/Makefile	2015-09-04 08:42:39.000000000 +0200
+@@ -97,7 +97,7 @@
+ # enabled by default. Some other features that *might* break some existing
+ # code (e.g. __pairs or os.execute() return values) can be enabled here.
+ # Note: this does not provide full compatibility with Lua 5.2 at this time.
+-#XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
++XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
+ #
+ # Disable the JIT compiler, i.e. turn LuaJIT into a pure interpreter.
+ #XCFLAGS+= -DLUAJIT_DISABLE_JIT
+@@ -456,7 +456,7 @@
+ LJVM_BOUT= $(LJVM_S)
+ LJVM_MODE= elfasm
+ 
+-LJLIB_O= lib_base.o lib_math.o lib_bit.o lib_string.o lib_table.o \
++LJLIB_O= lib_base.o lib_math.o lbitlib.o lib_bit.o lib_string.o lib_table.o \
+ 	 lib_io.o lib_os.o lib_package.o lib_debug.o lib_jit.o lib_ffi.o
+ LJLIB_C= $(LJLIB_O:.o=.c)
+ 
+diff -ur LuaJIT-2.1.0-beta1.orig/src/Makefile.dep LuaJIT-2.1.0-beta1/src/Makefile.dep
+--- LuaJIT-2.1.0-beta1.orig/src/Makefile.dep	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/Makefile.dep	2015-09-04 08:46:10.000000000 +0200
+@@ -6,6 +6,7 @@
+  lj_tab.h lj_meta.h lj_state.h lj_ctype.h lj_cconv.h lj_bc.h lj_ff.h \
+  lj_ffdef.h lj_dispatch.h lj_jit.h lj_ir.h lj_char.h lj_strscan.h \
+  lj_strfmt.h lj_lib.h lj_libdef.h
++lbitlib.o: lbitlib.c lua.h luaconf.h lauxlib.h lualib.h
+ lib_bit.o: lib_bit.c lua.h luaconf.h lauxlib.h lualib.h lj_obj.h lj_def.h \
+  lj_arch.h lj_err.h lj_errmsg.h lj_buf.h lj_gc.h lj_str.h lj_strscan.h \
+  lj_strfmt.h lj_ctype.h lj_cdata.h lj_cconv.h lj_carith.h lj_ff.h \
