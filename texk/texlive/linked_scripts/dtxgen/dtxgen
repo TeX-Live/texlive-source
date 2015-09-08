@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=1.05
+version=1.06
 myname=$(basename $0)
 
 <<'DOC'
@@ -8,6 +8,17 @@ myname=$(basename $0)
 
 = Synopsis
 dtxgen [options] basename.[sty,cls]	
+
+Options:
+-h,--help	print short help and exit
+-H,--Help	print full documentation via less and exit
+-V,--version	print version and exit
+-s,--short	short, one-liner, package description
+-d,--date	initial version's date. Default: current date 
+-m,--mail	your email address. Default: $MAIL
+-n,--name	your name. Default: $NAME
+-c,--class	(class packs only) class to be preloaded. Default: article
+-q,--quiet	run quietly
 
 = Description
 dtxgen creates a template for a self-extracting .dtx file, based on the model described by
@@ -83,11 +94,6 @@ inst		install in the user's TeX tree,
 install		install in the local TeX tree (uses sudo)
 zip		produce a zip file ready for upload to CTAN
 
-= Changes
-Changes with respect version 1.04:
-- mktemp now works for Mac/BSD too
-- don't include .cls/.sty file in zip
-
 = Author and copyright
 Author	Wybo Dekker
 Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
@@ -122,16 +128,25 @@ eval set -- "$options"
 
 while [ $# -gt 0 ]; do
    case $1 in
-   (-h|--help)    help;;
-   (-H|--Help)    helpall;;	
-   (-V|--version) version;;
+   (-h|--help)		# print short help and exit
+	 help;;
+   (-H|--Help)		# print full documentation via less and exit
+	 helpall;;	
+   (-V|--version)	# print version and exit
+	 version;;
+   (-s|--short)		# short, one-liner, package description
+	 short=$2; shift 2;;
+   (-d|--date)		# initial version's date. Default: current date 
+	 date=$2; shift 2;;
+   (-m|--mail)		# your email address. Default: $MAIL
+	 mail=$2; shift 2;;
+   (-n|--name)		# your name. Default: $NAME
+	 name=$2; shift 2;;
+   (-c|--class)		# (class packs only) class to be preloaded. Default: article
+	 loadclass=$2; shift 2;;
+   (-q|--quiet)		# run quietly
+	 quiet=--quiet; shift;;
    (-I)           install;;
-   (-s|--short)   short=$2;          shift 2;;
-   (-d|--date)    date=$2;           shift 2;;
-   (-m|--mail)    mail=$2;           shift 2;;
-   (-n|--name)    name=$2;           shift 2;;
-   (-c|--class)   loadclass=$2;      shift 2;;
-   (-q|--quiet)   quiet=--quiet;       shift;;
    (--)          shift;               break;;
    (*)           break;;
    esac
@@ -174,15 +189,36 @@ short=$(sed 's/\\/\\\\/g' <<<$short)
 test -z "$mail" && die "author's email not set - use option or environment variable EMAIL"
 test -z "$name" && die "author's name not set - use option or environment variable NAME"
 
-# sed script replacing the variables in the templates:
-for i in base year ext mail use typ Typ name date short shrt lcl; do
-  eval v=\$$i
-  test $quiet || echo "$i	$v"|sed 's/\\\\/\\/g'
-  script="${script}s/%$i%/$v/g;"
+colw=${#base}
+test $colw -lt 7 && colw=7
+kopl=$(eval "printf '%.0s-' {1..$colw}")
+kopr=$(eval "printf '%.0s-' {1..$((72-$colw))}")
+declare -A rm=(
+    [$kopl]=$kopr
+    [$base]=$shrt
+   [Author]=$name
+   [E-mail]=$mail
+  [License]='Released under the LaTeX Project Public License v1.3c or later'
+      [See]='http://www.latex-project.org/lppl.txt'
+)
+
+readme=()
+
+for i in $kopl $base Author E-mail License See; do
+   readme+="$(printf "%*s:| %s°"  $colw "$i" "${rm[$i]}")"
 done
 
-createfile "$script" Makefile
-createfile "$script" DTX $base.dtx
+# make sed script replacing the variables in the templates:
+sedscript=''
+for i in readme base year ext mail use typ Typ name date short shrt lcl; do
+  eval v="\$$i"
+  test $quiet || echo "$i	$v"|sed 's/\\\\/\\/g;s=°=\n=g'
+  sedscript="${sedscript}s=%$i%=$v=g;"
+done
+sedscript+='s=°=\n=g'
+
+createfile "$sedscript" Makefile
+createfile "$sedscript" DTX $base.dtx
 make $quiet
 exit 0
 
@@ -226,18 +262,15 @@ Makefile
 
 <<'DTX'
 % \iffalse meta-comment
+% vim: textwidth=75
 %<*internal>
 \iffalse
 %</internal>
 %<*readme>
-----------------------------------------------------------------
-%base% --- %shrt%
-Author:  %name%
-E-mail:  %mail%
-License: Released under the LaTeX Project Public License v1.3c or later
-See:     http://www.latex-project.org/lppl.txt
-----------------------------------------------------------------
+|
+%readme%
 
+Short description:
 Some text about the %typ%: probably the same as the abstract.
 %</readme>
 %<*internal>
@@ -252,14 +285,7 @@ Some text about the %typ%: probably the same as the abstract.
 \keepsilent
 \askforoverwritefalse
 \preamble
-----------------------------------------------------------------
-%base% --- %shrt%
-Author:  %name%
-E-mail:  %mail%
-License: Released under the LaTeX Project Public License v1.3c or later
-See:     http://www.latex-project.org/lppl.txt
-----------------------------------------------------------------
-
+%readme%
 \endpreamble
 \postamble
 
