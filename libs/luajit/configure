@@ -14143,6 +14143,7 @@ if ac_fn_c_try_cpp "$LINENO"; then :
   lj_cpp=ok; rm -f dynasm_flags native_flags
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for architecture" >&5
 $as_echo_n "checking for architecture... " >&6; }
+cp conftest.i system_flags
 if grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1; then :
   LJARCH=x64
 elif grep 'LJ_TARGET_X86 ' conftest.i >/dev/null 2>&1; then :
@@ -14211,10 +14212,6 @@ if test "x$LJHOST" = xWindows; then :
 fi
 DASM_ARCH=$LJARCH
 case $LJARCH in #(
-  x86) :
-    if grep '__SSE2__ 1' conftest.i >/dev/null 2>&1; then :
-  echo '-D SSE' >>dynasm_flags
-fi ;; #(
   x64) :
     if grep 'LJ_FR2 1' conftest.i >/dev/null 2>&1; then :
 
