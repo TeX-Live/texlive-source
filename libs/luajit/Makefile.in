@@ -731,7 +731,7 @@ ljlib_sources = \
 HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
 CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_opt_fold.c lj_vm_asm.S \
 	jiterr.out jiterr.tmp rebuild.stamp
-CONFIG_CLEAN_FILES = dynasm_flags native_flags
+CONFIG_CLEAN_FILES = dynasm_flags native_flags system_flags
 luajitincludedir = ${includedir}/texluajit
 luajitinclude_HEADERS = \
 	$(LUAJIT_TREE)/src/lauxlib.h \

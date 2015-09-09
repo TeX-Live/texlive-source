@@ -144,7 +144,7 @@ $(ljlib_sources) lj_opt_fold.c: config.force
 
 CLEANFILES = $(HDRGEN) $(ljlib_sources) lj_opt_fold.c lj_vm_asm.S
 
-CONFIG_CLEAN_FILES = dynasm_flags native_flags
+CONFIG_CLEAN_FILES = dynasm_flags native_flags system_flags
 
 luajitincludedir = ${includedir}/texluajit
 

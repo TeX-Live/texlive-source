@@ -1,3 +1,8 @@
+2015-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, m4/lj-system.m4: Keep preprocessed src/lj_arch.h
+	as system_flags for better diagnostics.
+
 2015-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import LuaJIT-2.1.0-beta1.

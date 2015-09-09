@@ -12,6 +12,7 @@
 m4_define([_LJ_ARCH], [dnl
 rm -f dynasm_flags native_flags
 AC_MSG_CHECKING([for architecture])
+cp conftest.i system_flags
 AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x64],
       [grep 'LJ_TARGET_X86 ' conftest.i >/dev/null 2>&1],
@@ -63,8 +64,6 @@ AS_IF([test "x$LJHOST" = xWindows],
       [echo '-D WIN' >>dynasm_flags])
 DASM_ARCH=$LJARCH
 AS_CASE([$LJARCH],
-        [x86], [AS_IF([grep '__SSE2__ 1' conftest.i >/dev/null 2>&1],
-                      [echo '-D SSE' >>dynasm_flags])],
         [x64], [AS_IF([grep 'LJ_FR2 1' conftest.i >/dev/null 2>&1],
                       [], [DASM_ARCH=x86])],
         [arm], [AS_IF([test "x$LJHOST" = xiOS],
