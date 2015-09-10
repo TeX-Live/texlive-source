@@ -9,7 +9,7 @@
 %    Yoichi Kawabata (kawabata@canon.co.jp),
 %    Makoto Kobayashi (makoto@lloem.fujidenki.co.jp),
 %    Yoshihiro Aoki (aoki@tokyo-shoseki-ptg.co.jp),
-%    Akira Kakuto (kakuto@fsci.fuk.kindai.ac.jp).
+%    Akira Kakuto (kakuto@fuk.kindai.ac.jp).
 %    Koich Inoue (inoue@ma.ns.musashi-tech.ac.jp).
 %
 % (??/??/87) RKS jTeX 2.9 -- j1.0
@@ -51,6 +51,7 @@
 % (2013-04-09) PB  pTeX p3.4 (TL 2013)
 % (2014-04-17) KB  pTeX p3.5 (TL 2014)
 % (2014-03-15) KB  pTeX p3.6 (TL 2015)
+% (2015-09-10) AK  pTeX p3.7 Bug fix by Hironori Kitagawa in flushing choice node.
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
@@ -3416,6 +3417,28 @@ accent_noad: begin print_esc("accent"); print_fam_and_char(accent_chr(p));
 @y
 accent_noad: begin print_esc("accent");
   print_fam_and_char(accent_chr(p),math_char);
+@z
+
+@x pTeX: flush choice_node
+  begin if math_type(nucleus(p))>=sub_box then
+    flush_node_list(info(nucleus(p)));
+  if math_type(supscr(p))>=sub_box then
+    flush_node_list(info(supscr(p)));
+  if math_type(subscr(p))>=sub_box then
+    flush_node_list(info(subscr(p)));
+@y
+  begin if (math_type(nucleus(p))>=sub_box)
+       and (math_type(nucleus(p))<>math_jchar)
+       and (math_type(nucleus(p))<>math_text_jchar) then
+    flush_node_list(info(nucleus(p)));
+  if math_type(supscr(p))>=sub_box
+       and (math_type(supscr(p))<>math_jchar)
+       and (math_type(supscr(p))<>math_text_jchar) then
+    flush_node_list(info(supscr(p)));
+  if math_type(subscr(p))>=sub_box
+       and (math_type(subscr(p))<>math_jchar)
+       and (math_type(subscr(p))<>math_text_jchar) then
+    flush_node_list(info(subscr(p)));
 @z
 
 @x [35.715] l.14687 - pTeX: rebox

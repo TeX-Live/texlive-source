@@ -1,3 +1,8 @@
+2015-09-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Fix a bug in flushing choice node.
+	* ptex_version.h: pTeX version p3.7.
+
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptriptest (removed): Renamed ...
