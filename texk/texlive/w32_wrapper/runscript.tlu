@@ -249,6 +249,8 @@ local docstr = [[
         - fix for argument duplication in fmtutil
     2015/04/12
         - handle fmtutil-sys via fmtutil --sys
+    2015/09/10
+        - more slash flipping for the sake of vbscript and unc paths
 ]]
 
 -- HELPER SUBROUTINES --
@@ -645,7 +647,9 @@ if not ARGV then
     arg[0] = progfullname
   else
     ARGV = extension_map[ext] or assert(shebang_to_argv(progfullname)) 
-    table.insert(ARGV, _q(progfullname))
+    -- [w|c]script, for one, mistakes a forward-slashed UNC script path
+    -- for an option even when quoted
+    table.insert(ARGV, _q(progfullname:gsub('/','\\')))
     if not ARGV[0] then
       ARGV[0], ARGV[1] = assert(check_command(ARGV[1], PATH))
     end
