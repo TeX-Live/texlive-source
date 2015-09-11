@@ -1,4 +1,0 @@
-Expected changes to come:
-
-Questions:
-* Do we support glyphid as a slot attribute?

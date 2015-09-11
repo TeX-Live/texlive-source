@@ -394,26 +394,13 @@ bool Silf::runGraphite(Segment *seg, uint8 firstPass, uint8 lastPass, int dobidi
                             << json::close;
             }
 #endif
-
-            if (!(seg->dir() & 2) && m_aBidi != 0xFF)
-            {
-                if ((seg->dir() & 1) != m_dir)
-                    seg->reverseSlots();
-                seg->bidiPass(m_dir, m_aMirror);
-            }
-            else if (m_aMirror && (seg->dir() & 1))
-            {
-                Slot * s;
-                for (s = seg->first(); s; s = s->next())
-                {
-                    unsigned short g = seg->glyphAttr(s->gid(), m_aMirror);
-                    if (g && (!(seg->dir() & 4) || !seg->glyphAttr(s->gid(), m_aMirror + 1)))
-                        s->setGlyph(seg, g);
-                }
-            }
+            if (seg->currdir() != m_dir)
+                seg->reverseSlots();
+            if (m_aMirror && (seg->dir() & 3) == 3)
+                seg->doMirror(m_aMirror);
         --i;
+        lbidi = lastPass;
         --lastPass;
-        lbidi = 0xFF;
         continue;
         }
 
@@ -431,8 +418,9 @@ bool Silf::runGraphite(Segment *seg, uint8 firstPass, uint8 lastPass, int dobidi
 #endif
 
         // test whether to reorder, prepare for positioning
+        bool reverse = (lbidi == 0xFF) && (seg->currdir() != ((m_dir & 1) ^ m_passes[i].reverseDir()));
         if ((i >= 32 || (seg->passBits() & (1 << i)) == 0 || m_passes[i].collisionLoops())
-                && !m_passes[i].runGraphite(m, fsm))
+                && !m_passes[i].runGraphite(m, fsm, reverse))
             return false;
         // only subsitution passes can change segment length, cached subsegments are short for their text
         if (m.status() != vm::Machine::finished

@@ -53,9 +53,10 @@ public:
     
     bool readPass(const byte * pPass, size_t pass_length, size_t subtable_base, Face & face,
         enum passtype pt, uint32 version, Error &e);
-    bool runGraphite(vm::Machine & m, FiniteStateMachine & fsm) const;
+    bool runGraphite(vm::Machine & m, FiniteStateMachine & fsm, bool reverse) const;
     void init(Silf *silf) { m_silf = silf; }
     byte collisionLoops() const { return m_numCollRuns; }
+    bool reverseDir() const { return m_isReverseDir; }
 
     CLASS_NEW_DELETE
 private:
@@ -106,6 +107,7 @@ private:
     byte m_minPreCtxt;
     byte m_maxPreCtxt;
     byte m_colThreshold;
+    bool m_isReverseDir;
     vm::Machine::Code m_cPConstraint;
     
 private:        //defensive

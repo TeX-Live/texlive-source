@@ -74,7 +74,6 @@ add_library(graphite2 SHARED
     gr_logging.cpp
     gr_segment.cpp
     gr_slot.cpp
-    Bidi.cpp
     CachedFace.cpp
     CmapCache.cpp
     Code.cpp

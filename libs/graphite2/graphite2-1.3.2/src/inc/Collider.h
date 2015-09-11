@@ -28,7 +28,7 @@ of the License or (at your option) any later version.
 
 #include <utility>
 #include "inc/List.h"
-#include "inc/Slot.h"
+//#include "inc/Slot.h"
 #include "inc/Position.h"
 #include "inc/Intervals.h"
 #include "inc/debug.h"

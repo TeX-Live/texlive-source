@@ -68,7 +68,12 @@ void unaligned_copy(void * d, void const * s) {
 }
 
 inline
-u8 * memcpy_nooverlap(u8 * d, u8 const * s, size_t n) {
+size_t align(size_t p) {
+    return (p + sizeof(unsigned long)-1) & ~(sizeof(unsigned long)-1);
+}
+
+inline
+u8 * overrun_copy(u8 * d, u8 const * s, size_t n) {
     size_t const WS = sizeof(unsigned long);
     u8 const * e = s + n;
     do 
@@ -85,7 +90,7 @@ u8 * memcpy_nooverlap(u8 * d, u8 const * s, size_t n) {
 
 
 inline
-u8 * memcpy_nooverlap_surpass(u8 * d, u8 const * s, size_t n) {
+u8 * fast_copy(u8 * d, u8 const * s, size_t n) {
     size_t const WS = sizeof(unsigned long);
     size_t wn = n/WS;
     while (wn--) 
@@ -102,9 +107,9 @@ u8 * memcpy_nooverlap_surpass(u8 * d, u8 const * s, size_t n) {
 
 
 inline 
-u8 * memcpy_(u8 * d, u8 const * s, size_t n) {
+u8 * copy(u8 * d, u8 const * s, size_t n) {
     if (likely(d>s+sizeof(unsigned long)))
-        return memcpy_nooverlap(d,s,n);
+        return overrun_copy(d,s,n);
     else 
         while (n--) *d++ = *s++;
     return d;

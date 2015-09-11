@@ -32,15 +32,13 @@ of the License or (at your option) any later version.
 #include "inc/Font.h"
 #include "inc/Position.h"
 
-
-
 namespace graphite2 {
 
 typedef gr_attrCode attrCode;
 
 class GlyphFace;
-class Segment;
 class SegCacheEntry;
+class Segment;
 
 struct SlotJustify
 {
@@ -109,6 +107,7 @@ public:
     bool isInsertBefore() const { return !(m_flags & INSERTED); }
     uint8 getBidiLevel() const { return m_bidiLevel; }
     void setBidiLevel(uint8 level) { m_bidiLevel = level; }
+    int8 getBidiClass(const Segment *seg);
     int8 getBidiClass() const { return m_bidiCls; }
     void setBidiClass(int8 cls) { m_bidiCls = cls; }
     int16 *userAttrs() const { return m_userAttr; }

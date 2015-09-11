@@ -124,8 +124,7 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libgraphite2_a_AR = $(AR) $(ARFLAGS)
 libgraphite2_a_LIBADD =
-am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/Bidi.cpp \
-	@GRAPHITE2_TREE@/src/CachedFace.cpp \
+am__libgraphite2_a_SOURCES_DIST = @GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/CmapCache.cpp \
 	@GRAPHITE2_TREE@/src/Code.cpp \
 	@GRAPHITE2_TREE@/src/Collider.cpp \
@@ -169,8 +168,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @WITH_FILEFACE_TRUE@	@GRAPHITE2_TREE@/src/FileFace.$(OBJEXT)
 @WITH_TRACING_TRUE@am__objects_5 =  \
 @WITH_TRACING_TRUE@	@GRAPHITE2_TREE@/src/json.$(OBJEXT)
-am_libgraphite2_a_OBJECTS = @GRAPHITE2_TREE@/src/Bidi.$(OBJEXT) \
-	@GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT) \
+am_libgraphite2_a_OBJECTS = @GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/CmapCache.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Code.$(OBJEXT) \
 	@GRAPHITE2_TREE@/src/Collider.$(OBJEXT) \
@@ -661,8 +659,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/$(GRAPHITE2_SRC) \
 	-I$(top_srcdir)/$(GRAPHITE2_INC) -DGRAPHITE2_STATIC \
 	-DGRAPHITE2_CUSTOM_HEADER='<config.h>' $(am__append_4) \
 	$(am__append_6) $(am__append_8)
-libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/Bidi.cpp \
-	@GRAPHITE2_TREE@/src/CachedFace.cpp \
+libgraphite2_a_SOURCES = @GRAPHITE2_TREE@/src/CachedFace.cpp \
 	@GRAPHITE2_TREE@/src/CmapCache.cpp \
 	@GRAPHITE2_TREE@/src/Code.cpp \
 	@GRAPHITE2_TREE@/src/Collider.cpp \
@@ -766,9 +763,6 @@ clean-noinstLIBRARIES:
 @GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) @GRAPHITE2_TREE@/src/$(DEPDIR)
 	@: > @GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GRAPHITE2_TREE@/src/Bidi.$(OBJEXT):  \
-	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
-	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GRAPHITE2_TREE@/src/CachedFace.$(OBJEXT):  \
 	@GRAPHITE2_TREE@/src/$(am__dirstamp) \
 	@GRAPHITE2_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -896,7 +890,6 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gr2test-dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gr2test-gr2test.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Bidi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/CachedFace.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/CmapCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GRAPHITE2_TREE@/src/$(DEPDIR)/Code.Po@am__quote@
