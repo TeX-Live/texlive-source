@@ -47,7 +47,6 @@ $(_NS)_SOURCES = \
     $($(_NS)_BASE)/src/gr_segment.cpp \
     $($(_NS)_BASE)/src/gr_slot.cpp \
     $($(_NS)_BASE)/src/json.cpp \
-    $($(_NS)_BASE)/src/Bidi.cpp \
     $($(_NS)_BASE)/src/CachedFace.cpp \
     $($(_NS)_BASE)/src/CmapCache.cpp \
     $($(_NS)_BASE)/src/Code.cpp \
@@ -78,7 +77,6 @@ $(_NS)_PRIVATE_HEADERS = \
     $($(_NS)_BASE)/src/inc/bits.h \
     $($(_NS)_BASE)/src/inc/debug.h \
     $($(_NS)_BASE)/src/inc/json.h \
-    $($(_NS)_BASE)/src/inc/Bidi.h \
     $($(_NS)_BASE)/src/inc/CachedFace.h \
     $($(_NS)_BASE)/src/inc/CharInfo.h \
     $($(_NS)_BASE)/src/inc/CmapCache.h \

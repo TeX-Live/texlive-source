@@ -72,7 +72,8 @@ Pass::Pass()
   m_numColumns(0),
   m_minPreCtxt(0),
   m_maxPreCtxt(0),
-  m_colThreshold(0)
+  m_colThreshold(0),
+  m_isReverseDir(false)
 {
 }
 
@@ -103,6 +104,7 @@ bool Pass::readPass(const byte * const pass_start, size_t pass_length, size_t su
         return face.error(e);
     m_numCollRuns = flags & 0x7;
     m_kernColls   = (flags >> 3) & 0x3;
+    m_isReverseDir = (flags >> 5) & 0x1;
     m_iMaxLoop = be::read<byte>(p);
     if (m_iMaxLoop < 1) m_iMaxLoop = 1;
     be::skip<byte>(p,2); // skip maxContext & maxBackup
@@ -226,7 +228,7 @@ bool Pass::readRules(const byte * rule_map, const size_t num_entries,
     m_rules = new Rule [m_numRules];
     m_codes = new Code [m_numRules*2];
     const size_t prog_pool_sz = vm::Machine::Code::estimateCodeDataOut(ac_end - ac_data + rc_end - rc_data);
-    m_progs = static_cast<byte *>(malloc(prog_pool_sz));
+    m_progs = gralloc<byte>(prog_pool_sz);
     byte * prog_pool_free = m_progs,
          * prog_pool_end  = m_progs + prog_pool_sz;
     if (e.test(!(m_rules && m_codes && m_progs), E_OUTOFMEM)) return face.error(e);
@@ -260,16 +262,16 @@ bool Pass::readRules(const byte * rule_map, const size_t num_entries,
             return face.error(e);
     }
 
-    // Shrink the program pool
-    // TODO: Coverty: 1315808: RESOURCE_LEAK - Resolved
-    ptrdiff_t const delta = static_cast<byte *>(realloc(m_progs, prog_pool_free - m_progs)) - m_progs;
-    if (delta)
+    byte * moved_progs = static_cast<byte *>(realloc(m_progs, prog_pool_free - m_progs));
+    if (e.test(!moved_progs, E_OUTOFMEM))   return face.error(e);
+
+    if (moved_progs != m_progs)
     {
-        m_progs += delta;
         for (Code * c = m_codes, * const ce = c + m_numRules*2; c != ce; ++c)
         {
-            c->externalProgramMoved(delta);
+            c->externalProgramMoved(moved_progs - m_progs);
         }
+        m_progs = moved_progs;
     }
 
     // Load the rule entries map
@@ -377,10 +379,11 @@ bool Pass::readRanges(const byte * ranges, size_t num_ranges, Error &e)
 }
 
 
-bool Pass::runGraphite(vm::Machine & m, FiniteStateMachine & fsm) const
+bool Pass::runGraphite(vm::Machine & m, FiniteStateMachine & fsm, bool reverse) const
 {
     Slot *s = m.slotMap().segment.first();
     if (!s || !testPassConstraint(m)) return true;
+    if (reverse) m.slotMap().segment.reverseSlots();
     if (m_numRules)
     {
         Slot *currHigh = s->next();

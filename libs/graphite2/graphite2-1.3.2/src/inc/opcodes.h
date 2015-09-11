@@ -314,6 +314,8 @@ STARTOP(insert)
     {
         newSlot->originate(seg.defaultOriginal());
     }
+    if (is == smap.highwater())
+        smap.highpassed(false);
     is = newSlot;
     seg.extendLength(1);
     if (map != &smap[-1]) 

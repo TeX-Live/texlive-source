@@ -447,6 +447,7 @@ bool Slot::removeSibling(Slot *ap)
 void Slot::setGlyph(Segment *seg, uint16 glyphid, const GlyphFace * theGlyph)
 {
     m_glyphid = glyphid;
+    m_bidiCls = -1;
     if (!theGlyph)
     {
         theGlyph = seg->getFace()->glyphs().glyphSafe(glyphid);

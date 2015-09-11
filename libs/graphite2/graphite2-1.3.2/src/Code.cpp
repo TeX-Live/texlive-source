@@ -617,6 +617,7 @@ void Machine::Code::decoder::apply_analysis(instr * const code, instr * code_end
         *tip = temp_copy;
         ++code_end;
         ++tempcount;
+        _code._delete = true;
     }
     
     _code._instr_count = code_end - code;

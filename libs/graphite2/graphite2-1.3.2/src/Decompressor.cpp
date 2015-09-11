@@ -65,6 +65,9 @@ bool read_sequence(u8 const * &src, u8 const * const end, u8 const * &literal, u
 
 int lz4::decompress(void const *in, size_t in_size, void *out, size_t out_size)
 {
+    if (out_size <= in_size)
+        return -1;
+
     u8 const *       src     = static_cast<u8 const *>(in),
              *       literal = 0,
              * const src_end = src + in_size;
@@ -78,25 +81,26 @@ int lz4::decompress(void const *in, size_t in_size, void *out, size_t out_size)
     
     while (read_sequence(src, src_end, literal, literal_len, match_len, match_dist))
     {
-        // Copy in literal
-        if (unlikely(literal + literal_len + sizeof(unsigned long) > src_end
-                  || dst + literal_len + sizeof(unsigned long) > dst_end)) 
+        // Copy in literal. At this point the last full sequence must be at
+        // least MINMATCH + 5 from the end of the output buffer.
+        if (unlikely(literal + align(literal_len) > src_end
+                  || dst + align(literal_len) > dst_end - MINMATCH+5))
             return -1;
-        dst = memcpy_nooverlap(dst, literal, literal_len);
-        
+        dst = overrun_copy(dst, literal, literal_len);
+
         // Copy, possibly repeating, match from earlier in the
         //  decoded output.
         u8 const * const pcpy = dst - match_dist;
-        if (unlikely(pcpy < static_cast<u8*>(out) 
-                  || dst + match_len + MINMATCH  + sizeof(unsigned long) > dst_end)) 
+        if (unlikely(pcpy < static_cast<u8*>(out)
+                  || dst + align(match_len + MINMATCH) > dst_end))
             return -1;
-        dst = memcpy_(dst, pcpy, match_len + MINMATCH);
+        dst = copy(dst, pcpy, match_len + MINMATCH);
     }
     
     if (unlikely(literal + literal_len > src_end
               || dst + literal_len > dst_end)) 
         return -1;
-    dst = memcpy_nooverlap_surpass(dst, literal, literal_len);
+    dst = fast_copy(dst, literal, literal_len);
     
     return dst - (u8*)out;
 }
