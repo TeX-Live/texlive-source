@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-09-04.11}
+\def\texinfoversion{2015-09-07.22}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -690,6 +690,12 @@
     \endgraf % Not \par, as it may have been set to \lisppar.
     \global\dimen1 = \prevdepth
   \egroup           % End the \vtop.
+  \addgroupbox
+  \prevdepth = \dimen1
+  \checkinserts
+}
+
+\def\addgroupbox{
   % \dimen0 is the vertical size of the group's box.
   \dimen0 = \ht\groupbox  \advance\dimen0 by \dp\groupbox
   % \dimen2 is how much space is left on the page (more or less).
@@ -702,9 +708,8 @@
     \fi
   \fi
   \box\groupbox
-  \prevdepth = \dimen1
-  \checkinserts
 }
+
 %
 % TeX puts in an \escapechar (i.e., `@') at the beginning of the help
 % message, so this ends up printing `@group can only ...'.
@@ -1046,32 +1051,8 @@ where each line of input produces a line of output.}
 % @refill is a no-op.
 \let\refill=\relax
 
-% If working on a large document in chapters, it is convenient to
-% be able to disable indexing, cross-referencing, and contents, for test runs.
-% This is done with @novalidate (before @setfilename).
-%
-\newif\iflinks \linkstrue % by default we want the aux files.
-\let\novalidate = \linksfalse
-
-% @setfilename is done at the beginning of every texinfo file.  So open
-% here some of the files we need to have open while reading the input.
-% This makes it possible to make a .fmt file for texinfo.
-\def\setfilename{%
-   \iflinks
-     \tryauxfile
-     % Open the new aux file.  TeX will close it automatically at exit.
-     \immediate\openout\auxfile=\jobname.aux
-   \fi % \openindices needs to do some work in any case.
-   \let\setfilename=\comment % Ignore extra @setfilename cmds.
-   %
-   % If texinfo.cnf is present on the system, read it.
-   % Useful for site-wide @afourpaper, etc.
-   \openin 1 texinfo.cnf
-   \ifeof 1 \else \input texinfo.cnf \fi
-   \closein 1
-   %
-   \comment % Ignore the actual filename.
-}
+% @setfilename INFO-FILENAME - ignored
+\let\setfilename=\comment
 
 % @bye.
 \outer\def\bye{\pagealignmacro\tracingstats=1\ptexend}
@@ -2777,11 +2758,6 @@ end
 %
 \def\dmn#1{\thinspace #1}
 
-% @l was never documented to mean ``switch to the Lisp font'',
-% and it is not used as such in any manual I can find.  We need it for
-% Polish suppressed-l.  --karl, 22sep96.
-%\def\l#1{{\li #1}\null}
-
 % @acronym for "FBI", "NATO", and the like.
 % We print this one point size smaller, since it's intended for
 % all-uppercase.
@@ -3737,7 +3713,12 @@ end
    \noindent
    \hbox to 0pt{\hss \itemcontents \kern\itemmargin}%
    %
-   \vadjust{\penalty 1200}}% not good to break after first line of item.
+   \ifinner\else
+     \vadjust{\penalty 1200}% not good to break after first line of item.
+   \fi
+   % We can be in inner vertical mode in a footnote, although an
+   % @itemize looks awful there.
+  }%
   \flushcr
 }
 
@@ -4679,12 +4660,14 @@ end
     \backslashdisappear
     \def-{}%
     \def<{}%
+    \def\@{}%
   }
 
   \gdef\indexnonalnumreappear{%
     \useindexbackslash
     \let-\normaldash
     \let<\normalless
+    \def\@{@}%
   }
 }
 
@@ -5078,10 +5061,10 @@ end
   \catcode`\/=13
   \def/{{\secrmnotbold \normalslash}}%
   \def-{{\normaldash\normaldash}}% en dash `--'
-  \let^=\normalcaret
+  \def^{{\chapbf \normalcaret}}
   \let~=\normaltilde
   \def\_{%
-    \leavevmode \kern.07em \vbox{\hrule width.33em height.06ex}\kern .07em }%
+     \leavevmode \kern.07em \vbox{\hrule width.3em height.1ex}\kern .07em }%
   \def|{$\vert$}%
   \def<{$\less$}%
   \def>{$\gtr$}%
@@ -5102,9 +5085,9 @@ end
   % The glue before the bonus allows a little bit of space at the
   % bottom of a column to reduce an increase in inter-line spacing.
   \nobreak
-  \vskip 0pt plus 3\baselineskip
+  \vskip 0pt plus 5\baselineskip
   \penalty -300 
-  \vskip 0pt plus -3\baselineskip
+  \vskip 0pt plus -5\baselineskip
   %
   % Typeset the initial.  Making this add up to a whole number of
   % baselineskips increases the chance of the dots lining up from column
@@ -5113,26 +5096,20 @@ end
   %
   % No shrink because it confuses \balancecolumns.
   \vskip 1.67\baselineskip plus .5\baselineskip
-  \bgroup \secfonts % Initial is the same size as section headings
-  \leftline{\secbf #1}%
-  \egroup
+  \leftline{\secfonts \secbf #1}%
+  % \secfonts is inside the argument of \leftline so that the change of
+  % \baselineskip will not affect any glue inserted before the vbox that
+  % \leftline creates.
   % Do our best not to break after the initial.
   \nobreak
   \vskip .33\baselineskip plus .1\baselineskip
-  \egroup % \initialfonts
+  \egroup % \initialglyphs
 }
 
 % \entry typesets a paragraph consisting of the text (#1), dot leaders, and
 % then page number (#2) flushed to the right margin.  It is used for index
 % and table of contents entries.  The paragraph is indented by \leftskip.
 %
-% A straightforward implementation would start like this:
-%	\def\entry#1#2{...
-% But this freezes the catcodes in the argument, and can cause problems to
-% @code, which sets - active.  This problem was fixed by a kludge---
-% ``-'' was active throughout whole index, but this isn't really right.
-% The right solution is to prevent \entry from swallowing the whole text.
-%                                 --kasal, 21nov03
 \def\entry{%
   \begingroup
     %
@@ -5165,7 +5142,7 @@ end
     %
     % A bit of stretch before each entry for the benefit of balancing
     % columns.
-    \vskip 0pt plus1pt
+    \vskip 0pt plus0.5pt
     %
     % When reading the text of entry, convert explicit line breaks
     % from @* into spaces.  The user might give these in long section
@@ -5399,7 +5376,10 @@ end
       \loop
         \global\setbox3 = \copy0
         \global\setbox1 = \vsplit3 to \dimen@
-      \ifdim\ht3>\dimen@
+        % Remove glue from bottom of first column to
+        % make sure it is higher than the second.
+        \global\setbox1 = \vbox{\unvbox1\unpenalty\unskip}%
+      \ifdim\ht3>\ht1
         \global\advance\dimen@ by 1pt
       \repeat
     }%
@@ -6560,7 +6540,7 @@ end
   % collide with the section heading.
   \ifnum\lastpenalty>10000 \vskip\parskip \penalty\lastpenalty \fi
   %
-  \vbox\bgroup
+  \setbox\groupbox=\vbox\bgroup
       \baselineskip=0pt\parskip=0pt\lineskip=0pt
       \carttop
       \hbox\bgroup
@@ -6584,6 +6564,7 @@ end
       \egroup
       \cartbot
   \egroup
+  \addgroupbox
   \checkinserts
 }
 
@@ -7529,6 +7510,7 @@ end
 % an argument to another Texinfo command.
 \def\macroargctxt{%
   \scanctxt
+  \catcode`\^^M=\other
   \catcode`\\=\active
 }
 
@@ -7608,59 +7590,36 @@ end
   \fi
 }
 
-% This makes use of the obscure feature that if the last token of a
-% <parameter list> is #, then the preceding argument is delimited by
-% an opening brace, and that opening brace is not consumed.
-% 
+% \getargs -- Parse the arguments to a @macro line.  Set \macname to
+% the name of the macro, and \argl to the braced argument list.
 \def\getargs#1{\getargsxxx#1{}}
 \def\getargsxxx#1#{\getmacname #1 \relax\getmacargs}
 \def\getmacname#1 #2\relax{\macname={#1}}
 \def\getmacargs#1{\def\argl{#1}}
+% This made use of the feature that if the last token of a
+% <parameter list> is #, then the preceding argument is delimited by
+% an opening brace, and that opening brace is not consumed.
 
-% For macro processing make @ a letter so that we can make
-% private-to-Texinfo macro names.
-\edef\texiatcatcode{\the\catcode`\@}
-\catcode `@=11\relax
-
-% Parse the optional {params} list.  Set up \paramno and \paramlist
-% so \defmacro knows what to do.  Define \macarg.BLAH for each BLAH
-% in the params list to some hook where the argument is to be expanded.  If
-% there are less than 10 arguments that hook is to be replaced by ##N where N
+% Parse the optional {params} list to @macro or @rmacro.
+% Set \paramno to the number of arguments,
+% and \paramlist to a parameter text for the macro (e.g. #1,#2,#3 for a
+% three-param macro.)  Define \macarg.BLAH for each BLAH in the params
+% list to some hook where the argument is to be expanded.  If there are
+% less than 10 arguments that hook is to be replaced by ##N where N
 % is the position in that list, that is to say the macro arguments are to be
 % defined `a la TeX in the macro body.  
 %
 % That gets used by \mbodybackslash (above).
 %
-% We need to get `macro parameter char #' into several definitions.
-% The technique used is stolen from LaTeX: let \hash be something
-% unexpandable, insert that wherever you need a #, and then redefine
-% it to # just before using the token list produced.
+% If there are 10 or more arguments, a different technique is used: see
+% \parsemmanyargdef.
 %
-% The same technique is used to protect \eatspaces till just before
-% the macro is used.
-%
-% If there are 10 or more arguments, a different technique is used, where the
-% hook remains in the body, and when macro is to be expanded the body is
-% processed again to replace the arguments.
-%
-% In that case, the hook is \the\toks N-1, and we simply set \toks N-1 to the
-% argument N value and then \edef  the body (nothing else will expand because of
-% the catcode regime underwhich the body was input).
-%
-% If you compile with TeX (not eTeX), and you have macros with 10 or more
-% arguments, no macro can have more than 256 arguments (else error).
-% 
 \def\parsemargdef#1;{%
   \paramno=0\def\paramlist{}%
   \let\hash\relax
-  \let\xeatspaces\relax
+  % \hash is redefined to `#' later to get it into definitions
+  \let\processmacroarg\relax
   \parsemargdefxxx#1,;,%
-  % In case that there are 10 or more arguments we parse again the arguments
-  % list to set new definitions for the \macarg.BLAH macros corresponding to
-  % each BLAH argument. It was anyhow needed to parse already once this list
-  % in order to count the arguments, and as macros with at most 9 arguments
-  % are by far more frequent than macro with 10 or more arguments, defining
-  % twice the \macarg.BLAH macros does not cost too much processing power.
   \ifnum\paramno<10\relax\else
     \paramno0\relax
     \parsemmanyargdef@@#1,;,% 10 or more arguments
@@ -7671,10 +7630,47 @@ end
   \else \let\next=\parsemargdefxxx
     \advance\paramno by 1
     \expandafter\edef\csname macarg.\eatspaces{#1}\endcsname
-        {\xeatspaces{\hash\the\paramno}}%
+        {\processmacroarg{\hash\the\paramno}}%
     \edef\paramlist{\paramlist\hash\the\paramno,}%
   \fi\next}
 
+% \parsemacbody, \parsermacbody
+%
+% Read recursive and nonrecursive macro bodies. (They're different since
+% rec and nonrec macros end differently.)
+% 
+% We are in \macrobodyctxt, and the \xdef causes backslashshes in the macro 
+% body to be transformed.
+% Set \macrobody to the body of the macro, and call \defmacro.
+%
+{\catcode`\ =\other\long\gdef\parsemacbody#1@end macro{%
+\xdef\macrobody{\eatcr{#1}}\endgroup\defmacro}}%
+{\catcode`\ =\other\long\gdef\parsermacbody#1@end rmacro{%
+\xdef\macrobody{\eatcr{#1}}\endgroup\defmacro}}%
+
+%%%%%%%%%%%%%% Code for > 10 arguments only   %%%%%%%%%%%%%%%%%%
+
+% Make @ a letter, so that we can make private-to-Texinfo macro names.
+\edef\texiatcatcode{\the\catcode`\@}
+\catcode `@=11\relax
+
+% If there are 10 or more arguments, a different technique is used, where the
+% hook remains in the body, and when macro is to be expanded the body is
+% processed again to replace the arguments.
+%
+% In that case, the hook is \the\toks N-1, and we simply set \toks N-1 to the
+% argument N value and then \edef the body (nothing else will expand because of
+% the catcode regime under which the body was input).
+%
+% If you compile with TeX (not eTeX), and you have macros with 10 or more
+% arguments, no macro can have more than 256 arguments (else error).
+%
+% In case that there are 10 or more arguments we parse again the arguments
+% list to set new definitions for the \macarg.BLAH macros corresponding to
+% each BLAH argument. It was anyhow needed to parse already once this list
+% in order to count the arguments, and as macros with at most 9 arguments
+% are by far more frequent than macro with 10 or more arguments, defining
+% twice the \macarg.BLAH macros does not cost too much processing power.
 \def\parsemmanyargdef@@#1,{%
   \if#1;\let\next=\relax
   \else 
@@ -7690,15 +7686,6 @@ end
     \advance\paramno by 1\relax
   \fi\next}
 
-% These two commands read recursive and nonrecursive macro bodies.
-% (They're different since rec and nonrec macros end differently.)
-% Set \temp to the body of the macro, and call \defmacro.
-\catcode `\@\texiatcatcode
-{\catcode`\ =\other\long\gdef\parsemacbody#1@end macro{%
-\xdef\temp{\eatcr{#1}}\endgroup\defmacro}}%
-{\catcode`\ =\other\long\gdef\parsermacbody#1@end rmacro{%
-\xdef\temp{\eatcr{#1}}\endgroup\defmacro}}%
-\catcode `\@=11\relax
 
 \let\endargs@\relax
 \let\nil@\relax
@@ -7727,9 +7714,6 @@ end
     \getargvals@@
   \fi
 }
-
-% Internal for \getargsval@.
-%  
 \def\getargvals@@{%
   \ifx\paramlist\nilm@
       % Some sanity check needed here that \argvaluelist is also empty.
@@ -7837,16 +7821,7 @@ end
   \next
 }
 
-% Save the token stack pointer into macro #1:
-\def\texisavetoksstackpoint#1{\edef#1{\the\@cclvi}}
-%
-% Restore the token stack pointer from number in macro #1:
-\def\texirestoretoksstackpoint#1{\expandafter\mathchardef
-  \expandafter\@cclvi#1\relax}
-% Variant \newtoks that can be used non-\outer:
-\def\texinonouternewtoks{\alloc@ 5\toks \toksdef \@cclvi}
-
-% Tailing missing arguments are set to empty.
+% Trailing missing arguments are set to empty.
 % 
 \def\setemptyargvalues@{%
   \ifx\paramlist\nilm@
@@ -7877,27 +7852,58 @@ end
    \long\def#2{#4}%
 }
 
-% This defines a Texinfo @macro.  \temp has the body of the macro in it.
+\catcode `\@\texiatcatcode\relax % end private-to-Texinfo catcodes
+
+
+%%%%%%%%%%%%%% End of code for > 10 arguments %%%%%%%%%%%%%%%%%%
+
+
+
+% Remove following spaces at the expansion stage.
+% This works because spaces are discarded before each argument when TeX is 
+% getting the arguments for a macro.
+% This must not be immediately followed by a }.
+\long\def\gobblespaces#1{#1}
+
+% This defines a Texinfo @macro or @rmacro, called by \parsemacbody.
+%    \macrobody has the body of the macro in it, with placeholders for
+% its parameters.
+%    \paramno is the number of parameters
+%    \paramlist is a TeX parameter text, e.g. "#1,#2,#3,"
 % There are eight cases: recursive and nonrecursive macros of zero, one,
 % up to nine, and many arguments.
-% Much magic with \expandafter here.
 % \xdef is used so that macro definitions will survive the file
-% they're defined in; @include reads the file inside a group.
+% they're defined in: @include reads the file inside a group.
 %
 \def\defmacro{%
   \let\hash=##% convert placeholders to macro parameter chars
+  \ifnum\paramno=1
+    \def\processmacroarg{\gobblespaces}%
+    % This removes the pair of braces around the argument.  We don't
+    % use \eatspaces, because this can cause ends of lines to be lost
+    % when the argument to \eatspaces is read, leading to line-based
+    % commands like "@itemize" not being read correctly.
+  \else
+    \let\xeatspaces\relax
+    \def\processmacroarg{\xeatspaces}%
+  \fi
   \ifrecursive   %%%%%%%%%%%%%% Recursive %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \ifcase\paramno
     % 0
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \noexpand\scanmacro{\temp}}%
+        \noexpand\scanmacro{\macrobody}}%
     \or % 1
       \expandafter\xdef\csname\the\macname\endcsname{%
          \bgroup
          \noexpand\braceorline
          \expandafter\noexpand\csname\the\macname xxx\endcsname}%
       \expandafter\xdef\csname\the\macname xxx\endcsname##1{%
-         \egroup\noexpand\scanmacro{\temp}}%
+         \expandafter\noexpand\csname\the\macname xxxx\endcsname{%
+           \noexpand\gobblespaces##1\empty}%
+           % The \empty is for \gobblespaces in case #1 is empty
+         }%
+      \expandafter\xdef\csname\the\macname xxxx\endcsname##1{%
+         \egroup\noexpand\scanmacro{\macrobody}}%
     \else
       \ifnum\paramno<10\relax % at most 9
         \expandafter\xdef\csname\the\macname\endcsname{%
@@ -7909,12 +7915,12 @@ end
         \expandafter\xdef
         \expandafter\expandafter
           \csname\the\macname xxx\endcsname
-            \paramlist{\egroup\noexpand\scanmacro{\temp}}%
+            \paramlist{\egroup\noexpand\scanmacro{\macrobody}}%
       \else % 10 or more
         \expandafter\xdef\csname\the\macname\endcsname{%
           \noexpand\getargvals@{\the\macname}{\argl}%
         }%    
-        \global\expandafter\let\csname mac.\the\macname .body\endcsname\temp
+        \global\expandafter\let\csname mac.\the\macname .body\endcsname\macrobody
         \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\gobble
       \fi
     \fi
@@ -7922,15 +7928,20 @@ end
     \ifcase\paramno
     % 0
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \noexpand\scanmacro{\temp}}%
+        \noexpand\scanmacro{\macrobody}}%
     \or % 1
       \expandafter\xdef\csname\the\macname\endcsname{%
          \bgroup
          \noexpand\braceorline
          \expandafter\noexpand\csname\the\macname xxx\endcsname}%
       \expandafter\xdef\csname\the\macname xxx\endcsname##1{%
+         \expandafter\noexpand\csname\the\macname xxxx\endcsname{%
+           \noexpand\gobblespaces##1\empty}%
+           % The \empty is for \gobblespaces in case #1 is empty
+         }%
+      \expandafter\xdef\csname\the\macname xxxx\endcsname##1{%
         \egroup
-        \noexpand\scanmacro{\temp}%
+        \noexpand\scanmacro{\macrobody}%
         }%
     \else % at most 9
       \ifnum\paramno<10\relax
@@ -7945,19 +7956,17 @@ end
         \csname\the\macname xxx\endcsname
         \paramlist{%
             \egroup
-            \noexpand\scanmacro{\temp}%
+            \noexpand\scanmacro{\macrobody}%
             }%
       \else % 10 or more:
         \expandafter\xdef\csname\the\macname\endcsname{%
           \noexpand\getargvals@{\the\macname}{\argl}%
         }%
-        \global\expandafter\let\csname mac.\the\macname .body\endcsname\temp
+        \global\expandafter\let\csname mac.\the\macname .body\endcsname\macrobody
         \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\norecurse
       \fi
     \fi
   \fi}
-
-\catcode `\@\texiatcatcode\relax % end private-to-Texinfo catcodes
 
 \def\norecurse#1{\bgroup\cslet{#1}{macsave.#1}}
 
@@ -8122,6 +8131,7 @@ end
   \pdfmkdest{#1}%
   \iflinks
     {%
+      \requireauxfile
       \atdummies  % preserve commands, but don't expand them
       \edef\writexrdef##1##2{%
 	\write\auxfile{@xrdef{#1-% #1 of \setref, expanded by the \edef
@@ -8386,6 +8396,7 @@ end
 % If its value is nonempty, SUFFIX is output afterward.
 %
 \def\refx#1#2{%
+  \requireauxfile
   {%
     \indexnofonts
     \otherbackslash
@@ -8447,6 +8458,23 @@ end
     \expandafter\xdef\csname floatlist\iffloattype\endcsname{\the\toks0
       {\safexrefname}}%
   \fi
+}
+
+% If working on a large document in chapters, it is convenient to
+% be able to disable indexing, cross-referencing, and contents, for test runs.
+% This is done with @novalidate at the beginning of the file.
+%
+\newif\iflinks \linkstrue % by default we want the aux files.
+\let\novalidate = \linksfalse
+
+% Used when writing to the aux file, or when using data from it.
+\def\requireauxfile{%
+  \iflinks
+    \tryauxfile
+    % Open the new aux file.  TeX will close it automatically at exit.
+    \immediate\openout\auxfile=\jobname.aux
+  \fi
+  \global\let\requireauxfile=\relax   % Only do this once.
 }
 
 % Read the last existing aux file, if any.  No error if none exists.
@@ -8922,6 +8950,7 @@ end
       % \floatlabel-lof.  Besides \floatident, we include the short
       % caption if specified, else the full caption if specified, else nothing.
       {%
+        \requireauxfile
         \atdummies
         %
         % since we read the caption text in the macro world, where ^^M
@@ -10480,6 +10509,16 @@ directory should work if nowhere else does.}
   % file name, in case not using a pre-dumped format.
   @catcode`+=@active
   @catcode`@_=@active
+  %
+  % If texinfo.cnf is present on the system, read it.
+  % Useful for site-wide @afourpaper, etc.  This macro, @fixbackslash, gets
+  % called at the beginning of every Texinfo file.  Not opening texinfo.cnf
+  % directly in this file, texinfo.tex, makes it possible to make a format
+  % file for Texinfo.
+  %
+  @openin 1 texinfo.cnf
+  @ifeof 1 @else @input texinfo.cnf @fi
+  @closein 1
 }
 
 
