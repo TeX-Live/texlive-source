@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.6";          # ctanify version number
+our $VERSION = "1.7";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -241,7 +241,11 @@ if ($skipdroppings) {
 foreach my $fname (@manifest) {
     next if defined $file2tds{$fname};
     my $fext = ($fname =~ m|([^./]+)$| && $1);
-    if (defined $ext2tds{$fext}) {
+    if ($fname =~ /\.tex$/ && $pkgname eq basename $fname, ".tex") {
+        # <package>.tex -- treat as documentation.
+        $file2tds{$fname} = sprintf $ext2tds{"README"}, $pkgname;
+    }
+    elsif (defined $ext2tds{$fext}) {
         # Most files -- determine the directory based on the file extension.
         $file2tds{$fname} = sprintf $ext2tds{$fext}, $pkgname;
     }
@@ -253,7 +257,7 @@ foreach my $fname (@manifest) {
         # Read the file to determine if it's a Unix script (starts with "#!").
         open(SCRIPT, "<", $fname) || die "${progname}: Failed to open $fname ($!)\n";
         my $shebang;
-        read(SCRIPT, $shebang, 2) || die "${progname}: Failed to read $fname ($!)\n";
+        read(SCRIPT, $shebang, 2);
         close SCRIPT;
         if ($shebang eq "#!") {
             $file2tds{$fname} = "scripts/$pkgname";
@@ -662,9 +666,10 @@ tarball.  In short, before running B<ctanify> you should manually
 process any F<.ins> files and otherwise generate any files that should
 be sent to CTAN.
 
-B<ctanify> has been tested only on Linux.  It may work on S<OS X>.  It
-probably does not work on Windows.  Volunteers willing to help port
-B<ctanify> to other platforms are extremely welcome.
+B<ctanify> has been tested only on Linux.  It may work on S<OS X>.
+I've been told that it works on Windows when run using Cygwin.
+Volunteers willing to help port B<ctanify> to other platforms are
+extremely welcome.
 
 
 =head1 SEE ALSO
@@ -673,7 +678,7 @@ tar(1),
 zip(1),
 latex(1),
 Guidelines for uploading TDS-Packaged materials to CTAN
-(L<http://www.ctan.org/TDS-guidelines.html>),
+(L<http://www.ctan.org/TDS-guidelines>),
 A Directory Structure for TeX Files (L<http://tug.org/tds/>),
 
 
