@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-09-07.22}
+\def\texinfoversion{2015-09-11.21}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -196,17 +196,6 @@
   wide-spread wrap-around
 }
 
-% Margin to add to right of even pages, to left of odd pages.
-\newdimen\bindingoffset
-\newdimen\normaloffset
-\newdimen\pagewidth \newdimen\pageheight
-
-% For a final copy, take out the rectangles
-% that mark overfull boxes (in case you have decided
-% that the text looks ok even though it passes the margin).
-%
-\def\finalout{\overfullrule=0pt }
-
 % Sometimes it is convenient to have everything in the transcript file
 % and nothing on the terminal.  We don't just call \tracingall here,
 % since that produces some useless output on the terminal.  We also make
@@ -251,6 +240,15 @@
 \def\bigbreak{\ifnum\lastpenalty<10000\par\ifdim\lastskip<\bigskipamount
   \removelastskip\penalty-200\bigskip\fi\fi}
 
+% Output routine
+%
+
+% For a final copy, take out the rectangles
+% that mark overfull boxes (in case you have decided
+% that the text looks ok even though it passes the margin).
+%
+\def\finalout{\overfullrule=0pt }
+
 % Do @cropmarks to get crop marks.
 %
 \newif\ifcropmarks
@@ -290,6 +288,9 @@
     \noexpand\else \the\toks8             % 2: color marks
   }%
 }
+
+% \gettopheadingmarks, \getbottomheadingmarks - extract needed part of mark.
+%
 % \topmark doesn't work for the very first chapter (after the title
 % page or the contents), so we use \firstmark there -- this gets us
 % the mark with the chapter defs, unless the user sneaks in, e.g.,
@@ -310,6 +311,10 @@
 \def\prevsectiondefs{}
 \def\lastcolordefs{}
 
+% Margin to add to right of even pages, to left of odd pages.
+\newdimen\bindingoffset
+\newdimen\normaloffset
+\newdimen\pagewidth \newdimen\pageheight
 
 % Main output routine.
 %
@@ -319,25 +324,56 @@
 \newbox\headlinebox
 \newbox\footlinebox
 
-% \onepageout takes a vbox as an argument.  Note that \pagecontents
-% does insertions, but you have to call it yourself.
+% \onepageout takes a vbox as an argument.
+% \shipout a vbox for a single page, adding an optional header, footer,
+% cropmarks, and footnote.  This also causes index entries for this page
+% to be written to the auxiliary files.
+%
 \def\onepageout#1{%
   \ifcropmarks \hoffset=0pt \else \hoffset=\normaloffset \fi
   %
   \ifodd\pageno  \advance\hoffset by \bindingoffset
   \else \advance\hoffset by -\bindingoffset\fi
   %
+  % Common context changes for both heading and footing.
   % Do this outside of the \shipout so @code etc. will be expanded in
   % the headline as they should be, not taken literally (outputting ''code).
   \def\commmonheadfootline{\let\hsize=\pagewidth \texinfochars}
   %
-  \ifodd\pageno \getoddheadingmarks \else \getevenheadingmarks \fi
-  \global\setbox\headlinebox = \vbox{\commmonheadfootline \makeheadline}%
+  % Retrieve the information for the headings from the marks in the page,
+  % and call Plain TeX's \makeheadline and \makefootline, which use the
+  % values in \headline and \footline.
   %
+  % This is used to check if we are on the first page of a chapter.
+  \ifcase0\topmark\fi
+  \ifx\thischapter\empty
+    % See comment for \gettopheadingmarks
+    \ifcase0\firstmark\fi
+    \let\curchaptername\thischaptername
+    \ifcase1\firstmark\fi
+    \let\prevchaptername\thischaptername
+  \else
+    \let\curchaptername\thischaptername
+    \ifcase1\topmark\fi
+    \let\prevchaptername\thischaptername
+  \fi
+  %
+  \ifodd\pageno \getoddheadingmarks \else \getevenheadingmarks \fi
   \ifodd\pageno \getoddfootingmarks \else \getevenfootingmarks \fi
+  %
+  \ifx\curchaptername\prevchaptername
+  \else
+    % If on the first page of a chapter, clear @thischapter so it
+    % doesn't appear in the headline, because the chapter is already
+    % shown in the chapter heading.
+    \def\thischapter{}%
+  \fi
+  %
+  \global\setbox\headlinebox = \vbox{\commmonheadfootline \makeheadline}%
   \global\setbox\footlinebox = \vbox{\commmonheadfootline \makefootline}%
   %
   {%
+    % Set context for writing to auxiliary files like index files.
     % Have to do this stuff outside the \shipout because we want it to
     % take effect in \write's, yet the group defined by the \vbox ends
     % before the \shipout runs.
@@ -407,6 +443,7 @@
 
 \newinsert\margin \dimen\margin=\maxdimen
 
+% Main part of page, including any footnotes
 \def\pagebody#1{\vbox to\pageheight{\boxmaxdepth=\maxdepth #1}}
 {\catcode`\@ =11
 \gdef\pagecontents#1{\ifvoid\topins\else\unvbox\topins\fi
@@ -3368,7 +3405,7 @@ end
 \newtoks\evenfootline    % footline on even pages
 \newtoks\oddfootline     % footline on odd pages
 
-% Now make TeX use those variables
+% Now make \makeheadline and \makefootline in Plain TeX use those variables
 \headline={{\textfonts\rm \ifodd\pageno \the\oddheadline
                             \else \the\evenheadline \fi}}
 \footline={{\textfonts\rm \ifodd\pageno \the\oddfootline
@@ -3424,6 +3461,10 @@ end
 % @everyheadingmarks
 % @everyfootingmarks
 
+% These define \getoddheadingmarks, \getevenheadingmarks,
+% \getoddfootingmarks, and \getevenfootingmarks, each to one of
+% \gettopheadingmarks, \getbottomheadingmarks.
+%
 \def\evenheadingmarks{\headingmarks{even}{heading}}
 \def\oddheadingmarks{\headingmarks{odd}{heading}}
 \def\evenfootingmarks{\headingmarks{even}{footing}}
@@ -5095,7 +5136,7 @@ end
   % we need before each entry, but it's better.
   %
   % No shrink because it confuses \balancecolumns.
-  \vskip 1.67\baselineskip plus .5\baselineskip
+  \vskip 1.67\baselineskip plus 1\baselineskip
   \leftline{\secfonts \secbf #1}%
   % \secfonts is inside the argument of \leftline so that the change of
   % \baselineskip will not affect any glue inserted before the vbox that
@@ -5221,6 +5262,9 @@ end
 \newbox\partialpage
 \newdimen\doublecolumnhsize
 
+\newtoks\savedtopmark % Used in \begindoublecolumns
+\newtoks\savedfirstmark
+
 \def\begindoublecolumns{\begingroup % ended by \enddoublecolumns
   % Grab any single-column material above us.
   \output = {%
@@ -5241,8 +5285,22 @@ end
       \unvbox\PAGE
       \kern-\topskip \kern\baselineskip
     }%
+    % Save \topmark and \firstmark
+    \global\savedtopmark=\expandafter{\topmark}%
+    \global\savedfirstmark=\expandafter{\firstmark}%
   }%
   \eject % run that output routine to set \partialpage
+  %
+  % We recover the two marks that the last output routine saved in order
+  % to propagate the information in marks added around a chapter heading,
+  % which could be otherwise be lost by the time the final page is output.
+  %
+  \mark{\the\savedtopmark}% Only mark in page passed to following \output.
+  \output = {%
+    \setbox0=\box\PAGE % clear box 255
+  }abc\eject
+  %
+  \mark{\the\savedfirstmark}%
   %
   % Use the double-column output routine for subsequent pages.
   \output = {\doublecolumnout}%
@@ -5387,9 +5445,11 @@ end
     \divide\dimen@ii by 5
     \ifdim\ht3<\dimen@ii
       % Column heights are too different, so don't make their bottoms
-      % flush with each other
+      % flush with each other.  The glue at the end of the second column
+      % allows a second column to stretch, reducing the difference in
+      % height between the two.
       \setbox0=\vbox to\dimen@{\unvbox1\vfill}%
-      \setbox2=\vbox to\dimen@{\unvbox3\vfill}%
+      \setbox2=\vbox to\dimen@{\unvbox3\vskip 0pt plus 0.3\ht0}%
     \else
       \setbox0=\vbox to\dimen@{\unvbox1}%
       \setbox2=\vbox to\dimen@{\unvbox3}%
@@ -5415,6 +5475,9 @@ end
     \let\lastnode=\empty      % no node to associate with
     \writetocentry{part}{#1}{}% but put it in the toc
     \headingsoff              % no headline or footline on the part page
+    % This outputs a mark at the end of the page that clears \thischapter
+    % and \thissection, like is done in \startcontents.
+    \chapmacro{}{Yomitfromtoc}{}%
     \chapoddpage
   \endgroup
 }
@@ -5659,9 +5722,6 @@ end
 
 % @centerchap is like @unnumbered, but the heading is centered.
 \outer\parseargdef\centerchap{%
-  % Well, we could do the following in a group, but that would break
-  % an assumption that \chapmacro is called at the outermost level.
-  % Thus we are safer this way:		--kasal, 24feb04
   \let\centerparametersmaybe = \centerparameters
   \unnmhead0{#1}%
   \let\centerparametersmaybe = \relax
@@ -5785,7 +5845,11 @@ end
 
 % Define plain chapter starts, and page on/off switching for it.
 \def\chapbreak{\dobreak \chapheadingskip {-4000}}
+
+% Start a new page
 \def\chappager{\par\vfill\supereject}
+
+% \chapoddpage - start on an odd page for a new chapter
 % Because \domark is called before \chapoddpage, the filler page will
 % get the headings for the next chapter, which is wrong.  But we don't
 % care -- we just disable all headings on the filler page.
@@ -5821,7 +5885,7 @@ end
 
 \CHAPPAGon
 
-% Chapter opening.
+% \chapmacro - Chapter opening.
 %
 % #1 is the text, #2 is the section type (Ynumbered, Ynothing,
 % Yappendix, Yomitfromtoc), #3 the chapter number.
