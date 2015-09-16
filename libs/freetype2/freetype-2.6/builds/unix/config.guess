@@ -2,7 +2,7 @@
 # Attempt to guess a canonical system name.
 #   Copyright 1992-2015 Free Software Foundation, Inc.
 
-timestamp='2015-08-20'
+timestamp='2015-09-14'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -963,6 +963,9 @@ EOF
 	echo ${UNAME_MACHINE}-pc-linux-${LIBC}
 	exit ;;
     ia64:Linux:*:*)
+	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+	exit ;;
+    k1om:Linux:*:*)
 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
 	exit ;;
     m32r*:Linux:*:*)
