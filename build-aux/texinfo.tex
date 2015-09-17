@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-09-11.21}
+\def\texinfoversion{2015-09-14.16}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4458,8 +4458,6 @@ end
 
 % Used when writing an index entry out to an index file, to prevent
 % expansion of Texinfo commands that can appear in an index entry.
-% Since there are some commands we want to expand, and others we don't,
-% we have to laboriously prevent expansion for those that we don't.
 %
 \def\indexdummies{%
   \escapechar = `\\     % use backslash in output files.
@@ -5147,6 +5145,9 @@ end
   \egroup % \initialglyphs
 }
 
+\newdimen\entryrightmargin
+\entryrightmargin=0pt
+
 % \entry typesets a paragraph consisting of the text (#1), dot leaders, and
 % then page number (#2) flushed to the right margin.  It is used for index
 % and table of contents entries.  The paragraph is indented by \leftskip.
@@ -5158,38 +5159,48 @@ end
     % affect previous text.
     \par
     %
-    % Do not fill out the last line with white space.
-    \parfillskip = 0in
-    %
     % No extra space above this paragraph.
     \parskip = 0in
-    %
-    % Do not prefer a separate line ending with a hyphen to fewer lines.
-    \finalhyphendemerits = 0
-    %
-    % \hangindent is only relevant when the entry text and page number
-    % don't both fit on one line.  In that case, bob suggests starting the
-    % dots pretty far over on the line.  Unfortunately, a large
-    % indentation looks wrong when the entry text itself is broken across
-    % lines.  So we use a small indentation and put up with long leaders.
-    %
-    % \hangafter is reset to 1 (which is the value we want) at the start
-    % of each paragraph, so we need not do anything with that.
-    \hangindent = 2em
-    %
-    % When the entry text needs to be broken, just fill out the first line
-    % with blank space.
-    \rightskip = 0pt plus1fil
-    %
-    % A bit of stretch before each entry for the benefit of balancing
-    % columns.
-    \vskip 0pt plus0.5pt
     %
     % When reading the text of entry, convert explicit line breaks
     % from @* into spaces.  The user might give these in long section
     % titles, for instance.
     \def\*{\unskip\space\ignorespaces}%
     \def\entrybreak{\hfil\break}%
+    %
+    % A bit of stretch before each entry for the benefit of balancing
+    % columns.
+    \vskip 0pt plus0.5pt
+    %
+    % Badness calculation for paragraph affected by -
+    %  How much \indexdotfill is stretched, or how much \pafillskip is shrunk
+    %  Number of lines (\linepenalty)
+    %  
+    % Do not prefer a separate line ending with a hyphen to fewer lines.
+    \finalhyphendemerits = 0
+    %
+    \linepenalty=400  % Discourage line breaks.
+    %
+    % Ragged right margin, but not for the last line with the leaders in it
+    \rightskip=\entryrightmargin
+    \advance\rightskip by 0pt plus 1fil
+    %
+    % \parfillskip is at the end of the line with the page number
+    \parfillskip=0pt
+    % Cancel the \rightskip stretch
+    \advance \parfillskip by 0pt plus -1fil
+    % Determine how far we can stretch into the margin.
+    % This allows, e.g., "Appendix H  GNU Free Documentation License" to fit
+    % on one line.
+    \advance \parfillskip by 0pt minus .6\entryrightmargin
+    %
+    % \hangindent is only relevant when the entry text and page number
+    % don't both fit on one line.  In that case, bob suggests starting the
+    % dots pretty far over on the line.  Unfortunately, a large
+    % indentation looks wrong when the entry text itself is broken across
+    % lines.  So we use a small indentation and put up with long leaders.
+    \hangafter = 1
+    \hangindent = 2em
     %
     % Swallow the left brace of the text (first parameter):
     \afterassignment\doentry
@@ -5213,29 +5224,24 @@ end
       \ %
     \else
       %
-      % If we must, put the page number on a line of its own, and fill out
-      % this line with blank space.  (The \hfil is overwhelmed with the
-      % fill leaders glue in \indexdotfill if the page number does fit.)
-      \hfil\penalty50
       \null\nobreak\indexdotfill % Have leaders before the page number.
       %
-      % The `\ ' here is removed by the implicit \unskip that TeX does as
-      % part of (the primitive) \par.  Without it, a spurious underfull
-      % \hbox ensues.
       \ifpdf
 	\pdfgettoks#1.%
-	\ \the\toksA
+	\thinspace\the\toksA
       \else
-	\ #1%
+	\thinspace#1%
       \fi
     \fi
     \par
   \endgroup
 }
 
-% Like plain.tex's \dotfill, except uses up at least 1 em.
+% Like plain.tex's \dotfill, except uses up at least 1.2 em.
+% Using a finite stretch encourages several words to appear on a second line
+% if the entry is broken.
 \def\indexdotfill{\cleaders
-  \hbox{$\mathsurround=0pt \mkern1.5mu.\mkern1.5mu$}\hskip 1em plus 1fill}
+  \hbox{$\mathsurround=0pt \mkern1.5mu.\mkern1.5mu$}\hskip 1.2em plus 1\hsize}
 
 \def\primary #1{\line{#1\hfil}}
 
@@ -5979,6 +5985,8 @@ end
     % entry, and \donoderef resets it to empty.
     \writetocentry{\toctype}{#1}{#3}%
     %
+    \hbox{}\kern-\topskip % Cancel \topskip glue before heading
+    %
     % For pdftex, we have to write out the node definition (aka, make
     % the pdfdest) after any page break, but before the actual text has
     % been typeset.  If the destination for the pdf outline is after the
@@ -6279,7 +6287,7 @@ end
   \savepageno = \pageno
   \begingroup                  % Set up to handle contents files properly.
     \raggedbottom              % Worry more about breakpoints than the bottom.
-    \advance\hsize by -\contentsrightmargin % Don't use the full line length.
+    \entryrightmargin=\contentsrightmargin % Don't use the full line length.
     %
     % Roman numerals for page numbers.
     \ifnum \pageno>0 \global\pageno = \lastnegativepageno \fi
@@ -6384,7 +6392,7 @@ end
 
 % Chapters, in the main contents.
 \def\numchapentry#1#2#3#4{\dochapentry{#2\labelspace#1}{#4}}
-%
+
 % Chapters, in the short toc.
 % See comments in \dochapentry re vbox and related settings.
 \def\shortchapentry#1#2#3#4{%
@@ -6399,7 +6407,7 @@ end
   \setbox0 = \hbox{\putwordAppendix{} M}%
   \hbox to \wd0{\putwordAppendix{} #1\hss}}
 %
-\def\appentry#1#2#3#4{\dochapentry{\appendixbox{#2}\labelspace#1}{#4}}
+\def\appentry#1#2#3#4{\dochapentry{\appendixbox{#2}\hskip.7em#1}{#4}}
 
 % Unnumbered chapters.
 \def\unnchapentry#1#2#3#4{\dochapentry{#1}{#4}}
@@ -6432,6 +6440,8 @@ end
 \def\dochapentry#1#2{%
    \penalty-300 \vskip1\baselineskip plus.33\baselineskip minus.25\baselineskip
    \begingroup
+     % Move the page numbers slightly to the right
+     \advance\entryrightmargin by -0.05em
      \chapentryfonts
      \tocentry{#1}{\dopageno\bgroup#2\egroup}%
    \endgroup
