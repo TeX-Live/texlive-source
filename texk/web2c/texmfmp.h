@@ -1,4 +1,4 @@
-/* texmf.h: Main include file for TeX and MF in C. This file is
+/* texmfmp.h: Main include file for TeX and MF in C. This file is
    included by {tex,mf}d.h, which is the first include in the C files
    output by web2c.  */
 
@@ -347,7 +347,7 @@ extern void paintrow (/*screenrow, pixelcolor, transspec, screencol*/);
     }									\
   } while (0)
 
-/* We define the routines to do the actual work in texmf.c.  */
+/* We define the routines to do the actual work in texmfmp.c.  */
 #ifdef XeTeX
 #include <zlib.h>
 extern void do_dump (char *, int, int, gzFile);
