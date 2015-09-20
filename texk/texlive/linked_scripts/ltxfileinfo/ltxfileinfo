@@ -1,7 +1,7 @@
 #!/bin/bash
 
-version=2.02
-myname=$(basename $0)
+version=2.03
+myname=$(basename "$0")
 
 <<'DOC'
 = ltxfileinfo - print version information for a LaTeX file
@@ -20,6 +20,7 @@ Options:
 -f,--flat	output as 1 line with 4 tab-separated file, date, version and info fields
 -s,--star	mark mal-formatted data with a star
 -c,--color	mark mal-formatted data with red color (ANSI coloring)
+-D,--debug	for debugging, keep temporary files
 
 = Description
 ltxfileinfo displays version information for LaTeX files. If no path
@@ -114,26 +115,21 @@ The .dtx files have more problems than other files:
          52  had a mal-formatted version
         468  had a \Provides... first argument different from the filename
 
-= Changes
-Changes with respect to version 2.00:
-- Documentation adapted to gendoc
-- Syntactically beautified
-
 = Author and copyright
 Author	Wybo Dekker
 Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
 License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
 DOC
 
-    die() { echo -e "$myname: $Err$@$Nor" 1>&2; exit 1; }
-   help() { sed -n '/^= Synopsis/,/^= /p' $0|sed '1s/.*/Usage:/;/^= /d'; exit; }
-helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' $0|sed -n '1d;$d;p'|less; exit; }
+    die() { echo -e "$myname: $Err${*}$Nor" 1>&2; exit 1; }
+   help() { sed -n '/^= Synopsis/,/^= /p' "$0"|sed '1s/.*/Usage:/;/^= /d'; exit; }
+helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' "$0"|sed -n '1d;$d;p'|less; exit; }
 version() { echo $version; exit; }
-install() { which instscript>&/dev/null && instscript --zip --pdf --markdown $myname; exit; }
+install() { which instscript>&/dev/null && instscript --zip --pdf --markdown "$myname"; exit; }
 
 Nor='\e[0m'    # reset color	]
 Err='\e[31;1m' # light red	]
-test ${BASH_VERSINFO[0]} -ge 4 || die "Need bash version >= 4 (you have $BASH_VERSION)"
+[[ ${BASH_VERSINFO[0]} -ge 4 ]] || die "Need bash version >= 4 (you have $BASH_VERSION)"
 
 # remove leading and trailing whitespace from a string
 function trim {
@@ -145,13 +141,13 @@ function trim {
 
 # mark a string by appending a * (--mark star)
 function mark {
-   echo "$mark1$*$mark2"
+   echo "$mark1${*}$mark2"
 }
 
 # special treatment for .mbs and .bst files:
 function dombsbst {
    # look at the first \ProvidesFile only:
-   out="File: "$(grep '\ProvidesFile{' $loca |head -1 |sed 's/^[ %]*\\ProvidesFile{//;s/}\[/ /;s/\]$//')
+   out="File: "$(grep '\ProvidesFile{' "$loca" |head -1 |sed 's/^[ %]*\\ProvidesFile{//;s/}\[/ /;s/\]$//')
 }
 
 # unpack the fields
@@ -159,48 +155,47 @@ function extract {
   shift # remove File:
   file=$1
   shift # remove filename
-  if [ "$1" = "" ]; then
+  if [[ -z $1 ]]; then
      date=--; vers=--; info=--; return
-  elif [[ "$1" =~ ^[0-9]+/[0-9]+/[0-9]+ ]]; then
-     date=$1
+  elif [[ $1 =~ ^[0-9]+/[0-9]+/[0-9]+ ]]; then
+     date="$1"
      shift
   else
      date="--"
   fi
-  if [ "$1" = "" ]; then
+  if [[ -z $1 ]]; then
      vers=--; info=--; return
-  elif [[ "$1" =~ ^v?[[:digit:]][.[:digit:]]+[a-z]* ]]; then
-     vers=$1
+  elif [[ $1 =~ ^v?[[:digit:]][.[:digit:]]+[a-z]* ]]; then
+     vers="$1"
      shift
      info="${*:---}"
      return
   else
-     fixed=
+     fixed=false
      # sometimes the version is of the form v.1.3 or vers:1.3 or such:
      for i in version ver. ver: ver v. V v; do
         if [[ $1 =~ $i[[:digit:]][.[:digit:]]*[a-z]* ]]; then
-           vers=$1
+           vers="$1"
            shift
-           fixed=1
+           fixed=true
            break
         fi
      done
-     if [ ! $fixed ]; then
+     if ! $fixed; then
         # sometimes the version is reported as "v 1.3" or "vers: 1.3" or such:
         for i in version ver: ver v. V v; do 
-           if [ $1 = $i ]; then
-              if [[ "$2" =~ [[:digit:]][.[:digit:]]+[a-z]* ]]; then
+           if [[ $1 == "$i" ]]; then
+              if [[ $2 =~ [[:digit:]][.[:digit:]]+[a-z]* ]]; then
                  vers="$1 $2"
-                 shift
-                 shift
-                 fixed=1
+                 shift 2
+                 fixed=true
                  break
               fi
            fi
         done
      fi
      info="${*:---}"
-     if [ ! $fixed ]; then
+     if ! $fixed; then
         vers=--
      fi
   fi
@@ -209,23 +204,23 @@ function extract {
 # display the results
 function display {
    # file should be equal to arg (the argument)
-   test $file != $arg && file="$arg ($(mark $file))"
+   [[ $file != "$arg" ]] && file="$arg ($(mark "$file"))"
    
    # to be correct, date must be of the form yyyy/mm/dd
-   if [[ ! "$date" =~ ^[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}$ ]]; then
+   if [[ ! $date =~ ^[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}$ ]]; then
       date=$(mark $date)
    else
       # also, the number must be valid:
       if [ "$( date -d "$date" +%arg 2>&1 | grep invalid )" != "" ] ; then
-         date=$(mark $date)
+         date=$(mark "$date")
       fi
    fi
    
    # version should be 1.2 or 1.2.3, maybe prefixed with v and suffixed with zero or more lower case letters
-   if [[ ! "$vers" =~ ^v?[[:digit:]]+.[[:digit:]]+(.[[:digit:]]+)?[[:lower:]]*$ ]]; then vers=$(mark $vers); fi
+   if [[ ! $vers =~ ^v?[[:digit:]]+.[[:digit:]]+(.[[:digit:]]+)?[[:lower:]]*$ ]]; then vers=$(mark $vers); fi
    
    if [ ! "$key" ]; then
-      if [ $flat ]; then 
+      if $flat; then 
          echo -e "$file\t$date\t$vers\t$info"
       else
          cat <<-EOF
@@ -242,28 +237,55 @@ function display {
 }
 
 if ! options=$(getopt\
-   -n $myname \
+   -n "$myname" \
    -o hHiVIdvlifcsD \
    -l help,Help,date,version,location,info,flat,star,color,debug -- "$@"
 ); then exit 1; fi
 eval set -- "$options"
-debug=false
+debug=false flat=false
 while [ $# -gt 0 ]; do
    case $1 in
-   (-h|--help)     help;;
-   (-H|--Help)     helpall;;
-   (-V) 		  version;;
-   (-I)            install;;
-   (-d|--date)     key=date;;
-   (-v|--version)  key=vers;;
-   (-i|--info)     key=info;;
-   (-l|--location) key=loca;;
-   (-f|--flat)     flat=1;;
-   (-s|--star)     mark1=''; mark2='*';;
-   (-c|--color)    mark1='[1;31m'; mark2='[0m';;
-   (-D|--debug)    debug=true;;
-   (--)           shift; break;;
-   (*)            break;;
+   (-h|--help)     # print this help and exit
+                   help
+                   ;;
+   (-H|--Help)     # print full documentation via less and exit
+                   helpall
+                   ;;
+   (-V)            version
+                   ;;
+   (-d|--date)     # print file's date only
+                   key=date
+                   ;;
+   (-v|--version)  # print file's version only
+                   key=vers
+                   ;;
+   (-i|--info)     # print file's description text only
+                   key=info
+                   ;;
+   (-l|--location) # print file's full path only (same output as kpsewhich)
+                   key=loca
+                   ;;
+   (-f|--flat)     # output as 1 line with 4 tab-separated file, date, version and info fields
+                   flat=true
+                   ;;
+   (-s|--star)     # mark mal-formatted data with a star
+                   mark1=''
+                   mark2='*'
+                   ;;
+   (-c|--color)    # mark mal-formatted data with red color (ANSI coloring)
+                   mark1='[1;31m'
+                   mark2='[0m'
+                   ;;
+   (-D|--debug)    # for debugging, keep temporary files
+                   debug=true
+                   ;;
+   (-I)            install
+                   ;;
+   (--)            shift
+                   break
+                   ;;
+   (*)             break
+                   ;;
    esac
    shift
 done
@@ -271,9 +293,9 @@ done
 arg=$1
 case $arg in
 (*/*)	loca=$arg
-	test -e $loca || die "$loca: file does not exist";;
+	[[ -e $loca ]] || die "$loca: file does not exist";;
 ('')	help;;
-(*)	loca=$(kpsewhich $arg) || die "$arg: not found by kpsewhich"
+(*)	loca=$(kpsewhich "$arg") || die "$arg: not found by kpsewhich"
 esac
 loca=$(kpsewhich "$arg")
 prov=$(grep '\\Provides' "$loca") || die "no \\Provides..."
@@ -287,10 +309,14 @@ prov=$(grep '\\Provides' "$loca") || die "no \\Provides..."
 # \ProvideFile statements in them mostly refer to merlin.mbs, or other names
 [[ $arg =~ \.(mbs|bst)$ ]] && dombsbst
 
-dir=$(mktemp -d -t $myname.XXXXXXXXXX)
-$debug && echo Running in $dir || trap "rm -rf $dir" 0 1 2 15
-cp "$loca" $dir
-cd $dir
+dir=$(mktemp -d -t "$myname.XXXXXXXXXX")
+if $debug; then
+   echo "Running in $dir"
+else
+   trap 'rm -rf $dir' 0 1 2 15
+fi
+cp "$loca" "$dir"
+cd "$dir" || die "Could not cd to $dir"
 
 # The following code is mostly from Uwe Lueck's readprov.sty:
 echo '
@@ -320,7 +346,7 @@ echo '
 }
 \def\read@no@spaces#1#2\@nil{#1#2}%
 \def\NeedsTeXFormat#1{\expandafter\@needsformat}
-\ReadFileInfos{'$loca'}
+\ReadFileInfos{'"$loca"'}
 \endinput
 ' > ltxfileinfo.tex
 
@@ -330,11 +356,11 @@ IFS= # do not remove any whitespace
 base=${arg##*/} # strip the path
 base=${base%.*} # strip the extension
 shopt -s nocasematch # MS people don't pay attention to case differences in file names...
-while read line; do
-   if [[ "$line" =~ ^File:.$base ]]; then 
+while read -r line; do
+   if [[ $line =~ ^File:.$base ]]; then 
       out="$line"
       while [ ${#line} -eq 79 ]; do # gather continuation lines
-         read line
+         read -r line
          out="$out$line"
       done  
    fi
@@ -343,46 +369,47 @@ IFS=' '			# back to
 shopt -u nocasematch	# normal
 
 # if the \Provides statement is not recognized, try to find out why, and die:
-if [ "$out" = "" ]; then
-   read -r provtype provarg <<<$(sed -n '/\Provides\(Class\|Package\|File\)\s*{[^}]*}/s/.*\(Class\|Package\|File\)\s*{\([^}]*\)}.*/\1 \2/p' "$loca")
-   if [[ "$provarg" = "" || "$provarg" =~ '\\' ]]; then die Unidentified problem with \\ProvidesPackage statement; fi
+if [[ -z $out ]]; then
+   read -r provtype provarg <<<"$(sed -n '/\Provides\(Class\|Package\|File\)\s*{[^}]*}/s/.*\(Class\|Package\|File\)\s*{\([^}]*\)}.*/\1 \2/p' "$loca")"
+   if [[ -z $provarg || $provarg =~ \\ ]]; then die Unidentified problem with \\ProvidesPackage statement; fi
    case $provtype in
    (Package) 
-     if [[ ! "$arg" =~ \.(sty|dtx)$ ]]; then
+     if [[ ! $arg =~ \.(sty|dtx)$ ]]; then
        die \\ProvidesPackage used in file without a .sty extension
-     elif [[ "$provarg" =~ \.sty$ ]]; then
+     elif [[ $provarg =~ \.sty$ ]]; then
        die "Argument of \\ProvidesPackage ($provarg) should not contain .sty extension"
-     elif [ "$provarg" != "$base" ]; then
+     elif [[ $provarg != "$base" ]]; then
        die "Argument of \\ProvidesPackage ($provarg) not equal to file's base name ($base)"
      else
        die Unidentified problem with \\ProvidesPackage statement
      fi
      ;;
    (Class)
-     if [[ ! "$arg" =~ \.(cls|dtx)$ ]]; then
+     if [[ ! $arg =~ \.(cls|dtx)$ ]]; then
        die \\ProvidesClass used in file without a .cls extension
-     elif [[ "$provarg" =~ \.cls$ ]]; then
+     elif [[ $provarg =~ \.cls$ ]]; then
        die "Argument of \\ProvidesClass ($provarg) should not contain .cls extension"
-     elif [ "$provarg" != "$base" ]; then
+     elif [[ $provarg != "$base" ]]; then
        die "Argument of \\ProvidesClass ($provarg) not equal to file's base name ($base)"
      else
        die Unidentified problem with \\ProvidesPackage statement
      fi
      ;;
    (File)
-     if [ "$arg" != "$provarg" ]; then
+     if [[ $arg != "$provarg" ]]; then
        die "Argument of \\ProvidesFile ($provarg) not equal to file's name ($arg)"
      else
        die Unidentified problem with \\ProvidesPackage statement
      fi
      ;;
    (*)
-     die Found \\Provides$provarg statement - cannot handle it
+     die "Found \\Provides$provarg statement - cannot handle it"
      ;;  
    esac
 fi
 
-extract $out
+out=($out)
+extract "${out[@]}"
 display
 exit 0
 
