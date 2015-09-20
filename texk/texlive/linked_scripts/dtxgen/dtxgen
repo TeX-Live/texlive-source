@@ -1,7 +1,7 @@
 #!/bin/bash
 
-version=1.06
-myname=$(basename $0)
+version=1.07
+myname=$(basename "$0")
 
 <<'DOC'
 = dtxgen - generate template for LaTeX self-extracting .dtx file
@@ -100,15 +100,15 @@ Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
 License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
 DOC
 
-    die() { echo -e "$myname: $Err$@$Nor" 1>&2; exit 1; }
-   help() { sed -n '/^= Synopsis/,/^= /p' $0|sed '1s/.*/Usage:/;/^= /d'; exit; }
-helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' $0|sed -n '1d;$d;p'|less; exit; }
+    die() { echo -e "$myname: $Err${*}$Nor" 1>&2; exit 1; }
+   help() { sed -n '/^= Synopsis/,/^= /p' "$0"|sed '1s/.*/Usage:/;/^= /d'; exit; }
+helpall() { sed -n '/^<<.DOC.$/,/^DOC$/p' "$0"|sed -n '1d;$d;p'|less; exit; }
 version() { echo $version; exit; }
-install() { which instscript>&/dev/null && instscript --zip --pdf --markdown $myname; exit; }
+install() { which instscript>&/dev/null && instscript --zip --pdf --markdown "$myname"; exit; }
 
 Nor='\e[0m'    # reset color	]
 Err='\e[31;1m' # light red	]
-test ${BASH_VERSINFO[0]} -ge 4 || die "Need bash version >= 4 (you have $BASH_VERSION)"
+[[ ${BASH_VERSINFO[0]} -ge 4 ]] || die "Need bash version >= 4 (you have $BASH_VERSION)"
 
 # using the label in arg 2, read template from my self, filter it
 # through the script in arg 1, and write the output to the file in arg 3.
@@ -116,11 +116,11 @@ test ${BASH_VERSINFO[0]} -ge 4 || die "Need bash version >= 4 (you have $BASH_VE
 function createfile {
    file=$3
    test "$file" = "" && file=$2
-   sed -n "/^<<'$2'/,/^$2/p" $0 |tail -n +2 |head -n -1 |sed "$1" >$file
+   sed -n "/^<<'$2'/,/^$2/p" "$0" |tail -n +2 |head -n -1 |sed "$1" >"$file"
 }
 
 if ! options=$(getopt \
-   -n $myname \
+   -n "$myname" \
    -o s:n:m:c:d:hHVqI \
    -l short:,name:,mail:,class:,date:,help,Help,version,quiet -- "$@"
 ); then exit 1; fi
@@ -128,29 +128,50 @@ eval set -- "$options"
 
 while [ $# -gt 0 ]; do
    case $1 in
-   (-h|--help)		# print short help and exit
-	 help;;
-   (-H|--Help)		# print full documentation via less and exit
-	 helpall;;	
-   (-V|--version)	# print version and exit
-	 version;;
-   (-s|--short)		# short, one-liner, package description
-	 short=$2; shift 2;;
-   (-d|--date)		# initial version's date. Default: current date 
-	 date=$2; shift 2;;
-   (-m|--mail)		# your email address. Default: $MAIL
-	 mail=$2; shift 2;;
-   (-n|--name)		# your name. Default: $NAME
-	 name=$2; shift 2;;
-   (-c|--class)		# (class packs only) class to be preloaded. Default: article
-	 loadclass=$2; shift 2;;
-   (-q|--quiet)		# run quietly
-	 quiet=--quiet; shift;;
-   (-I)           install;;
-   (--)          shift;               break;;
-   (*)           break;;
+   (-h|--help)    # print short help and exit
+                  help
+                  ;;
+   (-H|--Help)    # print full documentation via less and exit
+                  helpall
+                  ;;      
+   (-V|--version) # print version and exit
+                  version
+                  ;;
+   (-s|--short)   # short, one-liner, package description
+                  short=$2
+                  shift 2
+                  ;;
+   (-d|--date)    # initial version's date. Default: current date 
+                  date=$2
+                  shift 2
+                  ;;
+   (-m|--mail)    # your email address. Default: $MAIL
+                  mail=$2
+                  shift 2
+                  ;;
+   (-n|--name)    # your name. Default: $NAME
+                  name=$2
+                  shift 2
+                  ;;
+   (-c|--class)   # (class packs only) class to be preloaded. Default: article
+                  loadclass=$2
+                  shift 2
+                  ;;
+   (-q|--quiet)   # run quietly
+                  quiet=--quiet
+                  shift
+                  ;;
+   (-I)           install
+                  ;;
+   (--)           shift
+                  break
+                  ;;
+   (*)            break
+                  ;;
    esac
 done
+
+export year typ Typ lcl use # used in templates - shellcheck se them as unused
 
 name=${name:-${NAME:-(not set)}}
 mail=${mail:-${EMAIL:-(not set)}}
@@ -159,20 +180,21 @@ year=${date:0:4}
 loadclass=${loadclass:-article}
 
 # date must be 8 digits; insert the two /'s:
-if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die illegal date; fi
-date=$(sed 's/\(....\)\(..\)\(..\)/\1\\\/\2\\\/\3/' <<<$date)
+if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die "illegal date"; fi
+date=$(sed 's/\(....\)\(..\)\(..\)/\1\\\/\2\\\/\3/' <<<"$date")
 
-# argument must have .clls or .sty extension:
-read base ext <<<$(echo $1 |sed  's/\./ /')
+# argument must have .cls or .sty extension:
+base=${1%.*}
+ext=${1#*.}
 
 case "$ext" in
 (cls) typ=class; Typ=Class;
-     short=${short:-A new LaTeX class}
-     lcl='\\LoadClass[a4paper,fleqn]{'"$loadclass}"
+      short=${short:-A new LaTeX class}
+      lcl='\\LoadClass[a4paper,fleqn]{'"$loadclass}"
      ;;
 (sty) typ=package; Typ=Package;
-     short=${short:-A new LaTeX package}
-     use='\\usepackage{\\jobname}'
+      short=${short:-A new LaTeX package}
+      use='\\usepackage{\\jobname}'
      ;;
 (*)   die "The argument must have .cls or .sty extension
          (try the --help option)"
@@ -181,18 +203,18 @@ esac
 # The short description may contain TeX commands, but then we need
 # a version without them at some places; note that this removes only
 # simple contructs:
-shrt=$(sed 's/\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\//g' <<<$short)
+shrt=$(sed 's/\\[[:alpha:]]\\+{\\([^}]*\\)}/\\1/g;s/\\//g' <<<"$short")
 
 # Any \'s in the short description need to be duplicated for the script:
-short=$(sed 's/\\/\\\\/g' <<<$short)
+short=$(sed 's/\\/\\\\/g' <<<"$short")
 
 test -z "$mail" && die "author's email not set - use option or environment variable EMAIL"
 test -z "$name" && die "author's name not set - use option or environment variable NAME"
 
 colw=${#base}
-test $colw -lt 7 && colw=7
-kopl=$(eval "printf '%.0s-' {1..$colw}")
-kopr=$(eval "printf '%.0s-' {1..$((72-$colw))}")
+(( colw = colw < 7 ? 7 : colw ))
+kopl="$(eval "printf '%.0s-' {1..$colw}")"
+kopr="$(eval "printf '%.0s-' {1..$((72-colw))}")"
 declare -A rm=(
     [$kopl]=$kopr
     [$base]=$shrt
@@ -218,7 +240,7 @@ done
 sedscript+='s=°=\n=g'
 
 createfile "$sedscript" Makefile
-createfile "$sedscript" DTX $base.dtx
+createfile "$sedscript" DTX "$base.dtx"
 make $quiet
 exit 0
 
@@ -227,12 +249,10 @@ exit 0
 NAME  = %base%
 SHELL = bash
 PWD   = $(shell pwd)
-TEMP := $(shell mktemp -d -t dtxgen.XXXXXXXXXX)
-TDIR  = $(TEMP)/$(NAME)
-VERS  = $(shell ltxfileinfo -v $(NAME).dtx)
+VERS  = $(shell ltxfileinfo -v $(NAME).dtx|sed -e 's/^v//')
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
-all:	$(NAME).pdf clean
+all:	$(NAME).pdf
 	test -e README.txt && mv README.txt README || exit 0
 $(NAME).pdf: $(NAME).dtx
 	pdflatex -shell-escape -recorder -interaction=batchmode $(NAME).dtx >/dev/null
@@ -255,9 +275,9 @@ install: all
 	sudo cp $(NAME).%ext% $(LOCAL)/tex/latex/$(NAME)
 	sudo cp $(NAME).pdf $(LOCAL)/doc/latex/$(NAME)
 zip: all
-	mkdir $(TDIR)
-	cp $(NAME).{pdf,dtx} README $(TDIR)
-	cd $(TEMP); zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)
+	ln -sf . $(NAME)
+	zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)/{README,$(NAME).{pdf,dtx}}
+	rm $(NAME)
 Makefile
 
 <<'DTX'
