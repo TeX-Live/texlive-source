@@ -1424,8 +1424,8 @@ int mp_round_unscaled(mp_number x_orig) {
 
 @c
 void mp_number_floor (mp_number *i) {
-  int round = set.round;
-  set.round = DEC_ROUND_DOWN;
+  int round = set.round; 
+  set.round = DEC_ROUND_FLOOR; 
   decNumberToIntegralValue(i->data.num, i->data.num, &set);
   set.round = round;
 }
