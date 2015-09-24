@@ -461,7 +461,7 @@ do_args (int argc, char *argv[], const char *source)
       break;
 
     case 133: /* --kpathsea-debug */
-      if ((kpathsea_debug = atoi(optarg)) < 0)
+      if ((kpathsea_debug = (uint32_t)atoi(optarg)) < 0)
         ERROR("Invalid kpathsearch debugging flags specified: %s", optarg);
       break;
 
