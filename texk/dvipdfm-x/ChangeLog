@@ -1,11 +1,6 @@
-2015-09-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2015-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* dvipdfmx.c: Cast as kpathsea_debug = (uint32_t)atoi(optarg).
-	Since kpathsea_debug is unsigned int, the cast must be redundant.
-	However, a debian person says that he has:
-	$ dvipdfmx --kpathsea-debug -1 test.dvi
-	dvipdfmx:fatal: Invalid kpathsearch debugging flags specified: -1
-	I cannot reproduce the behavior, but I add the redundant cast.
+	* dvipdfmx.c: Use strtoul for kpathsea_debug.
 
 2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
