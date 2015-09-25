@@ -1,22 +1,48 @@
-#!/usr/bin/perl -W
-## rubikrotation.pl (version2.0) 
-##=============================
-# Copyright 20 January 2014 RWD Nickalls and A Syropoulos
+#!/usr/bin/env perl 
+##
+use Carp;
+use Fatal;
+use warnings;
+##
+our $version = "3.0 (25 Sept 2015)";
+##---------------------------
+##
+##  rubikrotation.pl 
+##  VERSION 3.0 
+##  Copyright 25 September, 2015,  
+##  RWD Nickalls  (dick@nickalls.org) 
+##  A Syropoulos  (asyropoulos@yahoo.com)
+##
+##--------------------------------
+## changes in v3.0:
+## 1) accepts command-line arguments for input (mandatory) and output (optional) filenames
+##    default output filename is: rubikOUT.txt
+## 2) included the symbols [ and ] to denote a rotation-name label (ie as well as *)
+## 3) fixed some of the variable definitions (as highlighted by <use strict> pragma)
+##--------------------------------
+## changes in v2.3:
+## 1) accepts a single  commandline argument (datafilename)
+## 2) uses the standard modules Carp and Fatal (give extra  line info on error)
+##--------------------------------
+## changes in v2.2:
+## 1) changed licence --> LatexPP
+## 2) included random n errors in ERROR messages (lines 492--495)
+## 3) included version number in error message
+##------------------------------
 #
 # This file is part of the LaTeX  rubikrotation package, and 
 # requires rubikcube.sty and rubikrotation.sty
 #
 # rubikrotation.pl is a Perl-5 program and free software:
-# you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
+# This program can be redistributed and/or modified under the terms
+# of the LaTeX Project Public License Distributed from CTAN
+# archives in directory macros/latex/base/lppl.txt; either
+# version 1 of the License, or any later version.
 #
 # rubikrotation.pl is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-##=============================
 
 ##---------------------------------------------------------------------
 ## OVERVIEW
@@ -26,8 +52,8 @@
 ## and writes the new state to the file rubikstateNEW.dat, which is then input 
 ## by the TeX file. Further documentation  accompanies the rubikrotation package.
 
-## Note that all posible state changing rotations of a 3x3x3 cube are
-## either conbinations of, or the inverse of, just 9 different rotations,
+## Note that all possible state changing rotations of a 3x3x3 cube are
+## either combinations of, or the inverse of, just 9 different rotations,
 ## three associated with each XYZ axis.
 ##--------------------------------------------------
 
@@ -42,23 +68,97 @@
 ## The first argument in each line of the file rubikstate.dat is the rubikkeyword.
 ## Program is documented in the rubikrotation.pdf (see section ``Overview'')
 
-### start by opening the three working files (last one ``for append'')
+our $source_file="";
+our $out_file="rubikOUT.txt"; #default
+our $argc=@ARGV;
+our $commandLineArgs = join(" ", @ARGV);
+our $showargs="\tcommandline args = $commandLineArgs\n";
+our $usage="\tUsage: rubikrotation [-h|--help|-v|--version] -i <input file> [-o <out file>]\n";
+our $rubikversion="\tVersion: this is rubikrotation version $version\n";
+#
+## check for correct number of commandline  arguments and allocate filenames
+#
+if ($argc == 0||$argc > 4 ){ # croak if  0 or  more than 4 arguments
+        croak $rubikversion,$showargs,
+        "\tWrong no of arguments\n",
+        $usage;
+   }
+   else {
+        SWITCHES:
+        while($_ = $ARGV[0]) {
+        shift;     
+        if (/^-h$/ || /^--help$/ ) {
+             die $rubikversion,$usage, 
+             "\twhere,\n" . 
+             "\t[-h|--help]\tgives this help listing\n" .
+             "\t[-v|--version]\tgives version\n" .
+             "\t[-i]     \tcreates specified input file\n", 
+             "\t[-o]     \tcreates specified output file\n",
+             "\tFor documentation see: rubikrotation.pdf,\n",
+             "\trubikrotationPL.pdf and rubikcube.pdf.\n\n";
+        }
+        elsif  (/^-v$/ || /^--version$/ ) {die $rubikversion;}
+        elsif (/^-i$/) {
+              if (!@ARGV){
+                       croak $showargs, 
+                       "\tNo input file specified!\n",
+                       $usage;
+                      }
+              else {
+                  $source_file = $ARGV[0],
+                  shift;
+                  }
+        }
+        elsif (/^-o$/) {
+              if (!@ARGV) {
+                 croak $showargs, 
+                    "\tNo output file specified!\n",
+                    $usage;
+                    }
+              else {
+                $out_file = $ARGV[0],
+                shift;
+              }
+        }
+        elsif (/^-\w+/) {
+            croak $showargs, 
+            "\t$_: Illegal command line switch!\n",
+            $usage;
+        }
+        else {
+            croak $showargs, 
+            "\tmissing filenames or ? missing -i or -o switch!\n",
+            $usage;
+       }
+   } # end of while
+};   # end of else
 
- open (IN_FILE, "<rubikstate.dat")||die "ERROR: can't open file rubikstate.dat\n";
- open (TeX_OUT_FILE, ">rubikstateNEW.dat")||die "ERROR: can't open file rubikstateNEW.dat\n";
- open (ERROR_OUT_FILE,  ">>rubikstateERRORS.dat")||die "ERROR: can't open file rubikstateERRORS,dat\n";
+print "This is rubikrotation version $version\n";
+#================================ 
+  open(IN_FILE, "<$source_file")  ||croak "\tCan't open source file: $source_file\n";
+  open(TeX_OUT_FILE, ">$out_file")||croak "\tCan't open output file: $out_file\n";
+
+  ## create error file (for append)
+  open (ERROR_OUT_FILE,  ">>rubikstateERRORS.dat")||croak "ERROR: can't open file rubikstateERRORS.dat\n";
+
 
  ## use dots for Perl messages (I have used dashes for LaTeX messages in the .sty)
  ## gprint sub prints its argument (message) to both the screen and to the TeX_OUT_FILE
 
- gprint ("...PERL process...................................");
+ gprint ("...PERL process..................................");
+ gprint ("...program = rubikrotation.pl v$version");
 
 ## setup  global error parameters, so we can write all the errors to a file as an array
-%error       = (); # setup an array for error messages (was %)
-$erroralert  = ""; # error flag
-$errornumber = 0;  #set number of errors to zero
+my %error       = (); # setup an array for error messages (was %)
+my $erroralert  = ""; # error flag
+my $errornumber = 0;  #set number of errors to zero
 
- gprint ("...reading the current rubik state (rubikstate.dat)");
+ gprint ("...reading the current rubik state (from File: $source_file)");
+
+my $dataline = "";
+my $rubikkeyword = "";
+my $rotationcommand = "";
+my @data;
 
  LINE: while (<IN_FILE>){
           next LINE if /^#/;  #skip comments
@@ -69,7 +169,7 @@ $errornumber = 0;  #set number of errors to zero
 	  #$n++; # count the number of lines
 	  @data=split (/,/, $dataline); # create an array called data
 	  ## we have 10 fields (0--9)
-	  ## check for rubikkeyword= up,down,left,right,front,back,rotation, checkstate:
+	  ## check for rubikkeyword= up,down,left,right,front,back,checkstate,rotation:
           gprint ("...$dataline");
 	  $rubikkeyword=$data[0]; 
 
@@ -127,11 +227,12 @@ $errornumber = 0;  #set number of errors to zero
                      gprint ("...command=$rotationcommand");
 
 
+                   ##-----random-----------------
                    ## if second argument = random, 
-                   ##  then we also need to check if third argument is an integer; 
+                   ##   THEN we also need to check if third argument is an integer; 
                    ## if so -->random sub.
                    ## if the 3rd argument is NOT an integer then reject line & get next input line
-                    if ($data[1] eq 'random') 
+                   if ($data[1] eq 'random') 
                          {
                             if ($data[2] =~/\D/) {  
                                 errormessage("[$data[2]] not an integer");
@@ -148,14 +249,20 @@ $errornumber = 0;  #set number of errors to zero
                          # to the rotation sub,  BUT, need to first remove the 
                          # rubikkeyword `rotation'  from the begining of line (array)
                          # as we need to send ONLY the  sequence string to the rotation sub.
-                         shift (@data);  
+
+                         ## remove keyword rotation
+                         shift (@data);
+
+                         ## process @data string by the rotation sub
                          rotation(@data);
                          }
-                  }
-
-           };
+                   }
+##-------------------------------
+## place additional keywords here
+##-------------------------------
+           }; ## end of while
  
- ## we have finished reading in all the lines from the rubikstate.dat file,
+ ## we have finished reading in all the lines from the source file,
  ## and doing all the rotations etc, so we now just write the new cube state 
  ## to the output file = TeX_OUT_FILE (so LaTeX can read it)
  writestate();
@@ -174,7 +281,7 @@ sub errormessage{
 };
 
 ##======================================
-##  prints argument (comments) to screen and also to TeX_OUT_FILE (= rubikstateNEW.dat). 
+##  prints argument (comments) to screen and also to TeX_OUT_FILE. 
 ## The typeout commands will find its way into the log file when read by latex
 ## Important to include trailing % for messages written to the TeX_OUT_FILE 
 ##    to stop extra <spaces> being seen by TeX.
@@ -200,6 +307,8 @@ sub checkstate{
              $Blt[0],$Bmt[0],$Brt[0],  $Blm[0],$Bmm[0],$Brm[0],  $Blb[0],$Bmb[0],$Brb[0]);
 
 my $R=0,my $O=0,my $Y=0,my $G=0,my $B=0,my $W=0,my $X=0; 
+
+my $cubiecolour = "";
 
 foreach $cubiecolour (@cubies)
       {
@@ -230,7 +339,7 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
 # no of arguments passed to the sub = $#_ (black book p 156)
 
  sub rotation {
-## here we process an array (from main) consisting of all 
+## here we process the array @data  (from main) consisting of all 
 ## the rotation commands associated with 
 ## a single RubikRotation command.
 
@@ -239,6 +348,8 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
   my $originalchar="";
   my $j;
   my $numberofchars; ## length of a string
+  my $nfrontchars;
+  my $char = "";
 
      gprint ("...arguments passed to `rotation' sub = @_ (n= $n)");
      foreach $char (@_) {
@@ -246,8 +357,9 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
         ## grab a copy of the original char for use if  m Mod4=0
         $originalchar=$char;
 
-    ## if argument has a leading * then it is a label (not a rotation) so jump to next one
-    if (substr ($char,0,1) eq "*"){
+    ## if argument has a leading * or [ or ] then it is a label (not a rotation) 
+    ## so jump to next one
+   if (substr ($char,0,1)  =~  /[ * \[ \] ]/  ){
                                    gprint ("...$char is a label OK");
                                    next;
                                    };
@@ -258,7 +370,7 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
   ##    split char string into front chars (= $char) + trailing digit (= $m)
      $m = 1; # initialise m 
 
-  ## if terminal char is a digit (d) then d --> m  and let frontstring --> char 
+  ## if terminal char is a digit (d) then let d --> m  and let frontstring --> char 
   ## (Black book p 130 & 136) 
   ## if the frontstring contains any digits then it will be rejected in the filter below anyway.
 
@@ -275,8 +387,8 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
           ## (if MOD 4 = 0 then nothing will happen as j starts at 1)
           ## but should generate an errormessage
           if ( $m == 0 ){
-                     gprint ("...rotation $originalchar equiv 0 MOD 4 (NOT IMPLEMENTED)");
-                     errormessage ("[$originalchar] in RubikRotation (= 0 MOD 4)");
+                     gprint ("...rotation $originalchar equiv 0;(MOD 4) (NOT IMPLEMENTED)");
+                     errormessage ("[$originalchar] in RubikRotation (4 MOD 4 = 0)");
                      next;
                     };
           };
@@ -293,7 +405,7 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
     elsif ($char eq "Rsp") {for($j=1;$j<=$m;$j++) { gprint ("...rotation Rsp OK (= rrRp + rrL)"); &rrRsp}}
     elsif ($char eq "Ra")  {for($j=1;$j<=$m;$j++) { gprint ("...rotation Ra  OK (= rrR + rrL)"); &rrRa}}
     elsif ($char eq "Rap") {for($j=1;$j<=$m;$j++) { gprint ("...rotation Rap OK (= rrRp + rrLp)"); &rrRap}}
-  ####
+    ####
     elsif ($char eq "L")   {for($j=1;$j<=$m;$j++) {gprint ("...rotation L   OK (= rrLp3)"); &rrL}}
     elsif ($char eq "Lp")  {for($j=1;$j<=$m;$j++) {gprint ("...rotation Lp  OK"); &rrLp}}
     elsif ($char eq "Lw")  {for($j=1;$j<=$m;$j++) {gprint ("...rotation Lw  OK (= rrLp3 + rrSrp)"); &rrLw}}
@@ -351,8 +463,8 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
     elsif ($char eq "Sfp") {for($j=1;$j<=$m;$j++) {gprint ("...rotation Sfp OK (= rrSf3)"); &rrSfp}}
     elsif ($char eq "Sb")  {for($j=1;$j<=$m;$j++) {gprint ("...rotation Sb  OK (= rrSfp)"); &rrSb}}
     elsif ($char eq "Sbp") {for($j=1;$j<=$m;$j++) {gprint ("...rotation Sbp OK (= rrSf)"); &rrSbp}}
-   ## XYZ stuff
-   ## need to include lowercase x,y,x, and also u,d,l,r,f,b equivalents
+    ## XYZ stuff
+    ## need to include lowercase x,y,x, and also u,d,l,r,f,b equivalents
     elsif ($char eq "X" or $char eq "x" or $char eq "r")  
                {for($j=1;$j<=$m;$j++) {gprint ("...rotation $char OK (= rrR + rrSr + rrLp)"); &rrR;&rrSr;&rrLp}}
     elsif ($char eq "Xp" or $char eq "xp" or $char eq "l")  
@@ -373,14 +485,21 @@ if ($W >9){ errormessage("No of White cubies > 9 (=$W)")};
     elsif ($char eq "S")   {for($j=1;$j<=$m;$j++) {gprint ("...rotation S   OK (= Sf) "); &rrSf}}
     elsif ($char eq "Sp")  {for($j=1;$j<=$m;$j++) {gprint ("...rotation Sp  OK (= Sb) "); &rrSb}}
     ####
+    ## check for missing rotation
+    elsif ($char eq "")    {for($j=1;$j<=$m;$j++) 
+                               {gprint ("...rotation ,$char, ERROR  ? typo or missing rotation"),
+                               errormessage("[,$char,] in RubikRotation: ? typo or missing rotation")}}
+    ####
+    ## rotation must be undefined
     else {
-          gprint ("...rotation $originalchar NOT KNOWN");
-          errormessage("[$originalchar] in RubikRotation");
-          };
-      }
-  };
+         gprint ("...rotation $originalchar NOT KNOWN");
+         errormessage("[$originalchar] in RubikRotation\{\}");
+         };
+      }; # end of foreach 
+  };    # end of sub
 
-## aNOTE we only defined and determined 9 primary rotation transforms, 
+##---------------------------------------------
+## aNOTE we have  defined (as rotation SUBs at the end) just 9 primary rotation transforms, 
 ## rrR, rrSr, rrLp
 ## rrU, rrSu, rrDp
 ## rrF, rrSf, rrBp
@@ -465,12 +584,14 @@ sub random{
 ## (perl 5 book page 68)
 ## ? maybe we should only use the 18 rotations mentioned in Rokicki 2013 paper?
 ## but here I have included all the S ones too.
-@rrlist= ("U", "Up", "Su", "Sup",
-          "D", "Dp", "Sd", "Sdp",
-          "L", "Lp", "Sl", "Slp",
-          "R", "Rp", "Sr", "Srp",
-          "F", "Fp", "Sf", "Sfp",
-          "B", "Bp", "Sb", "Sbp");
+
+
+my @rrlist= ("U", "Up", "Su", "Sup",
+             "D", "Dp", "Sd", "Sdp",
+             "L", "Lp", "Sl", "Slp",
+             "R", "Rp", "Sr", "Srp",
+             "F", "Fp", "Sf", "Sfp",
+             "B", "Bp", "Sb", "Sbp");
 
 my $rrlistnumber=$#rrlist;
 print " rrlistnumber = $rrlistnumber\n";
@@ -480,12 +601,13 @@ print " rrlistnumber = $rrlistnumber\n";
 my $defaultn = 50;
 my $maxn     = 200;
 ##  grab the integer passed  from the random() command in main
-$s = $_[0];
+my $s = $_[0];
 if ($s >= $maxn) {$s = $maxn;
-                     gprint ("...WARNING: maximum n = 200")}
+                     gprint ("...WARNING: maximum n = 200");
+                     errormessage ("random: max n =200 (n=200 was used)")}
     elsif ($s == 0) {$s = $defaultn;
-                     gprint ("...WARNING: integer = 0 or not given: using default value 50")};
-
+                     gprint ("...WARNING: integer = 0 or not given: using default value 50");
+                     errormessage ("random: n invalid (n=50 was used)")};
 
 my @rr; ## array to hold all the random rotations
 print " randomising the available rotations\n";
@@ -500,9 +622,11 @@ srand;
 ## = (lastindexnumber -1). Therefore we need to use the range 0--(lastindexnumber+1)
 ## in order to randomise all posibilities on  our list.
 
+my $j;
+
 for ($j = 1; $j <=$s; $j=$j+1) 
     {
-     $p= int(rand ($rrlistnumber +1));
+     my $p= int(rand ($rrlistnumber +1));
      print "Rotation = $p, $rrlist[$p] \n";
      ## push rotation code   $rrlist[$p] on to END of array @rr 
      push (@rr, $rrlist[$p]);
@@ -517,24 +641,25 @@ for ($j = 1; $j <=$s; $j=$j+1)
 ##===================subs==================================
 
  sub writestate{
-## this just writes the final state to the TeX_OUT_FILE (= rubikstateNEW) will be read by latex.
+## this just writes the final state to the TeX_OUT_FILE (= rubikstateNEW.dat) will be read by latex.
 
-print (TeX_OUT_FILE    "\%\% file=rubikstateNEW.dat (Perl)\n");
+print (TeX_OUT_FILE    "\%\% output datafile=$out_file\n");
+print (TeX_OUT_FILE    "\%\% PERL prog=rubikrotation version $version\n");
+print (TeX_OUT_FILE    "\\typeout{...writing new Rubik state to file $out_file}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceUp\{$Ult[0]\}\{$Umt[0]\}\{$Urt[0]\}\{$Ulm[0]\}\{$Umm[0]\}\{$Urm[0]\}\{$Ulb[0]\}\{$Umb[0]\}\{$Urb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceDown\{$Dlt[0]\}\{$Dmt[0]\}\{$Drt[0]\}\{$Dlm[0]\}\{$Dmm[0]\}\{$Drm[0]\}\{$Dlb[0]\}\{$Dmb[0]\}\{$Drb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceLeft\{$Llt[0]\}\{$Lmt[0]\}\{$Lrt[0]\}\{$Llm[0]\}\{$Lmm[0]\}\{$Lrm[0]\}\{$Llb[0]\}\{$Lmb[0]\}\{$Lrb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceRight\{$Rlt[0]\}\{$Rmt[0]\}\{$Rrt[0]\}\{$Rlm[0]\}\{$Rmm[0]\}\{$Rrm[0]\}\{$Rlb[0]\}\{$Rmb[0]\}\{$Rrb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceFront\{$Flt[0]\}\{$Fmt[0]\}\{$Frt[0]\}\{$Flm[0]\}\{$Fmm[0]\}\{$Frm[0]\}\{$Flb[0]\}\{$Fmb[0]\}\{$Frb[0]\}\%\n");
 print (TeX_OUT_FILE    "\\RubikFaceBack\{$Blt[0]\}\{$Bmt[0]\}\{$Brt[0]\}\{$Blm[0]\}\{$Bmm[0]\}\{$Brm[0]\}\{$Blb[0]\}\{$Bmb[0]\}\{$Brb[0]\}\%\n");
-print (TeX_OUT_FILE    "\\typeout{...writing new Rubik state to file rubikstateNEW.dat}\%\n");
 
 ## now include any error messages generated 
 ## (these are all  in an array waiting to be printed out)
 
 if ($erroralert eq "YES")
       {
-       ## open a separate file  just for errors (we append the errrors to end of file)
-       ## this file (rubikstate.cfg) was opened by the TeX file
+       ## write errors to a separate file (just for errors---we append the errrors to end of file)
+       ## the error file (rubikstateERRORS.dat) was created by the TeX file
        my $ne;  #number of errors
        $ne=$#error; ## number of errors= largest index num since we started at zero
        ### do not attach error to a <checkstate> command
@@ -582,7 +707,7 @@ print " Perl output file written OK\n";
 ## R = RIGHT, s = side; 0=colour, 1= number
 ## make the clockwise rotation permutation
 ## In this permutation the Front-right-bottom (Frb) (side)facelet rotates to 
-## the new position of Up-right-bottom (Urb) (side)facelet.
+##    the new position of Up-right-bottom (Urb) (side)facelet.
 ##-----------SIDE-------
 ## 12 side cubie facelets in  arrays @Rs0 (colours) and @Rs1 (numbers)
 ## these are the initial positions
@@ -597,11 +722,11 @@ print " Perl output file written OK\n";
       $Drb[1],$Drm[1],$Drt[1]);
 
 ## now we reallocate the initial array elements to the new 
-## post (90 degree clockwise) rotation position.
+##    post (90 degree clockwise) rotation position.
 ## Cube is viewed from FRONT.
-## positions of side facelets of Right slice are numbered 0-11 in clockwise direction,
+## Positions of side facelets of Right slice are numbered 0-11 in clockwise direction,
 ##   (as seen from Right face) starting with Up-right-bottom facelet. 
-## first line example:  
+## First line example:  
 ## variable $Urb[0] (Upface-right-bottom colour) <-- colour of first element in @Rs0 (=Frb[0]) 
 ## variable $Urb[1] (Upface-right-bottom number) <-- number of first element in @Rs1 (=Frb[1]) 
 $Urb[0]=$Rs0[0]; $Urb[1]=$Rs1[0];
