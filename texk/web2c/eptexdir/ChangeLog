@@ -1,3 +1,7 @@
+2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* eptriptest.test: Also check tripos.tex and etrip.out.
+
 2015-08-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* pdfprimitive.test: New shell script testing \pdfprimitive.

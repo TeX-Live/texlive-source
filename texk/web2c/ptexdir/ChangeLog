@@ -1,3 +1,7 @@
+2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* ptriptest.test: Also check tripos.tex.
+
 2015-09-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Fix a bug in flushing choice node.

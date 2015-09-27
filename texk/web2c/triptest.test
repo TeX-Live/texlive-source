@@ -80,6 +80,8 @@ diff $testdir/trip.fot trip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log trip.log
 
+diff $testdir/tripos.tex tripos.tex || is_OK=false
+
 eval ../dvitype $dvitype_args trip.dvi >trip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ trip.typ
 

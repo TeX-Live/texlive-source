@@ -55,6 +55,9 @@ diff $testdir/trip.fot ptrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log ptrip.log 
 
+mv tripos.tex ptripos.tex
+diff $testdir/tripos.tex ptripos.tex || is_OK=false
+
 eval ../dvitype $dvitype_args trip.dvi >ptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ ptrip.typ
 

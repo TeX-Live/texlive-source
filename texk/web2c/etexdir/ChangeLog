@@ -1,3 +1,7 @@
+2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* etriptest.test: Also check tripos.tex and etrip.out.
+
 2015-07-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/etex.am: Fixed a stupid typo that caused 'make dist' to
