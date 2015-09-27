@@ -1,0 +1,64 @@
+	We don't want this for TeX Live cross compilation.
+
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-56.1.orig/source/config/mh-mingw icu-56.1/source/config/mh-mingw
+--- icu-56.1.orig/source/config/mh-mingw	2015-09-24 00:33:18.000000000 +0200
++++ icu-56.1/source/config/mh-mingw	2015-09-27 15:24:45.000000000 +0200
+@@ -59,27 +59,9 @@
+ ## Non-shared intermediate object suffix
+ STATIC_O = ao
+ 
+-ifeq ($(ENABLE_SHARED),YES)
+-SO_TARGET_VERSION_SUFFIX = $(SO_TARGET_VERSION_MAJOR)
+-else
+-SO_TARGET_VERSION_SUFFIX = 
+-endif
+-
+-# Static library prefix and file extension
+-LIBSICU = lib$(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+-A = a
+-
+ ## An import library is needed for z/OS and MSVC
+ IMPORT_LIB_EXT = .dll.a
+ 
+-LIBPREFIX=
+-
+-# Change the stubnames so that poorly working FAT disks and installation programs can work.
+-# This is also for backwards compatibility.
+-DATA_STUBNAME = dt
+-I18N_STUBNAME = in
+-LIBICU = $(STATIC_PREFIX_WHEN_USED)$(ICUPREFIX)
+-
+ #SH### copied from Makefile.inc
+ #SH## for icu-config to test with
+ #SH#ICULIBS_COMMON_LIB_NAME="${LIBICU}${COMMON_STUBNAME}${ICULIBSUFFIX}${ICULIBSUFFIX_VERSION}.${SO}"
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-56.1.orig/source/config/mh-mingw64 icu-56.1/source/config/mh-mingw64
+--- icu-56.1.orig/source/config/mh-mingw64	2015-09-24 00:33:18.000000000 +0200
++++ icu-56.1/source/config/mh-mingw64	2015-09-27 15:24:45.000000000 +0200
+@@ -59,27 +59,9 @@
+ ## Non-shared intermediate object suffix
+ STATIC_O = ao
+ 
+-ifeq ($(ENABLE_SHARED),YES)
+-SO_TARGET_VERSION_SUFFIX = $(SO_TARGET_VERSION_MAJOR)
+-else
+-SO_TARGET_VERSION_SUFFIX = 
+-endif
+-
+-# Static library prefix and file extension
+-LIBSICU = lib$(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+-A = a
+-
+ ## An import library is needed for z/OS and MSVC
+ IMPORT_LIB_EXT = .dll.a
+ 
+-LIBPREFIX=
+-
+-# Change the stubnames so that poorly working FAT disks and installation programs can work.
+-# This is also for backwards compatibility.
+-DATA_STUBNAME = dt
+-I18N_STUBNAME = in
+-LIBICU = $(STATIC_PREFIX_WHEN_USED)$(ICUPREFIX)
+-
+ #SH### copied from Makefile.inc
+ #SH## for icu-config to test with
+ #SH#ICULIBS_COMMON_LIB_NAME="${LIBICU}${COMMON_STUBNAME}${ICULIBSUFFIX}${ICULIBSUFFIX_VERSION}.${SO}"
