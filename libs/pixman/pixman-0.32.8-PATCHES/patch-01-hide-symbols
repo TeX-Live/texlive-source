@@ -1,6 +1,6 @@
-diff -ur pixman-0.32.6.orig/pixman/pixman-compiler.h pixman-0.32.6/pixman/pixman-compiler.h
---- pixman-0.32.6.orig/pixman/pixman-compiler.h	2014-04-24 06:34:14.000000000 +0200
-+++ pixman-0.32.6/pixman/pixman-compiler.h	2014-12-04 08:34:52.000000000 +0100
+diff -ur pixman-0.32.8.orig/pixman/pixman-compiler.h pixman-0.32.8/pixman/pixman-compiler.h
+--- pixman-0.32.8.orig/pixman/pixman-compiler.h	2015-06-30 11:48:31.000000000 +0200
++++ pixman-0.32.8/pixman/pixman-compiler.h	2015-09-26 18:58:53.409947954 +0200
 @@ -91,7 +91,7 @@
  
  /* GCC visibility */

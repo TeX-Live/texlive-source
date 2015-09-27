@@ -440,7 +440,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/pixman-0.32.6/pixman/pixman-version.h.in \
+	$(top_srcdir)/pixman-0.32.8/pixman/pixman-version.h.in \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
@@ -702,7 +702,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-pixman-version.h: $(top_builddir)/config.status $(top_srcdir)/pixman-0.32.6/pixman/pixman-version.h.in
+pixman-version.h: $(top_builddir)/config.status $(top_srcdir)/pixman-0.32.8/pixman/pixman-version.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:

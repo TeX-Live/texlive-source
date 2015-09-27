@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current pixman version
-m4_define([pixman_version], [0.32.6])
+m4_define([pixman_version], [0.32.8])
