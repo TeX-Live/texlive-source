@@ -1,3 +1,11 @@
+1.3.3
+    . Slight speed up in Collision Avoidance
+    . Remove dead bidi code
+    . Bug fixes
+        . Between pass bidi reorderings and at the end
+        . Decompressor fuzz bugs
+        . Other fuzz bugs
+
 1.3.2
     . Remove full bidi. All segments are assumed to be single directioned.
     . Bug fixes:
