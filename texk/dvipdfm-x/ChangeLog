@@ -1,6 +1,7 @@
-2015-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2015-09-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* dvipdfmx.c: Use strtoul for kpathsea_debug.
+	* dvipdfmx.c: Remove conditional error message in kpathsea_debug,
+	since there should be no errors.
 
 2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
