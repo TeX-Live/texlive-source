@@ -1,0 +1,14 @@
+	It seems gcc-4.4 uses external calls.
+
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-56.1.orig/source/common/putilimp.h icu-56.1/source/common/putilimp.h
+--- icu-56.1.orig/source/common/putilimp.h	2015-09-24 00:32:40.000000000 +0200
++++ icu-56.1/source/common/putilimp.h	2015-09-27 15:22:44.000000000 +0200
+@@ -191,7 +191,7 @@
+     /* Use the predefined value. */
+ #elif U_PLATFORM == U_PF_MINGW
+     #define U_HAVE_GCC_ATOMICS 0
+-#elif U_GCC_MAJOR_MINOR >= 404 || defined(__clang__)
++#elif U_GCC_MAJOR_MINOR >= 405 || defined(__clang__)
+     /* TODO: Intel icc and IBM xlc on AIX also support gcc atomics.  (Intel originated them.)
+      *       Add them for these compilers.
+      * Note: Clang sets __GNUC__ defines for version 4.2, so misses the 4.4 test here.

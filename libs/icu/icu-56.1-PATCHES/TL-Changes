@@ -1,0 +1,22 @@
+Changes applied to the icu-56.1/ tree as obtained from:
+	http://download.icu-project.org/files/icu4c/56.rc/icu4c-56_rc-src.tgz
+
+Removed:
+	as_is/
+	packaging/
+
+Removed empty directory:
+	source/config/m4/
+
+Updated:
+	source/config.guess
+	source/config.sub
+	source/install-sh
+
+Reduced size of source/data/in/icudt53l.dat
+	icupkg -r 'curr/*' IN OUT
+	icupkg -r 'lang/*' IN OUT
+	icupkg -r 'region/*' IN OUT
+	icupkg -r 'rfc*.spp' IN OUT
+	icupkg -r 'zone/*' IN OUT
+

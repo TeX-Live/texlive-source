@@ -1,0 +1,21 @@
+	Do not define _XOPEN_SOURCE_EXTENDED on Solaris,
+	notwithstanding comments in icu source.
+
+diff -ur -N -x config.guess -x config.sub -x install-sh icu-56.1.orig/source/common/uposixdefs.h icu-56.1/source/common/uposixdefs.h
+--- icu-56.1.orig/source/common/uposixdefs.h	2015-09-24 00:32:36.000000000 +0200
++++ icu-56.1/source/common/uposixdefs.h	2015-09-27 15:27:38.000000000 +0200
+@@ -49,10 +49,13 @@
+  * Make sure things like readlink and such functions work.
+  * Poorly upgraded Solaris machines can't have this defined.
+  * Cleanly installed Solaris can use this #define.
++ * [Experience with TeX Live is that it always causes failure.
++ *  http://tug.org/pipermail/tlbuild/2013q1/002493.html
++ *  http://tug.org/pipermail/tlbuild/2013q1/002536.html ]
+  *
+  * z/OS needs this definition for timeval and to get usleep.
+  */
+-#if !defined(_XOPEN_SOURCE_EXTENDED)
++#if !defined(_XOPEN_SOURCE_EXTENDED) && !defined(__sun)
+ #   define _XOPEN_SOURCE_EXTENDED 1
+ #endif
+ 
