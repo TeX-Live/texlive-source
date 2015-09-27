@@ -1,7 +1,6 @@
-2015-09-19  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* texmfmp.h: Change file names texmf.h and texmf.c in comments as
-	texmfmp.h and texmfmp.c, respectively.
+	* triptest.test: Also check tripos.tex.
 
 2015-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -279,7 +278,7 @@
 
 	* trap.test (removed): Renamed ...
 	* mftraptest (new): ... into this.
-	* trp.test (removed): Renamed ...
+	* trip.test (removed): Renamed ...
 	* triptest (new): ... into this.
 	* am/texmf.am, triptrap-sh: Adapted.
 

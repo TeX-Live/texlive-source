@@ -58,6 +58,9 @@ diff $testdir/trip.fot cuptrip.fot
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log cuptrip.log 
 
+mv tripos.tex cuptripos.tex
+diff $testdir/tripos.tex cuptripos.tex
+
 eval ../dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
 
@@ -85,6 +88,9 @@ diff $testdir/trip.fot xuptrip.fot
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $testdir/trip.log xuptrip.log 
+
+mv tripos.tex xuptripos.tex
+diff $testdir/tripos.tex xuptripos.tex
 
 eval ../dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ xuptrip.typ
@@ -120,6 +126,9 @@ diff $etestdir/etrip.fot euptrip.fot
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
 $DIFF $DIFFFLAGS $eptestdir/eptrip.log euptrip.log
+
+mv etrip.out euptrip.out
+diff $etestdir/etrip.out euptrip.out
 
 eval ../dvitype $dvitype_args etrip.dvi >euptrip.typ || exit 1
 $DIFF $DIFFFLAGS $etestdir/etrip.typ euptrip.typ
