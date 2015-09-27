@@ -1,0 +1,14 @@
+	MinGW64 complains when <winsock2.h> is included after <windows.h>
+	(via include/efont/otfdata.hh).
+
+diff -ur -x Makefile.in -x aclocal.m4 -x autoconf.h.in -x configure lcdf-typetools-2.105.orig/include/config.h lcdf-typetools-2.105/include/config.h
+--- lcdf-typetools-2.105.orig/include/config.h	2013-08-13 22:12:16.000000000 +0200
++++ lcdf-typetools-2.105/include/config.h	2015-09-26 21:41:12.000000000 +0200
+@@ -6,6 +6,7 @@
+ /* Allow compilation on Windows (thanks, Fabrice Popineau). */
+ #ifdef WIN32
+ # ifdef __MINGW32__
++#  include <winsock2.h>
+ #  include <windows.h>
+ # else
+ #  include <win32lib.h>

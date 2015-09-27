@@ -1,3 +1,8 @@
+2015-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import lcdf-typetools-2.105.
+	* version.ac: Adapted.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.

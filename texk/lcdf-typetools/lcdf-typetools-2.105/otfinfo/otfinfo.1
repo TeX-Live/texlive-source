@@ -1,0 +1,199 @@
+'\"t
+.ds V 2.105
+.de M
+.BR "\\$1" "(\\$2)\\$3"
+..
+.de Sp
+.if n .sp
+.if t .sp 0.4
+..
+.TH OTFINFO 1 "LCDF Typetools" "Version \*V"
+.SH NAME
+otfinfo \- report information about OpenType fonts
+.SH SYNOPSIS
+.B otfinfo
+\%[\fB-sfzpvag\fR]
+\%[\fIFILE...\fR]
+'
+.SH DESCRIPTION
+.BR Otfinfo
+reports information about the named OpenType font
+.IR FILE s
+(or standard input, if no 
+.IR FILE s
+are given). Results are printed to standard output. Each line is prefaced
+with the relevant
+.I FILE
+if more than one
+.I FILE
+was supplied.
+'
+.SH OPTIONS
+With long options, you need type only as many characters as will make the
+option unique.
+.SS Query options
+.PD 0
+.PD 0
+.TP 5
+.BR \-s ", " \-\-scripts
+Print supported scripts and language systems. The scripts are printed one
+per line, with human-readable descriptions; for example:
+.nf
+  cyrl            Cyrillic
+  grek            Greek
+  latn            Latin
+  latn.TUR        Latin/Turkish
+.fi
+'
+.Sp
+.TP 5
+.BR \-f ", " \-\-features
+Print GSUB and GPOS features supported by the selected script (see the
+.B \-\-script
+option below). The scripts are printed one per line, with human-readable
+descriptions; for example:
+.nf
+  aalt    Access All Alternates
+  c2sc    Small Capitals From Capitals
+  case    Case-Sensitive Forms
+  cpsp    Capital Spacing
+  \&...
+  zero    Slashed Zero
+.fi
+'
+.Sp
+.TP 5
+.BR \-z ", " \-\-optical\-size
+Print optical size information. For example:
+.nf
+  design size 11 pt, size range (8.4 pt, 13 pt], subfamily ID 11, subfamily name Semibold Italic
+.fi
+'
+.Sp
+.TP 5
+.BR \-p ", " \-\-postscript\-name
+Print each font's PostScript name. For example:
+.nf
+  MinionPro-SemiboldItCapt
+.fi
+'
+.Sp
+.TP 5
+.BR \-a ", " \-\-family
+Print each font's family name. For example:
+.nf
+  Minion Pro
+.fi
+'
+.Sp
+.TP 5
+.BR \-v ", " \-\-font\-version
+Print font version information, if available. For example:
+.nf
+  OTF 1.013;PS 001.000;Core 1.0.27;makeotf.lib(1.11)
+.fi
+'
+.Sp
+.TP 5
+.BR \-i ", " \-\-info
+Print each font's name, version, designer, vendor, copyright, and license
+information. For example:
+.nf
+  Family:              Minion Pro
+  Subfamily:           Regular
+  Full name:           Minion Pro
+  PostScript name:     MinionPro-Regular
+  Version:             OTF 1.011;PS 001.000;Core 1.0.27;makeotf.lib1.3.1
+  Unique ID:           1.011;ADBE;MinionPro-Regular
+  Designer:            Robert Slimbach
+  Vendor URL:          http://www.adobe.com/type/
+  Trademark:           Minion is either a registered trademark or a trademark of Adobe Systems Incorporated in the United States and/or other countries.
+  Copyright:           \(co 2000 Adobe Systems Incorporated. All Rights Reserved. U.S. Patent Des. 337,604. Other patents pending.
+  License URL:         http://www.adobe.com/type/legal.html
+.fi
+'
+.Sp
+.TP 5
+.BR \-g ", " \-\-glyphs
+Print the name of every glyph in each font, one per line. For example:
+.nf
+  \&.notdef
+  space
+  exclam
+  \&...
+  ncommaaccent.end
+  lje.alt
+.fi
+'
+.Sp
+.TP 5
+.BR \-u ", " \-\-unicode
+Print each Unicode code point supported by the font, followed by the glyph number
+representing that code point (and, if present, the name of the corresponding glyph).
+.Sp
+.TP 5
+.BR \-t ", " \-\-tables
+Print the size and name of every OpenType table in the font. For example:
+.nf
+       52 BASE
+    87723 CFF
+     4940 DSIG
+    21366 GPOS
+  \&...
+.fi
+'
+.Sp
+.TP 5
+.BR \-T " \fItable\fR, " \-\-dump\-table= \fItable\fR
+Print the contents of the font's OpenType table \fItable\fR.
+'
+.PD
+'
+'
+.SS Miscellaneous options
+'
+.PD 0
+.TP 5
+.BI \-\-script= "script\fR[.\fIlang\fR]"
+Select the script system
+.I script
+and language system
+.IR lang
+used to look up features by
+.BR \-\-features .
+Examples include "latn" (Latin script), "grek" (Greek script), and "yi.YIC"
+(Yi script with classic characters). If
+.I lang
+is not specified, otfinfo will use the default language system for that
+script. Defaults to "latn".
+'
+.Sp
+.TP 5
+.BR \-V ", " \-\-verbose
+Write progress messages to standard error.
+'
+.Sp
+.TP 5
+.BR \-q ", " \-\-quiet
+Do not generate any error messages.
+'
+.Sp
+.TP 5
+.BR \-h ", " \-\-help
+Print usage information and exit.
+'
+.Sp
+.TP 5
+.BR \-\-version
+Print the version number and some short non-warranty information and exit.
+.PD
+'
+.SH "SEE ALSO"
+.LP
+.M otftotfm 1
+.LP
+.IR "OpenType Specification" ,
+Version 1.4
+'
+.SH AUTHOR
+Eddie Kohler (ekohler@gmail.com)
