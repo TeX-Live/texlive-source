@@ -1,0 +1,78 @@
+.ds V 2.105
+.de M
+.BR "\\$1" "(\\$2)\\$3"
+..
+.de Sp
+.if n .sp
+.if t .sp 0.4
+..
+.TH TTFTOTYPE42 1 "LCDF Typetools" "Version \*V"
+.SH NAME
+ttftotype42 \- create PostScript Type 42 wrapper of TrueType font
+.SH SYNOPSIS
+.B ttftotype42
+\%[\fIinput\fR [\fIoutput\fR]]
+.SH DESCRIPTION
+.BR Ttftotype42
+converts TrueType or TrueType-flavored OpenType font programs into
+PostScript Type 42 format, which is a wrapper for the TrueType outlines.
+This conversion preserves all outlines and hint information from the
+original TrueType font. The Type 42 wrapper uses glyph names identical to
+those expected by
+.M pdflatex 1
+or
+.M otftotfm 1 ,
+so encoding files suitable for TrueType fonts and
+.B pdflatex
+will also work for the Type 42 fonts and
+.M dvips 1 .
+If the file
+.I output
+is not specified output goes to the standard output.
+If the file
+.I input
+is not specified input comes from the standard input.
+'
+.SH OPTIONS
+.PD 0
+.TP 5
+.BI \-o " file\fR, " \-\-output " file"
+Write output font to
+.IR file
+instead of the standard output.
+'
+.Sp
+.TP 5
+.BR \-q ", " \-\-quiet
+Do not generate any error messages.
+'
+.Sp
+.TP 5
+.BR \-h ", " \-\-help
+Print usage information and exit.
+'
+.Sp
+.TP 5
+.BR \-v ", " \-\-version
+Print the version number and some short non-warranty information and exit.
+.PD
+'
+.SH "SEE ALSO"
+.LP
+.M cfftot1 1 ,
+.M otftotfm 1 ,
+.M pdftex 1 ,
+.M dvips 1
+.LP
+Adobe Technical Note #5012,
+.IR "The Type 42 Font Format Specification"
+.LP
+.IR "OpenType Specification" ,
+Version 1.4
+'
+.SH AUTHOR
+Eddie Kohler (ekohler@gmail.com)
+.PP
+The latest version is available from:
+.br
+http://www.lcdf.org/type/
