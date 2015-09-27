@@ -1,3 +1,8 @@
+2015-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.8.
+	* patch-01-hide-symbols: Adapted.
+
 2014-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-01-hide-symbols (new): Allow to hide all symbols.

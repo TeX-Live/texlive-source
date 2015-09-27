@@ -1,3 +1,8 @@
+2015-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.8.
+	* version.ac: Adapted.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
