@@ -1,3 +1,8 @@
+2015-09-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* Makefile.am, configure.ac, m4/lj-system.m4: Try to stay
+	closer to the distributed build system.
+
 2015-09-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am, m4/lj-system.m4: Keep preprocessed src/lj_arch.h
