@@ -53,7 +53,7 @@ AS_CASE([$LJHOST],
                         [LJVM_MODE=elfasm])
 lj_save_CFLAGS=$CFLAGS
 CFLAGS="$CFLAGS -fno-stack-protector"
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[]],[[]])],
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],[[]])],
                   [LUAJIT_CFLAGS="$LUAJIT_CFLAGS -fno-stack-protector"])
 CFLAGS=$lj_save_CFLAGS
 AM_CONDITIONAL([PEOBJ], [test "x$LJVM_MODE" = xpeobj])
