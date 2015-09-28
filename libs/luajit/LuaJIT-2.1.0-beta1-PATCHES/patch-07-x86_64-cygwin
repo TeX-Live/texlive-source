@@ -1,0 +1,59 @@
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lj_alloc.c LuaJIT-2.1.0-beta1/src/lj_alloc.c
+--- LuaJIT-2.1.0-beta1.orig/src/lj_alloc.c	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lj_alloc.c	2015-09-27 19:05:37.000000000 +0200
+@@ -196,7 +196,7 @@
+   return ptr;
+ }
+ 
+-#elif LJ_TARGET_OSX || LJ_TARGET_PS4 || defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__sun__)
++#elif LJ_TARGET_OSX || LJ_TARGET_PS4 || defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__) || defined(__sun__) || defined(__CYGWIN__)
+ 
+ /* OSX and FreeBSD mmap() use a naive first-fit linear search.
+ ** That's perfect for us. Except that -pagezero_size must be set for OSX,
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lj_arch.h LuaJIT-2.1.0-beta1/src/lj_arch.h
+--- LuaJIT-2.1.0-beta1.orig/src/lj_arch.h	2015-09-04 08:58:07.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lj_arch.h	2015-09-27 19:05:37.000000000 +0200
+@@ -155,7 +155,11 @@
+ #define LJ_ARCH_NAME		"x64"
+ #define LJ_ARCH_BITS		64
+ #define LJ_ARCH_ENDIAN		LUAJIT_LE
+-#define LJ_ABI_WIN		LJ_TARGET_WINDOWS
++#if LJ_TARGET_WINDOWS || __CYGWIN__
++#define LJ_ABI_WIN		1
++#else
++#define LJ_ABI_WIN		0
++#endif
+ #define LJ_TARGET_X64		1
+ #define LJ_TARGET_X86ORX64	1
+ #define LJ_TARGET_EHRETREG	0
+diff -ur LuaJIT-2.1.0-beta1.orig/src/lj_err.c LuaJIT-2.1.0-beta1/src/lj_err.c
+--- LuaJIT-2.1.0-beta1.orig/src/lj_err.c	2015-08-25 23:35:00.000000000 +0200
++++ LuaJIT-2.1.0-beta1/src/lj_err.c	2015-09-27 19:05:37.000000000 +0200
+@@ -183,7 +183,7 @@
+ 
+ /* -- External frame unwinding -------------------------------------------- */
+ 
+-#if defined(__GNUC__) && !LJ_NO_UNWIND && !LJ_TARGET_WINDOWS
++#if defined(__GNUC__) && !LJ_NO_UNWIND && !LJ_ABI_WIN
+ 
+ /*
+ ** We have to use our own definitions instead of the mandatory (!) unwind.h,
+@@ -349,7 +349,7 @@
+ 
+ #endif
+ 
+-#elif LJ_TARGET_X64 && LJ_TARGET_WINDOWS
++#elif LJ_TARGET_X64 && LJ_ABI_WIN
+ 
+ /*
+ ** Someone in Redmond owes me several days of my life. A lot of this is
+@@ -414,7 +414,9 @@
+     if (cf2) {  /* We catch it, so start unwinding the upper frames. */
+       if (rec->ExceptionCode == LJ_MSVC_EXCODE ||
+ 	  rec->ExceptionCode == LJ_GCC_EXCODE) {
++#if LJ_TARGET_WINDOWS
+ 	__DestructExceptionObject(rec, 1);
++#endif
+ 	setstrV(L, L->top++, lj_err_str(L, LJ_ERR_ERRCPP));
+       } else if (!LJ_EXCODE_CHECK(rec->ExceptionCode)) {
+ 	/* Don't catch access violations etc. */
