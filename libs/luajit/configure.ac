@@ -48,9 +48,14 @@ AS_CASE([$host_os],
 LJ_ARCH()
 AS_CASE([$LJHOST],
         [Windows], [LJVM_MODE=peobj
-                    LUAJIT_CFLAGS=-malign-double],
+                    LUAJIT_CFLAGS="$LUAJIT_CFLAGS -malign-double"],
         [Darwin | iOS], [LJVM_MODE=machasm],
                         [LJVM_MODE=elfasm])
+lj_save_CFLAGS=$CFLAGS
+CFLAGS="$CFLAGS -fno-stack-protector"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[]],[[]])],
+                  [LUAJIT_CFLAGS="$LUAJIT_CFLAGS -fno-stack-protector"])
+CFLAGS=$lj_save_CFLAGS
 AM_CONDITIONAL([PEOBJ], [test "x$LJVM_MODE" = xpeobj])
 
 AC_SUBST([LUAJIT_CFLAGS])

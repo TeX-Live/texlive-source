@@ -13,15 +13,18 @@ m4_define([_LJ_ARCH], [dnl
 rm -f dynasm_flags native_flags
 AC_MSG_CHECKING([for architecture])
 cp conftest.i system_flags
+LUAJIT_CFLAGS='-fomit-frame-pointer'
 AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x64],
       [grep 'LJ_TARGET_X86 ' conftest.i >/dev/null 2>&1],
         [LJARCH=x86
-         LUAJIT_CFLAGS='-march=i686 -msse -msse2 -mfpmath=sse'],
+         LUAJIT_CFLAGS="$LUAJIT_CFLAGS -march=i686 -msse -msse2 -mfpmath=sse"],
       [grep 'LJ_TARGET_ARM ' conftest.i >/dev/null 2>&1],
         [LJARCH=arm],
       [grep 'LJ_TARGET_ARM64 ' conftest.i >/dev/null 2>&1],
-        [LJARCH=arm64],
+        [LJARCH=arm64
+         AS_IF([test "x$LJHOST" = xiOS],
+               [LUAJIT_CFLAGS='-fno-omit-frame-pointer'])],
       [grep 'LJ_TARGET_PPC ' conftest.i >/dev/null 2>&1],
         [LJARCH=ppc
          AS_IF([grep 'LJ_LE 1' conftest.i >/dev/null 2>&1],
