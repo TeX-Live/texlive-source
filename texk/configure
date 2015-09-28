@@ -3374,7 +3374,7 @@ case $enable_luajittex in #(
     : ;; #(
   *) :
     case $host in #(
-  alpha* | sparc* | x86_64-*-cygwin | powerpc-*-darwin* ) :
+  alpha* | sparc* | powerpc-*-darwin* ) :
     { $as_echo "$as_me:${as_lineno-$LINENO}: $host -> \`--disable-luajittex'" >&5
 $as_echo "$as_me: $host -> \`--disable-luajittex'" >&6;}
                       ac_configure_args="$ac_configure_args '--disable-luajittex'" ;; #(
@@ -3387,7 +3387,7 @@ case $enable_mfluajit in #(
     : ;; #(
   *) :
     case $host in #(
-  alpha* | sparc* | x86_64-*-cygwin | powerpc-*-darwin* ) :
+  alpha* | sparc* | powerpc-*-darwin* ) :
     { $as_echo "$as_me:${as_lineno-$LINENO}: $host -> \`--disable-mfluajit'" >&5
 $as_echo "$as_me: $host -> \`--disable-mfluajit'" >&6;}
                       ac_configure_args="$ac_configure_args '--disable-mfluajit'" ;; #(

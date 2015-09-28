@@ -85,7 +85,7 @@ AC_FOREACH([Kpse_Pkg], [luajittex mfluajit], [dnl
 AS_CASE([$enable_]Kpse_Pkg,
         [yes | no], [:],
           [AS_CASE([$host],
-                   [alpha* | sparc* | x86_64-*-cygwin | powerpc-*-darwin* ],
+                   [alpha* | sparc* | powerpc-*-darwin* ],
                      [AC_MSG_NOTICE([$host -> `--disable-]Kpse_Pkg['])
                       ac_configure_args="$ac_configure_args '--disable-]Kpse_Pkg['"])])
 ])
