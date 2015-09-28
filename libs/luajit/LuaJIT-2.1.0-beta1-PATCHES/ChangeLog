@@ -1,3 +1,7 @@
+2015-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-07-x86_64-cygwin (new): Backport from upstream git.
+
 2015-09-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import LuaJIT-2.1.0-beta1.

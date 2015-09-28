@@ -1,4 +1,8 @@
-2015-09-044  Peter Breitenlohner  <peb@mppmu.mpg.de>
+2015-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* kpse-setup.m4: Allow LuaJIT for x86_64-cygwin.
+
+2015-09-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-lib-version.m4 (KPSE_LIB_VERSION): Allow more general
 	version number suffix strings, e.g., "-beta1".

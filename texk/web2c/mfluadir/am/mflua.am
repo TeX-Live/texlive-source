@@ -68,9 +68,9 @@ libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) -DMF_LUA
 # We must create mfluad.h before building the libmflua_a_OBJECTS.
 $(libmflua_a_OBJECTS): mfluad.h
 
-$(mflua_c_h): mflua-web2c $(LUA_DEPEND)
+$(mflua_c_h): mflua-web2c
 	@$(web2c) mflua
-mflua-web2c: mflua.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluadir/mflua.defines
+mflua-web2c: mflua.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluadir/mflua.defines $(LUA_DEPEND)
 	@$(web2c) mflua
 
 mflua-pool.c: mflua.pool mfluad.h $(makecpool_stamp)

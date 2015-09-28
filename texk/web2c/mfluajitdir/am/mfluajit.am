@@ -3,7 +3,7 @@
 ## Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## MFLua
+## MFLuaJIT
 ##
 if MFLUAJIT
 bin_PROGRAMS += mfluajit
@@ -59,7 +59,7 @@ $(mfluajit_OBJECTS) $(mfluajit_nowin_OBJECTS): mfluajitd.h mfluadir/mflua_versio
 ## To avoid compiling everything twice, the common objects are in a library.
 EXTRA_LIBRARIES += libmfluajit.a
 
-# MFLua C sources
+# MFLuaJIT C sources
 mfluajit_c_h = mfluajitini.c mfluajit0.c mfluajitcoerce.h mfluajitd.h
 dist_libmfluajit_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmfluajit_a_SOURCES = $(mfluajit_c_h) mfluajit-pool.c
@@ -68,15 +68,15 @@ libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DMF_LUA -DJIT
 # We must create mfluajitd.h before building the libmfluajit_a_OBJECTS.
 $(libmfluajit_a_OBJECTS): mfluajitd.h
 
-$(mfluajit_c_h): mfluajit-web2c $(LUAJIT_DEPEND)
+$(mfluajit_c_h): mfluajit-web2c
 	@$(web2c) mfluajit
-mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluajitdir/mfluajit.defines
+mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluajitdir/mfluajit.defines $(LUAJIT_DEPEND)
 	@$(web2c) mfluajit
 
 mfluajit-pool.c: mfluajit.pool mfluajitd.h $(makecpool_stamp)
 	$(makecpool) mfluajit >$@ || rm -f $@
 
-# Tangling MFLua
+# Tangling MFLuaJIT
 mfluajit.p mfluajit.pool: mfluajit-tangle
 	@$(texmf_tangle) mfluajit mfluajit
 mfluajit-tangle: tangle$(EXEEXT) mfluajit.web mfluajit.ch tangle-sh
@@ -106,7 +106,7 @@ DISTCLEANFILES += $(nodist_libmfluajit_a_SOURCES) mfluajit.web mfluajit.ch mflua
 EXTRA_DIST += \
 	mfluajitdir/ChangeLog
 
-# MFLua tests
+# MFLuaJIT tests
 #
 mfluajit_tests = mfluajitdir/mfluajittraptest.test
 mfluajitdir/mfluajittraptest.log: mfluajit$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
