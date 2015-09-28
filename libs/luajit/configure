@@ -14278,6 +14278,13 @@ CFLAGS="$CFLAGS -fno-stack-protector"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
+int
+main ()
+{
+
+  ;
+  return 0;
+}
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
   LUAJIT_CFLAGS="$LUAJIT_CFLAGS -fno-stack-protector"
