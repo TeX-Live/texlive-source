@@ -224,7 +224,7 @@ TEXINPUTS.platex-ng = .;$TEXMF/tex/{uplatex,platex,latex,generic,}//
 % (e)up(La)TeX, and for upmpost
 TEXINPUTS.uplatex = .;$TEXMF/tex/{uplatex,platex,latex,generic,}//
 TEXINPUTS.uptex   = .;$TEXMF/tex/{uptex,ptex,plain,generic,}//
-TEXINPUTS.euptex  = .;$TEXMF/tex/{uptex,ptex,plain,generic}//
+TEXINPUTS.euptex  = .;$TEXMF/tex/{uptex,ptex,plain,generic,}//
 TEX.upmpost = euptex
 
 % pBibTeX bibliographies and style files.
