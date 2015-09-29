@@ -22,15 +22,17 @@ DEPENDENCIES
    The PostScript special handler requires the Ghostscript library
    libgs.so (Linux) or gsdll32.dll/gsdll64.dll (Windows) to be installed.
    If the configure script finds the corresponding Ghostscript development
-   files on the system, it directly links against libgs.so. Otherwise, the
-   library is looked up at runtime, and PostScript support is enabled only if
-   libgs.so can be found. Due to incompatible changes of the Ghostscript API,
-   dvisvgm requires Ghostscript 8.31 or later.
+   files on the system, it directly links against libgs.so.N, where N is the
+   library's ABI version. Otherwise, the library is looked up at runtime,
+   and PostScript support is enabled only if libgs.so can be found. Due to
+   incompatible changes of the Ghostscript API, dvisvgm requires Ghostscript 8.31
+   or later.
 
  * kpathsea (https://tug.org/kpathsea)
    This library is part of the Web2C package and is usually installed in
    conjunction with a TeX distribution. kpathsea provides functions for
-   searching files in the large texmf tree.
+   searching files in the large texmf tree. Please ensure that you use the
+   kpathsea version coming with or matching your TeX system.
 
  * potracelib (http://potrace.sourceforge.net)
    Peter Selinger's bitmap tracing library is utilized to vectorize Metafont's
@@ -73,7 +75,7 @@ COMPILATION
 
  If you don't like compiling the sources yourself, you can
  download pre-compiled executables for Windows and MiKTeX
- from sourceforge.net instead (see below).
+ from the project website instead (see below).
 
 
 USAGE
@@ -83,16 +85,15 @@ USAGE
 
 ADDITIONAL INFORMATION
  This package is available from CTAN (dviware/dvisvgm) and can be downloaded
- from the project website at sourceforge.net as well:
+ from the project website as well:
 
-    http://dvisvgm.sourceforge.net
+    http://dvisvgm.bplaced.net
 
  Here you can find the sources, pre-compiled binaries and further additional
  information about the converter and related topics.
 
  If you've found a bug, please let me know. You can either send me an email or
- preferably use the bug tracker at GitHub (https://github.com/mgieseki/dvisvgm)
- or Launchpad (https://launchpad.net/dvisvgm).
+ preferably use the bug tracker at GitHub (https://github.com/mgieseki/dvisvgm).
 
 
 COPYRIGHT

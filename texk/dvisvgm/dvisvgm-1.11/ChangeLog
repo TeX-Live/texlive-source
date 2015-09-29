@@ -1,3 +1,63 @@
+2015-09-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README, README.md: 
+  updated NEWS and README files 
+
+2015-09-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .travis.yml, configure.ac, src/Doxyfile: 
+  set version to 1.11 
+
+2015-09-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Font.cpp, src/Unicode.cpp, src/Unicode.h, tests/UnicodeTest.cpp: 
+  renamed Unicode::psName2Codepoint to Unicode::psNameToCodepoint 
+
+  * src/Font.cpp, src/ToUnicodeMap.cpp, src/Unicode.cpp, src/Unicode.h, 
+    tests/UnicodeTest.cpp: 
+  improved handling of invalid Unicode points 
+
+2015-09-10  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/HtmlSpecialHandler.cpp: 
+  quote XML metacharacters in xlink:title attributes 
+
+  * src/Font.cpp: 
+  prevent creating 0x00 codepoints if PS character name is unknown 
+
+2015-09-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/SVGTree.cpp: 
+  force creating a new text element after appending a different node to 
+  the page 
+
+2015-08-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README, README.md: 
+  minor updates to README and README.md 
+
+2015-07-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/CommandLineTest.cpp, tests/MessageExceptionTest.cpp: 
+  use ASSERT_STREQ in tests 
+
+  * tests/UnicodeTest.cpp: 
+  improved UnicodeTest 
+
+  * tests/GhostscriptTest.cpp, tests/Makefile.am: 
+  added GhostscriptTest 
+
+2015-07-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README, README.md, doc/dvisvgm.txt.in: 
+  updated links to project website again (relocated to 
+  dvisvgm.bplaced.net) 
+
+2015-07-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README, README.md, doc/dvisvgm.txt.in: 
+  updated info about new project website 
+
 2015-07-14  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 
