@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-09-20.17}
+\def\texinfoversion{2015-09-23.01}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4864,11 +4864,17 @@ end
 \def\requireopenindexfile#1{%
 \ifnum\csname #1indfile\endcsname=0
   \expandafter\newwrite \csname#1indfile\endcsname
-  \immediate\openout\csname#1indfile\endcsname \jobname.#1 % Open the file
+  \edef\suffix{#1}%
+  % A .fls suffix would conflict with the file extension for the output
+  % of -recorder, so use .f1s instead.
+  \ifx\suffix\indexisfl\def\suffix{f1}\fi
+  % Open the file
+  \immediate\openout\csname#1indfile\endcsname \jobname.\suffix
   % Using \immediate here prevents an object entering into the current box,
   % which could confound checks such as those in \safewhatsit for preceding
   % skips.
 \fi}
+\def\indexisfl{fl}
 
 % Output \ as {\indexbackslash}, because \ is an escape character in
 % the index files.
@@ -5059,7 +5065,9 @@ end
   % as its first line, TeX doesn't complain about mismatched braces
   % (because it thinks @} is a control sequence).
   \catcode`\@ = 11
-  \openin 1 \jobname.#1s
+  % See comment in \requireopenindexfile.
+  \def\indexname{#1}\ifx\indexname\indexisfl\def\indexname{f1}\fi
+  \openin 1 \jobname.\indexname s
   \ifeof 1
     % \enddoublecolumns gets confused if there is no text in the index,
     % and it loses the chapter title and the aux file entries for the
