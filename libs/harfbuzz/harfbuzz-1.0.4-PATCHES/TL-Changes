@@ -1,0 +1,28 @@
+Changes applied to the harfbuzz-1.0.4/ tree as obtained from:
+	http://www.freedesktop.org/software/harfbuzz/release/
+
+Removed:
+	COPYING
+	INSTALL
+	Makefile.in
+	aclocal.m4
+	ar-lib
+	compile
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	ltmain.sh
+	missing
+	src/Makefile.in
+	src/hb-version.h
+	test-driver
+
+Removed unused dirs:
+	docs
+	m4
+	test
+	util
+	src/hb-ucdn
+
