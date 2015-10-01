@@ -1,3 +1,7 @@
+2015-10-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdf/pdfgen.w: Sync with the upstream trunk.
+
 2015-09-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* lua/lepdflib.cc: Drop useless casts 'const char *' -> 'char *'
