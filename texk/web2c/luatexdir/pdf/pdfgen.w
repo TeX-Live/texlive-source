@@ -1679,7 +1679,7 @@ char *getcreationdate(PDF pdf)
 void remove_pdffile(PDF pdf)
 {
     if (pdf != NULL) {
-        if (!kpathsea_debug && pdf->file_name && (pdf->draftmode != 0)) {
+        if (!kpathsea_debug && pdf->file_name && (pdf->draftmode == 0)) {
             xfclose(pdf->file, pdf->file_name);
             remove(pdf->file_name);
         }
