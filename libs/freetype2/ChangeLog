@@ -1,3 +1,8 @@
+2015-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import freetype-2.6.1.
+	* version.ac: Adjusted.
+
 2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.6.
