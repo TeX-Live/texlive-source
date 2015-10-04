@@ -1,0 +1,15 @@
+Changes applied to the freetype-2.6.1/ tree as obtained from:
+	http://savannah.nongnu.org/download/freetype/.
+
+Updated:
+	builds/unix/config.guess
+	builds/unix/config.sub
+	builds/unix/install-sh
+
+Converted Dos/Win line ends to native:
+	builds/win*/*/*
+
+Added newline at end of file:
+	builds/wince/vc2005-ce/freetype.vcproj
+	builds/windows/vc2005/freetype.vcproj
+
