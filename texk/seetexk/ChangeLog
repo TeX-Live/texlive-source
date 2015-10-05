@@ -1,3 +1,8 @@
+2015-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dvitodvi.c (ParseSpecs): Avoid to return the address of a
+	local variable, even when the result is discarded.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

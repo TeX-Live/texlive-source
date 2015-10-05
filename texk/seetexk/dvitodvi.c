@@ -301,15 +301,17 @@ parsedimen(char **sp)
 static struct pagespec *
 ParseSpecs(char *str, int make)
 {
-   struct pagespec *head, *tail;
+   struct pagespec *result, *head, *tail;
    int other = 0;
    int num = -1;
    struct pagespec spare;
 
    if (make)
-      head = tail = newspec();
-   else
+      result = head = tail = newspec();
+   else {
+      result = NULL;
       head = tail = &spare;
+   }
    while (*str) {
       if (isdigit((unsigned char)*str)) {
 	 num = parseint(&str);
@@ -357,7 +359,7 @@ ParseSpecs(char *str, int make)
       specusage();
    else if (num >= 0)
       tail->pageno = num;
-   return (head);
+   return result;
 }
 
 static i32
