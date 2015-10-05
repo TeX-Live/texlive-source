@@ -22,7 +22,7 @@
  * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
  * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include "fontforgevw.h"
 #include <chardata.h>
@@ -1179,14 +1179,14 @@ static struct {
     uint32 tag;
 } localscripts[] = {
     { N_("Arabic"), CHR('a','r','a','b') },
-    { N_("Aramaic"), CHR('a','r','a','m') },
+    { N_("Aramaic"), CHR('a','r','a','m') }, /* Only in ff  */
     { N_("Armenian"), CHR('a','r','m','n') },
-    { N_("Avestan"), CHR('a','v','e','s') },
+    { N_("Avestan"), CHR('a','v','e','s') }, /* Only in ff  */
     { N_("Balinese"), CHR('b','a','l','i') },
     { N_("Batak"), CHR('b','a','t','k') },
     { N_("Bengali"), CHR('b','e','n','g') },
     { N_("Bengali2"), CHR('b','n','g','2') },
-    { N_("Bliss Symbolics"), CHR('b','l','i','s') },
+    { N_("Bliss Symbolics"), CHR('b','l','i','s') }, /* Only in ff  */
     { N_("Bopomofo"), CHR('b','o','p','o') },
     { N_("Brāhmī"), CHR('b','r','a','h') },
     { N_("Braille"), CHR('b','r','a','i') },
@@ -1198,11 +1198,11 @@ static struct {
     { N_("Cherokee"), CHR('c','h','a','m') },
     { N_("Cham"), CHR('c','h','a','m') },
     { N_("Cherokee"), CHR('c','h','e','r') },
-    { N_("Cirth"), CHR('c','i','r','t') },
+    { N_("Cirth"), CHR('c','i','r','t') }, /* Only in ff  */
     { N_("CJK Ideographic"), CHR('h','a','n','i') },
     { N_("Coptic"), CHR('c','o','p','t') },
     { N_("Cypro-Minoan"), CHR('c','p','r','t') },
-    { N_("Cypriot syllabary"), CHR('c','p','m','n') },
+    { N_("Cypriot syllabary"), CHR('c','p','m','n') }, /* Only in ff  */
     { N_("Cyrillic"), CHR('c','y','r','l') },
     { N_("Default"), CHR('D','F','L','T') },
     { N_("Deseret (Mormon)"), CHR('d','s','r','t') },
@@ -1242,35 +1242,35 @@ static struct {
     { N_("Latin"), CHR('l','a','t','n') },
     { N_("Lepcha (Róng)"), CHR('l','e','p','c') },
     { N_("Limbu"), CHR('l','i','m','b') },	/* Not in ISO 15924 !!!!!, just guessing */
-    { N_("Linear A"), CHR('l','i','n','a') },
+    { N_("Linear A"), CHR('l','i','n','a') }, /* Only in ff  */
     { N_("Linear B"), CHR('l','i','n','b') },
     { N_("Lycian"), CHR('l','y','c','i') },
     { N_("Lydian"), CHR('l','y','d','i') },
     { N_("Mandaean"), CHR('m','a','n','d') },
 /*  { N_("Mayan hieroglyphs"), CHR('m','a','y','a') },*/
     { N_("Malayālam"), CHR('m','l','y','m') },
-    { N_("Malayālam2"), CHR('m','l','y','2') },
+    { N_("Malayālam2"), CHR('m','l','y','2') }, /* Only in ff, should be  mlm2 */
     { N_("Mathematical Alphanumeric Symbols"), CHR('m','a','t','h') },
     { N_("Mongolian"), CHR('m','o','n','g') },
-    { N_("Musical"), CHR('m','u','s','i') },
+    { N_("Musical"), CHR('m','u','s','i') }, /* Only in ff, should be musc   */
     { N_("Myanmar"), CHR('m','y','m','r') },
     { N_("New Tai Lue"), CHR('t','a','l','u') },
     { N_("N'Ko"), CHR('n','k','o',' ') },
     { N_("Ogham"), CHR('o','g','a','m') },
     { N_("Ol Chiki"), CHR('o','l','c','k') },
     { N_("Old Italic (Etruscan, Oscan, etc.)"), CHR('i','t','a','l') },
-    { N_("Old Permic"), CHR('p','e','r','m') },
+    { N_("Old Permic"), CHR('p','e','r','m') }, /* Only in ff  */
     { N_("Old Persian cuneiform"), CHR('x','p','e','o') },
     { N_("Oriya"), CHR('o','r','y','a') },
     { N_("Oriya2"), CHR('o','r','y','2') },
     { N_("Osmanya"), CHR('o','s','m','a') },
-    { N_("Pahlavi"), CHR('p','a','l','v') },
+    { N_("Pahlavi"), CHR('p','a','l','v') }, /* Only  in ff */
     { N_("Phags-pa"), CHR('p','h','a','g') },
     { N_("Phoenician"), CHR('p','h','n','x') },
-    { N_("Phaistos"), CHR('p','h','s','t') },
-    { N_("Pollard Phonetic"), CHR('p','l','r','d') },
+    { N_("Phaistos"), CHR('p','h','s','t') },  /* Only in ff  */
+    { N_("Pollard Phonetic"), CHR('p','l','r','d') }, /* Only in ff  */
     { N_("Rejang"), CHR('r','j','n','g') },
-    { N_("Rongorongo"), CHR('r','o','r','o') },
+    { N_("Rongorongo"), CHR('r','o','r','o') }, /* Only in ff  */
     { N_("Runic"), CHR('r','u','n','r') },
     { N_("Saurashtra"), CHR('s','a','u','r') },
     { N_("Shavian"), CHR('s','h','a','w') },
@@ -1287,15 +1287,15 @@ static struct {
     { N_("Tamil2"), CHR('t','m','l','2') },
     { N_("Telugu"), CHR('t','e','l','u') },
     { N_("Telugu2"), CHR('t','e','l','2') },
-    { N_("Tengwar"), CHR('t','e','n','g') },
+    { N_("Tengwar"), CHR('t','e','n','g') },    /* Only in ff  */
     { N_("Thaana"), CHR('t','h','a','a') },
     { N_("Thai"), CHR('t','h','a','i') },
     { N_("Tibetan"), CHR('t','i','b','t') },
     { N_("Tifinagh (Berber)"), CHR('t','f','n','g') },
-    { N_("Ugaritic"), CHR('u','g','r','t') },	/* Not in ISO 15924 !!!!!, just guessing */
+    { N_("Ugaritic"), CHR('u','g','r','t') },	/* Only in ff, should be ugar  */
     { N_("Vai"), CHR('v','a','i',' ') },
 /*  { N_("Visible Speech"), CHR('v','i','s','p') },*/
-    { N_("Cuneiform, Ugaritic"), CHR('x','u','g','a') },
+    { N_("Cuneiform, Ugaritic"), CHR('x','u','g','a') }, /* Only in ff  */
     { N_("Yi")  , CHR('y','i',' ',' ') },
 /*  { N_("Private Use Script 1"), CHR('q','a','a','a') },*/
 /*  { N_("Private Use Script 2"), CHR('q','a','a','b') },*/

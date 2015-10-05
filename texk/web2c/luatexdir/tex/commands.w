@@ -1065,6 +1065,8 @@ void initialize_etex_commands(void)
                      int_base + suppress_ifcsname_error_code, int_base);
     primitive_luatex("suppressoutererror", assign_int_cmd,
                      int_base + suppress_outer_error_code, int_base);
+    primitive_luatex("matheqnogapstep", assign_int_cmd,
+                     int_base + math_eqno_gap_step_code, int_base);
     primitive_luatex("synctex", assign_int_cmd, int_base + synctex_code,
                      int_base);
 

@@ -771,7 +771,7 @@ typedef struct bdfprops {
 
 typedef struct bdffont {
     struct splinefont *sf;
-    int glyphcnt, glyphmax;	/* used & allocated sizes of glyphs array */
+    int glyphcnt, glyphmax,glyphmin;	/* used & allocated sizes of glyphs array */
     BDFChar **glyphs;		/* an array of charcnt entries */
     int16 pixelsize;
     int16 ascent, descent;
@@ -1484,7 +1484,7 @@ typedef struct splinefont {
     struct splinefont *next;
     int ascent, descent;
     int uniqueid;				/* Not copied when reading in!!!! */
-    int glyphcnt, glyphmax;			/* allocated size of glyphs array */
+  int glyphcnt, glyphmax,glyphmin;			/* allocated size of glyphs array */
     SplineChar **glyphs;
     unsigned int changed: 1;
     unsigned int changed_since_autosave: 1;

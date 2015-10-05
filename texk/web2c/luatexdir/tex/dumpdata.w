@@ -26,8 +26,8 @@
 #define prev_depth cur_list.prev_depth_field
 
 /* 907 = sum of the values of the bytes of "don knuth" */
-/* The next FORMAT_ID will be 907+2               */
-#define FORMAT_ID (907+1)  
+/* The next FORMAT_ID will be 907+3               */
+#define FORMAT_ID (907+2)  
 #if ((FORMAT_ID>=0) && (FORMAT_ID<=256))
 #error Wrong value for FORMAT_ID.
 #endif

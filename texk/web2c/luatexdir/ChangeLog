@@ -1,3 +1,19 @@
+2015-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Completely sync with the upstream trunk.
+	Changed files are
+	font/writecff.w, font/writefont.w,
+	lua/lnodelib.c, lua/lpdflib.c, lua/luatoken.w,
+	luafontloader/fontforge/fontforge/lookups.c,
+	luafontloader/fontforge/fontforge/parsettf.c,
+	luafontloader/fontforge/fontforge/parsettfatt.c,
+	luafontloader/fontforge/fontforge/splinefont.h,
+	luafontloader/fontforge/fontforge/tottf.c,
+	luafontloader/src/luafflib.c,
+	luatex.c,
+	tex/commands.w, tex/dumpdata.w, tex/equivalents.h, tex/filename.w,
+	tex/maincontrol.w, tex/printing.w, tex/texmath.w.
+
 2015-10-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdf/pdfgen.w: Sync with the upstream trunk.

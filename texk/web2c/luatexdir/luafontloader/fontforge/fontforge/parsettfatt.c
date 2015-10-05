@@ -447,7 +447,7 @@ static void addPairPos(struct ttfinfo *info, int glyph1, int glyph2,
 	uint32 base,FILE *ttf) {
     (void)ttf; /* for -Wall */
     (void)l; /* for -Wall */
-    (void)base; /* for -Wall */    
+    (void)base; /* for -Wall */
     if ( glyph1<info->glyph_cnt && glyph2<info->glyph_cnt ) {
 	PST *pos = chunkalloc(sizeof(PST));
 	pos->type = pst_pair;
@@ -1727,7 +1727,7 @@ return;
 }
 
 static void gposContextSubTable(FILE *ttf, int stoffset,
-	struct ttfinfo *info, struct lookup *l, struct lookup_subtable *subtable, 
+	struct ttfinfo *info, struct lookup *l, struct lookup_subtable *subtable,
 	struct lookup *alllooks) {
     switch( getushort(ttf)) {
       case 1:
@@ -1743,7 +1743,7 @@ static void gposContextSubTable(FILE *ttf, int stoffset,
 }
 
 static void gposChainingSubTable(FILE *ttf, int stoffset,
-	struct ttfinfo *info, struct lookup *l, struct lookup_subtable *subtable, 
+	struct ttfinfo *info, struct lookup *l, struct lookup_subtable *subtable,
 	struct lookup *alllooks) {
     switch( getushort(ttf)) {
       case 1:
@@ -2570,10 +2570,10 @@ static void gposExtensionSubTable(FILE *ttf, int stoffset,
     switch ( lu_type ) {
       case 1:
 	gposSimplePos(ttf,st,info,l,subtable);
-      break;  
+      break;
       case 2:
 	gposKernSubTable(ttf,st,info,l,subtable);
-      break;  
+      break;
       case 3:
 	gposCursiveSubTable(ttf,st,info,l,subtable);
       break;
@@ -2657,10 +2657,10 @@ static void gposLookupSwitch(FILE *ttf, int st,
     switch ( l->type | 0x100 ) {
       case gpos_single:
 	gposSimplePos(ttf,st,info,l,subtable);
-      break;  
+      break;
       case gpos_pair:
 	gposKernSubTable(ttf,st,info,l,subtable);
-      break;  
+      break;
       case gpos_cursive:
 	gposCursiveSubTable(ttf,st,info,l,subtable);
       break;
@@ -2838,17 +2838,24 @@ void readttfgdef(FILE *ttf,struct ttfinfo *info) {
     int coverage, cnt, i,j, format;
     uint16 *glyphs, *lc_offsets, *offsets;
     uint32 caret_base;
+    uint32 version;
     PST *pst;
     SplineChar *sc;
 
     fseek(ttf,info->gdef_start,SEEK_SET);
-    if ( getlong(ttf)!=0x00010000 )
-return;
+
+    version = getlong(ttf) ;
+    if (version != 0x00010000 && version != 0x00010002)
+        return;
+
     info->g_bounds = info->gdef_start + info->gdef_length;
     gclass = getushort(ttf);
     /* attach list = */ getushort(ttf);
     lclo = getushort(ttf);		/* ligature caret list */
-    mac = getushort(ttf);		/* mark attach class */ 
+    mac = getushort(ttf);		/* mark attach class */
+
+    if (version == 0x00010002)
+        getushort(ttf);		/* class defs */
 
     if ( gclass!=0 ) {
 	uint16 *gclasses = getClassDefTable(ttf,info->gdef_start+gclass, info);
@@ -3614,7 +3621,7 @@ void readttfbase(FILE *ttf,struct ttfinfo *info) {
     struct Base *curBase;
     struct basescript *curScript, *last;
     struct baselangextent *cur, *lastLang;
-    
+
     if ( info->base_start==0 )
 return;
     fseek(ttf,info->base_start,SEEK_SET);

@@ -494,6 +494,7 @@ static int l_reserveobj(lua_State * L)
     case 1:
         if (!lua_isstring(L, -1))
             luaL_error(L, "pdf.reserveobj() optional argument must be string");
+        st_s = luaL_checkstring(L, 1);
         if (lua_key_eq(st_s, annot)) {
             pdf_last_annot = pdf_create_obj(static_pdf, obj_type_annot, 0);
         } else {

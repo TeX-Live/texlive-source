@@ -3407,6 +3407,7 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
             pdf_out_block(pdf, stream, l);
             pdf_end_stream(pdf);
             pdf_end_obj(pdf);
+	    xfree(stream);
         }
     }
 

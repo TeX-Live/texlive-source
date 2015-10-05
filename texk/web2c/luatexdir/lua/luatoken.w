@@ -301,6 +301,7 @@ void tokenlist_to_luastring(lua_State * L, int p)
     char *s;
     s = tokenlist_to_cstring(p, 1, &l);
     lua_pushlstring(L, s, (size_t) l);
+    free(s);    
 }
 
 
