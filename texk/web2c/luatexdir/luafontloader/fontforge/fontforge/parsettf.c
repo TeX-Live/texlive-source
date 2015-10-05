@@ -938,7 +938,7 @@ return;
     free(tabs);
     fseek(ttf,restore_this_pos,SEEK_SET);
 }
-	    
+
 static struct tablenames { uint32 tag; char *name; } stdtables[] = {
     { CHR('a','c','n','t'), N_("accent attachment table") },
     { CHR('a','v','a','r'), N_("axis variation table") },
@@ -1546,7 +1546,7 @@ static char *FindLangEntry(struct ttfinfo *info, int id ) {
 	for ( cur=info->names; cur!=NULL && cur->names[id]==NULL; cur=cur->next );
     if ( cur==NULL )
 return( NULL );
-    ret = copy(cur->names[id]);	
+    ret = copy(cur->names[id]);
 return( ret );
 }
 
@@ -1602,7 +1602,7 @@ static void readttfcopyrights(FILE *ttf,struct ttfinfo *info) {
 	    name = getushort(ttf);
 	    str_len = getushort(ttf);
 	    stroff = getushort(ttf);
-    
+
 	    TTFAddLangStr(ttf,info,name,str_len,tableoff+stroff,
 		    platform,specific,language);
 	}
@@ -2114,11 +2114,11 @@ return( sc );
 	LogError(_("Bad glyph (%d), its definition extends beyond the space allowed for it\n"), gid );
 	info->bad_glyph_data = true;
       }
-      
+
       /* find the bb */
       THPatchSplineChar(sc);
     }
-    
+
 return( sc );
 }
 
@@ -3669,20 +3669,30 @@ static void cidfigure(struct ttfinfo *info, struct topdicts *dict,
     /*info->map = encmap = EncMapNew(info->glyph_cnt,info->glyph_cnt,&custom);*/
 
     for ( j=0; subdicts[j]!=NULL; ++j );
-    info->subfontcnt = j;
+        info->subfontcnt = j;
     info->subfonts = gcalloc(j+1,sizeof(SplineFont *));
     for ( j=0; subdicts[j]!=NULL; ++j )  {
-	info->subfonts[j] = cffsffillup(subdicts[j],strings,scnt,info);
-	info->subfonts[j]->map = encmap;
+        info->subfonts[j] = cffsffillup(subdicts[j],strings,scnt,info);
+        info->subfonts[j]->map = encmap;
+        info->subfonts[j]->glyphmin = -1;
     }
+    /* here we also deal with glyphmin */
+
     for ( i=0; i<info->glyph_cnt; ++i ) {
-	sf = info->subfonts[ fdselect[i] ];
-	cid = dict->charset[i];
-	if ( cid>=sf->glyphcnt ) sf->glyphcnt = sf->glyphmax = cid+1;
-	/*if ( cid>=encmap->enccount ) encmap->enccount = cid+1;*/
+        sf = info->subfonts[ fdselect[i] ];
+        cid = dict->charset[i];
+        if ( cid>=sf->glyphcnt ) {
+	  if (sf->glyphmin == -1) {
+	    sf->glyphmin = cid;
+	  }
+	  sf->glyphcnt = sf->glyphmax = cid+1;
+	}
+        /*if ( cid>=encmap->enccount )
+            encmap->enccount = cid+1;*/
     }
     for ( j=0; subdicts[j]!=NULL; ++j )
-	info->subfonts[j]->glyphs = gcalloc(info->subfonts[j]->glyphcnt,sizeof(SplineChar *));
+      info->subfonts[j]->glyphs = gcalloc(info->subfonts[j]->glyphcnt,sizeof(SplineChar *));
+
     /*encmap->encmax = encmap->enccount;*/
     /*encmap->map = galloc(encmap->enccount*sizeof(int));*/
     /*memset(encmap->map,-1,encmap->enccount*sizeof(int));*/
@@ -3697,49 +3707,46 @@ static void cidfigure(struct ttfinfo *info, struct topdicts *dict,
     map = FindCidMap(info->cidregistry,info->ordering,info->supplement,NULL);
 
     for ( i=0; i<info->glyph_cnt; ++i ) {
-	j = fdselect[i];
-	sf = info->subfonts[ j ];
-/* The format allows for some dicts that are type1 strings and others that */
-/*  are type2s. Which means that the global subrs will have a different bias */
-/*  as we flip from font to font. So we can't set the bias when we read in */
-/*  the subrs but must wait until we know which font we're working on. */
-	cstype = subdicts[j]->charstringtype;
-	pscontext.is_type2 = cstype-1;
-	pscontext.painttype = subdicts[j]->painttype;
-	gsubrs->bias = cstype==1 ? 0 :
-		gsubrs->cnt < 1240 ? 107 :
-		gsubrs->cnt <33900 ? 1131 : 32768;
-	subrs = &subdicts[j]->local_subrs;
-	subrs->bias = cstype==1 ? 0 :
-		subrs->cnt < 1240 ? 107 :
-		subrs->cnt <33900 ? 1131 : 32768;
-
-	cid = dict->charset[i];
-	/*encmap->map[cid] = cid;*/
-	uni = CID2NameUni(map,cid,buffer,sizeof(buffer));
-	info->chars[i] = PSCharStringToBB(
-		dict->glyphs.values[i], dict->glyphs.lens[i],&pscontext,
-		subrs,gsubrs,buffer);
-	info->chars[i]->vwidth = sf->ascent+sf->descent;
-	info->chars[i]->unicodeenc = uni;
-	sf->glyphs[cid] = info->chars[i];
-	sf->glyphs[cid]->parent = sf;
-	sf->glyphs[cid]->orig_pos = cid;		/* Bug! should be i, but I assume sf->chars[orig_pos]->orig_pos==orig_pos */
-	if ( sf->glyphs[cid]->layers[ly_fore].refs!=NULL )
-	    IError( "Reference found in CID font. Can't fix it up");
-
+        j = fdselect[i];
+        sf = info->subfonts[j];
+        /* The format allows for some dicts that are type1 strings and others that */
+        /*  are type2s. Which means that the global subrs will have a different bias */
+        /*  as we flip from font to font. So we can't set the bias when we read in */
+        /*  the subrs but must wait until we know which font we're working on. */
+        cstype = subdicts[j]->charstringtype;
+        pscontext.is_type2 = cstype-1;
+        pscontext.painttype = subdicts[j]->painttype;
+        gsubrs->bias = cstype==1 ? 0 :
+            gsubrs->cnt < 1240 ? 107 :
+            gsubrs->cnt <33900 ? 1131 : 32768;
+        subrs = &subdicts[j]->local_subrs;
+        subrs->bias = cstype==1 ? 0 :
+            subrs->cnt < 1240 ? 107 :
+            subrs->cnt <33900 ? 1131 : 32768;
+        cid = dict->charset[i];
+        /*encmap->map[cid] = cid;*/
+        uni = CID2NameUni(map,cid,buffer,sizeof(buffer));
+        info->chars[i] = PSCharStringToBB(
+            dict->glyphs.values[i], dict->glyphs.lens[i],&pscontext,
+            subrs,gsubrs,buffer);
+        info->chars[i]->vwidth = sf->ascent+sf->descent;
+        info->chars[i]->unicodeenc = uni;
+        sf->glyphs[cid] = info->chars[i];
+        sf->glyphs[cid]->parent = sf;
+        sf->glyphs[cid]->orig_pos = i; /* fixed in 0.80.1 */
+        if ( sf->glyphs[cid]->layers[ly_fore].refs!=NULL )
+            IError( "Reference found in CID font. Can't fix it up");
         THPatchSplineChar(sf->glyphs[cid]);
-
-	if ( cstype==2 ) {
-	    if ( sf->glyphs[cid]->width == (int16) 0x8000 )
-		sf->glyphs[cid]->width = subdicts[j]->defaultwidthx;
-	    else
-		sf->glyphs[cid]->width += subdicts[j]->nominalwidthx;
-	}
-	ff_progress_next();
+        if ( cstype==2 ) {
+            if ( sf->glyphs[cid]->width == (int16) 0x8000 )
+                sf->glyphs[cid]->width = subdicts[j]->defaultwidthx;
+            else
+                sf->glyphs[cid]->width += subdicts[j]->nominalwidthx;
+        }
+        ff_progress_next();
     }
     /* No need to do a reference fixup here-- the chars aren't associated */
-    /*  with any encoding as is required for seac */
+    /* with any encoding as is required for seac */
 }
 
 static int readcffglyphs(FILE *ttf,struct ttfinfo *info) {
@@ -3857,7 +3864,7 @@ static int readtyp1glyphs(FILE *ttf,struct ttfinfo *info) {
 	    i = 0;
 	fseek(ttf,info->typ1_start+i,SEEK_SET);
     }
-    
+
     tmp = tmpfile();
     for ( i=0; i<(int)info->typ1_length; ++i )
 	putc(getc(ttf),tmp);
@@ -3892,7 +3899,7 @@ return( true );
     }
 return( false );
 }
-    
+
 static void readttfwidths(FILE *ttf,struct ttfinfo *info) {
     int i,j;
     int lastwidth = info->emsize, lsb;
@@ -3936,7 +3943,7 @@ static void readttfwidths(FILE *ttf,struct ttfinfo *info) {
 	LogError( _("Invalid ttf hmtx table (or hhea), numOfLongMetrics is 0\n") );
 	info->bad_metrics = true;
     }
-	
+
     for ( j=i; j<info->glyph_cnt; ++j ) {
 	if ( (sc = info->chars[j])!=NULL ) {	/* In a ttc file we may skip some */
 	    sc->width = lastwidth;
@@ -4701,7 +4708,7 @@ return;
 	} else if ( format==2 ) {
 	    int max_sub_head_key = 0, cnt, max_pos= -1;
 	    struct subhead *subheads;
-	    
+
 	    for ( i=0; i<256; ++i ) {
 		table[i] = getushort(ttf)/8;	/* Sub-header keys */
 		if ( table[i]>max_sub_head_key ) {
@@ -5703,7 +5710,7 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
     SplineChar *sc;
     struct ttf_table *last[2], *tab, *next;
 
-    
+
     sf = SplineFontEmpty();
     sf->display_size = -default_fv_font_size;
 #ifdef LUA_FF_LIB
@@ -5861,7 +5868,7 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
 	sf->layers = info->layers;
 	sf->layer_cnt = info->layer_cnt;
     }
-	
+
 
     for ( i=0; i<info->glyph_cnt; ++i ) if ( info->chars[i]!=NULL ) {
 	SCOrderAP(info->chars[i]);
@@ -5982,12 +5989,12 @@ return( 0 );
 return( true );
 }
 
-/* I am not sure what happens to the ttinfo struct's members. 
+/* I am not sure what happens to the ttinfo struct's members.
    perhaps some need free()-ing
 */
 
-void THPatchSplineChar (SplineChar *sc) 
-{     
+void THPatchSplineChar (SplineChar *sc)
+{
   DBounds bb;
   if (sc->layers!=NULL && sc->layers[ly_fore].splines != NULL) {
     if (sc->xmax==0 && sc->ymax==0 && sc->xmin==0 && sc->ymin==0) {
@@ -6006,7 +6013,7 @@ void THPatchSplineChar (SplineChar *sc)
     sc->layers[ly_fore].refs = NULL;
   }
 }
- 
+
 
 static SplineFont *SFFillFromTTFInfo(struct ttfinfo *info) {
     SplineFont *sf ;

@@ -632,6 +632,31 @@ static int lua_nodelib_direct_getfont(lua_State * L)
     return 1;
 }
 
+
+/* node.direct.getfont */
+/* a new one, waiting some patched from HH
+static int lua_nodelib_direct_getfont(lua_State * L)
+{
+    halfword n, t;
+    n = (halfword) lua_tonumber(L, 1);
+    if (n != null) {
+        t = type(n);
+        if (t == glyph_node) {
+            lua_pushnumber(L, font(n));
+        } else if ((t == math_char_node) || (t == math_text_char_node)) {
+            lua_pushnumber(L, fam_fnt(math_fam(n), 0));
+        } else {
+            lua_pushnil(L);
+        }
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+*/
+
+
+
 /* node.getchar */
 
 static int lua_nodelib_getcharacter(lua_State * L)

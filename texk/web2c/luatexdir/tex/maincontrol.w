@@ -65,6 +65,9 @@
 #define pdf_px_dimen       dimen_par(pdf_px_dimen_code)
 
 #define pdf_image_resolution   int_par(pdf_image_resolution_code)
+
+#define math_eqno_gap_step     int_par(math_eqno_gap_step_code)
+
 #define escape_char int_par(escape_char_code)
 #define max_dead_cycles int_par(max_dead_cycles_code)
 #define tolerance int_par(tolerance_code)
@@ -3610,6 +3613,7 @@ void initialize(void)
         pdf_image_apply_gamma = 0;
         pdf_px_dimen = one_bp;
         pdf_draftmode = 0;
+	math_eqno_gap_step = 1000 ;
         cs_text(frozen_protection) = maketexstring("inaccessible");
         format_ident = maketexstring(" (INITEX)");
         cs_text(end_write) = maketexstring("endwrite");

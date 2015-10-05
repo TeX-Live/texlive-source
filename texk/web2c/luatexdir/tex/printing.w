@@ -427,7 +427,7 @@ void tprint(const char *sss)
                     buffer[i++] = s+64;
                     term_offset += 2;
                 }
-                if (term_offset++ == max_print_line) {
+                if (++term_offset == max_print_line) {
                     buffer[i++] = '\n';
                     buffer[i++] = '\0';
                     fputs(buffer, term_out);

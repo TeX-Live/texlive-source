@@ -480,6 +480,7 @@ return;
 
     sf->glyphs = gcalloc(max,sizeof(SplineChar *));
     sf->glyphcnt = sf->glyphmax = max;
+    sf->glyphmin = 0;
     for ( k=0; k<sf->subfontcnt; ++k )
 	for ( i=0; i<sf->subfonts[k]->glyphcnt; ++i ) if ( sf->subfonts[k]->glyphs[i]!=NULL )
 	    sf->glyphs[i] = sf->subfonts[k]->glyphs[i];
@@ -1896,7 +1897,7 @@ static int dumpcff(struct alltabs *at,SplineFont *sf,enum fontformat format,
 	SFDummyUpCIDs(&at->gi,sf);	/* life is easier if we ignore the seperate fonts of a cid keyed fonts and treat it as flat */
 	ret = dumpcidglyphs(sf,at);
 	free(sf->glyphs); sf->glyphs = NULL;
-	sf->glyphcnt = sf->glyphmax = 0;
+	sf->glyphcnt = sf->glyphmax = sf->glyphmin = 0;
     }
     free( at->gi.bygid );
 

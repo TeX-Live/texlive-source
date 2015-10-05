@@ -957,6 +957,14 @@ static void write_cid_charwidth_array(PDF pdf, fo_entry * fo)
     pdf_end_obj(pdf);
 }
 
+static void destroy_glw_cid_entry(void *pa, void *pb)
+{
+    glw_entry *e = (glw_entry *) pa;
+    (void) pb;
+    xfree(e);
+}
+
+
 static void create_cid_fontdictionary(PDF pdf, internal_font_number f)
 {
     fm_entry *fm = font_map(f);
@@ -980,6 +988,12 @@ static void create_cid_fontdictionary(PDF pdf, internal_font_number f)
     write_fontdescriptor(pdf, fo->fd);
 
     write_cid_fontdictionary(pdf, fo, f);
+    if (fo->fd) {
+      if (fo->fd->gl_tree){
+	avl_destroy(fo->fd->gl_tree,destroy_glw_cid_entry);
+      }
+      xfree(fo->fd);
+    }      
     xfree(fo);
 }
 
