@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 37974 2015-07-28 06:42:13Z preining $
+# $Id: tlmgr.pl 38566 2015-10-06 02:49:58Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 37974 $';
-my $datrev = '$Date: 2015-07-28 08:42:13 +0200 (Tue, 28 Jul 2015) $';
+my $svnrev = '$Revision: 38566 $';
+my $datrev = '$Date: 2015-10-06 04:49:58 +0200 (Tue, 06 Oct 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3300,7 +3300,9 @@ sub action_update {
   # if one of latex or tex has been updated, we rebuild the formats
   # defined in packages *depending* on these packages.
   if (!$opts{"list"}) {
-    TeXLive::TLUtils::announce_execute_actions("latex-updated") if ($updated{"latex"});
+    if ($updated{"latex"} || $updated{"babel"}) {
+      TeXLive::TLUtils::announce_execute_actions("latex-updated");
+    }
     TeXLive::TLUtils::announce_execute_actions("tex-updated") if ($updated{"tex"});
   }
 
@@ -4296,16 +4298,17 @@ sub action_option {
 #  ARCH
 #
 sub action_platform {
+  my $ret = $F_OK;
   my @extra_w32_packs = qw/tlperl.win32 tlgs.win32 tlpsv.win32
                            collection-wintools
                            dviout.win32 wintools.win32/;
   if ($^O=~/^MSWin(32|64)$/i) {
     warn("action `platform' not supported on Windows\n");
-    return();
+    return ($F_WARNING);
   }
   if ($opts{"usermode"}) {
     tlwarn("action `platform' not supported in usermode\n");
-    exit 1;
+    return ($F_ERROR);
   }
   my $what = shift @ARGV;
   init_local_db(1);
@@ -4328,18 +4331,18 @@ sub action_platform {
     print "You can add new platforms with: tlmgr platform add ARCH1 ARCH2...\n";
     return ($F_OK | $F_NOPOSTACTION);
   } elsif ($what =~ m/^add$/i) {
-    return if !check_on_writable();
+    return ($F_ERROR) if !check_on_writable();
     init_tlmedia_or_die();
     my @already_installed_arch = $localtlpdb->available_architectures;
     my @available_arch = $remotetlpdb->available_architectures;
     my @todoarchs;
     foreach my $a (@ARGV) {
       if (TeXLive::TLUtils::member($a, @already_installed_arch)) {
-        print "Platform $a is already installed\n";
+        info("Platform $a is already installed\n");
         next;
       }
       if (!TeXLive::TLUtils::member($a, @available_arch)) {
-        print "Platform $a not available, use 'tlmgr platform list'!\n";
+        info("Platform $a not available, use 'tlmgr platform list'!\n");
         next;
       }
       push @todoarchs, $a;
@@ -4353,8 +4356,14 @@ sub action_platform {
           foreach my $a (@todoarchs) {
             if ($remotetlpdb->get_package("$pkg.$a")) {
               info("install: $pkg.$a\n");
-              $remotetlpdb->install_package("$pkg.$a", $localtlpdb)
-                if (!$opts{"dry-run"});
+              if (!$opts{'dry-run'}) {
+                if (! $remotetlpdb->install_package("$pkg.$a", $localtlpdb)) {
+                  $ret |= $F_ERROR;
+                }
+              }
+            } else {
+              tlwarn("action platform add, cannot find package $pkg.$a\n");
+              $ret |= $F_WARNING;
             }
           }
         }
@@ -4364,7 +4373,11 @@ sub action_platform {
       # install the necessary w32 stuff
       for my $p (@extra_w32_packs) {
         info("install: $p\n");
-        $remotetlpdb->install_package($p, $localtlpdb) if (!$opts{"dry-run"});
+        if (!$opts{'dry-run'}) {
+          if (! $remotetlpdb->install_package($p, $localtlpdb)) {
+            $ret |= $F_ERROR;
+          }
+        }
       }
     }
     # update the option("available_architectures") list of installed archs
@@ -4375,17 +4388,19 @@ sub action_platform {
       $localtlpdb->save;
     }
   } elsif ($what =~ m/^remove$/i) {
-    return if !check_on_writable();
+    return ($F_ERROR) if !check_on_writable();
     my @already_installed_arch = $localtlpdb->available_architectures;
     my @todoarchs;
     my $currentarch = $localtlpdb->platform();
     foreach my $a (@ARGV) {
       if (!TeXLive::TLUtils::member($a, @already_installed_arch)) {
-        print "Platform $a not installed, use 'tlmgr platform list'!\n";
+        tlwarn("Platform $a not installed, use 'tlmgr platform list'!\n");
+        $ret |= $F_WARNING;
         next;
       }
       if ($currentarch eq $a) {
         info("You are running on platform $a, you cannot remove that one!\n");
+        $ret |= $F_WARNING;
         next;
       }
       push @todoarchs, $a;
@@ -4404,6 +4419,7 @@ sub action_platform {
           foreach my $a (@todoarchs) {
             if ($localtlpdb->get_package("$pkg.$a")) {
               info("remove: $pkg.$a\n");
+              # assume that this works out
               $localtlpdb->remove_package("$pkg.$a") if (!$opts{"dry-run"});
             }
           }
@@ -4421,6 +4437,7 @@ sub action_platform {
       for my $a (@todoarchs) {
         if (!rmdir("$Master/bin/$a")) {
           tlwarn("binary directory $Master/bin/$a not empty after removal of $a.\n");
+          $ret |= $F_WARNING;
         }
       }
       # update the option("available_architectures") list of installed archs
@@ -4444,14 +4461,16 @@ sub action_platform {
     } else {
       if (!TeXLive::TLUtils::member($arg, @already_installed_arch)) {
         tlwarn("cannot set platform to a not installed one.\n");
-        return;
+        return ($F_ERROR);
       }
       $localtlpdb->setting('platform', $arg);
       $localtlpdb->save;
     }
   } else {
-    die "Unknown option for platform: $what";
+    tlwarn("Unknown option for platform: $what\n");
+    $ret |= $F_ERROR;
   }
+  return ($ret);
 }
 
 
