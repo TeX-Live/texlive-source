@@ -1641,9 +1641,6 @@ static boolean print_convert_string(halfword c, int i)
     case etex_code:
         tprint(eTeX_version_string);
         break;
-    case pdftex_revision_code:
-        tprint(pdftex_revision);
-        break;
     case luatex_revision_code:
         print(get_luatexrevision());
         break;
@@ -1779,7 +1776,6 @@ void conv_toks(void)
     case font_id_code:
         scan_font_ident();
         break;
-    case pdftex_revision_code:
     case luatex_revision_code:
     case luatex_date_code:
     case luatex_banner_code:

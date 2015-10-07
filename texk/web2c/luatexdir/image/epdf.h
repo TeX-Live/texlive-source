@@ -124,6 +124,7 @@ extern "C" {
     extern void read_pdf_info(image_dict *, int, int, img_readtype_e);
     extern void write_epdf(PDF, image_dict *);
     extern void unrefPdfDocument(char *);
+    extern void unrefMemStreamPdfDocument(char *);
     extern void epdf_free(void);
     extern void copyReal(PDF pdf, double d);
 
@@ -193,5 +194,14 @@ struct PdfDocument {
 };
 
 PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe);
+
+PdfDocument *refMemStreamPdfDocument(char *docstream, unsigned long long streamsize, const char *file_id);
+
+
+#define STREAM_CHECKSUM_SIZE 16    // md5
+#define STRSTREAM_CHECKSUM_SIZE 1+((unsigned int)(log(ULONG_MAX)/log(16)))    // djb2 printable digest as hex stream
+#define STREAM_FILE_ID_LEN   2048  // 2048 bytes are enough to make a strong almost-unique name
+#define STREAM_URI           "data:application/pdf,"
+#define STREAM_URI_LEN       21    // length of "data:application/pdf," without final '\0'
 
 #endif                          /* EPDF_H */

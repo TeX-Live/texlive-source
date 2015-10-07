@@ -70,8 +70,9 @@ typedef enum { DICT_NEW,        /* fresh dictionary */
     DICT_WRITTEN                /* image dict written to file */
 } dict_state;
 
+
 typedef enum { IMG_TYPE_NONE, IMG_TYPE_PDF, IMG_TYPE_PNG, IMG_TYPE_JPG,
-    IMG_TYPE_JP2, IMG_TYPE_JBIG2, IMG_TYPE_PDFSTREAM, IMG_TYPE_SENTINEL
+	       IMG_TYPE_JP2, IMG_TYPE_JBIG2, IMG_TYPE_PDFSTREAM, IMG_TYPE_PDFMEMSTREAM, IMG_TYPE_SENTINEL
 } imgtype_e;
 
 typedef enum { IMG_KEEPOPEN, IMG_CLOSEINBETWEEN } img_readtype_e;
@@ -183,7 +184,7 @@ typedef struct {
 #  define epdf_orig_x(a)        img_xorig(idict_array[a])
 #  define epdf_orig_y(a)        img_yorig(idict_array[a])
 
-#  define is_pdf_image(a)       (img_type(idict_array[a]) == IMG_TYPE_PDF)
+#  define is_pdf_image(a)       ((img_type(idict_array[a]) == IMG_TYPE_PDF) || (img_type(idict_array[a]) == IMG_TYPE_PDFMEMSTREAM))
 #  define is_png_image(a)       (img_type(idict_array[a]) == IMG_TYPE_PNG)
 
 #  define img_is_refered(N)     (img_index(N) != -1)

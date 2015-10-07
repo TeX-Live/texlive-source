@@ -1133,7 +1133,7 @@ static int setmathcode(lua_State * L)
     check_char_range(cval, "setmathcode", 8);
     check_char_range(fval, "setmathcode", 256);
     check_char_range(chval, "setmathcode", 65536*17);
-    set_math_code(ch, xetex_mathcode, cval,fval, chval, (quarterword) (level));
+    set_math_code(ch, umath_mathcode, cval,fval, chval, (quarterword) (level));
     return 0;
 }
 
@@ -1190,7 +1190,7 @@ static int setdelcode(lua_State * L)
     check_char_range(scval, "setdelcode", 65536*17);
     check_char_range(lfval, "setdelcode", 256);
     check_char_range(lcval, "setdelcode", 65536*17);
-    set_del_code(ch, xetex_mathcode, sfval, scval, lfval, lcval, (quarterword) (level));
+    set_del_code(ch, umath_mathcode, sfval, scval, lfval, lcval, (quarterword) (level));
 
     return 0;
 }
@@ -1416,14 +1416,13 @@ static int do_lastitem(lua_State * L, int cur_code)
     case last_node_type_code:
     case input_line_no_code:
     case badness_code:
-    case pdftex_version_code:
     case pdf_last_obj_code:
     case pdf_last_xform_code:
     case pdf_last_ximage_code:
     case pdf_last_ximage_pages_code:
     case pdf_last_annot_code:
-    case pdf_last_x_pos_code:
-    case pdf_last_y_pos_code:
+    case last_x_pos_code:
+    case last_y_pos_code:
     case pdf_retval_code:
     case pdf_last_ximage_colordepth_code:
     case random_seed_code:
@@ -1992,8 +1991,7 @@ static int tex_extraprimitives(lua_State * L)
     int cs = 0;
     n = lua_gettop(L);
     if (n == 0) {
-        mask = etex_command + aleph_command + omega_command +
-            pdftex_command + luatex_command + umath_command;
+        mask = etex_command + pdftex_command + luatex_command + umath_command;
     } else {
         for (i = 1; i <= n; i++) {
             if (lua_isstring(L, i)) {
@@ -2006,10 +2004,6 @@ static int tex_extraprimitives(lua_State * L)
                     mask |= core_command;
                 } else if (lua_key_eq(s,pdftex)) {
                     mask |= pdftex_command;
-                } else if (lua_key_eq(s,aleph)) {
-                    mask |= aleph_command;
-                } else if (lua_key_eq(s,omega)) {
-                    mask |= omega_command;
                 } else if (lua_key_eq(s,luatex)) {
                     mask |= luatex_command | umath_command;
                 } else if (lua_key_eq(s,umath)) {
@@ -2233,13 +2227,14 @@ static int tex_run_linebreak(lua_State * L)
     halfword final_par_glue;
     int paragraph_dir = 0;
     /* locally initialized parameters for line breaking */
-    int pretolerance, tracingparagraphs, tolerance, looseness, hyphenpenalty,
-        exhyphenpenalty, pdfadjustspacing, adjdemerits, pdfprotrudechars,
+    int pretolerance, tracingparagraphs, tolerance, looseness,
+        /*
+        hyphenpenalty, exhyphenpenalty,
+        */
+        adjustspacing, adjdemerits, protrudechars,
         linepenalty, lastlinefit, doublehyphendemerits, finalhyphendemerits,
         hangafter, interlinepenalty, widowpenalty, clubpenalty, brokenpenalty;
-    halfword emergencystretch, hangindent, hsize, leftskip, rightskip,
-        pdfeachlineheight, pdfeachlinedepth, pdffirstlineheight,
-        pdflastlinedepth, pdfignoreddimen, parshape;
+    halfword emergencystretch, hangindent, hsize, leftskip, rightskip,parshape;
     int fewest_demerits = 0, actual_looseness = 0;
     halfword clubpenalties, interlinepenalties, widowpenalties;
     int save_vlink_tmp_head;
@@ -2287,14 +2282,16 @@ static int tex_run_linebreak(lua_State * L)
                 int_par(tracing_paragraphs_code));
     get_int_par("tolerance", tolerance, int_par(tolerance_code));
     get_int_par("looseness", looseness, int_par(looseness_code));
+    /*
     get_int_par("hyphenpenalty", hyphenpenalty, int_par(hyphen_penalty_code));
     get_int_par("exhyphenpenalty", exhyphenpenalty,
                 int_par(ex_hyphen_penalty_code));
-    get_int_par("pdfadjustspacing", pdfadjustspacing,
-                int_par(pdf_adjust_spacing_code));
+    */
+    get_int_par("adjustspacing", adjustspacing,
+                int_par(adjust_spacing_code));
     get_int_par("adjdemerits", adjdemerits, int_par(adj_demerits_code));
-    get_int_par("pdfprotrudechars", pdfprotrudechars,
-                int_par(pdf_protrude_chars_code));
+    get_int_par("protrudechars", protrudechars,
+                int_par(protrude_chars_code));
     get_int_par("linepenalty", linepenalty, int_par(line_penalty_code));
     get_int_par("lastlinefit", lastlinefit, int_par(last_line_fit_code));
     get_int_par("doublehyphendemerits", doublehyphendemerits,
@@ -2315,35 +2312,25 @@ static int tex_run_linebreak(lua_State * L)
     get_dimen_par("hsize", hsize, dimen_par(hsize_code));
     get_glue_par("leftskip", leftskip, glue_par(left_skip_code));
     get_glue_par("rightskip", rightskip, glue_par(right_skip_code));
-    get_dimen_par("pdfeachlineheight", pdfeachlineheight,
-                  dimen_par(pdf_each_line_height_code));
-    get_dimen_par("pdfeachlinedepth", pdfeachlinedepth,
-                  dimen_par(pdf_each_line_depth_code));
-    get_dimen_par("pdffirstlineheight", pdffirstlineheight,
-                  dimen_par(pdf_first_line_height_code));
-    get_dimen_par("pdflastlinedepth", pdflastlinedepth,
-                  dimen_par(pdf_last_line_depth_code));
-    get_dimen_par("pdfignoreddimen", pdfignoreddimen,
-                  dimen_par(pdf_ignored_dimen_code));
 
     ext_do_line_break(paragraph_dir,
                       pretolerance, tracingparagraphs, tolerance,
-                      emergencystretch,
-                      looseness, hyphenpenalty, exhyphenpenalty,
-                      pdfadjustspacing,
+                      emergencystretch, looseness,
+                      /*
+                      hyphenpenalty, exhyphenpenalty,
+                      */
+                      adjustspacing,
                       parshape,
-                      adjdemerits, pdfprotrudechars,
+                      adjdemerits, protrudechars,
                       linepenalty, lastlinefit,
                       doublehyphendemerits, finalhyphendemerits,
                       hangindent, hsize, hangafter, leftskip, rightskip,
-                      pdfeachlineheight, pdfeachlinedepth,
-                      pdffirstlineheight, pdflastlinedepth,
                       interlinepenalties,
                       interlinepenalty, clubpenalty,
                       clubpenalties,
                       widowpenalties,
                       widowpenalty, brokenpenalty,
-                      final_par_glue, pdfignoreddimen);
+                      final_par_glue);
 
     /* return the generated list, and its prevdepth */
     get_linebreak_info (&fewest_demerits, &actual_looseness) ;
@@ -2415,8 +2402,6 @@ static int tex_run_boot(lua_State * L)
         zwclose(fmt_file);
     }
     fix_date_and_time();
-    /* if (format == NULL) */
-    /*     make_pdftex_banner(); */
     random_seed = (microseconds * 1000) + (epochseconds % 1000000);
     init_randoms(random_seed);
     initialize_math();
@@ -2503,7 +2488,7 @@ static int lua_math_random (lua_State *L)
 
 /* Experimental code can either become permanent or disappear. It is
 undocumented and mostly present in the experimental branch but for
-practical reasons we also have the setup code in the regular binary. 
+practical reasons we also have the setup code in the regular binary.
 The experimental_code array is indexed by i with 1<= i <= max_experimental_code,
 position 0 is not used */
 int experimental_code[MAX_EXPERIMENTAL_CODE_SIZE] = { 0 };

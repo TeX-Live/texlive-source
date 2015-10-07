@@ -38,7 +38,7 @@ void place_img(PDF pdf, image_dict * idict, scaled_whd dim, int transform)
     assert(p != NULL);
     a[0] = a[3] = 1.0e6;
     a[1] = a[2] = 0;
-    if (img_type(idict) == IMG_TYPE_PDF
+    if (img_type(idict) == IMG_TYPE_PDF || img_type(idict) == IMG_TYPE_PDFMEMSTREAM
         || img_type(idict) == IMG_TYPE_PDFSTREAM) {
         a[0] /= (float) img_xsize(idict);
         a[3] /= (float) img_ysize(idict);

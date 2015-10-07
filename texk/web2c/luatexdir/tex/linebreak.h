@@ -1,5 +1,5 @@
 /* linebreak.h
-   
+
    Copyright 2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -39,12 +39,14 @@ extern void ext_do_line_break(int paragraph_dir,
                               int tolerance,
                               scaled emergency_stretch,
                               int looseness,
+                              /*
                               int hyphen_penalty,
                               int ex_hyphen_penalty,
-                              int pdf_adjust_spacing,
+                              */
+                              int adjust_spacing,
                               halfword par_shape_ptr,
                               int adj_demerits,
-                              int pdf_protrude_chars,
+                              int protrude_chars,
                               int line_penalty,
                               int last_line_fit,
                               int double_hyphen_demerits,
@@ -54,18 +56,13 @@ extern void ext_do_line_break(int paragraph_dir,
                               int hang_after,
                               halfword left_skip,
                               halfword right_skip,
-                              int pdf_each_line_height,
-                              int pdf_each_line_depth,
-                              int pdf_first_line_height,
-                              int pdf_last_line_depth,
                               halfword inter_line_penalties_ptr,
                               int inter_line_penalty,
                               int club_penalty,
                               halfword club_penalties_ptr,
                               halfword widow_penalties_ptr,
                               int widow_penalty,
-                              int broken_penalty, halfword final_par_glue,
-                              halfword pdf_ignored_dimen);
+                              int broken_penalty, halfword final_par_glue);
 
 extern void get_linebreak_info(int *, int *);
 extern halfword find_protchar_left(halfword l, boolean d);

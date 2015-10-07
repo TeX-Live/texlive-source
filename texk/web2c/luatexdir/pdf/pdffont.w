@@ -281,7 +281,7 @@ void read_expand_font(void)
         pdf_error("font expansion", "invalid font identifier");
     //if (pdf_font_blink(f) != null_font)
     //    pdf_error("font expansion",
-    //              "\\pdffontexpand cannot be used this way (the base font has been expanded)");
+    //              "\\fontexpand cannot be used this way (the base font has been expanded)");
     scan_optional_equals();
     scan_int();
     stretch_limit = fix_int(cur_val, 0, 1000);

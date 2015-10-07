@@ -1,5 +1,5 @@
 /* equivalents.h
-   
+
    Copyright 2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -279,7 +279,11 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define output_box_code 64
 #  define cur_lang_code 65      /* current language id */
 #  define ex_hyphen_char_code 66
-#  define pdftex_first_integer_code 67  /*base for \pdfTeX's integer parameters */
+#  define hyphenation_min_code 67 /* minimum word length */
+#  define adjust_spacing_code 68      /*level of spacing adjusting */
+#  define protrude_chars_code 69      /*protrude chars at left/right edge of paragraphs */
+
+#  define pdftex_first_integer_code 70  /*base for \pdfTeX's integer parameters */
 #  define pdf_output_code (pdftex_first_integer_code + 0)
                                                         /*switch on PDF output if positive */
 #  define pdf_compress_level_code (pdftex_first_integer_code + 1)
@@ -292,23 +296,21 @@ here, and the |number_regs| \.{\\dimen} registers.
                                                                 /*generate unique names for resouces */
 #  define pdf_minor_version_code (pdftex_first_integer_code + 6)        /*fractional part of the PDF version produced */
 #  define pdf_pagebox_code (pdftex_first_integer_code + 7)      /*default pagebox to use for PDF inclusion */
-#  define pdf_inclusion_errorlevel_code (pdftex_first_integer_code + 8) /*if the PDF inclusion should treat pdfs 
+#  define pdf_inclusion_errorlevel_code (pdftex_first_integer_code + 8) /*if the PDF inclusion should treat pdfs
                                                                            newer than |pdf_minor_version| as an error */
 #  define pdf_gamma_code (pdftex_first_integer_code + 9)
 #  define pdf_image_gamma_code (pdftex_first_integer_code + 10)
 #  define pdf_image_hicolor_code (pdftex_first_integer_code + 11)
 #  define pdf_image_apply_gamma_code (pdftex_first_integer_code + 12)
-#  define pdf_adjust_spacing_code (pdftex_first_integer_code + 13)      /*level of spacing adjusting */
-#  define pdf_protrude_chars_code (pdftex_first_integer_code + 14)      /*protrude chars at left/right edge of paragraphs */
-#  define pdf_tracing_fonts_code (pdftex_first_integer_code + 15)
+#  define pdf_tracing_fonts_code (pdftex_first_integer_code + 13)
                                                                 /*level of font detail in log */
-#  define pdf_objcompresslevel_code (pdftex_first_integer_code + 16)    /*activate object streams */
-#  define pdf_gen_tounicode_code (pdftex_first_integer_code + 17)
+#  define pdf_objcompresslevel_code (pdftex_first_integer_code + 14)    /*activate object streams */
+#  define pdf_gen_tounicode_code (pdftex_first_integer_code + 15)
                                                                 /*generate ToUnicode for fonts? */
-#  define pdf_draftmode_code (pdftex_first_integer_code + 18)   /*switch on draftmode if positive */
-#  define pdf_replace_font_code (pdftex_first_integer_code + 19)        /*generate ToUnicode for fonts? */
-#  define pdf_inclusion_copy_font_code (pdftex_first_integer_code + 20) /*generate ToUnicode for fonts? */
-#  define pdf_int_pars (pdftex_first_integer_code + 21) /*total number of \pdfTeX's integer parameters */
+#  define pdf_draftmode_code (pdftex_first_integer_code + 16)   /*switch on draftmode if positive */
+#  define pdf_replace_font_code (pdftex_first_integer_code + 17)        /*generate ToUnicode for fonts? */
+#  define pdf_inclusion_copy_font_code (pdftex_first_integer_code + 18) /*generate ToUnicode for fonts? */
+#  define pdf_int_pars (pdftex_first_integer_code + 19) /*total number of \pdfTeX's integer parameters */
 #  define etex_first_integer_code (pdf_int_pars)        /*base for \eTeX's integer parameters */
 #  define tracing_assigns_code (etex_first_integer_code)        /*show assignments */
 #  define tracing_groups_code (etex_first_integer_code+1)       /*show save/restore groups */
@@ -378,13 +380,8 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define pdf_link_margin_code    (pdftex_first_dimen_code + 4) /* link margin in the PDF output */
 #  define pdf_dest_margin_code    (pdftex_first_dimen_code + 5) /* dest margin in the PDF output */
 #  define pdf_thread_margin_code  (pdftex_first_dimen_code + 6) /* thread margin in the PDF output */
-#  define pdf_first_line_height_code (pdftex_first_dimen_code + 7)
-#  define pdf_last_line_depth_code   (pdftex_first_dimen_code + 8)
-#  define pdf_each_line_height_code  (pdftex_first_dimen_code + 9)
-#  define pdf_each_line_depth_code   (pdftex_first_dimen_code + 10)
-#  define pdf_ignored_dimen_code   (pdftex_first_dimen_code + 11)
-#  define pdf_px_dimen_code       (pdftex_first_dimen_code + 12)
-#  define pdftex_last_dimen_code  (pdftex_first_dimen_code + 12)        /* last number defined in this section */
+#  define pdf_px_dimen_code       (pdftex_first_dimen_code + 7)
+#  define pdftex_last_dimen_code  (pdftex_first_dimen_code + 7)        /* last number defined in this section */
 #  define dimen_pars (pdftex_last_dimen_code + 1)
                                                 /* total number of dimension parameters */
 
@@ -433,7 +430,7 @@ extern int cur_boundary;        /* where the current level begins */
 
 /*
 We use the notation |saved(k)| to stand for an item that
-appears in location |save_ptr+k| of the save stack. 
+appears in location |save_ptr+k| of the save stack.
 */
 
 #  define saved_type(A) save_stack[save_ptr+(A)].type_

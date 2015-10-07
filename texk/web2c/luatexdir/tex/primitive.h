@@ -24,15 +24,14 @@
 /* This enum is a list of origins for primitive commands */
 
 typedef enum {
-    tex_command = 1,
-    etex_command = 2,
-    aleph_command = 4,
-    omega_command = 8,
-    pdftex_command = 16,
-    luatex_command = 32,
-    core_command = 64,
-    no_command = 128,
-    umath_command = 256,
+    /* Can be modified as suggested ?*/
+    tex_command = 1,    /* 1  */
+    etex_command = 2,   /* 2  */
+    pdftex_command = 16,/* 4  */
+    luatex_command = 32,/* 8  */
+    core_command = 64,  /* 16 */
+    no_command = 128,   /* 32 */
+    umath_command = 256,/* 64  */
 } command_origin;
 
 #  define hash_size 65536       /* maximum number of control sequences; it should be at most about |(fix_mem_max-fix_mem_min)/10| */
@@ -74,8 +73,6 @@ extern void undump_primitives(void);
 
 #  define primitive_tex(a,b,c,d)    primitive((a),(b),(c),(d),tex_command)
 #  define primitive_etex(a,b,c,d)   primitive((a),(b),(c),(d),etex_command)
-#  define primitive_aleph(a,b,c,d)  primitive((a),(b),(c),(d),aleph_command)
-#  define primitive_omega(a,b,c,d)  primitive((a),(b),(c),(d),omega_command)
 #  define primitive_pdftex(a,b,c,d) primitive((a),(b),(c),(d),pdftex_command)
 #  define primitive_luatex(a,b,c,d) primitive((a),(b),(c),(d),luatex_command)
 #  define primitive_umath(a,b,c,d)  primitive((a),(b),(c),(d),umath_command)

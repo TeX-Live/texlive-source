@@ -129,7 +129,8 @@ static int l_open_PDFDoc(lua_State * L)
     if (d == NULL)
         lua_pushnil(L);
     else {
-        globalParams = new GlobalParams();
+      if (!(globalParams)) // globalParams could be already created
+          globalParams = new GlobalParams();
         uout = new_PDFDoc_userdata(L);
         uout->d = d;
         uout->atype = ALLOC_LEPDF;
@@ -138,6 +139,59 @@ static int l_open_PDFDoc(lua_State * L)
     }
     return 1;                   // doc path
 }
+
+static int l_open_MemStreamPDFDoc(lua_State * L)
+{
+    const char *docstream=NULL;
+    const char *file_id;
+    unsigned long long stream_size;
+    udstruct *uout;
+    PdfDocument *d;
+    switch (lua_type(L, 1)) {
+      case LUA_TSTRING:
+         docstream = luaL_checkstring(L, 1); // stream as Lua string
+         break;
+      case LUA_TLIGHTUSERDATA:
+         docstream = (const char *) lua_touserdata(L, 1); // stream as sequence of bytes 
+	 break;
+       default:
+         luaL_error(L, "bad argument: string or lightuserdata expected"); 
+    }
+    if (docstream==NULL) 
+      luaL_error(L, "bad document"); 
+    stream_size = (unsigned long long) luaL_checkint(L, 2);// size of the stream
+    file_id  =  luaL_checkstring(L, 3); // a symbolic name for this stream, mandatory
+    if (file_id == NULL)
+      lua_pushnil(L);
+    if (strlen(file_id) >STREAM_FILE_ID_LEN )  // a limit to the length of the string
+      luaL_error(L, "PDFDoc has a too long id");
+    d = refMemStreamPdfDocument((char *)docstream, stream_size, file_id);
+    if (d == NULL) {
+      lua_pushnil(L);
+      lua_pushnil(L);
+      lua_pushnil(L);
+    }
+    else if (d->file_path == NULL ) {
+      lua_pushnil(L);
+      lua_pushnil(L);
+      lua_pushnil(L);
+    }
+    else {
+      if (!(globalParams)) // globalParams could be already created         
+        globalParams = new GlobalParams();
+      uout = new_PDFDoc_userdata(L);
+      uout->d = d;
+      uout->atype = ALLOC_LEPDF;
+      uout->pc = d->pc;
+      uout->pd = d;
+      lua_pushstring(L,d->file_path);
+      lua_pushstring(L,STREAM_URI);
+    }
+    return 3;                   // stream, stream_id, stream_uri
+}
+
+
+
 
 static int l_new_Array(lua_State * L)
 {
@@ -361,6 +415,7 @@ static int l_new_PDFRectangle(lua_State * L)
 
 static const struct luaL_Reg epdflib_f[] = {
     {"open", l_open_PDFDoc},
+    {"openMemStream", l_open_MemStreamPDFDoc},
     {"Array", l_new_Array},
     {"Attribute",          l_new_Attribute},
     {"StructElement_Type", l_StructElement_Type},

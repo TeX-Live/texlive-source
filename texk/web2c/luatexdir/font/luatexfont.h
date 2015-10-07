@@ -174,11 +174,12 @@ void t1_free(void);
 extern int t1_length1, t1_length2, t1_length3;
 
 /* writetype2.c */
-void writetype2(PDF, fd_entry *);
+boolean writetype2(PDF, fd_entry *);
 extern unsigned long cidtogid_obj;
 pdf_obj *pdf_new_stream(void);
 void pdf_add_stream(pdf_obj * stream, unsigned char *buf, long len);
 void pdf_release_obj(pdf_obj * stream);
+unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx);
 
 /* subfont.c */
 void sfd_free(void);

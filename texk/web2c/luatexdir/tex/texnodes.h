@@ -30,7 +30,7 @@
 #  define get_character(a)  character(a)
 
 extern halfword insert_discretionary(halfword t, halfword pre, halfword post,
-                                     halfword replace);
+                                     halfword replace, int penalty);
 extern halfword insert_syllable_discretionary(halfword t, lang_variables * lan);
 extern halfword insert_word_discretionary(halfword t, lang_variables * lan);
 extern halfword insert_complex_discretionary(halfword t, lang_variables * lan,
@@ -151,7 +151,7 @@ typedef enum {
    pointers are not really needed (8 instead of 10).
  */
 
-#  define disc_node_size 10
+#  define disc_node_size 11
 
 typedef enum {
     discretionary_disc = 0,
@@ -162,13 +162,14 @@ typedef enum {
     select_disc,                /* second of a duo of syllable_discs */
 } discretionary_types;
 
-#  define pre_break_head(a)   ((a)+4)
-#  define post_break_head(a)  ((a)+6)
-#  define no_break_head(a)    ((a)+8)
+#  define pre_break_head(a)   ((a)+5)
+#  define post_break_head(a)  ((a)+7)
+#  define no_break_head(a)    ((a)+9)
 
-#  define pre_break(a)     vinfo((a)+2)
-#  define post_break(a)    vlink((a)+2)
-#  define no_break(a)      vlink((a)+3)
+#  define disc_penalty(a)  vlink((a)+2)
+#  define pre_break(a)     vinfo((a)+3)
+#  define post_break(a)    vlink((a)+3)
+#  define no_break(a)      vlink((a)+4)
 #  define tlink llink
 
 #  define vlink_pre_break(a)  vlink(pre_break_head(a))
@@ -429,14 +430,16 @@ typedef enum {
 #  define large_fam(A)  vinfo((A)+3)    /* |fam| for ``large'' delimiter */
 #  define large_char(A) vlink((A)+3)    /* |character| for ``large'' delimiter */
 
+
+/* be careful: must be in sync with whatsit_node_data[] ! (at least) */
 typedef enum {
     open_node = 0,
     write_node,
     close_node,
     special_node,
-    language_node,
-    set_language_code,
-    local_par_node,
+    /*language_node,              OBSOLETE*/
+    /*set_language_code,          OBSOLETE*/
+    local_par_node=6,
     dir_node,
     pdf_literal_node,
     pdf_obj_code,
@@ -453,7 +456,7 @@ typedef enum {
     pdf_thread_node,            /* 20 */
     pdf_start_thread_node,
     pdf_end_thread_node,
-    pdf_save_pos_node,
+ save_pos_node,
     pdf_thread_data_node,
     pdf_link_data_node,
     pdf_names_code,
@@ -462,7 +465,7 @@ typedef enum {
     pdf_map_file_code,
     pdf_map_line_code,          /* 30 */
     pdf_trailer_code,
-    pdf_font_expand_code,
+    font_expand_code,
     set_random_seed_code,
     pdf_glyph_to_unicode_code,
     late_lua_node,              /* 35 */
@@ -470,7 +473,7 @@ typedef enum {
     save_cat_code_table_code,
     init_cat_code_table_code,
     pdf_colorstack_node,
-    pdf_setmatrix_node,         /* 40 */
+    pdf_setmatrix_node,         /*40 */
     pdf_save_node,
     pdf_restore_node,
     cancel_boundary_node,
@@ -547,6 +550,9 @@ typedef enum {
 #  define late_lua_name(a)        vlink((a)+3)
 #  define late_lua_type(a)        subtype((a)+3)
 
+#  define save_pos_node_size 3
+
+
 #  define local_par_size 6
 
 #  define local_pen_inter(a)       vinfo((a)+2)
@@ -621,7 +627,6 @@ destination |pdf_ann_left| and |pdf_ann_top| are used for some types of destinat
 
 #  define pdf_end_link_node_size 3
 #  define pdf_end_thread_node_size 3
-#  define pdf_save_pos_node_size 3
 
 #  define pdf_colorstack_node_size 4
 #  define pdf_setmatrix_node_size 3

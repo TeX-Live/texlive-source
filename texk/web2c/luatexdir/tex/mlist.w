@@ -3350,14 +3350,14 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             goto CHECK_DIMENSIONS;
             break;
         case radical_noad:
-            if (subtype(q) == 4)
-                make_under_delimiter(q, cur_style);
-            else if (subtype(q) == 5)
-                make_over_delimiter(q, cur_style);
-            else if (subtype(q) == 6)
-                make_delimiter_under(q, cur_style);
-            else if (subtype(q) == 7)
+            if (subtype(q) == 6)
                 make_delimiter_over(q, cur_style);
+            else if (subtype(q) == 5)
+                make_delimiter_under(q, cur_style);
+            else if (subtype(q) == 4)
+                make_over_delimiter(q, cur_style);
+            else if (subtype(q) == 3)
+                make_under_delimiter(q, cur_style);
             else
                 make_radical(q, cur_style);
             break;

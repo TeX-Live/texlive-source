@@ -49,13 +49,8 @@
 #define err_help equiv(err_help_loc)
 #define text_direction int_par(text_direction_code)
 #define every_par equiv(every_par_loc)
-#define pdf_ignored_dimen dimen_par(pdf_ignored_dimen_code)
 #define par_direction int_par(par_direction_code)
 
-#define pdf_first_line_height  dimen_par(pdf_first_line_height_code)
-#define pdf_last_line_depth    dimen_par(pdf_last_line_depth_code)
-#define pdf_each_line_height   dimen_par(pdf_each_line_height_code)
-#define pdf_each_line_depth    dimen_par(pdf_each_line_depth_code)
 #define page_left_offset dimen_par(page_left_offset_code)
 #define page_top_offset dimen_par(page_top_offset_code)
 #define page_right_offset dimen_par(page_right_offset_code)
@@ -332,9 +327,9 @@ static void run_math_char_num (void) {
     if (cur_chr == 0)
         mval = scan_mathchar(tex_mathcode);
     else if (cur_chr == 1)
-        mval = scan_mathchar(xetex_mathcode);
+        mval = scan_mathchar(umath_mathcode);
     else
-        mval = scan_mathchar(xetexnum_mathcode);
+        mval = scan_mathchar(umathnum_mathcode);
     math_char_in_text(mval);
 }
 
@@ -347,7 +342,7 @@ static void run_math_given (void) {
 
 static void run_xmath_given (void) {
     mathcodeval mval;           /* to build up an argument to |set_math_char| */
-    mval = mathchar_from_integer(cur_chr, xetex_mathcode);
+    mval = mathchar_from_integer(cur_chr, umath_mathcode);
     math_char_in_text(mval);
 }
 
@@ -364,13 +359,13 @@ is short, since the |scan_rule_spec| routine already does most of what is
 required; thus, there is no need for a special action procedure.
 
 Note that baselineskip calculations are disabled after a rule in vertical
-mode, by setting |prev_depth:=pdf_ignored_dimen|.
+mode, by setting |prev_depth:=ignore_depth|.
 
 @c
 static void run_rule (void) {
     tail_append(scan_rule_spec());
     if (abs(mode) == vmode)
-        prev_depth = pdf_ignored_dimen;
+        prev_depth = ignore_depth;
     else if (abs(mode) == hmode)
         space_factor = 1000;
 }
@@ -550,9 +545,9 @@ static void run_math_char_num_mmode (void) {
     if (cur_chr == 0)
         mval = scan_mathchar(tex_mathcode);
     else if (cur_chr == 1)
-        mval = scan_mathchar(xetex_mathcode);
+        mval = scan_mathchar(umath_mathcode);
     else
-        mval = scan_mathchar(xetexnum_mathcode);
+        mval = scan_mathchar(umathnum_mathcode);
     set_math_char(mval);
 }
 
@@ -565,7 +560,7 @@ static void run_math_given_mmode (void) {
 
 static void run_xmath_given_mmode (void) {
     mathcodeval mval;           /* to build up an argument to |set_math_char| */
-    mval = mathchar_from_integer(cur_chr, xetex_mathcode);
+    mval = mathchar_from_integer(cur_chr, umath_mathcode);
     set_math_char(mval);
 }
 
@@ -575,7 +570,7 @@ static void run_delim_num (void) {
     if (cur_chr == 0)
         mval = scan_delimiter_as_mathchar(tex_mathcode);
     else
-        mval = scan_delimiter_as_mathchar(xetex_mathcode);
+        mval = scan_delimiter_as_mathchar(umath_mathcode);
     set_math_char(mval);
 
 }
@@ -586,7 +581,7 @@ static void run_vcenter (void) {
     normal_paragraph();
     push_nest();
     mode = -vmode;
-    prev_depth = pdf_ignored_dimen;
+    prev_depth = ignore_depth;
     if (every_vbox != null)
         begin_token_list(every_vbox, every_vbox_text);
 }
@@ -1550,7 +1545,7 @@ void begin_insert_or_adjust(void)
     normal_paragraph();
     push_nest();
     mode = -vmode;
-    prev_depth = pdf_ignored_dimen;
+    prev_depth = ignore_depth;
 }
 
 
@@ -1757,6 +1752,7 @@ void append_discretionary(void)
     tail_append(new_disc());
     subtype(tail) = (quarterword) cur_chr;
     if (cur_chr == explicit_disc) {
+        /* \- */
         c = get_pre_hyphen_char(cur_lang);
         if (c != 0) {
             vlink(pre_break(tail)) = new_char(equiv(cur_font_loc), c);
@@ -1769,7 +1765,9 @@ void append_discretionary(void)
             alink(vlink(post_break(tail))) = post_break(tail);
             tlink(post_break(tail)) = vlink(post_break(tail));
         }
+        disc_penalty(tail) = int_par(ex_hyphen_penalty_code);
     } else {
+        /* \discretionary */
         incr(save_ptr);
         set_saved_record(-1, saved_disc, 0, 0);
         new_save_level(disc_group);
@@ -1777,6 +1775,7 @@ void append_discretionary(void)
         push_nest();
         mode = -hmode;
         space_factor = 1000;
+        /* already preset: disc_penalty(tail) = int_par(hyphen_penalty_code); */
     }
 }
 
@@ -2250,14 +2249,14 @@ void prefixed_command(void)
             define(p, math_given_cmd, cur_val);
             break;
         case xmath_char_def_code:
-            mval = scan_mathchar(xetex_mathcode);
+            mval = scan_mathchar(umath_mathcode);
             cur_val =
                 (mval.class_value + (8 * mval.family_value)) * (65536 * 32) +
                 mval.character_value;
             define(p, xmath_given_cmd, cur_val);
             break;
         case umath_char_def_code:
-            mval = scan_mathchar(xetexnum_mathcode);
+            mval = scan_mathchar(umathnum_mathcode);
             cur_val =
                 (mval.class_value + (8 * mval.family_value)) * (65536 * 32) +
                 mval.character_value;
@@ -2499,13 +2498,13 @@ void prefixed_command(void)
         else
             cur_val1 = cur_level;
         if (cur_chr == math_code_base)
-            scan_extdef_math_code(cur_val1, xetex_mathcode);
+            scan_extdef_math_code(cur_val1, umath_mathcode);
         else if (cur_chr == math_code_base + 1)
-            scan_extdef_math_code(cur_val1, xetexnum_mathcode);
+            scan_extdef_math_code(cur_val1, umathnum_mathcode);
         else if (cur_chr == del_code_base)
-            scan_extdef_del_code(cur_val1, xetex_mathcode);
+            scan_extdef_del_code(cur_val1, umath_mathcode);
         else if (cur_chr == del_code_base + 1)
-            scan_extdef_del_code(cur_val1, xetexnum_mathcode);
+            scan_extdef_del_code(cur_val1, umathnum_mathcode);
         break;
     case def_family_cmd:
         p = cur_chr;
@@ -2654,6 +2653,9 @@ void prefixed_command(void)
             break;
         case 5:
             new_post_exhyphen_char();
+            break;
+        case 6:
+            new_hyphenation_min();
             break;
         }
         break;
@@ -3583,11 +3585,6 @@ void initialize(void)
         page_top_offset = one_inch;
         page_right_offset = one_inch;
         page_bottom_offset = one_inch;
-        pdf_ignored_dimen = ignore_depth;
-        pdf_each_line_height = pdf_ignored_dimen;
-        pdf_each_line_depth = pdf_ignored_dimen;
-        pdf_first_line_height = pdf_ignored_dimen;
-        pdf_last_line_depth = pdf_ignored_dimen;
         ini_init_primitives();
         hash_used = frozen_control_sequence;    /* nothing is used */
         hash_high = 0;

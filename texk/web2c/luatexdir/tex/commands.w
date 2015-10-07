@@ -238,10 +238,10 @@ void initialize_commands(void)
                      int_base + pdf_image_hicolor_code, int_base);
     primitive_pdftex("pdfimageapplygamma", assign_int_cmd,
                      int_base + pdf_image_apply_gamma_code, int_base);
-    primitive_pdftex("pdfadjustspacing", assign_int_cmd,
-                     int_base + pdf_adjust_spacing_code, int_base);
-    primitive_pdftex("pdfprotrudechars", assign_int_cmd,
-                     int_base + pdf_protrude_chars_code, int_base);
+    primitive_luatex("adjustspacing", assign_int_cmd,
+                     int_base + adjust_spacing_code, int_base);
+    primitive_luatex("protrudechars", assign_int_cmd,
+                     int_base + protrude_chars_code, int_base);
     primitive_pdftex("pdftracingfonts", assign_int_cmd,
                      int_base + pdf_tracing_fonts_code, int_base);
     primitive_pdftex("pdfgentounicode", assign_int_cmd,
@@ -298,30 +298,16 @@ void initialize_commands(void)
                      dimen_base + pdf_h_origin_code, dimen_base);
     primitive_pdftex("pdfvorigin", assign_dimen_cmd,
                      dimen_base + pdf_v_origin_code, dimen_base);
-    primitive_omega("pagewidth", assign_dimen_cmd, dimen_base + page_width_code,
+    primitive_luatex("pagewidth", assign_dimen_cmd, dimen_base + page_width_code,
                     dimen_base);
-    primitive_pdftex("pdfpagewidth", assign_dimen_cmd,
-                     dimen_base + page_width_code, dimen_base);
-    primitive_omega("pageheight", assign_dimen_cmd,
+    primitive_luatex("pageheight", assign_dimen_cmd,
                     dimen_base + page_height_code, dimen_base);
-    primitive_pdftex("pdfpageheight", assign_dimen_cmd,
-                     dimen_base + page_height_code, dimen_base);
     primitive_pdftex("pdflinkmargin", assign_dimen_cmd,
                      dimen_base + pdf_link_margin_code, dimen_base);
     primitive_pdftex("pdfdestmargin", assign_dimen_cmd,
                      dimen_base + pdf_dest_margin_code, dimen_base);
     primitive_pdftex("pdfthreadmargin", assign_dimen_cmd,
                      dimen_base + pdf_thread_margin_code, dimen_base);
-    primitive_pdftex("pdffirstlineheight", assign_dimen_cmd,
-                     dimen_base + pdf_first_line_height_code, dimen_base);
-    primitive_pdftex("pdflastlinedepth", assign_dimen_cmd,
-                     dimen_base + pdf_last_line_depth_code, dimen_base);
-    primitive_pdftex("pdfeachlineheight", assign_dimen_cmd,
-                     dimen_base + pdf_each_line_height_code, dimen_base);
-    primitive_pdftex("pdfeachlinedepth", assign_dimen_cmd,
-                     dimen_base + pdf_each_line_depth_code, dimen_base);
-    primitive_pdftex("pdfignoreddimen", assign_dimen_cmd,
-                     dimen_base + pdf_ignored_dimen_code, dimen_base);
     primitive_pdftex("pdfpxdimen", assign_dimen_cmd,
                      dimen_base + pdf_px_dimen_code, dimen_base);
 
@@ -347,14 +333,14 @@ void initialize_commands(void)
     eqtb[frozen_end_group] = eqtb[cur_val];
     primitive_tex("expandafter", expand_after_cmd, 0, 0);
     primitive_tex("font", def_font_cmd, 0, 0);
-    primitive_pdftex("letterspacefont", letterspace_font_cmd, 0, 0);
+    primitive_luatex("letterspacefont", letterspace_font_cmd, 0, 0);
     primitive_pdftex("pdfcopyfont", pdf_copy_font_cmd, 0, 0);
     primitive_tex("fontdimen", assign_font_dimen_cmd, 0, 0);
     primitive_tex("halign", halign_cmd, 0, 0);
     primitive_tex("hrule", hrule_cmd, 0, 0);
     primitive_tex("ignorespaces", ignore_spaces_cmd, 0, 0);
     primitive_tex("insert", insert_cmd, 0, 0);
-    primitive_omega("leftghost", char_ghost_cmd, 0, 0);
+    primitive_luatex("leftghost", char_ghost_cmd, 0, 0);
     primitive_tex("mark", mark_cmd, 0, 0);
     primitive_tex("mathaccent", math_accent_cmd, 0, 0);
     primitive_umath("Umathaccent", math_accent_cmd, 1, 0);
@@ -368,7 +354,6 @@ void initialize_commands(void)
     primitive_tex("noboundary", no_boundary_cmd, 0, 0);
     primitive_tex("noexpand", no_expand_cmd, 0, 0);
     primitive_luatex("primitive", no_expand_cmd, 1, 0);
-    primitive_pdftex("pdfprimitive", no_expand_cmd, 1, 0);
     primitive_tex("nonscript", non_script_cmd, 0, 0);
     primitive_tex("omit", omit_cmd, 0, 0);
     primitive_tex("parshape", set_tex_shape_cmd, par_shape_loc, par_shape_loc);
@@ -385,7 +370,7 @@ void initialize_commands(void)
     primitive_tex("relax", relax_cmd, too_big_char, too_big_char);
     cs_text(frozen_relax) = maketexstring("relax");
     eqtb[frozen_relax] = eqtb[cur_val];
-    primitive_omega("rightghost", char_ghost_cmd, 1, 0);
+    primitive_luatex("rightghost", char_ghost_cmd, 1, 0);
     primitive_tex("setbox", set_box_cmd, 0, 0);
     primitive_tex("the", the_cmd, 0, 0);
     primitive_tex("toks", toks_register_cmd, 0, 0);
@@ -428,7 +413,7 @@ void initialize_commands(void)
     /* The hash table is initialized with `\.{\\count}', `\.{\\attribute}',
        `\.{\\dimen}', `\.{\\skip}', and `\.{\\muskip}' all having |register|
        as their command code; they are distinguished by the |chr_code|, which
-       is either |int_val|, |attr_val|, |dimen_val|, |glue_val|, or |mu_val|. 
+       is either |int_val|, |attr_val|, |dimen_val|, |glue_val|, or |mu_val|.
      */
     primitive_tex("count", register_cmd, int_val_level, 0);
     primitive_luatex("attribute", register_cmd, attr_val_level, 0);
@@ -448,7 +433,6 @@ void initialize_commands(void)
     primitive_tex("lastskip", last_item_cmd, lastskip_code, 0);
     primitive_tex("inputlineno", last_item_cmd, input_line_no_code, 0);
     primitive_tex("badness", last_item_cmd, badness_code, 0);
-    primitive_pdftex("pdftexversion", last_item_cmd, luatex_version_code, 0); /*OBSOLETE */
     primitive_luatex("luatexversion", last_item_cmd, luatex_version_code, 0);
     primitive_pdftex("pdflastobj", last_item_cmd, pdf_last_obj_code, 0);
     primitive_pdftex("pdflastxform", last_item_cmd, pdf_last_xform_code, 0);
@@ -456,12 +440,12 @@ void initialize_commands(void)
     primitive_pdftex("pdflastximagepages", last_item_cmd,
                      pdf_last_ximage_pages_code, 0);
     primitive_pdftex("pdflastannot", last_item_cmd, pdf_last_annot_code, 0);
-    primitive_pdftex("pdflastxpos", last_item_cmd, pdf_last_x_pos_code, 0);
-    primitive_pdftex("pdflastypos", last_item_cmd, pdf_last_y_pos_code, 0);
+    primitive_luatex("lastxpos", last_item_cmd, last_x_pos_code, 0);
+    primitive_luatex("lastypos", last_item_cmd, last_y_pos_code, 0);
     primitive_pdftex("pdfretval", last_item_cmd, pdf_retval_code, 0);
     primitive_pdftex("pdflastximagecolordepth", last_item_cmd,
                      pdf_last_ximage_colordepth_code, 0);
-    primitive_pdftex("pdfrandomseed", last_item_cmd, random_seed_code, 0);
+    primitive_luatex("randomseed", last_item_cmd, random_seed_code, 0);
     primitive_pdftex("pdflastlink", last_item_cmd, pdf_last_link_code, 0);
 
     primitive_tex("number", convert_cmd, number_code, 0);
@@ -471,28 +455,26 @@ void initialize_commands(void)
     primitive_etex("eTeXVersion", convert_cmd, etex_code, 0);
     primitive_tex("fontname", convert_cmd, font_name_code, 0);
     primitive_luatex("fontid", convert_cmd, font_id_code, 0);
-    primitive_pdftex("pdftexrevision", convert_cmd, luatex_revision_code, 0); /*OBSOLETE*/
     primitive_luatex("luatexrevision", convert_cmd, luatex_revision_code, 0);
     primitive_luatex("luatexdatestamp", convert_cmd, luatex_date_code, 0);
-    primitive_pdftex("pdftexbanner", convert_cmd, luatex_banner_code, 0); /*OBSOLETE*/
-    primitive_pdftex("luatexbanner", convert_cmd, luatex_banner_code, 0); /*will replace pdftexbanner*/
+    primitive_luatex("luatexbanner", convert_cmd, luatex_banner_code, 0);
     primitive_pdftex("pdffontname", convert_cmd, pdf_font_name_code, 0);
     primitive_pdftex("pdffontobjnum", convert_cmd, pdf_font_objnum_code, 0);
     primitive_pdftex("pdffontsize", convert_cmd, pdf_font_size_code, 0);
     primitive_pdftex("pdfpageref", convert_cmd, pdf_page_ref_code, 0);
-    primitive_pdftex("leftmarginkern", convert_cmd, left_margin_kern_code, 0);
-    primitive_pdftex("rightmarginkern", convert_cmd, right_margin_kern_code, 0);
+    primitive_luatex("leftmarginkern", convert_cmd, left_margin_kern_code, 0);
+    primitive_luatex("rightmarginkern", convert_cmd, right_margin_kern_code, 0);
     primitive_pdftex("pdfxformname", convert_cmd, pdf_xform_name_code, 0);
     primitive_pdftex("pdfcreationdate", convert_cmd, pdf_creation_date_code, 0);
-    primitive_pdftex("pdfuniformdeviate", convert_cmd, uniform_deviate_code, 0);
+    primitive_luatex("uniformdeviate", convert_cmd, uniform_deviate_code, 0);
     primitive_pdftex("pdfcolorstackinit", convert_cmd, pdf_colorstack_init_code,
                      0);
-    primitive_pdftex("pdfnormaldeviate", convert_cmd, normal_deviate_code, 0);
+    primitive_luatex("normaldeviate", convert_cmd, normal_deviate_code, 0);
     primitive_core("directlua", convert_cmd, lua_code, 0);
     primitive_luatex("luafunction", convert_cmd, lua_function_code, 0);
     primitive_luatex("luaescapestring", convert_cmd, lua_escape_string_code, 0);
     primitive_luatex("mathstyle", convert_cmd, math_style_code, 0);
-    primitive_pdftex("expanded", convert_cmd, expanded_code, 0);
+    primitive_luatex("expanded", convert_cmd, expanded_code, 0);
     primitive_tex("jobname", convert_cmd, job_name_code, 0);
     primitive_luatex("formatname", convert_cmd, format_name_code, 0);
     primitive_pdftex("pdfinsertht", convert_cmd, pdf_insert_ht_code, 0);
@@ -518,8 +500,6 @@ void initialize_commands(void)
     primitive_tex("iffalse", if_test_cmd, if_false_code, 0);
     primitive_tex("ifcase", if_test_cmd, if_case_code, 0);
     primitive_luatex("ifprimitive", if_test_cmd, if_primitive_code, 0);
-    primitive_pdftex("ifpdfprimitive", if_test_cmd, if_primitive_code, 0);
-
     primitive_tex("fi", fi_or_else_cmd, fi_code, 0);
     cs_text(frozen_fi) = maketexstring("fi");
     eqtb[frozen_fi] = eqtb[cur_val];
@@ -593,10 +573,10 @@ void initialize_commands(void)
     primitive_tex("cleaders", leader_ship_cmd, c_leaders, 0);
     primitive_tex("xleaders", leader_ship_cmd, x_leaders, 0);
     primitive_luatex("gleaders", leader_ship_cmd, g_leaders, 0);
-    primitive_aleph("boxdir", assign_box_dir_cmd, 0, 0);
+    primitive_luatex("boxdir", assign_box_dir_cmd, 0, 0);
     primitive_tex("indent", start_par_cmd, 1, 0);
     primitive_tex("noindent", start_par_cmd, 0, 0);
-    primitive_pdftex("quitvmode", start_par_cmd, 2, 0);
+    primitive_luatex("quitvmode", start_par_cmd, 2, 0);
     primitive_tex("unpenalty", remove_item_cmd, penalty_node, 0);
     primitive_tex("unkern", remove_item_cmd, kern_node, 0);
     primitive_tex("unskip", remove_item_cmd, glue_node, 0);
@@ -606,8 +586,8 @@ void initialize_commands(void)
     primitive_tex("unvcopy", un_vbox_cmd, copy_code, 0);
     primitive_tex("-", discretionary_cmd, explicit_disc, 0);
     primitive_tex("discretionary", discretionary_cmd, discretionary_disc, 0);
-    primitive_omega("localleftbox", assign_local_box_cmd, 0, 0);
-    primitive_omega("localrightbox", assign_local_box_cmd, 1, 0);
+    primitive_luatex("localleftbox", assign_local_box_cmd, 0, 0);
+    primitive_luatex("localrightbox", assign_local_box_cmd, 1, 0);
 
     primitive_umath("Ustartmath", math_shift_cs_cmd, text_style, 0);
     primitive_umath("Ustopmath", math_shift_cs_cmd, cramped_text_style, 0);
@@ -923,13 +903,14 @@ void initialize_commands(void)
     primitive_luatex("posthyphenchar", hyph_data_cmd, 3, 0);
     primitive_luatex("preexhyphenchar", hyph_data_cmd, 4, 0);
     primitive_luatex("postexhyphenchar", hyph_data_cmd, 5, 0);
+    primitive_luatex("hyphenationmin", hyph_data_cmd, 6, 0);
     primitive_tex("hyphenchar", assign_font_int_cmd, 0, 0);
     primitive_tex("skewchar", assign_font_int_cmd, 1, 0);
-    primitive_pdftex("lpcode", assign_font_int_cmd, lp_code_base, 0);
-    primitive_pdftex("rpcode", assign_font_int_cmd, rp_code_base, 0);
-    primitive_pdftex("efcode", assign_font_int_cmd, ef_code_base, 0);
-    primitive_pdftex("tagcode", assign_font_int_cmd, tag_code, 0);
-    primitive_pdftex("pdfnoligatures", assign_font_int_cmd, no_lig_code, 0);
+    primitive_luatex("lpcode", assign_font_int_cmd, lp_code_base, 0);
+    primitive_luatex("rpcode", assign_font_int_cmd, rp_code_base, 0);
+    primitive_luatex("efcode", assign_font_int_cmd, ef_code_base, 0);
+    primitive_luatex("tagcode", assign_font_int_cmd, tag_code, 0);
+    primitive_luatex("ignoreligaturesinfont", assign_font_int_cmd, no_lig_code, 0);
     primitive_tex("batchmode", set_interaction_cmd, batch_mode, 0);
     primitive_tex("nonstopmode", set_interaction_cmd, nonstop_mode, 0);
     primitive_tex("scrollmode", set_interaction_cmd, scroll_mode, 0);
@@ -953,27 +934,27 @@ void initialize_commands(void)
     cs_text(frozen_special) = maketexstring("special");
     eqtb[frozen_special] = eqtb[cur_val];
     primitive_tex("immediate", extension_cmd, immediate_code, 0);
-    primitive_omega("localinterlinepenalty", assign_int_cmd,
+    primitive_luatex("localinterlinepenalty", assign_int_cmd,
                     int_base + local_inter_line_penalty_code, int_base);
-    primitive_omega("localbrokenpenalty", assign_int_cmd,
+    primitive_luatex("localbrokenpenalty", assign_int_cmd,
                     int_base + local_broken_penalty_code, int_base);
-    primitive_omega("pagedir", assign_dir_cmd, int_base + page_direction_code,
+    primitive_luatex("pagedir", assign_dir_cmd, int_base + page_direction_code,
                     dir_base);
-    primitive_omega("bodydir", assign_dir_cmd, int_base + body_direction_code,
+    primitive_luatex("bodydir", assign_dir_cmd, int_base + body_direction_code,
                     dir_base);
-    primitive_omega("pardir", assign_dir_cmd, int_base + par_direction_code,
+    primitive_luatex("pardir", assign_dir_cmd, int_base + par_direction_code,
                     dir_base);
-    primitive_omega("textdir", assign_dir_cmd, int_base + text_direction_code,
+    primitive_luatex("textdir", assign_dir_cmd, int_base + text_direction_code,
                     dir_base);
-    primitive_omega("mathdir", assign_dir_cmd, int_base + math_direction_code,
+    primitive_luatex("mathdir", assign_dir_cmd, int_base + math_direction_code,
                     dir_base);
     primitive_luatex("pageleftoffset", assign_dimen_cmd,
                      dimen_base + page_left_offset_code, dimen_base);
     primitive_luatex("pagetopoffset", assign_dimen_cmd,
                      dimen_base + page_top_offset_code, dimen_base);
-    primitive_aleph("pagerightoffset", assign_dimen_cmd,
+    primitive_luatex("pagerightoffset", assign_dimen_cmd,
                     dimen_base + page_right_offset_code, dimen_base);
-    primitive_aleph("pagebottomoffset", assign_dimen_cmd,
+    primitive_luatex("pagebottomoffset", assign_dimen_cmd,
                     dimen_base + page_bottom_offset_code, dimen_base);
     primitive_pdftex("pdfliteral", extension_cmd, pdf_literal_node, 0);
     primitive_pdftex("pdfcolorstack", extension_cmd, pdf_colorstack_node, 0);
@@ -994,7 +975,7 @@ void initialize_commands(void)
     primitive_pdftex("pdfthread", extension_cmd, pdf_thread_node, 0);
     primitive_pdftex("pdfstartthread", extension_cmd, pdf_start_thread_node, 0);
     primitive_pdftex("pdfendthread", extension_cmd, pdf_end_thread_node, 0);
-    primitive_pdftex("pdfsavepos", extension_cmd, pdf_save_pos_node, 0);
+    primitive_luatex("savepos", extension_cmd, save_pos_node, 0);
     primitive_pdftex("pdfinfo", extension_cmd, pdf_info_code, 0);
     primitive_pdftex("pdfcatalog", extension_cmd, pdf_catalog_code, 0);
     primitive_pdftex("pdfnames", extension_cmd, pdf_names_code, 0);
@@ -1008,10 +989,10 @@ void initialize_commands(void)
                      save_cat_code_table_code, 0);
     primitive_luatex("initcatcodetable", extension_cmd,
                      init_cat_code_table_code, 0);
-    primitive_pdftex("pdfsetrandomseed", extension_cmd, set_random_seed_code,
+    primitive_luatex("setrandomseed", extension_cmd, set_random_seed_code,
                      0);
     primitive_luatex("latelua", extension_cmd, late_lua_node, 0);
-    primitive_pdftex("pdffontexpand", extension_cmd, pdf_font_expand_code, 0);
+    primitive_pdftex("expandglyphsinfont", extension_cmd, font_expand_code, 0);
     primitive_pdftex("pdfglyphtounicode", extension_cmd,
                      pdf_glyph_to_unicode_code, 0);
 
@@ -1078,14 +1059,9 @@ void initialize_etex_commands(void)
     primitive_etex("currentiflevel", last_item_cmd, current_if_level_code, 0);
     primitive_etex("currentiftype", last_item_cmd, current_if_type_code, 0);
     primitive_etex("currentifbranch", last_item_cmd, current_if_branch_code, 0);
-
-    primitive_omega("charwd", last_item_cmd, font_char_wd_code, 0);
     primitive_etex("fontcharwd", last_item_cmd, font_char_wd_code, 0);
-    primitive_omega("charht", last_item_cmd, font_char_ht_code, 0);
     primitive_etex("fontcharht", last_item_cmd, font_char_ht_code, 0);
-    primitive_omega("chardp", last_item_cmd, font_char_dp_code, 0);
     primitive_etex("fontchardp", last_item_cmd, font_char_dp_code, 0);
-    primitive_omega("charit", last_item_cmd, font_char_ic_code, 0);
     primitive_etex("fontcharic", last_item_cmd, font_char_ic_code, 0);
 
     primitive_etex("parshapelength", last_item_cmd, par_shape_length_code, 0);
@@ -1126,11 +1102,9 @@ void initialize_etex_commands(void)
     primitive_etex("ifdefined", if_test_cmd, if_def_code, 0);
     primitive_etex("ifcsname", if_test_cmd, if_cs_code, 0);
     primitive_etex("iffontchar", if_test_cmd, if_font_char_code, 0);
-    primitive_pdftex("ifincsname", if_test_cmd, if_in_csname_code, 0);
+    primitive_luatex("ifincsname", if_test_cmd, if_in_csname_code, 0);
     primitive_luatex("ifabsnum", if_test_cmd, if_abs_num_code, 0);
     primitive_luatex("ifabsdim", if_test_cmd, if_abs_dim_code, 0);
-    primitive_pdftex("ifpdfabsnum", if_test_cmd, if_abs_num_code, 0);
-    primitive_pdftex("ifpdfabsdim", if_test_cmd, if_abs_dim_code, 0);
 
     /* The |protected| feature of \eTeX\ defines the \.{\\protected} prefix
        command for macro definitions.  Such macros are protected against

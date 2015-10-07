@@ -1269,7 +1269,7 @@ void append_to_vlist(halfword b)
 {
     scaled d;                   /* deficiency of space between baselines */
     halfword p;                 /* a new glue node */
-    if (prev_depth > dimen_par(pdf_ignored_dimen_code)) {
+    if (prev_depth > ignore_depth) {
         if ((type(b) == hlist_node) && is_mirrored(box_dir(b))) {
             d = width(glue_par(baseline_skip_code)) - prev_depth - depth(b);
         } else {
@@ -1756,7 +1756,7 @@ void begin_box(int box_context)
         push_nest();
         cur_list.mode_field = -k;
         if (k == vmode) {
-            prev_depth = dimen_par(pdf_ignored_dimen_code);
+            prev_depth = ignore_depth;
             if (every_vbox != null)
                 begin_token_list(every_vbox, every_vbox_text);
         } else {

@@ -152,6 +152,7 @@ extern dirtab_entry *dir_tab;
 extern dirtab_entry *ttf_name_lookup(const char *s, boolean required);
 extern dirtab_entry *ttf_seek_tab(const char *name, TTF_LONG offset);
 
+extern void otc_read_tabdir(int index);
 extern void ttf_read_tabdir(void);
 extern void ttf_read_head(void);
 extern void ttf_read_hhea(void);
