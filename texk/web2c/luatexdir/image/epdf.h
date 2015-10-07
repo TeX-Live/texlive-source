@@ -199,7 +199,11 @@ PdfDocument *refMemStreamPdfDocument(char *docstream, unsigned long long streams
 
 
 #define STREAM_CHECKSUM_SIZE 16    // md5
+#if defined(_MSC_VER) // VS 2010 cannot compile log(ULONG_MAX)/log(16)
+#define STRSTREAM_CHECKSUM_SIZE 1+((unsigned int)(log((double)ULONG_MAX)/log(16.0)))    // djb2 printable digest as hex stream
+#else
 #define STRSTREAM_CHECKSUM_SIZE 1+((unsigned int)(log(ULONG_MAX)/log(16)))    // djb2 printable digest as hex stream
+#endif
 #define STREAM_FILE_ID_LEN   2048  // 2048 bytes are enough to make a strong almost-unique name
 #define STREAM_URI           "data:application/pdf,"
 #define STREAM_URI_LEN       21    // length of "data:application/pdf," without final '\0'
