@@ -53,7 +53,7 @@ luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(POPPLER_LIBS)
 luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 luatex_LDADD = libluatex.a libff.a libluamisc.a libluasocket.a $(LUA_LIBS) $(luatex_postldadd)
-luajittex_LDADD = libluajittex.a libjitff.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS) $(luatex_postldadd)
+luajittex_LDADD = libluajittex.a libff.a libluajitmisc.a libluajitsocket.a $(LUAJIT_LIBS) $(luatex_postldadd)
 
 luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
 luatex_DEPENDENCIES = $(luatex_depend) libluatex.a

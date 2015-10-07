@@ -1,36 +1,26 @@
 ## texk/web2c/luatexdir/am/luafontforge.am: Makefile fragment for libff.
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## luafontforge
 ##
-EXTRA_LIBRARIES += libff.a libjitff.a
+EXTRA_LIBRARIES += libff.a
 
-libff_a_DEPENDENCIES = libunilib.a libluamisc.a
-libjitff_a_DEPENDENCIES = libunilib.a libluajitmisc.a
+$(libff_a_OBJECTS): libunilib.a
 
-$(libff_a_OBJECTS): $(libff_a_DEPENDENCIES)
-$(libjitff_a_OBJECTS): $(libjitff_a_DEPENDENCIES)
+libff_a_CPPFLAGS = $(AM_CPPFLAGS) \
+	-DLUA_FF_LIB=1 -D_NO_PYTHON=1 -DX_DISPLAY_MISSING=1 -DUSE_OUR_MEMORY=1 \
+	-I$(srcdir)/w2c \
+	-I$(srcdir)/luatexdir \
+	-I$(srcdir)/luatexdir/unilib \
+	-I$(srcdir)/luatexdir/luafontloader/fontforge/inc \
+	-I$(srcdir)/luatexdir/luafontloader/fontforge/fontforge
 
-libff_a_postflags = -DLUA_FF_LIB=1 -D_NO_PYTHON=1 -DX_DISPLAY_MISSING=1 \
-	-DUSE_OUR_MEMORY=1 \
-	-I$(top_srcdir)/w2c \
-	-I$(top_srcdir)/luatexdir \
-	-I$(top_srcdir)/luatexdir/unilib \
-	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/inc \
-	-I$(top_srcdir)/luatexdir/luafontloader/fontforge/fontforge
-
-libff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) $(libff_a_postflags)
-libjitff_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DLuajitTeX $(libff_a_postflags)
 
 libff_a_CFLAGS = # $(WARNING_CFLAGS)
-libjitff_a_CFLAGS = # $(WARNING_CFLAGS)
 
-nodist_libff_a_SOURCES = $(libff_sources)
-nodist_libjitff_a_SOURCES = $(libff_sources)
-
-libff_sources = \
+libff_a_SOURCES = \
 	luatexdir/luafontloader/fontforge/fontforge/PfEd.h \
 	luatexdir/luafontloader/fontforge/fontforge/autohint.c \
 	luatexdir/luafontloader/fontforge/fontforge/baseviews.h \
@@ -96,11 +86,7 @@ libff_sources = \
 	luatexdir/luafontloader/fontforge/inc/basics.h \
 	luatexdir/luafontloader/fontforge/inc/gfile.h \
 	luatexdir/luafontloader/fontforge/inc/gimage.h \
-	luatexdir/luafontloader/fontforge/inc/intl.h \
-	luatexdir/luafontloader/src/ffdummies.c \
-	luatexdir/luafontloader/src/luafflib.c
-
-EXTRA_DIST += $(libff_sources)
+	luatexdir/luafontloader/fontforge/inc/intl.h
 
 ## Not used
 ##

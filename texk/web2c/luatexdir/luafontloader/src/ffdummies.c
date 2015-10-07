@@ -19,20 +19,9 @@
 
 /* some dummy functions and variables so that a few ff source files can be ignored */
 
-#include "uiinterface.h"
-#include "fontforgevw.h"
-#include "splinefont.h"
+#include "ffdummies.h"
+
 #include <stdarg.h>
-#include <stdio.h>
-#include <basics.h>
-#include <ustring.h>
-
-
-
-/* fix for non-gcc compilation: */
-#if !defined(__GNUC__) || (__GNUC__ < 2)
-#  define __attribute__(x)
-#endif                          /* !defined(__GNUC__) || (__GNUC__ < 2) */
 
 char **gww_errors = NULL;
 int gww_error_count = 0;
@@ -91,7 +80,7 @@ static void LUAUI__LogError(const char *format, va_list ap)
 /* this is not static because it is used by gwwiconv.c */
 
 __attribute__ ((format(printf, 1, 2)))
-void LUAUI_LogError(const char *format, ...)
+static void LUAUI_LogError(const char *format, ...)
 {
     va_list ap;
     va_start(ap, format);
@@ -158,7 +147,7 @@ static char *LUAUI_ask_string(const char *title, const char *def,
     (void) title;
     (void) def;
     (void) question;
-    return ((char *) def);
+    return def ? strdup(def) : NULL;
 }
 
 static char *LUAUI_open_file(const char *title, const char *defaultfile,
@@ -282,12 +271,14 @@ void ScriptPrint(FontViewBase * fv, int type, int32 * pointsizes,
     (void) outputfile;
 }
 
-int PdfDumpGlyphResources(void *pi, SplineChar * sc)
+#if 0 /* unused */
+static int PdfDumpGlyphResources(void *pi, SplineChar * sc)
 {
     (void) pi;
     (void) sc;
     return 0;
 }
+#endif
 
 /* autotrace.c */
 int autotrace_ask = 0, mf_ask = 0, mf_clearbackgrounds = 0, mf_showerrors = 0;
