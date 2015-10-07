@@ -1,6 +1,7 @@
 2015-10-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Sync with the upstream trunk.
+	* image/epdf.h: Support Visual Studio 2010 for log().
 
 2015-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
