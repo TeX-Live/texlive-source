@@ -40,7 +40,6 @@ void init_col(void);
 #define every_cr          equiv(every_cr_loc)
 #define display_indent    dimen_par(display_indent_code)
 #define max_depth         dimen_par(max_depth_code)
-#define pdf_ignored_dimen dimen_par(pdf_ignored_dimen_code)
 #define overfull_rule     dimen_par(overfull_rule_code)
 
 @ It's sort of a miracle whenever \.{\\halign} and \.{\\valign} work, because
@@ -494,7 +493,7 @@ static void init_span(pointer p)
     if (cur_list.mode_field == -hmode) {
         space_factor = 1000;
     } else {
-        prev_depth = pdf_ignored_dimen;
+        prev_depth = ignore_depth;
         normal_paragraph();
     }
     cur_span = p;

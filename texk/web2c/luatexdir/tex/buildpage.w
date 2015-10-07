@@ -38,7 +38,6 @@
 #define vsize dimen_par(vsize_code)
 #define vfuzz dimen_par(vfuzz_code)
 #define max_depth dimen_par(max_depth_code)
-#define pdf_ignored_dimen dimen_par(pdf_ignored_dimen_code)
 
 #define output_routine equiv(output_routine_loc)
 #define split_top_skip glue_par(split_top_skip_code)
@@ -971,7 +970,7 @@ void fire_up(halfword c)
             incr(dead_cycles);
             push_nest();
             mode = -vmode;
-            prev_depth = pdf_ignored_dimen;
+            prev_depth = ignore_depth;
             mode_line = -line;
             begin_token_list(output_routine, output_text);
             new_save_level(output_group);

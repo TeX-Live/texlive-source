@@ -406,7 +406,6 @@ make_lua_key(adjusted_hbox);\
 make_lua_key(advance);\
 make_lua_key(after_display);\
 make_lua_key(after_output);\
-make_lua_key(aleph);\
 make_lua_key(align);\
 make_lua_key(align_head);\
 make_lua_key(align_set);\
@@ -569,7 +568,6 @@ make_lua_key(num);\
 make_lua_key(number);\
 make_lua_key(objcompression);\
 make_lua_key(objnum);\
-make_lua_key(omega);\
 make_lua_key(ordering);\
 make_lua_key(output);\
 make_lua_key(pLTL);\
@@ -709,7 +707,6 @@ init_lua_key(adjusted_hbox);\
 init_lua_key(advance);\
 init_lua_key(after_display);\
 init_lua_key(after_output);\
-init_lua_key(aleph);\
 init_lua_key(align);\
 init_lua_key(align_head);\
 init_lua_key(align_set);\
@@ -863,7 +860,6 @@ init_lua_key(num);\
 init_lua_key(number);\
 init_lua_key(objcompression);\
 init_lua_key(objnum);\
-init_lua_key(omega);\
 init_lua_key(ordering);\
 init_lua_key(output);\
 init_lua_key(page);\
@@ -1076,7 +1072,6 @@ use_lua_key(adjusted_hbox);
 use_lua_key(advance);
 use_lua_key(after_display);
 use_lua_key(after_output);
-use_lua_key(aleph);
 use_lua_key(align);
 use_lua_key(align_head);
 use_lua_key(align_set);
@@ -1239,7 +1234,6 @@ use_lua_key(num);
 use_lua_key(number);
 use_lua_key(objcompression);
 use_lua_key(objnum);
-use_lua_key(omega);
 use_lua_key(ordering);
 use_lua_key(output);
 use_lua_key(pLTL);

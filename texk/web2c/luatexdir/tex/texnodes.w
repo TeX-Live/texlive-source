@@ -78,7 +78,7 @@ const char *node_fields_insert[] =
     { "attr", "cost", "depth", "height", "spec", "head", NULL };
 const char *node_fields_mark[] = { "attr", "class", "mark", NULL };
 const char *node_fields_adjust[] = { "attr", "head", NULL };
-const char *node_fields_disc[] = { "attr", "pre", "post", "replace", NULL };
+const char *node_fields_disc[] = { "attr", "pre", "post", "replace", "penalty", NULL };
 const char *node_fields_math[] = { "attr", "surround", NULL };
 const char *node_fields_glue[] = { "attr", "spec", "leader", NULL };
 const char *node_fields_kern[] = { "attr", "kern", "expansion_factor", NULL };
@@ -182,7 +182,7 @@ const char *node_fields_whatsit_pdf_start_thread[] =
     "named_id", "thread_id", "thread_attr", NULL
 };
 const char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
-const char *node_fields_whatsit_pdf_save_pos[] = { "attr", NULL };
+const char *node_fields_whatsit_save_pos[] = { "attr", NULL };
 const char *node_fields_whatsit_late_lua[] =
     { "attr", "reg", "data", "name", "string", NULL };
 const char *node_fields_whatsit_close_lua[] = { "attr", "reg", NULL };
@@ -296,8 +296,8 @@ node_info whatsit_node_data[] = {
      node_fields_whatsit_pdf_start_thread, "pdf_start_thread"},
     {pdf_end_thread_node, pdf_end_thread_node_size,
      node_fields_whatsit_pdf_end_thread, "pdf_end_thread"},
-    {pdf_save_pos_node, pdf_save_pos_node_size,
-     node_fields_whatsit_pdf_save_pos, "pdf_save_pos"},
+    {save_pos_node, save_pos_node_size,
+     node_fields_whatsit_save_pos, "save_pos"},
     {pdf_thread_data_node, pdf_thread_node_size, NULL, "pdf_thread_data"},
     {pdf_link_data_node, pdf_annot_node_size, NULL, "pdf_link_data"},
     {fake_node, fake_node_size, NULL, fake_node_name},
@@ -1166,7 +1166,7 @@ void flush_node(halfword p)
         case pdf_refximage_node:
         case pdf_end_link_node:
         case pdf_end_thread_node:
-        case pdf_save_pos_node:
+        case save_pos_node:
         case local_par_node:
             break;
 
@@ -1474,7 +1474,7 @@ void check_node(halfword p)
         case pdf_refximage_node:
         case pdf_end_link_node:
         case pdf_end_thread_node:
-        case pdf_save_pos_node:
+        case save_pos_node:
         case local_par_node:
             break;
         default:
@@ -2144,8 +2144,8 @@ static halfword new_attribute_node(unsigned int i, int v)
     type(r) = attribute_node;
     attribute_id(r) = (halfword) i;
     attribute_value(r) = v;
-    /* not used but nicer in print */ 
-    subtype(r) = 0; 
+    /* not used but nicer in print */
+    subtype(r) = 0;
     return r;
 }
 
@@ -2213,37 +2213,37 @@ void build_attribute_list(halfword b)
 
 
 @ @c
-halfword current_attribute_list(void) 
+halfword current_attribute_list(void)
 {
     if (max_used_attr >= 0) {
       if (attr_list_cache == cache_disabled) {
             update_attribute_cache();
-      } 
-      return attr_list_cache ; 
+      }
+      return attr_list_cache ;
     }
     return null ;
 }
 
 
 @ @c
-void reassign_attribute(halfword n, halfword new) 
+void reassign_attribute(halfword n, halfword new)
 {
     halfword old;
     old = node_attr(n);
     if (new == null) {
          /* there is nothing to assign but we need to check for an old value */
-        if (old != null) 
+        if (old != null)
             delete_attribute_ref(old); /* also nulls attr field of n */
     } else if (old == null) {
          /* nothing is assigned so we just do that now */
         assign_attribute_ref(n,new);
-    } else if (old != new) { 
+    } else if (old != new) {
          /* something is assigned so we need to clean up and assign then */
         delete_attribute_ref(old);
         assign_attribute_ref(n,new);
     }
      /* else: same value so there is no need to assign and change the refcount */
-    node_attr(n) = new ; 
+    node_attr(n) = new ;
 }
 
 
@@ -2799,8 +2799,8 @@ static void show_whatsit_node(int p)
     case pdf_end_thread_node:
         tprint_esc("pdfendthread");
         break;
-    case pdf_save_pos_node:
-        tprint_esc("pdfsavepos");
+    case save_pos_node:
+        tprint_esc("savepos");
         break;
     case user_defined_node:
         tprint_esc("whatsit");
@@ -3082,6 +3082,8 @@ void show_node_list(int p)
                 /* The |post_break| list of a discretionary node is indicated by a prefixed
                    `\.{\char'174}' instead of the `\..' before the |pre_break| list. */
                 tprint_esc("discretionary");
+                print_int(disc_penalty(p));
+                print_char('|');
                 if (vlink(no_break(p)) != null) {
                     tprint(" replacing ");
                     node_list_display(vlink(no_break(p)));
@@ -3479,6 +3481,7 @@ halfword new_disc(void)
 {                               /* creates an empty |disc_node| */
     halfword p;                 /* the new node */
     p = new_node(disc_node, 0);
+    disc_penalty(p) = int_par(hyphen_penalty_code);
     return p;
 }
 

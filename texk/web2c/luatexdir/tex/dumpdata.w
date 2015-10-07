@@ -26,8 +26,8 @@
 #define prev_depth cur_list.prev_depth_field
 
 /* 907 = sum of the values of the bytes of "don knuth" */
-/* The next FORMAT_ID will be 907+3               */
-#define FORMAT_ID (907+2)  
+/* The next FORMAT_ID will be 907+5               */
+#define FORMAT_ID (907+4)  
 #if ((FORMAT_ID>=0) && (FORMAT_ID<=256))
 #error Wrong value for FORMAT_ID.
 #endif
@@ -506,7 +506,6 @@ boolean load_fmt_file(const char *fmtname)
         undump_font(k);
     }
     undump_math_data();
-    /*make_pdftex_banner();*/
 
     /* Undump the hyphenation tables */
     undump_language_data();
@@ -527,7 +526,7 @@ boolean load_fmt_file(const char *fmtname)
     /* Undump the lua bytecodes */
     undump_luac_registers();
 
-    prev_depth = dimen_par(pdf_ignored_dimen_code);
+    prev_depth = ignore_depth;
     return true;                /* it worked! */
   BAD_FMT:
     wake_up_terminal();

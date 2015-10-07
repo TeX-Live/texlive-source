@@ -560,7 +560,7 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
         break;
     case xmath_given_cmd:
         tprint_esc("Umathchar");
-        show_mathcode_value(mathchar_from_integer(chr_code, xetex_mathcode));
+        show_mathcode_value(mathchar_from_integer(chr_code, umath_mathcode));
         break;
     case set_font_cmd:
         tprint("select font ");

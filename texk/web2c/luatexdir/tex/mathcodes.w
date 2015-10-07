@@ -77,14 +77,14 @@ static int delcode_heapptr = 0;
 @ @c
 void show_mathcode_value(mathcodeval c)
 {
-    if (c.origin_value == xetex_mathcode) {
+    if (c.origin_value == umath_mathcode) {
         print_char('"');
         print_hex_digit(c.class_value);
         print_char('"');
         two_hex(c.family_value);
         print_char('"');
         six_hex(c.character_value);
-    } else if (c.origin_value == xetexnum_mathcode) {
+    } else if (c.origin_value == umathnum_mathcode) {
         int m;
         m = (c.class_value + (c.family_value * 8)) * 2097152 +
             c.character_value;
@@ -110,9 +110,9 @@ void show_mathcode_value(mathcodeval c)
 static void show_mathcode(int n)
 {
     mathcodeval c = get_math_code(n);
-    if (c.origin_value == xetex_mathcode) {
+    if (c.origin_value == umath_mathcode) {
         tprint_esc("Umathcode");
-    } else if (c.origin_value == xetexnum_mathcode) {
+    } else if (c.origin_value == umathnum_mathcode) {
         tprint_esc("Umathcodenum");
     } else {
         tprint_esc("mathcode");
@@ -188,7 +188,7 @@ mathcodeval get_math_code(int n)
         mathcodeval d;
         d.class_value = 0;
         d.family_value = 0;
-        d.origin_value = (n < 256 ? tex_mathcode : xetex_mathcode);
+        d.origin_value = (n < 256 ? tex_mathcode : umath_mathcode);
         d.character_value = n;
         return d;
     } else {
@@ -278,9 +278,9 @@ static void show_delcode(int n)
     c = get_del_code(n);
     if (c.origin_value == tex_mathcode) {
         tprint_esc("delcode");
-    } else if (c.origin_value == xetex_mathcode) {
+    } else if (c.origin_value == umath_mathcode) {
         tprint_esc("Udelcode");
-    } else if (c.origin_value == xetexnum_mathcode) {
+    } else if (c.origin_value == umathnum_mathcode) {
         tprint_esc("Udelcodenum");
     }
     print_int(n);
@@ -295,11 +295,11 @@ static void show_delcode(int n)
             two_hex(c.small_character_value);
             print_hex_digit(c.large_family_value);
             two_hex(c.large_character_value);
-        } else if (c.origin_value == xetex_mathcode) {
+        } else if (c.origin_value == umath_mathcode) {
             print_char('"');
             two_hex(c.small_family_value);
             six_hex(c.small_character_value);
-        } else if (c.origin_value == xetexnum_mathcode) {
+        } else if (c.origin_value == umathnum_mathcode) {
             int m;
             m = c.small_family_value * 2097152 + c.small_character_value;
             print_int(m);

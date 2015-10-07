@@ -32,13 +32,9 @@
 void ext_post_line_break(int paragraph_dir,
                          int right_skip,
                          int left_skip,
-                         int pdf_protrude_chars,
+                         int protrude_chars,
                          halfword par_shape_ptr,
-                         int pdf_adjust_spacing,
-                         int pdf_each_line_height,
-                         int pdf_each_line_depth,
-                         int pdf_first_line_height,
-                         int pdf_last_line_depth,
+                         int adjust_spacing,
                          halfword inter_line_penalties_ptr,
                          int inter_line_penalty,
                          int club_penalty,
@@ -52,7 +48,6 @@ void ext_post_line_break(int paragraph_dir,
                          scaled second_width,
                          scaled second_indent,
                          scaled first_width,
-                         scaled first_indent, halfword best_line,
-                         halfword pdf_ignored_dimen);
+                         scaled first_indent, halfword best_line);
 
 #endif

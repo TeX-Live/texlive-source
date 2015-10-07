@@ -53,10 +53,6 @@ extern char **suffixlist;       /* in luainit.w */
 #  define eTeX_minor_version 2  /* \.{\\eTeXminorversion}  */
 #  define eTeX_revision ".2"    /* \.{\\eTeXrevision} */
 
-#  define pdftex_version_string "-2.00.0"
-                                        /* current \pdfTeX\ version */
-#  define pdftex_version 200    /* \.{\\pdftexversion} */
-#  define pdftex_revision "0"   /* \.{\\pdftexrevision} */
 
 #define LUA_COMPAT_MODULE 1
 #  include "lua.h"

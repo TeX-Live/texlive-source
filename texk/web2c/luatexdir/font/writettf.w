@@ -510,9 +510,10 @@ static void ttf_ncopy(PDF pdf, int n)
 dirtab_entry *ttf_name_lookup(const char *s, boolean required)
 {
     dirtab_entry *tab;
-    for (tab = dir_tab; tab - dir_tab < ntabs; tab++)
+    for (tab = dir_tab; tab - dir_tab < ntabs; tab++) {
         if (strncmp(tab->tag, s, 4) == 0)
             break;
+    }
     if (tab - dir_tab == ntabs) {
         if (required)
             luatex_fail("can't find table `%s'", s);
@@ -834,6 +835,29 @@ static void ttf_read_loca(void)
     else
         for (glyph = glyph_tab; glyph - glyph_tab < glyphs_count + 1; glyph++)
             glyph->offset = get_ushort() << 1;
+}
+
+void otc_read_tabdir(int index)
+{
+    unsigned long i, num, rem=0;
+    dirtab_entry *tab;
+    ttf_skip(TTF_FIXED_SIZE);   /* ignore TTCTag 'ttcf' */
+    ttf_skip(TTF_ULONG_SIZE);   /* ignorethe version number */
+    num = get_ulong();
+    for (i = 0; i < num; i++)  {
+        if (i==index) rem = get_ulong(); else ttf_skip(TTF_ULONG_SIZE);
+    }
+    ttf_skip(rem - TTF_FIXED_SIZE - (num+2)*TTF_ULONG_SIZE);
+    ttf_skip(TTF_FIXED_SIZE);   /* ignore the sfnt number */
+    dir_tab = xtalloc(ntabs = get_ushort(), dirtab_entry);
+    ttf_skip(3 * TTF_USHORT_SIZE);
+    for (tab = dir_tab; tab - dir_tab < ntabs; tab++) {
+        for (i = 0; i < 4; i++)
+            tab->tag[i] = get_char();
+        tab->checksum = get_ulong();
+        tab->offset = get_ulong();
+        tab->length = get_ulong();
+    }
 }
 
 void ttf_read_tabdir(void)

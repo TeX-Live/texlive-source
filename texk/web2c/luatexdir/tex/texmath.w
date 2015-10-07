@@ -689,16 +689,17 @@ void display_normal_noad(pointer p)
             break;
         }
         break;
-    case radical_noad:
-        if (subtype(p) == 7)
+
+       case radical_noad:
+        if (subtype(p) == 6)
             tprint_esc("Udelimiterover");
-        else if (subtype(p) == 6)
-            tprint_esc("Udelimiterunder");
         else if (subtype(p) == 5)
-            tprint_esc("Uoverdelimiter");
+            tprint_esc("Udelimiterunder");
         else if (subtype(p) == 4)
-            tprint_esc("Uunderdelimiter");
+            tprint_esc("Uoverdelimiter");
         else if (subtype(p) == 3)
+            tprint_esc("Uunderdelimiter");
+        else if (subtype(p) == 2)
             tprint_esc("Uroot");
         else
             tprint_esc("radical");
@@ -1059,7 +1060,7 @@ static delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
         mschr = (cur_val % 0x100000) / 0x1000;
         mlfam = (cur_val & 0xFFF) / 0x100;
         mlchr = (cur_val % 0x100);
-    } else if (extcode == xetex_mathcode) {     /* \.{\\Udelcode} */
+    } else if (extcode == umath_mathcode) {     /* \.{\\Udelcode} */
         /* <0-7>,<0-0xFF>,<0-0x10FFFF>  or <0-0xFF>,<0-0x10FFFF> */
         if (doclass) {
             scan_int();
@@ -1076,13 +1077,13 @@ static delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
         }
         mlfam = 0;
         mlchr = 0;
-    } else if (extcode == xetexnum_mathcode) {  /* \.{\\Udelcodenum} */
+    } else if (extcode == umathnum_mathcode) {  /* \.{\\Udelcodenum} */
         /* "FF<21bits> */
         /* the largest numeric value is $2^29-1$, but
            the top of bit 21 can't be used as it contains invalid USV's
          */
         if (doclass) {          /* such a primitive doesn't exist */
-            confusion("xetexnum_mathcode");
+            confusion("umathnum_mathcode");
         }
         scan_int();
         msfam = (cur_val / 0x200000);
@@ -1146,7 +1147,7 @@ mathcodeval scan_mathchar(int extcode)
         mcls = (cur_val / 0x1000);
         mfam = ((cur_val % 0x1000) / 0x100);
         mchr = (cur_val % 0x100);
-    } else if (extcode == xetex_mathcode) {
+    } else if (extcode == umath_mathcode) {
         /* <0-0x7> <0-0xFF> <0-0x10FFFF> */
         scan_int();
         mcls = cur_val;
@@ -1160,7 +1161,7 @@ mathcodeval scan_mathchar(int extcode)
             mfam = 0;
             mcls = 0;
         }
-    } else if (extcode == xetexnum_mathcode) {
+    } else if (extcode == umathnum_mathcode) {
         /* "FFT<21bits> */
         /* the largest numeric value is $2^32-1$, but
            the top of bit 21 can't be used as it contains invalid USV's
@@ -1281,9 +1282,9 @@ int scan_math(pointer p, int mstyle)
         if (cur_chr == 0)
             mval = scan_mathchar(tex_mathcode);
         else if (cur_chr == 1)
-            mval = scan_mathchar(xetex_mathcode);
+            mval = scan_mathchar(umath_mathcode);
         else if (cur_chr == 2)
-            mval = scan_mathchar(xetexnum_mathcode);
+            mval = scan_mathchar(umathnum_mathcode);
         else
             confusion("scan_math");
         break;
@@ -1291,13 +1292,13 @@ int scan_math(pointer p, int mstyle)
         mval = mathchar_from_integer(cur_chr, tex_mathcode);
         break;
     case xmath_given_cmd:
-        mval = mathchar_from_integer(cur_chr, xetex_mathcode);
+        mval = mathchar_from_integer(cur_chr, umath_mathcode);
         break;
     case delim_num_cmd:
         if (cur_chr == 0)
             mval = scan_delimiter_as_mathchar(tex_mathcode);
         else if (cur_chr == 1)
-            mval = scan_delimiter_as_mathchar(xetex_mathcode);
+            mval = scan_delimiter_as_mathchar(umath_mathcode);
         else
             confusion("scan_math");
         break;
@@ -1440,8 +1441,8 @@ static void scan_delimiter(pointer p, int r)
     delcodeval dval = { 0, 0, 0, 0, 0, 0 };
     if (r == tex_mathcode) {    /* \.{\\radical} */
         dval = do_scan_extdef_del_code(tex_mathcode, true);
-    } else if (r == xetex_mathcode) {   /* \.{\\Uradical} */
-        dval = do_scan_extdef_del_code(xetex_mathcode, false);
+    } else if (r == umath_mathcode) {   /* \.{\\Uradical} */
+        dval = do_scan_extdef_del_code(umath_mathcode, false);
     } else if (r == no_mathcode) {
         get_next_nb_nr();
         switch (cur_cmd) {
@@ -1453,7 +1454,7 @@ static void scan_delimiter(pointer p, int r)
             if (cur_chr == 0)   /* \.{\\delimiter} */
                 dval = do_scan_extdef_del_code(tex_mathcode, true);
             else if (cur_chr == 1)      /* \.{\\Udelimiter} */
-                dval = do_scan_extdef_del_code(xetex_mathcode, true);
+                dval = do_scan_extdef_del_code(umath_mathcode, true);
             else
                 confusion("scan_delimiter1");
             break;
@@ -1502,17 +1503,17 @@ void math_radical(void)
     if (chr_code == 0)          /* \.{\\radical} */
         scan_delimiter(left_delimiter(tail), tex_mathcode);
     else if (chr_code == 1)     /* \.{\\Uradical} */
-        scan_delimiter(left_delimiter(tail), xetex_mathcode);
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else if (chr_code == 2)     /* \.{\\Uroot} */
-        scan_delimiter(left_delimiter(tail), xetex_mathcode);
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else if (chr_code == 3)     /* \.{\\Uunderdelimiter} */
-        scan_delimiter(left_delimiter(tail), xetex_mathcode);
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else if (chr_code == 4)     /* \.{\\Uoverdelimiter} */
-        scan_delimiter(left_delimiter(tail), xetex_mathcode);
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else if (chr_code == 5)     /* \.{\\Udelimiterunder} */
-        scan_delimiter(left_delimiter(tail), xetex_mathcode);
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else if (chr_code == 6)     /* \.{\\Udelimiterover} */
-        scan_delimiter(left_delimiter(tail), xetex_mathcode);
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else
         confusion("math_radical");
     if (chr_code == 2) {
@@ -1554,23 +1555,23 @@ void math_ac(void)
     } else if (cur_chr == 1) {  /* \.{\\Umathaccent} */
 	if (scan_keyword("fixed")) {
            subtype(tail) = 1;
-	   t = scan_mathchar(xetex_mathcode);
+	   t = scan_mathchar(umath_mathcode);
 	} else if (scan_keyword("both")) {
   	   if (scan_keyword("fixed")) {
              subtype(tail) = 1;
            }
-	   t = scan_mathchar(xetex_mathcode);
+	   t = scan_mathchar(umath_mathcode);
   	   if (scan_keyword("fixed")) {
              subtype(tail) += 2;
            }
-	   b = scan_mathchar(xetex_mathcode);
+	   b = scan_mathchar(umath_mathcode);
 	} else if (scan_keyword("bottom")) {
   	   if (scan_keyword("fixed")) {
              subtype(tail) = 2;
            }
-	   b = scan_mathchar(xetex_mathcode);
+	   b = scan_mathchar(umath_mathcode);
 	} else {
-	   t = scan_mathchar(xetex_mathcode);
+	   t = scan_mathchar(umath_mathcode);
 	}
     } else {
         confusion("math_ac");

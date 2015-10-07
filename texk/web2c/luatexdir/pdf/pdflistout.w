@@ -482,7 +482,7 @@ void hlist_out(PDF pdf, halfword this_box)
             case whatsit_node:
                 /* Output the whatsit node |p| in |hlist_out| */
                 switch (subtype(p)) {
-                case pdf_save_pos_node:
+                case save_pos_node:
                     pdf_last_pos = pdf->posstruct->pos;
                     pos_info.curpos = pdf->posstruct->pos;
                     pos_info.boxpos.pos = refpos->pos;
@@ -928,7 +928,7 @@ void vlist_out(PDF pdf, halfword this_box)
             case whatsit_node:
                 /* Output the whatsit node |p| in |vlist_out| */
                 switch (subtype(p)) {
-                case pdf_save_pos_node:
+                case save_pos_node:
                     pdf_last_pos = pdf->posstruct->pos;
                     pos_info.curpos = pdf->posstruct->pos;
                     pos_info.boxpos.pos = refpos->pos;

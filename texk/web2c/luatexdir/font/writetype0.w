@@ -25,20 +25,22 @@
 #include "font/writecff.h"
 
 @ @c
+extern unsigned char *ttf_buffer;
 void writetype0(PDF pdf, fd_entry * fd)
 {
     int callback_id;
     int file_opened = 0;
-    long i;
+    long i = 0;
     dirtab_entry *tab;
     cff_font *cff;
+    sfnt *sfont;
 
     dir_tab = NULL;
     glyph_tab = NULL;
 
     fd_cur = fd;                /* |fd_cur| is global inside \.{writettf.w} */
     assert(fd_cur->fm != NULL);
-    assert(is_opentype(fd_cur->fm));
+    assert(is_opentype(fd_cur->fm) || is_truetype(fd_cur->fm));
     assert(is_included(fd_cur->fm));
 
     ttf_curbyte = 0;
@@ -46,8 +48,12 @@ void writetype0(PDF pdf, fd_entry * fd)
     cur_file_name =
         luatex_find_file(fd_cur->fm->ff_name, find_opentype_file_callback);
     if (cur_file_name == NULL) {
-        luatex_fail("cannot find OpenType font file for reading (%s)",
-                    fd_cur->fm->ff_name);
+        cur_file_name =
+            luatex_find_file(fd_cur->fm->ff_name, find_truetype_file_callback);
+        if (cur_file_name == NULL) {
+            luatex_fail("cannot find OpenType font file for reading (%s)",
+                        fd_cur->fm->ff_name);
+        }
     }
     callback_id = callback_defined(read_opentype_file_callback);
     if (callback_id > 0) {
@@ -69,12 +75,22 @@ void writetype0(PDF pdf, fd_entry * fd)
 
     fd_cur->ff_found = true;
 
+    sfont = sfnt_open(ttf_buffer, ttf_size);
+    if (sfont->type == SFNT_TYPE_TTC)
+        i = ff_get_ttc_index(fd->fm->ff_name, fd->fm->ps_name);
+	
+
     if (is_subsetted(fd_cur->fm)) {
         report_start_file(filetype_subset, cur_file_name);
     } else {
         report_start_file(filetype_font, cur_file_name);
     }
-    ttf_read_tabdir();
+
+
+    if (sfont->type == SFNT_TYPE_TTC) otc_read_tabdir(i);
+    else ttf_read_tabdir();
+    sfnt_close(sfont);
+
     /* read font parameters */
     if (ttf_name_lookup("head", false) != NULL)
         ttf_read_head();

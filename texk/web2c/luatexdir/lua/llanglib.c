@@ -1,5 +1,5 @@
 /* llanglib.c
-   
+
    Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -177,6 +177,23 @@ static int lang_post_exhyphen_char(lua_State * L)
 }
 
 
+static int lang_hyphenation_min(lua_State * L)
+{
+    struct tex_language **lang_ptr;
+    lang_ptr = check_islang(L, 1);
+    if (lua_gettop(L) != 1) {
+        if (!lua_isnumber(L, 2)) {
+            return luaL_error(L,
+                           "lang.hyphenationmin(): argument should be a number");
+        }
+        (*lang_ptr)->hyphenation_min=(int)lua_tonumber(L, 2);
+        return 0;
+    } else {
+        lua_pushnumber(L, (*lang_ptr)->hyphenation_min);
+        return 1;
+    }
+}
+
 static int lang_clear_hyphenation(lua_State * L)
 {
     struct tex_language **lang_ptr;
@@ -226,6 +243,7 @@ static const struct luaL_Reg langlib_d[] = {
     {"posthyphenchar",    lang_post_hyphen_char},
     {"preexhyphenchar",   lang_pre_exhyphen_char},
     {"postexhyphenchar",  lang_post_exhyphen_char},
+    {"hyphenationmin",    lang_hyphenation_min},
     {"id",                lang_id},
     /* *INDENT-ON* */
     {NULL, NULL}                /* sentinel */
@@ -242,6 +260,7 @@ static const struct luaL_Reg langlib[] = {
     {"posthyphenchar",    lang_post_hyphen_char},
     {"preexhyphenchar",   lang_pre_exhyphen_char},
     {"postexhyphenchar",  lang_post_exhyphen_char},
+    {"hyphenationmin",    lang_hyphenation_min},
     {"id",                lang_id},
     {"clean",             do_lang_clean},
     {"hyphenate",         do_lang_hyphenate},

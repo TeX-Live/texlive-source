@@ -428,17 +428,20 @@ static void write_fontfile(PDF pdf, fd_entry * fd)
     /* by using the regular code for this and assigning indices and tounicodes */
     /* to the character blobs, but for the moment we keep the current approach */
     if (is_cidkeyed(fd->fm)) {
-        if (is_opentype(fd->fm))
+        if (is_opentype(fd->fm)) {
             writetype0(pdf, fd);
-        else if (is_truetype(fd->fm))
-            writetype2(pdf, fd);
-        else if (is_type1(fd->fm))
-            writetype1w(pdf, fd);
-        else
-            assert(0);
+	} else if (is_truetype(fd->fm)) {
+            if (!writetype2(pdf, fd)) { 
+                writetype0(pdf,fd);
+	        fd->fm->type |= F_OTF; fd->fm->type ^= F_TRUETYPE;
+            }
+	} else if (is_type1(fd->fm))
+	    writetype1w(pdf, fd);
+	else
+	    assert(0);
     } else {
-        if (is_type1(fd->fm))
-            writet1(pdf, fd);
+	if (is_type1(fd->fm))
+	    writet1(pdf, fd);
         else if (is_truetype(fd->fm))
             writettf(pdf, fd);
         else if (is_opentype(fd->fm))

@@ -94,9 +94,9 @@ static const parm_struct img_parms[] = {
     {NULL, P__SENTINEL}
 };
 
-#define imgtype_max 6
+#define imgtype_max 7
 const char *imgtype_s[] =
-    { "none", "pdf", "png", "jpg", "jp2", "jbig2", "stream", NULL };
+  { "none", "pdf", "png", "jpg", "jp2", "jbig2", "stream", "memstream",NULL };
 
 #define pagebox_max 5
 const char *pdfboxspec_s[] =

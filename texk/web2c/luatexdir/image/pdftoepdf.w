@@ -27,7 +27,9 @@
 #include "image/epdf.h"
 
 // This file is mostly C and not very much C++; it's just used to interface
-// the functions of xpdf, which happens to be written in C++.
+// the functions of poppler, which happens to be written in C++.
+
+extern void md5(Guchar *msg, int msgLen, Guchar *digest);
 
 static GBool isInit = gFalse;
 
@@ -89,6 +91,27 @@ static char *get_file_checksum(const char *a, file_error_mode fe)
     return ck;
 }
 
+
+static char *get_stream_checksum (const char *str, unsigned long long str_size){
+  /* http://www.cse.yorku.ca/~oz/hash.html */
+  /* djb2                                  */
+  unsigned long hash ;
+  char *ck = NULL;
+  unsigned int i;
+  hash = 5381;
+  ck = (char *) malloc(STRSTREAM_CHECKSUM_SIZE+1);
+  if (ck == NULL)
+    luatex_fail("PDF inclusion: out of memory while processing a memstream");
+  for(i=0; i<(unsigned int)(str_size); i++) {
+    hash = ((hash << 5) + hash) + str[i]; /* hash * 33 + str[i] */
+  }
+  snprintf(ck,STRSTREAM_CHECKSUM_SIZE+1,"%lx",hash);
+  ck[STRSTREAM_CHECKSUM_SIZE]='\0';
+  return ck;
+}
+
+
+
 // Returns pointer to PdfDocument structure for PDF file.
 // Creates a new PdfDocument structure if it doesn't exist yet.
 // When fe = FE_RETURN_NULL, the function returns NULL in error case.
@@ -144,7 +167,7 @@ PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe)
         if (!doc->isOk() || !doc->okToPrint()) {
             switch (fe) {
             case FE_FAIL:
-                luatex_fail("xpdf: reading PDF image failed");
+                luatex_fail("PDF inclusion: reading PDF image failed");
                 break;
             case FE_RETURN_NULL:
                 delete doc;
@@ -178,6 +201,92 @@ PdfDocument *refPdfDocument(const char *file_path, file_error_mode fe)
 #endif
     return pdf_doc;
 }
+
+
+
+// Returns pointer to PdfDocument structure for a PDF stream in memory
+// of streamsize dimension 
+// As before, creates a new PdfDocument structure if it doesn't exist yet
+// with file_path = file_id
+
+PdfDocument *refMemStreamPdfDocument(char *docstream, unsigned long long streamsize,const char *file_id)
+{
+    char *checksum;
+    char *file_path;
+    PdfDocument *pdf_doc;
+    PDFDoc *doc = NULL;
+    Object obj;
+    MemStream *docmemstream = NULL;
+    /*int new_flag = 0;*/
+    size_t  cnt = 0;
+
+    checksum = get_stream_checksum(docstream, streamsize);
+    assert(checksum != NULL);
+    cnt = strlen(file_id);
+    assert(cnt>0 && cnt <STREAM_FILE_ID_LEN); 
+    file_path = (char *) malloc(cnt+STREAM_URI_LEN+STRSTREAM_CHECKSUM_SIZE+1); // 1 for '\0'
+    assert(file_path != NULL);
+    strcpy(file_path,STREAM_URI);
+    strcat(file_path,file_id);
+    strcat(file_path,checksum);
+    file_path[cnt+STREAM_URI_LEN+STRSTREAM_CHECKSUM_SIZE]='\0';
+    if ((pdf_doc = findPdfDocument(file_path)) == NULL) {
+#ifdef DEBUG
+        fprintf(stderr, "\nDEBUG: New MemStreamPdfDocument %s\n", file_path);
+#endif
+        /*new_flag = 1;*/
+        pdf_doc = new PdfDocument;
+        pdf_doc->file_path = file_path;
+        pdf_doc->checksum = checksum;
+        pdf_doc->doc = NULL;
+        pdf_doc->inObjList = NULL;
+        pdf_doc->ObjMapTree = NULL;
+        pdf_doc->occurences = 0;        // 0 = unreferenced
+        pdf_doc->pc = 0;
+    } else {
+#ifdef DEBUG
+        fprintf(stderr, "\nDEBUG: Found MemStreamPdfDocument %s (%d)\n",
+                pdf_doc->file_path, pdf_doc->occurences);
+#endif
+        assert(pdf_doc->checksum != NULL);
+        // As is now, checksum is in file_path, so this check is should be useless.
+        if (strncmp(pdf_doc->checksum, checksum, STRSTREAM_CHECKSUM_SIZE) != 0) {
+            luatex_fail("PDF inclusion: stream has changed '%s'", file_path);
+        }
+	free(file_path);
+        free(checksum);
+    }
+    assert(pdf_doc != NULL);
+    if (pdf_doc->doc == NULL) {
+#ifdef DEBUG
+        fprintf(stderr, "\nDEBUG: New PDFDoc %s (%d)\n",
+                pdf_doc->file_path, pdf_doc->occurences);
+#endif
+	docmemstream = new MemStream( docstream,0,streamsize, obj.initNull() ); 
+        doc = new PDFDoc(docmemstream);      // takes ownership of docmemstream
+        pdf_doc->pc++;
+
+        if (!doc->isOk() || !doc->okToPrint()) {
+	  luatex_fail("poppler: reading PDF Stream failed");
+	}
+        pdf_doc->doc = doc;
+    }
+    // PDF file could be opened without problems, checksum ok.
+    if (PdfDocumentTree == NULL)
+        PdfDocumentTree = avl_create(CompPdfDocument, NULL, &avl_xallocator);
+    if ((PdfDocument *) avl_find(PdfDocumentTree, pdf_doc) == NULL) {
+        void **aa = avl_probe(PdfDocumentTree, pdf_doc);
+        assert(aa != NULL);
+    }
+    pdf_doc->occurences++;
+#ifdef DEBUG
+    fprintf(stderr, "\nDEBUG: Incrementing %s (%d)\n",
+            pdf_doc->file_path, pdf_doc->occurences);
+#endif
+    return pdf_doc;
+}
+
+
 
 //**********************************************************************
 // AVL sort ObjMap into ObjMapTree by object number and generation
@@ -433,7 +542,7 @@ static void copyObject(PDF pdf, PdfDocument * pdf_doc, Object * obj)
                     obj->getTypeName());
         break;
     default:
-        assert(0);              // xpdf doesn't have any other types
+        assert(0);              // poppler doesn't have any other types
     }
 }
 
@@ -507,16 +616,24 @@ read_pdf_info(image_dict * idict, int minor_pdf_version_wanted,
     int pdf_major_version_found, pdf_minor_version_found;
     float xsize, ysize, xorig, yorig;
     assert(idict != NULL);
-    assert(img_type(idict) == IMG_TYPE_PDF);
+    assert((img_type(idict) == IMG_TYPE_PDF) || (img_type(idict) == IMG_TYPE_PDFMEMSTREAM));
     assert(readtype == IMG_CLOSEINBETWEEN);     // only this is implemented
     // initialize
     if (isInit == gFalse) {
-        globalParams = new GlobalParams();
-        globalParams->setErrQuiet(gFalse);
-        isInit = gTrue;
+      if (!(globalParams)) // globalParams could be already created
+	  globalParams = new GlobalParams();
+	globalParams->setErrQuiet(gFalse);
+	isInit = gTrue;
     }
     // open PDF file
-    pdf_doc = refPdfDocument(img_filepath(idict), FE_FAIL);
+    if (img_type(idict) == IMG_TYPE_PDF) 
+      pdf_doc = refPdfDocument(img_filepath(idict), FE_FAIL);
+    else if (img_type(idict) == IMG_TYPE_PDFMEMSTREAM) {
+      pdf_doc = findPdfDocument(img_filepath(idict)) ;
+      assert(pdf_doc != NULL);
+      pdf_doc->occurences++; 
+    } else
+	luatex_fail("PDF inclusion: unknown document (1)");
     doc = pdf_doc->doc;
     catalog = doc->getCatalog();
     // check PDF version
@@ -638,7 +755,14 @@ void write_epdf(PDF pdf, image_dict * idict)
     assert(idict != NULL);
 
     // open PDF file
-    pdf_doc = refPdfDocument(img_filepath(idict), FE_FAIL);
+    if (img_type(idict) == IMG_TYPE_PDF) 
+      pdf_doc = refPdfDocument(img_filepath(idict), FE_FAIL);
+    else if (img_type(idict) == IMG_TYPE_PDFMEMSTREAM) {
+      pdf_doc = findPdfDocument(img_filepath(idict)) ;
+      assert(pdf_doc != NULL);
+      pdf_doc->occurences++; 
+    } else
+	luatex_fail("PDF inclusion: unknown document (2)");
     doc = pdf_doc->doc;
     catalog = doc->getCatalog();
     page = catalog->getPage(img_pagenum(idict));
@@ -853,6 +977,17 @@ void unrefPdfDocument(char *file_path)
         assert(pdf_doc->inObjList == NULL);     // should be eaten up already
         deletePdfDocumentPdfDoc(pdf_doc);
     }
+}
+
+
+
+// For completeness, but it isn't  currently used
+// (unreferencing is done by mean of file_path) 
+
+void unrefMemStreamPdfDocument(char *file_id)
+{
+  (void) unrefPdfDocument(file_id);
+    
 }
 
 // Called when PDF embedding system is finalized.

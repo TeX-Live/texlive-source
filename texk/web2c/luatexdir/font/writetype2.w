@@ -30,7 +30,7 @@
 
 @ forward declaration
 @c
-void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen);
+boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen);
 
 @ @c
 unsigned long cidtogid_obj = 0;
@@ -134,10 +134,11 @@ void pdf_release_obj(pdf_obj * stream)
 
 @ The main function.
 @c
-void writetype2(PDF pdf, fd_entry * fd)
+boolean writetype2(PDF pdf, fd_entry * fd)
 {
     int callback_id;
     int file_opened = 0;
+    boolean ret;
 
     glyph_tab = NULL;
 
@@ -178,7 +179,7 @@ void writetype2(PDF pdf, fd_entry * fd)
     
     /* here is the real work */
 
-    make_tt_subset(pdf, fd, ttf_buffer, ttf_size);
+    ret = make_tt_subset(pdf, fd, ttf_buffer, ttf_size);
 #if 0
     xfree (dir_tab);
 #endif
@@ -188,6 +189,7 @@ void writetype2(PDF pdf, fd_entry * fd)
      else 
         report_stop_file(filetype_font);
     cur_file_name = NULL;
+    return ret;
 }
 
 @ PDF viewer applications use following tables (CIDFontType 2)
@@ -232,7 +234,7 @@ static struct {
 };
 
 
-static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
+unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
 {
     //ULONG version;
     unsigned long offset = 0;
@@ -255,7 +257,7 @@ static unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
 @ Creating the subset.
 @c
 extern int cidset;
-void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
+boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
 {
 
     long i, cid;
@@ -287,6 +289,12 @@ void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
         fprintf(stderr, "Could not parse the ttf directory.\n");
         uexit(1);
     }
+
+    if (sfont->type == SFNT_TYPE_TTC && sfnt_find_table_pos(sfont, "CFF ")) {
+        sfnt_close(sfont);
+	return false;
+    }
+
     if (is_subsetted(fd->fm)) {
         /* rebuild the glyph tables and create a fresh cidmap */
         glyphs = tt_build_init();
@@ -436,5 +444,5 @@ void make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
 
     xfree(used_chars);
     sfnt_close(sfont);
-    return;
+    return true;
 }

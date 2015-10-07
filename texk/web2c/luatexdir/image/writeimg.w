@@ -124,18 +124,41 @@
 #define HEADER_JP2 "\x6A\x50\x20\x20"
 #define HEADER_PDF "%PDF-1."
 #define MAX_HEADER (sizeof(HEADER_PNG)-1)
+#define HEADER_PDF_MEMSTREAM "data:application/pdf," /* see epdf.h */
+#define LEN_PDF_MEMSTREAM      21 /* see epdf.h */   
+
 
 static void check_type_by_header(image_dict * idict)
 {
     int i;
     FILE *file = NULL;
     char header[MAX_HEADER];
+    char prefix[LEN_PDF_MEMSTREAM+1]; 
 
     assert(idict != NULL);
     if (img_type(idict) != IMG_TYPE_NONE)       /* nothing to do */
         return;
+
     /* read the header */
-    file = xfopen(img_filepath(idict), FOPEN_RBIN_MODE);
+    /* Like                                                */
+    /* file = xfopen(img_filepath(idict), FOPEN_RBIN_MODE);*/
+    /* but we also check for a memstream object            */
+    assert(img_filepath(idict) && FOPEN_RBIN_MODE); 
+    file = fopen(img_filepath(idict), FOPEN_RBIN_MODE);
+    if (file == NULL) {
+        /* check the prefix of   img_filepath(idict) */
+        for (i = 0; (unsigned) i < LEN_PDF_MEMSTREAM; i++) {
+           prefix[i] = (char) (img_filepath(idict)[i]);
+         }
+         prefix[LEN_PDF_MEMSTREAM]='\0';
+         if (strncmp(prefix, HEADER_PDF_MEMSTREAM, LEN_PDF_MEMSTREAM) == 0) {
+            img_type(idict) = IMG_TYPE_PDFMEMSTREAM;
+            return;
+          } else {
+            FATAL_PERROR(img_filepath(idict));
+          }
+    }
+    /* a valid file, but perhaps unsupported */
     for (i = 0; (unsigned) i < MAX_HEADER; i++) {
         header[i] = (char) xgetc(file);
         if (feof(file))
@@ -252,6 +275,7 @@ void free_image_dict(image_dict * p)
     /* called from limglib.c */
     assert(img_state(p) < DICT_REFERED);
     switch (img_type(p)) {
+    case IMG_TYPE_PDFMEMSTREAM:
     case IMG_TYPE_PDF:
         unrefPdfDocument(img_filepath(p));
         break;
@@ -310,6 +334,7 @@ void read_img(PDF pdf,
     check_type_by_extension(idict);
     /* read image */
     switch (img_type(idict)) {
+    case IMG_TYPE_PDFMEMSTREAM:
     case IMG_TYPE_PDF:
         assert(pdf != NULL);    /* TODO! */
         read_pdf_info(idict, minor_version, inclusion_errorlevel,
@@ -523,7 +548,7 @@ scaled_whd scale_img(image_dict * idict, scaled_whd alt_rule, int transform)
     scaled_whd nat;             /* natural size corresponding to image resolution */
     int default_res;
     assert(idict != NULL);
-    if ((img_type(idict) == IMG_TYPE_PDF
+    if ((img_type(idict) == IMG_TYPE_PDF || img_type(idict) == IMG_TYPE_PDFMEMSTREAM
          || img_type(idict) == IMG_TYPE_PDFSTREAM) && img_is_bbox(idict)) {
         x = img_xsize(idict) = img_bbox(idict)[2] - img_bbox(idict)[0]; /* dimensions from image.bbox */
         y = img_ysize(idict) = img_bbox(idict)[3] - img_bbox(idict)[1];
@@ -551,7 +576,7 @@ scaled_whd scale_img(image_dict * idict, scaled_whd alt_rule, int transform)
         yr = tmp;
     }
     nat.dp = 0;                 /* always for images */
-    if (img_type(idict) == IMG_TYPE_PDF
+    if (img_type(idict) == IMG_TYPE_PDF || img_type(idict) == IMG_TYPE_PDFMEMSTREAM
         || img_type(idict) == IMG_TYPE_PDFSTREAM) {
         nat.wd = x;
         nat.ht = y;
@@ -591,6 +616,7 @@ void write_img(PDF pdf, image_dict * idict)
         case IMG_TYPE_JBIG2:
             write_jbig2(pdf, idict);
             break;
+        case IMG_TYPE_PDFMEMSTREAM:
         case IMG_TYPE_PDF:
             write_epdf(pdf, idict);
             break;
@@ -677,7 +703,7 @@ void pdf_dict_add_img_filename(PDF pdf, image_dict * idict)
     char s[21], *p;
     assert(idict != NULL);
     /* for now PTEX.FileName only for PDF, but prepared for JPG, PNG, ... */
-    if (img_type(idict) != IMG_TYPE_PDF)
+    if ((img_type(idict) != IMG_TYPE_PDF) || (img_type(idict) != IMG_TYPE_PDFMEMSTREAM))
         return;
     if (img_visiblefilename(idict) != NULL) {
         if (strlen(img_visiblefilename(idict)) == 0)
@@ -768,7 +794,7 @@ void dumpimagemeta(void)
         /* the |image_struct| is not dumped at all, except for a few
            variables that are needed to restore the contents */
 
-        if (img_type(idict) == IMG_TYPE_PDF) {
+        if ((img_type(idict) == IMG_TYPE_PDF)|| (img_type(idict) == IMG_TYPE_PDFMEMSTREAM)) {
             dumpinteger(img_pagebox(idict));
             dumpinteger(img_pagenum(idict));
         } else if (img_type(idict) == IMG_TYPE_JBIG2) {
@@ -808,6 +834,7 @@ void undumpimagemeta(PDF pdf, int pdfversion, int pdfinclusionerrorlevel)
         undumpinteger(img_colorspace(idict));
 
         switch (img_type(idict)) {
+        case IMG_TYPE_PDFMEMSTREAM:
         case IMG_TYPE_PDF:
             undumpinteger(img_pagebox(idict));
             undumpinteger(img_pagenum(idict));

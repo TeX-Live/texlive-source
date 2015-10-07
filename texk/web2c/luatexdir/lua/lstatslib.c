@@ -43,11 +43,6 @@ static const char *getlogname(void)
     return (const char *) texmf_log_name;
 }
 
-/* Obsolete in 0.80.0                         */
-/* static const char *get_pdftex_banner(void) */
-/* { */
-/*     return (const char *) pdftex_banner; */
-/* } */
 
 static const char *get_output_file_name(void)
 {
@@ -205,7 +200,6 @@ static struct statistic stats[] = {
     {"output_file_name", 'S', (void *) &get_output_file_name},
     {"log_name", 'S', (void *) &getlogname},
     {"banner", 'S', (void *) &getbanner},
-    {"pdftex_banner", 'S', (void *) &getbanner},
     {"luatex_svn", 'G', &get_luatexsvn},
     {"luatex_version", 'G', &get_luatexversion},
     {"luatex_revision", 'S', (void *) &luatexrevision},

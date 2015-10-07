@@ -58,13 +58,9 @@ and begin direction instructions at the beginnings of lines.
 void ext_post_line_break(int paragraph_dir,
                          int right_skip,
                          int left_skip,
-                         int pdf_protrude_chars,
+                         int protrude_chars,
                          halfword par_shape_ptr,
-                         int pdf_adjust_spacing,
-                         int pdf_each_line_height,
-                         int pdf_each_line_depth,
-                         int pdf_first_line_height,
-                         int pdf_last_line_depth,
+                         int adjust_spacing,
                          halfword inter_line_penalties_ptr,
                          int inter_line_penalty,
                          int club_penalty,
@@ -78,8 +74,7 @@ void ext_post_line_break(int paragraph_dir,
                          scaled second_width,
                          scaled second_indent,
                          scaled first_width,
-                         scaled first_indent, halfword best_line,
-                         halfword pdf_ignored_dimen)
+                         scaled first_indent, halfword best_line)
 {
 
     boolean have_directional = true;
@@ -304,7 +299,7 @@ void ext_post_line_break(int paragraph_dir,
            has been changed to the last node of the |pre_break| list */
         /* If the par ends with a \break command, the last line is utterly empty.
            That is the case of |q==temp_head| */
-        if (q != temp_head && pdf_protrude_chars > 0) {
+        if (q != temp_head && protrude_chars > 0) {
             halfword p, ptmp;
             if (disc_break && (is_char_node(q) || (type(q) != disc_node))) {
                 p = q;          /* |q| has been reset to the last node of |pre_break| */
@@ -372,7 +367,7 @@ void ext_post_line_break(int paragraph_dir,
             }
         }
         /*at this point |q| is the leftmost node; all discardable nodes have been discarded */
-        if (pdf_protrude_chars > 0) {
+        if (protrude_chars > 0) {
 	    halfword p;
             p = q;
             p = find_protchar_left(p, false);   /* no more discardables */
@@ -415,7 +410,7 @@ void ext_post_line_break(int paragraph_dir,
         }
         adjust_tail = adjust_head;
         pre_adjust_tail = pre_adjust_head;
-        if (pdf_adjust_spacing > 0) {
+        if (adjust_spacing > 0) {
             just_box = hpack(q, cur_width, cal_expand_ratio, paragraph_dir);
         } else {
             just_box = hpack(q, cur_width, exactly, paragraph_dir);
@@ -423,19 +418,6 @@ void ext_post_line_break(int paragraph_dir,
         shift_amount(just_box) = cur_indent;
         subtype(just_box) = HLIST_SUBTYPE_LINE;
         /* /Call the packaging subroutine, setting |just_box| to the justified box; */
-
-        /* Append the new box to the current vertical list, followed by the list of
-           special nodes taken out of the box by the packager; */
-        if (pdf_each_line_height != pdf_ignored_dimen)
-            height(just_box) = pdf_each_line_height;
-        if (pdf_each_line_depth != pdf_ignored_dimen)
-            depth(just_box) = pdf_each_line_depth;
-        if ((pdf_first_line_height != pdf_ignored_dimen)
-            && (cur_line == cur_list.pg_field + 1))
-            height(just_box) = pdf_first_line_height;
-        if ((pdf_last_line_depth != pdf_ignored_dimen)
-            && (cur_line + 1 == best_line))
-            depth(just_box) = pdf_last_line_depth;
 
         if ((vlink(contrib_head) != null))
             if (!output_active)

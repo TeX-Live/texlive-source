@@ -25,8 +25,8 @@
 
 #  define no_mathcode 0         /* this is a flag for |scan_delimiter| */
 #  define tex_mathcode 8
-#  define xetex_mathcode 21
-#  define xetexnum_mathcode 22
+#  define umath_mathcode 21
+#  define umathnum_mathcode 22
 
 typedef struct mathcodeval {
     int class_value;
