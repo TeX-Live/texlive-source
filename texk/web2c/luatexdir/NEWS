@@ -2,6 +2,141 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.81.0 was released 2015100722 (5350)
+==============================================================
+
+
+
+* A couple of primitives are removed, renamed and/or promoted to core (luatex) primitives. 
+Here's a summary. It might demand some adaption in the way macro packages initialize so we will mention them here explicitly in advance. As shown below, a simple way to get backward compatibility is to \let old ones to new ones. So,
+
+   Updating to this version also might demand an update in the
+   macro package that you use!
+
+Here we go:
+
+% removed, can be done with callbacks if needed, one can define dimen dummies, like
+
+\newdimen\pdfeachlineheight
+\newdimen\pdfeachlinedepth
+\newdimen\pdflastlinedepth
+\newdimen\pdffirstlineheight
+\newdimen\pdfignoreddimen
+
+% removed, were already obsolete, one can \let them
+
+\let\pdftexversion \luatexversion
+\let\pdftexrevision\luatexrevision
+\let\pdftexbanner  \luatexbanner
+
+% promoted (from pdftex), so pdf prefix gone, one can \let them
+
+\let\pdfnormaldeviate \normaldeviate
+\let\pdfuniformdeviate\uniformdeviate
+\let\pdfsetrandomseed \setrandomseed
+\let\pdfrandomseed    \randomseed
+
+% promoted (from omega), so pdf prefix gone, one can \let them
+
+\let\pdfpagewidth \pagewidth
+\let\pdfpageheight\pageheight
+
+% redundant (etex wins over omega), so \font-less ones gone, one can \let them
+
+\let\chardp\fontchardp
+\let\charht\fontcharht
+\let\charit\fontcharit
+\let\charwd\fontcharwd
+
+% promoted (from aleph)
+
+\pagerightoffset
+\pagebottomoffset
+
+% promoted (from pdftex)
+
+\ifincsname
+\expanded
+\quitvmode
+
+% removed (from pdftex), so *pdf* ones gone, one can \let them
+
+\let\ifpdfabsnum   \ifabsnum
+\let\ifpdfabsdim   \ifabsdim
+\let\ifpdfprimitive\ifprimitive
+\let\pdfprimitive  \primitive
+
+% promoted (from omega)
+
+\pagedir
+\bodydir
+\pardir
+\textdir
+\mathdir
+
+% promoted (from aleph)
+
+\boxdir
+
+% promoted (from pdftex)
+
+\lpcode
+\rpcode
+\efcode
+\leftmarginkern
+\rightmarginkern
+
+\tagcode
+\letterspacefont
+
+% promoted (from pdftex), so *pdf* ones gone, one can \let them
+
+\let\pdfprotrudechars\protrudechars
+\let\pdfadjustspacing\adjustspacing
+
+\let\pdfnoligatures  \ignoreligaturesinfont
+\let\pdffontexpand   \expandglyphsinfont
+
+% promoted (from pdftex), so *pdf* ones gone, one can \let them
+
+\let\pdfsavepos \savepos
+\let\pdflastxpos\lastxpos
+\let\pdflastypos\lastypos
+
+% on the todo list are:
+
+\pdfoutput         : \outputmode
+\pdfmatrix         : will get a normal syntax, no weird { } parsing
+
+\pdfcolorstackinit : might become obsolete
+\pdfcolorstack     : might become obsolete
+
+So, apart from a few, the \pdf* primitives now relate to the backend only.
+
+% There is also a new primitive:
+
+\hyphenationmin
+
+This one determines the minimum word length (per language).
+ At the same time we moved the (ex)hyphenpenalties 
+in the disc nodes so you can inject discretionaries with specific penalties.
+
+There will also be an updated manual.
+Hans
+
+
+* new epdf.openMemStream(s,l,docid)
+to create a pdf from a lightuserdata or  string.
+(experimental, do not use in production.)
+
+* uniform random generator in mplib is now specific for each numbersystem;
+
+* too_precise implemented for binary number system;
+
+* several bug fixes.
+
+
+==============================================================
 Luatex beta-0.80.0 was released 20150319 (5195)
 ==============================================================
 
@@ -2310,7 +2445,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5205 2015-03-27 19:28:05Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5348 2015-10-07 13:45:11Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

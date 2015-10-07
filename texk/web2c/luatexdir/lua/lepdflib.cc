@@ -142,7 +142,8 @@ static int l_open_PDFDoc(lua_State * L)
 
 static int l_open_MemStreamPDFDoc(lua_State * L)
 {
-    const char *docstream=NULL;
+    const char *docstream = NULL;
+    char *docstream_usr = NULL ;
     const char *file_id;
     unsigned long long stream_size;
     udstruct *uout;
@@ -162,10 +163,15 @@ static int l_open_MemStreamPDFDoc(lua_State * L)
     stream_size = (unsigned long long) luaL_checkint(L, 2);// size of the stream
     file_id  =  luaL_checkstring(L, 3); // a symbolic name for this stream, mandatory
     if (file_id == NULL)
-      lua_pushnil(L);
+      luaL_error(L, "PDFDoc has an invalid id");  
     if (strlen(file_id) >STREAM_FILE_ID_LEN )  // a limit to the length of the string
       luaL_error(L, "PDFDoc has a too long id");
-    d = refMemStreamPdfDocument((char *)docstream, stream_size, file_id);
+    docstream_usr = (char *)gmalloc((unsigned) (stream_size + 1));
+    if (!docstream_usr)
+      luaL_error(L, "no room for PDFDoc");
+    memcpy(docstream_usr, docstream, (stream_size + 1));
+    docstream_usr[stream_size]='\0';
+    d = refMemStreamPdfDocument(docstream_usr, stream_size, file_id);
     if (d == NULL) {
       lua_pushnil(L);
       lua_pushnil(L);
