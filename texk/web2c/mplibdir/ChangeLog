@@ -1,3 +1,8 @@
+2015-10-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	*mpmath.w, mpmathbinary.w, mpmathdecimal.w, mp.w, mpmathdouble.w:
+	Sync with the upstream trunk.
+
 2015-09-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mpmathdecimal.w: Sync with the upstream trunk.
