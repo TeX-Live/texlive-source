@@ -1,3 +1,9 @@
+2015-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* am/libluatex.am, am/luafontforge.am: Rearrange to compile the
+	luafontloader/src/* files as part of liblua(jit)tex.a, such that
+	there is only one libff.a used for LuaTeX and LuaJITTeX.
+
 2015-10-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Sync with the upstream trunk.

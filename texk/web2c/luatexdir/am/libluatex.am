@@ -13,12 +13,15 @@ LUA_DEPEND = $(LUA52_DEPEND)
 ##
 EXTRA_LIBRARIES += libluatex.a libluajittex.a
 
-libluatex_a_DEPENDENCIES = libff.a
-libluajittex_a_DEPENDENCIES = libjitff.a
+libluatex_a_DEPENDENCIES = libff.a libluamisc.a
+libluajittex_a_DEPENDENCIES = libff.a libluajitmisc.a
 
 libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES)
 libluatex_a_preflags += $(POPPLER_INCLUDES) -I$(srcdir)/libmd5
 libluatex_a_preflags += -DpdfTeX -I$(srcdir)/luatexdir
+libluatex_a_preflags += -I$(srcdir)/luatexdir/unilib
+libluatex_a_preflags += -I$(srcdir)/luatexdir/luafontloader/fontforge/inc
+libluatex_a_preflags += -DLUA_FF_LIB=1 -I$(srcdir)/luatexdir/luafontloader/fontforge/fontforge
 libluatex_a_preflags += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
 
 libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
@@ -42,8 +45,8 @@ nodist_libluajittex_a_SOURCES = \
 	$(dist_libluatex_sources) \
 	$(nodist_libluatex_sources)
 
-$(libluatex_a_OBJECTS): libff.a libmplib.a $(POPPLER_DEPEND)
-$(libluajittex_a_OBJECTS): libjitff.a libmplib.a $(POPPLER_DEPEND)
+$(libluatex_a_OBJECTS): libff.a libmplib.a libluamisc.a $(POPPLER_DEPEND)
+$(libluajittex_a_OBJECTS): libff.a libmplib.a libluajitmisc.a $(POPPLER_DEPEND)
 
 ## from luatexdir
 ##
@@ -56,6 +59,13 @@ dist_libluatex_sources = \
 	luatexdir/luatex.h \
 	luatexdir/luatex-common.h \
 	luatexdir/ptexlib.h
+
+## from luatexdir/luafontloader/src
+##
+dist_libluatex_sources += \
+	luatexdir/luafontloader/src/ffdummies.c \
+	luatexdir/luafontloader/src/ffdummies.h \
+	luatexdir/luafontloader/src/luafflib.c
 
 ## from luatexdir/dvi
 ##

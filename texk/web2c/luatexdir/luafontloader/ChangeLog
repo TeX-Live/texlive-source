@@ -1,3 +1,9 @@
+2015-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* src/ffdummies.h (new): Declare functions and variables.
+	* src/ffdummies.c, src/luafflib.c: Include src/ffdummies.h for
+	prototypes, use static functions and const variables.
+
 2013-11-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* src/luafflib.c: Values of italicangle were inconsistent between
