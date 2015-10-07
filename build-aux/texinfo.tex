@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-09-23.01}
+\def\texinfoversion{2015-10-04.19}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1416,6 +1416,7 @@ output) for that.)}
       \normalturnoffactive
       \def\@{@}%
       \let\/=\empty
+      \let\xprocessmacroarg=\eatspaces % in case we are in a macro expansion
       \makevalueexpandable
       % do we want to go so far as to use \indexnofonts instead of just
       % special-casing \var here?
@@ -5259,7 +5260,7 @@ end
     % cursed by a Unix daemon.
     \setbox\boxA = \hbox{#1}%
     \ifdim\wd\boxA = 0pt
-      \ %
+      \null\nobreak\hfill\ %
     \else
       %
       \null\nobreak\indexdotfill % Have leaders before the page number.
