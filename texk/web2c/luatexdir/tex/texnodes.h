@@ -469,8 +469,7 @@ typedef enum {
     set_random_seed_code,
     pdf_glyph_to_unicode_code,
     late_lua_node,              /* 35 */
-    close_lua_node,
-    save_cat_code_table_code,
+    save_cat_code_table_code =37,
     init_cat_code_table_code,
     pdf_colorstack_node,
     pdf_setmatrix_node,         /*40 */

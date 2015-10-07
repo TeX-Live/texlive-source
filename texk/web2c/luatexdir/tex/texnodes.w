@@ -185,7 +185,6 @@ const char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
 const char *node_fields_whatsit_save_pos[] = { "attr", NULL };
 const char *node_fields_whatsit_late_lua[] =
     { "attr", "reg", "data", "name", "string", NULL };
-const char *node_fields_whatsit_close_lua[] = { "attr", "reg", NULL };
 const char *node_fields_whatsit_pdf_colorstack[] =
     { "attr", "stack", "cmd", "data", NULL };
 const char *node_fields_whatsit_pdf_setmatrix[] = { "attr", "data", NULL };
@@ -311,8 +310,7 @@ node_info whatsit_node_data[] = {
     {fake_node, fake_node_size, NULL, fake_node_name},
     {late_lua_node, late_lua_node_size, node_fields_whatsit_late_lua,
      "late_lua"},
-    {close_lua_node, write_node_size, node_fields_whatsit_close_lua,
-     "close_lua"},
+    {fake_node, fake_node_size, NULL, fake_node_name},
     {fake_node, fake_node_size, NULL, fake_node_name},
     {fake_node, fake_node_size, NULL, fake_node_name},
     {pdf_colorstack_node, pdf_colorstack_node_size,
@@ -1160,7 +1158,6 @@ void flush_node(halfword p)
         case pdf_save_node:
         case pdf_restore_node:
         case cancel_boundary_node:
-        case close_lua_node:
         case pdf_refobj_node:
         case pdf_refxform_node:
         case pdf_refximage_node:
@@ -1468,7 +1465,6 @@ void check_node(halfword p)
         case pdf_save_node:
         case pdf_restore_node:
         case cancel_boundary_node:
-        case close_lua_node:
         case pdf_refobj_node:
         case pdf_refxform_node:
         case pdf_refximage_node:
@@ -2632,10 +2628,6 @@ static void show_whatsit_node(int p)
         break;
     case late_lua_node:
         show_late_lua(p);
-        break;
-    case close_lua_node:
-        tprint_esc("closelua");
-        print_int(late_lua_reg(p));
         break;
     case pdf_refobj_node:
         tprint_esc("pdfrefobj");
