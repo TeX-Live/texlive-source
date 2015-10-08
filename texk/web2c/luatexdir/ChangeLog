@@ -2,6 +2,7 @@
 
 	* lua/lepdflib.cc, tex/texnodes.h, tex/texnodes.w, NEWS:
 	Sync with the upstream.
+	* luatex.c: beta-0.81.0.
 
 2015-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
