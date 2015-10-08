@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-10-04.19}
+\def\texinfoversion{2015-10-06.21}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -5567,7 +5567,8 @@ end
     \writetocentry{part}{#1}{}% but put it in the toc
     \headingsoff              % no headline or footline on the part page
     % This outputs a mark at the end of the page that clears \thischapter
-    % and \thissection, like is done in \startcontents.
+    % and \thissection, as is done in \startcontents.
+    \let\pchapsepmacro\relax
     \chapmacro{}{Yomitfromtoc}{}%
     \chapoddpage
   \endgroup
