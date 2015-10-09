@@ -1,0 +1,158 @@
+gregorio (3.0.0-1) UNRELEASED; urgency=low
+
+  * New upstream version:
+     - New incompatible format of space configuration files (`gsp-xxx.tex`)
+     - Possibility to scale or not distances with staff size
+     - Clivis stem length follow Solesmes' books conventions
+     - \setstafflinethickness controls the thickness of the staff lines
+     - New PDF documentation for GregorioTeX (UserManual.pdf)
+     - \includescore has super powers deprecating previous score include macros
+     - Added <nlba> markup in gabc to get areas with no line breaks
+     - Added <c> markup in gabc to denote a change of color
+     - Pressus maior liquescens: `hof~`
+     - Torculus liquescent deminutus and quilisma version, gabc dfec~ and dwfec~
+     - Virga aucta (for liquescent salicus), gabc "iv>"
+     - \gremanualinitialwidth` macro to specify width of all initials
+     - English centering scheme now available as GregorioTeX option
+     - Fixing glyphs disapearing when importing into Illustrator
+     - Quilisma was melting too much with next note when in a second interval
+     - Low episemus ("_0") under consecutive notes are now aligned correctly
+     - gabc "mode" and "anotation-line" now do their job
+     - Reducing flat stem length
+     - Reducing horizontal episemus width
+     - Clivis alignment follows Solesmes' conventions more closely
+  * New watch file for github
+  * New documentation files
+  * Bump Standards-Version to 3.9.6
+  * Update gregorio.docs
+  * Updating Vcs-Browser and Vcs-Git (formerly Vcs-Svn) fields
+
+ -- Elie Roux <elie.roux@telecom-bretagne.eu>  Sun, 22 Mar 2015 17:45:45 +0200
+
+gregorio (2.3-1) unstable; urgency=low
+
+  * New upstream version:
+     - fixing absolute path handling
+     - fixing several segfaults
+     - fixing height of automatic custo
+     - fixing height of the bars in some cases
+     - fixing italic and bold automatic hyphen and ligatures
+     - cs: field now accepts non-ascii characters
+     - missing additional lines on porrectus
+     - braces over the notes should now work as documented
+     - vertical spaces are resetted between scores
+     - errors now affect the return value
+     - adapting to LuaTeX >= 0.75
+     - droppint support for TeXLive < 2010
+     - dropping support for Aleph/Omega
+     - font system is now based on ttf files
+     - fixing lintian warnings and errors
+  * New watch file
+  * Bump Standards-Version to 3.9.4.0
+  * Build-Depends on dh-autoreconf and dpkg-dev
+  * Bump compat to 9
+  * New maintainer (Closes: #675755)
+  * Adding Vcs-Browser and Vcs-Svn fields
+  * Switch to dpkg-source 3.0 (quilt) format
+
+ -- Elie Roux <elie.roux@telecom-bretagne.eu>  Sat, 22 Jun 2013 14:50:45 +0200
+
+gregorio (2.0-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * tex-common v3 transition:
+    . build-depend on tex-common (>= 3)
+      (debian/control)
+    . remove obsolete conffile updmap.d/20gregoriotex.cfg 
+      (debian/gregoriotex.maintscript)
+
+ -- Norbert Preining <preining@debian.org>  Fri, 23 Mar 2012 11:26:28 +0900
+
+gregorio (2.0-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Empty dependency_libs (Closes: #621334).
+
+ -- Luk Claes <luk@debian.org>  Sat, 18 Jun 2011 19:29:34 +0200
+
+gregorio (2.0-1) unstable; urgency=low
+
+  * New upstream release
+  * New maintainer
+  * Bump Standards-Version to 3.9.1.0
+  * [gregoriotex] Add dependency on texlive-latex-extra
+  * debian/gregorio.{postinst,postrm}: remove
+  * debian/rules: fix calls to dh_clean
+
+ -- Jérôme Marant <jerome@debian.org>  Wed, 05 Jan 2011 22:19:35 +0100 
+
+gregorio (1.0-1) unstable; urgency=low
+
+  * New upstream version:
+     - fixing a lot of bugs
+     - changing the number of arguments of some TeX function
+     - changing the glyph names
+     - improving the spacings
+     - better management of the penalty in TeX so that the line changes
+       are more consistent
+     - adding the possibility to put a flat after the clef
+     - adding the possibility to put a custo before a clef change
+     - changing the markup system in gabc to be more natural
+     - adaptation to TeXLive 2010 for LuaTeX
+
+  * Adding instructions about adding gregorio to the list of the 
+    programs allowed to be executed from TeX in the README.Debian
+  * Closing bug #572470 (depending on autopoint)
+
+ -- Elie Roux <elie.roux@telecom-bretagne.eu>  Sat, 29 May 2010 14:50:45 +0200
+
+gregorio (0.9.2-1) unstable; urgency=low
+
+  * New upstream version:
+     - fixing a lot of bugs
+     - changing the number of arguments of some TeX function
+     - changing the glyph names
+     - LuaTeX additional functionalities
+
+ -- Elie Roux <elie.roux@telecom-bretagne.eu>  Sun, 27 Dec 2008 11:19:26 +0200
+
+gregorio (0.9.1-1) unstable; urgency=low
+
+  * New upstream version:
+     - fixing a lot of small bugs
+     - changing the number of arguments of some TeX functions
+
+ -- Elie Roux <elie.roux@telecom-bretagne.eu>  Sun, 23 Nov 2008 16:19:26 +0200
+
+gregorio (0.9-1) unstable; urgency=low
+
+  * New upstream version:
+     - stabilizing the TeX API
+     - adding support for Cygwin compilation
+     - adding too many new features to be listed
+
+ -- Elie Roux <elie.roux@telecom-bretagne.eu>  Fri, 25 Jul 2008 14:19:26 +0200
+
+gregorio (0.3-1) unstable; urgency=low
+
+  * New upstream version:
+     - adding support for end of lines
+     - changing the architecture of libraries and plugins
+     - adding support for compilation on MAC OSX
+
+ -- Elie Roux <elie.roux@enst-bretagne.fr>  Fri, 18 Jan 2008 10:06:46 +0200
+
+gregorio (0.2.2-1) unstable; urgency=low
+
+  * New upstream version:
+     - adding support for styled text
+     - correcting small bugs in OpusTeX output
+     - changing GregorioXML on the text
+
+ -- Elie Roux <elie.roux@enst-bretagne.fr>  Thu, 14 Jun 2007 19:28:46 +0200
+
+gregorio (0.2.1-1) unstable; urgency=low
+
+  * Initial debian release
+
+ -- Elie Roux <elie.roux@enst-bretagne.fr>  Mon, 04 Jun 2007 22:47:32 +0200

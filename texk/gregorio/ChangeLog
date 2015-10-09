@@ -1,3 +1,8 @@
+2015-10-09  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import gregorio-4.0.0-rc1.
+	* configure.ac, version.ac: Adapted.
+
 2015-09-02  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import gregorio-4.0.0-beta2.

@@ -1,0 +1,28 @@
+Source: gregorio
+Section: x11
+Priority: optional
+Maintainer: Elie Roux <elie.roux@telecom-bretagne.eu>
+Build-Depends: dpkg-dev (>= 1.16.2), debhelper (>= 9), dh-autoreconf, autotools-dev, docbook-to-man, xsltproc, docbook-xsl, autopoint, libkpathsea-dev, pkg-config, tex-common
+Standards-Version: 3.9.6
+Homepage: http://gregorio-project.github.io/
+Vcs-Browser: https://github.com/gregorio-project/gregorio/
+Vcs-Git: https://github.com/gregorio-project/gregorio.git
+
+Package: gregorio
+Architecture: any
+Depends: libkpathsea6, ${misc:Depends}
+Recommends: gregoriotex
+Description: command-line tool to convert gabc scores into GregorioTeX
+ Gregorio is a software application for engraving Gregorian Chant scores on a
+ computer. Gregorio's main job is to convert a gabc file (simple text
+ representation of a score) into a GregorioTeX file, which makes TeX able to
+ create a PDF of your score.
+
+Package: gregoriotex
+Architecture: all
+Depends: luatex, texlive-luatex, ${misc:Depends}
+Recommends: gregorio
+Description: LuaTeX style for Gregorian chant scores
+ GregorioTeX is a LuaTeX style for writing Gregorian chant scores.
+ The code to write for a score is quite complex and should be written directly
+ by the gregorio software.
