@@ -1,8 +1,0 @@
-README file for Gregorio under DEBIAN GNU/Linux systems
-
-After the installation of gregorio, if you want to benefit from the macros
-compiling directly gabc fils in GregorioTeX (like \includescore), you
-have to add gregorio to the list of programs allowed to run from TeX
-by TeXLive. To do so, you have to modify /etc/texmf/texmf.cnf and add
-gregorio to the list 'shell_escape_commands'.
-
