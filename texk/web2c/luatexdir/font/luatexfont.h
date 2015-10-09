@@ -179,7 +179,7 @@ extern unsigned long cidtogid_obj;
 pdf_obj *pdf_new_stream(void);
 void pdf_add_stream(pdf_obj * stream, unsigned char *buf, long len);
 void pdf_release_obj(pdf_obj * stream);
-unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx);
+unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx, fd_entry *fd);
 
 /* subfont.c */
 void sfd_free(void);

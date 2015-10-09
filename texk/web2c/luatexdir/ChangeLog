@@ -1,6 +1,7 @@
 2015-10-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c: Sync with the upstream.
+	* font/luatexfont.h, font/writetype2.w: Sync with the upstream.
 
 2015-10-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

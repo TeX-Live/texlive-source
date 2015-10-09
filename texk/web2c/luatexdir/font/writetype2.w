@@ -172,11 +172,11 @@ boolean writetype2(PDF pdf, fd_entry * fd)
 
     fd_cur->ff_found = true;
 
-    if (is_subsetted(fd_cur->fm)) 
+    if (is_subsetted(fd_cur->fm))
         report_start_file(filetype_subset,cur_file_name);
-     else 
+     else
         report_start_file(filetype_font,cur_file_name);
-    
+
     /* here is the real work */
 
     ret = make_tt_subset(pdf, fd, ttf_buffer, ttf_size);
@@ -184,9 +184,9 @@ boolean writetype2(PDF pdf, fd_entry * fd)
     xfree (dir_tab);
 #endif
     xfree(ttf_buffer);
-    if (is_subsetted(fd_cur->fm)) 
+    if (is_subsetted(fd_cur->fm))
         report_stop_file(filetype_subset);
-     else 
+     else
         report_stop_file(filetype_font);
     cur_file_name = NULL;
     return ret;
@@ -234,7 +234,7 @@ static struct {
 };
 
 
-unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
+unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx, fd_entry * fd)
 {
     //ULONG version;
     unsigned long offset = 0;
@@ -245,8 +245,9 @@ unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx)
     /*version = */(void)sfnt_get_ulong(sfont);
     num_dirs = sfnt_get_ulong(sfont);
     if (ttc_idx < 0 || ttc_idx > (int) (num_dirs - 1)) {
-        fprintf(stderr, "Invalid TTC index number\n");
-        uexit(1);
+        fprintf(stderr, "Invalid TTC index number %i (0..%i), using index 0 for font %s\n",
+            ttc_idx,(int) (num_dirs - 1),(fd->fm->ps_name ? fd->fm->ps_name : ""));
+        return 0 ;
     }
     sfnt_seek_set(sfont, 12 + ttc_idx * 4);
     offset = sfnt_get_ulong(sfont);
@@ -278,9 +279,7 @@ boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
 
     if (sfont->type == SFNT_TYPE_TTC) {
         i = ff_get_ttc_index(fd->fm->ff_name, fd->fm->ps_name);
-        tex_printf("(%s:%ld)", (fd->fm->ps_name ? fd->fm->ps_name : ""), i);
-        error =
-            sfnt_read_table_directory(sfont, ttc_read_offset(sfont, (int) i));
+        error = sfnt_read_table_directory(sfont, ttc_read_offset(sfont, (int) i, fd));
     } else {
         error = sfnt_read_table_directory(sfont, 0);
     }
