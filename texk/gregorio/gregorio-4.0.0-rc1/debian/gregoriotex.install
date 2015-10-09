@@ -1,6 +1,0 @@
-tex/gregorio*.tex /usr/share/texmf/tex/luatex/gregoriotex
-tex/gsp-default.tex /usr/share/texmf/tex/luatex/gregoriotex
-tex/gregorio*.lua /usr/share/texmf/tex/luatex/gregoriotex
-tex/gregorio*.sty /usr/share/texmf/tex/luatex/gregoriotex
-fonts/*.ttf /usr/share/texmf/fonts/truetype/public/gregoriotex
-fonts/*.sfd /usr/share/texmf/fonts/source/public/gregoriotex
