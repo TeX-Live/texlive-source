@@ -1764,7 +1764,7 @@ extern char *strconcat3(const char *str, const char *str2, const char *str3);
 
 extern char *XUIDFromFD(int xuid[20]);
 extern SplineFont *SplineFontFromPSFont(struct fontdict *fd);
-extern int CheckAfmOfPostscript(SplineFont *sf,char *psname,EncMap *map);
+extern int CheckAfmOfPostscript(SplineFont *sf, const char *psname,EncMap *map);
 extern int LoadKerningDataFromAmfm(SplineFont *sf, char *filename, EncMap *map);
 extern int LoadKerningDataFromAfm(SplineFont *sf, char *filename, EncMap *map);
 extern int LoadKerningDataFromTfm(SplineFont *sf, char *filename, EncMap *map);
