@@ -23,7 +23,6 @@ dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([gregorio])
 
 dnl Checks for header files.
-AC_CHECK_HEADER_STDBOOL
 AC_CHECK_HEADERS([stdalign.h])
 
 AC_C_BIGENDIAN

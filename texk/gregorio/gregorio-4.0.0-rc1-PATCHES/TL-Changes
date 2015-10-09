@@ -1,0 +1,18 @@
+Changes applied to the gregorio-4.0.0-rc1 tree as obtained from:
+	https://github.com/gregorio-project/gregorio/releases/download/v4.0.0-beta2/
+	https://github.com/gregorio-project/gregorio/releases/tag/v4.0.0-rc1/
+
+Remove:
+	Makefile.in
+	aclocal.m4
+	build-aux/
+	configure
+	contrib/Makefile.in
+	doc/Makefile.in
+	examples/Makefile.in
+	fonts/Makefile.in
+	macosx/
+	src/Makefile.in
+	src/config_.h.in
+	tex/Makefile.in
+

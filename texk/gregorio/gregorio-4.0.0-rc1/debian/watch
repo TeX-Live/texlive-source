@@ -1,0 +1,4 @@
+version=3
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/gregorio-$1\.tar\.gz/ \
+  https://github.com/gregorio-project/gregorio/tags .*/v?(\d\S*)\.tar\.gz
+# Elie Roux <elie.roux@telecom-bretagne.eu>  Mon, 23 Mar 2015 16:25:47 +0200
