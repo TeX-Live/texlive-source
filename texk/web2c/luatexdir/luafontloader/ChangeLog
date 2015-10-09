@@ -1,3 +1,11 @@
+2015-10-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* fontforge/fontforge/splinefont.h.
+	fontforge/fontforge/splinesaveafm.c:
+	Declare arg2 of CheckAfmOfPostscript() as const.
+	* src/luafflib.c: Temporarily copy const strings instead of
+	casting them from 'const char *' to 'char *'.
+
 2015-10-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* src/ffdummies.h (new): Declare functions and variables.

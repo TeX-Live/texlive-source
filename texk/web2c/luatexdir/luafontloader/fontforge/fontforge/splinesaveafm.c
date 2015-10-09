@@ -228,7 +228,7 @@ return( 0 );
 return( true );
 }
 
-int CheckAfmOfPostscript(SplineFont *sf,char *psname, EncMap *map) {
+int CheckAfmOfPostscript(SplineFont *sf, const char *psname, EncMap *map) {
     char *new, *pt;
     int ret;
     int wasuc=false;

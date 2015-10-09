@@ -301,8 +301,9 @@ static int ff_apply_featurefile(lua_State * L)
     SplineFont **sf;
     char *fname;
     sf = check_isfont(L, 1);
-    fname = (char *) luaL_checkstring(L, 2);
+    fname = xstrdup(luaL_checkstring(L, 2));
     SFApplyFeatureFilename(*sf, fname);
+    free(fname);
     if (gww_error_count > 0) {
 	int i;
 	lua_newtable(L);
@@ -320,9 +321,9 @@ static int ff_apply_featurefile(lua_State * L)
 static int ff_apply_afmfile(lua_State * L)
 {
     SplineFont **sf;
-    char *fname;
+    const char *fname;
     sf = check_isfont(L, 1);
-    fname = (char *) luaL_checkstring(L, 2);
+    fname = luaL_checkstring(L, 2);
     CheckAfmOfPostscript(*sf, fname, (*sf)->map);
     if (gww_error_count > 0) {
 	int i;
@@ -3227,6 +3228,7 @@ static int ff_info(lua_State * L)
     FILE *l;
     int i;
     const char *fontname;
+    char *fontnamecopy;
     int openflags = 1;
     fontname = luaL_checkstring(L, 1);
     if (!strlen(fontname)) {
@@ -3247,7 +3249,9 @@ static int ff_info(lua_State * L)
     }
 
     gww_error_count = 0;
-    sf = ReadSplineFontInfo((char *) fontname, openflags);
+    fontnamecopy = xstrdup(fontname);
+    sf = ReadSplineFontInfo(fontnamecopy, openflags);
+    free(fontnamecopy);
     if (gww_error_count > 0)
         gwwv_errors_free();
 
