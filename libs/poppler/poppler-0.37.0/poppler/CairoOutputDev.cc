@@ -823,8 +823,16 @@ void CairoOutputDev::eoFill(GfxState *state) {
   cairo_set_fill_rule (cairo, CAIRO_FILL_RULE_EVEN_ODD);
   cairo_set_source (cairo, fill_pattern);
   LOG(printf ("fill-eo\n"));
-  cairo_fill (cairo);
 
+  if (mask) {
+    cairo_save (cairo);
+    cairo_clip (cairo);
+    cairo_set_matrix (cairo, &mask_matrix);
+    cairo_mask (cairo, mask);
+    cairo_restore (cairo);
+  } else {
+    cairo_fill (cairo);
+  }
   if (cairo_shape) {
     cairo_set_fill_rule (cairo_shape, CAIRO_FILL_RULE_EVEN_ODD);
     doPath (cairo_shape, state, state->getPath());

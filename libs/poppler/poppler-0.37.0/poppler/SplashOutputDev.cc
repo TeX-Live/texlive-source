@@ -35,6 +35,7 @@
 // Copyright (C) 2014 Ed Porras <ed@moto-research.com>
 // Copyright (C) 2014 Richard PALO <richard@netbsd.org>
 // Copyright (C) 2015 Tamas Szekeres <szekerest@gmail.com>
+// Copyright (C) 2015 Kenji Uno <ku@digitaldolphins.jp>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1906,7 +1907,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
   GfxFont *gfxFont;
   GfxFontLoc *fontLoc;
   GfxFontType fontType;
-  SplashOutFontFileID *id;
+  SplashOutFontFileID *id = NULL;
   SplashFontFile *fontFile;
   SplashFontSrc *fontsrc = NULL;
   FoFiTrueType *ff;
@@ -1945,6 +1946,12 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
   }
 
   // check the font file cache
+reload:
+  delete id;
+  delete fontLoc;
+  if (fontsrc && !fontsrc->isFile)
+      fontsrc->unref();
+
   id = new SplashOutFontFileID(gfxFont->getID());
   if ((fontFile = fontEngine->getFontFile(id))) {
     delete id;
@@ -1988,6 +1995,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -1999,6 +2007,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -2010,6 +2019,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -2045,6 +2055,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -2056,6 +2067,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -2076,6 +2088,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -2112,6 +2125,7 @@ void SplashOutputDev::doUpdateFont(GfxState *state) {
 	error(errSyntaxError, -1, "Couldn't create a font for '{0:s}'",
 	      gfxFont->getName() ? gfxFont->getName()->getCString()
 	                         : "(unnamed)");
+	if (gfxFont->invalidateEmbeddedFont()) goto reload;
 	goto err2;
       }
       break;
@@ -3683,6 +3697,11 @@ void SplashOutputDev::drawMaskedImage(GfxState *state, Object *ref,
     imgMaskData.height = maskHeight;
     imgMaskData.y = 0;
     maskBitmap = new SplashBitmap(width, height, 1, splashModeMono1, gFalse);
+    if (!maskBitmap->getDataPtr()) {
+      delete maskBitmap;
+      width = height = 1;
+      maskBitmap = new SplashBitmap(width, height, 1, splashModeMono1, gFalse);
+    }
     maskSplash = new Splash(maskBitmap, gFalse);
     maskColor[0] = 0;
     maskSplash->clear(maskColor);
@@ -4058,7 +4077,9 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   // save state
   transpGroup->origBitmap = bitmap;
   transpGroup->origSplash = splash;
+#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
   transpGroup->fontAA = fontEngine->getAA();
+#endif
 
   //~ this handles the blendingColorSpace arg for soft masks, but
   //~   not yet for transparency groups
@@ -4088,10 +4109,17 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   // create the temporary bitmap
   bitmap = new SplashBitmap(w, h, bitmapRowPad, colorMode, gTrue,
 			    bitmapTopDown, bitmap->getSeparationList());
+  if (!bitmap->getDataPtr()) {
+    delete bitmap;
+    w = h = 1;
+    bitmap = new SplashBitmap(w, h, bitmapRowPad, colorMode, gTrue, bitmapTopDown);
+  }
   splash = new Splash(bitmap, vectorAntialias,
 		      transpGroup->origSplash->getScreen());
   if (transpGroup->next != NULL && transpGroup->next->knockout) {
+#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
     fontEngine->setAA(gFalse);
+#endif
   }
   splash->setThinLineMode(transpGroup->origSplash->getThinLineMode());
   splash->setMinLineWidth(globalParams->getMinLineWidth());
@@ -4155,7 +4183,9 @@ void SplashOutputDev::paintTransparencyGroup(GfxState *state, double *bbox) {
     splash->composite(tBitmap, 0, 0, tx, ty,
       tBitmap->getWidth(), tBitmap->getHeight(),
       gFalse, !isolated, transpGroupStack->next != NULL && transpGroupStack->next->knockout, knockoutOpacity);
+#if HAVE_FREETYPE_FREETYPE_H || HAVE_FREETYPE_H
     fontEngine->setAA(transpGroupStack->fontAA);
+#endif
     if (transpGroupStack->next != NULL && transpGroupStack->next->shape != NULL) {
       transpGroupStack->next->knockout = gTrue;
     }

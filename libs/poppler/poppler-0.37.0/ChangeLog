@@ -1,3 +1,189 @@
+commit e8cb16bff48dbe2d9efd988ddb09608406d2633b
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Sep 27 15:34:12 2015 +0930
+
+    configure: fix openjpeg detection
+
+    - configure was failing when enable_libopenjpeg="auto" and openjpeg
+    not found
+    - fix header check for pre 1.4 versions
+
+    Bug 92135
+
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a82e338b4f9639aced3201bf7639bbdf1a7974e2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Sep 27 15:41:27 2015 +0200
+
+    Fix memory leak on font reload
+
+ poppler/SplashOutputDev.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+commit 8639b20da3d9be62f47462ad1cdaa5c65d117dfb
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun Sep 27 15:37:51 2015 +0200
+
+    Try to use an external font if the internal one is invalid
+
+ poppler/GfxFont.h          | 11 +++++++++++
+ poppler/SplashOutputDev.cc |  8 ++++++++
+ 2 files changed, 19 insertions(+)
+
+commit e3225a0543d1e6fbc269094ca192879816296993
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 01:14:41 2015 +0200
+
+    Fix crash in GfxGouraudTriangleShading for malformed files
+
+ poppler/GfxState.cc | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+commit 0a33e3a740a1dbe57023d0a51077689d29d79def
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 01:00:32 2015 +0200
+
+    Fix the fix of the fix for SplashOutputDev::beginTransparencyGroup
+    and malformed files
+
+ poppler/SplashOutputDev.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit b723e4f90c78ac972bf30d7006283042930374d7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 00:53:10 2015 +0200
+
+    Fix crash in malformed document in SplashOutputDev::drawMaskedImage
+
+    And improved the one i just did for
+    SplashOutputDev::beginTransparencyGroup
+
+ poppler/SplashOutputDev.cc | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+commit fd49b3d4ecdbe04c4f51e6ab77687dc25bbc3f49
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 00:45:55 2015 +0200
+
+    Fix crash on Annot::layoutText for malformed documents
+
+ poppler/Annot.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit a88be71fee8a4fd8e9a5a1d9d955addc0f3076ea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 00:42:14 2015 +0200
+
+    Fix crash in SplashOutputDev::beginTransparencyGroup in malformed file
+
+ poppler/SplashOutputDev.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 0fa5c17ea409c3fdfe1e3a97ff5e4bae96da1cae
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 00:36:33 2015 +0200
+
+    Fix crash on JBIG2Stream::readHalftoneRegionSeg for malformed
+    documents
+
+ poppler/JBIG2Stream.cc | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+commit 942adfc25e7a00ac3cf032ced2d8949e99099f70
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Sep 25 00:30:58 2015 +0200
+
+    Fix crash on AnnotInk::draw for malformed documents
+
+ poppler/Annot.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 9aa19159bff4db02889cba48b9b31e40247e5314
+Author: Even Rouault <even.rouault@spatialys.com>
+Date:   Fri Sep 11 13:56:05 2015 +0200
+
+    Catalog::cachePageTree(): recover from out of memory condition
+
+ poppler/Catalog.cc | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+commit 8dc9187690de10f1538764972799a39660272d1f
+Author: Even Rouault <even.rouault@spatialys.com>
+Date:   Fri Sep 11 13:30:32 2015 +0200
+
+    Catalog::getNumPages(): validate page count
+
+ poppler/Catalog.cc | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 7028f835a603e12dd73452a39f56ac0b633207b2
+Author: Arseniy Lartsev <arseniy@alumni.chalmers.se>
+Date:   Sun Sep 20 18:32:36 2015 +0200
+
+    PageTransition D is a number not an int
+
+    See bug #92040
+
+ poppler/PageTransition.cc          |  5 +++--
+ poppler/PageTransition.h           |  5 +++--
+ qt4/src/poppler-page-transition.cc |  6 ++++++
+ qt4/src/poppler-page-transition.h  | 14 ++++++++++++--
+ qt5/src/poppler-page-transition.cc |  6 ++++++
+ qt5/src/poppler-page-transition.h  | 14 ++++++++++++--
+ 6 files changed, 42 insertions(+), 8 deletions(-)
+
+commit a98f99e90aac703e648697da5c897c49645eda10
+Author: Kenji Uno <ku@digitaldolphins.jp>
+Date:   Wed Sep 16 22:08:59 2015 +0200
+
+    SplashOuputDev: Protect calls to set/getAA with the proper #if guards
+
+    Bug #92006
+
+ poppler/SplashOutputDev.cc | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit 2a48cab5e66a69ed1bf3e792efc109ddcad8d5ee
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Tue Sep 15 14:43:21 2015 -0500
+
+    cairo: Use mask for even-odd fill
+
+    Bug #84527
+
+ poppler/CairoOutputDev.cc | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit b14d4b0968f7b0ad783c3fa56ad863d7fda235fe
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Sep 10 00:33:15 2015 +0200
+
+    Post release fixlets for the NEWS file
+
+ NEWS | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+commit de1ece5c929c3f46c04be76b4b72f6371911fd1a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Sep 10 00:26:02 2015 +0200
+
+    Poppler 0.36
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 36 ++++++++++++++++++++++++++++++++++++
+ configure.ac           |  2 +-
+ cpp/Doxyfile           |  2 +-
+ poppler/Makefile.am    |  2 +-
+ qt4/src/CMakeLists.txt |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt4/src/Makefile.am    |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 11 files changed, 47 insertions(+), 11 deletions(-)
+
 commit d490c21fe4a60cff26f34c619d3078dcb575bf44
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Wed Sep 9 23:55:57 2015 +0200

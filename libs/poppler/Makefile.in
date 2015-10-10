@@ -276,7 +276,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
-	$(top_srcdir)/poppler-0.36.0/poppler/poppler-config.h.in \
+	$(top_srcdir)/poppler-0.37.0/poppler/poppler-config.h.in \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
@@ -597,7 +597,7 @@ poppler-config.h: stamp-h2
 	@test -f $@ || rm -f stamp-h2
 	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) stamp-h2
 
-stamp-h2: $(top_srcdir)/poppler-0.36.0/poppler/poppler-config.h.in $(top_builddir)/config.status
+stamp-h2: $(top_srcdir)/poppler-0.37.0/poppler/poppler-config.h.in $(top_builddir)/config.status
 	@rm -f stamp-h2
 	cd $(top_builddir) && $(SHELL) ./config.status poppler-config.h
 

@@ -1,6 +1,6 @@
-diff -ur poppler-0.36.0.orig/goo/GooString.h poppler-0.36.0/goo/GooString.h
---- poppler-0.36.0.orig/goo/GooString.h	2015-07-12 17:05:10.000000000 +0200
-+++ poppler-0.36.0/goo/GooString.h	2015-08-10 09:38:59.000000000 +0200
+diff -ur poppler-0.37.0.orig/goo/GooString.h poppler-0.37.0/goo/GooString.h
+--- poppler-0.37.0.orig/goo/GooString.h	2015-07-12 17:05:10.000000000 +0200
++++ poppler-0.37.0/goo/GooString.h	2015-08-10 09:38:59.000000000 +0200
 @@ -35,6 +35,21 @@
  #endif
  
