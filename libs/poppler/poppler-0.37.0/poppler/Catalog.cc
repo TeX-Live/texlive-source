@@ -31,6 +31,7 @@
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 José Aliste <jaliste@src.gnome.org>
 // Copyright (C) 2014 Ed Porras <ed@moto-research.com>
+// Copyright (C) 2015 Even Rouault <even.rouault@spatialys.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -171,8 +172,8 @@ Catalog::~Catalog() {
       }
     }
     gfree(pages);
-    gfree(pageRefs);
   }
+  gfree(pageRefs);
   names.free();
   dests.free();
   delete destNameTree;
@@ -305,8 +306,14 @@ GBool Catalog::cachePageTree(int page)
     }
 
     pagesSize = getNumPages();
-    pages = (Page **)gmallocn(pagesSize, sizeof(Page *));
-    pageRefs = (Ref *)gmallocn(pagesSize, sizeof(Ref));
+    pages = (Page **)gmallocn_checkoverflow(pagesSize, sizeof(Page *));
+    pageRefs = (Ref *)gmallocn_checkoverflow(pagesSize, sizeof(Ref));
+    if (pages == NULL || pageRefs == NULL ) {
+      error(errSyntaxError, -1, "Cannot allocate page cache");
+      pagesDict->decRef();
+      pagesSize = 0;
+      return gFalse;
+    }
     for (int i = 0; i < pagesSize; ++i) {
       pages[i] = NULL;
       pageRefs[i].num = -1;
@@ -856,6 +863,17 @@ int Catalog::getNumPages()
       }
     } else {
       numPages = (int)obj.getNum();
+      if (numPages <= 0) {
+        error(errSyntaxError, -1,
+              "Invalid page count {0:d}", numPages);
+        numPages = 0;
+      } else if (numPages > xref->getNumObjects()) {
+        error(errSyntaxError, -1,
+              "Page count ({0:d}) larger than number of objects ({1:d})",
+              numPages, xref->getNumObjects());
+        numPages = 0;
+      }
+
     }
 
     catDict.free();

@@ -1,3 +1,16 @@
+Release 0.37.0
+        core:
+         * CairoOutputDev: Use mask for even-odd fill. Bug #84527
+         * SplashOuputDev: Protect calls to set/getAA with the proper #if guards. Bug #92006
+         * SplashOuputDev: Try to use an external font if the internal one is invalid
+         * PageTransition D is a number not an int. Bug #92040
+         * Catalog::getNumPages(): validate page count
+         * Catalog::cachePageTree(): recover from out of memory condition
+         * Fix crashes in malformed documents
+
+        build system:
+         * configure: fix openjpeg detection
+
 Release 0.36.0
         core:
          * Patch to support RichMedia annotations
@@ -18,7 +31,7 @@ Release 0.36.0
         qt5:
          * Basic support for RichMedia annotations
          * Change default image format
-         * Minor optimizationsHEADmaster
+         * Minor optimizations
 
         cpp:
          * Fix utf8/utf16 conversion. Bug #91644
@@ -26,9 +39,6 @@ Release 0.36.0
         build system:
          * Do not hardcode -fPIC in Makefile.am
          * cmake: Allow configuring SHARE_INSTALL_DIR. Bug #90293
-
-        glib:
-         *
 
         utils:
          * pdfunite: Insert embedded files in result pdf. Bug #90066

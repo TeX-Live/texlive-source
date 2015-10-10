@@ -1,5 +1,6 @@
 /* PageTransition.cc
  * Copyright (C) 2005, Net Integration Technologies, Inc.
+ * Copyright (C) 2015, Arseniy Lartsev <arseniy@alumni.chalmers.se>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ public:
   PageTransitionType getType() { return type; }
 
   // Get duration
-  int getDuration() { return duration;}
+  double getDuration() { return duration; }
 
   // Get alignment
   PageTransitionAlignment getAlignment() { return alignment; }
@@ -92,7 +93,7 @@ public:
 private:
   
   PageTransitionType type;           // transition style
-  int duration;                      // duration of the effect in seconds
+  double duration;                   // duration of the effect in seconds
   PageTransitionAlignment alignment; // dimension of the effect
   PageTransitionDirection direction; // direction of motion
   int angle;                         // direction in degrees

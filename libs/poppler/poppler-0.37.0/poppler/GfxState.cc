@@ -5027,7 +5027,7 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(GfxResources *res, i
     }
   }
   delete bitBuf;
-  if (typeA == 5) {
+  if (typeA == 5 && nVerticesA > 0) {
     nRows = nVerticesA / vertsPerRow;
     nTrianglesA = (nRows - 1) * 2 * (vertsPerRow - 1);
     trianglesA = (int (*)[3])gmallocn(nTrianglesA * 3, sizeof(int));
@@ -5140,17 +5140,23 @@ void GfxGouraudTriangleShading::getTriangle(int i,
   assert(isParameterized()); 
 
   v = triangles[i][0];
-  *x0 = vertices[v].x;
-  *y0 = vertices[v].y;
-  *color0 = colToDbl(vertices[v].color.c[0]);
+  if (likely(v >= 0 && v < nVertices)) {
+    *x0 = vertices[v].x;
+    *y0 = vertices[v].y;
+    *color0 = colToDbl(vertices[v].color.c[0]);
+  }
   v = triangles[i][1];
-  *x1 = vertices[v].x;
-  *y1 = vertices[v].y;
-  *color1 = colToDbl(vertices[v].color.c[0]);
+  if (likely(v >= 0 && v < nVertices)) {
+    *x1 = vertices[v].x;
+    *y1 = vertices[v].y;
+    *color1 = colToDbl(vertices[v].color.c[0]);
+  }
   v = triangles[i][2];
-  *x2 = vertices[v].x;
-  *y2 = vertices[v].y;
-  *color2 = colToDbl(vertices[v].color.c[0]);
+  if (likely(v >= 0 && v < nVertices)) {
+    *x2 = vertices[v].x;
+    *y2 = vertices[v].y;
+    *color2 = colToDbl(vertices[v].color.c[0]);
+  }
 }
 
 //------------------------------------------------------------------------

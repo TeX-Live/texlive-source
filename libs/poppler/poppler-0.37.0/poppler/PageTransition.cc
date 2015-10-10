@@ -2,6 +2,7 @@
  * Copyright (C) 2005, Net Integration Technologies, Inc.
  * Copyright (C) 2010, Albert Astals Cid <aacid@kde.org>
  * Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
+ * Copyright (C) 2015, Arseniy Lartsev <arseniy@alumni.chalmers.se>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,8 +81,8 @@ PageTransition::PageTransition (Object *trans) {
   obj.free();
 
   // get duration
-  if (dict->lookup("D", &obj)->isInt()) {
-    duration = obj.getInt();
+  if (dict->lookup("D", &obj)->isNum()) {
+    duration = obj.getNum();
   }
   obj.free();
 

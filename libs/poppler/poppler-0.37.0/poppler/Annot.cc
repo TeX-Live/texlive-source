@@ -15,7 +15,7 @@
 //
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
 // Copyright (C) 2007, 2008 Julien Rebetez <julienr@svn.gnome.org>
-// Copyright (C) 2007-2013 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2007-2013, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2007-2013 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2007, 2008 Iñigo Martínez <inigomartinez@gmail.com>
 // Copyright (C) 2007 Jeff Muizelaar <jeff@infidigm.net>
@@ -4052,6 +4052,9 @@ void Annot::layoutText(GooString *text, GooString *outBuf, int *i,
   double w = 0.0;
   int uLen, n;
   double dx, dy, ox, oy;
+  if (!text) {
+    return;
+  }
   GBool unicode = text->hasUnicodeMarker();
   GBool spacePrev;              // previous character was a space
 
@@ -6151,7 +6154,7 @@ void AnnotInk::draw(Gfx *gfx, GBool printing) {
 
     for (int i = 0; i < inkListLength; ++i) {
       const AnnotPath * path = inkList[i];
-      if (path->getCoordsLength() != 0) {
+      if (path && path->getCoordsLength() != 0) {
         appearBuf->appendf ("{0:.2f} {1:.2f} m\n", path->getX(0) - rect->x1, path->getY(0) - rect->y1);
         appearBBox->extendTo (path->getX(0) - rect->x1, path->getY(0) - rect->y1);
 

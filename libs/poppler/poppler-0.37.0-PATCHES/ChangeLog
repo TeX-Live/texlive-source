@@ -1,3 +1,10 @@
+2015-10-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Imported poppler-0.37.0 source tree from:
+	  http://poppler.freedesktop.org/
+
+	* patch-02-LLONG_MAX, patch-03-Object-functions: Adapted.
+
 2015-09-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Imported poppler-0.36.0 source tree from:
