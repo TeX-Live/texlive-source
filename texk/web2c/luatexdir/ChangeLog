@@ -1,3 +1,7 @@
+2015-10-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex/mlist.w: Sync with the upstream.
+
 2015-10-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c: Sync with the upstream.

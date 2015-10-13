@@ -2128,12 +2128,20 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
         if (sa == INT_MIN) {
             sa = half(width(y));        /* just take the center */
         }
-        shift_amount(y) = s - sa;
+        if (math_direction == dir_TRT) {
+           shift_amount(y) = s + sa - width(y);
+        } else {
+           shift_amount(y) = s - sa;
+        }
     } else {
         if (width(y)== 0) {
             shift_amount(y) = s + w;
         } else {
-            shift_amount(y) = s + half(w - width(y));
+            if (math_direction == dir_TRT) {
+                shift_amount(y) = s + width(y);
+            } else {
+                shift_amount(y) = s + half(w - width(y));
+            }
         }
     }
     width(y) = 0;
