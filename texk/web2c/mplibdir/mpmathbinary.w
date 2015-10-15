@@ -896,14 +896,14 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
   invalid = mpfr_set_str(result,buf, 10, ROUNDING);
   //fprintf(stdout,"scan of [%s] produced %s, ", buf, mp_binnumber_tostring(result));
   lp = (unsigned long) l;
-  
   /* strip leading - or + or 0 or .*/
   if ( (*bufp=='-') || (*bufp=='+') || (*bufp=='0') || (*bufp=='.') ) { lp--; bufp++;}
   /* strip also . */
   lp = strchr(bufp,'.') ? lp-1: lp;
   /* strip also trailing 0s */ 
   bufp = buf+l-1;
-  while(*bufp == '0') {bufp--; lp--;}
+  while(*bufp == '0') {bufp--; lp=( (lp==0)||(lp==1)?1:lp--);}
+  /* force at last one digit, even if the number is  0 */
   lp = lp>0? lp: 1;
   /* bits needed for buf */
   lpbit = (unsigned long)ceil(lp/log10(2)+1);
