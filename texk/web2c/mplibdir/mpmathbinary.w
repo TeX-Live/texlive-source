@@ -902,8 +902,8 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
   lp = strchr(bufp,'.') ? lp-1: lp;
   /* strip also trailing 0s */ 
   bufp = buf+l-1;
-  while(*bufp == '0') {bufp--; lp=( (lp==0)||(lp==1)?1:lp--);}
-  /* force at last one digit, even if the number is  0 */
+  while(*bufp == '0') {bufp--; lp=( ((lp==0)||(lp==1))?1:lp-1);}
+  /* at least one digit, even if the number is  0 */
   lp = lp>0? lp: 1;
   /* bits needed for buf */
   lpbit = (unsigned long)ceil(lp/log10(2)+1);
