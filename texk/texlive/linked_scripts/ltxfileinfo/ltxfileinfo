@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version=2.03
+version=2.04
 myname=$(basename "$0")
 
 <<'DOC'
@@ -49,12 +49,11 @@ ltxfileinfo tries to detect (and report) mal-formatted dates and versions;
 use the |--star| option to mark such fields with a star, of use the |--color|
 option to color invalid fields red, if you work in a terminal with ANSI-coloring
 capabilities.
-These options are useful for developers
-who want to check the correctness of their |\Provides...| statements.
-For example:
+These options are useful for developers who want to check the correctness
+of their |\Provides...| statements. For example:
 
   $ ltxfileinfo -s arfonts.sty
-  file: arfonts.sty (ARfonts.sty*)
+  file: ARfonts.sty* (case difference in \Provides statement)
   date: 2006/01/01
   vers: --*
   info: Part of the Arabi package
@@ -139,7 +138,7 @@ function trim {
    echo -n "$var"
 }
 
-# mark a string by appending a * (--mark star)
+# mark a string by appending a * (--star and --color options)
 function mark {
    echo "$mark1${*}$mark2"
 }
@@ -204,16 +203,25 @@ function extract {
 # display the results
 function display {
    # file should be equal to arg (the argument)
-   [[ $file != "$arg" ]] && file="$arg ($(mark "$file"))"
+   if [[ $file != "$arg" ]] && [[ -n $mark2 ]]; then 
+      file="$(mark "$file") (case difference in \\Provides statement)"
+   fi
    
    # to be correct, date must be of the form yyyy/mm/dd
-   if [[ ! $date =~ ^[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}$ ]]; then
-      date=$(mark $date)
-   else
-      # also, the number must be valid:
-      if [ "$( date -d "$date" +%arg 2>&1 | grep invalid )" != "" ] ; then
-         date=$(mark "$date")
+   if [[ $date == -- ]]; then
+      date="$(mark $date)  (file modification date: $(stat -c %z "$loca"|sed -e 's/\..*//'))"
+   elif [[ -n $mark2 ]]; then
+      local wrong=false add=''
+      if [[ ! $date =~ ^[[:digit:]]{4}/[[:digit:]]{2}/[[:digit:]]{2}$ ]]; then
+         add+="  (wrong format)"
+         wrong=true
       fi
+      if [ "$(date -d "$date" +%arg 2>&1 | grep invalid)" != "" ]; then
+         # even if it matches, the date must be valid:
+         add+="  (invalid date)"
+         wrong=true
+      fi
+      if $wrong; then date="$(mark "$date")$add"; fi
    fi
    
    # version should be 1.2 or 1.2.3, maybe prefixed with v and suffixed with zero or more lower case letters
@@ -319,7 +327,7 @@ cp "$loca" "$dir"
 cd "$dir" || die "Could not cd to $dir"
 
 # The following code is mostly from Uwe Lueck's readprov.sty:
-echo '
+printf %s '
 \makeatletter
 \def\GetFileInfo#1{%
   \def\filename{#1}%
@@ -411,34 +419,3 @@ fi
 out=($out)
 extract "${out[@]}"
 display
-exit 0
-
-# template for README file:
-<<'README'
-This is release %version% of the ltxfileinfo script
-License: GPL
-
-Short description:
-ltxfileinfo is a bash script; it prints information about a latex class,
-style and other files to standard output.
-The script is based on Uwe Lueck's readprov.sty, so it prints information
-only for files that contain a \ProvidesFile, \ProvidesClass or
-\ProvidesPackage statement.
-The script tries to correct errors in these \Provides... statements and it
-has options, useful for developers, to make errors in those statements visible.
-
-Usage example:
-
-$ ltxfileinfo article.cls
-name: article.cls
-date: 2007/10/19
-vers: v1.4h
-info: Standard LaTeX document class
-loca: /usr/local/texlive/2009/texmf-dist/tex/latex/base/article.cls
-
-major changes of release %version% relative to 1.1
-- completely rewritten as a bash script, using code from readprov.sty
-- now also can evaluate xelatex oriented files
-- can now handle any LaTeX file containing a \Provides... statement
-- options for \Provides... statement validation
-README
