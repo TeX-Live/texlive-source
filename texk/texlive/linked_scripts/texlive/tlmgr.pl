@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 38566 2015-10-06 02:49:58Z preining $
+# $Id: tlmgr.pl 38618 2015-10-12 02:51:38Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 38566 $';
-my $datrev = '$Date: 2015-10-06 04:49:58 +0200 (Tue, 06 Oct 2015) $';
+my $svnrev = '$Revision: 38618 $';
+my $datrev = '$Date: 2015-10-12 04:51:38 +0200 (Mon, 12 Oct 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3023,7 +3023,9 @@ sub action_update {
       # - then it is tried to be updated here, which is not working!
       # report that and ask for report
       if (!defined($tlp)) {
-        tlwarn("$prg: inconsistency on the server:\n");
+        my %servers = repository_to_array($location);
+        my $servers = join("\n ", values(%servers));
+        tlwarn("$prg: inconsistency on (one of) the server(s): $servers\n");
         tlwarn("$prg: tlp for package $pkg cannot be found, please report.\n");
         $ret |= $F_WARNING;
         next;

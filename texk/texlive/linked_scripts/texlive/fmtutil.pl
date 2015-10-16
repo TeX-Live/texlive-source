@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 37583 2015-06-17 05:51:36Z preining $
+# $Id: fmtutil.pl 38582 2015-10-07 22:32:58Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -25,11 +25,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 37583 2015-06-17 05:51:36Z preining $';
-my $lastchdate = '$Date: 2015-06-17 07:51:36 +0200 (Wed, 17 Jun 2015) $';
+my $svnid = '$Id: fmtutil.pl 38582 2015-10-07 22:32:58Z karl $';
+my $lastchdate = '$Date: 2015-10-08 00:32:58 +0200 (Thu, 08 Oct 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37583 $';
+my $svnrev = '$Revision: 38582 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
