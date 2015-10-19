@@ -232,7 +232,7 @@ BIBINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bib//
 BSTINPUTS.pbibtex       = .;$TEXMF/{pbibtex,bibtex}/bst//
 
 % ConTeXt.
-TEXINPUTS.context       = .;$TEXMF/tex/{context,plain,generic}//
+TEXINPUTS.context       = .;$TEXMF/tex/{context,plain,generic,}//
 
 % jadetex.
 TEXINPUTS.jadetex       = .;$TEXMF/tex/{jadetex,latex,generic,}//
