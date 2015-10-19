@@ -6,7 +6,7 @@ $opt_l = 'kKsSvVzZoOuUiIA';             # defaults for Slovak and Czech
 $opt_c = $opt_f = $opt_h = $opt_v = 0;
 getopts('cfphvl:');
 
-$version_msg = "findhyph version 3.2\n";
+$version_msg = "findhyph version 3.4\n";
 $help_msg = "\nUsage: findhyph [options] <yourtexfile.log>\n" .
             "\n" .
             "Options: -c           display hyphenated words in context\n" .
@@ -36,7 +36,7 @@ $act_text = "";
 $looseness = 0;
 
 while(<IN>) {
-  chomp;
+  s/[\r\n]*$//;
   if (/^\@looseness=(\-?\d+)$/) {
     $looseness = $1;
   }
@@ -70,7 +70,7 @@ while(<IN>) {
     %LOOSE = ();
     next;
   }
-  if ($search && /^@@(\d+): line (\d+)\..+ t=(\-?\d+) \-\> @@(\d+)/) {
+  if ($search && /^@@(\d+): line (\d+)\..+ t=(\-?\d+) (?:s=\S+ (?:g|a)=\S+ )?\-\> @@(\d+)/) {
     $act_break = $1;
     $BREAKS{$act_break}{'prev'} = $4;
     if ($endgraf && $3 < $demerits) {
@@ -205,9 +205,11 @@ sub do_hyph {
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
-B<findhyph> - find words hyphenated by TeX in a document
+B<findhyph> – find words hyphenated by TeX in a document
 
 =head1 INSTALLATION
 
@@ -320,7 +322,7 @@ public release
 =item *
 
 fixes in line breaks detection algorithm; support for the third pass of line
-breaking algorithm in TeX (positive \emergencystretch); support for 
+breaking algorithm in TeX (positive C<\emergencystretch>); support for 
 discretionary breaks in the first pass
 
 =item *
@@ -340,7 +342,7 @@ hyphenated words can be displayed in context
 
 =item *
 
-suggestions and testing by Pavel Striz
+suggestions and testing by Pavel Stříž
 
 =back
 
@@ -354,7 +356,7 @@ fixed a bug when total paragraph demerits are negative
 
 =item *
 
-C<\looseness> setting is now taken into account (thanks to Karel Horak
+C<\looseness> setting is now taken into account (thanks to Karel Horák
 for identifying the issue)
 
 =back
@@ -365,7 +367,7 @@ for identifying the issue)
 
 =item *
 
-fixed displaying of hyphenated ligatures (bug reported by Karel Horak)
+fixed displaying of hyphenated ligatures (bug reported by Karel Horák)
 
 =back
 
@@ -390,6 +392,21 @@ fixed the manual page as suggested by Eric S. Raymond
 
 =back
 
+=head4 3.4 (2015-10-18)
+
+=over 4
+
+=item *
+
+fixed processing of logs produced using ε-TeX's C<\lastlinefit> option
+(bug reported by Karel Horák)
+
+=item *
+
+fixed cross-platform handling of linebreaks in the input file
+
+=back
+
 =head1 LICENSE
 
 This program is free software; you can redistribute it and/or modify
@@ -399,6 +416,7 @@ any later version.
 
 =head1 AUTHOR
 
-Copyright (c) Martin Budaj E<lt>m.b@speleo.skE<gt> 2000, 2001, 2009, 2012
+Copyright (c) Martin Budaj E<lt>m.b@speleo.skE<gt> 2000, 2001, 2009, 2012,
+2015
 
 =cut
