@@ -303,17 +303,18 @@ static int ff_apply_featurefile(lua_State * L)
     sf = check_isfont(L, 1);
     fname = xstrdup(luaL_checkstring(L, 2));
     SFApplyFeatureFilename(*sf, fname);
+    recorder_record_input(fname);
     free(fname);
     if (gww_error_count > 0) {
-	int i;
-	lua_newtable(L);
-	for (i = 0; i < gww_error_count; i++) {
-	    lua_pushstring(L, gww_errors[i]);
-	    lua_rawseti(L, -2, (i + 1));
-	}
-	gwwv_errors_free();
+        int i;
+        lua_newtable(L);
+        for (i = 0; i < gww_error_count; i++) {
+            lua_pushstring(L, gww_errors[i]);
+            lua_rawseti(L, -2, (i + 1));
+        }
+        gwwv_errors_free();
     } else {
-	lua_pushnil(L);
+        lua_pushnil(L);
     }
     return 1;
 }
