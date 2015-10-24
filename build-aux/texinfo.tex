@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-10-17.11}
+\def\texinfoversion{2015-10-21.19}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4685,7 +4685,6 @@ end
   % The space after the comma will end up in the temporary definition
   % that we make for arg2 (see \parsemargdef ff.).  We want all this to be
   % expanded for the sake of the index, so we end up just seeing "bar".
-  \let\xeatspaces = \eatspaces
   \let\xprocessmacroarg\eatspaces
 }
 
@@ -7594,7 +7593,6 @@ end
 % Argument is macro body with arguments substituted
 \def\scanmacro#1{%
   \newlinechar`\^^M
-  \let\xeatspaces\eatspaces
   % Reduce doubled backslashes to one
   \def\xprocessmacroarg{\passargtomacro\eatspaces}%
   %
