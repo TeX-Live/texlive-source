@@ -164,6 +164,7 @@ texmf_other_scripts = \
 	pythontex/pythontex.py \
 	rubik/rubikrotation.pl \
 	splitindex/splitindex.pl \
+	srcredact/srcredact.pl \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
 	tex4ebook/tex4ebook \
