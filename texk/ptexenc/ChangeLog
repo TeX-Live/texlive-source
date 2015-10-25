@@ -1,3 +1,9 @@
+2015-10-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexenc.c: Enable composition of Hiragana, Katakana
+	from combining character sequences to precomposed characters
+	in upTeX.
+
 2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: Update version number 1.3.3 => 1.3.4dev.

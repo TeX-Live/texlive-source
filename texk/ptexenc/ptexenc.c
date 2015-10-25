@@ -616,16 +616,18 @@ static unsigned char *buffer;
 static long first, last;
 static boolean combin_voiced_sound(boolean semi)
 {
-    int i;
+    int i, mblen;
 
-    if (last-2 < first) return false;
-    if (multistrlen(buffer,last,last-2) != 2) return false;
-    i = toUCS(fromBUFF(buffer,last,last-2));
+    mblen = is_internalUPTEX() ? 3 : 2;
+    if (last-mblen < first) return false;
+    if (multistrlen(buffer,last,last-mblen) != mblen) return false;
+    i = toUCS(fromBUFF(buffer,last,last-mblen));
     i = get_voiced_sound(i, semi);
     if (i == 0) return false;
     i = toBUFF(fromUCS(i));
-    buffer[last-2] = HI(i);
-    buffer[last-1] = LO(i);
+    if (BYTE2(i) != 0) buffer[last-3] = BYTE2(i);
+    /* always */       buffer[last-2] = BYTE3(i);
+    /* always */       buffer[last-1] = BYTE4(i);
     return true;
 }
 
