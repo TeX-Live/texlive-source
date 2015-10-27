@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 38618 2015-10-12 02:51:38Z preining $
+# $Id: tlmgr.pl 38720 2015-10-26 22:29:22Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 38618 $';
-my $datrev = '$Date: 2015-10-12 04:51:38 +0200 (Mon, 12 Oct 2015) $';
+my $svnrev = '$Revision: 38720 $';
+my $datrev = '$Date: 2015-10-26 23:29:22 +0100 (Mon, 26 Oct 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4992,7 +4992,7 @@ sub check_runfiles {
   foreach my $f (@duplicates) {
     # assume tex4ht, xdy, afm stuff is ok, and don't worry about
     # Changes, README et al.  Other per-format versions.
-    next if $f =~ /\.(afm|cfg|dll|exe|4hf|htf|xdy)$/;
+    next if $f =~ /\.(afm|cfg|dll|exe|4hf|htf|pm|xdy)$/;
     next if $f
       =~ /^((czech|slovak)\.sty
             |Changes

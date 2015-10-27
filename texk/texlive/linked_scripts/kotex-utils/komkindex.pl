@@ -3,7 +3,7 @@
 
 # komkindex.pl
 #
-# Copyright (c) 2007-2013 Dohyun Kim <nomos at ktug org>
+# Copyright (c) 2007-2015 Dohyun Kim <nomos at ktug org>
 #
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3c
@@ -159,16 +159,14 @@ if ($args{s}) {
 }
 
 $idx0 = $IDXfiles[0];
-$idx0 =~s/\.idx$//;
+$idx0 =~ s/\.[A-Za-z]+$//;
 
-$indfile = $args{o} || $idx0;
-$indfile =~ /(\..+?)$/ or $indfile .= ".ind";
+$indfile = $args{o} ? $args{o} : $idx0 . ".ind";
 
-$logfile = $args{t} || $idx0;
-$logfile =~ /(\..+?)$/ or $logfile .= ".ilg";
+$logfile = $args{t} ? $args{t} : $idx0 . ".ilg";
 
 foreach my $file (@IDXfiles) {
-  $file =~ /(\..+?)$/ or $file .= ".idx";
+  $file =~ /\.[A-Za-z]+$/ or $file .= ".idx";
 }
 
 ###
@@ -252,35 +250,34 @@ foreach my $file (@IDXfiles) {
     #    \indexentry{ ..... }{ .. }
     # -> $pre         $body $post
     if (/(\Q$ist_keyword\E\s*\Q$ist_arg_open\E)
-         (.*?[^\Q$ist_quote\E])
+         (.*)
          (\Q$ist_arg_close$ist_arg_open\E.+?\Q$ist_arg_close\E)
          $/x) {
       my($pre,$body,$post) = ($1,$2,$3);
 
       #    \indexentry{ ..... | .. }{ .. }
       # -> $pre         $body $post
-      my @xbody = split /(?<!\Q$ist_quote\E)\Q$ist_encap/,$body;
+      my @xbody = split /(?<!(?<!\\)[\\\Q$ist_quote\E])\Q$ist_encap/,$body;
       for ( my $i=$#xbody; $i>0; $i--) {
         $post = $ist_encap.$xbody[$i].$post;
       }
       $body = $xbody[0];
 
       # !을 경계로 가름.
-      @xbody = split /(?<!\Q$ist_quote\E)\Q$ist_level/, $body;
+      @xbody = split /(?<!(?<!\\)[\\\Q$ist_quote\E])\Q$ist_level/, $body;
 
       for (@xbody) {
         # @이 없으면... 넣어준다.
-        unless (/[^\Q$ist_quote\E]\Q$ist_actual/) {
+        unless (/(?<!(?<!\\)[\\\Q$ist_quote\E])\Q$ist_actual/) {
           $_ = $_.$ist_actual.$_;
         }
 
         # @을 경계로 가름.
-        my @ybody = split /(?<!\Q$ist_quote\E)\Q$ist_actual\E/, $_;
+        my @ybody = split /(?<!(?<!\\)[\\\Q$ist_quote\E])\Q$ist_actual\E/, $_;
         $_ = $ybody[0];
 
-        s/[{}]//g;
-        s/\\[A-Za-z]+//g;
-        s/^\s+//;
+        s/(?<!\\)\\[A-Za-z]+\s*//g;
+        s/(?<!\\)[{}]//g;
 
         &hanja_to_hangul;
         s/([\x{AC00}-\x{D7A3}])/syllable_to_jamo_chr($1)/ge;
