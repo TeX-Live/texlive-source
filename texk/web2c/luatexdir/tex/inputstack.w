@@ -234,36 +234,71 @@ void set_trick_count(void)
         trick_count = error_line;
 }
 
-#define begin_pseudoprint() do {		\
-    l=tally; tally=0; selector=pseudo;		\
-    trick_count=1000000;			\
+#define begin_pseudoprint() do { \
+    l=tally; \
+    tally=0; \
+    selector=pseudo; \
+    trick_count=1000000; \
   } while (0)
 
-#define PSEUDO_PRINT_THE_LINE()	do {					\
-    begin_pseudoprint();						\
-    if (buffer[ilimit]==end_line_char) j=ilimit;			\
-    else j=ilimit+1; /* determine the effective end of the line */	\
-    if (j>0) {								\
-      for (i=istart;i<=j-1;i++) {					\
-	if (i==iloc) set_trick_count();					\
-	print_char(buffer[i]);						\
-      }									\
-    }									\
-  } while (0)
+#define PSEUDO_PRINT_THE_LINE()	do { \
+    begin_pseudoprint(); \
+    if (buffer[ilimit]==end_line_char) \
+        j=ilimit; \
+    else \
+        j=ilimit+1; /* determine the effective end of the line */ \
+    if (j>0) { \
+        for (i=istart;i<=j-1;i++) { \
+            if (i==iloc) \
+                set_trick_count(); \
+            print_char(buffer[i]); \
+        } \
+    } \
+} while (0)
+
+/*
+    We don't care too much if we stay a bit too much below the max error_line
+    even if we have more room on the line. If length is really an issue then
+    any length is. After all on can set the length larger.
+*/
+
+#define print_valid_utf8(q) do { \
+    c = (int)trick_buf[q % error_line]; \
+    if (c < 128) { \
+        print_char(c); \
+    } else if (c < 194) { \
+        /* invalid */ \
+    } else if (c < 224) { \
+        print_char(c); \
+        print_char(trick_buf[(q+1) % error_line]); \
+    } else if (c < 240) { \
+        print_char(c); \
+        print_char(trick_buf[(q+1) % error_line]); \
+        print_char(trick_buf[(q+2) % error_line]); \
+    } else if (c < 245) { \
+        print_char(c); \
+        print_char(trick_buf[(q+1) % error_line]); \
+        print_char(trick_buf[(q+2) % error_line]); \
+        print_char(trick_buf[(q+3) % error_line]); \
+    } else { \
+        /* invalid */ \
+    } \
+} while (0)
 
 @ @c
 void show_context(void)
-{                               /* prints where the scanner is */
-    int old_setting;            /* saved |selector| setting */
-    int nn;                     /* number of contexts shown so far, less one */
-    boolean bottom_line;        /* have we reached the final context to be shown? */
-    int i;                      /* index into |buffer| */
-    int j;                      /* end of current line in |buffer| */
-    int l;                      /* length of descriptive information on line 1 */
-    int m;                      /* context information gathered for line 2 */
-    int n;                      /* length of line 1 */
-    int p;                      /* starting or ending place in |trick_buf| */
-    int q;                      /* temporary index */
+{                        /* prints where the scanner is */
+    int old_setting;     /* saved |selector| setting */
+    int nn;              /* number of contexts shown so far, less one */
+    boolean bottom_line; /* have we reached the final context to be shown? */
+    int i;               /* index into |buffer| */
+    int j;               /* end of current line in |buffer| */
+    int l;               /* length of descriptive information on line 1 */
+    int m;               /* context information gathered for line 2 */
+    int n;               /* length of line 1 */
+    int p;               /* starting or ending place in |trick_buf| */
+    int q;               /* temporary index */
+    int c;               /* used in sanitizer */
 
     base_ptr = input_ptr;
     input_stack[base_ptr] = cur_input;
@@ -342,7 +377,7 @@ void show_context(void)
                     n = half_error_line;
                 }
                 for (q = p; q <= first_count - 1; q++)
-                    print_char(trick_buf[(q % error_line)]);
+                    print_valid_utf8(q);
                 print_ln();
                 for (q = 1; q <= n; q++)
                     print_char(' ');    /* print |n| spaces to begin line~2 */
@@ -351,7 +386,7 @@ void show_context(void)
                 else
                     p = first_count + (error_line - n - 3);
                 for (q = first_count; q <= p - 1; q++)
-                    print_char(trick_buf[(q % error_line)]);
+                    print_valid_utf8(q);
                 if (m + n > error_line)
                     tprint("...");
 
