@@ -179,8 +179,7 @@ Isspace (char c)
 
      Internally, all arguments are quoted by ' (Unix) or " (Windows)
      before calling the system() function in order to forbid execution
-     of any embedded command.  In addition, on Windows, special
-     characters of cmd.exe are escaped by using (^).
+     of any embedded command.
 
    If the --shell-escape option is given, we set
      shellenabledp = 1 and restrictedshell = 0, i.e., any command is allowed.
@@ -381,11 +380,20 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
            example:
            --format="other text files" becomes
            '--format=''other text files' (Unix)
-           "--format=""other text files" (Windows) */
+           "--format"="other text files" (Windows) */
 
-        if (pre == 0)
+        if (pre == 0) {
+#ifdef WIN32
+          if (*(s-1) == '=') {
+            *(d-1) = QUOTE;
+            *d++ = '=';
+          } else {
+            *d++ = QUOTE;
+          }
+#else
           *d++ = QUOTE;
-
+#endif
+        }
         pre = 0;
         /* output the quotation mark for the quoted argument */
         *d++ = QUOTE;
@@ -395,9 +403,15 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
           /* Illegal use of ', or closing quotation mark is missing */
           if (*s == '\'' || *s == '\0')
             return -1;
+#if 0
+/*
+  The following in WIN32 may not be necessary, because
+  all arguments are quoted.
+*/
 #ifdef WIN32
           if (char_needs_quote (*s))
             *d++ = '^';
+#endif
 #endif
           *d++ = *s++;
         }
@@ -415,9 +429,15 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
       } else if (pre == 1 && !Isspace (*s)) {
         pre = 0;
         *d++ = QUOTE;
+#if 0
+/*
+  The following in WIN32 may not be necessary, because
+  all arguments are quoted.
+*/
 #ifdef WIN32
         if (char_needs_quote (*s))
           *d++ = '^';
+#endif
 #endif
         *d++ = *s++;
         /* Ending of a usual argument */
@@ -429,9 +449,15 @@ shell_cmd_is_allowed (const char *cmd, char **safecmd, char **cmdname)
         *d++ = *s++;
       } else {
         /* Copy a character from cmd to *safecmd. */
+#if 0
+/*
+  The following in WIN32 may not be necessary, because
+  all arguments are quoted.
+*/
 #ifdef WIN32
         if (char_needs_quote (*s))
           *d++ = '^';
+#endif
 #endif
         *d++ = *s++;
       }
