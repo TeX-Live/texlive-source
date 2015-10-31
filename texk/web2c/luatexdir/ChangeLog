@@ -1,6 +1,7 @@
 2015-10-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex/inputstack.w: Sync with the upstream.
+	* luatex.c: Improve a little (w32 only).
 
 2015-10-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
