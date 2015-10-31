@@ -1,3 +1,7 @@
+2015-10-31  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Improve restricted shell escape for w32 a little.
+
 2015-08-19  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* texmfmp.c: Another minor modification (unused static).
