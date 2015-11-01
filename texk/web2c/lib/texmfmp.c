@@ -278,6 +278,7 @@ init_shell_escape (void)
 #define QUOTE '\''
 #endif
 
+#if 0
 #ifdef WIN32
 static int
 char_needs_quote (int c)
@@ -288,6 +289,7 @@ char_needs_quote (int c)
           c == '>' || c == ';' || c == ',' || c == '(' ||
           c == ')');
 }
+#endif
 #endif
 
 /* return values:
