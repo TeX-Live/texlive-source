@@ -183,6 +183,7 @@ void init_shell_escape(void)
 #    define QUOTE '\''
 #  endif
 
+#  if 0
 #  ifdef WIN32
 static int char_needs_quote(int c)
 {
@@ -191,6 +192,7 @@ static int char_needs_quote(int c)
     return (c == '&' || c == '|' || c == '%' || c == '<' ||
             c == '>' || c == ';' || c == ',' || c == '(' || c == ')');
 }
+#  endif
 #  endif
 
 static int Isspace(char c)
