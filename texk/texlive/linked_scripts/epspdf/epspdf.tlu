@@ -6,9 +6,10 @@ kpse.set_program_name('texlua')
 
 -- 0.6.0: first texlua version
 -- 0.6.1: allow TeX installation on path with spaces
+-- 0.6.2: compatibility fix for luatex 0.81
 
-ep_version = '0.6.1'
-ep_copyright = '2006, 2008, 2009, 2010, 2011, 2013, 2014'
+ep_version = '0.6.2'
+ep_copyright = '2006, 2008, 2009, 2010, 2011, 2013, 2014, 2015'
 
 --[[
 
@@ -1528,6 +1529,13 @@ function PsPdf:pdf_crop()
     #3%
   \fi
 }
+
+% future modification: \pdfoutput => \outputmode
+\begingroup\expandafter\expandafter\expandafter\endgroup
+  \expandafter\ifx\csname pdfoutput\endcsname\relax
+  \let\pdfoutput \outputmode
+\fi
+
 \begingroup
   \newlinechar=10 %
   \endlinechar=\newlinechar %
@@ -1540,8 +1548,8 @@ function PsPdf:pdf_crop()
             'pdfcompresslevel',
             'pdfhorigin',
             'pdfvorigin',
-            'pdfpagewidth',
-            'pdfpageheight',
+            'pagewidth',
+            'pageheight',
             'pdfmapfile',
             'pdfximage',
             'pdflastximage',
@@ -1559,8 +1567,8 @@ function PsPdf:pdf_crop()
     \global\let\pdfcompresslevel\TESTpdfcompresslevel %
     \global\let\pdfhorigin\TESTpdfhorigin %
     \global\let\pdfvorigin\TESTpdfvorigin %
-    \global\let\pdfpagewidth\TESTpdfpagewidth %
-    \global\let\pdfpageheight\TESTpdfpageheight %
+    \global\let\pagewidth\TESTpagewidth %
+    \global\let\pageheight\TESTpageheight %
     \global\let\pdfmapfile\TESTpdfmapfile %
     \global\let\pdfximage\TESTpdfximage %
     \global\let\pdflastximage\TESTpdflastximage %
@@ -1602,11 +1610,11 @@ function PsPdf:pdf_crop()
   }%
   \pdfhorigin=-#2bp\relax
   \pdfvorigin=#3bp\relax
-  \pdfpagewidth=#4bp\relax
-  \advance\pdfpagewidth by -#2bp\relax
-  \pdfpageheight=#5bp\relax
-  \advance\pdfpageheight by -#3bp\relax
-  \ht0=\pdfpageheight
+  \pagewidth=#4bp\relax
+  \advance\pagewidth by -#2bp\relax
+  \pageheight=#5bp\relax
+  \advance\pageheight by -#3bp\relax
+  \ht0=\pageheight
   \shipout\box0\relax
 }
 ]]
