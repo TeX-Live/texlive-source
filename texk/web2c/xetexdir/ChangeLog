@@ -1,3 +1,9 @@
+2015-11-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* XeTeX_ext.c: Change const char *outputdriver = "xdvipdfmx -q -E";
+	as const char *outputdriver = "xdvipdfmx -E"; by removing the quiet
+	option, in order to show useful messages for users.
+
 2015-08-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* image/bmpimage.c, image/pngimage.c: Drop set but unused vars.
