@@ -1,4 +1,4 @@
-% $Id: mp.w 2070 2015-10-06 10:35:23Z luigi $
+% $Id: mp.w 2073 2015-11-10 16:19:50Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -32802,8 +32802,7 @@ static integer mp_min_cover (MP mp, mp_number d) {
 
     set_number_from_substraction(test, value_number (p), l);
     if (number_less (test, mp->perturbation)) {
-      number_clone (mp->perturbation, value_number (p));
-      number_substract (mp->perturbation, l);
+      number_clone (mp->perturbation, test);
     }
   }
   free_number  (test);
@@ -32829,13 +32828,13 @@ finding the range, then to go sequentially until the exact borderline has
 been discovered.
 
 @c
-static void mp_threshold (MP mp, mp_number ret, integer m) {
+static void mp_threshold (MP mp, mp_number *ret, integer m) {
   mp_number d, arg1;     /* lower bound on the smallest interval size */
   new_number (d);
   new_number (arg1);
   mp->excess = mp_min_cover (mp, zero_t) - m;
   if (mp->excess <= 0) {
-    number_clone (ret, zero_t);
+    number_clone (*ret, zero_t);
   } else {
     do {
       number_clone (d, mp->perturbation);
@@ -32844,7 +32843,7 @@ static void mp_threshold (MP mp, mp_number ret, integer m) {
     while (mp_min_cover (mp, d) > m) {
       number_clone (d, mp->perturbation);
     }
-    number_clone (ret, d);
+    number_clone (*ret, d);
   }
   free_number (d);
   free_number (arg1);
@@ -32866,7 +32865,7 @@ static integer mp_skimp (MP mp, integer m) {
   mp_number v;     /* a compromise value */
   mp_number l_d;
   new_number (d);
-  mp_threshold (mp, d, m);
+  mp_threshold (mp, &d, m);
   new_number (l);
   new_number (l_d);
   new_number (v);
@@ -32903,6 +32902,7 @@ static integer mp_skimp (MP mp, integer m) {
     decr (mp->excess);
     if (mp->excess == 0) {
        number_clone (l_d, l);
+       set_number_to_zero (d);
     }
   } while (number_lessequal(value_number (mp_link (p)), l_d));
   set_number_from_substraction (test, value_number (p), l);
@@ -32972,7 +32972,7 @@ also because zero values do not need to be put into the lists.
 clear_the_list;
 for (k = mp->bc; k <= mp->ec; k++) {
   if (mp->char_exists[k]) {
-    if (mp->tfm_height[k] == 0)
+    if (number_zero(value_number (mp->tfm_height[k])))
       mp->tfm_height[k] = mp->zero_val;
     else
       mp->tfm_height[k] = mp_sort_in (mp, value_number (mp->tfm_height[k]));
@@ -32985,7 +32985,7 @@ if (number_greaterequal (mp->perturbation, tfm_warn_threshold_k))
 clear_the_list;
 for (k = mp->bc; k <= mp->ec; k++) {
   if (mp->char_exists[k]) {
-    if (mp->tfm_depth[k] == 0)
+    if (number_zero(value_number (mp->tfm_depth[k])))
       mp->tfm_depth[k] = mp->zero_val;
     else
       mp->tfm_depth[k] = mp_sort_in (mp, value_number (mp->tfm_depth[k]));
@@ -32998,7 +32998,7 @@ if (number_greaterequal (mp->perturbation, tfm_warn_threshold_k))
 clear_the_list;
 for (k = mp->bc; k <= mp->ec; k++) {
   if (mp->char_exists[k]) {
-    if (mp->tfm_ital_corr[k] == 0)
+    if (number_zero(value_number (mp->tfm_ital_corr[k])))
       mp->tfm_ital_corr[k] = mp->zero_val;
     else
       mp->tfm_ital_corr[k] = mp_sort_in (mp, value_number (mp->tfm_ital_corr[k]));
