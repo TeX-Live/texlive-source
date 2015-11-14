@@ -145,10 +145,10 @@ void place_img(PDF pdf, image_dict * idict, scaled_whd dim, int transform)
 void pdf_place_image(PDF pdf, halfword p)
 {
     scaled_whd dim;
-    image_dict *idict = idict_array[pdf_ximage_index(p)];
+    image_dict *idict = idict_array[rule_index(p)];
     assert(idict != NULL);
     dim.wd = width(p);
     dim.ht = height(p);
     dim.dp = depth(p);
-    place_img(pdf, idict, dim, pdf_ximage_transform(p));
+    place_img(pdf, idict, dim, rule_transform(p));
 }

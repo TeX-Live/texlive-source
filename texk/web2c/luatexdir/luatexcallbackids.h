@@ -55,13 +55,15 @@ typedef enum {
     pre_linebreak_filter_callback,
     linebreak_filter_callback,
     post_linebreak_filter_callback,
+    append_to_vlist_filter_callback,
     mlist_to_hlist_callback,
     finish_pdffile_callback,
     finish_pdfpage_callback,
     pre_dump_callback,
     start_file_callback, stop_file_callback,
-    show_error_message_callback,show_lua_error_hook_callback,
-    pdf_stream_filter_callback,
+    show_error_message_callback, show_lua_error_hook_callback,
+    show_warning_message_callback,
+    hpack_quality_callback, vpack_quality_callback,
     total_callbacks
 } callback_callback_types;
 
@@ -85,8 +87,7 @@ extern void get_saved_lua_boolean(int i, const char *name, boolean * target);
 extern void get_saved_lua_number(int i, const char *name, int *target);
 extern void get_saved_lua_string(int i, const char *name, char **target);
 
-extern void get_lua_boolean(const char *table, const char *name,
-                            boolean * target);
+extern void get_lua_boolean(const char *table, const char *name, boolean * target);
 extern void get_lua_number(const char *table, const char *name, int *target);
 extern void get_lua_string(const char *table, const char *name, char **target);
 
@@ -127,7 +128,7 @@ static const char *const filetypes_right[] = { "?", ")", "}", ">", ">", ">>" } ;
             (void) run_callback(report_id, "dS->",left,name); \
         } \
     } \
-} while (0) 
+} while (0)
 
 #define report_stop_file(right) do { \
     if (tracefilenames) { \

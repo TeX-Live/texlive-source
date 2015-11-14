@@ -193,7 +193,7 @@ static void negate_cur_val(boolean delete_glue)
 
 @ Some of the internal items can be fetched both routines,
 and these have been split off into the next routine, that
-returns true if the command code was understood 
+returns true if the command code was understood
 
 @c
 static boolean short_scan_something_internal(int cmd, int chr, int level,
@@ -315,7 +315,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
         cur_chr = chr;
         /* Fetch an item in the current node, if appropriate */
         /* Here is where \.{\\lastpenalty}, \.{\\lastkern}, and \.{\\lastskip} are
-           implemented. The reference count for \.{\\lastskip} will be updated later. 
+           implemented. The reference count for \.{\\lastskip} will be updated later.
 
            We also handle \.{\\inputlineno} and \.{\\badness} here, because they are
            legal in similar contexts. */
@@ -344,7 +344,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                 /* This code for reducing |cur_val_level| and\slash or negating the
                    result is similar to the one for all the other cases of
                    |scan_something_internal|, with the difference that |scan_expr| has
-                   already increased the reference count of a glue specification. 
+                   already increased the reference count of a glue specification.
                  */
                 while (cur_val_level > level) {
                     downgrade_cur_val(true);
@@ -424,38 +424,23 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                 case luatex_version_code:
                     cur_val = get_luatexversion();
                     break;
-                case pdf_last_obj_code:
-                    cur_val = pdf_last_obj;
+                case last_saved_box_resource_index_code:
+                    cur_val = last_saved_box_index;
                     break;
-                case pdf_last_xform_code:
-                    cur_val = pdf_last_xform;
+                case last_saved_image_resource_index_code:
+                    cur_val = last_saved_image_index;
                     break;
-                case pdf_last_ximage_code:
-                    cur_val = pdf_last_ximage;
-                    break;
-                case pdf_last_ximage_pages_code:
-                    cur_val = pdf_last_ximage_pages;
-                    break;
-                case pdf_last_annot_code:
-                    cur_val = pdf_last_annot;
+                case last_saved_image_resource_pages_code:
+                    cur_val = last_saved_image_pages;
                     break;
                 case last_x_pos_code:
-                    cur_val = pdf_last_pos.h;
+                    cur_val = last_position.h;
                     break;
                 case last_y_pos_code:
-                    cur_val = pdf_last_pos.v;
-                    break;
-                case pdf_retval_code:
-                    cur_val = pdf_retval;
-                    break;
-                case pdf_last_ximage_colordepth_code:
-                    cur_val = pdf_last_ximage_colordepth;
+                    cur_val = last_position.v;
                     break;
                 case random_seed_code:
                     cur_val = random_seed;
-                    break;
-                case pdf_last_link_code:
-                    cur_val = pdf_last_link;
                     break;
                 case eTeX_version_code:
                     cur_val = eTeX_version;
@@ -503,7 +488,6 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                         cur_val = shrink_order(q);
                     delete_glue_ref(q);
                     break;
-
                 }               /* there are no other cases */
                 cur_val_level = int_val_level;
             }
@@ -588,7 +572,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
 
 @ First, here is a short routine that is called from lua code. All
 the  real work is delegated to |short_scan_something_internal| that
-is shared between this routine and |scan_something_internal|. 
+is shared between this routine and |scan_something_internal|.
 
 @c
 void scan_something_simple(halfword cmd, halfword subitem)
@@ -661,7 +645,7 @@ void scan_something_internal(int level, boolean negative)
         case set_font_cmd:
         case def_font_cmd:
         case letterspace_font_cmd:
-        case pdf_copy_font_cmd:
+        case copy_font_cmd:
             /* Fetch a token list or font identifier, provided that |level=tok_val| */
             if (level != tok_val_level) {
                 print_err("Missing number, treated as zero");
@@ -679,6 +663,10 @@ void scan_something_internal(int level, boolean negative)
                 scan_font_ident();
                 scanned_result(font_id_base + cur_val, ident_val_level);
             }
+            break;
+        case set_font_id_cmd:
+            scan_int();
+            scanned_result(font_id_base + cur_val, ident_val_level);
             break;
         case def_family_cmd:
             /* Fetch a math font identifier */
@@ -852,9 +840,9 @@ void scan_something_internal(int level, boolean negative)
 |scan_eight_bit_int| is superceded by |scan_register_num| and
 |scan_mark_num|. It may become split up even further in the future.
 
-Many of the |restricted classes| routines are the essentially 
+Many of the |restricted classes| routines are the essentially
 the same except for the upper limit and the error message, so it makes
-sense to combine these all into one function. 
+sense to combine these all into one function.
 
 @c
 void scan_limited_int(int max, const char *name)
@@ -1263,7 +1251,7 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
         /* Scan for (f)\.{fil} units; |goto attach_fraction| if found */
         /* In traditional TeX, a specification like `\.{filllll}' or `\.{fill L L
            L}' will lead to two error messages (one for each additional keyword
-           \.{"l"}). 
+           \.{"l"}).
            Not so for luatex, it just parses the construct in reverse. */
         if (scan_keyword("filll")) {
             cur_order = filll;
@@ -1309,7 +1297,7 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
     } else if (scan_keyword("ex")) {
         v = (x_height(get_cur_font()));
     } else if (scan_keyword("px")) {
-        v = dimen_par(pdf_px_dimen_code);
+        v = dimen_par(px_dimen_code);
     } else {
         goto NOT_FOUND;
     }
@@ -1498,7 +1486,7 @@ void scan_glue(int level)
     cur_val = q;
 }
 
-@ This is an omega routine 
+@ This is an omega routine
 @c
 void scan_scaled(void)
 {                               /* sets |cur_val| to a scaled value */
@@ -1798,8 +1786,17 @@ found (in any order).
 @c
 halfword scan_rule_spec(void)
 {
-    halfword q;                 /* the rule node being created */
-    q = new_rule();             /* |width|, |depth|, and |height| all equal |null_flag| now */
+    /* |width|, |depth|, and |height| all equal |null_flag| now */
+    halfword q;
+    if (cur_cmd == no_vrule_cmd) {
+        q = new_rule(empty_rule);
+        cur_cmd = vrule_cmd;
+    } else if (cur_cmd == no_hrule_cmd) {
+        q = new_rule(empty_rule);
+        cur_cmd = hrule_cmd;
+    } else {
+        q = new_rule(normal_rule);
+    }
     if (cur_cmd == vrule_cmd) {
         width(q) = default_rule;
         rule_dir(q) = body_direction;
@@ -1840,8 +1837,7 @@ void scan_font_ident(void)
         get_x_token();
     } while (cur_cmd == spacer_cmd);
 
-    if ((cur_cmd == def_font_cmd) || (cur_cmd == letterspace_font_cmd)
-        || (cur_cmd == pdf_copy_font_cmd)) {
+    if ((cur_cmd == def_font_cmd) || (cur_cmd == letterspace_font_cmd) || (cur_cmd == copy_font_cmd)) {
         f = get_cur_font();
     } else if (cur_cmd == set_font_cmd) {
         f = cur_chr;
@@ -1862,7 +1858,7 @@ void scan_font_ident(void)
 }
 
 @ The |scan_general_text| procedure is much like |scan_toks(false,false)|,
-but will be invoked via |expand|, i.e., recursively. 
+but will be invoked via |expand|, i.e., recursively.
 
 The token list (balanced text) created by |scan_general_text| begins
 at |link(temp_token_head)| and ends at |cur_val|.  (If |cur_val=temp_token_head|,
@@ -2038,7 +2034,7 @@ halfword scan_toks(boolean macro_def, boolean xpand)
             /* Here we insert an entire token list created by |the_toks| without
                expanding it further. */
             while (1) {
-                get_token_lua();
+                get_next(); /* get_token_lua(); */
                 if (cur_cmd >= call_cmd) {
                     if (token_info(token_link(cur_chr)) == protected_token) {
                         cur_cmd = relax_cmd;
@@ -2140,8 +2136,8 @@ typedef enum {
   ($2^{31}-1$) in absolute value, dimensions must not exceed |max_dimen|
   ($2^{30}-1$).  We avoid the absolute value of an integer, because this
   might fail for the value $-2^{31}$ using 32-bit arithmetic.
- 
-@   clear a number or dimension and set |arith_error| 
+
+@   clear a number or dimension and set |arith_error|
 
 @c
 #define num_error(A) do {			\
@@ -2149,8 +2145,8 @@ typedef enum {
 	A=0;					\
     } while (0)
 
- 
-@   clear a glue spec and set |arith_error| 
+
+@   clear a glue spec and set |arith_error|
 
 @c
 #define glue_error(A) do {				\

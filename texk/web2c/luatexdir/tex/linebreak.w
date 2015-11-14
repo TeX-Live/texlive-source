@@ -155,16 +155,16 @@ void line_break(boolean d, int line_break_context)
                                    addressof(cur_list.tail_field));
         if (callback_id > 0) {
             /* find the correct value for the |just_box| */
-	    halfword box_search = cur_list.tail_field;
+            halfword box_search = cur_list.tail_field;
             just_box  = null;
-	    if (box_search != null) {
+            if (box_search != null) {
                 do {
-	            if (type(box_search) == hlist_node) {
+                    if (type(box_search) == hlist_node) {
                        just_box = box_search;
                     }
                     box_search = vlink(box_search);
                 } while (box_search != null);
-	    }
+            }
             if (just_box == null) {
                 help3
                     ("A linebreaking routine should return a non-empty list of nodes",
@@ -176,17 +176,13 @@ void line_break(boolean d, int line_break_context)
         } else {
             if (int_par(tracing_paragraphs_code) > 0) {
                 begin_diagnostic();
-                tprint_nl
-                    ("Lua linebreak_filter failed, reverting to default on line ");
                 print_int(line);
                 end_diagnostic(true);
             }
         }
     }
     if (callback_id == 0) {
-        if ((!is_char_node(vlink(temp_head)))
-            && ((type(vlink(temp_head)) == whatsit_node)
-                && (subtype(vlink(temp_head)) == local_par_node)))
+        if ((!is_char_node(vlink(temp_head))) && ((type(vlink(temp_head)) == local_par_node)))
             paragraph_dir = local_par_dir(vlink(temp_head));
         else
             assert(0);              /* |paragraph_dir = 0|; */
@@ -196,10 +192,6 @@ void line_break(boolean d, int line_break_context)
                           int_par(tolerance_code),
                           dimen_par(emergency_stretch_code),
                           int_par(looseness_code),
-                          /*
-                          int_par(hyphen_penalty_code),
-                          int_par(ex_hyphen_penalty_code),
-                          */
                           int_par(adjust_spacing_code),
                           equiv(par_shape_loc),
                           int_par(adj_demerits_code),
@@ -217,8 +209,8 @@ void line_break(boolean d, int line_break_context)
                           int_par(inter_line_penalty_code),
                           int_par(club_penalty_code),
                           equiv(club_penalties_loc),
-			  (d ? equiv(display_widow_penalties_loc) : equiv(widow_penalties_loc)),
-			  (d ? int_par(display_widow_penalty_code) : int_par(widow_penalty_code)),
+                          (d ? equiv(display_widow_penalties_loc) : equiv(widow_penalties_loc)),
+                          (d ? int_par(display_widow_penalty_code) : int_par(widow_penalty_code)),
                           int_par(broken_penalty_code),
                           final_par_glue);
     }
@@ -306,14 +298,14 @@ static short hlist_stack_level = 0;
 static void push_node(halfword p)
 {
     if (hlist_stack_level >= max_hlist_stack)
-        pdf_error("push_node", "stack overflow");
+        normal_error("push_node","stack overflow");
     hlist_stack[hlist_stack_level++] = p;
 }
 
 static halfword pop_node(void)
 {
     if (hlist_stack_level <= 0) /* would point to some bug */
-        pdf_error("pop_node", "stack underflow (internal error)");
+        normal_error("pop_node","stack underflow (internal error)");
     return hlist_stack[--hlist_stack_level];
 }
 
@@ -333,23 +325,20 @@ static boolean check_expand_pars(internal_font_number f)
     if (cur_font_step < 0)
         cur_font_step = font_step(f);
     else if (cur_font_step != font_step(f))
-        pdf_error("font expansion",
-                  "using fonts with different step of expansion in one paragraph is not allowed");
+        normal_error("font expansion","using fonts with different step of expansion in one paragraph is not allowed");
     m = font_max_stretch(f);
     if (m != 0) {
         if (max_stretch_ratio < 0)
             max_stretch_ratio = m;
         else if (max_stretch_ratio != m)
-            pdf_error("font expansion",
-                      "using fonts with different limit of expansion in one paragraph is not allowed");
+            normal_error("font expansion","using fonts with different limit of expansion in one paragraph is not allowed");
     }
     m = font_max_shrink(f);
     if (m != 0) {
         if (max_shrink_ratio < 0)
             max_shrink_ratio = -m;
         else if (max_shrink_ratio != -m)
-            pdf_error("font expansion",
-                      "using fonts with different limit of expansion in one paragraph is not allowed");
+            normal_error("font expansion","using fonts with different limit of expansion in one paragraph is not allowed");
     }
     return true;
 }
@@ -361,33 +350,44 @@ static boolean check_expand_pars(internal_font_number f)
 {
     halfword t;
     boolean run;
-    if ((vlink(l) != null) && (type(l) == hlist_node) && (width(l) == 0)
-        && (height(l) == 0) && (depth(l) == 0) && (list_ptr(l) == null)) {
-        l = vlink(l);           /*for paragraph start with \.{\\parindent} = 0pt */
-    } else if (d) {
+    boolean done = false ;
+    while ((vlink(l) != null) && (type(l) == hlist_node) && zero_dimensions(l) && (list_ptr(l) == null)) {
+        /*for paragraph start with \.{\\parindent} = 0pt or any empty hbox */
+        l = vlink(l);
+        done = true ;
+    }
+    if ((!done) && (type(l) == local_par_node)) {
+        l = vlink(l);
+        done = true ;
+    }
+    if ((!done) && d) {
         while ((vlink(l) != null) && (!(is_char_node(l) || non_discardable(l)))) {
-            l = vlink(l);       /* std.\ discardables at line break, \TeX book, p 95 */
+            /* std.\ discardables at line break, \TeX book, p 95 */
+            l = vlink(l);
         }
     }
-    hlist_stack_level = 0;
-    run = true;
-    do {
-        t = l;
-        while (run && (type(l) == hlist_node) && (list_ptr(l) != null)) {
-            push_node(l);
-            l = list_ptr(l);
-        }
-        while (run && cp_skipable(l)) {
-            while ((vlink(l) == null) && (hlist_stack_level > 0)) {
-                l = pop_node(); /* don't visit this node again */
-                run = false;
+    if (type(l) != glyph_node) {
+        hlist_stack_level = 0;
+        run = true;
+        do {
+            t = l;
+            while (run && (type(l) == hlist_node) && (list_ptr(l) != null)) {
+                push_node(l);
+                l = list_ptr(l);
             }
-            if (vlink(l) != null)
-                l = vlink(l);
-            else if (hlist_stack_level == 0)
-                run = false;
-        }
-    } while (t != l);
+            while (run && cp_skipable(l)) {
+                while ((vlink(l) == null) && (hlist_stack_level > 0)) {
+                    l = pop_node(); /* don't visit this node again */
+                    run = false;
+                }
+                if (vlink(l) != null) {
+                    l = vlink(l);
+                } else if (hlist_stack_level == 0) {
+                    run = false;
+                }
+            }
+        } while (t != l);
+    }
     return l;
 }
 
@@ -723,11 +723,11 @@ static int line_diff;           /*the difference between the current line number
 #define kern_break() {  \
     if ((!is_char_node(vlink(cur_p))) && auto_breaking)  \
       if (type(vlink(cur_p))==glue_node)  \
-	  ext_try_break(0,unhyphenated_node, line_break_dir, adjust_spacing,	\
-                      par_shape_ptr, adj_demerits,  \
-                      tracing_paragraphs, protrude_chars,  \
-                      line_penalty, last_line_fit,  \
-                      double_hyphen_demerits,  final_hyphen_demerits,first_p,cur_p);  \
+          ext_try_break(0,unhyphenated_node, line_break_dir, adjust_spacing,	\
+                          par_shape_ptr, adj_demerits,  \
+                          tracing_paragraphs, protrude_chars,  \
+                          line_penalty, last_line_fit,  \
+                          double_hyphen_demerits,  final_hyphen_demerits,first_p,cur_p);  \
     if (type(cur_p)!=math_node) active_width[1]+=width(cur_p);  \
     else                        active_width[1]+=surround(cur_p);  \
   }
@@ -777,8 +777,7 @@ Replacement texts and discretionary texts are supposed to contain
 only character nodes, kern nodes, and box or rule nodes.
 
 @c
-static void add_to_widths(halfword s, int line_break_dir,
-                          int adjust_spacing, scaled * widths)
+static void add_to_widths(halfword s, int line_break_dir, int adjust_spacing, scaled * widths)
 {
     while (s != null) {
         if (is_char_node(s)) {
@@ -795,7 +794,7 @@ static void add_to_widths(halfword s, int line_break_dir,
                 widths[1] += pack_width(line_break_dir, box_dir(s), s, false);
                 break;
             case kern_node:
-                if ((adjust_spacing > 1) && (subtype(s) == normal)) {
+                if ((adjust_spacing == 2) && (subtype(s) == normal)) {
                     add_kern_stretch(widths[8], s);
                     add_kern_shrink(widths[9], s);
                 }
@@ -806,7 +805,7 @@ static void add_to_widths(halfword s, int line_break_dir,
             case disc_node:    /* TH temp */
                 break;
             default:
-                confusion("add_disc_widths");
+                confusion("invalid node found in discretionary"); /* todo: report type */
             }
         }
         s = vlink(s);
@@ -819,8 +818,7 @@ It is used only once, but deserves it own function because of orthogonality
 with the |add_to_widths| function.
 
 @c
-static void sub_from_widths(halfword s, int line_break_dir,
-                            int adjust_spacing, scaled * widths)
+static void sub_from_widths(halfword s, int line_break_dir, int adjust_spacing, scaled * widths)
 {
     while (s != null) {
         /* Subtract the width of node |s| from |break_width|; */
@@ -838,7 +836,7 @@ static void sub_from_widths(halfword s, int line_break_dir,
                 widths[1] -= pack_width(line_break_dir, box_dir(s), s, false);
                 break;
             case kern_node:
-                if ((adjust_spacing > 1) && (subtype(s) == normal)) {
+                if ((adjust_spacing == 2) && (subtype(s) == normal)) {
                     sub_kern_stretch(widths[8], s);
                     sub_kern_shrink(widths[9], s);
                 }
@@ -849,7 +847,7 @@ static void sub_from_widths(halfword s, int line_break_dir,
             case disc_node:    /* TH temp */
                 break;
             default:
-                confusion("sub_disc_widths");
+                confusion("invalid node found in discretionary"); /* todo: report type */
                 break;
             }
         }
@@ -879,9 +877,7 @@ static void sub_from_widths(halfword s, int line_break_dir,
 
 @c
 static void
-compute_break_width(int break_type, int line_break_dir, int adjust_spacing,
-                    halfword p
-                    /*, halfword s */ )
+compute_break_width(int break_type, int line_break_dir, int adjust_spacing, halfword p)
 {
     halfword s;                 /* glue and other 'whitespace' to be skipped after a break
                                  * used if unhyphenated, or |post_break==empty| */
@@ -914,10 +910,8 @@ compute_break_width(int break_type, int line_break_dir, int adjust_spacing,
            path, as we are talking about the breaking on {\it this} position.
          */
 
-        sub_from_widths(vlink_no_break(p), line_break_dir, adjust_spacing,
-                        break_width);
-        add_to_widths(vlink_post_break(p), line_break_dir, adjust_spacing,
-                      break_width);
+        sub_from_widths(vlink_no_break(p), line_break_dir, adjust_spacing, break_width);
+        add_to_widths(vlink_post_break(p), line_break_dir, adjust_spacing, break_width);
         do_one_seven_eight(add_disc_width_to_break_width);
         if (vlink_post_break(p) == null) {
             s = vlink(p);       /* no |post_break|: 'skip' any 'whitespace' following */
@@ -927,6 +921,15 @@ compute_break_width(int break_type, int line_break_dir, int adjust_spacing,
     }
     while (s != null) {
         switch (type(s)) {
+        case math_node:
+            /* begin mathskip code */
+            if (math_skip == zero_glue) {
+                break_width[1] -= surround(s);
+                break;
+            } else {
+                /* fall through */
+            }
+            /* end mathskip code */
         case glue_node:
             /*Subtract glue from |break_width|; */
             {
@@ -937,9 +940,6 @@ compute_break_width(int break_type, int line_break_dir, int adjust_spacing,
             }
             break;
         case penalty_node:
-            break;
-        case math_node:
-            break_width[1] -= surround(s);
             break;
         case kern_node:
             if (subtype(s) != explicit)
@@ -1163,8 +1163,7 @@ ext_try_break(int pi,
                 if (no_break_yet) {
                     no_break_yet = false;
                     do_all_eight(set_break_width_to_background);
-                    compute_break_width(break_type, line_break_dir,
-                                        adjust_spacing, cur_p);
+                    compute_break_width(break_type, line_break_dir, adjust_spacing, cur_p);
                 }
                 /* Insert a delta node to prepare for breaks at |cur_p|; */
                 /* We use the fact that |type(active)<>delta_node|. */
@@ -1317,8 +1316,7 @@ ext_try_break(int pi,
                 o = find_protchar_right(l1, o);
             }
             /* now the left margin */
-            if ((l1 != null) && (type(l1) == disc_node)
-                && (vlink_post_break(l1) != null)) {
+            if ((l1 != null) && (type(l1) == disc_node) && (vlink_post_break(l1) != null)) {
                 /* FIXME: first 'char' could be a disc! */
                 l1 = vlink_post_break(l1);        /* protrude the first char */
             } else {
@@ -1326,7 +1324,7 @@ ext_try_break(int pi,
             }
             shortfall += (left_pw(l1) + right_pw(o));
         }
-        if ((shortfall != 0) && (adjust_spacing > 1)) {
+        if ((shortfall != 0) && (adjust_spacing == 2)) {
             margin_kern_stretch = 0;
             margin_kern_shrink = 0;
             if (protrude_chars > 1) {
@@ -1345,15 +1343,13 @@ ext_try_break(int pi,
             if ((shortfall > 0)
                 && ((total_font_stretch + margin_kern_stretch) > 0)) {
                 if ((total_font_stretch + margin_kern_stretch) > shortfall)
-                    shortfall = ((total_font_stretch + margin_kern_stretch) /
-                                 (max_stretch_ratio / cur_font_step)) / 2;
+                    shortfall = ((total_font_stretch + margin_kern_stretch) / (max_stretch_ratio / cur_font_step)) / 2;
                 else
                     shortfall -= (total_font_stretch + margin_kern_stretch);
             } else if ((shortfall < 0)
                        && ((total_font_shrink + margin_kern_shrink) > 0)) {
                 if ((total_font_shrink + margin_kern_shrink) > -shortfall)
-                    shortfall = -((total_font_shrink + margin_kern_shrink) /
-                                  (max_shrink_ratio / cur_font_step)) / 2;
+                    shortfall = -((total_font_shrink + margin_kern_shrink) / (max_shrink_ratio / cur_font_step)) / 2;
                 else
                     shortfall += (total_font_shrink + margin_kern_shrink);
             }
@@ -1630,10 +1626,6 @@ ext_do_line_break(int paragraph_dir,
                   int tolerance,
                   scaled emergency_stretch,
                   int looseness,
-                  /*
-                  int hyphen_penalty,
-                  int ex_hyphen_penalty,
-                  */
                   int adjust_spacing,
                   halfword par_shape_ptr,
                   int adj_demerits,
@@ -1801,9 +1793,8 @@ ext_do_line_break(int paragraph_dir,
         auto_breaking = true;
         cur_p = vlink(temp_head);
         /* LOCAL: Initialize with first |local_paragraph| node */
-        if ((cur_p != null) && (type(cur_p) == whatsit_node)
-            && (subtype(cur_p) == local_par_node)) {
-	    alink(cur_p) = temp_head; /* this used to be an assert, but may as well force it */
+        if ((cur_p != null) && (type(cur_p) == local_par_node)) {
+            alink(cur_p) = temp_head; /* this used to be an assert, but may as well force it */
             internal_pen_inter = local_pen_inter(cur_p);
             internal_pen_broken = local_pen_broken(cur_p);
             init_internal_left_box = local_box_left(cur_p);
@@ -1852,8 +1843,8 @@ ext_do_line_break(int paragraph_dir,
 #endif
                 }
             }
-            if (cur_p == null) {        /* TODO */
-                confusion("linebreak_tail");
+            if (cur_p == null) {
+                normal_error("linebreak","invalid list tail, probably missing glue");
             }
             /* Determine legal breaks: As we move through the hlist, we need to keep
                the |active_width| array up to date, so that the badness of individual
@@ -1870,33 +1861,34 @@ ext_do_line_break(int paragraph_dir,
             case rule_node:
                 active_width[1] += width(cur_p);
                 break;
-            case whatsit_node:
-                /* Advance past a whatsit node in the |line_break| loop; */
-                switch (subtype(cur_p)) {
-                case local_par_node:   /* LOCAL: Advance past a |local_paragraph| node; */
-                    internal_pen_inter = local_pen_inter(cur_p);
-                    internal_pen_broken = local_pen_broken(cur_p);
-                    internal_left_box = local_box_left(cur_p);
-                    internal_left_box_width = local_box_left_width(cur_p);
-                    internal_right_box = local_box_right(cur_p);
-                    internal_right_box_width = local_box_right_width(cur_p);
-                    break;
-                case dir_node: /* DIR: Adjust the dir stack for the |line_break| routine; */
-                    if (dir_dir(cur_p) >= 0) {
-                        line_break_dir = dir_dir(cur_p);
-                        push_dir_node(cur_p,dir_ptr);   /* adds to |dir_ptr| */
-                    } else {
-                        pop_dir_node(dir_ptr);
-                        if (dir_ptr != null)
-                            line_break_dir = dir_dir(dir_ptr);
-                    }
-                    break;
-                case pdf_refxform_node:
-                case pdf_refximage_node:
-                    active_width[1] += width(cur_p);
+            case dir_node: /* DIR: Adjust the dir stack for the |line_break| routine; */
+                if (dir_dir(cur_p) >= 0) {
+                    line_break_dir = dir_dir(cur_p);
+                    push_dir_node(cur_p,dir_ptr);   /* adds to |dir_ptr| */
+                } else {
+                    pop_dir_node(dir_ptr);
+                    if (dir_ptr != null)
+                        line_break_dir = dir_dir(dir_ptr);
                 }
-                /* / Advance past a whatsit node in the |line_break| loop/; */
                 break;
+            case local_par_node:   /* LOCAL: Advance past a |local_paragraph| node; */
+                internal_pen_inter = local_pen_inter(cur_p);
+                internal_pen_broken = local_pen_broken(cur_p);
+                internal_left_box = local_box_left(cur_p);
+                internal_left_box_width = local_box_left_width(cur_p);
+                internal_right_box = local_box_right(cur_p);
+                internal_right_box_width = local_box_right_width(cur_p);
+                break;
+            case math_node:
+                auto_breaking = (subtype(cur_p) == after);
+                /* begin mathskip code */
+                if (math_skip == zero_glue) {
+                    kern_break();
+                    break;
+                } else {
+                    /* fall through */
+                }
+                /* end mathskip code */
             case glue_node:
                 /* If node |cur_p| is a legal breakpoint, call |try_break|;
                    then update the active widths by including the glue in
@@ -1926,13 +1918,18 @@ ext_do_line_break(int paragraph_dir,
                 active_width[1] += width(q);
                 active_width[2 + stretch_order(q)] += stretch(q);
                 active_width[7] += shrink(q);
+                /* begin mathskip code */
+                if (type(cur_p)==math_node) {
+                    active_width[1]+=surround(cur_p);
+                }
+                /* end mathskip code */
                 break;
             case kern_node:
                 if (subtype(cur_p) == explicit) {
                     kern_break();
                 } else {
                     active_width[1] += width(cur_p);
-                    if ((adjust_spacing > 1) && (subtype(cur_p) == normal)) {
+                    if ((adjust_spacing == 2) && (subtype(cur_p) == normal)) {
                         add_kern_stretch(active_width[8], cur_p);
                         add_kern_shrink(active_width[9], cur_p);
                     }
@@ -1970,8 +1967,7 @@ ext_do_line_break(int paragraph_dir,
                                       double_hyphen_demerits,
                                       final_hyphen_demerits, first_p, cur_p);
                     } else {
-                        add_to_widths(s, line_break_dir, adjust_spacing,
-                                      disc_width);
+                        add_to_widths(s, line_break_dir, adjust_spacing, disc_width);
                         do_one_seven_eight(add_disc_width_to_active_width);
                         ext_try_break(actual_penalty, hyphenated_node,
                                       line_break_dir, adjust_spacing,
@@ -1990,8 +1986,7 @@ ext_do_line_break(int paragraph_dir,
                             assert(type(vlink(cur_p)) == disc_node &&
                                    subtype(vlink(cur_p)) == select_disc);
                             s = vlink_pre_break(vlink(cur_p));
-                            add_to_widths(s, line_break_dir, adjust_spacing,
-                                          disc_width);
+                            add_to_widths(s, line_break_dir, adjust_spacing, disc_width);
                             ext_try_break(actual_penalty, hyphenated_node,
                                           line_break_dir, adjust_spacing,
                                           par_shape_ptr, adj_demerits,
@@ -2008,8 +2003,7 @@ ext_do_line_break(int paragraph_dir,
                             do_one_seven_eight(reset_disc_width);
                             /* add select |no_break| to |active_width| */
                             s = vlink_no_break(vlink(cur_p));
-                            add_to_widths(s, line_break_dir, adjust_spacing,
-                                          disc_width);
+                            add_to_widths(s, line_break_dir, adjust_spacing, disc_width);
                             ext_try_break(actual_penalty, hyphenated_node,
                                           line_break_dir, adjust_spacing,
                                           par_shape_ptr, adj_demerits,
@@ -2024,12 +2018,7 @@ ext_do_line_break(int paragraph_dir,
                     }
                 }
                 s = vlink_no_break(cur_p);
-                add_to_widths(s, line_break_dir, adjust_spacing,
-                              active_width);
-                break;
-            case math_node:
-                auto_breaking = (subtype(cur_p) == after);
-                kern_break();
+                add_to_widths(s, line_break_dir, adjust_spacing, active_width);
                 break;
             case penalty_node:
                 ext_try_break(penalty(cur_p), unhyphenated_node, line_break_dir,
@@ -2039,6 +2028,9 @@ ext_do_line_break(int paragraph_dir,
                               double_hyphen_demerits, final_hyphen_demerits,
                               first_p, cur_p);
                 break;
+            case boundary_node:
+            case whatsit_node:
+                /* / Advance past a whatsit node in the |line_break| loop/; */
             case mark_node:
             case ins_node:
             case adjust_node:

@@ -22,9 +22,6 @@
 
 #include "ptexlib.h"
 
-@ @c
-#define pdf_link_margin          dimen_par(pdf_link_margin_code)
-
 @ To implement nested link annotations, we need a stack to hold copy of
 |pdf_start_link_node|'s that are being written out, together with their box
 nesting level.
@@ -53,10 +50,11 @@ void pop_link_level(PDF pdf)
 void do_link(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
 {
     scaled_whd alt_rule;
+    int k;
     if (type(p) == vlist_node)
-        pdf_error("ext4", "\\pdfstartlink ended up in vlist");
+        normal_error("pdf backend", "'startlink' ended up in vlist");
     if (global_shipping_mode == SHIPPING_FORM)
-        pdf_error("ext4", "link annotations cannot be inside an XForm");
+        normal_error("pdf backend", "link annotations cannot be inside an XForm");
     assert(type(parent_box) == hlist_node);
     if (is_obj_scheduled(pdf, pdf_link_objnum(p)))
         pdf_link_objnum(p) = pdf_create_obj(pdf, obj_type_others, 0);
@@ -66,7 +64,9 @@ void do_link(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     alt_rule.dp = depth(p);
     set_rect_dimens(pdf, p, parent_box, cur, alt_rule, pdf_link_margin);
     obj_annot_ptr(pdf, pdf_link_objnum(p)) = p; /* the reference for the pdf annot object must be set here */
-    addto_page_resources(pdf, obj_type_link, pdf_link_objnum(p));
+    k = pdf_link_objnum(p);
+    set_obj_scheduled(pdf, pdf_link_objnum(p));
+    addto_page_resources(pdf, obj_type_link, k);
 }
 
 @ @c
@@ -75,13 +75,11 @@ void end_link(PDF pdf, halfword p)
     halfword q;
     scaledpos pos = pdf->posstruct->pos;
     if (type(p) == vlist_node)
-        pdf_error("ext4", "\\pdfendlink ended up in vlist");
+        normal_error("pdf backend","'endlink' ended up in vlist");
     if (pdf->link_stack_ptr < 1)
-        pdf_error("ext4",
-                  "pdf link_stack empty, \\pdfendlink used without \\pdfstartlink?");
+        normal_error("pdf backend","pdf link_stack empty, 'endlink' used without 'startlink'");
     if (pdf->link_stack[pdf->link_stack_ptr].nesting_level != cur_s)
-        pdf_error("ext4",
-                  "\\pdfendlink ended up in different nesting level than \\pdfstartlink");
+        normal_error("pdf backend","'endlink' ended up in different nesting level than 'startlink'");
 
     /* N.B.: test for running link must be done on |link_node| and not |ref_link_node|,
        as |ref_link_node| can be set by |do_link| or |append_link| already */
@@ -89,11 +87,11 @@ void end_link(PDF pdf, halfword p)
     if (is_running(width(pdf->link_stack[pdf->link_stack_ptr].link_node))) {
         q = pdf->link_stack[pdf->link_stack_ptr].ref_link_node;
         if (global_shipping_mode == SHIPPING_PAGE && matrixused()) {
-            matrixrecalculate(pos.h + pdf_link_margin);
+	    matrixrecalculate(pos.h + pdf_link_margin);
             pdf_ann_left(q) = getllx() - pdf_link_margin;
-            pdf_ann_top(q) = pdf->page_size.v - getury() - pdf_link_margin;
+            pdf_ann_top(q) = getlly() - pdf_link_margin;
             pdf_ann_right(q) = geturx() + pdf_link_margin;
-            pdf_ann_bottom(q) = pdf->page_size.v - getlly() + pdf_link_margin;
+            pdf_ann_bottom(q) = getury() + pdf_link_margin;
         } else {
             switch (pdf->posstruct->dir) {
             case dir_TLT:
@@ -139,6 +137,7 @@ void append_link(PDF pdf, halfword parent_box, scaledpos cur, small_number i)
     set_rect_dimens(pdf, p, parent_box, cur, alt_rule, pdf_link_margin);
     k = pdf_create_obj(pdf, obj_type_others, 0);
     obj_annot_ptr(pdf, k) = p;
+    set_obj_scheduled(pdf, pdf_link_objnum(p));
     addto_page_resources(pdf, obj_type_link, k);
 }
 
@@ -148,7 +147,7 @@ void scan_startlink(PDF pdf)
     int k;
     halfword r;
     if (abs(cur_list.mode_field) == vmode)
-        pdf_error("ext1", "\\pdfstartlink cannot be used in vertical mode");
+        normal_error("pdf backend", "startlink cannot be used in vertical mode");
     k = pdf_create_obj(pdf, obj_type_others, 0);
     new_annot_whatsit(pdf_start_link_node);
     set_pdf_link_attr(cur_list.tail_field, null);

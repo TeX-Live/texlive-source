@@ -496,7 +496,7 @@ return( _ReadSplineFont(NULL,filename,openflags));
 
 SplineFont *ReadSplineFontInfo(char *filename,enum openflags openflags) {
   SplineFont *sf, *sf_ptr;
-	char **fontlist;
+	char **fontlist; 
     char *pt =NULL, *strippedname=filename, *paren=NULL, *rparen=NULL, *fullname=filename;
     FILE *foo = NULL;
     int checked = 0;
@@ -533,8 +533,11 @@ return( NULL );
 	    sf = SFReadTTFInfo(fullname,0,openflags);
 	    checked = 't';
 	} else if ((ch1=='t' && ch2=='t' && ch3=='c' && ch4=='f')) {
-	  /* read all fonts in a collection */
+          char **old_fontlist;
+          int i;
+          /* read all fonts in a collection */
 	  fontlist = NamesReadTTF(fullname);
+          old_fontlist = fontlist;
 	  if (fontlist) {
 		while (*fontlist != NULL) {
 		  snprintf(s,511, "%s(%s)", fullname,*fontlist);
@@ -544,6 +547,12 @@ return( NULL );
 		  sf = sf_ptr;
 		  fontlist++;
 		}
+                /* fontlist is (g)allocated */
+                fontlist = old_fontlist;
+                for(i=0; fontlist[i]; i++)
+                      free(fontlist[i]);
+                free(fontlist);
+                old_fontlist = NULL;
 	  }
     } else if ( strmatch(fullname+strlen(strippedname)-4, ".bin")==0 ||
                 strmatch(fullname+strlen(strippedname)-4, ".hqx")==0 ||

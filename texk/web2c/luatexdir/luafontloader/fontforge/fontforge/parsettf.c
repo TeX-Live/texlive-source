@@ -478,7 +478,12 @@ return( NULL );
 	    char *cstr = galloc(inlen);
 	    ICONV_CONST char *in = cstr;
 	    char *out;
-	    str = galloc(outlen+2);
+#ifdef UNICHAR_16
+            str = galloc(outlen+2);
+#else
+            str = galloc(outlen+sizeof(unichar_t));
+#endif
+	    /*str = galloc(outlen+2);*/
 	    out = (char *) str;
 	    iconv(enc->tounicode,&in,&inlen,&out,&outlen);
 	    out[0] = '\0'; out[1] = '\0';
@@ -4256,6 +4261,7 @@ static void ApplyVariationSequenceSubtable(FILE *ttf,uint32 vs_map,
 	    }
 	}
     }
+    free(vs_data);
 }
 
 static enum uni_interp amscheck(struct ttfinfo *info, EncMap *map) {
@@ -5062,6 +5068,8 @@ static void readttfpostnames(FILE *ttf,struct ttfinfo *info) {
 		    nm[j] = getc(ttf);
 		nm[j] = '\0';
 		if ( indexes[i]<info->glyph_cnt && info->chars[indexes[i]]!=NULL ) {
+                    if (info->chars[indexes[i]]->name) 
+                       free( info->chars[indexes[i]]->name );
 		    info->chars[indexes[i]]->name = nm;
 #if 0			/* Too many fonts have badly named glyphs */
 		    if ( info->chars[indexes[i]]->unicodeenc==-1 )
@@ -5917,6 +5925,12 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
 
     SFRelativeWinAsDs(sf);
     free(info->savetab);
+    /*if (info->chars) {
+      int i;
+      for(i=0; info->chars[i]; i++)
+         if (info->chars[i]->name)
+             free(info->chars[i]->name);
+    }*/
     sf->loadvalidation_state =
 	    (info->bad_ps_fontname	?lvs_bad_ps_fontname:0) |
 	    (info->bad_glyph_data	?lvs_bad_glyph_table:0) |
@@ -6062,6 +6076,8 @@ static SplineFont *SFFillFromTTFInfo(struct ttfinfo *info) {
     sf->pfminfo = info->pfminfo ;
 
     free(info->savetab);
+    if (info->chosenname)
+        free(info->chosenname); 
     if ( sf->copyright==NULL )
 	sf->copyright = info->copyright;
     else

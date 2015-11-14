@@ -149,25 +149,25 @@ size_t          T##_limit
 
 #  define str_prefix(s1, s2)  (strncmp((s1), (s2), strlen(s2)) == 0)
 
-/* that was ptexmac.h */
-
 #  include "tex/mainbody.h"
 #  include "tex/expand.h"
 #  include "tex/conditional.h"
-#  include "pdf/pdftypes.h"
 
-/* synctex */
+#  include "pdf/pdftypes.h" /* the backend data structure, shared between dvi and pdf */
+
 #  include "synctex.h"
 
 #  include "utils/avlstuff.h"
 #  include "utils/managed-sa.h"
+
 #  include "image/writeimg.h"
+
 #  include "dvi/dvigen.h"
+
+#  include "pdf/pdftables.h"
 #  include "pdf/pdfpagetree.h"
 #  include "pdf/pdfgen.h"
 #  include "pdf/pdfpage.h"
-#  include "pdf/pdftables.h"
-
 #  include "pdf/pdfaction.h"
 #  include "pdf/pdfannot.h"
 #  include "pdf/pdfcolorstack.h"
@@ -194,8 +194,10 @@ size_t          T##_limit
 
 #  include "font/luatexfont.h"
 #  include "font/mapfile.h"
+
 #  include "utils/utils.h"
 #  include "utils/unistring.h"
+
 #  include "image/writejbig2.h"
 #  include "image/pdftoepdf.h"
 
@@ -244,15 +246,20 @@ extern halfword new_ligkern(halfword head, halfword tail);
 extern halfword handle_ligaturing(halfword head, halfword tail);
 extern halfword handle_kerning(halfword head, halfword tail);
 
-halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type,
-                          int extrainfo, int d);
-void lua_node_filter(int filterid, int extrainfo, halfword head_node,
-                     halfword * tail_node);
-halfword lua_vpack_filter(halfword head_node, scaled size, int pack_type,
-                          scaled maxd, int extrainfo, int d);
-void lua_node_filter_s(int filterid, int extrainfo);
-int lua_linebreak_callback(int is_broken, halfword head_node,
-                           halfword * new_head);
+halfword lua_hpack_filter(
+    halfword head_node, scaled size, int pack_type, int extrainfo, int d);
+void lua_node_filter(
+    int filterid, int extrainfo, halfword head_node,
+    halfword * tail_node);
+halfword lua_vpack_filter(
+    halfword head_node, scaled size, int pack_type, scaled maxd, int extrainfo, int d);
+void lua_node_filter_s(
+    int filterid, int extrainfo);
+int lua_linebreak_callback(
+    int is_broken, halfword head_node, halfword * new_head);
+int lua_appendtovlist_callback(
+    halfword box, int location, halfword prev_depth, boolean is_mirrored,
+    halfword * result, int * next_depth, boolean * prev_set);
 
 void lua_pdf_literal(PDF pdf, int i);
 void copy_pdf_literal(pointer r, pointer p);
@@ -361,9 +368,7 @@ extern string normalize_quotes(const_string name, const_string mesg);
 extern string dump_name;
 extern const_string c_job_name;
 
-extern halfword *check_isnode(lua_State * L, int ud);
-extern void lua_nodelib_push_fast(lua_State * L, halfword n);
-
+extern halfword *check_isnode(lua_State * L, int i);
 extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
 extern halfword list_node_mem_usage(void);
@@ -378,7 +383,5 @@ extern void set_charinfo_vert_variants(charinfo * ci, extinfo * ext);
 extern extinfo *copy_variants(extinfo * o);
 
 extern int program_name_set;    /* in lkpselib.c */
-
-
 
 #endif                          /* PTEXLIB_H */

@@ -112,6 +112,9 @@ static void FontViewBase_Free(FontViewBase *fv) {
     int i;
     FontViewBase *prev;
 
+    if (fv->cidmaster)
+       EncMapFree(fv->cidmaster->map);
+
    if ( fv->nextsame==NULL && fv->sf->fv==fv ) {
 	EncMapFree(fv->map);
 	SplineFontFree(fv->cidmaster?fv->cidmaster:fv->sf);

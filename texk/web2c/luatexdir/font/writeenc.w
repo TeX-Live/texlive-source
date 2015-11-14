@@ -149,6 +149,7 @@ static void destroy_fe_entry(void *pa, void *pb)
             if (p->glyph_names[i] != notdef)
                 xfree(p->glyph_names[i]);
     xfree(p->glyph_names);
+    avl_destroy(p->tx_tree,NULL);
     xfree(p);
 }
 

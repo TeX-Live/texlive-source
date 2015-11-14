@@ -236,7 +236,7 @@ static struct {
 
 unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx, fd_entry * fd)
 {
-    //ULONG version;
+    /*ULONG version;*/
     unsigned long offset = 0;
     unsigned long num_dirs = 0;
 

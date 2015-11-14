@@ -18,8 +18,6 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-
-
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 #include "lua/lauxlib_bridge.h"
@@ -28,7 +26,6 @@
 lua_State *Luas = NULL;
 
 int luastate_bytes = 0;
-
 int lua_active = 0;
 
 @ @c
@@ -57,8 +54,7 @@ void make_table(lua_State * L, const char *tab, const char *mttab, const char *g
 }
 
 @ @c
-static
-const char *getS(lua_State * L, void *ud, size_t * size)
+static const char *getS(lua_State * L, void *ud, size_t * size)
 {
     LoadS *ls = (LoadS *) ud;
     (void) L;
@@ -118,9 +114,6 @@ void luafunctioncall(int slot)
     lua_active--;
 }
 
-
-
-
 @ @c
 static const luaL_Reg lualibs[] = {
     {"", luaopen_base},
@@ -143,11 +136,11 @@ static const luaL_Reg lualibs[] = {
     {"bit",	luaopen_bit },
     {NULL, NULL}
 };
+
 static const luaL_Reg lualibs_nofenv[] = {
     {"lpeg", luaopen_lpeg},
     {NULL, NULL}
 };
-
 
 @ @c
 static void do_openlibs(lua_State * L)
@@ -220,29 +213,27 @@ static int luatex_dofile (lua_State *L) {
   return lua_gettop(L) - n;
 }
 
-
 @ @c
 void luainterpreter(void)
 {
     lua_State *L;
-        
+
     if (jithash_hashname==NULL){
-	/* default lua51 */ 
+	/* default lua51 */
 	luajittex_choose_hash_function = 0;
         jithash_hashname = (char *) xmalloc(strlen("lua51")+1);
-        jithash_hashname = strcpy ( jithash_hashname, "lua51"); 
+        jithash_hashname = strcpy ( jithash_hashname, "lua51");
     } else {
       if (strcmp((const char*)jithash_hashname,"lua51")==0){
 	luajittex_choose_hash_function = 0;
       }else if (strcmp((const char*)jithash_hashname,"luajit20")==0){
 	luajittex_choose_hash_function = 1;
       } else {
-	/* default lua51 */ 
+	/* default lua51 */
 	luajittex_choose_hash_function = 0;
-	jithash_hashname = strcpy ( jithash_hashname, "lua51"); 
+	jithash_hashname = strcpy ( jithash_hashname, "lua51");
       }
     }
-    
 
     L = luaL_newstate() ;
     /*L = lua_newstate(my_luaalloc, NULL);*/
@@ -260,7 +251,6 @@ void luainterpreter(void)
     else {
        luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_OFF);
     }
-
 
     lua_pushcfunction(L,luatex_dofile);
     lua_setglobal(L, "dofile");
@@ -311,8 +301,8 @@ void luainterpreter(void)
     /* our own libraries */
     luaopen_ff(L);
     luaopen_tex(L);
-    luaopen_newtoken(L);
     luaopen_token(L);
+    luaopen_oldtoken(L);
     luaopen_node(L);
     luaopen_texio(L);
     luaopen_kpse(L);
@@ -418,7 +408,6 @@ void unhide_lua_value(lua_State * L, const char *name, const char *item, int r)
     }
 }
 
-
 @ @c
 int lua_traceback(lua_State * L)
 {
@@ -514,7 +503,6 @@ static void luacall(int p, int nameptr, boolean is_string) /* hh-ls: optimized l
     lua_active--;
 }
 
-
 @ @c
 void late_lua(PDF pdf, halfword p)
 {
@@ -581,24 +569,23 @@ lua_State *luatex_error(lua_State * L, int is_fatal)
 
     const_lstring luaerr;
     char *err = NULL;
-    if (lua_isstring(L, -1)) {
+    if (lua_type(L, -1) == LUA_TSTRING) {
         luaerr.s = lua_tolstring(L, -1, &luaerr.l);
+        /* free last one ? */
         err = (char *) xmalloc((unsigned) (luaerr.l + 1));
         snprintf(err, (luaerr.l + 1), "%s", luaerr.s);
-	last_lua_error = err;
+        last_lua_error = err; /* hm, what if we have several .. not freed */
     }
     if (is_fatal > 0) {
         /* Normally a memory error from lua.
            The pool may overflow during the |maketexlstring()|, but we
            are crashing anyway so we may as well abort on the pool size */
-        lua_fatal_error(err);
+        normal_error("lua",err);
         /* never reached */
-        xfree(err);
         lua_close(L);
         return (lua_State *) NULL;
     } else {
-        lua_norm_error(err);
-	/* last_lua_error = err so no need to xfree(err) */
+        normal_warning("lua",err,true,true);
         return L;
     }
 }
@@ -624,83 +611,77 @@ void preset_environment(lua_State * L, const parm_struct * p, const char *s)
     lua_settable(L, LUA_REGISTRYINDEX); /* - */
 }
 
-
 @ @c
 /*
-int luaL_typerror (void *LL, int narg, const char *tname)
-{
-  lua_State *L = (lua_State *)LL;
-  const char *msg = lua_pushfstring(L, "%s expected, got %s",
-                                    tname, luaL_typename(L, narg));
-  return luaL_argerror(L, narg, msg);	
-}
+    int luaL_typerror (void *LL, int narg, const char *tname)
+    {
+      lua_State *L = (lua_State *)LL;
+      const char *msg = lua_pushfstring(L, "%s expected, got %s",
+                                        tname, luaL_typename(L, narg));
+      return luaL_argerror(L, narg, msg);
+    }
 */
-
 
 /*
-
-
-Compatibility layer for luatex lua5.2 
-
+    Compatibility layer for luatex lua5.2
 */
-
-
 
 @ @c
 LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) {
-  void *p = lua_touserdata(L, ud);
-  if (p != NULL) {  /* value is a userdata? */
-    if (lua_getmetatable(L, ud)) {  /* does it have a metatable? */
-      luaL_getmetatable(L, tname);  /* get correct metatable */
-      if (!lua_rawequal(L, -1, -2))  /* not the same? */
-        p = NULL;  /* value is a userdata with wrong metatable */
-      lua_pop(L, 2);  /* remove both metatables */
-      return p;
+    void *p = lua_touserdata(L, ud);
+    if (p != NULL) {  /* value is a userdata? */
+        if (lua_getmetatable(L, ud)) {  /* does it have a metatable? */
+            luaL_getmetatable(L, tname);  /* get correct metatable */
+        if (!lua_rawequal(L, -1, -2))  /* not the same? */
+            p = NULL;  /* value is a userdata with wrong metatable */
+        lua_pop(L, 2);  /* remove both metatables */
+        return p;
+        }
     }
-  }
-  return NULL;  /* value is not a userdata with a metatable */
+    return NULL;  /* value is not a userdata with a metatable */
 }
 
 @ @c
-/* It's not ok. See lua-users.org/wiki/CompatibilityWithLuaFive for another solution */
-LUALIB_API void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
-  /*luaL_checkversion(L);*/
-  luaL_checkstack(L, nup, "too many upvalues");
-  for (; l->name != NULL; l++) {  /* fill the table with given functions */
-    int i;
-    for (i = 0; i < nup; i++)  /* copy upvalues to the top */
-      lua_pushvalue(L, -nup);
-    lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
-    lua_setfield(L, -(nup + 2), l->name);
-  }
-  lua_pop(L, nup);  /* remove upvalues */
-}
 
+/* It's not ok. See lua-users.org/wiki/CompatibilityWithLuaFive for another solution */
+
+LUALIB_API void luaL_setfuncs (lua_State *L, const luaL_Reg *l, int nup) {
+    /*luaL_checkversion(L);*/
+    luaL_checkstack(L, nup, "too many upvalues");
+    for (; l->name != NULL; l++) {  /* fill the table with given functions */
+        int i;
+        for (i = 0; i < nup; i++)  /* copy upvalues to the top */
+            lua_pushvalue(L, -nup);
+        lua_pushcclosure(L, l->func, nup);  /* closure with those upvalues */
+        lua_setfield(L, -(nup + 2), l->name);
+    }
+    lua_pop(L, nup);  /* remove upvalues */
+}
 
 @ @c
 LUALIB_API char *luaL_prepbuffsize (luaL_Buffer *B, size_t sz) {
-  lua_State *L = B->L;
-  if (sz > LUAL_BUFFERSIZE ) 
-	luaL_error(L, "buffer too large");
-  return luaL_prepbuffer(B) ;
+    lua_State *L = B->L;
+    if (sz > LUAL_BUFFERSIZE )
+        luaL_error(L, "buffer too large");
+    return luaL_prepbuffer(B) ;
 }
 
 @ @c
 LUA_API int lua_compare (lua_State *L, int o1, int o2, int op) {
-  /*StkId o1, o2;*/
-  int i = 0;
-  lua_lock(L);  /* may call tag method */
-  /* o1 = index2addr(L, index1); */
-  /* o2 = index2addr(L, index2); */
-  /*if (isvalid(o1) && isvalid(o2)) {*/
+    /*StkId o1, o2;*/
+    int i = 0;
+    lua_lock(L);  /* may call tag method */
+    /* o1 = index2addr(L, index1); */
+    /* o2 = index2addr(L, index2); */
+    /*if (isvalid(o1) && isvalid(o2)) {*/
     switch (op) {
-      case LUA_OPEQ: i = lua_equal(L, o1, o2); break;
-      case LUA_OPLT: i = lua_lessthan(L, o1, o2); break;
-      case LUA_OPLE: i = (lua_lessthan(L, o1, o2) || lua_equal(L, o1, o2)) ; break;
-      default: luaL_error(L, "invalid option");
+        case LUA_OPEQ: i = lua_equal(L, o1, o2); break;
+        case LUA_OPLT: i = lua_lessthan(L, o1, o2); break;
+        case LUA_OPLE: i = (lua_lessthan(L, o1, o2) || lua_equal(L, o1, o2)) ; break;
+        default: luaL_error(L, "invalid option");
     }
-  /*}*/
-  lua_unlock(L);
-  return i;
+    /*}*/
+    lua_unlock(L);
+    return i;
 }
 

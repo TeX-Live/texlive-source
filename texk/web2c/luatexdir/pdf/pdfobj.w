@@ -18,12 +18,8 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-
-
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
-
-int pdf_last_obj;
 
 @ write a raw PDF object
 
@@ -34,8 +30,8 @@ void pdf_write_obj(PDF pdf, int k)
     const_lstring st;
     size_t li;                  /* index into |data.s| */
     int saved_compress_level = pdf->compress_level;
-    int os_threshold = OBJSTM_ALWAYS;   /* gives compressed objects for \.{\\pdfobjcompresslevel} >= |OBJSTM_ALWAYS| */
-    int l = 0;                  /* possibly a lua registry reference */
+    int os_threshold = OBJSTM_ALWAYS;   /* gives compressed objects for \.{\\pdfvariable objcompresslevel} >= |OBJSTM_ALWAYS| */
+    int l = 0;                          /* possibly a lua registry reference */
     int ll = 0;
     data.s = NULL;
     if (obj_obj_pdfcompresslevel(pdf, k) > -1)  /* -1 = "unset" */
@@ -48,7 +44,8 @@ void pdf_write_obj(PDF pdf, int k)
         l = obj_obj_stream_attr(pdf, k);
         if (l != LUA_NOREF) {
             lua_rawgeti(Luas, LUA_REGISTRYINDEX, l);
-            assert(lua_isstring(Luas, -1));
+            if (lua_type(Luas,-1) != LUA_TSTRING)
+                normal_error("pdf backend","invalid object");
             st.s = lua_tolstring(Luas, -1, &li);
             st.l = li;
             pdf_out_block(pdf, st.s, st.l);
@@ -64,7 +61,8 @@ void pdf_write_obj(PDF pdf, int k)
         pdf_begin_obj(pdf, k, os_threshold);
     l = obj_obj_data(pdf, k);
     lua_rawgeti(Luas, LUA_REGISTRYINDEX, l);
-    assert(lua_isstring(Luas, -1));
+    if (lua_type(Luas,-1) != LUA_TSTRING)
+        normal_error("pdf backend","invalid object");
     st.s = lua_tolstring(Luas, -1, &li);
     st.l = li;
     lua_pop(Luas, 1);
@@ -80,21 +78,21 @@ void pdf_write_obj(PDF pdf, int k)
             res = run_callback(callback_id, "S->bSd", fnam, &file_opened, &data.s, &ll);
             data.l = (size_t) ll;
             if (!file_opened)
-                pdf_error("ext5", "cannot open file for embedding");
+                normal_error("pdf backend", "cannot open file for embedding");
         } else {
             byte_file f;        /* the data file's FILE* */
             if (!fnam)
                 fnam = st.s;
             if (!luatex_open_input(&f, fnam, kpse_tex_format, FOPEN_RBIN_MODE, true))
-                pdf_error("ext5", "cannot open file for embedding");
+                normal_error("pdf backend", "cannot open file for embedding");
             res = read_data_file(f, &data.s, &ll);
             data.l = (size_t) ll;
             close_file(f);
         }
         if (data.l == 0L)
-            pdf_error("ext5", "empty file for embedding");
+            normal_error("pdf backend", "empty file for embedding");
         if (!res)
-            pdf_error("ext5", "error reading file for embedding");
+            normal_error("pdf backend", "error reading file for embedding");
         tprint("<<");
         tprint(st.s);
         pdf_out_block(pdf, (const char *) data.s, data.l);
@@ -132,11 +130,11 @@ void init_obj_obj(PDF pdf, int k)
     obj_obj_objstm_threshold(pdf, k) = OBJSTM_UNSET;  /* unset */
 }
 
-@ The \.{\\pdfobj} primitive is used to create a ``raw'' object in the PDF
+@ The \.{\\pdfextension obj} primitive is used to create a ``raw'' object in the PDF
    output file. The object contents will be hold in memory and will be written
-   out only when the object is referenced by \.{\\pdfrefobj}. When \.{\\pdfobj}
-   is used with \.{\\immediate}, the object contents will be written out
-   immediately. Objects referenced in the current page are appended into
+   out only when the object is referenced by \.{\\pdfextension refobj}. When
+   \.{\\pdfextension obj} is used with \.{\\immediate}, the object contents will be
+   written out immediately. Objects referenced in the current page are appended into
    |pdf_obj_list|.
 
 @c

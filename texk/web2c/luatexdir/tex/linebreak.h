@@ -70,33 +70,34 @@ extern halfword find_protchar_right(halfword l, halfword r);
 
 /* skipable nodes at the margins during character protrusion */
 
-#  define cp_skipable(a) ((! is_char_node((a))) &&                        \
-                        ((type((a)) == ins_node)                        \
-                         || (type((a)) == mark_node)                    \
-                         || (type((a)) == adjust_node)                  \
-                         || (type((a)) == penalty_node)                 \
-                         || ((type((a)) == whatsit_node) &&             \
-                             (subtype((a)) != pdf_refximage_node) &&    \
-                             (subtype((a)) != pdf_refxform_node))       \
-                         /* reference to an image or XObject form */    \
-                         || ((type((a)) == disc_node) &&                \
-                             (vlink_pre_break(a) == null) &&            \
-                             (vlink_post_break(a) == null) &&           \
-                             (vlink_no_break(a) == null))               \
-                         /* an empty |disc_node| */                     \
-                         || ((type((a)) == math_node) &&                \
-                             (surround((a)) == 0))                      \
-                         || ((type((a)) == kern_node) &&                \
-                             ((width((a)) == 0) ||                      \
-                              (subtype((a)) == normal)))                \
-                         || ((type((a)) == glue_node) &&                \
-                             (glue_ptr((a)) == zero_glue))              \
-                         || ((type((a)) == hlist_node) &&               \
-                             (width((a)) == 0) &&                       \
-                             (height((a)) == 0) &&                      \
-                             (depth((a)) == 0) &&                       \
-                             (list_ptr((a)) == null))                   \
-                         ))
+#  define zero_dimensions(a) ( \
+    (width((a)) == 0) && \
+    (height((a)) == 0) && \
+    (depth((a)) == 0) \
+)
+
+#  define empty_disc(a) ( \
+    (vlink_pre_break(a) == null) && \
+    (vlink_post_break(a) == null) && \
+    (vlink_no_break(a) == null) \
+)
+
+#  define cp_skipable(a) ( (! is_char_node((a))) && ( \
+     (type((a)) == ins_node) \
+ ||  (type((a)) == mark_node) \
+ ||  (type((a)) == adjust_node) \
+ ||  (type((a)) == penalty_node) \
+ ||  (type((a)) == boundary_node) \
+ ||  (type((a)) == whatsit_node) \
+ ||  (type((a)) == dir_node) \
+ ||  (type((a)) == local_par_node) \
+ || ((type((a)) == rule_node)  && zero_dimensions(a)) \
+ || ((type((a)) == disc_node)  && empty_disc(a)) \
+ || ((type((a)) == math_node)  && (surround((a)) == 0)) \
+ || ((type((a)) == kern_node)  && ((width((a)) == 0) || (subtype((a)) == normal))) \
+ || ((type((a)) == glue_node)  && (glue_ptr((a)) == zero_glue)) \
+ || ((type((a)) == hlist_node) && (list_ptr((a)) == null) && zero_dimensions(a)) \
+) )
 
 
 #endif

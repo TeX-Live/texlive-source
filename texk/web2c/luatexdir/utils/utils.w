@@ -135,7 +135,7 @@ void tex_printf(const char *fmt, ...)
    current implementation it appears that error messages are misleading,
    possibly because pool overflows are detected too late.
 
-   The output format of this fuction must be the same as |pdf_error| in
+   The output format of this fuction must be the same as |normal_error| in
    pdftex.web!
 
 @c
@@ -166,7 +166,7 @@ void luatex_fail(const char *fmt, ...)
     }
 }
 
-@ The output format of this fuction must be the same as |pdf_warn| in
+@ The output format of this fuction must be the same as |normal_warn| in
    pdftex.web!
 @c
 __attribute__ ((format(printf, 1, 2)))
@@ -177,7 +177,7 @@ void luatex_warn(const char *fmt, ...)
     va_start(args, fmt);
     selector = term_and_log;
     print_ln();
-    tex_printf("LuaTeX warning");
+    tex_printf("warning");
     if (cur_file_name)
         tex_printf(" (file %s)", cur_file_name);
     tex_printf(": ");
@@ -239,7 +239,7 @@ scaled ext_xn_over_d(scaled x, scaled n, scaled d)
     else
         r -= 0.5;
     if (r >= (double) max_integer || r <= -(double) max_integer)
-        luatex_warn("arithmetic: number too big");
+        luatex_warn("arithmetic number too big");
     return (scaled) r;
 }
 
@@ -373,9 +373,9 @@ scaled divide_scaled(scaled s, scaled m, int dd)
         m = -m;
     }
     if (m == 0) {
-        pdf_error("arithmetic", "divided by zero");
+        normal_error("arithmetic", "divided by zero");
     } else if (m >= (max_integer / 10)) {
-        pdf_error("arithmetic", "number too big");
+        normal_error("arithmetic", "number too big");
     }
     q = s / m;
     r = s % m;

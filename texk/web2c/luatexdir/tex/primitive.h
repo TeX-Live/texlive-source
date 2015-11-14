@@ -25,17 +25,16 @@
 
 typedef enum {
     /* Can be modified as suggested ?*/
-    tex_command = 1,    /* 1  */
-    etex_command = 2,   /* 2  */
-    pdftex_command = 16,/* 4  */
-    luatex_command = 32,/* 8  */
-    core_command = 64,  /* 16 */
-    no_command = 128,   /* 32 */
-    umath_command = 256,/* 64  */
+    tex_command    =  1,  /*  1 */
+    etex_command   =  2,  /*  2 */
+    pdftex_command = 16,  /*  4 */ /* obsolete */
+    luatex_command = 32,  /*  8 */
+    core_command   = 64,  /* 16 */
+    no_command     = 128, /* 32 */
+    umath_command  = 256, /* 64 */ /* obsolete */
 } command_origin;
 
 #  define hash_size 65536       /* maximum number of control sequences; it should be at most about |(fix_mem_max-fix_mem_min)/10| */
-
 #  define hash_prime 55711      /* a prime number equal to about 85\pct! of |hash_size| */
 
 extern two_halves *hash;        /* the hash table */

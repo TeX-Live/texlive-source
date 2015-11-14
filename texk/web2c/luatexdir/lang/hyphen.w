@@ -41,6 +41,7 @@
 
 
 #include "ptexlib.h"
+#include "lua/luatex-api.h"
 
 #include <stdlib.h>             /* for NULL, malloc */
 #include <stdio.h>              /* for fprintf */
@@ -61,7 +62,7 @@
 
 @ TODO: should be moved to separate library
 
-@c 
+@c
 static unsigned char *hnj_strdup(const unsigned char *s)
 {
     unsigned char *new;
@@ -77,7 +78,7 @@ static unsigned char *hnj_strdup(const unsigned char *s)
 @* Type definitions.
 
 @ a little bit of a hash table implementation. This simply maps strings
-   to state numbers 
+   to state numbers
 
 @c
 typedef struct _HashTab HashTab;
@@ -224,7 +225,7 @@ static void delete_HashIter(HashIter * i)
 }
 
 
-@ a |char*| hash function from ASU - adapted from Gtk+ 
+@ a |char*| hash function from ASU - adapted from Gtk+
 
 @c
 static unsigned int hnj_string_hash(const unsigned char *s)
@@ -243,7 +244,7 @@ static unsigned int hnj_string_hash(const unsigned char *s)
 }
 
 
-@ assumes that key is not already present! 
+@ assumes that key is not already present!
 
 @c
 static void state_insert(HashTab * hashtab, unsigned char *key, int state)
@@ -260,7 +261,7 @@ static void state_insert(HashTab * hashtab, unsigned char *key, int state)
 }
 
 
-@ assumes that key is not already present! 
+@ assumes that key is not already present!
 
 @c
 static void hyppat_insert(HashTab * hashtab, unsigned char *key, char *hyppat)
@@ -357,25 +358,27 @@ static int hnj_get_state(HyphenDict * dict,
 
 
 @ Add a transition from state1 to state2 through ch - assumes that the
-   transition does not already exist 
+   transition does not already exist
 
 @c
 static void hnj_add_trans(HyphenDict * dict, int state1, int state2, int uni_ch)
 {
     int num_trans;
     /* TH: this test was a bit too strict, it is quite normal for old
-       patterns to have chars in the range 0-31 or 127-159 (inclusive). 
-       To ease the transition, let's only disallow NUL for now 
+       patterns to have chars in the range 0-31 or 127-159 (inclusive).
+       To ease the transition, let's only disallow NUL for now
        (this is probably a requirement of the code anyway).
      */
     if (uni_ch == 0) {
-        fprintf(stderr, "Character out of bounds: u%04x \n", uni_ch);
-        exit(1);
+        char errmsg[256]; /* temp hack ... we will have a formatted error */
+        snprintf(errmsg, 255, "character out of bounds: u%04x", uni_ch);
+        errmsg[255] = '\0';
+        normal_error("hyphenation",errmsg); /* todo */
     }
     num_trans = dict->states[state1].num_trans;
     if (num_trans == 0) {
         dict->states[state1].trans = hnj_malloc(sizeof(HyphenTrans));
-    } else { 
+    } else {
         /* TH: The old version did
            } else if (!(num_trans & (num_trans - 1))) {
              ... hnj_realloc(dict->states[state1].trans,
@@ -624,7 +627,7 @@ void hnj_hyphen_load(HyphenDict * dict, const unsigned char *f)
            char * index2 = strnchr(index + 1, ',',clen-(index-repl));
            if (index2) {
            replindex = (signed char) atoi(index + 1) - 1;
-           replcut = (signed char) atoi(index2 + 1);                
+           replcut = (signed char) atoi(index2 + 1);
            }
            } else {
            hnj_strchomp(repl + 1);
@@ -692,8 +695,7 @@ void hnj_hyphen_load(HyphenDict * dict, const unsigned char *f)
                                 e1++;
                         neworg = malloc((size_t) (l1 + 2 - e1));
                         sprintf(neworg, "%0*d", l1 + 1 - e1, 0);  /* fill with right amount of '0' */
-                        hyppat_insert(dict->merged, newword,
-                                      combine(neworg, subpat_pat));
+                        hyppat_insert(dict->merged, newword, combine(neworg, subpat_pat));
                     } else {
                         combine(newpat_pat, subpat_pat);
                     }
@@ -759,12 +761,12 @@ void hnj_hyphen_load(HyphenDict * dict, const unsigned char *f)
 #ifdef VERBOSE
     for (i = 0; i < HASH_SIZE; i++) {
         for (e = dict->state_num->entries[i]; e; e = e->next) {
-            printf("%d string %s state %d, fallback=%d\n", i, e->key,
-                   e->u.state, dict->states[e->u.state].fallback_state);
+            printf("%d string %s state %d, fallback=%d\n",
+                i, e->key, e->u.state, dict->states[e->u.state].fallback_state);
             for (j = 0; j < dict->states[e->u.state].num_trans; j++) {
                 printf(" u%4x->%d\n",
-                       (int) dict->states[e->u.state].trans[j].uni_ch,
-                       dict->states[e->u.state].trans[j].new_state);
+                   (int) dict->states[e->u.state].trans[j].uni_ch,
+                   dict->states[e->u.state].trans[j].new_state);
             }
         }
     }
@@ -828,7 +830,7 @@ void hnj_hyphen_hyphenate(HyphenDict * dict,
                          */
                         int offset = (int) (char_num + 2 - (int) strlen(match));
 #if 0
-                        printf ("%*s%s\n", offset,"", match);
+                        printf("%*s%s\n", offset,"", match);
 #endif
                         int m;
                         for (m = 0; match[m]; m++) {
@@ -841,7 +843,7 @@ void hnj_hyphen_hyphenate(HyphenDict * dict,
             }
             state = hstate->fallback_state;
 #if 0
-            printf (" back to %d\n", state);
+            printf(" back to %d\n", state);
 #endif
         }
         /* nothing worked, let's go to the next character */

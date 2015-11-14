@@ -75,6 +75,7 @@ typedef struct charinfo {
     scaled height;              /* height */
     scaled depth;               /* depth */
     scaled italic;              /* italic correction */
+    scaled vert_italic;         /* italic correction */
     scaled top_accent;          /* top accent alignment */
     scaled bot_accent;          /* bot accent alignment */
     int ef;                     /* font expansion factor */
@@ -112,8 +113,6 @@ extern extinfo *new_variant(int glyph, int startconnect, int endconnect,
 
 extern scaled_whd get_charinfo_whd(internal_font_number f, int c);
 
-
-
 typedef struct texfont {
     int _font_size;
     int _font_dsize;
@@ -135,6 +134,7 @@ typedef struct texfont {
     char _font_touched;         /* internal information */
     int _font_cache_id;         /* internal information */
     char _font_encodingbytes;   /* 1 or 2 bytes */
+    boolean _font_oldmath;      /* default to false when MathConstants seen */
 
     int _font_slant;            /* a slant in ppt */
     int _font_extend;           /* an extension in ppt, or 1000 */
@@ -197,7 +197,6 @@ typedef enum {
 extern const char *font_type_strings[];
 extern const char *font_format_strings[];
 extern const char *font_embedding_strings[];
-
 
 #  define font_checksum(a)          font_tables[a]->_font_checksum
 #  define set_font_checksum(a,b)    font_checksum(a) = b
@@ -292,6 +291,9 @@ boolean cmp_font_area(int, str_number);
 #  define font_encodingbytes(a)       font_tables[a]->_font_encodingbytes
 #  define set_font_encodingbytes(a,b) font_encodingbytes(a) = b
 
+#  define font_oldmath(a)             font_tables[a]->_font_oldmath
+#  define set_font_oldmath(a,b)       font_oldmath(a) = b
+
 #  define font_slant(a)               font_tables[a]->_font_slant
 #  define set_font_slant(a,b)         font_slant(a) = b
 
@@ -333,7 +335,6 @@ boolean cmp_font_area(int, str_number);
 
 #  define pdf_font_attr(a)            font_tables[a]->_pdf_font_attr
 #  define set_pdf_font_attr(a,b)      pdf_font_attr(a) = b
-
 
 #  define left_boundarychar  -1
 #  define right_boundarychar -2
@@ -418,6 +419,7 @@ extern void set_charinfo_width(charinfo * ci, scaled val);
 extern void set_charinfo_height(charinfo * ci, scaled val);
 extern void set_charinfo_depth(charinfo * ci, scaled val);
 extern void set_charinfo_italic(charinfo * ci, scaled val);
+extern void set_charinfo_vert_italic(charinfo * ci, scaled val);
 extern void set_charinfo_top_accent(charinfo * ci, scaled val);
 extern void set_charinfo_bot_accent(charinfo * ci, scaled val);
 extern void set_charinfo_tag(charinfo * ci, scaled val);
@@ -447,6 +449,7 @@ extern scaled get_charinfo_width(charinfo * ci);
 extern scaled get_charinfo_height(charinfo * ci);
 extern scaled get_charinfo_depth(charinfo * ci);
 extern scaled get_charinfo_italic(charinfo * ci);
+extern scaled get_charinfo_vert_italic(charinfo * ci);
 extern scaled get_charinfo_top_accent(charinfo * ci);
 extern scaled get_charinfo_bot_accent(charinfo * ci);
 extern char get_charinfo_tag(charinfo * ci);
@@ -517,6 +520,7 @@ extern scaled calc_char_width(internal_font_number f, int c, int ex);
 extern scaled char_width(internal_font_number f, int c);
 extern scaled char_depth(internal_font_number f, int c);
 extern scaled char_italic(internal_font_number f, int c);
+extern scaled char_vert_italic(internal_font_number f, int c);
 extern scaled char_top_accent(internal_font_number f, int c);
 extern scaled char_bot_accent(internal_font_number f, int c);
 
@@ -606,6 +610,7 @@ extern int vf_packet_bytes(charinfo * co);
 extern charinfo *copy_charinfo(charinfo * ci);
 
 /* this function is in vfovf.c for the moment */
+
 extern int make_vf_table(lua_State * L, const char *name, scaled s);
 
 /* some bits of the old interface, used by e.g. writet3.c */
@@ -616,5 +621,23 @@ extern int make_vf_table(lua_State * L, const char *name, scaled s);
 #  define get_charwidth(f,c) (char_exists(f,c) ? char_width(f,c) : 0)
 #  define get_charheight(f,c) (char_exists(f,c) ? char_height(f,c) : 0)
 #  define get_chardepth(f,c) (char_exists(f,c) ? char_depth(f,c) : 0)
+
+/* moved from pdffont.h */
+
+extern int pk_dpi;              /* PK pixel density value from \.{texmf.cnf} */
+
+extern internal_font_number tfm_lookup(char *s, scaled fs);
+
+extern int fix_expand_value(internal_font_number f, int e);
+
+extern void set_expand_params(internal_font_number f, boolean auto_expand,
+                              int stretch_limit, int shrink_limit,
+                              int font_step);
+
+extern void read_expand_font(void);
+extern void new_letterspaced_font(small_number a);
+extern void make_font_copy(small_number a);
+
+extern void glyph_to_unicode(void);
 
 #endif                          /* TEXFONT_H */

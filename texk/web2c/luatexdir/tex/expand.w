@@ -57,7 +57,7 @@ recursive calls don't invalidate them.
 @^recursion@>
 
 @c
-boolean is_in_csname = false;
+int is_in_csname = 0;
 
 @ @c
 void expand(void)
@@ -320,7 +320,7 @@ void manufacture_csname(void)
     lstring *ss;
     r = get_avail();
     p = r;                      /* head of the list of characters */
-    is_in_csname = true;
+    is_in_csname += 1;
     do {
         get_x_token();
         if (cur_cs == 0)
@@ -330,10 +330,9 @@ void manufacture_csname(void)
         /* Complain about missing \.{\\endcsname} */
         complain_missing_csname();
     }
-    is_in_csname = false;
     /* Look up the characters of list |r| in the hash table, and set |cur_cs| */
-
     ss = tokenlist_to_lstring(r, true);
+    is_in_csname -= 1;
     if (ss->l > 0) {
         no_new_control_sequence = false;
         cur_cs = string_lookup((char *) ss->s, ss->l);
@@ -373,7 +372,7 @@ common cases.
 void get_x_token(void)
 {                               /* sets |cur_cmd|, |cur_chr|, |cur_tok|,  and expands macros */
   RESTART:
-    get_token_lua();
+    get_next(); /* get_token_lua(); */
     if (cur_cmd <= max_command_cmd)
         goto DONE;
     if (cur_cmd >= call_cmd) {
@@ -404,8 +403,8 @@ void x_token(void)
 {                               /* |get_x_token| without the initial |get_next| */
     while (cur_cmd > max_command_cmd) {
         expand();
-        get_token_lua();
-    }
+        get_next(); /* get_token_lua(); */
+   }
     if (cur_cs == 0)
         cur_tok = token_val(cur_cmd, cur_chr);
     else

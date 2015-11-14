@@ -96,15 +96,22 @@ static int outline_list_count(PDF pdf, pointer p)
 @ @c
 void scan_pdfoutline(PDF pdf)
 {
-    halfword p, q, r;
-    int i, j, k, l;
+    halfword q, r;
+    int i, k, l;
+    int j = 0;
+    halfword p = NULL;
     if (scan_keyword("attr")) {
         scan_pdf_ext_toks();
         r = def_ref;
     } else {
         r = 0;
     }
-    p = scan_action(pdf);
+    if (scan_keyword("useobjnum")) {
+        scan_int();
+        j = cur_val;
+    } else {
+        p = scan_action(pdf);
+    }
     if (scan_keyword("count")) {
         scan_int();
         i = cur_val;
@@ -113,11 +120,13 @@ void scan_pdfoutline(PDF pdf)
     }
     scan_pdf_ext_toks();
     q = def_ref;
-    j = pdf_create_obj(pdf, obj_type_others, 0);
-    pdf_begin_obj(pdf, j, OBJSTM_ALWAYS);
-    write_action(pdf, p);
-    pdf_end_obj(pdf);
-    delete_action_ref(p);
+    if (j == 0) {
+        j = pdf_create_obj(pdf, obj_type_others, 0);
+        pdf_begin_obj(pdf, j, OBJSTM_ALWAYS);
+        write_action(pdf, p);
+        pdf_end_obj(pdf);
+        delete_action_ref(p);
+    }
     k = pdf_create_obj(pdf, obj_type_outline, 0);
     set_obj_outline_ptr(pdf, k, pdf_get_mem(pdf, pdfmem_outline_size));
     set_obj_outline_action_objnum(pdf, k, j);

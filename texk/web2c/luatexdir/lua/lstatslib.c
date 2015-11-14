@@ -31,8 +31,6 @@ typedef const char *(*charfunc) (void);
 typedef lua_Number(*numfunc) (void);
 typedef int (*intfunc) (void);
 
-const char *last_lua_error;
-
 static const char *getbanner(void)
 {
     return (const char *) luatex_banner;
@@ -42,7 +40,6 @@ static const char *getlogname(void)
 {
     return (const char *) texmf_log_name;
 }
-
 
 static const char *get_output_file_name(void)
 {
@@ -73,7 +70,20 @@ static const char *getlastluaerror(void)
     return last_lua_error;
 }
 
+static const char *getlastwarningtag(void)
+{
+    return last_warning_tag;
+}
 
+static const char *getlastwarningstr(void)
+{
+    return last_warning_str;
+}
+
+static const char *getlasterrorcontext(void)
+{
+    return last_error_context;
+}
 
 static const char *luatexrevision(void)
 {
@@ -189,6 +199,9 @@ static struct statistic stats[] = {
 
     {"lasterrorstring", 'S', (void *) &getlasterror},
     {"lastluaerrorstring", 'S', (void *) &getlastluaerror},
+    {"lastwarningtag", 'S', (void *) &getlastwarningtag},
+    {"lastwarningstring", 'S', (void *) &getlastwarningstr},
+    {"lasterrorcontext", 'S', (void *) &getlasterrorcontext},
 
     /* seldom or never accessed */
 
@@ -240,6 +253,7 @@ static struct statistic stats[] = {
     {"param_size", 'g', &param_size},
     {"buf_size", 'g', &buf_size},
     {"save_size", 'g', &save_size},
+    {"input_ptr", 'g', &input_ptr},
     /* pdf stats */
     {"obj_ptr", 'N', &get_obj_ptr},
     {"obj_tab_size", 'N', &get_obj_tab_size},
@@ -331,7 +345,7 @@ static int getstats(lua_State * L)
 {
     const char *st;
     int i;
-    if (lua_isstring(L, -1)) {
+    if (lua_type(L,-1) == LUA_TSTRING) {
         st = lua_tostring(L, -1);
         i = stats_name_to_id(st);
         if (i >= 0) {
@@ -361,10 +375,22 @@ static int statslist(lua_State * L)
     return 1;
 }
 
-
+static int resetmessages(lua_State * L)
+{
+    xfree(last_warning_str);
+    xfree(last_warning_tag);
+    xfree(last_error);
+    xfree(last_lua_error);
+    last_warning_str = NULL;
+    last_warning_tag = NULL;
+    last_error = NULL;
+    last_lua_error = NULL;
+    return 0;
+}
 
 static const struct luaL_Reg statslib[] = {
     {"list", statslist},
+    {"resetmessages", resetmessages},
     {NULL, NULL}                /* sentinel */
 };
 

@@ -1,5 +1,5 @@
 /* ltokenlib.c
-   
+
    Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -42,11 +42,13 @@ static unsigned char *get_cs_text(int cs)
 static int test_expandable(lua_State * L)
 {
     int cmd = -1;
+    int t;
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
-        if (lua_isnumber(L, -1)) {
+        t = lua_type(L, -1);
+        if (t == LUA_TNUMBER) {
             cmd = (int) lua_tointeger(L, -1);
-        } else if (lua_isstring(L, -1)) {
+        } else if (t == LUA_TSTRING) {
             cmd = get_command_id(lua_tostring(L, -1));
         }
         if (cmd > max_command_cmd) {
@@ -64,11 +66,13 @@ static int test_expandable(lua_State * L)
 static int test_protected(lua_State * L)
 {
     int chr = -1;
+    int t;
     if (is_valid_token(L, -1)) {
         get_token_chr(L, -1);
-        if (lua_isnumber(L, -1)) {
+        t = lua_type(L, -1);
+        if (t == LUA_TNUMBER) {
             chr = (int) lua_tointeger(L, -1);
-        } else if (lua_isstring(L, -1)) {
+        } else if (t == LUA_TSTRING) {
             chr = get_command_id(lua_tostring(L, -1));
         }
         if (token_info(token_link(chr)) == protected_token) {
@@ -88,7 +92,7 @@ static int test_activechar(lua_State * L)
         unsigned char *s;
         int cs = 0;
         get_token_cs(L, -1);
-        if (lua_isnumber(L, -1)) {
+        if (lua_type(L, -1) == LUA_TNUMBER) {
             cs = (int) lua_tointeger(L, -1);
         }
         lua_pop(L, 1);
@@ -111,7 +115,7 @@ static int run_get_command_name(lua_State * L)
     int cs;
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
-        if (lua_isnumber(L, -1)) {
+        if (lua_type(L, -1) == LUA_TNUMBER) {
             cs = (int) lua_tointeger(L, -1);
             lua_pushstring(L, command_names[cs].cmd_name);
         } else {
@@ -131,14 +135,14 @@ static int run_get_csname_name(lua_State * L)
     if (is_valid_token(L, -1)) {
         get_token_cmd(L, -1);
         /*
-        if (lua_isnumber(L, -1)) {
+        if (lua_type(L, -1) == LUA_TNUMBER) {
             cmd = (int) lua_tointeger(L, -1);
         }
         */
         lua_pop(L, 1);
         cs = 0;
         get_token_cs(L, -1);
-        if (lua_isnumber(L, -1)) {
+        if (lua_type(L, -1) == LUA_TNUMBER) {
             cs = (int) lua_tointeger(L, -1);
         }
         lua_pop(L, 1);
@@ -160,7 +164,7 @@ static int run_get_csname_name(lua_State * L)
 static int run_get_command_id(lua_State * L)
 {
     int cs = -1;
-    if (lua_isstring(L, -1)) {
+    if (lua_type(L, -1) == LUA_TSTRING) {
         cs = get_command_id(lua_tostring(L, -1));
     }
     lua_pushnumber(L, cs);
@@ -172,7 +176,7 @@ static int run_get_csname_id(lua_State * L)
 {
     const char *s;
     size_t k, cs = 0;
-    if (lua_isstring(L, -1)) {
+    if (lua_type(L, -1) == LUA_TSTRING) {
         s = lua_tolstring(L, -1, &k);
         cs = (size_t) string_lookup(s, k);
     }
@@ -217,7 +221,7 @@ static int run_lookup(lua_State * L)
     size_t l;
     int cs, cmd, chr;
     int save_nncs;
-    if (lua_isstring(L, -1)) {
+    if (lua_type(L, -1) == LUA_TSTRING) {
         s = lua_tolstring(L, -1, &l);
         if (l > 0) {
             save_nncs = no_new_control_sequence;
@@ -238,7 +242,7 @@ static int run_lookup(lua_State * L)
 static int run_build(lua_State * L)
 {
     int cmd, chr, cs;
-    if (lua_isnumber(L, 1)) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
         cs = 0;
         chr = (int) lua_tointeger(L, 1);
         cmd = (int) luaL_optinteger(L, 2, get_char_cat_code(chr));
@@ -277,8 +281,8 @@ static const struct luaL_Reg tokenlib[] = {
     {NULL, NULL}                /* sentinel */
 };
 
-int luaopen_token(lua_State * L)
+int luaopen_oldtoken(lua_State * L)
 {
-    luaL_register(L, "token", tokenlib);
+    luaL_register(L, "oldtoken", tokenlib);
     return 1;
 }

@@ -29,6 +29,7 @@
 #define wlog(A)      fputc(A,log_file)
 #define wterm(A)     fputc(A,term_out)
 
+int new_string_line = 0;
 
 @ Messages that are sent to a user's terminal and to the transcript-log file
 are produced by several `|print|' procedures. These procedures will
@@ -101,8 +102,12 @@ void print_ln(void)
         term_offset = 0;
         break;
     case no_print:
+        break;
     case pseudo:
+        break;
     case new_string:
+        if (new_string_line > 0)
+            print_char(new_string_line);
         break;
     default:
         fprintf(write_file[selector], "\n");
@@ -218,7 +223,7 @@ The first 256 entries above the 17th unicode plane are used for a
 special trick: when \TeX\ has to print items in that range, it will
 instead print the character that results from substracting 0x110000
 from that value. This allows byte-oriented output to things like
-\.{\\specials} and \.{\\pdfliterals}. Todo: Perhaps it would be useful
+\.{\\specials} and \.{\\pdfextension literals}. Todo: Perhaps it would be useful
 to do the same substraction while typesetting.
 
 @c
@@ -260,8 +265,7 @@ void print(int s)
             } else if (s >= 0x110000) {
                 int c = s - 0x110000;
                 if (c >= 256) {
-                    pdf_warning("print", "bad raw byte to print (c=",
-                                true, false);
+                    normal_warning("print", "bad raw byte to print (c=", true, false);
                     print_int(c);
                     tprint("), skipped.");
                     print_ln();
@@ -309,9 +313,12 @@ string appears at the beginning of a new line.
 @c
 void print_nlp(void)
 {                               /* move to beginning of a line */
-    if (((term_offset > 0) && (odd(selector))) ||
-        ((file_offset > 0) && (selector >= log_only)))
+    if (new_string_line > 0) {
+        print_char(new_string_line);
+    } else if (((term_offset > 0) && (odd(selector))) ||
+               ((file_offset > 0) && (selector >= log_only))) {
         print_ln();
+    }
 }
 
 void print_nl(str_number s)
@@ -419,9 +426,9 @@ void tprint(const char *sss)
                 term_offset=0;
             }
             if (s != newlinechar) {
-                if ((s>=0x20)||(s==0x0A)||(s==0x0D)||(s==0x09)) {       
+                if ((s>=0x20)||(s==0x0A)||(s==0x0D)||(s==0x09)) {
                     buffer[i++] = s;
-                } else {                                                
+                } else {
                     buffer[i++] = '^';
                     buffer[i++] = '^';
                     buffer[i++] = s+64;
@@ -474,7 +481,7 @@ void print_banner(const char *v, int ver)
             wterm(' ');
             fprintf(term_out,"Number of bits used by the hash function (" my_name "): %d",LUAI_HASHLIMIT);
         print_ln();
-        } 
+        }
         if (shellenabledp) {
             wterm(' ');
             if (restrictedshell)
@@ -499,7 +506,7 @@ void log_banner(const char *v, int ver)
     if (ver < 0)
         fprintf(log_file, "This is " MyName ", Version %s ", v);
     else
-        fprintf(log_file, "This is " MyName ", Version %s%s (rev %d) ", v, 
+        fprintf(log_file, "This is " MyName ", Version %s%s (rev %d) ", v,
 	                  WEB2CVERSION, ver);
     print(format_ident);
     print_char(' ');
@@ -834,7 +841,7 @@ void print_font_identifier(internal_font_number f)
         tprint_esc("FONT");
         print_int(f);
     }
-    if (int_par(pdf_tracing_fonts_code) > 0) {
+    if (int_par(tracing_fonts_code) > 0) {
         tprint(" (");
         print_font_name(f);
         if (font_size(f) != font_dsize(f)) {

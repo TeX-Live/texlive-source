@@ -27,7 +27,7 @@
 
 #  define STACK_INCREMENT 8
 
-int newcolorstack(int s, int literal_mode, boolean pagestart);
+int newcolorstack(const char *s, int literal_mode, boolean pagestart);
 int colorstackused(void);
 int colorstackpop(int colstack_no);
 int colorstackcurrent(int colstack_no);

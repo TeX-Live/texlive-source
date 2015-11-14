@@ -25,7 +25,7 @@
 @ @c
 #define box(A) eqtb[box_base+(A)].hh.rh
 
-@* We consider now the way \TeX\ handles various kinds of \.{\\if} commands. 
+@* We consider now the way \TeX\ handles various kinds of \.{\\if} commands.
 
 @ Conditions can be inside conditions, and this nesting has a stack
 that is independent of the |save_stack|.
@@ -73,7 +73,7 @@ void pass_text(void)
     l = 0;
     skip_line = line;
     while (1) {
-        get_token_lua();
+        get_next(); /* get_token_lua(); */
         if (cur_cmd == fi_or_else_cmd) {
             if (l == 0)
                 break;
@@ -381,11 +381,11 @@ void conditional(void)
          */
         save_scanner_status = scanner_status;
         scanner_status = normal;
-        get_token_lua();
+        get_next(); /* get_token_lua(); */
         n = cur_cs;
         p = cur_cmd;
         q = cur_chr;
-        get_token_lua();
+        get_next(); /* get_token_lua(); */
         if (cur_cmd != p) {
             b = false;
         } else if (cur_cmd < call_cmd) {
@@ -418,8 +418,9 @@ void conditional(void)
         scanner_status = save_scanner_status;
         break;
     case if_eof_code:
+        /* bad this system check here as it's an extension*/
         scan_four_bit_int_or_18();
-        if (cur_val == 18)
+        if (cur_val == write_target_system)
             b = !shellenabledp;
         else
             b = (read_open[cur_val] == closed);
@@ -459,7 +460,7 @@ void conditional(void)
     case if_primitive_code:
         save_scanner_status = scanner_status;
         scanner_status = normal;
-        get_token_lua();
+        get_next(); /* get_token_lua(); */
         scanner_status = save_scanner_status;
         m = prim_lookup(cs_text(cur_cs));
         b = ((cur_cmd != undefined_cs_cmd) &&
@@ -473,7 +474,7 @@ void conditional(void)
            are allowed, but we might be scanning a macro definition or preamble. */
         save_scanner_status = scanner_status;
         scanner_status = normal;
-        get_token_lua();
+        get_next(); /* get_token_lua(); */
         b = (cur_cmd != undefined_cs_cmd);
         scanner_status = save_scanner_status;
         break;

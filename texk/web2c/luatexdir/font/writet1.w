@@ -1567,14 +1567,25 @@ static void t1_flush_cs(PDF pdf, boolean is_subr)
             }
         }
         xfree(ptr->data);
+	if (is_subr)
+	  ptr->valid=false;
         if (ptr->name != notdef)
             xfree(ptr->name);
     }
     sprintf(t1_line_array, "%s", line_end);
     t1_line_ptr = eol(t1_line_array);
     t1_putline(pdf);
-    if (is_subr)
-        xfree(return_cs);
+    if (is_subr) {
+        end_tab = subr_tab + subr_size;
+	for (ptr = tab; ptr < end_tab; ptr++) {
+          if (ptr->valid) {
+            xfree(ptr->data);
+            if (ptr->name != notdef)
+              xfree(ptr->name);
+          }
+        }
+	xfree(return_cs);
+    }
     xfree(tab);
     xfree(start_line);
     xfree(line_end);
@@ -1662,10 +1673,13 @@ static void t1_subset_charstrings(PDF pdf)
     cs_dict_end = xstrdup(t1_line_array);
     t1_mark_glyphs();
     if (subr_tab != NULL) {
+
+
         if (cs_token_pair == NULL)
             luatex_fail
                 ("This Type 1 font uses mismatched subroutine begin/end token pairs.");
         t1_subr_flush();
+
     }
     for (cs_counter = 0, ptr = cs_tab; ptr < cs_ptr; ptr++)
         if (ptr->used)

@@ -35,6 +35,23 @@
 #define cur_fam int_par(cur_fam_code)
 #define text_direction int_par(text_direction_code)
 
+/*
+
+    \mathdisplayskipmode
+
+    tex normally always inserts before and only after when larger than zero
+
+    0 = normal tex
+    1 = always
+    2 = non-zero
+    3 = ignore
+
+*/
+
+#define display_skip_mode int_par(math_display_skip_mode_code)
+
+#define math_skip glue_par(math_skip_code)
+
 #define var_code 7
 
 @ TODO: not sure if this is the right order
@@ -48,18 +65,19 @@
 
 @ @c
 int scan_math(pointer, int);
+int scan_math_style(pointer, int);
 pointer fin_mlist(pointer);
 
 #define pre_display_size dimen_par(pre_display_size_code)
-#define hsize          dimen_par(hsize_code)
-#define display_width  dimen_par(display_width_code)
-#define display_indent dimen_par(display_indent_code)
-#define math_surround  dimen_par(math_surround_code)
-#define hang_indent    dimen_par(hang_indent_code)
-#define hang_after     int_par(hang_after_code)
-#define every_math     equiv(every_math_loc)
-#define every_display  equiv(every_display_loc)
-#define par_shape_ptr  equiv(par_shape_loc)
+#define hsize            dimen_par(hsize_code)
+#define display_width    dimen_par(display_width_code)
+#define display_indent   dimen_par(display_indent_code)
+#define math_surround    dimen_par(math_surround_code)
+#define hang_indent      dimen_par(hang_indent_code)
+#define hang_after       int_par(hang_after_code)
+#define every_math       equiv(every_math_loc)
+#define every_display    equiv(every_display_loc)
+#define par_shape_ptr    equiv(par_shape_loc)
 
 #define math_eqno_gap_step int_par(math_eqno_gap_step_code)
 
@@ -151,7 +169,6 @@ static void unsave_math(void)
     text_dir_ptr = saved_value(0);
 }
 
-
 @ Sometimes it is necessary to destroy an mlist. The following
 subroutine empties the current list, assuming that |abs(mode)=mmode|.
 
@@ -229,8 +246,6 @@ static void unsave_math_fam_data(int gl)
     }
 }
 
-
-
 @ and parameters
 
 @c
@@ -263,7 +278,6 @@ scaled get_math_param(int param_id, int style_id)
     return (scaled) get_sa_item(math_param_head, n);
 }
 
-
 @ @c
 static void unsave_math_param_data(int gl)
 {
@@ -294,7 +308,6 @@ static void unsave_math_param_data(int gl)
         (math_param_head->stack_ptr)--;
     }
 }
-
 
 @ saving and unsaving of both
 
@@ -334,8 +347,6 @@ void initialize_math(void)
     }
     return;
 }
-
-
 
 @ Each portion of a formula is classified as Ord, Op, Bin, Rel, Ope,
 Clo, Pun, or Inn, for purposes of spacing and line breaking. An
@@ -381,8 +392,6 @@ be placed at the left and right of the fraction. In this way, a
 \.{\\atop}, \.{\\above}, \.{\\overwithdelims}, \.{\\atopwithdelims}, and
  \.{\\abovewithdelims}.
 
-
-
 @ The |new_noad| function creates an |ord_noad| that is completely null
 
 @c
@@ -405,7 +414,6 @@ pointer new_sub_box(pointer curbox)
     return p;
 }
 
-
 @ A few more kinds of noads will complete the set: An |under_noad| has its
 nucleus underlined; an |over_noad| has it overlined. An |accent_noad| places
 an accent over its nucleus; the accent character appears as
@@ -423,8 +431,6 @@ never appears in an mlist except as the first element, and a |fence_noad|
 with subtype |right_noad_side| never appears in an mlist
 except as the last element; furthermore, we either have both a |left_noad_side|
 and a |right_noad_side|, or neither one is present.
-
-
 
 @ Math formulas can also contain instructions like \.{\\textstyle} that
 override \TeX's normal style rules. A |style_node| is inserted into the
@@ -507,7 +513,6 @@ static pointer new_choice(void)
     return new_node(choice_node, 0);    /* the |subtype| is not used */
 }
 
-
 @ Let's consider now the previously unwritten part of |show_node_list|
 that displays the things that can only be present in mlists; this
 program illustrates how to access the data structures just defined.
@@ -566,7 +571,6 @@ void show_math_node(pointer p)
     }
 }
 
-
 @ Here are some simple routines used in the display of noads.
 
 @c
@@ -582,6 +586,31 @@ static void print_fam_and_char(pointer p)
 static void print_delimiter(pointer p)
 {
     int a;
+    if (delimiteroptionset(p)) {
+        tprint(" [ ");
+        if (delimiteraxis(p))
+            tprint("axis ");
+        if (delimiternoaxis(p))
+            tprint("noaxis ");
+        if (delimiterexact(p))
+            tprint("exact ");
+        tprint("]");
+    }
+    if (delimiterheight(p)) {
+        tprint("height=");
+        print_scaled(delimiterheight(p));
+        tprint(" ");
+    }
+    if (delimiterdepth(p)) {
+        tprint("depth=");
+        print_scaled(delimiterdepth(p));
+        tprint(" ");
+    }
+    if (delimiterclass(p)) {
+        tprint("class=");
+        print_int(delimiterclass(p));
+        tprint(" ");
+    }
     if (small_fam(p) < 0) {
         print_int(-1);          /* this should never happen */
     } else if (small_fam(p) < 16 && large_fam(p) < 16 &&
@@ -597,7 +626,6 @@ static void print_delimiter(pointer p)
         print_hex(small_char(p));
     }
 }
-
 
 @ The next subroutine will descend to another level of recursion when a
 subsidiary mlist needs to be displayed. The parameter |c| indicates what
@@ -689,8 +717,7 @@ void display_normal_noad(pointer p)
             break;
         }
         break;
-
-       case radical_noad:
+    case radical_noad:
         if (subtype(p) == 6)
             tprint_esc("Udelimiterover");
         else if (subtype(p) == 5)
@@ -707,64 +734,90 @@ void display_normal_noad(pointer p)
         if (degree(p) != null) {
             print_subsidiary_data(degree(p), '/');
         }
+        if (radicalwidth(p)) {
+            tprint("width=");
+            print_scaled(radicalwidth(p));
+            tprint(" ");
+        }
+        if (radicaloptionset(p)) {
+            tprint(" [ ");
+            if (radicalexact(p))
+                tprint("exact ");
+            if (radicalleft(p))
+                tprint("left ");
+            if (radicalmiddle(p))
+                tprint("middle ");
+            if (radicalright(p))
+                tprint("right ");
+            tprint("]");
+        }
         break;
     case accent_noad:
-       if (accent_chr(p) != null) {
+       if (top_accent_chr(p) != null) {
            if (bot_accent_chr(p) != null) {
                tprint_esc("Umathaccent both");
            } else {
                tprint_esc("Umathaccent");
            }
-       } else {
-           tprint_esc("Umathaccent bottom");
-       }
-       switch (subtype(p)) {
-       case 0:
-        if (accent_chr(p) != null) {
-            if (bot_accent_chr(p) != null) {
-                print_fam_and_char(accent_chr(p));
-                print_fam_and_char(bot_accent_chr(p));
-            } else {
-                print_fam_and_char(accent_chr(p));
-            }
+        } else if (bot_accent_chr(p) != null) {
+            tprint_esc("Umathaccent bottom");
         } else {
-            print_fam_and_char(bot_accent_chr(p));
+            tprint_esc("Umathaccent overlay");
         }
-        break;
-       case 1:
-        if (accent_chr(p) != null) {
-            tprint(" fixed ");
-	    print_fam_and_char(accent_chr(p));
-            if (bot_accent_chr(p) != null) {
-                print_fam_and_char(bot_accent_chr(p));
+        if (accentfraction(p)) {
+            tprint(" fraction=");
+            print_int(accentfraction(p));
+            tprint(" ");
+        }
+        switch (subtype(p)) {
+            case 0:
+                if (top_accent_chr(p) != null) {
+                    if (bot_accent_chr(p) != null) {
+                        print_fam_and_char(top_accent_chr(p));
+                        print_fam_and_char(bot_accent_chr(p));
+                    } else {
+                        print_fam_and_char(top_accent_chr(p));
+                    }
+                } else if (bot_accent_chr(p) != null) {
+                    print_fam_and_char(bot_accent_chr(p));
+                } else {
+                    print_fam_and_char(overlay_accent_chr(p));
+                }
+                break;
+            case 1:
+                if (top_accent_chr(p) != null) {
+                    tprint(" fixed ");
+                    print_fam_and_char(top_accent_chr(p));
+                    if (bot_accent_chr(p) != null) {
+                        print_fam_and_char(bot_accent_chr(p));
+                    }
+                } else {
+                    confusion("display_accent_noad");
+                }
+                break;
+            case 2:
+                if (bot_accent_chr(p) != null) {
+                    if (top_accent_chr(p) != null) {
+                        print_fam_and_char(top_accent_chr(p));
+                    }
+                    tprint(" fixed ");
+                    print_fam_and_char(bot_accent_chr(p));
+                } else{
+                    confusion("display_accent_noad");
+                }
+                break;
+            case 3:
+                if (top_accent_chr(p) != null && bot_accent_chr(p) != null) {
+                    tprint(" fixed ");
+                    print_fam_and_char(top_accent_chr(p));
+                    tprint(" fixed ");
+                    print_fam_and_char(bot_accent_chr(p));
+                } else {
+                    confusion("display_accent_noad");
+                }
+                break;
             }
-        } else {
-            confusion("display_accent_noad");
-        }
         break;
-       case 2:
-        if (bot_accent_chr(p) != null) {
-            if (accent_chr(p) != null) {
-	       print_fam_and_char(accent_chr(p));
-            }
-	    tprint(" fixed ");
-            print_fam_and_char(bot_accent_chr(p));
-        } else{
-            confusion("display_accent_noad");
-        }
-        break;
-       case 3:
-        if (accent_chr(p) != null && bot_accent_chr(p) != null) {
-            tprint(" fixed ");
-            print_fam_and_char(accent_chr(p));
-	    tprint(" fixed ");
-            print_fam_and_char(bot_accent_chr(p));
-        } else {
-            confusion("display_accent_noad");
-        }
-        break;
-       }
-       break;
     }
     print_subsidiary_data(nucleus(p), '.');
     print_subsidiary_data(supscr(p), '^');
@@ -810,7 +863,6 @@ void display_fraction_noad(pointer p)
     print_subsidiary_data(numerator(p), '\\');
     print_subsidiary_data(denominator(p), '/');
 }
-
 
 @ The routines that \TeX\ uses to create mlists are similar to those we have
 just seen for the generation of hlists and vlists. But it is necessary to
@@ -882,11 +934,9 @@ void init_math(void)
     }
 }
 
-
 @ We get into ordinary math mode from display math mode when `\.{\\eqno}' or
 `\.{\\leqno}' appears. In such cases |cur_chr| will be 0 or~1, respectively;
 the value of |cur_chr| is placed onto |save_stack| for safe keeping.
-
 
 @ When \TeX\ is in display math mode, |cur_group=math_shift_group|,
 so it is not necessary for the |start_eq_no| procedure to test for
@@ -953,10 +1003,6 @@ static boolean math_and_text_reversed_p(void)
     return false;
 }
 
-
-
-
-
 @ When we enter display math mode, we need to call |line_break| to
 process the partial paragraph that has just been interrupted by the
 display. Then we can set the proper values of |display_width| and
@@ -972,8 +1018,7 @@ void enter_display_math(void)
     int n;                      /* scope of paragraph shape specification */
     if (head == tail ||         /* `\.{\\noindent\$\$}' or `\.{\$\${ }\$\$}' */
         (vlink(head) == tail && /* the 2nd of \.{\$\${ }\$\$} \.{\$\${ }\$\$} */
-         type(tail) == whatsit_node &&
-         subtype(tail) == local_par_node && vlink(tail) == null)) {
+         type(tail) == local_par_node && vlink(tail) == null)) {
         if (vlink(head) == tail) {
             /* bug \#270: |resume_after_display| inserts a |local_par_node|, but if
                there is another display immediately following, we have to get rid
@@ -1202,7 +1247,6 @@ void scan_extdef_math_code(int level, int extcode)
                   d.family_value, d.character_value, (quarterword) (level));
 }
 
-
 @ this reads in a delcode when actually a mathcode is needed
 @c
 mathcodeval scan_delimiter_as_mathchar(int extcode)
@@ -1248,6 +1292,16 @@ that subformula into a given word of |mem|.
 @c
 #define get_next_nb_nr() do { get_x_token(); } while (cur_cmd==spacer_cmd||cur_cmd==relax_cmd)
 
+int scan_math_style(pointer p, int mstyle)
+{
+    get_next_nb_nr();
+    back_input();
+    scan_left_brace();
+    set_saved_record(0, saved_math, 0, p);
+    incr(save_ptr);
+    push_math(math_group, mstyle);
+    return 1;
+}
 
 int scan_math(pointer p, int mstyle)
 {
@@ -1321,8 +1375,6 @@ int scan_math(pointer p, int mstyle)
     return 0;
 }
 
-
-
 @ The |set_math_char| procedure creates a new noad appropriate to a given
 math code, and appends it to the current mlist. However, if the math code
 is sufficiently large, the |cur_chr| is treated as an active character and
@@ -1368,8 +1420,6 @@ void set_math_char(mathcodeval mval)
     }
 }
 
-
-
 @ The |math_char_in_text| procedure creates a new node representing a math char
 in text code, and appends it to the current list. However, if the math code
 is sufficiently large, the |cur_chr| is treated as an active character and
@@ -1387,13 +1437,11 @@ void math_char_in_text(mathcodeval mval)
         x_token();
         back_input();
     } else {
-        p = new_char(fam_fnt(mval.family_value, text_size),
-                     mval.character_value);
+        p = new_char(fam_fnt(mval.family_value, text_size), mval.character_value);
         vlink(tail) = p;
         tail = p;
     }
 }
-
 
 @ @c
 void math_math_comp(void)
@@ -1408,7 +1456,6 @@ void math_math_comp(void)
     else
         (void) scan_math(nucleus(tail), m_style);
 }
-
 
 @ @c
 void math_limit_switch(void)
@@ -1428,7 +1475,6 @@ void math_limit_switch(void)
     }
     tex_error("Limit controls must follow a math operator", hlp);
 }
-
 
 @ Delimiter fields of noads are filled in by the |scan_delimiter| routine.
 The first parameter of this procedure is the |mem| address where the
@@ -1491,15 +1537,30 @@ static void scan_delimiter(pointer p, int r)
     return;
 }
 
-
 @ @c
 void math_radical(void)
 {
     halfword q;
     int chr_code = cur_chr;
+    halfword options = 0;
     tail_append(new_node(radical_noad, chr_code));
     q = new_node(delim_node, 0);
     left_delimiter(tail) = q;
+    while (1) {
+        if (scan_keyword("width")) {
+            scan_dimen(false,false,false);
+            radicalwidth(tail) = cur_val ;
+        } else if (scan_keyword("left")) {
+            options = options | noad_option_left ;
+        } else if (scan_keyword("middle")) {
+            options = options | noad_option_middle ;
+        } else if (scan_keyword("right")) {
+            options = options | noad_option_right ;
+        } else {
+            break;
+        }
+    }
+    radicaloptions(tail) = options;
     if (chr_code == 0)          /* \.{\\radical} */
         scan_delimiter(left_delimiter(tail), tex_mathcode);
     else if (chr_code == 1)     /* \.{\\Uradical} */
@@ -1514,9 +1575,15 @@ void math_radical(void)
         scan_delimiter(left_delimiter(tail), umath_mathcode);
     else if (chr_code == 6)     /* \.{\\Udelimiterover} */
         scan_delimiter(left_delimiter(tail), umath_mathcode);
+    else if (chr_code == 7)     /* \.{\\Uhextensible} */
+        scan_delimiter(left_delimiter(tail), umath_mathcode);
     else
         confusion("math_radical");
-    if (chr_code == 2) {
+    if (chr_code == 7) {
+        q = new_node(sub_box_node, 0); /* type will change */
+        nucleus(tail) = q;
+        return;
+    } else if (chr_code == 2) {
         /* the trick with the |vlink(q)| is used by |scan_math|
            to decide whether it needs to go on */
         q = new_node(math_char_node, 0);
@@ -1539,8 +1606,9 @@ void math_radical(void)
 void math_ac(void)
 {
     halfword q;
-    mathcodeval t = { 0, 0, 0, 0 }, b = {
-    0, 0, 0, 0};
+    mathcodeval t = { 0, 0, 0, 0 };
+    mathcodeval b = { 0, 0, 0, 0 };
+    mathcodeval o = { 0, 0, 0, 0 };
     if (cur_cmd == accent_cmd) {
         const char *hlp[] = {
             "I'm changing \\accent to \\mathaccent here; wish me luck.",
@@ -1553,37 +1621,57 @@ void math_ac(void)
     if (cur_chr == 0) {         /* \.{\\mathaccent} */
         t = scan_mathchar(tex_mathcode);
     } else if (cur_chr == 1) {  /* \.{\\Umathaccent} */
-	if (scan_keyword("fixed")) {
-           subtype(tail) = 1;
-	   t = scan_mathchar(umath_mathcode);
-	} else if (scan_keyword("both")) {
-  	   if (scan_keyword("fixed")) {
-             subtype(tail) = 1;
-           }
-	   t = scan_mathchar(umath_mathcode);
-  	   if (scan_keyword("fixed")) {
-             subtype(tail) += 2;
-           }
-	   b = scan_mathchar(umath_mathcode);
-	} else if (scan_keyword("bottom")) {
-  	   if (scan_keyword("fixed")) {
-             subtype(tail) = 2;
-           }
-	   b = scan_mathchar(umath_mathcode);
-	} else {
-	   t = scan_mathchar(umath_mathcode);
-	}
+        if (scan_keyword("fixed")) {
+            /* top */
+            subtype(tail) = 1;
+            t = scan_mathchar(umath_mathcode);
+        } else if (scan_keyword("both")) {
+            /* top bottom */
+            if (scan_keyword("fixed")) {
+                subtype(tail) = 1;
+            }
+            t = scan_mathchar(umath_mathcode);
+            if (scan_keyword("fixed")) {
+                subtype(tail) += 2;
+            }
+            b = scan_mathchar(umath_mathcode);
+        } else if (scan_keyword("bottom")) {
+            /* bottom */
+            if (scan_keyword("fixed")) {
+                subtype(tail) = 2;
+            }
+            b = scan_mathchar(umath_mathcode);
+        } else if (scan_keyword("top")) {
+            /* top */
+            if (scan_keyword("fixed")) {
+                subtype(tail) = 1;
+            }
+            t = scan_mathchar(umath_mathcode);
+        } else if (scan_keyword("overlay")) {
+            /* overlay */
+            if (scan_keyword("fixed")) {
+                subtype(tail) = 1;
+            }
+            o = scan_mathchar(umath_mathcode);
+        } else {
+            /* top */
+            t = scan_mathchar(umath_mathcode);
+        }
+        if (scan_keyword("fraction")) {
+            scan_int();
+            accentfraction(tail) = cur_val;
+        }
     } else {
-        confusion("math_ac");
+        confusion("mathaccent");
     }
     if (!(t.character_value == 0 && t.family_value == 0)) {
         q = new_node(math_char_node, 0);
-        accent_chr(tail) = q;
-        math_character(accent_chr(tail)) = t.character_value;
+        top_accent_chr(tail) = q;
+        math_character(top_accent_chr(tail)) = t.character_value;
         if ((t.class_value == var_code) && fam_in_range)
-            math_fam(accent_chr(tail)) = cur_fam;
+            math_fam(top_accent_chr(tail)) = cur_fam;
         else
-            math_fam(accent_chr(tail)) = t.family_value;
+            math_fam(top_accent_chr(tail)) = t.family_value;
     }
     if (!(b.character_value == 0 && b.family_value == 0)) {
         q = new_node(math_char_node, 0);
@@ -1593,6 +1681,15 @@ void math_ac(void)
             math_fam(bot_accent_chr(tail)) = cur_fam;
         else
             math_fam(bot_accent_chr(tail)) = b.family_value;
+    }
+    if (!(o.character_value == 0 && o.family_value == 0)) {
+        q = new_node(math_char_node, 0);
+        overlay_accent_chr(tail) = q;
+        math_character(overlay_accent_chr(tail)) = o.character_value;
+        if ((o.class_value == var_code) && fam_in_range)
+            math_fam(overlay_accent_chr(tail)) = cur_fam;
+        else
+            math_fam(overlay_accent_chr(tail)) = o.family_value;
     }
     q = new_node(math_char_node, 0);
     nucleus(tail) = q;
@@ -1610,7 +1707,6 @@ pointer math_vcenter_group(pointer p)
     math_list(nucleus(q)) = p;
     return q;
 }
-
 
 @ The routine that scans the four mlists of a \.{\\mathchoice} is very
 much like the routine that builds discretionary nodes.
@@ -1655,7 +1751,6 @@ void build_choices(void)
     scan_left_brace();
 }
 
-
 @ Subscripts and superscripts are attached to the previous nucleus by the
 action procedure called |sub_sup|.
 
@@ -1697,7 +1792,6 @@ void sub_sup(void)
     }
 }
 
-
 @ An operation like `\.{\\over}' causes the current mlist to go into a
 state of suspended animation: |incompleat_noad| points to a |fraction_noad|
 that contains the mlist-so-far as its numerator, while the denominator
@@ -1711,6 +1805,7 @@ void math_fraction(void)
 {
     halfword c;                 /* the type of generalized fraction we are scanning */
     pointer q;
+    halfword options = 0;
     c = cur_chr;
     if (incompleat_noad != null) {
         const char *hlp[] = {
@@ -1734,6 +1829,11 @@ void math_fraction(void)
         tail = head;
         m_style = cramped_style(m_style);
 
+        if ((c % delimited_code) == skewed_code) {
+            q = new_node(delim_node, 0);
+            middle_delimiter(incompleat_noad) = q;
+            scan_delimiter(middle_delimiter(incompleat_noad), no_mathcode);
+        }
         if (c >= delimited_code) {
             q = new_node(delim_node, 0);
             left_delimiter(incompleat_noad) = q;
@@ -1743,21 +1843,40 @@ void math_fraction(void)
             scan_delimiter(right_delimiter(incompleat_noad), no_mathcode);
         }
         switch (c % delimited_code) {
-        case above_code:
-            scan_normal_dimen();
-            thickness(incompleat_noad) = cur_val;
-            break;
-        case over_code:
-            thickness(incompleat_noad) = default_code;
-            break;
-        case atop_code:
-            thickness(incompleat_noad) = 0;
-            break;
-        }                       /* there are no other cases */
+            case above_code:
+                while (1) {
+                    if (scan_keyword("exact")) {
+                        options = options | noad_option_exact ;
+                    } else {
+                        break;
+                    }
+                }
+                fractionoptions(incompleat_noad) = options;
+                scan_normal_dimen();
+                thickness(incompleat_noad) = cur_val;
+                break;
+            case over_code:
+                thickness(incompleat_noad) = default_code;
+                break;
+            case atop_code:
+                thickness(incompleat_noad) = 0;
+                break;
+            case skewed_code:
+                while (1) {
+                    if (scan_keyword("exact")) {
+                        options = options | noad_option_exact ;
+                    } else if (scan_keyword("noaxis")) {
+                        options = options | noad_option_no_axis ;
+                    } else {
+                        break;
+                    }
+                }
+                fractionoptions(incompleat_noad) = options;
+                thickness(incompleat_noad) = 0;
+                break;
+        }
     }
 }
-
-
 
 @ At the end of a math formula or subformula, the |fin_mlist| routine is
 called upon to return a pointer to the newly completed mlist, and to
@@ -1795,7 +1914,6 @@ pointer fin_mlist(pointer p)
     pop_nest();
     return q;
 }
-
 
 @ Now at last we're ready to see what happens when a right brace occurs
 in a math formula. Two special cases are simplified here: Braces are effectively
@@ -1863,7 +1981,6 @@ void close_math_group(pointer p)
     }
 }
 
-
 @ We have dealt with all constructions of math mode except `\.{\\left}' and
 `\.{\\right}', so the picture is completed by the following sections of
 the program. The |middle| feature of eTeX allows one ore several \.{\\middle}
@@ -1872,12 +1989,42 @@ delimiters to appear between \.{\\left} and \.{\\right}.
 @c
 void math_left_right(void)
 {
-    halfword t;                 /* |left_noad_side| .. |right_noad_side| */
-    pointer p;                  /* new noad */
-    pointer q;                  /* resulting mlist */
-    pointer r;                  /* temporary */
+    halfword t;      /* |left_noad_side| .. |right_noad_side| */
+    pointer p;       /* new noad */
+    pointer q;       /* resulting mlist */
+    pointer r;       /* temporary */
+    halfword ht = 0;
+    halfword dp = 0;
+    halfword options = 0;
+    halfword type = -1 ;
     t = cur_chr;
-    if ((t != left_noad_side) && (cur_group != math_left_group)) {
+
+    if (t > 10) {
+        /* we have \Uleft \Uright \Umiddle */
+        t = t - 10;
+        while (1) {
+            if (scan_keyword("height")) {
+                scan_dimen(false,false,false);
+                ht = cur_val ;
+            } else if (scan_keyword("depth")) {
+                scan_dimen(false,false,false);
+                dp = cur_val ;
+            } else if (scan_keyword("axis")) {
+                options = options | noad_option_axis ;
+            } else if (scan_keyword("noaxis")) {
+                options = options | noad_option_no_axis ;
+            } else if (scan_keyword("exact")) {
+                options = options | noad_option_exact ;
+            } else if (scan_keyword("class")) {
+                scan_int();
+                type = cur_val ;
+            } else {
+                break;
+            }
+        }
+    }
+
+    if ((t != no_noad_side) && (t != left_noad_side) && (cur_group != math_left_group)) {
         if (cur_group == math_shift_group) {
             scan_delimiter(null, no_mathcode);
             if (t == middle_noad_side) {
@@ -1902,7 +2049,24 @@ void math_left_right(void)
         subtype(p) = (quarterword) t;
         r = new_node(delim_node, 0);
         delimiter(p) = r;
+
+        delimiterheight(p) = ht;
+        delimiterdepth(p) = dp;
+        delimiteroptions(p) = options;
+        delimiterclass(p) = type;
+        delimiteritalic(p) = 0;
+
         scan_delimiter(delimiter(p), no_mathcode);
+
+        if (t == no_noad_side) {
+            tail_append(new_noad());
+            subtype(tail) = inner_noad_type;
+            r = new_node(sub_mlist_node, 0);
+            nucleus(tail) = r;
+            math_list(nucleus(tail)) = p;
+            return ;
+        }
+
         if (t == left_noad_side) {
             q = p;
         } else {
@@ -1923,7 +2087,6 @@ void math_left_right(void)
         }
     }
 }
-
 
 @ \TeX\ gets to the following part of the program when
 the first `\.\$' ending a display has been scanned.
@@ -1985,17 +2148,14 @@ static void resume_after_display(void)
     }
 }
 
-
 @  The fussiest part of math mode processing occurs when a displayed formula is
 being centered and placed with an optional equation number.
-
 
 At this time we are in vertical mode (or internal vertical mode).
 
   |p| points to the mlist for the formula.
   |a| is either |null| or it points to a box containing the equation number.
   |l| is true if there was an \.{\\leqno}/ (so |a| is a horizontal box).
-
 
 @c
 static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
@@ -2019,6 +2179,8 @@ static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
     adjust_tail = adjust_head;
     pre_adjust_tail = pre_adjust_head;
     eq_box = hpack(p, 0, additional, -1);
+    subtype(eq_box) = equation_list; /* new */
+    build_attribute_list(eq_box);
     p = list_ptr(eq_box);
     t = adjust_tail;
     adjust_tail = null;
@@ -2034,25 +2196,31 @@ static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
     } else {
         eqno_w = width(eqno_box);
         eqno_width = eqno_w;
-	eqno_w2 = eqno_w + round_xn_over_d(math_eqno_gap_step, get_math_quad(text_size), 1000);
-    }
+        eqno_w2 = eqno_w + round_xn_over_d(math_eqno_gap_step, get_math_quad(text_size), 1000);
+        subtype(eqno_box) = equation_number_list; /* new */
+     /* build_attribute_list(eqno_box); */ /* probably already set */
+   }
     if (eq_w + eqno_w2 > line_w) {
         /* The user can force the equation number to go on a separate line
            by causing its width to be zero. */
-        if ((eqno_w != 0)
-            && ((eq_w - total_shrink[normal] + eqno_w2 <= line_w)
-                || (total_shrink[sfi] != 0) || (total_shrink[fil] != 0)
+        if ((eqno_w != 0) && ((eq_w - total_shrink[normal] + eqno_w2 <= line_w)
+                || (total_shrink[sfi] != 0)
+                || (total_shrink[fil] != 0)
                 || (total_shrink[fill] != 0)
                 || (total_shrink[filll] != 0))) {
             list_ptr(eq_box) = null;
             flush_node(eq_box);
             eq_box = hpack(p, line_w - eqno_w2, exactly, -1);
+            subtype(eq_box) = equation_list; /* new */
+            build_attribute_list(eq_box);
         } else {
             eqno_w = 0;
             if (eq_w > line_w) {
                 list_ptr(eq_box) = null;
                 flush_node(eq_box);
                 eq_box = hpack(p, line_w, exactly, -1);
+                subtype(eq_box) = equation_list; /* new */
+                build_attribute_list(eq_box);
             }
         }
         eq_w = width(eq_box);
@@ -2092,18 +2260,29 @@ static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
      /* \.{\\leqno} on a forced single line due to |width=0| */
      /* it follows that |type(a)=hlist_node| */
 
-        if (eqno_box && l && (eqno_w == 0)) {
-/*            if (math_direction==dir_TLT) { */
-                shift_amount(eqno_box) = 0;
-/*            } else {                       */
-/*            }                              */
-            append_to_vlist(eqno_box);
-            tail_append(new_penalty(inf_penalty));
-        } else {
-
-        tail_append(new_param_glue(g1));
-
+    if (eqno_box && l && (eqno_w == 0)) {
+     /* if (math_direction==dir_TLT) { */
+            shift_amount(eqno_box) = 0;
+     /* } else {                       */
+     /* }                              */
+        append_to_vlist(eqno_box,lua_key_index(equation_number));
+        tail_append(new_penalty(inf_penalty));
+    } else {
+        switch (display_skip_mode) {
+            case 0 : /* normal tex */
+                tail_append(new_param_glue(g1));
+                break;
+            case 1 : /* always */
+                tail_append(new_param_glue(g1));
+                break;
+            case 2 : /* non-zero */
+                if (g1 != 0)
+                    tail_append(new_param_glue(g1));
+                break;
+            case 3: /* ignore */
+                break;
         }
+    }
 
     if (eqno_w != 0) {
         r = new_kern(line_w - eq_w - eqno_w - d);
@@ -2181,38 +2360,53 @@ static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
             }
         }
         eq_box = hpack(eq_box, 0, additional, -1);
+        subtype(eq_box) = equation_list; /* new */
+        build_attribute_list(eq_box);
         shift_amount(eq_box) = line_s;
     } else {
         shift_amount(eq_box) = line_s + d;
     }
 /* check for prev: */
-    append_to_vlist(eq_box);
+    append_to_vlist(eq_box,lua_key_index(equation));
 
     if ((eqno_box != null) && (eqno_w == 0) && !l) {
         tail_append(new_penalty(inf_penalty));
-/*        if (math_direction==dir_TLT) { */
+     /* if (math_direction==dir_TLT) { */
             shift_amount(eqno_box) = line_s + line_w - eqno_width ;
-/*        } else { */
-/*        }        */
-/* check for prev: */
-        append_to_vlist(eqno_box);
+     /* } else {                       */
+     /* }                              */
+        append_to_vlist(eqno_box,lua_key_index(equation_number));
         g2 = 0;
     }
     if (t != adjust_head) {     /* migrating material comes after equation number */
         vlink(tail) = vlink(adjust_head);
-/* needs testing */
-alink(adjust_tail) = alink(tail);
+        /* needs testing */
+        alink(adjust_tail) = alink(tail);
         tail = t;
     }
     if (pre_t != pre_adjust_head) {
         vlink(tail) = vlink(pre_adjust_head);
-/* needs testing */
-alink(pre_adjust_tail) = alink(tail);
+        /* needs testing */
+        alink(pre_adjust_tail) = alink(tail);
         tail = pre_t;
     }
     tail_append(new_penalty(int_par(post_display_penalty_code)));
-    if (g2 > 0)
-        tail_append(new_param_glue(g2));
+
+    switch (display_skip_mode) {
+        case 0 : /* normal tex */
+            if (g2 > 0)
+                tail_append(new_param_glue(g2));
+            break;
+        case 1 : /* always */
+            tail_append(new_param_glue(g2));
+            break;
+        case 2 : /* non-zero */
+            if (g2 != 0)
+                tail_append(new_param_glue(g2));
+            break;
+        case 3: /* ignore */
+            break;
+    }
 
     resume_after_display();
 }
@@ -2238,6 +2432,7 @@ void after_math(void)
         }
         run_mlist_to_hlist(p, text_style, false);
         a = hpack(vlink(temp_head), 0, additional, -1);
+        build_attribute_list(a);
         unsave_math();
         decr(save_ptr);         /* now |cur_group=math_shift_group| */
         assert(saved_type(0) == saved_eqno);
@@ -2245,6 +2440,7 @@ void after_math(void)
             l = true;
         m = mode;
         p = fin_mlist(null);
+
     }
     if (m < 0) {
         /* The |unsave| is done after everything else here; hence an appearance of
@@ -2257,6 +2453,12 @@ void after_math(void)
             check_inline_math_end();
         }
         tail_append(new_math(math_surround, before));
+        /* begin mathskip code */
+        if (math_skip != zero_glue) {
+            glue_ptr(tail) = math_skip;
+            add_glue_ref(math_skip);
+        }
+        /* end mathskip code */
         if (dir_math_save) {
             tail_append(new_dir(math_direction));
         }
@@ -2265,10 +2467,16 @@ void after_math(void)
         while (vlink(tail) != null)
             tail = vlink(tail);
         if (dir_math_save) {
-            tail_append(new_dir(math_direction - 64));
+            tail_append(new_dir(math_direction - dir_swap));
         }
         dir_math_save = false;
         tail_append(new_math(math_surround, after));
+        /* begin mathskip code */
+        if (math_skip != zero_glue) {
+            glue_ptr(tail) = math_skip;
+            add_glue_ref(math_skip);
+        }
+        /* end mathskip code */
         space_factor = 1000;
         unsave_math();
     } else {
@@ -2283,7 +2491,6 @@ void after_math(void)
         finish_displayed_math(l, a, vlink(temp_head));
     }
 }
-
 
 @ When \.{\\halign} appears in a display, the alignment routines operate
 essentially as they do in vertical mode. Then the following program is
@@ -2320,9 +2527,8 @@ void setup_math_style(void)
     tail_append(new_noad());
     q = new_node(math_char_node, 0);
     nucleus(tail) = q;
-    (void) scan_math(nucleus(tail), num_style(m_style));
+    (void) scan_math_style(nucleus(tail), num_style(m_style));
 }
-
 
 @ @c
 void print_math_style(void)

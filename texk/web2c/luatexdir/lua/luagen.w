@@ -17,37 +17,4 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
-@ @c
-
-
-#include "ptexlib.h"
-#include "pdf/pdfpage.h"
-
-@ @c
-void lua_begin_page(PDF pdf)
-{
-    (void) pdf;
-}
-
-void lua_end_page(PDF pdf)
-{
-    (void) pdf;
-}
-
-void lua_place_glyph(PDF pdf, internal_font_number f, int c, int ex)
-{
-    (void) pdf;
-    (void) f;
-    printf("%c", (int) c);
-}
-
-void lua_place_rule(PDF pdf, scaledpos size)
-{
-    (void) pdf;
-    (void) size;
-}
-
-void finish_lua_file(PDF pdf)
-{
-    (void) pdf;
-}
+/* obsolete */

@@ -592,7 +592,7 @@ int tt_get_metrics(sfnt * sfont, struct tt_glyphs *g)
     for (i = 0; i < g->num_glyphs; i++) {
         USHORT gid;             /* old gid */
         ULONG loc, len;
-        //SHORT number_of_contours;
+        /*SHORT number_of_contours;*/
 
         gid = g->gd[i].ogid;
         if (gid >= maxp->numGlyphs)

@@ -1144,8 +1144,10 @@ return( NULL );
 	inlen = strlen(in);
 	outlen = (inlen+1)*4;
 	out = (char *) (ret = galloc(outlen+2));
-	if(iconv(toutf8,&in,&inlen,&out,&outlen)==-1)
-return( NULL );
+	if(iconv(toutf8,&in,&inlen,&out,&outlen)==-1){
+            if (ret)    free(ret) ;
+            if (toutf8) iconv_close(toutf8);
+return( NULL );}
 	out[0] = '\0';
 	iconv_close(toutf8);
 #ifdef UNICHAR_16
@@ -1153,12 +1155,14 @@ return( NULL );
 #else
 	toutf8 = iconv_open("UTF-8","UCS4");
 #endif
-	if ( toutf8==(iconv_t) -1 || toutf8==NULL )
-return( NULL );
+	if ( toutf8==(iconv_t) -1 || toutf8==NULL ){
+            if (ret) free(ret);
+            if (toutf8) iconv_close(toutf8);
+return( NULL );}
 	in = (char *) strdup(ret);
 	inlen = strlen(in);
 	outlen = (inlen+1)*4;
-	out = (char *) (ret = galloc(outlen+2));
+	out = (char *) (ret = grealloc(ret,outlen+2));
 	if(iconv(toutf8,&in,&inlen,&out,&outlen)==-1)
 return( NULL );
 	out[0] = '\0';

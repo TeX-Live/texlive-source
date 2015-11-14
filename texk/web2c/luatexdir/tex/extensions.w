@@ -21,8 +21,6 @@
 \def\pdfTeX{pdf\TeX}
 
 @ @c
-
-
 #include "ptexlib.h"
 
 @ @c
@@ -33,17 +31,11 @@
 #define dir_save      cur_list.dirs_field
 
 #define tracing_nesting int_par(tracing_nesting_code)
+#define tracing_online int_par(tracing_online_code)
 #define box(A) eqtb[box_base+(A)].hh.rh
 #define global_defs int_par(global_defs_code)
 #define cat_code_table int_par(cat_code_table_code)
-#define par_direction int_par(par_direction_code)
 #define toks(A) equiv(toks_base+(A))
-
-#define local_inter_line_penalty int_par(local_inter_line_penalty_code)
-#define local_broken_penalty int_par(local_broken_penalty_code)
-#define local_left_box equiv(local_left_box_base)
-#define local_right_box equiv(local_right_box_base)
-
 
 @ The program above includes a bunch of ``hooks'' that allow further
 capabilities to be added without upsetting \TeX's basic structure.
@@ -107,14 +99,14 @@ greater than 15, while |write_open[17]| represents a negative stream number,
 and both of these variables are always |false|.
 
 @c
-alpha_file write_file[16];
-halfword write_file_mode[16];
-halfword write_file_translation[16];
-boolean write_open[18];
+alpha_file write_file[last_file_selector+1];
+halfword write_file_mode[last_file_selector+1];
+halfword write_file_translation[last_file_selector+1];
+boolean write_open[last_write_open+1];
+
 scaled neg_wd;
 scaled pos_wd;
 scaled neg_ht;
-
 
 @ The variable |write_loc| just introduced is used to provide an
 appropriate error message in case of ``runaway'' write texts.
@@ -122,393 +114,399 @@ appropriate error message in case of ``runaway'' write texts.
 @c
 halfword write_loc;             /* |eqtb| address of \.{\\write} */
 
+/*
+    hh: eventually i'll make \pdfextension a lua token parsed function;
+    a complication is that sometimes token lists are delayed
+*/
 
 @ When an |extension| command occurs in |main_control|, in any mode,
 the |do_extension| routine is called.
 
 @c
-void do_extension(PDF pdf)
+int last_saved_image_index ;
+int last_saved_image_pages ;
+int last_saved_box_index ;
+scaledpos last_position = { 0, 0 };
+
+void do_extension_dvi(int immediate)
 {
-    int i, k;                   /* all-purpose integers */
-    halfword p;                 /* all-purpose pointer */
-    switch (cur_chr) {
-    case open_node:
-        /* Implement \.{\\openout} */
-        new_write_whatsit(open_node_size);
-        scan_optional_equals();
-        scan_file_name();
-        open_name(tail) = cur_name;
-        open_area(tail) = cur_area;
-        open_ext(tail) = cur_ext;
-        break;
-    case write_node:
-        /* Implement \.{\\write} */
-        /* When `\.{\\write 12\{...\}}' appears, we scan the token list `\.{\{...\}}'
-           without expanding its macros; the macros will be expanded later when this
-           token list is rescanned. */
-        k = cur_cs;
-        new_write_whatsit(write_node_size);
-        cur_cs = k;
-        p = scan_toks(false, false);
-        write_tokens(tail) = def_ref;
-        break;
-    case close_node:
-        /* Implement \.{\\closeout} */
-        new_write_whatsit(write_node_size);
-        write_tokens(tail) = null;
-        break;
-    case special_node:
-        /* Implement \.{\\special} */
-        /* When `\.{\\special\{...\}}' appears, we expand the macros in the token
-           list as in \.{\\xdef} and \.{\\mark}. */
+    if (scan_keyword("literal")) {
         new_whatsit(special_node);
         write_stream(tail) = null;
-        p = scan_toks(false, true);
+        scan_toks(false, true);
         write_tokens(tail) = def_ref;
-        break;
-    case immediate_code:
-        /* Implement \.{\\immediate} */
-        /* To write a token list, we must run it through \TeX's scanner, expanding
-           macros and \.{\\the} and \.{\\number}, etc. This might cause runaways,
-           if a delimited macro parameter isn't matched, and runaways would be
-           extremely confusing since we are calling on \TeX's scanner in the middle
-           of a \.{\\shipout} command. Therefore we will put a dummy control sequence as
-           a ``stopper,'' right after the token list. This control sequence is
-           artificially defined to be \.{\\outer}.
-
-           The presence of `\.{\\immediate}' causes the |do_extension| procedure
-           to descend to one level of recursion. Nothing happens unless \.{\\immediate}
-           is followed by `\.{\\openout}', `\.{\\write}', or `\.{\\closeout}'.
-         */
-        get_x_token();
-        if (cur_cmd == extension_cmd) {
-            if (cur_chr <= close_node) {
-                p = tail;
-                /* |do_extension()| and |out_what()| here can only be open, write, or close */
-                do_extension(pdf);      /* append a whatsit node */
-                out_what(pdf, tail);    /* do the action immediately */
-                flush_node_list(tail);
-                tail = p;
-                vlink(p) = null;
-            } else {
-                switch (cur_chr) {
-                case pdf_obj_code:
-                    check_o_mode(pdf, "\\immediate\\pdfobj", 1 << OMODE_PDF,
-                                 true);
-                    do_extension(pdf);  /* scan object and set |pdf_last_obj| */
-                    if (obj_data_ptr(pdf, pdf_last_obj) == 0)   /* this object has not been initialized yet */
-                        pdf_error("ext1",
-                                  "`\\pdfobj reserveobjnum' cannot be used with \\immediate");
-                    pdf_write_obj(pdf, pdf_last_obj);
-                    break;
-                case pdf_xform_code:
-                    check_o_mode(pdf, "\\immediate\\pdfxform", 1 << OMODE_PDF,
-                                 true);
-                    do_extension(pdf);  /* scan form and set |pdf_last_xform| */
-                    pdf_cur_form = pdf_last_xform;
-                    ship_out(pdf, obj_xform_box(pdf, pdf_last_xform), SHIPPING_FORM);
-                    break;
-                case pdf_ximage_code:
-                    check_o_mode(pdf, "\\immediate\\pdfximage", 1 << OMODE_PDF,
-                                 true);
-                    do_extension(pdf);  /* scan image and set |pdf_last_ximage| */
-                    pdf_write_image(pdf, pdf_last_ximage);
-                    break;
-                default:
-                    back_input();
-                    break;
-                }
-            }
-        } else {
-            back_input();
-        }
-        break;
-    case pdf_annot_node:
-        /* Implement \.{\\pdfannot} */
-        check_o_mode(pdf, "\\pdfannot", 1 << OMODE_PDF, false);
-        scan_annot(pdf);
-        break;
-    case pdf_catalog_code:
-        /* Implement \.{\\pdfcatalog} */
-        check_o_mode(pdf, "\\pdfcatalog", 1 << OMODE_PDF, true);        /* writes an object */
-        scan_pdfcatalog(pdf);
-        break;
-    case pdf_dest_node:
-        /* Implement \.{\\pdfdest} */
-        check_o_mode(pdf, "\\pdfdest", 1 << OMODE_PDF, false);
-        scan_pdfdest(pdf);
-        break;
-    case pdf_end_link_node:
-        /* Implement \.{\\pdfendlink} */
-        check_o_mode(pdf, "\\pdfendlink", 1 << OMODE_PDF, false);
-        if (abs(mode) == vmode)
-            pdf_error("ext1", "\\pdfendlink cannot be used in vertical mode");
-        new_whatsit(pdf_end_link_node);
-        break;
-    case pdf_end_thread_node:
-        /* Implement \.{\\pdfendthread} */
-        check_o_mode(pdf, "\\pdfendthread", 1 << OMODE_PDF, false);
-        new_whatsit(pdf_end_thread_node);
-        break;
-    case pdf_font_attr_code:
-        /* Implement \.{\\pdffontattr} */
-        /* A change from Thanh's original code: the font attributes are simply
-           initialized to zero now, this is easier to deal with from C than an
-           empty \TeX{} string, and surely nobody will want to set
-           \.{\\pdffontattr} to a string containing a single zero, as that
-           would be nonsensical in the PDF output. */
-        check_o_mode(pdf, "\\pdffontattr", 1 << OMODE_PDF, false);
-        scan_font_ident();
-        k = cur_val;
-        if (k == null_font)
-            pdf_error("font", "invalid font identifier");
-        scan_pdf_ext_toks();
-        set_pdf_font_attr(k, tokens_to_string(def_ref));
-        if (str_length(pdf_font_attr(k)) == 0) {
-            flush_str((str_ptr - 1));   /* from |tokens_to_string| */
-            set_pdf_font_attr(k, 0);
-        }
-        break;
-    case font_expand_code:
-        /* Implement \.{\\fontexpand} */
-        read_expand_font();
-        break;
-    case pdf_include_chars_code:
-        /* Implement \.{\\pdfincludechars} */
-        check_o_mode(pdf, "\\pdfincludechars", 1 << OMODE_PDF, false);
-        pdf_include_chars(pdf);
-        break;
-    case pdf_info_code:
-        /* Implement \.{\\pdfinfo} */
-        check_o_mode(pdf, "\\pdfinfo", 1 << OMODE_PDF, false);
-        scan_pdf_ext_toks();
-        pdf_info_toks = concat_tokens(pdf_info_toks, def_ref);
-        break;
-    case pdf_literal_node:
-        /* Implement \.{\\pdfliteral} */
-        check_o_mode(pdf, "\\pdfliteral", 1 << OMODE_PDF, false);
-        new_whatsit(pdf_literal_node);
-        if (scan_keyword("direct"))
-            set_pdf_literal_mode(tail, direct_always);
-        else if (scan_keyword("page"))
-            set_pdf_literal_mode(tail, direct_page);
-        else
-            set_pdf_literal_mode(tail, set_origin);
-        scan_pdf_ext_toks();
-        set_pdf_literal_type(tail, normal);
-        set_pdf_literal_data(tail, def_ref);
-        break;
-    case pdf_colorstack_node:
-        /* Implement \.{\\pdfcolorstack} */
-        check_o_mode(pdf, "\\pdfcolorstack", 1 << OMODE_PDF, false);
-        /* Scan and check the stack number and store in |cur_val| */
-        scan_int();
-        if (cur_val >= colorstackused()) {
-            print_err("Unknown color stack number ");
-            print_int(cur_val);
-            help3
-                ("Allocate and initialize a color stack with \\pdfcolorstackinit.",
-                 "I'll use default color stack 0 here.",
-                 "Proceed, with fingers crossed.");
-            error();
-            cur_val = 0;
-        }
-        if (cur_val < 0) {
-            print_err("Invalid negative color stack number");
-            help2("I'll use default color stack 0 here.",
-                  "Proceed, with fingers crossed.");
-            error();
-            cur_val = 0;
-        }
-        if (scan_keyword("set"))
-            i = colorstack_set;
-        else if (scan_keyword("push"))
-            i = colorstack_push;
-        else if (scan_keyword("pop"))
-            i = colorstack_pop;
-        else if (scan_keyword("current"))
-            i = colorstack_current;
-        else
-            i = -1;             /* error */
-
-        if (i >= 0) {
-            new_whatsit(pdf_colorstack_node);
-            set_pdf_colorstack_stack(tail, cur_val);
-            set_pdf_colorstack_cmd(tail, i);
-            set_pdf_colorstack_data(tail, null);
-            if (i <= colorstack_data) {
-                scan_pdf_ext_toks();
-                set_pdf_colorstack_data(tail, def_ref);
-            }
-        } else {
-            print_err("Color stack action is missing");
-            help3("The expected actions for \\pdfcolorstack:",
-                  "    set, push, pop, current",
-                  "I'll ignore the color stack command.");
-            error();
-        }
-        break;
-    case pdf_setmatrix_node:
-        /* Implement \.{\\pdfsetmatrix} */
-        check_o_mode(pdf, "\\pdfsetmatrix", 1 << OMODE_PDF, false);
-        new_whatsit(pdf_setmatrix_node);
-        scan_pdf_ext_toks();
-        set_pdf_setmatrix_data(tail, def_ref);
-        break;
-    case pdf_save_node:
-        /* Implement \.{\\pdfsave} */
-        check_o_mode(pdf, "\\pdfsave", 1 << OMODE_PDF, false);
-        new_whatsit(pdf_save_node);
-        break;
-    case pdf_restore_node:
-        /* Implement \.{\\pdfrestore} */
-        check_o_mode(pdf, "\\pdfrestore", 1 << OMODE_PDF, false);
-        new_whatsit(pdf_restore_node);
-        break;
-    case pdf_map_file_code:
-        /* Implement \.{\\pdfmapfile} */
-        check_o_mode(pdf, "\\pdfmapfile", 1 << OMODE_PDF, false);
-        scan_pdf_ext_toks();
-        pdfmapfile(def_ref);
-        delete_token_ref(def_ref);
-        break;
-    case pdf_map_line_code:
-        /* Implement \.{\\pdfmapline} */
-        check_o_mode(pdf, "\\pdfmapline", 1 << OMODE_PDF, false);
-        scan_pdf_ext_toks();
-        pdfmapline(def_ref);
-        delete_token_ref(def_ref);
-        break;
-    case pdf_names_code:
-        /* Implement \.{\\pdfnames} */
-        check_o_mode(pdf, "\\pdfnames", 1 << OMODE_PDF, false);
-        scan_pdf_ext_toks();
-        pdf_names_toks = concat_tokens(pdf_names_toks, def_ref);
-        break;
-    case pdf_obj_code:
-        /* Implement \.{\\pdfobj} */
-        check_o_mode(pdf, "\\pdfobj", 1 << OMODE_PDF, false);
-        scan_obj(pdf);
-        break;
-    case pdf_outline_code:
-        /* Implement \.{\\pdfoutline} */
-        check_o_mode(pdf, "\\pdfoutline", 1 << OMODE_PDF, true);
-        scan_pdfoutline(pdf);
-        break;
-    case pdf_refobj_node:
-        /* Implement \.{\\pdfrefobj} */
-        check_o_mode(pdf, "\\pdfrefobj", 1 << OMODE_PDF, false);
-        scan_refobj(pdf);
-        break;
-    case pdf_refxform_node:
-        /* Implement \.{\\pdfrefxform} */
-        check_o_mode(pdf, "\\pdfrefxform", 1 << OMODE_PDF, false);
-        scan_pdfrefxform(pdf);
-        break;
-    case pdf_refximage_node:
-        /* Implement \.{\\pdfrefximage} */
-        check_o_mode(pdf, "\\pdfrefximage", 1 << OMODE_PDF, false);
-        scan_pdfrefximage(pdf);
-        break;
-    case save_pos_node:
-        /* Implement \.{\\savepos} */
-        new_whatsit(save_pos_node);
-        break;
-    case pdf_start_link_node:
-        /* Implement \.{\\pdfstartlink} */
-        check_o_mode(pdf, "\\pdfstartlink", 1 << OMODE_PDF, false);
-        scan_startlink(pdf);
-        break;
-    case pdf_start_thread_node:
-        /* Implement \.{\\pdfstartthread} */
-        check_o_mode(pdf, "\\pdfstartthread", 1 << OMODE_PDF, false);
-        new_annot_whatsit(pdf_start_thread_node);
-        scan_thread_id();
-        break;
-    case pdf_thread_node:
-        /* Implement \.{\\pdfthread} */
-        check_o_mode(pdf, "\\pdfthread", 1 << OMODE_PDF, false);
-        new_annot_whatsit(pdf_thread_node);
-        scan_thread_id();
-        break;
-    case pdf_trailer_code:
-        /* Implement \.{\\pdftrailer} */
-        check_o_mode(pdf, "\\pdftrailer", 1 << OMODE_PDF, false);
-        scan_pdf_ext_toks();
-        pdf_trailer_toks = concat_tokens(pdf_trailer_toks, def_ref);
-        break;
-    case pdf_xform_code:
-        /* Implement \.{\\pdfxform} */
-        check_o_mode(pdf, "\\pdfxform", 1 << OMODE_PDF, false);
-        scan_pdfxform(pdf);
-        break;
-    case pdf_ximage_code:
-        /* Implement \.{\\pdfximage} */
-        check_o_mode(pdf, "\\pdfximage", 1 << OMODE_PDF, false);
-        /* png, jpeg, and pdf image handling depends on this done so early: */
-        fix_pdf_minorversion(pdf);
-        scan_pdfximage(pdf);
-        break;
-    case save_cat_code_table_code:
-        /* Implement \.{\\savecatcodetable} */
-        scan_int();
-        if ((cur_val < 0) || (cur_val > 0x7FFF)) {
-            print_err("Invalid \\catcode table");
-            help1("All \\catcode table ids must be between 0 and 0x7FFF");
-            error();
-        } else {
-            if (cur_val == cat_code_table) {
-                print_err("Invalid \\catcode table");
-                help1("You cannot overwrite the current \\catcode table");
-                error();
-            } else {
-                copy_cat_codes(cat_code_table, cur_val);
-            }
-        }
-        break;
-    case init_cat_code_table_code:
-        /* Implement \.{\\initcatcodetable} */
-        scan_int();
-        if ((cur_val < 0) || (cur_val > 0x7FFF)) {
-            print_err("Invalid \\catcode table");
-            help1("All \\catcode table ids must be between 0 and 0x7FFF");
-            error();
-        } else {
-            if (cur_val == cat_code_table) {
-                print_err("Invalid \\catcode table");
-                help1("You cannot overwrite the current \\catcode table");
-                error();
-            } else {
-                initex_cat_codes(cur_val);
-            }
-        }
-        break;
-    case set_random_seed_code:
-        /* Implement \.{\\setrandomseed} */
-        /*  Negative random seed values are silently converted to positive ones */
-        scan_int();
-        if (cur_val < 0)
-            negate(cur_val);
-        random_seed = cur_val;
-        init_randoms(random_seed);
-        break;
-    case pdf_glyph_to_unicode_code:
-        /* Implement \.{\\pdfglyphtounicode} */
-        glyph_to_unicode();
-        break;
-    case late_lua_node:
-        /* Implement \.{\\latelua} */
-        new_whatsit(late_lua_node); /* type == normal */
-        late_lua_name(tail) = scan_lua_state();
-        (void) scan_toks(false, false);
-        late_lua_data(tail) = def_ref;
-        break;
-    default:
-        confusion("ext1");
-        break;
+    } else {
+        normal_error("dvi backend", "unknown \\dviextension");
     }
 }
 
+void do_extension_pdf(int immediate)
+{
+    int i, k;
+
+    i = 0 ;
+         if (scan_keyword("literal"))        i = pdf_literal_code ;
+    else if (scan_keyword("dest"))           i = pdf_dest_code ;
+    else if (scan_keyword("annot"))          i = pdf_annot_code ;
+    else if (scan_keyword("save"))           i = pdf_save_code ;
+    else if (scan_keyword("restore"))        i = pdf_restore_code ;
+    else if (scan_keyword("setmatrix"))      i = pdf_setmatrix_code ;
+    else if (scan_keyword("obj"))            i = pdf_obj_code ;
+    else if (scan_keyword("refobj"))         i = pdf_refobj_code ;
+    else if (scan_keyword("colorstack"))     i = pdf_colorstack_code ;
+    else if (scan_keyword("startlink"))      i = pdf_start_link_code ;
+    else if (scan_keyword("endlink"))        i = pdf_end_link_code ;
+    else if (scan_keyword("startthread"))    i = pdf_start_thread_code ;
+    else if (scan_keyword("endthread"))      i = pdf_end_thread_code ;
+    else if (scan_keyword("thread"))         i = pdf_thread_code ;
+    else if (scan_keyword("outline"))        i = pdf_outline_code ;
+    else if (scan_keyword("glyphtounicode")) i = pdf_glyph_to_unicode_code ;
+    else if (scan_keyword("catalog"))        i = pdf_catalog_code ;
+    else if (scan_keyword("fontattr"))       i = pdf_font_attr_code ;
+    else if (scan_keyword("mapfile"))        i = pdf_map_file_code ;
+    else if (scan_keyword("mapline"))        i = pdf_map_line_code ;
+    else if (scan_keyword("includechars"))   i = pdf_include_chars_code ;
+    else if (scan_keyword("info"))           i = pdf_info_code ;
+    else if (scan_keyword("names"))          i = pdf_names_code ;
+    else if (scan_keyword("trailer"))        i = pdf_trailer_code ;
+
+    switch (i) {
+        case pdf_literal_code:
+            new_whatsit(pdf_literal_node);
+            if (scan_keyword("direct"))
+                set_pdf_literal_mode(tail, direct_always);
+            else if (scan_keyword("page"))
+                set_pdf_literal_mode(tail, direct_page);
+            else
+                set_pdf_literal_mode(tail, set_origin);
+            scan_pdf_ext_toks();
+            set_pdf_literal_type(tail, normal);
+            set_pdf_literal_data(tail, def_ref);
+            break;
+        case pdf_dest_code:
+            scan_pdfdest(static_pdf);
+            break;
+        case pdf_annot_code:
+            scan_annot(static_pdf);
+            break;
+        case pdf_setmatrix_code:
+            new_whatsit(pdf_setmatrix_node);
+            scan_pdf_ext_toks();
+            set_pdf_setmatrix_data(tail, def_ref);
+            break;
+        case pdf_save_code:
+            new_whatsit(pdf_save_node);
+            break;
+        case pdf_restore_code:
+            new_whatsit(pdf_restore_node);
+            break;
+        case pdf_obj_code:
+            scan_obj(static_pdf);
+            if (immediate) {
+                if (obj_data_ptr(static_pdf, pdf_last_obj) == 0)   /* this object has not been initialized yet */
+                    normal_error("pdf backend","\\pdfextension obj 'reserveobjnum' cannot be used with \\immediate");
+                pdf_write_obj(static_pdf, pdf_last_obj);
+            }
+            break;
+        case pdf_refobj_code:
+            scan_refobj(static_pdf);
+            break;
+        case pdf_colorstack_code:
+            scan_int();
+            if (cur_val >= colorstackused()) {
+                print_err("Unknown color stack number ");
+                print_int(cur_val);
+                help3
+                    ("Allocate and initialize a color stack with \\pdfextension colorstackinit.",
+                     "I'll use default color stack 0 here.",
+                     "Proceed, with fingers crossed.");
+                error();
+                cur_val = 0;
+            }
+            if (cur_val < 0) {
+                print_err("Invalid negative color stack number");
+                help2("I'll use default color stack 0 here.",
+                      "Proceed, with fingers crossed.");
+                error();
+                cur_val = 0;
+            }
+            if (scan_keyword("set"))
+                i = colorstack_set;
+            else if (scan_keyword("push"))
+                i = colorstack_push;
+            else if (scan_keyword("pop"))
+                i = colorstack_pop;
+            else if (scan_keyword("current"))
+                i = colorstack_current;
+            else
+                i = -1; /* error */
+            if (i >= 0) {
+                new_whatsit(pdf_colorstack_node);
+                set_pdf_colorstack_stack(tail, cur_val);
+                set_pdf_colorstack_cmd(tail, i);
+                set_pdf_colorstack_data(tail, null);
+                if (i <= colorstack_data) {
+                    scan_pdf_ext_toks();
+                    set_pdf_colorstack_data(tail, def_ref);
+                }
+            } else {
+                print_err("Color stack action is missing");
+                help3("The expected actions for \\pdfextension colorstack:",
+                      "    set, push, pop, current",
+                      "I'll ignore the color stack command.");
+                error();
+            }
+            break;
+        case pdf_start_link_code:
+            scan_startlink(static_pdf);
+            break;
+        case pdf_end_link_code:
+            if (abs(mode) == vmode)
+                normal_error("pdf backend", "\\pdfextension endlink cannot be used in vertical mode");
+            new_whatsit(pdf_end_link_node);
+            break;
+        case pdf_start_thread_code:
+            new_annot_whatsit(pdf_start_thread_node);
+            scan_thread_id();
+            break;
+        case pdf_end_thread_code:
+            new_whatsit(pdf_end_thread_node);
+            break;
+        case pdf_outline_code:
+            scan_pdfoutline(static_pdf);
+            break;
+        case pdf_glyph_to_unicode_code:
+            glyph_to_unicode();
+            break;
+        case pdf_catalog_code:
+            scan_pdfcatalog(static_pdf);
+            break;
+        case pdf_font_attr_code:
+            /*
+                The font attributes are simply initialized to zero now, this is easier to deal with from C than an
+                empty \TeX{} string, and surely nobody will want to set font attr to a string containing a single zero,
+                as that would be nonsensical in the PDF output.
+            */
+            scan_font_ident();
+            k = cur_val;
+            if (k == null_font)
+                normal_error("pdf backend", "invalid font identifier");
+            scan_pdf_ext_toks();
+            set_pdf_font_attr(k, tokens_to_string(def_ref));
+            if (str_length(pdf_font_attr(k)) == 0) {
+                flush_str((str_ptr - 1));   /* from |tokens_to_string| */
+                set_pdf_font_attr(k, 0);
+            }
+            break;
+        case pdf_map_file_code:
+            scan_pdf_ext_toks();
+            pdfmapfile(def_ref);
+            delete_token_ref(def_ref);
+            break;
+        case pdf_map_line_code:
+            scan_pdf_ext_toks();
+            pdfmapline(def_ref);
+            delete_token_ref(def_ref);
+            break;
+        case pdf_include_chars_code:
+            pdf_include_chars(static_pdf);
+            break;
+        case pdf_info_code:
+            scan_pdf_ext_toks();
+            pdf_info_toks = concat_tokens(pdf_info_toks, def_ref);
+            break;
+        case pdf_names_code:
+            scan_pdf_ext_toks();
+            pdf_names_toks = concat_tokens(pdf_names_toks, def_ref);
+            break;
+        case pdf_thread_code:
+            new_annot_whatsit(pdf_thread_node);
+            scan_thread_id();
+            break;
+        case pdf_trailer_code:
+            scan_pdf_ext_toks();
+            pdf_trailer_toks = concat_tokens(pdf_trailer_toks, def_ref);
+            break;
+        default:
+            normal_error("pdf backend", "unknown \\pdfextension keyword");
+            break ;
+    }
+}
+
+void do_resource_dvi(int immediate, int code)
+{
+}
+
+void do_resource_pdf(int immediate, int code)
+{
+    switch (code) {
+        case use_box_resource_code:
+            scan_pdfrefxform(static_pdf);
+            break;
+        case use_image_resource_code:
+            scan_pdfrefximage(static_pdf);
+            break;
+        case save_box_resource_code:
+            scan_pdfxform(static_pdf);
+            if (immediate) {
+                pdf_cur_form = last_saved_box_index;
+                ship_out(static_pdf, obj_xform_box(static_pdf, last_saved_box_index), SHIPPING_FORM);
+            }
+            break;
+        case save_image_resource_code:
+            fix_pdf_minorversion(static_pdf);
+            scan_pdfximage(static_pdf);
+            if (immediate) {
+                pdf_write_image(static_pdf, last_saved_image_index);
+            }
+            break;
+    }
+}
+
+/*
+
+    Ad immediate:
+
+    To write a token list, we must run it through \TeX's scanner, expanding
+    macros and \.{\\the} and \.{\\number}, etc. This might cause runaways,
+    if a delimited macro parameter isn't matched, and runaways would be
+    extremely confusing since we are calling on \TeX's scanner in the middle
+    of a \.{\\shipout} command. Therefore we will put a dummy control sequence as
+    a ``stopper,'' right after the token list. This control sequence is
+    artificially defined to be \.{\\outer}.
+
+    The presence of `\.{\\immediate}' causes the |do_extension| procedure
+    to descend to one level of recursion. Nothing happens unless \.{\\immediate}
+    is followed by `\.{\\openout}', `\.{\\write}', or `\.{\\closeout}'.
+
+*/
+
+/* extensions are backend related */
+
+@ The next subroutine uses |cur_chr| to decide what sort of whatsit is
+involved, and also inserts a |write_stream| number.
+
+@c
+static void new_write_whatsit(int w, int check)
+{
+    new_whatsit(cur_chr);
+    if (check) {
+        /* so we check with open and close */
+        scan_limited_int(last_file_selector,NULL);
+    } else {
+        /* but we're tolerant with the rest */
+        scan_int();
+        if (cur_val < 0)
+            cur_val = term_only;
+        else if ((cur_val > last_file_selector) || (cur_val == write_target_direct) || (cur_val == write_target_special)) {
+            /* hh: i need to check what 17 is supposed to do. so let's kind of reserve it  */
+            cur_val = write_target_overflow;
+        }
+    }
+    write_stream(tail) = cur_val;
+}
+
+void do_extension(int immediate)
+{
+    halfword p; /* all-purpose pointer */
+    if (cur_cmd == extension_cmd) {
+        /* these have their own range starting at 0 */
+        switch (cur_chr) {
+        case open_code:
+            p = tail;
+            new_write_whatsit(open_node_size,1);
+            scan_optional_equals();
+            scan_file_name();
+            open_name(tail) = cur_name;
+            open_area(tail) = cur_area;
+            open_ext(tail) = cur_ext;
+            if (immediate) {
+                out_what(static_pdf, tail);
+                flush_node_list(tail);
+                tail = p;
+                vlink(p) = null;
+            }
+            break;
+        case write_code:
+            /*
+                When `\.{\\write 12\{...\}}' appears, we scan the token list `\.{\{...\}}'
+                without expanding its macros; the macros will be expanded later when this
+                token list is rescanned.
+            */
+            p = tail;
+            new_write_whatsit(write_node_size,0);
+            cur_cs = write_stream(tail);
+            scan_toks(false, false);
+            write_tokens(tail) = def_ref;
+            if (immediate) {
+                out_what(static_pdf, tail);
+                flush_node_list(tail);
+                tail = p;
+                vlink(p) = null;
+            }
+            break;
+        case close_code:
+            p = tail;
+            new_write_whatsit(close_node_size,1);
+            write_tokens(tail) = null;
+            if (immediate) {
+                out_what(static_pdf, tail);
+                flush_node_list(tail);
+                tail = p;
+                vlink(p) = null;
+            }
+            break;
+        case special_code:
+            /*
+                When `\.{\\special\{...\}}' appears, we expand the macros in the token
+                list as in \.{\\xdef} and \.{\\mark}.
+            */
+            new_whatsit(special_node);
+            write_stream(tail) = null;
+            p = scan_toks(false, true);
+            write_tokens(tail) = def_ref;
+            break;
+        case immediate_code:
+            get_x_token();
+            do_extension(1);
+            break;
+        case use_box_resource_code:
+        case use_image_resource_code:
+        case save_box_resource_code:
+        case save_image_resource_code:
+            switch (get_o_mode()) {
+                case OMODE_DVI:
+                    do_resource_dvi(0,cur_chr);
+                    break;
+                case OMODE_PDF:
+                    do_resource_pdf(0,cur_chr);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        /* backend extensions have their own range starting at 32 */
+        case dvi_extension_code:
+            if (get_o_mode() == OMODE_DVI)
+                do_extension_dvi(immediate);
+            break;
+        case pdf_extension_code:
+            if (get_o_mode() == OMODE_PDF)
+                do_extension_pdf(immediate);
+            break;
+        default:
+            if (immediate) {
+                back_input();
+            } else {
+                confusion("ext1x");
+            }
+            break;
+        }
+    } else {
+        /* no extension command, quite certainly following \immediate */
+        back_input();
+    }
+}
 
 @ Here is a subroutine that creates a whatsit node having a given |subtype|
 and a given number of words. It initializes only the first word of the whatsit,
@@ -523,28 +521,173 @@ void new_whatsit(int s)
     tail = p;
 }
 
-
-@ The next subroutine uses |cur_chr| to decide what sort of whatsit is
-involved, and also inserts a |write_stream| number.
+@ The final line of this routine is slightly subtle; at least, the author
+didn't think about it until getting burnt! There is a used-up token list
+@^Knuth, Donald Ervin@>
+on the stack, namely the one that contained |end_write_token|. (We
+insert this artificial `\.{\\endwrite}' to prevent runaways, as explained
+above.) If it were not removed, and if there were numerous writes on a
+single page, the stack would overflow.
 
 @c
-void new_write_whatsit(int w)
+#define end_write_token cs_token_flag+end_write
+
+void expand_macros_in_tokenlist(halfword p)
 {
-    new_whatsit(cur_chr);
-    if (w != write_node_size) {
-        scan_four_bit_int();
-    } else {
-        scan_int();
-        if (cur_val < 0)
-            cur_val = 17;
-        else if ((cur_val > 15) && (cur_val != 18))
-            cur_val = 16;
+    int old_mode;               /* saved |mode| */
+    pointer q, r;               /* temporary variables for list manipulation */
+    q = get_avail();
+    token_info(q) = right_brace_token + '}';
+    r = get_avail();
+    token_link(q) = r;
+    token_info(r) = end_write_token;
+    begin_token_list(q, inserted);
+    begin_token_list(write_tokens(p), write_text);
+    q = get_avail();
+    token_info(q) = left_brace_token + '{';
+    begin_token_list(q, inserted);
+    /* now we're ready to scan
+       `\.\{$\langle\,$token list$\,\rangle$\.{\} \\endwrite}' */
+    old_mode = mode;
+    mode = 0;
+    /* disable \.{\\prevdepth}, \.{\\spacefactor}, \.{\\lastskip}, \.{\\prevgraf} */
+    cur_cs = write_loc;
+    q = scan_toks(false, true); /* expand macros, etc. */
+    get_token();
+    if (cur_tok != end_write_token) {
+        /* Recover from an unbalanced write command */
+        const char *hlp[] = {
+            "On this page there's a \\write with fewer real {'s than }'s.",
+            "I can't handle that very well; good luck.", NULL
+        };
+        tex_error("Unbalanced write command", hlp);
+        do {
+            get_token();
+        } while (cur_tok != end_write_token);
     }
-    write_stream(tail) = cur_val;
+    mode = old_mode;
+    end_token_list();           /* conserve stack space */
 }
 
+void write_out(halfword p)
+{
+    int old_setting;            /* holds print |selector| */
+    int j;                      /* write stream number */
+    boolean clobbered;          /* system string is ok? */
+    int ret;                    /* return value from |runsystem| */
+    char *s, *ss;               /* line to be written, as a C string */
+    int callback_id;
+    int lua_retval;
+    expand_macros_in_tokenlist(p);
+    old_setting = selector;
+    j = write_stream(p);
+    if (j == write_target_system) {
+        selector = new_string;
+    } else if (write_open[j]) {
+        selector = j;
+    } else if ((j == term_only) && (selector == term_and_log)) {
+        /* write to the terminal if file isn't open */
+        selector = log_only;
+        tprint_nl("");
+    } else {
+        tprint_nl("");
+    }
+    s = tokenlist_to_cstring(def_ref, false, NULL);
+    if (selector < no_print) {
+        /* selector is a file */
+        callback_id = callback_defined(process_output_buffer_callback);
+        if (callback_id > 0) {
+            /* fix up the output buffer using callbacks */
+            lua_retval = run_callback(callback_id, "S->S", s, &ss);
+            if ((lua_retval == true) && (ss != NULL)) {
+                xfree(s);
+                s = ss;
+            }
+        }
+    }
+    tprint(s);
+    xfree(s);
+    print_ln();
+    flush_list(def_ref);
+    if (j == write_target_system) {
+        cur_string[cur_length] = '\0';  /* Convert newline to null. */
+        if (tracing_online <= 0)
+            selector = log_only;        /* Show what we're doing in the log file. */
+        else
+            selector = term_and_log;    /* Show what we're doing. */
+        /* If the log file isn't open yet, we can only send output to the terminal.
+           Calling |open_log_file| from here seems to result in bad data in the log.
+         */
+        if (!log_opened_global)
+            selector = term_only;
+        tprint_nl("runsystem(");
+        tprint((char *) cur_string);
+        tprint(")...");
+        if (shellenabledp) {
+            clobbered = false;
+            if (strlen((char *) cur_string) != cur_length)
+                clobbered = true;
+            /* minimal checking: NUL not allowed in argument string of |system|() */
+            if (clobbered) {
+                tprint("clobbered");
+            } else {
+                /* We have the command.  See if we're allowed to execute it,
+                   and report in the log.  We don't check the actual exit status of
+                   the command, or do anything with the output. */
+                ret = runsystem((char *) cur_string);
+                if (ret == -1)
+                    tprint("quotation error in system command");
+                else if (ret == 0)
+                    tprint("disabled (restricted)");
+                else if (ret == 1)
+                    tprint("executed");
+                else if (ret == 2)
+                    tprint("executed safely (allowed)");
+            }
+        } else {
+            tprint("disabled"); /* |shellenabledp| false */
+        }
+        print_char('.');
+        tprint_nl("");
+        print_ln();
+        cur_length = 0;         /* erase the string */
+    }
+    selector = old_setting;
+}
 
-@ We have to check whether \.{\\pdfoutput} is set for using \pdfTeX{}
+void finalize_write_files(void) {
+    int k;
+    for (k = 0; k <= last_file_selector; k++) {
+        if (write_open[k]) {
+            lua_a_close_out(write_file[k]);
+        }
+    }
+}
+
+void initialize_write_files(void) {
+    int k;
+    for (k = 0; k <= last_write_open; k++) {
+        write_open[k] = false;
+    }
+}
+
+void close_write_file(int id) {
+    if (write_open[id]) {
+        lua_a_close_out(write_file[id]);
+        write_open[id] = false;
+    }
+}
+
+boolean open_write_file(int id, char *fn) {
+    if (lua_a_open_out(&(write_file[id]), fn, (id + 1))) {
+        write_open[id] = true;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+@ We have to check whether \.{\\outputmode} is set for using \pdfTeX{}
   extensions.
 
 @c
@@ -553,48 +696,16 @@ void scan_pdf_ext_toks(void)
     (void) scan_toks(false, true);      /* like \.{\\special} */
 }
 
-@  We need to check whether the referenced object exists.
-
-finds the node preceding the rightmost node |e|; |s| is some node before |e| 
-@c
-halfword prev_rightmost(halfword s, halfword e)
-{
-    halfword p = s;
-    if (p == null)
-        return null;
-    while (vlink(p) != e) {
-        p = vlink(p);
-        if (p == null)
-            return null;
-    }
-    return p;
-}
-
-@ \.{\\pdfxform} and \.{\\pdfrefxform} are similiar to \.{\\pdfobj} and
-  \.{\\pdfrefobj}
+@ the pdflast* need extra global variables
 
 @c
-int pdf_last_xform;
-
-@ \.{\\pdfximage} and \.{\\pdfrefximage} are similiar to \.{\\pdfxform} and
-  \.{\\pdfrefxform}. As we have to scan |<rule spec>| quite often, it is better
-  have a |rule_node| that holds the most recently scanned |<rule spec>|.
-
-@c
-int pdf_last_ximage;
-int pdf_last_ximage_pages;
-int pdf_last_ximage_colordepth;
 int pdf_last_annot;
-
-@ pdflastlink needs an extra global variable 
-
-@c
 int pdf_last_link;
-scaledpos pdf_last_pos = { 0, 0 };
+int pdf_last_obj;
+int pdf_retval;                 /* global multi-purpose return value */
 
-
-@ To implement primitives as \.{\\pdfinfo}, \.{\\pdfcatalog} or
-\.{\\pdfnames} we need to concatenate tokens lists.
+@ To implement primitives as \.{\\pdfextension info}, \.{\\pdfextension catalog} or
+\.{\\pdfextension names} we need to concatenate tokens lists.
 
 @c
 halfword concat_tokens(halfword q, halfword r)
@@ -610,33 +721,6 @@ halfword concat_tokens(halfword q, halfword r)
     return q;
 }
 
-@ @c
-int pdf_retval;                 /* global multi-purpose return value */
-
-@ @c
-halfword make_local_par_node(void)
-/* This function creates a |local_paragraph| node */
-{
-    halfword p, q;
-    p = new_node(whatsit_node, local_par_node);
-    local_pen_inter(p) = local_inter_line_penalty;
-    local_pen_broken(p) = local_broken_penalty;
-    if (local_left_box != null) {
-        q = copy_node_list(local_left_box);
-        local_box_left(p) = q;
-        local_box_left_width(p) = width(local_left_box);
-    }
-    if (local_right_box != null) {
-        q = copy_node_list(local_right_box);
-        local_box_right(p) = q;
-        local_box_right_width(p) = width(local_right_box);
-    }
-    local_par_dir(p) = par_direction;
-    return p;
-}
-
-
-
 @ The \eTeX\ features available in extended mode are grouped into two
 categories:  (1)~Some of them are permanently enabled and have no
 semantic effect as long as none of the additional primitives are
@@ -646,13 +730,11 @@ an \eTeX\ state variable named \.{\\...state}; the feature is enabled,
 resp.\ disabled by assigning a positive, resp.\ non-positive value to
 that integer.
 
-
 @ In order to handle \.{\\everyeof} we need an array |eof_seen| of
 boolean variables.
 
 @c
 boolean *eof_seen;              /* has eof been seen? */
-
 
 @ The |print_group| procedure prints the current level of grouping and
 the name corresponding to |cur_group|.
@@ -726,7 +808,6 @@ void print_group(boolean e)
     }
 }
 
-
 @ The |group_trace| procedure is called when a new level of grouping
 begins (|e=false|) or ends (|e=true|) with |saved_value(-1)| containing the
 line number.
@@ -755,7 +836,6 @@ and |cond_ptr| values for each input file.
 @c
 save_pointer *grp_stack;        /* initial |cur_boundary| */
 halfword *if_stack;             /* initial |cond_ptr| */
-
 
 @ When a group ends that was apparently entered in a different input
 file, the |group_warning| procedure is invoked in order to update the
@@ -802,7 +882,6 @@ void group_warning(void)
             history = warning_issued;
     }
 }
-
 
 @ When a conditional ends that was apparently started in a different
 input file, the |if_warning| procedure is invoked in order to update the
@@ -901,18 +980,66 @@ void file_warning(void)
 @ @c
 halfword last_line_fill;        /* the |par_fill_skip| glue node of the new paragraph */
 
-
 @ The lua interface needs some extra functions. The functions
 themselves are quite boring, but they are handy because otherwise this
 internal stuff has to be accessed from C directly, where lots of the
 defines are not available.
 
 @c
+#define dimen(A) eqtb[scaled_base+(A)].hh.rh
+#define count(A) eqtb[count_base+(A)].hh.rh
+
 #define get_tex_dimen_register(j) dimen(j)
 #define get_tex_skip_register(j) skip(j)
+#define get_tex_mu_skip_register(j) mu_skip(j)
 #define get_tex_count_register(j) count(j)
 #define get_tex_attribute_register(j) attribute(j)
 #define get_tex_box_register(j) box(j)
+
+int get_tex_extension_count_register(const char *s, int d)
+{
+    int cs;
+    cs = string_lookup(s,strlen(s));
+    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
+        return d;
+    return (int) get_tex_count_register((equiv(cs) - count_base));
+}
+
+void set_tex_extension_count_register(const char *s, int d)
+{
+    int cs;
+    cs = string_lookup(s,strlen(s));
+    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
+        return;
+    get_tex_count_register((equiv(cs) - count_base)) = d;
+}
+
+int get_tex_extension_dimen_register(const char *s, int d)
+{
+    int cs;
+    cs = string_lookup(s,strlen(s));
+    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
+        return d;
+    return (int) get_tex_dimen_register((equiv(cs) - scaled_base));
+}
+
+void set_tex_extension_dimen_register(const char *s, int d)
+{
+    int cs;
+    cs = string_lookup(s,strlen(s));
+    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
+        return;
+    get_tex_dimen_register((equiv(cs) - scaled_base)) = d;
+}
+
+int get_tex_extension_toks_register(const char *s)
+{
+    int cs;
+    cs = string_lookup(s,strlen(s));
+    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
+        return null;
+    return toks((equiv(cs) - toks_base)); /* a pointer to a token list */
+}
 
 int set_tex_dimen_register(int j, scaled v)
 {
@@ -935,6 +1062,19 @@ int set_tex_skip_register(int j, halfword v)
     if (type(v) != glue_spec_node)
         return 1;
     word_define(j + skip_base, v);
+    return 0;
+}
+
+int set_tex_mu_skip_register(int j, halfword v)
+{
+    int a;                      /* return non-nil for error */
+    if (global_defs > 0)
+        a = 4;
+    else
+        a = 0;
+    if (type(v) != glue_spec_node)
+        return 1;
+    word_define(j + mu_skip_base, v);
     return 0;
 }
 
@@ -1000,6 +1140,22 @@ int set_tex_toks_register(int j, lstring s)
     return 0;
 }
 
+int scan_tex_toks_register(int j, int c, lstring s)
+{
+    halfword ref;
+    int a;
+    ref = get_avail();
+    (void) str_scan_toks(c,s);
+    set_token_ref_count(ref, 0);
+    set_token_link(ref, token_link(temp_token_head));
+    if (global_defs > 0)
+        a = 4;
+    else
+        a = 0;
+    define(j + toks_base, call_cmd, ref);
+    return 0;
+}
+
 scaled get_tex_box_width(int j)
 {
     halfword q = box(j);
@@ -1034,7 +1190,6 @@ int set_tex_box_height(int j, scaled v)
     return 0;
 }
 
-
 scaled get_tex_box_depth(int j)
 {
     halfword q = box(j);
@@ -1051,7 +1206,6 @@ int set_tex_box_depth(int j, scaled v)
     depth(q) = v;
     return 0;
 }
-
 
 @ This section is devoted to the {\sl Synchronize \TeX nology}
 - or simply {\sl Sync\TeX} - used to synchronize between input and output.
@@ -1086,7 +1240,6 @@ the {\sl Sync\TeX} related options, and the {\sl Sync\TeX} controller will read 
 @c
 int synctexoption;
 
-
 @ A convenient primitive is provided:
 \.{\\synctex=1} in the input source file enables synchronization whereas
 \.{\\synctex=0} disables it.
@@ -1102,7 +1255,6 @@ the correct value when quite everything is initialized.
 
 @c
 int synctexoffset;              /* holds the true value of |synctex_code| */
-
 
 @ Synchronization is achieved with the help of an auxiliary file named
 `\.{{\sl jobname}.synctex}' ({\sl jobname} is the contents of the
@@ -1165,7 +1317,6 @@ If the input comes from the terminal or a pseudo file, the |synctex_tag| is set 
 It results in automatically disabling synchronization for material
 input from the terminal or pseudo files.
 
-
 Synchronized nodes are boxes, math, kern and glue nodes.
 Other nodes should be synchronized too, in particular math noads.
 \TeX\ assumes that math, kern and glue nodes have the same size,
@@ -1190,7 +1341,6 @@ Of course, all this assumes that {\sl Sync\TeX} is turned off from the command l
 @^synctex@>
 @^synchronization@>
 
-
 @ Here are extra variables for Web2c.  (This numbering of the
 system-dependent section allows easy integration of Web2c and e-\TeX, etc.)
 @^<system dependencies@>
@@ -1209,7 +1359,7 @@ int shellenabledp;
 int restrictedshell;
 char *output_comment;
 
-@ Are we printing extra info as we read the format file? 
+@ Are we printing extra info as we read the format file?
 
 @c
 boolean debug_format_file;

@@ -209,18 +209,19 @@ void pdf_do_page_undivert(int divnum, int curdivnum)
 
 @ write a /Pages object
 @c
-#define pdf_pages_attr equiv(pdf_pages_attr_loc)
 
 static void write_pages(PDF pdf, pages_entry * p, int parent)
 {
     int i;
+    int pages_attributes ;
     assert(p != NULL);
     pdf_begin_obj(pdf, p->objnum, OBJSTM_ALWAYS);
     pdf_begin_dict(pdf);
     pdf_dict_add_name(pdf, "Type", "Pages");
     if (parent == 0) {          /* it's root */
-        if (pdf_pages_attr != null) {
-            pdf_print_toks(pdf, pdf_pages_attr);
+        pages_attributes = pdf_pages_attr; /* lookup once */
+        if (pages_attributes != null) {
+            pdf_print_toks(pdf, pages_attributes);
             pdf_out(pdf, ' ');
         }
         print_pdf_table_string(pdf, "pagesattributes");
