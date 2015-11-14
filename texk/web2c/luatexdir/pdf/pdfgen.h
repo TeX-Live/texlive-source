@@ -66,12 +66,7 @@ written bytes.
             ff = A;                             \
     } while (0)
 
-typedef enum { NOT_SHIPPING, SHIPPING_PAGE, SHIPPING_FORM } shipping_mode_e;
-
-extern int pdf_output_option;
-extern int pdf_output_value;
-extern int pdf_draftmode_option;
-extern int pdf_draftmode_value;
+typedef enum { NOT_SHIPPING, SHIPPING_PAGE, SHIPPING_FORM } shipping_mode_e; /* needs pdf_prefix */
 
 extern scaled one_hundred_inch;
 extern scaled one_inch;
@@ -187,8 +182,6 @@ extern char *convertStringToPDFString(const char *in, int len);
 extern void init_start_time(PDF);
 extern char *getcreationdate(PDF);
 
-extern void pdf_error(const char *t, const char *p);
-extern void pdf_warning(const char *t, const char *p, boolean pr, boolean ap);
 extern void check_o_mode(PDF pdf, const char *s, int o_mode, boolean errorflag);
 
 extern void set_job_id(PDF, int, int, int, int);
@@ -199,7 +192,6 @@ extern void print_pdf_table_string(PDF pdf, const char *s);
 extern const char *get_pdf_table_string(const char *s);
 extern int get_pdf_table_bool(PDF, const char *, int);
 
-extern void fix_o_mode(PDF pdf);
 extern void ensure_output_state(PDF pdf, output_state s);
 extern PDF init_pdf_struct(PDF pdf);
 

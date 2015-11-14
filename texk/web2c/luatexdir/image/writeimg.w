@@ -38,10 +38,6 @@
 #include "lua.h"          /* for |LUA_NOREF| */
 #include "lauxlib.h"
 
-@ @c
-#define pdf_image_resolution int_par(pdf_image_resolution_code)
-#define pdf_pagebox int_par(pdf_pagebox_code)
-
 @* Patch ImageTypeDetection 2003/02/08 by Heiko Oberdiek.
 
   Function |readimage| performs some basic initializations.
@@ -125,7 +121,7 @@
 #define HEADER_PDF "%PDF-1."
 #define MAX_HEADER (sizeof(HEADER_PNG)-1)
 #define HEADER_PDF_MEMSTREAM "data:application/pdf," /* see epdf.h */
-#define LEN_PDF_MEMSTREAM      21 /* see epdf.h */   
+#define LEN_PDF_MEMSTREAM      21 /* see epdf.h */
 
 
 static void check_type_by_header(image_dict * idict)
@@ -133,7 +129,7 @@ static void check_type_by_header(image_dict * idict)
     int i;
     FILE *file = NULL;
     char header[MAX_HEADER];
-    char prefix[LEN_PDF_MEMSTREAM+1]; 
+    char prefix[LEN_PDF_MEMSTREAM+1];
 
     assert(idict != NULL);
     if (img_type(idict) != IMG_TYPE_NONE)       /* nothing to do */
@@ -143,7 +139,7 @@ static void check_type_by_header(image_dict * idict)
     /* Like                                                */
     /* file = xfopen(img_filepath(idict), FOPEN_RBIN_MODE);*/
     /* but we also check for a memstream object            */
-    assert(img_filepath(idict) && FOPEN_RBIN_MODE); 
+    assert(img_filepath(idict) && FOPEN_RBIN_MODE);
     file = fopen(img_filepath(idict), FOPEN_RBIN_MODE);
     if (file == NULL) {
         /* check the prefix of   img_filepath(idict) */
@@ -448,9 +444,8 @@ void scan_pdfximage(PDF pdf)
     img_attr(idict) = attr;
     img_dimen(idict) = alt_rule;
     img_transform(idict) = transform;
-    pdf_last_ximage = img_objnum(idict);
-    pdf_last_ximage_pages = img_totalpages(idict);
-    pdf_last_ximage_colordepth = img_colordepth(idict);
+    last_saved_image_index = img_objnum(idict);
+    last_saved_image_pages = img_totalpages(idict);
 }
 
 @ @c
@@ -464,7 +459,7 @@ void scan_pdfrefximage(PDF pdf)
     alt_rule = scan_alt_rule(); /* scans |<rule spec>| to |alt_rule| */
     scan_int();
     check_obj_type(pdf, obj_type_ximage, cur_val);
-    new_whatsit(pdf_refximage_node);
+    tail_append(new_rule(image_rule));
     idict = idict_array[obj_data_ptr(pdf, cur_val)];
     if (alt_rule.wd != null_flag || alt_rule.ht != null_flag
         || alt_rule.dp != null_flag)
@@ -474,8 +469,8 @@ void scan_pdfrefximage(PDF pdf)
     width(tail) = dim.wd;
     height(tail) = dim.ht;
     depth(tail) = dim.dp;
-    pdf_ximage_transform(tail) = transform;
-    pdf_ximage_index(tail) = img_index(idict);
+    rule_transform(tail) = transform;
+    rule_index(tail) = img_index(idict);
 }
 
 @ |tex_scale()| sequence of decisions:
@@ -702,23 +697,28 @@ void pdf_dict_add_img_filename(PDF pdf, image_dict * idict)
 {
     char s[21], *p;
     assert(idict != NULL);
-    /* for now PTEX.FileName only for PDF, but prepared for JPG, PNG, ... */
-    if ((img_type(idict) != IMG_TYPE_PDF) || (img_type(idict) != IMG_TYPE_PDFMEMSTREAM))
-        return;
-    if (img_visiblefilename(idict) != NULL) {
-        if (strlen(img_visiblefilename(idict)) == 0)
-            return;             /* empty string blocks PTEX.FileName output */
-        else
-            p = img_visiblefilename(idict);
-    } else
-        p = img_filepath(idict);
-    // write additional information
-    snprintf(s, 20, "%s.FileName", pdfkeyprefix);
-    pdf_add_name(pdf, s);
-    pdf_printf(pdf, " (%s)", convertStringToPDFString(p, strlen(p)));
+    if (pdf_image_addfilename>0) {
+        /* for now PTEX.FileName only for PDF, but prepared for JPG, PNG, ... */
+        if (! ( (img_type(idict) == IMG_TYPE_PDF) || (img_type(idict) == IMG_TYPE_PDFMEMSTREAM) ))
+            return;
+        if (img_visiblefilename(idict) != NULL) {
+            if (strlen(img_visiblefilename(idict)) == 0) {
+                return; /* empty string blocks PTEX.FileName output */
+            } else {
+                p = img_visiblefilename(idict);
+            }
+        } else {
+            /* unset so let's use the default */
+            p = img_filepath(idict);
+        }
+        // write additional information
+        snprintf(s, 20, "%s.FileName", pdfkeyprefix);
+        pdf_add_name(pdf, s);
+        pdf_printf(pdf, " (%s)", convertStringToPDFString(p, strlen(p)));
+    }
 }
 
-@ To allow the use of \.{\\pdfrefximage} inside saved boxes in -ini mode,
+@ To allow the use of box resources inside saved boxes in -ini mode,
 the information in the array has to be (un)dumped with the format.
 The next two routines take care of that.
 

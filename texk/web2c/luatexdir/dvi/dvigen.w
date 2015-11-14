@@ -35,9 +35,10 @@
 @c
 #undef write_dvi
 
+/* todo: move macros to api */
+
 #define mode cur_list.mode_field        /* current mode */
 
-#define pdf_output int_par(pdf_output_code)
 #define mag int_par(mag_code)
 #define tracing_output int_par(tracing_output_code)
 #define tracing_stats int_par(tracing_stats_code)
@@ -1053,13 +1054,19 @@ that a \.{DVI}-reading program will push onto its coordinate stack.
 @c
 void dvi_place_rule(PDF pdf, halfword q, scaledpos size)
 {
-    (void) q;
     synch_dvi_with_pos(pdf->posstruct->pos);
-    if (textdir_is_L(pdf->posstruct->dir)) {
-        dvi_out(set_rule);      /* movement optimization for |dir_*L*| */
-        dvi.h += size.h;
-    } else
-        dvi_out(put_rule);
+    if ((subtype(q) == box_rule) || (subtype(q) == image_rule) || (subtype(q) == empty_rule)) {
+        /* place nothing, only take space */
+        if (textdir_is_L(pdf->posstruct->dir))
+            dvi.h += size.h;
+    } else {
+        /* normal_rule or >= 100 being a leader rule */
+        if (textdir_is_L(pdf->posstruct->dir)) {
+            dvi_out(set_rule);      /* movement optimization for |dir_*L*| */
+            dvi.h += size.h;
+        } else
+            dvi_out(put_rule);
+    }
     dvi_four(size.v);
     dvi_four(size.h);
 }
@@ -1108,136 +1115,6 @@ void dvi_special(PDF pdf, halfword p)
     cur_length = 0;             /* erase the string */
 }
 
-@ The final line of this routine is slightly subtle; at least, the author
-didn't think about it until getting burnt! There is a used-up token list
-@^Knuth, Donald Ervin@>
-on the stack, namely the one that contained |end_write_token|. (We
-insert this artificial `\.{\\endwrite}' to prevent runaways, as explained
-above.) If it were not removed, and if there were numerous writes on a
-single page, the stack would overflow.
-
-@c
-/* TODO: keep track of this value */
-#define end_write_token cs_token_flag+end_write
-
-void expand_macros_in_tokenlist(halfword p)
-{
-    int old_mode;               /* saved |mode| */
-    pointer q, r;               /* temporary variables for list manipulation */
-    q = get_avail();
-    token_info(q) = right_brace_token + '}';
-    r = get_avail();
-    token_link(q) = r;
-    token_info(r) = end_write_token;
-    begin_token_list(q, inserted);
-    begin_token_list(write_tokens(p), write_text);
-    q = get_avail();
-    token_info(q) = left_brace_token + '{';
-    begin_token_list(q, inserted);
-    /* now we're ready to scan
-       `\.\{$\langle\,$token list$\,\rangle$\.{\} \\endwrite}' */
-    old_mode = mode;
-    mode = 0;
-    /* disable \.{\\prevdepth}, \.{\\spacefactor}, \.{\\lastskip}, \.{\\prevgraf} */
-    cur_cs = write_loc;
-    q = scan_toks(false, true); /* expand macros, etc. */
-    get_token();
-    if (cur_tok != end_write_token) {
-        /* Recover from an unbalanced write command */
-        const char *hlp[] = {
-            "On this page there's a \\write with fewer real {'s than }'s.",
-            "I can't handle that very well; good luck.", NULL
-        };
-        tex_error("Unbalanced write command", hlp);
-        do {
-            get_token();
-        } while (cur_tok != end_write_token);
-    }
-    mode = old_mode;
-    end_token_list();           /* conserve stack space */
-}
-
-void write_out(halfword p)
-{
-    int old_setting;            /* holds print |selector| */
-    int j;                      /* write stream number */
-    boolean clobbered;          /* system string is ok? */
-    int ret;                    /* return value from |runsystem| */
-    char *s, *ss;               /* line to be written, as a C string */
-    int callback_id;
-    int lua_retval;
-    expand_macros_in_tokenlist(p);
-    old_setting = selector;
-    j = write_stream(p);
-    if (j == 18) {
-        selector = new_string;
-    } else if (write_open[j]) {
-        selector = j;
-    } else {                    /* write to the terminal if file isn't open */
-        if ((j == 17) && (selector == term_and_log))
-            selector = log_only;
-        tprint_nl("");
-    }
-    s = tokenlist_to_cstring(def_ref, false, NULL);
-    if (selector < no_print) {  /* selector is a file */
-        /* fix up the output buffer using callbacks */
-        callback_id = callback_defined(process_output_buffer_callback);
-        if (callback_id > 0) {
-            lua_retval = run_callback(callback_id, "S->S", s, &ss);
-            if ((lua_retval == true) && (ss != NULL))
-	      { xfree(s); s = ss; }
-        }
-    }
-    tprint(s);
-    xfree(s);
-    print_ln();
-    flush_list(def_ref);
-    if (j == 18) {
-        cur_string[cur_length] = '\0';  /* Convert newline to null. */
-        if (tracing_online <= 0)
-            selector = log_only;        /* Show what we're doing in the log file. */
-        else
-            selector = term_and_log;    /* Show what we're doing. */
-        /* If the log file isn't open yet, we can only send output to the terminal.
-           Calling |open_log_file| from here seems to result in bad data in the log.
-         */
-        if (!log_opened_global)
-            selector = term_only;
-        tprint_nl("runsystem(");
-        tprint((char *) cur_string);
-        tprint(")...");
-        if (shellenabledp) {
-            clobbered = false;
-            if (strlen((char *) cur_string) != cur_length)
-                clobbered = true;
-            /* minimal checking: NUL not allowed in argument string of |system|() */
-            if (clobbered) {
-                tprint("clobbered");
-            } else {
-                /* We have the command.  See if we're allowed to execute it,
-                   and report in the log.  We don't check the actual exit status of
-                   the command, or do anything with the output. */
-                ret = runsystem((char *) cur_string);
-                if (ret == -1)
-                    tprint("quotation error in system command");
-                else if (ret == 0)
-                    tprint("disabled (restricted)");
-                else if (ret == 1)
-                    tprint("executed");
-                else if (ret == 2)
-                    tprint("executed safely (allowed)");
-            }
-        } else {
-            tprint("disabled"); /* |shellenabledp| false */
-        }
-        print_char('.');
-        tprint_nl("");
-        print_ln();
-        cur_length = 0;         /* erase the string */
-    }
-    selector = old_setting;
-}
-
 @ Here's an example of how these conventions are used. Whenever it is time to
 ship out a box of stuff, we shall use the macro |ensure_dvi_open|.
 
@@ -1247,7 +1124,7 @@ void ensure_dvi_header_written(PDF pdf)
     unsigned l;
     unsigned s;                 /* index into |str_pool| */
     int old_setting;            /* saved |selector| setting */
-    assert(pdf->o_mode == OMODE_DVI);
+    assert(output_mode_used == OMODE_DVI);
     assert(pdf->o_state == ST_FILE_OPEN);
 
     if (half_buf == 0) {

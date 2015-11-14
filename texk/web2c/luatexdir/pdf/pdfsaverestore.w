@@ -53,15 +53,14 @@ static void checkpdfrestore(scaledpos pos)
 {
     scaledpos diff;
     if (pos_stack_used == 0) {
-        luatex_warn("%s", "\\pdfrestore: missing \\pdfsave");
+        luatex_warn("%s", "'restore' is missing a 'save'");
         return;
     }
     pos_stack_used--;
     diff.h = pos.h - pos_stack[pos_stack_used].pos.h;
     diff.v = pos.v - pos_stack[pos_stack_used].pos.v;
     if (diff.h != 0 || diff.v != 0) {
-        luatex_warn("Misplaced \\pdfrestore by (%dsp, %dsp)", (int) diff.h,
-                    (int) diff.v);
+        luatex_warn("misplaced 'restore' by (%dsp, %dsp)", (int) diff.h, (int) diff.v);
     }
     if (global_shipping_mode == SHIPPING_PAGE) {
         matrix_stack_used = pos_stack[pos_stack_used].matrix_stack;

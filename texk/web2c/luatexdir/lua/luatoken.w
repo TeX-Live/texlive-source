@@ -19,7 +19,6 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
@@ -60,6 +59,8 @@ command_item command_names[] = {
     {"halign", halign_cmd, NULL},
     {"valign", valign_cmd, NULL},
     {"no_align", no_align_cmd, NULL},
+    {"novrule", no_vrule_cmd, NULL},
+    {"nohrule", no_hrule_cmd, NULL},
     {"vrule", vrule_cmd, NULL},
     {"hrule", hrule_cmd, NULL},
     {"insert", insert_cmd, NULL},
@@ -84,12 +85,15 @@ command_item command_names[] = {
     {"vcenter", vcenter_cmd, NULL},
     {"case_shift", case_shift_cmd, NULL},
     {"message", message_cmd, NULL},
+    {"normal", normal_cmd, NULL},
     {"extension", extension_cmd, NULL},
+    {"option", option_cmd, NULL},
     {"in_stream", in_stream_cmd, NULL},
     {"begin_group", begin_group_cmd, NULL},
     {"end_group", end_group_cmd, NULL},
     {"omit", omit_cmd, NULL},
     {"ex_space", ex_space_cmd, NULL},
+    {"boundary", boundary_cmd, NULL},
     {"no_boundary", no_boundary_cmd, NULL},
     {"radical", radical_cmd, NULL},
     {"super_sub_script", super_sub_script_cmd, NULL},
@@ -140,7 +144,9 @@ command_item command_names[] = {
     {"hyph_data", hyph_data_cmd, NULL},
     {"set_interaction", set_interaction_cmd, NULL},
     {"letterspace_font", letterspace_font_cmd, NULL},
-    {"pdf_copy_font", pdf_copy_font_cmd, NULL},
+    {"expand_font",expand_font_cmd, NULL},
+    {"copy_font", copy_font_cmd, NULL},
+    {"set_font_id", set_font_id_cmd, NULL},
     {"undefined_cs", undefined_cs_cmd, NULL},
     {"expand_after", expand_after_cmd, NULL},
     {"no_expand", no_expand_cmd, NULL},
@@ -243,7 +249,7 @@ static int get_cur_cs(lua_State * L)
     ret = 0;
     cur_cs = 0;
     lua_getfield(L, -1, "name");
-    if (lua_isstring(L, -1)) {
+    if (lua_type(L, -1) == LUA_TSTRING) {
         s = lua_tolstring(L, -1, &l);
         if (l > 0) {
             if ((last + (int) l) > buf_size)
@@ -301,7 +307,7 @@ void tokenlist_to_luastring(lua_State * L, int p)
     char *s;
     s = tokenlist_to_cstring(p, 1, &l);
     lua_pushlstring(L, s, (size_t) l);
-    free(s);    
+    free(s);
 }
 
 
@@ -309,14 +315,15 @@ void tokenlist_to_luastring(lua_State * L, int p)
 int tokenlist_from_lua(lua_State * L)
 {
     const char *s;
-    int tok;
+    int tok, t;
     size_t i, j;
     halfword p, q, r;
     r = get_avail();
     token_info(r) = 0;          /* ref count */
     token_link(r) = null;
     p = r;
-    if (lua_istable(L, -1)) {
+    t = lua_type(L, -1);
+    if (t == LUA_TTABLE) {
         j = lua_rawlen(L, -1);
         if (j > 0) {
             for (i = 1; i <= j; i++) {
@@ -329,7 +336,7 @@ int tokenlist_from_lua(lua_State * L)
             };
         }
         return r;
-    } else if (lua_isstring(L, -1)) {
+    } else if (t == LUA_TSTRING) {
         s = lua_tolstring(L, -1, &j);
         for (i = 0; i < j; i++) {
             if (s[i] == 32) {

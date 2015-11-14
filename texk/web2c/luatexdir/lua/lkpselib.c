@@ -1,5 +1,5 @@
 /* lkpselib.c
-   
+
    Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -184,24 +184,27 @@ int program_name_set = 0;
 
 static int find_file(lua_State * L)
 {
-    int i;
+    int i, t;
     const char *st;
     unsigned ftype = kpse_tex_format;
     int mexist = 0;
     TEST_PROGRAM_NAME_SET;
-    if (!lua_isstring(L, 1)) {
+    if (lua_type(L, 1) != LUA_TSTRING) {
         luaL_error(L, "not a file name");
     }
     st = lua_tostring(L, 1);
     i = lua_gettop(L);
     while (i > 1) {
-        if (lua_isboolean(L, i)) {
+        t = lua_type(L, i) ;
+        if (t == LUA_TBOOLEAN) {
             mexist = lua_toboolean(L, i);
-        } else if (lua_isnumber(L, i)) {
+        } else if (t == LUA_TNUMBER) {
             mexist=(int)lua_tonumber(L, i);
-        } else if (lua_isstring(L, i)) {
+        } else if (t == LUA_TSTRING) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
+        } else {
+            /* ignore */
         }
         i--;
     }
@@ -223,30 +226,30 @@ static int find_file(lua_State * L)
 
 static int lua_kpathsea_find_file(lua_State * L)
 {
-    int i;
+    int i, t;
     unsigned ftype = kpse_tex_format;
     int mexist = 0;
     kpathsea *kp = (kpathsea *) luaL_checkudata(L, 1, KPATHSEA_METATABLE);
     const char *st = luaL_checkstring(L, 2);
     i = lua_gettop(L);
     while (i > 2) {
-        if (lua_isboolean(L, i)) {
+        t = lua_type(L, i) ;
+        if (t == LUA_TBOOLEAN) {
             mexist = (boolean) lua_toboolean(L, i);
-        } else if (lua_isnumber(L, i)) {
+        } else if (t == LUA_TNUMBER) {
             mexist=(int)lua_tonumber(L, i);
-        } else if (lua_isstring(L, i)) {
+        } else if (t == LUA_TSTRING) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
+        } else {
+            /* ignore */
         }
         i--;
     }
-    if (ftype == kpse_pk_format ||
-        ftype == kpse_gf_format || ftype == kpse_any_glyph_format) {
+    if (ftype == kpse_pk_format || ftype == kpse_gf_format || ftype == kpse_any_glyph_format) {
         /* ret.format, ret.name, ret.dpi */
         kpse_glyph_file_type ret;
-        lua_pushstring(L,
-                       kpathsea_find_glyph(*kp, st, (unsigned) mexist, ftype,
-                                           &ret));
+        lua_pushstring(L, kpathsea_find_glyph(*kp, st, (unsigned) mexist, ftype, &ret));
     } else {
         if (mexist > 0)
             mexist = 1;
@@ -368,7 +371,7 @@ static unsigned find_dpi(const_string s)
    is, for a string S in MATCHES, its dirname must end with one of the
    elements in SUBDIRS.  For instance, if subdir=foo/bar, that will
    match a string foo/bar/baz or /some/texmf/foo/bar/baz.
-   
+
    We don't reallocate the actual strings, just the list elements.
    Perhaps later we will implement wildcards or // or something.  */
 
@@ -599,17 +602,17 @@ static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
         if (lua_istable(L, -1)) {
             lua_pushnil(L);
             while (lua_next(L, -2) != 0) {      /* numeric value */
-                if (lua_isstring(L, -1)) {
-		    char *s = xstrdup(lua_tostring(L, -1));
+                if (lua_type(L, -1) == LUA_TSTRING) {
+                    char *s = xstrdup(lua_tostring(L, -1));
                     str_list_add(&subdir_paths, s);
-		    xfree(s);
+                    xfree(s);
                 }
                 lua_pop(L, 1);
             }
-        } else if (lua_isstring(L, -1)) {
-	    char *s = xstrdup(lua_tostring(L, -1));
+        } else if (lua_type(L, -1) == LUA_TSTRING) {
+            char *s = xstrdup(lua_tostring(L, -1));
             str_list_add(&subdir_paths, s);
-	    xfree(s);
+            xfree(s);
         }
         lua_pop(L, 1);
         if (STR_LIST_LENGTH(subdir_paths) > 0) {

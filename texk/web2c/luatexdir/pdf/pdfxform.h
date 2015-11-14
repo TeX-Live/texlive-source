@@ -21,9 +21,9 @@
 #ifndef PDFXFORM_H
 #  define PDFXFORM_H
 
-/* data structure for \.{\\pdfxform} and \.{\\pdfrefxform} */
+/* data structure for box resources */
 
-#  define pdfmem_xform_size        6    /* size of memory in |pdf->mem| which |obj_data_ptr| holds */
+#  define pdfmem_xform_size        8    /* size of memory in |pdf->mem| which |obj_data_ptr| holds */
 
 #  define set_pdf_xform_objnum(A,B) pdf_xform_objnum(A)=B
 
@@ -36,6 +36,8 @@
                                                                                    attributes */
 #  define obj_xform_resources(pdf,A)   pdf->mem[obj_data_ptr(pdf,A) + 5]        /* additional xform
                                                                                    Resources */
+#  define obj_xform_attr_str(pdf,A)        pdf->mem[obj_data_ptr(pdf,A) + 6]
+#  define obj_xform_resources_str(pdf,A)   pdf->mem[obj_data_ptr(pdf,A) + 7]
 
 
 #  define set_obj_xform_width(pdf,A,B) obj_xform_width(pdf,A)=B
@@ -44,6 +46,8 @@
 #  define set_obj_xform_box(pdf,A,B) obj_xform_box(pdf,A)=B
 #  define set_obj_xform_attr(pdf,A,B) obj_xform_attr(pdf,A)=B
 #  define set_obj_xform_resources(pdf,A,B) obj_xform_resources(pdf,A)=B
+#  define set_obj_xform_attr_str(pdf,A,B) obj_xform_attr_str(pdf,A)=B
+#  define set_obj_xform_resources_str(pdf,A,B) obj_xform_resources_str(pdf,A)=B
 
 extern int pdf_cur_form;        /* the form being output */
 

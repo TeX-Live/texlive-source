@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-
 #ifndef PDFTYPES_H
 #  define PDFTYPES_H
 
@@ -52,7 +51,6 @@ typedef enum {
 typedef enum {
     PDFOUT_BUF,
     OBJSTM_BUF,
-    LUASTM_BUF
 } buffer_e;
 
 /* This stucture holds everything that is needed for the actual pdf generation.
@@ -101,10 +99,6 @@ typedef struct {
 
 typedef enum { PMODE_NONE, PMODE_PAGE, PMODE_TEXT, PMODE_CHARARRAY, PMODE_CHAR
 } pos_mode;
-
-typedef enum { OMODE_NONE, OMODE_DVI, OMODE_PDF, OMODE_LUA } output_mode;
-
-#  define MAX_OMODE 3           /* largest index in enum output_mode */
 
 typedef enum { ST_INITIAL, ST_OMODE_FIX, ST_FILE_OPEN, ST_HEADER_WRITTEN,
     ST_FILE_CLOSED
@@ -222,12 +216,10 @@ typedef struct os_struct_ {
     os_obj_data *obj;           /* array of object stream objects */
     strbuf_s *buf[3];
     buffer_e curbuf;            /* select into which buffer to output */
-    luaL_Buffer b;              /* Lua buffer connected to luastm_buf */
     unsigned int cur_objstm;    /* number of current object stream object */
     unsigned int idx;           /* index of object within object stream [1...PDF_OS_MAX_OBJS - 1] */
     unsigned int ostm_ctr;      /* statistics: counter for object stream objects */
     unsigned int o_ctr;         /* statistics: counter for objects within object streams */
-    int trigger_luastm;
 } os_struct;
 
 /**********************************************************************/

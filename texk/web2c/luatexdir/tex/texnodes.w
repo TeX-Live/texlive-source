@@ -17,6 +17,8 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+% hh: Here the backend nodes are still interwoven .. when I'm in the mood...
+
 @ @c
 
 
@@ -68,269 +70,358 @@ int copy_error(halfword p);     /* define below */
 
 #define variable_node_size 2
 
-const char *node_fields_list[] =
-    { "attr", "width", "depth", "height", "dir", "shift",
-    "glue_order", "glue_sign", "glue_set", "head", NULL
+/* core nodes */
+
+const char *node_fields_list[] = {
+    "attr", "width", "depth", "height", "dir", "shift", "glue_order", "glue_sign",
+    "glue_set", "head", NULL
 };
-const char *node_fields_rule[] =
-    { "attr", "width", "depth", "height", "dir", NULL };
-const char *node_fields_insert[] =
-    { "attr", "cost", "depth", "height", "spec", "head", NULL };
-const char *node_fields_mark[] = { "attr", "class", "mark", NULL };
-const char *node_fields_adjust[] = { "attr", "head", NULL };
-const char *node_fields_disc[] = { "attr", "pre", "post", "replace", "penalty", NULL };
-const char *node_fields_math[] = { "attr", "surround", NULL };
-const char *node_fields_glue[] = { "attr", "spec", "leader", NULL };
-const char *node_fields_kern[] = { "attr", "kern", "expansion_factor", NULL };
-const char *node_fields_penalty[] = { "attr", "penalty", NULL };
-
-const char *node_fields_unset[] =
-    { "attr", "width", "depth", "height", "dir", "shrink",
-    "glue_order", "glue_sign", "stretch", "span", "head", NULL
+const char *node_fields_rule[] = {
+    "attr", "width", "depth", "height", "dir", "index", NULL
 };
-const char *node_fields_margin_kern[] = { "attr", "width", "glyph", NULL };
-
-const char *node_fields_glyph[] =
-    { "attr", "char", "font", "lang", "left", "right", "uchyph",
-      "components", "xoffset", "yoffset", "width", "height", "depth", "expansion_factor", NULL
+const char *node_fields_insert[] = {
+    "attr", "cost", "depth", "height", "spec", "head", NULL
 };
-const char *node_fields_style[] = { "attr", "style", NULL };
-const char *node_fields_choice[] =
-    { "attr", "display", "text", "script", "scriptscript", NULL };
-const char *node_fields_ord[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_op[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_bin[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_rel[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_open[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_close[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_punct[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_inner[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_under[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_over[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_vcenter[] = { "attr", "nucleus", "sub", "sup", NULL };
-const char *node_fields_radical[] =
-    { "attr", "nucleus", "sub", "sup", "left", "degree", NULL };
-const char *node_fields_fraction[] =
-    { "attr", "width", "num", "denom", "left", "right", NULL };
-const char *node_fields_accent[] =
-    { "attr", "nucleus", "sub", "sup", "accent", "bot_accent", NULL };
-const char *node_fields_fence[] = { "attr", "delim", NULL };
-const char *node_fields_math_char[] = { "attr", "fam", "char", NULL };
-const char *node_fields_sub_box[] = { "attr", "head", NULL };
-const char *node_fields_sub_mlist[] = { "attr", "head", NULL };
-const char *node_fields_math_text_char[] = { "attr", "fam", "char", NULL };
-const char *node_fields_delim[] =
-    { "attr", "small_fam", "small_char", "large_fam", "large_char", NULL };
-
-const char *node_fields_inserting[] =
-    { "height", "last_ins_ptr", "best_ins_ptr", NULL };
-
-const char *node_fields_splitup[] = { "height", "last_ins_ptr", "best_ins_ptr",
-    "broken_ptr", "broken_ins", NULL
+const char *node_fields_mark[] = {
+    "attr", "class", "mark", NULL
 };
-
-const char *node_fields_action[] = { "action_type", "named_id", "action_id",
-    "file", "new_window", "data", "ref_count", NULL
+const char *node_fields_adjust[] = {
+    "attr", "head", NULL
 };
-const char *node_fields_attribute[] = { "number", "value", NULL };
-
-const char *node_fields_glue_spec[] = { "width", "stretch", "shrink",
-    "stretch_order", "shrink_order", "ref_count", "writable", NULL
+const char *node_fields_disc[] = {
+    "attr", "pre", "post", "replace", "penalty", NULL
 };
-const char *node_fields_attribute_list[] = { NULL };
-
-const char *node_fields_whatsit_open[] =
-    { "attr", "stream", "name", "area", "ext", NULL };
-const char *node_fields_whatsit_write[] = { "attr", "stream", "data", NULL };
-const char *node_fields_whatsit_close[] = { "attr", "stream", NULL };
-const char *node_fields_whatsit_special[] = { "attr", "data", NULL };
-
-const char *node_fields_whatsit_local_par[] =
-    { "attr", "pen_inter", "pen_broken", "dir",
-    "box_left", "box_left_width", "box_right", "box_right_width", NULL
+const char *node_fields_math[] = {
+    "attr", "surround", NULL
 };
-const char *node_fields_whatsit_dir[] =
-    { "attr", "dir", "level", "dvi_ptr", "dvi_h", NULL };
-
-const char *node_fields_whatsit_pdf_literal[] =
-    { "attr", "mode", "data", NULL };
-const char *node_fields_whatsit_pdf_refobj[] = { "attr", "objnum", NULL };
-const char *node_fields_whatsit_pdf_refxform[] =
-    { "attr", "width", "depth", "height", "objnum", NULL };
-const char *node_fields_whatsit_pdf_refximage[] =
-    { "attr", "width", "depth", "height", "transform", "index", NULL };
-const char *node_fields_whatsit_pdf_annot[] =
-    { "attr", "width", "depth", "height", "objnum", "data", NULL };
-const char *node_fields_whatsit_pdf_start_link[] =
-    { "attr", "width", "depth", "height",
-    "objnum", "link_attr", "action", NULL
+const char *node_fields_glue[] = {
+    "attr", "spec", "leader", NULL
 };
-const char *node_fields_whatsit_pdf_end_link[] = { "attr", NULL };
-
-const char *node_fields_whatsit_pdf_dest[] =
-    { "attr", "width", "depth", "height",
-    "named_id", "dest_id", "dest_type", "xyz_zoom", "objnum", NULL
+const char *node_fields_kern[] = {
+    "attr", "kern", "expansion_factor", NULL
+};
+const char *node_fields_penalty[] = {
+    "attr", "penalty", NULL
+};
+const char *node_fields_unset[] = {
+    "attr", "width", "depth", "height", "dir", "shrink", "glue_order",
+    "glue_sign", "stretch", "span", "head", NULL
+};
+const char *node_fields_margin_kern[]  = {
+    "attr", "width", "glyph", NULL
+};
+const char *node_fields_glyph[] = {
+    "attr", "char", "font", "lang", "left", "right", "uchyph", "components",
+    "xoffset", "yoffset", "width", "height", "depth", "expansion_factor", NULL
+};
+const char *node_fields_inserting[] = {
+    "height", "last_ins_ptr", "best_ins_ptr", NULL
+};
+const char *node_fields_splitup[] = {
+    "height", "last_ins_ptr", "best_ins_ptr", "broken_ptr", "broken_ins", NULL
+};
+const char *node_fields_attribute[] = {
+    "number", "value", NULL
+};
+const char *node_fields_glue_spec[] = {
+    "width", "stretch", "shrink", "stretch_order", "shrink_order", "ref_count",
+   "writable", NULL
+};
+const char *node_fields_attribute_list[] = {
+    NULL
+};
+const char *node_fields_local_par[] = {
+    "attr", "pen_inter", "pen_broken", "dir", "box_left", "box_left_width",
+    "box_right", "box_right_width", NULL
+};
+const char *node_fields_dir[] = {
+    "attr", "dir", "level", "dvi_ptr", "dvi_h", NULL
+};
+const char *node_fields_boundary[] = {
+    "attr", "value", NULL
 };
 
-const char *node_fields_whatsit_pdf_thread[] =
-    { "attr", "width", "depth", "height",
-    "named_id", "thread_id", "thread_attr", NULL
+/* math nodes */
+
+const char *node_fields_noad[] = {
+    "attr", "nucleus", "sub", "sup", NULL
 };
 
-const char *node_fields_whatsit_pdf_start_thread[] =
-    { "attr", "width", "depth", "height",
-    "named_id", "thread_id", "thread_attr", NULL
-};
-const char *node_fields_whatsit_pdf_end_thread[] = { "attr", NULL };
-const char *node_fields_whatsit_save_pos[] = { "attr", NULL };
-const char *node_fields_whatsit_late_lua[] =
-    { "attr", "reg", "data", "name", "string", NULL };
-const char *node_fields_whatsit_pdf_colorstack[] =
-    { "attr", "stack", "cmd", "data", NULL };
-const char *node_fields_whatsit_pdf_setmatrix[] = { "attr", "data", NULL };
-const char *node_fields_whatsit_pdf_save[] = { "attr", NULL };
-const char *node_fields_whatsit_pdf_restore[] = { "attr", NULL };
-const char *node_fields_whatsit_cancel_boundary[] = { "attr", NULL };
-const char *node_fields_whatsit_user_defined[] =
-    { "attr", "user_id", "type", "value", NULL };
+#define node_fields_ord     node_fields_noad
+#define node_fields_op      node_fields_noad
+#define node_fields_bin     node_fields_noad
+#define node_fields_rel     node_fields_noad
+#define node_fields_open    node_fields_noad
+#define node_fields_close   node_fields_noad
+#define node_fields_punct   node_fields_noad
+#define node_fields_inner   node_fields_noad
+#define node_fields_under   node_fields_noad
+#define node_fields_over    node_fields_noad
+#define node_fields_vcenter node_fields_noad
 
-node_info node_data[] = {
-    {hlist_node, box_node_size, node_fields_list, "hlist"},
-    {vlist_node, box_node_size, node_fields_list, "vlist"},
-    {rule_node, rule_node_size, node_fields_rule, "rule"},
-    {ins_node, ins_node_size, node_fields_insert, "ins"},
-    {mark_node, mark_node_size, node_fields_mark, "mark"},
-    {adjust_node, adjust_node_size, node_fields_adjust, "adjust"},
-    {fake_node, fake_node_size, NULL, fake_node_name},  /* don't touch this! */
-    {disc_node, disc_node_size, node_fields_disc, "disc"},
-    {whatsit_node, -1, NULL, "whatsit"},
-    {math_node, math_node_size, node_fields_math, "math"},
-    {glue_node, glue_node_size, node_fields_glue, "glue"},
-    {kern_node, kern_node_size, node_fields_kern, "kern"},
-    {penalty_node, penalty_node_size, node_fields_penalty, "penalty"},
-    {unset_node, box_node_size, node_fields_unset, "unset"},
-    {style_node, style_node_size, node_fields_style, "style"},
-    {choice_node, style_node_size, node_fields_choice, "choice"},
-    {simple_noad, noad_size, node_fields_ord, "noad"},
-    {old_op_noad, noad_size, node_fields_op, "op"},
-    {old_bin_noad, noad_size, node_fields_bin, "bin"},
-    {old_rel_noad, noad_size, node_fields_rel, "rel"},
-    {old_open_noad, noad_size, node_fields_open, "open"},
-    {old_close_noad, noad_size, node_fields_close, "close"},
-    {old_punct_noad, noad_size, node_fields_punct, "punct"},
-    {old_inner_noad, noad_size, node_fields_inner, "inner"},
-    {radical_noad, radical_noad_size, node_fields_radical, "radical"},
-    {fraction_noad, fraction_noad_size, node_fields_fraction, "fraction"},
-    {old_under_noad, noad_size, node_fields_under, "under"},
-    {old_over_noad, noad_size, node_fields_over, "over"},
-    {accent_noad, accent_noad_size, node_fields_accent, "accent"},
-    {old_vcenter_noad, noad_size, node_fields_vcenter, "vcenter"},
-    {fence_noad, fence_noad_size, node_fields_fence, "fence"},
-    {math_char_node, math_kernel_node_size, node_fields_math_char, "math_char"},
-    {sub_box_node, math_kernel_node_size, node_fields_sub_box, "sub_box"},
-    {sub_mlist_node, math_kernel_node_size, node_fields_sub_mlist, "sub_mlist"},
-    {math_text_char_node, math_kernel_node_size, node_fields_math_text_char, "math_text_char"},
-    {delim_node, math_shield_node_size, node_fields_delim, "delim"},
-    {margin_kern_node, margin_kern_node_size, node_fields_margin_kern, "margin_kern"},
-    {glyph_node, glyph_node_size, node_fields_glyph, "glyph"},
-    {align_record_node, box_node_size, NULL, "align_record"},
-    {pseudo_file_node, pseudo_file_node_size, NULL, "pseudo_file"},
-    {pseudo_line_node, variable_node_size, NULL, "pseudo_line"},
-    {inserting_node, page_ins_node_size, node_fields_inserting, "page_insert"},
-    {split_up_node, page_ins_node_size, node_fields_splitup, "split_insert"},
-    {expr_node, expr_node_size, NULL, "expr_stack"},
-    {nesting_node, nesting_node_size, NULL, "nested_list"},
-    {span_node, span_node_size, NULL, "span"},
-    {attribute_node, attribute_node_size, node_fields_attribute, "attribute"},
-    {glue_spec_node, glue_spec_size, node_fields_glue_spec, "glue_spec"},
-    {attribute_list_node, attribute_node_size, node_fields_attribute_list, "attribute_list"},
-    {action_node, pdf_action_size, node_fields_action, "action"},
-    {temp_node, temp_node_size, NULL, "temp"},
-    {align_stack_node, align_stack_node_size, NULL, "align_stack"},
-    {movement_node, movement_node_size, NULL, "movement_stack"},
-    {if_node, if_node_size, NULL, "if_stack"},
-    {unhyphenated_node, active_node_size, NULL, "unhyphenated"},
-    {hyphenated_node, active_node_size, NULL, "hyphenated"},
-    {delta_node, delta_node_size, NULL, "delta"},
-    {passive_node, passive_node_size, NULL, "passive"},
-    {shape_node, variable_node_size, NULL, "shape"},
-    {-1, -1, NULL, NULL}
+const char *node_fields_style[] = {
+    "attr", "style", NULL
+};
+const char *node_fields_choice[] = {
+    "attr", "display", "text", "script", "scriptscript", NULL
+};
+const char *node_fields_radical[] = {
+    "attr", "nucleus", "sub", "sup", "left", "degree", NULL
+};
+const char *node_fields_fraction[] = {
+    "attr", "width", "num", "denom", "left", "right", NULL
+};
+const char *node_fields_accent[] = {
+    "attr", "nucleus", "sub", "sup", "accent", "bot_accent", "top_accent",
+    "overlay_accent", NULL
+};
+const char *node_fields_fence[] = {
+    "attr", "delim", NULL
+};
+const char *node_fields_math_char[] = {
+    "attr", "fam", "char", NULL
+};
+const char *node_fields_sub_box[] = {
+    "attr", "head", NULL
+};
+const char *node_fields_sub_mlist[] = {
+    "attr", "head", NULL
+};
+const char *node_fields_math_text_char[] = {
+    "attr", "fam", "char", NULL
+};
+const char *node_fields_delim[] = {
+    "attr", "small_fam", "small_char", "large_fam", "large_char", NULL
 };
 
-#define last_normal_node shape_node
+/* whatsit nodes */
+
+const char *node_fields_whatsit_open[] = {
+    "attr", "stream", "name", "area", "ext", NULL
+};
+const char *node_fields_whatsit_write[] = {
+    "attr", "stream", "data", NULL
+};
+const char *node_fields_whatsit_close[] = {
+    "attr", "stream", NULL
+};
+const char *node_fields_whatsit_special[] = {
+    "attr", "data", NULL
+};
+const char *node_fields_whatsit_save_pos[] = {
+    "attr", NULL
+};
+const char *node_fields_whatsit_late_lua[] = {
+    "attr", "reg", "data", "name", "string", NULL
+};
+const char *node_fields_whatsit_user_defined[] = {
+    "attr", "user_id", "type", "value", NULL
+};
+
+/* pdf backend whatsit nodes */
+
+const char *node_fields_whatsit_pdf_literal[] = {
+    "attr", "mode", "data", NULL
+};
+const char *node_fields_whatsit_pdf_refobj[] = {
+    "attr", "objnum", NULL
+};
+const char *node_fields_whatsit_pdf_annot[] = {
+    "attr", "width", "depth", "height", "objnum", "data", NULL
+};
+const char *node_fields_whatsit_pdf_start_link[] = {
+    "attr", "width", "depth", "height", "objnum", "link_attr", "action", NULL
+};
+const char *node_fields_whatsit_pdf_end_link[] = {
+    "attr", NULL
+};
+const char *node_fields_whatsit_pdf_dest[] = {
+    "attr", "width", "depth", "height", "named_id", "dest_id", "dest_type",
+    "xyz_zoom", "objnum", NULL
+};
+const char *node_fields_whatsit_pdf_action[] = {
+    "action_type", "named_id", "action_id", "file", "new_window", "data",
+    "ref_count", NULL
+};
+const char *node_fields_whatsit_pdf_thread[] = {
+    "attr", "width", "depth", "height",  "named_id", "thread_id", "thread_attr", NULL
+};
+const char *node_fields_whatsit_pdf_start_thread[] = {
+    "attr", "width", "depth", "height", "named_id", "thread_id", "thread_attr", NULL
+};
+const char *node_fields_whatsit_pdf_end_thread[] = {
+    "attr", NULL
+};
+const char *node_fields_whatsit_pdf_colorstack[] = {
+    "attr", "stack", "cmd", "data", NULL
+};
+const char *node_fields_whatsit_pdf_setmatrix[] = {
+    "attr", "data", NULL
+};
+const char *node_fields_whatsit_pdf_save[] = {
+    "attr", NULL
+};
+const char *node_fields_whatsit_pdf_restore[] = {
+    "attr", NULL
+};
+
+/* subtypes */
+
+const char *node_subtypes_glue[] = {
+    "userskip", "lineskip", "baselineskip", "parskip", "abovedisplayskip", "belowdisplayskip",
+    "abovedisplayshortskip", "belowdisplayshortskip", "leftskip", "rightskip", "topskip",
+    "splittopskip", "tabskip", "spaceskip", "xspaceskip", "parfillskip", "thinmuskip",
+    "medmuskip", "thickmuskip", "mathskip", NULL
+};
+const char *node_subtypes_leader[] = { /* 100+ */
+    "leaders", "cleaders", "xleaders", "gleaders", NULL
+};
+const char *node_subtypes_fill[] = {
+    "stretch", "fi", "fil", "fill", "filll", NULL
+};
+const char *node_subtypes_penalty[] = {
+    "userpenalty", NULL
+};
+const char *node_subtypes_kern[] = {
+    "fontkern", "userkern", "accentkern", NULL
+};
+const char *node_subtypes_rule[] = {
+    "normal", "box", "image", "empty", NULL
+};
+const char *node_subtypes_glyph[] = {
+    "character", "glyph", "ligature", "ghost", "left", "right", NULL
+};
+const char *node_subtypes_disc[] = {
+    "discretionary", "explicit", "automatic", "regular", "first", "second", NULL
+};
+const char *node_subtypes_marginkern[] = {
+    "left", "right", NULL
+};
+const char *node_subtypes_list[] = {
+    "unknown", "line", "box", "indent", "alignment", "cell", "equation", "equationnumber", NULL
+};
+const char *node_subtypes_math[] = {
+    "beginmath", "endmath", NULL
+};
+const char *node_subtypes_noad[] = {
+    "ord", "opdisplaylimits", "oplimits", "opnolimits", "bin", "rel", "open", "close",
+    "punct", "inner", "under", "over", "vcenter", NULL
+};
+const char *node_subtypes_radical[] = {
+    "radical", "uradical", "uroot", "uunderdelimiter", "uoverdelimiter", "udelimiterunder",
+    "udelimiterover", NULL
+};
+const char *node_subtypes_accent[] = {
+    "bothflexible", "fixedtop", "fixedbottom", "fixedboth", NULL,
+};
+const char *node_subtypes_fence[] = {
+    "unset", "left", "middle", "right", NULL
+};
+
+node_info node_data[] = { /* the last entry in a row is the etex number */
+    { hlist_node,          box_node_size,         node_fields_list,                          "hlist",           1 },
+    { vlist_node,          box_node_size,         node_fields_list,                          "vlist",           2 },
+    { rule_node,           rule_node_size,        node_fields_rule,                          "rule",            3 },
+    { ins_node,            ins_node_size,         node_fields_insert,                        "ins",             4 },
+    { mark_node,           mark_node_size,        node_fields_mark,                          "mark",            5 },
+    { adjust_node,         adjust_node_size,      node_fields_adjust,                        "adjust",          6 },
+    { boundary_node,       boundary_size,         node_fields_boundary,                      "boundary",       -1 },
+    { disc_node,           disc_node_size,        node_fields_disc,                          "disc",            8 },
+    { whatsit_node,        -1,                    NULL,                                      "whatsit",         9 },
+    { math_node,           math_node_size,        node_fields_math,                          "math",           10 },
+    { glue_node,           glue_node_size,        node_fields_glue,                          "glue",           11 },
+    { kern_node,           kern_node_size,        node_fields_kern,                          "kern",           12 },
+    { penalty_node,        penalty_node_size,     node_fields_penalty,                       "penalty",        13 },
+    { unset_node,          box_node_size,         node_fields_unset,                         "unset",          14 },
+    { style_node,          style_node_size,       node_fields_style,                         "style",          15 },
+    { choice_node,         style_node_size,       node_fields_choice,                        "choice",         15 },
+    { simple_noad,         noad_size,             node_fields_ord,                           "noad",           15 },
+    { radical_noad,        radical_noad_size,     node_fields_radical,                       "radical",        15 },
+    { fraction_noad,       fraction_noad_size,    node_fields_fraction,                      "fraction",       15 },
+    { accent_noad,         accent_noad_size,      node_fields_accent,                        "accent",         15 },
+    { fence_noad,          fence_noad_size,       node_fields_fence,                         "fence",          15 },
+    { math_char_node,      math_kernel_node_size, node_fields_math_char,                     "math_char",      15 },
+    { sub_box_node,        math_kernel_node_size, node_fields_sub_box,                       "sub_box",        15 },
+    { sub_mlist_node,      math_kernel_node_size, node_fields_sub_mlist,                     "sub_mlist",      15 },
+    { math_text_char_node, math_kernel_node_size, node_fields_math_text_char,                "math_text_char", 15 },
+    { delim_node,          math_shield_node_size, node_fields_delim,                         "delim",          15 },
+    { margin_kern_node,    margin_kern_node_size, node_fields_margin_kern,                   "margin_kern",    -1 },
+    { glyph_node,          glyph_node_size,       node_fields_glyph,                         "glyph",           0 },
+    { align_record_node,   box_node_size,         NULL,                                      "align_record",   -1 },
+    { pseudo_file_node,    pseudo_file_node_size, NULL,                                      "pseudo_file",    -1 },
+    { pseudo_line_node,    variable_node_size,    NULL,                                      "pseudo_line",    -1 },
+    { inserting_node,      page_ins_node_size,    node_fields_inserting,                     "page_insert",    -1 },
+    { split_up_node,       page_ins_node_size,    node_fields_splitup,                       "split_insert",   -1 },
+    { expr_node,           expr_node_size,        NULL,                                      "expr_stack",     -1 },
+    { nesting_node,        nesting_node_size,     NULL,                                      "nested_list",    -1 },
+    { span_node,           span_node_size,        NULL,                                      "span",           -1 },
+    { attribute_node,      attribute_node_size,   node_fields_attribute,                     "attribute",      -1 },
+    { glue_spec_node,      glue_spec_size,        node_fields_glue_spec,                     "glue_spec",      -1 },
+    { attribute_list_node, attribute_node_size,   node_fields_attribute_list,                "attribute_list", -1 },
+    { temp_node,           temp_node_size,        NULL,                                      "temp",           -1 },
+    { align_stack_node,    align_stack_node_size, NULL,                                      "align_stack",    -1 },
+    { movement_node,       movement_node_size,    NULL,                                      "movement_stack", -1 },
+    { if_node,             if_node_size,          NULL,                                      "if_stack",       -1 },
+    { unhyphenated_node,   active_node_size,      NULL,                                      "unhyphenated",   -1 },
+    { hyphenated_node,     active_node_size,      NULL,                                      "hyphenated",     -1 },
+    { delta_node,          delta_node_size,       NULL,                                      "delta",          -1 },
+    { passive_node,        passive_node_size,     NULL,                                      "passive",        -1 },
+    { shape_node,          variable_node_size,    NULL,                                      "shape",          -1 },
+    { dir_node,            dir_node_size,         node_fields_dir,                           "dir",            -1 },
+    { local_par_node,      local_par_size,        node_fields_local_par,                     "local_par",      -1 },
+    { -1,                 -1,                     NULL,                                      NULL,             -1 },
+};
+
+#define last_normal_node local_par_node
+
+const char *node_subtypes_pdf_destination[] = {
+    "xyz", "fit", "fith", "fitv", "fitb", "fitbh", "fitbv", "fitr", NULL
+};
+const char *node_subtypes_pdf_literal[] = {
+    "origin", "page", "direct", NULL
+};
 
 node_info whatsit_node_data[] = {
-    {open_node, open_node_size, node_fields_whatsit_open, "open"},
-    {write_node, write_node_size, node_fields_whatsit_write, "write"},
-    {close_node, close_node_size, node_fields_whatsit_close, "close"},
-    {special_node, special_node_size, node_fields_whatsit_special, "special"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {local_par_node, local_par_size, node_fields_whatsit_local_par,
-     "local_par"},
-    {dir_node, dir_node_size, node_fields_whatsit_dir, "dir"},
-    {pdf_literal_node, write_node_size, node_fields_whatsit_pdf_literal,
-     "pdf_literal"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {pdf_refobj_node, pdf_refobj_node_size, node_fields_whatsit_pdf_refobj,
-     "pdf_refobj"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {pdf_refxform_node, pdf_refxform_node_size,
-     node_fields_whatsit_pdf_refxform, "pdf_refxform"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {pdf_refximage_node, pdf_refximage_node_size,
-     node_fields_whatsit_pdf_refximage, "pdf_refximage"},
-    {pdf_annot_node, pdf_annot_node_size, node_fields_whatsit_pdf_annot,
-     "pdf_annot"},
-    {pdf_start_link_node, pdf_annot_node_size,
-     node_fields_whatsit_pdf_start_link, "pdf_start_link"},
-    {pdf_end_link_node, pdf_end_link_node_size,
-     node_fields_whatsit_pdf_end_link, "pdf_end_link"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {pdf_dest_node, pdf_dest_node_size, node_fields_whatsit_pdf_dest,
-     "pdf_dest"},
-    {pdf_thread_node, pdf_thread_node_size, node_fields_whatsit_pdf_thread,
-     "pdf_thread"},
-    {pdf_start_thread_node, pdf_thread_node_size,
-     node_fields_whatsit_pdf_start_thread, "pdf_start_thread"},
-    {pdf_end_thread_node, pdf_end_thread_node_size,
-     node_fields_whatsit_pdf_end_thread, "pdf_end_thread"},
-    {save_pos_node, save_pos_node_size,
-     node_fields_whatsit_save_pos, "save_pos"},
-    {pdf_thread_data_node, pdf_thread_node_size, NULL, "pdf_thread_data"},
-    {pdf_link_data_node, pdf_annot_node_size, NULL, "pdf_link_data"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {late_lua_node, late_lua_node_size, node_fields_whatsit_late_lua,
-     "late_lua"},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {fake_node, fake_node_size, NULL, fake_node_name},
-    {pdf_colorstack_node, pdf_colorstack_node_size,
-     node_fields_whatsit_pdf_colorstack, "pdf_colorstack"},
-    {pdf_setmatrix_node, pdf_setmatrix_node_size,
-     node_fields_whatsit_pdf_setmatrix, "pdf_setmatrix"},
-    {pdf_save_node, pdf_save_node_size, node_fields_whatsit_pdf_save,
-     "pdf_save"},
-    {pdf_restore_node, pdf_restore_node_size, node_fields_whatsit_pdf_restore,
-     "pdf_restore"},
-    {cancel_boundary_node, cancel_boundary_size,
-     node_fields_whatsit_cancel_boundary, "cancel_boundary"},
-    {user_defined_node, user_defined_node_size,
-     node_fields_whatsit_user_defined, "user_defined"},
-    {-1, -1, NULL, NULL}
+    { open_node,         open_node_size,               node_fields_whatsit_open,             "open",             -1 },
+    { write_node,        write_node_size,              node_fields_whatsit_write,            "write",            -1 },
+    { close_node,        close_node_size,              node_fields_whatsit_close,            "close",            -1 },
+    { special_node,      special_node_size,            node_fields_whatsit_special,          "special",          -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { save_pos_node,     save_pos_node_size,           node_fields_whatsit_save_pos,         "save_pos",         -1 },
+    { late_lua_node,     late_lua_node_size,           node_fields_whatsit_late_lua,         "late_lua",         -1 },
+    { user_defined_node, user_defined_node_size,       node_fields_whatsit_user_defined,     "user_defined",     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    { fake_node,         fake_node_size,               NULL,                                 fake_node_name,     -1 },
+    /* here starts the dvi backend section, todo: a separate list  */
+    /* nothing for dvi */
+    /* here starts the pdf backend section, todo: a separate list  */
+    { pdf_literal_node,      write_node_size,          node_fields_whatsit_pdf_literal,      "pdf_literal",      -1 },
+    { pdf_refobj_node,       pdf_refobj_node_size,     node_fields_whatsit_pdf_refobj,       "pdf_refobj",       -1 },
+    { pdf_annot_node,        pdf_annot_node_size,      node_fields_whatsit_pdf_annot,        "pdf_annot",        -1 },
+    { pdf_start_link_node,   pdf_annot_node_size,      node_fields_whatsit_pdf_start_link,   "pdf_start_link",   -1 },
+    { pdf_end_link_node,     pdf_end_link_node_size,   node_fields_whatsit_pdf_end_link,     "pdf_end_link",     -1 },
+    { pdf_dest_node,         pdf_dest_node_size,       node_fields_whatsit_pdf_dest,         "pdf_dest",         -1 },
+    { pdf_action_node,       pdf_action_size,          node_fields_whatsit_pdf_action,       "pdf_action",       -1 },
+    { pdf_thread_node,       pdf_thread_node_size,     node_fields_whatsit_pdf_thread,       "pdf_thread",       -1 },
+    { pdf_start_thread_node, pdf_thread_node_size,     node_fields_whatsit_pdf_start_thread, "pdf_start_thread", -1 },
+    { pdf_end_thread_node,   pdf_end_thread_node_size, node_fields_whatsit_pdf_end_thread,   "pdf_end_thread",   -1 },
+    { pdf_thread_data_node,  pdf_thread_node_size,     NULL,                                 "pdf_thread_data",  -1 },
+    { pdf_link_data_node,    pdf_annot_node_size,      NULL,                                 "pdf_link_data",    -1 },
+    { pdf_colorstack_node,   pdf_colorstack_node_size, node_fields_whatsit_pdf_colorstack,   "pdf_colorstack",   -1 },
+    { pdf_setmatrix_node,    pdf_setmatrix_node_size,  node_fields_whatsit_pdf_setmatrix,    "pdf_setmatrix",    -1 },
+    { pdf_save_node,         pdf_save_node_size,       node_fields_whatsit_pdf_save,         "pdf_save",         -1 },
+    { pdf_restore_node,      pdf_restore_node_size,    node_fields_whatsit_pdf_restore,      "pdf_restore",      -1 },
+    /* done */
+    { -1,                    -1,                       NULL,                                 NULL,               -1 },
 };
 
-#define last_whatsit_node user_defined_node
-
-/* hh: experiment */
+#define last_whatsit_node pdf_restore_node
 
 /*
 
@@ -540,6 +631,8 @@ halfword new_node(int i, int j)
         depth(n) = null_flag;
         height(n) = null_flag;
         rule_dir(n) = -1;
+        rule_index(n) = 0;
+        rule_transform(n) = 0;
         /* fall through */
     case unset_node:
         width(n) = null_flag;
@@ -560,32 +653,34 @@ halfword new_node(int i, int j)
     default:
         break;
     }
-    /* handle synctex extension */
-    switch (i) {
-    case math_node:
-        synctex_tag_math(n) = cur_input.synctex_tag_field;
-        synctex_line_math(n) = line;
-        break;
-    case glue_node:
-        synctex_tag_glue(n) = cur_input.synctex_tag_field;
-        synctex_line_glue(n) = line;
-        break;
-    case kern_node:
-        if (j != 0) {
-            synctex_tag_kern(n) = cur_input.synctex_tag_field;
-            synctex_line_kern(n) = line;
+    if (int_par(synctex_code)) {
+        /* handle synctex extension */
+        switch (i) {
+        case math_node:
+            synctex_tag_math(n) = cur_input.synctex_tag_field;
+            synctex_line_math(n) = line;
+            break;
+        case glue_node:
+            synctex_tag_glue(n) = cur_input.synctex_tag_field;
+            synctex_line_glue(n) = line;
+            break;
+        case kern_node:
+            if (j != 0) {
+                synctex_tag_kern(n) = cur_input.synctex_tag_field;
+                synctex_line_kern(n) = line;
+            }
+            break;
+        case hlist_node:
+        case vlist_node:
+        case unset_node:
+            synctex_tag_box(n) = cur_input.synctex_tag_field;
+            synctex_line_box(n) = line;
+            break;
+        case rule_node:
+            synctex_tag_rule(n) = cur_input.synctex_tag_field;
+            synctex_line_rule(n) = line;
+            break;
         }
-        break;
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-        synctex_tag_box(n) = cur_input.synctex_tag_field;
-        synctex_line_box(n) = line;
-        break;
-    case rule_node:
-        synctex_tag_rule(n) = cur_input.synctex_tag_field;
-        synctex_line_rule(n) = line;
-        break;
     }
     /* take care of attributes */
     if (nodetype_has_attributes(i)) {
@@ -699,10 +794,98 @@ halfword copy_node_list(halfword p)
 } while (0)
 
 @ make a dupe of a single node
+
 @c
+
+/*
+    at some point we can use function pointers as in the backend itself:
+
+    typedef void (*copy_function) ();
+    copy_function *copy_functions;
+    xmalloc((MAX_WHATSIT_TYPE + 1) * sizeof(copy_function));
+*/
+
+static void copy_node_wrapup_core(halfword p, halfword r)
+{
+    halfword s ;
+    switch (subtype(p)) {
+        case write_node:
+        case special_node:
+            add_token_ref(write_tokens(p));
+            break;
+        case late_lua_node:
+            copy_late_lua(r, p);
+            break;
+        case user_defined_node:
+            switch (user_node_type(p)) {
+            case 'a':
+                add_node_attr_ref(user_node_value(p));
+                break;
+            case 'l':
+                copy_user_lua(r, p);
+                break;
+            case 'n':
+                s = copy_node_list(user_node_value(p));
+                user_node_value(r) = s;
+                break;
+            case 's':
+                /* |add_string_ref(user_node_value(p));| *//* if this was mpost .. */
+                break;
+            case 't':
+                add_token_ref(user_node_value(p));
+                break;
+            }
+            break;
+        default:
+            break ;
+    }
+}
+
+void copy_node_wrapup_dvi(halfword p, halfword r)
+{
+}
+
+void copy_node_wrapup_pdf(halfword p, halfword r)
+{
+    switch(subtype(p)) {
+        case pdf_literal_node:
+            copy_pdf_literal(r, p);
+            break;
+        case pdf_colorstack_node:
+            if (pdf_colorstack_cmd(p) <= colorstack_data)
+                add_token_ref(pdf_colorstack_data(p));
+            break;
+        case pdf_setmatrix_node:
+            add_token_ref(pdf_setmatrix_data(p));
+            break;
+        case pdf_annot_node:
+            add_token_ref(pdf_annot_data(p));
+            break;
+        case pdf_start_link_node:
+            if (pdf_link_attr(r) != null)
+                add_token_ref(pdf_link_attr(r));
+            add_action_ref(pdf_link_action(r));
+            break;
+        case pdf_dest_node:
+            if (pdf_dest_named_id(p) > 0)
+                add_token_ref(pdf_dest_id(p));
+            break;
+        case pdf_thread_node:
+        case pdf_start_thread_node:
+            if (pdf_thread_named_id(p) > 0)
+                add_token_ref(pdf_thread_id(p));
+            if (pdf_thread_attr(p) != null)
+                add_token_ref(pdf_thread_attr(p));
+            break;
+        default:
+            break;
+    }
+}
+
 halfword copy_node(const halfword p)
 {
     halfword r;                 /* current node being fabricated for new list */
+    halfword w ;                /* whatsit subtype */
     register halfword s;        /* a helper variable for copying into variable mem  */
     register int i;
     if (copy_error(p)) {
@@ -715,16 +898,18 @@ halfword copy_node(const halfword p)
     (void) memcpy((void *) (varmem + r), (void *) (varmem + p),
                   (sizeof(memory_word) * (unsigned) i));
 
-    /* handle synctex extension */
-   switch (type(p)) {
-    case math_node:
-        synctex_tag_math(r) = cur_input.synctex_tag_field;
-        synctex_line_math(r) = line;
-        break;
-    case kern_node:
-        synctex_tag_kern(r) = cur_input.synctex_tag_field;
-        synctex_line_kern(r) = line;
-        break;
+    if (int_par(synctex_code)) {
+        /* handle synctex extension */
+        switch (type(p)) {
+        case math_node:
+            synctex_tag_math(r) = cur_input.synctex_tag_field;
+            synctex_line_math(r) = line;
+            break;
+        case kern_node:
+            synctex_tag_kern(r) = cur_input.synctex_tag_field;
+            synctex_line_kern(r) = line;
+            break;
+        }
     }
     if (nodetype_has_attributes(type(p))) {
         add_node_attr_ref(node_attr(p));
@@ -775,6 +960,11 @@ halfword copy_node(const halfword p)
             assert(tlink_no_break(r) == null);
         }
         break;
+    case math_node:
+        if (glue_ptr(p) != zero_glue) {
+            add_glue_ref(glue_ptr(p));
+        }
+        break;
     case ins_node:
         add_glue_ref(split_top_ptr(p));
         copy_sub_list(ins_ptr(r),ins_ptr(p)) ;
@@ -795,18 +985,24 @@ halfword copy_node(const halfword p)
         copy_sub_list(script_script_mlist(r),script_script_mlist(p)) ;
         break;
     case simple_noad:
+        copy_sub_list(nucleus(r),nucleus(p)) ;
+        copy_sub_list(subscr(r),subscr(p)) ;
+        copy_sub_list(supscr(r),supscr(p)) ;
+        break;
     case radical_noad:
+        copy_sub_list(nucleus(r),nucleus(p)) ;
+        copy_sub_list(subscr(r),subscr(p)) ;
+        copy_sub_list(supscr(r),supscr(p)) ;
+        copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
+        copy_sub_list(degree(r),degree(p)) ;
+        break;
     case accent_noad:
         copy_sub_list(nucleus(r),nucleus(p)) ;
         copy_sub_list(subscr(r),subscr(p)) ;
         copy_sub_list(supscr(r),supscr(p)) ;
-        if (type(p) == accent_noad) {
-            copy_sub_list(accent_chr(r),accent_chr(p)) ;
-            copy_sub_list(bot_accent_chr(r),bot_accent_chr(p)) ;
-        } else if (type(p) == radical_noad) {
-            copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
-            copy_sub_list(degree(r),degree(p)) ;
-        }
+        copy_sub_list(top_accent_chr(r),top_accent_chr(p)) ;
+        copy_sub_list(bot_accent_chr(r),bot_accent_chr(p)) ;
+        copy_sub_list(overlay_accent_chr(r),overlay_accent_chr(p)) ;
         break;
     case fence_noad:
         copy_sub_node(delimiter(r),delimiter(p)) ;
@@ -824,77 +1020,18 @@ halfword copy_node(const halfword p)
     case glue_spec_node:
         glue_ref_count(r) = null;
         break;
-    case whatsit_node:
-        switch (subtype(p)) {
-        case dir_node:
-        case local_par_node:
-            break;
-        case write_node:
-        case special_node:
-            add_token_ref(write_tokens(p));
-            break;
-        case pdf_literal_node:
-            copy_pdf_literal(r, p);
-            break;
-        case pdf_colorstack_node:
-            if (pdf_colorstack_cmd(p) <= colorstack_data)
-                add_token_ref(pdf_colorstack_data(p));
-            break;
-        case pdf_setmatrix_node:
-            add_token_ref(pdf_setmatrix_data(p));
-            break;
-        case late_lua_node:
-            copy_late_lua(r, p);
-            break;
-        case pdf_annot_node:
-            add_token_ref(pdf_annot_data(p));
-            break;
-        case pdf_start_link_node:
-            if (pdf_link_attr(r) != null)
-                add_token_ref(pdf_link_attr(r));
-            add_action_ref(pdf_link_action(r));
-            break;
-        case pdf_dest_node:
-            if (pdf_dest_named_id(p) > 0)
-                add_token_ref(pdf_dest_id(p));
-            break;
-        case pdf_thread_node:
-        case pdf_start_thread_node:
-            if (pdf_thread_named_id(p) > 0)
-                add_token_ref(pdf_thread_id(p));
-            if (pdf_thread_attr(p) != null)
-                add_token_ref(pdf_thread_attr(p));
-            break;
-        case user_defined_node:
-            switch (user_node_type(p)) {
-            case 'a':
-                add_node_attr_ref(user_node_value(p));
-                break;
-            case 'l':
-                copy_user_lua(r, p);
-                break;
-            case 'n':
-                s = copy_node_list(user_node_value(p));
-                user_node_value(r) = s;
-                break;
-            case 's':
-                /* |add_string_ref(user_node_value(p));| *//* if this was mpost .. */
-                break;
-            case 't':
-                add_token_ref(user_node_value(p));
-                break;
-            }
-            break;
-#if 0
-        case style_node:
-        case delim_node:
-        case math_char_node:
-        case math_text_char_node:
+    case dir_node:
+    case local_par_node:
+    case boundary_node:
         break;
-#else
-        default:
-#endif
-            break;
+    case whatsit_node:
+        w = subtype(p) ;
+        if (w >= backend_first_pdf_whatsit) {
+            copy_node_wrapup_pdf(p,r);
+        } else if (w >= backend_first_dvi_whatsit) {
+            copy_node_wrapup_dvi(p,r);
+        } else {
+            copy_node_wrapup_core(p,r);
         }
         break;
     }
@@ -1097,118 +1234,20 @@ int copy_error(halfword p)
 } while (0)
 
 @ @c
-void flush_node(halfword p)
+
+static void flush_node_wrapup_core(halfword p)
 {
-
-    if (p == null)              /* legal, but no-op */
-        return;
-
-#ifdef DEBUG
-    fprintf(DEBUG_OUT, "Free-ing %s node %d\n",
-            get_node_name(type(p), subtype(p)), (int) p);
-#endif
-    if (free_error(p))
-        return;
-
-    switch (type(p)) {
-    case glyph_node:
-        free_sub_list(lig_ptr(p));
-        break;
-    case glue_node:
-        delete_glue_ref(glue_ptr(p));
-        free_sub_list(leader_ptr(p));
-        break;
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-        free_sub_list(list_ptr(p));
-        break;
-    case disc_node:
-        free_sub_list(vlink(pre_break(p)));
-        free_sub_list(vlink(post_break(p)));
-        free_sub_list(vlink(no_break(p)));
-// why not: free_sub_list(pre_break(p));
-// why not: free_sub_list(post_break(p));
-// why not: free_sub_list(no_break(p));
-        break;
-    case rule_node:
-    case kern_node:
-    case math_node:
-    case penalty_node:
-        break;
-    case glue_spec_node:
-        /* this allows free-ing of lua-allocated glue specs */
-        if (valid_node(p)) {
-            if (glue_ref_count(p)!=null) {
-                decr(glue_ref_count(p));
-            } else {
-                free_node(p, get_node_size(type(p), subtype(p)));
-            }
-        }
-        return ;
-        break ;
-    case whatsit_node:
-        switch (subtype(p)) {
-
-        case dir_node:
-            break;
+    switch (subtype(p)) {
         case open_node:
         case write_node:
         case close_node:
-        case pdf_save_node:
-        case pdf_restore_node:
-        case cancel_boundary_node:
-        case pdf_refobj_node:
-        case pdf_refxform_node:
-        case pdf_refximage_node:
-        case pdf_end_link_node:
-        case pdf_end_thread_node:
         case save_pos_node:
-        case local_par_node:
             break;
-
         case special_node:
             delete_token_ref(write_tokens(p));
             break;
-        case pdf_literal_node:
-            free_pdf_literal(p);
-            break;
-        case pdf_colorstack_node:
-            if (pdf_colorstack_cmd(p) <= colorstack_data)
-                delete_token_ref(pdf_colorstack_data(p));
-            break;
-        case pdf_setmatrix_node:
-            delete_token_ref(pdf_setmatrix_data(p));
-            break;
         case late_lua_node:
             free_late_lua(p);
-            break;
-        case pdf_annot_node:
-            delete_token_ref(pdf_annot_data(p));
-            break;
-
-        case pdf_link_data_node:
-            break;
-
-        case pdf_start_link_node:
-            if (pdf_link_attr(p) != null)
-                delete_token_ref(pdf_link_attr(p));
-            delete_action_ref(pdf_link_action(p));
-            break;
-        case pdf_dest_node:
-            if (pdf_dest_named_id(p) > 0)
-                delete_token_ref(pdf_dest_id(p));
-            break;
-
-        case pdf_thread_data_node:
-            break;
-
-        case pdf_thread_node:
-        case pdf_start_thread_node:
-            if (pdf_thread_named_id(p) > 0)
-                delete_token_ref(pdf_thread_id(p));
-            if (pdf_thread_attr(p) != null)
-                delete_token_ref(pdf_thread_attr(p));
             break;
         case user_defined_node:
             switch (user_node_type(p)) {
@@ -1240,11 +1279,136 @@ void flush_node(halfword p)
                 break;
             }
             break;
+    }
+}
 
-        default:
-            confusion("ext3");
-            return;
+void flush_node_wrapup_dvi(halfword p)
+{
+}
 
+void flush_node_wrapup_pdf(halfword p)
+{
+    switch(subtype(p)) {
+        case pdf_save_node:
+        case pdf_restore_node:
+        case pdf_refobj_node:
+        case pdf_end_link_node:
+        case pdf_end_thread_node:
+            break;
+        case pdf_literal_node:
+            free_pdf_literal(p);
+            break;
+        case pdf_colorstack_node:
+            if (pdf_colorstack_cmd(p) <= colorstack_data)
+                delete_token_ref(pdf_colorstack_data(p));
+            break;
+        case pdf_setmatrix_node:
+            delete_token_ref(pdf_setmatrix_data(p));
+            break;
+        case pdf_annot_node:
+            delete_token_ref(pdf_annot_data(p));
+            break;
+        case pdf_link_data_node:
+            break;
+        case pdf_start_link_node:
+            if (pdf_link_attr(p) != null)
+                delete_token_ref(pdf_link_attr(p));
+            delete_action_ref(pdf_link_action(p));
+            break;
+        case pdf_dest_node:
+            if (pdf_dest_named_id(p) > 0)
+                delete_token_ref(pdf_dest_id(p));
+            break;
+        case pdf_action_node:
+            if (pdf_action_type(p) == pdf_action_user) {
+                delete_token_ref(pdf_action_tokens(p));
+            } else {
+                if (pdf_action_file(p) != null)
+                    delete_token_ref(pdf_action_file(p));
+                if (pdf_action_type(p) == pdf_action_page)
+                    delete_token_ref(pdf_action_tokens(p));
+                else if (pdf_action_named_id(p) > 0)
+                    delete_token_ref(pdf_action_id(p));
+            }
+            break;
+        case pdf_thread_data_node:
+            break;
+        case pdf_thread_node:
+        case pdf_start_thread_node:
+            if (pdf_thread_named_id(p) > 0)
+                delete_token_ref(pdf_thread_id(p));
+            if (pdf_thread_attr(p) != null)
+                delete_token_ref(pdf_thread_attr(p));
+            break;
+    }
+}
+
+void flush_node(halfword p)
+{
+    halfword w;
+    if (p == null)              /* legal, but no-op */
+        return;
+
+#ifdef DEBUG
+    fprintf(DEBUG_OUT, "Free-ing %s node %d\n",
+            get_node_name(type(p), subtype(p)), (int) p);
+#endif
+    if (free_error(p))
+        return;
+
+    switch (type(p)) {
+    case glyph_node:
+        free_sub_list(lig_ptr(p));
+        break;
+    case glue_node:
+        delete_glue_ref(glue_ptr(p));
+        free_sub_list(leader_ptr(p));
+        break;
+    case hlist_node:
+    case vlist_node:
+    case unset_node:
+        free_sub_list(list_ptr(p));
+        break;
+    case disc_node:
+        /* watch the start at temp node hack */
+        free_sub_list(vlink(pre_break(p)));
+        free_sub_list(vlink(post_break(p)));
+        free_sub_list(vlink(no_break(p)));
+        break;
+    case rule_node:
+    case kern_node:
+    case penalty_node:
+        break;
+    case math_node:
+        /* begin mathskip code */
+        if (glue_ptr(p) != zero_glue) {
+            delete_glue_ref(glue_ptr(p));
+        }
+        /* end mathskip code */
+        break;
+    case glue_spec_node:
+        /* this allows free-ing of lua-allocated glue specs */
+        if (valid_node(p)) {
+            if (glue_ref_count(p)!=null) {
+                decr(glue_ref_count(p));
+            } else {
+                free_node(p, get_node_size(type(p), subtype(p)));
+            }
+        }
+        return ;
+        break ;
+    case dir_node:
+    case local_par_node:
+    case boundary_node:
+        break;
+    case whatsit_node:
+        w = subtype(p) ;
+        if (w >= backend_first_pdf_whatsit) {
+            flush_node_wrapup_pdf(p);
+        } else if (w >= backend_first_dvi_whatsit) {
+            flush_node_wrapup_dvi(p);
+        } else {
+            flush_node_wrapup_core(p);
         }
         break;
     case ins_node:
@@ -1269,18 +1433,24 @@ void flush_node(halfword p)
         free_sub_list(script_script_mlist(p));
         break;
     case simple_noad:
+        free_sub_list(nucleus(p));
+        free_sub_list(subscr(p));
+        free_sub_list(supscr(p));
+        break;
     case radical_noad:
+        free_sub_list(nucleus(p));
+        free_sub_list(subscr(p));
+        free_sub_list(supscr(p));
+        free_sub_node(left_delimiter(p));
+        free_sub_list(degree(p));
+        break;
     case accent_noad:
         free_sub_list(nucleus(p));
         free_sub_list(subscr(p));
         free_sub_list(supscr(p));
-        if (type(p) == accent_noad) {
-            free_sub_list(accent_chr(p));
-            free_sub_list(bot_accent_chr(p));
-        } else if (type(p) == radical_noad) {
-            free_sub_node(left_delimiter(p));
-            free_sub_list(degree(p));
-        }
+        free_sub_list(top_accent_chr(p));
+        free_sub_list(bot_accent_chr(p));
+        free_sub_list(overlay_accent_chr(p));
         break;
     case fence_noad:
         free_sub_list(delimiter(p));
@@ -1316,7 +1486,6 @@ void flush_node(halfword p)
     case hyphenated_node:
     case delta_node:
     case passive_node:
-    case action_node:
     case inserting_node:
     case split_up_node:
     case expr_node:
@@ -1377,32 +1546,48 @@ static int test_count = 1;
 #define check_attribute_ref(a)  { dorangetest(p,a,var_mem_max); }
 #define check_token_ref(a)      assert(1)
 
-void check_node(halfword p)
+static void check_node_wrapup_core(halfword p)
 {
-
-    switch (type(p)) {
-    case glyph_node:
-        dorangetest(p, lig_ptr(p), var_mem_max);
-        break;
-    case glue_node:
-        check_glue_ref(glue_ptr(p));
-        dorangetest(p, leader_ptr(p), var_mem_max);
-        break;
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-    case align_record_node:
-        dorangetest(p, list_ptr(p), var_mem_max);
-        break;
-    case ins_node:
-        dorangetest(p, ins_ptr(p), var_mem_max);
-        check_glue_ref(split_top_ptr(p));
-        break;
-    case whatsit_node:
-        switch (subtype(p)) {
+    switch (subtype(p)) {
+        /* frontend code */
         case special_node:
             check_token_ref(write_tokens(p));
             break;
+        case user_defined_node:
+            switch (user_node_type(p)) {
+            case 'a':
+                check_attribute_ref(user_node_value(p));
+                break;
+            case 't':
+                check_token_ref(user_node_value(p));
+                break;
+            case 'n':
+                dorangetest(p, user_node_value(p), var_mem_max);
+                break;
+            case 's':
+            case 'd':
+                break;
+            default:
+                confusion("extuser");
+                break;
+            }
+            break;
+        case open_node:
+        case write_node:
+        case close_node:
+        case save_pos_node:
+            confusion("ext3"); /* why */
+            break;
+    }
+}
+
+void check_node_wrapup_dvi(halfword p)
+{
+}
+
+void check_node_wrapup_pdf(halfword p)
+{
+    switch (subtype(p)) {
         case pdf_literal_node:
             if (pdf_literal_type(p) == normal)
                 check_token_ref(pdf_literal_data(p));
@@ -1439,46 +1624,58 @@ void check_node(halfword p)
             if (pdf_thread_attr(p) != null)
                 check_token_ref(pdf_thread_attr(p));
             break;
-        case user_defined_node:
-            switch (user_node_type(p)) {
-            case 'a':
-                check_attribute_ref(user_node_value(p));
-                break;
-            case 't':
-                check_token_ref(user_node_value(p));
-                break;
-            case 'n':
-                dorangetest(p, user_node_value(p), var_mem_max);
-                break;
-            case 's':
-            case 'd':
-                break;
-            default:
-                confusion("extuser");
-                break;
-            }
-            break;
-        case dir_node:
-        case open_node:
-        case write_node:
-        case close_node:
         case pdf_save_node:
         case pdf_restore_node:
-        case cancel_boundary_node:
         case pdf_refobj_node:
-        case pdf_refxform_node:
-        case pdf_refximage_node:
         case pdf_end_link_node:
         case pdf_end_thread_node:
-        case save_pos_node:
-        case local_par_node:
             break;
         default:
             confusion("ext3");
+            break;
+    }
+}
+
+void check_node(halfword p)
+{
+    halfword w ;
+    switch (type(p)) {
+    case glyph_node:
+        dorangetest(p, lig_ptr(p), var_mem_max);
+        break;
+    case glue_node:
+        check_glue_ref(glue_ptr(p));
+        dorangetest(p, leader_ptr(p), var_mem_max);
+        break;
+    case hlist_node:
+    case vlist_node:
+    case unset_node:
+    case align_record_node:
+        dorangetest(p, list_ptr(p), var_mem_max);
+        break;
+    case ins_node:
+        dorangetest(p, ins_ptr(p), var_mem_max);
+        check_glue_ref(split_top_ptr(p));
+        break;
+    case whatsit_node:
+        w = subtype(p) ;
+        if (w >= backend_first_pdf_whatsit) {
+            check_node_wrapup_pdf(p);
+        } else if (w >= backend_first_dvi_whatsit) {
+            check_node_wrapup_dvi(p);
+        } else {
+            check_node_wrapup_core(p);
         }
         break;
     case margin_kern_node:
         check_node(margin_char(p));
+        break;
+    case math_node:
+        /* begin mathskip code */
+        if (glue_ptr(p) != zero_glue) {
+            check_glue_ref(glue_ptr(p));
+        }
+        /* end mathskip code */
         break;
     case disc_node:
         dorangetest(p, vlink(pre_break(p)), var_mem_max);
@@ -1522,15 +1719,15 @@ void check_node(halfword p)
         dorangetest(p, nucleus(p), var_mem_max);
         dorangetest(p, subscr(p), var_mem_max);
         dorangetest(p, supscr(p), var_mem_max);
-        dorangetest(p, accent_chr(p), var_mem_max);
+        dorangetest(p, top_accent_chr(p), var_mem_max);
         dorangetest(p, bot_accent_chr(p), var_mem_max);
+        dorangetest(p, overlay_accent_chr(p), var_mem_max);
         break;
     case fence_noad:
         dorangetest(p, delimiter(p), var_mem_max);
         break;
     case rule_node:
     case kern_node:
-    case math_node:
     case penalty_node:
     case mark_node:
     case style_node:
@@ -1548,6 +1745,9 @@ void check_node(halfword p)
     case delta_node:
     case passive_node:
     case expr_node:
+    case dir_node:
+    case boundary_node:
+    case local_par_node:
         break;
     default:
         fprintf(stdout, "check_node: type is %d\n", type(p));
@@ -2265,6 +2465,13 @@ void delete_attribute_ref(halfword b)
     }
 }
 
+void reset_node_properties(halfword b)
+{
+    if (b != null) {
+        lua_properties_reset(b);
+    }
+}
+
 @ |p| is an attr list head, or zero
 @c
 halfword do_set_attribute(halfword p, int i, int val)
@@ -2522,311 +2729,257 @@ static void print_write_whatsit(const char *s, pointer p)
 
 
 @ @c
-static void show_whatsit_node(int p)
+
+static void show_node_wrapup_core(int p)
 {
     switch (subtype(p)) {
-    case open_node:
-        print_write_whatsit("openout", p);
-        print_char('=');
-        print_file_name(open_name(p), open_area(p), open_ext(p));
-        break;
-    case write_node:
-        print_write_whatsit("write", p);
-        print_mark(write_tokens(p));
-        break;
-    case close_node:
-        print_write_whatsit("closeout", p);
-        break;
-    case special_node:
-        tprint_esc("special");
-        print_mark(write_tokens(p));
-        break;
-    case dir_node:
-        if (dir_dir(p) < 0) {
-            tprint_esc("enddir");
-            print_char(' ');
-            print_dir(dir_dir(p) + 64);
-        } else {
-            tprint_esc("begindir");
-            print_char(' ');
-            print_dir(dir_dir(p));
-        }
-        break;
-    case local_par_node:
-        tprint_esc("whatsit");
-        append_char('.');
-        print_ln();
-        print_current_string();
-        tprint_esc("localinterlinepenalty");
-        print_char('=');
-        print_int(local_pen_inter(p));
-        print_ln();
-        print_current_string();
-        tprint_esc("localbrokenpenalty");
-        print_char('=');
-        print_int(local_pen_broken(p));
-        print_ln();
-        print_current_string();
-        tprint_esc("localleftbox");
-        if (local_box_left(p) == null) {
-            tprint("=null");
-        } else {
-            append_char('.');
-            show_node_list(local_box_left(p));
-            decr(cur_length);
-        }
-        print_ln();
-        print_current_string();
-        tprint_esc("localrightbox");
-        if (local_box_right(p) == null) {
-            tprint("=null");
-        } else {
-            append_char('.');
-            show_node_list(local_box_right(p));
-            decr(cur_length);
-        }
-        decr(cur_length);
-        break;
-    case pdf_literal_node:
-        show_pdf_literal(p);
-        break;
-    case pdf_colorstack_node:
-        tprint_esc("pdfcolorstack ");
-        print_int(pdf_colorstack_stack(p));
-        switch (pdf_colorstack_cmd(p)) {
-        case colorstack_set:
-            tprint(" set ");
+        case open_node:
+            print_write_whatsit("openout", p);
+            print_char('=');
+            print_file_name(open_name(p), open_area(p), open_ext(p));
             break;
-        case colorstack_push:
-            tprint(" push ");
+        case write_node:
+            print_write_whatsit("write", p);
+            print_mark(write_tokens(p));
             break;
-        case colorstack_pop:
-            tprint(" pop");
+        case close_node:
+            print_write_whatsit("closeout", p);
             break;
-        case colorstack_current:
-            tprint(" current");
+        case special_node:
+            tprint_esc("special");
+            print_mark(write_tokens(p));
             break;
-        default:
-            confusion("pdfcolorstack");
+        case late_lua_node:
+            show_late_lua(p);
             break;
-        }
-        if (pdf_colorstack_cmd(p) <= colorstack_data)
-            print_mark(pdf_colorstack_data(p));
-        break;
-    case pdf_setmatrix_node:
-        tprint_esc("pdfsetmatrix");
-        print_mark(pdf_setmatrix_data(p));
-        break;
-    case pdf_save_node:
-        tprint_esc("pdfsave");
-        break;
-    case pdf_restore_node:
-        tprint_esc("pdfrestore");
-        break;
-    case cancel_boundary_node:
-        tprint_esc("noboundary");
-        break;
-    case late_lua_node:
-        show_late_lua(p);
-        break;
-    case pdf_refobj_node:
-        tprint_esc("pdfrefobj");
-        if (obj_obj_is_stream(static_pdf, pdf_obj_objnum(p))) {
-            if (obj_obj_stream_attr(static_pdf, pdf_obj_objnum(p)) != LUA_NOREF) {
-                tprint(" attr");
+        case save_pos_node:
+            tprint_esc("savepos");
+            break;
+        case user_defined_node:
+            tprint_esc("whatsit");
+            print_int(user_node_id(p));
+            print_char('=');
+            switch (user_node_type(p)) {
+            case 'a':
+                tprint("<>");
+                break;
+            case 'n':
+                tprint("[");
+                show_node_list(user_node_value(p));
+                tprint("]");
+                break;
+            case 's':
+                print_char('"');
+                print(user_node_value(p));
+                print_char('"');
+                break;
+            case 't':
+                print_mark(user_node_value(p));
+                break;
+            default:               /* only 'd' */
+                print_int(user_node_value(p));
+                break;
+            }
+            break;
+    }
+}
+
+void show_node_wrapup_dvi(int p)
+{
+}
+
+void show_node_wrapup_pdf(int p)
+{
+    switch (subtype(p)) {
+        case pdf_literal_node:
+            show_pdf_literal(p);
+            break;
+        case pdf_colorstack_node:
+            tprint_esc("pdfcolorstack ");
+            print_int(pdf_colorstack_stack(p));
+            switch (pdf_colorstack_cmd(p)) {
+            case colorstack_set:
+                tprint(" set ");
+                break;
+            case colorstack_push:
+                tprint(" push ");
+                break;
+            case colorstack_pop:
+                tprint(" pop");
+                break;
+            case colorstack_current:
+                tprint(" current");
+                break;
+            default:
+                confusion("pdfcolorstack");
+                break;
+            }
+            if (pdf_colorstack_cmd(p) <= colorstack_data)
+                print_mark(pdf_colorstack_data(p));
+            break;
+        case pdf_setmatrix_node:
+            tprint_esc("pdfsetmatrix");
+            print_mark(pdf_setmatrix_data(p));
+            break;
+        case pdf_save_node:
+            tprint_esc("pdfsave");
+            break;
+        case pdf_restore_node:
+            tprint_esc("pdfrestore");
+            break;
+        case pdf_refobj_node:
+            tprint_esc("pdfrefobj");
+            if (obj_obj_is_stream(static_pdf, pdf_obj_objnum(p))) {
+                if (obj_obj_stream_attr(static_pdf, pdf_obj_objnum(p)) != LUA_NOREF) {
+                    tprint(" attr");
+                    lua_rawgeti(Luas, LUA_REGISTRYINDEX,
+                                obj_obj_stream_attr(static_pdf, pdf_obj_objnum(p)));
+                    print_char(' ');
+                    tprint((const char *) lua_tostring(Luas, -1));
+                    lua_pop(Luas, 1);
+                }
+                tprint(" stream");
+            }
+            if (obj_obj_is_file(static_pdf, pdf_obj_objnum(p)))
+                tprint(" file");
+            if (obj_obj_data(static_pdf, pdf_obj_objnum(p)) != LUA_NOREF) {
                 lua_rawgeti(Luas, LUA_REGISTRYINDEX,
-                            obj_obj_stream_attr(static_pdf, pdf_obj_objnum(p)));
+                            obj_obj_data(static_pdf, pdf_obj_objnum(p)));
                 print_char(' ');
                 tprint((const char *) lua_tostring(Luas, -1));
                 lua_pop(Luas, 1);
             }
-            tprint(" stream");
-        }
-        if (obj_obj_is_file(static_pdf, pdf_obj_objnum(p)))
-            tprint(" file");
-        if (obj_obj_data(static_pdf, pdf_obj_objnum(p)) != LUA_NOREF) {
-            lua_rawgeti(Luas, LUA_REGISTRYINDEX,
-                        obj_obj_data(static_pdf, pdf_obj_objnum(p)));
-            print_char(' ');
-            tprint((const char *) lua_tostring(Luas, -1));
-            lua_pop(Luas, 1);
-        }
-        break;
-    case pdf_refxform_node:
-    case pdf_refximage_node:
-        if (subtype(p) == pdf_refxform_node)
-            tprint_esc("pdfrefxform");
-        else
-            tprint_esc("pdfrefximage");
-        tprint("(");
-        print_scaled(height(p));
-        print_char('+');
-        print_scaled(depth(p));
-        tprint(")x");
-        print_scaled(width(p));
-        break;
-    case pdf_annot_node:
-        tprint_esc("pdfannot");
-        show_pdftex_whatsit_rule_spec(p);
-        print_mark(pdf_annot_data(p));
-        break;
-    case pdf_start_link_node:
-        tprint_esc("pdfstartlink");
-        show_pdftex_whatsit_rule_spec(p);
-        if (pdf_link_attr(p) != null) {
-            tprint(" attr");
-            print_mark(pdf_link_attr(p));
-        }
-        tprint(" action");
-        if (pdf_action_type(pdf_link_action(p)) == pdf_action_user) {
-            tprint(" user");
-            print_mark(pdf_action_tokens(pdf_link_action(p)));
-            return;
-        }
-        if (pdf_action_file(pdf_link_action(p)) != null) {
-            tprint(" file");
-            print_mark(pdf_action_file(pdf_link_action(p)));
-        }
-        switch (pdf_action_type(pdf_link_action(p))) {
-        case pdf_action_goto:
-            if (pdf_action_named_id(pdf_link_action(p)) > 0) {
-                tprint(" goto name");
-                print_mark(pdf_action_id(pdf_link_action(p)));
-            } else {
-                tprint(" goto num");
-                print_int(pdf_action_id(pdf_link_action(p)));
-            }
             break;
-        case pdf_action_page:
-            tprint(" page");
-            print_int(pdf_action_id(pdf_link_action(p)));
-            print_mark(pdf_action_tokens(pdf_link_action(p)));
-            break;
-        case pdf_action_thread:
-            if (pdf_action_named_id(pdf_link_action(p)) > 0) {
-                tprint(" thread name");
-                print_mark(pdf_action_id(pdf_link_action(p)));
-            } else {
-                tprint(" thread num");
-                print_int(pdf_action_id(pdf_link_action(p)));
-            }
-            break;
-        default:
-            pdf_error("displaying", "unknown action type");
-            break;
-        }
-        break;
-    case pdf_end_link_node:
-        tprint_esc("pdfendlink");
-        break;
-    case pdf_dest_node:
-        tprint_esc("pdfdest");
-        if (pdf_dest_named_id(p) > 0) {
-            tprint(" name");
-            print_mark(pdf_dest_id(p));
-        } else {
-            tprint(" num");
-            print_int(pdf_dest_id(p));
-        }
-        print_char(' ');
-        switch (pdf_dest_type(p)) {
-        case pdf_dest_xyz:
-            tprint("xyz");
-            if (pdf_dest_xyz_zoom(p) != null) {
-                tprint(" zoom");
-                print_int(pdf_dest_xyz_zoom(p));
-            }
-            break;
-        case pdf_dest_fitbh:
-            tprint("fitbh");
-            break;
-        case pdf_dest_fitbv:
-            tprint("fitbv");
-            break;
-        case pdf_dest_fitb:
-            tprint("fitb");
-            break;
-        case pdf_dest_fith:
-            tprint("fith");
-            break;
-        case pdf_dest_fitv:
-            tprint("fitv");
-            break;
-        case pdf_dest_fitr:
-            tprint("fitr");
+        case pdf_annot_node:
+            tprint_esc("pdfannot");
             show_pdftex_whatsit_rule_spec(p);
+            print_mark(pdf_annot_data(p));
             break;
-        case pdf_dest_fit:
-            tprint("fit");
+        case pdf_start_link_node:
+            tprint_esc("pdfstartlink");
+            show_pdftex_whatsit_rule_spec(p);
+            if (pdf_link_attr(p) != null) {
+                tprint(" attr");
+                print_mark(pdf_link_attr(p));
+            }
+            tprint(" action");
+            if (pdf_action_type(pdf_link_action(p)) == pdf_action_user) {
+                tprint(" user");
+                print_mark(pdf_action_tokens(pdf_link_action(p)));
+                return;
+            }
+            if (pdf_action_file(pdf_link_action(p)) != null) {
+                tprint(" file");
+                print_mark(pdf_action_file(pdf_link_action(p)));
+            }
+            switch (pdf_action_type(pdf_link_action(p))) {
+            case pdf_action_goto:
+                if (pdf_action_named_id(pdf_link_action(p)) > 0) {
+                    tprint(" goto name");
+                    print_mark(pdf_action_id(pdf_link_action(p)));
+                } else {
+                    tprint(" goto num");
+                    print_int(pdf_action_id(pdf_link_action(p)));
+                }
+                break;
+            case pdf_action_page:
+                tprint(" page");
+                print_int(pdf_action_id(pdf_link_action(p)));
+                print_mark(pdf_action_tokens(pdf_link_action(p)));
+                break;
+            case pdf_action_thread:
+                if (pdf_action_named_id(pdf_link_action(p)) > 0) {
+                    tprint(" thread name");
+                    print_mark(pdf_action_id(pdf_link_action(p)));
+                } else {
+                    tprint(" thread num");
+                    print_int(pdf_action_id(pdf_link_action(p)));
+                }
+                break;
+            default:
+                normal_error("pdf backend", "unknown action type for link");
+                break;
+            }
+            break;
+        case pdf_end_link_node:
+            tprint_esc("pdfendlink");
+            break;
+        case pdf_dest_node:
+            tprint_esc("pdfdest");
+            if (pdf_dest_named_id(p) > 0) {
+                tprint(" name");
+                print_mark(pdf_dest_id(p));
+            } else {
+                tprint(" num");
+                print_int(pdf_dest_id(p));
+            }
+            print_char(' ');
+            switch (pdf_dest_type(p)) {
+            case pdf_dest_xyz:
+                tprint("xyz");
+                if (pdf_dest_xyz_zoom(p) != null) {
+                    tprint(" zoom");
+                    print_int(pdf_dest_xyz_zoom(p));
+                }
+                break;
+            case pdf_dest_fitbh:
+                tprint("fitbh");
+                break;
+            case pdf_dest_fitbv:
+                tprint("fitbv");
+                break;
+            case pdf_dest_fitb:
+                tprint("fitb");
+                break;
+            case pdf_dest_fith:
+                tprint("fith");
+                break;
+            case pdf_dest_fitv:
+                tprint("fitv");
+                break;
+            case pdf_dest_fitr:
+                tprint("fitr");
+                show_pdftex_whatsit_rule_spec(p);
+                break;
+            case pdf_dest_fit:
+                tprint("fit");
+                break;
+            default:
+                tprint("unknown!");
+                break;
+            }
+            break;
+        case pdf_thread_node:
+        case pdf_start_thread_node:
+            if (subtype(p) == pdf_thread_node)
+                tprint_esc("pdfthread");
+            else
+                tprint_esc("pdfstartthread");
+            tprint("(");
+            print_rule_dimen(height(p));
+            print_char('+');
+            print_rule_dimen(depth(p));
+            tprint(")x");
+            print_rule_dimen(width(p));
+            if (pdf_thread_attr(p) != null) {
+                tprint(" attr");
+                print_mark(pdf_thread_attr(p));
+            }
+            if (pdf_thread_named_id(p) > 0) {
+                tprint(" name");
+                print_mark(pdf_thread_id(p));
+            } else {
+                tprint(" num");
+                print_int(pdf_thread_id(p));
+            }
+            break;
+        case pdf_end_thread_node:
+            tprint_esc("pdfendthread");
             break;
         default:
-            tprint("unknown!");
             break;
-        }
-        break;
-    case pdf_thread_node:
-    case pdf_start_thread_node:
-        if (subtype(p) == pdf_thread_node)
-            tprint_esc("pdfthread");
-        else
-            tprint_esc("pdfstartthread");
-        tprint("(");
-        print_rule_dimen(height(p));
-        print_char('+');
-        print_rule_dimen(depth(p));
-        tprint(")x");
-        print_rule_dimen(width(p));
-        if (pdf_thread_attr(p) != null) {
-            tprint(" attr");
-            print_mark(pdf_thread_attr(p));
-        }
-        if (pdf_thread_named_id(p) > 0) {
-            tprint(" name");
-            print_mark(pdf_thread_id(p));
-        } else {
-            tprint(" num");
-            print_int(pdf_thread_id(p));
-        }
-        break;
-    case pdf_end_thread_node:
-        tprint_esc("pdfendthread");
-        break;
-    case save_pos_node:
-        tprint_esc("savepos");
-        break;
-    case user_defined_node:
-        tprint_esc("whatsit");
-        print_int(user_node_id(p));
-        print_char('=');
-        switch (user_node_type(p)) {
-        case 'a':
-            tprint("<>");
-            break;
-        case 'n':
-            tprint("[");
-            show_node_list(user_node_value(p));
-            tprint("]");
-            break;
-        case 's':
-            print_char('"');
-            print(user_node_value(p));
-            print_char('"');
-            break;
-        case 't':
-            print_mark(user_node_value(p));
-            break;
-        default:               /* only 'd' */
-            print_int(user_node_value(p));
-            break;
-        }
-        break;
-    default:
-        tprint("whatsit?");
-        break;
     }
 }
-
-
 
 @  Now we are ready for |show_node_list| itself. This procedure has been
   written to be ``extra robust'' in the sense that it should not crash or get
@@ -2853,6 +3006,7 @@ static void show_whatsit_node(int p)
 void show_node_list(int p)
 {                               /* prints a node list symbolically */
     int n;                      /* the number of items already printed at this level */
+    halfword w;
     real g;                     /* a glue ratio, as a floating point number */
     if ((int) cur_length > depth_threshold) {
         if (p > null)
@@ -2955,7 +3109,13 @@ void show_node_list(int p)
                 break;
             case rule_node:
                 /* Display rule |p|; */
-                tprint_esc("rule(");
+                if (subtype(p) == normal_rule) {
+                    tprint_esc("rule(");
+                } else if (subtype(p) == box_rule) {
+                    tprint_esc("box(");
+                } else if (subtype(p) == image_rule) {
+                    tprint_esc("image(");
+                }
                 print_rule_dimen(height(p));
                 print_char('+');
                 print_rule_dimen(depth(p));
@@ -2976,8 +3136,72 @@ void show_node_list(int p)
                 print_int(float_cost(p));
                 node_list_display(ins_ptr(p));  /* recursive call */
                 break;
+            case dir_node:
+                if (dir_dir(p) < 0) {
+                    tprint_esc("enddir");
+                    print_char(' ');
+                    print_dir(dir_dir(p) + dir_swap);
+                } else {
+                    tprint_esc("begindir");
+                    print_char(' ');
+                    print_dir(dir_dir(p));
+                }
+                break;
+            case local_par_node:
+                tprint_esc("localpar");
+                append_char('.');
+                print_ln();
+                print_current_string();
+                tprint_esc("localinterlinepenalty");
+                print_char('=');
+                print_int(local_pen_inter(p));
+                print_ln();
+                print_current_string();
+                tprint_esc("localbrokenpenalty");
+                print_char('=');
+                print_int(local_pen_broken(p));
+                print_ln();
+                print_current_string();
+                tprint_esc("localleftbox");
+                if (local_box_left(p) == null) {
+                    tprint("=null");
+                } else {
+                    append_char('.');
+                    show_node_list(local_box_left(p));
+                    decr(cur_length);
+                }
+                print_ln();
+                print_current_string();
+                tprint_esc("localrightbox");
+                if (local_box_right(p) == null) {
+                    tprint("=null");
+                } else {
+                    append_char('.');
+                    show_node_list(local_box_right(p));
+                    decr(cur_length);
+                }
+                decr(cur_length);
+                break;
+            case boundary_node:
+                if (subtype(p)==0) {
+                    tprint_esc("noboundary");
+                } else{
+                    tprint_esc("boundary");
+                    print_char('=');
+                    print_int(subtype(p));
+                    print_char(':');
+                    print_int(boundary_value(p));
+                }
+                break;
             case whatsit_node:
-                show_whatsit_node(p);
+                w = subtype(p) ;
+                if (w >= backend_first_pdf_whatsit) {
+                    show_node_wrapup_pdf(p);
+                } else if (w >= backend_first_dvi_whatsit) {
+                    show_node_wrapup_dvi(p);
+                } else {
+                    show_node_wrapup_core(p);
+                }
                 break;
             case glue_node:
                 /* Display glue |p|; */
@@ -3148,8 +3372,14 @@ pointer actual_box_width(pointer r, scaled base_width)
             d = width(p);
             break;
         case math_node:
-            d = surround(p);
-            break;
+            /* begin mathskip code */
+            if (glue_ptr(p) == zero_glue) {
+                d = surround(p);
+                break;
+            } else {
+                /* fall through */
+            }
+            /* end mathskip code */
         case glue_node:
             /* We need to be careful that |w|, |v|, and |d| do not depend on any |glue_set|
                values, since such values are subject to system-dependent rounding.
@@ -3170,13 +3400,6 @@ pointer actual_box_width(pointer r, scaled base_width)
             }
             if (subtype(p) >= a_leaders)
                 goto found;
-            break;
-        case whatsit_node:
-            if ((subtype(p) == pdf_refxform_node)
-                || (subtype(p) == pdf_refximage_node))
-                d = width(p);
-            else
-                d = 0;
             break;
         default:
             d = 0;
@@ -3307,10 +3530,10 @@ makes all the dimensions ``running,'' so you have to change the
 ones that are not allowed to run.
 
 @c
-halfword new_rule(void)
+halfword new_rule(int s)
 {
     halfword p;                 /* the new node */
-    p = new_node(rule_node, 0); /* the |subtype| is not used */
+    p = new_node(rule_node,s);
     return p;
 }
 
@@ -3684,3 +3907,27 @@ However, other references to the nodes are made symbolically in terms of
 the \.{WEB} macro definitions above, so that format changes will leave
 \TeX's other algorithms intact.
 @^system dependencies@>
+
+@ @c
+halfword make_local_par_node(void)
+/* This function creates a |local_paragraph| node */
+{
+    halfword p, q;
+    p = new_node(local_par_node,0);
+    local_pen_inter(p) = local_inter_line_penalty;
+    local_pen_broken(p) = local_broken_penalty;
+    if (local_left_box != null) {
+        q = copy_node_list(local_left_box);
+        local_box_left(p) = q;
+        local_box_left_width(p) = width(local_left_box);
+    }
+    if (local_right_box != null) {
+        q = copy_node_list(local_right_box);
+        local_box_right(p) = q;
+        local_box_right_width(p) = width(local_right_box);
+    }
+    local_par_dir(p) = par_direction;
+    return p;
+}
+
+

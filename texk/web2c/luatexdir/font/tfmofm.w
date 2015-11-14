@@ -22,7 +22,7 @@
 
 #include "ptexlib.h"
 
-@ Here are some macros that help process ligatures and kerns 
+@ Here are some macros that help process ligatures and kerns
 @c
 #define lig_kern_start(f,c)   char_remainder(f,c)
 #define stop_flag 128           /* value indicating `\.{STOP}' in a lig/kern program */
@@ -48,7 +48,7 @@ $\Omega$ is capable of reading not only \.{TFM} files, but also
 \.{OFM} files, which can describe fonts with up to 65536 characters
 and with huge lig/kern tables.  These fonts will often be virtual
 fonts built up from real fonts with 256 characters, but $\Omega$
-is not aware of this.  
+is not aware of this.
 
 The documentation below describes \.{TFM} files, with slight additions
 to show where \.{OFM} files differ.
@@ -73,7 +73,7 @@ $$\vbox{\halign{\hfil#&$\null=\null$#\hfil\cr
 They are all nonnegative and less than $2^{15}$. We must have |bc-1<=ec<=255|,
 and
 $$\hbox{|lf=6+lh+(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np|.}$$
-Note that a \.{TFM} font may contain as many as 256 characters 
+Note that a \.{TFM} font may contain as many as 256 characters
 (if |bc=0| and |ec=255|), and as few as 0 characters (if |bc=ec+1|).
 
 Incidentally, when two or more 8-bit bytes are combined to form an integer of
@@ -89,7 +89,7 @@ the first two bytes be 0 to differentiate \.{TFM} and \.{OFM} files).
 The next twelve integers are as above, all nonegative and less
 than~$2^{31}$.  We must have |bc-1<=ec<=65535|, and
 $$\hbox{|lf=13+lh+2*(ec-bc+1)+nw+nh+nd+ni+nl+nk+ne+np|.}$$
-Note that an \.{OFM} font may contain as many as 65536 characters 
+Note that an \.{OFM} font may contain as many as 65536 characters
 (if |bc=0| and |ec=65535|), and as few as 0 characters (if |bc=ec+1|).
 
 The rest of the \.{TFM} file may be regarded as a sequence of ten data
@@ -177,13 +177,13 @@ to have the same height, depth, or italic correction, the \.{TFM} format
 imposes a limit of 16 different heights, 16 different depths, and
 64 different italic corrections.
 
-For \.{OFM} files, two words (eight bytes) are used. 
+For \.{OFM} files, two words (eight bytes) are used.
 The arrangement is as follows.
 
 \yskip\hang first and second bytes: |@!width_index| (16 bits)\par
 \hang third byte: |@!height_index| (8 bits)\par
 \hang fourth byte: |@!depth_index| (8~bits)\par
-\hang fifth and sixth bytes: 
+\hang fifth and sixth bytes:
 |@!italic_index| (14 bits) times 4, plus |@!tag| (2~bits)\par
 \hang seventh and eighth bytes: |@!remainder| (16 bits)\par
 \yskip\noindent
@@ -220,7 +220,7 @@ It returns the value of the internal font number that was just loaded.
 If an error is detected, an error message is issued and no font
 information is stored; |null_font| is returned in this case.
 
-@ 
+@
 The |tag| field in a |char_info_word| has four values that explain how to
 interpret the |remainder| field.
 
@@ -295,8 +295,8 @@ or kerning command is performed.
 
 
 @ Extensible characters are specified by an |@!extensible_recipe|, which
-consists of four bytes in a \.{TFM} file, 
-called |@!top|, |@!mid|, |@!bot|, and |@!rep| (in this order). 
+consists of four bytes in a \.{TFM} file,
+called |@!top|, |@!mid|, |@!bot|, and |@!rep| (in this order).
 In an \.{OFM} file, each field takes two bytes, for eight in total.
 These bytes are the character codes of individual pieces used to
 build up a large symbol.  If |top|, |mid|, or |bot| are zero, they are not
@@ -539,13 +539,15 @@ scaled store_scaled_f(scaled sq, scaled z_in)
         sq = sq / 256;
         a = (eight_bits) ((sq + 128) % 256);
     }
+    if (beta==0)
+        normal_error("vf", "vf scaling");
     sw = (((((d * z) >> 8) + (c * z)) >> 8) + (b * z)) / beta;
     if (a == 0)
         return sw;
     else if (a == 255)
         return (sw - alpha);
     else
-        pdf_error("vf", "vf scaling");
+        normal_error("vf", "vf scaling");
     return sw;                  /* not reached, just to make the compiler happy */
 }
 
@@ -700,7 +702,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
     if ((nw == 0) || (nh == 0) || (nd == 0) || (ni == 0))
         tfm_abort;
 
-    /* 
+    /*
        We check to see that the \.{TFM} file doesn't end prematurely; but
        no error message is given for files having more than |lf| words.
      */
@@ -768,6 +770,10 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
         alpha = alpha + alpha;
     };
     beta = (char) (256 / alpha);
+
+    /* beta cannot be zero */
+    if (beta==0)
+       normal_error("vf", "vf reading");
     alpha = alpha * z;
 
     /* Read box dimensions */
@@ -813,7 +819,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
                     bchar = b;
             } else {
 #if 0
-                if (b!=bchar) check_existence(b); 
+                if (b!=bchar) check_existence(b);
 #endif
                 if (c < 128) {
 #if 0
@@ -872,7 +878,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
     fkerns = 0;
     if (bch_label != nl) {
         k = bch_label;
-#if 0        
+#if 0
            if (skip_byte(k) > stop_flag)
            k = lig_kern_restart(k);
 #endif
@@ -904,7 +910,7 @@ int read_tfm_info(internal_font_number f, const char *cnom, scaled s)
 #if 0
         if (skip_byte(k) > stop_flag)
            k = lig_kern_restart(k);
-#endif         
+#endif
         while (1) {
             if (skip_byte(k) <= stop_flag) {
                 if (op_byte(k) >= kern_flag) {  /* kern */

@@ -1,5 +1,5 @@
 /* textoken.h
-   
+
    Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -27,9 +27,7 @@
 
 #  define left_brace_token 0x200000     /* $2^{21}\cdot|left_brace|$ */
 #  define right_brace_token 0x400000    /* $2^{21}\cdot|right_brace|$ */
-#  define left_brace_token 0x200000     /* $2^{21}\cdot|left_brace|$ */
 #  define left_brace_limit 0x400000     /* $2^{21}\cdot(|left_brace|+1)$ */
-#  define right_brace_token 0x400000    /* $2^{21}\cdot|right_brace|$ */
 #  define right_brace_limit 0x600000    /* $2^{21}\cdot(|right_brace|+1)$ */
 #  define math_shift_token 0x600000     /* $2^{21}\cdot|math_shift|$ */
 #  define tab_token 0x800000    /* $2^{21}\cdot|tab_mark|$ */
@@ -140,7 +138,7 @@ extern int get_char_cat_code(int);
 
 # define no_expand_flag special_char
 # define end_line_char int_par(end_line_char_code)
-# define  end_line_char_inactive ((end_line_char < 0) || (end_line_char > 127))
+# define end_line_char_inactive ((end_line_char < 0) || (end_line_char > 127))
 
 extern halfword par_loc;
 extern halfword par_token;
@@ -151,14 +149,26 @@ extern void firm_up_the_line(void);
 extern void get_token(void);
 
 extern halfword str_toks(lstring b);
+extern halfword str_scan_toks(int c, lstring b);
 extern void ins_the_toks(void);
 
 extern int scan_lua_state(void);
-extern void conv_toks(void);
 
+extern void conv_toks(void);
+extern str_number the_convert_string(halfword c, int i);
+
+extern int conv_toks_dvi(halfword c); /* plugin */
+extern int conv_toks_pdf(halfword c); /* plugin */
+
+extern int conv_var_dvi(halfword c); /* plugin */
+extern int conv_var_pdf(halfword c); /* plugin */
+
+extern int the_convert_string_dvi(halfword c, int i); /* plugin */
+extern int the_convert_string_pdf(halfword c, int i); /* plugin */
+
+extern halfword lua_str_toks(lstring b);
 extern boolean in_lua_escape;
 extern boolean is_convert(halfword c);
-extern str_number the_convert_string(halfword c, int i);
 
 #  define closed 2              /* not open, or at end of file */
 #  define just_open 1           /* newly opened, first line not yet read */

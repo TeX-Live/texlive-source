@@ -45,9 +45,8 @@ void init_col(void);
 @ It's sort of a miracle whenever \.{\\halign} and \.{\\valign} work, because
 they cut across so many of the control structures of \TeX.
 
-Therefore the
-present page is probably not the best place for a beginner to start reading
-this program; it is better to master everything else first.
+Therefore the present page is probably not the best place for a beginner to
+start reading this program; it is better to master everything else first.
 
 Let us focus our thoughts on an example of what the input might be, in order
 to get some idea about how the alignment miracle happens. The example doesn't
@@ -172,8 +171,6 @@ called upon to step in and do some little action, but most of the time
 these routines just lurk in the background. It's something like
 post-hypnotic suggestion.
 
-
-
 @ We have mentioned that alignrecords contain no |height| or |depth| fields.
 Their |glue_sign| and |glue_order| are pre-empted as well, since it
 is necessary to store information about what to do when a template ends.
@@ -184,7 +181,6 @@ This information is called the |extra_info| field.
 #define v_part(A) vinfo((A)+depth_offset)       /* pointer to \<v_j> token list */
 #define span_ptr(A) vinfo((A)+1)        /* column spanning list */
 #define extra_info(A) vinfo((A)+list_offset)    /* info to remember during template */
-
 
 @ Alignments can occur within alignments, so a small stack is used to access
 the alignrecord information. At each level we have a |preamble| pointer,
@@ -218,6 +214,13 @@ pointer cur_pre_head = null, cur_pre_tail = null;       /* pre-adjustment list p
 
 @ Alignment stack maintenance is handled by a pair of trivial routines
 called |push_alignment| and |pop_alignment|.
+
+(HH:) It makes not much sense to add support for an \.{attr} keyword to
+\.{\\halign} and \.{\\valign} because then we need to decide if we tag
+rows or cells or both or come up with \.{cellattr} and \.{rowattr} and
+such. But then it even makes sense to have explicit commands (in addition
+to the seperator) to tags individual cells. Too muss hassle for now and the
+advantages are not that large.
 
 @c
 static void push_alignment(void)
@@ -773,7 +776,7 @@ void fin_row(void)
         pop_nest();
         if (cur_pre_head != cur_pre_tail)
             append_list(cur_pre_head, cur_pre_tail);
-        append_to_vlist(p);
+        append_to_vlist(p,lua_key_index(alignment));
         if (cur_head != cur_tail)
             append_list(cur_head, cur_tail);
     } else {
@@ -817,7 +820,7 @@ void fin_align(void)
     else
         o = 0;
     /* Go through the preamble list, determining the column widths and
-     * changing the alignrecords to dummy unset boxes 
+     * changing the alignrecords to dummy unset boxes
      */
 
 /* It's time now to dismantle the preamble list and to compute the column
@@ -952,11 +955,11 @@ value is changed to zero and so is the next tabskip.
 
                 if (cur_list.mode_field == -vmode) {
                     type(q) = hlist_node;
-                    subtype(q) = HLIST_SUBTYPE_ALIGNROW;
+                    subtype(q) = align_row_list;
                     width(q) = width(p);
                 } else {
                     type(q) = vlist_node;
-                    subtype(q) = HLIST_SUBTYPE_ALIGNROW;
+                    subtype(q) = align_row_list;
                     height(q) = height(p);
                 }
                 glue_order(q) = glue_order(p);
@@ -1004,7 +1007,7 @@ value is changed to zero and so is the next tabskip.
                         vlink(u) = rr;
                         u = vlink(u);
                         t = t + width(s);
-                        subtype(u) = HLIST_SUBTYPE_ALIGNCELL;
+                        subtype(u) = align_cell_list;
                         if (cur_list.mode_field == -vmode) {
                             width(u) = width(s);
                         } else {
@@ -1046,7 +1049,7 @@ value is changed to zero and so is the next tabskip.
                         }
                         width(r) = w;
                         type(r) = hlist_node;
-                        subtype(r) = HLIST_SUBTYPE_ALIGNCELL;
+                        subtype(r) = align_cell_list;
 
                     } else {
                         /* Make the unset node |r| into a |vlist_node| of height |w|,
@@ -1078,7 +1081,7 @@ value is changed to zero and so is the next tabskip.
                         }
                         height(r) = w;
                         type(r) = vlist_node;
-                        subtype(r) = HLIST_SUBTYPE_ALIGNCELL;
+                        subtype(r) = align_cell_list;
 
                     }
                     /* subtype(r) = 0; */
@@ -1107,7 +1110,7 @@ value is changed to zero and so is the next tabskip.
                     vlink(q) = null;
                     q = hpack(q, 0, additional, -1);
                     shift_amount(q) = o;
-                    subtype(q) = HLIST_SUBTYPE_ALIGNCELL;
+                    subtype(q) = align_cell_list;
                     vlink(q) = r;
                     vlink(s) = q;
                 }
@@ -1123,7 +1126,7 @@ value is changed to zero and so is the next tabskip.
        and ends at |cur_list.tail_field|. This list will be merged with the one that encloses
        it. (In case the enclosing mode is |mmode|, for displayed formulas,
        we will need to insert glue before and after the display; that part of the
-       program will be deferred until we're more familiar with such operations.) 
+       program will be deferred until we're more familiar with such operations.)
      */
     pd = cur_list.prev_depth_field;
     p = vlink(cur_list.head_field);
@@ -1138,14 +1141,11 @@ value is changed to zero and so is the next tabskip.
             cur_list.tail_field = q;
         if (cur_list.mode_field == vmode) {
             if (!output_active)
-	    //                lua_node_filter_s(buildpage_filter_callback, "alignment");
-		lua_node_filter_s(buildpage_filter_callback,lua_key_index(alignment));	
+                lua_node_filter_s(buildpage_filter_callback,lua_key_index(alignment));
             build_page();
         }
     }
 }
-
-
 
 @ The token list |omit_template| just referred to is a constant token
 list that contains the special control sequence \.{\\endtemplate} only.

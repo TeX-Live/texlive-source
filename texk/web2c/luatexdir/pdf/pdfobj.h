@@ -21,7 +21,7 @@
 #ifndef PDFOBJ_H
 #  define PDFOBJ_H
 
-/* data structure for \.{\\pdfobj} and \.{\\pdfrefobj} */
+/* data structure for \.{\\pdfextension obj} and \.{\\pdfextension refobj} */
 
 #  define set_pdf_obj_objnum(A, B) pdf_obj_objnum(A) = (B)
 
@@ -53,8 +53,6 @@
 #  define unset_obj_obj_is_file(pdf,A)   ((obj_obj_flags((pdf), (A)) &= ~OBJ_FLAG_ISFILE))
 
 /**********************************************************************/
-
-extern int pdf_last_obj;
 
 extern void init_obj_obj(PDF pdf, int k);
 extern void pdf_write_obj(PDF pdf, int n);

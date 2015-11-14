@@ -22,7 +22,7 @@
 
 #include "ptexlib.h"
 
-@ stack for \.{\\pdfsetmatrix}
+@ stack for \.{\\pdfextension setmatrix}
 
 @c
 matrix_entry *matrix_stack = NULL;
@@ -49,7 +49,7 @@ static void matrix_stack_room(void)
     }
 }
 
-@   \.{\\pdfsetmatrix{a b c d}}
+@   \.{\\pdfextension setmatrix{a b c d}}
 
     |e| := pos.h
 
@@ -58,7 +58,7 @@ static void matrix_stack_room(void)
     |M_top|: current active matrix at the top of
            the matrix stack
 
-    The origin of \.{\\pdfsetmatrix} is the current point.
+    The origin of \.{\\pdfextension setmatrix} is the current point.
     The annotation coordinate system is the original
     page coordinate system. When pdfTeX calculates
     annotation rectangles it does not take into
@@ -84,7 +84,7 @@ static void matrix_stack_room(void)
 @c
 static void pdfsetmatrix(const char *in, scaledpos pos)
 {
-    /* Argument of \.{\\pdfsetmatrix} starts with |str_pool[in]| and ends
+    /* Argument of \.{\\pdfextension setmatrix} starts with |str_pool[in]| and ends
        before |str_pool[pool_ptr]|. */
 
     matrix_entry x, *y, *z;
@@ -92,7 +92,7 @@ static void pdfsetmatrix(const char *in, scaledpos pos)
     if (global_shipping_mode == SHIPPING_PAGE) {
         if (sscanf((const char *) in, " %lf %lf %lf %lf ",
                    &x.a, &x.b, &x.c, &x.d) != 4) {
-            luatex_warn("Unrecognized format of \\pdfsetmatrix{%s}", in);
+            luatex_warn("unrecognized format of setmatrix: {%s}", in);
             return;
         }
         /* calculate this transformation matrix */
@@ -128,7 +128,7 @@ static void pdfsetmatrix(const char *in, scaledpos pos)
                ( e f 1 )
 }
 
-If \.{\\pdfsetmatrix} wasn't used, then return the value unchanged.
+If \.{\\pdfextension setmatrix} wasn't used, then return the value unchanged.
 
 @c
 /* Return values for matrix tranform functions */

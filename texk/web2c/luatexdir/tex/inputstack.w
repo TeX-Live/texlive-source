@@ -378,7 +378,7 @@ void show_context(void)
                 }
                 for (q = p; q <= first_count - 1; q++)
                     print_valid_utf8(q);
-                print_ln();
+                    print_ln();
                 for (q = 1; q <= n; q++)
                     print_char(' ');    /* print |n| spaces to begin line~2 */
                 if (m + n <= error_line)

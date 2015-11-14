@@ -103,12 +103,10 @@ void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
     pdfstructure *p = pdf->pstruct;
     if (s >= STRING_OFFSET) {   /* needed for |out_save| */
         j = 0;
+        /* the next is obsolete, in fact, specials are obsolete in pdf mode */
         if (literal_mode == scan_special) {
             if (!(str_in_cstr(s, "PDF:", 0) || str_in_cstr(s, "pdf:", 0))) {
-                if (warn
-                    &&
-                    ((!(str_in_cstr(s, "SRC:", 0) || str_in_cstr(s, "src:", 0)))
-                     || (str_length(s) == 0)))
+                if (warn && ((!(str_in_cstr(s, "SRC:", 0) || str_in_cstr(s, "src:", 0))) || (str_length(s) == 0)))
                     tprint_nl("Non-PDF special ignored!");
                 return;
             }

@@ -24,12 +24,6 @@
 
 #include "ptexlib.h"
 
-@ @c
-#define font_id_text(A) cs_text(font_id_base+(A))       /* a frozen font identifier's name */
-
-int pk_dpi;                     /* PK pixel density value from \.{texmf.cnf} */
-
-
 @ As \pdfTeX{} should also act as a back-end driver, it needs to support virtual
 fonts too. Information about virtual fonts can be found in the source of some
 \.{DVI}-related programs.
@@ -37,7 +31,6 @@ fonts too. Information about virtual fonts can be found in the source of some
 Whenever we want to write out a character in a font to PDF output, we
 should check whether the used character is a virtual or real character.
 The |has_packet()| C macro checks for this condition.
-
 
 @ The following code typesets a character to PDF output
 
@@ -194,199 +187,6 @@ internal_font_number pdf_set_font(PDF pdf, internal_font_number f)
     return ff;
 }
 
-@ Here come some subroutines to deal with expanded fonts for HZ-algorithm.
-return 1 == identical
-@c
-static boolean cmp_font_name(int id, char *tt)
-{
-    char *tid;
-    if (!is_valid_font(id))
-        return 0;
-    tid = font_name(id);
-    if (tt == NULL && tid == NULL)
-        return 1;
-    if (tt == NULL || tid == NULL || strcmp(tid, tt) != 0)
-        return 0;
-    return 1;
-}
-
-@ @c
-internal_font_number tfm_lookup(char *s, scaled fs)
-{                               /* looks up for a TFM with name |s| loaded at |fs| size; if found then flushes |s| */
-    internal_font_number k;
-    if (fs != 0) {
-        for (k = 1; k <= max_font_id(); k++) {
-            if (cmp_font_name(k, s) && font_size(k) == fs) {
-                return k;
-            }
-        }
-    } else {
-        for (k = 1; k <= max_font_id(); k++) {
-            if (cmp_font_name(k, s)) {
-                return k;
-            }
-        }
-    }
-    return null_font;
-}
-
-@ @c
-int fix_expand_value(internal_font_number f, int e)
-{                               /* return the multiple of |font_step(f)| that is nearest to |e| */
-    int step;
-    int max_expand;
-    boolean neg;
-    if (e == 0)
-        return 0;
-    if (e < 0) {
-        e = -e;
-        neg = true;
-        max_expand = font_max_shrink(f);
-    } else {
-        neg = false;
-        max_expand = font_max_stretch(f);
-    }
-    if (e > max_expand) {
-        e = max_expand;
-    } else {
-        step = font_step(f);
-        if (e % step > 0)
-            e = step * round_xn_over_d(e, 1, step);
-    }
-    if (neg)
-        e = -e;
-    return e;
-}
-
-@ @c
-void set_expand_params(internal_font_number f, boolean auto_expand,
-                       int stretch_limit, int shrink_limit, int font_step)
-{                               /* expand a font with given parameters */
-    set_font_step(f, font_step);
-    set_font_auto_expand(f, auto_expand);
-    set_font_max_shrink(f, shrink_limit);
-    set_font_max_stretch(f, stretch_limit);
-}
-
-@ @c
-void read_expand_font(void)
-{                               /* read font expansion spec and load expanded font */
-    int shrink_limit, stretch_limit, font_step;
-    internal_font_number f;
-    boolean auto_expand;
-    /* read font expansion parameters */
-    scan_font_ident();
-    f = cur_val;
-    if (f == null_font)
-        pdf_error("font expansion", "invalid font identifier");
-    //if (pdf_font_blink(f) != null_font)
-    //    pdf_error("font expansion",
-    //              "\\fontexpand cannot be used this way (the base font has been expanded)");
-    scan_optional_equals();
-    scan_int();
-    stretch_limit = fix_int(cur_val, 0, 1000);
-    scan_int();
-    shrink_limit = fix_int(cur_val, 0, 500);
-    scan_int();
-    font_step = fix_int(cur_val, 0, 100);
-    if (font_step == 0)
-        pdf_error("font expansion", "invalid step");
-    stretch_limit = stretch_limit - stretch_limit % font_step;
-    if (stretch_limit < 0)
-        stretch_limit = 0;
-    shrink_limit = shrink_limit - shrink_limit % font_step;
-    if (shrink_limit < 0)
-        shrink_limit = 0;
-    if ((stretch_limit == 0) && (shrink_limit == 0))
-        pdf_error("font expansion", "invalid limit(s)");
-    auto_expand = false;
-    if (scan_keyword("autoexpand")) {
-        auto_expand = true;
-        /* Scan an optional space */
-        get_x_token();
-        if (cur_cmd != spacer_cmd)
-            back_input();
-    }
-
-    if (font_step(f) != 0) {
-        /* this font has been expanded, ensure the expansion parameters are identical */
-        if (font_step(f) != font_step)
-            pdf_error("font expansion",
-                      "font has been expanded with different expansion step");
-
-        if (((font_max_stretch(f) == 0) && (stretch_limit != 0)) ||
-            ((font_max_stretch(f) > 0)
-             && (font_max_stretch(f) != stretch_limit)))
-            pdf_error("font expansion",
-                      "font has been expanded with different stretch limit");
-
-        if (((font_max_shrink(f) == 0) && (shrink_limit != 0)) ||
-            ((font_max_shrink(f) > 0)
-             && (font_max_shrink(f) != shrink_limit)))
-            pdf_error("font expansion",
-                      "font has been expanded with different shrink limit");
-
-        if (font_auto_expand(f) != auto_expand)
-            pdf_error("font expansion",
-                      "font has been expanded with different auto expansion value");
-    } else {
-        if (font_used(f))
-            pdf_warning("font expansion",
-                        "font should be expanded before its first use", true,
-                        true);
-        set_expand_params(f, auto_expand, stretch_limit, shrink_limit,
-                          font_step);
-    }
-}
-
-@ @c
-void new_letterspaced_font(small_number a)
-{                               /* letter-space a font by creating a virtual font */
-    pointer u;                  /* user's font identifier */
-    str_number t;               /* name for the frozen font identifier */
-    internal_font_number f, k;
-    boolean nolig = false;
-    get_r_token();
-    u = cur_cs;
-    if (u >= hash_base)
-        t = cs_text(u);
-    else
-        t = maketexstring("FONT");
-    define(u, set_font_cmd, null_font);
-    scan_optional_equals();
-    scan_font_ident();
-    k = cur_val;
-    scan_int();
-    if (scan_keyword("nolig"))
-       nolig=true;
-    f = letter_space_font(k, fix_int(cur_val, -1000, 1000), nolig);
-    equiv(u) = f;
-    eqtb[font_id_base + f] = eqtb[u];
-    font_id_text(f) = t;
-}
-
-@ @c
-void make_font_copy(small_number a)
-{                               /* make a font copy for further use with font expansion */
-    pointer u;                  /* user's font identifier */
-    str_number t;               /* name for the frozen font identifier */
-    internal_font_number f, k;
-    get_r_token();
-    u = cur_cs;
-    if (u >= hash_base)
-        t = cs_text(u);
-    else
-        t = maketexstring("FONT");
-    define(u, set_font_cmd, null_font);
-    scan_optional_equals();
-    scan_font_ident();
-    k = cur_val;
-    f = copy_font_info(k);
-    equiv(u) = f;
-    eqtb[font_id_base + f] = eqtb[u];
-    font_id_text(f) = t;
-}
-
 @ @c
 void pdf_include_chars(PDF pdf)
 {
@@ -396,7 +196,7 @@ void pdf_include_chars(PDF pdf)
     scan_font_ident();
     f = cur_val;
     if (f == null_font)
-        pdf_error("font", "invalid font identifier");
+        normal_error("pdf backend", "invalid font identifier for 'includechars'");
     pdf_check_vf(cur_val);
     if (!font_used(f))
         pdf_init_font(pdf, f);
@@ -408,19 +208,4 @@ void pdf_include_chars(PDF pdf)
         pdf_mark_char(f, *k);
     }
     flush_str(s);
-}
-
-@ @c
-void glyph_to_unicode(void)
-{
-    str_number s1, s2;
-    scan_pdf_ext_toks();
-    s1 = tokens_to_string(def_ref);
-    delete_token_ref(def_ref);
-    scan_pdf_ext_toks();
-    s2 = tokens_to_string(def_ref);
-    delete_token_ref(def_ref);
-    def_tounicode(s1, s2);
-    flush_str(s2);
-    flush_str(s1);
 }

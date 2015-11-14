@@ -402,16 +402,9 @@ void build_page(void)
 
             }
             break;
+        case boundary_node:
         case whatsit_node:
-            /* Prepare to move whatsit |p| to the current page,
-               then |goto contribute| */
-            if ((subtype(p) == pdf_refxform_node)
-                || (subtype(p) == pdf_refximage_node)) {
-                page_total = page_total + page_depth + height(p);
-                page_depth = depth(p);
-            }
             goto CONTRIBUTE;
-
             break;
         case glue_node:
             if (page_contents < box_there)
@@ -1050,8 +1043,7 @@ void resume_after_output(void)
     flush_node_list(page_disc);
     page_disc = null;
     pop_nest();
-    //lua_node_filter_s(buildpage_filter_callback, "after_output");
     lua_node_filter_s(buildpage_filter_callback,lua_key_index(after_output));
-   build_page();
+    build_page();
 
 }

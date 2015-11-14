@@ -1,4 +1,4 @@
-% packaging.w
+4% packaging.w
 %
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
 %
@@ -220,7 +220,7 @@ halfword last_rightmost_char;
 halfword next_char_p;           /* pointer to the next char of an implicit kern */
 halfword prev_char_p;           /* pointer to the previous char of an implicit kern */
 
-@ This procedure is called repeatedly from inside the line break algorithm. 
+@ This procedure is called repeatedly from inside the line break algorithm.
 @c
 void set_prev_char_p(halfword p)
 {
@@ -337,7 +337,7 @@ void do_subst_font(halfword p, int ex_ratio)
     if (is_char_node(p)) {
         r = p;
     } else {
-        pdf_error("font expansion", "invalid node type");
+        normal_error("font expansion", "invalid node type");
         return;
     }
     f = font(r);
@@ -387,7 +387,7 @@ halfword new_margin_kern(scaled w, halfword p, int side)
     k = new_node(margin_kern_node, side);
     width(k) = w;
     if (p == null)
-        pdf_error("margin kerning", "invalid pointer to marginal char node");
+        normal_error("margin kerning", "invalid pointer to marginal char node");
     q = new_char(font(p), character(p));
     margin_char(k) = q;
     return k;
@@ -541,31 +541,26 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                     p = q;
                 }
                 break;
-            case whatsit_node:
-                /* Incorporate a whatsit node into an hbox */
-                if (subtype(p) == dir_node) {
-                    /* DIR: Adjust the dir stack for the |hpack| routine */
-                    if (dir_dir(p) >= 0) {
-                        hpack_dir = dir_dir(p);
-                        push_dir_node(p,dir_ptr1);
-                    } else {
-                        pop_dir_node(dir_ptr1);
-                        if (dir_ptr1 != null)
-                            hpack_dir = dir_dir(dir_ptr1);
-                    }
-
+            case dir_node:
+                /* DIR: Adjust the dir stack for the |hpack| routine */
+                if (dir_dir(p) >= 0) {
+                    hpack_dir = dir_dir(p);
+                    push_dir_node(p,dir_ptr1);
                 } else {
-                    if ((subtype(p) == pdf_refxform_node)
-                        || (subtype(p) == pdf_refximage_node)) {
-                        x += width(p);
-                        s = 0;
-                        if (height(p) - s > h)
-                            h = height(p) - s;
-                        if (depth(p) + s > d)
-                            d = depth(p) + s;
-                    }
+                    pop_dir_node(dir_ptr1);
+                    if (dir_ptr1 != null)
+                        hpack_dir = dir_dir(dir_ptr1);
                 }
                 break;
+            case math_node:
+                /* begin mathskip code */
+                if (glue_ptr(p) == zero_glue) {
+                    x += surround(p);
+                    break;
+                } else {
+                    /* fall through: mathskip */
+                }
+                /* end mathskip code */
             case glue_node:
                 /* Incorporate glue into the horizontal totals */
                 g = glue_ptr(p);
@@ -622,9 +617,6 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                     }
                 }
                 x += width(p);
-                break;
-            case math_node:
-                x += surround(p);
                 break;
             case disc_node:
                 if (m == subst_ex_font)
@@ -699,13 +691,30 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                    is sufficiently bad */
                 last_badness = badness(x, total_stretch[normal]);
                 if (last_badness > int_par(hbadness_code)) {
-                    print_ln();
-                    if (last_badness > 100)
-                        tprint_nl("Underfull \\hbox (badness ");
-                    else
-                        tprint_nl("Loose \\hbox (badness ");
-                    print_int(last_badness);
-                    goto COMMON_ENDING;
+                    int callback_id = callback_defined(hpack_quality_callback);
+                    if (callback_id > 0) {
+                        halfword rule = null;
+                        if (last_badness > 100) {
+                            run_callback(callback_id, "SdNdd->N","underfull",last_badness,r,abs(pack_begin_line),line,&rule);
+                        } else {
+                            run_callback(callback_id, "SdNdd->N","loose",last_badness,r,abs(pack_begin_line),line,&rule);
+                        }
+                        if (rule != null) {
+                            while (vlink(q) != null) {
+                                q = vlink(q);
+                            }
+                            couple_nodes(q,rule);
+                        }
+                    } else {
+                        print_ln();
+                        if (last_badness > 100) {
+                            tprint_nl("Underfull \\hbox (badness ");
+                        } else {
+                            tprint_nl("Loose \\hbox (badness ");
+                        }
+                        print_int(last_badness);
+                        goto COMMON_ENDING;
+                    }
                 }
             }
         }
@@ -738,35 +747,56 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
             set_glue_ratio_zero(glue_set(r));   /* there's nothing to shrink */
         }
         if ((total_shrink[o] < -x) && (o == normal) && (list_ptr(r) != null)) {
+            int overshoot = -x - total_shrink[normal] ;
             last_badness = 1000000;
             set_glue_ratio_one(glue_set(r));    /* use the maximum shrinkage */
             /* Report an overfull hbox and |goto common_ending|, if this box
                is sufficiently bad */
-            if ((-x - total_shrink[normal] > dimen_par(hfuzz_code))
-                || (int_par(hbadness_code) < 100)) {
-                if ((dimen_par(overfull_rule_code) > 0)
-                    && (-x - total_shrink[normal] > dimen_par(hfuzz_code))) {
-                    while (vlink(q) != null)
-                        q = vlink(q);
-                    vlink(q) = new_rule();
-                    rule_dir(vlink(q)) = box_dir(r);
-                    width(vlink(q)) = dimen_par(overfull_rule_code);
+            if ((overshoot > dimen_par(hfuzz_code)) || (int_par(hbadness_code) < 100)) {
+                int callback_id = callback_defined(hpack_quality_callback);
+                halfword rule = null;
+                if (callback_id > 0) {
+                    run_callback(callback_id, "SdNdd->N","overfull",overshoot,r,abs(pack_begin_line),line,&rule);
+                } else if (dimen_par(overfull_rule_code) > 0) {
+                    rule = new_rule(normal_rule);
+                    rule_dir(rule) = box_dir(r);
+                    width(rule) = dimen_par(overfull_rule_code);
                 }
-                print_ln();
-                tprint_nl("Overfull \\hbox (");
-                print_scaled(-x - total_shrink[normal]);
-                tprint("pt too wide");
-                goto COMMON_ENDING;
+                if (rule != null) {
+                    while (vlink(q) != null) {
+                        q = vlink(q);
+                    }
+                    couple_nodes(q,rule);
+                }
+                if (callback_id == 0) {
+                    print_ln();
+                    tprint_nl("Overfull \\hbox (");
+                    print_scaled(overshoot);
+                    tprint("pt too wide");
+                    goto COMMON_ENDING;
+                }
             }
         } else if (o == normal) {
             if (list_ptr(r) != null) {
                 /* Report a tight hbox and |goto common_ending|, if this box is sufficiently bad */
                 last_badness = badness(-x, total_shrink[normal]);
                 if (last_badness > int_par(hbadness_code)) {
-                    print_ln();
-                    tprint_nl("Tight \\hbox (badness ");
-                    print_int(last_badness);
-                    goto COMMON_ENDING;
+                    int callback_id = callback_defined(hpack_quality_callback);
+                    if (callback_id > 0) {
+                        halfword rule = null;
+                        run_callback(callback_id, "SdNdd->N","tight",last_badness,r,abs(pack_begin_line),line,&rule);
+                        if (rule != null) {
+                            while (vlink(q) != null) {
+                                q = vlink(q);
+                            }
+                            couple_nodes(q,rule);
+                        }
+                    } else {
+                        print_ln();
+                        tprint_nl("Tight \\hbox (badness ");
+                        print_int(last_badness);
+                        goto COMMON_ENDING;
+                    }
                 }
             }
         }
@@ -779,10 +809,11 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
         tprint(") has occurred while \\output is active");
     } else {
         if (pack_begin_line != 0) {
-            if (pack_begin_line > 0)
+            if (pack_begin_line > 0) {
                 tprint(") in paragraph at lines ");
-            else
+            } else {
                 tprint(") in alignment at lines ");
+            }
             print_int(abs(pack_begin_line));
             tprint("--");
         } else {
@@ -874,17 +905,15 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
                 if (depth(p) + s > siz.dp)
                     siz.dp = depth(p) + s;
                 break;
-            case whatsit_node:
-                if ((subtype(p) == pdf_refxform_node)
-                    || (subtype(p) == pdf_refximage_node)) {
-                    siz.wd += width(p);
-                    s = 0;
-                    if (height(p) - s > siz.ht)
-                        siz.ht = height(p) - s;
-                    if (depth(p) + s > siz.dp)
-                        siz.dp = depth(p) + s;
+            case math_node:
+                /* begin mathskip code */
+                if (glue_ptr(p) == zero_glue) {
+                    siz.wd += surround(p);
+                    break;
+                } else {
+                    /* fall through: mathskip */
                 }
-                break;
+                /* end mathskip code */
             case glue_node:
                 g = glue_ptr(p);
                 siz.wd += width(g);
@@ -912,9 +941,6 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
             case margin_kern_node:
             case kern_node:
                 siz.wd += width(p);
-                break;
-            case math_node:
-                siz.wd += surround(p);
                 break;
             case disc_node:
                 xx = natural_sizes(no_break(p), null, g_mult, g_sign, g_order,
@@ -1016,17 +1042,6 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
                 if (width(p) + s > w)
                     w = width(p) + s;
                 break;
-            case whatsit_node:
-                /* Incorporate a whatsit node into a vbox */
-                if ((subtype(p) == pdf_refxform_node)
-                    || (subtype(p) == pdf_refximage_node)) {
-                    x += d + height(p);
-                    d = depth(p);
-                    s = 0;
-                    if (width(p) + s > w)
-                        w = width(p) + s;
-                }
-                break;
             case glue_node:
                 /* Incorporate glue into the vertical totals */
                 x += d;
@@ -1102,13 +1117,24 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
                    is sufficiently bad */
                 last_badness = badness(x, total_stretch[normal]);
                 if (last_badness > int_par(vbadness_code)) {
-                    print_ln();
-                    if (last_badness > 100)
-                        tprint_nl("Underfull \\vbox (badness ");
-                    else
-                        tprint_nl("Loose \\vbox (badness ");
-                    print_int(last_badness);
-                    goto COMMON_ENDING;
+                    int callback_id = callback_defined(vpack_quality_callback);
+                    if (callback_id > 0) {
+                        if (last_badness > 100) {
+                            run_callback(callback_id, "SdNdd->","underfull",last_badness,r,abs(pack_begin_line),line);
+                        } else {
+                            run_callback(callback_id, "SdNdd->","loose",last_badness,r,abs(pack_begin_line),line);
+                        }
+                        goto EXIT;
+                    } else {
+                        print_ln();
+                        if (last_badness > 100) {
+                            tprint_nl("Underfull \\vbox (badness ");
+                        } else {
+                            tprint_nl("Loose \\vbox (badness ");
+                        }
+                        print_int(last_badness);
+                        goto COMMON_ENDING;
+                    }
                 }
             }
         }
@@ -1138,26 +1164,38 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
             set_glue_ratio_zero(glue_set(r));   /* there's nothing to shrink */
         }
         if ((total_shrink[o] < -x) && (o == normal) && (list_ptr(r) != null)) {
+            int overshoot = -x - total_shrink[normal];
             last_badness = 1000000;
             set_glue_ratio_one(glue_set(r));    /* use the maximum shrinkage */
             /* Report an overfull vbox and |goto common_ending|, if this box is sufficiently bad */
-            if ((-x - total_shrink[normal] > dimen_par(vfuzz_code))
-                || (int_par(vbadness_code) < 100)) {
-                print_ln();
-                tprint_nl("Overfull \\vbox (");
-                print_scaled(-x - total_shrink[normal]);
-                tprint("pt too high");
-                goto COMMON_ENDING;
+            if ((overshoot > dimen_par(vfuzz_code)) || (int_par(vbadness_code) < 100)) {
+                int callback_id = callback_defined(vpack_quality_callback);
+                if (callback_id > 0) {
+                    run_callback(callback_id, "SdNdd->","overfull",overshoot,r,abs(pack_begin_line),line);
+                    goto EXIT;
+                } else {
+                    print_ln();
+                    tprint_nl("Overfull \\vbox (");
+                    print_scaled(-x - total_shrink[normal]);
+                    tprint("pt too high");
+                    goto COMMON_ENDING;
+                }
             }
         } else if (o == normal) {
             if (list_ptr(r) != null) {
                 /* Report a tight vbox and |goto common_ending|, if this box is sufficiently bad */
                 last_badness = badness(-x, total_shrink[normal]);
                 if (last_badness > int_par(vbadness_code)) {
-                    print_ln();
-                    tprint_nl("Tight \\vbox (badness ");
-                    print_int(last_badness);
-                    goto COMMON_ENDING;
+                    int callback_id = callback_defined(vpack_quality_callback);
+                    if (callback_id > 0) {
+                        run_callback(callback_id, "SdNdd->","tight",last_badness,r,abs(pack_begin_line),line);
+                        goto EXIT;
+                    } else {
+                        print_ln();
+                        tprint_nl("Tight \\vbox (badness ");
+                        print_int(last_badness);
+                        goto COMMON_ENDING;
+                    }
                 }
             }
         }
@@ -1182,6 +1220,7 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
     begin_diagnostic();
     show_box(r);
     end_diagnostic(true);
+  EXIT:
     return r;
 }
 
@@ -1226,7 +1265,7 @@ void package(int c)
         cur_box = filtered_hpack(cur_list.head_field,
                                  cur_list.tail_field, saved_value(1),
                                  saved_level(1), grp, saved_level(2));
-        subtype(cur_box) = HLIST_SUBTYPE_HBOX;
+        subtype(cur_box) = hbox_list;
     } else {
         cur_box = filtered_vpackage(vlink(cur_list.head_field),
                                     saved_value(1), saved_level(1), d, grp,
@@ -1265,31 +1304,47 @@ void package(int c)
 baselineskip calculation is handled by the |append_to_vlist| routine.
 
 @c
-void append_to_vlist(halfword b)
+void append_to_vlist(halfword b, int location)
 {
-    scaled d;                   /* deficiency of space between baselines */
-    halfword p;                 /* a new glue node */
-    if (prev_depth > ignore_depth) {
-        if ((type(b) == hlist_node) && is_mirrored(box_dir(b))) {
-            d = width(glue_par(baseline_skip_code)) - prev_depth - depth(b);
-        } else {
-            d = width(glue_par(baseline_skip_code)) - prev_depth - height(b);
+    scaled d;   /* deficiency of space between baselines */
+    halfword p; /* a new glue node */
+    boolean mirrored = (type(b) == hlist_node) && is_mirrored(box_dir(b)) ;
+    halfword result = null;
+    halfword next_depth = ignore_depth;
+    boolean prev_set = false ;
+    if (lua_appendtovlist_callback(b,location,prev_depth,mirrored,&result,&next_depth,&prev_set)) {
+        while (result != null) {
+            couple_nodes(cur_list.tail_field, result);
+            cur_list.tail_field = result;
+            result = vlink(result);
         }
-        if (d < dimen_par(line_skip_limit_code)) {
-            p = new_param_glue(line_skip_code);
-        } else {
-            p = new_skip_param(baseline_skip_code);
-            width(temp_ptr) = d;        /* |temp_ptr=glue_ptr(p)| */
+        if (prev_set) {
+            prev_depth = next_depth;
         }
-        couple_nodes(cur_list.tail_field, p);
-        cur_list.tail_field = p;
+    } else {
+        if (prev_depth > ignore_depth) {
+            if (mirrored) {
+                d = width(glue_par(baseline_skip_code)) - prev_depth - depth(b);
+            } else {
+                d = width(glue_par(baseline_skip_code)) - prev_depth - height(b);
+            }
+            if (d < dimen_par(line_skip_limit_code)) {
+                p = new_param_glue(line_skip_code);
+            } else {
+                p = new_skip_param(baseline_skip_code);
+                width(temp_ptr) = d;        /* |temp_ptr=glue_ptr(p)| */
+            }
+            couple_nodes(cur_list.tail_field, p);
+            cur_list.tail_field = p;
+        }
+        couple_nodes(cur_list.tail_field, b);
+        cur_list.tail_field = b;
+        if (mirrored) {
+            prev_depth = height(b);
+        } else {
+            prev_depth = depth(b);
+        }
     }
-    couple_nodes(cur_list.tail_field, b);
-    cur_list.tail_field = b;
-    if ((type(b) == hlist_node) && is_mirrored(box_dir(b)))
-        prev_depth = height(b);
-    else
-        prev_depth = depth(b);
 }
 
 
@@ -1344,6 +1399,7 @@ halfword prune_page_top(halfword p, boolean s)
                 width(temp_ptr) = 0;
             p = null;
             break;
+        case boundary_node:
         case whatsit_node:
         case mark_node:
         case ins_node:
@@ -1444,13 +1500,8 @@ halfword vert_break(halfword p, scaled h, scaled d)
                 prev_dp = depth(p);
                 goto NOT_FOUND;
                 break;
+            case boundary_node:
             case whatsit_node:
-                /* Process whatsit |p| in |vert_break| loop, |goto not_found| */
-                if ((subtype(p) == pdf_refxform_node)
-                    || (subtype(p) == pdf_refximage_node)) {
-                    cur_height = cur_height + prev_dp + height(p);
-                    prev_dp = depth(p);
-                }
                 goto NOT_FOUND;
                 break;
             case glue_node:

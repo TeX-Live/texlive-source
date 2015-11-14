@@ -63,8 +63,8 @@ int cs_count;                   /* total number of known identifiers */
 #define prim_base 1
 
 @ The arrays |prim| and |prim_eqtb| are used for name -> cmd,chr lookups.
-  
- The are  modelled after |hash| and |eqtb|, except that primitives do not 
+
+ The are  modelled after |hash| and |eqtb|, except that primitives do not
   have an |eq_level|, that field is replaced by |origin|.
 
 @c
@@ -84,7 +84,7 @@ static two_halves prim[(prim_size + 1)];        /* the primitives table */
 static memory_word prim_eqtb[(prim_size + 1)];
 
 @ The array |prim_data| works the other way around, it is used for
-   cmd,chr -> name lookups. 
+   cmd,chr -> name lookups.
 
 @c
 typedef struct prim_info {
@@ -95,7 +95,7 @@ typedef struct prim_info {
 
 static prim_info prim_data[(last_cmd + 1)];
 
-@ initialize the memory arrays 
+@ initialize the memory arrays
 @c
 void init_primitives(void)
 {
@@ -134,7 +134,7 @@ static halfword compute_hash(const char *j, unsigned int l,
 }
 
 
-@ Here is the subroutine that searches the primitive table for an identifier 
+@ Here is the subroutine that searches the primitive table for an identifier
 @c
 pointer prim_lookup(str_number s)
 {
@@ -182,7 +182,7 @@ pointer prim_lookup(str_number s)
     return p;
 }
 
-@ how to test a csname for primitive-ness 
+@ how to test a csname for primitive-ness
 @c
 boolean is_primitive(str_number csname)
 {
@@ -198,7 +198,7 @@ boolean is_primitive(str_number csname)
 }
 
 
-@ a few simple accessors 
+@ a few simple accessors
 @c
 quarterword get_prim_eq_type(int p)
 {
@@ -221,7 +221,7 @@ str_number get_prim_text(int p)
 }
 
 
-@ dumping and undumping 
+@ dumping and undumping
 @c
 void dump_primitives(void)
 {
@@ -270,7 +270,7 @@ void undump_primitives(void)
 
 @  Because the definitions of the actual user-accessible name of a
    primitive can be postponed until runtime, the function |primitive_def|
-   is needed that does nothing except creating the control sequence name. 
+   is needed that does nothing except creating the control sequence name.
 
 @c
 void primitive_def(const char *s, size_t l, quarterword c, halfword o)
@@ -323,7 +323,7 @@ store_primitive_name(str_number s, quarterword c, halfword o, halfword offset)
     prim_data[c].names[idx] = s;
 }
 
-@ Compared to tex82, |primitive| has two extra parameters. The |off| is an offset 
+@ Compared to tex82, |primitive| has two extra parameters. The |off| is an offset
    that will be passed on to |store_primitive_name|, the |cmd_origin| is the bit
    that is used to group primitives by originator.
 
@@ -363,7 +363,7 @@ static halfword insert_id(halfword p, const unsigned char *j, unsigned int l)
     if (cs_text(p) > 0) {
         if (hash_high < hash_extra) {
             incr(hash_high);
-            /* can't use |eqtb_top| here (perhaps because that is not finalized 
+            /* can't use |eqtb_top| here (perhaps because that is not finalized
                yet when called from |primitive|?) */
             cs_next(p) = hash_high + eqtb_size;
             p = cs_next(p);
@@ -473,9 +473,9 @@ pointer string_lookup(const char *s, size_t l)
 
    The body of |print_cmd_chr| use to be  a rather tedious listing of print
    commands, and most of it was essentially an inverse to the |primitive|
-   routine that enters a \TeX\ primitive into |eqtb|. 
+   routine that enters a \TeX\ primitive into |eqtb|.
 
-   Thanks to |prim_data|, there is no need for all that tediousness. What 
+   Thanks to |prim_data|, there is no need for all that tediousness. What
    is left of |primt_cnd_chr| are just the exceptions to the general rule
    that the  |cmd,chr_code| pair represents in a single primitive command.
 
@@ -591,17 +591,6 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
             tprint(" ");
         tprint("macro");
         break;
-    case extension_cmd:
-        if (chr_code < prim_data[cmd].subids &&
-            prim_data[cmd].names[chr_code] != 0) {
-            prim_cmd_chr(cmd, chr_code);
-        } else {
-            tprint("[unknown extension! (");
-            print_int(chr_code);
-            tprint(")]");
-
-        }
-        break;
     case assign_glue_cmd:
     case assign_mu_glue_cmd:
         if (chr_code < skip_base) {
@@ -640,6 +629,25 @@ void print_cmd_chr(quarterword cmd, halfword chr_code)
         } else {
             tprint_esc("dimen");
             print_int(chr_code - scaled_base);
+        }
+        break;
+    case normal_cmd:
+        if (chr_code < prim_data[cmd].subids && prim_data[cmd].names[chr_code] != 0) {
+            prim_cmd_chr(cmd, chr_code);
+        } else {
+            tprint("[unknown command! (");
+            print_int(chr_code);
+            tprint(")]");
+        }
+        break;
+    case extension_cmd:
+        if (chr_code < prim_data[cmd].subids && prim_data[cmd].names[chr_code] != 0) {
+            prim_cmd_chr(cmd, chr_code);
+        } else {
+            tprint("[unknown extension! (");
+            print_int(chr_code);
+            tprint(")]");
+
         }
         break;
     default:

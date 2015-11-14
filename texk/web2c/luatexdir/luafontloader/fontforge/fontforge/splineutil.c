@@ -4313,6 +4313,7 @@ return;
     for ( i=0; i < sf->layer_cnt; ++i )
         free (sf->layers[i].name);
     free(sf->layers);
+    free(sf->MATH);
     free(sf);
 }
 

@@ -17,9 +17,28 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-
 #ifndef LUATEX_API_H
 #  define LUATEX_API_H 1
+
+/* output modes, a bad place but this compiles at least */
+
+typedef enum { OMODE_NONE, OMODE_DVI, OMODE_PDF } output_mode ;
+
+#  define MAX_OMODE 2           /* largest index in enum output_mode */
+
+extern int output_mode_used;
+extern int output_mode_option;
+extern int output_mode_value;
+extern int draft_mode_option;
+extern int draft_mode_value;
+
+/* get_o_mode translates from output_mode to output_mode_used */
+/* fix_o_mode freezes output_mode as soon as anything goes through the backend */
+
+extern output_mode get_o_mode(void);
+extern void fix_o_mode(void);
+
+/* till here */
 
 #  include <stdlib.h>
 #  include <stdio.h>
@@ -53,14 +72,11 @@ extern void make_table(lua_State * L, const char *tab, const char *mttab, const 
 extern int luac_main(int argc, char *argv[]);
 
 extern int luaopen_tex(lua_State * L);
-
 extern int luaopen_pdf(lua_State * L);
-
-#  define LUA_TEXFILEHANDLE               "TEXFILE*"
-
 extern int luaopen_texio(lua_State * L);
-
 extern int luaopen_lang(lua_State * L);
+
+#  define LUA_TEXFILEHANDLE "TEXFILE*"
 
 extern lua_State *luatex_error(lua_State * L, int fatal);
 
@@ -112,14 +128,15 @@ extern int luaopen_vf(lua_State * L);
 extern int font_to_lua(lua_State * L, int f);
 extern int font_from_lua(lua_State * L, int f); /* return is boolean */
 
+extern int luaopen_oldtoken(lua_State * L);
 extern int luaopen_token(lua_State * L);
-extern int luaopen_newtoken(lua_State * L);
 extern void tokenlist_to_lua(lua_State * L, int p);
 extern void tokenlist_to_luastring(lua_State * L, int p);
 extern int tokenlist_from_lua(lua_State * L);
 
 extern void lua_nodelib_push(lua_State * L);
 extern int nodelib_getdir(lua_State * L, int n, int absolute_only);
+extern int nodelib_getlist(lua_State * L, int n);
 
 extern int luaopen_node(lua_State * L);
 extern void nodelist_to_lua(lua_State * L, int n);
@@ -172,9 +189,6 @@ extern int saved_callback_count;
 
 extern const char *luatex_banner;
 
-extern const char *last_lua_error;
-
-
 /* luastuff.h */
 
 typedef struct {
@@ -182,8 +196,7 @@ typedef struct {
     int idx;                    /* index within img_parms array */
 } parm_struct;
 
-extern void preset_environment(lua_State * L, const parm_struct * p,
-                               const char *s);
+extern void preset_environment(lua_State * L, const parm_struct * p, const char *s);
 
 extern char *startup_filename;
 extern int safer_option;
@@ -198,17 +211,15 @@ extern int program_name_set;    /* in lkpselib.c */
 extern char **argv;
 extern int argc;
 
-extern int loader_C_luatex(lua_State * L, const char *name,
-                           const char *filename);
-extern int loader_Call_luatex(lua_State * L, const char *name,
-                              const char *filename);
+extern int loader_C_luatex(lua_State * L, const char *name, const char *filename);
+extern int loader_Call_luatex(lua_State * L, const char *name, const char *filename);
 
 extern void init_tex_table(lua_State * L);
 
 extern int tex_table_id;
 extern int pdf_table_id;
-extern int newtoken_table_id;
 extern int token_table_id;
+extern int oldtoken_table_id;
 extern int node_table_id;
 extern int main_initialize(void);
 
@@ -216,7 +227,6 @@ extern int do_run_callback(int special, const char *values, va_list vl);
 extern int lua_traceback(lua_State * L);
 
 extern int luainit;
-
 
 extern char *luanames[];
 
@@ -242,27 +252,22 @@ extern char **environ;
 
 */
 
-/*#define init_luaS_index(a) do {                         */
 #define init_lua_key(a) do {                      \
     lua_pushliteral(Luas,#a);                             \
     luaS_##a##_ptr = lua_tostring(Luas,-1);               \
     luaS_##a##_index = luaL_ref (Luas,LUA_REGISTRYINDEX); \
 } while (0)
 
-  /*#define init_luaS_index_s(a,b) do {           */
 #define init_lua_key_alias(a,b) do {              \
     lua_pushliteral(Luas,b);                              \
     luaS_##a##_ptr = lua_tostring(Luas,-1);               \
     luaS_##a##_index = luaL_ref (Luas,LUA_REGISTRYINDEX); \
 } while (0)
 
-  /*#define make_luaS_index(a) */
 #define make_lua_key(a)       \
     int luaS_##a##_index = 0;          \
     const char * luaS_##a##_ptr = NULL
 
-
-/*#define luaS_ptr_eq(a,b) (a==luaS_##b##_ptr)*/
 #define lua_key_eq(a,b) (a==luaS_##b##_ptr)
 
 #define luaS_index(a)    luaS_##a##_index
@@ -271,7 +276,6 @@ extern char **environ;
 #define use_lua_key(a)  \
   extern int luaS_##a##_index ;          \
   extern const char * luaS_##a##_ptr
-
 
 #define lua_key_rawgeti(a) \
   lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_##a##_index);\
@@ -282,9 +286,9 @@ extern char **environ;
   lua_rawget(L, -1+n)
 
 /*
-Unfortunately floor is already redefined as 
+Unfortunately floor is already redefined as
 #define floor ((integer)floor((double)(a)))
-so 
+so
 #define lua_uroundnumber(a,b) (unsigned int)floor((double)(lua_tonumber(a,b)+0.5))
 is useless.
 */
@@ -293,7 +297,6 @@ is useless.
 #define lua_uroundnumber(a,b) (unsigned int)((double)(lua_tonumber(a,b)+0.5))
 extern int lua_numeric_field_by_index(lua_State *, int , int);
 extern unsigned int lua_unsigned_numeric_field_by_index(lua_State *, int , int);
-
 
 /* Currently we sometimes use numbers and sometimes strings in node properties. We can
 make that consistent by having a check on number and if not then assign a string. The
@@ -305,27 +308,26 @@ preassign these at startup time. */
 #define PACK_TYPE_SIZE        4
 #define GROUP_CODE_SIZE      23
 #define MATH_STYLE_NAME_SIZE  8
-#define DIR_PAR_SIZE        128
-#define DIR_TEXT_SIZE       128
+#define APPEND_LIST_SIZE      5
+#define DIR_PAR_SIZE          8
+#define DIR_TEXT_SIZE         8
 
-extern int l_pack_type_index       [PACK_TYPE_SIZE] ;
+extern int l_pack_type_index       [PACK_TYPE_SIZE];
 extern int l_group_code_index      [GROUP_CODE_SIZE];
 extern int l_math_style_name_index [MATH_STYLE_NAME_SIZE];
 extern int l_dir_par_index         [DIR_PAR_SIZE];
 extern int l_dir_text_index        [DIR_TEXT_SIZE];
 
-#define lua_push_pack_type(L,pack_type)  lua_rawgeti(L, LUA_REGISTRYINDEX, l_pack_type_index      [pack_type] );
-#define lua_push_group_code(L,group_code) lua_rawgeti(L, LUA_REGISTRYINDEX, l_group_code_index     [group_code]);
+#define lua_push_pack_type(L,pack_type)  lua_rawgeti(L, LUA_REGISTRYINDEX, l_pack_type_index[pack_type] );
+#define lua_push_group_code(L,group_code) lua_rawgeti(L, LUA_REGISTRYINDEX, l_group_code_index[group_code]);
 #define lua_push_math_style_name(L,style_name) lua_rawgeti(L, LUA_REGISTRYINDEX, l_math_style_name_index[style_name]);
-#define lua_push_dir_par(L,dir) lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_par_index[dir+64])
-#define lua_push_dir_text(L,dir) lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_text_index[dir+64])
-
+#define lua_push_dir_par(L,dir) lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_par_index[dir+dir_swap])
+#define lua_push_dir_text(L,dir) lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_text_index[dir+dir_swap])
 
 #define lua_push_string_by_index(L,index) lua_rawgeti(L, LUA_REGISTRYINDEX, index)
 #define lua_push_string_by_name(L,index) lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(index))
 
-
-#define set_pack_type_index \
+#define set_l_pack_type_index \
 l_pack_type_index[0] = lua_key_index(exactly); \
 l_pack_type_index[1] = lua_key_index(additional); \
 l_pack_type_index[2] = lua_key_index(cal_expand_ratio);\
@@ -368,24 +370,23 @@ l_math_style_name_index[7] = lua_key_index(crampedscriptscript)
 
 #define set_l_dir_par_index \
 l_dir_par_index[0] = lua_key_index(TLT);\
-l_dir_par_index[4] = lua_key_index(TRT);\
-l_dir_par_index[9] = lua_key_index(LTL);\
-l_dir_par_index[24] = lua_key_index(RTT);\
-l_dir_par_index[64] = lua_key_index(TLT);\
-l_dir_par_index[68] = lua_key_index(TRT);\
-l_dir_par_index[73] = lua_key_index(LTL);\
-l_dir_par_index[88] = lua_key_index(RTT);\
+l_dir_par_index[1] = lua_key_index(TRT);\
+l_dir_par_index[2] = lua_key_index(LTL);\
+l_dir_par_index[3] = lua_key_index(RTT);\
+l_dir_par_index[4] = lua_key_index(TLT);\
+l_dir_par_index[5] = lua_key_index(TRT);\
+l_dir_par_index[6] = lua_key_index(LTL);\
+l_dir_par_index[7] = lua_key_index(RTT);\
 
 #define set_l_dir_text_index \
 l_dir_text_index[0] = lua_key_index(mTLT);\
-l_dir_text_index[4] = lua_key_index(mTRT);\
-l_dir_text_index[9] = lua_key_index(mLTL);\
-l_dir_text_index[24] = lua_key_index(mRTT);\
-l_dir_text_index[64] = lua_key_index(pTLT);\
-l_dir_text_index[68] = lua_key_index(pTRT);\
-l_dir_text_index[73] = lua_key_index(pLTL);\
-l_dir_text_index[88] = lua_key_index(pRTT);\
-
+l_dir_text_index[1] = lua_key_index(mTRT);\
+l_dir_text_index[2] = lua_key_index(mLTL);\
+l_dir_text_index[3] = lua_key_index(mRTT);\
+l_dir_text_index[4] = lua_key_index(pTLT);\
+l_dir_text_index[5] = lua_key_index(pTRT);\
+l_dir_text_index[6] = lua_key_index(pLTL);\
+l_dir_text_index[7] = lua_key_index(pRTT);\
 
 #define set_make_keys \
 make_lua_key(cmdname);make_lua_key(expandable);make_lua_key(protected);\
@@ -476,6 +477,8 @@ make_lua_key(encodingbytes);\
 make_lua_key(encodingname);\
 make_lua_key(end);\
 make_lua_key(etex);\
+make_lua_key(equation);\
+make_lua_key(equation_number);\
 make_lua_key(exactly);\
 make_lua_key(expansion_factor);\
 make_lua_key(ext);\
@@ -485,14 +488,17 @@ make_lua_key(extensible);\
 make_lua_key(extra_space);\
 make_lua_key(fam);\
 make_lua_key(fast);\
+make_lua_key(fence);\
 make_lua_key(file);\
 make_lua_key(filename);\
+make_lua_key(fill);\
 make_lua_key(fin_row);\
 make_lua_key(font);\
 make_lua_key(fonts);\
 make_lua_key(format);\
 make_lua_key(fullname);\
 make_lua_key(global);\
+make_lua_key(glue);\
 make_lua_key(glue_order);\
 make_lua_key(glue_set);\
 make_lua_key(glue_sign);\
@@ -532,12 +538,14 @@ make_lua_key(log);\
 make_lua_key(lua);\
 make_lua_key(lua_functions);\
 make_lua_key(luatex);\
-make_lua_key(luatex_newtoken);\
 make_lua_key(luatex_node);\
+make_lua_key(luatex_oldtoken);\
+make_lua_key(luatex_token);\
 make_lua_key(mLTL);\
 make_lua_key(mRTT);\
 make_lua_key(mTLT);\
 make_lua_key(mTRT);\
+make_lua_key(marginkern);\
 make_lua_key(mark);\
 make_lua_key(math);\
 make_lua_key(math_choice);\
@@ -568,8 +576,11 @@ make_lua_key(num);\
 make_lua_key(number);\
 make_lua_key(objcompression);\
 make_lua_key(objnum);\
+make_lua_key(oldmath);\
 make_lua_key(ordering);\
+make_lua_key(origin);\
 make_lua_key(output);\
+make_lua_key(overlay_accent);\
 make_lua_key(pLTL);\
 make_lua_key(pRTT);\
 make_lua_key(pTLT);\
@@ -583,11 +594,14 @@ make_lua_key(pagesattributes);\
 make_lua_key(parameters);\
 make_lua_key(pdf_data);\
 make_lua_key(pdftex);\
+make_lua_key(pdf_destination);\
+make_lua_key(pdf_literal);\
 make_lua_key(pen_broken);\
 make_lua_key(pen_inter);\
 make_lua_key(penalty);\
 make_lua_key(pop);\
 make_lua_key(post);\
+make_lua_key(post_linebreak);\
 make_lua_key(pre);\
 make_lua_key(pre_adjust);\
 make_lua_key(pre_adjust_head);\
@@ -601,6 +615,7 @@ make_lua_key(psname);\
 make_lua_key(ptr);\
 make_lua_key(push);\
 make_lua_key(quad);\
+make_lua_key(radical);\
 make_lua_key(raw);\
 make_lua_key(ref_count);\
 make_lua_key(reg);\
@@ -608,6 +623,7 @@ make_lua_key(registry);\
 make_lua_key(renew);\
 make_lua_key(rep);\
 make_lua_key(replace);\
+make_lua_key(resources);\
 make_lua_key(right);\
 make_lua_key(right_boundary);\
 make_lua_key(right_protruding);\
@@ -677,16 +693,18 @@ make_lua_key(value);\
 make_lua_key(vbox);\
 make_lua_key(vcenter);\
 make_lua_key(version);\
+make_lua_key(vert_italic);\
 make_lua_key(vert_variants);\
 make_lua_key(vmode_par);\
 make_lua_key(vtop);\
 make_lua_key(width);\
 make_lua_key(writable);\
 make_lua_key(x_height);\
+make_lua_key(xformresources);\
+make_lua_key(xformattributes);\
 make_lua_key(xoffset);\
 make_lua_key(xyz_zoom);\
 make_lua_key(yoffset)
-
 
 #define set_init_keys \
 init_lua_key(cmdname);init_lua_key(expandable);init_lua_key(protected);\
@@ -776,6 +794,8 @@ init_lua_key(encodingbytes);\
 init_lua_key(encodingname);\
 init_lua_key(end);\
 init_lua_key(etex);\
+init_lua_key(equation);\
+init_lua_key(equation_number);\
 init_lua_key(exactly);\
 init_lua_key(expansion_factor);\
 init_lua_key(ext);\
@@ -785,14 +805,17 @@ init_lua_key(extensible);\
 init_lua_key(extra_space);\
 init_lua_key(fam);\
 init_lua_key(fast);\
+init_lua_key(fence);\
 init_lua_key(file);\
 init_lua_key(filename);\
+init_lua_key(fill);\
 init_lua_key(fin_row);\
 init_lua_key(font);\
 init_lua_key(fonts);\
 init_lua_key(format);\
 init_lua_key(fullname);\
 init_lua_key(global);\
+init_lua_key(glue);\
 init_lua_key(glue_order);\
 init_lua_key(glue_set);\
 init_lua_key(glue_sign);\
@@ -830,8 +853,12 @@ init_lua_key(list);\
 init_lua_key(local_box);\
 init_lua_key(log);\
 init_lua_key(lua);\
+init_lua_key(lua_functions);\
 init_lua_key(luatex);\
-init_lua_key(luatex_newtoken);\
+init_lua_key(luatex_node);\
+init_lua_key(luatex_oldtoken);\
+init_lua_key(luatex_token);\
+init_lua_key(marginkern);\
 init_lua_key(mark);\
 init_lua_key(math);\
 init_lua_key(math_choice);\
@@ -860,8 +887,11 @@ init_lua_key(num);\
 init_lua_key(number);\
 init_lua_key(objcompression);\
 init_lua_key(objnum);\
+init_lua_key(oldmath);\
+init_lua_key(origin);\
 init_lua_key(ordering);\
 init_lua_key(output);\
+init_lua_key(overlay_accent);\
 init_lua_key(page);\
 init_lua_key(page_head);\
 init_lua_key(page_ins_head);\
@@ -870,11 +900,14 @@ init_lua_key(pageresources);\
 init_lua_key(pagesattributes);\
 init_lua_key(parameters);\
 init_lua_key(pdftex);\
+init_lua_key(pdf_destination);\
+init_lua_key(pdf_literal);\
 init_lua_key(pen_broken);\
 init_lua_key(pen_inter);\
 init_lua_key(penalty);\
 init_lua_key(pop);\
 init_lua_key(post);\
+init_lua_key(post_linebreak);\
 init_lua_key(pre);\
 init_lua_key(pre_adjust);\
 init_lua_key(pre_adjust_head);\
@@ -888,6 +921,7 @@ init_lua_key(psname);\
 init_lua_key(ptr);\
 init_lua_key(push);\
 init_lua_key(quad);\
+init_lua_key(radical);\
 init_lua_key(raw);\
 init_lua_key(ref_count);\
 init_lua_key(reg);\
@@ -895,6 +929,7 @@ init_lua_key(registry);\
 init_lua_key(renew);\
 init_lua_key(rep);\
 init_lua_key(replace);\
+init_lua_key(resources);\
 init_lua_key(right);\
 init_lua_key(right_boundary);\
 init_lua_key(right_protruding);\
@@ -963,12 +998,15 @@ init_lua_key(value);\
 init_lua_key(vbox);\
 init_lua_key(vcenter);\
 init_lua_key(version);\
+init_lua_key(vert_italic);\
 init_lua_key(vert_variants);\
 init_lua_key(vmode_par);\
 init_lua_key(vtop);\
 init_lua_key(width);\
 init_lua_key(writable);\
 init_lua_key(x_height);\
+init_lua_key(xformresources);\
+init_lua_key(xformattributes);\
 init_lua_key(xoffset);\
 init_lua_key(xyz_zoom);\
 init_lua_key(yoffset);\
@@ -988,12 +1026,11 @@ init_lua_key_alias(pTRT,"+TRT");\
 init_lua_key_alias(pdf_data,"pdf.data");\
 init_lua_key_alias(term_and_log,"term and log")
 
-
 #define assign_math_style(L,n,target) do { \
-    if (lua_isnumber(L,n)) { \
+    if (lua_type(L,n) == LUA_TNUMBER) { \
         /* new, often same as subtype anyway  */ \
         target = lua_tonumber(L,n); \
-    } else if (lua_isstring(L,n)) { \
+    } else if (lua_type(L,n) == LUA_TSTRING) { \
         const char *s = lua_tostring(L, n); \
         if (lua_key_eq(s,display)) { \
             target = 0; \
@@ -1019,39 +1056,16 @@ init_lua_key_alias(term_and_log,"term and log")
     } \
 } while(0)
 
-
-
-
 #ifdef __MINGW32__
 extern FILE *_cairo_win32_tmpfile( void );
 #define tmpfile() _cairo_win32_tmpfile()
 #endif /* __MINGW32__ */
 
-
-
-/*
-* experimental code (no primitive):
-
-   0 = all
-   1 = retain math nodes
-
-*/
-
-#define max_experimental_code 1
-#define MAX_EXPERIMENTAL_CODE_SIZE max_experimental_code+1
-/* to be indexed by i with 1<= i <=max_experimental_code */
-extern int experimental_code[MAX_EXPERIMENTAL_CODE_SIZE] ; 
-
-
 #endif                          /* LUATEX_API_H */
-
-
-
 
 /*                                                 */
 /* These keys have to available to different files */
 /*                                                 */
-
 
 use_lua_key(cmdname);use_lua_key(expandable);use_lua_key(protected);
 
@@ -1142,6 +1156,8 @@ use_lua_key(encodingbytes);
 use_lua_key(encodingname);
 use_lua_key(end);
 use_lua_key(etex);
+use_lua_key(equation);\
+use_lua_key(equation_number);\
 use_lua_key(exactly);
 use_lua_key(expansion_factor);
 use_lua_key(ext);
@@ -1151,14 +1167,17 @@ use_lua_key(extensible);
 use_lua_key(extra_space);
 use_lua_key(fam);
 use_lua_key(fast);
+use_lua_key(fence);
 use_lua_key(file);
 use_lua_key(filename);
+use_lua_key(fill);
 use_lua_key(fin_row);
 use_lua_key(font);
 use_lua_key(fonts);
 use_lua_key(format);
 use_lua_key(fullname);
 use_lua_key(global);
+use_lua_key(glue);
 use_lua_key(glue_order);
 use_lua_key(glue_set);
 use_lua_key(glue_sign);
@@ -1198,12 +1217,14 @@ use_lua_key(log);
 use_lua_key(lua);
 use_lua_key(lua_functions);
 use_lua_key(luatex);
-use_lua_key(luatex_newtoken);
 use_lua_key(luatex_node);
+use_lua_key(luatex_oldtoken);
+use_lua_key(luatex_token);
 use_lua_key(mLTL);
 use_lua_key(mRTT);
 use_lua_key(mTLT);
 use_lua_key(mTRT);
+use_lua_key(marginkern);
 use_lua_key(mark);
 use_lua_key(math);
 use_lua_key(math_choice);
@@ -1234,8 +1255,11 @@ use_lua_key(num);
 use_lua_key(number);
 use_lua_key(objcompression);
 use_lua_key(objnum);
+use_lua_key(oldmath);
+use_lua_key(origin);
 use_lua_key(ordering);
 use_lua_key(output);
+use_lua_key(overlay_accent);
 use_lua_key(pLTL);
 use_lua_key(pRTT);
 use_lua_key(pTLT);
@@ -1249,11 +1273,14 @@ use_lua_key(pagesattributes);
 use_lua_key(parameters);
 use_lua_key(pdf_data);
 use_lua_key(pdftex);
+use_lua_key(pdf_destination);\
+use_lua_key(pdf_literal);\
 use_lua_key(pen_broken);
 use_lua_key(pen_inter);
 use_lua_key(penalty);
 use_lua_key(pop);
 use_lua_key(post);
+use_lua_key(post_linebreak);
 use_lua_key(pre);
 use_lua_key(pre_adjust);
 use_lua_key(pre_adjust_head);
@@ -1267,6 +1294,7 @@ use_lua_key(psname);
 use_lua_key(ptr);
 use_lua_key(push);
 use_lua_key(quad);
+use_lua_key(radical);
 use_lua_key(raw);
 use_lua_key(ref_count);
 use_lua_key(reg);
@@ -1274,6 +1302,7 @@ use_lua_key(registry);
 use_lua_key(renew);
 use_lua_key(rep);
 use_lua_key(replace);
+use_lua_key(resources);
 use_lua_key(right);
 use_lua_key(right_boundary);
 use_lua_key(right_protruding);
@@ -1343,12 +1372,15 @@ use_lua_key(value);
 use_lua_key(vbox);
 use_lua_key(vcenter);
 use_lua_key(version);
+use_lua_key(vert_italic);
 use_lua_key(vert_variants);
 use_lua_key(vmode_par);
 use_lua_key(vtop);
 use_lua_key(width);
 use_lua_key(writable);
 use_lua_key(x_height);
+use_lua_key(xformresources);
+use_lua_key(xformattributes);
 use_lua_key(xoffset);
 use_lua_key(xyz_zoom);
 use_lua_key(yoffset);

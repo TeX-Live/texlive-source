@@ -23,6 +23,8 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
+/* these will move to equivalents.h */
+
 @ @c
 #define explicit 1
 #define acc_kern 2
@@ -32,7 +34,7 @@
 #define tag_code 5
 #define auto_kern explicit
 #define no_lig_code 6
-
+#define gp_code_base 7
 
 #define prev_depth cur_list.prev_depth_field
 #define space_factor cur_list.space_factor_field
@@ -55,13 +57,9 @@
 #define page_top_offset dimen_par(page_top_offset_code)
 #define page_right_offset dimen_par(page_right_offset_code)
 #define page_bottom_offset dimen_par(page_bottom_offset_code)
-#define pdf_h_origin       dimen_par(pdf_h_origin_code)
-#define pdf_v_origin       dimen_par(pdf_v_origin_code)
-#define pdf_px_dimen       dimen_par(pdf_px_dimen_code)
+#define px_dimen dimen_par(px_dimen_code)
 
-#define pdf_image_resolution   int_par(pdf_image_resolution_code)
-
-#define math_eqno_gap_step     int_par(math_eqno_gap_step_code)
+#define math_eqno_gap_step int_par(math_eqno_gap_step_code)
 
 #define escape_char int_par(escape_char_code)
 #define max_dead_cycles int_par(max_dead_cycles_code)
@@ -73,6 +71,7 @@
 #define looseness int_par(looseness_code)
 #define space_skip glue_par(space_skip_code)
 #define xspace_skip glue_par(xspace_skip_code)
+#define math_skip glue_par(math_skip_code)
 #define every_vbox equiv(every_vbox_loc)
 
 #define split_top_skip glue_par(split_top_skip_code)
@@ -250,11 +249,23 @@ static void run_app_space (void) {
     }
 }
 
-@ Append a |cancel_boundary_node|
+@ Append a |boundary_node|
 @c
 static void run_no_boundary (void) {
-    new_whatsit(cancel_boundary_node);
+    halfword n ;
+    n = new_node(boundary_node,cancel_boundary);
+    couple_nodes(tail, n);
+    tail = n;
 }
+static void run_boundary (void) {
+    halfword n ;
+    n = new_node(boundary_node,user_boundary);
+    scan_int();
+    boundary_value(n) = cur_val;
+    couple_nodes(tail, n);
+    tail = n;
+}
+
 
 @ @c
 static void run_char_ghost (void) {
@@ -294,7 +305,7 @@ static void run_ignore_spaces (void) {
     } else {
         int t = scanner_status;
         scanner_status = normal;
-        get_token_lua();
+        get_next(); /* get_token_lua(); */
         scanner_status = t;
         cur_cs = prim_lookup(cs_text(cur_cs));
         if (cur_cs != undefined_primitive) {
@@ -627,9 +638,105 @@ static void run_after_group (void) {
 
 @ @c
 static void run_extension (void) {
-    do_extension(static_pdf);
+    do_extension(0);
 }
 
+static void run_normal (void) {
+{
+    switch (cur_chr) {
+        case save_pos_code:
+            new_whatsit(save_pos_node);
+            break;
+        case save_cat_code_table_code:
+            scan_int();
+            if ((cur_val < 0) || (cur_val > 0x7FFF)) {
+                print_err("Invalid \\catcode table");
+                help1("All \\catcode table ids must be between 0 and 0x7FFF");
+                error();
+            } else {
+                if (cur_val == cat_code_table) {
+                    print_err("Invalid \\catcode table");
+                    help1("You cannot overwrite the current \\catcode table");
+                    error();
+                } else {
+                    copy_cat_codes(cat_code_table, cur_val);
+                }
+            }
+            break;
+        case init_cat_code_table_code:
+            scan_int();
+            if ((cur_val < 0) || (cur_val > 0x7FFF)) {
+                print_err("Invalid \\catcode table");
+                help1("All \\catcode table ids must be between 0 and 0x7FFF");
+                error();
+            } else {
+                if (cur_val == cat_code_table) {
+                    print_err("Invalid \\catcode table");
+                    help1("You cannot overwrite the current \\catcode table");
+                    error();
+                } else {
+                    initex_cat_codes(cur_val);
+                }
+            }
+            break;
+        case set_random_seed_code:
+            /*  Negative random seed values are silently converted to positive ones */
+            scan_int();
+            if (cur_val < 0)
+                negate(cur_val);
+            random_seed = cur_val;
+            init_randoms(random_seed);
+            break;
+        case late_lua_code:
+            new_whatsit(late_lua_node); /* type == normal */
+            late_lua_name(tail) = scan_lua_state();
+            (void) scan_toks(false, false);
+            late_lua_data(tail) = def_ref;
+            break;
+        case expand_font_code:
+            read_expand_font();
+            break;
+        default:
+            confusion("int1");
+            break;
+        }
+    }
+}
+
+/*
+    this is experimental and not used for production, only for testing and writing
+    macros
+
+*/
+
+static void run_option(void) {
+    int a = 0 ;
+    switch (cur_chr) {
+        case math_option_code:
+            if (scan_keyword("old")) {
+                scan_int();
+                word_define(int_base+math_old_code, cur_val);
+                /* math_no_char_italic = cur_val; */
+            } else if (scan_keyword("noitaliccompensation")) {
+                scan_int();
+                word_define(int_base+math_no_italic_compensation_code, cur_val);
+                /* math_no_italic_compensation = cur_val; */
+            } else if (scan_keyword("nocharitalic")) {
+                scan_int();
+                word_define(int_base+math_no_char_italic_code, cur_val);
+                /* math_no_char_italic = cur_val; */
+            } else if (scan_keyword("useoldfractionscaling")) {
+                scan_int();
+                word_define(int_base+math_use_old_fraction_scaling_code, cur_val);
+            } else {
+                normal_warning("mathoption","unknown key",false,false);
+            }
+            break;
+        default:
+            /* harmless */
+            break;
+    }
+}
 
 @ For mode-independent commands, the following macro is useful.
 
@@ -657,12 +764,14 @@ static void init_main_control (void) {
     jump_table[hmode + spacer_cmd] = run_app_space;
     jump_table[hmode + ex_space_cmd] = run_app_space;
     jump_table[mmode + ex_space_cmd] = run_app_space;
+    jump_table[hmode + boundary_cmd] = run_boundary;
     jump_table[hmode + no_boundary_cmd] = run_no_boundary;
     jump_table[hmode + char_ghost_cmd] = run_char_ghost;
     jump_table[mmode + char_ghost_cmd] = run_char_ghost;
     any_mode(relax_cmd, run_relax);
     jump_table[vmode + spacer_cmd] = run_relax;
     jump_table[mmode + spacer_cmd] = run_relax;
+    jump_table[mmode + boundary_cmd] = run_relax;
     jump_table[mmode + no_boundary_cmd] = run_relax;
     any_mode(ignore_spaces_cmd,run_ignore_spaces);
     jump_table[vmode + stop_cmd] = run_stop;
@@ -705,9 +814,13 @@ static void init_main_control (void) {
     jump_table[mmode + un_vbox_cmd] =  insert_dollar_sign;
     jump_table[mmode + valign_cmd] =  insert_dollar_sign;
     jump_table[mmode + hrule_cmd] =  insert_dollar_sign;
+    jump_table[mmode + no_hrule_cmd] =  insert_dollar_sign;
     jump_table[vmode + hrule_cmd] = run_rule;
+    jump_table[vmode + no_hrule_cmd] = run_rule;
     jump_table[hmode + vrule_cmd] = run_rule;
+    jump_table[hmode + no_vrule_cmd] = run_rule;
     jump_table[mmode + vrule_cmd] = run_rule;
+    jump_table[mmode + no_vrule_cmd] = run_rule;
     jump_table[vmode + vskip_cmd] = append_glue;
     jump_table[hmode + hskip_cmd] = append_glue;
     jump_table[mmode + hskip_cmd] = append_glue;
@@ -736,17 +849,20 @@ static void init_main_control (void) {
     jump_table[vmode + math_shift_cs_cmd] = run_new_graf;
     jump_table[vmode + un_hbox_cmd] = run_new_graf;
     jump_table[vmode + vrule_cmd] = run_new_graf;
+    jump_table[vmode + no_vrule_cmd] = run_new_graf;
     jump_table[vmode + accent_cmd] = run_new_graf;
     jump_table[vmode + discretionary_cmd] = run_new_graf;
     jump_table[vmode + hskip_cmd] = run_new_graf;
     jump_table[vmode + valign_cmd] = run_new_graf;
     jump_table[vmode + ex_space_cmd] = run_new_graf;
+    jump_table[vmode + boundary_cmd] = run_new_graf;
     jump_table[vmode + no_boundary_cmd] = run_new_graf;
     jump_table[vmode + par_end_cmd] = run_par_end_vmode;
     jump_table[hmode + par_end_cmd] = run_par_end_hmode;
     jump_table[hmode + stop_cmd] = head_for_vmode;
     jump_table[hmode + vskip_cmd] = head_for_vmode;
     jump_table[hmode + hrule_cmd] = head_for_vmode;
+    jump_table[hmode + no_hrule_cmd] = head_for_vmode;
     jump_table[hmode + un_vbox_cmd] = head_for_vmode;
     jump_table[hmode + halign_cmd] = head_for_vmode;
     any_mode(insert_cmd,begin_insert_or_adjust);
@@ -828,7 +944,8 @@ static void init_main_control (void) {
     any_mode(set_font_cmd, prefixed_command);
     any_mode(def_font_cmd, prefixed_command);
     any_mode(letterspace_font_cmd, prefixed_command);
-    any_mode(pdf_copy_font_cmd, prefixed_command);
+    any_mode(copy_font_cmd, prefixed_command);
+    any_mode(set_font_id_cmd, prefixed_command);
     any_mode(register_cmd, prefixed_command);
     any_mode(advance_cmd, prefixed_command);
     any_mode(multiply_cmd, prefixed_command);
@@ -847,7 +964,9 @@ static void init_main_control (void) {
     any_mode(message_cmd,issue_message);
     any_mode(case_shift_cmd, shift_case);
     any_mode(xray_cmd, show_whatever);
+    any_mode(normal_cmd, run_normal);
     any_mode(extension_cmd, run_extension);
+    any_mode(option_cmd, run_option);
 }
 
 @ And here is |main_control| itself.  It is quite short nowadays.
@@ -1331,7 +1450,7 @@ void box_end(int box_context)
                         append_list(pre_adjust_head, pre_adjust_tail);
                     pre_adjust_tail = null;
                 }
-                append_to_vlist(cur_box);
+                append_to_vlist(cur_box,lua_key_index(box));
                 if (adjust_tail != null) {
                     if (adjust_head != adjust_tail)
                         append_list(adjust_head, adjust_tail);
@@ -1400,8 +1519,9 @@ void scan_box(int box_context)
 
     if (cur_cmd == make_box_cmd) {
         begin_box(box_context);
-    } else if ((box_context >= leader_flag)
-               && ((cur_cmd == hrule_cmd) || (cur_cmd == vrule_cmd))) {
+    } else if ((box_context >= leader_flag) &&
+            ((cur_cmd == hrule_cmd) || (cur_cmd == vrule_cmd) ||
+             (cur_cmd == no_hrule_cmd) || (cur_cmd == no_vrule_cmd))) {
         cur_box = scan_rule_spec();
         box_end(box_context);
     } else {
@@ -1432,7 +1552,7 @@ void new_graf(boolean indented)
         p = new_null_box();
         box_dir(p) = par_direction;
         width(p) = par_indent;
-        subtype(p) = HLIST_SUBTYPE_INDENT;
+        subtype(p) = indent_list;
         q = tail;
         tail_append(p);
     } else {
@@ -1768,6 +1888,10 @@ void append_discretionary(void)
         disc_penalty(tail) = int_par(ex_hyphen_penalty_code);
     } else {
         /* \discretionary */
+        if (scan_keyword("penalty")) {
+            scan_int();
+            disc_penalty(tail) = cur_val;
+        }
         incr(save_ptr);
         set_saved_record(-1, saved_disc, 0, 0);
         new_save_level(disc_group);
@@ -2703,9 +2827,14 @@ void prefixed_command(void)
     case letterspace_font_cmd:
         new_letterspaced_font((small_number) a);
         break;
-    case pdf_copy_font_cmd:
+    case copy_font_cmd:
         make_font_copy((small_number) a);
         break;
+    case set_font_id_cmd:
+        scan_int();
+        if (is_valid_font(cur_val))
+            zset_cur_font(cur_val);
+        break ;
     case set_interaction_cmd:
         new_interaction();
         break;
@@ -2744,7 +2873,7 @@ void fixup_directions(void)
             /* DIR: Add local dir node */
             tail_append(new_dir(text_direction));
 
-            dir_dir(tail) = temporary_dir - 64;
+            dir_dir(tail) = temporary_dir - dir_swap;
         }
         if (temp_no_whatsits != 0) {
             /* LOCAL: Add local paragraph node */
@@ -2831,14 +2960,6 @@ void assign_internal_value(int a, halfword p, int val)
             } else {
                 word_define(p, val);
             }
-            break;
-        case pdf_compress_level_code:
-            static_pdf->compress_level = val;
-            word_define(p, val);
-            break;
-        case pdf_objcompresslevel_code:
-            static_pdf->objcompresslevel = val;
-            word_define(p, val);
             break;
         case language_code:
             if (val < 0) {
@@ -3494,9 +3615,8 @@ void initialize(void)
 
     format_ident = 0;
     format_name = get_nullstr();
-    for (k = 0; k <= 17; k++)
-        write_open[k] = false;
     initialize_directions();
+    initialize_write_files();
     seconds_and_micros(epochseconds, microseconds);
     init_start_time(static_pdf);
 
@@ -3597,20 +3717,8 @@ void initialize(void)
         cs_text(frozen_primitive) = maketexstring("primitive");
         create_null_font();
         font_bytes = 0;
-        pdf_h_origin = one_inch;
-        pdf_v_origin = one_inch;
-        pdf_compress_level = 9;
-        pdf_objcompresslevel = 0;
-        pdf_decimal_digits = 3;
-        pdf_image_resolution = 72;
-        pdf_minor_version = 4;
-        pdf_gamma = 1000;
-        pdf_image_gamma = 2200;
-        pdf_image_hicolor = 1;
-        pdf_image_apply_gamma = 0;
-        pdf_px_dimen = one_bp;
-        pdf_draftmode = 0;
-	math_eqno_gap_step = 1000 ;
+        px_dimen = one_bp;
+        math_eqno_gap_step = 1000 ;
         cs_text(frozen_protection) = maketexstring("inaccessible");
         format_ident = maketexstring(" (INITEX)");
         cs_text(end_write) = maketexstring("endwrite");

@@ -39,7 +39,7 @@ They have the following properties:
       freed if the stack is cleared.
 
 
-@ Color Stack 
+@ Color Stack
 @c
 #define MAX_COLORSTACKS 32768
 /* The colorstack number is stored in two bytes (info field of the node) */
@@ -104,11 +104,10 @@ int colorstackused(void)
     A new color stack is setup with the given parameters.
     The stack number is returned or -1 in case of error (no room).
 @c
-int newcolorstack(int s, int literal_mode, boolean page_start)
+int newcolorstack(const char *str, int literal_mode, boolean page_start)
 {
     colstack_type *colstack;
     int colstack_num;
-    char *str;
 
     init_colorstacks();
 
@@ -135,24 +134,21 @@ int newcolorstack(int s, int literal_mode, boolean page_start)
     colstack->form_used = 0;
     colstack->literal_mode = literal_mode;
     colstack->page_start = page_start;
-    str = makecstring(s);
-    if (*str == 0) {
-        colstack->page_current = NULL;
-        colstack->form_current = NULL;
-        colstack->form_init = NULL;
-    } else {
+    colstack->page_current = NULL;
+    colstack->form_current = NULL;
+    colstack->form_init = NULL;
+    if (str) {
         colstack->page_current = xstrdup(str);
         colstack->form_current = xstrdup(str);
         colstack->form_init = xstrdup(str);
     }
-    free(str);
     return colstack_num;
 }
 
 @ @c
 #define get_colstack(n) (&colstacks[n])
 
-@ Puts a string on top of the string pool and updates |pool_ptr|. 
+@ Puts a string on top of the string pool and updates |pool_ptr|.
 @c
 static void put_cstring_on_str_pool(char *str)
 {

@@ -488,7 +488,7 @@ static char *hyphenation_exception(int exceptions, char *w)
     if (lua_istable(L, -1)) {   /* ?? */
         lua_pushstring(L, w);   /* word table */
         lua_rawget(L, -2);
-        if (lua_isstring(L, -1)) {
+        if (lua_type(L, -1) == LUA_TSTRING) {
             ret = xstrdup(lua_tostring(L, -1));
         }
         lua_pop(L, 2);
@@ -577,6 +577,11 @@ static const char *PAT_ERROR[] = {
     "No intervening spaces are allowed.",
     NULL
 };
+
+/*
+    The exceptions are taken as-is: no min values are taken into account. One can
+    add normal patterns on-the-fly if needed.
+*/
 
 static void do_exception(halfword wordstart, halfword r, char *replacement)
 {
@@ -723,6 +728,7 @@ static halfword find_next_wordstart(halfword r)
     halfword t ;
     while (r != null) {
         switch (type(r)) {
+        case boundary_node:
         case whatsit_node:
             break;
         case glue_node:
@@ -785,18 +791,19 @@ static int valid_wordend(halfword s)
     register int clang = char_lang(s);
     if (r == null)
         return 1;
-    while ((r != null) && ((type(r) == glyph_node && is_simple_character(r)
-                            && clang == char_lang(r)) ||
-                           (type(r) == kern_node && (subtype(r) == normal))
+    while ((r != null) && (   (type(r) == glyph_node && is_simple_character(r) && clang == char_lang(r))
+                           || (type(r) == kern_node && (subtype(r) == normal))
            )) {
         r = vlink(r);
     }
-    if (r == null || (type(r) == glyph_node && is_simple_character(r)
-                      && clang != char_lang(r)) || type(r) == glue_node
-        || type(r) == whatsit_node || type(r) == ins_node
-        || type(r) == adjust_node || type(r) == penalty_node
-        || (type(r) == kern_node
-            && (subtype(r) == explicit || subtype(r) == acc_kern)))
+    if (r == null || (type(r) == glyph_node && is_simple_character(r) && clang != char_lang(r))
+                  ||  type(r) == glue_node
+                  ||  type(r) == boundary_node
+                  ||  type(r) == whatsit_node
+                  ||  type(r) == ins_node
+                  ||  type(r) == adjust_node
+                  ||  type(r) == penalty_node
+                  || (type(r) == kern_node && (subtype(r) == explicit || subtype(r) == acc_kern)))
         return 1;
     return 0;
 }

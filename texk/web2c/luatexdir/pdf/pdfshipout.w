@@ -19,7 +19,6 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
@@ -33,8 +32,6 @@
 #define page_right_offset dimen_par(page_right_offset_code)
 #define page_top_offset dimen_par(page_top_offset_code)
 #define page_width dimen_par(page_width_code)
-#define pdf_h_origin dimen_par(pdf_h_origin_code)
-#define pdf_v_origin dimen_par(pdf_v_origin_code)
 #define tracing_output int_par(tracing_output_code)
 #define tracing_stats int_par(tracing_stats_code)
 #define v_offset dimen_par(v_offset_code)
@@ -58,8 +55,8 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
     refpoint.pos.v = 0;
 
     ensure_output_state(pdf, ST_HEADER_WRITTEN);
-    fix_o_mode(pdf);            /* this is only for complaining if \.{\\pdfoutput} has changed */
-    init_backend_functionpointers(pdf->o_mode);
+    fix_o_mode();            /* this is only for complaining if \.{\\outputmode} has changed */
+    init_backend_functionpointers(output_mode_used);
 
     pdf->f_cur = null_font;
 
@@ -105,10 +102,7 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
 
     /* Ship box |p| out */
     if (shipping_mode == SHIPPING_PAGE && box_dir(p) != page_direction)
-        pdf_warning("\\shipout",
-                    "\\pagedir != \\bodydir; "
-                    "\\box\\outputbox may be placed wrongly on the page.", true,
-                    true);
+        normal_warning("backend","pagedir differs from bodydir, the output may be placed wrongly on the page", true, true);
     /* Update the values of |max_h| and |max_v|; but if the page is too large, |goto done| */
     /* Sometimes the user will generate a huge page because other error messages
        are being ignored. Such pages are not output to the \.{dvi} file, since they
@@ -178,14 +172,14 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
         /* Think in upright page/paper coordinates (page origin = lower left edge).
            First preset |refpoint.pos| to the DVI origin (near upper left page edge). */
 
-        switch (pdf->o_mode) {
+        switch (output_mode_used) {
         case OMODE_DVI:
+            /* hh: how can we end up here? */
             refpoint.pos.h = one_true_inch;
             refpoint.pos.v = pdf->page_size.v - one_true_inch;
             dvi = refpoint.pos;
             break;
         case OMODE_PDF:
-        case OMODE_LUA:
             refpoint.pos.h = pdf_h_origin;
             refpoint.pos.v = pdf->page_size.v - pdf_v_origin;
             break;
@@ -220,7 +214,7 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
         cur.v = height(p);
         synch_pos_with_cur(pdf->posstruct, &refpoint, cur);
     } else {                    /* shipping a /Form */
-        assert(pdf->o_mode == OMODE_PDF);
+        assert(output_mode_used == OMODE_PDF);
         pdf->posstruct->dir = box_dir(p);
         switch (pdf->posstruct->dir) {
         case dir_TLT:
@@ -262,31 +256,27 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
 
     shipbox_refpos = pdf->posstruct->pos;       /* for \.{\\gleaders} */
 
-    switch (pdf->o_mode) {
-    case OMODE_DVI:
-        assert(shipping_mode == SHIPPING_PAGE);
-        dvi_begin_page(pdf);
-        break;
-    case OMODE_PDF:
-        pdf_begin_page(pdf);
-        break;
-    case OMODE_LUA:
-        assert(shipping_mode == SHIPPING_PAGE);
-        lua_begin_page(pdf);
-        break;
-    default:
-        assert(0);
+    switch (output_mode_used) {
+        case OMODE_DVI:
+            assert(shipping_mode == SHIPPING_PAGE);
+            dvi_begin_page(pdf);
+            break;
+        case OMODE_PDF:
+            pdf_begin_page(pdf);
+            break;
+        default:
+            normal_error("pdf backend", "unknown output mode");
     }
 
     switch (type(p)) {
-    case vlist_node:
-        vlist_out(pdf, p);
-        break;
-    case hlist_node:
-        hlist_out(pdf, p);
-        break;
-    default:
-        assert(0);
+        case vlist_node:
+            vlist_out(pdf, p);
+            break;
+        case hlist_node:
+            hlist_out(pdf, p);
+            break;
+        default:
+            normal_error("pdf backend", "no vlist or hlist in (xform) shipout");
     }
 
     if (shipping_mode == SHIPPING_PAGE)
@@ -295,18 +285,15 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
 
     /* Finish shipping */
 
-    switch (pdf->o_mode) {
-    case OMODE_DVI:
-        dvi_end_page(pdf);
-        break;
-    case OMODE_PDF:
-        pdf_end_page(pdf);
-        break;
-    case OMODE_LUA:
-        lua_end_page(pdf);
-        break;
-    default:
-        assert(0);
+    switch (output_mode_used) {
+        case OMODE_DVI:
+            dvi_end_page(pdf);
+            break;
+        case OMODE_PDF:
+            pdf_end_page(pdf);
+            break;
+        default:
+            normal_error("pdf backend", "unknown output mode");
     }
 
   DONE:

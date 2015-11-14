@@ -23,7 +23,7 @@
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
-@ a bit more interfacing is needed for proper error reporting 
+@ a bit more interfacing is needed for proper error reporting
 
 @c
 static char *font_error_message(pointer u, char *nom, scaled s)
@@ -50,7 +50,7 @@ static int do_define_font(int f, const char *cnom, scaled s, int natural_dir)
     boolean res;                /* was the callback successful? */
     int callback_id;
     char *cnam;
-    int r;
+    int r, t;
     res = 0;
 
     callback_id = callback_defined(define_font_callback);
@@ -61,11 +61,12 @@ static int do_define_font(int f, const char *cnom, scaled s, int natural_dir)
         if (callback_id > 0) {  /* success */
             luaL_checkstack(Luas, 1, "out of stack space");
             lua_rawgeti(Luas, LUA_REGISTRYINDEX, callback_id);
-            if (lua_istable(Luas, -1)) {
+            t = lua_type(Luas, -1);
+            if (t == LUA_TTABLE) {
                 res = font_from_lua(Luas, f);
                 destroy_saved_callback(callback_id);
                 /* |lua_pop(Luas, 1);| *//* done by |font_from_lua| */
-            } else if (lua_isnumber(Luas, -1)) {
+            } else if (t == LUA_TNUMBER) {
                 r=(int)lua_tonumber(Luas, -1);
                 destroy_saved_callback(callback_id);
                 delete_font(f);

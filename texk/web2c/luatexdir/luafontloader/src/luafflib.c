@@ -88,7 +88,6 @@ static const char *otf_lookup_type_enum[] = {
     eight_nulls(), eight_nulls(),
 };
 
-
 static const char *anchor_type_enum[] = {
     "mark", "basechar", "baselig", "basemark", "centry", "cexit", "max", NULL
 };
@@ -150,8 +149,6 @@ static int is_userdata(lua_State *L, int b, const char *utype)
     return 0;
 }
 
-
-
 static void lua_ff_pushfont(lua_State * L, SplineFont * sf)
 {
     SplineFont **a;
@@ -211,17 +208,18 @@ static int ff_open(lua_State * L)
         fclose(l);
     } else {
         lua_pushnil(L);
-        lua_pushfstring(L, "font loading failed for %s (read error)\n",
-                        fontname);
+        lua_pushfstring(L, "font loading failed for %s (read error)\n", fontname);
         return 2;
     }
     args = lua_gettop(L);
-    if (args >= 2 && lua_isstring(L, 2)) {
-        if (*(fontname + strlen(fontname)) != ')') {
+    if (args >= 2 && (lua_type(L, 2) == LUA_TSTRING)) {
+        len = strlen(fontname);
+        if (*(fontname + len) != ')') {
             /* possibly fails for embedded parens in the font name */
-            snprintf(s, 511, "%s(%s)", fontname, lua_tolstring(L, 2, &len));
             if (len == 0) {
                 snprintf(s, 511, "%s", fontname);
+            } else {
+                snprintf(s, 511, "%s(%s)", fontname, lua_tolstring(L, 2, &len));
             }
         }
     } else {
@@ -256,12 +254,10 @@ static int ff_open(lua_State * L)
         }
     } else {
         lua_pushnil(L);
-        lua_pushfstring(L, "font loading failed: empty string given\n",
-                        fontname);
+        lua_pushfstring(L, "font loading failed: empty string given\n", fontname);
     }
     return 2;
 }
-
 
 static int ff_close(lua_State * L)
 {
@@ -340,8 +336,6 @@ static int ff_apply_afmfile(lua_State * L)
     return 1;
 }
 
-
-
 static void dump_intfield(lua_State * L, const char *name, long int field)
 {
     lua_checkstack(L, 2);
@@ -366,9 +360,7 @@ static void dump_realfield(lua_State * L, const char *name, real field)
     lua_rawset(L, -3);
 }
 
-
 #define dump_cond_intfield(a,b,c) if ((c)!=0) { dump_intfield ((a),(b),(c)); }
-
 
 static void dump_stringfield(lua_State * L, const char *name, const char *field)
 {
@@ -385,7 +377,6 @@ static void dump_char_ref(lua_State * L, struct splinechar *spchar)
     lua_pushstring(L, spchar->name);
     lua_rawset(L, -3);
 }
-
 
 static void dump_lstringfield(lua_State * L, const char *name, char *field, int len)
 {
@@ -422,7 +413,6 @@ static char *make_tag_string(unsigned int field)
     return (char *) tag_string;
 }
 
-
 static void dump_tag(lua_State * L, const char *name, unsigned int field)
 {
     lua_checkstack(L, 2);
@@ -452,35 +442,34 @@ static void dump_subtable_name(lua_State * L, const char *name, struct lookup_su
     }
 }
 
+#define NESTED_TABLE(a,b,c) { \
+    int k = 1;\
+    next = b; \
+    while (next != NULL) { \
+        lua_checkstack(L,2); \
+        lua_pushnumber(L,k); k++; \
+        lua_createtable(L,0,c); \
+        a(L, next); \
+        lua_rawset(L,-3); \
+        next = next->next; \
+    } \
+}
 
-
-#define NESTED_TABLE(a,b,c) {                                           \
-    int k = 1;                                                          \
-    next = b;								\
-    while (next != NULL) {                                              \
-	lua_checkstack(L,2);						\
-	lua_pushnumber(L,k); k++;					\
-	lua_createtable(L,0,c);						\
-	a(L, next);							\
-	lua_rawset(L,-3);						\
-	next = next->next;						\
-    } }
-
-#define NESTED_TABLE_SF(a,b,c,d) {                                      \
-    int k = 1;                                                          \
-    next = b;								\
-    while (next != NULL) {                                              \
-	lua_checkstack(L,2);						\
-	lua_pushnumber(L,k); k++;					\
-	lua_createtable(L,0,d);						\
-	if (a(L, next, c))						\
-	    lua_rawset(L,-3);						\
-	else {								\
-	    lua_pop(L,2);						\
-	}								\
-	next = next->next;						\
-    } }
-
+#define NESTED_TABLE_SF(a,b,c,d) { \
+    int k = 1; \
+    next = b; \
+    while (next != NULL) { \
+        lua_checkstack(L,2); \
+        lua_pushnumber(L,k); k++; \
+        lua_createtable(L,0,d); \
+        if (a(L, next, c)) \
+            lua_rawset(L,-3); \
+        else { \
+            lua_pop(L,2); \
+        } \
+        next = next->next; \
+    } \
+}
 
 static void do_handle_scriptlanglist(lua_State * L, struct scriptlanglist *sl)
 {
@@ -676,8 +665,6 @@ static void handle_splinecharlist(lua_State * L, struct splinecharlist *scl)
     }
 }
 
-
-
 /* vs is the "variation selector" a unicode codepoint which modifieds */
 /*  the code point before it. If vs is -1 then unienc is just an */
 /*  alternate encoding (greek Alpha and latin A), but if vs is one */
@@ -686,7 +673,6 @@ static void handle_splinecharlist(lua_State * L, struct splinecharlist *scl)
 /*  fid is currently unused, but may, someday, be used to do ttcs */
 /* NOTE: GlyphInfo displays vs==-1 as vs==0, and fixes things up */
 
-
 static int handle_altuni(lua_State * L, struct altuni *au)
 {
     struct altuni *next = au;
@@ -694,23 +680,22 @@ static int handle_altuni(lua_State * L, struct altuni *au)
     int k = 1;
     lua_checkstack(L, 3);
     while (next != NULL) {
-      if (next->unienc<0x10FFFF) {
-	lua_newtable(L);
-	dump_intfield(L, "unicode", next->unienc);
-	i++;
-	if (next->vs != -1)
-	  dump_intfield(L, "variant", next->vs);
-	/* dump_intfield(L, "fid", next->fid); */
-	lua_rawseti(L, -2, k++);
-      } else {
-	printf("ignoring variant %i %i\n",next->unienc,next->vs);
-      }
-      next = next->next;
+        if (next->unienc<0x10FFFF) {
+            lua_newtable(L);
+            dump_intfield(L, "unicode", next->unienc);
+            i++;
+            if (next->vs != -1) {
+                dump_intfield(L, "variant", next->vs);
+                /* dump_intfield(L, "fid", next->fid); */
+            }
+            lua_rawseti(L, -2, k++);
+        } else {
+            printf("ignoring variant %i %i\n",next->unienc,next->vs);
+        }
+        next = next->next;
     }
     return i;
 }
-
-
 
 #define interesting_vr(a) (((a)->xoff!=0) || ((a)->yoff!=0) || ((a)->h_adv_off!=0) || ((a)->v_adv_off!=0))
 
@@ -778,7 +763,6 @@ static void do_handle_generic_pst(lua_State * L, struct generic_pst *pst)
     }
     lua_rawset(L, -3);
 }
-
 
 static void handle_generic_pst(lua_State * L, struct generic_pst *pst)
 {
@@ -901,7 +885,6 @@ static void do_handle_anchorpoint(lua_State * L, struct anchorpoint *anchor)
     lua_pop(L, 1);
 }
 
-
 static void handle_anchorpoint(lua_State * L, struct anchorpoint *anchor)
 {
     struct anchorpoint *next;
@@ -956,8 +939,6 @@ static void handle_mathkern(lua_State * L, struct mathkern *mk)
     handle_mathkernvertex(L, &(mk->bottom_left));
     lua_setfield(L, -2, "bottom_left");
 }
-
-
 
 static void handle_splinechar(lua_State * L, struct splinechar *glyph, int hasvmetrics)
 {
@@ -1125,42 +1106,41 @@ static void handle_splinechar(lua_State * L, struct splinechar *glyph, int hasvm
     }
 }
 
-const char *panose_values_0[] =
-    { "Any", "No Fit", "Text and Display", "Script", "Decorative",
-    "Pictorial"
+const char *panose_values_0[] = {
+    "Any", "No Fit", "Text and Display", "Script", "Decorative", "Pictorial"
 };
 
-const char *panose_values_1[] =
-    { "Any", "No Fit", "Cove", "Obtuse Cove", "Square Cove",
+const char *panose_values_1[] = {
+    "Any", "No Fit", "Cove", "Obtuse Cove", "Square Cove",
     "Obtuse Square Cove",
     "Square", "Thin", "Bone", "Exaggerated", "Triangle", "Normal Sans",
     "Obtuse Sans", "Perp Sans", "Flared", "Rounded"
 };
 
-const char *panose_values_2[] =
-    { "Any", "No Fit", "Very Light", "Light", "Thin", "Book",
+const char *panose_values_2[] = {
+    "Any", "No Fit", "Very Light", "Light", "Thin", "Book",
     "Medium", "Demi", "Bold", "Heavy", "Black", "Nord"
 };
 
-const char *panose_values_3[] =
-    { "Any", "No Fit", "Old Style", "Modern", "Even Width",
+const char *panose_values_3[] = {
+    "Any", "No Fit", "Old Style", "Modern", "Even Width",
     "Expanded", "Condensed", "Very Expanded", "Very Condensed", "Monospaced"
 };
 
-const char *panose_values_4[] =
-    { "Any", "No Fit", "None", "Very Low", "Low", "Medium Low",
+const char *panose_values_4[] = {
+    "Any", "No Fit", "None", "Very Low", "Low", "Medium Low",
     "Medium", "Medium High", "High", "Very High"
 };
 
-const char *panose_values_5[] =
-    { "Any", "No Fit", "Gradual/Diagonal", "Gradual/Transitional",
+const char *panose_values_5[] = {
+    "Any", "No Fit", "Gradual/Diagonal", "Gradual/Transitional",
     "Gradual/Vertical",
     "Gradual/Horizontal", "Rapid/Vertical", "Rapid/Horizontal",
     "Instant/Vertical"
 };
 
-const char *panose_values_6[] =
-    { "Any", "No Fit", "Straight Arms/Horizontal", "Straight Arms/Wedge",
+const char *panose_values_6[] = {
+    "Any", "No Fit", "Straight Arms/Horizontal", "Straight Arms/Wedge",
     "Straight Arms/Vertical",
     "Straight Arms/Single Serif", "Straight Arms/Double Serif",
     "Non-Straight Arms/Horizontal",
@@ -1169,8 +1149,8 @@ const char *panose_values_6[] =
     "Non-Straight Arms/Double Serif"
 };
 
-const char *panose_values_7[] =
-    { "Any", "No Fit", "Normal/Contact", "Normal/Weighted", "Normal/Boxed",
+const char *panose_values_7[] = {
+    "Any", "No Fit", "Normal/Contact", "Normal/Weighted", "Normal/Boxed",
     "Normal/Flattened",
     "Normal/Rounded", "Normal/Off Center", "Normal/Square", "Oblique/Contact",
     "Oblique/Weighted",
@@ -1178,16 +1158,16 @@ const char *panose_values_7[] =
     "Oblique/Off Center", "Oblique/Square"
 };
 
-const char *panose_values_8[] =
-    { "Any", "No Fit", "Standard/Trimmed", "Standard/Pointed",
+const char *panose_values_8[] = {
+    "Any", "No Fit", "Standard/Trimmed", "Standard/Pointed",
     "Standard/Serifed", "High/Trimmed",
     "High/Pointed", "High/Serifed", "Constant/Trimmed", "Constant/Pointed",
     "Constant/Serifed",
     "Low/Trimmed", "Low/Pointed", "Low/Serifed"
 };
 
-const char *panose_values_9[] =
-    { "Any", "No Fit", "Constant/Small", "Constant/Standard",
+const char *panose_values_9[] = {
+    "Any", "No Fit", "Constant/Small", "Constant/Standard",
     "Constant/Large", "Ducking/Small", "Ducking/Standard", "Ducking/Large"
 };
 
@@ -1450,13 +1430,11 @@ static void do_handle_ttflangname(lua_State * L, struct ttflangname *names)
     lua_setfield(L, -2, "names");
 }
 
-
 static void handle_ttflangname(lua_State * L, struct ttflangname *names)
 {
     struct ttflangname *next;
     NESTED_TABLE(do_handle_ttflangname, names, 2);
 }
-
 
 static void do_handle_anchorclass(lua_State * L, struct anchorclass *anchor)
 {
@@ -1549,42 +1527,40 @@ static void handle_kernclass(lua_State * L, struct kernclass *kerns, const char 
 }
 
 
-#define DUMP_NUMBER_ARRAY(s,cnt,item) {					\
-    if (cnt>0 && item != NULL) {						\
-      int kk;											\
-      lua_newtable(L);									\
-      for (kk=0;kk<cnt;kk++) {							\
-		lua_pushnumber(L,(kk+1));						\
-		lua_pushnumber(L,item[kk]);						\
-		lua_rawset(L,-3); }								\
+#define DUMP_NUMBER_ARRAY(s,cnt,item) {	\
+    if (cnt>0 && item != NULL) {		\
+      int kk;							\
+      lua_newtable(L);					\
+      for (kk=0;kk<cnt;kk++) {			\
+		lua_pushnumber(L,(kk+1));		\
+		lua_pushnumber(L,item[kk]);		\
+		lua_rawset(L,-3); }				\
       lua_setfield(L,-2,s); } }
 
 
-#define DUMP_STRING_ARRAY(s,cnt,item) {				\
-    if (cnt>0 && item!=NULL) {						\
-      int kk;										\
-      lua_newtable(L);								\
-      for (kk=0;kk<cnt;kk++) {						\
-		lua_pushnumber(L,(kk+1));					\
-		lua_pushstring(L,item[kk]);					\
-		lua_rawset(L,-3); }							\
+#define DUMP_STRING_ARRAY(s,cnt,item) {	\
+    if (cnt>0 && item!=NULL) {			\
+      int kk;							\
+      lua_newtable(L);					\
+      for (kk=0;kk<cnt;kk++) {			\
+		lua_pushnumber(L,(kk+1));		\
+		lua_pushstring(L,item[kk]);		\
+		lua_rawset(L,-3); }				\
       lua_setfield(L,-2,s); } }
 
-#define DUMP_EXACT_STRING_ARRAY(s,cnt,item) {		\
-    if (cnt>0 && item!=NULL) {						\
-      int kk;										\
-      lua_newtable(L);								\
-      for (kk=0;kk<cnt;kk++) {						\
-		lua_pushnumber(L,(kk));						\
-		lua_pushstring(L,item[kk]);					\
-		lua_rawset(L,-3); }							\
+#define DUMP_EXACT_STRING_ARRAY(s,cnt,item) { \
+    if (cnt>0 && item!=NULL) {				  \
+      int kk;								  \
+      lua_newtable(L);						  \
+      for (kk=0;kk<cnt;kk++) {				  \
+		lua_pushnumber(L,(kk));				  \
+		lua_pushstring(L,item[kk]);			  \
+		lua_rawset(L,-3); }					  \
       lua_setfield(L,-2,s); } }
-
 
 static void handle_fpst_rule(lua_State * L, struct fpst_rule *rule, int format)
 {
     int k;
-
 
     if (format == pst_glyphs) {
 
@@ -1727,76 +1703,51 @@ static void handle_otfname(lua_State * L, struct otfname *oname)
     NESTED_TABLE(do_handle_otfname, oname, 2);
 }
 
-
-
-
 static void handle_MATH(lua_State * L, struct MATH *MATH)
 {
     dump_intfield(L, "ScriptPercentScaleDown", MATH->ScriptPercentScaleDown);
-    dump_intfield(L, "ScriptScriptPercentScaleDown",
-                  MATH->ScriptScriptPercentScaleDown);
-    dump_intfield(L, "DelimitedSubFormulaMinHeight",
-                  MATH->DelimitedSubFormulaMinHeight);
-    dump_intfield(L, "DisplayOperatorMinHeight",
-                  MATH->DisplayOperatorMinHeight);
+    dump_intfield(L, "ScriptScriptPercentScaleDown", MATH->ScriptScriptPercentScaleDown);
+    dump_intfield(L, "DelimitedSubFormulaMinHeight", MATH->DelimitedSubFormulaMinHeight);
+    dump_intfield(L, "DisplayOperatorMinHeight", MATH->DisplayOperatorMinHeight);
     dump_intfield(L, "MathLeading", MATH->MathLeading);
     dump_intfield(L, "AxisHeight", MATH->AxisHeight);
     dump_intfield(L, "AccentBaseHeight", MATH->AccentBaseHeight);
-    dump_intfield(L, "FlattenedAccentBaseHeight",
-                  MATH->FlattenedAccentBaseHeight);
+    dump_intfield(L, "FlattenedAccentBaseHeight", MATH->FlattenedAccentBaseHeight);
     dump_intfield(L, "SubscriptShiftDown", MATH->SubscriptShiftDown);
     dump_intfield(L, "SubscriptTopMax", MATH->SubscriptTopMax);
-    dump_intfield(L, "SubscriptBaselineDropMin",
-                  MATH->SubscriptBaselineDropMin);
+    dump_intfield(L, "SubscriptBaselineDropMin", MATH->SubscriptBaselineDropMin);
     dump_intfield(L, "SuperscriptShiftUp", MATH->SuperscriptShiftUp);
-    dump_intfield(L, "SuperscriptShiftUpCramped",
-                  MATH->SuperscriptShiftUpCramped);
+    dump_intfield(L, "SuperscriptShiftUpCramped", MATH->SuperscriptShiftUpCramped);
     dump_intfield(L, "SuperscriptBottomMin", MATH->SuperscriptBottomMin);
-    dump_intfield(L, "SuperscriptBaselineDropMax",
-                  MATH->SuperscriptBaselineDropMax);
+    dump_intfield(L, "SuperscriptBaselineDropMax", MATH->SuperscriptBaselineDropMax);
     dump_intfield(L, "SubSuperscriptGapMin", MATH->SubSuperscriptGapMin);
-    dump_intfield(L, "SuperscriptBottomMaxWithSubscript",
-                  MATH->SuperscriptBottomMaxWithSubscript);
+    dump_intfield(L, "SuperscriptBottomMaxWithSubscript", MATH->SuperscriptBottomMaxWithSubscript);
     dump_intfield(L, "SpaceAfterScript", MATH->SpaceAfterScript);
     dump_intfield(L, "UpperLimitGapMin", MATH->UpperLimitGapMin);
-    dump_intfield(L, "UpperLimitBaselineRiseMin",
-                  MATH->UpperLimitBaselineRiseMin);
+    dump_intfield(L, "UpperLimitBaselineRiseMin", MATH->UpperLimitBaselineRiseMin);
     dump_intfield(L, "LowerLimitGapMin", MATH->LowerLimitGapMin);
-    dump_intfield(L, "LowerLimitBaselineDropMin",
-                  MATH->LowerLimitBaselineDropMin);
+    dump_intfield(L, "LowerLimitBaselineDropMin", MATH->LowerLimitBaselineDropMin);
     dump_intfield(L, "StackTopShiftUp", MATH->StackTopShiftUp);
-    dump_intfield(L, "StackTopDisplayStyleShiftUp",
-                  MATH->StackTopDisplayStyleShiftUp);
+    dump_intfield(L, "StackTopDisplayStyleShiftUp", MATH->StackTopDisplayStyleShiftUp);
     dump_intfield(L, "StackBottomShiftDown", MATH->StackBottomShiftDown);
-    dump_intfield(L, "StackBottomDisplayStyleShiftDown",
-                  MATH->StackBottomDisplayStyleShiftDown);
+    dump_intfield(L, "StackBottomDisplayStyleShiftDown", MATH->StackBottomDisplayStyleShiftDown);
     dump_intfield(L, "StackGapMin", MATH->StackGapMin);
     dump_intfield(L, "StackDisplayStyleGapMin", MATH->StackDisplayStyleGapMin);
     dump_intfield(L, "StretchStackTopShiftUp", MATH->StretchStackTopShiftUp);
-    dump_intfield(L, "StretchStackBottomShiftDown",
-                  MATH->StretchStackBottomShiftDown);
+    dump_intfield(L, "StretchStackBottomShiftDown", MATH->StretchStackBottomShiftDown);
     dump_intfield(L, "StretchStackGapAboveMin", MATH->StretchStackGapAboveMin);
     dump_intfield(L, "StretchStackGapBelowMin", MATH->StretchStackGapBelowMin);
-    dump_intfield(L, "FractionNumeratorShiftUp",
-                  MATH->FractionNumeratorShiftUp);
-    dump_intfield(L, "FractionNumeratorDisplayStyleShiftUp",
-                  MATH->FractionNumeratorDisplayStyleShiftUp);
-    dump_intfield(L, "FractionDenominatorShiftDown",
-                  MATH->FractionDenominatorShiftDown);
-    dump_intfield(L, "FractionDenominatorDisplayStyleShiftDown",
-                  MATH->FractionDenominatorDisplayStyleShiftDown);
+    dump_intfield(L, "FractionNumeratorShiftUp", MATH->FractionNumeratorShiftUp);
+    dump_intfield(L, "FractionNumeratorDisplayStyleShiftUp", MATH->FractionNumeratorDisplayStyleShiftUp);
+    dump_intfield(L, "FractionDenominatorShiftDown", MATH->FractionDenominatorShiftDown);
+    dump_intfield(L, "FractionDenominatorDisplayStyleShiftDown", MATH->FractionDenominatorDisplayStyleShiftDown);
     dump_intfield(L, "FractionNumeratorGapMin", MATH->FractionNumeratorGapMin);
-    dump_intfield(L, "FractionNumeratorDisplayStyleGapMin",
-                  MATH->FractionNumeratorDisplayStyleGapMin);
+    dump_intfield(L, "FractionNumeratorDisplayStyleGapMin", MATH->FractionNumeratorDisplayStyleGapMin);
     dump_intfield(L, "FractionRuleThickness", MATH->FractionRuleThickness);
-    dump_intfield(L, "FractionDenominatorGapMin",
-                  MATH->FractionDenominatorGapMin);
-    dump_intfield(L, "FractionDenominatorDisplayStyleGapMin",
-                  MATH->FractionDenominatorDisplayStyleGapMin);
-    dump_intfield(L, "SkewedFractionHorizontalGap",
-                  MATH->SkewedFractionHorizontalGap);
-    dump_intfield(L, "SkewedFractionVerticalGap",
-                  MATH->SkewedFractionVerticalGap);
+    dump_intfield(L, "FractionDenominatorGapMin", MATH->FractionDenominatorGapMin);
+    dump_intfield(L, "FractionDenominatorDisplayStyleGapMin", MATH->FractionDenominatorDisplayStyleGapMin);
+    dump_intfield(L, "SkewedFractionHorizontalGap", MATH->SkewedFractionHorizontalGap);
+    dump_intfield(L, "SkewedFractionVerticalGap", MATH->SkewedFractionVerticalGap);
     dump_intfield(L, "OverbarVerticalGap", MATH->OverbarVerticalGap);
     dump_intfield(L, "OverbarRuleThickness", MATH->OverbarRuleThickness);
     dump_intfield(L, "OverbarExtraAscender", MATH->OverbarExtraAscender);
@@ -1804,14 +1755,12 @@ static void handle_MATH(lua_State * L, struct MATH *MATH)
     dump_intfield(L, "UnderbarRuleThickness", MATH->UnderbarRuleThickness);
     dump_intfield(L, "UnderbarExtraDescender", MATH->UnderbarExtraDescender);
     dump_intfield(L, "RadicalVerticalGap", MATH->RadicalVerticalGap);
-    dump_intfield(L, "RadicalDisplayStyleVerticalGap",
-                  MATH->RadicalDisplayStyleVerticalGap);
+    dump_intfield(L, "RadicalDisplayStyleVerticalGap", MATH->RadicalDisplayStyleVerticalGap);
     dump_intfield(L, "RadicalRuleThickness", MATH->RadicalRuleThickness);
     dump_intfield(L, "RadicalExtraAscender", MATH->RadicalExtraAscender);
     dump_intfield(L, "RadicalKernBeforeDegree", MATH->RadicalKernBeforeDegree);
     dump_intfield(L, "RadicalKernAfterDegree", MATH->RadicalKernAfterDegree);
-    dump_intfield(L, "RadicalDegreeBottomRaisePercent",
-                  MATH->RadicalDegreeBottomRaisePercent);
+    dump_intfield(L, "RadicalDegreeBottomRaisePercent", MATH->RadicalDegreeBottomRaisePercent);
     dump_intfield(L, "MinConnectorOverlap", MATH->MinConnectorOverlap);
 }
 
@@ -1828,13 +1777,11 @@ static void do_handle_baselangextent(lua_State * L, struct baselangextent *ble)
     lua_setfield(L, -2, "features");
 }
 
-
 static void handle_baselangextent(lua_State * L, struct baselangextent *ble)
 {
     struct baselangextent *next;
     NESTED_TABLE(do_handle_baselangextent, ble, 4);
 }
-
 
 static void handle_base(lua_State * L, struct Base *Base)
 {
@@ -1871,7 +1818,6 @@ static void handle_base(lua_State * L, struct Base *Base)
     }
 }
 
-
 static void handle_axismap(lua_State * L, struct axismap *am)
 {
     int i;
@@ -1892,7 +1838,6 @@ static void handle_axismap(lua_State * L, struct axismap *am)
     dump_realfield(L, "def", am->def);
     dump_realfield(L, "max", am->max);
 }
-
 
 static void handle_mmset(lua_State * L, struct mmset *mm)
 {
@@ -1952,8 +1897,6 @@ static void handle_mmset(lua_State * L, struct mmset *mm)
     dump_stringfield(L, "cdv", mm->cdv);
     dump_stringfield(L, "ndv", mm->ndv);
 }
-
-
 
 static void handle_splinefont(lua_State * L, struct splinefont *sf)
 {
@@ -2529,7 +2472,6 @@ const char *font_glyph_keys[] = {
     NULL
 };
 
-
 static int ff_fields(lua_State * L)
 {
     int i;
@@ -2552,8 +2494,6 @@ static int ff_fields(lua_State * L)
     return 1;
 }
 
-
-
 static int ff_glyphs_index(lua_State * L)
 {
 
@@ -2566,8 +2506,7 @@ static int ff_glyphs_index(lua_State * L)
     /* sf = *check_isfont(L, -1); */
     if (!(is_userdata(L, -1, FONT_METATABLE) ||
 	  is_userdata(L, -1, FONT_SUBFONT_METATABLE))) {
-        return luaL_error(L,
-                          "fontloader.__index: expected a (sub)font userdata object\n");
+        return luaL_error(L, "fontloader.__index: expected a (sub)font userdata object\n");
     }
     sf = *((SplineFont **)lua_touserdata(L, -1));
 
@@ -2618,12 +2557,10 @@ static int ff_glyph_index(lua_State * L)
     int key;
     glyph = *check_isglyph(L, 1);
     if (glyph == NULL) {
-        return luaL_error(L,
-                          "fontloader.glyph.__index: glyph is nonexistent\n");
+        return luaL_error(L, "fontloader.glyph.__index: glyph is nonexistent\n");
     }
-    if (!lua_isstring(L, 2)) {  /* 1 == 'font' */
-        return luaL_error(L,
-                          "fontloader.glyph.__index: can only be indexed by string\n");
+    if (lua_type(L, 2) != LUA_TSTRING) {  /* 1 == 'font' */
+        return luaL_error(L, "fontloader.glyph.__index: can only be indexed by string\n");
     }
     key = luaL_checkoption(L, 2, NULL, font_glyph_keys);
     switch (key) {
@@ -2800,7 +2737,6 @@ static int ff_glyph_index(lua_State * L)
     return 1;
 }
 
-
 static int ff_index(lua_State * L)
 {
     SplineFont *sf;
@@ -2808,20 +2744,16 @@ static int ff_index(lua_State * L)
     /* sf = *check_isfont(L, 1); */
     if (!(is_userdata(L, 1, FONT_METATABLE) ||
 	  is_userdata(L, 1, FONT_SUBFONT_METATABLE))) {
-        return luaL_error(L,
-                          "fontloader.__index: expected a (sub)font userdata object\n");
+        return luaL_error(L, "fontloader.__index: expected a (sub)font userdata object\n");
     }
     sf = *((SplineFont **)lua_touserdata(L, 1));
 
     if (sf == NULL) {
-      /*       return luaL_error(L, */
-      /*                          "fontloader.__index: font is nonexistent or freed already\n");*/
         lua_pushnil(L);
         return 1;
     }
-    if (!lua_isstring(L, 2)) {  /* 1 == 'font' */
-        return luaL_error(L,
-                          "fontloader.__index: can only be indexed by string\n");
+    if (lua_type(L, 2) != LUA_TSTRING) {  /* 1 == 'font' */
+        return luaL_error(L, "fontloader.__index: can only be indexed by string\n");
     }
     key = luaL_checkoption(L, 2, NULL, font_keys);
     switch (key) {
@@ -3215,13 +3147,13 @@ static int ff_index(lua_State * L)
     case FK_extrema_bound:
         lua_pushnumber(L, sf->extrema_bound);
         break;
-    default:                   /* can't actually happen, |luaL_checkoption| raises an error instead */
+    default:
+        /* can't actually happen, |luaL_checkoption| raises an error instead */
         lua_pushnil(L);
         break;
     }
     return 1;
 }
-
 
 static int ff_info(lua_State * L)
 {
@@ -3234,8 +3166,7 @@ static int ff_info(lua_State * L)
     fontname = luaL_checkstring(L, 1);
     if (!strlen(fontname)) {
         lua_pushnil(L);
-        lua_pushfstring(L, "font loading failed: empty string given\n",
-                        fontname);
+        lua_pushfstring(L, "font loading failed: empty string given\n", fontname);
         return 2;
     }
     /* test fontname for existance */
@@ -3244,11 +3175,9 @@ static int ff_info(lua_State * L)
         fclose(l);
     } else {
         lua_pushnil(L);
-        lua_pushfstring(L, "font loading failed for %s (read error)\n",
-                        fontname);
+        lua_pushfstring(L, "font loading failed for %s (read error)\n", fontname);
         return 2;
     }
-
     gww_error_count = 0;
     fontnamecopy = xstrdup(fontname);
     sf = ReadSplineFontInfo(fontnamecopy, openflags);
@@ -3303,9 +3232,10 @@ static void ff_do_cff(SplineFont * sf, char *filename, unsigned char **buf,
         fclose(f);
         return;
     }
-    /* errors */
-    fprintf(stdout, "\n%s => CFF, failed\n", sf->filename);
-
+    /* snprintf(errmsg, 255, "%s => CFF, failed", sf->filename); */
+    /* normal_error("fontloader",errmsg); */ /* TODO */
+    fprintf(stdout,"%s => CFF, failed", sf->filename);
+    exit(EXIT_FAILURE);
 }
 
 /* exported for writecff.c */
@@ -3343,7 +3273,8 @@ int ff_get_ttc_index(char *ffname, char *psname)
 
     sf = ReadSplineFontInfo((char *) ffname, openflags);
     if (sf == NULL) {
-        perror("font loading failed unexpectedly\n");
+        /* normal_error("fontloader","font loading failed unexpectedly"); */ /* TODO */
+        fprintf(stdout,"font loading failed unexpectedly\n");
         exit(EXIT_FAILURE);
     }
     while (sf != NULL) {
@@ -3406,7 +3337,6 @@ int luaopen_ff(lua_State * L)
     lua_pushcfunction(L, ff_glyph_index);
     lua_rawset(L, -3);
     lua_pop(L, 1);
-
 
     luaL_openlib(L, "fontloader", fllib, 0);
 

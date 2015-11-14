@@ -125,7 +125,7 @@ typedef struct vf_stack_record {
     scaled stack_w, stack_x, stack_y, stack_z;
 } vf_stack_record;
 
-@ get a byte from\.{VF} file 
+@ get a byte from\.{VF} file
 @c
 #define vf_byte(a)                                     \
 {                                                      \
@@ -150,7 +150,7 @@ typedef struct vf_stack_record {
 }
 
 
-@ read |k| bytes as an integer from \.{VF} file 
+@ read |k| bytes as an integer from \.{VF} file
 beware: the |vf_read()| macro differs from |vf_read()| in vftovp.web for 1...3 byte words.
 @c
 #define vf_read(k, l)                            \
@@ -181,7 +181,7 @@ beware: the |vf_read()| macro differs from |vf_read()| in vftovp.web for 1...3 b
 void pdf_check_vf(internal_font_number f)
 {
     if (font_type(f) == virtual_font_type)
-        pdf_error("font", "command cannot be used with virtual font");
+        normal_error("font", "command cannot be used with virtual font");
 }
 
 static void
@@ -202,8 +202,10 @@ vf_local_font_warning(internal_font_number f, internal_font_number k,
 }
 
 
-@ process a local font in \.{VF} file 
+@ process a local font in \.{VF} file
 @c
+int level = 0;
+
 static internal_font_number
 vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
 {
@@ -264,20 +266,30 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
         (*vf_cr)++;
         append_char(junk);
     }
-    s = make_string();
-    st = makecstring(s);
-    k = tfm_lookup(st, fs);
-    if (k == null_font)
-        k = read_font_info(null_cs, st, fs, -1);
-    free(st);
-    if (k != null_font) {
-        if (checksum != 0 && font_checksum(k) != 0
-            && checksum != font_checksum(k))
-            vf_local_font_warning(f, k, "checksum mismatch", (int) checksum,
-                                  (int) font_checksum(k));
-        if (ds != font_dsize(k))
-            vf_local_font_warning(f, k, "design size mismatch", ds,
-                                  font_dsize(k));
+    if (level > 5) {
+        normal_warning("vf","quitting at recurse depth > 5",true,true);
+        k = f ;
+    } else if ((level > 1) && (fs > 65536*1024)) {
+        normal_warning("vf","quitting when recursing at size > 65536*1024",true,true);
+        k = f ;
+    } else {
+        level += 1 ;
+        s = make_string();
+        st = makecstring(s);
+        k = tfm_lookup(st, fs);
+        if (k == null_font)
+            k = read_font_info(null_cs, st, fs, -1);
+        free(st);
+        level -= 1 ;
+        if (k != null_font) {
+            if (checksum != 0 && font_checksum(k) != 0
+                && checksum != font_checksum(k))
+                vf_local_font_warning(f, k, "checksum mismatch", (int) checksum,
+                                      (int) font_checksum(k));
+            if (ds != font_dsize(k))
+                vf_local_font_warning(f, k, "design size mismatch", ds,
+                                      font_dsize(k));
+        }
     }
     return k;
 }
@@ -331,7 +343,7 @@ static int open_vf_file(const char *fn, unsigned char **vbuffer, int *vsize)
 #define append_packet(k) vpackets[vf_np++] = (eight_bits)(k)
 
 @ life is easier if all internal font commands are fnt4 and
-   all character commands are set4 or put4 
+   all character commands are set4 or put4
 
 @c
 #define append_fnt_set(k)            \
@@ -349,7 +361,7 @@ static int open_vf_file(const char *fn, unsigned char **vbuffer, int *vsize)
     append_packet((k & 0x000000FF));       \
 }
 
-@ some of these things happen twice, adding a define is simplest 
+@ some of these things happen twice, adding a define is simplest
 
 @c
 #define test_checksum()  { vf_byte(tmp_b0); vf_byte(tmp_b1);    \
@@ -662,7 +674,7 @@ void do_vf(internal_font_number f)
     vf_stack_index stack_level;
     int vf_z;                   /* multiplier */
     int vf_alpha;               /* correction for negative values */
-    //char vf_beta;               /* divisor */
+    /*char vf_beta;*/               /* divisor */
     int vf_np;
     eight_bits *vpackets;
     memory_word tmp_w;          /* accumulator */
@@ -1048,7 +1060,7 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
     vf_stack_index stack_level;
     int vf_z;                   /* multiplier */
     int vf_alpha;               /* correction for negative values */
-    //char vf_beta;               /* divisor */
+    /*char vf_beta;*/               /* divisor */
     eight_bits *s;
     scaled h, v;
     scaled w, x, y, z;
@@ -1403,39 +1415,6 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
     return 1;
 }
 
-@ unused, remains for reference, for a while
-@c
-internal_font_number auto_expand_font(internal_font_number f, int e)
-{
-    internal_font_number k;
-    kerninfo *krn;
-    charinfo *co;
-    int i;
-    scaled w;
-    assert(0);
-    k = copy_font(f);
-    set_font_name(k, font_name(f));
-    //set_font_expand_ratio(k, e);
-    for (i = font_bc(k); i <= font_ec(k); i++) {
-        if (quick_char_exists(k, i)) {
-            co = get_charinfo(k, i);
-            w = round_xn_over_d(char_width(f, i), 1000 + e, 1000);
-            set_charinfo_width(co, w);
-            w = round_xn_over_d(char_italic(f, i), 1000 + e, 1000);
-            set_charinfo_italic(co, w);
-            krn = get_charinfo_kerns(co);
-            if (krn != NULL) {
-                while (!kern_end((*krn))) {
-                    kern_kern(*krn) =
-                        round_xn_over_d(kern_kern(*krn), 1000 + e, 1000);
-                    krn++;
-                }
-            }
-        }
-    }
-    return k;
-}
-
 @ @c
 internal_font_number
 letter_space_font(internal_font_number f, int e, boolean nolig)
@@ -1464,7 +1443,7 @@ letter_space_font(internal_font_number f, int e, boolean nolig)
 
     /* create the corresponding virtual font */
     set_font_type(k, virtual_font_type);
-   
+
     for (c=font_bc(k);c<=font_ec(k);c++) {
        if (quick_char_exists(k, c)) {
            int half_w;
@@ -1498,7 +1477,7 @@ letter_space_font(internal_font_number f, int e, boolean nolig)
        set_font_param(k, quad_code, -round_xn_over_d(quad(k), 1000-e, 1000));
     } else {
        set_font_param(k, quad_code, round_xn_over_d(quad(k), 1000+e, 1000));
-    } 
+    }
 #endif
     return k;
 }

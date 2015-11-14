@@ -30,7 +30,7 @@ void do_annot(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     scaled_whd alt_rule;
     int k;
     if (global_shipping_mode == SHIPPING_FORM)
-        pdf_error("ext4", "annotations cannot be inside an XForm");
+        normal_error("pdf backend", "annotations cannot be inside an XForm");
     if (doing_leaders)
         return;
     if (is_obj_scheduled(pdf, pdf_annot_objnum(p))) {
@@ -82,7 +82,7 @@ void scan_annot(PDF pdf)
             k = cur_val;
             check_obj_type(pdf, obj_type_annot, k);
             if (obj_annot_ptr(pdf, k) != 0)
-                pdf_error("ext1", "annot object in use");
+                normal_error("pdf backend", "annot object in use");
         } else {
             k = pdf_create_obj(pdf, obj_type_annot, 0);
         }

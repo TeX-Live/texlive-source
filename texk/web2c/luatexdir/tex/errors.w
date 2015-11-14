@@ -17,14 +17,16 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+@ TODO: we need to use a formatted normal_error in:
+
+hyphen.w
+luafflib.c
+
 @ @c
-
-
 #include "ptexlib.h"
 
 @ @c
 #define new_line_char int_par(new_line_char_code)
-
 
 @ When something anomalous is detected, \TeX\ typically does something like this:
 $$\vbox{\halign{#\hfil\cr
@@ -55,8 +57,35 @@ int interactionoption;          /* set from command line */
 /* ls-hh: so, new code only kicks in when we have a callback defined */
 
 char *last_error = NULL;
+char *last_lua_error = NULL;
+char *last_warning_tag = NULL;
+char *last_warning_str = NULL;
+char *last_error_context = NULL;
+
 int err_old_setting = 0 ;
 int in_error = 0 ;
+
+void set_last_error_context(void)
+{
+    str_number str;
+    int sel = selector;
+    int saved_new_line_char;
+    int saved_new_string_line;
+    selector = new_string;
+    saved_new_line_char = new_line_char;
+    saved_new_string_line = new_string_line;
+    new_line_char = 10;
+    new_string_line = 10;
+    show_context();
+    xfree(last_error_context);
+    str = make_string();
+    last_error_context = makecstring(str);
+    flush_str(str);
+    selector = sel;
+    new_line_char = saved_new_line_char;
+    new_string_line = saved_new_string_line;
+    return;
+}
 
 void flush_err(void)
 {
@@ -113,8 +142,8 @@ void print_err(const char *s)
 might be unusual. The only possible values of |selector| at the time of
 error messages are
 
-\yskip\hang|no_print| (when |interaction=batch_mode|
-  and |log_file| not yet open);
+\yskip
+\hang|no_print| (when |interaction=batch_mode| and |log_file| not yet open);
 
 \hang|term_only| (when |interaction>batch_mode| and |log_file| not yet open);
 
@@ -132,7 +161,6 @@ void fixup_selector(boolean logopened)
     if (logopened)
         selector = selector + 2;
 }
-
 
 @ A global variable |deletions_allowed| is set |false| if the |get_next|
 routine is active when |error| is called; this ensures that |get_next|
@@ -157,8 +185,6 @@ int error_count;                /* the number of scrolled errors since the last 
 int interrupt;                  /* should \TeX\ pause for instructions? */
 boolean OK_to_interrupt;        /* should interrupts be observed? */
 
-
-
 @ The value of |history| is initially |fatal_error_stop|, but it will
 be changed to |spotless| if \TeX\ survives the initialization process.
 
@@ -175,7 +201,6 @@ void initialize_errors(void)
     /* |history| is initialized elsewhere */
 }
 
-
 @ It is possible for |error| to be called recursively if some error arises
 when |get_token| is being used to delete a token, and/or if some fatal error
 occurs while \TeX\ is trying to fix a non-fatal one. But such recursion
@@ -187,7 +212,6 @@ is never more than two levels deep.
 @c
 const char *help_line[7];       /* helps for the next |error| */
 boolean use_err_help;           /* should the |err_help| list be shown? */
-
 
 @ The |jump_out| procedure just cuts across all active procedure levels and
 exits the program. It is used when there is no recovery from a particular error.
@@ -223,6 +247,7 @@ void error(void)
         history = error_message_issued;
     callback_id = callback_defined(show_error_hook_callback);
     if (callback_id > 0) {
+        set_last_error_context();
         run_callback(callback_id, "->");
     } else {
         print_char('.');
@@ -314,7 +339,6 @@ void error(void)
                 /* Print the help information and |goto continue| */
                 if (use_err_help) {
                     give_err_help();
-                    use_err_help = false;
                 } else {
                     if (help_line[0] == NULL) {
                         help2
@@ -385,17 +409,18 @@ void error(void)
             default:
                 break;
             }
-            /* Print the menu of available options */
-            tprint
-                ("Type <return> to proceed, S to scroll future error messages,");
-            tprint_nl("R to run without stopping, Q to run quietly,");
-            tprint_nl("I to insert something, ");
-            if (base_ptr > 0)
-                tprint("E to edit your file,");
-            if (deletions_allowed)
-                tprint_nl
-                    ("1 or ... or 9 to ignore the next 1 to 9 tokens of input,");
-            tprint_nl("H for help, X to quit.");
+            if (!use_err_help) {
+                /* Print the menu of available options */
+                tprint("Type <return> to proceed, S to scroll future error messages,");
+                tprint_nl("R to run without stopping, Q to run quietly,");
+                tprint_nl("I to insert something, ");
+                if (base_ptr > 0)
+                    tprint("E to edit your file,");
+                if (deletions_allowed)
+                    tprint_nl("1 or ... or 9 to ignore the next 1 to 9 tokens of input,");
+                tprint_nl("H for help, X to quit.");
+            }
+            use_err_help = false;
         }
 
     }
@@ -422,8 +447,6 @@ void error(void)
     print_ln();
 }
 
-
-
 @ A dozen or so error messages end with a parenthesized integer, so we
 save a teeny bit of program space by declaring the following procedure:
 
@@ -435,7 +458,6 @@ void int_error(int n)
     print_char(')');
     error();
 }
-
 
 @ In anomalous cases, the print selector might be in an unknown state;
 the following subroutine is called to fix things just enough to keep
@@ -479,36 +501,6 @@ void fatal_error(const char *s)
     succumb();
 }
 
-@ @c
-void lua_norm_error(const char *s)
-{                               /* lua found a problem */
-    int saved_new_line_char;
-    int report_id ;
-    saved_new_line_char = new_line_char;
-    new_line_char = 10;
-    report_id = callback_defined(show_lua_error_hook_callback);
-    if (report_id == 0) {
-        print_err("LuaTeX error ");
-        tprint(s);
-    } else {
-        (void) run_callback(report_id, "->");
-    }
-    help2("The lua interpreter ran into a problem, so the",
-          "remainder of this lua chunk will be ignored.");
-    error();
-    new_line_char = saved_new_line_char;
-}
-
-@ @c
-void lua_fatal_error(const char *s)
-{                               /* lua found a problem */
-    new_line_char = 10;
-    normalize_selector();
-    print_err("LuaTeX fatal error ");
-    tprint(s);
-    succumb();
-}
-
 @ Here is the most dreaded error message
 @c
 void overflow(const char *s, unsigned int n)
@@ -523,7 +515,6 @@ void overflow(const char *s, unsigned int n)
           "you can ask a wizard to enlarge me.");
     succumb();
 }
-
 
 @ The program might sometime run completely amok, at which point there is
 no choice but to stop. If no previous error has been detected, that's bad
@@ -550,7 +541,6 @@ void confusion(const char *s)
     succumb();
 }
 
-
 @ Users occasionally want to interrupt \TeX\ while it's running.
 If the runtime system allows this, one can implement
 a routine that sets the global variable |interrupt| to some nonzero value
@@ -565,8 +555,6 @@ void check_interrupt(void)
     if (interrupt != 0)
         pause_for_instructions();
 }
-
-
 
 @ When an interrupt has been detected, the program goes into its
 highest interaction level and lets the user have nearly the full flexibility of
@@ -631,8 +619,6 @@ void ins_error(void)
     error();
 }
 
-
-
 @ When \TeX\ wants to typeset a character that doesn't exist, the
 character node is not created; thus the output routine can assume
 that characters exist when it sees them. The following procedure
@@ -669,5 +655,70 @@ void char_warning(internal_font_number f, int c)
         print_char('!');
         end_diagnostic(false);
         int_par(tracing_online_code) = old_setting;
+    }
+}
+
+@ @c
+void normal_error(const char *t, const char *p)
+{
+    normalize_selector();
+    print_err("error ");
+    if (t != NULL) {
+        tprint(" (");
+        tprint(t);
+        tprint(")");
+    }
+    tprint(": ");
+    if (p != NULL)
+        tprint(p);
+    succumb();
+}
+
+@ @c
+void normal_warning(const char *t, const char *p, boolean prepend_nl, boolean append_nl)
+{
+    int report_id ;
+    if (strcmp(t,"lua") == 0) {
+        int saved_new_line_char;
+        saved_new_line_char = new_line_char;
+        new_line_char = 10;
+        report_id = callback_defined(show_lua_error_hook_callback);
+        if (report_id == 0) {
+            tprint(p);
+            help2("The lua interpreter ran into a problem, so the",
+                  "remainder of this lua chunk will be ignored.");
+        } else {
+            (void) run_callback(report_id, "->");
+        }
+        error();
+        new_line_char = saved_new_line_char;
+    } else {
+        report_id = callback_defined(show_warning_message_callback);
+        if (report_id > 0) {
+            /* free last ones */
+            xfree(last_warning_str);
+            xfree(last_warning_tag);
+            last_warning_str = (string) xmalloc(strlen(p) + 1);
+            last_warning_tag = (string) xmalloc(strlen(t) + 1);
+            strcpy(last_warning_str,p);
+            strcpy(last_warning_tag,t);
+            run_callback(report_id, "->");
+        } else {
+            if (prepend_nl)
+                print_ln();
+            tprint("warning ");
+            if (t != NULL) {
+                tprint(" (");
+                tprint(t);
+                tprint(")");
+            }
+            tprint(": ");
+            if (p != NULL)
+                tprint(p);
+            if (append_nl)
+                print_ln();
+        }
+        if (history == spotless)
+            history = warning_issued;
     }
 }

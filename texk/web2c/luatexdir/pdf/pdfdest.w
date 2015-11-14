@@ -22,9 +22,6 @@
 
 #include "ptexlib.h"
 
-@ @c
-#define pdf_dest_margin          dimen_par(pdf_dest_margin_code)
-
 @ Here we implement subroutines for work with objects and related things.
 Some of them are used in former parts too, so we need to declare them
 forward.
@@ -65,7 +62,7 @@ with the same identifier already exists and give a warning if needed.
 @c
 void warn_dest_dup(int id, small_number byname, const char *s1, const char *s2)
 {
-    pdf_warning(s1, "destination with the same identifier (", false, false);
+    normal_warning(s1, "destination with the same identifier (", false, false);
     if (byname > 0) {
         tprint("name");
         print_mark(id);
@@ -87,13 +84,13 @@ void do_dest(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     scaled_whd alt_rule;
     int k;
     if (global_shipping_mode == SHIPPING_FORM)
-        pdf_error("ext4", "destinations cannot be inside an XForm");
+        normal_error("pdf backend", "destinations cannot be inside an XForm");
     if (doing_leaders)
         return;
     k = pdf_get_obj(pdf, obj_type_dest, pdf_dest_id(p), pdf_dest_named_id(p));
     if (obj_dest_ptr(pdf, k) != null) {
         warn_dest_dup(pdf_dest_id(p), (small_number) pdf_dest_named_id(p),
-                      "ext4", "has been already used, duplicate ignored");
+                      "pdf backend", "has been already used, duplicate ignored");
         return;
     }
     obj_dest_ptr(pdf, k) = p;
@@ -140,8 +137,7 @@ void write_out_pdf_mark_destinations(PDF pdf)
     if ((k = get_page_resources_list(pdf, obj_type_dest)) != NULL) {
         while (k != NULL) {
             if (is_obj_written(pdf, k->info)) {
-                pdf_error("ext5",
-                          "destination has been already written (this shouldn't happen)");
+                normal_error("pdf backend","destination has been already written (this shouldn't happen)");
             } else {
                 int i;
                 i = obj_dest_ptr(pdf, k->info);
@@ -195,7 +191,7 @@ void write_out_pdf_mark_destinations(PDF pdf)
                     pdf_add_rect_spec(pdf, i);
                     break;
                 default:
-                    pdf_error("ext5", "unknown dest type");
+                    normal_error("pdf backend", "unknown dest type");
                     break;
                 }
                 pdf_end_array(pdf);
@@ -220,9 +216,9 @@ void scan_pdfdest(PDF pdf)
     if (scan_keyword("num")) {
         scan_int();
         if (cur_val <= 0)
-            pdf_error("ext1", "num identifier must be positive");
+            normal_error("pdf backend", "num identifier must be positive");
         if (cur_val > max_halfword)
-            pdf_error("ext1", "number too big");
+            normal_error("pdf backend", "number too big");
         set_pdf_dest_id(cur_list.tail_field, cur_val);
         set_pdf_dest_named_id(cur_list.tail_field, 0);
     } else if (scan_keyword("name")) {
@@ -230,14 +226,14 @@ void scan_pdfdest(PDF pdf)
         set_pdf_dest_id(cur_list.tail_field, def_ref);
         set_pdf_dest_named_id(cur_list.tail_field, 1);
     } else {
-        pdf_error("ext1", "identifier type missing");
+        normal_error("pdf backend", "identifier type missing");
     }
     if (scan_keyword("xyz")) {
         set_pdf_dest_type(cur_list.tail_field, pdf_dest_xyz);
         if (scan_keyword("zoom")) {
             scan_int();
             if (cur_val > max_halfword)
-                pdf_error("ext1", "number too big");
+                normal_error("pdf backend", "number too big");
             set_pdf_dest_xyz_zoom(cur_list.tail_field, cur_val);
         } else {
             set_pdf_dest_xyz_zoom(cur_list.tail_field, null);
@@ -257,7 +253,7 @@ void scan_pdfdest(PDF pdf)
     } else if (scan_keyword("fit")) {
         set_pdf_dest_type(cur_list.tail_field, pdf_dest_fit);
     } else {
-        pdf_error("ext1", "destination type missing");
+        normal_error("pdf backend", "destination type missing");
     }
     /* Scan an optional space */
     get_x_token();
@@ -281,7 +277,7 @@ void scan_pdfdest(PDF pdf)
     if ((k != 0) && (obj_dest_ptr(pdf, k) != null)) {
         warn_dest_dup(pdf_dest_id(cur_list.tail_field),
                       (small_number) pdf_dest_named_id(cur_list.tail_field),
-                      "ext4", "has been already used, duplicate ignored");
+                      "pdf backend", "has been already used, duplicate ignored");
         flush_node_list(cur_list.tail_field);
         cur_list.tail_field = q;
         vlink(q) = null;

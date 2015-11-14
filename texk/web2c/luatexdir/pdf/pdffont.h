@@ -22,25 +22,8 @@
 #  define PDFFONT_H
 
 extern scaled_whd output_one_char(PDF pdf, halfword p);
-
 extern void pdf_init_font(PDF pdf, internal_font_number f);
 extern internal_font_number pdf_set_font(PDF pdf, internal_font_number f);
-
-extern int pk_dpi;              /* PK pixel density value from \.{texmf.cnf} */
-
-extern internal_font_number tfm_lookup(char *s, scaled fs);
-
-extern void set_expand_params(internal_font_number f, boolean auto_expand,
-                              int stretch_limit, int shrink_limit,
-                              int font_step);
-
-extern void read_expand_font(void);
-extern void new_letterspaced_font(small_number a);
-extern void make_font_copy(small_number a);
-
 extern void pdf_include_chars(PDF);
-extern void glyph_to_unicode(void);
-
-extern int fix_expand_value(internal_font_number f, int e);
 
 #endif

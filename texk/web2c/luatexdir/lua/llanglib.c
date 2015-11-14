@@ -62,7 +62,7 @@ static int lang_patterns(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isstring(L, 2)) {
+        if (lua_type(L, 2) != LUA_TSTRING) {
             return luaL_error(L, "lang.patterns(): argument should be a string");
         }
         load_patterns(*lang_ptr, (const unsigned char *) lua_tostring(L, 2));
@@ -91,7 +91,7 @@ static int lang_hyphenation(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isstring(L, 2)) {
+        if (lua_type(L, 2) != LUA_TSTRING) {
             return luaL_error(L,
                            "lang.hyphenation(): argument should be a string");
         }
@@ -112,9 +112,8 @@ static int lang_pre_hyphen_char(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isnumber(L, 2)) {
-            return luaL_error(L,
-                           "lang.prehyphenchar(): argument should be a character number");
+        if (lua_type(L, 2) != LUA_TNUMBER) {
+            return luaL_error(L, "lang.prehyphenchar(): argument should be a character number");
         }
         (*lang_ptr)->pre_hyphen_char=(int)lua_tonumber(L, 2);
         return 0;
@@ -129,9 +128,8 @@ static int lang_post_hyphen_char(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isnumber(L, 2)) {
-            return luaL_error(L,
-                           "lang.posthyphenchar(): argument should be a character number");
+        if (lua_type(L, 2) != LUA_TNUMBER) {
+            return luaL_error(L, "lang.posthyphenchar(): argument should be a character number");
         }
         (*lang_ptr)->post_hyphen_char=(int)lua_tonumber(L, 2);
         return 0;
@@ -147,9 +145,8 @@ static int lang_pre_exhyphen_char(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isnumber(L, 2)) {
-            return luaL_error(L,
-                           "lang.preexhyphenchar(): argument should be a character number");
+        if (lua_type(L, 2) != LUA_TNUMBER) {
+            return luaL_error(L, "lang.preexhyphenchar(): argument should be a character number");
         }
         (*lang_ptr)->pre_exhyphen_char=(int)lua_tonumber(L, 2);
         return 0;
@@ -164,9 +161,8 @@ static int lang_post_exhyphen_char(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isnumber(L, 2)) {
-            return luaL_error(L,
-                           "lang.postexhyphenchar(): argument should be a character number");
+        if (lua_type(L, 2) != LUA_TNUMBER) {
+            return luaL_error(L, "lang.postexhyphenchar(): argument should be a character number");
         }
         (*lang_ptr)->post_exhyphen_char=(int)lua_tonumber(L, 2);
         return 0;
@@ -182,9 +178,8 @@ static int lang_hyphenation_min(lua_State * L)
     struct tex_language **lang_ptr;
     lang_ptr = check_islang(L, 1);
     if (lua_gettop(L) != 1) {
-        if (!lua_isnumber(L, 2)) {
-            return luaL_error(L,
-                           "lang.hyphenationmin(): argument should be a number");
+        if (lua_type(L, 2) != LUA_TNUMBER) {
+            return luaL_error(L, "lang.hyphenationmin(): argument should be a number");
         }
         (*lang_ptr)->hyphenation_min=(int)lua_tonumber(L, 2);
         return 0;
@@ -206,8 +201,8 @@ static int lang_clear_hyphenation(lua_State * L)
 static int do_lang_clean(lua_State * L)
 {
     char *cleaned;
-    if (!lua_isstring(L, 1)) {
-	return luaL_error(L, "lang.clean(): argument should be a string");
+    if (lua_type(L, 1) != LUA_TSTRING) {
+        return luaL_error(L, "lang.clean(): argument should be a string");
     }
     (void) clean_hyphenation(lua_tostring(L, 1), &cleaned);
     lua_pushstring(L, cleaned);

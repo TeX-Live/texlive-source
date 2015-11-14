@@ -1,5 +1,5 @@
 /* texmath.h
-   
+
    Copyright 1996-2006 Han The Thanh <thanh@pdftex.org>
    Copyright 2006-2009 Taco Hoekwater <taco@luatex.org>
 
@@ -160,6 +160,8 @@ typedef enum {
     math_param_fraction_denom_vgap,
     math_param_fraction_denom_down,
     math_param_fraction_del_size,
+    math_param_skewed_fraction_hgap,
+    math_param_skewed_fraction_vgap,
     math_param_limit_above_vgap,
     math_param_limit_above_bgap,
     math_param_limit_above_kern,

@@ -17,13 +17,52 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
-/* hh-ls: by using couple_nodes instead of vlink we make sure that we can backtrack as well as have valid prev links */
+% (HH / 0.82+):
 
+@ In traditional \TeX\ the italic correction is added to the width of the glyph. This
+is part of the engine design and related font design. In opentype math this is
+different. There the italic correction had more explicit usage. The 1.7 spec
+says:
 
+italic correction:
+
+  When a run of slanted characters is followed by a straight character (such as
+  an operator or a delimiter), the italics correction of the last glyph is added
+  to its advance width.
+
+  When positioning limits on an N-ary operator (e.g., integral sign), the horizontal
+  position of the upper limit is moved to the right by ½ of the italics correction,
+  while the position of the lower limit is moved to the left by the same distance.
+
+  When positioning superscripts and subscripts, their default horizontal positions are
+  also different by the amount of the italics correction of the preceding glyph.
+
+math kerning:
+
+  Set the default horizontal position for the superscript as shifted relative to the
+  position of the subscript by the italics correction of the base glyph.
+
+Before this was specified we had to gamble a bit and assume that cambria was the font
+benchmark and trust our eyes (and msword) for the logic. I must admit that I have been
+fighting these italics in fonts (and the heuristics that Lua\TeX\ provided) right from
+the start (e.g. using Lua based postprocessing) but by now we know more and have more
+fonts to test with. More fonts are handy because not all fonts are alike when it comes
+to italics. Axis are another area of concern, as it looks like opentype math fonts often
+already apply that shift.
+
+@ @c
+#define math_old                      int_par(math_old_code)
+#define math_no_italic_compensation   int_par(math_no_italic_compensation_code)
+#define math_no_char_italic           int_par(math_no_char_italic_code)
+#define math_use_old_fraction_scaling int_par(math_use_old_fraction_scaling_code)
+
+#define is_new_mathfont(A)   ((font_math_params(A) >0) && (math_old == 0))
+#define is_old_mathfont(A,B) ((font_math_params(A)==0) && (font_params(A)>=(B)))
+
+@
 \def\LuaTeX{Lua\TeX}
 
 @ @c
-
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -37,47 +76,41 @@
 #define script_space         dimen_par(script_space_code)
 #define disable_lig          int_par(disable_lig_code)
 #define disable_kern         int_par(disable_kern_code)
+#define scripts_mode         int_par(math_scripts_mode_code)
 
 #define nDEBUG
 
-#define reset_attributes(p,newatt) do {             \
-    delete_attribute_ref(node_attr(p));             \
-    node_attr(p) = newatt;                          \
-    if (newatt!=null) {                             \
-      assert(type(newatt)==attribute_list_node);    \
-      add_node_attr_ref(node_attr(p));              \
-    }                                               \
+#define reset_attributes(p,newatt) do {                \
+    delete_attribute_ref(node_attr(p)); \
+    node_attr(p) = newatt;                             \
+    if (newatt!=null) {                                \
+      assert(type(newatt)==attribute_list_node);       \
+      add_node_attr_ref(node_attr(p));                 \
+    }                                                  \
   } while (0)
 
-
-#define DEFINE_MATH_PARAMETERS(A,B,C,D) do {                            \
-    if (B==text_size) {                                                 \
-      def_math_param(A, text_style, (C),D);                             \
-      def_math_param(A, cramped_text_style, (C),D);                     \
-    } else if (B==script_size) {                                        \
-      def_math_param(A, script_style, (C),D);                           \
-      def_math_param(A, cramped_script_style, (C),D);                   \
-    } else if (B==script_script_size) {                                 \
-      def_math_param(A, script_script_style, (C),D);                    \
-      def_math_param(A, cramped_script_script_style, (C),D);            \
-    }                                                                   \
+#define DEFINE_MATH_PARAMETERS(A,B,C,D) do {                 \
+    if (B==text_size) {                                      \
+      def_math_param(A, text_style, (C),D);                  \
+      def_math_param(A, cramped_text_style, (C),D);          \
+    } else if (B==script_size) {                             \
+      def_math_param(A, script_style, (C),D);                \
+      def_math_param(A, cramped_script_style, (C),D);        \
+    } else if (B==script_script_size) {                      \
+      def_math_param(A, script_script_style, (C),D);         \
+      def_math_param(A, cramped_script_script_style, (C),D); \
+    }                                                        \
   } while (0)
 
-#define DEFINE_DMATH_PARAMETERS(A,B,C,D) do {                           \
-    if (B==text_size) {                                                 \
-      def_math_param(A, display_style,(C),D);                           \
-      def_math_param(A, cramped_display_style,(C),D);                   \
-    }                                                                   \
+#define DEFINE_DMATH_PARAMETERS(A,B,C,D) do {                \
+    if (B==text_size) {                                      \
+      def_math_param(A, display_style,(C),D);                \
+      def_math_param(A, cramped_display_style,(C),D);        \
+    }                                                        \
   } while (0)
-
-
-#define is_new_mathfont(A) (font_math_params(A)>0)
-#define is_old_mathfont(A,B) (font_math_params(A)==0 && font_params(A)>=(B))
-
 
 #define font_MATH_par(a,b)                                                  \
   (font_math_params(a)>=b ? font_math_param(a,b) : undefined_math_parameter)
-
 
 @ here are the math parameters that are font-dependant
 
@@ -95,24 +128,24 @@ following macros, which take a size code as their parameter; for example,
 #define total_mathex_params 13
 
 #define mathsy(A,B) font_param(fam_fnt(2,A),B)
-#define math_x_height(A) mathsy(A,5)    /* height of `\.x' */
-#define math_quad(A) mathsy(A,6)        /* \.{18mu} */
-#define num1(A) mathsy(A,8)     /* numerator shift-up in display styles */
-#define num2(A) mathsy(A,9)     /* numerator shift-up in non-display, non-\.{\\atop} */
-#define num3(A) mathsy(A,10)    /* numerator shift-up in non-display \.{\\atop} */
-#define denom1(A) mathsy(A,11)  /* denominator shift-down in display styles */
-#define denom2(A) mathsy(A,12)  /* denominator shift-down in non-display styles */
-#define sup1(A) mathsy(A,13)    /* superscript shift-up in uncramped display style */
-#define sup2(A) mathsy(A,14)    /* superscript shift-up in uncramped non-display */
-#define sup3(A) mathsy(A,15)    /* superscript shift-up in cramped styles */
-#define sub1(A) mathsy(A,16)    /* subscript shift-down if superscript is absent */
-#define sub2(A) mathsy(A,17)    /* subscript shift-down if superscript is present */
-#define sup_drop(A) mathsy(A,18)        /* superscript baseline below top of large box */
-#define sub_drop(A) mathsy(A,19)        /* subscript baseline below bottom of large box */
-#define delim1(A) mathsy(A,20)  /* size of \.{\\atopwithdelims} delimiters in display styles */
-#define delim2(A) mathsy(A,21)  /* size of \.{\\atopwithdelims} delimiters in non-displays */
-#define axis_height(A) mathsy(A,22)     /* height of fraction lines above the baseline */
 
+#define math_x_height(A) mathsy(A,5) /* height of `\.x' */
+#define math_quad(A) mathsy(A,6)     /* \.{18mu} */
+#define num1(A) mathsy(A,8)          /* numerator shift-up in display styles */
+#define num2(A) mathsy(A,9)          /* numerator shift-up in non-display, non-\.{\\atop} */
+#define num3(A) mathsy(A,10)         /* numerator shift-up in non-display \.{\\atop} */
+#define denom1(A) mathsy(A,11)       /* denominator shift-down in display styles */
+#define denom2(A) mathsy(A,12)       /* denominator shift-down in non-display styles */
+#define sup1(A) mathsy(A,13)         /* superscript shift-up in uncramped display style */
+#define sup2(A) mathsy(A,14)         /* superscript shift-up in uncramped non-display */
+#define sup3(A) mathsy(A,15)         /* superscript shift-up in cramped styles */
+#define sub1(A) mathsy(A,16)         /* subscript shift-down if superscript is absent */
+#define sub2(A) mathsy(A,17)         /* subscript shift-down if superscript is present */
+#define sup_drop(A) mathsy(A,18)     /* superscript baseline below top of large box */
+#define sub_drop(A) mathsy(A,19)     /* subscript baseline below bottom of large box */
+#define delim1(A) mathsy(A,20)       /* size of \.{\\atopwithdelims} delimiters in display styles */
+#define delim2(A) mathsy(A,21)       /* size of \.{\\atopwithdelims} delimiters in non-displays */
+#define axis_height(A) mathsy(A,22)  /* height of fraction lines above the baseline */
 
 @ The math-extension parameters have similar macros, but the size code is
 omitted (since it is always |cur_size| when we refer to such parameters).
@@ -150,13 +183,7 @@ FlattenedAccentBaseHeight:
   needs support for MathTopAccentAttachment table to be
   implemented first
 
-SkewedFractionHorizontalGap,
-SkewedFractionVerticalGap:
-  I am not sure it makes sense implementing skewed fractions,
-  so I would like to see an example first
-
 Also still TODO for OpenType Math:
-  * extensible large operators
   * prescripts
 
 @ this is not really a math parameter at all
@@ -180,7 +207,6 @@ static void math_param_error(const char *param, int style)
 #endif
     return;
 }
-
 
 @ @c
 static scaled accent_base_height(int f)
@@ -210,7 +236,7 @@ scaled get_math_quad(int var)
 }
 
 @ this parameter is different because it is called with a size
-   specifier instead of a style specifier.
+specifier instead of a style specifier.
 
 @c
 static scaled math_axis(int b)
@@ -244,7 +270,6 @@ static scaled get_math_quad_size(int b)
     return get_math_param(math_param_quad, var);
 }
 
-
 @ @c
 static scaled minimum_operator_size(int var)
 {
@@ -253,7 +278,7 @@ static scaled minimum_operator_size(int var)
 }
 
 @ Old-style fonts do not define the |radical_rule|. This allows |make_radical| to select
- the backward compatibility code, and it means that we can't raise an error here.
+the backward compatibility code, and it means that we can't raise an error here.
 
 @c
 static scaled radical_rule(int var)
@@ -275,6 +300,30 @@ static scaled do_get_math_param_or_error(int var, int param, const char *name)
         a = 0;
     }
     return a;
+}
+
+@ A variant on a suggestion on the list based on analysis by UV.
+
+@c
+static scaled get_delimiter_height(scaled max_d, scaled max_h, boolean axis) {
+    scaled delta, delta1, delta2;
+    if (axis) {
+        delta2 = max_d + math_axis(cur_size);
+    } else {
+        delta2 = max_d;
+    }
+    delta1 = max_h + max_d - delta2;
+    if (delta2 > delta1) {
+        /* |delta1| is max distance from axis */
+        delta1 = delta2;
+    }
+    delta = (delta1 / 500) * delimiter_factor;
+    delta2 = delta1 + delta1 - delimiter_shortfall;
+    if (delta < delta2) {
+        return delta2;
+    } else {
+        return delta;
+    }
 }
 
 @ @c
@@ -310,7 +359,11 @@ static scaled do_get_math_param_or_error(int var, int param, const char *name)
 #define fraction_denom_vgap(a)   get_math_param_or_error(a, fraction_denom_vgap)
 #define fraction_num_up(a)       get_math_param_or_error(a, fraction_num_up)
 #define fraction_denom_down(a)   get_math_param_or_error(a, fraction_denom_down)
-#define fraction_del_size(a)     get_math_param_or_error(a, fraction_del_size)
+#define fraction_del_size_new(a) get_math_param_or_error(a, fraction_del_size)
+#define fraction_del_size_old(a) get_math_param(a, math_param_fraction_del_size)
+
+#define skewed_fraction_hgap(a)  get_math_param_or_error(a, skewed_fraction_hgap)
+#define skewed_fraction_vgap(a)  get_math_param_or_error(a, skewed_fraction_vgap)
 
 #define limit_above_vgap(a)      get_math_param_or_error(a, limit_above_vgap)
 #define limit_above_bgap(a)      get_math_param_or_error(a, limit_above_bgap)
@@ -337,494 +390,482 @@ void fixup_math_parameters(int fam_id, int size_id, int f, int lvl)
 {
     if (is_new_mathfont(f)) {   /* fix all known parameters */
 
-        DEFINE_MATH_PARAMETERS(math_param_quad, size_id, font_size(f), lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_quad, size_id, font_size(f), lvl);
+        DEFINE_MATH_PARAMETERS(math_param_quad, size_id,
+            font_size(f), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_quad, size_id,
+            font_size(f), lvl);
         DEFINE_MATH_PARAMETERS(math_param_axis, size_id,
-                               font_MATH_par(f, AxisHeight), lvl);
+            font_MATH_par(f, AxisHeight), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_axis, size_id,
-                                font_MATH_par(f, AxisHeight), lvl);
+            font_MATH_par(f, AxisHeight), lvl);
         DEFINE_MATH_PARAMETERS(math_param_overbar_kern, size_id,
-                               font_MATH_par(f, OverbarExtraAscender), lvl);
+            font_MATH_par(f, OverbarExtraAscender), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_overbar_kern, size_id,
-                                font_MATH_par(f, OverbarExtraAscender), lvl);
+            font_MATH_par(f, OverbarExtraAscender), lvl);
         DEFINE_MATH_PARAMETERS(math_param_overbar_rule, size_id,
-                               font_MATH_par(f, OverbarRuleThickness), lvl);
+            font_MATH_par(f, OverbarRuleThickness), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_overbar_rule, size_id,
-                                font_MATH_par(f, OverbarRuleThickness), lvl);
+            font_MATH_par(f, OverbarRuleThickness), lvl);
         DEFINE_MATH_PARAMETERS(math_param_overbar_vgap, size_id,
-                               font_MATH_par(f, OverbarVerticalGap), lvl);
+            font_MATH_par(f, OverbarVerticalGap), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_overbar_vgap, size_id,
-                                font_MATH_par(f, OverbarVerticalGap), lvl);
+            font_MATH_par(f, OverbarVerticalGap), lvl);
         DEFINE_MATH_PARAMETERS(math_param_underbar_kern, size_id,
-                               font_MATH_par(f, UnderbarExtraDescender), lvl);
+            font_MATH_par(f, UnderbarExtraDescender), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_underbar_kern, size_id,
-                                font_MATH_par(f, UnderbarExtraDescender), lvl);
+            font_MATH_par(f, UnderbarExtraDescender), lvl);
         DEFINE_MATH_PARAMETERS(math_param_underbar_rule, size_id,
-                               font_MATH_par(f, UnderbarRuleThickness), lvl);
+            font_MATH_par(f, UnderbarRuleThickness), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_underbar_rule, size_id,
-                                font_MATH_par(f, UnderbarRuleThickness), lvl);
+            font_MATH_par(f, UnderbarRuleThickness), lvl);
         DEFINE_MATH_PARAMETERS(math_param_underbar_vgap, size_id,
-                               font_MATH_par(f, UnderbarVerticalGap), lvl);
+           font_MATH_par(f, UnderbarVerticalGap), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_underbar_vgap, size_id,
-                                font_MATH_par(f, UnderbarVerticalGap), lvl);
+            font_MATH_par(f, UnderbarVerticalGap), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_under_delimiter_vgap, size_id,
-                               font_MATH_par(f, StretchStackGapAboveMin), lvl);
+            font_MATH_par(f, StretchStackGapAboveMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_under_delimiter_vgap, size_id,
-                                font_MATH_par(f, StretchStackGapAboveMin), lvl);
+            font_MATH_par(f, StretchStackGapAboveMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_under_delimiter_bgap, size_id,
-                               font_MATH_par(f, StretchStackBottomShiftDown),
-                               lvl);
+            font_MATH_par(f, StretchStackBottomShiftDown), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_under_delimiter_bgap, size_id,
-                                font_MATH_par(f, StretchStackBottomShiftDown),
-                                lvl);
+            font_MATH_par(f, StretchStackBottomShiftDown), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_over_delimiter_vgap, size_id,
-                               font_MATH_par(f, StretchStackGapBelowMin), lvl);
+            font_MATH_par(f, StretchStackGapBelowMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_over_delimiter_vgap, size_id,
-                                font_MATH_par(f, StretchStackGapBelowMin), lvl);
+            font_MATH_par(f, StretchStackGapBelowMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_over_delimiter_bgap, size_id,
-                               font_MATH_par(f, StretchStackTopShiftUp), lvl);
+            font_MATH_par(f, StretchStackTopShiftUp), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_over_delimiter_bgap, size_id,
-                                font_MATH_par(f, StretchStackTopShiftUp), lvl);
-
+            font_MATH_par(f, StretchStackTopShiftUp), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_stack_num_up, size_id,
-                               font_MATH_par(f, StackTopShiftUp), lvl);
+           font_MATH_par(f, StackTopShiftUp), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_stack_num_up, size_id,
-                                font_MATH_par(f, StackTopDisplayStyleShiftUp),
-                                lvl);
+            font_MATH_par(f, StackTopDisplayStyleShiftUp), lvl);
         DEFINE_MATH_PARAMETERS(math_param_stack_denom_down, size_id,
-                               font_MATH_par(f, StackBottomShiftDown), lvl);
+            font_MATH_par(f, StackBottomShiftDown), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_stack_denom_down, size_id,
-                                font_MATH_par(f,
-                                              StackBottomDisplayStyleShiftDown),
-                                lvl);
+            font_MATH_par(f, StackBottomDisplayStyleShiftDown), lvl);
         DEFINE_MATH_PARAMETERS(math_param_stack_vgap, size_id,
-                               font_MATH_par(f, StackGapMin), lvl);
+            font_MATH_par(f, StackGapMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_stack_vgap, size_id,
-                                font_MATH_par(f, StackDisplayStyleGapMin), lvl);
+            font_MATH_par(f, StackDisplayStyleGapMin), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_radical_kern, size_id,
-                               font_MATH_par(f, RadicalExtraAscender), lvl);
+            font_MATH_par(f, RadicalExtraAscender), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_kern, size_id,
-                                font_MATH_par(f, RadicalExtraAscender), lvl);
+            font_MATH_par(f, RadicalExtraAscender), lvl);
 
         DEFINE_DMATH_PARAMETERS(math_param_operator_size, size_id,
-                                font_MATH_par(f, DisplayOperatorMinHeight),
-                                lvl);
+            font_MATH_par(f, DisplayOperatorMinHeight), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_radical_rule, size_id,
-                               font_MATH_par(f, RadicalRuleThickness), lvl);
+            font_MATH_par(f, RadicalRuleThickness), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_rule, size_id,
-                                font_MATH_par(f, RadicalRuleThickness), lvl);
+            font_MATH_par(f, RadicalRuleThickness), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_vgap, size_id,
-                               font_MATH_par(f, RadicalVerticalGap), lvl);
+            font_MATH_par(f, RadicalVerticalGap), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
-                                font_MATH_par(f,
-                                              RadicalDisplayStyleVerticalGap),
-                                lvl);
+            font_MATH_par(f, RadicalDisplayStyleVerticalGap), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_before, size_id,
-                               font_MATH_par(f, RadicalKernBeforeDegree), lvl);
+            font_MATH_par(f, RadicalKernBeforeDegree), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_before, size_id,
-                                font_MATH_par(f, RadicalKernBeforeDegree), lvl);
+            font_MATH_par(f, RadicalKernBeforeDegree), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_after, size_id,
-                               font_MATH_par(f, RadicalKernAfterDegree), lvl);
+            font_MATH_par(f, RadicalKernAfterDegree), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_after, size_id,
-                                font_MATH_par(f, RadicalKernAfterDegree), lvl);
+            font_MATH_par(f, RadicalKernAfterDegree), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, size_id,
-                               font_MATH_par(f,
-                                             RadicalDegreeBottomRaisePercent),
-                               lvl);
+            font_MATH_par(f, RadicalDegreeBottomRaisePercent), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_raise, size_id,
-                                font_MATH_par(f,
-                                              RadicalDegreeBottomRaisePercent),
-                                lvl);
+            font_MATH_par(f, RadicalDegreeBottomRaisePercent), lvl);
+
         if (size_id == text_size) {
             def_math_param(math_param_sup_shift_up, display_style,
-                           font_MATH_par(f, SuperscriptShiftUp), lvl);
+                font_MATH_par(f, SuperscriptShiftUp), lvl);
             def_math_param(math_param_sup_shift_up, cramped_display_style,
-                           font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
+                font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
             def_math_param(math_param_sup_shift_up, text_style,
-                           font_MATH_par(f, SuperscriptShiftUp), lvl);
+                font_MATH_par(f, SuperscriptShiftUp), lvl);
             def_math_param(math_param_sup_shift_up, cramped_text_style,
-                           font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
+                font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
         } else if (size_id == script_size) {
             def_math_param(math_param_sup_shift_up, script_style,
-                           font_MATH_par(f, SuperscriptShiftUp), lvl);
+                font_MATH_par(f, SuperscriptShiftUp), lvl);
             def_math_param(math_param_sup_shift_up, cramped_script_style,
-                           font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
+                font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
         } else if (size_id == script_script_size) {
             def_math_param(math_param_sup_shift_up, script_script_style,
-                           font_MATH_par(f, SuperscriptShiftUp), lvl);
+                font_MATH_par(f, SuperscriptShiftUp), lvl);
             def_math_param(math_param_sup_shift_up, cramped_script_script_style,
-                           font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
+                font_MATH_par(f, SuperscriptShiftUpCramped), lvl);
         }
 
         DEFINE_MATH_PARAMETERS(math_param_sub_shift_drop, size_id,
-                               font_MATH_par(f, SubscriptBaselineDropMin), lvl);
+            font_MATH_par(f, SubscriptBaselineDropMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sub_shift_drop, size_id,
-                                font_MATH_par(f, SubscriptBaselineDropMin),
-                                lvl);
+            font_MATH_par(f, SubscriptBaselineDropMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sup_shift_drop, size_id,
-                               font_MATH_par(f, SuperscriptBaselineDropMax),
-                               lvl);
+            font_MATH_par(f, SuperscriptBaselineDropMax), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sup_shift_drop, size_id,
-                                font_MATH_par(f, SuperscriptBaselineDropMax),
-                                lvl);
+            font_MATH_par(f, SuperscriptBaselineDropMax), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sub_shift_down, size_id,
-                               font_MATH_par(f, SubscriptShiftDown), lvl);
+            font_MATH_par(f, SubscriptShiftDown), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sub_shift_down, size_id,
-                                font_MATH_par(f, SubscriptShiftDown), lvl);
+            font_MATH_par(f, SubscriptShiftDown), lvl);
 
-        if (font_MATH_par(f, SubscriptShiftDownWithSuperscript) !=
-            undefined_math_parameter) {
+        if (font_MATH_par(f, SubscriptShiftDownWithSuperscript) != undefined_math_parameter) {
             DEFINE_MATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                   font_MATH_par(f,
-                                                 SubscriptShiftDownWithSuperscript),
-                                   lvl);
+                font_MATH_par(f, SubscriptShiftDownWithSuperscript), lvl);
             DEFINE_DMATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                    font_MATH_par(f,
-                                                  SubscriptShiftDownWithSuperscript),
-                                    lvl);
+                font_MATH_par(f, SubscriptShiftDownWithSuperscript), lvl);
         } else {
             DEFINE_MATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                   font_MATH_par(f, SubscriptShiftDown), lvl);
+                font_MATH_par(f, SubscriptShiftDown), lvl);
             DEFINE_DMATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                    font_MATH_par(f, SubscriptShiftDown), lvl);
+                font_MATH_par(f, SubscriptShiftDown), lvl);
         }
 
         DEFINE_MATH_PARAMETERS(math_param_sub_top_max, size_id,
-                               font_MATH_par(f, SubscriptTopMax), lvl);
+            font_MATH_par(f, SubscriptTopMax), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sub_top_max, size_id,
-                                font_MATH_par(f, SubscriptTopMax), lvl);
+            font_MATH_par(f, SubscriptTopMax), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sup_bottom_min, size_id,
-                               font_MATH_par(f, SuperscriptBottomMin), lvl);
+            font_MATH_par(f, SuperscriptBottomMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sup_bottom_min, size_id,
-                                font_MATH_par(f, SuperscriptBottomMin), lvl);
+            font_MATH_par(f, SuperscriptBottomMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sup_sub_bottom_max, size_id,
-                               font_MATH_par(f,
-                                             SuperscriptBottomMaxWithSubscript),
-                               lvl);
+            font_MATH_par(f, SuperscriptBottomMaxWithSubscript), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sup_sub_bottom_max, size_id,
-                                font_MATH_par(f,
-                                              SuperscriptBottomMaxWithSubscript),
-                                lvl);
+            font_MATH_par(f, SuperscriptBottomMaxWithSubscript), lvl);
         DEFINE_MATH_PARAMETERS(math_param_subsup_vgap, size_id,
-                               font_MATH_par(f, SubSuperscriptGapMin), lvl);
+            font_MATH_par(f, SubSuperscriptGapMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_subsup_vgap, size_id,
-                                font_MATH_par(f, SubSuperscriptGapMin), lvl);
+            font_MATH_par(f, SubSuperscriptGapMin), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_limit_above_vgap, size_id,
-                               font_MATH_par(f, UpperLimitGapMin), lvl);
+            font_MATH_par(f, UpperLimitGapMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_above_vgap, size_id,
-                                font_MATH_par(f, UpperLimitGapMin), lvl);
+            font_MATH_par(f, UpperLimitGapMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_above_bgap, size_id,
-                               font_MATH_par(f, UpperLimitBaselineRiseMin),
-                               lvl);
+            font_MATH_par(f, UpperLimitBaselineRiseMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_above_bgap, size_id,
-                                font_MATH_par(f, UpperLimitBaselineRiseMin),
-                                lvl);
-        DEFINE_MATH_PARAMETERS(math_param_limit_above_kern, size_id, 0, lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_limit_above_kern, size_id, 0, lvl);
+            font_MATH_par(f, UpperLimitBaselineRiseMin), lvl);
+        DEFINE_MATH_PARAMETERS(math_param_limit_above_kern, size_id,
+            0, lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_limit_above_kern, size_id,
+            0, lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_below_vgap, size_id,
-                               font_MATH_par(f, LowerLimitGapMin), lvl);
+            font_MATH_par(f, LowerLimitGapMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_below_vgap, size_id,
-                                font_MATH_par(f, LowerLimitGapMin), lvl);
+            font_MATH_par(f, LowerLimitGapMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_below_bgap, size_id,
-                               font_MATH_par(f, LowerLimitBaselineDropMin),
-                               lvl);
+            font_MATH_par(f, LowerLimitBaselineDropMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_below_bgap, size_id,
-                                font_MATH_par(f, LowerLimitBaselineDropMin),
-                                lvl);
-        DEFINE_MATH_PARAMETERS(math_param_limit_below_kern, size_id, 0, lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_limit_below_kern, size_id, 0, lvl);
+            font_MATH_par(f, LowerLimitBaselineDropMin), lvl);
+        DEFINE_MATH_PARAMETERS(math_param_limit_below_kern, size_id,
+            0, lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_limit_below_kern, size_id,
+            0, lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_fraction_rule, size_id,
-                               font_MATH_par(f, FractionRuleThickness), lvl);
+            font_MATH_par(f, FractionRuleThickness), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_rule, size_id,
-                                font_MATH_par(f, FractionRuleThickness), lvl);
+            font_MATH_par(f, FractionRuleThickness), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_num_vgap, size_id,
-                               font_MATH_par(f, FractionNumeratorGapMin), lvl);
+            font_MATH_par(f, FractionNumeratorGapMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_num_vgap, size_id,
-                                font_MATH_par(f,
-                                              FractionNumeratorDisplayStyleGapMin),
-                                lvl);
+            font_MATH_par(f, FractionNumeratorDisplayStyleGapMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_num_up, size_id,
-                               font_MATH_par(f, FractionNumeratorShiftUp), lvl);
+            font_MATH_par(f, FractionNumeratorShiftUp), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_num_up, size_id,
-                                font_MATH_par(f,
-                                              FractionNumeratorDisplayStyleShiftUp),
-                                lvl);
+            font_MATH_par(f, FractionNumeratorDisplayStyleShiftUp), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_denom_vgap, size_id,
-                               font_MATH_par(f, FractionDenominatorGapMin),
-                               lvl);
+            font_MATH_par(f, FractionDenominatorGapMin), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_denom_vgap, size_id,
-                                font_MATH_par(f,
-                                              FractionDenominatorDisplayStyleGapMin),
-                                lvl);
+            font_MATH_par(f,FractionDenominatorDisplayStyleGapMin), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_denom_down, size_id,
-                               font_MATH_par(f, FractionDenominatorShiftDown),
-                               lvl);
+            font_MATH_par(f, FractionDenominatorShiftDown), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_denom_down, size_id,
-                                font_MATH_par(f,
-                                              FractionDenominatorDisplayStyleShiftDown),
-                                lvl);
+            font_MATH_par(f, FractionDenominatorDisplayStyleShiftDown), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_fraction_del_size, size_id,
-                               font_MATH_par(f, FractionDelimiterSize), lvl);
+            font_MATH_par(f, FractionDelimiterSize), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_del_size, size_id,
-                                font_MATH_par(f,
-                                              FractionDelimiterDisplayStyleSize),
-                                lvl);
+            font_MATH_par(f, FractionDelimiterDisplayStyleSize), lvl);
+
+        DEFINE_MATH_PARAMETERS(math_param_skewed_fraction_hgap, size_id,
+            font_MATH_par(f, SkewedFractionHorizontalGap), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_skewed_fraction_hgap, size_id,
+            font_MATH_par(f, SkewedFractionHorizontalGap), lvl);
+        DEFINE_MATH_PARAMETERS(math_param_skewed_fraction_vgap, size_id,
+            font_MATH_par(f, SkewedFractionVerticalGap), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_skewed_fraction_vgap, size_id,
+            font_MATH_par(f, SkewedFractionVerticalGap), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_space_after_script, size_id,
-                               font_MATH_par(f, SpaceAfterScript), lvl);
+            font_MATH_par(f, SpaceAfterScript), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_space_after_script, size_id,
-                                font_MATH_par(f, SpaceAfterScript), lvl);
+            font_MATH_par(f, SpaceAfterScript), lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_connector_overlap_min, size_id,
-                               font_MATH_par(f, MinConnectorOverlap), lvl);
+            font_MATH_par(f, MinConnectorOverlap), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_connector_overlap_min, size_id,
-                                font_MATH_par(f, MinConnectorOverlap), lvl);
-
+            font_MATH_par(f, MinConnectorOverlap), lvl);
 
     } else if (fam_id == 2 && is_old_mathfont(f, total_mathsy_params)) {
+
         /* fix old-style |sy| parameters */
-        DEFINE_MATH_PARAMETERS(math_param_quad, size_id, math_quad(size_id),
-                               lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_quad, size_id, math_quad(size_id),
-                                lvl);
-        DEFINE_MATH_PARAMETERS(math_param_axis, size_id, axis_height(size_id),
-                               lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_axis, size_id, axis_height(size_id),
-                                lvl);
-        DEFINE_MATH_PARAMETERS(math_param_stack_num_up, size_id, num3(size_id),
-                               lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_stack_num_up, size_id, num1(size_id),
-                                lvl);
+
+        DEFINE_MATH_PARAMETERS(math_param_quad, size_id,
+            math_quad(size_id), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_quad, size_id,
+            math_quad(size_id), lvl);
+        DEFINE_MATH_PARAMETERS(math_param_axis, size_id,
+            axis_height(size_id), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_axis, size_id,
+            axis_height(size_id), lvl);
+        DEFINE_MATH_PARAMETERS(math_param_stack_num_up, size_id,
+            num3(size_id), lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_stack_num_up, size_id,
+            num1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_stack_denom_down, size_id,
-                               denom2(size_id), lvl);
+            denom2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_stack_denom_down, size_id,
-                                denom1(size_id), lvl);
+            denom1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_num_up, size_id,
-                               num2(size_id), lvl);
+            num2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_num_up, size_id,
-                                num1(size_id), lvl);
+            num1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_denom_down, size_id,
-                               denom2(size_id), lvl);
+            denom2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_denom_down, size_id,
-                                denom1(size_id), lvl);
+            denom1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_del_size, size_id,
-                               delim2(size_id), lvl);
+            delim2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_del_size, size_id,
-                                delim1(size_id), lvl);
+            delim1(size_id), lvl);
+
+        DEFINE_MATH_PARAMETERS(math_param_skewed_fraction_hgap, size_id,
+            0, lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_skewed_fraction_hgap, size_id,
+            0, lvl);
+        DEFINE_MATH_PARAMETERS(math_param_skewed_fraction_vgap, size_id,
+            0, lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_skewed_fraction_vgap, size_id,
+            0, lvl);
+
         if (size_id == text_size) {
             def_math_param(math_param_sup_shift_up, display_style,
-                           sup1(size_id), lvl);
+                sup1(size_id), lvl);
             def_math_param(math_param_sup_shift_up, cramped_display_style,
-                           sup3(size_id), lvl);
-            def_math_param(math_param_sup_shift_up, text_style, sup2(size_id),
-                           lvl);
+                sup3(size_id), lvl);
+            def_math_param(math_param_sup_shift_up, text_style,
+                sup2(size_id), lvl);
             def_math_param(math_param_sup_shift_up, cramped_text_style,
-                           sup3(size_id), lvl);
+               sup3(size_id), lvl);
         } else if (size_id == script_size) {
             def_math_param(math_param_sub_shift_drop, display_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sub_shift_drop, cramped_display_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sub_shift_drop, text_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sub_shift_drop, cramped_text_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, display_style,
-                           sup_drop(size_id), lvl);
+                sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, cramped_display_style,
-                           sup_drop(size_id), lvl);
+                sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, text_style,
-                           sup_drop(size_id), lvl);
+                sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, cramped_text_style,
-                           sup_drop(size_id), lvl);
-            def_math_param(math_param_sup_shift_up, script_style, sup2(size_id),
-                           lvl);
+                sup_drop(size_id), lvl);
+            def_math_param(math_param_sup_shift_up, script_style,
+                sup2(size_id), lvl);
             def_math_param(math_param_sup_shift_up, cramped_script_style,
-                           sup3(size_id), lvl);
+                sup3(size_id), lvl);
         } else if (size_id == script_script_size) {
             def_math_param(math_param_sub_shift_drop, script_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sub_shift_drop, cramped_script_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sub_shift_drop, script_script_style,
-                           sub_drop(size_id), lvl);
+                sub_drop(size_id), lvl);
             def_math_param(math_param_sub_shift_drop,
-                           cramped_script_script_style, sub_drop(size_id), lvl);
+                cramped_script_script_style, sub_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, script_style,
-                           sup_drop(size_id), lvl);
+                sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, cramped_script_style,
-                           sup_drop(size_id), lvl);
+                sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop, script_script_style,
-                           sup_drop(size_id), lvl);
+                sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_drop,
-                           cramped_script_script_style, sup_drop(size_id), lvl);
+                cramped_script_script_style, sup_drop(size_id), lvl);
             def_math_param(math_param_sup_shift_up, script_script_style,
-                           sup2(size_id), lvl);
+                sup2(size_id), lvl);
             def_math_param(math_param_sup_shift_up, cramped_script_script_style,
-                           sup3(size_id), lvl);
+                sup3(size_id), lvl);
         }
+
         DEFINE_MATH_PARAMETERS(math_param_sub_shift_down, size_id,
-                               sub1(size_id), lvl);
+            sub1(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sub_shift_down, size_id,
-                                sub1(size_id), lvl);
+            sub1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                               sub2(size_id), lvl);
+            sub2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sub_sup_shift_down, size_id,
-                                sub2(size_id), lvl);
+            sub2(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sub_top_max, size_id,
-                               (abs(math_x_height(size_id) * 4) / 5), lvl);
+            (abs(math_x_height(size_id) * 4) / 5), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sub_top_max, size_id,
-                                (abs(math_x_height(size_id) * 4) / 5), lvl);
+            (abs(math_x_height(size_id) * 4) / 5), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sup_bottom_min, size_id,
-                               (abs(math_x_height(size_id)) / 4), lvl);
+            (abs(math_x_height(size_id)) / 4), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sup_bottom_min, size_id,
-                                (abs(math_x_height(size_id)) / 4), lvl);
+            (abs(math_x_height(size_id)) / 4), lvl);
         DEFINE_MATH_PARAMETERS(math_param_sup_sub_bottom_max, size_id,
-                               (abs(math_x_height(size_id) * 4) / 5), lvl);
+            (abs(math_x_height(size_id) * 4) / 5), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_sup_sub_bottom_max, size_id,
-                                (abs(math_x_height(size_id) * 4) / 5), lvl);
+            (abs(math_x_height(size_id) * 4) / 5), lvl);
 
-        /* The display-size |radical_vgap| is done twice because it needs
-           values from both the sy and the ex font. */
+        /*
+            The display-size |radical_vgap| is done twice because it needs
+            values from both the sy and the ex font.
+        */
+
         DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
-                                (default_rule_thickness(size_id) +
-                                 (abs(math_x_height(size_id)) / 4)), lvl);
-
+            (default_rule_thickness(size_id) + (abs(math_x_height(size_id)) / 4)), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_raise, size_id,
-                               60, lvl);
+            60, lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_raise, size_id,
-                                60, lvl);
+            60, lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_before, size_id,
-                               xn_over_d(get_math_quad_size(size_id), 5, 18),
-                               lvl);
+            xn_over_d(get_math_quad_size(size_id), 5, 18), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_before, size_id,
-                                xn_over_d(get_math_quad_size(size_id), 5, 18),
-                                lvl);
+            xn_over_d(get_math_quad_size(size_id), 5, 18), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_degree_after, size_id,
-                               (-xn_over_d
-                                (get_math_quad_size(size_id), 10, 18)), lvl);
+            (-xn_over_d (get_math_quad_size(size_id), 10, 18)), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_degree_after, size_id,
-                                (-xn_over_d
-                                 (get_math_quad_size(size_id), 10, 18)), lvl);
+            (-xn_over_d (get_math_quad_size(size_id), 10, 18)), lvl);
 
     } else if (fam_id == 3 && is_old_mathfont(f, total_mathex_params)) {
+
         /* fix old-style |ex| parameters */
+
         DEFINE_MATH_PARAMETERS(math_param_overbar_kern, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_overbar_rule, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_overbar_vgap, size_id,
-                               3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_overbar_kern, size_id,
-                                default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_overbar_rule, size_id,
-                                default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_overbar_vgap, size_id,
-                                3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_underbar_kern, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_underbar_rule, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_underbar_vgap, size_id,
-                               3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_underbar_kern, size_id,
-                                default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_underbar_rule, size_id,
-                                default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_underbar_vgap, size_id,
-                                3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_kern, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_radical_kern, size_id,
-                                default_rule_thickness(size_id), lvl);
-
+            default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_radical_vgap, size_id,
-                               (default_rule_thickness(size_id) +
-                                (abs(default_rule_thickness(size_id)) / 4)),
-                               lvl);
-
+           (default_rule_thickness(size_id) + (abs(default_rule_thickness(size_id)) / 4)), lvl);
         DEFINE_MATH_PARAMETERS(math_param_stack_vgap, size_id,
-                               3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_stack_vgap, size_id,
-                                7 * default_rule_thickness(size_id), lvl);
+            7 * default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_rule, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_rule, size_id,
-                                default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_num_vgap, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_num_vgap, size_id,
-                                3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_fraction_denom_vgap, size_id,
-                               default_rule_thickness(size_id), lvl);
+            default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_fraction_denom_vgap, size_id,
-                                3 * default_rule_thickness(size_id), lvl);
+            3 * default_rule_thickness(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_above_vgap, size_id,
-                               big_op_spacing1(size_id), lvl);
+            big_op_spacing1(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_above_vgap, size_id,
-                                big_op_spacing1(size_id), lvl);
+            big_op_spacing1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_above_bgap, size_id,
-                               big_op_spacing3(size_id), lvl);
+            big_op_spacing3(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_above_bgap, size_id,
-                                big_op_spacing3(size_id), lvl);
+            big_op_spacing3(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_above_kern, size_id,
-                               big_op_spacing5(size_id), lvl);
+            big_op_spacing5(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_above_kern, size_id,
-                                big_op_spacing5(size_id), lvl);
+            big_op_spacing5(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_below_vgap, size_id,
-                               big_op_spacing2(size_id), lvl);
+            big_op_spacing2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_below_vgap, size_id,
-                                big_op_spacing2(size_id), lvl);
+            big_op_spacing2(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_below_bgap, size_id,
-                               big_op_spacing4(size_id), lvl);
+            big_op_spacing4(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_below_bgap, size_id,
-                                big_op_spacing4(size_id), lvl);
+            big_op_spacing4(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_limit_below_kern, size_id,
-                               big_op_spacing5(size_id), lvl);
+           big_op_spacing5(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_limit_below_kern, size_id,
-                                big_op_spacing5(size_id), lvl);
+            big_op_spacing5(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_subsup_vgap, size_id,
-                               4 * default_rule_thickness(size_id), lvl);
+            4 * default_rule_thickness(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_subsup_vgap, size_id,
-                                4 * default_rule_thickness(size_id), lvl);
-        /* All of the |space_after_script|s are done in |finalize_math_parameters| because the
-           \.{\\scriptspace} may have been altered by the user
-         */
-        DEFINE_MATH_PARAMETERS(math_param_connector_overlap_min, size_id, 0,
-                               lvl);
-        DEFINE_DMATH_PARAMETERS(math_param_connector_overlap_min, size_id, 0,
-                                lvl);
+            4 * default_rule_thickness(size_id), lvl);
+
+        /*
+            All of the |space_after_script|s are done in |finalize_math_parameters|
+            because the \.{\\scriptspace} may have been altered by the user
+        */
+
+        DEFINE_MATH_PARAMETERS(math_param_connector_overlap_min, size_id,
+            0, lvl);
+        DEFINE_DMATH_PARAMETERS(math_param_connector_overlap_min, size_id,
+            0, lvl);
 
         DEFINE_MATH_PARAMETERS(math_param_under_delimiter_vgap, size_id,
-                               big_op_spacing2(size_id), lvl);
+            big_op_spacing2(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_under_delimiter_vgap, size_id,
-                                big_op_spacing2(size_id), lvl);
+            big_op_spacing2(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_under_delimiter_bgap, size_id,
-                               big_op_spacing4(size_id), lvl);
+            big_op_spacing4(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_under_delimiter_bgap, size_id,
-                                big_op_spacing4(size_id), lvl);
+            big_op_spacing4(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_over_delimiter_vgap, size_id,
-                               big_op_spacing1(size_id), lvl);
+            big_op_spacing1(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_over_delimiter_vgap, size_id,
-                                big_op_spacing1(size_id), lvl);
+            big_op_spacing1(size_id), lvl);
         DEFINE_MATH_PARAMETERS(math_param_over_delimiter_bgap, size_id,
-                               big_op_spacing3(size_id), lvl);
+            big_op_spacing3(size_id), lvl);
         DEFINE_DMATH_PARAMETERS(math_param_over_delimiter_bgap, size_id,
-                                big_op_spacing3(size_id), lvl);
+            big_op_spacing3(size_id), lvl);
 
-        /* The display-size |radical_vgap| is done twice because it needs
-           values from both the sy and the ex font. */
+        /*
+            The display-size |radical_vgap| is done twice because it needs
+            values from both the sy and the ex font.
+        */
+
         DEFINE_DMATH_PARAMETERS(math_param_radical_vgap, size_id,
-                                (default_rule_thickness(size_id) +
-                                 (abs(math_x_height(size_id)) / 4)), lvl);
+            (default_rule_thickness(size_id) + (abs(math_x_height(size_id)) / 4)), lvl);
+
     }
 }
 
@@ -836,29 +877,26 @@ static void finalize_math_parameters(void)
 {
     int saved_trace = int_par(tracing_assigns_code);
     int_par(tracing_assigns_code) = 0;
-    if (get_math_param(math_param_space_after_script, display_style) ==
-        undefined_math_parameter) {
+    if (get_math_param(math_param_space_after_script, display_style) == undefined_math_parameter) {
         def_math_param(math_param_space_after_script, display_style,
-                       script_space, level_one);
+            script_space, level_one);
         def_math_param(math_param_space_after_script, text_style,
-                       script_space, level_one);
+            script_space, level_one);
         def_math_param(math_param_space_after_script, script_style,
-                       script_space, level_one);
+            script_space, level_one);
         def_math_param(math_param_space_after_script, script_script_style,
-                       script_space, level_one);
+            script_space, level_one);
         def_math_param(math_param_space_after_script, cramped_display_style,
-                       script_space, level_one);
+            script_space, level_one);
         def_math_param(math_param_space_after_script, cramped_text_style,
-                       script_space, level_one);
+            script_space, level_one);
         def_math_param(math_param_space_after_script, cramped_script_style,
-                       script_space, level_one);
-        def_math_param(math_param_space_after_script,
-                       cramped_script_script_style, script_space, level_one);
+            script_space, level_one);
+        def_math_param(math_param_space_after_script, cramped_script_script_style,
+            script_space, level_one);
     }
     int_par(tracing_assigns_code) = saved_trace;
-
 }
-
 
 @ In order to convert mlists to hlists, i.e., noads to nodes, we need several
 subroutines that are conveniently dealt with now.
@@ -884,14 +922,14 @@ static const char *math_size_string(int s)
 information:
 
 @c
-#define setup_cur_size(a) do {                                   \
-        if (a==script_style ||                                          \
-            a==cramped_script_style)                                    \
-            cur_size=script_size;                                       \
-        else if (a==script_script_style ||                              \
-                 a==cramped_script_script_style)                        \
-            cur_size=script_script_size;                                \
-        else cur_size=text_size;                                        \
+#define setup_cur_size(a) do {                   \
+        if (a==script_style ||                   \
+            a==cramped_script_style)             \
+            cur_size=script_size;                \
+        else if (a==script_script_style ||       \
+                 a==cramped_script_script_style) \
+            cur_size=script_script_size;         \
+        else cur_size=text_size;                 \
     } while (0)
 
 
@@ -913,9 +951,6 @@ static pointer math_clone(pointer q)
     return x;
 }
 
-
-
-
 @ Here is a function that returns a pointer to a rule node having a given
   thickness |t|. The rule will extend horizontally to the boundary of the vlist
   that eventually contains it.
@@ -924,7 +959,7 @@ static pointer math_clone(pointer q)
 static pointer do_fraction_rule(scaled t, pointer att)
 {
     pointer p;                  /* the new node */
-    p = new_rule();
+    p = new_rule(normal_rule);
     rule_dir(p) = math_direction;
     height(p) = t;
     depth(p) = 0;
@@ -932,8 +967,7 @@ static pointer do_fraction_rule(scaled t, pointer att)
     return p;
 }
 
-
-@  The |overbar| function returns a pointer to a vlist box that consists of
+@ The |overbar| function returns a pointer to a vlist box that consists of
   a given box |b|, above which has been placed a kern of height |k| under a
   fraction rule of thickness |t| under additional space of height |ht|.
 
@@ -942,8 +976,8 @@ static pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
 {
     pointer p, q;               /* nodes being constructed */
     p = new_kern(k);
-    couple_nodes(p,b);
     reset_attributes(p, att);
+    couple_nodes(p,b);
     q = do_fraction_rule(t, att);
     couple_nodes(q,p);
     p = new_kern(ht);
@@ -955,17 +989,20 @@ static pointer overbar(pointer b, scaled k, scaled t, scaled ht, pointer att)
 }
 
 @ Here is a subroutine that creates a new box, whose list contains a
-  single character, and whose width includes the italic correction for
-  that character. The height or depth of the box will be negative, if
-  the height or depth of the character is negative; thus, this routine
-  may deliver a slightly different result than |hpack| would produce.
+single character, and whose width includes the italic correction for
+that character. The height or depth of the box will be negative, if
+the height or depth of the character is negative; thus, this routine
+may deliver a slightly different result than |hpack| would produce.
 
 @c
 static pointer char_box(internal_font_number f, int c, pointer bb)
 {
-    pointer b, p;               /* the new box and its character node */
+    pointer b, p; /* the new box and its character node */
     b = new_null_box();
-    width(b) = char_width(f, c) + char_italic(f, c);
+    if (is_new_mathfont(f))
+        width(b) = char_width(f, c);
+    else
+        width(b) = char_width(f, c) + char_italic(f, c);
     height(b) = char_height(f, c);
     depth(b) = char_depth(f, c);
     reset_attributes(b, bb);
@@ -976,7 +1013,7 @@ static pointer char_box(internal_font_number f, int c, pointer bb)
 }
 
 @ Another handy subroutine computes the height plus depth of
- a given character:
+  a given character:
 
 @c
 static scaled height_plus_depth(internal_font_number f, int c)
@@ -984,19 +1021,17 @@ static scaled height_plus_depth(internal_font_number f, int c)
     return (char_height(f, c) + char_depth(f, c));
 }
 
-
-@  When we build an extensible character, it's handy to have the
+@ When we build an extensible character, it's handy to have the
   following subroutine, which puts a given character on top
   of the characters already in box |b|:
 
 @c
 static scaled stack_into_box(pointer b, internal_font_number f, int c)
 {
-    pointer p, q;               /* new node placed into |b| */
-    p = char_box(f, c, node_attr(b));
+    pointer p, q; /* new node placed into |b| */
+    p = char_box(f, c, node_attr(b)); /* italic gets added to width */
     if (type(b) == vlist_node) {
-//        vlink(p) = list_ptr(b);
-try_couple_nodes(p,list_ptr(b));
+        try_couple_nodes(p,list_ptr(b));
         list_ptr(b) = p;
         height(b) = height(p);
         if (width(b) < width(p))
@@ -1018,7 +1053,6 @@ try_couple_nodes(p,list_ptr(b));
         return char_width(f, c);
     }
 }
-
 
 static void stack_glue_into_box(pointer b, scaled min, scaled max) {
     pointer p, q;               /* new node placed into |b| */
@@ -1059,11 +1093,11 @@ static void stack_glue_into_box(pointer b, scaled min, scaled max) {
 @^recursion@>
 
 @c
-int cur_size;                   /* size code corresponding to |cur_style|  */
+int cur_size; /* size code corresponding to |cur_style|  */
 
 @ @c
-static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
-                             pointer att, int boxtype, int cur_style)
+static pointer get_delim_box(pointer q, extinfo * ext, internal_font_number f, scaled v,
+                             pointer att, int cur_style, int boxtype)
 {
     pointer b;                  /* new box */
     scaled b_max;               /* natural (maximum) size of the stack */
@@ -1131,28 +1165,31 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
         num_normal = 1;
         num_extenders--;
     }
-    /* |ext| holds a linked list of numerous items that may or may not be
-       repeatable. For the total height, we have to figure out how many items
-       are needed to create a stack of at least |v|.
-       The next |while| loop does  that. It has two goals: it finds out
-       the natural height |b_max|  of the all the parts needed to reach
-       at least |v|,  and it sets |with_extenders| to the number of times
-       each of the repeatable items in |ext| has to be repeated to reach
-       that height.
-     */
+    /*
+        |ext| holds a linked list of numerous items that may or may not be
+        repeatable. For the total height, we have to figure out how many items
+        are needed to create a stack of at least |v|.
+
+        The next |while| loop does  that. It has two goals: it finds out
+        the natural height |b_max|  of the all the parts needed to reach
+        at least |v|,  and it sets |with_extenders| to the number of times
+        each of the repeatable items in |ext| has to be repeated to reach
+        that height.
+
+    */
     cur = ext;
     b_max = 0;
     while (b_max < v && num_extenders > 0) {
         b_max = 0;
-	prev_overlap = 0;
+        prev_overlap = 0;
         with_extenders++;
         for (cur = ext; cur != NULL; cur = cur->next) {
-	    if (cur->extender == 0) {
-	        c = cur->start_overlap;
-		if (min_overlap < c)
-		    c = min_overlap;
-		if (prev_overlap < c)
-		    c = prev_overlap;
+            if (cur->extender == 0) {
+                c = cur->start_overlap;
+                if (min_overlap < c)
+                    c = min_overlap;
+                if (prev_overlap < c)
+                    c = prev_overlap;
                 a = cur->advance;
                 if (a == 0) {
                     /* for tfm fonts */
@@ -1162,16 +1199,16 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
                         a = char_width(f, cur->glyph);
                     assert(a >= 0);
                 }
-		b_max += a - c;
-		prev_overlap = cur->end_overlap;
-	    } else {
-	        i = with_extenders;
-		while (i > 0) {
-	            c = cur->start_overlap;
-		    if (min_overlap < c)
-		        c = min_overlap;
-		    if (prev_overlap < c)
-		        c = prev_overlap;
+                b_max += a - c;
+                prev_overlap = cur->end_overlap;
+            } else {
+                i = with_extenders;
+                while (i > 0) {
+                    c = cur->start_overlap;
+                    if (min_overlap < c)
+                        c = min_overlap;
+                    if (prev_overlap < c)
+                        c = prev_overlap;
                     a = cur->advance;
                     if (a == 0) {
                         /* for tfm fonts */
@@ -1181,57 +1218,60 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
                             a = char_width(f, cur->glyph);
                         assert(a >= 0);
                     }
-		    b_max += a - c;
-		    prev_overlap = cur->end_overlap;
-		    i--;
-		}
-	    }
-	}
+                    b_max += a - c;
+                    prev_overlap = cur->end_overlap;
+                    i--;
+                }
+            }
+        }
     }
 
-    /* assemble box using |with_extenders| copies of each extender, with
-       appropriate glue wherever an overlap occurs */
+    /*
+        assemble box using |with_extenders| copies of each extender, with
+        appropriate glue wherever an overlap occurs
+    */
     prev_overlap = 0;
     b_max = 0;
     s_max = 0;
     for (cur = ext; cur != NULL; cur = cur->next) {
         if (cur->extender == 0) {
-	    c = cur->start_overlap;
-	    if (prev_overlap < c)
-	        c = prev_overlap;
-	    d = c;
-	    if (min_overlap < c)
-	        c = min_overlap;
-	    if (d > 0) {
-	        stack_glue_into_box(b, -d, -c);
-	        s_max += (-c) - (-d);
-	        b_max -= d;
-	    }
+            c = cur->start_overlap;
+            if (prev_overlap < c)
+                c = prev_overlap;
+            d = c;
+            if (min_overlap < c)
+                c = min_overlap;
+            if (d > 0) {
+                stack_glue_into_box(b, -d, -c);
+                s_max += (-c) - (-d);
+                b_max -= d;
+            }
             b_max += stack_into_box(b, f, cur->glyph);
-	    prev_overlap = cur->end_overlap;
-	    i--;
-	} else {
-	    i = with_extenders;
-	    while (i > 0) {
-	        c = cur->start_overlap;
-		if (prev_overlap < c)
-		    c = prev_overlap;
-		d = c;
-		if (min_overlap < c)
-		    c = min_overlap;
-		if (d > 0) {
-		    stack_glue_into_box(b, -d, -c);
-	            s_max += (-c) - (-d);
-	            b_max -= d;
-		}
+            prev_overlap = cur->end_overlap;
+            i--;
+        } else {
+            i = with_extenders;
+            while (i > 0) {
+                c = cur->start_overlap;
+                if (prev_overlap < c)
+                    c = prev_overlap;
+                d = c;
+                if (min_overlap < c)
+                    c = min_overlap;
+                if (d > 0) {
+                    stack_glue_into_box(b, -d, -c);
+                    s_max += (-c) - (-d);
+                    b_max -= d;
+                }
                 b_max += stack_into_box(b, f, cur->glyph);
-		prev_overlap = cur->end_overlap;
-	        i--;
-	    }
-	}
+                prev_overlap = cur->end_overlap;
+                i--;
+            }
+        }
     }
 
     /* set glue so as to stretch the connections if needed */
+
     d = 0;
     if (v > b_max && s_max > 0) {
         d = v-b_max;
@@ -1244,29 +1284,16 @@ static pointer get_delim_box(extinfo * ext, internal_font_number f, scaled v,
         b_max += d;
     }
 
-    if (boxtype == vlist_node)
+    if (boxtype == vlist_node) {
         height(b) = b_max;
-    else
+    } else {
         width(b) = b_max;
+    }
 
     return b;
 }
 
-static pointer get_delim_vbox(extinfo * ext, internal_font_number f, scaled v,
-                              pointer att, int cur_style)
-{
-    return get_delim_box(ext, f, v, att, vlist_node, cur_style);
-}
-
-static pointer get_delim_hbox(extinfo * ext, internal_font_number f, scaled v,
-                              pointer att, int cur_style)
-{
-    return get_delim_box(ext, f, v, att, hlist_node, cur_style);
-}
-
-
-
-@  The |var_delimiter| function, which finds or constructs a sufficiently
+@ The |var_delimiter| function, which finds or constructs a sufficiently
   large delimiter, is the most interesting of the auxiliary functions that
   currently concern us. Given a pointer |d| to a delimiter field in some noad,
   together with a size code |s| and a vertical distance |v|, this function
@@ -1288,7 +1315,7 @@ static void endless_loop_error(internal_font_number g, int y)
     const char *hlp[] = {
         "You managed to create a seemingly endless charlist chain in the current",
         "font. I have counted until 10000 already and still have not escaped, so"
-            "I will jump out of the loop all by myself now. Fix your font!",
+        "I will jump out of the loop all by myself now. Fix your font!",
         NULL
     };
     snprintf(s, 256, "Math error: endless loop in charlist (U+%04x in %s)",
@@ -1296,10 +1323,8 @@ static void endless_loop_error(internal_font_number g, int y)
     tex_error(s, hlp);
 }
 
-static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
-                                boolean flat, int cur_style)
+static pointer do_delimiter(pointer q, pointer d, int s, scaled v, boolean flat, int cur_style, boolean shift, boolean *stack, scaled *delta)
 {
-    /* label found,continue; */
     pointer b;                  /* the box that will be constructed */
     internal_font_number f, g;  /* best-so-far and tentative font codes */
     int c, i, x, y;             /* best-so-far and tentative character codes */
@@ -1322,9 +1347,11 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
     x = small_char(d);
     i = 0;
     while (true) {
-        /* The search process is complicated slightly by the facts that some of the
-           characters might not be present in some of the fonts, and they might not
-           be probed in increasing order of height. */
+        /*
+            The search process is complicated slightly by the facts that some of the
+            characters might not be present in some of the fonts, and they might not
+            be probed in increasing order of height.
+        */
         if ((z != 0) || (x != 0)) {
             g = fam_fnt(z, s);
             if (g != null_font) {
@@ -1362,7 +1389,7 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
             }
         }
         if (large_attempt)
-            goto FOUND;         /* there were none large enough */
+            goto FOUND; /* there were none large enough */
         large_attempt = true;
         z = large_fam(d);
         x = large_char(d);
@@ -1374,58 +1401,63 @@ static pointer do_var_delimiter(pointer d, int s, scaled v, scaled * ic,
         flush_node(d);
     }
     if (f != null_font) {
-        /* When the following code is executed, |do_parts| will be true
-           if a built-up symbol is supposed to be returned.
-         */
+        /*
+            When the following code is executed, |do_parts| will be true
+            if a built-up symbol is supposed to be returned.
+        */
         ext = NULL;
-        if ((do_parts) &&
-            ((!flat
-              && (ext = get_charinfo_vert_variants(char_info(f, c))) != NULL)
-             || (flat
-                 && (ext =
-                     get_charinfo_hor_variants(char_info(f, c))) != NULL))) {
-            b = (flat ? get_delim_hbox(ext, f, v, att, cur_style) :
-                 get_delim_vbox(ext, f, v, att, cur_style));
+        if ((do_parts) && ((!flat && (ext = get_charinfo_vert_variants(char_info(f,c))) != NULL)
+                       ||  ( flat && (ext = get_charinfo_hor_variants (char_info(f,c))) != NULL))) {
+            if (flat) {
+                b = get_delim_box(d, ext, f, v, att, cur_style, hlist_node);
+            } else {
+                b = get_delim_box(d, ext, f, v, att, cur_style, vlist_node);
+            }
+            if (delta != NULL) {
+                if (is_new_mathfont(f)) {
+                    *delta = char_vert_italic(f,x);
+                } else {
+                    *delta = char_italic(f,x);
+                }
+            }
+            if (stack != NULL)
+                *stack = true ;
         } else {
             b = char_box(f, c, att);
+            if (!is_new_mathfont(f)) {
+                /* italic gets added to width */
+                width(b) += char_italic(f, c);
+            }
+            if (delta != NULL) {
+                *delta = char_italic(f,x);
+            }
+            if (stack != NULL)
+                *stack = false ;
         }
-        /* This next test is because for OT MATH fonts, the italic correction of an
-           extensible character is only used for the placement  of a subscript
-           (in negated form), and it is not supposed to be added to the
-           width of the character box at all.
-
-           This has an effect later on in |make_op| as well, where it has to do
-           an extra correction for |make_script|'s addition of yet another italic
-           correction.
-         */
-        if (!is_new_mathfont(f)) {
-            width(b) += char_italic(f, c);
-        }
-        if (ic != NULL)
-            *ic = char_italic(f, c);
     } else {
         b = new_null_box();
         reset_attributes(b, att);
-        width(b) = (flat ? 0 : null_delimiter_space);   /* use this width if no delimiter was found */
-        if (ic != NULL)
-            *ic = 0;
+        if (flat) {
+            width(b) = 0;
+        } else {
+            /* use this width if no delimiter was found */
+            width(b) = null_delimiter_space;
+        }
+        if (delta != NULL) {
+            *delta = 0;
+        }
+        if (stack != NULL)
+            *stack = false ;
     }
-    if (!flat)
-        shift_amount(b) = half(height(b) - depth(b)) - math_axis(s);
+    if (!flat) {
+        /* vertical variant */
+        shift_amount(b) = half(height(b) - depth(b));
+        if (shift) {
+            shift_amount(b) -= math_axis(s);
+        }
+    }
     delete_attribute_ref(att);
     return b;
-}
-
-
-static pointer var_delimiter(pointer d, int s, scaled v, scaled * ic,
-                             int cur_style)
-{
-    return do_var_delimiter(d, s, v, ic, false, cur_style);
-}
-
-static pointer flat_delimiter(pointer d, int s, scaled v, int cur_style)
-{
-    return do_var_delimiter(d, s, v, NULL, true, cur_style);
 }
 
 @ The next subroutine is much simpler; it is used for numerators and
@@ -1436,7 +1468,6 @@ The centering is done by putting \.{\\hss} glue at the left and right
 of the list inside |b|, then packaging the new box; thus, the
 actual box might not really be centered, if it already contains
 infinite glue.
-
 
 The given box might contain a single character whose italic correction
 has been added to the width of the box; in this case a compensating
@@ -1495,9 +1526,9 @@ one that is expressed in `\.{mu}', given the value of the math unit.
 
 static pointer math_glue(pointer g, scaled m)
 {
-    pointer p;                  /* the new glue specification */
-    int n;                      /* integer part of |m| */
-    scaled f;                   /* fraction part of |m| */
+    pointer p; /* the new glue specification */
+    int n;     /* integer part of |m| */
+    scaled f;  /* fraction part of |m| */
     n = x_over_n(m, unity);
     f = tex_remainder;
     if (f < 0) {
@@ -1505,7 +1536,7 @@ static pointer math_glue(pointer g, scaled m)
         f = f + unity;
     }
     p = new_node(glue_spec_node, 0);
-    width(p) = mu_mult(width(g));       /* convert \.{mu} to \.{pt} */
+    width(p) = mu_mult(width(g)); /* convert \.{mu} to \.{pt} */
     stretch_order(p) = stretch_order(g);
     if (stretch_order(p) == normal)
         stretch(p) = mu_mult(stretch(g));
@@ -1525,8 +1556,8 @@ the value of the math unit.
 @c
 static void math_kern(pointer p, scaled m)
 {
-    int n;                      /* integer part of |m| */
-    scaled f;                   /* fraction part of |m| */
+    int n;    /* integer part of |m| */
+    scaled f; /* fraction part of |m| */
     if (subtype(p) == mu_glue) {
         n = x_over_n(m, unity);
         f = tex_remainder;
@@ -1558,17 +1589,19 @@ void run_mlist_to_hlist(halfword p, int mstyle, boolean penalties)
             return;
         }
         alink(p) = null ;
-        nodelist_to_lua(L, p);  /* arg 1 */
-        lua_pushstring(L, math_style_names[mstyle]);    /* arg 2 */
-        lua_pushboolean(L, penalties);  /* arg 3 */
-        if (lua_pcall(L, 3, 1, 0) != 0) {       /* 3 args, 1 result */
-            fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
+        nodelist_to_lua(L, p);                       /* arg 1 */
+        lua_pushstring(L, math_style_names[mstyle]); /* arg 2 */
+        lua_pushboolean(L, penalties);               /* arg 3 */
+        if (lua_pcall(L, 3, 1, 0) != 0) {            /* 3 args, 1 result */
+            char errmsg[256]; /* temp hack ... we will have a formatted error */
+            snprintf(errmsg, 255, "error: %s\n", lua_tostring(L, -1));
+            errmsg[255]='\0';
             lua_settop(L, sfix);
-            error();
+            normal_error("mlist to hlist",errmsg); /* to be done */
             return;
         }
         a = nodelist_from_lua(L);
-	/* alink(vlink(a)) = null; */ /* hh-ls: not need to null here  */
+        /* alink(vlink(a)) = null; */
         lua_settop(L, sfix);
         vlink(temp_head) = a;
     } else if (callback_id == 0) {
@@ -1584,17 +1617,16 @@ math style; |mlist_to_hlist| can call |clean_box|, which can call
 |mlist_to_hlist|.
 @^recursion@>
 
-
 The box returned by |clean_box| is ``clean'' in the
 sense that its |shift_amount| is zero.
 
 @c
 static pointer clean_box(pointer p, int s, int cur_style)
 {
-    pointer q;                  /* beginning of a list to be boxed */
-    pointer x;                  /* box to be returned */
-    pointer r;                  /* temporary pointer */
-    pointer mlist = null;       /* beginning of mlist to be translated */
+    pointer q;            /* beginning of a list to be boxed */
+    pointer x;            /* box to be returned */
+    pointer r;            /* temporary pointer */
+    pointer mlist = null; /* beginning of mlist to be translated */
     switch (type(p)) {
     case math_char_node:
         mlist = new_noad();
@@ -1613,14 +1645,13 @@ static pointer clean_box(pointer p, int s, int cur_style)
         goto FOUND;
     }
     mlist_to_hlist_args(mlist, s, false);
-    q = vlink(temp_head);       /* recursive call */
+    q = vlink(temp_head); /* recursive call */
     setup_cur_size(cur_style);
   FOUND:
     if (is_char_node(q) || (q == null))
         x = hpack(q, 0, additional, -1);
-    else if ((vlink(q) == null) && (type(q) <= vlist_node)
-             && (shift_amount(q) == 0))
-        x = q;                  /* it's already clean */
+    else if ((vlink(q) == null) && (type(q) <= vlist_node) && (shift_amount(q) == 0))
+        x = q; /* it's already clean */
     else
         x = hpack(q, 0, additional, -1);
     if (x != q && q != null)
@@ -1654,11 +1685,13 @@ after |fetch| has acted, and the field will also have been reset to |null|.
 The outputs of |fetch| are placed in global variables.
 
 @c
-internal_font_number cur_f;     /* the |font| field of a |math_char| */
-int cur_c;                      /* the |character| field of a |math_char| */
+internal_font_number cur_f; /* the |font| field of a |math_char| */
+int cur_c;                  /* the |character| field of a |math_char| */
 
-static void fetch(pointer a)
-{                               /* unpack the |math_char| field |a| */
+@ Here we unpack the |math_char| field |a|.
+
+@c static void fetch(pointer a)
+{
     cur_c = math_character(a);
     cur_f = fam_fnt(math_fam(a), cur_size);
     if (cur_f == null_font) {
@@ -1675,13 +1708,10 @@ static void fetch(pointer a)
                  math_size_string(cur_size), (int) math_fam(a), (int) cur_c);
         tex_error(msg, hlp);
         free(msg);
-    } else {
-        if (!(char_exists(cur_f, cur_c))) {
-            char_warning(cur_f, cur_c);
-        }
+    } else if (!(char_exists(cur_f, cur_c))) {
+        char_warning(cur_f, cur_c);
     }
 }
-
 
 @ We need to do a lot of different things, so |mlist_to_hlist| makes two
 passes over the given mlist.
@@ -1727,20 +1757,17 @@ static void assign_new_hlist(pointer q, pointer r)
 @ @c
 #define choose_mlist(A) do { p=A(q); A(q)=null; } while (0)
 
-
 @ Most of the actual construction work of |mlist_to_hlist| is done
-by procedures with names
-like |make_fraction|, |make_radical|, etc. To illustrate
-the general setup of such procedures, let's begin with a couple of
-simple ones.
+by procedures with names like |make_fraction|, |make_radical|, etc. To
+illustrate the general setup of such procedures, let's begin with a
+couple of simple ones.
 
 @c
 static void make_over(pointer q, int cur_style)
 {
     pointer p;
     p = overbar(clean_box(nucleus(q), cramped_style(cur_style), cur_style),
-                overbar_vgap(cur_style),
-                overbar_rule(cur_style),
+                overbar_vgap(cur_style), overbar_rule(cur_style),
                 overbar_kern(cur_style), node_attr(nucleus(q)));
     math_list(nucleus(q)) = p;
     type(nucleus(q)) = sub_box_node;
@@ -1771,7 +1798,7 @@ static void make_vcenter(pointer q)
     scaled delta;               /* its height plus depth */
     v = math_list(nucleus(q));
     if (type(v) != vlist_node)
-        confusion("vcenter");   /* this can't happen vcenter */
+        confusion("vcenter");
     delta = height(v) + depth(v);
     height(v) = math_axis(cur_size) + half(delta);
     depth(v) = delta - height(v);
@@ -1787,36 +1814,69 @@ of the nucleus plus a certain minimum clearance~|psi|. The symbol will be
 placed so that the actual clearance is |psi| plus half the excess.
 
 @c
+static void make_hextension(pointer q, int cur_style)
+{
+    pointer e, p;
+    halfword w;
+    boolean stack = false;
+    e = do_delimiter(q, left_delimiter(q), cur_size, radicalwidth(q), true, cur_style, true, &stack, NULL);
+    w = width(e);
+    if (!stack&& (radicalwidth(q) != 0) && (radicalwidth(q) != width(e))) {
+        if (radicalmiddle(q)) {
+            p = new_kern(half(radicalwidth(q)-w));
+            reset_attributes(p, node_attr(q));
+            couple_nodes(p,e);
+            e = p;
+            w = radicalwidth(q);
+        } else if (radicalexact(q)) {
+            w = radicalwidth(q);
+        }
+    }
+    e = hpack(e, 0, additional, -1);
+    width(e) = w ;
+    reset_attributes(e, node_attr(q));
+    math_list(nucleus(q)) = e;
+    left_delimiter(q) = null;
+}
+
 static void make_radical(pointer q, int cur_style)
 {
-    pointer x, y, p;            /* temporary registers for box construction */
-    scaled delta, clr, theta, h;        /* dimensions involved in the calculation */
+    pointer x, y, p, l1, l2;     /* temporary registers for box construction */
+    scaled delta, clr, theta, h; /* dimensions involved in the calculation */
     x = clean_box(nucleus(q), cramped_style(cur_style), cur_style);
     clr = radical_vgap(cur_style);
     theta = radical_rule(cur_style);
     if (theta == undefined_math_parameter) {
+        /* a real radical */
         theta = fraction_rule(cur_style);
-        y = var_delimiter(left_delimiter(q), cur_size,
-                          height(x) + depth(x) + clr + theta, NULL, cur_style);
-	/* If |y| is a composite then set |theta| to the height of its top
-           character, else set it to the height of |y|. */
-        if (list_ptr(y) != null
-            && type(list_ptr(y)) == hlist_node
-            && list_ptr(list_ptr(y)) != null
-            && type(list_ptr(list_ptr(y))) == glyph_node) {     /* and it should be */
-            theta = char_height(font(list_ptr(list_ptr(y))),
-                           character(list_ptr(list_ptr(y))));
+        y = do_delimiter(q, left_delimiter(q), cur_size, height(x) + depth(x) + clr + theta, false, cur_style, true, NULL, NULL);
+        /*
+            If |y| is a composite then set |theta| to the height of its top
+            character, else set it to the height of |y|.
+        */
+        l1 = list_ptr(y);
+        if ((l1 != null) && (type(l1) == hlist_node)) {
+            /* possible composite */
+            l2 = list_ptr(l1);
+            if ((l2 != null) && (type(l2) == glyph_node)) {
+                /* top character */
+                theta = char_height(font(l2), character(l2));
+            } else {
+                theta = height(y);
+            }
         } else {
             theta = height(y);
         }
     } else {
-        y = var_delimiter(left_delimiter(q), cur_size,
-                          height(x) + depth(x) + clr + theta, NULL, cur_style);
+        /* not really a radical but we use its node, historical sharing (like in mathml) */
+        y = do_delimiter(q, left_delimiter(q), cur_size, height(x) + depth(x) + clr + theta, false, cur_style, true, NULL, NULL);
     }
     left_delimiter(q) = null;
     delta = (depth(y) + height(y) - theta) - (height(x) + depth(x) + clr);
-    if (delta > 0)
-        clr = clr + half(delta);        /* increase the actual clearance */
+    if (delta > 0) {
+        /* increase the actual clearance */
+        clr = clr + half(delta);
+    }
     shift_amount(y) = (height(y) - theta) - (height(x) + clr);
     h = depth(y) + height(y);
     p = overbar(x, clr, theta, radical_kern(cur_style), node_attr(y));
@@ -1845,7 +1905,8 @@ static void make_radical(pointer q, int cur_style)
             couple_nodes(x,r);
             y = x;
         }
-        math_list(degree(q)) = null;    /* for \.{\\Uroot ..{<list>}{}} */
+        /* for \.{\\Uroot ..{<list>}{}} : */
+        math_list(degree(q)) = null;
         flush_node(degree(q));
     }
     p = hpack(y, 0, additional, -1);
@@ -1854,14 +1915,12 @@ static void make_radical(pointer q, int cur_style)
     type(nucleus(q)) = sub_box_node;
 }
 
-
 @ Construct a vlist box
+
 @c
-static pointer
-wrapup_delimiter(pointer x, pointer y, pointer q,
-                 scaled shift_up, scaled shift_down)
+static pointer wrapup_over_under_delimiter(pointer x, pointer y, pointer q, scaled shift_up, scaled shift_down)
 {
-    pointer p;                  /* temporary register for box construction */
+    pointer p;  /* temporary register for box construction */
     pointer v = new_null_box();
     type(v) = vlist_node;
     height(v) = shift_up + height(x);
@@ -1875,26 +1934,72 @@ wrapup_delimiter(pointer x, pointer y, pointer q,
     return v;
 }
 
+/* when exact use radicalwidth (y is delimiter) */
+
 @ @c
-#define fixup_widths(x,y) do {                      \
-        if (width(y) >= width(x)) {                 \
-            width(x) = width(y);                    \
-        } else {                                    \
-            width(y) = width(x);                    \
-        }                                           \
-    } while (0)
+
+#define fixup_widths(q,x,y) do { \
+    if (width(y) >= width(x)) { \
+        if (radicalwidth(q) != zero_glue) { \
+            shift_amount(x) += half(width(y)-width(x)) ; \
+        } \
+        width(x) = width(y); \
+    } else { \
+        if (radicalwidth(q) != zero_glue) { \
+            shift_amount(y) += half(width(x)-width(y)) ; \
+        } \
+        width(y) = width(x); \
+    } \
+} while (0)
+
+
+#define check_radical(q,stack,r,t) do { \
+    if (!stack && (width(r) >= width(t)) && (radicalwidth(q) != zero_glue) && (radicalwidth(q) != width(r))) { \
+        if (radicalleft(q)) { \
+            halfword p = new_kern(radicalwidth(q)-width(r)); \
+            reset_attributes(p, node_attr(q)); \
+            couple_nodes(p,r); \
+            r = hpack(p, 0, additional, -1); \
+            width(r) = radicalwidth(q); \
+            reset_attributes(r, node_attr(q)); \
+        } else if (radicalmiddle(q)) { \
+            halfword p = new_kern(half(radicalwidth(q)-width(r))); \
+            reset_attributes(p, node_attr(q)); \
+            couple_nodes(p,r); \
+            r = hpack(p, 0, additional, -1); \
+            width(r) = radicalwidth(q); \
+            reset_attributes(r, node_attr(q)); \
+        } else if (radicalright(q)) { \
+            /* also kind of exact compared to vertical */ \
+            r = hpack(r, 0, additional, -1); \
+            width(r) = radicalwidth(q); \
+            reset_attributes(r, node_attr(q)); \
+        } \
+    } \
+} while (0)
+
+#define check_widths(q,p) do { \
+    if (radicalwidth(q) != zero_glue) { \
+        wd = radicalwidth(q); \
+    } else { \
+        wd = width(p); \
+    } \
+} while (0)
 
 @ this has the |nucleus| box |x| as a limit above an extensible delimiter |y|
 
 @c
 static void make_over_delimiter(pointer q, int cur_style)
 {
-    pointer x, y, v;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr, delta;
+    pointer x, y, v; /* temporary registers for box construction */
+    scaled shift_up, shift_down, clr, delta, wd;
+    boolean stack;
     x = clean_box(nucleus(q), sub_style(cur_style), cur_style);
-    y = flat_delimiter(left_delimiter(q), cur_size, width(x), cur_style);
+    check_widths(q,x);
+    y = do_delimiter(q, left_delimiter(q), cur_size, wd, true, cur_style, true, &stack, NULL);
     left_delimiter(q) = null;
-    fixup_widths(x, y);
+    check_radical(q,stack,y,x);
+    fixup_widths(q, x, y);
     shift_up = over_delimiter_bgap(cur_style);
     shift_down = 0;
     clr = over_delimiter_vgap(cur_style);
@@ -1902,8 +2007,35 @@ static void make_over_delimiter(pointer q, int cur_style)
     if (delta > 0) {
         shift_up = shift_up + delta;
     }
-    v = wrapup_delimiter(x, y, q, shift_up, shift_down);
-    width(v) = width(x);        /* this also equals |width(y)| */
+    v = wrapup_over_under_delimiter(x, y, q, shift_up, shift_down);
+    width(v) = width(x); /* this also equals |width(y)| */
+    math_list(nucleus(q)) = v;
+    type(nucleus(q)) = sub_box_node;
+}
+
+@ this has the extensible delimiter |x| as a limit below |nucleus| box |y|
+
+@c
+static void make_under_delimiter(pointer q, int cur_style)
+{
+    pointer x, y, v; /* temporary registers for box construction */
+    scaled shift_up, shift_down, clr, delta, wd;
+    boolean stack;
+    y = clean_box(nucleus(q), sup_style(cur_style), cur_style);
+    check_widths(q,y);
+    x = do_delimiter(q, left_delimiter(q), cur_size, wd, true, cur_style, true, &stack, NULL);
+    left_delimiter(q) = null;
+    check_radical(q,stack,x,y);
+    fixup_widths(q, x, y);
+    shift_up = 0;
+    shift_down = under_delimiter_bgap(cur_style);
+    clr = under_delimiter_vgap(cur_style);
+    delta = clr - ((shift_up - depth(x)) - (height(y) - shift_down));
+    if (delta > 0) {
+        shift_down = shift_down + delta;
+    }
+    v = wrapup_over_under_delimiter(x, y, q, shift_up, shift_down);
+    width(v) = width(y); /* this also equals |width(y)| */
     math_list(nucleus(q)) = v;
     type(nucleus(q)) = sub_box_node;
 }
@@ -1913,14 +2045,15 @@ static void make_over_delimiter(pointer q, int cur_style)
 @c
 static void make_delimiter_over(pointer q, int cur_style)
 {
-    pointer x, y, v;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr, actual;
+    pointer x, y, v; /* temporary registers for box construction */
+    scaled shift_up, shift_down, clr, actual, wd;
+    boolean stack;
     y = clean_box(nucleus(q), cur_style, cur_style);
-    x = flat_delimiter(left_delimiter(q),
-                       cur_size + (cur_size == script_script_size ? 0 : 1),
-                       width(y), cur_style);
+    check_widths(q,y);
+    x = do_delimiter(q, left_delimiter(q), cur_size + (cur_size == script_script_size ? 0 : 1), wd, true, cur_style, true, &stack, NULL);
     left_delimiter(q) = null;
-    fixup_widths(x, y);
+    check_radical(q,stack,x,y);
+    fixup_widths(q, x, y);
     shift_up = over_delimiter_bgap(cur_style)-height(x)-depth(x);
     shift_down = 0;
     clr = over_delimiter_vgap(cur_style);
@@ -1928,12 +2061,11 @@ static void make_delimiter_over(pointer q, int cur_style)
     if (actual < clr) {
         shift_up = shift_up + (clr-actual);
     }
-    v = wrapup_delimiter(x, y, q, shift_up, shift_down);
-    width(v) = width(x);        /* this also equals |width(y)| */
+    v = wrapup_over_under_delimiter(x, y, q, shift_up, shift_down);
+    width(v) = width(x); /* this also equals |width(y)| */
     math_list(nucleus(q)) = v;
     type(nucleus(q)) = sub_box_node;
 }
-
 
 @ this has the extensible delimiter |y| as a limit below a |nucleus| box |x|
 
@@ -1941,13 +2073,14 @@ static void make_delimiter_over(pointer q, int cur_style)
 static void make_delimiter_under(pointer q, int cur_style)
 {
     pointer x, y, v;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr, actual;
+    scaled shift_up, shift_down, clr, actual, wd;
+    boolean stack;
     x = clean_box(nucleus(q), cur_style, cur_style);
-    y = flat_delimiter(left_delimiter(q),
-                       cur_size + (cur_size == script_script_size ? 0 : 1),
-                       width(x), cur_style);
+    check_widths(q,x);
+    y = do_delimiter(q, left_delimiter(q), cur_size + (cur_size == script_script_size ? 0 : 1), wd, true, cur_style, true, &stack, NULL);
     left_delimiter(q) = null;
-    fixup_widths(x, y);
+    check_radical(q,stack,y,x);
+    fixup_widths(q, x, y);
     shift_up = 0;
     shift_down = under_delimiter_bgap(cur_style) - height(y)-depth(y);
     clr = under_delimiter_vgap(cur_style);
@@ -1955,154 +2088,158 @@ static void make_delimiter_under(pointer q, int cur_style)
     if (actual<clr) {
        shift_down += (clr-actual);
     }
-    v = wrapup_delimiter(x, y, q, shift_up, shift_down);
-    width(v) = width(y);        /* this also equals |width(y)| */
+    v = wrapup_over_under_delimiter(x, y, q, shift_up, shift_down);
+    width(v) = width(y); /* this also equals |width(y)| */
     math_list(nucleus(q)) = v;
     type(nucleus(q)) = sub_box_node;
-
 }
-
-@ this has the extensible delimiter |x| as a limit below |nucleus| box |y|
-
-@c
-static void make_under_delimiter(pointer q, int cur_style)
-{
-    pointer x, y, v;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr, delta;
-    y = clean_box(nucleus(q), sup_style(cur_style), cur_style);
-    x = flat_delimiter(left_delimiter(q), cur_size, width(y), cur_style);
-    left_delimiter(q) = null;
-    fixup_widths(x, y);
-    shift_up = 0;
-    shift_down = under_delimiter_bgap(cur_style);
-    clr = under_delimiter_vgap(cur_style);
-    delta = clr - ((shift_up - depth(x)) - (height(y) - shift_down));
-    if (delta > 0) {
-        shift_down = shift_down + delta;
-    }
-    v = wrapup_delimiter(x, y, q, shift_up, shift_down);
-    width(v) = width(y);        /* this also equals |width(y)| */
-    math_list(nucleus(q)) = v;
-    type(nucleus(q)) = sub_box_node;
-
-}
-
 
 @ Slants are not considered when placing accents in math mode. The accenter is
 centered over the accentee, and the accent width is treated as zero with
 respect to the size of the final box.
 
 @c
-#define TOP_CODE 1
-#define BOT_CODE 2
-#define TOP_OR_BOT_MASK ((TOP_CODE) | (BOT_CODE))
-#define STRETCH_ACCENT_CODE 4
+#define TOP_CODE            1
+#define BOT_CODE            2
+#define OVERLAY_CODE        4
+#define STRETCH_ACCENT_CODE 8
 
-static boolean compute_accent_skew(pointer q, int top_or_bot, scaled *s)
+static boolean compute_accent_skew(pointer q, int flags, scaled *s)
 {
-    pointer p;                  /* temporary register for box construction */
-    boolean s_is_absolute;      /* will be true if a top-accent is placed in |s| */
-
-    s_is_absolute = false;
-
+    pointer p;                     /* temporary register for box construction */
+    boolean s_is_absolute = false; /* will be true if a top-accent is placed in |s| */
     if (type(nucleus(q)) == math_char_node) {
         fetch(nucleus(q));
         if (is_new_mathfont(cur_f)) {
-            if (top_or_bot == TOP_CODE) {
-                *s = char_top_accent(cur_f, cur_c);
-                if (*s != INT_MIN) {
-                    s_is_absolute = true;
+            /*
+                there is no bot_accent so let's assume similarity
+
+                if (flags & (TOP_CODE | OVERLAY_CODE)) {
+                    *s = char_top_accent(cur_f, cur_c);
+                    if (*s != INT_MIN) {
+                        s_is_absolute = true;
+                    }
+                } else {
+                    *s = char_bot_accent(cur_f, cur_c);
+                    if (*s != INT_MIN) {
+                        s_is_absolute = true;
+                    }
                 }
-            } else {
-                *s = char_bot_accent(cur_f, cur_c);
-                if (*s != INT_MIN) {
-                    s_is_absolute = true;
-                }
+            */
+            *s = char_top_accent(cur_f, cur_c);
+            if (*s != INT_MIN) {
+                s_is_absolute = true;
             }
         } else {
-            if (top_or_bot == TOP_CODE) {
+            if (flags & TOP_CODE) {
                 *s = get_kern(cur_f, cur_c, skew_char(cur_f));
             } else {
                 *s = 0;
             }
         }
     } else if (type(nucleus(q)) == sub_mlist_node) {
-	/* if |nucleus(q)| is a |sub_mlist_node| composed of an |accent_noad| we
-         * use the positioning of the nucleus of that noad, recursing until
-         * the inner most |accent_noad|. This way multiple stacked accents are
-         * aligned to the inner most one. */
+        /*
+            if |nucleus(q)| is a |sub_mlist_node| composed of an |accent_noad| we
+
+            * use the positioning of the nucleus of that noad, recursing until
+            * the inner most |accent_noad|. This way multiple stacked accents are
+            * aligned to the inner most one.
+        */
         p = math_list(nucleus(q));
         if (type(p) == accent_noad) {
-            s_is_absolute = compute_accent_skew(p, top_or_bot, s);
+            s_is_absolute = compute_accent_skew(p, flags, s);
         }
     }
 
     return s_is_absolute;
 }
 
-static void do_make_math_accent(pointer q, internal_font_number f, int c,
-                                int flags, int cur_style)
+static void do_make_math_accent(pointer q, internal_font_number f, int c, int flags, int cur_style)
 {
-    pointer p, r, x, y;         /* temporary registers for box construction */
-    scaled s;                   /* amount to skew the accent to the right */
-    scaled h;                   /* height of character being accented */
-    scaled delta;               /* space to remove between accent and accentee */
-    scaled w;                   /* width of the accentee, not including sub/superscripts */
-    boolean s_is_absolute;      /* will be true if a top-accent is placed in |s| */
+    pointer p, r, x, y;    /* temporary registers for box construction */
+    scaled s;              /* amount to skew the accent to the right */
+    scaled h;              /* height of character being accented */
+    scaled delta;          /* space to remove between accent and accentee */
+    scaled w;              /* width of the accentee, not including sub/superscripts */
+    boolean s_is_absolute; /* will be true if a top-accent is placed in |s| */
+    scaled fraction ;
+    scaled target ;
     extinfo *ext;
     pointer attr_p;
-    const int top_or_bot = flags & TOP_OR_BOT_MASK;
-    attr_p = (top_or_bot == TOP_CODE ? accent_chr(q) : bot_accent_chr(q));
+    attr_p = (flags & TOP_CODE ? top_accent_chr(q) : flags & BOT_CODE ? bot_accent_chr(q) : overlay_accent_chr(q));
+    fraction = accentfraction(q);
     c = cur_c;
     f = cur_f;
-
-    s = 0;
-    s_is_absolute = false;
+    s = 1;
+    if (fraction == 0) {
+        fraction = 1000;
+    }
     /* Compute the amount of skew, or set |s| to an alignment point */
-    s_is_absolute = compute_accent_skew(q, top_or_bot, &s);
-
+    s_is_absolute = compute_accent_skew(q, flags, &s);
     x = clean_box(nucleus(q), cramped_style(cur_style), cur_style);
     w = width(x);
     h = height(x);
     if (is_new_mathfont(cur_f) && !s_is_absolute) {
-      s = half(w);
-      s_is_absolute = true;
+        s = half(w);
+        s_is_absolute = true;
     }
     /* Switch to a larger accent if available and appropriate */
     y = null;
     ext = NULL;
+    if (flags & OVERLAY_CODE) {
+        if (fraction > 0) {
+            target = xn_over_d(h,fraction,1000);
+        } else {
+            target = h;
+        }
+    } else {
+        if (fraction > 0) {
+            target = xn_over_d(w,fraction,1000);
+        } else {
+            target = w;
+        }
+    }
     if ((flags & STRETCH_ACCENT_CODE) && (char_width(f, c) < w)) {
       while (1) {
-        if ((char_tag(f, c) == ext_tag) &&
-            ((ext = get_charinfo_hor_variants(char_info(f, c))) != NULL)) {
-            y = get_delim_hbox(ext, f, w, node_attr(attr_p), cur_style);
+        if ((char_tag(f, c) == ext_tag) && ((ext = get_charinfo_hor_variants(char_info(f, c))) != NULL)) {
+            /* a bit weird for an overlay but anyway, here we don't need a factor as we don't step */
+            y = get_delim_box(q, ext, f, w, node_attr(attr_p), cur_style, hlist_node);
             break;
         } else if (char_tag(f, c) != list_tag) {
             break;
         } else {
             int yy = char_remainder(f, c);
-            if (!char_exists(f, yy))
+            if (!char_exists(f, yy)) {
                 break;
-            if (char_width(f, yy) > w)
-                break;
+            } else if (flags & OVERLAY_CODE) {
+                if (char_height(f, yy) > target) {
+                   break;
+                }
+            } else {
+                if (char_width(f, yy) > target)
+                   break;
+            }
             c = yy;
         }
       }
     }
     if (y == null) {
-        y = char_box(f, c, node_attr(attr_p));
+        y = char_box(f, c, node_attr(attr_p)); /* italic gets added to width */
     }
-    if (top_or_bot == TOP_CODE) {
-        if (h < accent_base_height(f))
+    if (flags & TOP_CODE) {
+        if (h < accent_base_height(f)) {
             delta = h;
-        else
+        } else {
             delta = accent_base_height(f);
+        }
+    } else if (flags & OVERLAY_CODE) {
+        delta = half(height(y) + depth(y) + height(x) + depth(x)); /* center the accent vertically around the accentee */
     } else {
-        delta = 0;              /* hm */
+        delta = 0; /* hm */
     }
     if ((supscr(q) != null) || (subscr(q) != null)) {
         if (type(nucleus(q)) == math_char_node) {
-            /* Swap the subscript and superscript into box |x| */
+            /* swap the subscript and superscript into box |x| */
             flush_node_list(x);
             x = new_noad();
             r = math_clone(nucleus(q));
@@ -2118,15 +2255,27 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
             h = height(x);
         }
     }
+    /* the top accents of both characters are aligned */
     if (s_is_absolute) {
         scaled sa;
         if (ext != NULL) {
-            sa = half(width(y));	/* if the accent is extensible just take the center */
+            /* if the accent is extensible just take the center */
+            sa = half(width(y));
         } else {
+            /*
+                there is no bot_accent so let's assume similarity
+
+                if (flags & BOT_CODE) {
+                    sa = char_bot_accent(f, c);
+                } else {
+                    sa = char_top_accent(f, c);
+                }
+            */
             sa = char_top_accent(f, c);
         }
         if (sa == INT_MIN) {
-            sa = half(width(y));        /* just take the center */
+            /* just take the center */
+            sa = half(width(y));
         }
         if (math_direction == dir_TRT) {
            shift_amount(y) = s + sa - width(y);
@@ -2136,26 +2285,19 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     } else {
         if (width(y)== 0) {
             shift_amount(y) = s + w;
+        } else if (math_direction == dir_TRT) {
+            shift_amount(y) = s + width(y); /* ok? */
         } else {
-            if (math_direction == dir_TRT) {
-                shift_amount(y) = s + width(y);
-            } else {
-                shift_amount(y) = s + half(w - width(y));
-            }
+            shift_amount(y) = s + half(w - width(y));
         }
     }
     width(y) = 0;
-    if (top_or_bot == TOP_CODE) {
+    if (flags & (TOP_CODE | OVERLAY_CODE)) {
         p = new_kern(-delta);
+        reset_attributes(p, node_attr(q));
         couple_nodes(p,x);
         couple_nodes(y,p);
     } else {
-#if 0
-           p = new_kern(-delta);
-           couple_nodes(x,p);
-           couple_nodes(p,y);
-           y = x;
-#endif
         couple_nodes(x,y);
         y = x;
     }
@@ -2163,13 +2305,12 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c,
     reset_attributes(r, node_attr(q));
     width(r) = width(x);
     y = r;
-    if (top_or_bot == TOP_CODE) {
+    if (flags & (TOP_CODE | OVERLAY_CODE)) {
         if (height(y) < h) {
-            /* Make the height of box |y| equal to |h| */
+            /* make the height of box |y| equal to |h| */
             p = new_kern(h - height(y));
             reset_attributes(p, node_attr(q));
-//            vlink(p) = list_ptr(y);
-try_couple_nodes(p,list_ptr(y));
+            try_couple_nodes(p,list_ptr(y));
             list_ptr(y) = p;
             height(y) = h;
         }
@@ -2185,13 +2326,13 @@ static void make_math_accent(pointer q, int cur_style)
     int topstretch = !(subtype(q) % 2);
     int botstretch = !(subtype(q) / 2);
 
-    if (accent_chr(q) != null) {
-        fetch(accent_chr(q));
+    if (top_accent_chr(q) != null) {
+        fetch(top_accent_chr(q));
         if (char_exists(cur_f, cur_c)) {
           do_make_math_accent(q, cur_f, cur_c, TOP_CODE | (topstretch ? STRETCH_ACCENT_CODE : 0), cur_style);
         }
-        flush_node(accent_chr(q));
-        accent_chr(q) = null;
+        flush_node(top_accent_chr(q));
+        top_accent_chr(q) = null;
     }
     if (bot_accent_chr(q) != null) {
         fetch(bot_accent_chr(q));
@@ -2201,6 +2342,14 @@ static void make_math_accent(pointer q, int cur_style)
         flush_node(bot_accent_chr(q));
         bot_accent_chr(q) = null;
     }
+    if (overlay_accent_chr(q) != null) {
+        fetch(overlay_accent_chr(q));
+        if (char_exists(cur_f, cur_c)) {
+          do_make_math_accent(q, cur_f, cur_c, OVERLAY_CODE | STRETCH_ACCENT_CODE, cur_style);
+        }
+        flush_node(overlay_accent_chr(q));
+        overlay_accent_chr(q) = null;
+    }
 }
 
 @ The |make_fraction| procedure is a bit different because it sets
@@ -2209,28 +2358,46 @@ static void make_math_accent(pointer q, int cur_style)
 @c
 static void make_fraction(pointer q, int cur_style)
 {
-    pointer p, v, x, y, z;      /* temporary registers for box construction */
-    scaled delta, delta1, delta2, shift_up, shift_down, clr;
+    pointer p, p1, p2, v, x, y, z, l, r, m; /* temporary registers for box construction */
+    scaled delta, delta1, delta2, shift_up, shift_down, clr1, clr2;
     /* dimensions for box calculations */
     if (thickness(q) == default_code)
         thickness(q) = fraction_rule(cur_style);
-    /* Create equal-width boxes |x| and |z| for the numerator and denominator,
-       and compute the default amounts |shift_up| and |shift_down| by which they
-       are displaced from the baseline */
+    /*
+        Create equal-width boxes |x| and |z| for the numerator and denominator,
+        and compute the default amounts |shift_up| and |shift_down| by which they
+        are displaced from the baseline
+    */
+
     x = clean_box(numerator(q), num_style(cur_style), cur_style);
     z = clean_box(denominator(q), denom_style(cur_style), cur_style);
-    if (width(x) < width(z))
-        x = rebox(x, width(z));
-    else
-        z = rebox(z, width(x));
-    if (thickness(q) == 0) {
+
+    if (middle_delimiter(q) != null) {
+        delta = 0;
+        m = do_delimiter(q, middle_delimiter(q), cur_size, delta, false, cur_style, true, NULL, NULL);
+        middle_delimiter(q) = null;
+    } else {
+        m = null ;
+        if (width(x) < width(z)) {
+            x = rebox(x, width(z));
+        } else {
+            z = rebox(z, width(x));
+        }
+    }
+
+    if (m != null) {
+        shift_up = 0;
+        shift_down = 0;
+    } else if (thickness(q) == 0) {
         shift_up = stack_num_up(cur_style);
         shift_down = stack_denom_down(cur_style);
-        /* The numerator and denominator must be separated by a certain minimum
-           clearance, called |clr| in the following program. The difference between
-           |clr| and the actual clearance is |2delta|. */
-        clr = stack_vgap(cur_style);
-        delta = half(clr - ((shift_up - depth(x)) - (height(z) - shift_down)));
+        /*
+            the numerator and denominator must be separated by a certain minimum
+            clearance, called |clr| in the following program. The difference between
+            |clr| and the actual clearance is |2delta|.
+        */
+        clr1 = stack_vgap(cur_style);
+        delta = half(clr1 - ((shift_up - depth(x)) - (height(z) - shift_down)));
         if (delta > 0) {
             shift_up = shift_up + delta;
             shift_down = shift_down + delta;
@@ -2238,57 +2405,156 @@ static void make_fraction(pointer q, int cur_style)
     } else {
         shift_up = fraction_num_up(cur_style);
         shift_down = fraction_denom_down(cur_style);
-        /* In the case of a fraction line, the minimum clearance depends on the actual
-           thickness of the line. */
+        /*
+            in the case of a fraction line, the minimum clearance depends on the actual
+            thickness of the line.
+        */
+        clr1 = fraction_num_vgap(cur_style);
+        clr2 = fraction_denom_vgap(cur_style);
         delta = half(thickness(q));
-        clr = fraction_num_vgap(cur_style);
-        clr = ext_xn_over_d(clr, thickness(q), fraction_rule(cur_style));
-        delta1 = clr - ((shift_up - depth(x)) - (math_axis(cur_size) + delta));
-        if (delta1 > 0)
+        if (fractionexact(q)) {
+            delta1 = clr1 - ((shift_up   - depth(x) ) - (math_axis(cur_size) + delta));
+            delta2 = clr2 - ((shift_down - height(z)) + (math_axis(cur_size) - delta));
+        } else {
+            delta = half(thickness(q));
+            clr1 = ext_xn_over_d(clr1, thickness(q), fraction_rule(cur_style));
+            clr2 = ext_xn_over_d(clr2, thickness(q), fraction_rule(cur_style));
+            delta1 = clr1 - ((shift_up   - depth(x) ) - (math_axis(cur_size) + delta));
+            delta2 = clr2 - ((shift_down - height(z)) + (math_axis(cur_size) - delta));
+        }
+        if (delta1 > 0) {
             shift_up = shift_up + delta1;
-        clr = fraction_denom_vgap(cur_style);
-        clr = ext_xn_over_d(clr, thickness(q), fraction_rule(cur_style));
-        delta2 =
-            clr - ((math_axis(cur_size) - delta) - (height(z) - shift_down));
-        if (delta2 > 0)
+        }
+        if (delta2 > 0) {
             shift_down = shift_down + delta2;
+        }
     }
-    /* Construct a vlist box for the fraction, according to |shift_up| and |shift_down| */
-    v = new_null_box();
-    type(v) = vlist_node;
-    height(v) = shift_up + height(x);
-    depth(v) = depth(z) + shift_down;
-    width(v) = width(x);        /* this also equals |width(z)| */
-    reset_attributes(v, node_attr(q));
-    if (thickness(q) == 0) {
-        p = new_kern((shift_up - depth(x)) - (height(z) - shift_down));
-        couple_nodes(p,z);
+    if (m != null) {
+        /*
+            construct a hlist box for the fraction, according to |hgap| and |vgap|
+        */
+        shift_up = skewed_fraction_vgap(cur_style);
+
+        if (!fractionnoaxis(q)) {
+            shift_up += half(math_axis(cur_size));
+        }
+
+        shift_down = shift_up;
+        v = new_null_box();
+        reset_attributes(v, node_attr(q));
+        type(v) = hlist_node;
+        list_ptr(v) = x;
+        width(v) = width(x);
+        height(v) = height(x) + shift_up;
+        depth(v) = depth(x);
+        shift_amount(v) = - shift_up;
+        x = v;
+
+        v = new_null_box();
+        reset_attributes(v, node_attr(q));
+        type(v) = hlist_node;
+        list_ptr(v) = z;
+        width(v) = width(z);
+        height(v) = height(z);
+        depth(v) = depth(z) + shift_down;
+        shift_amount(v) = shift_down;
+        z = v;
+
+        v = new_null_box();
+        reset_attributes(v, node_attr(q));
+        type(v) = hlist_node;
+        if (height(x) > height(z)) {
+            height(v) = height(x);
+        } else {
+            height(v) = height(z);
+        }
+        if (depth(x) > depth(z)) {
+            depth(v) = depth(x);
+        } else {
+            depth(v) = depth(z);
+        }
+        if (height(m) > height(v)) {
+            height(v) = height(m);
+        }
+        if (depth(m) > depth(v)) {
+            depth(v) = depth(m);
+        }
+
+        if (fractionexact(q)) {
+            delta1 = -half(skewed_fraction_hgap(cur_style));
+            delta2 = delta1;
+            width(v) = width(x) + width(z) + width(m) - skewed_fraction_hgap(cur_style);
+        } else {
+            delta1 = half(skewed_fraction_hgap(cur_style)-width(m));
+            delta2 = half(skewed_fraction_hgap(cur_style)+width(m));
+            width(v) = width(x) + width(z) + skewed_fraction_hgap(cur_style);
+            width(m) = 0;
+        }
+
+        p1 = new_kern(delta1);
+        reset_attributes(p1, node_attr(q));
+        p2 = new_kern(delta2);
+        reset_attributes(p2, node_attr(q));
+
+        couple_nodes(x,p1);
+        couple_nodes(p1,m);
+        couple_nodes(m,p2);
+        couple_nodes(p2,z);
+
+        list_ptr(v) = x;
     } else {
-        y = do_fraction_rule(thickness(q), node_attr(q));
-        p = new_kern((math_axis(cur_size) - delta) - (height(z) - shift_down));
+        /*
+            construct a vlist box for the fraction, according to |shift_up| and |shift_down|
+        */
+        v = new_null_box();
+        type(v) = vlist_node;
+        height(v) = shift_up + height(x);
+        depth(v) = depth(z) + shift_down;
+        width(v) = width(x); /* this also equals |width(z)| */
+        reset_attributes(v, node_attr(q));
+        if (thickness(q) == 0) {
+            p = new_kern((shift_up - depth(x)) - (height(z) - shift_down));
+            couple_nodes(p,z);
+        } else {
+            y = do_fraction_rule(thickness(q), node_attr(q));
+            p = new_kern((math_axis(cur_size) - delta) - (height(z) - shift_down));
+            reset_attributes(p, node_attr(q));
+            couple_nodes(y,p);
+            couple_nodes(p,z);
+            p = new_kern((shift_up - depth(x)) - (math_axis(cur_size) + delta));
+            couple_nodes(p,y);
+        }
         reset_attributes(p, node_attr(q));
-        couple_nodes(y,p);
-        couple_nodes(p,z);
-        p = new_kern((shift_up - depth(x)) - (math_axis(cur_size) + delta));
-        couple_nodes(p,y);
+        couple_nodes(x,p);
+        list_ptr(v) = x;
     }
-    reset_attributes(p, node_attr(q));
-    couple_nodes(x,p);
-    list_ptr(v) = x;
-    /* Put the fraction into a box with its delimiters, and make |new_hlist(q)|
-       point to it */
-    delta = fraction_del_size(cur_style);
-    x = var_delimiter(left_delimiter(q), cur_size, delta, NULL, cur_style);
+    /*
+        put the fraction into a box with its delimiters, and make |new_hlist(q)|
+        point to it
+    */
+    if (is_new_mathfont(cur_f)) {
+        if (math_use_old_fraction_scaling) {
+            delta = fraction_del_size_old(cur_style);
+        } else {
+            delta = fraction_del_size_new(cur_style);
+        }
+        if (delta == undefined_math_parameter) {
+            delta = get_delimiter_height(depth(v), height(v), true);
+        }
+    } else {
+        delta = fraction_del_size_old(cur_style);
+    }
+
+    l = do_delimiter(q, left_delimiter(q), cur_size, delta, false, cur_style, true, NULL, NULL);
     left_delimiter(q) = null;
-    couple_nodes(x,v);
-    z = var_delimiter(right_delimiter(q), cur_size, delta, NULL, cur_style);
+    r = do_delimiter(q, right_delimiter(q), cur_size, delta, false, cur_style, true, NULL, NULL);
     right_delimiter(q) = null;
-    couple_nodes(v,z);
-    y = hpack(x, 0, additional, -1);
+    couple_nodes(l,v);
+    couple_nodes(v,r);
+    y = hpack(l, 0, additional, -1);
     reset_attributes(y, node_attr(q));
     assign_new_hlist(q, y);
 }
-
 
 @ If the nucleus of an |op_noad| is a single character, it is to be
 centered vertically with respect to the axis, after first being enlarged
@@ -2297,52 +2563,49 @@ convention for placing displayed limits is to put them above and below the
 operator in display style.
 
 The italic correction is removed from the character if there is a subscript
-and the limits are not being displayed. The |make_op|
-routine returns the value that should be used as an offset between
-subscript and superscript.
+and the limits are not being displayed. The |make_op| routine returns the
+value that should be used as an offset between subscript and superscript.
 
 After |make_op| has acted, |subtype(q)| will be |limits| if and only if
 the limits have been set above and below the operator. In that case,
 |new_hlist(q)| will already contain the desired final box.
 
 @c
+static void make_scripts(pointer q, pointer p, scaled it, int cur_style, scaled supshift, scaled subshift);
+static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_style);
+
 static scaled make_op(pointer q, int cur_style)
 {
-    scaled delta;               /* offset between subscript and superscript */
-    pointer p, v, x, y, z;      /* temporary registers for box construction */
-    int c;                      /* register for character examination */
-    scaled shift_up, shift_down;        /* dimensions for box calculation */
+    scaled delta = 0;            /* offset between subscript and superscript */
+    pointer p, v, x, y, z, n;    /* temporary registers for box construction */
+    int c;                       /* register for character examination */
+    scaled shift_up, shift_down; /* dimensions for box calculation */
+    boolean axis_shift = false;
     scaled ok_size;
-    if ((subtype(q) == op_noad_type_normal) && (cur_style < text_style))
+    if ((subtype(q) == op_noad_type_normal) && (cur_style < text_style)) {
         subtype(q) = op_noad_type_limits;
+    }
     if (type(nucleus(q)) == math_char_node) {
         fetch(nucleus(q));
-        if (cur_style < text_style) {   /* try to make it larger */
+        if (cur_style < text_style) {
+            /* try to make it larger */
             ok_size = minimum_operator_size(cur_style);
             if (ok_size != undefined_math_parameter) {
                 /* creating a temporary delimiter is the cleanest way */
                 y = new_node(delim_node, 0);
+                reset_attributes(y, node_attr(q));
                 small_fam(y) = math_fam(nucleus(q));
                 small_char(y) = math_character(nucleus(q));
-                x = var_delimiter(y, text_size, ok_size, &delta, cur_style);
-                if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
-                    width(x) -= delta;  /* remove italic correction */
-                }
-                /* For an OT MATH font, we may have to get rid of yet another italic
-                   correction because |make_scripts()| will add one.
-                   This test is somewhat more complicated because |x| can be a null
-                   delimiter */
-                if ((subscr(q) != null || supscr(q) != null)
-                    && (subtype(q) != op_noad_type_limits)
-                    && ((list_ptr(x) != null)
-                        && (type(list_ptr(x)) == glyph_node)
-                        && is_new_mathfont(font(list_ptr(x))))) {
-                    width(x) -= delta;  /* remove another italic correction */
+                x = do_delimiter(q, y, text_size, ok_size, false, cur_style, true, NULL, &delta);
+                if (is_new_mathfont(cur_f)) {
+                    /* we never added italic correction */
+                } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
+                    /* remove italic correction */
+                    width(x) -= delta;
                 }
             } else {
                 ok_size = height_plus_depth(cur_f, cur_c) + 1;
-                while ((char_tag(cur_f, cur_c) == list_tag) &&
-                       height_plus_depth(cur_f, cur_c) < ok_size) {
+                while ((char_tag(cur_f, cur_c) == list_tag) && height_plus_depth(cur_f, cur_c) < ok_size) {
                     c = char_remainder(cur_f, cur_c);
                     if (!char_exists(cur_f, c))
                         break;
@@ -2351,43 +2614,55 @@ static scaled make_op(pointer q, int cur_style)
                 }
                 delta = char_italic(cur_f, cur_c);
                 x = clean_box(nucleus(q), cur_style, cur_style);
-                if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
-                    width(x) = width(x) - delta;        /* remove italic correction */
-
-                shift_amount(x) =
-                    half(height(x) - depth(x)) - math_axis(cur_size);
-                /* center vertically */
+                if (delta != null) {
+                    if (is_new_mathfont(cur_f)) {
+                        /* we never added italic correction */
+                    } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
+                        /* remove italic correction */
+                        width(x) = width(x) - delta;
+                    }
+                }
+                axis_shift = true;
             }
-            type(nucleus(q)) = sub_box_node;
-            math_list(nucleus(q)) = x;
-
-        } else {                /* normal size */
+        } else {
+            /* normal size */
             delta = char_italic(cur_f, cur_c);
             x = clean_box(nucleus(q), cur_style, cur_style);
-            if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits))
-                width(x) = width(x) - delta;    /* remove italic correction */
-
-            /* For an OT MATH font, we may have to get rid of yet another italic
-               correction because |make_scripts()| will add one.
-               This test is somewhat more complicated because |x| can be a null
-               delimiter */
-            if ((subscr(q) != null || supscr(q) != null)
-                && (subtype(q) != op_noad_type_limits)
-                && ((list_ptr(x) != null)
-                    && (type(list_ptr(x)) == glyph_node)
-                    && is_new_mathfont(font(list_ptr(x))))) {
-                width(x) -= delta;  /* remove another italic correction */
-	    }
-
-            shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
-            /* center vertically */
-            type(nucleus(q)) = sub_box_node;
-            math_list(nucleus(q)) = x;
+            if (delta != 0) {
+                if (is_new_mathfont(cur_f)) {
+                    /* we never added italic correction */
+                } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
+                    /* remove italic correction */
+                    width(x) = width(x) - delta;
+                }
+            }
+            axis_shift = true;
         }
-    } else {
-        delta = 0;
+        if (axis_shift) {
+            /* center vertically */
+            shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
+        }
+        type(nucleus(q)) = sub_box_node;
+        math_list(nucleus(q)) = x;
     }
-    if (subtype(q) == op_noad_type_limits) {
+
+    /* we now handle op_nod_type_no_limits here too */
+
+    if (subtype(q) == op_noad_type_no_limits) {
+        if (is_new_mathfont(cur_f)) {
+            if (delta != 0) {
+                delta = half(delta) ;
+                /* similar code then the caller */
+                p = check_nucleus_complexity(q, 0, cur_style);
+                if ((subscr(q) == null) && (supscr(q) == null)) {
+                    assign_new_hlist(q, p);
+                } else {
+                    make_scripts(q, p, 0, cur_style, delta, -delta);
+                }
+                delta = 0;
+            }
+        }
+    } else if (subtype(q) == op_noad_type_limits) {
         /* The following program builds a vlist box |v| for displayed limits. The
            width of the box is not affected by the fact that the limits may be skewed. */
         x = clean_box(supscr(q), sup_style(cur_style), cur_style);
@@ -2396,6 +2671,43 @@ static scaled make_op(pointer q, int cur_style)
         v = new_null_box();
         reset_attributes(v, node_attr(q));
         type(v) = vlist_node;
+        if (is_new_mathfont(cur_f)) {
+            n = null;
+            if (! math_no_italic_compensation) {
+                n = nucleus(q);
+                if (n != null) {
+                    if ((type(n) == sub_mlist_node) || (type(n) == sub_box_node)) {
+                        n = math_list(n);
+                        if (n != null) {
+                            if (type(n) == hlist_node) {
+                                n = list_ptr(n); /* just a not scaled char */
+                                while (n != null) {
+                                    if (type(n) == glyph_node) {
+                                        delta = char_italic(font(n),character(n));
+                                    }
+                                    n = vlink(n);
+                                }
+                            } else {
+                                while (n != null) {
+                                    if (type(n) == fence_noad) {
+                                        if (delimiteritalic(n) > delta) {
+                                            /* we can have dummies, the period ones */
+                                            delta = delimiteritalic(n);
+                                        }
+                                    }
+                                    n = vlink(n);
+                                }
+                            }
+                        }
+                    } else {
+                        n = nucleus(q);
+                        if (type(n) == math_char_node) {
+                            delta = char_italic(fam_fnt(math_fam(n),cur_size),math_character(n));
+                        }
+                    }
+                }
+            }
+        }
         width(v) = width(y);
         if (width(x) > width(v))
             width(v) = width(x);
@@ -2406,14 +2718,23 @@ static scaled make_op(pointer q, int cur_style)
         z = rebox(z, width(v));
         shift_amount(x) = half(delta);
         shift_amount(z) = -shift_amount(x);
+        /* v is the still empty target */
         height(v) = height(y);
         depth(v) = depth(y);
-        /* Attach the limits to |y| and adjust |height(v)|, |depth(v)| to
-           account for their presence */
-        /* We use |shift_up| and |shift_down| in the following program for the
-           amount of glue between the displayed operator |y| and its limits |x| and
-           |z|. The vlist inside box |v| will consist of |x| followed by |y| followed
-           by |z|, with kern nodes for the spaces between and around them. */
+        /*
+            attach the limits to |y| and adjust |height(v)|, |depth(v)| to
+            account for their presence
+
+            we use |shift_up| and |shift_down| in the following program for the
+            amount of glue between the displayed operator |y| and its limits |x| and
+            |z|
+
+            the vlist inside box |v| will consist of |x| followed by |y| followed
+            by |z|, with kern nodes for the spaces between and around them
+
+            b: baseline  v: minumum gap
+        */
+
         if (supscr(q) == null) {
             list_ptr(x) = null;
             flush_node(x);
@@ -2430,9 +2751,7 @@ static scaled make_op(pointer q, int cur_style)
             reset_attributes(p, node_attr(q));
             couple_nodes(p,x);
             list_ptr(v) = p;
-            height(v) =
-                height(v) + limit_above_kern(cur_style) + height(x) + depth(x) +
-                shift_up;
+            height(v) = height(v) + limit_above_kern(cur_style) + height(x) + depth(x) + shift_up;
         }
         if (subscr(q) == null) {
             list_ptr(z) = null;
@@ -2441,16 +2760,16 @@ static scaled make_op(pointer q, int cur_style)
             shift_down = limit_below_bgap(cur_style) - height(z);
             if (shift_down < limit_below_vgap(cur_style))
                 shift_down = limit_below_vgap(cur_style);
-            p = new_kern(shift_down);
-            reset_attributes(p, node_attr(q));
-            couple_nodes(y,p);
-            couple_nodes(p,z);
+            if (shift_down > 0) {
+                p = new_kern(shift_down);
+                reset_attributes(p, node_attr(q));
+                couple_nodes(y,p);
+                couple_nodes(p,z);
+            }
             p = new_kern(limit_below_kern(cur_style));
             reset_attributes(p, node_attr(q));
             couple_nodes(z,p);
-            depth(v) =
-                depth(v) + limit_below_kern(cur_style) + height(z) + depth(z) +
-                shift_down;
+            depth(v) = depth(v) + limit_below_kern(cur_style) + height(z) + depth(z) + shift_down;
         }
         if (subscr(q) != null) {
             math_list(subscr(q)) = null;
@@ -2463,6 +2782,9 @@ static scaled make_op(pointer q, int cur_style)
             supscr(q) = null;
         }
         assign_new_hlist(q, v);
+        if (is_new_mathfont(cur_f)) {
+            delta = 0;
+        }
     }
     return delta;
 }
@@ -2478,36 +2800,52 @@ to a math font (i.e., a font with |space=0|).
 No boundary characters enter into these ligatures.
 
 @c
+#define simple_char_noad(p) (\
+    (p != null) && \
+    (type(p) == simple_noad) && \
+    (subtype(p) <= punct_noad_type) && \
+    (type(nucleus(p)) == math_char_node) \
+)
+
+#define same_nucleus_fam(p,q) \
+    (math_fam(nucleus(p)) == math_fam(nucleus(q)))
+
 static void make_ord(pointer q)
 {
-    int a;                      /* the left-side character for lig/kern testing */
-    pointer p, r, s;            /* temporary registers for list manipulation */
-    scaled k;                   /* a kern */
-    liginfo lig;                /* a ligature */
+    int a;           /* the left-side character for lig/kern testing */
+    pointer p, r, s; /* temporary registers for list manipulation */
+    scaled k;        /* a kern */
+    liginfo lig;     /* a ligature */
   RESTART:
-    if (subscr(q) == null &&
-        supscr(q) == null && type(nucleus(q)) == math_char_node) {
+    if (subscr(q) == null && supscr(q) == null && type(nucleus(q)) == math_char_node) {
         p = vlink(q);
-        if ((p != null) &&
-            (type(p) == simple_noad) &&
-            (subtype(p) <= punct_noad_type) &&
-            (type(nucleus(p)) == math_char_node) &&
-            (math_fam(nucleus(p)) == math_fam(nucleus(q)))) {
+        if (simple_char_noad(p) && same_nucleus_fam(p,q)) {
             type(nucleus(q)) = math_text_char_node;
             fetch(nucleus(q));
             a = cur_c;
+            /* add italic correction */
+            if (is_new_mathfont(cur_f) && (char_italic(cur_f,math_character(nucleus(q))) != 0)) {
+                p = new_kern(char_italic(cur_f,math_character(nucleus(q))));
+                reset_attributes(p, node_attr(q));
+                couple_nodes(p,vlink(q));
+                couple_nodes(q,p);
+                return;
+            }
+            /* construct ligatures, quite unlikely in new math fonts */
             if ((has_kern(cur_f, a)) || (has_lig(cur_f, a))) {
                 cur_c = math_character(nucleus(p));
-                /* If character |a| has a kern with |cur_c|, attach
-                   the kern after~|q|; or if it has a ligature with |cur_c|, combine
-                   noads |q| and~|p| appropriately; then |return| if the cursor has
-                   moved past a noad, or |goto restart| */
+                /*
+                    if character |a| has a kern with |cur_c|, attach the kern after~|q|; or if
+                    it has a ligature with |cur_c|, combine noads |q| and~|p| appropriately;
+                    then |return| if the cursor has moved past a noad, or |goto restart|
 
-                /* Note that a ligature between an |ord_noad| and another kind of noad
-                   is replaced by an |ord_noad|, when the two noads collapse into one.
-                   But we could make a parenthesis (say) change shape when it follows
-                   certain letters. Presumably a font designer will define such
-                   ligatures only when this convention makes sense. */
+                    note that a ligature between an |ord_noad| and another kind of noad
+                    is replaced by an |ord_noad|, when the two noads collapse into one
+
+                    we could make a parenthesis (say) change shape when it follows
+                    certain letters. Presumably a font designer will define such
+                    ligatures only when this convention makes sense
+                */
 
                 if (disable_lig == 0 && has_lig(cur_f, a)) {
                     lig = get_ligature(cur_f, a, cur_c);
@@ -2515,17 +2853,24 @@ static void make_ord(pointer q)
                         check_interrupt();      /* allow a way out of infinite ligature loop */
                         switch (lig_type(lig)) {
                         case 1:
+                            /* \.{=:\char`\|} */
                         case 5:
-                            math_character(nucleus(q)) = lig_replacement(lig);  /* \.{=:\char`\|}, \.{=:\char`\|>} */
+                            /* \.{=:\char`\|>} */
+                            math_character(nucleus(q)) = lig_replacement(lig);
                             break;
                         case 2:
+                            /* \.{\char`\|=:} */
                         case 6:
-                            math_character(nucleus(p)) = lig_replacement(lig);  /* \.{\char`\|=:}, \.{\char`\|=:>} */
+                            /* \.{\char`\|=:>} */
+                            math_character(nucleus(p)) = lig_replacement(lig);
                             break;
                         case 3:
+                             /* \.{\char`\|=:\char`\|} */
                         case 7:
+                             /* \.{\char`\|=:\char`\|>} */
                         case 11:
-                            r = new_noad();     /* \.{\char`\|=:\char`\|}, \.{\char`\|=:\char`\|>}, \.{\char`\|=:\char`\|>>} */
+                             /* \.{\char`\|=:\char`\|>>} */
+                            r = new_noad();
                             reset_attributes(r, node_attr(q));
                             s = new_node(math_char_node, 0);
                             reset_attributes(s, node_attr(q));
@@ -2537,16 +2882,17 @@ static void make_ord(pointer q)
                             if (lig_type(lig) < 11)
                                 type(nucleus(r)) = math_char_node;
                             else
-                                type(nucleus(r)) = math_text_char_node; /* prevent combination */
+                                /* prevent combination */
+                                type(nucleus(r)) = math_text_char_node;
                             break;
                         default:
                             try_couple_nodes(q,vlink(p));
-                            math_character(nucleus(q)) = lig_replacement(lig);  /* \.{=:} */
+                            math_character(nucleus(q)) = lig_replacement(lig); /* \.{=:} */
                             s = math_clone(subscr(p));
                             subscr(q) = s;
                             s = math_clone(supscr(p));
                             supscr(q) = s;
-                            math_reset(subscr(p));      /* just in case */
+                            math_reset(subscr(p)); /* just in case */
                             math_reset(supscr(p));
                             flush_node(p);
                             break;
@@ -2558,7 +2904,8 @@ static void make_ord(pointer q)
                     }
                 }
                 if (disable_kern == 0 && has_kern(cur_f, a)) {
-                    k = get_kern(cur_f, a, cur_c);      /* todo: should this use mathkerns? */
+                    /* todo: should this use mathkerns? */
+                    k = get_kern(cur_f, a, cur_c);
                     if (k != 0) {
                         p = new_kern(k);
                         reset_attributes(p, node_attr(q));
@@ -2580,12 +2927,12 @@ please use old-style italic correction placement
 #define MATH_KERN_NOT_FOUND 0x7FFFFFFF
 
 @ This function tries to find the kern needed for proper cut-ins.
-   The left side doesn't move, but the right side does, so the first
-   order of business is to create a staggered fence line on the
-   left side of the right character.
+The left side doesn't move, but the right side does, so the first
+order of business is to create a staggered fence line on the
+left side of the right character.
 
-   The microsoft spec says that there are four quadrants, but the
-   actual images say
+The microsoft spec says that there are four quadrants, but the
+actual images say
 
 @c
 static scaled math_kern_at(internal_font_number f, int c, int side, int v)
@@ -2593,7 +2940,7 @@ static scaled math_kern_at(internal_font_number f, int c, int side, int v)
     int h, k, numkerns;
     scaled *kerns_heights;
     scaled kern = 0;
-    charinfo *co = char_info(f, c);     /* known to exist */
+    charinfo *co = char_info(f, c); /* known to exist */
     numkerns = get_charinfo_math_kerns(co, side);
 #ifdef DEBUG
     fprintf(stderr, "  entries = %d, height = %d\n", numkerns, v);
@@ -2632,24 +2979,22 @@ static scaled math_kern_at(internal_font_number f, int c, int side, int v)
 }
 
 @ @c
-static scaled
-find_math_kern(internal_font_number l_f, int l_c,
-               internal_font_number r_f, int r_c, int cmd, scaled shift)
+static scaled find_math_kern(internal_font_number l_f, int l_c,
+                             internal_font_number r_f, int r_c,
+                             int cmd, scaled shift)
 {
     scaled corr_height_top = 0, corr_height_bot = 0;
     scaled krn_l = 0, krn_r = 0, krn = 0;
-    if ((!is_new_mathfont(l_f)) || (!is_new_mathfont(r_f))
-        || (!char_exists(l_f, l_c)) || (!char_exists(r_f, r_c)))
+    if ((!is_new_mathfont(l_f)) || (!is_new_mathfont(r_f)) || (!char_exists(l_f, l_c)) || (!char_exists(r_f, r_c)))
         return MATH_KERN_NOT_FOUND;
 
     if (cmd == sup_mark_cmd) {
         corr_height_top = char_height(l_f, l_c);
-        corr_height_bot = -char_depth(r_f, r_c) + shift;        /* bottom of superscript */
+        corr_height_bot = -char_depth(r_f, r_c) + shift; /* bottom of superscript */
         krn_l = math_kern_at(l_f, l_c, top_right_kern, corr_height_top);
         krn_r = math_kern_at(r_f, r_c, bottom_left_kern, corr_height_top);
 #ifdef DEBUG
-        fprintf(stderr, "SUPER Top LR = %d,%d (shift %d)\n", krn_l, krn_r,
-                shift);
+        fprintf(stderr, "SUPER Top LR = %d,%d (shift %d)\n", krn_l, krn_r, shift);
 #endif
         krn = (krn_l + krn_r);
         krn_l = math_kern_at(l_f, l_c, top_right_kern, corr_height_bot);
@@ -2662,7 +3007,7 @@ find_math_kern(internal_font_number l_f, int l_c,
         return (krn);
 
     } else if (cmd == sub_mark_cmd) {
-        corr_height_top = char_height(r_f, r_c) - shift;        /* top of subscript */
+        corr_height_top = char_height(r_f, r_c) - shift; /* top of subscript */
         corr_height_bot = -char_depth(l_f, l_c);
         krn_l = math_kern_at(l_f, l_c, bottom_right_kern, corr_height_top);
         krn_r = math_kern_at(r_f, r_c, top_left_kern, corr_height_top);
@@ -2682,7 +3027,7 @@ find_math_kern(internal_font_number l_f, int l_c,
     } else {
         confusion("find_math_kern");
     }
-    return 0;                   /* not reached */
+    return 0; /* not reached */
 }
 
 @ just a small helper
@@ -2691,7 +3036,9 @@ static pointer attach_hkern_to_new_hlist(pointer q, scaled delta2)
 {
     pointer y;
     pointer z = new_kern(delta2);
-    if (new_hlist(q) == null) { /* this is somewhat weird */
+    reset_attributes(z, node_attr(q));
+    if (new_hlist(q) == null) {
+        /* this is somewhat weird */
         new_hlist(q) = z;
     } else {
         y = new_hlist(q);
@@ -2729,7 +3076,6 @@ void dump_simple_field(pointer q)
         break;
     }
 }
-
 
 void dump_simple_node(pointer q)
 {
@@ -2794,11 +3140,10 @@ the new fonts so eventualy there will be an option to ignore such corrections.
     }                                                                            \
   } while (0)
 
-
-static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
+static void make_scripts(pointer q, pointer p, scaled it, int cur_style, scaled supshift, scaled subshift)
 {
-    pointer x, y, z;            /* temporary registers for box construction */
-    scaled shift_up, shift_down, clr;   /* dimensions in the calculation */
+    pointer x, y, z;                  /* temporary registers for box construction */
+    scaled shift_up, shift_down, clr; /* dimensions in the calculation */
     scaled delta1, delta2;
     halfword sub_n, sup_n;
     internal_font_number sub_f, sup_f;
@@ -2818,14 +3163,15 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
     printf("p: node %d, type=%d, subtype=%d\n", p, type(p), subtype(p));
 #endif
     switch (type(nucleus(q))) {
-    case math_char_node:
-    case math_text_char_node:
-        if ((subscr(q) == null) && (delta1 != 0)) {
-            x = new_kern(delta1);
-            reset_attributes(x, node_attr(nucleus(q)));
-            couple_nodes(p,x);
-            delta1 = 0;
-        }
+        case math_char_node:
+        case math_text_char_node:
+            if ((subscr(q) == null) && (delta1 != 0)) {
+                /* todo: selective */
+                x = new_kern(delta1); /* italic correction */
+                reset_attributes(x, node_attr(nucleus(q)));
+                couple_nodes(p,x);
+                delta1 = 0;
+            }
     }
     assign_new_hlist(q, p);
     if (is_char_node(p)) {
@@ -2833,8 +3179,8 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         shift_down = 0;
     } else {
         z = hpack(p, 0, additional, -1);
-        shift_up = height(z) - sup_shift_drop(cur_style);       /* r18 */
-        shift_down = depth(z) + sub_shift_drop(cur_style);      /* r19 */
+        shift_up = height(z) - sup_shift_drop(cur_style);  /* r18 */
+        shift_down = depth(z) + sub_shift_drop(cur_style); /* r19 */
         list_ptr(z) = null;
         flush_node(z);
     }
@@ -2847,102 +3193,193 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
     }
 
     if (supscr(q) == null) {
+        /*
+            construct a subscript box |x| when there is no superscript
 
-        /* Construct a subscript box |x| when there is no superscript */
-        /* When there is a subscript without a superscript, the top of the subscript
-           should not exceed the baseline plus four-fifths of the x-height. */
+            when there is a subscript without a superscript, the top of the subscript
+            should not exceed the baseline plus four-fifths of the x-height.
+        */
         x = clean_box(subscr(q), sub_style(cur_style), cur_style);
         width(x) = width(x) + space_after_script(cur_style);
-        if (shift_down < sub_shift_down(cur_style))
-            shift_down = sub_shift_down(cur_style);
-        clr = height(x) - sub_top_max(cur_style);
-        if (shift_down < clr)
-            shift_down = clr;
+        switch (scripts_mode) {
+            case 1:
+                shift_down = sub_shift_down(cur_style) ;
+                break;
+            case 2:
+                shift_down = sub_sup_shift_down(cur_style) ;
+                break;
+            case 3:
+                shift_down = sub_sup_shift_down(cur_style) ;
+                break;
+            case 4:
+                shift_down = sub_shift_down(cur_style) + half(sub_sup_shift_down(cur_style)-sub_shift_down(cur_style)) ;
+                break;
+            case 5:
+                shift_down = sub_shift_down(cur_style) ;
+                break;
+            default:
+                if (shift_down < sub_shift_down(cur_style))
+                    shift_down = sub_shift_down(cur_style);
+                clr = height(x) - sub_top_max(cur_style);
+                if (shift_down < clr)
+                    shift_down = clr;
+                break;
+        }
         shift_amount(x) = shift_down;
 
         /* now find and correct for horizontal shift */
         if (sub_n != null) {
             delta2 = find_math_kern(font(p), character(p),sub_f,sub_c,sub_mark_cmd, shift_down);
-            if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
-                p = attach_hkern_to_new_hlist(q, delta2);
+            if (delta2 == MATH_KERN_NOT_FOUND) {
+                delta2 = subshift ;
+            } else {
+                delta2 = delta2 + subshift ;
             }
+        } else {
+            delta2 = subshift ;
+        }
+        if (delta2 != 0) {
+            p = attach_hkern_to_new_hlist(q, delta2);
         }
 
     } else {
-        /* Construct a superscript box |x| */
-        /*The bottom of a superscript should never descend below the baseline plus
-           one-fourth of the x-height. */
+        /*
+            construct a superscript box |x|
+
+            the bottom of a superscript should never descend below the baseline plus
+            one-fourth of the x-height.
+        */
         x = clean_box(supscr(q), sup_style(cur_style), cur_style);
         width(x) = width(x) + space_after_script(cur_style);
-        clr = sup_shift_up(cur_style);
-        if (shift_up < clr)
-            shift_up = clr;
-        clr = depth(x) + sup_bottom_min(cur_style);
-        if (shift_up < clr)
-            shift_up = clr;
-
+        switch (scripts_mode) {
+            case 1:
+                shift_up = sup_shift_up(cur_style);
+                break;
+            case 2:
+                shift_up = sup_shift_up(cur_style) ;
+                break;
+            case 3:
+                shift_up = sup_shift_up(cur_style) + sub_sup_shift_down(cur_style) - sub_shift_down(cur_style) ;
+                break;
+            case 4:
+                shift_up = sup_shift_up(cur_style) + half(sub_sup_shift_down(cur_style)-sub_shift_down(cur_style)) ;
+                break;
+            case 5:
+                shift_up = sup_shift_up(cur_style) + sub_sup_shift_down(cur_style)-sub_shift_down(cur_style) ;
+                break;
+            default:
+                clr = sup_shift_up(cur_style);
+                if (shift_up < clr)
+                    shift_up = clr;
+                clr = depth(x) + sup_bottom_min(cur_style);
+                if (shift_up < clr)
+                    shift_up = clr;
+                break;
+        }
         if (subscr(q) == null) {
             shift_amount(x) = -shift_up;
             /* now find and correct for horizontal shift */
             if (sup_n != null) {
                 clr = find_math_kern(font(p),character(p),sup_f,sup_c,sup_mark_cmd,shift_up);
-                if (clr != MATH_KERN_NOT_FOUND && clr != 0) {
-                    p = attach_hkern_to_new_hlist(q, clr);
+                if (clr == MATH_KERN_NOT_FOUND) {
+                    clr = supshift ;
+                } else {
+                    clr = clr + supshift ;
                 }
+            } else {
+                clr = supshift;
+            }
+            if (clr != 0) {
+                p = attach_hkern_to_new_hlist(q, clr);
             }
         } else {
-            /* Construct a sub/superscript combination box |x|, with the
-               superscript offset by |delta| */
-            /* When both subscript and superscript are present, the subscript must be
-               separated from the superscript by at least four times |default_rule_thickness|.
-               If this condition would be violated, the subscript moves down, after which
-               both subscript and superscript move up so that the bottom of the superscript
-               is at least as high as the baseline plus four-fifths of the x-height. */
+            /*
+                construct a sub/superscript combination box |x|, with the superscript offset
+                by |delta|
 
+                when both subscript and superscript are present, the subscript must be
+                separated from the superscript by at least four times |default_rule_thickness|
+
+                if this condition would be violated, the subscript moves down, after which
+                both subscript and superscript move up so that the bottom of the superscript
+                is at least as high as the baseline plus four-fifths of the x-height
+            */
             y = clean_box(subscr(q), sub_style(cur_style), cur_style);
             width(y) = width(y) + space_after_script(cur_style);
-            if (shift_down < sub_sup_shift_down(cur_style))
-                shift_down = sub_sup_shift_down(cur_style);
-                clr = subsup_vgap(cur_style) - ((shift_up - depth(x)) - (height(y) - shift_down));
-            if (clr > 0) {
-                shift_down = shift_down + clr;
-                clr = sup_sub_bottom_max(cur_style) - (shift_up - depth(x));
-                if (clr > 0) {
-                    shift_up = shift_up + clr;
-                    shift_down = shift_down - clr;
-                }
+            switch (scripts_mode) {
+                case 1:
+                    shift_down = sub_shift_down(cur_style) ;
+                    break;
+                case 2:
+                    shift_down = sub_sup_shift_down(cur_style) ;
+                    break;
+                case 3:
+                    shift_down = sub_sup_shift_down(cur_style) ;
+                    break;
+                case 4:
+                    shift_down = sub_shift_down(cur_style) + half(sub_sup_shift_down(cur_style)-sub_shift_down(cur_style)) ;
+                    break;
+                case 5:
+                    shift_down = sub_shift_down(cur_style) ;
+                    break;
+                default:
+                    if (shift_down < sub_sup_shift_down(cur_style))
+                        shift_down = sub_sup_shift_down(cur_style);
+                    clr = subsup_vgap(cur_style) - ((shift_up - depth(x)) - (height(y) - shift_down));
+                    if (clr > 0) {
+                        shift_down = shift_down + clr;
+                        clr = sup_sub_bottom_max(cur_style) - (shift_up - depth(x));
+                        if (clr > 0) {
+                            shift_up = shift_up + clr;
+                            shift_down = shift_down - clr;
+                        }
+                    }
+                break;
             }
             /* now find and correct for horizontal shift */
             if (sub_n != null) {
                 delta2 = find_math_kern(font(p), character(p),sub_f,sub_c,sub_mark_cmd, shift_down);
-                if (delta2 != MATH_KERN_NOT_FOUND && delta2 != 0) {
-                    p = attach_hkern_to_new_hlist(q, delta2);
+                if (delta2 == MATH_KERN_NOT_FOUND) {
+                    delta2 = subshift ;
+                } else {
+                    delta2 = delta2 + subshift ;
                 }
+            } else {
+                delta2 = subshift ;
             }
-            /* now the horizontal shift for the superscript. */
-            /* the superscript is also to be shifted by |delta1| (the italic correction) */
+            if (delta2 != 0) {
+                p = attach_hkern_to_new_hlist(q, delta2);
+            }
+            /*
+                now the horizontal shift for the superscript; the superscript is also to be shifted
+                by |delta1| (the italic correction)
+            */
             clr = MATH_KERN_NOT_FOUND;
             if (sup_n != null) {
                 clr = find_math_kern(font(p),character(p),sup_f,sup_c,sup_mark_cmd,shift_up);
             }
 
+            /* delta can already have been applied and now be 0 */
             if (delta2 == MATH_KERN_NOT_FOUND)
-                delta2 = 0;
+                delta2 = - supshift ;
+            else
+                delta2 = delta2 - supshift ;
             if (clr != MATH_KERN_NOT_FOUND) {
                 shift_amount(x) = clr + delta1 - delta2;
             } else {
                 shift_amount(x) = delta1 - delta2;
             }
+            /* todo: only if kern != 0 */
             p = new_kern((shift_up - depth(x)) - (height(y) - shift_down));
             reset_attributes(p, node_attr(q));
             couple_nodes(x,p);
             couple_nodes(p,y);
+            /* we end up with funny dimensions */
             x = vpackage(x, 0, additional, max_dimen, math_direction);
             reset_attributes(x, node_attr(q));
             shift_amount(x) = shift_down;
         }
     }
-
 
     if (new_hlist(q) == null) {
         new_hlist(q) = x;
@@ -2962,7 +3399,6 @@ static void make_scripts(pointer q, pointer p, scaled it, int cur_style)
         flush_node(supscr(q));
         supscr(q) = null;
     }
-
 }
 
 @ The |make_left_right| function constructs a left or right delimiter of
@@ -2971,27 +3407,86 @@ the required size and returns the value |open_noad| or |close_noad|. The
 so they will have consistent sizes.
 
 @c
-static small_number make_left_right(pointer q, int style, scaled max_d,
-                                    scaled max_hv)
+static small_number make_left_right(pointer q, int style, scaled max_d, scaled max_h)
 {
-    scaled delta, delta1, delta2;       /* dimensions used in the calculation */
-    pointer tmp;
+    scaled delta;
+    pointer tmp, lst;
+    scaled hd_asked = 0;
+    scaled ic = 0;
+    boolean stack = false;
+    boolean axis = false;
+    /*
+        scaled hd_done = 0;
+        boolean fitting = true;
+        boolean fence = false;
+        int chr = 0;
+        int cls = 0;
+    */
     setup_cur_size(style);
-    delta2 = max_d + math_axis(cur_size);
-    delta1 = max_hv + max_d - delta2;
-    if (delta2 > delta1)
-        delta1 = delta2;        /* |delta1| is max distance from axis */
-    delta = (delta1 / 500) * delimiter_factor;
-    delta2 = delta1 + delta1 - delimiter_shortfall;
-    if (delta < delta2)
-        delta = delta2;
-    tmp = var_delimiter(delimiter(q), cur_size, delta, NULL, style);
+
+    if ((delimiterheight(q)!=0) || (delimiterdepth(q)!=0)) {
+
+        hd_asked = delimiterheight(q) + delimiterdepth(q);
+        tmp = do_delimiter(q, delimiter(q), cur_size, hd_asked, false, style, false, &stack, &ic);
+        delimiteritalic(q) = ic;
+
+        /* beware, a stacked delimiter has a shift but no corrected height/depth (yet) */
+
+        if (stack) {
+            shift_amount(tmp) = delimiterdepth(q);
+        }
+
+        /*
+            hd_done = height(tmp) + depth(tmp);
+            fitting = stack || ((hd_done-hd_asked) == 0);
+
+            if (type(delimiter(q)) == delim_node && (small_char(delimiter(q)) != 0)) {
+                chr = small_char(delimiter(q));
+                cls = get_math_code(chr).class_value ;
+                fence = (cls == 4) || (cls == 5) ;
+            }
+
+            printf("delimiter stack %i fence %i fitting %i\n",stack,fence,fitting);
+        */
+
+        if (delimiterexact(q)) {
+            delimiterheight(q) = height(tmp) - shift_amount(tmp);
+            delimiterdepth(q)  = depth(tmp)  + shift_amount(tmp);
+        }
+        if (delimiteraxis(q)) {
+            delimiterheight(q) += math_axis(cur_size);
+            delimiterdepth(q)  -= math_axis(cur_size);
+            shift_amount(tmp)  -= math_axis(cur_size);
+        }
+        lst = new_node(hlist_node,0);
+        reset_attributes(lst, node_attr(q));
+        box_dir(lst) = dir_TLT ;
+        height(lst) = delimiterheight(q);
+        depth(lst) = delimiterdepth(q);
+        width(lst) = width(tmp);
+        list_ptr(lst) = tmp;
+        tmp = lst ;
+    } else {
+        axis = ! delimiternoaxis(q);
+        delta = get_delimiter_height(max_d,max_h,axis);
+        tmp = do_delimiter(q, delimiter(q), cur_size, delta, false, style, axis, &stack, &ic);
+        delimiteritalic(q) = ic;
+    }
     delimiter(q) = null;
     assign_new_hlist(q, tmp);
-    if (subtype(q) == left_noad_side)
+    if (delimiterclass(q) >= ord_noad_type) {
+        if (delimiterclass(q) <= inner_noad_type) {
+            return delimiterclass(q);
+        } else {
+            return ord_noad_type;
+        }
+    } else if (subtype(q) == no_noad_side) {
         return open_noad_type;
-    else
+    } else if (subtype(q) == left_noad_side) {
+        return open_noad_type;
+    } else {
         return close_noad_type;
+    }
 }
 
 @ @c
@@ -3097,7 +3592,6 @@ void initialize_math_spacing(void)
     /* *INDENT-ON* */
 }
 
-
 @ @c
 #define both_types(A,B) ((A)*16+(B))
 
@@ -3111,82 +3605,82 @@ static pointer math_spacing_glue(int l_type, int r_type, int mstyle, scaled mmu)
         r_type = op_noad_type_normal;
     switch (both_types(l_type, r_type)) {
     /* *INDENT-OFF* */
-    case both_types(ord_noad_type,  ord_noad_type  ):  x = get_math_param(math_param_ord_ord_spacing,mstyle); break;
-    case both_types(ord_noad_type,  op_noad_type_normal   ):  x = get_math_param(math_param_ord_op_spacing,mstyle); break;
-    case both_types(ord_noad_type,  bin_noad_type  ):  x = get_math_param(math_param_ord_bin_spacing,mstyle); break;
-    case both_types(ord_noad_type,  rel_noad_type  ):  x = get_math_param(math_param_ord_rel_spacing,mstyle); break;
-    case both_types(ord_noad_type,  open_noad_type ):  x = get_math_param(math_param_ord_open_spacing,mstyle); break;
-    case both_types(ord_noad_type,  close_noad_type):  x = get_math_param(math_param_ord_close_spacing,mstyle); break;
-    case both_types(ord_noad_type,  punct_noad_type):  x = get_math_param(math_param_ord_punct_spacing,mstyle); break;
-    case both_types(ord_noad_type,  inner_noad_type):  x = get_math_param(math_param_ord_inner_spacing,mstyle); break;
-    case both_types(op_noad_type_normal, ord_noad_type  ):  x = get_math_param(math_param_op_ord_spacing,mstyle); break;
-    case both_types(op_noad_type_normal, op_noad_type_normal   ):  x = get_math_param(math_param_op_op_spacing,mstyle); break;
+    case both_types(ord_noad_type,       ord_noad_type      ): x = get_math_param(math_param_ord_ord_spacing,mstyle); break;
+    case both_types(ord_noad_type,       op_noad_type_normal): x = get_math_param(math_param_ord_op_spacing,mstyle); break;
+    case both_types(ord_noad_type,       bin_noad_type      ): x = get_math_param(math_param_ord_bin_spacing,mstyle); break;
+    case both_types(ord_noad_type,       rel_noad_type      ): x = get_math_param(math_param_ord_rel_spacing,mstyle); break;
+    case both_types(ord_noad_type,       open_noad_type     ): x = get_math_param(math_param_ord_open_spacing,mstyle); break;
+    case both_types(ord_noad_type,       close_noad_type    ): x = get_math_param(math_param_ord_close_spacing,mstyle); break;
+    case both_types(ord_noad_type,       punct_noad_type    ): x = get_math_param(math_param_ord_punct_spacing,mstyle); break;
+    case both_types(ord_noad_type,       inner_noad_type    ): x = get_math_param(math_param_ord_inner_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, ord_noad_type      ): x = get_math_param(math_param_op_ord_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, op_noad_type_normal): x = get_math_param(math_param_op_op_spacing,mstyle); break;
 #if 0
-      case both_types(op_noad_type_normal,   bin_noad_type  ):  x = get_math_param(math_param_op_bin_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, bin_noad_type      ): x = get_math_param(math_param_op_bin_spacing,mstyle); break;
 #endif
-    case both_types(op_noad_type_normal,   rel_noad_type  ):  x = get_math_param(math_param_op_rel_spacing,mstyle); break;
-    case both_types(op_noad_type_normal,   open_noad_type ):  x = get_math_param(math_param_op_open_spacing,mstyle); break;
-    case both_types(op_noad_type_normal,   close_noad_type):  x = get_math_param(math_param_op_close_spacing,mstyle); break;
-    case both_types(op_noad_type_normal,   punct_noad_type):  x = get_math_param(math_param_op_punct_spacing,mstyle); break;
-    case both_types(op_noad_type_normal,   inner_noad_type):  x = get_math_param(math_param_op_inner_spacing,mstyle); break;
-    case both_types(bin_noad_type,  ord_noad_type  ):  x = get_math_param(math_param_bin_ord_spacing,mstyle); break;
-    case both_types(bin_noad_type,  op_noad_type_normal   ):  x = get_math_param(math_param_bin_op_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, rel_noad_type      ): x = get_math_param(math_param_op_rel_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, open_noad_type     ): x = get_math_param(math_param_op_open_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, close_noad_type    ): x = get_math_param(math_param_op_close_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, punct_noad_type    ): x = get_math_param(math_param_op_punct_spacing,mstyle); break;
+    case both_types(op_noad_type_normal, inner_noad_type    ): x = get_math_param(math_param_op_inner_spacing,mstyle); break;
+    case both_types(bin_noad_type,       ord_noad_type      ): x = get_math_param(math_param_bin_ord_spacing,mstyle); break;
+    case both_types(bin_noad_type,       op_noad_type_normal): x = get_math_param(math_param_bin_op_spacing,mstyle); break;
 #if 0
-      case both_types(bin_noad_type,  bin_noad_type  ):  x = get_math_param(math_param_bin_bin_spacing,mstyle); break;
-      case both_types(bin_noad_type,  rel_noad_type  ):  x = get_math_param(math_param_bin_rel_spacing,mstyle); break;
+    case both_types(bin_noad_type,       bin_noad_type      ): x = get_math_param(math_param_bin_bin_spacing,mstyle); break;
+    case both_types(bin_noad_type,       rel_noad_type      ): x = get_math_param(math_param_bin_rel_spacing,mstyle); break;
 #endif
-    case both_types(bin_noad_type,  open_noad_type ):  x = get_math_param(math_param_bin_open_spacing,mstyle); break;
+    case both_types(bin_noad_type,       open_noad_type     ): x = get_math_param(math_param_bin_open_spacing,mstyle); break;
 #if 0
-      case both_types(bin_noad_type,  close_noad_type):  x = get_math_param(math_param_bin_close_spacing,mstyle); break;
-      case both_types(bin_noad_type,  punct_noad_type):  x = get_math_param(math_param_bin_punct_spacing,mstyle); break;
+    case both_types(bin_noad_type,       close_noad_type    ): x = get_math_param(math_param_bin_close_spacing,mstyle); break;
+    case both_types(bin_noad_type,       punct_noad_type    ): x = get_math_param(math_param_bin_punct_spacing,mstyle); break;
 #endif
-    case both_types(bin_noad_type,  inner_noad_type):  x = get_math_param(math_param_bin_inner_spacing,mstyle); break;
-    case both_types(rel_noad_type,  ord_noad_type  ):  x = get_math_param(math_param_rel_ord_spacing,mstyle); break;
-    case both_types(rel_noad_type,  op_noad_type_normal   ):  x = get_math_param(math_param_rel_op_spacing,mstyle); break;
+    case both_types(bin_noad_type,       inner_noad_type    ): x = get_math_param(math_param_bin_inner_spacing,mstyle); break;
+    case both_types(rel_noad_type,       ord_noad_type      ): x = get_math_param(math_param_rel_ord_spacing,mstyle); break;
+    case both_types(rel_noad_type,       op_noad_type_normal): x = get_math_param(math_param_rel_op_spacing,mstyle); break;
 #if 0
-      case both_types(rel_noad_type,  bin_noad_type  ):  x = get_math_param(math_param_rel_bin_spacing,mstyle); break;
+    case both_types(rel_noad_type,       bin_noad_type      ): x = get_math_param(math_param_rel_bin_spacing,mstyle); break;
 #endif
-    case both_types(rel_noad_type,  rel_noad_type  ):  x = get_math_param(math_param_rel_rel_spacing,mstyle); break;
-    case both_types(rel_noad_type,  open_noad_type ):  x = get_math_param(math_param_rel_open_spacing,mstyle); break;
-    case both_types(rel_noad_type,  close_noad_type):  x = get_math_param(math_param_rel_close_spacing,mstyle); break;
-    case both_types(rel_noad_type,  punct_noad_type):  x = get_math_param(math_param_rel_punct_spacing,mstyle); break;
-    case both_types(rel_noad_type,  inner_noad_type):  x = get_math_param(math_param_rel_inner_spacing,mstyle); break;
-    case both_types(open_noad_type, ord_noad_type  ):  x = get_math_param(math_param_open_ord_spacing,mstyle); break;
-    case both_types(open_noad_type, op_noad_type_normal   ):  x = get_math_param(math_param_open_op_spacing,mstyle); break;
+    case both_types(rel_noad_type,       rel_noad_type      ): x = get_math_param(math_param_rel_rel_spacing,mstyle); break;
+    case both_types(rel_noad_type,       open_noad_type     ): x = get_math_param(math_param_rel_open_spacing,mstyle); break;
+    case both_types(rel_noad_type,       close_noad_type    ): x = get_math_param(math_param_rel_close_spacing,mstyle); break;
+    case both_types(rel_noad_type,       punct_noad_type    ): x = get_math_param(math_param_rel_punct_spacing,mstyle); break;
+    case both_types(rel_noad_type,       inner_noad_type    ): x = get_math_param(math_param_rel_inner_spacing,mstyle); break;
+    case both_types(open_noad_type,      ord_noad_type      ): x = get_math_param(math_param_open_ord_spacing,mstyle); break;
+    case both_types(open_noad_type,      op_noad_type_normal): x = get_math_param(math_param_open_op_spacing,mstyle); break;
 #if 0
-      case both_types(open_noad_type, bin_noad_type  ):  x = get_math_param(math_param_open_bin_spacing,mstyle); break;
+    case both_types(open_noad_type,      bin_noad_type      ): x = get_math_param(math_param_open_bin_spacing,mstyle); break;
 #endif
-    case both_types(open_noad_type, rel_noad_type  ):  x = get_math_param(math_param_open_rel_spacing,mstyle); break;
-    case both_types(open_noad_type, open_noad_type ):  x = get_math_param(math_param_open_open_spacing,mstyle); break;
-    case both_types(open_noad_type, close_noad_type):  x = get_math_param(math_param_open_close_spacing,mstyle); break;
-    case both_types(open_noad_type, punct_noad_type):  x = get_math_param(math_param_open_punct_spacing,mstyle); break;
-    case both_types(open_noad_type, inner_noad_type):  x = get_math_param(math_param_open_inner_spacing,mstyle); break;
-    case both_types(close_noad_type,ord_noad_type  ):  x = get_math_param(math_param_close_ord_spacing,mstyle); break;
-    case both_types(close_noad_type,op_noad_type_normal   ):  x = get_math_param(math_param_close_op_spacing,mstyle); break;
-    case both_types(close_noad_type,bin_noad_type  ):  x = get_math_param(math_param_close_bin_spacing,mstyle); break;
-    case both_types(close_noad_type,rel_noad_type  ):  x = get_math_param(math_param_close_rel_spacing,mstyle); break;
-    case both_types(close_noad_type,open_noad_type ):  x = get_math_param(math_param_close_open_spacing,mstyle); break;
-    case both_types(close_noad_type,close_noad_type):  x = get_math_param(math_param_close_close_spacing,mstyle); break;
-    case both_types(close_noad_type,punct_noad_type):  x = get_math_param(math_param_close_punct_spacing,mstyle); break;
-    case both_types(close_noad_type,inner_noad_type):  x = get_math_param(math_param_close_inner_spacing,mstyle); break;
-    case both_types(punct_noad_type,ord_noad_type  ):  x = get_math_param(math_param_punct_ord_spacing,mstyle); break;
-    case both_types(punct_noad_type,op_noad_type_normal   ):  x = get_math_param(math_param_punct_op_spacing,mstyle); break;
+    case both_types(open_noad_type,      rel_noad_type      ): x = get_math_param(math_param_open_rel_spacing,mstyle); break;
+    case both_types(open_noad_type,      open_noad_type     ): x = get_math_param(math_param_open_open_spacing,mstyle); break;
+    case both_types(open_noad_type,      close_noad_type    ): x = get_math_param(math_param_open_close_spacing,mstyle); break;
+    case both_types(open_noad_type,      punct_noad_type    ): x = get_math_param(math_param_open_punct_spacing,mstyle); break;
+    case both_types(open_noad_type,      inner_noad_type    ): x = get_math_param(math_param_open_inner_spacing,mstyle); break;
+    case both_types(close_noad_type,     ord_noad_type      ): x = get_math_param(math_param_close_ord_spacing,mstyle); break;
+    case both_types(close_noad_type,     op_noad_type_normal): x = get_math_param(math_param_close_op_spacing,mstyle); break;
+    case both_types(close_noad_type,     bin_noad_type      ): x = get_math_param(math_param_close_bin_spacing,mstyle); break;
+    case both_types(close_noad_type,     rel_noad_type      ): x = get_math_param(math_param_close_rel_spacing,mstyle); break;
+    case both_types(close_noad_type,     open_noad_type     ): x = get_math_param(math_param_close_open_spacing,mstyle); break;
+    case both_types(close_noad_type,     close_noad_type    ): x = get_math_param(math_param_close_close_spacing,mstyle); break;
+    case both_types(close_noad_type,     punct_noad_type    ): x = get_math_param(math_param_close_punct_spacing,mstyle); break;
+    case both_types(close_noad_type,     inner_noad_type    ): x = get_math_param(math_param_close_inner_spacing,mstyle); break;
+    case both_types(punct_noad_type,     ord_noad_type      ): x = get_math_param(math_param_punct_ord_spacing,mstyle); break;
+    case both_types(punct_noad_type,     op_noad_type_normal): x = get_math_param(math_param_punct_op_spacing,mstyle); break;
 #if 0
-      case both_types(punct_noad_type,bin_noad_type  ):  x = get_math_param(math_param_punct_bin_spacing,mstyle); break;
+    case both_types(punct_noad_type,     bin_noad_type      ): x = get_math_param(math_param_punct_bin_spacing,mstyle); break;
 #endif
-    case both_types(punct_noad_type,rel_noad_type  ):  x = get_math_param(math_param_punct_rel_spacing,mstyle); break;
-    case both_types(punct_noad_type,open_noad_type ):  x = get_math_param(math_param_punct_open_spacing,mstyle); break;
-    case both_types(punct_noad_type,close_noad_type):  x = get_math_param(math_param_punct_close_spacing,mstyle); break;
-    case both_types(punct_noad_type,punct_noad_type):  x = get_math_param(math_param_punct_punct_spacing,mstyle); break;
-    case both_types(punct_noad_type,inner_noad_type):  x = get_math_param(math_param_punct_inner_spacing,mstyle); break;
-    case both_types(inner_noad_type,ord_noad_type  ):  x = get_math_param(math_param_inner_ord_spacing,mstyle); break;
-    case both_types(inner_noad_type,op_noad_type_normal   ):  x = get_math_param(math_param_inner_op_spacing,mstyle); break;
-    case both_types(inner_noad_type,bin_noad_type  ):  x = get_math_param(math_param_inner_bin_spacing,mstyle); break;
-    case both_types(inner_noad_type,rel_noad_type  ):  x = get_math_param(math_param_inner_rel_spacing,mstyle); break;
-    case both_types(inner_noad_type,open_noad_type ):  x = get_math_param(math_param_inner_open_spacing,mstyle); break;
-    case both_types(inner_noad_type,close_noad_type):  x = get_math_param(math_param_inner_close_spacing,mstyle); break;
-    case both_types(inner_noad_type,punct_noad_type):  x = get_math_param(math_param_inner_punct_spacing,mstyle); break;
-    case both_types(inner_noad_type,inner_noad_type):  x = get_math_param(math_param_inner_inner_spacing,mstyle); break;
+    case both_types(punct_noad_type,     rel_noad_type      ): x = get_math_param(math_param_punct_rel_spacing,mstyle); break;
+    case both_types(punct_noad_type,     open_noad_type     ): x = get_math_param(math_param_punct_open_spacing,mstyle); break;
+    case both_types(punct_noad_type,     close_noad_type    ): x = get_math_param(math_param_punct_close_spacing,mstyle); break;
+    case both_types(punct_noad_type,     punct_noad_type    ): x = get_math_param(math_param_punct_punct_spacing,mstyle); break;
+    case both_types(punct_noad_type,     inner_noad_type    ): x = get_math_param(math_param_punct_inner_spacing,mstyle); break;
+    case both_types(inner_noad_type,     ord_noad_type      ): x = get_math_param(math_param_inner_ord_spacing,mstyle); break;
+    case both_types(inner_noad_type,     op_noad_type_normal): x = get_math_param(math_param_inner_op_spacing,mstyle); break;
+    case both_types(inner_noad_type,     bin_noad_type      ): x = get_math_param(math_param_inner_bin_spacing,mstyle); break;
+    case both_types(inner_noad_type,     rel_noad_type      ): x = get_math_param(math_param_inner_rel_spacing,mstyle); break;
+    case both_types(inner_noad_type,     open_noad_type     ): x = get_math_param(math_param_inner_open_spacing,mstyle); break;
+    case both_types(inner_noad_type,     close_noad_type    ): x = get_math_param(math_param_inner_close_spacing,mstyle); break;
+    case both_types(inner_noad_type,     punct_noad_type    ): x = get_math_param(math_param_inner_punct_spacing,mstyle); break;
+    case both_types(inner_noad_type,     inner_noad_type    ): x = get_math_param(math_param_inner_inner_spacing,mstyle); break;
     /* *INDENT-ON* */
     }
     if (x < 0) {
@@ -3194,11 +3688,13 @@ static pointer math_spacing_glue(int l_type, int r_type, int mstyle, scaled mmu)
     }
     if (x != 0) {
         pointer y;
-        if (x <= thick_mu_skip_code) {  /* trap thin/med/thick settings cf. old TeX */
+        if (x <= thick_mu_skip_code) {
+            /* trap thin/med/thick settings cf. old TeX */
             y = math_glue(glue_par(x), mmu);
             z = new_glue(y);
             glue_ref_count(y) = null;
-            subtype(z) = (quarterword) (x + 1); /* store a symbolic subtype */
+            /* store a symbolic subtype */
+            subtype(z) = (quarterword) (x + 1);
         } else {
             y = math_glue(x, mmu);
             z = new_glue(y);
@@ -3209,8 +3705,7 @@ static pointer math_spacing_glue(int l_type, int r_type, int mstyle, scaled mmu)
 }
 
 @ @c
-static pointer check_nucleus_complexity(halfword q, scaled * delta,
-                                        int cur_style)
+static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_style)
 {
     pointer p = null;
     switch (type(nucleus(q))) {
@@ -3218,18 +3713,36 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta,
     case math_text_char_node:
         fetch(nucleus(q));
         if (char_exists(cur_f, cur_c)) {
-            *delta = char_italic(cur_f, cur_c);
+            /* we could look at neighbours */
+            if (is_new_mathfont(cur_f)) {
+                *delta = 0 ; /* cf spec only the last one */
+            } else {
+                *delta = char_italic(cur_f, cur_c);
+            }
             p = new_glyph(cur_f, cur_c);
             reset_attributes(p, node_attr(nucleus(q)));
-            if ((is_new_mathfont(cur_f) && get_char_cat_code(cur_c) == 11) ||
-                (!is_new_mathfont(cur_f) && type(nucleus(q)) == math_text_char_node && space(cur_f)) != 0) {
-                *delta = 0;     /* no italic correction in mid-word of text font */
-	    }
+            if (is_new_mathfont(cur_f)) {
+                if (! math_no_char_italic) {
+                    /* keep italic, but bad with two successive letters */
+                } else if (get_char_cat_code(cur_c) == 11) {
+                    /* no italic correction in mid-word of text font */
+                    *delta = 0;
+                }
+            } else {
+                /* no italic correction in mid-word of text font */
+                if (((type(nucleus(q))) == math_text_char_node) && (space(cur_f) != 0)) {
+                    *delta = 0;
+                }
+            }
+            /* so we only add italic correction when we have no scripts */
             if ((subscr(q) == null) && (supscr(q) == null) && (*delta != 0)) {
                 pointer x = new_kern(*delta);
                 reset_attributes(x, node_attr(nucleus(q)));
                 couple_nodes(p,x);
                 *delta = 0;
+            }
+            if (is_new_mathfont(cur_f)) {
+                *delta = char_italic(cur_f, cur_c); /* must be more selective */
             }
         }
         break;
@@ -3254,19 +3767,19 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta,
 @c
 static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
 {
-    pointer q;                  /* runs through the mlist */
-    pointer r;                  /* the most recent noad preceding |q| */
+    pointer q;            /* runs through the mlist */
+    pointer r;            /* the most recent noad preceding |q| */
     int style;
-    int r_type;                 /* the |type| of noad |r|, or |op_noad| if |r=null| */
-    int r_subtype;              /* the |subtype| of noad |r| if |r_type| is |fence_noad| */
-    int t;                      /* the effective |type| of noad |q| during the second pass */
-    int t_subtype;              /* the effective |subtype| of noad |q| during the second pass */
-    pointer p, x, y, z;         /* temporary registers for list construction */
-    int pen;                    /* a penalty to be inserted */
-    scaled max_hl, max_d;       /* maximum height and depth of the list translated so far */
-    scaled delta;               /* italic correction offset for subscript and superscript */
-    scaled cur_mu;              /* the math unit width corresponding to |cur_size| */
-    style = cur_style;          /* tuck global parameter away as local variable */
+    int r_type;           /* the |type| of noad |r|, or |op_noad| if |r=null| */
+    int r_subtype;        /* the |subtype| of noad |r| if |r_type| is |fence_noad| */
+    int t;                /* the effective |type| of noad |q| during the second pass */
+    int t_subtype;        /* the effective |subtype| of noad |q| during the second pass */
+    pointer p, x, y, z;   /* temporary registers for list construction */
+    int pen;              /* a penalty to be inserted */
+    scaled max_hl, max_d; /* maximum height and depth of the list translated so far */
+    scaled delta;         /* italic correction offset for subscript and superscript */
+    scaled cur_mu;        /* the math unit width corresponding to |cur_size| */
+    style = cur_style;    /* tuck global parameter away as local variable */
     q = mlist;
     r = null;
     r_type = simple_noad;
@@ -3278,12 +3791,15 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     setup_cur_size(cur_style);
     cur_mu = x_over_n(get_math_quad(cur_size), 18);
     while (q != null) {
-        /* We use the fact that no character nodes appear in an mlist, hence
-           the field |type(q)| is always present. */
+        /*
+            we use the fact that no character nodes appear in an mlist, hence
+            the field |type(q)| is always present.
 
-        /* One of the things we must do on the first pass is change a |bin_noad| to
-           an |ord_noad| if the |bin_noad| is not in the context of a binary operator.
-           The values of |r| and |r_type| make this fairly easy. */
+            one of the things we must do on the first pass is change a |bin_noad| to
+            an |ord_noad| if the |bin_noad| is not in the context of a binary operator
+
+            the values of |r| and |r_type| make this fairly easy
+        */
       RESWITCH:
         delta = 0;
         switch (type(q)) {
@@ -3307,7 +3823,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                     break;
                 case fence_noad:
                     if (r_subtype == left_noad_side) {
-                        subtype(q) = ord_noad_type;
+                        subtype(q) = ord_noad_type; /* so these can best be the same size */
                         goto RESWITCH;
                     }
                     break;
@@ -3326,7 +3842,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             case close_noad_type:
             case punct_noad_type:
                 if (r_type == simple_noad && r_subtype == bin_noad_type) {
-                    type(r) = simple_noad;
+                    type(r) = simple_noad; /* assumes the same size .. can't this go */
                     subtype(r) = ord_noad_type;
                 }
                 break;
@@ -3334,7 +3850,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             case op_noad_type_limits:
             case op_noad_type_no_limits:
                 delta = make_op(q, cur_style);
-                if (subtype(q) == op_noad_type_limits)
+                if ((subtype(q) == op_noad_type_limits) || (subtype(q) == op_noad_type_no_limits))
                     goto CHECK_DIMENSIONS;
                 break;
             case ord_noad_type:
@@ -3348,7 +3864,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         case fence_noad:
             if (subtype(q) != left_noad_side)
                 if (r_type == simple_noad && r_subtype == bin_noad_type) {
-                    type(r) = simple_noad;
+                    type(r) = simple_noad; /* assumes the same size  */
                     subtype(r) = ord_noad_type;
                 }
             goto DONE_WITH_NOAD;
@@ -3358,7 +3874,9 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             goto CHECK_DIMENSIONS;
             break;
         case radical_noad:
-            if (subtype(q) == 6)
+            if (subtype(q) == 7)
+                make_hextension(q, cur_style);
+            else if (subtype(q) == 6)
                 make_delimiter_over(q, cur_style);
             else if (subtype(q) == 5)
                 make_delimiter_under(q, cur_style);
@@ -3375,26 +3893,24 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         case style_node:
             cur_style = subtype(q);
             setup_cur_size(cur_style);
-            /* HH-LS: was cur_mu = x_over_n(get_math_quad(cur_size), 18);*/
-            /* This is an old bug so the fix can influence outcome       */
             cur_mu = x_over_n(get_math_quad(cur_style), 18);
             goto DONE_WITH_NODE;
             break;
         case choice_node:
             switch (cur_style / 2) {
-            case 0:
+            case 0: /* |display_style=0| */
                 choose_mlist(display_mlist);
-                break;          /* |display_style=0| */
-            case 1:
+                break;
+            case 1: /* |text_style=2| */
                 choose_mlist(text_mlist);
-                break;          /* |text_style=2| */
-            case 2:
+                break;
+            case 2: /* |script_style=4| */
                 choose_mlist(script_mlist);
-                break;          /* |script_style=4| */
-            case 3:
+                break;
+            case 3: /* |script_script_style=6| */
                 choose_mlist(script_script_mlist);
-                break;          /* |script_script_style=6| */
-            }                   /* there are no other cases */
+                break;
+            }
             flush_node_list(display_mlist(q));
             flush_node_list(text_mlist(q));
             flush_node_list(script_mlist(q));
@@ -3413,6 +3929,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         case ins_node:
         case mark_node:
         case adjust_node:
+        case boundary_node:
         case whatsit_node:
         case penalty_node:
         case disc_node:
@@ -3427,21 +3944,22 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             break;
         case glue_node:
             /*
-               Conditional math glue (`\.{\\nonscript}') results in a |glue_node|
-               pointing to |zero_glue|, with |subtype(q)=cond_math_glue|; in such a case
-               the node following will be eliminated if it is a glue or kern node and if the
-               current size is different from |text_size|. Unconditional math glue
-               (`\.{\\muskip}') is converted to normal glue by multiplying the dimensions
-               by |cur_mu|.
-             */
+                conditional math glue (`\.{\\nonscript}') results in a |glue_node|
+                pointing to |zero_glue|, with |subtype(q)=cond_math_glue|; in such a case
+                the node following will be eliminated if it is a glue or kern node and if the
+                current size is different from |text_size|
+
+                unconditional math glue (`\.{\\muskip}') is converted to normal glue by
+                multiplying the dimensions by |cur_mu|
+
+            */
             if (subtype(q) == mu_glue) {
                 x = glue_ptr(q);
                 y = math_glue(x, cur_mu);
                 delete_glue_ref(x);
                 glue_ptr(q) = y;
                 subtype(q) = normal;
-            } else if ((cur_size != text_size)
-                       && (subtype(q) == cond_math_glue)) {
+            } else if ((cur_size != text_size) && (subtype(q) == cond_math_glue)) {
                 p = vlink(q);
                 if (p != null)
                     if ((type(p) == glue_node) || (type(p) == kern_node)) {
@@ -3457,24 +3975,27 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             goto DONE_WITH_NODE;
             break;
         default:
-            confusion("mlist1");        /* this can't happen mlist1 */
+            confusion("mlist1");
         }
-        /* When we get to the following part of the program, we have ``fallen through''
-           from cases that did not lead to |check_dimensions| or |done_with_noad| or
-           |done_with_node|. Thus, |q|~points to a noad whose nucleus may need to be
-           converted to an hlist, and whose subscripts and superscripts need to be
-           appended if they are present.
+        /*
+            When we get to the following part of the program, we have ``fallen through''
+            from cases that did not lead to |check_dimensions| or |done_with_noad| or
+            |done_with_node|. Thus, |q|~points to a noad whose nucleus may need to be
+            converted to an hlist, and whose subscripts and superscripts need to be
+            appended if they are present.
 
-           If |nucleus(q)| is not a |math_char|, the variable |delta| is the amount
-           by which a superscript should be moved right with respect to a subscript
-           when both are present.
-         */
+            If |nucleus(q)| is not a |math_char|, the variable |delta| is the amount
+            by which a superscript should be moved right with respect to a subscript
+            when both are present.
+
+        */
         p = check_nucleus_complexity(q, &delta, cur_style);
 
         if ((subscr(q) == null) && (supscr(q) == null)) {
             assign_new_hlist(q, p);
         } else {
-            make_scripts(q, p, delta, cur_style);       /* top, bottom */
+            /* top, bottom */
+            make_scripts(q, p, delta, cur_style, 0, 0);
         }
       CHECK_DIMENSIONS:
         z = hpack(new_hlist(q), 0, additional, -1);
@@ -3483,7 +4004,8 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         if (depth(z) > max_d)
             max_d = depth(z);
         list_ptr(z) = null;
-        flush_node(z);          /* only drop the \.{\\hbox} */
+        /* only drop the \.{\\hbox} */
+        flush_node(z);
       DONE_WITH_NOAD:
         r = q;
         r_type = type(r);
@@ -3501,15 +4023,16 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         type(r) = simple_noad;
         subtype(r) = ord_noad_type;
     }
-    /* Make a second pass over the mlist, removing all noads and inserting the
-       proper spacing and penalties */
+    /*
+        Make a second pass over the mlist, removing all noads and inserting the
+        proper spacing and penalties.
 
-    /* We have now tied up all the loose ends of the first pass of |mlist_to_hlist|.
-       The second pass simply goes through and hooks everything together with the
-       proper glue and penalties. It also handles the |fence_noad|s that
-       might be present, since |max_hl| and |max_d| are now known. Variable |p| points
-       to a node at the current end of the final hlist.
-     */
+        We have now tied up all the loose ends of the first pass of |mlist_to_hlist|.
+        The second pass simply goes through and hooks everything together with the
+        proper glue and penalties. It also handles the |fence_noad|s that
+        might be present, since |max_hl| and |max_d| are now known. Variable |p| points
+        to a node at the current end of the final hlist.
+    */
     p = temp_head;
     vlink(p) = null;
     q = mlist;
@@ -3520,13 +4043,16 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     cur_mu = x_over_n(get_math_quad(cur_size), 18);
   NEXT_NODE:
     while (q != null) {
-        /* If node |q| is a style node, change the style and |goto delete_q|;
-           otherwise if it is not a noad, put it into the hlist,
-           advance |q|, and |goto done|; otherwise set |s| to the size
-           of noad |q|, set |t| to the associated type (|ord_noad..
-           inner_noad|), and set |pen| to the associated penalty */
-        /* Just before doing the big |case| switch in the second pass, the program
-           sets up default values so that most of the branches are short. */
+        /*
+            If node |q| is a style node, change the style and |goto delete_q|;
+            otherwise if it is not a noad, put it into the hlist,
+            advance |q|, and |goto done|; otherwise set |s| to the size
+            of noad |q|, set |t| to the associated type (|ord_noad..
+            inner_noad|), and set |pen| to the associated penalty
+
+            Just before doing the big |case| switch in the second pass, the program
+            sets up default values so that most of the branches are short.
+        */
         t = simple_noad;
         t_subtype = ord_noad_type;
         pen = inf_penalty;
@@ -3580,10 +4106,11 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             goto NEXT_NODE;
             break;
         default:
-            confusion("mlist3");        /* this can't happen mlist3 */
+            confusion("mlist3");
         }
         /* Append inter-element spacing based on |r_type| and |t| */
-        if (r_type > 0) {       /* not the first noad */
+        if (r_type > 0) {
+            /* not the first noad */
             z = math_spacing_glue(r_subtype, t_subtype, cur_style, cur_mu);
             if (z != null) {
                 reset_attributes(z, node_attr(p));
@@ -3591,12 +4118,13 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 p = z;
             }
         }
+        /*
+            Append any |new_hlist| entries for |q|, and any appropriate penalties
 
-        /* Append any |new_hlist| entries for |q|, and any appropriate penalties */
-        /* We insert a penalty node after the hlist entries of noad |q| if |pen|
-           is not an ``infinite'' penalty, and if the node immediately following |q|
-           is not a penalty node or a |rel_noad| or absent entirely. */
-
+            We insert a penalty node after the hlist entries of noad |q| if |pen|
+            is not an ``infinite'' penalty, and if the node immediately following |q|
+            is not a penalty node or a |rel_noad| or absent entirely.
+        */
         if (new_hlist(q) != null) {
             couple_nodes(p,new_hlist(q));
             do {
@@ -3606,8 +4134,7 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         if (penalties && vlink(q) != null && pen < inf_penalty) {
             r_type = type(vlink(q));
             r_subtype = subtype(vlink(q));
-            if (r_type != penalty_node
-                && (r_type != simple_noad || r_subtype != rel_noad_type)) {
+            if (r_type != penalty_node && (r_type != simple_noad || r_subtype != rel_noad_type)) {
                 z = new_penalty(pen);
                 reset_attributes(z, node_attr(q));
                 couple_nodes(p,z);
@@ -3623,15 +4150,16 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
       DELETE_Q:
         r = q;
         q = vlink(q);
-        /* The m-to-hlist conversion takes place in-place,
-           so the various dependant fields may not be freed
-           (as would happen if |flush_node| was called).
-           A low-level |free_node| is easier than attempting
-           to nullify such dependant fields for all possible
-           node and noad types.
-         */
+        /*
+            The m-to-hlist conversion takes place in-place, so the various dependant
+            fields may not be freed (as would happen if |flush_node| was called).
+
+            A low-level |free_node| is easier than attempting to nullify such dependant
+            fields for all possible node and noad types.
+        */
         if (nodetype_has_attributes(type(r)))
             delete_attribute_ref(node_attr(r));
+        reset_node_properties(r);
         free_node(r, get_node_size(type(r), subtype(r)));
     }
 }

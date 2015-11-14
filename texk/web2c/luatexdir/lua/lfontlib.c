@@ -41,9 +41,9 @@ static int font_read_tfm(lua_State * L)
     scaled s;
     int k;
     const char *cnom;
-    if (lua_isstring(L, 1)) {
+    if (lua_type(L, 1) == LUA_TSTRING) {
         cnom = lua_tostring(L, 1);
-        if (lua_isnumber(L, 2)) {
+        if (lua_type(L, 2) == LUA_TNUMBER) {
             s = (int) lua_tonumber(L, 2);
             if (strlen(cnom)) {
                 f = get_fontid();
@@ -72,10 +72,10 @@ static int font_read_vf(lua_State * L)
 {
     int i;
     const char *cnom;
-    if (lua_isstring(L, 1)) {
+    if (lua_type(L, 1) == LUA_TSTRING) {
         cnom = lua_tostring(L, 1);
         if (strlen(cnom)) {
-            if (lua_isnumber(L, 2)) {
+            if (lua_type(L, 2) == LUA_TNUMBER) {
                 i = (int) lua_tonumber(L, 2);
                 return make_vf_table(L, cnom, (scaled) i);
             } else {
@@ -296,7 +296,7 @@ static int l_vf_char(lua_State * L)
     internal_font_number lf = vsp->lf;
     int ex_glyph = vsp->ex_glyph/1000;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.char() outside virtual font");
+        normal_error("vf", "vf.char() outside virtual font");
     k = (int) luaL_checkinteger(L, 1);
     if (!char_exists(lf, (int) k)) {
         char_warning(lf, (int) k);
@@ -319,7 +319,7 @@ static int l_vf_down(lua_State * L)
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.down() outside virtual font");
+        normal_error("vf", "vf.down() outside virtual font");
     i = (scaled) luaL_checkinteger(L, 1);
     i = store_scaled_f(i, vsp->fs_f);
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
@@ -332,7 +332,7 @@ static int l_vf_fontid(lua_State * L)
 {
     vf_struct *vsp = static_pdf->vfstruct;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.fontid() outside virtual font");
+        normal_error("vf", "vf.fontid() outside virtual font");
     vsp->lf = (int) luaL_checkinteger(L, 1);
     return 0;
 }
@@ -342,7 +342,7 @@ static int l_vf_image(lua_State * L)
     int k;
     vf_struct *vsp = static_pdf->vfstruct;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.image() outside virtual font");
+        normal_error("vf", "vf.image() outside virtual font");
     k = (int) luaL_checkinteger(L, 1);
     vf_out_image(static_pdf, k);
     return 0;
@@ -353,7 +353,7 @@ static int l_vf_node(lua_State * L)
     int k;
     vf_struct *vsp = static_pdf->vfstruct;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.node() outside virtual font");
+        normal_error("vf", "vf.node() outside virtual font");
     k = (int) luaL_checkinteger(L, 1);
     hlist_out(static_pdf, (halfword) k);
     return 0;
@@ -363,7 +363,7 @@ static int l_vf_nop(lua_State * L)
 {
     vf_struct *vsp = static_pdf->vfstruct;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.nop() outside virtual font");
+        normal_error("vf", "vf.nop() outside virtual font");
     return 0;
 }
 
@@ -372,9 +372,9 @@ static int l_vf_pop(lua_State * L)
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.pop() outside virtual font");
+        normal_error("vf", "vf.pop() outside virtual font");
     if (vsp->packet_stack_level == vsp->packet_stack_minlevel)
-        pdf_error("vf", "packet_stack_level underflow");
+        normal_error("vf", "packet_stack_level underflow");
     vsp->packet_stack_level--;
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
     synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
@@ -386,11 +386,11 @@ static int l_vf_push(lua_State * L)
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.push() outside virtual font");
+        normal_error("vf", "vf.push() outside virtual font");
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
     vsp->packet_stack_level++;
     if (vsp->packet_stack_level == packet_stack_size)
-        pdf_error("vf", "packet_stack_level overflow");
+        normal_error("vf", "packet_stack_level overflow");
     vsp->packet_stack[vsp->packet_stack_level] = *mat_p;
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
     return 0;
@@ -402,7 +402,7 @@ static int l_vf_right(lua_State * L)
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.right() outside virtual font");
+        normal_error("vf", "vf.right() outside virtual font");
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
     i = (scaled) luaL_checkinteger(L, 1);
     i = store_scaled_f(i, vsp->fs_f);
@@ -417,7 +417,7 @@ static int l_vf_rule(lua_State * L)
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.rule() outside virtual font");
+        normal_error("vf", "vf.rule() outside virtual font");
     size.h = (scaled) luaL_checkinteger(L, 1);
     size.v = (scaled) luaL_checkinteger(L, 2);
     size.h = store_scaled_f(size.h, vsp->fs_f);
@@ -436,7 +436,7 @@ static int l_vf_special(lua_State * L)
     int texstr;
     vf_struct *vsp = static_pdf->vfstruct;
     if (!vsp->vflua)
-        pdf_error("vf", "vf.special() outside virtual font");
+        normal_error("vf", "vf.special() outside virtual font");
     st.s = lua_tolstring(L, 1, &(st.l));
     texstr = maketexlstring(st.s, st.l);
     pdf_literal(static_pdf, texstr, scan_special, false);

@@ -1,5 +1,5 @@
 /* commands.h
-   
+
    Copyright 2008 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -61,162 +61,164 @@ The ``expandable'' commands come first.
 */
 
 typedef enum {
-    relax_cmd = 0,              /* do nothing ( \.{\\relax} ) */
-#  define escape_cmd  relax_cmd /* escape delimiter (called \.\\ in {\sl The \TeX book\/}) */
-    left_brace_cmd,             /* beginning of a group ( \.\{ ) */
-    right_brace_cmd,            /* ending of a group ( \.\} ) */
-    math_shift_cmd,             /* mathematics shift character ( \.\$ ) */
-    tab_mark_cmd,               /* alignment delimiter ( \.\&, \.{\\span} ) */
-    car_ret_cmd,                /* end of line ( |carriage_return|, \.{\\cr}, \.{\\crcr} ) */
-#  define out_param_cmd  car_ret_cmd    /* output a macro parameter */
-    mac_param_cmd,              /* macro parameter symbol ( \.\# ) */
-    sup_mark_cmd,               /* superscript ( \.{\char'136} ) */
-    sub_mark_cmd,               /* subscript ( \.{\char'137} ) */
-    endv_cmd,                   /* end of \<v_j> list in alignment template */
-#  define ignore_cmd endv_cmd   /* characters to ignore ( \.{\^\^@@} ) */
-    spacer_cmd,                 /* characters equivalent to blank space ( \.{\ } ) */
-    letter_cmd,                 /* characters regarded as letters ( \.{A..Z}, \.{a..z} ) */
-    other_char_cmd,             /* none of the special character types */
-    par_end_cmd,                /* end of paragraph ( \.{\\par} ) */
-#  define active_char_cmd par_end_cmd   /* characters that invoke macros ( \.{\char`\~} ) */
-#  define match_cmd par_end_cmd /* match a macro parameter */
-    stop_cmd,                   /* end of job ( \.{\\end}, \.{\\dump} ) */
-#  define comment_cmd stop_cmd  /* characters that introduce comments ( \.\% ) */
-#  define end_match_cmd stop_cmd        /* end of parameters to macro */
-    delim_num_cmd,              /* specify delimiter numerically ( \.{\\delimiter} ) */
-#  define invalid_char_cmd delim_num_cmd        /* characters that shouldn't appear ( \.{\^\^?} ) */
-#  define max_char_code_cmd delim_num_cmd
-    /* largest catcode for individual characters */
-    char_num_cmd,               /* character specified numerically ( \.{\\char} ) */
-    math_char_num_cmd,          /* explicit math code ( \.{\\mathchar} ) */
-    mark_cmd,                   /* mark definition ( \.{\\mark} ) */
-    xray_cmd,                   /* peek inside of \TeX\ ( \.{\\show}, \.{\\showbox}, etc.~) */
-    make_box_cmd,               /* make a box ( \.{\\box}, \.{\\copy}, \.{\\hbox}, etc.~) */
-    hmove_cmd,                  /* horizontal motion ( \.{\\moveleft}, \.{\\moveright} ) */
-    vmove_cmd,                  /* vertical motion ( \.{\\raise}, \.{\\lower} ) */
-    un_hbox_cmd,                /* unglue a box ( \.{\\unhbox}, \.{\\unhcopy} ) */
-    un_vbox_cmd,                /* unglue a box ( \.{\\unvbox}, \.{\\unvcopy} or 
-                                   \.{\\pagediscards}, \.{\\splitdiscards} ) */
-    remove_item_cmd,            /* nullify last item ( \.{\\unpenalty}, \.{\\unkern}, \.{\\unskip} ) */
-    hskip_cmd,                  /* horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~) */
-    vskip_cmd,                  /* vertical glue ( \.{\\vskip}, \.{\\vfil}, etc.~) */
-    mskip_cmd,                  /* math glue ( \.{\\mskip} ) */
-    kern_cmd,                   /* fixed space ( \.{\\kern}) */
-    mkern_cmd,                  /* math kern ( \.{\\mkern} ) */
-    leader_ship_cmd,            /* use a box ( \.{\\shipout}, \.{\\leaders}, etc.~) */
-    halign_cmd,                 /* horizontal table alignment ( \.{\\halign} ) */
-    valign_cmd,                 /* vertical table alignment ( \.{\\valign} ) */
-    no_align_cmd,               /* temporary escape from alignment ( \.{\\noalign} ) */
-    vrule_cmd,                  /* vertical rule ( \.{\\vrule} ) */
-    hrule_cmd,                  /* horizontal rule ( \.{\\hrule} ) */
-    insert_cmd,                 /* vlist inserted in box ( \.{\\insert} ) */
-    vadjust_cmd,                /* vlist inserted in enclosing paragraph ( \.{\\vadjust} ) */
-    ignore_spaces_cmd,          /* gobble |spacer| tokens ( \.{\\ignorespaces} ) */
-    after_assignment_cmd,       /* save till assignment is done ( \.{\\afterassignment} ) */
-    after_group_cmd,            /* save till group is done ( \.{\\aftergroup} ) */
-    break_penalty_cmd,          /* additional badness ( \.{\\penalty} ) */
-    start_par_cmd,              /* begin paragraph ( \.{\\indent}, \.{\\noindent} ) */
-    ital_corr_cmd,              /* italic correction ( \.{\\/} ) */
-    accent_cmd,                 /* attach accent in text ( \.{\\accent} ) */
-    math_accent_cmd,            /* attach accent in math ( \.{\\mathaccent} ) */
-    discretionary_cmd,          /* discretionary texts ( \.{\\-}, \.{\\discretionary} ) */
-    eq_no_cmd,                  /* equation number ( \.{\\eqno}, \.{\\leqno} ) */
-    left_right_cmd,             /* variable delimiter ( \.{\\left}, \.{\\right} or \.{\\middle} ) */
-    math_comp_cmd,              /* component of formula ( \.{\\mathbin}, etc.~) */
-    limit_switch_cmd,           /* diddle limit conventions ( \.{\\displaylimits}, etc.~) */
-    above_cmd,                  /* generalized fraction ( \.{\\above}, \.{\\atop}, etc.~) */
-    math_style_cmd,             /* style specification ( \.{\\displaystyle}, etc.~) */
-    math_choice_cmd,            /* choice specification ( \.{\\mathchoice} ) */
-    non_script_cmd,             /* conditional math glue ( \.{\\nonscript} ) */
-    vcenter_cmd,                /* vertically center a vbox ( \.{\\vcenter} ) */
-    case_shift_cmd,             /* force specific case ( \.{\\lowercase}, \.{\\uppercase}~) */
-    message_cmd,                /* send to user ( \.{\\message}, \.{\\errmessage} ) */
-    extension_cmd,              /* extensions to \TeX\ ( \.{\\write}, \.{\\special}, etc.~) */
-    in_stream_cmd,              /* files for reading ( \.{\\openin}, \.{\\closein} ) */
-    begin_group_cmd,            /* begin local grouping ( \.{\\begingroup} ) */
-    end_group_cmd,              /* end local grouping ( \.{\\endgroup} ) */
-    omit_cmd,                   /* omit alignment template ( \.{\\omit} ) */
-    ex_space_cmd,               /* explicit space ( \.{\\\ } ) */
-    no_boundary_cmd,            /* suppress boundary ligatures ( \.{\\noboundary} ) */
-    radical_cmd,                /* square root and similar signs ( \.{\\radical} ) */
-    super_sub_script_cmd,       /* explicit super- or subscript */
-    math_shift_cs_cmd,          /* start- and endmath */
-    end_cs_name_cmd,            /* end control sequence ( \.{\\endcsname} ) */
-    char_ghost_cmd,             /* \.{\\leftghost}, \.{\\rightghost} character for kerning */
-    assign_local_box_cmd,       /* box for guillemets \.{\\localleftbox} or \.{\\localrightbox} */
-    char_given_cmd,             /* character code defined by \.{\\chardef} */
-#  define min_internal_cmd char_given_cmd
-    /* the smallest code that can follow \.{\\the} */
-    math_given_cmd,             /* math code defined by \.{\\mathchardef} */
-    xmath_given_cmd,            /* math code defined by \.{\\Umathchardef} or \.{\\Umathcharnumdef} */
-    last_item_cmd,              /* most recent item ( \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip} ) */
+    relax_cmd = 0,                        /* do nothing ( \.{\\relax} ) */
+#  define escape_cmd  relax_cmd           /* escape delimiter (called \.\\ in {\sl The \TeX book\/}) */
+    left_brace_cmd,                       /* beginning of a group ( \.\{ ) */
+    right_brace_cmd,                      /* ending of a group ( \.\} ) */
+    math_shift_cmd,                       /* mathematics shift character ( \.\$ ) */
+    tab_mark_cmd,                         /* alignment delimiter ( \.\&, \.{\\span} ) */
+    car_ret_cmd,                          /* end of line ( |carriage_return|, \.{\\cr}, \.{\\crcr} ) */
+#  define out_param_cmd  car_ret_cmd      /* output a macro parameter */
+    mac_param_cmd,                        /* macro parameter symbol ( \.\# ) */
+    sup_mark_cmd,                         /* superscript ( \.{\char'136} ) */
+    sub_mark_cmd,                         /* subscript ( \.{\char'137} ) */
+    endv_cmd,                             /* end of \<v_j> list in alignment template */
+#  define ignore_cmd endv_cmd             /* characters to ignore ( \.{\^\^@@} ) */
+    spacer_cmd,                           /* characters equivalent to blank space ( \.{\ } ) */
+    letter_cmd,                           /* characters regarded as letters ( \.{A..Z}, \.{a..z} ) */
+    other_char_cmd,                       /* none of the special character types */
+    par_end_cmd,                          /* end of paragraph ( \.{\\par} ) */
+#  define active_char_cmd par_end_cmd     /* characters that invoke macros ( \.{\char`\~} ) */
+#  define match_cmd par_end_cmd           /* match a macro parameter */
+    stop_cmd,                             /* end of job ( \.{\\end}, \.{\\dump} ) */
+#  define comment_cmd stop_cmd            /* characters that introduce comments ( \.\% ) */
+#  define end_match_cmd stop_cmd          /* end of parameters to macro */
+    delim_num_cmd,                        /* specify delimiter numerically ( \.{\\delimiter} ) */
+#  define invalid_char_cmd delim_num_cmd  /* characters that shouldn't appear ( \.{\^\^?} ) */
+#  define max_char_code_cmd delim_num_cmd /* largest catcode for individual characters */
+    char_num_cmd,                         /* character specified numerically ( \.{\\char} ) */
+    math_char_num_cmd,                    /* explicit math code ( \.{\\mathchar} ) */
+    mark_cmd,                             /* mark definition ( \.{\\mark} ) */
+    xray_cmd,                             /* peek inside of \TeX\ ( \.{\\show}, \.{\\showbox}, etc.~) */
+    make_box_cmd,                         /* make a box ( \.{\\box}, \.{\\copy}, \.{\\hbox}, etc.~) */
+    hmove_cmd,                            /* horizontal motion ( \.{\\moveleft}, \.{\\moveright} ) */
+    vmove_cmd,                            /* vertical motion ( \.{\\raise}, \.{\\lower} ) */
+    un_hbox_cmd,                          /* unglue a box ( \.{\\unhbox}, \.{\\unhcopy} ) */
+    un_vbox_cmd,                          /* unglue a box ( \.{\\unvbox}, \.{\\unvcopy} or \.{\\pagediscards}, \.{\\splitdiscards} ) */
+    remove_item_cmd,                      /* nullify last item ( \.{\\unpenalty}, \.{\\unkern}, \.{\\unskip} ) */
+    hskip_cmd,                            /* horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~) */
+    vskip_cmd,                            /* vertical glue ( \.{\\vskip}, \.{\\vfil}, etc.~) */
+    mskip_cmd,                            /* math glue ( \.{\\mskip} ) */
+    kern_cmd,                             /* fixed space ( \.{\\kern}) */
+    mkern_cmd,                            /* math kern ( \.{\\mkern} ) */
+    leader_ship_cmd,                      /* use a box ( \.{\\shipout}, \.{\\leaders}, etc.~) */
+    halign_cmd,                           /* horizontal table alignment ( \.{\\halign} ) */
+    valign_cmd,                           /* vertical table alignment ( \.{\\valign} ) */
+    no_align_cmd,                         /* temporary escape from alignment ( \.{\\noalign} ) */
+    vrule_cmd,                            /* vertical rule ( \.{\\vrule} ) */
+    hrule_cmd,                            /* horizontal rule ( \.{\\hrule} ) */
+    no_vrule_cmd,                         /* no rule, just reserve space ( \.{\\novrule} )*/
+    no_hrule_cmd,                         /* no rule, just reserve space ( \.{\\nohrule} )*/
+    insert_cmd,                           /* vlist inserted in box ( \.{\\insert} ) */
+    vadjust_cmd,                          /* vlist inserted in enclosing paragraph ( \.{\\vadjust} ) */
+    ignore_spaces_cmd,                    /* gobble |spacer| tokens ( \.{\\ignorespaces} ) */
+    after_assignment_cmd,                 /* save till assignment is done ( \.{\\afterassignment} ) */
+    after_group_cmd,                      /* save till group is done ( \.{\\aftergroup} ) */
+    break_penalty_cmd,                    /* additional badness ( \.{\\penalty} ) */
+    start_par_cmd,                        /* begin paragraph ( \.{\\indent}, \.{\\noindent} ) */
+    ital_corr_cmd,                        /* italic correction ( \.{\\/} ) */
+    accent_cmd,                           /* attach accent in text ( \.{\\accent} ) */
+    math_accent_cmd,                      /* attach accent in math ( \.{\\mathaccent} ) */
+    discretionary_cmd,                    /* discretionary texts ( \.{\\-}, \.{\\discretionary} ) */
+    eq_no_cmd,                            /* equation number ( \.{\\eqno}, \.{\\leqno} ) */
+    left_right_cmd,                       /* variable delimiter ( \.{\\left}, \.{\\right} or \.{\\middle} ) */
+    math_comp_cmd,                        /* component of formula ( \.{\\mathbin}, etc.~) */
+    limit_switch_cmd,                     /* diddle limit conventions ( \.{\\displaylimits}, etc.~) */
+    above_cmd,                            /* generalized fraction ( \.{\\above}, \.{\\atop}, etc.~) */
+    math_style_cmd,                       /* style specification ( \.{\\displaystyle}, etc.~) */
+    math_choice_cmd,                      /* choice specification ( \.{\\mathchoice} ) */
+    non_script_cmd,                       /* conditional math glue ( \.{\\nonscript} ) */
+    vcenter_cmd,                          /* vertically center a vbox ( \.{\\vcenter} ) */
+    case_shift_cmd,                       /* force specific case ( \.{\\lowercase}, \.{\\uppercase}~) */
+    message_cmd,                          /* send to user ( \.{\\message}, \.{\\errmessage} ) */
+    normal_cmd,                           /* general extensions to \TeX\ that don't fit into a category */
+    extension_cmd,                        /* extensions to \TeX\ ( \.{\\write}, \.{\\special}, etc.~) */
+    option_cmd,
+    in_stream_cmd,                        /* files for reading ( \.{\\openin}, \.{\\closein} ) */
+    begin_group_cmd,                      /* begin local grouping ( \.{\\begingroup} ) */
+    end_group_cmd,                        /* end local grouping ( \.{\\endgroup} ) */
+    omit_cmd,                             /* omit alignment template ( \.{\\omit} ) */
+    ex_space_cmd,                         /* explicit space ( \.{\\\ } ) */
+    boundary_cmd,                         /* insert boundry node with value ( \.{\\boundary} ) */
+    no_boundary_cmd,                      /* suppress boundary ligatures ( \.{\\noboundary} ) */
+    radical_cmd,                          /* square root and similar signs ( \.{\\radical} ) */
+    super_sub_script_cmd,                 /* explicit super- or subscript */
+    math_shift_cs_cmd,                    /* start- and endmath */
+    end_cs_name_cmd,                      /* end control sequence ( \.{\\endcsname} ) */
+    char_ghost_cmd,                       /* \.{\\leftghost}, \.{\\rightghost} character for kerning */
+    assign_local_box_cmd,                 /* box for guillemets \.{\\localleftbox} or \.{\\localrightbox} */
+    char_given_cmd,                       /* character code defined by \.{\\chardef} */
+#  define min_internal_cmd char_given_cmd /* the smallest code that can follow \.{\\the} */
+    math_given_cmd,                       /* math code defined by \.{\\mathchardef} */
+    xmath_given_cmd,                      /* math code defined by \.{\\Umathchardef} or \.{\\Umathcharnumdef} */
+    last_item_cmd,                        /* most recent item ( \.{\\lastpenalty}, \.{\\lastkern}, \.{\\lastskip} ) */
 #  define max_non_prefixed_command_cmd last_item_cmd    /* largest command code that can't be \.{\\global} */
-    toks_register_cmd,          /* token list register ( \.{\\toks} ) */
-    assign_toks_cmd,            /* special token list ( \.{\\output}, \.{\\everypar}, etc.~) */
-    assign_int_cmd,             /* user-defined integer ( \.{\\tolerance}, \.{\\day}, etc.~) */
-    assign_attr_cmd,            /*  user-defined attributes  */
-    assign_dimen_cmd,           /* user-defined length ( \.{\\hsize}, etc.~) */
-    assign_glue_cmd,            /* user-defined glue ( \.{\\baselineskip}, etc.~) */
-    assign_mu_glue_cmd,         /* user-defined muglue ( \.{\\thinmuskip}, etc.~) */
-    assign_font_dimen_cmd,      /* user-defined font dimension ( \.{\\fontdimen} ) */
-    assign_font_int_cmd,        /* user-defined font integer ( \.{\\hyphenchar}, \.{\\skewchar} ) */
-    set_aux_cmd,                /* specify state info ( \.{\\spacefactor}, \.{\\prevdepth} ) */
-    set_prev_graf_cmd,          /* specify state info ( \.{\\prevgraf} ) */
-    set_page_dimen_cmd,         /* specify state info ( \.{\\pagegoal}, etc.~) */
-    set_page_int_cmd,           /* specify state info ( \.{\\deadcycles},  \.{\\insertpenalties} ) */
-    set_box_dimen_cmd,          /* change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} ) */
-    set_tex_shape_cmd,          /* specify fancy paragraph shape ( \.{\\parshape} ) */
-    set_etex_shape_cmd,         /* specify etex extended list ( \.{\\interlinepenalties}, etc.~) */
-    def_char_code_cmd,          /* define a character code ( \.{\\catcode}, etc.~) */
-    def_del_code_cmd,           /* define a delimiter code ( \.{\\delcode}) */
-    extdef_math_code_cmd,       /* define an extended character code ( \.{\\Umathcode}, etc.~) */
-    extdef_del_code_cmd,        /* define an extended delimiter code ( \.{\\Udelcode}, etc.~) */
-    def_family_cmd,             /* declare math fonts ( \.{\\textfont}, etc.~) */
-    set_math_param_cmd,         /* set math parameters ( \.{\\mathquad}, etc.~) */
-    set_font_cmd,               /* set current font ( font identifiers ) */
-    def_font_cmd,               /* define a font file ( \.{\\font} ) */
-    register_cmd,               /* internal register ( \.{\\count}, \.{\\dimen}, etc.~) */
-    assign_box_dir_cmd,         /* (\.{\\boxdir}) */
-    assign_dir_cmd,             /* (\.{\\pagedir}, \.{\\textdir}) */
-#  define max_internal_cmd assign_dir_cmd
-    /* the largest code that can follow \.{\\the} */
-    advance_cmd,                /* advance a register or parameter ( \.{\\advance} ) */
-    multiply_cmd,               /* multiply a register or parameter ( \.{\\multiply} ) */
-    divide_cmd,                 /* divide a register or parameter ( \.{\\divide} ) */
-    prefix_cmd,                 /* qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} ) */
-    let_cmd,                    /* assign a command code ( \.{\\let}, \.{\\futurelet} ) */
-    shorthand_def_cmd,          /* code definition ( \.{\\chardef}, \.{\\countdef}, etc.~) */
-    read_to_cs_cmd,             /* read into a control sequence ( \.{\\read} ) */
-    def_cmd,                    /* macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} ) */
-    set_box_cmd,                /* set a box ( \.{\\setbox} ) */
-    hyph_data_cmd,              /* hyphenation data ( \.{\\hyphenation}, \.{\\patterns} ) */
-    set_interaction_cmd,        /* define level of interaction ( \.{\\batchmode}, etc.~) */
-    letterspace_font_cmd,       /* letterspace a font ( \.{\\letterspacefont} ) */
-    pdf_copy_font_cmd,          /* create a new font instance ( \.{\\pdfcopyfont} ) */
-    undefined_cs_cmd,           /* initial state of most |eq_type| fields */
-    expand_after_cmd,           /* special expansion ( \.{\\expandafter} ) */
-    no_expand_cmd,              /* special nonexpansion ( \.{\\noexpand} ) */
-    input_cmd,                  /* input a source file ( \.{\\input}, \.{\\endinput} or 
-                                   \.{\\scantokens} or \.{\\scantextokens} ) */
-    if_test_cmd,                /* conditional text ( \.{\\if}, \.{\\ifcase}, etc.~) */
-    fi_or_else_cmd,             /* delimiters for conditionals ( \.{\\else}, etc.~) */
-    cs_name_cmd,                /* make a control sequence from tokens ( \.{\\csname} ) */
-    convert_cmd,                /* convert to text ( \.{\\number}, \.{\\string}, etc.~) */
-    the_cmd,                    /* expand an internal quantity ( \.{\\the} or \.{\\unexpanded}, \.{\\detokenize} ) */
-    top_bot_mark_cmd,           /* inserted mark ( \.{\\topmark}, etc.~) */
-    call_cmd,                   /* non-long, non-outer control sequence */
-    long_call_cmd,              /* long, non-outer control sequence */
-    outer_call_cmd,             /* non-long, outer control sequence */
-    long_outer_call_cmd,        /* long, outer control sequence */
-    end_template_cmd,           /* end of an alignment template */
-    dont_expand_cmd,            /* the following token was marked by \.{\\noexpand} */
-    glue_ref_cmd,               /* the equivalent points to a glue specification */
-    shape_ref_cmd,              /* the equivalent points to a parshape specification */
-    box_ref_cmd,                /* the equivalent points to a box node, or is |null| */
-    data_cmd,                   /* the equivalent is simply a halfword number */
+    toks_register_cmd,                    /* token list register ( \.{\\toks} ) */
+    assign_toks_cmd,                      /* special token list ( \.{\\output}, \.{\\everypar}, etc.~) */
+    assign_int_cmd,                       /* user-defined integer ( \.{\\tolerance}, \.{\\day}, etc.~) */
+    assign_attr_cmd,                      /*  user-defined attributes  */
+    assign_dimen_cmd,                     /* user-defined length ( \.{\\hsize}, etc.~) */
+    assign_glue_cmd,                      /* user-defined glue ( \.{\\baselineskip}, etc.~) */
+    assign_mu_glue_cmd,                   /* user-defined muglue ( \.{\\thinmuskip}, etc.~) */
+    assign_font_dimen_cmd,                /* user-defined font dimension ( \.{\\fontdimen} ) */
+    assign_font_int_cmd,                  /* user-defined font integer ( \.{\\hyphenchar}, \.{\\skewchar} ) */
+    set_aux_cmd,                          /* specify state info ( \.{\\spacefactor}, \.{\\prevdepth} ) */
+    set_prev_graf_cmd,                    /* specify state info ( \.{\\prevgraf} ) */
+    set_page_dimen_cmd,                   /* specify state info ( \.{\\pagegoal}, etc.~) */
+    set_page_int_cmd,                     /* specify state info ( \.{\\deadcycles},  \.{\\insertpenalties} ) */
+    set_box_dimen_cmd,                    /* change dimension of box ( \.{\\wd}, \.{\\ht}, \.{\\dp} ) */
+    set_tex_shape_cmd,                    /* specify fancy paragraph shape ( \.{\\parshape} ) */
+    set_etex_shape_cmd,                   /* specify etex extended list ( \.{\\interlinepenalties}, etc.~) */
+    def_char_code_cmd,                    /* define a character code ( \.{\\catcode}, etc.~) */
+    def_del_code_cmd,                     /* define a delimiter code ( \.{\\delcode}) */
+    extdef_math_code_cmd,                 /* define an extended character code ( \.{\\Umathcode}, etc.~) */
+    extdef_del_code_cmd,                  /* define an extended delimiter code ( \.{\\Udelcode}, etc.~) */
+    def_family_cmd,                       /* declare math fonts ( \.{\\textfont}, etc.~) */
+    set_math_param_cmd,                   /* set math parameters ( \.{\\mathquad}, etc.~) */
+    set_font_cmd,                         /* set current font ( font identifiers ) */
+    def_font_cmd,                         /* define a font file ( \.{\\font} ) */
+    register_cmd,                         /* internal register ( \.{\\count}, \.{\\dimen}, etc.~) */
+    assign_box_dir_cmd,                   /* (\.{\\boxdir}) */
+    assign_dir_cmd,                       /* (\.{\\pagedir}, \.{\\textdir}) */
+# define max_internal_cmd assign_dir_cmd  /* the largest code that can follow \.{\\the} */
+    advance_cmd,                          /* advance a register or parameter ( \.{\\advance} ) */
+    multiply_cmd,                         /* multiply a register or parameter ( \.{\\multiply} ) */
+    divide_cmd,                           /* divide a register or parameter ( \.{\\divide} ) */
+    prefix_cmd,                           /* qualify a definition ( \.{\\global}, \.{\\long}, \.{\\outer} ) */
+    let_cmd,                              /* assign a command code ( \.{\\let}, \.{\\futurelet} ) */
+    shorthand_def_cmd,                    /* code definition ( \.{\\chardef}, \.{\\countdef}, etc.~) */
+    read_to_cs_cmd,                       /* read into a control sequence ( \.{\\read} ) */
+    def_cmd,                              /* macro definition ( \.{\\def}, \.{\\gdef}, \.{\\xdef}, \.{\\edef} ) */
+    set_box_cmd,                          /* set a box ( \.{\\setbox} ) */
+    hyph_data_cmd,                        /* hyphenation data ( \.{\\hyphenation}, \.{\\patterns} ) */
+    set_interaction_cmd,                  /* define level of interaction ( \.{\\batchmode}, etc.~) */
+    letterspace_font_cmd,                 /* letterspace a font ( \.{\\letterspacefont} ) */
+    expand_font_cmd,                      /* expand glyphs ( \.{\\expandglyphsinfont} ) */
+    copy_font_cmd,                        /* create a new font instance ( \.{\\copyfont} ) */
+    set_font_id_cmd,
+    undefined_cs_cmd,                     /* initial state of most |eq_type| fields */
+    expand_after_cmd,                     /* special expansion ( \.{\\expandafter} ) */
+    no_expand_cmd,                        /* special nonexpansion ( \.{\\noexpand} ) */
+    input_cmd,                            /* input a source file ( \.{\\input}, \.{\\endinput} or \.{\\scantokens} or \.{\\scantextokens} ) */
+    if_test_cmd,                          /* conditional text ( \.{\\if}, \.{\\ifcase}, etc.~) */
+    fi_or_else_cmd,                       /* delimiters for conditionals ( \.{\\else}, etc.~) */
+    cs_name_cmd,                          /* make a control sequence from tokens ( \.{\\csname} ) */
+    convert_cmd,                          /* convert to text ( \.{\\number}, \.{\\string}, etc.~) */
+    the_cmd,                              /* expand an internal quantity ( \.{\\the} or \.{\\unexpanded}, \.{\\detokenize} ) */
+    top_bot_mark_cmd,                     /* inserted mark ( \.{\\topmark}, etc.~) */
+    call_cmd,                             /* non-long, non-outer control sequence */
+    long_call_cmd,                        /* long, non-outer control sequence */
+    outer_call_cmd,                       /* non-long, outer control sequence */
+    long_outer_call_cmd,                  /* long, outer control sequence */
+    end_template_cmd,                     /* end of an alignment template */
+    dont_expand_cmd,                      /* the following token was marked by \.{\\noexpand} */
+    glue_ref_cmd,                         /* the equivalent points to a glue specification */
+    shape_ref_cmd,                        /* the equivalent points to a parshape specification */
+    box_ref_cmd,                          /* the equivalent points to a box node, or is |null| */
+    data_cmd,                             /* the equivalent is simply a halfword number */
 } tex_command_code;
 
-#  define max_command_cmd pdf_copy_font_cmd     /* the largest command code seen at |big_switch| */
+#  define max_command_cmd set_font_id_cmd /* the largest command code seen at |big_switch| */
 #  define last_cmd data_cmd
 #  define max_non_prefixed_command last_item_cmd
 
@@ -224,7 +226,8 @@ typedef enum {
     above_code = 0,
     over_code = 1,
     atop_code = 2,
-    delimited_code = 3
+    skewed_code = 3,
+    delimited_code = 4,
 } fraction_codes;
 
 typedef enum {
@@ -236,21 +239,12 @@ typedef enum {
     etex_code,                  /* command code for \.{\\eTeXVersion} */
     format_name_code,           /* command code for \.{\\AlephVersion} */
     luatex_banner_code,         /* command code for \.{\\luatexbanner}: */
-    pdf_font_name_code,         /* command code for \.{\\pdffontname} */
-    pdf_font_objnum_code,       /* command code for \.{\\pdffontobjnum} */
-    pdf_font_size_code,         /* command code for \.{\\pdffontsize} */
-    pdf_page_ref_code,          /* command code for \.{\\pdfpageref} */
-    pdf_xform_name_code,        /* command code for \.{\\pdfxformname} */
     left_margin_kern_code,      /* command code for \.{\\leftmarginkern} */
     right_margin_kern_code,     /* command code for \.{\\rightmarginkern} */
-    pdf_creation_date_code,     /* command code for \.{\\pdfcreationdate} */
     uniform_deviate_code,       /* command code for \.{\\uniformdeviate} */
     normal_deviate_code,        /* command code for \.{\\normaldeviate} */
-    pdf_insert_ht_code,         /* command code for \.{\\pdfinsertht} */
-    pdf_ximage_bbox_code,       /* command code for \.{\\pdfximagebbox} */
     lua_code,                   /* command code for \.{\\directlua} */
     lua_escape_string_code,     /* command code for \.{\\luaescapestring} */
-    pdf_colorstack_init_code,   /* command code for \.{\\pdfcolorstackinit} */
     luatex_revision_code,       /* command code for \.{\\luatexrevision} */
     luatex_date_code,           /* command code for \.{\\luatexdate} */
     math_style_code,            /* command code for \.{\\mathstyle} */
@@ -261,60 +255,89 @@ typedef enum {
     font_id_code,               /* command code for \.{\\fontid} */
     uchar_code,                 /* command code for \.{\\Uchar} */
     lua_function_code,          /* command code for \.{\\luafunction} */
+    insert_ht_code,             /* command code for \.{\\insertht} */
+    math_char_class_code,
+    math_char_fam_code,
+    math_char_slot_code,
+    /* backend */
+    dvi_feedback_code,
+    pdf_feedback_code,
+    dvi_variable_code,
+    pdf_variable_code,
 } convert_codes;
 
 typedef enum {
-    lastpenalty_code = 0,       /* code for \.{\\lastpenalty} */
-    lastattr_code,              /* not used */
-    lastkern_code,              /* code for \.{\\lastkern} */
-    lastskip_code,              /* code for \.{\\lastskip} */
-    last_node_type_code,        /* code for \.{\\lastnodetype} */
-    input_line_no_code,         /* code for \.{\\inputlineno} */
-    badness_code,               /* code for \.{\\badness} */
-    pdf_last_obj_code,          /* code for \.{\\pdflastobj} */
-    pdf_last_xform_code,        /* code for \.{\\pdflastxform} */
-    pdf_last_ximage_code,       /* code for \.{\\pdflastximage} */
-    pdf_last_ximage_pages_code, /* code for \.{\\pdflastximagepages} */
-    pdf_last_annot_code,        /* code for \.{\\pdflastannot} */
-    last_x_pos_code,        /* code for \.{\\lastxpos} */
-    last_y_pos_code,        /* code for \.{\\lastypos} */
-    pdf_retval_code,            /* global multi-purpose return value */
-    pdf_last_ximage_colordepth_code,    /* code for \.{\\pdflastximagecolordepth} */
-    random_seed_code,           /* code for \.{\\pdfrandomseed} */
-    pdf_last_link_code,         /* code for \.{\\pdflastlink} */
-    luatex_version_code,        /* code for \.{\\luatexversion} */
-    eTeX_minor_version_code,    /* code for \.{\\eTeXminorversion} */
-    eTeX_version_code,          /* code for \.{\\eTeXversion} */
-#  define eTeX_int eTeX_version_code    /* first of \eTeX\ codes for integers */
-    current_group_level_code,   /* code for \.{\\currentgrouplevel} */
-    current_group_type_code,    /* code for \.{\\currentgrouptype} */
-    current_if_level_code,      /* code for \.{\\currentiflevel} */
-    current_if_type_code,       /* code for \.{\\currentiftype} */
-    current_if_branch_code,     /* code for \.{\\currentifbranch} */
-    glue_stretch_order_code,    /* code for \.{\\gluestretchorder} */
-    glue_shrink_order_code,     /* code for \.{\\glueshrinkorder} */
-    font_char_wd_code,          /* code for \.{\\fontcharwd} */
-#  define eTeX_dim font_char_wd_code    /* first of \eTeX\ codes for dimensions */
-    font_char_ht_code,          /* code for \.{\\fontcharht} */
-    font_char_dp_code,          /* code for \.{\\fontchardp} */
-    font_char_ic_code,          /* code for \.{\\fontcharic} */
-    par_shape_length_code,      /* code for \.{\\parshapelength} */
-    par_shape_indent_code,      /* code for \.{\\parshapeindent} */
-    par_shape_dimen_code,       /* code for \.{\\parshapedimen} */
-    glue_stretch_code,          /* code for \.{\\gluestretch} */
-    glue_shrink_code,           /* code for \.{\\glueshrink} */
-    mu_to_glue_code,            /* code for \.{\\mutoglue} */
-#  define eTeX_glue mu_to_glue_code     /* first of \eTeX\ codes for glue */
-    glue_to_mu_code,            /* code for \.{\\gluetomu} */
-#  define eTeX_mu glue_to_mu_code
-    /* first of \eTeX\ codes for muglue */
-    numexpr_code,               /* code for \.{\\numexpr} */
-#  define eTeX_expr numexpr_code        /* first of \eTeX\ codes for expressions */
-    attrexpr_code,              /* not used */
-    dimexpr_code,               /* code for \.{\\dimexpr} */
-    glueexpr_code,              /* code for \.{\\glueexpr} */
-    muexpr_code,                /* code for \.{\\muexpr} */
+    pdf_font_name_code = 32,    /* command code for \.{\\pdffeedback fontname} */
+    pdf_font_objnum_code,       /* command code for \.{\\pdffeedback fontobjnum} */
+    pdf_font_size_code,         /* command code for \.{\\pdffeedback fontsize} */
+    pdf_page_ref_code,          /* command code for \.{\\pdffeedback pageref} */
+    pdf_xform_name_code,        /* command code for \.{\\pdffeedback xformname} */
+    pdf_creation_date_code,     /* command code for \.{\\pdffeedback creationdate} */
+    pdf_colorstack_init_code,   /* command code for \.{\\pdffeedback colorstackinit} */
+    pdf_last_obj_code,
+    pdf_last_annot_code,
+    pdf_retval_code,
+    pdf_last_link_code,
+    pdf_version_code,
+    pdf_revision_code,
+} convert_codes_pdf;
+
+typedef enum {
+    lastpenalty_code = 0,                 /* code for \.{\\lastpenalty} */
+    lastattr_code,                        /* not used */
+    lastkern_code,                        /* code for \.{\\lastkern} */
+    lastskip_code,                        /* code for \.{\\lastskip} */
+    last_node_type_code,                  /* code for \.{\\lastnodetype} */
+    input_line_no_code,                   /* code for \.{\\inputlineno} */
+    badness_code,                         /* code for \.{\\badness} */
+    last_saved_box_resource_index_code,   /* code for \.{\\lastsavedboxresourceindex} */
+    last_saved_image_resource_index_code, /* code for \.{\\lastsavedimageresourceindex} */
+    last_saved_image_resource_pages_code, /* code for \.{\\lastsavedimageresourcepages} */
+    last_x_pos_code,                      /* code for \.{\\lastxpos} */
+    last_y_pos_code,                      /* code for \.{\\lastypos} */
+    random_seed_code,                     /* code for \.{\\randomseed} */
+    luatex_version_code,                  /* code for \.{\\luatexversion} */
+    eTeX_minor_version_code,              /* code for \.{\\eTeXminorversion} */
+    eTeX_version_code,                    /* code for \.{\\eTeXversion} */
+#  define eTeX_int eTeX_version_code      /* first of \eTeX\ codes for integers */
+    current_group_level_code,             /* code for \.{\\currentgrouplevel} */
+    current_group_type_code,              /* code for \.{\\currentgrouptype} */
+    current_if_level_code,                /* code for \.{\\currentiflevel} */
+    current_if_type_code,                 /* code for \.{\\currentiftype} */
+    current_if_branch_code,               /* code for \.{\\currentifbranch} */
+    glue_stretch_order_code,              /* code for \.{\\gluestretchorder} */
+    glue_shrink_order_code,               /* code for \.{\\glueshrinkorder} */
+    font_char_wd_code,                    /* code for \.{\\fontcharwd} */
+#  define eTeX_dim font_char_wd_code      /* first of \eTeX\ codes for dimensions */
+    font_char_ht_code,                    /* code for \.{\\fontcharht} */
+    font_char_dp_code,                    /* code for \.{\\fontchardp} */
+    font_char_ic_code,                    /* code for \.{\\fontcharic} */
+    par_shape_length_code,                /* code for \.{\\parshapelength} */
+    par_shape_indent_code,                /* code for \.{\\parshapeindent} */
+    par_shape_dimen_code,                 /* code for \.{\\parshapedimen} */
+    glue_stretch_code,                    /* code for \.{\\gluestretch} */
+    glue_shrink_code,                     /* code for \.{\\glueshrink} */
+    mu_to_glue_code,                      /* code for \.{\\mutoglue} */
+#  define eTeX_glue mu_to_glue_code       /* first of \eTeX\ codes for glue */
+    glue_to_mu_code,                      /* code for \.{\\gluetomu} */
+#  define eTeX_mu glue_to_mu_code         /* first of \eTeX\ codes for muglue */
+    numexpr_code,                         /* code for \.{\\numexpr} */
+#  define eTeX_expr numexpr_code          /* first of \eTeX\ codes for expressions */
+    attrexpr_code,                        /* not used */
+    dimexpr_code,                         /* code for \.{\\dimexpr} */
+    glueexpr_code,                        /* code for \.{\\glueexpr} */
+    muexpr_code,                          /* code for \.{\\muexpr} */
 } last_item_codes;
+
+
+typedef enum {
+    save_cat_code_table_code=0,
+    init_cat_code_table_code,
+    set_random_seed_code,
+    save_pos_code,
+    late_lua_code,
+    expand_font_code,
+} normal_codes;
 
 #  define explicit 1
 #  define acc_kern 2

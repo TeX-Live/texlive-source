@@ -27,7 +27,7 @@
 #include "lua/luatex-api.h"
 
 /* internalized strings: see luatex-api.h */
-set_make_keys; 
+set_make_keys;
 
 
 @
@@ -68,14 +68,9 @@ const_string LUATEX_IHELP[] = {
     "",
     "  The following regular options are understood: ",
     "",
-    "   --8bit                        ignored, input is assumed to be in UTF-8 encoding",
     "   --credits                     display credits and exit",
     "   --debug-format                enable format debugging",
-    "   --default-translate-file=FILE ignored, input is assumed to be in UTF-8 encoding",
-    "   --disable-write18             disable \\write18{SHELL COMMAND}",
     "   --draftmode                   switch on draft mode (generates no output PDF)",
-    "   --enable-write18              enable \\write18{SHELL COMMAND}",
-    "   --etex                        ignored, the etex extensions are always active",
     "   --[no-]file-line-error        disable/enable file:line:error style messages",
     "   --[no-]file-line-error-style  aliases of --[no-]file-line-error",
     "   --fmt=FORMAT                  load the format file FORMAT",
@@ -91,29 +86,37 @@ const_string LUATEX_IHELP[] = {
     "   --output-comment=STRING       use STRING for DVI file comment instead of date (no effect for PDF)",
     "   --output-directory=DIR        use existing DIR as the directory to write files in",
     "   --output-format=FORMAT        use FORMAT for job output; FORMAT is 'dvi' or 'pdf'",
-    "   --[no-]parse-first-line       ignored",
     "   --progname=STRING             set the program name to STRING",
     "   --recorder                    enable filename recorder",
     "   --safer                       disable easily exploitable lua commands",
     "   --[no-]shell-escape           disable/enable \\write18{SHELL COMMAND}",
     "   --shell-restricted            restrict \\write18 to a list of commands given in texmf.cnf",
     "   --synctex=NUMBER              enable synctex",
-    "   --translate-file=FILE         ignored, input is assumed to be in UTF-8 encoding",
     "   --version                     display version and exit",
     "",
     "Alternate behaviour models can be obtained by special switches",
     "",
-    "  --luaonly                run a lua file, then exit",
-    "  --luaconly               byte-compile a lua file, then exit",
-    "  --luahashchars           the bits used by current Lua interpreter for strings hashing",
+    "  --luaonly                      run a lua file, then exit",
+    "  --luaconly                     byte-compile a lua file, then exit",
+    "  --luahashchars                 the bits used by current Lua interpreter for strings hashing",
 #ifdef LuajitTeX
-    "  --jiton                  turns the JIT compiler on (default off)",
-    "  --jithash=STRING         choose the hash function for the lua strings (lua51|luajit20: default lua51)",
+    "  --jiton                        turns the JIT compiler on (default off)",
+    "  --jithash=STRING               choose the hash function for the lua strings (lua51|luajit20: default lua51)",
 #endif
     "",
     "See the reference manual for more information about the startup process.",
     NULL
 };
+
+/*
+    "   --8bit                        ignored, input is assumed to be in UTF-8 encoding",
+    "   --default-translate-file=FILE ignored, input is assumed to be in UTF-8 encoding",
+    "   --etex                        ignored, the etex extensions are always active",
+    "   --disable-write18             disable \\write18{SHELL COMMAND}",
+    "   --enable-write18              enable \\write18{SHELL COMMAND}",
+    "   --[no-]parse-first-line       ignored",
+    "   --translate-file=FILE         ignored, input is assumed to be in UTF-8 encoding",
+*/
 
 @ The return value will be the directory of the executable, e.g.: \.{c:/TeX/bin}
 @c
@@ -198,54 +201,66 @@ option table in a variable |long_options|.
 @c
 #define ARGUMENT_IS(a) STREQ (long_options[option_index].name, a)
 
-/* SunOS cc can't initialize automatic structs, so make this static.  */
-static struct option long_options[]
-= { {"fmt", 1, 0, 0},
-{"lua", 1, 0, 0},
-{"luaonly", 0, 0, 0},
-{"luahashchars", 0, 0, 0},
+/*
+    SunOS cc can't initialize automatic structs, so make this static.
+*/
+
+/*
+    Nota Bene: we still intercept some options that other engines handle
+    so that existing scripted usage will not fail.
+*/
+
+static struct option long_options[] = {
+    {"fmt", 1, 0, 0},
+    {"lua", 1, 0, 0},
+    {"luaonly", 0, 0, 0},
+    {"luahashchars", 0, 0, 0},
 #ifdef LuajitTeX
-{"jiton", 0, 0, 0},
-{"jithash", 1, 0, 0},
+    {"jiton", 0, 0, 0},
+    {"jithash", 1, 0, 0},
 #endif
-{"safer", 0, &safer_option, 1},
-{"nosocket", 0, &nosocket_option, 1},
-{"help", 0, 0, 0},
-{"ini", 0, &ini_version, 1},
-{"interaction", 1, 0, 0},
-{"halt-on-error", 0, &haltonerrorp, 1},
-{"kpathsea-debug", 1, 0, 0},
-{"progname", 1, 0, 0},
-{"version", 0, 0, 0},
-{"credits", 0, 0, 0},
-{"recorder", 0, &recorder_enabled, 1},
-{"etex", 0, 0, 0},
-{"output-comment", 1, 0, 0},
-{"output-directory", 1, 0, 0},
-{"draftmode", 0, 0, 0},
-{"output-format", 1, 0, 0},
-{"shell-escape", 0, &shellenabledp, 1},
-{"no-shell-escape", 0, &shellenabledp, -1},
-{"enable-write18", 0, &shellenabledp, 1},
-{"disable-write18", 0, &shellenabledp, -1},
-{"shell-restricted", 0, 0, 0},
-{"debug-format", 0, &debug_format_file, 1},
-{"file-line-error-style", 0, &filelineerrorstylep, 1},
-{"no-file-line-error-style", 0, &filelineerrorstylep, -1},
-      /* Shorter option names for the above. */
-{"file-line-error", 0, &filelineerrorstylep, 1},
-{"no-file-line-error", 0, &filelineerrorstylep, -1},
-{"jobname", 1, 0, 0},
-{"parse-first-line", 0, &parsefirstlinep, 1},
-{"no-parse-first-line", 0, &parsefirstlinep, -1},
-{"translate-file", 1, 0, 0},
-{"default-translate-file", 1, 0, 0},
-{"8bit", 0, 0, 0},
-{"mktex", 1, 0, 0},
-{"no-mktex", 1, 0, 0},
-/* Synchronization: just like "interaction" above */
-{"synctex", 1, 0, 0},
-{0, 0, 0, 0}
+    {"safer", 0, &safer_option, 1},
+    {"nosocket", 0, &nosocket_option, 1},
+    {"help", 0, 0, 0},
+    {"ini", 0, &ini_version, 1},
+    {"interaction", 1, 0, 0},
+    {"halt-on-error", 0, &haltonerrorp, 1},
+    {"kpathsea-debug", 1, 0, 0},
+    {"progname", 1, 0, 0},
+    {"version", 0, 0, 0},
+    {"credits", 0, 0, 0},
+    {"recorder", 0, &recorder_enabled, 1},
+    {"etex", 0, 0, 0},
+    {"output-comment", 1, 0, 0},
+    {"output-directory", 1, 0, 0},
+    {"draftmode", 0, 0, 0},
+    {"output-format", 1, 0, 0},
+    {"shell-escape", 0, &shellenabledp, 1},
+    {"no-shell-escape", 0, &shellenabledp, -1},
+    {"enable-write18", 0, &shellenabledp, 1},
+    {"disable-write18", 0, &shellenabledp, -1},
+    {"shell-restricted", 0, 0, 0},
+    {"debug-format", 0, &debug_format_file, 1},
+    {"file-line-error-style", 0, &filelineerrorstylep, 1},
+    {"no-file-line-error-style", 0, &filelineerrorstylep, -1},
+
+    /* Shorter option names for the above. */
+
+    {"file-line-error", 0, &filelineerrorstylep, 1},
+    {"no-file-line-error", 0, &filelineerrorstylep, -1},
+    {"jobname", 1, 0, 0},
+    {"parse-first-line", 0, &parsefirstlinep, 1},
+    {"no-parse-first-line", 0, &parsefirstlinep, -1},
+    {"translate-file", 1, 0, 0},
+    {"default-translate-file", 1, 0, 0},
+    {"8bit", 0, 0, 0},
+    {"mktex", 1, 0, 0},
+    {"no-mktex", 1, 0, 0},
+
+    /* Synchronization: just like "interaction" above */
+
+    {"synctex", 1, 0, 0},
+    {0, 0, 0, 0}
 };
 
 @ @c
@@ -370,20 +385,19 @@ static void parse_options(int ac, char **av)
             restrictedshell = 1;
 
         } else if (ARGUMENT_IS("output-format")) {
-            pdf_output_option = 1;
+            output_mode_option = 1;
             if (strcmp(optarg, "dvi") == 0) {
-                pdf_output_value = 0;
+                output_mode_value = 0;
             } else if (strcmp(optarg, "pdf") == 0) {
-                pdf_output_value = 2;
+                output_mode_value = 1;
             } else {
-                WARNING1("Ignoring unknown value `%s' for --output-format",
-                         optarg);
-                pdf_output_option = 0;
+                WARNING1("Ignoring unknown value `%s' for --output-format",optarg);
+                output_mode_option = 0;
             }
 
         } else if (ARGUMENT_IS("draftmode")) {
-            pdf_draftmode_option = 1;
-            pdf_draftmode_value = 1;
+            draft_mode_option = 1;
+            draft_mode_value = 1;
 
         } else if (ARGUMENT_IS("mktex")) {
             kpse_maketex_option(optarg, true);
@@ -421,12 +435,7 @@ static void parse_options(int ac, char **av)
                  "the terms of the GNU General Public License, version 2 or (at your option)\n"
                  "any later version. For more information about these matters, see the file\n"
                  "named COPYING and the LuaTeX source.\n\n"
-#ifdef LuajitTeX
-                 "LuaTeX is Copyright 2015 Taco Hoekwater, the LuaTeX Team.\n"
-                 "Libraries and JIT extensions by Luigi Scarso, the LuaTeX SwigLib team.\n");
-#else
-                 "Copyright 2015 Taco Hoekwater, the LuaTeX Team.\n");
-#endif
+                 "LuaTeX is Copyright 2015 Taco Hoekwater and the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
@@ -434,33 +443,19 @@ static void parse_options(int ac, char **av)
             initversionstring(&versions);
             print_version_banner();
             /* *INDENT-OFF* */
-            puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater.\n"
+            puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater, Luigi Scarso.\n\n"
                  MyName " merges and builds upon (parts of) the code from these projects:\n\n"
-                 "tex       by Donald Knuth\n"
-                 "etex      by Peter Breitenlohner, Phil Taylor and friends\n"
-                 "omega     by John Plaice and Yannis Haralambous\n"
-                 "aleph     by Giuseppe Bilotta\n"
-                 "pdftex    by Han The Thanh and friends\n"
-                 "kpathsea  by Karl Berry, Olaf Weber and others\n"
-                 "lua       by Roberto Ierusalimschy, Waldemar Celes\n"
-                 "             and Luiz Henrique de Figueiredo\n"
-                 "metapost  by John Hobby, Taco Hoekwater and friends.\n"
-                 "poppler   by Derek Noonburg, Kristian H\\ogsberg (partial)\n"
-#ifdef LuajitTeX
-                 "fontforge by George Williams (partial)\n"
-                 "luajit    by Mike Pall\n\n"
-#else
-                 "fontforge by George Williams (partial)\n\n"
-#endif
-                 "Some extensions to lua and additional lua libraries are used, as well as\n"
-                 "libraries for graphic inclusion. More details can be found in the source.\n"
-                 "Code development was sponsored by a grant from Colorado State University\n"
-#ifdef LuajitTeX
-                 "via the 'oriental tex' project, the TeX User Groups, and donations.\n"
-                 "The additional libraries and the LuaJIT extensions are provided by the LuaTeX SwigLib project.\n");
-#else
-                 "via the 'oriental tex' project, the TeX User Groups, and donations.\n");
-#endif
+                 "tex       : Donald Knuth\n"
+                 "etex      : Peter Breitenlohner, Phil Taylor and friends\n"
+                 "omega     : John Plaice and Yannis Haralambous\n"
+                 "aleph     : Giuseppe Bilotta\n"
+                 "pdftex    : Han The Thanh and friends\n"
+                 "kpathsea  : Karl Berry, Olaf Weber and others\n"
+                 "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
+                 "metapost  : John Hobby, Taco Hoekwater and friends.\n"
+                 "poppler   : Derek Noonburg, Kristian H\\ogsberg (partial)\n"
+                 "fontforge : George Williams (partial)\n"
+                 "luajit    : Mike Pall (used in LuajitTeX)\n");
             /* *INDENT-ON* */
             puts(versions);
             uexit(0);
@@ -556,8 +551,8 @@ static char *find_filename(char *name, const char *envkey)
             }
             filename = xmalloc((unsigned) (strlen(dirname) + strlen(name) + 2));
             filename = concat3(dirname, "/", name);
+            xfree(dirname);
             if (is_readable(filename)) {
-                xfree(dirname);
                 return filename;
             }
             xfree(filename);
@@ -787,8 +782,8 @@ static void setup_lua_path(lua_State * L)
 @c
 int tex_table_id;
 int pdf_table_id;
-int newtoken_table_id;
 int token_table_id;
+int oldtoken_table_id;
 int node_table_id;
 
 @ @c
@@ -797,7 +792,6 @@ int l_group_code_index      [GROUP_CODE_SIZE];
 int l_math_style_name_index [MATH_STYLE_NAME_SIZE];
 int l_dir_par_index         [DIR_PAR_SIZE];
 int l_dir_text_index        [DIR_TEXT_SIZE];
-
 
 #if defined(WIN32) || defined(__MINGW32__) || defined(__CYGWIN__)
 char **suffixlist;
@@ -946,7 +940,7 @@ void lua_initialize(int ac, char **av)
     lua_settable(Luas,LUA_REGISTRYINDEX);
 
     /* here start the key definitions */
-    set_pack_type_index;
+    set_l_pack_type_index;
     set_l_group_code_index;
     set_l_math_style_name_index;
     set_l_dir_par_index;
@@ -957,15 +951,18 @@ void lua_initialize(int ac, char **av)
 
     if (startup_filename != NULL) {
         given_file = xstrdup(startup_filename);
-        startup_filename = find_filename(startup_filename, "LUATEXDIR");
+        if (lua_only) {
+          xfree(startup_filename);
+        }
+        startup_filename = find_filename(given_file, "LUATEXDIR");
     }
     /* now run the file */
     if (startup_filename != NULL) {
         char *v1;
         /* hide the 'tex' and 'pdf' table */
         tex_table_id = hide_lua_table(Luas, "tex");
-        newtoken_table_id = hide_lua_table(Luas, "newtoken");
         token_table_id = hide_lua_table(Luas, "token");
+        oldtoken_table_id = hide_lua_table(Luas, "oldtoken");
         node_table_id = hide_lua_table(Luas, "node");
         pdf_table_id = hide_lua_table(Luas, "pdf");
 
@@ -997,8 +994,8 @@ void lua_initialize(int ac, char **av)
         /* unhide the 'tex' and 'pdf' table */
         unhide_lua_table(Luas, "tex", tex_table_id);
         unhide_lua_table(Luas, "pdf", pdf_table_id);
-        unhide_lua_table(Luas, "newtoken", newtoken_table_id);
         unhide_lua_table(Luas, "token", token_table_id);
+        unhide_lua_table(Luas, "oldtoken", oldtoken_table_id);
         unhide_lua_table(Luas, "node", node_table_id);
 
         /* |kpse_init| */

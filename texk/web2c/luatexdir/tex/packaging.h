@@ -1,5 +1,5 @@
 /* packaging.h
-   
+
    Copyright 2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -58,7 +58,7 @@ extern halfword new_margin_kern(scaled w, halfword p, int side);
 
 #  define update_adjust_list(A) do {					\
 	if (A == null)							\
-	    pdf_error("pre vadjust", "adjust_tail or pre_adjust_tail is null");	\
+	    normal_error("pre vadjust", "adjust_tail or pre_adjust_tail is null");	\
 	vlink(A) = adjust_ptr(p);					\
 	while (vlink(A) != null)					\
 	    A = vlink(A);						\
@@ -80,7 +80,7 @@ extern halfword filtered_vpackage(halfword p, scaled h, int m, scaled l,
                                   int grp, int d);
 extern void finish_vcenter(void);
 extern void package(int c);
-extern void append_to_vlist(halfword b);
+extern void append_to_vlist(halfword b, int location);
 
 extern halfword prune_page_top(halfword p, boolean s);
 extern scaled active_height[10];        /* distance from first active node to~|cur_p| */

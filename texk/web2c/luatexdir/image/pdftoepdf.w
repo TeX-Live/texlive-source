@@ -249,7 +249,7 @@ PdfDocument *refMemStreamPdfDocument(char *docstream, unsigned long long streams
                 pdf_doc->file_path, pdf_doc->occurences);
 #endif
         assert(pdf_doc->checksum != NULL);
-        // As is now, checksum is in file_path, so this check is should be useless.
+        // As is now, checksum is in file_path, so this check should be useless.
         if (strncmp(pdf_doc->checksum, checksum, STRSTREAM_CHECKSUM_SIZE) != 0) {
             luatex_fail("PDF inclusion: stream has changed '%s'", file_path);
         }
