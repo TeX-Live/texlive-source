@@ -1500,16 +1500,17 @@ void get_token_lua(void)
 
 @ changes the string |s| to a token list
 @c
-halfword string_to_toks(char *ss)
+halfword string_to_toks(const char *ss)
 {
     halfword p;                 /* tail of the token list */
     halfword q;                 /* new node being added to the token list via |store_new_token| */
     halfword t;                 /* token being appended */
-    char *s = ss, *se = ss + strlen(s);
+    const char *s = ss; 
+    const char *se = ss + strlen(s);
     p = temp_token_head;
     set_token_link(p, null);
     while (s < se) {
-        t = (halfword) str2uni((unsigned char *) s);
+        t = (halfword) str2uni((const unsigned char *) s);
         s += utf8_size(t);
         if (t == ' ')
             t = space_token;

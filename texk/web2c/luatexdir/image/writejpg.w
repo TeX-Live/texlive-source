@@ -164,7 +164,10 @@ read_APP1_Exif (FILE *fp, unsigned short length, int *xx, int *yy)
     double xres = 72.0;
     double yres = 72.0;
     double res_unit = 1.0;
-    fread(buffer, length, 1, fp);
+    size_t ret_len;
+    ret_len = fread(buffer, length, 1, fp);
+    if (ret_len != 1)
+        goto err ;
     p = buffer;
     while ((p < buffer + length) && (*p == 0))
         ++p;
