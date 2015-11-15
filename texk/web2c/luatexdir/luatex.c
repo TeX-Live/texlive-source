@@ -422,7 +422,7 @@ int runsystem(const char *cmd)
     int allow = 0;
     char *safecmd = NULL;
     char *cmdname = NULL;
-
+    int status = 0;
     if (shellenabledp <= 0) {
         return 0;
     }
@@ -432,12 +432,15 @@ int runsystem(const char *cmd)
         allow = 1;
     else
         allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
-
+    
     if (allow == 1)
-        (void) system(cmd);
+        status = system(cmd);
     else if (allow == 2)
-        (void) system(safecmd);
-
+        status = system(safecmd);
+    /* Not really meaningful, but we have to manage the return value of system. */
+    if (status != 0)
+       fprintf(stderr,"system returned with code %d\n", status); 
+    
     if (safecmd)
         free(safecmd);
     if (cmdname)

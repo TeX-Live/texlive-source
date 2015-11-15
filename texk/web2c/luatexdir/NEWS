@@ -2,6 +2,126 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex beta-0.85.0 was released 2015111400 (5509)
+==============================================================
+
+
+-- roadmap
+
+The 0.85 release is has a lot of changes. It is the prelude to 0.90 which itself is
+a prelude to the 0.95 that will go on texlive 2016. The 1.00 release will happen
+around the 2016 context meeting. After that 2.* will become the next experimental
+branch (leading to 3.*). The most important changes between 0.80 and 0.85 are mentioned
+below. For more information consult the manual.
+
+-- the backend commands
+
+There is a better separation between front- and backend code. Some of the generic
+\pdf* commands have been promoted to core primitives (with different names), some
+have been removes like ximagecolordepth and ximagebbox have been removed and
+all that are left have been organized differently. The backend is now more abstract
+and provides three primitives only
+
+  \pdfextension <keyword> <optional spec>
+  \pdfvariable  <keyword>
+  \pdffeedback  <keyword>
+
+The first replaces \pdfannot and alike, the second replaces the variables that can
+be sused to control behaviour, and the third accesses the read only variables. See
+luatex-pdf.tex in the context distribution for a plain definition file.
+
+The big advantage of the separation (basically core (lua)tex + extensions) is that
+changes in the backend don't have consequences for the frontend and it's easier to
+locate possible issues in the code. We might split a bit more at the lua end too.
+
+-- nodes
+
+The boundary, dir and localpar whatsits are now normal nodes. The xforms and ximage
+whatsits are now a special kind of rule nodes (subtypes 1 and 2) and known as box-
+and image resources (see manual). Also, empty rules are now a valid subtype (subtype
+3) with related commands \nohrule and \novrule.
+
+At the lua end one can now access the fields of a spec subnode directly in the parent,
+which has the benefit of more control and robust assignments (no need to check for
+writeability) while we keep the concept of shared glue specs (tex internals). By
+staying close to traditional TeX the Knuthian documentation still applies in most
+cases.
+
+The pdf action nodes are now pdf_action whatsit nodes (so no longer a pseudo core
+node).
+
+You can get the node subtypes with the node.subtypes function which adds a layer
+of abstraction (foo.subtype = "string" might be added in the future).
+
+-- expansion
+
+The hz optimization already only supported level 2 optimization, but now has a variant
+3 that does only stretch glyphs and not kerns. Pending is a change where we go back to
+percentages instead of fractions of em.
+
+-- math
+
+The old/new codepath has been checked and italic correction which is fundamental
+different between the engines has been (partially) redone.
+
+We now have \mathsurroundskip that replaces mathsurround when it's non zero.
+
+The \mathtoptions (old 1) directive can be used for testing. This primitive is mostly for
+ourselves and used for development.
+
+The \Umathcharclass, \Umathcharfam and \Umathcharslot primitives can be used to fetch
+properties of a math character.
+
+The new \Uleft, \Uright and \Umiddle fence operators accept "height <dimen>", "depth
+<dimen>" and the "noaxis" keyword as well the "exact" keyword for non-fitting ones. There
+is also \Uvextension. Optionally one can specify a 'class'.
+
+The \Udelimiter[under|over] and \U[under|over]delimiter primitives accept a width as well
+as left, middle and right keywords (for non fitting ones). There is also \Uhextension.
+
+The \abovewithdelimiter command accepts 'exact' as keyword (before the dimension) which nils
+the excessive spacing. The normal vgaps still apply.
+
+We have a new fraction primitive \Uskewed with a companion \Uskewedwithdelims. Optional
+keywords are 'noaxis' and 'exact'.
+
+There is a new directive \mathdisplayskipmode (esp for controlling the > 0 below skip check).
+
+With \mathscriptsmode you can fix anchoring of scripts (as needed for chemistry).
+
+The \Umathaccent commands accept a width and fraction argument.
+
+-- hyhenation
+
+The discretionary command now accept an optional "penalty <number>" specification
+where the penalty will be stored with the node. Default is hyphenpenalty.
+
+-- file io
+
+texio.write/write_nl now writes to file if the first argument is a (valid) number
+reference to a file opened at the tex end
+
+-- lua interface
+
+The tex.<internal variable> is hopefully better now. The tex.get* also can handle
+the built in registers. Especially prevdepth access should work out ok now.
+
+-- and ...
+
+As usual there are lots of small fixes, improvements, overhauls, small additions,
+hopefully all mentioned in the manual.
+
+-- warning
+
+This version is probably not compatible with the macro package that you use as some
+engine specific initializations need to take place (\pdf commands) and some node types
+have been changed. We now have separated pdf backend commands and the only left
+primitive categories are: core, (tex), etex and luatex, so no more pdftex, omega and
+umath (where the distinction became to fuzzy). Of course you can still prefix.
+
+
+
+==============================================================
 Luatex beta-0.81.0 was released 2015100722 (5350)
 ==============================================================
 
@@ -2445,7 +2565,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5348 2015-10-07 13:45:11Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5508 2015-11-14 11:58:08Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
