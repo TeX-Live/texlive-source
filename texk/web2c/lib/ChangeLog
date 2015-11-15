@@ -1,3 +1,7 @@
+2015-11-15  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Show return code of system() if it is not zero.
+
 2015-11-01  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Improve restricted shell escape for w32 a little.
