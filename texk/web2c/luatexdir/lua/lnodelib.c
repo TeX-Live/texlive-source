@@ -884,6 +884,26 @@ static int lua_nodelib_getprev(lua_State * L)
     return 1;
 }
 
+static int lua_nodelib_getboth(lua_State * L)
+{
+    halfword *a;
+    halfword *p = lua_touserdata(L, 1);
+    if ( (p == NULL) || (! lua_getmetatable(L,1)) ) {
+        lua_pushnil(L);
+        lua_pushnil(L);
+    } else {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(luatex_node));
+        lua_gettable(L, LUA_REGISTRYINDEX);
+        if (!lua_rawequal(L, -1, -2)) {
+            lua_pushnil(L);
+            lua_pushnil(L);
+        } else {
+            fast_metatable_or_nil(alink(*p));
+            fast_metatable_or_nil(vlink(*p));
+        }
+    }
+    return 2;
+}
 
 /* node.fast.getprev
 
@@ -6694,6 +6714,7 @@ static const struct luaL_Reg nodelib_f[] = {
  /* {"getbox", lua_nodelib_getbox}, */ /* tex.getbox */
     {"getnext", lua_nodelib_getnext},
     {"getprev", lua_nodelib_getprev},
+    {"getboth", lua_nodelib_getboth},
     {"getlist", lua_nodelib_getlist},
     {"getleader", lua_nodelib_getleader},
     {"getid", lua_nodelib_getid},
