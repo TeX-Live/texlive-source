@@ -58,7 +58,6 @@ typedef struct saved_tex_scanner {
 	cur_tok = a.save_tok;			  \
     } while (0)
 
-
 #define TEX_ORIGIN 0 /* not used yet */
 #define LUA_ORIGIN 1
 
@@ -69,11 +68,10 @@ static lua_token *check_istoken(lua_State * L, int ud);
 #define DEBUG 0
 #define DEBUG_OUT stdout
 
-
 #define DEFAULT_SCAN_CODE_SET 2048 + 4096 /* default: letter and other */
 
-
 /* two core helpers */
+
 #define  is_active_string(s) (strlen((char *)s)>3 && *s==0xEF && *(s+1)==0xBF && *(s+2)==0xBF)
 
 static unsigned char *get_cs_text(int cs)
@@ -85,8 +83,6 @@ static unsigned char *get_cs_text(int cs)
     else
         return (unsigned char *) makecstring(cs_text(cs));
 }
-
-
 
 /* maybe this qualify as  a macro, not function */
 
@@ -140,7 +136,6 @@ static void push_token(lua_State * L, int tok)
     lua_gettable(L, LUA_REGISTRYINDEX);
     lua_setmetatable(L, -2);
 }
-
 
 /* static int run_get_cs_offset(lua_State * L) */
 /* { */
@@ -196,6 +191,26 @@ static int run_scan_keyword(lua_State * L)
     return 1;
 }
 
+static int run_scan_csname(lua_State * L)
+{
+    unsigned char *s;
+    int t;
+    saved_tex_scanner texstate;
+    save_tex_scanner(texstate);
+    get_next();
+    t = (cur_cs ? cs_token_flag + cur_cs : token_val(cur_cmd, cur_chr));
+    if (t >= cs_token_flag && ((s = get_cs_text(t - cs_token_flag)) != (unsigned char *) NULL)) {
+        if (is_active_string(s))
+            lua_pushstring(L, (char *) (s + 3));
+        else
+            lua_pushstring(L, (char *) s);
+    } else {
+        lua_pushnil(L);
+    }
+    unsave_tex_scanner(texstate);
+    return 1;
+}
+
 static int run_scan_int(lua_State * L)
 {
     saved_tex_scanner texstate;
@@ -207,7 +222,6 @@ static int run_scan_int(lua_State * L)
     lua_pushnumber(L,(lua_Number)v);
     return 1;
 }
-
 
 static int run_scan_dimen(lua_State * L)
 {
@@ -233,9 +247,6 @@ static int run_scan_dimen(lua_State * L)
     }
 }
 
-
-
-
 static int run_scan_glue(lua_State * L)
 {
     saved_tex_scanner texstate;
@@ -251,7 +262,6 @@ static int run_scan_glue(lua_State * L)
     lua_nodelib_push_fast(L,(halfword)v);
     return 1;
 }
-
 
 static int run_scan_toks(lua_State * L)
 {
@@ -354,8 +364,6 @@ static int run_scan_word(lua_State * L) /* HH */
     return 1;
 }
 
-
-
 static int run_scan_code(lua_State * L) /* HH */
 {
     saved_tex_scanner texstate;
@@ -384,13 +392,11 @@ static int run_scan_code(lua_State * L) /* HH */
     return 1;
 }
 
-
 static int lua_tokenlib_is_token(lua_State * L) /* HH */
 {
     lua_pushboolean(L,maybe_istoken(L,1)==NULL ? 0 : 1);
     return 1;
 }
-
 
 /* static int run_expand(lua_State * L) */
 /* { */
@@ -398,7 +404,6 @@ static int lua_tokenlib_is_token(lua_State * L) /* HH */
 /*     expand(); */
 /*     return 0; */
 /* } */
-
 
 static int run_lookup(lua_State * L)
 {
@@ -590,7 +595,6 @@ static int lua_tokenlib_type(lua_State * L)
     return 1;
 }
 
-
 static int run_scan_token(lua_State * L)
 {
     saved_tex_scanner texstate;
@@ -728,7 +732,6 @@ static int set_macro(lua_State * L)
     return 0;
 }
 
-
 static const struct luaL_Reg tokenlib[] = {
     {"is_token", lua_tokenlib_is_token},
     {"get_next", run_get_next},
@@ -740,6 +743,7 @@ static const struct luaL_Reg tokenlib[] = {
     {"scan_code", run_scan_code},
     {"scan_string", run_scan_string},
     {"scan_word", run_scan_word},
+    {"scan_csname", run_scan_csname},
     {"type", lua_tokenlib_type},
     {"create", run_build},
     {"scan_token", run_scan_token}, /* expands next token if needed */
@@ -758,8 +762,6 @@ static const struct luaL_Reg tokenlib_m[] = {
     {"__gc", lua_tokenlib_free},
     {NULL, NULL} /* sentinel */
 };
-
-
 
 int luaopen_token(lua_State * L)
 {

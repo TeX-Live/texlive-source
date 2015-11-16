@@ -49,7 +49,8 @@ char *GFileGetAbsoluteName(char *name, char *result, int rsiz) {
 	char *pt, *spt, *rpt, *bpt;
 
 	if ( dirname_[0]=='\0' ) {
-	    getcwd(dirname_,sizeof(dirname_));
+	  if (getcwd(dirname_,sizeof(dirname_)) == NULL)
+return(result);
 	}
 	strcpy(buffer,dirname_);
 	if ( buffer[strlen(buffer)-1]!='/' )
@@ -278,7 +279,8 @@ unichar_t *u_GFileGetAbsoluteName(unichar_t *name, unichar_t *result, int rsiz) 
 	unichar_t *pt, *spt, *rpt, *bpt;
 
 	if ( dirname_[0]=='\0' ) {
-	    getcwd(dirname_,sizeof(dirname_));
+	  if (getcwd(dirname_,sizeof(dirname_)) == NULL) 
+return(result);
 	}
 	uc_strcpy(buffer,dirname_);
 	if ( buffer[u_strlen(buffer)-1]!='/' )
