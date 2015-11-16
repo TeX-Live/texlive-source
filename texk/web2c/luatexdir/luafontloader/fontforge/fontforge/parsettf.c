@@ -3860,7 +3860,8 @@ static int readtyp1glyphs(FILE *ttf,struct ttfinfo *info) {
 /*  it's not exactly 20. I've seen 22 and 24. So see if we can find "%!PS-Adobe" */
 /*  in the first few bytes of the file, and skip to there if found */
     { char buffer[41];
-	fread(buffer,1,sizeof(buffer),ttf);
+        if(fread(buffer,1,sizeof(buffer),ttf) != sizeof(buffer))
+return( false );
 	buffer[40] = '\0';
 	for ( i=39; i>=0; --i )
 	    if ( buffer[i]=='%' && buffer[i+1]=='!' )
@@ -5336,7 +5337,12 @@ return;
     tab->len = len;
     tab->data = galloc(len);
     fseek(ttf,start,SEEK_SET);
-    fread(tab->data,1,len,ttf);
+    if (fread(tab->data,1,len,ttf) != (size_t)len) {
+	LogError( _("Unable to read %u bytes for data, so I'm ignoring it.\n"), len );
+        if (tab->data !=NULL) free(tab->data);
+        if (tab !=NULL)       free(tab);
+return;
+    }
     tab->next = info->tabs;
     info->tabs = tab;
 }
