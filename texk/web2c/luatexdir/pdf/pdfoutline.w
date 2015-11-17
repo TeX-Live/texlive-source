@@ -99,7 +99,7 @@ void scan_pdfoutline(PDF pdf)
     halfword q, r;
     int i, k, l;
     int j = 0;
-    halfword p = NULL;
+    halfword p = null;
     if (scan_keyword("attr")) {
         scan_pdf_ext_toks();
         r = def_ref;
