@@ -136,7 +136,7 @@ void do_extension_dvi(int immediate)
         scan_toks(false, true);
         write_tokens(tail) = def_ref;
     } else {
-        normal_error("dvi backend", "unknown \\dviextension");
+        tex_error("unexpected use of \\dviextension",null);
     }
 }
 
@@ -328,7 +328,7 @@ void do_extension_pdf(int immediate)
             pdf_trailer_toks = concat_tokens(pdf_trailer_toks, def_ref);
             break;
         default:
-            normal_error("pdf backend", "unknown \\pdfextension keyword");
+            tex_error("unexpected use of \\pdfextension",null);
             break ;
     }
 }
@@ -498,7 +498,7 @@ void do_extension(int immediate)
             if (immediate) {
                 back_input();
             } else {
-                confusion("ext1x");
+                confusion("invalid extension");
             }
             break;
         }

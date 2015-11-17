@@ -1505,7 +1505,7 @@ halfword string_to_toks(const char *ss)
     halfword p;                 /* tail of the token list */
     halfword q;                 /* new node being added to the token list via |store_new_token| */
     halfword t;                 /* token being appended */
-    const char *s = ss; 
+    const char *s = ss;
     const char *se = ss + strlen(s);
     p = temp_token_head;
     set_token_link(p, null);
@@ -2287,13 +2287,13 @@ void conv_toks(void)
     case dvi_variable_code:
         done = conv_var_dvi(c);
         if (done==0)
-            confusion("dvi variable");
+            tex_error("unexpected use of \\dvivariable",null);
         return;
         break;
     case pdf_variable_code:
         done = conv_var_pdf(c);
         if (done==0)
-            confusion("pdf variable");
+            tex_error("unexpected use of \\pdfvariable",null);
         return;
         break;
     case dvi_feedback_code:
@@ -2302,7 +2302,7 @@ void conv_toks(void)
         else
             done = 0;
         if (done==0)
-            confusion("dvi feedback");
+            tex_error("unexpected use of \\dvifeedback",null);
         else if (done==2)
             return;
         break;
@@ -2312,7 +2312,7 @@ void conv_toks(void)
         else
             done = 0;
         if (done==0)
-            confusion("pdf feedback");
+            tex_error("unexpected use of \\pdffeedback",null);
         else if (done==2)
             return;
         break;

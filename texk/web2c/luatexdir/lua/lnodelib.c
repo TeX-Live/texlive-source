@@ -5540,9 +5540,11 @@ static int lua_nodelib_direct_setcharacter(lua_State * L)
 {
     halfword n;
     n = (halfword ) lua_tonumber(L, 1);
-    if (n) {
-        if ((type(n) == glyph_node) && (lua_type(L, 2) == LUA_TNUMBER)) {
+    if ((n) && (lua_type(L, 2) == LUA_TNUMBER)) {
+        if (type(n) == glyph_node) {
             character(n) = (halfword) lua_tointeger(L, 2);
+        } else if ((type(n) == math_char_node) || (type(n) == math_text_char_node)) {
+            math_character(n) = (halfword) lua_tointeger(L, 2);
         }
     }
     return 0;
@@ -6196,27 +6198,43 @@ static int lua_nodelib_direct_getbox(lua_State * L)
     return 1;
 }
 
-static int direct_vsetbox(lua_State * L, int is_global)
+/* node.setbox = tex.setbox */
+/* node.setbox */
+
+static int lua_nodelib_direct_setbox(lua_State * L)
 {
-    int j, k, err;
-    int save_global_defs = int_par(global_defs_code);
-    if (is_global)
-        int_par(global_defs_code) = 1;
+    int isglobal = 0;
+    int j, k, err, t;
+    int save_global_defs ;
+    int n = lua_gettop(L);
+    if (n == 3 && (lua_type(L, 1) == LUA_TSTRING)) {
+        const char *s = lua_tostring(L, 1);
+        if (lua_key_eq(s, global))
+            isglobal = 1;
+    }
+    t = lua_type(L, -1);
     k = direct_get_box_id(L, -2);
     direct_check_index_range(k, "setbox");
-    if (lua_isboolean(L, -1)) {
+    if (t == LUA_TBOOLEAN) {
         j = lua_toboolean(L, -1);
-        if (j == 0)
+        if (j == 0) {
             j = null;
-        else
+        } else {
             return 0;
+        }
+    } else if (t == LUA_TNIL) {
+        j = null;
     } else {
-        j=nodelib_popdirect(-1);
+        j = nodelib_popdirect(-1);
         if (j != null && type(j) != hlist_node && type(j) != vlist_node) {
             luaL_error(L, "setbox: incompatible node type (%s)\n",get_node_name(type(j), subtype(j)));
             return 0;
         }
 
+    }
+    save_global_defs = int_par(global_defs_code);
+    if (isglobal) {
+        int_par(global_defs_code) = 1;
     }
     err = set_tex_box_register(k, j);
     int_par(global_defs_code) = save_global_defs;
@@ -6224,21 +6242,6 @@ static int direct_vsetbox(lua_State * L, int is_global)
         luaL_error(L, "incorrect value");
     }
     return 0;
-}
-
-/* node.setbox = tex.setbox */
-/* node.setbox */
-
-static int lua_nodelib_direct_setbox(lua_State * L)
-{
-    int isglobal = 0;
-    int n = lua_gettop(L);
-    if (n == 3 && (lua_type(L, 1) == LUA_TSTRING)) {
-        const char *s = lua_tostring(L, 1);
-        if (lua_key_eq(s, global))
-            isglobal = 1;
-    }
-    return direct_vsetbox(L, isglobal);
 }
 
 /* node.is_node(n) */
