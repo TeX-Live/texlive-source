@@ -398,8 +398,15 @@ static void new_write_whatsit(int w, int check)
         scan_int();
         if (cur_val < 0)
             cur_val = term_only;
+#ifdef _MSC_VER
+        else if (cur_val > last_file_selector) {
+/* In the original one, 16 or 17 becomes 143 = 127 + 16, so I don't
+   include (cur_val == write_target_direct) || (cur_val == write_target_special).
+   ak: */
+#else
         else if ((cur_val > last_file_selector) || (cur_val == write_target_direct) || (cur_val == write_target_special)) {
             /* hh: i need to check what 17 is supposed to do. so let's kind of reserve it  */
+#endif
             cur_val = write_target_overflow;
         }
     }
