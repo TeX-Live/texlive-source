@@ -309,20 +309,23 @@ void read_img(PDF pdf,
     char *filepath = NULL;
     int callback_id;
     assert(idict != NULL);
-    if (img_filename(idict) == NULL)
+    if (img_filename(idict) == NULL) {
         luatex_fail("image file name missing");
+    }
     callback_id = callback_defined(find_image_file_callback);
     if (img_filepath(idict) == NULL) {
-        if (callback_id > 0
-            && run_callback(callback_id, "S->S", img_filename(idict),
-                            &filepath)) {
-            if (filepath && (strlen(filepath) > 0))
-                img_filepath(idict) = strdup(filepath);
-        } else
-            img_filepath(idict) =
-                kpse_find_file(img_filename(idict), kpse_tex_format, true);
-        if (img_filepath(idict) == NULL)
+        if (callback_id > 0) {
+            if (run_callback(callback_id, "S->S", img_filename(idict),&filepath)) {
+                if (filepath && (strlen(filepath) > 0)) {
+                    img_filepath(idict) = strdup(filepath);
+                }
+            }
+        } else {
+            img_filepath(idict) = kpse_find_file(img_filename(idict), kpse_tex_format, true);
+        }
+        if (img_filepath(idict) == NULL) {
             luatex_fail("cannot find image file '%s'", img_filename(idict));
+        }
     }
     recorder_record_input(img_filename(idict));
     /* type checks */

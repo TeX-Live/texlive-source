@@ -2696,39 +2696,63 @@ static int tex_use_box_resource(lua_State * L)
     halfword rule;
     int index = 0;
     scaled_whd alt, nat, dim;
-    int top = lua_gettop(L);
-    alt.wd = null_flag;
-    alt.ht = null_flag;
-    alt.dp = null_flag;
-    if (top == 0)
-        return 0;
-    index = lua_tonumber(L,1);
-    if (top>1)
-        alt.wd = (scaled) lua_tonumber(L,2);
-    if (top>2)
-        alt.ht = (scaled) lua_tonumber(L,3);
-    if (top>3)
-        alt.dp = (scaled) lua_tonumber(L,4);
-    /* sort of the same as backend */
-    check_obj_type(static_pdf, obj_type_xform, index);
-    nat.wd = obj_xform_width(static_pdf, index);
-    nat.ht = obj_xform_height(static_pdf, index);
-    nat.dp = obj_xform_depth(static_pdf, index);
-    if (alt.wd != null_flag || alt.ht != null_flag || alt.dp != null_flag) {
-        dim = tex_scale(nat, alt);
+    if (lua_type(L,1) != LUA_TNUMBER) {
+        lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
     } else {
-        dim = nat;
+        index = lua_tonumber(L,1);
+        alt.wd = null_flag;
+        alt.ht = null_flag;
+        alt.dp = null_flag;
+        if (lua_type(L,2) == LUA_TNUMBER) {
+            alt.wd = (scaled) lua_tonumber(L,2);
+        }
+        if (lua_type(L,3) == LUA_TNUMBER) {
+            alt.ht = (scaled) lua_tonumber(L,3);
+        }
+        if (lua_type(L,4) == LUA_TNUMBER) {
+            alt.dp = (scaled) lua_tonumber(L,4);
+        }
+        /* sort of the same as backend */
+        check_obj_type(static_pdf, obj_type_xform, index);
+        nat.wd = obj_xform_width(static_pdf, index);
+        nat.ht = obj_xform_height(static_pdf, index);
+        nat.dp = obj_xform_depth(static_pdf, index);
+        if (alt.wd != null_flag || alt.ht != null_flag || alt.dp != null_flag) {
+            dim = tex_scale(nat, alt);
+        } else {
+            dim = nat;
+        }
+        rule = new_rule(box_rule);
+        rule_index(rule) = index;
+        width(rule) = dim.wd;
+        height(rule) = dim.ht;
+        depth(rule) = dim.dp;
+        nodelist_to_lua(L, rule);
+        lua_pushnumber(L, (int) dim.wd);
+        lua_pushnumber(L, (int) dim.ht);
+        lua_pushnumber(L, (int) dim.dp);
     }
-    rule = new_rule(box_rule);
-    rule_index(rule) = index;
-    width(rule) = dim.wd;
-    height(rule) = dim.ht;
-    depth(rule) = dim.dp;
-    nodelist_to_lua(L, rule);
-    lua_pushnumber(L, (int) dim.wd);
-    lua_pushnumber(L, (int) dim.ht);
-    lua_pushnumber(L, (int) dim.dp);
     return 4;
+}
+
+static int tex_get_box_resource_dimensions(lua_State * L)
+{
+    int index = 0;
+    if (lua_type(L,1) != LUA_TNUMBER) {
+        lua_pushnil(L);
+        lua_pushnil(L);
+        lua_pushnil(L);
+    } else {
+        index = lua_tonumber(L,1);
+        check_obj_type(static_pdf, obj_type_xform, index);
+        lua_pushnumber(L, (int) obj_xform_width(static_pdf, index));
+        lua_pushnumber(L, (int) obj_xform_height(static_pdf, index));
+        lua_pushnumber(L, (int) obj_xform_depth(static_pdf, index));
+    }
+    return 3;
 }
 
 static int tex_build_page(lua_State * L)
@@ -2750,86 +2774,87 @@ void init_tex_table(lua_State * L)
 }
 
 static const struct luaL_Reg texlib[] = {
-    {"run", tex_run_main},      /* may be needed  */
-    {"finish", tex_run_end},    /* may be needed  */
-    {"write", luacwrite},
-    {"print", luacprint},
-    {"tprint", luactprint},
-    {"error", texerror},
-    {"sprint", luacsprint},
-    {"set", settex},
-    {"get", gettex},
-    {"isdimen", isdimen},
-    {"setdimen", setdimen},
-    {"getdimen", getdimen},
-    {"isskip", isskip},
-    {"setskip", setskip},
-    {"getskip", getskip},
-    {"ismuskip", ismuskip},
-    {"setmuskip", setmuskip},
-    {"getmuskip", getmuskip},
-    {"isattribute", isattribute},
-    {"setattribute", setattribute},
-    {"getattribute", getattribute},
-    {"iscount", iscount},
-    {"setcount", setcount},
-    {"getcount", getcount},
-    {"istoks", istoks},
-    {"settoks", settoks},
-    {"scantoks", scantoks},
-    {"gettoks", gettoks},
-    {"isbox", isbox},
-    {"setbox", setbox},
-    {"getbox", getbox},
-    {"setlist", setlist},
-    {"getlist", getlist},
-    {"setnest", setnest},
-    {"getnest", getnest},
-    {"setcatcode", setcatcode},
-    {"getcatcode", getcatcode},
-    {"setdelcode", setdelcode},
-    {"getdelcode", getdelcode},
-    {"getdelcodes", getdelcodes},
-    {"setlccode", setlccode},
-    {"getlccode", getlccode},
-    {"setmathcode", setmathcode},
-    {"getmathcode", getmathcode},
-    {"getmathcodes", getmathcodes},
-    {"setsfcode", setsfcode},
-    {"getsfcode", getsfcode},
-    {"setuccode", setuccode},
-    {"getuccode", getuccode},
-    {"round", tex_roundnumber},
-    {"scale", tex_scaletable},
-    {"sp", tex_scaledimen},
-    {"fontname", getfontname},
-    {"fontidentifier", getfontidentifier},
-    {"uniformdeviate", getuniformdeviate},
-    {"number", getnumber},
-    {"romannumeral", getromannumeral},
-    {"definefont", tex_definefont},
-    {"hashtokens", tex_hashpairs},
-    {"primitives", tex_primitives},
-    {"extraprimitives", tex_extraprimitives},
-    {"enableprimitives", tex_enableprimitives},
-    {"shipout", tex_shipout},
-    {"badness", tex_badness},
-    {"setmath", tex_setmathparm},
-    {"getmath", tex_getmathparm},
-    {"linebreak", tex_run_linebreak},
+    { "run", tex_run_main },      /* may be needed  */
+    { "finish", tex_run_end },    /* may be needed  */
+    { "write", luacwrite },
+    { "print", luacprint },
+    { "tprint", luactprint },
+    { "error", texerror },
+    { "sprint", luacsprint },
+    { "set", settex },
+    { "get", gettex },
+    { "isdimen", isdimen },
+    { "setdimen", setdimen },
+    { "getdimen", getdimen },
+    { "isskip", isskip },
+    { "setskip", setskip },
+    { "getskip", getskip },
+    { "ismuskip", ismuskip },
+    { "setmuskip", setmuskip },
+    { "getmuskip", getmuskip },
+    { "isattribute", isattribute },
+    { "setattribute", setattribute },
+    { "getattribute", getattribute },
+    { "iscount", iscount },
+    { "setcount", setcount },
+    { "getcount", getcount },
+    { "istoks", istoks },
+    { "settoks", settoks },
+    { "scantoks", scantoks },
+    { "gettoks", gettoks },
+    { "isbox", isbox },
+    { "setbox", setbox },
+    { "getbox", getbox },
+    { "setlist", setlist },
+    { "getlist", getlist },
+    { "setnest", setnest },
+    { "getnest", getnest },
+    { "setcatcode", setcatcode },
+    { "getcatcode", getcatcode },
+    { "setdelcode", setdelcode },
+    { "getdelcode", getdelcode },
+    { "getdelcodes", getdelcodes },
+    { "setlccode", setlccode },
+    { "getlccode", getlccode },
+    { "setmathcode", setmathcode },
+    { "getmathcode", getmathcode },
+    { "getmathcodes", getmathcodes },
+    { "setsfcode", setsfcode },
+    { "getsfcode", getsfcode },
+    { "setuccode", setuccode },
+    { "getuccode", getuccode },
+    { "round", tex_roundnumber },
+    { "scale", tex_scaletable },
+    { "sp", tex_scaledimen },
+    { "fontname", getfontname },
+    { "fontidentifier", getfontidentifier },
+    { "uniformdeviate", getuniformdeviate },
+    { "number", getnumber },
+    { "romannumeral", getromannumeral },
+    { "definefont", tex_definefont },
+    { "hashtokens", tex_hashpairs },
+    { "primitives", tex_primitives },
+    { "extraprimitives", tex_extraprimitives },
+    { "enableprimitives", tex_enableprimitives },
+    { "shipout", tex_shipout },
+    { "badness", tex_badness },
+    { "setmath", tex_setmathparm },
+    { "getmath", tex_getmathparm },
+    { "linebreak", tex_run_linebreak },
     /* tex random generators     */
-    {"init_rand",   tex_init_rand},
-    {"uniform_rand",tex_unif_rand},
-    {"normal_rand", tex_norm_rand},
-    {"lua_math_randomseed", tex_init_rand}, /* syntactic sugar  */
-    {"lua_math_random", lua_math_random},
-    {"show_context", tex_show_context},
-    {"saveboxresource", tex_save_box_resource},
-    {"useboxresource", tex_use_box_resource},
+    { "init_rand",   tex_init_rand },
+    { "uniform_rand",tex_unif_rand },
+    { "normal_rand", tex_norm_rand },
+    { "lua_math_randomseed", tex_init_rand }, /* syntactic sugar  */
+    { "lua_math_random", lua_math_random },
+    { "show_context", tex_show_context },
+    { "saveboxresource", tex_save_box_resource },
+    { "useboxresource", tex_use_box_resource },
+    { "getboxresourcedimensions", tex_get_box_resource_dimensions },
     /* just for testing: it will probably stay but maybe with options */
-    {"triggerbuildpage", tex_build_page},
+    { "triggerbuildpage", tex_build_page },
     /* sentinel */
-    {NULL, NULL}
+    { NULL, NULL }
 };
 
 int luaopen_tex(lua_State * L)
