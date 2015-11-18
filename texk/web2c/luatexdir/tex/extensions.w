@@ -128,7 +128,7 @@ int last_saved_image_pages ;
 int last_saved_box_index ;
 scaledpos last_position = { 0, 0 };
 
-void do_extension_dvi(int immediate)
+static void do_extension_dvi(int immediate)
 {
     if (scan_keyword("literal")) {
         new_whatsit(special_node);
@@ -140,204 +140,152 @@ void do_extension_dvi(int immediate)
     }
 }
 
-void do_extension_pdf(int immediate)
+static void do_extension_pdf(int immediate)
 {
-    int i, k;
+    int i;
 
-    i = 0 ;
-         if (scan_keyword("literal"))        i = pdf_literal_code ;
-    else if (scan_keyword("dest"))           i = pdf_dest_code ;
-    else if (scan_keyword("annot"))          i = pdf_annot_code ;
-    else if (scan_keyword("save"))           i = pdf_save_code ;
-    else if (scan_keyword("restore"))        i = pdf_restore_code ;
-    else if (scan_keyword("setmatrix"))      i = pdf_setmatrix_code ;
-    else if (scan_keyword("obj"))            i = pdf_obj_code ;
-    else if (scan_keyword("refobj"))         i = pdf_refobj_code ;
-    else if (scan_keyword("colorstack"))     i = pdf_colorstack_code ;
-    else if (scan_keyword("startlink"))      i = pdf_start_link_code ;
-    else if (scan_keyword("endlink"))        i = pdf_end_link_code ;
-    else if (scan_keyword("startthread"))    i = pdf_start_thread_code ;
-    else if (scan_keyword("endthread"))      i = pdf_end_thread_code ;
-    else if (scan_keyword("thread"))         i = pdf_thread_code ;
-    else if (scan_keyword("outline"))        i = pdf_outline_code ;
-    else if (scan_keyword("glyphtounicode")) i = pdf_glyph_to_unicode_code ;
-    else if (scan_keyword("catalog"))        i = pdf_catalog_code ;
-    else if (scan_keyword("fontattr"))       i = pdf_font_attr_code ;
-    else if (scan_keyword("mapfile"))        i = pdf_map_file_code ;
-    else if (scan_keyword("mapline"))        i = pdf_map_line_code ;
-    else if (scan_keyword("includechars"))   i = pdf_include_chars_code ;
-    else if (scan_keyword("info"))           i = pdf_info_code ;
-    else if (scan_keyword("names"))          i = pdf_names_code ;
-    else if (scan_keyword("trailer"))        i = pdf_trailer_code ;
-
-    switch (i) {
-        case pdf_literal_code:
-            new_whatsit(pdf_literal_node);
-            if (scan_keyword("direct"))
-                set_pdf_literal_mode(tail, direct_always);
-            else if (scan_keyword("page"))
-                set_pdf_literal_mode(tail, direct_page);
-            else
-                set_pdf_literal_mode(tail, set_origin);
-            scan_pdf_ext_toks();
-            set_pdf_literal_type(tail, normal);
-            set_pdf_literal_data(tail, def_ref);
-            break;
-        case pdf_dest_code:
-            scan_pdfdest(static_pdf);
-            break;
-        case pdf_annot_code:
-            scan_annot(static_pdf);
-            break;
-        case pdf_setmatrix_code:
-            new_whatsit(pdf_setmatrix_node);
-            scan_pdf_ext_toks();
-            set_pdf_setmatrix_data(tail, def_ref);
-            break;
-        case pdf_save_code:
-            new_whatsit(pdf_save_node);
-            break;
-        case pdf_restore_code:
-            new_whatsit(pdf_restore_node);
-            break;
-        case pdf_obj_code:
-            scan_obj(static_pdf);
-            if (immediate) {
-                if (obj_data_ptr(static_pdf, pdf_last_obj) == 0)   /* this object has not been initialized yet */
-                    normal_error("pdf backend","\\pdfextension obj 'reserveobjnum' cannot be used with \\immediate");
-                pdf_write_obj(static_pdf, pdf_last_obj);
+    if (scan_keyword("literal")) {
+        new_whatsit(pdf_literal_node);
+        if (scan_keyword("direct"))
+            set_pdf_literal_mode(tail, direct_always);
+        else if (scan_keyword("page"))
+            set_pdf_literal_mode(tail, direct_page);
+        else
+            set_pdf_literal_mode(tail, set_origin);
+        scan_pdf_ext_toks();
+        set_pdf_literal_type(tail, normal);
+        set_pdf_literal_data(tail, def_ref);
+    } else if (scan_keyword("dest")) {
+        scan_pdfdest(static_pdf);
+    } else if (scan_keyword("annot")) {
+        scan_annot(static_pdf);
+    } else if (scan_keyword("save")) {
+        new_whatsit(pdf_save_node);
+    } else if (scan_keyword("restore")) {
+        new_whatsit(pdf_restore_node);
+    } else if (scan_keyword("setmatrix")) {
+        new_whatsit(pdf_setmatrix_node);
+        scan_pdf_ext_toks();
+        set_pdf_setmatrix_data(tail, def_ref);
+    } else if (scan_keyword("obj")) {
+        scan_obj(static_pdf);
+        if (immediate) {
+            if (obj_data_ptr(static_pdf, pdf_last_obj) == 0)   /* this object has not been initialized yet */
+                normal_error("pdf backend","\\pdfextension obj 'reserveobjnum' cannot be used with \\immediate");
+            pdf_write_obj(static_pdf, pdf_last_obj);
+        }
+    } else if (scan_keyword("refobj")) {
+        scan_refobj(static_pdf);
+    } else if (scan_keyword("colorstack")) {
+        scan_int();
+        if (cur_val >= colorstackused()) {
+            print_err("Unknown color stack number ");
+            print_int(cur_val);
+            help3
+                ("Allocate and initialize a color stack with \\pdfextension colorstackinit.",
+                 "I'll use default color stack 0 here.",
+                 "Proceed, with fingers crossed.");
+            error();
+            cur_val = 0;
+        }
+        if (cur_val < 0) {
+            print_err("Invalid negative color stack number");
+            help2("I'll use default color stack 0 here.",
+                  "Proceed, with fingers crossed.");
+            error();
+            cur_val = 0;
+        }
+        if (scan_keyword("set"))
+            i = colorstack_set;
+        else if (scan_keyword("push"))
+            i = colorstack_push;
+        else if (scan_keyword("pop"))
+            i = colorstack_pop;
+        else if (scan_keyword("current"))
+            i = colorstack_current;
+        else
+            i = -1; /* error */
+        if (i >= 0) {
+            new_whatsit(pdf_colorstack_node);
+            set_pdf_colorstack_stack(tail, cur_val);
+            set_pdf_colorstack_cmd(tail, i);
+            set_pdf_colorstack_data(tail, null);
+            if (i <= colorstack_data) {
+                scan_pdf_ext_toks();
+                set_pdf_colorstack_data(tail, def_ref);
             }
-            break;
-        case pdf_refobj_code:
-            scan_refobj(static_pdf);
-            break;
-        case pdf_colorstack_code:
-            scan_int();
-            if (cur_val >= colorstackused()) {
-                print_err("Unknown color stack number ");
-                print_int(cur_val);
-                help3
-                    ("Allocate and initialize a color stack with \\pdfextension colorstackinit.",
-                     "I'll use default color stack 0 here.",
-                     "Proceed, with fingers crossed.");
-                error();
-                cur_val = 0;
-            }
-            if (cur_val < 0) {
-                print_err("Invalid negative color stack number");
-                help2("I'll use default color stack 0 here.",
-                      "Proceed, with fingers crossed.");
-                error();
-                cur_val = 0;
-            }
-            if (scan_keyword("set"))
-                i = colorstack_set;
-            else if (scan_keyword("push"))
-                i = colorstack_push;
-            else if (scan_keyword("pop"))
-                i = colorstack_pop;
-            else if (scan_keyword("current"))
-                i = colorstack_current;
-            else
-                i = -1; /* error */
-            if (i >= 0) {
-                new_whatsit(pdf_colorstack_node);
-                set_pdf_colorstack_stack(tail, cur_val);
-                set_pdf_colorstack_cmd(tail, i);
-                set_pdf_colorstack_data(tail, null);
-                if (i <= colorstack_data) {
-                    scan_pdf_ext_toks();
-                    set_pdf_colorstack_data(tail, def_ref);
-                }
-            } else {
-                print_err("Color stack action is missing");
-                help3("The expected actions for \\pdfextension colorstack:",
-                      "    set, push, pop, current",
-                      "I'll ignore the color stack command.");
-                error();
-            }
-            break;
-        case pdf_start_link_code:
-            scan_startlink(static_pdf);
-            break;
-        case pdf_end_link_code:
-            if (abs(mode) == vmode)
-                normal_error("pdf backend", "\\pdfextension endlink cannot be used in vertical mode");
-            new_whatsit(pdf_end_link_node);
-            break;
-        case pdf_start_thread_code:
-            new_annot_whatsit(pdf_start_thread_node);
-            scan_thread_id();
-            break;
-        case pdf_end_thread_code:
-            new_whatsit(pdf_end_thread_node);
-            break;
-        case pdf_outline_code:
-            scan_pdfoutline(static_pdf);
-            break;
-        case pdf_glyph_to_unicode_code:
-            glyph_to_unicode();
-            break;
-        case pdf_catalog_code:
-            scan_pdfcatalog(static_pdf);
-            break;
-        case pdf_font_attr_code:
-            /*
-                The font attributes are simply initialized to zero now, this is easier to deal with from C than an
-                empty \TeX{} string, and surely nobody will want to set font attr to a string containing a single zero,
-                as that would be nonsensical in the PDF output.
-            */
-            scan_font_ident();
-            k = cur_val;
-            if (k == null_font)
-                normal_error("pdf backend", "invalid font identifier");
-            scan_pdf_ext_toks();
-            set_pdf_font_attr(k, tokens_to_string(def_ref));
-            if (str_length(pdf_font_attr(k)) == 0) {
-                flush_str((str_ptr - 1));   /* from |tokens_to_string| */
-                set_pdf_font_attr(k, 0);
-            }
-            break;
-        case pdf_map_file_code:
-            scan_pdf_ext_toks();
-            pdfmapfile(def_ref);
-            delete_token_ref(def_ref);
-            break;
-        case pdf_map_line_code:
-            scan_pdf_ext_toks();
-            pdfmapline(def_ref);
-            delete_token_ref(def_ref);
-            break;
-        case pdf_include_chars_code:
-            pdf_include_chars(static_pdf);
-            break;
-        case pdf_info_code:
-            scan_pdf_ext_toks();
-            pdf_info_toks = concat_tokens(pdf_info_toks, def_ref);
-            break;
-        case pdf_names_code:
-            scan_pdf_ext_toks();
-            pdf_names_toks = concat_tokens(pdf_names_toks, def_ref);
-            break;
-        case pdf_thread_code:
-            new_annot_whatsit(pdf_thread_node);
-            scan_thread_id();
-            break;
-        case pdf_trailer_code:
-            scan_pdf_ext_toks();
-            pdf_trailer_toks = concat_tokens(pdf_trailer_toks, def_ref);
-            break;
-        default:
-            tex_error("unexpected use of \\pdfextension",null);
-            break ;
+        } else {
+            print_err("Color stack action is missing");
+            help3("The expected actions for \\pdfextension colorstack:",
+                  "    set, push, pop, current",
+                  "I'll ignore the color stack command.");
+            error();
+        }
+    } else if (scan_keyword("startlink")) {
+        scan_startlink(static_pdf);
+    } else if (scan_keyword("endlink")) {
+        if (abs(mode) == vmode)
+            normal_error("pdf backend", "\\pdfextension endlink cannot be used in vertical mode");
+        new_whatsit(pdf_end_link_node);
+    } else if (scan_keyword("startthread")) {
+        new_annot_whatsit(pdf_start_thread_node);
+        scan_thread_id();
+    } else if (scan_keyword("endthread")) {
+        new_whatsit(pdf_end_thread_node);
+    } else if (scan_keyword("thread")) {
+        new_annot_whatsit(pdf_thread_node);
+        scan_thread_id();
+    } else if (scan_keyword("outline")) {
+        scan_pdfoutline(static_pdf);
+    } else if (scan_keyword("glyphtounicode")) {
+        glyph_to_unicode();
+    } else if (scan_keyword("catalog")) {
+        scan_pdfcatalog(static_pdf);
+    } else if (scan_keyword("fontattr")) {
+        /*
+            The font attributes are simply initialized to zero now, this is easier to deal with from C than an
+            empty \TeX{} string, and surely nobody will want to set font attr to a string containing a single zero,
+            as that would be nonsensical in the PDF output.
+        */
+        scan_font_ident();
+        i = cur_val;
+        if (i == null_font)
+            normal_error("pdf backend", "invalid font identifier");
+        scan_pdf_ext_toks();
+        set_pdf_font_attr(i, tokens_to_string(def_ref));
+        if (str_length(pdf_font_attr(i)) == 0) {
+            flush_str((str_ptr - 1));   /* from |tokens_to_string| */
+            set_pdf_font_attr(i, 0);
+        }
+    } else if (scan_keyword("mapfile")) {
+        scan_pdf_ext_toks();
+        pdfmapfile(def_ref);
+        delete_token_ref(def_ref);
+    } else if (scan_keyword("mapline")) {
+        scan_pdf_ext_toks();
+        pdfmapline(def_ref);
+        delete_token_ref(def_ref);
+    } else if (scan_keyword("includechars")) {
+        pdf_include_chars(static_pdf);
+    } else if (scan_keyword("info")) {
+        scan_pdf_ext_toks();
+        pdf_info_toks = concat_tokens(pdf_info_toks, def_ref);
+    } else if (scan_keyword("names")) {
+        scan_pdf_ext_toks();
+        pdf_names_toks = concat_tokens(pdf_names_toks, def_ref);
+    } else if (scan_keyword("trailer")) {
+        scan_pdf_ext_toks();
+        pdf_trailer_toks = concat_tokens(pdf_trailer_toks, def_ref);
+    } else {
+        tex_error("unexpected use of \\pdfextension",null);
     }
 }
 
-void do_resource_dvi(int immediate, int code)
+static void do_resource_dvi(int immediate, int code)
 {
 }
 
-void do_resource_pdf(int immediate, int code)
+static void do_resource_pdf(int immediate, int code)
 {
     switch (code) {
         case use_box_resource_code:
@@ -398,15 +346,8 @@ static void new_write_whatsit(int w, int check)
         scan_int();
         if (cur_val < 0)
             cur_val = term_only;
-#ifdef _MSC_VER
-        else if (cur_val > last_file_selector) {
-/* In the original one, 16 or 17 becomes 143 = 127 + 16, so I don't
-   include (cur_val == write_target_direct) || (cur_val == write_target_special).
-   ak: */
-#else
         else if ((cur_val > last_file_selector) || (cur_val == write_target_direct) || (cur_val == write_target_special)) {
             /* hh: i need to check what 17 is supposed to do. so let's kind of reserve it  */
-#endif
             cur_val = write_target_overflow;
         }
     }
@@ -501,6 +442,7 @@ void do_extension(int immediate)
             if (get_o_mode() == OMODE_PDF)
                 do_extension_pdf(immediate);
             break;
+        /* done */
         default:
             if (immediate) {
                 back_input();
@@ -1003,6 +945,8 @@ defines are not available.
 #define get_tex_attribute_register(j) attribute(j)
 #define get_tex_box_register(j) box(j)
 
+/*
+
 int get_tex_extension_count_register(const char *s, int d)
 {
     int cs;
@@ -1045,7 +989,34 @@ int get_tex_extension_toks_register(const char *s)
     cs = string_lookup(s,strlen(s));
     if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
         return null;
-    return toks((equiv(cs) - toks_base)); /* a pointer to a token list */
+    return toks((equiv(cs) - toks_base));
+}
+
+*/
+
+int get_tex_extension_count_register(int i, int d)
+{
+    return (int) int_par(backend_int_base+i);
+}
+
+void set_tex_extension_count_register(int i, int d)
+{
+    int_par(backend_int_base+i) = d;
+}
+
+int get_tex_extension_dimen_register(int i, int d)
+{
+    return (int) dimen_par(backend_dimen_base+i);
+}
+
+void set_tex_extension_dimen_register(int i, int d)
+{
+    dimen_par(backend_dimen_base+i) = d;
+}
+
+int get_tex_extension_toks_register(int i)
+{
+    return equiv(backend_toks_base+i); /* brr */
 }
 
 int set_tex_dimen_register(int j, scaled v)

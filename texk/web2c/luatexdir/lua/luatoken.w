@@ -155,6 +155,8 @@ command_item command_names[] = {
     {"fi_or_else", fi_or_else_cmd, NULL},
     {"cs_name", cs_name_cmd, NULL},
     {"convert", convert_cmd, NULL},
+    {"variable", variable_cmd, NULL},
+    {"feedback", feedback_cmd, NULL},
     {"the", the_cmd, NULL},
     {"top_bot_mark", top_bot_mark_cmd, NULL},
     {"call", call_cmd, NULL},

@@ -56,8 +56,6 @@ also be a special flag that lies outside the bounds of |mem|, so we
 allow pointers to assume any |halfword| value. The minimum halfword
 value represents a null pointer. \TeX\ does not assume that |mem[null]| exists.
 
-
-
 @ Locations in |fixmem| are used for storing one-word records; a conventional
 \.{AVAIL} stack is used for allocation in this array.
 
@@ -65,7 +63,6 @@ value represents a null pointer. \TeX\ does not assume that |mem[null]| exists.
 smemory_word *fixmem;           /* the big dynamic storage area */
 unsigned fix_mem_min;           /* the smallest location of one-word memory in use */
 unsigned fix_mem_max;           /* the largest location of one-word memory in use */
-
 
 @ In order to study the memory requirements of particular applications, it
 is possible to prepare a version of \TeX\ that keeps track of current and
@@ -153,7 +150,6 @@ halfword get_avail(void)
     incr(dyn_used);             /* maintain statistics */
     return (halfword) p;
 }
-
 
 @ The procedure |flush_list(p)| frees an entire linked list of
 one-word nodes that starts at position |p|.
@@ -276,7 +272,6 @@ void print_meaning(void)
     }
 }
 
-
 @ The procedure |show_token_list|, which prints a symbolic form of
 the token list that starts at a given node |p|, illustrates these
 conventions. The token list being displayed should not begin with a reference
@@ -304,6 +299,25 @@ form of control sequences that are not followed by a blank space, e.g.,
 a real control sequence named \.{BAD} would come out `\.{\\BAD\ }'.
 
 @c
+#define not_so_bad(p) \
+    switch (m) { \
+        case assign_int_cmd: \
+            if (c >= (int_base+backend_int_base) && c <= (int_base+backend_int_last)) \
+                p("[internal backend variable]"); \
+            break; \
+        case assign_dimen_cmd: \
+            if (c >= (dimen_base+backend_dimen_base) && c <= (int_base+backend_dimen_last)) \
+                p("[internal backend variable]"); \
+            break; \
+        case assign_toks_cmd: \
+            if (c >= (backend_toks_base) && c <= (backend_toks_last)) \
+                p("[internal backend variable]"); \
+            break; \
+        default: \
+            p("BAD"); \
+            break; \
+    }
+
 void show_token_list(int p, int q, int l)
 {
     int m, c;                   /* pieces of a token */
@@ -331,7 +345,7 @@ void show_token_list(int p, int q, int l)
             m = token_cmd(token_info(p));
             c = token_chr(token_info(p));
             if (token_info(p) < 0) {
-                tprint_esc("BAD.");
+                tprint_esc("BAD");
             } else {
                 /* Display the token $(|m|,|c|)$ */
                 /* The procedure usually ``learns'' the character code used for macro
@@ -376,7 +390,7 @@ void show_token_list(int p, int q, int l)
                         tprint("->");
                     break;
                 default:
-                    tprint_esc("BAD.");
+                    not_so_bad(tprint);
                     break;
                 }
             }
@@ -403,8 +417,6 @@ void token_show(halfword p)
     if (p != null)
         show_token_list(token_link(p), null, 10000000);
 }
-
-
 
 @ |delete_token_ref|, is called when
 a pointer to a token list's reference count is being removed. This means
@@ -454,7 +466,6 @@ typedef enum { next_line_ok, next_line_return,
 } next_line_retval;
 
 static next_line_retval next_line(void);        /* below */
-
 
 @  In case you are getting bored, here is a slightly less trivial routine:
    Given a string of lowercase letters, like `\.{pt}' or `\.{plus}' or
@@ -625,7 +636,6 @@ it sets |cur_cmd=cur_chr=cur_cs=0| in the case that no more tokens
 appear on that line. (There might not be any tokens at all, if the
 |end_line_char| has |ignore| as its catcode.)
 
-
 @ The value of |par_loc| is the |eqtb| address of `\.{\\par}'. This quantity
 is needed because a blank line of input is supposed to be exactly equivalent
 to the appearance of \.{\\par}; we must set |cur_cs:=par_loc|
@@ -648,7 +658,6 @@ statements waiting to be input, it is changed by |luatokencall|.
 @c
 boolean force_eof;              /* should the next \.{\\input} be aborted early? */
 int luacstrings;                /* how many lua strings are waiting to be input? */
-
 
 @ If the user has set the |pausing| parameter to some positive value,
 and if nonstop mode has not been selected, each line of input is displayed
@@ -680,8 +689,6 @@ void firm_up_the_line(void)
         }
     }
 }
-
-
 
 @ Before getting into |get_next|, let's consider the subroutine that
    is called when an `\.{\\outer}' control sequence has been scanned or
@@ -965,30 +972,30 @@ static boolean get_next_file(void)
 @ @c
 #define is_hex(a) ((a>='0'&&a<='9')||(a>='a'&&a<='f'))
 
-#define add_nybble(a)   do {                                            \
-    if (a<='9') cur_chr=(cur_chr<<4)+a-'0';                             \
-    else        cur_chr=(cur_chr<<4)+a-'a'+10;                          \
+#define add_nybble(a)   do {                    \
+    if (a<='9') cur_chr=(cur_chr<<4)+a-'0';     \
+    else        cur_chr=(cur_chr<<4)+a-'a'+10;  \
   } while (0)
 
-#define hex_to_cur_chr do {                                             \
-    if (c<='9')  cur_chr=c-'0';                                         \
-    else         cur_chr=c-'a'+10;                                      \
-    add_nybble(cc);                                                     \
+#define hex_to_cur_chr do {                     \
+    if (c<='9')  cur_chr=c-'0';                 \
+    else         cur_chr=c-'a'+10;              \
+    add_nybble(cc);                             \
   } while (0)
 
-#define four_hex_to_cur_chr do {                                        \
-    hex_to_cur_chr;                                                     \
-    add_nybble(ccc); add_nybble(cccc);                                  \
+#define four_hex_to_cur_chr do {                \
+    hex_to_cur_chr;                             \
+    add_nybble(ccc); add_nybble(cccc);          \
   } while (0)
 
-#define five_hex_to_cur_chr  do {                                       \
-    four_hex_to_cur_chr;                                                \
-    add_nybble(ccccc);                                                  \
+#define five_hex_to_cur_chr  do {               \
+    four_hex_to_cur_chr;                        \
+    add_nybble(ccccc);                          \
   } while (0)
 
-#define six_hex_to_cur_chr do {                                         \
-    five_hex_to_cur_chr;                                                \
-    add_nybble(cccccc);                                                 \
+#define six_hex_to_cur_chr do {                 \
+    five_hex_to_cur_chr;                        \
+    add_nybble(cccccc);                         \
   } while (0)
 
 
@@ -1241,7 +1248,6 @@ static boolean check_expanded_code(int *kk)
     return false;
 }
 
-
 @ All of the easy branches of |get_next| have now been taken care of.
   There is one more branch.
 
@@ -1443,7 +1449,6 @@ void get_next(void)
     }
 }
 
-
 @ Since |get_next| is used so frequently in \TeX, it is convenient
 to define three related procedures that do a little more:
 
@@ -1563,7 +1568,6 @@ halfword lua_str_toks(lstring b)
     }
     return p;
 }
-
 
 @ Incidentally, the main reason for wanting |str_toks| is the function |the_toks|,
 which has similar input/output characteristics.
@@ -1738,7 +1742,7 @@ we have to create a temporary string that is destroyed immediately after.
     selector = old_setting; \
 }
 
-int conv_var_dvi(halfword c)
+static int do_variable_dvi(halfword c)
 {
     return 0;
 }
@@ -1746,85 +1750,63 @@ int conv_var_dvi(halfword c)
 #define backend_dimen(A) eqtb[scaled_base+(A)].hh.rh
 #define backend_count(A) eqtb[count_base+(A)].hh.rh
 
-#define get_backend_count(cur_cs,name,index,default) { \
-    no_new_control_sequence = false; \
-    cur_cs = string_lookup(name,strlen(name)); \
-    no_new_control_sequence = true; \
-    if (eq_type(cur_cs) == undefined_cs_cmd) { \
-        assert(index < backend_int_last); \
-        primitive_tex(name, assign_int_cmd, int_base + index, int_base); \
-        backend_count(cur_cs) = default ; \
-    } \
-    cur_tok = cur_cs + cs_token_flag; \
-    back_input(); \
-}
+#define do_variable_backend_int(i) \
+    cur_cmd = assign_int_cmd; \
+    cur_val = backend_int_base + i + int_base; \
+    cur_tok = token_val(cur_cmd, cur_val); \
+    back_input();
 
-#define get_backend_dimen(cur_cs,name,index,default) { \
-    no_new_control_sequence = false; \
-    cur_cs = string_lookup(name,strlen(name)); \
-    no_new_control_sequence = true; \
-    if (eq_type(cur_cs) == undefined_cs_cmd) { \
-        assert(index < backend_dimen_last); \
-        primitive_tex(name, assign_dimen_cmd, dimen_base + index, dimen_base); \
-        backend_dimen(cur_cs) = default ; \
-    } \
-    cur_tok = cur_cs + cs_token_flag; \
-    back_input(); \
-}
+#define do_variable_backend_dimen(i) \
+    cur_cmd = assign_dimen_cmd; \
+    cur_val = backend_dimen_base + i + dimen_base; \
+    cur_tok = token_val(cur_cmd, cur_val); \
+    back_input();
 
-#define get_backend_toks(cur_cs,name,index) { \
-    no_new_control_sequence = false; \
-    cur_cs = string_lookup(name,strlen(name)); \
-    no_new_control_sequence = true; \
-    if (eq_type(cur_cs) == undefined_cs_cmd) { \
-        assert(index < backend_toks_last); \
-        primitive_tex(name, assign_toks_cmd, index, local_base); \
-    } \
-    cur_tok = cur_cs + cs_token_flag; \
-    back_input(); \
-}
+#define do_variable_backend_toks(i) \
+    cur_cmd = assign_toks_cmd; \
+    cur_val = backend_toks_base + i ; /* + local_base ; */ \
+    cur_tok = token_val(cur_cmd, cur_val); \
+    back_input();
 
-int conv_var_pdf(halfword c)
+static int do_variable_pdf(halfword c)
 {
-    /* todo: optimize order, but hardly any access */
+         if (scan_keyword("compresslevel"))       { do_variable_backend_int( 1); }
+    else if (scan_keyword("decimaldigits"))       { do_variable_backend_int( 2); }
+    else if (scan_keyword("imageresolution"))     { do_variable_backend_int( 3); }
+    else if (scan_keyword("pkresolution"))        { do_variable_backend_int( 4); }
+    else if (scan_keyword("uniqueresname"))       { do_variable_backend_int( 5); }
+    else if (scan_keyword("minorversion"))        { do_variable_backend_int( 6); }
+    else if (scan_keyword("pagebox"))             { do_variable_backend_int( 7); }
+    else if (scan_keyword("inclusionerrorlevel")) { do_variable_backend_int( 8); }
+    else if (scan_keyword("gamma"))               { do_variable_backend_int( 9); }
+    else if (scan_keyword("imageapplygamma"))     { do_variable_backend_int(10); }
+    else if (scan_keyword("imagegamma"))          { do_variable_backend_int(11); }
+    else if (scan_keyword("imagehicolor"))        { do_variable_backend_int(12); }
+    else if (scan_keyword("imageaddfilename"))    { do_variable_backend_int(13); }
+    else if (scan_keyword("objcompresslevel"))    { do_variable_backend_int(14); }
+    else if (scan_keyword("inclusioncopyfonts"))  { do_variable_backend_int(15); }
+    else if (scan_keyword("gentounicode"))        { do_variable_backend_int(16); }
+    else if (scan_keyword("replacefont"))         { do_variable_backend_int(17); }
 
-         if (scan_keyword("compresslevel"))       { get_backend_count(cur_cs,"pdf_compresslevel",       backend_int_base   +  1, 9); }
-    else if (scan_keyword("decimaldigits"))       { get_backend_count(cur_cs,"pdf_decimaldigits",       backend_int_base   +  2, 3); }
-    else if (scan_keyword("imageresolution"))     { get_backend_count(cur_cs,"pdf_imageresolution",     backend_int_base   +  3, 72); }
-    else if (scan_keyword("pkresolution"))        { get_backend_count(cur_cs,"pdf_pkresolution",        backend_int_base   +  4, 72); }
-    else if (scan_keyword("uniqueresname"))       { get_backend_count(cur_cs,"pdf_uniqueresname",       backend_int_base   +  5, 0); }
-    else if (scan_keyword("minorversion"))        { get_backend_count(cur_cs,"pdf_minorversion",        backend_int_base   +  6, 4); }
-    else if (scan_keyword("pagebox"))             { get_backend_count(cur_cs,"pdf_pagebox",             backend_int_base   +  7, 0); }
-    else if (scan_keyword("inclusionerrorlevel")) { get_backend_count(cur_cs,"pdf_inclusionerrorlevel", backend_int_base   +  8, 0); }
-    else if (scan_keyword("gamma"))               { get_backend_count(cur_cs,"pdf_gamma",               backend_int_base   +  9, 1000); }
-    else if (scan_keyword("imageapplygamma"))     { get_backend_count(cur_cs,"pdf_imageapplygamma",     backend_int_base   + 10, 0); }
-    else if (scan_keyword("imagegamma"))          { get_backend_count(cur_cs,"pdf_imagegamma",          backend_int_base   + 11, 2200); }
-    else if (scan_keyword("imagehicolor"))        { get_backend_count(cur_cs,"pdf_imagehicolor",        backend_int_base   + 12, 1); }
-    else if (scan_keyword("imageaddfilename"))    { get_backend_count(cur_cs,"pdf_imageaddfilename",    backend_int_base   + 12, 1); }
-    else if (scan_keyword("objcompresslevel"))    { get_backend_count(cur_cs,"pdf_objcompresslevel",    backend_int_base   + 13, 0); }
-    else if (scan_keyword("inclusioncopyfonts"))  { get_backend_count(cur_cs,"pdf_inclusioncopyfonts",  backend_int_base   + 14, 0); }
-    else if (scan_keyword("gentounicode"))        { get_backend_count(cur_cs,"pdf_gentounicode",        backend_int_base   + 15, 0); }
-    else if (scan_keyword("replacefont"))         { get_backend_count(cur_cs,"pdf_replacefont",         backend_int_base   + 16, 0); }
+    else if (scan_keyword("horigin"))             { do_variable_backend_dimen(1); }
+    else if (scan_keyword("vorigin"))             { do_variable_backend_dimen(2); }
+    else if (scan_keyword("threadmargin"))        { do_variable_backend_dimen(3); }
+    else if (scan_keyword("destmargin"))          { do_variable_backend_dimen(4); }
+    else if (scan_keyword("linkmargin"))          { do_variable_backend_dimen(5); }
 
-    else if (scan_keyword("horigin"))             { get_backend_dimen(cur_cs,"pdf_horigin",             backend_dimen_base +  1, one_inch); }
-    else if (scan_keyword("vorigin"))             { get_backend_dimen(cur_cs,"pdf_vorigin",             backend_dimen_base +  2, one_inch); }
-    else if (scan_keyword("threadmargin"))        { get_backend_dimen(cur_cs,"pdf_threadmargin",        backend_dimen_base +  3, 0); }
-    else if (scan_keyword("destmargin"))          { get_backend_dimen(cur_cs,"pdf_destmargin",          backend_dimen_base +  4, 0); }
-    else if (scan_keyword("linkmargin"))          { get_backend_dimen(cur_cs,"pdf_linkmargin",          backend_dimen_base +  5, 0); }
-
-    else if (scan_keyword("pageattr"))            { get_backend_toks (cur_cs,"pdf_pageattr",            backend_toks_base  +  1); }
-    else if (scan_keyword("pageresources"))       { get_backend_toks (cur_cs,"pdf_pageresources",       backend_toks_base  +  2); }
-    else if (scan_keyword("pagesattr"))           { get_backend_toks (cur_cs,"pdf_pagesattr",           backend_toks_base  +  3); }
-    else if (scan_keyword("xformattr"))           { get_backend_toks (cur_cs,"pdf_xformattr",           backend_toks_base  +  4); }
-    else if (scan_keyword("xformresources"))      { get_backend_toks (cur_cs,"pdf_xformresources",      backend_toks_base  +  5); }
-    else if (scan_keyword("pkmode"))              { get_backend_toks (cur_cs,"pdf_pkmode",              backend_toks_base  +  6); }
+    else if (scan_keyword("pageattr"))            { do_variable_backend_toks(1); }
+    else if (scan_keyword("pageresources"))       { do_variable_backend_toks(2); }
+    else if (scan_keyword("pagesattr"))           { do_variable_backend_toks(3); }
+    else if (scan_keyword("xformattr"))           { do_variable_backend_toks(4); }
+    else if (scan_keyword("xformresources"))      { do_variable_backend_toks(5); }
+    else if (scan_keyword("pkmode"))              { do_variable_backend_toks(6); }
 
     else
         return 0;
     return 1;
 }
 
-int conv_toks_dvi(halfword c)
+static int do_feedback_dvi(halfword c)
 {
     return 0;
 }
@@ -1834,7 +1816,7 @@ int conv_toks_dvi(halfword c)
 #define pdftex_version  40  /* these values will not change any more */
 #define pdftex_revision "0" /* these values will not change any more */
 
-int conv_toks_pdf(halfword c)
+static int do_feedback_pdf(halfword c)
 {
     int old_setting;            /* holds |selector| setting */
     int save_scanner_status;    /* |scanner_status| upon entry */
@@ -1846,141 +1828,112 @@ int conv_toks_pdf(halfword c)
     str_number u = 0;           /* third temp string, will become non-nil if a string is already being built */
     char *str;                  /* color stack init str */
 
-         if (scan_keyword("lastlink"))       c = pdf_last_link_code;
-    else if (scan_keyword("retval"))         c = pdf_retval_code;
-    else if (scan_keyword("lastobj"))        c = pdf_last_obj_code;
-    else if (scan_keyword("lastannot"))      c = pdf_last_annot_code;
-    else if (scan_keyword("xformname"))      c = pdf_xform_name_code;
-    else if (scan_keyword("creationdate"))   c = pdf_creation_date_code;
-    else if (scan_keyword("fontname"))       c = pdf_font_name_code;
-    else if (scan_keyword("fontobjnum"))     c = pdf_font_objnum_code;
-    else if (scan_keyword("fontsize"))       c = pdf_font_size_code;
-    else if (scan_keyword("pageref"))        c = pdf_page_ref_code;
-    else if (scan_keyword("colorstackinit")) c = pdf_colorstack_init_code;
-    else if (scan_keyword("version"))        c = pdf_version_code;
-    else if (scan_keyword("revision"))       c = pdf_revision_code;
-
-    switch (c) {
-        case pdf_last_link_code:
-            push_selector;
-            print_int(pdf_last_link);
-            pop_selector;
-            break;
-        case pdf_retval_code:
-            push_selector;
-            print_int(pdf_retval);
-            pop_selector;
-            break;
-        case pdf_last_obj_code:
-            push_selector;
-            print_int(pdf_last_obj);
-            pop_selector;
-            break;
-        case pdf_last_annot_code:
-            push_selector;
-            print_int(pdf_last_annot);
-            pop_selector;
-            break;
-        case pdf_xform_name_code:
-            scan_int();
-            check_obj_type(static_pdf, obj_type_xform, cur_val);
-            push_selector;
-            print_int(obj_info(static_pdf, cur_val));
-            pop_selector;
-            break;
-        case pdf_creation_date_code:
-            ins_list(string_to_toks(getcreationdate(static_pdf)));
-            /* no further action */
-            return 2;
-            break;
-        case pdf_font_name_code:
-            scan_font_ident();
-            if (cur_val == null_font)
-                normal_error("pdf backend", "invalid font identifier when asking 'fontname'");
-            pdf_check_vf(cur_val);
-            if (!font_used(cur_val))
-                pdf_init_font(static_pdf, cur_val);
-            push_selector;
-            set_ff(cur_val);
-            print_int(obj_info(static_pdf, pdf_font_num(ff)));
-            pop_selector;
-            break;
-        case pdf_font_objnum_code:
-            scan_font_ident();
-            if (cur_val == null_font)
-                normal_error("pdf backend", "invalid font identifier when asking 'objnum'");
-            pdf_check_vf(cur_val);
-            if (!font_used(cur_val))
-                pdf_init_font(static_pdf, cur_val);
-            push_selector;
-            set_ff(cur_val);
-            print_int(pdf_font_num(ff));
-            pop_selector;
-            break;
-        case pdf_font_size_code:
-            scan_font_ident();
-            if (cur_val == null_font)
-                normal_error("pdf backend", "invalid font identifier when asking 'fontsize'");
-            push_selector;
-            print_scaled(font_size(cur_val));
-            tprint("pt");
-            pop_selector;
-            break;
-        case pdf_page_ref_code:
-            scan_int();
-            if (cur_val <= 0)
-                normal_error("pdf backend", "invalid page number when asking 'pageref'");
-            push_selector;
-            print_int(pdf_get_obj(static_pdf, obj_type_page, cur_val, false));
-            pop_selector;
-            break;
-        case pdf_colorstack_init_code:
-            bool = scan_keyword("page");
-            if (scan_keyword("direct"))
-                cur_val = direct_always;
-            else if (scan_keyword("page"))
-                cur_val = direct_page;
-            else
-                cur_val = set_origin;
-            save_scanner_status = scanner_status;
-            save_warning_index = warning_index;
-            save_def_ref = def_ref;
-            u = save_cur_string();
-            scan_toks(false, true); /*hh-ls was scan_pdf_ext_toks();*/
-            s = tokens_to_string(def_ref);
-            delete_token_ref(def_ref);
-            def_ref = save_def_ref;
-            warning_index = save_warning_index;
-            scanner_status = save_scanner_status;
-            str = makecstring(s);
-            cur_val = newcolorstack(str, cur_val, bool);
-            free(str);
-            flush_str(s);
-            cur_val_level = int_val_level;
-            if (cur_val < 0) {
-                print_err("Too many color stacks");
-                help2("The number of color stacks is limited to 32768.",
-                      "I'll use the default color stack 0 here.");
-                error();
-                cur_val = 0;
-                restore_cur_string(u);
-            }
-            push_selector;
-            print_int(cur_val);
-            pop_selector;
-            break;
-        case pdf_version_code:
-            push_selector;
-            print_int(pdftex_version);
-            pop_selector;
-            break;
-        case pdf_revision_code:
-            ins_list(string_to_toks(pdftex_revision));
-            return 2;
-            break;
-        default:
-            return 0;
-            break;
+    if (scan_keyword("lastlink")) {
+        push_selector;
+        print_int(pdf_last_link);
+        pop_selector;
+    } else if (scan_keyword("retval")) {
+        push_selector;
+        print_int(pdf_retval);
+        pop_selector;
+    } else if (scan_keyword("lastobj")) {
+        push_selector;
+        print_int(pdf_last_obj);
+        pop_selector;
+    } else if (scan_keyword("lastannot")) {
+        push_selector;
+        print_int(pdf_last_annot);
+        pop_selector;
+    } else if (scan_keyword("xformname")) {
+        scan_int();
+        check_obj_type(static_pdf, obj_type_xform, cur_val);
+        push_selector;
+        print_int(obj_info(static_pdf, cur_val));
+        pop_selector;
+    } else if (scan_keyword("creationdate")) {
+        ins_list(string_to_toks(getcreationdate(static_pdf)));
+        /* no further action */
+        return 2;
+    } else if (scan_keyword("fontname")) {
+        scan_font_ident();
+        if (cur_val == null_font)
+            normal_error("pdf backend", "invalid font identifier when asking 'fontname'");
+        pdf_check_vf(cur_val);
+        if (!font_used(cur_val))
+            pdf_init_font(static_pdf, cur_val);
+        push_selector;
+        set_ff(cur_val);
+        print_int(obj_info(static_pdf, pdf_font_num(ff)));
+        pop_selector;
+    } else if (scan_keyword("fontobjnum")) {
+        scan_font_ident();
+        if (cur_val == null_font)
+            normal_error("pdf backend", "invalid font identifier when asking 'objnum'");
+        pdf_check_vf(cur_val);
+        if (!font_used(cur_val))
+            pdf_init_font(static_pdf, cur_val);
+        push_selector;
+        set_ff(cur_val);
+        print_int(pdf_font_num(ff));
+        pop_selector;
+    } else if (scan_keyword("fontsize")) {
+        scan_font_ident();
+        if (cur_val == null_font)
+            normal_error("pdf backend", "invalid font identifier when asking 'fontsize'");
+        push_selector;
+        print_scaled(font_size(cur_val));
+        tprint("pt");
+        pop_selector;
+    } else if (scan_keyword("pageref")) {
+        scan_int();
+        if (cur_val <= 0)
+            normal_error("pdf backend", "invalid page number when asking 'pageref'");
+        push_selector;
+        print_int(pdf_get_obj(static_pdf, obj_type_page, cur_val, false));
+        pop_selector;
+    } else if (scan_keyword("colorstackinit")) {
+        bool = scan_keyword("page");
+        if (scan_keyword("direct"))
+            cur_val = direct_always;
+        else if (scan_keyword("page"))
+            cur_val = direct_page;
+        else
+            cur_val = set_origin;
+        save_scanner_status = scanner_status;
+        save_warning_index = warning_index;
+        save_def_ref = def_ref;
+        u = save_cur_string();
+        scan_toks(false, true); /*hh-ls was scan_pdf_ext_toks();*/
+        s = tokens_to_string(def_ref);
+        delete_token_ref(def_ref);
+        def_ref = save_def_ref;
+        warning_index = save_warning_index;
+        scanner_status = save_scanner_status;
+        str = makecstring(s);
+        cur_val = newcolorstack(str, cur_val, bool);
+        free(str);
+        flush_str(s);
+        cur_val_level = int_val_level;
+        if (cur_val < 0) {
+            print_err("Too many color stacks");
+            help2("The number of color stacks is limited to 32768.",
+                  "I'll use the default color stack 0 here.");
+            error();
+            cur_val = 0;
+            restore_cur_string(u);
+        }
+        push_selector;
+        print_int(cur_val);
+        pop_selector;
+    } else if (scan_keyword("version")) {
+        push_selector;
+        print_int(pdftex_version);
+        pop_selector;
+    } else if (scan_keyword("revision")) {
+        ins_list(string_to_toks(pdftex_revision));
+        return 2;
+    } else {
+        return 0;
     }
     return 1;
 }
@@ -1998,7 +1951,6 @@ void conv_toks(void)
     str_number u = 0;           /* third temp string, will become non-nil if a string is already being built */
     int c = cur_chr;            /* desired type of conversion */
     str_number str;
-    int done = 1;
     int i = 0;
     /* Scan the argument for command |c| */
     switch (c) {
@@ -2284,21 +2236,10 @@ void conv_toks(void)
         tprint("pt");
         pop_selector;
         break;
-    case dvi_variable_code:
-        done = conv_var_dvi(c);
-        if (done==0)
-            tex_error("unexpected use of \\dvivariable",null);
-        return;
-        break;
-    case pdf_variable_code:
-        done = conv_var_pdf(c);
-        if (done==0)
-            tex_error("unexpected use of \\pdfvariable",null);
-        return;
-        break;
+    /*
     case dvi_feedback_code:
         if (get_o_mode() == OMODE_DVI)
-            done = conv_toks_dvi(c);
+            done = do_feedback_dvi(c);
         else
             done = 0;
         if (done==0)
@@ -2316,83 +2257,117 @@ void conv_toks(void)
         else if (done==2)
             return;
         break;
+    */
     default:
         confusion("convert");
         break;
     }
-
     str = make_string();
     (void) str_toks(str_lstring(str));
     flush_str(str);
     ins_list(token_link(temp_token_head));
 }
 
+void do_feedback(void)
+{
+    int c = cur_chr;
+    str_number str;
+    int done = 1;
+    switch (c) {
+        case dvi_feedback_code:
+            if (get_o_mode() == OMODE_DVI)
+                done = do_feedback_dvi(c);
+            else
+                done = 0;
+            if (done==0)
+                tex_error("unexpected use of \\dvifeedback",null);
+            else if (done==2)
+                return;
+            break;
+        case pdf_feedback_code:
+            if (get_o_mode() == OMODE_PDF)
+                done = do_feedback_pdf(c);
+            else
+                done = 0;
+            if (done==0)
+                tex_error("unexpected use of \\pdffeedback",null);
+            else if (done==2)
+                return;
+            break;
+        default:
+            confusion("feedback");
+            break;
+    }
+    str = make_string();
+    (void) str_toks(str_lstring(str));
+    flush_str(str);
+    ins_list(token_link(temp_token_head));
+}
+
+void do_variable(void)
+{
+    int c = cur_chr;
+    int done = 1;
+    switch (c) {
+        case dvi_variable_code:
+            done = do_variable_dvi(c);
+            if (done==0)
+                tex_error("unexpected use of \\dvivariable",null);
+            return;
+            break;
+        case pdf_variable_code:
+            done = do_variable_pdf(c);
+            if (done==0)
+                tex_error("unexpected use of \\pdfvariable",null);
+            return;
+            break;
+        default:
+            confusion("variable");
+            break;
+    }
+}
+
 @ This boolean is keeping track of the lua string escape state
 @c
 boolean in_lua_escape;
 
-@ probably not needed anymore
-@c
-boolean is_convert(halfword c)
+static int the_convert_string_dvi(halfword c, int i)
 {
-    return (c == convert_cmd);
+    return 0 ;
 }
 
-int the_convert_string_dvi(halfword c, int i)
-{
-    return 0;
-}
-
-int the_convert_string_pdf(halfword c, int i)
+static int the_convert_string_pdf(halfword c, int i)
 {
     int ff;
-
-         if (scan_keyword("lastlink"))       c = pdf_last_link_code;
-    else if (scan_keyword("retval"))         c = pdf_retval_code;
-    else if (scan_keyword("lastobj"))        c = pdf_last_obj_code;
-    else if (scan_keyword("lastannot"))      c = pdf_last_annot_code;
-    else if (scan_keyword("xformname"))      c = pdf_xform_name_code;
- /* else if (scan_keyword("creationdate"))   c = pdf_creation_date_code; */
-    else if (scan_keyword("fontname"))       c = pdf_font_name_code;
-    else if (scan_keyword("fontobjnum"))     c = pdf_font_objnum_code;
-    else if (scan_keyword("fontsize"))       c = pdf_font_size_code;
-    else if (scan_keyword("pageref"))        c = pdf_page_ref_code;
- /* else if (scan_keyword("colorstackinit")) c = pdf_colorstack_init_code; */
-
-    switch(c) {
-        case pdf_last_link_code:
-            print_int(pdf_last_link);
-            break;
-        case pdf_retval_code:
-            print_int(pdf_retval);
-            break;
-        case pdf_last_obj_code:
-            print_int(pdf_last_obj);
-            break;
-        case pdf_last_annot_code:
-            print_int(pdf_last_annot);
-            break;
-        case pdf_font_name_code:
-            set_ff(i);
-            print_int(obj_info(static_pdf, pdf_font_num(ff)));
-            break;
-        case pdf_font_objnum_code:
-            set_ff(i);
-            print_int(pdf_font_num(ff));
-            break;
-        case pdf_font_size_code:
-            print_scaled(font_size(i));
-            tprint("pt");
-            break;
-        case pdf_page_ref_code:
-            print_int(pdf_get_obj(static_pdf, obj_type_page, i, false));
-            break;
-        case pdf_xform_name_code:
-            print_int(obj_info(static_pdf, i));
-            break;
-        default:
-            return 0;
-            break;
+    if (get_o_mode() != OMODE_PDF) {
+        return 0;
+    } else if (scan_keyword("lastlink")) {
+        print_int(pdf_last_link);
+    } else if (scan_keyword("retval")) {
+        print_int(pdf_retval);
+    } else if (scan_keyword("lastobj")) {
+        print_int(pdf_last_obj);
+    } else if (scan_keyword("lastannot")) {
+        print_int(pdf_last_annot);
+    } else if (scan_keyword("xformname")) {
+        print_int(obj_info(static_pdf, i));
+    } else if (scan_keyword("creationdate")) {
+        return 0;
+    } else if (scan_keyword("fontname")) {
+        set_ff(i);
+        print_int(obj_info(static_pdf, pdf_font_num(ff)));
+    } else if (scan_keyword("fontobjnum")) {
+        set_ff(i);
+        print_int(pdf_font_num(ff));
+    } else if (scan_keyword("fontsize")) {
+        print_scaled(font_size(i));
+        tprint("pt");
+    } else if (scan_keyword("pageref")) {
+        print_int(pdf_get_obj(static_pdf, obj_type_page, i, false));
+    } else if (scan_keyword("colorstackinit")) {
+        return 0;
+    } else {
+        return 0;
     }
     return 1;
 }
@@ -2458,24 +2433,21 @@ str_number the_convert_string(halfword c, int i)
         case font_identifier_code:
             print_font_identifier(i);
             break;
+        /* backend: this might become obsolete */
         case dvi_feedback_code:
-            if (get_o_mode() == OMODE_DVI)
-                done = the_convert_string_dvi(c,i);
-            else
-                done = false;
+            done = the_convert_string_dvi(c,i);
             break;
         case pdf_feedback_code:
-            if (get_o_mode() == OMODE_PDF)
-                done = the_convert_string_pdf(c,i);
-            else
-                done = false;
+            done = the_convert_string_pdf(c,i);
             break;
+        /* done */
         default:
             done = false;
             break;
     }
-    if (done)
+    if (done) {
         ret = make_string();
+    }
     selector = old_setting;
     return ret;
 }
@@ -2628,48 +2600,53 @@ str_number tokens_to_string(halfword p)
 }
 
 @ @c
-#define make_room(a)                                    \
-    if ((unsigned)i+a+1>alloci) {                      \
-        ret = xrealloc(ret,(alloci+64));                \
-        alloci = alloci + 64;                           \
+#define make_room(a)                     \
+    if ((unsigned)i+a+1>alloci) {        \
+        ret = xrealloc(ret,(alloci+64)); \
+        alloci = alloci + 64;            \
     }
-
 
 #define append_i_byte(a) ret[i++] = (char)(a)
 
 #define Print_char(a) make_room(1); append_i_byte(a)
 
-#define Print_uchar(s) {                                           \
-    make_room(4);                                                  \
-    if (s<=0x7F) {                                                 \
-      append_i_byte(s);                                            \
-    } else if (s<=0x7FF) {                                         \
-      append_i_byte(0xC0 + (s / 0x40));                            \
-      append_i_byte(0x80 + (s % 0x40));                            \
-    } else if (s<=0xFFFF) {                                        \
-      append_i_byte(0xE0 + (s / 0x1000));                          \
-      append_i_byte(0x80 + ((s % 0x1000) / 0x40));                 \
-      append_i_byte(0x80 + ((s % 0x1000) % 0x40));                 \
-    } else if (s>=0x110000) {                                      \
-      append_i_byte(s-0x11000);                                    \
-    } else {                                                       \
-      append_i_byte(0xF0 + (s / 0x40000));                         \
-      append_i_byte(0x80 + ((s % 0x40000) / 0x1000));              \
-      append_i_byte(0x80 + (((s % 0x40000) % 0x1000) / 0x40));     \
-      append_i_byte(0x80 + (((s % 0x40000) % 0x1000) % 0x40));     \
+#define Print_uchar(s) {                                       \
+    make_room(4);                                              \
+    if (s<=0x7F) {                                             \
+      append_i_byte(s);                                        \
+    } else if (s<=0x7FF) {                                     \
+      append_i_byte(0xC0 + (s / 0x40));                        \
+      append_i_byte(0x80 + (s % 0x40));                        \
+    } else if (s<=0xFFFF) {                                    \
+      append_i_byte(0xE0 + (s / 0x1000));                      \
+      append_i_byte(0x80 + ((s % 0x1000) / 0x40));             \
+      append_i_byte(0x80 + ((s % 0x1000) % 0x40));             \
+    } else if (s>=0x110000) {                                  \
+      append_i_byte(s-0x11000);                                \
+    } else {                                                   \
+      append_i_byte(0xF0 + (s / 0x40000));                     \
+      append_i_byte(0x80 + ((s % 0x40000) / 0x1000));          \
+      append_i_byte(0x80 + (((s % 0x40000) % 0x1000) / 0x40)); \
+      append_i_byte(0x80 + (((s % 0x40000) % 0x1000) % 0x40)); \
     } }
 
 
-#define Print_esc(b) {                                          \
-    const char *v = b;                                          \
-    if (e>0 && e<STRING_OFFSET) {                               \
-        Print_uchar (e);                                        \
-    }                                                           \
-    make_room(strlen(v));                                       \
-    while (*v) { append_i_byte(*v); v++; }                      \
+#define Print_esc(b) {                     \
+    const char *v = b;                     \
+    if (e>0 && e<STRING_OFFSET) {          \
+        Print_uchar (e);                   \
+    }                                      \
+    make_room(strlen(v));                  \
+    while (*v) { append_i_byte(*v); v++; } \
   }
 
-#define is_cat_letter(a)                                                \
+#define Print_str(b) {                     \
+    const char *v = b;                     \
+    make_room(strlen(v));                  \
+    while (*v) { append_i_byte(*v); v++; } \
+  }
+
+#define is_cat_letter(a) \
     (get_char_cat_code(pool_to_unichar(str_string((a)))) == 11)
 
 @ the actual token conversion in this function is now functionally
@@ -2748,7 +2725,7 @@ char *tokenlist_to_cstring(int pp, int inhibit_par, int *siz)
             }
         } else {
             if (infop < 0) {
-                Print_esc("BAD.");
+                Print_esc("BAD");
             } else {
                 m = token_cmd(infop);
                 c = token_chr(infop);
@@ -2793,7 +2770,7 @@ char *tokenlist_to_cstring(int pp, int inhibit_par, int *siz)
                     }
                     break;
                 default:
-                    Print_esc("BAD.");
+                    not_so_bad(Print_esc);
                     break;
                 }
             }
