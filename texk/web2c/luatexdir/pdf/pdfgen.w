@@ -1639,6 +1639,11 @@ void check_o_mode(PDF pdf, const char *s, int o_mode_bitpattern, boolean strict)
     output_mode o_mode;
     const char *m = NULL;
 
+    if (lua_only) {
+        normal_error("lua only","no backend present, needed for what you asked for");
+        return ;
+    }
+
     /* in warn mode (strict == false):
        only check, don't do |fix_o_mode()| here! |output_mode_used| is left
        in possibly wrong state until real output, ok.

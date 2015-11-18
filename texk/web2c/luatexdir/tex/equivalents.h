@@ -172,12 +172,10 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define err_help_loc (local_base+9)                                   /* points to token list for \.{\\errhelp} */
 #  define every_eof_loc (local_base+10)                                 /* points to token list for \.{\\everyeof} */
 
-/* define toks_base (local_base+11) */                                  /* table of |number_regs| token list registers */
-
 #  define backend_toks_base (local_base+11)
-#  define backend_toks_last (backend_toks_base+10)
+#  define backend_toks_last (local_base+20)
 
-#  define toks_base (backend_toks_last+1)                               /* table of |number_regs| token list registers */
+#  define toks_base (local_base+21)                                     /* table of |number_regs| token list registers */
 
 #  define etex_pen_base (toks_base+number_regs)                         /* start of table of \eTeX's penalties */
 #  define inter_line_penalties_loc (etex_pen_base)                      /* additional penalties between lines */
@@ -293,13 +291,12 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define math_no_char_italic_code 92                                   /* just for tracing, can change */
 #  define math_use_old_fraction_scaling_code 93                         /* just for tracing, can change */
 #  define math_old_code 94                                              /* this one is stable */
-
 #  define math_option_code 95
 
-#  define backend_int_base (math_option_code+1)
-#  define backend_int_last (backend_int_base+20)
+#  define backend_int_base (int_base+96)
+#  define backend_int_last (int_base+115)
 
-#  define tex_int_pars (backend_int_last+1)                             /* total number of integer parameters */
+#  define tex_int_pars (116)                                            /* total number of integer parameters */
 
 #  define page_direction_code (tex_int_pars)
 #  define body_direction_code (tex_int_pars+1)
@@ -342,14 +339,12 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define page_bottom_offset_code 24
 #  define px_dimen_code 25
 #  define page_width_code 26                                            /* page width of the output */
-#  define page_height_code 27                                           /* page height of the output */
+#  define page_height_code 27                                           /* page height of the output */                      /* total number of dimension parameters */
 
-/* define dimen_pars (page_height_code + 1) */                          /* total number of dimension parameters */
+#  define backend_dimen_base (dimen_base+28)
+#  define backend_dimen_last (dimen_base+37)
 
-#  define backend_dimen_base (page_height_code+1)
-#  define backend_dimen_last (backend_dimen_base+10)
-
-#  define dimen_pars (backend_dimen_last + 1)                           /* total number of dimension parameters */
+#  define dimen_pars (38)                                               /* total number of dimension parameters */
 
 #  define scaled_base (dimen_base+dimen_pars)                           /* table of |number_regs| user-defined \.{\\dimen} registers */
 #  define eqtb_size (scaled_base+biggest_reg)                           /* largest subscript of |eqtb| */

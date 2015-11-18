@@ -320,10 +320,12 @@ void luainterpreter(void)
     lua_pushstring(L, "pdf");
     lua_call(L, 1, 0);
 
-    /* |luaopen_img(L);| */
-    lua_pushcfunction(L, luaopen_img);
-    lua_pushstring(L, "img");
-    lua_call(L, 1, 0);
+    if (!lua_only) {
+        /* |luaopen_img(L);| */
+        lua_pushcfunction(L, luaopen_img);
+        lua_pushstring(L, "img");
+        lua_call(L, 1, 0);
+    }
 
     /* |luaopen_epdf(L);| */
     lua_pushcfunction(L, luaopen_epdf);

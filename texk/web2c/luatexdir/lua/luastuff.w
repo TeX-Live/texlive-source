@@ -274,8 +274,10 @@ void luainterpreter(void)
     lua_pushstring(L, "pdf");
     lua_call(L, 1, 0);
 
-    luaL_requiref(L, "img", luaopen_img, 1);
-    lua_pop(L, 1);
+    if (!lua_only) {
+        luaL_requiref(L, "img", luaopen_img, 1);
+        lua_pop(L, 1);
+    }
 
     luaL_requiref(L, "epdf", luaopen_epdf, 1);
     lua_pop(L, 1);

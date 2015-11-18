@@ -89,9 +89,9 @@ extern halfword last_line_fill; /* the |par_fill_skip| glue node of the new para
 #  define get_tex_attribute_register(j) attribute(j)
 #  define get_tex_box_register(j) box(j)
 
-extern int  get_tex_extension_count_register(int i, int d);
+extern int  get_tex_extension_count_register(int i);
 extern void set_tex_extension_count_register(int i, int d);
-extern int  get_tex_extension_dimen_register(int i, int d);
+extern int  get_tex_extension_dimen_register(int i);
 extern void set_tex_extension_dimen_register(int i, int d);
 extern int  get_tex_extension_toks_register (int i);
 
@@ -149,41 +149,5 @@ typedef enum {
     dvi_extension_code,
     pdf_extension_code,
 } extension_codes ;
-
-/* for the  moment there */
-
-/* reserved, first needs to be larger than max extension_codes */
-
-/* typedef enum {                 */
-/*     pdf_literal_code = 32,     */
-/*     pdf_dest_code,             */
-/*     pdf_annot_code,            */
-/*     pdf_save_code,             */
-/*     pdf_restore_code,          */
-/*     pdf_setmatrix_code,        */
-/*     pdf_obj_code,              */
-/*     pdf_refobj_code,           */
-/*     pdf_colorstack_code,       */
-/*     pdf_start_link_code,       */
-/*     pdf_end_link_code,         */
-/*     pdf_link_data_code,        */
-/*     pdf_start_thread_code,     */
-/*     pdf_end_thread_code,       */
-/*     pdf_thread_code,           */
-/*     pdf_outline_code,          */
-/*     pdf_glyph_to_unicode_code, */
-/*     pdf_catalog_code,          */
-/*     pdf_font_attr_code,        */
-/*     pdf_map_file_code,         */
-/*     pdf_map_line_code,         */
-/*     pdf_include_chars_code,    */
-/*     pdf_info_code,             */
-/*     pdf_names_code,            */
-/*     pdf_trailer_code,          */
-/* } pdf_extension_codes;         */
-/*                                */
-/* typedef enum {                 */
-/*     dvi_literal_code = 32,     */
-/* } dvi_extension_codes;         */
 
 #endif

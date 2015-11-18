@@ -268,22 +268,6 @@ typedef enum {
     pdf_variable_code,
 } convert_codes;
 
-/* typedef enum {               */
-/*     pdf_font_name_code = 32, */
-/*     pdf_font_objnum_code,    */
-/*     pdf_font_size_code,      */
-/*     pdf_page_ref_code,       */
-/*     pdf_xform_name_code,     */
-/*     pdf_creation_date_code,  */
-/*     pdf_colorstack_init_code,*/
-/*     pdf_last_obj_code,       */
-/*     pdf_last_annot_code,     */
-/*     pdf_retval_code,         */
-/*     pdf_last_link_code,      */
-/*     pdf_version_code,        */
-/*     pdf_revision_code,       */
-/* } convert_codes_pdf;         */
-
 typedef enum {
     lastpenalty_code = 0,                 /* code for \.{\\lastpenalty} */
     lastattr_code,                        /* not used */
