@@ -156,19 +156,11 @@ extern int scan_lua_state(void);
 
 extern void conv_toks(void);
 extern str_number the_convert_string(halfword c, int i);
-
-extern int conv_toks_dvi(halfword c); /* plugin */
-extern int conv_toks_pdf(halfword c); /* plugin */
-
-extern int conv_var_dvi(halfword c); /* plugin */
-extern int conv_var_pdf(halfword c); /* plugin */
-
-extern int the_convert_string_dvi(halfword c, int i); /* plugin */
-extern int the_convert_string_pdf(halfword c, int i); /* plugin */
+extern void do_variable(void);
+extern void do_feedback(void);
 
 extern halfword lua_str_toks(lstring b);
 extern boolean in_lua_escape;
-extern boolean is_convert(halfword c);
 
 #  define closed 2              /* not open, or at end of file */
 #  define just_open 1           /* newly opened, first line not yet read */

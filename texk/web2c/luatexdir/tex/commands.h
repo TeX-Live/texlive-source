@@ -204,6 +204,8 @@ typedef enum {
     fi_or_else_cmd,                       /* delimiters for conditionals ( \.{\\else}, etc.~) */
     cs_name_cmd,                          /* make a control sequence from tokens ( \.{\\csname} ) */
     convert_cmd,                          /* convert to text ( \.{\\number}, \.{\\string}, etc.~) */
+    variable_cmd,
+    feedback_cmd,
     the_cmd,                              /* expand an internal quantity ( \.{\\the} or \.{\\unexpanded}, \.{\\detokenize} ) */
     top_bot_mark_cmd,                     /* inserted mark ( \.{\\topmark}, etc.~) */
     call_cmd,                             /* non-long, non-outer control sequence */
@@ -266,21 +268,21 @@ typedef enum {
     pdf_variable_code,
 } convert_codes;
 
-typedef enum {
-    pdf_font_name_code = 32,    /* command code for \.{\\pdffeedback fontname} */
-    pdf_font_objnum_code,       /* command code for \.{\\pdffeedback fontobjnum} */
-    pdf_font_size_code,         /* command code for \.{\\pdffeedback fontsize} */
-    pdf_page_ref_code,          /* command code for \.{\\pdffeedback pageref} */
-    pdf_xform_name_code,        /* command code for \.{\\pdffeedback xformname} */
-    pdf_creation_date_code,     /* command code for \.{\\pdffeedback creationdate} */
-    pdf_colorstack_init_code,   /* command code for \.{\\pdffeedback colorstackinit} */
-    pdf_last_obj_code,
-    pdf_last_annot_code,
-    pdf_retval_code,
-    pdf_last_link_code,
-    pdf_version_code,
-    pdf_revision_code,
-} convert_codes_pdf;
+/* typedef enum {               */
+/*     pdf_font_name_code = 32, */
+/*     pdf_font_objnum_code,    */
+/*     pdf_font_size_code,      */
+/*     pdf_page_ref_code,       */
+/*     pdf_xform_name_code,     */
+/*     pdf_creation_date_code,  */
+/*     pdf_colorstack_init_code,*/
+/*     pdf_last_obj_code,       */
+/*     pdf_last_annot_code,     */
+/*     pdf_retval_code,         */
+/*     pdf_last_link_code,      */
+/*     pdf_version_code,        */
+/*     pdf_revision_code,       */
+/* } convert_codes_pdf;         */
 
 typedef enum {
     lastpenalty_code = 0,                 /* code for \.{\\lastpenalty} */
@@ -351,7 +353,6 @@ typedef enum {
 #  define immediate_code 4      /* command modifier for \.{\\immediate} */
 
 extern void initialize_commands(void);
-
 extern void initialize_etex_commands(void);
 
 #endif

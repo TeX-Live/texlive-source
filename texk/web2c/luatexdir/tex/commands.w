@@ -689,11 +689,11 @@ void initialize_commands(void)
     primitive_luatex("latelua", normal_cmd, late_lua_code, 0);
     primitive_luatex("insertht", convert_cmd, insert_ht_code, 0);
     primitive_luatex("dviextension", extension_cmd, dvi_extension_code, 0);
-    primitive_luatex("dvifeedback", convert_cmd, dvi_feedback_code, 0);
-    primitive_luatex("dvivariable", convert_cmd, dvi_variable_code, 0);
+    primitive_luatex("dvifeedback", feedback_cmd, dvi_feedback_code, 0);
+    primitive_luatex("dvivariable", variable_cmd, dvi_variable_code, 0);
     primitive_luatex("pdfextension", extension_cmd, pdf_extension_code, 0);
-    primitive_luatex("pdffeedback", convert_cmd, pdf_feedback_code, 0);
-    primitive_luatex("pdfvariable", convert_cmd, pdf_variable_code, 0);
+    primitive_luatex("pdffeedback", feedback_cmd, pdf_feedback_code, 0);
+    primitive_luatex("pdfvariable", variable_cmd, pdf_variable_code, 0);
     primitive_luatex("mathoption", option_cmd, math_option_code, 0);
 
     /*
