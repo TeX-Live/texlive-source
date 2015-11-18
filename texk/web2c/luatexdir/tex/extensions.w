@@ -102,7 +102,7 @@ and both of these variables are always |false|.
 alpha_file write_file[last_file_selector+1];
 halfword write_file_mode[last_file_selector+1];
 halfword write_file_translation[last_file_selector+1];
-boolean write_open[last_write_open+1];
+boolean write_open[last_file_selector+1];
 
 scaled neg_wd;
 scaled pos_wd;
@@ -346,9 +346,8 @@ static void new_write_whatsit(int w, int check)
         scan_int();
         if (cur_val < 0)
             cur_val = term_only;
-        else if ((cur_val > last_file_selector) || (cur_val == write_target_direct) || (cur_val == write_target_special)) {
-            /* hh: i need to check what 17 is supposed to do. so let's kind of reserve it  */
-            cur_val = write_target_overflow;
+        else if (cur_val > last_file_selector) {
+            cur_val = term_and_log;
         }
     }
     write_stream(tail) = cur_val;
@@ -522,17 +521,13 @@ void write_out(halfword p)
 {
     int old_setting;            /* holds print |selector| */
     int j;                      /* write stream number */
-    boolean clobbered;          /* system string is ok? */
-    int ret;                    /* return value from |runsystem| */
     char *s, *ss;               /* line to be written, as a C string */
     int callback_id;
     int lua_retval;
     expand_macros_in_tokenlist(p);
     old_setting = selector;
     j = write_stream(p);
-    if (j == write_target_system) {
-        selector = new_string;
-    } else if (write_open[j]) {
+    if (write_open[j]) {
         selector = j;
     } else if ((j == term_only) && (selector == term_and_log)) {
         /* write to the terminal if file isn't open */
@@ -558,49 +553,6 @@ void write_out(halfword p)
     xfree(s);
     print_ln();
     flush_list(def_ref);
-    if (j == write_target_system) {
-        cur_string[cur_length] = '\0';  /* Convert newline to null. */
-        if (tracing_online <= 0)
-            selector = log_only;        /* Show what we're doing in the log file. */
-        else
-            selector = term_and_log;    /* Show what we're doing. */
-        /* If the log file isn't open yet, we can only send output to the terminal.
-           Calling |open_log_file| from here seems to result in bad data in the log.
-         */
-        if (!log_opened_global)
-            selector = term_only;
-        tprint_nl("runsystem(");
-        tprint((char *) cur_string);
-        tprint(")...");
-        if (shellenabledp) {
-            clobbered = false;
-            if (strlen((char *) cur_string) != cur_length)
-                clobbered = true;
-            /* minimal checking: NUL not allowed in argument string of |system|() */
-            if (clobbered) {
-                tprint("clobbered");
-            } else {
-                /* We have the command.  See if we're allowed to execute it,
-                   and report in the log.  We don't check the actual exit status of
-                   the command, or do anything with the output. */
-                ret = runsystem((char *) cur_string);
-                if (ret == -1)
-                    tprint("quotation error in system command");
-                else if (ret == 0)
-                    tprint("disabled (restricted)");
-                else if (ret == 1)
-                    tprint("executed");
-                else if (ret == 2)
-                    tprint("executed safely (allowed)");
-            }
-        } else {
-            tprint("disabled"); /* |shellenabledp| false */
-        }
-        print_char('.');
-        tprint_nl("");
-        print_ln();
-        cur_length = 0;         /* erase the string */
-    }
     selector = old_setting;
 }
 
@@ -615,7 +567,7 @@ void finalize_write_files(void) {
 
 void initialize_write_files(void) {
     int k;
-    for (k = 0; k <= last_write_open; k++) {
+    for (k = 0; k <= last_file_selector; k++) {
         write_open[k] = false;
     }
 }
