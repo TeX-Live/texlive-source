@@ -486,7 +486,7 @@ void print_banner(const char *v, int ver)
             wterm(' ');
             if (restrictedshell)
                 fprintf(term_out, "restricted ");
-            fprintf(term_out, "\\write18 enabled.\n");
+            fprintf(term_out, "system commands enabled.\n");
         }
     } else if (callback_id > 0) {
         run_callback(callback_id, "->");
@@ -525,7 +525,7 @@ void log_banner(const char *v, int ver)
         wlog(' ');
         if (restrictedshell)
             fprintf(log_file, "restricted ");
-        fprintf(log_file, "\\write18 enabled.");
+        fprintf(log_file, "system commands enabled.");
     }
     if (filelineerrorstylep) {
         wlog_cr();

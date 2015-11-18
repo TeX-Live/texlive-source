@@ -19,7 +19,6 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
@@ -38,7 +37,6 @@
 
 #define text_direction int_par(text_direction_code)
 #define body_direction int_par(body_direction_code)
-
 
 @ Let's turn now to some procedures that \TeX\ calls upon frequently to digest
 certain kinds of patterns in the input. Most of these are quite simple;
@@ -72,7 +70,6 @@ void scan_left_brace(void)
     }
 }
 
-
 @ The |scan_optional_equals| routine looks for an optional `\.=' sign preceded
 by optional spaces; `\.{\\relax}' is not ignored here.
 
@@ -87,7 +84,6 @@ void scan_optional_equals(void)
         back_input();
 }
 
-
 @ Here is a procedure that sounds an alarm when mu and non-mu units
 are being switched.
 
@@ -98,7 +94,6 @@ static void mu_error(void)
     help1("I'm going to assume that 1mu=1pt when they're mixed.");
     error();
 }
-
 
 @ The next routine `|scan_something_internal|' is used to fetch internal
 numeric quantities like `\.{\\hsize}', and also to handle the `\.{\\the}'
@@ -150,7 +145,6 @@ int cur_val_level;              /* the ``level'' of this value */
 	cur_val_level=B;			\
     } while (0)
 
-
 @ When a |glue_val| changes to a |dimen_val|, we use the width component
 of the glue; there is no need to decrease the reference count, since it
 has not yet been increased.  When a |dimen_val| changes to an |int_val|,
@@ -189,7 +183,6 @@ static void negate_cur_val(boolean delete_glue)
         negate(cur_val);
     }
 }
-
 
 @ Some of the internal items can be fetched both routines,
 and these have been split off into the next routine, that
@@ -589,8 +582,6 @@ void scan_something_simple(halfword cmd, halfword subitem)
     }
 }
 
-
-
 @ OK, we're ready for |scan_something_internal| itself. A second parameter,
 |negative|, is set |true| if the value that is found should be negated.
 It is assumed that |cur_cmd| and |cur_chr| represent the first token of
@@ -835,7 +826,6 @@ void scan_something_internal(int level, boolean negative)
     }
 }
 
-
 @ It is nice to have routines that say what they do, so the original
 |scan_eight_bit_int| is superceded by |scan_register_num| and
 |scan_mark_num|. It may become split up even further in the future.
@@ -902,28 +892,6 @@ void scan_fifty_one_bit_int(void)
     cur_val = iiii;
 }
 
-
-@ To be able to determine whether \.{\\write18} is enabled from within
-\TeX\ we also implement \.{\\eof18}.  We sort of cheat by having an
-additional route |scan_four_bit_int_or_18| which is the same as
-|scan_four_bit_int| except it also accepts the value 18.
-
-@c
-void scan_four_bit_int_or_18(void)
-{
-    scan_int();
-    if ((cur_val < 0) || ((cur_val > 15) && (cur_val != 18))) {
-        print_err("Bad number");
-        help2("Since I expected to read a number between 0 and 15,",
-              "I changed this one to zero.");
-        int_error(cur_val);
-        cur_val = 0;
-    }
-}
-
-
-
-
 @ An integer number can be preceded by any number of spaces and `\.+' or
 `\.-' signs. Then comes either a decimal constant (i.e., radix 10), an
 octal constant (i.e., radix 8, preceded by~'), a hexadecimal constant
@@ -936,7 +904,6 @@ otherwise |radix| is set to zero. An optional space follows a constant.
 
 @c
 int radix;                      /* |scan_int| sets this to 8, 10, 16, or zero */
-
 
 @ The |scan_int| routine is used also to scan the integer part of a
   fraction; for example, the `\.3' in `\.{3.14159}' will be found by
@@ -1092,7 +1059,6 @@ void scan_int(void)
         negate(cur_val);
 }
 
-
 @ The following code is executed when |scan_something_internal| was
 called asking for |mu_val|, when we really wanted a ``mudimen'' instead
 of ``muglue.''
@@ -1107,8 +1073,6 @@ static void coerce_glue(void)
         cur_val = v;
     }
 }
-
-
 
 @ The |scan_dimen| routine is similar to |scan_int|, but it sets |cur_val| to
 a |scaled| value, i.e., an integral number of sp. One of its main tasks
@@ -1421,7 +1385,6 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
         negate(cur_val);
 }
 
-
 @ The final member of \TeX's value-scanning trio is |scan_glue|, which
 makes |cur_val| point to a glue specification. The reference count of that
 glue spec will take account of the fact that |cur_val| is pointing to~it.
@@ -1571,7 +1534,6 @@ void scan_scaled(void)
         negate(cur_val);
 }
 
-
 @ This procedure is supposed to scan something like `\.{\\skip\\count12}',
 i.e., whatever can follow `\.{\\the}', and it constructs a token list
 containing something like `\.{-3.0pt minus 0.5fill}'.
@@ -1698,8 +1660,6 @@ str_number the_scanned_result(void)
     return r;
 }
 
-
-
 @ The following routine is used to implement `\.{\\fontdimen} |n| |f|'.
 The boolean parameter |writing| is set |true| if the calling program
 intends to change the parameter value.
@@ -1774,7 +1734,6 @@ void get_font_dimen(void)
   EXIT:
     scanned_result(cur_val, dimen_val_level);
 }
-
 
 @ Here's a similar procedure that returns a pointer to a rule node. This
 routine is called just after \TeX\ has seen \.{\\hrule} or \.{\\vrule};
@@ -1909,7 +1868,6 @@ void scan_general_text(void)
     def_ref = d;
 }
 
-
 @ The |get_x_or_protected| procedure is like |get_x_token| except that
 protected macros are not expanded.
 
@@ -1928,7 +1886,6 @@ void get_x_or_protected(void)
         expand();
     }
 }
-
 
 @ |scan_toks|. This function returns a pointer to the tail of a new token
 list, and it also makes |def_ref| point to the reference count at the
@@ -2098,7 +2055,6 @@ halfword scan_toks(boolean macro_def, boolean xpand)
     return p;
 }
 
-
 @ Here we declare two trivial procedures in order to avoid mutually
 recursive procedures with parameters.
 
@@ -2155,12 +2111,10 @@ typedef enum {
 	A=new_spec(zero_glue);				\
     } while (0)
 
-
 #define normalize_glue(A) do {				\
 	if (stretch(A)==0) stretch_order(A)=normal;	\
 	if (shrink(A)==0) shrink_order(A)=normal;	\
     } while (0)
-
 
 @ Parenthesized subexpressions can be inside expressions, and this
 nesting has a stack.  Seven local variables represent the top of the
@@ -2176,7 +2130,6 @@ numerator for a combined multiplication and division, if any.
 #define expr_e_field(A) vlink((A)+1)    /* saved expression so far */
 #define expr_t_field(A) vlink((A)+2)    /* saved term so far */
 #define expr_n_field(A) vinfo((A)+2)    /* saved numerator */
-
 
 #define expr_add_sub(A,B,C) add_or_sub((A),(B),(C),(r==expr_sub))
 #define expr_a(A,B) expr_add_sub((A),(B),max_dimen)
@@ -2206,11 +2159,8 @@ int add_or_sub(int x, int y, int max_answer, boolean negative)
     return a;
 }
 
-
 #define expr_m(A) A = nx_plus_y((A),f,0)
-
 #define expr_d(A) A=quotient((A),f)
-
 
 @ The function |quotient(n,d)| computes the rounded quotient
 $q=\lfloor n/d+{1\over2}\rfloor$, when $n$ and $d$ are positive.
@@ -2245,7 +2195,6 @@ int quotient(int n, int d)
 }
 
 #define expr_s(A) A=fract((A),n,f,max_dimen)
-
 
 @ Finally, the function |fract(x,n,d,max_answer)| computes the integer
 $q=\lfloor xn/d+{1\over2}\rfloor$, when $x$, $n$, and $d$ are positive

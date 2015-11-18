@@ -4,8 +4,6 @@ This file is in the public domain.
 ==============================================================
 Luatex beta-0.85.0 was released 2015111400 (5509)
 ==============================================================
-
-
 -- roadmap
 
 The 0.85 release is has a lot of changes. It is the prelude to 0.90 which itself is
@@ -99,7 +97,8 @@ where the penalty will be stored with the node. Default is hyphenpenalty.
 -- file io
 
 texio.write/write_nl now writes to file if the first argument is a (valid) number
-reference to a file opened at the tex end
+reference to a file opened at the tex end; you can now open 128 files from the tex end
+(0..127) and the system command is no longer executed with 18
 
 -- lua interface
 
@@ -2565,7 +2564,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5508 2015-11-14 11:58:08Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5538 2015-11-18 08:36:25Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
