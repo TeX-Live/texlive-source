@@ -121,39 +121,76 @@ extern void undump_pdftex_data(PDF pdf);
 
 /* pdf backend definitions */
 
-#  define pdf_compress_level          get_tex_extension_count_register( 1,    9)
-#  define pdf_decimal_digits          get_tex_extension_count_register( 2,    3)
-#  define pdf_image_resolution        get_tex_extension_count_register( 3,   72)
-#  define pdf_pk_resolution           get_tex_extension_count_register( 4,   72)
-#  define pdf_unique_resname          get_tex_extension_count_register( 5,    0)
-#  define pdf_minor_version           get_tex_extension_count_register( 6,    4)
-#  define pdf_pagebox                 get_tex_extension_count_register( 7,    0)
-#  define pdf_inclusion_errorlevel    get_tex_extension_count_register( 8,    0)
-#  define pdf_gamma                   get_tex_extension_count_register( 9, 1000)
-#  define pdf_image_apply_gamma       get_tex_extension_count_register(10,    0)
-#  define pdf_image_gamma             get_tex_extension_count_register(11, 2200)
-#  define pdf_image_hicolor           get_tex_extension_count_register(12,    1)
-#  define pdf_image_addfilename       get_tex_extension_count_register(13,    1)
-#  define pdf_objcompresslevel        get_tex_extension_count_register(14,    0)
-#  define pdf_inclusion_copy_font     get_tex_extension_count_register(15,    0)
-#  define pdf_gen_tounicode           get_tex_extension_count_register(16,    0)
-#  define pdf_replace_font            get_tex_extension_count_register(17,    0)
+typedef enum {
+    c_pdf_compress_level = 0,
+    c_pdf_decimal_digits,
+    c_pdf_image_resolution,
+    c_pdf_pk_resolution,
+    c_pdf_unique_resname,
+    c_pdf_minor_version,
+    c_pdf_pagebox,
+    c_pdf_inclusion_errorlevel,
+    c_pdf_gamma,
+    c_pdf_image_apply_gamma,
+    c_pdf_image_gamma,
+    c_pdf_image_hicolor,
+    c_pdf_image_addfilename,
+    c_pdf_objcompresslevel,
+    c_pdf_inclusion_copy_font,
+    c_pdf_gen_tounicode,
+    c_pdf_replace_font,
+} pdf_backend_counters ;
 
-#  define pdf_h_origin                get_tex_extension_dimen_register(1, one_inch)
-#  define pdf_v_origin                get_tex_extension_dimen_register(2, one_inch)
-#  define pdf_thread_margin           get_tex_extension_dimen_register(3,        0)
-#  define pdf_dest_margin             get_tex_extension_dimen_register(4,        0)
-#  define pdf_link_margin             get_tex_extension_dimen_register(5,        0)
+typedef enum {
+    d_pdf_h_origin = 0,
+    d_pdf_v_origin,
+    d_pdf_thread_margin,
+    d_pdf_dest_margin,
+    d_pdf_link_margin,
+} pdf_backend_dimensions ;
 
-#  define pdf_page_attr               get_tex_extension_toks_register(1)
-#  define pdf_page_resources          get_tex_extension_toks_register(2)
-#  define pdf_pages_attr              get_tex_extension_toks_register(3)
-#  define pdf_xform_attr              get_tex_extension_toks_register(4)
-#  define pdf_xform_resources         get_tex_extension_toks_register(5)
-#  define pdf_pk_mode                 get_tex_extension_toks_register(6)
+typedef enum {
+    t_pdf_page_attr = 0,
+    t_pdf_page_resources,
+    t_pdf_pages_attr,
+    t_pdf_xform_attr,
+    t_pdf_xform_resources,
+    t_pdf_pk_mode,
+} pdf_backend_tokenlists ;
 
-#  define set_pdf_minor_version(i)    set_tex_extension_count_register( 6,i)
-#  define set_pdf_compress_level(i)   set_tex_extension_count_register( 1,i)
-#  define set_pdf_objcompresslevel(i) set_tex_extension_count_register(14,i)
+#  define pdf_compress_level          get_tex_extension_count_register(c_pdf_compress_level)
+#  define pdf_decimal_digits          get_tex_extension_count_register(c_pdf_decimal_digits)
+#  define pdf_image_resolution        get_tex_extension_count_register(c_pdf_image_resolution)
+#  define pdf_pk_resolution           get_tex_extension_count_register(c_pdf_pk_resolution)
+#  define pdf_unique_resname          get_tex_extension_count_register(c_pdf_unique_resname)
+#  define pdf_minor_version           get_tex_extension_count_register(c_pdf_minor_version)
+#  define pdf_pagebox                 get_tex_extension_count_register(c_pdf_pagebox)
+#  define pdf_inclusion_errorlevel    get_tex_extension_count_register(c_pdf_inclusion_errorlevel)
+#  define pdf_gamma                   get_tex_extension_count_register(c_pdf_gamma)
+#  define pdf_image_apply_gamma       get_tex_extension_count_register(c_pdf_image_apply_gamma)
+#  define pdf_image_gamma             get_tex_extension_count_register(c_pdf_image_gamma)
+#  define pdf_image_hicolor           get_tex_extension_count_register(c_pdf_image_hicolor)
+#  define pdf_image_addfilename       get_tex_extension_count_register(c_pdf_image_addfilename)
+#  define pdf_objcompresslevel        get_tex_extension_count_register(c_pdf_objcompresslevel)
+#  define pdf_inclusion_copy_font     get_tex_extension_count_register(c_pdf_inclusion_copy_font)
+#  define pdf_gen_tounicode           get_tex_extension_count_register(c_pdf_gen_tounicode)
+#  define pdf_replace_font            get_tex_extension_count_register(c_pdf_replace_font)
+
+#  define pdf_h_origin                get_tex_extension_dimen_register(d_pdf_h_origin)
+#  define pdf_v_origin                get_tex_extension_dimen_register(d_pdf_v_origin)
+#  define pdf_thread_margin           get_tex_extension_dimen_register(d_pdf_thread_margin)
+#  define pdf_dest_margin             get_tex_extension_dimen_register(d_pdf_dest_margin)
+#  define pdf_link_margin             get_tex_extension_dimen_register(d_pdf_link_margin)
+
+#  define pdf_page_attr               get_tex_extension_toks_register(t_pdf_page_attr)
+#  define pdf_page_resources          get_tex_extension_toks_register(t_pdf_page_resources)
+#  define pdf_pages_attr              get_tex_extension_toks_register(t_pdf_pages_attr)
+#  define pdf_xform_attr              get_tex_extension_toks_register(t_pdf_xform_attr)
+#  define pdf_xform_resources         get_tex_extension_toks_register(t_pdf_xform_resources)
+#  define pdf_pk_mode                 get_tex_extension_toks_register(t_pdf_pk_mode)
+
+#  define set_pdf_minor_version(i)    set_tex_extension_count_register(c_pdf_minor_version,i)
+#  define set_pdf_compress_level(i)   set_tex_extension_count_register(c_pdf_compress_level,i)
+#  define set_pdf_objcompresslevel(i) set_tex_extension_count_register(c_pdf_objcompresslevel,i)
 
 #endif                          /* PDFTABLES_H */

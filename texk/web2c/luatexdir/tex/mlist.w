@@ -2577,6 +2577,7 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
 static scaled make_op(pointer q, int cur_style)
 {
     scaled delta = 0;            /* offset between subscript and superscript */
+    scaled dummy = 0;
     pointer p, v, x, y, z, n;    /* temporary registers for box construction */
     int c;                       /* register for character examination */
     scaled shift_up, shift_down; /* dimensions for box calculation */
@@ -2652,14 +2653,21 @@ static scaled make_op(pointer q, int cur_style)
         if (is_new_mathfont(cur_f)) {
             if (delta != 0) {
                 delta = half(delta) ;
-                /* similar code then the caller */
-                p = check_nucleus_complexity(q, 0, cur_style);
-                if ((subscr(q) == null) && (supscr(q) == null)) {
-                    assign_new_hlist(q, p);
-                } else {
-                    make_scripts(q, p, 0, cur_style, delta, -delta);
-                }
-                delta = 0;
+            }
+            p = check_nucleus_complexity(q, &dummy, cur_style);
+            if ((subscr(q) == null) && (supscr(q) == null)) {
+                assign_new_hlist(q, p);
+            } else {
+                make_scripts(q, p, 0, cur_style, delta, -delta);
+            }
+            delta = 0;
+        } else {
+            /* similar code then the caller (before CHECK_DIMENSIONS) */
+            p = check_nucleus_complexity(q, &delta, cur_style);
+            if ((subscr(q) == null) && (supscr(q) == null)) {
+                assign_new_hlist(q, p);
+            } else {
+                make_scripts(q, p, delta, cur_style, 0, 0);
             }
         }
     } else if (subtype(q) == op_noad_type_limits) {

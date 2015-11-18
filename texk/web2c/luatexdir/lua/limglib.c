@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 #include <stdio.h>
@@ -35,24 +34,25 @@ void stackDump(lua_State * L, char *s)
 {
     int i, t, top = lua_gettop(L);
     printf("\n=== stackDump <%s>: ", s);
-    for (i = top; i >= 1; i--) {        /* repeat for each level */
+    for (i = top; i >= 1; i--) {
         t = lua_type(L, i);
         printf("%d: ", i);
         switch (t) {
-        case LUA_TSTRING:      /* strings */
-            printf("`%s'", lua_tostring(L, i));
-            break;
-        case LUA_TBOOLEAN:     /* booleans */
-            printf(lua_toboolean(L, i) ? "true" : "false");
-            break;
-        case LUA_TNUMBER:      /* numbers */
-            printf("%g", (double) lua_tonumber(L, i));
-            break;
-        default:               /* other values */
-            printf("%s", lua_typename(L, t));
-            break;
+            case LUA_TSTRING:
+                printf("`%s'", lua_tostring(L, i));
+                break;
+            case LUA_TBOOLEAN:
+                printf(lua_toboolean(L, i) ? "true" : "false");
+                break;
+            case LUA_TNUMBER:
+                printf("%g", (double) lua_tonumber(L, i));
+                break;
+            default:
+                printf("%s", lua_typename(L, t));
+                break;
         }
-        printf("  ");           /* put a separator */
+        /* insert a separator */
+        printf("  ");
     }
     printf("\n");
 }
@@ -539,8 +539,7 @@ static void read_scale_img(image * a)
             check_pdfstream_dict(ad);
         else {
             fix_pdf_minorversion(static_pdf);
-            read_img(static_pdf,
-                     ad, pdf_minor_version, pdf_inclusion_errorlevel);
+            read_img(static_pdf, ad, pdf_minor_version, pdf_inclusion_errorlevel);
         }
     }
     if (is_wd_running(a) || is_ht_running(a) || is_dp_running(a))
@@ -600,8 +599,7 @@ static void setup_image(PDF pdf, image * a, wrtype_e writetype)
     read_scale_img(a);
     if (img_objnum(ad) == 0) {  /* latest needed just before out_img() */
         pdf->ximage_count++;
-        img_objnum(ad) =
-            pdf_create_obj(pdf, obj_type_ximage, pdf->ximage_count);
+        img_objnum(ad) = pdf_create_obj(pdf, obj_type_ximage, pdf->ximage_count);
         img_index(ad) = pdf->ximage_count;
         idict_to_array(ad);     /* now ad is read-only */
         obj_data_ptr(pdf, pdf->obj_ptr) = img_index(ad);
@@ -650,9 +648,11 @@ static int l_write_image(lua_State * L)
 static int l_immediatewrite_image(lua_State * L)
 {
     check_o_mode(static_pdf, "img.immediatewrite()", 1 << OMODE_PDF, true);
-    if (global_shipping_mode != NOT_SHIPPING)
+    if (global_shipping_mode != NOT_SHIPPING) {
         luaL_error(L, "pdf.immediatewrite() can not be used with \\latelua");
-    write_image_or_node(L, WR_IMMEDIATEWRITE);
+    } else {
+        write_image_or_node(L, WR_IMMEDIATEWRITE);
+    }
     return 1;                   /* image */
 }
 

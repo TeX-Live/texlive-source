@@ -897,78 +897,31 @@ defines are not available.
 #define get_tex_attribute_register(j) attribute(j)
 #define get_tex_box_register(j) box(j)
 
-/*
+/* these can now be macros (todo) */
 
-int get_tex_extension_count_register(const char *s, int d)
+int get_tex_extension_count_register(int i)
 {
-    int cs;
-    cs = string_lookup(s,strlen(s));
-    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
-        return d;
-    return (int) get_tex_count_register((equiv(cs) - count_base));
-}
-
-void set_tex_extension_count_register(const char *s, int d)
-{
-    int cs;
-    cs = string_lookup(s,strlen(s));
-    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
-        return;
-    get_tex_count_register((equiv(cs) - count_base)) = d;
-}
-
-int get_tex_extension_dimen_register(const char *s, int d)
-{
-    int cs;
-    cs = string_lookup(s,strlen(s));
-    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
-        return d;
-    return (int) get_tex_dimen_register((equiv(cs) - scaled_base));
-}
-
-void set_tex_extension_dimen_register(const char *s, int d)
-{
-    int cs;
-    cs = string_lookup(s,strlen(s));
-    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
-        return;
-    get_tex_dimen_register((equiv(cs) - scaled_base)) = d;
-}
-
-int get_tex_extension_toks_register(const char *s)
-{
-    int cs;
-    cs = string_lookup(s,strlen(s));
-    if ((cs == undefined_control_sequence || cs == undefined_cs_cmd))
-        return null;
-    return toks((equiv(cs) - toks_base));
-}
-
-*/
-
-int get_tex_extension_count_register(int i, int d)
-{
-    return (int) int_par(backend_int_base+i);
+    return (int) int_par(backend_int_base-int_base+i);
 }
 
 void set_tex_extension_count_register(int i, int d)
 {
-    int_par(backend_int_base+i) = d;
+    int_par(backend_int_base-int_base+i) = d;
 }
 
-int get_tex_extension_dimen_register(int i, int d)
+int get_tex_extension_dimen_register(int i)
 {
-    return (int) dimen_par(backend_dimen_base+i);
+    return (int) dimen_par(backend_dimen_base-dimen_base+i);
 }
 
 void set_tex_extension_dimen_register(int i, int d)
 {
-    dimen_par(backend_dimen_base+i) = d;
+    dimen_par(backend_dimen_base-dimen_base+i) = d;
 }
 
 int get_tex_extension_toks_register(int i)
 {
-    return equiv(backend_toks_base+i); /* brr */
+    return equiv(backend_toks_base+i);
 }
 
 int set_tex_dimen_register(int j, scaled v)

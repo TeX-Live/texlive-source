@@ -302,16 +302,16 @@ a real control sequence named \.{BAD} would come out `\.{\\BAD\ }'.
 #define not_so_bad(p) \
     switch (m) { \
         case assign_int_cmd: \
-            if (c >= (int_base+backend_int_base) && c <= (int_base+backend_int_last)) \
-                p("[internal backend variable]"); \
+            if (c >= (backend_int_base) && c <= (backend_int_last)) \
+                p("[internal backend integer]"); \
             break; \
         case assign_dimen_cmd: \
-            if (c >= (dimen_base+backend_dimen_base) && c <= (int_base+backend_dimen_last)) \
-                p("[internal backend variable]"); \
+            if (c >= (backend_dimen_base) && c <= (backend_dimen_last)) \
+                p("[internal backend dimension]"); \
             break; \
         case assign_toks_cmd: \
             if (c >= (backend_toks_base) && c <= (backend_toks_last)) \
-                p("[internal backend variable]"); \
+                p("[internal backend tokenlist]"); \
             break; \
         default: \
             p("BAD"); \
@@ -1747,59 +1747,56 @@ static int do_variable_dvi(halfword c)
     return 0;
 }
 
-#define backend_dimen(A) eqtb[scaled_base+(A)].hh.rh
-#define backend_count(A) eqtb[count_base+(A)].hh.rh
-
 #define do_variable_backend_int(i) \
     cur_cmd = assign_int_cmd; \
-    cur_val = backend_int_base + i + int_base; \
+    cur_val = backend_int_base + i; \
     cur_tok = token_val(cur_cmd, cur_val); \
     back_input();
 
 #define do_variable_backend_dimen(i) \
     cur_cmd = assign_dimen_cmd; \
-    cur_val = backend_dimen_base + i + dimen_base; \
+    cur_val = backend_dimen_base + i; \
     cur_tok = token_val(cur_cmd, cur_val); \
     back_input();
 
 #define do_variable_backend_toks(i) \
     cur_cmd = assign_toks_cmd; \
-    cur_val = backend_toks_base + i ; /* + local_base ; */ \
+    cur_val = backend_toks_base + i ; \
     cur_tok = token_val(cur_cmd, cur_val); \
     back_input();
 
 static int do_variable_pdf(halfword c)
 {
-         if (scan_keyword("compresslevel"))       { do_variable_backend_int( 1); }
-    else if (scan_keyword("decimaldigits"))       { do_variable_backend_int( 2); }
-    else if (scan_keyword("imageresolution"))     { do_variable_backend_int( 3); }
-    else if (scan_keyword("pkresolution"))        { do_variable_backend_int( 4); }
-    else if (scan_keyword("uniqueresname"))       { do_variable_backend_int( 5); }
-    else if (scan_keyword("minorversion"))        { do_variable_backend_int( 6); }
-    else if (scan_keyword("pagebox"))             { do_variable_backend_int( 7); }
-    else if (scan_keyword("inclusionerrorlevel")) { do_variable_backend_int( 8); }
-    else if (scan_keyword("gamma"))               { do_variable_backend_int( 9); }
-    else if (scan_keyword("imageapplygamma"))     { do_variable_backend_int(10); }
-    else if (scan_keyword("imagegamma"))          { do_variable_backend_int(11); }
-    else if (scan_keyword("imagehicolor"))        { do_variable_backend_int(12); }
-    else if (scan_keyword("imageaddfilename"))    { do_variable_backend_int(13); }
-    else if (scan_keyword("objcompresslevel"))    { do_variable_backend_int(14); }
-    else if (scan_keyword("inclusioncopyfonts"))  { do_variable_backend_int(15); }
-    else if (scan_keyword("gentounicode"))        { do_variable_backend_int(16); }
-    else if (scan_keyword("replacefont"))         { do_variable_backend_int(17); }
+         if (scan_keyword("compresslevel"))       { do_variable_backend_int(c_pdf_compress_level); }
+    else if (scan_keyword("decimaldigits"))       { do_variable_backend_int(c_pdf_decimal_digits); }
+    else if (scan_keyword("imageresolution"))     { do_variable_backend_int(c_pdf_image_resolution); }
+    else if (scan_keyword("pkresolution"))        { do_variable_backend_int(c_pdf_pk_resolution); }
+    else if (scan_keyword("uniqueresname"))       { do_variable_backend_int(c_pdf_unique_resname); }
+    else if (scan_keyword("minorversion"))        { do_variable_backend_int(c_pdf_minor_version); }
+    else if (scan_keyword("pagebox"))             { do_variable_backend_int(c_pdf_pagebox); }
+    else if (scan_keyword("inclusionerrorlevel")) { do_variable_backend_int(c_pdf_inclusion_errorlevel); }
+    else if (scan_keyword("gamma"))               { do_variable_backend_int(c_pdf_gamma); }
+    else if (scan_keyword("imageapplygamma"))     { do_variable_backend_int(c_pdf_image_apply_gamma); }
+    else if (scan_keyword("imagegamma"))          { do_variable_backend_int(c_pdf_image_gamma); }
+    else if (scan_keyword("imagehicolor"))        { do_variable_backend_int(c_pdf_image_hicolor); }
+    else if (scan_keyword("imageaddfilename"))    { do_variable_backend_int(c_pdf_image_addfilename); }
+    else if (scan_keyword("objcompresslevel"))    { do_variable_backend_int(c_pdf_objcompresslevel); }
+    else if (scan_keyword("inclusioncopyfonts"))  { do_variable_backend_int(c_pdf_inclusion_copy_font); }
+    else if (scan_keyword("gentounicode"))        { do_variable_backend_int(c_pdf_gen_tounicode); }
+    else if (scan_keyword("replacefont"))         { do_variable_backend_int(c_pdf_replace_font); }
 
-    else if (scan_keyword("horigin"))             { do_variable_backend_dimen(1); }
-    else if (scan_keyword("vorigin"))             { do_variable_backend_dimen(2); }
-    else if (scan_keyword("threadmargin"))        { do_variable_backend_dimen(3); }
-    else if (scan_keyword("destmargin"))          { do_variable_backend_dimen(4); }
-    else if (scan_keyword("linkmargin"))          { do_variable_backend_dimen(5); }
+    else if (scan_keyword("horigin"))             { do_variable_backend_dimen(d_pdf_h_origin); }
+    else if (scan_keyword("vorigin"))             { do_variable_backend_dimen(d_pdf_v_origin); }
+    else if (scan_keyword("threadmargin"))        { do_variable_backend_dimen(d_pdf_thread_margin); }
+    else if (scan_keyword("destmargin"))          { do_variable_backend_dimen(d_pdf_dest_margin); }
+    else if (scan_keyword("linkmargin"))          { do_variable_backend_dimen(d_pdf_link_margin); }
 
-    else if (scan_keyword("pageattr"))            { do_variable_backend_toks(1); }
-    else if (scan_keyword("pageresources"))       { do_variable_backend_toks(2); }
-    else if (scan_keyword("pagesattr"))           { do_variable_backend_toks(3); }
-    else if (scan_keyword("xformattr"))           { do_variable_backend_toks(4); }
-    else if (scan_keyword("xformresources"))      { do_variable_backend_toks(5); }
-    else if (scan_keyword("pkmode"))              { do_variable_backend_toks(6); }
+    else if (scan_keyword("pageattr"))            { do_variable_backend_toks(t_pdf_page_attr); }
+    else if (scan_keyword("pageresources"))       { do_variable_backend_toks(t_pdf_page_resources); }
+    else if (scan_keyword("pagesattr"))           { do_variable_backend_toks(t_pdf_pages_attr); }
+    else if (scan_keyword("xformattr"))           { do_variable_backend_toks(t_pdf_xform_attr); }
+    else if (scan_keyword("xformresources"))      { do_variable_backend_toks(t_pdf_xform_resources); }
+    else if (scan_keyword("pkmode"))              { do_variable_backend_toks(t_pdf_pk_mode); }
 
     else
         return 0;
