@@ -1324,16 +1324,16 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
 
 #define set_conversion(A,B) do { num=(A); denom=(B); } while(0)
 
-    if (scan_keyword("in")) {
-        set_conversion(7227, 100);
-    } else if (scan_keyword("pc")) {
-        set_conversion(12, 1);
+    if (scan_keyword("mm")) {
+        set_conversion(7227, 2540);
     } else if (scan_keyword("cm")) {
         set_conversion(7227, 254);
-    } else if (scan_keyword("mm")) {
-        set_conversion(7227, 2540);
+    } else if (scan_keyword("sp")) {
+        goto DONE;
     } else if (scan_keyword("bp")) {
         set_conversion(7227, 7200);
+    } else if (scan_keyword("in")) {
+        set_conversion(7227, 100);
     } else if (scan_keyword("dd")) {
         set_conversion(1238, 1157);
     } else if (scan_keyword("cc")) {
@@ -1342,8 +1342,8 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
         set_conversion(685, 642);
     } else if (scan_keyword("nc")) {
         set_conversion(1370, 107);
-    } else if (scan_keyword("sp")) {
-        goto DONE;
+    } else if (scan_keyword("pc")) {
+        set_conversion(12, 1);
     } else {
         /* Complain about unknown unit and |goto done2| */
         print_err("Illegal unit of measure (pt inserted)");

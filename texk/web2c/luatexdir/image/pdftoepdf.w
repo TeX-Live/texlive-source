@@ -966,8 +966,14 @@ static void destroyPdfDocument(void *pa, void * /*pb */ )
 void unrefPdfDocument(char *file_path)
 {
     PdfDocument *pdf_doc = findPdfDocument(file_path);
-    assert(pdf_doc != NULL);
-    assert(pdf_doc->occurences != 0);   // aim for point landing
+    if (pdf_doc == NULL) /* Does the caller break the contract ? */
+return;
+    if (pdf_doc->occurences == 0) /* Again, does the caller breaks the contract ? */
+return; 
+    /* for the moment we keep these assert here as remind that the code */
+    /* should be revisited                                              */
+    //assert(pdf_doc != NULL);
+    //assert(pdf_doc->occurences != 0);   // aim for point landing
     pdf_doc->occurences--;
 #ifdef DEBUG
     fprintf(stderr, "\nDEBUG: Decrementing %s (%d)\n",
