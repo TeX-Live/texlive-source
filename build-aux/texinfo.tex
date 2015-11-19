@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-10-29.16}
+\def\texinfoversion{2015-11-16.19}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1416,7 +1416,6 @@ output) for that.)}
       \normalturnoffactive
       \def\@{@}%
       \let\/=\empty
-      \let\xprocessmacroarg=\eatspaces % in case we are in a macro expansion
       \makevalueexpandable
       % do we want to go so far as to use \indexnofonts instead of just
       % special-casing \var here?
@@ -4676,16 +4675,6 @@ end
   \definedummyword\verb
   \definedummyword\w
   \definedummyword\xref
-  %
-  % Consider:
-  %   @macro mkind{arg1,arg2}
-  %   @cindex \arg2\
-  %   @end macro
-  %   @mkind{foo, bar}
-  % The space after the comma will end up in the temporary definition
-  % that we make for arg2 (see \parsemargdef ff.).  We want all this to be
-  % expanded for the sake of the index, so we end up just seeing "bar".
-  \let\xprocessmacroarg\eatspaces
 }
 
 % For testing: output @{ and @} in index sort strings as \{ and \}.
@@ -5212,16 +5201,12 @@ end
     % from @* into spaces.  The user might give these in long section
     % titles, for instance.
     \def\*{\unskip\space\ignorespaces}%
-    \def\entrybreak{\hfil\break}%
+    \def\entrybreak{\hfil\break}% An undocumented command
     %
     % A bit of stretch before each entry for the benefit of balancing
     % columns.
     \vskip 0pt plus0.5pt
     %
-    % Badness calculation for paragraph affected by -
-    %  How much \indexdotfill is stretched, or how much \parfillskip is shrunk
-    %  Number of lines (\linepenalty)
-    %  
     % Swallow the left brace of the text (first parameter):
     \afterassignment\doentry
     \let\temp =
@@ -5293,7 +5278,9 @@ end
       \advance\dimen@ii by -1\leftskip
       \advance\dimen@ii by -1\entryrightmargin
       \advance\dimen@ii by 1\dimen@i
+      \let\maybestrut=\relax
       \ifdim\wd\boxA > \dimen@ii % If the entry doesn't fit in one line
+        \let\maybestrut=\strut
       \ifdim\dimen@ > 0.8\dimen@ii   % due to long index text
         \dimen@ = 0.7\dimen@ % Try to split the text roughly evenly
         \dimen@ii = \hsize
@@ -5308,7 +5295,9 @@ end
         % Ideally we'd add a finite glue at the end of the first line only, but
         % TeX doesn't seem to provide a way to do such a thing.
       \fi\fi
+      \maybestrut  % Add a strut on the first and last lines
       \unhbox\boxA
+      \maybestrut
       %
       % Do not prefer a separate line ending with a hyphen to fewer lines.
       \finalhyphendemerits = 0
@@ -5333,9 +5322,9 @@ end
 
 \newbox\entryindexbox
 \def\insertindexentrybox{%
-\lineskip=.7ex plus .5ex % This comes into effect when the \vbox has a large 
-                         % height due to the paragraph in it having several 
-                         % lines.
+\lineskip=0pt    % This comes into effect when the \vbox has a large 
+                 % height due to the paragraph in it having several 
+                 % lines.
 \box\entryindexbox}
 
 % Default is no penalty
@@ -7612,8 +7601,7 @@ end
 % Argument is macro body with arguments substituted
 \def\scanmacro#1{%
   \newlinechar`\^^M
-  % Reduce doubled backslashes to one
-  \def\xprocessmacroarg{\passargtomacro\eatspaces}%
+  \def\xprocessmacroarg{\eatspaces}%
   %
   % Process the macro body under the current catcode regime.
   \scantokens{#1\texinfoc}\aftermacro%
@@ -7733,6 +7721,7 @@ end
 % an argument to another Texinfo command.
 \def\macroargctxt{%
   \scanctxt
+  \catcode`\ =\active
   \catcode`\^^M=\other
   \catcode`\\=\active
 }
@@ -8127,16 +8116,23 @@ end
          \egroup\noexpand\scanmacro{\macrobody}}%
     \else
       \ifnum\paramno<10\relax % at most 9
+        % See non-recursive section below for comments
         \expandafter\xdef\csname\the\macname\endcsname{%
-           \bgroup\noexpand\macroargctxt
-           \noexpand\csname\the\macname @@\endcsname}%
+          \bgroup
+          \noexpand\expandafter
+          \noexpand\macroargctxt
+          \noexpand\expandafter
+          \expandafter\noexpand\csname\the\macname @@\endcsname}%
         \expandafter\xdef\csname\the\macname @@\endcsname##1{%
-            \expandafter\noexpand\csname\the\macname @@@\endcsname ##1,}%
+            \noexpand\passargtomacro
+            \expandafter\noexpand\csname\the\macname @@@\endcsname{##1,}}%
+        \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
+            \expandafter\noexpand\csname\the\macname @@@@\endcsname ##1}%
         \expandafter\expandafter
         \expandafter\xdef
         \expandafter\expandafter
-          \csname\the\macname @@@\endcsname
-            \paramlist{\egroup\noexpand\scanmacro{\macrobody}}%
+          \csname\the\macname @@@@\endcsname\paramlist{%
+            \egroup\noexpand\scanmacro{\macrobody}}%
       \else % 10 or more
         \expandafter\xdef\csname\the\macname\endcsname{%
           \noexpand\getargvals@{\the\macname}{\argl}%
@@ -8166,19 +8162,27 @@ end
         }%
     \else % at most 9
       \ifnum\paramno<10\relax
+        % @MACNAME sets the context for reading the macro argument
+        % @MACNAME@@ gets the argument, processes backslashes and appends a 
+        % comma.
+        % @MACNAME@@@ removes braces surrounding the argument list.
+        % @MACNAME@@@@ scans the macro body with arguments substituted.
         \expandafter\xdef\csname\the\macname\endcsname{%
-           \bgroup\noexpand\macroargctxt
-           \expandafter\noexpand\csname\the\macname @@\endcsname}%
+          \bgroup
+          \noexpand\expandafter  % This \expandafter skip any spaces after the
+          \noexpand\macroargctxt % macro before we change the catcode of space.
+          \noexpand\expandafter
+          \expandafter\noexpand\csname\the\macname @@\endcsname}%
         \expandafter\xdef\csname\the\macname @@\endcsname##1{%
-            \expandafter\noexpand\csname\the\macname @@@\endcsname ##1,}%
+            \noexpand\passargtomacro
+            \expandafter\noexpand\csname\the\macname @@@\endcsname{##1,}}%
+        \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
+            \expandafter\noexpand\csname\the\macname @@@@\endcsname ##1}%
         \expandafter\expandafter
         \expandafter\xdef
         \expandafter\expandafter
-        \csname\the\macname @@@\endcsname
-        \paramlist{%
-            \egroup
-            \noexpand\scanmacro{\macrobody}%
-            }%
+          \csname\the\macname @@@@\endcsname\paramlist{%
+            \egroup\noexpand\scanmacro{\macrobody}}%
       \else % 10 or more:
         \expandafter\xdef\csname\the\macname\endcsname{%
           \noexpand\getargvals@{\the\macname}{\argl}%
@@ -8194,71 +8198,96 @@ end
 \def\norecurse#1{\bgroup\cslet{#1}{macsave.#1}}
 
 
-{\catcode`\@=0 \catcode`\\=13
-@catcode`@_=11
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+{\catcode`\@=0 \catcode`\\=13  % We need to manipulate \ so use @ as escape
+@catcode`@_=11  % private names
+@catcode`@!=11  % used as argument separator
 
+% \passargtomacro#1#2 -
 % Call #1 with a list of tokens #2, with any doubled backslashes in #2
 % compressed to one.
+%
+% This implementation works by expansion, and not execution (so we cannot use 
+% \def or similar).  This reduces the risk of this failing in contexts where 
+% complete expansion is done with no execution (for example, in writing out to 
+% an auxiliary file for an index entry).
+% 
+% State is kept in the input stream: the argument passed to
+% @look_ahead, @gobble_and_check_finish and @add_segment is
+%
+% THE_MACRO ARG_RESULT ! {PENDING_BS} NEXT_TOKEN  (... rest of input)
+%
+% where:
+% THE_MACRO - name of the macro we want to call
+% ARG_RESULT - argument list we build to pass to that macro
+% PENDING_BS - either a backslash or nothing
+% NEXT_TOKEN - used to look ahead in the input stream to see what's coming next
+
 @gdef@passargtomacro#1#2{%
-  @def@the_macro{#1}%
-  @def@pending_backslash{}%
-  @def@finish{@finish}%
-  @def@arg_result{}%
-  @let@next_token=@relax
-  @add_segment#2\@finish\%
+  @add_segment #1!{}@relax#2\@_finish\%
 }
+@gdef@_finish{@_finishx} @global@let@_finishx@relax
 
-% Input stream is just after a backslash.  If the next token is not a
-% backslash, process the rest of the argument; otherwise, remove the next
-% token.
-@gdef@look_ahead{%
-  @futurelet@next_token@look_aheadzzz}
-@gdef@look_aheadzzz{%
-  @ifx@next_token\%
-   @let@next=@gobble_and_check_finish 
+% #1 - THE_MACRO ARG_RESULT
+% #2 - PENDING_BS
+% #3 - NEXT_TOKEN
+% #4 used to look ahead
+%
+% If the next token is not a backslash, process the rest of the argument; 
+% otherwise, remove the next token.
+@gdef@look_ahead#1!#2#3#4{%
+  @ifx#4\%
+   @expandafter@gobble_and_check_finish 
   @else
-   @let@next=@add_segment
-  @fi@next
+   @expandafter@add_segment
+  @fi#1!{#2}#4#4%
 }
 
-% Double backslash found.  Add a single backslash here.
-@gdef@gobble_and_check_finish#1{%
-  @add_the_backslash
-  @def@pending_backslash{}%
-  @futurelet@next_token@add_segment
+% #1 - THE_MACRO ARG_RESULT
+% #2 - PENDING_BS
+% #3 - NEXT_TOKEN
+% #4 should be a backslash, which is gobbled.
+% #5 looks ahead
+%
+% Double backslash found.  Add a single backslash, and look ahead.
+@gdef@gobble_and_check_finish#1!#2#3#4#5{%
+  @add_segment#1\!{}#5#5%
 }
 
-% append a backslash to \arg_result
-@gdef@add_the_backslash{%
-  @expandafter@gdef@expandafter@arg_result@expandafter{@arg_result\}%
-}
+@gdef@is_fi{@fi}
 
+% #1 - THE_MACRO ARG_RESULT
+% #2 - PENDING_BS
+% #3 - NEXT_TOKEN
+% #4 is input stream until next backslash
+%
 % Input stream is either at the start of the argument, or just after a 
 % backslash sequence, either a lone backslash, or a doubled backslash.  
-% \next_token contains the first token in the input stream: if it is \finish, 
-% finish; otherwise, append to \arg_result the segment of the argument up until
-% the next backslash.  \pending_backslash contains a backslash to represent
+% NEXT_TOKEN contains the first token in the input stream: if it is \finish, 
+% finish; otherwise, append to ARG_RESULT the segment of the argument up until
+% the next backslash.  PENDING_BACKSLASH contains a backslash to represent
 % a backslash just before the start of the input stream that has not been
-% added to \arg_result.
-@gdef@add_segment#1\{%
-@ifx@next_token@finish
-  @let@next=@call_the_macro%
+% added to ARG_RESULT.
+@gdef@add_segment#1!#2#3#4\{%
+@ifx#3@_finish
+  @call_the_macro#1!%
 @else
-  @let@next=@look_ahead
-  %
-  % append to @arg_result
-  % token list registers might be better
-  @expandafter@expandafter@expandafter@gdef
-  @expandafter@expandafter@expandafter@arg_result
-  @expandafter@expandafter@expandafter{%
-  @expandafter@arg_result
-  @pending_backslash#1}%
-  @def@pending_backslash{\}%
-@fi@next}
+  % append the pending backslash to the result, followed by the next segment
+  @expandafter@is_fi@look_ahead#1#2#4!{\}@fi
+  % this @fi is discarded by @look_ahead.
+  % we can't get rid of it with \expandafter because we don't know how 
+  % long #4 is.
+}
 
-@gdef@call_the_macro{@expandafter@the_macro@expandafter{@arg_result}}
+% #1 - THE_MACRO
+% #2 - ARG_RESULT
+% #3 discards the res of the conditional in @add_segment, and @is_fi ends the 
+% conditional.
+@gdef@call_the_macro#1#2!#3@fi{@is_fi #1{#2}}
 
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % \braceorline MAC is used for a one-argument macro MAC.  It checks
 % whether the next non-whitespace character is a {.  It sets the context
