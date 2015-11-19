@@ -275,7 +275,7 @@ void expand(void)
             do_variable();
             break;
         case feedback_cmd:
-            do_variable();
+            do_feedback();
             break;
         default:
             /* Complain about an undefined macro */

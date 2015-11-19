@@ -2,7 +2,7 @@
 This file is in the public domain.
 
 ==============================================================
-Luatex beta-0.85.0 was released 2015111400 (5509)
+Luatex beta-0.85.0 was released 2015111400 (5550)
 ==============================================================
 -- roadmap
 
@@ -2564,7 +2564,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5538 2015-11-18 08:36:25Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5550 2015-11-19 13:23:59Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
