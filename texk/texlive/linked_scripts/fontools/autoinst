@@ -964,8 +964,11 @@ sub parse_basicinfo {
     $data{subfamily} =  $data{preferredsubfamily} || $data{subfamily};
     $data{fullname}  =~ s/\A$data{family}//xms;
     $data{fullname}  =  lc $data{fullname};
+
+    # clean up family name (it's used in LaTeX command names)
     $data{family}    =~ s/\A(?: Adobe | ITC | LT | MT)//xms;
     $data{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
+    $data{family}    =~ s/[^A-Za-z]+//xmsg;
     
     my $fullinfo =  lc "$data{subfamily} | $data{fullname}";
     
@@ -2153,6 +2156,10 @@ GNU General Public License for more details.
 (See the source code for the rest of the story.)
 
 =over 12
+
+=item I<2015-11-22>
+
+Bugfix: Latex doesn't like command names with dashes in it.
 
 =item I<2015-05-13>
 
