@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 38582 2015-10-07 22:32:58Z karl $
+# $Id: fmtutil.pl 38835 2015-11-13 00:30:30Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -25,11 +25,11 @@ BEGIN {
 }
 
 
-my $svnid = '$Id: fmtutil.pl 38582 2015-10-07 22:32:58Z karl $';
-my $lastchdate = '$Date: 2015-10-08 00:32:58 +0200 (Thu, 08 Oct 2015) $';
+my $svnid = '$Id: fmtutil.pl 38835 2015-11-13 00:30:30Z preining $';
+my $lastchdate = '$Date: 2015-11-13 01:30:30 +0100 (Fri, 13 Nov 2015) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 38582 $';
+my $svnrev = '$Revision: 38835 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -124,6 +124,7 @@ our @cmdline_options = (
   "version",
   "help|h",
   "strict",
+  "recorder",
   "_dumpdata",
   );
 
@@ -422,6 +423,7 @@ sub rebuild_one_format {
   my $texengine;
   my $jobswitch = "-jobname=$fmt";
   my $prgswitch = "-progname=" ;
+  my $recorderswitch = ($opts{'recorder'} ? "-recorder" : "");
   my $fmtfile = $fmt;
   my $kpsefmt;
   my $pool;
@@ -528,7 +530,7 @@ sub rebuild_one_format {
     }
 
     # in mktexfmtMode we need to redirect *all* output to stderr
-    my $cmdline = "$eng  -ini $tcxflag $jobswitch $prgswitch $texargs";
+    my $cmdline = "$eng  -ini $tcxflag $recorderswitch $jobswitch $prgswitch $texargs";
     $cmdline .= " >&2" if $mktexfmtMode;
     $cmdline .= " <$nul";
     my $retval = system($cmdline);
@@ -584,6 +586,12 @@ sub rebuild_one_format {
   
   if (!File::Copy::move( "$fmt.log", "$fulldestdir/$fmt.log")) {
     print_deferred_error("Cannot move $fmt.log to $fulldestdir.\n");
+  }
+  if ($opts{'recorder'}) {
+    my $recfile = $fmt . ($fmt =~ m/^(aleph|lamed)$/ ? ".ofl" : ".fls");
+    if (!File::Copy::move( $recfile, "$fulldestdir/$recfile")) {
+      print_deferred_error("Cannot move $recfile to $fulldestdir.\n");
+    }
   }
 
   my $destfile = "$fulldestdir/$fmtfile";
@@ -1163,6 +1171,7 @@ Options:
                              exit successfully even if the required engine
                                is missing, if it is included in the list.
   --quiet                    be silent
+  --recorder                 pass the -recorder option and save .fls files
   --test                     (not implemented, just for compatibility)
   --dolinks                  (not implemented, just for compatibility)
   --force                    (not implemented, just for compatibility)
