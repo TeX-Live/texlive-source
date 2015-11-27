@@ -289,6 +289,15 @@ if full_name then begin
 end else
 @z
 
+@x [104] Compute alpha and beta.
+alpha:=16;
+while z>=@'40000000 do
+@y
+alpha:=16;
+if z>@'400000000 then abort('Character size is too large!');
+while z>=@'40000000 do
+@z
+
 @x [108] Declare full_name.
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
 @y
