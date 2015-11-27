@@ -1,7 +1,7 @@
 2015-11-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvicopy.ch: Avoid to crash and abort with an error message when
-	the character size is larger than 1024 pt.
+	the character size >= 2048 pt.
 
 2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

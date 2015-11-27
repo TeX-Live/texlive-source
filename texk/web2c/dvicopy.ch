@@ -294,7 +294,7 @@ alpha:=16;
 while z>=@'40000000 do
 @y
 alpha:=16;
-if z>@'400000000 then abort('Character size is too large!');
+if z>=@'1000000000 then abort('Character size is too large!');
 while z>=@'40000000 do
 @z
 
