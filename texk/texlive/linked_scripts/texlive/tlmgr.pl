@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 38720 2015-10-26 22:29:22Z karl $
+# $Id: tlmgr.pl 38967 2015-11-28 02:15:58Z preining $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 38720 $';
-my $datrev = '$Date: 2015-10-26 23:29:22 +0100 (Mon, 26 Oct 2015) $';
+my $svnrev = '$Revision: 38967 $';
+my $datrev = '$Date: 2015-11-28 03:15:58 +0100 (Sat, 28 Nov 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -820,32 +820,6 @@ sub handle_execute_actions {
         } else {
           TeXLive::TLUtils::create_language_lua($localtlpdb, $arg1, $arg2);
         }
-      }
-    }
-
-    #
-    # check if *depending* formats have been changed
-    # we are currently only caring for package "latex" and "tex". If
-    # one of these has changed, we search for all packages *depending*
-    # on latex/tex and regenerate all formats in these packages.
-    #
-    # do this only if we are not in --list or --dry-run mode
-    if (!$opts{"list"}) {
-      my @check_indirect_formats;
-      # TODO:
-      # in case that hyphenation patterns are changed, ie $regenerate_language
-      # then maybe we don't need to update latex based ones?
-      push @check_indirect_formats, $localtlpdb->needed_by("latex")
-        if ($::latex_updated);
-      push @check_indirect_formats, $localtlpdb->needed_by("tex")
-        if ($::tex_updated);
-      for my $p (@check_indirect_formats) {
-          my $tlp = $localtlpdb->get_package($p);
-          if (!defined($tlp)) {
-            tlwarn("$p mentioned but not found in local tlpdb, strange!\n");
-            next;
-          }
-          TeXLive::TLUtils::announce_execute_actions("enable", $tlp, "format");
       }
     }
 
@@ -3301,12 +3275,8 @@ sub action_update {
   # special check for depending format updates:
   # if one of latex or tex has been updated, we rebuild the formats
   # defined in packages *depending* on these packages.
-  if (!$opts{"list"}) {
-    if ($updated{"latex"} || $updated{"babel"}) {
-      TeXLive::TLUtils::announce_execute_actions("latex-updated");
-    }
-    TeXLive::TLUtils::announce_execute_actions("tex-updated") if ($updated{"tex"});
-  }
+  check_announce_format_triggers(@inst_packs, @new_packs)
+    if (!$opts{"list"});
 
   print "end-of-updates\n" if $::machinereadable;
 
@@ -3461,6 +3431,27 @@ END_DISK_WARN
   return ($ret);
 }
 
+
+sub check_announce_format_triggers {
+  # we treat new and updated packages the same as updated 
+  # when it comes to triggers
+  my %updpacks = map { $_ => 1 } @_;
+
+  # search all format definitions in the tlpdb
+  FMTDEF: for my $fmtdef ($localtlpdb->format_definitions) {
+    # if by default they are activated, check the whether the
+    # trigger packages appear in the list of updated/new packages
+    if (($fmtdef->{'mode'} == 1) && $fmtdef->{'fmttriggers'}) {
+      for my $trigger (@{$fmtdef->{'fmttriggers'}}) {
+        if ($updpacks{$trigger}) {
+          TeXLive::TLUtils::announce_execute_actions("rebuild-format",
+            0, $fmtdef);
+          next FMTDEF;
+        }
+      }
+    }
+  }
+}
 
 #  INSTALL
 #
