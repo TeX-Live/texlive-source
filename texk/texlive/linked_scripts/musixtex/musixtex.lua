@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.11"
+VERSION = "0.12"
 
 --[[
      musixtex.lua: processes MusiXTeX files (and deletes intermediate files)
@@ -26,6 +26,9 @@ VERSION = "0.11"
 --[[
 
   ChangeLog:
+     version 0.12 2015-11-28 RDT
+      Process .ltx files with -l implied
+
      version 0.11 2015-07-16 RDT
       Automatic autosp preprocessing. 
 
@@ -64,10 +67,10 @@ VERSION = "0.11"
 --]]
 
 function usage()
-  print("Usage:  [texlua] musixtex.lua { option | basename[.tex] | basename[.aspc] } ... ")
+  print("Usage:  [texlua] musixtex.lua { option | basename[.tex] | basename[.aspc] basename[.ltx] } ... ")
   print("options: -v  version")
   print("         -h  help")
-  print("         -l  latex (or pdflatex)")
+  print("         -l  latex (or pdflatex) (implied with .ltx extension)")
   print("         -p  pdfetex (or pdflatex)")
   print("         -d  dvipdfm")
   print("         -s  stop at dvi")
@@ -76,7 +79,7 @@ function usage()
   print("         -1  one-pass [pdf][la]tex processing")
   print("         -F fmt  use fmt as the TeX processor")
   print("         -x  run makeindex")
-  print("         -a  preprocess using autosp")
+  print("         -a  preprocess using autosp (impled with .aspc extension)")
   print("         -f  restore default processing")
 end
 
@@ -144,31 +147,57 @@ repeat
     tex = arg[narg]
   else
     repeat  -- pseudo loop to get effect of "continue" using "break"
-      filename = this_arg 
-      if filename ~= "" and string.sub(filename, -5, -1) == ".aspc" then
-        if io.open(filename, "r") then
-          print("Processing ".. filename )
+      texfilename = this_arg 
+      if texfilename ~= "" and string.sub(texfilename, -5, -1) == ".aspc" then
+        if io.open(texfilename, "r") then
+          print("Processing ".. texfilename )
         else
-          print("No file: " .. filename )
+          print("No file: " .. texfilename )
           break -- out of pseudo loop
         end
         preprocess = 1
-        filename = string.sub(filename, 1, -6)
-      elseif filename ~= "" and string.sub(filename, -4, -1) == ".tex" then
-        if io.open(filename, "r") then
-          print("Processing ".. filename )
+        filename = string.sub(texfilename, 1, -6)
+        texfilename = filename .. ".tex"
+      elseif texfilename ~= "" and string.sub(texfilename, -4, -1) == ".ltx" then
+        if io.open(texfilename, "r") then
+          print("Processing ".. texfilename )
         else
-          print("No file: " .. filename )
+          print("No file: " .. texfilename )
           break -- out of pseudo loop
         end
-        filename = string.sub(filename, 1, -5)
-      elseif io.open(filename .. ".aspc", "r") then
+        if tex == "pdfetex" then
+          tex = "pdflatex"
+        else
+          tex = "latex"
+        end
+        filename = string.sub(texfilename, 1, -5) 
+      elseif texfilename ~= "" and string.sub(texfilename, -4, -1) == ".tex" then
+        if io.open(texfilename, "r") then
+          print("Processing ".. texfilename )
+        else
+          print("No file: " .. texfilename )
+          break -- out of pseudo loop
+        end
+        filename = string.sub(texfilename, 1, -5)
+      elseif io.open(texfilename .. ".aspc", "r") then
         preprocess = 1
-        print("Processing ".. filename .. ".aspc")
-      elseif io.open(filename .. ".tex", "r") then
-        print("Processing ".. filename .. ".tex")
+        print("Processing ".. texfilename .. ".aspc")
+        filename = texfilename 
+      elseif io.open(texfilename .. ".ltx", "r") then
+        if tex == "pdfetex" then
+          tex = "pdflatex"
+        else
+          tex = "latex"
+        end
+        ltx = 1
+        filename = texfilename
+        texfilename = filename .. ".ltx"
+      elseif io.open(texfilename .. ".tex", "r") then
+        print("Processing ".. texfilename .. ".tex")
+        filename = texfilename
+        texfilename = filename .. ".tex"
       else
-        print("No file: " .. filename )
+        print("No file: " .. texfilename )
         break -- out of pseudo loop
       end
       if preprocess == 1 and os.execute("autosp " .. filename) ~= 0 then
@@ -176,18 +205,18 @@ repeat
         break -- out of pseudo loop
       end
       os.remove( filename .. ".mx2" )
-      if (passes == 1 or os.execute(tex .. " " .. filename) == 0) and
+      if (passes == 1 or os.execute(tex .. " " .. texfilename) == 0) and
          (passes == 1 or os.execute(musixflx .. " " .. filename) == 0) and
-         (os.execute(tex .. " " .. filename) == 0) and
+         (os.execute(tex .. " " .. texfilename) == 0) and
          ((tex ~= "latex" and tex ~="pdflatex")
            or (index == 0)
            or (os.execute("makeindex -q " .. filename) == 0)) and
          ((tex ~= "latex" and tex ~= "pdflatex")
-           or (os.execute(tex .. " " .. filename) == 0)) and
+           or (os.execute(tex .. " " .. texfilename) == 0)) and
          ((tex ~= "latex" and tex ~= "pdflatex")
-           or (os.execute(tex .. " " .. filename) == 0)) and
+           or (os.execute(tex .. " " .. texfilename) == 0)) and
          ((tex ~= "latex" and tex ~= "pdflatex")
-           or (os.execute(tex .. " " .. filename) == 0)) and
+           or (os.execute(tex .. " " .. texfilename) == 0)) and
          (dvi == "" or  (os.execute(dvi .. " " .. filename) == 0)) and
          (ps2pdf == "" or (os.execute(ps2pdf .. " " .. filename .. ".ps") == 0) )
       then 
@@ -205,7 +234,7 @@ repeat
           end
         end
       else
-        print("Musixtex processing of " .. filename .. ".tex fails.\n")
+        print("Musixtex processing of " .. texfilename " fails.\n")
         exit_code = 2
         --[[ uncomment for debugging
         print("tex = ", tex)
