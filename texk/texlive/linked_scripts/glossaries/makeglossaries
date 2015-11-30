@@ -26,9 +26,12 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.16 (2015-06-28)";
+my $version="2.17 (2015-11-30)";
 
 # History:
+# v2.17 (2015/11/30)
+#   * Escaped { in regular expressions.
+#     http://www.dickimaw-books.com/cgi-bin/bugtracker.cgi?action=view&key=101
 # v2.16 (2015/06/28)
 #   * Added check for "german" and codepage that doesn't contain
 #   "din5007", "duden" or "braille". If missing, "din5007-" is
@@ -635,7 +638,8 @@ sub scan_aux{
         }
 
         # v1.9 added
-        if (m/\\\@input{(.+)\.aux}/)
+        # v2.17 escaped { in regex
+        if (m/\\\@input\{(.+)\.aux\}/)
         {
            &scan_aux($1);
 
@@ -644,7 +648,8 @@ sub scan_aux{
            next;
         }
 
-        if (m/\\\@newglossary\s*\{(.*)\}{(.*)}{(.*)}{(.*)}/)
+        # v2.17 escaped { in regex
+        if (m/\\\@newglossary\s*\{(.*)\}\{(.*)\}\{(.*)\}\{(.*)\}/)
         {
            $exttype{$1}{'log'} = $2;
            $exttype{$1}{'out'} = $3;
@@ -656,7 +661,8 @@ sub scan_aux{
            }
         }
 
-        if (m/\\\@istfilename\s*{([^}]*)}/)
+        # v2.17 escaped { in regex
+        if (m/\\\@istfilename\s*\{([^}]*)\}/)
         {
            $istfile = $1;
 
@@ -675,13 +681,15 @@ sub scan_aux{
         }
 
         # v1.5 added
-        if (m/\\\@xdylanguage\s*{([^}]+)}{([^}]*)}/)
+        # v2.17 escaped { in regex
+        if (m/\\\@xdylanguage\s*\{([^}]+)\}\{([^}]*)\}/)
         {
            $language{$1} = $2;
         }
 
         # v1.5 added
-        if (m/\\\@gls\@codepage\s*{([^}]+)}{([^}]*)}/)
+        # v2.17 escaped { in regex
+        if (m/\\\@gls\@codepage\s*\{([^}]+)\}\{([^}]*)\}/)
         {
            $codepage{$1} = $2;
         }
@@ -690,7 +698,8 @@ sub scan_aux{
         # Allow -l switch to override specification in aux file
         unless (defined($opt_l))
         {
-           if (m/\\\@glsorder\s*{([^}]+)}/)
+           # v2.17 escaped { in regex
+           if (m/\\\@glsorder\s*\{([^}]+)\}/)
            {
               my $ordering = $1;
 
