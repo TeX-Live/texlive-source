@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.7";          # ctanify version number
+our $VERSION = "1.8";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -49,11 +49,13 @@ my %ext2tds =
      "bst"     => "bibtex/bst/%s",
      "cbx"     => "tex/latex/%s",
      "cls"     => "tex/latex/%s",
+     "dbx"     => "tex/latex/%s",
      "dtx"     => "source/latex/%s",
      "dvi"     => "doc/latex/%s",
      "fd"      => "tex/latex/%s",
      "ins"     => "source/latex/%s",
      "map"     => "fonts/map/dvips/%s",
+     "md"      => "doc/latex/%s",
      "mf"      => "fonts/source/public/%s",
      "mp"      => "metapost/%s",
      "ofm"     => "fonts/ofm/public/%s",
