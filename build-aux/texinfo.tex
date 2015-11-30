@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-11-24.17}
+\def\texinfoversion{2015-11-27.11}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1153,8 +1153,8 @@ output) for that.)}
   \def\rgbDarkRed{0.50 0.09 0.12}
   \def\rgbBlack{0 0 0}
   %
-  % k sets the color for filling (usual text, etc.);
-  % K sets the color for stroking (thin rules, e.g., normal _'s).
+  % rg sets the color for filling (usual text, etc.);
+  % RG sets the color for stroking (thin rules, e.g., normal _'s).
   \def\pdfsetcolor#1{\pdfliteral{#1 rg  #1 RG}}
   %
   % Set color, and create a mark which defines \thiscolor accordingly,
@@ -5229,16 +5229,23 @@ end
       %
       \ifpdf
         \pdfgettoks#1.%
-        \hskip\skip\thinshrinkable\the\toksA
+        \bgroup\let\domark\relax
+          \hskip\skip\thinshrinkable\the\toksA
+        \egroup
+        % The redefinion of \domark stops marks being added in \pdflink to 
+        % preserve coloured links across page boundaries.  Otherwise the marks
+        % would get in the way of \lastbox in \insertindexentrybox.
       \else
         \hskip\skip\thinshrinkable #1%
       \fi
     \fi
     \egroup % end \boxA
     \ifdim\wd\boxB = 0pt
-      \global\setbox\entryindexbox=\box\boxA
+      \global\setbox\entryindexbox=\vbox{\unhbox\boxA}%
     \else
-    \global\setbox\entryindexbox=\vbox\bgroup\noindent
+    \global\setbox\entryindexbox=\vbox\bgroup
+      \prevdepth=\entrylinedepth
+      \noindent
       % We want the text of the entries to be aligned to the left, and the
       % page numbers to be aligned to the right.
       %
@@ -5267,9 +5274,7 @@ end
       \advance\dimen@ii by -1\leftskip
       \advance\dimen@ii by -1\entryrightmargin
       \advance\dimen@ii by 1\dimen@i
-      \let\maybestrut=\relax
       \ifdim\wd\boxA > \dimen@ii % If the entry doesn't fit in one line
-        \let\maybestrut=\strut
       \ifdim\dimen@ > 0.8\dimen@ii   % due to long index text
         \dimen@ = 0.7\dimen@ % Try to split the text roughly evenly
         \dimen@ii = \hsize
@@ -5284,9 +5289,7 @@ end
         % Ideally we'd add a finite glue at the end of the first line only, but
         % TeX doesn't seem to provide a way to do such a thing.
       \fi\fi
-      \maybestrut  % Add a strut on the first and last lines
       \unhbox\boxA
-      \maybestrut
       %
       % Do not prefer a separate line ending with a hyphen to fewer lines.
       \finalhyphendemerits = 0
@@ -5311,10 +5314,21 @@ end
 
 \newbox\entryindexbox
 \def\insertindexentrybox{%
-\lineskip=0pt    % This comes into effect when the \vbox has a large 
-                 % height due to the paragraph in it having several 
-                 % lines.
-\box\entryindexbox}
+  \copy\entryindexbox
+  % The following gets the depth of the last box.  This is for even
+  % line spacing when entries span several lines.
+  \setbox\dummybox\vbox{%
+    \unvbox\entryindexbox
+    \nointerlineskip
+    \lastbox
+    \global\entrylinedepth=\prevdepth
+  }%
+  % Note that we couldn't simply \unvbox\entryindexbox followed by 
+  % \nointerlineskip\lastbox to remove the last box and then reinstate it, 
+  % because this resets how far the box has been \moveleft'ed to 0.  \unvbox
+  % doesn't affect \prevdepth either.
+}
+\newdimen\entrylinedepth
 
 % Default is no penalty
 \let\entryorphanpenalty\egroup
@@ -5365,7 +5379,7 @@ end
 % Define two-column mode, which we use to typeset indexes.
 % Adapted from the TeXbook, page 416, which is to say,
 % the manmac.tex format used to print the TeXbook itself.
-\catcode`\@=11
+\catcode`\@=11  % private names
 
 \newbox\partialpage
 \newdimen\doublecolumnhsize
@@ -5443,6 +5457,7 @@ end
   \global\advance\vsize by -1\doublecolumntopgap
   \vsize = 2\vsize
   \topskip=0pt
+  \global\entrylinedepth=0pt\relax
 }
 
 % The double-column output routine for all double-column pages except
@@ -7606,6 +7621,7 @@ end
   % to allow macros to open or close groups themselves.
 }
 
+% Used for copying and captions
 \def\scanexp#1{%
   \bgroup
   % Undo catcode changes of \startcontents and \printindex
@@ -10836,11 +10852,12 @@ directory should work if nowhere else does.}
 % this is not a problem.
 \def\ifusingit#1#2{\ifdim \fontdimen1\font>0pt #1\else #2\fi}
 
-% Turn off all special characters except @
-% (and those which the user can use as if they were ordinary).
+% Set catcodes for Texinfo file
+
+% Active characters for printing the wanted glyph.
 % Most of these we simply print from the \tt font, but for some, we can
 % use math or other variants that look better in normal text.
-
+%
 \catcode`\"=\active
 \def\activedoublequote{{\tt\char34}}
 \let"=\activedoublequote
@@ -10850,12 +10867,10 @@ directory should work if nowhere else does.}
 
 \catcode`\_=\active
 \def_{\ifusingtt\normalunderscore\_}
-\let\realunder=_
-% Subroutine for the previous macro.
 \def\_{\leavevmode \kern.07em \vbox{\hrule width.3em height.1ex}\kern .07em }
+\let\realunder=_
 
-\catcode`\|=\active
-\def|{{\tt\char124}}
+\catcode`\|=\active \def|{{\tt\char124}}
 
 \chardef \less=`\<
 \catcode`\<=\active \def\activeless{{\tt \less}}\let< = \activeless
