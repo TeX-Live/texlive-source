@@ -34,6 +34,7 @@
 class Color
 {
 	public:
+		static bool SUPPRESS_COLOR_NAMES;
 		static const Color BLACK;
 		static const Color WHITE;
 		static const Color TRANSPARENT;
@@ -55,7 +56,7 @@ class Color
 		void setRGB (UInt8 r, UInt8 g, UInt8 b)  {_rgb = (r << 16) | (g << 8) | b;}
 		void setRGB (double r, double g, double b);
 		void setRGB (const std::valarray<double> &rgb) {setRGB(rgb[0], rgb[1], rgb[2]);}
-		bool setName (std::string name, bool case_sensitive=true);
+		bool setPSName (std::string name, bool case_sensitive=true);
 		void setGray (UInt8 g)  {setRGB(g,g,g);}
 		void setGray (double g) {setRGB(g,g,g);}
 		void setGray (const std::valarray<double> &gray) {setRGB(gray[0], gray[0], gray[0]);}
@@ -79,6 +80,8 @@ class Color
 		void operator *= (double c);
 		double deltaE (const Color &c) const;
 		std::string rgbString () const;
+		std::string svgColorString (bool rgbonly) const;
+		std::string svgColorString () const {return svgColorString(SUPPRESS_COLOR_NAMES);}
 		static void CMYK2RGB (const std::valarray<double> &cmyk, std::valarray<double> &rgb);
 		static void RGB2CMYK (const std::valarray<double> &rgb, std::valarray<double> &cmyk);
 		static void HSB2RGB (const std::valarray<double> &hsb, std::valarray<double> &rgb);

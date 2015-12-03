@@ -182,22 +182,22 @@ void HtmlSpecialHandler::markLinkedBox () {
 			double h = linewidth;
 			const Color &linecolor = USE_LINECOLOR ? LINK_LINECOLOR : _actions->getColor();
 			if (MARKER_TYPE == MT_LINE)
-				rect->addAttribute("fill", linecolor.rgbString());
+				rect->addAttribute("fill", linecolor.svgColorString());
 			else {
 				x -= linewidth;
 				y = bbox.minY()-linewidth;
 				w += 2*linewidth;
 				h += bbox.height()+linewidth;
 				if (MARKER_TYPE == MT_BGCOLOR) {
-					rect->addAttribute("fill", LINK_BGCOLOR.rgbString());
+					rect->addAttribute("fill", LINK_BGCOLOR.svgColorString());
 					if (USE_LINECOLOR) {
-						rect->addAttribute("stroke", linecolor.rgbString());
+						rect->addAttribute("stroke", linecolor.svgColorString());
 						rect->addAttribute("stroke-width", linewidth);
 					}
 				}
 				else {  // LM_BOX
 					rect->addAttribute("fill", "none");
-					rect->addAttribute("stroke", linecolor.rgbString());
+					rect->addAttribute("stroke", linecolor.svgColorString());
 					rect->addAttribute("stroke-width", linewidth);
 				}
 			}
@@ -286,13 +286,13 @@ bool HtmlSpecialHandler::setLinkMarker (const string &marker) {
 	else if (type == "box")
 		MARKER_TYPE = MT_BOX;
 	else {
-		if (!LINK_BGCOLOR.setName(type, false))
+		if (!LINK_BGCOLOR.setPSName(type, false))
 			return false;
 		MARKER_TYPE = MT_BGCOLOR;
 	}
 	USE_LINECOLOR = false;
 	if (MARKER_TYPE != MT_NONE && !color.empty()) {
-		if (!LINK_LINECOLOR.setName(color, false))
+		if (!LINK_LINECOLOR.setPSName(color, false))
 			return false;
 		USE_LINECOLOR = true;
 	}

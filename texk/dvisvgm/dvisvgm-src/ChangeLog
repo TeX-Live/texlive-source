@@ -1,3 +1,52 @@
+2015-11-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .travis.yml, configure.ac, src/Doxyfile: 
+  set version to 1.12 
+
+2015-11-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontEngine.cpp: 
+  treat character code as character index if no font mapping is set 
+
+  * src/FontManager.cpp: 
+  removed redundant #include 
+
+2015-11-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README, README.md: 
+  updated links to Google Test framework 
+
+2015-11-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/Color.cpp, src/Color.h, src/CommandLine.cpp, 
+    src/CommandLine.h, src/DVIToSVGActions.cpp, 
+    src/DvisvgmSpecialHandler.cpp, src/EmSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.cpp, src/PSPattern.cpp, src/PsSpecialHandler.cpp, 
+    src/SVGTree.cpp, src/TpicSpecialHandler.cpp, src/dvisvgm.cpp, 
+    src/options.xml, tests/ColorTest.cpp: 
+  added option --colornames to replace RGB color values with SVG color 
+  names 
+
+  * tests/Makefile.am, tests/ShadingPatch.cpp, tests/ShadingPatchTest.cpp: 
+  renamed ShadingPatchTest 
+
+  * src/Color.cpp, src/Color.h, src/ColorSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.cpp, tests/ColorTest.cpp: 
+  renamed Color::setName() to Color::setPSName() 
+
+2015-10-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Process.cpp, src/Process.h: 
+  fixed invalid access to freed string memory 
+
+2015-10-06  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in: 
+  minor improvements of the manual page 
+
 2015-09-21  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS, README, README.md: 
