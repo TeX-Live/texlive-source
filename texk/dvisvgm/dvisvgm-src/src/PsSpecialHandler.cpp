@@ -318,24 +318,25 @@ void PsSpecialHandler::psfile (const string &fname, const map<string,string> &at
 		_actions->setY(0);
 		moveToDVIPos();
 
-		_xmlnode = new XMLElementNode("g");
+		_xmlnode = new XMLElementNode("g");  // append following elements to this group
 		_psi.execute("\n@beginspecial @setspecial "); // enter \special environment
 		_psi.limit(epsfile.pslength()); // limit the number of bytes to be processed
 		_psi.execute(is);               // process EPS file
 		_psi.limit(0);                  // disable limitation
 		_psi.execute("\n@endspecial "); // leave special environment
-		if (!_xmlnode->empty()) {       // has anything been drawn?
-			Matrix m(1);
-			m.rotate(angle).scale(hscale/100, vscale/100).translate(hoffset, voffset);
-			m.translate(-llx, lly);
-			m.scale(sx, sy);      // resize image to width "rwi" and height "rhi"
-			m.translate(x, y);    // move image to current DVI position
-			_xmlnode->addAttribute("transform", m.getSVG());
+		if (_xmlnode->empty())          // nothing been drawn?
+			delete _xmlnode;             // => don't need to add empty group node
+		else {                          // has anything been drawn?
+			Matrix matrix(1);
+			matrix.rotate(angle).scale(hscale/100, vscale/100).translate(hoffset, voffset);
+			matrix.translate(-llx, lly);
+			matrix.scale(sx, sy);      // resize image to width "rwi" and height "rhi"
+			matrix.translate(x, y);    // move image to current DVI position
+			if (!matrix.isIdentity())
+				_xmlnode->addAttribute("transform", matrix.getSVG());
 			_actions->appendToPage(_xmlnode);
 		}
-		else
-			delete _xmlnode;
-		_xmlnode = 0;
+		_xmlnode = 0;   // append following elements to page group again
 
 		// restore DVI position
 		_actions->setX(x);
@@ -415,17 +416,17 @@ void PsSpecialHandler::dviEndPage (unsigned) {
 
 ///////////////////////////////////////////////////////
 
-void PsSpecialHandler::gsave (vector<double> &p) {
+void PsSpecialHandler::gsave (vector<double>&) {
 	_clipStack.dup();
 }
 
 
-void PsSpecialHandler::grestore (vector<double> &p) {
+void PsSpecialHandler::grestore (vector<double>&) {
 	_clipStack.pop();
 }
 
 
-void PsSpecialHandler::grestoreall (vector<double> &p) {
+void PsSpecialHandler::grestoreall (vector<double>&) {
 	_clipStack.pop(-1, true);
 }
 
@@ -455,7 +456,7 @@ void PsSpecialHandler::curveto (vector<double> &p) {
 }
 
 
-void PsSpecialHandler::closepath (vector<double> &p) {
+void PsSpecialHandler::closepath (vector<double>&) {
 	_path.closepath();
 }
 
@@ -463,6 +464,7 @@ void PsSpecialHandler::closepath (vector<double> &p) {
 /** Draws the current path recorded by previously executed path commands (moveto, lineto,...).
  *  @param[in] p not used */
 void PsSpecialHandler::stroke (vector<double> &p) {
+	_path.removeRedundantCommands();
 	if ((_path.empty() && !_clipStack.clippathLoaded()) || !_actions)
 		return;
 
@@ -544,6 +546,7 @@ void PsSpecialHandler::stroke (vector<double> &p) {
  *  @param[in] p not used
  *  @param[in] evenodd true: use even-odd fill algorithm, false: use nonzero fill algorithm */
 void PsSpecialHandler::fill (vector<double> &p, bool evenodd) {
+	_path.removeRedundantCommands();
 	if ((_path.empty() && !_clipStack.clippathLoaded()) || !_actions)
 		return;
 
@@ -705,7 +708,7 @@ void PsSpecialHandler::clippath (std::vector<double>&) {
  *  path (see PS language reference, 3rd edition, pp. 193, 542)
  *  @param[in] p not used
  *  @param[in] evenodd true: use even-odd fill algorithm, false: use nonzero fill algorithm */
-void PsSpecialHandler::clip (vector<double> &, bool evenodd) {
+void PsSpecialHandler::clip (vector<double>&, bool evenodd) {
 	clip(_path, evenodd);
 }
 
@@ -716,7 +719,8 @@ void PsSpecialHandler::clip (vector<double> &, bool evenodd) {
  *  @param[in] path path used to restrict the clipping region
  *  @param[in] evenodd true: use even-odd fill algorithm, false: use nonzero fill algorithm */
 void PsSpecialHandler::clip (Path &path, bool evenodd) {
-		// when this method is called, _path contains the clipping path
+	// when this method is called, _path contains the clipping path
+	_path.removeRedundantCommands();
 	if (path.empty() || !_actions)
 		return;
 
@@ -876,7 +880,7 @@ class ShadingCallback : public ShadingPatch::Callback {
 				_group->addAttribute("clip-path", XMLString("url(#clip")+XMLString(clippathID)+")");
 		}
 
-		void patchSegment (GraphicPath<double> &path, const Color &color) {
+		void patchSegment (GraphicsPath<double> &path, const Color &color) {
 			if (!_actions->getMatrix().isIdentity())
 				path.transform(_actions->getMatrix());
 
@@ -913,7 +917,7 @@ void PsSpecialHandler::processSequentialPatchMesh (int shadingTypeID, ColorSpace
 #if 0
 		if (bgcolorGiven) {
 			// fill whole patch area with given background color
-			GraphicPath<double> outline;
+			GraphicsPath<double> outline;
 			patch->getBoundaryPath(outline);
 			callback.patchSegment(outline, bgcolor);
 		}

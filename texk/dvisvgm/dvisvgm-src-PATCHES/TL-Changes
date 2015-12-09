@@ -1,4 +1,4 @@
-Changes applied to the dvisvgm-1.12 tree as obtained from:
+Changes applied to the dvisvgm-1.13 tree as obtained from:
 	http://dvisvgm.bplaced.net/Downloads
 
 Removed:
@@ -18,4 +18,3 @@ Removed:
 Converted Dos/Win line ends to native:
 	clipper/clipper.cpp
 	clipper/clipper.hpp
-

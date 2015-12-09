@@ -1,5 +1,5 @@
 /*************************************************************************
-** GraphicPath.h                                                        **
+** GraphicsPath.h                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- the DVI to SVG converter             **
 ** Copyright (C) 2005-2015 Martin Gieseking <martin.gieseking@uos.de>   **
@@ -32,7 +32,7 @@
 
 
 template <typename T>
-class GraphicPath
+class GraphicsPath
 {
 	friend class PathClipper;
 	public:
@@ -101,7 +101,7 @@ class GraphicPath
 		typedef typename std::vector<Command>::const_reverse_iterator ConstRevIterator;
 
 	public:
-		GraphicPath (WindingRule wr=WR_NON_ZERO) : _windingRule(wr) {}
+		GraphicsPath (WindingRule wr=WR_NON_ZERO) : _windingRule(wr) {}
 
 		void setWindingRule (WindingRule wr) {_windingRule = wr;}
 		WindingRule windingRule () const     {return _windingRule;}
@@ -121,7 +121,7 @@ class GraphicPath
 		}
 
 		/// Insert another path at the beginning of this one.
-		void prepend (const GraphicPath &path) {
+		void prepend (const GraphicsPath &path) {
 			_commands.insert(_commands.begin(), path._commands.begin(), path._commands.end());
 		}
 
@@ -176,7 +176,7 @@ class GraphicPath
 		 *	 in the glyph's outline description. All open paths are automatically closed by the renderer.
 		 *	 This method detects all open paths and adds the missing closePath statement. */
 		void closeOpenSubPaths () {
-			Command *prevCommand = 0;
+			Command *prevCommand=0;
 			FORALL(_commands, Iterator, it) {
 				if (it->type == Command::MOVETO && prevCommand && prevCommand->type != Command::CLOSEPATH) {
 					prevCommand = &(*it);
@@ -189,6 +189,24 @@ class GraphicPath
 			if (!_commands.empty() && _commands.back().type != Command::CLOSEPATH)
 				closepath();
 		}
+
+
+	   /** Removes redundant path commands commands. Currently, it only removes movetos. */
+	   void removeRedundantCommands () {
+		   // remove trailing moveto commands
+		   while (_commands.back().type == Command::MOVETO)
+			   _commands.pop_back();
+		   // resolve intermediate sequences of moveto commands
+		   Iterator it=_commands.begin();
+		   if (it == _commands.end())
+			   return;
+		   Iterator prev = it;
+		   for (++it; it != _commands.end(); ++it) {
+			   if (prev->type == Command::MOVETO && it->type == Command::MOVETO)
+					_commands.erase(prev);
+			   prev = it;
+		   }
+	   }
 
 
 		/** Writes the path data as SVG path drawing command to a given output stream.
@@ -320,7 +338,7 @@ class GraphicPath
  *  @param[in] actions template methods called by each iteration step
  *  @param[in] optimize if true, shorthand drawing commands (sconicto, scubicto,...) are considered */
 template <typename T>
-void GraphicPath<T>::iterate (Actions &actions, bool optimize) const {
+void GraphicsPath<T>::iterate (Actions &actions, bool optimize) const {
 	ConstIterator prev = _commands.end();  // pointer to preceding command
 	Point fp; // first point of current path
 	Point cp; // current point

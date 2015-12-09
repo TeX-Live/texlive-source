@@ -1,3 +1,65 @@
+2015-12-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .travis.yml, configure.ac, src/Doxyfile: 
+  set version to 1.13 
+
+2015-12-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * CMakeLists.txt, src/Font.cpp, src/Font.h, src/Glyph.h, 
+    src/GraphicPath.h, src/GraphicsPath.h, src/Makefile.am, 
+    src/PathClipper.h, src/PsSpecialHandler.cpp, src/PsSpecialHandler.h, 
+    src/ShadingPatch.h, src/TensorProductPatch.cpp, src/TensorProductPatch.h, 
+    src/TpicSpecialHandler.cpp, src/TriangularPatch.cpp, 
+    src/TriangularPatch.h, tests/GraphicPathTest.cpp, 
+    tests/GraphicsPathTest.cpp, tests/Makefile.am, 
+    tests/TensorProductPatchTest.cpp, tests/TriangularPatchTest.cpp: 
+  renamed class GraphicPath to GraphicsPath 
+
+2015-11-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GraphicPath.h, src/PsSpecialHandler.cpp: 
+  remove redundant moveto commands from graphics paths 
+
+  * doc/dvisvgm.txt.in: 
+  added a couple of links to the manpage 
+
+2015-11-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .gitignore, CMakeLists.txt, cmake/FindGhostscript.cmake, 
+    cmake/FindKpathsea.cmake, cmake/FindPotrace.cmake: 
+  added files for cmake 
+
+2015-11-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIToSVGActions.cpp, src/DVIToSVGActions.h: 
+  removed redundant methods 
+
+  * src/DVIToSVGActions.cpp, src/EPSToSVG.cpp: 
+  remove progress message before printing a PS error message 
+
+2015-11-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * xxHash/xxhash.c: 
+  updated xxHash to version r42 
+
+  * src/psdefs.cpp, src/psdefs.ps: 
+  added evaluation of PS operators ashow, awidthshow, and widthshow (fixes 
+  #49) 
+
+2015-11-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp, src/psdefs.ps: 
+  propagate call of PS operator 'setcolor' to the PS handler 
+
+  * src/psdefs.cpp, src/psdefs.ps: 
+  reduce rounding errors produced by PS operator 'charpath' 
+
+  * src/PsSpecialHandler.cpp, src/psdefs.cpp, src/psdefs.ps: 
+  minor code cleanup and reordering 
+
 2015-11-18  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 

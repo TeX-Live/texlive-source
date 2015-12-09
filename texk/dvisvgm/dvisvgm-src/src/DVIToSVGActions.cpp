@@ -215,16 +215,6 @@ void DVIToSVGActions::special (const string &spc, double dvi2bp, bool preprocess
 }
 
 
-/** This method is called when the DVI preamble was read
- *  @param[in] cmt preamble comment text. */
-void DVIToSVGActions::preamble (const string &cmt) {
-}
-
-
-void DVIToSVGActions::postamble () {
-}
-
-
 /** This method is called when a "begin of page (bop)" command was found in the DVI file.
  *  @param[in] pageno physical page number
  *  @param[in] c array with 10 components representing \\count0 ... \\count9. c[0] contains the
@@ -295,7 +285,7 @@ BoundingBox& DVIToSVGActions::bbox(const string& name, bool reset) {
 void DVIToSVGActions::progress (const char *id) {
 	if (PROGRESSBAR_DELAY < 1000) {
 		static double time=0;
-		// slow down updating of the progress indicator to prevent flickering
+		// slow down updating the progress indicator to prevent flickering
 		if (System::time() - time > 0.1) {
 			progress(0, 0, id);
 			time = System::time();
