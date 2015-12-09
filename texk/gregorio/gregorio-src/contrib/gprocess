@@ -1,0 +1,183 @@
+#!/usr/bin/perl
+
+# gprocess
+# a script for 'compiling' gregorio gabc music files
+# v0.2
+# Copyright (c) 2010 Richard Chonak <chonak@yahoo.com>
+# Changes in v0.2:
+# -- change list of PDF viewers
+# -- invoke LuaLateX instead of lamed/dvipdfm
+# -- drop use of pdftk (it's not available for my system)
+# -- use latin1 character set instead of utf8
+# -- update macro and variable names (with "gre" prefix) as needed
+# -- add 'redlines'
+# -- 
+#
+# v0.1
+# Copyright (C) 2008 Richard Chonak <chonak@yahoo.com>
+# 
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+use strict;
+
+## USER-MODIFIABLE COMMAND PATHS
+
+my $TEXCOMPILER = "lualatex --shell-escape";
+
+## END OF USER-MODIFIABLE COMMAND PATHS
+
+
+# print usage string if no command-line arg specified
+
+if ($#ARGV < 0) {
+  die "usage: $0 <gabc-file-name>\n";
+}
+
+
+my $GABCFILE = $ARGV[0];
+my $GABCNAME = $GABCFILE;
+$GABCNAME =~ s/.gabc//;
+my $SCORENAME; 
+my $ANNOTATION;
+my $REFERENCE;
+my $OFFICEPART;
+my $NAMEFOUND = 0;
+my $KEEPSEARCHING = 1;
+my $INLINE = "";
+
+
+my $SCOREWRAPTEX = $GABCFILE;
+$SCOREWRAPTEX =~ s/.gabc$/-main.tex/;
+
+####  GET THE SCORE TITLE FROM THE GABC FILE ####
+
+if ($GABCFILE =~ m#/#) {
+   die "File spec must not contain slashes: $GABCFILE\n";
+};
+
+
+open (GABC,"<".$GABCFILE) or die "No such file: $GABCFILE\n";
+while ($KEEPSEARCHING == 1 && ($INLINE = <GABC>)) {
+  if ($INLINE =~ /^name/) {
+    $SCORENAME = $INLINE;
+    $SCORENAME =~ s/^.*:\s*//;
+    $SCORENAME =~ s/\s*;\s*$//;
+  };
+  if ($INLINE =~ /^anotation/) {
+    $ANNOTATION = $INLINE;
+    $ANNOTATION =~ s/^.*:\s*//;
+    $ANNOTATION =~ s/\s*;\s*$//;
+  };
+  if ($INLINE =~ /^reference/) {
+    $REFERENCE = $INLINE;
+    $REFERENCE =~ s/^.*:\s*//;
+    $REFERENCE =~ s/\s*;\s*$//;
+  };
+  if ($INLINE =~ /^office-part/) {
+    $OFFICEPART = $INLINE;
+    $OFFICEPART =~ s/^.*:\s*//;
+    $OFFICEPART =~ s/\s*;\s*$//;
+  };
+  if ($INLINE =~ /^%%/) { $KEEPSEARCHING = 0; }
+}
+
+close (GABC);
+
+
+
+####  READ IN THE TEMPLATE  ####
+
+my @TEMPLATELINES;
+
+
+@TEMPLATELINES = <DATA>;
+
+
+
+####  MAKE SUBSTITUTIONS ####
+
+&do_subst ("XXXX-SCORENAME-XXXX", $SCORENAME);
+&do_subst ("XXXX-GABCFILE-XXXX", $GABCNAME);
+&do_subst ("XXXX-ANNOTATION-XXXX", $ANNOTATION);
+&do_subst ("XXXX-OFFICEPART-XXXX", $OFFICEPART);
+&do_subst ("XXXX-REFERENCE-XXXX", $REFERENCE);
+
+foreach (@TEMPLATELINES){
+  s/^.*XXXX.*$//;
+};
+
+####  WRITE TEX WRAPPER FILE ####
+
+open (TEXWRAP,">".$SCOREWRAPTEX) or die "Cannot write file $SCOREWRAPTEX\n";
+print TEXWRAP @TEMPLATELINES; 
+close (TEXWRAP);
+
+#### RUN GREGORIO, LATEX, AND KPDF ####
+my $PDFFILE = $SCOREWRAPTEX;
+$PDFFILE =~ s/tex$/pdf/;
+my $AUXFILE = $SCOREWRAPTEX;
+$AUXFILE =~ s/tex$/aux/;
+my $GAUXFILE = $SCOREWRAPTEX;
+$GAUXFILE =~ s/tex$/gaux/;
+
+# remove product files so that we don't accidentally view results
+# from a prior run
+unlink $PDFFILE;
+
+do_cmd("$TEXCOMPILER $SCOREWRAPTEX");
+unlink $AUXFILE;
+unlink $GAUXFILE;
+
+print "\n\nOutput is in $PDFFILE .\n";
+
+exit;
+
+sub do_subst {
+  my $TAG = $_[0];
+  my $VAL = $_[1];
+
+  foreach (@TEMPLATELINES) {
+     s/$TAG/$VAL/g;
+  }
+};
+
+sub do_cmd {
+	my $CMD = $_[0];
+#debugging	print "Doing command: \n  $CMD\n\n";
+	system ($CMD) == 0 
+	   or die "\n\nSystem command failed: $CMD : $?\n";
+};
+
+
+#  THE LINES AFTER THIS "END" TAG ARE A TEMPLATE FOR THE TEX FILE TO BE GENERATED
+__END__
+
+\documentclass[12pt, letterpaper]{article}
+\usepackage{fullpage}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{luainputenc}
+\usepackage{palatino}
+\usepackage[autocompile,allowdeprecated=false]{gregoriotex}
+\pagestyle{empty}
+\begin{document}
+
+\begin{center}\begin{huge}\textsc{XXXX-SCORENAME-XXXX}\end{huge}\end{center}
+
+\gregorioscore{XXXX-GABCFILE-XXXX}
+
+\end{document}
+
+
