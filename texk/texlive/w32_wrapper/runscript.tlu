@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 36823 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2015-04-13 08:30:56 +0200 (Mon, 13 Apr 2015) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 39066 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2015-12-11 05:51:32 +0900 (Fri, 11 Dec 2015) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -251,6 +251,8 @@ local docstr = [[
         - handle fmtutil-sys via fmtutil --sys
     2015/09/10
         - more slash flipping for the sake of vbscript and unc paths
+    2015/12/11
+    	- fix spurious arguments for updmap and fmtutil
 ]]
 
 -- HELPER SUBROUTINES --
@@ -576,11 +578,11 @@ elseif progname == 'a2ping' then
   table.insert(extension_map['.pl'], '-x')
 elseif progname == 'updmap' then 
   if sysprog then
-    argline = progname .. ' --sys ' .. argline
+    argline = ' --sys ' .. argline
   end
 elseif progname == 'fmtutil' then 
   if sysprog then
-    argline = progname .. ' --sys ' .. argline
+    argline = ' --sys ' .. argline
   end
 elseif progname == 'asy' then
   os.setenv('ASYMPTOTE_GS', GSEXE)
