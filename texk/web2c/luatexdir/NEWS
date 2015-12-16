@@ -4,7 +4,7 @@ This file is in the public domain.
 
 
 
-Upcoming LuaTeX Release 0.86
+Upcoming LuaTeX Release 0.87
 
 (major changes)
 
@@ -2591,7 +2591,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5624 2015-12-15 21:49:14Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5627 2015-12-16 09:54:35Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
