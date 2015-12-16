@@ -17,21 +17,22 @@
 % You should have received a copy of the GNU General Public License along
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
-% hh: Here the backend nodes are still interwoven .. when I'm in the mood...
-
 @ @c
-
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
-@ @c
-#undef name
+/* we can consider less mode sizes: 2 4 6 8 */
 
-#define noDEBUG
-#define DEBUG_OUT stdout
+@
+This module started out using NDEBUG to trigger checking invalid node usage,
+something that is needed because users can mess up nodes in Lua. At some point
+that code was always enabled so it is now always on but still can be recognized
+as additional code. And as the performance hit is close to zero so disabling
+makes no sense, not even to make it configureable. There is a little more memory
+used but that is neglectable compared to other memory usage.
 
-#define adjust_pre subtype
+@c
 #define attribute(A) eqtb[attribute_base+(A)].cint
 
 #define uc_hyph int_par(uc_hyph_code)
@@ -39,14 +40,14 @@
 #define left_hyphen_min int_par(left_hyphen_min_code)
 #define right_hyphen_min int_par(right_hyphen_min_code)
 
-#define text_direction int_par(text_direction_code)
+#define MAX_CHAIN_SIZE 13 /* why not a bit larger */
 
-#define MAX_CHAIN_SIZE 13
+#define CHECK_NODE_USAGE 1 /* this triggers checking */
 
 memory_word *volatile varmem = NULL;
 
-#ifndef NDEBUG
-char *varmem_sizes = NULL;
+#ifdef CHECK_NODE_USAGE
+    char *varmem_sizes = NULL;
 #endif
 
 halfword var_mem_max = 0;
@@ -56,13 +57,9 @@ halfword free_chain[MAX_CHAIN_SIZE] = { null };
 
 static int my_prealloc = 0;
 
-int fix_node_lists = 1;
-
-int free_error_seen = 0;
-int copy_error_seen = 0;
+int fix_node_lists = 1; /* used in font and lang */
 
 halfword slow_get_node(int s);  /* defined below */
-int copy_error(halfword p);     /* define below */
 
 #define fake_node 100
 #define fake_node_size 2
@@ -286,7 +283,7 @@ const char *node_subtypes_kern[] = {
     "fontkern", "userkern", "accentkern", NULL
 };
 const char *node_subtypes_rule[] = {
-    "normal", "box", "image", "empty", NULL
+    "normal", "box", "image", "empty", "user", NULL
 };
 const char *node_subtypes_glyph[] = {
     "character", "glyph", "ligature", "ghost", "left", "right", NULL
@@ -328,6 +325,8 @@ node_info node_data[] = { /* the last entry in a row is the etex number */
     { boundary_node,       boundary_size,         node_fields_boundary,                      "boundary",       -1 },
     { disc_node,           disc_node_size,        node_fields_disc,                          "disc",            8 },
     { whatsit_node,        -1,                    NULL,                                      "whatsit",         9 },
+    { local_par_node,      local_par_size,        node_fields_local_par,                     "local_par",      -1 },
+    { dir_node,            dir_node_size,         node_fields_dir,                           "dir",            -1 },
     { math_node,           math_node_size,        node_fields_math,                          "math",           10 },
     { glue_node,           glue_node_size,        node_fields_glue,                          "glue",           11 },
     { kern_node,           kern_node_size,        node_fields_kern,                          "kern",           12 },
@@ -367,8 +366,6 @@ node_info node_data[] = { /* the last entry in a row is the etex number */
     { delta_node,          delta_node_size,       NULL,                                      "delta",          -1 },
     { passive_node,        passive_node_size,     NULL,                                      "passive",        -1 },
     { shape_node,          variable_node_size,    NULL,                                      "shape",          -1 },
-    { dir_node,            dir_node_size,         node_fields_dir,                           "dir",            -1 },
-    { local_par_node,      local_par_size,        node_fields_local_par,                     "local_par",      -1 },
     { -1,                 -1,                     NULL,                                      NULL,             -1 },
 };
 
@@ -423,8 +420,7 @@ node_info whatsit_node_data[] = {
 
 #define last_whatsit_node pdf_restore_node
 
-/*
-
+@
 When we copy a node list, there are several possibilities: we do the same as a new node,
 we copy the entry to the table in properties (a reference), we do a deep copy of a table
 in the properties, we create a new table and give it the original one as a metatable.
@@ -446,9 +442,10 @@ only small lists.
 So, in the end this is what we ended up with. For the record, I also experimented with the
 following:
 
-- copy attributes to the properties so that we hav efast access at the lua end: in the end
+- copy attributes to the properties so that we have fast access at the lua end: in the end
   the overhead is not compensated by speed and convenience, in fact, attributes are not
   that slow when it comes to accessing them
+
 - a bitset in the node but again the gain compared to attributes is neglectable and it also
   demands a pretty string agreement over what bit represents what, and this is unlikely to
   succeed in the tex community (I could use it for font handling, which is cross package,
@@ -462,15 +459,16 @@ alternative is to store a reference in the node itself but that is complicated b
 that the register has some limitations (no numeric keys) and we also don't want to mess with
 it too much.
 
-*/
-
+@c
 int lua_properties_level         = 0 ; /* can be private */
 int lua_properties_enabled       = 0 ;
 int lua_properties_use_metatable = 0 ;
 
-/* We keep track of nesting so that we don't oveflow the stack, and, what is more important,
-don't keep resolving the registry index. */
+@
+We keep track of nesting so that we don't oveflow the stack, and, what is more
+important, don't keep resolving the registry index.
 
+@c
 #define lua_properties_push do { \
     if (lua_properties_enabled) { \
         lua_properties_level = lua_properties_level + 1 ; \
@@ -511,37 +509,38 @@ don't keep resolving the registry index. */
     } \
 } while(0)
 
-/* For a moment I considered supporting all kind of data types but in practice
-that makes no sense. So we stick to a cheap shallow copy with as option a
-metatable. Btw, a deep copy would look like this:
+/*
+    For a moment I considered supporting all kind of data types but in practice
+    that makes no sense. So we stick to a cheap shallow copy with as option a
+    metatable. Btw, a deep copy would look like this:
 
-static void copy_lua_table(lua_State* L, int index) {
-    lua_newtable(L);
-    lua_pushnil(L);
-    while(lua_next(L, index-1) != 0) {
-        lua_pushvalue(L, -2);
-        lua_insert(L, -2);
-        if (lua_type(L,-1)==LUA_TTABLE)
-            copy_lua_table(L,-1);
-        lua_settable(L, -4);
+    static void copy_lua_table(lua_State* L, int index) {
+        lua_newtable(L);
+        lua_pushnil(L);
+        while(lua_next(L, index-1) != 0) {
+            lua_pushvalue(L, -2);
+            lua_insert(L, -2);
+            if (lua_type(L,-1)==LUA_TTABLE)
+                copy_lua_table(L,-1);
+            lua_settable(L, -4);
+        }
+        lua_pop(L,1);
     }
-    lua_pop(L,1);
-}
 
-#define lua_properties_copy(target, source) do { \
-    if (lua_properties_enabled) { \
-        lua_pushnumber(Luas,source); \
-        lua_rawget(Luas,-2); \
-        if (lua_type(Luas,-1)==LUA_TTABLE) { \
-            copy_lua_table(Luas,-1); \
-            lua_pushnumber(Luas,target); \
-            lua_insert(Luas,-2); \
-            lua_rawset(Luas,-3); \
-        } else { \
-            lua_pop(Luas,1); \
+    #define lua_properties_copy(target, source) do { \
+        if (lua_properties_enabled) { \
+            lua_pushinteger(Luas,source); \
+            lua_rawget(Luas,-2); \
+            if (lua_type(Luas,-1)==LUA_TTABLE) { \
+                copy_lua_table(Luas,-1); \
+                lua_pushinteger(Luas,target); \
+                lua_insert(Luas,-2); \
+                lua_rawset(Luas,-3); \
+            } else { \
+                lua_pop(Luas,1); \
+            } \
         } \
-    } \
-} while(0)
+    } while(0)
 
 */
 
@@ -589,97 +588,297 @@ static void copy_lua_table(lua_State* L, int index) {
 /* Here end the property handlers. */
 
 @ @c
+int valid_node(halfword p)
+{
+    if (p > my_prealloc && p < var_mem_max) {
+#ifdef CHECK_NODE_USAGE
+        if (varmem_sizes[p] > 0) {
+            return 1;
+        }
+#else
+        return 1;
+#endif
+    }
+    return 0;
+}
+
+@ @c
+static int test_count = 1;
+
+#define dorangetest(a,b,c)  do {                                 \
+    if (!(b>=0 && b<c)) {                                        \
+        fprintf(stdout,"For node p:=%d, 0<=%d<%d (l.%d,r.%d)\n", \
+            (int)a, (int)b, (int)c, __LINE__,test_count);        \
+        confusion("node range test failed");                     \
+    } } while (0)
+
+#define dotest(a,b,c) do {                                     \
+    if (b!=c) {                                                \
+        fprintf(stdout,"For node p:=%d, %d==%d (l.%d,r.%d)\n", \
+            (int)a, (int)b, (int)c, __LINE__,test_count);      \
+        confusion("node test failed");                         \
+    } } while (0)
+
+#define check_action_ref(a)    { dorangetest(p,a,var_mem_max); }
+#define check_glue_ref(a)      { dorangetest(p,a,var_mem_max); }
+#define check_attribute_ref(a) { dorangetest(p,a,var_mem_max); }
+#define check_token_ref(a)     { confusion("fuzzy token cleanup in node"); }
+
+#ifdef CHECK_NODE_USAGE
+
+static void check_static_node_mem(void)
+{
+    dotest(zero_glue, width(zero_glue), 0);
+    dotest(zero_glue, type(zero_glue), glue_spec_node);
+    dotest(zero_glue, vlink(zero_glue), null);
+    dotest(zero_glue, stretch(zero_glue), 0);
+    dotest(zero_glue, stretch_order(zero_glue), normal);
+    dotest(zero_glue, shrink(zero_glue), 0);
+    dotest(zero_glue, shrink_order(zero_glue), normal);
+
+    dotest(sfi_glue, width(sfi_glue), 0);
+    dotest(sfi_glue, type(sfi_glue), glue_spec_node);
+    dotest(sfi_glue, vlink(sfi_glue), null);
+    dotest(sfi_glue, stretch(sfi_glue), 0);
+    dotest(sfi_glue, stretch_order(sfi_glue), sfi);
+    dotest(sfi_glue, shrink(sfi_glue), 0);
+    dotest(sfi_glue, shrink_order(sfi_glue), normal);
+
+    dotest(fil_glue, width(fil_glue), 0);
+    dotest(fil_glue, type(fil_glue), glue_spec_node);
+    dotest(fil_glue, vlink(fil_glue), null);
+    dotest(fil_glue, stretch(fil_glue), unity);
+    dotest(fil_glue, stretch_order(fil_glue), fil);
+    dotest(fil_glue, shrink(fil_glue), 0);
+    dotest(fil_glue, shrink_order(fil_glue), normal);
+
+    dotest(fill_glue, width(fill_glue), 0);
+    dotest(fill_glue, type(fill_glue), glue_spec_node);
+    dotest(fill_glue, vlink(fill_glue), null);
+    dotest(fill_glue, stretch(fill_glue), unity);
+    dotest(fill_glue, stretch_order(fill_glue), fill);
+    dotest(fill_glue, shrink(fill_glue), 0);
+    dotest(fill_glue, shrink_order(fill_glue), normal);
+
+    dotest(ss_glue, width(ss_glue), 0);
+    dotest(ss_glue, type(ss_glue), glue_spec_node);
+    dotest(ss_glue, vlink(ss_glue), null);
+    dotest(ss_glue, stretch(ss_glue), unity);
+    dotest(ss_glue, stretch_order(ss_glue), fil);
+    dotest(ss_glue, shrink(ss_glue), unity);
+    dotest(ss_glue, shrink_order(ss_glue), fil);
+
+    dotest(fil_neg_glue, width(fil_neg_glue), 0);
+    dotest(fil_neg_glue, type(fil_neg_glue), glue_spec_node);
+    dotest(fil_neg_glue, vlink(fil_neg_glue), null);
+    dotest(fil_neg_glue, stretch(fil_neg_glue), -unity);
+    dotest(fil_neg_glue, stretch_order(fil_neg_glue), fil);
+    dotest(fil_neg_glue, shrink(fil_neg_glue), 0);
+    dotest(fil_neg_glue, shrink_order(fil_neg_glue), normal);
+}
+
+static void node_mem_dump(halfword p)
+{
+    halfword r;
+    for (r = my_prealloc + 1; r < var_mem_max; r++) {
+        if (vlink(r) == p) {
+            halfword s = r;
+            while (s > my_prealloc && varmem_sizes[s] == 0) {
+                s--;
+            }
+            if (s != null
+                && s != my_prealloc
+                && s != var_mem_max
+                && (r - s) < get_node_size(type(s), subtype(s))
+                && alink(s) != p) {
+                if (type(s) == disc_node) {
+                    fprintf(stdout,"  pointed to from %s node %d (vlink %d, alink %d): ",
+                            get_node_name(type(s), subtype(s)), (int) s,
+                            (int) vlink(s), (int) alink(s));
+                    fprintf(stdout, "pre_break(%d,%d,%d), ",
+                            (int) vlink_pre_break(s), (int) tlink(pre_break(s)),
+                            (int) alink(pre_break(s)));
+                    fprintf(stdout, "post_break(%d,%d,%d), ",
+                            (int) vlink_post_break(s),
+                            (int) tlink(post_break(s)),
+                            (int) alink(post_break(s)));
+                    fprintf(stdout, "no_break(%d,%d,%d)",
+                            (int) vlink_no_break(s), (int) tlink(no_break(s)),
+                            (int) alink(no_break(s)));
+                    fprintf(stdout, "\n");
+                } else {
+                    if (vlink(s) == p
+                        || (type(s) == glyph_node && lig_ptr (s) == p)
+                        || (type(s) == vlist_node && list_ptr(s) == p)
+                        || (type(s) == hlist_node && list_ptr(s) == p)
+                        || (type(s) == unset_node && list_ptr(s) == p)
+                        || (type(s) == ins_node   && ins_ptr (s) == p)
+                        ) {
+                        fprintf(stdout,"  pointed to from %s node %d (vlink %d, alink %d): ",
+                                get_node_name(type(s), subtype(s)), (int) s,
+                                (int) vlink(s), (int) alink(s));
+                        if (type(s) == glyph_node) {
+                            fprintf(stdout, "lig_ptr(%d)", (int) lig_ptr(s));
+                        } else if (type(s) == vlist_node || type(s) == hlist_node) {
+                            fprintf(stdout, "list_ptr(%d)", (int) list_ptr(s));
+                        }
+                        fprintf(stdout, "\n");
+                    } else {
+                        if ((type(s) != penalty_node) && (type(s) != math_node) && (type(s) != kern_node)) {
+                            fprintf(stdout, "  pointed to from %s node %d\n",
+                                get_node_name(type(s), subtype(s)), (int) s);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+#endif
+
+static int free_error(halfword p)
+{
+    if (p > my_prealloc && p < var_mem_max) {
+#ifdef CHECK_NODE_USAGE
+        int i;
+        if (varmem_sizes[p] == 0) {
+            check_static_node_mem();
+            for (i = (my_prealloc + 1); i < var_mem_max; i++) {
+                if (varmem_sizes[i] > 0) {
+                    check_node(i);
+                }
+            }
+            test_count++;
+            if (type(p) == glyph_node) {
+                formatted_error("nodes", "attempt to double-free glyph (%c) node %d, ignored", (int) character(p), (int) p);
+            } else {
+                formatted_error("nodes", "attempt to double-free %s node %d, ignored", get_node_name(type(p), subtype(p)), (int) p);
+            }
+            node_mem_dump(p);
+            return 1;
+        }
+#endif
+    } else {
+        formatted_error("nodes", "attempt to free an impossible node %d", (int) p);
+        return 1;
+    }
+    return 0;
+}
+
+@ @c
+static int copy_error(halfword p)
+{
+    if (p >= 0 && p < var_mem_max) {
+#ifdef CHECK_NODE_USAGE
+        if (p > my_prealloc && varmem_sizes[p] == 0) {
+            if (type(p) == glyph_node) {
+                formatted_warning("nodes", "attempt to copy free glyph (%c) node %d, ignored", (int) character(p), (int) p);
+            } else {
+                formatted_warning("nodes", "attempt to copy free %s node %d, ignored", get_node_name(type(p), subtype(p)), (int) p);
+            }
+            return 1;
+        }
+#endif
+    } else {
+        formatted_error("nodes", "attempt to copy an impossible node %d", (int) p);
+        return 1;
+    }
+    return 0;
+}
+
+@ @c
 halfword new_node(int i, int j)
 {
-    int s;
-    halfword n;
-    s = get_node_size(i, j);
-    n = get_node(s);
-    /* it should be possible to do this memset at |free_node()| */
-    /* type() and subtype() will be set below, and vlink() is
-       set to null by |get_node()|, so we can do we clearing one
-       word less than |s| */
-    (void) memset((void *) (varmem + n + 1), 0,
-                  (sizeof(memory_word) * ((unsigned) s - 1)));
+    int s = get_node_size(i, j);
+    halfword n = get_node(s);
+    /*
+        It should be possible to do this memset at |free_node()|.
+
+        Both type() and subtype() will be set below, and vlink() is
+        set to null by |get_node()|, so we can do we clearing one
+        word less than |s|
+    */
+    (void) memset((void *) (varmem + n + 1), 0, (sizeof(memory_word) * ((unsigned) s - 1)));
     switch (i) {
-    case glyph_node:
-        init_lang_data(n);
-        break;
-    case hlist_node:
-    case vlist_node:
-        box_dir(n) = -1;
-        break;
-    case whatsit_node:
-        if (j == open_node) {
-            open_name(n) = get_nullstr();
-            open_area(n) = open_name(n);
-            open_ext(n) = open_name(n);
-        }
-        break;
-    case disc_node:
-        pre_break(n) = pre_break_head(n);
-        type(pre_break(n)) = nesting_node;
-        subtype(pre_break(n)) = pre_break_head(0);
-        post_break(n) = post_break_head(n);
-        type(post_break(n)) = nesting_node;
-        subtype(post_break(n)) = post_break_head(0);
-        no_break(n) = no_break_head(n);
-        type(no_break(n)) = nesting_node;
-        subtype(no_break(n)) = no_break_head(0);
-        break;
-    case rule_node:
-        depth(n) = null_flag;
-        height(n) = null_flag;
-        rule_dir(n) = -1;
-        rule_index(n) = 0;
-        rule_transform(n) = 0;
-        /* fall through */
-    case unset_node:
-        width(n) = null_flag;
-        break;
-    case pseudo_line_node:
-    case shape_node:
-        /* this is a trick that makes |pseudo_files| slightly slower,
-         but the overall allocation faster then an explicit test
-         at the top of |new_node()|.
-         */
-        if (j>0) {
-          free_node(n, variable_node_size);
-          n = slow_get_node(j);
-          (void) memset((void *) (varmem + n + 1), 0,
-                      (sizeof(memory_word) * ((unsigned) j - 1)));
-        }
-        break;
-    default:
-        break;
+        case glyph_node:
+            init_lang_data(n);
+            break;
+        case hlist_node:
+        case vlist_node:
+            box_dir(n) = -1;
+            break;
+        case disc_node:
+            pre_break(n) = pre_break_head(n);
+            type(pre_break(n)) = nesting_node;
+            subtype(pre_break(n)) = pre_break_head(0);
+            post_break(n) = post_break_head(n);
+            type(post_break(n)) = nesting_node;
+            subtype(post_break(n)) = post_break_head(0);
+            no_break(n) = no_break_head(n);
+            type(no_break(n)) = nesting_node;
+            subtype(no_break(n)) = no_break_head(0);
+            break;
+        case rule_node:
+            depth(n) = null_flag;
+            height(n) = null_flag;
+            width(n) = null_flag;
+            rule_dir(n) = -1;
+            rule_index(n) = 0;
+            rule_transform(n) = 0;
+            break;
+        case whatsit_node:
+            if (j == open_node) {
+                open_name(n) = get_nullstr();
+                open_area(n) = open_name(n);
+                open_ext(n) = open_name(n);
+            }
+            break;
+        case unset_node:
+            width(n) = null_flag;
+            break;
+        case pseudo_line_node:
+        case shape_node:
+            /* this is a trick that makes |pseudo_files| slightly slower,
+             but the overall allocation faster then an explicit test
+             at the top of |new_node()|.
+             */
+            if (j>0) {
+              free_node(n, variable_node_size);
+              n = slow_get_node(j);
+              (void) memset((void *) (varmem + n + 1), 0, (sizeof(memory_word) * ((unsigned) j - 1)));
+            }
+            break;
+        default:
+            break;
     }
     if (int_par(synctex_code)) {
         /* handle synctex extension */
         switch (i) {
-        case math_node:
-            synctex_tag_math(n) = cur_input.synctex_tag_field;
-            synctex_line_math(n) = line;
-            break;
-        case glue_node:
-            synctex_tag_glue(n) = cur_input.synctex_tag_field;
-            synctex_line_glue(n) = line;
-            break;
-        case kern_node:
-            if (j != 0) {
-                synctex_tag_kern(n) = cur_input.synctex_tag_field;
-                synctex_line_kern(n) = line;
-            }
-            break;
-        case hlist_node:
-        case vlist_node:
-        case unset_node:
-            synctex_tag_box(n) = cur_input.synctex_tag_field;
-            synctex_line_box(n) = line;
-            break;
-        case rule_node:
-            synctex_tag_rule(n) = cur_input.synctex_tag_field;
-            synctex_line_rule(n) = line;
-            break;
+            case math_node:
+                synctex_tag_math(n) = cur_input.synctex_tag_field;
+                synctex_line_math(n) = line;
+                break;
+            case glue_node:
+                synctex_tag_glue(n) = cur_input.synctex_tag_field;
+                synctex_line_glue(n) = line;
+                break;
+            case kern_node:
+                if (j != 0) {
+                    synctex_tag_kern(n) = cur_input.synctex_tag_field;
+                    synctex_line_kern(n) = line;
+                }
+                break;
+            case hlist_node:
+            case vlist_node:
+            case unset_node:
+                synctex_tag_box(n) = cur_input.synctex_tag_field;
+                synctex_line_box(n) = line;
+                break;
+            case rule_node:
+                synctex_tag_rule(n) = cur_input.synctex_tag_field;
+                synctex_line_rule(n) = line;
+                break;
         }
     }
     /* take care of attributes */
@@ -689,19 +888,13 @@ halfword new_node(int i, int j)
     }
     type(n) = (quarterword) i;
     subtype(n) = (quarterword) j;
-#ifdef DEBUG
-    fprintf(DEBUG_OUT, "Alloc-ing %s node %d\n",
-            get_node_name(type(n), subtype(n)), (int) n);
-#endif
     return n;
 }
 
 halfword raw_glyph_node(void)
 {
-    register halfword n;
-    n = get_node(glyph_node_size);
-    (void) memset((void *) (varmem + n + 1), 0,
-                  (sizeof(memory_word) * (glyph_node_size - 1)));
+    register halfword n = get_node(glyph_node_size);
+    (void) memset((void *) (varmem + n + 1), 0, (sizeof(memory_word) * (glyph_node_size - 1)));
     type(n) = glyph_node;
     subtype(n) = 0;
     return n;
@@ -709,10 +902,8 @@ halfword raw_glyph_node(void)
 
 halfword new_glyph_node(void)
 {
-    register halfword n;
-    n = get_node(glyph_node_size);
-    (void) memset((void *) (varmem + n + 1), 0,
-                  (sizeof(memory_word) * (glyph_node_size - 1)));
+    register halfword n = get_node(glyph_node_size);
+    (void) memset((void *) (varmem + n + 1), 0, (sizeof(memory_word) * (glyph_node_size - 1)));
     type(n) = glyph_node;
     subtype(n) = 0;
     build_attribute_list(n);
@@ -720,16 +911,15 @@ halfword new_glyph_node(void)
     return n;
 }
 
-
 @ makes a duplicate of the node list that starts at |p| and returns a
-   pointer to the new list
+pointer to the new list
+
 @c
 halfword do_copy_node_list(halfword p, halfword end)
 {
-    halfword q = null;          /* previous position in new list */
-    halfword h = null;          /* head of the list */
+    halfword q = null; /* previous position in new list */
+    halfword h = null; /* head of the list */
     register halfword s ;
-    copy_error_seen = 0;
     lua_properties_push; /* saves stack and time */
     while (p != end) {
         s = copy_node(p);
@@ -749,31 +939,6 @@ halfword copy_node_list(halfword p)
 {
     return do_copy_node_list(p, null);
 }
-
-/*  There is no gain in using a temp var:
-
-    #define copy_sub_list(target,source) do { \
-         l = source; \
-         if (l != null) { \
-             s = copy_node_list(l); \
-             target = s; \
-         } else { \
-             target = null; \
-         } \
-    } while (0)
-
-    #define copy_sub_node(target,source) do { \
-        l = source; \
-        if (l != null) { \
-            s = copy_node(l); \
-            target = s ; \
-        } else { \
-            target = null; \
-        } \
-    } while (0)
-
-    So we use:
-*/
 
 #define copy_sub_list(target,source) do { \
      if (source != null) { \
@@ -796,15 +961,6 @@ halfword copy_node_list(halfword p)
 @ make a dupe of a single node
 
 @c
-
-/*
-    at some point we can use function pointers as in the backend itself:
-
-    typedef void (*copy_function) ();
-    copy_function *copy_functions;
-    xmalloc((MAX_WHATSIT_TYPE + 1) * sizeof(copy_function));
-*/
-
 static void copy_node_wrapup_core(halfword p, halfword r)
 {
     halfword s ;
@@ -829,7 +985,7 @@ static void copy_node_wrapup_core(halfword p, halfword r)
                 user_node_value(r) = s;
                 break;
             case 's':
-                /* |add_string_ref(user_node_value(p));| *//* if this was mpost .. */
+                /* |add_string_ref(user_node_value(p));| */
                 break;
             case 't':
                 add_token_ref(user_node_value(p));
@@ -895,20 +1051,19 @@ halfword copy_node(const halfword p)
     i = get_node_size(type(p), subtype(p));
     r = get_node(i);
 
-    (void) memcpy((void *) (varmem + r), (void *) (varmem + p),
-                  (sizeof(memory_word) * (unsigned) i));
+    (void) memcpy((void *) (varmem + r), (void *) (varmem + p), (sizeof(memory_word) * (unsigned) i));
 
     if (int_par(synctex_code)) {
         /* handle synctex extension */
         switch (type(p)) {
-        case math_node:
-            synctex_tag_math(r) = cur_input.synctex_tag_field;
-            synctex_line_math(r) = line;
-            break;
-        case kern_node:
-            synctex_tag_kern(r) = cur_input.synctex_tag_field;
-            synctex_line_kern(r) = line;
-            break;
+            case math_node:
+                synctex_tag_math(r) = cur_input.synctex_tag_field;
+                synctex_line_math(r) = line;
+                break;
+            case kern_node:
+                synctex_tag_kern(r) = cur_input.synctex_tag_field;
+                synctex_line_kern(r) = line;
+                break;
         }
     }
     if (nodetype_has_attributes(type(p))) {
@@ -919,319 +1074,129 @@ halfword copy_node(const halfword p)
     vlink(r) = null;
 
     switch (type(p)) {
-    case glyph_node:
-        copy_sub_list(lig_ptr(r),lig_ptr(p)) ;
-        break;
-    case glue_node:
-        add_glue_ref(glue_ptr(p));
-        copy_sub_list(leader_ptr(r),leader_ptr(p)) ;
-        break;
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-        copy_sub_list(list_ptr(r),list_ptr(p)) ;
-        break;
-    case disc_node:
-        pre_break(r) = pre_break_head(r);
-        if (vlink_pre_break(p) != null) {
-            s = copy_node_list(vlink_pre_break(p));
-            alink(s) = pre_break(r);
-            tlink_pre_break(r) = tail_of_list(s);
-            vlink_pre_break(r) = s;
-        } else {
-            assert(tlink(pre_break(r)) == null);
-        }
-        post_break(r) = post_break_head(r);
-        if (vlink_post_break(p) != null) {
-            s = copy_node_list(vlink_post_break(p));
-            alink(s) = post_break(r);
-            tlink_post_break(r) = tail_of_list(s);
-            vlink_post_break(r) = s;
-        } else {
-            assert(tlink_post_break(r) == null);
-        }
-        no_break(r) = no_break_head(r);
-        if (vlink(no_break(p)) != null) {
-            s = copy_node_list(vlink_no_break(p));
-            alink(s) = no_break(r);
-            tlink_no_break(r) = tail_of_list(s);
-            vlink_no_break(r) = s;
-        } else {
-            assert(tlink_no_break(r) == null);
-        }
-        break;
-    case math_node:
-        if (glue_ptr(p) != zero_glue) {
+        case glyph_node:
+            copy_sub_list(lig_ptr(r),lig_ptr(p)) ;
+            break;
+        case glue_node:
             add_glue_ref(glue_ptr(p));
-        }
-        break;
-    case ins_node:
-        add_glue_ref(split_top_ptr(p));
-        copy_sub_list(ins_ptr(r),ins_ptr(p)) ;
-        break;
-    case margin_kern_node:
-        copy_sub_node(margin_char(r),margin_char(p));
-        break;
-    case mark_node:
-        add_token_ref(mark_ptr(p));
-        break;
-    case adjust_node:
-        copy_sub_list(adjust_ptr(r),adjust_ptr(p));
-        break;
-    case choice_node:
-        copy_sub_list(display_mlist(r),display_mlist(p)) ;
-        copy_sub_list(text_mlist(r),text_mlist(p)) ;
-        copy_sub_list(script_mlist(r),script_mlist(p)) ;
-        copy_sub_list(script_script_mlist(r),script_script_mlist(p)) ;
-        break;
-    case simple_noad:
-        copy_sub_list(nucleus(r),nucleus(p)) ;
-        copy_sub_list(subscr(r),subscr(p)) ;
-        copy_sub_list(supscr(r),supscr(p)) ;
-        break;
-    case radical_noad:
-        copy_sub_list(nucleus(r),nucleus(p)) ;
-        copy_sub_list(subscr(r),subscr(p)) ;
-        copy_sub_list(supscr(r),supscr(p)) ;
-        copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
-        copy_sub_list(degree(r),degree(p)) ;
-        break;
-    case accent_noad:
-        copy_sub_list(nucleus(r),nucleus(p)) ;
-        copy_sub_list(subscr(r),subscr(p)) ;
-        copy_sub_list(supscr(r),supscr(p)) ;
-        copy_sub_list(top_accent_chr(r),top_accent_chr(p)) ;
-        copy_sub_list(bot_accent_chr(r),bot_accent_chr(p)) ;
-        copy_sub_list(overlay_accent_chr(r),overlay_accent_chr(p)) ;
-        break;
-    case fence_noad:
-        copy_sub_node(delimiter(r),delimiter(p)) ;
-        break;
-    case sub_box_node:
-    case sub_mlist_node:
-        copy_sub_list(math_list(r),math_list(p)) ;
-        break;
-    case fraction_noad:
-        copy_sub_list(numerator(r),numerator(p)) ;
-        copy_sub_list(denominator(r),denominator(p)) ;
-        copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
-        copy_sub_node(right_delimiter(r),right_delimiter(p)) ;
-        break;
-    case glue_spec_node:
-        glue_ref_count(r) = null;
-        break;
-    case dir_node:
-    case local_par_node:
-    case boundary_node:
-        break;
-    case whatsit_node:
-        w = subtype(p) ;
-        if (w >= backend_first_pdf_whatsit) {
-            copy_node_wrapup_pdf(p,r);
-        } else if (w >= backend_first_dvi_whatsit) {
-            copy_node_wrapup_dvi(p,r);
-        } else {
-            copy_node_wrapup_core(p,r);
-        }
-        break;
+            copy_sub_list(leader_ptr(r),leader_ptr(p)) ;
+            break;
+        case hlist_node:
+        case vlist_node:
+        case unset_node:
+            copy_sub_list(list_ptr(r),list_ptr(p)) ;
+            break;
+        case disc_node:
+            pre_break(r) = pre_break_head(r);
+            if (vlink_pre_break(p) != null) {
+                s = copy_node_list(vlink_pre_break(p));
+                alink(s) = pre_break(r);
+                tlink_pre_break(r) = tail_of_list(s);
+                vlink_pre_break(r) = s;
+            } else {
+                assert(tlink(pre_break(r)) == null);
+            }
+            post_break(r) = post_break_head(r);
+            if (vlink_post_break(p) != null) {
+                s = copy_node_list(vlink_post_break(p));
+                alink(s) = post_break(r);
+                tlink_post_break(r) = tail_of_list(s);
+                vlink_post_break(r) = s;
+            } else {
+                assert(tlink_post_break(r) == null);
+            }
+            no_break(r) = no_break_head(r);
+            if (vlink(no_break(p)) != null) {
+                s = copy_node_list(vlink_no_break(p));
+                alink(s) = no_break(r);
+                tlink_no_break(r) = tail_of_list(s);
+                vlink_no_break(r) = s;
+            } else {
+                assert(tlink_no_break(r) == null);
+            }
+            break;
+        case math_node:
+            if (glue_ptr(p) != zero_glue) {
+                add_glue_ref(glue_ptr(p));
+            }
+            break;
+        case ins_node:
+            add_glue_ref(split_top_ptr(p));
+            copy_sub_list(ins_ptr(r),ins_ptr(p)) ;
+            break;
+        case margin_kern_node:
+            copy_sub_node(margin_char(r),margin_char(p));
+            break;
+        case mark_node:
+            add_token_ref(mark_ptr(p));
+            break;
+        case adjust_node:
+            copy_sub_list(adjust_ptr(r),adjust_ptr(p));
+            break;
+        case choice_node:
+            copy_sub_list(display_mlist(r),display_mlist(p)) ;
+            copy_sub_list(text_mlist(r),text_mlist(p)) ;
+            copy_sub_list(script_mlist(r),script_mlist(p)) ;
+            copy_sub_list(script_script_mlist(r),script_script_mlist(p)) ;
+            break;
+        case simple_noad:
+            copy_sub_list(nucleus(r),nucleus(p)) ;
+            copy_sub_list(subscr(r),subscr(p)) ;
+            copy_sub_list(supscr(r),supscr(p)) ;
+            break;
+        case radical_noad:
+            copy_sub_list(nucleus(r),nucleus(p)) ;
+            copy_sub_list(subscr(r),subscr(p)) ;
+            copy_sub_list(supscr(r),supscr(p)) ;
+            copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
+            copy_sub_list(degree(r),degree(p)) ;
+            break;
+        case accent_noad:
+            copy_sub_list(nucleus(r),nucleus(p)) ;
+            copy_sub_list(subscr(r),subscr(p)) ;
+            copy_sub_list(supscr(r),supscr(p)) ;
+            copy_sub_list(top_accent_chr(r),top_accent_chr(p)) ;
+            copy_sub_list(bot_accent_chr(r),bot_accent_chr(p)) ;
+            copy_sub_list(overlay_accent_chr(r),overlay_accent_chr(p)) ;
+            break;
+        case fence_noad:
+            copy_sub_node(delimiter(r),delimiter(p)) ;
+            break;
+        case sub_box_node:
+        case sub_mlist_node:
+            copy_sub_list(math_list(r),math_list(p)) ;
+            break;
+        case fraction_noad:
+            copy_sub_list(numerator(r),numerator(p)) ;
+            copy_sub_list(denominator(r),denominator(p)) ;
+            copy_sub_node(left_delimiter(r),left_delimiter(p)) ;
+            copy_sub_node(right_delimiter(r),right_delimiter(p)) ;
+            break;
+        case glue_spec_node:
+            glue_ref_count(r) = null;
+            break;
+        case dir_node:
+        case local_par_node:
+        case boundary_node:
+            break;
+        case whatsit_node:
+            w = subtype(p) ;
+            if (w >= backend_first_pdf_whatsit) {
+                copy_node_wrapup_pdf(p,r);
+            } else if (w >= backend_first_dvi_whatsit) {
+                copy_node_wrapup_dvi(p,r);
+            } else {
+                copy_node_wrapup_core(p,r);
+            }
+            break;
     }
-#ifdef DEBUG
-    fprintf(DEBUG_OUT, "Alloc-ing %s node %d (copy of %d)\n",
-            get_node_name(type(r), subtype(r)), (int) r, (int) p);
-#endif
     return r;
 }
 
-@ @c
-int valid_node(halfword p)
-{
-    if (p > my_prealloc) {
-        if (p < var_mem_max) {
-#ifndef NDEBUG
-            if (varmem_sizes[p] > 0)
-#endif
-                return 1;
-        }
-    } else {
-        return 0;
-    }
-    return 0;
-}
+/* x */
 
-@ @c
-static void do_free_error(halfword p)
-{
-    halfword r;
-    char errstr[255] = { 0 };
-    const char *errhlp[] = {
-        "When I tried to free the node mentioned in the error message, it turned",
-        "out it was not (or no longer) actually in use.",
-        "Errors such as these are often caused by Lua node list alteration,",
-        "but could also point to a bug in the executable. It should be safe to continue.",
-        NULL
-    };
-
-    check_node_mem();
-    if (free_error_seen)
-        return;
-
-    r = null;
-    free_error_seen = 1;
-    if (type(p) == glyph_node) {
-        snprintf(errstr, 255,
-                 "Attempt to double-free glyph (%c) node %d, ignored",
-                 (int) character(p), (int) p);
-    } else {
-        snprintf(errstr, 255, "Attempt to double-free %s node %d, ignored",
-                 get_node_name(type(p), subtype(p)), (int) p);
-    }
-    tex_error(errstr, errhlp);
-#ifndef NDEBUG
-    for (r = my_prealloc + 1; r < var_mem_max; r++) {
-        if (vlink(r) == p) {
-            halfword s = r;
-            while (s > my_prealloc && varmem_sizes[s] == 0)
-                s--;
-            if (s != null
-                && s != my_prealloc
-                && s != var_mem_max
-                && (r - s) < get_node_size(type(s), subtype(s))
-                && alink(s) != p) {
-
-                if (type(s) == disc_node) {
-                    fprintf(stdout,
-                            "  pointed to from %s node %d (vlink %d, alink %d): ",
-                            get_node_name(type(s), subtype(s)), (int) s,
-                            (int) vlink(s), (int) alink(s));
-                    fprintf(stdout, "pre_break(%d,%d,%d), ",
-                            (int) vlink_pre_break(s), (int) tlink(pre_break(s)),
-                            (int) alink(pre_break(s)));
-                    fprintf(stdout, "post_break(%d,%d,%d), ",
-                            (int) vlink_post_break(s),
-                            (int) tlink(post_break(s)),
-                            (int) alink(post_break(s)));
-                    fprintf(stdout, "no_break(%d,%d,%d)",
-                            (int) vlink_no_break(s), (int) tlink(no_break(s)),
-                            (int) alink(no_break(s)));
-                    fprintf(stdout, "\n");
-                } else {
-                    if (vlink(s) == p
-                        || (type(s) == glyph_node && lig_ptr(s) == p)
-                        || (type(s) == vlist_node && list_ptr(s) == p)
-                        || (type(s) == hlist_node && list_ptr(s) == p)
-                        || (type(s) == unset_node && list_ptr(s) == p)
-                        || (type(s) == ins_node && ins_ptr(s) == p)
-                        ) {
-                        fprintf(stdout,
-                                "  pointed to from %s node %d (vlink %d, alink %d): ",
-                                get_node_name(type(s), subtype(s)), (int) s,
-                                (int) vlink(s), (int) alink(s));
-                        if (type(s) == glyph_node) {
-                            fprintf(stdout, "lig_ptr(%d)", (int) lig_ptr(s));
-                        } else if (type(s) == vlist_node
-                                   || type(s) == hlist_node) {
-                            fprintf(stdout, "list_ptr(%d)", (int) list_ptr(s));
-                        }
-                        fprintf(stdout, "\n");
-                    } else {
-                        if ((type(s) != penalty_node)
-                            && (type(s) != math_node)
-                            && (type(s) != kern_node)
-                            ) {
-                            fprintf(stdout, "  pointed to from %s node %d\n",
-                                    get_node_name(type(s), subtype(s)),
-                                    (int) s);
-                        }
-                    }
-                }
-            }
-        }
-    }
-#endif
-}
-
-static int free_error(halfword p)
-{
-    assert(p > my_prealloc);
-    assert(p < var_mem_max);
-#ifndef NDEBUG
-    if (varmem_sizes[p] == 0) {
-        do_free_error(p);
-        return 1;               /* double free */
-    }
-#endif
-    return 0;
-}
-
-
-@ @c
-static void do_copy_error(halfword p)
-{
-    char errstr[255] = { 0 };
-    const char *errhlp[] = {
-        "When I tried to copy the node mentioned in the error message, it turned",
-        "out it was not (or no longer) actually in use.",
-        "Errors such as these are often caused by Lua node list alteration,",
-        "but could also point to a bug in the executable. It should be safe to continue.",
-        NULL
-    };
-
-    if (copy_error_seen)
-        return;
-
-    copy_error_seen = 1;
-    if (type(p) == glyph_node) {
-        snprintf(errstr, 255,
-                 "Attempt to copy free glyph (%c) node %d, ignored",
-                 (int) character(p), (int) p);
-    } else {
-        snprintf(errstr, 255, "Attempt to copy free %s node %d, ignored",
-                 get_node_name(type(p), subtype(p)), (int) p);
-    }
-    tex_error(errstr, errhlp);
-}
-
-
-int copy_error(halfword p)
-{
-    assert(p >= 0);
-    assert(p < var_mem_max);
-#ifndef NDEBUG
-    if (p > my_prealloc && varmem_sizes[p] == 0) {
-        do_copy_error(p);
-        return 1;               /* copy free node */
-    }
-#endif
-    return 0;
-}
-
-/* No gain in a helper:
-
-    #define free_sub_list(source) do { \
-        l = source; \
-        if (l != null) \
-            flush_node_list(l); \
-    } while (0)
-
-    #define free_sub_node(source) do { \
-        l = source; \
-        if (l != null) \
-            flush_node(l); \
-    } while (0)
-
-    So:
-
-*/
-
-#define free_sub_list(source) do { \
-    if (source != null) \
-        flush_node_list(source); \
-} while (0)
-
-#define free_sub_node(source) do { \
-    if (source != null) \
-        flush_node(source); \
-} while (0)
+#define free_sub_list(source) if (source != null) flush_node_list(source);
+#define free_sub_node(source) if (source != null) flush_node(source);
 
 @ @c
 
@@ -1348,155 +1313,148 @@ void flush_node(halfword p)
     halfword w;
     if (p == null)              /* legal, but no-op */
         return;
-
-#ifdef DEBUG
-    fprintf(DEBUG_OUT, "Free-ing %s node %d\n",
-            get_node_name(type(p), subtype(p)), (int) p);
-#endif
     if (free_error(p))
         return;
-
     switch (type(p)) {
-    case glyph_node:
-        free_sub_list(lig_ptr(p));
-        break;
-    case glue_node:
-        delete_glue_ref(glue_ptr(p));
-        free_sub_list(leader_ptr(p));
-        break;
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-        free_sub_list(list_ptr(p));
-        break;
-    case disc_node:
-        /* watch the start at temp node hack */
-        free_sub_list(vlink(pre_break(p)));
-        free_sub_list(vlink(post_break(p)));
-        free_sub_list(vlink(no_break(p)));
-        break;
-    case rule_node:
-    case kern_node:
-    case penalty_node:
-        break;
-    case math_node:
-        /* begin mathskip code */
-        if (glue_ptr(p) != zero_glue) {
+        case glyph_node:
+            free_sub_list(lig_ptr(p));
+            break;
+        case glue_node:
             delete_glue_ref(glue_ptr(p));
-        }
-        /* end mathskip code */
-        break;
-    case glue_spec_node:
-        /* this allows free-ing of lua-allocated glue specs */
-        if (valid_node(p)) {
-            if (glue_ref_count(p)!=null) {
-                decr(glue_ref_count(p));
-            } else {
-                free_node(p, get_node_size(type(p), subtype(p)));
+            free_sub_list(leader_ptr(p));
+            break;
+        case hlist_node:
+        case vlist_node:
+        case unset_node:
+            free_sub_list(list_ptr(p));
+            break;
+        case disc_node:
+            /* watch the start at temp node hack */
+            free_sub_list(vlink(pre_break(p)));
+            free_sub_list(vlink(post_break(p)));
+            free_sub_list(vlink(no_break(p)));
+            break;
+        case rule_node:
+        case kern_node:
+        case penalty_node:
+            break;
+        case math_node:
+            /* begin mathskip code */
+            if (glue_ptr(p) != zero_glue) {
+                delete_glue_ref(glue_ptr(p));
             }
-        }
-        return ;
-        break ;
-    case dir_node:
-    case local_par_node:
-    case boundary_node:
-        break;
-    case whatsit_node:
-        w = subtype(p) ;
-        if (w >= backend_first_pdf_whatsit) {
-            flush_node_wrapup_pdf(p);
-        } else if (w >= backend_first_dvi_whatsit) {
-            flush_node_wrapup_dvi(p);
-        } else {
-            flush_node_wrapup_core(p);
-        }
-        break;
-    case ins_node:
-        flush_node_list(ins_ptr(p));
-        delete_glue_ref(split_top_ptr(p));
-        break;
-    case margin_kern_node:
-        flush_node(margin_char(p));
-        break;
-    case mark_node:
-        delete_token_ref(mark_ptr(p));
-        break;
-    case adjust_node:
-        flush_node_list(adjust_ptr(p));
-        break;
-    case style_node:           /* nothing to do */
-        break;
-    case choice_node:
-        free_sub_list(display_mlist(p));
-        free_sub_list(text_mlist(p));
-        free_sub_list(script_mlist(p));
-        free_sub_list(script_script_mlist(p));
-        break;
-    case simple_noad:
-        free_sub_list(nucleus(p));
-        free_sub_list(subscr(p));
-        free_sub_list(supscr(p));
-        break;
-    case radical_noad:
-        free_sub_list(nucleus(p));
-        free_sub_list(subscr(p));
-        free_sub_list(supscr(p));
-        free_sub_node(left_delimiter(p));
-        free_sub_list(degree(p));
-        break;
-    case accent_noad:
-        free_sub_list(nucleus(p));
-        free_sub_list(subscr(p));
-        free_sub_list(supscr(p));
-        free_sub_list(top_accent_chr(p));
-        free_sub_list(bot_accent_chr(p));
-        free_sub_list(overlay_accent_chr(p));
-        break;
-    case fence_noad:
-        free_sub_list(delimiter(p));
-        break;
-    case delim_node:           /* nothing to do */
-    case math_char_node:
-    case math_text_char_node:
-        break;
-    case sub_box_node:
-    case sub_mlist_node:
-        free_sub_list(math_list(p));
-        break;
-    case fraction_noad:
-        free_sub_list(numerator(p));
-        free_sub_list(denominator(p));
-        free_sub_node(left_delimiter(p));
-        free_sub_node(right_delimiter(p));
-        break;
-    case pseudo_file_node:
-        free_sub_list(pseudo_lines(p));
-        break;
-    case pseudo_line_node:
-    case shape_node:
-        free_node(p, subtype(p));
-        return;
-        break;
-    case align_stack_node:
-    case span_node:
-    case movement_node:
-    case if_node:
-    case nesting_node:
-    case unhyphenated_node:
-    case hyphenated_node:
-    case delta_node:
-    case passive_node:
-    case inserting_node:
-    case split_up_node:
-    case expr_node:
-    case attribute_node:
-    case attribute_list_node:
-    case temp_node:
-        break;
-    default:
-        fprintf(stdout, "flush_node: type is %d\n", type(p));
-        return;
-
+            /* end mathskip code */
+            break;
+        case glue_spec_node:
+            /* this allows free-ing of lua-allocated glue specs */
+            if (valid_node(p)) {
+                if (glue_ref_count(p)!=null) {
+                    decr(glue_ref_count(p));
+                } else {
+                    free_node(p, get_node_size(type(p), subtype(p)));
+                }
+            }
+            return ;
+            break ;
+        case dir_node:
+        case local_par_node:
+        case boundary_node:
+            break;
+        case whatsit_node:
+            w = subtype(p) ;
+            if (w >= backend_first_pdf_whatsit) {
+                flush_node_wrapup_pdf(p);
+            } else if (w >= backend_first_dvi_whatsit) {
+                flush_node_wrapup_dvi(p);
+            } else {
+                flush_node_wrapup_core(p);
+            }
+            break;
+        case ins_node:
+            flush_node_list(ins_ptr(p));
+            delete_glue_ref(split_top_ptr(p));
+            break;
+        case margin_kern_node:
+            flush_node(margin_char(p));
+            break;
+        case mark_node:
+            delete_token_ref(mark_ptr(p));
+            break;
+        case adjust_node:
+            flush_node_list(adjust_ptr(p));
+            break;
+        case style_node:           /* nothing to do */
+            break;
+        case choice_node:
+            free_sub_list(display_mlist(p));
+            free_sub_list(text_mlist(p));
+            free_sub_list(script_mlist(p));
+            free_sub_list(script_script_mlist(p));
+            break;
+        case simple_noad:
+            free_sub_list(nucleus(p));
+            free_sub_list(subscr(p));
+            free_sub_list(supscr(p));
+            break;
+        case radical_noad:
+            free_sub_list(nucleus(p));
+            free_sub_list(subscr(p));
+            free_sub_list(supscr(p));
+            free_sub_node(left_delimiter(p));
+            free_sub_list(degree(p));
+            break;
+        case accent_noad:
+            free_sub_list(nucleus(p));
+            free_sub_list(subscr(p));
+            free_sub_list(supscr(p));
+            free_sub_list(top_accent_chr(p));
+            free_sub_list(bot_accent_chr(p));
+            free_sub_list(overlay_accent_chr(p));
+            break;
+        case fence_noad:
+            free_sub_list(delimiter(p));
+            break;
+        case delim_node:           /* nothing to do */
+        case math_char_node:
+        case math_text_char_node:
+            break;
+        case sub_box_node:
+        case sub_mlist_node:
+            free_sub_list(math_list(p));
+            break;
+        case fraction_noad:
+            free_sub_list(numerator(p));
+            free_sub_list(denominator(p));
+            free_sub_node(left_delimiter(p));
+            free_sub_node(right_delimiter(p));
+            break;
+        case pseudo_file_node:
+            free_sub_list(pseudo_lines(p));
+            break;
+        case pseudo_line_node:
+        case shape_node:
+            free_node(p, subtype(p));
+            return;
+            break;
+        case align_stack_node:
+        case span_node:
+        case movement_node:
+        case if_node:
+        case nesting_node:
+        case unhyphenated_node:
+        case hyphenated_node:
+        case delta_node:
+        case passive_node:
+        case inserting_node:
+        case split_up_node:
+        case expr_node:
+        case attribute_node:
+        case attribute_list_node:
+        case temp_node:
+            break;
+        default:
+            formatted_error("nodes","flushing weird node type %d", type(p));
+            return;
     }
     if (nodetype_has_attributes(type(p))) {
         delete_attribute_ref(node_attr(p));
@@ -1510,7 +1468,6 @@ void flush_node(halfword p)
 void flush_node_list(halfword pp)
 {                               /* erase list of nodes starting at |p| */
     register halfword p = pp;
-    free_error_seen = 0;
     if (p == null)              /* legal, but no-op */
         return;
     if (free_error(p))
@@ -1525,27 +1482,6 @@ void flush_node_list(halfword pp)
 }
 
 @ @c
-static int test_count = 1;
-
-#define dorangetest(a,b,c)  do {                                        \
-    if (!(b>=0 && b<c)) {                                               \
-      fprintf(stdout,"For node p:=%d, 0<=%d<%d (l.%d,r.%d)\n",          \
-              (int)a, (int)b, (int)c, __LINE__,test_count);             \
-      confusion("dorangetest");                                        \
-    } } while (0)
-
-#define dotest(a,b,c) do {                                              \
-    if (b!=c) {                                                         \
-      fprintf(stdout,"For node p:=%d, %d==%d (l.%d,r.%d)\n",            \
-              (int)a, (int)b, (int)c, __LINE__,test_count);             \
-      confusion("dotest");                                             \
-    } } while (0)
-
-#define check_action_ref(a)     { dorangetest(p,a,var_mem_max); }
-#define check_glue_ref(a)       { dorangetest(p,a,var_mem_max); }
-#define check_attribute_ref(a)  { dorangetest(p,a,var_mem_max); }
-#define check_token_ref(a)      assert(1)
-
 static void check_node_wrapup_core(halfword p)
 {
     switch (subtype(p)) {
@@ -1555,28 +1491,27 @@ static void check_node_wrapup_core(halfword p)
             break;
         case user_defined_node:
             switch (user_node_type(p)) {
-            case 'a':
-                check_attribute_ref(user_node_value(p));
-                break;
-            case 't':
-                check_token_ref(user_node_value(p));
-                break;
-            case 'n':
-                dorangetest(p, user_node_value(p), var_mem_max);
-                break;
-            case 's':
-            case 'd':
-                break;
-            default:
-                confusion("extuser");
-                break;
+                case 'a':
+                    check_attribute_ref(user_node_value(p));
+                    break;
+                case 't':
+                    check_token_ref(user_node_value(p));
+                    break;
+                case 'n':
+                    dorangetest(p, user_node_value(p), var_mem_max);
+                    break;
+                case 's':
+                case 'd':
+                    break;
+                default:
+                    confusion("unknown user node type");
+                    break;
             }
             break;
         case open_node:
         case write_node:
         case close_node:
         case save_pos_node:
-            confusion("ext3"); /* why */
             break;
     }
 }
@@ -1631,7 +1566,7 @@ void check_node_wrapup_pdf(halfword p)
         case pdf_end_thread_node:
             break;
         default:
-            confusion("ext3");
+            confusion("wrapup pdf nodes");
             break;
     }
 }
@@ -1640,185 +1575,120 @@ void check_node(halfword p)
 {
     halfword w ;
     switch (type(p)) {
-    case glyph_node:
-        dorangetest(p, lig_ptr(p), var_mem_max);
-        break;
-    case glue_node:
-        check_glue_ref(glue_ptr(p));
-        dorangetest(p, leader_ptr(p), var_mem_max);
-        break;
-    case hlist_node:
-    case vlist_node:
-    case unset_node:
-    case align_record_node:
-        dorangetest(p, list_ptr(p), var_mem_max);
-        break;
-    case ins_node:
-        dorangetest(p, ins_ptr(p), var_mem_max);
-        check_glue_ref(split_top_ptr(p));
-        break;
-    case whatsit_node:
-        w = subtype(p) ;
-        if (w >= backend_first_pdf_whatsit) {
-            check_node_wrapup_pdf(p);
-        } else if (w >= backend_first_dvi_whatsit) {
-            check_node_wrapup_dvi(p);
-        } else {
-            check_node_wrapup_core(p);
-        }
-        break;
-    case margin_kern_node:
-        check_node(margin_char(p));
-        break;
-    case math_node:
-        /* begin mathskip code */
-        if (glue_ptr(p) != zero_glue) {
+        case glyph_node:
+            dorangetest(p, lig_ptr(p), var_mem_max);
+            break;
+        case glue_node:
             check_glue_ref(glue_ptr(p));
-        }
-        /* end mathskip code */
-        break;
-    case disc_node:
-        dorangetest(p, vlink(pre_break(p)), var_mem_max);
-        dorangetest(p, vlink(post_break(p)), var_mem_max);
-        dorangetest(p, vlink(no_break(p)), var_mem_max);
-        break;
-    case adjust_node:
-        dorangetest(p, adjust_ptr(p), var_mem_max);
-        break;
-    case pseudo_file_node:
-        dorangetest(p, pseudo_lines(p), var_mem_max);
-        break;
-    case pseudo_line_node:
-    case shape_node:
-        break;
-    case choice_node:
-        dorangetest(p, display_mlist(p), var_mem_max);
-        dorangetest(p, text_mlist(p), var_mem_max);
-        dorangetest(p, script_mlist(p), var_mem_max);
-        dorangetest(p, script_script_mlist(p), var_mem_max);
-        break;
-    case fraction_noad:
-        dorangetest(p, numerator(p), var_mem_max);
-        dorangetest(p, denominator(p), var_mem_max);
-        dorangetest(p, left_delimiter(p), var_mem_max);
-        dorangetest(p, right_delimiter(p), var_mem_max);
-        break;
-    case simple_noad:
-        dorangetest(p, nucleus(p), var_mem_max);
-        dorangetest(p, subscr(p), var_mem_max);
-        dorangetest(p, supscr(p), var_mem_max);
-        break;
-    case radical_noad:
-        dorangetest(p, nucleus(p), var_mem_max);
-        dorangetest(p, subscr(p), var_mem_max);
-        dorangetest(p, supscr(p), var_mem_max);
-        dorangetest(p, degree(p), var_mem_max);
-        dorangetest(p, left_delimiter(p), var_mem_max);
-        break;
-    case accent_noad:
-        dorangetest(p, nucleus(p), var_mem_max);
-        dorangetest(p, subscr(p), var_mem_max);
-        dorangetest(p, supscr(p), var_mem_max);
-        dorangetest(p, top_accent_chr(p), var_mem_max);
-        dorangetest(p, bot_accent_chr(p), var_mem_max);
-        dorangetest(p, overlay_accent_chr(p), var_mem_max);
-        break;
-    case fence_noad:
-        dorangetest(p, delimiter(p), var_mem_max);
-        break;
-    case rule_node:
-    case kern_node:
-    case penalty_node:
-    case mark_node:
-    case style_node:
-    case attribute_list_node:
-    case attribute_node:
-    case glue_spec_node:
-    case temp_node:
-    case align_stack_node:
-    case movement_node:
-    case if_node:
-    case nesting_node:
-    case span_node:
-    case unhyphenated_node:
-    case hyphenated_node:
-    case delta_node:
-    case passive_node:
-    case expr_node:
-    case dir_node:
-    case boundary_node:
-    case local_par_node:
-        break;
-    default:
-        fprintf(stdout, "check_node: type is %d\n", type(p));
+            dorangetest(p, leader_ptr(p), var_mem_max);
+            break;
+        case hlist_node:
+        case vlist_node:
+        case unset_node:
+        case align_record_node:
+            dorangetest(p, list_ptr(p), var_mem_max);
+            break;
+        case ins_node:
+            dorangetest(p, ins_ptr(p), var_mem_max);
+            check_glue_ref(split_top_ptr(p));
+            break;
+        case whatsit_node:
+            w = subtype(p) ;
+            if (w >= backend_first_pdf_whatsit) {
+                check_node_wrapup_pdf(p);
+            } else if (w >= backend_first_dvi_whatsit) {
+                check_node_wrapup_dvi(p);
+            } else {
+                check_node_wrapup_core(p);
+            }
+            break;
+        case margin_kern_node:
+            check_node(margin_char(p));
+            break;
+        case math_node:
+            /* begin mathskip code */
+            if (glue_ptr(p) != zero_glue) {
+                check_glue_ref(glue_ptr(p));
+            }
+            /* end mathskip code */
+            break;
+        case disc_node:
+            dorangetest(p, vlink(pre_break(p)), var_mem_max);
+            dorangetest(p, vlink(post_break(p)), var_mem_max);
+            dorangetest(p, vlink(no_break(p)), var_mem_max);
+            break;
+        case adjust_node:
+            dorangetest(p, adjust_ptr(p), var_mem_max);
+            break;
+        case pseudo_file_node:
+            dorangetest(p, pseudo_lines(p), var_mem_max);
+            break;
+        case pseudo_line_node:
+        case shape_node:
+            break;
+        case choice_node:
+            dorangetest(p, display_mlist(p), var_mem_max);
+            dorangetest(p, text_mlist(p), var_mem_max);
+            dorangetest(p, script_mlist(p), var_mem_max);
+            dorangetest(p, script_script_mlist(p), var_mem_max);
+            break;
+        case fraction_noad:
+            dorangetest(p, numerator(p), var_mem_max);
+            dorangetest(p, denominator(p), var_mem_max);
+            dorangetest(p, left_delimiter(p), var_mem_max);
+            dorangetest(p, right_delimiter(p), var_mem_max);
+            break;
+        case simple_noad:
+            dorangetest(p, nucleus(p), var_mem_max);
+            dorangetest(p, subscr(p), var_mem_max);
+            dorangetest(p, supscr(p), var_mem_max);
+            break;
+        case radical_noad:
+            dorangetest(p, nucleus(p), var_mem_max);
+            dorangetest(p, subscr(p), var_mem_max);
+            dorangetest(p, supscr(p), var_mem_max);
+            dorangetest(p, degree(p), var_mem_max);
+            dorangetest(p, left_delimiter(p), var_mem_max);
+            break;
+        case accent_noad:
+            dorangetest(p, nucleus(p), var_mem_max);
+            dorangetest(p, subscr(p), var_mem_max);
+            dorangetest(p, supscr(p), var_mem_max);
+            dorangetest(p, top_accent_chr(p), var_mem_max);
+            dorangetest(p, bot_accent_chr(p), var_mem_max);
+            dorangetest(p, overlay_accent_chr(p), var_mem_max);
+            break;
+        case fence_noad:
+            dorangetest(p, delimiter(p), var_mem_max);
+            break;
+        /*
+        case rule_node:
+        case kern_node:
+        case penalty_node:
+        case mark_node:
+        case style_node:
+        case attribute_list_node:
+        case attribute_node:
+        case glue_spec_node:
+        case temp_node:
+        case align_stack_node:
+        case movement_node:
+        case if_node:
+        case nesting_node:
+        case span_node:
+        case unhyphenated_node:
+        case hyphenated_node:
+        case delta_node:
+        case passive_node:
+        case expr_node:
+        case dir_node:
+        case boundary_node:
+        case local_par_node:
+            break;
+        default:
+            fprintf(stdout, "check_node: type is %d\n", type(p));
+        */
     }
-}
-
-@ @c
-static void check_static_node_mem(void)
-{
-    dotest(zero_glue, width(zero_glue), 0);
-    dotest(zero_glue, type(zero_glue), glue_spec_node);
-    dotest(zero_glue, vlink(zero_glue), null);
-    dotest(zero_glue, stretch(zero_glue), 0);
-    dotest(zero_glue, stretch_order(zero_glue), normal);
-    dotest(zero_glue, shrink(zero_glue), 0);
-    dotest(zero_glue, shrink_order(zero_glue), normal);
-
-    dotest(sfi_glue, width(sfi_glue), 0);
-    dotest(sfi_glue, type(sfi_glue), glue_spec_node);
-    dotest(sfi_glue, vlink(sfi_glue), null);
-    dotest(sfi_glue, stretch(sfi_glue), 0);
-    dotest(sfi_glue, stretch_order(sfi_glue), sfi);
-    dotest(sfi_glue, shrink(sfi_glue), 0);
-    dotest(sfi_glue, shrink_order(sfi_glue), normal);
-
-    dotest(fil_glue, width(fil_glue), 0);
-    dotest(fil_glue, type(fil_glue), glue_spec_node);
-    dotest(fil_glue, vlink(fil_glue), null);
-    dotest(fil_glue, stretch(fil_glue), unity);
-    dotest(fil_glue, stretch_order(fil_glue), fil);
-    dotest(fil_glue, shrink(fil_glue), 0);
-    dotest(fil_glue, shrink_order(fil_glue), normal);
-
-    dotest(fill_glue, width(fill_glue), 0);
-    dotest(fill_glue, type(fill_glue), glue_spec_node);
-    dotest(fill_glue, vlink(fill_glue), null);
-    dotest(fill_glue, stretch(fill_glue), unity);
-    dotest(fill_glue, stretch_order(fill_glue), fill);
-    dotest(fill_glue, shrink(fill_glue), 0);
-    dotest(fill_glue, shrink_order(fill_glue), normal);
-
-    dotest(ss_glue, width(ss_glue), 0);
-    dotest(ss_glue, type(ss_glue), glue_spec_node);
-    dotest(ss_glue, vlink(ss_glue), null);
-    dotest(ss_glue, stretch(ss_glue), unity);
-    dotest(ss_glue, stretch_order(ss_glue), fil);
-    dotest(ss_glue, shrink(ss_glue), unity);
-    dotest(ss_glue, shrink_order(ss_glue), fil);
-
-    dotest(fil_neg_glue, width(fil_neg_glue), 0);
-    dotest(fil_neg_glue, type(fil_neg_glue), glue_spec_node);
-    dotest(fil_neg_glue, vlink(fil_neg_glue), null);
-    dotest(fil_neg_glue, stretch(fil_neg_glue), -unity);
-    dotest(fil_neg_glue, stretch_order(fil_neg_glue), fil);
-    dotest(fil_neg_glue, shrink(fil_neg_glue), 0);
-    dotest(fil_neg_glue, shrink_order(fil_neg_glue), normal);
-}
-
-@ @c
-void check_node_mem(void)
-{
-    int i;
-    check_static_node_mem();
-#ifndef NDEBUG
-    for (i = (my_prealloc + 1); i < var_mem_max; i++) {
-        if (varmem_sizes[i] > 0) {
-            check_node(i);
-        }
-    }
-#endif
-    test_count++;
 }
 
 @ @c
@@ -1840,49 +1710,34 @@ void fix_node_list(halfword head)
 halfword get_node(int s)
 {
     register halfword r;
-#if 0
-    check_static_node_mem();
-#endif
-    assert(s < MAX_CHAIN_SIZE);
 
-    r = free_chain[s];
-    if (r != null) {
-        free_chain[s] = vlink(r);
-#ifndef NDEBUG
-        varmem_sizes[r] = (char) s;
+    if (s < MAX_CHAIN_SIZE) {
+        r = free_chain[s];
+        if (r != null) {
+            free_chain[s] = vlink(r);
+#ifdef CHECK_NODE_USAGE
+            varmem_sizes[r] = (char) s;
 #endif
-        vlink(r) = null;
-        var_used += s;          /* maintain usage statistics */
-        return r;
+            vlink(r) = null;
+            var_used += s; /* maintain usage statistics */
+            return r;
+        }
+        /* this is the end of the 'inner loop' */
+        return slow_get_node(s);
+    } else {
+        normal_error("nodes","there is a problem in getting a node, case 1");
+        return null;
     }
-    /* this is the end of the 'inner loop' */
-    return slow_get_node(s);
 }
-
-@ @c
-#ifdef DEBUG
-static void print_free_chain(int c)
-{
-    halfword p = free_chain[c];
-    fprintf(stdout, "\nfree chain[%d] =\n  ", c);
-    while (p != null) {
-        fprintf(stdout, "%d,", (int) p);
-        p = vlink(p);
-    }
-    fprintf(stdout, "null;\n");
-}
-#endif
 
 @ @c
 void free_node(halfword p, int s)
 {
-
     if (p <= my_prealloc) {
-        fprintf(stdout, "node %d (type %d) should not be freed!\n", (int) p,
-                type(p));
+        formatted_error("nodes", "node number %d of type %d should not be freed", (int) p, type(p));
         return;
     }
-#ifndef NDEBUG
+#ifdef CHECK_NODE_USAGE
     varmem_sizes[p] = 0;
 #endif
     if (s < MAX_CHAIN_SIZE) {
@@ -1897,7 +1752,8 @@ void free_node(halfword p, int s)
         }
         vlink(rover) = p;
     }
-    var_used -= s;              /* maintain statistics */
+    /* maintain statistics */
+    var_used -= s;
 }
 
 @ @c
@@ -1905,37 +1761,37 @@ static void free_node_chain(halfword q, int s)
 {
     register halfword p = q;
     while (vlink(p) != null) {
-#ifndef NDEBUG
+#ifdef CHECK_NODE_USAGE
         varmem_sizes[p] = 0;
 #endif
         var_used -= s;
         p = vlink(p);
     }
     var_used -= s;
-#ifndef NDEBUG
+#ifdef CHECK_NODE_USAGE
     varmem_sizes[p] = 0;
 #endif
     vlink(p) = free_chain[s];
     free_chain[s] = q;
 }
 
-
 @ @c
 void init_node_mem(int t)
 {
     my_prealloc = var_mem_stat_max;
-    assert(whatsit_node_data[user_defined_node].id == user_defined_node);
-    assert(node_data[passive_node].id == passive_node);
 
-    varmem =
-        (memory_word *) realloc((void *) varmem,
-                                sizeof(memory_word) * (unsigned) t);
+    /*  message ?
+
+        assert(whatsit_node_data[user_defined_node].id == user_defined_node);
+        assert(node_data[passive_node].id == passive_node);
+    */
+
+    varmem = (memory_word *) realloc((void *) varmem, sizeof(memory_word) * (unsigned) t);
     if (varmem == NULL) {
         overflow("node memory size", (unsigned) var_mem_max);
     }
     memset((void *) (varmem), 0, (unsigned) t * sizeof(memory_word));
-
-#ifndef NDEBUG
+#ifdef CHECK_NODE_USAGE
     varmem_sizes = (char *) realloc(varmem_sizes, sizeof(char) * (unsigned) t);
     if (varmem_sizes == NULL) {
         overflow("node memory size", (unsigned) var_mem_max);
@@ -2067,7 +1923,7 @@ void dump_node_mem(void)
     dump_int(var_mem_max);
     dump_int(rover);
     dump_things(varmem[0], var_mem_max);
-#ifndef NDEBUG
+#ifdef CHECK_NODE_USAGE
     dump_things(varmem_sizes[0], var_mem_max);
 #endif
     dump_things(free_chain[0], MAX_CHAIN_SIZE);
@@ -2077,6 +1933,7 @@ void dump_node_mem(void)
 
 @ it makes sense to enlarge the varmem array immediately
 @c
+
 void undump_node_mem(void)
 {
     int x;
@@ -2084,11 +1941,8 @@ void undump_node_mem(void)
     undump_int(rover);
     var_mem_max = (x < 100000 ? 100000 : x);
     varmem = xmallocarray(memory_word, (unsigned) var_mem_max);
-#if 0
-    memset ((void *)varmem,0,x*sizeof(memory_word));
-#endif
     undump_things(varmem[0], x);
-#ifndef NDEBUG
+#ifdef CHECK_NODE_USAGE
     varmem_sizes = xmallocarray(char, (unsigned) var_mem_max);
     memset((void *) varmem_sizes, 0, (unsigned) var_mem_max * sizeof(char));
     undump_things(varmem_sizes[0], x);
@@ -2107,24 +1961,6 @@ void undump_node_mem(void)
     }
 }
 
-#if 0
-void test_rovers(char *s)
-{
-    int q = rover;
-    int r = q;
-    fprintf(stdout, "%s: {rover=%d,size=%d,link=%d}", s, r, node_size(r),
-            vlink(r));
-    while (vlink(r) != q) {
-        r = vlink(r);
-        fprintf(stdout, ",{rover=%d,size=%d,link=%d}", r, node_size(r),
-                vlink(r));
-    }
-    fprintf(stdout, "\n");
-}
-#else
-#  define test_rovers(a)
-#endif
-
 @ @c
 halfword slow_get_node(int s)
 {
@@ -2132,105 +1968,99 @@ halfword slow_get_node(int s)
 
   RETRY:
     t = node_size(rover);
-    assert(vlink(rover) < var_mem_max);
-    assert(vlink(rover) != 0);
-    test_rovers("entry");
-    if (t > s) {
-        register halfword r;
-        /* allocating from the bottom helps decrease page faults */
-        r = rover;
-        rover += s;
-        vlink(rover) = vlink(r);
-        node_size(rover) = node_size(r) - s;
-        if (vlink(rover) != r) {        /* list is longer than one */
-            halfword q = r;
-            while (vlink(q) != r) {
-                q = vlink(q);
-            }
-            vlink(q) += s;
-        } else {
-            vlink(rover) += s;
-        }
-        test_rovers("taken");
-        assert(vlink(rover) < var_mem_max);
-#ifndef NDEBUG
-        varmem_sizes[r] = (char) (s > 127 ? 127 : s);
-#endif
-        vlink(r) = null;
-        var_used += s;          /* maintain usage statistics */
-        return r;               /* this is the only exit */
-    } else {
-        int x;
-        /* attempt to keep the free list small */
-        if (vlink(rover) != rover) {
-            if (t < MAX_CHAIN_SIZE) {
-                halfword l = vlink(rover);
-                vlink(rover) = free_chain[t];
-                free_chain[t] = rover;
-                rover = l;
-                while (vlink(l) != free_chain[t]) {
-                    l = vlink(l);
+    if (vlink(rover) < var_mem_max && vlink(rover) != 0) {
+        if (t > s) {
+            /* allocating from the bottom helps decrease page faults */
+            register halfword r = rover;
+            rover += s;
+            vlink(rover) = vlink(r);
+            node_size(rover) = node_size(r) - s;
+            if (vlink(rover) != r) {        /* list is longer than one */
+                halfword q = r;
+                while (vlink(q) != r) {
+                    q = vlink(q);
                 }
-                vlink(l) = rover;
-                test_rovers("outtake");
-                goto RETRY;
+                vlink(q) += s;
             } else {
-                halfword l = rover;
-                while (vlink(rover) != l) {
-                    if (node_size(rover) > s) {
-                        goto RETRY;
+                vlink(rover) += s;
+            }
+            if (vlink(rover) < var_mem_max) {
+#ifdef CHECK_NODE_USAGE
+                varmem_sizes[r] = (char) (s > 127 ? 127 : s);
+#endif
+                vlink(r) = null;
+                var_used += s;          /* maintain usage statistics */
+                return r;               /* this is the only exit */
+            } else {
+                normal_error("nodes","there is a problem in getting a node, case 2");
+                return null;
+            }
+        } else {
+            /* attempt to keep the free list small */
+            int x;
+            if (vlink(rover) != rover) {
+                if (t < MAX_CHAIN_SIZE) {
+                    halfword l = vlink(rover);
+                    vlink(rover) = free_chain[t];
+                    free_chain[t] = rover;
+                    rover = l;
+                    while (vlink(l) != free_chain[t]) {
+                        l = vlink(l);
                     }
-                    rover = vlink(rover);
+                    vlink(l) = rover;
+                    goto RETRY;
+                } else {
+                    halfword l = rover;
+                    while (vlink(rover) != l) {
+                        if (node_size(rover) > s) {
+                            goto RETRY;
+                        }
+                        rover = vlink(rover);
+                    }
                 }
             }
-        }
-        /* if we are still here, it was apparently impossible to get a match */
-        x = (var_mem_max >> 2) + s;
-        varmem =
-            (memory_word *) realloc((void *) varmem,
-                                    sizeof(memory_word) *
-                                    (unsigned) (var_mem_max + x));
-        if (varmem == NULL) {
-            overflow("node memory size", (unsigned) var_mem_max);
-        }
-        memset((void *) (varmem + var_mem_max), 0,
-               (unsigned) x * sizeof(memory_word));
-
-#ifndef NDEBUG
-        varmem_sizes =
-            (char *) realloc(varmem_sizes,
-                             sizeof(char) * (unsigned) (var_mem_max + x));
-        if (varmem_sizes == NULL) {
-            overflow("node memory size", (unsigned) var_mem_max);
-        }
-        memset((void *) (varmem_sizes + var_mem_max), 0,
-               (unsigned) (x) * sizeof(char));
+            /* if we are still here, it was apparently impossible to get a match */
+            x = (var_mem_max >> 2) + s;
+            varmem = (memory_word *) realloc((void *) varmem, sizeof(memory_word) * (unsigned) (var_mem_max + x));
+            if (varmem == NULL) {
+                overflow("node memory size", (unsigned) var_mem_max);
+            }
+            memset((void *) (varmem + var_mem_max), 0, (unsigned) x * sizeof(memory_word));
+#ifdef CHECK_NODE_USAGE
+            varmem_sizes = (char *) realloc(varmem_sizes, sizeof(char) * (unsigned) (var_mem_max + x));
+            if (varmem_sizes == NULL) {
+                overflow("node memory size", (unsigned) var_mem_max);
+            }
+            memset((void *) (varmem_sizes + var_mem_max), 0, (unsigned) (x) * sizeof(char));
 #endif
-
-        /* todo ? it is perhaps possible to merge the new memory with an existing rover */
-        vlink(var_mem_max) = rover;
-        node_size(var_mem_max) = x;
-        while (vlink(rover) != vlink(var_mem_max)) {
-            rover = vlink(rover);
+            /* todo ? it is perhaps possible to merge the new memory with an existing rover */
+            vlink(var_mem_max) = rover;
+            node_size(var_mem_max) = x;
+            while (vlink(rover) != vlink(var_mem_max)) {
+                rover = vlink(rover);
+            }
+            vlink(rover) = var_mem_max;
+            rover = var_mem_max;
+            var_mem_max += x;
+            goto RETRY;
         }
-        vlink(rover) = var_mem_max;
-        rover = var_mem_max;
-        test_rovers("realloc");
-        var_mem_max += x;
-        goto RETRY;
+    } else {
+        normal_error("nodes","there is a problem in getting a node, case 3");
+        return null;
     }
 }
 
 @ @c
 char *sprint_node_mem_usage(void)
 {
-    int i, b;
-
-    char *s, *ss;
-#ifndef NDEBUG
+    char *s;
+#ifdef CHECK_NODE_USAGE
+    char *ss;
+    int i;
+    int b = 0;
     char msg[256];
     int node_counts[last_normal_node + last_whatsit_node + 2] = { 0 };
-
+    s = strdup("");
     for (i = (var_mem_max - 1); i > my_prealloc; i--) {
         if (varmem_sizes[i] > 0) {
             if (type(i) > last_normal_node + last_whatsit_node) {
@@ -2242,15 +2072,12 @@ char *sprint_node_mem_usage(void)
             }
         }
     }
-    s = strdup("");
-    b = 0;
     for (i = 0; i < last_normal_node + last_whatsit_node + 2; i++) {
         if (node_counts[i] > 0) {
             int j =
                 (i > (last_normal_node + 1) ? (i - last_normal_node - 1) : 0);
             snprintf(msg, 255, "%s%d %s", (b ? ", " : ""), (int) node_counts[i],
-                     get_node_name((i > last_normal_node ? whatsit_node : i),
-                                   j));
+                     get_node_name((i > last_normal_node ? whatsit_node : i), j));
             ss = xmalloc((unsigned) (strlen(s) + strlen(msg) + 1));
             strcpy(ss, s);
             strcat(ss, msg);
@@ -2268,9 +2095,10 @@ char *sprint_node_mem_usage(void)
 @ @c
 halfword list_node_mem_usage(void)
 {
+    halfword q = null;
+#ifdef CHECK_NODE_USAGE
+    halfword p = null;
     halfword i, j;
-    halfword p = null, q = null;
-#ifndef NDEBUG
     char *saved_varmem_sizes = xmallocarray(char, (unsigned) var_mem_max);
     memcpy(saved_varmem_sizes, varmem_sizes, (size_t) var_mem_max);
     for (i = my_prealloc + 1; i < (var_mem_max - 1); i++) {
@@ -2297,8 +2125,7 @@ void print_node_mem_stats(void)
     char msg[256];
     char *s;
     int free_chain_counts[MAX_CHAIN_SIZE] = { 0 };
-    snprintf(msg, 255, " %d words of node memory still in use:",
-             (int) (var_used + my_prealloc));
+    snprintf(msg, 255, " %d words of node memory still in use:", (int) (var_used + my_prealloc));
     tprint_nl(msg);
     s = sprint_node_mem_usage();
     tprint_nl("   ");
@@ -2311,13 +2138,13 @@ void print_node_mem_stats(void)
         for (j = free_chain[i]; j != null; j = vlink(j))
             free_chain_counts[i]++;
         if (free_chain_counts[i] > 0) {
-            snprintf(msg, 255, "%s%d:%d", (b ? "," : ""), i,
-                     (int) free_chain_counts[i]);
+            snprintf(msg, 255, "%s%d:%d", (b ? "," : ""), i, (int) free_chain_counts[i]);
             tprint(msg);
             b = 1;
         }
     }
-    print_nlp();                /* newline, if needed */
+    /* newline, if needed */
+    print_nlp();
 }
 
 /* this belongs in the web but i couldn't find the correct syntactic place */
@@ -2400,13 +2227,8 @@ void build_attribute_list(halfword b)
         }
         attr_list_ref(attr_list_cache)++;
         node_attr(b) = attr_list_cache;
-#ifdef DEBUG
-        fprintf(DEBUG_OUT, "Added attrlist (%d) to node %d (count=%d)\n",
-                node_attr(b), b, attr_list_ref(attr_list_cache));
-#endif
     }
 }
-
 
 @ @c
 halfword current_attribute_list(void)
@@ -2442,26 +2264,24 @@ void reassign_attribute(halfword n, halfword new)
     node_attr(n) = new ;
 }
 
-
-
 @ @c
 void delete_attribute_ref(halfword b)
 {
     if (b != null) {
-        assert(type(b) == attribute_list_node);
-        attr_list_ref(b)--;
-#ifdef DEBUG
-        fprintf(DEBUG_OUT, "Removed attrlistref (%d) (count=%d)\n", b,
-                attr_list_ref(b));
-#endif
-        if (attr_list_ref(b) == 0) {
-            if (b == attr_list_cache)
-                attr_list_cache = cache_disabled;
-            free_node_chain(b, attribute_node_size);
+        if (type(b) == attribute_list_node){
+            attr_list_ref(b)--;
+            if (attr_list_ref(b) == 0) {
+                if (b == attr_list_cache)
+                    attr_list_cache = cache_disabled;
+                free_node_chain(b, attribute_node_size);
+            }
+            /* maintain sanity */
+            if (attr_list_ref(b) < 0) {
+                attr_list_ref(b) = 0;
+            }
+        } else {
+            normal_error("nodes","trying to delete an attribute reference of a non attribute node");
         }
-        /* maintain sanity */
-        if (attr_list_ref(b) < 0)
-            attr_list_ref(b) = 0;
     }
 }
 
@@ -2487,28 +2307,32 @@ halfword do_set_attribute(halfword p, int i, int val)
         return q;
     }
     q = p;
-    assert(vlink(p) != null);
-    while (vlink(p) != null) {
-        int t = attribute_id(vlink(p));
-        if (t == i && attribute_value(vlink(p)) == val)
-            return q;           /* no need to do anything */
-        if (t >= i)
-            break;
-        j++;
-        p = vlink(p);
-    }
+    if (vlink(p) != null) {
+        while (vlink(p) != null) {
+            int t = attribute_id(vlink(p));
+            if (t == i && attribute_value(vlink(p)) == val)
+                return q;           /* no need to do anything */
+            if (t >= i)
+                break;
+            j++;
+            p = vlink(p);
+        }
 
-    p = q;
-    while (j-- > 0)
-        p = vlink(p);
-    if (attribute_id(vlink(p)) == i) {
-        attribute_value(vlink(p)) = val;
-    } else {                    /* add a new node */
-        halfword r = new_attribute_node((unsigned) i, val);
-        vlink(r) = vlink(p);
-        vlink(p) = r;
+        p = q;
+        while (j-- > 0)
+            p = vlink(p);
+        if (attribute_id(vlink(p)) == i) {
+            attribute_value(vlink(p)) = val;
+        } else {                    /* add a new node */
+            halfword r = new_attribute_node((unsigned) i, val);
+            vlink(r) = vlink(p);
+            vlink(p) = r;
+        }
+        return q;
+    } else {
+        normal_error("nodes","trying to set an attribute fails, case 1");
+        return null ;
     }
-    return q;
 }
 
 @ @c
@@ -2531,60 +2355,61 @@ void set_attribute(halfword n, int i, int val)
         return;
     }
     /* we check if we have this attribute already and quit if the value stays the same */
-    assert(vlink(p) != null);
-    while (vlink(p) != null) {
-        int t = attribute_id(vlink(p));
-        if (t == i && attribute_value(vlink(p)) == val)
-            return;
-        if (t >= i)
-            break;
-        j++;
-        p = vlink(p);
-    }
-    /* j has now the position (if found) .. we assume a sorted list ! */
-    p = node_attr(n);
+    if (vlink(p) != null) {
+        while (vlink(p) != null) {
+            int t = attribute_id(vlink(p));
+            if (t == i && attribute_value(vlink(p)) == val)
+                return;
+            if (t >= i)
+                break;
+            j++;
+            p = vlink(p);
+        }
+        /* j has now the position (if found) .. we assume a sorted list ! */
+        p = node_attr(n);
 
-    if (attr_list_ref(p) == 0 ) {
-        /* the list is invalid i.e. freed already */
-        fprintf(stdout,"Node %d has an attribute list that is free already\n",(int) n);
-        /* the still dangling list gets ref count 1 */
-        attr_list_ref(p) = 1;
-    } else if (attr_list_ref(p) == 1) {
-        /* this can really happen HH-LS */
-        if (p == attr_list_cache) {
-            /* we can invalidate the cache setting */
-            /* attr_list_cache = cache_disabled    */
-            /* or save the list, as done below     */
+        if (attr_list_ref(p) == 0 ) {
+            /* the list is invalid i.e. freed already */
+            formatted_warning("nodes","node %d has an attribute list that is free already, case 1",(int) n);
+            /* the still dangling list gets ref count 1 */
+            attr_list_ref(p) = 1;
+        } else if (attr_list_ref(p) == 1) {
+            /* this can really happen HH-LS */
+            if (p == attr_list_cache) {
+                /* we can invalidate the cache setting */
+                /* attr_list_cache = cache_disabled    */
+                /* or save the list, as done below     */
+                p = copy_attribute_list(p);
+                node_attr(n) = p;
+                /* the copied list gets ref count 1 */
+                attr_list_ref(p) = 1;
+            }
+        } else {
+            /* the list is used multiple times so we make a copy */
             p = copy_attribute_list(p);
+            /* we decrement the ref count or the original */
+            delete_attribute_ref(node_attr(n));
             node_attr(n) = p;
             /* the copied list gets ref count 1 */
             attr_list_ref(p) = 1;
         }
+
+
+        /* we go to position j in the list */
+        while (j-- > 0)
+            p = vlink(p);
+        /* if we have a hit we just set the value otherwise we add a new node */
+        if (attribute_id(vlink(p)) == i) {
+            attribute_value(vlink(p)) = val;
+        } else {                    /* add a new node */
+            halfword r = new_attribute_node((unsigned) i, val);
+            vlink(r) = vlink(p);
+            vlink(p) = r;
+        }
     } else {
-        /* the list is used multiple times so we make a copy */
-        p = copy_attribute_list(p);
-        /* we decrement the ref count or the original */
-        delete_attribute_ref(node_attr(n));
-        node_attr(n) = p;
-        /* the copied list gets ref count 1 */
-        attr_list_ref(p) = 1;
+        normal_error("nodes","trying to set an attribute fails, case 2");
     }
-
-
-    /* we go to position j in the list */
-    while (j-- > 0)
-        p = vlink(p);
-    /* if we have a hit we just set the value otherwise we add a new node */
-    if (attribute_id(vlink(p)) == i) {
-        attribute_value(vlink(p)) = val;
-    } else {                    /* add a new node */
-        halfword r = new_attribute_node((unsigned) i, val);
-        vlink(r) = vlink(p);
-        vlink(p) = r;
-    }
-    return;
 }
-
 
 @ @c
 int unset_attribute(halfword n, int i, int val)
@@ -2599,43 +2424,45 @@ int unset_attribute(halfword n, int i, int val)
     if (p == null)
         return UNUSED_ATTRIBUTE;
     if (attr_list_ref(p) == 0) {
-        fprintf(stdout,
-                "Node %d has an attribute list that is free already\n",
-                (int) n);
+        formatted_warning("nodes","node %d has an attribute list that is free already, case 2", (int) n);
         return UNUSED_ATTRIBUTE;
     }
-    assert(vlink(p) != null);
-    while (vlink(p) != null) {
-        t = attribute_id(vlink(p));
-        if (t > i)
-            return UNUSED_ATTRIBUTE;
-        if (t == i) {
+    if (vlink(p) != null) {
+        while (vlink(p) != null) {
+            t = attribute_id(vlink(p));
+            if (t > i)
+                return UNUSED_ATTRIBUTE;
+            if (t == i) {
+                p = vlink(p);
+                break;
+            }
+            j++;
             p = vlink(p);
-            break;
         }
-        j++;
-        p = vlink(p);
-    }
-    if (attribute_id(p) != i)
-        return UNUSED_ATTRIBUTE;
-    /* if we are still here, the attribute exists */
-    p = node_attr(n);
-    if (attr_list_ref(p) > 1 || p == attr_list_cache) {
-        halfword q = copy_attribute_list(p);
-        if (attr_list_ref(p) > 1) {
-            delete_attribute_ref(node_attr(n));
+        if (attribute_id(p) != i)
+            return UNUSED_ATTRIBUTE;
+        /* if we are still here, the attribute exists */
+        p = node_attr(n);
+        if (attr_list_ref(p) > 1 || p == attr_list_cache) {
+            halfword q = copy_attribute_list(p);
+            if (attr_list_ref(p) > 1) {
+                delete_attribute_ref(node_attr(n));
+            }
+            attr_list_ref(q) = 1;
+            node_attr(n) = q;
         }
-        attr_list_ref(q) = 1;
-        node_attr(n) = q;
+        p = vlink(node_attr(n));
+        while (j-- > 0)
+            p = vlink(p);
+        t = attribute_value(p);
+        if (val == UNUSED_ATTRIBUTE || t == val) {
+            attribute_value(p) = UNUSED_ATTRIBUTE;
+        }
+        return t;
+    } else {
+        normal_error("nodes","trying to unset an attribute fails");
+        return null;
     }
-    p = vlink(node_attr(n));
-    while (j-- > 0)
-        p = vlink(p);
-    t = attribute_value(p);
-    if (val == UNUSED_ATTRIBUTE || t == val) {
-        attribute_value(p) = UNUSED_ATTRIBUTE;
-    }
-    return t;
 }
 
 @ @c
@@ -2666,36 +2493,32 @@ int has_attribute(halfword n, int i, int val)
 void print_short_node_contents(halfword p)
 {
     switch (type(p)) {
-    case hlist_node:
-    case vlist_node:
-    case ins_node:
-    case whatsit_node:
-    case mark_node:
-    case adjust_node:
-    case unset_node:
-        print_char('[');
-        print_char(']');
-        break;
-    case rule_node:
-        print_char('|');
-        break;
-    case glue_node:
-        if (glue_ptr(p) != zero_glue)
-            print_char(' ');
-        break;
-    case math_node:
-        print_char('$');
-        break;
-    case disc_node:
-        short_display(vlink(pre_break(p)));
-        short_display(vlink(post_break(p)));
-        break;
-    default:
-        assert(1);
-        break;
+        case hlist_node:
+        case vlist_node:
+        case ins_node:
+        case whatsit_node:
+        case mark_node:
+        case adjust_node:
+        case unset_node:
+            print_char('[');
+            print_char(']');
+            break;
+        case rule_node:
+            print_char('|');
+            break;
+        case glue_node:
+            if (glue_ptr(p) != zero_glue)
+                print_char(' ');
+            break;
+        case math_node:
+            print_char('$');
+            break;
+        case disc_node:
+            short_display(vlink(pre_break(p)));
+            short_display(vlink(post_break(p)));
+            break;
     }
 }
-
 
 @ @c
 static void show_pdftex_whatsit_rule_spec(int p)
@@ -2707,8 +2530,6 @@ static void show_pdftex_whatsit_rule_spec(int p)
     tprint(")x");
     print_rule_dimen(width(p));
 }
-
-
 
 @ Each new type of node that appears in our data structure must be capable
 of being displayed, copied, destroyed, and so on. The routines that we
@@ -2727,9 +2548,7 @@ static void print_write_whatsit(const char *s, pointer p)
         print_char('-');
 }
 
-
 @ @c
-
 static void show_node_wrapup_core(int p)
 {
     switch (subtype(p)) {
@@ -2811,7 +2630,7 @@ void show_node_wrapup_pdf(int p)
                 tprint(" current");
                 break;
             default:
-                confusion("pdfcolorstack");
+                confusion("colorstack");
                 break;
             }
             if (pdf_colorstack_cmd(p) <= colorstack_data)
@@ -2997,15 +2816,17 @@ void show_node_wrapup_pdf(int p)
 
 @ Recursive calls on |show_node_list| therefore use the following pattern:
 @c
-#define node_list_display(A) do {               \
-    append_char('.');                           \
-    show_node_list(A);                          \
-    flush_char();                               \
+#define node_list_display(A) do { \
+    append_char('.');             \
+    show_node_list(A);            \
+    flush_char();                 \
 } while (0)
 
+/* prints a node list symbolically */
+
 void show_node_list(int p)
-{                               /* prints a node list symbolically */
-    int n;                      /* the number of items already printed at this level */
+{
+    int n = 0;                  /* the number of items already printed at this level */
     halfword w;
     real g;                     /* a glue ratio, as a floating point number */
     if ((int) cur_length > depth_threshold) {
@@ -3013,7 +2834,6 @@ void show_node_list(int p)
             tprint(" []");      /* indicate that there's been some truncation */
         return;
     }
-    n = 0;
     while (p != null) {
         print_ln();
         print_current_string(); /* display the nesting history */
@@ -3111,6 +2931,10 @@ void show_node_list(int p)
                 /* Display rule |p|; */
                 if (subtype(p) == normal_rule) {
                     tprint_esc("rule(");
+                } else if (subtype(p) == empty_rule) {
+                    tprint_esc("norule(");
+                } else if (subtype(p) == user_rule) {
+                    tprint_esc("userrule(");
                 } else if (subtype(p) == box_rule) {
                     tprint_esc("box(");
                 } else if (subtype(p) == image_rule) {
@@ -3221,7 +3045,7 @@ void show_node_list(int p)
                         print_char('g');
                         break;
                     default:
-                        assert(0);
+                        normal_warning("nodes","weird glue leader subtype ignored");
                     }
                     tprint("leaders ");
                     print_spec(glue_ptr(p), NULL);
@@ -3321,7 +3145,7 @@ void show_node_list(int p)
             case adjust_node:
                 /* Display adjustment |p|; */
                 tprint_esc("vadjust");
-                if (adjust_pre(p) != 0)
+                if (subtype(p) != 0)
                     tprint(" pre ");
                 node_list_display(adjust_ptr(p));       /* recursive call */
                 break;
@@ -3345,70 +3169,67 @@ void show_node_list(int p)
 @c
 pointer actual_box_width(pointer r, scaled base_width)
 {
-    scaled w;                   /* calculated |size| */
-    pointer p;                  /* current node when calculating |pre_display_size| */
-    pointer q;                  /* glue specification when calculating |pre_display_size| */
-    scaled d;                   /* increment to |v| */
-    scaled v;                   /* |w| plus possible glue amount */
-    w = -max_dimen;
-    v = shift_amount(r) + base_width;
-    p = list_ptr(r);
+    pointer q;                               /* glue specification when calculating |pre_display_size| */
+    scaled d;                                /* increment to |v| */
+    scaled w = -max_dimen;                   /* calculated |size| */
+    scaled v = shift_amount(r) + base_width; /* |w| plus possible glue amount */
+    pointer p = list_ptr(r);                 /* current node when calculating |pre_display_size| */
     while (p != null) {
         if (is_char_node(p)) {
             d = glyph_width(p);
-            goto found;
+            goto FOUND;
         }
         switch (type(p)) {
-        case hlist_node:
-        case vlist_node:
-        case rule_node:
-            d = width(p);
-            goto found;
-            break;
-        case margin_kern_node:
-            d = width(p);
-            break;
-        case kern_node:
-            d = width(p);
-            break;
-        case math_node:
-            /* begin mathskip code */
-            if (glue_ptr(p) == zero_glue) {
-                d = surround(p);
+            case hlist_node:
+            case vlist_node:
+            case rule_node:
+                d = width(p);
+                goto FOUND;
                 break;
-            } else {
-                /* fall through */
-            }
-            /* end mathskip code */
-        case glue_node:
-            /* We need to be careful that |w|, |v|, and |d| do not depend on any |glue_set|
-               values, since such values are subject to system-dependent rounding.
-               System-dependent numbers are not allowed to infiltrate parameters like
-               |pre_display_size|, since \TeX82 is supposed to make the same decisions on all
-               machines.
-             */
-            q = glue_ptr(p);
-            d = width(q);
-            if (glue_sign(r) == stretching) {
-                if ((glue_order(r) == stretch_order(q))
-                    && (stretch(q) != 0))
-                    v = max_dimen;
-            } else if (glue_sign(r) == shrinking) {
-                if ((glue_order(r) == shrink_order(q))
-                    && (shrink(q) != 0))
-                    v = max_dimen;
-            }
-            if (subtype(p) >= a_leaders)
-                goto found;
-            break;
-        default:
-            d = 0;
-            break;
+            case margin_kern_node:
+                d = width(p);
+                break;
+            case kern_node:
+                d = width(p);
+                break;
+            case math_node:
+                /* begin mathskip code */
+                if (glue_ptr(p) == zero_glue) {
+                    d = surround(p);
+                    break;
+                } else {
+                    /* fall through */
+                }
+                /* end mathskip code */
+            case glue_node:
+                /* We need to be careful that |w|, |v|, and |d| do not depend on any |glue_set|
+                   values, since such values are subject to system-dependent rounding.
+                   System-dependent numbers are not allowed to infiltrate parameters like
+                   |pre_display_size|, since \TeX82 is supposed to make the same decisions on all
+                   machines.
+                 */
+                q = glue_ptr(p);
+                d = width(q);
+                if (glue_sign(r) == stretching) {
+                    if ((glue_order(r) == stretch_order(q))
+                        && (stretch(q) != 0))
+                        v = max_dimen;
+                } else if (glue_sign(r) == shrinking) {
+                    if ((glue_order(r) == shrink_order(q))
+                        && (shrink(q) != 0))
+                        v = max_dimen;
+                }
+                if (subtype(p) >= a_leaders)
+                    goto FOUND;
+                break;
+            default:
+                d = 0;
+                break;
         }
         if (v < max_dimen)
             v = v + d;
-        goto not_found;
-      found:
+        goto NOT_FOUND;
+      FOUND:
         if (v < max_dimen) {
             v = v + d;
             w = v;
@@ -3416,12 +3237,11 @@ pointer actual_box_width(pointer r, scaled base_width)
             w = max_dimen;
             break;
         }
-      not_found:
+      NOT_FOUND:
         p = vlink(p);
     }
     return w;
 }
-
 
 @ @c
 halfword tail_of_list(halfword p)
@@ -3432,29 +3252,26 @@ halfword tail_of_list(halfword p)
     return q;
 }
 
-
 @ |delete_glue_ref| is called when a pointer to a glue
    specification is being withdrawn.
 
 @c
-#define fast_delete_glue_ref(A) do {		\
-    if (glue_ref_count(A)==null) {		\
-      flush_node(A);				\
-    } else {					\
-      decr(glue_ref_count(A));			\
-    }						\
-  } while (0)
-
 void delete_glue_ref(halfword p)
-{                               /* |p| points to a glue specification */
-    assert(type(p) == glue_spec_node);
-    fast_delete_glue_ref(p);
+{   /* |p| points to a glue specification */
+    if (type(p) == glue_spec_node) {
+        if (glue_ref_count(p) == null) {
+          flush_node(p);
+        } else {
+          decr(glue_ref_count(p));
+        }
+    } else {
+        normal_error("nodes","invalid glue spec node");
+    }
 }
 
 @ @c
 int var_used;
-halfword temp_ptr;              /* a pointer variable for occasional emergency use */
-
+halfword temp_ptr;  /* a pointer variable for occasional emergency use */
 
 @ Attribute lists need two extra globals to increase processing efficiency.
 |max_used_attr| limits the test loop that checks for set attributes, and
@@ -3464,7 +3281,7 @@ trusted: after an assignment to an attribute register, and after a group has
 ended.
 
 @c
-int max_used_attr;              /* maximum assigned attribute id  */
+int max_used_attr;        /* maximum assigned attribute id  */
 halfword attr_list_cache;
 
 @ From the computer's standpoint, \TeX's chief mission is to create
@@ -3477,7 +3294,6 @@ penalties, or special things like discretionary hyphens; because of this
 variety, some nodes are longer than others, and we must distinguish different
 kinds of nodes. We do this by putting a `|type|' field in the first word,
 together with the link and an optional `|subtype|'.
-
 
 @ Character nodes appear only in horizontal lists, never in vertical lists.
 
@@ -3507,16 +3323,13 @@ The |subtype| field is set to |min_quarterword|, since that's the desired
 @c
 halfword new_null_box(void)
 {                               /* creates a new box node */
-    halfword p;                 /* the new node */
-    p = new_node(hlist_node, min_quarterword);
+    halfword p = new_node(hlist_node, min_quarterword);
     box_dir(p) = text_direction;
     return p;
 }
 
-
 @ A |vlist_node| is like an |hlist_node| in all respects except that it
 contains a vertical list.
-
 
 @ A |rule_node| stands for a solid black rectangle; it has |width|,
 |depth|, and |height| fields just as in an |hlist_node|. However, if
@@ -3532,11 +3345,9 @@ ones that are not allowed to run.
 @c
 halfword new_rule(int s)
 {
-    halfword p;                 /* the new node */
-    p = new_node(rule_node,s);
+    halfword p = new_node(rule_node,s);
     return p;
 }
-
 
 @ Insertions are represented by |ins_node| records, where the |subtype|
 indicates the corresponding box number. For example, `\.{\\insert 250}'
@@ -3593,7 +3404,6 @@ halfword new_glyph(int f, int c)
     return p;
 }
 
-
 @ A subset of the glyphs nodes represent ligatures: characters
 fabricated from the interaction of two or more actual characters.  The
 characters that generated the ligature have not been forgotten, since
@@ -3631,11 +3441,9 @@ halfword new_char(int f, int c)
     set_to_character(p);
     font(p) = f;
     character(p) = c;
-    lang_data(p) =
-        make_lang_data(uc_hyph, cur_lang, left_hyphen_min, right_hyphen_min);
+    lang_data(p) = make_lang_data(uc_hyph, cur_lang, left_hyphen_min, right_hyphen_min);
     return p;
 }
-
 
 @ Left and right ghost glyph nodes are the result of \.{\\leftghost}
 and \.{\\rightghost}, respectively. They are going to be removed by
@@ -3646,15 +3454,13 @@ and \.{\\rightghost}, respectively. They are going to be removed by
 @c
 scaled glyph_width(halfword p)
 {
-    scaled w;
-    w = char_width(font(p), character(p));
+    scaled w = char_width(font(p), character(p));
     return w;
 }
 
 scaled glyph_height(halfword p)
 {
-    scaled w;
-    w = char_height(font(p), character(p)) + y_displace(p);
+    scaled w = char_height(font(p), character(p)) + y_displace(p);
     if (w < 0)
         w = 0;
     return w;
@@ -3662,15 +3468,13 @@ scaled glyph_height(halfword p)
 
 scaled glyph_depth(halfword p)
 {
-    scaled w;
-    w = char_depth(font(p), character(p));
+    scaled w = char_depth(font(p), character(p));
     if (y_displace(p) > 0)
         w = w - y_displace(p);
     if (w < 0)
         w = 0;
     return w;
 }
-
 
 @ A |disc_node|, which occurs only in horizontal lists, specifies a
 ``dis\-cretion\-ary'' line break. If such a break occurs at node |p|, the text
@@ -3694,8 +3498,7 @@ not chosen.
 @c
 halfword new_disc(void)
 {                               /* creates an empty |disc_node| */
-    halfword p;                 /* the new node */
-    p = new_node(disc_node, 0);
+    halfword p = new_node(disc_node, 0);
     disc_penalty(p) = int_par(hyphen_penalty_code);
     return p;
 }
@@ -3724,8 +3527,7 @@ the amount of surrounding space inserted by \.{\\mathsurround}.
 @c
 halfword new_math(scaled w, int s)
 {
-    halfword p;                 /* the new node */
-    p = new_node(math_node, s);
+    halfword p = new_node(math_node, s);
     surround(p) = w;
     return p;
 }
@@ -3784,8 +3586,7 @@ to be exactly one reference to the new specification.
 @c
 halfword new_spec(halfword p)
 {                               /* duplicates a glue specification */
-    halfword q;                 /* the new spec */
-    q = copy_node(p);
+    halfword q = copy_node(p);
     glue_ref_count(q) = null;
     return q;
 }
@@ -3798,10 +3599,8 @@ current \.{\\lineskip}.
 @c
 halfword new_param_glue(int n)
 {
-    halfword p;                 /* the new node */
-    halfword q;                 /* the glue specification */
-    p = new_node(glue_node, n + 1);
-    q = glue_par(n);
+    halfword p = new_node(glue_node, n + 1);
+    halfword q = glue_par(n);
     glue_ptr(p) = q;
     incr(glue_ref_count(q));
     return p;
@@ -3813,8 +3612,7 @@ whose argument points to a glue specification.
 @c
 halfword new_glue(halfword q)
 {
-    halfword p;                 /* the new node */
-    p = new_node(glue_node, normal);
+    halfword p = new_node(glue_node, normal);
     glue_ptr(p) = q;
     incr(glue_ref_count(q));
     return p;
@@ -3854,8 +3652,7 @@ inserted from \.{\\mkern} specifications in math formulas).
 @c
 halfword new_kern(scaled w)
 {
-    halfword p;                 /* the new node */
-    p = new_node(kern_node, normal);
+    halfword p = new_node(kern_node, normal);
     width(p) = w;
     return p;
 }
@@ -3873,8 +3670,7 @@ be able to guess what comes next.
 @c
 halfword new_penalty(int m)
 {
-    halfword p;                 /* the new node */
-    p = new_node(penalty_node, 0);      /* the |subtype| is not used */
+    halfword p = new_node(penalty_node, 0); /* the |subtype| is not used */
     penalty(p) = m;
     return p;
 }
@@ -3908,12 +3704,14 @@ the \.{WEB} macro definitions above, so that format changes will leave
 \TeX's other algorithms intact.
 @^system dependencies@>
 
-@ @c
+@ This function creates a |local_paragraph| node
+
+@c
+
 halfword make_local_par_node(void)
-/* This function creates a |local_paragraph| node */
 {
-    halfword p, q;
-    p = new_node(local_par_node,0);
+    halfword q;
+    halfword p = new_node(local_par_node,0);
     local_pen_inter(p) = local_inter_line_penalty;
     local_pen_broken(p) = local_broken_penalty;
     if (local_left_box != null) {
@@ -3929,5 +3727,3 @@ halfword make_local_par_node(void)
     local_par_dir(p) = par_direction;
     return p;
 }
-
-

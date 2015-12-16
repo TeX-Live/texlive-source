@@ -20,7 +20,6 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @
-
 This is experimental JBIG2 image support to pdfTeX. JBIG2 image decoding
 is part of Adobe PDF-1.4, and requires Acroread 5.0 or later.
 
@@ -80,8 +79,6 @@ object exists, reference it. Else create fresh one.
 09 Dec. 2002: JBIG2 seg. page numbers > 0 are now set to 1, see PDF Ref.
 
 @ @c
-
-
 #undef DEBUG
 
 #include "ptexlib.h"
@@ -120,7 +117,7 @@ typedef enum { INITIAL, HAVEINFO, WRITEPDF } PHASE;
 typedef struct _LITEM {
     struct _LITEM *prev;
     struct _LITEM *next;
-    void *d;                    /* data */
+    void *d; /* data */
 } LITEM;
 
 typedef struct _LIST {
@@ -133,26 +130,26 @@ typedef struct _SEGINFO {
     unsigned long segnum;
     boolean isrefered;
     boolean refers;
-    unsigned int seghdrflags;   /* set by readseghdr() */
-    boolean pageassocsizeflag;  /* set by readseghdr() */
-    unsigned int reftosegcount; /* set by readseghdr() */
-    unsigned int countofrefered;        /* set by readseghdr() */
-    unsigned int fieldlen;      /* set by readseghdr() */
-    unsigned int segnumwidth;   /* set by readseghdr() */
-    long segpage;               /* set by readseghdr() */
-    unsigned long segdatalen;   /* set by readseghdr() */
-    unsigned long hdrstart;     /* set by readseghdr() */
-    unsigned long hdrend;       /* set by readseghdr() */
+    unsigned int seghdrflags;    /* set by readseghdr() */
+    boolean pageassocsizeflag;   /* set by readseghdr() */
+    unsigned int reftosegcount;  /* set by readseghdr() */
+    unsigned int countofrefered; /* set by readseghdr() */
+    unsigned int fieldlen;       /* set by readseghdr() */
+    unsigned int segnumwidth;    /* set by readseghdr() */
+    long segpage;                /* set by readseghdr() */
+    unsigned long segdatalen;    /* set by readseghdr() */
+    unsigned long hdrstart;      /* set by readseghdr() */
+    unsigned long hdrend;        /* set by readseghdr() */
     unsigned long datastart;
     unsigned long dataend;
-    boolean endofstripeflag;    /* set by checkseghdrflags() */
-    boolean endofpageflag;      /* set by checkseghdrflags() */
-    boolean pageinfoflag;       /* set by checkseghdrflags() */
-    boolean endoffileflag;      /* set by checkseghdrflags() */
+    boolean endofstripeflag;     /* set by checkseghdrflags() */
+    boolean endofpageflag;       /* set by checkseghdrflags() */
+    boolean pageinfoflag;        /* set by checkseghdrflags() */
+    boolean endoffileflag;       /* set by checkseghdrflags() */
 } SEGINFO;
 
 typedef struct _PAGEINFO {
-    LIST segments;              /* segments associated with page */
+    LIST segments;               /* segments associated with page */
     unsigned long pagenum;
     unsigned int width;
     unsigned int height;
@@ -167,12 +164,12 @@ typedef struct _FILEINFO {
     FILE *file;
     char *filepath;
     long filesize;
-    LIST pages;                 /* not including page0 */
+    LIST pages;                  /* not including page0 */
     LIST page0;
-    unsigned int filehdrflags;  /* set by readfilehdr() */
-    boolean sequentialaccess;   /* set by readfilehdr() */
-    unsigned long numofpages;   /* set by readfilehdr() */
-    unsigned long streamstart;  /* set by |get_jbig2_info()| */
+    unsigned int filehdrflags;   /* set by readfilehdr() */
+    boolean sequentialaccess;    /* set by readfilehdr() */
+    unsigned long numofpages;    /* set by readfilehdr() */
+    unsigned long streamstart;   /* set by |get_jbig2_info()| */
     unsigned long pdfpage0objnum;
     PHASE phase;
 } FILEINFO;
@@ -183,22 +180,19 @@ static struct avl_table *file_tree = NULL;
 static int comp_file_entry(const void *pa, const void *pb, void *p)
 {
     (void) p;
-    return strcmp(((const FILEINFO *) pa)->filepath,
-                  ((const FILEINFO *) pb)->filepath);
+    return strcmp(((const FILEINFO *) pa)->filepath,((const FILEINFO *) pb)->filepath);
 }
 
 static int comp_page_entry(const void *pa, const void *pb, void *p)
 {
     (void) p;
-    return (int) (((const PAGEINFO *) pa)->pagenum -
-                  ((const PAGEINFO *) pb)->pagenum);
+    return (int) (((const PAGEINFO *) pa)->pagenum - ((const PAGEINFO *) pb)->pagenum);
 }
 
 static int comp_segment_entry(const void *pa, const void *pb, void *p)
 {
     (void) p;
-    return (int) (((const SEGINFO *) pa)->segnum -
-                  ((const SEGINFO *) pb)->segnum);
+    return (int) (((const SEGINFO *) pa)->segnum - ((const SEGINFO *) pb)->segnum);
 }
 
 @ @c
@@ -207,9 +201,9 @@ static int ygetc(FILE * stream)
     int c = getc(stream);
     if (c < 0) {
         if (c == EOF)
-            luatex_fail("getc() failed; premature end of JBIG2 image file");
+            normal_error("readjbig2","premature end file");
         else
-            luatex_fail("getc() failed (can't happen)");
+            normal_error("readjbig2","can't happen");
     }
     return c;
 }
@@ -382,8 +376,7 @@ static void readfilehdr(FILEINFO * fip)
     xfseek(fip->file, 0, SEEK_SET, fip->filepath);
     for (i = 0; i < 8; i++)
         if (ygetc(fip->file) != jbig2_id[i])
-            luatex_fail
-                ("readfilehdr(): reading JBIG2 image file failed: ID string missing");
+            normal_error("readjbig2","ID string missing");
     /* Annex D.4.2 File header flags */
     fip->filehdrflags = (unsigned int) ygetc(fip->file);
     fip->sequentialaccess = (fip->filehdrflags & 0x01) ? true : false;
@@ -407,41 +400,40 @@ static void checkseghdrflags(SEGINFO * sip)
     sip->endoffileflag = false;
     /* 7.3 Segment types */
     switch (sip->seghdrflags & 0x3f) {
-    case M_SymbolDictionary:
-    case M_IntermediateTextRegion:
-    case M_ImmediateTextRegion:
-    case M_ImmediateLosslessTextRegion:
-    case M_PatternDictionary:
-    case M_IntermediateHalftoneRegion:
-    case M_ImmediateHalftoneRegion:
-    case M_ImmediateLosslessHalftoneRegion:
-    case M_IntermediateGenericRegion:
-    case M_ImmediateGenericRegion:
-    case M_ImmediateLosslessGenericRegion:
-    case M_IntermediateGenericRefinementRegion:
-    case M_ImmediateGenericRefinementRegion:
-    case M_ImmediateLosslessGenericRefinementRegion:
-        break;
-    case M_PageInformation:
-        sip->pageinfoflag = true;
-        break;
-    case M_EndOfPage:
-        sip->endofpageflag = true;
-        break;
-    case M_EndOfStripe:
-        sip->endofstripeflag = true;
-        break;
-    case M_EndOfFile:
-        sip->endoffileflag = true;
-        break;
-    case M_Profiles:
-    case M_Tables:
-    case M_Extension:
-        break;
-    default:
-        luatex_fail
-            ("checkseghdrflags(): unknown segment type in JBIG2 image file");
-        break;
+        case M_SymbolDictionary:
+        case M_IntermediateTextRegion:
+        case M_ImmediateTextRegion:
+        case M_ImmediateLosslessTextRegion:
+        case M_PatternDictionary:
+        case M_IntermediateHalftoneRegion:
+        case M_ImmediateHalftoneRegion:
+        case M_ImmediateLosslessHalftoneRegion:
+        case M_IntermediateGenericRegion:
+        case M_ImmediateGenericRegion:
+        case M_ImmediateLosslessGenericRegion:
+        case M_IntermediateGenericRefinementRegion:
+        case M_ImmediateGenericRefinementRegion:
+        case M_ImmediateLosslessGenericRefinementRegion:
+            break;
+        case M_PageInformation:
+            sip->pageinfoflag = true;
+            break;
+        case M_EndOfPage:
+            sip->endofpageflag = true;
+            break;
+        case M_EndOfStripe:
+            sip->endofstripeflag = true;
+            break;
+        case M_EndOfFile:
+            sip->endoffileflag = true;
+            break;
+        case M_Profiles:
+        case M_Tables:
+        case M_Extension:
+            break;
+        default:
+            normal_error("readjbig2","unknown segment type file");
+            break;
     }
 }
 
@@ -454,19 +446,10 @@ static boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
     sip->hdrstart = xftell(fip->file, fip->filepath);
     if (fip->sequentialaccess && sip->hdrstart == (unsigned) fip->filesize)
         return false;           /* no endoffileflag is ok for sequentialaccess */
-#ifdef DEBUG
-    printf("\nhdrstart %d\n", sip->hdrstart);
-#endif
     /* 7.2.2 Segment number */
     sip->segnum = read4bytes(fip->file);
-#ifdef DEBUG
-    printf("  segnum %d\n", sip->segnum);
-#endif
     /* 7.2.3 Segment header flags */
     sip->seghdrflags = (unsigned int) ygetc(fip->file);
-#ifdef DEBUG
-    printf("  hdrflags %d\n", sip->seghdrflags & 0x3f);
-#endif
     checkseghdrflags(sip);
     if (fip->sequentialaccess && sip->endoffileflag)    /* accept shorter segment, */
         return true;            /* makes it compliant with Example 3.4 of PDFRef. 5th ed. */
@@ -489,15 +472,15 @@ static boolean readseghdr(FILEINFO * fip, SEGINFO * sip)
         sip->segnumwidth = 4;
     for (i = 0; i < sip->countofrefered; i++) {
         switch (sip->segnumwidth) {
-        case 1:
-            (void) ygetc(fip->file);
-            break;
-        case 2:
-            (void) read2bytes(fip->file);
-            break;
-        case 4:
-            (void) read4bytes(fip->file);
-            break;
+            case 1:
+                (void) ygetc(fip->file);
+                break;
+            case 2:
+                (void) read2bytes(fip->file);
+                break;
+            case 4:
+                (void) read4bytes(fip->file);
+                break;
         }
     }
     /* 7.2.6 Segment page association */
@@ -543,22 +526,22 @@ static void writeseghdr(PDF pdf, FILEINFO * fip, SEGINFO * sip)
     /* 7.2.5 Referred-to segment numbers */
     for (i = 0; i < sip->countofrefered; i++) {
         switch (sip->segnumwidth) {
-        case 1:
-            referedseg = (unsigned long) ygetc(fip->file);
-            pdf_out(pdf, referedseg);
-            break;
-        case 2:
-            referedseg = read2bytes(fip->file);
-            pdf_out(pdf, (referedseg >> 8) & 0xff);
-            pdf_out(pdf, referedseg & 0xff);
-            break;
-        case 4:
-            referedseg = read4bytes(fip->file);
-            pdf_out(pdf, (referedseg >> 24) & 0xff);
-            pdf_out(pdf, (referedseg >> 16) & 0xff);
-            pdf_out(pdf, (referedseg >> 8) & 0xff);
-            pdf_out(pdf, referedseg & 0xff);
-            break;
+            case 1:
+                referedseg = (unsigned long) ygetc(fip->file);
+                pdf_out(pdf, referedseg);
+                break;
+            case 2:
+                referedseg = read2bytes(fip->file);
+                pdf_out(pdf, (referedseg >> 8) & 0xff);
+                pdf_out(pdf, referedseg & 0xff);
+                break;
+            case 4:
+                referedseg = read4bytes(fip->file);
+                pdf_out(pdf, (referedseg >> 24) & 0xff);
+                pdf_out(pdf, (referedseg >> 16) & 0xff);
+                pdf_out(pdf, (referedseg >> 8) & 0xff);
+                pdf_out(pdf, referedseg & 0xff);
+                break;
         }
         if (fip->page0.last != NULL && !sip->refers)
             markpage0seg(fip, referedseg);
@@ -592,15 +575,15 @@ static void checkseghdr(FILEINFO * fip, SEGINFO * sip)
     /* 7.2.5 Referred-to segment numbers */
     for (i = 0; i < sip->countofrefered; i++) {
         switch (sip->segnumwidth) {
-        case 1:
-            referedseg = (unsigned long) ygetc(fip->file);
-            break;
-        case 2:
-            referedseg = read2bytes(fip->file);
-            break;
-        case 4:
-            referedseg = read4bytes(fip->file);
-            break;
+            case 1:
+                referedseg = (unsigned long) ygetc(fip->file);
+                break;
+            case 2:
+                referedseg = read2bytes(fip->file);
+                break;
+            case 4:
+                referedseg = read4bytes(fip->file);
+                break;
         }
         if (!sip->refers)
             markpage0seg(fip, referedseg);
@@ -620,8 +603,8 @@ static void checkseghdr(FILEINFO * fip, SEGINFO * sip)
 static unsigned long findstreamstart(FILEINFO * fip)
 {
     SEGINFO tmp;
-    assert(!fip->sequentialaccess);     /* D.2 Random-access organisation */
-    do                          /* find random-access stream start */
+    assert(!fip->sequentialaccess);   /* D.2 Random-access organisation */
+    do                                /* find random-access stream start */
         (void) readseghdr(fip, &tmp);
     while (!tmp.endoffileflag);
     fip->streamstart = tmp.hdrend;
@@ -632,8 +615,8 @@ static unsigned long findstreamstart(FILEINFO * fip)
 @ @c
 static void rd_jbig2_info(FILEINFO * fip)
 {
-    unsigned long seekdist = 0; /* for sequential-access only */
-    unsigned long streampos = 0;        /* for random-access only */
+    unsigned long seekdist = 0;    /* for sequential-access only */
+    unsigned long streampos = 0;   /* for random-access only */
     unsigned long currentpage = 0;
     boolean sipavail = false;
     PAGEINFO *pip;
@@ -732,16 +715,14 @@ static void wr_jbig2(PDF pdf, image_dict * idict, FILEINFO * fip,
         pdf_dict_add_int(pdf, "Height", pip->height);
         pdf_dict_add_name(pdf, "ColorSpace", "DeviceGray");
         pdf_dict_add_int(pdf, "BitsPerComponent", 1);
-        pdf_dict_add_int(pdf, "Length",
-                         getstreamlen(pip->segments.first, true));
+        pdf_dict_add_int(pdf, "Length", getstreamlen(pip->segments.first, true));
         pdf_add_name(pdf, "Filter");
         pdf_begin_array(pdf);
         pdf_add_name(pdf, "JBIG2Decode");
         pdf_end_array(pdf);
         if (fip->page0.last != NULL) {
             if (fip->pdfpage0objnum == 0) {
-                fip->pdfpage0objnum =
-                    (unsigned long) pdf_create_obj(pdf, obj_type_others, 0);
+                fip->pdfpage0objnum = (unsigned long) pdf_create_obj(pdf, obj_type_others, 0);
             }
             pdf_add_name(pdf, "DecodeParms");
             pdf_begin_array(pdf);
@@ -757,8 +738,7 @@ static void wr_jbig2(PDF pdf, image_dict * idict, FILEINFO * fip,
         assert(pip != NULL);
         pdf_begin_obj(pdf, (int) fip->pdfpage0objnum, OBJSTM_NEVER);
         pdf_begin_dict(pdf);
-        pdf_dict_add_int(pdf, "Length",
-                         getstreamlen(pip->segments.first, false));
+        pdf_dict_add_int(pdf, "Length", getstreamlen(pip->segments.first, false));
         pdf_end_dict(pdf);
     }
     pdf_begin_stream(pdf);
@@ -780,28 +760,43 @@ static void wr_jbig2(PDF pdf, image_dict * idict, FILEINFO * fip,
 }
 
 @ @c
+boolean supported_jbig2(image_dict * idict)
+{
+    if (img_pdfminorversion(idict) < 4) {
+        normal_error("readjbig2","you need to generate at least PDF 1.4");
+        return false;
+    } else {
+        return true;
+    }
+}
+
+@ @c
+void flush_jbig2_info(image_dict * idict)
+{
+    /* todo */
+}
+
+@ @c
 void read_jbig2_info(image_dict * idict)
 {
     FILEINFO *fip, tmp;
     PAGEINFO *pip;
-    void **aa;
-    assert(idict != NULL);
-    img_type(idict) = IMG_TYPE_JBIG2;
-    if (img_pagenum(idict) < 1)
-        luatex_fail
-            ("read_jbig2_info(): page %d not in JBIG2 image file; page must be > 0",
-             (int) img_pagenum(idict));
+    img_type(idict) = IMG_TYPE_JBIG2; /* already set probably, see other read_... */
+    if (! supported_jbig2(idict)) {
+        /* already an error done */
+    }
+    if (img_pagenum(idict) < 1) {
+        normal_error("readjbig2","page must be > 0");
+    }
     if (file_tree == NULL) {
         file_tree = avl_create(comp_file_entry, NULL, &avl_xallocator);
-        assert(file_tree != NULL);
     }
     tmp.filepath = img_filepath(idict);
     fip = (FILEINFO *) avl_find(file_tree, &tmp);
     if (fip == NULL) {
         fip = new_fileinfo();
         fip->filepath = xstrdup(img_filepath(idict));
-        aa = avl_probe(file_tree, fip);
-        assert(aa != NULL);
+        avl_probe(file_tree, fip);
     }
     if (fip->phase == INITIAL) {
         rd_jbig2_info(fip);
@@ -813,9 +808,9 @@ void read_jbig2_info(image_dict * idict)
         }
     }
     pip = find_pageinfo(&(fip->pages), (unsigned long) img_pagenum(idict));
-    if (pip == NULL)
-        luatex_fail("read_jbig2_info(): page %d not found in JBIG2 image file",
-                    (int) img_pagenum(idict));
+    if (pip == NULL) {
+        formatted_error("readjbig2","page %d not found in image file",(int) img_pagenum(idict));
+    }
     img_totalpages(idict) = (int) fip->numofpages;
     img_xsize(idict) = (int) pip->width;
     img_ysize(idict) = (int) pip->height;

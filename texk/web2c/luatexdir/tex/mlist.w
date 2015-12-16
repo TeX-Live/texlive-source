@@ -76,6 +76,7 @@ already apply that shift.
 #define script_space         dimen_par(script_space_code)
 #define disable_lig          int_par(disable_lig_code)
 #define disable_kern         int_par(disable_kern_code)
+#define disable_space        int_par(disable_space_code)
 #define scripts_mode         int_par(math_scripts_mode_code)
 
 #define nDEBUG
@@ -1571,7 +1572,7 @@ static void math_kern(pointer p, scaled m)
 }
 
 @ @c
-void run_mlist_to_hlist(halfword p, int mstyle, boolean penalties)
+void run_mlist_to_hlist(halfword p, boolean penalties, int mstyle)
 {
     int callback_id;
     int a, sfix;
@@ -1605,7 +1606,7 @@ void run_mlist_to_hlist(halfword p, int mstyle, boolean penalties)
         lua_settop(L, sfix);
         vlink(temp_head) = a;
     } else if (callback_id == 0) {
-        mlist_to_hlist_args(p, mstyle, penalties);
+        mlist_to_hlist(p, penalties, mstyle);
     } else {
         vlink(temp_head) = null;
     }
@@ -1644,7 +1645,7 @@ static pointer clean_box(pointer p, int s, int cur_style)
         q = new_null_box();
         goto FOUND;
     }
-    mlist_to_hlist_args(mlist, s, false);
+    mlist_to_hlist(mlist, false, s);
     q = vlink(temp_head); /* recursive call */
     setup_cur_size(cur_style);
   FOUND:
@@ -3758,7 +3759,7 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
         p = math_list(nucleus(q));
         break;
     case sub_mlist_node:
-        mlist_to_hlist_args(math_list(nucleus(q)), cur_style, false);   /* recursive call */
+        mlist_to_hlist(math_list(nucleus(q)), false, cur_style);   /* recursive call */
         setup_cur_size(cur_style);
         p = hpack(vlink(temp_head), 0, additional, -1);
         reset_attributes(p, node_attr(nucleus(q)));
@@ -3773,29 +3774,25 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
    local variables.
 
 @c
-static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
+void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
 {
-    pointer q;            /* runs through the mlist */
-    pointer r;            /* the most recent noad preceding |q| */
-    int style;
-    int r_type;           /* the |type| of noad |r|, or |op_noad| if |r=null| */
-    int r_subtype;        /* the |subtype| of noad |r| if |r_type| is |fence_noad| */
-    int t;                /* the effective |type| of noad |q| during the second pass */
-    int t_subtype;        /* the effective |subtype| of noad |q| during the second pass */
-    pointer p, x, y, z;   /* temporary registers for list construction */
-    int pen;              /* a penalty to be inserted */
-    scaled max_hl, max_d; /* maximum height and depth of the list translated so far */
-    scaled delta;         /* italic correction offset for subscript and superscript */
-    scaled cur_mu;        /* the math unit width corresponding to |cur_size| */
-    style = cur_style;    /* tuck global parameter away as local variable */
-    q = mlist;
-    r = null;
-    r_type = simple_noad;
+    pointer q = mlist;                    /* runs through the mlist */
+    pointer r = null;                     /* the most recent noad preceding |q| */
+    int style = cur_style;                /* tuck global parameter away as local variable */
+    int r_type = simple_noad;             /* the |type| of noad |r|, or |op_noad| if |r=null| */
+    int r_subtype = op_noad_type_normal;  /* the |subtype| of noad |r| if |r_type| is |fence_noad| */
+    int t;                                /* the effective |type| of noad |q| during the second pass */
+    int t_subtype;                        /* the effective |subtype| of noad |q| during the second pass */
+    pointer p = null;
+    pointer x = null;
+    pointer y = null;
+    pointer z = null;
+    int pen;                              /* a penalty to be inserted */
+    scaled max_hl = 0;                    /* maximum height of the list translated so far */
+    scaled max_d = 0;                     /* maximum depth of the list translated so far */
+    scaled delta;                         /* italic correction offset for subscript and superscript */
+    scaled cur_mu;                        /* the math unit width corresponding to |cur_size| */
     r_subtype = op_noad_type_normal;
-    max_hl = 0;
-    max_d = 0;
-    x = null;
-    p = null;
     setup_cur_size(cur_style);
     cur_mu = x_over_n(get_math_quad(cur_size), 18);
     while (q != null) {
@@ -4170,13 +4167,4 @@ static void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         reset_node_properties(r);
         free_node(r, get_node_size(type(r), subtype(r)));
     }
-}
-
-@ This used to be needed when |mlist_to_hlist| communicated via global
-variables.
-
-@c
-void mlist_to_hlist_args(pointer n, int w, boolean m)
-{
-    mlist_to_hlist(n, m, w);
 }

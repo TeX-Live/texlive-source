@@ -19,18 +19,17 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
-#define tail          cur_list.tail_field
+#define tail cur_list.tail_field
 
 void do_annot(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
 {
     scaled_whd alt_rule;
     int k;
     if (global_shipping_mode == SHIPPING_FORM)
-        normal_error("pdf backend", "annotations cannot be inside an XForm");
+        normal_error("pdf backend", "annotations cannot be inside an xform");
     if (doing_leaders)
         return;
     if (is_obj_scheduled(pdf, pdf_annot_objnum(p))) {
@@ -47,8 +46,8 @@ void do_annot(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
 }
 
 @ create a new whatsit node for annotation
-@c
-void new_annot_whatsit(small_number w)
+
+@c void new_annot_whatsit(small_number w)
 {
     scaled_whd alt_rule;
     new_whatsit(w);
@@ -58,7 +57,7 @@ void new_annot_whatsit(small_number w)
     set_depth(tail, alt_rule.dp);
     if ((w == pdf_thread_node) || (w == pdf_start_thread_node)) {
         if (scan_keyword("attr")) {
-            scan_pdf_ext_toks();
+            scan_toks(false, true);
             set_pdf_thread_attr(tail, def_ref);
         } else {
             set_pdf_thread_attr(tail, null);
@@ -66,8 +65,9 @@ void new_annot_whatsit(small_number w)
     }
 }
 
-@ @c
-void scan_annot(PDF pdf)
+@ scanning at the \TeX\ end
+
+@c void scan_annot(PDF pdf)
 {
     int k;
     if (scan_keyword("reserveobjnum")) {
@@ -89,7 +89,7 @@ void scan_annot(PDF pdf)
         new_annot_whatsit(pdf_annot_node);
         obj_annot_ptr(pdf, k) = tail;
         set_pdf_annot_objnum(tail, k);
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_annot_data(tail, def_ref);
     }
     pdf_last_annot = k;

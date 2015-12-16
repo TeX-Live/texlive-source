@@ -19,7 +19,6 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
@@ -59,8 +58,7 @@ void scan_direction(void)
 @c
 halfword do_push_dir_node(halfword p, halfword a)
 {
-    halfword n;
-    n = copy_node(a);
+    halfword n = copy_node(a);
     vlink(n) = p;
     return n;
 }
@@ -86,8 +84,7 @@ void initialize_directions(void)
 @ @c
 halfword new_dir(int s)
 {
-    halfword p;                 /* the new node */
-    p = new_node(dir_node, 0);
+    halfword p = new_node(dir_node, 0);
     dir_dir(p) = s;
     dir_dvi_ptr(p) = -1;
     dir_level(p) = cur_level;
@@ -150,10 +147,10 @@ scaled pack_width(int curdir, int pdir, halfword p, boolean isglyph)
         if (textdir_parallel(curdir, pdir) == textglyphdir_orthogonal(pdir)) {
             wd = glyph_width(p);
             if (ex_glyph(p) != 0) {
-	      //wd = round_xn_over_d(wd, 1000 + ex_glyph(p)/1000, 1000);
-	      wd = ext_xn_over_d(wd, 1000000+ex_glyph(p), 1000000);
+             /* wd = round_xn_over_d(wd, 1000 + ex_glyph(p)/1000, 1000); */
+                wd = ext_xn_over_d(wd, 1000000+ex_glyph(p), 1000000);
 
-	    }
+            }
         } else {
             wd = glyph_depth(p) + glyph_height(p);
         }
@@ -178,22 +175,20 @@ scaled_whd pack_width_height_depth(int curdir, int pdir, halfword p,
                 whd.ht = whd.dp = (glyph_height(p) + glyph_depth(p)) / 2;
             else
                 whd.ht = whd.dp = glyph_width(p) / 2;
+        } else if (is_rotated(pdir)) {
+            if (textdir_parallel(curdir, pdir))
+                whd.ht = whd.dp = (glyph_height(p) + glyph_depth(p)) / 2;
+            else
+                whd.ht = glyph_width(p);
         } else {
-            if (is_rotated(pdir)) {
-                if (textdir_parallel(curdir, pdir))
-                    whd.ht = whd.dp = (glyph_height(p) + glyph_depth(p)) / 2;
-                else
-                    whd.ht = glyph_width(p);
-            } else {
-                if (glyphdir_eq(curdir, pdir)) {
-                    whd.ht = glyph_height(p);
-                    whd.dp = glyph_depth(p);
-                } else if (glyphdir_opposite(curdir, pdir)) {
-                    whd.ht = glyph_depth(p);
-                    whd.dp = glyph_height(p);
-                } else
-                    whd.ht = glyph_width(p);
-            }
+            if (glyphdir_eq(curdir, pdir)) {
+                whd.ht = glyph_height(p);
+                whd.dp = glyph_depth(p);
+            } else if (glyphdir_opposite(curdir, pdir)) {
+                whd.ht = glyph_depth(p);
+                whd.dp = glyph_height(p);
+            } else
+                whd.ht = glyph_width(p);
         }
     } else {
         if (is_rotated(curdir)) {
@@ -201,16 +196,14 @@ scaled_whd pack_width_height_depth(int curdir, int pdir, halfword p,
                 whd.ht = whd.dp = (height(p) + depth(p)) / 2;
             else
                 whd.ht = whd.dp = width(p) / 2;
-        } else {
-            if (pardir_eq(curdir, pdir)) {
-                whd.ht = height(p);
-                whd.dp = depth(p);
-            } else if (pardir_opposite(curdir, pdir)) {
-                whd.ht = depth(p);
-                whd.dp = height(p);
-            } else
-                whd.ht = width(p);
-        }
+        } else if (pardir_eq(curdir, pdir)) {
+            whd.ht = height(p);
+            whd.dp = depth(p);
+        } else if (pardir_opposite(curdir, pdir)) {
+            whd.ht = depth(p);
+            whd.dp = height(p);
+        } else
+            whd.ht = width(p);
     }
     return whd;
 }

@@ -15,12 +15,12 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 
 #ifndef PDFLITERAL_H
 #  define PDFLITERAL_H
-
 
 #  define set_pdf_literal_mode(A,B) pdf_literal_mode(A)=B
 #  define set_pdf_literal_type(A,B) pdf_literal_type(A)=B

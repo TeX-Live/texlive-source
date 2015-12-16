@@ -21,7 +21,6 @@
 #ifndef MAINBODY_H
 #  define MAINBODY_H
 
-extern int luatex_svn;
 extern int luatex_version;
 extern int luatex_revision;
 extern int luatex_date_info;
@@ -218,7 +217,6 @@ is conditionally compiled in the C code.
 
 #  define fix_date_and_time() dateandtime(int_par(time_code),int_par(day_code),int_par(month_code),int_par(year_code))
 
-extern int get_luatexsvn(void);
 extern int get_luatexversion(void);
 extern str_number get_luatexrevision(void);
 extern int get_luatex_date_info(void);

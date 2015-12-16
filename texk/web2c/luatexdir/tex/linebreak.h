@@ -17,7 +17,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-
 #ifndef LINEBREAK_H
 #  define LINEBREAK_H
 
@@ -83,21 +82,20 @@ extern halfword find_protchar_right(halfword l, halfword r);
 )
 
 #  define cp_skipable(a) ( (! is_char_node((a))) && ( \
-     (type((a)) == ins_node) \
+    ((type((a)) == glue_node) && (glue_ptr((a)) == zero_glue)) \
+ ||  (type((a)) == penalty_node) \
+ || ((type((a)) == disc_node) && empty_disc(a)) \
+ || ((type((a)) == kern_node) && ((width((a)) == 0) || (subtype((a)) == normal))) \
+ || ((type((a)) == rule_node) && zero_dimensions(a)) \
+ || ((type((a)) == math_node) && (surround((a)) == 0)) \
+ ||  (type((a)) == dir_node) \
+ || ((type((a)) == hlist_node) && (list_ptr((a)) == null) && zero_dimensions(a)) \
+ ||  (type((a)) == local_par_node) \
+ ||  (type((a)) == ins_node) \
  ||  (type((a)) == mark_node) \
  ||  (type((a)) == adjust_node) \
- ||  (type((a)) == penalty_node) \
  ||  (type((a)) == boundary_node) \
  ||  (type((a)) == whatsit_node) \
- ||  (type((a)) == dir_node) \
- ||  (type((a)) == local_par_node) \
- || ((type((a)) == rule_node)  && zero_dimensions(a)) \
- || ((type((a)) == disc_node)  && empty_disc(a)) \
- || ((type((a)) == math_node)  && (surround((a)) == 0)) \
- || ((type((a)) == kern_node)  && ((width((a)) == 0) || (subtype((a)) == normal))) \
- || ((type((a)) == glue_node)  && (glue_ptr((a)) == zero_glue)) \
- || ((type((a)) == hlist_node) && (list_ptr((a)) == null) && zero_dimensions(a)) \
 ) )
-
 
 #endif

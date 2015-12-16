@@ -18,13 +18,14 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-
-
 #include "ptexlib.h"
 #include "pdf/pdfpage.h"
 
 @ @c
-void pdf_place_rule(PDF pdf, halfword q, scaledpos size)
+
+/* maybe we should have an extra callback on normal rules or on any rule in 2.0+ */
+
+void pdf_place_rule(PDF pdf, halfword q, scaledpos size, int callback_id)
 {
     pdfpos dim;
     pdfstructure *p = pdf->pstruct;
@@ -36,6 +37,14 @@ void pdf_place_rule(PDF pdf, halfword q, scaledpos size)
         pdf_place_image(pdf,q);
     } else if (subtype(q) == empty_rule) {
         /* place nothing, only take space */
+    } else if (subtype(q) == user_rule) {
+        if (callback_id != 0) {
+            pdf_goto_pagemode(pdf);
+            pdf_puts(pdf, "q\n");
+            pdf_set_pos_temp(pdf, pos);
+            run_callback(callback_id, "Ndd->",q,size.h,size.v);
+            pdf_puts(pdf, "\nQ\n");
+        }
     } else {
         /* normal_rule or >= 100 being a leader rule */
         pdf_goto_pagemode(pdf);

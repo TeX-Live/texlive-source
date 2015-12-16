@@ -44,7 +44,7 @@ static boolean get_selector_value(lua_State * L, int i, int *l)
             r = true;
         }
     } else if (t == LUA_TNUMBER) {
-        int n = lua_tonumber(L,i);
+        int n = lua_tointeger(L,i);
         if (file_can_be_written(n)) {
             *l = n;
             r = true;
@@ -71,7 +71,7 @@ static int do_texio_print(lua_State * L, texio_printer printfunction)
         if (get_selector_value(L, i, &selector))
             i++;
     }
-    if (selector != log_only && selector != term_only && selector != term_and_log) {
+    if (selector != term_and_log && selector != log_only && selector != term_only) {
         if (! valid_write_file(selector)) {
             normalize_selector();   /* sets selector */
         }
@@ -145,9 +145,16 @@ void flush_loggable_info(void)
     }
 }
 
+static int texio_setescape(lua_State * L)
+{
+    escape_controls = lua_tointeger(L,-1);
+    return 0 ;
+}
+
 static const struct luaL_Reg texiolib[] = {
     {"write", texio_print},
     {"write_nl", texio_printnl},
+    {"setescape", texio_setescape},
     {NULL, NULL}
 };
 

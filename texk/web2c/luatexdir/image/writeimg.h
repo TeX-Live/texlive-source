@@ -18,11 +18,10 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-
 #ifndef WRITEIMG_H
 #  define WRITEIMG_H
 
-#  include "dvi/dvigen.h"       /* for scaled_whd only */
+#  include "dvi/dvigen.h"
 #  include "image.h"
 #  include "pdf/pdfpage.h"
 
@@ -31,10 +30,9 @@ idict_entry *idict_array;
 
 void new_img_pdfstream_struct(image_dict *);
 image *new_image(void);
-/*void init_image_dict(image_dict *);*/
 image_dict *new_image_dict(void);
 void free_image_dict(image_dict * p);
-void read_img(PDF, image_dict *, int, int);
+void read_img(image_dict * p);
 void scan_pdfximage(PDF pdf);
 void scan_pdfrefximage(PDF pdf);
 scaled_whd tex_scale(scaled_whd nat, scaled_whd tex);
@@ -50,4 +48,4 @@ scaled_whd scan_alt_rule(void);
 size_t read_file_to_buf(PDF pdf, FILE * f, size_t len);
 void pdf_dict_add_img_filename(PDF pdf, image_dict * idict);
 
-#endif                          /* WRITEIMG_H */
+#endif

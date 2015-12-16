@@ -53,7 +53,7 @@ extern int hyphenate_string(struct tex_language *lang, char *w, char **ret);
 extern void new_hyphenation(halfword h, halfword t);
 extern void clear_patterns(struct tex_language *lang);
 extern void clear_hyphenation(struct tex_language *lang);
-extern const char *clean_hyphenation(const char *buffer, char **cleaned);
+extern const char *clean_hyphenation(int id, const char *buffer, char **cleaned);
 extern void hnj_hyphenation(halfword head, halfword tail);
 
 extern void set_pre_hyphen_char(int lan, int val);
@@ -82,6 +82,7 @@ extern void new_post_hyphen_char(void);
 extern void new_pre_exhyphen_char(void);
 extern void new_post_exhyphen_char(void);
 extern void new_hyphenation_min(void);
+extern void new_hj_code(void);
 
 
 #endif

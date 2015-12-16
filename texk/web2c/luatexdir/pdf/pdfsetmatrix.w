@@ -19,7 +19,6 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ stack for \.{\\pdfextension setmatrix}
@@ -38,34 +37,28 @@ boolean matrixused(void)
 static void matrix_stack_room(void)
 {
     matrix_entry *new_stack;
-
     if (matrix_stack_used >= matrix_stack_size) {
         matrix_stack_size += STACK_INCREMENT;
         new_stack = xtalloc((unsigned) matrix_stack_size, matrix_entry);
-        memcpy((void *) new_stack, (void *) matrix_stack,
-               (unsigned) matrix_stack_used * sizeof(matrix_entry));
+        memcpy((void *) new_stack, (void *) matrix_stack, (unsigned) matrix_stack_used * sizeof(matrix_entry));
         xfree(matrix_stack);
         matrix_stack = new_stack;
     }
 }
 
-@   \.{\\pdfextension setmatrix{a b c d}}
+@ \.{\\pdfextension setmatrix{a b c d}}
 
-    |e| := pos.h
+|e| := pos.h
 
-    |f| := pos.v
+|f| := pos.v
 
-    |M_top|: current active matrix at the top of
-           the matrix stack
+|M_top|: current active matrix at the top of the matrix stack
 
-    The origin of \.{\\pdfextension setmatrix} is the current point.
-    The annotation coordinate system is the original
-    page coordinate system. When pdfTeX calculates
-    annotation rectangles it does not take into
-    account this transformations, it uses the original
-    coordinate system. To get the corrected values,
-    first we go back to the origin, perform the
-    transformation and go back:
+The origin of \.{\\pdfextension setmatrix} is the current point. The annotation
+coordinate system is the original page coordinate system. When pdfTeX calculates
+annotation rectangles it does not take into account this transformations, it uses
+the original coordinate system. To get the corrected values, first we go back to
+the origin, perform the transformation and go back:
 
 {\obeylines\obeyspaces\tt
     (  1   0  0 )   ( a b 0 )   ( 1 0 0 )
@@ -84,15 +77,14 @@ static void matrix_stack_room(void)
 @c
 static void pdfsetmatrix(const char *in, scaledpos pos)
 {
-    /* Argument of \.{\\pdfextension setmatrix} starts with |str_pool[in]| and ends
-       before |str_pool[pool_ptr]|. */
-
+    /*
+        Argument of \.{\\pdfextension setmatrix} starts with |str_pool[in]| and ends
+        before |str_pool[pool_ptr]|.
+    */
     matrix_entry x, *y, *z;
-
     if (global_shipping_mode == SHIPPING_PAGE) {
-        if (sscanf((const char *) in, " %lf %lf %lf %lf ",
-                   &x.a, &x.b, &x.c, &x.d) != 4) {
-            luatex_warn("unrecognized format of setmatrix: {%s}", in);
+        if (sscanf((const char *) in, " %lf %lf %lf %lf ", &x.a, &x.b, &x.c, &x.d) != 4) {
+            formatted_warning("pdf backend","unrecognized format of setmatrix: %s", in);
             return;
         }
         /* calculate this transformation matrix */
@@ -130,8 +122,9 @@ static void pdfsetmatrix(const char *in, scaledpos pos)
 
 If \.{\\pdfextension setmatrix} wasn't used, then return the value unchanged.
 
+@ Return values for matrix tranform functions:
+
 @c
-/* Return values for matrix tranform functions */
 static scaled ret_llx;
 static scaled ret_lly;
 static scaled ret_urx;
@@ -181,7 +174,6 @@ static void do_matrixtransform(scaled x, scaled y, scaled * retx, scaled * rety)
 void matrixtransformrect(scaled llx, scaled lly, scaled urx, scaled ury)
 {
     scaled x1, x2, x3, x4, y1, y2, y3, y4;
-
     if (global_shipping_mode == SHIPPING_PAGE && matrix_stack_used > 0) {
         last_llx = llx;
         last_lly = lly;

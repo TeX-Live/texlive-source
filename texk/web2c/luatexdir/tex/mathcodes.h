@@ -1,5 +1,5 @@
 /* mathcodes.h
-   
+
    Copyright 2009-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -15,33 +15,30 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+*/
 
 #ifndef MATHCODES_H
 #  define MATHCODES_H
 
-/* mathcodes.c */
+/* this is a flag for |scan_delimiter| */
 
-#  define no_mathcode 0         /* this is a flag for |scan_delimiter| */
-#  define tex_mathcode 8
-#  define umath_mathcode 21
+#  define no_mathcode        0
+#  define tex_mathcode       8
+#  define umath_mathcode    21
 #  define umathnum_mathcode 22
 
 typedef struct mathcodeval {
     int class_value;
-    int origin_value;
     int family_value;
     int character_value;
 } mathcodeval;
 
-void set_math_code(int n,
-                   int commandorigin,
-                   int mathclass,
-                   int mathfamily, int mathcharacter, quarterword gl);
+void set_math_code(int n, int mathclass, int mathfamily, int mathcharacter, quarterword gl);
 
 mathcodeval get_math_code(int n);
-int get_math_code_num(int n, boolean compat);
+int get_math_code_num(int n);
 int get_del_code_num(int n);
 mathcodeval scan_mathchar(int extcode);
 mathcodeval scan_delimiter_as_mathchar(int extcode);
@@ -51,18 +48,13 @@ void show_mathcode_value(mathcodeval d);
 
 typedef struct delcodeval {
     int class_value;
-    int origin_value;
     int small_family_value;
     int small_character_value;
     int large_family_value;
     int large_character_value;
 } delcodeval;
 
-void set_del_code(int n,
-                  int commandorigin,
-                  int smathfamily,
-                  int smathcharacter,
-                  int lmathfamily, int lmathcharacter, quarterword gl);
+void set_del_code(int n, int smathfamily, int smathcharacter, int lmathfamily, int lmathcharacter, quarterword gl);
 
 delcodeval get_del_code(int n);
 

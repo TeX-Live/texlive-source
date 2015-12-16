@@ -19,18 +19,16 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
-@ Here we implement subroutines for work with objects and related things.
-Some of them are used in former parts too, so we need to declare them
-forward.
+@ Here we implement subroutines for work with objects and related things. Some of
+them are used in former parts too, so we need to declare them forward.
 
 @c
 void init_dest_names(PDF pdf)
 {
     pdf->dest_names_size = inf_dest_names_size;
-    pdf->dest_names = xmallocarray(dest_name_entry, inf_dest_names_size);       /* will grow dynamically */
+    pdf->dest_names = xmallocarray(dest_name_entry, inf_dest_names_size); /* will grow dynamically */
 }
 
 @ @c
@@ -38,44 +36,34 @@ void append_dest_name(PDF pdf, char *s, int n)
 {
     int a;
     if (pdf->dest_names_ptr == sup_dest_names_size)
-        overflow("number of destination names (dest_names_size)",
-                 (unsigned) pdf->dest_names_size);
+        overflow("number of destination names (dest_names_size)",(unsigned) pdf->dest_names_size);
     if (pdf->dest_names_ptr == pdf->dest_names_size) {
         a = pdf->dest_names_size / 5;
         if (pdf->dest_names_size < sup_dest_names_size - a)
             pdf->dest_names_size = pdf->dest_names_size + a;
         else
             pdf->dest_names_size = sup_dest_names_size;
-        pdf->dest_names =
-            xreallocarray(pdf->dest_names, dest_name_entry,
-                          (unsigned) pdf->dest_names_size);
+        pdf->dest_names = xreallocarray(pdf->dest_names, dest_name_entry, (unsigned) pdf->dest_names_size);
     }
     pdf->dest_names[pdf->dest_names_ptr].objname = xstrdup(s);
     pdf->dest_names[pdf->dest_names_ptr].objnum = n;
     pdf->dest_names_ptr++;
 }
 
-
 @ When a destination is created we need to check whether another destination
 with the same identifier already exists and give a warning if needed.
 
 @c
-void warn_dest_dup(int id, small_number byname, const char *s1, const char *s2)
+static void warn_dest_dup(int id, small_number byname)
 {
-    normal_warning(s1, "destination with the same identifier (", false, false);
     if (byname > 0) {
-        tprint("name");
-        print_mark(id);
+        char *ss = tokenlist_to_cstring(id, true, NULL);
+        formatted_warning("pdf backend", "ignoring duplicate destination with the name '%s'",ss);
     } else {
-        tprint("num");
-        print_int(id);
+        formatted_warning("pdf backend", "ignoring duplicate destination with the num '%d'",id);
     }
-    tprint(") ");
-    tprint(s2);
-    print_ln();
-    show_context();
+    /* no longer the annoying context */
 }
-
 
 @ @c
 void do_dest(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
@@ -84,13 +72,12 @@ void do_dest(PDF pdf, halfword p, halfword parent_box, scaledpos cur)
     scaled_whd alt_rule;
     int k;
     if (global_shipping_mode == SHIPPING_FORM)
-        normal_error("pdf backend", "destinations cannot be inside an XForm");
+        normal_error("pdf backend", "destinations cannot be inside an xform");
     if (doing_leaders)
         return;
     k = pdf_get_obj(pdf, obj_type_dest, pdf_dest_id(p), pdf_dest_named_id(p));
     if (obj_dest_ptr(pdf, k) != null) {
-        warn_dest_dup(pdf_dest_id(p), (small_number) pdf_dest_named_id(p),
-                      "pdf backend", "has been already used, duplicate ignored");
+        warn_dest_dup(pdf_dest_id(p), (small_number) pdf_dest_named_id(p));
         return;
     }
     obj_dest_ptr(pdf, k) = p;
@@ -149,50 +136,50 @@ void write_out_pdf_mark_destinations(PDF pdf)
                 pdf_begin_array(pdf);
                 pdf_add_ref(pdf, pdf->last_page);
                 switch (pdf_dest_type(i)) {
-                case pdf_dest_xyz:
-                    pdf_add_name(pdf, "XYZ");
-                    pdf_add_mag_bp(pdf, pdf_ann_left(i));
-                    pdf_add_mag_bp(pdf, pdf_ann_top(i));
-                    if (pdf_dest_xyz_zoom(i) == null) {
-                        pdf_add_null(pdf);
-                    } else {
-                        if (pdf->cave == 1)
-                            pdf_out(pdf, ' ');
-                        pdf_print_int(pdf, pdf_dest_xyz_zoom(i) / 1000);
-                        pdf_out(pdf, '.');
-                        pdf_print_int(pdf, (pdf_dest_xyz_zoom(i) % 1000));
-                        pdf->cave = 1;
-                    }
-                    break;
-                case pdf_dest_fit:
-                    pdf_add_name(pdf, "Fit");
-                    break;
-                case pdf_dest_fith:
-                    pdf_add_name(pdf, "FitH");
-                    pdf_add_mag_bp(pdf, pdf_ann_top(i));
-                    break;
-                case pdf_dest_fitv:
-                    pdf_add_name(pdf, "FitV");
-                    pdf_add_mag_bp(pdf, pdf_ann_left(i));
-                    break;
-                case pdf_dest_fitb:
-                    pdf_add_name(pdf, "FitB");
-                    break;
-                case pdf_dest_fitbh:
-                    pdf_add_name(pdf, "FitBH");
-                    pdf_add_mag_bp(pdf, pdf_ann_top(i));
-                    break;
-                case pdf_dest_fitbv:
-                    pdf_add_name(pdf, "FitBV");
-                    pdf_add_mag_bp(pdf, pdf_ann_left(i));
-                    break;
-                case pdf_dest_fitr:
-                    pdf_add_name(pdf, "FitR");
-                    pdf_add_rect_spec(pdf, i);
-                    break;
-                default:
-                    normal_error("pdf backend", "unknown dest type");
-                    break;
+                    case pdf_dest_xyz:
+                        pdf_add_name(pdf, "XYZ");
+                        pdf_add_bp(pdf, pdf_ann_left(i));
+                        pdf_add_bp(pdf, pdf_ann_top(i));
+                        if (pdf_dest_xyz_zoom(i) == null) {
+                            pdf_add_null(pdf);
+                        } else {
+                            if (pdf->cave == 1)
+                                pdf_out(pdf, ' ');
+                            pdf_print_int(pdf, pdf_dest_xyz_zoom(i) / 1000);
+                            pdf_out(pdf, '.');
+                            pdf_print_int(pdf, (pdf_dest_xyz_zoom(i) % 1000));
+                            pdf->cave = 1;
+                        }
+                        break;
+                    case pdf_dest_fit:
+                        pdf_add_name(pdf, "Fit");
+                        break;
+                    case pdf_dest_fith:
+                        pdf_add_name(pdf, "FitH");
+                        pdf_add_bp(pdf, pdf_ann_top(i));
+                        break;
+                    case pdf_dest_fitv:
+                        pdf_add_name(pdf, "FitV");
+                        pdf_add_bp(pdf, pdf_ann_left(i));
+                        break;
+                    case pdf_dest_fitb:
+                        pdf_add_name(pdf, "FitB");
+                        break;
+                    case pdf_dest_fitbh:
+                        pdf_add_name(pdf, "FitBH");
+                        pdf_add_bp(pdf, pdf_ann_top(i));
+                        break;
+                    case pdf_dest_fitbv:
+                        pdf_add_name(pdf, "FitBV");
+                        pdf_add_bp(pdf, pdf_ann_left(i));
+                        break;
+                    case pdf_dest_fitr:
+                        pdf_add_name(pdf, "FitR");
+                        pdf_add_rect_spec(pdf, i);
+                        break;
+                    default:
+                        normal_error("pdf backend", "unknown dest type");
+                        break;
                 }
                 pdf_end_array(pdf);
                 if (pdf_dest_named_id(i) > 0)
@@ -222,7 +209,7 @@ void scan_pdfdest(PDF pdf)
         set_pdf_dest_id(cur_list.tail_field, cur_val);
         set_pdf_dest_named_id(cur_list.tail_field, 0);
     } else if (scan_keyword("name")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_dest_id(cur_list.tail_field, def_ref);
         set_pdf_dest_named_id(cur_list.tail_field, 1);
     } else {
@@ -271,13 +258,10 @@ void scan_pdfdest(PDF pdf)
         k = find_obj(pdf, obj_type_dest, i, true);
         flush_str(i);
     } else {
-        k = find_obj(pdf, obj_type_dest, pdf_dest_id(cur_list.tail_field),
-                     false);
+        k = find_obj(pdf, obj_type_dest, pdf_dest_id(cur_list.tail_field), false);
     }
     if ((k != 0) && (obj_dest_ptr(pdf, k) != null)) {
-        warn_dest_dup(pdf_dest_id(cur_list.tail_field),
-                      (small_number) pdf_dest_named_id(cur_list.tail_field),
-                      "pdf backend", "has been already used, duplicate ignored");
+        warn_dest_dup(pdf_dest_id(cur_list.tail_field),(small_number) pdf_dest_named_id(cur_list.tail_field));
         flush_node_list(cur_list.tail_field);
         cur_list.tail_field = q;
         vlink(q) = null;
@@ -296,8 +280,7 @@ static int dest_cmp(const void *a, const void *b)
 @ @c
 void sort_dest_names(PDF pdf)
 {
-    qsort(pdf->dest_names, (size_t) pdf->dest_names_ptr,
-          sizeof(dest_name_entry), dest_cmp);
+    qsort(pdf->dest_names, (size_t) pdf->dest_names_ptr, sizeof(dest_name_entry), dest_cmp);
 }
 
 @ Output the name tree. The tree nature of the destination list forces the
@@ -309,18 +292,18 @@ pointers.
 int output_name_tree(PDF pdf)
 {
     boolean is_names = true;    /* flag for name tree output: is it Names or Kids? */
-    int b = 0, j, l;
     int k = 0;                  /* index of current child of |l|; if |k < pdf_dest_names_ptr|
                                    then this is pointer to |dest_names| array;
                                    otherwise it is the pointer to |obj_tab| (object number) */
-    int m;
+    int b = 0;
+    int m, j, l;
     int dests = 0;
-    int names_head = 0, names_tail = 0;
+    int names_head = 0;
+    int names_tail = 0;
     if (pdf->dest_names_ptr == 0) {
         goto DONE;
     }
     sort_dest_names(pdf);
-
     while (true) {
         do {
             l = pdf_create_obj(pdf, obj_type_others, 0);        /* create a new node */
@@ -385,7 +368,6 @@ int output_name_tree(PDF pdf)
             goto DONE;
         }
     }
-
   DONE:
     if ((dests != 0) || (pdf_names_toks != null)) {
         m = pdf_create_obj(pdf, obj_type_others, 0);

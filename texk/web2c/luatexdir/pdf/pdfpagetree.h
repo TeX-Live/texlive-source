@@ -15,8 +15,8 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PAGETREE_H
 #  define PAGETREE_H
@@ -25,4 +25,4 @@ int output_pages_tree(PDF);
 int pdf_do_page_divert(PDF, int, int);
 void pdf_do_page_undivert(int, int);
 
-#endif                          /* PAGETREE_H */
+#endif

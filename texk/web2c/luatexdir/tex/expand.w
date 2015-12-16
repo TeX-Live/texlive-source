@@ -221,13 +221,22 @@ void expand(void)
             break;
         case cs_name_cmd:
             /* Manufacture a control sequence name; */
-            manufacture_csname();
+            if (cur_chr == 0) {
+                manufacture_csname(0);
+            } else if (cur_chr == 1) {
+                inject_last_tested_cs();
+            } else {
+                manufacture_csname(1);
+            }
             break;
         case convert_cmd:
             conv_toks();        /* this procedure is discussed in Part 27 below */
             break;
         case the_cmd:
             ins_the_toks();     /* this procedure is discussed in Part 27 below */
+            break;
+        case combine_toks_cmd:
+            combine_the_toks(cur_chr);
             break;
         case if_test_cmd:
             conditional();      /* this procedure is discussed in Part 28 below */
@@ -320,7 +329,7 @@ void complain_missing_csname(void)
 }
 
 @ @c
-void manufacture_csname(void)
+void manufacture_csname(boolean use)
 {
     halfword p, q, r;
     lstring *ss;
@@ -339,22 +348,50 @@ void manufacture_csname(void)
     /* Look up the characters of list |r| in the hash table, and set |cur_cs| */
     ss = tokenlist_to_lstring(r, true);
     is_in_csname -= 1;
-    if (ss->l > 0) {
-        no_new_control_sequence = false;
-        cur_cs = string_lookup((char *) ss->s, ss->l);
-        no_new_control_sequence = true;
+    if (use) {
+        if (ss->l > 0) {
+            cur_cs = string_lookup((char *) ss->s, ss->l);
+        } else {
+            cur_cs = null_cs;
+        }
+        last_cs_name = cur_cs ;
+        free_lstring(ss);
+        flush_list(r);
+        if (cur_cs == null_cs) {
+            /* skip */
+        } else if (eq_type(cur_cs) == undefined_cs_cmd) {
+            /* skip */
+        } else {
+            cur_tok = cur_cs + cs_token_flag;
+            back_input();
+        }
     } else {
-        cur_cs = null_cs;       /* the list is empty */
+        if (ss->l > 0) {
+            no_new_control_sequence = false;
+            cur_cs = string_lookup((char *) ss->s, ss->l);
+            no_new_control_sequence = true;
+        } else {
+            cur_cs = null_cs;       /* the list is empty */
+        }
+        last_cs_name = cur_cs ;
+        free_lstring(ss);
+        flush_list(r);
+        if (eq_type(cur_cs) == undefined_cs_cmd) {
+            eq_define(cur_cs, relax_cmd, too_big_char);     /* N.B.: The |save_stack| might change */
+        };                          /* the control sequence will now match `\.{\\relax}' */
+        cur_tok = cur_cs + cs_token_flag;
+        back_input();
     }
-    free_lstring(ss);
-    flush_list(r);
-    if (eq_type(cur_cs) == undefined_cs_cmd) {
-        eq_define(cur_cs, relax_cmd, too_big_char);     /* N.B.: The |save_stack| might change */
-    };                          /* the control sequence will now match `\.{\\relax}' */
-    cur_tok = cur_cs + cs_token_flag;
-    back_input();
 }
 
+void inject_last_tested_cs(void)
+{
+    if (last_cs_name != null_cs) {
+        cur_cs = last_cs_name;
+        cur_tok = last_cs_name + cs_token_flag;
+        back_input();
+    }
+}
 
 @ Sometimes the expansion looks too far ahead, so we want to insert
 a harmless \.{\\relax} into the user's input.
@@ -378,7 +415,7 @@ common cases.
 void get_x_token(void)
 {                               /* sets |cur_cmd|, |cur_chr|, |cur_tok|,  and expands macros */
   RESTART:
-    get_next(); /* get_token_lua(); */
+    get_next();
     if (cur_cmd <= max_command_cmd)
         goto DONE;
     if (cur_cmd >= call_cmd) {
@@ -409,7 +446,7 @@ void x_token(void)
 {                               /* |get_x_token| without the initial |get_next| */
     while (cur_cmd > max_command_cmd) {
         expand();
-        get_next(); /* get_token_lua(); */
+        get_next();
    }
     if (cur_cs == 0)
         cur_tok = token_val(cur_cmd, cur_chr);
@@ -750,9 +787,10 @@ void macro_call(void)
     /* Before we put a new token list on the input stack, it is wise to clean off
        all token lists that have recently been depleted. Then a user macro that ends
        with a call to itself will not require unbounded stack space. */
-    while ((istate == token_list) && (iloc == null)
-           && (token_type != v_template))
-        end_token_list();       /* conserve stack space */
+    while ((istate == token_list) && (iloc == null) && (token_type != v_template)) {
+        /* conserve stack space */
+        end_token_list();
+    }
     begin_token_list(ref_count, macro);
     iname = warning_index;
     iloc = token_link(r);

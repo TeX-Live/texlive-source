@@ -1,5 +1,5 @@
 /* inputstack.h
-   
+
    Copyright 2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -24,7 +24,7 @@
 /*
   The state of \TeX's input mechanism appears in the input stack, whose
   entries are records with six fields, called |state|, |index|, |start|, |loc|,
-  |limit|, and |name|. 
+  |limit|, and |name|.
 */
 
 typedef struct in_state_record {
@@ -273,7 +273,7 @@ the text expansion of a \.{\\count} or similar variable;
 \yskip\noindent
 The codes for |output_text|, |every_par_text|, etc., are equal to a constant
 plus the corresponding codes for token list parameters |output_routine_loc|,
-|every_par_loc|, etc.  
+|every_par_loc|, etc.
 
 The token list begins with a reference count if and
 only if |token_type>=macro|.
@@ -319,18 +319,13 @@ extern int base_ptr;
 extern void show_context(void);
 extern void set_trick_count(void);
 
-/* leave an input level, re-enter the old */
-#  define pop_input() cur_input=input_stack[--input_ptr]
-
-extern void push_input(void);
-
 #  define back_list(A) begin_token_list(A,backed_up)    /* backs up a simple token list */
 #  define ins_list(A) begin_token_list(A,inserted)      /* inserts a simple token list */
 
 extern void begin_token_list(halfword p, quarterword t);
 extern void end_token_list(void);
 extern void back_input(void);
-extern int reinsert_token(boolean a, halfword pp);
+extern void reinsert_token(boolean a, halfword pp);
 extern void begin_file_reading(void);
 extern void end_file_reading(void);
 extern void clear_for_error_prompt(void);

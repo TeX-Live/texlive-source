@@ -1,6 +1,33 @@
 
 This file is in the public domain.
 
+
+
+
+Upcoming LuaTeX Release 0.86
+
+(major changes)
+
+- image data no longer stored in format (was fragile anyway)
+- pdf backend data no longer stored in format
+
+- (incomplete) \mag support removed from pdf backend (kept in dvi mode)
+
+- all kind of (efficiency) improvements
+- some pending issues done (behind the screens)
+
+- \nospace=1 will not inject glue for spaces (not even zero glue)
+- \nospace=2 will inject zero glue for spaces
+
+- no longer keep track of older math character and delimiter definition states
+
+- only ^^ ^^^^XXXX ^^^^^^XXXXXX supported
+- texio.setescape(0) disables escaping to terminal
+
+- lc codes saved with language
+
+
+
 ==============================================================
 Luatex beta-0.85.0 was released 2015111400 (5550)
 ==============================================================
@@ -2564,7 +2591,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5550 2015-11-19 13:23:59Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5624 2015-12-15 21:49:14Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

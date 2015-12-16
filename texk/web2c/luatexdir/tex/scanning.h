@@ -15,8 +15,9 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+*/
 
 #ifndef SCANNING_H
 #  define SCANNING_H
@@ -42,7 +43,6 @@ extern int cur_val_level;       /* the ``level'' of this value */
 extern void scan_something_simple(halfword cmd, halfword subitem);
 extern void scan_something_internal(int level, boolean negative);
 
-
 extern void scan_limited_int(int max, const char *name);
 
 #  define scan_register_num() scan_limited_int(65535,"register code")
@@ -57,17 +57,15 @@ extern void scan_limited_int(int max, const char *name);
 extern void scan_fifteen_bit_int(void);
 extern void scan_fifty_one_bit_int(void);
 
-#  define octal_token (other_token+'\'')        /* apostrophe, indicates an octal constant */
-#  define hex_token (other_token+'"')   /* double quote, indicates a hex constant */
-#  define alpha_token (other_token+'`') /* reverse apostrophe, precedes alpha constants */
-#  define point_token (other_token+'.') /* decimal point */
-#  define continental_point_token (other_token+',')     /* decimal point, Eurostyle */
-#  define infinity 017777777777 /* the largest positive value that \TeX\ knows */
-#  define zero_token (other_token+'0')  /* zero, the smallest digit */
-#  define A_token (letter_token+'A')    /* the smallest special hex digit */
-#  define other_A_token (other_token+'A')
-                                        /* special hex digit of type |other_char| */
-
+#  define octal_token (other_token+'\'')            /* apostrophe, indicates an octal constant */
+#  define hex_token (other_token+'"')               /* double quote, indicates a hex constant */
+#  define alpha_token (other_token+'`')             /* reverse apostrophe, precedes alpha constants */
+#  define point_token (other_token+'.')             /* decimal point */
+#  define continental_point_token (other_token+',') /* decimal point, Eurostyle */
+#  define infinity 017777777777                     /* the largest positive value that \TeX\ knows */
+#  define zero_token (other_token+'0')              /* zero, the smallest digit */
+#  define A_token (letter_token+'A')                /* the smallest special hex digit */
+#  define other_A_token (other_token+'A')           /* special hex digit of type |other_char| */
 extern int radix;
 
 extern void scan_int(void);
@@ -94,15 +92,13 @@ extern void scan_general_text(void);
 extern void get_x_or_protected(void);
 extern halfword scan_toks(boolean macrodef, boolean xpand);
 
-
 extern void scan_normal_glue(void);
 extern void scan_mu_glue(void);
 
-extern int add_or_sub(int x, int y, int max_answer, boolean negative);
-extern int quotient(int n, int d);
+/* extern int add_or_sub(int x, int y, int max_answer, boolean negative); */
+/* extern int quotient(int n, int d); */
 extern int fract(int x, int n, int d, int max_answer);
-extern void scan_expr(void);
 
-
+/* extern void scan_expr(void); */
 
 #endif

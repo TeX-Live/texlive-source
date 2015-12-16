@@ -73,14 +73,14 @@ void scan_pdfxform(PDF pdf)
     k = pdf_create_obj(pdf, obj_type_xform, pdf->xform_count);
     set_obj_data_ptr(pdf, k, pdf_get_mem(pdf, pdfmem_xform_size));
     if (scan_keyword("attr")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_obj_xform_attr(pdf, k, def_ref);
     } else {
         set_obj_xform_attr(pdf, k, null);
     }
     set_obj_xform_attr_str(pdf, k, null);
     if (scan_keyword("resources")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_obj_xform_resources(pdf, k, def_ref);
     } else {
         set_obj_xform_resources(pdf, k, null);

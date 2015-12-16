@@ -32,7 +32,6 @@ problematic |if 0 != null|.
 
 @c
 
-
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
 
@@ -96,6 +95,7 @@ int new_font(void)
     int k;
     int id;
     charinfo *ci;
+    sa_tree_item sa_value = { 0 };
     id = new_font_id();
     font_bytes += (int) sizeof(texfont);
     /* most stuff is zero */
@@ -125,8 +125,7 @@ int new_font(void)
         set_font_param(id, k, 0);
     }
     /* character info zero is reserved for notdef */
-    font_tables[id]->characters = new_sa_tree(1, 0);    /* stack size 1, default item value 0 */
-
+    font_tables[id]->characters = new_sa_tree(1, 1, sa_value);    /* stack size 1, default item value 0 */
     ci = xcalloc(1, sizeof(charinfo));
     set_charinfo_name(ci, xstrdup(".notdef"));
     font_tables[id]->charinfo = ci;
@@ -148,23 +147,24 @@ void font_malloc_charinfo(internal_font_number f, int num)
 }
 
 @ @c
-#define find_charinfo_id(f,c) get_sa_item(font_tables[f]->characters,c)
+#define find_charinfo_id(f,c) (get_sa_item(font_tables[f]->characters,c).int_value)
 
 charinfo *get_charinfo(internal_font_number f, int c)
 {
-    sa_tree_item glyph;
+    int glyph;
     charinfo *ci;
     if (proper_char_index(c)) {
-        glyph = get_sa_item(font_tables[f]->characters, c);
+        glyph = get_sa_item(font_tables[f]->characters, c).int_value;
         if (!glyph) {
-
+            sa_tree_item sa_value = { 0 };
             int tglyph = ++font_tables[f]->charinfo_count;
             if (tglyph >= font_tables[f]->charinfo_size) {
                 font_malloc_charinfo(f, 256);
             }
             font_tables[f]->charinfo[tglyph].ef = 1000; /* init */
-            set_sa_item(font_tables[f]->characters, c, (sa_tree_item) tglyph, 1);       /* 1= global */
-            glyph = (sa_tree_item) tglyph;
+            sa_value.int_value = tglyph;
+            set_sa_item(font_tables[f]->characters, c, sa_value, 1); /* 1 = global */
+            glyph = tglyph;
         }
         return &(font_tables[f]->charinfo[glyph]);
     } else if (c == left_boundarychar) {
@@ -188,13 +188,13 @@ charinfo *get_charinfo(internal_font_number f, int c)
 @ @c
 static void set_charinfo(internal_font_number f, int c, charinfo * ci)
 {
-    sa_tree_item glyph;
+    int glyph;
     if (proper_char_index(c)) {
-        glyph = get_sa_item(font_tables[f]->characters, c);
+        glyph = get_sa_item(font_tables[f]->characters, c).int_value;
         if (glyph) {
             font_tables[f]->charinfo[glyph] = *ci;
         } else {
-            luatex_fail("font: %s", "character insertion failed");
+            normal_error("font","character insertion failed");
         }
     } else if (c == left_boundarychar) {
         set_left_boundary(f, ci);
@@ -259,13 +259,10 @@ charinfo *copy_charinfo(charinfo * ci)
 
     /* horizontal and vertical extenders */
     if (get_charinfo_vert_variants(ci) != NULL) {
-        set_charinfo_vert_variants(co,
-                                   copy_variants(get_charinfo_vert_variants
-                                                 (ci)));
+        set_charinfo_vert_variants(co, copy_variants(get_charinfo_vert_variants(ci)));
     }
     if (get_charinfo_hor_variants(ci) != NULL) {
-        set_charinfo_hor_variants(co,
-                                  copy_variants(get_charinfo_hor_variants(ci)));
+        set_charinfo_hor_variants(co, copy_variants(get_charinfo_hor_variants(ci)));
     }
     x = ci->top_left_math_kerns;
     co->top_left_math_kerns = x;
@@ -273,10 +270,8 @@ charinfo *copy_charinfo(charinfo * ci)
         co->top_left_math_kern_array =
             xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
         for (k = 0; k < co->top_left_math_kerns; k++) {
-            co->top_left_math_kern_array[(2 * k)] =
-                ci->top_left_math_kern_array[(2 * k)];
-            co->top_left_math_kern_array[(2 * k) + 1] =
-                ci->top_left_math_kern_array[(2 * k) + 1];
+            co->top_left_math_kern_array[(2 * k)] = ci->top_left_math_kern_array[(2 * k)];
+            co->top_left_math_kern_array[(2 * k) + 1] = ci->top_left_math_kern_array[(2 * k) + 1];
         }
     }
     x = ci->top_right_math_kerns;
@@ -285,10 +280,8 @@ charinfo *copy_charinfo(charinfo * ci)
         co->top_right_math_kern_array =
             xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
         for (k = 0; k < co->top_right_math_kerns; k++) {
-            co->top_right_math_kern_array[(2 * k)] =
-                ci->top_right_math_kern_array[(2 * k)];
-            co->top_right_math_kern_array[(2 * k) + 1] =
-                ci->top_right_math_kern_array[(2 * k) + 1];
+            co->top_right_math_kern_array[(2 * k)] = ci->top_right_math_kern_array[(2 * k)];
+            co->top_right_math_kern_array[(2 * k) + 1] = ci->top_right_math_kern_array[(2 * k) + 1];
         }
     }
     x = ci->bottom_right_math_kerns;
@@ -297,10 +290,8 @@ charinfo *copy_charinfo(charinfo * ci)
         co->bottom_right_math_kern_array =
             xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
         for (k = 0; k < co->bottom_right_math_kerns; k++) {
-            co->bottom_right_math_kern_array[(2 * k)] =
-                ci->bottom_right_math_kern_array[(2 * k)];
-            co->bottom_right_math_kern_array[(2 * k) + 1] =
-                ci->bottom_right_math_kern_array[(2 * k) + 1];
+            co->bottom_right_math_kern_array[(2 * k)] = ci->bottom_right_math_kern_array[(2 * k)];
+            co->bottom_right_math_kern_array[(2 * k) + 1] = ci->bottom_right_math_kern_array[(2 * k) + 1];
         }
     }
     x = ci->bottom_left_math_kerns;
@@ -309,14 +300,10 @@ charinfo *copy_charinfo(charinfo * ci)
         co->bottom_left_math_kern_array =
             xmalloc((unsigned) (2 * (int) sizeof(scaled) * x));
         for (k = 0; k < co->bottom_left_math_kerns; k++) {
-            co->bottom_left_math_kern_array[(2 * k)] =
-                ci->bottom_left_math_kern_array[(2 * k)];
-            co->bottom_left_math_kern_array[(2 * k) + 1] =
-                ci->bottom_left_math_kern_array[(2 * k) + 1];
+            co->bottom_left_math_kern_array[(2 * k)] = ci->bottom_left_math_kern_array[(2 * k)];
+            co->bottom_left_math_kern_array[(2 * k) + 1] = ci->bottom_left_math_kern_array[(2 * k) + 1];
         }
     }
-
-
     return co;
 }
 
@@ -375,8 +362,8 @@ static int lua_char_exists_callback(internal_font_number f, int c)
             lua_pop(L, 2);
             return 0;
         }
-        lua_pushnumber(L, f);
-        lua_pushnumber(L, c);
+        lua_pushinteger(L, f);
+        lua_pushinteger(L, c);
         if (lua_pcall(L, 2, 1, 0) != 0) {       /* two args, 1 result */
             fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
             lua_pop(L, 2);
@@ -497,7 +484,6 @@ extinfo *copy_variants(extinfo * o)
 
     return h;
 }
-
 
 @ @c
 static void dump_charinfo_variants(extinfo * o)
@@ -1098,7 +1084,6 @@ void set_font_math_params(internal_font_number f, int b)
     }
 }
 
-
 @ @c
 int copy_font(int f)
 {
@@ -1358,7 +1343,6 @@ void set_tag_code(internal_font_number f, int c, int i)
     }
 }
 
-
 @ @c
 void set_lp_code(internal_font_number f, int c, int i)
 {
@@ -1392,10 +1376,8 @@ void set_no_ligatures(internal_font_number f)
 {
     int c;
     charinfo *co;
-
     if (font_tables[f]->ligatures_disabled)
         return;
-
     co = char_info(f, left_boundarychar);
     set_charinfo_ligatures(co, NULL);
     co = char_info(f, right_boundarychar);      /* this is weird */
@@ -1410,7 +1392,7 @@ void set_no_ligatures(internal_font_number f)
 @ @c
 liginfo get_ligature(internal_font_number f, int lc, int rc)
 {
-    int k;
+    int k = 0;
     liginfo t, u;
     charinfo *co;
     t.lig = 0;
@@ -1418,7 +1400,6 @@ liginfo get_ligature(internal_font_number f, int lc, int rc)
     t.adj = 0;
     if (lc == non_boundarychar || rc == non_boundarychar || (!has_lig(f, lc)))
         return t;
-    k = 0;
     co = char_info(f, lc);
     while (1) {
         u = charinfo_ligature(co, k);
@@ -1436,16 +1417,14 @@ liginfo get_ligature(internal_font_number f, int lc, int rc)
     return t;
 }
 
-
 @ @c
 scaled raw_get_kern(internal_font_number f, int lc, int rc)
 {
-    int k;
+    int k = 0;
     kerninfo u;
     charinfo *co;
     if (lc == non_boundarychar || rc == non_boundarychar)
         return 0;
-    k = 0;
     co = char_info(f, lc);
     while (1) {
         u = charinfo_kern(co, k);
@@ -1461,7 +1440,6 @@ scaled raw_get_kern(internal_font_number f, int lc, int rc)
     }
     return 0;
 }
-
 
 @ @c
 scaled get_kern(internal_font_number f, int lc, int rc)
@@ -1715,12 +1693,14 @@ static int undump_charinfo(int f)
     return i;
 }
 
-#define undump_font_string(a)   undump_int (x);		\
-    if (x>0) {						\
-	font_bytes += x;				\
-    s = xmalloc((unsigned)x); undump_things(*s,x);	\
-    a(f,s); }
-
+#define undump_font_string(a) \
+    undump_int (x); \
+    if (x>0) { \
+        font_bytes += x; \
+        s = xmalloc((unsigned)x); \
+        undump_things(*s,x); \
+        a(f,s); \
+    }
 
 static void undump_font_entry(texfont * f)
 {
@@ -1759,14 +1739,13 @@ static void undump_font_entry(texfont * f)
     /* *INDENT-ON* */
 }
 
-
-
 void undump_font(int f)
 {
     int x, i;
     texfont *tt;
     charinfo *ci;
     char *s;
+    sa_tree_item sa_value = { 0 };
     grow_font_table(f);
     tt = xmalloc(sizeof(texfont));
     memset(tt, 0, sizeof(texfont));
@@ -1796,18 +1775,19 @@ void undump_font(int f)
         undump_things(*math_param_base(f), (font_math_params(f) + 1));
     }
 
-    font_tables[f]->characters = new_sa_tree(1, 0);     /* stack size 1, default item value 0 */
+    /* stack size 1, default item value 0 */
+    font_tables[f]->characters = new_sa_tree(1, 1, sa_value);
     ci = xcalloc(1, sizeof(charinfo));
     set_charinfo_name(ci, xstrdup(".notdef"));
     font_tables[f]->charinfo = ci;
     undump_int(x);
     if (x) {
-        i = undump_charinfo(f);
-    }                           /* left boundary */
+        i = undump_charinfo(f); /* left boundary */
+    }
     undump_int(x);
     if (x) {
-        i = undump_charinfo(f);
-    }                           /* right boundary */
+        i = undump_charinfo(f); /* right boundary */
+    }
 
     i = font_bc(f);
     while (i < font_ec(f)) {
@@ -1939,7 +1919,7 @@ void read_expand_font(void)
             normal_error("font expansion","font has been expanded with different auto expansion value");
     } else {
         if (font_used(f))
-            normal_warning("font expansion", "font should be expanded before its first use", true, true);
+            normal_warning("font expansion", "font should be expanded before its first use");
         set_expand_params(f, auto_expand, stretch_limit, shrink_limit,
                           font_step);
     }
@@ -1997,14 +1977,13 @@ void make_font_copy(small_number a)
 void glyph_to_unicode(void)
 {
     str_number s1, s2;
-    scan_pdf_ext_toks();
+    scan_toks(false, true);
     s1 = tokens_to_string(def_ref);
     delete_token_ref(def_ref);
-    scan_pdf_ext_toks();
+    scan_toks(false, true);
     s2 = tokens_to_string(def_ref);
     delete_token_ref(def_ref);
     def_tounicode(s1, s2);
     flush_str(s2);
     flush_str(s1);
 }
-

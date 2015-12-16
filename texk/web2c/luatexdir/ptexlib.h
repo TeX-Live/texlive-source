@@ -80,7 +80,7 @@ extern char **suffixlist;       /* in luainit.w */
 
 #  define check_buf(size, buf_size)                                 \
   if ((unsigned)(size) > (unsigned)(buf_size))                      \
-    luatex_fail("buffer overflow: %d > %d at file %s, line %d",     \
+    formatted_error("internal","buffer overflow: %d > %d at file %s, line %d",     \
                 (int)(size), (int)(buf_size), __FILE__,  __LINE__ )
 
 #  define append_char_to_buf(c, p, buf, buf_size) do { \
@@ -178,7 +178,6 @@ size_t          T##_limit
 #  include "pdf/pdflink.h"
 #  include "pdf/pdflistout.h"
 #  include "pdf/pdfliteral.h"
-#  include "pdf/pdfluaapi.h"
 #  include "pdf/pdfobj.h"
 #  include "pdf/pdfoutline.h"
 #  include "pdf/pdfrule.h"
@@ -188,9 +187,6 @@ size_t          T##_limit
 #  include "pdf/pdfthread.h"
 #  include "pdf/pdfxform.h"
 
-#  include "lua/luagen.h"
-
-#  include "luascripts/pdflua.h"
 
 #  include "font/luatexfont.h"
 #  include "font/mapfile.h"
@@ -236,9 +232,6 @@ size_t          T##_limit
 /**********************************************************************/
 
 #  include "tex/filename.h"
-
-/* lua/luainit.c */
-extern void write_svnversion(char *a);
 
 /**********************************************************************/
 
@@ -288,9 +281,6 @@ int luacstring_input(void);
 int luacstring_partial(void);
 int luacstring_final_line(void);
 
-/* lua/luatoken.c */
-void do_get_token_lua(int callback_id);
-
 /* lua/luanode.c */
 int visible_last_node_type(int n);
 void print_node_mem_stats(void);
@@ -326,7 +316,6 @@ extern boolean get_callback(lua_State * L, int i);
 /* test whether a char in font is marked */
 #  define pdf_char_marked char_used
 
-#  define pdfassert assert
 #  define voidcast(a) (void *)(a)
 #  define fixmemcast(a) (smemory_word *)(a)
 

@@ -19,15 +19,13 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
 void pdf_special(PDF pdf, halfword p)
 {
-    int old_setting;            /* holds print |selector| */
+    int old_setting = selector;
     str_number s;
-    old_setting = selector;
     selector = new_string;
     show_token_list(token_link(write_tokens(p)), null, -1);
     selector = old_setting;
@@ -36,11 +34,10 @@ void pdf_special(PDF pdf, halfword p)
     flush_str(s);
 }
 
-
 @ To ship out a \TeX\ box to PDF page description we need to implement
-|hlist_out|, |vlist_out| and |ship_out|, which are equivalent to
-the \TeX' original |hlist_out|, |vlist_out| and |ship_out| resp. But first we
-need to declare some procedures needed in |hlist_out| and |vlist_out|.
+|hlist_out|, |vlist_out| and |ship_out|, which are equivalent to the \TeX'
+original |hlist_out|, |vlist_out| and |ship_out| resp. But first we need to
+declare some procedures needed in |hlist_out| and |vlist_out|.
 
 @c
 void pdf_out_literal(PDF pdf, halfword p)
@@ -57,22 +54,21 @@ void pdf_out_literal(PDF pdf, halfword p)
         pdf_literal(pdf, s, pdf_literal_mode(p), false);
         flush_str(s);
     } else {
-        assert(pdf_literal_mode(p) != scan_special);
         switch (pdf_literal_mode(p)) {
-        case set_origin:
-            pdf_goto_pagemode(pdf);
-            pdf_set_pos(pdf, pdf->posstruct->pos);
-            break;
-        case direct_page:
-            pdf_goto_pagemode(pdf);
-            break;
-        case direct_always:
-            pdf_end_string_nl(pdf);
-            ps->need_tm = true;
-            break;
-        default:
-            confusion("literal1");
-            break;
+            case set_origin:
+                pdf_goto_pagemode(pdf);
+                pdf_set_pos(pdf, pdf->posstruct->pos);
+                break;
+            case direct_page:
+                pdf_goto_pagemode(pdf);
+                break;
+            case direct_always:
+                pdf_end_string_nl(pdf);
+                ps->need_tm = true;
+                break;
+            default:
+                normal_error("pdf backend","bad literal mode");
+                break;
         }
         lua_pdf_literal(pdf, pdf_literal_data(p));
     }
@@ -101,7 +97,8 @@ void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
     size_t l;
     pool_pointer j = 0;         /* current character code position, initialized to make the compiler happy */
     pdfstructure *p = pdf->pstruct;
-    if (s >= STRING_OFFSET) {   /* needed for |out_save| */
+    if (s >= STRING_OFFSET) {
+        /* needed for |out_save| */
         j = 0;
         /* the next is obsolete, in fact, specials are obsolete in pdf mode */
         if (literal_mode == scan_special) {
@@ -123,27 +120,26 @@ void pdf_literal(PDF pdf, str_number s, int literal_mode, boolean warn)
         }
     }
     switch (literal_mode) {
-    case set_origin:
-        pdf_goto_pagemode(pdf);
-        pdf_set_pos(pdf, pdf->posstruct->pos);
-        break;
-    case direct_page:
-        pdf_goto_pagemode(pdf);
-        break;
-    case direct_always:
-        pdf_end_string_nl(pdf);
-        p->need_tm = true;
-        break;
-    default:
-        confusion("literal1");
-        break;
+        case set_origin:
+            pdf_goto_pagemode(pdf);
+            pdf_set_pos(pdf, pdf->posstruct->pos);
+            break;
+        case direct_page:
+            pdf_goto_pagemode(pdf);
+            break;
+        case direct_always:
+            pdf_end_string_nl(pdf);
+            p->need_tm = true;
+            break;
+        default:
+            normal_error("pdf backend","bad literal mode");
+            break;
     }
     if (s >= STRING_OFFSET) {
         ss = str_string(s);
         l = str_length(s) - (size_t) j;
         pdf_out_block(pdf, (const char *) (ss + j), l);
     } else {
-        assert(s < 256);
         pdf_out(pdf, s);
     }
     pdf_out(pdf, '\n');

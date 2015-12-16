@@ -96,19 +96,21 @@
 
 @ go out \.{VF} processing with an error message
 @c
-#define bad_vf(a) { xfree(vf_buffer); print_nlp();  \
-    tprint("Error in processing VF font (");  \
-    tprint(font_name(f));       \
-    tprint(".vf): ");       \
-    tprint(a);          \
-    tprint(", virtual font will be ignored"); \
-    print_ln();  return; }
+#define bad_vf(a) { \
+    xfree(vf_buffer); \
+    print_nlp(); \
+    formatted_warning("virtual font","file '%s', %s, font will be ignored",font_name(f),a); \
+    print_ln(); \
+    return; \
+}
 
-#define lua_bad_vf(a) { xfree(vf_buffer);   \
-           lua_settop(L,s_top);   \
-           lua_pushnil(L);      \
-           lua_pushstring(L,a);   \
-           return 2; }
+#define lua_bad_vf(a) { \
+    xfree(vf_buffer); \
+    lua_settop(L,s_top); \
+    lua_pushnil(L); \
+    lua_pushstring(L,a); \
+    return 2; \
+}
 
 #define tmp_b0  tmp_w.qqqq.b0
 #define tmp_b1  tmp_w.qqqq.b1
@@ -129,9 +131,9 @@ typedef struct vf_stack_record {
 @c
 #define vf_byte(a)                                     \
 {                                                      \
-  eight_bits vf_tmp_b;				       \
+  eight_bits vf_tmp_b;				                   \
     if (vf_cur >= vf_size) {                           \
-        luatex_fail("unexpected eof on virtual font"); \
+        normal_error("virtual font","unexpected eof"); \
     }                                                  \
     vf_tmp_b = vf_buffer[vf_cur++];                    \
     a = vf_tmp_b;                                      \
@@ -185,8 +187,7 @@ void pdf_check_vf(internal_font_number f)
 }
 
 static void
-vf_local_font_warning(internal_font_number f, internal_font_number k,
-                      const char *s, int a, int b)
+vf_local_font_warning(internal_font_number f, internal_font_number k, const char *s, int a, int b)
 {
     print_nlp();
     tprint(s);
@@ -267,10 +268,10 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
         append_char(junk);
     }
     if (level > 5) {
-        normal_warning("vf","quitting at recurse depth > 5",true,true);
+        normal_warning("vf","quitting at recurse depth > 5");
         k = f ;
     } else if ((level > 1) && (fs > 65536*1024)) {
-        normal_warning("vf","quitting when recursing at size > 65536*1024",true,true);
+        normal_warning("vf","quitting when recursing at size > 65536*1024");
         k = f ;
     } else {
         level += 1 ;
@@ -284,11 +285,9 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
         if (k != null_font) {
             if (checksum != 0 && font_checksum(k) != 0
                 && checksum != font_checksum(k))
-                vf_local_font_warning(f, k, "checksum mismatch", (int) checksum,
-                                      (int) font_checksum(k));
+                vf_local_font_warning(f, k, "checksum mismatch", (int) checksum, (int) font_checksum(k));
             if (ds != font_dsize(k))
-                vf_local_font_warning(f, k, "design size mismatch", ds,
-                                      font_dsize(k));
+                vf_local_font_warning(f, k, "design size mismatch", ds, font_dsize(k));
         }
     }
     return k;
@@ -1014,31 +1013,31 @@ void do_vf(internal_font_number f)
 }
 
 @ @c
-#define make_command0(N,K) {      \
-    lua_newtable(L);        \
-    lua_pushstring(L, N);     \
-    lua_rawseti(L,-2, 1);     \
-    lua_rawseti(L,-2, K);     \
+#define make_command0(N,K) { \
+    lua_newtable(L);         \
+    lua_pushstring(L, N);    \
+    lua_rawseti(L,-2, 1);    \
+    lua_rawseti(L,-2, K);    \
     K++; }
 
-#define make_command1(N,V,K) {      \
-    lua_newtable(L);        \
-    lua_pushstring(L, N);     \
-    lua_rawseti(L,-2, 1);     \
-    lua_pushnumber(L, V);     \
-    lua_rawseti(L,-2, 2);     \
-    lua_rawseti(L,-2, K);     \
+#define make_command1(N,V,K) { \
+    lua_newtable(L);           \
+    lua_pushstring(L, N);      \
+    lua_rawseti(L,-2, 1);      \
+    lua_pushinteger(L, V);     \
+    lua_rawseti(L,-2, 2);      \
+    lua_rawseti(L,-2, K);      \
     K++; }
 
-#define make_command2(N,V,W,K) {    \
-    lua_newtable(L);        \
-    lua_pushstring(L, N);     \
-    lua_rawseti(L,-2, 1);     \
-    lua_pushnumber(L, V);     \
-    lua_rawseti(L,-2, 2);     \
-    lua_pushnumber(L, W);     \
-    lua_rawseti(L,-2, 3);     \
-    lua_rawseti(L,-2, K);     \
+#define make_command2(N,V,W,K) { \
+    lua_newtable(L);             \
+    lua_pushstring(L, N);        \
+    lua_rawseti(L,-2, 1);        \
+    lua_pushinteger(L, V);       \
+    lua_rawseti(L,-2, 2);        \
+    lua_pushinteger(L, W);       \
+    lua_rawseti(L,-2, 3);        \
+    lua_rawseti(L,-2, K);        \
     K++; }
 
 #define make_commands(N,S,V,K) {    \
@@ -1111,9 +1110,7 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
     vf_byte(cs.b1);
     vf_byte(cs.b2);
     vf_byte(cs.b3);
-    lua_pushnumber(L,
-                   (lua_Number) ((cs.b0 << 24) + (cs.b1 << 16) +
-                                 (cs.b2 << 8) + cs.b3));
+    lua_pushinteger(L,  (lua_Number) ((cs.b0 << 24) + (cs.b1 << 16) + (cs.b2 << 8) + cs.b3));
     lua_setfield(L, -2, "checksum");
 
     vf_read(4, k);
@@ -1150,7 +1147,7 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
         vf_read(4, k);
         fs = store_scaled_f(k, atsize);
         lua_pushstring(L, "size");
-        lua_pushnumber(L, fs);
+        lua_pushinteger(L, fs);
         lua_rawset(L, -3);
 
         vf_read(4, k);
@@ -1198,16 +1195,10 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
             vf_read_u(3, utmp);
             tfm_width = (int) utmp;
         }
-
-
-
         lua_newtable(L);        /* for this character */
-
-        lua_pushnumber(L, tfm_width);
+        lua_pushinteger(L, tfm_width);
         lua_setfield(L, -2, "width");
-
         lua_newtable(L);        /* for 'commands' */
-
         k = 1;
         vf_nf = 0;
         w = 0;
@@ -1217,14 +1208,12 @@ int make_vf_table(lua_State * L, const char *cnom, scaled atsize)
         while (packet_length > 0) {
             vf_byte(cmd);
             decr(packet_length);
-
             if ((cmd >= set_char_0) && (cmd < set1)) {
                 if (vf_nf == 0) {
                     vf_nf = 1;
                     make_command1("font", vf_nf, k);
                 }
                 make_command1("char", cmd, k);
-
             } else if (((fnt_num_0 <= cmd) && (cmd <= fnt_num_0 + 63)) ||
                        ((fnt1 <= cmd) && (cmd <= fnt1 + 3))) {
                 if (cmd >= fnt1) {

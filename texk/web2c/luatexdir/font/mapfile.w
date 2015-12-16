@@ -164,17 +164,13 @@ int avl_do_entry(fm_entry * fm, int mode)
     if (p != NULL) {
         switch (mode) {
         case FM_DUPIGNORE:
-            luatex_warn
-                ("fontmap entry for `%s' already exists, duplicates ignored",
-                 fm->tfm_name);
+            formatted_warning("map file", "entry for '%s' already exists, duplicates ignored", fm->tfm_name);
             delete_new = 1;
             break;
         case FM_REPLACE:
         case FM_DELETE:
             if (is_inuse(p)) {
-                luatex_warn
-                    ("fontmap entry for `%s' has been used, replace/delete not allowed",
-                     fm->tfm_name);
+                formatted_warning("map file", "entry for '%s' has been used, replace/delete not allowed", fm->tfm_name);
                 delete_new = 1;
             } else {
                 a = avl_delete(tfm_tree, p);
@@ -220,8 +216,8 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
 
     if (is_fontfile(fm) && !is_included(fm)) {
         if (warn)
-            luatex_warn
-                ("ambiguous entry for `%s': font file present but not included, "
+            formatted_warning("map file",
+                 "ambiguous entry for '%s': font file present but not included, "
                  "will be treated as font file not present", fm->tfm_name);
         xfree(fm->ff_name);
         /* do not set variable |a| as this entry will be still accepted */
@@ -230,33 +226,27 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     /* if both ps_name and font file are missing, drop this entry */
     if (fm->ps_name == NULL && !is_fontfile(fm)) {
         if (warn)
-            luatex_warn
-                ("invalid entry for `%s': both ps_name and font file missing",
-                 fm->tfm_name);
+            formatted_warning("map file", "invalid entry for '%s': both ps_name and font file missing", fm->tfm_name);
         a += 1;
     }
 
     /* TrueType fonts cannot be reencoded without subsetting */
     if (is_truetype(fm) && is_reencoded(fm) && !is_subsetted(fm)) {
         if (warn)
-            luatex_warn
-                ("invalid entry for `%s': only subsetted TrueType font can be reencoded",
-                 fm->tfm_name);
+            formatted_warning("map file", "invalid entry for '%s': only subsetted TrueType font can be reencoded", fm->tfm_name);
         a += 2;
     }
 
     /* the value of SlantFont and ExtendFont must be reasonable */
     if (fm->slant < FONT_SLANT_MIN || fm->slant > FONT_SLANT_MAX) {
         if (warn)
-            luatex_warn
-                ("invalid entry for `%s': too big value of SlantFont (%g)",
+            formatted_warning("map file", "invalid entry for '%s': value '%g' is to large for SlantFont",
                  fm->tfm_name, fm->slant / 1000.0);
         a += 8;
     }
     if (fm->extend < FONT_EXTEND_MIN || fm->extend > FONT_EXTEND_MAX) {
         if (warn)
-            luatex_warn
-                ("invalid entry for `%s': too big value of ExtendFont (%g)",
+            formatted_warning("map file", "invalid entry for '%s': value '%g' is too large for ExtendFont",
                  fm->tfm_name, fm->extend / 1000.0);
         a += 16;
     }
@@ -265,8 +255,7 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     if (fm->pid != -1 &&
         !(is_truetype(fm) && is_subsetted(fm) && !is_reencoded(fm))) {
         if (warn)
-            luatex_warn
-                ("invalid entry for `%s': PidEid can be used only with subsetted non-reencoded TrueType fonts",
+            formatted_warning("map file", "invalid entry for '%s': PidEid can be used only with subsetted non-reencoded TrueType fonts",
                  fm->tfm_name);
         a += 32;
     }
@@ -335,7 +324,7 @@ static void fm_scan_line(void)
     float d;
     fm_entry *fm;
     char fm_line[FM_BUF_SIZE], buf[FM_BUF_SIZE];
-    char *p, *q, *s; 
+    char *p, *q, *s;
     char *r = NULL;
     switch (mitem->type) {
     case MAPFILE:
@@ -405,9 +394,7 @@ static void fm_scan_line(void)
                         for (r = s; *r != ' ' && *r != '"' && *r != '\0'; r++); /* jump over name */
                         c = *r; /* remember char for temporary end of string */
                         *r = '\0';
-                        luatex_warn
-                            ("invalid entry for `%s': unknown name `%s' ignored",
-                             fm->tfm_name, s);
+                        formatted_warning("map file", "invalid entry for '%s': unknown name '%s' ignored", fm->tfm_name, s);
                         *r = (char) c;
                     }
                 } else
@@ -417,9 +404,7 @@ static void fm_scan_line(void)
             if (*r == '"')      /* closing quote */
                 r++;
             else {
-                luatex_warn
-                    ("invalid entry for `%s': closing quote missing",
-                     fm->tfm_name);
+                formatted_warning("map file", "invalid entry for '%s': closing quote missing", fm->tfm_name);
                 goto bad_line;
             }
             break;
@@ -525,14 +510,14 @@ static void fm_read_info(void)
                             fm_file = NULL;
                         }
                     } else {
-                        luatex_warn("cannot open font map file (%s)", cur_file_name);
+                        formatted_warning("map file", "cannot open font map file '%s'", cur_file_name);
                     }
                 } else {
-                    luatex_warn("cannot open font map file (%s)", cur_file_name);
+                    formatted_warning("map file", "cannot open font map file '%s'", cur_file_name);
                 }
             } else {
                 if (!fm_open(cur_file_name)) {
-                    luatex_warn("cannot open font map file (%s)", cur_file_name);
+                    formatted_warning("map file", "cannot open font map file '%s'", cur_file_name);
                 } else {
                     fm_read_file();
                     report_start_file(filetype_map,cur_file_name);
@@ -549,7 +534,7 @@ static void fm_read_info(void)
         }
         break;
     case MAPLINE:
-        cur_file_name = NULL;   /* makes luatex_warn() shorter */
+        cur_file_name = NULL;
         fm_scan_line();
         break;
     default:

@@ -15,7 +15,8 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 
 #ifndef PDFANNOT_H
@@ -23,10 +24,10 @@
 
 /* data structure of annotations; words 1..4 represent the coordinates of the annotation */
 
-#  define obj_annot_ptr            obj_aux      /* pointer to corresponding whatsit node */
+#  define obj_annot_ptr obj_aux /* pointer to corresponding whatsit node */
 
 #  define set_pdf_annot_objnum(A,B) pdf_annot_objnum(A)=B
-#  define set_pdf_annot_data(A,B) pdf_annot_data(A)=B
+#  define set_pdf_annot_data(A,B)   pdf_annot_data(A)=B
 
 extern void do_annot(PDF pdf, halfword p, halfword parent_box, scaledpos cur);
 extern void new_annot_whatsit(small_number w);

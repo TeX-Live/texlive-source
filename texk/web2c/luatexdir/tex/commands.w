@@ -1,4 +1,4 @@
- % commands.w
+% commands.w
 %
 % Copyright 2009-2010 Taco Hoekwater <taco@@luatex.org>
 %
@@ -123,6 +123,7 @@ void initialize_commands(void)
     primitive_luatex("luastartup", assign_int_cmd, int_base + luastartup_id_code, int_base);
     primitive_luatex("nokerns", assign_int_cmd, int_base + disable_kern_code, int_base);
     primitive_luatex("noligs", assign_int_cmd, int_base + disable_lig_code, int_base);
+    primitive_luatex("nospaces", assign_int_cmd, int_base + disable_space_code, int_base);
     primitive_luatex("catcodetable", assign_int_cmd, int_base + cat_code_table_code, int_base);
     primitive_luatex("outputbox", assign_int_cmd, int_base + output_box_code, int_base);
     primitive_luatex("outputmode", assign_int_cmd, int_base + output_mode_code, int_base);
@@ -168,6 +169,8 @@ void initialize_commands(void)
     primitive_tex("begingroup", begin_group_cmd, 0, 0);
     primitive_tex("char", char_num_cmd, 0, 0);
     primitive_tex("csname", cs_name_cmd, 0, 0);
+    primitive_luatex("lastnamedcs", cs_name_cmd, 1, 0);
+    primitive_luatex("begincsname", cs_name_cmd, 2, 0);
     primitive_tex("delimiter", delim_num_cmd, 0, 0);
     primitive_luatex("Udelimiter", delim_num_cmd, 1, 0);
     primitive_tex("divide", divide_cmd, 0, 0);
@@ -184,6 +187,7 @@ void initialize_commands(void)
     primitive_tex("fontdimen", assign_font_dimen_cmd, 0, 0);
     primitive_tex("halign", halign_cmd, 0, 0);
     primitive_tex("hrule", hrule_cmd, 0, 0);
+    primitive_luatex("nohrule", no_vrule_cmd, 0, 0);
     primitive_tex("ignorespaces", ignore_spaces_cmd, 0, 0);
     primitive_tex("insert", insert_cmd, 0, 0);
     primitive_luatex("leftghost", char_ghost_cmd, 0, 0);
@@ -197,8 +201,6 @@ void initialize_commands(void)
     primitive_luatex("Ustack", math_choice_cmd, 1, 0);
     primitive_tex("multiply", multiply_cmd, 0, 0);
     primitive_tex("noalign", no_align_cmd, 0, 0);
-    primitive_luatex("nohrule", no_vrule_cmd, 0, 0);
-    primitive_luatex("novrule", no_hrule_cmd, 0, 0);
     primitive_tex("boundary", boundary_cmd, 0, 0);
     primitive_tex("noboundary", no_boundary_cmd, 0, 0);
     primitive_tex("noexpand", no_expand_cmd, 0, 0);
@@ -223,11 +225,16 @@ void initialize_commands(void)
     primitive_luatex("rightghost", char_ghost_cmd, 1, 0);
     primitive_tex("setbox", set_box_cmd, 0, 0);
     primitive_tex("the", the_cmd, 0, 0);
+    primitive_luatex("toksapp", combine_toks_cmd, 0, 0);
+    primitive_luatex("tokspre", combine_toks_cmd, 1, 0);
+    primitive_luatex("etoksapp", combine_toks_cmd, 2, 0);
+    primitive_luatex("etokspre", combine_toks_cmd, 3, 0);
     primitive_tex("toks", toks_register_cmd, 0, 0);
     primitive_tex("vadjust", vadjust_cmd, 0, 0);
     primitive_tex("valign", valign_cmd, 0, 0);
     primitive_tex("vcenter", vcenter_cmd, 0, 0);
     primitive_tex("vrule", vrule_cmd, 0, 0);
+    primitive_luatex("novrule", no_hrule_cmd, 0, 0);
     primitive_tex("par", par_end_cmd, too_big_char, too_big_char);      /* cf.\ |scan_file_name| */
     par_loc = cur_val;
     par_token = cs_token_flag + par_loc;
@@ -297,6 +304,7 @@ void initialize_commands(void)
     primitive_tex("number", convert_cmd, number_code, 0);
     primitive_tex("romannumeral", convert_cmd, roman_numeral_code, 0);
     primitive_tex("string", convert_cmd, string_code, 0);
+    primitive_tex("csstring", convert_cmd, cs_string_code, 0);
     primitive_tex("meaning", convert_cmd, meaning_code, 0);
     primitive_etex("eTeXVersion", convert_cmd, etex_code, 0);
     primitive_tex("fontname", convert_cmd, font_name_code, 0);
@@ -408,6 +416,9 @@ void initialize_commands(void)
     primitive_tex("copy", make_box_cmd, copy_code, 0);
     primitive_tex("lastbox", make_box_cmd, last_box_code, 0);
     primitive_tex("vsplit", make_box_cmd, vsplit_code, 0);
+    primitive_tex("tpack", make_box_cmd, tpack_code, 0);
+    primitive_tex("vpack", make_box_cmd, vpack_code, 0);
+    primitive_tex("hpack", make_box_cmd, hpack_code, 0);
     primitive_tex("vtop", make_box_cmd, vtop_code, 0);
     primitive_tex("vbox", make_box_cmd, vtop_code + vmode, 0);
     primitive_tex("hbox", make_box_cmd, vtop_code + hmode, 0);
@@ -488,6 +499,7 @@ void initialize_commands(void)
     primitive_tex("xdef", def_cmd, 3, 0);
     primitive_tex("let", let_cmd, normal, 0);
     primitive_tex("futurelet", let_cmd, normal + 1, 0);
+    primitive_luatex("letcharcode", let_cmd, normal + 2, 0);
     primitive_tex("chardef", shorthand_def_cmd, char_def_code, 0);
     primitive_tex("mathchardef", shorthand_def_cmd, math_char_def_code, 0);
     primitive_luatex("Umathchardef", shorthand_def_cmd, xmath_char_def_code, 0);
@@ -637,6 +649,7 @@ void initialize_commands(void)
     primitive_luatex("preexhyphenchar", hyph_data_cmd, 4, 0);
     primitive_luatex("postexhyphenchar", hyph_data_cmd, 5, 0);
     primitive_luatex("hyphenationmin", hyph_data_cmd, 6, 0);
+    primitive_luatex("hjcode", hyph_data_cmd, 7, 0);
     primitive_tex("hyphenchar", assign_font_int_cmd, 0, 0);
     primitive_tex("skewchar", assign_font_int_cmd, 1, 0);
     primitive_luatex("lpcode", assign_font_int_cmd, lp_code_base, 0);

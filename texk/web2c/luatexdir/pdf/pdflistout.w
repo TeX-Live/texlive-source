@@ -31,21 +31,11 @@ backend_function *backend_out, *backend_out_whatsit;
 @ @c
 static void missing_backend_function(PDF pdf, halfword p)
 {
-    char *b;
-    const char *s;
-    const char *n;
-    char backend_string[15];
-    char err_string[60];
-    assert(backend != NULL);
+    const char *n = get_node_name(type(p), subtype(p));
     if (type(p) == whatsit_node)
-        s = "whatsit";
+        formatted_error("pdf backend","no output function for whatsit %s",n);
     else
-        s = "node";
-    n = get_node_name(type(p), subtype(p));
-    b = backend[output_mode_used].name;
-    snprintf(backend_string, strlen(b) + 10, "%s back-end", b);
-    snprintf(err_string, 59, "no output function for \"%s\" %s", n, s);
-    normal_error(backend_string, err_string);
+        formatted_error("pdf backend","no output function for node %s",n);
 }
 
 @ @c
@@ -89,7 +79,6 @@ static void init_dvi_backend_functions(void)
     p->whatsit_fu[late_lua_node] = &late_lua;
 }
 
-
 @ @c
 void init_backend_functionpointers(output_mode o_mode)
 {
@@ -126,22 +115,22 @@ static scaled simple_advance_width(halfword p)
     while ((q != null) && (vlink(q) != null)) {
         q = vlink(q);
         switch (type(q)) {
-        case glyph_node:
-            w += glyph_width(q);
-            break;
-        case hlist_node:
-        case vlist_node:
-        case rule_node:
-        case margin_kern_node:
-        case kern_node:
-            w += width(q);
-            break;
-        case disc_node:
-            /* hh: the frontend should append already */
-            if (vlink(no_break(q)) != null)
-                w += simple_advance_width(no_break(q));
-        default:
-            break;
+            case glyph_node:
+                w += glyph_width(q);
+                break;
+            case hlist_node:
+            case vlist_node:
+            case rule_node:
+            case margin_kern_node:
+            case kern_node:
+                w += width(q);
+                break;
+            case disc_node:
+                /* hh: the frontend should append already */
+                if (vlink(no_break(q)) != null)
+                    w += simple_advance_width(no_break(q));
+            default:
+                break;
         }
     }
     return w;
@@ -163,60 +152,60 @@ static halfword calculate_width_to_enddir(halfword p, real cur_glue, scaled cur_
             w += pack_width(box_dir(this_box), dir_TRT, q, true);
         else {
             switch (type(q)) {
-            case hlist_node:
-            case vlist_node:
-                w += pack_width(box_dir(this_box), box_dir(q), q, false);
-                break;
-            case rule_node:
-            case margin_kern_node:
-            case kern_node:
-                w += width(q);
-                break;
-            case math_node:
-                /* begin mathskip code */
-                if (glue_ptr(q) == zero_glue) {
-                    w += surround(q);
+                case hlist_node:
+                case vlist_node:
+                    w += pack_width(box_dir(this_box), box_dir(q), q, false);
                     break;
-                } else {
-                    /* fall through: mathskip */
-                }
-                /* end mathskip code */
-            case glue_node:
-                g = glue_ptr(q);
-                w += width(g) - cur_g;
-                if (g_sign != normal) {
-                    if (g_sign == stretching) {
-                        if (stretch_order(g) == g_order) {
-                            cur_glue = cur_glue + stretch(g);
+                case rule_node:
+                case margin_kern_node:
+                case kern_node:
+                    w += width(q);
+                    break;
+                case math_node:
+                    /* begin mathskip code */
+                    if (glue_ptr(q) == zero_glue) {
+                        w += surround(q);
+                        break;
+                    } else {
+                        /* fall through: mathskip */
+                    }
+                    /* end mathskip code */
+                case glue_node:
+                    g = glue_ptr(q);
+                    w += width(g) - cur_g;
+                    if (g_sign != normal) {
+                        if (g_sign == stretching) {
+                            if (stretch_order(g) == g_order) {
+                                cur_glue = cur_glue + stretch(g);
+                                vet_glue(float_cast(glue_set(this_box)) * cur_glue);
+                                cur_g = float_round(glue_temp);
+                            }
+                        } else if (shrink_order(g) == g_order) {
+                            cur_glue = cur_glue - shrink(g);
                             vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                             cur_g = float_round(glue_temp);
                         }
-                    } else if (shrink_order(g) == g_order) {
-                        cur_glue = cur_glue - shrink(g);
-                        vet_glue(float_cast(glue_set(this_box)) * cur_glue);
-                        cur_g = float_round(glue_temp);
                     }
-                }
-                w += cur_g;
-                break;
-            case disc_node:
-                /* hh: the frontend should append already */
-                if (vlink(no_break(q)) != null)
-                    w += simple_advance_width(no_break(q));
-                break;
-            case dir_node:
-                if (dir_dir(q) >= 0)
-                    dir_nest++;
-                else
-                    dir_nest--;
-                if (dir_nest == 0) {
-                    enddir_ptr = q;
-                    dir_cur_h(enddir_ptr) = w;
-                    q = null;
-                }
-                break;
-            default:
-                break;
+                    w += cur_g;
+                    break;
+                case disc_node:
+                    /* hh: the frontend should append already */
+                    if (vlink(no_break(q)) != null)
+                        w += simple_advance_width(no_break(q));
+                    break;
+                case dir_node:
+                    if (dir_dir(q) >= 0)
+                        dir_nest++;
+                    else
+                        dir_nest--;
+                    if (dir_nest == 0) {
+                        enddir_ptr = q;
+                        dir_cur_h(enddir_ptr) = w;
+                        q = null;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -237,56 +226,55 @@ implementations, due to machine-dependent rounding in the glue calculations.)
 @c
 void out_what(PDF pdf, halfword p)
 {
-    switch (subtype(p)) {      /* function(pdf, p) */
-    case special_node:         /* |pdf_special(pdf, p)|; */
-    case late_lua_node:        /* |late_lua(pdf, p)|; */
-    case pdf_save_node:        /* |pdf_out_save(pdf, p)|; */
-    case pdf_restore_node:     /* |pdf_out_restore(pdf, p)|; */
-    case pdf_end_link_node:    /* |end_link(pdf, p)|; */
-    case pdf_end_thread_node:  /* |end_thread(pdf, p)|; */
-    case pdf_literal_node:     /* |pdf_out_literal(pdf, p)|; */
-    case pdf_colorstack_node:  /* |pdf_out_colorstack(pdf, p)|; */
-    case pdf_setmatrix_node:   /* |pdf_out_setmatrix(pdf, p)|; */
-    case pdf_refobj_node:      /* |pdf_ref_obj(pdf, p)| */
-        backend_out_whatsit[subtype(p)] (pdf, p);
-        break;
-    case open_node:
-    case write_node:
-    case close_node:
-        /* do some work that has been queued up for \.{\\write} */
-        if (!doing_leaders) {
-            int j = write_stream(p);
-            if (subtype(p) == write_node) {
-                write_out(p);
-            } else if (subtype(p) == close_node) {
-                close_write_file(j);
-            } else if (valid_write_file(j)) {
-                char *fn;
-                close_write_file(j);
-                cur_name = open_name(p);
-                cur_area = open_area(p);
-                cur_ext = open_ext(p);
-                if (cur_ext == get_nullstr())
-                    cur_ext = maketexstring(".tex");
-                fn = pack_file_name(cur_name, cur_area, cur_ext);
-                while (! open_write_file(j,fn)) {
-                    fn = prompt_file_name("output file name", ".tex");
+    switch (subtype(p)) {
+        case special_node:         /* |pdf_special(pdf, p)|; */
+        case late_lua_node:        /* |late_lua(pdf, p)|; */
+        case pdf_save_node:        /* |pdf_out_save(pdf, p)|; */
+        case pdf_restore_node:     /* |pdf_out_restore(pdf, p)|; */
+        case pdf_end_link_node:    /* |end_link(pdf, p)|; */
+        case pdf_end_thread_node:  /* |end_thread(pdf, p)|; */
+        case pdf_literal_node:     /* |pdf_out_literal(pdf, p)|; */
+        case pdf_colorstack_node:  /* |pdf_out_colorstack(pdf, p)|; */
+        case pdf_setmatrix_node:   /* |pdf_out_setmatrix(pdf, p)|; */
+        case pdf_refobj_node:      /* |pdf_ref_obj(pdf, p)| */
+            backend_out_whatsit[subtype(p)] (pdf, p);
+            break;
+        case open_node:
+        case write_node:
+        case close_node:
+            /* do some work that has been queued up for \.{\\write} */
+            if (!doing_leaders) {
+                int j = write_stream(p);
+                if (subtype(p) == write_node) {
+                    write_out(p);
+                } else if (subtype(p) == close_node) {
+                    close_write_file(j);
+                } else if (valid_write_file(j)) {
+                    char *fn;
+                    close_write_file(j);
+                    cur_name = open_name(p);
+                    cur_area = open_area(p);
+                    cur_ext = open_ext(p);
+                    if (cur_ext == get_nullstr())
+                        cur_ext = maketexstring(".tex");
+                    fn = pack_file_name(cur_name, cur_area, cur_ext);
+                    while (! open_write_file(j,fn)) {
+                        fn = prompt_file_name("output file name", ".tex");
+                    }
                 }
             }
-        }
-        break;
-    case user_defined_node:
-        break;
-    default:
-        /* this should give an error about missing whatsit backend function */
-        backend_out_whatsit[subtype(p)] (pdf, p);
+            break;
+        case user_defined_node:
+            break;
+        default:
+            /* this should give an error about missing whatsit backend function */
+            backend_out_whatsit[subtype(p)] (pdf, p);
     }
 }
 
 @ @c
-void hlist_out(PDF pdf, halfword this_box)
+void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
 {
-
     posstructure localpos;      /* the position structure local within this function */
     posstructure *refpos;       /* the list origin pos. on the page, provided by the caller */
     scaledpos cur = { 0, 0 }, tmpcur, basepoint;
@@ -333,7 +321,6 @@ void hlist_out(PDF pdf, halfword this_box)
     }
 
     for (i = 1; i <= pdf->link_stack_ptr; i++) {
-        assert(is_running(width(pdf->link_stack[i].link_node)));
         if (pdf->link_stack[i].nesting_level == cur_s)
             append_link(pdf, this_box, cur, (small_number) i);
     }
@@ -362,302 +349,305 @@ void hlist_out(PDF pdf, halfword this_box)
         } else {
             /* output the non-|char_node| |p| for |hlist_out| and move to the next node */
             switch (type(p)) {
-            case hlist_node:
-            case vlist_node:
-                if (textdir_parallel(box_dir(p), localpos.dir)) {
-                    effective_horizontal = width(p);
-                    basepoint.v = 0;
-                    if (textdir_opposite(box_dir(p), localpos.dir))
-                        basepoint.h = width(p);
+                case hlist_node:
+                case vlist_node:
+                    if (textdir_parallel(box_dir(p), localpos.dir)) {
+                        effective_horizontal = width(p);
+                        basepoint.v = 0;
+                        if (textdir_opposite(box_dir(p), localpos.dir))
+                            basepoint.h = width(p);
+                        else
+                            basepoint.h = 0;
+                    } else {
+                        effective_horizontal = height(p) + depth(p);
+                        if (!is_mirrored(box_dir(p))) {
+                            if (partextdir_eq(box_dir(p), localpos.dir))
+                                basepoint.h = height(p);
+                            else
+                                basepoint.h = depth(p);
+                        } else {
+                            if (partextdir_eq(box_dir(p), localpos.dir))
+                                basepoint.h = depth(p);
+                            else
+                                basepoint.h = height(p);
+                        }
+                        if (is_rotated(localpos.dir)) {
+                            if (partextdir_eq(localpos.dir, box_dir(p)))
+                                basepoint.v = -width(p) / 2; /* up */
+                            else
+                                basepoint.v = width(p) / 2;  /* down */
+                        } else if (is_mirrored(localpos.dir)) {
+                            if (partextdir_eq(localpos.dir, box_dir(p)))
+                                basepoint.v = 0;
+                            else
+                                basepoint.v = width(p);      /* down */
+                        } else {
+                            if (partextdir_eq(localpos.dir, box_dir(p)))
+                                basepoint.v = -width(p);     /* up */
+                            else
+                                basepoint.v = 0;
+                        }
+                    }
+                    if (!is_mirrored(localpos.dir))
+                        basepoint.v = basepoint.v + shift_amount(p); /* shift the box down */
                     else
-                        basepoint.h = 0;
-                } else {
-                    effective_horizontal = height(p) + depth(p);
-                    if (!is_mirrored(box_dir(p))) {
-                        if (partextdir_eq(box_dir(p), localpos.dir))
-                            basepoint.h = height(p);
-                        else
-                            basepoint.h = depth(p);
+                        basepoint.v = basepoint.v - shift_amount(p); /* shift the box up */
+                    if (list_ptr(p) == null) {
+                        if (synctex) {
+                            if (type(p) == vlist_node)
+                                synctexvoidvlist(p, this_box);
+                            else
+                                synctexvoidhlist(p, this_box);
+                        }
                     } else {
-                        if (partextdir_eq(box_dir(p), localpos.dir))
-                            basepoint.h = depth(p);
-                        else
-                            basepoint.h = height(p);
-                    }
-                    if (is_rotated(localpos.dir)) {
-                        if (partextdir_eq(localpos.dir, box_dir(p)))
-                            basepoint.v = -width(p) / 2; /* up */
-                        else
-                            basepoint.v = width(p) / 2;  /* down */
-                    } else if (is_mirrored(localpos.dir)) {
-                        if (partextdir_eq(localpos.dir, box_dir(p)))
-                            basepoint.v = 0;
-                        else
-                            basepoint.v = width(p);      /* down */
-                    } else {
-                        if (partextdir_eq(localpos.dir, box_dir(p)))
-                            basepoint.v = -width(p);     /* up */
-                        else
-                            basepoint.v = 0;
-                    }
-                }
-                if (!is_mirrored(localpos.dir))
-                    basepoint.v = basepoint.v + shift_amount(p); /* shift the box down */
-                else
-                    basepoint.v = basepoint.v - shift_amount(p); /* shift the box up */
-                if (list_ptr(p) == null) {
-                    if (synctex) {
+                        tmpcur.h = cur.h + basepoint.h;
+                        tmpcur.v = basepoint.v;
+                        synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
                         if (type(p) == vlist_node)
-                            synctexvoidvlist(p, this_box);
+                            vlist_out(pdf, p, rule_callback_id);
                         else
-                            synctexvoidhlist(p, this_box);
+                            hlist_out(pdf, p, rule_callback_id);
                     }
-                } else {
-                    assert(cur.v == 0);
-                    tmpcur.h = cur.h + basepoint.h;
-                    tmpcur.v = basepoint.v;
-                    synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
-                    if (type(p) == vlist_node)
-                        vlist_out(pdf, p);
-                    else
-                        hlist_out(pdf, p);
-                }
-                cur.h += effective_horizontal;
-                break;
-            case disc_node:
-                /* hh: the frontend should append already */
-                if (vlink(no_break(p)) != null) {
-                    if (subtype(p) != select_disc) {
-                        q = tail_of_list(vlink(no_break(p))); /* this could be a tlink */
-                        vlink(q) = vlink(p);
-                        q = vlink(no_break(p));
-                        vlink(no_break(p)) = null;
-                        vlink(p) = q;
+                    cur.h += effective_horizontal;
+                    break;
+                case disc_node:
+                    /* hh: the frontend should append already */
+                    if (vlink(no_break(p)) != null) {
+                        if (subtype(p) != select_disc) {
+                            q = tail_of_list(vlink(no_break(p))); /* this could be a tlink */
+                            vlink(q) = vlink(p);
+                            q = vlink(no_break(p));
+                            vlink(no_break(p)) = null;
+                            vlink(p) = q;
+                        }
                     }
-                }
-                break;
-            case rule_node:
-                if (rule_dir(p) < 0)
-                    rule_dir(p) = localpos.dir;
-                if (pardir_parallel(rule_dir(p), localpos.dir)) {
-                    rule.ht = height(p);
-                    rule.dp = depth(p);
-                    rule.wd = width(p);
-                } else {
-                    rule.ht = width(p) / 2;
-                    rule.dp = width(p) / 2;
-                    rule.wd = height(p) + depth(p);
-                }
-                goto FIN_RULE;
-                break;
-            case dir_node:
-                /* output a reflection instruction if the direction has changed */
-                if (dir_dir(p) >= 0) {
-                    /*
-                        Calculate the needed width to the matching |enddir|, return the
-                        |enddir| node, with width info
-                    */
-                    enddir_ptr = calculate_width_to_enddir(p, cur_glue, cur_g, this_box);
-                    if (textdir_parallel(dir_dir(p), localpos.dir)) {
-                        dir_cur_h(enddir_ptr) += cur.h;
-                        if (textdir_opposite(dir_dir(p), localpos.dir))
-                            cur.h = dir_cur_h(enddir_ptr);
-                    } else
-                        dir_cur_h(enddir_ptr) = cur.h;
-                    if (enddir_ptr != p) {
-                        /* only if it is an enddir */
-                        dir_cur_v(enddir_ptr) = cur.v;
-                        dir_refpos_h(enddir_ptr) = refpos->pos.h;
-                        dir_refpos_v(enddir_ptr) = refpos->pos.v;
-                        /* negative: mark it as |enddir| */
-                        dir_dir(enddir_ptr) = localpos.dir - dir_swap;
-                    }
-                    /* fake a nested |hlist_out| */
-                    synch_pos_with_cur(pdf->posstruct, refpos, cur);
-                    refpos->pos = pdf->posstruct->pos;
-                    localpos.dir = dir_dir(p);
-                    cur.h = 0;
-                    cur.v = 0;
-                } else {
-                    refpos->pos.h = dir_refpos_h(p);
-                    refpos->pos.v = dir_refpos_v(p);
-                    localpos.dir = dir_dir(p) + dir_swap;
-                    cur.h = dir_cur_h(p);
-                    cur.v = dir_cur_v(p);
-                }
-                break;
-            case whatsit_node:
-                /* output the whatsit node |p| in |hlist_out| */
-                switch (subtype(p)) {
-                case save_pos_node:
-                    last_position = pdf->posstruct->pos;
-                    pos_info.curpos = pdf->posstruct->pos;
-                    pos_info.boxpos.pos = refpos->pos;
-                    pos_info.boxpos.dir = localpos.dir;
-                    pos_info.boxdim.wd = width(this_box);
-                    pos_info.boxdim.ht = height(this_box);
-                    pos_info.boxdim.dp = depth(this_box);
                     break;
-                case pdf_annot_node:
-                case pdf_start_link_node:
-                case pdf_dest_node:
-                case pdf_start_thread_node:
-                case pdf_thread_node:
-                    backend_out_whatsit[subtype(p)] (pdf, p, this_box, cur);
-                    break;
-                default:
-                    out_what(pdf, p);
-                }
-                break;
-            case math_node:
-                if (synctex) {
-                    synctexmath(p, this_box);
-                }
-                /* begin mathskip code */
-                if (glue_ptr(p) == zero_glue) {
-                    cur.h += surround(p);
-                    break;
-                } else {
-                    /* fall through: mathskip */
-                }
-                /* end mathskip code */
-            case glue_node:
-                {
-                    /* move right or output leaders, we use real multiplication */
-                    halfword g = glue_ptr(p);
-                    rule.wd = width(g) - cur_g;
-                    if (g_sign != normal) {
-                        if (g_sign == stretching) {
-                            if (stretch_order(g) == g_order) {
-                                cur_glue = cur_glue + stretch(g);
+                case glue_node:
+                    {
+                        /* move right or output leaders, we use real multiplication */
+                        halfword g = glue_ptr(p);
+                        rule.wd = width(g) - cur_g;
+                        if (g_sign != normal) {
+                            if (g_sign == stretching) {
+                                if (stretch_order(g) == g_order) {
+                                    cur_glue = cur_glue + stretch(g);
+                                    vet_glue(float_cast(glue_set(this_box)) * cur_glue);
+                                    cur_g = float_round(glue_temp);
+                                }
+                            } else if (shrink_order(g) == g_order) {
+                                cur_glue = cur_glue - shrink(g);
                                 vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                                 cur_g = float_round(glue_temp);
                             }
-                        } else if (shrink_order(g) == g_order) {
-                            cur_glue = cur_glue - shrink(g);
-                            vet_glue(float_cast(glue_set(this_box)) * cur_glue);
-                            cur_g = float_round(glue_temp);
-                        }
-                }
-                rule.wd = rule.wd + cur_g;
-                if (subtype(p) >= a_leaders) {
-                    /* output leaders in an hlist, |goto fin_rule| if a rule or to |next_p| if done */
-                    leader_box = leader_ptr(p);
-                    if (type(leader_box) == rule_node) {
-                        rule.ht = height(leader_box);
-                        rule.dp = depth(leader_box);
-                        goto FIN_RULE;
                     }
-                    if (textdir_parallel(box_dir(leader_box), localpos.dir))
-                        leader_wd = width(leader_box);
-                    else
-                        leader_wd = height(leader_box) + depth(leader_box);
-                    if ((leader_wd > 0) && (rule.wd > 0)) {
-                        rule.wd = rule.wd + 10; /* compensate for floating-point rounding */
-                        edge = cur.h + rule.wd;
-                        lx = 0;
-                        /*
-                            let |cur.h| be the position of the first box, and set |leader_wd+lx|
-                            to the spacing between corresponding parts of boxes
-                        */
-                        if (subtype(p) == g_leaders) {
-                            save_h = cur.h;
-                            switch (localpos.dir) {
-                            case dir_TLT:
-                                cur.h += refpos->pos.h - shipbox_refpos.h;
-                                cur.h = leader_wd * (cur.h / leader_wd);
-                                cur.h -= refpos->pos.h - shipbox_refpos.h;
-                                break;
-                            case dir_TRT:
-                                cur.h = refpos->pos.h - shipbox_refpos.h - cur.h;
-                                cur.h = leader_wd * (cur.h / leader_wd);
-                                cur.h = refpos->pos.h - shipbox_refpos.h - cur.h;
-                                break;
-                            case dir_LTL:
-                            case dir_RTT:
-                                cur.h = refpos->pos.v - shipbox_refpos.v - cur.h;
-                                cur.h = leader_wd * (cur.h / leader_wd);
-                                cur.h = refpos->pos.v - shipbox_refpos.v - cur.h;
-                                break;
-                            default:
-                                assert(0);
-                            }
-                            if (cur.h < save_h)
-                                cur.h += leader_wd;
-                        } else if (subtype(p) == a_leaders) {
-                            save_h = cur.h;
-                            cur.h = leader_wd * (cur.h / leader_wd);
-                            if (cur.h < save_h)
-                                cur.h += leader_wd;
-                        } else {
-                            lq = rule.wd / leader_wd; /* the number of box copies */
-                            lr = rule.wd % leader_wd; /* the remaining space */
-                            if (subtype(p) == c_leaders) {
-                                cur.h += lr / 2;
-                            } else {
-                                lx = lr / (lq + 1);
-                                cur.h += (lr - (lq - 1) * lx) / 2;
-                            }
+                    rule.wd = rule.wd + cur_g;
+                    if (subtype(p) >= a_leaders) {
+                        /* output leaders in an hlist, |goto fin_rule| if a rule or to |next_p| if done */
+                        leader_box = leader_ptr(p);
+                        if (type(leader_box) == rule_node) {
+                            rule.ht = height(leader_box);
+                            rule.dp = depth(leader_box);
+                            goto FIN_RULE;
                         }
-                        while (cur.h + leader_wd <= edge) {
-                            /* output a leader box at |cur.h|, then advance |cur.h| by |leader_wd+lx| */
-                            if (pardir_parallel(box_dir(leader_box), localpos.dir)) {
-                                basepoint.v = 0;
-                                if (textdir_opposite(box_dir(leader_box), localpos.dir))
-                                    basepoint.h = width(leader_box);
-                                else
-                                    basepoint.h = 0;
-                            } else {
-                                if (!is_mirrored(box_dir(leader_box))) {
-                                    if (partextdir_eq(box_dir(leader_box), localpos.dir))
-                                        basepoint.h = height(leader_box);
-                                    else
-                                        basepoint.h = depth(leader_box);
-                                } else {
-                                    if (partextdir_eq(box_dir(leader_box), localpos.dir))
-                                        basepoint.h = depth(leader_box);
-                                    else
-                                        basepoint.h = height(leader_box);
+                        if (textdir_parallel(box_dir(leader_box), localpos.dir))
+                            leader_wd = width(leader_box);
+                        else
+                            leader_wd = height(leader_box) + depth(leader_box);
+                        if ((leader_wd > 0) && (rule.wd > 0)) {
+                            rule.wd = rule.wd + 10; /* compensate for floating-point rounding */
+                            edge = cur.h + rule.wd;
+                            lx = 0;
+                            /*
+                                let |cur.h| be the position of the first box, and set |leader_wd+lx|
+                                to the spacing between corresponding parts of boxes
+                            */
+                            if (subtype(p) == g_leaders) {
+                                save_h = cur.h;
+                                switch (localpos.dir) {
+                                    case dir_TLT:
+                                        cur.h += refpos->pos.h - shipbox_refpos.h;
+                                        cur.h = leader_wd * (cur.h / leader_wd);
+                                        cur.h -= refpos->pos.h - shipbox_refpos.h;
+                                        break;
+                                    case dir_TRT:
+                                        cur.h = refpos->pos.h - shipbox_refpos.h - cur.h;
+                                        cur.h = leader_wd * (cur.h / leader_wd);
+                                        cur.h = refpos->pos.h - shipbox_refpos.h - cur.h;
+                                        break;
+                                    case dir_LTL:
+                                    case dir_RTT:
+                                        cur.h = refpos->pos.v - shipbox_refpos.v - cur.h;
+                                        cur.h = leader_wd * (cur.h / leader_wd);
+                                        cur.h = refpos->pos.v - shipbox_refpos.v - cur.h;
+                                        break;
+                                    default:
+                                        formatted_warning("pdf backend","forcing bad dir %i to TLT in hlist case 1",localpos.dir);
+                                        localpos.dir = dir_TLT;
+                                        cur.h += refpos->pos.h - shipbox_refpos.h;
+                                        cur.h = leader_wd * (cur.h / leader_wd);
+                                        cur.h -= refpos->pos.h - shipbox_refpos.h;
+                                        break;
                                 }
-                                if (partextdir_eq(localpos.dir, box_dir(leader_box)))
-                                    basepoint.v = -(width(leader_box) / 2);
-                                else
-                                    basepoint.v = (width(leader_box) / 2);
+                                if (cur.h < save_h)
+                                    cur.h += leader_wd;
+                            } else if (subtype(p) == a_leaders) {
+                                save_h = cur.h;
+                                cur.h = leader_wd * (cur.h / leader_wd);
+                                if (cur.h < save_h)
+                                    cur.h += leader_wd;
+                            } else {
+                                lq = rule.wd / leader_wd; /* the number of box copies */
+                                lr = rule.wd % leader_wd; /* the remaining space */
+                                if (subtype(p) == c_leaders) {
+                                    cur.h += lr / 2;
+                                } else {
+                                    lx = lr / (lq + 1);
+                                    cur.h += (lr - (lq - 1) * lx) / 2;
+                                }
                             }
-                            if (!is_mirrored(localpos.dir))
-                                basepoint.v = basepoint.v + shift_amount(leader_box); /* shift the box down */
-                            else
-                                basepoint.v = basepoint.v - shift_amount(leader_box); /* shift the box up */
-                            assert(cur.v == 0);
-                            tmpcur.h = cur.h + basepoint.h;
-                            tmpcur.v = basepoint.v;
-                            synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
-                            outer_doing_leaders = doing_leaders;
-                            doing_leaders = true;
-                            if (type(leader_box) == vlist_node)
-                                vlist_out(pdf, leader_box);
-                            else
-                                hlist_out(pdf, leader_box);
-                            doing_leaders = outer_doing_leaders;
-                            cur.h += leader_wd + lx;
+                            while (cur.h + leader_wd <= edge) {
+                                /* output a leader box at |cur.h|, then advance |cur.h| by |leader_wd+lx| */
+                                if (pardir_parallel(box_dir(leader_box), localpos.dir)) {
+                                    basepoint.v = 0;
+                                    if (textdir_opposite(box_dir(leader_box), localpos.dir))
+                                        basepoint.h = width(leader_box);
+                                    else
+                                        basepoint.h = 0;
+                                } else {
+                                    if (!is_mirrored(box_dir(leader_box))) {
+                                        if (partextdir_eq(box_dir(leader_box), localpos.dir))
+                                            basepoint.h = height(leader_box);
+                                        else
+                                            basepoint.h = depth(leader_box);
+                                    } else {
+                                        if (partextdir_eq(box_dir(leader_box), localpos.dir))
+                                            basepoint.h = depth(leader_box);
+                                        else
+                                            basepoint.h = height(leader_box);
+                                    }
+                                    if (partextdir_eq(localpos.dir, box_dir(leader_box)))
+                                        basepoint.v = -(width(leader_box) / 2);
+                                    else
+                                        basepoint.v = (width(leader_box) / 2);
+                                }
+                                if (!is_mirrored(localpos.dir))
+                                    basepoint.v = basepoint.v + shift_amount(leader_box); /* shift the box down */
+                                else
+                                    basepoint.v = basepoint.v - shift_amount(leader_box); /* shift the box up */
+                                tmpcur.h = cur.h + basepoint.h;
+                                tmpcur.v = basepoint.v;
+                                synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
+                                outer_doing_leaders = doing_leaders;
+                                doing_leaders = true;
+                                if (type(leader_box) == vlist_node)
+                                    vlist_out(pdf, leader_box, rule_callback_id);
+                                else
+                                    hlist_out(pdf, leader_box, rule_callback_id);
+                                doing_leaders = outer_doing_leaders;
+                                cur.h += leader_wd + lx;
+                            }
+                            cur.h = edge - 10;
+                            goto NEXTP;
                         }
-                        cur.h = edge - 10;
-                        goto NEXTP;
                     }
-                }
-                }
-                goto MOVE_PAST;
-                break;
-            case margin_kern_node:
-                cur.h += width(p);
-                break;
-            case kern_node:
-                if (synctex)
-                    synctexkern(p, this_box);
-                cur.h += width(p);
-                break;
-            default:
-                break;
+                    }
+                    goto MOVE_PAST;
+                    break;
+                case kern_node:
+                    if (synctex)
+                        synctexkern(p, this_box);
+                    cur.h += width(p);
+                    break;
+                case rule_node:
+                    if (rule_dir(p) < 0)
+                        rule_dir(p) = localpos.dir;
+                    if (pardir_parallel(rule_dir(p), localpos.dir)) {
+                        rule.ht = height(p);
+                        rule.dp = depth(p);
+                        rule.wd = width(p);
+                    } else {
+                        rule.ht = width(p) / 2;
+                        rule.dp = width(p) / 2;
+                        rule.wd = height(p) + depth(p);
+                    }
+                    goto FIN_RULE;
+                    break;
+                case dir_node:
+                    /* output a reflection instruction if the direction has changed */
+                    if (dir_dir(p) >= 0) {
+                        /*
+                            Calculate the needed width to the matching |enddir|, return the
+                            |enddir| node, with width info
+                        */
+                        enddir_ptr = calculate_width_to_enddir(p, cur_glue, cur_g, this_box);
+                        if (textdir_parallel(dir_dir(p), localpos.dir)) {
+                            dir_cur_h(enddir_ptr) += cur.h;
+                            if (textdir_opposite(dir_dir(p), localpos.dir))
+                                cur.h = dir_cur_h(enddir_ptr);
+                        } else
+                            dir_cur_h(enddir_ptr) = cur.h;
+                        if (enddir_ptr != p) {
+                            /* only if it is an enddir */
+                            dir_cur_v(enddir_ptr) = cur.v;
+                            dir_refpos_h(enddir_ptr) = refpos->pos.h;
+                            dir_refpos_v(enddir_ptr) = refpos->pos.v;
+                            /* negative: mark it as |enddir| */
+                            dir_dir(enddir_ptr) = localpos.dir - dir_swap;
+                        }
+                        /* fake a nested |hlist_out| */
+                        synch_pos_with_cur(pdf->posstruct, refpos, cur);
+                        refpos->pos = pdf->posstruct->pos;
+                        localpos.dir = dir_dir(p);
+                        cur.h = 0;
+                        cur.v = 0;
+                    } else {
+                        refpos->pos.h = dir_refpos_h(p);
+                        refpos->pos.v = dir_refpos_v(p);
+                        localpos.dir = dir_dir(p) + dir_swap;
+                        cur.h = dir_cur_h(p);
+                        cur.v = dir_cur_v(p);
+                    }
+                    break;
+                case whatsit_node:
+                    /* output the whatsit node |p| in |hlist_out| */
+                    switch (subtype(p)) {
+                        case save_pos_node:
+                            last_position = pdf->posstruct->pos;
+                            pos_info.curpos = pdf->posstruct->pos;
+                            pos_info.boxpos.pos = refpos->pos;
+                            pos_info.boxpos.dir = localpos.dir;
+                            pos_info.boxdim.wd = width(this_box);
+                            pos_info.boxdim.ht = height(this_box);
+                            pos_info.boxdim.dp = depth(this_box);
+                            break;
+                        case pdf_annot_node:
+                        case pdf_start_link_node:
+                        case pdf_dest_node:
+                        case pdf_start_thread_node:
+                        case pdf_thread_node:
+                            backend_out_whatsit[subtype(p)] (pdf, p, this_box, cur);
+                            break;
+                        default:
+                            out_what(pdf, p);
+                    }
+                    break;
+                case math_node:
+                    if (synctex) {
+                        synctexmath(p, this_box);
+                    }
+                    /* begin mathskip code */
+                    if (glue_ptr(p) == zero_glue) {
+                        cur.h += surround(p);
+                        break;
+                    } else {
+                        /* fall through: mathskip */
+                    }
+                    /* end mathskip code */
+                case margin_kern_node:
+                    cur.h += width(p);
+                    break;
+                default:
+                    break;
             }
             goto NEXTP;
           FIN_RULE:
@@ -669,39 +659,44 @@ void hlist_out(PDF pdf, halfword this_box)
             /* we don't output empty rules */
             if ((rule.ht + rule.dp) > 0 && rule.wd > 0) {
                 switch (localpos.dir) {
-                case dir_TLT:
-                    size.h = rule.wd;
-                    size.v = rule.ht + rule.dp;
-                    pos_down(rule.dp);
-                    break;
-                case dir_TRT:
-                    size.h = rule.wd;
-                    size.v = rule.ht + rule.dp;
-                    pos_left(size.h);
-                    pos_down(rule.dp);
-                    break;
-                case dir_LTL:
-                    size.h = rule.ht + rule.dp;
-                    size.v = rule.wd;
-                    pos_left(rule.ht);
-                    pos_down(size.v);
-                    break;
-                case dir_RTT:
-                    size.h = rule.ht + rule.dp;
-                    size.v = rule.wd;
-                    pos_left(rule.dp);
-                    pos_down(size.v);
-                    break;
-                default:
-                    assert(0);
+                    case dir_TLT:
+                        size.h = rule.wd;
+                        size.v = rule.ht + rule.dp;
+                        pos_down(rule.dp);
+                        break;
+                    case dir_TRT:
+                        size.h = rule.wd;
+                        size.v = rule.ht + rule.dp;
+                        pos_left(size.h);
+                        pos_down(rule.dp);
+                        break;
+                    case dir_LTL:
+                        size.h = rule.ht + rule.dp;
+                        size.v = rule.wd;
+                        pos_left(rule.ht);
+                        pos_down(size.v);
+                        break;
+                    case dir_RTT:
+                        size.h = rule.ht + rule.dp;
+                        size.v = rule.wd;
+                        pos_left(rule.dp);
+                        pos_down(size.v);
+                        break;
+                    default:
+                        formatted_warning("pdf backend","forcing bad dir %i to TLT in hlist case 2",localpos.dir);
+                        localpos.dir = dir_TLT;
+                        size.h = rule.wd;
+                        size.v = rule.ht + rule.dp;
+                        pos_down(rule.dp);
+                        break;
                 }
                 if (type(p) == glue_node) {
                     q = leader_ptr(p);
                     if ((q) && (type(q) == rule_node)) {
-                        backend_out[rule_node] (pdf, q, size);
+                        backend_out[rule_node] (pdf, q, size, rule_callback_id);
                     }
                 } else {
-                    backend_out[rule_node] (pdf, p, size);
+                    backend_out[rule_node] (pdf, p, size, rule_callback_id);
                 }
             }
           MOVE_PAST:
@@ -715,10 +710,8 @@ void hlist_out(PDF pdf, halfword this_box)
             synch_pos_with_cur(pdf->posstruct, refpos, cur);
         }
     }
-
     if (synctex)
         synctextsilh(this_box);
-
     if (output_mode_used == OMODE_DVI) {
         prune_movements(save_loc);
         if (cur_s > 0) {
@@ -731,7 +724,7 @@ void hlist_out(PDF pdf, halfword this_box)
 }
 
 @ @c
-void vlist_out(PDF pdf, halfword this_box)
+void vlist_out(PDF pdf, halfword this_box, int rule_callback_id)
 {
     posstructure localpos; /* the position structure local within this function */
     posstructure *refpos;  /* the list origin pos. on the page, provided by the caller */
@@ -790,11 +783,7 @@ void vlist_out(PDF pdf, halfword this_box)
     check_running_thread(pdf, this_box, cur);
 
     while (p != null) {
-        if (is_char_node(p)) {
-            confusion("vlistout"); /* this can't happen */
-        } else {
-            /* output the non-|char_node| |p| for |vlist_out| */
-            switch (type(p)) {
+        switch (type(p)) {
             case hlist_node:
             case vlist_node:
                 /*
@@ -846,14 +835,13 @@ void vlist_out(PDF pdf, halfword this_box)
                             synctexvoidhlist(p, this_box);
                     }
                 } else {
-                    assert(cur.h == 0);
                     tmpcur.h = basepoint.h;
                     tmpcur.v = cur.v + basepoint.v;
                     synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
                     if (type(p) == vlist_node)
-                        vlist_out(pdf, p);
+                        vlist_out(pdf, p, rule_callback_id);
                     else
-                        hlist_out(pdf, p);
+                        hlist_out(pdf, p, rule_callback_id);
                     cur.v += effective_vertical;
                 }
                 break;
@@ -870,29 +858,6 @@ void vlist_out(PDF pdf, halfword this_box)
                     rule.wd = height(p) + depth(p);
                 }
                 goto FIN_RULE;
-                break;
-            case whatsit_node:
-                /* output the whatsit node |p| in |vlist_out| */
-                switch (subtype(p)) {
-                case save_pos_node:
-                    last_position = pdf->posstruct->pos;
-                    pos_info.curpos = pdf->posstruct->pos;
-                    pos_info.boxpos.pos = refpos->pos;
-                    pos_info.boxpos.dir = localpos.dir;
-                    pos_info.boxdim.wd = width(this_box);
-                    pos_info.boxdim.ht = height(this_box);
-                    pos_info.boxdim.dp = depth(this_box);
-                    break;
-                case pdf_annot_node:
-                case pdf_start_link_node:
-                case pdf_dest_node:
-                case pdf_start_thread_node:
-                case pdf_thread_node:
-                    backend_out_whatsit[subtype(p)] (pdf, p, this_box, cur);
-                    break;
-                default:
-                    out_what(pdf, p);
-                }
                 break;
             case glue_node:
                 {
@@ -933,24 +898,29 @@ void vlist_out(PDF pdf, halfword this_box)
                         if (subtype(p) == g_leaders) {
                             save_v = cur.v;
                             switch (localpos.dir) {
-                            case dir_LTL:
-                                cur.v += refpos->pos.h - shipbox_refpos.h;
-                                cur.v = leader_ht * (cur.v / leader_ht);
-                                cur.v -= refpos->pos.h - shipbox_refpos.h;
-                                break;
-                            case dir_RTT:
-                                cur.v = refpos->pos.h - shipbox_refpos.h - cur.v;
-                                cur.v = leader_ht * (cur.v / leader_ht);
-                                cur.v = refpos->pos.h - shipbox_refpos.h - cur.v;
-                                break;
-                            case dir_TLT:
-                            case dir_TRT:
-                                cur.v = refpos->pos.v - shipbox_refpos.v - cur.v;
-                                cur.v = leader_ht * (cur.v / leader_ht);
-                                cur.v = refpos->pos.v - shipbox_refpos.v - cur.v;
-                                break;
-                            default:
-                                assert(0);
+                                case dir_LTL:
+                                    cur.v += refpos->pos.h - shipbox_refpos.h;
+                                    cur.v = leader_ht * (cur.v / leader_ht);
+                                    cur.v -= refpos->pos.h - shipbox_refpos.h;
+                                    break;
+                                case dir_RTT:
+                                    cur.v = refpos->pos.h - shipbox_refpos.h - cur.v;
+                                    cur.v = leader_ht * (cur.v / leader_ht);
+                                    cur.v = refpos->pos.h - shipbox_refpos.h - cur.v;
+                                    break;
+                                case dir_TLT:
+                                case dir_TRT:
+                                    cur.v = refpos->pos.v - shipbox_refpos.v - cur.v;
+                                    cur.v = leader_ht * (cur.v / leader_ht);
+                                    cur.v = refpos->pos.v - shipbox_refpos.v - cur.v;
+                                    break;
+                                default:
+                                    formatted_warning("pdf backend","forcing bad dir %i to TLT in vlist case 1",localpos.dir);
+                                    localpos.dir = dir_TLT;
+                                    cur.v += refpos->pos.h - shipbox_refpos.h;
+                                    cur.v = leader_ht * (cur.v / leader_ht);
+                                    cur.v -= refpos->pos.h - shipbox_refpos.h;
+                                    break;
                             }
                             if (cur.v < save_v)
                                 cur.v += leader_ht;
@@ -972,16 +942,15 @@ void vlist_out(PDF pdf, halfword this_box)
 
                         while (cur.v + leader_ht <= edge) {
                             /* output a leader box at |cur.v|, then advance |cur.v| by |leader_ht+lx| */
-                            assert(cur.h == 0);
                             tmpcur.h = shift_amount(leader_box);
                             tmpcur.v = cur.v + height(leader_box);
                             synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
                             outer_doing_leaders = doing_leaders;
                             doing_leaders = true;
                             if (type(leader_box) == vlist_node)
-                                vlist_out(pdf, leader_box);
+                                vlist_out(pdf, leader_box, rule_callback_id);
                             else
-                                hlist_out(pdf, leader_box);
+                                hlist_out(pdf, leader_box, rule_callback_id);
                             doing_leaders = outer_doing_leaders;
                             cur.v += leader_ht + lx;
                         }
@@ -995,17 +964,44 @@ void vlist_out(PDF pdf, halfword this_box)
             case kern_node:
                 cur.v += width(p);
                 break;
+            case whatsit_node:
+                /* output the whatsit node |p| in |vlist_out| */
+                switch (subtype(p)) {
+                    case save_pos_node:
+                        last_position = pdf->posstruct->pos;
+                        pos_info.curpos = pdf->posstruct->pos;
+                        pos_info.boxpos.pos = refpos->pos;
+                        pos_info.boxpos.dir = localpos.dir;
+                        pos_info.boxdim.wd = width(this_box);
+                        pos_info.boxdim.ht = height(this_box);
+                        pos_info.boxdim.dp = depth(this_box);
+                        break;
+                    case pdf_annot_node:
+                    case pdf_start_link_node:
+                    case pdf_dest_node:
+                    case pdf_start_thread_node:
+                    case pdf_thread_node:
+                        backend_out_whatsit[subtype(p)] (pdf, p, this_box, cur);
+                        break;
+                    default:
+                        out_what(pdf, p);
+                }
+                break;
+            case glyph_node:
+            case disc_node:
+                confusion("vlistout"); /* this can't happen */
+                break;
             default:
                 break;
-            }
-            goto NEXTP;
-          FIN_RULE:
-            /* output a rule in a vlist, |goto next_p| */
-            if (is_running(rule.wd))
-                rule.wd = width(this_box);
-            /* we don't output empty rules */
-            if ((rule.ht + rule.dp) > 0 && rule.wd > 0) {
-                switch (localpos.dir) {
+        }
+        goto NEXTP;
+      FIN_RULE:
+        /* output a rule in a vlist, |goto next_p| */
+        if (is_running(rule.wd))
+            rule.wd = width(this_box);
+        /* we don't output empty rules */
+        if ((rule.ht + rule.dp) > 0 && rule.wd > 0) {
+            switch (localpos.dir) {
                 case dir_TLT:
                     size.h = rule.wd;
                     size.v = rule.ht + rule.dp;
@@ -1029,24 +1025,28 @@ void vlist_out(PDF pdf, halfword this_box)
                     pos_down(size.v);
                     break;
                 default:
-                    assert(0);
-                }
-                if (type(p) == glue_node) {
-                    q = leader_ptr(p);
-                    if ((q) && (type(q) == rule_node)) {
-                        backend_out[rule_node] (pdf, q, size);
-                    }
-                } else {
-                    backend_out[rule_node] (pdf, p, size);
-                }
+                    formatted_warning("pdf backend","forcing bad dir %i to TLT in vlist case 2",localpos.dir);
+                    localpos.dir = dir_TLT;
+                    size.h = rule.wd;
+                    size.v = rule.ht + rule.dp;
+                    pos_down(size.v);
+                    break;
             }
-            cur.v += rule.ht + rule.dp;
-            goto NEXTP;
-          MOVE_PAST:
-            cur.v += rule.ht;
-          NEXTP:
-            p = vlink(p);
+            if (type(p) == glue_node) {
+                q = leader_ptr(p);
+                if ((q) && (type(q) == rule_node)) {
+                    backend_out[rule_node] (pdf, q, size, rule_callback_id);
+                }
+            } else {
+                backend_out[rule_node] (pdf, p, size, rule_callback_id);
+            }
         }
+        cur.v += rule.ht + rule.dp;
+        goto NEXTP;
+      MOVE_PAST:
+        cur.v += rule.ht;
+      NEXTP:
+        p = vlink(p);
         synch_pos_with_cur(pdf->posstruct, refpos, cur);
     }
     if (synctex)

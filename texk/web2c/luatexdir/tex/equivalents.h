@@ -15,104 +15,97 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef EQUIVALENTS_H
 #  define EQUIVALENTS_H
 
 /*
-Like the preceding parameters, the following quantities can be changed
-at compile time to extend or reduce \TeX's capacity. But if they are changed,
-it is necessary to rerun the initialization program \.{INITEX}
-@.INITEX@>
-to generate new tables for the production \TeX\ program.
-One can't simply make helter-skelter changes to the following constants,
-since certain rather complex initialization
-numbers are computed from them. They are defined here using
-\.{WEB} macros, instead of being put into \PASCAL's |const| list, in order to
-emphasize this distinction.
+
+Like the preceding parameters, the following quantities can be changed at compile
+time to extend or reduce \TeX's capacity. But if they are changed, it is
+necessary to rerun the initialization program \.{INITEX} @.INITEX@> to generate
+new tables for the production \TeX\ program. One can't simply make helter-skelter
+changes to the following constants, since certain rather complex initialization
+numbers are computed from them. They are defined here using \.{WEB} macros,
+instead of being put into \PASCAL's |const| list, in order to emphasize this
+distinction.
+
 */
 
-#  define font_base 0           /* smallest internal font number; must not be less than |min_quarterword| */
-#  define biggest_reg 65535     /* the largest allowed register number; must be |< max_quarterword| */
-#  define number_regs 65536     /* |biggest_reg+1| */
-#  define number_attrs 65536    /* total numbeer of attributes */
-#  define biggest_char 1114111  /* the largest allowed character number; must be |< max_halfword| */
-#  define too_big_char 1114112  /* |biggest_char+1| */
-#  define special_char 1114113  /* |biggest_char+2| */
-#  define number_chars 1114112  /* |biggest_char+1| */
+#  define font_base                    0  /* smallest internal font number; must not be less than |min_quarterword| */
+#  define biggest_reg              65535  /* the largest allowed register number; must be |< max_quarterword| */
+#  define number_regs              65536  /* |biggest_reg+1| */
+#  define number_attrs             65536  /* total numbeer of attributes */
+#  define biggest_char           1114111  /* the largest allowed character number; must be |< max_halfword| */
+#  define too_big_char           1114112  /* |biggest_char+1| */
+#  define special_char           1114113  /* |biggest_char+2| */
+#  define number_chars           1114112  /* |biggest_char+1| */
 #  define number_fonts (5535-font_base+1)
-#  define biggest_lang 32767
-#  define too_big_lang 32768
-#  define text_size 0           /* size code for the largest size in a family */
-#  define script_size 1         /* size code for the medium size in a family */
-#  define script_script_size 2  /* size code for the smallest size in a family */
+#  define biggest_lang             32767
+#  define too_big_lang             32768
+#  define text_size                    0  /* size code for the largest size in a family */
+#  define script_size                  1  /* size code for the medium size in a family */
+#  define script_script_size           2  /* size code for the smallest size in a family */
 
 /*
+
 Each entry in |eqtb| is a |memory_word|. Most of these words are of type
 |two_halves|, and subdivided into three fields:
 
-\yskip\hangg 1) The |eq_level| (a quarterword) is the level of grouping at
-which this equivalent was defined. If the level is |level_zero|, the
-equivalent has never been defined; |level_one| refers to the outer level
-(outside of all groups), and this level is also used for global
-definitions that never go away. Higher levels are for equivalents that
-will disappear at the end of their group.  @^global definitions@>
+\yskip\hangg 1) The |eq_level| (a quarterword) is the level of grouping at which
+this equivalent was defined. If the level is |level_zero|, the equivalent has
+never been defined; |level_one| refers to the outer level (outside of all
+groups), and this level is also used for global definitions that never go away.
+Higher levels are for equivalents that will disappear at the end of their group.
+@^global definitions@>
 
-\yskip\hangg 2) The |eq_type| (another quarterword) specifies what kind of
-entry this is. There are many types, since each \TeX\ primitive like
-\.{\\hbox}, \.{\\def}, etc., has its own special code. The list of
-command codes above includes all possible settings of the |eq_type| field.
+\yskip\hangg 2) The |eq_type| (another quarterword) specifies what kind of entry
+this is. There are many types, since each \TeX\ primitive like \.{\\hbox},
+\.{\\def}, etc., has its own special code. The list of command codes above
+includes all possible settings of the |eq_type| field.
 
-\yskip\hangg 3) The |equiv| (a halfword) is the current equivalent value.
-This may be a font number, a pointer into |mem|, or a variety of other
-things.
-*/
+\yskip\hangg 3) The |equiv| (a halfword) is the current equivalent value. This
+may be a font number, a pointer into |mem|, or a variety of other things.
 
-/*
-Many locations in |eqtb| have symbolic names. The purpose of the next
-paragraphs is to define these names, and to set up the initial values of the
-equivalents.
+Many locations in |eqtb| have symbolic names. The purpose of the next paragraphs
+is to define these names, and to set up the initial values of the equivalents.
 
-In the first region we have a single entry for the `null csname' of
-length zero. In luatex, the active characters and and single-letter
-control sequence names are part of the next region.
+In the first region we have a single entry for the `null csname' of length zero.
+In luatex, the active characters and and single-letter control sequence names are
+part of the next region.
 
-Then comes region~2, which corresponds to the hash table that we will
-define later.  The maximum address in this region is used for a dummy
-control sequence that is perpetually undefined. There also are several
-locations for control sequences that are perpetually defined
-(since they are used in error recovery).
-*/
+Then comes region~2, which corresponds to the hash table that we will define
+later. The maximum address in this region is used for a dummy control sequence
+that is perpetually undefined. There also are several locations for control
+sequences that are perpetually defined (since they are used in error recovery).
 
-/*
-@ Region 3 of |eqtb| contains the |number_regs| \.{\\skip} registers, as well as the
-glue parameters defined here. It is important that the ``muskip''
-parameters have larger numbers than the others.
+@ Region 3 of |eqtb| contains the |number_regs| \.{\\skip} registers, as well as
+the glue parameters defined here. It is important that the ``muskip'' parameters
+have larger numbers than the others.
 
-@ Region 4 of |eqtb| contains the local quantities defined here. The
-bulk of this region is taken up by five tables that are indexed by eight-bit
-characters; these tables are important to both the syntactic and semantic
-portions of \TeX. There are also a bunch of special things like font and
-token parameters, as well as the tables of \.{\\toks} and \.{\\box}
-registers.
+@ Region 4 of |eqtb| contains the local quantities defined here. The bulk of this
+region is taken up by five tables that are indexed by eight-bit characters; these
+tables are important to both the syntactic and semantic portions of \TeX. There
+are also a bunch of special things like font and token parameters, as well as the
+tables of \.{\\toks} and \.{\\box} registers.
 
-@ Region 5 of |eqtb| contains the integer parameters and registers defined
-here, as well as the |del_code| table. The latter table differs from the
-|cat_code..math_code| tables that precede it, since delimiter codes are
-fullword integers while the other kinds of codes occupy at most a
-halfword. This is what makes region~5 different from region~4. We will
-store the |eq_level| information in an auxiliary array of quarterwords
-that will be defined later.
+@ Region 5 of |eqtb| contains the integer parameters and registers defined here,
+as well as the |del_code| table. The latter table differs from the
+|cat_code..math_code| tables that precede it, since delimiter codes are fullword
+integers while the other kinds of codes occupy at most a halfword. This is what
+makes region~5 different from region~4. We will store the |eq_level| information
+in an auxiliary array of quarterwords that will be defined later.
 
-@ The integer parameters should really be initialized by a macro package;
-the following initialization does the minimum to keep \TeX\ from
-complete failure.
+@ The integer parameters should really be initialized by a macro package; the
+following initialization does the minimum to keep \TeX\ from complete failure.
+
 @^null delimiter@>
 
-@ The final region of |eqtb| contains the dimension parameters defined
-here, and the |number_regs| \.{\\dimen} registers.
+@ The final region of |eqtb| contains the dimension parameters defined here, and
+the |number_regs| \.{\\dimen} registers.
+
 */
 
 #  define null_cs 1                                                     /* equivalent of \.{\\csname\\endcsname} */
@@ -258,45 +251,46 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define luastartup_id_code 60
 #  define disable_lig_code 61
 #  define disable_kern_code 62
-#  define cat_code_table_code 63
-#  define output_box_code 64
-#  define cur_lang_code 65                                              /* current language id */
-#  define ex_hyphen_char_code 66
-#  define hyphenation_min_code 67                                       /* minimum word length */
-#  define adjust_spacing_code 68                                        /* level of spacing adjusting */
-#  define protrude_chars_code 69                                        /* protrude chars at left/right edge of paragraphs */
-#  define output_mode_code 70                                           /* switch on PDF output if positive */
-#  define draft_mode_code 71
-#  define tracing_fonts_code 72
-#  define tracing_assigns_code 73                                       /* show assignments */
-#  define tracing_groups_code 74                                        /* show save/restore groups */
-#  define tracing_ifs_code 75                                           /* show conditionals */
-#  define tracing_scan_tokens_code 76                                   /* show pseudo file open and close */
-#  define tracing_nesting_code 77                                       /* show incomplete groups and ifs within files */
-#  define pre_display_direction_code 78                                 /* text direction preceding a display */
-#  define last_line_fit_code 79                                         /* adjustment for last line of paragraph */
-#  define saving_vdiscards_code 80                                      /* save items discarded from vlists */
-#  define saving_hyph_codes_code 81                                     /* save hyphenation codes for languages */
-#  define suppress_fontnotfound_error_code 82                           /* suppress errors for missing fonts */
-#  define suppress_long_error_code 83                                   /* suppress errors for missing fonts */
-#  define suppress_ifcsname_error_code 84                               /* suppress errors for failed \.{\\ifcsname} */
-#  define suppress_outer_error_code 85                                  /* suppress errors for \.{\\outer} */
-#  define suppress_mathpar_error_code 86                                /* suppress errors for \.{\\par}} in math */
-#  define math_eqno_gap_step_code 87                                    /* factor/1000 used for distance between eq and eqno */
-#  define math_display_skip_mode_code 88
-#  define math_scripts_mode_code 89
-#  define synctex_code 90                                               /* is synctex file generation enabled ?  */
+#  define disable_space_code 63
+#  define cat_code_table_code 64
+#  define output_box_code 65
+#  define cur_lang_code 66                                              /* current language id */
+#  define ex_hyphen_char_code 67
+#  define hyphenation_min_code 68                                       /* minimum word length */
+#  define adjust_spacing_code 69                                        /* level of spacing adjusting */
+#  define protrude_chars_code 70                                        /* protrude chars at left/right edge of paragraphs */
+#  define output_mode_code 71                                           /* switch on PDF output if positive */
+#  define draft_mode_code 72
+#  define tracing_fonts_code 73
+#  define tracing_assigns_code 74                                       /* show assignments */
+#  define tracing_groups_code 75                                        /* show save/restore groups */
+#  define tracing_ifs_code 76                                           /* show conditionals */
+#  define tracing_scan_tokens_code 77                                   /* show pseudo file open and close */
+#  define tracing_nesting_code 78                                       /* show incomplete groups and ifs within files */
+#  define pre_display_direction_code 79                                 /* text direction preceding a display */
+#  define last_line_fit_code 80                                         /* adjustment for last line of paragraph */
+#  define saving_vdiscards_code 81                                      /* save items discarded from vlists */
+#  define saving_hyph_codes_code 82                                     /* save hyphenation codes for languages */
+#  define suppress_fontnotfound_error_code 83                           /* suppress errors for missing fonts */
+#  define suppress_long_error_code 84                                   /* suppress errors for missing fonts */
+#  define suppress_ifcsname_error_code 85                               /* suppress errors for failed \.{\\ifcsname} */
+#  define suppress_outer_error_code 86                                  /* suppress errors for \.{\\outer} */
+#  define suppress_mathpar_error_code 87                                /* suppress errors for \.{\\par}} in math */
+#  define math_eqno_gap_step_code 88                                    /* factor/1000 used for distance between eq and eqno */
+#  define math_display_skip_mode_code 89
+#  define math_scripts_mode_code 90
+#  define synctex_code 91                                               /* is synctex file generation enabled ?  */
 
-#  define math_no_italic_compensation_code 91                           /* just for tracing, can change */
-#  define math_no_char_italic_code 92                                   /* just for tracing, can change */
-#  define math_use_old_fraction_scaling_code 93                         /* just for tracing, can change */
-#  define math_old_code 94                                              /* this one is stable */
-#  define math_option_code 95
+#  define math_no_italic_compensation_code 92                           /* just for tracing, can change */
+#  define math_no_char_italic_code 93                                   /* just for tracing, can change */
+#  define math_use_old_fraction_scaling_code 94                         /* just for tracing, can change */
+#  define math_old_code 95                                              /* this one is stable */
+#  define math_option_code 96
 
-#  define backend_int_base (int_base+96)
-#  define backend_int_last (int_base+115)
+#  define backend_int_base (int_base+97)
+#  define backend_int_last (int_base+116)
 
-#  define tex_int_pars (116)                                            /* total number of integer parameters */
+#  define tex_int_pars (117)                                            /* total number of integer parameters */
 
 #  define page_direction_code (tex_int_pars)
 #  define body_direction_code (tex_int_pars+1)
@@ -339,7 +333,7 @@ here, and the |number_regs| \.{\\dimen} registers.
 #  define page_bottom_offset_code 24
 #  define px_dimen_code 25
 #  define page_width_code 26                                            /* page width of the output */
-#  define page_height_code 27                                           /* page height of the output */                      /* total number of dimension parameters */
+#  define page_height_code 27                                           /* page height of the output */
 
 #  define backend_dimen_base (dimen_base+28)
 #  define backend_dimen_last (dimen_base+37)
@@ -387,8 +381,10 @@ extern int cur_boundary;                                                /* where
 #  define save_word(A) save_stack[(A)].word_                            /* |eqtb| entry */
 
 /*
-We use the notation |saved(k)| to stand for an item that
-appears in location |save_ptr+k| of the save stack.
+
+We use the notation |saved(k)| to stand for an item that appears in location
+|save_ptr+k| of the save stack.
+
 */
 
 #  define saved_type(A) save_stack[save_ptr+(A)].type_
@@ -418,58 +414,59 @@ appears in location |save_ptr+k| of the save stack.
 #  define saved_boxspec 14
 #  define saved_boxdir 15
 #  define saved_boxattr 16
-#  define saved_eqtb 17
+#  define saved_boxpack 18
+#  define saved_eqtb 19
 
 extern void print_save_stack(void);
-
-#  define assign_trace(A,B) if (int_par(tracing_assigns_code)>0) restore_trace((A),(B))
 
 #  define int_par(A)   eqtb[int_base+(A)].cint
 #  define dimen_par(A) eqtb[dimen_base+(A)].cint
 #  define loc_par(A)   equiv(local_base+(A))
 #  define glue_par(A)  equiv(glue_base+(A))
 
-extern int mag_set;             /* if nonzero, this magnification should be used henceforth */
+/* if nonzero, this magnification should be used henceforth */
+
+extern int mag_set;
 extern void prepare_mag(void);
 
 /*
-@ Here are the group codes that are used to discriminate between different
-kinds of groups. They allow \TeX\ to decide what special actions, if any,
-should be performed when a group ends.
-\def\grp{\.{\char'173...\char'175}}
 
-Some groups are not supposed to be ended by right braces. For example,
-the `\.\$' that begins a math formula causes a |math_shift_group| to
-be started, and this should be terminated by a matching `\.\$'. Similarly,
-a group that starts with \.{\\left} should end with \.{\\right}, and
-one that starts with \.{\\begingroup} should end with \.{\\endgroup}.
+@ Here are the group codes that are used to discriminate between different kinds
+of groups. They allow \TeX\ to decide what special actions, if any, should be
+performed when a group ends. \def\grp{\.{\char'173...\char'175}}
+
+Some groups are not supposed to be ended by right braces. For example, the `\.\$'
+that begins a math formula causes a |math_shift_group| to be started, and this
+should be terminated by a matching `\.\$'. Similarly, a group that starts with
+\.{\\left} should end with \.{\\right}, and one that starts with \.{\\begingroup}
+should end with \.{\\endgroup}.
 
 */
 
 typedef enum {
-    bottom_level = 0,           /* group code for the outside world */
-    simple_group,               /* group code for local structure only */
-    hbox_group,                 /* code for `\.{\\hbox}\grp' */
-    adjusted_hbox_group,        /* code for `\.{\\hbox}\grp' in vertical mode */
-    vbox_group,                 /* code for `\.{\\vbox}\grp' */
-    vtop_group,                 /* code for `\.{\\vtop}\grp' */
-    align_group,                /* code for `\.{\\halign}\grp', `\.{\\valign}\grp' */
-    no_align_group,             /* code for `\.{\\noalign}\grp' */
-    output_group,               /* code for output routine */
-    math_group,                 /* code for, e.g., `\.{\char'136}\grp' */
-    disc_group,                 /* code for `\.{\\discretionary}\grp\grp\grp' */
-    insert_group,               /* code for `\.{\\insert}\grp', `\.{\\vadjust}\grp' */
-    vcenter_group,              /* code for `\.{\\vcenter}\grp' */
-    math_choice_group,          /* code for `\.{\\mathchoice}\grp\grp\grp\grp' */
-    semi_simple_group,          /* code for `\.{\\begingroup...\\endgroup}' */
-    math_shift_group,           /* code for `\.{\$...\$}' */
-    math_left_group,            /* code for `\.{\\left...\\right}' */
-    local_box_group,            /* code for `\.{\\localleftbox...\\localrightbox}' */
-    split_off_group,            /* box code for the top part of a \.{\\vsplit} */
-    split_keep_group,           /* box code for the bottom part of a \.{\\vsplit} */
-    preamble_group,             /* box code for the preamble processing  in an alignment */
-    align_set_group,            /* box code for the final item pass in an alignment */
-    fin_row_group               /* box code for a provisory line in an alignment */
+    bottom_level = 0,    /* group code for the outside world */
+    simple_group,        /* group code for local structure only */
+    hbox_group,          /* code for `\.{\\hbox}\grp' */
+    adjusted_hbox_group, /* code for `\.{\\hbox}\grp' in vertical mode */
+    vbox_group,          /* code for `\.{\\vbox}\grp' */
+    vtop_group,          /* code for `\.{\\vtop}\grp' */
+    align_group,         /* code for `\.{\\halign}\grp', `\.{\\valign}\grp' */
+    no_align_group,      /* code for `\.{\\noalign}\grp' */
+    output_group,        /* code for output routine */
+    math_group,          /* code for, e.g., `\.{\char'136}\grp' */
+    disc_group,          /* code for `\.{\\discretionary}\grp\grp\grp' */
+    insert_group,        /* code for `\.{\\insert}\grp', `\.{\\vadjust}\grp' */
+    vcenter_group,       /* code for `\.{\\vcenter}\grp' */
+    math_choice_group,   /* code for `\.{\\mathchoice}\grp\grp\grp\grp' */
+    semi_simple_group,   /* code for `\.{\\begingroup...\\endgroup}' */
+    math_shift_group,    /* code for `\.{\$...\$}' */
+    math_left_group,     /* code for `\.{\\left...\\right}' */
+    local_box_group,     /* code for `\.{\\localleftbox...\\localrightbox}' */
+    split_off_group,     /* box code for the top part of a \.{\\vsplit} */
+    split_keep_group,    /* box code for the bottom part of a \.{\\vsplit} */
+    preamble_group,      /* box code for the preamble processing  in an alignment */
+    align_set_group,     /* box code for the final item pass in an alignment */
+    fin_row_group        /* box code for a provisory line in an alignment */
 } tex_group_codes;
 
 #  define max_group_code local_box_group                        /* which is wrong, but is what the web says */
@@ -490,7 +487,6 @@ extern void geq_define(halfword p, quarterword t, halfword e);  /* global |eq_de
 extern void geq_word_define(halfword p, int w);                 /* global |eq_word_define| */
 extern void save_for_after(halfword t);
 extern void unsave(void);                                       /* pops the top level off the save stack */
-extern void restore_trace(halfword p, const char *s);           /* |eqtb[p]| has just been restored or retained */
 extern void show_save_groups(void);
 
 #  define level_zero 0                                          /* level for undefined quantities */
@@ -498,10 +494,20 @@ extern void show_save_groups(void);
 
 extern void show_eqtb(halfword n);
 
+/* \csname \ifcsname */
+
+extern halfword last_cs_name;
+
 /* more will move here */
 
 #define space_skip glue_par(space_skip_code)
 #define xspace_skip glue_par(xspace_skip_code)
 #define math_skip glue_par(math_skip_code)
+
+#define body_direction int_par(body_direction_code)
+#define page_direction int_par(page_direction_code)
+#define par_direction  int_par(par_direction_code)
+#define text_direction int_par(text_direction_code)
+#define math_direction int_par(math_direction_code)
 
 #endif

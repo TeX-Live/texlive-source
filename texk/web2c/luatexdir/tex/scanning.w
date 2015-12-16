@@ -35,8 +35,7 @@
 #define count(A) eqtb[count_base+(A)].hh.rh
 #define box(A) equiv(box_base+(A))
 
-#define text_direction int_par(text_direction_code)
-#define body_direction int_par(body_direction_code)
+static void scan_expr(void);
 
 @ Let's turn now to some procedures that \TeX\ calls upon frequently to digest
 certain kinds of patterns in the input. Most of these are quite simple;
@@ -602,7 +601,7 @@ void scan_something_internal(int level, boolean negative)
             /* Fetch a character code from some table */
             scan_char_num();
             if (m == math_code_base) {
-                cur_val1 = get_math_code_num(cur_val, true);
+                cur_val1 = get_math_code_num(cur_val);
                 scanned_result(cur_val1, int_val_level);
             } else if (m == lc_code_base) {
                 cur_val1 = get_lc_code(cur_val);
@@ -621,6 +620,7 @@ void scan_something_internal(int level, boolean negative)
             }
             break;
         case def_del_code_cmd:
+        case extdef_del_code_cmd: /* bonus */
             /* Fetch a character code from some table */
             scan_char_num();
             cur_val1 = get_del_code_num(cur_val);
@@ -629,7 +629,7 @@ void scan_something_internal(int level, boolean negative)
         case extdef_math_code_cmd:
             /* Fetch an extended math code table value */
             scan_char_num();
-            cur_val1 = get_math_code_num(cur_val, false);
+            cur_val1 = get_math_code_num(cur_val);
             scanned_result(cur_val1, int_val_level);
             break;
         case toks_register_cmd:
@@ -1102,26 +1102,73 @@ $|cur_val|+|f|/2^{16}$. At the end of the routine, this ``unpacked''
 representation is put into the single word |cur_val|, which suddenly
 switches significance from |integer| to |scaled|.
 
-@c
-void scan_dimen(boolean mu, boolean inf, boolean shortcut)
-/* sets |cur_val| to a dimension */
-{
-    boolean negative;           /* should the answer be negated? */
-    int f;                      /* numerator of a fraction whose denominator is $2^{16}$ */
-    /* Local variables for dimension calculations */
-    int num, denom;             /* conversion ratio for the scanned units */
-    int k, kk;                  /* number of digits in a decimal fraction */
-    halfword p, q;              /* top of decimal digit stack */
-    scaled v;                   /* an internal dimension */
-    int save_cur_val;           /* temporary storage of |cur_val| */
+@
+The necessary conversion factors can all be specified exactly as
+fractions whose numerator and denominator add to 32768 or less.
+According to the definitions here, $\rm2660\,dd\approx1000.33297\,mm$;
+this agrees well with the value $\rm1000.333\,mm$ cited by Bosshard
+\^{Bosshard, Hans Rudolf}
+in {\sl Technische Grundlagen zur Satzherstellung\/} (Bern, 1980).
+The Didot point has been newly standardized in 1978;
+it's now exactly $\rm 1\,nd=0.375\,mm$.
+Conversion uses the equation $0.375=21681/20320/72.27\cdot25.4$.
+The new Cicero follows the new Didot point; $\rm 1\,nc=12\,nd$.
+These would lead to the ratios $21681/20320$ and $65043/5080$,
+respectively.
+The closest approximations supported by the algorithm would be
+$11183/10481$ and $1370/107$.  In order to maintain the
+relation $\rm 1\,nc=12\,nd$, we pick the ratio $685/642$ for
+$\rm nd$, however.
 
-    f = 0;
+@c
+
+static void scan_dimen_mu_error(void) {
+    print_err("Illegal unit of measure (mu inserted)");
+    help4("The unit of measurement in math glue must be mu.",
+          "To recover gracefully from this error, it's best to",
+          "delete the erroneous units; e.g., type `2' to delete",
+          "two letters. (See Chapter 27 of The TeXbook.)");
+    error();
+}
+
+static void scan_dimen_unknown_unit_error(void) {
+    print_err("Illegal unit of measure (pt inserted)");
+    help6("Dimensions can be in units of em, ex, in, pt, pc,",
+          "cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!",
+          "I'll assume that you meant to say pt, for printer's points.",
+          "To recover gracefully from this error, it's best to",
+          "delete the erroneous units; e.g., type `2' to delete",
+          "two letters. (See Chapter 27 of The TeXbook.)");
+    error();
+}
+
+static void scan_dimen_out_of_range_error(void) {
+    print_err("Dimension too large");
+    help2("I can't work with sizes bigger than about 19 feet.",
+          "Continue and I'll use the largest value I can.");
+    error();
+}
+
+#define set_conversion(A,B) do { num=(A); denom=(B); } while(0)
+
+/*
+    This function sets |cur_val| to a dimension. It could be optimized a bit
+    more (but not now, something for luatex > 1).
+*/
+
+void scan_dimen(boolean mu, boolean inf, boolean shortcut)
+{
+    boolean negative; /* should the answer be negated? */
+    int f = 0;        /* numerator of a fraction whose denominator is $2^{16}$ */
+    int num, denom;   /* conversion ratio for the scanned units */
+    halfword q;       /* top of decimal digit stack */
+    scaled v;         /* an internal dimension */
+    int save_cur_val; /* temporary storage of |cur_val| */
     arith_error = false;
     cur_order = normal;
     negative = false;
     if (!shortcut) {
         /* Get the next non-blank non-sign... */
-        negative = false;
         do {
             /* Get the next non-blank non-call token */
             do {
@@ -1132,23 +1179,22 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
                 cur_tok = other_token + '+';
             }
         } while (cur_tok == other_token + '+');
-
         if ((cur_cmd >= min_internal_cmd) && (cur_cmd <= max_internal_cmd)) {
-            /* Fetch an internal dimension and |goto attach_sign|,
-               or fetch an internal integer */
+            /* Fetch an internal dimension and |goto attach_sign|, or fetch an internal integer */
             if (mu) {
                 scan_something_internal(mu_val_level, false);
                 coerce_glue();
-                if (cur_val_level == mu_val_level)
+                if (cur_val_level == mu_val_level) {
                     goto ATTACH_SIGN;
-                if (cur_val_level != int_val_level)
+                } else if (cur_val_level != int_val_level) {
                     mu_error();
+                }
             } else {
                 scan_something_internal(dimen_val_level, false);
-                if (cur_val_level == dimen_val_level)
+                if (cur_val_level == dimen_val_level) {
                     goto ATTACH_SIGN;
+                }
             }
-
         } else {
             back_input();
             if (cur_tok == continental_point_token) {
@@ -1160,24 +1206,26 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
                 radix = 10;
                 cur_val = 0;
             }
-            if (cur_tok == continental_point_token)
+            if (cur_tok == continental_point_token) {
                 cur_tok = point_token;
+            }
             if ((radix == 10) && (cur_tok == point_token)) {
-                /* Scan decimal fraction */
-                /* When the following code is executed, we have |cur_tok=point_token|, but this
-                   token has been backed up using |back_input|; we must first discard it.
-
-                   It turns out that a decimal point all by itself is equivalent to `\.{0.0}'.
-                   Let's hope people don't use that fact. */
-
-                k = 0;
-                p = null;
-                get_token();    /* |point_token| is being re-scanned */
+                /*
+                    Scan decimal fraction. When the following code is executed, we have
+                    |cur_tok=point_token|, but this token has been backed up using |back_input|;
+                    we must first discard it. It turns out that a decimal point all by itself
+                    is equivalent to `\.{0.0}'. Let's hope people don't use that fact.
+                */
+                int k = 0;
+                halfword p = null;
+                int kk;
+                get_token(); /* |point_token| is being re-scanned */
                 while (1) {
                     get_x_token();
                     if ((cur_tok > zero_token + 9) || (cur_tok < zero_token))
                         break;
-                    if (k < 17) {       /* digits for |k>=17| cannot affect the result */
+                    if (k < 17) {
+                        /* digits for |k>=17| cannot affect the result */
                         q = get_avail();
                         set_token_link(q, p);
                         set_token_info(q, cur_tok - zero_token);
@@ -1192,31 +1240,33 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
                     free_avail(q);
                 }
                 f = round_decimals(k);
-                if (cur_cmd != spacer_cmd)
+                if (cur_cmd != spacer_cmd) {
                     back_input();
+                }
             }
         }
     }
-    if (cur_val < 0) {          /* in this case |f=0| */
+    if (cur_val < 0) {
+        /* in this case |f=0| */
         negative = !negative;
         negate(cur_val);
     }
-    /* Scan units and set |cur_val| to $x\cdot(|cur_val|+f/2^{16})$, where there
-       are |x| sp per unit; |goto attach_sign| if the units are internal */
-    /* Now comes the harder part: At this point in the program, |cur_val| is a
-       nonnegative integer and $f/2^{16}$ is a nonnegative fraction less than 1;
-       we want to multiply the sum of these two quantities by the appropriate
-       factor, based on the specified units, in order to produce a |scaled|
-       result, and we want to do the calculation with fixed point arithmetic that
-       does not overflow.
-     */
-
+    /*
+        Scan units and set |cur_val| to $x\cdot(|cur_val|+f/2^{16})$, where there
+        are |x| sp per unit; |goto attach_sign| if the units are internal. Now comes
+        the harder part: At this point in the program, |cur_val| is a nonnegative
+        integer and $f/2^{16}$ is a nonnegative fraction less than 1; we want to
+        multiply the sum of these two quantities by the appropriate factor, based
+        on the specified units, in order to produce a |scaled| result, and we want
+        to do the calculation with fixed point arithmetic that does not overflow.
+    */
     if (inf) {
-        /* Scan for (f)\.{fil} units; |goto attach_fraction| if found */
-        /* In traditional TeX, a specification like `\.{filllll}' or `\.{fill L L
-           L}' will lead to two error messages (one for each additional keyword
-           \.{"l"}).
-           Not so for luatex, it just parses the construct in reverse. */
+        /*
+            Scan for (f)\.{fil} units; |goto attach_fraction| if found. In traditional
+            \TeX, a specification like `\.{filllll}' or `\.{fill L L L}' will lead to
+            two error messages (one for each additional keyword \.{"l"}). Not so for
+            \LuaTeX, it just parses the construct in reverse.
+        */
         if (scan_keyword("filll")) {
             cur_order = filll;
             goto ATTACH_FRACTION;
@@ -1230,12 +1280,13 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
             cur_order = sfi;
             goto ATTACH_FRACTION;
         }
-
     }
-    /* Scan for (u)units that are internal dimensions;
-       |goto attach_sign| with |cur_val| set if found */
+    /*
+        Scan for (u)units that are internal dimensions; |goto attach_sign| with
+        |cur_val| set if found
+    */
     save_cur_val = cur_val;
-    /* Get the next non-blank non-call... */
+    /* Get the next non-blank non-call... a pitty if just backed up the input */
     do {
         get_x_token();
     } while (cur_cmd == spacer_cmd);
@@ -1243,146 +1294,124 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
     if ((cur_cmd < min_internal_cmd) || (cur_cmd > max_internal_cmd)) {
         back_input();
     } else {
+        /* math_given_cmd xmath_given_cmd last_item_cmd */
         if (mu) {
             scan_something_internal(mu_val_level, false);
             coerce_glue();
-            if (cur_val_level != mu_val_level)
+            if (cur_val_level != mu_val_level) {
                 mu_error();
+            }
         } else {
             scan_something_internal(dimen_val_level, false);
         }
         v = cur_val;
         goto FOUND;
     }
-    if (mu)
-        goto NOT_FOUND;
-    if (scan_keyword("em")) {
-        v = (quad(get_cur_font()));
+    /* bah ... true forces to split the unit scanner */
+    if (mu) {
+        /* Scan for (m)\.{mu} units and |goto attach_fraction| */
+        if (! scan_keyword("mu")) {
+            scan_dimen_mu_error();
+        }
+        goto ATTACH_FRACTION;
+    } else if (scan_keyword("em")) {
+        v = quad(get_cur_font());
     } else if (scan_keyword("ex")) {
-        v = (x_height(get_cur_font()));
+        v = x_height(get_cur_font());
     } else if (scan_keyword("px")) {
         v = dimen_par(px_dimen_code);
     } else {
-        goto NOT_FOUND;
+        goto PICKUP_UNIT;
     }
-    /* Scan an optional space */
+    /* Scan an optional space (after em, ex or px) */
     get_x_token();
-    if (cur_cmd != spacer_cmd)
+    if (cur_cmd != spacer_cmd) {
         back_input();
-
+    }
   FOUND:
     cur_val = nx_plus_y(save_cur_val, v, xn_over_d(v, f, 0200000));
     goto ATTACH_SIGN;
-  NOT_FOUND:
-
-    if (mu) {
-        /* Scan for (m)\.{mu} units and |goto attach_fraction| */
-        if (scan_keyword("mu")) {
-            goto ATTACH_FRACTION;
-        } else {
-            print_err("Illegal unit of measure (mu inserted)");
-            help4("The unit of measurement in math glue must be mu.",
-                  "To recover gracefully from this error, it's best to",
-                  "delete the erroneous units; e.g., type `2' to delete",
-                  "two letters. (See Chapter 27 of The TeXbook.)");
-            error();
-            goto ATTACH_FRACTION;
-        }
-    }
-    if (scan_keyword("true")) {
-        /* Adjust (f)for the magnification ratio */
-        prepare_mag();
-        if (int_par(mag_code) != 1000) {
-            cur_val = xn_over_d(cur_val, 1000, int_par(mag_code));
-            f = (1000 * f + 0200000 * tex_remainder) / int_par(mag_code);
-            cur_val = cur_val + (f / 0200000);
-            f = f % 0200000;
-        }
-    }
-    if (scan_keyword("pt"))
+    /*
+        Scan for (a)all other units and adjust |cur_val| and |f| accordingly;
+        |goto done| in the case of scaled points
+    */
+  PICKUP_UNIT:
+    if (scan_keyword("pt")) {
         goto ATTACH_FRACTION;   /* the easy case */
-    /* Scan for (a)all other units and adjust |cur_val| and |f| accordingly;
-       |goto done| in the case of scaled points */
-
-    /* The necessary conversion factors can all be specified exactly as
-       fractions whose numerator and denominator add to 32768 or less.
-       According to the definitions here, $\rm2660\,dd\approx1000.33297\,mm$;
-       this agrees well with the value $\rm1000.333\,mm$ cited by Bosshard
-       \^{Bosshard, Hans Rudolf}
-       in {\sl Technische Grundlagen zur Satzherstellung\/} (Bern, 1980).
-       The Didot point has been newly standardized in 1978;
-       it's now exactly $\rm 1\,nd=0.375\,mm$.
-       Conversion uses the equation $0.375=21681/20320/72.27\cdot25.4$.
-       The new Cicero follows the new Didot point; $\rm 1\,nc=12\,nd$.
-       These would lead to the ratios $21681/20320$ and $65043/5080$,
-       respectively.
-       The closest approximations supported by the algorithm would be
-       $11183/10481$ and $1370/107$.  In order to maintain the
-       relation $\rm 1\,nc=12\,nd$, we pick the ratio $685/642$ for
-       $\rm nd$, however.
-     */
-
-#define set_conversion(A,B) do { num=(A); denom=(B); } while(0)
-
-    if (scan_keyword("mm")) {
+    } else if (scan_keyword("mm")) {
         set_conversion(7227, 2540);
+        goto SCALE_VALUE;
     } else if (scan_keyword("cm")) {
         set_conversion(7227, 254);
+        goto SCALE_VALUE;
     } else if (scan_keyword("sp")) {
         goto DONE;
     } else if (scan_keyword("bp")) {
         set_conversion(7227, 7200);
+        goto SCALE_VALUE;
     } else if (scan_keyword("in")) {
         set_conversion(7227, 100);
+        goto SCALE_VALUE;
     } else if (scan_keyword("dd")) {
         set_conversion(1238, 1157);
+        goto SCALE_VALUE;
     } else if (scan_keyword("cc")) {
         set_conversion(14856, 1157);
-    } else if (scan_keyword("nd")) {
-        set_conversion(685, 642);
-    } else if (scan_keyword("nc")) {
-        set_conversion(1370, 107);
+        goto SCALE_VALUE;
     } else if (scan_keyword("pc")) {
         set_conversion(12, 1);
+        goto SCALE_VALUE;
+    } else if (scan_keyword("nd")) {
+        set_conversion(685, 642);
+        goto SCALE_VALUE;
+    } else if (scan_keyword("nc")) {
+        set_conversion(1370, 107);
+        goto SCALE_VALUE;
+    } else if (scan_keyword("true")) {
+        /* Adjust (f)for the magnification ratio */
+        if (output_mode_used == OMODE_DVI) {
+            prepare_mag();
+            if (int_par(mag_code) != 1000) {
+                cur_val = xn_over_d(cur_val, 1000, int_par(mag_code));
+                f = (1000 * f + 0200000 * tex_remainder) / int_par(mag_code);
+                cur_val = cur_val + (f / 0200000);
+                f = f % 0200000;
+            }
+        }
+        goto PICKUP_UNIT;
     } else {
         /* Complain about unknown unit and |goto done2| */
-        print_err("Illegal unit of measure (pt inserted)");
-        help6("Dimensions can be in units of em, ex, in, pt, pc,",
-              "cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!",
-              "I'll assume that you meant to say pt, for printer's points.",
-              "To recover gracefully from this error, it's best to",
-              "delete the erroneous units; e.g., type `2' to delete",
-              "two letters. (See Chapter 27 of The TeXbook.)");
-        error();
-        goto DONE2;
+        scan_dimen_unknown_unit_error();
+        goto BAD_NEWS;
     }
+  SCALE_VALUE:
     cur_val = xn_over_d(cur_val, num, denom);
     f = (num * f + 0200000 * tex_remainder) / denom;
     cur_val = cur_val + (f / 0200000);
     f = f % 0200000;
-  DONE2:
+  BAD_NEWS:
   ATTACH_FRACTION:
-    if (cur_val >= 040000)
+    if (cur_val >= 040000) {
         arith_error = true;
-    else
+    } else {
         cur_val = cur_val * unity + f;
+    }
   DONE:
-    /* Scan an optional space */
+    /* Scan an optional space */ /* happens too often */
     get_x_token();
-    if (cur_cmd != spacer_cmd)
+    if (cur_cmd != spacer_cmd) {
         back_input();
+    }
   ATTACH_SIGN:
     if (arith_error || (abs(cur_val) >= 010000000000)) {
         /* Report that this dimension is out of range */
-        print_err("Dimension too large");
-        help2("I can't work with sizes bigger than about 19 feet.",
-              "Continue and I'll use the largest value I can.");
-        error();
+        scan_dimen_out_of_range_error();
         cur_val = max_dimen;
         arith_error = false;
     }
-    if (negative)
+    if (negative) {
         negate(cur_val);
+    }
 }
 
 @ The final member of \TeX's value-scanning trio is |scan_glue|, which
@@ -1991,7 +2020,7 @@ halfword scan_toks(boolean macro_def, boolean xpand)
             /* Here we insert an entire token list created by |the_toks| without
                expanding it further. */
             while (1) {
-                get_next(); /* get_token_lua(); */
+                get_next();
                 if (cur_cmd >= call_cmd) {
                     if (token_info(token_link(cur_chr)) == protected_token) {
                         cur_cmd = relax_cmd;
@@ -2096,25 +2125,24 @@ typedef enum {
 @   clear a number or dimension and set |arith_error|
 
 @c
-#define num_error(A) do {			\
-	arith_error=true;			\
-	A=0;					\
-    } while (0)
-
+#define num_error(A) do { \
+    arith_error=true; \
+    A=0; \
+} while (0)
 
 @   clear a glue spec and set |arith_error|
 
 @c
-#define glue_error(A) do {				\
-	arith_error=true;				\
-	delete_glue_ref(A);				\
-	A=new_spec(zero_glue);				\
-    } while (0)
+#define glue_error(A) do { \
+    arith_error=true; \
+    delete_glue_ref(A); \
+    A=new_spec(zero_glue); \
+} while (0)
 
-#define normalize_glue(A) do {				\
-	if (stretch(A)==0) stretch_order(A)=normal;	\
-	if (shrink(A)==0) shrink_order(A)=normal;	\
-    } while (0)
+#define normalize_glue(A) do { \
+    if (stretch(A)==0) stretch_order(A)=normal; \
+    if (shrink(A)==0) shrink_order(A)=normal; \
+} while (0)
 
 @ Parenthesized subexpressions can be inside expressions, and this
 nesting has a stack.  Seven local variables represent the top of the
@@ -2141,7 +2169,7 @@ numerator for a combined multiplication and division, if any.
   |max_answer|.
 
 @c
-int add_or_sub(int x, int y, int max_answer, boolean negative)
+inline static int add_or_sub(int x, int y, int max_answer, boolean negative)
 {
     int a;                      /* the answer */
     if (negative)
@@ -2166,7 +2194,7 @@ int add_or_sub(int x, int y, int max_answer, boolean negative)
 $q=\lfloor n/d+{1\over2}\rfloor$, when $n$ and $d$ are positive.
 
 @c
-int quotient(int n, int d)
+inline static int quotient(int n, int d)
 {
     boolean negative;           /* should the answer be negated? */
     int a;                      /* the answer */
@@ -2252,8 +2280,6 @@ int fract(int x, int n, int d, int max_answer)
         x = n;
         n = t;
     }
-
-
     /* now |0<n<=x<d| */
     /* Compute $f=\lfloor xn/d+{1\over2}\rfloor$; */
     /* The loop here preserves the following invariant relations
@@ -2307,7 +2333,7 @@ int fract(int x, int n, int d, int max_answer)
 }
 
 @ @c
-void scan_expr(void)
+static void scan_expr(void)
 {                               /* scans and evaluates an expression */
     boolean a, b;               /* saved values of |arith_error| */
     int l;                      /* type of expression */
@@ -2402,8 +2428,7 @@ void scan_expr(void)
         if (abs(f) > max_dimen)
             num_error(f);
     } else {
-        if ((abs(width(f)) > max_dimen) ||
-            (abs(stretch(f)) > max_dimen) || (abs(shrink(f)) > max_dimen))
+        if ((abs(width(f)) > max_dimen) || (abs(stretch(f)) > max_dimen) || (abs(shrink(f)) > max_dimen))
             glue_error(f);
     }
 
@@ -2464,7 +2489,6 @@ void scan_expr(void)
             expr_s(shrink(t));
         }
         break;
-
     }                           /* there are no other cases */
     if (o > expr_sub) {
         s = o;
@@ -2486,8 +2510,7 @@ void scan_expr(void)
             width(e) = expr_a(width(e), width(t));
             if (stretch_order(e) == stretch_order(t)) {
                 stretch(e) = expr_a(stretch(e), stretch(t));
-            } else if ((stretch_order(e) < stretch_order(t))
-                       && (stretch(t) != 0)) {
+            } else if ((stretch_order(e) < stretch_order(t)) && (stretch(t) != 0)) {
                 stretch(e) = stretch(t);
                 stretch_order(e) = stretch_order(t);
             }

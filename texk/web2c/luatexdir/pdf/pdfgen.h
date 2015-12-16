@@ -15,8 +15,8 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFGEN_H
 #  define PDFGEN_H
@@ -27,46 +27,49 @@
 #  define PROCSET_IMAGE_C (1 << 3)
 #  define PROCSET_IMAGE_I (1 << 4)
 
-#  define inf_pdf_mem_size 10000/* min size of the |mem| array */
-#  define sup_pdf_mem_size 10000000     /* max size of the |mem| array */
+#  define inf_pdf_mem_size    10000 /* min size of the |mem| array */
+#  define sup_pdf_mem_size 10000000 /* max size of the |mem| array */
 
 extern PDF static_pdf;
 
 extern int pdf_get_mem(PDF pdf, int s);
 
 /*
-We use the similiar subroutines to handle the output buffer for
-PDF output. When compress is used, the state of writing to buffer
-is held in |zip_write_state|. We must write the header of PDF
-output file in initialization to ensure that it will be the first
-written bytes.
+
+We use the similiar subroutines to handle the output buffer for PDF output. When
+compress is used, the state of writing to buffer is held in |zip_write_state|. We
+must write the header of PDF output file in initialization to ensure that it will
+be the first written bytes.
+
 */
 
-#  define inf_pdfout_buf_size 16384 /* initial value of |pdf->buf| size */
-#  define sup_pdfout_buf_size 16384     /* arbitrary upper hard limit of |pdf->buf| size */
-#  define inf_objstm_buf_size 1 /* initial value of |os->buf[OBJSTM_BUF]| size */
-#  define sup_objstm_buf_size 5000000   /* arbitrary upper hard limit of |os->buf[OBJSTM_BUF]| size */
+#  define inf_pdfout_buf_size   16384  /* initial value of |pdf->buf| size */
+#  define sup_pdfout_buf_size   16384  /* arbitrary upper hard limit of |pdf->buf| size */
+#  define inf_objstm_buf_size       1  /* initial value of |os->buf[OBJSTM_BUF]| size */
+#  define sup_objstm_buf_size 5000000  /* arbitrary upper hard limit of |os->buf[OBJSTM_BUF]| size */
 
-#  define PDF_OS_MAX_OBJS 100   /* maximum number of objects in object stream */
+#  define PDF_OS_MAX_OBJS         100  /* maximum number of objects in object stream */
 
-#  define inf_obj_tab_size 1000 /* min size of the cross-reference table for PDF output */
-#  define sup_obj_tab_size 8388607      /* max size of the cross-reference table for PDF output */
+#  define inf_obj_tab_size       1000  /* min size of the cross-reference table for PDF output */
+#  define sup_obj_tab_size    8388607  /* max size of the cross-reference table for PDF output */
 
 /* The following macros are similar as for \.{DVI} buffer handling */
 
 #  define pdf_offset(pdf) (pdf->gone + (off_t)(pdf->buf->p - pdf->buf->data))
-                                        /* the file offset of last byte in PDF
-                                           buffer that |pdf_ptr| points to */
 #  define pdf_save_offset(pdf) pdf->save_offset = (pdf->gone + (off_t)(pdf->buf->p - pdf->buf->data))
 
-#  define set_ff(A)  do {                       \
-        if (pdf_font_num(A) < 0)                \
-            ff = -pdf_font_num(A);              \
-        else                                    \
-            ff = A;                             \
-    } while (0)
+#  define set_ff(A) do { \
+    if (pdf_font_num(A) < 0) \
+        ff = -pdf_font_num(A); \
+    else \
+        ff = A; \
+} while (0)
 
-typedef enum { NOT_SHIPPING, SHIPPING_PAGE, SHIPPING_FORM } shipping_mode_e; /* needs pdf_prefix */
+typedef enum {  /* needs pdf_prefix */
+    NOT_SHIPPING,
+    SHIPPING_PAGE,
+    SHIPPING_FORM
+} shipping_mode_e;
 
 extern scaled one_hundred_inch;
 extern scaled one_inch;
@@ -80,29 +83,36 @@ extern void pdf_room(PDF, int);
 
 extern void fix_pdf_minorversion(PDF);
 
- /* output a byte to PDF buffer without checking of overflow */
+/* output a byte to PDF buffer without checking of overflow */
+
 #  define pdf_quick_out(pdf,A) * (pdf->buf->p++) = (unsigned char) (A)
 
 /* do the same as |pdf_quick_out| and flush the PDF buffer if necessary */
-#  define pdf_out(pdf,A) do { pdf_room(pdf, 1); pdf_quick_out(pdf, A); } while (0)
+
+#  define pdf_out(pdf,A) do { \
+    pdf_room(pdf, 1); \
+    pdf_quick_out(pdf, A); \
+} while (0)
 
 /*
+
 Basic printing procedures for PDF output are very similiar to \TeX\ basic
-printing ones but the output is going to PDF buffer. Subroutines with
-suffix |_ln| append a new-line character to the PDF output.
+printing ones but the output is going to PDF buffer. Subroutines with suffix
+|_ln| append a new-line character to the PDF output.
+
 */
 
-/* print out a string to PDF buffer followed by a new-line character */
-#  define pdf_print_ln(pdf,A) do {                 \
-        pdf_print(pdf,A);                          \
-        pdf_out(pdf, '\n');                        \
-    } while (0)
+#  define pdf_print_ln(pdf,A) do { \
+    pdf_print(pdf,A); \
+    pdf_out(pdf, '\n'); \
+} while (0)
 
 /* print out an integer to PDF buffer followed by a new-line character */
-#  define pdf_print_int_ln(pdf,A) do {             \
-        pdf_print_int(pdf,A);                      \
-        pdf_out(pdf, '\n');                        \
-    } while (0)
+
+#  define pdf_print_int_ln(pdf,A) do { \
+    pdf_print_int(pdf,A); \
+    pdf_out(pdf, '\n'); \
+} while (0)
 
 extern __attribute__ ((format(printf, 2, 3)))
 void pdf_printf(PDF, const char *, ...);
@@ -131,7 +141,6 @@ extern void pdf_begin_stream(PDF);
 extern void pdf_end_stream(PDF);
 
 extern void pdf_add_bp(PDF, scaled);
-extern void pdf_add_mag_bp(PDF, scaled);
 
 extern strbuf_s *new_strbuf(size_t size, size_t limit);
 extern void strbuf_seek(strbuf_s * b, off_t offset);
@@ -149,10 +158,10 @@ extern void pdf_out_block(PDF pdf, const char *s, size_t n);
 
 #  define pdf_puts(pdf, s) pdf_out_block((pdf), (s), strlen(s))
 
-#  define pdf_print_resname_prefix(pdf) do {        \
-        if (pdf->resname_prefix != NULL)            \
-            pdf_puts(pdf, pdf->resname_prefix);     \
-    } while (0)
+#  define pdf_print_resname_prefix(pdf) do { \
+    if (pdf->resname_prefix != NULL) \
+        pdf_puts(pdf, pdf->resname_prefix); \
+} while (0)
 
 extern void pdf_print_str_ln(PDF, const char *);
 
@@ -195,15 +204,14 @@ extern int get_pdf_table_bool(PDF, const char *, int);
 extern void ensure_output_state(PDF pdf, output_state s);
 extern PDF init_pdf_struct(PDF pdf);
 
-extern halfword pdf_info_toks;  /* additional keys of Info dictionary */
+extern halfword pdf_info_toks;          /* additional keys of Info dictionary */
 extern halfword pdf_catalog_toks;       /* additional keys of Catalog dictionary */
 extern halfword pdf_catalog_openaction;
-extern halfword pdf_names_toks; /* additional keys of Names dictionary */
+extern halfword pdf_names_toks;         /* additional keys of Names dictionary */
 extern halfword pdf_trailer_toks;       /* additional keys of Trailer dictionary */
 extern void scan_pdfcatalog(PDF pdf);
-extern void finish_pdf_file(PDF pdf, int luatex_version,
-                            str_number luatex_revision);
+extern void finish_pdf_file(PDF pdf, int luatex_version, str_number luatex_revision);
 
 extern shipping_mode_e global_shipping_mode;
 
-#endif                          /* PDFGEN_H */
+#endif

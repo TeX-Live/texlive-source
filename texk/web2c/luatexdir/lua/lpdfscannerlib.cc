@@ -1,5 +1,5 @@
 /* lpdfscannerlib.c
-   
+
    Copyright 2013 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -162,7 +162,7 @@ static scannerdata *scanner_check (lua_State *L, int index)
   return bar;
 }
 
-static void free_token (Token *token) 
+static void free_token (Token *token)
 {
   if (token->string) {
     free(token->string);
@@ -419,10 +419,10 @@ static Token *_parseInlineImage (scannerdata *self, int c)
 	  /* remove end-of-line before EI */
 	  if (found[foundindex-1] == '\n') {
 	    found[--foundindex] = '\0';
-	  } 
+	  }
 	  if (found[foundindex-1] == '\r') {
 	    found[--foundindex] = '\0';
-	  } 
+	  }
 	  break;
 	} else {
 	  c = streamGetChar(self);
@@ -433,7 +433,7 @@ static Token *_parseInlineImage (scannerdata *self, int c)
 	c = streamGetChar(self);
 	check_overflow(found, foundindex);
 	found[foundindex++] = c;
-      }	
+      }
     } else {
       c = streamGetChar(self);
       check_overflow(found, foundindex);
@@ -454,7 +454,7 @@ static Token *_parseOperator (scannerdata *self, int c)
     found[foundindex++] = c;
     c = streamLookChar(self);
     if ((c<0) || (c == ' ' || c == '\n' || c == '\r' || c == '\t' ||
-		  c == '/' || c == '[' || c == '(' || c == '<')) 
+		  c == '/' || c == '[' || c == '(' || c == '<'))
       break ;
     c = streamGetChar(self);
   }
@@ -480,7 +480,7 @@ static Token *_parseOperator (scannerdata *self, int c)
 }
 
 
-static Token * _parseComment  (scannerdata *self, int c) 
+static Token * _parseComment  (scannerdata *self, int c)
 {
   do {
     c = streamGetChar(self);
@@ -488,7 +488,7 @@ static Token * _parseComment  (scannerdata *self, int c)
   return _parseToken(self,streamGetChar(self));
 }
 
-static Token *_parseLt (scannerdata *self, int c) 
+static Token *_parseLt (scannerdata *self, int c)
 {
   c = streamGetChar(self);
   if (c == '<') {
@@ -496,9 +496,9 @@ static Token *_parseLt (scannerdata *self, int c)
   } else {
     return _parseHexstring(self,c);
   }
-} 
+}
 
-static Token * _parseGt (scannerdata *self, int c) 
+static Token * _parseGt (scannerdata *self, int c)
 {
   c = streamGetChar(self);
   if (c== '>') {
@@ -510,24 +510,24 @@ static Token * _parseGt (scannerdata *self, int c)
 }
 
 
-static Token *_parseError (int c) 
+static Token *_parseError (int c)
 {
   fprintf(stderr, "stray %c [%d] in stream", c, c);
   return NULL;
 }
 
-static Token *_parseStartarray () 
+static Token *_parseStartarray ()
 {
   return new_operand (pdf_startarray);
 }
 
-static Token *_parseStoparray () 
+static Token *_parseStoparray ()
 {
   return new_operand (pdf_stoparray);
 }
 
 
-static Token *_parseToken (scannerdata *self, int c) 
+static Token *_parseToken (scannerdata *self, int c)
 {
    if (self->_ininlineimage==1) {
      self->_ininlineimage = 2;
@@ -548,23 +548,23 @@ static Token *_parseToken (scannerdata *self, int c)
    case '<': return _parseLt(self,c); break;
    case '>': return _parseGt(self,c); break;
    case '%': return _parseComment(self,c); break;
-   case ' ': 
-   case '\r': 
-   case '\n': 
-   case '\t': 
+   case ' ':
+   case '\r':
+   case '\n':
+   case '\t':
      return _parseSpace(self); break;
-   case '0': 
-   case '1': 
-   case '2': 
-   case '3': 
-   case '4': 
-   case '5': 
-   case '6': 
-   case '7': 
-   case '8': 
-   case '9': 
-   case '-': 
-   case '.': 
+   case '0':
+   case '1':
+   case '2':
+   case '3':
+   case '4':
+   case '5':
+   case '6':
+   case '7':
+   case '8':
+   case '9':
+   case '-':
+   case '.':
      return _parseNumber(self,c); break;
    default:
      if (c<=127) {
@@ -662,7 +662,7 @@ static int scanner_scan(lua_State * L)
   while (token) {
     if (token->type == pdf_operator) {
       lua_pushstring(L, token->string);
-      free_token(token); 
+      free_token(token);
       lua_rawget(L,2); // operator table
       if (lua_isfunction(L,-1)) {
 	lua_pushvalue(L,4);
@@ -671,7 +671,7 @@ static int scanner_scan(lua_State * L)
       } else {
 	lua_pop(L,1); // nil
       }
-      clear_operand_stack(self,0); 
+      clear_operand_stack(self,0);
     } else {
       push_operand(self, token);
     }
@@ -775,12 +775,12 @@ static void push_dict (lua_State *L, scannerdata *self)
   }
 }
 
-const char *typenames[pdf_stopdict+1] = 
-  { "unknown", "integer", "real", "boolean", "name", "operator", 
+const char *typenames[pdf_stopdict+1] =
+  { "unknown", "integer", "real", "boolean", "name", "operator",
     "string", "array", "array", "dict", "dict" };
 
 static void push_token (lua_State *L, scannerdata *self)
-{ 
+{
   Token *token =  self->_operandstack[self->_nextoperand-1];
   lua_createtable(L,2,0);
   lua_pushstring (L, typenames[token->type]);
@@ -788,7 +788,7 @@ static void push_token (lua_State *L, scannerdata *self)
   if (token->type == pdf_string || token->type == pdf_name) {
     lua_pushlstring(L, token->string, token->value);
   } else if (token->type == pdf_real || token->type == pdf_integer) {
-    lua_pushnumber(L, token->value);
+    lua_pushnumber(L, token->value); /* integer or float */
   } else if (token->type == pdf_boolean) {
     lua_pushboolean(L, (int)token->value);
   } else if (token->type == pdf_startarray) {
@@ -820,7 +820,7 @@ static int scanner_popsingular (lua_State * L, int token_type) {
     push_token(L, self);
     lua_rawgeti(L,-1,2);
   } else if (token_type == pdf_real || token_type == pdf_integer) {
-    lua_pushnumber(L, token->value);
+    lua_pushnumber(L, token->value); /* integer or float */
   } else if (token_type == pdf_boolean) {
     lua_pushboolean(L,(int)token->value);
   } else if (token_type == pdf_name || token_type == pdf_string) {
@@ -860,7 +860,7 @@ static int scanner_popanything (lua_State * L) {
 
 static int scanner_popnumber(lua_State * L)
 {
-  if(scanner_popsingular(L,pdf_real)) 
+  if(scanner_popsingular(L,pdf_real))
     return 1;
   if (scanner_popsingular(L,pdf_integer))
     return 1;
@@ -870,7 +870,7 @@ static int scanner_popnumber(lua_State * L)
 
 static int scanner_popboolean(lua_State * L)
 {
-  if(scanner_popsingular(L,pdf_boolean)) 
+  if(scanner_popsingular(L,pdf_boolean))
     return 1;
   lua_pushnil(L);
   return 1;

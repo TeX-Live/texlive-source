@@ -56,14 +56,14 @@ typedef short shalfword;
 @
 Now we have some routines to get stuff from the pk file.  pkbyte returns
 the next byte from the pk file.
- 
+
 @c
 static shalfword pkbyte(void)
 {
     register shalfword i;
     i = t3_getchar();
     if (t3_eof())
-        luatex_fail("unexpected eof in pk file");
+        normal_error("type 3","unexpected EOF in pk file");
     return (i);
 }
 
@@ -200,7 +200,7 @@ static halfword rest(void)
             return (i);
         }
     } else {
-        luatex_fail("shouldn't happen");
+        normal_error("type 3","pk issue that shouldn't happen");
         return 0;
      /*NOTREACHED*/}
 }
@@ -277,12 +277,6 @@ static void unpack(chardesc * cd)
         bitweight = 0;
         while (rowsleft > 0) {
             count = (*realfunc) ();
-#ifdef DEBUG
-            if (turnon)
-                printf("(%d) ", (int) count);
-            else
-                printf("%d ", (int) count);
-#endif
             while (count != 0) {
                 if ((count < wordweight) && (count < hbit)) {
                     if (turnon)
@@ -319,7 +313,7 @@ static void unpack(chardesc * cd)
             turnon = !turnon;
         }
         if ((rowsleft != 0) || ((int) hbit != cd->cwidth))
-            luatex_fail("error while unpacking; more bits than required");
+            normal_error("type 3","error while unpacking, more bits than required");
     }
 }
 
@@ -341,9 +335,9 @@ int readchar(boolean check_preamble, chardesc * cd)
  */
     if (check_preamble) {
         if (pkbyte() != 247)
-            luatex_fail("bad pk file, expected pre");
+            normal_error("type 3","bad pk file, expected pre");
         if (pkbyte() != 89)
-            luatex_fail("bad version of pk file");
+            normal_error("type 3","bad version of pk file");
         for (i = pkbyte(); i > 0; i--)  /* creator of pkfile */
             (void) pkbyte();
         (void) pkquad();        /* design size */
@@ -399,7 +393,7 @@ int readchar(boolean check_preamble, chardesc * cd)
                 cd->yoff = pkquad();
             }
             if (length <= 0)
-                luatex_fail("packet length (%i) too small", (int) length);
+                formatted_error("type 3","pk packet length '%i' too small", (int) length);
             unpack(cd);
             return 1;
         } else {
@@ -424,7 +418,7 @@ int readchar(boolean check_preamble, chardesc * cd)
             case 246:
                 break;
             default:
-                luatex_fail("unexpected command (%i)", (int) flagbyte);
+                formatted_error("type 3","unexpected pk command '%i'", (int) flagbyte);
             }
         }
     }

@@ -48,17 +48,43 @@ static const char *get_output_file_name(void)
     return NULL;
 }
 
+/*
 static const char *getfilename(void)
 {
     int t = 0;
     int level = in_open;
     while ((level > 0)) {
         t = input_stack[level--].name_field;
-        if (t >= STRING_OFFSET)
+        if (t >= STRING_OFFSET) {
             return (const char *) str_string(t);
+        }
     }
     return "";
 }
+*/
+
+static const char *getfilename(void)
+{
+    const char * s;
+    int level, t;
+    level = in_open;
+    while ((level > 0)) {
+        s = full_source_filename_stack[level--];
+        if (s != NULL) {
+            return s;
+        }
+    }
+    /* old method */
+    level = in_open;
+    while ((level > 0)) {
+        t = input_stack[level--].name_field;
+        if (t >= STRING_OFFSET) {
+            return (const char *) str_string(t);
+        }
+    }
+    return "";
+}
+
 
 static const char *getlasterror(void)
 {
@@ -147,7 +173,6 @@ static lua_Number get_pdf_mem_ptr(void)
     return (lua_Number) 0;
 }
 
-
 static lua_Number get_obj_ptr(void)
 {
     if (static_pdf != NULL)
@@ -179,6 +204,17 @@ static lua_Number get_dest_names_ptr(void)
 static int get_hash_size(void)
 {
     return hash_size;           /* is a #define */
+}
+
+static lua_Number shell_escape_state(void)
+{
+    if (shellenabledp <= 0) {
+        return (lua_Number) 0;
+    } else if (restrictedshell == 0) {
+        return (lua_Number) 1;
+    } else {
+        return (lua_Number) 2;
+    }
 }
 
 static int luastate_max = 1;    /* fixed value */
@@ -213,13 +249,14 @@ static struct statistic stats[] = {
     {"output_file_name", 'S', (void *) &get_output_file_name},
     {"log_name", 'S', (void *) &getlogname},
     {"banner", 'S', (void *) &getbanner},
-    {"luatex_svn", 'G', &get_luatexsvn},
     {"luatex_version", 'G', &get_luatexversion},
     {"luatex_revision", 'S', (void *) &luatexrevision},
     {"luatex_hashtype", 'S', (void *) &get_luatexhashtype},
     {"luatex_hashchars", 'N',  &get_luatexhashchars},
 
     {"ini_version", 'b', &ini_version},
+
+    {"shell_escape", 'N', &shell_escape_state}, /* be easy on old time usage */
     /*
      * mem stat
      */
@@ -254,7 +291,6 @@ static struct statistic stats[] = {
     {"buf_size", 'g', &buf_size},
     {"save_size", 'g', &save_size},
     {"input_ptr", 'g', &input_ptr},
-    /* pdf stats */
     {"obj_ptr", 'N', &get_obj_ptr},
     {"obj_tab_size", 'N', &get_obj_tab_size},
     {"pdf_os_cntr", 'N', &get_pdf_os_cntr},
@@ -263,9 +299,7 @@ static struct statistic stats[] = {
     {"dest_names_size", 'N', &get_dest_names_size},
     {"pdf_mem_ptr", 'N', &get_pdf_mem_ptr},
     {"pdf_mem_size", 'N', &get_pdf_mem_size},
-
     {"largest_used_mark", 'g', &biggest_used_mark},
-
     {"luabytecodes", 'g', &luabytecode_max},
     {"luabytecode_bytes", 'g', &luabytecode_bytes},
     {"luastates", 'g', &luastate_max},
@@ -313,14 +347,14 @@ static int do_getstat(lua_State * L, int i)
         break;
     case 'N':
         n = stats[i].value;
-        lua_pushnumber(L, n());
+        lua_pushinteger(L, n());
         break;
     case 'G':
         g = stats[i].value;
-        lua_pushnumber(L, g());
+        lua_pushinteger(L, g());
         break;
     case 'g':
-        lua_pushnumber(L, *(int *) (stats[i].value));
+        lua_pushinteger(L, *(int *) (stats[i].value));
         break;
     case 'B':
         g = stats[i].value;

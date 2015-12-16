@@ -19,16 +19,14 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ read an action specification
-@c
-halfword scan_action(PDF pdf)
+
+@c halfword scan_action(PDF pdf)
 {
-    int p;
+    int p = new_node(whatsit_node, pdf_action_node);
     (void) pdf;
-    p = new_node(whatsit_node, pdf_action_node);
     if (scan_keyword("user"))
         set_pdf_action_type(p, pdf_action_user);
     else if (scan_keyword("goto"))
@@ -38,12 +36,12 @@ halfword scan_action(PDF pdf)
     else
         normal_error("pdf backend", "action type missing");
     if (pdf_action_type(p) == pdf_action_user) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_action_tokens(p, def_ref);
         return p;
     }
     if (scan_keyword("file")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_action_file(p, def_ref);
     }
     if (scan_keyword("page")) {
@@ -55,10 +53,10 @@ halfword scan_action(PDF pdf)
             normal_error("pdf backend", "page number must be positive");
         set_pdf_action_id(p, cur_val);
         set_pdf_action_named_id(p, 0);
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_action_tokens(p, def_ref);
     } else if (scan_keyword("name")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_action_named_id(p, 1);
         set_pdf_action_id(p, def_ref);
     } else if (scan_keyword("num")) {
@@ -97,8 +95,8 @@ halfword scan_action(PDF pdf)
 }
 
 @ write an action specification
-@c
-void write_action(PDF pdf, halfword p)
+
+@c void write_action(PDF pdf, halfword p)
 {
     char *s;
     int d = 0;
@@ -124,44 +122,30 @@ void write_action(PDF pdf, halfword p)
         }
     }
     switch (pdf_action_type(p)) {
-    case pdf_action_page:
-        pdf_dict_add_name(pdf, "S", "GoTo");
-        if (pdf_action_file(p) == null) {
-            pdf_add_name(pdf, "D");
-            pdf_begin_array(pdf);
-            pdf_add_ref(pdf, pdf_get_obj(pdf, obj_type_page, pdf_action_id(p), false));
-        } else {
-            pdf_add_name(pdf, "D");
-            pdf_begin_array(pdf);
-            pdf_print_int(pdf, pdf_action_id(p) - 1);
-        }
-        {
-            char *tokstr = tokenlist_to_cstring(pdf_action_tokens(p), true, NULL);
-            pdf_printf(pdf, " %s", tokstr);
-            pdf_end_array(pdf);
-            xfree(tokstr);
-        }
-        break;
-    case pdf_action_goto:
-        if (pdf_action_file(p) == null) {
+        case pdf_action_page:
             pdf_dict_add_name(pdf, "S", "GoTo");
-            d = pdf_get_obj(pdf, obj_type_dest, pdf_action_id(p), pdf_action_named_id(p));
-        } else
-            pdf_dict_add_name(pdf, "S", "GoToR");
-        if (pdf_action_named_id(p) > 0) {
-            char *tokstr = tokenlist_to_cstring(pdf_action_id(p), true, NULL);
-            pdf_dict_add_string(pdf, "D", tokstr);
-            xfree(tokstr);
-        } else if (pdf_action_file(p) == null) {
-            pdf_dict_add_ref(pdf, "D", d);
-        } else {
-            normal_error("pdf backend","'goto' option cannot be used with both 'file' and 'num'");
-        }
-        break;
-    case pdf_action_thread:
-        pdf_dict_add_name(pdf, "S", "Thread");
-        if (pdf_action_file(p) == null) {
-            d = pdf_get_obj(pdf, obj_type_thread, pdf_action_id(p), pdf_action_named_id(p));
+            if (pdf_action_file(p) == null) {
+                pdf_add_name(pdf, "D");
+                pdf_begin_array(pdf);
+                pdf_add_ref(pdf, pdf_get_obj(pdf, obj_type_page, pdf_action_id(p), false));
+            } else {
+                pdf_add_name(pdf, "D");
+                pdf_begin_array(pdf);
+                pdf_print_int(pdf, pdf_action_id(p) - 1);
+            }
+            {
+                char *tokstr = tokenlist_to_cstring(pdf_action_tokens(p), true, NULL);
+                pdf_printf(pdf, " %s", tokstr);
+                pdf_end_array(pdf);
+                xfree(tokstr);
+            }
+            break;
+        case pdf_action_goto:
+            if (pdf_action_file(p) == null) {
+                pdf_dict_add_name(pdf, "S", "GoTo");
+                d = pdf_get_obj(pdf, obj_type_dest, pdf_action_id(p), pdf_action_named_id(p));
+            } else
+                pdf_dict_add_name(pdf, "S", "GoToR");
             if (pdf_action_named_id(p) > 0) {
                 char *tokstr = tokenlist_to_cstring(pdf_action_id(p), true, NULL);
                 pdf_dict_add_string(pdf, "D", tokstr);
@@ -169,10 +153,24 @@ void write_action(PDF pdf, halfword p)
             } else if (pdf_action_file(p) == null) {
                 pdf_dict_add_ref(pdf, "D", d);
             } else {
-                pdf_dict_add_int(pdf, "D", pdf_action_id(p));
+                normal_error("pdf backend","'goto' option cannot be used with both 'file' and 'num'");
             }
-        }
-        break;
+            break;
+        case pdf_action_thread:
+            pdf_dict_add_name(pdf, "S", "Thread");
+            if (pdf_action_file(p) == null) {
+                d = pdf_get_obj(pdf, obj_type_thread, pdf_action_id(p), pdf_action_named_id(p));
+                if (pdf_action_named_id(p) > 0) {
+                    char *tokstr = tokenlist_to_cstring(pdf_action_id(p), true, NULL);
+                    pdf_dict_add_string(pdf, "D", tokstr);
+                    xfree(tokstr);
+                } else if (pdf_action_file(p) == null) {
+                    pdf_dict_add_ref(pdf, "D", d);
+                } else {
+                    pdf_dict_add_int(pdf, "D", pdf_action_id(p));
+                }
+            }
+            break;
     }
     pdf_end_dict(pdf);
 }

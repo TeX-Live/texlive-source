@@ -25,9 +25,11 @@
 #  define LUATEX_COMMON_H
 
 /* utils.c */
-__attribute__ ((format(printf, 1, 2)))
-extern void luatex_warn(const char *fmt, ...);
-__attribute__ ((noreturn, format(printf, 1, 2)))
-extern void luatex_fail(const char *fmt, ...);
+
+extern void tex_error(const char *msg, const char **hlp);
+extern void normal_error(const char *t, const char *p);
+extern void normal_warning(const char *t, const char *p);
+extern void formatted_error(const char *t, const char *fmt, ...);
+extern void formatted_warning(const char *t, const char *fmt, ...);
 
 #endif /* LUATEX_COMMON_H */

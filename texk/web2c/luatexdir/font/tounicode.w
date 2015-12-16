@@ -95,9 +95,8 @@ void def_tounicode(str_number glyph, str_number unistr)
             break;
         }
     }
-    if (l == 0 || valid_unistr == 0 || strlen(buf) == 0
-        || strcmp(buf, notdef) == 0) {
-        luatex_warn("ToUnicode: invalid parameter(s): `%s' => `%s'", buf, p);
+    if (l == 0 || valid_unistr == 0 || strlen(buf) == 0 || strcmp(buf, notdef) == 0) {
+        formatted_warning("tounicode", "invalid parameter(s): %s -> %s", buf, p);
         return;
     }
     if (glyph_unicode_tree == NULL) {
@@ -308,9 +307,6 @@ int write_tounicode(PDF pdf, char **glyph_names, char *name)
     int bfchar_count, bfrange_count, subrange_count;
     assert(strlen(name) + strlen(builtin_suffix) < SMALL_BUF_SIZE);
     if (glyph_unicode_tree == NULL) {
-#ifdef DEBUG
-        luatex_warn("no GlyphToUnicode entry has been inserted yet!");
-#endif
         pdf->gen_tounicode = 0;
         return 0;
     }

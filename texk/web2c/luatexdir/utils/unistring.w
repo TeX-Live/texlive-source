@@ -64,9 +64,9 @@ unsigned str2uni(const unsigned char *k)
             *text >= 0xc0 || text[1] >= 0xc0 || text[2] >= 0xc0)
             val = 0xFFFD;
     } else {
-        /* the 5- and 6-byte UTF-8 sequences generate integers 
+        /* the 5- and 6-byte UTF-8 sequences generate integers
            that are outside of the valid UCS range, and therefore
-           unsupported 
+           unsupported
          */
     }
     if (val == 0xFFFD)
@@ -74,7 +74,7 @@ unsigned str2uni(const unsigned char *k)
     return (val);
 }
 
-@ This is a very basic helper 
+@ This is a very basic helper
 @c
 unsigned char *uni2str(unsigned unic)
 {
@@ -92,12 +92,11 @@ unsigned char *uni2str(unsigned unic)
         *pt++ = (unsigned char) (0x80 | ((unic >> 6) & 0x3f));
         *pt++ = (unsigned char) (0x80 | (unic & 0x3f));
     } else {
-        int u, z, y, x;
         unsigned val = unic - 0x10000;
-        u = (int) (((val & 0xf0000) >> 16) + 1);
-        z = (int) ((val & 0x0f000) >> 12);
-        y = (int) ((val & 0x00fc0) >> 6);
-        x = (int) (val & 0x0003f);
+        int u = (int) (((val & 0xf0000) >> 16) + 1);
+        int z = (int)  ((val & 0x0f000) >> 12);
+        int y = (int)  ((val & 0x00fc0) >> 6);
+        int x = (int)   (val & 0x0003f);
         *pt++ = (unsigned char) (0xf0 | (u >> 2));
         *pt++ = (unsigned char) (0x80 | ((u & 3) << 4) | z);
         *pt++ = (unsigned char) (0x80 | y);
@@ -109,7 +108,7 @@ unsigned char *uni2str(unsigned unic)
 
 @ |buffer_to_unichar| converts a sequence of bytes in the |buffer|
 into a unicode character value. It does not check for overflow
-of the |buffer|, but it is careful to check the validity of the 
+of the |buffer|, but it is careful to check the validity of the
 UTF-8 encoding.
 
 @c
@@ -120,7 +119,7 @@ int buffer_to_unichar(int k)
 
 
 @ These came from texlang.w
-@c 
+@c
 char *uni2string(char *utf8_text, unsigned ch)
 {
     /* Increment and deposit character */

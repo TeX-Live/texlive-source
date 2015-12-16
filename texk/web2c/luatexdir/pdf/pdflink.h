@@ -15,13 +15,13 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFLINK_H
 #  define PDFLINK_H
 
-#  define set_pdf_link_attr(A,B) pdf_link_attr(A)=B
+#  define set_pdf_link_attr(A,B)   pdf_link_attr(A)=B
 #  define set_pdf_link_action(A,B) pdf_link_action(A)=B
 #  define set_pdf_link_objnum(A,B) pdf_link_objnum(A)=B
 
@@ -29,9 +29,7 @@ extern void push_link_level(PDF pdf, halfword p);
 extern void pop_link_level(PDF pdf);
 extern void do_link(PDF pdf, halfword p, halfword parent_box, scaledpos cur);
 extern void end_link(PDF pdf, halfword p);
-extern void append_link(PDF pdf, halfword parent_box, scaledpos cur,
-                        small_number i);
-
+extern void append_link(PDF pdf, halfword parent_box, scaledpos cur, small_number i);
 extern void scan_startlink(PDF pdf);
 
 

@@ -19,46 +19,44 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
-@ Data structure of outlines; it's not able to write out outline entries
-before all outline entries are defined, so memory allocated for outline
-entries can't not be deallocated and will stay in memory. For this reason we
-will store data of outline entries in |pdf->mem| instead of |mem|
+@ Data structure of outlines; it's not able to write out outline entries before
+all outline entries are defined, so memory allocated for outline entries can't
+not be deallocated and will stay in memory. For this reason we will store data of
+outline entries in |pdf->mem| instead of |mem|
 
 @c
-#define pdfmem_outline_size      8      /* size of memory in |pdf->mem| which |obj_outline_ptr| points to */
+#define pdfmem_outline_size 8 /* size of memory in |pdf->mem| which |obj_outline_ptr| points to */
 
-#define obj_outline_count         obj_info      /* count of all opened children */
-#define set_obj_outline_count(pdf,A,B) obj_outline_count(pdf,A)=B
-#define obj_outline_ptr           obj_aux       /* pointer to |pdf->mem| */
-#define set_obj_outline_ptr(pdf,A,B) obj_outline_ptr(pdf,A)=B
+#define obj_outline_count                obj_info      /* count of all opened children */
+#define obj_outline_ptr                  obj_aux       /* pointer to |pdf->mem| */
 
-#define obj_outline_title(pdf,A)      pdf->mem[obj_outline_ptr(pdf,A)]
-#define obj_outline_parent(pdf,A)     pdf->mem[obj_outline_ptr(pdf,A) + 1]
-#define obj_outline_prev(pdf,A)       pdf->mem[obj_outline_ptr(pdf,A) + 2]
-#define obj_outline_next(pdf,A)       pdf->mem[obj_outline_ptr(pdf,A) + 3]
-#define obj_outline_first(pdf,A)      pdf->mem[obj_outline_ptr(pdf,A) + 4]
-#define obj_outline_last(pdf,A)       pdf->mem[obj_outline_ptr(pdf,A) + 5]
-#define obj_outline_action_objnum(pdf,A)  pdf->mem[obj_outline_ptr(pdf,A) + 6]  /* object number of action */
-#define obj_outline_attr(pdf,A)       pdf->mem[obj_outline_ptr(pdf,A) + 7]
+#define obj_outline_title(pdf,A)         pdf->mem[obj_outline_ptr(pdf,A)]
+#define obj_outline_parent(pdf,A)        pdf->mem[obj_outline_ptr(pdf,A) + 1]
+#define obj_outline_prev(pdf,A)          pdf->mem[obj_outline_ptr(pdf,A) + 2]
+#define obj_outline_next(pdf,A)          pdf->mem[obj_outline_ptr(pdf,A) + 3]
+#define obj_outline_first(pdf,A)         pdf->mem[obj_outline_ptr(pdf,A) + 4]
+#define obj_outline_last(pdf,A)          pdf->mem[obj_outline_ptr(pdf,A) + 5]
+#define obj_outline_action_objnum(pdf,A) pdf->mem[obj_outline_ptr(pdf,A) + 6]  /* object number of action */
+#define obj_outline_attr(pdf,A)          pdf->mem[obj_outline_ptr(pdf,A) + 7]
 
+#define set_obj_outline_count(pdf,A,B)         obj_outline_count(pdf,A)=B
+#define set_obj_outline_ptr(pdf,A,B)           obj_outline_ptr(pdf,A)=B
 #define set_obj_outline_action_objnum(pdf,A,B) obj_outline_action_objnum(pdf,A)=B
-#define set_obj_outline_title(pdf,A,B) obj_outline_title(pdf,A)=B
-#define set_obj_outline_prev(pdf,A,B) obj_outline_prev(pdf,A)=B
-#define set_obj_outline_next(pdf,A,B) obj_outline_next(pdf,A)=B
-#define set_obj_outline_first(pdf,A,B) obj_outline_first(pdf,A)=B
-#define set_obj_outline_last(pdf,A,B) obj_outline_last(pdf,A)=B
-#define set_obj_outline_parent(pdf,A,B) obj_outline_parent(pdf,A)=B
-#define set_obj_outline_attr(pdf,A,B) obj_outline_attr(pdf,A)=B
+#define set_obj_outline_title(pdf,A,B)         obj_outline_title(pdf,A)=B
+#define set_obj_outline_prev(pdf,A,B)          obj_outline_prev(pdf,A)=B
+#define set_obj_outline_next(pdf,A,B)          obj_outline_next(pdf,A)=B
+#define set_obj_outline_first(pdf,A,B)         obj_outline_first(pdf,A)=B
+#define set_obj_outline_last(pdf,A,B)          obj_outline_last(pdf,A)=B
+#define set_obj_outline_parent(pdf,A,B)        obj_outline_parent(pdf,A)=B
+#define set_obj_outline_attr(pdf,A,B)          obj_outline_attr(pdf,A)=B
 
 @ @c
 static int open_subentries(PDF pdf, halfword p)
 {
-    int k, c;
-    int l, r;
-    k = 0;
+    int c, l, r;
+    int k = 0;
     if (obj_outline_first(pdf, p) != 0) {
         l = obj_outline_first(pdf, p);
         do {
@@ -101,7 +99,7 @@ void scan_pdfoutline(PDF pdf)
     int j = 0;
     halfword p = null;
     if (scan_keyword("attr")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         r = def_ref;
     } else {
         r = 0;
@@ -118,7 +116,7 @@ void scan_pdfoutline(PDF pdf)
     } else {
         i = 0;
     }
-    scan_pdf_ext_toks();
+    scan_toks(false, true);
     q = def_ref;
     if (j == 0) {
         j = pdf_create_obj(pdf, obj_type_others, 0);
@@ -180,8 +178,8 @@ void scan_pdfoutline(PDF pdf)
     }
 }
 
-@ In the end we must flush PDF objects that cannot be written out
-immediately after shipping out pages.
+@ In the end we must flush PDF objects that cannot be written out immediately
+after shipping out pages.
 
 @c
 int print_outlines(PDF pdf)

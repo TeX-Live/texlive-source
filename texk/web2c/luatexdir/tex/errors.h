@@ -99,12 +99,16 @@ extern void pause_for_instructions(void);
 
 extern void tex_error(const char *msg, const char **hlp);
 extern void normal_error(const char *t, const char *p);
-extern void normal_warning(const char *t, const char *p, boolean pr, boolean ap);
+extern void normal_warning(const char *t, const char *p);
+extern void formatted_error(const char *t, const char *fmt, ...);
+extern void formatted_warning(const char *t, const char *fmt, ...);
 
 extern void back_error(void);
 extern void ins_error(void);
 extern void flush_err(void);
 
 extern void char_warning(internal_font_number f, int c);
+
+extern void wrapup_backend(void);
 
 #endif

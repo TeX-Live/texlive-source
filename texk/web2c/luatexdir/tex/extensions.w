@@ -152,7 +152,7 @@ static void do_extension_pdf(int immediate)
             set_pdf_literal_mode(tail, direct_page);
         else
             set_pdf_literal_mode(tail, set_origin);
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_literal_type(tail, normal);
         set_pdf_literal_data(tail, def_ref);
     } else if (scan_keyword("dest")) {
@@ -165,7 +165,7 @@ static void do_extension_pdf(int immediate)
         new_whatsit(pdf_restore_node);
     } else if (scan_keyword("setmatrix")) {
         new_whatsit(pdf_setmatrix_node);
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_setmatrix_data(tail, def_ref);
     } else if (scan_keyword("obj")) {
         scan_obj(static_pdf);
@@ -211,7 +211,7 @@ static void do_extension_pdf(int immediate)
             set_pdf_colorstack_cmd(tail, i);
             set_pdf_colorstack_data(tail, null);
             if (i <= colorstack_data) {
-                scan_pdf_ext_toks();
+                scan_toks(false, true);
                 set_pdf_colorstack_data(tail, def_ref);
             }
         } else {
@@ -251,30 +251,30 @@ static void do_extension_pdf(int immediate)
         i = cur_val;
         if (i == null_font)
             normal_error("pdf backend", "invalid font identifier");
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         set_pdf_font_attr(i, tokens_to_string(def_ref));
         if (str_length(pdf_font_attr(i)) == 0) {
             flush_str((str_ptr - 1));   /* from |tokens_to_string| */
             set_pdf_font_attr(i, 0);
         }
     } else if (scan_keyword("mapfile")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         pdfmapfile(def_ref);
         delete_token_ref(def_ref);
     } else if (scan_keyword("mapline")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         pdfmapline(def_ref);
         delete_token_ref(def_ref);
     } else if (scan_keyword("includechars")) {
         pdf_include_chars(static_pdf);
     } else if (scan_keyword("info")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         pdf_info_toks = concat_tokens(pdf_info_toks, def_ref);
     } else if (scan_keyword("names")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         pdf_names_toks = concat_tokens(pdf_names_toks, def_ref);
     } else if (scan_keyword("trailer")) {
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         pdf_trailer_toks = concat_tokens(pdf_trailer_toks, def_ref);
     } else {
         tex_error("unexpected use of \\pdfextension",null);
@@ -463,8 +463,7 @@ and appends it to the current list.
 @c
 void new_whatsit(int s)
 {
-    halfword p;                 /* the new node */
-    p = new_node(whatsit_node, s);
+    halfword p = new_node(whatsit_node, s);
     couple_nodes(tail, p);
     tail = p;
 }
@@ -482,11 +481,10 @@ single page, the stack would overflow.
 
 void expand_macros_in_tokenlist(halfword p)
 {
-    int old_mode;               /* saved |mode| */
-    pointer q, r;               /* temporary variables for list manipulation */
-    q = get_avail();
+    int old_mode;
+    pointer q = get_avail();
+    pointer r = get_avail();
     token_info(q) = right_brace_token + '}';
-    r = get_avail();
     token_link(q) = r;
     token_info(r) = end_write_token;
     begin_token_list(q, inserted);
@@ -588,22 +586,6 @@ boolean open_write_file(int id, char *fn) {
     }
 }
 
-@ We have to check whether \.{\\outputmode} is set for using \pdfTeX{}
-  extensions.
-
-@c
-void scan_pdf_ext_toks(void)
-{
-    (void) scan_toks(false, true);      /* like \.{\\special} */
-}
-
-@ the pdflast* need extra global variables
-
-@c
-int pdf_last_annot;
-int pdf_last_link;
-int pdf_last_obj;
-int pdf_retval;                 /* global multi-purpose return value */
 
 @ To implement primitives as \.{\\pdfextension info}, \.{\\pdfextension catalog} or
 \.{\\pdfextension names} we need to concatenate tokens lists.
@@ -644,58 +626,58 @@ the name corresponding to |cur_group|.
 void print_group(boolean e)
 {
     switch (cur_group) {
-    case bottom_level:
-        tprint("bottom level");
-        return;
-        break;
-    case simple_group:
-    case semi_simple_group:
-        if (cur_group == semi_simple_group)
-            tprint("semi ");
-        tprint("simple");
-        break;;
-    case hbox_group:
-    case adjusted_hbox_group:
-        if (cur_group == adjusted_hbox_group)
-            tprint("adjusted ");
-        tprint("hbox");
-        break;
-    case vbox_group:
-        tprint("vbox");
-        break;
-    case vtop_group:
-        tprint("vtop");
-        break;
-    case align_group:
-    case no_align_group:
-        if (cur_group == no_align_group)
-            tprint("no ");
-        tprint("align");
-        break;
-    case output_group:
-        tprint("output");
-        break;
-    case disc_group:
-        tprint("disc");
-        break;
-    case insert_group:
-        tprint("insert");
-        break;
-    case vcenter_group:
-        tprint("vcenter");
-        break;
-    case math_group:
-    case math_choice_group:
-    case math_shift_group:
-    case math_left_group:
-        tprint("math");
-        if (cur_group == math_choice_group)
-            tprint(" choice");
-        else if (cur_group == math_shift_group)
-            tprint(" shift");
-        else if (cur_group == math_left_group)
-            tprint(" left");
-        break;
+        case bottom_level:
+            tprint("bottom level");
+            return;
+            break;
+        case simple_group:
+        case semi_simple_group:
+            if (cur_group == semi_simple_group)
+                tprint("semi ");
+            tprint("simple");
+            break;;
+        case hbox_group:
+        case adjusted_hbox_group:
+            if (cur_group == adjusted_hbox_group)
+                tprint("adjusted ");
+            tprint("hbox");
+            break;
+        case vbox_group:
+            tprint("vbox");
+            break;
+        case vtop_group:
+            tprint("vtop");
+            break;
+        case align_group:
+        case no_align_group:
+            if (cur_group == no_align_group)
+                tprint("no ");
+            tprint("align");
+            break;
+        case output_group:
+            tprint("output");
+            break;
+        case disc_group:
+            tprint("disc");
+            break;
+        case insert_group:
+            tprint("insert");
+            break;
+        case vcenter_group:
+            tprint("vcenter");
+            break;
+        case math_group:
+        case math_choice_group:
+        case math_shift_group:
+        case math_left_group:
+            tprint("math");
+            if (cur_group == math_choice_group)
+                tprint(" choice");
+            else if (cur_group == math_shift_group)
+                tprint(" shift");
+            else if (cur_group == math_left_group)
+                tprint(" left");
+            break;
     }                           /* there are no other cases */
     tprint(" group (level ");
     print_int(cur_level);
@@ -751,12 +733,10 @@ synchronized with the |in_open| variable indexing |grp_stack|.
 @c
 void group_warning(void)
 {
-    int i;                      /* index into |grp_stack| */
-    boolean w;                  /* do we need a warning? */
+    boolean w = false;                  /* do we need a warning? */
+    int i = in_open;                    /* index into |grp_stack| */
     base_ptr = input_ptr;
     input_stack[base_ptr] = cur_input;  /* store current state */
-    i = in_open;
-    w = false;
     while ((grp_stack[i] == cur_boundary) && (i > 0)) {
         /* Set variable |w| to indicate if this case should be reported */
         /* This code scans the input stack in order to determine the type of the
@@ -792,12 +772,10 @@ give a warning message (with the same complications as above).
 @c
 void if_warning(void)
 {
-    int i;                      /* index into |if_stack| */
-    boolean w;                  /* do we need a warning? */
+    boolean w = false;                  /* do we need a warning? */
+    int i = in_open;
     base_ptr = input_ptr;
     input_stack[base_ptr] = cur_input;  /* store current state */
-    i = in_open;
-    w = false;
     while (if_stack[i] == cond_ptr) {
         /* Set variable |w| to... */
         if (tracing_nesting > 0) {
@@ -832,13 +810,10 @@ file are still incomplete.
 @c
 void file_warning(void)
 {
-    halfword p;                 /* saved value of |save_ptr| or |cond_ptr| */
-    int l;                      /* saved value of |cur_level| or |if_limit| */
-    int c;                      /* saved value of |cur_group| or |cur_if| */
-    int i;                      /* saved value of |if_line| */
-    p = save_ptr;
-    l = cur_level;
-    c = cur_group;
+    halfword p = save_ptr; /* saved value of |save_ptr| or |cond_ptr| */
+    int l = cur_level;     /* saved value of |cur_level| or |if_limit| */
+    int c = cur_group;     /* saved value of |cur_group| or |cur_if| */
+    int i;                 /* saved value of |if_line| */
     save_ptr = cur_boundary;
     while (grp_stack[in_open] != save_ptr) {
         decr(cur_level);
@@ -999,8 +974,7 @@ int set_tex_attribute_register(int j, scaled v)
 
 int get_tex_toks_register(int j)
 {
-    str_number s;
-    s = get_nullstr();
+    str_number s = get_nullstr();
     if (toks(j) != null) {
         s = tokens_to_string(toks(j));
     }
@@ -1009,9 +983,8 @@ int get_tex_toks_register(int j)
 
 int set_tex_toks_register(int j, lstring s)
 {
-    halfword ref;
     int a;
-    ref = get_avail();
+    halfword ref = get_avail();
     (void) str_toks(s);
     set_token_ref_count(ref, 0);
     set_token_link(ref, token_link(temp_token_head));
@@ -1025,9 +998,8 @@ int set_tex_toks_register(int j, lstring s)
 
 int scan_tex_toks_register(int j, int c, lstring s)
 {
-    halfword ref;
     int a;
-    ref = get_avail();
+    halfword ref = get_avail();
     (void) str_scan_toks(c,s);
     set_token_ref_count(ref, 0);
     set_token_link(ref, token_link(temp_token_head));

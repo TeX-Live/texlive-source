@@ -15,25 +15,30 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFACTION_H
 #  define PDFACTION_H
 
-/* increase count of references to this action. this is used to speed up
-   copy_node() */
+/*
+    Increase count of references to this action. this is used to speed up
+    copy_node().
+*/
 
 #  define add_action_ref(a) pdf_action_refcount((a))++
 
-/* decrease count of references to this action; free it if there is no reference
-   to this action */
+/*
+    Decrease count of references to this action; free it if there is no reference
+    to this action.
+*/
 
-#  define delete_action_ref(a) {          \
+#  define delete_action_ref(a) { \
     if (pdf_action_refcount(a) == null) { \
-        flush_node(a);                    \
-    } else {                              \
-        pdf_action_refcount(a)--;         \
-    }                                     \
+        flush_node(a); \
+    } else { \
+        pdf_action_refcount(a)--; \
+    } \
 }
 
 #  define set_pdf_action_type(A,B)       pdf_action_type(A)=B

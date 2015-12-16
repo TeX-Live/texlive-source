@@ -44,13 +44,6 @@ extern halfword write_loc;
 
 extern void do_extension(int immediate);
 
-extern int pdf_last_annot;
-extern int pdf_last_link;
-extern int pdf_last_obj;
-extern int pdf_retval;
-
-/* Three extra node types carry information from |main_control|. */
-
 /*
 User defined whatsits can be inserted into node lists to pass data
 along from one lua call to another without interference from the
@@ -59,7 +52,6 @@ type of the value depends on the |user_node_type| field.
 */
 
 extern void new_whatsit(int s);
-extern void scan_pdf_ext_toks(void);
 
 extern halfword concat_tokens(halfword q, halfword r);
 

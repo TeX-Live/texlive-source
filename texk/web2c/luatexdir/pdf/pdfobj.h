@@ -15,8 +15,8 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFOBJ_H
 #  define PDFOBJ_H
@@ -25,21 +25,13 @@
 
 #  define set_pdf_obj_objnum(A, B) pdf_obj_objnum(A) = (B)
 
-#  define pdfmem_obj_size                  5    /* size of memory in |mem| which |obj_data_ptr| holds */
+#  define pdfmem_obj_size 5 /* size of memory in |mem| which |obj_data_ptr| holds */
 
-#  define obj_obj_data(pdf, A)             pdf->mem[obj_data_ptr((pdf), (A)) + 0]       /* object data */
-#  define obj_obj_stream_attr(pdf, A)      pdf->mem[obj_data_ptr((pdf), (A)) + 1]       /* additional attributes into stream dict */
-#  define obj_obj_flags(pdf, A)            pdf->mem[obj_data_ptr((pdf), (A)) + 2]       /* stream/file flags */
-#  define obj_obj_pdfcompresslevel(pdf, A) pdf->mem[obj_data_ptr((pdf), (A)) + 3]       /* overrides \pdfcompresslevel */
-#  define obj_obj_objstm_threshold(pdf, A) pdf->mem[obj_data_ptr((pdf), (A)) + 4]       /* for object stream compression */
-
-/*  define set_obj_obj_data(pdf, A, B)             obj_obj_data((pdf), (A)) = (B) */
-/*  define set_obj_obj_flags(pdf, A, B)            obj_obj_flags((pdf), (A)) = (B) */
-/*  define set_obj_obj_stream_attr(pdf, A, B)      obj_obj_stream_attr((pdf), (A)) = (B) */
-/*  define set_obj_obj_pdfcompresslevel(pdf, A, B) obj_obj_pdfcompresslevel((pdf), (A)) = (B) */
-/*  define set_obj_obj_objstm_threshold(pdf, A, B) obj_obj_objstm_threshold((pdf), (A)) = (B) */
-
-/**********************************************************************/
+#  define obj_obj_data(pdf, A)             pdf->mem[obj_data_ptr((pdf), (A)) + 0] /* object data */
+#  define obj_obj_stream_attr(pdf, A)      pdf->mem[obj_data_ptr((pdf), (A)) + 1] /* additional attributes into stream dict */
+#  define obj_obj_flags(pdf, A)            pdf->mem[obj_data_ptr((pdf), (A)) + 2] /* stream/file flags */
+#  define obj_obj_pdfcompresslevel(pdf, A) pdf->mem[obj_data_ptr((pdf), (A)) + 3] /* overrides \pdfcompresslevel */
+#  define obj_obj_objstm_threshold(pdf, A) pdf->mem[obj_data_ptr((pdf), (A)) + 4] /* for object stream compression */
 
 #  define OBJ_FLAG_ISSTREAM              (1 << 0)
 #  define OBJ_FLAG_ISFILE                (1 << 1)
@@ -51,8 +43,6 @@
 #  define obj_obj_is_file(pdf,A)         ((obj_obj_flags((pdf), (A)) & OBJ_FLAG_ISFILE) != 0)
 #  define set_obj_obj_is_file(pdf,A)     ((obj_obj_flags((pdf), (A)) |= OBJ_FLAG_ISFILE))
 #  define unset_obj_obj_is_file(pdf,A)   ((obj_obj_flags((pdf), (A)) &= ~OBJ_FLAG_ISFILE))
-
-/**********************************************************************/
 
 extern void init_obj_obj(PDF pdf, int k);
 extern void pdf_write_obj(PDF pdf, int n);

@@ -100,7 +100,7 @@ void luafunctioncall(int slot)
     lua_rawgeti(Luas, -1,slot);
     if (lua_isfunction(Luas,-1)) {
         int base = lua_gettop(Luas); /* function index */
-        lua_pushnumber(Luas, slot);
+        lua_pushinteger(Luas, slot);
         lua_pushcfunction(Luas, lua_traceback); /* push traceback function */
         lua_insert(Luas, base); /* put it under chunk  */
         i = lua_pcall(Luas, 1, 0, base);
@@ -302,7 +302,6 @@ void luainterpreter(void)
     luaopen_ff(L);
     luaopen_tex(L);
     luaopen_token(L);
-    luaopen_oldtoken(L);
     luaopen_node(L);
     luaopen_texio(L);
     luaopen_kpse(L);
@@ -587,7 +586,7 @@ lua_State *luatex_error(lua_State * L, int is_fatal)
         lua_close(L);
         return (lua_State *) NULL;
     } else {
-        normal_warning("lua",err,true,true);
+        normal_warning("lua",err);
         return L;
     }
 }

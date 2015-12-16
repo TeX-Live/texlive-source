@@ -45,7 +45,7 @@ char *tt_pack_head_table(struct tt_head_table *table)
     char *p, *data;
 
     if (table == NULL)
-        TT_ERROR("passed NULL pointer\n");
+        normal_error("ttf","passed NULL pointer");
 
     p = data = NEW(TT_HEAD_TABLE_SIZE, char);
     p += sfnt_put_ulong(p, (LONG) table->version);
@@ -205,13 +205,13 @@ struct tt_hhea_table *tt_read_hhea_table(sfnt * sfont)
     }
     table->metricDataFormat = sfnt_get_short(sfont);
     if (table->metricDataFormat != 0)
-        TT_ERROR("unknown metricDaraFormat");
+        normal_error("ttf","unknown metricDaraFormat");
     table->numberOfHMetrics = sfnt_get_ushort(sfont);
 
     return table;
 }
 
-@ vhea 
+@ vhea
 @c
 char *tt_pack_vhea_table(struct tt_vhea_table *table)
 {
@@ -279,7 +279,7 @@ struct tt_VORG_table *tt_read_VORG_table(sfnt * sfont)
 
         sfnt_locate_table(sfont, "VORG");
         if (sfnt_get_ushort(sfont) != 1 || sfnt_get_ushort(sfont) != 0)
-            TT_ERROR("Unsupported VORG version.");
+            normal_error("ttf","unsupported VORG version");
 
         vorg->defaultVertOriginY = sfnt_get_short(sfont);
         vorg->numVertOriginYMetrics = sfnt_get_ushort(sfont);
@@ -325,7 +325,7 @@ struct tt_longMetrics *tt_read_longMetrics(sfnt * sfont, USHORT numGlyphs,
 
 @ OS/2 table
 
-this table may not exist 
+this table may not exist
 @c
 struct tt_os2__table *tt_read_os2__table(sfnt * sfont)
 {
@@ -398,7 +398,7 @@ tt_get_name(sfnt * sfont, char *dest, USHORT destlen,
     name_offset = sfnt_locate_table(sfont, "name");
 
     if (sfnt_get_ushort(sfont))
-        TT_ERROR("Expecting zero");
+        normal_error("ttf","expecting zero");
 
     num_names = sfnt_get_ushort(sfont);
     string_offset = sfnt_get_ushort(sfont);
@@ -443,7 +443,7 @@ USHORT tt_get_ps_fontname(sfnt * sfont, char *dest, USHORT destlen)
         (namelen = tt_get_name(sfont, dest, destlen, 3, 5, 0x412u, 6)) != 0)
         return namelen;
 
-    fprintf(stderr, "\n** Warning: No valid PostScript name available **\n");
+    normal_warning("ttf","no valid PostScript name available");
     /*
        Wrokaround for some bad TTfonts:
        Language ID value 0xffffu for `accept any language ID'
@@ -452,7 +452,7 @@ USHORT tt_get_ps_fontname(sfnt * sfont, char *dest, USHORT destlen)
         /*
            Finally falling back to Mac Roman name field.
            Warning: Some bad Japanese TTfonts using SJIS encoded string in the
-           Mac Roman name field. 
+           Mac Roman name field.
          */
         namelen = tt_get_name(sfont, dest, destlen, 1, 0, 0, 1);
     }
