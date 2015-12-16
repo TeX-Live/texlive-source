@@ -1,3 +1,8 @@
+2015-12-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Makefile.in: Rewritten by hand for LuaTeX beta-0.86.0.
+	It should be recreated by autotool.
+
 2015-11-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvicopy.ch: Avoid to crash and abort with an error message when
