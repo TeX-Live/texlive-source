@@ -15,20 +15,22 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFSAVERESTORE_H
 #  define PDFSAVERESTORE_H
 
 /* stack for positions of \pdfsave */
+
 typedef struct {
     scaledpos pos;
     int matrix_stack;
 } pos_entry;
-extern pos_entry *pos_stack;    /* the stack */
-extern int pos_stack_size;      /* initially empty */
-extern int pos_stack_used;      /* used entries */
+
+extern pos_entry *pos_stack; /* the stack */
+extern int pos_stack_size;   /* initially empty */
+extern int pos_stack_used;   /* used entries */
 
 extern void pdf_out_save(PDF pdf, halfword p);
 extern void pdf_out_restore(PDF pdf, halfword p);

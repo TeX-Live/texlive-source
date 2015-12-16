@@ -19,192 +19,81 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
-@ @c
-#define LCCODESTACK  8
-#define LCCODEDEFAULT 0
+@ catcodes @c
 
-static sa_tree lccode_head = NULL;
-
-#define UCCODESTACK  8
-#define UCCODEDEFAULT 0
-
-static sa_tree uccode_head = NULL;
-
-#define SFCODESTACK 8
-#define SFCODEDEFAULT 1000
-
-static sa_tree sfcode_head = NULL;
-
-#define CATCODESTACK 8
-#define CATCODEDEFAULT 12
-
-
-void set_lc_code(int n, halfword v, quarterword gl)
-{
-    set_sa_item(lccode_head, n, (sa_tree_item) v, gl);
-}
-
-halfword get_lc_code(int n)
-{
-    return (halfword) get_sa_item(lccode_head, n);
-}
-
-static void unsavelccodes(quarterword gl)
-{
-    restore_sa_stack(lccode_head, gl);
-}
-
-static void initializelccodes(void)
-{
-    lccode_head = new_sa_tree(LCCODESTACK, LCCODEDEFAULT);
-}
-
-static void dumplccodes(void)
-{
-    dump_sa_tree(lccode_head);
-}
-
-static void undumplccodes(void)
-{
-    lccode_head = undump_sa_tree();
-}
-
-void set_uc_code(int n, halfword v, quarterword gl)
-{
-    set_sa_item(uccode_head, n, (sa_tree_item) v, gl);
-}
-
-halfword get_uc_code(int n)
-{
-    return (halfword) get_sa_item(uccode_head, n);
-}
-
-static void unsaveuccodes(quarterword gl)
-{
-    restore_sa_stack(uccode_head, gl);
-}
-
-static void initializeuccodes(void)
-{
-    uccode_head = new_sa_tree(UCCODESTACK, UCCODEDEFAULT);
-}
-
-static void dumpuccodes(void)
-{
-    dump_sa_tree(uccode_head);
-}
-
-static void undumpuccodes(void)
-{
-    uccode_head = undump_sa_tree();
-}
-
-void set_sf_code(int n, halfword v, quarterword gl)
-{
-    set_sa_item(sfcode_head, n, (sa_tree_item) v, gl);
-}
-
-halfword get_sf_code(int n)
-{
-    return (halfword) get_sa_item(sfcode_head, n);
-}
-
-static void unsavesfcodes(quarterword gl)
-{
-    restore_sa_stack(sfcode_head, gl);
-}
-
-static void initializesfcodes(void)
-{
-    sfcode_head = new_sa_tree(SFCODESTACK, SFCODEDEFAULT);
-}
-
-static void dumpsfcodes(void)
-{
-    dump_sa_tree(sfcode_head);
-}
-
-static void undumpsfcodes(void)
-{
-    sfcode_head = undump_sa_tree();
-}
-
+#define CATCODESTACK       8
+#define CATCODEDEFAULT    12
+#define CATCODE_MAX    32767
 
 static sa_tree *catcode_heads = NULL;
 static int catcode_max = 0;
 static unsigned char *catcode_valid = NULL;
 
-#define CATCODE_MAX 32767
-
-#define update_catcode_max(h)  if (h > catcode_max)  catcode_max = h
-
 void set_cat_code(int h, int n, halfword v, quarterword gl)
 {
+    sa_tree_item sa_value = { 0 };
     sa_tree s = catcode_heads[h];
-    update_catcode_max(h);
+    if (h > catcode_max)
+        catcode_max = h;
     if (s == NULL) {
-        s = new_sa_tree(CATCODESTACK, CATCODEDEFAULT);
+        sa_value.int_value = CATCODEDEFAULT;
+        s = new_sa_tree(CATCODESTACK, 1, sa_value);
         catcode_heads[h] = s;
     }
-    set_sa_item(s, n, (sa_tree_item) v, gl);
+    sa_value.int_value = (int) v;
+    set_sa_item(s, n, sa_value, gl);
 }
 
 halfword get_cat_code(int h, int n)
 {
+    sa_tree_item sa_value = { 0 };
     sa_tree s = catcode_heads[h];
-    update_catcode_max(h);
+    if (h > catcode_max)
+        catcode_max = h;
     if (s == NULL) {
-        s = new_sa_tree(CATCODESTACK, CATCODEDEFAULT);
+        sa_value.int_value = CATCODEDEFAULT;
+        s = new_sa_tree(CATCODESTACK, 1, sa_value);
         catcode_heads[h] = s;
     }
-    return (halfword) get_sa_item(s, n);
+    return (halfword) get_sa_item(s, n).int_value;
 }
 
 void unsave_cat_codes(int h, quarterword gl)
 {
     int k;
-    update_catcode_max(h);
+    if (h > catcode_max)
+        catcode_max = h;
     for (k = 0; k <= catcode_max; k++) {
         if (catcode_heads[k] != NULL)
             restore_sa_stack(catcode_heads[k], gl);
     }
 }
 
-#if 0
-static void clearcatcodestack(int h)
-{
-    clear_sa_stack(catcode_heads[h]);
-}
-#endif
-
 static void initializecatcodes(void)
 {
+    sa_tree_item sa_value = { 0 };
     catcode_max = 0;
-#if 0
-    xfree(catcode_heads); /* not needed */
-    xfree(catcode_valid); 
-#endif
     catcode_heads = Mxmalloc_array(sa_tree, (CATCODE_MAX + 1));
     catcode_valid = Mxmalloc_array(unsigned char, (CATCODE_MAX + 1));
     memset(catcode_heads, 0, sizeof(sa_tree) * (CATCODE_MAX + 1));
     memset(catcode_valid, 0, sizeof(unsigned char) * (CATCODE_MAX + 1));
     catcode_valid[0] = 1;
-    catcode_heads[0] = new_sa_tree(CATCODESTACK, CATCODEDEFAULT);
+    sa_value.int_value = CATCODEDEFAULT;
+    catcode_heads[0] = new_sa_tree(CATCODESTACK, 1, sa_value);
 }
 
 static void dumpcatcodes(void)
 {
-    int k, total;
-    dump_int(catcode_max);
-    total = 0;
+    int total = 0;
+    int k;
     for (k = 0; k <= catcode_max; k++) {
         if (catcode_valid[k]) {
             total++;
         }
     }
+    dump_int(catcode_max);
     dump_int(total);
     for (k = 0; k <= catcode_max; k++) {
         if (catcode_valid[k]) {
@@ -245,7 +134,8 @@ void copy_cat_codes(int from, int to)
     if (from < 0 || from > CATCODE_MAX || catcode_valid[from] == 0) {
         uexit(1);
     }
-    update_catcode_max(to);
+    if (to > catcode_max)
+        catcode_max = to;
     destroy_sa_tree(catcode_heads[to]);
     catcode_heads[to] = copy_sa_tree(catcode_heads[from]);
     catcode_valid[to] = 1;
@@ -254,7 +144,8 @@ void copy_cat_codes(int from, int to)
 void initex_cat_codes(int h)
 {
     int k;
-    update_catcode_max(h);
+    if (h > catcode_max)
+        catcode_max = h;
     destroy_sa_tree(catcode_heads[h]);
     catcode_heads[h] = NULL;
     set_cat_code(h, '\r', car_ret_cmd, 1);
@@ -271,27 +162,9 @@ void initex_cat_codes(int h)
     catcode_valid[h] = 1;
 }
 
-void unsave_text_codes(quarterword grouplevel)
-{
-    unsavesfcodes(grouplevel);
-    unsaveuccodes(grouplevel);
-    unsavelccodes(grouplevel);
-}
-
-void initialize_text_codes(void)
-{
-    initializesfcodes();
-    initializeuccodes();
-    initializecatcodes();
-    initializelccodes();
-}
-
-void free_text_codes(void)
+static void freecatcodes(void)
 {
     int k;
-    destroy_sa_tree(lccode_head);
-    destroy_sa_tree(uccode_head);
-    destroy_sa_tree(sfcode_head);
     for (k = 0; k <= catcode_max; k++) {
         if (catcode_valid[k]) {
             destroy_sa_tree(catcode_heads[k]);
@@ -301,19 +174,313 @@ void free_text_codes(void)
     xfree(catcode_valid);
 }
 
+@ lccodes @c
+
+#define LCCODESTACK   8
+#define LCCODEDEFAULT 0
+
+static sa_tree lccode_head = NULL;
+
+void set_lc_code(int n, halfword v, quarterword gl)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = (int) v;
+    set_sa_item(lccode_head, n, sa_value, gl);
+}
+
+halfword get_lc_code(int n)
+{
+    return (halfword) get_sa_item(lccode_head, n).int_value;
+}
+
+static void unsavelccodes(quarterword gl)
+{
+    restore_sa_stack(lccode_head, gl);
+}
+
+static void initializelccodes(void)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = LCCODEDEFAULT;
+    lccode_head = new_sa_tree(LCCODESTACK, 1, sa_value);
+}
+
+static void dumplccodes(void)
+{
+    dump_sa_tree(lccode_head);
+}
+
+static void undumplccodes(void)
+{
+    lccode_head = undump_sa_tree();
+}
+
+static void freelccodes(void)
+{
+    destroy_sa_tree(lccode_head);
+}
+
+@ uccodes @c
+
+#define UCCODESTACK   8
+#define UCCODEDEFAULT 0
+
+static sa_tree uccode_head = NULL;
+
+void set_uc_code(int n, halfword v, quarterword gl)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = (int) v;
+    set_sa_item(uccode_head, n, sa_value, gl);
+}
+
+halfword get_uc_code(int n)
+{
+    return (halfword) get_sa_item(uccode_head, n).int_value;
+}
+
+static void unsaveuccodes(quarterword gl)
+{
+    restore_sa_stack(uccode_head, gl);
+}
+
+static void initializeuccodes(void)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = UCCODEDEFAULT;
+    uccode_head = new_sa_tree(UCCODESTACK, 1, sa_value);
+}
+
+static void dumpuccodes(void)
+{
+    dump_sa_tree(uccode_head);
+}
+
+static void undumpuccodes(void)
+{
+    uccode_head = undump_sa_tree();
+}
+
+static void freeuccodes(void)
+{
+    destroy_sa_tree(uccode_head);
+}
+
+@ sfcodes @c
+
+#define SFCODESTACK      8
+#define SFCODEDEFAULT 1000
+
+static sa_tree sfcode_head = NULL;
+
+void set_sf_code(int n, halfword v, quarterword gl)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = (int) v;
+    set_sa_item(sfcode_head, n, sa_value, gl);
+}
+
+halfword get_sf_code(int n)
+{
+    return (halfword) get_sa_item(sfcode_head, n).int_value;
+}
+
+static void unsavesfcodes(quarterword gl)
+{
+    restore_sa_stack(sfcode_head, gl);
+}
+
+static void initializesfcodes(void)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = SFCODEDEFAULT;
+    sfcode_head = new_sa_tree(SFCODESTACK, 1, sa_value);
+}
+
+static void dumpsfcodes(void)
+{
+    dump_sa_tree(sfcode_head);
+}
+
+static void undumpsfcodes(void)
+{
+    sfcode_head = undump_sa_tree();
+}
+
+static void freesfcodes(void)
+{
+    destroy_sa_tree(sfcode_head);
+}
+
+@ hjcodes @c
+
+#define HJCODESTACK       8
+#define HJCODEDEFAULT     0
+#define HJCODE_MAX    16383 /* number of languages */
+
+static sa_tree *hjcode_heads = NULL;
+static int hjcode_max = 0;
+static unsigned char *hjcode_valid = NULL;
+
+@ Here we set codes but we don't initialize from lccodes.
+
+@c void set_hj_code(int h, int n, halfword v, quarterword gl)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_tree s = hjcode_heads[h];
+    if (h > hjcode_max)
+        hjcode_max = h;
+    if (s == NULL) {
+        sa_value.int_value = HJCODEDEFAULT;
+        s = new_sa_tree(HJCODESTACK, 1, sa_value);
+        hjcode_heads[h] = s;
+    }
+    sa_value.int_value = (int) v;
+    set_sa_item(s, n, sa_value, gl);
+}
+
+@ We just return the lccodes when nothing is set.
+
+@c halfword get_hj_code(int h, int n)
+{
+    sa_tree s = hjcode_heads[h];
+    if (s == NULL) {
+        s = lccode_head;
+    }
+    return (halfword) get_sa_item(s, n).int_value;
+}
+
+@ We don't restore as we can have more languages in a paragraph
+and hyphenation takes place at a later stage so we would get
+weird grouping side effects .. so, one can overload settings
+but management is then upto the used, so no:
+
+@c
+/*
+    static void unsavehjcodes(quarterword gl) { }
+*/
+
+static void initializehjcodes(void)
+{
+    sa_tree_item sa_value = { 0 };
+    hjcode_max = 0;
+    hjcode_heads = Mxmalloc_array(sa_tree, (HJCODE_MAX + 1));
+    hjcode_valid = Mxmalloc_array(unsigned char, (HJCODE_MAX + 1));
+    memset(hjcode_heads, 0, sizeof(sa_tree) * (HJCODE_MAX + 1));
+    memset(hjcode_valid, 0, sizeof(unsigned char) * (HJCODE_MAX + 1));
+    hjcode_valid[0] = 1;
+    sa_value.int_value = HJCODEDEFAULT;
+    hjcode_heads[0] = new_sa_tree(HJCODESTACK, 1, sa_value);
+}
+
+void hj_codes_from_lc_codes(int h)
+{
+    sa_tree_item sa_value = { 0 };
+    sa_tree s = hjcode_heads[h];
+    if (s != NULL) {
+        destroy_sa_tree(s);
+    } else if (h > hjcode_max) {
+        hjcode_max = h;
+    }
+    if (s == NULL) {
+        sa_value.int_value = HJCODEDEFAULT;
+        s = new_sa_tree(HJCODESTACK, 1, sa_value);
+        hjcode_heads[h] = s;
+    }
+    hjcode_heads[h] = copy_sa_tree(lccode_head);
+    hjcode_valid[h] = 1;
+}
+
+static void dumphjcodes(void)
+{
+    int total = 0;
+    int k;
+    for (k = 0; k <= hjcode_max; k++) {
+        if (hjcode_valid[k]) {
+            total++;
+        }
+    }
+    dump_int(hjcode_max);
+    dump_int(total);
+    for (k = 0; k <= hjcode_max; k++) {
+        if (hjcode_valid[k]) {
+            dump_int(k);
+            dump_sa_tree(hjcode_heads[k]);
+        }
+    }
+}
+
+static void undumphjcodes(void)
+{
+    int total, k, x;
+    xfree(hjcode_heads);
+    xfree(hjcode_valid);
+    hjcode_heads = Mxmalloc_array(sa_tree, (HJCODE_MAX + 1));
+    hjcode_valid = Mxmalloc_array(unsigned char, (HJCODE_MAX + 1));
+    memset(hjcode_heads, 0, sizeof(sa_tree) * (HJCODE_MAX + 1));
+    memset(hjcode_valid, 0, sizeof(unsigned char) * (HJCODE_MAX + 1));
+    undump_int(hjcode_max);
+    undump_int(total);
+    for (k = 0; k < total; k++) {
+        undump_int(x);
+        hjcode_heads[x] = undump_sa_tree();
+        hjcode_valid[x] = 1;
+    }
+}
+
+static void freehjcodes(void)
+{
+    int k;
+    for (k = 0; k <= hjcode_max; k++) {
+        if (hjcode_valid[k]) {
+            destroy_sa_tree(hjcode_heads[k]);
+        }
+    }
+    xfree(hjcode_heads);
+    xfree(hjcode_valid);
+}
+
+/* management */
+
+void unsave_text_codes(quarterword grouplevel)
+{
+    unsavelccodes(grouplevel);
+    unsaveuccodes(grouplevel);
+    unsavesfcodes(grouplevel);
+}
+
+void initialize_text_codes(void)
+{
+    initializecatcodes();
+    initializelccodes();
+    initializeuccodes();
+    initializesfcodes();
+    initializehjcodes();
+}
+
+void free_text_codes(void)
+{
+    freecatcodes();
+    freelccodes();
+    freeuccodes();
+    freesfcodes();
+    freehjcodes();
+}
 
 void dump_text_codes(void)
 {
-    dumpsfcodes();
-    dumpuccodes();
-    dumplccodes();
     dumpcatcodes();
+    dumplccodes();
+    dumpuccodes();
+    dumpsfcodes();
+    dumphjcodes();
 }
 
 void undump_text_codes(void)
 {
-    undumpsfcodes();
-    undumpuccodes();
-    undumplccodes();
     undumpcatcodes();
+    undumplccodes();
+    undumpuccodes();
+    undumpsfcodes();
+    undumphjcodes();
 }

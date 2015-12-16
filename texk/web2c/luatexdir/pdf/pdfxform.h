@@ -15,44 +15,37 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
+*/
 
 #ifndef PDFXFORM_H
 #  define PDFXFORM_H
 
-/* data structure for box resources */
+#  define pdfmem_xform_size 8 /* size of memory in |pdf->mem| which |obj_data_ptr| holds */
 
-#  define pdfmem_xform_size        8    /* size of memory in |pdf->mem| which |obj_data_ptr| holds */
+#  define obj_xform_width(pdf,A)          pdf->mem[obj_data_ptr(pdf,A) + 0]
+#  define obj_xform_height(pdf,A)         pdf->mem[obj_data_ptr(pdf,A) + 1]
+#  define obj_xform_depth(pdf,A)          pdf->mem[obj_data_ptr(pdf,A) + 2]
+#  define obj_xform_box(pdf,A)            pdf->mem[obj_data_ptr(pdf,A) + 3] /* this field holds pointer to the corresponding box */
+#  define obj_xform_attr(pdf,A)           pdf->mem[obj_data_ptr(pdf,A) + 4] /* additional xform attributes */
+#  define obj_xform_resources(pdf,A)      pdf->mem[obj_data_ptr(pdf,A) + 5] /* additional xform Resources */
+#  define obj_xform_attr_str(pdf,A)       pdf->mem[obj_data_ptr(pdf,A) + 6]
+#  define obj_xform_resources_str(pdf,A)  pdf->mem[obj_data_ptr(pdf,A) + 7]
 
-#  define set_pdf_xform_objnum(A,B) pdf_xform_objnum(A)=B
-
-#  define obj_xform_width(pdf,A)       pdf->mem[obj_data_ptr(pdf,A) + 0]
-#  define obj_xform_height(pdf,A)      pdf->mem[obj_data_ptr(pdf,A) + 1]
-#  define obj_xform_depth(pdf,A)       pdf->mem[obj_data_ptr(pdf,A) + 2]
-#  define obj_xform_box(pdf,A)         pdf->mem[obj_data_ptr(pdf,A) + 3]        /* this field holds
-                                                                                   pointer to the corresponding box */
-#  define obj_xform_attr(pdf,A)        pdf->mem[obj_data_ptr(pdf,A) + 4]        /* additional xform
-                                                                                   attributes */
-#  define obj_xform_resources(pdf,A)   pdf->mem[obj_data_ptr(pdf,A) + 5]        /* additional xform
-                                                                                   Resources */
-#  define obj_xform_attr_str(pdf,A)        pdf->mem[obj_data_ptr(pdf,A) + 6]
-#  define obj_xform_resources_str(pdf,A)   pdf->mem[obj_data_ptr(pdf,A) + 7]
-
-
-#  define set_obj_xform_width(pdf,A,B) obj_xform_width(pdf,A)=B
-#  define set_obj_xform_height(pdf,A,B) obj_xform_height(pdf,A)=B
-#  define set_obj_xform_depth(pdf,A,B) obj_xform_depth(pdf,A)=B
-#  define set_obj_xform_box(pdf,A,B) obj_xform_box(pdf,A)=B
-#  define set_obj_xform_attr(pdf,A,B) obj_xform_attr(pdf,A)=B
-#  define set_obj_xform_resources(pdf,A,B) obj_xform_resources(pdf,A)=B
-#  define set_obj_xform_attr_str(pdf,A,B) obj_xform_attr_str(pdf,A)=B
+#  define set_pdf_xform_objnum(A,B)            pdf_xform_objnum(A)=B
+#  define set_obj_xform_width(pdf,A,B)         obj_xform_width(pdf,A)=B
+#  define set_obj_xform_height(pdf,A,B)        obj_xform_height(pdf,A)=B
+#  define set_obj_xform_depth(pdf,A,B)         obj_xform_depth(pdf,A)=B
+#  define set_obj_xform_box(pdf,A,B)           obj_xform_box(pdf,A)=B
+#  define set_obj_xform_attr(pdf,A,B)          obj_xform_attr(pdf,A)=B
+#  define set_obj_xform_resources(pdf,A,B)     obj_xform_resources(pdf,A)=B
+#  define set_obj_xform_attr_str(pdf,A,B)      obj_xform_attr_str(pdf,A)=B
 #  define set_obj_xform_resources_str(pdf,A,B) obj_xform_resources_str(pdf,A)=B
 
-extern int pdf_cur_form;        /* the form being output */
+extern int pdf_cur_form; /* the form being output */
 
 void pdf_place_form(PDF pdf, halfword p);
-
 void scan_pdfxform(PDF pdf);
 void scan_pdfrefxform(PDF pdf);
 

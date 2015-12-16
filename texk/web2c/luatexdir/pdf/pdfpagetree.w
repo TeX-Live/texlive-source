@@ -19,25 +19,20 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @* Page diversions.
 
 @ @c
-#ifdef DEBUG
-#  define PAGES_TREE_KIDSMAX 3
-#else
-#  define PAGES_TREE_KIDSMAX 10
-#endif
+# define PAGES_TREE_KIDSMAX 10
 
 static struct avl_table *divert_list_tree = NULL;
 
 typedef struct pages_entry_ {
-    int objnum;                 /* object number of this /Pages object */
-    int number_of_pages;        /* total number of all pages below */
-    int number_of_kids;         /* number of direct kid objects */
-    int kids[PAGES_TREE_KIDSMAX];       /* array of kid object numbers */
+    int objnum;                   /* object number of this /Pages object */
+    int number_of_pages;          /* total number of all pages below */
+    int number_of_kids;           /* number of direct kid objects */
+    int kids[PAGES_TREE_KIDSMAX]; /* array of kid object numbers */
     struct pages_entry_ *next;
 } pages_entry;
 
@@ -50,11 +45,9 @@ typedef struct divert_list_entry_ {
 static int comp_divert_list_entry(const void *pa, const void *pb, void *p)
 {
     (void) p;
-    if (((const divert_list_entry *) pa)->divnum >
-        ((const divert_list_entry *) pb)->divnum)
+    if (((const divert_list_entry *) pa)->divnum > ((const divert_list_entry *) pb)->divnum)
         return 1;
-    if (((const divert_list_entry *) pa)->divnum <
-        ((const divert_list_entry *) pb)->divnum)
+    if (((const divert_list_entry *) pa)->divnum < ((const divert_list_entry *) pb)->divnum)
         return -1;
     return 0;
 }
@@ -62,9 +55,8 @@ static int comp_divert_list_entry(const void *pa, const void *pb, void *p)
 @ @c
 static pages_entry *new_pages_entry(PDF pdf)
 {
-    pages_entry *p;
     int i;
-    p = xtalloc(1, pages_entry);
+    pages_entry *p = xtalloc(1, pages_entry);
     p->number_of_pages = p->number_of_kids = 0;
     for (i = 0; i < PAGES_TREE_KIDSMAX; i++)
         p->kids[i] = 0;
@@ -86,9 +78,7 @@ static divert_list_entry *new_divert_list_entry(void)
 static void ensure_list_tree(void)
 {
     if (divert_list_tree == NULL) {
-        divert_list_tree =
-            avl_create(comp_divert_list_entry, NULL, &avl_xallocator);
-        assert(divert_list_tree != NULL);
+        divert_list_tree = avl_create(comp_divert_list_entry, NULL, &avl_xallocator);
     }
 }
 
@@ -102,8 +92,11 @@ static divert_list_entry *get_divert_list(int divnum)
     if (d == NULL) {
         d = new_divert_list_entry();
         d->divnum = divnum;
+        /* the next bit of code can actually be removed */
         aa = avl_probe(divert_list_tree, d);
-        assert(aa != NULL);
+        if (aa==NULL) {
+            normal_error("pdf backend","page list lookup error");
+        }
     }
     return d;
 }
@@ -114,11 +107,6 @@ int pdf_do_page_divert(PDF pdf, int objnum, int divnum)
 {
     divert_list_entry *d;
     pages_entry *p;
-#ifdef DEBUG
-    pages_entry *q;
-    struct avl_traverser t;
-    int i;
-#endif
     /* initialize the tree */
     ensure_list_tree();
     /* make sure we have a list for this diversion */
@@ -135,34 +123,21 @@ int pdf_do_page_divert(PDF pdf, int objnum, int divnum)
     p = d->last;
     p->kids[p->number_of_kids++] = objnum;
     p->number_of_pages++;
-#ifdef DEBUG
-    printf("\n");
-    avl_t_init(&t, divert_list_tree);
-    for (d = avl_t_first(&t, divert_list_tree); d != NULL; d = avl_t_next(&t)) {
-        printf("===== D-LIST %d: ", d->divnum);
-        for (q = d->first; q != NULL; q = q->next) {
-            printf("P=%d NK=%d (", q->objnum, q->number_of_kids);
-            for (i = 0; i < q->number_of_kids; i++)
-                printf("%d ", q->kids[i]);
-            printf(") ");
-        }
-        printf("\n");
-    }
-    printf("\n");
-#endif
     return p->objnum;
 }
 
 @ @c
 static void movelist(divert_list_entry * d, divert_list_entry * dto)
 {
-    if (d != NULL && d->first != NULL && d->divnum != dto->divnum) {    /* no undivert of empty list or into self */
+    if (d != NULL && d->first != NULL && d->divnum != dto->divnum) {
+        /* no undivert of empty list or into self */
         if (dto->first == NULL)
             dto->first = d->first;
         else
             dto->last->next = d->first;
         dto->last = d->last;
-        d->first = d->last = NULL;      /* one could as well remove this |divert_list_entry| */
+        /* one could as well remove this |divert_list_entry| */
+        d->first = d->last = NULL;
     }
 }
 
@@ -172,15 +147,12 @@ void pdf_do_page_undivert(int divnum, int curdivnum)
 {
     divert_list_entry *d, *dto, tmp;
     struct avl_traverser t;
-#ifdef DEBUG
-    pages_entry *p;
-    int i;
-#endif
     /*  initialize the tree */
     ensure_list_tree();
     /* find the diversion |curdivnum| list where diversion |divnum| should go */
     dto = get_divert_list(curdivnum);
-    if (divnum == 0) {          /* 0 = special case: undivert {\it all\/} lists */
+    if (divnum == 0) {
+        /* 0 = special case: undivert {\it all\/} lists */
         avl_t_init(&t, divert_list_tree);
         for (d = avl_t_first(&t, divert_list_tree); d != NULL;
              d = avl_t_next(&t))
@@ -190,21 +162,6 @@ void pdf_do_page_undivert(int divnum, int curdivnum)
         d = (divert_list_entry *) avl_find(divert_list_tree, &tmp);
         movelist(d, dto);
     }
-#ifdef DEBUG
-    printf("\n");
-    avl_t_init(&t, divert_list_tree);
-    for (d = avl_t_first(&t, divert_list_tree); d != NULL; d = avl_t_next(&t)) {
-        printf("===== U-LIST %d: ", d->divnum);
-        for (p = d->first; p != NULL; p = p->next) {
-            printf("P=%d NK=%d (", p->objnum, p->number_of_kids);
-            for (i = 0; i < p->number_of_kids; i++)
-                printf("%d ", p->kids[i]);
-            printf(") ");
-        }
-        printf("\n");
-    }
-    printf("\n");
-#endif
 }
 
 @ write a /Pages object
@@ -214,11 +171,11 @@ static void write_pages(PDF pdf, pages_entry * p, int parent)
 {
     int i;
     int pages_attributes ;
-    assert(p != NULL);
     pdf_begin_obj(pdf, p->objnum, OBJSTM_ALWAYS);
     pdf_begin_dict(pdf);
     pdf_dict_add_name(pdf, "Type", "Pages");
-    if (parent == 0) {          /* it's root */
+    if (parent == 0) {
+        /* it's root */
         pages_attributes = pdf_pages_attr; /* lookup once */
         if (pages_attributes != null) {
             pdf_print_toks(pdf, pages_attributes);
@@ -240,16 +197,17 @@ static void write_pages(PDF pdf, pages_entry * p, int parent)
 
 @ loop over all /Pages objects, output them, create their parents,
 recursing bottom up, return the /Pages root object number
+
 @c
 static int output_pages_list(PDF pdf, pages_entry * pe)
 {
     pages_entry *p, *q, *r;
-    assert(pe != NULL);
-    if (pe->next == NULL) {     /* everything fits into one |pages_entry| */
-        write_pages(pdf, pe, 0);        /* --> /Pages root found */
+    if (pe->next == NULL) {
+        /* everything fits into one |pages_entry| */
+        write_pages(pdf, pe, 0); /* /Pages root found */
         return pe->objnum;
     }
-    q = r = new_pages_entry(pdf);       /* one level higher needed */
+    q = r = new_pages_entry(pdf); /* one level higher needed */
     for (p = pe; p != NULL; p = p->next) {
         if (q->number_of_kids == PAGES_TREE_KIDSMAX) {
             q->next = new_pages_entry(pdf);
@@ -259,7 +217,7 @@ static int output_pages_list(PDF pdf, pages_entry * pe)
         q->number_of_pages += p->number_of_pages;
         write_pages(pdf, p, q->objnum);
     }
-    return output_pages_list(pdf, r);   /* recurse through next higher level */
+    return output_pages_list(pdf, r); /* recurse through next higher level */
 }
 
 @ @c

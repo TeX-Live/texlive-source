@@ -19,8 +19,22 @@
 
 @ @c
 
-
 #include "ptexlib.h"
+
+halfword last_cs_name = null_cs;
+
+/* |eqtb[p]| has just been restored or retained */
+
+static void diagnostic_trace(halfword p, const char *s)
+{
+    begin_diagnostic();
+    print_char('{');
+    tprint(s);
+    print_char(' ');
+    show_eqtb(p);
+    print_char('}');
+    end_diagnostic(false);
+}
 
 @ @c
 #define par_shape_ptr equiv(par_shape_loc)
@@ -85,7 +99,6 @@ void initialize_equivalents(void)
         xeq_level[k] = level_one;
 }
 
-
 @ The nested structure provided by `$\.{\char'173}\ldots\.{\char'175}$' groups
 in \TeX\ means that |eqtb| entries valid in outer groups should be saved
 and restored later if they are overridden inside the braces. When a new |eqtb|
@@ -105,9 +118,9 @@ interpreted in one of four ways:
 |save_value(p)| is a location in |eqtb| whose current value should
 be destroyed at the end of the current group and replaced by |save_word(p-1)|
 (|save_type(p-1)==saved_eqtb|).
-Furthermore if |save_value(p)>=int_base|, then |save_level(p)| should 
+Furthermore if |save_value(p)>=int_base|, then |save_level(p)| should
 replace the corresponding entry in |xeq_level| (if |save_value(p)<int_base|,
-then the level is part of |save_word(p-1)|). 
+then the level is part of |save_word(p-1)|).
 
 \yskip\hang 2) If |save_type(p)=restore_zero|, then |save_value(p)|
 is a location in |eqtb| whose current value should be destroyed at the end
@@ -125,7 +138,6 @@ the entries for that group. Furthermore, |save_value(p-1)| contains the
 source line number at which the current level of grouping was entered,
 this field has itself a type: |save_type(p-1)==saved_line|.
 
-
 Besides this `official' use, various subroutines push temporary
 variables on the save stack when it is handy to do so. These all have
 an explicit |save_type|, and they are:
@@ -141,7 +153,8 @@ an explicit |save_type|, and they are:
 |saved_boxcontext| the box context value,
 |saved_boxspec| the box \.{to} or \.{spread} specification,
 |saved_boxdir| the box \.{dir} specification,
-|saved_boxattr| the box \.{attr} specification.
+|saved_boxattr| the box \.{attr} specification,
+|saved_boxpack| the box \.{pack} specification.
 
 @ The global variable |cur_group| keeps track of what sort of group we are
 currently in. Another global variable, |cur_boundary|, points to the
@@ -151,12 +164,11 @@ in the |save_stack| or in |eqtb| ever has a level greater than |cur_level|.
 
 @c
 save_record *save_stack;
-int save_ptr;                   /* first unused entry on |save_stack| */
-int max_save_stack;             /* maximum usage of save stack */
-quarterword cur_level = level_one;      /* current nesting level for groups */
-group_code cur_group = bottom_level;    /* current group type */
-int cur_boundary;               /* where the current level begins */
-
+int save_ptr;                        /* first unused entry on |save_stack| */
+int max_save_stack;                  /* maximum usage of save stack */
+quarterword cur_level = level_one;   /* current nesting level for groups */
+group_code cur_group = bottom_level; /* current group type */
+int cur_boundary;                    /* where the current level begins */
 
 @ At this time it might be a good idea for the reader to review the introduction
 to |eqtb| that was given above just before the long lists of parameter names.
@@ -170,14 +182,13 @@ entries on |save_stack|. By making a conservative test like this, we can
 get by with testing for overflow in only a few places.
 
 @c
-#define check_full_save_stack() do {			\
-	if (save_ptr>max_save_stack) {			\
-	    max_save_stack=save_ptr;			\
-	    if (max_save_stack>save_size-8)		\
-            overflow("save size",(unsigned)save_size);	\
-	}						\
-    } while (0)
-
+#define check_full_save_stack() do { \
+    if (save_ptr>max_save_stack) { \
+        max_save_stack=save_ptr; \
+        if (max_save_stack>save_size-8) \
+            overflow("save size",(unsigned)save_size); \
+    } \
+} while (0)
 
 @ Procedure |new_save_level| is called when a group begins. The
 argument is a group identification code like `|hbox_group|'. After
@@ -193,7 +204,7 @@ called.
 
 @c
 void new_save_level(group_code c)
-{                               /* begin a new level of grouping */
+{   /* begin a new level of grouping */
     check_full_save_stack();
     set_saved_record(0, saved_line, 0, line);
     incr(save_ptr);
@@ -216,27 +227,26 @@ static const char *save_stack_type(int v)
 {
     const char *s = "";
     switch (save_type(v)) {
-/* *INDENT-OFF* */
-    case restore_old_value: s = "restore_old_value"; break;
-    case restore_zero:      s = "restore_zero";      break;
-    case insert_token:      s = "insert_token";      break;
-    case level_boundary:    s = "level_boundary";    break;
-    case saved_line:        s = "saved_line";        break;
-    case saved_adjust:      s = "saved_adjust";      break;
-    case saved_insert:      s = "saved_insert";      break;
-    case saved_disc:        s = "saved_disc";        break;
-    case saved_boxtype:     s = "saved_boxtype";     break;
-    case saved_textdir:     s = "saved_textdir";     break;
-    case saved_eqno:        s = "saved_eqno";        break;
-    case saved_choices:     s = "saved_choices";     break;
-    case saved_math:        s = "saved_math";        break;
-    case saved_boxcontext:  s = "saved_boxcontext";  break;
-    case saved_boxspec:     s = "saved_boxspec";     break;
-    case saved_boxdir:      s = "saved_boxdir";      break;
-    case saved_boxattr:     s = "saved_boxattr";     break;
-    case saved_eqtb:        s = "saved_eqtb";        break;
-    default: break;
-/* *INDENT-ON* */
+        case restore_old_value: s = "restore_old_value"; break;
+        case restore_zero:      s = "restore_zero";      break;
+        case insert_token:      s = "insert_token";      break;
+        case level_boundary:    s = "level_boundary";    break;
+        case saved_line:        s = "saved_line";        break;
+        case saved_adjust:      s = "saved_adjust";      break;
+        case saved_insert:      s = "saved_insert";      break;
+        case saved_disc:        s = "saved_disc";        break;
+        case saved_boxtype:     s = "saved_boxtype";     break;
+        case saved_textdir:     s = "saved_textdir";     break;
+        case saved_eqno:        s = "saved_eqno";        break;
+        case saved_choices:     s = "saved_choices";     break;
+        case saved_math:        s = "saved_math";        break;
+        case saved_boxcontext:  s = "saved_boxcontext";  break;
+        case saved_boxspec:     s = "saved_boxspec";     break;
+        case saved_boxdir:      s = "saved_boxdir";      break;
+        case saved_boxattr:     s = "saved_boxattr";     break;
+        case saved_boxpack:     s = "saved_boxpack";     break;
+        case saved_eqtb:        s = "saved_eqtb";        break;
+        default: break;
     }
     return s;
 }
@@ -258,106 +268,105 @@ void print_save_stack(void)
         tprint("]: ");
         tprint(save_stack_type(i));
         switch (save_type(i)) {
-        case restore_old_value:
-            tprint(", ");
-            show_eqtb_meaning(save_value(i));
-            tprint("=");
-            if (save_value(i) >= int_base) {
-                print_int(save_word(i - 1).cint);
-            } else {
-                print_int(eq_type_field(save_word(i - 1)));
-                print_char(',');        /* |print_int(eq_level_field(save_word(i-1)));| */
-                print_int(equiv_field(save_word(i - 1)));
-            }
-            i--;
-            break;
-        case restore_zero:
-            tprint(", ");
-            show_eqtb_meaning(save_value(i));
-            break;
-        case insert_token:
-            tprint(", ");
-            {
-                halfword p = get_avail();
-                set_token_info(p, save_value(i));
-                show_token_list(p, null, 1);
-                free_avail(p);
-            }
-            break;
-        case level_boundary:
-            tprint(", old group=");
-            print_int(save_level(i));
-            tprint(", boundary = ");
-            print_int(save_value(i));
-            tprint(", line = ");
-            print_int(save_value(i - 1));
-            i--;
-            break;
-        case saved_adjust:
-            tprint(", ");
-            print_int(save_level(i));   /* vadjust vs vadjust pre */
-            break;
-        case saved_insert:
-            tprint(", ");
-            print_int(save_value(i));   /* insert number */
-            break;
-        case saved_boxtype:    /* \.{\\localleftbox} vs \.{\\localrightbox} */
-            tprint(", ");
-            print_int(save_value(i));
-            break;
-        case saved_eqno:       /* \.{\\eqno} vs \.{\\leqno} */
-            tprint(", ");
-            print_int(save_value(i));
-            break;
-        case saved_disc:
-        case saved_choices:
-            tprint(", ");
-            print_int(save_value(i));
-            break;
-        case saved_math:
-            tprint(", listptr=");
-            print_int(save_value(i));
-            break;
-        case saved_boxcontext:
-            tprint(", ");
-            print_int(save_value(i));
-            break;
-        case saved_boxspec:
-            tprint(", spec=");
-            print_int(save_level(i));
-            tprint(", dimen=");
-            print_int(save_value(i));
-            break;
-        case saved_textdir:
-        case saved_boxdir:
-            tprint(", ");
-            print_dir(dir_dir(save_value(i)));
-            break;
-        case saved_boxattr:
-            tprint(", ");
-            print_int(save_value(i));
-            break;
-        case saved_line:
-        case saved_eqtb:
-            break;
-        default:
-            break;
+            case restore_old_value:
+                tprint(", ");
+                show_eqtb_meaning(save_value(i));
+                tprint("=");
+                if (save_value(i) >= int_base) {
+                    print_int(save_word(i - 1).cint);
+                } else {
+                    print_int(eq_type_field(save_word(i - 1)));
+                    print_char(',');        /* |print_int(eq_level_field(save_word(i-1)));| */
+                    print_int(equiv_field(save_word(i - 1)));
+                }
+                i--;
+                break;
+            case restore_zero:
+                tprint(", ");
+                show_eqtb_meaning(save_value(i));
+                break;
+            case insert_token:
+                tprint(", ");
+                {
+                    halfword p = get_avail();
+                    set_token_info(p, save_value(i));
+                    show_token_list(p, null, 1);
+                    free_avail(p);
+                }
+                break;
+            case level_boundary:
+                tprint(", old group=");
+                print_int(save_level(i));
+                tprint(", boundary = ");
+                print_int(save_value(i));
+                tprint(", line = ");
+                print_int(save_value(i - 1));
+                i--;
+                break;
+            case saved_adjust:
+                tprint(", ");
+                print_int(save_level(i));   /* vadjust vs vadjust pre */
+                break;
+            case saved_insert:
+                tprint(", ");
+                print_int(save_value(i));   /* insert number */
+                break;
+            case saved_boxtype:    /* \.{\\localleftbox} vs \.{\\localrightbox} */
+                tprint(", ");
+                print_int(save_value(i));
+                break;
+            case saved_eqno:       /* \.{\\eqno} vs \.{\\leqno} */
+                tprint(", ");
+                print_int(save_value(i));
+                break;
+            case saved_disc:
+            case saved_choices:
+                tprint(", ");
+                print_int(save_value(i));
+                break;
+            case saved_math:
+                tprint(", listptr=");
+                print_int(save_value(i));
+                break;
+            case saved_boxcontext:
+                tprint(", ");
+                print_int(save_value(i));
+                break;
+            case saved_boxspec:
+                tprint(", spec=");
+                print_int(save_level(i));
+                tprint(", dimen=");
+                print_int(save_value(i));
+                break;
+            case saved_textdir:
+            case saved_boxdir:
+                tprint(", ");
+                print_dir(dir_dir(save_value(i)));
+                break;
+            case saved_boxattr:
+            case saved_boxpack:
+                tprint(", ");
+                print_int(save_value(i));
+                break;
+            case saved_line:
+            case saved_eqtb:
+                break;
+            default:
+                break;
         }
         print_ln();
     }
     end_diagnostic(true);
 }
 
-
 @ The \.{\\showgroups} command displays all currently active grouping
   levels.
-
 
 @ The modifications of \TeX\ required for the display produced by the
   |show_save_groups| procedure were first discussed by Donald~E. Knuth in
   {\sl TUGboat\/} {\bf 11}, 165--170 and 499--511, 1990.
   @^Knuth, Donald Ervin@>
-  
+
   In order to understand a group type we also have to know its mode.
   Since unrestricted horizontal modes are not associated with grouping,
   they are skipped when traversing the semantic nest.
@@ -365,26 +374,17 @@ void print_save_stack(void)
 @c
 void show_save_groups(void)
 {
-    int p;                      /* index into |nest| */
+    int p = nest_ptr;           /* index into |nest| */
     int m;                      /* mode */
-    save_pointer v;             /* saved value of |save_ptr| */
-    quarterword l;              /* saved value of |cur_level| */
-    group_code c;               /* saved value of |cur_group| */
-    int a;                      /* to keep track of alignments */
+    save_pointer v = save_ptr;  /* saved value of |save_ptr| */
+    quarterword l = cur_level;  /* saved value of |cur_level| */
+    group_code c = cur_group;   /* saved value of |cur_group| */
+    int a = 1;                  /* to keep track of alignments */
     int i;
     quarterword j;
-    const char *s;
-#ifdef DEBUG
-    print_save_stack();
-#endif
-    p = nest_ptr;
-    v = save_ptr;
-    l = cur_level;
-    c = cur_group;
+    const char *s = NULL;
     save_ptr = cur_boundary;
     decr(cur_level);
-    a = 1;
-    s = NULL;
     tprint_nl("");
     print_ln();
     while (1) {
@@ -401,106 +401,106 @@ void show_save_groups(void)
         } while (m == hmode);
         tprint(" (");
         switch (cur_group) {
-        case simple_group:
-            incr(p);
-            goto FOUND2;
-            break;
-        case hbox_group:
-        case adjusted_hbox_group:
-            s = "hbox";
-            break;
-        case vbox_group:
-            s = "vbox";
-            break;
-        case vtop_group:
-            s = "vtop";
-            break;
-        case align_group:
-            if (a == 0) {
-                if (m == -vmode)
-                    s = "halign";
-                else
-                    s = "valign";
-                a = 1;
+            case simple_group:
+                incr(p);
+                goto FOUND2;
+                break;
+            case hbox_group:
+            case adjusted_hbox_group:
+                s = "hbox";
+                break;
+            case vbox_group:
+                s = "vbox";
+                break;
+            case vtop_group:
+                s = "vtop";
+                break;
+            case align_group:
+                if (a == 0) {
+                    if (m == -vmode)
+                        s = "halign";
+                    else
+                        s = "valign";
+                    a = 1;
+                    goto FOUND1;
+                } else {
+                    if (a == 1)
+                        tprint("align entry");
+                    else
+                        tprint_esc("cr");
+                    if (p >= a)
+                        p = p - a;
+                    a = 0;
+                    goto FOUND;
+                }
+                break;
+            case no_align_group:
+                incr(p);
+                a = -1;
+                tprint_esc("noalign");
+                goto FOUND2;
+                break;
+            case output_group:
+                tprint_esc("output");
+                goto FOUND;
+                break;
+            case math_group:
+                goto FOUND2;
+                break;
+            case disc_group:
+                tprint_esc("discretionary");
+                for (i = 1; i < 3; i++)
+                    if (i <= saved_value(-2))
+                        tprint("{}");
+                goto FOUND2;
+                break;
+            case math_choice_group:
+                tprint_esc("mathchoice");
+                for (i = 1; i < 4; i++)
+                    if (i <= saved_value(-3))       /* different offset because |-2==saved_textdir| */
+                        tprint("{}");
+                goto FOUND2;
+                break;
+            case insert_group:
+                if (saved_type(-1) == saved_adjust) {
+                    tprint_esc("vadjust");
+                    if (saved_level(-1) != 0)
+                        tprint(" pre");
+                } else {
+                    tprint_esc("insert");
+                    print_int(saved_value(-1));
+                }
+                goto FOUND2;
+                break;
+            case vcenter_group:
+                s = "vcenter";
                 goto FOUND1;
-            } else {
-                if (a == 1)
-                    tprint("align entry");
-                else
-                    tprint_esc("cr");
-                if (p >= a)
-                    p = p - a;
-                a = 0;
+                break;
+            case semi_simple_group:
+                incr(p);
+                tprint_esc("begingroup");
                 goto FOUND;
-            }
-            break;
-        case no_align_group:
-            incr(p);
-            a = -1;
-            tprint_esc("noalign");
-            goto FOUND2;
-            break;
-        case output_group:
-            tprint_esc("output");
-            goto FOUND;
-            break;
-        case math_group:
-            goto FOUND2;
-            break;
-        case disc_group:
-            tprint_esc("discretionary");
-            for (i = 1; i < 3; i++)
-                if (i <= saved_value(-2))
-                    tprint("{}");
-            goto FOUND2;
-            break;
-        case math_choice_group:
-            tprint_esc("mathchoice");
-            for (i = 1; i < 4; i++)
-                if (i <= saved_value(-3))       /* different offset because |-2==saved_textdir| */
-                    tprint("{}");
-            goto FOUND2;
-            break;
-        case insert_group:
-            if (saved_type(-1) == saved_adjust) {
-                tprint_esc("vadjust");
-                if (saved_level(-1) != 0)
-                    tprint(" pre");
-            } else {
-                tprint_esc("insert");
-                print_int(saved_value(-1));
-            }
-            goto FOUND2;
-            break;
-        case vcenter_group:
-            s = "vcenter";
-            goto FOUND1;
-            break;
-        case semi_simple_group:
-            incr(p);
-            tprint_esc("begingroup");
-            goto FOUND;
-            break;
-        case math_shift_group:
-            if (m == mmode) {
+                break;
+            case math_shift_group:
+                if (m == mmode) {
+                    print_char('$');
+                } else if (nest[p].mode_field == mmode) {
+                    print_cmd_chr(eq_no_cmd, saved_value(-2));
+                    goto FOUND;
+                }
                 print_char('$');
-            } else if (nest[p].mode_field == mmode) {
-                print_cmd_chr(eq_no_cmd, saved_value(-2));
                 goto FOUND;
-            }
-            print_char('$');
-            goto FOUND;
-            break;
-        case math_left_group:
-            if (subtype(nest[p + 1].eTeX_aux_field) == left_noad_side)
-                tprint_esc("left");
-            else
-                tprint_esc("middle");
-            goto FOUND;
-            break;
-        default:
-            confusion("showgroups");
-            break;
+                break;
+            case math_left_group:
+                if (subtype(nest[p + 1].eTeX_aux_field) == left_noad_side)
+                    tprint_esc("left");
+                else
+                    tprint_esc("middle");
+                goto FOUND;
+                break;
+            default:
+                confusion("showgroups");
+                break;
         }
         /* Show the box context */
         i = saved_value(-5);
@@ -560,8 +560,6 @@ void show_save_groups(void)
     cur_group = c;
 }
 
-
-
 @ Just before an entry of |eqtb| is changed, the following procedure should
 be called to update the other data structures properly. It is important
 to keep in mind that reference counts in |mem| include references from
@@ -573,28 +571,27 @@ void eq_destroy(memory_word w)
 {                               /* gets ready to forget |w| */
     halfword q;                 /* |equiv| field of |w| */
     switch (eq_type_field(w)) {
-    case call_cmd:
-    case long_call_cmd:
-    case outer_call_cmd:
-    case long_outer_call_cmd:
-        delete_token_ref(equiv_field(w));
-        break;
-    case glue_ref_cmd:
-        delete_glue_ref(equiv_field(w));
-        break;
-    case shape_ref_cmd:
-        q = equiv_field(w);     /* we need to free a \.{\\parshape} block */
-        if (q != null)
-            flush_node(q);
-        break;                  /* such a block is |2n+1| words long, where |n=vinfo(q)| */
-    case box_ref_cmd:
-        flush_node_list(equiv_field(w));
-        break;
-    default:
-        break;
+        case call_cmd:
+        case long_call_cmd:
+        case outer_call_cmd:
+        case long_outer_call_cmd:
+            delete_token_ref(equiv_field(w));
+            break;
+        case glue_ref_cmd:
+            delete_glue_ref(equiv_field(w));
+            break;
+        case shape_ref_cmd:
+            q = equiv_field(w);     /* we need to free a \.{\\parshape} block */
+            if (q != null)
+                flush_node(q);
+            break;                  /* such a block is |2n+1| words long, where |n=vinfo(q)| */
+        case box_ref_cmd:
+            flush_node_list(equiv_field(w));
+            break;
+        default:
+            break;
     }
 }
-
 
 @ To save a value of |eqtb[p]| that was established at level |l|, we
 can use the following subroutine.
@@ -616,7 +613,6 @@ void eq_save(halfword p, quarterword l)
     incr(save_ptr);
 }
 
-
 @ The procedure |eq_define| defines an |eqtb| entry having specified
 |eq_type| and |equiv| fields, and saves the former value if appropriate.
 This procedure is used only for entries in the first four regions of |eqtb|,
@@ -625,15 +621,19 @@ After calling this routine, it is safe to put four more entries on
 |save_stack|, provided that there was room for four more entries before
 the call, since |eq_save| makes the necessary test.
 
+@ new data for |eqtb|
 @c
 void eq_define(halfword p, quarterword t, halfword e)
-{                               /* new data for |eqtb| */
+{
+    boolean trace = int_par(tracing_assigns_code) > 0;
     if ((eq_type(p) == t) && (equiv(p) == e)) {
-        assign_trace(p, "reassigning");
+        if (trace)
+            diagnostic_trace(p, "reassigning");
         eq_destroy(eqtb[p]);
         return;
     }
-    assign_trace(p, "changing");
+    if (trace)
+        diagnostic_trace(p, "changing");
     if (eq_level(p) == cur_level)
         eq_destroy(eqtb[p]);
     else if (cur_level > level_one)
@@ -641,9 +641,9 @@ void eq_define(halfword p, quarterword t, halfword e)
     set_eq_level(p, cur_level);
     set_eq_type(p, t);
     set_equiv(p, e);
-    assign_trace(p, "into");
+    if (trace)
+        diagnostic_trace(p, "into");
 }
-
 
 @ The counterpart of |eq_define| for the remaining (fullword) positions in
 |eqtb| is called |eq_word_define|. Since |xeq_level[p]>=level_one| for all
@@ -652,17 +652,21 @@ void eq_define(halfword p, quarterword t, halfword e)
 @c
 void eq_word_define(halfword p, int w)
 {
+    boolean trace = int_par(tracing_assigns_code) > 0;
     if (eqtb[p].cint == w) {
-        assign_trace(p, "reassigning");
+        if (trace)
+            diagnostic_trace(p, "reassigning");
         return;
     }
-    assign_trace(p, "changing");
+    if (trace)
+        diagnostic_trace(p, "changing");
     if (xeq_level[p] != cur_level) {
         eq_save(p, xeq_level[p]);
         xeq_level[p] = cur_level;
     }
     eqtb[p].cint = w;
-    assign_trace(p, "into");
+    if (trace)
+        diagnostic_trace(p, "into");
 }
 
 
@@ -674,24 +678,29 @@ to save old values, and the new value is associated with |level_one|.
 @c
 void geq_define(halfword p, quarterword t, halfword e)
 {                               /* global |eq_define| */
-    assign_trace(p, "globally changing");
+    boolean trace = int_par(tracing_assigns_code) > 0;
+    if (trace)
+        diagnostic_trace(p, "globally changing");
     eq_destroy(eqtb[p]);
     set_eq_level(p, level_one);
     set_eq_type(p, t);
     set_equiv(p, e);
-    assign_trace(p, "into");
+    if (trace)
+        diagnostic_trace(p, "into");
 }
 
 void geq_word_define(halfword p, int w)
 {                               /* global |eq_word_define| */
-    assign_trace(p, "globally changing");
+    boolean trace = int_par(tracing_assigns_code) > 0;
+    if (trace)
+        diagnostic_trace(p, "globally changing");
     eqtb[p].cint = w;
     xeq_level[p] = level_one;
-    assign_trace(p, "into");
+    if (trace)
+        diagnostic_trace(p, "into");
 }
 
-
-@ Subroutine |save_for_after| puts a token on the stack for save-keeping. 
+@ Subroutine |save_for_after| puts a token on the stack for save-keeping.
 
 @c
 void save_for_after(halfword t)
@@ -705,7 +714,6 @@ void save_for_after(halfword t)
     }
 }
 
-
 @ The |unsave| routine goes the other way, taking items off of |save_stack|.
 This routine takes care of restoration when a level ends; everything
 belonging to the topmost group is cleared off of the save stack.
@@ -714,15 +722,14 @@ belonging to the topmost group is cleared off of the save stack.
 void unsave(void)
 {                               /* pops the top level off the save stack */
     halfword p;                 /* position to be restored */
-    quarterword l;              /* saved level, if in fullword regions of |eqtb| */
-    boolean a;                  /* have we already processed an \.{\\aftergroup} ? */
-    a = false;
-    l = level_one;              /* just in case */
+    quarterword l = level_one;  /* saved level, if in fullword regions of |eqtb| */
+    boolean a = false;          /* have we already processed an \.{\\aftergroup} ? */
     unsave_math_codes(cur_level);
     unsave_cat_codes(int_par(cat_code_table_code), cur_level);
     unsave_text_codes(cur_level);
     unsave_math_data(cur_level);
     if (cur_level > level_one) {
+        boolean trace = int_par(tracing_restores_code) > 0;
         decr(cur_level);
         /* Clear off top level from |save_stack| */
         while (true) {
@@ -731,7 +738,8 @@ void unsave(void)
                 break;
             p = save_value(save_ptr);
             if (save_type(save_ptr) == insert_token) {
-                a = reinsert_token(a, p);
+                reinsert_token(a, p);
+                a = true; /* always ... always etex now */
             } else {
                 if (save_type(save_ptr) == restore_old_value) {
                     l = save_level(save_ptr);
@@ -749,24 +757,23 @@ void unsave(void)
                 if (p < int_base || p > eqtb_size) {
                     if (eq_level(p) == level_one) {
                         eq_destroy(save_word(save_ptr));        /* destroy the saved value */
-                        if (int_par(tracing_restores_code) > 0)
-                            restore_trace(p, "retaining");
+                        if (trace)
+                            diagnostic_trace(p, "retaining");
                     } else {
                         eq_destroy(eqtb[p]);    /* destroy the current value */
                         eqtb[p] = save_word(save_ptr);  /* restore the saved value */
-                        if (int_par(tracing_restores_code) > 0)
-                            restore_trace(p, "restoring");
+                        if (trace)
+                            diagnostic_trace(p, "restoring");
                     }
                 } else if (xeq_level[p] != level_one) {
                     eqtb[p] = save_word(save_ptr);
                     xeq_level[p] = l;
-                    if (int_par(tracing_restores_code) > 0)
-                        restore_trace(p, "restoring");
+                    if (trace)
+                        diagnostic_trace(p, "restoring");
                 } else {
-                    if (int_par(tracing_restores_code) > 0)
-                        restore_trace(p, "retaining");
+                    if (trace)
+                        diagnostic_trace(p, "retaining");
                 }
-
             }
         }
         if (int_par(tracing_groups_code) > 0)
@@ -776,25 +783,11 @@ void unsave(void)
         cur_group = save_level(save_ptr);
         cur_boundary = save_value(save_ptr);
         decr(save_ptr);
-
     } else {
         confusion("curlevel");  /* |unsave| is not used when |cur_group=bottom_level| */
     }
     attr_list_cache = cache_disabled;
 }
-
-@ @c
-void restore_trace(halfword p, const char *s)
-{                               /* |eqtb[p]| has just been restored or retained */
-    begin_diagnostic();
-    print_char('{');
-    tprint(s);
-    print_char(' ');
-    show_eqtb(p);
-    print_char('}');
-    end_diagnostic(false);
-}
-
 
 @ Most of the parameters kept in |eqtb| can be changed freely, but there's
 an exception:  The magnification should not be used with two different
@@ -803,8 +796,7 @@ entire run. The global variable |mag_set| is set to the current magnification
 whenever it becomes necessary to ``freeze'' it at a particular value.
 
 @c
-int mag_set;                    /* if nonzero, this magnification should be used henceforth */
-
+int mag_set; /* if nonzero, this magnification should be used henceforth */
 
 @ The |prepare_mag| subroutine is called whenever \TeX\ wants to use |mag|
 for magnification.
@@ -838,7 +830,6 @@ void prepare_mag(void)
     }
     mag_set = mag;
 }
-
 
 @ Let's pause a moment now and try to look at the Big Picture.
 The \TeX\ program consists of three main parts: syntactic routines,
@@ -892,7 +883,7 @@ halfword cur_chr;               /* operand of current command */
 halfword cur_cs;                /* control sequence found here, zero if none found */
 halfword cur_tok;               /* packed representative of |cur_cmd| and |cur_chr| */
 
-@ Here is a procedure that displays the current command. 
+@ Here is a procedure that displays the current command.
 
 @c
 #define mode cur_list.mode_field
@@ -939,20 +930,22 @@ void show_cur_cmd_chr(void)
     end_diagnostic(false);
 }
 
-
-@ Here is a procedure that displays the contents of |eqtb[n]|
-   symbolically.
+@ Here is a procedure that displays the contents of |eqtb[n]| symbolically.
 
 @c
 void show_eqtb(halfword n)
 {
     if (n < null_cs) {
-        print_char('?');        /* this can't happen */
+        /* this can't happen */
+        print_char('?');
     } else if ((n < glue_base) || ((n > eqtb_size) && (n <= eqtb_top))) {
-        /* Show equivalent |n|, in region 1 or 2 */
-        /* Here is a routine that displays the current meaning of an |eqtb| entry
-           in region 1 or~2. (Similar routines for the other regions will appear
-           below.) */
+        /*
+            Show equivalent |n|, in region 1 or 2
+
+            Here is a routine that displays the current meaning of an |eqtb| entry
+            in region 1 or~2. (Similar routines for the other regions will appear
+            below.)
+        */
 
         sprint_cs(n);
         print_char('=');
@@ -962,8 +955,11 @@ void show_eqtb(halfword n)
             show_token_list(token_link(equiv(n)), null, 32);
         }
     } else if (n < local_base) {
-        /* Show equivalent |n|, in region 3 */
-        /* All glue parameters and registers are initially `\.{0pt plus0pt minus0pt}'. */
+        /*
+            Show equivalent |n|, in region 3
+
+            All glue parameters and registers are initially `\.{0pt plus0pt minus0pt}'.
+        */
         if (n < skip_base) {
             if (n < glue_base + thin_mu_skip_code)
                 print_cmd_chr(assign_glue_cmd, n);
@@ -987,16 +983,19 @@ void show_eqtb(halfword n)
         }
 
     } else if (n < int_base) {
-        /* Show equivalent |n|, in region 4 */
-        /* We initialize most things to null or undefined values. An undefined font
-           is represented by the internal code |font_base|.
+        /*
+            Show equivalent |n|, in region 4
 
-           However, the character code tables are given initial values based on the
-           conventional interpretation of ASCII code. These initial values should
-           not be changed when \TeX\ is adapted for use with non-English languages;
-           all changes to the initialization conventions should be made in format
-           packages, not in \TeX\ itself, so that global interchange of formats is
-           possible. */
+            We initialize most things to null or undefined values. An undefined font
+            is represented by the internal code |font_base|.
+
+            However, the character code tables are given initial values based on the
+            conventional interpretation of ASCII code. These initial values should
+            not be changed when \TeX\ is adapted for use with non-English languages;
+            all changes to the initialization conventions should be made in format
+            packages, not in \TeX\ itself, so that global interchange of formats is
+            possible.
+        */
         if ((n == par_shape_loc) || ((n >= etex_pen_base) && (n < etex_pens))) {
             if (n == par_shape_loc)
                 print_cmd_chr(set_tex_shape_cmd, n);
@@ -1042,7 +1041,6 @@ void show_eqtb(halfword n)
             print_char('=');
             print_esc(hash[font_id_base + equiv(n)].rh);        /* that's |font_id_text(equiv(n))| */
         }
-
     } else if (n < dimen_base) {
         /* Show equivalent |n|, in region 5 */
         if (n < dir_base) {
@@ -1064,7 +1062,6 @@ void show_eqtb(halfword n)
             print_char('=');
             print_int(eqtb[n].cint);
         }
-
     } else if (n <= eqtb_size) {
         /* Show equivalent |n|, in region 6 */
         if (n < scaled_base) {
@@ -1076,9 +1073,9 @@ void show_eqtb(halfword n)
         print_char('=');
         print_scaled(eqtb[n].cint);
         tprint("pt");
-
     } else {
-        print_char('?');        /* this can't happen either */
+        /* this can't happen either */
+        print_char('?');
     }
 }
 
@@ -1086,17 +1083,23 @@ void show_eqtb(halfword n)
 void show_eqtb_meaning(halfword n)
 {
     if (n < null_cs) {
-        print_char('?');        /* this can't happen */
+        /* this can't happen */
+        print_char('?');
     } else if ((n < glue_base) || ((n > eqtb_size) && (n <= eqtb_top))) {
-        /* Show equivalent |n|, in region 1 or 2 */
-        /* Here is a routine that displays the current meaning of an |eqtb| entry
-           in region 1 or~2. (Similar routines for the other regions will appear
-           below.) */
+        /*
+            Show equivalent |n|, in region 1 or 2
 
+            Here is a routine that displays the current meaning of an |eqtb| entry
+            in region 1 or~2. (Similar routines for the other regions will appear
+            below.)
+        */
         sprint_cs(n);
     } else if (n < local_base) {
-        /* Show equivalent |n|, in region 3 */
-        /* All glue parameters and registers are initially `\.{0pt plus0pt minus0pt}'. */
+        /*
+            Show equivalent |n|, in region 3
+
+            All glue parameters and registers are initially `\.{0pt plus0pt minus0pt}'.
+        */
         if (n < skip_base) {
             if (n < glue_base + thin_mu_skip_code)
                 print_cmd_chr(assign_glue_cmd, n);
@@ -1111,16 +1114,19 @@ void show_eqtb_meaning(halfword n)
         }
 
     } else if (n < int_base) {
-        /* Show equivalent |n|, in region 4 */
-        /* We initialize most things to null or undefined values. An undefined font
-           is represented by the internal code |font_base|.
+        /*
+            Show equivalent |n|, in region 4
 
-           However, the character code tables are given initial values based on the
-           conventional interpretation of ASCII code. These initial values should
-           not be changed when \TeX\ is adapted for use with non-English languages;
-           all changes to the initialization conventions should be made in format
-           packages, not in \TeX\ itself, so that global interchange of formats is
-           possible. */
+            We initialize most things to null or undefined values. An undefined font
+            is represented by the internal code |font_base|.
+
+            However, the character code tables are given initial values based on the
+            conventional interpretation of ASCII code. These initial values should
+            not be changed when \TeX\ is adapted for use with non-English languages;
+            all changes to the initialization conventions should be made in format
+            packages, not in \TeX\ itself, so that global interchange of formats is
+            possible.
+        */
         if ((n == par_shape_loc) || ((n >= etex_pen_base) && (n < etex_pens))) {
             if (n == par_shape_loc)
                 print_cmd_chr(set_tex_shape_cmd, n);
@@ -1138,7 +1144,6 @@ void show_eqtb_meaning(halfword n)
             /* Show the font identifier in |eqtb[n]| */
             tprint("current font");
         }
-
     } else if (n < dimen_base) {
         /* Show equivalent |n|, in region 5 */
         if (n < dir_base) {
@@ -1152,7 +1157,6 @@ void show_eqtb_meaning(halfword n)
             tprint_esc("attribute");
             print_int(n - attribute_base);
         }
-
     } else if (n <= eqtb_size) {
         /* Show equivalent |n|, in region 6 */
         if (n < scaled_base) {
@@ -1162,6 +1166,7 @@ void show_eqtb_meaning(halfword n)
             print_int(n - scaled_base);
         }
     } else {
-        print_char('?');        /* this can't happen either */
+        /* this can't happen either */
+        print_char('?');
     }
 }

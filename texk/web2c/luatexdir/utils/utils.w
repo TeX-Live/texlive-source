@@ -47,7 +47,7 @@
 @ @c
 #define check_nprintf(size_get, size_want) \
     if ((unsigned)(size_get) >= (unsigned)(size_want)) \
-        luatex_fail ("snprintf failed: file %s, line %d", __FILE__, __LINE__);
+        formatted_error("internal","snprintf failed: file %s, line %d", __FILE__, __LINE__);
 
 char *cur_file_name = NULL;
 static char print_buf[PRINTF_BUF_SIZE];
@@ -113,9 +113,7 @@ void make_subset_tag(fd_entry * fd)
     aa = avl_probe(st_tree, fd->subset_tag);
     assert(aa != NULL);
     if (j > 2)
-        luatex_warn
-            ("\nmake_subset_tag(): subset-tag collision, resolved in round %d.\n",
-             j);
+        formatted_warning("subsets","subset-tag collision, resolved in round %d",j);
 }
 
 @ @c
@@ -130,77 +128,11 @@ void tex_printf(const char *fmt, ...)
     va_end(args);
 }
 
-@ |luatex_fail| may be called when a buffer overflow has happened/is
-   happening, therefore may not call mktexstring.  However, with the
-   current implementation it appears that error messages are misleading,
-   possibly because pool overflows are detected too late.
-
-   The output format of this fuction must be the same as |normal_error| in
-   pdftex.web!
-
-@c
-__attribute__ ((noreturn, format(printf, 1, 2)))
-void luatex_fail(const char *fmt, ...)
-{
-    va_list args;
-    va_start(args, fmt);
-    print_ln();
-    tprint("!LuaTeX error");
-    if (cur_file_name) {
-        tprint(" (file ");
-        tprint(cur_file_name);
-        tprint(")");
-    }
-    tprint(": ");
-    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
-    tprint(print_buf);
-    va_end(args);
-    print_ln();
-    remove_pdffile(static_pdf);
-    tprint(" ==> Fatal error occurred, no output PDF file produced!");
-    print_ln();
-    if (kpathsea_debug) {
-        abort();
-    } else {
-        exit(EXIT_FAILURE);
-    }
-}
-
-@ The output format of this fuction must be the same as |normal_warn| in
-   pdftex.web!
-@c
-__attribute__ ((format(printf, 1, 2)))
-void luatex_warn(const char *fmt, ...)
-{
-    int old_selector = selector;
-    va_list args;
-    va_start(args, fmt);
-    selector = term_and_log;
-    print_ln();
-    tex_printf("warning");
-    if (cur_file_name)
-        tex_printf(" (file %s)", cur_file_name);
-    tex_printf(": ");
-    vsnprintf(print_buf, PRINTF_BUF_SIZE, fmt, args);
-    tprint(print_buf);
-    va_end(args);
-    print_ln();
-    selector = old_selector;
-}
-
-@ @c
-void garbage_warning(void)
-{
-    luatex_warn("dangling objects discarded, no output file produced.");
-    remove_pdffile(static_pdf);
-}
-
-
 @ @c
 size_t xfwrite(void *ptr, size_t size, size_t nmemb, FILE * stream)
 {
     if (fwrite(ptr, size, nmemb, stream) != nmemb)
-        luatex_fail("fwrite() failed");
+        formatted_error("file io","fwrite() failed");
     return nmemb;
 }
 
@@ -208,7 +140,7 @@ size_t xfwrite(void *ptr, size_t size, size_t nmemb, FILE * stream)
 int xfflush(FILE * stream)
 {
     if (fflush(stream) != 0)
-        luatex_fail("fflush() failed (%s)", strerror(errno));
+        formatted_error("file io","fflush() failed (%s)", strerror(errno));
     return 0;
 }
 
@@ -217,7 +149,7 @@ int xgetc(FILE * stream)
 {
     int c = getc(stream);
     if (c < 0 && c != EOF)
-        luatex_fail("getc() failed (%s)", strerror(errno));
+        formatted_error("file io","getc() failed (%s)", strerror(errno));
     return c;
 }
 
@@ -226,7 +158,7 @@ int xputc(int c, FILE * stream)
 {
     int i = putc(c, stream);
     if (i < 0)
-        luatex_fail("putc() failed (%s)", strerror(errno));
+        formatted_error("file io","putc() failed (%s)", strerror(errno));
     return i;
 }
 
@@ -239,7 +171,7 @@ scaled ext_xn_over_d(scaled x, scaled n, scaled d)
     else
         r -= 0.5;
     if (r >= (double) max_integer || r <= -(double) max_integer)
-        luatex_warn("arithmetic number too big");
+        normal_warning("internal","arithmetic number too big");
     return (scaled) r;
 }
 

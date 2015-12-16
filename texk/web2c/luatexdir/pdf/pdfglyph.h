@@ -15,8 +15,8 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFGLYPH_H
 #  define PDFGLYPH_H

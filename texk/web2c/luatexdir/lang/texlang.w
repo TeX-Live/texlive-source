@@ -19,7 +19,6 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 #include <string.h>
 #include "lua/luatex-api.h"
@@ -62,6 +61,9 @@ struct tex_language *new_language(int n)
         lang->pre_exhyphen_char = 0;
         lang->post_exhyphen_char = 0;
         lang->hyphenation_min = -1;
+        if (int_par(saving_hyph_codes_code)) {
+            hj_codes_from_lc_codes(l); /* for now, we might just use specific value for whatever task */
+        }
         return lang;
     } else {
         return NULL;
@@ -96,7 +98,6 @@ void set_post_hyphen_char(int n, int v)
         l->post_hyphen_char = (int) v;
 }
 
-
 void set_pre_exhyphen_char(int n, int v)
 {
     struct tex_language *l = get_language((int) n);
@@ -110,7 +111,6 @@ void set_post_exhyphen_char(int n, int v)
     if (l != NULL)
         l->post_exhyphen_char = (int) v;
 }
-
 
 int get_pre_hyphen_char(int n)
 {
@@ -128,7 +128,6 @@ int get_post_hyphen_char(int n)
     return (int) l->post_hyphen_char;
 }
 
-
 int get_pre_exhyphen_char(int n)
 {
     struct tex_language *l = get_language((int) n);
@@ -145,7 +144,6 @@ int get_post_exhyphen_char(int n)
     return (int) l->post_exhyphen_char;
 }
 
-
 void set_hyphenation_min(int n, int v)
 {
     struct tex_language *l = get_language((int) n);
@@ -161,7 +159,6 @@ int get_hyphenation_min(int n)
     return (int) l->hyphenation_min;
 }
 
-@ @c
 void load_patterns(struct tex_language *lang, const unsigned char *buff)
 {
     if (lang == NULL || buff == NULL || strlen((const char *) buff) == 0)
@@ -187,18 +184,23 @@ void load_tex_patterns(int curlang, halfword head)
     load_patterns(get_language(curlang), (unsigned char *) s);
 }
 
-
 @ @c
-#define STORE_CHAR(x) do {                          \
-	unsigned xx = get_lc_code(x);               \
-        if (!xx) xx = x;                            \
-        uindex = uni2string(uindex, xx);            \
-    } while (0)
+#define STORE_CHAR(l,x) do { \
+    unsigned xx = get_hj_code(l,x); \
+    if (!xx) { \
+        xx = x; \
+    } \
+    uindex = uni2string(uindex, xx); \
+} while (0)
 
-/* Cleans one word which is returned in |cleaned|,
-   returns the new offset into |buffer| */
+#define hj_char_code(l,c) \
+    (l>=0 && get_hj_code(l,c))
 
-const char *clean_hyphenation(const char *buff, char **cleaned)
+@ Cleans one word which is returned in |cleaned|, returns the new offset
+into |buffer|
+
+@c
+const char *clean_hyphenation(int id, const char *buff, char **cleaned)
 {
     int items = 0;
     unsigned char word[MAX_WORD_LEN + 1]; /* work buffer for bytes */
@@ -209,8 +211,8 @@ const char *clean_hyphenation(const char *buff, char **cleaned)
     const char *s = buff;
 
     while (*s && !isspace((unsigned char)*s)) {
-	word[i++] = (unsigned)*s;
-	s++;
+        word[i++] = (unsigned)*s;
+        s++;
         if ((s-buff)>MAX_WORD_LEN) {
             /* todo: this is too strict, should count unicode, not bytes */
     	    *cleaned = NULL;
@@ -228,7 +230,7 @@ const char *clean_hyphenation(const char *buff, char **cleaned)
 	u = uword[i++];
         if (u == '-') {        /* skip */
         } else if (u == '=') {
-            STORE_CHAR('-');
+            STORE_CHAR(id,'-');
         } else if (u == '{') {
             u = uword[i++];
             items = 0;
@@ -250,7 +252,7 @@ const char *clean_hyphenation(const char *buff, char **cleaned)
                 u = uword[i++];;
             }
             while (u && u != '}') {
-                STORE_CHAR(u);
+                STORE_CHAR(id,u);
                 u = uword[i++];
             }
             if (u == '}') {
@@ -262,7 +264,7 @@ const char *clean_hyphenation(const char *buff, char **cleaned)
                 return s;
             }
         } else {
-            STORE_CHAR(u);
+            STORE_CHAR(id,u);
         }
     }
     *uindex = '\0';
@@ -276,6 +278,7 @@ void load_hyphenation(struct tex_language *lang, const unsigned char *buff)
     const char *s;
     const char *value;
     char *cleaned;
+    int id ;
     lua_State *L = Luas;
     if (lang == NULL)
         return;
@@ -285,12 +288,13 @@ void load_hyphenation(struct tex_language *lang, const unsigned char *buff)
     }
     lua_rawgeti(L, LUA_REGISTRYINDEX, lang->exceptions);
     s = (const char *) buff;
+    id = lang->id;
     while (*s) {
         while (isspace((unsigned char)*s))
             s++;
         if (*s) {
             value = s;
-            s = clean_hyphenation(s, &cleaned);
+            s = clean_hyphenation(id, s, &cleaned);
             if (cleaned != NULL) {
                 if ((s - value) > 0) {
                     lua_pushstring(L, cleaned);
@@ -300,8 +304,7 @@ void load_hyphenation(struct tex_language *lang, const unsigned char *buff)
                 free(cleaned);
             } else {
 #ifdef VERBOSE
-                fprintf(stderr, "skipping invalid hyphenation exception: %s\n",
-                        value);
+                formatted_warning("hyphenation","skipping invalid hyphenation exception: %s", value);
 #endif
             }
         }
@@ -442,7 +445,6 @@ halfword compound_word_break(halfword t, int clang)
     return disc;
 }
 
-
 halfword insert_complex_discretionary(halfword t, lang_variables * lan,
                                       halfword pre, halfword pos,
                                       halfword replace)
@@ -450,7 +452,6 @@ halfword insert_complex_discretionary(halfword t, lang_variables * lan,
     (void) lan;
     return insert_discretionary(t, pre, pos, replace,int_par(hyphen_penalty_code));
 }
-
 
 halfword insert_character(halfword t, int c)
 {
@@ -476,8 +477,6 @@ void set_disc_field(halfword f, halfword t)
     }
 }
 
-
-
 @ @c
 static char *hyphenation_exception(int exceptions, char *w)
 {
@@ -497,7 +496,6 @@ static char *hyphenation_exception(int exceptions, char *w)
     }
     return ret;
 }
-
 
 @ @c
 char *exception_strings(struct tex_language *lang)
@@ -519,8 +517,7 @@ char *exception_strings(struct tex_language *lang)
             if (current + 2 + l > size) {
                 ret =
                     xrealloc(ret,
-                             (unsigned) ((size + size / 5) + current + l +
-                                         1024));
+                             (unsigned) ((size + size / 5) + current + l + 1024));
                 size = (size + size / 5) + current + l + 1024;
             }
             *(ret + current) = ' ';
@@ -531,7 +528,6 @@ char *exception_strings(struct tex_language *lang)
     }
     return ret;
 }
-
 
 @ the sequence from |wordstart| to |r| can contain only normal characters
 it could be faster to modify a halfword pointer and return an integer
@@ -569,7 +565,6 @@ static int count_exception_part(unsigned int *j, unsigned int *uword, int len)
     *j = ++i;
     return ret;
 }
-
 
 @ @c
 static const char *PAT_ERROR[] = {
@@ -706,13 +701,11 @@ Algorithms} was typeset by \TeX, only about 1.2 hyphenations needed to be
 tried per paragraph, since the line breaking algorithm needed to use two
 passes on only about 5 per cent of the paragraphs.
 
-
 When a word been set up to contain a candidate for hyphenation,
 \TeX\ first looks to see if it is in the user's exception dictionary. If not,
 hyphens are inserted based on patterns that appear within the given word,
 using an algorithm due to Frank~M. Liang.
 @^Liang, Franklin Mark@>
-
 
 @ This is incompatible with TEX because the first word of a paragraph
 can be hyphenated, but most european users seem to agree that
@@ -752,12 +745,14 @@ static halfword find_next_wordstart(halfword r)
             if (is_simple_character(r)) {
                 chr = character(r) ;
                 if (chr == ex_hyphen_char) {
-                    /* We only accept an explicit hyphen when there is a preceding glyph and  */
-                    /* we skip a sequence of explicit hyphens as that normally indicates a    */
-                    /* -- or --- ligature in which case we can in a worse case usage get bad  */
-                    /* node lists later on due to messed up ligature building as these dashes */
-                    /* ligatures in base fonts. This is a side effect of the separating the   */
-                    /* hyphenation, ligaturing and kerning steps. A test is cmr with ------.  */
+                    /*
+                        We only accept an explicit hyphen when there is a preceding glyph and
+                        we skip a sequence of explicit hyphens as that normally indicates a
+                        -- or --- ligature in which case we can in a worse case usage get bad
+                        node lists later on due to messed up ligature building as these dashes
+                        are ligatures in base fonts. This is a side effect of the separating the
+                        hyphenation, ligaturing and kerning steps. A test is cmr with ------.
+                    */
                     t = vlink(r) ;
                     if ((start_ok > 0) && (t!=null) && (type(t) == glyph_node) && (character(t) != ex_hyphen_char)) {
                         t = compound_word_break(r, char_lang(r));
@@ -766,7 +761,7 @@ static halfword find_next_wordstart(halfword r)
                     } else {
                         start_ok = 0;
                     }
-                } else if (start_ok && (l = get_lc_code(chr)) > 0) {
+                } else if (start_ok && (l = hj_char_code(char_lang(r),chr)) > 0) {
                     if (char_uchyph(r) || l == chr) {
                         return r;
                     } else {
@@ -859,7 +854,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         langdata.pre_hyphen_char = get_pre_hyphen_char(clang);
         langdata.post_hyphen_char = get_post_hyphen_char(clang);
         while (r != null && type(r) == glyph_node && is_simple_character(r) && clang == char_lang(r) &&
-              (((lchar = get_lc_code(character(r))) > 0) || (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
+              (((lchar = hj_char_code(clang,character(r))) > 0) || (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
             if (character(r) == ex_hyphen_char)
     	        explicit_hyphen = true;
             wordlen++;
@@ -876,8 +871,7 @@ void hnj_hyphenation(halfword head, halfword tail)
                 (replacement =
                  hyphenation_exception(lang->exceptions, utf8word)) != NULL) {
 #ifdef VERBOSE
-                fprintf(stderr, "replacing %s (c=%d) by %s\n", utf8word, clang,
-                        replacement);
+                formatted_warning("hyphenation","replacing %s (c=%d) by %s", utf8word, clang, replacement);
 #endif
                 do_exception(wordstart, r, replacement);
                 free(replacement);
@@ -887,7 +881,7 @@ void hnj_hyphenation(halfword head, halfword tail)
                 halfword rr = r;
                 halfword t = null;
 #ifdef VERBOSE
-                fprintf(stderr, "explicit hyphen(s) found in %s (c=%d)\n", utf8word, clang);
+                formatted_warning("hyphenation","explicit hyphen(s) found in %s (c=%d)", utf8word, clang);
 #endif
                 while (rr != wordstart) {
 	            if (is_simple_character(rr)) {
@@ -919,12 +913,11 @@ void hnj_hyphenation(halfword head, halfword tail)
                 }
 
 #ifdef VERBOSE
-                fprintf(stderr, "hyphenate %s (c=%d,l=%d,r=%d) from %c to %c\n",
-                        utf8word, clang, lhmin, rhmin, character(left),
-                        character(right));
+                formatted_warning("hyphenation","hyphenate %s (c=%d,l=%d,r=%d) from %c to %c",
+                    utf8word, clang, lhmin, rhmin, character(left),
+                    character(right));
 #endif
-                (void) hnj_hyphen_hyphenate(lang->patterns, wordstart, end_word,
-                                            wordlen, left, right, &langdata);
+                (void) hnj_hyphen_hyphenate(lang->patterns, wordstart, end_word, wordlen, left, right, &langdata);
             }
         }
 	explicit_hyphen = false;
@@ -937,7 +930,6 @@ void hnj_hyphenation(halfword head, halfword tail)
     flush_node(vlink(tail));
     vlink(tail) = save_tail1;
 }
-
 
 @ @c
 void new_hyphenation(halfword head, halfword tail)
@@ -956,7 +948,7 @@ void new_hyphenation(halfword head, halfword tail)
         nodelist_to_lua(L, head);
         nodelist_to_lua(L, tail);
         if (lua_pcall(L, 2, 0, 0) != 0) {
-            fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
+            formatted_warning("hyphenation","bad specification: %s",lua_tostring(L, -1));
             lua_pop(L, 2);
             lua_error(L);
             return;
@@ -970,14 +962,13 @@ void new_hyphenation(halfword head, halfword tail)
 @ dumping and undumping languages
 
 @c
-#define dump_string(a)                          \
-  if (a!=NULL) {                                \
-      x = (int)strlen(a)+1;                     \
-    dump_int(x);  dump_things(*a, x);           \
-  } else {                                      \
-    x = 0; dump_int(x);                         \
+#define dump_string(a)                \
+  if (a!=NULL) {                      \
+      x = (int)strlen(a)+1;           \
+    dump_int(x);  dump_things(*a, x); \
+  } else {                            \
+    x = 0; dump_int(x);               \
   }
-
 
 static void dump_one_language(int i)
 {
@@ -1021,7 +1012,6 @@ void dump_language_data(void)
         }
     }
 }
-
 
 static void undump_one_language(int i)
 {
@@ -1071,7 +1061,6 @@ void undump_language_data(void)
     }
 }
 
-
 @ When \TeX\ has scanned `\.{\\hyphenation}', it calls on a procedure named
 |new_hyph_exceptions| to do the right thing.
 
@@ -1113,7 +1102,6 @@ void new_post_hyphen_char(void)
     set_post_hyphen_char(int_par(language_code), cur_val);
 }
 
-
 @ `\.{\\preexhyphenchar}', sets the |pre_break| character, and
 `\.{\\postexhyphenchar}' the |post_break| character. Their
 defaults are both zero (nul).
@@ -1133,10 +1121,19 @@ void new_post_exhyphen_char(void)
     set_post_exhyphen_char(int_par(language_code), cur_val);
 }
 
-
 void new_hyphenation_min(void)
 {
     scan_optional_equals();
     scan_int();
     set_hyphenation_min(int_par(language_code), cur_val);
+}
+
+void new_hj_code(void)
+{
+    int i ;
+    scan_int();
+    i = cur_val;
+    scan_optional_equals();
+    scan_int();
+    set_hj_code(int_par(language_code), i, cur_val, -1);
 }

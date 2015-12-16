@@ -222,6 +222,7 @@ typedef enum {
     box_rule,
     image_rule,
     empty_rule,
+    user_rule,
 } rule_subtypes;
 
 #  define rule_node_size       8
@@ -301,6 +302,10 @@ typedef enum {
     boundary_node,
     disc_node,
     whatsit_node,
+#define last_preceding_break_node whatsit_node
+    local_par_node,
+    dir_node,
+#define last_non_discardable_node dir_node
     math_node,
     glue_node,
     kern_node,
@@ -340,11 +345,32 @@ typedef enum {
     delta_node,
     passive_node,
     shape_node,
-    dir_node,
-    local_par_node,
 } node_types;
 
-#  define MAX_NODE_TYPE 60
+#  define MAX_NODE_TYPE shape_node /* 60 */
+
+/*
+    TH: these two defines still need checking. The node ordering in luatex is not
+    quite the same as in tex82, HH: but it's probably ok
+*/
+
+/*
+
+    #  define precedes_break(a) \
+    #      (type(a)<math_node && \
+    #      (type(a)!=whatsit_node || (subtype(a)!=dir_node && subtype(a)!=local_par_node)))
+
+*/
+
+/*
+    #  define precedes_break(a)  (type(a)<math_node)
+    #  define non_discardable(a) (type(a)<math_node || type(a) == dir_node || type(a) == local_par_node)
+*/
+
+#  define precedes_break(a)  (type(a)<=last_preceding_break_node)
+#  define non_discardable(a) (type(a)<=last_non_discardable_node)
+
+#  define known_node_type(i) ( i >= 0 && i <= MAX_NODE_TYPE)
 
 #  define last_known_node temp_node     /* used by \lastnodetype */
 
@@ -527,6 +553,8 @@ typedef enum {
     pdf_restore_node,
 } whatsit_types;
 
+#  define first_common_whatsit      0
+#  define last_common_whatsit       user_defined_node
 #  define backend_first_dvi_whatsit 15
 #  define backend_last_dvi_whatsit  15
 #  define backend_first_pdf_whatsit 16
@@ -534,7 +562,13 @@ typedef enum {
 
 #  define MAX_WHATSIT_TYPE 32
 
-#  define  get_node_size(i,j) (i!=whatsit_node ? node_data[i].size : whatsit_node_data[j].size)
+#  define known_whatsit_type(i) ( \
+    (i >= first_common_whatsit      && i <= last_common_whatsit) || \
+    (i >= backend_first_dvi_whatsit && i <= backend_last_dvi_whatsit) || \
+    (i >= backend_first_pdf_whatsit && i <= backend_last_pdf_whatsit) \
+)
+
+#  define get_node_size(i,j) (i!=whatsit_node ? node_data[i].size : whatsit_node_data[j].size)
 #  define get_node_name(i,j) (i!=whatsit_node ? node_data[i].name : whatsit_node_data[j].name)
 #  define get_etex_code(i)                     (node_data[i].etex)
 
@@ -781,26 +815,6 @@ extern void print_short_node_contents(halfword n);
 extern void show_node_list(int i);
 extern pointer actual_box_width(pointer r, scaled base_width);
 
-/*
-    TH: these two defines still need checking. The node ordering in luatex is not
-    quite the same as in tex82
-*/
-
-/*
-
-#  define precedes_break(a) \
-#      (type((a))<math_node && (type(a)!=whatsit_node || (subtype(a)!=dir_node && subtype(a)!=local_par_node)))
-
-*/
-
-/*
-    so what comes before math (as we have put dir_node and local_par_node to the end)
-*/
-
-#  define precedes_break(a) (type((a))<math_node)
-
-#  define non_discardable(a) (type((a))<math_node)
-
 /* from luanode.c */
 
 typedef struct _node_info {
@@ -840,7 +854,6 @@ extern halfword do_copy_node_list(halfword, halfword);
 extern halfword copy_node_list(halfword);
 extern halfword copy_node(const halfword);
 extern void check_node(halfword);
-extern void check_node_mem(void);
 extern void fix_node_list(halfword);
 extern int fix_node_lists;
 extern char *sprint_node_mem_usage(void);
@@ -852,8 +865,8 @@ extern void flush_node_wrapup_dvi(halfword);
 extern void flush_node_wrapup_pdf(halfword);
 extern void copy_node_wrapup_dvi(halfword, halfword); /* original target */
 extern void copy_node_wrapup_pdf(halfword, halfword); /* original target */
-extern void check_node_wrapup_dvi(halfword);
-extern void check_node_wrapup_pdf(halfword);
+extern void check_node_wrapup_dvi(halfword); /* DEBUG_NODES mode */
+extern void check_node_wrapup_pdf(halfword); /* DEBUG_NODES mode */
 extern void show_node_wrapup_dvi(halfword);
 extern void show_node_wrapup_pdf(halfword);
 
@@ -926,7 +939,6 @@ extern int lua_properties_use_metatable ;
 #define local_broken_penalty int_par(local_broken_penalty_code)
 #define local_left_box equiv(local_left_box_base)
 #define local_right_box equiv(local_right_box_base)
-#define par_direction int_par(par_direction_code)
 
 extern halfword make_local_par_node(void);
 

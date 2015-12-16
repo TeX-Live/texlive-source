@@ -156,7 +156,6 @@ extern int luajiton;
 extern char *jithash_hashname ;
 #endif
 
-
 #if !defined(LUAI_HASHLIMIT)
 #define LUAI_HASHLIMIT		5
 #endif
@@ -245,6 +244,8 @@ extern char **environ;
 }
 #endif
 
+extern int luatwrite(lua_State * L);
+
 /*
     Same as in lnodelib.c, but with prefix G_ for now.
     These macros create and access pointers (indices) to keys which is faster. The
@@ -318,14 +319,14 @@ extern int l_math_style_name_index [MATH_STYLE_NAME_SIZE];
 extern int l_dir_par_index         [DIR_PAR_SIZE];
 extern int l_dir_text_index        [DIR_TEXT_SIZE];
 
-#define lua_push_pack_type(L,pack_type)  lua_rawgeti(L, LUA_REGISTRYINDEX, l_pack_type_index[pack_type] );
-#define lua_push_group_code(L,group_code) lua_rawgeti(L, LUA_REGISTRYINDEX, l_group_code_index[group_code]);
+#define lua_push_pack_type(L,pack_type)        lua_rawgeti(L, LUA_REGISTRYINDEX, l_pack_type_index[pack_type] );
+#define lua_push_group_code(L,group_code)      lua_rawgeti(L, LUA_REGISTRYINDEX, l_group_code_index[group_code]);
 #define lua_push_math_style_name(L,style_name) lua_rawgeti(L, LUA_REGISTRYINDEX, l_math_style_name_index[style_name]);
-#define lua_push_dir_par(L,dir) lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_par_index[dir+dir_swap])
-#define lua_push_dir_text(L,dir) lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_text_index[dir+dir_swap])
+#define lua_push_dir_par(L,dir)                lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_par_index[dir+dir_swap])
+#define lua_push_dir_text(L,dir)               lua_rawgeti(L, LUA_REGISTRYINDEX, l_dir_text_index[dir+dir_swap])
 
-#define lua_push_string_by_index(L,index) lua_rawgeti(L, LUA_REGISTRYINDEX, index)
-#define lua_push_string_by_name(L,index) lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(index))
+#define lua_push_string_by_index(L,index)      lua_rawgeti(L, LUA_REGISTRYINDEX, index)
+#define lua_push_string_by_name(L,index)       lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(index))
 
 #define set_l_pack_type_index \
 l_pack_type_index[0] = lua_key_index(exactly); \
@@ -388,6 +389,53 @@ l_dir_text_index[5] = lua_key_index(pTRT);\
 l_dir_text_index[6] = lua_key_index(pLTL);\
 l_dir_text_index[7] = lua_key_index(pRTT);\
 
+#define img_parms_max     25
+#define img_pageboxes_max  6
+
+extern int img_parms     [img_parms_max];
+extern int img_pageboxes [img_pageboxes_max];
+
+# define set_l_img_keys_index \
+img_parms[ 0] = lua_key_index(attr); \
+img_parms[ 1] = lua_key_index(bbox); \
+img_parms[ 2] = lua_key_index(colordepth); \
+img_parms[ 3] = lua_key_index(colorspace); \
+img_parms[ 4] = lua_key_index(depth); \
+img_parms[ 5] = lua_key_index(filename); \
+img_parms[ 6] = lua_key_index(filepath); \
+img_parms[ 7] = lua_key_index(height); \
+img_parms[ 8] = lua_key_index(imagetype); \
+img_parms[ 9] = lua_key_index(index); \
+img_parms[10] = lua_key_index(keepopen); \
+img_parms[11] = lua_key_index(objnum); \
+img_parms[12] = lua_key_index(pagebox); \
+img_parms[13] = lua_key_index(page); \
+img_parms[14] = lua_key_index(pages); \
+img_parms[15] = lua_key_index(ref_count); \
+img_parms[16] = lua_key_index(rotation); \
+img_parms[17] = lua_key_index(stream); \
+img_parms[18] = lua_key_index(transform); \
+img_parms[19] = lua_key_index(visiblefilename); \
+img_parms[20] = lua_key_index(width); \
+img_parms[21] = lua_key_index(xres); \
+img_parms[22] = lua_key_index(xsize); \
+img_parms[23] = lua_key_index(yres); \
+img_parms[24] = lua_key_index(ysize); \
+
+# define set_l_img_pageboxes_index \
+img_pageboxes[0] = lua_key_index(none); \
+img_pageboxes[1] = lua_key_index(media); \
+img_pageboxes[2] = lua_key_index(crop); \
+img_pageboxes[3] = lua_key_index(bleed); \
+img_pageboxes[4] = lua_key_index(trim); \
+img_pageboxes[5] = lua_key_index(art); \
+
+#define lua_push_img_key(L,key)     lua_rawgeti(L, LUA_REGISTRYINDEX, img_parms[key] );
+#define lua_push_img_pagebox(L,box) lua_rawgeti(L, LUA_REGISTRYINDEX, img_pageboxes[box]);
+
+extern int lua_show_valid_list(lua_State *L, const char **list, int max);
+extern int lua_show_valid_keys(lua_State *L, int *list, int max);
+
 #define set_make_keys \
 make_lua_key(cmdname);make_lua_key(expandable);make_lua_key(protected);\
 make_lua_key(LTL);\
@@ -413,13 +461,16 @@ make_lua_key(align_set);\
 make_lua_key(alignment);\
 make_lua_key(annot);\
 make_lua_key(area);\
+make_lua_key(art);\
 make_lua_key(attr);\
 make_lua_key(attributes);\
 make_lua_key(auto_expand);\
+make_lua_key(bbox);\
 make_lua_key(before_display);\
 make_lua_key(best_ins_ptr);\
 make_lua_key(best_page_break);\
 make_lua_key(best_size);\
+make_lua_key(bleed);\
 make_lua_key(bot);\
 make_lua_key(bot_accent);\
 make_lua_key(bottom_left);\
@@ -439,6 +490,8 @@ make_lua_key(characters);\
 make_lua_key(checksum);\
 make_lua_key(cidinfo);\
 make_lua_key(class);\
+make_lua_key(colordepth);\
+make_lua_key(colorspace);\
 make_lua_key(command);\
 make_lua_key(commands);\
 make_lua_key(comment);\
@@ -452,6 +505,7 @@ make_lua_key(crampeddisplay);\
 make_lua_key(crampedscript);\
 make_lua_key(crampedscriptscript);\
 make_lua_key(crampedtext);\
+make_lua_key(crop);\
 make_lua_key(csname);\
 make_lua_key(data);\
 make_lua_key(degree);\
@@ -491,6 +545,7 @@ make_lua_key(fast);\
 make_lua_key(fence);\
 make_lua_key(file);\
 make_lua_key(filename);\
+make_lua_key(filepath);\
 make_lua_key(fill);\
 make_lua_key(fin_row);\
 make_lua_key(font);\
@@ -513,11 +568,13 @@ make_lua_key(horiz_variants);\
 make_lua_key(hyphenchar);\
 make_lua_key(id);\
 make_lua_key(image);\
+make_lua_key(imagetype);\
 make_lua_key(immediate);\
 make_lua_key(index);\
 make_lua_key(info);\
 make_lua_key(insert);\
 make_lua_key(italic);\
+make_lua_key(keepopen);\
 make_lua_key(kern);\
 make_lua_key(kerns);\
 make_lua_key(lang);\
@@ -554,6 +611,7 @@ make_lua_key(math_shift);\
 make_lua_key(mathdir);\
 make_lua_key(mathkern);\
 make_lua_key(mathstyle);\
+make_lua_key(media);\
 make_lua_key(mid);\
 make_lua_key(mode);\
 make_lua_key(modeline);\
@@ -570,6 +628,7 @@ make_lua_key(node);\
 make_lua_key(node_properties);\
 make_lua_key(node_properties_indirect);\
 make_lua_key(nomath);\
+make_lua_key(none);\
 make_lua_key(nop);\
 make_lua_key(nucleus);\
 make_lua_key(num);\
@@ -586,9 +645,11 @@ make_lua_key(pRTT);\
 make_lua_key(pTLT);\
 make_lua_key(pTRT);\
 make_lua_key(page);\
+make_lua_key(pages);\
 make_lua_key(page_head);\
 make_lua_key(page_ins_head);\
 make_lua_key(pageattributes);\
+make_lua_key(pagebox);\
 make_lua_key(pageresources);\
 make_lua_key(pagesattributes);\
 make_lua_key(parameters);\
@@ -627,6 +688,7 @@ make_lua_key(resources);\
 make_lua_key(right);\
 make_lua_key(right_boundary);\
 make_lua_key(right_protruding);\
+make_lua_key(rotation);\
 make_lua_key(rule);\
 make_lua_key(scale);\
 make_lua_key(script);\
@@ -682,6 +744,7 @@ make_lua_key(top_right);\
 make_lua_key(tounicode);\
 make_lua_key(trailer);\
 make_lua_key(transform);\
+make_lua_key(trim);\
 make_lua_key(type);\
 make_lua_key(uchyph);\
 make_lua_key(umath);\
@@ -696,6 +759,7 @@ make_lua_key(version);\
 make_lua_key(vert_italic);\
 make_lua_key(vert_variants);\
 make_lua_key(vmode_par);\
+make_lua_key(visiblefilename);\
 make_lua_key(vtop);\
 make_lua_key(width);\
 make_lua_key(writable);\
@@ -703,8 +767,12 @@ make_lua_key(x_height);\
 make_lua_key(xformresources);\
 make_lua_key(xformattributes);\
 make_lua_key(xoffset);\
+make_lua_key(xres);\
+make_lua_key(xsize);\
 make_lua_key(xyz_zoom);\
-make_lua_key(yoffset)
+make_lua_key(yoffset); \
+make_lua_key(yres); \
+make_lua_key(ysize)
 
 #define set_init_keys \
 init_lua_key(cmdname);init_lua_key(expandable);init_lua_key(protected);\
@@ -731,13 +799,16 @@ init_lua_key(align_set);\
 init_lua_key(alignment);\
 init_lua_key(annot);\
 init_lua_key(area);\
+init_lua_key(art);\
 init_lua_key(attr);\
 init_lua_key(attributes);\
 init_lua_key(auto_expand);\
+init_lua_key(bbox);\
 init_lua_key(before_display);\
 init_lua_key(best_ins_ptr);\
 init_lua_key(best_page_break);\
 init_lua_key(best_size);\
+init_lua_key(bleed);\
 init_lua_key(bot);\
 init_lua_key(bot_accent);\
 init_lua_key(bottom_left);\
@@ -757,6 +828,8 @@ init_lua_key(characters);\
 init_lua_key(checksum);\
 init_lua_key(cidinfo);\
 init_lua_key(class);\
+init_lua_key(colordepth);\
+init_lua_key(colorspace);\
 init_lua_key(command);\
 init_lua_key(commands);\
 init_lua_key(comment);\
@@ -770,6 +843,7 @@ init_lua_key(crampeddisplay);\
 init_lua_key(crampedscript);\
 init_lua_key(crampedscriptscript);\
 init_lua_key(crampedtext);\
+init_lua_key(crop);\
 init_lua_key(csname);\
 init_lua_key(data);\
 init_lua_key(degree);\
@@ -808,6 +882,7 @@ init_lua_key(fast);\
 init_lua_key(fence);\
 init_lua_key(file);\
 init_lua_key(filename);\
+init_lua_key(filepath);\
 init_lua_key(fill);\
 init_lua_key(fin_row);\
 init_lua_key(font);\
@@ -830,11 +905,13 @@ init_lua_key(horiz_variants);\
 init_lua_key(hyphenchar);\
 init_lua_key(id);\
 init_lua_key(image);\
+init_lua_key(imagetype);\
 init_lua_key(immediate);\
 init_lua_key(index);\
 init_lua_key(info);\
 init_lua_key(insert);\
 init_lua_key(italic);\
+init_lua_key(keepopen);\
 init_lua_key(kern);\
 init_lua_key(kerns);\
 init_lua_key(lang);\
@@ -867,6 +944,7 @@ init_lua_key(math_shift);\
 init_lua_key(mathdir);\
 init_lua_key(mathkern);\
 init_lua_key(mathstyle);\
+init_lua_key(media);\
 init_lua_key(mid);\
 init_lua_key(mode);\
 init_lua_key(modeline);\
@@ -881,6 +959,7 @@ init_lua_key(no_align);\
 init_lua_key(noad);\
 init_lua_key(node);\
 init_lua_key(nomath);\
+init_lua_key(none);\
 init_lua_key(nop);\
 init_lua_key(nucleus);\
 init_lua_key(num);\
@@ -893,9 +972,11 @@ init_lua_key(ordering);\
 init_lua_key(output);\
 init_lua_key(overlay_accent);\
 init_lua_key(page);\
+init_lua_key(pages);\
 init_lua_key(page_head);\
 init_lua_key(page_ins_head);\
 init_lua_key(pageattributes);\
+init_lua_key(pagebox);\
 init_lua_key(pageresources);\
 init_lua_key(pagesattributes);\
 init_lua_key(parameters);\
@@ -933,6 +1014,7 @@ init_lua_key(resources);\
 init_lua_key(right);\
 init_lua_key(right_boundary);\
 init_lua_key(right_protruding);\
+init_lua_key(rotation);\
 init_lua_key(rule);\
 init_lua_key(scale);\
 init_lua_key(script);\
@@ -987,6 +1069,7 @@ init_lua_key(top_right);\
 init_lua_key(tounicode);\
 init_lua_key(trailer);\
 init_lua_key(transform);\
+init_lua_key(trim);\
 init_lua_key(type);\
 init_lua_key(uchyph);\
 init_lua_key(umath);\
@@ -1001,6 +1084,7 @@ init_lua_key(version);\
 init_lua_key(vert_italic);\
 init_lua_key(vert_variants);\
 init_lua_key(vmode_par);\
+init_lua_key(visiblefilename);\
 init_lua_key(vtop);\
 init_lua_key(width);\
 init_lua_key(writable);\
@@ -1008,8 +1092,12 @@ init_lua_key(x_height);\
 init_lua_key(xformresources);\
 init_lua_key(xformattributes);\
 init_lua_key(xoffset);\
+init_lua_key(xres);\
+init_lua_key(xsize);\
 init_lua_key(xyz_zoom);\
 init_lua_key(yoffset);\
+init_lua_key(yres);\
+init_lua_key(ysize);\
 init_lua_key_alias(empty_string,"");\
 init_lua_key_alias(lua_functions,"lua.functions");\
 init_lua_key_alias(luatex_node, "luatex.node");\
@@ -1029,7 +1117,7 @@ init_lua_key_alias(term_and_log,"term and log")
 #define assign_math_style(L,n,target) do { \
     if (lua_type(L,n) == LUA_TNUMBER) { \
         /* new, often same as subtype anyway  */ \
-        target = lua_tonumber(L,n); \
+        target = lua_tointeger(L,n); \
     } else if (lua_type(L,n) == LUA_TSTRING) { \
         const char *s = lua_tostring(L, n); \
         if (lua_key_eq(s,display)) { \
@@ -1092,13 +1180,16 @@ use_lua_key(align_set);
 use_lua_key(alignment);
 use_lua_key(annot);
 use_lua_key(area);
+use_lua_key(art);
 use_lua_key(attr);
 use_lua_key(attributes);
 use_lua_key(auto_expand);
+use_lua_key(bbox);
 use_lua_key(before_display);
 use_lua_key(best_ins_ptr);
 use_lua_key(best_page_break);
 use_lua_key(best_size);
+use_lua_key(bleed);
 use_lua_key(bot);
 use_lua_key(bot_accent);
 use_lua_key(bottom_left);
@@ -1118,6 +1209,8 @@ use_lua_key(characters);
 use_lua_key(checksum);
 use_lua_key(cidinfo);
 use_lua_key(class);
+use_lua_key(colordepth);
+use_lua_key(colorspace);
 use_lua_key(command);
 use_lua_key(commands);
 use_lua_key(comment);
@@ -1131,6 +1224,7 @@ use_lua_key(crampeddisplay);
 use_lua_key(crampedscript);
 use_lua_key(crampedscriptscript);
 use_lua_key(crampedtext);
+use_lua_key(crop);
 use_lua_key(csname);
 use_lua_key(data);
 use_lua_key(degree);
@@ -1170,6 +1264,7 @@ use_lua_key(fast);
 use_lua_key(fence);
 use_lua_key(file);
 use_lua_key(filename);
+use_lua_key(filepath);
 use_lua_key(fill);
 use_lua_key(fin_row);
 use_lua_key(font);
@@ -1192,11 +1287,13 @@ use_lua_key(horiz_variants);
 use_lua_key(hyphenchar);
 use_lua_key(id);
 use_lua_key(image);
+use_lua_key(imagetype);
 use_lua_key(immediate);
 use_lua_key(index);
 use_lua_key(info);
 use_lua_key(insert);
 use_lua_key(italic);
+use_lua_key(keepopen);
 use_lua_key(kern);
 use_lua_key(kerns);
 use_lua_key(lang);
@@ -1233,6 +1330,7 @@ use_lua_key(math_shift);
 use_lua_key(mathdir);
 use_lua_key(mathkern);
 use_lua_key(mathstyle);
+use_lua_key(media);
 use_lua_key(mid);
 use_lua_key(mode);
 use_lua_key(modeline);
@@ -1249,6 +1347,7 @@ use_lua_key(node);
 use_lua_key(node_properties);
 use_lua_key(node_properties_indirect);
 use_lua_key(nomath);
+use_lua_key(none);
 use_lua_key(nop);
 use_lua_key(nucleus);
 use_lua_key(num);
@@ -1265,8 +1364,10 @@ use_lua_key(pRTT);
 use_lua_key(pTLT);
 use_lua_key(pTRT);
 use_lua_key(page);
+use_lua_key(pages);
 use_lua_key(page_head);
 use_lua_key(page_ins_head);
+use_lua_key(pagebox);
 use_lua_key(pageattributes);
 use_lua_key(pageresources);
 use_lua_key(pagesattributes);
@@ -1306,6 +1407,7 @@ use_lua_key(resources);
 use_lua_key(right);
 use_lua_key(right_boundary);
 use_lua_key(right_protruding);
+use_lua_key(rotation);
 use_lua_key(rule);
 use_lua_key(scale);
 use_lua_key(script);
@@ -1361,6 +1463,7 @@ use_lua_key(top_right);
 use_lua_key(tounicode);
 use_lua_key(trailer);
 use_lua_key(transform);
+use_lua_key(trim);
 use_lua_key(type);
 use_lua_key(uchyph);
 use_lua_key(umath);
@@ -1375,6 +1478,7 @@ use_lua_key(version);
 use_lua_key(vert_italic);
 use_lua_key(vert_variants);
 use_lua_key(vmode_par);
+use_lua_key(visiblefilename);
 use_lua_key(vtop);
 use_lua_key(width);
 use_lua_key(writable);
@@ -1382,5 +1486,9 @@ use_lua_key(x_height);
 use_lua_key(xformresources);
 use_lua_key(xformattributes);
 use_lua_key(xoffset);
+use_lua_key(xres);
+use_lua_key(xsize);
 use_lua_key(xyz_zoom);
 use_lua_key(yoffset);
+use_lua_key(yres);
+use_lua_key(ysize);

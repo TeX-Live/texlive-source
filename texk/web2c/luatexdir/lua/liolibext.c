@@ -1,5 +1,5 @@
 /* liolibext.c
-   
+
    Copyright 2014 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -81,7 +81,7 @@
 
 #define l_fseek(f,o,w)          fseeko64(f,o,w)
 #define l_ftell(f)              ftello64(f)
-#define l_seeknum               int64_t 
+#define l_seeknum               int64_t
 
 #else
 
@@ -196,7 +196,7 @@ static void opencheck (lua_State *L, const char *fname, const char *mode) {
 #ifdef WIN32
     _setmode (fileno (p->f), _O_BINARY);
 #endif
-    if (mode[0]=='r') 
+    if (mode[0]=='r')
        recorder_record_input(fname);
     else
        recorder_record_output(fname);
@@ -223,7 +223,7 @@ static int io_open (lua_State *L) {
 #ifdef WIN32
       _setmode (fileno (p->f), _O_BINARY);
 #endif
-      if (mode[0]=='r') 
+      if (mode[0]=='r')
 	  recorder_record_input(filename);
       else
 	  recorder_record_output(filename);
@@ -377,7 +377,7 @@ static int io_lines (lua_State *L) {
 static int read_number (lua_State *L, FILE *f) {
   lua_Number d;
   if (fscanf(f, LUA_NUMBER_SCAN, &d) == 1) {
-    lua_pushnumber(L, d);
+    lua_pushnumber(L, d); /* integer or float */
     return 1;
   }
   else {
@@ -394,7 +394,7 @@ static int test_eof (lua_State *L, FILE *f) {
   return (c != EOF);
 }
 
-/* this version does not care wether the file has 
+/* this version does not care wether the file has
    line endings using an 'alien' convention */
 
 static int read_line(lua_State * L, FILE * f, int chop)
@@ -439,7 +439,7 @@ static void read_all (lua_State *L, FILE *f) {
   luaL_buffinit(L, &b);
   /* speed up loading of not too large files: */
   old = l_ftell(f);
-  if ((l_fseek(f, 0, SEEK_END) >= 0) && 
+  if ((l_fseek(f, 0, SEEK_END) >= 0) &&
       ((nrlen = l_ftell(f)) > 0) && nrlen < 1000 * 1000 * 100) {
       rlen = nrlen;
   }
@@ -603,7 +603,7 @@ static int f_seek (lua_State *L) {
   if (op)
     return luaL_fileresult(L, 0, NULL);  /* error */
   else {
-    lua_pushnumber(L, (lua_Number)l_ftell(f));
+    lua_pushinteger(L, (lua_Number)l_ftell(f));
     return 1;
   }
 }

@@ -41,7 +41,7 @@ const key_entry font_key[FONT_KEYS_NUM] = {
     , {"FontName", "FontName", 1}
 };
 
-@ 
+@
 @c
 struct avl_table *fo_tree = NULL;       /* tree of font dictionaries */
 struct avl_table *fd_tree = NULL;       /* tree of font descriptor objects */
@@ -62,7 +62,7 @@ static int comp_fd_entry(const void *pa, const void *pb, void *p)
     return strcmp(p1->fm->ff_name, p2->fm->ff_name);
 }
 
-@ initialize data structure for /Type /Font 
+@ initialize data structure for /Type /Font
 @c
 static fo_entry *new_fo_entry(void)
 {
@@ -187,7 +187,7 @@ static void write_fontmetrics(PDF pdf, fd_entry * fd)
             pdf_dict_add_int(pdf, font_key[i].pdfname, fd->font_dim[i].val);
 }
 
-@ 
+@
 @c
 static void preset_fontname(fo_entry * fo, internal_font_number f)
 {
@@ -217,7 +217,7 @@ static void pdf_dict_add_fontname(PDF pdf, const char *key, fd_entry * fd)
     xfree(s);
 }
 
-@ 
+@
 @c
 fd_entry *lookup_fd_entry(char *s)
 {
@@ -268,7 +268,7 @@ static void create_fontdescriptor(fo_entry * fo, internal_font_number f)
     assert(fo->fd->gl_tree != NULL);
 }
 
-@ 
+@
 For all used characters of \TeX font |f|, get corresponding glyph names
 from external reencoding (.enc) file and collect these in the glyph
 tree |gl_tree| of font descriptor |fd| referenced by font dictionary |fo|.
@@ -431,7 +431,7 @@ static void write_fontfile(PDF pdf, fd_entry * fd)
         if (is_opentype(fd->fm)) {
             writetype0(pdf, fd);
 	} else if (is_truetype(fd->fm)) {
-            if (!writetype2(pdf, fd)) { 
+            if (!writetype2(pdf, fd)) {
                 writetype0(pdf,fd);
 	        fd->fm->type |= F_OTF; fd->fm->type ^= F_TRUETYPE;
             }
@@ -529,9 +529,8 @@ static void write_fontdescriptor(PDF pdf, fd_entry * fd)
         fd_flags = is_std_t1font(fd->fm)
             ? std_flags[check_std_t1font(fd->fm->ps_name)]
             : FD_FLAGS_DEFAULT_NON_EMBED;
-        luatex_warn
-            ("No flags specified for non-embedded font `%s' (%s) (I'm using %i): "
-             "fix your map entry.",
+        formatted_warning("map file",
+             "No flags specified for non-embedded font '%s' (%s), I'm using %i, fix your map entry",
              fd->fm->ps_name != NULL ? fd->fm->ps_name : "No name given",
              fd->fm->tfm_name, fd_flags);
     }
@@ -720,9 +719,8 @@ static void create_fontdictionary(PDF pdf, internal_font_number f)
         create_fontdescriptor(fo, f);
         write_fontdescriptor(pdf, fo->fd);
         if (!is_std_t1font(fo->fm))
-            luatex_warn("font `%s' is not a standard font; "
-                        "I suppose it is available to your PDF viewer then",
-                        fo->fm->ps_name);
+            formatted_warning("map file", "font '%s' is not a standard font; I suppose it is available to your PDF viewer then",
+                fo->fm->ps_name);
     }
     if (is_type1(fo->fm))
         register_fo_entry(fo);
@@ -784,9 +782,7 @@ void do_pdf_font(PDF pdf, internal_font_number f)
                 fm->ff_name = s;
                 del_file = 1;
             } else {
-                luatex_fail
-                    ("writefont.c: The file (%s) does not contain font `%s'",
-                     fm->ff_name, fm->ps_name);
+                formatted_error("font","file '%s' does not contain font '%s'",fm->ff_name, fm->ps_name);
             }
         }
         fm->encname = font_encodingname(f);     /* for the CIDSystemInfo */
@@ -812,9 +808,8 @@ void do_pdf_font(PDF pdf, internal_font_number f)
             set_type1(fm);
             break;
         default:
-            luatex_fail
-                ("writefont.c: The file format (%s) for font `%s' is incompatible with wide characters\n",
-                 font_format_name(f), font_name(f));
+            formatted_error("font","file format '%s' for '%s' is incompatible with wide characters",
+                font_format_name(f), font_name(f));
         }
         /* This makes "unknown" default to subsetted inclusion */
         if (font_embedding(f) != no_embedding) {
@@ -996,7 +991,7 @@ static void create_cid_fontdictionary(PDF pdf, internal_font_number f)
 	avl_destroy(fo->fd->gl_tree,destroy_glw_cid_entry);
       }
       xfree(fo->fd);
-    }      
+    }
     xfree(fo);
 }
 

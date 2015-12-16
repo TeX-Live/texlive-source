@@ -36,6 +36,7 @@ typedef enum {
     new_string   = last_file_selector + 6, /* 21 */ /* printing is deflected to the string pool */
 } selector_settings;
 
+extern int escape_controls;
 extern int new_string_line;
 
 #  define ssup_error_line 255
@@ -69,8 +70,8 @@ extern void print(int s);
 extern void lprint (lstring *ss);
 extern void print_nl(str_number s);
 extern void print_nlp(void);
-extern void print_banner(const char *, int);
-extern void log_banner(const char *, int);
+extern void print_banner(const char *);
+extern void log_banner(const char *);
 extern void print_version_banner(void);
 extern void print_esc(str_number s);
 extern void print_the_digs(eight_bits k);
@@ -84,6 +85,7 @@ extern void print_current_string(void);
 
 extern void print_cs(int p);
 extern void sprint_cs(pointer p);
+extern void sprint_cs_name(pointer p);
 extern void tprint(const char *s);
 extern void tprint_nl(const char *s);
 extern void tprint_esc(const char *s);

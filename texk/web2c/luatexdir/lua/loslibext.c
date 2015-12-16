@@ -1,5 +1,5 @@
 /* loslibext.c
-   
+
    Copyright 2006-2012 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -33,8 +33,8 @@
 
 /* An attempt to figure out the basic platform, does not
   care about niceties like version numbers yet,
-  and ignores platforms where luatex is unlikely to 
-  successfully compile without major prorting effort 
+  and ignores platforms where luatex is unlikely to
+  successfully compile without major prorting effort
   (amiga|mac|os2|vms) */
 
 #if defined(_WIN32) || defined(__NT__)
@@ -111,14 +111,14 @@
 
 /* Note: under WIN32, |environ| is nothing but a copy of the actual
    environment as it was during program startup. That variable
-   can then be changed (which is a little odd), but such changes 
+   can then be changed (which is a little odd), but such changes
    do not survive in the actual environment *unless* they are
    passed on down in e.g. |_execvpe|, when they would be inherited
-   by the child process.  
+   by the child process.
 
-   This gives trouble because some parts of the texk code actually 
-   change the contents of the |environ| variable as a side-effect 
-   of other processing, and that explains why the current code does 
+   This gives trouble because some parts of the texk code actually
+   change the contents of the |environ| variable as a side-effect
+   of other processing, and that explains why the current code does
    not use |environ| at all for the moment.
 
    The API is kept in place for now, just in case. Thanks to Tomek
@@ -205,21 +205,21 @@ static int exec_command(const char *file, char *const *av, char *const *envp)
     return -1;
 }
 
-/* 
+/*
    It is not possible to mimic |spawnve()| completely. The main problem is
-   that the |fork|--|waitpid| combination cannot really do identical error 
+   that the |fork|--|waitpid| combination cannot really do identical error
    reporting to the parent process, because it has to pass all the possible
-   error conditions as well as the actual process return status through a 
+   error conditions as well as the actual process return status through a
    single 8-bit value.
 
    The current implementation tries to give back meaningful results for |execve()|
    errors in the child, for the cases that could also be returned by |spawnve()|,
    and for |ETXTBSY|, because that can be triggered by our path searching routine.
 
-   This implementation does not differentiate abnormal status conditions reported 
+   This implementation does not differentiate abnormal status conditions reported
    by |waitpid()|, but will simply return a single error indication value.
 
-   For all this, hyjacking a bunch of numbers in the range 1...255 is needed. 
+   For all this, hyjacking a bunch of numbers in the range 1...255 is needed.
    The chance of collisions is hopefully diminished by using a rather random
    range in the 8-bit section.
 */
@@ -284,7 +284,7 @@ static int spawn_command(const char *file, char *const *av, char *const *envp)
 #ifdef _WIN32
 static char *get_command_name(char *maincmd)
 {
-    /* retrieve argv[0] part from the command string, 
+    /* retrieve argv[0] part from the command string,
        it will be truncated to MAX_PATH if it's too long */
     char *cmdname = (char *) malloc(sizeof(char) * MAX_PATH);
     int i, k, quoted;
@@ -307,10 +307,10 @@ static char **do_split_command(const char *maincmd, char **runcmd)
 {
     char **cmdline = NULL;
 #ifdef _WIN32
-    /* On WIN32 don't split anything, because 
-       _spawnvpe can't put it back together properly 
-       if there are quoted arguments with spaces. 
-       Instead, dump everything into one argument 
+    /* On WIN32 don't split anything, because
+       _spawnvpe can't put it back together properly
+       if there are quoted arguments with spaces.
+       Instead, dump everything into one argument
        and it will be passed through as is */
     cmdline = malloc(sizeof(char *) * 2);
     cmdline[0] = xstrdup(maincmd);
@@ -325,7 +325,7 @@ static char **do_split_command(const char *maincmd, char **runcmd)
     int quoted = 0;
     if (strlen(maincmd) == 0)
         return NULL;
-    /* allocate the array of options first. it will probably be 
+    /* allocate the array of options first. it will probably be
        be a little bit too big, but better too much than to little */
     j = 2;
     for (i = 0; i < strlen(maincmd); i++) {
@@ -434,7 +434,7 @@ static int os_exec(lua_State * L)
     char *safecmd = NULL, *cmdname = NULL;
     char **cmdline = NULL;
     char **envblock = NULL;
-    
+
     if (lua_gettop(L) != 1) {
         lua_pushnil(L);
         lua_pushliteral(L, "invalid arguments passed");
@@ -480,7 +480,7 @@ static int os_exec(lua_State * L)
             if (r == -1) {
                 lua_pushnil(L);
                 lua_pushfstring(L, "%s: %s", runcmd, strerror(errno));
-                lua_pushnumber(L, errno);
+                lua_pushinteger(L, errno);
                 return 3;
             }
         }
@@ -503,7 +503,7 @@ static int os_exec(lua_State * L)
 #define do_error_return(A,B) do {                                       \
         lua_pushnil(L);                                                 \
         lua_pushfstring(L,"%s: %s",runcmd,(A));                         \
-        lua_pushnumber(L, B);                                           \
+        lua_pushinteger(L, B);                                          \
         return 3;                                                       \
     } while (0)
 
@@ -555,7 +555,7 @@ static int os_spawn(lua_State * L)
         if (cmdname)
             free(cmdname);
         if (i == 0) {
-            lua_pushnumber(L, i);
+            lua_pushinteger(L, i);
             return 1;
         } else if (i == -1) {
             /* this branch covers WIN32 as well as fork() and waitpid() errors */
@@ -577,7 +577,7 @@ static int os_spawn(lua_State * L)
             do_error_return("execution interrupted", i);
 #endif
         } else {
-            lua_pushnumber(L, i);
+            lua_pushinteger(L, i);
             return 1;
         }
     }
@@ -723,7 +723,7 @@ static int uname(struct utsname *uts)
             strcpy(uts->sysname, "Windows Vista");      /* Vista */
             /*
                else
-               strcpy (uts->sysname, "Windows Server 2008"); 
+               strcpy (uts->sysname, "Windows Server 2008");
              */
         }
         os = WinNT;
@@ -775,9 +775,9 @@ static int uname(struct utsname *uts)
         strcpy(uts->machine, "mips");
         break;
     case PROCESSOR_ARCHITECTURE_INTEL:
-        /* 
+        /*
          * dwProcessorType is only valid in Win95 and Win98 and WinME
-         * wProcessorLevel is only valid in WinNT 
+         * wProcessorLevel is only valid in WinNT
          */
         switch (os) {
         case Win95:
@@ -841,19 +841,19 @@ static int os_times(lua_State * L)
     struct tms r;
     (void) times(&r);
     lua_newtable(L);
-    lua_pushnumber(L,
+    lua_pushnumber(L, /* float */
                    ((lua_Number) (r.tms_utime)) /
                    (lua_Number) sysconf(_SC_CLK_TCK));
     lua_setfield(L, -2, "utime");
-    lua_pushnumber(L,
+    lua_pushnumber(L, /* float */
                    ((lua_Number) (r.tms_stime)) /
                    (lua_Number) sysconf(_SC_CLK_TCK));
     lua_setfield(L, -2, "stime");
-    lua_pushnumber(L,
+    lua_pushnumber(L, /* float */
                    ((lua_Number) (r.tms_cutime)) /
                    (lua_Number) sysconf(_SC_CLK_TCK));
     lua_setfield(L, -2, "cutime");
-    lua_pushnumber(L,
+    lua_pushnumber(L, /* float */
                    ((lua_Number) (r.tms_cstime)) /
                    (lua_Number) sysconf(_SC_CLK_TCK));
     lua_setfield(L, -2, "cstime");
@@ -889,7 +889,7 @@ static int os_gettimeofday(lua_State * L)
     tmpres -= DELTA_EPOCH_IN_MICROSECS; /*converting file time to unix epoch */
     v = (double) tmpres / 1000000.0;
 #  endif
-    lua_pushnumber(L, v);
+    lua_pushnumber(L, v); /* float */
     return 1;
 }
 #endif

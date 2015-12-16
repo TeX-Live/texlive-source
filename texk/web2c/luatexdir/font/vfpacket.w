@@ -217,8 +217,8 @@ void do_vf_packet(PDF pdf, internal_font_number vf_f, int c, int ex_glyph)
             packet_scaled(size.v, vp->fs_f);    /* height (where is depth?) */
             packet_scaled(size.h, vp->fs_f);
             if (size.h > 0 && size.v > 0)
-                pdf_place_rule(pdf, 0, size);   /* the 0 is unused */
-            mat_p->pos.h += size.h;
+                backend_out[rule_node](pdf, 0, size);  /* the 0 is unused */
+           mat_p->pos.h += size.h;
             break;
         case packet_right_code:
             packet_scaled(i, vp->fs_f);
@@ -255,7 +255,7 @@ void do_vf_packet(PDF pdf, internal_font_number vf_f, int c, int ex_glyph)
             break;
         case packet_node_code:
             packet_number(k);
-            hlist_out(pdf, (halfword) k);
+            hlist_out(pdf, (halfword) k, 0);
             break;
         case packet_nop_code:
             break;

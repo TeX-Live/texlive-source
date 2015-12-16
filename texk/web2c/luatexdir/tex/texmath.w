@@ -33,7 +33,6 @@
 #define incompleat_noad cur_list.incompleat_noad_field
 
 #define cur_fam int_par(cur_fam_code)
-#define text_direction int_par(text_direction_code)
 
 /*
 
@@ -194,15 +193,17 @@ static sa_tree math_fam_head = NULL;
 int fam_fnt(int fam_id, int size_id)
 {
     int n = fam_id + (256 * size_id);
-    return (int) get_sa_item(math_fam_head, n);
+    return (int) get_sa_item(math_fam_head, n).int_value;
 }
 
 void def_fam_fnt(int fam_id, int size_id, int f, int lvl)
 {
     int n = fam_id + (256 * size_id);
-    set_sa_item(math_fam_head, n, (sa_tree_item) f, lvl);
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = f;
+    set_sa_item(math_fam_head, n, sa_value, lvl);
     fixup_math_parameters(fam_id, size_id, f, lvl);
-    if (int_par(tracing_assigns_code) > 0) {
+    if (int_par(tracing_assigns_code) > 1) {
         begin_diagnostic();
         tprint("{assigning");
         print_char(' ');
@@ -228,7 +229,7 @@ static void unsave_math_fam_data(int gl)
         if (st.level > 0) {
             rawset_sa_item(math_fam_head, st.code, st.value);
             /* now do a trace message, if requested */
-            if (int_par(tracing_restores_code) > 0) {
+            if (int_par(tracing_restores_code) > 1) {
                 int size_id = st.code / 256;
                 int fam_id = st.code % 256;
                 begin_diagnostic();
@@ -258,8 +259,10 @@ static sa_tree math_param_head = NULL;
 void def_math_param(int param_id, int style_id, scaled value, int lvl)
 {
     int n = param_id + (256 * style_id);
-    set_sa_item(math_param_head, n, (sa_tree_item) value, lvl);
-    if (int_par(tracing_assigns_code) > 0) {
+    sa_tree_item sa_value = { 0 };
+    sa_value.int_value = (int) value;
+    set_sa_item(math_param_head, n, sa_value, lvl);
+    if (int_par(tracing_assigns_code) > 1) {
         begin_diagnostic();
         tprint("{assigning");
         print_char(' ');
@@ -275,7 +278,7 @@ void def_math_param(int param_id, int style_id, scaled value, int lvl)
 scaled get_math_param(int param_id, int style_id)
 {
     int n = param_id + (256 * style_id);
-    return (scaled) get_sa_item(math_param_head, n);
+    return (scaled) get_sa_item(math_param_head, n).int_value;
 }
 
 @ @c
@@ -291,7 +294,7 @@ static void unsave_math_param_data(int gl)
         if (st.level > 0) {
             rawset_sa_item(math_param_head, st.code, st.value);
             /* now do a trace message, if requested */
-            if (int_par(tracing_restores_code) > 0) {
+            if (int_par(tracing_restores_code) > 1) {
                 int param_id = st.code % 256;
                 int style_id = st.code / 256;
                 begin_diagnostic();
@@ -322,11 +325,16 @@ void unsave_math_data(int gl)
 @c
 void dump_math_data(void)
 {
-    if (math_fam_head == NULL)
-        math_fam_head = new_sa_tree(MATHFONTSTACK, MATHFONTDEFAULT);
+    sa_tree_item sa_value = { 0 };
+    if (math_fam_head == NULL) {
+        sa_value.int_value = MATHFONTDEFAULT;
+        math_fam_head = new_sa_tree(MATHFONTSTACK, 1, sa_value);
+    }
     dump_sa_tree(math_fam_head);
-    if (math_param_head == NULL)
-        math_param_head = new_sa_tree(MATHPARAMSTACK, MATHPARAMDEFAULT);
+    if (math_param_head == NULL) {
+        sa_value.int_value = MATHPARAMDEFAULT;
+        math_param_head = new_sa_tree(MATHPARAMSTACK, 1, sa_value);
+    }
     dump_sa_tree(math_param_head);
 }
 
@@ -339,10 +347,14 @@ void undump_math_data(void)
 @ @c
 void initialize_math(void)
 {
-    if (math_fam_head == NULL)
-        math_fam_head = new_sa_tree(MATHFONTSTACK, MATHFONTDEFAULT);
+    sa_tree_item sa_value = { 0 };
+    if (math_fam_head == NULL) {
+        sa_value.int_value = MATHFONTDEFAULT;
+        math_fam_head = new_sa_tree(MATHFONTSTACK, 1, sa_value);
+    }
     if (math_param_head == NULL) {
-        math_param_head = new_sa_tree(MATHPARAMSTACK, MATHPARAMDEFAULT);
+        sa_value.int_value = MATHPARAMDEFAULT;
+        math_param_head = new_sa_tree(MATHPARAMSTACK, 1, sa_value);
         initialize_math_spacing();
     }
     return;
@@ -1144,7 +1156,6 @@ static delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
         /* something's gone wrong */
         confusion("unknown_extcode");
     }
-    d.origin_value = extcode;
     d.class_value = mcls;
     d.small_family_value = msfam;
     d.small_character_value = mschr;
@@ -1162,7 +1173,7 @@ void scan_extdef_del_code(int level, int extcode)
     p = cur_val;
     scan_optional_equals();
     d = do_scan_extdef_del_code(extcode, false);
-    set_del_code(p, extcode, d.small_family_value, d.small_character_value,
+    set_del_code(p, d.small_family_value, d.small_character_value,
                  d.large_family_value, d.large_character_value,
                  (quarterword) (level));
 }
@@ -1229,7 +1240,6 @@ mathcodeval scan_mathchar(int extcode)
     }
     d.class_value = mcls;
     d.family_value = mfam;
-    d.origin_value = extcode;
     d.character_value = mchr;
     return d;
 }
@@ -1243,7 +1253,7 @@ void scan_extdef_math_code(int level, int extcode)
     p = cur_val;
     scan_optional_equals();
     d = scan_mathchar(extcode);
-    set_math_code(p, extcode, d.class_value,
+    set_math_code(p, d.class_value,
                   d.family_value, d.character_value, (quarterword) (level));
 }
 
@@ -1254,31 +1264,9 @@ mathcodeval scan_delimiter_as_mathchar(int extcode)
     delcodeval dval;
     mathcodeval mval;
     dval = do_scan_extdef_del_code(extcode, true);
-    mval.origin_value = 0;
     mval.class_value = dval.class_value;
     mval.family_value = dval.small_family_value;
     mval.character_value = dval.small_character_value;
-    return mval;
-}
-
-@ this has to match the inverse routine in the pascal code
- where the \.{\\Umathchardef} is executed
-
-@c
-mathcodeval mathchar_from_integer(int value, int extcode)
-{
-    mathcodeval mval;
-    mval.origin_value = extcode;
-    if (extcode == tex_mathcode) {
-        mval.class_value = (value / 0x1000);
-        mval.family_value = ((value % 0x1000) / 0x100);
-        mval.character_value = (value % 0x100);
-    } else {                    /* some xetexended xetex thing */
-        int mfam = (value / 0x200000) & 0x7FF;
-        mval.class_value = mfam % 0x08;
-        mval.family_value = mfam / 0x08;
-        mval.character_value = value & 0x1FFFFF;
-    }
     return mval;
 }
 
@@ -1306,7 +1294,7 @@ int scan_math_style(pointer p, int mstyle)
 int scan_math(pointer p, int mstyle)
 {
     /* label restart,reswitch,exit; */
-    mathcodeval mval = { 0, 0, 0, 0 };
+    mathcodeval mval = { 0, 0, 0 };
     assert(p != null);
   RESTART:
     get_next_nb_nr();
@@ -1404,15 +1392,15 @@ void set_math_char(mathcodeval mval)
             subtype(p) = ord_noad_type;
         } else {
             switch (mval.class_value) {
-          /* *INDENT-OFF* */
-          case 0: subtype(p) = ord_noad_type; break;
-          case 1: subtype(p) = op_noad_type_normal; break;
-          case 2: subtype(p) = bin_noad_type; break;
-          case 3: subtype(p) = rel_noad_type; break;
-          case 4: subtype(p) = open_noad_type; break;
-          case 5: subtype(p) = close_noad_type; break;
-          case 6: subtype(p) = punct_noad_type; break;
-          /* *INDENT-ON* */
+                  /* *INDENT-OFF* */
+                case 0: subtype(p) = ord_noad_type; break;
+                case 1: subtype(p) = op_noad_type_normal; break;
+                case 2: subtype(p) = bin_noad_type; break;
+                case 3: subtype(p) = rel_noad_type; break;
+                case 4: subtype(p) = open_noad_type; break;
+                case 5: subtype(p) = close_noad_type; break;
+                case 6: subtype(p) = punct_noad_type; break;
+                  /* *INDENT-ON* */
             }
         }
         vlink(tail) = p;
@@ -1484,7 +1472,7 @@ delimiter is to be placed; the second tells if this delimiter follows
 @c
 static void scan_delimiter(pointer p, int r)
 {
-    delcodeval dval = { 0, 0, 0, 0, 0, 0 };
+    delcodeval dval = { 0, 0, 0, 0, 0 };
     if (r == tex_mathcode) {    /* \.{\\radical} */
         dval = do_scan_extdef_del_code(tex_mathcode, true);
     } else if (r == umath_mathcode) {   /* \.{\\Uradical} */
@@ -1606,9 +1594,9 @@ void math_radical(void)
 void math_ac(void)
 {
     halfword q;
-    mathcodeval t = { 0, 0, 0, 0 };
-    mathcodeval b = { 0, 0, 0, 0 };
-    mathcodeval o = { 0, 0, 0, 0 };
+    mathcodeval t = { 0, 0, 0 };
+    mathcodeval b = { 0, 0, 0 };
+    mathcodeval o = { 0, 0, 0 };
     if (cur_cmd == accent_cmd) {
         const char *hlp[] = {
             "I'm changing \\accent to \\mathaccent here; wish me luck.",
@@ -2430,7 +2418,7 @@ void after_math(void)
         } else {
             check_display_math_end();
         }
-        run_mlist_to_hlist(p, text_style, false);
+        run_mlist_to_hlist(p, false, text_style);
         a = hpack(vlink(temp_head), 0, additional, -1);
         build_attribute_list(a);
         unsave_math();
@@ -2462,7 +2450,7 @@ void after_math(void)
         if (dir_math_save) {
             tail_append(new_dir(math_direction));
         }
-        run_mlist_to_hlist(p, text_style, (mode > 0));
+        run_mlist_to_hlist(p, (mode > 0), text_style);
         vlink(tail) = vlink(temp_head);
         while (vlink(tail) != null)
             tail = vlink(tail);
@@ -2487,7 +2475,7 @@ void after_math(void)
                 check_display_math_end();
             }
         }
-        run_mlist_to_hlist(p, display_style, false);
+        run_mlist_to_hlist(p, false, display_style);
         finish_displayed_math(l, a, vlink(temp_head));
     }
 }

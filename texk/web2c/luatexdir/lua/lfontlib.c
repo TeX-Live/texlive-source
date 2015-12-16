@@ -37,18 +37,14 @@ static int get_fontid(void)
 
 static int font_read_tfm(lua_State * L)
 {
-    internal_font_number f;
-    scaled s;
-    int k;
-    const char *cnom;
     if (lua_type(L, 1) == LUA_TSTRING) {
-        cnom = lua_tostring(L, 1);
+        const char *cnom = lua_tostring(L, 1);
         if (lua_type(L, 2) == LUA_TNUMBER) {
-            s = (int) lua_tonumber(L, 2);
+            scaled s = (int) lua_tointeger(L, 2);
             if (strlen(cnom)) {
-                f = get_fontid();
+                internal_font_number f = get_fontid();
                 if (read_tfm_info(f, cnom, s)) {
-                    k = font_to_lua(L, f);
+                    int k = font_to_lua(L, f);
                     delete_font(f);
                     return k;
                 } else {
@@ -70,13 +66,11 @@ static int font_read_tfm(lua_State * L)
 
 static int font_read_vf(lua_State * L)
 {
-    int i;
-    const char *cnom;
     if (lua_type(L, 1) == LUA_TSTRING) {
-        cnom = lua_tostring(L, 1);
+        const char *cnom = lua_tostring(L, 1);
         if (strlen(cnom)) {
             if (lua_type(L, 2) == LUA_TNUMBER) {
-                i = (int) lua_tonumber(L, 2);
+                int i = lua_tointeger(L, 2);
                 return make_vf_table(L, cnom, (scaled) i);
             } else {
                 luaL_error(L, "expected an integer size as second argument");
@@ -90,8 +84,7 @@ static int font_read_vf(lua_State * L)
 
 static int tex_current_font(lua_State * L)
 {
-    int i;
-    i = (int) luaL_optinteger(L, 1, 0);
+    int i = luaL_optinteger(L, 1, 0);
     if (i > 0) {
         if (is_valid_font(i)) {
             zset_cur_font(i);
@@ -101,23 +94,22 @@ static int tex_current_font(lua_State * L)
             return 2;           /* not reached */
         }
     } else {
-        lua_pushnumber(L, get_cur_font());
+        lua_pushinteger(L, get_cur_font());
         return 1;
     }
 }
 
 static int tex_max_font(lua_State * L)
 {
-    lua_pushnumber(L, max_font_id());
+    lua_pushinteger(L, max_font_id());
     return 1;
 }
 
 
 static int tex_each_font_next(lua_State * L)
 {
-    int i, m;                   /* id */
-    m = (int) lua_tonumber(L, 1);
-    i = (int) lua_tonumber(L, 2);
+    int m = lua_tointeger(L, 1);
+    int i = lua_tointeger(L, 2);
     i++;
     while (i <= m && !is_valid_font(i))
         i++;
@@ -125,7 +117,7 @@ static int tex_each_font_next(lua_State * L)
         lua_pushnil(L);
         return 1;
     } else {
-        lua_pushnumber(L, i);
+        lua_pushinteger(L, i);
         if (!font_to_lua(L, i))
             lua_pushnil(L);
         return 2;
@@ -135,15 +127,14 @@ static int tex_each_font_next(lua_State * L)
 static int tex_each_font(lua_State * L)
 {
     lua_pushcclosure(L, tex_each_font_next, 0);
-    lua_pushnumber(L, max_font_id());
-    lua_pushnumber(L, 0);
+    lua_pushinteger(L, max_font_id());
+    lua_pushinteger(L, 0);
     return 3;
 }
 
 static int frozenfont(lua_State * L)
 {
-    int i;
-    i = (int) luaL_checkinteger(L, 1);
+    int i = luaL_checkinteger(L, 1);
     if (i) {
         if (is_valid_font(i)) {
             if (font_touched(i) || font_used(i)) {
@@ -164,8 +155,7 @@ static int frozenfont(lua_State * L)
 
 static int setfont(lua_State * L)
 {
-    int i;
-    i = (int) luaL_checkinteger(L, -2);
+    int i = luaL_checkinteger(L, -2);
     if (i) {
         luaL_checktype(L, -1, LUA_TTABLE);
         if (is_valid_font(i)) {
@@ -185,29 +175,10 @@ static int setfont(lua_State * L)
 
 static int deffont(lua_State * L)
 {
-    int i;
-#if TIMERS
-    struct timeval tva;
-    struct timeval tvb;
-    double tvdiff;
-#endif
+    int i = get_fontid();
     luaL_checktype(L, -1, LUA_TTABLE);
-    i = get_fontid();
-#if TIMERS
-    gettimeofday(&tva, NULL);
-#endif
     if (font_from_lua(L, i)) {
-#if TIMERS
-        gettimeofday(&tvb, NULL);
-        tvdiff = tvb.tv_sec * 1000000.0;
-        tvdiff += (double) tvb.tv_usec;
-        tvdiff -= (tva.tv_sec * 1000000.0);
-        tvdiff -= (double) tva.tv_usec;
-        tvdiff /= 1000000;
-        fprintf(stdout, "font.define(%s,%i): %f seconds\n",
-                font_fullname(i), i, tvdiff);
-#endif
-        lua_pushnumber(L, i);
+        lua_pushinteger(L, i);
         return 1;
     } else {
         lua_pop(L, 1);          /* pop the broken table */
@@ -221,7 +192,7 @@ static int deffont(lua_State * L)
 static int nextfontid(lua_State * L)
 {
     int i = get_fontid();
-    lua_pushnumber(L, i);
+    lua_pushinteger(L, i);
     delete_font(i);
     return 1;
 }
@@ -229,8 +200,7 @@ static int nextfontid(lua_State * L)
 
 static int getfont(lua_State * L)
 {
-    int i;
-    i = (int) luaL_checkinteger(L, -1);
+    int i = luaL_checkinteger(L, -1);
     if (i && is_valid_font(i) && font_to_lua(L, i))
         return 1;
     lua_pushnil(L);
@@ -240,21 +210,18 @@ static int getfont(lua_State * L)
 
 static int getfontid(lua_State * L)
 {
-    const char *s;
-    size_t ff;
-    int cs;
-    int f;
     if (lua_type(L, 1) == LUA_TSTRING) {
-        s = lua_tolstring(L, 1, &ff);
-        cs = string_lookup(s, ff);
-        if (cs == undefined_control_sequence || cs == undefined_cs_cmd
-            || eq_type(cs) != set_font_cmd) {
+        size_t ff;
+        const char *s = lua_tolstring(L, 1, &ff);
+        int cs = string_lookup(s, ff);
+        int f;
+        if (cs == undefined_control_sequence || cs == undefined_cs_cmd || eq_type(cs) != set_font_cmd) {
             lua_pushstring(L, "not a valid font csname");
             f = -1;
         } else {
             f = equiv(cs);
         }
-        lua_pushnumber(L, f);
+        lua_pushinteger(L, f);
     } else {
         luaL_error(L, "expected font csname string as argument");
     }
@@ -290,24 +257,23 @@ int luaopen_font(lua_State * L)
 static int l_vf_char(lua_State * L)
 {
     int k, w;
-    /*int ex = 0;*/                 /* Wrong! TODO */
     vf_struct *vsp = static_pdf->vfstruct;
     packet_stack_record *mat_p;
     internal_font_number lf = vsp->lf;
     int ex_glyph = vsp->ex_glyph/1000;
     if (!vsp->vflua)
         normal_error("vf", "vf.char() outside virtual font");
-    k = (int) luaL_checkinteger(L, 1);
-    if (!char_exists(lf, (int) k)) {
-        char_warning(lf, (int) k);
+    k = luaL_checkinteger(L, 1);
+    if (!char_exists(lf, k)) {
+        char_warning(lf, k);
     } else {
-        if (has_packet(lf, (int) k))
-            do_vf_packet(static_pdf, lf, (int) k, ex_glyph);
+        if (has_packet(lf, k))
+            do_vf_packet(static_pdf, lf, k, ex_glyph);
         else
-            backend_out[glyph_node] (static_pdf, lf, (int) k, ex_glyph);
+            backend_out[glyph_node] (static_pdf, lf, k, ex_glyph);
     }
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
-    w = char_width(lf, (int) k);
+    w = char_width(lf, k);
     mat_p->pos.h += round_xn_over_d(w, 1000 + ex_glyph, 1000);
     synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);
     return 0;
@@ -355,7 +321,7 @@ static int l_vf_node(lua_State * L)
     if (!vsp->vflua)
         normal_error("vf", "vf.node() outside virtual font");
     k = (int) luaL_checkinteger(L, 1);
-    hlist_out(static_pdf, (halfword) k);
+    hlist_out(static_pdf, (halfword) k, 0);
     return 0;
 }
 
@@ -423,7 +389,7 @@ static int l_vf_rule(lua_State * L)
     size.h = store_scaled_f(size.h, vsp->fs_f);
     size.v = store_scaled_f(size.v, vsp->fs_f);
     if (size.h > 0 && size.v > 0)
-        pdf_place_rule(static_pdf, 0, size);    /* the 0 is unused */
+        backend_out[rule_node](static_pdf, 0, size);    /* the 0 is unused */
     mat_p = &(vsp->packet_stack[vsp->packet_stack_level]);
     mat_p->pos.h += size.h;
     synch_pos_with_cur(static_pdf->posstruct, vsp->refpos, mat_p->pos);

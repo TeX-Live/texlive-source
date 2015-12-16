@@ -142,7 +142,7 @@ static void convert_tag(char *tag, unsigned long u_tag)
 
 
 @ Computes the max power of 2 <= n
- 
+
 @c
 static unsigned max2floor(unsigned n)
 {
@@ -281,7 +281,7 @@ ULONG sfnt_locate_table(sfnt * sfont, const char *tag)
 
     offset = sfnt_find_table_pos(sfont, tag);
     if (offset == 0)
-        TT_ERROR("sfnt: table not found...");
+        normal_error("ttf","sfnt table not found");
 
     sfnt_seek_set(sfont, (long) offset);
 
@@ -429,7 +429,7 @@ pdf_obj *sfnt_create_FontFile_stream(sfnt * sfont)
                 if (!sfont->buffer)
                 {
                     pdf_release_obj(stream);
-                    TT_ERROR("Font file not opened or already closed...");
+                    normal_error("ttf","file not opened or already closed");
                     return NULL;
                 }
 
@@ -439,7 +439,7 @@ pdf_obj *sfnt_create_FontFile_stream(sfnt * sfont)
                     nb_read = sfnt_read(wbuf, (int) MIN(length, 1024), sfont);
                     if (nb_read < 0) {
                         pdf_release_obj(stream);
-                        TT_ERROR("Reading file failed...");
+                        normal_error("ttf","reading file failed");
                         return NULL;
                     } else if (nb_read > 0) {
                         pdf_add_stream(stream, wbuf, nb_read);

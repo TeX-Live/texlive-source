@@ -2,7 +2,7 @@
    written by Tim Morgan, drawing from other Unix ports of TeX.  This is
    a collection of miscellany, everything that's easier (or only
    possible) to do in C.
-   
+
    This file is public domain.  */
 
 /* This file is used to create texextra.c etc., with this line
@@ -21,16 +21,17 @@
 #include "ptexlib.h"
 #include "luatex.h"
 #include "lua/luatex-api.h"
+/*
 #include "luatex_svnversion.h"
+*/
 
 
 #define TeX
 
-int luatex_svn = luatex_svn_revision;
-int luatex_version = 85;        /* \.{\\luatexversion}  */
+int luatex_version = 86;        /* \.{\\luatexversion}  */
 int luatex_revision = '0';      /* \.{\\luatexrevision}  */
-int luatex_date_info = 2015111900;     /* the compile date is now hardwired */
-const char *luatex_version_string = "beta-0.85.0";
+int luatex_date_info = 2015120800;     /* the compile date is now hardwired */
+const char *luatex_version_string = "beta-0.86.0";
 const char *engine_name = my_name;     /* the name of this engine */
 
 #include <kpathsea/c-ctype.h>
@@ -204,7 +205,7 @@ static int Isspace(char c)
   -1 : invalid quotation of an argument
    0 : command is not allowed
    2 : restricted shell escape, CMD is allowed.
-   
+
    We set *SAFECMD to a safely-quoted version of *CMD; this is what
    should get executed.  And we set CMDNAME to its first word; this is
    what is checked against the shell_escape_commands list.  */
@@ -379,7 +380,7 @@ int shell_cmd_is_allowed(const char *cmd, char **safecmd, char **cmdname)
               strcat (q, (p + 2));
               free (*safecmd);
               *safecmd = q;
-          } else if (!IS_DIR_SEP (p[0]) && !(p[1] == ':' && IS_DIR_SEP (p[2]))) { 
+          } else if (!IS_DIR_SEP (p[0]) && !(p[1] == ':' && IS_DIR_SEP (p[2]))) {
             p = kpse_var_value ("SELFAUTOLOC");
             if (p) {
               r = *safecmd;
@@ -432,15 +433,15 @@ int runsystem(const char *cmd)
         allow = 1;
     else
         allow = shell_cmd_is_allowed(cmd, &safecmd, &cmdname);
-    
+
     if (allow == 1)
         status = system(cmd);
     else if (allow == 2)
         status = system(safecmd);
     /* Not really meaningful, but we have to manage the return value of system. */
     if (status==-1)
-       fprintf(stderr,"system returned with code -1\n"); 
-    
+       fprintf(stderr,"system returned with code -1\n");
+
     if (safecmd)
         free(safecmd);
     if (cmdname)
@@ -480,7 +481,7 @@ static void myInvalidParameterHandler(const wchar_t * expression,
 /*
    I return silently to avoid an exit with the error 0xc0000417
    (invalid parameter) when we use non-embedded fonts in luatex-ja,
-   which works without any problem on Unix systems. 
+   which works without any problem on Unix systems.
    I hope it is not dangerous.
 */
    return;
@@ -628,7 +629,7 @@ struct msg
   int   namelength; /* length of auxiliary data */
   int   eof;        /* new eof for dvi file */
 #if 0  /* see usage of struct msg below */
-  char more_data[0]; /* where the rest of the stuff goes */ 
+  char more_data[0]; /* where the rest of the stuff goes */
 #endif
 };
 
@@ -799,7 +800,7 @@ ipcpage (int is_eof)
   if (!begun) {
     string name; /* Just the filename.  */
     string cwd = xgetcwd ();
-    
+
     ipc_open_out ();
 
     /* Have to pass whole filename to the other end, since it may have
@@ -824,7 +825,7 @@ ipcpage (int is_eof)
     begun = true;
   }
   ipc_snd (len, is_eof, p);
-  
+
   if (p)
     free (p);
 }

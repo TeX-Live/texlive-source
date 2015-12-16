@@ -18,18 +18,17 @@
 % with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 @ @c
-
-
 #include "ptexlib.h"
-#include "lua/luatex-api.h"     /* for luatex_banner */
+#include "lua/luatex-api.h" /* for luatex_banner */
 
 @ @c
 #define font_id_text(A) cs_text(font_id_base+(A))
 
-#define wlog(A)      fputc(A,log_file)
-#define wterm(A)     fputc(A,term_out)
+#define wlog(A)  fputc(A,log_file)
+#define wterm(A) fputc(A,term_out)
 
 int new_string_line = 0;
+int escape_controls = 1;
 
 @ Messages that are sent to a user's terminal and to the transcript-log file
 are produced by several `|print|' procedures. These procedures will
@@ -71,89 +70,118 @@ have appeared so far on the current line that has been output to the
 terminal or to the transcript file, respectively.
 
 @c
-alpha_file log_file;            /* transcript of \TeX\ session */
-int selector = term_only;       /* where to print a message */
-int dig[23];                    /* digits in a number being output */
-int tally = 0;                  /* the number of characters recently printed */
-int term_offset = 0;            /* the number of characters on the current terminal line */
-int file_offset = 0;            /* the number of characters on the current file line */
-packed_ASCII_code trick_buf[(ssup_error_line + 1)];     /* circular buffer for pseudoprinting */
-int trick_count;                /* threshold for pseudoprinting, explained later */
-int first_count;                /* another variable for pseudoprinting */
-boolean inhibit_par_tokens = false;     /*  for minor adjustments to |show_token_list|  */
+alpha_file log_file;                /* transcript of \TeX\ session */
+int selector = term_only;           /* where to print a message */
+int dig[23];                        /* digits in a number being output */
+int tally = 0;                      /* the number of characters recently printed */
+int term_offset = 0;                /* the number of characters on the current terminal line */
+int file_offset = 0;                /* the number of characters on the current file line */
+packed_ASCII_code trick_buf[(ssup_error_line + 1)]; /* circular buffer for pseudoprinting */
+int trick_count;                    /* threshold for pseudoprinting, explained later */
+int first_count;                    /* another variable for pseudoprinting */
+boolean inhibit_par_tokens = false; /*  for minor adjustments to |show_token_list|  */
 
 @ To end a line of text output, we call |print_ln|
+
 @c
 void print_ln(void)
-{                               /* prints an end-of-line */
+{
     switch (selector) {
-    case term_and_log:
-        wterm_cr();
-        wlog_cr();
-        term_offset = 0;
-        file_offset = 0;
-        break;
-    case log_only:
-        wlog_cr();
-        file_offset = 0;
-        break;
-    case term_only:
-        wterm_cr();
-        term_offset = 0;
-        break;
-    case no_print:
-        break;
-    case pseudo:
-        break;
-    case new_string:
-        if (new_string_line > 0)
-            print_char(new_string_line);
-        break;
-    default:
-        fprintf(write_file[selector], "\n");
-        break;
+        case no_print:
+            break;
+        case term_only:
+            wterm_cr();
+            term_offset = 0;
+            break;
+        case log_only:
+            wlog_cr();
+            file_offset = 0;
+            break;
+        case term_and_log:
+            wterm_cr();
+            wlog_cr();
+            term_offset = 0;
+            file_offset = 0;
+            break;
+        case pseudo:
+            break;
+        case new_string:
+            if (new_string_line > 0)
+                print_char(new_string_line);
+            break;
+        default:
+            fprintf(write_file[selector], "\n");
+            break;
     }
-}                               /* |tally| is not affected */
-
+    /* |tally| is not affected */
+}
 
 @ The |print_char| procedure sends one byte to the desired destination.
-  All printing comes through |print_ln| or |print_char|, except for the
-  case of |tprint| (see below).
+All printing comes through |print_ln| or |print_char|, except for the
+case of |tprint| (see below).
+
+The checking of the line length is an inheritance from previosu engines
+and we might drop it after release 1.0. We're not too picky about the exact
+match of that length because we have utf output so length is then a bit
+fuzzy anyway.
 
 @c
-#define wterm_char(A) do {				\
-    if ((A>=0x20)||(A==0x0A)||(A==0x0D)||(A==0x09)) {	\
-      wterm(A);					        \
-    } else {						\
-      if (term_offset+2>=max_print_line) {		\
-	wterm_cr(); term_offset=0;			\
-      }							\
-      incr(term_offset); wterm('^');			\
-      incr(term_offset); wterm('^');			\
-      wterm(A+64);					\
-    }							\
-  } while (0)
+#define needs_escaping(A) \
+    ((! escape_controls) || (A>=0x20) || (A==0x0A) || (A==0x0D) || (A==0x09))
 
-#define needs_wrapping(A,B)				\
-  (((A>=0xF0)&&(B+4>=max_print_line))||                 \
-   ((A>=0xE0)&&(B+3>=max_print_line))||	                \
+#define escaped_char(A) \
+    A+64
+
+#define wterm_char(A) \
+    if (needs_escaping(A)) { \
+        wterm(A); \
+    } else { \
+        if (term_offset+2>=max_print_line) { \
+            wterm_cr(); \
+            term_offset=0; \
+        } \
+        wterm('^'); \
+        wterm('^'); \
+        wterm(escaped_char(A)); \
+        term_offset += 2; \
+    }
+
+/*
+
+#define needs_wrapping(A,B) \
+  (((A>=0xF0)&&(B+4>=max_print_line)) || \
+   ((A>=0xE0)&&(B+3>=max_print_line)) || \
    ((A>=0xC0)&&(B+2>=max_print_line)))
 
-#define fix_term_offset(A)	 do {			\
-    if (needs_wrapping(A,term_offset)){			\
-      wterm_cr(); term_offset=0;			\
-    }							\
-  } while (0)
+we have mostly ascii in logs, so ...
 
-#define fix_log_offset(A)	 do {			\
-    if (needs_wrapping(A,file_offset)){			\
-      wlog_cr(); file_offset=0;				\
-    }							\
-  } while (0)
+*/
+
+#define needs_wrapping(A,B) \
+  (   (A>=0xC0) && \
+    (((A>=0xF0) && (B+4>=max_print_line)) || \
+     ((A>=0xE0) && (B+3>=max_print_line)) || \
+     (             (B+2>=max_print_line))) \
+  )
+
+#define fix_term_offset(A) \
+    if (needs_wrapping(A,term_offset)){ \
+        wterm_cr(); \
+        term_offset=0; \
+    }
+
+#define fix_log_offset(A) \
+    if (needs_wrapping(A,file_offset)){ \
+        wlog_cr(); \
+        file_offset=0; \
+    }
 
 void print_char(int s)
-{                               /* prints a single byte */
-    assert(s >= 0 && s < 256);
+{
+    if (s < 0 || s > 255) {
+        formatted_warning("print","weird character %i",s);
+        return;
+    }
     if (s == int_par(new_line_char_code)) {
         if (selector < pseudo) {
             print_ln();
@@ -161,55 +189,54 @@ void print_char(int s)
         }
     }
     switch (selector) {
-    case term_and_log:
-        fix_term_offset(s);
-        fix_log_offset(s);
-        wterm_char(s);
-        wlog(s);
-        incr(term_offset);
-        incr(file_offset);
-        if (term_offset == max_print_line) {
-            wterm_cr();
-            term_offset = 0;
-        }
-        if (file_offset == max_print_line) {
-            wlog_cr();
-            file_offset = 0;
-        }
-        break;
-    case log_only:
-        fix_log_offset(s);
-        wlog(s);
-        incr(file_offset);
-        if (file_offset == max_print_line) {
-            wlog_cr();
-            file_offset = 0;
-        }
-        break;
-    case term_only:
-        fix_term_offset(s);
-        wterm_char(s);
-        incr(term_offset);
-        if (term_offset == max_print_line) {
-            wterm_cr();
-            term_offset = 0;
-        }
-        break;
-    case no_print:
-        break;
-    case pseudo:
-        if (tally < trick_count)
-            trick_buf[tally % error_line] = (packed_ASCII_code) s;
-        break;
-    case new_string:
-        append_char(s);
-        break;                  /* we drop characters if the string space is full */
-    default:
-        fprintf(write_file[selector], "%c", s);
+        case no_print:
+            break;
+        case term_only:
+            fix_term_offset(s);
+            wterm_char(s);
+            incr(term_offset);
+            if (term_offset == max_print_line) {
+                wterm_cr();
+                term_offset = 0;
+            }
+            break;
+        case log_only:
+            fix_log_offset(s);
+            wlog(s);
+            incr(file_offset);
+            if (file_offset == max_print_line) {
+                wlog_cr();
+                file_offset = 0;
+            }
+            break;
+        case term_and_log:
+            fix_term_offset(s);
+            fix_log_offset(s);
+            wterm_char(s);
+            wlog(s);
+            incr(term_offset);
+            incr(file_offset);
+            if (term_offset == max_print_line) {
+                wterm_cr();
+                term_offset = 0;
+            }
+            if (file_offset == max_print_line) {
+                wlog_cr();
+                file_offset = 0;
+            }
+            break;
+        case pseudo:
+            if (tally < trick_count)
+                trick_buf[tally % error_line] = (packed_ASCII_code) s;
+            break;
+        case new_string:
+            append_char(s);
+            break;
+        default:
+            fprintf(write_file[selector], "%c", s);
     }
     incr(tally);
 }
-
 
 @ An entire string is output by calling |print|. Note that if we are outputting
 the single standard ASCII character \.c, we could call |print("c")|, since
@@ -217,6 +244,7 @@ the single standard ASCII character \.c, we could call |print("c")|, since
 |print_char("c")| is quicker, so \TeX\ goes directly to the |print_char|
 routine when it knows that this is safe. (The present implementation
 assumes that it is always safe to print a visible ASCII character.)
+
 @^system dependencies@>
 
 The first 256 entries above the 17th unicode plane are used for a
@@ -228,24 +256,19 @@ to do the same substraction while typesetting.
 
 @c
 void print(int s)
-{                               /* prints string |s| */
+{
     if (s >= str_ptr) {
-        /* this can't happen */
-        print_char('?');
-        print_char('?');
-        print_char('?');
+        normal_warning("print","bad string pointer");
         return;
     } else if (s < STRING_OFFSET) {
         if (s < 0) {
-            /* can't happen */
-            print_char('?');
-            print_char('?');
-            print_char('?');
+            normal_warning("print","bad string offset");
         } else {
             /* TH not sure about this, disabled for now! */
             if ((false) && (selector > pseudo)) {
+                /* internal strings are not expanded */
                 print_char(s);
-                return;         /* internal strings are not expanded */
+                return;
             }
             if (s == int_par(new_line_char_code)) {
                 if (selector < pseudo) {
@@ -265,10 +288,7 @@ void print(int s)
             } else if (s >= 0x110000) {
                 int c = s - 0x110000;
                 if (c >= 256) {
-                    normal_warning("print", "bad raw byte to print (c=", true, false);
-                    print_int(c);
-                    tprint("), skipped.");
-                    print_ln();
+                    formatted_warning("print", "bad raw byte to print (c=%d), skipped",c);
                 } else {
                     print_char(c);
                 }
@@ -332,6 +352,14 @@ different because it uses buffering, which works well because
 most of the output actually comes through |tprint|.
 
 @c
+#define t_flush_buffer(target,offset) \
+    buffer[i++] = '\n'; \
+    buffer[i++] = '\0';\
+    fputs(buffer, target); \
+    i = 0; \
+    buffer[0] = '\0'; \
+    offset=0;
+
 void tprint(const char *sss)
 {
     char *buffer = NULL;
@@ -340,115 +368,101 @@ void tprint(const char *sss)
     int dolog = 0;
     int doterm = 0;
     switch (selector) {
-    case new_string:
-        append_string((const unsigned char *)sss, (unsigned) strlen(sss));
-        return;
-        break;
-    case pseudo:
-        while (*sss) {
-           if (tally < trick_count) {
-               trick_buf[tally % error_line] = (packed_ASCII_code) *sss++;
-	       tally++;
-           } else {
-               return;
-           }
-        }
-        return;
-        break;
-    case no_print:
-        return;
-        break;
-    case term_and_log:
-        dolog = 1;
-        doterm = 1;
-        break;
-    case log_only:
-        dolog = 1;
-        break;
-    case term_only:
-        doterm = 1;
-        break;
-    default:
-        {
-            char *newstr = xstrdup(sss);
-            char *s;
-            for (s=newstr;*s;s++) {
-                if (*s == newlinechar) {
-                    *s = '\n';
-                }
-            }
-            fputs(newstr, write_file[selector]);
-            free(newstr);
+        case no_print:
             return;
-        }
-        break;
+            break;
+        case term_only:
+            doterm = 1;
+            break;
+        case log_only:
+            dolog = 1;
+            break;
+        case term_and_log:
+            dolog = 1;
+            doterm = 1;
+            break;
+        case pseudo:
+            while (*sss) {
+               if (tally < trick_count) {
+                   trick_buf[tally % error_line] = (packed_ASCII_code) *sss++;
+               tally++;
+               } else {
+                   return;
+               }
+            }
+            return;
+            break;
+        case new_string:
+            append_string((const unsigned char *)sss, (unsigned) strlen(sss));
+            return;
+            break;
+        default:
+            {
+                char *newstr = xstrdup(sss);
+                char *s;
+                for (s=newstr;*s;s++) {
+                    if (*s == newlinechar) {
+                        *s = '\n';
+                    }
+                }
+                fputs(newstr, write_file[selector]);
+                free(newstr);
+                return;
+            }
+            break;
     }
     /* what is left is the 3 term/log settings */
-    buffer = xmalloc(strlen(sss)*3);
-    if (dolog) {
-        const unsigned char *ss = (const unsigned char *) sss;
-        while (*ss) {
-            int s = *ss++;
-            if (needs_wrapping(s,file_offset) || s == newlinechar) {
-                buffer[i++] = '\n';
+    if (dolog || doterm) {
+        buffer = xmalloc(strlen(sss)*3);
+        if (dolog) {
+            const unsigned char *ss = (const unsigned char *) sss;
+            while (*ss) {
+                int s = *ss++;
+                if (needs_wrapping(s,file_offset) || s == newlinechar) {
+                    t_flush_buffer(log_file,file_offset);
+                }
+                if (s != newlinechar) {
+                    buffer[i++] = s;
+                    if (file_offset++ == max_print_line) {
+                        t_flush_buffer(log_file,file_offset);
+                    }
+                }
+            }
+            if (*buffer) {
                 buffer[i++] = '\0';
                 fputs(buffer, log_file);
-                i = 0; buffer[0] = '\0';
-                file_offset=0;
+                buffer[0] = '\0';
             }
-            if (s != newlinechar) {
-                buffer[i++] = s;
-                if (file_offset++ == max_print_line) {
-                    buffer[i++] = '\n';
-                    buffer[i++] = '\0';
-                    fputs(buffer, log_file);
-                    i = 0; buffer[0] = '\0';
-                    file_offset = 0;
+            i = 0;
+        }
+        if (doterm) {
+            const unsigned char *ss = (const unsigned char *) sss;
+            while (*ss) {
+                int s = *ss++;
+                if (needs_wrapping(s,term_offset) || s == newlinechar) {
+                    t_flush_buffer(term_out,term_offset);
+                }
+                if (s != newlinechar) {
+                    if (needs_escaping(s)) {
+                        buffer[i++] = s;
+                    } else {
+                        buffer[i++] = '^';
+                        buffer[i++] = '^';
+                        buffer[i++] = escaped_char(s);
+                        term_offset += 2;
+                    }
+                    if (++term_offset == max_print_line) {
+                        t_flush_buffer(term_out,term_offset);
+                    }
                 }
             }
-        }
-        if (*buffer) {
-            buffer[i++] = '\0';
-            fputs(buffer, log_file);
-            buffer[0] = '\0';
-        }
-        i = 0;
-    }
-    if (doterm) {
-        const unsigned char *ss = (const unsigned char *) sss;
-        while (*ss) {
-            int s = *ss++;
-            if (needs_wrapping(s,term_offset) || s == newlinechar) {
-                buffer[i++] = '\n';
+            if (*buffer) {
                 buffer[i++] = '\0';
                 fputs(buffer, term_out);
-                i = 0; buffer[0] = '\0';
-                term_offset=0;
-            }
-            if (s != newlinechar) {
-                if ((s>=0x20)||(s==0x0A)||(s==0x0D)||(s==0x09)) {
-                    buffer[i++] = s;
-                } else {
-                    buffer[i++] = '^';
-                    buffer[i++] = '^';
-                    buffer[i++] = s+64;
-                    term_offset += 2;
-                }
-                if (++term_offset == max_print_line) {
-                    buffer[i++] = '\n';
-                    buffer[i++] = '\0';
-                    fputs(buffer, term_out);
-                    i = 0; buffer[0] = '\0';
-                    term_offset = 0;
-                }
             }
         }
-        if (*buffer) {
-            buffer[i++] = '\0';
-            fputs(buffer, term_out);
-        }
+        free(buffer);
     }
-    free(buffer);
 }
 
 void tprint_nl(const char *s)
@@ -464,16 +478,11 @@ and format identifier together will occupy at most |max_print_line|
 character positions.
 
 @c
-void print_banner(const char *v, int ver)
+void print_banner(const char *v)
 {
-    int callback_id;
-    callback_id = callback_defined(start_run_callback);
+    int callback_id = callback_defined(start_run_callback);
     if (callback_id == 0) {
-        if (ver < 0)
-            fprintf(term_out, "This is " MyName ", Version %s ", v);
-        else
-             fprintf(term_out, "This is " MyName ", Version %s%s (rev %d) ", v,
-                     WEB2CVERSION, ver);
+        fprintf(term_out, "This is " MyName ", Version %s%s ", v, WEB2CVERSION);
         if (format_ident > 0)
             print(format_ident);
         print_ln();
@@ -494,7 +503,7 @@ void print_banner(const char *v, int ver)
 }
 
 @ @c
-void log_banner(const char *v, int ver)
+void log_banner(const char *v)
 {
     const char *months[] = { "   ",
         "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
@@ -503,11 +512,7 @@ void log_banner(const char *v, int ver)
     unsigned month = (unsigned) int_par(month_code);
     if (month > 12)
         month = 0;
-    if (ver < 0)
-        fprintf(log_file, "This is " MyName ", Version %s ", v);
-    else
-        fprintf(log_file, "This is " MyName ", Version %s%s (rev %d) ", v,
-	                  WEB2CVERSION, ver);
+    fprintf(log_file, "This is " MyName ", Version %s%s ", v, WEB2CVERSION);
     print(format_ident);
     print_char(' ');
     print_char(' ');
@@ -544,21 +549,19 @@ the user's escape character (which is usually a backslash).
 
 @c
 void print_esc(str_number s)
-{                               /* prints escape character, then |s| */
-    int c;                      /* the escape character code */
-    /* Set variable |c| to the current escape character */
-    c = int_par(escape_char_code);
+{
+    int c = int_par(escape_char_code); /* Set variable |c| to the current escape character */
     if (c >= 0 && c < STRING_OFFSET)
         print(c);
     print(s);
 }
 
-@ @c
+@ This prints escape character, then |s|.
+
+@c
 void tprint_esc(const char *s)
-{                               /* prints escape character, then |s| */
-    int c;                      /* the escape character code */
-    /* Set variable |c| to the current escape character */
-    c = int_par(escape_char_code);
+{
+    int c = int_par(escape_char_code); /* Set variable |c| to the current escape character */
     if (c >= 0 && c < STRING_OFFSET)
         print(c);
     tprint(s);
@@ -586,10 +589,9 @@ by all PASCAL compilers.
 
 @c
 void print_int(longinteger n)
-{                               /* prints an integer in decimal form */
-    int k;                      /* index to current digit; we assume that $|n|<10^{23}$ */
-    longinteger m;              /* used to negate |n| in possibly dangerous cases */
-    k = 0;
+{
+    int k = 0;     /* index to current digit; we assume that $|n|<10^{23}$ */
+    longinteger m; /* used to negate |n| in possibly dangerous cases */
     if (n < 0) {
         print_char('-');
         if (n > -100000000) {
@@ -621,20 +623,18 @@ a parameter in the range |0<=n<=99|.
 
 @c
 void print_two(int n)
-{                               /* prints two least significant digits */
+{
     n = abs(n) % 100;
     print_char('0' + (n / 10));
     print_char('0' + (n % 10));
 }
 
-
 @ Hexadecimal printing of nonnegative integers is accomplished by |print_hex|.
 
 @c
 void print_hex(int n)
-{                               /* prints a positive integer in hexadecimal form */
-    int k;                      /* index to current digit; we assume that $0\L n<16^{22}$ */
-    k = 0;
+{
+    int k = 0 ; /* index to current digit; we assume that $0\L n<16^{22}$ */
     print_char('"');
     do {
         dig[k] = n % 16;
@@ -644,7 +644,6 @@ void print_hex(int n)
     print_the_digs((eight_bits) k);
 }
 
-
 @ Roman numerals are produced by the |print_roman_int| routine.  Readers
 who like puzzles might enjoy trying to figure out how this tricky code
 works; therefore no explanation will be given. Notice that 1990 yields
@@ -653,8 +652,8 @@ works; therefore no explanation will be given. Notice that 1990 yields
 @c
 void print_roman_int(int n)
 {
-    char *j, *k;                /* mysterious indices */
-    int u, v;                   /* mysterious numbers */
+    char *j, *k; /* mysterious indices */
+    int u, v;    /* mysterious numbers */
     char mystery[] = "m2d5c2l5x2v5i";
     j = (char *) mystery;
     v = 1000;
@@ -663,8 +662,10 @@ void print_roman_int(int n)
             print_char(*j);
             n = n - v;
         }
-        if (n <= 0)
-            return;             /* nonpositive input produces no output */
+        if (n <= 0) {
+            /* nonpositive input produces no output */
+            return;
+        }
         k = j + 2;
         u = v / (*(k - 1) - '0');
         if (*(k - 1) == '2') {
@@ -681,14 +682,13 @@ void print_roman_int(int n)
     }
 }
 
-
 @ The |print| subroutine will not print a string that is still being
 created. The following procedure will.
 
 @c
 void print_current_string(void)
-{                               /* prints a yet-unmade string */
-    unsigned j = 0;             /* points to current character code */
+{
+    unsigned j = 0; /* points to current character code */
     while (j < cur_length)
         print_char(cur_string[j++]);
 }
@@ -702,9 +702,10 @@ they may be unprintable.
 
 @c
 void print_cs(int p)
-{                               /* prints a purported control sequence */
+{
     str_number t = cs_text(p);
-    if (p < hash_base) {        /* nullcs */
+    if (p < hash_base) {
+        /* nullcs */
         if (p == null_cs) {
             tprint_esc("csname");
             tprint_esc("endcsname");
@@ -733,13 +734,12 @@ void print_cs(int p)
     }
 }
 
-
 @ Here is a similar procedure; it avoids the error checks, and it never
 prints a space after the control sequence.
 
 @c
 void sprint_cs(pointer p)
-{                               /* prints a control sequence */
+{
     str_number t;
     if (p == null_cs) {
         tprint_esc("csname");
@@ -753,8 +753,20 @@ void sprint_cs(pointer p)
     }
 }
 
+void sprint_cs_name(pointer p)
+{
+    str_number t;
+    if (p != null_cs) {
+        t = cs_text(p);
+        if (is_active_cs(t))
+            print(active_cs_value(t));
+        else
+            print(t);
+    }
+}
 
 @ This procedure is never called when |interaction<scroll_mode|.
+
 @c
 void prompt_input(const char *s)
 {
@@ -763,13 +775,12 @@ void prompt_input(const char *s)
     term_input();
 }
 
-
 @ Then there is a subroutine that prints glue stretch and shrink, possibly
 followed by the name of finite units:
 
 @c
 void print_glue(scaled d, int order, const char *s)
-{                               /* prints a glue component */
+{
     print_scaled(d);
     if ((order < normal) || (order > filll)) {
         tprint("foul");
@@ -785,9 +796,10 @@ void print_glue(scaled d, int order, const char *s)
 }
 
 @ The next subroutine prints a whole glue specification
+
 @c
 void print_spec(int p, const char *s)
-{                               /* prints a glue specification */
+{
     if (p < 0) {
         print_char('*');
     } else {
@@ -804,7 +816,6 @@ void print_spec(int p, const char *s)
         }
     }
 }
-
 
 @ We can reinforce our knowledge of the data structures just introduced
 by considering two procedures that display a list in symbolic form.
@@ -824,8 +835,7 @@ is assumed to be present when |short_display| begins; deviations from this
 font will be printed.
 
 @c
-int font_in_short_display;      /* an internal font number */
-
+int font_in_short_display; /* an internal font number */
 
 @ Boxes, rules, inserts, whatsits, marks, and things in general that are
 sort of ``complicated'' are indicated only by printing `\.{[]}'.
@@ -853,9 +863,11 @@ void print_font_identifier(internal_font_number f)
     }
 }
 
-@ @c
+@ This prints highlights of list |p|.
+
+@c
 void short_display(int p)
-{                               /* prints highlights of list |p| */
+{
     while (p != null) {
         if (is_char_node(p)) {
             if (lig_ptr(p) != null) {
@@ -879,14 +891,15 @@ void short_display(int p)
     }
 }
 
-
 @ The |show_node_list| routine requires some auxiliary subroutines: one to
 print a font-and-character combination, one to print a token list without
 its reference count, and one to print a rule dimension.
 
+@ This prints |char_node| data.
+
 @c
 void print_font_and_char(int p)
-{                               /* prints |char_node| data */
+{
     if (!is_valid_font(font(p)))
         print_char('*');
     else
@@ -895,9 +908,11 @@ void print_font_and_char(int p)
     print(character(p));
 }
 
-@ @c
+@ This prints token list data in braces
+
+@c
 void print_mark(int p)
-{                               /* prints token list data in braces */
+{
     print_char('{');
     if ((p < (int) fix_mem_min) || (p > (int) fix_mem_end))
         tprint_esc("CLOBBERED.");
@@ -906,15 +921,16 @@ void print_mark(int p)
     print_char('}');
 }
 
-@ @c
+@ This prints dimensions of a rule node.
+
+@c
 void print_rule_dimen(scaled d)
-{                               /* prints dimension in rule node */
+{
     if (is_running(d))
         print_char('*');
     else
         print_scaled(d);
 }
-
 
 @ Since boxes can be inside of boxes, |show_node_list| is inherently recursive,
 @^recursion@>
@@ -930,32 +946,29 @@ be given and no sublists will be traversed. Another global variable, called
 |breadth_max| had better be positive, or you won't see anything.
 
 @c
-int depth_threshold;            /* maximum nesting depth in box displays */
-int breadth_max;                /* maximum number of items shown at the same list level */
+int depth_threshold; /* maximum nesting depth in box displays */
+int breadth_max;     /* maximum number of items shown at the same list level */
 
-
-@ The recursive machinery is started by calling |show_box|.
+@ The recursive machinery is started by calling |show_box|. Assign the values
+|depth_threshold:=show_box_depth| and |breadth_max:=show_box_breadth|
 
 @c
 void show_box(halfword p)
 {
-    /* Assign the values |depth_threshold:=show_box_depth| and
-       |breadth_max:=show_box_breadth| */
     depth_threshold = int_par(show_box_depth_code);
     breadth_max = int_par(show_box_breadth_code);
-
     if (breadth_max <= 0)
         breadth_max = 5;
-    show_node_list(p);          /* the show starts at |p| */
+    /* the show starts at |p| */
+    show_node_list(p);
     print_ln();
 }
 
-
-@ Helper for debugging purposes
+@ Helper for debugging purposes. It prints highlights of list |p|
 
 @c
 void short_display_n(int p, int m)
-{                               /* prints highlights of list |p| */
+{
     int i = 0;
     font_in_short_display = null_font;
     if (p == null)
@@ -999,7 +1012,6 @@ void short_display_n(int p, int m)
     update_terminal();
 }
 
-
 @ When debugging a macro package, it can be useful to see the exact
 control sequence names in the format file.  For example, if ten new
 csnames appear, it's nice to know what they are, to help pinpoint where
@@ -1011,20 +1023,20 @@ void print_csnames(int hstart, int hfinish)
 {
     int h;
     unsigned char *c, *l;
-    fprintf(stderr, "fmtdebug:csnames from %d to %d:", (int) hstart,
-            (int) hfinish);
+    fprintf(stderr, "fmtdebug:csnames from %d to %d:", (int) hstart, (int) hfinish);
     for (h = hstart; h <= hfinish; h++) {
-        if (cs_text(h) > 0) {   /* if have anything at this position */
+        if (cs_text(h) > 0) {
+            /* we have anything at this position */
             c = str_string(cs_text(h));
             l = c + str_length(cs_text(h));
             while (c < l) {
-                fputc(*c++, stderr);    /* print the characters */
+                /* print the characters */
+                fputc(*c++, stderr);
             }
             fprintf(stderr, "|");
         }
     }
 }
-
 
 @ A helper for printing file:line:error style messages.  Look for a
 filename in |full_source_filename_stack|, and if we fail to find
@@ -1033,8 +1045,7 @@ one fall back on the non-file:line:error style.
 @c
 void print_file_line(void)
 {
-    int level;
-    level = in_open;
+    int level = in_open;
     while ((level > 0) && (full_source_filename_stack[level] == 0))
         decr(level);
     if (level == 0) {
@@ -1051,14 +1062,13 @@ void print_file_line(void)
     }
 }
 
-
 @ \TeX\ is occasionally supposed to print diagnostic information that
 goes only into the transcript file, unless |tracing_online| is positive.
 Here are two routines that adjust the destination of print commands:
 
 @c
 void begin_diagnostic(void)
-{                               /* prepare to do some tracing */
+{
     global_old_setting = selector;
     if ((int_par(tracing_online_code) <= 0) && (selector == term_and_log)) {
         decr(selector);
@@ -1067,15 +1077,16 @@ void begin_diagnostic(void)
     }
 }
 
-@ @c
+@ Restore proper conditions after tracing.
+
+@c
 void end_diagnostic(boolean blank_line)
-{                               /* restore proper conditions after tracing */
+{
     tprint_nl("");
     if (blank_line)
         print_ln();
     selector = global_old_setting;
 }
-
 
 @ Of course we had better declare another global variable, if the previous
 routines are going to work.

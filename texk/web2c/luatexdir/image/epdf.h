@@ -121,7 +121,8 @@ extern "C" {
     extern int pdf_create_obj(PDF pdf, int t, int i);
 
     /* pdftoepdf.cc */
-    extern void read_pdf_info(image_dict *, int, int, img_readtype_e);
+    extern void read_pdf_info(image_dict *);
+    extern void flush_pdf_info(image_dict *);
     extern void write_epdf(PDF, image_dict *);
     extern void unrefPdfDocument(char *);
     extern void unrefMemStreamPdfDocument(char *);

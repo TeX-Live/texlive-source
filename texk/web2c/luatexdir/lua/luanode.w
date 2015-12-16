@@ -152,7 +152,7 @@ int lua_appendtovlist_callback(halfword box, int location, halfword prev_depth, 
     }
     nodelist_to_lua(L, box);
     lua_push_string_by_index(L,location);
-    lua_pushnumber(L, (int) prev_depth);
+    lua_pushinteger(L, (int) prev_depth);
     lua_pushboolean(L, is_mirrored);
     if (lua_pcall(L, 4, 2, 0) != 0) {
         fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
@@ -161,7 +161,7 @@ int lua_appendtovlist_callback(halfword box, int location, halfword prev_depth, 
         return 0;
     }
     if (lua_type(L,-1) == LUA_TNUMBER) {
-        *next_depth = lua_tonumber(L,-1);
+        *next_depth = lua_tointeger(L,-1);
         *prev_set = true;
         if (lua_type(L, -2) != LUA_TNIL) {
             p = check_isnode(L, -2);
@@ -193,7 +193,7 @@ halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type, int ex
     alink(head_node) = null ; /* hh-ls */
     nodelist_to_lua(L, head_node);
     lua_push_group_code(L,extrainfo);
-    lua_pushnumber(L, size);
+    lua_pushinteger(L, size);
     lua_push_pack_type(L,pack_type);
     if (pack_direction >= 0)
         lua_push_dir_par(L, pack_direction);
@@ -251,9 +251,9 @@ halfword lua_vpack_filter(halfword head_node, scaled size, int pack_type, scaled
     alink(head_node) = null ; /* hh-ls */
     nodelist_to_lua(L, head_node);
     lua_push_group_code(L,extrainfo);
-    lua_pushnumber(L, size);
+    lua_pushinteger(L, size);
     lua_push_pack_type(L,pack_type);
-    lua_pushnumber(L, maxd);
+    lua_pushinteger(L, maxd);
     if (pack_direction >= 0)
          lua_push_dir_par(L, pack_direction);
     else
@@ -383,17 +383,17 @@ void show_pdf_literal(pointer p)
 {
     tprint_esc("pdfliteral");
     switch (pdf_literal_mode(p)) {
-    case set_origin:
-        break;
-    case direct_page:
-        tprint(" page");
-        break;
-    case direct_always:
-        tprint(" direct");
-        break;
-    default:
-        confusion("literal2");
-        break;
+        case set_origin:
+            break;
+        case direct_page:
+            tprint(" page");
+            break;
+        case direct_always:
+            tprint(" direct");
+            break;
+        default:
+            confusion("literal2");
+            break;
     }
     if (pdf_literal_type(p) == normal) {
         print_mark(pdf_literal_data(p));

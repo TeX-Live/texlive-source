@@ -207,6 +207,7 @@ typedef enum {
     variable_cmd,
     feedback_cmd,
     the_cmd,                              /* expand an internal quantity ( \.{\\the} or \.{\\unexpanded}, \.{\\detokenize} ) */
+    combine_toks_cmd,
     top_bot_mark_cmd,                     /* inserted mark ( \.{\\topmark}, etc.~) */
     call_cmd,                             /* non-long, non-outer control sequence */
     long_call_cmd,                        /* long, non-outer control sequence */
@@ -234,33 +235,34 @@ typedef enum {
 
 typedef enum {
     number_code = 0,            /* command code for \.{\\number} */
-    roman_numeral_code,         /* command code for \.{\\romannumeral} */
+    lua_function_code,          /* command code for \.{\\luafunction} */
+    lua_code,                   /* command code for \.{\\directlua} */
+    expanded_code,              /* command code for \.{\\expanded} */
+    math_style_code,            /* command code for \.{\\mathstyle} */
     string_code,                /* command code for \.{\\string} */
+    cs_string_code,             /* command code for \.{\\csstring} */
+    roman_numeral_code,         /* command code for \.{\\romannumeral} */
     meaning_code,               /* command code for \.{\\meaning} */
+    uchar_code,                 /* command code for \.{\\Uchar} */
+    lua_escape_string_code,     /* command code for \.{\\luaescapestring} */
+    font_id_code,               /* command code for \.{\\fontid} */
     font_name_code,             /* command code for \.{\\fontname} */
-    etex_code,                  /* command code for \.{\\eTeXVersion} */
-    format_name_code,           /* command code for \.{\\AlephVersion} */
-    luatex_banner_code,         /* command code for \.{\\luatexbanner}: */
     left_margin_kern_code,      /* command code for \.{\\leftmarginkern} */
     right_margin_kern_code,     /* command code for \.{\\rightmarginkern} */
     uniform_deviate_code,       /* command code for \.{\\uniformdeviate} */
     normal_deviate_code,        /* command code for \.{\\normaldeviate} */
-    lua_code,                   /* command code for \.{\\directlua} */
-    lua_escape_string_code,     /* command code for \.{\\luaescapestring} */
-    luatex_revision_code,       /* command code for \.{\\luatexrevision} */
-    luatex_date_code,           /* command code for \.{\\luatexdate} */
-    math_style_code,            /* command code for \.{\\mathstyle} */
-    expanded_code,              /* command code for \.{\\expanded} */
-    job_name_code,              /* command code for \.{\\jobname} */
-    eTeX_revision_code,         /* command code for \.{\\eTeXrevision} */
-    font_identifier_code,       /* command code for \.{tex.fontidentifier} (virtual) */
-    font_id_code,               /* command code for \.{\\fontid} */
-    uchar_code,                 /* command code for \.{\\Uchar} */
-    lua_function_code,          /* command code for \.{\\luafunction} */
-    insert_ht_code,             /* command code for \.{\\insertht} */
     math_char_class_code,
     math_char_fam_code,
     math_char_slot_code,
+    insert_ht_code,             /* command code for \.{\\insertht} */
+    job_name_code,              /* command code for \.{\\jobname} */
+    format_name_code,           /* command code for \.{\\AlephVersion} */
+    luatex_banner_code,         /* command code for \.{\\luatexbanner}: */
+    luatex_revision_code,       /* command code for \.{\\luatexrevision} */
+    luatex_date_code,           /* command code for \.{\\luatexdate} */
+    etex_code,                  /* command code for \.{\\eTeXVersion} */
+    eTeX_revision_code,         /* command code for \.{\\eTeXrevision} */
+    font_identifier_code,       /* command code for \.{tex.fontidentifier} (virtual) */
     /* backend */
     dvi_feedback_code,
     pdf_feedback_code,

@@ -19,13 +19,11 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
 #define end_line_char int_par(end_line_char_code)
 #define error_context_lines int_par(error_context_lines_code)
-
 
 in_state_record *input_stack = NULL;
 int input_ptr = 0;              /* first unused location of |input_stack| */
@@ -46,15 +44,13 @@ int scanner_status = 0;         /* can a subfile end now? */
 pointer warning_index = null;   /* identifier relevant to non-|normal| scanner status */
 pointer def_ref = null;         /* reference count of token list being defined */
 
-
-
 @ Here is a procedure that uses |scanner_status| to print a warning message
 when a subfile has ended, and at certain other crucial times:
 
 @c
 void runaway(void)
 {
-    pointer p = null;           /* head of runaway list */
+    pointer p = null; /* head of runaway list */
     if (scanner_status > skipping) {
         switch (scanner_status) {
         case defining:
@@ -73,7 +69,8 @@ void runaway(void)
             tprint_nl("Runaway text");
             p = def_ref;
             break;
-        default:               /* there are no other cases */
+        default:
+            /* there are no other cases */
             break;
         }
         print_char('?');
@@ -81,7 +78,6 @@ void runaway(void)
         show_token_list(token_link(p), null, error_line - 10);
     }
 }
-
 
 @ The |param_stack| is an auxiliary array used to hold pointers to the token
 lists for parameters at the current level and subsidiary levels of input.
@@ -106,7 +102,6 @@ $v_j$ template begins when a tab mark or \.{\\cr} occurs at a time that
 @c
 int align_state = 0;            /* group level with respect to current alignment */
 
-
 @ Thus, the ``current input state'' can be very complicated indeed; there
 can be many levels and each level can arise in a variety of ways. The
 |show_context| procedure, which is used by \TeX's error-reporting routine to
@@ -117,7 +112,6 @@ displayed by this procedure.
 
 @c
 int base_ptr = 0;               /* shallowest level shown by |show_context| */
-
 
 @ The status at each level is indicated by printing two lines, where the first
 line indicates what was read so far and the second line shows what remains
@@ -130,65 +124,65 @@ at most |error_line|. Non-current input levels whose |token_type| is
 static void print_token_list_type(int t)
 {
     switch (t) {
-    case parameter:
-        tprint_nl("<argument> ");
-        break;
-    case u_template:
-    case v_template:
-        tprint_nl("<template> ");
-        break;
-    case backed_up:
-        if (iloc == null)
-            tprint_nl("<recently read> ");
-        else
-            tprint_nl("<to be read again> ");
-        break;
-    case inserted:
-        tprint_nl("<inserted text> ");
-        break;
-    case macro:
-        print_ln();
-        print_cs(iname);
-        break;
-    case output_text:
-        tprint_nl("<output> ");
-        break;
-    case every_par_text:
-        tprint_nl("<everypar> ");
-        break;
-    case every_math_text:
-        tprint_nl("<everymath> ");
-        break;
-    case every_display_text:
-        tprint_nl("<everydisplay> ");
-        break;
-    case every_hbox_text:
-        tprint_nl("<everyhbox> ");
-        break;
-    case every_vbox_text:
-        tprint_nl("<everyvbox> ");
-        break;
-    case every_job_text:
-        tprint_nl("<everyjob> ");
-        break;
-    case every_cr_text:
-        tprint_nl("<everycr> ");
-        break;
-    case mark_text:
-        tprint_nl("<mark> ");
-        break;
-    case every_eof_text:
-        tprint_nl("<everyeof> ");
-        break;
-    case write_text:
-        tprint_nl("<write> ");
-        break;
-    default:
-        tprint_nl("?");
-        break;                  /* this should never happen */
+        case parameter:
+            tprint_nl("<argument> ");
+            break;
+        case u_template:
+        case v_template:
+            tprint_nl("<template> ");
+            break;
+        case backed_up:
+            if (iloc == null)
+                tprint_nl("<recently read> ");
+            else
+                tprint_nl("<to be read again> ");
+            break;
+        case inserted:
+            tprint_nl("<inserted text> ");
+            break;
+        case macro:
+            print_ln();
+            print_cs(iname);
+            break;
+        case output_text:
+            tprint_nl("<output> ");
+            break;
+        case every_par_text:
+            tprint_nl("<everypar> ");
+            break;
+        case every_math_text:
+            tprint_nl("<everymath> ");
+            break;
+        case every_display_text:
+            tprint_nl("<everydisplay> ");
+            break;
+        case every_hbox_text:
+            tprint_nl("<everyhbox> ");
+            break;
+        case every_vbox_text:
+            tprint_nl("<everyvbox> ");
+            break;
+        case every_job_text:
+            tprint_nl("<everyjob> ");
+            break;
+        case every_cr_text:
+            tprint_nl("<everycr> ");
+            break;
+        case mark_text:
+            tprint_nl("<mark> ");
+            break;
+        case every_eof_text:
+            tprint_nl("<everyeof> ");
+            break;
+        case write_text:
+            tprint_nl("<write> ");
+            break;
+        default:
+            tprint_nl("?");
+            /* this should never happen */
+            break;
     }
 }
-
 
 @ Here it is necessary to explain a little trick. We don't want to store a long
 string that corresponds to a token list, because that string might take up
@@ -219,8 +213,6 @@ where subscripts of |trick_buf| are circular modulo |error_line|. The
 second line consists of |n|~spaces followed by |trick_buf[k..(k+m-1)]|,
 unless |n+m>error_line|; in the latter case, further cropping is done.
 This is easier to program than to explain.
-
-
 
 @ The following code sets up the print routines so that they will gather
 the desired information.
@@ -259,7 +251,7 @@ void set_trick_count(void)
 /*
     We don't care too much if we stay a bit too much below the max error_line
     even if we have more room on the line. If length is really an issue then
-    any length is. After all on can set the length larger.
+    any length is. After all one can set the length larger.
 */
 
 #define print_valid_utf8(q) do { \
@@ -287,44 +279,40 @@ void set_trick_count(void)
 
 @ @c
 void show_context(void)
-{                        /* prints where the scanner is */
-    int old_setting;     /* saved |selector| setting */
-    int nn;              /* number of contexts shown so far, less one */
-    boolean bottom_line; /* have we reached the final context to be shown? */
-    int i;               /* index into |buffer| */
-    int j;               /* end of current line in |buffer| */
-    int l;               /* length of descriptive information on line 1 */
-    int m;               /* context information gathered for line 2 */
-    int n;               /* length of line 1 */
-    int p;               /* starting or ending place in |trick_buf| */
-    int q;               /* temporary index */
-    int c;               /* used in sanitizer */
-
+{                                /* prints where the scanner is */
+    int old_setting;             /* saved |selector| setting */
+    int nn = -1;                 /* number of contexts shown so far, less one */
+    boolean bottom_line = false; /* have we reached the final context to be shown? */
+    int i;                       /* index into |buffer| */
+    int j;                       /* end of current line in |buffer| */
+    int l;                       /* length of descriptive information on line 1 */
+    int m;                       /* context information gathered for line 2 */
+    int n;                       /* length of line 1 */
+    int p;                       /* starting or ending place in |trick_buf| */
+    int q;                       /* temporary index */
+    int c;                       /* used in sanitizer */
     base_ptr = input_ptr;
     input_stack[base_ptr] = cur_input;
     /* store current state */
-    nn = -1;
-    bottom_line = false;
     while (true) {
         cur_input = input_stack[base_ptr];      /* enter into the context */
         if (istate != token_list) {
             if ((iname > 21) || (base_ptr == 0))
                 bottom_line = true;
         }
-        if ((base_ptr == input_ptr) || bottom_line
-            || (nn < error_context_lines)) {
+        if ((base_ptr == input_ptr) || bottom_line || (nn < error_context_lines)) {
             /* Display the current context */
-            if ((base_ptr == input_ptr) || (istate != token_list) ||
-                (token_type != backed_up) || (iloc != null)) {
+            if ((base_ptr == input_ptr) || (istate != token_list) || (token_type != backed_up) || (iloc != null)) {
                 /* we omit backed-up token lists that have already been read */
                 tally = 0;      /* get ready to count characters */
                 old_setting = selector;
                 if (istate != token_list) {
-                    /* Print location of current line */
                     /*
-                       This routine should be changed, if necessary, to give the best possible
-                       indication of where the current line resides in the input file.
-                       For example, on some systems it is best to print both a page and line number.
+                        Print location of current line
+
+                        This routine should be changed, if necessary, to give the best possible
+                        indication of where the current line resides in the input file. For example,
+                        on some systems it is best to print both a page and line number.
                      */
                     if (iname <= 17) {
                         if (terminal_input) {
@@ -359,7 +347,8 @@ void show_context(void)
                     else
                         show_token_list(token_link(istart), iloc, 100000);      /* avoid reference count */
                 }
-                selector = old_setting; /* stop pseudoprinting */
+                /* stop pseudoprinting */
+                selector = old_setting;
                 /* Print two lines using the tricky pseudoprinted information */
                 if (trick_count == 1000000)
                     set_trick_count();
@@ -379,8 +368,9 @@ void show_context(void)
                 for (q = p; q <= first_count - 1; q++)
                     print_valid_utf8(q);
                     print_ln();
+                /* print |n| spaces to begin line~2 */
                 for (q = 1; q <= n; q++)
-                    print_char(' ');    /* print |n| spaces to begin line~2 */
+                    print_char(' ');
                 if (m + n <= error_line)
                     p = first_count + m;
                 else
@@ -389,20 +379,20 @@ void show_context(void)
                     print_valid_utf8(q);
                 if (m + n > error_line)
                     tprint("...");
-
                 incr(nn);
             }
         } else if (nn == error_context_lines) {
             tprint_nl("...");
-            incr(nn);           /* omitted if |error_context_lines<0| */
+            incr(nn);
+            /* omitted if |error_context_lines<0| */
         }
         if (bottom_line)
             break;
         decr(base_ptr);
     }
-    cur_input = input_stack[input_ptr]; /* restore original state */
+    /* restore original state */
+    cur_input = input_stack[input_ptr];
 }
-
 
 @ The following subroutines change the input status in commonly needed ways.
 
@@ -410,19 +400,21 @@ First comes |push_input|, which stores the current state and creates a
 new level (having, initially, the same properties as the old).
 
 @c
+
 /* enter a new input level, save the old */
 
-void push_input(void)
-{
-    if (input_ptr > max_in_stack) {
-        max_in_stack = input_ptr;
-        if (input_ptr == stack_size)
-            overflow("input stack size", (unsigned) stack_size);
-    }
-    input_stack[input_ptr] = cur_input; /* stack the record */
-    nofilter = false;
+# define pop_input() \
+    cur_input=input_stack[--input_ptr]
+
+# define push_input() \
+    if (input_ptr > max_in_stack) { \
+        max_in_stack = input_ptr; \
+        if (input_ptr == stack_size) \
+            overflow("input stack size", (unsigned) stack_size); \
+    } \
+    input_stack[input_ptr] = cur_input; \
+    nofilter = false; \
     incr(input_ptr);
-}
 
 @
 Here is a procedure that starts a new level of token-list input, given
@@ -436,7 +428,8 @@ void begin_token_list(halfword p, quarterword t)
     istate = token_list;
     istart = p;
     token_type = (unsigned char) t;
-    if (t >= macro) {           /* the token list starts with a reference count */
+    if (t >= macro) {
+        /* the token list starts with a reference count */
         add_token_ref(p);
         if (t == macro) {
             param_start = param_ptr;
@@ -462,7 +455,6 @@ void begin_token_list(halfword p, quarterword t)
     }
 }
 
-
 @ When a token list has been fully scanned, the following computations
 should be done as we leave that level of input. The |token_type| tends
 to be equal to either |backed_up| or |inserted| about 2/3 of the time.
@@ -470,13 +462,17 @@ to be equal to either |backed_up| or |inserted| about 2/3 of the time.
 
 @c
 void end_token_list(void)
-{                               /* leave a token-list input level */
-    if (token_type >= backed_up) {      /* token list to be deleted */
+{
+    /* leave a token-list input level */
+    if (token_type >= backed_up) {
+        /* token list to be deleted */
         if (token_type <= inserted) {
             flush_list(istart);
         } else {
-            delete_token_ref(istart);   /* update reference count */
-            if (token_type == macro) {  /* parameters must be flushed */
+            /* update reference count */
+            delete_token_ref(istart);
+            if (token_type == macro) {
+                /* parameters must be flushed */
                 while (param_ptr > param_start) {
                     decr(param_ptr);
                     flush_list(param_stack[param_ptr]);
@@ -493,7 +489,6 @@ void end_token_list(void)
     check_interrupt();
 }
 
-
 @ Sometimes \TeX\ has read too far and wants to ``unscan'' what it has
 seen. The |back_input| procedure takes care of this by putting the token
 just scanned back into the input stream, ready to be read again. This
@@ -503,12 +498,16 @@ so it has been slightly optimized for speed.
 @^inner loop@>
 
 @c
+
+/* undoes one token of input */
+
 void back_input(void)
-{                               /* undoes one token of input */
-    halfword p;                 /* a token list of length one */
-    while ((istate == token_list) && (iloc == null)
-           && (token_type != v_template))
-        end_token_list();       /* conserve stack space */
+{
+    halfword p; /* a token list of length one */
+    while ((istate == token_list) && (iloc == null) && (token_type != v_template)) {
+        /* conserve stack space */
+        end_token_list();
+    }
     p = get_avail();
     set_token_info(p, cur_tok);
     if (cur_tok < right_brace_limit) {
@@ -526,7 +525,8 @@ void back_input(void)
 
 @ Insert token |p| into \TeX's input
 @c
-int reinsert_token(boolean a, halfword pp)
+
+void reinsert_token(boolean a, halfword pp)
 {
     halfword t;
     t = cur_tok;
@@ -546,12 +546,9 @@ int reinsert_token(boolean a, halfword pp)
         }
     } else {
         back_input();
-        a = true;               /* etex is always on */
     }
     cur_tok = t;
-    return a;
 }
-
 
 @ The |begin_file_reading| procedure starts a new level of input for lines
 of characters to be read from a file, or as an insertion from the
@@ -584,7 +581,6 @@ void begin_file_reading(void)
     synctex_tag = 0;
 }
 
-
 @ Conversely, the variables must be downdated when such a level of input
 is finished:
 
@@ -603,7 +599,6 @@ void end_file_reading(void)
     decr(in_open);
 }
 
-
 @ In order to keep the stack from overflowing during a long sequence of
 inserted `\.{\\show}' commands, the following routine removes completed
 error-inserted lines from memory.
@@ -618,8 +613,7 @@ void clear_for_error_prompt(void)
     clear_terminal();
 }
 
-@ To get \TeX's whole input mechanism going, we perform the following
-   actions.
+@ To get \TeX's whole input mechanism going, we perform the following actions.
 
 @c
 void initialize_inputstack(void)
@@ -662,9 +656,6 @@ void initialize_inputstack(void)
     first = last + 1;           /* |init_terminal| has set |loc| and |last| */
 }
 
-
-
-
 @ The global variable |pseudo_files| is used to maintain a stack of
 pseudo files.  The |pseudo_lines| field of each pseudo file points to
 a linked list of variable size nodes representing lines not yet
@@ -672,7 +663,7 @@ processed: the |subtype| field contains the size of this node,
 all the following words contain ASCII codes.
 
 @c
-halfword pseudo_files;          /* stack of pseudo files */
+halfword pseudo_files; /* stack of pseudo files */
 
 static halfword string_to_pseudo(str_number str, int nl)
 {
@@ -685,7 +676,7 @@ static halfword string_to_pseudo(str_number str, int nl)
     len = (unsigned) str_length(str);
     l = 0;
     while (l < len) {
-        unsigned m = l;         /* start of current line */
+        unsigned m = l; /* start of current line */
         while ((l < len) && (s[l] != nl))
             l++;
         sz = (int) (l - m + 7) / 4;
@@ -718,14 +709,13 @@ static halfword string_to_pseudo(str_number str, int nl)
     return h;
 }
 
-
 @ The |pseudo_start| procedure initiates reading from a pseudo file.
 
 @c
 void pseudo_from_string(void)
 {
-    str_number s;               /* string to be converted into a pseudo file */
-    halfword p;                 /* for list construction */
+    str_number s;  /* string to be converted into a pseudo file */
+    halfword p;    /* for list construction */
     s = make_string();
     /* Convert string |s| into a new pseudo file */
     p = string_to_pseudo(s, int_par(new_line_char_code));
@@ -733,10 +723,10 @@ void pseudo_from_string(void)
     pseudo_files = p;
     flush_str(s);
     /* Initiate input from new pseudo file */
-    begin_file_reading();       /* set up |cur_file| and new level of input */
+    begin_file_reading(); /* set up |cur_file| and new level of input */
     line = 0;
     ilimit = istart;
-    iloc = ilimit + 1;          /* force line read */
+    iloc = ilimit + 1; /* force line read */
     if (int_par(tracing_scan_tokens_code) > 0) {
         if (term_offset > max_print_line - 3)
             print_ln();
@@ -755,7 +745,7 @@ void pseudo_from_string(void)
 
 void pseudo_start(void)
 {
-    int old_setting;            /* holds |selector| setting */
+    int old_setting;
     scan_general_text();
     old_setting = selector;
     selector = new_string;
@@ -769,10 +759,10 @@ void pseudo_start(void)
 @ @c
 void lua_string_start(void)
 {
-    begin_file_reading();       /* set up |cur_file| and new level of input */
+    begin_file_reading(); /* set up |cur_file| and new level of input */
     line = 0;
     ilimit = istart;
-    iloc = ilimit + 1;          /* force line read */
+    iloc = ilimit + 1; /* force line read */
     iname = 21;
     luacstring_start(iindex);
 }
@@ -780,13 +770,15 @@ void lua_string_start(void)
 @ Here we read a line from the current pseudo file into |buffer|.
 
 @c
+/* inputs the next line or returns |false| */
+
 boolean pseudo_input(void)
-{                               /* inputs the next line or returns |false| */
-    halfword p;                 /* current line from pseudo file */
-    int sz;                     /* size of node |p| */
-    four_quarters w;            /* four ASCII codes */
-    halfword r;                 /* loop index */
-    last = first;               /* cf.\ Matthew 19\thinspace:\thinspace30 */
+{
+    halfword p;      /* current line from pseudo file */
+    int sz;          /* size of node |p| */
+    four_quarters w; /* four ASCII codes */
+    halfword r;      /* loop index */
+    last = first;    /* cf.\ Matthew 19\thinspace:\thinspace30 */
     p = pseudo_lines(pseudo_files);
     if (p == null) {
         return false;
@@ -798,7 +790,7 @@ boolean pseudo_input(void)
         last = first;
         for (r = p + 1; r <= p + sz - 1; r++) {
             w = varmem[r].qqqq;
-            buffer[last] = (packed_ASCII_code) w.b0;
+            buffer[last]     = (packed_ASCII_code) w.b0;
             buffer[last + 1] = (packed_ASCII_code) w.b1;
             buffer[last + 2] = (packed_ASCII_code) w.b2;
             buffer[last + 3] = (packed_ASCII_code) w.b3;
@@ -816,8 +808,10 @@ boolean pseudo_input(void)
 @ When we are done with a pseudo file we `close' it.
 
 @c
+/* close the top level pseudo file */
+
 void pseudo_close(void)
-{                               /* close the top level pseudo file */
+{
     halfword p;
     p = vlink(pseudo_files);
     flush_node(pseudo_files);

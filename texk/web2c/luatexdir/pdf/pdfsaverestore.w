@@ -19,24 +19,21 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
-pos_entry *pos_stack = 0;       /* the stack */
-int pos_stack_size = 0;         /* initially empty */
-int pos_stack_used = 0;         /* used entries */
+pos_entry *pos_stack = 0; /* the stack */
+int pos_stack_size = 0;   /* initially empty */
+int pos_stack_used = 0;   /* used entries */
 
 @ @c
 static void checkpdfsave(scaledpos pos)
 {
     pos_entry *new_stack;
-
     if (pos_stack_used >= pos_stack_size) {
         pos_stack_size += STACK_INCREMENT;
         new_stack = xtalloc((unsigned) pos_stack_size, pos_entry);
-        memcpy((void *) new_stack, (void *) pos_stack,
-               (unsigned) pos_stack_used * sizeof(pos_entry));
+        memcpy((void *) new_stack, (void *) pos_stack, (unsigned) pos_stack_used * sizeof(pos_entry));
         xfree(pos_stack);
         pos_stack = new_stack;
     }
@@ -53,20 +50,19 @@ static void checkpdfrestore(scaledpos pos)
 {
     scaledpos diff;
     if (pos_stack_used == 0) {
-        luatex_warn("%s", "'restore' is missing a 'save'");
+        normal_warning("pdf backend", "'restore' is missing a 'save'");
         return;
     }
     pos_stack_used--;
     diff.h = pos.h - pos_stack[pos_stack_used].pos.h;
     diff.v = pos.v - pos_stack[pos_stack_used].pos.v;
     if (diff.h != 0 || diff.v != 0) {
-        luatex_warn("misplaced 'restore' by (%dsp, %dsp)", (int) diff.h, (int) diff.v);
+        formatted_warning("pdf backend","misplaced 'restore' by (%dsp, %dsp)", (int) diff.h, (int) diff.v);
     }
     if (global_shipping_mode == SHIPPING_PAGE) {
         matrix_stack_used = pos_stack[pos_stack_used].matrix_stack;
     }
 }
-
 
 @ @c
 void pdf_out_save(PDF pdf, halfword p)

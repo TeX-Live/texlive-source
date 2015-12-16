@@ -20,7 +20,6 @@
 
 @ @c
 
-
 @ Basic JPEG~2000 image support. Section and Table references below:
 Information technology --- JPEG~2000 image coding system: Core coding system.
 ISO/IEC 15444-1, Second edition, 2004-09-15, file |15444-1annexi.pdf|.
@@ -66,8 +65,9 @@ static hdr_struct read_boxhdr(image_dict * idict)
     hdr.tbox = read4bytes(img_file(idict));
     if (hdr.lbox == 1)
         hdr.lbox = read8bytes(img_file(idict));
-    if (hdr.lbox == 0 && hdr.tbox != BOX_JP2C)
-        luatex_fail("reading JP2 image failed (LBox == 0)");
+    if (hdr.lbox == 0 && hdr.tbox != BOX_JP2C) {
+        normal_error("readjp2","LBox == 0");
+    }
     return hdr;
 }
 
@@ -90,6 +90,7 @@ static void scan_ihdr(image_dict * idict)
 
 /* 1.5.3.7.1 Capture Resolution box */
 /* 1.5.3.7.2 Default Display Resolution box */
+
 static void scan_resc_resd(image_dict * idict)
 {
     unsigned int vr_n, vr_d, hr_n, hr_d;
@@ -108,6 +109,7 @@ static void scan_resc_resd(image_dict * idict)
 }
 
 /* 1.5.3.7 Resolution box (superbox) */
+
 static void scan_res(image_dict * idict, uint64_t epos_s)
 {
     hdr_struct hdr;
@@ -118,25 +120,23 @@ static void scan_res(image_dict * idict, uint64_t epos_s)
         hdr = read_boxhdr(idict);
         epos = spos + hdr.lbox;
         switch (hdr.tbox) {
-        case (BOX_RESC):
-            /* arbitrarily: let BOX_RESD have precedence */
-            if (img_xres(idict) == 0 && img_yres(idict) == 0) {
+            case (BOX_RESC):
+                /* arbitrarily: let BOX_RESD have precedence */
+                if (img_xres(idict) == 0 && img_yres(idict) == 0) {
+                    scan_resc_resd(idict);
+                    if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
+                        normal_error("readjp2","resc box size inconsistent");
+                }
+                break;
+            case (BOX_RESD):
                 scan_resc_resd(idict);
                 if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
-                    luatex_fail
-                        ("reading JP2 image failed (resc box size inconsistent)");
-            }
-            break;
-        case (BOX_RESD):
-            scan_resc_resd(idict);
-            if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
-                luatex_fail
-                    ("reading JP2 image failed (resd box size inconsistent)");
-            break;
-        default:;
+                    normal_error("readjp2","resd box size inconsistent");
+                break;
+            default:;
         }
         if (epos > epos_s)
-            luatex_fail("reading JP2 image failed (res box size inconsistent)");
+            normal_error("readjp2","res box size inconsistent");
         if (epos == epos_s)
             break;
         xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
@@ -144,6 +144,7 @@ static void scan_res(image_dict * idict, uint64_t epos_s)
 }
 
 /* 1.5.3 JP2 Header box (superbox) */
+
 static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
 {
     boolean ihdr_found = false;
@@ -158,8 +159,7 @@ static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
         case (BOX_IHDR):
             scan_ihdr(idict);
             if (xftell(img_file(idict), img_filepath(idict)) != (long)epos)
-                luatex_fail
-                    ("reading JP2 image failed (ihdr box size inconsistent)");
+                normal_error("readjp2","ihdr box size inconsistent");
             ihdr_found = true;
             break;
         case (BOX_RES):
@@ -168,8 +168,7 @@ static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
         default:;
         }
         if (epos > epos_s)
-            luatex_fail
-                ("reading JP2 image failed (jp2h box size inconsistent)");
+            normal_error("readjp2","jp2h box size inconsistent");
         if (epos == epos_s)
             break;
         xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
@@ -179,50 +178,56 @@ static boolean scan_jp2h(image_dict * idict, uint64_t epos_s)
 
 static void close_and_cleanup_jp2(image_dict * idict)
 {
-    assert(idict != NULL);
-    assert(img_file(idict) != NULL);
-    assert(img_filepath(idict) != NULL);
-    xfclose(img_file(idict), img_filepath(idict));
-    img_file(idict) = NULL;
-    assert(img_jp2_ptr(idict) != NULL);
-    xfree(img_jp2_ptr(idict));
+    /* if one of then is not NULL we already cleaned up */
+    if (img_file(idict) != NULL) {
+        xfclose(img_file(idict), img_filepath(idict));
+        img_file(idict) = NULL;
+    }
+    if (img_jp2_ptr(idict) != NULL) {
+        xfree(img_jp2_ptr(idict));
+    }
 }
 
-void read_jp2_info(image_dict * idict, img_readtype_e readtype)
+void flush_jp2_info(image_dict * idict)
+{
+    close_and_cleanup_jp2(idict);
+}
+
+void read_jp2_info(image_dict * idict)
 {
     boolean ihdr_found = false;
     hdr_struct hdr;
     uint64_t spos, epos;
-    assert(img_type(idict) == IMG_TYPE_JP2);
+    if (img_type(idict) != IMG_TYPE_JP2) {
+        normal_error("readjp2","conflicting image dictionary");
+    }
+    if (img_file(idict) != NULL) {
+        normal_error("readjp2","image data already read");
+    }
     img_totalpages(idict) = 1;
     img_pagenum(idict) = 1;
     img_xres(idict) = img_yres(idict) = 0;
-    assert(img_file(idict) == NULL);
     img_file(idict) = xfopen(img_filepath(idict), FOPEN_RBIN_MODE);
-    assert(img_jp2_ptr(idict) == NULL);
     img_jp2_ptr(idict) = xtalloc(1, jp2_img_struct);
     xfseek(img_file(idict), 0, SEEK_END, img_filepath(idict));
-    img_jp2_ptr(idict)->length =
-        (int) xftell(img_file(idict), img_filepath(idict));
+    img_jp2_ptr(idict)->length = (int) xftell(img_file(idict), img_filepath(idict));
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
-
-    assert(sizeof(uint64_t) >= 8);
+    if (sizeof(uint64_t) < 8) {
+        normal_error("readjp2","size problem");
+    }
     spos = epos = 0;
-
     /* 1.5.1 JPEG 2000 Signature box */
     hdr = read_boxhdr(idict);
-    assert(hdr.tbox == BOX_JP); /* has already been checked */
     epos = spos + hdr.lbox;
     xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
-
     /* 1.5.2 File Type box */
     spos = epos;
     hdr = read_boxhdr(idict);
-    if (hdr.tbox != BOX_FTYP)
-        luatex_fail("reading JP2 image failed (missing ftyp box)");
+    if (hdr.tbox != BOX_FTYP) {
+        normal_error("readjp2","missing ftyp box");
+    }
     epos = spos + hdr.lbox;
     xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
-
     while (!ihdr_found) {
         spos = epos;
         hdr = read_boxhdr(idict);
@@ -233,14 +238,15 @@ void read_jp2_info(image_dict * idict, img_readtype_e readtype)
             break;
         case BOX_JP2C:
             if (!ihdr_found)
-                luatex_fail("reading JP2 image failed (no ihdr box found)");
+                normal_error("readjp2","no ihdr box found");
             break;
         default:;
         }
         xfseek(img_file(idict), (long) epos, SEEK_SET, img_filepath(idict));
     }
-    if (readtype == IMG_CLOSEINBETWEEN)
+    if (! img_keepopen(idict)) {
         close_and_cleanup_jp2(idict);
+    }
 }
 
 static void reopen_jp2(image_dict * idict)
@@ -250,19 +256,23 @@ static void reopen_jp2(image_dict * idict)
     height = img_ysize(idict);
     xres = img_xres(idict);
     yres = img_yres(idict);
-    read_jp2_info(idict, IMG_KEEPOPEN);
+    /*
+        we need to make sure that the file kept open
+    */
+    img_keepopen(idict) = 1;
+    read_jp2_info(idict);
     if (width != img_xsize(idict) || height != img_ysize(idict)
-        || xres != img_xres(idict) || yres != img_yres(idict))
-        luatex_fail("writejp2: image dimensions have changed");
+            || xres != img_xres(idict) || yres != img_yres(idict)) {
+        normal_error("writejp2","image dimensions have changed");
+    }
 }
 
 void write_jp2(PDF pdf, image_dict * idict)
 {
     long unsigned l;
-    assert(idict != NULL);
-    if (img_file(idict) == NULL)
+    if (img_file(idict) == NULL) {
         reopen_jp2(idict);
-    assert(img_jp2_ptr(idict) != NULL);
+    }
     pdf_begin_obj(pdf, img_objnum(idict), OBJSTM_NEVER);
     pdf_begin_dict(pdf);
     pdf_dict_add_name(pdf, "Type", "XObject");
@@ -279,8 +289,9 @@ void write_jp2(PDF pdf, image_dict * idict)
     l = (long unsigned int) img_jp2_ptr(idict)->length;
     xfseek(img_file(idict), 0, SEEK_SET, img_filepath(idict));
     if (read_file_to_buf(pdf, img_file(idict), l) != l)
-        luatex_fail("writejp2: fread failed");
+        normal_error("writejp2","fread failed");
     pdf_end_stream(pdf);
     pdf_end_obj(pdf);
+    /* always */
     close_and_cleanup_jp2(idict);
 }

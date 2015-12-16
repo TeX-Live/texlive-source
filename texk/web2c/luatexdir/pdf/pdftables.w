@@ -19,54 +19,55 @@
 
 @ @c
 
-
 #include "ptexlib.h"
 
 @ @c
-const char *pdf_obj_typenames[PDF_OBJ_TYPE_MAX + 1] =
-    { "font", "outline", "dest", "obj", "xform", "ximage", "thread",
+const char *pdf_obj_typenames[PDF_OBJ_TYPE_MAX + 1] = {
+    "font", "outline", "dest", "obj", "xform", "ximage", "thread",
     "pagestream", "page", "pages", "catalog", "info", "link", "annot", "annots",
     "bead", "beads", "objstm", "others"
 };
+
+int pdf_last_annot;
+int pdf_last_link;
+int pdf_last_obj;
+int pdf_retval;                 /* global multi-purpose return value */
 
 @ AVL sort entry into |avl_table[]|
 @c
 static int compare_info(const void *pa, const void *pb, void *param)
 {
-    const oentry *a, *b;
+    const oentry *a = (const oentry *) pa;
+    const oentry *b = (const oentry *) pb;
     (void) param;
-    a = (const oentry *) pa;
-    b = (const oentry *) pb;
     if (a->u_type == b->u_type) {
         if (a->u_type == union_type_int)
-            return ((a->u.int0 <
-                     b->u.int0 ? -1 : (a->u.int0 > b->u.int0 ? 1 : 0)));
-        else                    /* string type */
+            return ((a->u.int0 < b->u.int0 ? -1 : (a->u.int0 > b->u.int0 ? 1 : 0)));
+        else /* string type */
             return strcmp(a->u.str0, b->u.str0);
-    } else if (a->u_type == union_type_int)
+    } else if (a->u_type == union_type_int) {
         return -1;
-    else
+    } else {
         return 1;
+    }
 }
 
 static void avl_put_obj(PDF pdf, int t, oentry * oe)
 {
     void **pp;
-    assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
     if (pdf->obj_tree[t] == NULL) {
         pdf->obj_tree[t] = avl_create(compare_info, NULL, &avl_xallocator);
         if (pdf->obj_tree[t] == NULL)
-            luatex_fail("avlstuff.c: avl_create() pdf->obj_tree failed");
+            formatted_error("pdf backend","avl_create() pdf->obj_tree failed");
     }
     pp = avl_probe(pdf->obj_tree[t], oe);
     if (pp == NULL)
-        luatex_fail("avlstuff.c: avl_probe() out of memory in insertion");
+        formatted_error("pdf backend","avl_probe() out of memory in insertion");
 }
 
 static void avl_put_int_obj(PDF pdf, int int0, int objptr, int t)
 {
-    oentry *oe;
-    oe = xtalloc(1, oentry);
+    oentry *oe = xtalloc(1, oentry);
     oe->u.int0 = int0;
     oe->u_type = union_type_int;
     oe->objptr = objptr;
@@ -75,8 +76,7 @@ static void avl_put_int_obj(PDF pdf, int int0, int objptr, int t)
 
 static void avl_put_str_obj(PDF pdf, char *str0, int objptr, int t)
 {
-    oentry *oe;
-    oe = xtalloc(1, oentry);
+    oentry *oe = xtalloc(1, oentry);
     oe->u.str0 = str0;          /* no xstrdup() here */
     oe->u_type = union_type_cstring;
     oe->objptr = objptr;
@@ -87,7 +87,6 @@ static int avl_find_int_obj(PDF pdf, int t, int i)
 {
     oentry *p;
     oentry tmp;
-    assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
     tmp.u.int0 = i;
     tmp.u_type = union_type_int;
     if (pdf->obj_tree[t] == NULL)
@@ -102,7 +101,6 @@ static int avl_find_str_obj(PDF pdf, int t, char *s)
 {
     oentry *p;
     oentry tmp;
-    assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
     tmp.u.str0 = s;
     tmp.u_type = union_type_cstring;
     if (pdf->obj_tree[t] == NULL)
@@ -128,9 +126,7 @@ int pdf_create_obj(PDF pdf, int t, int i)
             pdf->obj_tab_size = pdf->obj_tab_size + a;
         else
             pdf->obj_tab_size = sup_obj_tab_size;
-        pdf->obj_tab =
-            xreallocarray(pdf->obj_tab, obj_entry,
-                          (unsigned) pdf->obj_tab_size);
+        pdf->obj_tab = xreallocarray(pdf->obj_tab, obj_entry, (unsigned) pdf->obj_tab_size);
     }
     pdf->obj_ptr++;
     obj_info(pdf, pdf->obj_ptr) = i;
@@ -146,8 +142,7 @@ int pdf_create_obj(PDF pdf, int t, int i)
         obj_link(pdf, pdf->obj_ptr) = pdf->head_tab[t];
         pdf->head_tab[t] = pdf->obj_ptr;
         if ((t == obj_type_dest) && (i < 0))
-            append_dest_name(pdf, makecstring(-obj_info(pdf, pdf->obj_ptr)),
-                             pdf->obj_ptr);
+            append_dest_name(pdf, makecstring(-obj_info(pdf, pdf->obj_ptr)), pdf->obj_ptr); /* why not just -i */
     }
     return pdf->obj_ptr;
 }
@@ -157,7 +152,6 @@ int find_obj(PDF pdf, int t, int i, boolean byname)
 {
     char *ss = NULL;
     int ret;
-    assert(i >= 0);             /* no tricks */
     if (byname) {
         ss = makecstring(i);
         ret = avl_find_str_obj(pdf, t, ss);
@@ -169,19 +163,17 @@ int find_obj(PDF pdf, int t, int i, boolean byname)
 }
 
 @ The following function finds an object with identifier |i| and type |t|.
-   Identifier |i| is either an integer or a token list index. If no
-   such object exists then it will be created. This function is used mainly to
-   find destination for link annotations and outlines; however it is also used
-   in |ship_out| (to check whether a Page object already exists) so we need
-   to declare it together with subroutines needed in |hlist_out| and
-   |vlist_out|.
+Identifier |i| is either an integer or a token list index. If no such object
+exists then it will be created. This function is used mainly to find destination
+for link annotations and outlines; however it is also used in |ship_out| (to
+check whether a Page object already exists) so we need to declare it together
+with subroutines needed in |hlist_out| and |vlist_out|.
 
 @c
 int pdf_get_obj(PDF pdf, int t, int i, boolean byname)
 {
     int r;
     str_number s;
-    assert(i >= 0);
     if (byname > 0) {
         s = tokens_to_string(i);
         r = find_obj(pdf, t, s, true);
@@ -215,28 +207,22 @@ void check_obj_exists(PDF pdf, int objnum)
 void check_obj_type(PDF pdf, int t, int objnum)
 {
     int u;
-    char *s;
     check_obj_exists(pdf, objnum);
     u = obj_type(pdf, objnum);
     if (t != u) {
-        assert(t >= 0 && t <= PDF_OBJ_TYPE_MAX);
-        assert(u >= 0 && u <= PDF_OBJ_TYPE_MAX);
-        s = (char *) xtalloc(128, char);
-        snprintf(s, 127, "referenced object has wrong type %s; should be %s",
-                 pdf_obj_typenames[u], pdf_obj_typenames[t]);
-        normal_error("pdf backend", s);
+        formatted_error("pdf backend", "referenced object has wrong type %s; should be %s",
+            pdf_obj_typenames[u], pdf_obj_typenames[t]);
     }
 }
 
 @ @c
-void set_rect_dimens(PDF pdf, halfword p, halfword parent_box, scaledpos cur,
-                     scaled_whd alt_rule, scaled margin)
+void set_rect_dimens(PDF pdf, halfword p, halfword parent_box, scaledpos cur, scaled_whd alt_rule, scaled margin)
 {
-    scaledpos ll, ur;           /* positions relative to cur */
+    scaledpos ll, ur; /* positions relative to cur */
     scaledpos pos_ll, pos_ur, tmp;
     posstructure localpos;
     localpos.dir = pdf->posstruct->dir;
-    ll.h = 0;                   /* pdf contains current point on page */
+    ll.h = 0; /* pdf contains current point on page */
     if (is_running(alt_rule.dp))
         ll.v = depth(parent_box) - cur.v;
     else
@@ -249,12 +235,10 @@ void set_rect_dimens(PDF pdf, halfword p, halfword parent_box, scaledpos cur,
         ur.v = -height(parent_box) - cur.v;
     else
         ur.v = -alt_rule.ht;
-
     synch_pos_with_cur(&localpos, pdf->posstruct, ll);
     pos_ll = localpos.pos;
     synch_pos_with_cur(&localpos, pdf->posstruct, ur);
     pos_ur = localpos.pos;
-
     if (pos_ll.h > pos_ur.h) {
         tmp.h = pos_ll.h;
         pos_ll.h = pos_ur.h;
@@ -291,149 +275,4 @@ void libpdffinish(PDF pdf)
     sfd_free();
     glyph_unicode_free();
     zip_free(pdf);
-}
-
-@ Store some of the pdftex data structures in the format. The idea here is
-to ensure that any data structures referenced from pdftex-specific whatsit
-nodes are retained. For the sake of simplicity and speed, all the filled parts
-of |pdf->mem| and |obj_tab| are retained, in the present implementation. We also
-retain three of the linked lists that start from |head_tab|, so that it is
-possible to, say, load an image in the \.{INITEX} run and then reference it in a
-\.{VIRTEX} run that uses the dumped format.
-
-@c
-void dump_pdftex_data(PDF pdf)
-{
-    int k, x;
-    pdf_object_list *l;
-    dumpimagemeta();            /* the image information array */
-    dump_int(pdf->mem_size);
-    dump_int(pdf->mem_ptr);
-    for (k = 1; k <= pdf->mem_ptr - 1; k++) {
-        x = pdf->mem[k];
-        dump_int(x);
-    }
-    print_ln();
-    print_int(pdf->mem_ptr - 1);
-    tprint(" words of pdf memory");
-    x = pdf->obj_tab_size;
-    dump_int(x);
-    x = pdf->obj_ptr;
-    dump_int(x);
-    for (k = 1; k <= pdf->obj_ptr; k++) {
-        x = obj_info(pdf, k);
-        dump_int(x);
-        x = obj_link(pdf, k);
-        dump_int(x);
-        x = obj_os_idx(pdf, k);
-        dump_int(x);
-        x = obj_aux(pdf, k);
-        dump_int(x);
-        x = obj_type(pdf, k);
-        dump_int(x);
-    }
-    print_ln();
-    print_int(pdf->obj_ptr);
-    tprint(" indirect objects");
-    dump_int(pdf->obj_count);
-    dump_int(pdf->xform_count);
-    dump_int(pdf->ximage_count);
-    if ((l = get_page_resources_list(pdf, obj_type_obj)) != NULL) {
-        while (l != NULL) {
-            dump_int(l->info);
-            l = l->link;
-        }
-    }
-    dump_int(0);                /* signal end of |obj_list| */
-    if ((l = get_page_resources_list(pdf, obj_type_xform)) != NULL) {
-        while (l != NULL) {
-            dump_int(l->info);
-            l = l->link;
-        }
-    }
-    dump_int(0);                /* signal end of |xform_list| */
-    if ((l = get_page_resources_list(pdf, obj_type_ximage)) != NULL) {
-        while (l != NULL) {
-            dump_int(l->info);
-            l = l->link;
-        }
-    }
-    dump_int(0);                /* signal end of |ximage_list| */
-    x = pdf->head_tab[obj_type_obj];
-    dump_int(x);
-    x = pdf->head_tab[obj_type_xform];
-    dump_int(x);
-    x = pdf->head_tab[obj_type_ximage];
-    dump_int(x);
-    dump_int(pdf_last_obj);
-    dump_int(last_saved_box_index);
-    dump_int(last_saved_image_index);
-}
-
-@ And restoring the pdftex data structures from the format. The
-two function arguments to |undumpimagemeta| have been restored
-already in an earlier module.
-
-@c
-void undump_pdftex_data(PDF pdf)
-{
-    int k, x;
-    undumpimagemeta(pdf, pdf_minor_version, pdf_inclusion_errorlevel);  /* the image information array */
-    undump_int(pdf->mem_size);
-    pdf->mem = xreallocarray(pdf->mem, int, (unsigned) pdf->mem_size);
-    undump_int(pdf->mem_ptr);
-    for (k = 1; k <= pdf->mem_ptr - 1; k++) {
-        undump_int(x);
-        pdf->mem[k] = (int) x;
-    }
-    undump_int(x);
-    pdf->obj_tab_size = x;
-    undump_int(x);
-    pdf->obj_ptr = x;
-    for (k = 1; k <= pdf->obj_ptr; k++) {
-        undump_int(x);
-        obj_info(pdf, k) = x;
-        undump_int(x);
-        obj_link(pdf, k) = x;
-        set_obj_offset(pdf, k, -1);
-        undump_int(x);
-        obj_os_idx(pdf, k) = x;
-        undump_int(x);
-        obj_aux(pdf, k) = x;
-        undump_int(x);
-        obj_type(pdf, k) = x;
-    }
-
-    undump_int(x);
-    pdf->obj_count = x;
-    undump_int(x);
-    pdf->xform_count = x;
-    undump_int(x);
-    pdf->ximage_count = x;
-    /* todo : the next 3 loops can be done much more efficiently */
-    undump_int(x);
-    while (x != 0) {
-        addto_page_resources(pdf, obj_type_obj, x);
-        undump_int(x);
-    }
-    undump_int(x);
-    while (x != 0) {
-        addto_page_resources(pdf, obj_type_xform, x);
-        undump_int(x);
-    }
-    undump_int(x);
-    while (x != 0) {
-        addto_page_resources(pdf, obj_type_ximage, x);
-        undump_int(x);
-    }
-
-    undump_int(x);
-    pdf->head_tab[obj_type_obj] = x;
-    undump_int(x);
-    pdf->head_tab[obj_type_xform] = x;
-    undump_int(x);
-    pdf->head_tab[obj_type_ximage] = x;
-    undump_int(pdf_last_obj);
-    undump_int(last_saved_box_index);
-    undump_int(last_saved_image_index);
 }

@@ -199,7 +199,7 @@ static int find_file(lua_State * L)
         if (t == LUA_TBOOLEAN) {
             mexist = lua_toboolean(L, i);
         } else if (t == LUA_TNUMBER) {
-            mexist=(int)lua_tonumber(L, i);
+            mexist = (int) lua_tointeger(L, i);
         } else if (t == LUA_TSTRING) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
@@ -237,7 +237,7 @@ static int lua_kpathsea_find_file(lua_State * L)
         if (t == LUA_TBOOLEAN) {
             mexist = (boolean) lua_toboolean(L, i);
         } else if (t == LUA_TNUMBER) {
-            mexist=(int)lua_tonumber(L, i);
+            mexist = (int) lua_tointeger(L, i);
         } else if (t == LUA_TSTRING) {
             int op = luaL_checkoption(L, i, NULL, filetypenames);
             ftype = filetypes[op];
@@ -366,14 +366,16 @@ static unsigned find_dpi(const_string s)
     return dpi_number;
 }
 
-/* Return newly-allocated NULL-terminated list of strings from MATCHES
-   that are prefixed with any of the subdirectories in SUBDIRS.  That
-   is, for a string S in MATCHES, its dirname must end with one of the
-   elements in SUBDIRS.  For instance, if subdir=foo/bar, that will
-   match a string foo/bar/baz or /some/texmf/foo/bar/baz.
+/*
+    Return newly-allocated NULL-terminated list of strings from MATCHES
+    that are prefixed with any of the subdirectories in SUBDIRS.  That
+    is, for a string S in MATCHES, its dirname must end with one of the
+    elements in SUBDIRS.  For instance, if subdir=foo/bar, that will
+    match a string foo/bar/baz or /some/texmf/foo/bar/baz.
 
-   We don't reallocate the actual strings, just the list elements.
-   Perhaps later we will implement wildcards or // or something.  */
+    We don't reallocate the actual strings, just the list elements.
+    Perhaps later we will implement wildcards or "//" or something.
+*/
 
 static string *subdir_match(str_list_type subdirs, string * matches)
 {
@@ -538,14 +540,14 @@ static int do_lua_kpathsea_lookup(lua_State * L, kpathsea kpse, int idx)
         lua_pushstring(L, "dpi");
         lua_gettable(L, idx + 1);
         if (lua_type(L, -1) == LUA_TNUMBER) {
-            dpi=(int)lua_tonumber(L, -1);
+            dpi = (int) lua_tointeger(L, -1);
         }
         lua_pop(L, 1);
         lua_pushstring(L, "debug");
         lua_gettable(L, idx + 1);
         if (lua_type(L, -1) == LUA_TNUMBER) {
             int d = 0;
-            d=(int)lua_tonumber(L, -1);
+            d = (int) lua_tointeger(L, -1);
             kpse->debug |= d;
         }
         lua_pop(L, 1);

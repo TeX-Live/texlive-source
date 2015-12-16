@@ -67,8 +67,8 @@ void pdf_write_obj(PDF pdf, int k)
     st.l = li;
     lua_pop(Luas, 1);
     if (obj_obj_is_file(pdf, k)) {
-        boolean res = false;    /* callback status value */
-        const char *fnam = NULL;        /* callback found filename */
+        boolean res = false;      /* callback status value */
+        const char *fnam = NULL;  /* callback found filename */
         int callback_id;
         /* st.s is also |\0|-terminated, even as lstring */
         fnam = luatex_find_file(st.s, find_data_file_callback);
@@ -96,18 +96,10 @@ void pdf_write_obj(PDF pdf, int k)
         tprint("<<");
         tprint(st.s);
         pdf_out_block(pdf, (const char *) data.s, data.l);
-        /* already happens in pdf_end_obj:
-            if (!obj_obj_is_stream(pdf, k) && data.s[data.l - 1] != '\n')
-                pdf_out(pdf, '\n');
-        */
         xfree(data.s);
         tprint(">>");
     } else {
         pdf_out_block(pdf, st.s, st.l);
-        /* already happens in pdf_end_obj:
-            if (!obj_obj_is_stream(pdf, k) && st.s[st.l - 1] != '\n')
-                pdf_out(pdf, '\n');
-        */
     }
     if (obj_obj_is_stream(pdf, k)) {
         pdf_end_stream(pdf);
@@ -126,16 +118,16 @@ void init_obj_obj(PDF pdf, int k)
     obj_obj_data(pdf, k) = LUA_NOREF;
     unset_obj_obj_is_stream(pdf, k);
     unset_obj_obj_is_file(pdf, k);
-    obj_obj_pdfcompresslevel(pdf, k) = -1;      /* unset */
-    obj_obj_objstm_threshold(pdf, k) = OBJSTM_UNSET;  /* unset */
+    obj_obj_pdfcompresslevel(pdf, k) = -1; /* unset */
+    obj_obj_objstm_threshold(pdf, k) = OBJSTM_UNSET; /* unset */
 }
 
-@ The \.{\\pdfextension obj} primitive is used to create a ``raw'' object in the PDF
-   output file. The object contents will be hold in memory and will be written
-   out only when the object is referenced by \.{\\pdfextension refobj}. When
-   \.{\\pdfextension obj} is used with \.{\\immediate}, the object contents will be
-   written out immediately. Objects referenced in the current page are appended into
-   |pdf_obj_list|.
+@ The \.{\\pdfextension obj} primitive is used to create a ``raw'' object in the
+PDF output file. The object contents will be hold in memory and will be written
+out only when the object is referenced by \.{\\pdfextension refobj}. When
+\.{\\pdfextension obj} is used with \.{\\immediate}, the object contents will be
+written out immediately. Objects referenced in the current page are appended into
+|pdf_obj_list|.
 
 @c
 void scan_obj(PDF pdf)
@@ -143,7 +135,6 @@ void scan_obj(PDF pdf)
     int k;
     lstring *st = NULL;
     if (scan_keyword("reserveobjnum")) {
-        /* Scan an optional space */
         get_x_token();
         if (cur_cmd != spacer_cmd)
             back_input();
@@ -163,13 +154,13 @@ void scan_obj(PDF pdf)
         obj_data_ptr(pdf, k) = pdf_get_mem(pdf, pdfmem_obj_size);
         init_obj_obj(pdf, k);
         if (scan_keyword("uncompressed")) {
-            obj_obj_pdfcompresslevel(pdf, k) = 0;       /* \pdfcompresslevel = 0 */
+            obj_obj_pdfcompresslevel(pdf, k) = 0;
             obj_obj_objstm_threshold(pdf, k) = OBJSTM_NEVER;
         }
         if (scan_keyword("stream")) {
             set_obj_obj_is_stream(pdf, k);
             if (scan_keyword("attr")) {
-                scan_pdf_ext_toks();
+                scan_toks(false, true);
                 st = tokenlist_to_lstring(def_ref, true);
                 flush_list(def_ref);
                 lua_pushlstring(Luas, (char *) st->s, st->l);
@@ -180,7 +171,7 @@ void scan_obj(PDF pdf)
         }
         if (scan_keyword("file"))
             set_obj_obj_is_file(pdf, k);
-        scan_pdf_ext_toks();
+        scan_toks(false, true);
         st = tokenlist_to_lstring(def_ref, true);
         flush_list(def_ref);
         lua_pushlstring(Luas, (char *) st->s, st->l);
@@ -192,7 +183,7 @@ void scan_obj(PDF pdf)
 }
 
 @ @c
-#define tail          cur_list.tail_field
+#define tail cur_list.tail_field
 
 void scan_refobj(PDF pdf)
 {

@@ -214,8 +214,6 @@ dist_libluatex_sources += \
 ##
 luatex_lua_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/lua $(ctangle)
 
-luagen.c: ctangle$(EXEEXT) luatexdir/lua/luagen.w
-	$(luatex_lua_ctangle) luagen.w
 luainit.c: ctangle$(EXEEXT) luatexdir/lua/luainit.w
 	$(luatex_lua_ctangle) luainit.w
 luajitstuff.c: ctangle$(EXEEXT) luatexdir/lua/luajitstuff.w
@@ -231,11 +229,13 @@ texluac.c: ctangle$(EXEEXT) luatexdir/lua/texluac.w
 texluajitc.c: ctangle$(EXEEXT) luatexdir/lua/texluajitc.w
 	$(luatex_lua_ctangle) texluajitc.w
 
-libluatex_web += luatexdir/lua/luagen.w luatexdir/lua/luainit.w luatexdir/lua/luajitstuff.w
+libluatex_web += luatexdir/lua/luainit.w luatexdir/lua/luajitstuff.w
 libluatex_web += luatexdir/lua/luanode.w luatexdir/lua/luastuff.w luatexdir/lua/luatoken.w
 libluatex_web += luatexdir/lua/texluac.w luatexdir/lua/texluajitc.w
 
-nodist_libluatex_sources += luagen.c luainit.c luanode.c luatoken.c
+nodist_libluatex_sources +=  luainit.c luanode.c luatoken.c
+
+
 
 dist_libluatex_sources += \
 	luatexdir/lua/lcallbacklib.c \
@@ -254,9 +254,7 @@ dist_libluatex_sources += \
 	luatexdir/lua/lstatslib.c \
 	luatexdir/lua/ltexiolib.c \
 	luatexdir/lua/ltexlib.c \
-	luatexdir/lua/ltokenlib.c \
 	luatexdir/lua/lnewtokenlib.c \
-	luatexdir/lua/luagen.h \
 	luatexdir/lua/luatex-api.h
 
 ## from luatexdir/pdf
@@ -287,8 +285,6 @@ pdflistout.c: ctangle$(EXEEXT) luatexdir/pdf/pdflistout.w
 	$(luatex_pdf_ctangle) pdflistout.w
 pdfliteral.c: ctangle$(EXEEXT) luatexdir/pdf/pdfliteral.w
 	$(luatex_pdf_ctangle) pdfliteral.w
-pdfluaapi.c: ctangle$(EXEEXT) luatexdir/pdf/pdfluaapi.w
-	$(luatex_pdf_ctangle) pdfluaapi.w
 pdfobj.c: ctangle$(EXEEXT) luatexdir/pdf/pdfobj.w
 	$(luatex_pdf_ctangle) pdfobj.w
 pdfoutline.c: ctangle$(EXEEXT) luatexdir/pdf/pdfoutline.w
@@ -314,7 +310,7 @@ libluatex_web += luatexdir/pdf/pdfpagetree.w luatexdir/pdf/pdfaction.w luatexdir
 libluatex_web += luatexdir/pdf/pdfcolorstack.w luatexdir/pdf/pdfdest.w
 libluatex_web += luatexdir/pdf/pdffont.w luatexdir/pdf/pdfgen.w luatexdir/pdf/pdfglyph.w
 libluatex_web += luatexdir/pdf/pdfimage.w luatexdir/pdf/pdflink.w luatexdir/pdf/pdflistout.w
-libluatex_web += luatexdir/pdf/pdfliteral.w luatexdir/pdf/pdfluaapi.w luatexdir/pdf/pdfobj.w
+libluatex_web += luatexdir/pdf/pdfliteral.w luatexdir/pdf/pdfobj.w
 libluatex_web += luatexdir/pdf/pdfoutline.w luatexdir/pdf/pdfpage.w luatexdir/pdf/pdfrule.w
 libluatex_web += luatexdir/pdf/pdfsaverestore.w luatexdir/pdf/pdfsetmatrix.w
 libluatex_web += luatexdir/pdf/pdfshipout.w luatexdir/pdf/pdftables.w
@@ -322,7 +318,7 @@ libluatex_web += luatexdir/pdf/pdfthread.w luatexdir/pdf/pdfxform.w
 
 nodist_libluatex_sources += pdfpagetree.c pdfaction.c pdfannot.c pdfcolorstack.c pdfdest.c pdffont.c
 nodist_libluatex_sources += pdfgen.c pdfglyph.c pdfimage.c pdflink.c pdflistout.c pdfliteral.c
-nodist_libluatex_sources += pdfluaapi.c pdfobj.c pdfoutline.c pdfpage.c pdfrule.c pdfsaverestore.c
+nodist_libluatex_sources += pdfobj.c pdfoutline.c pdfpage.c pdfrule.c pdfsaverestore.c
 nodist_libluatex_sources += pdfsetmatrix.c pdfshipout.c pdftables.c pdfthread.c pdfxform.c
 
 dist_libluatex_sources += \
@@ -338,7 +334,6 @@ dist_libluatex_sources += \
 	luatexdir/pdf/pdflink.h \
 	luatexdir/pdf/pdflistout.h \
 	luatexdir/pdf/pdfliteral.h \
-	luatexdir/pdf/pdfluaapi.h \
 	luatexdir/pdf/pdfobj.h \
 	luatexdir/pdf/pdfoutline.h \
 	luatexdir/pdf/pdfpage.h \
@@ -351,36 +346,44 @@ dist_libluatex_sources += \
 	luatexdir/pdf/pdftypes.h \
 	luatexdir/pdf/pdfxform.h
 
+################################################################################
+################################################################################
+################################################################################
+## REMOVED
+## but still left as example.
 ## from luatexdir/scripts
 ##
-luatex_luascripts_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/luascripts $(ctangle)
+# luatex_luascripts_ctangle = $(ctangle_silent)CWEBINPUTS=$(srcdir)/luatexdir/luascripts $(ctangle)
 
-txt2zlib.c: ctangle$(EXEEXT) luatexdir/luascripts/txt2zlib.w
-	$(luatex_luascripts_ctangle) txt2zlib.w
+# txt2zlib.c: ctangle$(EXEEXT) luatexdir/luascripts/txt2zlib.w
+# 	$(luatex_luascripts_ctangle) txt2zlib.w
 
-libluatex_web += \
-	luatexdir/luascripts/pdflua.c \
-	luatexdir/luascripts/pdflua.lua \
-	luatexdir/luascripts/txt2zlib.w
+# libluatex_web += \
+# 	luatexdir/luascripts/pdflua.c \
+# 	luatexdir/luascripts/pdflua.lua \
+# 	luatexdir/luascripts/txt2zlib.w
 
-## We normaly use the auxiliary program txt2zlib to create pdflua.c
-## from luatexdir/luascripts/pdflua.lua.  When cross compiling we
-## use instead the distributed luatexdir/luascripts/pdflua.c.
-if cross
-pdflua.c: luatexdir/luascripts/pdflua.c
-	$(AM_V_GEN)rm -f pdflua.c; \
-	$(LN_S) $(srcdir)/luatexdir/luascripts/pdflua.c pdflua.c
-else !cross
-pdflua.c: txt2zlib$(EXEEXT) luatexdir/luascripts/pdflua.lua
-	$(AM_V_GEN)./txt2zlib $(srcdir)/luatexdir/luascripts/pdflua.lua pdflua.c && \
-	cmp -s pdflua.c $(srcdir)/luatexdir/luascripts/pdflua.c || \
-	  cp -f pdflua.c $(srcdir)/luatexdir/luascripts/pdflua.c
-endif !cross
+# ## We normaly use the auxiliary program txt2zlib to create pdflua.c
+# ## from luatexdir/luascripts/pdflua.lua.  When cross compiling we
+# ## use instead the distributed luatexdir/luascripts/pdflua.c.
+# if cross
+# pdflua.c: luatexdir/luascripts/pdflua.c
+# 	$(AM_V_GEN)rm -f pdflua.c; \
+# 	$(LN_S) $(srcdir)/luatexdir/luascripts/pdflua.c pdflua.c
+# else !cross
+# pdflua.c: txt2zlib$(EXEEXT) luatexdir/luascripts/pdflua.lua
+# 	$(AM_V_GEN)./txt2zlib $(srcdir)/luatexdir/luascripts/pdflua.lua pdflua.c && \
+# 	cmp -s pdflua.c $(srcdir)/luatexdir/luascripts/pdflua.c || \
+# 	  cp -f pdflua.c $(srcdir)/luatexdir/luascripts/pdflua.c
+# endif !cross
 
-nodist_libluatex_sources += pdflua.c
+# nodist_libluatex_sources += pdflua.c
 
-dist_libluatex_sources += \
-	luatexdir/luascripts/pdflua.h
+# dist_libluatex_sources += \
+# 	luatexdir/luascripts/pdflua.h
+################################################################################
+################################################################################
+################################################################################
 
 ## from luatexdir/tex
 ##

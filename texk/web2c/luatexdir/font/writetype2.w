@@ -152,7 +152,7 @@ boolean writetype2(PDF pdf, fd_entry * fd)
     cur_file_name =
         luatex_find_file(fd_cur->fm->ff_name, find_opentype_file_callback);
     if (cur_file_name == NULL) {
-        luatex_fail("cannot find OpenType font file for reading (%s)", fd_cur->fm->ff_name);
+        formatted_error("type 2","cannot find file '%s'", fd_cur->fm->ff_name);
     }
     callback_id = callback_defined(read_opentype_file_callback);
     if (callback_id > 0) {
@@ -160,11 +160,11 @@ boolean writetype2(PDF pdf, fd_entry * fd)
                          &file_opened, &ttf_buffer, &ttf_size) &&
             file_opened && ttf_size > 0) {
         } else {
-            luatex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
+            formatted_error("type 2","cannot find file '%s'", cur_file_name);
         }
     } else {
         if (!otf_open(cur_file_name)) {
-            luatex_fail("cannot open OpenType font file for reading (%s)", cur_file_name);
+            formatted_error("type 2","cannot find file '%s'", cur_file_name);
         }
         ttf_read_file();
         ttf_close();

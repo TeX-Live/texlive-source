@@ -1,5 +1,5 @@
 /* expand.h
-   
+
    Copyright 2009 Taco Hoekwater <taco@luatex.org>
 
    This file is part of LuaTeX.
@@ -24,7 +24,8 @@
 extern boolean is_in_csname;
 extern void expand(void);
 extern void complain_missing_csname(void);
-extern void manufacture_csname(void);
+extern void manufacture_csname(boolean use);
+extern void inject_last_tested_cs(void);
 extern void insert_relax(void);
 extern void get_x_token(void);
 extern void x_token(void);

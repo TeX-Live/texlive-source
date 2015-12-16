@@ -15,8 +15,8 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
-
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef PDFPAGE_H
 #  define PDFPAGE_H
@@ -33,11 +33,7 @@
 #    undef hz
 #  endif
 
-/**********************************************************************/
-
-void synch_pos_with_cur(posstructure * pos, posstructure * refpos,
-                        scaledpos cur);
-
+void synch_pos_with_cur(posstructure * pos, posstructure * refpos, scaledpos cur);
 boolean calc_pdfpos(pdfstructure * p, scaledpos pos);
 void pdf_end_string_nl(PDF pdf);
 void pdf_goto_pagemode(PDF pdf);

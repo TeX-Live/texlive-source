@@ -36,7 +36,31 @@
 #  define Mxcalloc_array(a,b)  xcalloc((b),sizeof(a))
 #  define Mxrealloc_array(a,b,c)  xrealloc((a),(unsigned)((unsigned)(c)*sizeof(b)))
 
-typedef unsigned int sa_tree_item;
+typedef union {
+    unsigned int uint_value;
+    int int_value;
+    struct {
+        int value_1;
+        int value_2;
+    } dump_int;
+    struct {
+        unsigned int value_1;
+        unsigned int value_2;
+    } dump_uint;
+    struct {
+        unsigned int character_value:21;
+        unsigned int family_value:8;
+        unsigned int class_value:3;
+    } math_code_value;
+    struct {
+        unsigned int small_character_value:21;
+        unsigned int small_family_value:8;
+        unsigned int class_value:3;
+        unsigned int large_character_value:21;
+        unsigned int large_family_value:8;
+        unsigned int dummy_value:3;
+    } del_code_value;
+} sa_tree_item;
 
 typedef struct {
     int code;
@@ -48,6 +72,7 @@ typedef struct {
 typedef struct {
     int stack_size;             /* initial stack size   */
     int stack_step;             /* increment stack step */
+    int stack_type;
     int stack_ptr;              /* current stack point  */
     sa_tree_item dflt;          /* default item value   */
     sa_tree_item ***tree;       /* item tree head       */
@@ -60,7 +85,7 @@ extern sa_tree_item get_sa_item(const sa_tree head, const int n);
 extern void set_sa_item(sa_tree head, int n, sa_tree_item v, int gl);
 extern void rawset_sa_item(sa_tree head, int n, sa_tree_item v);
 
-extern sa_tree new_sa_tree(int size, sa_tree_item dflt);
+extern sa_tree new_sa_tree(int size, int type, sa_tree_item dflt);
 
 extern sa_tree copy_sa_tree(sa_tree head);
 extern void destroy_sa_tree(sa_tree head);

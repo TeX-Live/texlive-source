@@ -67,7 +67,7 @@ static int do_define_font(int f, const char *cnom, scaled s, int natural_dir)
                 destroy_saved_callback(callback_id);
                 /* |lua_pop(Luas, 1);| *//* done by |font_from_lua| */
             } else if (t == LUA_TNUMBER) {
-                r=(int)lua_tonumber(Luas, -1);
+                r = (int) lua_tointeger(Luas, -1);
                 destroy_saved_callback(callback_id);
                 delete_font(f);
                 lua_pop(Luas, 1);

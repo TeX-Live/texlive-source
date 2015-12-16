@@ -18,7 +18,6 @@
    You should have received a copy of the GNU General Public License along
    with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
 
-
 #ifndef WRITEJBIG2_H
 #  define WRITEJBIG2_H
 
@@ -27,8 +26,10 @@
 unsigned int read2bytes(FILE * f);
 unsigned int read4bytes(FILE * f);
 
-void flush_jbig2_page0_objects(PDF);
+boolean supported_jbig2(image_dict *);
 void read_jbig2_info(image_dict *);
+void flush_jbig2_info(image_dict *);
 void write_jbig2(PDF, image_dict *);
+void flush_jbig2_page0_objects(PDF);
 
-#endif                          /* WRITEJBIG"_H */
+#endif

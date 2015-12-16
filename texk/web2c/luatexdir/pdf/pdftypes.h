@@ -15,7 +15,9 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License along
-   with LuaTeX; if not, see <http://www.gnu.org/licenses/>. */
+   with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
+
+*/
 
 #ifndef PDFTYPES_H
 #  define PDFTYPES_H
@@ -26,26 +28,27 @@
 #  include <zlib.h>
 #  include "lua/luatex-api.h"
 
-/* The prefix "PTEX" for the PDF keys is special to pdfTeX;
-   this has been registered with Adobe by Hans Hagen. */
+/*
+    The prefix "PTEX" for the PDF keys is special to pdfTeX and has been registered with
+    Adobe by Hans Hagen.
+*/
 
 #  define pdfkeyprefix "PTEX"
 
 #  define i32round(a) (int) floor((a) + 0.5)
 #  define i64round(a) (int64_t) floor((a) + 0.5)
 
-#  define MAX_OBJ_COMPRESS_LEVEL 3      /* maximum/clipping value for \pdfobjcompresslevel */
-#  define OBJSTM_UNSET -1       /* initial value */
-#  define OBJSTM_ALWAYS 1       /* \pdfobjcompresslevel >= OBJSTM_ALWAYS: put object into object stream */
-#  define OBJSTM_NEVER (MAX_OBJ_COMPRESS_LEVEL + 1)
-                                        /* above maximum/clipping value for \pdfobjcompresslevel */
+#  define MAX_OBJ_COMPRESS_LEVEL 3                  /* maximum/clipping value for \pdfobjcompresslevel */
+#  define OBJSTM_UNSET -1                           /* initial value */
+#  define OBJSTM_ALWAYS 1                           /* \pdfobjcompresslevel >= OBJSTM_ALWAYS: put object into object stream */
+#  define OBJSTM_NEVER (MAX_OBJ_COMPRESS_LEVEL + 1) /* above maximum/clipping value for \pdfobjcompresslevel */
 
-typedef int internal_font_number;       /* |font| in a |char_node| */
+typedef int internal_font_number;                  /* |font| in a |char_node| */
 
 typedef enum {
-    NO_ZIP,                     /* no \.{ZIP} compression */
-    ZIP_WRITING,                /* \.{ZIP} compression being used */
-    ZIP_FINISH                  /* finish \.{ZIP} compression */
+    NO_ZIP,       /* no \.{ZIP} compression */
+    ZIP_WRITING,  /* \.{ZIP} compression being used */
+    ZIP_FINISH    /* finish \.{ZIP} compression */
 } zip_write_state_e;
 
 typedef enum {
@@ -53,19 +56,21 @@ typedef enum {
     OBJSTM_BUF,
 } buffer_e;
 
-/* This stucture holds everything that is needed for the actual pdf generation.
+/*
+    This stucture holds everything that is needed for the actual pdf generation.
 
-Because this structure interfaces with C++, it is not wise to use |boolean|
-here (C++ has a boolean type built-in that is not compatible). Also, I have
-plans to convert the backend code into a C library for use with e.g. standalone
-lua. Together, this means that it is best only to use the standard C types and
-the types explicitly defined in this header, and stay away from types like
-|integer| and |eight_bits| that are used elsewhere in the \LUATEX\ sources.
+    Because this structure interfaces with C++, it is not wise to use |boolean|
+    here (C++ has a boolean type built-in that is not compatible). Also, I have
+    plans to convert the backend code into a C library for use with e.g. standalone
+    lua. Together, this means that it is best only to use the standard C types and
+    the types explicitly defined in this header, and stay away from types like
+    |integer| and |eight_bits| that are used elsewhere in the \LUATEX\ sources.
+
 */
 
 typedef struct {
-    int64_t m;                     /* mantissa (significand) */
-    int e;                      /* exponent * -1 */
+    int64_t m; /* mantissa (significand) */
+    int e;     /* exponent * -1 */
 } pdffloat;
 
 typedef struct {
@@ -81,26 +86,35 @@ typedef struct scaledpos_ {
 } scaledpos;
 
 typedef struct scaled_whd_ {
-    scaled wd;                  /* TeX width */
-    scaled ht;                  /* TeX height */
-    scaled dp;                  /* TeX depth */
+    scaled wd; /* TeX width */
+    scaled ht; /* TeX height */
+    scaled dp; /* TeX depth */
 } scaled_whd;
 
 typedef struct posstructure_ {
-    scaledpos pos;              /* position on the page */
-    int dir;                    /* direction of stuff to be put onto the page */
+    scaledpos pos; /* position on the page */
+    int dir;       /* direction of stuff to be put onto the page */
 } posstructure;
 
 typedef struct {
-    scaledpos curpos;           /* \pdflastpos position */
-    posstructure boxpos;        /* box dir and position of the box origin on the page */
-    scaled_whd boxdim;          /* box dimensions (in hlist/vlist coordinate system) */
+    scaledpos curpos;    /* \pdflastpos position */
+    posstructure boxpos; /* box dir and position of the box origin on the page */
+    scaled_whd boxdim;   /* box dimensions (in hlist/vlist coordinate system) */
 } pos_info_structure;
 
-typedef enum { PMODE_NONE, PMODE_PAGE, PMODE_TEXT, PMODE_CHARARRAY, PMODE_CHAR
+typedef enum {
+    PMODE_NONE,
+    PMODE_PAGE,
+    PMODE_TEXT,
+    PMODE_CHARARRAY,
+    PMODE_CHAR
 } pos_mode;
 
-typedef enum { ST_INITIAL, ST_OMODE_FIX, ST_FILE_OPEN, ST_HEADER_WRITTEN,
+typedef enum {
+    ST_INITIAL,
+    ST_OMODE_FIX,
+    ST_FILE_OPEN,
+    ST_HEADER_WRITTEN,
     ST_FILE_CLOSED
 } output_state;
 
@@ -109,14 +123,16 @@ typedef struct pdf_object_list_ {
     struct pdf_object_list_ *link;
 } pdf_object_list;
 
-typedef enum { WMODE_H, WMODE_V } writing_mode; /* []TJ runs horizontal or vertical */
+typedef enum {  /* []TJ runs horizontal or vertical */
+    WMODE_H,
+    WMODE_V
+} writing_mode;
 
 typedef struct {
     pdfpos pdf;                 /* pos. on page (PDF page raster) */
     pdfpos pdf_bt_pos;          /* pos. at begin of BT-ET group (PDF page raster) */
     pdfpos pdf_tj_pos;          /* pos. at begin of TJ array (PDF page raster) */
-    pdffloat cw;                /* pos. within [(..)..]TJ array (glyph raster);
-                                   cw.e = fractional digits in /Widths array */
+    pdffloat cw;                /* pos. within [(..)..]TJ array (glyph raster); cw.e = fractional digits in /Widths array */
     pdffloat tj_delta;          /* rel. movement in [(..)..]TJ array (glyph raster) */
     pdffloat fs;                /* font size in PDF units */
     pdffloat fs_cur;            /* to check if fs.m has changed and Tf needed */
@@ -155,7 +171,7 @@ typedef struct dest_name_entry_ {
     int objnum;                 /* destination object number */
 } dest_name_entry;
 
-#  define pdf_max_link_level  10/* maximum depth of link nesting */
+# define pdf_max_link_level 10  /* maximum depth of link nesting */
 
 typedef struct pdf_link_stack_record {
     int nesting_level;
@@ -166,6 +182,12 @@ typedef struct pdf_link_stack_record {
 } pdf_link_stack_record;
 
 /* types of objects */
+
+/*
+    NB: |obj_type_thread| is the highest entry in |head_tab|, but there are a few
+    more linked lists that are handy.
+*/
+
 typedef enum {
     obj_type_font = 0,          /* index of linked list of Fonts objects */
     obj_type_outline = 1,       /* index of linked list of outline objects */
@@ -174,8 +196,6 @@ typedef enum {
     obj_type_xform = 4,         /* index of linked list of XObject forms */
     obj_type_ximage = 5,        /* index of linked list of XObject images */
     obj_type_thread = 6,        /* index of linked list of num article threads */
-    /* |obj_type_thread| is the highest entry in |head_tab|, but there are a few
-       more linked lists that are handy: */
     obj_type_pagestream = 7,    /* Page stream objects */
     obj_type_page = 8,          /* /Page objects */
     obj_type_pages = 9,         /* /Pages objects */
@@ -198,7 +218,6 @@ typedef struct pdf_resource_struct_ {
     int last_resources;         /* halfword to most recently generated Resources object. */
 } pdf_resource_struct;
 
-/**********************************************************************/
 
 typedef struct os_obj_data_ {
     int num;
@@ -222,10 +241,9 @@ typedef struct os_struct_ {
     unsigned int o_ctr;         /* statistics: counter for objects within object streams */
 } os_struct;
 
-/**********************************************************************/
 
-#  define packet_max_recursion 100      /* see |packet_cur_s| */
-#  define packet_stack_size 100
+#  define packet_max_recursion 100 /* see |packet_cur_s| */
+#  define packet_stack_size    100
 
 typedef struct packet_stack_record_ {
     float c0;
@@ -247,8 +265,6 @@ typedef struct vf_struct_ {
     int vflua;                  /* flag, whether vf.*() functions are allowed */
 } vf_struct;
 
-/**********************************************************************/
-
 typedef struct pdf_output_file_ {
     FILE *file;                 /* the PDF output file handle */
     char *file_name;            /* the PDF output file name */
@@ -265,7 +281,6 @@ typedef struct pdf_output_file_ {
     int decimal_digits;
     int gen_tounicode;
     int inclusion_copy_font;
-    int replace_font;
     int minor_version;          /* fixed minor part of the PDF version */
     int compress_level;         /* level for zlib object stream compression */
     int objcompresslevel;       /* fixed level for activating PDF object streams */
@@ -292,8 +307,7 @@ typedef struct pdf_output_file_ {
     int stream_deflate;         /* true, if stream dict has /Filter/FlateDecode */
     int stream_writing;         /* true while writing stream */
 
-    int pk_scale_factor;        /* this is just a preprocessed value that depends on
-                                   |pk_resolution| and |decimal_digits| */
+    int pk_scale_factor;        /* this is just a preprocessed value that depends on |pk_resolution| and |decimal_digits| */
 
     int img_page_group_val;     /* page group information pointer from included pdf or png images */
     char *resname_prefix;       /* global prefix of resources name */
@@ -319,10 +333,6 @@ typedef struct pdf_output_file_ {
     off_t stream_length_offset; /* file offset of the last stream length */
     int seek_write_length;      /* flag whether to seek back and write \.{/Length} */
     int last_byte;              /* byte most recently written to PDF file; for \.{endstream} in new line */
-
-    /* integer last_resources;     halfword to most recently generated Resources object.
-       TH: this used to be a local in pdf_shipout, but I would like to
-       be able to split that function into a pre- and post part */
 
     int obj_count;
     int xform_count;
@@ -351,7 +361,6 @@ typedef struct pdf_output_file_ {
     int thread_level;           /* depth of nesting of box containing the last thread */
 
     int f_cur;                  /* TeX font number */
-    int pdflua_ref;
     int cave;                   /* stay away from previous PDF object */
 
     vf_struct *vfstruct;
@@ -359,4 +368,4 @@ typedef struct pdf_output_file_ {
 
 typedef pdf_output_file *PDF;
 
-#endif                          /* PDFTYPES_H */
+#endif

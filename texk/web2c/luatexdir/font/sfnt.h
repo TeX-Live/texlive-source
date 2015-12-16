@@ -1,5 +1,5 @@
 /* sfnt.h
-    
+
    Copyright 2002 by Jin-Hwan Cho and Shunsaku Hirata,
    the dvipdfmx project team <dvipdfmx@project.ktug.or.kr>
    Copyright 2006-2008 Taco Hoekwater <taco@luatex.org>
@@ -27,18 +27,6 @@
 #    include <w2c/config.h>
 #  endif                        /* HAVE_CONFIG_H_ */
 
-#  ifndef pdfTeX
-#    include "mfileio.h"
-#    include "numbers.h"
-#    include "pdfobj.h"
-#  endif
-
-#  ifdef XETEX
-#    include "ft2build.h"
-#    include FT_FREETYPE_H
-#    include FT_TRUETYPE_TABLES_H
-#  endif
-
 /* Data Types as described in Apple's TTRefMan */
 typedef unsigned char BYTE;
 typedef signed char ICHAR;
@@ -49,8 +37,7 @@ typedef signed long LONG;
 typedef unsigned long Fixed;    /* 16.16-bit signed fixed-point number */
 typedef short FWord;
 typedef unsigned short uFWord;
-typedef short F2Dot14;          /* 16-bit signed fixed number with the low
-                                   14 bits representing fraction. */
+typedef short F2Dot14;          /* 16-bit signed fixed number with the low 14 bits representing fraction. */
 
 struct sfnt_table {
     /* table header */
@@ -182,9 +169,6 @@ typedef struct {
 #    define RELEASE(a) free(a)
 #    define NEW(a,b) xmalloc((unsigned)((unsigned)(a)*sizeof(b)))
 #    define RENEW(a,b,c) xrealloc(a, (unsigned)((unsigned)(b)*sizeof(c)))
-#    define TT_ERROR luatex_fail
-#    define WARN printf
-
 
 #  endif
 
