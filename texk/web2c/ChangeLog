@@ -1,6 +1,10 @@
+2015-12-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Makefile.am: remove txt2zlib.am for LuaTeX.
+
 2015-12-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* Makefile.in: Rewritten by hand for LuaTeX beta-0.86.0.
+	* Makefile.in: Rewritten by hand for LuaTeX beta-0.87.0.
 	It should be recreated by autotool.
 
 2015-11-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
