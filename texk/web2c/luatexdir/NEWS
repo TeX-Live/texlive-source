@@ -2,30 +2,58 @@
 This file is in the public domain.
 
 
+==============================================================
+Luatex beta-0.87.0 was released 2015121700 
+==============================================================
 
 
-Upcoming LuaTeX Release 0.87
 
-(major changes)
+This is a next step upto 0.90 and it has the following changes:
 
-- image data no longer stored in format (was fragile anyway)
-- pdf backend data no longer stored in format
+- image data is no longer stored in the format (it was fragile anyway)
 
-- (incomplete) \mag support removed from pdf backend (kept in dvi mode)
+- pdf backend data generated when in ini mode is no longer stored in  the format
 
-- all kind of (efficiency) improvements
-- some pending issues done (behind the screens)
+- (incomplete) \mag support removed from pdf backend (this functionality is
+  kept in dvi mode)
 
-- \nospace=1 will not inject glue for spaces (not even zero glue)
-- \nospace=2 will inject zero glue for spaces
+- there are a couple of improvements that should make luatex run a little bit faster
+  (but of course that depends on the job at hand)
 
-- no longer keep track of older math character and delimiter definition states
+- some further pending issues / cleanup has been done (but this is not reflected in the
+  interface)
 
-- only ^^ ^^^^XXXX ^^^^^^XXXXXX supported
-- texio.setescape(0) disables escaping to terminal
+- there is a new primitive \nospace:
 
-- lc codes saved with language
+  \nospace=1   do now not inject glue for spaces (not even zero glue)
+  \nospace=2   inject zero glue for spaces
 
+- there are new primitives \hpack, \vpack and \tpack that are like \hbox, \vbox and
+  \vtop but they don't trigger callbacks
+
+- we no longer keep track of older math character and delimiter definition states,
+  but this should normally go unnoticed
+
+- from now on only ^^XX, ^^C, ^^^^XXXX and ^^^^^^XXXXXX are supported so no funny odd
+  values (three and five)
+
+- texio.setescape(0) disables escaping to terminal (a matter of taste)
+
+- the (current) lc codes are now saved with the (current) language when patterns are
+  loaded unless one hs used \hjcode instead of \lccode; overloading of \hjcodes is
+  possible (but of course goes ahead of hyphenation which is delayed till parbuilding or
+  packaging
+
+- active characters can now be set with: \letcharcode123=\foo (experimental)
+
+- there are some experimental new primitives but these will be described when they are
+  stable (currently being tested)
+
+- there is more backend error reporting and all error messages adn warnings (the non-tex
+  ones) have been normalized
+
+- of course there are the usual small fixes and additional setters and getters in libraries
+  (see manual)
 
 
 ==============================================================
@@ -2591,7 +2619,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5627 2015-12-16 09:54:35Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5643 2015-12-17 15:21:20Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
