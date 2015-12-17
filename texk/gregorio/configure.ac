@@ -15,7 +15,7 @@ dnl
 m4_include([version.ac])[] dnl define gregorio_version
 AC_INIT([ChkTeX (TeX Live)], gregorio_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([gregorio-]gregorio_version[/src/gregorio-utils.c])
+AC_CONFIG_SRCDIR([gregorio-src/src/gregorio-utils.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -27,7 +27,7 @@ AC_CHECK_HEADERS([stdalign.h])
 
 AC_C_BIGENDIAN
 
-AC_SUBST([GREGORIO_TREE], [gregorio-]gregorio_version)
+AC_SUBST([GREGORIO_TREE], [gregorio-src])
 AC_SUBST([PERL5], ['/usr/bin/env perl'])
 
 KPSE_KPATHSEA_FLAGS
