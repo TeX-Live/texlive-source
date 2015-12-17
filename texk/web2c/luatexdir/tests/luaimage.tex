@@ -8,7 +8,15 @@
   \expandafter\dump
 \fi
 %==================
-\pdfoutput=1
+\outputmode=1
+\edef\pdfcompresslevel {\pdfvariable compresslevel}
+\edef\pdfminorversion{\pdfvariable minorversion}
+
+\let\pdfximage\saveimageresource
+\let\pdfrefximage\useimageresource
+\let\pdflastximage\lastsavedimageresourceindex
+
+\pdfminorversion=7
 \pdfcompresslevel=0
 
 \topskip0pt
