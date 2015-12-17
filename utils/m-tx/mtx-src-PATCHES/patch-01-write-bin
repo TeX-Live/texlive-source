@@ -1,0 +1,11 @@
+--- mtx-0.61.orig/globals.c	Thu Dec 17 04:15:57 2015
++++ mtx-0.61/globals.c	Thu Dec 17 08:57:13 2015
+@@ -223,7 +223,7 @@
+     if (outfile != NULL)
+       fclose(outfile);
+     outfile = NULL;
+-    outfile = fopen(outfile_NAME, "w");
++    outfile = fopen(outfile_NAME, "wb");
+     if (outfile == NULL)
+       _EscIO2(FileNotFound, outfile_NAME);
+     fclose(outfile);

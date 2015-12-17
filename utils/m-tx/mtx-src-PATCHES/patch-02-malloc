@@ -1,0 +1,11 @@
+--- mtx-0.61.orig/multfile.c	Thu Dec 17 04:17:40 2015
++++ mtx-0.61/multfile.c	Thu Dec 17 09:03:39 2015
+@@ -60,7 +60,7 @@
+     printf("===! Ignoring recursive include of file %s\n", filename);
+     return;
+   }
+-  newnode = malloc(sizeof(filenode));
++  newnode = Malloc(sizeof(filenode));
+   newnode->actualfile = NULL;
+   strcpy(newnode->name, filename);
+   newnode->prev = current;
