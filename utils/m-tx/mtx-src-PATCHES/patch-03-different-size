@@ -1,0 +1,15 @@
+--- mtx-0.61.orig/libp2c/p2c.h	Wed Mar 17 00:28:20 1999
++++ mtx-0.61/libp2c/p2c.h	Thu Dec 17 09:00:24 2015
+@@ -428,10 +428,10 @@
+ 
+ /* Memory allocation */
+ #ifdef __GCC__
+-# define Malloc(n)  (malloc(n) ?: (Anyptr)_OutMem())
++# define Malloc(n)  (malloc(n) ?: (Anyptr)(size_t)_OutMem())
+ #else
+ extern Anyptr __MallocTemp__;
+-# define Malloc(n)  ((__MallocTemp__ = malloc(n)) ? __MallocTemp__ : (Anyptr)_OutMem())
++# define Malloc(n)  ((__MallocTemp__ = malloc(n)) ? __MallocTemp__ : (Anyptr)(size_t)_OutMem())
+ #endif
+ #define FreeR(p)    (free((Anyptr)(p)))    /* used if arg is an rvalue */
+ #define Free(p)     (free((Anyptr)(p)), (p)=NULL)

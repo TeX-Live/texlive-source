@@ -1,8 +1,0 @@
-M-Tx 0.60d is a test version of M-Tx 0.60. Please try it out and report any
-error observations to Christian Mondrup, reccmo@daimi.au.dk and 
-Dirk Laurie, dpl@sun.ac.za
-
-Changes:
-========
-
-- Fixed a bug with non-labeled ties

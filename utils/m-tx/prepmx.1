@@ -1,4 +1,4 @@
-.TH prepmx 1 "01 September 2005" "M-Tx Version 0.60" "prepmx Manual Page"
+.TH prepmx 1 "15 December 2015" "M-Tx Version 0.61" "prepmx Manual Page"
 .SH NAME
 prepmx \- preprocessor for PMX, easy music typesetting program
 .SH SYNOPSIS
@@ -18,17 +18,18 @@ easy example, have a look at the following example:
   c8 g+ e g c- g+ e g | d g f g    c- g+ e g |
 
 For syntax reference, please look at the M-Tx manual written by Dirk
-Laurie, the creator of the M-Tx language and the author of prepmx, its
-command line utility.
+Laurie, the creator of the M-Tx language and the author of 
+.BR prepmx (1), 
+its command-line utility.
 
 .B prepmx
 processes the file
 .IR jobname .mtx
 to generate
 .IR jobname .pmx.
-You can then process this file using the `pmx' command.
-.B PMX
-is a preprocessor for MusiXTeX.
+You can then process this file using the 
+.BR pmxab (1)
+command, which is a preprocessor for MusiXTeX.
 
 .I outdir/
 is the directory where `pmx' will put the final .tex file. Note that the
@@ -41,40 +42,44 @@ Options can also be specified in a `Options:' line in the preamble,
 which takes precedence over the command line.
 .TP
 .B \-b
-never unbeam eighth notes and shorter
+disable unbeamVocal
 .TP
 .B \-c
-main music lines only \- ignore chords
+disable doChords
 .TP
 .B \-D
-enable debug mode
+enable debugMode
 .TP
 .B \-f
-use tonic sol\-fa note names
+enable solfaNoteNames
 .TP
 .B \-i
-ignore errors
+enable ignoreErrors
 .TP
 .B \-m
-music only \- ignore lyrics
+disable doLyrics
 .TP
 .B \-n
-indent first system and print default instrument names
+enable instrumentNames
 .TP
 .B \-t
-ignore uptext lines
+disable doUptext
 .TP
 .B \-u
-uptext synchronizes with notes only, not rests
+disable uptextOnRests
 .TP
 .B \-v
-verbose progress report
+enable beVerbose
 .TP
 .B \-w
-enable pedantic warnings
+enable pedanticWarnings
 .TP
 .BI \- n
-select specified case of multiple score
+select Special Case 
+.I n
+.TP
+.B \-H
+print enabled status of all options
 .SH EXIT STATUS
 If no error was found,
 .B prepmx
@@ -84,12 +89,12 @@ the actual error. A return status of 10000 means that the input file was
 empty or could not be opened.
 .SH SEE ALSO
 .B M-Tx
-User's Guide (mtx060.pdf)
+User's Guide (mtxdoc.pdf)
 .br
-pmx(1), musixtex(1)
+pmxab(1), musixtex(1)
 .SH AUTHORS
-prepmx was written by Dirk Laurie <dpl@sun.ac.za>.
-This manual page was written by Roland Stigge <stigge@antcom.de> for the Debian
-project. It was revised and extended by Nis Martensen
-<nis.martensen@web.de>, mostly by copying text from Dirk Laurie's M-Tx
-User's Guide.
+prepmx was written by Dirk Laurie <dirk.laurie@gmail.com>. This
+manual page was written by Roland Stigge <stigge@antcom.de>
+for the Debian project. It was revised and extended by
+Nis Martensen <nis.martensen@web.de> and Bob Tennent
+<rdt@cs.queensu.ca>.

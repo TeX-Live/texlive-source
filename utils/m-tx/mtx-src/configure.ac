@@ -1,22 +1,22 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define mtx_version
-AC_INIT([m-tx (TeX Live)], mtx_version, [tex-k@tug.org])
-AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([mtx-src/analyze.c])
-AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIR([../../m4])
+AC_INIT([mtx], mtx_version, [rdt@cs.queensu.ca])
+AC_PREREQ([2.63])
+AC_CONFIG_SRCDIR([analyze.c])
 
-KPSE_BASIC([m-tx])
+AM_INIT_AUTOMAKE(mtx, mtx_version)
 
 dnl Check compiler and flags
 AC_PROG_CC
+
+AM_CONDITIONAL([WIN32], [test "x$kpse_cv_have_win32" != xno])
 
 dnl Checks for programs.
 AC_PROG_INSTALL
@@ -34,8 +34,6 @@ AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_CHECK_FUNCS([memchr memmove memset strchr strrchr strtol])
-
-AC_SUBST([MTX_TREE], [mtx-src])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
