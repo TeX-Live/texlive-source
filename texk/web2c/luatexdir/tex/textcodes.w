@@ -362,15 +362,19 @@ but management is then upto the used, so no:
 
 static void initializehjcodes(void)
 {
-    sa_tree_item sa_value = { 0 };
+    /*
+        sa_tree_item sa_value = { 0 };
+    */
     hjcode_max = 0;
     hjcode_heads = Mxmalloc_array(sa_tree, (HJCODE_MAX + 1));
     hjcode_valid = Mxmalloc_array(unsigned char, (HJCODE_MAX + 1));
     memset(hjcode_heads, 0, sizeof(sa_tree) * (HJCODE_MAX + 1));
     memset(hjcode_valid, 0, sizeof(unsigned char) * (HJCODE_MAX + 1));
-    hjcode_valid[0] = 1;
-    sa_value.int_value = HJCODEDEFAULT;
-    hjcode_heads[0] = new_sa_tree(HJCODESTACK, 1, sa_value);
+    /*
+        hjcode_valid[0] = 1;
+        sa_value.int_value = HJCODEDEFAULT;
+        hjcode_heads[0] = new_sa_tree(HJCODESTACK, 1, sa_value);
+    */
 }
 
 void hj_codes_from_lc_codes(int h)

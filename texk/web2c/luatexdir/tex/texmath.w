@@ -1100,8 +1100,7 @@ static delcodeval do_scan_extdef_del_code(int extcode, boolean doclass)
         NULL
     };
     delcodeval d;
-    int mcls, msfam = 0, mschr = 0, mlfam = 0, mlchr = 0;
-    mcls = 0;
+    int mcls = 0, msfam = 0, mschr = 0, mlfam = 0, mlchr = 0;
     if (extcode == tex_mathcode) {      /* \.{\\delcode}, this is the easiest */
         scan_int();
         /*  "MFCCFCC or "FCCFCC */

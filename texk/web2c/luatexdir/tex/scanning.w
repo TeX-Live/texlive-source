@@ -795,7 +795,41 @@ void scan_something_internal(int level, boolean negative)
                 goto RESTART;
             }
             break;
+        case hyph_data_cmd:
+            switch (cur_chr) {
+                case 0:
+                case 1:
+                    goto DEFAULT;
+                    break;
+                case 2:
+                    cur_val = get_pre_hyphen_char(int_par(language_code));
+                    cur_val_level = int_val_level;
+                    break;
+                case 3:
+                    cur_val = get_post_hyphen_char(int_par(language_code));
+                    cur_val_level = int_val_level;
+                    break;
+                case 4:
+                    cur_val = get_pre_exhyphen_char(int_par(language_code));
+                    cur_val_level = int_val_level;
+                    break;
+                case 5:
+                    cur_val = get_post_exhyphen_char(int_par(language_code));
+                    cur_val_level = int_val_level;
+                    break;
+                case 6:
+                    cur_val = get_hyphenation_min(int_par(language_code));
+                    cur_val_level = int_val_level;
+                    break;
+                case 7:
+                    scan_int();
+                    cur_val = get_hj_code(int_par(language_code),cur_val);
+                    cur_val_level = int_val_level;
+                    break;
+            }
+            break;
         default:
+            DEFAULT:
             /* Complain that \.{\\the} can not do this; give zero result */
             print_err("You can't use `");
             print_cmd_chr((quarterword) cur_cmd, cur_chr);
