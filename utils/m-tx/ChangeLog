@@ -1,3 +1,7 @@
+2015-12-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tests/mozart.pmx: Fix for the version 0.61. Thanks to Luigi.
+
 2015-12-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import m-tx 0.61.
