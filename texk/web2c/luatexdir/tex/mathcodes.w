@@ -27,8 +27,10 @@
 static sa_tree mathcode_head = NULL;
 
 /* the 0xFFFFFFFF is a flag value */
+
 #define MATHCODESTACK 8
 #define MATHCODEDEFAULT 0xFFFFFFFF
+#define MATHCODEACTIVE  0xFFFFFFFE
 
 @ delcodes
 @c
@@ -127,9 +129,13 @@ static void unsavemathcode(quarterword gl)
 void set_math_code(int n, int mathclass, int mathfamily, int mathcharacter, quarterword level)
 {
     sa_tree_item v;
-    v.math_code_value.class_value = mathclass;
-    v.math_code_value.family_value = mathfamily;
-    v.math_code_value.character_value = mathcharacter;
+    if (mathclass == 8 && mathfamily == 0 && mathcharacter == 0) {
+        v.uint_value = MATHCODEACTIVE;
+    } else {
+        v.math_code_value.class_value = mathclass;
+        v.math_code_value.family_value = mathfamily;
+        v.math_code_value.character_value = mathcharacter;
+    }
     set_sa_item(mathcode_head, n, v, level);
     if (int_par(tracing_assigns_code) > 1) {
         begin_diagnostic();
@@ -153,10 +159,19 @@ mathcodeval get_math_code(int n)
         d.class_value = 0;
         d.family_value = 0;
         d.character_value = n;
+    } else if (v.uint_value == MATHCODEACTIVE) {
+        d.class_value = 8;
+        d.family_value = 0;
+        d.character_value = 0;
     } else {
         d.class_value = v.math_code_value.class_value;
-        d.family_value = v.math_code_value.family_value;
-        d.character_value = v.math_code_value.character_value;
+        if (d.class_value == 8) {
+            d.family_value = 0;
+            d.character_value = n;
+        } else {
+            d.family_value = v.math_code_value.family_value;
+            d.character_value = v.math_code_value.character_value;
+        }
     }
     return d;
 }
