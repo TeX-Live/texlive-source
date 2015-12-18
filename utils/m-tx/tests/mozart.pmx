@@ -1,6 +1,6 @@
 ---
-\def\mtxversion{0.60d}
-\def\mtxdate{<11 October 2008>}
+\def\mtxversion{0.61}
+\def\mtxdate{<16 December 2015>}
 \input mtx
 \mtxComposerLine{}{W. A. Mozart (1756--1791)}
 \mtxTitleLine{Riff in C}
@@ -13,6 +13,7 @@ Tt
 \mtxTitle
 Tc
 \mtxPoetComposer
+w190m
 % Paragraph 2 line 5 bar 1
  w120m
 c83 g8+ e8 g8 c8- g8+ e8 g8 | /
