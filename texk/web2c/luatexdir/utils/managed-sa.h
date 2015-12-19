@@ -74,9 +74,9 @@ typedef struct {
     int stack_step;             /* increment stack step */
     int stack_type;
     int stack_ptr;              /* current stack point  */
-    sa_tree_item dflt;          /* default item value   */
     sa_tree_item ***tree;       /* item tree head       */
     sa_stack_item *stack;       /* stack tree head      */
+    sa_tree_item dflt;          /* default item value   */
 } sa_tree_head;
 
 typedef sa_tree_head *sa_tree;
@@ -90,8 +90,8 @@ extern sa_tree new_sa_tree(int size, int type, sa_tree_item dflt);
 extern sa_tree copy_sa_tree(sa_tree head);
 extern void destroy_sa_tree(sa_tree head);
 
-extern void dump_sa_tree(sa_tree a);
-extern sa_tree undump_sa_tree(void);
+extern void dump_sa_tree(sa_tree a, const char * name);
+extern sa_tree undump_sa_tree(const char * name);
 
 extern void restore_sa_stack(sa_tree a, int gl);
 extern void clear_sa_stack(sa_tree a);

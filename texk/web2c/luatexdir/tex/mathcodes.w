@@ -193,12 +193,12 @@ static void initializemathcode(void)
 
 static void dumpmathcode(void)
 {
-    dump_sa_tree(mathcode_head);
+    dump_sa_tree(mathcode_head,"mathcodes");
 }
 
 static void undumpmathcode(void)
 {
-    mathcode_head = undump_sa_tree();
+    mathcode_head = undump_sa_tree("mathcodes");
 }
 
 @ @c
@@ -304,21 +304,19 @@ int get_del_code_num(int n)
 static void initializedelcode(void)
 {
     sa_tree_item sa_value = { 0 };
- /* sa_value.uint_value = DELCODEDEFAULT; */
-    sa_value.dump_uint.value_1 = DELCODEDEFAULT;
-    sa_value.dump_uint.value_2 = 0;
+    sa_value.uint_value = DELCODEDEFAULT;
     delcode_head = new_sa_tree(DELCODESTACK, 2, sa_value);
 }
 
 @ @c
 static void dumpdelcode(void)
 {
-    dump_sa_tree(delcode_head);
+    dump_sa_tree(delcode_head,"delcodes");
 }
 
 static void undumpdelcode(void)
 {
-    delcode_head = undump_sa_tree();
+    delcode_head = undump_sa_tree("delcodes");
 }
 
 @ @c
