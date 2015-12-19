@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2015-11-27.11}
+\def\texinfoversion{2015-12-17.20}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -259,11 +259,18 @@
 %
 % Another complication is to let the user choose whether \thischapter
 % (\thissection) refers to the chapter (section) in effect at the top
-% of a page, or that at the bottom of a page.  The solution is
-% described on page 260 of The TeXbook.  It involves outputting two
-% marks for the sectioning macros, one before the section break, and
-% one after.  I won't pretend I can describe this better than DEK...
+% of a page, or that at the bottom of a page.
+
+% \domark is called twice inside \chapmacro, to add one
+% mark before the section break, and one after.
+%   In the second call \prevchapterdefs is the same as \lastchapterdefs,
+% and \prevsectiondefs is the same as \lastsectiondefs.
+%   Then if the page is not broken at the mark, some of the previous
+% section appears on the page, and we can get the name of this section
+% from \firstmark for @everyheadingmarks top.
+%   @everyheadingmarks bottom uses \botmark.
 %
+% See page 260 of The TeXbook.
 \def\domark{%
   \toks0=\expandafter{\lastchapterdefs}%
   \toks2=\expandafter{\lastsectiondefs}%
@@ -271,13 +278,14 @@
   \toks6=\expandafter{\prevsectiondefs}%
   \toks8=\expandafter{\lastcolordefs}%
   \mark{%
-                   \the\toks0 \the\toks2  % 0: top marks (\last...)
-      \noexpand\or \the\toks4 \the\toks6  % 1: bottom marks (default, \prev...)
+                   \the\toks0 \the\toks2  % 0: marks for @everyheadingmarks top
+      \noexpand\or \the\toks4 \the\toks6  % 1: for @everyheadingmarks bottom
     \noexpand\else \the\toks8             % 2: color marks
   }%
 }
 
-% \gettopheadingmarks, \getbottomheadingmarks - extract needed part of mark.
+% \gettopheadingmarks, \getbottomheadingmarks,
+% \getcolormarks - extract needed part of mark.
 %
 % \topmark doesn't work for the very first chapter (after the title
 % page or the contents), so we use \firstmark there -- this gets us
@@ -333,18 +341,10 @@
   % values in \headline and \footline.
   %
   % This is used to check if we are on the first page of a chapter.
-  \ifcase0\topmark\fi
-  \ifx\thischapter\empty
-    % See comment for \gettopheadingmarks
-    \ifcase0\firstmark\fi
-    \let\curchaptername\thischaptername
-    \ifcase1\firstmark\fi
-    \let\prevchaptername\thischaptername
-  \else
-    \let\curchaptername\thischaptername
-    \ifcase1\topmark\fi
-    \let\prevchaptername\thischaptername
-  \fi
+  \ifcase1\topmark\fi
+  \let\prevchaptername\thischaptername
+  \ifcase0\firstmark\fi
+  \let\curchaptername\thischaptername
   %
   \ifodd\pageno \getoddheadingmarks \else \getevenheadingmarks \fi
   \ifodd\pageno \getoddfootingmarks \else \getevenfootingmarks \fi
@@ -2840,23 +2840,24 @@ end
 \def\mathbackslash{\ifnum\fam=\ttfam \mathchar"075C \else\backslash \fi}
 %
 \def\math{%
-  \tex
-  \mathunderscore
-  \let\\ = \mathbackslash
-  \mathactive
-  % make the texinfo accent commands work in math mode
-  \let\"=\ddot
-  \let\'=\acute
-  \let\==\bar
-  \let\^=\hat
-  \let\`=\grave
-  \let\u=\breve
-  \let\v=\check
-  \let\~=\tilde
-  \let\dotaccent=\dot
-  % have to provide another name for sup operator
-  \let\mathopsup=\sup
-  $\finishmath
+  \ifmmode\else % only go into math if not in math mode already
+    \tex
+    \mathunderscore
+    \let\\ = \mathbackslash
+    \mathactive
+    % make the texinfo accent commands work in math mode
+    \let\"=\ddot
+    \let\'=\acute
+    \let\==\bar
+    \let\^=\hat
+    \let\`=\grave
+    \let\u=\breve
+    \let\v=\check
+    \let\~=\tilde
+    \let\dotaccent=\dot
+    % have to provide another name for sup operator
+    \let\mathopsup=\sup
+  $\expandafter\finishmath\fi
 }
 \def\finishmath#1{#1$\endgroup}  % Close the group opened by \tex.
 
@@ -5386,8 +5387,27 @@ end
 \newdimen\doublecolumntopgap
 \doublecolumntopgap = 0pt
 
-\newtoks\savedtopmark % Used in \begindoublecolumns
+% Use inside an output routine to save \topmark and \firstmark
+\def\savemarks{%
+  \global\savedtopmark=\expandafter{\topmark }%
+  \global\savedfirstmark=\expandafter{\firstmark }%
+}
+\newtoks\savedtopmark
 \newtoks\savedfirstmark
+
+% Set \topmark and \firstmark for next time \output runs.
+% Can't be run from withinside \output (because any material
+% added while an output routine is active, including 
+% penalties, is saved for after it finishes).  The page so far
+% should be empty, otherwise what's on it will be thrown away.
+\def\restoremarks{%
+  \mark{\the\savedtopmark}%
+  \bgroup\output = {%
+    \setbox\dummybox=\box\PAGE
+  }abc\eject\egroup
+  % "abc" because output routine doesn't fire for a completely empty page.
+  \mark{\the\savedfirstmark}%
+}
 
 \def\begindoublecolumns{\begingroup % ended by \enddoublecolumns
   % Grab any single-column material above us.
@@ -5409,22 +5429,15 @@ end
       \unvbox\PAGE
       \kern-\topskip \kern\baselineskip
     }%
-    % Save \topmark and \firstmark
-    \global\savedtopmark=\expandafter{\topmark}%
-    \global\savedfirstmark=\expandafter{\firstmark}%
+    \savemarks
   }%
   \eject % run that output routine to set \partialpage
+  \restoremarks
   %
   % We recover the two marks that the last output routine saved in order
   % to propagate the information in marks added around a chapter heading,
   % which could be otherwise be lost by the time the final page is output.
   %
-  \mark{\the\savedtopmark}% Only mark in page passed to following \output.
-  \output = {%
-    \setbox0=\box\PAGE % clear box 255
-  }abc\eject
-  %
-  \mark{\the\savedfirstmark}%
   %
   % Use the double-column output routine for subsequent pages.
   \output = {\doublecolumnout}%
@@ -5464,6 +5477,7 @@ end
 % the last, which is done by \balancecolumns.
 %
 \def\doublecolumnout{%
+  %
   \splittopskip=\topskip \splitmaxdepth=\maxdepth
   % Get the available space for the double columns -- the normal
   % (undoubled) page height minus any material left over from the
@@ -5525,6 +5539,7 @@ end
   \output = {%
     % Split the last of the double-column material.  Leave it on the
     % current page, no automatic page break.
+    \savemarks
     \balancecolumns
     %
     % If we end up splitting too much material for the current page,
@@ -5538,6 +5553,8 @@ end
   }%
   \eject
   \endgroup % started in \begindoublecolumns
+  \restoremarks
+  \box\balancedcolumns
   %
   % \pagegoal was set to the doubled \vsize above, since we restarted
   % the current page.  We're now back to normal single-column
@@ -5545,6 +5562,8 @@ end
   % \endgroup where \vsize got restored).
   \pagegoal = \vsize
 }
+\newbox\balancedcolumns
+\setbox\balancedcolumns=\vbox{shouldnt see this}%
 %
 % Only called for the last of the double column material.  \doublecolumnout 
 % does the others.
@@ -5588,7 +5607,7 @@ end
     \fi
   \fi
   %
-  \pagesofar
+  \global\setbox\balancedcolumns=\vbox{\pagesofar}%
 }
 \catcode`\@ = \other
 
