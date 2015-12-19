@@ -304,7 +304,9 @@ int get_del_code_num(int n)
 static void initializedelcode(void)
 {
     sa_tree_item sa_value = { 0 };
-    sa_value.uint_value = DELCODEDEFAULT;
+ /* sa_value.uint_value = DELCODEDEFAULT; */
+    sa_value.dump_uint.value_1 = DELCODEDEFAULT;
+    sa_value.dump_uint.value_2 = 0;
     delcode_head = new_sa_tree(DELCODESTACK, 2, sa_value);
 }
 
