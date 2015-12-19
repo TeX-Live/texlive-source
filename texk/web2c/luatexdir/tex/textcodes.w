@@ -98,7 +98,7 @@ static void dumpcatcodes(void)
     for (k = 0; k <= catcode_max; k++) {
         if (catcode_valid[k]) {
             dump_int(k);
-            dump_sa_tree(catcode_heads[k]);
+            dump_sa_tree(catcode_heads[k],"catcodes");
         }
     }
 }
@@ -116,7 +116,7 @@ static void undumpcatcodes(void)
     undump_int(total);
     for (k = 0; k < total; k++) {
         undump_int(x);
-        catcode_heads[x] = undump_sa_tree();
+        catcode_heads[x] = undump_sa_tree("catcodes");
         catcode_valid[x] = 1;
     }
 }
@@ -207,12 +207,12 @@ static void initializelccodes(void)
 
 static void dumplccodes(void)
 {
-    dump_sa_tree(lccode_head);
+    dump_sa_tree(lccode_head,"lccodes");
 }
 
 static void undumplccodes(void)
 {
-    lccode_head = undump_sa_tree();
+    lccode_head = undump_sa_tree("lccodes");
 }
 
 static void freelccodes(void)
@@ -253,12 +253,12 @@ static void initializeuccodes(void)
 
 static void dumpuccodes(void)
 {
-    dump_sa_tree(uccode_head);
+    dump_sa_tree(uccode_head,"uccodes");
 }
 
 static void undumpuccodes(void)
 {
-    uccode_head = undump_sa_tree();
+    uccode_head = undump_sa_tree("uccodes");
 }
 
 static void freeuccodes(void)
@@ -299,12 +299,12 @@ static void initializesfcodes(void)
 
 static void dumpsfcodes(void)
 {
-    dump_sa_tree(sfcode_head);
+    dump_sa_tree(sfcode_head,"sfcodes");
 }
 
 static void undumpsfcodes(void)
 {
-    sfcode_head = undump_sa_tree();
+    sfcode_head = undump_sa_tree("sfcodes");
 }
 
 static void freesfcodes(void)
@@ -409,7 +409,7 @@ static void dumphjcodes(void)
     for (k = 0; k <= hjcode_max; k++) {
         if (hjcode_valid[k]) {
             dump_int(k);
-            dump_sa_tree(hjcode_heads[k]);
+            dump_sa_tree(hjcode_heads[k],"hjcodes");
         }
     }
 }
@@ -427,7 +427,7 @@ static void undumphjcodes(void)
     undump_int(total);
     for (k = 0; k < total; k++) {
         undump_int(x);
-        hjcode_heads[x] = undump_sa_tree();
+        hjcode_heads[x] = undump_sa_tree("hjcodes");
         hjcode_valid[x] = 1;
     }
 }

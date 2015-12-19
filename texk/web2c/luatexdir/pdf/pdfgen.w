@@ -913,7 +913,7 @@ static void init_pdf_outputparameters(PDF pdf)
     int pk_mode;
     pdf->draftmode = fix_int(int_par(draft_mode_code), 0, 1);
     pdf->compress_level = fix_int(pdf_compress_level, 0, 9);
-    pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 16);
+    pdf->decimal_digits = fix_int(pdf_decimal_digits, 0, 4);
     pdf->gamma = fix_int(pdf_gamma, 0, 1000000);
     pdf->image_gamma = fix_int(pdf_image_gamma, 0, 1000000);
     pdf->image_hicolor = fix_int(pdf_image_hicolor, 0, 1);
@@ -921,6 +921,10 @@ static void init_pdf_outputparameters(PDF pdf)
     pdf->objcompresslevel = fix_int(pdf_objcompresslevel, 0, MAX_OBJ_COMPRESS_LEVEL);
     pdf->inclusion_copy_font = fix_int(pdf_inclusion_copy_font, 0, 1);
     pdf->pk_resolution = fix_int(pdf_pk_resolution, 72, 8000);
+    if (pdf->decimal_digits < 4) {
+        pdf->decimal_digits = 4;
+        formatted_warning("pdf backend","forcing decimal digits to %d",pdf->decimal_digits);
+    }
     if ((pdf->minor_version >= 5) && (pdf->objcompresslevel > 0)) {
         pdf->os_enable = true;
     } else {

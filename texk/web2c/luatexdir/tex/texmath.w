@@ -330,18 +330,18 @@ void dump_math_data(void)
         sa_value.int_value = MATHFONTDEFAULT;
         math_fam_head = new_sa_tree(MATHFONTSTACK, 1, sa_value);
     }
-    dump_sa_tree(math_fam_head);
+    dump_sa_tree(math_fam_head, "mathfonts");
     if (math_param_head == NULL) {
         sa_value.int_value = MATHPARAMDEFAULT;
         math_param_head = new_sa_tree(MATHPARAMSTACK, 1, sa_value);
     }
-    dump_sa_tree(math_param_head);
+    dump_sa_tree(math_param_head, "mathparameters");
 }
 
 void undump_math_data(void)
 {
-    math_fam_head = undump_sa_tree();
-    math_param_head = undump_sa_tree();
+    math_fam_head = undump_sa_tree("mathfonts");
+    math_param_head = undump_sa_tree("mathparameters");
 }
 
 @ @c

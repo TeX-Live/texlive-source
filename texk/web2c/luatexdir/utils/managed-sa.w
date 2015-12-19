@@ -144,6 +144,7 @@ sa_tree copy_sa_tree(sa_tree b)
     sa_tree a = (sa_tree) Mxmalloc_array(sa_tree_head, 1);
     a->stack_step = b->stack_step;
     a->stack_size = b->stack_size;
+    a->stack_type = b->stack_type;
     a->dflt = b->dflt;
     a->stack = NULL;
     a->stack_ptr = 0;
@@ -189,6 +190,7 @@ sa_tree new_sa_tree(int size, int type, sa_tree_item dflt)
     a->stack_step = size;
     a->stack_type = type;
     a->stack_ptr = 0;
+ /* printf("creating sa tree of type %d\n",type); */
     return (sa_tree) a;
 }
 
@@ -208,7 +210,7 @@ void restore_sa_stack(sa_tree head, int gl)
 }
 
 @ @c
-void dump_sa_tree(sa_tree a)
+void dump_sa_tree(sa_tree a, const char * name)
 {
     boolean f;
     int x, n;
@@ -217,9 +219,10 @@ void dump_sa_tree(sa_tree a)
     x = a->dflt.int_value;
     dump_int(x);
     if (a->tree != NULL) {
-        dump_int(1);
+        dump_int(1); /* marker */
         n = a->stack_type;
         dump_int(n);
+     /* printf("dumping sa tree %s with type %d\n",name,n); */
         for (h = 0; h < HIGHPART; h++) {
             if (a->tree[h] != NULL) {
                 f = 1;
@@ -229,10 +232,13 @@ void dump_sa_tree(sa_tree a)
                         f = 1;
                         dump_qqqq(f);
                         for (l = 0; l < LOWPART; l++) {
-                            x = a->tree[h][m][l].dump_uint.value_1;
-                            dump_int(x);
                             if (n == 2) {
+                                x = a->tree[h][m][l].dump_uint.value_1;
+                                dump_int(x);
                                 x = a->tree[h][m][l].dump_uint.value_2;
+                                dump_int(x);
+                            } else {
+                                x = a->tree[h][m][l].uint_value;
                                 dump_int(x);
                             }
                         }
@@ -247,12 +253,12 @@ void dump_sa_tree(sa_tree a)
             }
         }
     } else {
-        dump_int(0);
+        dump_int(0); /* marker */
     }
 }
 
 @ @c
-sa_tree undump_sa_tree(void)
+sa_tree undump_sa_tree(const char * name)
 {
     int x, n;
     int h, m, l;
@@ -266,12 +272,13 @@ sa_tree undump_sa_tree(void)
     a->stack = Mxmalloc_array(sa_stack_item, a->stack_size);
     a->stack_ptr = 0;
     a->tree = NULL;
-    undump_int(x);
+    undump_int(x); /* marker */
     if (x == 0)
         return a;
     a->tree = (sa_tree_item ***) Mxcalloc_array(void *, HIGHPART);
     undump_int(n);
     a->stack_type = n;
+ /* printf("undumping sa tree %s with type %d\n",name,n); */
     for (h = 0; h < HIGHPART; h++) {
         undump_qqqq(f);
         if (f > 0) {
@@ -281,11 +288,14 @@ sa_tree undump_sa_tree(void)
                 if (f > 0) {
                     a->tree[h][m] = Mxmalloc_array(sa_tree_item, LOWPART);
                     for (l = 0; l < LOWPART; l++) {
-                        undump_int(x);
-                        a->tree[h][m][l].dump_uint.value_1 = x;
                         if (n == 2) {
                             undump_int(x);
+                            a->tree[h][m][l].dump_uint.value_1 = x;
+                            undump_int(x);
                             a->tree[h][m][l].dump_uint.value_2 = x;
+                        } else {
+                            undump_int(x);
+                            a->tree[h][m][l].uint_value = x;
                         }
                     }
                 }
