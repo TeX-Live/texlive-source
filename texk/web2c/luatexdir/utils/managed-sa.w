@@ -231,7 +231,7 @@ void dump_sa_tree(sa_tree a)
                         for (l = 0; l < LOWPART; l++) {
                             x = a->tree[h][m][l].dump_uint.value_1;
                             dump_int(x);
-                            if (n == 1) {
+                            if (n == 2) {
                                 x = a->tree[h][m][l].dump_uint.value_2;
                                 dump_int(x);
                             }
@@ -283,7 +283,7 @@ sa_tree undump_sa_tree(void)
                     for (l = 0; l < LOWPART; l++) {
                         undump_int(x);
                         a->tree[h][m][l].dump_uint.value_1 = x;
-                        if (n == 1) {
+                        if (n == 2) {
                             undump_int(x);
                             a->tree[h][m][l].dump_uint.value_2 = x;
                         }

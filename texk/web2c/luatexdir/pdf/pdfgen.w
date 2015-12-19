@@ -913,7 +913,7 @@ static void init_pdf_outputparameters(PDF pdf)
     int pk_mode;
     pdf->draftmode = fix_int(int_par(draft_mode_code), 0, 1);
     pdf->compress_level = fix_int(pdf_compress_level, 0, 9);
-    pdf->decimal_digits = fix_int(pdf_decimal_digits, 0, 4);
+    pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 16);
     pdf->gamma = fix_int(pdf_gamma, 0, 1000000);
     pdf->image_gamma = fix_int(pdf_image_gamma, 0, 1000000);
     pdf->image_hicolor = fix_int(pdf_image_hicolor, 0, 1);

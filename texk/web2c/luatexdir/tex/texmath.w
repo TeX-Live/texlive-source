@@ -1191,17 +1191,31 @@ mathcodeval scan_mathchar(int extcode)
         /* "TFCC */
         scan_int();
         if (cur_val > 0x8000) {
-            tex_error("Invalid math code", hlp);
-            cur_val = 0;
+            /*
+                tex_error("Invalid math code", hlp);
+                cur_val = 0;
+            */
+            /* needed for latex: fallback to umathnum_mathcode */
+            mfam = (cur_val / 0x200000) & 0x7FF;
+            mcls = mfam % 0x08;
+            mfam = mfam / 0x08;
+            mchr = cur_val & 0x1FFFFF;
+            if (mchr > 0x10FFFF) {
+                tex_error("Invalid math code during > 0x8000 mathcode fallback", hlp);
+                mcls = 0;
+                mfam = 0;
+                mchr = 0;
+            }
+        } else {
+            if (cur_val < 0) {
+                snprintf(errstr, 255, "Bad mathchar (%d)", (int)cur_val);
+                tex_error(errstr, hlp);
+                cur_val = 0;
+            }
+            mcls = (cur_val / 0x1000);
+            mfam = ((cur_val % 0x1000) / 0x100);
+            mchr = (cur_val % 0x100);
         }
-        if (cur_val < 0) {
-            snprintf(errstr, 255, "Bad mathchar (%d)", (int)cur_val);
-            tex_error(errstr, hlp);
-            cur_val = 0;
-        }
-        mcls = (cur_val / 0x1000);
-        mfam = ((cur_val % 0x1000) / 0x100);
-        mchr = (cur_val % 0x100);
     } else if (extcode == umath_mathcode) {
         /* <0-0x7> <0-0xFF> <0-0x10FFFF> */
         scan_int();
