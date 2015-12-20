@@ -78,3 +78,7 @@ authorization from the copyright holder.
 
 #define __SyncTeX__ 1
 #define SYNCTEX_DO_NOT_LOG_OUTPUT_DIRECTORY 1
+
+/*   New LuaTeX (0.87.0) or later */
+#define glue_node 12
+#define kern_node 13
