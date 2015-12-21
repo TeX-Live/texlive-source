@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 38967 2015-11-28 02:15:58Z preining $
+# $Id: tlmgr.pl 39104 2015-12-14 15:56:11Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 38967 $';
-my $datrev = '$Date: 2015-11-28 03:15:58 +0100 (Sat, 28 Nov 2015) $';
+my $svnrev = '$Revision: 39104 $';
+my $datrev = '$Date: 2015-12-14 16:56:11 +0100 (Mon, 14 Dec 2015) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -411,6 +411,7 @@ sub main {
 
   if (defined($action) && $action eq "help") {
     $opts{"help"} = 1;
+    $action = undef;  # an option not an action
   }
 
   if (defined($action) && $action eq "print-platform") {
@@ -418,19 +419,19 @@ sub main {
     exit 0;
   }
 
-  #
   # ACTION massaging
   # for backward compatibility and usability
 
   # unify arguments so that the $action contains paper in all cases
   # and push the first arg back to @ARGV for action_paper processing
-  if ($action =~ /^(paper|xdvi|psutils|pdftex|dvips|dvipdfmx?|context)$/) {
+  if (defined $action 
+      && $action =~ /^(paper|xdvi|psutils|pdftex|dvips|dvipdfmx?|context)$/) {
     unshift(@ARGV, $action);
     $action = "paper";
   }
 
   # backward compatibility with action "show" and "list" from before
-  if ($action =~ /^(show|list)$/) {
+  if (defined $action && $action =~ /^(show|list)$/) {
     $action = "info";
   }
 

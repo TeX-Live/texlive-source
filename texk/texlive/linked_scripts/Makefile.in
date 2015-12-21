@@ -367,6 +367,7 @@ texmf_other_scripts = \
 	pdfcrop/pdfcrop.pl \
 	pedigree-perl/pedigree.pl \
 	perltex/perltex.pl \
+	petri-nets/pn2pdf \
 	pfarrei/a5toa4.tlu \
 	pfarrei/pfarrei.tlu \
 	pkfix-helper/pkfix-helper \
