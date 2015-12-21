@@ -369,7 +369,7 @@ node_info node_data[] = { /* the last entry in a row is the etex number */
     { -1,                 -1,                     NULL,                                      NULL,             -1 },
 };
 
-#define last_normal_node local_par_node
+#define last_normal_node shape_node
 
 const char *node_subtypes_pdf_destination[] = {
     "xyz", "fit", "fith", "fitv", "fitb", "fitbh", "fitbv", "fitr", NULL

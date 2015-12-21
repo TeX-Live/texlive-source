@@ -120,7 +120,6 @@ void initialize_commands(void)
     primitive_tex("righthyphenmin", assign_int_cmd, int_base + right_hyphen_min_code, int_base);
     primitive_tex("holdinginserts", assign_int_cmd, int_base + holding_inserts_code, int_base);
     primitive_tex("errorcontextlines", assign_int_cmd, int_base + error_context_lines_code, int_base);
-    primitive_luatex("luastartup", assign_int_cmd, int_base + luastartup_id_code, int_base);
     primitive_luatex("nokerns", assign_int_cmd, int_base + disable_kern_code, int_base);
     primitive_luatex("noligs", assign_int_cmd, int_base + disable_lig_code, int_base);
     primitive_luatex("nospaces", assign_int_cmd, int_base + disable_space_code, int_base);
