@@ -25,10 +25,9 @@
 #define font_id_text(A) cs_text(font_id_base+(A))
 #define prev_depth cur_list.prev_depth_field
 
-/* 907 = sum of the values of the bytes of "don knuth" */
-/* The next FORMAT_ID will be 907+10                    */
+/* we start with 907: the sum of the values of the bytes of "don knuth" */
 
-#define FORMAT_ID (907+10)
+#define FORMAT_ID (907+11)
 #if ((FORMAT_ID>=0) && (FORMAT_ID<=256))
 #error Wrong value for FORMAT_ID.
 #endif
