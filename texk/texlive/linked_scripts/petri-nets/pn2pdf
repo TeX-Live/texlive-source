@@ -1,0 +1,211 @@
+#!/usr/bin/perl
+
+## This file is part of the Petri-nets packages. See file README for
+## copyright notice.
+
+use strict;
+use Digest::MD5 qw(md5_hex);
+use Getopt::Long;
+
+##
+## read options
+##
+
+Getopt::Long::Configure ("bundling");
+
+my $keep    = 0;
+my $force   = 0;
+my $verbose = 0;
+
+GetOptions ("k|keep"    => \$keep,
+	    "f|force"   => \$force,
+	    "v|verbose" => \$verbose,
+	    "t|test"    => \&Test,
+	    "d|delete"  => \&Delete,
+	    "b|batch"   => \&Batch,
+	    "h|help"    => \&Help);
+
+&Help if scalar @ARGV > 1;
+
+##
+## Global variables
+##
+
+my $figure   = shift @ARGV;
+my $basename = $figure;      $basename =~ s/\.pn$//;
+my $jobname  = $basename;    $jobname =~ s/-fig\d+$//;
+my $data     = "";
+my %sum;
+
+##
+## Load checksums
+##
+
+if (-f "$jobname.sum") {
+    open SUM, "$jobname.sum"
+	or &Error ("could not open $jobname.sum -- $!");
+    while (<SUM>) {
+	next unless /^(.+)\s+(.+)$/;
+	$sum{$1} = $2;
+    }
+    close SUM;
+}
+
+##
+## Get preamble
+##
+
+if (-f "$jobname.pre") {
+    # read the existing preamble
+    my @lines;
+    open PRE, "$jobname.pre"
+	or &Error ("could not open $jobname.sum -- $!");
+    @lines = <PRE>;
+    close PRE;
+    $data .= join "", @lines;
+} else {
+    # create a new preamble
+    open TEX, "$jobname.tex"
+	or &Error ("could not open $jobname.tex -- $!");
+    while (<TEX>) {
+	$data .= $_;
+	last if /\\begin\{document\}/;
+    }
+    close TEX;
+    $data =~ s/(\\begin\{document\}).*$/$1\n/;
+    $data .= "\\pagestyle\{empty\}\n";
+    # save it
+    open PRE, ">$jobname.pre"
+	or &Error ("could not create $jobname.sum -- $!");
+    print PRE $data;
+    close PRE;
+}
+
+##
+## Read the figure
+##
+
+{
+    my $pre = 1;
+    open TEX, $figure or &Error ("could not open $figure -- $!");
+    open PRE, ">>$jobname.pre"
+	or &Error ("could not append $jobname.pre -- $!");
+    while (<TEX>) {
+	$pre = 0 if /^\\begin\{petrinet\}/;
+	print PRE if $pre;
+	$data .= $_;
+    }
+    close TEX;
+    close PRE;
+}
+
+##
+## Generate the EPDF
+##
+
+if (&SumChanged ($figure, "$data") or $force or (! -f "$basename.pdf")) {
+    open TEX, ">$basename.tex"
+	or &Error ("could not create file $basename.tex -- $!\n");
+    print TEX "$data\\end\{document\}\n";
+    close TEX;
+    system "latex", "$basename.tex";
+    system "dvips", "-E", "-Ppdf", "-o", "$basename.eps", "$basename";
+    system "epstopdf", "$basename.eps";
+}
+
+unlink ("$basename.tex", "$basename.log", "$basename.aux",
+	"$basename.dvi", "$basename.eps", "$basename.pn") unless $keep;
+
+##
+## Save checksums
+##
+
+open SUM, ">$jobname.sum"
+    or die "pn2pdf: could not create file $jobname.sum -- $!\n";
+foreach my $file (sort keys %sum) {
+    print SUM "$file $sum{$file}\n";
+}
+close SUM;
+
+exit 0;
+
+##
+## Sub programs
+##
+
+sub Help {
+    print <<"EOF";
+Usage: pn2pdf [OPTIONS]
+Create EPDF files for Petri net figures.
+
+  FIGURE               process FIGURE
+  -b, --batch FILE     process the commands in FILE
+  -k, --keep           keep temporary files
+  -f, --force          force the rendering of all pictures
+  -t, --test FILES     create FILES for test purpose
+  -d, --delete FILES   delete FILES (may be patterns)
+  -h, --help           display this help and exit
+
+Report bugs to <pommereau\@univ-paris12.fr>
+EOF
+    exit 0; }
+
+sub Error {
+    foreach my $line (@_) {
+	warn "pn2pdf: $line\n";
+    }
+    exit 1;
+}
+
+sub Verbose {
+    return unless $verbose;
+    foreach my $line (@_) {
+	warn "[pn2pdf] $line\n";
+    }
+}
+
+sub SumChanged {
+    my ($file, $lines) = @_;
+    my $md5 = md5_hex ($lines);
+    if ($md5 eq $sum{$file}) {
+	return 0;
+    } else {
+	$sum{$file} = $md5;
+	return 1;
+    }
+}
+
+sub Test {
+    foreach my $file (@ARGV) {
+	open FILE, ">$file" or &Error ("could not create $file -- $!");
+	close FILE;
+    }
+    exit 0;
+}
+
+sub Delete {
+    foreach my $pattern (@ARGV) {
+	unlink glob $pattern unless $keep;
+    }
+    exit 0;
+}
+
+sub Batch {
+    my @lines;
+    foreach my $file (@ARGV) {
+	$file =~ s/(\.[a-z]{3})?$/.bpn/i;
+	open FILE, $file or &Error ("could not open $file -- $!");
+	while (<FILE>) {
+	    next unless /^pn2pdf\s/;
+	    s/^pn2pdf\s/pn2pdf --keep / if $keep;
+	    s/^pn2pdf\s/pn2pdf --force / if $force;
+	    s/^pn2pdf\s/pn2pdf --verbose / if $verbose;
+	    push @lines, $_;
+	}
+	close FILE;
+    }
+    foreach (@lines) {
+	system $_;
+    }
+    exit 0;
+}
