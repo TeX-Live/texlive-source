@@ -6409,7 +6409,11 @@ static int lua_nodelib_direct_getbox(lua_State * L)
     int k = direct_get_box_id(L, -1);
     direct_check_index_range(k, "getbox");
     t = get_tex_box_register(k);
-    lua_pushinteger(L, t);
+    if (t == null) {
+        lua_pushnil(L);
+    } else {
+        lua_pushinteger(L, t);
+    }
     return 1;
 }
 
