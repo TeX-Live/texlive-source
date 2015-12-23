@@ -186,7 +186,7 @@ void initialize_commands(void)
     primitive_tex("fontdimen", assign_font_dimen_cmd, 0, 0);
     primitive_tex("halign", halign_cmd, 0, 0);
     primitive_tex("hrule", hrule_cmd, 0, 0);
-    primitive_luatex("nohrule", no_vrule_cmd, 0, 0);
+    primitive_luatex("nohrule", no_hrule_cmd, 0, 0);
     primitive_tex("ignorespaces", ignore_spaces_cmd, 0, 0);
     primitive_tex("insert", insert_cmd, 0, 0);
     primitive_luatex("leftghost", char_ghost_cmd, 0, 0);
@@ -233,7 +233,7 @@ void initialize_commands(void)
     primitive_tex("valign", valign_cmd, 0, 0);
     primitive_tex("vcenter", vcenter_cmd, 0, 0);
     primitive_tex("vrule", vrule_cmd, 0, 0);
-    primitive_luatex("novrule", no_hrule_cmd, 0, 0);
+    primitive_luatex("novrule", no_vrule_cmd, 0, 0);
     primitive_tex("par", par_end_cmd, too_big_char, too_big_char);      /* cf.\ |scan_file_name| */
     par_loc = cur_val;
     par_token = cs_token_flag + par_loc;
