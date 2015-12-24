@@ -1,3 +1,4 @@
+# $Id: TLUtils.pm 39054 2015-12-08 21:47:09Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2015 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -5,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 37234 $';
+my $svnrev = '$Revision: 39054 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -20,7 +21,7 @@ sub module_revision {
 
 =head1 NAME
 
-C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
+C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
 
 =head1 SYNOPSIS
 
@@ -78,7 +79,7 @@ C<TeXLive::TLUtils> -- utilities used in the TeX Live infrastructure
   TeXLive::TLUtils::install_packages($from_tlpdb,$media,$to_tlpdb,$what,$opt_src, $opt_doc)>);
   TeXLive::TLUtils::install_package($what, $filelistref, $target, $platform);
   TeXLive::TLUtils::do_postaction($how, $tlpobj, $do_fileassocs, $do_menu, $do_desktop, $do_script);
-  TeXLive::TLUtils::announce_execute_actions($how, @executes);
+  TeXLive::TLUtils::announce_execute_actions($how, @executes, $what);
   TeXLive::TLUtils::add_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info);
   TeXLive::TLUtils::remove_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info);
   TeXLive::TLUtils::w32_add_to_path($bindir, $multiuser);
@@ -115,11 +116,9 @@ use vars qw(
   $::LOGFILENAME @::LOGLINES 
   @::debug_hook @::ddebug_hook @::dddebug_hook @::info_hook @::warn_hook
   @::install_packages_hook
-  $::latex_updated
   $::machinereadable
   $::no_execute_actions
   $::regenerate_all_formats
-  $::tex_updated
   $TeXLive::TLDownload::net_lib_avail
 );
 
@@ -1935,10 +1934,11 @@ sub parse_into_keywords {
   return($error, %ret);
 }
 
-=item C<announce_execute_actions($how, $tlpobj)>
+=item C<announce_execute_actions($how, $tlpobj, $what)>
 
 Announces that the actions given in C<$tlpobj> should be executed
-after all packages have been unpacked.
+after all packages have been unpacked. C<$what> provides 
+additional information.
 
 =cut
 
@@ -1955,12 +1955,10 @@ sub announce_execute_actions {
     $::files_changed = 1;
     return;
   }
-  if (defined($type) && ($type eq "latex-updated")) {
-    $::latex_updated = 1;
-    return;
-  }
-  if (defined($type) && ($type eq "tex-updated")) {
-    $::tex_updated = 1;
+  if (defined($type) && ($type eq "rebuild-format")) {
+    # rebuild-format must feed in a hashref of a parse_AddFormat_line data
+    # the $tlp argument is not used
+    $::execute_actions{'enable'}{'formats'}{$what->{'name'}} = $what; 
     return;
   }
   if (!defined($type) || (($type ne "enable") && ($type ne "disable"))) {
@@ -3061,7 +3059,11 @@ sub parse_AddHyphen_line {
   return %ret;
 }
 
-
+# 
+# return hash of items on AddFormat line LINE (which must not have the
+# leading "execute AddFormat").  If parse fails, hash will contain a key
+# "error" with a message.
+# 
 sub parse_AddFormat_line {
   my $line = shift;
   my %ret;
@@ -3070,7 +3072,7 @@ sub parse_AddFormat_line {
   $ret{"mode"} = 1;
   for my $p (quotewords('\s+', 0, "$line")) {
     my ($a, $b);
-    if ($p =~ m/^(name|engine|mode|patterns|options)=(.*)$/) {
+    if ($p =~ m/^(name|engine|mode|patterns|options|fmttriggers)=(.*)$/) {
       $a = $1;
       $b = $2;
     } else {
@@ -3103,6 +3105,11 @@ sub parse_AddFormat_line {
     }
     if ($a eq "options") {
       $ret{"options"} = ( $b ? $b : "" );
+      next;
+    }
+    if ($a eq "fmttriggers") {
+      my @tl = split(',',$b);
+      $ret{"fmttriggers"} = \@tl ;
       next;
     }
     # should not be reached at all

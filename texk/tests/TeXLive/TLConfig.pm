@@ -1,3 +1,4 @@
+# $Id: TLConfig.pm 39006 2015-12-03 18:53:45Z karl $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -5,7 +6,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 37643 $';
+my $svnrev = '$Revision: 39006 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -217,7 +218,7 @@ our $F_NOPOSTACTION = 4;
 
 =head1 NAME
 
-C<TeXLive::TLConfig> -- TeX Live Configurations
+C<TeXLive::TLConfig> -- TeX Live Configuration module
 
 =head1 SYNOPSIS
 
