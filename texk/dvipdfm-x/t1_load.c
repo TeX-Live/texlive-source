@@ -322,6 +322,105 @@ static const char *const ISOLatin1Encoding[256] = {
   "ydieresis"
 };
 
+/* Treat cases such as "dup num num getinterval num exch putinterval"
+ * or "dup num exch num get put"
+ */
+static int
+try_put_or_putinterval (char **enc_vec, unsigned char **start, unsigned char *end)
+{
+  pst_obj *tok;
+  int i, num1, num2, num3;
+
+  tok = pst_get_token(start, end);
+  if (!tok || !PST_INTEGERTYPE(tok) ||
+      (num1 = pst_getIV(tok)) > 255 || num1 < 0) {
+    RELEASE_TOK(tok);
+    return -1;
+  }
+  RELEASE_TOK(tok);
+
+  tok = pst_get_token(start, end);
+  if (!tok) {
+    return -1;
+  } else if (MATCH_OP(tok, "exch")) {
+    /* dup num exch num get put */
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!tok || !PST_INTEGERTYPE(tok) ||
+        (num2 = pst_getIV(tok)) > 255 || num2 < 0) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!MATCH_OP(tok, "get")) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!MATCH_OP(tok, "put")) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    if (enc_vec[num1])
+      RELEASE(enc_vec[num1]);
+    enc_vec[num1] = xstrdup(enc_vec[num2]);
+  } else if (PST_INTEGERTYPE(tok) &&
+             (num2 = pst_getIV(tok)) + num1 <= 255 && num2 >= 0) {
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!MATCH_OP(tok, "getinterval")) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!tok || !PST_INTEGERTYPE(tok) ||
+        (num3 = pst_getIV(tok)) + num2 > 255 || num3 < 0) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!MATCH_OP(tok, "exch")) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    tok = pst_get_token(start, end);
+    if (!MATCH_OP(tok, "putinterval")) {
+      RELEASE_TOK(tok);
+      return -1;
+    }
+    RELEASE_TOK(tok);
+
+    for (i = 0; i < num2; i++) {
+      if (enc_vec[num1 + i]) { /* num1 + i < 256 here */
+        if (enc_vec[num3 + i]) { /* num3 + i < 256 here */
+          RELEASE(enc_vec[num3 + i]);
+          enc_vec[num3+i] = NULL;
+        }
+        enc_vec[num3 + i] = xstrdup(enc_vec[num1 + i]);
+      }
+    }
+  } else {
+    RELEASE_TOK(tok);
+    return -1;
+  }
+
+  return 0;
+}
+
 static int
 parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
 {
@@ -393,8 +492,16 @@ parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
       }
       RELEASE_TOK(tok);
 
+      /* cmctt10.pfb for examples contains the following PS code
+       *     dup num num getinterval num exch putinterval
+       *     dup num exch num get put
+       */
       tok = pst_get_token(start, end);
-      if (!tok || !PST_INTEGERTYPE(tok) ||
+      if (MATCH_OP(tok, "dup")) { /* possibly putinterval type */
+        try_put_or_putinterval(enc_vec, start, end);
+        RELEASE_TOK(tok)
+        continue;
+      } else if (!tok || !PST_INTEGERTYPE(tok) ||
           (code = pst_getIV(tok)) > 255 || code < 0) {
         RELEASE_TOK(tok);
         continue;
