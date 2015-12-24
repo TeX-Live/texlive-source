@@ -1,7 +1,7 @@
 2015-12-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
-	* t1_load.c: Support to download type1 fonts such as cmctt10.pfb
-	with complicated encoding.
+	* t1_load.c: Support for get/putinterval and get/put in encoding
+	definition found in some Type1 fonts such as cmctt10.pfb.
 
 2015-11-05  Karl Berry  <karl@tug.org>
 
