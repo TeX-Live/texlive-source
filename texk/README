@@ -59,10 +59,10 @@ dvipos - ?
 
 dvipsk - maintained here, by us
 
-dvisvgm 1.11 - checked 29sep15
+dvisvgm 1.13 - checked 9dec15
   http://dvisvgm.bplaced.net/Downloads
 
-gregorio 4.0.0-rc1 - checked 9oct15
+gregorio 4.0.0 - checked 9dec15
   https://github.com/gregorio-project/gregorio/releases/
 
 gsftopk - from Paul Vojta's xdvi?
