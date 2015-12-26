@@ -66,7 +66,6 @@ pdf_font_set_verbose (void)
   Type0Font_set_verbose();
   CIDFont_set_verbose  ();
   pdf_encoding_set_verbose();
-  UC_set_verbose ();
   agl_set_verbose();
   otl_conf_set_verbose();
   otf_cmap_set_verbose ();

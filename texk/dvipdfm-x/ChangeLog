@@ -1,3 +1,11 @@
+2015-12-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pngimage.c: Workaround for Adobe Potoshop generated PNGs which have
+	cHRM chunk but not gAMA chunk.
+	* agl.c, spc_pdfm.c, unicode.c, unicode.h: Addition of some
+	Unicode related functions. Try conversion to UTF16BE only for string
+	objects which can be considered as a valid Unicode text.
+
 2015-12-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* t1_load.c: Support for get/putinterval and get/put in encoding
