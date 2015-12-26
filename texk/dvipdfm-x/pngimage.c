@@ -63,6 +63,8 @@
 
 #include "pdfximage.h"
 
+#define DPX_PNG_DEFAULT_GAMMA 2.2
+
 #define PDF_TRANS_TYPE_NONE   0
 #define PDF_TRANS_TYPE_BINARY 1
 #define PDF_TRANS_TYPE_ALPHA  2
@@ -668,7 +670,7 @@ create_cspace_CalRGB (png_structp png_ptr, png_infop info_ptr)
     }
     G = 1.0 / G; /* Gamma is inverted. */
   } else {
-    G = 1.0;
+    G = DPX_PNG_DEFAULT_GAMMA;
   }
 
   cal_param = make_param_Cal(PNG_COLOR_TYPE_RGB, G, xw, yw, xr, yr, xg, yg, xb, yb);
@@ -709,7 +711,7 @@ create_cspace_CalGray (png_structp png_ptr, png_infop info_ptr)
     }
     G = 1.0 / G; /* Gamma is inverted. */
   } else {
-    G = 1.0;
+    G = DPX_PNG_DEFAULT_GAMMA;
   }
 
   cal_param = make_param_Cal(PNG_COLOR_TYPE_GRAY, G, xw, yw, xr, yr, xg, yg, xb, yb);

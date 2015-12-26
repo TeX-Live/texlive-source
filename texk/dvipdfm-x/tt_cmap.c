@@ -913,7 +913,7 @@ handle_subst_glyphs (CMap *cmap,
           int  k;
           len = 0;
           for (k = 0; k < unicode_count; ++k) {
-            len += UC_sput_UTF16BE(unicodes[k], &p, wbuf+WBUF_SIZE);
+            len += UC_UTF16BE_encode_char(unicodes[k], &p, wbuf+WBUF_SIZE);
           }
           wbuf[0] = (gid >> 8) & 0xff;
           wbuf[1] =  gid & 0xff;
@@ -994,7 +994,7 @@ add_to_cmap_if_used (CMap *cmap,
 
     wbuf[0] = (cid >> 8) & 0xff;
     wbuf[1] = (cid & 0xff);
-    len = UC_sput_UTF16BE(ch, &p, wbuf + WBUF_SIZE);
+    len = UC_UTF16BE_encode_char((int32_t) ch, &p, wbuf + WBUF_SIZE);
     CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
 
     /* Skip PUA characters and alphabetic presentation forms, allowing
@@ -1109,7 +1109,7 @@ create_ToUnicode_cmap (tt_cmap *ttcmap,
           unsigned char *p = wbuf + 2;
           wbuf[0] = (cid >> 8) & 0xff;
           wbuf[1] =  cid & 0xff;
-          len = UC_sput_UTF16BE(ch, &p, wbuf + WBUF_SIZE);
+          len = UC_UTF16BE_encode_char(ch, &p, wbuf + WBUF_SIZE);
           CMap_add_bfchar(cmap, wbuf, 2, wbuf + 2, len);
           count++;
         }
@@ -1340,7 +1340,7 @@ create_cmaps (CMap *cmap, CMap *tounicode,
       endptr  = wbuf + WBUF_SIZE;
       len     = 0;
       for (i = 0; i < glyph->num_unicodes; i++) {
-	len += UC_sput_UTF16BE(glyph->unicodes[i], &p, endptr);
+	      len += UC_UTF16BE_encode_char(glyph->unicodes[i], &p, endptr);
       }
       CMap_add_bfchar(tounicode, wbuf, 2, wbuf + 2, len);
     }

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2014 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2015 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -636,12 +636,12 @@ put_unicode_glyph (const char *name,
   if (p[1] != 'n') {
     p   += 1;
     ucv  = xtol(p, strlen(p));
-    len += UC_sput_UTF16BE (ucv, dstpp, limptr);
+    len += UC_UTF16BE_encode_char(ucv, dstpp, limptr);
   } else {
     p += 3;
     while (*p != '\0') {
       ucv  = xtol(p, 4);
-      len += UC_sput_UTF16BE (ucv, dstpp, limptr);
+      len += UC_UTF16BE_encode_char(ucv, dstpp, limptr);
       p   += 4;
     }
   }
@@ -715,7 +715,7 @@ agl_sput_UTF16BE (const char *glyphstr,
       }
       if (agln1) {
 	for (i = 0; i < agln1->n_components; i++) {
-	  len += UC_sput_UTF16BE (agln1->unicodes[i], dstpp, limptr);
+	  len += UC_UTF16BE_encode_char(agln1->unicodes[i], dstpp, limptr);
 	}
       } else {
 	if (verbose) {
