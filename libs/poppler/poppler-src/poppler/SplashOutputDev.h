@@ -231,6 +231,8 @@ public:
   virtual void updateBlendMode(GfxState *state);
   virtual void updateFillOpacity(GfxState *state);
   virtual void updateStrokeOpacity(GfxState *state);
+  virtual void updatePatternOpacity(GfxState *state);
+  virtual void clearPatternOpacity(GfxState *state);
   virtual void updateFillOverprint(GfxState *state);
   virtual void updateStrokeOverprint(GfxState *state);
   virtual void updateOverprintMode(GfxState *state);

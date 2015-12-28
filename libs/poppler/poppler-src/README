@@ -29,7 +29,9 @@ Please note that xpdf, and thus poppler, is licensed under the GPL,
 not the LGPL.  Consequently, any application using poppler must also
 be licensed under the GPL.  If you want to incorporate Xpdf based PDF
 rendering in a closed source product, please contact Glyph & Cog
-(www.glyphandcog.com) for commercial licensing options.
+(www.glyphandcog.com) for commercial licensing options. Note that
+this only allows you to use xpdf in a closed source product,
+not poppler itself.
 
 	Kristian Høgsberg, Feb. 27, 2005
 

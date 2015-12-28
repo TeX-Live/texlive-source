@@ -18,7 +18,7 @@
 // Copyright (C) 2006, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2006-2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009, 2012 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2009, 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009, 2011-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Christian Persch <chpe@gnome.org>
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
@@ -27,6 +27,7 @@
 // Copyright (C) 2013 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2013 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2013 Fabio D'Urso <fabiodurso@hotmail.it>
+// Copyright (C) 2015 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -78,6 +79,22 @@ GBool Matrix::invertTo(Matrix *other) const
   other->m[5] = (m[1] * m[4] - m[0] * m[5]) * det;
 
   return gTrue;
+}
+
+void Matrix::translate(double tx, double ty)
+{
+  double x0 = tx*m[0] + ty*m[2] + m[4];
+  double y0 = tx*m[1] + ty*m[3] + m[5];
+  m[4] = x0;
+  m[5] = y0;
+}
+
+void Matrix::scale(double sx, double sy)
+{
+  m[0] *= sx;
+  m[1] *= sx;
+  m[2] *= sy;
+  m[3] *= sy;
 }
 
 void Matrix::transform(double x, double y, double *tx, double *ty) const
@@ -2864,12 +2881,16 @@ void GfxSeparationColorSpace::getGray(GfxColor *color, GfxGray *gray) {
   GfxColor color2;
   int i;
 
-  x = colToDbl(color->c[0]);
-  func->transform(&x, c);
-  for (i = 0; i < alt->getNComps(); ++i) {
-    color2.c[i] = dblToCol(c[i]);
+  if (alt->getMode() == csDeviceGray && name->cmp("Black") == 0) {
+    *gray = clip01(gfxColorComp1 - color->c[0]);
+  } else {
+    x = colToDbl(color->c[0]);
+    func->transform(&x, c);
+    for (i = 0; i < alt->getNComps(); ++i) {
+      color2.c[i] = dblToCol(c[i]);
+    }
+    alt->getGray(&color2, gray);
   }
-  alt->getGray(&color2, gray);
 }
 
 void GfxSeparationColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
@@ -2878,12 +2899,18 @@ void GfxSeparationColorSpace::getRGB(GfxColor *color, GfxRGB *rgb) {
   GfxColor color2;
   int i;
 
-  x = colToDbl(color->c[0]);
-  func->transform(&x, c);
-  for (i = 0; i < alt->getNComps(); ++i) {
-    color2.c[i] = dblToCol(c[i]);
+  if (alt->getMode() == csDeviceGray && name->cmp("Black") == 0) {
+    rgb->r = clip01(gfxColorComp1 - color->c[0]);
+    rgb->g = clip01(gfxColorComp1 - color->c[0]);
+    rgb->b = clip01(gfxColorComp1 - color->c[0]);
+  } else {
+    x = colToDbl(color->c[0]);
+    func->transform(&x, c);
+    for (i = 0; i < alt->getNComps(); ++i) {
+      color2.c[i] = dblToCol(c[i]);
+    }
+    alt->getRGB(&color2, rgb);
   }
-  alt->getRGB(&color2, rgb);
 }
 
 void GfxSeparationColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
@@ -2892,12 +2919,34 @@ void GfxSeparationColorSpace::getCMYK(GfxColor *color, GfxCMYK *cmyk) {
   GfxColor color2;
   int i;
 
-  x = colToDbl(color->c[0]);
-  func->transform(&x, c);
-  for (i = 0; i < alt->getNComps(); ++i) {
-    color2.c[i] = dblToCol(c[i]);
+  if (name->cmp("Black") == 0) {
+    cmyk->c = 0;
+    cmyk->m = 0;
+    cmyk->y = 0;
+    cmyk->k = color->c[0];
+  } else if (name->cmp("Cyan") == 0) {
+    cmyk->c = color->c[0];
+    cmyk->m = 0;
+    cmyk->y = 0;
+    cmyk->k = 0;
+  } else if (name->cmp("Magenta") == 0) {
+    cmyk->c = 0;
+    cmyk->m = color->c[0];
+    cmyk->y = 0;
+    cmyk->k = 0;
+  } else if (name->cmp("Yellow") == 0) {
+    cmyk->c = 0;
+    cmyk->m = 0;
+    cmyk->y = color->c[0];
+    cmyk->k = 0;
+  } else {
+    x = colToDbl(color->c[0]);
+    func->transform(&x, c);
+    for (i = 0; i < alt->getNComps(); ++i) {
+      color2.c[i] = dblToCol(c[i]);
+    }
+    alt->getCMYK(&color2, cmyk);
   }
-  alt->getCMYK(&color2, cmyk);
 }
 
 void GfxSeparationColorSpace::getDeviceN(GfxColor *color, GfxColor *deviceN) {

@@ -25,7 +25,7 @@
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2011, 2012, 2014, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
-// Copyright (C) 2009-2011, 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2009-2011, 2013-2015 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2012, 2014 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2014 Till Kamppeter <till.kamppeter@gmail.com>
@@ -3762,38 +3762,19 @@ void PSOutputDev::startPage(int pageNum, GfxState *state, XRef *xrefA) {
 	}
       }
     }
-    if (paperMatch) {
-      paperSize = (PSOutPaperSize *)paperSizes->get(pagePaperSize[pageNum]);
-      writePSFmt("%%PageMedia: {0:t}\n", paperSize->name);
-    }
-    if (rotate == 0 || rotate == 180) {
-      writePSFmt("%%PageBoundingBox: 0 0 {0:d} {1:d}\n", width, height);
-    } else {
-      writePSFmt("%%PageBoundingBox: 0 0 {0:d} {1:d}\n", height, width);
-    }
-    writePSFmt("%%PageOrientation: {0:s}\n",
-	       landscape ? "Landscape" : "Portrait");
-    writePS("%%BeginPageSetup\n");
-    if (paperMatch) {
-      writePSFmt("{0:d} {1:d} pdfSetupPaper\n", imgURX, imgURY);
-    }
-    writePS("pdfStartPage\n");
     if (rotate == 0) {
       imgWidth2 = imgWidth;
       imgHeight2 = imgHeight;
     } else if (rotate == 90) {
-      writePS("90 rotate\n");
       ty = -imgWidth;
       imgWidth2 = imgHeight;
       imgHeight2 = imgWidth;
     } else if (rotate == 180) {
-      writePS("180 rotate\n");
       imgWidth2 = imgWidth;
       imgHeight2 = imgHeight;
       tx = -imgWidth;
       ty = -imgHeight;
     } else { // rotate == 270
-      writePS("270 rotate\n");
       tx = -imgHeight;
       imgWidth2 = imgHeight;
       imgHeight2 = imgWidth;
@@ -3837,6 +3818,59 @@ void PSOutputDev::startPage(int pageNum, GfxState *state, XRef *xrefA) {
     }
     tx += (rotate == 0 || rotate == 180) ? imgLLX : imgLLY;
     ty += (rotate == 0 || rotate == 180) ? imgLLY : -imgLLX;
+
+    if (paperMatch) {
+      paperSize = (PSOutPaperSize *)paperSizes->get(pagePaperSize[pageNum]);
+      writePSFmt("%%PageMedia: {0:t}\n", paperSize->name);
+    }
+
+    // Create a matrix with the same transform that will be output to PS
+    Matrix m;
+    switch (rotate) {
+    default:
+    case 0:
+      m.init(1, 0,
+	     0, 1,
+	     0, 0);
+      break;
+    case 90:
+      m.init(0,  1,
+	     -1, 0,
+	     0,  0);
+      break;
+    case 180:
+      m.init(-1, 0,
+	     0, -1,
+	     0,  0);
+      break;
+    case 270:
+      m.init(0, -1,
+	     1,  0,
+	     0,  0);
+      break;
+    }
+    m.translate(tx, ty);
+    m.scale(xScale, yScale);
+
+    double bboxX1, bboxY1, bboxX2, bboxY2;
+    m.transform(0, 0, &bboxX1, &bboxY1);
+    m.transform(width, height, &bboxX2, &bboxY2);
+
+    writePSFmt("%%PageBoundingBox: {0:g} {1:g} {2:g} {3:g}\n",
+	       floor(std::min(bboxX1, bboxX2)),
+	       floor(std::min(bboxY1, bboxY2)),
+	       ceil (std::max(bboxX1, bboxX2)),
+	       ceil (std::max(bboxY1, bboxY2)));
+
+    writePSFmt("%%PageOrientation: {0:s}\n",
+	       landscape ? "Landscape" : "Portrait");
+    writePS("%%BeginPageSetup\n");
+    if (paperMatch) {
+      writePSFmt("{0:d} {1:d} pdfSetupPaper\n", imgURX, imgURY);
+    }
+    writePS("pdfStartPage\n");
+    if (rotate)
+      writePSFmt("{0:d} rotate\n", rotate);
     if (tx != 0 || ty != 0) {
       writePSFmt("{0:.6g} {1:.6g} translate\n", tx, ty);
     }

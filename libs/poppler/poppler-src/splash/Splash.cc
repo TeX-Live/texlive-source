@@ -1752,11 +1752,23 @@ void Splash::setBlendFunc(SplashBlendFunc func) {
 }
 
 void Splash::setStrokeAlpha(SplashCoord alpha) {
-  state->strokeAlpha = alpha;
+  state->strokeAlpha = (state->multiplyPatternAlpha) ? alpha *  state->patternStrokeAlpha : alpha;
 }
 
 void Splash::setFillAlpha(SplashCoord alpha) {
-  state->fillAlpha = alpha;
+  state->fillAlpha = (state->multiplyPatternAlpha) ? alpha *  state->patternFillAlpha : alpha;
+}
+
+void Splash::setPatternAlpha(SplashCoord strokeAlpha, SplashCoord fillAlpha) {
+  state->patternStrokeAlpha = strokeAlpha;
+  state->patternFillAlpha = fillAlpha;
+  state->multiplyPatternAlpha = gTrue;
+}
+
+void Splash::clearPatternAlpha() {
+  state->patternStrokeAlpha = 1;
+  state->patternFillAlpha = 1;
+  state->multiplyPatternAlpha = gFalse;
 }
 
 void Splash::setFillOverprint(GBool fop) {

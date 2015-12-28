@@ -129,6 +129,8 @@ public:
   void setBlendFunc(SplashBlendFunc func);
   void setStrokeAlpha(SplashCoord alpha);
   void setFillAlpha(SplashCoord alpha);
+  void setPatternAlpha(SplashCoord strokeAlpha, SplashCoord fillAlpha);
+  void clearPatternAlpha();
   void setFillOverprint(GBool fop);
   void setStrokeOverprint(GBool sop);
   void setOverprintMode(int opm);
