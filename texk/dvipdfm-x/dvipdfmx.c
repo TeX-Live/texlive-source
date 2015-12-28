@@ -79,6 +79,7 @@ static int opt_flags = 0;
 #define OPT_CIDFONT_FIXEDPITCH    (1 << 2)
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
 #define OPT_PDFDOC_NO_DEST_REMOVE (1 << 4)
+#define OPT_PDFOBJ_NO_PREDICTOR   (1 << 5)
 
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
@@ -199,6 +200,7 @@ show_usage (void)
   printf ("\t\t  0x0004 Treat all CIDFont as fixed-pitch font.\n");
   printf ("\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
   printf ("\t\t  0x0010 Do not optimize PDF destinations.\n");
+  printf ("\t\t  0x0020 Do not use predictor filter for Flate compression.\n");
   printf ("\t\tPositive values are always ORed with previously given flags.\n");
   printf ("\t\tAnd negative values replace old values.\n");
   printf ("  -D template\tPS->PDF conversion command line template [none]\n");
@@ -1047,6 +1049,9 @@ main (int argc, char *argv[])
   /* Please move this to spc_init_specials(). */
   if (opt_flags & OPT_TPIC_TRANSPARENT_FILL)
     tpic_set_fill_mode(1);
+
+  if (opt_flags & OPT_PDFOBJ_NO_PREDICTOR)
+    pdf_set_use_predictor(0); /* No prediction */
 
   if (mp_mode) {
     do_mps_pages();

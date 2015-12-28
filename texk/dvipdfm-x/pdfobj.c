@@ -26,6 +26,8 @@
 
 #include <ctype.h>
 #include <string.h>
+/* floor and abs */
+#include <math.h>
 
 #include "system.h"
 #include "mem.h"
@@ -102,6 +104,25 @@ struct pdf_dict
   struct pdf_dict *next;
 };
 
+/* DecodeParms for FlateDecode */
+ struct decode_parms {
+  int     predictor;
+  int     colors;
+  int     bits_per_component;
+  int32_t columns;
+ };
+
+/* 2015/12/27 Added support for predictor functions
+ *
+ * There are yet no way to specify the use of predictor functions.
+ * Using TIFF2 or PNG predictor usually gives better compression for images
+ * but there is a case that compression speed becomes significantly slower.
+ * Please use -C 0x20 option to disable the use of predictor functions.
+ *
+ * See, e.g., for a heuristic approach for selecting filters
+ *   http://www.w3.org/TR/PNG-Encoders.html#E.Filter-selection
+ */
+
 struct pdf_stream
 {
   struct pdf_obj *dict;
@@ -109,7 +130,8 @@ struct pdf_stream
   int            *objstm_data;    /* used for object streams */
   unsigned int    stream_length;
   unsigned int    max_length;
-  unsigned char   _flags;
+  int32_t             _flags;
+  struct decode_parms decodeparms;
 };
 
 struct pdf_indirect
@@ -221,6 +243,7 @@ static void release_stream (pdf_stream *stream);
 
 static int  verbose = 0;
 static char compression_level = 9;
+static char compression_use_predictor = 1;
 
 void
 pdf_set_compression (int level)
@@ -240,6 +263,12 @@ pdf_set_compression (int level)
 #endif /* !HAVE_ZLIB */
 
   return;
+}
+
+void
+pdf_set_use_predictor (int bval)
+{
+  compression_use_predictor = bval ? 1 : 0;
 }
 
 static unsigned pdf_version = PDF_VERSION_DEFAULT;
@@ -1570,10 +1599,314 @@ pdf_new_stream (int flags)
   data->max_length    = 0;
   data->objstm_data = NULL;
 
+  data->decodeparms.predictor = 2;
+  data->decodeparms.columns   = 0;
+  data->decodeparms.bits_per_component = 0;
+  data->decodeparms.colors    = 0;
+
   result->data = data;
   result->flags |= OBJ_NO_OBJSTM;
 
   return result;
+}
+
+void
+pdf_stream_set_predictor (pdf_obj *stream,
+                          int predictor, int32_t columns, int bpc, int colors)
+{
+  struct pdf_stream *data;
+
+  if (pdf_obj_typeof(stream) != PDF_STREAM)
+    return;
+  else if (columns < 0 || bpc < 0 || colors < 0)
+    return;
+
+  data = (struct pdf_stream *) stream->data;
+  data->decodeparms.predictor = predictor;
+  data->decodeparms.columns   = columns;
+  data->decodeparms.bits_per_component = bpc;
+  data->decodeparms.colors    = colors;
+  data->_flags |= STREAM_USE_PREDICTOR;
+}
+
+/* Adaptive PNG filter
+ * We use the "minimum sum of absolute differences" heuristic approach
+ * for finding the most optimal filter to be used.
+ *
+ * From http://www.libpng.org/pub/png/book/chapter09.html
+ *
+ *   For grayscale and truecolor images of 8 or more bits per sample, with or
+ *   without alpha channels, dynamic filtering is almost always beneficial. The
+ *   approach that has by now become standard is known as the minimum sum of
+ *   absolute differences heuristic and was first proposed by Lee Daniel
+ *   Crocker in February 1995.
+ */
+static unsigned char *
+filter_PNG15_apply_filter (unsigned char *raster,
+                           int32_t columns, int32_t rows,
+                           int8_t bpc, int8_t colors, int32_t *length)
+{
+  unsigned char *dst;
+  int      bits_per_pixel  = colors * bpc;
+  int      bytes_per_pixel = (bits_per_pixel + 7) / 8;
+  int32_t  rowbytes = columns * bytes_per_pixel;
+  int32_t  i, j;
+
+  ASSERT(raster && length);
+
+  /* Result */
+  dst = NEW((rowbytes+1)*rows, unsigned char);
+  *length = (rowbytes + 1) * rows;
+
+  for (j = 0; j < rows; j++) {
+    int type = 0;
+    unsigned char *pp = dst + j * (rowbytes + 1);
+    unsigned char *p  = raster + j * rowbytes;
+    uint32_t sum[5]   = {0, 0, 0, 0, 0};
+    /* First calculated sum of values to make a heuristic guess
+     * of optimal predictor function.
+     */
+    for (i = 0; i < rowbytes; i++) {
+      int left  = (i - bytes_per_pixel >= 0) ? p[i - bytes_per_pixel] : 0;
+      int up    = (j > 0) ? *(p+i-rowbytes) : 0;
+      int uplft = (j > 0) ?
+                    ((i - bytes_per_pixel >= 0) ?
+                      *(p+i-rowbytes-bytes_per_pixel) : 0) : 0;
+      /* Type 0 -- None */
+      sum[0] += p[i];
+      /* Type 1 -- Sub */
+      sum[1] += abs((int) p[i] - left);
+      /* Type 2 -- Up */
+      sum[2] += abs((int) p[i] - up);
+      /* Type 3 -- Average */
+      {
+        int tmp = floor((up + left) / 2);
+        sum[3] += abs((int) p[i] - tmp);
+      }
+      /* Type 4 -- Peath */
+      {
+        int q = left + up - uplft;
+        int qa = abs(q - left), qb = abs(q - up), qc = abs(q - uplft);
+        if (qa <= qb && qa <= qc)
+          sum[4] += abs((int) p[i] - left);
+        else if (qb <= qc)
+          sum[4] += abs((int) p[i] - up);
+        else
+          sum[4] += abs((int) p[i] - uplft);
+      }
+    }
+    {
+      int min = sum[0], min_idx = 0;
+      for (i = 0; i < 5; i++) {
+        if (sum[i] < min) {
+          min = sum[i]; min_idx = i;
+        }
+      }
+      type = min_idx;
+    }
+    /* Now we actually apply filter. */
+    pp[0] = type;
+    switch (type) {
+    case 0:
+      memcpy(pp+1, p, rowbytes);
+      break;
+    case 1:
+      for (i = 0; i < rowbytes; i++) {
+        int left = (i - bytes_per_pixel >= 0) ? p[i - bytes_per_pixel] : 0;
+        pp[i+1] = p[i] - left;
+      }
+      break;
+    case 2:
+      for (i = 0; i < rowbytes; i++) {
+        int up  = (j > 0) ? *(p+i - rowbytes) : 0;
+        pp[i+1] = p[i] - up;
+      }
+      break;
+    case 3:
+      {
+        for (i = 0; i < rowbytes; i++) {
+          int up   = (j > 0) ? *(p+i-rowbytes) : 0;
+          int left = (i - bytes_per_pixel >= 0) ? p[i - bytes_per_pixel] : 0;
+          int tmp  = floor((up + left) / 2);
+          pp[i+1]  = p[i] - tmp;
+        }
+      }
+      break;
+    case 4: /* Peath */
+      {
+        for (i = 0; i < rowbytes; i++) {
+          int up   = (j > 0) ? *(p+i-rowbytes) : 0;
+          int left = (i - bytes_per_pixel >= 0) ? p[i - bytes_per_pixel] : 0;
+          int uplft = (j > 0) ?
+                        ((i - bytes_per_pixel >= 0) ?
+                          *(p+i-rowbytes-bytes_per_pixel) : 0) : 0;
+          int q = left + up - uplft;
+          int qa = abs(q - left), qb = abs(q - up), qc = abs(q - uplft);
+          if (qa <= qb && qa <= qc)
+            pp[i+1] = p[i] - left;
+          else if (qb <= qc)
+            pp[i+1] = p[i] - up;
+          else
+            pp[i+1] = p[i] - uplft;
+        }
+      }
+      break;
+    }
+  }
+
+  return  dst;
+}
+
+/* TIFF predictor filter support
+ *
+ * Many PDF viewers seems to have broken TIFF 2 predictor support?
+ * Ony GhostScript and MuPDF render 4bpc grayscale image with TIFF 2 predictor
+ * filter applied correctly.
+ *
+ *  Acrobat Reader DC  2015.007.20033  NG
+ *  Adobe Acrobat X    10.1.13         NG
+ *  Foxit Reader       4.1.5.425       NG
+ *  GhostScript        9.16            OK
+ *  SumatraPDF(MuPDF)  v3.0            OK
+ *  Evince(poppler)    2.32.0.145      NG (1bit and 4bit broken)
+ */
+
+/* This modifies "raster" itself! */
+static void
+apply_filter_TIFF2_1_2_4 (unsigned char *raster,
+                          int32_t width, int32_t height,
+                          int8_t bpc, int8_t num_comp)
+{
+  int32_t   rowbytes = (bpc * num_comp * width + 7) / 8;
+  uint8_t   mask     = (1 << bpc) - 1;
+  uint16_t *prev;
+  int32_t   i, j;
+
+  ASSERT(raster);
+  ASSERT( bpc > 0 && bpc <= 8 );
+
+  prev = NEW(num_comp, uint16_t);
+
+  /* Generic routine for 1 to 16 bit.
+   * It supports, e.g., 7 bpc images too.
+   * Actually, it is not necessary to have 16 bit inbuf and outbuf
+   * since we only need 1, 2, and 4 bit support here. 8 bit is enough.
+   */
+  for (j = 0; j < height; j++) {
+    int32_t  k, l, inbits, outbits;
+    uint16_t inbuf, outbuf;
+    int      c;
+
+    memset(prev, 0, sizeof(uint16_t)*num_comp);
+    inbuf = outbuf = 0; inbits = outbits = 0;
+    l = k = j * rowbytes;
+    for (i = 0; i < width; i++) {
+      for (c = 0; c < num_comp; c++) {
+        uint8_t cur;
+        int8_t  sub;
+        if (inbits < bpc) { /* need more byte */
+          inbuf   = (inbuf << 8) | raster[l]; l++;
+          inbits += 8;
+        }
+        cur     = (inbuf >> (inbits - bpc)) & mask;
+        inbits -= bpc; /* consumed bpc bits */
+        sub     = cur - prev[c];
+        prev[c] = cur;
+        if (sub < 0)
+          sub += (1 << bpc);
+        /* Append newly filtered component value */
+        outbuf   = (outbuf << bpc) | sub;
+        outbits += bpc;
+        /* flush */
+        if (outbits >= 8) {
+          raster[k] = (outbuf >> (outbits - 8)); k++;
+          outbits  -= 8;
+        }
+      }
+    }
+    if (outbits > 0)
+      raster[k] = (outbuf << (8 - outbits)); k++;
+  }
+  RELEASE(prev);
+}
+
+unsigned char *
+filter_TIFF2_apply_filter (unsigned char *raster,
+                           int32_t columns, int32_t rows,
+                           int8_t bpc, int8_t colors, int32_t *length)
+{
+  unsigned char *dst;
+  uint16_t      *prev;
+  int32_t        rowbytes = (bpc * colors * columns + 7) / 8;
+  int32_t        i, j;
+
+  ASSERT(raster && length);
+
+  dst = NEW(rowbytes*rows, unsigned char);
+  memcpy(dst, raster, rowbytes*rows);
+  *length = rowbytes * rows;
+
+  switch (bpc) {
+  case 1: case 2: case 4:
+    apply_filter_TIFF2_1_2_4(dst, columns, rows, bpc, colors);
+    break;
+
+  case 8:
+    prev = NEW(colors, uint16_t);
+    for (j = 0; j < rows; j++) {
+      memset(prev, 0, sizeof(uint16_t)*colors);
+      for (i = 0; i < columns; i++) {
+        int     c;
+        int32_t pos = colors * (columns * j + i);
+        for (c = 0; c < colors; c++) {
+          uint8_t cur = raster[pos+c];
+          int32_t sub = cur - prev[c];
+          prev[c]     = cur;
+          dst[pos+c]  = sub;
+        }
+      }
+    }
+    RELEASE(prev);
+    break;
+
+  case 16:
+    prev = NEW(colors, uint16_t);
+    for (j = 0; j < rows; j++) {
+      memset(prev, 0, sizeof(uint16_t)*colors);
+      for (i = 0; i < columns; i++) {
+        int     c;
+        int32_t pos = 2 * colors * (columns * j + i);
+        for (c = 0; c < colors; c++) {
+          uint16_t cur   = ((uint8_t)raster[pos+2*c])*256 +
+                             (uint8_t)raster[pos+2*c+1];
+          uint16_t sub   = cur - prev[c];
+          prev[c]        = cur;
+          dst[pos+2*c  ] = (sub >> 8) & 0xff;
+          dst[pos+2*c+1] = sub & 0xff;
+        }
+      }
+    }
+    RELEASE(prev);
+    break;
+
+  }
+
+  return  dst;
+}
+
+static pdf_obj *
+filter_create_predictor_dict (int predictor, int32_t columns,
+                              int bpc, int colors)
+{
+  pdf_obj *parms;
+
+  parms = pdf_new_dict();
+  pdf_add_dict(parms, pdf_new_name("BitsPerComponent"), pdf_new_number(bpc));
+  pdf_add_dict(parms, pdf_new_name("Colors"),  pdf_new_number(colors));
+  pdf_add_dict(parms, pdf_new_name("Columns"), pdf_new_number(columns));
+  pdf_add_dict(parms, pdf_new_name("Predictor"), pdf_new_number(predictor));
+
+  return  parms;
 }
 
 static void
@@ -1609,8 +1942,54 @@ write_stream (pdf_stream *stream, FILE *file)
   if (stream->stream_length > 0 &&
       (stream->_flags & STREAM_COMPRESS) &&
       compression_level > 0) {
+    pdf_obj *filters;
 
-    pdf_obj *filters = pdf_lookup_dict(stream->dict, "Filter");
+    /* First apply predictor filter if requested. */
+    if ( compression_use_predictor &&
+        (stream->_flags & STREAM_USE_PREDICTOR) &&
+        !pdf_lookup_dict(stream->dict, "DecodeParms")) {
+      int      bits_per_pixel  = stream->decodeparms.colors *
+                                   stream->decodeparms.bits_per_component;
+      int32_t  len  = (stream->decodeparms.columns * bits_per_pixel + 7) / 8;
+      int32_t  rows = stream->stream_length / len;
+      unsigned char *filtered2 = NULL;
+      int32_t        length2 = stream->stream_length;
+      pdf_obj       *parms;
+
+      parms = filter_create_predictor_dict(stream->decodeparms.predictor,
+                                        stream->decodeparms.columns,
+                                        stream->decodeparms.bits_per_component,
+                                        stream->decodeparms.colors);
+
+      switch (stream->decodeparms.predictor) {
+      case 2: /* TIFF2 */
+        filtered2 = filter_TIFF2_apply_filter(filtered,
+                                         stream->decodeparms.columns,
+                                         rows,
+                                         stream->decodeparms.bits_per_component,
+                                         stream->decodeparms.colors, &length2);
+        break;
+      case 15: /* PNG optimun */
+        filtered2 = filter_PNG15_apply_filter(filtered,
+                                         stream->decodeparms.columns,
+                                         rows,
+                                         stream->decodeparms.bits_per_component,
+                                         stream->decodeparms.colors, &length2);
+        break;
+      default:
+        WARN("Unknown/unsupported Predictor function %d.",
+             stream->decodeparms.predictor);
+        break;
+      }
+      if (parms && filtered2) {
+        RELEASE(filtered);
+        filtered = filtered2;
+        filtered_length = length2;
+        pdf_add_dict(stream->dict, pdf_new_name("DecodeParms"), parms);
+      }
+    }
+
+    filters = pdf_lookup_dict(stream->dict, "Filter");
 
     buffer_length = filtered_length + filtered_length/1000 + 14;
     buffer = NEW(buffer_length, unsigned char);
@@ -1824,18 +2203,6 @@ pdf_add_stream_flate (pdf_obj *dst, const void *data, int len)
   return (inflateEnd(&z) == Z_OK ? 0 : -1);
 }
 
-
-/* DecodeParms for FlateDecode
- *
- */
- struct decode_parms {
-  int predictor;
-  int colors;
-  int bits_per_component;
-  int columns;
-  /* EarlyChange unsupported */
- };
-
 static int
 get_decode_parms (struct decode_parms *parms, pdf_obj *dict)
 {
@@ -1879,24 +2246,18 @@ get_decode_parms (struct decode_parms *parms, pdf_obj *dict)
 /* From Xpdf version 3.04
  * I'm not sure if I properly ported... Untested.
  */
-#define PREDICTOR_TIFF2_MAX_COLORS 32
 static int
 filter_row_TIFF2 (unsigned char *dst, const unsigned char *src,
                   struct decode_parms *parms)
 {
   const unsigned char *p = src;
-  unsigned char  col[PREDICTOR_TIFF2_MAX_COLORS];
+  unsigned char *col;
   /* bits_per_component < 8 here */
   int  mask = (1 << parms->bits_per_component) - 1;
   int  inbuf, outbuf; /* 2 bytes buffer */
   int  i, ci, j, k, inbits, outbits;
 
-  if (parms->colors > PREDICTOR_TIFF2_MAX_COLORS) {
-    WARN("Sorry, Colors value > %d not supported for TIFF 2 predictor",
-         PREDICTOR_TIFF2_MAX_COLORS);
-    return -1;
-  }
-
+  col = NEW(parms->colors, unsigned char);
   memset(col, 0, parms->colors);
   inbuf = outbuf = 0; inbits = outbits = 0;
   j = k = 0;
@@ -1924,6 +2285,7 @@ filter_row_TIFF2 (unsigned char *dst, const unsigned char *src,
   if (outbits > 0) {
     dst[k] = (unsigned char) (outbuf << (8 - outbits));
   }
+  RELEASE(col);
 
   return 0;
 }

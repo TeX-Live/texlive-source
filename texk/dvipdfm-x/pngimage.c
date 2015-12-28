@@ -263,6 +263,8 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
        */
       break;
     }
+    info.num_components = 1;
+
     break;
   case PNG_COLOR_TYPE_RGB:
   case PNG_COLOR_TYPE_RGB_ALPHA:
@@ -331,6 +333,10 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
     if (trans_type == PDF_TRANS_TYPE_BINARY)
       pdf_add_dict(stream_dict, pdf_new_name("Mask"), mask);
     else if (trans_type == PDF_TRANS_TYPE_ALPHA) {
+      if (info.bits_per_component >= 8 && info.width > 64) {
+        pdf_stream_set_predictor(mask, 2, info.width,
+                                 info.bits_per_component, 1);
+      }
       pdf_add_dict(stream_dict, pdf_new_name("SMask"), pdf_ref_obj(mask));
       pdf_release_obj(mask);
     } else {
@@ -394,7 +400,12 @@ png_include_image (pdf_ximage *ximage, FILE *png_file)
     png_destroy_info_struct(png_ptr, &png_info_ptr);
   if (png_ptr)
     png_destroy_read_struct(&png_ptr, NULL, NULL);
-
+  if (color_type != PNG_COLOR_TYPE_PALETTE &&
+      info.bits_per_component >= 8 &&
+      info.height > 64) {
+    pdf_stream_set_predictor(stream, 15, info.width,
+                             info.bits_per_component, info.num_components);
+  }
   pdf_ximage_set_image(ximage, &info, stream);
 
   return 0;
