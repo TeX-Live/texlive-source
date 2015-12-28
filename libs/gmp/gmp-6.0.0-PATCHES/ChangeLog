@@ -1,4 +1,0 @@
-2014-05-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
-
-	patch-01-const (new): Avoid incompatible pointer type warning.
-

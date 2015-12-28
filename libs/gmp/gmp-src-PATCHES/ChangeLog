@@ -1,0 +1,7 @@
+2015-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-01-const: Removed, since it is applied in 6.1.0.
+
+2014-05-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	patch-01-const (new): Avoid incompatible pointer type warning.

@@ -139,6 +139,7 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/bdiv_q.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/binvert.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/cmp.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/com.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_qr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/dcpi1_div_q.$(OBJEXT) \
@@ -174,8 +175,8 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mul_1.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mul_basecase.$(OBJEXT) \
-	@GMP_TREE@/mpn/generic/mul_n.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mul_fft.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/mul_n.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mullo_basecase.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mullo_n.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mulmod_bnm1.$(OBJEXT) \
@@ -196,6 +197,8 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/set_str.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/sqr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/sqr_basecase.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/sqrlo.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/sqrlo_basecase.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/sqrmod_bnm1.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/sqrtrem.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/sub.$(OBJEXT) \
@@ -203,16 +206,16 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/sub_n.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/submul_1.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/tdiv_qr.$(OBJEXT) \
-	@GMP_TREE@/mpn/generic/toom2_sqr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom22_mul.$(OBJEXT) \
-	@GMP_TREE@/mpn/generic/toom3_sqr.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/toom2_sqr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom32_mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom33_mul.$(OBJEXT) \
-	@GMP_TREE@/mpn/generic/toom4_sqr.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/toom3_sqr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom42_mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom42_mulmid.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom43_mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom44_mul.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/toom4_sqr.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom53_mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom63_mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom6_sqr.$(OBJEXT) \
@@ -231,7 +234,8 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom_interpolate_5pts.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom_interpolate_6pts.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/toom_interpolate_7pts.$(OBJEXT) \
-	@GMP_TREE@/mpn/generic/toom_interpolate_8pts.$(OBJEXT)
+	@GMP_TREE@/mpn/generic/toom_interpolate_8pts.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/zero_p.$(OBJEXT)
 am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/add.$(OBJEXT) @GMP_TREE@/mpz/add_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/aorsmul.$(OBJEXT) \
@@ -561,7 +565,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/gmp-6.0.0/gmp-h.in ../../build-aux/compile \
+	$(top_srcdir)/gmp-src/gmp-h.in ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
@@ -771,6 +775,7 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/bdiv_q.c \
 	@GMP_TREE@/mpn/generic/binvert.c \
 	@GMP_TREE@/mpn/generic/cmp.c \
+	@GMP_TREE@/mpn/generic/com.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_q.c \
 	@GMP_TREE@/mpn/generic/dcpi1_bdiv_qr.c \
 	@GMP_TREE@/mpn/generic/dcpi1_div_q.c \
@@ -806,8 +811,8 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/mul.c \
 	@GMP_TREE@/mpn/generic/mul_1.c \
 	@GMP_TREE@/mpn/generic/mul_basecase.c \
-	@GMP_TREE@/mpn/generic/mul_n.c \
 	@GMP_TREE@/mpn/generic/mul_fft.c \
+	@GMP_TREE@/mpn/generic/mul_n.c \
 	@GMP_TREE@/mpn/generic/mullo_basecase.c \
 	@GMP_TREE@/mpn/generic/mullo_n.c \
 	@GMP_TREE@/mpn/generic/mulmod_bnm1.c \
@@ -828,6 +833,8 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/set_str.c \
 	@GMP_TREE@/mpn/generic/sqr.c \
 	@GMP_TREE@/mpn/generic/sqr_basecase.c \
+	@GMP_TREE@/mpn/generic/sqrlo.c \
+	@GMP_TREE@/mpn/generic/sqrlo_basecase.c \
 	@GMP_TREE@/mpn/generic/sqrmod_bnm1.c \
 	@GMP_TREE@/mpn/generic/sqrtrem.c \
 	@GMP_TREE@/mpn/generic/sub.c \
@@ -835,16 +842,16 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/sub_n.c \
 	@GMP_TREE@/mpn/generic/submul_1.c \
 	@GMP_TREE@/mpn/generic/tdiv_qr.c \
-	@GMP_TREE@/mpn/generic/toom2_sqr.c \
 	@GMP_TREE@/mpn/generic/toom22_mul.c \
-	@GMP_TREE@/mpn/generic/toom3_sqr.c \
+	@GMP_TREE@/mpn/generic/toom2_sqr.c \
 	@GMP_TREE@/mpn/generic/toom32_mul.c \
 	@GMP_TREE@/mpn/generic/toom33_mul.c \
-	@GMP_TREE@/mpn/generic/toom4_sqr.c \
+	@GMP_TREE@/mpn/generic/toom3_sqr.c \
 	@GMP_TREE@/mpn/generic/toom42_mul.c \
 	@GMP_TREE@/mpn/generic/toom42_mulmid.c \
 	@GMP_TREE@/mpn/generic/toom43_mul.c \
 	@GMP_TREE@/mpn/generic/toom44_mul.c \
+	@GMP_TREE@/mpn/generic/toom4_sqr.c \
 	@GMP_TREE@/mpn/generic/toom53_mul.c \
 	@GMP_TREE@/mpn/generic/toom63_mul.c \
 	@GMP_TREE@/mpn/generic/toom6_sqr.c \
@@ -863,7 +870,8 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/toom_interpolate_5pts.c \
 	@GMP_TREE@/mpn/generic/toom_interpolate_6pts.c \
 	@GMP_TREE@/mpn/generic/toom_interpolate_7pts.c \
-	@GMP_TREE@/mpn/generic/toom_interpolate_8pts.c
+	@GMP_TREE@/mpn/generic/toom_interpolate_8pts.c \
+	@GMP_TREE@/mpn/generic/zero_p.c
 
 mpn_unused = \
 	$(logops_n_sources) \
@@ -884,7 +892,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/bsqrtinv.c \
 	@GMP_TREE@/mpn/generic/cnd_add_n.c \
 	@GMP_TREE@/mpn/generic/cnd_sub_n.c \
-	@GMP_TREE@/mpn/generic/com.c \
 	@GMP_TREE@/mpn/generic/comb_tables.c \
 	@GMP_TREE@/mpn/generic/copyd.c \
 	@GMP_TREE@/mpn/generic/copyi.c \
@@ -1172,7 +1179,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-gmp.h: $(top_builddir)/config.status $(top_srcdir)/gmp-6.0.0/gmp-h.in
+gmp.h: $(top_builddir)/config.status $(top_srcdir)/gmp-src/gmp-h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:
@@ -1243,6 +1250,9 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/cmp.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/com.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/dcpi1_bdiv_q.$(OBJEXT):  \
@@ -1350,10 +1360,10 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpn/generic/mul_basecase.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
-@GMP_TREE@/mpn/generic/mul_n.$(OBJEXT):  \
+@GMP_TREE@/mpn/generic/mul_fft.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
-@GMP_TREE@/mpn/generic/mul_fft.$(OBJEXT):  \
+@GMP_TREE@/mpn/generic/mul_n.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/mullo_basecase.$(OBJEXT):  \
@@ -1416,6 +1426,12 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpn/generic/sqr_basecase.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/sqrlo.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/sqrlo_basecase.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/sqrmod_bnm1.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
@@ -1437,13 +1453,10 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpn/generic/tdiv_qr.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
-@GMP_TREE@/mpn/generic/toom2_sqr.$(OBJEXT):  \
-	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
-	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/toom22_mul.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
-@GMP_TREE@/mpn/generic/toom3_sqr.$(OBJEXT):  \
+@GMP_TREE@/mpn/generic/toom2_sqr.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/toom32_mul.$(OBJEXT):  \
@@ -1452,7 +1465,7 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpn/generic/toom33_mul.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
-@GMP_TREE@/mpn/generic/toom4_sqr.$(OBJEXT):  \
+@GMP_TREE@/mpn/generic/toom3_sqr.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/toom42_mul.$(OBJEXT):  \
@@ -1465,6 +1478,9 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/toom44_mul.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/toom4_sqr.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/toom53_mul.$(OBJEXT):  \
@@ -1522,6 +1538,9 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/toom_interpolate_8pts.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/zero_p.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/$(am__dirstamp):
@@ -1669,6 +1688,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/bdiv_q.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/binvert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/cmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/com.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_q.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_bdiv_qr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/dcpi1_div_q.Po@am__quote@
@@ -1726,6 +1746,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/set_str.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sqr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sqr_basecase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sqrlo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sqrlo_basecase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sqrmod_bnm1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sqrtrem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/sub.Po@am__quote@
@@ -1762,6 +1784,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/toom_interpolate_6pts.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/toom_interpolate_7pts.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/toom_interpolate_8pts.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/zero_p.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/abs.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/add.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/add_ui.Po@am__quote@

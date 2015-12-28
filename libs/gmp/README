@@ -3,9 +3,9 @@
 
 This directory libs/gmp/ uses a proxy Makefile.am to build the GNU MP
 library 'libgmp' from the unmodified source tree in
-libs/gmp/gmp-x.y.z/, bypassing the original build system.
+libs/gmp/gmp-src/, bypassing the original build system.
 
-As far as applicable, the tests in libs/gmp/gmp-x.y.z/configure have
+As far as applicable, the tests in libs/gmp/gmp-src/configure have
 been translated into equivalent test in libs/gmp/configure.ac.
 
 =============================
@@ -15,3 +15,4 @@ At the moment there is a wrapper Makefile.am and configure.ac.
 =============================
 
 2014-03-31	Taco Hoekwater <taco@metatex.org>
+2015-12-28	Akira Kakuto <kakuto@fuk.kindai.ac.jp>

@@ -9,7 +9,7 @@ dnl
 m4_include([../version.ac])[] dnl define gmp_version
 AC_INIT([gmp native], gmp_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([../gmp-]gmp_version[/gmp-impl.h])
+AC_CONFIG_SRCDIR([../gmp-src/gmp-impl.h])
 AC_CONFIG_AUX_DIR([../../../build-aux])
 AC_CONFIG_MACRO_DIR([../../../m4])
 
@@ -20,7 +20,7 @@ AC_PROG_LN_S
 
 KPSE_SEARCH_LIBS([MATH_LIB], [pow], [m])
 
-AC_SUBST([GMP_TREE], [../gmp-]gmp_version)
+AC_SUBST([GMP_TREE], [../gmp-src])
 
 dnl Not used but avoids putting useless -D's on the command line.
 AC_CONFIG_HEADERS([config.h])
