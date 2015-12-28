@@ -1,16 +1,17 @@
-	Building libpng-1.2.26 as part of the TL tree
+	Building libpng-1.6.20 as part of the TL tree
 	=============================================
 
 This directory libs/libpng/ uses a proxy Makefile.am to build the libpng library
-from the unmodified (*) source tree in libs/libpng/libpng-x.y.z/, bypassing
+from the unmodified (*) source tree in libs/libpng/libpng-src/, bypassing
 the original build system.
 
-(*) The directory libpng-x.y.z-PATCHES contains patches (if any) applied to
+(*) The directory libpng-src-PATCHES contains patches (if any) applied to
 the original source tree.
 
-As far as applicable, the tests in libs/libpng-x.y.z/configure.ac have been
+As far as applicable, the tests in libs/libpng-src/configure.ac have been
 copied to libs/libpng/configure.ac.
 
 =============================
 
 2009-07-23	Peter Breitenlohner <peb@mppmu.mpg.de>
+2015-12-28	Akira Kakuto <kakuto@fuk.kindai.ac.jp>

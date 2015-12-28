@@ -1,3 +1,8 @@
+2015-12-28 Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import libpng-1.6.20.
+	* version.ac: Adjust.
+
 2015-08-01 Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import libpng-1.6.18.

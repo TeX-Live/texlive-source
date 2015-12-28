@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define libpng_version
 AC_INIT([libpng (TeX Live)], libpng_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([libpng-]libpng_version[/pngget.c])
+AC_CONFIG_SRCDIR([libpng-src/pngget.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -51,7 +51,7 @@ KPSE_RESTORE_FLAGS
 echo timestamp >config.force
 fi
 
-AC_SUBST([LIBPNG_TREE], [libpng-]libpng_version)
+AC_SUBST([LIBPNG_TREE], [libpng-src])
 
 AC_SUBST([LIBPNG_DEFINES], ['-DPNG_CONFIGURE_LIBPNG -DPNG_NO_MMX_CODE'])
 
