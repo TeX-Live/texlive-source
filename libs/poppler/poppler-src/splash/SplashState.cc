@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2009, 2011, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009, 2011, 2012, 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -59,6 +59,9 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
   blendFunc = NULL;
   strokeAlpha = 1;
   fillAlpha = 1;
+  multiplyPatternAlpha = gFalse;
+  patternStrokeAlpha = 1;
+  patternFillAlpha = 1;
   lineWidth = 0;
   lineCap = splashLineCapButt;
   lineJoin = splashLineJoinMiter;
@@ -109,6 +112,9 @@ SplashState::SplashState(int width, int height, GBool vectorAntialias,
   blendFunc = NULL;
   strokeAlpha = 1;
   fillAlpha = 1;
+  multiplyPatternAlpha = gFalse;
+  patternStrokeAlpha = 1;
+  patternFillAlpha = 1;
   lineWidth = 0;
   lineCap = splashLineCapButt;
   lineJoin = splashLineJoinMiter;
@@ -152,6 +158,9 @@ SplashState::SplashState(SplashState *state) {
   blendFunc = state->blendFunc;
   strokeAlpha = state->strokeAlpha;
   fillAlpha = state->fillAlpha;
+  multiplyPatternAlpha = state->multiplyPatternAlpha;
+  patternStrokeAlpha = state->patternStrokeAlpha;
+  patternFillAlpha = state->patternFillAlpha;
   lineWidth = state->lineWidth;
   lineCap = state->lineCap;
   lineJoin = state->lineJoin;

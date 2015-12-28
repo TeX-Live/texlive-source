@@ -219,8 +219,8 @@
 #define HAVE_BOOLEAN
 #endif
 
-/* MS has defined snprintf as deprecated */
-#ifdef _MSC_VER
+/* MS defined snprintf as deprecated but then added it in Visual Studio 2015. */
+#if defined(_MSC_VER) && _MSC_VER < 1900
 #define snprintf _snprintf
 #endif
 

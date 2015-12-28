@@ -1,3 +1,397 @@
+commit 3eee5274abb24d5b5be05262aafe794652cdac35
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Dec 17 00:09:37 2015 +0100
+
+    New gtk-doc stuff
+
+ gtk-doc.make | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+commit fb1f7b0fb037837f37be65aa23ecac711a1b4981
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Dec 17 00:08:24 2015 +0100
+
+    Prepare for 0.39
+
+ CMakeLists.txt            |  4 ++--
+ NEWS                      | 21 +++++++++++++++++++++
+ configure.ac              |  2 +-
+ cpp/Doxyfile              |  2 +-
+ poppler/CairoOutputDev.cc |  2 +-
+ poppler/CairoOutputDev.h  |  2 +-
+ poppler/GfxState.cc       |  1 +
+ poppler/GfxState.h        |  1 +
+ poppler/JPEG2000Stream.cc |  1 +
+ poppler/Makefile.am       |  2 +-
+ poppler/PSOutputDev.cc    |  2 +-
+ qt4/src/Doxyfile          |  2 +-
+ qt5/src/Doxyfile          |  2 +-
+ utils/pdftocairo.cc       |  2 +-
+ 14 files changed, 35 insertions(+), 11 deletions(-)
+
+commit 7ed7fb6d2be009c5d433338a6b3da816dd38f5ca
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Oct 12 22:43:22 2014 +0200
+
+    Fix typos in error messages
+
+    Reported by Jakub Wilk, thanks!
+
+ poppler/JPEG2000Stream.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 47ffce08e75002aa0707107c76984e7e471d8afb
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Jan 15 21:20:05 2015 +1030
+
+    cairo: Implement function shading using mesh gradients
+
+    Gfx draws function shadings by subdividing the shading until the
+    colors are the same or the maximum subdivision is reached then fills
+    each cell with the color of the mid point of the cell. The solid
+    colors can result in a pixelated appearance.
+
+    This patch implements a cairo specific version of the function shading
+    that uses mesh gradients to draw each cell. By setting the corner of
+    each patch to the shading color at that point, the mesh gradient will
+    interpolate the colors resulting in a smooth appearance.
+
+    Bug 88394
+
+ poppler/CairoOutputDev.cc | 101
+ ++++++++++++++++++++++++++++++++++++++++++++++
+ poppler/CairoOutputDev.h  |   5 ++-
+ 2 files changed, 105 insertions(+), 1 deletion(-)
+
+commit d7717cf18d0db5663687690ccf66102e9a124025
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Fri Aug 22 00:51:36 2014 -0500
+
+    cairo: Scale radial pattern
+
+    Scale the radial pattern because cairo/pixman do not work well with a
+    very large or small scaled matrix.  See cairo bug #81657.
+
+    bug #22098
+
+ poppler/CairoOutputDev.cc | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
+
+commit 9ef565d0302ad4a36c53d7cd3251bff6a53070ea
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Fri Dec 4 11:08:45 2015 +0100
+
+    regtest: Pass always both the owner and user passwords to the tools
+
+ regtest/backends/cairo.py      | 2 +-
+ regtest/backends/postscript.py | 2 +-
+ regtest/backends/splash.py     | 2 +-
+ regtest/backends/text.py       | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 3686005cde6f0c0992498a1773b02331fce79b1c
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Fri Dec 4 11:03:27 2015 +0100
+
+    pdftocairo: Fix double free when both user and owner passwords
+    are given
+
+ utils/pdftocairo.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 38796894f8ab19c2cd0b996e6b1aa0be98326eac
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Mon Jun 9 22:54:54 2014 +0200
+
+    Remove enum PopplerOrientation from API
+
+    This should have been removed long time ago with
+    1aad886c6c19a964a3fc9e18f31acc8e115478e0
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=93229
+
+ glib/poppler.h                      |  8 --------
+ glib/reference/poppler-docs.sgml    |  1 -
+ glib/reference/poppler-sections.txt | 11 -----------
+ 3 files changed, 20 deletions(-)
+
+commit 921fe21d56be27c8164111577b9a848525b35508
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Thu Dec 3 16:23:30 2015 +0100
+
+    regtest: Fix testing text backend
+
+    Fix a typo in previous commit.
+
+ regtest/backends/text.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3e22c678e749eda4402a7440b91b33d627705fdb
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Thu Dec 3 15:46:58 2015 +0100
+
+    regtest: Add support for testing password protected documents
+
+    Similar to how skipped file works, you can pass a passwords file from
+    the command line or add a Passwords file to your docs directory. This
+    file should be a python file containing a "passwords" dictionary where
+    the key is the test document and the value is the password required to
+    open that document.
+
+ regtest/TestReferences.py      |  7 +++++--
+ regtest/TestRun.py             | 11 +++++++----
+ regtest/Utils.py               | 13 +++++++++++++
+ regtest/backends/__init__.py   |  2 +-
+ regtest/backends/cairo.py      |  7 +++++--
+ regtest/backends/postscript.py |  7 +++++--
+ regtest/backends/splash.py     |  7 +++++--
+ regtest/backends/text.py       |  7 +++++--
+ regtest/main.py                |  3 +++
+ 9 files changed, 49 insertions(+), 15 deletions(-)
+
+commit 50ba37c7b1aff14c73f158ff7f33d31953af512b
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jun 8 14:03:17 2014 +0200
+
+    doc: Move PopplerError to it's own section
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79837
+
+ glib/poppler.cc                     | 15 +++++++++++++++
+ glib/reference/poppler-docs.sgml    |  1 +
+ glib/reference/poppler-sections.txt | 18 +++++++++++++-----
+ 3 files changed, 29 insertions(+), 5 deletions(-)
+
+commit ef518d601836fcedb8b558447f10c846e4038318
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Mon Jun 9 15:53:57 2014 +0200
+
+    doc: Add poppler_orientation_get_type to poppler-sections.txt
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79837
+
+ glib/reference/poppler-sections.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 7f1de12da6d1128535c2e3e7dc89e29ca61b858f
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Sun Jun 8 22:27:47 2014 +0200
+
+    doc: Fix PopplerStructureElement documentation
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79837
+
+ glib/poppler-structure-element.cc | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
+
+commit d4a9da24d2c479d53ff1094e6e1d7c1d79561da4
+Author: Hib Eris <hib@hiberis.nl>
+Date:   Mon Jun 9 08:34:13 2014 +0200
+
+    doc: Do not include private headers
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=79837
+
+ glib/reference/Makefile.am          | 6 +++++-
+ glib/reference/poppler-sections.txt | 1 -
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+commit 7980727d76b29db12b468e5da19d174d42bc3b00
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Tue Oct 27 22:27:22 2015 +1030
+
+    pdftops: fix %%PageBoundingBox
+
+    The %%PageBoundingBox calculation did not take into account the
+    page transformation
+    (eg rotate, fit-to-page).
+
+    Bug 87161
+
+ poppler/GfxState.cc    | 16 +++++++++++
+ poppler/GfxState.h     |  5 ++++
+ poppler/PSOutputDev.cc | 72
+ +++++++++++++++++++++++++++++++++++++-------------
+ 3 files changed, 74 insertions(+), 19 deletions(-)
+
+commit 37840827c4073dedfd37915a74eb8fe0c44843c3
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Dec 2 22:15:33 2015 +0100
+
+    Ignore the alternateSpace and tintTransform
+
+    As a reasonable compromise in my eyes this new patch
+    now also checks the alternate colorspace, and if this
+    is DeviceGray in case of a separation colorspace with
+    name black this patch treats is as if it is really a
+    DeviceGray and so ignore tintTransform and alternate
+    colorspace just in this case when using getGray() and getRGB().
+
+    Bug #92381
+
+ poppler/GfxState.cc | 64
+ +++++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 48 insertions(+), 16 deletions(-)
+
+commit 72f0ea4f883417a920be65cb778989bf81e8f57d
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Wed Dec 2 16:59:16 2015 +0100
+
+    glib-demo: Use duration_real in transitions demo
+
+ glib/demo/transitions.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b5c7b93cabc0d95fb3a7dc1b8104363cd04873c1
+Author: Arseniy Lartsev <arseniy@alumni.chalmers.se>
+Date:   Wed Dec 2 16:48:05 2015 +0100
+
+    glib: Add duration_real to PopplerPageTransition
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=92040
+
+ glib/poppler-page.cc | 1 +
+ glib/poppler-page.h  | 1 +
+ 2 files changed, 2 insertions(+)
+
+commit 38ff3736576b81be51eb11454862f83d1c3f3d0e
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Nov 29 08:06:14 2015 +1030
+
+    Visual Studio 2015 now supports snprintf
+
+    Bug 93116
+
+ config.h.cmake | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit c63aa0c153fc114e6457fc89a40a9aa2a5508b9a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Nov 16 21:44:17 2015 +0100
+
+    Poppler 0.38
+
+ CMakeLists.txt      |  4 ++--
+ NEWS                | 12 ++++++++++++
+ configure.ac        |  2 +-
+ cpp/Doxyfile        |  2 +-
+ poppler/Makefile.am |  2 +-
+ qt4/src/Doxyfile    |  2 +-
+ qt5/src/Doxyfile    |  2 +-
+ 7 files changed, 19 insertions(+), 7 deletions(-)
+
+commit 6ca4afcea790d9118af3cda4961a647485fb14e8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Nov 16 21:40:20 2015 +0100
+
+    Update copyright years
+
+ utils/pdftocairo.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0e14049bc5b85f8ae2e1a56bc09480a499343e49
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sat Oct 31 18:32:49 2015 +1030
+
+    pdftocairo: fix fit to page transformation
+
+    Testing with the test case in bug 87161 revealed some bugs.
+
+ utils/pdftocairo.cc | 42 ++++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
+
+commit 3167964d70647d7b04e3ef8f415d5935990ecc9a
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Oct 28 23:13:44 2015 +0100
+
+    Multiply opacity in case of pattern colorspace
+
+    Bug #92592
+
+ poppler/Gfx.cc             |  4 +++-
+ poppler/OutputDev.h        |  4 +++-
+ poppler/SplashOutputDev.cc |  8 ++++++++
+ poppler/SplashOutputDev.h  |  2 ++
+ splash/Splash.cc           | 16 ++++++++++++++--
+ splash/Splash.h            |  2 ++
+ splash/SplashState.cc      | 11 ++++++++++-
+ splash/SplashState.h       |  5 ++++-
+ 8 files changed, 46 insertions(+), 6 deletions(-)
+
+commit c20f68ce434366bbec4077824da97ce843ecdff3
+Author: Marek Kasik <mkasik@redhat.com>
+Date:   Thu Oct 22 16:15:23 2015 +0200
+
+    forms: Fix showing of some non-ASCII characters
+
+    The &uChar is an array with just 1 member not 2.
+    This fixes mapping of some Unicode characters to
+    character codes.
+
+ poppler/Annot.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 64735113b203bb5adaaadc65641ef6c971f82bc6
+Author: Marek Kasik <mkasik@redhat.com>
+Date:   Fri Oct 23 10:15:47 2015 +0200
+
+    forms: Find correct glyph or return 0
+
+    Function CharCodeToUnicode::mapToCharCode() could return
+    wrong character code for given unicode character because
+    of wrongly placed continue statement.
+
+ poppler/CharCodeToUnicode.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit fb906dca8b84d03267099cc3174c50e932a55236
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Oct 15 07:19:16 2015 +1030
+
+    cmake: synchronize warnings with configure
+
+ CMakeLists.txt | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+commit 6329e3999d0a45b4c0cd0a8b675362e694bf1243
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Oct 15 07:11:13 2015 +1030
+
+    configure: warn that the internal DCT/JPX decoders are unmaintained
+
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 67e1463dc65f85aec1f85b5bace9e810bf477e15
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Oct 12 16:49:34 2015 +0200
+
+    Clarify getting a xpdf license does not allow you to use poppler in
+    closed source projects
+
+ README | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 44e1a2f715d0da8bb2941da296faab7ee144cfc2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Oct 9 23:28:03 2015 +0200
+
+    Poppler 0.37
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 13 +++++++++++++
+ configure.ac           |  2 +-
+ cpp/Doxyfile           |  2 +-
+ gtk-doc.make           | 20 ++++++++++++--------
+ poppler/Makefile.am    |  2 +-
+ qt4/src/CMakeLists.txt |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt4/src/Makefile.am    |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 12 files changed, 36 insertions(+), 19 deletions(-)
+
 commit e8cb16bff48dbe2d9efd988ddb09608406d2633b
 Author: Adrian Johnson <ajohnson@redneon.com>
 Date:   Sun Sep 27 15:34:12 2015 +0930

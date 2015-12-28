@@ -20,7 +20,7 @@
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
 // Copyright (C) 2006-2011, 2013, 2014 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2008 Carl Worth <cworth@cworth.org>
-// Copyright (C) 2008-2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2008-2015 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008, 2009 Chris Wilson <chris@chris-wilson.co.uk>
 // Copyright (C) 2008, 2012 Hib Eris <hib@hiberis.nl>
@@ -932,6 +932,107 @@ GBool CairoOutputDev::tilingPatternFill(GfxState *state, Gfx *gfxA, Catalog *cat
   return gTrue;
 }
 
+#if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 12, 0)
+GBool CairoOutputDev::functionShadedFill(GfxState *state, GfxFunctionShading *shading)
+{
+  // Function shaded fills are subdivided to rectangles that are the
+  // following size in device space.  Note when printing this size is
+  // in points.
+  const int subdivide_pixels = 10;
+
+  double x_begin, x_end, x1, x2;
+  double y_begin, y_end, y1, y2;
+  double x_step;
+  double y_step;
+  GfxColor color;
+  GfxRGB rgb;
+  double *matrix;
+  cairo_matrix_t mat;
+
+  matrix = shading->getMatrix();
+  mat.xx = matrix[0];
+  mat.yx = matrix[1];
+  mat.xy = matrix[2];
+  mat.yy = matrix[3];
+  mat.x0 = matrix[4];
+  mat.y0 = matrix[5];
+  if (cairo_matrix_invert(&mat)) {
+    error(errSyntaxWarning, -1, "matrix not invertible\n");
+    return gFalse;
+    }
+
+  // get cell size in pattern space
+  x_step = y_step = subdivide_pixels;
+  cairo_matrix_transform_distance (&mat, &x_step, &y_step);
+
+  cairo_pattern_destroy(fill_pattern);
+  fill_pattern = cairo_pattern_create_mesh ();
+  cairo_pattern_set_matrix(fill_pattern, &mat);
+  shading->getDomain(&x_begin, &y_begin, &x_end, &y_end);
+
+  for (x1 = x_begin; x1 < x_end; x1 += x_step) {
+    x2 = x1 + x_step;
+    if (x2 > x_end)
+      x2 = x_end;
+
+    for (y1 = y_begin; y1 < y_end; y1 += y_step) {
+      y2 = y1 + y_step;
+      if (y2 > y_end)
+	y2 = y_end;
+
+      cairo_mesh_pattern_begin_patch (fill_pattern);
+      cairo_mesh_pattern_move_to (fill_pattern, x1, y1);
+      cairo_mesh_pattern_line_to (fill_pattern, x2, y1);
+      cairo_mesh_pattern_line_to (fill_pattern, x2, y2);
+      cairo_mesh_pattern_line_to (fill_pattern, x1, y2);
+
+      shading->getColor(x1, y1, &color);
+      shading->getColorSpace()->getRGB(&color, &rgb);
+      cairo_mesh_pattern_set_corner_color_rgb (fill_pattern, 0,
+					       colToDbl(rgb.r),
+					       colToDbl(rgb.g),
+					       colToDbl(rgb.b));
+
+      shading->getColor(x2, y1, &color);
+      shading->getColorSpace()->getRGB(&color, &rgb);
+      cairo_mesh_pattern_set_corner_color_rgb (fill_pattern, 1,
+					       colToDbl(rgb.r),
+					       colToDbl(rgb.g),
+					       colToDbl(rgb.b));
+
+      shading->getColor(x2, y2, &color);
+      shading->getColorSpace()->getRGB(&color, &rgb);
+      cairo_mesh_pattern_set_corner_color_rgb (fill_pattern, 2,
+					       colToDbl(rgb.r),
+					       colToDbl(rgb.g),
+					       colToDbl(rgb.b));
+
+      shading->getColor(x1, y2, &color);
+      shading->getColorSpace()->getRGB(&color, &rgb);
+      cairo_mesh_pattern_set_corner_color_rgb (fill_pattern, 3,
+					       colToDbl(rgb.r),
+					       colToDbl(rgb.g),
+					       colToDbl(rgb.b));
+
+      cairo_mesh_pattern_end_patch (fill_pattern);
+    }
+  }
+
+  double xMin, yMin, xMax, yMax;
+  // get the clip region bbox
+  state->getUserClipBBox(&xMin, &yMin, &xMax, &yMax);
+  state->moveTo(xMin, yMin);
+  state->lineTo(xMin, yMax);
+  state->lineTo(xMax, yMax);
+  state->lineTo(xMax, yMin);
+  state->closePath();
+  fill(state);
+  state->clearPath();
+
+  return gTrue;
+}
+#endif /* CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 12, 0) */
+
 GBool CairoOutputDev::axialShadedFill(GfxState *state, GfxAxialShading *shading, double tMin, double tMax) {
   double x0, y0, x1, y1;
   double dx, dy;
@@ -963,18 +1064,32 @@ GBool CairoOutputDev::axialShadedSupportExtend(GfxState *state, GfxAxialShading 
 GBool CairoOutputDev::radialShadedFill(GfxState *state, GfxRadialShading *shading, double sMin, double sMax) {
   double x0, y0, r0, x1, y1, r1;
   double dx, dy, dr;
+  cairo_matrix_t matrix;
+  double scale;
 
   shading->getCoords(&x0, &y0, &r0, &x1, &y1, &r1);
   dx = x1 - x0;
   dy = y1 - y0;
   dr = r1 - r0;
+
+  // Cairo/pixman do not work well with a very large or small scaled
+  // matrix.  See cairo bug #81657.
+  //
+  // As a workaround, scale the pattern by the average of the vertical
+  // and horizontal scaling of the current transformation matrix.
+  cairo_get_matrix(cairo, &matrix);
+  scale = (sqrt(matrix.xx * matrix.xx + matrix.yx * matrix.yx)
+	   + sqrt(matrix.xy * matrix.xy + matrix.yy * matrix.yy)) / 2;
+  cairo_matrix_init_scale(&matrix, scale, scale);
+
   cairo_pattern_destroy(fill_pattern);
-  fill_pattern = cairo_pattern_create_radial (x0 + sMin * dx,
-					      y0 + sMin * dy,
-					      r0 + sMin * dr,
-					      x0 + sMax * dx,
-					      y0 + sMax * dy,
-					      r0 + sMax * dr);
+  fill_pattern = cairo_pattern_create_radial ((x0 + sMin * dx) * scale,
+					      (y0 + sMin * dy) * scale,
+					      (r0 + sMin * dr) * scale,
+					      (x0 + sMax * dx) * scale,
+					      (y0 + sMax * dy) * scale,
+					      (r0 + sMax * dr) * scale);
+  cairo_pattern_set_matrix(fill_pattern, &matrix);
   if (shading->getExtend0() && shading->getExtend1())
     cairo_pattern_set_extend (fill_pattern, CAIRO_EXTEND_PAD);
   else

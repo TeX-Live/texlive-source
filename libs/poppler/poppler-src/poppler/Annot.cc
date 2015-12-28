@@ -29,7 +29,7 @@
 // Copyright (C) 2012, 2015 Tobias Koenig <tokoe@kdab.com>
 // Copyright (C) 2013 Peter Breitenlohner <peb@mppmu.mpg.de>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
-// Copyright (C) 2014 Marek Kasik <mkasik@redhat.com>
+// Copyright (C) 2014, 2015 Marek Kasik <mkasik@redhat.com>
 // Copyright (C) 2014 Jiri Slaby <jirislaby@gmail.com>
 // Copyright (C) 2014 Anuj Khare <khareanuj18@gmail.com>
 // Copyright (C) 2015 Petr Gajdos <pgajdos@suse.cz>
@@ -4125,7 +4125,7 @@ void Annot::layoutText(GooString *text, GooString *outBuf, int *i,
         // This assumes an identity CMap.
         outBuf->append((uChar >> 8) & 0xff);
         outBuf->append(uChar & 0xff);
-      } else if (ccToUnicode->mapToCharCode(&uChar, &c, 2)) {
+      } else if (ccToUnicode->mapToCharCode(&uChar, &c, 1)) {
         ccToUnicode->decRefCnt();
         if (font->isCIDFont()) {
           // TODO: This assumes an identity CMap.  It should be extended to

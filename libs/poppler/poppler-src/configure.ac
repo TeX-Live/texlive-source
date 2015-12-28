@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[37])
+m4_define([poppler_version_minor],[39])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -1038,7 +1038,7 @@ if test x$enable_single_precision = xyes -a x$enable_fixedpoint = xyes; then
 fi
 
 if test x$enable_libjpeg != xyes; then
-	echo "  Warning: Using libjpeg is recommended"
+	echo "  Warning: Using libjpeg is recommended. The internal DCT decoder is unmaintained."
 fi
 
 if test x$enable_zlib != xno; then
@@ -1046,5 +1046,5 @@ if test x$enable_zlib != xno; then
 fi
 
 if test x$enable_libopenjpeg != xyes; then
-	echo "  Warning: Using libopenjpeg is recommended"
+	echo "  Warning: Using libopenjpeg is recommended. The internal JPX decoder is unmaintained."
 fi

@@ -23,6 +23,7 @@
 // Copyright (C) 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2014 Jiri Slaby <jirislaby@gmail.com>
+// Copyright (C) 2015 Marek Kasik <mkasik@redhat.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -656,7 +657,7 @@ int CharCodeToUnicode::mapToCharCode(Unicode* u, CharCode *c, int usize) {
       //compare the string char by char
       for (j=0; j<sMap[i].len; j++) {
         if (sMap[i].u[j] != u[j]) {
-          continue;
+          break;
         }
       }
 

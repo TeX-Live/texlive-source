@@ -22,6 +22,7 @@
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
 // Copyright (C) 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Lu Wang <coolwanglu@gmail.com>
+// Copyright (C) 2015 Adrian Johnson <ajohnson@redneon.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -59,7 +60,12 @@ class Matrix {
 public:
   double m[6];
 
+  void init(double xx, double yx, double xy, double yy, double x0, double y0) {
+    m[0] = xx; m[1] = yx; m[2] = xy; m[3] = yy; m[4] = x0; m[5] = y0;
+  }
   GBool invertTo(Matrix *other) const;
+  void translate(double tx, double ty);
+  void scale(double sx, double sy);
   void transform(double x, double y, double *tx, double *ty) const;
   double determinant() const { return m[0] * m[3] - m[1] * m[2]; }
   double norm() const;

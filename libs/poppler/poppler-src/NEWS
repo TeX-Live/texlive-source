@@ -1,3 +1,36 @@
+Release 0.39.0
+        core:
+         * Ignore the alternateSpace and tintTransform. Bug #92381
+         * CairoOutputDev: Scale radial pattern. Bug #22098
+         * CairoOutputDev: Implement function shading using mesh gradients. Bug #88394
+         * Regression test improvements
+         * Fix typos in error messages
+
+        build system:
+         * Visual Studio 2015 now supports snprintf. Bug #93116
+
+        utils:
+         * pdftops: fix %%PageBoundingBox. Bug #87161
+         * pdftocairo: Fix double free when both user and owner passwords are given
+
+        glib:
+         * Add duration_real to PopplerPageTransition. Bug #92040
+         * Remove enum PopplerOrientation from API. Bug #93229
+         * documentation improvements
+         * glib-demo improvements
+
+Release 0.38.0
+        core:
+         * Splash: Multiply opacity in case of pattern colorspace. Bug #92592
+         * Small form improvements on non ascii character rendering
+         * Clarify README
+
+        build system:
+         * Clarify internal DCT and JPX are only provided as deprecated fallbacks
+
+        utils:
+         * pdftocairo: fix fit to page transformation
+
 Release 0.37.0
         core:
          * CairoOutputDev: Use mask for even-odd fill. Bug #84527

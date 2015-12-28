@@ -28,7 +28,7 @@
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2009 M Joonas Pihlaja <jpihlaja@cc.helsinki.fi>
-// Copyright (C) 2009-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 William Bader <williambader@hotmail.com>
 // Copyright (C) 2009, 2010 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2010 Nils Höglund <nils.hoglund@gmail.com>
@@ -2283,6 +2283,7 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
 		       xi0, yi0, xi1, yi1, xstep, ystep)) {
     goto restore;
   } else {
+    out->updatePatternOpacity(state);
     for (yi = yi0; yi < yi1; ++yi) {
       for (xi = xi0; xi < xi1; ++xi) {
         x = xi * xstep;
@@ -2293,6 +2294,7 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
         	  m1, tPat->getBBox());
       }
     }
+    out->clearPatternOpacity(state);
   }
 
   // restore graphics state

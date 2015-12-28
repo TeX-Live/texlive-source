@@ -1842,6 +1842,14 @@ void SplashOutputDev::updateStrokeOpacity(GfxState *state) {
   }
 }
 
+void SplashOutputDev::updatePatternOpacity(GfxState *state) {
+  splash->setPatternAlpha((SplashCoord)state->getStrokeOpacity(), (SplashCoord)state->getFillOpacity());
+}
+
+void SplashOutputDev::clearPatternOpacity(GfxState *state) {
+  splash->clearPatternAlpha();
+}
+
 void SplashOutputDev::updateFillOverprint(GfxState *state) {
   splash->setFillOverprint(state->getFillOverprint());
 }

@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define poppler_version
 AC_INIT([poppler (TeX Live)], poppler_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([poppler-]poppler_version[/poppler/Array.cc])
+AC_CONFIG_SRCDIR([poppler-src/poppler/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -84,7 +84,7 @@ fi
 
 AC_CONFIG_HEADERS([config.h])
 
-AC_CONFIG_HEADERS([poppler-config.h:poppler-]poppler_version[/poppler/poppler-config.h.in])
+AC_CONFIG_HEADERS([poppler-config.h:poppler-src/poppler/poppler-config.h.in])
 
 dnl ##### Export the version
 AC_DEFINE_UNQUOTED([POPPLER_VERSION], ["poppler_version"], [Define to the poppler version.])
@@ -105,7 +105,7 @@ fi
 
 AC_DEFINE([ENABLE_ZLIB], 1, [Use zlib instead of builtin zlib decoder.])
 
-AC_SUBST([POPPLER_TREE], [poppler-]poppler_version)
+AC_SUBST([POPPLER_TREE], [poppler-src])
 
 AC_CONFIG_FILES([Makefile include/Makefile include/goo/Makefile include/fofi/Makefile])
 

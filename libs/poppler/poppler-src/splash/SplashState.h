@@ -11,7 +11,7 @@
 // All changes made under the Poppler project to this file are licensed
 // under GPL version 2 or later
 //
-// Copyright (C) 2011, 2012 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011, 2012, 2015 Thomas Freitag <Thomas.Freitag@alfa.de>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -101,6 +101,9 @@ private:
   SplashBlendFunc blendFunc;
   SplashCoord strokeAlpha;
   SplashCoord fillAlpha;
+  GBool multiplyPatternAlpha;
+  SplashCoord patternStrokeAlpha;
+  SplashCoord patternFillAlpha;
   SplashCoord lineWidth;
   int lineCap;
   int lineJoin;
