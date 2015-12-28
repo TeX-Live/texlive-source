@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current cairo version
-m4_define([cairo_version], [1.14.2])
+m4_define([cairo_version], [1.14.6])
