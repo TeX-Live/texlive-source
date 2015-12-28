@@ -1,3 +1,10 @@
+2015-12-28  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* bmpimage.c, dvipdfmx.c, pdfobj.[ch], pngimage.c: Support for predictor
+	functions for FlateDecode filter. PNG optimal and TIFF2 predictor functions
+	are currently implemented. It solves the preblem that PNG images become
+	sometimes larger in size when embedded in PDF file.
+
 2015-12-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pngimage.c: Workaround for Adobe Potoshop generated PNGs which have

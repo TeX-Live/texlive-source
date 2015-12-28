@@ -269,6 +269,12 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
     RELEASE(stream_data_ptr);
   }
 
+  /* Predictor is usually not so efficient for indexed images. */
+  if (hdr.bit_count >= 24 && info.bits_per_component >= 8 &&
+      info.height > 64) {
+    pdf_stream_set_predictor(stream, 15, info.width,
+                             info.bits_per_component, info.num_components);
+  }
   pdf_ximage_set_image(ximage, &info, stream);
 
   return 0;
