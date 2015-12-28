@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define harfbuzz_version
 AC_INIT([harfbuzz (TeX Live)], harfbuzz_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([harfbuzz-]harfbuzz_version[/src/harfbuzz.pc.in])
+AC_CONFIG_SRCDIR([harfbuzz-src/src/harfbuzz.pc.in])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -75,7 +75,7 @@ dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([HAVE_INTEL_ATOMIC_PRIMITIVES], 1, [Use Intel __sync_* atomic primitives])
 fi
 
-AC_SUBST([HARFBUZZ_TREE], [harfbuzz-]harfbuzz_version)
+AC_SUBST([HARFBUZZ_TREE], [harfbuzz-src])
 
 if test -f $srcdir/$HARFBUZZ_TREE/src/hb-version.h; then
   AC_MSG_ERROR([Sorry, you must remove the file $HARFBUZZ_TREE/src/hb-version.h])
@@ -83,6 +83,6 @@ fi
 
 AC_CONFIG_FILES([Makefile
 		 include/Makefile
-	         hb-version.h:harfbuzz-]harfbuzz_version[/src/hb-version.h.in])
+	         hb-version.h:harfbuzz-src/src/hb-version.h.in])
 
 AC_OUTPUT

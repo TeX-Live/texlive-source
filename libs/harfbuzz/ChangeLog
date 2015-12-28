@@ -1,3 +1,8 @@
+2015-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import harfbuzz-1.1.2.
+	* version.ac: Adjusted.
+
 2015-10-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import harfbuzz-1.0.4.
