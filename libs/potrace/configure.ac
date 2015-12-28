@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define potrace_version
 AC_INIT([potrace (TeX Live)], potrace_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([potrace-]potrace_version[/src/trace.c])
+AC_CONFIG_SRCDIR([potrace-src/src/trace.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -31,7 +31,7 @@ fi
 
 AC_SEARCH_LIBS([sqrt], [m])
 
-AC_SUBST([POTRACE_TREE], [potrace-]potrace_version)
+AC_SUBST([POTRACE_TREE], [potrace-src])
 
 AC_CONFIG_FILES([Makefile include/Makefile])
 

@@ -1,3 +1,9 @@
+2015-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import potrace-1.13.
+	* configure.ac: New source-tree-naming convention per Karl.
+	* version.ac: Adjust.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
