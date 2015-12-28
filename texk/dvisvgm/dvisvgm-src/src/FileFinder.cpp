@@ -115,7 +115,9 @@ std::string FileFinder::version () {
 	}
 #else
 	if (const char *v = strrchr(KPSEVERSION, ' '))
-		return v+1;
+		return (std::string(KPSEVERSION).substr(0, 9) == "kpathsea ") ? v+1 : KPSEVERSION;
+	if (strlen(KPSEVERSION) > 0)
+		return KPSEVERSION;
 #endif
 	return "unknown";
 }
@@ -130,6 +132,12 @@ static const char* find_file (const std::string &fname, const char *ftype) {
 	if (!_initialized || fname.empty())
 		return 0;
 
+	static std::string buf;
+	// try to lookup the file in the current working directory
+	buf = FileSystem::getcwd()+"/"+fname;
+	if (FileSystem::exists(buf.c_str()))
+		return buf.c_str();
+
 	std::string ext;
 	if (ftype)
 		ext = ftype;
@@ -140,7 +148,6 @@ static const char* find_file (const std::string &fname, const char *ftype) {
 		ext = fname.substr(pos+1);
 	}
 
-	static std::string buf;
 #ifdef MIKTEX
 	if (ext == "dll" || ext == "exe") {
 		// lookup dll and exe files in the MiKTeX bin directory first
