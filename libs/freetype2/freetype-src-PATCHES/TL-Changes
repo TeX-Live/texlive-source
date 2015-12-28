@@ -1,0 +1,6 @@
+Changes applied to the freetype-2.6.2/ tree as obtained from:
+	http://savannah.nongnu.org/download/freetype/.
+
+Updated:
+	builds/unix/config.guess
+	builds/unix/config.sub
