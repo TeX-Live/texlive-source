@@ -1,4 +1,4 @@
-Changes applied to the dvisvgm-1.13 tree as obtained from:
+Changes applied to the dvisvgm-1.14 tree as obtained from:
 	http://dvisvgm.bplaced.net/Downloads
 
 Removed:
@@ -14,7 +14,3 @@ Removed:
 	test-driver
 	tests/
 	*/Makefile.in
-
-Converted Dos/Win line ends to native:
-	clipper/clipper.cpp
-	clipper/clipper.hpp
