@@ -10,7 +10,7 @@ dnl
 m4_include([version.ac])[] dnl define gmp_version
 AC_INIT([gmp (TeX Live)], gmp_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([gmp-]gmp_version[/gmp-impl.h])
+AC_CONFIG_SRCDIR([gmp-src/gmp-impl.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
@@ -73,7 +73,7 @@ cat >gmp-tmp.h <<KPSE_EOF
 #define GMP_NAIL_BITS $GMP_NAIL_BITS
 #define GMP_LIMB_BITS 123
 $DEFN_LONG_LONG_LIMB
-#include "$srcdir/gmp-]gmp_version[/gmp-h.in"
+#include "$srcdir/gmp-src/gmp-h.in"
 KPSE_EOF
 AC_CONFIG_COMMANDS_POST([rm -rf gmp-tmp.h])
 ]) # KPSE_GMP_H
@@ -101,14 +101,14 @@ fi
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-AC_SUBST([GMP_TREE], [gmp-]gmp_version)
+AC_SUBST([GMP_TREE], [gmp-src])
 
 AC_SUBST([HAVE_HOST_CPU_FAMILY_power], 0)
 AC_SUBST([HAVE_HOST_CPU_FAMILY_powerpc], 0)
 AC_SUBST([DEFN_LONG_LONG_LIMB])
 AC_SUBST([LIBGMP_DLL], 0)
 
-AC_CONFIG_FILES([Makefile include/Makefile gmp.h:gmp-]gmp_version[/gmp-h.in])
+AC_CONFIG_FILES([Makefile include/Makefile gmp.h:gmp-src/gmp-h.in])
 
 dnl The subdirectory native must be configured for the build system.
 KPSE_NATIVE_SUBDIRS([native])

@@ -1,3 +1,7 @@
+2015-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gmp-6.1.0.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

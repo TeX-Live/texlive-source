@@ -18,7 +18,7 @@ freetype2 2.6.2 - checked 28dec15
 gd 2.1.1 - checked 14jan15
   https://bitbucket.org/libgd/gd-libgd/downloads/
 
-gmp 6.0.0 - checked 25mar14
+gmp 6.1.0 - checked 28dec15
   http://ftp.gnu.org/gnu/gmp/
 
 graphite2 1.3.3 - checked 27sep15
