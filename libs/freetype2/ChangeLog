@@ -1,3 +1,8 @@
+2015-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import freetype-2.6.2.
+	* version.ac: Adjusted.
+
 2015-10-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import freetype-2.6.1.

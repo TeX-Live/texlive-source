@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define freetype_version
 AC_INIT([FreeType (TeX Live)], freetype_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([freetype-]freetype_version[/builds/unix/ftconfig.in])
+AC_CONFIG_SRCDIR([freetype-src/builds/unix/ftconfig.in])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -29,7 +29,7 @@ else
 fi
 AC_SUBST([config_args])
 
-AC_SUBST([FREETYPE_TREE], [freetype-]freetype_version)
+AC_SUBST([FREETYPE_TREE], [freetype-src])
 
 AC_CONFIG_FILES([Makefile])
 
