@@ -1,6 +1,6 @@
 /* win32lib.h: bits and pieces for win32 and msvc.
 
-   Copyright 2006, 2010-2013 Akira Kakuto.
+   Copyright 2006, 2010-2015 Akira Kakuto.
    Copyright 1996, 1997, 1998, 1999 Fabrice Popineau.
 
    This library is free software; you can redistribute it and/or
@@ -55,6 +55,7 @@
 /* These have to be defined because our compilers treat __STDC__ as being
    defined (most of them anyway). */
 
+#if !defined(__cplusplus)
 #define access     _access
 #define alloca     _alloca
 #define chdir      _chdir
@@ -74,7 +75,6 @@
 #define ftime      _ftime
 #define getpid     _getpid
 #define getcwd     _getcwd
-#define getwd(dir)  GetCurrentDirectory(MAXPATHLEN, dir)
 #define inline     __inline
 #define isascii    __isascii
 #define isatty     _isatty
@@ -84,7 +84,6 @@
 #define memicmp    _memicmp
 #define mktemp     _mktemp
 #define open       _open
-
 #define putenv     _putenv
 #define read       _read
 #define rmdir      _rmdir
@@ -92,13 +91,8 @@
 #define spawnlp    _spawnlp
 #define stat       _stat
 #define stricmp    _stricmp
-#ifdef strcasecmp
-#undef strcasecmp
-#endif
-#define strcasecmp _stricmp
 #define strdup     _strdup
 #define strlwr     _strlwr
-#define strncasecmp _strnicmp
 #define strnicmp   _strnicmp
 #define tempnam    _tempnam
 #define timeb      _timeb
@@ -107,6 +101,18 @@
 #define umask      _umask
 #define utime      _utime
 #define write      _write
+#endif /* !__cplusplus */
+
+#define getwd(dir)  GetCurrentDirectory(MAXPATHLEN, dir)
+
+#ifdef strcasecmp
+#undef strcasecmp
+#endif
+#ifdef strncasecmp
+#undef strncasecmp
+#endif
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
 
 #ifndef S_IFMT
 #define S_IFMT _S_IFMT
