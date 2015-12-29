@@ -5,6 +5,14 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [4.0.1] - 2015-12-28
+### Fixed
+- `\greseteolcustos` now retains its setting across multiple score inclusions (see [#703](https://github.com/gregorio-project/gregorio/issues/703)).
+- Gregorio now works against luaotfload 2.6 (see [#717](https://github.com/gregorio-project/gregorio/issues/717)).
+- When beginning of line clefs are invisible and bol shifts are enabled, lyric text will no longer stick out into the margin.  Further the notes on the first and subsequent lines now align properly.  See [#683](https://github.com/gregorio-project/gregorio/issues/683).
+- `\grecross` and `\grealtcross` now print the correct glyphs (see [#713](https://github.com/gregorio-project/gregorio/issues/713)).
+
+
 ## [4.0.0] - 2015-12-08
 ### Fixed
 - Handling of the first syllable in gabc is now more consistent with the all other syllables.  This centers the syllable correctly when using latin syllable centering (see [#42](https://github.com/gregorio-project/gregorio/issues/42)) and makes the use of styles less surprising in the first syllable (see [#135](https://github.com/gregorio-project/gregorio/issues/135)).
@@ -178,7 +186,7 @@ See GregorioRef.pdf for full details.
 - `greg-book` and `greg-lily-book` engines, supplanted by improved capabilities of `\gregorioscore` for compiling gabc files at time of document compilation.
 - The TeXShop script for compiling gabc files.  Supplanted by the new autocompile feature of the package.
 
-### Known Bugs
+### Known Bugs - FIXED IN 4.0.1
 - When beginning of line clefs are invisible and bol shifts are enabled, lyric text will stick out into the margin.  Further the notes on the first and subsequent lines do not align properly.  See [#683](https://github.com/gregorio-project/gregorio/issues/683).
 
 

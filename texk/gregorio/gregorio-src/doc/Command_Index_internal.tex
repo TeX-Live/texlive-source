@@ -587,6 +587,9 @@ Macro called at the end of the score to ensure that a big initial setting doesnâ
 \macroname{\textbackslash greoldcatcode}{}{gregoriotex.tex}
 Macro to store the catcode for ``@'' so that we can use said symbol in function names under Plain \TeX\ and then restore the original catcode after the package is done loading.
 
+\macroname{\textbackslash gre@reseteolcustos}{}{gregoriotex-main.tex}
+Alias that resets the use of automatic custos to the value set by \verb=\greseteolcustos=.  This macro is aliased to \verb=\gre@useautoeolcustos= or \verb=\gre@usemanualeolcustos= by \verb=\greseteolcustos=.
+
 \macroname{\textbackslash gre@setstylefont}{}{gregoriotex-main.tex}
 Macro for opening up greextra font.
 
@@ -618,6 +621,12 @@ Macro which typesets the key.
 
 \macroname{\textbackslash gre@updateleftbox}{}{gregoriotex-main.tex}
 Macro to update the box printed a the left end of every line (the one which holds the staff lines).
+
+\macroname{\textbackslash gre@useautoeolcustos}{}{gregoriotex-main.tex}
+Macro which enables automatic custos at the end of lines.
+
+\macroname{\textbackslash gre@usemanualeolcustos}{}{gregoriotex-main.tex}
+Macro which disables automatic custos at the end of lines.
 
 \macroname{\textbackslash gre@usestylecommon}{}{gregoriotex-signs.tex}
 Macro which specifies the alternate glyphs which are common to all of the styles.

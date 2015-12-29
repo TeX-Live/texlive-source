@@ -36,7 +36,7 @@ void gregorio_snprintf(char *s, size_t size, const char *format, ...)
     va_list args;
 
 #ifdef _MSC_VER
-    memset(s, 0, size * sizeof(char));
+    memset(s, 0, size);
 #endif
 
     va_start(args, format);
@@ -90,4 +90,46 @@ char *gregorio_strdup(const char *s)
         exit(1);
     }
     return result;
+}
+
+bool gregorio_readline(char **buf, size_t *bufsize, FILE *file)
+{
+    size_t oldsize;
+    if (*buf == NULL) {
+        *bufsize = 128;
+        *buf = (char *)gregorio_malloc(*bufsize);
+    } else {
+        if (*bufsize < 128) {
+            gregorio_message(_("invalid buffer size"), "gregorio_getline",
+                    VERBOSITY_FATAL, 0);
+            exit(1);
+        }
+    }
+    (*buf)[0] = '\0';
+    oldsize = 1;
+    for (;;) {
+        (*buf)[*bufsize - 2] = '\0';
+
+        if (feof(file) || ferror(file)
+                || !fgets((*buf) + oldsize - 1, (int)(*bufsize - oldsize + 1),
+                    file)
+                || (*buf)[*bufsize - 2] == '\0') {
+            if (ferror(file)) {
+                gregorio_message(_("Error reading from the file"),
+                        "gregorio_getline", VERBOSITY_FATAL, 0);
+                exit(1);
+            }
+            return (*buf)[0] != '\0';
+        }
+
+        if (*bufsize >= MAX_BUF_GROWTH) {
+            gregorio_message(_("Line too long"), "gregorio_getline",
+                    VERBOSITY_FATAL, 0);
+            exit(1);
+        }
+
+        oldsize = *bufsize;
+        *bufsize <<= 1;
+        *buf = gregorio_realloc(*buf, *bufsize);
+    }
 }

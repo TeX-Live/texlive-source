@@ -234,7 +234,7 @@ void gregorio_add_texverb_to_note(gregorio_note **current_note, char *str)
     if (*current_note) {
         if ((*current_note)->texverb) {
             len = strlen((*current_note)->texverb) + strlen(str) + 1;
-            res = gregorio_malloc(len * sizeof(char));
+            res = gregorio_malloc(len);
             strcpy(res, (*current_note)->texverb);
             strcat(res, str);
             free((*current_note)->texverb);
