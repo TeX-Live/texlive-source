@@ -25,6 +25,13 @@
 #
 # Detailed usage information at the end of the file
 #
+# TODO/IDEAS: - option to call external pre-processing codes
+#
+# version 1.1.1:
+#    - better detection of RCS system 
+#    - undocumented option --debug/--nodebug to override default setting for debug mode (Default: 0)#
+#    - bug fix: --flatten option combined with --pdf caused confusion of old and new file
+#
 # version 1.1.0:
 #
 #      - with option --flatten and version control option, checkout the whole tree into a temporary directory
@@ -53,9 +60,12 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.1.0
+This is LATEXDIFF-VC 1.1.1
   (c) 2005-2015 F J Tilmann
 EOF
+
+# output debug and intermediate files, set to 0 in final distribution
+my $debug=0; 
 
 
 # Option names
@@ -86,7 +96,11 @@ GetOptions('revision|r:s' => \@revs,
 	   'only-changes' => \$onlychanges,
 	   'flatten:s' => \$flatten,
            'version' => \$version,
-	   'help|h' => \$help);
+	   'help|h' => \$help,
+	   'debug!' => \$debug);
+
+##print STDERR "DEBUG 1:revs($#revs): " . join(":",@revs) . "\n";
+##print STDERR "DEBUG 1:ARGV($#ARGV): " . join(":",@ARGV) . "\n";
 
 $extracomp = join(" ",grep(/BAR/,@ARGV)); # special latexdiff options requiring additional compilation
 
@@ -125,12 +139,12 @@ if ( $git ) {
 
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty -r option
 if ( @revs && ( -f $revs[$#revs] || $revs[$#revs] =~ /^-/ ) ) {
-  unshift @ARGV,$revs[$#revs];
+  push @ARGV,$revs[$#revs];
   $revs[$#revs]="";
 }
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty -d option
 if ( defined($dir) && ( -f $dir || $dir =~ /^-/ ) ) {
-  unshift @ARGV,$dir;
+  push @ARGV,$dir;
   $dir="";
 }
 # check whether the first file name or first passed-through option for latexdiff got misinterpreted as an option to an empty --flatten option
@@ -139,8 +153,7 @@ if ( defined($flatten) && ( -f $flatten || $flatten =~ /^-/ ) ) {
   $flatten="";
 }
 
-
-#print "DEBUG: latexdiff-vc command line: ", join(" ",@ARGV), "\n"; 
+print "DEBUG: PDF $pdf latexdiff-vc command line: ", join(" ",@ARGV), "\n" if $debug; 
 
 $file2=pop @ARGV;
 ( defined($file2) && $file2 =~ /\.(tex|bbl|flt)$/ ) or pod2usage("Must specify at least one tex, bbl or flt file");
@@ -158,7 +171,7 @@ if (! $vc && scalar(@revs)>0 ) {
     $vc="GIT";
   } elsif ( $0 =~ /-hg$/ ) {
     $vc="HG";
-  } elsif ( -e "$file2,v" ) {
+  } elsif ( -e "$file2,v" || -d "RCS" ) {
     print STDERR "Guess you are using RCS ...\n";
     $vc="RCS";
   } elsif ( -d ".svn" ) {
@@ -192,7 +205,7 @@ if ( scalar(@revs)>0 ) {
     $diffcmd  = "rcsdiff -u -r";  
     $patchcmd = "patch -R -p0";
   } elsif ( $vc eq "SVN" ) {
-    $diffcmd  = "svn diff -r ";  
+    $diffcmd  = "svn diff --internal-diff -r ";  
     $patchcmd = "patch -R -p0";
   } elsif ( $vc eq "GIT" ) {
     $diffcmd  = "git diff -r --relative --no-prefix ";  
@@ -231,7 +244,7 @@ if ( defined($flatten) ) {
 
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
-  push @ldoptions, "-s", "ZLABEL" ;
+  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL" ;
 }
 
 if ( scalar(@revs) == 0 ) {
@@ -244,7 +257,7 @@ if ( scalar(@revs) == 0 ) {
   if ( $flatten ) {
     pod2usage("Only one root file must be given  if --flatten option is used with version control") if  @files != 1;
     $tempdir='.' if ( $flatten eq "keep-intermediate" );
-    print "flatten tempdir |$tempdir|";
+    print "flatten tempdir |$tempdir|\n";
     if ( $vc eq "SVN" ) {
       my (@infoout)=`svn info`;
       my (@urlline) = grep(/^URL:/, @infoout);
@@ -277,7 +290,6 @@ if ( ($vc eq "SVN" || $vc eq "CVS") && scalar(@revs)) {
   length($revs[0]) > 0 or $revs[0]="HEAD";
 }
 
-#exit ; 
 
 
 # cycle through all files
@@ -352,7 +364,7 @@ while ( $infile=$file2=shift @files ) {
       die "Abort ... " ;
     }
   }
-  print "Running $latexdiff\n";
+  print "Running: $latexdiff  $options \"$file1\" \"$file2\" > \"$diff\"\n";
   unless ( system("$latexdiff $options \"$file1\" \"$file2\" > \"$diff\"") == 0 ) { 
     print STDERR  "Something went wrong in $latexdiff. Deleting $diff and abort\n" ; unlink $diff ; exit(5) 
   };
@@ -384,44 +396,44 @@ foreach $diff ( @difffiles ) {
   }
 
   if ( $pdf | $postscript ) {
-  print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n";
+    print STDERR "PDF: $pdf Postscript: $postscript cwd $cwd\n" if $debug;
 
-  if ( system("grep -q \'^[^%]*\\\\bibliography\' \"$diff\"") == 0 ) { 
-    system("$latexcmd --interaction=batchmode \"$diff\"; bibtex \"$diffbase\";");
-    push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
-  }
-
-  # if special needs, as CHANGEBAR
-  if ( $extracomp ) {
-    # print "Extracomp\n";
-    system("$latexcmd --interaction=batchmode \"$diff\";");
-  }
-
-  # final compilation
-  system("$latexcmd --interaction=batchmode \"$diff\";"); # needed if cross-refs
-  system("$latexcmd \"$diff\";"); # final, with possible error messages
-
-  if ( $postscript ) {
-    my $dvi="$diffbase.dvi";
-    my $ps="$diffbase.ps";
-    my $ppoption="";
-
-    if ( $onlychanges ) {
-      $ppoption="-pp ".join(",",findchangedpages("$diffbase.aux"));
+    if ( system("grep -q \'^[^%]*\\\\bibliography{\' \"$diff\"") == 0 ) { 
+      system("$latexcmd --interaction=batchmode \"$diff\"; bibtex \"$diffbase\";");
+      push @ptmpfiles, "$diffbase.bbl","$diffbase.bbl" ; 
     }
-    system("dvips $ppoption -o $ps $dvi");
-    push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
-    print "Generated postscript file $ps\n";
-  } 
-  elsif ( $pdf ) {
-    if ( $onlychanges ) {
-      my @pages=findchangedpages("$diffbase.aux");
-      system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or 
-               die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
-      move("$diffbase-changedpage.pdf","$diffbase.pdf");
+
+    # if special needs, as CHANGEBAR
+    if ( $extracomp ) {
+      # print "Extracomp\n";
+      system("$latexcmd --interaction=batchmode \"$diff\";");
     }
-    push @ptmpfiles, "$diffbase.aux","$diffbase.log";
-  }
+
+    # final compilation
+    system("$latexcmd --interaction=batchmode \"$diff\";"); # needed if cross-refs
+    system("$latexcmd \"$diff\";"); # final, with possible error messages
+
+    if ( $postscript ) {
+      my $dvi="$diffbase.dvi";
+      my $ps="$diffbase.ps";
+      my $ppoption="";
+      
+      if ( $onlychanges ) {
+	$ppoption="-pp ".join(",",findchangedpages("$diffbase.aux"));
+      }
+      system("dvips $ppoption -o $ps $dvi");
+      push @ptmpfiles, "$diffbase.aux","$diffbase.log",$dvi ;
+      print "Generated postscript file $ps\n";
+    } elsif ( $pdf ) {
+      if ( $onlychanges ) {
+	my @pages=findchangedpages("$diffbase.aux");
+	###      print ("Running pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"\n") or 
+	system ("pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"")==0 or 
+	  die ("Could not execute <pdftk $diffbase.pdf cat " . join(" ",@pages) . " output $diffbase-changedpage.pdf> . Return code: $?");
+	move("$diffbase-changedpage.pdf","$diffbase.pdf");
+      }
+      push @ptmpfiles, "$diffbase.aux","$diffbase.log";
+    }
   }
   unlink @ptmpfiles;
   chdir $cwd;
@@ -464,6 +476,7 @@ sub checkout_dir {
   if ( $vc eq "SVN" ) {
     system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
   } elsif ( $vc eq "GIT" ) {
+    $rev="HEAD" if length($rev)==0;
     system("git archive --format=tar $rev | ( cd $dirname ; tar -xf -)")==0 or die "Something went wrong in executing:  git archive --format=tar $rev | ( cd $dirname ; tar -xf -)";
   } elsif ( $vc eq "HG" ) {
     system("hg archive --type files -r $rev $dirname")==0 or die "Something went wrong in executing:  hg archive --type files -r $rev $dirname";
@@ -509,7 +522,7 @@ B<latexdiff-vc> [ F<latexdiff-options> ]  [ F<latexdiff-vc-options> ][ B<--posts
 =head1 DESCRIPTION
 
 I<latexdiff-vc> is a wrapper script that applies I<latexdiff> to a
-file, or multiple files under version control (CVS, RCS or SVN), and optionally runs the
+file, or multiple files under version control (git, subversion (SVN), mercurial (hg), CVS, RCS), and optionally runs the
 sequence of C<latex> and C<dvips> or C<pdflatex> commands necessary to
 produce pdf or postscript output of the difference tex file(s). It can
 also be applied to a pair of files to automatise the generation of difference
@@ -524,7 +537,7 @@ file in postscript or pdf format.
 Set the version system. 
 If no version system is specified, latexdiff-vc will venture a guess.
 
-latexdiff-cvs and latexdiff-rcs are variants of latexdiff-vc which default to 
+latexdiff-cvs, latexdiff-rcs etc are variants of latexdiff-vc which default to 
 the respective versioning system. However, this default can still be overridden using the options above.
 
 =item B<-r>, B<-r> F<rev> or B<--revision>, B<--revision=>F<rev>
@@ -633,11 +646,12 @@ or higher are required.
 =head1 BUG REPORTING
 
 Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
-or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the serial number of I<latexdiff-vc>
+or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the version number of I<latexdiff-vc>
 (option C<--version>).
 
 =head1 AUTHOR
 
+Version 1.1.1
 Copyright (C) 2005-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
