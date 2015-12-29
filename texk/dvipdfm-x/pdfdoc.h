@@ -31,15 +31,17 @@
 extern void     pdf_doc_set_verbose (void);
 
 extern void     pdf_open_document  (const char *filename,
-				    int do_encryption,
-				    double media_width, double media_height,
-				    double annot_grow_amount, int bookmark_open_depth,
-				    int check_gotos);
+                                    int enable_encrypt,
+                                    int enable_objstm,
+                                    double media_width, double media_height,
+                                    double annot_grow_amount,
+                                    int bookmark_open_depth,
+                                    int check_gotos);
 extern void     pdf_close_document (void);
 
 
 /* PDF document metadata */
-extern void     pdf_doc_set_creator   (const char *creator);
+extern void     pdf_doc_set_creator (const char *creator);
 
 
 /* They just return PDF dictionary object.
