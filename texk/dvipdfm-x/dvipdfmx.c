@@ -80,6 +80,7 @@ static int opt_flags = 0;
 #define OPT_FONTMAP_FIRST_MATCH   (1 << 3)
 #define OPT_PDFDOC_NO_DEST_REMOVE (1 << 4)
 #define OPT_PDFOBJ_NO_PREDICTOR   (1 << 5)
+#define OPT_PDFOBJ_NO_OBJSTM      (1 << 6)
 
 static char   ignore_colors = 0;
 static double annot_grow    = 0.0;
@@ -100,9 +101,12 @@ static int pdfdecimaldigits = 2;
 static int image_cache_life = -2;
 
 /* Encryption */
-static int do_encryption    = 0;
+static int     do_encryption = 0;
 static int     key_bits      = 40;
 static int32_t permission    = 0x003C;
+
+/* Object stream */
+static int     enable_objstm = 1;
 
 /* Page device */
 double paper_width  = 595.0;
@@ -201,6 +205,7 @@ show_usage (void)
   printf ("\t\t  0x0008 Do not replace duplicate fontmap entries.\n");
   printf ("\t\t  0x0010 Do not optimize PDF destinations.\n");
   printf ("\t\t  0x0020 Do not use predictor filter for Flate compression.\n");
+  printf ("\t\t  0x0040 Do not use object stream.\n");
   printf ("\t\tPositive values are always ORed with previously given flags.\n");
   printf ("\t\tAnd negative values replace old values.\n");
   printf ("  -D template\tPS->PDF conversion command line template [none]\n");
@@ -1015,12 +1020,12 @@ main (int argc, char *argv[])
       if (do_encryption) {
         if (!(key_bits >= 40 && key_bits <= 128 && (key_bits % 8 == 0)) &&
               key_bits != 256)
-	  ERROR("Invalid encryption key length specified: %u", key_bits);
-	else if (key_bits > 40 && pdf_get_version() < 4)
+          ERROR("Invalid encryption key length specified: %u", key_bits);
+        else if (key_bits > 40 && pdf_get_version() < 4)
           ERROR("Chosen key length requires at least PDF 1.4. " \
-		"Use \"-V 4\" to change.");
-	do_encryption = 1;
-	pdf_enc_set_passwd(key_bits, permission, owner_pw, user_pw);
+                "Use \"-V 4\" to change.");
+        do_encryption = 1;
+        pdf_enc_set_passwd(key_bits, permission, owner_pw, user_pw);
       }
     }
     if (landscape_mode) {
@@ -1030,11 +1035,14 @@ main (int argc, char *argv[])
 
   pdf_files_init();
 
+  if (opt_flags & OPT_PDFOBJ_NO_OBJSTM)
+    enable_objstm = 0;
+
   /* Set default paper size here so that all page's can inherite it.
    * annot_grow:    Margin of annotation.
    * bookmark_open: Miximal depth of open bookmarks.
    */
-  pdf_open_document(pdf_filename, do_encryption,
+  pdf_open_document(pdf_filename, do_encryption, enable_objstm,
                     paper_width, paper_height, annot_grow, bookmark_open,
                     !(opt_flags & OPT_PDFDOC_NO_DEST_REMOVE));
 

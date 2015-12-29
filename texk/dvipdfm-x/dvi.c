@@ -2350,13 +2350,15 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
           skip_white(&p, endptr);
           if (!strcmp(kp, "ownerpw")) {
             if ((obj = parse_pdf_string(&p, endptr))) {
-              strncpy(owner_pw, pdf_string_value(obj), MAX_PWD_LEN); 
+              if (pdf_string_value(obj))
+                strncpy(owner_pw, pdf_string_value(obj), MAX_PWD_LEN);
               pdf_release_obj(obj);
             } else
               error = -1;
           } else if (!strcmp(kp, "userpw")) {
             if ((obj = parse_pdf_string(&p, endptr))) {
-              strncpy(user_pw, pdf_string_value(obj), MAX_PWD_LEN);
+              if (pdf_string_value(obj))
+                strncpy(user_pw, pdf_string_value(obj), MAX_PWD_LEN);
               pdf_release_obj(obj);
             } else
               error = -1;

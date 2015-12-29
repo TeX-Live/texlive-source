@@ -2470,14 +2470,14 @@ static char *doccreator = NULL; /* Ugh */
 
 void
 pdf_open_document (const char *filename,
-                   int do_encryption,
+                   int enable_encrypt, int enable_objstm,
                    double media_width, double media_height,
                    double annot_grow_amount, int bookmark_open_depth,
                    int check_gotos)
 {
   pdf_doc *p = &pdoc;
 
-  pdf_out_init(filename, do_encryption);
+  pdf_out_init(filename, enable_encrypt, enable_objstm);
 
   pdf_doc_init_catalog(p);
 
@@ -2505,7 +2505,7 @@ pdf_open_document (const char *filename,
 
   pdf_doc_set_bgcolor(NULL);
 
-  if (do_encryption) {
+  if (enable_encrypt) {
     pdf_obj *encrypt = pdf_encrypt_obj();
     pdf_set_encrypt(encrypt);
     pdf_release_obj(encrypt);

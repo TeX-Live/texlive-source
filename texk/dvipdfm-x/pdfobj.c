@@ -125,11 +125,11 @@ struct pdf_dict
 
 struct pdf_stream
 {
-  struct pdf_obj *dict;
-  unsigned char  *stream;
-  int            *objstm_data;    /* used for object streams */
-  unsigned int    stream_length;
-  unsigned int    max_length;
+  struct pdf_obj     *dict;
+  unsigned char      *stream;
+  int                *objstm_data;    /* used for object streams */
+  unsigned int        stream_length;
+  unsigned int        max_length;
   int32_t             _flags;
   struct decode_parms decodeparms;
 };
@@ -320,7 +320,7 @@ add_xref_entry (unsigned label, unsigned char type, unsigned int field2, unsigne
 
 #define BINARY_MARKER "%\344\360\355\370\n"
 void
-pdf_out_init (const char *filename, int do_encryption)
+pdf_out_init (const char *filename, int do_encryption, int enable_objstm)
 {
   char v;
 
@@ -330,11 +330,16 @@ pdf_out_init (const char *filename, int do_encryption)
   next_label = 1;
 
   if (pdf_version >= 5) {
-    xref_stream = pdf_new_stream(STREAM_COMPRESS);
-    xref_stream->flags |= OBJ_NO_ENCRYPT;
-    trailer_dict = pdf_stream_dict(xref_stream);
-    pdf_add_dict(trailer_dict, pdf_new_name("Type"), pdf_new_name("XRef"));
-    do_objstm = 1;
+    if (enable_objstm) {
+      xref_stream = pdf_new_stream(STREAM_COMPRESS);
+      xref_stream->flags |= OBJ_NO_ENCRYPT;
+      trailer_dict = pdf_stream_dict(xref_stream);
+      pdf_add_dict(trailer_dict, pdf_new_name("Type"), pdf_new_name("XRef"));
+      do_objstm = 1;
+    } else {
+      trailer_dict = pdf_new_dict();
+      do_objstm = 0;
+    }
   } else {
     xref_stream = NULL;
     trailer_dict = pdf_new_dict();
