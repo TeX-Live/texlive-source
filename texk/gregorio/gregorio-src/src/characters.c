@@ -49,12 +49,6 @@
 #include "utf8strings.h"
 #include "vowel/vowel.h"
 
-#ifdef _WIN32
-#ifndef PATH_MAX
-#define PATH_MAX _MAX_PATH
-#endif
-#endif
-
 #define VOWEL_FILE "gregorio-vowels.dat"
 
 #ifndef USE_KPSE
@@ -85,7 +79,8 @@ static bool read_vowel_rules(char *const lang) {
     }
 #else
     FILE *file;
-    char buf[PATH_MAX];
+    size_t bufsize = 0;
+    char *buf = NULL;
     size_t capacity = 16, size = 0;
     
     filenames = gregorio_malloc(capacity * sizeof(char *));
@@ -97,7 +92,7 @@ static bool read_vowel_rules(char *const lang) {
                 strerror(errno));
         return false;
     }
-    while (!feof(file) && !ferror(file) && fgets(buf, PATH_MAX, file)) {
+    while (gregorio_readline(&buf, &bufsize, file)) {
         rtrim(buf);
         if (strlen(buf) > 0) {
             filenames[size++] = gregorio_strdup(buf);
@@ -111,6 +106,7 @@ static bool read_vowel_rules(char *const lang) {
                     _("kpsewhich returned bad value for %s"), VOWEL_FILE);
         }
     }
+    free(buf);
     filenames[size] = NULL;
     pclose(file);
 #endif

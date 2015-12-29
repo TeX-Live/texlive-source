@@ -568,7 +568,7 @@ char *gregorio_vowel_rulefile_text;
 static __inline void save_lval(void)
 {
     gregorio_vowel_rulefile_lval =
-            gregorio_malloc((gregorio_vowel_rulefile_leng + 1) * sizeof(char));
+            gregorio_malloc(gregorio_vowel_rulefile_leng + 1);
     strncpy(gregorio_vowel_rulefile_lval, gregorio_vowel_rulefile_text,
             gregorio_vowel_rulefile_leng);
     gregorio_vowel_rulefile_lval[gregorio_vowel_rulefile_leng] = '\0';
