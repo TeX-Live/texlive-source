@@ -2046,7 +2046,7 @@ static void check_nonexisting_pages(PDF pdf)
     avl_t_init(&t, page_tree);
     /* search from the end backward until the last real page is found */
     for (p = avl_t_last(&t, page_tree); p != NULL && obj_aux(pdf, p->objptr) == 0; p = avl_t_prev(&t)) {
-        formatted_warning("pdf backend", "page %s has been referenced but does not exist",obj_info(pdf, p->objptr));
+        formatted_warning("pdf backend", "page %d has been referenced but does not exist",obj_info(pdf, p->objptr));
     }
 }
 
