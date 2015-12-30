@@ -762,7 +762,7 @@ void normal_warning(const char *t, const char *p)
 
 @ @c
 static char print_buf[PRINTF_BUF_SIZE];
-
+__attribute__ ((format(printf, 2,3)))
 void formatted_error(const char *t, const char *fmt, ...)
 {
     va_list args;
@@ -772,6 +772,7 @@ void formatted_error(const char *t, const char *fmt, ...)
     va_end(args);
 }
 
+__attribute__ ((format(printf, 2,3)))
 void formatted_warning(const char *t, const char *fmt, ...)
 {
     va_list args;
