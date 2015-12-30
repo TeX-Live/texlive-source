@@ -47,7 +47,8 @@
 
 static int  check_for_ps    (FILE *image_file);
 static int  check_for_mp    (FILE *image_file);
-static int  ps_include_page (pdf_ximage *ximage, const char *file_name);
+static int  ps_include_page (pdf_ximage *ximage,
+                             const char *ident, load_options options);
 
 
 #define IMAGE_TYPE_UNKNOWN -1
@@ -65,13 +66,19 @@ struct attr_
   int      width, height;
   double   xdensity, ydensity;
   pdf_rect bbox;
+
+  /* Not appropriate place but... someone need them. */
+  int      page_no;
+  int      page_count;
+  int      bbox_type;  /* Ugh */
+  pdf_obj *dict;
+  char     tempfile;
 };
 
 struct pdf_ximage_
 {
   char        *ident;
   char         res_name[16];
-  int          page_no, page_count;
 
   int          subtype;
 
@@ -80,9 +87,7 @@ struct pdf_ximage_
   char        *filename;
   pdf_obj     *reference;
   pdf_obj     *resource;
-  pdf_obj     *attr_dict;
 
-  char        tempfile;
 };
 
 
@@ -111,34 +116,27 @@ static struct ic_  _ic = {
 };
 
 static void
-pdf_init_ximage_struct (pdf_ximage *I,
-                        const char *ident, const char *filename,
-                        int page_no, pdf_obj *dict)
+pdf_init_ximage_struct (pdf_ximage *I)
 {
-  if (ident) {
-    I->ident = NEW(strlen(ident)+1, char);
-    strcpy(I->ident, ident);
-  } else
-    I ->ident = NULL;
-  I->page_no  = page_no;
-  I->page_count = 0;
-  if (filename) {
-    I->filename = NEW(strlen(filename)+1, char);
-    strcpy(I->filename, filename);
-  } else
+  I->ident    = NULL;
     I->filename = NULL;
+
   I->subtype  = -1;
   memset(I->res_name, 0, 16);
   I->reference = NULL;
   I->resource  = NULL;
-  I->attr_dict = dict;
 
   I->attr.width = I->attr.height = 0;
   I->attr.xdensity = I->attr.ydensity = 1.0;
   I->attr.bbox.llx = I->attr.bbox.lly = 0;
   I->attr.bbox.urx = I->attr.bbox.ury = 0;
 
-  I->tempfile = 0;
+  I->attr.page_no    = 1;
+  I->attr.page_count = 1;
+  I->attr.bbox_type  = 0;
+
+  I->attr.dict     = NULL;
+  I->attr.tempfile = 0;
 }
 
 static void
@@ -148,7 +146,7 @@ pdf_set_ximage_tempfile (pdf_ximage *I, const char *filename)
     RELEASE(I->filename);
   I->filename = NEW(strlen(filename)+1, char);
   strcpy(I->filename, filename);
-  I->tempfile = 1;
+  I->attr.tempfile = 1;
 }
 
 static void
@@ -162,9 +160,9 @@ pdf_clean_ximage_struct (pdf_ximage *I)
     pdf_release_obj(I->reference);
   if (I->resource)
     pdf_release_obj(I->resource);
-  if (I->attr_dict)
-    pdf_release_obj(I->attr_dict);
-  pdf_init_ximage_struct(I, NULL, NULL, 0, NULL);
+  if (I->attr.dict) /* unsafe? */
+    pdf_release_obj(I->attr.dict);
+  pdf_init_ximage_struct(I);
 }
 
 
@@ -185,7 +183,7 @@ pdf_close_images (void)
     int  i;
     for (i = 0; i < ic->count; i++) {
       pdf_ximage *I = ic->ximages+i;
-      if (I->tempfile) {
+      if (I->attr.tempfile) {
         /*
          * It is important to remove temporary files at the end because
          * we cache file names. Since we use mkstemp to create them, we
@@ -254,7 +252,7 @@ source_image_type (FILE *fp)
 
 static int
 load_image (const char *ident, const char *fullname, int format, FILE  *fp,
-            int page_no, pdf_obj *dict)
+            load_options options)
 {
   struct ic_ *ic = &_ic;
   int         id = -1; /* ret */
@@ -267,7 +265,19 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   }
 
   I  = &ic->ximages[id];
-  pdf_init_ximage_struct(I, ident, fullname, page_no, dict);
+  pdf_init_ximage_struct(I);
+  if (ident) {
+    I->ident = NEW(strlen(ident)+1, char);
+    strcpy(I->ident, ident);
+  }
+  if (fullname) {
+    I->filename = NEW(strlen(fullname)+1, char);
+    strcpy(I->filename, fullname);
+  }
+
+  I->attr.page_no   = options.page_no;
+  I->attr.bbox_type = options.bbox_type;
+  I->attr.dict      = options.dict; /* unsafe? */
 
   switch (format) {
   case  IMAGE_TYPE_JPEG:
@@ -304,15 +314,15 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
     if (_opts.verbose)
       MESG("[PDF]");
     {
-      int result = pdf_include_page(I, fp, fullname);
+      int result = pdf_include_page(I, fp, fullname, options);
       if (result > 0)
         /* PDF version too recent */
-        result = ps_include_page(I, fullname);
+        result = ps_include_page(I, fullname, options);
       if (result < 0)
         goto error;
     }
     if (_opts.verbose)
-      MESG(",Page:%ld", I->page_no);
+      MESG(",Page:%ld", I->attr.page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
     break;
 /*
@@ -321,10 +331,10 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
   default:
     if (_opts.verbose)
       MESG(format == IMAGE_TYPE_EPS ? "[PS]" : "[UNKNOWN]");
-    if (ps_include_page(I, fullname) < 0)
+    if (ps_include_page(I, fullname, options) < 0)
       goto error;
     if (_opts.verbose)
-      MESG(",Page:%ld", I->page_no);
+      MESG(",Page:%ld", I->attr.page_no);
     I->subtype  = PDF_XOBJECT_TYPE_FORM;
   }
 
@@ -354,10 +364,8 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
 #define dpx_fopen(n,m) (MFOPEN((n),(m)))
 #define dpx_fclose(f)  (MFCLOSE((f)))
 
-uint8_t PageBox_of_id[MAX_IMAGES];
-
 int
-pdf_ximage_findresource (const char *ident, int page_no, pdf_obj *dict)
+pdf_ximage_findresource (const char *ident, load_options options)
 {
   struct ic_ *ic = &_ic;
   int         id = -1;
@@ -366,21 +374,20 @@ pdf_ximage_findresource (const char *ident, int page_no, pdf_obj *dict)
   int         format;
   FILE       *fp;
 
+  /* I don't understand why there is comparision against I->attr.dict here...
+   * I->attr.dict and options.dict are simply pointers to PDF dictionaries.
+   */
   for (id = 0; id < ic->count; id++) {
     I = &ic->ximages[id];
     if (I->ident && !strcmp(ident, I->ident)) {
       f = I->filename;
-      if (I->page_no == page_no + (page_no < 0 ? I->page_count+1 : 0) &&
-          I->attr_dict == dict) {
-        if (ImageSpecial) {
-          if ((int)PageBox_of_id[id] == PageBox)
-            return id;
-        } else {
+      if (I->attr.page_no == options.page_no /* Not sure */
+          && I->attr.dict == options.dict    /* ????? */
+          && I->attr.bbox_type == options.bbox_type) {
           return id;
         }
       }
     }
-  }
 
   if (f) {
     /* we already have converted this file; f is the temporary file name */
@@ -420,7 +427,7 @@ pdf_ximage_findresource (const char *ident, int page_no, pdf_obj *dict)
     } else
       break;
   default:
-    id = load_image(ident, fullname, format, fp, page_no, dict);
+    id = load_image(ident, fullname, format, fp, options);
     break;
   }
   dpx_fclose(fp);
@@ -534,8 +541,8 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   if (info->bits_per_component > 0) /* Ignored for JPXDecode filter. FIXME */
     pdf_add_dict(dict, pdf_new_name("BitsPerComponent"),
                  pdf_new_number(info->bits_per_component));
-  if (I->attr_dict)
-    pdf_merge_dict(dict, I->attr_dict);
+  if (I->attr.dict)
+    pdf_merge_dict(dict, I->attr.dict);
 
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
   I->resource  = NULL;
@@ -562,7 +569,7 @@ pdf_ximage_set_form (pdf_ximage *I, void *form_info, pdf_obj *resource)
 int
 pdf_ximage_get_page (pdf_ximage *I)
 {
-  return I->page_no;
+  return I->attr.page_no;
 }
 
 #define CHECK_ID(c,n) do {\
@@ -604,7 +611,12 @@ pdf_ximage_defineresource (const char *ident,
 
   I = &ic->ximages[id];
 
-  pdf_init_ximage_struct(I, ident, NULL, 0, NULL);
+  pdf_init_ximage_struct(I);
+
+  if (ident) {
+    I->ident = NEW(strlen(ident)+1, char);
+    strcpy(I->ident, ident);
+  }
 
   switch (subtype) {
   case PDF_XOBJECT_TYPE_IMAGE:
@@ -889,7 +901,7 @@ char *get_distiller_template (void)
 }
 
 static int
-ps_include_page (pdf_ximage *ximage, const char *filename)
+ps_include_page (pdf_ximage *ximage, const char *filename, load_options options)
 {
   char  *distiller_template = _opts.cmdtmpl;
   char  *temp;
@@ -950,10 +962,7 @@ ps_include_page (pdf_ximage *ximage, const char *filename)
     return  -1;
   }
   pdf_set_ximage_tempfile(ximage, temp);
-#if 0
-  error = pdf_include_page(ximage, fp, 0, pdfbox_crop);
-#endif
-  error = pdf_include_page(ximage, fp, temp);
+  error = pdf_include_page(ximage, fp, temp, options);
   MFCLOSE(fp);
 
   /* See pdf_close_images for why we cannot delete temporary files here. */

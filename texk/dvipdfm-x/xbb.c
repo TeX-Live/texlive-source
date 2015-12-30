@@ -256,8 +256,8 @@ static void do_pdf (FILE *fp, char *filename)
     WARN("%s does not look like a PDF file...\n", filename);
     return;
   }
-
-  page = pdf_doc_get_page(pf, page_no, &count, &bbox, NULL);
+  count = pdf_doc_get_page_count(pf);
+  page  = pdf_doc_get_page(pf, page_no, PageBox, &bbox, NULL);
 
   pdf_close(pf);
 

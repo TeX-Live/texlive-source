@@ -365,7 +365,8 @@ make_transmatrix (pdf_tmatrix *M,
 }
 
 static int
-spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *ap)
+spc_read_dimtrns_dvips (struct spc_env *spe,
+                        transform_info *t, struct spc_arg *ap)
 {
   static const char *_dtkeys[] = {
 #define  K_TRN__HOFFSET  0
@@ -507,9 +508,13 @@ spc_read_dimtrns_dvips (struct spc_env *spe, transform_info *t, struct spc_arg *
   return  error;
 }
 
-
+/* "page" and "pagebox" are not dimension nor transformation nor
+ * something acceptable to put into here.
+ * PLEASE DONT ADD HERE!
+ */
 static int
-spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *ap, int *page_no)
+spc_read_dimtrns_pdfm (struct spc_env *spe,
+                       transform_info *p, struct spc_arg *ap)
 {
   int     has_scale, has_xscale, has_yscale, has_rotate, has_matrix;
   const char *_dtkeys[] = {
@@ -529,10 +534,195 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 #undef  K__CLIP
 #define  K__CLIP       9
     "clip",
-#define  K__PAGE       10
-    "page",
-#define  K__HIDE       11
+#define  K__HIDE       10
     "hide",
+     NULL
+  };
+  double xscale, yscale, rotate;
+  int    error = 0;
+
+  has_xscale = has_yscale = has_scale = has_rotate = has_matrix = 0;
+  xscale = yscale = 1.0; rotate = 0.0;
+  p->flags |= INFO_DO_CLIP;   /* default: do clipping */
+  p->flags &= ~INFO_DO_HIDE;   /* default: do clipping */
+
+  skip_blank(&ap->curptr, ap->endptr);
+
+  while (!error && ap->curptr < ap->endptr) {
+    char  *kp, *vp;
+    int    k;
+
+    kp = parse_c_ident(&ap->curptr, ap->endptr);
+    if (!kp)
+      break;
+
+    skip_blank(&ap->curptr, ap->endptr);
+    for (k = 0; _dtkeys[k] && strcmp(_dtkeys[k], kp); k++);
+    switch (k) {
+    case  K_DIM__WIDTH:
+      error = spc_util_read_length(spe, &p->width , ap);
+      p->flags |= INFO_HAS_WIDTH;
+      break;
+    case  K_DIM__HEIGHT:
+      error = spc_util_read_length(spe, &p->height, ap);
+      p->flags |= INFO_HAS_HEIGHT;
+      break;
+    case  K_DIM__DEPTH:
+      error = spc_util_read_length(spe, &p->depth , ap);
+      p->flags |= INFO_HAS_HEIGHT;
+      break;
+    case  K_TRN__SCALE:
+      vp = parse_float_decimal(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+        xscale = yscale = atof(vp);
+        has_scale = 1;
+        RELEASE(vp);
+      }
+      break;
+    case  K_TRN__XSCALE:
+      vp = parse_float_decimal(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+        xscale  = atof(vp);
+        has_xscale = 1;
+        RELEASE(vp);
+      }
+      break;
+    case  K_TRN__YSCALE:
+      vp = parse_float_decimal(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+        yscale  = atof(vp);
+        has_yscale = 1;
+        RELEASE(vp);
+      }
+      break;
+    case  K_TRN__ROTATE:
+      vp = parse_float_decimal(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+        rotate = M_PI * atof(vp) / 180.0;
+        has_rotate = 1;
+        RELEASE(vp);
+      }
+      break;
+    case  K_TRN__BBOX:
+      {
+        double  v[4];
+        if (spc_util_read_numbers(v, 4, ap) != 4)
+          error = -1;
+        else {
+          p->bbox.llx = v[0];
+          p->bbox.lly = v[1];
+          p->bbox.urx = v[2];
+          p->bbox.ury = v[3];
+          p->flags   |= INFO_HAS_USER_BBOX;
+        }
+      }
+      break;
+    case  K_TRN__MATRIX:
+      {
+        double  v[6];
+        if (spc_util_read_numbers(v, 6, ap) != 6)
+          error = -1;
+        else {
+          pdf_setmatrix(&(p->matrix), v[0], v[1], v[2], v[3], v[4], v[5]);
+          has_matrix = 1;
+        }
+      }
+      break;
+    case  K__CLIP:
+      vp = parse_float_decimal(&ap->curptr, ap->endptr);
+      if (!vp)
+        error = -1;
+      else {
+        if (atof(vp))
+          p->flags |= INFO_DO_CLIP;
+        else
+          p->flags &= ~INFO_DO_CLIP;
+        RELEASE(vp);
+      }
+      break;
+    case  K__HIDE:
+      p->flags |= INFO_DO_HIDE;
+      break;
+
+    default:
+      error = -1;
+      break;
+    }
+    if (error)
+      spc_warn(spe, "Unrecognized key or invalid value for " \
+                     "dimension/transformation: %s", kp);
+    else
+      skip_blank(&ap->curptr, ap->endptr);
+    RELEASE(kp);
+  }
+
+  if (!error) {
+    /* Check consistency */
+    if (has_xscale && (p->flags & INFO_HAS_WIDTH)) {
+      spc_warn(spe, "Can't supply both width and xscale. Ignore xscale.");
+      xscale = 1.0;
+    } else if (has_yscale &&
+               (p->flags & INFO_HAS_HEIGHT)) {
+      spc_warn(spe, "Can't supply both height/depth and yscale. Ignore yscale.");
+      yscale = 1.0;
+    } else if (has_scale &&
+               (has_xscale || has_yscale)) {
+      spc_warn(spe, "Can't supply overall scale along with axis scales.");
+      error = -1;
+    } else if (has_matrix &&
+               (has_scale || has_xscale || has_yscale || has_rotate)) {
+      spc_warn(spe, "Can't supply transform matrix along with scales or rotate. Ignore scales and rotate.");
+    }
+  }
+
+  if (!has_matrix) {
+    make_transmatrix(&(p->matrix), 0.0, 0.0, xscale, yscale, rotate);
+  }
+
+  if (!(p->flags & INFO_HAS_USER_BBOX)) {
+    p->flags &= ~INFO_DO_CLIP;    /* no clipping needed */
+  }
+
+  return  error;
+}
+
+int
+spc_util_read_dimtrns (struct spc_env *spe,
+                       transform_info *ti, struct spc_arg *args, int syntax)
+{
+  if (!ti || !spe || !args)
+    return -1;
+
+  if (syntax) {
+    return  spc_read_dimtrns_dvips(spe, ti, args);
+  } else {
+    return  spc_read_dimtrns_pdfm (spe, ti, args);
+  }
+}
+
+int
+spc_util_read_blahblah (struct spc_env *spe,
+                        transform_info *p, int *page_no, int *bbox_type,
+                        struct spc_arg *ap)
+{
+  int     has_scale, has_xscale, has_yscale, has_rotate, has_matrix;
+  const char *_dtkeys[] = {
+    "width", "height", "depth",
+    "scale", "xscale", "yscale", "rotate",
+    "bbox",
+    "matrix",
+    "clip",
+    "hide",
+#define  K__PAGE       11
+    "page",
 #define  K__PAGEBOX    12
     "pagebox",
      NULL
@@ -647,6 +837,7 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
         RELEASE(vp);
       }
       break;
+
     case  K__PAGE:
       {
         double page;
@@ -664,22 +855,27 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
         char *q;
         q = parse_c_ident (&ap->curptr, ap->endptr);
         if (q) {
-          if (strcasecmp(q, "cropbox") == 0) PageBox = 1;
-          else if (strcasecmp(q, "mediabox") == 0) PageBox = 2;
-          else if (strcasecmp(q, "artbox") == 0) PageBox = 3;
-          else if (strcasecmp(q, "trimbox") == 0) PageBox = 4;
-          else if (strcasecmp(q, "bleedbox") == 0) PageBox = 5;
-        } else {
-          PageBox = 0;
+          if (bbox_type) {
+            if (strcasecmp(q, "cropbox") == 0)       *bbox_type = 1;
+            else if (strcasecmp(q, "mediabox") == 0) *bbox_type = 2;
+            else if (strcasecmp(q, "artbox") == 0)   *bbox_type = 3;
+            else if (strcasecmp(q, "trimbox") == 0)  *bbox_type = 4;
+            else if (strcasecmp(q, "bleedbox") == 0) *bbox_type = 5;
+          }
+          RELEASE(q);
+        } else if (bbox_type) {
+          *bbox_type = 0;
         }
       }
       break;
+
     default:
       error = -1;
       break;
     }
     if (error)
-      spc_warn(spe, "Unrecognized key or invalid value for dimension/transformation: %s", kp);
+      spc_warn(spe, "Unrecognized key or invalid value for " \
+                     "dimension/transformation: %s", kp);
     else
       skip_blank(&ap->curptr, ap->endptr);
     RELEASE(kp);
@@ -714,20 +910,6 @@ spc_read_dimtrns_pdfm (struct spc_env *spe, transform_info *p, struct spc_arg *a
 
   return  error;
 }
-
-int
-spc_util_read_dimtrns (struct spc_env *spe, transform_info *ti, struct spc_arg *args, int *page_no, int syntax)
-{
-  ASSERT(ti && spe && args);
-
-  if (syntax) {
-    ASSERT(!page_no);
-    return  spc_read_dimtrns_dvips(spe, ti, args);
-  } else {
-    return  spc_read_dimtrns_pdfm (spe, ti, args, page_no);
-  }
-}
-
 
 /* Color names */
 #ifdef  rgb

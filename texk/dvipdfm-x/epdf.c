@@ -164,7 +164,7 @@ pdf_get_page_obj (pdf_file *pf, int page_no,
     if (markinfo) {
       tmp = pdf_lookup_dict(markinfo, "Marked");
       if (PDF_OBJ_BOOLEANTYPE(tmp) && pdf_boolean_value(tmp))
-	WARN("File contains tagged PDF. Ignoring tags.");
+        WARN("PDF file is tagged... Ignoring tags.");
       pdf_release_obj(markinfo);
     }
 
@@ -215,24 +215,27 @@ pdf_get_page_obj (pdf_file *pf, int page_no,
 	  if (bbox)
 	    pdf_release_obj(bbox);
 	  bbox = tmp;
-        } else
+        } else {
           pdf_release_obj(tmp);
+      }
       }
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "TrimBox")))) {
         if (!rect_equal(tmp, bbox)) {
 	  if (bbox)
 	    pdf_release_obj(bbox);
 	  bbox = tmp;
-        } else
+        } else {
           pdf_release_obj(tmp);
+      }
       }
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "ArtBox")))) {
         if (!rect_equal(tmp, bbox)) {
 	  if (bbox)
 	    pdf_release_obj(bbox);
 	  bbox = tmp;
-        } else
+        } else {
           pdf_release_obj(tmp);
+      }
       }
       if ((tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "CropBox")))) {
 	if (crop_box)
@@ -270,10 +273,10 @@ pdf_get_page_obj (pdf_file *pf, int page_no,
 	  /* Pages object */
 	  count = pdf_number_value(tmp);
 	  pdf_release_obj(tmp);
-	} else
+        } else {
 	  /* Page object */
 	  count = 1;
-
+        }
 	if (page_idx < count)
 	  break;
 
@@ -312,7 +315,8 @@ pdf_get_page_obj (pdf_file *pf, int page_no,
 
   if (rotate) {
     if (pdf_number_value(rotate) != 0.0)
-      WARN("<< /Rotate %d >> found. (Not supported yet)",  (int)pdf_number_value(rotate));
+      WARN("<< /Rotate %d >> found. (Not supported yet)",
+            (int)pdf_number_value(rotate));
     pdf_release_obj(rotate);
     rotate = NULL;
   }
@@ -391,41 +395,32 @@ pdf_get_page_content (pdf_obj* page)
   return contents;
 }
 
+/* ximage here is the result. DONT USE IT FOR PASSING OPTIONS! */
 int
-pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
+pdf_include_page (pdf_ximage        *ximage,
+                  FILE              *image_file,
+                  const char        *ident,
+                  load_options       options)
 {
   pdf_file *pf;
   xform_info info;
   pdf_obj *contents = NULL, *catalog;
   pdf_obj *page = NULL, *resources = NULL, *markinfo = NULL;
-  int page_no;
 
-  pf = pdf_open(filename, image_file);
+  pf = pdf_open(ident, image_file);
   if (!pf)
     return -1;
 
-  /*
-   * Try to embed the PDF, even if the PDF version is newer than the setting.
-   */
-#if 0
-  if (pdf_file_get_version(pf) > pdf_get_version())
-    goto too_recent;
-#endif
+  if (pdf_file_get_version(pf) > pdf_get_version()) {
+    WARN("Trying to include PDF file which has newer version number " \
+         "than output PDF: %d.", pdf_get_version());
+  }
 
   pdf_ximage_init_form_info(&info);
 
-  /*
-   * Get Page.
-   */
-  page_no = pdf_ximage_get_page(ximage);
-  if (page_no == 0)
-    page_no = 1;
-
-  page = pdf_doc_get_page(pf, page_no, NULL, &info.bbox, &resources);
-/*
-  Recover the default value of PageBox
-*/
-  PageBox = 0;
+  page = pdf_doc_get_page(pf,
+                          options.page_no, options.bbox_type,
+                          &info.bbox, &resources);
 
   if(!page)
     goto error_silent;
@@ -439,8 +434,9 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
       if (tmp)
 	pdf_release_obj(tmp);
       goto error;
-    } else if (pdf_boolean_value(tmp))
-      WARN("File contains tagged PDF. Ignoring tags.");
+    } else if (pdf_boolean_value(tmp)) {
+      WARN("PDF file is tagged... Ignoring tags.");
+    }
     pdf_release_obj(tmp);
   }
 
@@ -482,8 +478,9 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 	}
 	pdf_release_obj(content_seg);
       }
-    } else
+    } else {
       goto error;
+    }
 
     if (contents)
       pdf_release_obj(contents);
@@ -498,14 +495,11 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
 
     contents_dict = pdf_stream_dict(contents);
     pdf_add_dict(contents_dict,
-		 pdf_new_name("Type"), 
-		 pdf_new_name("XObject"));
+                 pdf_new_name("Type"), pdf_new_name("XObject"));
     pdf_add_dict(contents_dict,
-		 pdf_new_name("Subtype"),
-		 pdf_new_name("Form"));
+                 pdf_new_name("Subtype"), pdf_new_name("Form"));
     pdf_add_dict(contents_dict,
-		 pdf_new_name("FormType"),
-		 pdf_new_number(1.0));
+                 pdf_new_name("FormType"), pdf_new_number(1.0));
 
     bbox = pdf_new_array();
     pdf_add_array(bbox, pdf_new_number(info.bbox.llx));
@@ -551,19 +545,6 @@ pdf_include_page (pdf_ximage *ximage, FILE *image_file, const char *filename)
   pdf_close(pf);
 
   return -1;
-
-#if 0
- too_recent:
-  pdf_close(pf);
-  WARN("PDF version of input file more recent than in output file.");
-  if (compat_mode) {
-    WARN("Converting. Use \"-V\" switch to change output PDF version.");
-    return 1;
-  } else {
-    WARN("Use \"-V\" switch to change output PDF version.");
-    return -1;
-  }
-#endif
 }
 
 typedef enum {
@@ -877,104 +858,3 @@ pdf_copy_clip (FILE *image_file, int pageNo, double x_user, double y_user)
 
   return 0;
 }
-
-#if 0
-#define WBUF_SIZE 4096
-#if HAVE_ZLIB
-static int
-add_stream_flate (pdf_obj *dst, const void *data, int len)
-{
-  z_stream z;
-  Bytef wbuf[WBUF_SIZE];
-
-  z.zalloc = Z_NULL; z.zfree = Z_NULL; z.opaque = Z_NULL;
-
-  z.next_in  = (z_const Bytef *) data; z.avail_in  = len;
-  z.next_out = (Bytef *) wbuf; z.avail_out = WBUF_SIZE;
-
-  if (inflateInit(&z) != Z_OK) {
-    WARN("inflateInit() failed.");
-    return -1;
-  }
-
-  for (;;) {
-    int status;
-    status = inflate(&z, Z_NO_FLUSH);
-    if (status == Z_STREAM_END)
-      break;
-    else if (status != Z_OK) {
-      WARN("inflate() failed. Broken PDF file?");
-      inflateEnd(&z);
-      return -1;
-    }
-
-    if (z.avail_out == 0) {
-      pdf_add_stream(dst, wbuf, WBUF_SIZE);
-      z.next_out  = wbuf;
-      z.avail_out = WBUF_SIZE;
-    }
-  }
-
-  if (WBUF_SIZE - z.avail_out > 0)
-    pdf_add_stream(dst, wbuf, WBUF_SIZE - z.avail_out);
-
-  return (inflateEnd(&z) == Z_OK ? 0 : -1);
-}
-#endif
-
-static int
-concat_stream (pdf_obj *dst, pdf_obj *src)
-{
-  const char *stream_data;
-  int         stream_length;
-  pdf_obj    *stream_dict;
-  pdf_obj    *filter;
-
-  if (!PDF_OBJ_STREAMTYPE(dst) || !PDF_OBJ_STREAMTYPE(src))
-    ERROR("Invalid type.");
-
-  stream_data   = pdf_stream_dataptr(src);
-  stream_length = pdf_stream_length (src);
-  stream_dict   = pdf_stream_dict   (src);
-
-  if (pdf_lookup_dict(stream_dict, "DecodeParms")) {
-    WARN("DecodeParams not supported.");
-    return -1;
-  }
-
-  filter = pdf_lookup_dict(stream_dict, "Filter");
-  if (!filter) {
-    pdf_add_stream(dst, stream_data, stream_length);
-    return 0;
-#if HAVE_ZLIB
-  } else {
-    char *filter_name;
-    if (PDF_OBJ_NAMETYPE(filter)) {
-      filter_name = pdf_name_value(filter);
-      if (filter_name && !strcmp(filter_name, "FlateDecode"))
-	return add_stream_flate(dst, stream_data, stream_length);
-      else {
-	WARN("DecodeFilter \"%s\" not supported.", filter_name);
-	return -1;
-      }
-    } else if (PDF_OBJ_ARRAYTYPE(filter)) {
-      if (pdf_array_length(filter) > 1) {
-	WARN("Multiple DecodeFilter not supported.");
-	return -1;
-      } else {
-	filter_name = pdf_name_value(pdf_get_array(filter, 0));
-	if (filter_name && !strcmp(filter_name, "FlateDecode"))
-	  return add_stream_flate(dst, stream_data, stream_length);
-	else {
-	  WARN("DecodeFilter \"%s\" not supported.", filter_name);
-	  return -1;
-	}
-      }
-    } else
-      ERROR("Broken PDF file?");
-#endif /* HAVE_ZLIB */
-  }
-
-  return -1;
-}
-#endif
