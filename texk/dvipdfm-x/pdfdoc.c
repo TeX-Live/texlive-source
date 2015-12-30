@@ -991,7 +991,7 @@ pdf_doc_get_page (pdf_file *pf,
     }
     count = pdf_number_value(tmp);
     pdf_release_obj(tmp);
-    if (page_no < 0 || page_no > count) {
+    if (page_no <= 0 || page_no > count) {
       WARN("Page %ld does not exist.", page_no);
       goto error_silent;
     }
