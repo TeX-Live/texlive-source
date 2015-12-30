@@ -1,5 +1,9 @@
 2015-12-30  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
+	* epdf.c: Fix in handling of page number for XeTeX.
+
+2015-12-30  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
 	 * epdf.[ch], pdfdoc.[ch], pdfximage.[ch],
 	spc_{dvips,html,misc,pdfm,util}.c, spc_util.h: Don't use global variables
 	for selecting boundary box. Cleanups.
