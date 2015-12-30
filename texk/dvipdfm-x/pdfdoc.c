@@ -88,6 +88,7 @@ read_thumbnail (const char *thumb_filename)
   pdf_obj *image_ref;
   int      xobj_id;
   FILE    *fp;
+  load_options options = {1, 0, NULL};
 
   fp = MFOPEN(thumb_filename, FOPEN_RBIN_MODE);
   if (!fp) {
@@ -101,7 +102,7 @@ read_thumbnail (const char *thumb_filename)
   }
   MFCLOSE(fp);
 
-  xobj_id = pdf_ximage_findresource(thumb_filename, 0, NULL);
+  xobj_id = pdf_ximage_findresource(thumb_filename, options);
   if (xobj_id < 0) {
     WARN("Could not read thumbnail file \"%s\".", thumb_filename);
     image_ref = NULL;
@@ -880,6 +881,35 @@ pdf_doc_close_page_tree (pdf_doc *p)
   return;
 }
 
+int
+pdf_doc_get_page_count (pdf_file *pf)
+{
+  int      count = 0;
+  pdf_obj *page_tree = NULL;
+  pdf_obj *catalog;
+
+  catalog = pdf_file_get_catalog(pf);
+
+  page_tree = pdf_deref_obj(pdf_lookup_dict(catalog, "Pages"));
+
+  if (!PDF_OBJ_DICTTYPE(page_tree)) {
+    return 0;
+  }
+
+  {
+    pdf_obj *tmp = pdf_deref_obj(pdf_lookup_dict(page_tree, "Count"));
+    if (!PDF_OBJ_NUMBERTYPE(tmp)) {
+      if (tmp)
+        pdf_release_obj(tmp);
+      return 0;
+    }
+    count = pdf_number_value(tmp);
+    pdf_release_obj(tmp);
+  }
+
+  return count;
+}
+
 /*
  * From PDFReference15_v6.pdf (p.119 and p.834)
  *
@@ -932,9 +962,14 @@ pdf_doc_close_page_tree (pdf_doc *p)
  * displayed or printed. The value must be a multiple of 90. Default value: 0.
  */
 
+/* count_p removed: Please use different interface if you want to get total page
+ * number. pdf_doc_get_page() is obviously not an interface to do such.
+ */
 pdf_obj *
-pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
-                  pdf_rect *bbox, pdf_obj **resources_p) {
+pdf_doc_get_page (pdf_file *pf,
+                  int page_no, int options,             /* load options */
+                  pdf_rect *bbox, pdf_obj **resources_p /* returned values */
+                  ) {
   pdf_obj *page_tree = NULL;
   pdf_obj *resources = NULL, *box = NULL, *rotate = NULL, *medbox = NULL;
   pdf_obj *catalog;
@@ -956,9 +991,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
     }
     count = pdf_number_value(tmp);
     pdf_release_obj(tmp);
-    if (count_p)
-      *count_p = count;
-    if (page_no <= 0 || page_no > count) {
+    if (page_no < 0 || page_no > count) {
       WARN("Page %ld does not exist.", page_no);
       goto error_silent;
     }
@@ -1064,7 +1097,8 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
       goto error;
     }
 
-    if (PageBox == 0) {
+    /* Nasty BBox selection... */
+    if (options == 0) {
       if (crop_box)
         box = crop_box;
       else {
@@ -1086,7 +1120,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
           }
         }
       }
-    } else if (PageBox == 1) {
+    } else if (options == 1) {
       if (crop_box)
         box = crop_box;
       else
@@ -1096,7 +1130,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
             art_box) {
             box = art_box;
         }
-    } else if (PageBox == 2) {
+    } else if (options == 2) {
       if (media_box)
         box = media_box;
       else
@@ -1106,7 +1140,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
             art_box) {
             box = art_box;
         }
-    } else if (PageBox == 3) {
+    } else if (options == 3) {
       if (art_box)
         box = art_box;
       else
@@ -1116,7 +1150,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
             trim_box) {
             box = trim_box;
         }
-    } else if (PageBox == 4) {
+    } else if (options == 4) {
       if (trim_box)
         box = trim_box;
       else
@@ -1126,7 +1160,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
             art_box) {
             box = art_box;
         }
-    } else if (PageBox == 5) {
+    } else if (options == 5) {
       if (bleed_box)
         box = bleed_box;
       else
@@ -1174,7 +1208,7 @@ pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
     }
 
     /* New scheme only for XDV files */
-    if (medbox && (is_xdv || PageBox)) {
+    if (medbox && (is_xdv || options)) {
       for (i = 4; i--; ) {
         double x;
         pdf_obj *tmp = pdf_deref_obj(pdf_get_array(medbox, i));

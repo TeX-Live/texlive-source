@@ -56,7 +56,8 @@ extern pdf_obj *pdf_doc_get_reference  (const char *category);
 #define pdf_doc_names()     pdf_doc_get_dictionary("Names")
 #define pdf_doc_this_page() pdf_doc_get_dictionary("@THISPAGE")
 
-extern pdf_obj *pdf_doc_get_page (pdf_file *pf, int page_no, int *count_p,
+extern int      pdf_doc_get_page_count (pdf_file *pf);
+extern pdf_obj *pdf_doc_get_page (pdf_file *pf, int page_no, int options,
 				  pdf_rect *bbox, pdf_obj **resources_p);
 
 extern int      pdf_doc_current_page_number    (void);

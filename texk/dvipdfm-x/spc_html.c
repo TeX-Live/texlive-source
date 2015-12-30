@@ -570,6 +570,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr)
 {
   pdf_obj       *src, *obj;
   transform_info ti;
+  load_options   options = {1, 0, NULL};
   int            id, error = 0;
 #ifdef  ENABLE_HTML_SVG_OPACITY
   double         alpha = 1.0; /* meaning fully opaque */
@@ -636,7 +637,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr)
     return  error;
   }
 
-  id = pdf_ximage_findresource(pdf_string_value(src), 0, NULL);
+  id = pdf_ximage_findresource(pdf_string_value(src), options);
   if (id < 0) {
     spc_warn(spe, "Could not find/load image: %s", pdf_string_value(src)); 
     error = -1;
@@ -939,4 +940,3 @@ spc_html_setup_handler (struct spc_handler *sph,
 
   return  0;
 }
-

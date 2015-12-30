@@ -49,6 +49,12 @@ typedef struct {
   pdf_tmatrix matrix;
 } xform_info;
 
+typedef struct {
+  int      page_no;
+  int      bbox_type;
+  pdf_obj *dict;
+} load_options;
+
 typedef struct pdf_ximage_ pdf_ximage;
 
 extern void     pdf_ximage_set_verbose    (void);
@@ -59,17 +65,22 @@ extern void     pdf_close_images          (void);
 extern char    *pdf_ximage_get_resname    (int xobj_id);
 extern pdf_obj *pdf_ximage_get_reference  (int xobj_id);
 
-
-extern int      pdf_ximage_findresource   (const char *ident, int page_no,
-                                           pdf_obj *dict);
+/* Please use different interface than findresource...
+ * This is not intended to be used for specifying page number and others.
+ * Only pdf:image special in spc_pdfm.c want optinal dict!
+ */
+extern int      pdf_ximage_findresource   (const char  *ident,
+                                           load_options options);
 extern int      pdf_ximage_defineresource (const char *ident, int subtype,
                                            void *cdata, pdf_obj *resource);
 
 /* Called by pngimage, jpegimage, epdf, mpost, etc. */
 extern void pdf_ximage_init_image_info (ximage_info *info);
 extern void pdf_ximage_init_form_info  (xform_info  *info);
-extern void pdf_ximage_set_image (pdf_ximage *ximage, void *info, pdf_obj *resource);
-extern void pdf_ximage_set_form  (pdf_ximage *ximage, void *info, pdf_obj *resource);
+extern void pdf_ximage_set_image (pdf_ximage *ximage,
+                                  void *info, pdf_obj *resource);
+extern void pdf_ximage_set_form  (pdf_ximage *ximage,
+                                  void *info, pdf_obj *resource);
 extern int  pdf_ximage_get_page  (pdf_ximage *I);
 
 /* from pdfximage.c */
@@ -89,5 +100,8 @@ extern void
 pdf_ximage_set_attr (int xobj_id,
                      int width, int height, double xdensity, double ydensity,
                      double llx, double lly, double urx, double ury);
+
+/* Migrated from pdfobj.h. Those are not PDF object related... */
+#define MAX_IMAGES 5000 /* This may be enough */
 
 #endif /* _PDFXIMAGE_H_ */

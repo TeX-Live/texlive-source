@@ -140,6 +140,7 @@ spc_handler_ps_file (struct spc_env *spe, struct spc_arg *args)
   int            form_id;
   char          *filename;
   transform_info ti;
+  load_options   options = {1, 0, NULL};
 
   ASSERT(spe && args);
 
@@ -158,12 +159,12 @@ spc_handler_ps_file (struct spc_env *spe, struct spc_arg *args)
   }
 
   transform_info_clear(&ti);
-  if (spc_util_read_dimtrns(spe, &ti, args, NULL, 1) < 0) {
+  if (spc_util_read_dimtrns(spe, &ti, args, 1) < 0) {
     RELEASE(filename);
     return  -1;
   }
 
-  form_id = pdf_ximage_findresource(filename, 1, NULL);
+  form_id = pdf_ximage_findresource(filename, options);
   if (form_id < 0) {
     spc_warn(spe, "Failed to read image file: %s", filename);
     RELEASE(filename);
@@ -184,6 +185,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
   int            form_id;
   char          *filename;
   transform_info p;
+  load_options   options = {1, 0, NULL};
 
   ASSERT(spe && args);
 
@@ -196,7 +198,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
     return -1;
   }
 
-  form_id = pdf_ximage_findresource(filename, 1, NULL);
+  form_id = pdf_ximage_findresource(filename, options);
   if (form_id < 0) {
     spc_warn(spe, "Could not open PS file: %s", filename);
     error = -1;
@@ -632,9 +634,10 @@ spc_handler_ps_tricks_parse_path (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
 {
-  FILE* fp;
+  FILE        *fp;
   int k;
   pdf_tmatrix M;
+  load_options options = {1, 0, NULL};
 
   if (!distiller_template)
     distiller_template = get_distiller_template();
@@ -706,7 +709,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
       return error;
     }
 
-    form_id = pdf_ximage_findresource(gs_out, 1, NULL);
+    form_id = pdf_ximage_findresource(gs_out, options);
     if (form_id < 0) {
       spc_warn(spe, "Failed to read converted PSTricks image file.");
       RELEASE(gs_in);

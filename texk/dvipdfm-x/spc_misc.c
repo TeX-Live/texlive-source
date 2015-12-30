@@ -52,6 +52,7 @@ spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
 {
   int            form_id, len;
   transform_info ti;
+  load_options   options = {1, 0, NULL};
   char           filename[256], *fullname;
   char           buf[512];
   FILE          *fp;
@@ -109,7 +110,7 @@ spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
   }
   MFCLOSE(fp);
 
-  form_id = pdf_ximage_findresource(filename, 0, NULL);
+  form_id = pdf_ximage_findresource(filename, options);
   if (form_id < 0) {
     spc_warn(spe, "Failed to load image file: %s", filename);
     return  -1;
