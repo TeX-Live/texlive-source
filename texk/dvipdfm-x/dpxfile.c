@@ -817,13 +817,20 @@ dpx_create_temp_file (void)
     strcpy(tmp, _tmpd);
     strcat(tmp, TEMPLATE);
     _fd  = mkstemp(tmp);
-    if (_fd != -1)
+    if (_fd != -1) {
 #  ifdef WIN32
+      char *p;
+      for (p = tmp; *p; p++) {
+        if (IS_KANJI (p))
+          p++;
+        else if (*p == '\\')
+          *p = '/';
+      }
       _close(_fd);
 #  else
       close(_fd);
 #  endif /* WIN32 */
-    else {
+    } else {
       RELEASE(tmp);
       tmp = NULL;
     }
