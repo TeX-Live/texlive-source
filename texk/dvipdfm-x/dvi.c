@@ -944,45 +944,6 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
 }
 
 static int
-is_notdef_notzero (char *path)
-{
-  FILE *f;
-  char buf[2048];
-  char *cmd;
-  char *p;
-  int  ret = 0;
-
-  p = kpse_var_value("SELFAUTOLOC");
-  if (p == NULL)
-    return ret;
-#if defined(_WIN32)
-  cmd = concatn ("\"", p, "/t1disasm.exe\" \"", path, "\"", NULL);
-#else
-  cmd = concat3 (p, "/t1disasm ", path);
-#endif
-  free (p);
-  f = popen (cmd, "r");
-  free (cmd);
-  if (f) {
-    while ((fgets (buf, 2047, f))) {
-      p = strstr (buf, "CharStrings");
-      if (p) {
-        fgets (buf, 2047, f);
-        p = buf;
-        while (*p == ' ' || *p == '\t')
-          p++;
-        if (strncmp (p, "/.notdef", 8) != 0)
-          ret = 1;
-        break;
-      }
-    }
-    fclose(f);
-  }
-
-  return ret;
-}
-
-static int
 dvi_locate_native_font (const char *filename, uint32_t index,
                         spt_t ptsize, int layout_dir, int extend, int slant, int embolden)
 {
@@ -1064,7 +1025,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
 
     DPXFCLOSE(fp);
     if (loaded_fonts[cur_id].cff_is_standard_encoding) {
-      loaded_fonts[cur_id].cff_is_standard_encoding = is_notdef_notzero (path);
+      loaded_fonts[cur_id].cff_is_standard_encoding = cffont->is_notdef_notzero;
     }
   } else {
     if (is_dfont)

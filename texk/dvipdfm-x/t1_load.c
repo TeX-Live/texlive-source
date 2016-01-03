@@ -744,6 +744,7 @@ parse_charstrings (cff_font *font,
   offset      = 0;
   have_notdef = 0; /* .notdef must be at gid = 0 in CFF */
 
+  font->is_notdef_notzero = 0;
   seek_operator(start, end, "begin");
   for (i = 0; i < count; i++) {
     char *glyph_name;
@@ -755,6 +756,9 @@ parse_charstrings (cff_font *font,
      */
     tok = pst_get_token(start, end);
     glyph_name = (char *)pst_getSV(tok);
+
+    if ((i == 0) && (strcmp (glyph_name, ".notdef") != 0))
+      font->is_notdef_notzero = 1;
 
     if (PST_NAMETYPE(tok)) {
       RELEASE_TOK(tok);

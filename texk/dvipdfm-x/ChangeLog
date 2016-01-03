@@ -1,5 +1,10 @@
 2016-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
+	* cff.h, dvi.c, t1_load.c: Improve the change made on 2015-08-05.
+	The static function static int is_notdef_notzero() in dvi.c is removed.
+
+2016-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
 	* dpxfile.c: Change \ to / for WIN32 also in the case where
 	HAVE_MKSTEMP is defined (win32 only).
 
