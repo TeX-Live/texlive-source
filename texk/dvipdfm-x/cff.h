@@ -77,6 +77,7 @@ typedef struct
 
   int           index;    /* CFF fontset index */
   int           flag;     /* Flag: see above */
+  int           is_notdef_notzero; /* 1 if .notdef is not the 1st glyph */
 } cff_font;
 
 extern cff_font *cff_open  (FILE *file, int offset, int idx);
