@@ -757,7 +757,7 @@ parse_charstrings (cff_font *font,
     tok = pst_get_token(start, end);
     glyph_name = (char *)pst_getSV(tok);
 
-    if ((i == 0) && (strcmp (glyph_name, ".notdef") != 0))
+    if ((i == 0) && (glyph_name != NULL) && (strcmp (glyph_name, ".notdef") != 0))
       font->is_notdef_notzero = 1;
 
     if (PST_NAMETYPE(tok)) {
