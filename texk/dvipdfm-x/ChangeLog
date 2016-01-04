@@ -1,3 +1,7 @@
+2016-01-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: Symplify support of native type1 fonts in XeTeX.
+
 2016-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dpxfile.c: Change \ to / for WIN32 also in the case where
