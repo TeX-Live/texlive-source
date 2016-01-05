@@ -794,7 +794,7 @@ static int gettex(lua_State * L);
             }                                                                         \
             break;                                                                    \
         default:                                                                      \
-            luaL_error(L, "argument of 'set%s' must be a string or a number", what);  \
+            luaL_error(L, "argument of 'get%s' must be a string or a number", what);  \
     }                                                                                 \
 }
 
