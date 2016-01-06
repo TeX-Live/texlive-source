@@ -1,6 +1,8 @@
 2016-01-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* t1_load.c: Avoid to crash for unsupported type1 fonts as native fonts.
+	* configure.ac: version 20160106.
+	* almost all files: change Copyright year.
 
 2016-01-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
