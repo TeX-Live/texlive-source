@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2015 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2016 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 2012-2015 by Khaled Hosny <khaledhosny@eglug.org>
