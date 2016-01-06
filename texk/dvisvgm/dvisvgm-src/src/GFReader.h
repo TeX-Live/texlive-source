@@ -1,8 +1,8 @@
 /*************************************************************************
 ** GFReader.h                                                           **
 **                                                                      **
-** This file is part of dvisvgm -- the DVI to SVG converter             **
-** Copyright (C) 2005-2015 Martin Gieseking <martin.gieseking@uos.de>   **
+** This file is part of dvisvgm -- a fast DVI to SVG converter          **
+** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -98,13 +98,14 @@ class GFReader
 	private:
 		std::istream &_in;
 		Int32 _minX, _maxX, _minY, _maxY;
-		Int32 _x, _y;            // current pen location (pixel units)
+		Int32 _x, _y;            ///< current pen location (pixel units)
 		Int32 _currentChar;
-		Bitmap _bitmap;         // bitmap of current char
-		FixWord _designSize;    // designSize
-		ScaledInt _hppp, _vppp;  // horizontal and vertical pixel per point
+		Bitmap _bitmap;          ///< bitmap of current char
+		FixWord _designSize;     ///< designSize
+		ScaledInt _hppp, _vppp;  ///< horizontal and vertical pixel per point
 		UInt32 _checksum;
 		std::map<UInt8,CharInfo> _charInfoMap;
+		bool _insideCharDef;     ///< true if inside a character definition (between BOC and EOC)
 		bool _penDown;
 };
 

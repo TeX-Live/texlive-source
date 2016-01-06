@@ -1,8 +1,8 @@
 /*************************************************************************
 ** PsSpecialHandler.cpp                                                 **
 **                                                                      **
-** This file is part of dvisvgm -- the DVI to SVG converter             **
-** Copyright (C) 2005-2015 Martin Gieseking <martin.gieseking@uos.de>   **
+** This file is part of dvisvgm -- a fast DVI to SVG converter          **
+** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -75,15 +75,7 @@ PsSpecialHandler::~PsSpecialHandler () {
  *  PS specials. */
 void PsSpecialHandler::initialize () {
 	if (_psSection == PS_NONE) {
-		// initial values of graphics state
-		_linewidth = 1;
-		_linecap = _linejoin = 0;
-		_miterlimit = 4;
-		_xmlnode = _savenode = 0;
-		_opacityalpha = 1;  // fully opaque
-		_sx = _sy = _cos = 1.0;
-		_pattern = 0;
-
+		initgraphics();
 		// execute dvips prologue/header files
 		const char *headers[] = {"tex.pro", "texps.pro", "special.pro", /*"color.pro",*/ 0};
 		for (const char **p=headers; *p; ++p)
@@ -93,6 +85,23 @@ void PsSpecialHandler::initialize () {
 		_psi.execute("\nTeXDict begin /bop{pop pop}def /eop{}def end ");
 		_psSection = PS_HEADERS;  // allow to process header specials now
 	}
+}
+
+
+/** Set initial values of PS graphics state (see PS language reference (Red Book)), p. 612). */
+void PsSpecialHandler::initgraphics () {
+	_linewidth = 1;
+	_linecap = _linejoin = 0;  // butt end caps and miter joins
+	_miterlimit = 4;
+	_xmlnode = _savenode = 0;
+	_opacityalpha = 1;  // fully opaque
+	_sx = _sy = _cos = 1.0;
+	_pattern = 0;
+	_currentcolor = Color::BLACK;
+	_dashoffset = 0;
+	_dashpattern.clear();
+	_path.clear();
+	_clipStack.clear();
 }
 
 
@@ -454,7 +463,8 @@ void PsSpecialHandler::dviEndPage (unsigned) {
 	}
 	// close dictionary TeXDict and execute end-hook if defined
 	if (_psSection == PS_BODY) {
-		_psi.execute("\nend userdict/end-hook known{end-hook}if ");
+		_psi.execute("\nend userdict/end-hook known{end-hook}if initgraphics ");
+		initgraphics();  // reset graphics state to default values
 		_psSection = PS_HEADERS;
 	}
 }
