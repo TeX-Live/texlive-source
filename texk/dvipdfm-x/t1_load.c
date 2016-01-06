@@ -498,7 +498,12 @@ parse_encoding (char **enc_vec, unsigned char **start, unsigned char *end)
        */
       tok = pst_get_token(start, end);
       if (MATCH_OP(tok, "dup")) { /* possibly putinterval type */
-        try_put_or_putinterval(enc_vec, start, end);
+        if (enc_vec == NULL) {
+          WARN ("This kind of type1 fonts are not supported as native fonts.\n"
+                "                   They are supported if used with tfm fonts.\n");
+        } else {
+          try_put_or_putinterval(enc_vec, start, end);
+        }
         RELEASE_TOK(tok)
         continue;
       } else if (!tok || !PST_INTEGERTYPE(tok) ||
