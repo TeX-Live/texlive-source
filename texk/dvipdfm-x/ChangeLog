@@ -1,6 +1,8 @@
 2016-01-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* epdf.c: A typo in a message.
+	* xbb.c: Change copyright year.
+	* tests/: Change test data.
 
 2016-01-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
