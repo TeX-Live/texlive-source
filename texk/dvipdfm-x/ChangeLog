@@ -1,3 +1,7 @@
+2016-01-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* epdf.c: A typo in a message.
+
 2016-01-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* t1_load.c: Avoid to crash for unsupported type1 fonts as native fonts.
@@ -17,7 +21,7 @@
 
 2015-12-30  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
-	 * epdf.[ch], pdfdoc.[ch], pdfximage.[ch],
+	* epdf.[ch], pdfdoc.[ch], pdfximage.[ch],
 	spc_{dvips,html,misc,pdfm,util}.c, spc_util.h: Don't use global variables
 	for selecting boundary box. Cleanups.
 

@@ -413,7 +413,7 @@ pdf_include_page (pdf_ximage        *ximage,
 
   if (pdf_file_get_version(pf) > pdf_get_version()) {
     WARN("Trying to include PDF file which has newer version number " \
-         "than output PDF: %d.", pdf_get_version());
+         "than output PDF: 1.%d.", pdf_get_version());
   }
 
   pdf_ximage_init_form_info(&info);
