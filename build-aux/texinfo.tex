@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-01-04.21}
+\def\texinfoversion{2016-01-07.22}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -9432,7 +9432,8 @@ directory should work if nowhere else does.}
 % otherwise the encoding support is completely broken.
 \ifx\XeTeXrevision\thisisundefined
 \else
-\XeTeXinputencoding "bytes"
+\XeTeXdefaultencoding "bytes"  % For subsequent files to be read
+\XeTeXinputencoding "bytes"  % Effective in texinfo.tex only
 \fi
 
 \ifx\luatexversion\thisisundefined
@@ -9477,6 +9478,14 @@ callback.register("process_input_buffer", convert_line)
 %
 \def\documentencoding{\parseargusing\filenamecatcodes\documentencodingzzz}
 \def\documentencodingzzz#1{%
+  % Get input by bytes instead of by UTF-8 codepoints for XeTeX,
+  % otherwise the encoding support is completely broken.
+  % This settings is for the document root file.
+  \ifx\XeTeXrevision\thisisundefined
+  \else
+    \XeTeXinputencoding "bytes"
+  \fi
+  %
   % Encoding being declared for the document.
   \def\declaredencoding{\csname #1.enc\endcsname}%
   %
