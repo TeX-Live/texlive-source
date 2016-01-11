@@ -2818,8 +2818,8 @@ backup_line (FILE *pdf_input_file)
 static int
 find_xref (FILE *pdf_input_file)
 {
-  int  xref_pos;
-  int  tries = 10;
+  int   xref_pos = 0;
+  int   len, tries = 10;
 
   do {
     int currentpos;
@@ -2840,14 +2840,15 @@ find_xref (FILE *pdf_input_file)
   /* Skip rest of this line */
   mfgets(work_buffer, WORK_BUFFER_SIZE, pdf_input_file);
   /* Next line of input file should contain actual xref location */
-  mfgets(work_buffer, WORK_BUFFER_SIZE, pdf_input_file);
-
-  {
+  len = mfreadln(work_buffer, WORK_BUFFER_SIZE, pdf_input_file);
+  if (len <= 0)
+   WARN("Reading xref location data failed... Not a PDF file?");
+  else {
     const char *start, *end;
     char *number;
 
     start = work_buffer;
-    end   = start + strlen(work_buffer);
+    end   = start + len;
     skip_white(&start, end);
     number   = parse_number(&start, end);
     xref_pos = (int) atof(number);
@@ -3227,38 +3228,65 @@ extend_xref (pdf_file *pf, int new_size)
   pf->num_obj = new_size;
 }
 
+/* Returns < 0 for error, 1 for success, and 0 when xref stream found. */
 static int
 parse_xref_table (pdf_file *pf, int xref_pos)
 {
-  FILE         *pdf_input_file = pf->file;
-  unsigned int  first, size;
-  unsigned int  i, offset;
-  unsigned int  obj_gen;
-  char          flag;
-  int           r;
+  FILE       *pdf_input_file = pf->file;
+  const char *p, *endptr;
+  char        buf[256]; /* See, PDF ref. v.1.7, p.91 for "255+1" here. */
+  int         len;
 
   /*
    * This routine reads one xref segment. It may be called multiple times
    * on the same file.  xref tables sometimes come in pieces.
    */
-
   seek_absolute(pf->file, xref_pos);
-
-  mfgets(work_buffer, WORK_BUFFER_SIZE, pdf_input_file);
-  if (memcmp(work_buffer, "xref", strlen("xref"))) {
+  len = mfreadln(buf, 255, pdf_input_file);
+  /* We should have already checked that "startxref" section exists.
+   * So, EOF here (len = -1) is impossible.  We don't treat too long line
+   * case seriously.
+   */
+  if (len < 0) {
+    WARN("Something went wrong while reading xref table...giving up.");
+    return -1;
+  }
+  p      = buf;
+  endptr = buf + len;
+  /* No skip_white() here. There should not be any white-spaces here. */
+  if (memcmp(p, "xref", strlen("xref"))) {
     /* Might be an xref stream and not an xref table */
     return 0;
   }
+  p += strlen("xref");
+  skip_white(&p, endptr);
+  if (p != endptr) {
+    WARN("Garbage after \"xref\" keyword found.");
+    return -1;
+  }
+
   /* Next line in file has first item and size of table */
   for (;;) {
+    char         flag;
     unsigned int current_pos;
+    int          i;
+    uint32_t     first, size, offset, obj_gen;
 
     current_pos = tell_position(pdf_input_file);
-    if (mfgets(work_buffer, WORK_BUFFER_SIZE, pdf_input_file) == NULL) {
-      WARN("Premature end of PDF file while parsing xref table.");
+    len = mfreadln(buf, 255, pdf_input_file);
+    if (len == 0) /* empty line... just skip. */
+      continue;
+    else if (len < 0) {
+      WARN("Reading a line failed in xref table.");
       return -1;
     }
-    if (!strncmp(work_buffer, "trailer", strlen ("trailer"))) {
+
+    p      = buf;
+    endptr = buf + len;
+    skip_white(&p, endptr);
+    if (p == endptr) { /* Only white-spaces and/or comment found. */
+      continue;
+    } else if (!strncmp(p, "trailer", strlen ("trailer"))) {
       /*
        * Backup... This is ugly, but it seems like the safest thing to
        * do.  It is possible the trailer dictionary starts on the same
@@ -3266,37 +3294,138 @@ parse_xref_table (pdf_file *pf, int xref_pos)
        * call might have started to read the trailer dictionary and
        * parse_trailer would fail.
        */
+      current_pos += p - buf; /* Jump to the beginning of "trailer" keyword. */
       seek_absolute(pdf_input_file, current_pos);
       break;
     }
-    sscanf(work_buffer, "%u %u", &first, &size);
+    /* Line containing something other than white-space characters found.
+     *
+     * Start reading xref subsection
+     *
+     * This section just reads two nusigned integers, namely, the object number
+     * of first object and the size of the xref subsection. PDF reference says
+     * that only "a space" is allowed between those two numbers but we allow
+     * more white-space characters.
+     */
+    {
+      char *q;
+
+      /* Object number of the first object whithin this xref subsection. */
+      q = parse_unsigned(&p, endptr);
+      if (!q) {
+        WARN("An unsigned integer expected but counld not find. (xref)");
+        return -1;
+      }
+      first = atoi(q);
+      RELEASE(q);
+      skip_white(&p, endptr);
+
+      /* Nnumber of objects in this xref subsection. */
+      q = parse_unsigned(&p, endptr);
+      if (!q) {
+        WARN("An unsigned integer expected but counld not find. (xref)");
+        return -1;
+      }
+      size = atoi(q);
+      RELEASE(q);
+      skip_white(&p, endptr);
+
+      /* Check for unrecognized tokens */
+      if (p != endptr) {
+        WARN("Unexpected token found in xref table.");
+        return -1;
+      }
+    }
+
+    /* The first line of a xref subsection OK. */
     if (pf->num_obj < first + size) {
       extend_xref(pf, first + size);
     }
 
-    for (i = first; i < first + size; i++) {
-      fread(work_buffer, sizeof(char), 20, pdf_input_file);
+    /* Start parsing xref subsection body... */
+    for (i = first; i < first + size; ) {
+     /* PDF spec. requires each xref subsection lines being exactly 20 bytes
+      * long [including end-of-line marker(s)], offset 10 decimal digits,
+      * generation number being 5 decimal digits, and each entries delimitted
+      * by "a single space". However, we don't srtictly follow this rule:
+      * More than one "white-spaces" allowed, can be ended with a comment,
+      * and so on.
+      */
+      len = mfreadln(buf, 255, pdf_input_file);
+      if (len == 0) /* empty line...just skip. */
+        continue;
+      else if (len < 0) {
+        WARN("Something went wrong while reading xref subsection...");
+        return -1;
+      }
+      p      = buf;
+      endptr = buf + len;
+      skip_white(&p, endptr);
+      if (p == endptr) /* Only white-spaces and/or comment. */
+        continue;
+
       /*
        * Don't overwrite positions that have already been set by a
        * modified xref table.  We are working our way backwards
        * through the reference table, so we only set "position" 
        * if it hasn't been set yet.
        */
-      work_buffer[19] = 0;
       offset = 0UL; obj_gen = 0; flag = 0;
-      r = sscanf(work_buffer, "%010u %05u %c", &offset, &obj_gen, &flag);
-      if ( r != 3 ||
-          ((flag != 'n' && flag != 'f') ||
-           (flag == 'n' &&
-           (offset >= pf->file_size || (offset > 0 && offset < 4))))) {
+      {
+        char *q;
+
+        /* Offset value -- 10 digits (0 padded) */
+        q = parse_unsigned(&p, endptr);
+        if (!q) {
+          WARN("An unsigned integer expected but counld not find. (xref)");
+          return -1;
+        } else if (strlen(q) != 10) { /* exactly 10 digits */
+          WARN(("Offset must be a 10 digits number. (xref)"));
+          return -1;
+        }
+        /* FIXME: Possible overflow here. Consider using strtoll(). */
+        offset = atoi(q);
+        RELEASE(q);
+        skip_white(&p, endptr);
+
+        /* Generation number -- 5 digits (0 padded) */
+        q = parse_unsigned(&p, endptr);
+        if (!q) {
+          WARN("An unsigned integer expected but counld not find. (xref)");
+          return -1;
+        } else if (strlen(q) != 5) { /* exactly 5 digits */
+          WARN(("Expecting a 5 digits number. (xref)"));
+          return -1;
+        }
+        obj_gen = atoi(q);
+        RELEASE(q);
+        skip_white(&p, endptr);
+      }
+      if (p == endptr) {
+        WARN("Unexpected EOL reached while reading a xref subsection entry.");
+        return -1;
+      }
+
+      /* Flag -- a char */
+      flag = *p; p++;
+      skip_white(&p, endptr);
+      if (p < endptr) {
+        WARN("Garbage in xref subsection entry found...");
+        return -1;
+      } else if (((flag != 'n' && flag != 'f') ||
+                  (flag == 'n' &&
+                  (offset >= pf->file_size || (offset > 0 && offset < 4))))) {
         WARN("Invalid xref table entry [%lu]. PDF file is corrupt...", i);
         return -1;
       }
+
+      /* Everything seems to be OK. */
       if (!pf->xref_table[i].field2) {
-	pf->xref_table[i].type   = (flag == 'n');
-	pf->xref_table[i].field2 = offset;
-	pf->xref_table[i].field3 = obj_gen;	
+        pf->xref_table[i].type   = (flag == 'n');
+        pf->xref_table[i].field2 = offset;
+        pf->xref_table[i].field3 = obj_gen;
       }
+      i++;
     }
   }
 
