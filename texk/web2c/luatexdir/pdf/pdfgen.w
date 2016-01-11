@@ -1629,7 +1629,7 @@ void pdf_begin_page(PDF pdf)
 {
     pdffloat f;
     int xform_attributes;
-    scaled form_margin = 0; /* was one_bp until SVN4066 */
+    scaled form_margin = pdf_xform_margin; /* was one_bp until SVN4066 */
     ensure_output_state(pdf, ST_HEADER_WRITTEN);
     init_pdf_pagecalculations(pdf);
     if (pdf->page_resources == NULL) {

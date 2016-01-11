@@ -138,6 +138,7 @@ typedef enum {
     d_pdf_thread_margin,
     d_pdf_dest_margin,
     d_pdf_link_margin,
+    d_pdf_xform_margin,
 } pdf_backend_dimensions ;
 
 typedef enum {
@@ -176,6 +177,7 @@ extern int pdf_retval;
 #  define pdf_thread_margin           get_tex_extension_dimen_register(d_pdf_thread_margin)
 #  define pdf_dest_margin             get_tex_extension_dimen_register(d_pdf_dest_margin)
 #  define pdf_link_margin             get_tex_extension_dimen_register(d_pdf_link_margin)
+#  define pdf_xform_margin            get_tex_extension_dimen_register(d_pdf_xform_margin)
 
 #  define pdf_page_attr               get_tex_extension_toks_register(t_pdf_page_attr)
 #  define pdf_page_resources          get_tex_extension_toks_register(t_pdf_page_resources)

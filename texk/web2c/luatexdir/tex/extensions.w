@@ -423,10 +423,10 @@ void do_extension(int immediate)
         case save_image_resource_code:
             switch (get_o_mode()) {
                 case OMODE_DVI:
-                    do_resource_dvi(0,cur_chr);
+                    do_resource_dvi(immediate,cur_chr);
                     break;
                 case OMODE_PDF:
-                    do_resource_pdf(0,cur_chr);
+                    do_resource_pdf(immediate,cur_chr);
                     break;
                 default:
                     break;

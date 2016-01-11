@@ -1220,11 +1220,10 @@ int readbinfile(FILE * f, unsigned char **tfm_buffer, int *tfm_size)
     return 0;
 }
 
-
-@ Like |runsystem()|, the |runpopen()| function is called only when
-   |shellenabledp == 1|.   Unlike |runsystem()|, here we write errors to
-   stderr, since we have nowhere better to use; and of course we return
-   a file handle (or NULL) instead of a status indicator.
+@ Like |os.execute()|, the |runpopen()| function is called only when
+|shellenabledp == 1|. Unlike |os.execute()| we write errors to stderr, since we
+have nowhere better to use; and of course we return a file handle (or NULL)
+instead of a status indicator.
 
 @c
 static FILE *runpopen(char *cmd, const char *mode)
