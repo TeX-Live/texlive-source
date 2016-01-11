@@ -1846,20 +1846,28 @@ void ext_do_line_break(int paragraph_dir,
                     }
                     /* end mathskip code */
                 case glue_node:
-                    /* If node |cur_p| is a legal breakpoint, call |try_break|;
-                       then update the active widths by including the glue in
-                       |glue_ptr(cur_p)|; */
-                    /* When node |cur_p| is a glue node, we look at the previous to
-                       see whether or not a breakpoint is legal at |cur_p|, as
-                       explained above. */
-                    /* *INDENT-OFF* */
+                    /*
+                        If node |cur_p| is a legal breakpoint, call |try_break|;
+                        then update the active widths by including the glue in
+                        |glue_ptr(cur_p)|;
+
+                        When node |cur_p| is a glue node, we look at the previous
+                        to see whether or not a breakpoint is legal at |cur_p|,
+                        as explained above.
+
+                        The |precedes_break| test also considers dir nodes and prohibits
+                        a break after an opening dir_node (positive dir). In |\textdir TRT x|
+                        the space after |TRT| is preserved and therefore the dir node
+                        is bound to the |x|. Being more clever makes no sense: users
+                        should code their input properly.
+                    */
                     if (auto_breaking) {
                         halfword prev_p = alink(cur_p);
-                        if (prev_p != temp_head &&
-                            (is_char_node(prev_p) ||
-                             precedes_break(prev_p) ||
-                             ((type(prev_p) == kern_node)
-                              && (subtype(prev_p) != explicit)))) {
+                        if (prev_p != temp_head && (
+                                is_char_node(prev_p)
+                             || precedes_break(prev_p)
+                             || ((type(prev_p) == kern_node) && (subtype(prev_p) != explicit))
+                            )) {
                             ext_try_break(0, unhyphenated_node, line_break_dir, adjust_spacing,
                                           par_shape_ptr, adj_demerits,
                                           tracing_paragraphs, protrude_chars,
