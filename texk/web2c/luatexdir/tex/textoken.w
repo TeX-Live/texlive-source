@@ -2317,6 +2317,7 @@ static int do_variable_pdf(halfword c)
     else if (scan_keyword("threadmargin"))        { do_variable_backend_dimen(d_pdf_thread_margin); }
     else if (scan_keyword("destmargin"))          { do_variable_backend_dimen(d_pdf_dest_margin); }
     else if (scan_keyword("linkmargin"))          { do_variable_backend_dimen(d_pdf_link_margin); }
+    else if (scan_keyword("xformmargin"))         { do_variable_backend_dimen(d_pdf_xform_margin); }
 
     else if (scan_keyword("pageattr"))            { do_variable_backend_toks(t_pdf_page_attr); }
     else if (scan_keyword("pageresources"))       { do_variable_backend_toks(t_pdf_page_resources); }
@@ -2792,24 +2793,34 @@ void do_feedback(void)
     int done = 1;
     switch (c) {
         case dvi_feedback_code:
-            if (get_o_mode() == OMODE_DVI)
+            if (get_o_mode() == OMODE_DVI) {
                 done = do_feedback_dvi(c);
-            else
-                done = 0;
-            if (done==0)
+            } else {
                 tex_error("unexpected use of \\dvifeedback",null);
-            else if (done==2)
+                return ;
+            }
+            if (done==0) {
+                /* we recover */
+                normal_warning("dvi backend","unexpected use of \\dvifeedback");
                 return;
+            } else if (done==2) {
+                return;
+            }
             break;
         case pdf_feedback_code:
-            if (get_o_mode() == OMODE_PDF)
+            if (get_o_mode() == OMODE_PDF) {
                 done = do_feedback_pdf(c);
-            else
-                done = 0;
-            if (done==0)
+            } else {
                 tex_error("unexpected use of \\pdffeedback",null);
-            else if (done==2)
+                return ;
+            }
+            if (done==0) {
+                /* we recover */
+                normal_warning("pdf backend","unexpected use of \\pdffeedback");
                 return;
+            } else if (done==2) {
+                return;
+            }
             break;
         default:
             confusion("feedback");
@@ -2828,14 +2839,18 @@ void do_variable(void)
     switch (c) {
         case dvi_variable_code:
             done = do_variable_dvi(c);
-            if (done==0)
-                tex_error("unexpected use of \\dvivariable",null);
+            if (done==0) {
+                /* we recover */
+                normal_warning("dvi backend","unexpected use of \\dvivariable");
+            }
             return;
             break;
         case pdf_variable_code:
             done = do_variable_pdf(c);
-            if (done==0)
-                tex_error("unexpected use of \\pdfvariable",null);
+            if (done==0) {
+                /* we recover */
+                normal_warning("pdf backend","unexpected use of \\pdfvariable");
+            }
             return;
             break;
         default:
