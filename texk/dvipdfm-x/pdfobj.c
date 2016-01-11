@@ -3313,7 +3313,7 @@ parse_xref_table (pdf_file *pf, int xref_pos)
       /* Object number of the first object whithin this xref subsection. */
       q = parse_unsigned(&p, endptr);
       if (!q) {
-        WARN("An unsigned integer expected but counld not find. (xref)");
+        WARN("An unsigned integer expected but could not find. (xref)");
         return -1;
       }
       first = atoi(q);
@@ -3323,7 +3323,7 @@ parse_xref_table (pdf_file *pf, int xref_pos)
       /* Nnumber of objects in this xref subsection. */
       q = parse_unsigned(&p, endptr);
       if (!q) {
-        WARN("An unsigned integer expected but counld not find. (xref)");
+        WARN("An unsigned integer expected but could not find. (xref)");
         return -1;
       }
       size = atoi(q);
@@ -3377,10 +3377,11 @@ parse_xref_table (pdf_file *pf, int xref_pos)
         /* Offset value -- 10 digits (0 padded) */
         q = parse_unsigned(&p, endptr);
         if (!q) {
-          WARN("An unsigned integer expected but counld not find. (xref)");
+          WARN("An unsigned integer expected but could not find. (xref)");
           return -1;
         } else if (strlen(q) != 10) { /* exactly 10 digits */
           WARN(("Offset must be a 10 digits number. (xref)"));
+          RELEASE(q);
           return -1;
         }
         /* FIXME: Possible overflow here. Consider using strtoll(). */
@@ -3391,10 +3392,11 @@ parse_xref_table (pdf_file *pf, int xref_pos)
         /* Generation number -- 5 digits (0 padded) */
         q = parse_unsigned(&p, endptr);
         if (!q) {
-          WARN("An unsigned integer expected but counld not find. (xref)");
+          WARN("An unsigned integer expected but could not find. (xref)");
           return -1;
         } else if (strlen(q) != 5) { /* exactly 5 digits */
           WARN(("Expecting a 5 digits number. (xref)"));
+          RELEASE(q);
           return -1;
         }
         obj_gen = atoi(q);
