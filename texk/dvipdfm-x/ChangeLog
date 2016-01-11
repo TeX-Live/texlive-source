@@ -1,3 +1,9 @@
+2016-01-11  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c, mfileio.[ch]: Modification on handling of xref table.
+	More permissive on treating white-spaces but more strict on
+	handling tokens.
+
 2016-01-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* epdf.c: A typo in a message.
