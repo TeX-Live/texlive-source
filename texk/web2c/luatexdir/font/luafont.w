@@ -1050,16 +1050,15 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
             u = lua_tointeger(L,-1);
             if (u < 0) {
                 set_charinfo_tounicode(co, NULL);
-            } else if (u < 0x10000) {
+            } else if (u < 0xD7FF || (u > 0xDFFF && u <= 0xFFFF)) {
                 char *s = malloc(5);
                 sprintf(s,"%04X",(unsigned int) u);
                 set_charinfo_tounicode(co,s);
-            } else if (u < 0x1FFFFFFFFF) {
-                char *s = malloc(9);
-                sprintf(s,"%04X%04X",(unsigned int) (floor(u/1024)),(unsigned int) (u%1024+0xDC00));
-                set_charinfo_tounicode(co,s);
             } else {
-                set_charinfo_tounicode(co, NULL);
+                char *s = malloc(9);
+                u = u - 0x10000;
+                sprintf(s,"%04X%04X",(unsigned int) (floor(u/1024)+0xD800),(unsigned int) (u%1024+0xDC00));
+                set_charinfo_tounicode(co,s);
             }
         } else if (u == LUA_TTABLE) {
             n = lua_rawlen(L,-1);
@@ -1076,14 +1075,10 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
                     u = -1;
                     lua_pop(L, 1);
                     break;
-                } else if (u < 0x10000) {
+                } else if (u < 0xD7FF || (u > 0xDFFF && u <= 0xFFFF)) {
                     u = u + 4;
-                } else if (u < 0x1FFFFFFFFF) {
-                    u = u + 8;
                 } else {
-                    u = -1;
-                    lua_pop(L, 1);
-                    break;
+                    u = u + 8;
                 }
                 lua_pop(L, 1);
             }
@@ -1093,11 +1088,12 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
                 for (k = 1; k <= n; k++) {
                     lua_rawgeti(L, -1, k);
                     u = lua_tointeger(L,-1);
-                    if (u < 0x10000) {
+                    if (u < 0xD7FF || (u > 0xDFFF && u <= 0xFFFF)) {
                         sprintf(t,"%04X",(unsigned int) u);
                         t += 4;
                     } else {
-                        sprintf(t,"%04X%04X",(unsigned int) (floor(u/1024)),(unsigned int) (u%1024+0xDC00));
+                        u = u - 0x10000;
+                        sprintf(t,"%04X%04X",(unsigned int) (floor(u/1024)+0xD800),(unsigned int) (u%1024+0xDC00));
                         t += 8;
                     }
                     lua_pop(L, 1);
