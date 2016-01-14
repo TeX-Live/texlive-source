@@ -22,7 +22,7 @@ if (ECM_FOUND)
 endif()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "39")
+set(POPPLER_MINOR_VERSION "40")
 set(POPPLER_MICRO_VERSION "0")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
@@ -442,7 +442,6 @@ elseif (LIBOPENJPEG2_FOUND)
     poppler/JPEG2000Stream.cc
   )
   add_definitions(-DUSE_OPENJPEG2)
-MESSAGE(${LIBOPENJPEG2_LIBRARIES})
   set(poppler_LIBS ${poppler_LIBS} ${LIBOPENJPEG2_LIBRARIES})
 else ()
   set(poppler_SRCS ${poppler_SRCS}
@@ -479,8 +478,7 @@ else(MSVC)
 add_library(poppler SHARED ${poppler_SRCS})
 endif(MSVC)
 set_target_properties(poppler PROPERTIES VERSION 58.0.0 SOVERSION 58)
-target_link_libraries(poppler ${poppler_LIBS})
-target_link_libraries(poppler LINK_INTERFACE_LIBRARIES "")
+target_link_libraries(poppler LINK_PRIVATE ${poppler_LIBS})
 install(TARGETS poppler RUNTIME DESTINATION bin LIBRARY DESTINATION lib${LIB_SUFFIX} ARCHIVE DESTINATION lib${LIB_SUFFIX})
 
 if(ENABLE_XPDF_HEADERS)
