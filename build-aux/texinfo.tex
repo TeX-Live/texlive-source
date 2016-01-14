@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-01-07.22}
+\def\texinfoversion{2016-01-11.19}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -9434,13 +9434,16 @@ directory should work if nowhere else does.}
 \else
 \XeTeXdefaultencoding "bytes"  % For subsequent files to be read
 \XeTeXinputencoding "bytes"  % Effective in texinfo.tex only
+% Unfortunately, there seems to be no corresponding XeTeX command for
+% output encoding.  This is a problem for auxiliary index and TOC files.
+% The only solution would be perhaps to write out @U{...} sequences in
+% place of UTF-8 characters.
 \fi
 
 \ifx\luatexversion\thisisundefined
 \else
 \directlua{
 local utf8_char, byte, gsub = unicode.utf8.char, string.byte, string.gsub
-
 local function convert_char (char)
   return utf8_char(byte(char))
 end
@@ -9450,6 +9453,16 @@ local function convert_line (line)
 end
 
 callback.register("process_input_buffer", convert_line)
+
+local function convert_line_out (line)
+  local line_out = ""
+  for c in string.utfvalues(line) do
+     line_out = line_out .. string.char(c)
+  end
+  return line_out
+end
+
+callback.register("process_output_buffer", convert_line_out)
 }
 \fi
 
