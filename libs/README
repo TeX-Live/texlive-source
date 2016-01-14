@@ -24,7 +24,7 @@ gmp 6.1.0 - checked 28dec15
 graphite2 1.3.3 - checked 27sep15
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
-harfbuzz 1.1.3 - checked 12Jan16
+harfbuzz 1.1.3 - checked 12jan16
   http://www.freedesktop.org/software/harfbuzz/release/
 
 icu 56.1 (release) - checked 8oct15
@@ -49,7 +49,7 @@ mpfr 3.1.3 - checked 20jun15
 pixman 0.32.8 - checked 27sep15
   http://cairographics.org/releases/
 
-poppler 0.39.0 - checked 28dec15
+poppler 0.40.0 - checked 14jan16
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
 potrace 1.13 - checked 28dec15

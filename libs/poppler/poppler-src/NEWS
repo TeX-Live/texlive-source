@@ -1,3 +1,21 @@
+Release 0.40.0
+        core:
+         * CairoOutputDev: Use shape mask with soft mask. Bug #91931
+         * TextOutputDev: Handle right-to-left text in search
+         * TextOutputDev: Fix finding Arabic Presentation Forms ligatures
+         * Fix crash in invalid file. Bug #93476
+         * Regression test improvements
+
+        utils:
+         * pdftocairo: fix writing to stdout out with image output
+         * pdftocairo: document that -singlefile appends file type. Bug #86254
+         * pdftocairo: ensure surface flushed before accessing image data
+         * pdftocairo: check for invalid use of options. Bug #92195
+         * pdfunite: Fix typo in manual
+
+        build system:
+         * Improve cmake build system
+
 Release 0.39.0
         core:
          * Ignore the alternateSpace and tintTransform. Bug #92381

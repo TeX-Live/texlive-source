@@ -17,6 +17,7 @@
 // Copyright (C) 2007 Jeff Muizelaar <jeff@infidigm.net>
 // Copyright (C) 2008 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2016 Khaled Hosny <khaledhosny@eglug.org>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -1015,7 +1016,9 @@ Unicode unicodeToUpper(Unicode c) {
 // of characters written. @buf may be NULL, in which case the length of the
 // decomposition is returned but nothing is written. If @u is its own
 // decomposition, write @u into @buf and return 1.
-static int decomp_compat(Unicode u, Unicode *buf) {
+// If reverseRTL is true, then decompositions of RTL characters will be output
+// in reverse order.
+static int decomp_compat(Unicode u, Unicode *buf, GBool reverseRTL = false) {
   // decomposition tables stored as lists {character, decomp_length, offset}
   // so we do a binary search
   int start = 0, end = DECOMP_TABLE_LENGTH;
@@ -1031,7 +1034,10 @@ static int decomp_compat(Unicode u, Unicode *buf) {
 	  int length = decomp_table[midpoint].length, i;
 	  if (buf)
 	    for (i = 0; i < length; ++i)
-	      buf[i] = decomp_expansion[offset + i];
+		if (unicodeTypeR(u) && reverseRTL)
+		  buf[i] = decomp_expansion[offset + length - i - 1];
+		else
+		  buf[i] = decomp_expansion[offset + i];
 	  return length;
 	}
       } else if (midpoint == start)
@@ -1125,8 +1131,14 @@ static GBool combine(Unicode base, Unicode add, Unicode *out) {
 // for each character in the normalized string giving the index in @in of the 
 // corresponding unnormalized character. @indices is not guaranteed monotone or
 // onto.
-Unicode *unicodeNormalizeNFKC(Unicode *in, int len, 
+Unicode *unicodeNormalizeNFKC(Unicode *in, int len,
 			      int *out_len, int **indices) {
+    return unicodeNormalizeNFKC(in, len, out_len, indices, false);
+}
+
+Unicode *unicodeNormalizeNFKC(Unicode *in, int len,
+			      int *out_len, int **indices,
+			      GBool reverseRTL) {
   Unicode *out;
   int i, o, *classes, *idx = NULL;
 
@@ -1174,7 +1186,7 @@ Unicode *unicodeNormalizeNFKC(Unicode *in, int len,
 	u = in[j];
 	if (j != i && COMBINING_CLASS(u) == 0)
 	  break;
-	dlen = decomp_compat(u, out + p);
+	dlen = decomp_compat(u, out + p, reverseRTL);
 	for (q = p; q < p + dlen; ++q) {
 	  classes[q] = COMBINING_CLASS(out[q]);
 	  if (indices)

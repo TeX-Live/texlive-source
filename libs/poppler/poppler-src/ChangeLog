@@ -1,3 +1,248 @@
+commit 449d45fab8e61393d858549460e61599e4dbd7eb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jan 13 23:19:12 2016 +0100
+
+    0.40.0 + NEWS
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 18 ++++++++++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 23 insertions(+), 5 deletions(-)
+
+commit e9740b57324cf5a09f6f4312165da13c7b3a576b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Jan 13 23:14:35 2016 +0100
+
+    Update copyrights
+
+ poppler/Function.cc | 2 +-
+ utils/pdftocairo.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 3bfc45bfcca1a52447cedbb95afad1ef362ac6f0
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Mon Jan 11 21:46:49 2016 +1030
+
+    pdftocairo: check for invalid use of -scale-to* and -paper[wh] options
+
+    Bug 92195
+
+ utils/pdftocairo.cc | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+commit 819bea740b1fadb24833e0ecbdf4e75ddca8eb14
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Mon Jan 11 19:44:14 2016 +1030
+
+    pdftocairo: ensure surface flushed before accessing image data
+
+ utils/pdftocairo.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f7542348b37cc881d854bbc36c3af0a4fe37d839
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Mon Jan 11 19:39:34 2016 +1030
+
+    pdftocairo: document that -singlefile appends file type
+
+    Bug 86254
+
+ utils/pdftocairo.1 | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 9fa58b1ef6c97e2a30bb3197c11000fac3b059f4
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Mon Jan 11 19:26:02 2016 +1030
+
+    pdftocairo: fix writing to stdout out with image output
+
+ utils/pdftocairo.cc | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+commit 01d4bb222d63eda7dc5ec903c0735179edf77c0e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 3 13:01:31 2016 +0100
+
+    Happy New Year
+
+ poppler/poppler-config.h.cmake | 2 +-
+ poppler/poppler-config.h.in    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit d8f418d2f2ec5966d77caf128a52c834fdd0efcf
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Mon Nov 23 13:52:10 2015 +0400
+
+    Fix finding Arabic Presentation Forms ligatures
+
+    PDF text containing Arabic Presentation forms ligatures is still not
+    found after the previous commit.
+
+    This because the ligatures are decomposed in logical order after
+    normalisation, while the whole string is in visual order.  For example
+    the RTL text ABCD in visual order will be DCBA, and assuming B is a
+    ligature, it will be decomposed to B1B2 so the string after
+    normalization will be DCB1B2A while we are expecting it to be DCB2B1A.
+
+    This patch reverses the order of the decomposition of RTL characters
+    to
+    work around this issue.
+
+ poppler/TextOutputDev.cc    |  4 +++-
+ poppler/UnicodeTypeTable.cc | 20 ++++++++++++++++----
+ poppler/UnicodeTypeTable.h  |  7 ++++++-
+ 3 files changed, 25 insertions(+), 6 deletions(-)
+
+commit 67645087477beb618304ea34cbdbafd40b199276
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Nov 18 14:47:28 2015 +0400
+
+    Handle right-to-left text in search
+
+    Currently right-to-left text reversal is only done during text
+    dumping,
+    but not during search. This commit applies the same reversal logic
+    during PDF search as well.
+
+ poppler/TextOutputDev.cc | 191
+ ++++++++++++++++++++++++++---------------------
+ 1 file changed, 107 insertions(+), 84 deletions(-)
+
+commit 00422d0c6baaba639fa0660e3a933cdb76b28f88
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Sun Dec 20 09:54:43 2015 -0600
+
+    cairo: use shape mask with soft mask
+
+    Clear target with the shape mask whether the soft mask is set or not.
+    Propagate the shape up to any higher level groups and destroy the
+    shape pattern when done.
+
+    Fix a memory leak by removing a call to 'cairo_reference
+    (cairo_shape)'.
+    We already keep track of the lifetime of cairo_shape using
+    knockoutCount.
+
+    bug 91931
+
+ poppler/CairoOutputDev.cc | 49
+ ++++++++++++++++++++++-------------------------
+ 1 file changed, 23 insertions(+), 26 deletions(-)
+
+commit bc4cab272e4fe28b836cb2ef1ff672f0d79d243c
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Sat Jan 2 09:49:27 2016 +0100
+
+    regtest: Fix the number of worker threads spawned reported in log
+    of run-tests command
+
+ regtest/TestRun.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ea75de614e666d8235c38048585315e0d7ff5522
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Sat Jan 2 09:48:03 2016 +0100
+
+    regtest: Limit the number of worker threads to the number of documents
+    to create references
+
+    The same way we do for the run-tests command.
+
+ regtest/TestReferences.py | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+
+commit 25bb59a81de8a1b6dd23fec871a97ccb11fe9d64
+Author: Carlos Garcia Campos <carlosgc@gnome.org>
+Date:   Fri Jan 1 12:45:42 2016 +0100
+
+    regtest: Allow to interrupt run-tests and create-refs commands when
+    multiple threads are used
+
+    The Queue join implementation uses a non-timed wait that blocks
+    the main
+    thread, making it impossible to interrupt it with CTRL+C or sending
+    SIGINT signal. Using any timeout value for wait would fix the problem,
+    but Queue doesn't allow to pass a timeout to the join method. The
+    Queue implementation is actually quite simple, so we can just add our
+    own implementation with only the things we really need and use
+    a timeout
+    value when calling wait() in join().
+
+ regtest/InterruptibleQueue.py | 68
+ +++++++++++++++++++++++++++++++++++++++++++
+ regtest/TestReferences.py     |  4 +--
+ regtest/TestRun.py            |  4 +--
+ 3 files changed, 72 insertions(+), 4 deletions(-)
+
+commit ffb3ff633b124c476ab48bbcfce04d7f418df9bc
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Fri Jan 1 11:32:14 2016 +0100
+
+    regtest: Do not use the log printer with the TestReferences lock held
+
+ regtest/TestReferences.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e3b09727ad96a03ba1250f49486948899b4df793
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Fri Dec 25 14:10:03 2015 +0100
+
+    Make detection of version one of OpenJPEG prefer a pkg-config manifest
+    if it exists.
+
+ CMakeLists.txt                      |  1 -
+ cmake/modules/FindLIBOPENJPEG.cmake | 37
+ +++++++++++++++++++++++--------------
+ 2 files changed, 23 insertions(+), 15 deletions(-)
+
+commit 7c880daecfcddac2f8181d5f3d506dd409812dbe
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Fri Dec 25 14:10:03 2015 +0100
+
+    Make use of LINK_PRIVATE flag to fix warning on CMake policy 0022.
+
+ CMakeLists.txt     | 3 +--
+ cpp/CMakeLists.txt | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+commit 4a413b9b95d5c6815c91adb815254cce97dd5b4b
+Author: Adam Reichold <adam.reichold@t-online.de>
+Date:   Fri Dec 25 14:10:03 2015 +0100
+
+    Make target names for Qt4 and Qt5 builds unique so they can be built
+    at the same time using recent CMake and Ninja versions.
+
+ qt4/tests/CMakeLists.txt | 44 +++++++++++++++++++++---------------------
+ qt5/CMakeLists.txt       |  2 ++
+ qt5/demos/CMakeLists.txt |  2 --
+ qt5/src/CMakeLists.txt   |  2 --
+ qt5/tests/CMakeLists.txt | 50
+ +++++++++++++++++++++++-------------------------
+ 5 files changed, 48 insertions(+), 52 deletions(-)
+
+commit b3425dd3261679958cd56c0f71995c15d2124433
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Dec 22 22:50:33 2015 +0100
+
+    Do not crash on invalid files
+
+    Bug #93476
+
+ poppler/Function.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 5d57c34cbf9288eec6ddb149e905268405c19450
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Dec 20 08:42:25 2015 +0100
+
+    typo fix: "occurence" -> "occurrence"
+
+ utils/pdfunite.1 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit 3eee5274abb24d5b5be05262aafe794652cdac35
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu Dec 17 00:09:37 2015 +0100
