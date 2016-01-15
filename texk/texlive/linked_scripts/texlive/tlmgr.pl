@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 39198 2015-12-25 03:12:03Z preining $
+# $Id: tlmgr.pl 39384 2016-01-14 17:57:13Z karl $
 #
 # Copyright 2008-2015 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 39198 $';
-my $datrev = '$Date: 2015-12-25 04:12:03 +0100 (Fri, 25 Dec 2015) $';
+my $svnrev = '$Revision: 39384 $';
+my $datrev = '$Date: 2016-01-14 18:57:13 +0100 (Thu, 14 Jan 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3182,8 +3182,9 @@ sub action_update {
           $remove_unwind_container = 1;
           $unwind_package = $newname;
         }
-        my $instret = TeXLive::TLPDB->_install_package("$unwind_package", 0,
-                                                       [], $localtlpdb);
+
+        my ($instret, $msg) = TeXLive::TLUtils::unpack("$unwind_package",
+          $localtlpdb->root);
         if ($instret) {
           # now we have to include the tlpobj
           my $tlpobj = TeXLive::TLPOBJ->new;
@@ -3196,6 +3197,7 @@ sub action_update {
         } else {
           logpackage("failed restore: $pkg ($rev)");
           tlwarn("$prg: Restoring of old package did NOT succeed.\n");
+          tlwarn("$prg: Error message from unpack: $msg\n");
           tlwarn("$prg: Most likely repair: run tlmgr install $pkg and hope.\n");
           # TODO_ERRORCHECKING
           # should we return F_ERROR here??? If we would do this, then
@@ -3668,9 +3670,12 @@ sub action_install {
       info("[$currnr/$totalnr, $estrem/$esttot] ${re}install: $pkg$tagstr [${kb}k]\n");
     }
     if (!$opts{"dry-run"}) {
-      $remotetlpdb->install_package($pkg, $localtlpdb,
-        ($packs{$pkg} ? $packs{$pkg} : undef) );
-      logpackage("${re}install: $pkg$tagstr");
+      if ($remotetlpdb->install_package($pkg, $localtlpdb,
+            ($packs{$pkg} ? $packs{$pkg} : undef) )) {
+        logpackage("${re}install: $pkg$tagstr");
+      } else {
+        logpackage("failed ${re}install: $pkg$tagstr");
+      }
     }
     $donesize += $sizes{$pkg};
     $currnr++;
@@ -4122,7 +4127,7 @@ sub action_option {
   init_local_db();
   my $ret = $F_OK;
   if ($what =~ m/^show$/i) {
-    for my $o (keys %{$localtlpdb->options}) {
+    for my $o (sort keys %{$localtlpdb->options}) {
       # ignore some things which are w32 specific
       next if ($o eq "desktop_integration" && !win32());
       next if ($o eq "file_assocs" && !win32());
