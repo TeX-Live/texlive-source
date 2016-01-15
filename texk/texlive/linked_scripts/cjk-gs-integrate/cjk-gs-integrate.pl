@@ -23,10 +23,11 @@ $^W = 1;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use File::Basename;
 use File::Path qw(make_path);
+use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20151002.0';
+my $version = '20160115.0';
 
 if (win32()) {
   print_error("Sorry, currently not supported on Windows!\n");
@@ -216,6 +217,12 @@ my %encode_list = (
     UniKS-UTF8-H
     UniKS-UTF8-V/ ] );
 
+#
+# location where links to fonts in texmf are created, relative to TEXMF
+my $otf_pathpart = "fonts/opentype/cjk-gs-integrate";
+my $ttf_pathpart = "fonts/truetype/cjk-gs-integrate";
+
+
 my $dry_run = 0;
 my $opt_help = 0;
 my $opt_quiet = 0;
@@ -288,7 +295,6 @@ if (defined($opt_texmflink)) {
   }
   $opt_texmflink = $foo;
 }
-
 
 main(@ARGV);
 
@@ -451,7 +457,7 @@ sub do_otf_fonts {
   my $ciddest  = "$opt_output/CIDFont";
   make_dir($fontdest, "cannot create CID snippets there!");
   make_dir($ciddest,  "cannot link CID fonts there!");
-  make_dir("$opt_texmflink/fonts/opentype/cjk-gs-integrate",
+  make_dir("$opt_texmflink/$otf_pathpart",
            "cannot link fonts to it!")
     if $opt_texmflink;
   for my $k (keys %fontdb) {
@@ -459,7 +465,7 @@ sub do_otf_fonts {
       generate_font_snippet($fontdest,
         $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
       link_font($fontdb{$k}{'target'}, $ciddest, $k);
-      link_font($fontdb{$k}{'target'}, "$opt_texmflink/fonts/opentype/cjk-gs-integrate")
+      link_font($fontdb{$k}{'target'}, "$opt_texmflink/$otf_pathpart", "$k.otf")
         if $opt_texmflink;
     }
   }
@@ -491,6 +497,35 @@ pop
   }
 }
 
+#
+# link_font operation
+# $opt_force is *not* treated first to warn only 
+# at really critical cases
+# case 1:
+#   exists, is link, link targets agree
+#     $opt_force is ignored
+#     remove or remove+add according to $opt_remove
+# case 2:
+#   exists, is link, dangling symlink
+#     $opt_force is ignored
+#     remove or remove+add according to $opt_remove
+# case 3:
+#   exists, is link, link target different
+#     if $opt_force
+#       warn, remove or remove+add according to $opt_remove
+#     else
+#       error message
+# case 4:
+#   exists, not a link
+#     if $opt_force
+#       warn, remove or remove+add according to $opt_remove
+#     else
+#       error message
+# case 5:
+#   not exists
+#     $opt_force is ignored
+#     do nothing or add according to $opt_remove
+#     
 sub link_font {
   my ($f, $cd, $n) = @_;
   return if $dry_run;
@@ -498,36 +533,47 @@ sub link_font {
     $n = basename($f);
   }
   my $target = "$cd/$n";
-  if ($opt_force && -e $target) {
-    print_info("Removing $target prior to recreation due to --force\n");
-    unlink($target) || die "Cannot unlink $target prior to recreation under --force: $!";
-    return if $opt_remove;
-  }
+  my $do_unlink = 0;
   if (-l $target) {
     my $linkt = readlink($target);
-    if ($linkt && -r $linkt) {
+    if ($linkt) {
       if ($linkt eq $f) {
-        unlink($target) if $opt_remove;
-        # do nothing, it is the same link
+        # case 1: exists, link, targets agree
+        $do_unlink = 1;
+      } elsif (-r $linkt) {
+        # case 3: exists, link, targets different
+        if ($opt_force) {
+          print_info("Removing link $target due to --force!\n");
+          $do_unlink = 1;
+        } else {
+          print_error("Link $target already existing, but different target then $target, exiting!\n");
+          exit(1);
+        }
       } else {
-        print_error("link $target already existing, but different target then $target, exiting!\n");
-        exit(1);
+        # case 2: dangling symlink
+        print_warning("Removing dangling symlink $target to $linkt\n");
+        $do_unlink = 1;
       }
     } else {
-      print_warning("removing dangling symlink $target to $linkt\n");
-      unlink($target);
-    }
-  } else {
-    if (-e $target) {
-      print_error("$target already existing, but not a link, exiting!\n");
+      print_error("This should not happen, we have a link but cannot read the target?\n");
       exit(1);
-    } else {
-      if ($opt_remove) {
-        unlink($target);
-      } else {
-        symlink($f, $target) || die("Cannot link font $f to $target: $!");
-      }
     }
+  } elsif (-r $target) {
+    # case 4: exists, but not link
+    if ($opt_force) {
+      print_info("Removing $target due to --force!\n");
+      $do_unlink = 1;
+    } else {
+      print_error("$target already existing, exiting!\n");
+      exit(1);
+    }
+  } # otherwise it is not existing!
+
+  # if we are still here and $do_unlink is set, remove it
+  unlink($target) if $do_unlink;
+  # recreate link if we are not in the remove case
+  if (! $opt_remove) {
+    symlink($f, $target) || die("Cannot link font $f to $target: $!");
   }
 }
 
@@ -537,7 +583,7 @@ sub do_ttf_fonts {
   my $outp = '';
   make_dir($fontdest, "cannot create CID snippets there!");
   make_dir($cidfsubst,  "cannot link TTF fonts there!");
-  make_dir("$opt_texmflink/fonts/truetype/cjk-gs-integrate",
+  make_dir("$opt_texmflink/$ttf_pathpart",
            "cannot link fonts to it!")
     if $opt_texmflink;
   for my $k (keys %fontdb) {
@@ -546,7 +592,7 @@ sub do_ttf_fonts {
         $k, $fontdb{$k}{'class'}, $fontdb{$k}{'target'});
       $outp .= generate_cidfmap_entry($k, $fontdb{$k}{'class'}, $fontdb{$k}{'ttfname'}, $fontdb{$k}{'subfont'});
       link_font($fontdb{$k}{'target'}, $cidfsubst, $fontdb{$k}{'ttfname'});
-      link_font($fontdb{$k}{'target'}, "$opt_texmflink/fonts/truetype/cjk-gs-integrate", $fontdb{$k}{'ttfname'})
+      link_font($fontdb{$k}{'target'}, "$opt_texmflink/$ttf_pathpart", $fontdb{$k}{'ttfname'})
         if $opt_texmflink;
     }
   }
@@ -689,6 +735,18 @@ sub info_found_fonts {
       if ($fontdb{$k}{'type'} eq 'TTF') {
         print "Link:  $fontdb{$k}{'ttfname'}\n";
       }
+      my @ks = sort { $fontdb{$k}{'files'}{$a}{'priority'}
+                      <=>
+                      $fontdb{$k}{'files'}{$b}{'priority'} }
+                    keys %{$fontdb{$k}{'files'}};
+      # remove the top element which is the winner and shown above
+      shift @ks;
+      if (@ks) {
+        print "Other candidates in decreasing order:\n";
+        for my $f (@ks) {
+          print "       ", $fontdb{$k}{'files'}{$f}{'target'}, "\n";
+        }
+      }
       print "\n";
     }
   }
@@ -741,16 +799,22 @@ sub check_for_files {
     }
     #
     if (@extradirs) {
-      # final dummy directory
-      push @extradirs, "/this/does/not/really/exists/unless/you/are/stupid";
+      # we want that files in OSFONTDIR are found first, before 
+      # links that we have created in TEXMFLOCAL
+      # Thus, instead of setting OSFONTDIR which is at the *END* of
+      # the kpsewhich variables OPENTYPEFONTS and TTFONTS, we put
+      # all these fonts at the front of them
       # push current value of OSFONTDIR
       push @extradirs, $ENV{'OSFONTDIR'} if $ENV{'OSFONTDIR'};
-      # compose OSFONTDIR
-      my $osfontdir = join ':', @extradirs;
-      $ENV{'OSFONTDIR'} = $osfontdir;
-    }
-    if ($ENV{'OSFONTDIR'}) {
-      print_debug("final setting of OSFONTDIR: $ENV{'OSFONTDIR'}\n");
+      # update OPENTYPEFONTS and TTFONTS
+      if (@extradirs) {
+        my $newotf = join(':', @extradirs) . ':';
+        my $newttf = $newotf;
+        $newotf .= $ENV{'OPENTYPEFONTS'} if ($ENV{'OPENTYPEFONTS'});
+        $newttf .= $ENV{'TTFONTS'} if ($ENV{'TTFONTS'});
+        $ENV{'OPENTYPEFONTS'} = $newotf;
+        $ENV{'TTFONTS'} = $newttf;
+      }
     }
     # prepare for kpsewhich call, we need to do quoting
     my $cmdl = 'kpsewhich ';
@@ -766,8 +830,13 @@ sub check_for_files {
   # map basenames to filenames
   my %bntofn;
   for my $f (@foundfiles) {
+    my $realf = abs_path($f);
+    if (!$realf) {
+      print_warning("dead link or strange file found: $f - ignored!\n");
+      next;
+    }
     my $bn = basename($f);
-    $bntofn{$bn} = $f;
+    $bntofn{$bn} = $realf;
   }
   if ($opt_debug > 0) {
     print_debug("dumping font database before file check:\n");
@@ -814,7 +883,7 @@ sub check_for_files {
       $fontdb{$k}{'subfont'} = $sf if ($fontdb{$k}{'type'} eq 'TTF');
     }
     # not needed anymore
-    delete $fontdb{$k}{'files'};
+    # delete $fontdb{$k}{'files'};
   }
   if ($opt_debug > 0) {
     print_debug("dumping font database:\n");
@@ -973,7 +1042,7 @@ sub read_font_database {
 sub find_gs_resource {
   # we assume that gs is in the path
   # on Windows we probably have to try something else
-  my @ret = `gs --help 2>$nul`;
+  chomp( my @ret = `gs --help 2>$nul` );
   my $foundres = '';
   if ($?) {
     print_error("Cannot find gs ...\n");
@@ -982,9 +1051,9 @@ sub find_gs_resource {
     for (@ret) {
       if (m!Resource/Font!) {
         $foundres = $_;
-        $foundres =~ s/^\s*//;
-        $foundres =~ s/\s*:\s*$//;
-        $foundres =~ s!/Font!!;
+        # extract the first substring of non-space chars
+        # up to Resource/Font and drop the /Font part
+        $foundres =~ s!^.*\s(\S*Resource)/Font.*$!$1!;
         last;
       }
     }
@@ -1018,9 +1087,9 @@ sub Usage {
 --filelist FILE       read list of available font files from FILE
                       instead of searching with kpathsea
 --link-texmf [DIR]    link fonts into
-                         DIR/fonts/opentype/cjk-gs-integrate
+                         DIR/$otf_pathpart
                       and
-                         DIR/fonts/truetype/cjk-gs-integrate
+                         DIR/$ttf_pathpart
                       where DIR defaults to TEXMFLOCAL
 --machine-readable    output of --list-aliases is machine readable
 --force               do not bail out if linked fonts already exist
