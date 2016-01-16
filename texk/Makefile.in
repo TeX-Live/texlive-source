@@ -929,10 +929,8 @@ $(CONFIG_AUX):
 
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap
-triptrap: web2c/Makefile
+triptrap:
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) $@
-web2c/Makefile:
-	$(MAKE) $(AM_MAKEFLAGS) CONF_SUBDIRS=web2c subtexk
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
