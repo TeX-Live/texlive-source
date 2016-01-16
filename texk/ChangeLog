@@ -1,3 +1,11 @@
+2016-01-16  Karl Berry  <karl@tug.org>
+
+	(web2c/Makefile): do not try to make the nonexistent subtexk target.
+	Apparently this is a leftover from generalizing the prior subtexk
+	into am/recurse.am.
+	http://tug.org/svn/texlive/trunk/Build/source/texk/Makefile.am?r1=31126&r2=31127
+	* Makefile.am (triptrap): no longer depend on web2c/Makefile.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../am/dist_hook.am.

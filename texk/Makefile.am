@@ -1,6 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## Ensure aclocal.m4 is up to date
@@ -24,7 +25,5 @@ EXTRA_DIST = tests
 
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap
-triptrap: web2c/Makefile
+triptrap:
 	cd web2c && $(MAKE) $(AM_MAKEFLAGS) $@
-web2c/Makefile:
-	$(MAKE) $(AM_MAKEFLAGS) CONF_SUBDIRS=web2c subtexk
