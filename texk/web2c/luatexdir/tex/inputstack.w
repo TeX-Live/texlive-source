@@ -662,6 +662,15 @@ a linked list of variable size nodes representing lines not yet
 processed: the |subtype| field contains the size of this node,
 all the following words contain ASCII codes.
 
+/*
+
+    hh: todo: if this is really critical code (which it isn't) then we can
+    consider a c stack and store a pointer to a line in the line node instead
+    which saves splitting here and reconstructing later.
+
+*/
+
+
 @c
 halfword pseudo_files; /* stack of pseudo files */
 
@@ -696,13 +705,12 @@ static halfword string_to_pseudo(str_number str, int nl)
         w.b2 = (quarterword) (l > m ? s[m++] : ' ');
         w.b3 = (quarterword) (l > m ? s[m] : ' ');
         varmem[++i].qqqq = w;
-        if (pseudo_lines(h) == null) {
+        if (q == null) {
             pseudo_lines(h) = r;
-            q = r;
         } else {
-            couple_nodes(q, r);
+            vlink(q) = r ; /* no prev node here so no couple_nodes !*/
         }
-        q = vlink(q);
+        q = r ;
         if (s[l] == nl)
             l++;
     }
