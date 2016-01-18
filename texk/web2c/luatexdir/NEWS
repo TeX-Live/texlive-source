@@ -3,6 +3,30 @@ This file is in the public domain.
 
 
 ==============================================================
+Luatex Release 0.88.0 was released 2016011500 
+==============================================================
+
+This is a next step upto 0.90 and it has the following changes:
+
+- mostly small bug fixes 
+
+- a few setters/getters added to the pdf namespace (were in the tex one before)
+
+- The current libraries under libs are now:
+  * poppler-0.40.0
+  * mpfr-3.1.3
+  * luajit-2.1.0-beta1
+  * gmp-6.1.0
+  * zziplib-0.13.62
+  * zlib-1.2.8
+  * lua52-5.2.4
+  * pixman-0.32.8
+  * libpng-1.6.21
+  * cairo-1.14.6
+
+
+
+==============================================================
 Luatex beta-0.87.0 was released 2015121700 
 ==============================================================
 
@@ -2619,7 +2643,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5643 2015-12-17 15:21:20Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5726 2016-01-18 11:26:27Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 
