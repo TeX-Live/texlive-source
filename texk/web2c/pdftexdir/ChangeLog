@@ -1,3 +1,8 @@
+2016-01-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web: Avoid to crash for unusual virtual fonts which lead to
+	font size >= 2048pt.
+
 2015-08-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* am/libpdftex.am, am/pdftosrc.am: Enable g++ warnings.
