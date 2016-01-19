@@ -13174,6 +13174,7 @@ alpha:integer;
 beta:1..16;
 begin
   alpha:=16;
+  if z>=@'1000000000 then pdf_error("font", "size is too large");
   while z>=@'40000000 do
     begin z:=z div 2; alpha:=alpha+alpha;
   end;
@@ -13207,6 +13208,7 @@ end
 
 @ @<Replace |z|...@>=
 begin alpha:=16;
+if z>=@'1000000000 then pdf_error("font", "size is too large");
 while z>=@'40000000 do
   begin z:=z div 2; alpha:=alpha+alpha;
   end;
