@@ -767,7 +767,7 @@ dpx_find_dfont_file (const char *filename)
   return fqpn;
 }
  
-static const char *
+static char *
 dpx_get_tmpdir (void)
 {
 #ifdef WIN32
@@ -775,6 +775,8 @@ dpx_get_tmpdir (void)
 #else /* WIN32 */
 #  define __TMPDIR     "/tmp"
 #endif /* WIN32 */
+    size_t i;
+    char *ret;
     const char *_tmpd;
 
 #ifdef  HAVE_GETENV
@@ -790,7 +792,13 @@ dpx_get_tmpdir (void)
 #else /* HAVE_GETENV */
     _tmpd = __TMPDIR;
 #endif /* HAVE_GETENV */
-    return _tmpd;
+    ret = xstrdup(_tmpd);
+    i = strlen(ret);
+    while(i > 1 && IS_DIR_SEP(ret[i-1])) {
+      ret[i-1] = '\0';
+      i--;
+    }
+    return ret;
 }
 
 #ifdef  HAVE_MKSTEMP
@@ -810,11 +818,12 @@ dpx_create_temp_file (void)
 #elif defined(HAVE_MKSTEMP)
 #  define TEMPLATE     "/dvipdfmx.XXXXXX"
   {
-    const char *_tmpd;
-    int   _fd = -1;
+    char *_tmpd;
+    int  _fd = -1;
     _tmpd = dpx_get_tmpdir();
     tmp = NEW(strlen(_tmpd) + strlen(TEMPLATE) + 1, char);
     strcpy(tmp, _tmpd);
+    RELEASE(_tmpd);
     strcat(tmp, TEMPLATE);
     _fd  = mkstemp(tmp);
     if (_fd != -1) {
@@ -838,12 +847,13 @@ dpx_create_temp_file (void)
 #else /* use _tempnam or tmpnam */
   {
 #  ifdef WIN32
-    const char *_tmpd;
+    char *_tmpd;
     char *p;
     _tmpd = dpx_get_tmpdir();
     tmp = _tempnam (_tmpd, "dvipdfmx.");
+    RELEASE(_tmpd);
     for (p = tmp; *p; p++) {
-      if (IS_KANJI (p))
+      if (IS_KANJI(p))
         p++;
       else if (*p == '\\')
         *p = '/';
@@ -864,7 +874,7 @@ char *
 dpx_create_fix_temp_file (const char *filename)
 {
 #define PREFIX "dvipdfm-x."
-  static const char *dir = NULL;
+  static char *dir = NULL;
   static char *cwd = NULL;
   char *ret, *s;
   int i;
@@ -917,7 +927,7 @@ dpx_clear_cache_filter (const struct dirent *ent) {
 void
 dpx_delete_old_cache (int life)
 {
-  const char *dir;
+  char *dir;
   char *pathname;
   DIR *dp;
   struct dirent *de;
@@ -947,6 +957,7 @@ dpx_delete_old_cache (int life)
       }
       closedir(dp);
   }
+  RELEASE(dir);
   RELEASE(pathname);
 }
 
