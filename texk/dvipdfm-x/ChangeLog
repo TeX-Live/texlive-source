@@ -1,3 +1,8 @@
+2016-01-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dpxfile.c: Remove trailing directory separators if any in
+	dpx_get_tmpdir().
+
 2016-01-11  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c, mfileio.[ch]: Modification on handling of xref table.
