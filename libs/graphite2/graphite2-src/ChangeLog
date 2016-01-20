@@ -1,3 +1,18 @@
+1.3.5
+    . Bug fixes
+        . Security bug fix
+        . Fix ARM misalignment problem
+        . Track latest cmake
+
+1.3.4
+    . Transition from Mercurial to Git
+    . Bug fixes
+        . Fix Collision Kerning ignoring some diacritics
+        . Handle pass bits 16-31 to speed up fonts with > 16 passes
+        . Various minor fuzz bug fixes
+        . Make Coverity happy
+        . Add GR_FALLTHROUGH macro for clang c++11
+
 1.3.3
     . Slight speed up in Collision Avoidance
     . Remove dead bidi code

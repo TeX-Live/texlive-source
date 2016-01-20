@@ -1,4 +1,4 @@
-Changes applied to the graphite2-1.3.3/ tree as obtained from:
+Changes applied to the graphite2-1.3.5/ tree as obtained from:
 	http://sourceforge.net/projects/silgraphite/files/graphite2/
 
 Removed unused dirs:
@@ -7,4 +7,3 @@ Removed unused dirs:
 	doc
 	gr2fonttest
 	tests
-
