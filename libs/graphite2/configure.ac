@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define graphite2_version
 AC_INIT([graphite2 (TeX Live)], graphite2_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([graphite2-]graphite2_version[/graphite2.pc.in])
+AC_CONFIG_SRCDIR([graphite2-src/graphite2.pc.in])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -47,7 +47,7 @@ if test "x$enable_tracing" = no; then
             [Define to 1 to disable tracing support.])
 fi
 
-AC_SUBST([GRAPHITE2_TREE], [graphite2-]graphite2_version)
+AC_SUBST([GRAPHITE2_TREE], [graphite2-src])
 
 AC_CONFIG_FILES([Makefile include/graphite2/Makefile])
 
