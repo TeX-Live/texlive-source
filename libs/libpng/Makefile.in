@@ -569,7 +569,9 @@ NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 SUBDIRS = . include
-AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES) $(LIBPNG_DEFINES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(LIBPNG_TREE) $(ZLIB_INCLUDES) \
+              $(LIBPNG_DEFINES) $(LIBPNG_USER_CPPFLAGS)
+
 AM_CFLAGS = $(VISIBILITY_CFLAGS) $(WARNING_CFLAGS)
 noinst_LIBRARIES = libpng.a
 nodist_libpng_a_SOURCES = \
