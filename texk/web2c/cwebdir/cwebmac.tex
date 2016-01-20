@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.67 --- July 2006
+% Version 3.68 --- January 2016
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB3.67}
-\chardef\cwebversion=3 \chardef\cwebrevision=67
+\xdef\fmtversion{\fmtversion+CWEB3.68}
+\chardef\cwebversion=3 \chardef\cwebrevision=68
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -278,7 +278,8 @@
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
   \noindent{\let\*=\lapstar\bf\secstar.\quad}%
   \ifpdftex\smash{\raise\baselineskip\hbox to0pt{%
-     \let\*=\empty\pdfdest num \secstar fith}}
+%     \let\*=\empty\pdfdest num \secstar fith}} % bad space in versions < 3.68
+     \let\*=\empty\pdfdest num \secstar fith}}% changed in version 3.68
   \else\ifpdf\smash{\raise\baselineskip\hbox to0pt{%
      \let\*=\empty\special{%
        pdf: dest (\romannumeral\secstar) [ @thispage /FitH @ypos ]}}}\fi\fi}
@@ -340,7 +341,7 @@
 \def\T#1{\leavevmode % octal, hex or decimal constant
   \hbox{$\def\?{\kern.2em}%
 %    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant % versions < 3.67
-    \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant
+    \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant % in version 3.67
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
     \let\~=\oct \let\^=\hex {#1}$}}
 \def\U{\note{This code is used in section}} % xref for use of a section
@@ -457,6 +458,7 @@
 \def\fin{\par\vfill\eject % this is done when we are ending the index
   \ifpagesaved\null\vfill\eject\fi % output a null index column
   \if L\lr\else\null\vfill\eject\fi % finish the current page
+  \ifpdftex \makebookmarks \fi % added in Version 3.68
   \parfillskip 0pt plus 1fil
   \def\grouptitle{NAMES OF THE SECTIONS}
   \let\topsecno=\nullsec
@@ -470,7 +472,8 @@
   \def\Us{\note{Used in sections}} % crossref for uses of a section
   \def\I{\par\hangindent 2em}\let\*=*
   \ifacro \def\outsecname{Names of the sections} \let\Xpdf\X
-  \ifpdftex \makebookmarks \pdfdest name {NOS} fitb
+%  \ifpdftex \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
+  \ifpdftex \pdfdest name {NOS} fitb % changed in version 3.68
     \pdfoutline goto name {NOS} count -\secno {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%

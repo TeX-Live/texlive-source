@@ -1,9 +1,9 @@
 % This file is part of CWEB.
 % The CWEB programs by Silvio Levy are based on programs by D. E. Knuth.
 % They are distributed WITHOUT ANY WARRANTY, express or implied.
-% This README file last updated May 2000 by Don Knuth
+% This README file last updated January 2016 by Don Knuth
 
-% Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
+% Copyright (C) 1987,1990,1993,2000,2016 Silvio Levy and Donald E. Knuth
 
 % Permission is granted to make and distribute verbatim copies of this
 % document provided that the copyright notice and this permission notice
@@ -14,7 +14,13 @@
 % entire resulting derived work is given a different name and distributed
 % under the terms of a permission notice identical to this one.
 
-% Please send comments, suggestions, etc. to levy@math.berkeley.edu.
+% Please send comments, suggestions, etc. to tex-k@tug.org, and people
+% there will verify and forward bug reports.
+%
+% DEK takes no responsibility for the changefiles; they should be
+% maintained independently. His job is to correct errors in
+% ctangle.w, cweave.w, common.w, cwebmac.tex, cwebman.tex,
+% and in the files of examples/*.w, nothing more.
 
 This directory contains the following files:
 
