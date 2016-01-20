@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 01/05/2016
+.\"      Date: 01/20/2016
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 1.14.1
+.\"    Source: dvisvgm 1.14.2
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "01/05/2016" "dvisvgm 1\&.14\&.1" "dvisvgm Manual"
+.TH "DVISVGM" "1" "01/20/2016" "dvisvgm 1\&.14\&.2" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -46,10 +46,12 @@ However, TeX\(cqs main source for font descriptions is Metafont, which produces 
 .sp
 When running dvisvgm without option \fB\-\-no\-fonts\fR, it creates \fIfont\fR elements (\fB<font>\fR\&...\fB</font>\fR) to embed the font data into the SVG files\&. Unfortunately, only few SVG renderes support these elements yet\&. Most web browsers and vector graphics applications don\(cqt evaluate them properly so that the text components of the resulting graphics might look strange\&. In order to create more compatible SVG files, command\-line option \fB\-\-no\-fonts\fR can be given to replace the font elements by plain graphics paths\&.
 .SH "OPTIONS"
+.sp
+dvisvgm provides a POSIX\-compliant command\-line interface with short and long option names\&. They may be given before and/or after the name of the file to be converted\&. Also, the order of specifying the options is not significant, i\&.e\&. you can add them in any order without changing dvisvgm\(cqs behavior\&. Certain options accept or require additional parameters which are directly appended to or separated by whitespace from a short option (e\&.g\&. \fB\-v0\fR or \fB\-v 0\fR)\&. Long options require an additional equals sign (\fB=\fR) between option name and argument but without any surrounding whitespace (e\&.g\&. \fB\-\-verbosity=0\fR)\&.
 .PP
 \fB\-a, \-\-trace\-all\fR=[\fIretrace\fR]
 .RS 4
-This option forces dvisvgm to vectorize not only the glyphs actually required to render the SVG file correctly \(en which is the default \(en, but processes all glyphs of all fonts referenced in the DVI file\&. Because dvisvgm stores the tracing results a font cache, all following conversions these fonts will speed up significantly\&. The boolean option
+This option forces dvisvgm to vectorize not only the glyphs actually required to render the SVG file correctly \(en which is the default \(en, but processes all glyphs of all fonts referenced in the DVI file\&. Because dvisvgm stores the tracing results in a font cache, all following conversions of these fonts will speed up significantly\&. The boolean option
 \fIretrace\fR
 determines how to handle glyphs already stored in the cache\&. By default, these glyphs are skipped\&. Setting argument
 \fIretrace\fR
