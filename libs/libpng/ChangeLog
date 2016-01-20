@@ -1,3 +1,8 @@
+2016-01-20  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (AM_CPPFLAGS): add LIBPNG_USER_CPPFLAGS for Mojca.
+	http://tug.org/pipermail/tlbuild/2016q1/003327.html
+
 2016-01-15 Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import libpng-1.6.21.
