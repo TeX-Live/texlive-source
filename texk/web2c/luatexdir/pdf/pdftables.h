@@ -192,4 +192,6 @@ extern int pdf_retval;
 
 #  define set_pdf_decimal_digits(i)   set_tex_extension_count_register(c_pdf_decimal_digits,i)
 
+#  define pk_decimal_digits(pdf,delta) ((pdf->decimal_digits > 4 ? 4 : 3) + delta)
+
 #endif
