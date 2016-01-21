@@ -301,8 +301,10 @@ static int open_vf_file(const char *fn, unsigned char **vbuffer, int *vsize)
     boolean file_read = false;  /* was |vf_file| successfully read? */
     FILE *vf_file;
     const char *fname = luatex_find_file(fn, find_vf_file_callback);
-    if (!fname)
-        fname = fn;
+    if (fname == NULL || strlen(fname) == 0) {
+       /* fname = fn; */
+       return 0;
+    }
 
     callback_id = callback_defined(read_vf_file_callback);
     if (callback_id > 0) {
