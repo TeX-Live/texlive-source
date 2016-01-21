@@ -214,6 +214,13 @@ static int pmain(lua_State* L)
  const Proto* f;
  int i;
  if (!lua_checkstack(L,argc)) fatal("too many input files");
+ /* open standard libraries:    */
+ /* we need to to this to keep */
+ /* the symbol luaL_openlibs   */ 
+ luaL_checkversion(L);
+ lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+ luaL_openlibs(L);  /* open libraries */
+ lua_gc(L, LUA_GCRESTART, 0);
  for (i=0; i<argc; i++)
  {
   const char* filename=IS("-") ? NULL : argv[i];

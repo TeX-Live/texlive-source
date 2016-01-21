@@ -145,7 +145,7 @@ static boolean writepk(PDF pdf, internal_font_number f)
     callback_id = callback_defined(read_pk_file_callback);
     if (callback_id > 0) {
         if (!(run_callback(callback_id, "S->bSd", name, &file_opened, &t3_buffer, &t3_size) && file_opened && t3_size > 0)) {
-            formatted_warning("font %s at %i not found", cur_file_name, (int) dpi);
+            formatted_warning("type 3","font %s at %i not found", cur_file_name, (int) dpi);
             cur_file_name = NULL;
             return false;
         }
