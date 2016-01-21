@@ -932,7 +932,7 @@ static void init_pdf_outputparameters(PDF pdf)
     }
     if (pdf->pk_resolution == 0)        /* if not set from format file or by user */
         pdf->pk_resolution = pk_dpi;    /* take it from \.{texmf.cnf} */
-    pdf->pk_scale_factor = divide_scaled(72, pdf->pk_resolution, 3+5); /* (pdf->decimal_digits < 4 ? 8 : 9));*/
+    pdf->pk_scale_factor = divide_scaled(72, pdf->pk_resolution, pk_decimal_digits(pdf,5));
     if (!callback_defined(read_pk_file_callback)) {
         pk_mode = pdf_pk_mode; /* lookup once */
         if (pk_mode != null) {
