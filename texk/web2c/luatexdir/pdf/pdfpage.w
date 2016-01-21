@@ -42,7 +42,7 @@ void init_pdf_pagecalculations(PDF pdf)
     setpdffloat(p->pdf.h, 0, decimal_digits);
     setpdffloat(p->pdf.v, 0, decimal_digits);
     p->cw.e = 1;
-    p->fs_cur.e = p->fs.e = decimal_digits + 2; /* "+ 2" makes less corrections inside []TJ */
+    p->fs_cur.e = p->fs.e = (decimal_digits < 4 ? 5 : 6); /* "+ 2" makes less corrections inside []TJ */
     /* for placement outside BT...ET */
     setpdffloat(p->cm[0], 1, 0);
     setpdffloat(p->cm[1], 0, 0);
