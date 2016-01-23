@@ -278,8 +278,10 @@ void sha1_process_block(const void *buffer, size_t len, struct sha1_ctx *ctx)
     while (words < endp) {
         uint32_t tm;
         int t;
+        uint32_t v;
         for (t = 0; t < 16; t++) {
-            x[t] = SWAP(*words);
+            memcpy(&v, words, sizeof(uint32_t));
+            x[t] = SWAP(v);
             words++;
         }
 

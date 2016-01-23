@@ -22,6 +22,21 @@ then
  export CONFIG_SHELL
 fi
 
+# try to find gnu make; we may need it
+MAKE=make
+if make -v 2>&1| grep "GNU Make" >/dev/null
+then
+  echo "Your make is a GNU-make; I will use that"
+elif gmake -v >/dev/null 2>&1
+then
+  MAKE=gmake
+  export MAKE
+  echo "You have a GNU-make installed as gmake; I will use that"
+else
+  echo "I can't find a GNU-make; I'll try to use make and hope that works." 
+  echo "If it doesn't, please install GNU-make."
+fi
+
 WARNINGS=yes
 MINGWCROSS=FALSE
 CONFHOST=
@@ -32,12 +47,9 @@ OTHERARGS=
 FORCE_AUTORECONF=
 FORCE_FONTS=
 
-CFLAGS="$CFLAGS -Wdeclaration-after-statement"
-
 until [ -z "$1" ]; do
   case "$1" in
     --mingw     ) MINGWCROSS=TRUE ;;
-    --warn      ) WARN=TRUE ;;
     --host=*    ) CONFHOST="$1" ;;
     --build=*   ) CONFBUILD="$1" ;;
     --arch=*    ) MACCROSS=TRUE; ARCH=`echo $1 | sed 's/--arch=\(.*\)/\1/' ` ;;
@@ -52,14 +64,6 @@ done
 B=build
 
 ARCHFLAGS=
-
-if [ "$WARN" = "TRUE" ]
-then
-  CFLAGS="-Wall -Wextra \
- -Wformat-y2k -Wno-format-extra-args\
- -Wno-format-zero-length -Wformat-nonliteral\
- -Wformat-security -Wformat=2 -Wnormalized=nfc $CFLAGS"
-fi
 
 if [ "$MINGWCROSS" = "TRUE" ]
 then
@@ -78,7 +82,7 @@ then
   fi
   OLDPATH=$PATH
   PATH=/usr/$MINGWSTR/bin:$PATH
-  CFLAGS="-mtune=pentiumpro -msse2 -O2 $CFLAGS"
+  CFLAGS="-mtune=pentiumpro -msse2 -g -O2 $CFLAGS"
   LDFLAGS="-Wl,--large-address-aware $CFLAGS"
   ARCHFLAGS="--target=\"$MINGWSTR\" \
     --with-gnu-ld \
@@ -120,14 +124,14 @@ echo "Configuring build files; options: $CONFIGURE_ARGS"
 echo
 
 echo "Building Gregorio; options:$MAKEOPTS"
-make ${MAKEOPTS} || die "build Gregorio"
+${MAKE} ${MAKEOPTS} || die "build Gregorio"
 echo
 
 if [ "$FORCE_FONTS" = "TRUE" -o ! -e fonts/greciliae.ttf ]
 then
   echo "Building fonts; options:$MAKEOPTS"
   cd fonts
-  make ${MAKEOPTS} fonts || die "build fonts"
+  ${MAKE} ${MAKEOPTS} fonts || die "build fonts"
   cd ..
   echo
 fi

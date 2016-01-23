@@ -86,6 +86,9 @@ Macro for calculating \verb=\gre@textaligncenter=.
 \macroname{\textbackslash gre@calculate@annotationtrueraise}{}{gregoriotex-spaces.tex}
 Macro to calculate \verb=\gre@dimen@annotationtrueraise=.
 
+\macroname{\textbackslash gre@calculate@commentarytrueraise}{}{gregoriotex-spaces.tex}
+Macro to calculate \verb=\gre@dimen@commentarytrueraise=.
+
 \macroname{\textbackslash gre@calculate@textlower}{}{gregoriotex-spaces.tex}
 Calculates the value of \texttt{textlower}.  Default is \texttt{spacebeneathtext}.
 
@@ -114,7 +117,7 @@ Calculates the baseline correction for the glyphs.  Dependent on \texttt{gre@fac
 Aggregates all of the global distance calculations and calls them in the order needed to respect dependencies.
 
 \macroname{\textbackslash gre@calculate@glyphraisevalue}{\#1\#2}{gregoriotex-spaces.tex}
-Calculates the raise values for a glyph (glyphraisevalue and addedraisevalue) based on where it is to be placed and what kind of a glyph it is.  This is a time of use calculation.
+Calculates the raise value for a glyph (glyphraisevalue) based on where it is to be placed and what kind of a glyph it is.  This is a time of use calculation.
 
 \begin{argtable}
 	\#1 & integer & The number for where the glyph is located.  \texttt{a} in gabc is \texttt{1}, \texttt{b} is \texttt{2}, \etc\\
@@ -130,7 +133,10 @@ Calculates the raise values for a glyph (glyphraisevalue and addedraisevalue) ba
 	& \texttt{10} & case of the low choral sign\\
 	& \texttt{11} & case of the high choral sign\\
 	& \texttt{12} & case of the low choral sign which is lower than the note\\
-	& \texttt{13} & case of the brace above the bars
+	& \texttt{13} & case of the brace above the bars\\
+	& \texttt{14} & case of the punctum mora in a space with a note on the line below it\\
+	& \texttt{15} & case of the over-the-notes slur\\
+	& \texttt{16} & case of the under-the-notes slur\\
 \end{argtable}
 
 \macroname{\textbackslash gre@stafflinefactor}{}{gregoriotex-spaces.tex}
@@ -187,27 +193,21 @@ Macro to calculate \texttt{nextbegindifference}.
 	& $40 \le$ integer $\le 59$ & Same as below 20 except there is a natural before the notes.  Subtract 40 to get the type of notes alignment.
 \end{argtable}
 
-\macroname{\textbackslash gre@makein}{\#1}{gregoriotex-spaces.tex}
-Strips the decimals and units from a distance.
+\macroname{\textbackslash gre@strip@pt}{\#1}{gregoriotex.sty \textup{and} gregoriotex.tex}
+Strips the units from a distance.  Under \LaTeX{}, this is an alias to \verb=\strip@pt=.
 
 \begin{argtable}
-	\#1 & distance & should be in the form ``[0-9]+.[0-9]+pt’’. (\ie the result of applying \verb=\the= to a distance register)
+	\#1 & control sequence & should be the control sequence for the the distance register (including the leading backslash)\\
 \end{argtable}
 
-\macroname{\textbackslash gre@makenum}{\#1}{gregoriotex-spaces.tex}
-Strips the units from a distance. 
+\macroname{\textbackslash gre@rem@pt}{\#1}{gregoriotex.tex}
+Strips the units from a distance.  Used internally by \verb=\gre@strip@pt=.  Under \LaTeX{}, this is not defined.
 
 \begin{argtable}
-	\#1 & distance & should be in the form ``[0-9]+.[0-9]+pt’’. (\ie the result of applying \verb=\the= to a distance register)
+	\#1 & distance & should be in the form ``[0-9]+.[0-9]+pt’’. (\ie the result of applying \verb=\the= to a distance register)\\
 \end{argtable}
 
-\macroname{\textbackslash gre@unitfactor}{}{gregoriotex-spaces.tex}
-Temporary count used by \verb=\gre@convertto=.
-
-\macroname{\textbackslash gre@basefactor}{}{gregoriotex-spaces.tex}
-Temporary count used by \verb=\gre@convertto=.
-
-\macroname{\textbackslash gre@count@temp@**}{}{gregoriotex-spaces.tex}
+\macroname{\textbackslash gre@count@temp@...}{}{gregoriotex-spaces.tex}
 Temporary count used in calculations.  There are currently three of these.
 
 \macroname{\textbackslash gre@convertto}{\#1\#2}{gregoriotex-spaces.tex}
@@ -259,22 +259,14 @@ optional argument.
 	\#1 & string & Snippet of gabc code.\\
 \end{argtable}
 
-\macroname{\textbackslash gre@gabcsnippet@option}{[\#1]\#2}{gregoriotex-main.tex}
-Macro that handles \verb=\gabcsnippet= calls when they have an optional
-argument.
+\macroname{\textbackslash gre@writemode}{\#1\#2\#3}{gregoriotex-main.tex}
+Macro that writes its arguments with \verb=\greannotation=.  This
+macro is typically called by \verb=\GreMode= in the gtex file.
 
 \begin{argtable}
-	\#1 & int & Value of initial style to be passed to gregorio \\
-	\#2 & string & Snippet of gabc code.\\
-\end{argtable}
-
-\macroname{\textbackslash gre@writemode}{\#1}{gregoriotex-main.tex}
-Macro that writes its argument with \verb=\greannotation=. The
-argument typically is given to this macro by \verb=\GreMode= in the
-gtex file.
-
-\begin{argtable}
-	\#1 & string & Text to place above the initial of a score.\\
+	\#1 & \TeX\ code & Mode text to place above the initial of a score in the \texttt{modeline} style.\\
+	\#2 & \TeX\ code & Arbitrary code to typeset, in the \texttt{modemodifier} style, after the mode text.\\
+	\#3 & \TeX\ code & Arbitrary code to typeset, in the \texttt{modedifferentia} style, after \#2.\\
 \end{argtable}
 
 \macroname{\textbackslash gre@brace@common}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
@@ -321,7 +313,7 @@ Draws a round under-brace using \MP{}.
 	\#1 & length & the width of the brace.
 \end{argtable}
 
-\macroname{\textbackslash gre@draw@roundbrace}{\#1}{gregoriotex-signs.tex}
+\macroname{\textbackslash gre@draw@roundbrace}{\#1\#2\#3}{gregoriotex-signs.tex}
 Draws a round over- or under-brace using \MP{}.
 
 \begin{argtable}
@@ -329,6 +321,17 @@ Draws a round over- or under-brace using \MP{}.
 	\#2 & number         & the height of the bounding box in em-relative units.\\
 	\#3 & \MP{} commands & \MP{} commands to draw the brace outline.
 \end{argtable}
+
+\macroname{\textbackslash gre@draw@slur}{\#1\#2\#3}{gregoriotex-signs.tex}
+Draws a slur using \MP{}.
+
+\begin{argtable}
+	\#1 & length      & the x-dimension of the slur.\\
+	\#2 & length      & the y-dimension of the slur.\\
+	\#3 & \texttt{-1} & draw an under-the-notes slur.\\
+			& \texttt{1}  & draw an over-the-notes slur.\\
+\end{argtable}
+
 
 \macroname{\textbackslash gre@iflatex}{\#1}{gregoriotex.sty \textup{and} gregoriotex.tex}
 Evaluates to \verb=#1= if running under \LaTeX{}.
@@ -369,13 +372,37 @@ Macro to pick the appropriate custos character.
 	\#1 & integer & height of the custos character to be placed\\
 \end{argtable}
 
+\macroname{\textbackslash gre@nextcustos}{}{gregoriotex-signs.tex}
+Macro that saves the next custos height.
+
+\macroname{\textbackslash gre@beginnotes}{}{gregoriotex-main.tex}
+Macro to draw the staff lines.  Comes after the initial but before the clef.
+
+\macroname{\textbackslash gre@noinitial}{}{gregoriotex-main.tex}
+Macro called when no initial is being set.
+
+\macroname{\textbackslash gre@setbiginitial}{}{gregoriotex-main.tex}
+Macro which indicates that a 2-line initial is desired.
+
+\macroname{\textbackslash gre@setinitial}{\#1}{gregoriotex-main.tex}
+Macro to set the initial in the score.
+
+\macroname{\textbackslash gre@adjustsecondline}{}{gregoriotex.tex}
+Macro to call before first syllable, but after \verb=\GreSetInitialClef=.
+
+\macroname{\textbackslash gre@adjustthirdline}{}{gregoriotex-main.tex}
+Macro to call during the second line.
+
+\macroname{\textbackslash gre@adjustlineifnecessary}{}{gregoriotex-main.tex}
+Macro that calls \verb=\gre@adjustthirdline= if indicated by \verb=\ifgre@thirdlineadjustmentnecessary=.
+
 \macroname{\textbackslash gre@addspaceabove}{}{gregoriotex-main.tex}
 Macro to increase the space above the lines to account for above lines text.
 
 \macroname{\textbackslash gre@removespaceabove}{}{gregoriotex-main.tex}
 Macro to decrease the space above the lines as there is no longer any above lines text.
 
-\macroname{\textbackslash gre@alteration}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
+\macroname{\textbackslash gre@alteration}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
 Macro to typeset an alteration.
 
 \begin{argtable}
@@ -384,21 +411,28 @@ Macro to typeset an alteration.
 	\#3 & character alias & the hole of the alteration\\
 	\#4 & \texttt{1} & the alteration is a flat for a key change\\
 	& \texttt{0} & all other cases\\
+	\#5 & \TeX\ code & signs to typeset before the glyph (typically additional bars, as they must be "behind" the glyph)\\
+	\#6 & \TeX\ code & signs to typeset after the glyph (almost all signs)\\
+	\#7 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled\\
 \end{argtable}
 
-\macroname{\textbackslash gre@calculate@clefnum}{\#1\#2}{gregoriotex-signs.tex}
-Macro calculating the \verb=\gre@clefnum= from the letter and number.
+\macroname{\textbackslash gre@clef}{}{gregoriotex-signs.tex}
+Macro holding the current clef type.
 
-\begin{argtable}
-	\#1 & charcter & type of clef (\texttt{c} or \texttt{f})\\
-	\#2 & integer & line number\\
-\end{argtable}
+\macroname{\textbackslash gre@clefheight}{}{gregoriotex-signs.tex}
+Macro holding the current clef line.
 
-\macroname{\textbackslash gre@clefnum}{}{gregoriotex-signs.tex}
-Count holding the current clef number.
+\macroname{\textbackslash gre@clefflatheight}{}{gregoriotex-signs.tex}
+Macro to hold the height of the current flat for the clef (\texttt{3} if no flat).
 
-\macroname{\textbackslash gre@clefflat}{}{gregoriotex-signs.tex}
-Macro to hold the height of the current flat for the clef (\texttt{a} if no flat).
+\macroname{\textbackslash gre@cleftwo}{}{gregoriotex-signs.tex}
+Macro holding the current secondary clef type.
+
+\macroname{\textbackslash gre@cleftwoheight}{}{gregoriotex-signs.tex}
+Macro holding the current secondary clef line (or 0 for no secondary clef).
+
+\macroname{\textbackslash gre@cleftwoflatheight}{}{gregoriotex-signs.tex}
+Macro to hold the height of the current flat for the secondary clef (\texttt{3} if no flat).
 
 \macroname{\textbackslash gre@updatelinesclef}{}{gregoriotex-signs.tex}
 Macro redrawing a key from \verb=\gre@clefnum=, useful for vertical space changes.
@@ -457,6 +491,21 @@ Macro called at end of a syllable, adds a penalty and a space.
 	\#3 & \texttt{1} & if next syllable is a bar\\
 	& \texttt{0} & otherwise\\
 \end{argtable}
+
+\macroname{\textbackslash gre@setfirstsyllabletext}{\#1\#2\#3\#4\#5\#6}{gregoriotex-syllable.tex}
+Internal macro to set the first syllable text after all parts are known.
+
+\begin{argtable}
+	\#1 & \TeX\ code & First part of the syllable (before the vowel)\\
+	\#2 & \TeX\ code & Middle part of the syllable (the vowel)\\
+	\#3 & \TeX\ code & Last part of the syllable (after the vowel)\\
+	\#4 & \TeX\ code & First letter of the syllable\\
+	\#5 & \TeX\ code & Everything after the first letter of the syllable\\
+	\#6 & \TeX\ code & Macros to run after the text is emitted\\
+\end{argtable}
+
+\macroname{\textbackslash gre@opening@syllabletext}{}{gregoriotex-syllable.tex}
+Macro that stores the computed \TeX\ code for rendering the text of the first syllable.
 
 \macroname{\textbackslash gre@exhyphencharsave}{}{gregoriotex-main.tex}
 Macro for saving the ex hyphen character so that it can be restored at the end of the score.
@@ -518,6 +567,7 @@ Macro to typeset a horizontal line (either an additional staff line or an episem
 	& \texttt{1} & stay at the end of the glyph; doesn’t make much sense to use this\\
 	& \texttt{2} & go back the width of \#1; this starts the episema at the glyph from the end that starts at \#1’s width from the end\\
 	& \texttt{3} & go back to the beginning of the previous glyph and then forward the width of \#1; this starts the episema at the glyph from the start that starts just after \#1’s width from the start\\
+	& \texttt{4} & go back to the beginning of the previous glyph and then forward the width of \#1, then back the width of \#2; this ends the episema at the end of \#1\\
 	\#3 & integer &the ambitus for a two note episema at the diagonal stroke of a porrectus, porrectus flexus, orculus resupinus, or torculus resupinus flexus\\
 	\#4 & \texttt{0} & an horizontal episema\\
 	& \texttt{1} & an horizontal episema under a note\\
@@ -587,8 +637,14 @@ Macro called at the end of the score to ensure that a big initial setting doesn�
 \macroname{\textbackslash greoldcatcode}{}{gregoriotex.tex}
 Macro to store the catcode for ``@'' so that we can use said symbol in function names under Plain \TeX\ and then restore the original catcode after the package is done loading.
 
+\macroname{\textbackslash gre@prephepisemaledgerlineheuristics}{}{gregoriotex-spaces.tex}
+Prepares the system to accept ledger line heuristics for the horizontal episema.
+
 \macroname{\textbackslash gre@reseteolcustos}{}{gregoriotex-main.tex}
 Alias that resets the use of automatic custos to the value set by \verb=\greseteolcustos=.  This macro is aliased to \verb=\gre@useautoeolcustos= or \verb=\gre@usemanualeolcustos= by \verb=\greseteolcustos=.
+
+\macroname{\textbackslash gre@resetledgerlineheuristics}{}{gregoriotex-spaces.tex}
+Resets the ledger line heuristic flags.
 
 \macroname{\textbackslash gre@setstylefont}{}{gregoriotex-main.tex}
 Macro for opening up greextra font.
@@ -606,17 +662,43 @@ The font size at which symbols are to be loaded.
 \macroname{\textbackslash gre@textnormal}{\#1}{gregoriotex-syllable.tex}
 Macro which applies the default text format.
 
-\macroname{\textbackslash gre@typekey}{\#1\#2\#3\#4\#5}{gregoriotex-signs.tex}
-Macro which typesets the key.
+\macroname{\textbackslash gre@save@clef}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
+Saves clef information for use in \verb=gre@updatelinesclef=.
 
 \begin{argtable}
-	\#1 & character & the type of the key: c or f\\
-	\#2 & integer & the line of the key (1 is the lowest)\\
-	\#3 & \texttt{0} & no need to use small key characters (inside a line)\\
-	& \texttt{1} & we must use small key characters (inside a line)\\
-	\#4 & \texttt{0} & no extra space is needed after the key\\
-	& \texttt{}1 & we must type a space after the key\\
-	\#5 & integer & if \texttt{3}, it means that we must not put a flat after the key, otherwise it’s the height of the flat\\
+	\#1 & character & the type of the clef: c or f\\
+	\#2 & integer & the line of the clef (1 is the lowest)\\
+	\#3 & integer & if \texttt{3}, it means that we must not put a flat after the clef, otherwise it’s the height of the flat\\
+	\#4 & character & the type of the secondary clef: c or f\\
+	\#5 & integer & the line of the secondary clef (1 is the lowest, 0 for no secondary clef)\\
+	\#6 & integer & if \texttt{3}, it means that we must not put a flat after the secondary clef, otherwise it’s the height of the flat\\
+\end{argtable}	
+
+\macroname{\textbackslash gre@typeclef}{\#1\#2\#3\#4\#5\#6\#7\#8}{gregoriotex-signs.tex}
+Macro which typesets the clef.
+
+\begin{argtable}
+	\#1 & character & the type of the clef: c or f\\
+	\#2 & integer & the line of the clef (1 is the lowest)\\
+	\#3 & \texttt{0} & no need to use small clef characters (inside a line)\\
+	& \texttt{1} & we must use small clef characters (inside a line)\\
+	\#4 & \texttt{0} & no extra space is needed after the clef\\
+	& \texttt{}1 & we must type a space after the clef\\
+	\#5 & integer & if \texttt{3}, it means that we must not put a flat after the clef, otherwise it’s the height of the flat\\
+	\#6 & character & the type of the secondary clef: c or f\\
+	\#7 & integer & the line of the secondary clef (1 is the lowest, 0 for no secondary clef)\\
+	\#8 & integer & if \texttt{3}, it means that we must not put a flat after the secondary clef, otherwise it’s the height of the flat\\
+\end{argtable}	
+
+\macroname{\textbackslash gre@typesingleclef}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
+Macro which typesets a single clef.
+
+\begin{argtable}
+	\#1 & character & the type of the clef: c or f\\
+	\#2 & integer & the line of the clef (1 is the lowest)\\
+	\#3 & \texttt{0} & no need to use small clef characters (inside a line)\\
+	& \texttt{1} & we must use small clef characters (inside a line)\\
+	\#4 & integer & if \texttt{3}, it means that we must not put a flat after the clef, otherwise it’s the height of the flat\\
 \end{argtable}	
 
 \macroname{\textbackslash gre@updateleftbox}{}{gregoriotex-main.tex}
@@ -634,7 +716,7 @@ Macro which specifies the alternate glyphs which are common to all of the styles
 \macroname{\textbackslash gre@widthof}{\#1}{gregoriotex-main.tex}
 Macro for calculating the width of its argument and storing it in \verb=\gre@dimen@temp@three=.
 
-\macroname{\textbackslash gre@writebar}{\#1\#2\#3}{gregoriotex-signs.tex}
+\macroname{\textbackslash gre@writebar}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
 Macro to write a bar.
 
 \begin{argtable}
@@ -646,7 +728,9 @@ Macro to write a bar.
 	& \texttt{5} & the last finalis\\
 	\#2 & \texttt{0} & in a syllable containing only this bar\\
 	& \texttt{1} & in a syllable containing other notes\\
-	\#3 & \TeX\ code & macros that may happen before the skip after the bar (typically GreVEpisema)\\
+	\#3 & \texttt{0} & if there is no text underneath the bar\\
+	& \texttt{1} & if there is text underneath the bar\\
+	\#4 & \TeX\ code & macros that may happen before the skip after the bar (typically GreVEpisema)\\
 \end{argtable}
 
 \macroname{\textbackslash gre@@arg}{}{gregoriotex-syllable.tex}
@@ -663,6 +747,14 @@ Workhorse function behind \verb=\greannotation=.
 	& \texttt{l} & left align the new line with the existing annotation content\\
 	& \texttt{r} & right align the new line with the existing annotation content\\
 	\#2 & string & the new annotation content\\
+\end{argtable}
+
+\macroname{\textbackslash gre@commentary}{[\#1]\#2}{gregoriotex-main.tex}
+Workhorse function behind \verb=\grecommentary=.
+
+\begin{argtable}
+	\#1 & distance & Additional distance to be placed between the commentary and the top staff line for the next score only.\\
+	\#2 & string & the new commentary content\\
 \end{argtable}
 
 \macroname{\textbackslash gre@atletter}{}{gregoriotex-main.tex}
@@ -691,7 +783,7 @@ Macro used in \verb=\GreSyllable=. Sets \verb=\gre@skip@bolshift= to the left ke
 \end{argtable}
 
 \macroname{\textbackslash gre@calculate@eolshift}{\#1}{gregoriotex-spaces.tex}
-Macro used in \verb=\GreSyllable=. Sets \verb=\gre@skip@eolshift= to the left kern that
+Macro used in \verb=\GreSyllable=. Sets \verb=\gre@dimen@eolshift= to the left kern that
 should appear before an end of line. The improvement is tiny: when
 text go further than notes in the last syllable of a line, the idea
 is to allow text to go a bit further right, under the custos.  This shift is applied to the left after every syllable and then to the right after setting the line break penalty.  If the line break occurs after this syllable, it will occur between the two shifts, pushing the shift right to the beginning of the next line where \TeX\ will ignore it as leading white space.
@@ -770,15 +862,26 @@ desired case.
 	\#1 & \texttt{0} & Default space.\\
 	& \texttt{1} & Zero-width space.\\
 	& \texttt{2} & Space between flat or natural and a note.\\
-	& \texttt{3} & Space between two puncta inclinata.\\
+	& \texttt{3} & Space between two puncta inclinata, descending.\\
 	& \texttt{4} & Space between bivirga or trivirga.\\
 	& \texttt{5} & space between bistropha or tristropha.\\
 	& \texttt{6} & Space after a punctum mora XXX: not used yet, not so sure it is a good idea\ldots\\
-	& \texttt{7} & Space between a punctum inclinatum and a punctum inclinatum debilis.\\
+	& \texttt{7} & Space between a punctum inclinatum and a punctum inclinatum debilis, descending.\\
 	& \texttt{8} & Space between two puncta inclinata debilis.\\
 	& \texttt{9} & Space before a punctum (or something else) and a punctum inclinatum.\\
-	& \texttt{10} & Space between puncta inclinata (also debilis for now), larger ambitus (range=3rd).\\
-	& \texttt{11} & Space between puncta inclinata (also debilis for now), larger ambitus (range=4th or more).\\
+	& \texttt{10} & Space between puncta inclinata (also debilis for now), larger ambitus (range=3rd), descending.\\
+	& \texttt{11} & Space between puncta inclinata (also debilis for now), larger ambitus (range=4th or 5th), descending.\\
+	& \texttt{12} & Space between two puncta inclinata, ascending. \\
+	& \texttt{13} & Space between a punctum inclinatum and a punctum inclinatum debilis, ascending. \\
+	& \texttt{14} & Space between puncta inclinata (also debilis for now), larger ambitus (range=3rd), ascending. \\
+	& \texttt{15} & Space between puncta inclinata (also debilis for now), larger ambitus (range=4th or 5th), ascending. \\
+	& \texttt{16} & Space between a punctum inclinatum and a ``no-bar'' glyph one pitch below. \\
+	& \texttt{17} & Space between a punctum inclinatum and a ``no-bar'' glyph two pitches below. \\
+	& \texttt{18} & Space between a punctum inclinatum and a ``no-bar'' glyph three or four pitches below \\
+	& \texttt{19} & Space between a punctum inclinatum and a ``no-bar'' glyph one pitch above. \\
+	& \texttt{20} & Space between a punctum inclinatum and a ``no-bar'' glyph two pitches above. \\
+	& \texttt{21} & Space between a punctum inclinatum and a ``no-bar'' glyph three or four pitches above \\
+	& \texttt{22} & Half-space. \\
 \end{argtable}
 
 \macroname{\textbackslash gre@nabcfontname}{}{gregoriotex-main.tex}
@@ -843,7 +946,7 @@ Macro to set the point-and-click position for above lines text.
 \macroname{\textbackslash gre@mark@translation}{}{gregoriotex-main.tex}
 Macro to set the point-and-click position for translations.
 
-\macroname{\textbackslash gre@pitch@[a-p]}{}{gregoriotex-main.tex}
+\macroname{\textbackslash gre@pitch@[a-n,p]}{}{gregoriotex-main.tex}
 Macros which map gabc pitch letters (the final part of the macro name) to the numerical value that Gregorio\TeX\ uses in processing note placement.
 
 \macroname{\textbackslash gre@pitch@adjust@top}{}{gregoriotex-main.tex}
@@ -851,6 +954,39 @@ If any note appears above this pitch, the space above the lines must be adjusted
 
 \macroname{\textbackslash gre@pitch@adjust@bottom}{}{gregoriotex-main.tex}
 If any note appears below this pitch, the space below the lines must be adjusted to account for it.
+
+\macroname{\textbackslash gre@pitch@abovestaff}{}{gregoriotex-main.tex}
+The pitch above the staff.
+
+\macroname{\textbackslash gre@pitch@belowstaff}{}{gregoriotex-main.tex}
+The pitch below the staff.
+
+\macroname{\textbackslash gre@pitch@ledger@above}{}{gregoriotex-main.tex}
+The pitch of the ledger line above the staff.
+
+\macroname{\textbackslash gre@pitch@ledger@below}{}{gregoriotex-main.tex}
+The pitch of the ledger line below the staff.
+
+\macroname{\textbackslash gre@pitch@barvepisema}{}{gregoriotex-main.tex}
+The pitch of the bar episema.
+
+\macroname{\textbackslash gre@pitch@underbrace}{}{gregoriotex-main.tex}
+The pitch of the under-the-staff brace.
+
+\macroname{\textbackslash gre@pitch@overbrace}{}{gregoriotex-main.tex}
+The pitch of the over-the-staff brace.
+
+\macroname{\textbackslash gre@pitch@overbraceglyph}{}{gregoriotex-main.tex}
+The pitch of the over-the-staff brace glyph.
+
+\macroname{\textbackslash gre@pitch@bar}{}{gregoriotex-main.tex}
+The pitch of the bar glyph.
+
+\macroname{\textbackslash gre@pitch@raresign}{}{gregoriotex-main.tex}
+The pitch of a rare sign (semicirculus, \etc).
+
+\macroname{\textbackslash gre@pitch@dummy}{}{gregoriotex-main.tex}
+A meaningless (don't-care) pitch.
 
 \macroname{\textbackslash gre@pointandclick}{\#1\#2}{gregoriotex-main.tex}
 Macro to generate the point-and-click links.
@@ -918,6 +1054,71 @@ Alias for \verb=\resizebox=.
 \macroname{\textbackslash gre@dimension}{}{gregoriotex-spaces.tex}
 Workhorse function behind \verb=\grecreatedim= and \verb=\grechangedim=.
 
+\macroname{\textbackslash gre@setstafflines}{\#1}{gregoriotex-main.tex}
+Sets the number of staff lines.
+
+\begin{argtable}
+	\#1 & integer & The number of staff lines\\
+\end{argtable}
+
+\macroname{\textbackslash gre@stafflines}{}{gregoriotex-main.tex}
+Contains the number of staff lines.
+
+\macroname{\textbackslash gre@romannumeral@majuscule}{\#1}{gregoriotex-main.tex}
+Typesets its numeric argument as an upper-case Roman numeral.
+
+\begin{argtable}
+	\#1 & integer & The number to typeset\\
+\end{argtable}
+
+\macroname{\textbackslash gre@romannumeral@minuscule}{\#1}{gregoriotex-main.tex}
+Typesets its numeric argument as a lower-case Roman numeral.
+
+\begin{argtable}
+	\#1 & integer & The number to typeset\\
+\end{argtable}
+
+\macroname{\textbackslash gre@bar@text}{\#1}{gregoriotex-symbols.tex}
+Macro used to switch between spacings where bar has text and those where it doesn't.
+
+\begin{argtable}
+	\#1 & \texttt{0} & emits nothing\\
+	& \texttt{1} emits \texttt{text}\\
+\end{argtable}
+
+\macroname{\textbackslash gre@drawadditionalline}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
+Workhorse function behind \verb=\GreDrawAdditionalLine=.
+
+\begin{argtable}
+	\#1 & \texttt{0} & Draw an over-the-staff ledger line. \\
+			& \texttt{1} & Draw an under-the-staff ledger line. \\
+	\#2 & distance   & The length of the line, with TeX units, excluding any left or right distances coming from the rest of the arguments. \\
+	\#3 & \texttt{0} & Start the line at this point. \\
+			& \texttt{1} & Start the line to the left of this point by \verb=gre@dimen@additionallineswidth=. \\
+			& \texttt{2} & Start the line to the left of this point by \#4. \\
+	\#4 & distance   & The distance to move left before starting the line if \#3 is \texttt{2}. \\
+	\#5 & \texttt{0} & End the line exactly \#2 to the right of this point. \\
+			& \texttt{1} & End the line \verb=gre@dimen@additionallineswidth= to the right of \#2 from this point. \\
+			& \texttt{2} & End the line \#6 to the right of \#2 from this point. \\
+	\#6 & distance   & The distance to end the line after \#2 from this point if \#3 is \texttt{2}. \\
+\end{argtable}
+
+\macroname{\textbackslash gre@kern@bar@aftermora}{}{gregoriotex-signs.tex}
+Macro which kerns between a punctum mora and a kern according to the setting in \verb=\gre@count@barshiftaftermora=.
+
+\macroname{\textbackslash gre@setgregoriofontscaled}{[\#1]\#2\#3}{gregoriotex-main.tex}
+Workhorse behind \verb=\gresetgregoriofontscaled=.
+
+\begin{argtable}
+	\#1 & \textit{(omitted)} & Use the normal font and rule set.\\
+	& \texttt{op} & Use the alternate Dominican font/rule set.\\
+	\#2 & \texttt{greciliae} & Use the Greciliae font (default).\\
+	& \texttt{gregorio} & Use the Gregorio font.\\
+	& \texttt{parmesan} & Use the Parmesan font.\\
+	\#3 & integer & the scaling factor\\
+\end{argtable}
+
+
 \subsection{Auxiliary File}
 Gregorio\TeX\ creates its own auxiliary file (extension \texttt{gaux}) which it uses to store information between successive typesetting runs.  This allows for such features as the dynamic interline spacing.  The following functions are used to interact with that auxiliary file.
 
@@ -950,11 +1151,11 @@ The font for some of the extra characters, such as the bar for barred letters.
 \macroname{\textbackslash gre@font@nabc}{}{gregoriotex-nabc.tex}
 The font for ancient notation.
 
-\macroname{\textbackslash gre@font@biginitial}{}{gregoriotex.tex}
-The font for the default big initial format in Plain \TeX.
-
 \macroname{\textbackslash gre@font@initial}{}{gregoriotex.tex}
 The font for the default initial format in Plain \TeX.
+
+\macroname{\textbackslash gre@fontfactor@...}{}{gregoriotex-main.tex}
+Macro holding the factor at which the font is loaded.  There is one of these macros for each chant font which has been loaded with the ending of the macro name being the name of the chant font (gregorio, parmesan, \etc).
 
 
 \subsection{Character Reference Aliases}
@@ -1084,6 +1285,15 @@ All distances in \nameref{distances} and \texttt{stafflinefactor} have a boolean
 indicates if the distance should scale when the staff size changes (true)
 or not (false).
 
+\macroname{\textbackslash ifgre@annotationbottomline}{}{gregoriotex-main.tex}
+Boolean used to indicate if the bottom line of the annotation should be used as the control line for its initial vertical alignment.
+
+\macroname{\textbackslash gre@count@annotationvalign}{}{gregoriotex-main.tex}
+Count used to indicate which part of the annotation control line should be initially aligned with the top line of the staff.  Values: \texttt{0}, top; \texttt{1}, baseline; or \texttt{2}, bottom.
+
+\macroname{\textbackslash ifgre@forcehyphen}{}{gregoriotex-main.tex}
+Boolean used to indicate if hyphens should be forced between all syllables in a polysyllabic word.
+
 \macroname{\textbackslash ifgre@checklength}{}{gregoriotex-spaces.tex}
 Boolean used in \verb=\gresetdim= to indicate if we are attempting to set a rubber length.
 
@@ -1163,11 +1373,20 @@ Boolean which indicates if the most recent note was a punctum mora.
 \macroname{\textbackslash ifgre@lastispunctumsave}{}{gregoriotex-signs.tex}
 Boolean for storing \verb=\ifgre@lastispunctum= so that it can be restored later.
 
+\macroname{\textbackslash ifgre@ledgerline@above}{}{gregoriotex-spaces.tex}
+Boolean which indicates whether the system should act as if there is a ledger line above the staff.
+
+\macroname{\textbackslash ifgre@ledgerline@below}{}{gregoriotex-spaces.tex}
+Boolean which indicates whether the system should act as if there is a ledger line below the staff.
+
 \macroname{\textbackslash gre@nlbstate}{}{gregoriotex-main.tex}
 Macro which indicates if we are in a no line break area due to translation centering (\texttt{1}), an explicit no line break designation in the gabc (\texttt{2}), or not at all (\texttt{0}).
 
 \macroname{\textbackslash gre@nlbinitialstate}{}{gregoriotex-main.tex}
 Macro to store \verb=\gre@nlbstate= as we initialize or end a no line break area so that we can manipulate said flag as part of the process.
+
+\macroname{\textbackslash ifgre@useledgerlineheuristic}{}{gregoriotex-spaces.tex}
+Boolean which specifies whether ledger line heuristics will be used or not.
 
 \macroname{\textbackslash ifgre@usestylefont}{}{gregoriotex-main.tex}
 Boolean which specifies whether the style font should be loaded or not.
@@ -1189,6 +1408,12 @@ Count to indicated if the spacing between lines should be variable (\texttt{1}) 
 
 \macroname{\textbackslash ifgre@blockeolcustos}{}{gregoriotex-main.tex}
 Boolean which indicates whether the custos at the end of the line should be blocked.
+
+\macroname{\textbackslash ifgre@blockeolcustosbeforeeuouae}{}{gregoriotex-main.tex}
+Boolean which indicates whether the custos at the end of the line should be blocked if a EUOUAE block immediately follows.
+
+\macroname{\textbackslash ifgre@raggedbreakbeforeeuouae}{}{gregoriotex-main.tex}
+Boolean which indicates whether an automatic line break immediately before a EUOUAE block should be ragged.
 
 \macroname{\textbackslash ifgre@breakintranslation}{}{gregoriotex-main.tex}
 Boolean which indicates if line breaks are allowed inside a translation.
@@ -1217,9 +1442,26 @@ Boolean which indicates that a hyphen after an empty first syllable should be fo
 \macroname{\textbackslash ifgre@showhyphenafterthissyllable}{}{gregoriotex-syllable.tex}
 Boolean used by \verb=\GreSyllable= to decide if a hyphen should be shown after the syllable.
 
+\macroname{\textbackslash ifgre@thirdlineadjustmentnecessary}{}{gregoriotex-syllable.tex}
+Boolean which indicates that a third-line adjustment to staff line width is necessary.
+
 \macroname{\textbackslash ifgre@scale@stafflinefactor}{}{gregoriotex-spaces.tex}
 Boolean indicating whether the stafflinefactor should scale with changes of \texttt{grefactor}, or not.
 
+\macroname{\textbackslash ifgre@haslinethree}{}{gregoriotex-spaces.tex}
+Boolean indicating whether the staff has a third line.
+
+\macroname{\textbackslash ifgre@haslinefour}{}{gregoriotex-spaces.tex}
+Boolean indicating whether the staff has a fourth line.
+
+\macroname{\textbackslash ifgre@haslinefive}{}{gregoriotex-spaces.tex}
+Boolean indicating whether the staff has a fifth line.
+
+\macroname{\textbackslash gre@count@barshiftaftermora}{}{gregoriotex-signs.tex}
+Count indicating when the presence of a punctum mora immediately before a bar line should affect the spacing.
+
+\macroname{\textbackslash ifgre@allowdeprecated}{}{gregoriotex.sty \textup{and} gregoriotex.tex}
+Boolean which controls whether deprecated functions raise a warning (true) or an error (false).
 
 
 \subsection{Boxes}
@@ -1238,17 +1480,26 @@ Box which holds the initial of the score.
 \macroname{\textbackslash gre@box@annotation}{}{gregoriotex-main.tex}
 Box holding the annotation which goes above the initial.
 
-\macroname{\textbackslash gre@box@annotation@add}{}{gregoriotex-main.tex}
-Box used for the new line to be added to the annotation.
+\macroname{\textbackslash gre@box@commentary}{}{gregoriotex-main.tex}
+Box holding the commentary which goes above the first staff line on the right.
 
-\macroname{\textbackslash gre@box@annotation@old}{}{gregoriotex-main.tex}
-Box used for the existing lines in the annotation when a new line is being added.
+\macroname{\textbackslash gre@box@add}{}{gregoriotex-main.tex}
+Box used for the new line to be added to the box being built (used in multi-line commentaries and annotations).
+
+\macroname{\textbackslash gre@box@old}{}{gregoriotex-main.tex}
+Box used for the existing lines in the box being build when a new line is being added (used in multi-line commentaries and annotations).
 
 \macroname{\textbackslash gre@box@lines}{}{gregoriotex-main.tex}
 Box holding the staff lines.
 
 \macroname{\textbackslash gre@box@temp@sign}{}{gregoriotex-signs.tex}
 Box to hold a sign so we can measure it for placement.
+
+\macroname{\textbackslash gre@box@temp@clef}{}{gregoriotex-signs.tex}
+Box for holding (and measuring) the clef when stacking non-overlapping clefs.
+
+\macroname{\textbackslash gre@box@temp@cleftwo}{}{gregoriotex-signs.tex}
+Box for holding (and measuring) the secondary clef when stacking non-overlapping clefs.
 
 \macroname{\textbackslash gre@box@syllablenotes}{}{gregoriotex-syllable.tex}
 Box holding the notes associated with a syllable.
@@ -1260,10 +1511,13 @@ Box holding the text associated with a syllable.
 Box holding the horizontal episema.
 
 
+
 \subsection{Distances}
-All of the distances listed in \nameref{distances} have an internal
-associated with them, of the form of \verb=\gre@*@*=, which stores the value of the distance (in
-string representation).  The first wildcard is either \texttt{skip} or \texttt{dimen} according to the distance type, while the second is the name of the distance.
+All of the distances listed in \nameref{distances} have an internal associated
+with them, of the form of \verb=\gre@space@*@*=, which stores the value of the
+distance (in string representation).  The first wildcard is either
+\texttt{skip} or \texttt{dimen} according to the distance type, while the
+second is the name of the distance.
 
 These additional distances are calculated by Gregorio based on the values for the user customizable distances and what may be going on in the score at the time of their use.
 
@@ -1324,9 +1578,6 @@ The space between the lines.
 \macroname{\textbackslash gre@dimen@glyphraisevalue}{}{gregoriotex-spaces.tex}
 The value that a particular glyph must be raised to be set in the correct position.
 
-\macroname{\textbackslash gre@dimen@addedraisevalue}{}{gregoriotex-spaces.tex}
-The additional raise needed for the vertical episema and the puncta.
-
 \macroname{\textbackslash gre@dimen@enddifference}{}{gregoriotex-spaces.tex}
 Distance from the end of the notes to the end of the text for the previous syllable.  Positive values when notes go further than text, negative in the other case.
 
@@ -1345,25 +1596,16 @@ The width of the last glyph.
 \macroname{\textbackslash gre@dimen@notesaligncenter}{}{gregoriotex-spaces.tex}
 Distance from beginning of notes to their point of alignment.
 
-\macroname{\textbackslash gre@dimen@temp@**}{}{gregoriotex-spaces.tex}
+\macroname{\textbackslash gre@dimen@temp@...}{}{gregoriotex-spaces.tex}
 Temporary dimensions used in calculations.  There are currently five of these.
 
-\macroname{\textbackslash gre@skip@temp@**}{}{gregoriotex-spaces.tex}
+\macroname{\textbackslash gre@skip@temp@...}{}{gregoriotex-spaces.tex}
 Temporary skips used in calculations.  There are currently four of these.
-
-\macroname{\textbackslash gre@unit}{}{gregoriotex-spaces.tex}
-Temporary dimension used by \verb=\gre@convertto=.
-
-\macroname{\textbackslash gre@base}{}{gregoriotex-spaces.tex}
-Temporary dimension used by \verb=\gre@convertto=.
-
-\macroname{\textbackslash gre@maxlen}{}{gregoriotex-spaces.tex}
-Distance holding the maximum legal length in TeX.
 
 \macroname{\textbackslash gre@dimen@savedglyphraise}{}{gregoriotex-signs.tex}
 Macro to hold the value of the glyph raise so that it can be restored after some calculations which may change it are performed.
 
-\macroname{\textbackslash gre@skip@eolshift}{}{gregoriotex-spaces.tex}
+\macroname{\textbackslash gre@dimen@eolshift}{}{gregoriotex-spaces.tex}
 The left kern that should appear before an end of line.
 
 \macroname{\textbackslash gre@dimen@bolshift}{}{gregoriotex-spaces.tex}
@@ -1374,6 +1616,9 @@ An extra space that is added to \verb=\gre@dimen@bolshift= when the first glyph 
 
 \macroname{\textbackslash gre@dimen@annotationtrueraise}{}{gregoriotex-spaces.tex}
 The distance from the baseline of the initial to the baseline of the annotation.
+
+\macroname{\textbackslash gre@dimen@commentarytrueraise}{}{gregoriotex-spaces.tex}
+The distance from the baseline of the initial to the baseline of the commentary.
 
 \macroname{\textbackslash gre@minTextDistance}{}{gregoriotex-spaces.tex}
 Minimum distance between text (meaningful alias for \verb=\gre@skip@temp@one= inside \verb=\gre@calculate@syllablefinalskip=).
@@ -1402,6 +1647,9 @@ Working alias for \verb=\gre@skip@temp@one= or \verb=\gre@dimen@temp@one=, as ap
 \macroname{\textbackslash gre@skip@syllablefinalskip}{}{gregoriotex-spaces.tex}
 The final distance to skip at the end of a syllable.
 
+\macroname{\textbackslash greslurheight}{}{gregoriotex-signs.tex}
+Stores the computed height of a variable-length slur.  The control sequence name
+does not have the \texttt{@} symbol because this dimension is used within \MP{}.
 
 \subsection{Penalties}
 These are the macros that Gregorio\TeX\ uses to manipulate the penalties in order to control line and page breaks within a score without affect the surrounding text.

@@ -57,23 +57,28 @@ typedef struct det_style {
 
 gregorio_character *gregorio_first_text(gregorio_score *score);
 
-void gregorio_write_text(bool skip_initial,
-        gregorio_character *current_character,
-        FILE *f, void (*printverb) (FILE *, grewchar *),
+typedef enum gregorio_write_text_phase {
+    WTP_NORMAL,
+    WTP_FIRST_SYLLABLE
+} gregorio_write_text_phase;
+
+void gregorio_write_text(gregorio_write_text_phase phase,
+        const gregorio_character *current_character, FILE *f,
+        void (*printverb) (FILE *, grewchar *),
         void (*printchar) (FILE *, grewchar),
         void (*begin) (FILE *, grestyle_style),
         void (*end) (FILE *, grestyle_style),
         void (*printspchar) (FILE *, grewchar *));
 
-void gregorio_write_first_letter_alignment_text(bool skip_initial,
-        gregorio_character *current_character,
-        FILE *f, void (*printverb) (FILE *, grewchar *),
+void gregorio_write_first_letter_alignment_text(gregorio_write_text_phase phase,
+        const gregorio_character *current_character, FILE *f,
+        void (*printverb) (FILE *, grewchar *),
         void (*printchar) (FILE *, grewchar),
         void (*begin) (FILE *, grestyle_style),
         void (*end) (FILE *, grestyle_style),
         void (*printspchar) (FILE *, grewchar *));
 
-void gregorio_write_initial(gregorio_character *current_character,
+void gregorio_write_initial(const gregorio_character *current_character,
         FILE *f, void (*printverb) (FILE *, grewchar *),
         void (*printchar) (FILE *, grewchar),
         void (*begin) (FILE *, grestyle_style),

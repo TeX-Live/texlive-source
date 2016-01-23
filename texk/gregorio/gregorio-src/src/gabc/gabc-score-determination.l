@@ -28,6 +28,7 @@
 #include <string.h>
 #include "struct.h"
 #include "messages.h"
+#include "bool.h"
 #include "support.h"
 
 #include "gabc.h"
@@ -35,6 +36,7 @@
 #include "gabc-score-determination-y.h"
 
 static unsigned char style_stack = 0;
+static bool eof_found = false;
 
 #define YY_NO_INPUT
 
@@ -137,91 +139,78 @@ semicolon. */
          return DEF_MACRO;
     }
 <INITIAL>number-of-voices {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
          return NUMBER_OF_VOICES;
     }
 <INITIAL>name {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
          return NAME;
     }
 <INITIAL>score-copyright {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return SCORE_COPYRIGHT;
     }
 <INITIAL>gabc-copyright {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return GABC_COPYRIGHT;
     }
-<INITIAL>office-part {
-        return OFFICE_PART;
-    }
-<INITIAL>occasion {
-        return OCCASION;
-    }
-<INITIAL>meter {
-        return METER;
-    }
-<INITIAL>commentary {
-        return COMMENTARY;
-    }
-<INITIAL>arranger {
-        return ARRANGER;
-    }
-<INITIAL>gabc-version {
-        return GABC_VERSION;
-    }
 <INITIAL>initial-style {
+        /* DEPRECATED by 4.1 */
         return INITIAL_STYLE;
     }
 <INITIAL>mode {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return MODE;
     }
+<INITIAL>mode-modifier {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
+        return MODE_MODIFIER;
+    }
+<INITIAL>mode-differentia {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
+        return MODE_DIFFERENTIA;
+    }
 <INITIAL>annotation {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return ANNOTATION;
     }
 <INITIAL>author {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return AUTHOR;
     }
-<INITIAL>date {
-        return DATE;
-    }
-<INITIAL>manuscript {
-        return MANUSCRIPT;
-    }
-<INITIAL>manuscript-reference {
-        return MANUSCRIPT_REFERENCE;
-    }
-<INITIAL>manuscript-storage-place {
-        return MANUSCRIPT_STORAGE_PLACE;
-    }
-<INITIAL>book {
-        return BOOK;
-    }
-<INITIAL>transcriber {
-        return TRANSCRIBER;
-    }
-<INITIAL>generated-by {
-        return GENERATED_BY;
-    }
-<INITIAL>centering-scheme {
-        return CENTERING_SCHEME;
-    }
 <INITIAL>language {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return LANGUAGE;
     }
-<INITIAL>transcription-date {
-        return TRANSCRIPTION_DATE;
-    }
-<INITIAL>style {
-        return STYLE;
-    }
-<INITIAL>virgula-position {
-        return VIRGULA_POSITION;
-    }
-<INITIAL>gregoriotex-font {
-        return GREGORIOTEX_FONT;
+<INITIAL>staff-lines {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
+        return STAFF_LINES;
     }
 <INITIAL>nabc-lines {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
         return NABC_LINES;
     }
-<INITIAL>user-notes {
-        return USER_NOTES;
+<INITIAL>oriscus-orientation {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
+        return ORISCUS_ORIENTATION;
+    }
+<INITIAL>[A-Za-z0-9_]+(-[A-Za-z0-9_]+)* {
+        gabc_score_determination_lval.text =
+                gregorio_strdup(gabc_score_determination_text);
+        return OTHER_HEADER;
     }
 <INITIAL>--(.*) {
        return VOICE_CHANGE;
@@ -235,10 +224,13 @@ semicolon. */
                 _("unrecognized character: \"%c\" in definition part"),
                 gabc_score_determination_text[0]);
     }
-<score>[^\{\}\(\[\]<%]+ {
+<score>[^-\{\}\(\[\]<%]+ {
         gabc_score_determination_lval.text =
                 gregorio_strdup(gabc_score_determination_text);
         return CHARACTERS;
+    }
+<score>- {
+        return HYPHEN;
     }
 <score,style><i> {
         BEGIN(style);
@@ -422,6 +414,14 @@ semicolon. */
 <notes>\)(\ |\t|\n|\r)+ {
         BEGIN(score);
         return CLOSING_BRACKET_WITH_SPACE;
+    }
+<<EOF>> {
+        if (!eof_found) {
+            eof_found = true;
+            return END_OF_FILE;
+        } else {
+            yyterminate();
+        }
     }
 %%
 

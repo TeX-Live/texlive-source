@@ -4,7 +4,7 @@
 
 You can report a bug and request a new feature on the [bug tracker](https://github.com/gregorio-project/gregorio/issues).
 
-Please search for existing issues before reporting a new one. 
+Please search for existing issues before reporting a new one.
 
 Please do not use the issue tracker for personal support requests, instead use the mailing-list (https://gna.org/mail/?group=gregorio) or IRC: #gregorio on freenode.
 
@@ -63,7 +63,7 @@ Gregorio provides an [`.editorconfig` file](../.editorconfig), using an [editorc
 
 Python files must output no error when inspected by `pylint`.
 
-TeX code must use LuaTeX (more than TeX + eTeX + Omega + PDFTeX) primitives as much as possible, and, when not possible, use code compiling under PlainTeX.
+TeX code must use LuaTeX (more than TeX + eTeX + Omega + PDFTeX) primitives as much as possible, and, when not possible, use code compiling under PlainTeX. All lines inside macro definitions must end with `%` to avoid spurious spaces. To check that no line has been forgotten, please check that `grep -nE '^( |\\(|g|e|x)def)[^%]+$' tex/*.tex tex/*.sty` returns only Lua and metapost code or other lines where `%` is not needed.
 
 ### Tests
 

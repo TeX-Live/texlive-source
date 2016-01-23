@@ -165,20 +165,17 @@ switch between different behaviors: \par\medskip
 	\gregorioscore[a]{TecumPrincipium} % gabc auto compiled.
 \end{latexcode}
 
-\macroname{\textbackslash gabcsnippet}{[\optional{\#1}]\{\#2\}}{gregoriotex-main.tex}
-Converts the gabc notation specified in \texttt{\#2} to Gregorio\TeX\ and
-includes it directly in the document.  The optional argument \texttt{[\#1]}
-may be used to specify a gabc \texttt{initial-style}, which defaults to
-\texttt{1}.
+\macroname{\textbackslash gabcsnippet}{\{\#1\}}{gregoriotex-main.tex}
+Converts the gabc notation specified in \texttt{\#1} to Gregorio\TeX\ and
+includes it directly in the document.
 
 \begin{argtable}
-	\#1 & number & Optional.  The gabc \texttt{initial-style} value to use.\\
-	\#2 & string & The gabc to insert into the document.\\
+	\#1 & string & The gabc to insert into the document.\\
 \end{argtable}
 
 \medskip For example:\par\medskip
 \begin{latexcode}
-	\gabcsnippet[0]{(c3) Al(eg~)le(gv.fhg)lu(efe___)ia(e.) (::)}
+	\gabcsnippet{(c3) Al(eg~)le(gv.fhg)lu(efe___)ia(e.) (::)}
 \end{latexcode}
 
 
@@ -323,6 +320,30 @@ necessary.
 \end{framed}
 \end{small}
 
+\macroname{\textbackslash gresetledgerlineheuristic}{\{\#1\}}{gregoriotex-spaces.tex}
+Macro which enables or disables ledger line heuristics.  Currently, ledger
+line heuristics allow Gregorio to reduce the space between a note and a
+horizontal episema that surround a line on which a ledger line may appear
+when the ledger line \textit{does not} appear.
+
+\begin{argtable}
+		\#1 & \texttt{enable}  & Ledger line heuristics will be used in placing
+														 the horizontal episema \\
+				& \texttt{disable} & Ledger line heuristics will not be used in
+														 placing the horizontal episema \\
+\end{argtable}
+
+Because of the complexity of computing distances exactly, the heuristic may
+guess incorrectly, causing the horizontal episema to be placed incorrectly.
+This may be overridden on a note-by-note basic by using the
+\texttt{[hl:\textit{n}]} and \texttt{[ll:\textit{n}]} gabc directives.  The
+\texttt{hl} directive sets an explicit high ledger line (above the staff),
+and the \texttt{ll} directive sets an explicit low ledger line (below the
+staff).  The \texttt{\textit{n}} should be set to indicate whether the
+system should act as if the ledger line exists (\texttt{1}) or not
+(\texttt{0}).
+
+
 \subsubsection{Staff Lines}
 
 \macroname{\textbackslash gresetlinecolor}{\{\#1\}}{gregoriotex.sty \textup{and} gregoriotex.tex}
@@ -365,6 +386,8 @@ Set the font used for the neumes.  The optional argument \texttt{[\#1]}
 may be used to specify an alternate font/rule set.  Currently, the only
 available alternate font/rule set is \texttt{op} for Dominican neumes.
 
+Note that the font will be looked up by name through luaotfload, see the documentation of luaotfload for what it implies.
+
 \begin{argtable}
 	\#1 & \textit{(omitted)} & Use the normal font and rule set (default).\\
 	& \texttt{op} & Use the alternate Dominican font/rule set.\\
@@ -373,6 +396,11 @@ available alternate font/rule set is \texttt{op} for Dominican neumes.
 	& \texttt{parmesan} & Use the Parmesan font.\\
 \end{argtable}
 
+\macroname{\textbackslash gresetgregoriofontscaled}{[\optional{\#1}]\{\#2\}\{\#3\}}{gregoriotex-main.tex}
+
+This function is the same as above, with a third argument to scale the font. The fonts shipped with Gregorio do not need to use this function, but some custom fonts do. Note that you cannot use this to scale glyphs up or down, as they would not be placed correctly on the staff.
+
+The two first arguments are the same as \texttt{\textbackslash gresetgregoriofont}. The third argument is an integer representing the scaling factor, where the one used by \texttt{\textbackslash gresetgregoriofont} is 100000.
 
 \subsubsection{Glyph Alteration}
 In addition to the normal glyphs loaded by the choice of font, Gregorio\TeX\ also supports several methods for fine tuning the choice of glyphs.  Using the below functions, you can choose from alternative glyphs which are already built into Gregorio\TeX\ or import custom glyphs you have designed yourself.
@@ -584,6 +612,24 @@ barred symbol.
 	\#5 & dimension & vertical shift of the bar glyph.\\
 \end{argtable}
 
+\macroname{\textbackslash gothRbar}{}{gregoriotex-symbols.tex}
+Prints \gothRbar.  Defined with \verb=\gredefsymbol=.
+
+\macroname{\textbackslash gothVbar}{}{gregoriotex-symbols.tex}
+Prints \gothVbar.  Defined with \verb=\gredefsymbol=.
+
+\macroname{\textbackslash grealtcross}{}{gregoriotex-symbols.tex}
+Prints \grealtcross.  Defined with \verb=\gredefsymbol=.
+
+\macroname{\textbackslash grecross}{}{gregoriotex-symbols.tex}
+Prints \grecross.  Defined with \verb=\gredefsymbol=.
+
+\macroname{\textbackslash greheightstar}{}{gregoriotex-symbols.tex}
+Prints \greheightstar.  Defined with \verb=\gredefsymbol=.
+
+\macroname{\textbackslash gresixstar}{}{gregoriotex-symbols.tex}
+Prints \gresixstar.  Defined with \verb=\gredefsymbol=.
+
 \macroname{\textbackslash greseparator}{\{\#1\}\{\#2\}}{gregoriotex-symbols.tex}
 A macro for invoking one of the five separators (fancy lines) which are contained in the greextra font.
 
@@ -611,8 +657,7 @@ Different elements of an include score have different styles applied.  These ele
 \begin{tabular}{lp{7cm plus .5cm}r}
 	Element Name & Description & Default\\
 	\hline
-	\stylename{initial} & Normal Initials & 40 pt font\\
-	\stylename{biginitial} & Big (2-Line) Initials & 80 pt font\\
+	\stylename{initial} & Score initial (the first letter of the score, when offset from the rest of the text) & 40 pt font\\
 	\stylename{translation} & Translation text (appears below lyrics) & {\it italics}\\
 	\stylename{abovelinestext} & Above line text (\texttt{<alt></alt>} in gabc, appears above the staff) & normal\\
 	\stylename{normalstafflines} & Full length staff lines & none\\
@@ -622,7 +667,11 @@ Different elements of an include score have different styles applied.  These ele
 	\stylename{firstsyllableinitial} & the first letter of the first syllable of a score which is not the score initial & none\\
 	\stylename{firstsyllable} & the first syllable of the score excluding the score initial & none\\
 	\stylename{firstword} & the first word of the first score excluding the score initial & none\\
+	\stylename{annotation} & the annotation & none\\
+	\stylename{commentary} & the commentary & {\footnotesize\it Footnote size italics}\\
 	\stylename{modeline} & the rendered annotation from the \texttt{mode: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textsc{\textbf{Bold Small Capitals}}}\\
+	\stylename{modemodifier} & the rendered annotation from the \texttt{mode-modifier: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textit{\textbf{Bold Italics}}}\\
+	\stylename{modedifferentia} & the rendered annotation from the \texttt{mode-differentia: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textbf{Bold}}\\
 	\stylename{nabc} & ancient notation & {\color{gregoriocolor}gregoriocolor} (\LaTeX)\\
 	&& none (Plain \TeX)\\
 \end{tabular}
@@ -673,21 +722,15 @@ Macro to add annotations (the text which appears above the initial) to a score. 
 
 \textbf{Nota Bene:} The first argument does not affect the alignment of lines already in the annotation, only the way the new line aligns with the existing lines as a whole.
 
-\macroname{\textbackslash grecommentary}{\{\#1\}}{gregoriotex-main.tex}
+\macroname{\textbackslash grecommentary}{[\optional{\#2}]\{\#1\}}{gregoriotex-main.tex}
 Macro to add commentary (the text flush right at the top, usually a scripture reference) to a score.  While a single call of this function does not support multiple lines, successive calls to the function will add a new line to the commentary directly below the previous.
 
 \begin{argtable}
-	\#1 & string & The text of the commentary.\\
+	\#1 & distance & Optional.  Additional distance to be placed between the commentary and the top staff line for the next score only.\\
+	\#2 & string & The text of the commentary.\\
 \end{argtable}
 
-\textbf{Nota Bene:} This command should appear directly before \verb=\gregorioscore= when used.
-
-\macroname{\textbackslash grescorereference}{\{\#1\}}{gregoriotex-main.tex}
-Macro to hold the score reference.  Currently the score reference does not print.
-
-\begin{argtable}
-	\#1 & string & The text of the score reference.\\
-\end{argtable}
+\textbf{Nota Bene:} If your commentary is multi-lined, then the optional argument of the last line, and only the last line, will be taken into account.  Further, pay attention to the fact that the optional argument is \emph{additional} distance, \ie, it will be added to \texttt{commentaryraise} to determine the distance from the baseline of the commentary to the top line of the staff.
 
 \macroname{\textbackslash greillumination}{\{\#1\}}{gregoriotex-main.tex}
 Macro to add an illuminated initial.
@@ -698,6 +741,21 @@ Macro to add an illuminated initial.
 
 \textbf{Nota Bene:} Usually the argument of this command should be an \verb=\includegraphics= command, but you may use what ever you want as the illuminated initial.
 
+\macroname{\textbackslash gresetinitiallines}{\#1}{gregoriotex-syllable.tex}
+Sets the number of lines the score initial requires.
+
+\begin{argtable}
+	\#1 & number & The number of lines required by the initial.  If \texttt{0}, the score will have no separated initial.\\
+\end{argtable}
+
+\macroname{\textbackslash gresetmodenumbersystem}{\#1}{gregoriotex-main.tex}
+Sets the number system used for the mode number.
+
+\begin{argtable}
+	\#1 & \texttt{roman-minuscule} & Use lower-case Roman numerals (the default, good for small capitals).\\
+			& \texttt{roman-majuscule} & Use upper-case Roman numerals.\\
+			& \texttt{arabic} & Use Arabic numerals.\\
+\end{argtable}
 
 \subsubsection{Text Alignment}
 Gregorio\TeX\ allows you to manipulate the global alignment behavior of some text elements using the following commands.
@@ -731,9 +789,35 @@ Macro to specify how the translation text should be aligned with it respective s
 	& \texttt{center} & The translation text is centered under its respective syllable.
 \end{argtable}
 
+\macroname{\textbackslash gresetannotationby}{\{\#1\}}{gregoriotex-main.tex}
+Macro to specify which line of the annotation should be used to determine its starting placement (i.e. before \texttt{annotationraise} is applied).
+
+\begin{argtable}
+	\#1 & \texttt{firstline} & Annotation placement is determined by the first line (default)\\
+	& \texttt{lastline} & annotation placement is determined by the last line\\
+\end{argtable}
+
+\macroname{\textbackslash gresetannotationvalign}{\{\#1\}}{gregoriotex-main.tex}
+Macro to specify which part of the control line in the annotation should be aligned with the top line of the staff before \texttt{annotationraise} is applied.
+
+\begin{argtable}
+	\#1 & \texttt{top} & The top of the annotation control line will align with the top line of the staff\\
+	& \texttt{baseline} & The baseline of the control line is used (default)\\
+	& \texttt{bottom} & The bottom of the control line is used\\
+\end{argtable}
+
+\textbf{Nota Bene:} These variable refer to the actual contents of the line and not to the ``hypothetical'' limits for the font.  As a result if the top of an annotation containing only short letters will be different from one which contains tall ones even if both use the same font.  Likewise, if the annotation contains no descenders, then baseline and bottom will be the same.  If this is a problem, then the use of struts within the annotation can be used to control the line height (distance from baseline to top) and depth (distance from baseline to bottom).
 
 \subsubsection{End of Line Behavior}
 While Gregorio\TeX\ will automatically wrap scores to fit your page, there are several ways to fine tune that line breaking behavior with the following commands.
+
+\macroname{\textbackslash gresetbreakbeforeeuouae}{\{\#1\}}{gregoriotex-main.tex}
+Macro to determine whether an automatic linebreak before a EUOUAE area is justified or not.
+
+\begin{argtable}
+	\#1 & \texttt{justified} & Automatic line breaks before EUOUAE areas should be justified (default)\\
+	& \texttt{ragged} & Automatic line breaks before EUOUAE areas should be ragged\\
+\end{argtable}
 
 \macroname{\textbackslash gresetbreakineuouae}{\{\#1\}}{gregoriotex-main.tex}
 Macro to determine whether line breaks are allowed inside a EUOUAE area (delimited by \texttt{<eu></eu>} tags in gabc).
@@ -761,6 +845,16 @@ Macro to determine whether Gregorio\TeX\ should automatically place the custos a
 
 \textbf{Nota Bene:} This command only effects the custos that appears at the end of a line.  Custos which are placed at a key change are unaffected.  Further, if custos are specified in the gabc file manually and Gregorio\TeX\ is set to place custos automatically, you will get two custos at the line breaks.
 
+\macroname{\textbackslash greseteolcustosbeforeeuouae}{\{\#1\}}{gregoriotex-main.tex}
+Macro to determine whether Gregorio\TeX\ should automatically place the custos at a line break before a EUOUAE.  Since the EUOUAE block is typically not a continuation of the melody but rather a reminder of the end of the tone that follows, this is set to \texttt{suppressed} (no custos) by default.
+
+\begin{argtable}
+	\#1 & \texttt{suppressed} & Custos will not automatically be placed at a line break before a EUOUAE block (the default)\\
+	& \texttt{auto} & Custos will behave according to \verb=greseteolcustos= at a line break before a EUOUAE block\\
+\end{argtable}
+
+\textbf{Nota Bene:} If \verb=\greseteolcustos= is set to \texttt{manual}, this setting is effectively ignored.
+
 \macroname{\textbackslash greseteolshifts}{\{\#1\}}{gregoriotex-main.tex}
 Macro to determine whether Gregorio\TeX\ should apply a small shift at the end of each line which allows lyrics to stretch under the final custos.
 
@@ -786,17 +880,29 @@ Macro to determine whether the last line of the score should be justified or not
 \end{argtable}
 
 
+\subsubsection{Bar spacing}
+
+\macroname{\textbackslash gresetbarshiftaftermora}{\{\#1\}}{gregoriotex-signs.tex}
+Macro to change the behaviour for bars following a punctum mora. The argument changes the cases in which punctum mora are ignored in bar horizontal placement:
+
+\begin{argtable}
+	\#1 & \texttt{always} & punctum mora are always ignored (default)\\
+	& \texttt{notextonly} & punctum mora are ignored in bars inside syllables, and in bars having their own syllable without text\\
+	& \texttt{insideonly} & punctum mora are ignored only in bars inside syllables\\
+	& \texttt{never} & punctum mora are never ignored\\
+\end{argtable}
+
+When a punctum mora is ignored, the bar will also be shifted by \texttt{barmoraadjustment} (zero by default), see its description in the \textbf{Distances} section.
+
 \subsubsection{Hyphenation}
 
 \macroname{\textbackslash gresethyphen}{\{\#1\}}{gregoriotex-main.tex}
-Tells Gregorio\TeX\ how to place a hyphen between syllables in polysyllabic words in a score.  This is done by overriding \texttt{maximumspacewithoutdash} so subsequent changes to this dimension will override this command.
+Tells Gregorio\TeX\ how to place a hyphen between syllables in polysyllabic words in a score.
 
 \begin{argtable}
 	\#1 & \texttt{force} & Hyphens will appear between all syllables in polysyllabic words.\\
 	& \texttt{auto} & Hyphens will appear based on the setting of \texttt{maximumspacewithoutdash} (default)
 \end{argtable}
-
-\textbf{Nota Bene:} \verb=\gresethyphen{auto}= restores \texttt{maximumspacewithoutdash} to the value found in \textit{gsp-default.tex}.  If you have changed your score size, you may need to change this distance to a more appropriate value using \verb=\grechangedim=.
 
 \macroname{\textbackslash gresetemptyfirstsyllablehyphen}{\{\#1\}}{gregoriotex-syllable.tex}
 Tells Gregorio\TeX\ how to place a hyphen after an empty first syllable (\ie, when the first syllable consists only of the big initial).
@@ -865,6 +971,66 @@ harmonizes with the greciliae font.  This macro must be redefined should
 a different value be desired.
 
 
+\subsubsection{Headers}
+
+\macroname{\textbackslash gresetheadercapture}{\{\#1\}\{\#2\}\{\#3\}}{gregoriotex-main.tex}
+Macro to tell Gregorio\TeX{} to capture a given header by calling a specified
+macro.  Passing an empty \#2 will cancel capture of the given header.
+
+\begin{argtable}
+	\#1 & string & The name of the header\\
+	\#2 & string & The name of the macro to use (without the leading backslash)
+								 or empty to stop capturing the given header\\
+	\#3 & string & a comma-separated list of options\\
+\end{argtable}
+
+The options are:
+
+\begin{tabular}{ll}
+	\texttt{name}   & The header name should also be passed to the macro\\
+	\texttt{string} & The header value should be passed to the macro as a string\\
+\end{tabular}
+
+If the \texttt{name} option is not supplied, the macro supplied must take one
+argument: the value of the header.
+
+If the \texttt{name} option is supplied, the macro supplied must take two
+arguments: the name and the value of the header (in that order).
+
+If the \texttt{string} option is supplied, the value will be passed with all
+non-space characters as \TeX{} catcode 12 (and all spaces as catcode 10).
+If not, the value will be evaluated as \TeX{}.
+
+Other than the headers that define macros, which are not passed to \TeX{},
+the headers will be processed in the order they were presented in the gabc
+file.  Headers will be processed in the \TeX{} state at the point of the
+\verb=\gregorioscore= call.  This means, for example, that should the
+capturing macro produce something, it will be typeset within the same
+paragraph as the \verb=\gregorioscore= call.
+
+Gregorio will call whatever is passed to \verb=\grebeforeheaders= before
+processing a given set of headers and to \verb=\greafterheaders= after
+processing them.
+
+\macroname{\textbackslash grebeforeheaders}{\{\#1\}}{gregoriotex-main.tex}
+Specifies something to be done before a set of headers is processed.
+Defaults to nothing.  If this is called multiple times, the most recent call
+will define the behavior at the next set of headers.
+
+\begin{argtable}
+		\#1 & \TeX\ code & The code to process before a set of headers.\\
+\end{argtable}
+
+\macroname{\textbackslash greafterheaders}{\{\#1\}}{gregoriotex-main.tex}
+Specifies something to be done after a set of headers is processed.
+Defaults to nothing.  If this is called multiple times, the most recent call
+will define the behavior at the next set of headers.
+
+\begin{argtable}
+		\#1 & \TeX\ code & The code to process after a set of headers.\\
+\end{argtable}
+
+
 \subsubsection{Ancient Notation}
 For a full description of how to make use of the ancient notation capabilities of gregorio and Gregorio\TeX, look at the GregorioNabcRef documentation.  The commands listed here allow the manipulation of settings related to that notation.
 
@@ -885,237 +1051,292 @@ While it may seem strange that many of these distances are defined to 5 decimal 
 
 \textbf{Nota Bene:} Because of the way Gregorio\TeX\ handles distances, these cannot be manipulated as if they were normal \TeX\ dimensions or skips.  As a result they should only be changed using the command defined by Gregorio\TeX\ for this purpose.
 
-\macroname{additionallineswidth}{}{gsp-default.tex}
+\begin{gdimension}{additionallineswidth}
 The additional width of the additional lines (\ie, the value added to the width of the glyph with which they're associated to get the width of the line).
+\end{gdimension}
 
-Default: \unit[0.14584]{cm}
-
-\macroname{alterationspace}{}{gsp-default.tex}
+\begin{gdimension}{alterationspace}
 Space between an alteration (flat or natural) and the next glyph.
+\end{gdimension}
 
-Default: \unit[0.07747]{cm}
-
-\macroname{beforealterationspace}{}{gsp-default.tex}
+\begin{gdimension}{beforealterationspace}
 When beginning of line shifts (bolshifts) are enabled, minimum space between a clef at the beginning of the line and a leading alteration glyph.  This distance should be larger than \texttt{clefflatspace} so that a flatted clef can be distinguished from a flat which is part of the first glyph on a line, but also smaller than \texttt{spaceafterlineclef}, the distance from the clef to the first notes.
+\end{gdimension}
 
-Default: \unit[0.1]{cm}
-
-\macroname{beforelowchoralsignspace}{}{gsp-default.tex}
+\begin{gdimension}{beforelowchoralsignspace}
 Space before a low choral sign.
+\end{gdimension}
 
-Default: \unit[0.04556]{cm} plus \unit[0.00638]{cm} minus \unit[0.00638]{cm}
-
-\macroname{clefflatspace}{}{gsp-default.tex}
+\begin{gdimension}{clefflatspace}
 Space between a clef and a flat (for clefs with flat).
+\end{gdimension}
 
-Default: \unit[0.05469]{cm} plus \unit[0.00638]{cm} minus \unit[0.00638]{cm}
-
-\macroname{interglyphspace}{}{gsp-default.tex}
+\begin{gdimension}{interglyphspace}
 Space between glyphs in the same element.
+\end{gdimension}
 
-Default: \unit[0.06927]{cm} plus \unit[0.00363]{cm} minus \unit[0.00363]{cm}
-
-\macroname{zerowidthspace}{}{gsp-default.tex}
+\begin{gdimension}{zerowidthspace}
 Null space.
+\end{gdimension}
 
-Default: \unit[0]{cm} plus \unit[0]{cm} minus \unit[0]{cm}
+\begin{gdimension}{halfspace}
+Half-space between elements.
+\end{gdimension}
 
-\macroname{interelementspace}{}{gsp-default.tex}
+\begin{gdimension}{interelementspace}
 Space between elements.
+\end{gdimension}
 
-Default: \unit[0.06927]{cm} plus \unit[0.00182]{cm} minus \unit[0.00363]{cm}
-
-\macroname{largerspace}{}{gsp-default.tex}
+\begin{gdimension}{largerspace}
 Larger space between elements.
+\end{gdimension}
 
-Default: \unit[0.10938]{cm} plus \unit[0.01822]{cm} minus \unit[0.00911]{cm}
-
-\macroname{glyphspace}{}{gsp-default.tex}
+\begin{gdimension}{glyphspace}
 Space between elements which has the size of a note.
+\end{gdimension}
 
-Default: \unit[0.21877]{cm} plus \unit[0.01822]{cm} minus \unit[0.01822]{cm}
-
-\macroname{intersyllablespacenotes}{}{gsp-default.tex}
-Minimum space between two notes of different syllables.
-
-Default: \unit[0.25523]{cm} plus \unit[0.31903]{cm} minus \unit[0]{cm}
-
-\macroname{spacebeforeeolcustos}{}{gsp-default.tex}
+\begin{gdimension}{spacebeforeeolcustos}
 Space before custos at the end of a line.
+\end{gdimension}
 
-Default: \unit[0.1823]{cm} plus \unit[0.31903]{cm} minus \unit[0.0638]{cm}
-
-\macroname{spacebeforeinlinecustos}{}{gsp-default.tex}
+\begin{gdimension}{spacebeforeinlinecustos}
 Space before custos within a line.
+\end{gdimension}
 
-Default: \unit[0]{cm} plus \unit[0]{cm} minus \unit[0]{cm}
-
-\macroname{spacebeforesigns}{}{gsp-default.tex}
+\begin{gdimension}{spacebeforesigns}
 Space before punctum mora and augmentum duplex.
+\end{gdimension}
 
-Default: \unit[0.05469]{cm} plus \unit[0.00455]{cm} minus \unit[0.00455]{cm}
+\begin{gdimension}{barmoraadjustment}
+When a bar is shifted left because of a preceding punctum mora, this space is
+also added. Use it to make the bar a bit further from the punctum mora if you want.
+\end{gdimension}
 
-\macroname{spaceaftersigns}{}{gsp-default.tex}
+\begin{gdimension}{spaceaftersigns}
 Space after punctum mora and augmentum duplex.
+\end{gdimension}
 
-Default: \unit[0.08203]{cm} plus \unit[0.0082]{cm} minus \unit[0.0082]{cm}
-
-\macroname{spaceafterlineclef}{}{gsp-default.tex}
+\begin{gdimension}{spaceafterlineclef}
 Space after a clef at the beginning of a line.
+\end{gdimension}
 
-Default: \unit[0.27345]{cm} plus \unit[0.14584]{cm} minus \unit[0.01367]{cm}
+\begin{gdimension}{intersyllablespacenotes}
+Minimum space between notes of different syllables.
+\end{gdimension}
 
-\macroname{interwordspacenotes}{}{gsp-default.tex}
-Space after at the end of a word when the last written symbol is a note and the first is a note.
+\begin{gdimension}{interwordspacenotes}
+Minimum space between notes of syllables from different words.
+\end{gdimension}
 
-Default: \unit[0.29169]{cm} plus \unit[0.08751]{cm} minus \unit[0.05469]{cm}
+\begin{gdimension}{interwordspacetext}
+Minimum space between texts of different words. Please keep the same \texttt{plus} and \texttt{minus} as \texttt{interwordspacenotes}.
+\end{gdimension}
 
-\macroname{interwordspacetext}{}{gsp-default.tex}
-Space after at the end of a word when the last written symbol is text and the first is text.
+\begin{gdimension}{interwordspacenotes@alteration}
+Same as \texttt{interwordspacenotes} for the case where the second syllable starts with an alteration.
+\end{gdimension}
 
-Default: \unit[0.22787]{cm} plus \unit[0.41019]{cm} minus \unit[0.07292]{cm}
+\begin{gdimension}{intersyllablespacenotes@alteration}
+Same as \texttt{intersyllablespacenotes} for the case where the second syllable starts with an alteration.
+\end{gdimension}
 
-\macroname{interwordspacenotes@euouae}{}{gsp-default.tex}
-Space after at the end of a word when the last written symbol is a note and the first is a note in \texttt{euouae} blocks.
+\begin{gdimension}{interwordspacenotes@euouae}
+Same as \texttt{interwordspacenotes} for \texttt{euouae} blocks.
+\end{gdimension}
 
-Default: \unit[0.19]{cm} plus \unit[0.1]{cm} minus \unit[0.05]{cm}
+\begin{gdimension}{interwordspacetext@euouae}
+Same as \texttt{interwordspacetext} for \texttt{euouae} blocks.
+\end{gdimension}
 
-\macroname{interwordspacetext@euouae}{}{gsp-default.tex}
-Space after at the end of a word when the last written symbol is text and the first is text in \texttt{euouae} blocks.
-
-Default: \unit[0.27]{cm} plus \unit[0.1]{cm} minus \unit[0.05]{cm}
-
-\macroname{bitrivirspace}{}{gsp-default.tex}
+\begin{gdimension}{bitrivirspace}
 Space between notes of a bivirga or trivirga.
+\end{gdimension}
 
-Default: \unit[0.06927]{cm} plus \unit[0.00182]{cm} minus \unit[0.00546]{cm}
-
-\macroname{bitristrospace}{}{gsp-default.tex}
+\begin{gdimension}{bitristrospace}
 Space between notes of a bistropha or tristrophae.
+\end{gdimension}
 
-Default: \unit[0.06927]{cm} plus \unit[0.00182]{cm} minus \unit[0.00546]{cm}
-
-\macroname{punctuminclinatumshift}{}{gsp-default.tex}
+\begin{gdimension}{punctuminclinatumshift}
 Space between two punctum inclinatum.
+\end{gdimension}
 
-Default: \unit[-0.03918]{cm} plus \unit[0.0009]{cm} minus \unit[0.0009]{cm}
-
-\macroname{beforepunctainclinatashift}{}{gsp-default.tex}
+\begin{gdimension}{beforepunctainclinatashift}
 Space before puncta inclinata.
+\end{gdimension}
 
-Default: \unit[0.05286]{cm} plus \unit[0.00728]{cm} minus \unit[0.00455]{cm}
-
-\macroname{punctuminclinatumanddebilisshift}{}{gsp-default.tex}
+\begin{gdimension}{punctuminclinatumanddebilisshift}
 Space between a punctum inclinatum and a punctum inclinatum deminutus.
+\end{gdimension}
 
-Default: \unit[-0.02278]{cm} plus \unit[0.0009]{cm} minus \unit[0.0009]{cm}
-
-\macroname{punctuminclinatumdebilisshift}{}{gsp-default.tex}
+\begin{gdimension}{punctuminclinatumdebilisshift}
 Space between two punctum inclinatum deminutus.
+\end{gdimension}
 
-Default: \unit[-0.00728]{cm} plus \unit[0.0009]{cm} minus \unit[0.0009]{cm}
-
-\macroname{punctuminclinatumbigshift}{}{gsp-default.tex}
+\begin{gdimension}{punctuminclinatumbigshift}
 Space between puncta inclinata, larger ambitus (range=3rd).
+\end{gdimension}
 
-Default: \unit[0.07565]{cm} plus \unit[0.0009]{cm} minus \unit[0.0009]{cm}
+\begin{gdimension}{punctuminclinatummaxshift}
+Space between puncta inclinata, larger ambitus (range=4th or 5th).
+\end{gdimension}
 
-\macroname{punctuminclinatummaxshift}{}{gsp-default.tex}
-Space between puncta inclinata, larger ambitus (range=4th -or more?-).
+\begin{gdimension}{ascendingpunctuminclinatumshift}
+Space between two ascending puncta inclinata.
+\end{gdimension}
 
-Default: \unit[0.17865]{cm} plus \unit[0.0009]{cm} minus \unit[0.0009]{cm}
+\begin{gdimension}{ascendingpunctuminclinatumanddebilisshift}
+Space between a punctum inclinatum and a punctum inclinatum deminutus,
+ascending.
+\end{gdimension}
 
-\macroname{spacearoundsmallbar}{}{gsp-default.tex}
+\begin{gdimension}{ascendingpunctuminclinatumbigshift}
+Space between ascending puncta inclinata, larger ambitus (range=3rd).
+\end{gdimension}
+
+\begin{gdimension}{ascendingpunctuminclinatummaxshift}
+Space between ascending puncta inclinata, larger ambitus (range=4th or 5th).
+\end{gdimension}
+
+\begin{gdimension}{descendinginclinatumtonobarshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph one pitch
+below.
+\end{gdimension}
+
+\begin{gdimension}{descendinginclinatumtonobarbigshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph two pitches
+below.
+\end{gdimension}
+
+\begin{gdimension}{descendinginclinatumtonobarmaxshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph three or four
+pitches below.
+\end{gdimension}
+
+\begin{gdimension}{ascendinginclinatumtonobarshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph one pitch
+above.
+\end{gdimension}
+
+\begin{gdimension}{ascendinginclinatumtonobarbigshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph two pitches
+above.
+\end{gdimension}
+
+\begin{gdimension}{ascendinginclinatumtonobarmaxshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph three or four
+pitches above.
+\end{gdimension}
+
+\begin{gdimension}{ascendinginclinatumtonobarmaxshift}
+Space between a punctum inclinatum and a no-bar (stemless) glyph three or four
+pitches above.
+\end{gdimension}
+
+\begin{gdimension}{spacearoundsmallbar}
 Space around virgula and divisio minima.
+\end{gdimension}
 
-Default: \unit[0.1823]{cm} plus \unit[0.22787]{cm} minus \unit[0.05469]{cm}
-
-\macroname{spacearoundminor}{}{gsp-default.tex}
+\begin{gdimension}{spacearoundminor}
 Space around divisio minor.
+\end{gdimension}
 
-Default: \unit[0.1823]{cm} plus \unit[0.22787]{cm} minus \unit[0.05469]{cm}
-
-\macroname{spacearoundmaior}{}{gsp-default.tex}
+\begin{gdimension}{spacearoundmaior}
 Space around divisio maior.
+\end{gdimension}
 
-Default: \unit[0.1823]{cm} plus \unit[0.22787]{cm} minus \unit[0.05469]{cm}
-
-\macroname{spacearoundfinalis}{}{gsp-default.tex}
+\begin{gdimension}{spacearoundfinalis}
 Space around divisio finalis.
+\end{gdimension}
 
-Default: \unit[0.1823]{cm} plus \unit[0.1823]{cm} minus \unit[0.05469]{cm}
-
-\macroname{spacebeforefinalfinalis}{}{gsp-default.tex}
+\begin{gdimension}{spacebeforefinalfinalis}
 A special space for finalis, for when it is the last glyph.
+\end{gdimension}
 
-Default: \unit[0.29169]{cm} plus \unit[0.07292]{cm} minus \unit[0.27345]{cm}
+\begin{gdimension}{spacearoundsmallbartext}
+Space around virgula and divisio minima with text underneath.
+\end{gdimension}
 
-\macroname{spacearoundclefbars}{}{gsp-default.tex}
+\begin{gdimension}{spacearoundminortext}
+Space around divisio minor with text underneath.
+\end{gdimension}
+
+\begin{gdimension}{spacearoundmaiortext}
+Space around divisio maior with text underneath.
+\end{gdimension}
+
+\begin{gdimension}{spacearoundfinalistext}
+Space around divisio finalis with text underneath.
+\end{gdimension}
+
+\begin{gdimension}{spacebeforefinalfinalistext}
+A special space for finalis with text underneath, for when it is the last glyph.
+\end{gdimension}
+
+\begin{gdimension}{spacearoundclefbars}
 Additional space that will appear around bars that are preceded by a custos and followed by a key.
+\end{gdimension}
 
-Default: \unit[0.03645]{cm} plus \unit[0.00455]{cm} minus \unit[0.0009]{cm}
-
-\macroname{textbartextspace}{}{gsp-default.tex}
+\begin{gdimension}{textbartextspace}
 Space between the text and the text of the bar.
+\end{gdimension}
 
-Default: \unit[0.24611]{cm} plus \unit[0.13672]{cm} minus \unit[0.04921]{cm}
-
-\macroname{notebarspace}{}{gsp-default.tex}
+\begin{gdimension}{notebarspace}
 Minimal space between a note and a bar.
+\end{gdimension}
 
-Default: \unit[0.31903]{cm} plus \unit[0.27345]{cm} minus \unit[0.02824]{cm}
-
-\macroname{maximumspacewithoutdash}{}{gsp-default.tex}
+\begin{gdimension}{maximumspacewithoutdash}
 Maximal space between two syllables for which we consider a dash is not needed.
+\end{gdimension}
 
-Default: \unit[0.02005]{cm}
-
-\macroname{afterclefnospace}{}{gsp-default.tex}
+\begin{gdimension}{afterclefnospace}
 An extensible space for the beginning of lines.
+\end{gdimension}
 
-Default: \unit[0]{cm} plus \unit[0.27345]{cm} minus \unit[0]{cm}
-
-\macroname{additionalcustoslineswidth}{}{gsp-default.tex}
+\begin{gdimension}{additionalcustoslineswidth}
 Width of the additional lines, used only for the custos.  The width is the one for the custos at end of lines, the line for custos in the middle of a score is the same multiplied by 2.
+\end{gdimension}
 
-Default: \unit[0.09114]{cm}
-
-\macroname{afterinitialshift}{}{gsp-default.tex}
+\begin{gdimension}{afterinitialshift}
 Space between the initial and the beginning of the score.
+\end{gdimension}
 
-Default: \unit[0.2457]{cm} plus \unit[0]{cm} minus \unit[0]{cm}
-
-\macroname{beforeinitialshift}{}{gsp-default.tex}
+\begin{gdimension}{beforeinitialshift}
 Space between the initial and the beginning of the score.
+\end{gdimension}
 
-Default: \unit[0.2457]{cm} plus \unit[0]{cm} minus \unit[0]{cm}
-
-\macroname{minimalspaceatlinebeginning}{}{gsp-default.tex}
+\begin{gdimension}{minimalspaceatlinebeginning}
 Minimal space in front of the lyrics at the beginning of a line when \texttt{bolshift}s are enabled.
+\end{gdimension}
 
-Default: \unit[1.7]{cm}
-
-\macroname{manualinitialwidth}{}{gsp-default.tex}
+\begin{gdimension}{manualinitialwidth}
 Space to force the initial width to.  Ignored when 0.
+\end{gdimension}
 
-Default: \unit[0]{cm}
-
-\macroname{annotationseparation}{}{gsp-default.tex}
+\begin{gdimension}{annotationseparation}
 This space is the one between lines in the annotation (text above the initial).
 
-Default: \unit[0.85]{cm}
+\textbf{Nota Bene:} This is the absolute space.  If the lower line contains only short letters then it will get moved up so only this space shows (not the space above the letters on a normal line plus this space).  You should use struts to control the line height of the lower line if this is a problem.
+\end{gdimension}
 
-\macroname{annotationraise}{}{gsp-default.tex}
-Amount to raise (positive) or lower (negative) the annotation from it's normal position (baseline of the first line aligned with the top line of the staff).
+\begin{gdimension}{annotationraise}
+Amount to raise (positive) or lower (negative) the annotation from its normal position (set with \verb=\gresetannotationby= and \verb=\gresetannotationvalign=).
+\end{gdimension}
 
-Default: \unit[0]{cm}
+\begin{gdimension}{commentaryseparation}
+This space is the one between lines in the commentary (text above the first staff line on the right).
 
-\macroname{noclefspace}{}{gsp-default.tex}
+\textbf{Nota Bene:} This is the absolute space.  If the lower line contains only short letters then it will get moved up so only this space shows (not the space above the letters on a normal line plus this space).  You should use struts to control the line height of the lower line if this is a problem.
+\end{gdimension}
+
+\begin{gdimension}{commentaryraise}
+Distance from the commentary to the top line of the staff.
+\end{gdimension}
+
+\begin{gdimension}{noclefspace}
 Space at the beginning of the lines if there is no clef.
+\end{gdimension}
 
-Default: \unit[0.1]{cm}
-
-\macroname{choralsigndownshift}{}{gsp-default.tex}
+\begin{gdimension}{choralsigndownshift}
 The distance to shift choral signs down.  The following choral signs are shifted down:
 
 \begin{itemize}
@@ -1123,83 +1344,76 @@ The distance to shift choral signs down.  The following choral signs are shifted
 	\item High choral signs which are in a space
 	\item Low choral signs that are lower than the note which are in a space
 \end{itemize}
+\end{gdimension}
 
-Default: \unit[0.00911]{cm}
-
-\macroname{choralsignupshift}{}{gsp-default.tex}
+\begin{gdimension}{choralsignupshift}
 The distance to shift choral signs up.  The following choral signs are shifted up:
 
 \begin{itemize}
 	\item High choral signs which are on a line
 	\item Low choral signs that are lower than the note which are on a line
 \end{itemize}
+\end{gdimension}
 
-Default: \unit[0.04556]{cm}
-
-\macroname{translationheight}{}{gsp-default.tex}
+\begin{gdimension}{translationheight}
 The space for the translation.
+\end{gdimension}
 
-Default: \unit[0.5]{cm}
-
-\macroname{spaceabovelines}{}{gsp-default.tex}
+\begin{gdimension}{spaceabovelines}
 The space above the lines.
+\end{gdimension}
 
-Default: \unit[0.45576]{cm} plus \unit[0.36461]{cm} minus \unit[0.09114]{cm}
-
-\macroname{spacelinestext}{}{gsp-default.tex}
+\begin{gdimension}{spacelinestext}
 The space between the lines and the bottom of the text.
+\end{gdimension}
 
-Default: \unit[0.60617]{cm} plus \unit[0]{cm} minus \unit[0]{cm}
-
-\macroname{spacebeneathtext}{}{gsp-default.tex}
+\begin{gdimension}{spacebeneathtext}
 The space beneath the text.
+\end{gdimension}
 
-Default: \unit[0]{cm} plus \unit[0]{cm} minus \unit[0]{cm}
-
-\macroname{abovelinestextraise}{}{gsp-default.tex}
+\begin{gdimension}{abovelinestextraise}
 Height of the text above the note line.
+\end{gdimension}
 
-Default: \unit[1.7]{cm}
-
-\macroname{abovelinestextheight}{}{gsp-default.tex}
+\begin{gdimension}{abovelinestextheight}
 Height that is added at the top of the lines if there is text above the lines (it must be bigger than the text for it to be taken into consideration).
+\end{gdimension}
 
-Default: \unit[0.3]{cm}
-
-\macroname{braceshift}{}{gsp-default.tex}
+\begin{gdimension}{braceshift}
 An additional shift you can give to the brace above the bars.
+\end{gdimension}
 
-Default: \unit[0]{cm}
-
-\macroname{curlybraceaccentusshift}{}{gsp-default.tex}
+\begin{gdimension}{curlybraceaccentusshift}
 A shift you can give to the accentus above the curly brace.
+\end{gdimension}
 
-Default: $\unit[-0.05]{cm}$
-
-\macroname{nabcinterelementspace}{}{gsp-default.tex}
+\begin{gdimension}{nabcinterelementspace}
 Space between elements in ancient notation.
+\end{gdimension}
 
-Default: \unit[0.06927]{cm} plus \unit[0.00182]{cm} minus \unit[0.00363]{cm}
-
-\macroname{nabclargerspace}{}{gsp-default.tex}
+\begin{gdimension}{nabclargerspace}
 Larger space between elements in ancient notation.
+\end{gdimension}
 
-Default: \unit[0.10938]{cm} plus \unit[0.01822]{cm} minus \unit[0.00911]{cm}
-
-\macroname{clivisalignmentmin}{}{gsp-default.tex}
+\begin{gdimension}{clivisalignmentmin}
 When \verb=\gre@clivisalignment= is 2, this distance is the maximum length of the consonants after vowels for which the clivis will be aligned on its center.
+\end{gdimension}
 
-Default: \unit[0.3]{cm}
-
-\macroname{clefchangespace}{}{gsp-default.tex}
+\begin{gdimension}{clefchangespace}
 Space around a clef change.
+\end{gdimension}
 
-Default: \unit[0.01768]{cm} plus \unit[0.00175]{cm} minus \unit[0.01768]{cm}
-
-\macroname{initialraise}{}{gsp-default.tex}
+\begin{gdimension}{initialraise}
 Distance the initial will be raised above its default baseline.  The default baseline for the initial coincides with the baseline for the text below the staff.
+\end{gdimension}
 
-Default: \unit[0]{cm}
+\begin{gdimension}{overslurshift}
+Distance an over-the-notes slur will be raised above the baseline of a note at the same height.
+\end{gdimension}
+
+\begin{gdimension}{underslurshift}
+Distance an under-the-notes slur will be raised above the baseline of a note at the same height.
+\end{gdimension}
 
 
 \subsection{Penalties}\label{penalties}

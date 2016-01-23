@@ -29,11 +29,12 @@
 
 /* functions to read gabc */
 gregorio_note *gabc_det_notes_from_string(char *str, char *macros[10],
-        gregorio_scanner_location *loc);
+        gregorio_scanner_location *loc, const gregorio_score *score);
 gregorio_element *gabc_det_elements_from_string(char *str, int *current_key,
-        char *macros[10], gregorio_scanner_location *loc);
+        char *macros[10], gregorio_scanner_location *loc,
+        const gregorio_score *const score);
 gregorio_glyph *gabc_det_glyphs_from_notes(gregorio_note *current_note,
-        int *current_key);
+        int *current_key, const gregorio_score *score);
 void gabc_digest(const void *buf, size_t size);
 int gabc_score_determination_lex_destroy(void);
 int gabc_notes_determination_lex_destroy(void);

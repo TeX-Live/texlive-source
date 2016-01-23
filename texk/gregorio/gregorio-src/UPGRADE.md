@@ -2,6 +2,64 @@
 
 This file contains instructions to upgrade to a new release of Gregorio.
 
+## 4.1
+
+### Initial handling
+
+Initial handling has been simplified.  This deprecates the `initial-style` gabc header and the `biginitial` style.
+
+Rather than using the `initial-style` gabc header, set the number of lines the initial should use in Tex with the `\gresetinitiallines` command.  It currently accepts 0 (for no initial), 1 (for a one-line initial), or 2 (for a two-line initial).
+
+As for the `biginitial` style, the intent is that the `initial` style be changed within the TeX document whenever the initial style should change, regardless of how many lines the initial requires.  For example, before including a score that has a two-line initial, you would probably want to redefine the `initial` style to use a larger font.  Then, before including a score which requires a one-line initial, you would then redefine the `initial` style back to what it was before.
+
+In order to allow a smoother transition to the new behavior, GregorioTeX will behave differently depending on whether or not deprecated usage is allowed (controlled by the `[allowdeprecated]` package option).  If deprecated usage is allowed, GregorioTeX will use the deprecated `biginitial` style for big initials.  If not, GregorioTeX will use the `initial` style for big initials.
+
+Since the `biginitial` style will disappear with Gregorio 5.0, please consider disabling deprecated usage (set `[allowdeprecated=false]` when using the `gregoriotex` package) and use the `initial` style as just described.
+
+### Spacing between notes
+
+When the next syllable starts with an alteration, the minimal space between notes of the current syllable and notes of the current syllable is handled by the new spaces `intersyllablespacenotes@alteration` and `interwordspacenotes@alteration`. Set them in your custom spacings file if needed.
+
+### Horizontal episemata on high and low notes
+
+Prior to version 4.1, Gregorio reserved space between notes at the `c` and `k` heights and their horizontal episemata for a "ledger line" that might appear between them.  However, if the ledger line did not appear, the episema would appear to be too far from the note.
+
+Starting with version 4.1, Gregorio attempts to reduce the space between the note and its episema if it doesn't think there is a "ledger line" there.  However, due to the intricacies of distances and measurement in TeX, Gregorio might guess wrong.  In this case, you can override the guess by using the `[hl:n]` (for a line above the staff) and `[ll:n]` (for a line below the staff) notations in gabc.  If you put a `0` for `n`, Gregorio will assume there is no ledger line, and if you put a `1` for `n`, Gregorio will assume there is a ledger line.  This notation will have to be placed after every note which should be thus modified.
+
+Note: Using `[hl:n]` and `[ll:n]` **will not** add a ledger line if it doesn't exist or remove one if it does.  It simply affects whether Gregorio will act as if one is there or not.
+
+If you prefer the old behavior, you may switch this off by issuing `\gresetledgerlineheuristic{disable}` in your TeX document.  You may switch it back on with `\gresetledgerlineheuristic{enable}`.
+
+### Custos before EUOUAE blocks
+
+In the past, Gregorio handled the notes of an `<eu>` block like any other, which meant that a custos would appear before the `<eu>` block if it happened to start on a new line.  However, the '<eu>' block is not a continuation of the melody, but rather a reminder of the ending to use for the paired psalm tone.  As a result, a custos immediately before an EUOUAE block is now suppressed by default.  If you desire the old behaviour, use `\greseteolcustosbeforeeuouae{auto}` in your TeX document.  To once again suppress the custos, use `\greseteolcustosbeforeeuouae{suppressed}`.
+
+### Spacing around bars (divisio) with text underneath
+
+The following spaces have been added:
+
+- `spacearoundsmallbartext` - for the space around virgula and divisio minima with text underneath
+- `spacearoundminortext` - for the space around divisio minor with text underneath
+- `spacearoundmaiortext` - for the space around divisio maior with text underneath
+- `spacearoundfinalistext` - for the space around divisio finalis with text underneath
+- `spacebeforefinalfinalistext` - for the space before a divisio finalis at the end of a score
+
+By default, these are sized one half millimeter larger than their "non-text" counterparts.  This may cause minor spacing changes in your existing scores.  Adjust them as necessary to get the look you want.
+
+### Oriscus orientation
+
+The oriscus orientation (whether it points up or down) is now dependent on the note the follows, even if the note is not directly connected to the oriscus (as it would be in a salicus or a pressus).  Appending a `<` to an unconnected oriscus in gabc will force the oriscus to point upwards and `>` will force the oriscus to point downwards.
+
+Prior to version 4.1, Gregorio automatically oriented the oriscus when it was within a neume, but left the orientation up the user otherwise.  If you prefer this behavior, set the `oriscus-orientation` header in gabc to `legacy`.  In legacy mode, the orientation of an unconnected oriscus will (by default) point downwards and may be reversed by appending `<` or `>` to the oriscus.
+
+### Mode number
+
+The style for the mode number has been bold and small capitals for a long time, but the number was rendered as upper-case Roman numerals, defeating the nuance of small capitals.  As of version 4.1, Gregorio will use lower-case Roman numerals (by default) that will then appear as small capitals.  This will change how the mode number appears above the initial if you have been using the `mode` header to typeset them.  If you prefer the earlier appearance, use `\gresetmodenumbersystem{roman-majuscule}` in your TeX file for upper-case Roman numerals.  The other options available are `roman-minuscule` (the new default), for lower-case Roman numerals, and `arabic`, for Arabic numerals.
+
+### Score reference macros
+
+If you were using `\scorereference`, `\GreScoreReference`, and/or `\grescorereference`, stop using them.  If you need to capture the `manuscript-reference` header, use the new header capture feature (see GregorioRef for details).
+
 ## 4.0
 
 ### Font changes

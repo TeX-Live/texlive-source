@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[4.0.1],[gregorio-devel@gna.org])
-FILENAME_VERSION="4_0_1"
+AC_INIT([gregorio],[4.1.0-beta1],[gregorio-devel@gna.org])
+FILENAME_VERSION="4_1_0-beta1"
 AC_SUBST(FILENAME_VERSION)
 MK=""
 AC_SUBST(MK)
@@ -28,7 +28,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([-Wall -Wno-portability subdir-objects foreign dist-bzip2 no-dist-gzip])
 
-AC_PROG_CC_C89
+AC_PROG_CC
 dnl AM_PROG_CC_C_O is deprecated since Automake 1.14, to be removed in the future
 AM_PROG_CC_C_O
 AC_PROG_CPP
@@ -38,12 +38,15 @@ AC_CHECK_TOOL([RC], [windres], [no])
 AM_CONDITIONAL([HAVE_RC], [test x$RC != xno])
 
 AX_CHECK_COMPILE_FLAG([-std=gnu89], [CFLAGS+=" -std=gnu89"])
-AX_CHECK_COMPILE_FLAG([-pedantic-errors], [CFLAGS+=" -pedantic-errors"])
+dnl until flex gets their act together, use pedantic instead of pedantic-errors
+AX_CHECK_COMPILE_FLAG([-pedantic], [CFLAGS+=" -pedantic"])
+dnl AX_CHECK_COMPILE_FLAG([-pedantic-errors], [CFLAGS+=" -pedantic-errors"])
 AX_CHECK_COMPILE_FLAG([-fstack-protector-strong], [CFLAGS+=" -fstack-protector-strong"])
 AX_CHECK_COMPILE_FLAG([-fPIE], [CFLAGS+=" -fPIE"])
-AX_CHECK_COMPILE_FLAG([-Wformat], [CFLAGS+=" -Wformat"])
+AX_CHECK_COMPILE_FLAG([-Wformat=2], [CFLAGS+=" -Wformat=2"])
 AX_CHECK_COMPILE_FLAG([-Werror=format-security], [CFLAGS+=" -Werror=format-security"])
 AX_CHECK_COMPILE_FLAG([-Wstrict-prototypes], [CFLAGS+=" -Wstrict-prototypes"])
+AX_CHECK_COMPILE_FLAG([-Wdeclaration-after-statement], [CFLAGS+=" -Wdeclaration-after-statement"])
 AX_CHECK_COMPILE_FLAG([-Wall], [CFLAGS+=" -Wall"])
 AX_CHECK_COMPILE_FLAG([-Wextra], [CFLAGS+=" -Wextra"])
 CPPFLAGS+=" -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 "
@@ -54,7 +57,9 @@ AX_CHECK_LINK_FLAG([-pie], [LDFLAGS+=" -pie"])
 
 AC_HEADER_STDC
 
-# linux has integer types in stdint.h, solaris, vms in inttypes.h
+gl_FUNC_REALPATH_WORKS
+
+dnl linux has integer types in stdint.h, solaris, vms in inttypes.h
 AC_CHECK_HEADERS([stdint.h])
 AC_CHECK_HEADERS([stdalign.h])
 

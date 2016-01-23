@@ -67,8 +67,16 @@ typedef enum gregorio_file_format {
 /* _MAX_PATH is being passed for the maxLength (third) argument of _fullpath,
  * but we are always passing NULL for the absPath (first) argument, so it will
  * be ignored per the MSDN documentation */
-#define realpath(path,resolved_path) _fullpath(resolved_path, path, _MAX_PATH)
-#endif
+#define gregorio_realpath(path,resolved_path) _fullpath(resolved_path,path,_MAX_PATH)
+#else
+#ifdef FUNC_REALPATH_WORKS
+#define gregorio_realpath(path,resolved_path) realpath(path,resolved_path)
+#else
+/* When realpath doesn't work (on an older system), we are forced to use
+ * PATH_MAX to allocate a buffer */
+#define gregorio_realpath(path,resolved_path) realpath(path,gregorio_malloc(PATH_MAX))
+#endif /* FUNC_REALPATH_WORKS */
+#endif /* _WIN32 */
 
 /* define_path attempts to canonicalize the pathname of a given string */
 static char *define_path(char *current_directory, char *string)
@@ -96,7 +104,7 @@ static char *define_path(char *current_directory, char *string)
         base_name++;
 
         /* try to resolve it */
-        file_name = realpath(temp_name, NULL);
+        file_name = gregorio_realpath(temp_name, NULL);
         if (!file_name) {
             fprintf(stderr, "the directory %s for %s does not exist\n",
                     temp_name, base_name);
@@ -238,7 +246,7 @@ static char *encode_point_and_click_filename(char *input_file_name)
     static const char *const hex = "0123456789ABCDEF";
     char *filename, *result = NULL, *r = NULL, *p;
 
-    filename = realpath(input_file_name, NULL);
+    filename = gregorio_realpath(input_file_name, NULL);
     if (!filename) {
         fprintf(stderr, "error: unable to resolve %s\n", input_file_name);
         exit(1);
@@ -279,6 +287,7 @@ static char *encode_point_and_click_filename(char *input_file_name)
 
     *r = '\0';
 
+    free(filename);
     return result;
 }
 
@@ -319,7 +328,7 @@ int main(int argc, char **argv)
     gregorio_score *score = NULL;
 
     #ifdef USE_KPSE
-        kpse_set_program_name("gregorio", "gregorio");
+        kpse_set_program_name(argv[0], "gregorio");
     #endif
     if (argc == 1) {
         print_usage(argv[0]);
@@ -560,7 +569,6 @@ int main(int argc, char **argv)
         if (point_and_click) {
             fprintf(stderr,
                     "warning: disabling point-and-click since reading from stdin\n");
-            point_and_click = false;
         }
     } else {
         input_file = fopen(input_file_name, "r");
@@ -614,7 +622,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    gregorio_fix_initial_keys(score, DEFAULT_KEY);
+    gregorio_fix_initial_keys(score, gregorio_default_clef);
 
     switch (output_format) {
     case GABC:

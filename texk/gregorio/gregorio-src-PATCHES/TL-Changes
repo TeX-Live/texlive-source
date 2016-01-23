@@ -1,5 +1,5 @@
-Changes applied to the gregorio-4.0.1 tree as obtained from:
-	https://github.com/gregorio-project/gregorio/releases/tag/v4.0.1/
+Changes applied to the gregorio-4.1.0-beta1 tree as obtained from:
+	https://github.com/gregorio-project/gregorio/releases/tag/v4.1.0-beta1/
 
 Remove:
 	Makefile.in
@@ -7,6 +7,8 @@ Remove:
 	build-aux/
 	configure
 	contrib/Makefile.in
+	contrib/TeXShop/._.DS_Store
+	contrib/TeXShop/.DS_STORE
 	doc/Makefile.in
 	examples/Makefile.in
 	fonts/

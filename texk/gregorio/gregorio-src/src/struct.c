@@ -5,7 +5,7 @@
  * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
- * 
+ *
  * Gregorio is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,7 @@
 /**
  * @file
  * @brief This file contains a set of function to manipulate the gregorio
- * structure. 
+ * structure.
  *
  * It starts by simple add/delete functions for almost all
  * structs, and ends with more complex functions for manipulating
@@ -50,6 +50,16 @@
 #include "messages.h"
 #include "support.h"
 #include "characters.h"
+#include "support.h"
+
+gregorio_clef_info gregorio_default_clef = {
+    /*.line =*/ 3,
+    /*.secondary_line =*/ 0,
+    /*.clef =*/ CLEF_C,
+    /*.flatted =*/ false,
+    /*.secondary_clef =*/ CLEF_C, /* not used since secondary_line is 0 */
+    /*.secondary_flatted =*/ false,
+};
 
 static gregorio_note *create_and_link_note(gregorio_note **current_note,
         const gregorio_scanner_location *const loc)
@@ -104,24 +114,22 @@ void gregorio_add_note(gregorio_note **current_note, signed char pitch,
         const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = GRE_NOTE;
-        element->u.note.pitch = pitch;
-        element->u.note.shape = shape;
-        element->signs = signs;
-        element->special_sign = _NO_SIGN;
-        element->u.note.liquescentia = liquescentia;
-        if (prototype) {
-            set_h_episema_above(element, prototype->h_episema_above,
-                    prototype->h_episema_above_size,
-                    prototype->h_episema_above_connect);
-            set_h_episema_below(element, prototype->h_episema_below,
-                    prototype->h_episema_below_size,
-                    prototype->h_episema_below_connect);
-        }
-        element->texverb = NULL;
-        element->choral_sign = NULL;
+    element->type = GRE_NOTE;
+    element->u.note.pitch = pitch;
+    element->u.note.shape = shape;
+    element->signs = signs;
+    element->special_sign = _NO_SIGN;
+    element->u.note.liquescentia = liquescentia;
+    if (prototype) {
+        set_h_episema_above(element, prototype->h_episema_above,
+                prototype->h_episema_above_size,
+                prototype->h_episema_above_connect);
+        set_h_episema_below(element, prototype->h_episema_below,
+                prototype->h_episema_below_size,
+                prototype->h_episema_below_connect);
     }
+    element->texverb = NULL;
+    element->choral_sign = NULL;
 }
 
 static void add_pitched_item_as_note(gregorio_note **current_note,
@@ -129,29 +137,26 @@ static void add_pitched_item_as_note(gregorio_note **current_note,
         const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = type;
-        element->u.note.pitch = pitch;
-    }
+    element->type = type;
+    element->u.note.pitch = pitch;
 }
 
 void gregorio_add_end_of_line_as_note(gregorio_note **current_note,
-        gregorio_type sub_type, const gregorio_scanner_location *const loc)
+        bool eol_ragged, bool eol_forces_custos, bool eol_forces_custos_on,
+        const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = GRE_END_OF_LINE;
-        element->u.other.sub_type = sub_type;
-    }
+    element->type = GRE_END_OF_LINE;
+    element->u.other.eol_ragged = eol_ragged;
+    element->u.other.eol_forces_custos = eol_forces_custos;
+    element->u.other.eol_forces_custos_on = eol_forces_custos_on;
 }
 
 void gregorio_add_custo_as_note(gregorio_note **current_note,
         const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = GRE_CUSTOS;
-    }
+    element->type = GRE_CUSTOS;
 }
 
 void gregorio_add_manual_custos_as_note(gregorio_note **current_note,
@@ -160,42 +165,54 @@ void gregorio_add_manual_custos_as_note(gregorio_note **current_note,
     add_pitched_item_as_note(current_note, GRE_MANUAL_CUSTOS, pitch, loc);
 }
 
-void gregorio_add_clef_change_as_note(gregorio_note **current_note,
-        gregorio_type type, signed char clef_line,
+void gregorio_add_clef_as_note(gregorio_note **current_note,
+        gregorio_clef clef, signed char clef_line, bool flatted,
         const gregorio_scanner_location *const loc)
 {
-    assert(type == GRE_C_KEY_CHANGE || type == GRE_F_KEY_CHANGE
-           || type == GRE_C_KEY_CHANGE_FLATED
-           || type == GRE_F_KEY_CHANGE_FLATED);
-    add_pitched_item_as_note(current_note, type, clef_line, loc);
+    gregorio_note *element = create_and_link_note(current_note, loc);
+    element->type = GRE_CLEF;
+    element->u.clef.clef = clef;
+    element->u.clef.line = clef_line;
+    element->u.clef.flatted = flatted;
+}
+
+void gregorio_add_secondary_clef_to_note(gregorio_note *current_note,
+        gregorio_clef clef, signed char clef_line, bool flatted)
+{
+    if (!current_note || current_note->type != GRE_CLEF) {
+        gregorio_message(_("trying to add a secondary clef to something that "
+                    "is not a clef"), "gregorio_add_secondary_clef_to_note",
+                VERBOSITY_ERROR, 0);
+        return;
+    }
+
+    if (current_note->u.clef.secondary_line) {
+        gregorio_message(_("secondary clef already exists"),
+                "gregorio_add_secondary_clef_to_note", VERBOSITY_ERROR, 0);
+        return;
+    }
+
+    current_note->u.clef.secondary_clef = clef;
+    current_note->u.clef.secondary_line = clef_line;
+    current_note->u.clef.secondary_flatted = flatted;
 }
 
 void gregorio_add_bar_as_note(gregorio_note **current_note, gregorio_bar bar,
         const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = GRE_BAR;
-        element->u.other.bar = bar;
-    }
-}
-
-void gregorio_add_alteration_as_note(gregorio_note **current_note,
-        gregorio_type type, signed char pitch,
-        const gregorio_scanner_location *const loc)
-{
-    assert(type == GRE_FLAT || type == GRE_SHARP || type == GRE_NATURAL);
-    add_pitched_item_as_note(current_note, type, pitch, loc);
+    element->type = GRE_BAR;
+    element->u.other.bar = bar;
 }
 
 void gregorio_add_space_as_note(gregorio_note **current_note,
-        gregorio_space space, const gregorio_scanner_location *const loc)
+        const gregorio_space space, char *factor,
+        const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = GRE_SPACE;
-        element->u.other.space = space;
-    }
+    element->type = GRE_SPACE;
+    element->u.other.space = space;
+    element->u.other.ad_hoc_space_factor = factor;
 }
 
 void gregorio_add_texverb_as_note(gregorio_note **current_note, char *str,
@@ -208,40 +225,50 @@ void gregorio_add_texverb_as_note(gregorio_note **current_note, char *str,
     element = create_and_link_note(current_note, loc);
     assert(type == GRE_TEXVERB_GLYPH || type == GRE_TEXVERB_ELEMENT
            || type == GRE_ALT);
-    if (element) {
-        element->type = type;
-        element->texverb = str;
-    }
+    element->type = type;
+    element->texverb = str;
 }
 
 void gregorio_add_nlba_as_note(gregorio_note **current_note, gregorio_nlba type,
         const gregorio_scanner_location *const loc)
 {
     gregorio_note *element = create_and_link_note(current_note, loc);
-    if (element) {
-        element->type = GRE_NLBA;
-        element->u.other.nlba = type;
-    }
+    element->type = GRE_NLBA;
+    element->u.other.nlba = type;
 }
 
-void gregorio_add_texverb_to_note(gregorio_note **current_note, char *str)
+void gregorio_start_autofuse(gregorio_note **current_note,
+        const gregorio_scanner_location *const loc)
+{
+    gregorio_note *element = create_and_link_note(current_note, loc);
+    element->type = GRE_AUTOFUSE_START;
+}
+
+void gregorio_end_autofuse(gregorio_note **current_note,
+        const gregorio_scanner_location *const loc)
+{
+    gregorio_note *element = create_and_link_note(current_note, loc);
+    element->type = GRE_AUTOFUSE_END;
+}
+
+void gregorio_add_texverb_to_note(gregorio_note *current_note, char *str)
 {
     size_t len;
     char *res;
     if (str == NULL) {
         return;
     }
-    if (*current_note) {
-        if ((*current_note)->texverb) {
-            len = strlen((*current_note)->texverb) + strlen(str) + 1;
+    if (current_note) {
+        if (current_note->texverb) {
+            len = strlen(current_note->texverb) + strlen(str) + 1;
             res = gregorio_malloc(len);
-            strcpy(res, (*current_note)->texverb);
+            strcpy(res, current_note->texverb);
             strcat(res, str);
-            free((*current_note)->texverb);
+            free(current_note->texverb);
             free(str);
-            (*current_note)->texverb = res;
+            current_note->texverb = res;
         } else {
-            (*current_note)->texverb = str;
+            current_note->texverb = str;
         }
     }
 }
@@ -266,13 +293,11 @@ void gregorio_add_special_sign(gregorio_note *note, gregorio_sign sign)
 
 static void fix_punctum_cavum_inclinatum_liquescentia(gregorio_note *const note)
 {
+    note->u.note.liquescentia &= TAIL_LIQUESCENTIA_MASK;
     switch (note->u.note.liquescentia) {
     case L_AUCTUS_ASCENDENS:
     case L_AUCTUS_DESCENDENS:
-    case L_AUCTA:
-    case L_AUCTUS_ASCENDENS_INITIO_DEBILIS:
-    case L_AUCTUS_DESCENDENS_INITIO_DEBILIS:
-        note->u.note.liquescentia = L_AUCTA;
+        note->u.note.liquescentia = L_AUCTUS_ASCENDENS;
         break;
     default:
         note->u.note.liquescentia = L_NO_LIQUESCENTIA;
@@ -280,131 +305,215 @@ static void fix_punctum_cavum_inclinatum_liquescentia(gregorio_note *const note)
     }
 }
 
-void gregorio_change_shape(gregorio_note *note, gregorio_shape shape)
+static void fix_oriscus_liquescentia(gregorio_note *const note,
+        const bool legacy_oriscus_orientation)
+{
+    if (legacy_oriscus_orientation) {
+        switch (note->u.note.liquescentia) {
+        case L_AUCTUS_ASCENDENS:
+            note->u.note.liquescentia =
+                    (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                    | L_AUCTUS_DESCENDENS;
+            /* fall through */
+        case L_AUCTUS_DESCENDENS:
+            note->u.note.shape = S_ORISCUS_DESCENDENS;
+            break;
+        case L_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_DEMINUTUS;
+            break;
+        default:
+            note->u.note.shape = S_ORISCUS_ASCENDENS;
+            break;
+        }
+    } else {
+        switch (note->u.note.liquescentia) {
+        case L_AUCTUS_ASCENDENS:
+            note->u.note.shape = S_ORISCUS_ASCENDENS;
+            break;
+        case L_AUCTUS_DESCENDENS:
+            note->u.note.shape = S_ORISCUS_DESCENDENS;
+            break;
+        case L_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_DEMINUTUS;
+            break;
+        default:
+            note->u.note.shape = S_ORISCUS_UNDETERMINED;
+            break;
+        }
+    }
+}
+
+static void fix_oriscus_cavum_liquescentia(gregorio_note *const note,
+        const bool legacy_oriscus_orientation)
+{
+    if (legacy_oriscus_orientation) {
+        switch (note->u.note.liquescentia) {
+        case L_AUCTUS_ASCENDENS:
+            note->u.note.liquescentia =
+                    (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                    | L_AUCTUS_DESCENDENS;
+            /* fall through */
+        case L_AUCTUS_DESCENDENS:
+            note->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
+            break;
+        case L_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_CAVUM_DEMINUTUS;
+            break;
+        default:
+            note->u.note.shape = S_ORISCUS_CAVUM_ASCENDENS;
+            break;
+        }
+    } else {
+        switch (note->u.note.liquescentia) {
+        case L_AUCTUS_ASCENDENS:
+            note->u.note.shape = S_ORISCUS_CAVUM_ASCENDENS;
+            break;
+        case L_AUCTUS_DESCENDENS:
+            note->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
+            break;
+        case L_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_CAVUM_DEMINUTUS;
+            break;
+        default:
+            note->u.note.shape = S_ORISCUS_CAVUM_UNDETERMINED;
+            break;
+        }
+    }
+}
+
+void gregorio_change_shape(gregorio_note *note, gregorio_shape shape,
+        const bool legacy_oriscus_orientation)
 {
     if (!note || note->type != GRE_NOTE) {
         gregorio_message(_("trying to change the shape of something that is "
                            "not a note"), "change_shape", VERBOSITY_ERROR, 0);
         return;
     }
-    switch (note->u.note.shape) {
-    case S_PUNCTUM_INCLINATUM:
-        if (shape == S_PUNCTUM_CAVUM) {
+
+    if (shape == S_PUNCTUM_CAVUM) {
+        /* S_PUNCTUM_CAVUM morphs other shapes */
+        switch (note->u.note.shape) {
+        case S_PUNCTUM_INCLINATUM:
             note->u.note.shape = S_PUNCTUM_CAVUM_INCLINATUM;
             fix_punctum_cavum_inclinatum_liquescentia(note);
-            break;
-        }
-        /* else fall through */
+            return;
 
-    default:
-        note->u.note.shape = shape;
-        switch (shape) {
-        case S_STROPHA:
-        case S_DISTROPHA:
-        case S_TRISTROPHA:
-            switch (note->u.note.liquescentia) {
-            case L_AUCTUS_ASCENDENS:
-            case L_AUCTUS_DESCENDENS:
-                note->u.note.liquescentia = L_AUCTA;
-                break;
-            case L_AUCTUS_ASCENDENS_INITIO_DEBILIS:
-            case L_AUCTUS_DESCENDENS_INITIO_DEBILIS:
-                note->u.note.liquescentia = L_AUCTA_INITIO_DEBILIS;
-                break;
-            default:
-                break;
-            }
-            break;
-
-        case S_ORISCUS:
-            switch (note->u.note.liquescentia) {
-            case L_AUCTUS_ASCENDENS:
-            case L_AUCTUS_DESCENDENS:
-            case L_AUCTUS_ASCENDENS_INITIO_DEBILIS:
-            case L_AUCTUS_DESCENDENS_INITIO_DEBILIS:
-                note->u.note.shape = S_ORISCUS_AUCTUS;
-                break;
-            case L_DEMINUTUS:
-            case L_DEMINUTUS_INITIO_DEBILIS:
-                note->u.note.shape = S_ORISCUS_DEMINUTUS;
-                break;
-            default:
-                break;
-            }
-            break;
+        case S_ORISCUS_UNDETERMINED:
+        case S_ORISCUS_ASCENDENS:
+        case S_ORISCUS_DESCENDENS:
+        case S_ORISCUS_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_CAVUM_UNDETERMINED;
+            fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+            return;
 
         default:
             break;
         }
+    }
+
+    note->u.note.shape = shape;
+    switch (shape) {
+    case S_STROPHA:
+    case S_DISTROPHA:
+    case S_TRISTROPHA:
+        note->u.note.liquescentia &= L_AUCTUS_ASCENDENS | L_INITIO_DEBILIS;
+        break;
+
+    case S_ORISCUS_UNDETERMINED:
+        fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_ASCENDENS:
+        note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_AUCTUS_ASCENDENS;
+        fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_DESCENDENS:
+        note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_AUCTUS_DESCENDENS;
+        fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_DEMINUTUS:
+        note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_DEMINUTUS;
+        fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_CAVUM_UNDETERMINED:
+        fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_CAVUM_ASCENDENS:
+        note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_AUCTUS_ASCENDENS;
+        fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_CAVUM_DESCENDENS:
+        note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_AUCTUS_DESCENDENS;
+        fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    case S_ORISCUS_CAVUM_DEMINUTUS:
+        note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_DEMINUTUS;
+        fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+        break;
+
+    default:
         break;
     }
 }
 
-void gregorio_add_liquescentia(gregorio_note *note, gregorio_liquescentia liq)
+void gregorio_add_tail_liquescentia(gregorio_note *note,
+        gregorio_liquescentia liq, const bool legacy_oriscus_orientation)
 {
     if (!note || note->type != GRE_NOTE) {
         gregorio_message(_("trying to make a liquescence on something that "
                     "is not a note"), "add_liquescentia", VERBOSITY_ERROR, 0);
         return;
     }
-    if (is_initio_debilis(liq)) {
-        switch (liq) {
-        case L_DEMINUTUS:
-            note->u.note.liquescentia = L_DEMINUTUS_INITIO_DEBILIS;
-            break;
-        case L_AUCTUS_ASCENDENS:
-            note->u.note.liquescentia = L_AUCTUS_ASCENDENS_INITIO_DEBILIS;
-            break;
-        case L_AUCTUS_DESCENDENS:
-            note->u.note.liquescentia = L_AUCTUS_DESCENDENS_INITIO_DEBILIS;
-            break;
-        case L_AUCTA:
-            note->u.note.liquescentia = L_AUCTA_INITIO_DEBILIS;
-            break;
-        default:
-            /* do nothing */
-            break;
-        }
-    } else {
-        note->u.note.liquescentia = liq;
-    }
+
+    note->u.note.liquescentia =
+        (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+        | (liq & TAIL_LIQUESCENTIA_MASK);
+
     switch (note->u.note.shape) {
     case S_STROPHA:
     case S_DISTROPHA:
     case S_TRISTROPHA:
-        switch (note->u.note.liquescentia) {
-        case L_AUCTUS_ASCENDENS:
-        case L_AUCTUS_DESCENDENS:
-            note->u.note.liquescentia = L_AUCTA;
-            break;
-        case L_AUCTUS_ASCENDENS_INITIO_DEBILIS:
-        case L_AUCTUS_DESCENDENS_INITIO_DEBILIS:
-            note->u.note.liquescentia = L_AUCTA_INITIO_DEBILIS;
-            break;
-        default:
-            break;
+        if (note->u.note.liquescentia & L_AUCTUS_DESCENDENS) {
+            note->u.note.liquescentia =
+                (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                | L_AUCTUS_ASCENDENS;
         }
         break;
 
-    case S_ORISCUS:
-        switch (note->u.note.liquescentia) {
-        case L_AUCTUS_ASCENDENS:
-        case L_AUCTUS_DESCENDENS:
-        case L_AUCTUS_ASCENDENS_INITIO_DEBILIS:
-        case L_AUCTUS_DESCENDENS_INITIO_DEBILIS:
-            note->u.note.shape = S_ORISCUS_AUCTUS;
-            break;
-        case L_DEMINUTUS:
-        case L_DEMINUTUS_INITIO_DEBILIS:
-            note->u.note.shape = S_ORISCUS_DEMINUTUS;
-            break;
-        default:
-            break;
-        }
+    case S_ORISCUS_UNDETERMINED:
+    case S_ORISCUS_ASCENDENS:
+    case S_ORISCUS_DESCENDENS:
+    case S_ORISCUS_DEMINUTUS:
+        fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
         break;
 
     case S_PUNCTUM_CAVUM_INCLINATUM:
         fix_punctum_cavum_inclinatum_liquescentia(note);
+        break;
+
+    case S_ORISCUS_CAVUM_UNDETERMINED:
+    case S_ORISCUS_CAVUM_ASCENDENS:
+    case S_ORISCUS_CAVUM_DESCENDENS:
+    case S_ORISCUS_CAVUM_DEMINUTUS:
+        fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
         break;
 
     default:
@@ -590,6 +699,9 @@ void gregorio_go_to_first_note(gregorio_note **note)
 
 static __inline void free_one_note(gregorio_note *note)
 {
+    if (note->type == GRE_SPACE) {
+        free(note->u.other.ad_hoc_space_factor);
+    }
     free(note->texverb);
     free(note->choral_sign);
     free(note);
@@ -602,11 +714,11 @@ void gregorio_free_one_note(gregorio_note **note)
         return;
     }
     if ((*note)->next) {
-        (*note)->next->previous = NULL;
+        (*note)->next->previous = (*note)->previous;
         next = (*note)->next;
     }
     if ((*note)->previous) {
-        (*note)->previous->next = NULL;
+        (*note)->previous->next = (*note)->next;
     }
     free_one_note(*note);
     *note = next;
@@ -640,48 +752,47 @@ void gregorio_add_glyph(gregorio_glyph **current_glyph,
         gregorio_liquescentia liquescentia)
 {
     gregorio_glyph *next_glyph = create_and_link_glyph(current_glyph);
-    if (next_glyph) {
-        next_glyph->type = GRE_GLYPH;
-        next_glyph->u.notes.glyph_type = type;
-        next_glyph->u.notes.liquescentia = liquescentia;
-        next_glyph->u.notes.first_note = first_note;
-    }
+    next_glyph->type = GRE_GLYPH;
+    next_glyph->u.notes.glyph_type = type;
+    next_glyph->u.notes.liquescentia = liquescentia;
+    next_glyph->u.notes.first_note = first_note;
+}
+
+void gregorio_add_clef_as_glyph(gregorio_glyph **current_glyph,
+        gregorio_clef_info clef, char *texverb)
+{
+    gregorio_glyph *next_glyph = create_and_link_glyph(current_glyph);
+    next_glyph->type = GRE_CLEF;
+    next_glyph->u.misc.clef = clef;
+    next_glyph->texverb = texverb;
 }
 
 void gregorio_add_pitched_element_as_glyph(gregorio_glyph **current_glyph,
-        gregorio_type type, signed char pitch, bool flatted_key,
-        bool force_pitch, char *texverb)
+        gregorio_type type, signed char pitch, bool force_pitch, char *texverb)
 {
     gregorio_glyph *next_glyph = create_and_link_glyph(current_glyph);
-    assert(type == GRE_C_KEY_CHANGE || type == GRE_F_KEY_CHANGE
-           || type == GRE_C_KEY_CHANGE_FLATED || type == GRE_F_KEY_CHANGE_FLATED
-           || type == GRE_CUSTOS || type == GRE_FLAT || type == GRE_NATURAL
-           || type == GRE_SHARP);
-    if (next_glyph) {
-        next_glyph->type = type;
-        next_glyph->u.misc.pitched.pitch = pitch;
-        next_glyph->u.misc.pitched.flatted_key = flatted_key;
-        next_glyph->u.misc.pitched.force_pitch = force_pitch;
-        next_glyph->texverb = texverb;
-    }
+    assert(type == GRE_CUSTOS);
+    next_glyph->type = type;
+    next_glyph->u.misc.pitched.pitch = pitch;
+    next_glyph->u.misc.pitched.force_pitch = force_pitch;
+    next_glyph->texverb = texverb;
 }
 
 void gregorio_add_unpitched_element_as_glyph(gregorio_glyph **current_glyph,
-        gregorio_type type, gregorio_extra_info info, gregorio_sign sign,
+        gregorio_type type, gregorio_extra_info *info, gregorio_sign sign,
         char *texverb)
 {
     gregorio_glyph *next_glyph = create_and_link_glyph(current_glyph);
     assert(type != GRE_NOTE && type != GRE_GLYPH && type != GRE_ELEMENT
-           && type != GRE_C_KEY_CHANGE && type != GRE_F_KEY_CHANGE
-           && type != GRE_C_KEY_CHANGE_FLATED && type != GRE_F_KEY_CHANGE_FLATED
-           && type != GRE_CUSTOS && type != GRE_FLAT && type != GRE_NATURAL
-           && type != GRE_SHARP);
-    if (next_glyph) {
-        next_glyph->type = type;
-        next_glyph->u.misc.unpitched.info = info;
-        next_glyph->u.misc.unpitched.special_sign = sign;
-        next_glyph->texverb = texverb;
-    }
+           && type != GRE_CLEF && type != GRE_CUSTOS);
+    next_glyph->type = type;
+    next_glyph->u.misc.unpitched.info = *info;
+    next_glyph->u.misc.unpitched.special_sign = sign;
+    next_glyph->texverb = texverb;
+
+    /* this was copied into the glyph, so we need to clear it to avoid a
+     * double-free */
+    info->ad_hoc_space_factor = NULL;
 }
 
 void gregorio_go_to_first_glyph(gregorio_glyph **glyph)
@@ -700,8 +811,16 @@ void gregorio_go_to_first_glyph(gregorio_glyph **glyph)
 static __inline void free_one_glyph(gregorio_glyph *glyph)
 {
     free(glyph->texverb);
-    if (glyph->type == GRE_GLYPH) {
+    switch (glyph->type) {
+    case GRE_GLYPH:
         gregorio_free_notes(&glyph->u.notes.first_note);
+        break;
+    case GRE_SPACE:
+        free(glyph->u.misc.unpitched.info.ad_hoc_space_factor);
+        break;
+    default:
+        /* nothing to do */
+        break;
     }
     free(glyph);
 }
@@ -754,20 +873,22 @@ void gregorio_add_element(gregorio_element **current_element,
         gregorio_glyph *first_glyph)
 {
     gregorio_element *next = create_and_link_element(current_element);
-    if (next) {
-        next->type = GRE_ELEMENT;
-        next->u.first_glyph = first_glyph;
-    }
+    next->type = GRE_ELEMENT;
+    next->u.first_glyph = first_glyph;
 }
 
 void gregorio_add_misc_element(gregorio_element **current_element,
-        gregorio_type type, gregorio_misc_element_info info, char *texverb)
+        gregorio_type type, gregorio_misc_element_info *info, char *texverb)
 {
     gregorio_element *special = create_and_link_element(current_element);
-    if (special) {
-        special->type = type;
-        special->u.misc = info;
-        special->texverb = texverb;
+    special->type = type;
+    special->u.misc = *info;
+    special->texverb = texverb;
+
+    if (type == GRE_SPACE) {
+        /* this was copied into the glyph, so we need to clear it to avoid a
+         * double-free */
+        info->unpitched.info.ad_hoc_space_factor = NULL;
     }
 }
 
@@ -778,8 +899,17 @@ static __inline void free_one_element(gregorio_element *element)
     for (i = 0; i < element->nabc_lines; i++) {
         free(element->nabc[i]);
     }
-    if (element->type == GRE_ELEMENT) {
+    free(element->nabc);
+    switch (element->type) {
+    case GRE_ELEMENT:
         gregorio_free_glyphs(&element->u.first_glyph);
+        break;
+    case GRE_SPACE:
+        free(element->u.misc.unpitched.info.ad_hoc_space_factor);
+        break;
+    default:
+        /* nothing to do */
+        break;
     }
     free(element);
 }
@@ -834,7 +964,7 @@ static void gregorio_free_one_character(gregorio_character *current_character)
     free(current_character);
 }
 
-static void gregorio_free_characters(gregorio_character *current_character)
+void gregorio_free_characters(gregorio_character *current_character)
 {
     gregorio_character *next_character;
     if (!current_character) {
@@ -847,9 +977,9 @@ static void gregorio_free_characters(gregorio_character *current_character)
     }
 }
 
-void gregorio_go_to_first_character(gregorio_character **character)
+void gregorio_go_to_first_character(const gregorio_character **character)
 {
-    gregorio_character *tmp;
+    const gregorio_character *tmp;
     if (!character || !*character) {
         return;
     }
@@ -890,6 +1020,29 @@ void gregorio_end_style(gregorio_character **current_character,
         (*current_character)->next_character = element;
     }
     *current_character = element;
+}
+
+gregorio_character *gregorio_clone_characters(
+        const gregorio_character *source)
+{
+    gregorio_character *target = NULL, *current = NULL;
+
+    for (; source; source = source->next_character) {
+        gregorio_character *character = (gregorio_character *)
+                gregorio_calloc(1, sizeof(gregorio_character));
+        *character = *source;
+        character->next_character = NULL;
+
+        if (current) {
+            character->previous_character = current;
+            current = current->next_character = character;
+        } else {
+            character->previous_character = NULL;
+            target = current = character;
+        }
+    }
+
+    return target;
 }
 
 void gregorio_add_syllable(gregorio_syllable **current_syllable,
@@ -985,80 +1138,37 @@ static void gregorio_free_syllables(gregorio_syllable **syllable,
     }
 }
 
-static void gregorio_source_info_init(source_info *si)
-{
-    si->author = NULL;
-    si->date = NULL;
-    si->manuscript = NULL;
-    si->manuscript_reference = NULL;
-    si->manuscript_storage_place = NULL;
-    si->transcriber = NULL;
-    si->transcription_date = NULL;
-    si->book = NULL;
-}
-
 gregorio_score *gregorio_new_score(void)
 {
-    int annotation_num;
     gregorio_score *new_score = gregorio_calloc(1, sizeof(gregorio_score));
-    new_score->first_syllable = NULL;
     new_score->number_of_voices = 1;
-    new_score->name = NULL;
-    new_score->gabc_copyright = NULL;
-    new_score->score_copyright = NULL;
-    new_score->initial_style = NORMAL_INITIAL;
-    new_score->office_part = NULL;
-    new_score->occasion = NULL;
-    new_score->meter = NULL;
-    new_score->commentary = NULL;
-    new_score->arranger = NULL;
-    gregorio_source_info_init(&new_score->si);
-    new_score->first_voice_info = NULL;
-    new_score->mode = 0;
-    new_score->gregoriotex_font = NULL;
-    new_score->user_notes = NULL;
-    for (annotation_num = 0; annotation_num < MAX_ANNOTATIONS; ++annotation_num) {
-        new_score->annotation[annotation_num] = NULL;
-    }
+    new_score->initial_style = INITIAL_NOT_SPECIFIED;
+    gregorio_set_score_staff_lines(new_score, 4);
     return new_score;
-}
-
-static void gregorio_free_source_info(source_info *si)
-{
-    free(si->date);
-    free(si->author);
-    free(si->manuscript);
-    free(si->manuscript_reference);
-    free(si->manuscript_storage_place);
-    free(si->transcriber);
-    free(si->transcription_date);
-    free(si->book);
 }
 
 static void gregorio_free_score_infos(gregorio_score *score)
 {
-    int annotation_num;
     if (!score) {
         gregorio_message(_("function called with NULL argument"),
                 "gregorio_free_score_infos", VERBOSITY_WARNING, 0);
         return;
     }
-    free(score->name);
-    free(score->gabc_copyright);
-    free(score->score_copyright);
-    free(score->office_part);
-    free(score->occasion);
-    free(score->meter);
-    free(score->commentary);
-    free(score->arranger);
-    free(score->user_notes);
-    free(score->gregoriotex_font);
-    for (annotation_num = 0; annotation_num < MAX_ANNOTATIONS; ++annotation_num) {
-        free(score->annotation[annotation_num]);
-    }
-    gregorio_free_source_info(&score->si);
+    /* don't free the strings coming from headers; they will be freed when the
+     * headers themselves are freed */
     if (score->first_voice_info) {
         gregorio_free_voice_infos(score->first_voice_info);
+    }
+}
+
+static void free_headers(gregorio_score *score) {
+    gregorio_header *header = score->headers;
+    while (header) {
+        gregorio_header *next = header->next;
+        free(header->name);
+        free(header->value);
+        free(header);
+        header = next;
     }
 }
 
@@ -1071,129 +1181,13 @@ void gregorio_free_score(gregorio_score *score)
     }
     gregorio_free_syllables(&(score->first_syllable), score->number_of_voices);
     gregorio_free_score_infos(score);
+    free_headers(score);
     free(score);
-}
-
-void gregorio_set_score_name(gregorio_score *score, char *name)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_name", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->name);
-    score->name = name;
-}
-
-void gregorio_set_score_gabc_copyright(gregorio_score *score,
-        char *gabc_copyright)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_gabc_copyright", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->gabc_copyright);
-    score->gabc_copyright = gabc_copyright;
-}
-
-void gregorio_set_score_score_copyright(gregorio_score *score,
-        char *score_copyright)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_score_copyright", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->score_copyright);
-    score->score_copyright = score_copyright;
-}
-
-void gregorio_set_score_office_part(gregorio_score *score, char *office_part)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_office_part", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->office_part);
-    score->office_part = office_part;
-}
-
-void gregorio_set_score_occasion(gregorio_score *score, char *occasion)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_occasion", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->occasion);
-    score->occasion = occasion;
-}
-
-void gregorio_set_score_meter(gregorio_score *score, char *meter)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_meter", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->meter);
-    score->meter = meter;
-}
-
-void gregorio_set_score_commentary(gregorio_score *score, char *commentary)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_commentary", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->commentary);
-    score->commentary = commentary;
-}
-
-void gregorio_set_score_arranger(gregorio_score *score, char *arranger)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_arranger", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->arranger);
-    score->arranger = arranger;
-}
-
-void gregorio_set_score_number_of_voices(gregorio_score *score,
-        int number_of_voices)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_number_of_voices", VERBOSITY_WARNING, 0);
-        return;
-    }
-    score->number_of_voices = number_of_voices;
-}
-
-void gregorio_set_score_user_notes(gregorio_score *score, char *user_notes)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_user_notes", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->user_notes);
-    score->user_notes = user_notes;
 }
 
 void gregorio_add_voice_info(gregorio_voice_info **current_voice_info)
 {
     gregorio_voice_info *next = gregorio_calloc(1, sizeof(gregorio_voice_info));
-    next->initial_key = NO_KEY;
-    next->flatted_key = false;
-    next->style = NULL;
-    next->virgula_position = NULL;
-    next->next_voice_info = NULL;
     if (*current_voice_info) {
         (*current_voice_info)->next_voice_info = next;
     }
@@ -1209,17 +1203,11 @@ void gregorio_free_voice_infos(gregorio_voice_info *voice_info)
         return;
     }
     while (voice_info) {
-        free(voice_info->style);
-        free(voice_info->virgula_position);
         next = voice_info->next_voice_info;
         free(voice_info);
         voice_info = next;
     }
 }
-
-/*
- * a set of quite useless function 
- */
 
 void gregorio_set_score_annotation(gregorio_score *score, char *annotation)
 {
@@ -1237,125 +1225,47 @@ void gregorio_set_score_annotation(gregorio_score *score, char *annotation)
         }
     }
     if (annotation_num >= MAX_ANNOTATIONS) {
-        free(annotation);
         gregorio_message(_("too many annotations"),
                 "gregorio_set_annotation", VERBOSITY_WARNING, 0);
     }
 }
 
-void gregorio_set_score_author(gregorio_score *score, char *author)
+void gregorio_set_score_staff_lines(gregorio_score *const score,
+        const char staff_lines)
 {
     if (!score) {
         gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_author", VERBOSITY_WARNING, 0);
+                "gregorio_set_score_staff_lines", VERBOSITY_WARNING, 0);
         return;
     }
-    free(score->si.author);
-    score->si.author = author;
+    if (staff_lines < 2 || staff_lines > 5) {
+        gregorio_message(_("invalid number of staff lines"),
+                "gregorio_set_score_staff_lines", VERBOSITY_ERROR, 0);
+        return;
+    }
+    score->staff_lines = staff_lines;
+    score->highest_pitch = LOWEST_PITCH + 4 + (2 * staff_lines);
+    score->high_ledger_line_pitch = score->highest_pitch - 1;
 }
 
-void gregorio_set_score_date(gregorio_score *score, char *date)
+void gregorio_add_score_header(gregorio_score *score, char *name, char *value)
 {
+    gregorio_header *header;
     if (!score) {
         gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_date", VERBOSITY_WARNING, 0);
+                "gregorio_add_score_header", VERBOSITY_WARNING, 0);
         return;
     }
-    free(score->si.date);
-    score->si.date = date;
-}
-
-void gregorio_set_score_manuscript(gregorio_score *score, char *manuscript)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_manuscript", VERBOSITY_WARNING, 0);
-        return;
+    header = (gregorio_header *)gregorio_malloc(sizeof(gregorio_header));
+    header->name = name;
+    header->value = value;
+    header->next = NULL;
+    if (score->last_header) {
+        score->last_header->next = header;
+    } else {
+        score->headers = header;
     }
-    free(score->si.manuscript);
-    score->si.manuscript = manuscript;
-}
-
-void gregorio_set_score_manuscript_reference(gregorio_score *score,
-        char *manuscript_reference)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_reference", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->si.manuscript_reference);
-    score->si.manuscript_reference = manuscript_reference;
-}
-
-void gregorio_set_score_manuscript_storage_place(gregorio_score *score,
-        char *manuscript_storage_place)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_manuscript_storage_place",
-                VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->si.manuscript_storage_place);
-    score->si.manuscript_storage_place = manuscript_storage_place;
-}
-
-void gregorio_set_score_book(gregorio_score *score, char *book)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_book", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->si.book);
-    score->si.book = book;
-}
-
-void gregorio_set_score_transcriber(gregorio_score *score, char *transcriber)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_transcriber", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->si.transcriber);
-    score->si.transcriber = transcriber;
-}
-
-void gregorio_set_score_transcription_date(gregorio_score *score,
-        char *transcription_date)
-{
-    if (!score) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_score_transcription_date", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(score->si.transcription_date);
-    score->si.transcription_date = transcription_date;
-}
-
-void gregorio_set_voice_style(gregorio_voice_info *voice_info, char *style)
-{
-    if (!voice_info) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_voice_style", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(voice_info->style);
-    voice_info->style = style;
-}
-
-void gregorio_set_voice_virgula_position(gregorio_voice_info *voice_info,
-        char *virgula_position)
-{
-    if (!voice_info) {
-        gregorio_message(_("function called with NULL argument"),
-                "gregorio_set_voice_virgula_position", VERBOSITY_WARNING, 0);
-        return;
-    }
-    free(voice_info->virgula_position);
-    voice_info->virgula_position = virgula_position;
+    score->last_header = header;
 }
 
 /**********************************
@@ -1369,78 +1279,29 @@ void gregorio_set_voice_virgula_position(gregorio_voice_info *voice_info,
  * * 3 for a C key on the second line
  * * 5 for a C key on the third line (default key)
  * * 7 for a C key on the fourth line
+ * * 9 for a C key on the fifth line
  *
  * * -2 for a F key on the first line
  * * 0 for a F key on the second line
  * * 2 for a F key on the third line
  * * 4 for a F key on the fourth line
+ * * 6 for a F key on the fifth line
  *
  *********************************/
 
-int gregorio_calculate_new_key(char step, int line)
+int gregorio_calculate_new_key(gregorio_clef_info clef)
 {
-    switch (step) {
-    case C_KEY:
-        return (2 * line) - 1;
+    switch (clef.clef) {
+    case CLEF_C:
+        return (2 * clef.line) - 1;
         break;
-    case F_KEY:
-        return (2 * line) - 4;
+    case CLEF_F:
+        return (2 * clef.line) - 4;
         break;
     default:
         gregorio_message(_("can't calculate key"),
                 "gregorio_calculate_new_key", VERBOSITY_ERROR, 0);
         return NO_KEY;
-    }
-}
-
-/**********************************
- *
- * The reverse function of the preceeding : give step (c or f) and
- * line (1-4) from an integer representing the key.
- *
- *********************************/
-
-void gregorio_det_step_and_line_from_key(int key, char *step, int *line)
-{
-    switch (key) {
-    case -2:
-        *step = 'f';
-        *line = 1;
-        break;
-    case 0:
-        *step = 'f';
-        *line = 2;
-        break;
-    case 2:
-        *step = 'f';
-        *line = 3;
-        break;
-    case 4:
-        *step = 'f';
-        *line = 4;
-        break;
-    case 1:
-        *step = 'c';
-        *line = 1;
-        break;
-    case 3:
-        *step = 'c';
-        *line = 2;
-        break;
-    case 5:
-        *step = 'c';
-        *line = 3;
-        break;
-    case 7:
-        *step = 'c';
-        *line = 4;
-        break;
-    default:
-        *step = '?';
-        *line = 0;
-        gregorio_message(_("can't determine step and line of the key"),
-                "gregorio_det_step_and_line_from_key", VERBOSITY_ERROR, 0);
-        return;
     }
 }
 
@@ -1460,7 +1321,9 @@ static signed char gregorio_syllable_first_note(gregorio_syllable *syllable)
         if (element->type == GRE_ELEMENT && element->u.first_glyph) {
             glyph = element->u.first_glyph;
             while (glyph) {
-                if (glyph->type == GRE_GLYPH && glyph->u.notes.first_note) {
+                if (glyph->type == GRE_GLYPH
+                        && glyph->u.notes.glyph_type != G_ALTERATION
+                        && glyph->u.notes.first_note) {
                     assert(glyph->u.notes.first_note->type == GRE_NOTE);
                     return glyph->u.notes.first_note->u.note.pitch;
                 }
@@ -1485,7 +1348,9 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
     if (glyph) {
         glyph = glyph->next;
         while (glyph) {
-            if (glyph->type == GRE_GLYPH && glyph->u.notes.first_note) {
+            if (glyph->type == GRE_GLYPH
+                    && glyph->u.notes.glyph_type != G_ALTERATION
+                    && glyph->u.notes.first_note) {
                 assert(glyph->u.notes.first_note->type == GRE_NOTE);
                 return glyph->u.notes.first_note->u.note.pitch;
             }
@@ -1501,7 +1366,9 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
         if (element->type == GRE_ELEMENT && element->u.first_glyph) {
             glyph = element->u.first_glyph;
             while (glyph) {
-                if (glyph->type == GRE_GLYPH && glyph->u.notes.first_note) {
+                if (glyph->type == GRE_GLYPH
+                        && glyph->u.notes.glyph_type != G_ALTERATION
+                        && glyph->u.notes.first_note) {
                     assert(glyph->u.notes.first_note->type == GRE_NOTE);
                     return glyph->u.notes.first_note->u.note.pitch;
                 }
@@ -1529,44 +1396,6 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
 
 /**********************************
  *
- * A function that may be useful (used in xml-write) : we have a
- * tabular of alterations (we must remember all alterations on all
- * notes all the time, they are reinitialized when a bar is found),
- * and we assign all of them to NO_ALTERATION.
- *
- *This function works in fact with a tabular of tabular, one per
- *voice, for polyphony.
- *
- *********************************/
-
-void gregorio_reinitialize_alterations(char alterations[][13],
-        int number_of_voices)
-{
-    int i;
-    int j;
-    for (j = 0; j < number_of_voices; j++) {
-        for (i = 0; i < 13; i++) {
-            alterations[j][i] = NO_ALTERATION;
-        }
-    }
-}
-
-/**********************************
- *
- * The corresponding function for monophony.
- *
- *********************************/
-
-void gregorio_reinitialize_one_voice_alterations(char alterations[13])
-{
-    int i;
-    for (i = 0; i < 13; i++) {
-        alterations[i] = NO_ALTERATION;
-    }
-}
-
-/**********************************
- *
  * A function called after the entire score is determined : we check
  * if the first element is a key change, if it is the case we delete
  * it and we update the score->voice-info->initial_key. Works in
@@ -1574,9 +1403,9 @@ void gregorio_reinitialize_one_voice_alterations(char alterations[13])
  *
  *********************************/
 
-void gregorio_fix_initial_keys(gregorio_score *score, int default_key)
+void gregorio_fix_initial_keys(gregorio_score *score,
+        gregorio_clef_info default_clef)
 {
-    int clef = 0;
     gregorio_element *element;
     gregorio_voice_info *voice_info;
     int i;
@@ -1593,22 +1422,8 @@ void gregorio_fix_initial_keys(gregorio_score *score, int default_key)
         if (!element) {
             continue;
         }
-        if (element->type == GRE_C_KEY_CHANGE) {
-            clef =
-                gregorio_calculate_new_key(C_KEY,
-                                           element->u.misc.pitched.pitch - '0');
-            voice_info->initial_key = clef;
-            voice_info->flatted_key = element->u.misc.pitched.flatted_key;
-            gregorio_free_one_element(&(score->first_syllable->elements[i]));
-            gregorio_messagef("gregorio_fix_initial_keys", VERBOSITY_INFO, 0,
-                    _("in voice %d the first element is a key definition, "
-                    "considered as initial key"), i + 1);
-        } else if (element->type == GRE_F_KEY_CHANGE) {
-            clef =
-                gregorio_calculate_new_key(F_KEY,
-                                           element->u.misc.pitched.pitch - '0');
-            voice_info->initial_key = clef;
-            voice_info->flatted_key = element->u.misc.pitched.flatted_key;
+        if (element->type == GRE_CLEF) {
+            voice_info->initial_clef = element->u.misc.clef;
             gregorio_free_one_element(&(score->first_syllable->elements[i]));
             gregorio_messagef("gregorio_fix_initial_keys", VERBOSITY_INFO, 0,
                     _("in voice %d the first element is a key definition, "
@@ -1637,8 +1452,8 @@ void gregorio_fix_initial_keys(gregorio_score *score, int default_key)
     voice_info = score->first_voice_info;
 
     for (i = 0; i < score->number_of_voices; i++) {
-        if (voice_info->initial_key == NO_KEY) {
-            voice_info->initial_key = default_key;
+        if (!voice_info->initial_clef.line) {
+            voice_info->initial_clef = default_clef;
             gregorio_messagef("gregorio_fix_initial_keys", VERBOSITY_INFO, 0,
                     _("no initial key definition in voice %d, default key "
                     "definition applied"), i + 1);
@@ -1668,3 +1483,25 @@ bool gregorio_is_only_special(gregorio_element *element)
     }
     return 1;
 }
+
+const char *gregorio_unknown(int value) {
+    static char buf[20];
+    gregorio_snprintf(buf, sizeof buf, "?%d", value);
+    return buf;
+}
+
+ENUM_TO_STRING(gregorio_type, GREGORIO_TYPE)
+ENUM_TO_STRING(gregorio_shape, GREGORIO_SHAPE)
+ENUM_TO_STRING(gregorio_bar, GREGORIO_BAR)
+ENUM_TO_STRING(gregorio_sign, GREGORIO_SIGN)
+ENUM_TO_STRING(gregorio_space, GREGORIO_SPACE)
+ENUM_TO_STRING(gregorio_liquescentia, GREGORIO_LIQUESCENTIA)
+ENUM_TO_STRING(grehepisema_size, GREHEPISEMA_SIZE)
+ENUM_TO_STRING(gregorio_vposition, GREGORIO_VPOSITION)
+ENUM_TO_STRING(gregorio_glyph_type, GREGORIO_GLYPH_TYPE)
+ENUM_TO_STRING(grestyle_style, GRESTYLE_STYLE)
+ENUM_TO_STRING(grestyle_type, GRESTYLE_TYPE)
+ENUM_TO_STRING(gregorio_tr_centering, GREGORIO_TR_CENTERING)
+ENUM_TO_STRING(gregorio_nlba, GREGORIO_NLBA)
+ENUM_TO_STRING(gregorio_euouae, GREGORIO_EUOUAE)
+ENUM_TO_STRING(gregorio_word_position, GREGORIO_WORD_POSITION)

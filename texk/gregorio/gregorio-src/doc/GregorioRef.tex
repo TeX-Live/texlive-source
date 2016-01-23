@@ -33,6 +33,7 @@
 \usepackage{tabulary}
 \usepackage{tabularx}
 \usepackage{adjustbox}
+\usepackage{xparse}
 
 \usepackage{makeidx}
 \makeindex
@@ -54,7 +55,7 @@
 \newenvironment{gabccode}{\tt}{}
 
 
-\usepackage{gregoriotex}
+\usepackage[allowdeprecated=false]{gregoriotex}
 
 \usepackage{carolmin}
 \usepackage{mflogo}
@@ -120,6 +121,24 @@
 		\hline}%
 	{\endtabularx\bigskip}
 
+\makeatletter%
+\NewDocumentEnvironment{gdimension}{m}{\macroname{#1}{}{gp-default.tex}}{%
+
+	\gre@rubberpermit{#1}%
+	\ifgre@rubber%
+		Default: \directlua{GregorioRef.emit_dimension("\luaescapestring{\csname gre@space@skip@#1\endcsname}")}
+	\else%
+		Default: \directlua{GregorioRef.emit_dimension("\luaescapestring{\csname gre@space@dimen@#1\endcsname}")}
+	\fi%
+}
+
+\newcommand{\writemode}[3]{%
+	\gre@style@modeline #1\endgre@style@modeline %
+	\gre@style@modemodifier #2\endgre@style@modemodifier %
+	\gre@style@modedifferentia #3\endgre@style@modedifferentia %
+}
+\makeatother
+
 \setlength{\parindent}{0mm} % Default is 15pt
 
 \begin{document}
@@ -133,7 +152,7 @@
 
 		\vspace{1cm}
 
-		\large Version \textbf{4.0.1}, 28 December 2015 %% PARSE_VERSION_DATE
+		\large Version \textbf{4.1.0-beta1}, 23 January 2016 %% PARSE_VERSION_DATE
 
 		\vspace{1.5cm}
 	\end{center}
@@ -141,8 +160,8 @@
 	\grechangestyle{lowchoralsign}{\cminfamily\small}%
 	\grechangestyle{highchoralsign}{\cminfamily\small}%
 	\def\GreStar{\greheightstar}%
-	\greannotation{\scriptsize{Comm.}}%
-	\greannotation{\scriptsize{VII}}%
+	\greannotation{\scriptsize Comm.}%
+	\greannotation{\scriptsize VII}%
 	\begingroup%
 		\color{black!60}%
 		\setmainfont[SmallCapsFont=AlegreyaSC]{Alegreya}%

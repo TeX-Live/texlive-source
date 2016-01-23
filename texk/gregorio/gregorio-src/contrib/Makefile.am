@@ -15,4 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST = gprocess gabc.xml gabc.lang gabc.vim 900_gregorio.xml gregorio-scribus.lua gregorio.png gabc-syntax.plist README.md TeXShop system-setup.sh system-setup.bat
+EXTRA_DIST = gprocess gabc.xml gabc.lang gabc.vim 900_gregorio.xml gregorio-scribus.lua gregorio.png gabc-syntax.plist README.md TeXShop system-setup.sh system-setup.bat config-texworks.command
