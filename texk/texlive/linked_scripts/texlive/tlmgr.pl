@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 39384 2016-01-14 17:57:13Z karl $
+# $Id: tlmgr.pl 39410 2016-01-17 00:07:22Z karl $
 #
-# Copyright 2008-2015 Norbert Preining
+# Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 39384 $';
-my $datrev = '$Date: 2016-01-14 18:57:13 +0100 (Thu, 14 Jan 2016) $';
+my $svnrev = '$Revision: 39410 $';
+my $datrev = '$Date: 2016-01-17 01:07:22 +0100 (Sun, 17 Jan 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -325,8 +325,8 @@ my %action_specification = (
 
 main() if $ismain;
 
-#####################################################################
-
+
+### main ##################################################################
 
 sub main {
   my %options;       # TL options from local tlpdb
@@ -624,7 +624,13 @@ for the full story.\n";
 
   my $ret = execute_action($action, @ARGV);
 
-  if ($ret & $F_ERROR) {
+  # F_ERROR stops processing immediately, and prevents postactions from
+  # being run (e.g., untar fails).  F_WARNING continues on, including
+  # postactions (e.g., user tries to install 10 packages and the
+  # checksum fails for one, but the others are ok), but still ends the
+  # program by exiting unsuccessfully.  So call them both "errors" 
+  # as far as the user is concerned.
+  if ($ret & ($F_ERROR | $F_WARNING)) {
     tlwarn("$prg: An error has occurred. See above messages. Exiting.\n");
   }
 
@@ -689,7 +695,7 @@ sub execute_action {
       return($foo);
     }
     if ($foo & $F_WARNING) {
-      tlwarn("$prg: action $action returned a warning.\n");
+      tlwarn("$prg: action $action returned an error; continuing.\n");
       $ret = $foo;
     }
   } else {
@@ -725,8 +731,7 @@ sub execute_action {
 # run CMD with notice to the user and if exit status is nonzero, complain.
 # return exit status.
 # 
-sub do_cmd_and_check
-{
+sub do_cmd_and_check {
   my $cmd = shift;
   # we output the pre-running notice on a separate line so that
   # tlmgr front ends (MacOSX's TeX Live Utility) can read it
@@ -5691,8 +5696,7 @@ sub init_tlmedia_or_die {
   }
 }
 
-sub init_tlmedia
-{
+sub init_tlmedia {
   # first check if $location contains multiple locations
   # in this case we go to virtual mode
   #my %repos = repository_to_array($localtlpdb->option("location"));
@@ -5765,12 +5769,7 @@ sub init_tlmedia
   return 1;
 }
 
-
-
-
-sub _init_tlmedia
-{
-
+sub _init_tlmedia {
   # if we are already initialized to the same location, nothing
   # needs to be done.
   # if we are initialized to a virtual tlpdb, then we have to 
@@ -5803,8 +5802,7 @@ sub _init_tlmedia
   return 1;
 }
 
-sub setup_one_remotetlpdb
-{
+sub setup_one_remotetlpdb {
   my $location = shift;
   my $remotetlpdb;
 
@@ -6079,8 +6077,7 @@ sub write_config_file {
 
 # if the packagelog variable is set then write to PACKAGELOG filehandle
 #
-sub logpackage
-{
+sub logpackage {
   if ($packagelogfile) {
     $packagelogged++;
     my $tim = localtime();
@@ -6089,8 +6086,7 @@ sub logpackage
 }
 
 # resolve relative paths from tlpdb wrt tlroot 
-sub norm_tlpdb_path
-{
+sub norm_tlpdb_path {
   my ($path) = @_;
   return if (!defined($path));
   $path =~ s!\\!/!;
@@ -6102,8 +6098,8 @@ sub norm_tlpdb_path
 
 # clear the backup dir for $pkg and keep only $autobackup packages
 # mind that with $autobackup == 0 all packages are cleared
-sub clear_old_backups
-{
+#
+sub clear_old_backups {
   my ($pkg, $backupdir, $autobackup, $dry) = @_;
 
   my $dryrun = 0;
@@ -6132,8 +6128,7 @@ sub clear_old_backups
 
 # check for updates to tlcritical packages
 #
-sub check_for_critical_updates
-{
+sub check_for_critical_updates {
   my ($localtlpdb, $mediatlpdb) = @_;
 
   my $criticalupdate = 0;
