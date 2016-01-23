@@ -8,7 +8,6 @@ office-part: Communio;
 mode: 7;
 book: Graduale Romanum, 1961, p. 296;
 transcriber: Andrew Hinkley, Jakub Jelínek;
-initial-style: 1;
 
 % You have to put the number of nabc lines here, only 1 is allowed for now
 

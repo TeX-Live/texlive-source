@@ -5,6 +5,114 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [4.1.0-beta1] - 2016-01-23
+### Fixed
+- The alignment of the vertical episema under a punctum inclinatum deminutus is now correct (see [#742](https://github.com/gregorio-project/gregorio/issues/742)).
+- `<eu>` and `<nlba>` may now be ended on the final divisio maior/finalis (see [#743](https://github.com/gregorio-project/gregorio/issues/743)).
+- Sign positioning on the first note of quadratum figures is now correct (see [#752](https://github.com/gregorio-project/gregorio/issues/752)).
+- Interlinear spacing of annotations when font size was smaller than normal.  You should now see just the spacing specified by `annotationseparation`.
+- Spacing is now correct and ledger lines are now typeset for flats, sharps, and naturals above and below the staff (see [#790](https://github.com/gregorio-project/gregorio/issues/790)).
+- Forced hyphens at the end of words are no longer suppressed (see [#804](https://github.com/gregorio-project/gregorio/issues/804)).
+
+### Changed
+- Initial handling has been simplified.  The initial style should now be specified from TeX by using the `\gresetinitiallines` command, rather than from a gabc header.  Big initials and normal initials are now governed by a single `initial` style, meant to be changed between scores as appropriate.  See [UPGRADE.md](UPGRADE.md) and GregorioRef for details (for the change request, see [#632](https://github.com/gregorio-project/gregorio/issues/632)).  Deprecations for this change are listed in the Deprecation section, below.
+- `\gresethyphen` no longer manipulates `maximumspacewithoutdash`, allowing for restoration of consistent behavior after this distance has been modified.  See [#705](https://github.com/gregorio-project/gregorio/issues/705).
+- The oriscus-based shapes in the greciliae font are more consistent.  The shape of a scandicus with a second ambitus of two is more consistent across all score fonts.
+- Minimal space between notes of different syllables (or words) has been reduced when the second syllable starts with an alteration.
+- The space between note and horizontal episema has been tightened for notes at the `c` or `k` height when there is no ledger line.  Due to the intricacies of measurement, the system tries to make a best guess as to the existence of the ledger line.  If the guess is wrong, you may use the `[hl:n]` and `[ll:n]` notations in gabc to override the guess.  See [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#716](https://github.com/gregorio-project/gregorio/issues/716)).
+- The custos that might appear immediately before a `<eu>` block is now suppressed by default.  This behavior is controlled by the `\greseteolcustosbeforeeuouae` command.  See GregorioRef and [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#761](https://github.com/gregorio-project/gregorio/issues/761)).
+- Different glyphs will now be used for the liquescent stropha on a line or between lines, if supported by the font.  If you prefer the old behavior, use `\grechangeglyph{StrophaAuctaLongtail}{*}{StrophaAucta}` in your TeX file.  See [#773](https://github.com/gregorio-project/gregorio/issues/773).
+- Made the oriscus orientation dependent on the note that follows.  Using `<` will force the ascending oriscus and `>` will force the descending oriscus.  The old behavior may be restored by setting the `oriscus-orientation` gabc header to `legacy`.  See UPGRADE.md for details (for the change request, see [#774](https://github.com/gregorio-project/gregorio/issues/774)).
+- Headers not recognized by gregorio, rather than inducing an error, are now simply accepted by gregorio.  Most of the old "standard" headers, like `book` and `manuscript-location`, are now handled in this way and thus are no longer limited to one instance.  See GregorioRef for details.
+- `mode` will now be converted to Roman numerals in lower case so that it shows up as small capitals using the default `modeline` style.  See [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#756](https://github.com/gregorio-project/gregorio/issues/756)).
+- `\grecommentary` is now less restrictive about where it occurs and need not occur directly before the score anymore.
+- When a bar is preceeded by a punctum mora, gregorio now ignores the punctum mora in the bar horizontal placement by default, and also adds a custom space (defaulting to 0). You can change this behavior with `\gresetbarshiftaftermora{}`, see GregorioRef for its arguments (for the change request, see [#795](https://github.com/gregorio-project/gregorio/issues/795)).
+
+### Added
+- Support for two-, three-, and five-line staves.  Set the `staff-lines` header to `2`, `3`, or `5`.  For all values of `staff-lines`, the note below the staff remains 'c'.  The two new notes above the staff (for a five-line staff) are `n` and `p`.  See [#429](https://github.com/gregorio-project/gregorio/issues/429).
+- Salicus flexus glyphs (see [#631](https://github.com/gregorio-project/gregorio/issues/631)).
+- Neume fusion, activated in gabc by `@`.  Use `@` before a clivis or a porrectus to get an unstemmed figure.  Use `@` between two notes to fuse them explicitly.  Enclose a set of notes within `@[` and `]` to automatically guess their fusion.  See GregorioRef for details (for the channge requests, see [#679](https://github.com/gregorio-project/gregorio/issues/679), [#687](https://github.com/gregorio-project/gregorio/issues/687), and [#692](https://github.com/gregorio-project/gregorio/issues/692)).
+- Hollow version of the oriscus, called by adding the `r` modifier to an oriscus, as in `gor` or `gor<` (See [#724](https://github.com/gregorio-project/gregorio/issues/724)).
+- Headers are now passed to TeX and may be captured in TeX by using the `\gresetheadercapture` command.  See GregorioRef for details.
+- Support for half-spaces and ad-hoc spaces.  Use `/0` in gabc for a half-space between notes.  Use `/[factor]` (substituting a positive or negative real number for the scale factor) for an ad-hoc space whose length is `interelementspace` scaled by the desired factor.  See [#736](https://github.com/gregorio-project/gregorio/issues/736).
+- Support for custom length ledger lines.  See GregorioRef for details (for the change request, see [#598](https://github.com/gregorio-project/gregorio/issues/598)).
+- Support for a secondary clef.  Use `@` to join two clefs together, as in `c1@c4`.  The first clef is considered the primary one and will be used when computing an automatic custos before a clef change.  See [#755](https://github.com/gregorio-project/gregorio/issues/755).
+- New headers for typesetting text after `mode` above the initial: `mode` will be typeset first, using the `modeline` style, then `mode-modifier`, using the `modemodifier` style, then `mode-differentia`, using the `modedifferentia` style.  See GregorioRef for details (for the change request, see [#756](https://github.com/gregorio-project/gregorio/issues/756)).
+- Automatic line breaks before a `<eu>` block may be made ragged by using `\gresetbreakbeforeeuouae{ragged}`.  See GregorioRef for details (for the change request, see [#764](https://github.com/gregorio-project/gregorio/issues/764)).
+- Tunable spaces for bars with text underneath: `spacearoundsmallbartext`, `spacearoundminortext`, `spacearoundmaiortext`, `spacearoundfinalistext`, `spacebeforefinalfinalistext`.  These are sized slightly larger than their "non-text" counterparts.  See GregorioRef and [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#766](https://github.com/gregorio-project/gregorio/issues/766)).
+- The ability to typeset simple slurs.  See GregorioRef for details (for the change request, see [#776](https://github.com/gregorio-project/gregorio/issues/776)).
+- More control over the alignment of the annotation.  You can now set either the first line or the last line of the annotation as the controling line with `\gresetannotationby{firstline}` and `\gresetannotationby{lastline}` respectively.  Additionaly, within the line you can specify the top, baseline, or bottom of the line as the alignment point with `\gresetannotationvalign{top}`, `\gresetannotation{baseline}`, and `\gresetannotationvalgin{bottom}` respectively.  Default behavior is baseline of the top line (as it was before).  These alignment controls are applied before `annotationraise` is taken into account.  See [#768](https://github.com/gregorio-project/gregorio/issues/768) for details.
+- More control over the placement of the commentary.  You can now set the amount of space between the lines of a multi-line commentary with `commentaryseparation` and the distance from the top line of the staff to the baseline of the bottom line of the commentary with `commentaryraise`.  See [#662](https://github.com/gregorio-project/gregorio/issues/662) for original request.
+- Styles for the annotation and the commentary.  `annotation` has no default styling.  `commentary` defaults to footnote sized italics.
+- `\grecommentary` now takes an optional argument which will add extra space between the commentary and the score for just the next score.
+- The custos can now be selectively enabled/disabled at forced line breaks by appending `+` (to enable) or `-` (to disable) after the `z` or `Z` (see [#800](https://github.com/gregorio-project/gregorio/issues/800)).
+- With thanks to an anonymous contributor, the shape of the MetaPost-drawn curly brace has been improved (see [#797](https://github.com/gregorio-project/gregorio/issues/797)).
+
+
+### Deprecated
+- `initial-style` gabc header, supplanted by the `\gresetinitiallines` TeX command.
+- `biginitial` style, consolidated into the `initial` style.
+- `\grescorereference`
+
+### Removed
+- `\GreSetStaffLinesFormat`, supplanted by `\grechangeformat{normalstafflines}...`
+- `\greinitialformat`, if you were redefining this command, use `\grechangeformat{initial}...` instead
+- `\grebiginitialformat`, if you were redefining this command, use `\grechangeformat{biginitial}...` instead
+- `\gretranslationformat`, if you were redefining this command, use `\grechangeformat{translation}...` instead
+- `\greabovelinestextstyle`, if you were redefining this command, use `\grechangeformat{abovelinestext}...` instead
+- `\grelowchoralsignstyle`, if you were redefining this command, use `\grechangeformat{lowchoralsign}...` instead
+- `\grehighchoralsignstyle`, if you were redefining this command, use `\grechangeformat{highchoralsign}...` instead
+- `\setaboveinitialseparation`, supplanted by `\grechangedim{annotationseparation}...`
+- `\scorereference`
+- `\GreScoreReference`
+- `\commentary`, supplanted by `\grecommentary`
+- `\setgretranslationcenteringscheme`, supplanted by `\gresettranslationcentering`
+- `\englishcentering`, supplanted by `\gresetlyriccentering{syllable}`
+- `\defaultcentering`, supplanted by `\gresetlyriccentering{vowel}`
+- `\setgrefactor`, supplanted by `\grechangestaffsize`
+- `\forcecompilegabc`, supplanted by `\gresetcompilegabc{force}`
+- `\autocompilegabc`, supplanted by `\gresetcompilegabc{auto}`
+- `\nevercompilegabc`, supplanted by `\gresetcompilegabc{never}`
+- `\includescore`, supplanted by `\gregorioscore`
+- `\grenoscaledim`, supplanted by `\grescaledim{...}{no}`
+- `\gresetdim`, supplanted by `\grecreatedim`
+- `\setstafflinethickness`, supplanted by `\grechangestafflinethickness`
+- `\grecoloredlines`, supplanted by `\gresetlinecolor`
+- `\greredlines` and `\redlines`, supplanted by `\gresetlinecolor{gregoriocolor}`
+- `\grenormallines` and `\normallines`, supplanted by `\gresetlinecolor{black}`
+- `\greremovelines`, supplanted by `\gresetlines{invisible}`
+- `\gredonotremovelines`, supplanted by `\gresetlines{visible}`
+- `\GreHidePCLines`, supplanted by `\gresetlinesbehindpunctumcavum{invisible}`
+- `\GreDontHidePCLines`, supplanted by `\gresetlinesbehindpunctumcavum{visible}`
+- `\GreHideAltLines`, supplanted by `\gresetlinesbehindalteration{invisible}`
+- `\GreDontHideAltLines`, supplanted by `\gresetlinesbehindalteration{visible}`
+- `\gresetnlbintranslation`, supplanted by `\gresetbreakintranslation`
+- `\greblockcustos`, supplanted by `\greseteolcustos{manual}`
+- `\greenableeolshifts`, supplanted by `\greseteolshifts{enable}`
+- `\gredisableeolshifts`, supplanted by `\greseteolshifts{disable}`
+- `\GreUseNoramalHyphen`, supplanted by `\greseteolhyphen{normal}`
+- `\GreUseZeroHyphen`, supplanted by `\greseteolhyphen{zero}`
+- `\greremoveclef`, supplanted by `\gresetclef{invisible}`
+- `\grenormalclef`, supplanted by `\gresetclef{visible}`
+- `\AddHEpisemusBridges`, supplanted by `\gresethepisema{bridge}`
+- `\RemoveHEpisemusBridges`, supplanted by `\gresethepisema{break}`
+- `\UseAlternatePunctumCavum`, supplanted by `\gresetpunctumcavum{alternate}`
+- `\UseNormalPunctumCavum`, supplanted by `\gresetpunctumcavum{normal}`
+- `\clivisalignmentalways`, supplanted by `\gresetclivisalignment{always}`
+- `\clivisalignmentnever`, supplanted by `\gresetclivisalignment{never}`
+- `\clivisalignmentspecial`, supplanted by `\gresetclivisalignment{special}`
+- `\greusedefaultstyle`, supplanted by `\gresetglyphsytle{default}`
+- `\greusemedicaeastyle`, supplanted by `\gresetglyphsytle{medicaea}`
+- `\greusehufnagelstyle`, supplanted by `\gresetglyphsytle{hufnagel}`
+- `\greusemensuralstyle`, supplanted by `\gresetglyphsytle{mensural}`
+- `\setspaceafterinitial`, supplanted by `\grechangedim{afterinitialshift}...`
+- `\setspacebeforeinitial`, supplanted by `\grechangedim{beforeinitialshift}...`
+- `\setinitialspacing`, supplanted by `\grechangedim{beforeinitialshift}...`, `\grechangedim{manualinitialwidth}...`, and `\grechangedime{afterinitialshift}...`
+- `centering-scheme` gabc header, supplanted by `\grelyriccentering` in TeX.  See GregorioRef for syntax.
+- `gregoriotex-font` gabc header, supplanted by `\gresetgregoriofont` in TeX.  See GregorioRef for syntax.
+- The meaningless `gabc-version` header in gabc (see [#664](https://github.com/gregorio-project/gregorio/issues/664)).
+
+
 ## [4.0.1] - 2015-12-28
 ### Fixed
 - `\greseteolcustos` now retains its setting across multiple score inclusions (see [#703](https://github.com/gregorio-project/gregorio/issues/703)).

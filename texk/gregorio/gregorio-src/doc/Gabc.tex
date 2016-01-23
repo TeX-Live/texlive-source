@@ -23,39 +23,26 @@ following structure:
 name: incipit;
 gabc-copyright: copyright on this gabc file;
 score-copyright: copyright on the source score;
-office-part: introitus/...;
-occasion: in church calendar;
-meter: for metrical hymns;
-commentary: source of words;
-arranger: name of arranger;
 author: if known;
-date: xi c;
-manuscript: ms name;
-manuscript-reference: e.g. CAO reference;
-manuscript-storage-place: library/monastery;
-book: from which score taken;
-transcriber: writer of gabc;
-transcription-date: 2009;
 language: latin;
-initial-style: 1;
-user-notes: whatever other comments you wish to make;
 mode: 6;
+mode-modifier: t.;
 annotation: IN.;
 annotation: 6;
 %%
 (clef) text(notes)
 \end{lstlisting}
 
-In each case, replace whatever is between the colon and semi-colon
-\texttt{(:...;)} with the appropriate character string. Of these attributes,
-only name is mandatory. Descriptions of how these header fields are
-intended to be used are below. If you wish to write a value over
-several lines, omit the semicolon at the end of the first line, and
-end the attribute value with \texttt{;;} (two semicolons).
+\subsection{Headers}
 
-\subsection{Header}
+The headers, such as \texttt{name: incipit;}, above, each have a name
+before the colon and a value, between the colon and the semicolon.  The
+header name is composed of ASCII letters and numbers, optionally separated
+by dashes.  If you wish to write a value over several lines, omit the
+semicolon at the end of the first line, and end the header value with
+\texttt{;;} (two semicolons).
 
-Here is a detailed description of each header field:
+Some headers have special meaning to Gregorio:
 
 \begin{description}
 \item[name] This is the name of the piece, in almost all cases the
@@ -70,22 +57,9 @@ Here is a detailed description of each header field:
 	\begin{lstlisting}[autogobble]
 		score-copyright: (C) Abbaye de Solesmes, 1934;
 	\end{lstlisting}
-\item[office-part] The office-part is the category of chant (in Latin), according to its liturgical rôle. Examples are: antiphona, hymnus, responsorium brevium, responsorium prolixum, introitus, graduale, tractus, offertorium, communio, kyrie, gloria, credo, sanctus, benedictus, agnus dei.
-\item[occasion] The occasion is the liturgical occasion, in Latin. For example, Dominica II Adventus, Commune doctorum, Feria secunda.
-\item[meter] For hymns and anything else with repetitive stanzas, the meter, the numbers of syllables in each line of a stanza. For example, 8.8.8.8 for typical Ambrosian-style hymns: 4 lines each of 8 syllables.
-\item[commentary] This is intended for notes about the source of the text, such as references to the Bible.
-\item[arranger] The name of a modern arranger, when a traditional chant melody has been adapted for new words, or when a manuscript is transcribed into square notation. This may be a corporate name, like Solesmes.
 \item[author] The author of the piece, if known; of course, the author of most traditional chant is not known.
-\item[date] The date of composition, or the date of earliest attestation. With most traditional chant, this will only be approximate; e.g. XI. s. for eleventh century. The convention is to put it with the latin style, like the previous examples (capital letters, roman numerals, s for seculum and the dots).
-\item[manuscript] For transcriptions direct from a manuscript, the text normally used to identify the manuscript, for example Montpellier H.159
-\item[manuscript-reference] A unique reference for the piece, according to some well-known system. For example, the reference beginning cao in the Cantus database of office chants. If the reference is unclear as to which system it uses, it should be prefixed by the name of the system. Note that this should be a reference identifying the piece, not the manuscript as a whole; anything identifying the manuscript as a whole should be put in the manuscript field.
-\item[manuscript-storage-place] For transcriptions direct from a manuscript, where the manuscript is held; e.g. Bibliothèque Nationale, Paris.
-\item[book] For transcriptions from a modern book (such as Solesmes editions; modern goes back at least to the 19th century revival), the name of the book; e.g. Liber Usualis.
-\item[transcriber] The name of the transcriber into gabc.
-\item[transcription-date] The date the gabc was written, with the following convention yyyymmdd, like 20090129 for january the 29th 2009.
 \item[language] The language of the lyrics.
-\item[initial-style] The style of the initial letter. 0 means no initial letter, 1 a normal one, and 2 a large one, on two lines. Note that if you want to use the initial on two lines, you have to specify at least the two first line breaks.
-\item[user-notes] This may contain any text in addition to the other headers -- any notes the transcriber may wish. However, it is recommended to use the specific header fields where they are suitable, so that it is easier to find particular information.
+\item[oriscus-orientation] If \texttt{legacy}, the orientation of an unconnected oriscus must be set manually.
 \item[mode] The mode of the piece. This should normally be an arabic
 	number between 1 and 8, but may be any text required for unusual
 	cases. The mode number will be converted to roman numerals and
@@ -95,6 +69,13 @@ Here is a detailed description of each header field:
 	\item There is a \verb=\greannotation= defined immediatly prior to \verb=\gregorioscore=.
 	\item The \texttt{annotation} header field is defined.
 	\end{itemize}
+\item[mode-modifier] The mode ``modifier'' of the piece. This may be any
+	\TeX\ code to typeset after the mode, if the mode is typeset.  If the mode
+	is not typeset, the mode-modifier will also not be typeset.
+\item[mode-differentia] The mode or tone differentia of the piece.  Typically,
+	this expresses the variant of the psalm tone to use for the piece.  This may
+	be any \TeX\ code to typeset after the mode-modifier, if the mode is typeset.
+	If the mode is not typeset, the mode-differentia will also not be typeset.
 \item[annotation] The annotation is the text to appear above the
 	initial letter. Usually this is an abbreviation of the office-part
 	in the upper line, and an indication of the mode (and differentia
@@ -113,8 +94,171 @@ Here is a detailed description of each header field:
 	If the user already defined annotation(s) in the main \TeX\ file via
 	\verb=\greannotation= then the \texttt{annotation} header field will not
 	overwrite that definition.
-
 \end{description}
+
+Although gregorio ascribes no special meaning to them, other suggested headers are:
+
+\begin{description}
+\item[office-part] The office-part is the category of chant (in Latin), according to its liturgical rôle. Examples are: antiphona, hymnus, responsorium brevium, responsorium prolixum, introitus, graduale, tractus, offertorium, communio, kyrie, gloria, credo, sanctus, benedictus, agnus dei.
+\item[occasion] The occasion is the liturgical occasion, in Latin. For example, Dominica II Adventus, Commune doctorum, Feria secunda.
+\item[meter] For hymns and anything else with repetitive stanzas, the meter, the numbers of syllables in each line of a stanza. For example, 8.8.8.8 for typical Ambrosian-style hymns: 4 lines each of 8 syllables.
+\item[commentary] This is intended for notes about the source of the text, such as references to the Bible.
+\item[arranger] The name of a modern arranger, when a traditional chant melody has been adapted for new words, or when a manuscript is transcribed into square notation. This may be a corporate name, like Solesmes.
+\item[date] The date of composition, or the date of earliest attestation. With most traditional chant, this will only be approximate; e.g. XI. s. for eleventh century. The convention is to put it with the latin style, like the previous examples (capital letters, roman numerals, s for seculum and the dots).
+\item[manuscript] For transcriptions direct from a manuscript, the text normally used to identify the manuscript, for example Montpellier H.159
+\item[manuscript-reference] A unique reference for the piece, according to some well-known system. For example, the reference beginning cao in the Cantus database of office chants. If the reference is unclear as to which system it uses, it should be prefixed by the name of the system. Note that this should be a reference identifying the piece, not the manuscript as a whole; anything identifying the manuscript as a whole should be put in the manuscript field.
+\item[manuscript-storage-place] For transcriptions direct from a manuscript, where the manuscript is held; e.g. Bibliothèque Nationale, Paris.
+\item[book] For transcriptions from a modern book (such as Solesmes editions; modern goes back at least to the 19th century revival), the name of the book; e.g. Liber Usualis.
+\item[transcriber] The name of the transcriber into gabc.
+\item[transcription-date] The date the gabc was written, with the following convention yyyymmdd, like 20090129 for January the 29th 2009.
+\item[user-notes] This may contain any text in addition to the other headers -- any notes the transcriber may wish. However, it is recommended to use the specific header fields where they are suitable, so that it is easier to find particular information.
+\end{description}
+
+\subsubsection{Mode Headers}
+
+The three mode headers described above (\texttt{mode}, \texttt{mode-modifier},
+and \texttt{mode-differentia}) will be typeset above the initial if neither
+the \texttt{annotation} gabc header nor the \verb=\greannotation= \TeX{}
+command is used.
+
+The mode annotation will look like
+\writemode{mode}{\thinspace mode-modifier}{\thinspace mode-differentia}.
+
+The \texttt{mode} header is typically a number that will be typeset as a
+Roman numeral using the \texttt{modeline} style.  Therefore, if the first
+character of \texttt{mode} is a number from one (\texttt{1}) through eight
+(\texttt{8}), that number will be converted according to the
+\verb=\gresetmodenumbersystem= setting.  However, there are other modes,
+so all other parts of \texttt{mode} will be typeset directly.  If the
+\texttt{mode} header is omitted, none of the other mode headers will be
+typeset.
+
+The \texttt{mode-modifier} header is some text (typeset in the
+\texttt{modemodifier} style) that appears after \texttt{mode}, but before
+\texttt{mode-differentia}.  This is meant for an extra notation that
+indicates something without altering the mode itself.  An example would be
+\writemode{}{t.}{} to indicate a transposed mode.  If the
+\texttt{mode-modifier} header starts with punctuation, there will be no space
+before it, otherwise there will be a \verb=\thinspace= before it.
+
+The \texttt{mode-differentia} header is some text (typeset in the
+\texttt{modedifferentia} style) that appears after \texttt{mode-modifier}.
+This is meant for indicating the psalm tone ending to use for the paired
+psalm tone.  If the \texttt{mode-differentia} header starts with punctuation,
+there will be no space before it, otherwise there will be a \verb=\thinspace=
+before it.
+
+Some examples:
+
+\begin{tabularx}{\textwidth}{l|l|l|X}
+	\texttt{mode} & \texttt{mode-modifier} & \texttt{mode-differentia} & Result \\
+	\hline
+	\verb=6= & & & \writemode{\romannumeral 6}{}{} \\
+	\verb=4A= & & & \writemode{\romannumeral 4\relax A}{}{} \\
+	\verb=4a= & & & \writemode{\romannumeral 4\relax a}{}{} \\
+	\verb=2*= & \verb=t.= & & \writemode{\romannumeral 2*}{\thinspace t.}{} \\
+	\verb=5= & \verb=,\thinspace t.= & & \writemode{\romannumeral 5}{,\thinspace t.}{} \\
+	\verb=7= & & {\scriptsize\verb=c\raise0.5ex\hbox{\small2}=} & \writemode{\romannumeral 7}{}{\thinspace c\raise0.5ex\hbox{\small2}} \\
+	\verb=8= & \verb=-t.= & \verb=G*= & \writemode{\romannumeral 8}{-t.}{\thinspace G*} \\
+	{\scriptsize\verb=t. irregularis=} & & & \writemode{t. irregularis}{}{} \\
+\end{tabularx}
+
+\subsection{Neume Fusion}
+
+Neume fusion allows for the composition of new shapes based on a set of
+primitive neumes.  These primitives are:
+
+\begin{tabularx}{\textwidth}{l|l|X}
+	Gabc & Description & Rules \\
+	\hline
+	\texttt{g} & punctum & fuses from higher or lower notes, and can fuse to higher or lower notes \\
+	\texttt{go} & oriscus & may only fuse in the direction it was fused from \\
+	\texttt{gO} & oriscus scapus & at the start only, next note must be higher to fuse \\
+	\texttt{gw} & quilisma & does not fuse from anything, and only fuses to a higher note \\
+	\texttt{gV} & virga reversa & at the start only, next note must be lower to fuse \\
+	\texttt{gf} & flexus & if not at the end, must be followed by a higher note to fuse \\
+	\texttt{gh} & pes & at the end only; in non-liquescent form, the previous note must be lower to fuse \\
+	\texttt{gfg} & porrectus & at the end only, previous note must be lower to fuse \\
+\end{tabularx}
+
+Placing the \texttt{@} character between two notes will attempt to use the above
+rules to fuse the notes together.  If a shape that is not fusable is used,
+Gregorio will typically fall back on the non-fusable form, but in some cases
+will result in a syntax error.
+
+Placing the \texttt{@} character before a primitive that would get a stem will
+suppress the stem.  Given the above list of primitives, this means the flexus
+and the porrectus.
+
+Here are some examples of fusion:
+
+\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+\gabcsnippet{
+(c3) h@iw@ji@j@ih<sp>~</sp>(h@iw@ji@j@ih~)
+(;) d@eo@fd(d@eo@fd)
+(;) IJ@kh(IJ@kh)
+}
+
+As a convenience, a sequence of notes enclosed within \texttt{@[} and
+\texttt{]} will be fused automatically based on an algorithm that breaks up
+the notes into the above primitives.  Using the same examples as before:
+
+\gabcsnippet{
+(c3) @<v>[</v>hiwjijih<sp>~</sp><v>]</v>(@[hiwjijih~])
+(;) @<v>[</v>deofd<v>]</v>(@[deofd])
+(;) @<v>[</v>IJkh<v>]</v>(@[IJkh])
+}
+
+\subsection{Custom Ledger Lines}
+
+To specify a custom ledger line, use
+\texttt{[oll:}\textit{left}\texttt{;}\textit{right}\texttt{]} to create an
+over-the-staff ledger line with specified lengths to the left and right of the
+point where it is introduced.  If \textit{left} is \texttt{0}, the ledger line
+will start at the introduction point.  If \textit{left} is \texttt{1}, the
+ledger line will start at the \textit{additionaallineswidth} distance to the
+left of the introduction point.  Otherwise, the line will start at the
+\textit{left} distance (taken to be an explicit length, with \TeX{} units
+required) to the left of the introduction point.  When using this form,
+\texttt{right} must be an explicit length to the right of the introduction
+point at which to end the line.
+
+Alternately, use
+\texttt{[oll:}\textit{left}\texttt{\{}\textit{right}\texttt{]} to specify the
+start of an over-the-staff ledger line, followed by \texttt{[oll:\}]} at some
+point later to specify its end.  When using this form, \textit{left} has the
+same meaning as before.  However, \textit{right} takes on similar values as
+\textit{left}, which are instead applied to the right of the specified
+endpoint.
+
+Use \texttt{ull} instead of \texttt{oll} (with either form) to create an
+under-the-staff ledger line.
+
+When using this feature with fusion, you will not be able to start or end a
+ledger line in the middle of two-note primitive shapes.  To work around this,
+either adjust the parameters of the ledger line or use manual fusion to break
+up those two notes.
+
+\subsection{Simple Slurs}
+
+To specify a simple slur, use
+\texttt{[oslur:}\textit{shift}\texttt{;}\textit{width}\texttt{,}\textit{height}\texttt{]}
+to create an over-the-notes slur with the specified \textit{width} and
+\textit{height}.  If \textit{shift} is \texttt{0}, the slur will start on the
+right side of the note to which it is atteched.  If \textit{shift} is
+\texttt{1}, the slur will start one punctum's width to the left of the right
+side of the note to which it is attached.  If \textit{shift} is \texttt{2},
+the slur will start one-half punctum's width to the left of the right side of
+the note to which it is attached.
+
+Alternately, use
+\texttt{[oslur:}\textit{shift}\texttt{\{]} to specify the start of an
+over-the-notes slur, followed by \texttt{[oslur:}\textit{shift}\texttt{\}]} at
+some point later to specify its end.  When using this form, \textit{shift} has
+the same meaning as before, but applies to both ends of the slur.
+
+Use \texttt{uslur} instead of \texttt{oslur} (with either form) to create an
+under-the-staff slur.
 
 \subsection{Lyric Centering}
 

@@ -28,10 +28,8 @@ local EXCLUDE = {
   ['.null'] = true,
   nonmarkingreturn = true,
   PunctumAuctusLineBL = true,
-  PunctumLineBL = true,
   PunctumLineBLBR = true,
   PunctumLineBR = true,
-  PunctumLineTL = true,
   PunctumLineTR = true,
   PunctumSmall = true,
   FlexusNobar = true,
@@ -41,6 +39,18 @@ local EXCLUDE = {
   QuilismaLineTR = true,
   VirgaLineBR = true,
   SalicusOriscus = true,
+  ['Virgula.2'] = true,
+  ['Virgula.3'] = true,
+  ['Virgula.5'] = true,
+  ['DivisioMinima.2'] = true,
+  ['DivisioMinima.3'] = true,
+  ['DivisioMinima.5'] = true,
+  ['DivisioMinor.2'] = true,
+  ['DivisioMinor.3'] = true,
+  ['DivisioMinor.5'] = true,
+  ['DivisioMaior.2'] = true,
+  ['DivisioMaior.3'] = true,
+  ['DivisioMaior.5'] = true,
 }
 
 local GABC = {
@@ -71,6 +81,7 @@ local GABC = {
   FlatHole = [[\excluded{gx}]],
   Flexus = [[ge]],
   FlexusLongqueue = [[hf]],
+  FlexusNobar = [[@hf]],
   FlexusOriscus = [[goe]],
   FlexusOriscusScapus = [[gOe]],
   FlexusOriscusScapusLongqueue = [[hOf]],
@@ -84,7 +95,15 @@ local GABC = {
   Natural = [[gy]],
   NaturalHole = [[\excluded{gy}]],
   Oriscus = [[go]],
+  OriscusCavum = [[gor]],
+  OriscusCavumDeminutus = [[gor\~{}]],
+  OriscusCavumDeminutusHole = [[\excluded{gor\~{}}]],
+  OriscusCavumHole = [[\excluded{gor}]],
+  OriscusCavumReversus = [[gor>]],
+  OriscusCavumReversusHole = [[\excluded{gor>}]],
+  OriscusLineBL = [[\excluded{e}@go]],
   OriscusReversus = [[go^^^^003c]],
+  OriscusReversusLineTL = [[\excluded{i}@go]],
   OriscusScapus = [[gO]],
   OriscusScapusLongqueue = [[hO]],
   Pes = [[gi]],
@@ -98,16 +117,23 @@ local GABC = {
   Porrectus = [[geg]],
   PorrectusFlexus = [[gege]],
   PorrectusFlexusNobar = [[\excluded{e}gege]],
-  PorrectusNobar = [[\excluded{eo}geg]],
+  PorrectusNobar = [[@geg]],
   Punctum = [[g]],
   PunctumCavum = [[gr]],
   PunctumCavumHole = [[\excluded{gr}]],
+  PunctumCavumInclinatum = [[Gr]],
+  PunctumCavumInclinatumAuctus = [[Gr>]],
+  PunctumCavumInclinatumAuctusHole = [[\excluded{Gr>}]],
+  PunctumCavumInclinatumHole = [[\excluded{Gr}]],
   PunctumInclinatum = [[G]],
   PunctumInclinatumAuctus = [[G>]],
+  PunctumLineBL = [[\excluded{e}@g]],
+  PunctumLineTL = [[\excluded{i}@g]],
   Quilisma = [[gw]],
   RoundBrace = '[ob:1;6mm]',
   RoundBraceDown = '[ub:1;6mm]',
   Salicus = [[giOk]],
+  SalicusFlexus = [[giOki]],
   SalicusLongqueue = [[hjOl]],
   Scandicus = [[gik]],
   Semicirculus = [[\excluded{g}r4]],
@@ -116,6 +142,7 @@ local GABC = {
   SharpHole = [[\excluded{g\#{}}]],
   Stropha = [[gs]],
   StrophaAucta = [[gs>]],
+  StrophaAuctaLongtail = [[hs>]],
   Torculus = [[gig]],
   TorculusLiquescens = [[gige]],
   TorculusLiquescensQuilisma = [[gwige]],
@@ -129,6 +156,46 @@ local GABC = {
   VirgaReversaLongqueue = [[hV]],
   VirgaStrata = [[giO]],
   Virgula = [[^^^^0060]],
+}
+
+local GABC_FUSE = {
+  Upper = {
+    Punctum = [[\excluded{e}@]],
+    Oriscus = [[\excluded{e}@]],
+    Pes = [[\excluded{e}@]],
+    PesQuadratum = [[\excluded{e}@]],
+    PesQuadratumLongqueue = [[\excluded{f}@]],
+    PesQuassus = [[\excluded{e}@]],
+    PesQuassusLongqueue = [[\excluded{f}@]],
+    Flexus = [[\excluded{e}@]],
+  },
+  Lower = {
+    Punctum = [[\excluded{i}@]],
+    Oriscus = [[\excluded{i}@]],
+    Pes = [[\excluded{i}@]],
+    PesQuadratum = [[\excluded{i}@]],
+    PesQuadratumLongqueue = [[\excluded{j}@]],
+    PesQuassus = [[\excluded{i}@]],
+    Flexus = [[\excluded{i}@]],
+    FlexusOriscus = [[\excluded{i}@]],
+  },
+  Up = {
+    Punctum = [[\excluded{@ij}]],
+    Oriscus = [[\excluded{@ij}]],
+    OriscusScapus = [[\excluded{@ij}]],
+    OriscusScapusLongqueue = [[\excluded{@jk}]],
+    Quilisma = [[\excluded{@ij}]],
+    Flexus = [[\excluded{@gi}]],
+    FlexusNobar = [[\excluded{@hj}]],
+  },
+  Down = {
+    Punctum = [[\excluded{@eg}]],
+    Oriscus = [[\excluded{@eg}]],
+    OriscusScapus = [[\excluded{@eg}]],
+    OriscusScapusLongqueue = [[\excluded{@eg}]],
+    VirgaReversa = [[\excluded{@eg}]],
+    VirgaReversaLongqueue = [[\excluded{@fg}]],
+  },
 }
 
 local DEBILIS = {
@@ -154,6 +221,8 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
 
   local function index_font(csname, variants, common)
     local glyphs = font.fonts[font.id(csname)].resources.unicodes
+    -- force-load the code points of the font --
+    local ignored = glyphs['___magic___']
     local glyph, cp
     for glyph, cp in pairs(glyphs) do
       if cp >= 0xe000 and not EXCLUDE[glyph] and not glyph:match('^HEpisema') then
@@ -189,16 +258,32 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
     end
   end
 
-  local function emit_score_glyph(shape, ambitus, debilis, liquescence)
-    local name = shape..ambitus..debilis..liquescence
+  local function emit_score_glyph(fusion, shape, ambitus, debilis, liquescence)
+    local name = fusion..shape..ambitus..debilis..liquescence
     local char = common_glyphs[name]
     local gabc = GABC[shape]
     if gabc then
-      gabc = '('..DEBILIS[debilis]..gabc..LIQUESCENCE[liquescence]..')'
+      local fuse_head = ''
+      local fuse_tail = ''
+      if fusion ~= '' then
+        fuse_head = GABC_FUSE[fusion][shape]
+        if fuse_head == nil then
+          tex.error('No head fusion for '..name)
+        end
+      end
+      local liq = liquescence
+      if liq == 'Up' or liq == 'Down' then
+        fuse_tail = GABC_FUSE[liq][shape]
+        if fuse_tail == nil then
+          tex.error('No tail fusion for '..name)
+        end
+        liq = ''
+      end
+      gabc = '('..fuse_head..DEBILIS[debilis]..gabc..LIQUESCENCE[liq]..fuse_tail..')'
     end
     tex.sprint(string.format(
-        [[{\scriptsize {\bfseries %s}{\itshape %s}%s%s}&{\ttfamily\small %s}&{\%s\char%d}&{\%s\char%d}&{\%s\char%d}&]],
-        shape, ambitus, debilis, liquescence, gabc or '', cs_greciliae, char, cs_gregorio, char, cs_parmesan, char
+        [[{\scriptsize %s{\bfseries %s}{\itshape %s}%s%s}&{\ttfamily\small %s}&{\%s\char%d}&{\%s\char%d}&{\%s\char%d}&]],
+        fusion, shape, ambitus, debilis, liquescence, gabc or '', cs_greciliae, char, cs_gregorio, char, cs_parmesan, char
     ))
     local emitted = false, i, variant
     for i, variant in ipairs(sort_unique_keys{greciliae[name], gregorio[name], parmesan[name]}) do
@@ -222,30 +307,38 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
   local ambitus = P'One' + P'Two' + P'Three' + P'Four' + P'Five'
   local majuscule = R'AZ'
   local minuscule = R'az'
+  local fusion = P'Upper' + P'Lower'
   local debilis = P'InitioDebilis'
-  local liquescentia = P'Nothing' + P'Deminutus' + P'Ascendens' + P'Descendens'
-  local word = (majuscule * minuscule^0) - ambitus - debilis - liquescentia
+  local post_word_liquescentia = P'Nothing' + P'Deminutus' + P'Ascendens' +
+      P'Descendens'
+  local liquescentia = post_word_liquescentia + P'Up' + P'Down'
+  local word = (majuscule * minuscule^0) - fusion - ambitus - debilis -
+      post_word_liquescentia
   local liquescence = debilis^-1 * liquescentia^-1
-  local pattern = C(word^1) * C(ambitus^0) * C(debilis^-1) * C(liquescentia^-1) * -1
+  local pattern = C(fusion^-1) * C(word^1) * C(ambitus^0) * C(debilis^-1) *
+      C(liquescentia^-1) * -1
   local only_twos = P'Two'^1 * -1
   for name in pairs(common_glyphs) do
-    local a, b, c, d = pattern:match(name)
-    if a then
-      table.insert(glyph_names, { a, b, c, d })
+    local a, b, c, d, e = pattern:match(name)
+    if b then
+      table.insert(glyph_names, { a, b, c, d, e })
     else
-      tex.error('Unable to parse '..name)
+      -- if parse fails, just use the name
+      table.insert(glyph_names, { '', name, '', '', '' })
     end
   end
   local function compare(x, y)
-    if x[1] < y[1] then
+    local nx = x[1]..x[2]
+    local ny = y[1]..y[2]
+    if nx < ny then
       return true
-    elseif x[1] == y[1] then
-      if x[3] < y[3] then
+    elseif nx == ny then
+      if x[4] < y[4] then
         return true
-      elseif x[3] == y[3] then
-        if x[4] < y[4] then
+      elseif x[4] == y[4] then
+        if x[5] < y[5] then
           return true
-        elseif x[4] == y[4] and x[2] < y[2] then
+        elseif x[5] == y[5] and x[3] < y[3] then
           return true
         end
       end
@@ -257,13 +350,13 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
   local i, name
   for i, name in ipairs(glyph_names) do
     if not EXCLUDE[name[1]] then
-      if (name[2] == '' and name[4] == '') or name[2] == '' or only_twos:match(name[2]) then
+      if (name[3] == '' and name[5] == '') or name[3] == '' or only_twos:match(name[3]) then
         if first then
           first = false
         else
           tex.print([[\hline]])
         end
-        emit_score_glyph(name[1], name[2], name[3], name[4])
+        emit_score_glyph(name[1], name[2], name[3], name[4], name[5])
       end
     end
   end
@@ -293,4 +386,11 @@ function GregorioRef.emit_extra_glyphs(csname)
   if not odd then
     tex.print([[&\\]])
   end
+end
+
+function GregorioRef.emit_dimension(value)
+  value = string.gsub(value, '(-?%d+%.%d+)%s*(%a+)', [[\unit[%1]{%2}]])
+  value = string.gsub(value, '(-?%d+%.)%s*(%a+)', [[\unit[%1]{%2}]])
+  value = string.gsub(value, '(-?%.?%d+)%s*(%a+)', [[\unit[%1]{%2}]])
+  tex.sprint(value)
 end

@@ -135,7 +135,7 @@ gregorio_character *gregorio_build_char_list_from_buf(const char *const buf)
         i++;
     }
     free(gwstring);
-    gregorio_go_to_first_character(&current_character);
+    gregorio_go_to_first_character_c(&current_character);
     return current_character;
 }
 

@@ -94,8 +94,9 @@ static int voice;
 static gregorio_center_determination center_is_determined;
 /* current_key is... the current key... updated by each notes determination
  * (for key changes) */
-static int current_key = DEFAULT_KEY;
+static int current_key;
 static bool got_language = false;
+static bool got_staff_lines = false;
 static bool started_first_word = false;
 static struct sha1_ctx digester;
 
@@ -113,7 +114,7 @@ static void gabc_score_determination_error(const char *error_str)
             VERBOSITY_ERROR, 0);
 }
 
-static void gabc_fix_custos(gregorio_score *score_to_check)
+static void fix_custos(gregorio_score *score_to_check)
 {
     gregorio_syllable *current_syllable;
     gregorio_element *current_element;
@@ -126,7 +127,8 @@ static void gabc_fix_custos(gregorio_score *score_to_check)
             || !score_to_check->first_voice_info) {
         return;
     }
-    current_key = score_to_check->first_voice_info->initial_key;
+    current_key = gregorio_calculate_new_key(
+            score_to_check->first_voice_info->initial_clef);
     current_syllable = score_to_check->first_syllable;
     while (current_syllable) {
         current_element = (current_syllable->elements)[0];
@@ -136,55 +138,34 @@ static void gabc_fix_custos(gregorio_score *score_to_check)
                 pitch = custo_element->u.misc.pitched.pitch;
                 /* we look for the key */
                 while (current_element) {
-                    switch (current_element->type) {
-                    case GRE_C_KEY_CHANGE:
-                    case GRE_C_KEY_CHANGE_FLATED:
-                        pitch = gregorio_determine_next_pitch(current_syllable,
+                    if (current_element->type == GRE_CLEF) {
+                        pitch = gregorio_determine_next_pitch( current_syllable,
                                 current_element, NULL);
-                        newkey = gregorio_calculate_new_key(C_KEY,
-                                current_element->u.misc.pitched.pitch - '0');
+                        newkey = gregorio_calculate_new_key(
+                                current_element->u.misc.clef);
                         pitch_difference = (char) newkey - (char) current_key;
                         pitch -= pitch_difference;
                         current_key = newkey;
-                        break;
-                    case GRE_F_KEY_CHANGE:
-                    case GRE_F_KEY_CHANGE_FLATED:
-                        pitch = gregorio_determine_next_pitch(current_syllable,
-                                current_element, NULL);
-                        newkey = gregorio_calculate_new_key(F_KEY,
-                                current_element->u.misc.pitched.pitch - '0');
-                        pitch_difference = (char) newkey - (char) current_key;
-                        pitch -= pitch_difference;
-                        current_key = newkey;
-                        break;
-                    default:
-                        break;
                     }
                     if (!custo_element->u.misc.pitched.force_pitch) {
                         while (pitch < LOWEST_PITCH) {
                             pitch += 7;
                         }
-                        while (pitch > HIGHEST_PITCH) {
+                        while (pitch > score_to_check->highest_pitch) {
                             pitch -= 7;
                         }
                         custo_element->u.misc.pitched.pitch = pitch;
                     }
                     assert(custo_element->u.misc.pitched.pitch >= LOWEST_PITCH 
                             && custo_element->u.misc.pitched.pitch
-                            <= HIGHEST_PITCH);
+                            <= score_to_check->highest_pitch);
                     current_element = current_element->next;
                 }
             }
             if (current_element) {
-                if (current_element->type == GRE_C_KEY_CHANGE
-                    || current_element->type == GRE_C_KEY_CHANGE_FLATED) {
-                    current_key = gregorio_calculate_new_key(C_KEY,
-                            current_element->u.misc.pitched.pitch - '0');
-                }
-                if (current_element->type == GRE_F_KEY_CHANGE
-                    || current_element->type == GRE_F_KEY_CHANGE_FLATED) {
-                    current_key = gregorio_calculate_new_key(F_KEY,
-                            current_element->u.misc.pitched.pitch - '0');
+                if (current_element->type == GRE_CLEF) {
+                    current_key = gregorio_calculate_new_key(
+                            current_element->u.misc.clef);
                 }
                 current_element = current_element->next;
             }
@@ -243,9 +224,12 @@ static void initialize_variables(void)
     no_linebreak_area = NLBA_NORMAL;
     euouae = EUOUAE_NORMAL;
     center_is_determined = CENTER_NOT_DETERMINED;
+    current_key = gregorio_calculate_new_key(gregorio_default_clef);
     for (i = 0; i < 10; i++) {
         macros[i] = NULL;
     }
+    got_language = false;
+    got_staff_lines = false;
     started_first_word = false;
 }
 
@@ -266,8 +250,7 @@ static void free_variables(void)
 /* see whether a voice_info is empty */
 static int voice_info_is_not_empty(const gregorio_voice_info *voice_info)
 {
-    return (voice_info->initial_key != 5 || voice_info->style
-            || voice_info->virgula_position);
+    return (voice_info->initial_clef.line);
 }
 
 /*
@@ -418,24 +401,23 @@ static void gregorio_set_translation_center_beginning(
 
 static void rebuild_characters(void)
 {
-    bool has_initial = score->initial_style != NO_INITIAL;
-
     /* we rebuild the first syllable text if it is the first syllable, or if
      * it is the second when the first has no text.
      * it is a patch for cases like (c4) Al(ab)le(ab) */
-    if ((!score->first_syllable && has_initial && current_character)
+    if ((!score->first_syllable && current_character)
             || (current_syllable && !current_syllable->previous_syllable
             && !current_syllable->text && current_character)) {
-        gregorio_rebuild_first_syllable(&current_character, has_initial);
+        /* leave the first syllable text untouched at this time */
+        gregorio_go_to_first_character_c(&current_character);
 
         started_first_word = true;
-    }
+    } else {
+        gregorio_rebuild_characters(&current_character, center_is_determined,
+                false);
 
-    gregorio_rebuild_characters(&current_character, center_is_determined,
-            has_initial);
-
-    if (started_first_word) {
-        gregorio_set_first_word(&current_character);
+        if (started_first_word) {
+            gregorio_set_first_word(&current_character);
+        }
     }
 }
 
@@ -523,26 +505,6 @@ static void gregorio_gabc_add_text(char *mbcharacters)
 }
 
 /*
- * the function called when centering_scheme is seen in gabc 
- */
-static void set_centering_scheme(char *sc)
-{
-    gregorio_message("\"centering-scheme\" header is deprecated. Please use "
-            "\\gresetlyriccentering in TeX instead.", "set_centering_scheme",
-            VERBOSITY_DEPRECATION, 0);
-    if (strncmp((const char *) sc, "latine", 6) == 0) {
-        score->centering = SCHEME_VOWEL;
-        return;
-    }
-    if (strncmp((const char *) sc, "english", 6) == 0) {
-        score->centering = SCHEME_SYLLABLE;
-        return;
-    }
-    gregorio_message("centering-scheme unknown value: must be \"latine\" "
-            "or \"english\"", "set_centering_scheme", VERBOSITY_WARNING, 0);
-}
-
-/*
  * 
  * The two functions called when lex returns a style, we simply add it. All the 
  * complex things will be done by the function after...
@@ -562,6 +524,96 @@ static void gregorio_gabc_end_style(unsigned char style)
 void gabc_digest(const void *const buf, const size_t size)
 {
     sha1_process_bytes(buf, size, &digester);
+}
+
+static void determine_oriscus_orientation(gregorio_score *score) {
+    gregorio_syllable *syllable;
+    gregorio_element *element;
+    gregorio_glyph *glyph;
+    gregorio_note *note;
+    gregorio_note *oriscus = NULL;
+
+    for (syllable = score->first_syllable; syllable;
+            syllable = syllable->next_syllable) {
+        for (element = syllable->elements[0]; element;
+                element = element->next) {
+            if (element->type == GRE_ELEMENT) {
+                for (glyph = element->u.first_glyph; glyph;
+                        glyph = glyph->next) {
+                    if (glyph->type == GRE_GLYPH) {
+                        for (note = glyph->u.notes.first_note; note;
+                                note = note->next) {
+                            if (note->type == GRE_NOTE) {
+                                if (oriscus) {
+                                    if (note->u.note.pitch
+                                            < oriscus->u.note.pitch) {
+                                        switch(oriscus->u.note.shape) {
+                                        case S_ORISCUS_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_DESCENDENS;
+                                            break;
+                                        case S_ORISCUS_CAVUM_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_CAVUM_DESCENDENS;
+                                            break;
+                                        default:
+                                            gregorio_message(_("bad shape"),
+                                                    "determine_oriscus_orientation",
+                                                    VERBOSITY_ERROR, 0);
+                                            break;
+                                        }
+                                    } else { /* ascending or the same */
+                                        switch(oriscus->u.note.shape) {
+                                        case S_ORISCUS_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_ASCENDENS;
+                                            break;
+                                        case S_ORISCUS_CAVUM_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_CAVUM_ASCENDENS;
+                                            break;
+                                        default:
+                                            gregorio_message(_("bad shape"),
+                                                    "determine_oriscus_orientation",
+                                                    VERBOSITY_ERROR, 0);
+                                            break;
+                                        }
+                                    }
+                                    oriscus = NULL;
+                                }
+
+                                switch (note->u.note.shape) {
+                                case S_ORISCUS_UNDETERMINED:
+                                case S_ORISCUS_CAVUM_UNDETERMINED:
+                                    oriscus = note;
+                                    break;
+
+                                default:
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (oriscus) {
+        /* oriscus at the end of the score */
+        switch(oriscus->u.note.shape) {
+        case S_ORISCUS_UNDETERMINED:
+            oriscus->u.note.shape = S_ORISCUS_DESCENDENS;
+            break;
+        case S_ORISCUS_CAVUM_UNDETERMINED:
+            oriscus->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
+            break;
+        default:
+            gregorio_message(_("bad shape"), "determine_oriscus_orientation",
+                    VERBOSITY_ERROR, 0);
+            break;
+        }
+    }
 }
 
 /*
@@ -588,8 +640,11 @@ gregorio_score *gabc_read_score(FILE *f_in)
     /* the flex/bison main call, it will build the score (that we have
      * initialized) */
     gabc_score_determination_parse();
-    gregorio_fix_initial_keys(score, DEFAULT_KEY);
-    gabc_fix_custos(score);
+    if (!score->legacy_oriscus_orientation) {
+        determine_oriscus_orientation(score);
+    }
+    gregorio_fix_initial_keys(score, gregorio_default_clef);
+    fix_custos(score);
     free_variables();
     /* the we check the validity and integrity of the score we have built. */
     if (!check_score_integrity(score)) {
@@ -611,11 +666,11 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
     if (nabc_state == 0) {
         if (!elements[voice]) {
             elements[voice] = gabc_det_elements_from_string(notes,
-                    &current_key, macros, &loc);
+                    &current_key, macros, &loc, score);
             current_element = elements[voice];
         } else {
             new_elements = gabc_det_elements_from_string(notes,
-                    &current_key, macros, &loc);
+                    &current_key, macros, &loc, score);
             last_element = elements[voice];
             while(last_element->next) {
                 last_element = last_element->next;
@@ -652,19 +707,28 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
     @$.last_offset = 0;
 }
 
-%token ATTRIBUTE COLON SEMICOLON OFFICE_PART ANNOTATION AUTHOR DATE 
-%token MANUSCRIPT MANUSCRIPT_REFERENCE MANUSCRIPT_STORAGE_PLACE TRANSCRIBER
-%token TRANSCRIPTION_DATE BOOK STYLE VIRGULA_POSITION INITIAL_STYLE MODE
-%token GREGORIOTEX_FONT GENERATED_BY NAME OPENING_BRACKET NOTES VOICE_CUT
-%token CLOSING_BRACKET NUMBER_OF_VOICES VOICE_CHANGE END_OF_DEFINITIONS SPACE
-%token CHARACTERS I_BEGINNING I_END TT_BEGINNING TT_END UL_BEGINNING UL_END
-%token C_BEGINNING C_END B_BEGINNING B_END SC_BEGINNING SC_END SP_BEGINNING
-%token SP_END VERB_BEGINNING VERB VERB_END CENTER_BEGINNING CENTER_END
-%token CLOSING_BRACKET_WITH_SPACE TRANSLATION_BEGINNING TRANSLATION_END
-%token GABC_COPYRIGHT SCORE_COPYRIGHT OCCASION METER COMMENTARY ARRANGER
-%token GABC_VERSION USER_NOTES DEF_MACRO ALT_BEGIN ALT_END CENTERING_SCHEME
-%token TRANSLATION_CENTER_END BNLBA ENLBA EUOUAE_B EUOUAE_E NABC_CUT NABC_LINES
-%token LANGUAGE
+%token NAME AUTHOR GABC_COPYRIGHT SCORE_COPYRIGHT
+%token NUMBER_OF_VOICES LANGUAGE STAFF_LINES ORISCUS_ORIENTATION
+%token DEF_MACRO OTHER_HEADER
+%token ANNOTATION MODE MODE_MODIFIER MODE_DIFFERENTIA
+%token INITIAL_STYLE /* DEPRECATED by 4.1 */
+%token VOICE_CUT VOICE_CHANGE END_OF_DEFINITIONS END_OF_FILE
+%token COLON SEMICOLON SPACE CHARACTERS NOTES HYPHEN ATTRIBUTE
+%token OPENING_BRACKET CLOSING_BRACKET CLOSING_BRACKET_WITH_SPACE
+%token I_BEGINNING I_END
+%token TT_BEGINNING TT_END
+%token UL_BEGINNING UL_END
+%token C_BEGINNING C_END
+%token B_BEGINNING B_END
+%token SC_BEGINNING SC_END
+%token SP_BEGINNING SP_END
+%token VERB_BEGINNING VERB VERB_END
+%token CENTER_BEGINNING CENTER_END
+%token TRANSLATION_BEGINNING TRANSLATION_END TRANSLATION_CENTER_END
+%token ALT_BEGIN ALT_END
+%token BNLBA ENLBA
+%token EUOUAE_B EUOUAE_E
+%token NABC_CUT NABC_LINES
 
 %%
 
@@ -682,259 +746,6 @@ definitions:
     | definitions definition
     ;
 
-number_of_voices_definition:
-    NUMBER_OF_VOICES attribute {
-        number_of_voices=atoi($2.text);
-        free($2.text);
-        if (number_of_voices > MAX_NUMBER_OF_VOICES) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    _("can't define %d voices, maximum is %d"),
-                    number_of_voices, MAX_NUMBER_OF_VOICES);
-        }
-        gregorio_set_score_number_of_voices (score, number_of_voices);
-    }
-    ;
-
-macro_definition:
-    DEF_MACRO attribute {
-        free(macros[$1.character - '0']);
-        macros[$1.character - '0'] = $2.text;
-    }
-    ;
-
-name_definition:
-    NAME attribute {
-        if ($2.text==NULL) {
-            gregorio_message("name can't be empty","det_score",
-                    VERBOSITY_WARNING, 0);
-        }
-        check_multiple("name", score->name != NULL);
-        gregorio_set_score_name (score, $2.text);
-    }
-    ;
-
-centering_scheme_definition:
-    CENTERING_SCHEME attribute {
-        set_centering_scheme($2.text);
-        free($2.text);
-    }
-    ;
-
-language_definition:
-    LANGUAGE attribute {
-        check_multiple("language", got_language);
-        gregorio_set_centering_language($2.text);
-        free($2.text);
-        got_language = true;
-    }
-    ;
-
-gabc_copyright_definition:
-    GABC_COPYRIGHT attribute {
-        check_multiple("gabc-copyright", score->gabc_copyright != NULL);
-        gregorio_set_score_gabc_copyright (score, $2.text);
-    }
-    ;
-
-score_copyright_definition:
-    SCORE_COPYRIGHT attribute {
-        check_multiple("score_copyright", score->score_copyright != NULL);
-        gregorio_set_score_score_copyright (score, $2.text);
-    }
-    ;
-
-gregoriotex_font_definition:
-    GREGORIOTEX_FONT attribute {
-        gregorio_message("\"gregoriotex-font\" header is deprecated. "
-        "Please use \\gresetgregoriofont in TeX instead.",
-        "set_gregoriotex_font", VERBOSITY_DEPRECATION, 0);
-        check_multiple("GregorioTeX font", score->gregoriotex_font != NULL);
-        score->gregoriotex_font=$2.text;
-    }
-    ;
-
-office_part_definition:
-    OFFICE_PART attribute {
-        check_multiple("office part", score->office_part != NULL);
-        gregorio_set_score_office_part (score, $2.text);
-    }
-    ;
-
-occasion_definition:
-    OCCASION attribute {
-        check_multiple("occasion", score->occasion != NULL);
-        gregorio_set_score_occasion (score, $2.text);
-    }
-    ;
-
-meter_definition:
-    METER attribute {
-        check_multiple("meter", score->meter != NULL);
-        gregorio_set_score_meter (score, $2.text);
-    }
-    ;
-
-commentary_definition:
-    COMMENTARY attribute {
-        check_multiple("commentary", score->commentary != NULL);
-        gregorio_set_score_commentary (score, $2.text);
-    }
-    ;
-
-arranger_definition:
-    ARRANGER attribute {
-        check_multiple("arranger", score->arranger != NULL);
-        gregorio_set_score_arranger (score, $2.text);
-    }
-    ;
-
-gabc_version_definition:
-    GABC_VERSION attribute {
-        /* Deprecated */
-        gregorio_message("\"gabc-version\" header is deprecated and will be "
-                "ignored.", "gabc_score_determination_parse",
-                VERBOSITY_DEPRECATION, 0);
-        free($2.text);
-    }
-    ;
-
-mode_definition:
-    MODE attribute {
-        check_multiple("mode", score->mode != 0);
-        if ($2.text) {
-            score->mode=atoi($2.text);
-            free($2.text);
-        }
-    }
-    ;
-
-nabc_lines_definition:
-    NABC_LINES attribute {
-        check_multiple("nabc lines", score->nabc_lines != 0);
-        if ($2.text) {
-            nabc_lines=atoi($2.text);
-            score->nabc_lines=nabc_lines;
-            free($2.text);
-        }
-    }
-    ;
-
-initial_style_definition:
-    INITIAL_STYLE attribute {
-        if ($2.text) {
-            score->initial_style=atoi($2.text);
-            free($2.text);
-        }
-    }
-    ;
-
-annotation_definition:
-    ANNOTATION attribute {
-        if (score->annotation [MAX_ANNOTATIONS - 1]) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    _("too many definitions of annotation found, only the "
-                    "first %d will be taken"), MAX_ANNOTATIONS);
-        }
-        gregorio_set_score_annotation (score, $2.text);
-    }
-    ;
-
-author_definition:
-    AUTHOR attribute {
-        check_multiple("author", score->si.author != NULL);
-        gregorio_set_score_author (score, $2.text);
-    }
-    ;
-
-date_definition:
-    DATE attribute {
-        check_multiple("date", score->si.date != NULL);
-        gregorio_set_score_date (score, $2.text);
-    }
-    ;
-
-manuscript_definition:
-    MANUSCRIPT attribute {
-        check_multiple("manuscript", score->si.manuscript != NULL);
-        gregorio_set_score_manuscript (score, $2.text);
-    }
-    ;
-
-manuscript_reference_definition:
-    MANUSCRIPT_REFERENCE attribute {
-        check_multiple("manuscript-reference",
-                score->si.manuscript_reference != NULL);
-        gregorio_set_score_manuscript_reference (score, $2.text);
-    }
-    ;
-
-manuscript_storage_place_definition:
-    MANUSCRIPT_STORAGE_PLACE attribute {
-        check_multiple("manuscript-storage-place",
-                score->si.manuscript_storage_place != NULL);
-        gregorio_set_score_manuscript_storage_place (score, $2.text);
-    }
-    ;
-
-book_definition:
-    BOOK attribute {
-        check_multiple("book", score->si.book != NULL);
-        gregorio_set_score_book (score, $2.text);
-    }
-    ;
-
-transcriber_definition:
-    TRANSCRIBER attribute {
-        check_multiple("transcriber", score->si.transcriber != NULL);
-        gregorio_set_score_transcriber (score, $2.text);
-    }
-    ;
-
-transcription_date_definition:
-    TRANSCRIPTION_DATE attribute {
-        check_multiple("transcription date",
-                score->si.transcription_date != NULL);
-        gregorio_set_score_transcription_date (score, $2.text);
-    }
-    ;
-
-style_definition:
-    STYLE attribute {
-        if (current_voice_info->style) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    _("several definitions of style found for voice %d, only "
-                    "the last will be taken into consideration"), voice);
-        }
-        gregorio_set_voice_style (current_voice_info, $2.text);
-    }
-    ;
-
-virgula_position_definition:
-    VIRGULA_POSITION attribute {
-        if (current_voice_info->virgula_position) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    _("several definitions of virgula position found for "
-                    "voice %d, only the last will be taken into consideration"),
-                    voice);
-        }
-        gregorio_set_voice_virgula_position (current_voice_info, $2.text);
-    }
-    ;
-
-
-generated_by_definition:
-    GENERATED_BY attribute {
-        /* set_voice_generated_by (current_voice_info, $2.text); */
-        free($2.text);
-    }
-    ;
-
-user_notes_definition:
-    USER_NOTES attribute {
-        gregorio_set_score_user_notes (score, $2.text);
-    }
-    ;
-
 attribute:
     COLON ATTRIBUTE SEMICOLON {
         $$.text = $2.text;
@@ -946,36 +757,108 @@ attribute:
     ;
 
 definition:
-    number_of_voices_definition
-    | name_definition
-    | macro_definition
-    | gabc_copyright_definition
-    | score_copyright_definition
-    | generated_by_definition
-    | virgula_position_definition
-    | style_definition
-    | transcription_date_definition
-    | transcriber_definition
-    | manuscript_storage_place_definition
-    | manuscript_reference_definition
-    | manuscript_definition
-    | book_definition
-    | nabc_lines_definition
-    | date_definition
-    | author_definition
-    | annotation_definition
-    | office_part_definition
-    | occasion_definition
-    | meter_definition
-    | commentary_definition
-    | arranger_definition
-    | gabc_version_definition
-    | initial_style_definition
-    | mode_definition
-    | gregoriotex_font_definition
-    | user_notes_definition
-    | centering_scheme_definition
-    | language_definition
+    NUMBER_OF_VOICES attribute {
+        gregorio_add_score_header(score, $1.text, $2.text);
+        number_of_voices=atoi($2.text);
+        if (number_of_voices > MAX_NUMBER_OF_VOICES) {
+            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
+                    _("can't define %d voices, maximum is %d"),
+                    number_of_voices, MAX_NUMBER_OF_VOICES);
+        }
+        score->number_of_voices = number_of_voices;
+    }
+    | DEF_MACRO attribute {
+        /* these definitions are not passed through */
+        free(macros[$1.character - '0']);
+        macros[$1.character - '0'] = $2.text;
+    }
+    | NAME attribute {
+        if ($2.text == NULL) {
+            gregorio_message("name can't be empty","det_score",
+                    VERBOSITY_WARNING, 0);
+        }
+        check_multiple("name", score->name != NULL);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->name = $2.text;
+    }
+    | LANGUAGE attribute {
+        check_multiple("language", got_language);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        gregorio_set_centering_language($2.text);
+        got_language = true;
+    }
+    | GABC_COPYRIGHT attribute {
+        check_multiple("gabc-copyright", score->gabc_copyright != NULL);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->gabc_copyright = $2.text;
+    }
+    | SCORE_COPYRIGHT attribute {
+        check_multiple("score_copyright", score->score_copyright != NULL);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->score_copyright = $2.text;
+    }
+    | MODE attribute {
+        check_multiple("mode", score->mode != 0);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->mode = $2.text;
+    }
+    | MODE_MODIFIER attribute {
+        check_multiple("mode-modifier", score->mode_modifier != NULL);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->mode_modifier = $2.text;
+    }
+    | MODE_DIFFERENTIA attribute {
+        check_multiple("mode-differentia", score->mode_differentia != NULL);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->mode_differentia = $2.text;
+    }
+    | STAFF_LINES attribute {
+        check_multiple("staff-lines", got_staff_lines);
+        if ($2.text) {
+            gregorio_add_score_header(score, $1.text, $2.text);
+            gregorio_set_score_staff_lines(score, atoi($2.text));
+            got_staff_lines = true;
+        }
+    }
+    | NABC_LINES attribute {
+        check_multiple("nabc lines", score->nabc_lines != 0);
+        if ($2.text) {
+            gregorio_add_score_header(score, $1.text, $2.text);
+            nabc_lines=atoi($2.text);
+            score->nabc_lines=nabc_lines;
+        }
+    }
+    | INITIAL_STYLE attribute {
+        if ($2.text) {
+            /* DEPRECATED by 4.1 */
+            gregorio_message("\"initial-style\" header is deprecated. Please "
+            "use \\gresetinitiallines in TeX instead.",
+            "gabc_score_determination_parse", VERBOSITY_DEPRECATION, 0);
+            score->initial_style = atoi($2.text);
+            free($2.text);
+        }
+    }
+    | ANNOTATION attribute {
+        if (score->annotation [MAX_ANNOTATIONS - 1]) {
+            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
+                    _("too many definitions of annotation found, only the "
+                    "first %d will be taken"), MAX_ANNOTATIONS);
+        }
+        gregorio_add_score_header(score, $1.text, $2.text);
+        gregorio_set_score_annotation(score, $2.text);
+    }
+    | AUTHOR attribute {
+        check_multiple("author", score->author != NULL);
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->author = $2.text;
+    }
+    | ORISCUS_ORIENTATION attribute {
+        gregorio_add_score_header(score, $1.text, $2.text);
+        score->legacy_oriscus_orientation = (strcmp($2.text, "legacy") == 0);
+    }
+    | OTHER_HEADER attribute {
+        gregorio_add_score_header(score, $1.text, $2.text);
+    }
     | VOICE_CHANGE {
         next_voice_info();
     }
@@ -1008,7 +891,7 @@ note:
         voice=0;
         nabc_state=0;
     }
-    | NOTES CLOSING_BRACKET_WITH_SPACE {
+    | NOTES closing_bracket_with_space {
         if (voice<number_of_voices) {
             gabc_y_add_notes($1.text, @1);
             free($1.text);
@@ -1062,12 +945,18 @@ note:
         voice=0;
         nabc_state=0;
     }
-    | CLOSING_BRACKET_WITH_SPACE {
+    | closing_bracket_with_space {
         elements[voice]=NULL;
         voice=0;
         nabc_state=0;
         update_position_with_space();
     }
+    ;
+
+closing_bracket_with_space:
+    CLOSING_BRACKET_WITH_SPACE
+    | CLOSING_BRACKET_WITH_SPACE END_OF_FILE
+    | CLOSING_BRACKET END_OF_FILE
     ;
 
 style_beginning:
@@ -1165,8 +1054,18 @@ character:
     | euouae
     ;
 
+text_hyphen:
+    HYPHEN {
+        gregorio_gabc_add_text(gregorio_strdup("-"));
+    }
+    | text_hyphen HYPHEN {
+        gregorio_gabc_add_text(gregorio_strdup("-"));
+    }
+    ;
+
 text:
     | text character
+    | text text_hyphen character
     ;
 
 translation_beginning:
@@ -1196,7 +1095,21 @@ syllable_with_notes:
         first_text_character = current_character;
         close_syllable(&@1);
     }
+    | text HYPHEN OPENING_BRACKET notes {
+        gregorio_gabc_add_style(ST_VERBATIM);
+        gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
+        gregorio_gabc_end_style(ST_VERBATIM);
+        rebuild_characters();
+        first_text_character = current_character;
+        close_syllable(&@1);
+    }
     | text translation OPENING_BRACKET notes {
+        close_syllable(&@1);
+    }
+    | text HYPHEN translation OPENING_BRACKET notes {
+        gregorio_gabc_add_style(ST_VERBATIM);
+        gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
+        gregorio_gabc_end_style(ST_VERBATIM);
         close_syllable(&@1);
     }
     ;
