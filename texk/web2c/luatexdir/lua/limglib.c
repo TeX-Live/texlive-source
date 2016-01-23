@@ -21,7 +21,6 @@
 #include "lua/luatex-api.h"
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include "lua.h"
 #include "lauxlib.h"
 
@@ -65,8 +64,9 @@ static void copy_image(lua_State * L, lua_Number scale)
         img_dictref(b) = luaL_ref(L, LUA_REGISTRYINDEX);   /* b */
         d = img_dict(*aa);
         img_luaref(d) += 1;
-    } else
-        assert(img_state(img_dict(a)) >= DICT_REFERED);
+    } else if (img_state(img_dict(a)) < DICT_REFERED) {
+        luaL_error(L, "img.copy needs an proper image as argument");
+    }
 }
 
 static void lua_to_image(lua_State * L, image * a, image_dict * d);
@@ -75,8 +75,9 @@ int l_new_image(lua_State * L)
 {
     image *a, **aa;
     image_dict **add;
-    if (lua_gettop(L) > 0 && ! lua_istable(L, -1))
+    if (lua_gettop(L) > 0 && ! lua_istable(L, -1)) {
         luaL_error(L, "img.new needs table as optional argument");  /* (t) */
+    }
     aa = (image **) lua_newuserdata(L, sizeof(image *));            /* i (t) */
     luaL_getmetatable(L, TYPE_IMG);                                 /* m i (t) */
     lua_setmetatable(L, -2);                                        /* i (t) */
@@ -127,8 +128,9 @@ static void read_scale_img(image * a)
                 else {
                     read_img(ad);
                 }
-            }
-            if (is_wd_running(a) || is_ht_running(a) || is_dp_running(a)) {
+            } else if (img_state(ad) == DICT_NEW) {
+                normal_warning("image","don't rely on the image data to be okay");
+            } else if (is_wd_running(a) || is_ht_running(a) || is_dp_running(a)) {
                 img_dimen(a) = scale_img(ad, img_dimen(a), img_transform(a));
             }
         }
@@ -231,7 +233,7 @@ static void write_image_or_node(lua_State * L, wrtype_e writetype)
             lua_nodelib_push_fast(L, n);
             break;
         default:
-            assert(0);
+            luaL_error(L, "%s expects an valid image", wrtype_s[writetype]);
     }
     if (img_state(ad) < DICT_REFERED)
         img_state(ad) = DICT_REFERED;
@@ -297,7 +299,9 @@ void vf_out_image(PDF pdf, unsigned i)
     aa = (image **) luaL_checkudata(L, -1, TYPE_IMG);
     a = *aa;
     ad = img_dict(a);
-    assert(ad != NULL);
+    if (ad == NULL) {
+        luaL_error(L, "invalid image dictionary");
+    }
     setup_image(pdf, a, WR_VF_IMG);
     place_img(pdf, ad, img_dimen(a), img_transform(a));
     lua_pop(L, 1);
