@@ -22,7 +22,6 @@
 
 @ @c
 #include "ptexlib.h"
-#include <assert.h>
 #include <kpathsea/c-auto.h>
 #include <kpathsea/c-memstr.h>
 
@@ -112,31 +111,34 @@ static void check_type_by_header(image_dict * idict)
     FILE *file = NULL;
     char header[MAX_HEADER];
     char prefix[LEN_PDF_MEMSTREAM+1];
-
-    assert(idict != NULL);
+    if (idict == NULL)
+        return;
     if (img_type(idict) != IMG_TYPE_NONE)
         return;
     /* here we read the and also check for a memstream object */
-    assert(img_filepath(idict) && FOPEN_RBIN_MODE);
+    if (!img_filepath(idict) || !FOPEN_RBIN_MODE) {
+        normal_error("pdf backend","reading image file failed");
+    }
     file = fopen(img_filepath(idict), FOPEN_RBIN_MODE);
     if (file == NULL) {
         /* check the prefix of img_filepath(idict) */
         for (i = 0; (unsigned) i < LEN_PDF_MEMSTREAM; i++) {
-           prefix[i] = (char) (img_filepath(idict)[i]);
-         }
-         prefix[LEN_PDF_MEMSTREAM]='\0';
-         if (strncmp(prefix, HEADER_PDF_MEMSTREAM, LEN_PDF_MEMSTREAM) == 0) {
+            prefix[i] = (char) (img_filepath(idict)[i]);
+        }
+        prefix[LEN_PDF_MEMSTREAM]='\0';
+        if (strncmp(prefix, HEADER_PDF_MEMSTREAM, LEN_PDF_MEMSTREAM) == 0) {
             img_type(idict) = IMG_TYPE_PDFMEMSTREAM;
             return;
-          } else {
-            FATAL_PERROR(img_filepath(idict));
-          }
+        } else {
+            formatted_error("pdf backend","reading image file '%s' failed",img_filepath(idict));
+        }
     }
     /* a valid file, but perhaps unsupported */
     for (i = 0; (unsigned) i < MAX_HEADER; i++) {
         header[i] = (char) xgetc(file);
-        if (feof(file))
+        if (feof(file)) {
             normal_error("pdf backend","reading image file failed");
+        }
     }
     xfclose(file, img_filepath(idict));
     /* tests */
@@ -180,8 +182,6 @@ static void check_type_by_extension(image_dict * idict)
 @ @c
 void new_img_pdfstream_struct(image_dict * p)
 {
-    assert(p != NULL);
-    assert(img_pdfstream_ptr(p) == NULL);
     img_pdfstream_ptr(p) = xtalloc(1, pdf_stream_struct);
     img_pdfstream_stream(p) = NULL;
 }
@@ -203,7 +203,6 @@ image *new_image(void)
 image_dict *new_image_dict(void)
 {
     image_dict *p = xtalloc(1, image_dict);
-    assert(p != NULL);
     memset(p, 0, sizeof(image_dict));
     set_wd_running(p);
     set_ht_running(p);
@@ -238,7 +237,6 @@ void free_image_dict(image_dict * p)
     if (ini_version)
         return;                 /* The image may be \.{\\dump}ed to a format */
     /* called from limglib.c */
-    assert(img_state(p) < DICT_REFERED);
     switch (img_type(p)) {
         case IMG_TYPE_PDFMEMSTREAM:
         case IMG_TYPE_PDF:
@@ -266,10 +264,9 @@ void free_image_dict(image_dict * p)
         case IMG_TYPE_NONE:
             break;
         default:
-            assert(0);
+            normal_error("pdf backend","unknown image type");
     }
     free_dict_strings(p);
-    assert(img_file(p) == NULL);
     xfree(p);
 }
 
@@ -278,7 +275,6 @@ void read_img(image_dict * idict)
 {
     char *filepath = NULL;
     int callback_id;
-    assert(idict != NULL);
     if (img_filename(idict) == NULL) {
         normal_error("pdf backend","image file name missing");
     }
@@ -320,11 +316,20 @@ void read_img(image_dict * idict)
             read_jbig2_info(idict);
             break;
         default:
-            normal_error("pdf backend","internal error: unknown image type");
+            img_type(idict) = IMG_TYPE_NONE;
+            if (pdf_ignore_unknown_images) {
+                normal_warning("pdf backend","internal error: ignoring unknown image type");
+            } else {
+                normal_error("pdf backend","internal error: unknown image type");
+            }
+            break;
     }
     cur_file_name = NULL;
-    if (img_state(idict) < DICT_FILESCANNED)
+    if (img_type(idict) == IMG_TYPE_NONE) {
+        img_state(idict) = DICT_NEW;
+    } else if (img_state(idict) < DICT_FILESCANNED) {
         img_state(idict) = DICT_FILESCANNED;
+    }
 }
 
 @ @c
@@ -340,7 +345,9 @@ static image_dict *read_image(char *file_name, int page_num, char *page_name, in
     img_colorspace(idict) = colorspace;
     img_pagenum(idict) = page_num;
     img_pagename(idict) = page_name;
-    assert(file_name != NULL);
+    if (file_name == NULL) {
+        normal_error("pdf backend","no image filename given");
+    }
     cur_file_name = file_name;
     img_filename(idict) = file_name;
     img_pagebox(idict) = page_box;
@@ -400,7 +407,9 @@ void scan_pdfximage(PDF pdf) /* static_pdf */
     }
     scan_toks(false, true);
     file_name = tokenlist_to_cstring(def_ref, true, NULL);
-    assert(file_name != NULL);
+    if (file_name == NULL) {
+        normal_error("pdf backend","no image filename given");
+    }
     delete_token_ref(def_ref);
     idict = read_image(file_name, page, named, colorspace, pagebox);
     img_attr(idict) = attr;
@@ -423,16 +432,23 @@ void scan_pdfrefximage(PDF pdf)
     check_obj_type(pdf, obj_type_ximage, cur_val);
     tail_append(new_rule(image_rule));
     idict = idict_array[obj_data_ptr(pdf, cur_val)];
-    if (alt_rule.wd != null_flag || alt_rule.ht != null_flag
-        || alt_rule.dp != null_flag)
-        dim = scale_img(idict, alt_rule, transform);
-    else
-        dim = scale_img(idict, img_dimen(idict), img_transform(idict));
-    width(tail) = dim.wd;
-    height(tail) = dim.ht;
-    depth(tail) = dim.dp;
-    rule_transform(tail) = transform;
-    rule_index(tail) = img_index(idict);
+    if (img_state(idict) == DICT_NEW) {
+        normal_warning("image","don't rely on the image data to be okay");
+        width(tail) = 0;
+        height(tail) = 0;
+        depth(tail) = 0;
+    } else {
+        if (alt_rule.wd != null_flag || alt_rule.ht != null_flag || alt_rule.dp != null_flag) {
+            dim = scale_img(idict, alt_rule, transform);
+        } else {
+            dim = scale_img(idict, img_dimen(idict), img_transform(idict));
+        }
+        width(tail) = dim.wd;
+        height(tail) = dim.ht;
+        depth(tail) = dim.dp;
+        rule_transform(tail) = transform;
+        rule_index(tail) = img_index(idict);
+    }
 }
 
 @ |tex_scale()| sequence of decisions:
@@ -504,7 +520,6 @@ scaled_whd scale_img(image_dict * idict, scaled_whd alt_rule, int transform)
     int x, y, xr, yr, tmp;      /* size and resolution of image */
     scaled_whd nat;             /* natural size corresponding to image resolution */
     int default_res;
-    assert(idict != NULL);
     if ((img_type(idict) == IMG_TYPE_PDF || img_type(idict) == IMG_TYPE_PDFMEMSTREAM
          || img_type(idict) == IMG_TYPE_PDFSTREAM) && img_is_bbox(idict)) {
         x = img_xsize(idict) = img_bbox(idict)[2] - img_bbox(idict)[0]; /* dimensions from image.bbox */
@@ -557,7 +572,6 @@ scaled_whd scale_img(image_dict * idict, scaled_whd alt_rule, int transform)
 @ @c
 void write_img(PDF pdf, image_dict * idict)
 {
-    assert(idict != NULL);
     if (img_state(idict) < DICT_WRITTEN) {
         report_start_file(filetype_image, img_filepath(idict));
         switch (img_type(idict)) {
@@ -581,7 +595,7 @@ void write_img(PDF pdf, image_dict * idict)
             write_pdfstream(pdf, idict);
             break;
         default:
-            normal_error("pdf backend","internal error: unknown image type");
+            normal_error("pdf backend","internal error: writing unknown image type");
         }
         report_stop_file(filetype_image);
         if (img_type(idict) == IMG_TYPE_PNG) {
@@ -612,8 +626,6 @@ void check_pdfstream_dict(image_dict * idict)
 @ @c
 void write_pdfstream(PDF pdf, image_dict * idict)
 {
-    assert(img_pdfstream_ptr(idict) != NULL);
-    assert(img_is_bbox(idict));
     pdf_begin_obj(pdf, img_objnum(idict), OBJSTM_NEVER);
     pdf_begin_dict(pdf);
     pdf_dict_add_name(pdf, "Type", "XObject");
@@ -643,21 +655,18 @@ size_t idict_limit;
 
 void idict_to_array(image_dict * idict)
 {
-    assert(idict != NULL);
     if (idict_ptr - idict_array == 0) { /* align to count from 1 */
         alloc_array(idict, 1, SMALL_BUF_SIZE);  /* /Im0 unused */
         idict_ptr++;
     }
     alloc_array(idict, 1, SMALL_BUF_SIZE);
     *idict_ptr = idict;
-    assert(img_index(idict) == idict_ptr - idict_array);
     idict_ptr++;
 }
 
 void pdf_dict_add_img_filename(PDF pdf, image_dict * idict)
 {
     char s[21], *p;
-    assert(idict != NULL);
     if (pdf_image_addfilename>0) {
         /* for now PTEX.FileName only for PDF, but prepared for JPG, PNG, ... */
         if (! ( (img_type(idict) == IMG_TYPE_PDF) || (img_type(idict) == IMG_TYPE_PDFMEMSTREAM) ))

@@ -122,6 +122,7 @@ typedef enum {
     c_pdf_minor_version,
     c_pdf_pagebox,
     c_pdf_inclusion_errorlevel,
+    c_pdf_ignore_unknown_images,
     c_pdf_gamma,
     c_pdf_image_apply_gamma,
     c_pdf_image_gamma,
@@ -163,6 +164,7 @@ extern int pdf_retval;
 #  define pdf_minor_version           get_tex_extension_count_register(c_pdf_minor_version)
 #  define pdf_pagebox                 get_tex_extension_count_register(c_pdf_pagebox)
 #  define pdf_inclusion_errorlevel    get_tex_extension_count_register(c_pdf_inclusion_errorlevel)
+#  define pdf_ignore_unknown_images   get_tex_extension_count_register(c_pdf_ignore_unknown_images)
 #  define pdf_gamma                   get_tex_extension_count_register(c_pdf_gamma)
 #  define pdf_image_apply_gamma       get_tex_extension_count_register(c_pdf_image_apply_gamma)
 #  define pdf_image_gamma             get_tex_extension_count_register(c_pdf_image_gamma)

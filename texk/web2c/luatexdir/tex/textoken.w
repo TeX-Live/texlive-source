@@ -2303,6 +2303,7 @@ static int do_variable_pdf(halfword c)
     else if (scan_keyword("minorversion"))        { do_variable_backend_int(c_pdf_minor_version); }
     else if (scan_keyword("pagebox"))             { do_variable_backend_int(c_pdf_pagebox); }
     else if (scan_keyword("inclusionerrorlevel")) { do_variable_backend_int(c_pdf_inclusion_errorlevel); }
+    else if (scan_keyword("ignoreunknownimages")) { do_variable_backend_int(c_pdf_ignore_unknown_images); }
     else if (scan_keyword("gamma"))               { do_variable_backend_int(c_pdf_gamma); }
     else if (scan_keyword("imageapplygamma"))     { do_variable_backend_int(c_pdf_image_apply_gamma); }
     else if (scan_keyword("imagegamma"))          { do_variable_backend_int(c_pdf_image_gamma); }

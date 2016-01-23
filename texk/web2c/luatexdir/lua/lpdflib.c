@@ -961,6 +961,85 @@ static int setpdforigin(lua_State * L)
     return 0 ;
 }
 
+static int getpdforigin(lua_State * L)
+{
+    lua_pushinteger(L,get_tex_extension_dimen_register(d_pdf_h_origin));
+    lua_pushinteger(L,get_tex_extension_dimen_register(d_pdf_v_origin));
+    return 2 ;
+}
+
+static int setpdfthreadmargin(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_dimen_register(d_pdf_thread_margin,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int setpdfdestmargin(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_dimen_register(d_pdf_dest_margin,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int setpdflinkmargin(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_dimen_register(d_pdf_link_margin,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int setpdfxformmargin(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_dimen_register(d_pdf_xform_margin,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int getpdfthreadmargin(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_dimen_register(d_pdf_thread_margin));
+    return 1;
+}
+
+static int getpdfdestmargin(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_dimen_register(d_pdf_dest_margin));
+    return 1;
+}
+
+static int getpdflinkmargin(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_dimen_register(d_pdf_link_margin));
+    return 1;
+}
+
+static int getpdfxformmargin(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_dimen_register(d_pdf_xform_margin));
+    return 1;
+}
+
+static int setpdfinclusionerrorlevel(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_count_register(c_pdf_inclusion_errorlevel,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int setpdfignoreunknownimages(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_count_register(c_pdf_ignore_unknown_images,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int getpdfinclusionerrorlevel(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_count_register(c_pdf_inclusion_errorlevel));
+    return 1;
+}
+
+static int getpdfignoreunknownimages(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_count_register(c_pdf_ignore_unknown_images));
+    return 1;
+}
+
 static int newpdfcolorstack(lua_State * L)
 {
     const char *s = NULL;
@@ -993,20 +1072,19 @@ static int newpdfcolorstack(lua_State * L)
 }
 
 static const struct luaL_Reg pdflib[] = {
-    { "immediateobj", l_immediateobj },
-    { "mapfile", l_mapfile },
-    { "mapline", l_mapline },
-    { "maxobjnum", l_maxobjnum },
+    { "gethpos", l_gethpos },
+    { "getvpos", l_getvpos },
     { "obj", l_obj },
-    { "objtype", l_objtype },
-    { "pageref", l_pageref },
-    { "print", luapdfprint },
+    { "immediateobj", l_immediateobj },
     { "refobj", l_refobj },
     { "registerannot", l_registerannot },
     { "reserveobj", l_reserveobj },
     { "getpos", l_getpos },
-    { "gethpos", l_gethpos },
-    { "getvpos", l_getvpos },
+    { "pageref", getpdfpageref },
+    { "maxobjnum", l_maxobjnum },
+    { "pageref", l_pageref },
+    { "print", luapdfprint },
+    { "objtype", l_objtype },
     { "getmatrix", l_getmatrix },
     { "hasmatrix", l_hasmatrix },
     { "setcatalog", l_set_catalog },
@@ -1038,16 +1116,30 @@ static const struct luaL_Reg pdflib[] = {
     { "getdecimaldigits", l_get_decimal_digits },
     { "setdecimaldigits", l_set_decimal_digits },
     /* moved from tex table */
-    { "fontname", getpdffontname},
-    { "fontobjnum", getpdffontobjnum},
-    { "fontsize", getpdffontsize},
-    { "pageref", getpdfpageref},
-    { "xformname", getpdfxformname},
-    { "getversion", getpdfversion},
-    { "getminorversion", getpdfminorversion},
-    { "setminorversion", setpdfminorversion},
-    { "newcolorstack", newpdfcolorstack},
-    { "setorigin",setpdforigin},
+    { "fontname", getpdffontname },
+    { "fontobjnum", getpdffontobjnum },
+    { "fontsize", getpdffontsize },
+    { "xformname", getpdfxformname },
+    { "getversion", getpdfversion },
+    { "getminorversion", getpdfminorversion },
+    { "setminorversion", setpdfminorversion },
+    { "newcolorstack", newpdfcolorstack },
+    { "setorigin", setpdforigin },
+    { "getorigin", getpdforigin },
+    { "setthreadmargin", setpdfthreadmargin },
+    { "setdestmargin", setpdfdestmargin },
+    { "setlinkmargin", setpdflinkmargin },
+    { "setxformmargin", setpdfxformmargin },
+    { "getthreadmargin", getpdfthreadmargin },
+    { "getdestmargin", getpdfdestmargin },
+    { "getlinkmargin", getpdflinkmargin },
+    { "getxformmargin", getpdfxformmargin },
+    { "getinclusionerrorlevel", getpdfinclusionerrorlevel },
+    { "getignoreunknownimages", getpdfignoreunknownimages },
+    { "setinclusionerrorlevel", setpdfinclusionerrorlevel },
+    { "setignoreunknownimages", setpdfignoreunknownimages },
+    { "mapfile", l_mapfile },
+    { "mapline", l_mapline },
     /* sentinel */
     {NULL, NULL}
 };
