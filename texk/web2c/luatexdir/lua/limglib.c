@@ -128,8 +128,12 @@ static void read_scale_img(image * a)
                 else {
                     read_img(ad);
                 }
-            } else if (img_state(ad) == DICT_NEW) {
+            }
+            if ((img_type(ad) == IMG_TYPE_NONE) || (img_state(ad) == DICT_NEW)) {
                 normal_warning("image","don't rely on the image data to be okay");
+                img_width(a) = 0;
+                img_height(a) = 0;
+                img_depth(a) = 0;
             } else if (is_wd_running(a) || is_ht_running(a) || is_dp_running(a)) {
                 img_dimen(a) = scale_img(ad, img_dimen(a), img_transform(a));
             }
