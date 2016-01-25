@@ -1,3 +1,7 @@
+2016-01-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Improve to skip BOM (win32 only).
+
 2016-01-02  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* printversion.c: 2015 ---> 2016.
