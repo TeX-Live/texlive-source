@@ -744,7 +744,7 @@ static boolean isUTF8Nstream(FILE *fp)
     for (i=0; i<MARK_LEN; i++) {
         c[i] = getc4(fp);
         if (!(bom_l[i] <= c[i] && c[i] <= bom_u[i])) {
-            do { ungetc4(c[i], fp); } while (--i>0);
+            do { ungetc4(c[i], fp); } while (i-- > 0);
             return false;
         }
     }
