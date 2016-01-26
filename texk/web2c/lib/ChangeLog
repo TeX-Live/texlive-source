@@ -1,4 +1,4 @@
-2016-01-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-01-26  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Improve to skip BOM (win32 only).
 
