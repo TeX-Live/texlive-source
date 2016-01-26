@@ -2,6 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
+# Version : 2.18
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -26,9 +27,13 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.17 (2015-11-30)";
+my $version="2.18 (2016-01-24)";
 
 # History:
+# v2.18 (2016/01/24)
+#   * Added &parse_for_xindy_nosort to help diagnose xindy's empty
+#     index key warning/error.
+#   * Added check for makeindex's multiple encap warning.
 # v2.17 (2015/11/30)
 #   * Escaped { in regular expressions.
 #     http://www.dickimaw-books.com/cgi-bin/bugtracker.cgi?action=view&key=101
@@ -490,7 +495,7 @@ if ($ext)
    else
    {
       &makeindex("$name.$ext",$outfile,$transcript,$istfile,
-                 $mkidxopts,$opt_q, $opt_n, $makeindexapp);
+                 $mkidxopts,$opt_q, $opt_n, $makeindexapp, 1);
    }
 
 
@@ -615,7 +620,7 @@ else
       else
       {
          &makeindex($inputfile,$outfile,$transcript,
-                    $istfile,$mkidxopts,$opt_q,$opt_n, $makeindexapp);
+                    $istfile,$mkidxopts,$opt_q,$opt_n, $makeindexapp, 1);
       }
    }
 }
@@ -851,7 +856,8 @@ sub run_app{
       }
    }
 
-   if ($log=~/\(0 entries accepted,/)
+   if ($log=~/\(0 entries accepted,/
+    or ( ($log=~/(\d+) warnings?/ and $1 gt 0)))
    {
       # Attempt to diagnose what's gone wrong
 
@@ -862,14 +868,14 @@ sub run_app{
             if (/Index style file .* not found/)
             {
                $errno = $istnotfound;
-               last;
             }
-
-            if (/Unknown specifier ;/)
+            elsif (/Unknown specifier ;/)
             {
                $errno = $xdynotist;
-
-               last;
+            }
+            elsif (/## Warning \(.*\):\s*$/)
+            {
+               $warnings .= $_ . <TRANS>;
             }
          }
 
@@ -883,7 +889,7 @@ sub run_app{
 
 # v2.08 added $app parameter
 sub makeindex{
-   my($in,$out,$trans,$ist,$rest,$quiet,$dontexec,$app) = @_;
+   my($in,$out,$trans,$ist,$rest,$quiet,$dontexec,$app,$repairencaps) = @_;
 
    my $args = "$rest -s \"$ist\" -t \"$trans\" -o \"$out\" \"$in\"";
 
@@ -914,6 +920,113 @@ sub makeindex{
         ),
         "Check '$trans' for details\n";
    }
+
+   # 2.18: added check and repair for multiple encaps
+   if ($warnings)
+   {
+      warn $warnings unless $quiet;
+
+      if ($repairencaps and $warnings=~/multiple encaps/)
+      {
+         unless ($quiet)
+         {
+            print "Multiple encaps detected. Attempting to remedy.\n";
+            print "Reading $in...\n";
+         }
+
+         # if $in can't be opened at this point something wrong
+         # has occurred (otherwise how did makeindex manage to open
+         # it?)
+
+         open INFD, $in or die "Can't open '$in' $!\n";
+
+         my @entries = ();
+
+         while (<INFD>)
+         {
+            if (/\\glossaryentry\{(.*)\|([^\|]*)\}\{(.*?)\}/)
+            {
+               my %entry = 
+                (
+                   'entry' => $1,
+                   'encap' => $2,
+                   'location' => $3
+                );
+
+               my $add = 1;
+
+               for (my $idx = 0; $idx <= $#entries; $idx++)
+               {
+                  my $existing = $entries[$idx];
+
+                  if ($entry{'entry'} eq $existing->{'entry'}
+                  and $entry{'location'} eq $existing->{'location'}
+                  and $entry{'encap'} ne $existing->{'encap'})
+                  {
+                     if (&encap_overrides($entry{'encap'},
+                           $existing->{'encap'}))
+                     {
+                        $entries[$idx] = \%entry;
+                     }
+
+                     $add = 0;
+                  } 
+               }
+
+               push @entries, \%entry if $add;
+            }
+            else
+            {
+               warn "Abandoning attempt. Can't parse: $_" unless $quiet;
+
+               close INFD;
+               return;
+            }
+         }
+
+         close INFD;
+
+         if (open OUTFD, ">$in")
+         {
+            print "Writing $in...\n" unless $quiet;
+
+            foreach my $entry (@entries)
+            {
+               print OUTFD '\\glossaryentry{',
+                 $entry->{'entry'}, '|',
+                 $entry->{'encap'}, '}{',
+                 $entry->{'location'}, '}', "\n";
+            }
+
+            close OUTFD;
+
+            print "Retrying\n" unless $quiet;
+
+            &makeindex($in,$out,$trans,$ist,$rest,$quiet,$dontexec,$app,0);
+         }
+         else
+         {
+            warn "Can't open '$in' $!\n" unless $quiet;
+         }
+      }
+   }
+}
+
+# 2.18 new
+# This is a subroutine in case of possible extension.
+# For example, what happens in the event of 'textbf' and 'emph'?
+# Should one override the other or be combined? Combining is harder
+# as it would need a corresponding LaTeX command.
+# Range encaps should take precedence.
+
+sub encap_overrides{
+  my ($newencap, $existing) = @_;
+
+  return 0 if ($existing=~/^[\(\)]/);
+
+  return 1 if ($newencap=~/^[\(\)]/);
+
+  ($existing=~/\\glsnumberformat\s*$/ or $newencap!~/\\glsnumberformat\s*$/ )
 }
 
 # v2.08 added $app parameter
@@ -1067,6 +1180,8 @@ sub xindy{
       if ($status=~/index 0 should be less than the length of the string/m)
       {
          $diagnostic = $xindy_error_text{nosort};
+
+         $diagnostic .= &parse_for_xindy_nosort($in);
       }
       elsif ($status=~/variable % has no value/m)
       {
@@ -1119,6 +1234,12 @@ sub xindy{
          $diagwarn .= $xindy_error_text{comp207};
       }
 
+      if ($status=~/Would replace complete index key by empty string, ignoring/m)
+      {
+         $diagwarn .= $xindy_error_text{nosort};
+         $diagwarn .= &parse_for_xindy_nosort($in);
+      }
+
       if ($diagwarn)
       {
          warn "\n**Warning:**\n\n", $diagwarn, "\n";
@@ -1146,6 +1267,63 @@ sub xindy{
          warn "Unable to open '$trans' $!\n";
       }
    }
+}
+
+# v2.18 added:
+sub parse_for_xindy_nosort{
+  my ($in) = @_;
+
+  my $msg = join("\n", "", 
+                 "Attempting to determine which entries have problem sort keys",
+                 "Parsing '$in'");
+
+  my %entries = ();
+
+  if (open FD, $in)
+  {
+     while (<FD>)
+     {
+        if (/:tkey \(\("(\\\\[a-zA-Z@]+ *)" "\\\\glossentry\{(.*)\}"\) \)/)
+        {
+           unless ($entries{$2})
+           {
+              $entries{$2} = $1;
+           }
+        }
+     }
+
+     close FD;
+
+     my @labels = keys %entries;
+
+     my $n = $#labels+1;
+
+     if ($n == 0)
+     {
+        $msg .= "\nCouldn't find anything! Sorry, I'm stumped.";
+     }
+     else
+     {
+        $msg .= ($n == 1 ? "\n1 problematic entry found:\n"
+                         : "\n$n problematic entries found:\n");
+
+        foreach my $label (@labels)
+        {
+           my $sort = $entries{$label};
+
+           $sort=~s/^\\\\([a-zA-Z@]+) *$/$1/;
+
+           $msg .= "\nLabel: '$label'. Sort value : '$entries{$label}'";
+           $msg .= "\n(Try adding sort={$sort} to the definition.)";
+        }
+     }
+  }
+  else
+  {
+     $msg .= "\nFailed to open '$in' $!\n";
+  }
+
+  $msg;
 }
 
 sub HELP_MESSAGE{
