@@ -2304,7 +2304,8 @@ input_line (FILE *f)
         else {
           k3 = getc (f);
           k4 = getc (f);
-          if (k1 == 0xef && k2 == 0xbb && k3 == 0xbf && (0 <= k4 <= 0x7e)) /* UTF-8 */
+          if (k1 == 0xef && k2 == 0xbb && k3 == 0xbf &&
+              k4 >= 0 && k4 <= 0x7e) /* UTF-8 */
             ungetc (k4, f);
           else
             rewind (f);
