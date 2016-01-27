@@ -2312,6 +2312,7 @@ static int do_variable_pdf(halfword c)
     else if (scan_keyword("objcompresslevel"))    { do_variable_backend_int(c_pdf_objcompresslevel); }
     else if (scan_keyword("inclusioncopyfonts"))  { do_variable_backend_int(c_pdf_inclusion_copy_font); }
     else if (scan_keyword("gentounicode"))        { do_variable_backend_int(c_pdf_gen_tounicode); }
+    else if (scan_keyword("pkfixeddpi"))          { do_variable_backend_int(c_pdf_pk_fixed_dpi); }
 
     else if (scan_keyword("horigin"))             { do_variable_backend_dimen(d_pdf_h_origin); }
     else if (scan_keyword("vorigin"))             { do_variable_backend_dimen(d_pdf_v_origin); }

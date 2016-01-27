@@ -800,9 +800,8 @@ static int l_get_objcompresslevel(lua_State * L)
 
 static int l_set_compresslevel(lua_State * L)
 {
-    int c ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int c = (int) lua_tointeger(L, 1);
         if (c<0)
             c = 0 ;
         else if (c>9)
@@ -814,9 +813,8 @@ static int l_set_compresslevel(lua_State * L)
 
 static int l_set_objcompresslevel(lua_State * L)
 {
-    int c ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int c = (int) lua_tointeger(L, 1);
         if (c<0)
             c = 0 ;
         else if (c>9)
@@ -834,15 +832,40 @@ static int l_get_decimal_digits(lua_State * L)
     return 1 ;
 }
 
-
 static int l_set_decimal_digits(lua_State * L)
 {
-    int c ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
-        if (c<0)
+        int c = (int) lua_tointeger(L, 1);
+        if (c<0) {
             c = 0 ;
+        }
         set_pdf_decimal_digits(c);
+    }
+    return 0 ;
+}
+
+/* pk */
+
+static int l_get_pk_resolution(lua_State * L)
+{
+    lua_pushinteger(L, (pdf_pk_resolution));
+    lua_pushinteger(L, (pdf_pk_fixed_dpi));
+    return 2 ;
+}
+
+static int l_set_pk_resolution(lua_State * L)
+{
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        int c = (int) lua_tointeger(L, 1);
+        if (c < 72) {
+            c = 72 ;
+        } else if (c > 8000) {
+            c = 8000 ;
+        }
+        set_pdf_pk_resolution(c);
+    }
+    if (lua_type(L, 2) == LUA_TNUMBER) {
+        set_pdf_pk_fixed_dpi(lua_tointeger(L, 1));
     }
     return 0 ;
 }
@@ -867,9 +890,9 @@ static int getpdffontname(lua_State * L)
 
 static int getpdffontobjnum(lua_State * L)
 {
-    int c, ff ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int ff;
+        int c = (int) lua_tointeger(L, 1);
         pdf_check_vf(c);
         if (!font_used(c))
             pdf_init_font(static_pdf,c);
@@ -883,9 +906,8 @@ static int getpdffontobjnum(lua_State * L)
 
 static int getpdffontsize(lua_State * L)
 {
-    int c;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int c = (int) lua_tointeger(L, 1);
         lua_pushinteger(L, (font_size(c)));
     } else {
         lua_pushnil(L);
@@ -895,9 +917,8 @@ static int getpdffontsize(lua_State * L)
 
 static int getpdfpageref(lua_State * L)
 {
-    int c ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int c = (int) lua_tointeger(L, 1);
         lua_pushinteger(L, (pdf_get_obj(static_pdf, obj_type_page, c, false)));
     } else {
         lua_pushnil(L);
@@ -907,9 +928,8 @@ static int getpdfpageref(lua_State * L)
 
 static int getpdfxformname(lua_State * L)
 {
-    int c ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int c = (int) lua_tointeger(L, 1);
         check_obj_type(static_pdf, obj_type_xform, c);
         lua_pushinteger(L, (obj_info(static_pdf, c)));
     } else {
@@ -933,9 +953,8 @@ static int getpdfminorversion(lua_State * L)
 
 static int setpdfminorversion(lua_State * L)
 {
-    int c ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        c = (int) lua_tointeger(L, 1);
+        int c = (int) lua_tointeger(L, 1);
         if ((c >= 0) && (c <= 9)) {
             static_pdf->minor_version = c;
             set_pdf_minor_version(c);
@@ -1115,6 +1134,8 @@ static const struct luaL_Reg pdflib[] = {
     { "setobjcompresslevel", l_set_objcompresslevel },
     { "getdecimaldigits", l_get_decimal_digits },
     { "setdecimaldigits", l_set_decimal_digits },
+    { "getpkresolution", l_get_pk_resolution },
+    { "setpkresolution", l_set_pk_resolution },
     /* moved from tex table */
     { "fontname", getpdffontname },
     { "fontobjnum", getpdffontobjnum },
