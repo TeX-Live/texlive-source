@@ -1,12 +1,12 @@
 /*
-** $Id: lptypes.h,v 1.11 2015/03/04 16:38:00 roberto Exp $
+** $Id: lptypes.h,v 1.14 2015/09/28 17:17:41 roberto Exp $
 ** LPeg - PEG pattern matching for Lua
-** Copyright 2007-2014, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
+** Copyright 2007-2015, Lua.org & PUC-Rio  (see 'lpeg.html' for license)
 ** written by Roberto Ierusalimschy
 */
 
 /*
- "Amalgamated" version for LuaTeX written by Scarso Luigi.
+ "Amalgamated" version for Lua(jit)TeX written by Scarso Luigi.
 */
 
 
@@ -20,16 +20,16 @@
 
 #include <assert.h>
 #include <limits.h>
+/* added */
 #include <ctype.h> 
 #include <stdio.h> 
 #include <string.h> 
 
-#include "lauxlib.h" 
+
 #include "lua.h"
+#include "lauxlib.h"
 
-
-
-#define VERSION         "0.12.2"
+#define VERSION         "1.0.0"
 
 
 #define PATTERN_T	"lpeg-pattern"
@@ -37,31 +37,31 @@
 
 
 /*
-** compatibility with Lua 5.2
+** compatibility with Lua 5.1
 */
-#if (LUA_VERSION_NUM >= 502)
+#if (LUA_VERSION_NUM == 501)
 
-#undef lua_equal
-#define lua_equal(L,idx1,idx2)  lua_compare(L,(idx1),(idx2),LUA_OPEQ)
+#define lp_equal	lua_equal
 
-#undef lua_getfenv
-#define lua_getfenv	lua_getuservalue
-#undef lua_setfenv
-#define lua_setfenv	lua_setuservalue
+#define lua_getuservalue	lua_getfenv
+#define lua_setuservalue	lua_setfenv
 
-#undef lua_objlen
-#define lua_objlen	lua_rawlen
+#define lua_rawlen		lua_objlen
 
-#undef luaL_register
-#define luaL_register(L,n,f) \
-	{ if ((n) == NULL) luaL_setfuncs(L,f,0); else luaL_newlib(L,f); }
+#define luaL_setfuncs(L,f,n)	luaL_register(L,NULL,f)
+#define luaL_newlib(L,f)	luaL_register(L,"lpeg",f)
 
+#endif
+
+
+#if !defined(lp_equal)
+#define lp_equal(L,idx1,idx2)  lua_compare(L,(idx1),(idx2),LUA_OPEQ)
 #endif
 
 
 /* default maximum size for call/backtrack stack */
 #if !defined(MAXBACK)
-#define MAXBACK         100
+#define MAXBACK         400
 #endif
 
 
@@ -165,7 +165,7 @@ typedef struct Charset {
 #define lpcap_h
 
 
-/* #include "lptypes.h"*/
+/*#include "lptypes.h"*/
 
 
 /* kinds of captures */
@@ -208,7 +208,7 @@ int finddyncap (Capture *cap, Capture *last);
 #define lptree_h
 
 
-/* #include "lptypes.h" */
+/*#include "lptypes.h" */
 
 
 /*
@@ -277,6 +277,7 @@ extern const byte numsiblings[];
 
 #endif
 
+
 /*
 ** $Id: lpvm.h,v 1.3 2014/02/21 13:06:41 roberto Exp $
 */
@@ -284,7 +285,7 @@ extern const byte numsiblings[];
 #if !defined(lpvm_h)
 #define lpvm_h
 
-/* #include "lpcap.h"*/
+/*#include "lpcap.h"*/
 
 
 /* Virtual Machine's instructions */
@@ -335,18 +336,20 @@ const char *match (lua_State *L, const char *o, const char *s, const char *e,
 
 #endif
 
+
+
 /*
-** $Id: lpcode.h,v 1.6 2013/11/28 14:56:02 roberto Exp $
+** $Id: lpcode.h,v 1.7 2015/06/12 18:24:45 roberto Exp $
 */
 
 #if !defined(lpcode_h)
 #define lpcode_h
 
-/* #include "lua.h"*/
+/*#include "lua.h"*/
 
-/* #include "lptypes.h"*/
-/* #include "lptree.h"*/
-/* #include "lpvm.h"*/
+/*#include "lptypes.h"*/
+/*#include "lptree.h"*/
+/*#include "lpvm.h"*/
 
 int tocharset (TTree *tree, Charset *cs);
 int checkaux (TTree *tree, int pred);
@@ -361,7 +364,15 @@ int sizei (const Instruction *i);
 #define PEnullable      0
 #define PEnofail        1
 
+/*
+** nofail(t) implies that 't' cannot fail with any input
+*/
 #define nofail(t)	checkaux(t, PEnofail)
+
+/*
+** (not nullable(t)) implies 't' cannot match without consuming
+** something
+*/
 #define nullable(t)	checkaux(t, PEnullable)
 
 #define fixedlen(t)     fixedlenx(t, 0, 0)
@@ -369,8 +380,10 @@ int sizei (const Instruction *i);
 
 
 #endif
+
+
 /*
-** $Id: lpprint.h,v 1.1 2013/03/21 20:25:12 roberto Exp $
+** $Id: lpprint.h,v 1.2 2015/06/12 18:18:08 roberto Exp $
 */
 
 
@@ -378,8 +391,8 @@ int sizei (const Instruction *i);
 #define lpprint_h
 
 
-/* #include "lptree.h"*/
-/* #include "lpvm.h"*/
+/* #include "lptree.h" */
+/* #include "lpvm.h" */
 
 
 #if defined(LPEG_DEBUG)
@@ -389,6 +402,7 @@ void printtree (TTree *tree, int ident);
 void printktable (lua_State *L, int idx);
 void printcharset (const byte *st);
 void printcaplist (Capture *cap, Capture *limit);
+void printinst (const Instruction *op, const Instruction *p);
 
 #else
 

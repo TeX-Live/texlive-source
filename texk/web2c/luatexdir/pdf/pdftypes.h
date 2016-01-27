@@ -278,6 +278,7 @@ typedef struct pdf_output_file_ {
     int image_apply_gamma;
     int draftmode;
     int pk_resolution;
+    int pk_fixed_dpi;
     int decimal_digits;
     int gen_tounicode;
     int inclusion_copy_font;

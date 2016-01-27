@@ -91,7 +91,8 @@ static boolean writepk(PDF pdf, internal_font_number f)
     char *name;
     chardesc cd;
     boolean is_null_glyph, check_preamble;
-    int dpi;
+    int dpi = 0;
+    int newdpi = 0;
     int callback_id = 0;
     int file_opened = 0;
     xfree(t3_buffer);
@@ -100,11 +101,17 @@ static boolean writepk(PDF pdf, internal_font_number f)
 
     callback_id = callback_defined(find_pk_file_callback);
 
+    if (pdf->pk_fixed_dpi) {
+        newdpi = pdf->pk_resolution;
+    } else {
+        newdpi = dpi;
+    }
+
     if (callback_id > 0) {
         /* <base>.dpi/<fontname>.<tdpi>pk */
         dpi = round((float) pdf->pk_resolution * (((float) font_size(f)) / (float) font_dsize(f)));
         cur_file_name = font_name(f);
-        run_callback(callback_id, "Sd->S", cur_file_name, (int) dpi, &name);
+        run_callback(callback_id, "Sd->S", cur_file_name, (int) newdpi, &name);
         if (name == NULL || strlen(name) == 0) {
             formatted_warning("type 3","font %s at %i not found", cur_file_name, (int) dpi);
             return false;
@@ -171,7 +178,10 @@ static boolean writepk(PDF pdf, internal_font_number f)
         pdf_printf(pdf, " 0 %i %i %i %i d1\n", (int) llx, (int) lly, (int) urx, (int) ury);
         if (is_null_glyph)
             goto end_stream;
-        pdf_printf(pdf, "q\n%i 0 0 %i %i %i cm\nBI\n", (int) cd.cwidth, (int) cd.cheight, (int) llx, (int) lly);
+        pdf_printf(pdf, "q\n%i 0 0 %i %i %i cm\nBI\n",
+            (int) (dpi * cd.cwidth  / newdpi),
+            (int) (dpi * cd.cheight / newdpi),
+            (int) llx, (int) lly);
         pdf_printf(pdf, "/W %i\n/H %i\n", (int) cd.cwidth, (int) cd.cheight);
         pdf_puts(pdf, "/IM true\n/BPC 1\n/D [1 0]\nID ");
         cw = (cd.cwidth + 7) / 8;
