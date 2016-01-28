@@ -193,19 +193,24 @@
 #define nodelib_check_glue_spec(n,g,field) do { \
     g = glue_ptr(n); \
     v = (halfword) lua_tointeger(L, 3); \
-    if ((!g) || (!valid_node(g))) { \
+    if (!g) { \
         g = new_node(glue_spec_node,0); \
+        add_glue_ref(g); \
         glue_ptr(n) = g; \
         field(g) = v; \
     } else if (field(g) != v) { \
-        if (glue_ref_count(g) > 1) { \
-            c = new_spec(g); \
+        if (valid_node(g)) { \
+            int c = new_spec(g); \
             delete_glue_ref(g); \
-            g = c; \
+            add_glue_ref(c); \
+            glue_ptr(n) = c; \
+            field(c) = v; \
+        } else { \
+            g = new_spec(g); \
             add_glue_ref(g); \
             glue_ptr(n) = g; \
+            field(g) = v; \
         } \
-        field(g) = v; \
     } \
 } while (0)
 
@@ -5036,7 +5041,7 @@ static int lua_nodelib_setfield_whatsit(lua_State * L, int n, const char *s)
 
 static int lua_nodelib_fast_setfield(lua_State * L)
 {
-    halfword g, c, v;
+    halfword g, v;
     const char *s;
     halfword n = *((halfword *) lua_touserdata(L, 1));
     int t = type(n);
@@ -5895,7 +5900,7 @@ static int lua_nodelib_direct_setdiscretionary(lua_State * L)
 
 static int lua_nodelib_direct_setfield(lua_State * L)
 {
-    halfword g, c, v;
+    halfword g, v;
     const char *s;
 
     halfword n = lua_tointeger(L, 1);
