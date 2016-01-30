@@ -1,3 +1,9 @@
+2016-01-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tt_post.c: Check post->glyphNamePtr[gid] before an access
+	in tt_get_glyphname(). Reported by Werner LEMBERG:
+	http://tug.org/pipermail/tex-live/2016-January/037696.html.
+
 2016-01-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dpxfile.c: Remove trailing directory separators if any in
