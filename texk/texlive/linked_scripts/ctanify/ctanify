@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.8";          # ctanify version number
+our $VERSION = "1.8.1";        # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -330,7 +330,7 @@ find(sub {
 # Archive and remove the TDS directory.
 $zipname = "$pkgname.tds.zip";
 my $zip_exclusions = $skipdroppings ? "-x __MACOSX -x .DS_Store" : "";
-run_command "zip -q -r -9 -m $workdir/$zipname . $zip_exclusions", 1;
+run_command "zip -q -r -9 -y -m $workdir/$zipname . $zip_exclusions", 1;
 my $zipsize;
 if (-f "$workdir/$zipname") {
     $zipsize = filesize "$workdir/$zipname";
@@ -691,7 +691,7 @@ Scott Pakin, I<scott+ctify@pakin.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2015 Scott Pakin
+Copyright 2016 Scott Pakin
 
 This work may be distributed and/or modified under the conditions of
 the LaTeX Project Public License, either S<version 1.3c> of this
