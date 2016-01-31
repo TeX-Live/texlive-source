@@ -1,3 +1,7 @@
+2016-01-31  Luigi Scarso  <uigi.scarso@gmail.com>
+
+	* pk2bm.c, pkin.c, pkin.h: Support charext.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
    pkname = argv[0];
 
-   if (readchar(pkname, (shalfword)C, &cd)) {
+   if (readchar(pkname, (integer)C, &cd)) {
       int H, dh, W, dw, bitsleft;
       halfword nextword; quarterword nextbyte;
 
@@ -221,5 +221,5 @@ atoo(char *oct)
 {
    int octal = 0;
    while (*oct != '\0') octal = 8*octal + (*oct++) - '0';
-   return octal & 0xff;
+   return octal;
 }
