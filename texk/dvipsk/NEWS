@@ -1,5 +1,9 @@
 This file records noteworthy changes.  (Public domain.)
 
+dvips 5.996 (TeX Live 2016).
+  afm2tfm 8.4: only adjust heights of base characters upward for accent
+  position, and new option -a to omit all adjustments.
+
 dvips 5.995 (TeX Live 2015).
   Portability/build changes only.
 

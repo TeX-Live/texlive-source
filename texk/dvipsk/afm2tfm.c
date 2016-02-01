@@ -226,6 +226,7 @@ float italicangle = 0.0;
 char fixedpitch;
 char makevpl;
 char pedantic;
+int noaccentheightadjust;
 int xheight = 400;
 int fontspace;
 int bc, ec;
@@ -1188,27 +1189,82 @@ writetfm(void) {
 /* OK, the TFM file is done! Now for our next trick, the VPL file. */
 
 /* For TeX we want to compute a character height that works properly
- * with accents. The following list of accents doesn't need to be complete. */
-/*
- *   We only do this if the xheight has a reasonable value.
- *   (>50)
- */
-const char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL};
+   with accents.  We only do this if the xheight has a reasonable value
+   (>50), and only if the -a flag is not given.  Furthermore, we never
+   return a height less than the height of the original character.
+
+   The idea of this routine is to adjust the heights of bare characters
+   (say, t) so that the result of using the \accent primitive (say, \"t)
+   is the same as a precomposed tdieresis character.  This is done in
+   the vpl output, so the vf+tfm generated from the vpl are affected,
+   but not the original tfm.
+   
+   This idea is reasonable, but the downside is that changing the height
+   of the base character at all, but especially downward, has
+   undesirable consequences: when putting a rule over the character or
+   constructing a math bar-over accent, for example, the rule will be
+   too close to (or too far from, if the height is increased) the
+   character.
+   
+   Furthermore, these days, except when using the original CM fonts,
+   precomposed accent glyphs are widely available and used.  And afm2tfm
+   is not used much with the original CM fonts, as they don't come with
+   afm files :).
+   
+   In any case, there is one situation where adjusting the height of the
+   base character by looking at the standalone accent is definitely
+   wrong: the dcaron, tcaron, and [Ll]caron glyphs.  In these cases, the
+   usual check-above shape is replaced by (approximately) an apostrophe
+   to the right of the character.  Therefore looking at the standalone
+   check glyph is inapplicable.
+
+   In general, it seems wrong to ever decrease the height from the
+   original, since that will almost certainly result in crashes with
+   \bar and the like.  That seems worse than a mispositioned accent.
+   So the routine returns the original height if the heuristic would
+   decrease it.
+   
+   Nevertheless, despite all the above, the original behavior has been
+   around for so many years that it seems bad to change it now.  So
+   adjustments upward are still made, unless -a is given.
+   
+   The following list of accents doesn't need to be complete. */
+const char *accents[] = { "acute", "tilde", "caron", "dieresis", NULL };
+
 static int
-texheight(register struct adobeinfo *ai)
+texheight(struct adobeinfo *ai)
 {
-   register const char **p;
-   register struct adobeinfo *aci, *acci;
-   if (xheight <= 50 || *(ai->adobename + 1)) return (ai->ury);
-                                           /* that was the simple case */
-   for (p=accents; *p; p++)  /* otherwise we look for accented letters */
-      if (0 != (aci=findadobe(*p))) {
-         strcpy(buffer,ai->adobename);
-         strcat(buffer,*p);
-         if (0 != (acci=findadobe(buffer)))
-            return (acci->ury - aci->ury + xheight);
+   const char **p;
+   struct adobeinfo *aci, *acci;
+   /* The `ai' argument is the base letter, e.g., "d".
+      `aci' is the accent, e.g., "caron".
+      `acci' is the pre-composed accented letter, e.g., "dcaron".  */
+
+   /* If -a was given, or the xheight is too small, or the character
+      name is more than one letter long, return the original height.  */
+   if (noaccentheightadjust
+       || xheight <= 50
+       || *(ai->adobename + 1))
+   return ai->ury;
+
+   for (p = accents; *p; p++) { /* otherwise we look for accented letters */
+      aci = findadobe(*p);
+      if (aci) {
+         strcpy(buffer, ai->adobename);
+         strcat(buffer, *p);
+         acci = findadobe(buffer);
+         if (acci) {
+            /* height heuristic since \accent assumes x-height positioning */
+            int guess = acci->ury - aci->ury + xheight;
+            if (guess > ai->ury) { /* ignore guess if it reduces height */
+               return guess;
+            }
+         }
       }
-   return (ai->ury);
+   }
+   
+   /* didn't find anything to adjust, return original */
+   return ai->ury;
 }
 
 /* modified tgr to eliminate varargs problems */
@@ -1505,9 +1561,9 @@ writevpl(void)
 static void
 version(FILE *f)
 {
-  fputs ("afm2tfm(k) (dvips(k) 5.995) 8.3\n", f);
+  fputs ("afm2tfm(k) (dvips(k) 5.996) 8.4\n", f);
   fprintf (f, "%s\n", kpathsea_version_string);
-  fputs ("Copyright 2015 Radical Eye Software.\n\
+  fputs ("Copyright 2016 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -1519,6 +1575,7 @@ Original author of afm2tfm: T. Rokicki.\n", f);
 #define USAGE "\
   Convert an Adobe font metric file to TeX font metric format.\n\
 \n\
+-a                  omit heuristic adjustment of heights for accents\n\
 -c REAL             use REAL for height of small caps made with -V [0.8]\n\
 -e REAL             widen (extend) characters by a factor of REAL\n\
 -O                  use octal for all character codes in the vpl file\n\
@@ -1634,26 +1691,34 @@ case 'v': makevpl++;
 #endif
             error("! can't open vpl output file");
          break;
-case 'e': CHECKARG3
-          if (sscanf(argv[3], "%f", &efactor)==0 || efactor<0.01)
-            error("! Bad extension factor");
-         efactorparam = argv[3];
+case 'a':
+         noaccentheightadjust = 1;
+         arginc = 1;
          break;
 case 'c':
          CHECKARG3
          if (sscanf(argv[3], "%f", &capheight)==0 || capheight<0.01)
             error("! Bad small caps height");
          break;
-case 's':
-         CHECKARG3
-         if (sscanf(argv[3], "%f", &slant)==0)
-            error("! Bad slant parameter");
-         slantparam = argv[3];
+case 'e': CHECKARG3
+          if (sscanf(argv[3], "%f", &efactor)==0 || efactor<0.01)
+            error("! Bad extension factor");
+         efactorparam = argv[3];
+         break;
+case 'O':
+         forceoctal = 1;
+         arginc = 1;
          break;
 case 'P':
 case 'p':
          CHECKARG3
          inenname = argv[3];
+         break;
+case 's':
+         CHECKARG3
+         if (sscanf(argv[3], "%f", &slant)==0)
+            error("! Bad slant parameter");
+         slantparam = argv[3];
          break;
 case 'T':
          CHECKARG3
@@ -1662,10 +1727,6 @@ case 'T':
 case 't':
          CHECKARG3
          outenname = argv[3];
-         break;
-case 'O':
-         forceoctal = 1;
-         arginc = 1;
          break;
 case 'u':
          pedantic = 1;
