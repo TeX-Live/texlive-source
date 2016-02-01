@@ -3374,6 +3374,9 @@ void write_cid_cff(PDF pdf, cff_font * cffont, fd_entry * fd)
             num_glyphs++;
         }
     }
+    if (last_cid >= cffont->num_glyphs) {
+        formatted_error("cff font","bad glyph index %i",last_cid);
+    }
 
     /* CIDSet: a table of bits indexed by cid, bytes with high order bit first,
        each (set) bit is a (present) CID. */

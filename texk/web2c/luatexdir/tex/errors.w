@@ -688,7 +688,15 @@ void wrapup_backend(void) {
 void normal_error(const char *t, const char *p)
 {
     normalize_selector();
-    print_err("error ");
+    if (interaction == error_stop_mode) {
+        wake_up_terminal();
+    }
+    if (filelineerrorstylep) {
+        print_file_line();
+    } else {
+        tprint_nl("! ");
+    }
+    tprint("error: ");
     if (cur_file_name) {
         tprint(" (file ");
         tprint(cur_file_name);
@@ -702,11 +710,26 @@ void normal_error(const char *t, const char *p)
     tprint(": ");
     if (p != NULL)
         tprint(p);
-    /* quit */
     history = fatal_error_stop;
     wrapup_backend();
     exit(EXIT_FAILURE);
 }
+
+/*
+void normal_error(const char *t, const char *p)
+{
+    normalize_selector();
+    if (interaction == error_stop_mode) {
+        wake_up_terminal();
+    }
+    tprint("error : ");
+    if (p != NULL)
+        tprint(p);
+    history = fatal_error_stop;
+    wrapup_backend();
+    exit(EXIT_FAILURE);
+}
+*/
 
 @ @c
 void normal_warning(const char *t, const char *p)
