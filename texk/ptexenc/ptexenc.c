@@ -840,7 +840,8 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
     return last;
 }
 
-boolean setinfileenc(FILE *fp, const char *str){
+boolean setinfileenc(FILE *fp, const char *str)
+{
     int enc;
     enc = string_to_enc(str);
     if (enc < 0) return false;
