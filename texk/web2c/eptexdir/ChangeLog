@@ -1,3 +1,11 @@
+2016-02-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* eptex.ech: Add a new primitive \epTeXinputencoding. (from N. Abe).
+	Change version to 160201 (H. Kitagawa).
+	* eptex.defines: Add a new function setinfileenc() for a new primitive
+	\epTeXinputencoding. (from N. Abe).
+	* eptex_version.h: Change version to 160201 (H. Kitagawa).
+
 2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* eptriptest.test: Also check tripos.tex and etrip.out.

@@ -1,3 +1,8 @@
+2016-02-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* euptex.defines: Add a new function setinfileenc() for a new primitive
+	\epTeXinputencoding. (from N. Abe).
+
 2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* euptriptest.test: Also check tripos.tex and etrip.out.

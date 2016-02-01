@@ -1,3 +1,8 @@
+2016-02-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h: Add a function setinfileenc() for a new
+	primitive \epTeXinputencoding in e-(u)pTeX. (from N. Abe).
+
 2016-01-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexenc.c: Fix a bug, reported by N. Abe, in isUTF8Nstream().

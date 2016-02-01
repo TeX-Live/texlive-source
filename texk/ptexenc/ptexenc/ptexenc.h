@@ -81,6 +81,9 @@ extern PTENCDLL int fputs2(const char *s, FILE *fp);
 extern PTENCDLL long input_line2(FILE *fp, unsigned char *buff, long pos,
 				const long buffsize, int *lastchar);
 
+/* set current encoding */
+extern PTENCDLL boolean setinfileenc(FILE *fp, const char *str);
+
 #ifdef WIN32
 extern PTENCDLL void clear_infile_enc(FILE *fp);
 #else
