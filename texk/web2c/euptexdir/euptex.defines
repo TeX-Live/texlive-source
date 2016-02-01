@@ -24,6 +24,8 @@
 @define function putc2 ();
 @define function inputline2 ();
 
+@define function setinfileenc ();
+
 @define function fromJIS ();
 @define function fromEUC ();
 @define function fromSJIS ();

@@ -19,7 +19,7 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-150805'
+@d epTeX_version_string=='-160201'
 @z
 
 @x e-pTeX: banner
@@ -303,6 +303,56 @@ if fm>0 then {drop \.{\\beginM} \.{\\endM} pair}
 @!fm:integer; {1: if |r|, 2: if |p| is a \.{\\beginM} node}
 @!gm:integer; {1: if |link(q)|, 2: if |q| is an  \.{\\endM} node}
 @!fd,@!gd:integer; {same for |disp_node|}
+@z
+
+@x
+@d set_language_code=5 {command modifier for \.{\\setlanguage}}
+@y
+@d set_language_code=5 {command modifier for \.{\\setlanguage}}
+@d epTeX_input_encoding_code=7 {command modifier for \.{\\epTeXinputencoding}}
+@z
+
+@x
+primitive("setlanguage",extension,set_language_code);@/
+@!@:set_language_}{\.{\\setlanguage} primitive@>
+@y
+primitive("setlanguage",extension,set_language_code);@/
+@!@:set_language_}{\.{\\setlanguage} primitive@>
+primitive("epTeXinputencoding",extension,epTeX_input_encoding_code);@/
+@!@:epTeX_input_encoding_}{\.{\\epTeXinputencoding} primitive@>
+@z
+
+@x
+  set_language_code:print_esc("setlanguage");
+@y
+  set_language_code:print_esc("setlanguage");
+  epTeX_input_encoding_code:print_esc("epTeXinputencoding");
+@z
+
+@x
+set_language_code:@<Implement \.{\\setlanguage}@>;
+@y
+set_language_code:@<Implement \.{\\setlanguage}@>;
+epTeX_input_encoding_code:@<Implement \.{\\epTeXinputencoding}@>;
+@z
+
+@x
+@ @<Finish the extensions@>=
+@y
+@ @<Implement \.{\\epTeXinputencoding}@>=
+  begin
+    scan_file_name;
+    pack_cur_name;
+    if setinfileenc(cur_file,stringcast(name_of_file+1)) = false then
+    begin
+      wlog_cr;
+      wlog('Unknown encoding `');
+      fputs(stringcast(name_of_file + 1), log_file);
+      wlog('''');
+    end
+  end
+
+@ @<Finish the extensions@>=
 @z
 
 @x
