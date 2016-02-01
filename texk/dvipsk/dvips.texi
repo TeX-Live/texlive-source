@@ -3621,10 +3621,11 @@ can also obtain special effects such as an oblique font.
 @pindex fontinst
 @cindex virtual fonts, creating
 @cindex Jeffrey, Alan
-An alternative to Afm2tfm for creating virtual fonts is Alan Jeffrey's
-@code{fontinst} program, available from
-@file{@var{CTAN:}fonts/utilities/fontinst} (for CTAN info,
-@pxref{unixtex.ftp,,, kpathsea, Kpathsea}).
+Alternatives to Afm2tfm for creating virtual fonts include
+@code{fontinst} @url{http://ctan.org/pkg/fontinst},
+@code{lcdf-typetools}, particularly @code{otftotfm}
+(@url{http://ctan.org/pkg/lcdf-typetools}), and @code{afm2p}
+(@url{http://tex.aanhet.net/afm2pl/}), among others.
 
 @menu
 * Changing font encodings::     Reencoding with -t, -p, -T.
@@ -4032,9 +4033,10 @@ Synopsis:
 afm2tfm [@var{option}]@dots{} @var{afmfile}[.afm] [@var{tfmfile}[.tfm]]
 @end example
 
-Afm2tfm reads @var{afmfile} and writes a corresponding (but raw) TFM
-file. If @var{tfmfile} is not supplied, the base name of the AFM file is
-extended with @samp{.tfm} to get the output filename.
+Afm2tfm reads @var{afmfile} and writes a corresponding (but ``raw'',
+see below) TFM file. If @var{tfmfile} is not supplied, the base name
+of the AFM file is extended with @samp{.tfm} to get the output
+filename.
 
 The simplest example:
 
@@ -4043,15 +4045,16 @@ afm2tfm Times-Roman rptmr
 @end example
 
 @cindex accents, wrong
+@cindex raw tfm files
 @noindent
 The TFM file thus created is @dfn{raw} because it omits ligature and
-kern information, and does no character remapping; it simply contains
-the character information in the AFM file in TFM form, which is the form
+kern information, and does no character remapping; it contains only
+the character information in the AFM file in TFM format, which is the form
 that @TeX{} understands.  The characters have the same code in the TFM
 file as in the AFM file.  For text fonts, this means printable ASCII
 characters will work ok, but little else, because standard PostScript
 fonts have a different encoding scheme than the one that plain @TeX{}
-expects (@pxref{Encodings}).  Although both schemes agree for the
+expects (@pxref{Encodings}).  Although the encodings agree for most
 printable ASCII characters, other characters such as ligatures and
 accents vary.  Thus, in practice, it's almost always desirable to create
 a virtual font as well with the @samp{-v} or @samp{-V} option.
@@ -4060,6 +4063,18 @@ a virtual font as well with the @samp{-v} or @samp{-V} option.
 The command line options to Afm2tfm:
 
 @table @samp
+@item -a
+@opindex -a
+@cindex accent height adjustment, omitting
+By default, Afm2tfm looks for precomposed accented characters, such as
+tdieresis, and possibly adjusts the height of the basic letter (t)
+upward so that the result of using @code{\accent} (as in @code{\"t})
+is visually the same as the precomposed characters.  The @code{-a}
+option omits such adjustments, so that all characters' heights remain
+as they are given in the AFM file.  (Until Afm2tfm 8.4, released in
+2016, heights could also be adjusted downward, but this is no longer
+the case.)
+
 @item -c @var{ratio}
 @opindex -c @var{ratio}
 @cindex scaling small caps

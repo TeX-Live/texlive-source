@@ -1,3 +1,12 @@
+2016-01-21  Karl Berry  <karl@freefriends.org>
+
+	* dvips.texi (Afm2tfm options) <-a>: document new option.
+	* afm2tfm.c (openfiles): new option -a.
+	(USAGE): include it in list for --help.
+	(noaccentheightadjust): new global to remember it.
+	(texheight): do nothing if -a is specified,
+	or if the heuristically-guessed height is less than the original.
+
 2015-07-10  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* test-dvips (removed): Renamed ...
