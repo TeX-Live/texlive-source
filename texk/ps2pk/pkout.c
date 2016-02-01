@@ -1,16 +1,13 @@
 /* FILE:    pkout.c
- *
  * PURPOSE: implementation of PK output functions
- *
  * COMMENT: functions are derived from `The GFtoPK processor' but
  *          presented in a modular fashion so they can be used in other
  *          programs. 
  *          (Porting `top-down' WEB code into modular readable C-code is
  *          not a trivial exercise.)
  *
- * VERSION: 1.7 (December 2014)
- *
- * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
+ * AUTHOR:  Piet Tutelaers
+ * (see README for license)
  */
 
 /* Some constants */

@@ -1,6 +1,5 @@
 /* FILE:	filenames.h
  * PURPOSE:	functions for handling file names
- * VERSION: 1.7 (December 2014)
  */
 
 /*

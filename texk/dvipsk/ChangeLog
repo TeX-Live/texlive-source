@@ -1,3 +1,8 @@
+2016-02-01  Karl Berry  <karl@tug.org>
+
+	* dvips.1,
+	* afm2tfm.1: ask for bug reports to go to tex-k.
+
 2016-01-21  Karl Berry  <karl@freefriends.org>
 
 	* dvips.texi (Afm2tfm options) <-a>: document new option.

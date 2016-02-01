@@ -171,11 +171,8 @@
  *	mtpk(1)
  *	pk2bm(1)
  *	pkfonts(1)
- * VERSION
- *	1.7 (December 2014)
  * AUTHOR
  *	Piet Tutelaers
- *	rcpt@urc.tue.nl
  */
 
 #include "basics.h"	/* basic definitions and fatal() */
@@ -342,12 +339,12 @@ int main(int argc, char *argv[])
       	    verbose = 1;
 	    break;
       	 default:
-      	    fatal("%s: %c illegal option\n", myname, c);
+      	    fatal("%s: %c invalid option\n", myname, c);
       	 }
       }
 
    if (argc < 1 || argc >2) {
-      msg  ("Ps2pk: version 1.7 (1992-2014)\n");
+      msg  ("ps2pk version " PACKAGE_VERSION " (1992-2016)\n");
       msg  ("Usage: %s [options] type1font [pkname]\n", myname);
       msg  ("options: -d -v -e<enc> -X<xres> -E<expansion> -S<slant>\n");
       fatal("options: -O -P<pointsize> -Y<yres> -a<AFM> -R<baseres>\n");

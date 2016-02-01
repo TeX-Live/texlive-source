@@ -1,8 +1,8 @@
-/*
- * FILE:    psearch.c
+/* FILE:    psearch.c
  * PURPOSE: PATH search module
  * VERSION: 1.7 (December 2014)
- * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
+ * AUTHOR:  Piet Tutelaers
+ * (see README for license)
  */
 
 #define _POSIX_SOURCE 1

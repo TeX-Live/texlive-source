@@ -1,4 +1,26 @@
-2016-01-31  Luigi Scarso  <uigi.scarso@gmail.com>
+2016-02-01  Karl Berry  <karl@tug.org>
+
+	* configure.ac
+	Version 1.8 (February 2016).
+	
+	* ps2pk.c: use PACKAGE_VERSION (from c-auto.h) instead
+	of hardwiring the number.
+	
+	* mag.c,
+	* pfb2pfa.c,
+	* pk2bm.c,
+	* pktest.c: report version number in usage as with ps2pk.
+	Also say "invalid" instead of "illegal".
+	
+	* *.1: uniformly use date in .TH line.
+	
+	* Remove version numbers from individual files.
+	
+	* Remove Piet's email address so he does not get unwanted mail,
+	since this package is maintained in TeX Live now.  Ask for reports
+	to go to tex-k.
+
+2016-01-31  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* pk2bm.c, pkin.c, pkin.h: Support charext.
 

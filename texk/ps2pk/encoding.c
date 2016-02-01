@@ -15,7 +15,7 @@
  * globals:    void fatal();
  *
  * Author:     Piet Tutelaers
- *             Version 1.7 (December 2014)
+ * (see README for license)
  */
 
 #include "types.h"

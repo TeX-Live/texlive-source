@@ -1,7 +1,7 @@
 /* FILE:    filenames.c
  * PURPOSE: some handy functions for working with TeXfiles
- * AUTHOR:  Piet Tutelaers (internet: rcpt@urc.tue.nl)
- * VERSION: 1.7 (December 2014)
+ * AUTHOR:  Piet Tutelaers
+ * (see README for license)
  */
 
 #ifdef HAVE_CONFIG_H

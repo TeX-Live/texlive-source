@@ -1,8 +1,8 @@
-/*
- * FILE:    psearch.h
+/* FILE:    psearch.h
  * PURPOSE: PATH search module
  * VERSION: 1.0 (Oct. 1995)
- * AUTHOR:  Piet Tutelaers (rcpt@urc.tue.nl)
+ * AUTHOR:  Piet Tutelaers
+ * (see README for license)
  */
 
 #include <sys/types.h>

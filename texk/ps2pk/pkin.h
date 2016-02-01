@@ -33,7 +33,6 @@
  *	integers must be manipulated with %ld, be carefull!
  * AUTHORS
  *	Piet Tutelaers
- *	rcpt@urc.tue.nl
  */
  
 #include <stdio.h>

@@ -1,4 +1,4 @@
-.TH AFM2TFM 1 "21 January 2016"
+.TH AFM2TFM 1 "1 February 2016"
 .SH NAME
 afm2tfm \- convert Adobe font metrics to TeX font metrics
 .SH DESCRIPTION
@@ -7,8 +7,9 @@ such as
 .B Times-Roman.afm,
 which describes the characteristics of the font called Times-Roman.
 To use such fonts with TeX, we need TFM files that contain similar
-information. This program does that conversion.  For more
-information, see the dvips documentation.
+information. This program does that conversion.
+.PP
+For all the details, see the dvips manual (http://tug.org/dvips).
 .SH FILES
 .I psfonts.map
 in the config directory used by dvips.
@@ -19,4 +20,7 @@ An option to add letterspacing to the virtual font was rejected by Knuth
 because it would make the fi and fl ligatures break the normal rhythmic
 pattern.
 .SH AUTHORS
-Tomas Rokicki and Donald E. Knuth.  Send bug reports to tex-k@tug.org.
+Tomas Rokicki and Donald E. Knuth.
+.PP
+Maintained in TeX Live; please send bug reports or other correspondence
+to tex-k@tug.org (http://lists.tug.org/tex-k).

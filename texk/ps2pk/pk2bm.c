@@ -28,7 +28,6 @@
  *	bitmap(X11), gftopk(TeX), pktype(TeX), ps2pk(1)
  * AUTHOR
  *	Piet Tutelaers
- *	rcpt@urc.tue.nl
  */
 
 #ifdef HAVE_CONFIG_H
@@ -93,12 +92,13 @@ int main(int argc, char *argv[])
       	    hexmap = 1;
       	    break;
       	 default:
-      	    printf("%s: %c illegal option\n", myname, c);
+      	    printf("%s: %c invalid option\n", myname, c);
       	    exit(1);
       	 }
    }
 
    if (argc == 0) {
+       msg  ("pk2bm (ps2pk) version " PACKAGE_VERSION "\n");
       printf("Usage: %s [-bh] {-c char|-o octchar} [-W width -H height] pkfile\n", myname);
       exit(1);
    }
