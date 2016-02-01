@@ -65,7 +65,6 @@
  *	.nf
  *	Piet Tutelaers
  *	University of Technology Eindhoven
- *	rcpt@urc.tue.nl
  */
 
 #include "basics.h"	/* fatal() */
@@ -109,12 +108,14 @@ int main(int argc, char *argv[]) {
 	    done = 1;
       	    break;
       	 default:
-      	    fatal("%s: %c illegal option\n", myname, c);
+      	    fatal("%s: %c invalid option\n", myname, c);
       	 }
       }
 
-   if (argc < 1)
+   if (argc < 1) {
+      msg  ("mag (ps2pk) version " PACKAGE_VERSION "\n");
       fatal("Usage: %s [-r] [-Rdpi] size . . .\n", myname);
+   }
    
 #ifdef WIN32
    setmode(fileno(stdout), _O_BINARY);

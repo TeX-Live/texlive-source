@@ -1,7 +1,7 @@
 /* FILE:    basics.c
  * PURPOSE: basic functions
  * AUTHOR:  Piet Tutelaers
- * VERSION: 1.7 (December 2014)
+ * (see README for license)
  */
 
 #include "basics.h"

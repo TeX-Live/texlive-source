@@ -1,9 +1,8 @@
-/*
- * File:    types.h
+/* File:    types.h
  * Purpose: define basic types so that program is portable to non 32 bits
  *          platforms
- * Version: 1.7 (December 2014)
  * Author:  Piet Tutelaers
+ * (see README for license)
  */
 
 #ifndef __PS2PK_TYPES__

@@ -11,7 +11,6 @@
  *	get more modularity in the style of MODULA2.
  * REDESIGN
  *	Piet Tutelaers
- *	rcpt@urc.tue.nl
  */
 
 #ifdef HAVE_CONFIG_H

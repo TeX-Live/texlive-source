@@ -1,15 +1,10 @@
-/*
- * FILE:     pktest.c 
- *
+/* FILE:     pktest.c 
  * PURPOSE:  This program demonstrates how a PK file can be created from
  *           a single character bitmap.
- *
  * USAGE:    pktest -c<char_code> -W<with> -H<Height> pkname < test.bm
  *	     (test.bm contains the character from `The GFtoPK processor')
- *
- * VERSION:  1.7 (December 2014)
- *
- * AUTHOR:   Piet Tutelaers (rcpt@urc.tue.nl)
+ * AUTHOR:   Piet Tutelaers
+ * (see README for license)
  */
 
 int testing = 1;
@@ -49,12 +44,14 @@ int main(int argc, char *argv[])
 	    W = atoi(*argv); done = 1;
       	    break;
       	 default:
-      	    fatal("%s: %c illegal option\n", myname, c);
+      	    fatal("%s: %c invalid option\n", myname, c);
       	 }
    }
 
-   if (argc == 0 || C == 0 || W*H == 0)
+   if (argc == 0 || C == 0 || W*H == 0) {
+      msg  ("pktest (ps2pk) version " PACKAGE_VERSION "\n");
       fatal("Usage: %s -c<char> -W<width> -H<height> pkfile\n", myname);
+   }
 
    pkname = argv[0];
    pk_open(pkname);
