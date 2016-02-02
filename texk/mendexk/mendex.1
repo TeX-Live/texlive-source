@@ -1,458 +1,458 @@
 .if t .ds TX "T\h'-.15m'\v'.2v'E\v'-.2v'\h'-.12m'X
 .if t .ds LX L\v'-.22m'a\v'.22m'T\h'-.1667m'\v'.22m'E\h'-.125m'\v'-.22m'X
 .TH MENDEX L
-.SH ̾��
-mendex \- ���������ġ���
-.SH ����ˡ
+.SH 名称
+mendex \- 索引整形ツール
+.SH 使用法
 \fBmendex\fR [-ilqrcgEJSU] [\fB-s\fI sty\fR] [\fB-d\fI dic\fR] [\fB-o\fI ind\fR] [\fB-d\fI dic\fR] [\fB-t\fI log\fR] [\fB-p\fI no\fR] [\fB-I\fI enc\fR] [\fB--\fR] [\fI idx0 idx1 idx2 ...\fR]
-.SH ����
+.SH 解説
 .PP
-\fImendex\fR ��ʸ��κ������������ġ���Ǥ��� LaTeX �ˤ����Ф��줿�����ꥹ�ȥե�����(\fI.idx\fR)���¤��ؤ����ºݤκ����Υ������ե�����η����������ޤ��� \fImakeindex\fR �ȸߴ��������ꡢ����ˡ��ɤߡפΰ����μ�֤򸺤餹�褦���ü첽����Ƥ��ޤ���
+\fImendex\fR は文書の索引を作成するツールです。 LaTeX により抽出された索引リストファイル(\fI.idx\fR)を並べ替え、実際の索引のソースファイルの形に整形します。 \fImakeindex\fR と互換性があり、さらに「読み」の扱いの手間を減らすように特殊化されています。
 .RE
-���Ϥ��������η����ϡ���������ե�����˽��äƷ��ꤵ��ޤ����ޤ�������ե������Ϳ���뤳�Ȥˤ�ꡢ������νϸ���ɤߤ���Ͽ����ޤ���
+出力される索引の形式は、スタイルファイルに従って決定されます。また、辞書ファイルを与えることにより、索引中の熟語の読みが登録されます。
 .RE
-�����γ��ؤϣ��ʳ��ޤǺ������뤳�Ȥ��Ǥ��ޤ���
-.SH ���ץ����
+索引の階層は３段階まで作成することができます。
+.SH オプション
 .PP
 .TP 10
 \fB-i\fR
-�����ꥹ�ȥե����뤬���ꤵ��Ƥ�����Ǥ⡢ɸ�����Ϥ�����ꥹ�ȤȤ��ƻ��Ѥ��ޤ���
+索引リストファイルが指定されている場合でも、標準入力を索引リストとして使用します。
 .TP 10
 \fB-l\fR
-�����Υ����Ȥ�ʸ����ǹԤ��ޤ������ꤵ��ʤ����ñ���Υ����Ȥˤʤ�ޤ�(��������ˡ�ˤĤ��Ƥϸ��)��
+索引のソートを文字順で行います。指定されなければ単語順のソートになります(ソート方法については後述)。
 .TP 10
 \fB-q\fR
-�Žͥ⡼�ɤǤ������顼����ӷٹ�ʳ���ɸ�२�顼���Ϥ˽��Ϥ��ޤ���
+静粛モードです。エラーおよび警告以外は標準エラー出力に出力しません。
 .TP 10
 \fB-r\fR
-�ڡ����ϰ�ɽ����̵���ˤ��ޤ������ꤷ�ʤ��ȡ�Ϣ³���ƽФƤ�������ˤĤ��Ƥ� "1--5" �Τ褦�˥ڡ����ϰϤ�ɽ������ޤ���
+ページ範囲表現を無効にします。指定しないと、連続して出てくる索引については "1--5" のようにページ範囲で表現されます。
 .TP 10
 \fB-c\fR
-���ڡ����䥿�֤Ȥ��ä��֥�󥯤�û�̤��ơ����٤ƣ��Ĥ�Ⱦ�ѥ��ڡ����ˤ��ޤ����ޤ�������Υ֥�󥯤Ϻ������ޤ���
+スペースやタブといったブランクを短縮して、すべて１個の半角スペースにします。また、前後のブランクは削除されます。
 .TP 10
 \fB-g\fR
-���ܸ��Ƭʸ���ζ��ڤ�� "����������������" �ˤ��ޤ������ꤷ�ʤ��� "������������������" �ˤʤ�ޤ���
+日本語の頭文字の区切りを "あかさた・・・わ" にします。指定しないと "あいうえ・・・わをん" になります。
 .TP 10
 \fB-f\fR
-����ե�����ˤʤ������⶯��Ū�˽��Ϥ���⡼�ɤǤ���
+辞書ファイルにない漢字も強制的に出力するモードです。
 .TP 10
 \fB-s\fI sty\fR
-\fIsty\fR �ե�����򥹥�����ե�����ȸ��ʤ��ޤ�����������ե��������ꤷ�ʤ���С��ǥե���Ȥκ��������Ǻ������ޤ���
+\fIsty\fR ファイルをスタイルファイルと見なします。スタイルファイルを指定しなければ、デフォルトの索引形式で作成します。
 .TP 10
 \fB-d\fI dic\fR
-\fIdic\fR �ե�����򼭽�ե�����ȸ��ʤ��ޤ�������ե���������ܸ�� <\fI�ϸ�\fR\ \fI�ɤ�\fR> �Υꥹ�Ȥǹ�������ޤ���
+\fIdic\fR ファイルを辞書ファイルと見なします。辞書ファイルは日本語の <\fI熟語\fR\ \fI読み\fR> のリストで構成されます。
 .TP 10
 \fB-o\fI ind\fR
-\fIind\fR �ե��������ϥե�����ȸ��ʤ��ޤ������꤬�ʤ����Ϻǽ�����ϥե�����γ�ĥ�Ҥ�.ind�Ȥ�����Ρ����ϥե����뤬ɸ�����ϤΤߤǤ����ɸ����Ϥ˽��Ϥ��ޤ���
+\fIind\fR ファイルを出力ファイルと見なします。指定がない場合は最初の入力ファイルの拡張子を.indとしたもの、入力ファイルが標準入力のみであれば標準出力に出力します。
 .TP 10
 \fB-t\fI log\fR
-\fIlog\fR �ե����������ե�����ȸ��ʤ��ޤ������꤬�ʤ����Ϻǽ�����ϥե�����γ�ĥ�Ҥ�.ilg�Ȥ�����Ρ����ϥե����뤬ɸ�����ϤΤߤǤ����ɸ�२�顼���ϤΤߤ˽��Ϥ���ޤ���
+\fIlog\fR ファイルをログファイルと見なします。指定がない場合は最初の入力ファイルの拡張子を.ilgとしたもの、入力ファイルが標準入力のみであれば標準エラー出力のみに出力されます。
 .TP 10
 \fB-p\fI no\fR
-\fIno\fR ������ڡ�������Ƭ�ڡ����Ȥ��ƻ��ꤷ�ޤ����ޤ���TeX��.log �ե�����򻲾Ȥ��뤳�Ȥˤ�� \fIany\fR(�ǽ��ڡ����μ��Υڡ�������)��\fIodd\fR(�ǽ��ڡ����μ��δ���ڡ�������)��\fIeven\fR(�ǽ��ڡ����μ��ζ����ڡ�������)�Ȥ��ä�����λ������ǽ�Ǥ���
+\fIno\fR を索引ページの先頭ページとして指定します。また、TeXの.log ファイルを参照することにより \fIany\fR(最終ページの次のページから)、\fIodd\fR(最終ページの次の奇数ページから)、\fIeven\fR(最終ページの次の偶数ページから)といった指定の仕方も可能です。
 .TP 10
 \fB-E\fR
-���������ɤ�EUC�˻��ꤷ�ޤ������ϥե����롢���ϥե�����Ȥ�EUC�Ȥ��ư����ޤ���
+漢字コードをEUCに指定します。入力ファイル、出力ファイルともEUCとして扱います。
 .TP 10
 \fB-J\fR
-���������ɤ�JIS�˻��ꤷ�ޤ������ϥե����롢���ϥե�����Ȥ�JIS�Ȥ��ư����ޤ���
+漢字コードをJISに指定します。入力ファイル、出力ファイルともJISとして扱います。
 .TP 10
 \fB-S\fR
-���������ɤ�ShiftJIS�˻��ꤷ�ޤ������ϥե����롢���ϥե�����Ȥ�ShiftJIS�Ȥ��ư����ޤ���
+漢字コードをShiftJISに指定します。入力ファイル、出力ファイルともShiftJISとして扱います。
 .TP 10
 \fB-U\fR
-���������ɤ�UTF-8�˻��ꤷ�ޤ������ϥե����롢���ϥե�����Ȥ�UTF-8�Ȥ��ư����ޤ���
+漢字コードをUTF-8に指定します。入力ファイル、出力ファイルともUTF-8として扱います。
 .TP 10
 \fB-I\fI enc\fR
-�����Хåե��Υ����ɤ�\fIenc\fR �˻��ꤷ�ޤ���\fIenc\fR �ˤ� \fIeuc\fR(EUC-JP) �ޤ��� \fIutf8\fR(UTF-8)�������ǽ�Ǥ���
+内部バッファのコードを\fIenc\fR に指定します。\fIenc\fR には \fIeuc\fR(EUC-JP) または \fIutf8\fR(UTF-8)が指定可能です。
 .TP 10
 \fB--\fR
-�ʹߤϥ��ץ����ʸ����Ȳ�ᤷ�ޤ���
+以降はオプション文字列と解釈しません。
 
 
-.SH ��������ե�����
-��������ե������ makeindex �Τ�ΤȾ�̸ߴ��Ǥ��� ������ <\fI��������ѥ�᡼��\fR\ \fI����\fR> �Υꥹ�Ȥǹ�������ޤ����ѥ�᡼���ν���ϼ�ͳ�Ǥ���
-�ʲ��˥�������ѥ�᡼���ΰ����򼨤��ޤ���
-`%'�ʹߤϥ����Ȥȸ��ʤ���ޤ���
+.SH スタイルファイル
+スタイルファイルは makeindex のものと上位互換です。 形式は <\fIスタイルパラメータ\fR\ \fI引数\fR> のリストで構成されます。パラメータの順序は自由です。
+以下にスタイルパラメータの一覧を示します。
+`%'以降はコメントと見なされます。
 .PP
-\fB ���ϥե����륹������ѥ�᡼��\fR
+\fB 入力ファイルスタイルパラメータ\fR
 .TP 30
-\fBkeyword\fR  <ʸ����>
+\fBkeyword\fR  <文字列>
 "\\\\indexentry"
 .RS
-��������ȥ������Ȥ��ƻ��ĥ��ޥ�ɡ�
+索引エントリを引数として持つコマンド。
 .RE
 .TP 30
-\fBarg_open\fR  <ʸ��>
+\fBarg_open\fR  <文字>
 \'{\'
 .RS
-��������ȥ�ʸ���󳫻Ϥ�ɽ��ʸ����
+索引エントリ文字列開始を表す文字。
 .RE
 .TP 30
-\fBarg_close\fR  <ʸ��>
+\fBarg_close\fR  <文字>
 \'}\'
 .RS
-��������ȥ�ʸ����λ��ɽ��ʸ����
+索引エントリ文字列終了を表す文字。
 .RE
 .TP 30
-\fBrange_open\fR  <ʸ��>
+\fBrange_open\fR  <文字>
 \'(\'
 .RS
-�ڡ����ϰϤγ��Ϥ򼨤�ʸ����
+ページ範囲の開始を示す文字。
 .RE
 .TP 30
-\fBrange_close\fR  <ʸ��>
+\fBrange_close\fR  <文字>
 \')\'
 .RS
-�ڡ����ϰϤν�λ�򼨤�ʸ����
+ページ範囲の終了を示す文字。
 .RE
 .TP 30
-\fBlevel\fR  <ʸ��>
+\fBlevel\fR  <文字>
 \'!\'
 .RS
-��°��٥�Ǥ��뤳�Ȥ򼨤�ʸ����
+従属レベルであることを示す文字。
 .RE
 .TP 30
-\fBactual\fR  <ʸ��>
+\fBactual\fR  <文字>
 \'@\'
 .RS
-���Υ���ܥ��³��ʸ���󤬼ºݤκ���ʸ����Ȥ��ƽ��ϥե�����˽񤫤�롣
+このシンボルに続く文字列が実際の索引文字列として出力ファイルに書かれる。
 .RE
 .TP 30
-\fBencap\fR  <ʸ��>
+\fBencap\fR  <文字>
 \'|\'
 .RS
-���Υ���ܥ��³��ʸ���󤬡��ڡ����ֹ���դ����ޥ��̾�Ȥ��ƻȤ��롣
+このシンボルに続く文字列が、ページ番号に付くコマンド名として使われる。
 .RE
 .TP 30
-\fBpage_compositor\fR  <ʸ����>
+\fBpage_compositor\fR  <文字列>
 "-"
 .RS
-���ز����줿�ڡ����ֹ�ˤ����볬�ش֤ζ��ڤ�ʸ����
+階層化されたページ番号における階層間の区切り文字。
 .RE
 .TP 30
-\fBpage_precedence\fR  <ʸ����>
+\fBpage_precedence\fR  <文字列>
 "rnaRA"
 .RS
-�ڡ����ֹ�ε�ˡ��ͥ���̡�\'R\'�����\'r\'�ϥ����޿�����\'n\'�ϥ���ӥ�������\'A\'�����\'a\'�ϥ���ե��٥åȤˤ�뵭ˡ��ɽ����
+ページ番号の記法の優先順位。\'R\'および\'r\'はローマ数字、\'n\'はアラビア数字、\'A\'および\'a\'はアルファベットによる記法を表す。
 .RE
 .TP 30
-\fBquote\fR  <ʸ��>
+\fBquote\fR  <文字>
 \'"\'
 .RS
-mendex�Υѥ�᡼��ʸ�����Ф��륨�������ץ���饯����
+mendexのパラメータ文字に対するエスケープキャラクタ。
 .RE
 .TP 30
-\fBescape\fR  <ʸ��>
+\fBescape\fR  <文字>
 \'\\\\\'
 .RS
-����Ū��ʸ�����Ф��륨�������ץ���饯����
+一般的な文字に対するエスケープキャラクタ。
 .RE
 
-\fB ���ϥե����륹������ѥ�᡼��\fR
+\fB 出力ファイルスタイルパラメータ\fR
 
-\fBpreamble\fR  <ʸ����>
+\fBpreamble\fR  <文字列>
 "\\\\begin{theindex}\\n"
 .RS
-���ϥե������ʸ����
+出力ファイルの文字列。
 .RE
 .TP 30
-\fBpostamble\fR  <ʸ����>
+\fBpostamble\fR  <文字列>
 "\\n\\n\\\\end{theindex}\\n"
 .RS
-���ϥե������������ʸ����
+出力ファイルの末尾の文字列。
 .RE
 .TP 30
-\fBsetpage_prefix\fR  <ʸ����>
+\fBsetpage_prefix\fR  <文字列>
 "\\n  \\\\setcounter{page}{"
 .RS
-���ϥڡ��������ꤹ��Ȥ��Ρ��ڡ����ֹ�������դ���ʸ����
+開始ページを設定するときの、ページ番号の前に付ける文字列。
 .RE
 .TP 30
-\fBsetpage_suffix\fR  <ʸ����>
+\fBsetpage_suffix\fR  <文字列>
 "}\\n"
 .RS
-���ϥڡ��������ꤹ��Ȥ��Ρ��ڡ����ֹ�θ���դ���ʸ����
+開始ページを設定するときの、ページ番号の後に付ける文字列。
 .RE
 .TP 30
-\fBgroup_skip\fR  <ʸ����>
+\fBgroup_skip\fR  <文字列>
 "\\n\\n  \\\\indexsapce\\n"
 .RS
-������(Ƭʸ��)��������������ĥ��ڡ�����ɽ��ʸ����
+新項目(頭文字)の前に挿入する縦スペースを表す文字列。
 .RE
 .TP 30
-\fBlethead_prefix\fR  <ʸ����>
+\fBlethead_prefix\fR  <文字列>
 ""
 .RS
-Ƭʸ���������դ��륳�ޥ��ʸ����
+頭文字の前に付けるコマンド文字列。
 .RE
 .TP 30
-\fBheading_prefix\fR  <ʸ����>
+\fBheading_prefix\fR  <文字列>
 ""
 .RS
-lethead_prefix��Ʊ����
+lethead_prefixと同じ。
 .RE
 .TP 30
-\fBlethead_suffix\fR  <ʸ����>
+\fBlethead_suffix\fR  <文字列>
 ""
 .RS
-Ƭʸ���θ���դ��륳�ޥ��ʸ����
+頭文字の後に付けるコマンド文字列。
 .RE
 .TP 30
-\fBheading_suffix\fR  <ʸ����>
+\fBheading_suffix\fR  <文字列>
 ""
 .RS
-lethead_suffix��Ʊ����
+lethead_suffixと同じ。
 .RE
 .TP 30
-\fBlethead_flag\fR  <ʸ����>
+\fBlethead_flag\fR  <文字列>
 0
 .RS
-Ƭʸ���ν��ϤΥե饰��0�ΤȤ����Ϥ��ʤ���0����礭���Ȥ��ϱѻ�����ʸ���ǡ�0��꾮�����Ȥ��Ͼ�ʸ���ǽ��Ϥ��롣
+頭文字の出力のフラグ。0のとき出力しない。0より大きいときは英字を大文字で、0より小さいときは小文字で出力する。
 .RE
 .TP 30
-\fBheading_flag\fR  <ʸ����>
+\fBheading_flag\fR  <文字列>
 0
 .RS
-lethead_flag��Ʊ����
+lethead_flagと同じ。
 .RE
 .TP 30
-\fBitem_0\fR  <ʸ����>
+\fBitem_0\fR  <文字列>
 "\\n  \\\\item "
 .RS
-�票��ȥ�֤��������륳�ޥ�ɡ�
+主エントリ間に挿入するコマンド。
 .RE
 .TP 30
-\fBitem_1\fR  <ʸ����>
+\fBitem_1\fR  <文字列>
 "\\n     \\\\subitem "
 .RS
-���֥���ȥ�֤��������륳�ޥ�ɡ�
+サブエントリ間に挿入するコマンド。
 .RE
 .TP 30
-\fBitem_2\fR  <ʸ����>
+\fBitem_2\fR  <文字列>
 "\\n       \\\\subsubitem "
 .RS
-���֥��֥���ȥ�֤��������륳�ޥ�ɡ�
+サブサブエントリ間に挿入するコマンド。
 .RE
 .TP 30
-\fBitem_01\fR  <ʸ����>
+\fBitem_01\fR  <文字列>
 "\\n    \\\\subitem "
 .RS
-������֥���ȥ�֤��������륳�ޥ�ɡ�
+主〜サブエントリ間に挿入するコマンド。
 .RE
 .TP 30
-\fBitem_x1\fR  <ʸ����>
+\fBitem_x1\fR  <文字列>
 "\\n    \\\\subitem "
 .RS
-������֥���ȥ�֤��������륳�ޥ�ɡ�(�票��ȥ�˥ڡ����ֹ椬�ʤ��Ȥ�)
+主〜サブエントリ間に挿入するコマンド。(主エントリにページ番号がないとき)
 .RE
 .TP 30
-\fBitem_12\fR  <ʸ����>
+\fBitem_12\fR  <文字列>
 "\\n    \\\\subsubitem "
 .RS
-���֡����֥��֥���ȥ�֤��������륳�ޥ�ɡ�
+サブ〜サブサブエントリ間に挿入するコマンド。
 .RE
 .TP 30
-\fBitem_x2\fR  <ʸ����>
+\fBitem_x2\fR  <文字列>
 "\\n    \\\\subsubitem "
 .RS
-���֡����֥��֥���ȥ�֤��������륳�ޥ�ɡ�(���֥���ȥ�˥ڡ����ֹ椬�ʤ��Ȥ�)
+サブ〜サブサブエントリ間に挿入するコマンド。(サブエントリにページ番号がないとき)
 .RE
 .TP 30
-\fBdelim_0\fR  <ʸ����>
+\fBdelim_0\fR  <文字列>
 ", "
 .RS
-�票��ȥ�Ⱥǽ�Υڡ����ֹ�δ֤ζ��ڤ�ʸ����
+主エントリと最初のページ番号の間の区切り文字列。
 .RE
 .TP 30
-\fBdelim_1\fR  <ʸ����>
+\fBdelim_1\fR  <文字列>
 ", "
 .RS
-���֥���ȥ�Ⱥǽ�Υڡ����ֹ�δ֤ζ��ڤ�ʸ����
+サブエントリと最初のページ番号の間の区切り文字列。
 .RE
 .TP 30
-\fBdelim_2\fR  <ʸ����>
+\fBdelim_2\fR  <文字列>
 ", "
 .RS
-���֥��֥���ȥ�Ⱥǽ�Υڡ����ֹ�δ֤ζ��ڤ�ʸ����
+サブサブエントリと最初のページ番号の間の区切り文字列。
 .RE
 .TP 30
-\fBdelim_n\fR  <ʸ����>
+\fBdelim_n\fR  <文字列>
 ", "
 .RS
-�ڡ����ֹ�֤ζ��ڤ�ʸ���󡣤ɤΥ���ȥ��٥�ˤⶦ�̡�
+ページ番号間の区切り文字列。どのエントリレベルにも共通。
 .RE
 .TP 30
-\fBdelim_r\fR  <ʸ����>
+\fBdelim_r\fR  <文字列>
 "--"
 .RS
-�ڡ����ϰϤ򼨤��Ȥ��Ρ��ڡ����ֹ�֤ζ��ڤ�ʸ����
+ページ範囲を示すときの、ページ番号間の区切り文字列。
 .RE
 .TP 30
-\fBdelim_t\fR  <ʸ����>
+\fBdelim_t\fR  <文字列>
 ""
 .RS
-�ڡ����ֹ�Υꥹ�Ȥν�ü�˽��Ϥ���ʸ����
+ページ番号のリストの終端に出力する文字列。
 .RE
 .TP 30
-\fBsuffix_2p\fR  <ʸ����>
+\fBsuffix_2p\fR  <文字列>
 ""
 .RS
-�ڡ����ֹ椬2�ڡ���Ϣ³������ˡ�delim_n ��2�ڡ����ܤ��ֹ��������ղä���ʸ����
+ページ番号が2ページ連続する場合に、delim_n と2ページ目の番号の代わりに付加する文字列。
 .RE
-ʸ�����������Ƥ�����ˤΤ�ͭ����
+文字列が定義されている場合にのみ有効。
 .RE
 .TP 30
-\fBsuffix_3p\fR  <ʸ����>
+\fBsuffix_3p\fR  <文字列>
 ""
 .RS
-�ڡ����ֹ椬3�ڡ���Ϣ³������ˡ�delim_r ��3�ڡ����ܤ��ֹ��������ղä���ʸ����suffix_mp ���ͥ�褵��롣
+ページ番号が3ページ連続する場合に、delim_r と3ページ目の番号の代わりに付加する文字列。suffix_mp より優先される。
 .RE
-ʸ�����������Ƥ�����ˤΤ�ͭ����
+文字列が定義されている場合にのみ有効。
 .RE
 .TP 30
-\fBsuffix_mp\fR  <ʸ����>
+\fBsuffix_mp\fR  <文字列>
 ""
 .RS
-�ڡ����ֹ椬3�ڡ����ޤ��Ϥ���ʾ�Ϣ³������ˡ�delim_r �������Υڡ����ֹ��������ղä���ʸ����
+ページ番号が3ページまたはそれ以上連続する場合に、delim_r と末尾のページ番号の代わりに付加する文字列。
 .RE
-ʸ�����������Ƥ�����ˤΤ�ͭ����
+文字列が定義されている場合にのみ有効。
 .RE
 .TP 30
-\fBencap_prefix\fR  <ʸ����>
+\fBencap_prefix\fR  <文字列>
 "\\\\"
 .RS
-�ڡ����ֹ�˥��ޥ�ɤ��դ���Ȥ��Ρ����ޥ��̾�������դ���ʸ����
+ページ番号にコマンドを付けるときの、コマンド名の前に付ける文字列。
 .RE
 .TP 30
-\fBencap_infix\fR  <ʸ����>
+\fBencap_infix\fR  <文字列>
 "{"
 .RS
-�ڡ����ֹ�˥��ޥ�ɤ��դ���Ȥ��Ρ��ڡ����ֹ�������դ���ʸ����
+ページ番号にコマンドを付けるときの、ページ番号の前に付ける文字列。
 .RE
 .TP 30
-\fBencap_suffix\fR  <ʸ����>
+\fBencap_suffix\fR  <文字列>
 "}".
 .RS
-�ڡ����ֹ�˥��ޥ�ɤ��դ���Ȥ��Ρ��ڡ����ֹ�θ���դ���ʸ����
+ページ番号にコマンドを付けるときの、ページ番号の後に付ける文字列。
 .RE
 .TP 30
-\fBline_max\fR  <����>
+\fBline_max\fR  <数値>
 72
 .RS
-���Ԥκ���ʸ�����������Ķ������ޤ��֤���
+１行の最大文字数。それを超えると折り返す。
 .RE
 .TP 30
-\fBindent_space\fR  <ʸ����>
+\fBindent_space\fR  <文字列>
 "\t\t"
 .RS
-�ޤ��֤����Ԥ�Ƭ���������륹�ڡ�����
+折り返した行の頭に挿入するスペース。
 .RE
 .TP 30
-\fBindent_length\fR  <����>
+\fBindent_length\fR  <数値>
 16
 .RS
-�ޤ��֤����Ԥ�Ƭ����������륹�ڡ�����Ĺ����
+折り返した行の頭に挿入されるスペースの長さ。
 .RE
 .TP 30
-\fBsymhead_positive\fR  <ʸ����>
+\fBsymhead_positive\fR  <文字列>
 "Symbols"
 .RS
-lethead_flag �ޤ��� heading_flag �������ξ��˿����������Ƭʸ���Ȥ��ƽ��Ϥ���ʸ����
+lethead_flag または heading_flag が正数の場合に数字・記号の頭文字として出力する文字列。
 .RE
 .TP 30
-\fBsymhead_negative\fR  <ʸ����>
+\fBsymhead_negative\fR  <文字列>
 "symbols"
 .RS
-lethead_flag �ޤ��� heading_flag ������ξ��˿����������Ƭʸ���Ȥ��ƽ��Ϥ���ʸ����
+lethead_flag または heading_flag が負数の場合に数字・記号の頭文字として出力する文字列。
 .RE
 .TP 30
-\fBsymbol\fR  <ʸ����>
+\fBsymbol\fR  <文字列>
 ""
 .RS
-symbol_flag ��0�Ǥʤ����ˡ������������Ƭʸ���Ȥ��ƽ��Ϥ���ʸ����
+symbol_flag が0でない場合に、数字・記号の頭文字として出力する文字列。
 .RE
-ʸ�����������Ƥ���С�symhead_positive ����� symhead_negative ���ͥ�褵��롣(mendex����)
+文字列が定義されていれば、symhead_positive および symhead_negative より優先される。(mendex専用)
 .RE
-���Υѥ�᡼����������줿��硢symhead_positive ����� symhead_negative ���ͥ�褵��롣(mendex����)
+このパラメータが定義された場合、symhead_positive および symhead_negative より優先される。(mendex専用)
 .RE
 .TP 30
-\fBsymbol_flag\fR  <����>
+\fBsymbol_flag\fR  <数値>
 1
 .RS
-�����������Ƭʸ���ν��ϥե饰��0�ΤȤ����Ϥ��ʤ���(mendex����)
+数字・記号の頭文字の出力フラグ。0のとき出力しない。(mendex専用)
 .RE
 .TP 30
-\fBletter_head\fR  <����>
+\fBletter_head\fR  <数値>
 1
 .RS
-���ܸ��Ƭʸ���ν��ϤΥե饰��1�ΤȤ��������ʡ�2�ΤȤ��Ҥ餬�ʤǽ��Ϥ��롣(mendex����)
+日本語の頭文字の出力のフラグ。1のときカタカナ、2のときひらがなで出力する。(mendex専用)
 .RE
 .TP 30
-\fBpriority\fR  <����>
+\fBpriority\fR  <数値>
 0
 .RS
-�ѻ������ܸ�Ȥκ��ߤ���������Υ�������ˡ�ˤĤ��ƤΥե饰��0�Ǥʤ���бѻ������ܸ�Ȥδ֤�Ⱦ�ѥ��ڡ��������줿���֤ǥ����Ȥ��롣(mendex����)
+英字と日本語との混在した索引語のソート方法についてのフラグ。0でなければ英字と日本語との間に半角スペースを入れた状態でソートする。(mendex専用)
 .RE
 .TP 30
-\fBcharacter_order\fR  <ʸ����>
+\fBcharacter_order\fR  <文字列>
 "SEJ"
 .RS
-���桢�ѻ������ܸ��ͥ���̡�\'S\'�ϵ��桢\'E\'�ϱѻ���\'J\'�����ܸ��ɽ����(mendex����)
+記号、英字、日本語の優先順位。\'S\'は記号、\'E\'は英字、\'J\'は日本語を表す。(mendex専用)
 .RE
 .PP
-.SH ���ܸ�ΰ����ˤĤ���
+.SH 日本語の扱いについて
 .PP
-\fImendex\fR �����ܸ�κ�����Ǥ�������ڤ˰�����褦�ˤʤäƤ��ޤ���
+\fImendex\fR は日本語の索引をできるだけ楽に扱えるようになっています。
 .RE
-makeindex�Ǥ����ܸ�κ����������������˥����Ȥ��뤿��ˤϤҤ餬�ʤޤ��ϥ������ʤ�·����ٹ����������������������ɤߤ��դ��ʤ���Фʤ�ޤ���Ǥ���(��ưŪ��·����С������⤢��)��
+makeindexでは日本語の索引が正しく辞書順にソートするためにはひらがなまたはカタカナに揃え、拗音、撥音、濁点を除いた読みを付けなければなりませんでした(自動的に揃えるバージョンもある)。
 .RE
-mendex�Ǥϥ��ʤˤĤ��ƤϤ��٤Ƽ�ưŪ��·�����ޤ������ˤĤ��Ƥϼ���ե���������ꤹ�뤳�Ȥˤ��ƺ����줴�Ȥ��ɤߤ��դ����Ȥ򤫤ʤ��äǤ��ޤ���
+mendexではカナについてはすべて自動的に揃え、また漢字については辞書ファイルを設定することにより各索引語ごとに読みを付ける作業をかなり解消できます。
 
 .LP
-�ʲ��������ǤΥ��ʤ��Ѵ���򼨤��ޤ���
+以下に内部でのカナの変換例を示します。
 .PP
 .RS
 .br
-���֤�����������		���դ�����������
+かぶしきがいしゃ		かふしきかいしや
 .br
-�ޥå���ȥå���		�ޤĤ���ȤĤ���
+マッキントッシュ		まつきんとつしゆ
 .br
-��ץ�				�濫�դ�
+ワープロ				わあふろ
 .RE
 .LP
-����ե������<\fI�ϸ�\ \ �ɤ�\fR>�Υꥹ�Ȥǹ�������ޤ���
-�ϸ���ɤߤζ��ڤ�ϥ��֤ޤ��ϥ��ڡ����Ǥ���
+辞書ファイルは<\fI熟語\ \ 読み\fR>のリストで構成されます。
+熟語と読みの区切りはタブまたはスペースです。
 .RE
-�ʲ��˼������򼨤��ޤ���
+以下に辞書の例を示します。
 .PP
 .RS
 .br
-����		����
+漢字		かんじ
 .br
-�ɤ�		���
+読み		よみ
 .br
-�Ķ�		���󤭤礦
+環境		かんきょう
 .br
-��		����ե�
+α		アルファ
 .RE
 .LP
-�������Ͽ����ϸ�ˤĤ��Ƥϡ��ɤ��������̤�ˤʤ�褦���겾̾���դ��Ƥ���������
-��ɽ�ס��������פΤ褦�����겾̾�ˤ�餺���̤���ɤ������Ǥ����ˤĤ��ƤϤɤ��餫���Ĥ�����Ͽ�Ǥ��ޤ���¾���ɤ����ˤĤ��Ƥϳƺ�������ɤߤ��դ��뤳�Ȥ��б����Ƥ���������
+辞書に登録する熟語については、読み方が１通りになるよう送り仮名を付けてください。
+「表」、「性質」のように送り仮名によらず２通りの読み方ができる語についてはどちらか１つしか登録できません。他の読み方については各索引語へ読みを付けることで対応してください。
 .RE
-�ޤ����Ķ��ѿ�<\fIINDEXDEFAULTDICTIONARY\fR>�˼���ե��������Ͽ���뤳�Ȥˤ�ꡢ��ưŪ�˼���򻲾Ȥ��ޤ����Ķ��ѿ�����Ͽ��������� -d �ǻ��ꤷ�������ʻ�ѤǤ��ޤ���
+また、環境変数<\fIINDEXDEFAULTDICTIONARY\fR>に辞書ファイルを登録することにより、自動的に辞書を参照します。環境変数に登録した辞書は -d で指定した辞書と併用できます。
 .PP
-.SH ��������ˡ�ˤĤ���
+.SH ソート方法について
 .PP
-\fImendex\fR ���̾�����Ϥ��줿������򤽤Τޤޥ����Ȥ��ޤ���\fI-l\fR���ץ�����դ���줿��硢ʣ����ñ��ǹ�������������ˤĤ��Ƥϡ������Ȥ���Ȥ���ñ���ñ��δ֤Υ��ڡ�����ͤ�ƥ����Ȥ��ޤ���
-�����Ǥ����Ԥ�ñ��祽���ȡ���Ԥ�ʸ���祽���ȤȸƤ֤��Ȥˤ��ޤ���
+\fImendex\fR は通常は入力された索引語をそのままソートします。\fI-l\fRオプションが付けられた場合、複数の単語で構成される索引語については、ソートするときに単語と単語の間のスペースを詰めてソートします。
+ここでは前者を単語順ソート、後者を文字順ソートと呼ぶことにします。
 .RE
-ʸ���祽���Ȥξ�硢�ºݤ˽��Ϥ����ʸ����ϥ��ڡ�����ޤ�����֤Τ�ΤǤ��Τǡ������켫�Τ��Ѳ����뤳�ȤϤ���ޤ���
+文字順ソートの場合、実際に出力される文字列はスペースを含んだ状態のものですので、索引語自体が変化することはありません。
 .RE
-�ʲ�����򼨤��ޤ���
+以下に例を示します。
 .PP
 .RS
-\fIñ��祽����			ʸ���祽����\fR
+\fI単語順ソート			文字順ソート\fR
 .br
 X Window				Xlib
 .br
@@ -461,40 +461,40 @@ Xlib					XView
 XView				X Window
 .RE
 .LP
-�ޤ������ܸ���ѻ��֤Ǥ�����褦�ʥ�������ˡ������ޤ�����������ե������\fIpriority\fR�򣰰ʳ��˻��ꤷ����硢���ܤ������ܸ�ȱѻ��δ֤˥��ڡ���������ƥ����Ȥ��ޤ���
+また、日本語〜英字間でも似たようなソート方法があります。スタイルファイルで\fIpriority\fRを０以外に指定した場合、隣接した日本語と英字の間にスペースを入れてソートします。
 .RE
-�ʲ�����򼨤��ޤ���
+以下に例を示します。
 .PP
 .RS
 \fIpriority=0			priority=1\fR
 .br
-index sort			ind�ե�����
+index sort			indファイル
 .br
-ind�ե�����			index sort
+indファイル			index sort
 .RE
 .PP
-.SH �Ķ��ѿ�
-\fImendex\fR �Ǥϰʲ��Τ褦�ʴĶ��ѿ�����Ѥ��Ƥ��ޤ���
+.SH 環境変数
+\fImendex\fR では以下のような環境変数を使用しています。
 .PP
 .TP 10
 \fIINDEXSTYLE\fR
-������������ե����뤬����ǥ��쥯�ȥ�
+索引スタイルファイルがあるディレクトリ
 .TP 10
 \fIINDEXDEFAULTSTYLE\fR
-�ǥե���Ȥǻ��Ȥ��������������ե�����
+デフォルトで参照する索引スタイルファイル
 .TP 10
 \fIINDEXDICTIONARY\fR
-���񤬤���ǥ��쥯�ȥ�
+辞書があるディレクトリ
 .TP 10
 \fIINDEXDEFAULTDICTIONARY\fR
-��˻��Ȥ��뼭��ե�����
+常に参照する辞書ファイル
 .PP
-.SH �ܺ٤ˤĤ���
-����¾���ܺ٤ˤĤ��Ƥ� \fImakeindex\fR �˽��
+.SH 詳細について
+その他、詳細については \fImakeindex\fR に準拠。
 .PP
-.SH ��������
-ʣ���Υڡ�����ˡ����Ѥ����硢�ڡ������.idx�ե������Ϳ���ʤ��ȥڡ����ֹ���ǧ���뤳�Ȥ�����ޤ���
+.SH 問題点等
+複数のページ記法を使用する場合、ページ順に.idxファイルを与えないとページ番号を誤認することがあります。
 .PP
-.SH ����
+.SH 参照
 tex(l), latex(l), makeindex(l)
 .RE
