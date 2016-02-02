@@ -26,7 +26,7 @@
 @ Low-level helpers
 
 @ @c
-#define noVERBOSE
+#define VERBOSE 0
 
 #define MAX_TEX_LANGUAGES  16384
 
@@ -192,9 +192,6 @@ void load_tex_patterns(int curlang, halfword head)
     } \
     uindex = uni2string(uindex, xx); \
 } while (0)
-
-#define hj_char_code(l,c) \
-    (l>=0 && get_hj_code(l,c))
 
 @ Cleans one word which is returned in |cleaned|, returns the new offset
 into |buffer|
@@ -761,7 +758,7 @@ static halfword find_next_wordstart(halfword r)
                     } else {
                         start_ok = 0;
                     }
-                } else if (start_ok && (l = hj_char_code(char_lang(r),chr)) > 0) {
+                } else if (start_ok && (char_lang(r)>0) && ((l = get_hj_code(char_lang(r),chr)) > 0)) {
                     if (char_uchyph(r) || l == chr) {
                         return r;
                     } else {
@@ -854,7 +851,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         langdata.pre_hyphen_char = get_pre_hyphen_char(clang);
         langdata.post_hyphen_char = get_post_hyphen_char(clang);
         while (r != null && type(r) == glyph_node && is_simple_character(r) && clang == char_lang(r) &&
-              (((lchar = hj_char_code(clang,character(r))) > 0) || (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
+              (((clang > 0) && (lchar = get_hj_code(clang,character(r))) > 0) || (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
             if (character(r) == ex_hyphen_char)
     	        explicit_hyphen = true;
             wordlen++;

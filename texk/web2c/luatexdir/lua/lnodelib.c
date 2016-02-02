@@ -984,11 +984,15 @@ static int lua_nodelib_direct_getboth(lua_State * L)
 
 static int lua_nodelib_subtype(lua_State * L)
 {
-    int i = get_node_type_id_from_name(L,1,whatsit_node_data);
-    if (i >= 0) {
-        lua_pushinteger(L, i);
+    if (lua_type(L,1) == LUA_TSTRING) {
+        int i = get_node_type_id_from_name(L,1,whatsit_node_data);
+        if (i >= 0) {
+            lua_pushinteger(L, i);
+        } else {
+            lua_pushnil(L);
+        }
     } else {
-        lua_pushnil(L); /* return 0; */
+        lua_pushnil(L);
     }
     return 1;
 }
