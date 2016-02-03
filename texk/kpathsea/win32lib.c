@@ -31,6 +31,11 @@ static int is_include_space(const char *s)
   return 0;
 }
 
+double win32_floor (double x)
+{
+  return floor (x);
+}
+
 FILE * win32_popen (const char *cmd, const char *fmode)
 {
   char mode[3];

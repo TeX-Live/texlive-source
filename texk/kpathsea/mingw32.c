@@ -48,6 +48,12 @@ extern int __cdecl _free_osfhnd (int fd);
 static char *get_home_directory (void);
 static int _parse_root (char * name, char ** pPath);
 
+double
+win32_floor (double x)
+{
+  return floor (x);
+}
+
 void
 init_user_info (void)
 {
