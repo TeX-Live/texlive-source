@@ -26,7 +26,7 @@
 @ Low-level helpers
 
 @ @c
-#define VERBOSE 0
+#define noVERBOSE
 
 #define MAX_TEX_LANGUAGES  16384
 
