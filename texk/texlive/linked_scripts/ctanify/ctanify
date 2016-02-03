@@ -7,7 +7,7 @@
 
 use Cwd;
 use File::Basename;
-use File::Copy qw(cp);
+use File::Copy::Recursive qw(fcopy);
 use File::Find;
 use File::Path;
 use File::Spec;
@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.8.1";        # ctanify version number
+our $VERSION = "1.8.2";        # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -85,7 +85,7 @@ my %text_ext =
 # aborting on error.
 sub filesize ($)
 {
-    my $finfo = stat($_[0]) || die "${progname}: Failed to stat $_ ($!)\n";
+    my $finfo = lstat($_[0]) || die "${progname}: Failed to stat $_ ($!)\n";
     return $finfo->size;
 }
 
@@ -281,7 +281,7 @@ foreach my $fname (@manifest) {
     mkpath "$tdsdir/$subdir";
 
     # Copy the specified file into the subdirectory.
-    cp($fname, "$tdsdir/$subdir/" . basename $fname) || die "${progname}: Failed to copy $fname ($!)\n";
+    fcopy($fname, "$tdsdir/$subdir/" . basename $fname) || die "${progname}: Failed to copy $fname ($!)\n";
 }
 if ($miscify) {
     # Replace package directories containing a single file with "misc".
@@ -351,7 +351,7 @@ foreach my $fname (@manifest) {
     my ($namepart, $pathpart, $suffixpart) = fileparse($relname);
     mkpath "$pkgdir/$pathpart";
     my $targetfile = "$pkgdir/$pathpart/$namepart$suffixpart";
-    cp($fname, $targetfile) || die "${progname}: Failed to copy $fname ($!)\n";
+    fcopy($fname, $targetfile) || die "${progname}: Failed to copy $fname ($!)\n";
 }
 if ($unixify) {
     # Make all text files use Unix line endings.
