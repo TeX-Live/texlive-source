@@ -255,6 +255,7 @@
 extern "C" {
 #endif
 
+extern KPSEDLL double win32_floor (double x);
 extern KPSEDLL FILE *win32_popen (const char *cmd, const char *mode);
 extern KPSEDLL int win32_pclose (FILE *f);
 extern KPSEDLL struct passwd *kpathsea_getpwnam (kpathsea kpse, char *name);

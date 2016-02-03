@@ -1,3 +1,8 @@
+2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.[ch], mingw32.[ch]: Define a function
+	double win32_floor (double x), since floor is defined in cpascal.h.
+
 2015-12-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.h: Update (w32 only).

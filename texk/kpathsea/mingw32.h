@@ -72,7 +72,8 @@ extern char *quote_args(char **);
 #endif /* MAKE_KPSE_DLL */
 
 extern KPSEDLL BOOL win32_get_long_filename (char *, char *, int);
-extern KPSEDLL void texlive_gs_init(void);
+extern KPSEDLL void texlive_gs_init (void);
+extern KPSEDLL double win32_floor (double);
 
 static inline FILE *
 win32_popen (const char *command, const char *fmode)
