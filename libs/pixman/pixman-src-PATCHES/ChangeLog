@@ -1,0 +1,41 @@
+2016-02-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import pixman-0.34.0.
+	* patch-01-hide-symbols: Adapted.
+
+2015-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.8.
+	* patch-01-hide-symbols: Adapted.
+
+2014-12-04  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* patch-01-hide-symbols (new): Allow to hide all symbols.
+
+2014-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.6.
+
+2013-11-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.4.
+
+2013-11-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.2.
+
+2013-11-11  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.32.0.
+
+2013-08-08  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.30.2.
+
+2013-05-30  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	Import pixman-0.30.0.
+
+2012-11-10  Taco Hoekwater  <taco@metatex.org>
+
+	Import pixman-0.28.0.

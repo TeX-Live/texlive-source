@@ -1,14 +1,15 @@
-	Building pixman-0.28.0 as part of the TL tree
+	Building pixman-0.34.0 as part of the TL tree
 	=============================================
 
 This directory libs/pixman/ uses a proxy Makefile.am to build the pixman
 library 'libpixman' from the unmodified source tree in
-libs/pixman/pixman-x.y.z/, bypassing the original build system.
+libs/pixman/pixman-src/, bypassing the original build system.
 
-As far as applicable, the tests in libs/pixman/pixman-x.y.z/configure have
+As far as applicable, the tests in libs/pixman/pixman-src/configure have
 been translated into equivalent test in libs/pixman/configure.ac.
 
 =============================
 
 2012-11-10	Taco Hoekwater <taco@metatex.org>
 2012-11-15	Peter Breitenlohner <peb@mppmu.mpg.de>
+2016-02-04	Akira Kakuto <kakuto@fuk.kindai.ac.jp>

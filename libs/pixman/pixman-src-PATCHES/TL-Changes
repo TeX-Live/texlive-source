@@ -1,0 +1,22 @@
+Changes applied to the pixman-0.34.0/ tree as obtained from:
+	http://cairographics.org/releases/
+
+Removed:
+	Makefile.in
+	aclocal.m4
+	config.guess
+	config.sub
+	configure
+	compile
+	depcomp
+	install-sh
+	ltmain.sh
+	missing
+	pixman/Makefile.in
+	pixman/pixman-version.h
+	test-driver
+
+Removed unused dirs:
+	demos
+	test
+
