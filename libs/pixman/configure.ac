@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define pixman_version
 AC_INIT([pixman (TeX Live)], pixman_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([pixman-]pixman_version[/pixman/pixman.h])
+AC_CONFIG_SRCDIR([pixman-src/pixman/pixman.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -151,7 +151,7 @@ fi
 PIXMAN_CHECK_CFLAG([-Wall])
 PIXMAN_CHECK_CFLAG([-fno-strict-aliasing])
 
-AC_SUBST([PIXMAN_TREE], [pixman-]pixman_version)
+AC_SUBST([PIXMAN_TREE], [pixman-src])
 
 if test -f $srcdir/$PIXMAN_TREE/pixman/pixman-version.h; then
   AC_MSG_ERROR([Sorry, you must remove the file $PIXMAN_TREE/pixman/pixman-version.h])
@@ -159,6 +159,6 @@ fi
 
 AC_CONFIG_FILES([Makefile
 		 include/Makefile
-	         pixman-version.h:pixman-]pixman_version[/pixman/pixman-version.h.in])
+	         pixman-version.h:pixman-src/pixman/pixman-version.h.in])
 
 AC_OUTPUT

@@ -1,3 +1,9 @@
+2016-02-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import pixman-0.34.0.
+	* version.ac: Adapted.
+	* configure.ac: New source tree convension.
+
 2015-09-26  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Import pixman-0.32.8.
