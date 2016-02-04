@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-01-31.12}
+\def\texinfoversion{2016-02-02.07}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4739,8 +4739,8 @@ end
   %
   \uccode`\1=`\{ \uppercase{\def\{{1}}%
   \uccode`\1=`\} \uppercase{\def\}{1}}%
-  \let\lbracechar\{
-  \let\rbracechar\}
+  \let\lbracechar\{%
+  \let\rbracechar\}%
   %
   % Non-English letters.
   \def\AA{AA}%
@@ -8601,12 +8601,9 @@ end
       %
       % output the `page 3'.
       \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
-           \ifx,\tokenafterxref
-      \else\ifx.\tokenafterxref
-      \else\ifx;\tokenafterxref
-      \else\ifx)\tokenafterxref
-      \else,% add a , if xref not followed by punctuation
-      \fi\fi\fi\fi
+      \if\noexpand\tokenafterxref\space
+        ,% add a , if xref not followed by punctuation
+      \fi
     \fi\fi
   \fi
   \endlink
