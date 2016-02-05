@@ -174,7 +174,7 @@ void ext_post_line_break(int paragraph_dir,
                         break;
                     } else if (non_discardable(q)) {
                         break;
-                    } else if (type(q) == kern_node && subtype(q) != explicit) {
+                    } else if (type(q) == kern_node && subtype(q) != explicit_kern && subtype(q) != italic_kern) {
                         break;
                     }
                     q = vlink(q);
@@ -559,7 +559,7 @@ void ext_post_line_break(int paragraph_dir,
                 if (q == cur_break(cur_p) || is_char_node(q))
                     break;
                 if (!((type(q) == local_par_node))) {
-                    if (non_discardable(q) || (type(q) == kern_node && subtype(q) != explicit))
+                    if (non_discardable(q) || (type(q) == kern_node && subtype(q) != explicit_kern && subtype(q) != italic_kern))
                         break;
                 }
                 */
@@ -581,7 +581,7 @@ void ext_post_line_break(int paragraph_dir,
                     /* weird, in the middle somewhere */
                 } else if (non_discardable(q)) {
                     break;
-                } else if (type(q) == kern_node && subtype(q) != explicit) {
+                } else if (type(q) == kern_node && subtype(q) != explicit_kern && subtype(q) != italic_kern) {
                     break;
                 }
                 r = q;

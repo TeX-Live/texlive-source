@@ -1,6 +1,23 @@
 
 This file is in the public domain.
 
+==============================================================
+Luatex Release 0.89.0 was released 2016020500 
+==============================================================
+
+No fundamental changes, just some fixes / improvements (and of course new bugglets).
+
+- New backend things:
+ \pdfvariable pkfixeddpi = integer % > 0 : use only default dpi (so one can do with one high res instance)
+ \pdfvariable ignoreunknownimages = integer % > 0 : ignore missing and inject something empty (to be used with care)
+  and one can do this:
+ \edef\foo{\pdfvariable foo}
+ \def \oof{foo}
+ \ifx\foo\oof don't fool me\fi
+ (side effect of no longer aborting on missing, so one implement a catch)
+
+
+
 
 ==============================================================
 Luatex Release 0.88.0 was released 2016011500 
@@ -2643,7 +2660,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5726 2016-01-18 11:26:27Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5776 2016-02-05 13:49:11Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

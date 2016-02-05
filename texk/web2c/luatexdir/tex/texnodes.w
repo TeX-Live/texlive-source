@@ -280,7 +280,7 @@ const char *node_subtypes_penalty[] = {
     "userpenalty", NULL
 };
 const char *node_subtypes_kern[] = {
-    "fontkern", "userkern", "accentkern", NULL
+    "fontkern", "userkern", "accentkern", "italiccorrection", NULL
 };
 const char *node_subtypes_rule[] = {
     "normal", "box", "image", "empty", "user", NULL
@@ -3092,7 +3092,7 @@ void show_node_list(int p)
                     if (subtype(p) != normal)
                         print_char(' ');
                     print_scaled(width(p));
-                    if (subtype(p) == acc_kern)
+                    if (subtype(p) == accent_kern)
                         tprint(" (for accent)");
                 } else {
                     tprint_esc("mkern");

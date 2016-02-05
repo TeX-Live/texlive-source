@@ -25,13 +25,10 @@
 /* these will move to equivalents.h */
 
 @ @c
-#define explicit 1
-#define acc_kern 2
 #define lp_code_base 2
 #define rp_code_base 3
 #define ef_code_base 4
 #define tag_code 5
-#define auto_kern explicit
 #define no_lig_code 6
 #define gp_code_base 7
 
@@ -505,7 +502,7 @@ static void run_par_end_hmode (void) {
 
 @ @c
 static void append_italic_correction_mmode (void) {
-    tail_append(new_kern(0));
+    tail_append(new_kern(0)); /* what subtype to use */
 }
 
 @ @c
@@ -1810,7 +1807,7 @@ void append_italic_correction(void)
             return;
         f = font(p);
         tail_append(new_kern(char_italic(f, character(p))));
-        subtype(tail) = explicit;
+        subtype(tail) = italic_kern;
     }
 }
 
@@ -2035,11 +2032,11 @@ void make_accent(void)
             }
             delta = round(float_cast(w - a) / float_constant(2) + h * t - x * s);       /* real multiplication */
             r = new_kern(delta);
-            subtype(r) = acc_kern;
+            subtype(r) = accent_kern;
             couple_nodes(tail, r);
             couple_nodes(r, p);
             tail = new_kern(-a - delta);
-            subtype(tail) = acc_kern;
+            subtype(tail) = accent_kern;
             couple_nodes(p, tail);
             p = q;
 

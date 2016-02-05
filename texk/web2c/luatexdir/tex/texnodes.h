@@ -177,9 +177,14 @@ typedef enum {
 #  define tlink_post_break(a) tlink(post_break_head(a))
 #  define tlink_no_break(a)   tlink(no_break_head(a))
 
+typedef enum {
+    font_kern = 0,
+    explicit_kern,  /* |subtype| of kern nodes from \.{\\kern} and \.{\\/} */
+    accent_kern,    /* |subtype| of kern nodes from accents */
+    italic_kern,
+} kern_subtypes;
+
 #  define kern_node_size       5
-#  define explicit             1             /* |subtype| of kern nodes from \.{\\kern} and \.{\\/} */
-#  define acc_kern             2             /* |subtype| of kern nodes from accents */
 #  define ex_kern(a)           vinfo((a)+3)  /* expansion factor (hz) */
 #  define synctex_tag_kern(a)  vinfo((a)+4)
 #  define synctex_line_kern(a) vlink((a)+4)

@@ -913,7 +913,7 @@ static void compute_break_width(int break_type, int line_break_dir, int adjust_s
             case penalty_node:
                 break;
             case kern_node:
-                if (subtype(s) != explicit)
+                if (subtype(s) != explicit_kern && subtype(s) != italic_kern)
                     return;
                 else
                     break_width[1] -= width(s);
@@ -1866,7 +1866,8 @@ void ext_do_line_break(int paragraph_dir,
                         if (prev_p != temp_head && (
                                 is_char_node(prev_p)
                              || precedes_break(prev_p)
-                             || ((type(prev_p) == kern_node) && (subtype(prev_p) != explicit))
+                             || ((type(prev_p) == kern_node) && (subtype(prev_p) != explicit_kern &&
+                                                                 subtype(prev_p) != italic_kern   ))
                             )) {
                             ext_try_break(0, unhyphenated_node, line_break_dir, adjust_spacing,
                                           par_shape_ptr, adj_demerits,
@@ -1889,7 +1890,7 @@ void ext_do_line_break(int paragraph_dir,
                     /* end mathskip code */
                     break;
                 case kern_node:
-                    if (subtype(cur_p) == explicit) {
+                    if (subtype(cur_p) == explicit_kern || subtype(cur_p) == italic_kern) {
                         kern_break();
                     } else {
                         active_width[1] += width(cur_p);

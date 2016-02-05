@@ -730,12 +730,12 @@ static int l_getmatrix(lua_State * L)
 {
     if (matrix_stack_used > 0) {
         matrix_entry *m = &matrix_stack[matrix_stack_used - 1];
-        lua_pushinteger(L, m->a);
-        lua_pushinteger(L, m->b);
-        lua_pushinteger(L, m->c);
-        lua_pushinteger(L, m->d);
-        lua_pushinteger(L, m->e);
-        lua_pushinteger(L, m->f);
+        lua_pushnumber(L, m->a);
+        lua_pushnumber(L, m->b);
+        lua_pushnumber(L, m->c);
+        lua_pushnumber(L, m->d);
+        lua_pushnumber(L, m->e);
+        lua_pushnumber(L, m->f);
     } else {
         lua_pushinteger(L, 1);
         lua_pushinteger(L, 0);
