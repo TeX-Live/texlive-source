@@ -105,16 +105,16 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
     boolean move_pdfpos = false;
     switch (p->mode) {
         case PMODE_PAGE:
-            new.h = i32round(pos.h * p->k1);
-            new.v = i32round(pos.v * p->k1);
+            new.h = i64round(pos.h * p->k1);
+            new.v = i64round(pos.v * p->k1);
             p->cm[4].m = new.h - p->pdf.h.m;        /* cm is concatenated */
             p->cm[5].m = new.v - p->pdf.v.m;
             if (new.h != p->pdf.h.m || new.v != p->pdf.v.m)
                 move_pdfpos = true;
             break;
         case PMODE_TEXT:
-            new.h = i32round(pos.h * p->k1);
-            new.v = i32round(pos.v * p->k1);
+            new.h = i64round(pos.h * p->k1);
+            new.v = i64round(pos.v * p->k1);
             p->tm[4].m = new.h - p->pdf_bt_pos.h.m; /* Tm replaces */
             p->tm[5].m = new.v - p->pdf_bt_pos.v.m;
             if (new.h != p->pdf.h.m || new.v != p->pdf.v.m)
@@ -124,16 +124,16 @@ boolean calc_pdfpos(pdfstructure * p, scaledpos pos)
         case PMODE_CHARARRAY:
             switch (p->wmode) {
                 case WMODE_H:
-                    new.h = i32round((pos.h * p->k1 - (double) p->pdf_tj_pos.h.m) * p->k2);
-                    new.v = i32round(pos.v * p->k1);
+                    new.h = i64round((pos.h * p->k1 - (double) p->pdf_tj_pos.h.m) * p->k2);
+                    new.v = i64round(pos.v * p->k1);
                     p->tj_delta.m = -i64round((double) ((new.h - p->cw.m) / ten_pow[p->cw.e - p->tj_delta.e]));
                     p->tm[5].m = new.v - p->pdf_bt_pos.v.m;     /* p->tm[4] is meaningless */
                     if (p->tj_delta.m != 0 || new.v != p->pdf.v.m)
                         move_pdfpos = true;
                     break;
                 case WMODE_V:
-                    new.h = i32round(pos.h * p->k1);
-                    new.v = i32round(((double) p->pdf_tj_pos.v.m - pos.v * p->k1) * p->k2);
+                    new.h = i64round(pos.h * p->k1);
+                    new.v = i64round(((double) p->pdf_tj_pos.v.m - pos.v * p->k1) * p->k2);
                     p->tm[4].m = new.h - p->pdf_bt_pos.h.m;     /* p->tm[5] is meaningless */
                     p->tj_delta.m = -i64round((double) ((new.v - p->cw.m) / ten_pow[p->cw.e - p->tj_delta.e]));
                     if (p->tj_delta.m != 0 || new.h != p->pdf.h.m)

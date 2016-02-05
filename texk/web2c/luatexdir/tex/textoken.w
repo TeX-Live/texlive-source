@@ -238,6 +238,10 @@ including the expansion of a macro or mark.
 @c
 void print_meaning(void)
 {
+    if (cur_cmd == math_char_num_cmd && cur_chr == 0) {
+        /* \mathchar -> \Umathchar */
+        cur_chr = 1 ;
+    }
     print_cmd_chr((quarterword) cur_cmd, cur_chr);
     if (cur_cmd >= call_cmd) {
         print_char(':');
@@ -249,21 +253,21 @@ void print_meaning(void)
             print_char(':');
             print_ln();
             switch (cur_chr) {
-            case first_mark_code:
-                token_show(first_mark(0));
-                break;
-            case bot_mark_code:
-                token_show(bot_mark(0));
-                break;
-            case split_first_mark_code:
-                token_show(split_first_mark(0));
-                break;
-            case split_bot_mark_code:
-                token_show(split_bot_mark(0));
-                break;
-            default:
-                token_show(top_mark(0));
-                break;
+                case first_mark_code:
+                    token_show(first_mark(0));
+                    break;
+                case bot_mark_code:
+                    token_show(bot_mark(0));
+                    break;
+                case split_first_mark_code:
+                    token_show(split_first_mark(0));
+                    break;
+                case split_bot_mark_code:
+                    token_show(split_bot_mark(0));
+                    break;
+                default:
+                    token_show(top_mark(0));
+                    break;
             }
         }
     }

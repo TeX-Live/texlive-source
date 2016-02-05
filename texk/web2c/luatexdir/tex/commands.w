@@ -405,7 +405,7 @@ void initialize_commands(void)
     primitive_tex("vss", vskip_cmd, ss_code, 0);
     primitive_tex("vfilneg", vskip_cmd, fil_neg_code, 0);
     primitive_tex("mskip", mskip_cmd, mskip_code, 0);
-    primitive_tex("kern", kern_cmd, explicit, 0);
+    primitive_tex("kern", kern_cmd, explicit_kern, 0);
     primitive_tex("mkern", mkern_cmd, mu_glue, 0);
     primitive_tex("moveleft", hmove_cmd, 1, 0);
     primitive_tex("moveright", hmove_cmd, 0, 0);

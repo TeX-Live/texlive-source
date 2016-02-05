@@ -1567,7 +1567,7 @@ static void math_kern(pointer p, scaled m)
             f = f + unity;
         }
         width(p) = mu_mult(width(p));
-        subtype(p) = explicit;
+        subtype(p) = italic_kern;
     }
 }
 

@@ -26,7 +26,7 @@
 @ Low-level helpers
 
 @ @c
-#define noVERBOSE
+#define unVERBOSE
 
 #define MAX_TEX_LANGUAGES  16384
 
@@ -795,7 +795,9 @@ static int valid_wordend(halfword s)
                   ||  type(r) == ins_node
                   ||  type(r) == adjust_node
                   ||  type(r) == penalty_node
-                  || (type(r) == kern_node && (subtype(r) == explicit || subtype(r) == acc_kern)))
+                  || (type(r) == kern_node && (subtype(r) == explicit_kern ||
+                                               subtype(r) == italic_kern   ||
+                                               subtype(r) == accent_kern   )))
         return 1;
     return 0;
 }

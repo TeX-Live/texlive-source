@@ -538,6 +538,7 @@ void pdf_print_int(PDF pdf, longinteger n)
 }
 
 @ @c
+/*
 void print_pdffloat(PDF pdf, pdffloat f)
 {
     char a[24];
@@ -559,6 +560,53 @@ void print_pdffloat(PDF pdf, pdffloat f)
             a[i] = '\0';
         }
         pdf_puts(pdf, (a + 1));
+    }
+}
+*/
+
+void print_pdffloat(PDF pdf, pdffloat f)
+{
+    int64_t m = f.m;
+    if (m == 0) {
+        pdf_out(pdf, '0');
+    } else {
+        int e = f.e;
+        if (e == 0) {
+            /* division by ten_pow[0] == 1 */
+            if (m == 1) {
+                pdf_out(pdf, '1');
+            } else {
+                char a[24];
+                snprintf(a, 23, "%ld", m);
+                pdf_puts(pdf, a);
+            }
+        } else {
+            int t = ten_pow[e] ;
+            if (t == m) {
+                pdf_out(pdf, '1');
+            } else {
+                int i;
+                char a[24];
+                int l = m / t;
+                int w = snprintf(a, 23, "%i", l);
+                pdf_out_block(pdf, (const char *) a, (size_t) w);
+                if (m < 0) {
+                    l = - m % t;
+                } else {
+                    l = m % t;
+                }
+                if (l != 0) {
+                    pdf_out(pdf, '.');
+                    snprintf(a, 23, "%d", l + t);
+                    for (i = e; i > 0; i--) {
+                        if (a[i] != '0')
+                            break;
+                        a[i] = '\0';
+                    }
+                    pdf_puts(pdf, (a + 1));
+                }
+            }
+        }
     }
 }
 
@@ -914,7 +962,8 @@ static void init_pdf_outputparameters(PDF pdf)
     int pk_mode;
     pdf->draftmode = fix_int(int_par(draft_mode_code), 0, 1);
     pdf->compress_level = fix_int(pdf_compress_level, 0, 9);
-    pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 6);
+    pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 5);
+/*    pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 6);*//* later, maybe (LS)*/
     pdf->gamma = fix_int(pdf_gamma, 0, 1000000);
     pdf->image_gamma = fix_int(pdf_image_gamma, 0, 1000000);
     pdf->image_hicolor = fix_int(pdf_image_hicolor, 0, 1);

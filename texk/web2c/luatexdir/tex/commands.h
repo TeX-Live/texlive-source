@@ -327,13 +327,10 @@ typedef enum {
     expand_font_code,
 } normal_codes;
 
-#  define explicit 1
-#  define acc_kern 2
 #  define lp_code_base 2
 #  define rp_code_base 3
 #  define ef_code_base 4
 #  define tag_code 5
-#  define auto_kern explicit
 #  define no_lig_code 6
 
 #  define immediate_code 4      /* command modifier for \.{\\immediate} */

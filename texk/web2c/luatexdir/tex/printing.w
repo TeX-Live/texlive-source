@@ -987,11 +987,13 @@ void short_display_n(int p, int m)
                 print(character(p));
             }
         } else {
-            if ((type(p) == glue_node) ||
-                (type(p) == disc_node) ||
-                (type(p) == penalty_node) ||
-                ((type(p) == kern_node) && (subtype(p) == explicit)))
+            if ( (type(p) == glue_node) ||
+                 (type(p) == disc_node) ||
+                 (type(p) == penalty_node) ||
+                ((type(p) == kern_node) && (subtype(p) == explicit_kern ||
+                                            subtype(p) == italic_kern   ))) {
                 incr(i);
+            }
             if (i >= m)
                 return;
             if (type(p) == disc_node) {
