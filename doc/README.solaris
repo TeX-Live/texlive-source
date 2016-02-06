@@ -6,7 +6,7 @@ Compiling TeX binaries on Solaris
 but the same rules should apply to i386 and x86_64 as well.)
 
 Solaris 9 has been out of official support for a while and making
-software compile on that platform is challenging, so it hardly make any
+software compile on that platform is challenging, so it hardly makes any
 sense to try to support it.
 
 Solaris 10 reaches end of support in January 2021:
@@ -101,3 +101,20 @@ systems.
 
 If users need binaries to run on even older systems, we can target what
 is desired by changing the map file.
+
+Building texlive
+================
+
+Two extra settings were needed to compile TeX Live with gcc 5.2:
+  * export LIBPNG_USER_CPPFLAGS="-D_XOPEN_SOURCE=600"
+  * ./Build --without-iconv
+
+The second option makes sure to avoid linking against libiconv
+which is not available on SunOS by default.
+
+The first option is only needed on Solaris 10 to circumvent a problem
+in libpng <https://sourceforge.net/p/libpng/bugs/245/>.
+
+Using `#define _POSIX_SOURCE 1` will fail to compile on Solaris 10 with gcc 5.x
+unless one of `_XPG6`, `_XOPEN_SOURCE = 600`, or `_POSIX_C_SOURCE = 200112L` is set.
+
