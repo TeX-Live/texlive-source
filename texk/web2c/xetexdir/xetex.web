@@ -315,8 +315,8 @@ known as `\eTeX'.
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
-@d XeTeX_revision==".99993" { \.{\\XeTeXrevision} }
-@d XeTeX_version_string=='-0.99993' {current \XeTeX\ version}
+@d XeTeX_revision==".99994" { \.{\\XeTeXrevision} }
+@d XeTeX_version_string=='-0.99994' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.14159265',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
@@ -9776,6 +9776,10 @@ end
 applications of |scan_int| that have already been made inside of
 |scan_something_internal|.
 
+@d char_class_limit = 16384
+@d char_class_ignored == char_class_limit
+@d char_class_boundary == (char_class_limit - 1)
+
 @ @<Declare procedures that scan restricted classes of integers@>=
 
 procedure scan_glyph_number(f: internal_font_number);
@@ -9795,10 +9799,10 @@ end;
 
 procedure scan_char_class;
 begin scan_int;
-if (cur_val<0)or(cur_val>256) then
+if (cur_val<0)or(cur_val>char_class_limit) then
   begin print_err("Bad character class");
 @.Bad character code@>
-  help2("A character class must be between 0 and 256.")@/
+  help2("A character class must be between 0 and 16384.")@/
     ("I changed this one to zero."); int_error(cur_val); cur_val:=0;
   end;
 end;
@@ -23398,10 +23402,10 @@ are inside the individual sections.
   cur_ptr:=null;
   space_class:=sf_code(cur_chr) div @"10000;
 
-  if XeTeX_inter_char_tokens_en and space_class <> 256 then begin {class 256 = ignored (for combining marks etc)}
-    if prev_class = 255 then begin {boundary}
+  if XeTeX_inter_char_tokens_en and space_class <> char_class_ignored then begin {class 16384 = ignored (for combining marks etc)}
+    if prev_class = char_class_boundary then begin {boundary}
       if (state<>token_list) or (token_type<>backed_up_char) then begin
-        find_sa_element(inter_char_val, 255*@"100 + space_class, false);
+        find_sa_element(inter_char_val, char_class_boundary*@"100 + space_class, false);
         if cur_ptr<>null then begin
           if cur_cmd<>letter then cur_cmd:=other_char;
           cur_tok:=(cur_cmd*max_char_val)+cur_chr;
@@ -23417,7 +23421,7 @@ are inside the individual sections.
         cur_tok:=(cur_cmd*max_char_val)+cur_chr;
         back_input; token_type:=backed_up_char;
         begin_token_list(sa_ptr(cur_ptr), inter_char_text);
-        prev_class:=255;
+        prev_class:=char_class_boundary;
         goto #;
       end;
     end;
@@ -23425,9 +23429,9 @@ are inside the individual sections.
   end
 
 @d check_for_post_char_toks(#)==
-  if XeTeX_inter_char_tokens_en and (space_class<>256) and (prev_class<>255) then begin
-    prev_class:=255;
-    find_sa_element(inter_char_val, space_class*@"100 + 255, false); {boundary}
+  if XeTeX_inter_char_tokens_en and (space_class<>char_class_ignored) and (prev_class<>char_class_boundary) then begin
+    prev_class:=char_class_boundary;
+    find_sa_element(inter_char_val, space_class*@"100 + char_class_boundary, false); {boundary}
     if cur_ptr<>null then begin
       if cur_cs=0 then begin
         if cur_cmd=char_num then cur_cmd:=other_char;
@@ -23441,7 +23445,7 @@ are inside the individual sections.
 
 @<Append character |cur_chr|...@>=
 
-prev_class:=255; {boundary}
+prev_class:=char_class_boundary; {boundary}
 
 { added code for native font support }
 if is_native_font(cur_font) then begin

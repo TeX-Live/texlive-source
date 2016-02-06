@@ -1,8 +1,20 @@
 ==============================================================
-XeTeX 0.99992 was released 2015????
+XeTeX 0.99993 was not really "released", but in July 2015 the
+version number was bumped in the TeXLive source when a new
+primitive was added.
 ==============================================================
 
 XeTeX:
+* Added \mdfivesum primitive
+* Removed -q from the default xdvipdfmx output-driver command line.
+
+==============================================================
+XeTeX 0.99992 was released 20150507
+==============================================================
+
+XeTeX:
+* New \Uchar and \Ucharcat primitives
+* Fix various issues with UTF-16 and characters >= U+10000.
 * Various image handling fixes by Akira Kakuto.
 * Fix off-by-one error in display of \every... token registers, thanks to Bruno
   Le Floch.
