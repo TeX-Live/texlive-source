@@ -32521,8 +32521,8 @@ the type of quantity (|int_val|, |dimen_val|, |glue_val|, |mu_val|,
 |box_val|, |tok_val|, |inter_char_val| or |mark_val|).  The |sa_used| field in the index
 nodes counts how many of the 64 pointers are non-null.
 
-The |sa_index| field in the nodes for array elements contains the four
-bits plus 16 times the type.  Therefore such a node represents a count
+The |sa_index| field in the nodes for array elements contains the six
+bits plus 64 times the type.  Therefore such a node represents a count
 or dimen register if and only if |sa_index<dimen_val_limit|; it
 represents a skip or muskip register if and only if
 |dimen_val_limit<=sa_index<mu_val_limit|; it represents a box register
@@ -32537,10 +32537,10 @@ having given contents of the |sa_index| and |link| fields.
 @d box_val==4 {the additional box registers}
 @d mark_val=7 {the additional mark classes}
 @#
-@d dimen_val_limit=@"20 {$2^4\cdot(|dimen_val|+1)$}
-@d mu_val_limit=@"40 {$2^4\cdot(|mu_val|+1)$}
-@d box_val_limit=@"50 {$2^4\cdot(|box_val|+1)$}
-@d tok_val_limit=@"60 {$2^4\cdot(|tok_val|+1)$}
+@d dimen_val_limit=@"80 {$2^6\cdot(|dimen_val|+1)$}
+@d mu_val_limit=@"100 {$2^6\cdot(|mu_val|+1)$}
+@d box_val_limit=@"140 {$2^6\cdot(|box_val|+1)$}
+@d tok_val_limit=@"180 {$2^6\cdot(|tok_val|+1)$}
 @#
 @d index_node_size=33 {size of an index node}
 @d sa_index==type {a four-bit address or a type or both}
@@ -32611,7 +32611,7 @@ procedure find_sa_element(@!t:small_number;@!n:halfword;@!w:boolean);
   {sets |cur_val| to sparse array element location or |null|}
 label not_found,not_found1,not_found2,not_found3,not_found4,exit;
 var q:pointer; {for list manipulations}
-@!i:small_number; {a four bit index}
+@!i:small_number; {a six bit index}
 begin cur_ptr:=sa_root[t];
 if_cur_ptr_is_null_then_return_or_goto(not_found);@/
 q:=cur_ptr; i:=hex_dig1(n); get_sa_ptr;
@@ -32654,7 +32654,7 @@ words contain the five types of current marks
 
 @d sa_lev==sa_used {grouping level for the current value}
 @d pointer_node_size=2 {size of an element with a pointer value}
-@d sa_type(#)==(sa_index(#) div 16) {type part of combined type/index}
+@d sa_type(#)==(sa_index(#) div 64) {type part of combined type/index}
 @d sa_ref(#)==info(#+1) {reference count of a sparse array element}
 @d sa_ptr(#)==link(#+1) {a pointer value}
 @#
@@ -32688,7 +32688,7 @@ else  begin if t<=dimen_val then {a count or dimen register}
     end;
   sa_ref(cur_ptr):=null; {all registers have a reference count}
   end;
-sa_index(cur_ptr):=16*t+i; sa_lev(cur_ptr):=level_one
+sa_index(cur_ptr):=64*t+i; sa_lev(cur_ptr):=level_one
 
 @ The |delete_sa_ref| procedure is called when a pointer to an array
 element representing a register is being removed; this means that the
@@ -32742,8 +32742,8 @@ to an array element.
 procedure print_sa_num(@!q:pointer); {print register number}
 var @!n:halfword; {the register number}
 begin if sa_index(q)<dimen_val_limit then n:=sa_num(q) {the easy case}
-else  begin n:=hex_dig4(sa_index(q)); q:=link(q); n:=n+16*sa_index(q);
-  q:=link(q); n:=n+256*(sa_index(q)+16*sa_index(link(q)));
+else  begin n:=hex_dig4(sa_index(q)); q:=link(q); n:=n+64*sa_index(q);
+  q:=link(q); n:=n+64*64*(sa_index(q)+64*sa_index(link(q)));
   end;
 print_int(n);
 end;
