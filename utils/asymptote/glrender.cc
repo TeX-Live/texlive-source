@@ -418,6 +418,10 @@ void home()
   initlighting();
 }
 
+void nodisplay()
+{
+}
+
 void quit() 
 {
 #ifdef HAVE_LIBOSMESA
@@ -435,10 +439,14 @@ void quit()
     home();
     Animate=getSetting<bool>("autoplay");
 #ifdef HAVE_PTHREAD
-    if(!interact::interactive || animating)
+    if(!interact::interactive || animating) {
+      idle();
+      glutDisplayFunc(nodisplay);
       endwait(readySignal,readyLock);
+    }
 #endif    
-    glutHideWindow();
+    if(interact::interactive)
+      glutHideWindow();
   } else {
     glutDestroyWindow(window);
     exit(0);
@@ -502,18 +510,6 @@ void reshape0(int width, int height)
   glViewport(0,0,Width,Height);
 }
   
-void update() 
-{
-  lastzoom=Zoom;
-  glLoadIdentity();
-  double cz=0.5*(zmin+zmax);
-  glTranslatef(cx,cy,cz);
-  glMultMatrixf(Rotate);
-  glTranslatef(0,0,-cz);
-  setProjection();
-  glutPostRedisplay();
-}
-
 void windowposition(int& x, int& y, int width=Width, int height=Height)
 {
   pair z=getSetting<pair>("position");
@@ -596,32 +592,6 @@ void togglefitscreen()
   fitscreen();
 }
 
-void updateHandler(int)
-{
-  queueScreen=true;
-  update();
-  if(interact::interactive || !Animate) {
-    glutShowWindow();
-    glutShowWindow(); // Call twice to work around apparent freeglut bug.
-  }
-}
-
-void reshape(int width, int height)
-{
-  if(glthread) {
-    static bool initialize=true;
-    if(initialize) {
-      initialize=false;
-      Signal(SIGUSR1,updateHandler);
-    }
-  }
-  
-  if(capsize(width,height))
-    glutReshapeWindow(width,height);
- 
-  reshape0(width,height);
-}
-  
 void initTimer() 
 {
   gettimeofday(&lasttime,NULL);
@@ -632,18 +602,6 @@ void idleFunc(void (*f)())
 {
   initTimer();
   glutIdleFunc(f);
-}
-
-void animate() 
-{
-  Animate=!Animate;
-  if(Animate) {
-    if(Fitscreen == 2) {
-      togglefitscreen();
-      togglefitscreen();
-    }
-    update();
-  }
 }
 
 void screen()
@@ -700,6 +658,58 @@ void display()
   }
 }
 
+void update() 
+{
+  glutDisplayFunc(display);
+  Animate=getSetting<bool>("autoplay");
+  glutShowWindow();
+  lastzoom=Zoom;
+  glLoadIdentity();
+  double cz=0.5*(zmin+zmax);
+  glTranslatef(cx,cy,cz);
+  glMultMatrixf(Rotate);
+  glTranslatef(0,0,-cz);
+  setProjection();
+  glutPostRedisplay();
+}
+
+void updateHandler(int)
+{
+  queueScreen=true;
+  update();
+  if(interact::interactive || !Animate) {
+    glutShowWindow();
+  }
+}
+
+void animate() 
+{
+  Animate=!Animate;
+  if(Animate) {
+    if(Fitscreen == 2) {
+      togglefitscreen();
+      togglefitscreen();
+    }
+    update();
+  }
+}
+
+void reshape(int width, int height)
+{
+  if(glthread) {
+    static bool initialize=true;
+    if(initialize) {
+      initialize=false;
+      Signal(SIGUSR1,updateHandler);
+    }
+  }
+  
+  if(capsize(width,height))
+    glutReshapeWindow(width,height);
+ 
+  reshape0(width,height);
+}
+  
 void shift(int x, int y)
 {
   if(x > 0 && y > 0) {
@@ -1237,6 +1247,7 @@ void exportHandler(int=0)
   if(!Iconify && !offscreen)
     glutHideWindow();
 #endif  
+  glutDisplayFunc(nodisplay);
 }
 
 static bool glinitialize=true;
@@ -1292,7 +1303,7 @@ void init()
 #ifdef HAVE_LIBGLUT
   mem::vector<string> cmd;
   cmd.push_back(settings::argv0);
-  if(Iconify)
+  if(!interact::interactive && Iconify)
     cmd.push_back("-iconic");
   push_split(cmd,getSetting<string>("glOptions"));
   char **argv=args(cmd,true);
@@ -1405,10 +1416,10 @@ void glrender(const string& prefix, const picture *pic, const string& format,
   pair maxtile=getSetting<pair>("maxtile");
   maxTileWidth=(int) maxtile.getx();
   maxTileHeight=(int) maxtile.gety();
+  if(maxTileWidth <= 0) maxTileWidth=1024;
+  if(maxTileHeight <= 0) maxTileHeight=768;
 
   if(offscreen) {
-    if(maxTileWidth <= 0) maxTileWidth=1024;
-    if(maxTileHeight <= 0) maxTileHeight=768;
     screenWidth=maxTileWidth;
     screenHeight=maxTileHeight;
 
@@ -1559,8 +1570,10 @@ void glrender(const string& prefix, const picture *pic, const string& format,
 #endif      
       if(samples > 1) {
         if(settings::verbose > 1 && samples > 1)
-          cout << "Multisampling enabled with sample width " << samples << endl;
+          cout << "Multisampling enabled with sample width " << samples
+               << endl;
       }
+      glutDisplayFunc(display);
       glutShowWindow();
     } else if(!havewindow) {
       glutInitWindowSize(maxTileWidth,maxTileHeight);
@@ -1625,7 +1638,6 @@ void glrender(const string& prefix, const picture *pic, const string& format,
     initializedView=true;
 #endif    
     glutReshapeFunc(reshape);
-    glutDisplayFunc(display);
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
   

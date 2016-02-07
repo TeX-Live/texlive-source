@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.35],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.36],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -123,20 +123,18 @@ AC_CHECK_HEADER(unordered_map,AC_DEFINE(HAVE_UNORDERED_MAP,1,
 
 GCVERSION=7.4.2
 GCFILE=gc-$GCVERSION
+ac_cv_use_gc="system"
 
 AC_CHECK_FILE($GCFILE.tar.gz,
-ac_cv_use_gc=$GCVERSION,
-[GC_SYSTEM="$GCFILE.tar.gz not found: using system Boehm garbage collector"
-ac_cv_use_gc="system"])
+ac_cv_use_gc=$GCVERSION)
 AC_ARG_ENABLE(gc,
 	[AS_HELP_STRING(--enable-gc[[[=system]]],
 enable system Boehm garbage collector)]
 	[     [[=VERSION]]   enable local VERSION of Boehm garbage collector]
 	[     [[=PREFIX]]    use Boehm garbage collector installed in PREFIX],
 			[
-			if test "x$enableval" != "xyes"; then
+			if test "x$enableval" != "xyes" ; then
 			   ac_cv_use_gc=$enableval
-			   GC_SYSTEM=""
 			fi
 			])
 
@@ -147,8 +145,8 @@ GCNAME="Boehm Garbage Collector"
 GCOPTIONS="--disable-shared --enable-large-config"
 if test "x$ac_cv_use_gc" != "xno" ; then
    OPTIONS=$OPTIONS"-DUSEGC "
-   case $ac_cv_use_gc in
-   system|*[[\\/]]*)
+   case _$ac_cv_use_gc in
+   _|_system|_*[[\\/]]*)
       if test "x$ac_cv_use_gc" = "xsystem" ; then
          INCL="-I$prefix/include/gc -I/usr/include/gc"
          LIBS=$LIBS"-L$prefix/lib " 
@@ -174,7 +172,8 @@ if test "x$ac_cv_use_gc" != "xno" ; then
       ;;
    *)
       GCVERSION=$ac_cv_use_gc
-      GCDIR=gc-$GCVERSION
+      GCFILE=gc-$GCVERSION
+      GCDIR=$GCFILE
       AC_MSG_NOTICE([enabling local $GCNAME $GCDIR])
       GCLIB="\$(GC)/.libs/libgc.a"
       INCL="-I\$(GC)/include"
@@ -248,7 +247,8 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
 abort
 #endif
 ])],AC_CHECK_LIB([readline], [history_list],,
-AC_MSG_NOTICE(*** Could not find GNU readline 4.3 or later: will compile without readline support ***)))
+AC_MSG_NOTICE(*** Could not find GNU libreadline 4.3 or later: will compile without readline support ***)),
+AC_MSG_NOTICE(*** Could not find GNU readline 4.3 or later: will compile without readline support ***))
 fi
 
 # Checks for header files.

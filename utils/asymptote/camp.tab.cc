@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2013 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.2"
+#define YYBISON_VERSION "3.0.4"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -216,7 +216,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE YYSTYPE;
+
 union YYSTYPE
 {
 #line 60 "camp.y" /* yacc.c:355  */
@@ -268,6 +268,8 @@ union YYSTYPE
 
 #line 270 "camp.tab.c" /* yacc.c:355  */
 };
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -281,7 +283,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 285 "camp.tab.c" /* yacc.c:358  */
+#line 287 "camp.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -1923,555 +1925,555 @@ yyreduce:
         case 2:
 #line 191 "camp.y" /* yacc.c:1646  */
     { absyntax::root = (yyvsp[0].b); }
-#line 1927 "camp.tab.c" /* yacc.c:1646  */
+#line 1929 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 195 "camp.y" /* yacc.c:1646  */
     { (yyval.b) = new file(lexerPos(), false); }
-#line 1933 "camp.tab.c" /* yacc.c:1646  */
+#line 1935 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 197 "camp.y" /* yacc.c:1646  */
     { (yyval.b) = (yyvsp[-1].b); (yyval.b)->add((yyvsp[0].run)); }
-#line 1939 "camp.tab.c" /* yacc.c:1646  */
+#line 1941 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
 #line 201 "camp.y" /* yacc.c:1646  */
     { (yyval.b) = new block(lexerPos(), true); }
-#line 1945 "camp.tab.c" /* yacc.c:1646  */
+#line 1947 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 203 "camp.y" /* yacc.c:1646  */
     { (yyval.b) = (yyvsp[-1].b); (yyval.b)->add((yyvsp[0].run)); }
-#line 1951 "camp.tab.c" /* yacc.c:1646  */
+#line 1953 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 207 "camp.y" /* yacc.c:1646  */
     { (yyval.n) = new simpleName((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 1957 "camp.tab.c" /* yacc.c:1646  */
+#line 1959 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 208 "camp.y" /* yacc.c:1646  */
     { (yyval.n) = new qualifiedName((yyvsp[-1].pos), (yyvsp[-2].n), (yyvsp[0].ps).sym); }
-#line 1963 "camp.tab.c" /* yacc.c:1646  */
+#line 1965 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 209 "camp.y" /* yacc.c:1646  */
     { (yyval.n) = new simpleName((yyvsp[0].ps).pos,
                                   symbol::trans("operator answer")); }
-#line 1970 "camp.tab.c" /* yacc.c:1646  */
+#line 1972 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
 #line 214 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = (yyvsp[0].d); }
-#line 1976 "camp.tab.c" /* yacc.c:1646  */
+#line 1978 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
 #line 215 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = (yyvsp[0].s); }
-#line 1982 "camp.tab.c" /* yacc.c:1646  */
+#line 1984 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 217 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = new modifiedRunnable((yyvsp[-1].ml)->getPos(), (yyvsp[-1].ml), (yyvsp[0].d)); }
-#line 1988 "camp.tab.c" /* yacc.c:1646  */
+#line 1990 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
 #line 219 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = new modifiedRunnable((yyvsp[-1].ml)->getPos(), (yyvsp[-1].ml), (yyvsp[0].s)); }
-#line 1994 "camp.tab.c" /* yacc.c:1646  */
+#line 1996 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 223 "camp.y" /* yacc.c:1646  */
     { (yyval.ml) = new modifierList((yyvsp[0].mod).pos); (yyval.ml)->add((yyvsp[0].mod).val); }
-#line 2000 "camp.tab.c" /* yacc.c:1646  */
+#line 2002 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 224 "camp.y" /* yacc.c:1646  */
     { (yyval.ml) = new modifierList((yyvsp[0].perm).pos); (yyval.ml)->add((yyvsp[0].perm).val); }
-#line 2006 "camp.tab.c" /* yacc.c:1646  */
+#line 2008 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
 #line 226 "camp.y" /* yacc.c:1646  */
     { (yyval.ml) = (yyvsp[-1].ml); (yyval.ml)->add((yyvsp[0].mod).val); }
-#line 2012 "camp.tab.c" /* yacc.c:1646  */
+#line 2014 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
 #line 228 "camp.y" /* yacc.c:1646  */
     { (yyval.ml) = (yyvsp[-1].ml); (yyval.ml)->add((yyvsp[0].perm).val); }
-#line 2018 "camp.tab.c" /* yacc.c:1646  */
+#line 2020 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
 #line 232 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = (yyvsp[0].vd); }
-#line 2024 "camp.tab.c" /* yacc.c:1646  */
+#line 2026 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 233 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = (yyvsp[0].d); }
-#line 2030 "camp.tab.c" /* yacc.c:1646  */
+#line 2032 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
 #line 234 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = (yyvsp[0].d); }
-#line 2036 "camp.tab.c" /* yacc.c:1646  */
+#line 2038 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
 #line 236 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new accessdec((yyvsp[-2].pos), (yyvsp[-1].ipl)); }
-#line 2042 "camp.tab.c" /* yacc.c:1646  */
+#line 2044 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 238 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new unraveldec((yyvsp[-4].pos), (yyvsp[-3].n), (yyvsp[-1].ipl)); }
-#line 2048 "camp.tab.c" /* yacc.c:1646  */
+#line 2050 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 240 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new unraveldec((yyvsp[-4].pos), (yyvsp[-3].n), WILDCARD); }
-#line 2054 "camp.tab.c" /* yacc.c:1646  */
+#line 2056 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 241 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new unraveldec((yyvsp[-2].pos), (yyvsp[-1].n), WILDCARD); }
-#line 2060 "camp.tab.c" /* yacc.c:1646  */
+#line 2062 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 243 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new fromaccessdec((yyvsp[-4].pos), (yyvsp[-3].ps).sym, (yyvsp[-1].ipl)); }
-#line 2066 "camp.tab.c" /* yacc.c:1646  */
+#line 2068 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 245 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new fromaccessdec((yyvsp[-4].pos), (yyvsp[-3].ps).sym, WILDCARD); }
-#line 2072 "camp.tab.c" /* yacc.c:1646  */
+#line 2074 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 247 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new importdec((yyvsp[-2].pos), (yyvsp[-1].ip)); }
-#line 2078 "camp.tab.c" /* yacc.c:1646  */
+#line 2080 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 248 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new includedec((yyvsp[-2].pos), (yyvsp[-1].ps).sym); }
-#line 2084 "camp.tab.c" /* yacc.c:1646  */
+#line 2086 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 250 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new includedec((yyvsp[-2].pos), (yyvsp[-1].stre)->getString()); }
-#line 2090 "camp.tab.c" /* yacc.c:1646  */
+#line 2092 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
 #line 254 "camp.y" /* yacc.c:1646  */
     { (yyval.ip) = new idpair((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 2096 "camp.tab.c" /* yacc.c:1646  */
+#line 2098 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
 #line 256 "camp.y" /* yacc.c:1646  */
     { (yyval.ip) = new idpair((yyvsp[-2].ps).pos, (yyvsp[-2].ps).sym, (yyvsp[-1].ps).sym , (yyvsp[0].ps).sym); }
-#line 2102 "camp.tab.c" /* yacc.c:1646  */
+#line 2104 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
 #line 260 "camp.y" /* yacc.c:1646  */
     { (yyval.ipl) = new idpairlist(); (yyval.ipl)->add((yyvsp[0].ip)); }
-#line 2108 "camp.tab.c" /* yacc.c:1646  */
+#line 2110 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
 #line 262 "camp.y" /* yacc.c:1646  */
     { (yyval.ipl) = (yyvsp[-2].ipl); (yyval.ipl)->add((yyvsp[0].ip)); }
-#line 2114 "camp.tab.c" /* yacc.c:1646  */
+#line 2116 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
 #line 266 "camp.y" /* yacc.c:1646  */
     { (yyval.ps) = (yyvsp[0].ps); }
-#line 2120 "camp.tab.c" /* yacc.c:1646  */
+#line 2122 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
 #line 267 "camp.y" /* yacc.c:1646  */
     { (yyval.ps).pos = (yyvsp[0].stre)->getPos();
                      (yyval.ps).sym = symbol::literalTrans((yyvsp[0].stre)->getString()); }
-#line 2127 "camp.tab.c" /* yacc.c:1646  */
+#line 2129 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 272 "camp.y" /* yacc.c:1646  */
     { (yyval.ip) = new idpair((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 2133 "camp.tab.c" /* yacc.c:1646  */
+#line 2135 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
 #line 274 "camp.y" /* yacc.c:1646  */
     { (yyval.ip) = new idpair((yyvsp[-2].ps).pos, (yyvsp[-2].ps).sym, (yyvsp[-1].ps).sym , (yyvsp[0].ps).sym); }
-#line 2139 "camp.tab.c" /* yacc.c:1646  */
+#line 2141 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
 #line 278 "camp.y" /* yacc.c:1646  */
     { (yyval.ipl) = new idpairlist(); (yyval.ipl)->add((yyvsp[0].ip)); }
-#line 2145 "camp.tab.c" /* yacc.c:1646  */
+#line 2147 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
 #line 280 "camp.y" /* yacc.c:1646  */
     { (yyval.ipl) = (yyvsp[-2].ipl); (yyval.ipl)->add((yyvsp[0].ip)); }
-#line 2151 "camp.tab.c" /* yacc.c:1646  */
+#line 2153 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 284 "camp.y" /* yacc.c:1646  */
     { (yyval.vd) = (yyvsp[-1].vd); }
-#line 2157 "camp.tab.c" /* yacc.c:1646  */
+#line 2159 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 288 "camp.y" /* yacc.c:1646  */
     { (yyval.vd) = new vardec((yyvsp[-1].t)->getPos(), (yyvsp[-1].t), (yyvsp[0].dil)); }
-#line 2163 "camp.tab.c" /* yacc.c:1646  */
+#line 2165 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
 #line 292 "camp.y" /* yacc.c:1646  */
     { (yyval.t) = (yyvsp[0].t); }
-#line 2169 "camp.tab.c" /* yacc.c:1646  */
+#line 2171 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
 #line 293 "camp.y" /* yacc.c:1646  */
     { (yyval.t) = new arrayTy((yyvsp[-1].n), (yyvsp[0].dim)); }
-#line 2175 "camp.tab.c" /* yacc.c:1646  */
+#line 2177 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
 #line 297 "camp.y" /* yacc.c:1646  */
     { (yyval.t) = new nameTy((yyvsp[0].n)); }
-#line 2181 "camp.tab.c" /* yacc.c:1646  */
+#line 2183 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 301 "camp.y" /* yacc.c:1646  */
     { (yyval.dim) = new dimensions((yyvsp[-1].pos)); }
-#line 2187 "camp.tab.c" /* yacc.c:1646  */
+#line 2189 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
 #line 302 "camp.y" /* yacc.c:1646  */
     { (yyval.dim) = (yyvsp[-2].dim); (yyval.dim)->increase(); }
-#line 2193 "camp.tab.c" /* yacc.c:1646  */
+#line 2195 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
 #line 306 "camp.y" /* yacc.c:1646  */
     { (yyval.elist) = new explist((yyvsp[-2].pos)); (yyval.elist)->add((yyvsp[-1].e)); }
-#line 2199 "camp.tab.c" /* yacc.c:1646  */
+#line 2201 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
 #line 308 "camp.y" /* yacc.c:1646  */
     { (yyval.elist) = (yyvsp[-3].elist); (yyval.elist)->add((yyvsp[-1].e)); }
-#line 2205 "camp.tab.c" /* yacc.c:1646  */
+#line 2207 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
 #line 312 "camp.y" /* yacc.c:1646  */
     { (yyval.dil) = new decidlist((yyvsp[0].di)->getPos()); (yyval.dil)->add((yyvsp[0].di)); }
-#line 2211 "camp.tab.c" /* yacc.c:1646  */
+#line 2213 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
 #line 314 "camp.y" /* yacc.c:1646  */
     { (yyval.dil) = (yyvsp[-2].dil); (yyval.dil)->add((yyvsp[0].di)); }
-#line 2217 "camp.tab.c" /* yacc.c:1646  */
+#line 2219 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
 #line 318 "camp.y" /* yacc.c:1646  */
     { (yyval.di) = new decid((yyvsp[0].dis)->getPos(), (yyvsp[0].dis)); }
-#line 2223 "camp.tab.c" /* yacc.c:1646  */
+#line 2225 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
 #line 320 "camp.y" /* yacc.c:1646  */
     { (yyval.di) = new decid((yyvsp[-2].dis)->getPos(), (yyvsp[-2].dis), (yyvsp[0].vi)); }
-#line 2229 "camp.tab.c" /* yacc.c:1646  */
+#line 2231 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
 #line 324 "camp.y" /* yacc.c:1646  */
     { (yyval.dis) = new decidstart((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 2235 "camp.tab.c" /* yacc.c:1646  */
+#line 2237 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
 #line 325 "camp.y" /* yacc.c:1646  */
     { (yyval.dis) = new decidstart((yyvsp[-1].ps).pos, (yyvsp[-1].ps).sym, (yyvsp[0].dim)); }
-#line 2241 "camp.tab.c" /* yacc.c:1646  */
+#line 2243 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
 #line 326 "camp.y" /* yacc.c:1646  */
     { (yyval.dis) = new fundecidstart((yyvsp[-2].ps).pos, (yyvsp[-2].ps).sym, 0,
                                             new formals((yyvsp[-1].pos))); }
-#line 2248 "camp.tab.c" /* yacc.c:1646  */
+#line 2250 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
 #line 329 "camp.y" /* yacc.c:1646  */
     { (yyval.dis) = new fundecidstart((yyvsp[-3].ps).pos, (yyvsp[-3].ps).sym, 0, (yyvsp[-1].fls)); }
-#line 2254 "camp.tab.c" /* yacc.c:1646  */
+#line 2256 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
 #line 333 "camp.y" /* yacc.c:1646  */
     { (yyval.vi) = (yyvsp[0].e); }
-#line 2260 "camp.tab.c" /* yacc.c:1646  */
+#line 2262 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
 #line 334 "camp.y" /* yacc.c:1646  */
     { (yyval.vi) = (yyvsp[0].ai); }
-#line 2266 "camp.tab.c" /* yacc.c:1646  */
+#line 2268 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
 #line 339 "camp.y" /* yacc.c:1646  */
     { (yyval.b) = (yyvsp[-1].b); }
-#line 2272 "camp.tab.c" /* yacc.c:1646  */
+#line 2274 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
 #line 343 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = new arrayinit((yyvsp[-1].pos)); }
-#line 2278 "camp.tab.c" /* yacc.c:1646  */
+#line 2280 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
 #line 345 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = new arrayinit((yyvsp[-3].pos)); (yyval.ai)->addRest((yyvsp[-1].vi)); }
-#line 2284 "camp.tab.c" /* yacc.c:1646  */
+#line 2286 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
 #line 347 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = (yyvsp[-1].ai); }
-#line 2290 "camp.tab.c" /* yacc.c:1646  */
+#line 2292 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
 #line 349 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = (yyvsp[-3].ai); (yyval.ai)->addRest((yyvsp[-1].vi)); }
-#line 2296 "camp.tab.c" /* yacc.c:1646  */
+#line 2298 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
 #line 353 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = new arrayinit((yyvsp[0].pos)); }
-#line 2302 "camp.tab.c" /* yacc.c:1646  */
+#line 2304 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
 #line 354 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = (yyvsp[0].ai); }
-#line 2308 "camp.tab.c" /* yacc.c:1646  */
+#line 2310 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
 #line 355 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = (yyvsp[-1].ai); }
-#line 2314 "camp.tab.c" /* yacc.c:1646  */
+#line 2316 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
 #line 359 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = new arrayinit((yyvsp[0].vi)->getPos());
 		     (yyval.ai)->add((yyvsp[0].vi));}
-#line 2321 "camp.tab.c" /* yacc.c:1646  */
+#line 2323 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
 #line 362 "camp.y" /* yacc.c:1646  */
     { (yyval.ai) = (yyvsp[-2].ai); (yyval.ai)->add((yyvsp[0].vi)); }
-#line 2327 "camp.tab.c" /* yacc.c:1646  */
+#line 2329 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
 #line 366 "camp.y" /* yacc.c:1646  */
     { (yyval.fls) = new formals((yyvsp[0].fl)->getPos()); (yyval.fls)->add((yyvsp[0].fl)); }
-#line 2333 "camp.tab.c" /* yacc.c:1646  */
+#line 2335 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
 #line 367 "camp.y" /* yacc.c:1646  */
     { (yyval.fls) = new formals((yyvsp[-1].pos)); (yyval.fls)->addRest((yyvsp[0].fl)); }
-#line 2339 "camp.tab.c" /* yacc.c:1646  */
+#line 2341 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
 #line 369 "camp.y" /* yacc.c:1646  */
     { (yyval.fls) = (yyvsp[-2].fls); (yyval.fls)->add((yyvsp[0].fl)); }
-#line 2345 "camp.tab.c" /* yacc.c:1646  */
+#line 2347 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
 #line 371 "camp.y" /* yacc.c:1646  */
     { (yyval.fls) = (yyvsp[-2].fls); (yyval.fls)->addRest((yyvsp[0].fl)); }
-#line 2351 "camp.tab.c" /* yacc.c:1646  */
+#line 2353 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
 #line 375 "camp.y" /* yacc.c:1646  */
     { (yyval.boo) = true; }
-#line 2357 "camp.tab.c" /* yacc.c:1646  */
+#line 2359 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
 #line 376 "camp.y" /* yacc.c:1646  */
     { (yyval.boo) = false; }
-#line 2363 "camp.tab.c" /* yacc.c:1646  */
+#line 2365 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
 #line 381 "camp.y" /* yacc.c:1646  */
     { (yyval.fl) = new formal((yyvsp[0].t)->getPos(), (yyvsp[0].t), 0, 0, (yyvsp[-1].boo), 0); }
-#line 2369 "camp.tab.c" /* yacc.c:1646  */
+#line 2371 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
 #line 383 "camp.y" /* yacc.c:1646  */
     { (yyval.fl) = new formal((yyvsp[-1].t)->getPos(), (yyvsp[-1].t), (yyvsp[0].dis), 0, (yyvsp[-2].boo), 0); }
-#line 2375 "camp.tab.c" /* yacc.c:1646  */
+#line 2377 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
 #line 385 "camp.y" /* yacc.c:1646  */
     { (yyval.fl) = new formal((yyvsp[-3].t)->getPos(), (yyvsp[-3].t), (yyvsp[-2].dis), (yyvsp[0].vi), (yyvsp[-4].boo), 0); }
-#line 2381 "camp.tab.c" /* yacc.c:1646  */
+#line 2383 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
 #line 388 "camp.y" /* yacc.c:1646  */
     { bool k = checkKeyword((yyvsp[-1].ps).pos, (yyvsp[-1].ps).sym);
                      (yyval.fl) = new formal((yyvsp[-2].t)->getPos(), (yyvsp[-2].t), (yyvsp[0].dis), 0, (yyvsp[-3].boo), k); }
-#line 2388 "camp.tab.c" /* yacc.c:1646  */
+#line 2390 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
 #line 391 "camp.y" /* yacc.c:1646  */
     { bool k = checkKeyword((yyvsp[-3].ps).pos, (yyvsp[-3].ps).sym);
                      (yyval.fl) = new formal((yyvsp[-4].t)->getPos(), (yyvsp[-4].t), (yyvsp[-2].dis), (yyvsp[0].vi), (yyvsp[-5].boo), k); }
-#line 2395 "camp.tab.c" /* yacc.c:1646  */
+#line 2397 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
 #line 397 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new fundec((yyvsp[-2].pos), (yyvsp[-4].t), (yyvsp[-3].ps).sym, new formals((yyvsp[-2].pos)), (yyvsp[0].s)); }
-#line 2401 "camp.tab.c" /* yacc.c:1646  */
+#line 2403 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
 #line 399 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new fundec((yyvsp[-3].pos), (yyvsp[-5].t), (yyvsp[-4].ps).sym, (yyvsp[-2].fls), (yyvsp[0].s)); }
-#line 2407 "camp.tab.c" /* yacc.c:1646  */
+#line 2409 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
 #line 403 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new recorddec((yyvsp[-2].pos), (yyvsp[-1].ps).sym, (yyvsp[0].b)); }
-#line 2413 "camp.tab.c" /* yacc.c:1646  */
+#line 2415 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
 #line 404 "camp.y" /* yacc.c:1646  */
     { (yyval.d) = new typedec((yyvsp[-1].pos), (yyvsp[0].vd)); }
-#line 2419 "camp.tab.c" /* yacc.c:1646  */
+#line 2421 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 84:
 #line 408 "camp.y" /* yacc.c:1646  */
     { (yyval.slice) = new slice((yyvsp[0].pos), 0, 0); }
-#line 2425 "camp.tab.c" /* yacc.c:1646  */
+#line 2427 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 85:
 #line 409 "camp.y" /* yacc.c:1646  */
     { (yyval.slice) = new slice((yyvsp[0].pos), (yyvsp[-1].e), 0); }
-#line 2431 "camp.tab.c" /* yacc.c:1646  */
+#line 2433 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 86:
 #line 410 "camp.y" /* yacc.c:1646  */
     { (yyval.slice) = new slice((yyvsp[-1].pos), 0, (yyvsp[0].e)); }
-#line 2437 "camp.tab.c" /* yacc.c:1646  */
+#line 2439 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 87:
 #line 411 "camp.y" /* yacc.c:1646  */
     { (yyval.slice) = new slice((yyvsp[-1].pos), (yyvsp[-2].e), (yyvsp[0].e)); }
-#line 2443 "camp.tab.c" /* yacc.c:1646  */
+#line 2445 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 88:
 #line 415 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new fieldExp((yyvsp[-1].pos), (yyvsp[-2].e), (yyvsp[0].ps).sym); }
-#line 2449 "camp.tab.c" /* yacc.c:1646  */
+#line 2451 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 89:
 #line 416 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new subscriptExp((yyvsp[-2].pos),
                               new nameExp((yyvsp[-3].n)->getPos(), (yyvsp[-3].n)), (yyvsp[-1].e)); }
-#line 2456 "camp.tab.c" /* yacc.c:1646  */
+#line 2458 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 90:
 #line 418 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new subscriptExp((yyvsp[-2].pos), (yyvsp[-3].e), (yyvsp[-1].e)); }
-#line 2462 "camp.tab.c" /* yacc.c:1646  */
+#line 2464 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 91:
 #line 419 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new sliceExp((yyvsp[-2].pos),
                               new nameExp((yyvsp[-3].n)->getPos(), (yyvsp[-3].n)), (yyvsp[-1].slice)); }
-#line 2469 "camp.tab.c" /* yacc.c:1646  */
+#line 2471 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 92:
 #line 421 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new sliceExp((yyvsp[-2].pos), (yyvsp[-3].e), (yyvsp[-1].slice)); }
-#line 2475 "camp.tab.c" /* yacc.c:1646  */
+#line 2477 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 93:
@@ -2479,7 +2481,7 @@ yyreduce:
     { (yyval.e) = new callExp((yyvsp[-1].pos),
                                       new nameExp((yyvsp[-2].n)->getPos(), (yyvsp[-2].n)),
                                       new arglist()); }
-#line 2483 "camp.tab.c" /* yacc.c:1646  */
+#line 2485 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 94:
@@ -2487,295 +2489,295 @@ yyreduce:
     { (yyval.e) = new callExp((yyvsp[-2].pos), 
                                       new nameExp((yyvsp[-3].n)->getPos(), (yyvsp[-3].n)),
                                       (yyvsp[-1].alist)); }
-#line 2491 "camp.tab.c" /* yacc.c:1646  */
+#line 2493 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 95:
 #line 429 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new callExp((yyvsp[-1].pos), (yyvsp[-2].e), new arglist()); }
-#line 2497 "camp.tab.c" /* yacc.c:1646  */
+#line 2499 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 96:
 #line 431 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new callExp((yyvsp[-2].pos), (yyvsp[-3].e), (yyvsp[-1].alist)); }
-#line 2503 "camp.tab.c" /* yacc.c:1646  */
+#line 2505 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 97:
 #line 433 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = (yyvsp[-1].e); }
-#line 2509 "camp.tab.c" /* yacc.c:1646  */
+#line 2511 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 98:
 #line 435 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new nameExp((yyvsp[-1].n)->getPos(), (yyvsp[-1].n)); }
-#line 2515 "camp.tab.c" /* yacc.c:1646  */
+#line 2517 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 99:
 #line 436 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new thisExp((yyvsp[0].pos)); }
-#line 2521 "camp.tab.c" /* yacc.c:1646  */
+#line 2523 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 100:
 #line 440 "camp.y" /* yacc.c:1646  */
     { (yyval.arg).name = symbol::nullsym; (yyval.arg).val=(yyvsp[0].e); }
-#line 2527 "camp.tab.c" /* yacc.c:1646  */
+#line 2529 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 101:
 #line 441 "camp.y" /* yacc.c:1646  */
     { (yyval.arg).name = (yyvsp[-2].ps).sym; (yyval.arg).val=(yyvsp[0].e); }
-#line 2533 "camp.tab.c" /* yacc.c:1646  */
+#line 2535 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 102:
 #line 445 "camp.y" /* yacc.c:1646  */
     { (yyval.alist) = new arglist(); (yyval.alist)->add((yyvsp[0].arg)); }
-#line 2539 "camp.tab.c" /* yacc.c:1646  */
+#line 2541 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 103:
 #line 447 "camp.y" /* yacc.c:1646  */
     { (yyval.alist) = new arglist(); (yyval.alist)->addRest((yyvsp[0].arg)); }
-#line 2545 "camp.tab.c" /* yacc.c:1646  */
+#line 2547 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 104:
 #line 449 "camp.y" /* yacc.c:1646  */
     { (yyval.alist) = (yyvsp[-2].alist); (yyval.alist)->add((yyvsp[0].arg)); }
-#line 2551 "camp.tab.c" /* yacc.c:1646  */
+#line 2553 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 105:
 #line 451 "camp.y" /* yacc.c:1646  */
     { (yyval.alist) = (yyvsp[-2].alist); (yyval.alist)->addRest((yyvsp[0].arg)); }
-#line 2557 "camp.tab.c" /* yacc.c:1646  */
+#line 2559 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 106:
 #line 456 "camp.y" /* yacc.c:1646  */
     { (yyval.alist) = new arglist(); (yyval.alist)->add((yyvsp[-2].e)); (yyval.alist)->add((yyvsp[0].e)); }
-#line 2563 "camp.tab.c" /* yacc.c:1646  */
+#line 2565 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 107:
 #line 457 "camp.y" /* yacc.c:1646  */
     { (yyval.alist) = (yyvsp[-2].alist); (yyval.alist)->add((yyvsp[0].e)); }
-#line 2569 "camp.tab.c" /* yacc.c:1646  */
+#line 2571 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 108:
 #line 461 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new nameExp((yyvsp[0].n)->getPos(), (yyvsp[0].n)); }
-#line 2575 "camp.tab.c" /* yacc.c:1646  */
+#line 2577 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 109:
 #line 462 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = (yyvsp[0].e); }
-#line 2581 "camp.tab.c" /* yacc.c:1646  */
+#line 2583 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 110:
 #line 463 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = (yyvsp[0].e); }
-#line 2587 "camp.tab.c" /* yacc.c:1646  */
+#line 2589 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 111:
 #line 464 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = (yyvsp[0].stre); }
-#line 2593 "camp.tab.c" /* yacc.c:1646  */
+#line 2595 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 112:
 #line 466 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new scaleExp((yyvsp[-1].e)->getPos(), (yyvsp[-1].e), (yyvsp[0].e)); }
-#line 2599 "camp.tab.c" /* yacc.c:1646  */
+#line 2601 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 113:
 #line 468 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new castExp((yyvsp[-2].n)->getPos(), new nameTy((yyvsp[-2].n)), (yyvsp[0].e)); }
-#line 2605 "camp.tab.c" /* yacc.c:1646  */
+#line 2607 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 114:
 #line 470 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new castExp((yyvsp[-3].n)->getPos(), new arrayTy((yyvsp[-3].n), (yyvsp[-2].dim)), (yyvsp[0].e)); }
-#line 2611 "camp.tab.c" /* yacc.c:1646  */
+#line 2613 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 115:
 #line 472 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new unaryExp((yyvsp[-1].ps).pos, (yyvsp[0].e), (yyvsp[-1].ps).sym); }
-#line 2617 "camp.tab.c" /* yacc.c:1646  */
+#line 2619 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 116:
 #line 474 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new unaryExp((yyvsp[-1].ps).pos, (yyvsp[0].e), (yyvsp[-1].ps).sym); }
-#line 2623 "camp.tab.c" /* yacc.c:1646  */
+#line 2625 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 117:
 #line 475 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new unaryExp((yyvsp[-1].ps).pos, (yyvsp[0].e), (yyvsp[-1].ps).sym); }
-#line 2629 "camp.tab.c" /* yacc.c:1646  */
+#line 2631 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 118:
 #line 476 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2635 "camp.tab.c" /* yacc.c:1646  */
+#line 2637 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 119:
 #line 477 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2641 "camp.tab.c" /* yacc.c:1646  */
+#line 2643 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 120:
 #line 478 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2647 "camp.tab.c" /* yacc.c:1646  */
+#line 2649 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 121:
 #line 479 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2653 "camp.tab.c" /* yacc.c:1646  */
+#line 2655 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 122:
 #line 480 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2659 "camp.tab.c" /* yacc.c:1646  */
+#line 2661 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 123:
 #line 481 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2665 "camp.tab.c" /* yacc.c:1646  */
+#line 2667 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 124:
 #line 482 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2671 "camp.tab.c" /* yacc.c:1646  */
+#line 2673 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 125:
 #line 483 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2677 "camp.tab.c" /* yacc.c:1646  */
+#line 2679 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 126:
 #line 484 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2683 "camp.tab.c" /* yacc.c:1646  */
+#line 2685 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 127:
 #line 485 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2689 "camp.tab.c" /* yacc.c:1646  */
+#line 2691 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 128:
 #line 486 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new equalityExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2695 "camp.tab.c" /* yacc.c:1646  */
+#line 2697 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 129:
 #line 487 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new equalityExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2701 "camp.tab.c" /* yacc.c:1646  */
+#line 2703 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 130:
 #line 488 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new andExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2707 "camp.tab.c" /* yacc.c:1646  */
+#line 2709 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 131:
 #line 489 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new orExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2713 "camp.tab.c" /* yacc.c:1646  */
+#line 2715 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 132:
 #line 490 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2719 "camp.tab.c" /* yacc.c:1646  */
+#line 2721 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 133:
 #line 491 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2725 "camp.tab.c" /* yacc.c:1646  */
+#line 2727 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 134:
 #line 492 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2731 "camp.tab.c" /* yacc.c:1646  */
+#line 2733 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 135:
 #line 493 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2737 "camp.tab.c" /* yacc.c:1646  */
+#line 2739 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 136:
 #line 494 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2743 "camp.tab.c" /* yacc.c:1646  */
+#line 2745 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 137:
 #line 496 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newRecordExp((yyvsp[-1].pos), (yyvsp[0].t)); }
-#line 2749 "camp.tab.c" /* yacc.c:1646  */
+#line 2751 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 138:
 #line 498 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newArrayExp((yyvsp[-2].pos), (yyvsp[-1].t), (yyvsp[0].elist), 0, 0); }
-#line 2755 "camp.tab.c" /* yacc.c:1646  */
+#line 2757 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 139:
 #line 500 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newArrayExp((yyvsp[-3].pos), (yyvsp[-2].t), (yyvsp[-1].elist), (yyvsp[0].dim), 0); }
-#line 2761 "camp.tab.c" /* yacc.c:1646  */
+#line 2763 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 140:
 #line 502 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newArrayExp((yyvsp[-2].pos), (yyvsp[-1].t), 0, (yyvsp[0].dim), 0); }
-#line 2767 "camp.tab.c" /* yacc.c:1646  */
+#line 2769 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 141:
 #line 504 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newArrayExp((yyvsp[-3].pos), (yyvsp[-2].t), 0, (yyvsp[-1].dim), (yyvsp[0].ai)); }
-#line 2773 "camp.tab.c" /* yacc.c:1646  */
+#line 2775 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 142:
 #line 506 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newFunctionExp((yyvsp[-4].pos), (yyvsp[-3].t), new formals((yyvsp[-2].pos)), (yyvsp[0].s)); }
-#line 2779 "camp.tab.c" /* yacc.c:1646  */
+#line 2781 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 143:
@@ -2784,13 +2786,13 @@ yyreduce:
                                              new arrayTy((yyvsp[-4].t)->getPos(), (yyvsp[-4].t), (yyvsp[-3].dim)),
                                              new formals((yyvsp[-2].pos)),
                                              (yyvsp[0].s)); }
-#line 2788 "camp.tab.c" /* yacc.c:1646  */
+#line 2790 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 144:
 #line 513 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new newFunctionExp((yyvsp[-5].pos), (yyvsp[-4].t), (yyvsp[-2].fls), (yyvsp[0].s)); }
-#line 2794 "camp.tab.c" /* yacc.c:1646  */
+#line 2796 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 145:
@@ -2799,31 +2801,31 @@ yyreduce:
                                              new arrayTy((yyvsp[-5].t)->getPos(), (yyvsp[-5].t), (yyvsp[-4].dim)),
                                              (yyvsp[-2].fls),
                                              (yyvsp[0].s)); }
-#line 2803 "camp.tab.c" /* yacc.c:1646  */
+#line 2805 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 146:
 #line 520 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new conditionalExp((yyvsp[-3].pos), (yyvsp[-4].e), (yyvsp[-2].e), (yyvsp[0].e)); }
-#line 2809 "camp.tab.c" /* yacc.c:1646  */
+#line 2811 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 147:
 #line 521 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new assignExp((yyvsp[-1].pos), (yyvsp[-2].e), (yyvsp[0].e)); }
-#line 2815 "camp.tab.c" /* yacc.c:1646  */
+#line 2817 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 148:
 #line 522 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new callExp((yyvsp[-2].pos), new nameExp((yyvsp[-2].pos), SYM_TUPLE), (yyvsp[-1].alist)); }
-#line 2821 "camp.tab.c" /* yacc.c:1646  */
+#line 2823 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 149:
 #line 524 "camp.y" /* yacc.c:1646  */
     { (yyvsp[-1].j)->pushFront((yyvsp[-2].e)); (yyvsp[-1].j)->pushBack((yyvsp[0].e)); (yyval.e) = (yyvsp[-1].j); }
-#line 2827 "camp.tab.c" /* yacc.c:1646  */
+#line 2829 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 150:
@@ -2833,314 +2835,314 @@ yyreduce:
                          new joinExp((yyvsp[0].se)->getPos(), SYM_DOTS);
                      (yyval.e)=jexp;
                      jexp->pushBack((yyvsp[-1].e)); jexp->pushBack((yyvsp[0].se)); }
-#line 2837 "camp.tab.c" /* yacc.c:1646  */
+#line 2839 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 151:
 #line 532 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new prefixExp((yyvsp[-1].ps).pos, (yyvsp[0].e), SYM_PLUS); }
-#line 2843 "camp.tab.c" /* yacc.c:1646  */
+#line 2845 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 152:
 #line 534 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new prefixExp((yyvsp[-1].ps).pos, (yyvsp[0].e), SYM_MINUS); }
-#line 2849 "camp.tab.c" /* yacc.c:1646  */
+#line 2851 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 153:
 #line 537 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new postfixExp((yyvsp[0].ps).pos, (yyvsp[-1].e), SYM_PLUS); }
-#line 2855 "camp.tab.c" /* yacc.c:1646  */
+#line 2857 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 154:
 #line 538 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new selfExp((yyvsp[-1].ps).pos, (yyvsp[-2].e), (yyvsp[-1].ps).sym, (yyvsp[0].e)); }
-#line 2861 "camp.tab.c" /* yacc.c:1646  */
+#line 2863 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 155:
 #line 540 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new quoteExp((yyvsp[-3].pos), (yyvsp[-1].b)); }
-#line 2867 "camp.tab.c" /* yacc.c:1646  */
+#line 2869 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 156:
 #line 546 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = new joinExp((yyvsp[0].ps).pos,(yyvsp[0].ps).sym); }
-#line 2873 "camp.tab.c" /* yacc.c:1646  */
+#line 2875 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 157:
 #line 548 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = (yyvsp[0].j); }
-#line 2879 "camp.tab.c" /* yacc.c:1646  */
+#line 2881 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 158:
 #line 550 "camp.y" /* yacc.c:1646  */
     { (yyvsp[-1].se)->setSide(camp::OUT);
                      (yyval.j) = (yyvsp[0].j); (yyval.j)->pushFront((yyvsp[-1].se)); }
-#line 2886 "camp.tab.c" /* yacc.c:1646  */
+#line 2888 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 159:
 #line 553 "camp.y" /* yacc.c:1646  */
     { (yyvsp[0].se)->setSide(camp::IN);
                      (yyval.j) = (yyvsp[-1].j); (yyval.j)->pushBack((yyvsp[0].se)); }
-#line 2893 "camp.tab.c" /* yacc.c:1646  */
+#line 2895 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 160:
 #line 556 "camp.y" /* yacc.c:1646  */
     { (yyvsp[-2].se)->setSide(camp::OUT); (yyvsp[0].se)->setSide(camp::IN);
                      (yyval.j) = (yyvsp[-1].j); (yyval.j)->pushFront((yyvsp[-2].se)); (yyval.j)->pushBack((yyvsp[0].se)); }
-#line 2900 "camp.tab.c" /* yacc.c:1646  */
+#line 2902 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 161:
 #line 561 "camp.y" /* yacc.c:1646  */
     { (yyval.se) = new specExp((yyvsp[-2].ps).pos, (yyvsp[-2].ps).sym, (yyvsp[-1].e)); }
-#line 2906 "camp.tab.c" /* yacc.c:1646  */
+#line 2908 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 162:
 #line 562 "camp.y" /* yacc.c:1646  */
     { (yyval.se) = new specExp((yyvsp[-2].pos), symbol::opTrans("spec"), (yyvsp[-1].e)); }
-#line 2912 "camp.tab.c" /* yacc.c:1646  */
+#line 2914 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 163:
 #line 564 "camp.y" /* yacc.c:1646  */
     { (yyval.se) = new specExp((yyvsp[-4].pos), symbol::opTrans("spec"),
 				      new pairExp((yyvsp[-2].pos), (yyvsp[-3].e), (yyvsp[-1].e))); }
-#line 2919 "camp.tab.c" /* yacc.c:1646  */
+#line 2921 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 164:
 #line 567 "camp.y" /* yacc.c:1646  */
     { (yyval.se) = new specExp((yyvsp[-6].pos), symbol::opTrans("spec"),
 				      new tripleExp((yyvsp[-4].pos), (yyvsp[-5].e), (yyvsp[-3].e), (yyvsp[-1].e))); }
-#line 2926 "camp.tab.c" /* yacc.c:1646  */
+#line 2928 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 165:
 #line 572 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = new joinExp((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 2932 "camp.tab.c" /* yacc.c:1646  */
+#line 2934 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 166:
 #line 574 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = new joinExp((yyvsp[-2].ps).pos, (yyvsp[-2].ps).sym); (yyval.j)->pushBack((yyvsp[-1].e)); }
-#line 2938 "camp.tab.c" /* yacc.c:1646  */
+#line 2940 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 167:
 #line 576 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = new joinExp((yyvsp[-2].ps).pos, (yyvsp[-2].ps).sym); (yyval.j)->pushBack((yyvsp[-1].e)); }
-#line 2944 "camp.tab.c" /* yacc.c:1646  */
+#line 2946 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 168:
 #line 577 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = new joinExp((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 2950 "camp.tab.c" /* yacc.c:1646  */
+#line 2952 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 169:
 #line 578 "camp.y" /* yacc.c:1646  */
     { (yyval.j) = new joinExp((yyvsp[0].ps).pos, (yyvsp[0].ps).sym); }
-#line 2956 "camp.tab.c" /* yacc.c:1646  */
+#line 2958 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 170:
 #line 582 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-1].ps).pos, (yyvsp[0].e), (yyvsp[-1].ps).sym,
                               new booleanExp((yyvsp[-1].ps).pos, false)); }
-#line 2963 "camp.tab.c" /* yacc.c:1646  */
+#line 2965 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 171:
 #line 585 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new ternaryExp((yyvsp[-3].ps).pos, (yyvsp[-2].e), (yyvsp[-3].ps).sym, (yyvsp[0].e),
                               new booleanExp((yyvsp[-3].ps).pos, false)); }
-#line 2970 "camp.tab.c" /* yacc.c:1646  */
+#line 2972 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 172:
 #line 588 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-2].ps).pos, (yyvsp[0].e), (yyvsp[-2].ps).sym,
                               new booleanExp((yyvsp[-1].ps).pos, true)); }
-#line 2977 "camp.tab.c" /* yacc.c:1646  */
+#line 2979 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 173:
 #line 591 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new ternaryExp((yyvsp[-4].ps).pos, (yyvsp[-2].e), (yyvsp[-4].ps).sym, (yyvsp[0].e),
                               new booleanExp((yyvsp[-3].ps).pos, true)); }
-#line 2984 "camp.tab.c" /* yacc.c:1646  */
+#line 2986 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 174:
 #line 596 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new unaryExp((yyvsp[-1].ps).pos, (yyvsp[0].e), (yyvsp[-1].ps).sym); }
-#line 2990 "camp.tab.c" /* yacc.c:1646  */
+#line 2992 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 175:
 #line 598 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = new binaryExp((yyvsp[-3].ps).pos, (yyvsp[-2].e), (yyvsp[-3].ps).sym, (yyvsp[0].e)); }
-#line 2996 "camp.tab.c" /* yacc.c:1646  */
+#line 2998 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 176:
 #line 602 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new emptyStm((yyvsp[0].pos)); }
-#line 3002 "camp.tab.c" /* yacc.c:1646  */
+#line 3004 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 177:
 #line 603 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = (yyvsp[0].s); }
-#line 3008 "camp.tab.c" /* yacc.c:1646  */
+#line 3010 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 178:
 #line 604 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = (yyvsp[-1].s); }
-#line 3014 "camp.tab.c" /* yacc.c:1646  */
+#line 3016 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 179:
 #line 606 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new ifStm((yyvsp[-4].pos), (yyvsp[-2].e), (yyvsp[0].s)); }
-#line 3020 "camp.tab.c" /* yacc.c:1646  */
+#line 3022 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 180:
 #line 608 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new ifStm((yyvsp[-6].pos), (yyvsp[-4].e), (yyvsp[-2].s), (yyvsp[0].s)); }
-#line 3026 "camp.tab.c" /* yacc.c:1646  */
+#line 3028 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 181:
 #line 610 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new whileStm((yyvsp[-4].pos), (yyvsp[-2].e), (yyvsp[0].s)); }
-#line 3032 "camp.tab.c" /* yacc.c:1646  */
+#line 3034 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 182:
 #line 612 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new doStm((yyvsp[-6].pos), (yyvsp[-5].s), (yyvsp[-2].e)); }
-#line 3038 "camp.tab.c" /* yacc.c:1646  */
+#line 3040 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 183:
 #line 614 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new forStm((yyvsp[-8].pos), (yyvsp[-6].run), (yyvsp[-4].e), (yyvsp[-2].sel), (yyvsp[0].s)); }
-#line 3044 "camp.tab.c" /* yacc.c:1646  */
+#line 3046 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 184:
 #line 616 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new extendedForStm((yyvsp[-7].pos), (yyvsp[-5].t), (yyvsp[-4].ps).sym, (yyvsp[-2].e), (yyvsp[0].s)); }
-#line 3050 "camp.tab.c" /* yacc.c:1646  */
+#line 3052 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 185:
 #line 617 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new breakStm((yyvsp[-1].pos)); }
-#line 3056 "camp.tab.c" /* yacc.c:1646  */
+#line 3058 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 186:
 #line 618 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new continueStm((yyvsp[-1].pos)); }
-#line 3062 "camp.tab.c" /* yacc.c:1646  */
+#line 3064 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 187:
 #line 619 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new returnStm((yyvsp[-1].pos)); }
-#line 3068 "camp.tab.c" /* yacc.c:1646  */
+#line 3070 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 188:
 #line 620 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new returnStm((yyvsp[-2].pos), (yyvsp[-1].e)); }
-#line 3074 "camp.tab.c" /* yacc.c:1646  */
+#line 3076 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 189:
 #line 624 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new expStm((yyvsp[0].e)->getPos(), (yyvsp[0].e)); }
-#line 3080 "camp.tab.c" /* yacc.c:1646  */
+#line 3082 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 190:
 #line 628 "camp.y" /* yacc.c:1646  */
     { (yyval.s) = new blockStm((yyvsp[0].b)->getPos(), (yyvsp[0].b)); }
-#line 3086 "camp.tab.c" /* yacc.c:1646  */
+#line 3088 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 191:
 #line 632 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = 0; }
-#line 3092 "camp.tab.c" /* yacc.c:1646  */
+#line 3094 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 192:
 #line 633 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = (yyvsp[0].sel); }
-#line 3098 "camp.tab.c" /* yacc.c:1646  */
+#line 3100 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 193:
 #line 634 "camp.y" /* yacc.c:1646  */
     { (yyval.run) = (yyvsp[0].vd); }
-#line 3104 "camp.tab.c" /* yacc.c:1646  */
+#line 3106 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 194:
 #line 638 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = 0; }
-#line 3110 "camp.tab.c" /* yacc.c:1646  */
+#line 3112 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 195:
 #line 639 "camp.y" /* yacc.c:1646  */
     { (yyval.e) = (yyvsp[0].e); }
-#line 3116 "camp.tab.c" /* yacc.c:1646  */
+#line 3118 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 196:
 #line 643 "camp.y" /* yacc.c:1646  */
     { (yyval.sel) = 0; }
-#line 3122 "camp.tab.c" /* yacc.c:1646  */
+#line 3124 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 197:
 #line 644 "camp.y" /* yacc.c:1646  */
     { (yyval.sel) = (yyvsp[0].sel); }
-#line 3128 "camp.tab.c" /* yacc.c:1646  */
+#line 3130 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 198:
 #line 648 "camp.y" /* yacc.c:1646  */
     { (yyval.sel) = new stmExpList((yyvsp[0].s)->getPos()); (yyval.sel)->add((yyvsp[0].s)); }
-#line 3134 "camp.tab.c" /* yacc.c:1646  */
+#line 3136 "camp.tab.c" /* yacc.c:1646  */
     break;
 
   case 199:
 #line 650 "camp.y" /* yacc.c:1646  */
     { (yyval.sel) = (yyvsp[-2].sel); (yyval.sel)->add((yyvsp[0].s)); }
-#line 3140 "camp.tab.c" /* yacc.c:1646  */
+#line 3142 "camp.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 3144 "camp.tab.c" /* yacc.c:1646  */
+#line 3146 "camp.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

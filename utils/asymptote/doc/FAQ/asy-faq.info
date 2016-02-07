@@ -10,7 +10,7 @@ END-INFO-DIR-ENTRY
 File: asy-faq.info, Node: Top, Next: Question 1.1, Up: (dir)
 
             ASYMPTOTE FREQUENTLY ASKED QUESTIONS
-                            19 May 2015
+                            03 Feb 2016
                           
 This is the list of Frequently Asked Questions about Asymptote (asy).
 
@@ -863,8 +863,8 @@ endlabel=false;
 
 (ii) explicitly remove specific ticks and their labels (drawing them
 manually; see
-http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/base/graph.asy
-for the definition of NoZero):
+http://www.github.com/vectorgraphics/asymptote/base/graph.asy for the
+definition of NoZero):
 
 import graph;
 
@@ -879,8 +879,8 @@ yaxis(Ticks(NoZero));
 
 label("$0$",(0,0),SW);
 (iii) explicitly remove specific tick labels and draw them manually (see
-http://asymptote.svn.sourceforge.net/viewvc/asymptote/trunk/asymptote/base/graph.asy
-for the definition of NoZeroFormat):
+http://www.github.com/vectorgraphics/asymptote/base/graph.asy for the
+definition of NoZeroFormat):
 
 import graph;
 

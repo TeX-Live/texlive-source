@@ -77,7 +77,7 @@ void copyArray4x4C(double*& dest, const vm::array *a)
 void copyTransform3(double*& d, const double* s, GCPlacement placement)
 
 {
-  if(!isIdTransform3(s) || d != NULL) {
+  if(s != NULL) {
     if(d == NULL)
       d=placement == NoGC ? new double[16] : new(placement) double[16];
     memcpy(d,s,sizeof(double)*16);
@@ -88,9 +88,9 @@ void copyTransform3(double*& d, const double* s, GCPlacement placement)
 void multiplyTransform3(double*& t, const double* s, const double* r)
 {
   if(isIdTransform3(s)) {
-    copyTransform3(t, r);
+    copyTransform3(t,r);
   } else if(isIdTransform3(r)) {
-    copyTransform3(t, s);
+    copyTransform3(t,s);
   } else {
     t=new(UseGC) double[16];
     for(size_t i=0; i < 4; i++) {
@@ -109,132 +109,28 @@ void multiplyTransform3(double*& t, const double* s, const double* r)
   }
 }
   
-void transformTriples(const double* t, size_t n, Triple* d, const Triple* s)
-{
-  if(n == 0 || s == NULL || d == NULL)
-    return;
-    
-  for(size_t i=0; i < n; i++) {
-    const double *si=s[i];
-    triple v=t*triple(si[0],si[1],si[2]);
-    double *di=d[i];
-    di[0]=v.getx();
-    di[1]=v.gety();
-    di[2]=v.getz();
-  }
-}
-  
-void transformNormalsTriples(const double* t, size_t n, Triple* d,
-                             const Triple* s)
-{
-  if(n == 0 || s == NULL || d == NULL)
-    return;
-    
-  for(size_t i=0; i < n; i++) {
-    const double *si=s[i];
-    triple v=transformNormal(t,triple(si[0],si[1],si[2]));
-    double *di=d[i];
-    di[0]=v.getx();
-    di[1]=v.gety();
-    di[2]=v.getz();
-  }
-}
-
-void unitTriples(size_t n, Triple* d)
-{
-  for (size_t i=0; i < n; i++) {
-    double& x = d[i][0];
-    double& y = d[i][1];
-    double& z = d[i][2];
-    const double scale=sqrt(x*x+y*y+z*z);
-    if(scale != 0.0) {
-      x /= scale;
-      y /= scale;
-      z /= scale;
-    }
-  }
-}
-
-void copyTriples(size_t n, Triple* d, const Triple* s)
-{
-  if(n == 0 || s == NULL || d == NULL)
-    return;
-    
-  memcpy(d, s, sizeof(double)*3*n);
-}
-  
-void boundsTriples(double& x, double& y, double& z, double& X, double& Y,
-                   double& Z, size_t n, const Triple* v)
+void boundstriples(double& x, double& y, double& z, double& X, double& Y,
+                   double& Z, size_t n, const triple* v)
 {
   if(n == 0 || v == NULL)
     return;
 
-  X=x=v[0][0];
-  Y=y=v[0][1];
-  Z=z=v[0][2];
+  X=x=v[0].getx();
+  Y=y=v[0].gety();
+  Z=z=v[0].getz();
     
   for(size_t i=1; i < n; ++i) {
-    const double* const vi=v[i];
-    const double vx=vi[0];
+    const triple vi=v[i];
+    const double vx=vi.getx();
     x=min(x,vx);
     X=max(X,vx);
-    const double vy=vi[1];
+    const double vy=vi.gety();
     y=min(y,vy);
     Y=max(Y,vy);
-    const double vz=vi[2];
+    const double vz=vi.getz();
     z=min(z,vz);
     Z=max(Z,vz);
   }
-    
-}
-  
-inline double xratioTriple(const Triple v)
-{
-  return v[0]/v[2];
-}
-  
-inline double yratioTriple(const Triple v)
-{
-  return v[1]/v[2];
-}
-  
-void ratioTriples(pair &b, double (*m)(double, double), bool &first, size_t n,
-                  const Triple* v)
-{
-  if(n == 0 || v == NULL)
-    return;
-
-  if(first) {
-    first=false;
-    const double* const v0=v[0];
-    b=pair(xratioTriple(v0),yratioTriple(v0));
-  }
-    
-  double x=b.getx();
-  double y=b.gety();
-  for(size_t i=0; i < n; ++i) {
-    const double* const vi=v[i];
-    x=m(x,xratioTriple(vi));
-    y=m(y,yratioTriple(vi));
-  }
-  b=pair(x,y);
-}
-
-void normalizeTriple(Triple v)
-{
-  const double length = sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
-  if(length > 0) {
-    v[0] /= length;
-    v[1] /= length;
-    v[2] /= length;
-  }
-}
-  
-void crossTriple(Triple n, const Triple u, const Triple v)
-{
-  n[0]=u[1]*v[2]-u[2]*v[1];
-  n[1]=u[2]*v[0]-u[0]*v[2];
-  n[2]=u[0]*v[1]-u[1]*v[0];
 }
 
 double xratio(const triple& v) {return v.getx()/v.getz();}
@@ -953,7 +849,7 @@ bool picture::shipout(picture *preamble, const string& Prefix,
         else bboxshift += pair(0.5*xexcess,0.5*yexcess);
       }
     } else {
-      double scale=max(abs(aligndir.getx()),abs(aligndir.gety()));
+      double scale=max(fabs(aligndir.getx()),fabs(aligndir.gety()));
       if(scale != 0) aligndir *= 0.5/scale;
       bboxshift += 
         pair((aligndir.getx()+0.5)*xexcess,(aligndir.gety()+0.5)*yexcess);

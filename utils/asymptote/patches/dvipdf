@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: dvipdf 5475 2012-08-24 06:27:29Z jcbowman $
+# $Id$
 # Convert DVI to PDF.
 #
 # Please contact Andrew Ford <A.Ford@ford-mason.co.uk> with any questions
