@@ -9308,6 +9308,10 @@ the internal quantity to be scanned; an error will be signalled if
 @d scanned_result_end(#)==cur_val_level:=#;@+end
 @d scanned_result(#)==@+begin cur_val:=#;scanned_result_end
 
+@d char_class_limit = @"1000
+@d char_class_ignored == char_class_limit
+@d char_class_boundary == (char_class_ignored - 1)
+
 @p procedure scan_something_internal(@!level:small_number;@!negative:boolean);
   {fetch an internal parameter}
 label exit;
@@ -9425,9 +9429,9 @@ else if cur_cmd<=assign_toks then
       end
     else cur_val:=sa_ptr(m)
   else if cur_chr=XeTeX_inter_char_loc then begin
-    scan_eight_bit_int; cur_ptr:=cur_val;
-    scan_eight_bit_int;
-    find_sa_element(inter_char_val, cur_ptr * @"100 + cur_val, false);
+    scan_char_class_not_ignored; cur_ptr:=cur_val;
+    scan_char_class_not_ignored;
+    find_sa_element(inter_char_val, cur_ptr*char_class_limit + cur_val, false);
     if cur_ptr=null then cur_val:=null
     else cur_val:=sa_ptr(cur_ptr);
   end else cur_val:=equiv(m);
@@ -9776,10 +9780,6 @@ end
 applications of |scan_int| that have already been made inside of
 |scan_something_internal|.
 
-@d char_class_limit = 16384
-@d char_class_ignored == char_class_limit
-@d char_class_boundary == (char_class_limit - 1)
-
 @ @<Declare procedures that scan restricted classes of integers@>=
 
 procedure scan_glyph_number(f: internal_font_number);
@@ -9802,7 +9802,17 @@ begin scan_int;
 if (cur_val<0)or(cur_val>char_class_limit) then
   begin print_err("Bad character class");
 @.Bad character code@>
-  help2("A character class must be between 0 and 16384.")@/
+  help2("A character class must be between 0 and 4096.")@/
+    ("I changed this one to zero."); int_error(cur_val); cur_val:=0;
+  end;
+end;
+
+procedure scan_char_class_not_ignored;
+begin scan_int;
+if (cur_val<0)or(cur_val>char_class_limit) then
+  begin print_err("Bad character class");
+@.Bad character code@>
+  help2("A class for inter-character transitions must be between 0 and 4095.")@/
     ("I changed this one to zero."); int_error(cur_val); cur_val:=0;
   end;
 end;
@@ -23402,10 +23412,10 @@ are inside the individual sections.
   cur_ptr:=null;
   space_class:=sf_code(cur_chr) div @"10000;
 
-  if XeTeX_inter_char_tokens_en and space_class <> char_class_ignored then begin {class 16384 = ignored (for combining marks etc)}
+  if XeTeX_inter_char_tokens_en and space_class <> char_class_ignored then begin {class 4096 = ignored (for combining marks etc)}
     if prev_class = char_class_boundary then begin {boundary}
       if (state<>token_list) or (token_type<>backed_up_char) then begin
-        find_sa_element(inter_char_val, char_class_boundary*@"100 + space_class, false);
+        find_sa_element(inter_char_val, char_class_boundary*char_class_limit + space_class, false);
         if cur_ptr<>null then begin
           if cur_cmd<>letter then cur_cmd:=other_char;
           cur_tok:=(cur_cmd*max_char_val)+cur_chr;
@@ -23415,7 +23425,7 @@ are inside the individual sections.
         end
       end
     end else begin
-      find_sa_element(inter_char_val, prev_class*@"100 + space_class, false);
+      find_sa_element(inter_char_val, prev_class*char_class_limit + space_class, false);
       if cur_ptr<>null then begin
         if cur_cmd<>letter then cur_cmd:=other_char;
         cur_tok:=(cur_cmd*max_char_val)+cur_chr;
@@ -23431,7 +23441,7 @@ are inside the individual sections.
 @d check_for_post_char_toks(#)==
   if XeTeX_inter_char_tokens_en and (space_class<>char_class_ignored) and (prev_class<>char_class_boundary) then begin
     prev_class:=char_class_boundary;
-    find_sa_element(inter_char_val, space_class*@"100 + char_class_boundary, false); {boundary}
+    find_sa_element(inter_char_val, space_class*char_class_limit + char_class_boundary, false); {boundary}
     if cur_ptr<>null then begin
       if cur_cs=0 then begin
         if cur_cmd=char_num then cur_cmd:=other_char;
@@ -26767,9 +26777,9 @@ toks_register,assign_toks: begin q:=cur_cs;
       end
     else e:=true
   else if cur_chr=XeTeX_inter_char_loc then begin
-    scan_eight_bit_int; cur_ptr:=cur_val;
-    scan_eight_bit_int;
-    find_sa_element(inter_char_val, cur_ptr*@"100 + cur_val, true);
+    scan_char_class_not_ignored; cur_ptr:=cur_val;
+    scan_char_class_not_ignored;
+    find_sa_element(inter_char_val, cur_ptr*char_class_limit + cur_val, true);
     cur_chr:=cur_ptr; e:=true;
   end;
   p:=cur_chr; {|p=every_par_loc| or |output_routine_loc| or \dots}
@@ -26804,9 +26814,9 @@ if (cur_cmd=toks_register)or(cur_cmd=assign_toks) then
       end
     else q:=sa_ptr(cur_chr)
   else if cur_chr=XeTeX_inter_char_loc then begin
-    scan_eight_bit_int; cur_ptr:=cur_val;
-    scan_eight_bit_int;
-    find_sa_element(inter_char_val, cur_ptr*@"100 + cur_val, false);
+    scan_char_class_not_ignored; cur_ptr:=cur_val;
+    scan_char_class_not_ignored;
+    find_sa_element(inter_char_val, cur_ptr*char_class_limit + cur_val, false);
     if cur_ptr=null then q:=null
     else q:=sa_ptr(cur_ptr);
   end else q:=equiv(cur_chr);
@@ -32487,17 +32497,18 @@ max_reg_help_line:="A register number must be between 0 and 32767.";
 @!max_reg_num: halfword; {largest allowed register number}
 @!max_reg_help_line: str_number; {first line of help message}
 
-@ There are seven almost identical doubly linked trees, one for the
-sparse array of the up to 32512 additional registers of each kind and
+@ There are eight almost identical doubly linked trees, one for the
+sparse array of the up to 32512 additional registers of each kind,
+one for inter-character token lists at specified class transitions, and
 one for the sparse array of the up to 32767 additional mark classes.
-The root of each such tree, if it exists, is an index node containing 16
-pointers to subtrees for 4096 consecutive array elements.  Similar index
-nodes are the starting points for all nonempty subtrees for 4096, 256,
-and 16 consecutive array elements.  These four levels of index nodes are
+The root of each such tree, if it exists, is an index node containing 64
+pointers to subtrees for 64^4 consecutive array elements.  Similar index
+nodes are the starting points for all nonempty subtrees for 64^3, 64^2,
+and 64 consecutive array elements.  These four levels of index nodes are
 followed by a fifth level with nodes for the individual array elements.
 
-Each index node is nine words long.  The pointers to the 16 possible
-subtrees or are kept in the |info| and |link| fields of the last eight
+Each index node is 33 words long.  The pointers to the 64 possible
+subtrees or nodes are kept in the |info| and |link| fields of the last 32
 words.  (It would be both elegant and efficient to declare them as
 array, unfortunately \PASCAL\ doesn't allow this.)
 
@@ -32507,8 +32518,8 @@ lower index node and the |sa_index| field contains four bits (one
 hexadecimal digit) of the register number or mark class.  For the lowest
 index node the |link| field is |null| and the |sa_index| field indicates
 the type of quantity (|int_val|, |dimen_val|, |glue_val|, |mu_val|,
-|box_val|, |tok_val|, or |mark_val|).  The |sa_used| field in the index
-nodes counts how many of the 16 pointers are non-null.
+|box_val|, |tok_val|, |inter_char_val| or |mark_val|).  The |sa_used| field in the index
+nodes counts how many of the 64 pointers are non-null.
 
 The |sa_index| field in the nodes for array elements contains the four
 bits plus 16 times the type.  Therefore such a node represents a count
@@ -32531,7 +32542,7 @@ having given contents of the |sa_index| and |link| fields.
 @d box_val_limit=@"50 {$2^4\cdot(|box_val|+1)$}
 @d tok_val_limit=@"60 {$2^4\cdot(|tok_val|+1)$}
 @#
-@d index_node_size=9 {size of an index node}
+@d index_node_size=33 {size of an index node}
 @d sa_index==type {a four-bit address or a type or both}
 @d sa_used==subtype {count of non-null pointers}
 
@@ -32540,12 +32551,12 @@ procedure new_index(@!i:quarterword; @!q:pointer);
 var k:small_number; {loop index}
 begin cur_ptr:=get_node(index_node_size); sa_index(cur_ptr):=i;
 sa_used(cur_ptr):=0; link(cur_ptr):=q;
-for k:=1 to index_node_size-1 do {clear all 16 pointers}
+for k:=1 to index_node_size-1 do {clear all 64 pointers}
   mem[cur_ptr+k]:=sa_null;
 end;
 
-@ The roots of the seven trees for the additional registers and mark
-classes are kept in the |sa_root| array.  The first six locations must
+@ The roots of the eight trees for the additional registers and mark
+classes are kept in the |sa_root| array.  The first seven locations must
 be dumped and undumped; the last one is also known as |sa_mark|.
 
 @d sa_mark==sa_root[mark_val] {root for mark classes}
@@ -32561,7 +32572,7 @@ sa_mark:=null; sa_null.hh.lh:=null; sa_null.hh.rh:=null;
 @ @<Initialize table...@>=
 for i:=int_val to inter_char_val do sa_root[i]:=null;
 
-@ Given a type |t| and a sixteen-bit number |n|, the |find_sa_element|
+@ Given a type |t| and a twenty-four-bit number |n|, the |find_sa_element|
 procedure returns (in |cur_ptr|) a pointer to the node for the
 corresponding array element, or |null| when no such element exists.  The
 third parameter |w| is set |true| if the element must exist, e.g.,
@@ -32569,19 +32580,20 @@ because it is about to be modified.  The procedure has two main
 branches:  one follows the existing tree structure, the other (only used
 when |w| is |true|) creates the missing nodes.
 
-We use macros to extract the four-bit pieces from a sixteen-bit register
-number or mark class and to fetch or store one of the 16 pointers from
-an index node.
+We use macros to extract the six-bit pieces from a twenty-four-bit register
+number or mark class and to fetch or store one of the 64 pointers from
+an index node. (Note that the |hex_dig| macros are mis-named since the conversion
+from 4-bit to 6-bit fields for \XeTeX!)
 
 @d if_cur_ptr_is_null_then_return_or_goto(#)== {some tree element is missing}
   begin if cur_ptr=null then
     if w then goto #@+else return;
   end
 @#
-@d hex_dig1(#)==# div 4096 {the fourth lowest hexadecimal digit}
-@d hex_dig2(#)==(# div 256) mod 16 {the third lowest hexadecimal digit}
-@d hex_dig3(#)==(# div 16) mod 16 {the second lowest hexadecimal digit}
-@d hex_dig4(#)==# mod 16 {the lowest hexadecimal digit}
+@d hex_dig1(#)==# div @"40000 {the fourth lowest 6-bit field}
+@d hex_dig2(#)==(# div @"1000) mod @"40 {the third lowest 6-bit field}
+@d hex_dig3(#)==(# div @"40) mod @"40 {the second lowest 6-bit field}
+@d hex_dig4(#)==# mod @"40 {the lowest 6-bit field}
 @#
 @d get_sa_ptr==if odd(i) then cur_ptr:=link(q+(i div 2)+1)
   else cur_ptr:=info(q+(i div 2)+1)
