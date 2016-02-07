@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-02-02.07}
+\def\texinfoversion{2016-02-05.07}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1449,6 +1449,56 @@ output) for that.)}
   \let\pdfmakeoutlines = \relax
 \fi  % \ifx\pdfoutput
 
+%
+% @image support for XeTeX
+%
+\newif\ifxeteximgpdf
+\ifx\XeTeXrevision\thisisundefined
+\else
+  %
+  % #1 is image name, #2 width (might be empty/whitespace), #3 height (ditto).
+  \def\doxeteximage#1#2#3{%
+    \def\xeteximagewidth{#2}\setbox0 = \hbox{\ignorespaces #2}%
+    \def\xeteximageheight{#3}\setbox2 = \hbox{\ignorespaces #3}%
+    %
+    % XeTeX (and the PDF format) support .pdf, .png, .jpg (among
+    % others).  Let's try in that order, PDF first since if
+    % someone has a scalable image, presumably better to use that than a
+    % bitmap.
+    \let\xeteximgext=\empty
+    \xeteximgpdffalse
+    \begingroup
+      \openin 1 #1.pdf \ifeof 1
+        \openin 1 #1.PDF \ifeof 1
+          \openin 1 #1.png \ifeof 1
+            \openin 1 #1.jpg \ifeof 1
+              \openin 1 #1.jpeg \ifeof 1
+                \openin 1 #1.JPG \ifeof 1
+                  \errmessage{Could not find image file #1 for XeTeX}%
+                \else \gdef\xeteximgext{JPG}%
+                \fi
+              \else \gdef\xeteximgext{jpeg}%
+              \fi
+            \else \gdef\xeteximgext{jpg}%
+            \fi
+          \else \gdef\xeteximgext{png}%
+          \fi
+        \else \gdef\xeteximgext{PDF} \global\xeteximgpdftrue%
+        \fi
+      \else \gdef\xeteximgext{pdf} \global\xeteximgpdftrue%
+      \fi
+      \closein 1
+    \endgroup
+    %
+    \ifxeteximgpdf
+      \XeTeXpdffile "#1".\xeteximgext ""
+    \else
+      \XeTeXpicfile "#1".\xeteximgext ""
+    \fi
+    \ifdim \wd0 >0pt width \xeteximagewidth \fi
+    \ifdim \wd2 >0pt height \xeteximageheight \fi \relax
+  }
+\fi
 
 \message{fonts,}
 
@@ -6054,7 +6104,13 @@ end
 \def\Yomitfromtockeyword{Yomitfromtoc}
 %
 \def\chapmacro#1#2#3{%
-  \checkenv{}% chapters, etc., should not start inside an environment.
+  \expandafter\ifx\thisenv\titlepage\else
+    \checkenv{}% chapters, etc., should not start inside an environment.
+  \fi
+  % FIXME: \chapmacro is currently called from inside \titlepage when
+  % \setcontentsaftertitlepage to print the "Table of Contents" heading, but
+  % this should probably be done by \sectionheading with an option to print
+  % in chapter size.
   %
   % Insert the first mark before the heading break (see notes for \domark).
   \let\prevchapterdefs=\lastchapterdefs
@@ -8601,9 +8657,15 @@ end
       %
       % output the `page 3'.
       \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
-      \if\noexpand\tokenafterxref\space
-        ,% add a , if xref not followed by punctuation
-      \fi
+      % Add a , if xref followed by a space
+      \if\space\noexpand\tokenafterxref ,%
+      \else\ifx\	\tokenafterxref ,% @TAB
+      \else\ifx\*\tokenafterxref ,%   @*
+      \else\ifx\ \tokenafterxref ,%   @SPACE
+      \else\ifx\
+                \tokenafterxref ,%    @NL
+      \else\ifx\tie\tokenafterxref ,% @tie
+      \fi\fi\fi\fi\fi\fi
     \fi\fi
   \fi
   \endlink
@@ -9078,12 +9140,21 @@ end
   %
   % Output the image.
   \ifpdf
+    % For pdfTeX and LuaTeX <= 0.80
     \dopdfimage{#1}{#2}{#3}%
   \else
-    % \epsfbox itself resets \epsf?size at each figure.
-    \setbox0 = \hbox{\ignorespaces #2}\ifdim\wd0 > 0pt \epsfxsize=#2\relax \fi
-    \setbox0 = \hbox{\ignorespaces #3}\ifdim\wd0 > 0pt \epsfysize=#3\relax \fi
-    \epsfbox{#1.eps}%
+    \ifx\XeTeXrevision\thisisundefined
+      % For epsf.tex
+      % \epsfbox itself resets \epsf?size at each figure.
+      \setbox0 = \hbox{\ignorespaces #2}%
+        \ifdim\wd0 > 0pt \epsfxsize=#2\relax \fi
+      \setbox0 = \hbox{\ignorespaces #3}%
+        \ifdim\wd0 > 0pt \epsfysize=#3\relax \fi
+      \epsfbox{#1.eps}%
+    \else
+      % For XeTeX
+      \doxeteximage{#1}{#2}{#3}%
+    \fi
   \fi
   %
   \ifimagevmode
