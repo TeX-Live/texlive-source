@@ -51,8 +51,10 @@ array *copyArray(array *a);
 array *copyArray2(array *a);
 array *copyArray3(array *a);
 
-double *copyTripleArray2Components(array *a, bool square=true, size_t dim2=0,
+double *copyTripleArray2Components(array *a, size_t &N,
                                    GCPlacement placement=NoGC);
+triple *copyTripleArray2C(array *a, size_t &N,
+                          GCPlacement placement=NoGC);
 }
 
 function *realRealFunction();
@@ -411,6 +413,7 @@ void gen_runlabel3(stack *Stack)
           std::ifstream in(name,std::ios::binary);
           ps << in.rdbuf();
           ps << "(>\n) print flush\n";
+          in.close();
           if(!keep) unlink(name);
         }
         ps.close();
@@ -454,13 +457,13 @@ void gen_runlabel3(stack *Stack)
     readpath(psname,keep,false,0.12,-1.0)); return;}
 }
 
-#line 384 "runlabel.in"
+#line 385 "runlabel.in"
 // patharray2* textpath(stringarray *s, penarray *p);
 void gen_runlabel4(stack *Stack)
 {
   penarray * p=vm::pop<penarray *>(Stack);
   stringarray * s=vm::pop<stringarray *>(Stack);
-#line 385 "runlabel.in"
+#line 386 "runlabel.in"
   size_t n=checkArrays(s,p);
   if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
@@ -533,13 +536,13 @@ void gen_runlabel4(stack *Stack)
   {Stack->push<patharray2*>(readpath(psname,keep,false,0.1)); return;}
 }
 
-#line 458 "runlabel.in"
+#line 459 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 459 "runlabel.in"
+#line 460 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
@@ -577,9 +580,9 @@ void gen_runlabel_venv(venv &ve)
   addFunc(ve, run::gen_runlabel2, realArray(), SYM(texsize), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
 #line 251 "runlabel.in"
   addFunc(ve, run::gen_runlabel3, pathArray2() , SYM(_texpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 384 "runlabel.in"
+#line 385 "runlabel.in"
   addFunc(ve, run::gen_runlabel4, pathArray2() , SYM(textpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 458 "runlabel.in"
+#line 459 "runlabel.in"
   addFunc(ve, run::gen_runlabel5, pathArray() , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
 }
 

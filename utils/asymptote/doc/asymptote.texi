@@ -76,7 +76,7 @@ Installation
 * Search paths::                Where @code{Asymptote} looks for your files
 * Compiling from UNIX source::  Building @code{Asymptote} from scratch
 * Editing modes::               Convenient @code{emacs} and @code{vim} modes
-* Subversion::                  Getting the latest development source
+* Git::                         Getting the latest development source
 * Uninstall::                   Goodbye, @code{Asymptote}!
 
 Drawing commands
@@ -161,6 +161,7 @@ Base modules
 * flowchart::                   Flowchart drawing routines
 * contour::                     Contour lines
 * contour3::                    Contour surfaces
+* smoothcontour3::              Smooth implicit surfaces
 * slopefield::                  Slope fields
 * ode::                         Ordinary differential equations
 
@@ -275,7 +276,7 @@ A quick reference card for @code{Asymptote} is available at
 * Search paths::                Where @code{Asymptote} looks for your files
 * Compiling from UNIX source::  Building @code{Asymptote} from scratch
 * Editing modes::               Convenient @code{emacs} and @code{vim} modes
-* Subversion::                  Getting the latest development source
+* Git::                         Getting the latest development source
 * Uninstall::                   Goodbye, @code{Asymptote}!
 @end menu
 
@@ -590,18 +591,20 @@ used; if it is old we recommend first putting
 in the @code{Asymptote} source directory.
 
 On @code{UNIX} platforms (other than @code{MacOS X}), we recommend
-using version @code{2.8.1} of the @code{freeglut} library. To compile
+using version @code{3.0.0} of the @code{freeglut} library. To compile
 @code{freeglut}, download
 @quotation
-@url{http://prdownloads.sourceforge.net/freeglut/freeglut-2.8.1.tar.gz}
+@url{http://prdownloads.sourceforge.net/freeglut/freeglut-3.0.0.tar.gz}
 @end quotation
 @noindent
 and type (as the root user):
 @verbatim
-gunzip freeglut-2.8.1.tar.gz
-tar -xf freeglut-2.8.1.tar
-cd freeglut-2.8.1
+gunzip freeglut-3.0.0.tar.gz
+tar -xf freeglut-3.0.0.tar
+cd freeglut-3.0.0
 ./configure --prefix=/usr
+cmake .
+make
 make install
 cd ..
 @end verbatim
@@ -733,15 +736,15 @@ can be enabled by running @code{asy-kate.sh} in the
 @code{@value{Datadir}/asymptote} directory and putting the generated
 @code{asymptote.xml} file in @code{~/.kde/share/apps/katepart/syntax/}.
 
-@node Subversion
-@section Subversion (SVN)
-@cindex Subversion
-@cindex SVN
+@node Git
+@section Git
+@cindex git
 
 The following commands are needed to install the latest development version of
-@code{Asymptote} using @code{Subversion}:
+@code{Asymptote} using @code{git}:
 @verbatim
-svn co http://svn.code.sf.net/p/asymptote/code/trunk/asymptote 
+git clone http://github.com/vectorgraphics/asymptote
+
 cd asymptote
 ./autogen.sh
 ./configure
@@ -1807,6 +1810,7 @@ maximum value is @code{intMax}.
 @cindex @code{realDigits}
 @cindex @code{mask}
 @cindex @code{inf}
+@cindex @code{nan}
 @cindex @code{isnan}
 a real number; this should be set to the highest-precision native
 floating-point type on the architecture. The implicit initializer for
@@ -1814,9 +1818,10 @@ reals is @code{0.0}. Real numbers have precision
 @code{realEpsilon}, with @code{realDigits} significant digits.
 The smallest positive real number is @code{realMin} and the largest
 positive real number is @code{realMax}. 
-The variable @code{inf} and function @code{bool isnan(real x)}
-are useful when floating-point exceptions are masked with
-the @code{-mask} command-line option (the default in interactive mode).
+The variables @code{inf} and @code{nan}, along with the function
+@code{bool isnan(real x)} are useful when floating-point exceptions
+are masked with the @code{-mask} command-line option (the default in
+interactive mode).
 
 @item pair
 @cindex @code{pair}
@@ -4172,7 +4177,7 @@ struct Person {
   string lastname;
 
   static Person Person(string firstname, string lastname) {
-    Person p;
+    Person p=new Person;
     p.firstname=firstname;
     p.lastname=lastname;
     return p;
@@ -4208,7 +4213,7 @@ structure is called @code{Foo}):
 
 @example
 static Foo Foo(@var{args}) @{
-  Foo instance;
+  Foo instance=new Foo;
   instance.operator init(@var{args});
   return instance;
 @}
@@ -5536,7 +5541,6 @@ real[][] A=fin.dimension(2,3);
 real[][][] B=fin.dimension(2,3,4);
 @end verbatim
 @noindent
-Again, an integer limit of zero means no restriction.
 
 @cindex @code{read}
 Sometimes the array dimensions are stored with the data as integer
@@ -6189,6 +6193,7 @@ Here now is @code{latexusage.tex}:
 * flowchart::                   Flowchart drawing routines
 * contour::                     Contour lines
 * contour3::                    Contour surfaces
+* smoothcontour3::              Smooth implicit surfaces
 * slopefield::                  Slope fields
 * ode::                         Ordinary differential equations
 @end menu
@@ -7729,20 +7734,25 @@ with the mean of the four vertex colors.
 
 @cindex @code{surface}
 @cindex @code{planar}
+@cindex @code{Bezier patch}
+@cindex @code{Bezier triangle}
 A surface can be constructed from a cyclic @code{path3} with the constructor
 @verbatim
 surface surface(path3 external, triple[] internal=new triple[],
-                triple[] normals=new triple[], pen[] colors=new pen[],
-                bool3 planar=default);
+                pen[] colors=new pen[], bool3 planar=default);
 @end verbatim
 @noindent
 and then filled:
 @verbatim
+draw(surface(unitsquare3,new triple[] {X,Y,Z,O}),red);
+draw(surface(O--X{Y}..Y{-X}--cycle,new triple[] {Z}),red);
 draw(surface(path3(polygon(5))),red,nolight);
 draw(surface(unitcircle3),red,nolight);
 draw(surface(unitcircle3,new pen[] {red,green,blue,black}),nolight);
 @end verbatim
 @noindent
+The first example draws a Bezier patch and the second example draws
+a Bezier triangle. The third and fourth examples are planar surfaces.
 The last example constructs a patch with vertex-specific colors.
 A three-dimensional planar surface in the plane @code{plane} can be
 constructed from a two-dimensional cyclic path @code{g} with the constructor
@@ -8342,7 +8352,7 @@ The routine
 real[][] intersections(path3 p, surface s, real fuzz=-1);
 @end verbatim
 @noindent
-returns all (unless there are infinitey many) intersection times of a
+returns all (unless there are infinitely many) intersection times of a
 path @code{p} with a surface @code{s} as a sorted array of real arrays
 of length 3, and 
 @cindex @code{intersectionpoints}
@@ -8983,7 +8993,7 @@ int[][] triangulate(pair[] z);
 @sp 1
 @center @image{triangulate}
 
-The example @code{Gouraudcontour} illustrates how to produce color
+The example @code{Gouraudcontour.asy} illustrates how to produce color
 density images over such irregular triangular meshes.
 @code{Asymptote} uses a robust version of Paul Bourke's Delaunay triangulation
 algorithm based on the public-domain exact arithmetic predicates written by
@@ -8993,8 +9003,45 @@ Jonathan Shewchuk.
 @section @code{contour3}
 @cindex @code{contour3}
 This package draws surfaces described as the null space of real-valued
-functions of @math{(x,y,z)} or real[][][] matrices.
+functions of @math{(x,y,z)} or @code{real[][][]} matrices.
 Its usage is illustrated in the example file @code{magnetic.asy}.
+
+@node smoothcontour3
+@section @code{smoothcontour3}
+@cindex @code{smoothcontour3}
+This module, written by Charles Staats, draws implicitly defined surfaces
+with smooth appearance.
+The purpose of this module is similar to that of @code{contour3}: given 
+a real-valued function @math{f(x,y,z)}, construct the surface described by 
+the equation @math{f(x,y,z) = 0}. The @code{smoothcontour3} module generally produces 
+nicer results than @code{contour3}, but takes longer to compile. Additionally, the 
+algorithm assumes that the function and the surface are both smooth; if they are not,
+then @code{contour3} may be a better choice.
+
+To construct the null surface of a function @code{f(triple)} or @code{ff(real,real,real)}
+over @code{box(a,b)}, use the routine
+@cindex @code{implicitsurface} 
+@verbatim
+surface implicitsurface(real f(triple)=null, 
+                        real ff(real,real,real)=null,
+                        triple a, 
+                        triple b,
+                        int n=nmesh,
+                        bool keyword overlapedges=false,
+                        int keyword nx=n,
+                        int keyword ny=n,
+                        int keyword nz=n,
+                        int keyword maxdepth=8);
+@end verbatim
+@noindent
+The optional parameter @code{overlapedges} attempts to compensate for
+an artifact that can cause the renderer to ``see through'' the
+boundary between patches. Although
+it defaults to @code{false}, it should usually be set to @code{true}.
+The example @code{genustwo.asy} illustrates the use of this function:
+Additional examples, together with a more in-depth explanation of 
+the module's usage and pitfalls, are available at
+@url{https://github.com/charlesstaats/smoothcontour3}.
 
 @node slopefield
 @section @code{slopefield}
@@ -9385,22 +9432,11 @@ and @code{tk-devel} packages.
 
 Pictures are deconstructed into the @acronym{PNG} image format, which
 supports full alpha channel transparency. Under @code{Microsoft Windows},
-this requires @code{Python 2.7.4} and the @code{Python Imaging Library}:
+this requires @code{Python 2.7.4} or later and version @code{3.1.0} of the
+@code{Pillow} fork of the @code{Python Imaging Library}, available from
 @quotation
-@url{http://www.python.org/ftp/python/2.7.4/python-2.7.4.msi}
+@url{https://pypi.python.org/pypi/Pillow/3.1.0}
 @end quotation
-@quotation
-@url{http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe}.
-@end quotation
-@noindent
-On @code{UNIX} systems, place
-@url{http://effbot.org/downloads/Imaging-1.1.7.tar.gz} in the
-@code{Asymptote} source directory, and type (as the root user):
-@verbatim
-tar -zxf Imaging-1.1.7.tar.gz
-cd Imaging-1.1.7
-python setup.py install
-@end verbatim
 
 @node GUI usage
 @section GUI usage
@@ -9482,8 +9518,8 @@ To receive announcements of upcoming releases, please subscribe to
 @cindex bug reports
 @noindent
 If you find a bug in @code{Asymptote}, please check (if possible)
-whether the bug is still present in the latest @code{Subversion}
-developmental code (@pxref{Subversion}) before submitting a bug
+whether the bug is still present in the latest @code{git}
+developmental code (@pxref{Git}) before submitting a bug
 report. New bugs can be submitted using the Bug Tracking System at
 @quotation
 @url{http://sourceforge.net/projects/asymptote}
@@ -9640,7 +9676,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  MetaPost MetaFont Hammerlindl Healy texinfo autoload setq setf
 @c  LocalWords:  printindex setfilename settitle dircategory direntry titlepage
 @c  LocalWords:  vskip filll insertcopying ifnottex detailmenu alist augroup PQ
-@c  LocalWords:  bool behaviour facto zxf login Debian dev filetypedetect SVN
+@c  LocalWords:  bool behaviour facto zxf login Debian dev filetypedetect
 @c  LocalWords:  FFTW bp readline gv eps args Boehm gc evenoddoverlap png joe
 @c  LocalWords:  boolean initializer expi dir xpart ypart STL substring rfind
 @c  LocalWords:  pos substr strftime typedef pxref unitcircle yscale Bezier iff
@@ -9663,7 +9699,7 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  quartercircle darkgreen lightblue urx ury texpreamble sgn texi
 @c  LocalWords:  lineargraph datagraph vertices parametricgraph uncomment ggv
 @c  LocalWords:  loggraph generalaxis texhash arrowsize arrowangle arrowlength
-@c  LocalWords:  SuppressQuiet MoveQuiet LIBREADLINE config MacOS prebuilt svn
+@c  LocalWords:  SuppressQuiet MoveQuiet LIBREADLINE config MacOS prebuilt
 @c  LocalWords:  ghostview gsview SIGHUP PDF acroread xpdf cutbefore strptime
 @c  LocalWords:  libsigsegv intersectionpoint dotfactor vv firstcut pq logticks
 @c  LocalWords:  Unisys dvips vvv vvvv vvvvv traceback lastcut cutafter infodir
@@ -9818,7 +9854,16 @@ Mark Henning, Steve Melenchuk, Martin Wiebusch, and Stefan Knorr.
 @c  LocalWords:  slopefield1 144x144 1filll 'load 'asy 'lasy 'auto 4g
 @c  LocalWords:  libgs 'load 'asy 'lasy 'auto 5bp 1cm 2S 100pt 3t 5mm
 @c  LocalWords:  bracedefaultratio incircle 12pt 25cm 3x 5x 3y 602e '
-@c  LocalWords:  2x 2y 3sin 10cm 204e 10x Ai 5E offaxis 'load 'lasy
+@c  LocalWords:  2x 2y 3sin 10cm 204e 10x Ai 5E offaxis 'load 'lasy '
 @c  LocalWords:  5cm 2N 2E 2n 100d 5z 5y 5unit dvisvgmOptions 144x144
-@c  LocalWords:  4g texengines coplanar
-@c  LocalWords:  insphere cospherical 5unit luatex lualatex
+@c  LocalWords:  4g texengines coplanar 0pt 1filll 's 3D 2D 'load 5bp
+@c  LocalWords:  insphere cospherical 5unit luatex lualatex 'asy 1cm
+@c  LocalWords:  'lasy 'auto 4g 2S 100pt 3t 12pt 5mm 25cm 3x 5x 3y 2x
+@c  LocalWords:  602e 2y 3sin 10cm 204e 10x Ai Ai Ai Ai Ai Ai Ai Ai '
+@c  LocalWords:  unnormalized 5E 5cm 2N 2E 2n 100d 5z 5y 0pt 1filll
+@c  LocalWords:  5unit 144x144 aligndir smoothcontour3 's 3D 2D cmake
+@c  LocalWords:  'load 'asy 'lasy 'auto 5bp 1cm 4g 2S 100pt 3t nan 3x
+@c  LocalWords:  12pt 5mm 25cm 5x 3y 602e 2x 2y 3sin 10cm 204e 10x Ai
+@c  LocalWords:  Ai Ai Ai Ai Ai Ai Ai 5E 5cm 2N 2E 2n 100d 5z 5y nz
+@c  LocalWords:  5unit Staats implicitsurface overlapedges maxdepth
+@c  LocalWords:  through'' genustwo 144x144

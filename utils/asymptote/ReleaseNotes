@@ -1,3 +1,21 @@
+Release Notes for Version 2.36
+
+Bezier triangle patches have been implemented in place of degenerate Bezier
+tensor product patches. Surface rendering was improved. The configuration
+of the readline and gc libraries was fixed. The asy configuration
+directory is only created if localhistory=false. Patches are now sorted by
+projected distance. Animations were fixed by running LaTeX twice.
+The asy-mode.el headers were updated. Intermittent segmentation faults and
+floating point exceptions in the OpenGL renderer were fixed. Support for
+GSL 2.0 was added. A quite nan constant was added. Straight segments are no
+longer split in bezulate. Segmentation faults in tab completion were fixed.
+A work around for a clang 3.7.0 compiler bug was implemented.
+The smoothcontour routine was sped up. Several bugs in the file read routines
+were fixed. A bug in rest argument signature equivalence was fixed.
+Threads are no longer used in batch mode, except under MacOS X. A convenience
+function graphicscale was added for using graphic with the conTeXt tex
+engine. The splinetype detection for Spline surfaces was fixed.
+
 Release Notes for Version 2.35
 
 A work around was implemented for a ghostscript eps2write bug that forces

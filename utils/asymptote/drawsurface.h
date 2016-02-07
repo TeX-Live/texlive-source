@@ -20,15 +20,15 @@ void storecolor(GLfloat *colors, int i, const vm::array &pens, int j);
 
 class drawSurface : public drawElement {
 protected:
-  Triple *controls;
-  Triple vertices[4];
+  triple *controls;
+  triple vertices[4];
   triple center;
-  bool straight;
-  RGBAColour diffuse;
-  RGBAColour ambient;
-  RGBAColour emissive;
-  RGBAColour specular;
-  RGBAColour *colors;
+  bool straight; // True iff Bezier patch is planar and has straight edges.
+  prc::RGBAColour diffuse;
+  prc::RGBAColour ambient;
+  prc::RGBAColour emissive;
+  prc::RGBAColour specular;
+  prc::RGBAColour *colors;
   double opacity;
   double shininess;
   double PRCshininess;
@@ -57,26 +57,24 @@ public:
     if(checkArray(&g) != 4 || checkArray(&p) != 4)
       reportError(wrongsize);
     
-    bool havenormal=normal != zero;
-  
     vm::array *g0=vm::read<vm::array*>(g,0);
     vm::array *g3=vm::read<vm::array*>(g,3);
     if(checkArray(g0) != 4 || checkArray(g3) != 4)
       reportError(wrongsize);
-    store(vertices[0],vm::read<triple>(g0,0));
-    store(vertices[1],vm::read<triple>(g0,3));
-    store(vertices[2],vm::read<triple>(g3,0));
-    store(vertices[3],vm::read<triple>(g3,3));
+    vertices[0]=vm::read<triple>(g0,0);
+    vertices[1]=vm::read<triple>(g0,3);
+    vertices[2]=vm::read<triple>(g3,0);
+    vertices[3]=vm::read<triple>(g3,3);
     
-    if(!havenormal || !straight) {
+    if(!straight) {
       size_t k=0;
-      controls=new(UseGC) Triple[16];
+      controls=new(UseGC) triple[16];
       for(size_t i=0; i < 4; ++i) {
         vm::array *gi=vm::read<vm::array*>(g,i);
         if(checkArray(gi) != 4) 
           reportError(wrongsize);
         for(size_t j=0; j < 4; ++j)
-          store(controls[k++],vm::read<triple>(gi,j));
+          controls[k++]=vm::read<triple>(gi,j);
       }
     } else controls=NULL;
     
@@ -90,8 +88,8 @@ public:
     
     int size=checkArray(&pens);
     if(size > 0) {
-      if(size != 4) reportError(wrongsize);
-      colors=new(UseGC) RGBAColour[4];
+      if(size != 4) reportError("4 vertex pens required");
+      colors=new(UseGC) prc::RGBAColour[4];
       colors[0]=rgba(vm::read<camp::pen>(pens,0));
       colors[1]=rgba(vm::read<camp::pen>(pens,3));
       colors[2]=rgba(vm::read<camp::pen>(pens,1));
@@ -102,17 +100,19 @@ public:
   drawSurface(const double* t, const drawSurface *s) :
     straight(s->straight), diffuse(s->diffuse), ambient(s->ambient),
     emissive(s->emissive), specular(s->specular), colors(s->colors),
-    opacity(s->opacity), shininess(s->shininess), PRCshininess(s->PRCshininess), 
-    invisible(s->invisible),
+    opacity(s->opacity), shininess(s->shininess),
+    PRCshininess(s->PRCshininess), invisible(s->invisible),
     interaction(s->interaction), prc(s->prc) { 
     
-    transformTriples(t,4,vertices,s->vertices);
+    for(unsigned int i=0; i < 4; ++i)
+      vertices[i]=t*s->vertices[i];
     
     if(s->controls) {
-      controls=new(UseGC) Triple[16];
-      transformTriples(t,16,controls,s->controls);
+      controls=new(UseGC) triple[16];
+      for(unsigned int i=0; i < 16; ++i)
+        controls[i]=t*s->controls[i];
     } else controls=NULL;
-    
+  
 #ifdef HAVE_GL
     center=t*s->center;
     normal=transformNormal(t,s->normal);
@@ -123,8 +123,8 @@ public:
   
   void bounds(const double* t, bbox3& b);
   
-  void ratio(const double* t, pair &b, double (*m)(double, double), double fuzz,
-             bool &first);
+  void ratio(const double* t, pair &b, double (*m)(double, double),
+             double fuzz, bool &first);
   
   virtual ~drawSurface() {}
 
@@ -138,17 +138,117 @@ public:
   drawElement *transformed(const double* t);
 };
   
+class drawBezierTriangle : public drawElement {
+protected:
+  triple *controls;
+  triple center;
+  bool straight; // True iff Bezier triangle is planar and has straight edges.
+  prc::RGBAColour diffuse;
+  prc::RGBAColour ambient;
+  prc::RGBAColour emissive;
+  prc::RGBAColour specular;
+  prc::RGBAColour *colors;
+  double opacity;
+  double shininess;
+  double PRCshininess;
+  bool invisible;
+  Interaction interaction;
+  
+  triple Min,Max;
+  bool prc;
+  
+#ifdef HAVE_GL
+  triple d; // Maximum deviation of surface from a triangle.
+  triple dperp;
+#endif  
+  
+public:
+  drawBezierTriangle(const vm::array& g, triple center, bool straight,
+                     const vm::array&p, double opacity, double shininess,
+                     double PRCshininess, const vm::array &pens,
+                     Interaction interaction, bool prc) :
+    center(center), straight(straight), opacity(opacity), shininess(shininess),
+    PRCshininess(PRCshininess), interaction(interaction), prc(prc) {
+    const string wrongsize=
+      "Bezier triangle requires triangular array of 10 triples and array of 4 pens";
+    if(checkArray(&g) != 4 || checkArray(&p) != 4)
+      reportError(wrongsize);
+    
+    size_t k=0;
+    controls=new(UseGC) triple[10];
+    for(unsigned int i=0; i < 4; ++i) {
+      vm::array *gi=vm::read<vm::array*>(g,i);
+      for(unsigned int j=0; j <= i; ++j) {
+        controls[k++]=vm::read<triple>(gi,j);
+      }
+    }
+    
+    pen surfacepen=vm::read<camp::pen>(p,0);
+    invisible=surfacepen.invisible();
+    
+    diffuse=rgba(surfacepen);
+    ambient=rgba(vm::read<camp::pen>(p,1));
+    emissive=rgba(vm::read<camp::pen>(p,2));
+    specular=rgba(vm::read<camp::pen>(p,3));
+    
+    int size=checkArray(&pens);
+    if(size > 0) {
+      if(size != 3) reportError("3 vertex pens required");
+      colors=new(UseGC) prc::RGBAColour[3];
+      colors[0]=rgba(vm::read<camp::pen>(pens,0));
+      colors[1]=rgba(vm::read<camp::pen>(pens,1));
+      colors[2]=rgba(vm::read<camp::pen>(pens,2));
+    } else colors=NULL;
+  }
+  
+  drawBezierTriangle(const double* t, const drawBezierTriangle *s) :
+    straight(s->straight), diffuse(s->diffuse), ambient(s->ambient),
+    emissive(s->emissive), specular(s->specular), colors(s->colors),
+    opacity(s->opacity), shininess(s->shininess),
+    PRCshininess(s->PRCshininess), invisible(s->invisible),
+    interaction(s->interaction), prc(s->prc) { 
+    
+    if(s->controls) {
+      controls=new(UseGC) triple[10];
+      for(unsigned int i=0; i < 10; ++i)
+        controls[i]=t*s->controls[i];
+    } else controls=NULL;
+    
+#ifdef HAVE_GL
+    center=t*s->center;
+#endif    
+  }
+  
+  bool is3D() {return true;}
+  
+  void bounds(const double* t, bbox3& b);
+  
+  void ratio(const double* t, pair &b, double (*m)(double, double),
+             double fuzz, bool &first);
+  
+  virtual ~drawBezierTriangle() {}
+
+  bool write(prcfile *out, unsigned int *, double, groupsmap&);
+  
+//  void displacement();
+  
+  void render(GLUnurbs *nurb, double, const triple& Min, const triple& Max,
+              double perspective, bool lighton, bool transparent);
+  
+  drawElement *transformed(const double* t);
+};
+
 class drawNurbs : public drawElement {
 protected:
   size_t udegree,vdegree;
   size_t nu,nv;
-  Triple *controls;
+  triple *controls;
   double *weights;
   double *uknots, *vknots;
-  RGBAColour diffuse;
-  RGBAColour ambient;
-  RGBAColour emissive;
-  RGBAColour specular;
+  prc::RGBAColour diffuse;
+  prc::RGBAColour ambient;
+  prc::RGBAColour emissive;
+  prc::RGBAColour specular;
   double opacity;
   double shininess;
   double PRCshininess;
@@ -182,7 +282,7 @@ public:
     nv=checkArray(g0);
     
     size_t n=nu*nv;
-    controls=new(UseGC) Triple[n];
+    controls=new(UseGC) triple[n];
     
     size_t k=0;
     for(size_t i=0; i < nu; ++i) {
@@ -190,7 +290,7 @@ public:
       if(checkArray(gi) != nv)  
         reportError(wrongsize);
       for(size_t j=0; j < nv; ++j)
-        store(controls[k++],vm::read<triple>(gi,j));
+        controls[k++]=vm::read<triple>(gi,j);
     }
       
     if(weightsize > 0) {
@@ -248,9 +348,9 @@ public:
     invisible(s->invisible) {
     
     const size_t n=nu*nv;
-    controls=new(UseGC) Triple[n];
-      
-    transformTriples(t,n,controls,s->controls);
+    controls=new(UseGC) triple[n];
+    for(unsigned int i=0; i < n; ++i)
+      controls[i]=t*s->controls[i];
     
 #ifdef HAVE_GL
     Controls=NULL;
@@ -270,8 +370,9 @@ public:
   void ratio(const double* t, pair &b, double (*m)(double, double), double,
              bool &first);
 
-  void render(GLUnurbs *nurb, double size2, const triple& Min, const triple& Max,
-              double perspective, bool lighton, bool transparent);
+  void render(GLUnurbs *nurb, double size2, const triple& Min,
+              const triple& Max, double perspective, bool lighton,
+              bool transparent);
     
   drawElement *transformed(const double* t);
 };
@@ -279,10 +380,10 @@ public:
 // Draw a transformed PRC object.
 class drawPRC : public drawElementLC {
 protected:
-  RGBAColour diffuse;
-  RGBAColour ambient;
-  RGBAColour emissive;
-  RGBAColour specular;
+  prc::RGBAColour diffuse;
+  prc::RGBAColour ambient;
+  prc::RGBAColour emissive;
+  prc::RGBAColour specular;
   double opacity;
   double shininess;
   bool invisible;
@@ -314,8 +415,8 @@ public:
     return true;
   }
   virtual void transformedbounds(const double*, bbox3&) {}
-  virtual void transformedratio(const double*, pair&, double (*)(double, double),
-                                double, bool&) {}
+  virtual void transformedratio(const double*, pair&,
+                                double (*)(double, double), double, bool&) {}
 
 };
   
@@ -331,7 +432,7 @@ public:
   drawSphere(const double* t, const drawSphere *s) :
     drawPRC(t,s), half(s->half), type(s->type) {}
     
-  void P(Triple& t, double x, double y, double z);
+  void P(triple& t, double x, double y, double z);
   
   bool write(prcfile *out, unsigned int *, double, groupsmap&);
   
@@ -379,10 +480,10 @@ class drawTube : public drawElement {
 protected:
   path3 center;
   path3 g;
-  RGBAColour diffuse;
-  RGBAColour ambient;
-  RGBAColour emissive;
-  RGBAColour specular;
+  prc::RGBAColour diffuse;
+  prc::RGBAColour ambient;
+  prc::RGBAColour emissive;
+  prc::RGBAColour specular;
   double opacity;
   double shininess;
   bool invisible;
@@ -419,27 +520,27 @@ public:
 
 // Draw a PRC pixel.
 class drawPixel : public drawElement {
-  Triple v;
-  RGBAColour c;
+  triple v;
+  prc::RGBAColour c;
   double width;
   bool invisible;
 public:
   drawPixel(const triple& v0, const pen& p, double width) :
     c(rgba(p)), width(width) {
-    store(v,v0);
+    v=v0;
     invisible=p.invisible();
   }
 
   drawPixel(const double* t, const drawPixel *s) :
     c(s->c), width(s->width), invisible(s->invisible) {
-    transformTriples(t,1,&v,&(s->v));
+    v=t*s->v;
   }
     
   void bounds(const double* t, bbox3& b) {
     const triple R=0.5*width*triple(1.0,1.0,1.0);
     if (t != NULL) {
-      Triple tv;
-      transformTriples(t,1,&tv,&v);
+      triple tv;
+      tv=t*v;
       b.add(tv-R);
       b.add(tv+R);
     } else {
@@ -448,8 +549,9 @@ public:
     }    
   }    
   
-  void render(GLUnurbs *nurb, double size2, const triple& Min, const triple& Max,
-              double perspective, bool lighton, bool transparent);
+  void render(GLUnurbs *nurb, double size2, const triple& Min,
+              const triple& Max, double perspective, bool lighton,
+              bool transparent);
   
   bool write(prcfile *out, unsigned int *, double, groupsmap&);
   
@@ -461,9 +563,9 @@ public:
 class drawBaseTriangles : public drawElement {
 protected:
   size_t nP;
-  Triple* P;
+  triple* P;
   size_t nN;
-  Triple* N;
+  triple* N;
   size_t nI;
   uint32_t (*PI)[3];
   uint32_t (*NI)[3];
@@ -477,9 +579,9 @@ public:
   drawBaseTriangles(const vm::array& v, const vm::array& vi,
                     const vm::array& n, const vm::array& ni) {
     nP=checkArray(&v);
-    P=new(UseGC) Triple[nP];
+    P=new(UseGC) triple[nP];
     for(size_t i=0; i < nP; ++i)
-      store(P[i],vm::read<triple>(v,i));
+      P[i]=vm::read<triple>(v,i);
   
     nI=checkArray(&vi);
     PI=new(UseGC) uint32_t[nI][3];
@@ -496,9 +598,9 @@ public:
     
     nN=checkArray(&n);
     if(nN) {
-      N=new(UseGC) Triple[nN];
+      N=new(UseGC) triple[nN];
       for(size_t i=0; i < nN; ++i)
-        store(N[i],vm::read<triple>(n,i));
+        N[i]=vm::read<triple>(n,i);
     
       if(checkArray(&ni) != nI)
         reportError("Index arrays have different lengths");
@@ -518,8 +620,9 @@ public:
 
   drawBaseTriangles(const double* t, const drawBaseTriangles *s) :
     nP(s->nP), nN(s->nN), nI(s->nI) {
-    P=new(UseGC) Triple[nP];
-    transformTriples(t,nP,P,s->P);
+    P=new(UseGC) triple[nP];
+    for(size_t i=0; i < nP; i++)
+      P[i]=t*s->P[i];
     
     PI=new(UseGC) uint32_t[nI][3];
     for(size_t i=0; i < nI; ++i) {
@@ -530,8 +633,9 @@ public:
     }
 
     if(nN) {
-      N=new(UseGC) Triple[nN];
-      transformNormalsTriples(t,nN,N,s->N);
+      N=new(UseGC) triple[nN];
+      for(size_t i=0; i < nN; i++)
+        N[i]=transformNormal(t,s->N[i]);
     
       NI=new(UseGC) uint32_t[nI][3];
       for(size_t i=0; i < nI; ++i) {
@@ -547,8 +651,8 @@ public:
   
   void bounds(const double* t, bbox3& b);
   
-  void ratio(const double* t, pair &b, double (*m)(double, double), double fuzz,
-             bool &first);
+  void ratio(const double* t, pair &b, double (*m)(double, double),
+             double fuzz, bool &first);
   
   virtual ~drawBaseTriangles() {}
   
@@ -559,14 +663,14 @@ public:
   
 class drawTriangles : public drawBaseTriangles {
   size_t nC;
-  RGBAColour*C;
+  prc::RGBAColour*C;
   uint32_t (*CI)[3];
    
   // Asymptote material data
-  RGBAColour diffuse;
-  RGBAColour ambient;
-  RGBAColour emissive;
-  RGBAColour specular;
+  prc::RGBAColour diffuse;
+  prc::RGBAColour ambient;
+  prc::RGBAColour emissive;
+  prc::RGBAColour specular;
   double opacity;
   double shininess;
   double PRCshininess;
@@ -590,7 +694,7 @@ public:
     
     nC=checkArray(&c);
     if(nC) {
-      C=new(UseGC) RGBAColour[nC];
+      C=new(UseGC) prc::RGBAColour[nC];
       for(size_t i=0; i < nC; ++i)
         C[i]=rgba(vm::read<camp::pen>(c,i));
     
@@ -624,7 +728,7 @@ public:
     invisible(s->invisible) {
     
     if(nC) {
-      C=new(UseGC) RGBAColour[nC];
+      C=new(UseGC) prc::RGBAColour[nC];
       for(size_t i=0; i < nC; ++i)
         C[i]=s->C[i];
     
@@ -640,8 +744,9 @@ public:
  
   virtual ~drawTriangles() {}
  
-  void render(GLUnurbs *nurb, double size2, const triple& Min, const triple& Max,
-              double perspective, bool lighton, bool transparent);
+  void render(GLUnurbs *nurb, double size2, const triple& Min,
+              const triple& Max, double perspective, bool lighton,
+              bool transparent);
  
   bool write(prcfile *out, unsigned int *, double, groupsmap&);
  

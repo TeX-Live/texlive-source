@@ -35,7 +35,7 @@ void ifile::ignoreComment()
         stream->ignore();
       if(c == '\n')
         stream->ignore();
-    } else {if(eol) stream->unget(); return;}
+    } else {if(c != EOF && eol) stream->unget(); return;}
   }
 }
   
@@ -115,6 +115,7 @@ void ifile::Read(string& val)
             stream->ignore();
           if(wordmode && !linemode)
             while(isspace(stream->peek())) stream->ignore();
+          if(stream->peek() == '"') {quote=!quote; stream->ignore(); continue;}
           if(s.empty() && c == '\n') {
             stream->ignore();
             continue;

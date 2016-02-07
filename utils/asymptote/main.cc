@@ -150,7 +150,20 @@ void *asymain(void *A)
     int status;
     while(wait(&status) > 0);
   }
+#ifdef HAVE_GL
+#ifdef HAVE_PTHREAD
+  if(gl::glthread && !getSetting<bool>("offscreen")) {
+    pthread_kill(gl::mainthread,SIGUSR2);
+    pthread_join(gl::mainthread,NULL);
+  }
+#endif
+#endif
   exit(em.processStatus() || interact::interactive ? 0 : 1);  
+}
+
+void exitHandler(int)
+{
+  exit(0);
 }
 
 int main(int argc, char *argv[]) 
@@ -169,7 +182,12 @@ int main(int argc, char *argv[])
   
   Args args(argc,argv);
 #ifdef HAVE_GL
-  gl::glthread=getSetting<bool>("threads");
+#ifdef __APPLE__
+  bool usethreads=true;
+#else
+  bool usethreads=view();
+#endif  
+  gl::glthread=usethreads ? getSetting<bool>("threads") : false;
 #if HAVE_PTHREAD
   
   if(gl::glthread) {
@@ -182,6 +200,7 @@ int main(int argc, char *argv[])
         sigaddset(&set, SIGCHLD);
         pthread_sigmask(SIG_BLOCK, &set, NULL);
         while(true) {
+          Signal(SIGUSR2,exitHandler);
           camp::glrenderWrapper();
           gl::initialize=true;
         }
