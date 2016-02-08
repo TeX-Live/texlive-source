@@ -6,6 +6,10 @@
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
 
+/* Define to 1 if realpath() can malloc memory, always gives an absolute path,
+   and handles trailing slash correctly. */
+#undef FUNC_REALPATH_WORKS
+
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
@@ -61,6 +65,9 @@
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #undef HAVE_PWD_H
+
+/* Define to 1 if you have the `realpath' function. */
+#undef HAVE_REALPATH
 
 /* Define to 1 if you have the <stdalign.h> header file. */
 #undef HAVE_STDALIGN_H
