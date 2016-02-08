@@ -238,10 +238,14 @@ including the expansion of a macro or mark.
 @c
 void print_meaning(void)
 {
-    if (cur_cmd == math_char_num_cmd && cur_chr == 0) {
-        /* \mathchar -> \Umathchar */
-        cur_chr = 1 ;
-    }
+    /* remap \mathchar onto \Umathchar */
+    if (cur_cmd == math_given_cmd) {
+        cur_cmd = xmath_given_cmd ;
+    } /* else if (cur_cmd == math_char_num_cmd) {
+        if (cur_chr == 0) {
+            cur_chr = 1 ;
+        }
+    } */
     print_cmd_chr((quarterword) cur_cmd, cur_chr);
     if (cur_cmd >= call_cmd) {
         print_char(':');
