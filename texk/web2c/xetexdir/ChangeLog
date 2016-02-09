@@ -1,3 +1,9 @@
+2016-02-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* XeTeX_ext.c: Revert the change on 2015-11-06.
+	That is, recover the original *outputdriver = "xdvipdfmx -q -E",
+	because asynchronous outputs of XeTeX and xdvipdfmx are messy.
+
 2016-02-07  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* xetex.web, NEWS: sync with the upstream.
