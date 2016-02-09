@@ -99,6 +99,10 @@ ttf2pk2 - maintained here, by us
 
 ttfdump - ?
 
+upmendex 0.50 - 
+  http://www.ctan.org/pkg/upmendex
+  http://www.t-lab.opal.ne.jp/tex/uptex_en.html
+
 web2c - maintained here, by us - core web2c, plain tex, etc.
         The TeX variant dirs (pdftexdir, xetexdir, etc.)
         updated here by their respective maintainers.

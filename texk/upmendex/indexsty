@@ -1,0 +1,15 @@
+preamble "\\documentclass{index}
+\\begin{document}\n
+\\chapter{索　引}[index0001]\n
+\\begin{theindex}\n\n"
+postamble "\n\n\\end{theindex}\n\n\\end{document}\n"
+
+lethead_prefix "\n\\letter{"
+lethead_suffix "}\n"
+lethead_flag 1
+
+delim_0 "\\delimi "
+delim_1 "\\delimii "
+delim_2 "\\delimiii "
+delim_r "\\delimr "
+delim_n "\\delimn "

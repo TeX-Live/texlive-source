@@ -127,6 +127,7 @@ seetexk
 tex4htk
 ttf2pk2
 ttfdump
+upmendex
 xdvik
 texlive
 ])]) # KPSE_TEXK_PKGS

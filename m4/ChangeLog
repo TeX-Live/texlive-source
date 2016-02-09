@@ -1,3 +1,7 @@
+2016-02-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): add upmendex.
+
 2015-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-setup.m4: Allow LuaJIT for x86_64-cygwin.
