@@ -1745,10 +1745,6 @@ do_glyphs (void)
   return;
 }
 
-/*
- * We recover the code in the TeX Live 2015 here,
- * because embolden !=0 etc. work if we do so.
- */
 static void
 check_postamble (void)
 {
@@ -1844,10 +1840,6 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
       break;
     case EOP:
       do_eop();
-/*
- * We recover the code in the TeX Live 2015 here,
- * because embolden !=0 etc. work if we do so.
- */
       if (linear) {
         if ((opcode = get_unsigned_byte(dvi_file)) == POST)
           check_postamble();
