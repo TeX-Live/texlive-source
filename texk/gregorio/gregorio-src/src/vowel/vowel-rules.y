@@ -33,12 +33,6 @@
 #include "vowel-rules.h"
 #include "vowel-rules-l.h"
 
-#if ! defined lint || defined __GNUC__
-# define IGNORE(e) ((void) (e))
-#else
-# define IGNORE(e) /* empty */
-#endif
-
 /* NOTE: This parser might allocate a new value for language; this value MUST
  *       BE FREED after the parser returns (if the value of the language pointer
  *       changes, then free the pointer).  This parser DOES free the language
@@ -49,11 +43,10 @@
 /*int gregorio_vowel_rulefile_debug=1;*/
 
 static void gregorio_vowel_rulefile_error(const char *const filename,
-        char **const language, rulefile_parse_status *const status,
+        char **const language __attribute__((__unused__)),
+        rulefile_parse_status *const status __attribute__((__unused__)),
         const char *const error_str)
 {
-    IGNORE(language);
-    IGNORE(status);
     gregorio_messagef("gregorio_vowel_rulefile_parse", VERBOSITY_ERROR, 0,
             _("%s: %s"), filename, error_str);
 }

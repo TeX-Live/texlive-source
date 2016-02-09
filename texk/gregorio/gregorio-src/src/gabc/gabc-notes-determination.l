@@ -55,10 +55,10 @@ static int slur_var[2] = { 0, 0 };
 static char slur_shift[2] = { '\0', '\0' };
 static gregorio_note *slur_start[] = { NULL, NULL };
 
-typedef enum ledger_line_type {
-    LL_OVER = 0,
-    LL_UNDER = 1
-} ledger_line_type;
+typedef enum sign_orientation {
+    SO_OVER = 0,
+    SO_UNDER = 1
+} sign_orientation;
 
 static __inline char pitch_letter_to_height(const char pitch) {
     char result = pitch - 'a' + LOWEST_PITCH;
@@ -90,12 +90,12 @@ static __inline void lex_add_note(int i, gregorio_shape shape, char signs,
             tolower((unsigned char)gabc_notes_determination_text[i])),
             shape, signs, liquescentia, NULL, &notes_lloc);
 
-    if (ledger_var[LL_OVER]) {
+    if (ledger_var[SO_OVER]) {
         current_note->supposed_high_ledger_line = true;
         current_note->explicit_high_ledger_line = true;
     }
 
-    if (ledger_var[LL_UNDER]) {
+    if (ledger_var[SO_UNDER]) {
         current_note->supposed_low_ledger_line = true;
         current_note->explicit_low_ledger_line = true;
     }
@@ -144,10 +144,12 @@ static void add_h_episema(void)
             size = H_SMALL_RIGHT;
             break;
         default:
-            gregorio_messagef("gabc_notes_determination", VERBOSITY_ERROR, 0,
-                    _("unrecognized horizontal episema modifier: %c"),
-                    current);
+            /* not reachable unless there's a programming error */
+            /* LCOV_EXCL_START */
+            gregorio_fail2(gabc_notes_determination,
+                    "unrecognized horizontal episema modifier: %c", current);
             break;
+            /* LCOV_EXCL_STOP */
         };
     }
 
@@ -183,7 +185,7 @@ static void save_before_ledger(const char *const before_ledger)
     }
 }
 
-static void add_static_ledger(const ledger_line_type type, const char *length) {
+static void add_static_ledger(const sign_orientation type, const char *length) {
     gregorio_snprintf(tempstr, sizeof tempstr,
             "\\GreDrawAdditionalLine{%d}{%s}{%d}{%s}{0}{}",
             type, length + 1, before_ledger_type, before_ledger_length);
@@ -197,23 +199,25 @@ static void add_static_ledger(const ledger_line_type type, const char *length) {
             GRE_TEXVERB_GLYPH, &notes_lloc);
 }
 
-static __inline const char *ledger_type_name(const ledger_line_type type) {
+static __inline const char *sign_orientation_name(const sign_orientation type) {
     switch (type) {
-    case LL_OVER:
+    case SO_OVER:
         return "over";
-    case LL_UNDER:
+    case SO_UNDER:
         return "under";
     }
-    gregorio_messagef("ledger_type_name", VERBOSITY_ERROR, 0,
-            _("invalid ledger type %d"), type);
-    return NULL;
+    /* not reachable unless there's a programming error */
+    /* LCOV_EXCL_START */
+    gregorio_fail2(sign_orientation_name, "invalid ledger type %d", type);
+    return "";
+    /* LCOV_EXCL_STOP */
 }
 
-static void add_variable_ledger(const ledger_line_type type,
+static void add_variable_ledger(const sign_orientation type,
         const char *after_ledger)
 {
     if (ledger_var[type]) {
-        const char *const typename = ledger_type_name(type);
+        const char *const typename = sign_orientation_name(type);
         gregorio_messagef("add_variable_ledger", VERBOSITY_ERROR, 0,
                 _("variable %s-staff ledger line without termination of "
                 "previous %s-staff ledger line"), typename, typename);
@@ -252,10 +256,10 @@ static void add_variable_ledger(const ledger_line_type type,
     }
 }
 
-static void end_variable_ledger(const ledger_line_type type)
+static void end_variable_ledger(const sign_orientation type)
 {
     if (!ledger_var[type]) {
-        const char *const typename = ledger_type_name(type);
+        const char *const typename = sign_orientation_name(type);
         gregorio_messagef("end_variable_ledger", VERBOSITY_ERROR, 0,
                 _("variable %s-staff ledger line termination without variable "
                 "%s-staff ledger line start"), typename, typename);
@@ -285,7 +289,7 @@ static __inline gregorio_bar parse_dominican_bar(char bar)
     bar -= '0';
     if (bar < 1 || bar > (2 * (staff_lines - 1))) {
         gregorio_messagef("parse_dominican_line", VERBOSITY_ERROR, 0,
-                _("invalid dominican bar for %u lines: ;%d"),
+                _("invalid Dominican bar for %u lines: ;%d"),
                 (unsigned int)staff_lines, (int)bar);
     }
 
@@ -307,10 +311,11 @@ static __inline gregorio_bar parse_dominican_bar(char bar)
     case 8:
         return B_DIVISIO_MINOR_D8;
     }
-
-    gregorio_messagef("check_dominican_line", VERBOSITY_ERROR, 0,
-            _("invalid dominican bar: %d"), (int)bar);
+    /* not reachable unless there's a programming error */
+    /* LCOV_EXCL_START */
+    gregorio_fail2(check_dominican_line, "invalid dominican bar: %d", (int)bar);
     return B_NO_BAR;
+    /* LCOV_EXCL_STOP */
 }
 
 static __inline gregorio_clef letter_to_clef(char letter)
@@ -321,15 +326,21 @@ static __inline gregorio_clef letter_to_clef(char letter)
     case 'f':
         return CLEF_F;
     }
-    gregorio_messagef("letter_to_clef", VERBOSITY_ERROR, 0,
-            _("invalid clef: %c"), letter);
+    /* not reachable unless there's a programming error */
+    /* LCOV_EXCL_START */
+    gregorio_fail2(letter_to_clef, "invalid clef: %c", letter);
     return CLEF_C;
+    /* LCOV_EXCL_STOP */
 }
 
+/* this assertion should only fail if the lex rules are incorrect */
 static __inline void slur_assert(char *fn, bool test) {
     if (!test) {
+        /* not reachable unless there's a programming error */
+        /* LCOV_EXCL_START */
         gregorio_message(_("invalid slur text"), fn, VERBOSITY_FATAL, 0);
         exit(1);
+        /* LCOV_EXCL_STOP */
     }
 }
 
@@ -372,7 +383,7 @@ static void parse_slur(int direction)
     gregorio_add_texverb_to_note(current_note, gregorio_strdup(tempstr));
 }
 
-static void start_var_slur(int index)
+static void start_var_slur(const sign_orientation index)
 {
     if (!current_note || current_note->type != GRE_NOTE) {
         gregorio_message(
@@ -382,9 +393,9 @@ static void start_var_slur(int index)
     }
 
     if (slur_var[index]) {
-        gregorio_message(
-                _("variable slur without termination of previous slur"),
-                "start_var_slur", VERBOSITY_ERROR, 0);
+        gregorio_messagef("start_var_slur", VERBOSITY_ERROR, 0,
+                _("variable %s-note slur without termination of previous slur"),
+                sign_orientation_name(index));
         return;
     }
 
@@ -393,7 +404,7 @@ static void start_var_slur(int index)
     slur_start[index] = current_note;
 }
 
-static void end_var_slur(int direction, int index)
+static void end_var_slur(const int direction, const sign_orientation index)
 {
     char shift;
 
@@ -405,8 +416,9 @@ static void end_var_slur(int direction, int index)
     }
 
     if (!slur_var[index] || !slur_shift[index] || !slur_start[index]) {
-        gregorio_message(_("variable slur end without variable slur start"),
-                "end_var_slur", VERBOSITY_ERROR, 0);
+        gregorio_messagef("end_var_slur", VERBOSITY_ERROR, 0,
+                _("variable %s-note slur end without start"),
+                sign_orientation_name(index));
         return;
     }
 
@@ -429,6 +441,36 @@ static void end_var_slur(int direction, int index)
     slur_var[index] = 0;
     slur_shift[index] = '\0';
     slur_start[index] = NULL;
+}
+
+void gabc_det_notes_finish(void)
+{
+    sign_orientation orientation;
+    if (overbrace_var) {
+        gregorio_message(_("unclosed variable over-staff brace"),
+                "gabc_det_notes_finish", VERBOSITY_ERROR, 0);
+        overbrace_var = 0;
+    }
+    if (underbrace_var) {
+        gregorio_message(_("unclosed variable under-staff brace"),
+                "gabc_det_notes_finish", VERBOSITY_ERROR, 0);
+        underbrace_var = 0;
+    }
+    for (orientation = SO_OVER; orientation <= SO_UNDER; ++orientation) {
+        const char *name = sign_orientation_name(orientation);
+        if (ledger_var[orientation]) {
+            gregorio_messagef("gabc_det_notes_finish", VERBOSITY_ERROR, 0,
+                    _("unclosed variable %s-staff ledger line"), name);
+            ledger_var[orientation] = 0;
+        }
+        if (slur_var[orientation]) {
+            gregorio_messagef("gabc_det_notes_finish", VERBOSITY_ERROR, 0,
+                    _("unclosed variable %s-note slur"), name);
+            slur_var[orientation] = 0;
+            slur_shift[orientation] = '\0';
+            slur_start[orientation] = NULL;
+        }
+    }
 }
 
 %}
@@ -748,7 +790,7 @@ static void end_var_slur(int direction, int index)
                 gregorio_strdup(gabc_notes_determination_text), &notes_lloc);
     }
 <INITIAL>\[oll:\}\] {
-        end_variable_ledger(LL_OVER);
+        end_variable_ledger(SO_OVER);
     }
 <INITIAL>\[oll: {
         BEGIN(overledger);
@@ -758,15 +800,15 @@ static void end_var_slur(int direction, int index)
         BEGIN(overledger2);
     }
 <overledger2>;[^\]]+ {
-        add_static_ledger(LL_OVER, gabc_notes_determination_text);
+        add_static_ledger(SO_OVER, gabc_notes_determination_text);
         BEGIN(endledger);
     }
 <overledger2>\{[^\]]+ {
-        add_variable_ledger(LL_OVER, gabc_notes_determination_text);
+        add_variable_ledger(SO_OVER, gabc_notes_determination_text);
         BEGIN(endledger);
     }
 <INITIAL>\[ull:\}\] {
-        end_variable_ledger(LL_UNDER);
+        end_variable_ledger(SO_UNDER);
     }
 <INITIAL>\[ull: {
         BEGIN(underledger);
@@ -776,11 +818,11 @@ static void end_var_slur(int direction, int index)
         BEGIN(underledger2);
     }
 <underledger2>;[^\]]+ {
-        add_static_ledger(LL_UNDER, gabc_notes_determination_text);
+        add_static_ledger(SO_UNDER, gabc_notes_determination_text);
         BEGIN(endledger);
     }
 <underledger2>\{[^\]]+ {
-        add_variable_ledger(LL_UNDER, gabc_notes_determination_text);
+        add_variable_ledger(SO_UNDER, gabc_notes_determination_text);
         BEGIN(endledger);
     }
 <texverbnote,texverbglyph,texverbelement,choralsign,choralnabc,alt,overcurlyaccentusbrace,overcurlybrace,overbrace,underbrace,space,nbspace,endledger>\] {
@@ -790,19 +832,19 @@ static void end_var_slur(int direction, int index)
         parse_slur(1);
     }
 <INITIAL>\[oslur:[012]\{\] {
-        start_var_slur(0);
+        start_var_slur(SO_OVER);
     }
 <INITIAL>\[oslur:[012]\}\] {
-        end_var_slur(1, 0);
+        end_var_slur(1, SO_OVER);
     }
 <INITIAL>\[uslur:[012];[^,]+,[^\]]+\] {
         parse_slur(-1);
     }
 <INITIAL>\[uslur:[012]\{\] {
-        start_var_slur(1);
+        start_var_slur(SO_UNDER);
     }
 <INITIAL>\[uslur:[012]\}\] {
-        end_var_slur(-1, 1);
+        end_var_slur(-1, SO_UNDER);
     }
 \{  {
         gregorio_add_texverb_as_note(&current_note,
@@ -929,6 +971,10 @@ y   {
         gregorio_add_space_as_note(&current_note, SP_HALF_SPACE, NULL,
                 &notes_lloc);
     }
+!?\/! {
+        gregorio_add_space_as_note(&current_note, SP_INTERGLYPH_SPACE, NULL,
+                &notes_lloc);
+    }
 \/  {
         gregorio_add_space_as_note(&current_note, SP_NEUMATIC_CUT, NULL,
                 &notes_lloc);
@@ -1031,8 +1077,7 @@ q   {
                 legacy_oriscus_orientation);
     }
 o   {
-        gregorio_change_shape(current_note, legacy_oriscus_orientation
-                ? S_ORISCUS_ASCENDENS : S_ORISCUS_UNDETERMINED,
+        gregorio_change_shape(current_note, S_ORISCUS_UNDETERMINED,
                 legacy_oriscus_orientation);
     }
 O   {
@@ -1075,7 +1120,7 @@ s   {
         current_note->supposed_low_ledger_line = false;
         current_note->explicit_low_ledger_line = true;
     }
-.   {
+.|\n {
         gregorio_messagef("det_notes_from_string", VERBOSITY_ERROR, 0,
                 _("unrecognized character: \"%c\""),
                 gabc_notes_determination_text[0]);

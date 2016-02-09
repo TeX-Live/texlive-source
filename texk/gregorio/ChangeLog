@@ -1,3 +1,8 @@
+2016-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gregorio-4.1.0-beta2.
+	* version.ac: Adapted.
+
 2016-02-08  Karl Berry  <karl@tug.org>
 
 	* configure.ac (gl_FUNC_REALPATH_WORKS): from gnulib/canonicalize.m4.

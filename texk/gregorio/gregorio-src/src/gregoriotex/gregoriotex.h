@@ -36,17 +36,12 @@ typedef enum gtex_type {
     /* two note neumes */
     T_PES,
     T_PESQUADRATUM,
-    T_PESQUADRATUM_LONGQUEUE,
     T_PESQUILISMA,
     T_PESQUASSUS,
-    T_PESQUASSUS_LONGQUEUE,
     T_PESQUILISMAQUADRATUM,
-    T_PESQUILISMAQUADRATUM_LONGQUEUE,
     T_FLEXUS,
-    T_FLEXUS_LONGQUEUE,
     T_FLEXUS_ORISCUS,
     T_FLEXUS_ORISCUS_SCAPUS,
-    T_FLEXUS_ORISCUS_SCAPUS_LONGQUEUE,
     T_VIRGA_STRATA,
     /* three note neumes */
     T_PORRECTUS,
@@ -54,9 +49,7 @@ typedef enum gtex_type {
     T_TORCULUS_QUILISMA,
     T_SCANDICUS, /* only deminutus */
     T_ANCUS, /* only deminutus */
-    T_ANCUS_LONGQUEUE, /* only deminutus */
     T_SALICUS,
-    T_SALICUS_LONGQUEUE,
     /* four note neumes */
     T_SALICUS_FLEXUS,
     T_PORRECTUS_FLEXUS,
@@ -127,10 +120,7 @@ static __inline bool choral_sign_here_is_low(const gregorio_glyph *const glyph,
         if (kind_of_pes) {
             *kind_of_pes = true;
         }
-        if (note->u.note.shape != S_QUILISMA) {
-            return true;
-        }
-        break;
+        return true;
 
     default:
         break;
@@ -152,8 +142,7 @@ static __inline bool is_between_lines(const char pitch)
 bool gtex_is_h_episema_above_shown(const gregorio_note *const note);
 bool gtex_is_h_episema_below_shown(const gregorio_note *const note);
 const char *gregoriotex_determine_glyph_name(const gregorio_glyph *const glyph,
-        const gregorio_element *const element, gtex_alignment *const  type,
-        gtex_type *const gtype);
+        gtex_alignment *const  type, gtex_type *const gtype);
 void gregoriotex_compute_positioning(const gregorio_element *element,
         const gregorio_score *score);
 

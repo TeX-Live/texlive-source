@@ -132,6 +132,10 @@ utf8strings.h: utf8strings.h.in
 encode_utf8strings${EXEEXT}: encode_utf8strings.c
 	$(CC) -o $@ $<
 
+clean-local:
+	find . -name '*.gcno' -print | xargs rm -f --
+	find . -name '*.gcda' -print | xargs rm -f --
+
 BUILT_SOURCES = utf8strings.h \
 					gabc/gabc-notes-determination-l.c \
 					gabc/gabc-score-determination-l.c \

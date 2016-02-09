@@ -322,7 +322,7 @@ extern int gabc_score_determination_lex (void);
 #undef YY_DECL
 #endif
 
-#line 426 "gabc/gabc-score-determination.l"
+#line 432 "gabc/gabc-score-determination.l"
 
 
 #line 329 "gabc/gabc-score-determination-l.h"

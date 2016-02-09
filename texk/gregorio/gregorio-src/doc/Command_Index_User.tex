@@ -647,6 +647,37 @@ A macro for invoking one of the ornamentation elements which are contained in th
 \end{argtable}
 
 
+\subsubsection{Special Characters}
+
+% this is defined in gregoriotex-symbols.texx as having one argument, but the
+% lua code generates a \gdef\<something> which then requires a second argument
+\macroname{\textbackslash gresetspecial}{\{\#1\}\{\#2\}}{gregoriotex-symbols.tex}
+Sets a special character.  Special characters are used from gabc within
+\texttt{<sp>} and \texttt{</sp>}.
+
+\begin{argtable}
+	\#1 & string & The text between \texttt{<sp>} and \texttt{</sp>}.\\
+	\#2 & \TeX\ code & The \TeX\ code to substitute when \texttt{<sp>\#1</sp>}
+										 is used in gabc.\\
+\end{argtable}
+
+\textbf{Nota Bene:} If you need to use a character in \#1 that is made special
+by \TeX{} (\ie, \textbackslash, \%, \etc), you should instead use
+\verb=\string\nnn=, where \texttt{nnn} is a three-digit, zero-padded number
+representing the ASCII code of the character (\ie, \textbackslash{} would be
+\verb=\string\092=).
+
+\macroname{\textbackslash greunsetspecial}{\{\#1\}}{gregoriotex-symbols.tex}
+Un-sets a special character.  Using an unset special character will use its
+text directly.
+
+\begin{argtable}
+	\#1 & string & The text between \texttt{<sp>} and \texttt{</sp>}.\\
+\end{argtable}
+
+\textbf{Nota Bene:} The same rules apply for \#1 as in \verb=\gresetspecial=.
+
+
 \subsubsection{Styling}
 Different elements of an include score have different styles applied.  These elements and their defaults are listed below:
 
@@ -657,23 +688,25 @@ Different elements of an include score have different styles applied.  These ele
 \begin{tabular}{lp{7cm plus .5cm}r}
 	Element Name & Description & Default\\
 	\hline
-	\stylename{initial} & Score initial (the first letter of the score, when offset from the rest of the text) & 40 pt font\\
-	\stylename{translation} & Translation text (appears below lyrics) & {\it italics}\\
-	\stylename{abovelinestext} & Above line text (\texttt{<alt></alt>} in gabc, appears above the staff) & normal\\
-	\stylename{normalstafflines} & Full length staff lines & none\\
+	\stylename{abovelinestext} & above line text (\texttt{<alt></alt>} in gabc, appears above the staff) & normal\\
 	\stylename{additionalstafflines} & short lines behind notes above or below the staff & special\footnotemark[1]\\
-	\stylename{lowchoralsign} & low choral signs & none\\
-	\stylename{highchoralsign} & high choral signs & none\\
-	\stylename{firstsyllableinitial} & the first letter of the first syllable of a score which is not the score initial & none\\
-	\stylename{firstsyllable} & the first syllable of the score excluding the score initial & none\\
-	\stylename{firstword} & the first word of the first score excluding the score initial & none\\
 	\stylename{annotation} & the annotation & none\\
-	\stylename{commentary} & the commentary & {\footnotesize\it Footnote size italics}\\
-	\stylename{modeline} & the rendered annotation from the \texttt{mode: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textsc{\textbf{Bold Small Capitals}}}\\
-	\stylename{modemodifier} & the rendered annotation from the \texttt{mode-modifier: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textit{\textbf{Bold Italics}}}\\
-	\stylename{modedifferentia} & the rendered annotation from the \texttt{mode-differentia: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textbf{Bold}}\\
+	\stylename{commentary} & the commentary & {\footnotesize\it footnote-size italics}\\
+	\stylename{elision} & elisions (\texttt{<e></e>} in gabc) & {\textit{\small small-size italics}} (\LaTeX)\\
+											&& {\textit{italics}} (Plain \TeX)\\
+	\stylename{firstsyllable} & the first syllable of the score excluding the score initial & none\\
+	\stylename{firstsyllableinitial} & the first letter of the first syllable of a score which is not the score initial & none\\
+	\stylename{firstword} & the first word of the first score excluding the score initial & none\\
+	\stylename{highchoralsign} & high choral signs & none\\
+	\stylename{initial} & Score initial (the first letter of the score, when offset from the rest of the text) & 40 pt font\\
+	\stylename{lowchoralsign} & low choral signs & none\\
+	\stylename{modedifferentia} & the rendered annotation from the \texttt{mode-differentia: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textbf{bold}}\\
+	\stylename{modeline} & the rendered annotation from the \texttt{mode: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textsc{\textbf{bold small capitals}}}\\
+	\stylename{modemodifier} & the rendered annotation from the \texttt{mode-modifier: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textit{\textbf{bold italics}}}\\
 	\stylename{nabc} & ancient notation & {\color{gregoriocolor}gregoriocolor} (\LaTeX)\\
-	&& none (Plain \TeX)\\
+									 && none (Plain \TeX)\\
+	\stylename{normalstafflines} & Full length staff lines & none\\
+	\stylename{translation} & Translation text (appears below lyrics) & {\it italics}\\
 \end{tabular}
 \end{adjustbox}
 
@@ -882,17 +915,26 @@ Macro to determine whether the last line of the score should be justified or not
 
 \subsubsection{Bar spacing}
 
-\macroname{\textbackslash gresetbarshiftaftermora}{\{\#1\}}{gregoriotex-signs.tex}
-Macro to change the behaviour for bars following a punctum mora. The argument changes the cases in which punctum mora are ignored in bar horizontal placement:
+\macroname{\textbackslash gresetshiftaftermora}{\{\#1\}}{gregoriotex-signs.tex}
+Macro to change the behaviour for separation between notes of two syllables when the first ends with a punctum mora. The argument changes the cases in which punctum mora are ignored in space computation:
 
 \begin{argtable}
 	\#1 & \texttt{always} & punctum mora are always ignored (default)\\
-	& \texttt{notextonly} & punctum mora are ignored in bars inside syllables, and in bars having their own syllable without text\\
-	& \texttt{insideonly} & punctum mora are ignored only in bars inside syllables\\
+	& \texttt{barsonly} & punctum mora are ignored before bars\\
+	& \texttt{notextonly} & punctum mora are ignored before bars inside syllables, or bars having their own syllable without text\\
+	& \texttt{insideonly} & punctum mora are ignored only before bars inside syllables\\
 	& \texttt{never} & punctum mora are never ignored\\
 \end{argtable}
 
 When a punctum mora is ignored, the bar will also be shifted by \texttt{barmoraadjustment} (zero by default), see its description in the \textbf{Distances} section.
+
+\macroname{\textbackslash gresetbarspacing}{\{\#1\}}{gregoriotex-syllable.tex}
+Macro to activate the new bar spacing algorithm.  The new algorithm attempts to place the bar line exactly midway between its surrounding notes.  Any text associated with the bar is placed midway between its surrounding text.  Since this might result in the bar line and the text being widely separated, there is also a limit to the distance between their centers: \texttt{maxbaroffset}.
+
+\begin{argtable}
+	\#1 & \texttt{new} & Activates the new spacing algorithm\\
+	& \texttt{old} & Activates the old behavior (Default)\\
+\end{argtable}
 
 \subsubsection{Hyphenation}
 
@@ -948,7 +990,7 @@ Macro to determine the method used for aligning the clivis with its lyrics.
 
 \subsubsection{Braces}
 
-\macroname{\textbackslash gresetbracerendering}{\{\#1\}}{gregoriotex-signs.tex}
+\macroname{\textbackslash gresetbracerendering}{[\optional{\#1}]\{\#2\}}{gregoriotex-signs.tex}
 Macro to tell Gregorio\TeX{} whether to use \MP{} or fonts to render
 braces.  \MP{} braces, the default, are tailored to better maintain
 optical line weight when stretched.  \MP{} braces are designed to
@@ -956,8 +998,13 @@ harmonize (and thus match best) with greciliae, but they still look good
 with the other score fonts.
 
 \begin{argtable}
-	\#1 & \texttt{metapost} & \MP{} will be used to render braces (default)\\
-	& \texttt{font} & The score font will be used to render braces
+	\#1 & \textit{(omitted)} & change all braces\\
+			& \texttt{brace} & change round braces that appear over the staff\\
+			& \texttt{underbrace} & change round braces that appear under the staff\\
+			& \texttt{curlybrace} & change curly braces\\
+			& \texttt{barbrace} & change round braces that appear over divisio bars\\
+	\#2 & \texttt{metapost} & \MP{} will be used to render braces\\
+			& \texttt{font} & The score font will be used to render braces\\
 \end{argtable}
 
 \macroname{\textbackslash grebarbracewidth}{}{gregoriotex-signs.tex}
@@ -1107,9 +1154,14 @@ Space before custos within a line.
 Space before punctum mora and augmentum duplex.
 \end{gdimension}
 
-\begin{gdimension}{barmoraadjustment}
-When a bar is shifted left because of a preceding punctum mora, this space is
-also added. Use it to make the bar a bit further from the punctum mora if you want.
+\begin{gdimension}{moraadjustment}
+When a syllable (bar or not) is shifted left because of a preceding punctum
+mora, this space is also added. Use it to make the syllable a bit further from
+the punctum mora if you want.
+\end{gdimension}
+
+\begin{gdimension}{moraadjustmentbar}
+Same as previous one but specific to cases where puntum mora precedes a bar.
 \end{gdimension}
 
 \begin{gdimension}{spaceaftersigns}
@@ -1413,6 +1465,10 @@ Distance an over-the-notes slur will be raised above the baseline of a note at t
 
 \begin{gdimension}{underslurshift}
 Distance an under-the-notes slur will be raised above the baseline of a note at the same height.
+\end{gdimension}
+
+\begin{gdimension}{maxbaroffset}
+When the new bar spacing algorithm is active, this is the maximum distance by which a bar and its associated text can be separated.
 \end{gdimension}
 
 

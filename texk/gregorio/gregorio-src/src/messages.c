@@ -22,13 +22,13 @@
 
 #include "config.h"
 #include <stdio.h>
-#include <stdlib.h>             /* for exit() */
-#include <stdarg.h>             /* for exit() */
+#include <assert.h>
+#include <stdarg.h>
 #include "bool.h"
 #include "messages.h"
+#include "support.h"
 
 static FILE *error_out;
-static const char *file_name = NULL;
 static gregorio_verbosity verbosity_mode = 0;
 static bool debug_messages = false;
 static int return_value = 0;
@@ -43,22 +43,15 @@ void gregorio_set_error_out(FILE *const f)
     error_out = f;
 }
 
-void gregorio_set_file_name(const char *const new_name)
-{
-    file_name = new_name;
-}
-
 void gregorio_set_verbosity_mode(const gregorio_verbosity verbosity)
 {
     verbosity_mode = verbosity;
 }
 
-#if 0 /* unused */
-static void gregorio_set_debug_messages(bool debug)
+void gregorio_set_debug_messages(bool debug)
 {
     debug_messages = debug;
 }
-#endif
 
 static const char *verbosity_to_str(const gregorio_verbosity verbosity)
 {
@@ -73,9 +66,18 @@ static const char *verbosity_to_str(const gregorio_verbosity verbosity)
     case VERBOSITY_ERROR:
         str = _("error:");
         break;
+    case VERBOSITY_ASSERTION:
+        /* not reachable unless there's a programming error */
+        /* LCOV_EXCL_START */
+        str = _("assertion:");
+        break;
+        /* LCOV_EXCL_STOP */
     case VERBOSITY_FATAL:
+        /* all fatal errors should not be reasonably testable */
+        /* LCOV_EXCL_START */
         str = _("fatal error:");
         break;
+        /* LCOV_EXCL_STOP */
     default:
         /* INFO, for example */
         str = " ";
@@ -91,64 +93,37 @@ void gregorio_messagef(const char *function_name,
     va_list args;
     const char *verbosity_str;
 
-    if (!debug_messages) {
+    if (!debug_messages && verbosity != VERBOSITY_ASSERTION) {
         line_number = 0;
         function_name = NULL;
     }
 
-    if (!error_out) {
-        fprintf(stderr, _("warning: error_out not set in gregorio_messages, "
-                    "assumed stderr\n"));
-        error_out = stderr;
-    }
-    if (!verbosity_mode) {
-        fprintf(stderr, _("warning: verbosity mode not set in "
-                    "gregorio_messages, assumed warnings\n"));
-        verbosity_mode = VERBOSITY_WARNING;
-    }
+    /* if these assertions fail, the program is not using this code correctly */
+    assert(error_out);
+    assert(verbosity_mode);
+
     if (verbosity < verbosity_mode) {
         return;
     }
+    if (verbosity == VERBOSITY_ASSERTION && return_value) {
+        /* if something has already caused the system to fail, demote any
+         * assertions coming after to warnings */
+        verbosity = VERBOSITY_WARNING;
+    }
     verbosity_str = verbosity_to_str(verbosity);
     if (line_number) {
+        /* if line number is specified, function_name must be specified */
+        assert(function_name);
         if (function_name) {
-            if (!file_name) {
-                fprintf(error_out, "line %d: in function `%s': %s",
-                        line_number, function_name, verbosity_str);
-            } else {
-                fprintf(error_out, "%d: in function `%s': %s", line_number,
-                        function_name, verbosity_str);
-            }
-        } else {
-            /* no function_name specified */
-            if (!file_name) {
-                fprintf(error_out, "line %d: %s", line_number, verbosity_str);
-            } else {
-                fprintf(error_out, "%d: %s", line_number, verbosity_str);
-            }
+            fprintf(error_out, "%d: in function `%s': %s", line_number,
+                    function_name, verbosity_str);
         }
     } else {
         if (function_name) {
-            /*
-             * if (!file_name) {
-             *     fprintf (error_out, "in function `%s': %s",
-             *     function_name, verbosity_str);
-             *     return;
-             * } else {
-             */
             fprintf(error_out, "in function `%s': %s", function_name,
                     verbosity_str);
-            /* } */
         } else {
-            /* no function_name specified */
-            /*
-             * if (!file_name) {
-             *     fprintf (error_out, "%s", verbosity_str);
-             *     return;
-             * } else {
-             */
             fprintf(error_out, "%s", verbosity_str);
-            /* } */
         }
     }
     va_start(args, format);
@@ -158,11 +133,15 @@ void gregorio_messagef(const char *function_name,
 
     switch (verbosity) {
     case VERBOSITY_ERROR:
+    case VERBOSITY_ASSERTION:
         return_value = 1;
         break;
     case VERBOSITY_FATAL:
-        exit(1);
+        /* all fatal errors should not be reasonably testable */
+        /* LCOV_EXCL_START */
+        gregorio_exit(1);
         break;
+        /* LCOV_EXCL_STOP */
     default:
         break;
     }
