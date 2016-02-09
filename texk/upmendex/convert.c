@@ -30,7 +30,7 @@ UChar * u_xstrdup (const UChar *string)
 /*   initialize kana table   */
 void initkanatable(void)
 {
-	int i,cc;
+	int i;
 
 	akasatana=u_xstrdup(AKASATANA);
 	for (i=0;;i++) {
@@ -184,9 +184,9 @@ static int dcomp(const void *bf1, const void *bf2)
 /*   convert to capital-hiragana character   */
 int convert(UChar *buff1, UChar *buff2)
 {
-	int i=0,j=0,k,l;
+	int i=0,j=0,k;
 	char errbuff[4096],errbuff2[4096];
-	int chr,wclen;
+	int wclen;
 	UChar buff3[3];
 
 	while(1) {
