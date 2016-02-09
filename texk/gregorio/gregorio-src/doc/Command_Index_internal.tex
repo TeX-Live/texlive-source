@@ -269,6 +269,40 @@ macro is typically called by \verb=\GreMode= in the gtex file.
 	\#3 & \TeX\ code & Arbitrary code to typeset, in the \texttt{modedifferentia} style, after \#2.\\
 \end{argtable}
 
+\macroname{\textbackslash gre@setallbracerendering}{\#1}{gregoriotex-signs.tex}
+Macro used by \verb=\gresetbracerendering= to change all braces.
+
+\begin{argtable}
+	\#1 & \texttt{metapost} & \MP{} will be used to render braces\\
+			& \texttt{font} & The score font will be used to render braces\\
+\end{argtable}
+
+\macroname{\textbackslash gre@setbracerendering}{[\#1]\#2}{gregoriotex-signs.tex}
+Macro used by \verb=\gresetbracerendering= to change a single type of brace.
+
+\begin{argtable}
+	\#1 & \texttt{brace} & change round braces that appear over the staff\\
+			& \texttt{underbrace} & change round braces that appear under the staff\\
+			& \texttt{curlybrace} & change curly braces\\
+			& \texttt{barbrace} & change round braces that appear over divisio bars\\
+	\#2 & \texttt{metapost} & \MP{} will be used to render braces\\
+			& \texttt{font} & The score font will be used to render braces\\
+\end{argtable}
+
+\macroname{\textbackslash gre@@setbracerendering}{\#1\#2}{gregoriotex-signs.tex}
+Secondary macro used by \verb=\gre@setallbracerendering= and
+\verb=\gre@setbracerendering= to change a single type of brace.  As a
+secondary macro, it doesn't check its first argument.
+
+\begin{argtable}
+	\#1 & \texttt{brace} & change round braces that appear over the staff\\
+			& \texttt{underbrace} & change round braces that appear under the staff\\
+			& \texttt{curlybrace} & change curly braces\\
+			& \texttt{barbrace} & change round braces that appear over divisio bars\\
+	\#2 & \texttt{metapost} & \MP{} will be used to render braces\\
+			& \texttt{font} & The score font will be used to render braces\\
+\end{argtable}
+
 \macroname{\textbackslash gre@brace@common}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
 Common macro used internally to render braces.
 
@@ -283,6 +317,9 @@ Common macro used internally to render braces.
 	\#6 & integer & The height number for the brace.\\
 	\#7 & csname  & The control sequence name representing the brace.
 \end{argtable}
+
+\macroname{\textbackslash gre@render@barbrace}{}{gregoriotex-signs.tex}
+Draws a divisio brace.
 
 \macroname{\textbackslash grebracemetapostpreamble}{\#1}{gregoriotex-signs.tex}
 Returns the \MP{} preamble for braces.  The control sequence name does
@@ -304,6 +341,14 @@ Draws a round over-brace using \MP{}.
 
 \begin{argtable}
 	\#1 & string & the width of the brace; if \texttt{*}, use the bar brace width.
+\end{argtable}
+
+\macroname{\textbackslash gre@render@fontbrace}{\#1\#2}{gregoriotex-signs.tex}
+Draws a brace using the score font.
+
+\begin{argtable}
+	\#1 & string & the width of the brace.\\
+	\#2 & \TeX\ code & \TeX\ code that renders the brace using the score font.\\
 \end{argtable}
 
 \macroname{\textbackslash gre@draw@underbrace}{\#1}{gregoriotex-signs.tex}
@@ -409,8 +454,8 @@ Macro to typeset an alteration.
 	\#1 & integer & height of the alteration\\
 	\#2 & character alias & the alteration\\
 	\#3 & character alias & the hole of the alteration\\
-	\#4 & \texttt{1} & the alteration is a flat for a key change\\
-	& \texttt{0} & all other cases\\
+	\#4 & \texttt{1} & the alteration is part of the clef\\
+	& \texttt{0} & the alteration is not part of the clef\\
 	\#5 & \TeX\ code & signs to typeset before the glyph (typically additional bars, as they must be "behind" the glyph)\\
 	\#6 & \TeX\ code & signs to typeset after the glyph (almost all signs)\\
 	\#7 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled\\
@@ -672,7 +717,7 @@ Saves clef information for use in \verb=gre@updatelinesclef=.
 	\#4 & character & the type of the secondary clef: c or f\\
 	\#5 & integer & the line of the secondary clef (1 is the lowest, 0 for no secondary clef)\\
 	\#6 & integer & if \texttt{3}, it means that we must not put a flat after the secondary clef, otherwise it’s the height of the flat\\
-\end{argtable}	
+\end{argtable}
 
 \macroname{\textbackslash gre@typeclef}{\#1\#2\#3\#4\#5\#6\#7\#8}{gregoriotex-signs.tex}
 Macro which typesets the clef.
@@ -688,7 +733,7 @@ Macro which typesets the clef.
 	\#6 & character & the type of the secondary clef: c or f\\
 	\#7 & integer & the line of the secondary clef (1 is the lowest, 0 for no secondary clef)\\
 	\#8 & integer & if \texttt{3}, it means that we must not put a flat after the secondary clef, otherwise it’s the height of the flat\\
-\end{argtable}	
+\end{argtable}
 
 \macroname{\textbackslash gre@typesingleclef}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
 Macro which typesets a single clef.
@@ -699,7 +744,7 @@ Macro which typesets a single clef.
 	\#3 & \texttt{0} & no need to use small clef characters (inside a line)\\
 	& \texttt{1} & we must use small clef characters (inside a line)\\
 	\#4 & integer & if \texttt{3}, it means that we must not put a flat after the clef, otherwise it’s the height of the flat\\
-\end{argtable}	
+\end{argtable}
 
 \macroname{\textbackslash gre@updateleftbox}{}{gregoriotex-main.tex}
 Macro to update the box printed a the left end of every line (the one which holds the staff lines).
@@ -1321,8 +1366,20 @@ Boolean used to specify whether the staff lines behind an alteration should be h
 \macroname{\textbackslash ifgre@hepisemabridge}{}{gregoriotex-signs.tex}
 Boolean used to specify whether adjacent horizontal episemata should be joined together.
 
-\macroname{\textbackslash ifgre@drawbraces}{}{gregoriotex-signs.tex}
-Boolean used to specify whether braces should be drawn by \MP{} as
+\macroname{\textbackslash ifgre@metapost@brace}{}{gregoriotex-signs.tex}
+Boolean used to specify whether round over-the-staff braces should be drawn by
+\MP{} as opposed to rendered via the score font.
+
+\macroname{\textbackslash ifgre@metapost@underbrace}{}{gregoriotex-signs.tex}
+Boolean used to specify whether round under-the-staff braces should be drawn by
+\MP{} as opposed to rendered via the score font.
+
+\macroname{\textbackslash ifgre@metapost@curlybrace}{}{gregoriotex-signs.tex}
+Boolean used to specify whether curly braces should be drawn by \MP{} as
+opposed to rendered via the score font.
+
+\macroname{\textbackslash ifgre@metapost@barbrace}{}{gregoriotex-signs.tex}
+Boolean used to specify whether divisio braces should be drawn by \MP{} as
 opposed to rendered via the score font.
 
 \macroname{\textbackslash gre@biginitial}{}{gregoriotex-main.tex}
@@ -1344,7 +1401,7 @@ Boolean to mark the last syllable of the score.
 Boolean that tells us if the current glyph is the first glyph or not.
 
 \macroname{\textbackslash gre@attr@dash}{}{gregoriotex-main.tex}
-A Lua\TeX\ attribute which indicates whether a syllable takes a dash if it ends a line.  
+A Lua\TeX\ attribute which indicates whether a syllable takes a dash if it ends a line.
 
 \macroname{\textbackslash gre@attr@center}{}{gregoriotex-main.tex}
 A Lua\TeX\ attribute which indicates the type of translation centering.
@@ -1367,8 +1424,11 @@ Macro which indicates whether we are currently inside a discretionary (\texttt{1
 \macroname{\textbackslash ifgre@isonaline}{}{gregoriotex-syllable.tex}
 Boolean which indicates whether the current note is on a line or not (used to adjust the height of some symbols so they won’t print on a line).
 
-\macroname{\textbackslash ifgre@lastispunctum}{}{gregoriotex-syllable.tex}
-Boolean which indicates if the most recent note was a punctum mora.
+\macroname{\textbackslash ifgre@lastendswithmora}{}{gregoriotex-syllable.tex}
+Boolean which indicates if the previous syllable ends with a punctum mora (set glyph by glyph, do not rely on it when typesetting glyph).
+
+\macroname{\textbackslash ifgre@thisendswithmora}{}{gregoriotex-syllable.tex}
+Same as previous one but for current syllable.
 
 \macroname{\textbackslash ifgre@lastispunctumsave}{}{gregoriotex-signs.tex}
 Boolean for storing \verb=\ifgre@lastispunctum= so that it can be restored later.
@@ -1460,8 +1520,19 @@ Boolean indicating whether the staff has a fifth line.
 \macroname{\textbackslash gre@count@barshiftaftermora}{}{gregoriotex-signs.tex}
 Count indicating when the presence of a punctum mora immediately before a bar line should affect the spacing.
 
+\macroname{\textbackslash gre@count@lastglyphiscavum}{}{gregoriotex-spaces.tex}
+Count indicating if the last glyph has a cavum (this includes flats, naturals, punctum cavum, etc.), when staff line shouldn't appear underneath this empty part. Can be:
+\begin{itemize}
+\item 0: previous and current glyph are not cavum
+\item 1: current glyph is (set when line is hidden, at the end of the glyph)
+\item 2: previous glyph is (set at beginning of glyph)
+\end{itemize}
+
 \macroname{\textbackslash ifgre@allowdeprecated}{}{gregoriotex.sty \textup{and} gregoriotex.tex}
 Boolean which controls whether deprecated functions raise a warning (true) or an error (false).
+
+\macroname{\textbackslash ifgre@newbarspacing}{}{gregoriotex-syllable.tex}
+Boolean which controls whether the new bar spacing algorithm is activated.
 
 
 \subsection{Boxes}
@@ -1521,8 +1592,11 @@ second is the name of the distance.
 
 These additional distances are calculated by Gregorio based on the values for the user customizable distances and what may be going on in the score at the time of their use.
 
+\macroname{\textbackslash gre@dimen@morawidth}{}{gregoriotex-spaces.tex}
+Width of a punctum mora (reinitialized at each score, lazily recomputed).
+
 \macroname{\textbackslash gre@dimen@clefwidth}{}{gregoriotex-spaces.tex}
-Width of the clef.
+Width of the current clef.
 
 \macroname{\textbackslash gre@dimen@constantglyphraise}{}{gregoriotex-spaces.tex}
 Dimension representing the space between the 0 of the gregorian fonts and the effective 0 of the TeX score.
@@ -1561,7 +1635,7 @@ the localleftbox for a big initial (one taking two lines).
 Dimension representing the width of the initial (and the space after).
 
 \macroname{\textbackslash gre@dimen@currentabovelinestextheight}{}{gregoriotex-spaces.tex}
-Dimension representing the space allocated above the lines for text.	
+Dimension representing the space allocated above the lines for text.
 
 \macroname{\textbackslash gre@dimen@staffheight}{}{gregoriotex-spaces.tex}
 The total height of the staff including the width of the lines and the spaces between them.
@@ -1620,23 +1694,23 @@ The distance from the baseline of the initial to the baseline of the annotation.
 \macroname{\textbackslash gre@dimen@commentarytrueraise}{}{gregoriotex-spaces.tex}
 The distance from the baseline of the initial to the baseline of the commentary.
 
-\macroname{\textbackslash gre@minTextDistance}{}{gregoriotex-spaces.tex}
-Minimum distance between text (meaningful alias for \verb=\gre@skip@temp@one= inside \verb=\gre@calculate@syllablefinalskip=).
+\macroname{\textbackslash gre@skip@minTextDistance}{}{gregoriotex-spaces.tex}
+Minimum distance between text.
 
-\macroname{\textbackslash gre@minNotesDistance}{}{gregoriotex-spaces.tex}
-Minimum distance between notes (meaningful alias for \verb=\gre@skip@temp@two= inside \verb=\gre@calculate@syllablefinalskip=).
+\macroname{\textbackslash gre@skip@minNotesDistance}{}{gregoriotex-spaces.tex}
+Minimum distance between notes.
 
-\macroname{\textbackslash gre@curTextDistance}{}{gregoriotex-spaces.tex}
-Current distance between text (meaningful alias for \verb=\gre@dimen@temp@three= inside \verb=\gre@calculate@syllablefinalskip=).
+\macroname{\textbackslash gre@dimen@curTextDistance}{}{gregoriotex-spaces.tex}
+Current distance between text.
 
-\macroname{\textbackslash gre@curNotesDistance}{}{gregoriotex-spaces.tex}
-Current distance between notes (meaningful alias for \verb=\gre@dimen@temp@four= inside \verb=\gre@calculate@syllablefinalskip=).
+\macroname{\textbackslash gre@dimen@curNotesDistance}{}{gregoriotex-spaces.tex}
+Current distance between notes.
 
-\macroname{\textbackslash gre@minShiftText}{}{gregoriotex-spaces.tex}
-Minimum shift required for the text (meaningful alias for \verb=\gre@skip@temp@three= inside \verb=\gre@calculate@syllablefinalskip=).
+\macroname{\textbackslash gre@skip@minShiftText}{}{gregoriotex-spaces.tex}
+Minimum shift required for the text.
 
-\macroname{\textbackslash gre@minShiftNotes}{}{gregoriotex-spaces.tex}
-Minimum shift required for the notes (meaningful alias for \verb=\gre@skip@temp@four= inside \verb=\gre@calculate@syllablefinalskip=).
+\macroname{\textbackslash gre@skip@minShiftNotes}{}{gregoriotex-spaces.tex}
+Minimum shift required for the notes.
 
 \macroname{\textbackslash gre@save@parfillskip}{}{gregoriotex-main.tex}
 Macro to store \verb=\parfillskip= value so that we can restore it at the end of the score (needed to force the last line of a score to be justified).

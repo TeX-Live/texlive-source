@@ -130,18 +130,13 @@ semicolon. */
                 gregorio_strdup(gabc_score_determination_text);
         return ATTRIBUTE;
     }
-<attribute>;(;|[\n\r]+) {
+<attribute>;;?[\n\r]+ {
          BEGIN(INITIAL);
          return SEMICOLON;
     }
 <INITIAL>def-m[0-9] {
          gabc_score_determination_lval.character = gabc_score_determination_text[5];
          return DEF_MACRO;
-    }
-<INITIAL>number-of-voices {
-        gabc_score_determination_lval.text =
-                gregorio_strdup(gabc_score_determination_text);
-         return NUMBER_OF_VOICES;
     }
 <INITIAL>name {
         gabc_score_determination_lval.text =
@@ -212,10 +207,7 @@ semicolon. */
                 gregorio_strdup(gabc_score_determination_text);
         return OTHER_HEADER;
     }
-<INITIAL>--(.*) {
-       return VOICE_CHANGE;
-    }
-<INITIAL>%(%)*(\n|\r)+ {
+<INITIAL>%%+(\n|\r)+ {
        BEGIN(score);
        return END_OF_DEFINITIONS;
     }
@@ -232,16 +224,16 @@ semicolon. */
 <score>- {
         return HYPHEN;
     }
+<score,style><nlba> {
+        return NLBA_B;
+    }
+<score,style><\/nlba> {
+        return NLBA_E;
+    }
 <score,style><i> {
         BEGIN(style);
         style_stack ++;
-        return I_BEGINNING;
-    }
-<score,style><nlba> {
-        return BNLBA;
-    }
-<score,style><\/nlba> {
-        return ENLBA;
+        return I_BEGIN;
     }
 <style><\/i> {
         style_stack --;
@@ -253,7 +245,7 @@ semicolon. */
 <score,style><tt> {
         BEGIN(style);
         style_stack ++;
-        return TT_BEGINNING;
+        return TT_BEGIN;
     }
 <style><\/tt> {
         style_stack --;
@@ -265,7 +257,7 @@ semicolon. */
 <score,style><ul> {
         BEGIN(style);
         style_stack ++;
-        return UL_BEGINNING;
+        return UL_BEGIN;
     }
 <style><\/ul> {
         style_stack --;
@@ -277,7 +269,7 @@ semicolon. */
 <score,style><c> {
         BEGIN(style);
         style_stack ++;
-        return C_BEGINNING;
+        return C_BEGIN;
     }
 <style><\/c> {
         style_stack --;
@@ -289,7 +281,7 @@ semicolon. */
 <score,style><b> {
         BEGIN(style);
         style_stack ++;
-        return B_BEGINNING;
+        return B_BEGIN;
     }
 <style><\/b> {
         style_stack --;
@@ -301,7 +293,7 @@ semicolon. */
 <score,style><sc> {
         BEGIN(style);
         style_stack ++;
-        return SC_BEGINNING;
+        return SC_BEGIN;
     }
 <style><\/sc> {
         style_stack --;
@@ -310,10 +302,22 @@ semicolon. */
         }
         return SC_END;
     }
+<score,style><e> {
+        BEGIN(style);
+        style_stack ++;
+        return ELISION_BEGIN;
+    }
+<style><\/e> {
+        style_stack --;
+        if (style_stack == 0) {
+            BEGIN(score);
+        }
+        return ELISION_END;
+    }
 <score,style><sp> {
         BEGIN(style);
         style_stack ++;
-        return SP_BEGINNING;
+        return SP_BEGIN;
     }
 <style><\/sp> {
         style_stack --;
@@ -338,7 +342,7 @@ semicolon. */
     }
 <style,score><v> {
         BEGIN(verb);
-        return VERB_BEGINNING;
+        return VERB_BEGIN;
     }
 <verb><\/v> {
         if (style_stack == 0) {
@@ -359,7 +363,7 @@ semicolon. */
         return CHARACTERS;
     }
 <score,style>\{ {
-        return CENTER_BEGINNING;
+        return CENTER_BEGIN;
     }
 <score,style>\} {
         return CENTER_END;
@@ -387,7 +391,7 @@ semicolon. */
         return TRANSLATION_CENTER_END;
     }
 <score>\[ {
-        return TRANSLATION_BEGINNING;
+        return TRANSLATION_BEGIN;
     }
 <score>\] {
         return TRANSLATION_END;
@@ -396,13 +400,10 @@ semicolon. */
         BEGIN(notes);
         return OPENING_BRACKET;
     }
-<notes>[^&|\)]* {
+<notes>[^|\)]* {
         gabc_score_determination_lval.text =
                 gregorio_strdup(gabc_score_determination_text);
         return NOTES;
-    }
-<notes>& {
-        return VOICE_CUT;
     }
 <notes>\| {
         return NABC_CUT;
@@ -422,6 +423,11 @@ semicolon. */
         } else {
             yyterminate();
         }
+    }
+.|\n {
+        gregorio_messagef("gabc_score_determination_lex", VERBOSITY_ERROR, 0,
+                _("unrecognized character: \"%c\""),
+                gabc_score_determination_text[0]);
     }
 %%
 

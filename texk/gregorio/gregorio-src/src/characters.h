@@ -55,8 +55,6 @@ typedef struct det_style {
     struct det_style *next_style;
 } det_style;
 
-gregorio_character *gregorio_first_text(gregorio_score *score);
-
 typedef enum gregorio_write_text_phase {
     WTP_NORMAL,
     WTP_FIRST_SYLLABLE
@@ -64,30 +62,21 @@ typedef enum gregorio_write_text_phase {
 
 void gregorio_write_text(gregorio_write_text_phase phase,
         const gregorio_character *current_character, FILE *f,
-        void (*printverb) (FILE *, grewchar *),
+        void (*printverb) (FILE *, const grewchar *),
         void (*printchar) (FILE *, grewchar),
         void (*begin) (FILE *, grestyle_style),
         void (*end) (FILE *, grestyle_style),
-        void (*printspchar) (FILE *, grewchar *));
+        void (*printspchar) (FILE *, const grewchar *));
 
 void gregorio_write_first_letter_alignment_text(gregorio_write_text_phase phase,
         const gregorio_character *current_character, FILE *f,
-        void (*printverb) (FILE *, grewchar *),
+        void (*printverb) (FILE *, const grewchar *),
         void (*printchar) (FILE *, grewchar),
         void (*begin) (FILE *, grestyle_style),
         void (*end) (FILE *, grestyle_style),
-        void (*printspchar) (FILE *, grewchar *));
-
-void gregorio_write_initial(const gregorio_character *current_character,
-        FILE *f, void (*printverb) (FILE *, grewchar *),
-        void (*printchar) (FILE *, grewchar),
-        void (*begin) (FILE *, grestyle_style),
-        void (*end) (FILE *, grestyle_style),
-        void (*printspchar) (FILE *, grewchar *));
+        void (*printspchar) (FILE *, const grewchar *));
 
 void gregorio_set_centering_language(char *language);
-
-gregorio_character *gregorio_first_text(gregorio_score *score);
 
 void gregorio_rebuild_characters(gregorio_character **param_character,
         gregorio_center_determination center_is_determined, bool skip_initial);

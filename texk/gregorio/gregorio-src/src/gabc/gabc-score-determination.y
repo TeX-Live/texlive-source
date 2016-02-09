@@ -175,30 +175,65 @@ static void fix_custos(gregorio_score *score_to_check)
 }
 
 /*
- * A function that checks to score integrity. For now it is... quite
- * ridiculous... but it might be improved in the future. 
+ * A function that checks the score integrity.
  */
 
-static int check_score_integrity(gregorio_score *score_to_check)
+static bool check_score_integrity(gregorio_score *score_to_check)
 {
-    if (!score_to_check) {
-        return 0;
+    bool good = true;
+
+    gregorio_assert(score_to_check, check_score_integrity, "score is NULL",
+            return false);
+
+    if (score_to_check->first_syllable
+            && score_to_check->first_syllable->elements
+            && *(score_to_check->first_syllable->elements)) {
+        gregorio_character *ch;
+        if ((score_to_check->first_syllable->elements)[0]->type
+                == GRE_END_OF_LINE) {
+            gregorio_message(
+                    "line break is not supported on the first syllable",
+                    "check_score_integrity", VERBOSITY_ERROR, 0);
+            good = false;
+        }
+        if (gregorio_get_clef_change(score_to_check->first_syllable)) {
+            gregorio_message(
+                    "clef change is not supported on the first syllable",
+                    "check_score_integrity", VERBOSITY_ERROR, 0);
+            good = false;
+        }
+        /* check first syllable for elision at the beginning */
+        for (ch = score_to_check->first_syllable->text; ch;
+                ch = ch->next_character) {
+            if (ch->is_character) {
+                break;
+            } else if (ch->cos.s.style == ST_VERBATIM
+                    || ch->cos.s.style == ST_SPECIAL_CHAR) {
+                break;
+            } else if (ch->cos.s.style == ST_ELISION) {
+                gregorio_message(
+                        _("score initial may not be in an elision"),
+                        "rebuild_characters", VERBOSITY_ERROR, 0);
+                break;
+            }
+        }
     }
-    return 1;
+
+    return good;
 }
 
 /*
  * Another function to be improved: this one checks the validity of the voice_infos.
  */
 
-static int check_infos_integrity(gregorio_score *score_to_check)
+static bool check_infos_integrity(gregorio_score *score_to_check)
 {
     if (!score_to_check->name) {
         gregorio_message(_("no name specified, put `name:...;' at the "
                 "beginning of the file, can be dangerous with some output "
                 "formats"), "det_score", VERBOSITY_WARNING, 0);
     }
-    return 1;
+    return true;
 }
 
 /*
@@ -215,8 +250,8 @@ static void initialize_variables(void)
     gregorio_add_voice_info(&current_voice_info);
     score->first_voice_info = current_voice_info;
     /* other initializations */
-    number_of_voices = 0;
-    voice = 1;
+    number_of_voices = 1;
+    voice = 0; /* first (and only) voice */
     current_character = NULL;
     first_translation_character = NULL;
     first_text_character = NULL;
@@ -247,40 +282,6 @@ static void free_variables(void)
     }
 }
 
-/* see whether a voice_info is empty */
-static int voice_info_is_not_empty(const gregorio_voice_info *voice_info)
-{
-    return (voice_info->initial_clef.line);
-}
-
-/*
- * a function called when we see "--\n" that end the infos for a certain voice 
- */
-static void next_voice_info(void)
-{
-    /* we must do this test in the case where there would be a "--" before
-     * first_declarations */
-    if (voice_info_is_not_empty(current_voice_info)) {
-        gregorio_add_voice_info(&current_voice_info);
-        voice++;
-    }
-}
-
-/*
- * Function that frees the voice_infos for voices > final_count. Useful if
- * there are too many voice_infos 
- */
-
-static void reajust_voice_infos(gregorio_voice_info *voice_info,
-        int final_count)
-{
-    int i = 1;
-    while (voice_info && i <= final_count) {
-        voice_info = voice_info->next_voice_info;
-    }
-    gregorio_free_voice_infos(voice_info);
-}
-
 /*
  * Function called when we have reached the end of the definitions, it tries to 
  * make the voice_infos coherent. 
@@ -289,39 +290,9 @@ static void end_definitions(void)
 {
     int i;
 
-    if (!check_infos_integrity(score)) {
-        gregorio_message(_("can't determine valid infos on the score"),
-                "det_score", VERBOSITY_ERROR, 0);
-    }
-    if (!number_of_voices) {
-        if (voice > MAX_NUMBER_OF_VOICES) {
-            voice = MAX_NUMBER_OF_VOICES;
-            reajust_voice_infos(score->first_voice_info, number_of_voices);
-        }
-        number_of_voices = voice;
-        score->number_of_voices = voice;
-    } else {
-        if (number_of_voices > voice) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    ngt_("not enough voice infos found: %d found, %d waited, "
-                    "%d assumed", "not enough voice infos found: %d found, %d "
-                    "waited, %d assumed", voice), voice,
-                    number_of_voices, voice);
-            score->number_of_voices = voice;
-            number_of_voices = voice;
-        } else {
-            if (number_of_voices < voice) {
-                gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                        ngt_("too many voice infos found: %d found, %d "
-                        "waited, %d assumed", "not enough voice infos found: "
-                        "%d found, %d waited, %d assumed",
-                        number_of_voices), voice, number_of_voices,
-                        number_of_voices);
-            }
-        }
-    }
-    /* voice is now voice-1, so that it can be the index of elements */
-    voice = 0;
+    gregorio_assert_only(check_infos_integrity(score), end_definitions,
+            "can't determine valid infos on the score");
+
     elements = (gregorio_element **) gregorio_malloc(number_of_voices *
             sizeof(gregorio_element *));
     for (i = 0; i < number_of_voices; i++) {
@@ -342,19 +313,6 @@ static void end_definitions(void)
 static char position = WORD_BEGINNING;
 static gregorio_syllable *current_syllable = NULL;
 static char *abovelinestext = NULL;
-
-/*
- * Function called when we see a ")", it completes the gregorio_element array
- * of the syllable with NULL pointers. Usefull in the cases where for example
- * you have two voices, but a voice that is silent on a certain syllable. 
- */
-static void complete_with_nulls(int last_voice)
-{
-    int i;
-    for (i = last_voice + 1; i < number_of_voices; i++) {
-        elements[i] = NULL;
-    }
-}
 
 /*
  * Function called each time we find a space, it updates the current position. 
@@ -399,24 +357,41 @@ static void gregorio_set_translation_center_beginning(
     current_syllable->translation_type = TR_NORMAL;
 }
 
-static void rebuild_characters(void)
+static void ready_characters(void)
 {
-    /* we rebuild the first syllable text if it is the first syllable, or if
-     * it is the second when the first has no text.
-     * it is a patch for cases like (c4) Al(ab)le(ab) */
-    if ((!score->first_syllable && current_character)
-            || (current_syllable && !current_syllable->previous_syllable
-            && !current_syllable->text && current_character)) {
-        /* leave the first syllable text untouched at this time */
+    if (current_character) {
         gregorio_go_to_first_character_c(&current_character);
+        if (!score->first_syllable || (current_syllable
+                && !current_syllable->previous_syllable
+                && !current_syllable->text)) {
+            started_first_word = true;
+        }
+    }
+}
 
-        started_first_word = true;
-    } else {
-        gregorio_rebuild_characters(&current_character, center_is_determined,
-                false);
+static void rebuild_score_characters(void)
+{
+    if (score->first_syllable) {
+        gregorio_syllable *syllable;
+        /* leave the first syllable text untouched at this time */
+        for (syllable = score->first_syllable->next_syllable; syllable;
+                syllable = syllable->next_syllable) {
+            const gregorio_character *t;
 
-        if (started_first_word) {
-            gregorio_set_first_word(&current_character);
+            /* find out if there is a forced center */
+            gregorio_center_determination center = CENTER_NOT_DETERMINED;
+            for (t = syllable->text; t; t = t->next_character) {
+                if (!t->is_character && t->cos.s.style == ST_FORCED_CENTER) {
+                    center = CENTER_FULLY_DETERMINED;
+                    break;
+                }
+            }
+
+            gregorio_rebuild_characters(&(syllable->text), center, false);
+
+            if (syllable->first_word) {
+                gregorio_set_first_word(&(syllable->text));
+            }
         }
     }
 }
@@ -427,7 +402,56 @@ static void rebuild_characters(void)
 
 static void close_syllable(YYLTYPE *loc)
 {
-    int i;
+    int i = 0;
+    gregorio_character *ch;
+
+    /* make sure any elisions that are opened are closed within the syllable */
+    for (ch = first_text_character; ch; ch = ch->next_character) {
+        if (!ch->is_character) {
+            switch (ch->cos.s.style) {
+            case ST_ELISION:
+                switch (ch->cos.s.type) {
+                case ST_T_BEGIN:
+                    ++i;
+                    if (i > 1) {
+                        gregorio_message(_("elisions may not be nested"),
+                                "close_syllable", VERBOSITY_ERROR, 0);
+                    }
+                    break;
+
+                case ST_T_END:
+                    --i;
+                    /* the parser precludes this from failing here */
+                    gregorio_assert_only(i >= 0, close_syllable,
+                            "encountered elision end with no beginning");
+                    break;
+
+                case ST_T_NOTHING:
+                    /* not reachable unless there's a programming error */
+                    /* LCOV_EXCL_START */
+                    gregorio_fail(close_syllable, "encountered ST_T_NOTHING");
+                    break;
+                    /* LCOV_EXCL_STOP */
+                }
+                break;
+
+            case ST_FORCED_CENTER:
+                if (i > 0) {
+                    gregorio_message(
+                            _("forced center may not be within an elision"),
+                            "close_syllable", VERBOSITY_ERROR, 0);
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+    /* the parser precludes this from failing here */
+    gregorio_assert_only(i == 0, close_syllable,
+            "encountered elision beginning with no end");
+
     gregorio_add_syllable(&current_syllable, number_of_voices, elements,
             first_text_character, first_translation_character, position,
             abovelinestext, translation_type, no_linebreak_area, euouae, loc,
@@ -468,7 +492,7 @@ static void close_syllable(YYLTYPE *loc)
  * the translation pointer instead of the text pointer */
 static void start_translation(unsigned char asked_translation_type)
 {
-    rebuild_characters();
+    ready_characters();
     first_text_character = current_character;
     /* the middle letters of the translation have no sense */
     center_is_determined = CENTER_FULLY_DETERMINED;
@@ -478,7 +502,7 @@ static void start_translation(unsigned char asked_translation_type)
 
 static void end_translation(void)
 {
-    rebuild_characters();
+    ready_characters();
     first_translation_character = current_character;
 }
 
@@ -557,10 +581,14 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                                     S_ORISCUS_CAVUM_DESCENDENS;
                                             break;
                                         default:
-                                            gregorio_message(_("bad shape"),
-                                                    "determine_oriscus_orientation",
-                                                    VERBOSITY_ERROR, 0);
+                                            /* not reachable unless there's a
+                                             * programming error */
+                                            /* LCOV_EXCL_START */
+                                            gregorio_fail(
+                                                    determine_oriscus_orientation,
+                                                    "bad_shape");
                                             break;
+                                            /* LCOV_EXCL_STOP */
                                         }
                                     } else { /* ascending or the same */
                                         switch(oriscus->u.note.shape) {
@@ -573,10 +601,14 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                                     S_ORISCUS_CAVUM_ASCENDENS;
                                             break;
                                         default:
-                                            gregorio_message(_("bad shape"),
-                                                    "determine_oriscus_orientation",
-                                                    VERBOSITY_ERROR, 0);
+                                            /* not reachable unless there's a
+                                             * programming error */
+                                            /* LCOV_EXCL_START */
+                                            gregorio_fail(
+                                                    determine_oriscus_orientation,
+                                                    "bad_shape");
                                             break;
+                                            /* LCOV_EXCL_STOP */
                                         }
                                     }
                                     oriscus = NULL;
@@ -609,9 +641,11 @@ static void determine_oriscus_orientation(gregorio_score *score) {
             oriscus->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
             break;
         default:
-            gregorio_message(_("bad shape"), "determine_oriscus_orientation",
-                    VERBOSITY_ERROR, 0);
+            /* not reachable unless there's a programming error */
+            /* LCOV_EXCL_START */
+            gregorio_fail(determine_oriscus_orientation, "bad_shape");
             break;
+            /* LCOV_EXCL_STOP */
         }
     }
 }
@@ -631,11 +665,8 @@ gregorio_score *gabc_read_score(FILE *f_in)
     sha1_process_bytes(GREGORIO_VERSION, strlen(GREGORIO_VERSION), &digester);
     /* the input file that flex will parse */
     gabc_score_determination_in = f_in;
-    if (!f_in) {
-        gregorio_message(_("can't read stream from argument, returning NULL "
-                "pointer"), "det_score", VERBOSITY_ERROR, 0);
-        return NULL;
-    }
+    gregorio_assert(f_in, gabc_read_score, "can't read stream from NULL",
+            return NULL);
     initialize_variables();
     /* the flex/bison main call, it will build the score (that we have
      * initialized) */
@@ -644,14 +675,14 @@ gregorio_score *gabc_read_score(FILE *f_in)
         determine_oriscus_orientation(score);
     }
     gregorio_fix_initial_keys(score, gregorio_default_clef);
+    rebuild_score_characters();
     fix_custos(score);
+    gabc_det_notes_finish();
     free_variables();
-    /* the we check the validity and integrity of the score we have built. */
+    /* then we check the validity and integrity of the score we have built. */
     if (!check_score_integrity(score)) {
-        gregorio_free_score(score);
-        score = NULL;
         gregorio_message(_("unable to determine a valid score from file"),
-                "det_score", VERBOSITY_FATAL, 0);
+                "gabc_read_score", VERBOSITY_ERROR, 0);
     }
     sha1_finish_ctx(&digester, score->digest);
     return score;
@@ -661,18 +692,16 @@ unsigned char nabc_state = 0;
 size_t nabc_lines = 0;
 
 static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
-    gregorio_element *new_elements;
-    gregorio_element *last_element;
     if (nabc_state == 0) {
         if (!elements[voice]) {
             elements[voice] = gabc_det_elements_from_string(notes,
                     &current_key, macros, &loc, score);
             current_element = elements[voice];
         } else {
-            new_elements = gabc_det_elements_from_string(notes,
-                    &current_key, macros, &loc, score);
-            last_element = elements[voice];
-            while(last_element->next) {
+            gregorio_element *new_elements = gabc_det_elements_from_string(
+                    notes, &current_key, macros, &loc, score);
+            gregorio_element *last_element = elements[voice];
+            while (last_element->next) {
                 last_element = last_element->next;
             }
             last_element->next = new_elements;
@@ -684,10 +713,9 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
             gregorio_add_element(&elements[voice], NULL);
             current_element = elements[voice];
         }
-        if (!current_element) {
-            gregorio_message(_("current_element is null, this shouldn't "
-                    "happen!"), "gabc_y_add_notes", VERBOSITY_FATAL, 0);
-        }
+        gregorio_assert(current_element, gabc_y_add_notes,
+                "current_element is null, this shouldn't happen!",
+                return);
         if (!current_element->nabc) {
             current_element->nabc = (char **) gregorio_calloc (nabc_lines,
                     sizeof (char *));
@@ -708,25 +736,26 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
 }
 
 %token NAME AUTHOR GABC_COPYRIGHT SCORE_COPYRIGHT
-%token NUMBER_OF_VOICES LANGUAGE STAFF_LINES ORISCUS_ORIENTATION
+%token LANGUAGE STAFF_LINES ORISCUS_ORIENTATION
 %token DEF_MACRO OTHER_HEADER
 %token ANNOTATION MODE MODE_MODIFIER MODE_DIFFERENTIA
 %token INITIAL_STYLE /* DEPRECATED by 4.1 */
-%token VOICE_CUT VOICE_CHANGE END_OF_DEFINITIONS END_OF_FILE
+%token END_OF_DEFINITIONS END_OF_FILE
 %token COLON SEMICOLON SPACE CHARACTERS NOTES HYPHEN ATTRIBUTE
 %token OPENING_BRACKET CLOSING_BRACKET CLOSING_BRACKET_WITH_SPACE
-%token I_BEGINNING I_END
-%token TT_BEGINNING TT_END
-%token UL_BEGINNING UL_END
-%token C_BEGINNING C_END
-%token B_BEGINNING B_END
-%token SC_BEGINNING SC_END
-%token SP_BEGINNING SP_END
-%token VERB_BEGINNING VERB VERB_END
-%token CENTER_BEGINNING CENTER_END
-%token TRANSLATION_BEGINNING TRANSLATION_END TRANSLATION_CENTER_END
+%token I_BEGIN I_END
+%token TT_BEGIN TT_END
+%token UL_BEGIN UL_END
+%token C_BEGIN C_END
+%token B_BEGIN B_END
+%token SC_BEGIN SC_END
+%token SP_BEGIN SP_END
+%token VERB_BEGIN VERB VERB_END
+%token CENTER_BEGIN CENTER_END
+%token ELISION_BEGIN ELISION_END
+%token TRANSLATION_BEGIN TRANSLATION_END TRANSLATION_CENTER_END
 %token ALT_BEGIN ALT_END
-%token BNLBA ENLBA
+%token NLBA_B NLBA_E
 %token EUOUAE_B EUOUAE_E
 %token NABC_CUT NABC_LINES
 
@@ -757,17 +786,7 @@ attribute:
     ;
 
 definition:
-    NUMBER_OF_VOICES attribute {
-        gregorio_add_score_header(score, $1.text, $2.text);
-        number_of_voices=atoi($2.text);
-        if (number_of_voices > MAX_NUMBER_OF_VOICES) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    _("can't define %d voices, maximum is %d"),
-                    number_of_voices, MAX_NUMBER_OF_VOICES);
-        }
-        score->number_of_voices = number_of_voices;
-    }
-    | DEF_MACRO attribute {
+    DEF_MACRO attribute {
         /* these definitions are not passed through */
         free(macros[$1.character - '0']);
         macros[$1.character - '0'] = $2.text;
@@ -859,9 +878,6 @@ definition:
     | OTHER_HEADER attribute {
         gregorio_add_score_header(score, $1.text, $2.text);
     }
-    | VOICE_CHANGE {
-        next_voice_info();
-    }
     ;
 
 notes:
@@ -870,62 +886,15 @@ notes:
 
 note:
     NOTES CLOSING_BRACKET {
-        if (voice<number_of_voices) {
-            gabc_y_add_notes($1.text, @1);
-            free($1.text);
-        }
-        else {
-            gregorio_messagef("det_score", VERBOSITY_ERROR, 0,
-                    ngt_("too many voices in note : %d found, %d expected",
-                    "too many voices in note : %d found, %d expected",
-                    number_of_voices), voice+1, number_of_voices);
-        }
-        if (voice<number_of_voices-1) {
-            gregorio_messagef("det_score", VERBOSITY_INFO, 0,
-                    ngt_("not enough voices in note : %d found, %d expected, "
-                    "completing with empty neume", "not enough voices in note "
-                    ": %d found, %d expected, completing with empty neume",
-                    voice+1), voice+1, number_of_voices);
-            complete_with_nulls(voice);
-        }
-        voice=0;
+        gabc_y_add_notes($1.text, @1);
+        free($1.text);
         nabc_state=0;
     }
     | NOTES closing_bracket_with_space {
-        if (voice<number_of_voices) {
-            gabc_y_add_notes($1.text, @1);
-            free($1.text);
-        }
-        else {
-            gregorio_messagef("det_score", VERBOSITY_ERROR, 0,
-                    ngt_("too many voices in note : %d found, %d expected",
-                    "too many voices in note : %d found, %d expected",
-                    number_of_voices), voice+1, number_of_voices);
-        }
-        if (voice<number_of_voices-1) {
-            gregorio_messagef("det_score", VERBOSITY_INFO, 0,
-                    ngt_("not enough voices in note : %d found, %d expected, "
-                    "completing with empty neume", "not enough voices in note "
-                    ": %d found, %d expected, completing with empty neume",
-                    voice+1), voice+1, number_of_voices);
-            complete_with_nulls(voice);
-        }
-        voice=0;
+        gabc_y_add_notes($1.text, @1);
+        free($1.text);
         nabc_state=0;
         update_position_with_space();
-    }
-    | NOTES VOICE_CUT {
-        if (voice<number_of_voices) {
-            gabc_y_add_notes($1.text, @1);
-            free($1.text);
-            voice++;
-        }
-        else {
-            gregorio_messagef("det_score", VERBOSITY_ERROR, 0,
-                    ngt_("too many voices in note : %d found, %d expected",
-                    "too many voices in note : %d found, %d expected",
-                    number_of_voices), voice+1, number_of_voices);
-        }
     }
     | NOTES NABC_CUT {
         if (!nabc_lines) {
@@ -934,20 +903,16 @@ note:
                                "set it in your gabc header."),
                              "det_score", VERBOSITY_FATAL, 0);
         }
-        if (voice<number_of_voices) {
-            gabc_y_add_notes($1.text, @1);
-            free($1.text);
-            nabc_state = (nabc_state + 1) % (nabc_lines+1);
-        }
+        gabc_y_add_notes($1.text, @1);
+        free($1.text);
+        nabc_state = (nabc_state + 1) % (nabc_lines+1);
     }
     | CLOSING_BRACKET {
         elements[voice]=NULL;
-        voice=0;
         nabc_state=0;
     }
     | closing_bracket_with_space {
         elements[voice]=NULL;
-        voice=0;
         nabc_state=0;
         update_position_with_space();
     }
@@ -960,31 +925,34 @@ closing_bracket_with_space:
     ;
 
 style_beginning:
-    I_BEGINNING {
+    I_BEGIN {
         gregorio_gabc_add_style(ST_ITALIC);
     }
-    | TT_BEGINNING {
+    | TT_BEGIN {
         gregorio_gabc_add_style(ST_TT);
     }
-    | UL_BEGINNING {
+    | UL_BEGIN {
         gregorio_gabc_add_style(ST_UNDERLINED);
     }
-    | C_BEGINNING {
+    | C_BEGIN {
         gregorio_gabc_add_style(ST_COLORED);
     }
-    | B_BEGINNING {
+    | B_BEGIN {
         gregorio_gabc_add_style(ST_BOLD);
     }
-    | SC_BEGINNING {
+    | SC_BEGIN {
         gregorio_gabc_add_style(ST_SMALL_CAPS);
     }
-    | VERB_BEGINNING {
+    | VERB_BEGIN {
         gregorio_gabc_add_style(ST_VERBATIM);
     }
-    | SP_BEGINNING {
+    | SP_BEGIN {
         gregorio_gabc_add_style(ST_SPECIAL_CHAR);
     }
-    | CENTER_BEGINNING {
+    | ELISION_BEGIN {
+        gregorio_gabc_add_style(ST_ELISION);
+    }
+    | CENTER_BEGIN {
         if (!center_is_determined) {
             gregorio_gabc_add_style(ST_FORCED_CENTER);
             center_is_determined=CENTER_HALF_DETERMINED;
@@ -1017,6 +985,9 @@ style_end:
     | SP_END {
         gregorio_gabc_end_style(ST_SPECIAL_CHAR);
     }
+    | ELISION_END {
+        gregorio_gabc_end_style(ST_ELISION);
+    }
     | CENTER_END {
         if (center_is_determined==CENTER_HALF_DETERMINED) {
             gregorio_gabc_end_style(ST_FORCED_CENTER);
@@ -1035,10 +1006,10 @@ euouae:
     ;
 
 linebreak_area:
-    BNLBA {
+    NLBA_B {
         no_linebreak_area = NLBA_BEGINNING;
     }
-    | ENLBA {
+    | NLBA_E {
         no_linebreak_area = NLBA_END;
     }
     ;
@@ -1069,7 +1040,7 @@ text:
     ;
 
 translation_beginning:
-    TRANSLATION_BEGINNING {
+    TRANSLATION_BEGIN {
         start_translation(TR_NORMAL);
     }
     ;
@@ -1091,7 +1062,7 @@ above_line_text:
 
 syllable_with_notes:
     text OPENING_BRACKET notes {
-        rebuild_characters();
+        ready_characters();
         first_text_character = current_character;
         close_syllable(&@1);
     }
@@ -1099,7 +1070,7 @@ syllable_with_notes:
         gregorio_gabc_add_style(ST_VERBATIM);
         gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
         gregorio_gabc_end_style(ST_VERBATIM);
-        rebuild_characters();
+        ready_characters();
         first_text_character = current_character;
         close_syllable(&@1);
     }

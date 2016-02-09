@@ -249,30 +249,65 @@ static void fix_custos(gregorio_score *score_to_check)
 }
 
 /*
- * A function that checks to score integrity. For now it is... quite
- * ridiculous... but it might be improved in the future. 
+ * A function that checks the score integrity.
  */
 
-static int check_score_integrity(gregorio_score *score_to_check)
+static bool check_score_integrity(gregorio_score *score_to_check)
 {
-    if (!score_to_check) {
-        return 0;
+    bool good = true;
+
+    gregorio_assert(score_to_check, check_score_integrity, "score is NULL",
+            return false);
+
+    if (score_to_check->first_syllable
+            && score_to_check->first_syllable->elements
+            && *(score_to_check->first_syllable->elements)) {
+        gregorio_character *ch;
+        if ((score_to_check->first_syllable->elements)[0]->type
+                == GRE_END_OF_LINE) {
+            gregorio_message(
+                    "line break is not supported on the first syllable",
+                    "check_score_integrity", VERBOSITY_ERROR, 0);
+            good = false;
+        }
+        if (gregorio_get_clef_change(score_to_check->first_syllable)) {
+            gregorio_message(
+                    "clef change is not supported on the first syllable",
+                    "check_score_integrity", VERBOSITY_ERROR, 0);
+            good = false;
+        }
+        /* check first syllable for elision at the beginning */
+        for (ch = score_to_check->first_syllable->text; ch;
+                ch = ch->next_character) {
+            if (ch->is_character) {
+                break;
+            } else if (ch->cos.s.style == ST_VERBATIM
+                    || ch->cos.s.style == ST_SPECIAL_CHAR) {
+                break;
+            } else if (ch->cos.s.style == ST_ELISION) {
+                gregorio_message(
+                        _("score initial may not be in an elision"),
+                        "rebuild_characters", VERBOSITY_ERROR, 0);
+                break;
+            }
+        }
     }
-    return 1;
+
+    return good;
 }
 
 /*
  * Another function to be improved: this one checks the validity of the voice_infos.
  */
 
-static int check_infos_integrity(gregorio_score *score_to_check)
+static bool check_infos_integrity(gregorio_score *score_to_check)
 {
     if (!score_to_check->name) {
         gregorio_message(_("no name specified, put `name:...;' at the "
                 "beginning of the file, can be dangerous with some output "
                 "formats"), "det_score", VERBOSITY_WARNING, 0);
     }
-    return 1;
+    return true;
 }
 
 /*
@@ -289,8 +324,8 @@ static void initialize_variables(void)
     gregorio_add_voice_info(&current_voice_info);
     score->first_voice_info = current_voice_info;
     /* other initializations */
-    number_of_voices = 0;
-    voice = 1;
+    number_of_voices = 1;
+    voice = 0; /* first (and only) voice */
     current_character = NULL;
     first_translation_character = NULL;
     first_text_character = NULL;
@@ -321,40 +356,6 @@ static void free_variables(void)
     }
 }
 
-/* see whether a voice_info is empty */
-static int voice_info_is_not_empty(const gregorio_voice_info *voice_info)
-{
-    return (voice_info->initial_clef.line);
-}
-
-/*
- * a function called when we see "--\n" that end the infos for a certain voice 
- */
-static void next_voice_info(void)
-{
-    /* we must do this test in the case where there would be a "--" before
-     * first_declarations */
-    if (voice_info_is_not_empty(current_voice_info)) {
-        gregorio_add_voice_info(&current_voice_info);
-        voice++;
-    }
-}
-
-/*
- * Function that frees the voice_infos for voices > final_count. Useful if
- * there are too many voice_infos 
- */
-
-static void reajust_voice_infos(gregorio_voice_info *voice_info,
-        int final_count)
-{
-    int i = 1;
-    while (voice_info && i <= final_count) {
-        voice_info = voice_info->next_voice_info;
-    }
-    gregorio_free_voice_infos(voice_info);
-}
-
 /*
  * Function called when we have reached the end of the definitions, it tries to 
  * make the voice_infos coherent. 
@@ -363,39 +364,9 @@ static void end_definitions(void)
 {
     int i;
 
-    if (!check_infos_integrity(score)) {
-        gregorio_message(_("can't determine valid infos on the score"),
-                "det_score", VERBOSITY_ERROR, 0);
-    }
-    if (!number_of_voices) {
-        if (voice > MAX_NUMBER_OF_VOICES) {
-            voice = MAX_NUMBER_OF_VOICES;
-            reajust_voice_infos(score->first_voice_info, number_of_voices);
-        }
-        number_of_voices = voice;
-        score->number_of_voices = voice;
-    } else {
-        if (number_of_voices > voice) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    ngt_("not enough voice infos found: %d found, %d waited, "
-                    "%d assumed", "not enough voice infos found: %d found, %d "
-                    "waited, %d assumed", voice), voice,
-                    number_of_voices, voice);
-            score->number_of_voices = voice;
-            number_of_voices = voice;
-        } else {
-            if (number_of_voices < voice) {
-                gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                        ngt_("too many voice infos found: %d found, %d "
-                        "waited, %d assumed", "not enough voice infos found: "
-                        "%d found, %d waited, %d assumed",
-                        number_of_voices), voice, number_of_voices,
-                        number_of_voices);
-            }
-        }
-    }
-    /* voice is now voice-1, so that it can be the index of elements */
-    voice = 0;
+    gregorio_assert_only(check_infos_integrity(score), end_definitions,
+            "can't determine valid infos on the score");
+
     elements = (gregorio_element **) gregorio_malloc(number_of_voices *
             sizeof(gregorio_element *));
     for (i = 0; i < number_of_voices; i++) {
@@ -416,19 +387,6 @@ static void end_definitions(void)
 static char position = WORD_BEGINNING;
 static gregorio_syllable *current_syllable = NULL;
 static char *abovelinestext = NULL;
-
-/*
- * Function called when we see a ")", it completes the gregorio_element array
- * of the syllable with NULL pointers. Usefull in the cases where for example
- * you have two voices, but a voice that is silent on a certain syllable. 
- */
-static void complete_with_nulls(int last_voice)
-{
-    int i;
-    for (i = last_voice + 1; i < number_of_voices; i++) {
-        elements[i] = NULL;
-    }
-}
 
 /*
  * Function called each time we find a space, it updates the current position. 
@@ -473,24 +431,41 @@ static void gregorio_set_translation_center_beginning(
     current_syllable->translation_type = TR_NORMAL;
 }
 
-static void rebuild_characters(void)
+static void ready_characters(void)
 {
-    /* we rebuild the first syllable text if it is the first syllable, or if
-     * it is the second when the first has no text.
-     * it is a patch for cases like (c4) Al(ab)le(ab) */
-    if ((!score->first_syllable && current_character)
-            || (current_syllable && !current_syllable->previous_syllable
-            && !current_syllable->text && current_character)) {
-        /* leave the first syllable text untouched at this time */
+    if (current_character) {
         gregorio_go_to_first_character_c(&current_character);
+        if (!score->first_syllable || (current_syllable
+                && !current_syllable->previous_syllable
+                && !current_syllable->text)) {
+            started_first_word = true;
+        }
+    }
+}
 
-        started_first_word = true;
-    } else {
-        gregorio_rebuild_characters(&current_character, center_is_determined,
-                false);
+static void rebuild_score_characters(void)
+{
+    if (score->first_syllable) {
+        gregorio_syllable *syllable;
+        /* leave the first syllable text untouched at this time */
+        for (syllable = score->first_syllable->next_syllable; syllable;
+                syllable = syllable->next_syllable) {
+            const gregorio_character *t;
 
-        if (started_first_word) {
-            gregorio_set_first_word(&current_character);
+            /* find out if there is a forced center */
+            gregorio_center_determination center = CENTER_NOT_DETERMINED;
+            for (t = syllable->text; t; t = t->next_character) {
+                if (!t->is_character && t->cos.s.style == ST_FORCED_CENTER) {
+                    center = CENTER_FULLY_DETERMINED;
+                    break;
+                }
+            }
+
+            gregorio_rebuild_characters(&(syllable->text), center, false);
+
+            if (syllable->first_word) {
+                gregorio_set_first_word(&(syllable->text));
+            }
         }
     }
 }
@@ -501,7 +476,56 @@ static void rebuild_characters(void)
 
 static void close_syllable(YYLTYPE *loc)
 {
-    int i;
+    int i = 0;
+    gregorio_character *ch;
+
+    /* make sure any elisions that are opened are closed within the syllable */
+    for (ch = first_text_character; ch; ch = ch->next_character) {
+        if (!ch->is_character) {
+            switch (ch->cos.s.style) {
+            case ST_ELISION:
+                switch (ch->cos.s.type) {
+                case ST_T_BEGIN:
+                    ++i;
+                    if (i > 1) {
+                        gregorio_message(_("elisions may not be nested"),
+                                "close_syllable", VERBOSITY_ERROR, 0);
+                    }
+                    break;
+
+                case ST_T_END:
+                    --i;
+                    /* the parser precludes this from failing here */
+                    gregorio_assert_only(i >= 0, close_syllable,
+                            "encountered elision end with no beginning");
+                    break;
+
+                case ST_T_NOTHING:
+                    /* not reachable unless there's a programming error */
+                    /* LCOV_EXCL_START */
+                    gregorio_fail(close_syllable, "encountered ST_T_NOTHING");
+                    break;
+                    /* LCOV_EXCL_STOP */
+                }
+                break;
+
+            case ST_FORCED_CENTER:
+                if (i > 0) {
+                    gregorio_message(
+                            _("forced center may not be within an elision"),
+                            "close_syllable", VERBOSITY_ERROR, 0);
+                }
+                break;
+
+            default:
+                break;
+            }
+        }
+    }
+    /* the parser precludes this from failing here */
+    gregorio_assert_only(i == 0, close_syllable,
+            "encountered elision beginning with no end");
+
     gregorio_add_syllable(&current_syllable, number_of_voices, elements,
             first_text_character, first_translation_character, position,
             abovelinestext, translation_type, no_linebreak_area, euouae, loc,
@@ -542,7 +566,7 @@ static void close_syllable(YYLTYPE *loc)
  * the translation pointer instead of the text pointer */
 static void start_translation(unsigned char asked_translation_type)
 {
-    rebuild_characters();
+    ready_characters();
     first_text_character = current_character;
     /* the middle letters of the translation have no sense */
     center_is_determined = CENTER_FULLY_DETERMINED;
@@ -552,7 +576,7 @@ static void start_translation(unsigned char asked_translation_type)
 
 static void end_translation(void)
 {
-    rebuild_characters();
+    ready_characters();
     first_translation_character = current_character;
 }
 
@@ -631,10 +655,14 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                                     S_ORISCUS_CAVUM_DESCENDENS;
                                             break;
                                         default:
-                                            gregorio_message(_("bad shape"),
-                                                    "determine_oriscus_orientation",
-                                                    VERBOSITY_ERROR, 0);
+                                            /* not reachable unless there's a
+                                             * programming error */
+                                            /* LCOV_EXCL_START */
+                                            gregorio_fail(
+                                                    determine_oriscus_orientation,
+                                                    "bad_shape");
                                             break;
+                                            /* LCOV_EXCL_STOP */
                                         }
                                     } else { /* ascending or the same */
                                         switch(oriscus->u.note.shape) {
@@ -647,10 +675,14 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                                     S_ORISCUS_CAVUM_ASCENDENS;
                                             break;
                                         default:
-                                            gregorio_message(_("bad shape"),
-                                                    "determine_oriscus_orientation",
-                                                    VERBOSITY_ERROR, 0);
+                                            /* not reachable unless there's a
+                                             * programming error */
+                                            /* LCOV_EXCL_START */
+                                            gregorio_fail(
+                                                    determine_oriscus_orientation,
+                                                    "bad_shape");
                                             break;
+                                            /* LCOV_EXCL_STOP */
                                         }
                                     }
                                     oriscus = NULL;
@@ -683,9 +715,11 @@ static void determine_oriscus_orientation(gregorio_score *score) {
             oriscus->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
             break;
         default:
-            gregorio_message(_("bad shape"), "determine_oriscus_orientation",
-                    VERBOSITY_ERROR, 0);
+            /* not reachable unless there's a programming error */
+            /* LCOV_EXCL_START */
+            gregorio_fail(determine_oriscus_orientation, "bad_shape");
             break;
+            /* LCOV_EXCL_STOP */
         }
     }
 }
@@ -705,11 +739,8 @@ gregorio_score *gabc_read_score(FILE *f_in)
     sha1_process_bytes(GREGORIO_VERSION, strlen(GREGORIO_VERSION), &digester);
     /* the input file that flex will parse */
     gabc_score_determination_in = f_in;
-    if (!f_in) {
-        gregorio_message(_("can't read stream from argument, returning NULL "
-                "pointer"), "det_score", VERBOSITY_ERROR, 0);
-        return NULL;
-    }
+    gregorio_assert(f_in, gabc_read_score, "can't read stream from NULL",
+            return NULL);
     initialize_variables();
     /* the flex/bison main call, it will build the score (that we have
      * initialized) */
@@ -718,14 +749,14 @@ gregorio_score *gabc_read_score(FILE *f_in)
         determine_oriscus_orientation(score);
     }
     gregorio_fix_initial_keys(score, gregorio_default_clef);
+    rebuild_score_characters();
     fix_custos(score);
+    gabc_det_notes_finish();
     free_variables();
-    /* the we check the validity and integrity of the score we have built. */
+    /* then we check the validity and integrity of the score we have built. */
     if (!check_score_integrity(score)) {
-        gregorio_free_score(score);
-        score = NULL;
         gregorio_message(_("unable to determine a valid score from file"),
-                "det_score", VERBOSITY_FATAL, 0);
+                "gabc_read_score", VERBOSITY_ERROR, 0);
     }
     sha1_finish_ctx(&digester, score->digest);
     return score;
@@ -735,18 +766,16 @@ unsigned char nabc_state = 0;
 size_t nabc_lines = 0;
 
 static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
-    gregorio_element *new_elements;
-    gregorio_element *last_element;
     if (nabc_state == 0) {
         if (!elements[voice]) {
             elements[voice] = gabc_det_elements_from_string(notes,
                     &current_key, macros, &loc, score);
             current_element = elements[voice];
         } else {
-            new_elements = gabc_det_elements_from_string(notes,
-                    &current_key, macros, &loc, score);
-            last_element = elements[voice];
-            while(last_element->next) {
+            gregorio_element *new_elements = gabc_det_elements_from_string(
+                    notes, &current_key, macros, &loc, score);
+            gregorio_element *last_element = elements[voice];
+            while (last_element->next) {
                 last_element = last_element->next;
             }
             last_element->next = new_elements;
@@ -758,10 +787,9 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
             gregorio_add_element(&elements[voice], NULL);
             current_element = elements[voice];
         }
-        if (!current_element) {
-            gregorio_message(_("current_element is null, this shouldn't "
-                    "happen!"), "gabc_y_add_notes", VERBOSITY_FATAL, 0);
-        }
+        gregorio_assert(current_element, gabc_y_add_notes,
+                "current_element is null, this shouldn't happen!",
+                return);
         if (!current_element->nabc) {
             current_element->nabc = (char **) gregorio_calloc (nabc_lines,
                     sizeof (char *));
@@ -771,7 +799,7 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
     }
 }
 
-#line 775 "gabc/gabc-score-determination-y.c" /* yacc.c:339  */
+#line 803 "gabc/gabc-score-determination-y.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -810,61 +838,60 @@ extern int gabc_score_determination_debug;
     AUTHOR = 259,
     GABC_COPYRIGHT = 260,
     SCORE_COPYRIGHT = 261,
-    NUMBER_OF_VOICES = 262,
-    LANGUAGE = 263,
-    STAFF_LINES = 264,
-    ORISCUS_ORIENTATION = 265,
-    DEF_MACRO = 266,
-    OTHER_HEADER = 267,
-    ANNOTATION = 268,
-    MODE = 269,
-    MODE_MODIFIER = 270,
-    MODE_DIFFERENTIA = 271,
-    INITIAL_STYLE = 272,
-    VOICE_CUT = 273,
-    VOICE_CHANGE = 274,
-    END_OF_DEFINITIONS = 275,
-    END_OF_FILE = 276,
-    COLON = 277,
-    SEMICOLON = 278,
-    SPACE = 279,
-    CHARACTERS = 280,
-    NOTES = 281,
-    HYPHEN = 282,
-    ATTRIBUTE = 283,
-    OPENING_BRACKET = 284,
-    CLOSING_BRACKET = 285,
-    CLOSING_BRACKET_WITH_SPACE = 286,
-    I_BEGINNING = 287,
-    I_END = 288,
-    TT_BEGINNING = 289,
-    TT_END = 290,
-    UL_BEGINNING = 291,
-    UL_END = 292,
-    C_BEGINNING = 293,
-    C_END = 294,
-    B_BEGINNING = 295,
-    B_END = 296,
-    SC_BEGINNING = 297,
-    SC_END = 298,
-    SP_BEGINNING = 299,
-    SP_END = 300,
-    VERB_BEGINNING = 301,
-    VERB = 302,
-    VERB_END = 303,
-    CENTER_BEGINNING = 304,
-    CENTER_END = 305,
-    TRANSLATION_BEGINNING = 306,
-    TRANSLATION_END = 307,
-    TRANSLATION_CENTER_END = 308,
-    ALT_BEGIN = 309,
-    ALT_END = 310,
-    BNLBA = 311,
-    ENLBA = 312,
-    EUOUAE_B = 313,
-    EUOUAE_E = 314,
-    NABC_CUT = 315,
-    NABC_LINES = 316
+    LANGUAGE = 262,
+    STAFF_LINES = 263,
+    ORISCUS_ORIENTATION = 264,
+    DEF_MACRO = 265,
+    OTHER_HEADER = 266,
+    ANNOTATION = 267,
+    MODE = 268,
+    MODE_MODIFIER = 269,
+    MODE_DIFFERENTIA = 270,
+    INITIAL_STYLE = 271,
+    END_OF_DEFINITIONS = 272,
+    END_OF_FILE = 273,
+    COLON = 274,
+    SEMICOLON = 275,
+    SPACE = 276,
+    CHARACTERS = 277,
+    NOTES = 278,
+    HYPHEN = 279,
+    ATTRIBUTE = 280,
+    OPENING_BRACKET = 281,
+    CLOSING_BRACKET = 282,
+    CLOSING_BRACKET_WITH_SPACE = 283,
+    I_BEGIN = 284,
+    I_END = 285,
+    TT_BEGIN = 286,
+    TT_END = 287,
+    UL_BEGIN = 288,
+    UL_END = 289,
+    C_BEGIN = 290,
+    C_END = 291,
+    B_BEGIN = 292,
+    B_END = 293,
+    SC_BEGIN = 294,
+    SC_END = 295,
+    SP_BEGIN = 296,
+    SP_END = 297,
+    VERB_BEGIN = 298,
+    VERB = 299,
+    VERB_END = 300,
+    CENTER_BEGIN = 301,
+    CENTER_END = 302,
+    ELISION_BEGIN = 303,
+    ELISION_END = 304,
+    TRANSLATION_BEGIN = 305,
+    TRANSLATION_END = 306,
+    TRANSLATION_CENTER_END = 307,
+    ALT_BEGIN = 308,
+    ALT_END = 309,
+    NLBA_B = 310,
+    NLBA_E = 311,
+    EUOUAE_B = 312,
+    EUOUAE_E = 313,
+    NABC_CUT = 314,
+    NABC_LINES = 315
   };
 #endif
 /* Tokens.  */
@@ -872,61 +899,60 @@ extern int gabc_score_determination_debug;
 #define AUTHOR 259
 #define GABC_COPYRIGHT 260
 #define SCORE_COPYRIGHT 261
-#define NUMBER_OF_VOICES 262
-#define LANGUAGE 263
-#define STAFF_LINES 264
-#define ORISCUS_ORIENTATION 265
-#define DEF_MACRO 266
-#define OTHER_HEADER 267
-#define ANNOTATION 268
-#define MODE 269
-#define MODE_MODIFIER 270
-#define MODE_DIFFERENTIA 271
-#define INITIAL_STYLE 272
-#define VOICE_CUT 273
-#define VOICE_CHANGE 274
-#define END_OF_DEFINITIONS 275
-#define END_OF_FILE 276
-#define COLON 277
-#define SEMICOLON 278
-#define SPACE 279
-#define CHARACTERS 280
-#define NOTES 281
-#define HYPHEN 282
-#define ATTRIBUTE 283
-#define OPENING_BRACKET 284
-#define CLOSING_BRACKET 285
-#define CLOSING_BRACKET_WITH_SPACE 286
-#define I_BEGINNING 287
-#define I_END 288
-#define TT_BEGINNING 289
-#define TT_END 290
-#define UL_BEGINNING 291
-#define UL_END 292
-#define C_BEGINNING 293
-#define C_END 294
-#define B_BEGINNING 295
-#define B_END 296
-#define SC_BEGINNING 297
-#define SC_END 298
-#define SP_BEGINNING 299
-#define SP_END 300
-#define VERB_BEGINNING 301
-#define VERB 302
-#define VERB_END 303
-#define CENTER_BEGINNING 304
-#define CENTER_END 305
-#define TRANSLATION_BEGINNING 306
-#define TRANSLATION_END 307
-#define TRANSLATION_CENTER_END 308
-#define ALT_BEGIN 309
-#define ALT_END 310
-#define BNLBA 311
-#define ENLBA 312
-#define EUOUAE_B 313
-#define EUOUAE_E 314
-#define NABC_CUT 315
-#define NABC_LINES 316
+#define LANGUAGE 262
+#define STAFF_LINES 263
+#define ORISCUS_ORIENTATION 264
+#define DEF_MACRO 265
+#define OTHER_HEADER 266
+#define ANNOTATION 267
+#define MODE 268
+#define MODE_MODIFIER 269
+#define MODE_DIFFERENTIA 270
+#define INITIAL_STYLE 271
+#define END_OF_DEFINITIONS 272
+#define END_OF_FILE 273
+#define COLON 274
+#define SEMICOLON 275
+#define SPACE 276
+#define CHARACTERS 277
+#define NOTES 278
+#define HYPHEN 279
+#define ATTRIBUTE 280
+#define OPENING_BRACKET 281
+#define CLOSING_BRACKET 282
+#define CLOSING_BRACKET_WITH_SPACE 283
+#define I_BEGIN 284
+#define I_END 285
+#define TT_BEGIN 286
+#define TT_END 287
+#define UL_BEGIN 288
+#define UL_END 289
+#define C_BEGIN 290
+#define C_END 291
+#define B_BEGIN 292
+#define B_END 293
+#define SC_BEGIN 294
+#define SC_END 295
+#define SP_BEGIN 296
+#define SP_END 297
+#define VERB_BEGIN 298
+#define VERB 299
+#define VERB_END 300
+#define CENTER_BEGIN 301
+#define CENTER_END 302
+#define ELISION_BEGIN 303
+#define ELISION_END 304
+#define TRANSLATION_BEGIN 305
+#define TRANSLATION_END 306
+#define TRANSLATION_CENTER_END 307
+#define ALT_BEGIN 308
+#define ALT_END 309
+#define NLBA_B 310
+#define NLBA_E 311
+#define EUOUAE_B 312
+#define EUOUAE_E 313
+#define NABC_CUT 314
+#define NABC_LINES 315
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -958,7 +984,7 @@ int gabc_score_determination_parse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 962 "gabc/gabc-score-determination-y.c" /* yacc.c:358  */
+#line 988 "gabc/gabc-score-determination-y.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -1202,21 +1228,21 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   175
+#define YYLAST   166
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  62
+#define YYNTOKENS  61
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  23
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  82
+#define YYNRULES  81
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  117
+#define YYNSTATES  115
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   316
+#define YYMAXUTOK   315
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -1256,22 +1282,22 @@ static const yytype_uint8 yytranslate[] =
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    57,    58,    59,    60,    61
+      55,    56,    57,    58,    59,    60
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   736,   736,   740,   745,   746,   750,   754,   760,   770,
-     775,   784,   790,   795,   800,   805,   810,   815,   823,   831,
-     841,   850,   855,   859,   862,   867,   868,   872,   894,   917,
-     930,   943,   948,   957,   958,   959,   963,   966,   969,   972,
-     975,   978,   981,   984,   987,   996,   999,  1002,  1005,  1008,
-    1011,  1014,  1017,  1020,  1029,  1032,  1038,  1041,  1047,  1048,
-    1051,  1052,  1053,  1054,  1058,  1061,  1066,  1067,  1068,  1072,
-    1078,  1081,  1087,  1093,  1098,  1106,  1109,  1118,  1121,  1127,
-    1128,  1131,  1132
+       0,   765,   765,   769,   774,   775,   779,   783,   789,   794,
+     803,   809,   814,   819,   824,   829,   834,   842,   850,   860,
+     869,   874,   878,   883,   884,   888,   893,   899,   910,   914,
+     922,   923,   924,   928,   931,   934,   937,   940,   943,   946,
+     949,   952,   955,   964,   967,   970,   973,   976,   979,   982,
+     985,   988,   991,  1000,  1003,  1009,  1012,  1018,  1019,  1022,
+    1023,  1024,  1025,  1029,  1032,  1037,  1038,  1039,  1043,  1049,
+    1052,  1058,  1064,  1069,  1077,  1080,  1089,  1092,  1098,  1099,
+    1102,  1103
 };
 #endif
 
@@ -1281,24 +1307,23 @@ static const yytype_uint16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "NAME", "AUTHOR", "GABC_COPYRIGHT",
-  "SCORE_COPYRIGHT", "NUMBER_OF_VOICES", "LANGUAGE", "STAFF_LINES",
-  "ORISCUS_ORIENTATION", "DEF_MACRO", "OTHER_HEADER", "ANNOTATION", "MODE",
-  "MODE_MODIFIER", "MODE_DIFFERENTIA", "INITIAL_STYLE", "VOICE_CUT",
-  "VOICE_CHANGE", "END_OF_DEFINITIONS", "END_OF_FILE", "COLON",
-  "SEMICOLON", "SPACE", "CHARACTERS", "NOTES", "HYPHEN", "ATTRIBUTE",
-  "OPENING_BRACKET", "CLOSING_BRACKET", "CLOSING_BRACKET_WITH_SPACE",
-  "I_BEGINNING", "I_END", "TT_BEGINNING", "TT_END", "UL_BEGINNING",
-  "UL_END", "C_BEGINNING", "C_END", "B_BEGINNING", "B_END", "SC_BEGINNING",
-  "SC_END", "SP_BEGINNING", "SP_END", "VERB_BEGINNING", "VERB", "VERB_END",
-  "CENTER_BEGINNING", "CENTER_END", "TRANSLATION_BEGINNING",
-  "TRANSLATION_END", "TRANSLATION_CENTER_END", "ALT_BEGIN", "ALT_END",
-  "BNLBA", "ENLBA", "EUOUAE_B", "EUOUAE_E", "NABC_CUT", "NABC_LINES",
-  "$accept", "score", "all_definitions", "definitions", "attribute",
-  "definition", "notes", "note", "closing_bracket_with_space",
-  "style_beginning", "style_end", "euouae", "linebreak_area", "character",
-  "text_hyphen", "text", "translation_beginning", "translation",
-  "above_line_text", "syllable_with_notes", "notes_without_word",
-  "syllable", "syllables", YY_NULLPTR
+  "SCORE_COPYRIGHT", "LANGUAGE", "STAFF_LINES", "ORISCUS_ORIENTATION",
+  "DEF_MACRO", "OTHER_HEADER", "ANNOTATION", "MODE", "MODE_MODIFIER",
+  "MODE_DIFFERENTIA", "INITIAL_STYLE", "END_OF_DEFINITIONS", "END_OF_FILE",
+  "COLON", "SEMICOLON", "SPACE", "CHARACTERS", "NOTES", "HYPHEN",
+  "ATTRIBUTE", "OPENING_BRACKET", "CLOSING_BRACKET",
+  "CLOSING_BRACKET_WITH_SPACE", "I_BEGIN", "I_END", "TT_BEGIN", "TT_END",
+  "UL_BEGIN", "UL_END", "C_BEGIN", "C_END", "B_BEGIN", "B_END", "SC_BEGIN",
+  "SC_END", "SP_BEGIN", "SP_END", "VERB_BEGIN", "VERB", "VERB_END",
+  "CENTER_BEGIN", "CENTER_END", "ELISION_BEGIN", "ELISION_END",
+  "TRANSLATION_BEGIN", "TRANSLATION_END", "TRANSLATION_CENTER_END",
+  "ALT_BEGIN", "ALT_END", "NLBA_B", "NLBA_E", "EUOUAE_B", "EUOUAE_E",
+  "NABC_CUT", "NABC_LINES", "$accept", "score", "all_definitions",
+  "definitions", "attribute", "definition", "notes", "note",
+  "closing_bracket_with_space", "style_beginning", "style_end", "euouae",
+  "linebreak_area", "character", "text_hyphen", "text",
+  "translation_beginning", "translation", "above_line_text",
+  "syllable_with_notes", "notes_without_word", "syllable", "syllables", YY_NULLPTR
 };
 #endif
 
@@ -1313,14 +1338,14 @@ static const yytype_uint16 yytoknum[] =
      285,   286,   287,   288,   289,   290,   291,   292,   293,   294,
      295,   296,   297,   298,   299,   300,   301,   302,   303,   304,
      305,   306,   307,   308,   309,   310,   311,   312,   313,   314,
-     315,   316
+     315
 };
 # endif
 
-#define YYPACT_NINF -55
+#define YYPACT_NINF -52
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-55)))
+  (!!((Yystate) == (-52)))
 
 #define YYTABLE_NINF -3
 
@@ -1331,18 +1356,18 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -55,    26,   -55,    -1,   -55,     1,     5,     5,     5,     5,
-       5,     5,     5,     5,     5,     5,     5,     5,     5,     5,
-       5,   -55,   -55,     5,   -55,   -55,   -55,   -55,    36,   -55,
-       2,   -55,   -55,   -55,     0,   -55,   -55,   -55,   -55,   -55,
-     -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,
-     -55,    -6,   -55,    -8,   -55,   -55,   -55,   -55,   -55,   -55,
-     -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,
-     -55,   -55,   -55,     7,   -55,   -55,   -55,   -55,   -55,   -55,
-     -55,   -55,   -55,    99,     8,   -55,    71,   -55,   -55,     6,
-       4,    15,    17,   -55,   -55,   -55,    10,    -6,   -15,   -55,
-     -55,   -55,   -55,   -55,    -6,   -55,   -55,    15,   -55,   -55,
-     -55,   -55,    -6,   -55,   -55,    -6,    -6
+     -52,    17,   -52,    -2,   -52,    16,    18,    18,    18,    18,
+      18,    18,    18,    18,    18,    18,    18,    18,    18,    18,
+     -52,    18,   -52,   -52,   -52,   -52,    41,   -52,    12,   -52,
+     -52,   -52,    28,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,    24,   -52,
+      -6,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,    19,   -52,   -52,   -52,   -52,   -52,   -52,   -52,
+     -52,   -52,   108,    13,   -52,    78,   -52,   -52,    20,    -9,
+      36,    37,   -52,   -52,   -52,    30,    24,     3,   -52,   -52,
+     -52,   -52,   -52,    24,   -52,    36,   -52,   -52,   -52,   -52,
+      24,   -52,   -52,    24,    24
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -1350,34 +1375,34 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       4,     0,    81,     0,     1,    66,     0,     0,     0,     0,
+       4,     0,    80,     0,     1,    65,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,    24,     3,     0,     5,    25,    69,    71,     0,    66,
-       0,    79,    80,    82,     0,    10,    21,    12,    13,     8,
-      11,    17,    22,     9,    23,    20,    14,    15,    16,    19,
-      18,    77,    59,    64,    25,    36,    45,    37,    46,    38,
-      47,    39,    48,    40,    49,    41,    50,    43,    52,    42,
-      51,    44,    53,     0,    56,    57,    54,    55,    60,    61,
-      63,    62,    67,     0,     0,    58,     0,    25,     7,     0,
-       0,    31,    33,    26,    32,    25,     0,    73,     0,    65,
-      68,    25,    64,    70,    78,     6,    29,    27,    30,    28,
-      35,    34,    74,    25,    72,    75,    76
+       3,     0,     5,    23,    68,    70,     0,    65,     0,    78,
+      79,    81,     0,     9,    20,    11,    12,    10,    16,    21,
+       8,    22,    19,    13,    14,    15,    18,    17,    76,    58,
+      63,    23,    33,    43,    34,    44,    35,    45,    36,    46,
+      37,    47,    38,    48,    40,    50,    39,    49,    42,    52,
+      41,    51,     0,    55,    56,    53,    54,    59,    60,    62,
+      61,    66,     0,     0,    57,     0,    23,     7,     0,     0,
+      28,    30,    24,    29,    23,     0,    72,     0,    64,    67,
+      23,    63,    69,    77,     6,    25,    27,    26,    32,    31,
+      73,    23,    71,    74,    75
 };
 
   /* YYPGOTO[NTERM-NUM].  */
-static const yytype_int16 yypgoto[] =
+static const yytype_int8 yypgoto[] =
 {
-     -55,   -55,   -55,   -55,   152,   -55,   -54,   -55,   -46,   -55,
-     -55,   -55,   -55,   -37,   -55,    19,   -55,   -11,   -55,   -55,
-     -55,   -55,   -55
+     -52,   -52,   -52,   -52,    15,   -52,   -51,   -52,   -30,   -52,
+     -52,   -52,   -52,   -21,   -52,    35,   -52,    -5,   -52,   -52,
+     -52,   -52,   -52
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,     2,     3,    35,    24,    51,    93,    94,    78,
-      79,    80,    81,    82,    83,    28,    29,    30,    85,    31,
-      32,    33,     5
+      -1,     1,     2,     3,    33,    22,    48,    92,    93,    77,
+      78,    79,    80,    81,    82,    26,    27,    28,    84,    29,
+      30,    31,     5
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -1385,78 +1410,76 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      97,    -2,     6,     7,     8,     9,    10,    11,    12,    13,
-      14,    15,    16,    17,    18,    19,    20,    84,    21,    22,
-      90,    95,   106,    88,    91,    92,     4,    34,    89,   105,
-      25,    87,    98,   104,   107,    92,   110,   101,   111,   113,
-     114,   112,    96,    26,   109,    27,   100,   115,    86,     0,
-       0,     0,    26,     0,    27,     0,     0,     0,     0,   116,
-      23,    52,     0,    53,   108,    54,     0,     0,    55,    56,
-      57,    58,    59,    60,    61,    62,    63,    64,    65,    66,
-      67,    68,    69,     0,    70,    71,    72,    26,     0,    27,
-      73,     0,    74,    75,    76,    77,    52,     0,   102,     0,
-       0,     0,     0,    55,    56,    57,    58,    59,    60,    61,
-      62,    63,    64,    65,    66,    67,    68,    69,     0,    70,
-      71,    72,     0,   103,    52,    73,    99,    74,    75,    76,
-      77,    55,    56,    57,    58,    59,    60,    61,    62,    63,
-      64,    65,    66,    67,    68,    69,     0,    70,    71,    72,
-       0,     0,     0,    73,     0,    74,    75,    76,    77,    36,
-      37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
-      47,    48,    49,     0,     0,    50
+      96,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    20,    -2,     4,   105,    91,
+      94,    83,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    44,    45,    46,   103,    47,    32,    86,   100,
+     104,    97,    23,   110,    24,    95,    25,    89,    87,   113,
+     106,    90,    91,    88,   108,   109,   111,   112,    21,   107,
+     114,    99,    85,    49,     0,    50,    24,    51,    25,     0,
+      52,    53,    54,    55,    56,    57,    58,    59,    60,    61,
+      62,    63,    64,    65,    66,     0,    67,    68,    69,    70,
+      71,    24,     0,    25,    72,     0,    73,    74,    75,    76,
+      49,     0,   101,     0,     0,     0,     0,    52,    53,    54,
+      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
+      65,    66,     0,    67,    68,    69,    70,    71,     0,   102,
+      49,    72,    98,    73,    74,    75,    76,    52,    53,    54,
+      55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
+      65,    66,     0,    67,    68,    69,    70,    71,     0,     0,
+       0,    72,     0,    73,    74,    75,    76
 };
 
 static const yytype_int8 yycheck[] =
 {
-      54,     0,     3,     4,     5,     6,     7,     8,     9,    10,
-      11,    12,    13,    14,    15,    16,    17,    28,    19,    20,
-      26,    29,    18,    23,    30,    31,     0,    22,    28,    23,
-      29,    29,    25,    87,    30,    31,    21,    29,    21,    29,
-      55,    95,    53,    51,    90,    53,    83,   101,    29,    -1,
-      -1,    -1,    51,    -1,    53,    -1,    -1,    -1,    -1,   113,
-      61,    25,    -1,    27,    60,    29,    -1,    -1,    32,    33,
-      34,    35,    36,    37,    38,    39,    40,    41,    42,    43,
-      44,    45,    46,    -1,    48,    49,    50,    51,    -1,    53,
-      54,    -1,    56,    57,    58,    59,    25,    -1,    27,    -1,
-      -1,    -1,    -1,    32,    33,    34,    35,    36,    37,    38,
-      39,    40,    41,    42,    43,    44,    45,    46,    -1,    48,
-      49,    50,    -1,    52,    25,    54,    27,    56,    57,    58,
-      59,    32,    33,    34,    35,    36,    37,    38,    39,    40,
-      41,    42,    43,    44,    45,    46,    -1,    48,    49,    50,
-      -1,    -1,    -1,    54,    -1,    56,    57,    58,    59,     7,
-       8,     9,    10,    11,    12,    13,    14,    15,    16,    17,
-      18,    19,    20,    -1,    -1,    23
+      51,     3,     4,     5,     6,     7,     8,     9,    10,    11,
+      12,    13,    14,    15,    16,    17,     0,     0,    27,    28,
+      26,    26,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18,    19,    86,    21,    19,    26,    26,
+      20,    22,    26,    94,    50,    50,    52,    23,    20,   100,
+      59,    27,    28,    25,    18,    18,    26,    54,    60,    89,
+     111,    82,    27,    22,    -1,    24,    50,    26,    52,    -1,
+      29,    30,    31,    32,    33,    34,    35,    36,    37,    38,
+      39,    40,    41,    42,    43,    -1,    45,    46,    47,    48,
+      49,    50,    -1,    52,    53,    -1,    55,    56,    57,    58,
+      22,    -1,    24,    -1,    -1,    -1,    -1,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    -1,    45,    46,    47,    48,    49,    -1,    51,
+      22,    53,    24,    55,    56,    57,    58,    29,    30,    31,
+      32,    33,    34,    35,    36,    37,    38,    39,    40,    41,
+      42,    43,    -1,    45,    46,    47,    48,    49,    -1,    -1,
+      -1,    53,    -1,    55,    56,    57,    58
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    63,    64,    65,     0,    84,     3,     4,     5,     6,
+       0,    62,    63,    64,     0,    83,     3,     4,     5,     6,
        7,     8,     9,    10,    11,    12,    13,    14,    15,    16,
-      17,    19,    20,    61,    67,    29,    51,    53,    77,    78,
-      79,    81,    82,    83,    22,    66,    66,    66,    66,    66,
-      66,    66,    66,    66,    66,    66,    66,    66,    66,    66,
-      66,    68,    25,    27,    29,    32,    33,    34,    35,    36,
-      37,    38,    39,    40,    41,    42,    43,    44,    45,    46,
-      48,    49,    50,    54,    56,    57,    58,    59,    71,    72,
-      73,    74,    75,    76,    79,    80,    77,    29,    23,    28,
-      26,    30,    31,    69,    70,    29,    79,    68,    25,    27,
-      75,    29,    27,    52,    68,    23,    18,    30,    60,    70,
-      21,    21,    68,    29,    55,    68,    68
+      17,    60,    66,    26,    50,    52,    76,    77,    78,    80,
+      81,    82,    19,    65,    65,    65,    65,    65,    65,    65,
+      65,    65,    65,    65,    65,    65,    65,    65,    67,    22,
+      24,    26,    29,    30,    31,    32,    33,    34,    35,    36,
+      37,    38,    39,    40,    41,    42,    43,    45,    46,    47,
+      48,    49,    53,    55,    56,    57,    58,    70,    71,    72,
+      73,    74,    75,    78,    79,    76,    26,    20,    25,    23,
+      27,    28,    68,    69,    26,    78,    67,    22,    24,    74,
+      26,    24,    51,    67,    20,    27,    59,    69,    18,    18,
+      67,    26,    54,    67,    67
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    62,    63,    64,    65,    65,    66,    66,    67,    67,
-      67,    67,    67,    67,    67,    67,    67,    67,    67,    67,
-      67,    67,    67,    67,    67,    68,    68,    69,    69,    69,
-      69,    69,    69,    70,    70,    70,    71,    71,    71,    71,
-      71,    71,    71,    71,    71,    72,    72,    72,    72,    72,
-      72,    72,    72,    72,    73,    73,    74,    74,    75,    75,
-      75,    75,    75,    75,    76,    76,    77,    77,    77,    78,
-      79,    79,    80,    81,    81,    81,    81,    82,    82,    83,
-      83,    84,    84
+       0,    61,    62,    63,    64,    64,    65,    65,    66,    66,
+      66,    66,    66,    66,    66,    66,    66,    66,    66,    66,
+      66,    66,    66,    67,    67,    68,    68,    68,    68,    68,
+      69,    69,    69,    70,    70,    70,    70,    70,    70,    70,
+      70,    70,    70,    71,    71,    71,    71,    71,    71,    71,
+      71,    71,    71,    72,    72,    73,    73,    74,    74,    74,
+      74,    74,    74,    75,    75,    76,    76,    76,    77,    78,
+      78,    79,    80,    80,    80,    80,    81,    81,    82,    82,
+      83,    83
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -1464,13 +1487,13 @@ static const yytype_uint8 yyr2[] =
 {
        0,     2,     2,     2,     0,     2,     3,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     1,     0,     2,     2,     2,     2,
-       2,     1,     1,     1,     2,     2,     1,     1,     1,     1,
+       2,     2,     2,     0,     2,     2,     2,     2,     1,     1,
+       1,     2,     2,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     2,     0,     2,     3,     1,
-       3,     1,     3,     3,     4,     4,     5,     2,     3,     1,
-       1,     0,     2
+       1,     1,     1,     1,     2,     0,     2,     3,     1,     3,
+       1,     3,     3,     4,     4,     5,     2,     3,     1,     1,
+       0,     2
 };
 
 
@@ -2056,7 +2079,7 @@ yyparse (void)
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
 /* User initialization code.  */
-#line 701 "gabc/gabc-score-determination.y" /* yacc.c:1429  */
+#line 729 "gabc/gabc-score-determination.y" /* yacc.c:1429  */
 {
     yylloc.first_line = 1;
     yylloc.first_column = 0;
@@ -2066,7 +2089,7 @@ yyparse (void)
     yylloc.last_offset = 0;
 }
 
-#line 2070 "gabc/gabc-score-determination-y.c" /* yacc.c:1429  */
+#line 2093 "gabc/gabc-score-determination-y.c" /* yacc.c:1429  */
   yylsp[0] = yylloc;
   goto yysetstate;
 
@@ -2253,56 +2276,41 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 740 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 769 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         end_definitions();
     }
-#line 2261 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2284 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 750 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 779 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         (yyval).text = (yyvsp[-1]).text;
-    }
-#line 2269 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 7:
-#line 754 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        (yyval).text = NULL;
-    }
-#line 2277 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 8:
-#line 760 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
-        number_of_voices=atoi((yyvsp[0]).text);
-        if (number_of_voices > MAX_NUMBER_OF_VOICES) {
-            gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
-                    _("can't define %d voices, maximum is %d"),
-                    number_of_voices, MAX_NUMBER_OF_VOICES);
-        }
-        score->number_of_voices = number_of_voices;
     }
 #line 2292 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 9:
-#line 770 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 7:
+#line 783 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        (yyval).text = NULL;
+    }
+#line 2300 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 8:
+#line 789 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         /* these definitions are not passed through */
         free(macros[(yyvsp[-1]).character - '0']);
         macros[(yyvsp[-1]).character - '0'] = (yyvsp[0]).text;
     }
-#line 2302 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2310 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 10:
-#line 775 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 9:
+#line 794 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0]).text == NULL) {
             gregorio_message("name can't be empty","det_score",
@@ -2312,72 +2320,72 @@ yyreduce:
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->name = (yyvsp[0]).text;
     }
-#line 2316 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2324 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 11:
-#line 784 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 10:
+#line 803 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("language", got_language);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         gregorio_set_centering_language((yyvsp[0]).text);
         got_language = true;
     }
-#line 2327 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2335 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 12:
-#line 790 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 11:
+#line 809 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("gabc-copyright", score->gabc_copyright != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->gabc_copyright = (yyvsp[0]).text;
     }
-#line 2337 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2345 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 13:
-#line 795 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 12:
+#line 814 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("score_copyright", score->score_copyright != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->score_copyright = (yyvsp[0]).text;
     }
-#line 2347 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2355 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 14:
-#line 800 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 13:
+#line 819 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("mode", score->mode != 0);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->mode = (yyvsp[0]).text;
     }
-#line 2357 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2365 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 15:
-#line 805 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 14:
+#line 824 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("mode-modifier", score->mode_modifier != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->mode_modifier = (yyvsp[0]).text;
     }
-#line 2367 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2375 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 16:
-#line 810 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 15:
+#line 829 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("mode-differentia", score->mode_differentia != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->mode_differentia = (yyvsp[0]).text;
     }
-#line 2377 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2385 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 17:
-#line 815 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 16:
+#line 834 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("staff-lines", got_staff_lines);
         if ((yyvsp[0]).text) {
@@ -2386,11 +2394,11 @@ yyreduce:
             got_staff_lines = true;
         }
     }
-#line 2390 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2398 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 18:
-#line 823 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 17:
+#line 842 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("nabc lines", score->nabc_lines != 0);
         if ((yyvsp[0]).text) {
@@ -2399,11 +2407,11 @@ yyreduce:
             score->nabc_lines=nabc_lines;
         }
     }
-#line 2403 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2411 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 19:
-#line 831 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 18:
+#line 850 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0]).text) {
             /* DEPRECATED by 4.1 */
@@ -2414,11 +2422,11 @@ yyreduce:
             free((yyvsp[0]).text);
         }
     }
-#line 2418 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2426 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 20:
-#line 841 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 19:
+#line 860 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (score->annotation [MAX_ANNOTATIONS - 1]) {
             gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
@@ -2428,119 +2436,59 @@ yyreduce:
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         gregorio_set_score_annotation(score, (yyvsp[0]).text);
     }
-#line 2432 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2440 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 21:
-#line 850 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 20:
+#line 869 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("author", score->author != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->author = (yyvsp[0]).text;
     }
-#line 2442 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2450 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 22:
-#line 855 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 21:
+#line 874 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->legacy_oriscus_orientation = (strcmp((yyvsp[0]).text, "legacy") == 0);
     }
-#line 2451 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 23:
-#line 859 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
-    }
 #line 2459 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 24:
-#line 862 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 22:
+#line 878 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        next_voice_info();
+        gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
     }
 #line 2467 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 27:
-#line 872 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 25:
+#line 888 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        if (voice<number_of_voices) {
-            gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
-            free((yyvsp[-1]).text);
-        }
-        else {
-            gregorio_messagef("det_score", VERBOSITY_ERROR, 0,
-                    ngt_("too many voices in note : %d found, %d expected",
-                    "too many voices in note : %d found, %d expected",
-                    number_of_voices), voice+1, number_of_voices);
-        }
-        if (voice<number_of_voices-1) {
-            gregorio_messagef("det_score", VERBOSITY_INFO, 0,
-                    ngt_("not enough voices in note : %d found, %d expected, "
-                    "completing with empty neume", "not enough voices in note "
-                    ": %d found, %d expected, completing with empty neume",
-                    voice+1), voice+1, number_of_voices);
-            complete_with_nulls(voice);
-        }
-        voice=0;
+        gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
+        free((yyvsp[-1]).text);
         nabc_state=0;
     }
-#line 2494 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2477 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 28:
-#line 894 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 26:
+#line 893 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        if (voice<number_of_voices) {
-            gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
-            free((yyvsp[-1]).text);
-        }
-        else {
-            gregorio_messagef("det_score", VERBOSITY_ERROR, 0,
-                    ngt_("too many voices in note : %d found, %d expected",
-                    "too many voices in note : %d found, %d expected",
-                    number_of_voices), voice+1, number_of_voices);
-        }
-        if (voice<number_of_voices-1) {
-            gregorio_messagef("det_score", VERBOSITY_INFO, 0,
-                    ngt_("not enough voices in note : %d found, %d expected, "
-                    "completing with empty neume", "not enough voices in note "
-                    ": %d found, %d expected, completing with empty neume",
-                    voice+1), voice+1, number_of_voices);
-            complete_with_nulls(voice);
-        }
-        voice=0;
+        gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
+        free((yyvsp[-1]).text);
         nabc_state=0;
         update_position_with_space();
     }
-#line 2522 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2488 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 29:
-#line 917 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        if (voice<number_of_voices) {
-            gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
-            free((yyvsp[-1]).text);
-            voice++;
-        }
-        else {
-            gregorio_messagef("det_score", VERBOSITY_ERROR, 0,
-                    ngt_("too many voices in note : %d found, %d expected",
-                    "too many voices in note : %d found, %d expected",
-                    number_of_voices), voice+1, number_of_voices);
-        }
-    }
-#line 2540 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 30:
-#line 930 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 27:
+#line 899 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (!nabc_lines) {
             gregorio_message(_("You used character \"|\" in gabc without "
@@ -2548,334 +2496,346 @@ yyreduce:
                                "set it in your gabc header."),
                              "det_score", VERBOSITY_FATAL, 0);
         }
-        if (voice<number_of_voices) {
-            gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
-            free((yyvsp[-1]).text);
-            nabc_state = (nabc_state + 1) % (nabc_lines+1);
-        }
+        gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
+        free((yyvsp[-1]).text);
+        nabc_state = (nabc_state + 1) % (nabc_lines+1);
     }
-#line 2558 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2504 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 31:
-#line 943 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 28:
+#line 910 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         elements[voice]=NULL;
-        voice=0;
         nabc_state=0;
     }
-#line 2568 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2513 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 32:
-#line 948 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 29:
+#line 914 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         elements[voice]=NULL;
-        voice=0;
         nabc_state=0;
         update_position_with_space();
+    }
+#line 2523 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 33:
+#line 928 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_ITALIC);
+    }
+#line 2531 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 34:
+#line 931 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_TT);
+    }
+#line 2539 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 35:
+#line 934 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_UNDERLINED);
+    }
+#line 2547 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 36:
+#line 937 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_COLORED);
+    }
+#line 2555 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 37:
+#line 940 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_BOLD);
+    }
+#line 2563 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 38:
+#line 943 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_SMALL_CAPS);
+    }
+#line 2571 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 39:
+#line 946 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_style(ST_VERBATIM);
     }
 #line 2579 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 36:
-#line 963 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 40:
+#line 949 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_add_style(ST_ITALIC);
+        gregorio_gabc_add_style(ST_SPECIAL_CHAR);
     }
 #line 2587 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 37:
-#line 966 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 41:
+#line 952 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_add_style(ST_TT);
+        gregorio_gabc_add_style(ST_ELISION);
     }
 #line 2595 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 38:
-#line 969 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_style(ST_UNDERLINED);
-    }
-#line 2603 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 39:
-#line 972 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_style(ST_COLORED);
-    }
-#line 2611 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 40:
-#line 975 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_style(ST_BOLD);
-    }
-#line 2619 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 41:
-#line 978 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_style(ST_SMALL_CAPS);
-    }
-#line 2627 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
   case 42:
-#line 981 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_style(ST_VERBATIM);
-    }
-#line 2635 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 43:
-#line 984 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_style(ST_SPECIAL_CHAR);
-    }
-#line 2643 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 44:
-#line 987 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 955 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (!center_is_determined) {
             gregorio_gabc_add_style(ST_FORCED_CENTER);
             center_is_determined=CENTER_HALF_DETERMINED;
         }
     }
-#line 2654 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2606 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 43:
+#line 964 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_end_style(ST_ITALIC);
+    }
+#line 2614 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 44:
+#line 967 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_end_style(ST_TT);
+    }
+#line 2622 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 996 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 970 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_end_style(ST_ITALIC);
+        gregorio_gabc_end_style(ST_UNDERLINED);
+    }
+#line 2630 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 46:
+#line 973 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_end_style(ST_COLORED);
+    }
+#line 2638 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 47:
+#line 976 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_end_style(ST_BOLD);
+    }
+#line 2646 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 48:
+#line 979 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_end_style(ST_SMALL_CAPS);
+    }
+#line 2654 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 49:
+#line 982 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_end_style(ST_VERBATIM);
     }
 #line 2662 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 46:
-#line 999 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 50:
+#line 985 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_end_style(ST_TT);
+        gregorio_gabc_end_style(ST_SPECIAL_CHAR);
     }
 #line 2670 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 47:
-#line 1002 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 51:
+#line 988 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_end_style(ST_UNDERLINED);
+        gregorio_gabc_end_style(ST_ELISION);
     }
 #line 2678 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 48:
-#line 1005 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_end_style(ST_COLORED);
-    }
-#line 2686 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 49:
-#line 1008 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_end_style(ST_BOLD);
-    }
-#line 2694 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 50:
-#line 1011 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_end_style(ST_SMALL_CAPS);
-    }
-#line 2702 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 51:
-#line 1014 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_end_style(ST_VERBATIM);
-    }
-#line 2710 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
   case 52:
-#line 1017 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_end_style(ST_SPECIAL_CHAR);
-    }
-#line 2718 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 53:
-#line 1020 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 991 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (center_is_determined==CENTER_HALF_DETERMINED) {
             gregorio_gabc_end_style(ST_FORCED_CENTER);
             center_is_determined=CENTER_FULLY_DETERMINED;
         }
     }
-#line 2729 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2689 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 53:
+#line 1000 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        euouae = EUOUAE_BEGINNING;
+    }
+#line 2697 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 54:
+#line 1003 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        euouae = EUOUAE_END;
+    }
+#line 2705 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 55:
+#line 1009 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        no_linebreak_area = NLBA_BEGINNING;
+    }
+#line 2713 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 56:
+#line 1012 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        no_linebreak_area = NLBA_END;
+    }
+#line 2721 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 58:
+#line 1019 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        gregorio_gabc_add_text((yyvsp[0]).text);
+    }
+#line 2729 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 63:
 #line 1029 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        euouae = EUOUAE_BEGINNING;
+        gregorio_gabc_add_text(gregorio_strdup("-"));
     }
 #line 2737 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 55:
+  case 64:
 #line 1032 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        euouae = EUOUAE_END;
+        gregorio_gabc_add_text(gregorio_strdup("-"));
     }
 #line 2745 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 56:
-#line 1038 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 68:
+#line 1043 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        no_linebreak_area = NLBA_BEGINNING;
+        start_translation(TR_NORMAL);
     }
 #line 2753 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 57:
-#line 1041 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 69:
+#line 1049 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        no_linebreak_area = NLBA_END;
+        end_translation();
     }
 #line 2761 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 59:
-#line 1048 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 70:
+#line 1052 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_add_text((yyvsp[0]).text);
+        start_translation(TR_WITH_CENTER_END);
     }
 #line 2769 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 64:
+  case 71:
 #line 1058 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        gregorio_gabc_add_text(gregorio_strdup("-"));
+        abovelinestext = (yyvsp[-1]).text;
     }
 #line 2777 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 65:
-#line 1061 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        gregorio_gabc_add_text(gregorio_strdup("-"));
-    }
-#line 2785 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 69:
-#line 1072 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        start_translation(TR_NORMAL);
-    }
-#line 2793 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 70:
-#line 1078 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        end_translation();
-    }
-#line 2801 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 71:
-#line 1081 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        start_translation(TR_WITH_CENTER_END);
-    }
-#line 2809 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
   case 72:
-#line 1087 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1064 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
-        abovelinestext = (yyvsp[-1]).text;
-    }
-#line 2817 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 73:
-#line 1093 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        rebuild_characters();
+        ready_characters();
         first_text_character = current_character;
         close_syllable(&(yylsp[-2]));
     }
-#line 2827 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2787 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 74:
-#line 1098 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 73:
+#line 1069 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_VERBATIM);
         gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
         gregorio_gabc_end_style(ST_VERBATIM);
-        rebuild_characters();
+        ready_characters();
         first_text_character = current_character;
         close_syllable(&(yylsp[-3]));
     }
-#line 2840 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2800 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 75:
-#line 1106 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 74:
+#line 1077 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         close_syllable(&(yylsp[-3]));
     }
-#line 2848 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2808 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
-  case 76:
-#line 1109 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+  case 75:
+#line 1080 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_VERBATIM);
         gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
         gregorio_gabc_end_style(ST_VERBATIM);
         close_syllable(&(yylsp[-4]));
     }
-#line 2859 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2819 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+    break;
+
+  case 76:
+#line 1089 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+    {
+        close_syllable(NULL);
+    }
+#line 2827 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 1118 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1092 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         close_syllable(NULL);
     }
-#line 2867 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
-    break;
-
-  case 78:
-#line 1121 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
-    {
-        close_syllable(NULL);
-    }
-#line 2875 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2835 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
 
-#line 2879 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2839 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

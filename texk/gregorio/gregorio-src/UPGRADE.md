@@ -20,6 +20,14 @@ Since the `biginitial` style will disappear with Gregorio 5.0, please consider d
 
 When the next syllable starts with an alteration, the minimal space between notes of the current syllable and notes of the current syllable is handled by the new spaces `intersyllablespacenotes@alteration` and `interwordspacenotes@alteration`. Set them in your custom spacings file if needed.
 
+When a syllable ends with a punctum mora, Gregorio 4.1 doesn't consider the punctum mora completely in horizontal spacing. This can result in next syllable being closer. To balance the output, `spacebeforesigns` has been made shorter. If you want to go back to the old behavior, use:
+
+- `\gresetshiftaftermora{never}` if you want to remove it completely
+- `\gresetshiftaftermora{barsonly}` if you want to remove it for non-bar syllables but keep it for bar syllables
+- `\grechangedim{spacebeforesigns}{0.05469 cm plus 0.00455 cm minus 0.00455 cm}{scalable}` to go back to the old spacing before punctum mora
+
+The `\gresetshiftaftermora` macro can take other arguments for controlling how this should work, see GregorioRef for details.
+
 ### Horizontal episemata on high and low notes
 
 Prior to version 4.1, Gregorio reserved space between notes at the `c` and `k` heights and their horizontal episemata for a "ledger line" that might appear between them.  However, if the ledger line did not appear, the episema would appear to be too far from the note.
@@ -59,6 +67,10 @@ The style for the mode number has been bold and small capitals for a long time, 
 ### Score reference macros
 
 If you were using `\scorereference`, `\GreScoreReference`, and/or `\grescorereference`, stop using them.  If you need to capture the `manuscript-reference` header, use the new header capture feature (see GregorioRef for details).
+
+### Three descending notes
+
+Three descending notes that have no other markings (such as liquescentia) will now be rendered as a clivis followed by a punctum.  The older, incorrect behavior was to group them as three punctums joined by `!`.  If you prefer this behavior, explicitly separate the notes with `!`.
 
 ## 4.0
 

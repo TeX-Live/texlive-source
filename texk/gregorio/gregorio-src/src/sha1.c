@@ -114,7 +114,7 @@ void *sha1_finish_ctx(struct sha1_ctx *ctx, void *resbuf)
      */
     ctx->total[0] += bytes;
     if (ctx->total[0] < bytes)
-        ++ctx->total[1];
+        ++ctx->total[1]; /* data-sepcific; LCOV_EXCL_LINE */
 
     /*
      * Put the 64-bit file length in *bits* at the end of the buffer.  
@@ -130,30 +130,6 @@ void *sha1_finish_ctx(struct sha1_ctx *ctx, void *resbuf)
     sha1_process_block(ctx->buffer, size * 4, ctx);
 
     return sha1_read_ctx(ctx, resbuf);
-}
-
-/* Compute SHA1 message digest for LEN bytes beginning at BUFFER.  The
-   result is always in little endian byte order, so that a byte-wise
-   output yields to the wanted ASCII representation of the message
-   digest.  */
-void *sha1_buffer(const char *buffer, size_t len, void *resblock)
-{
-    struct sha1_ctx ctx;
-
-    /*
-     * Initialize the computation context.  
-     */
-    sha1_init_ctx(&ctx);
-
-    /*
-     * Process whole buffer but last len % 64 bytes.  
-     */
-    sha1_process_bytes(buffer, len, &ctx);
-
-    /*
-     * Put result in desired memory area.  
-     */
-    return sha1_finish_ctx(&ctx, resblock);
 }
 
 void sha1_process_bytes(const void *buffer, size_t len, struct sha1_ctx *ctx)
@@ -189,6 +165,7 @@ void sha1_process_bytes(const void *buffer, size_t len, struct sha1_ctx *ctx)
      * Process available complete blocks.  
      */
     if (len >= 64) {
+        /* architecture and data-specific; LCOV_EXCL_START */
 #if !_STRING_ARCH_unaligned
 #define UNALIGNED_P(p) ((uintptr_t) (p) % alignof (uint32_t) != 0)
         if (UNALIGNED_P(buffer)) {
@@ -204,6 +181,7 @@ void sha1_process_bytes(const void *buffer, size_t len, struct sha1_ctx *ctx)
             buffer = (const char *) buffer + (len & ~63);
             len &= 63;
         }
+        /* LCOV_EXCL_STOP */
     }
 
     /*
@@ -215,10 +193,12 @@ void sha1_process_bytes(const void *buffer, size_t len, struct sha1_ctx *ctx)
         memcpy(&((char *) ctx->buffer)[left_over], buffer, len);
         left_over += len;
         if (left_over >= 64) {
+            /* data-specific; LCOV_EXCL_START */
             sha1_process_block(ctx->buffer, 64, ctx);
             left_over -= 64;
             memcpy(ctx->buffer, &ctx->buffer[16], left_over);
         }
+        /* LCOV_EXCL_STOP */
         ctx->buflen = left_over;
     }
 }

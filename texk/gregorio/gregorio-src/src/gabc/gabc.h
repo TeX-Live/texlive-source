@@ -30,6 +30,7 @@
 /* functions to read gabc */
 gregorio_note *gabc_det_notes_from_string(char *str, char *macros[10],
         gregorio_scanner_location *loc, const gregorio_score *score);
+void gabc_det_notes_finish(void);
 gregorio_element *gabc_det_elements_from_string(char *str, int *current_key,
         char *macros[10], gregorio_scanner_location *loc,
         const gregorio_score *const score);
@@ -47,9 +48,6 @@ typedef enum gabc_determination {
     DET_END_OF_PREVIOUS,
     DET_END_OF_BOTH
 } gabc_determination;
-
-/* defines the maximal interval between two notes of the same glyph */
-#define MAX_INTERVAL 5
 
 static __inline void gabc_update_location(gregorio_scanner_location *const loc,
         const char *const bytes, const size_t length)

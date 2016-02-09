@@ -5,6 +5,25 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [4.1.0-beta2] - 2016-02-08
+### Fixed
+- When a flat on a ledger line (`bx` or `lx`) was preceding a note also on a ledger line, the ledger line was partially visible inside the flat, see [#882](https://github.com/gregorio-project/gregorio/issues/882).
+- Compilation of documents produced with Gregorio should be slightly faster.
+
+### Changed
+- Stem length for virgas, flexus, pes quadratum, etc. are now tunable, and have been reviewed, see [#803](https://github.com/gregorio-project/gregorio/issues/803).
+- Height of the porrectus have been altered (first note moved up, second also moved up when second ambitus is more than one) so that they are more coherent with the punctum height. The porrectus stroke drawings have also been slightly altered to be slightly thinner and sharper around the bottom note (see [#858](https://github.com/gregorio-project/gregorio/issues/858)).
+- When a syllable is preceeded by a punctum mora, gregorio now ignores the punctum mora in the spacing of the syllables by default, and also adds a custom space (defaulting to 0). You can change this behavior with `\gresetshiftaftermora{}`, see GregorioRef for its arguments. To balance the output, space before a punctum mora has been made slightly thinner, more in line with old Solesmes books. (For the change requests, see [#795](https://github.com/gregorio-project/gregorio/issues/795) and [#871](https://github.com/gregorio-project/gregorio/issues/871)).
+- The `--admin` option is removed from the `initexmf` call for MiKTeX installations, allowing the installer to work better on Windows 10.
+- MiKTeX installations no longer copy files into TEXMFLOCAL but instead registers the texmf folder which the installer creates with MiKTeX, allowing it to use those files in place.  See [#884](https://github.com/gregorio-project/gregorio/issues/884)
+- Added an uninstall script which will run as part of the uninstall action and will remove the Gregorio executable and TeX files from their copied locations (at least using the `unins000.exe` file which is created in the program directory when the program is installed, I haven't tested using the Add/Remove Programs feature built into Windows).
+
+### Added
+- A new algorithm for placing bar syllables has been added.  The goal of the new algorithm is to place the bar line exactly between the notes which surround it and do the same with the text associated with the bar line.  It also implements a limit, `maxbaroffset`, which prevents the bar line and its text from getting too far apart.  This algorithm can be activated with `\gresetbarspacing{new}`.  Testing is not yet complete and it may still contain bugs.  See [#767](https://github.com/gregorio-project/gregorio/issues/767).
+- It is now possible to generate a font with a different stem length schema (apart from the default one, Solesmes' is available), see [fonts/README.md](fonts/README.md) for details.
+- Some forms (`ed` for example) will have a different stem length if a ledger line is present. Heuristics to determine the presence of a ledger line or not are quite simple and may not always be correct. Gabc now allows you to force a note to act as if a ledger line was present with `[ll:1]`, or as if there was no ledger line, with `[ll:0]`. See Gabc section of GregorioRef for details.
+- The ability to typeset an inter-glyph space using `/!` in gabc (see [#868](https://github.com/gregorio-project/gregorio/issues/868))
+
 ## [4.1.0-beta1] - 2016-01-23
 ### Fixed
 - The alignment of the vertical episema under a punctum inclinatum deminutus is now correct (see [#742](https://github.com/gregorio-project/gregorio/issues/742)).
@@ -13,6 +32,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - Interlinear spacing of annotations when font size was smaller than normal.  You should now see just the spacing specified by `annotationseparation`.
 - Spacing is now correct and ledger lines are now typeset for flats, sharps, and naturals above and below the staff (see [#790](https://github.com/gregorio-project/gregorio/issues/790)).
 - Forced hyphens at the end of words are no longer suppressed (see [#804](https://github.com/gregorio-project/gregorio/issues/804)).
+- Three descending, otherwise unmodified notes are now correctly grouped as a clivis followed by a punctum.  If you prefer three notes butted up against each other, separate them with `!`.
 
 ### Changed
 - Initial handling has been simplified.  The initial style should now be specified from TeX by using the `\gresetinitiallines` command, rather than from a gabc header.  Big initials and normal initials are now governed by a single `initial` style, meant to be changed between scores as appropriate.  See [UPGRADE.md](UPGRADE.md) and GregorioRef for details (for the change request, see [#632](https://github.com/gregorio-project/gregorio/issues/632)).  Deprecations for this change are listed in the Deprecation section, below.
@@ -26,7 +46,6 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - Headers not recognized by gregorio, rather than inducing an error, are now simply accepted by gregorio.  Most of the old "standard" headers, like `book` and `manuscript-location`, are now handled in this way and thus are no longer limited to one instance.  See GregorioRef for details.
 - `mode` will now be converted to Roman numerals in lower case so that it shows up as small capitals using the default `modeline` style.  See [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#756](https://github.com/gregorio-project/gregorio/issues/756)).
 - `\grecommentary` is now less restrictive about where it occurs and need not occur directly before the score anymore.
-- When a bar is preceeded by a punctum mora, gregorio now ignores the punctum mora in the bar horizontal placement by default, and also adds a custom space (defaulting to 0). You can change this behavior with `\gresetbarshiftaftermora{}`, see GregorioRef for its arguments (for the change request, see [#795](https://github.com/gregorio-project/gregorio/issues/795)).
 
 ### Added
 - Support for two-, three-, and five-line staves.  Set the `staff-lines` header to `2`, `3`, or `5`.  For all values of `staff-lines`, the note below the staff remains 'c'.  The two new notes above the staff (for a five-line staff) are `n` and `p`.  See [#429](https://github.com/gregorio-project/gregorio/issues/429).
@@ -47,7 +66,9 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - `\grecommentary` now takes an optional argument which will add extra space between the commentary and the score for just the next score.
 - The custos can now be selectively enabled/disabled at forced line breaks by appending `+` (to enable) or `-` (to disable) after the `z` or `Z` (see [#800](https://github.com/gregorio-project/gregorio/issues/800)).
 - With thanks to an anonymous contributor, the shape of the MetaPost-drawn curly brace has been improved (see [#797](https://github.com/gregorio-project/gregorio/issues/797)).
-
+- Support for elisions, text between `<e>` and `</e>` in gabc, styled according to the `elision` style, which are excluded when determining where to position the text under its notes (see [#838](https://github.com/gregorio-project/gregorio/issues/838)).
+- Special characters (between `<sp>` and `</sp>` in gabc) may now be customized using the `\gresetspecial` and `\greunsetspecial` commands.  See GregorioRef for details (for the change request, see [#846](https://github.com/gregorio-project/gregorio/issues/846)).
+- `\gresetbracerendering` can now take an optional argument to change the rendering of a single type of brace.  See GregorioRef for details (for the change request, see [#850](https://github.com/gregorio-project/gregorio/issues/850)).
 
 ### Deprecated
 - `initial-style` gabc header, supplanted by the `\gresetinitiallines` TeX command.

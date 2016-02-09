@@ -98,8 +98,8 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
     /* here we separate notes that would be logically in the same glyph
      * but that are too far to be so */
     if (last_pitch) {
-        if (current_pitch - last_pitch > MAX_INTERVAL
-                || current_pitch - last_pitch < -MAX_INTERVAL) {
+        if (current_pitch - last_pitch > MAX_AMBITUS
+                || current_pitch - last_pitch < -MAX_AMBITUS) {
             current_glyph_type = G_UNDETERMINED;
         }
     }
@@ -188,8 +188,13 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
             if (current_pitch > last_pitch) {
                 next_glyph_type = G_PORRECTUS;
             } else {
-                *end_of_glyph = DET_END_OF_CURRENT;
-                next_glyph_type = G_ANCUS;
+                if (liquescentia & L_DEMINUTUS) {
+                    *end_of_glyph = DET_END_OF_CURRENT;
+                    next_glyph_type = G_ANCUS;
+                } else {
+                    *end_of_glyph = DET_END_OF_PREVIOUS;
+                    next_glyph_type = G_PUNCTUM;
+                }
             }
             break;
         case G_TORCULUS:
@@ -257,6 +262,7 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
         break;
     case S_BIVIRGA:
         if (current_glyph_type == G_VIRGA && last_pitch == current_pitch) {
+            *end_of_glyph = DET_END_OF_CURRENT;
             next_glyph_type = G_TRIVIRGA;
         } else {
             *end_of_glyph = DET_END_OF_PREVIOUS;
@@ -315,7 +321,7 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
             if (last_pitch < current_pitch) {
                 next_glyph_type = G_3_PUNCTA_INCLINATA_ASCENDENS;
             } else {
-                next_glyph_type = G_TRIGONUS;
+                next_glyph_type = G_PUNCTA_INCLINATA;
             }
             break;
         case G_3_PUNCTA_INCLINATA_ASCENDENS:
@@ -334,7 +340,7 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
             break;
         case G_2_PUNCTA_INCLINATA_DESCENDENS:
             if (last_pitch < current_pitch) {
-                next_glyph_type = G_TRIGONUS;
+                next_glyph_type = G_PUNCTA_INCLINATA;
             } else {
                 next_glyph_type = G_3_PUNCTA_INCLINATA_DESCENDENS;
             }
@@ -392,7 +398,12 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
         next_glyph_type = G_TRISTROPHA;
         break;
     default:
+        /* not reachable unless there's a programming error */
+        /* LCOV_EXCL_START */
+        gregorio_fail2(gregorio_add_note_to_a_glyph, "unexpected shape: %s",
+                gregorio_shape_to_string(shape));
         break;
+        /* LCOV_EXCL_STOP */
     }
     /* end of the main switch */
 
@@ -419,12 +430,22 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
      * it was not the same glyph, there we must say that the previous
      * glyph has ended. */
     if (last_pitch) {
-        if (current_pitch - last_pitch > MAX_INTERVAL
-                || current_pitch - last_pitch < -MAX_INTERVAL) {
+        if (current_pitch - last_pitch > MAX_AMBITUS
+                || current_pitch - last_pitch < -MAX_AMBITUS) {
             if (*end_of_glyph == DET_END_OF_CURRENT
                     || *end_of_glyph == DET_END_OF_BOTH) {
+                /* There is no current way for the code to end up here, but
+                 * we'll leave it in because it's a good safety precaution in
+                 * case something new is added in the future */
+                /* LCOV_EXCL_START */
+                gregorio_message(_("Encountered the need to switch "
+                            "DET_END_OF_CURRENT to DET_END_OF_BOTH because of "
+                            "overly large ambitus"),
+                            "gregorio_add_note_to_a_glyph", VERBOSITY_WARNING,
+                            __LINE__);
                 *end_of_glyph = DET_END_OF_BOTH;
             } else {
+                /* LCOV_EXCL_STOP */
                 *end_of_glyph = DET_END_OF_PREVIOUS;
             }
         }
@@ -453,9 +474,6 @@ static gregorio_note *close_normal_glyph(gregorio_glyph **last_glyph,
 {
     gregorio_note *new_current_note = current_note;
     gregorio_scanner_location loc;
-    /* a variable necessary for the patch for G_BIVIRGA & co. */
-    gregorio_note *added_notes = NULL;
-    gregorio_note *next_note = NULL;
 
     /* patch to have good glyph type in the case where a glyph ends by a note
      * with shape S_QUADRATUM */
@@ -481,12 +499,16 @@ static gregorio_note *close_normal_glyph(gregorio_glyph **last_glyph,
             || glyph_type == G_TRISTROPHA_AUCTA) {
         gregorio_go_to_first_note(&current_note);
         while (current_note) {
+            /* a variable necessary for the patch for G_BIVIRGA & co. */
+            gregorio_note *added_notes = NULL;
+            gregorio_note *next_note = NULL;
             if (current_note->type == GRE_NOTE) {
                 switch (current_note->u.note.shape) {
                 case S_TRIVIRGA:
                     gregorio_add_note(&added_notes, current_note->u.note.pitch,
                             S_VIRGA, _NO_SIGN, L_NO_LIQUESCENTIA, current_note,
                             copy_note_location(current_note, &loc));
+                    /* fall through */
                 case S_BIVIRGA:
                     gregorio_add_note(&added_notes, current_note->u.note.pitch,
                             S_VIRGA, _NO_SIGN, L_NO_LIQUESCENTIA, current_note,
@@ -501,6 +523,7 @@ static gregorio_note *close_normal_glyph(gregorio_glyph **last_glyph,
                             S_STROPHA, _NO_SIGN, L_NO_LIQUESCENTIA,
                             current_note,
                             copy_note_location(current_note, &loc));
+                    /* fall through */
                 case S_DISTROPHA:
                     gregorio_add_note(&added_notes, current_note->u.note.pitch,
                             S_STROPHA, _NO_SIGN, L_NO_LIQUESCENTIA,
@@ -511,29 +534,19 @@ static gregorio_note *close_normal_glyph(gregorio_glyph **last_glyph,
                             current_note->u.note.liquescentia, current_note,
                             copy_note_location(current_note, &loc));
                     break;
-                case S_TRISTROPHA_AUCTA:
-                    gregorio_add_note(&added_notes, current_note->u.note.pitch,
-                            S_STROPHA, _NO_SIGN, L_NO_LIQUESCENTIA,
-                            current_note,
-                            copy_note_location(current_note, &loc));
-                case S_DISTROPHA_AUCTA:
-                    gregorio_add_note(&added_notes, current_note->u.note.pitch,
-                            S_STROPHA, _NO_SIGN, L_NO_LIQUESCENTIA,
-                            current_note,
-                            copy_note_location(current_note, &loc));
-                    gregorio_add_note(&added_notes, current_note->u.note.pitch,
-                            S_STROPHA_AUCTA, current_note->signs,
-                            current_note->u.note.liquescentia, current_note,
-                            copy_note_location(current_note, &loc));
-                    break;
                 default:
                     break;
                 }
             }
-            /* this is the case of two separate virga that have been spotted
-             * as a bivirga */
             if (!added_notes) {
-                break;
+                /* nothing added, but we must go on in case it's
+                 * virga+bivirga = trivirga or stropa+bistropha = tristropha */
+                if (current_note->next) {
+                    current_note = current_note->next;
+                    continue;
+                } else {
+                    break;
+                }
             }
             next_note = current_note->next;
             /* now we have what we want, we set up the links and free the old
@@ -542,12 +555,13 @@ static gregorio_note *close_normal_glyph(gregorio_glyph **last_glyph,
                 current_note->next->previous = added_notes;
                 added_notes->next = next_note;
             }
+            if (current_note == new_current_note) {
+                new_current_note = added_notes;
+            }
             gregorio_go_to_first_note(&added_notes);
             if (current_note->previous) {
                 current_note->previous->next = added_notes;
                 added_notes->previous = current_note->previous;
-            } else {
-                new_current_note = added_notes;
             }
             /* Detaching current_note is not strictly necessary here because we
              * are effectively plucking out added_notes into its own glyph;
@@ -582,16 +596,15 @@ static gregorio_note *close_fused_glyph(gregorio_glyph **last_glyph,
 static gregorio_note *next_non_texverb_note(gregorio_note *first_note,
         gregorio_note *last_note)
 {
-    if (first_note == NULL) {
-        return NULL;
-    }
+    gregorio_not_null(first_note, gregorio_note, return NULL);
 
     if (first_note == last_note) {
-        if (first_note->type == GRE_TEXVERB_GLYPH) {
-            gregorio_message(_("Unexpected texverb at start of iteration"),
-                    "next_non_texverb_note", VERBOSITY_ERROR, 0);
-        }
+        /* not reachable unless there's a programming error */
+        /* LCOV_EXCL_START */
+        gregorio_assert_only(first_note->type != GRE_TEXVERB_GLYPH,
+                next_non_texverb_note, "Unexpected texverb at start of iteration");
         return first_note;
+        /* LCOV_EXCL_STOP */
     }
 
     for (first_note = first_note->next; first_note && first_note != last_note;
@@ -601,10 +614,8 @@ static gregorio_note *next_non_texverb_note(gregorio_note *first_note,
         }
     }
 
-    if (first_note && first_note->type == GRE_TEXVERB_GLYPH) {
-        gregorio_message(_("Unexpected texverb at end of iteration"),
-                "next_non_texverb_note", VERBOSITY_ERROR, 0);
-    }
+    gregorio_assert_only(!first_note || first_note->type != GRE_TEXVERB_GLYPH,
+            next_non_texverb_note, "Unexpected texverb at end of iteration");
 
     return last_note;
 }
@@ -636,11 +647,9 @@ static gregorio_note *close_fusion_glyph(gregorio_glyph **last_glyph,
     int prev_shift = 0, shift, shift2;
     gregorio_note *result;
 
-    if ((*first_note)->type == GRE_TEXVERB_GLYPH) {
-        gregorio_message(_("Unexpected texverb at start of fusion"),
-                "close_fusion_glyph", VERBOSITY_ERROR, 0);
-        return real_last_note;
-    }
+    gregorio_assert((*first_note)->type != GRE_TEXVERB_GLYPH,
+            close_fusion_glyph, "Unexpected texverb at start of fusion",
+            return real_last_note);
 
     for (last_note = real_last_note;
             last_note != *first_note && last_note->type == GRE_TEXVERB_GLYPH;
@@ -658,19 +667,16 @@ static gregorio_note *close_fusion_glyph(gregorio_glyph **last_glyph,
                     (*first_note)->type, &((*first_note)->u.other), _NO_SIGN,
                     (*first_note)->texverb);
             (*first_note)->texverb = NULL;
-            if (*first_note == last_note) {
-                gregorio_message(_("Unexpected texverb at end of fusion"),
-                        "close_fusion_glyph", VERBOSITY_ERROR, 0);
-                return last_note;
-            }
+            gregorio_assert(*first_note != last_note,
+                    close_fusion_glyph, "Unexpected texverb at end of fusion",
+                    return last_note);
             gregorio_free_one_note(first_note);
         }
 
-        if (*first_note == last_note || !(next = (*first_note)->next)) {
-            gregorio_message(_("Unexpected single note during fusion"),
-                    "close_fusion_glyph", VERBOSITY_ERROR, 0);
-            return last_note;
-        }
+        gregorio_assert(
+                *first_note != last_note && (next = (*first_note)->next),
+                close_fusion_glyph, "Unexpected single note during fusion",
+                return last_note);
 
         next = next_non_texverb_note(*first_note, last_note);
 
@@ -690,11 +696,8 @@ static gregorio_note *close_fusion_glyph(gregorio_glyph **last_glyph,
         if (prev_shift >= 0 && shift < 0) {
             /* check for a porrectus-like flexus */
             gregorio_note *next_next = next_non_texverb_note(next, last_note);
-            if (!next_next) {
-                gregorio_message(_("Unexpected end of notes during fusion"),
-                        "close_fusion_glyph", VERBOSITY_ERROR, 0);
-                return last_note;
-            }
+            gregorio_assert(next_next, close_fusion_glyph,
+                    "Unexpected end of notes during fusion", return last_note);
             shift2 = next_next->u.note.pitch - next->u.note.pitch;
             if (shift2 > 0) {
                 if (next_next == last_note) {
@@ -854,9 +857,8 @@ gregorio_glyph *gabc_det_glyphs_from_notes(gregorio_note *current_note,
     gregorio_liquescentia head_liquescentia;
     bool autofuse = false, first_autofused_note = false;
 
-    if (current_note == NULL) {
-        return NULL;
-    }
+    gregorio_assert(current_note, gabc_det_glyphs_from_notes,
+            "current_note may not be NULL", return NULL);
 
     gregorio_go_to_first_note(&current_note);
 
@@ -1114,10 +1116,6 @@ gregorio_glyph *gabc_det_glyphs_from_notes(gregorio_note *current_note,
                             current_note->u.note.shape =
                                     S_PUNCTUM_CAVUM_INCLINATUM_AUCTUS;
                             break;
-
-                        default:
-                            /* do nothing */
-                            break;
                         }
 
                         if (current_note->next
@@ -1187,10 +1185,6 @@ gregorio_glyph *gabc_det_glyphs_from_notes(gregorio_note *current_note,
                         case L_AUCTUS_ASCENDENS:
                             current_note->u.note.shape =
                                     S_PUNCTUM_CAVUM_INCLINATUM_AUCTUS;
-                            break;
-
-                        default:
-                            /* do nothing */
                             break;
                         }
 

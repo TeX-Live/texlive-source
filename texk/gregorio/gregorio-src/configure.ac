@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[4.1.0-beta1],[gregorio-devel@gna.org])
-FILENAME_VERSION="4_1_0-beta1"
+AC_INIT([gregorio],[4.1.0-beta2],[gregorio-devel@gna.org])
+FILENAME_VERSION="4_1_0-beta2"
 AC_SUBST(FILENAME_VERSION)
 MK=""
 AC_SUBST(MK)
@@ -80,6 +80,22 @@ AS_IF([test "x$with_kpathsea" = "xyes"], [
           AC_MSG_ERROR([unable to find the kpathsea library])
       ])
     )
+])
+
+AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug@<:@=sanitize,coverage@:>@], [Enable debugging options [with additional sanitize options].]), [
+    AS_IF([test "x$enableval" != "xno"], [
+        dnl AX_CHECK_COMPILE_FLAG([-g], [CFLAGS+=" -g"])
+        AX_CHECK_COMPILE_FLAG([-Og], [CFLAGS+=" -Og"], [
+            AX_CHECK_COMPILE_FLAG([-O0], [CFLAGS+=" -O0"])
+        ])
+        AS_IF([test "x$enableval" = "xsanitize"], [
+            AX_CHECK_COMPILE_FLAG([-fsanitize=address,undefined], [CFLAGS+=" -fsanitize=address,undefined"])
+        ])
+        AS_IF([test "x$enableval" = "xcoverage"], [
+            AX_CHECK_COMPILE_FLAG([--coverage], [CFLAGS+=" --coverage"])
+            AX_CHECK_LINK_FLAG([--coverage], [LDFLAGS+=" --coverage"])
+        ])
+    ])
 ])
 
 AC_CONFIG_HEADERS([src/config_.h])

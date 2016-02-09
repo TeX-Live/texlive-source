@@ -36,22 +36,32 @@
  * 
  */
 
-static __inline bool is_puncta_ascendens(char glyph)
+static __inline bool is_puncta_ascendens(gregorio_glyph_type glyph)
 {
-    return glyph == G_2_PUNCTA_INCLINATA_ASCENDENS
-        || glyph == G_3_PUNCTA_INCLINATA_ASCENDENS
-        || glyph == G_4_PUNCTA_INCLINATA_ASCENDENS
-        || glyph == G_5_PUNCTA_INCLINATA_ASCENDENS
-        || glyph == G_PUNCTUM_INCLINATUM;
+    switch (glyph) {
+    case G_2_PUNCTA_INCLINATA_ASCENDENS:
+    case G_3_PUNCTA_INCLINATA_ASCENDENS:
+    case G_4_PUNCTA_INCLINATA_ASCENDENS:
+    case G_5_PUNCTA_INCLINATA_ASCENDENS:
+    case G_PUNCTUM_INCLINATUM:
+        return true;
+    default:
+        return false;
+    }
 }
 
-static __inline bool is_puncta_descendens(char glyph)
+static __inline bool is_puncta_descendens(gregorio_glyph_type glyph)
 {
-    return glyph == G_2_PUNCTA_INCLINATA_DESCENDENS
-        || glyph == G_3_PUNCTA_INCLINATA_DESCENDENS
-        || glyph == G_4_PUNCTA_INCLINATA_DESCENDENS
-        || glyph == G_5_PUNCTA_INCLINATA_DESCENDENS
-        || glyph == G_PUNCTUM_INCLINATUM;
+    switch (glyph) {
+    case G_2_PUNCTA_INCLINATA_DESCENDENS:
+    case G_3_PUNCTA_INCLINATA_DESCENDENS:
+    case G_4_PUNCTA_INCLINATA_DESCENDENS:
+    case G_5_PUNCTA_INCLINATA_DESCENDENS:
+    case G_PUNCTUM_INCLINATUM:
+        return true;
+    default:
+        return false;
+    }
 }
 
 /*
@@ -111,17 +121,14 @@ static gregorio_element *gabc_det_elements_from_glyphs(
     gregorio_element *first_element = NULL;
     /* the first_glyph of the element that we are currently determining */
     gregorio_glyph *first_glyph = current_glyph;
-    /* the last real (GRE_GLYPH) that we have processed, often the same as
-     * first_glyph */
-    gregorio_glyph *previous_glyph = current_glyph;
+    /* the last real (GRE_GLYPH) that we have processed */
+    gregorio_glyph *previous_glyph = NULL;
     /* a char that is necessary to determine some cases */
     bool do_not_cut = false;
     /* a char that is necesarry to determine the type of the current_glyph */
-    char current_glyph_type;
+    gregorio_glyph_type current_glyph_type;
 
-    if (!current_glyph) {
-        return NULL;
-    }
+    gregorio_not_null(current_glyph, gabc_det_elements_from_glyphs, return NULL);
     /* first we go to the first glyph in the chained list of glyphs (maybe to
      * suppress ?) */
     gregorio_go_to_first_glyph(&current_glyph);
@@ -133,6 +140,7 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                 switch (current_glyph->u.misc.unpitched.info.space) {
                 case SP_ZERO_WIDTH:
                 case SP_HALF_SPACE:
+                case SP_INTERGLYPH_SPACE:
                     if (!current_glyph->next) {
                         close_element(&current_element, &first_glyph, current_glyph);
                     }
@@ -144,12 +152,13 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                     break;
                 }
             }
-            /* we must not cut after a zero_width_space */
+            /* we must not cut after a texverb */
             if (current_glyph->type == GRE_TEXVERB_GLYPH) {
                 if (!current_glyph->next) {
                     close_element(&current_element, &first_glyph, current_glyph);
                 }
                 current_glyph = current_glyph->next;
+                do_not_cut = true;
                 continue;
             }
             /* clef change or space or end of line */
@@ -172,19 +181,23 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                                           current_glyph->texverb);
             }
             first_glyph = current_glyph->next;
-            previous_glyph = current_glyph->next;
+            previous_glyph = NULL;
             current_glyph->texverb = NULL;
             gregorio_free_one_glyph(&current_glyph);
             continue;
         }
 
-        if (is_puncta_ascendens(current_glyph->type)) {
+        if (is_fused(current_glyph->u.notes.liquescentia)) {
+            do_not_cut = true;
+        }
+
+        if (is_puncta_ascendens(current_glyph->u.notes.glyph_type)) {
             current_glyph_type = G_PUNCTA_ASCENDENS;
         } else {
-            if (is_puncta_descendens(current_glyph->type)) {
+            if (is_puncta_descendens(current_glyph->u.notes.glyph_type)) {
                 current_glyph_type = G_PUNCTA_DESCENDENS;
             } else {
-                current_glyph_type = current_glyph->type;
+                current_glyph_type = current_glyph->u.notes.glyph_type;
             }
         }
         switch (current_glyph_type) {
@@ -204,28 +217,42 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                 do_not_cut = false;
             }
             break;
-        case G_ONE_NOTE:
-            if (current_glyph->u.notes.first_note
-                && (current_glyph->u.notes.first_note->u.note.shape == S_STROPHA
-                    || current_glyph->u.notes.first_note->u.note.shape == S_VIRGA
-                    || current_glyph->u.notes.first_note->u.note.shape == S_VIRGA_REVERSA)) {
-                /* we determine the last pitch */
-                char last_pitch;
-                gregorio_note *tmp_note;
-                tmp_note = previous_glyph->u.notes.first_note;
-                while (tmp_note->next) {
-                    tmp_note = tmp_note->next;
-                }
-                last_pitch = tmp_note->u.note.pitch;
-                if (current_glyph->u.notes.first_note->u.note.pitch == last_pitch) {
-                    previous_glyph = current_glyph;
-                    break;
+        /* one note glyphs */
+        case G_PUNCTUM:
+        case G_VIRGA:
+        case G_BIVIRGA:
+        case G_TRIVIRGA:
+        case G_VIRGA_REVERSA:
+        case G_STROPHA:
+        case G_STROPHA_AUCTA:
+        case G_DISTROPHA:
+        case G_DISTROPHA_AUCTA:
+        case G_TRISTROPHA:
+        case G_TRISTROPHA_AUCTA:
+            if (previous_glyph && !is_tail_liquescentia(
+                        previous_glyph->u.notes.liquescentia)) {
+                if (previous_glyph) {
+                    signed char last_pitch;
+                    /* we determine the last pitch */
+                    gregorio_note *tmp_note;
+                    tmp_note = previous_glyph->u.notes.first_note;
+                    while (tmp_note->next) {
+                        tmp_note = tmp_note->next;
+                    }
+                    last_pitch = tmp_note->u.note.pitch;
+                    if (current_glyph->u.notes.first_note->u.note.pitch
+                            == last_pitch) {
+                        do_not_cut = false;
+                        previous_glyph = current_glyph;
+                        break;
+                    }
                 }
             }
             /* else we fall in the default case */
         default:
             if (do_not_cut) {
                 do_not_cut = false;
+                previous_glyph = current_glyph;
             } else {
                 cut_before(current_glyph, &first_glyph, &previous_glyph,
                            &current_element);

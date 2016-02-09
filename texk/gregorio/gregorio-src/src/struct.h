@@ -35,6 +35,7 @@
 #include "enum_generator.h"
 #include "bool.h"
 #include "sha1.h"
+#include "messages.h"
 
 #ifdef __cplusplus
 #define ENUM_BITFIELD(TYPE) enum TYPE
@@ -68,7 +69,6 @@ typedef struct gregorio_scanner_location {
     E(GRE_GLYPH) \
     E(GRE_ELEMENT) \
     E(GRE_CLEF) \
-    E(GRE_SYLLABLE) \
     E(GRE_END_OF_LINE) \
     E(GRE_SPACE) \
     E(GRE_BAR) \
@@ -113,9 +113,7 @@ ENUM(gregorio_clef, GREGORIO_CLEF);
     E(S_STROPHA) \
     E(S_STROPHA_AUCTA) \
     E(S_DISTROPHA) \
-    E(S_DISTROPHA_AUCTA) \
     E(S_TRISTROPHA) \
-    E(S_TRISTROPHA_AUCTA) \
     E(S_PUNCTUM_CAVUM) \
     E(S_LINEA_PUNCTUM) \
     E(S_LINEA_PUNCTUM_CAVUM) \
@@ -191,6 +189,7 @@ ENUM(gregorio_sign, GREGORIO_SIGN);
     E(SP_NO_SPACE) \
     E(SP_ZERO_WIDTH) \
     E(SP_HALF_SPACE) \
+    E(SP_INTERGLYPH_SPACE) \
     E(SP_NEUMATIC_CUT) \
     E(SP_LARGER_SPACE) \
     E(SP_GLYPH_SPACE) \
@@ -249,7 +248,6 @@ ENUM(gregorio_vposition, GREGORIO_VPOSITION);
     E(G_3_PUNCTA_INCLINATA_ASCENDENS) \
     E(G_4_PUNCTA_INCLINATA_ASCENDENS) \
     E(G_5_PUNCTA_INCLINATA_ASCENDENS) \
-    E(G_TRIGONUS) \
     E(G_PUNCTA_INCLINATA) \
     /* !!! DO NOT CHANGE THE ENUM ORDERING BEFORE THIS LINE !!! */ \
     E(G_UNDETERMINED) \
@@ -276,7 +274,6 @@ ENUM(gregorio_vposition, GREGORIO_VPOSITION);
     E(G_SCANDICUS) \
     E(G_PES_QUILISMA_QUADRATUM_FIRST_PART) \
     E(G_ANCUS) \
-    E(G_ONE_NOTE) \
     E(G_PUNCTA_ASCENDENS) \
     E(G_PUNCTA_DESCENDENS) \
     E(G_VIRGA_REVERSA) \
@@ -313,10 +310,12 @@ ENUM(gregorio_glyph_type, GREGORIO_GLYPH_TYPE);
     E(ST_INITIAL) /* a style used to determine the initial */ \
     E(ST_UNDERLINED) \
     E(ST_COLORED) \
+    E(ST_ELISION) \
     E(ST_FIRST_WORD) \
     E(ST_FIRST_SYLLABLE) \
     E(ST_FIRST_SYLLABLE_INITIAL) \
-    L(ST_SYLLABLE_INITIAL)
+    E(ST_SYLLABLE_INITIAL) \
+    L(ST_SENTINEL) /* a temporary style to signify the end of a syllable */
 ENUM(grestyle_style, GRESTYLE_STYLE);
 
 /*
@@ -570,8 +569,8 @@ typedef struct gregorio_element {
  */
 
 typedef struct gregorio_style {
-    ENUM_BITFIELD(grestyle_style) style:8;
-    ENUM_BITFIELD(grestyle_type) type:8;
+    ENUM_BITFIELD(grestyle_style) style:6;
+    ENUM_BITFIELD(grestyle_type) type:2;
 } gregorio_style;
 
 /*
@@ -624,11 +623,6 @@ typedef struct gregorio_syllable {
     struct gregorio_element **elements;
     unsigned short euouae_id;
     unsigned short src_line, src_column, src_offset;
-    /* a syllable can be a GRE_SYLLABLE, a GRE_*_KEY_CHANGE or a
-     * GRE_BAR. It is useful when there is only that in a syllable. */
-    ENUM_BITFIELD(gregorio_type) type:8;
-    /* again, an additional field to put some signs or other things... */
-    ENUM_BITFIELD(gregorio_sign) special_sign:8;
     /* type of translation (with center beginning or only center end) */
     ENUM_BITFIELD(gregorio_tr_centering) translation_type:2;
     /* beginning or end of area without linebreak? */
@@ -761,6 +755,9 @@ static __inline bool is_fused(char liquescentia)
 #define DUMMY_PITCH (LOWEST_PITCH + 6)
 #define LOW_LEDGER_LINE_PITCH (LOWEST_PITCH + 1)
 
+/* defines the maximal interval between two notes of the same glyph */
+#define MAX_AMBITUS 5
+
 gregorio_score *gregorio_new_score(void);
 void gregorio_add_note(gregorio_note **current_note, signed char pitch,
         gregorio_shape shape, gregorio_sign signs,
@@ -857,6 +854,7 @@ gregorio_character *gregorio_clone_characters(const gregorio_character *source);
 signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
         gregorio_element *element, gregorio_glyph *glyph);
 const char *gregorio_unknown(int value);
+gregorio_element *gregorio_get_clef_change(gregorio_syllable *syllable);
 
 static __inline void gregorio_go_to_first_character_c(gregorio_character **character)
 {
@@ -867,9 +865,9 @@ static __inline gregorio_note *gregorio_glyph_last_note(
         const gregorio_glyph *const glyph)
 {
     gregorio_note *note;
-    if (!glyph || glyph->type != GRE_GLYPH) {
-        return NULL;
-    }
+    gregorio_assert(glyph && glyph->type == GRE_GLYPH, gregorio_glyph_last_note,
+            "trying to find the last note of something that is not a glyph",
+            return NULL);
     for (note = glyph->u.notes.first_note; note->next; note = note->next) {
         /* iterate to find the last note */
     }

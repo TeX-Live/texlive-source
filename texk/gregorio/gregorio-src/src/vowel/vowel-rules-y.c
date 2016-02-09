@@ -106,12 +106,6 @@
 #include "vowel-rules.h"
 #include "vowel-rules-l.h"
 
-#if ! defined lint || defined __GNUC__
-# define IGNORE(e) ((void) (e))
-#else
-# define IGNORE(e) /* empty */
-#endif
-
 /* NOTE: This parser might allocate a new value for language; this value MUST
  *       BE FREED after the parser returns (if the value of the language pointer
  *       changes, then free the pointer).  This parser DOES free the language
@@ -122,11 +116,10 @@
 /*int gregorio_vowel_rulefile_debug=1;*/
 
 static void gregorio_vowel_rulefile_error(const char *const filename,
-        char **const language, rulefile_parse_status *const status,
+        char **const language __attribute__((__unused__)),
+        rulefile_parse_status *const status __attribute__((__unused__)),
         const char *const error_str)
 {
-    IGNORE(language);
-    IGNORE(status);
     gregorio_messagef("gregorio_vowel_rulefile_parse", VERBOSITY_ERROR, 0,
             _("%s: %s"), filename, error_str);
 }
@@ -180,7 +173,7 @@ static __inline void add(const rulefile_parse_status *const status,
 #define _ADD(TABLE, CHARS) add(status, gregorio_##TABLE##_table_add, CHARS)
 
 
-#line 184 "vowel/vowel-rules-y.c" /* yacc.c:339  */
+#line 177 "vowel/vowel-rules-y.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -257,7 +250,7 @@ int gregorio_vowel_rulefile_parse (const char *const filename, char **language, 
 
 /* Copy the second part of user declarations.  */
 
-#line 261 "vowel/vowel-rules-y.c" /* yacc.c:358  */
+#line 254 "vowel/vowel-rules-y.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -555,8 +548,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   121,   121,   123,   127,   128,   129,   130,   131,   132,
-     135,   137,   140,   142,   145,   147,   150,   152
+       0,   114,   114,   116,   120,   121,   122,   123,   124,   125,
+     128,   130,   133,   135,   138,   140,   143,   145
 };
 #endif
 
@@ -1343,43 +1336,43 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 127 "vowel/vowel-rules.y" /* yacc.c:1646  */
+#line 120 "vowel/vowel-rules.y" /* yacc.c:1646  */
     { _MATCH((yyvsp[-1])); }
-#line 1349 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1342 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 128 "vowel/vowel-rules.y" /* yacc.c:1646  */
+#line 121 "vowel/vowel-rules.y" /* yacc.c:1646  */
     { _ALIAS((yyvsp[-3]), (yyvsp[-1])); }
-#line 1355 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1348 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 137 "vowel/vowel-rules.y" /* yacc.c:1646  */
+#line 130 "vowel/vowel-rules.y" /* yacc.c:1646  */
     { _ADD(vowel, (yyvsp[0])); }
-#line 1361 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1354 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 142 "vowel/vowel-rules.y" /* yacc.c:1646  */
+#line 135 "vowel/vowel-rules.y" /* yacc.c:1646  */
     { _ADD(prefix, (yyvsp[0])); }
-#line 1367 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1360 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 147 "vowel/vowel-rules.y" /* yacc.c:1646  */
+#line 140 "vowel/vowel-rules.y" /* yacc.c:1646  */
     { _ADD(suffix, (yyvsp[0])); }
-#line 1373 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1366 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 152 "vowel/vowel-rules.y" /* yacc.c:1646  */
+#line 145 "vowel/vowel-rules.y" /* yacc.c:1646  */
     { _ADD(secondary, (yyvsp[0])); }
-#line 1379 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1372 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
     break;
 
 
-#line 1383 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
+#line 1376 "vowel/vowel-rules-y.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

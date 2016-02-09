@@ -206,16 +206,6 @@ static __inline const char *fused_single_note_case(
     return unfused_case;
 }
 
-static __inline gregorio_vposition above_if_auctus(
-        const gregorio_glyph *const glyph)
-{
-    if (glyph->u.notes.liquescentia &
-            (L_AUCTUS_ASCENDENS | L_AUCTUS_DESCENDENS)) {
-        return VPOS_ABOVE;
-    }
-    return VPOS_BELOW;
-}
-
 static __inline gregorio_vposition below_if_auctus(
         const gregorio_glyph *const glyph)
 {
@@ -239,11 +229,12 @@ static __inline gregorio_vposition above_if_fused_next_h_episema(
         const gregorio_glyph *glyph)
 {
     const gregorio_glyph *next = gregorio_next_non_texverb_glyph(glyph);
-    if (next && next->type == GRE_GLYPH
-            && is_fused(next->u.notes.liquescentia)) {
-        return above_if_h_episema(next->u.notes.first_note);
-    }
-    return VPOS_BELOW;
+    gregorio_assert(next && next->type == GRE_GLYPH
+            && is_fused(next->u.notes.liquescentia),
+            above_if_fused_next_h_episema,
+            "expected this glyph to be fused to the next one",
+            return VPOS_BELOW);
+    return above_if_h_episema(next->u.notes.first_note);
 }
 
 static __inline gregorio_vposition above_if_either_h_episema(
@@ -401,7 +392,7 @@ static gregorio_vposition advise_positioning(const gregorio_glyph *const glyph,
                 } else {
                     note->gtex_offset_case = FinalPunctum;
                 }
-                h_episema = above_if_auctus(glyph);
+                h_episema = VPOS_BELOW;
             }
             v_episema = VPOS_BELOW;
         } else { /* i=2  */
@@ -418,11 +409,8 @@ static gregorio_vposition advise_positioning(const gregorio_glyph *const glyph,
         }
         break;
     case T_PESQUADRATUM:
-    case T_PESQUADRATUM_LONGQUEUE:
     case T_PESQUASSUS:
-    case T_PESQUASSUS_LONGQUEUE:
     case T_PESQUILISMAQUADRATUM:
-    case T_PESQUILISMAQUADRATUM_LONGQUEUE:
         if (i == 1) {
             note->gtex_offset_case = first_note_case(note, glyph);
             h_episema = above_if_h_episema(note->next);
@@ -439,7 +427,6 @@ static gregorio_vposition advise_positioning(const gregorio_glyph *const glyph,
         }
         break;
     case T_FLEXUS:
-    case T_FLEXUS_LONGQUEUE:
     case T_FLEXUS_ORISCUS:
         if (i == 1) {
             high_low_set_upper(glyph, note);
@@ -811,7 +798,6 @@ static gregorio_vposition advise_positioning(const gregorio_glyph *const glyph,
         }
         /* else fallthrough to the next case! */
     case T_SALICUS:
-    case T_SALICUS_LONGQUEUE:
         v_episema = VPOS_BELOW;
         switch (i) {
         case 1:
@@ -861,7 +847,6 @@ static gregorio_vposition advise_positioning(const gregorio_glyph *const glyph,
         }
         /* else fallthrough to the next case! */
     case T_ANCUS:
-    case T_ANCUS_LONGQUEUE:
         switch (i) {
         case 1:
             note->gtex_offset_case = first_note_case(note, glyph);
@@ -1543,11 +1528,11 @@ static __inline int compute_fused_shift(const gregorio_glyph *glyph)
     case S_FLAT:
     case S_SHARP:
     case S_NATURAL:
-        /* if this glyph starts with one of these, it's not fusable */
+        /* if this glyph starts with one of these, it's not fusible */
         return 0;
 
     default:
-        /* anything else is potentially fusable */
+        /* anything else is potentially fusible */
         break;
     }
 
@@ -1555,20 +1540,18 @@ static __inline int compute_fused_shift(const gregorio_glyph *glyph)
     case G_PUNCTUM:
     case G_FLEXA:
     case G_VIRGA_REVERSA:
-        /* these are potentially fusable to this note */
+        /* these are potentially fusible to this note */
         break;
 
     default:
-        /* everything else is not fusable */
+        /* everything else is not fusible */
         return 0;
     }
 
     prev_note = gregorio_glyph_last_note(previous);
 
-    if (prev_note->type != GRE_NOTE) {
-        /* previous note wasn't a note */
-        return 0;
-    }
+    gregorio_assert(prev_note->type == GRE_NOTE, compute_fused_shift,
+            "previous note wasn't a note", return 0);
 
     switch (prev_note->u.note.shape) {
     case S_PUNCTUM_CAVUM:
@@ -1582,15 +1565,13 @@ static __inline int compute_fused_shift(const gregorio_glyph *glyph)
         return 0;
 
     default:
-        /* anything else is potentially fusable */
+        /* anything else is potentially fusible */
         break;
     }
 
     shift = first_note->u.note.pitch - prev_note->u.note.pitch;
-    if (shift < -5 || shift > 5) {
-        /* ambitus too large to fuse */
-        return 0;
-    }
+    gregorio_assert(shift >= -MAX_AMBITUS && shift <= MAX_AMBITUS,
+            compute_fused_shift, "ambitus too large to fuse", return 0);
 
     if (shift > 0 && previous->u.notes.glyph_type == G_VIRGA_REVERSA) {
         /* virga reversa cannot fuse upwards */
@@ -1598,9 +1579,10 @@ static __inline int compute_fused_shift(const gregorio_glyph *glyph)
     }
 
     /* the FLEXA check below checks for a porrectus-like flexus, which is not
-     * fusable from above */
+     * fusible from above */
     if (shift < 0 && ((next_is_fused && glyph->u.notes.glyph_type == G_FLEXA)
                 || glyph->u.notes.glyph_type == G_PORRECTUS
+                || glyph->u.notes.glyph_type == G_PODATUS
                 || (previous->u.notes.glyph_type == G_PUNCTUM
                     && is_initio_debilis(previous->u.notes.liquescentia)))) {
         /* may not be fused from above */
@@ -1699,8 +1681,7 @@ void gregoriotex_compute_positioning(const gregorio_element *element,
                     glyph->u.notes.fuse_to_next_glyph = compute_fused_shift(
                             gregorio_next_non_texverb_glyph(glyph));
                     i = 0;
-                    gregoriotex_determine_glyph_name(glyph, element, &ignored,
-                            &type);
+                    gregoriotex_determine_glyph_name(glyph, &ignored, &type);
                     for (note = glyph->u.notes.first_note; note;
                             note = note->next) {
                         if (note->type == GRE_NOTE) {

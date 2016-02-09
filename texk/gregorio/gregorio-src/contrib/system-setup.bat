@@ -45,6 +45,9 @@ echo. >> %output%
 @for %%e in (%PATHEXT%) do @for %%i in (luatex%%e) do @if NOT "%%~$PATH:i"=="" echo %%~$PATH:i >> %output% 2>&1
 echo. >> %output%
 echo. >> %output%
+echo #### TEXMFDIST >> %output%
+kpsewhich --var-value=TEXMFDIST >> %output% 2>&1
+echo. >> %output%
 echo #### 	TEXMFLOCAL >> %output%
 echo. >> %output%
 for /f "delims=" %%i in ('kpsewhich --var-value TEXMFLOCAL') do set texmflocal=%%i
@@ -134,12 +137,12 @@ echo.
 echo.
 echo system-setup.log created and saved in a temporary location.
 echo Upon exiting this script, the log will be opened in Notepad for you.
-echo Please save the file to a convenient location and email it to 
+echo Please save the file to a convenient location and email it to
 echo gregorio-users@gna.org as part of your bug report.
 echo.
-echo You can also create an issue at 
+echo You can also create an issue at
 echo http://github.org/gregorio-project/gregorio/issues
 echo and copy-paste the content of this file into the description.
-echo. 
+echo.
 pause
 start notepad %output%

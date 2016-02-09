@@ -90,16 +90,15 @@ Macro for typesetting a bar brace.
 Macro for typesetting a bar syllable.
 
 \begin{argtable}
-	\#1 & string & First part of syllable text associated with the bar.\\
-	\#2 & string & Middle part of the syllable text associated with the bar.\\
-	\#3 & string & End part of the syllable text associated with the bar.\\
-	\#4 & & Not used.\\
-	\#5 & \TeX\ code & Code to execute before calculating \texttt{nextbegindifference}.\\
-	\#6 & & Not used.\\
-	\#7 & $0 <$ integer $< 19$ & the type of notes alignment.  See \nameref{notesalign}.\\
-	& $20 <$ integer $< 39$ & Same as below 20 except there is a flat before the notes.  Subtract 20 to get the type of notes alignment.\\
-	& $40 <$ integer $< 59$ & Same as below 20 except there is a natural before the notes.  Subtract 40 to get the type of notes alignment.\\
-	\#8 & \TeX\ code & Code to execute before  printing anything.\\
+	\#1 & \TeX\ code & macro setting syllable letters for the current syllable\\
+	\#2 & empty & reserved for future use\\
+	\#3 & \TeX\ control sequence & the control sequence to use for styling the hyphen\\
+	\#4 & \texttt{0} & this syllable is not the end of a word\\
+	& \texttt{1} & this syllable is the end of a word\\
+	\#5 & \TeX\ code & macros setting syllable letters for the next syllable\\
+	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled\\
+	\#7 & & alignment type of the first next glyph\\
+	\#8 &\TeX\ code & other macros (translation, double text, etc.) that don't fit in the limitation of the number of arguments\\
 	\#9 & \TeX\ code & The bar line (usually a \textit{writebar} call).
 \end{argtable}
 
@@ -253,6 +252,13 @@ Macro to draw ledger lines.
 	\#6 & distance   & The distance to end the line after \#2 from this point if \#3 is \texttt{2}. \\
 \end{argtable}
 
+\macroname{\textbackslash GreElision}{\#1}{gregoriotex-syllable.tex}
+Typesets \#1 using the \texttt{elision} style.
+
+\begin{argtable}
+	\#1 & string & Text to be typeset in the \texttt{elision} style.\\
+\end{argtable}
+
 \macroname{\textbackslash GreEmptyFirstSyllableHyphen}{}{gregoriotex-syllable.tex}
 Macro that indicates the position of an empty-first-syllable hyphen, should one be desired.
 
@@ -381,8 +387,8 @@ Macro to typeset a flat.
 
 \begin{argtable}
 	\#1 & integer & Height number of the flat.\\
-	\#2 & \texttt{0} & No flat for a key change.\\
-	& \texttt{1} & Indicates the flat for a key change.\\
+	\#2 & \texttt{0} & The flat is not part of the clef.\\
+	& \texttt{1} & The flat is part of the clef.\\
 	\#3 & \TeX\ code & signs to typeset before the glyph (typically additional bars, as they must be "behind" the glyph)\\
 	\#4 & \TeX\ code & signs to typeset after the glyph (almost all signs)\\
 	\#5 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled\\
@@ -587,8 +593,8 @@ Macro to typeset a natural.
 
 \begin{argtable}
 	\#1 & integer & Height number of the natural.\\
-	\#2 & \texttt{0} & No flat for a key change.\\
-	& \texttt{1} & Indicates the flat for a key change.\\
+	\#2 & \texttt{0} & The natural is not part of the clef.\\
+	& \texttt{1} & The natural is part of the clef (doesn't happen).\\
 	\#3 & \TeX\ code & signs to typeset before the glyph (typically additional bars, as they must be "behind" the glyph)\\
 	\#4 & \TeX\ code & signs to typeset after the glyph (almost all signs)\\
 	\#5 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled\\
@@ -716,9 +722,10 @@ Macro for typesetting punctum mora.
 
 \begin{argtable}
 	\#1 & integer & Height number of punctum mora.\\
-	\#2 & \texttt{1} & Go back to end of punctum.\\
+	\#2 & \texttt{0} & General case.\\
+	& \texttt{1} & Make the punctum mora zero width.\\
 	& \texttt{2} & Shift left width of 1 punctum.\\
-	& \texttt{3} & Shift left width of 1 punctum and ambitus of 1.\\
+	& \texttt{3} & Shift left width of 1 punctum if last ambitus is 1.\\
 	\#3 & \texttt{0} & Punctum mora does not occur before last note of podatus, porrectus, or torculus resupinus.\\
 	& \texttt{1} & Punctum mora occurs before last note of podatus, porrectus, or torculus resupinus.\\
 	\#4 & \texttt{0} & No punctum inclinatum.\\
@@ -866,8 +873,8 @@ Macro to typeset a sharp.
 
 \begin{argtable}
 	\#1 & integer & Height number of the sharp.\\
-	\#2 & \texttt{0} & No flat for a key change.\\
-	& \texttt{1} & Indicates the flat for a key change.\\
+	\#2 & \texttt{0} & The sharp is not part of the clef.\\
+	& \texttt{1} & The sharp is part of the clef (doesn't happen).\\
 	\#3 & \TeX\ code & signs to typeset before the glyph (typically additional bars, as they must be "behind" the glyph)\\
 	\#4 & \TeX\ code & signs to typeset after the glyph (almost all signs)\\
 	\#5 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled\\
@@ -895,6 +902,14 @@ Typesets a slur.
 	\#4 & string & The horizontal dimension of the slur.\\
 	\#5 & string & The vertical dimension of the slur.\\
 	\#6 & integer & Height number of the pitch.\\
+\end{argtable}
+
+\macroname{\textbackslash GreSpecial}{\#1}{gregoriotex-symbols.tex}
+Typesets a special character.  If the \#1 special character wasn't defined by
+\verb=\gresetspecial=, the text of \#1 will be output directly.
+
+\begin{argtable}
+	\#1 & string & The text between \texttt{<sp>} and \texttt{</sp>}.\\
 \end{argtable}
 
 \macroname{\textbackslash GreStar}{}{gregoriotex-symbol.tex}
