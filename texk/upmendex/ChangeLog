@@ -1,0 +1,59 @@
+2016-01-31  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.50  Beta version.
+	Support option "icu_rules" in style file.
+	Support option "icu_attributes" in style file.
+	Support option "priority" in style file
+	as similar to mendex.
+	Refine and fix several bugs in sorting procedure.
+	Fix bug of -g option.
+	Update samples.
+
+2015-10-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.06  Alpha version.
+	Support dotted/dotless I/i in Turkish.
+	Support digraphs in Albanian.
+	Modify on surrogate pair.
+	Update samples.
+
+2015-09-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.05  Alpha version.
+	Support Hanzi ideograph (Han script) indexing.
+	It works when icu_locale is
+	"zh@collation=unihan", "ja@collation=unihan",
+	"ko@collation=unihan" (radical-stroke),
+	"zh@collation=stroke" (stroke),
+	"zh" (pinyin)  or "zh@collation=zhuyin" (zhuyin).
+	Fix bug on surrogate pair.
+	Update samples.
+
+2015-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.04  Alpha version.
+	Support digraphs and trigraphs in Latin scripts.
+	Accept long file name for a log file and a index file.
+	Update samples.
+
+2015-08-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.03  Alpha version.
+	Support option "icu_locale" in style file.
+	Support diacritical marks in Latin, Greek, Cyrillic.
+	Update samples.
+
+2015-05-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.02  Alpha version.
+	Support Korean Hangul.
+	Fix bug on Japanese indexing.
+	Fix bug on surrogate pair.
+	Add option "icu_locale" in style file (Preliminary).
+
+2015-01-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Initial version 0.01.
+	Alpha version
+	based on mendex version 2.6f [14-Aug-2009] (TeX Live 2015/dev).
+

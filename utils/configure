@@ -803,6 +803,7 @@ enable_seetexk
 enable_tex4htk
 enable_ttf2pk2
 enable_ttfdump
+enable_upmendex
 enable_xdvik
 with_xdvi_x_toolkit
 enable_texlive
@@ -1601,6 +1602,7 @@ Optional Features:
   --disable-tex4htk       do not build the tex4htk package
   --disable-ttf2pk2       do not build the ttf2pk2 package
   --disable-ttfdump       do not build the ttfdump package
+  --disable-upmendex      do not build the upmendex package
   --disable-xdvik         do not build the xdvik package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
   --disable-linked-scripts  do not install the linked scripts
@@ -4798,6 +4800,29 @@ esac
 
 test "x$enable_ttfdump" = xno || {
   need_kpathsea=yes
+}
+
+## texk/upmendex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/upmendex/
+## configure options and TL libraries required for upmendex
+# Check whether --enable-upmendex was given.
+if test "${enable_upmendex+set}" = set; then :
+  enableval=$enable_upmendex;
+fi
+case $enable_upmendex in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_upmendex=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-upmendex=$enable_upmendex'" >&5
+$as_echo "$as_me: Assuming \`--enable-upmendex=$enable_upmendex'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-upmendex=$enable_upmendex'"
+    ;;
+esac
+
+test "x$enable_upmendex" = xno || {
+  need_kpathsea=yes
+  need_icu=yes
 }
 
 ## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
