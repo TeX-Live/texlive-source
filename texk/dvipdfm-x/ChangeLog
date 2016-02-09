@@ -1,3 +1,8 @@
+2016-02-09  Jiang Jiang  <gzjjgod@gmail.com>
+
+	* dvi.c: Tweak skip_native_font_def() to make it handle more
+	flags.
+
 2016-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c: disable check_postamble() introduced by Peter, because
