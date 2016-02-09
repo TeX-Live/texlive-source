@@ -1611,11 +1611,19 @@ skip_native_font_def (void)
   flags = get_unsigned_pair(dvi_file);
   name_length = get_unsigned_byte(dvi_file);
   skip_bytes(name_length + 4, dvi_file);
-  if ((flags & XDV_FLAG_COLORED) || (flags & XDV_FLAG_EMBOLDEN) ||
-      (flags & XDV_FLAG_EXTEND) || (flags & XDV_FLAG_SLANT)) {
+
+  if (flags & XDV_FLAG_COLORED)
     skip_bytes(4, dvi_file);
-  }
- }
+
+  if (flags & XDV_FLAG_EXTEND)
+    skip_bytes(4, dvi_file);
+
+  if (flags & XDV_FLAG_SLANT)
+    skip_bytes(4, dvi_file);
+
+  if (flags & XDV_FLAG_EMBOLDEN)
+    skip_bytes(4, dvi_file);
+}
 
 static void
 do_native_font_def (int32_t tex_id)
