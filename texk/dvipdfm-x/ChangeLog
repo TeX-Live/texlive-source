@@ -2,6 +2,7 @@
 
 	* dvi.c: Tweak skip_native_font_def() to make it handle more
 	flags.
+	* dpxutil.c: Remove a redundant check found by -Wall.
 
 2016-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

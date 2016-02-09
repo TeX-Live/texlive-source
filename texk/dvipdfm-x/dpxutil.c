@@ -261,7 +261,7 @@ ht_set_iter (struct ht_table *ht, struct ht_iter *iter)
 {
   int    i;
 
-  ASSERT(ht && ht->table && iter);
+  ASSERT(ht && iter);
 
   for (i = 0; i < HASH_TABLE_SIZE; i++) {
     if (ht->table[i]) {
