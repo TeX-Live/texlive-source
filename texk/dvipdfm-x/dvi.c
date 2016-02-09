@@ -1965,10 +1965,6 @@ dvi_init (char *dvi_filename, double mag)
 
     get_preamble_dvi_info();
     do_scales(mag);
-/*
- * We recover the code in the TeX Live 2015 here,
- * because embolden !=0 etc. work if we do so.
- */
     if ((ch = get_unsigned_byte(dvi_file)) == POST)
       check_postamble();
     else
