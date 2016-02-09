@@ -1611,8 +1611,10 @@ skip_native_font_def (void)
   flags = get_unsigned_pair(dvi_file);
   name_length = get_unsigned_byte(dvi_file);
   skip_bytes(name_length + 4, dvi_file);
-  if (flags & XDV_FLAG_COLORED)
+  if ((flags & XDV_FLAG_COLORED) || (flags & XDV_FLAG_EMBOLDEN) ||
+      (flags & XDV_FLAG_EXTEND) || (flags & XDV_FLAG_SLANT)) {
     skip_bytes(4, dvi_file);
+  }
  }
 
 static void
@@ -1739,7 +1741,6 @@ do_glyphs (void)
  * We recover the code in the TeX Live 2015 here,
  * because embolden !=0 etc. work if we do so.
  */
-#if 0 
 static void
 check_postamble (void)
 {
@@ -1772,7 +1773,6 @@ check_postamble (void)
 
   num_pages = 0; /* force loop to terminate */
 }
-#endif /* 0 */
 
 /* Most of the work of actually interpreting
  * the dvi file is here.
@@ -1840,14 +1840,12 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
  * We recover the code in the TeX Live 2015 here,
  * because embolden !=0 etc. work if we do so.
  */
-#if 0
       if (linear) {
         if ((opcode = get_unsigned_byte(dvi_file)) == POST)
           check_postamble();
         else
           ungetc(opcode, dvi_file);
       }
-#endif /* 0 */
       return;
 
     case PUSH:
@@ -1971,12 +1969,10 @@ dvi_init (char *dvi_filename, double mag)
  * We recover the code in the TeX Live 2015 here,
  * because embolden !=0 etc. work if we do so.
  */
-#if 0
     if ((ch = get_unsigned_byte(dvi_file)) == POST)
       check_postamble();
     else
       ungetc(ch, dvi_file);
-#endif /* 0 */
   } else {
     dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
     if (!dvi_file) {
