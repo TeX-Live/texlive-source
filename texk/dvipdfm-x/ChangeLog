@@ -1,3 +1,8 @@
+2016-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: disable check_postamble() introduced by Peter, because
+	features embolden != 0, slant != 0, and extend != 1 do not work.
+
 2016-01-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tt_post.c: Check post->glyphNamePtr[gid] before an access

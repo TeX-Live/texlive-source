@@ -1735,6 +1735,11 @@ do_glyphs (void)
   return;
 }
 
+/*
+ * We recover the code in the TeX Live 2015 here,
+ * because embolden !=0 etc. work if we do so.
+ */
+#if 0 
 static void
 check_postamble (void)
 {
@@ -1767,6 +1772,7 @@ check_postamble (void)
 
   num_pages = 0; /* force loop to terminate */
 }
+#endif /* 0 */
 
 /* Most of the work of actually interpreting
  * the dvi file is here.
@@ -1830,12 +1836,18 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
       break;
     case EOP:
       do_eop();
+/*
+ * We recover the code in the TeX Live 2015 here,
+ * because embolden !=0 etc. work if we do so.
+ */
+#if 0
       if (linear) {
         if ((opcode = get_unsigned_byte(dvi_file)) == POST)
           check_postamble();
         else
           ungetc(opcode, dvi_file);
       }
+#endif /* 0 */
       return;
 
     case PUSH:
@@ -1955,10 +1967,16 @@ dvi_init (char *dvi_filename, double mag)
 
     get_preamble_dvi_info();
     do_scales(mag);
+/*
+ * We recover the code in the TeX Live 2015 here,
+ * because embolden !=0 etc. work if we do so.
+ */
+#if 0
     if ((ch = get_unsigned_byte(dvi_file)) == POST)
       check_postamble();
     else
       ungetc(ch, dvi_file);
+#endif /* 0 */
   } else {
     dvi_file = MFOPEN(dvi_filename, FOPEN_RBIN_MODE);
     if (!dvi_file) {
