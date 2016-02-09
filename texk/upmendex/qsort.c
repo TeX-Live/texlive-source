@@ -118,8 +118,8 @@ qst(char *base, char *max)
     register int ii;
     register char c;
     void *tmp;
-    int lo;
-    int hi;
+    size_t lo;
+    size_t hi;
 
     lo = max - base;	/* number of elements as chars */
     do {

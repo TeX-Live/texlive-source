@@ -16,7 +16,7 @@ int idxread(char *filename, int start)
 {
 	int i,j,k,l,m,n,cc,indent,wflg,flg=0,bflg=0,nest,esc,quo,eflg=0,pacc,preject;
 	char buff[BUFSIZE],wbuff[BUFSIZE],estr[256],table[BUFSIZE];
-	UChar utable[BUFSIZE],ubuff[BUFSIZE],*tmp1,*tmp2;
+	UChar utable[BUFSIZE],*tmp1,*tmp2;
 	FILE *fp;
 
 	pacc=acc;
