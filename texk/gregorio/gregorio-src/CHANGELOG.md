@@ -5,6 +5,18 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [4.1.0-beta3] - 2016-02-09
+### Fixed
+- Missing file from manifests and system-setup scripts has been added (new bug in 4.1.0-beta2)
+
+### Changed
+- Command line output (help message, version message, error handling) has been improved, see [#891](https://github.com/gregorio-project/gregorio/issues/891)
+- Windows installer no longer copies the executable into the TeX bin directory.  Instead it has the option to add its own bin directory to PATH.
+- `system-setup.sh` has become `system-setup.command` so that it is double click executable on Mac.
+- Post install options for Windows installer have been simplified.  There are no longer separate options for MiKTeX and TeXLive.  Instead the installer will determine which you have itself and act accordingly.
+- Windows installer will check more locations for old installations to remove.
+
+
 ## [4.1.0-beta2] - 2016-02-08
 ### Fixed
 - When a flat on a ledger line (`bx` or `lx`) was preceding a note also on a ledger line, the ledger line was partially visible inside the flat, see [#882](https://github.com/gregorio-project/gregorio/issues/882).
@@ -16,7 +28,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - When a syllable is preceeded by a punctum mora, gregorio now ignores the punctum mora in the spacing of the syllables by default, and also adds a custom space (defaulting to 0). You can change this behavior with `\gresetshiftaftermora{}`, see GregorioRef for its arguments. To balance the output, space before a punctum mora has been made slightly thinner, more in line with old Solesmes books. (For the change requests, see [#795](https://github.com/gregorio-project/gregorio/issues/795) and [#871](https://github.com/gregorio-project/gregorio/issues/871)).
 - The `--admin` option is removed from the `initexmf` call for MiKTeX installations, allowing the installer to work better on Windows 10.
 - MiKTeX installations no longer copy files into TEXMFLOCAL but instead registers the texmf folder which the installer creates with MiKTeX, allowing it to use those files in place.  See [#884](https://github.com/gregorio-project/gregorio/issues/884)
-- Added an uninstall script which will run as part of the uninstall action and will remove the Gregorio executable and TeX files from their copied locations (at least using the `unins000.exe` file which is created in the program directory when the program is installed, I haven't tested using the Add/Remove Programs feature built into Windows).
+- Windows installer now contains an uninstall script which will run as part of the uninstall action and thus should remove the Gregorio executable and TeX files from their copied locations (leaving a clean post-uninstall system).
 
 ### Added
 - A new algorithm for placing bar syllables has been added.  The goal of the new algorithm is to place the bar line exactly between the notes which surround it and do the same with the text associated with the bar line.  It also implements a limit, `maxbaroffset`, which prevents the bar line and its text from getting too far apart.  This algorithm can be activated with `\gresetbarspacing{new}`.  Testing is not yet complete and it may still contain bugs.  See [#767](https://github.com/gregorio-project/gregorio/issues/767).
