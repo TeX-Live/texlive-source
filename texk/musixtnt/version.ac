@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current musixtnt version
-m4_define([musixtnt_version], [2015-02-09])
+m4_define([musixtnt_version], [2016-01-30])

@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define musixtnt_version
 AC_INIT([musixtnt (TeX Live)], musixtnt_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([musixtnt-]musixtnt_version[/msxlint.c])
+AC_CONFIG_SRCDIR([musixtnt-src/msxlint.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -22,7 +22,7 @@ AC_CONFIG_HEADERS([config.h])
 
 KPSE_KPATHSEA_FLAGS
 
-AC_SUBST([MUSIXTNT_TREE], [musixtnt-]musixtnt_version)
+AC_SUBST([MUSIXTNT_TREE], [musixtnt-src])
 
 AC_CONFIG_FILES([Makefile])
 

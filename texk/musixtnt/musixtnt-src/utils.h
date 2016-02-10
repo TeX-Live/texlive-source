@@ -1,8 +1,8 @@
 
 /*  
-  utils.h  -- header file for fixmsxpart.c and msxlint.c
+  utils.h  -- header file for msxlint.c
 
-  Copyright (c) 2005-15  R. D. Tennent   
+  Copyright (c) 2005-16  R. D. Tennent   
   School of Computing, Queen's University, rdt@cs.queensu.ca 
 
 This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 # include <stdlib.h>
 # include <string.h>
 # include <stdio.h>
+# include <ctype.h>
+
 # ifdef KPATHSEA
 # include <kpathsea/getopt.h>
 # else

@@ -4,7 +4,7 @@ and MacOSX, and documentation for two programs: fixmsxpart
 and msxlint.
 
 musixtnt.tex provides a macro \TransformNotes that
-makes possble transformations of the effect of notes
+enables transformations of the effect of notes
 commands such as \notes. In general, the effect of
 \TransformNotes{input}{output} is that notes commands in
 the source will expect their arguments to match the input
@@ -32,7 +32,7 @@ Update the file-name database as required by your TeX
 installation.
 
 If your platform is UNIX-like, process the
-musixtnt-2014-02-04.tar.gz file as usual (tar zxvf ...,
+musixtnt-<version>.tar.gz file as usual (tar zxvf ...,
 ./configure, make, make install).
 
 If your platform is Windows, move the executables
@@ -43,11 +43,12 @@ If your platform is Mac OS-X, install the executables
 in the macosx directory.
 
 musixtnt.tex, fixmsxpart.c, utils.c and msxlint.c are
-licensed under the GPL version 2.
+licensed under the GPL version 2 or (at your option) any
+later version.
 
 Please report bugs and experience (good or bad) using these
 programs to me.
 
 Bob Tennent
-rdt@cs.queensu.ca
-2015-02-05
+rdt(at)cs(dot)queensu(dot)ca
+2015-05-07
