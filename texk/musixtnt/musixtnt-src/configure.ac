@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([musixtnt],[2015-02-09],[rdt@cs.queensu.ca])
+AC_INIT([musixtnt],[2016-01-30],[rdt@cs.queensu.ca])
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])

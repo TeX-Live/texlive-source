@@ -1,6 +1,6 @@
-char version[12] = "2015-02-09";
+char version[12] = "2016-01-30";
 
-/*  Copyright (C) 2014-15 R. D. Tennent School of Computing,
+/*  Copyright (C) 2014-16 R. D. Tennent School of Computing,
  *  Queen's University, rdt@cs.queensu.ca
  *
  *  This program is free software; you can redistribute it
@@ -386,7 +386,7 @@ main (int argc, char *argv[])
         }
       c = getopt_long (argc, argv, "hvd", longopts, NULL);
     }
-  puts ( "Copyright (C) 2014-15  R. D. Tennent" );
+  puts ( "Copyright (C) 2014-16  R. D. Tennent" );
   puts ( "School of Computing, Queen's University, rdt@cs.queensu.ca" );
   puts ( "License GNU GPL version 2 or later <http://gnu.org/licences/gpl.html>." );
   puts ( "There is NO WARRANTY, to the extent permitted by law." );

@@ -1,3 +1,16 @@
+2015-05-07
+
+  Re-implement to deal with autosp output
+  Replace -d option by a log file
+  Introduce -a option to allow user choice of \qb{n}{.p} treatment
+  Don't replace \alaligne and \alapage by \bar 
+    (might change context)
+  output_rests for \znotes ...
+
+2015-02-23
+
+  Allow for \zcn, \lcn, \ccn abbreviations for \zcharnote, etc.
+
 2015-02-09 RDT
 
   Check for EOF and missing EOL.
