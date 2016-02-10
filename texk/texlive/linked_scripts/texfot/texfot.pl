@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.28 2015/08/07 00:48:23 karl Exp $
+# $Id: texfot,v 1.32 2016/02/09 19:13:22 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.28 2015/08/07 00:48:23 karl Exp $';
+my $ident = '$Id: texfot,v 1.32 2016/02/09 19:13:22 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -133,6 +133,7 @@ sub process_output {
      |LaTeX\ Font\ Warning:\ Some\ font\ shapes
      |LaTeX\ Font\ Warning:\ Size\ substitutions
      |Package\ caption\ Warning:\ Unsupported\ document\ class
+     |Package\ fixltx2e\ Warning:\ fixltx2e\ is\ not\ required
      |Package\ frenchb\.ldf\ Warning:\ (Figures|The\ definition)
      |Reloading\ Xunicode\ for\ encoding  # spurious ***
      |This\ is.*(epsf\.tex|\.sty)         # so what
@@ -155,6 +156,7 @@ sub process_output {
      |LaTeX\ Font\ Warning:\ Font\ shape
      |>\ [^<]            # from \show..., but not "> <img.whatever"
      |removed\ on\ input\ line  # hyperref
+     |Runaway\ argument
     )/x) {
       &debug ("  found print_next ($1)\n");
       print $prefix;
@@ -173,6 +175,7 @@ sub process_output {
      |.*Citation.*undefined
      |.*\ Error           # as in \Url Error ->...
      |Missing\ character: # good to show (need \tracinglostchars=1)
+     |\\endL.*problem     # XeTeX?
      |\*\*\*\s            # *** from some packages or subprograms
      |l\.[0-9]+\          # line number marking
      |all\ text\ was\ ignored\ after\ line
@@ -221,8 +224,8 @@ value is that of I<texcmd>.  Examples:
   texfot pdflatex file.tex
   
   # Ordinarily all output is copied to /tmp/fot before filtering;
-  # omit that:
-  texfot --tee=/dev/null file.tex
+  # that can be omitted:
+  texfot pdflatex --tee=/dev/null file.tex
   
   # Example of more complex engine invocation:
   texfot lualatex --recorder '\nonstopmode\input file'
@@ -276,6 +279,9 @@ Otherwise, the default: if the line came from stdout, ignore it; if the
 line came from stderr, print it (to stdout).  (This distinction is made
 because TeX engines write relatively few messages to stderr, and it's
 not unlikely that any such should be considered.
+
+It would be easy to add more options to allow for user additions to the
+various regex lists, if that ever seems useful.  Or email me (see end).
 
 =back
 
@@ -371,16 +377,16 @@ I wrote this because, in my work as a TUGboat editor
 (L<http://tug.org/TUGboat>, journal submissions always welcome!), I end
 up running and rerunning many papers, many times each.  It was too easy
 to lose warnings I needed to see in the mass of unvarying and
-uninteresting output from TeX, such as all the style files being read
-and all the fonts being used.  I wanted to see all and only those
-messages which needed some action by me.
+uninteresting output from TeX, such as style files being read and fonts
+being used.  I wanted to see all and only those messages which needed
+some action by me.
 
-I found some other programs of a similar nature, the C<silence> LaTeX
-package, and plenty of other (La)TeX wrappers, but it seemed none of
+I found some other programs of a similar nature, the LaTeX package
+C<silence>, and plenty of other (La)TeX wrappers, but it seemed none of
 them did what I wanted.  Either they read the log file (I wanted the
 online output only), or they output more or less than I wanted, or they
 required invoking TeX differently (I wanted to keep my build process
-exactly the same, definitely including the TeX invocation, which can get
+exactly the same, most critically the TeX invocation, which can get
 complicated).  Hence I wrote this.
 
 Here are some keywords if you want to explore other options:
@@ -402,7 +408,7 @@ the present S<case :).>
 
 This script and its documentation were written by Karl Berry and both
 are released to the public domain.  Email C<karl@freefriends.org> with
-bug reports.  There is no home page beyond the package on CTAN:
+bug reports.  It has no home page beyond the package on CTAN:
 L<http://www.ctan.org/pkg/texfot>.
 
 =cut
