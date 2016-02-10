@@ -1,12 +1,57 @@
-   Corrections and enhancements to M-Tx starting from 0.53
-   Newest items at top
+Corrections and enhancements to M-Tx starting from 0.53
+=======================================================
+   
+Newest items at top. You might also want to look at file `MAINTENANCE`.
+
+Version 0.62a
+-------------
+
+1. Fonts bigtype and BIgtype, needed because PMX header font sizes
+were made smaller in July 2015, added to \mtxPalatino. Also, for
+completeness, \mtxbigsf and \mtxBIGsf. This version tagged on GitHub
+as 0.62.
+
+Version 0.62
+------------
+
+1. `\mtxlatex` command no longer needed.
+2. Various subtleties in the code have been commented.
+
+Version 0.61a
+-------------
+
+1. Special code for multi-bar rests removed, taking advantage of
+upstream improvements. 
+2. MusiXTeX 1.21 and PMX 2.71 required in `mtx.tex`.
+3. When the last line of a file does not have an end-of-line,
+its line number in comments and error messages was 0. Corrected now. 
+(This bug was almost 11 years old.)
 
 Version 0.61
-  `TeX` preamble command for Type 2 TeX strings.
-  Assertions: Range, Bars.
-  User's Manual thoroughly revised.
-  Misnamed procedure `tex3` is now `TeXtype2`.
-  Page and font macros are included in `mtx.tex`.
+------------
+
+Mainly aids to the programmer.
+
+1.  `TeX` preamble command for Type 2 TeX strings.
+2.  Assertions: Range, Bars.
+3.  User's Manual thoroughly revised.
+4.  Misnamed procedure `tex3` is now `TeXtype2`.
+5.  Page and font macros are included in `mtx.tex`.
+6.  The part of this file above the horizontal line is in Markdown.
+
+
+----------------------------------------------------------------------
+
+Version 0.60f
+  notes.pas: {$V-} inserted since otherwise Pascal 2.6.2 regards it as an 
+    error to pass a var argument of type `string[16]` to a procedure that 
+    expects type `string`.
+  lyrics.pas: tests for empty lyrics paragraph
+  
+Version 0.60e (RETRACTED)
+  Any bar word starting with `|` terminates a pickup, not only `|`.
+  Actually the manual was clear on this point, so the current version
+  has reverted to 0.60d.
 
 Version 0.60d
   Replaced space character tie label by no label,
@@ -184,4 +229,12 @@ Version 0.53a
   From Christian Mondrup
     preamble.pas: added trailing backslash to \mtxTenorClef
     mtx.tex: changed \mtxmtxNormalSize to \mtxNormalSize 
+
+Changes since 0.52b, undated.
+   Uses mtx.tex file
+   More than one # or % per word treated correctly in uptext
+   Better way of handling line numbers in lyrics
+
+For earlier history, see comments in prepmx.pas of 0.52b.
+
 

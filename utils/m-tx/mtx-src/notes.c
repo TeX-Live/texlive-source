@@ -2,8 +2,8 @@
 /* From input file "notes.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define NOTES_G
 #include "notes.h"

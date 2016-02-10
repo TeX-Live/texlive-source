@@ -2,8 +2,8 @@
 /* From input file "status.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define STATUS_G
 #include "status.h"

@@ -8,7 +8,7 @@
 #else
 # define vextern extern
 #endif
-/* DPL 2004-03-06
+/* DPL 2004-03-06, 2015-01-16
 (* Support for including files into an input stream.
 (* Intended for an application that does not require Pascal formatting,
 (*   but reads complete lines one at a time.

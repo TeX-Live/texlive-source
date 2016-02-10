@@ -2,8 +2,8 @@
 /* From input file "globals.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define GLOBALS_G
 #include "globals.h"

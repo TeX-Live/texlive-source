@@ -1,5 +1,6 @@
---- mtx-0.61.orig/libp2c/p2c.h	Wed Mar 17 00:28:20 1999
-+++ mtx-0.61/libp2c/p2c.h	Thu Dec 17 09:00:24 2015
+diff -ur mtx-0.62.orig/libp2c/p2c.h mtx-0.62/libp2c/p2c.h
+--- mtx-0.62.orig/libp2c/p2c.h	Tue Feb 09 05:23:09 2016
++++ mtx-0.62/libp2c/p2c.h	Thu Feb 11 01:54:30 2016
 @@ -428,10 +428,10 @@
  
  /* Memory allocation */

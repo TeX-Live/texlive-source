@@ -72,7 +72,9 @@ TESTS = mtx.test
 EXTRA_DIST += $(TESTS)
 
 ## mtx.test
-EXTRA_DIST += tests/mozart.mtx tests/mozart.pmx Makefile.orig Bugs Corrections  ChangeLog.C
+EXTRA_DIST += tests/mozart.mtx tests/mozart.pmx 
+
+EXTRA_DIST += Makefile.orig Bugs Corrections MAINTENANCE Makefile.p2c 
 EXTRA_DIST += configure.ac Makefile.am
 DISTCLEANFILES = mozart*
 

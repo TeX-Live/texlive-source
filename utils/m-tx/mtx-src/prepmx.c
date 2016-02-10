@@ -2,8 +2,8 @@
 /* From input file "prepmx.pas" */
 
 
-
 #include "p2c.h"
+
 
 #ifndef CONTROL_H
 #include "control.h"
@@ -66,16 +66,10 @@
 
 /** M-Tx preprocessor to PMX     Dirk Laurie */
 
-#define version         "0.61"
-#define version_date    "<16 December 2015>"
+#define version         "0.62"
+#define version_date    "<08 February 2016>"
 
 /** See file "Corrections" for updates later than those listed below
-*/
-
-/** Changes since 0.52b
-   Uses mtx.tex file
-   More than one # or % per word treated correctly in uptext
-   Better way of handling line numbers in lyrics
 */
 
 /** To do next:
@@ -98,9 +92,9 @@
 
 
 Static boolean last_bar;
-Static Char multibar[256];
 Static Char repeat_sign[256];
-Static short bar_of_line, bars_of_rest, rest_spacing;
+/*, bars_of_rest*/
+Static short bar_of_line;
 
 
 /* --------------- Bars and rests --------------- */
@@ -138,10 +132,6 @@ Static void supplyRests(voice_index voice)
   Char STR2[4];
   Char STR3[256];
 
-  if (multi_bar_rest) {
-    put(multibar, putspace);
-    return;
-  }
   if (bar_of_line == 1 && pedanticWarnings()) {
     printf("Bar %d Voice %d", bar_no, voice);
     warning(" Filling missing voice with rests", !print);
@@ -150,60 +140,6 @@ Static void supplyRests(voice_index voice)
     put(rests(STR3, pickup, meterdenom, visible), nospace);
   sprintf(STR2, "%s ", pause);
   put(STR2, putspace);
-}
-
-
-Static void countBars(Char *note_)
-{
-  Char note[256];
-  short k, adjust;
-  short sign = 1;
-
-  strcpy(note, note_);
-  predelete(note, 2);
-  k = pos1('+', note);
-  if (k == 0) {
-    k = pos1('-', note);
-    if (k > 0)
-      sign = -1;
-  }
-  if (k > 0) {
-    note[k-1] = '/';
-    getTwoNums(note, &bars_of_rest, &adjust);
-  } else {
-    getNum(note, &bars_of_rest);
-    adjust = 0;
-  }
-  rest_spacing = adjust * sign + 14;
-}
-
-
-/* FIXME  This procedure had a serious bug.  It now has a smaller bug.
-  Basically there should be a test on whether a break between staves
-  is a break between instruments, in which case the procedure is (now)
-  right; or a break between staves of the same instrument, in which
-  case a '|' instead of a '&' should be output (as it was).  If the Space
-  feature is not used, the bug does not show up. */
-Static void putMBRest(void)
-{
-  stave_index i, FORLIM;
-  Char STR1[256];
-  Char STR2[256], STR3[256];
-
-  put("\\\\\\def\\atnextbar{\\znotes", nospace);
-  FORLIM = nstaves;
-  for (i = 1; i <= FORLIM; i++) {
-    sprintf(STR3, "\\mbrest{%s}{%s}0",
-	    toString(STR1, bars_of_rest), toString(STR2, rest_spacing));
-    put(STR3, nospace);
-    if (i < nstaves)
-      put("&", nospace);
-    else
-      putLine("\\en}\\");
-  }
-  sprintf(STR3, "\\\\\\advance\\barno%s\\", toString(STR1, bars_of_rest - 1));
-  putLine(STR3);
-  bar_no += bars_of_rest - 1;
 }
 
 
@@ -483,8 +419,6 @@ Static void processLine(voice_index voice_, short bar_no)
 
     case rword:
       if (multi_bar_rest) {
-	countBars(V.note);
-	strcpy(V.note, multibar);
 	if (uptextOnRests())
 	  addUptext(V.voice, &V.no_uptext, V.pretex);
       } else {
@@ -579,7 +513,6 @@ Local void putPMXlines(struct LOC_musicParagraph *LINK)
 Local void processOneBar(struct LOC_musicParagraph *LINK)
 {
   paragraph_index0 m, cm;
-  short n1, n2;
   voice_index voice, cvoice;
   boolean ignore_voice;
   boolean wrote_repeat = false;
@@ -606,12 +539,6 @@ Local void processOneBar(struct LOC_musicParagraph *LINK)
     meterChange(LINK->new_meter, nleft, 64, true);
   if (*LINK->new_meter != '\0')
     putLine(LINK->new_meter);
-  if (multi_bar_rest) {
-    n1 = meternum * 64;
-    n2 = meterdenom;
-    cancel(&n1, &n2, 1);
-    rests(multibar, n1, n2, blind);
-  }
   for (voice = nvoices; voice >= 1; voice--) {
     ignore_voice = !selected[voice-1];
     cvoice = companion(voice);
@@ -638,8 +565,6 @@ Local void processOneBar(struct LOC_musicParagraph *LINK)
       }
     }
   }
-  if (multi_bar_rest)
-    putMBRest();
   bar_no++;
   pickup = 0;
   putLine("");
@@ -650,6 +575,22 @@ Local void putMeter(Char *new_meter_word, struct LOC_musicParagraph *LINK)
   if (strcmp(new_meter_word, old_meter_word))
     putLine(new_meter_word);
   strcpy(old_meter_word, new_meter_word);
+}
+
+Local void processMBR(struct LOC_musicParagraph *LINK)
+{
+  short bars_of_rest;
+  Char mbr[256];
+  Char STR1[256];
+  Char STR3[256];
+
+  strcpy(mbr, P[0]);
+  predelete(mbr, 2);
+  getNum(mbr, &bars_of_rest);
+  bar_no += bars_of_rest;
+  sprintf(STR3, "rm%s /", toString(STR1, bars_of_rest));
+  putLine(STR3);
+  putLine("");
 }
 
 
@@ -721,10 +662,12 @@ Static void musicParagraph(void)
   if (nleft > 0)
     nbars++;
   if (nbars == 0 && multi_bar_rest)
-    nbars = 1;
-  FORLIM1 = nbars;
-  for (bar_of_line = 1; bar_of_line <= FORLIM1; bar_of_line++)
-    processOneBar(&V);
+    processMBR(&V);
+  else {
+    FORLIM1 = nbars;
+    for (bar_of_line = 1; bar_of_line <= FORLIM1; bar_of_line++)
+      processOneBar(&V);
+  }
   restoreDurations();
 }
 

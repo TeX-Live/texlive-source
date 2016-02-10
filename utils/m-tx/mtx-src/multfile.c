@@ -2,8 +2,8 @@
 /* From input file "multfile.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define MULTFILE_G
 #include "multfile.h"
@@ -22,6 +22,7 @@ typedef struct filenode {
 
 
 Static filenode *current = NULL;
+Static short last_valid_line_no = 0;
 Static boolean inputerror = false;
 Static short reportitem = reportnewfile + reportoldfile + reporterror +
 			  reportrecursive;
@@ -140,8 +141,10 @@ Char *readLine(Char *Result)
     *TEMP = 0;
   strcpy(Result, s);
   inputerror = (P_ioresult != 0);
-  if (!inputerror)
+  if (!inputerror) {
     current->lineno++;
+    last_valid_line_no = current->lineno;
+  }
   if (inputerror && (reportitem & reporterror) > 0)
     printf("==!! Could not read from file %s\n", currentFilename(STR2));
   return Result;
@@ -208,10 +211,7 @@ boolean eofAll(void)
 
 short currentLineNo(void)
 {
-  if (current == NULL)
-    return 0;
-  else
-    return (current->lineno);
+  return last_valid_line_no;
 }
 
 

@@ -2,8 +2,8 @@
 /* From input file "mtx.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define MTX_G
 #include "mtx.h"

@@ -2,8 +2,8 @@
 /* From input file "uptext.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define UPTEXT_G
 #include "uptext.h"
