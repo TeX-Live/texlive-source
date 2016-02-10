@@ -1,3 +1,7 @@
+2016-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import pmx 2.7.3.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

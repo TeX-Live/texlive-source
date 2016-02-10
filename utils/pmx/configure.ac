@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define pmx_version
 AC_INIT([pmx (TeX Live)], pmx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([pmx-]pmx_version[/pmxab.c])
+AC_CONFIG_SRCDIR([pmx-src/pmxab.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -40,7 +40,7 @@ if test $ac_cv_sizeof_long_long -lt 8; then
   PMX_DEFINES="$PMX_DEFINES -DNO_LONG_LONG"
 fi
 
-AC_SUBST([PMX_TREE], [pmx-]pmx_version)
+AC_SUBST([PMX_TREE], [pmx-src])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

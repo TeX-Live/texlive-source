@@ -110,8 +110,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
         read(*,'(a)')jobname
         numargs = 1
       else 
-        call getarg(1,jobname,idum) ! May need to replace this w/ next line 
-c        call getarg(1,jobname) 
+c       call getarg(1,jobname,idum) ! May need to replace this w/ next line 
+        call getarg(1,jobname) 
       end if
       ljob = lenstr(jobname,27)
       if (ljob .eq. 0) then
@@ -1482,7 +1482,7 @@ c
       common /all/ noinow,iorig(noimax),noinst,insetup,replacing,
      *       instnum(noimax),botv(noimax),nvi(noimax),nsyst,nvnow
       character*128 line
-      logical insetup,replacing
+      logical insetup,replacing,botv
       iccount = 0
       do 1 iset = 1 , 12
         call partnum(iv,iccount,line,xdata)

@@ -14,11 +14,11 @@ signal_(integer *sigp, sig_pf proc)
 	int sig;
 	sig = (int)*sigp;
 
-#ifdef _WIN64
-	return (ftnint)(__int64)signal(sig, proc);
-#else
-	return (ftnint)(long)signal(sig, proc);
-#endif
+        #ifdef _WIN64
+            return (ftnint)(__int64)signal(sig, proc);
+        #else
+            return (ftnint)(long)signal(sig, proc);
+        #endif
 	}
 #ifdef __cplusplus
 }
