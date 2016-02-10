@@ -15,4 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST=PopulusSion.gabc main-lualatex.tex FactusEst.gabc
+EXTRA_DIST=PopulusSion.gabc main-lualatex.tex FactusEst.gabc debugging.tex

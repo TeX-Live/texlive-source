@@ -103,12 +103,15 @@ void gregorio_support_init(const char *const program USED_FOR_KPSE,
 void gregorio_print_version(const char *copyright)
 {
 #ifdef USE_KPSE
-    printf("Gregorio version %s (%s).\n%s\n", GREGORIO_VERSION,
+    printf("Gregorio %s (%s).\n%s\n", GREGORIO_VERSION,
             kpathsea_version_string, copyright);
 #else
-    printf("Gregorio version %s.\n%s\n", GREGORIO_VERSION,
+    printf("Gregorio %s.\n%s\n", GREGORIO_VERSION,
             copyright);
 #endif
+    printf("License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\
+This is free software: you are free to change and redistribute it.\n\
+There is NO WARRANTY, to the extent permitted by law.\n");
 }
 
 #ifdef USE_KPSE
