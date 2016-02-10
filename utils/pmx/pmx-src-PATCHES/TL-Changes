@@ -1,4 +1,4 @@
-Changes applied to the pmx-2.7.0 tree as obtained from:
+Changes applied to the pmx-2.7.3 tree as obtained from:
 	http://www.ctan.org/tex-archive/support/pmx/
 
 Remove:
@@ -9,4 +9,3 @@ Remove:
 	depcomp
 	install-sh
 	missing
-

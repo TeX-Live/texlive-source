@@ -3,7 +3,6 @@
 ##
 
 INCLUDES = -I$(srcdir)/libf2c
-AM_CFLAGS = #$(WARNING_CFLAGS)
 
 bin_PROGRAMS = pmxab scor2prt
 
@@ -232,11 +231,14 @@ EXTRA_DIST = $(TESTS)
 PATCHES = libf2c/patch-01-binary libf2c/patch-03-DOS-line-endings \
 	libf2c/patch-04-MSVC-complex libf2c/patch-05-FreeBSD-off_t libf2c/patch-06-WIN32 \
 	libf2c/patch-07-MuslLibc \
-	PATCH-pmx270.for-1 PATCH-scor2prt.for-1
+        libf2c/patch-08-WIN64 \
+        libf2c/patch-09-tmpfile \
+	PATCH-pmx273.for-1 PATCH-pmx273.for-2
 ## pmx.test
 EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
 	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
-EXTRA_DIST += scor2prt.for.orig scor2prt.for pmx270.for.orig pmx270.for 
+EXTRA_DIST += scor2prt.for pmx273.for.orig pmx273.for 
 EXTRA_DIST += $(PATCHES)
+EXTRA_DIST += version.ac configure.ac Makefile.am Makefile.f2c
 DISTCLEANFILES = barsant* pmxaerr.dat
 

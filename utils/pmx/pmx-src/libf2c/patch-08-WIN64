@@ -1,0 +1,23 @@
+*** signal_.c.orig	2016-02-02 08:40:45.725142965 -0500
+--- signal_.c	2016-02-01 19:44:44.304546734 -0500
+***************
+*** 14,20 ****
+  	int sig;
+  	sig = (int)*sigp;
+  
+! 	return (ftnint)signal(sig, proc);
+  	}
+  #ifdef __cplusplus
+  }
+--- 14,24 ----
+  	int sig;
+  	sig = (int)*sigp;
+  
+!         #ifdef _WIN64
+!             return (ftnint)(__int64)signal(sig, proc);
+!         #else
+!             return (ftnint)(long)signal(sig, proc);
+!         #endif
+  	}
+  #ifdef __cplusplus
+  }

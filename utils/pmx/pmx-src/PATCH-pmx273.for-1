@@ -1,0 +1,34 @@
+11004c11004
+<       subroutine getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,
+---
+>       subroutine getmidi(noinstarg,lineq,iccount,ibarcnt,ibaroff,nbars,
+11033c11033
+<      *                ,miditran(nm),midtc(0:nm),noinstdum,iinsiv(nm)
+---
+>      *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
+11110c11110
+<         do 2 ivx = 1 , noinst
+---
+>         do 2 ivx = 1 , noinstarg
+11155c11155
+<         do 7 ivx = 1 , noinst
+---
+>         do 7 ivx = 1 , noinstarg
+11178c11178
+<         do 8 ivx = 1 , noinst
+---
+>         do 8 ivx = 1 , noinstarg
+11201c11201
+<         do 9 ivx = 1 , noinst
+---
+>         do 9 ivx = 1 , noinstarg
+19791c19791,19792
+<       logical inputmlyr /.false./
+---
+>       logical inputmlyr 
+>       data inputmlyr /.false./
+24429c24430,24431
+<       character*1 sq /'\'/
+---
+>       character*1 sq 
+>       data sq /'\'/
