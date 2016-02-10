@@ -1076,6 +1076,19 @@ static int getbox(lua_State * L)
     return 1;
 }
 
+static int splitbox(lua_State * L)
+{
+    int k = get_box_id(L, 1, true);
+    check_index_range(k, "splitbox");
+    if (lua_isnumber(L, 2)) {
+        nodelist_to_lua(L, vsplit(k,lua_tointeger(L,2)));
+    } else {
+        /* maybe a warning */
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
 static int isbox(lua_State * L)
 {
     int k = get_box_id(L, -1, false);
@@ -2822,6 +2835,7 @@ static const struct luaL_Reg texlib[] = {
     { "isbox", isbox },
     { "setbox", setbox },
     { "getbox", getbox },
+    { "splitbox", splitbox },
     { "setlist", setlist },
     { "getlist", getlist },
     { "setnest", setnest },
