@@ -1,0 +1,278 @@
+Notes for maintainers of M-Tx
+=============================
+
+This file is for someone who wishes to fix a bug, without actually being 
+willing to master the whole program of well over 4000 lines spread over 
+16 files.
+
+1. Quick start
+--------------
+
+The main program is `prepmx.pas`. The other files are units.
+
+There are three places in each file that give a lot of useful information. 
+When you have a spare moment, look at those. It will save time later.
+
+1.  Immediately after the first line, there should be a comment
+    containing a short description of what is in the file.
+2.  After the keyword `interface`, there may be a `uses` statement
+    listing the units needed in order that the interface (the Pascal
+    equivalent of a C header file) can be defined.
+3.  After the keyword `implementation`, there may be a `uses` statement
+    listing the further units needed in order that the implementation
+    (the equivalent of a C code file) can be defined.
+
+Instead of some dull generalities, here is a blow-by-blow account of how an 
+actual bug reported by Wojtek Chemijewski on the Werner Icking Music Archive 
+mailing list `<tex-music@tug.org>` on 2014-01-29 was found and "corrected".
+
+2. Case study
+-------------
+
+I'm doing this from a command line in Ubuntu Linux, so I use `grep`.
+Any other tool that can search for text in the Pascal source files
+will do equally well.
+
+In M-Tx 0.60, the following behaviour was considered to be a bug:
+
+> If the piece starts with a pickup, then the bar separator at the end
+of the pickup is only recognized as terminating a pickup when it is 
+a plain bar line `|`, not when it is a left repeat `|:`.
+
+There are workarounds for this, the best one being to not use plain bar
+lines but to use the PMX command `Rl` in the lowest voice (which becomes
+the first voice in PMX). That is not the point. We want M-Tx to do this
+right.
+
+We start by looking for the string `|:` in all the source files.
+
+    $ grep '|:' *.pas
+    prepmx.pas:    else if bar='|:' then repcode:='Rl'
+    prepmx.pas:    else if bar=':|:' then repcode:='Rlr'
+
+(BTW, although I continue using `grep`, I won't again insult your
+intelligence by quoting the exact invocation.)
+
+On reading the source, we note that both references are inside
+a procedure called `writeRepeat`. 
+
+    procedure writeRepeat(var bar: string);
+      var repcode: string;
+      begin  if bar='' then exit;
+        repcode:='';
+        if bar='||' then repcode:='Rd'
+        else if (bar='|]') then repcode:='RD'
+        else if bar='|:' then repcode:='Rl'
+        else if bar=':|:' then repcode:='Rlr'
+        else if bar=':|' then repcode:='Rr'
+        else if last_bar and (bar='|') then repcode:='Rb';
+        if repcode<>'' then putLine(' '+repcode);
+        bar:='';
+      end;
+
+This clearly writes to the PMX file the PMX code to which the M-Tx
+bar symbol translates. It can't be the cause of the bug.
+
+Where is `writeRepeat` used? Another `grep` says: only in `prepmx.pas` 
+itself, four times.
+
+The first one is in the following context:
+
+     barword: begin
+         if voice=nvoices then
+         if endOfBar(voice,bar_no) then repeat_sign := note
+           else writeRepeat(note);
+         if note<>barsym then note:='';
+         no_chords:=false;
+       end;
+
+This code tests whether we are at the end of a bar; if so, the bar
+word is remembered as `repeat_sign`, otherwise it is written 
+immediately. We are following a breadth-first strategy, so we don't
+yet look at `endOfBar`, but continue with examining the references
+to `writeRepeat`.
+
+The second reference in context:
+
+    if bar_of_line>1 then putLine(comment+'Bar '+toString(bar_no));
+    last_bar := (bar_of_line=nbars) and final_paragraph;
+    if last_bar and (repeat_sign='|') then repeat_sign:='';
+    writeRepeat(repeat_sign);  new_meter := '';
+
+This occurs in a procedure called `processOneBar`. The first thing is
+to write out the `repeat_sign` previously saved. It also does not
+seem to be the cause of the bug.
+
+The third reference is inside a loop over all voices. If that is the
+problem, we may have to dig very deeply, so we postpone looking at it.
+
+The last reference is inside the procedure `doMusic`.
+
+      if startsWithBracedWord(P[1]) then lyricsParagraph else
+      begin musicParagraph;  first_paragraph:=false;
+        writeRepeat(repeat_sign);
+      end
+
+That boolean `first_paragraph` sticks out like a sore thumb. The 
+program is doing something differently, depending on whether we are
+doing the first paragraph or a later one! That cannot be unrelated
+to the question of a pickup.
+
+Let's look for where `first_paragraph` is used. In `files.pas` there
+is something that appears to be handling inline TeX, the others are
+in `prepmx.pas`. It appears in this conditional:
+
+    if first_paragraph then includeStartString;
+
+Let's find that procedure. It's in `analyze.pas`. The procedure itself
+is clearly blameless, but also near the top of `analyze.pas` our eye
+alights on `pickup:=0;`. The statement appears twice, the second time 
+probably needlessly, but that's beside the point. We now know there is 
+a variable named `pickup` and unless the author of the program is 
+deliberately misleading us, it must be relevant to the pickup.
+
+Further on in `analyze.pas`, we find:
+
+      scanMusic(voice,l);
+      if multi_bar_rest and (nv>1) then error(
+        'Multi-bar rest allows only one voice',print);
+      if not pmx_preamble_done then
+      if voice=top then pickup:=l
+        else if pickup<>l then
+        error3(voice,'The same pickup must appear in all voices');
+
+I.e. the procedure `scanMusic` sets a value `l` that will be assigned
+to `pickup`. We're getting warm!
+
+That procedure is in `mtx.pas`.  It is a very long procedure, but the 
+argument `l` is now the parameter `left_over`, easy to search for.
+The only place where it seems to be used after being initialized is
+in the following compound statement:
+
+    if (note=barsym) then
+    if meternum=0 then
+      error3(voice,'You may not use bar lines in barless music')
+    else if bar_length=0 then markBar(voice)
+    else if (numberOfBars(voice)=0) and (bar_length<bar) then
+    begin  if has_next then
+      has_next:=false  {Should check whether pickups are equal}
+      else if left_over>0 then error3(voice,'Bar is too short');
+      left_over:=bar_length;  bar_length := 0;
+    end;
+
+What is `barsym`? These are the places where the name appears.
+
+    analyze.pas:      is_labelled := (w[l]=colon) and (w[l-1]<>barsym);
+    globals.pas:      barsym = '|';
+    mtxline.pas:  if chord>0 then if P[chord]=barsym then predelete(P[chord],1);
+    mtx.pas:    if (note=barsym) then
+    prepmx.pas:    if (w=barsym) or (w='') then no_chords:=true;
+    prepmx.pas:      if note<>barsym then note:='';
+    uptext.pas:        if (w=barsym) or (w='') then no_uptext:=true;
+
+Our quest is over! This is the bug. The whole code starts with
+`if (note=barsym) then`. The parentheses indicate that at some
+previous stage of the code, the programmer thought that there may
+have been extra clauses, such as testing for left repeat, but forgot
+to put them in. We also note further evidence of not-quite-completed
+code in the comment `{Should check whether pickups are equal}`.
+
+How will we fix this? Should we have `if isBarSym(note) then` and supply
+a function `isBarSym`, or merely add a clause? It appears as if the
+other cases do not require the same fixing, so the function will only be
+called this once. Let's try:
+
+    if note[1]=barsym then
+
+That will cover `|`, `|:` and `||` but not `:|`, which seems fair 
+enough. It will also cover illegal cases like `|-`, but let's hope
+those are caught elsewhere.
+
+The change is enough to cure the reported bug, so we document it at the
+top of `prepmx.pas` and in `Corrections`, changing the version number to
+`0.60e`.
+
+### It was not a bug
+
+After carrying out the above exercise, I carefully reread the M-Tx
+manual and found:
+
+> If your piece starts with a pickup, it is defined by a bar line at the 
+> end of “bar 0”, i.e. the incomplete bar containing the pickup. Even 
+> when there is a repeat sign after the pickup, so that you don’t 
+> actually see a bar line in the printed music, you still need a bar 
+> line before the repeat sign, otherwise M-Tx cannot know where the 
+> pickup stops. The bar line defining the pickup is compulsory in the 
+> first voice found, and optional but recommended in the others.
+
+Be warned, therefore, that M-Tx 0.60e is a dead end. The next version
+of M-Tx will branch from 0.60d again. 
+
+3. Adding a preamble command
+----------------------------
+
+In M-Tx 0.61, the `TeX` preamble command was added. Obviously we start
+in `preamble.pas`. There are some pretty obvious lists contained in 
+`type` and `const` statements.
+
+The name lower-case name `tex` is inserted in the list of names 
+`command_type`, the upper case version `TEX` in the corresponding 
+position in `commands`, a default empty value in `cline` and an
+extra `false` in `redefined`. This is enough to get the `TeX` command
+recognized, to save the value given, and to record the fact that there
+was a change.
+
+We want the TeX string to appear immediately after `readmod`. If you
+examine a `.tex` file made by PMX from source coded by M-Tx, you will
+see that `\mtxInterInstrument` is there. The only line containing that
+word is in `preamble.pas`:
+
+    if nspace[j]<>unspec then TeXtype2('\mtxInterInstrument{'+toString(i-1)+
+
+I.e. it was inserted as a "Type 2 TeX string". The line in question is 
+inside the function `respace`, which we see is executed immediately 
+after the statement `pmx_preamble_done:=true;`. We need to squeeze 
+in between, adding a call
+
+    insertTeX; 
+
+At some respectable point before that, we define this procedure.
+
+    procedure insertTeX;
+    begin
+       if redefined[tex] then TeXtype2(cline[tex]);
+    end;
+
+Test it; it works. However, if we issue more than one `TeX` command,
+only the last one takes effect, whereas the user will want all.
+Looking for assignments into `cline`, we find in procedure `doCommand`
+the statement:
+
+    cline[last_command]:=line;
+
+The entire loop containing that statement needs a bit of reorganization,
+since we must not only allow for appending new text but also bypass the
+test for redefinition warnings. First we supply a function
+
+    function mustAppend(command: command_type): boolean;
+    begin mustAppend := command=tex end;
+
+which allows for possible future preamble commands that also append
+rather than redefine. The new code of the loop starting with
+
+    if mustAppend(last_command) and redefined[last_command] then
+
+is straightforward, almost. Do we put in `LineEnding` when we append?
+If we don't, we may run into problems with `PMXlinelength` which is
+only 128. If we do, `TeXtype2` needs to be made a little smarter,
+i.e. able to re-split the lines. Actually, in that case an explicit 
+`#10` is better, since on some systems `LineEnding` has two characters.
+
+`TeXtype2` is in `files.pas`. There is a line
+
+    else if first_paragraph then putLine('\'+s+'\')
+
+that we replace by a call to a routine `putTeXlines` which does
+the necessary.
+
+

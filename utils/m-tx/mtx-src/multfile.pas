@@ -1,4 +1,4 @@
-unit multfile;  (* DPL 2004-03-06 
+unit multfile;  (* DPL 2004-03-06, 2015-01-16 
 (* Support for including files into an input stream.  
 (* Intended for an application that does not require Pascal formatting,
 (*   but reads complete lines one at a time.
@@ -80,6 +80,7 @@ implementation
   end;  
 
   const current: pfilenode = NIL;
+    last_valid_line_no: integer = 0;
     inputerror: boolean = false; 
     reportitem: integer = reportnewfile + reportoldfile 
      + reporterror + reportrecursive;
@@ -144,7 +145,10 @@ implementation
     readln(current^.actualfile,s); readLine:=s;
 {$I+}
     inputerror := ioresult<>0;
-    if not inputerror then inc(current^.lineno);
+    if not inputerror then 
+    begin inc(current^.lineno);
+      last_valid_line_no := current^.lineno
+    end;
     if inputerror and ((reportitem and reporterror)>0) then writeln
       ('==!! Could not read from file ',currentFilename);
   end;
@@ -182,8 +186,7 @@ implementation
   end;
 
   function currentLineNo: integer;
-  begin if current = NIL then currentLineNo := 0
-    else currentLineNo := current^.lineno;
+  begin currentLineNo := last_valid_line_no
   end;
 
   function currentFilename: string;

@@ -2,8 +2,8 @@
 /* From input file "lyrics.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define LYRICS_G
 #include "lyrics.h"

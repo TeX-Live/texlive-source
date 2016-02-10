@@ -1,6 +1,7 @@
---- mtx-0.61.orig/multfile.c	Thu Dec 17 04:17:40 2015
-+++ mtx-0.61/multfile.c	Thu Dec 17 09:03:39 2015
-@@ -60,7 +60,7 @@
+diff -ur mtx-0.62.orig/multfile.c mtx-0.62/multfile.c
+--- mtx-0.62.orig/multfile.c	Tue Feb 09 05:52:29 2016
++++ mtx-0.62/multfile.c	Thu Feb 11 01:52:08 2016
+@@ -61,7 +61,7 @@
      printf("===! Ignoring recursive include of file %s\n", filename);
      return;
    }

@@ -2,8 +2,8 @@
 /* From input file "files.pas" */
 
 
-
 #include "p2c.h"
+
 
 #define FILES_G
 #include "files.h"
@@ -289,9 +289,9 @@ void OpenFiles(void)
   pushFile(infilename);
   strcpy(outfile_NAME, outfilename);
   if (outfile != NULL)
-    outfile = freopen(outfile_NAME, "wb", outfile);
+    outfile = freopen(outfile_NAME, "w", outfile);
   else
-    outfile = fopen(outfile_NAME, "wb");
+    outfile = fopen(outfile_NAME, "w");
   _SETIO(outfile != NULL, FileNotFound);
   strcpy(stylefile_NAME, stylefilename);
   if (stylefile != NULL)

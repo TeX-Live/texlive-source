@@ -5,16 +5,10 @@ uses control, strings, globals, preamble, lyrics, mtx, analyze,
 { CMO: addition/change by Christian Mondrup }
 
 {* M-Tx preprocessor to PMX     Dirk Laurie }
-const version = '0.61';
-      version_date = '<11 December 2015>';
+const version = '0.62';
+      version_date = '<08 February 2016>';
 
 {* See file "Corrections" for updates later than those listed below
-}
-
-{* Changes since 0.52b
-   Uses mtx.tex file
-   More than one # or % per word treated correctly in uptext
-   Better way of handling line numbers in lyrics
 }
 
 {* To do next:
@@ -35,9 +29,8 @@ const version = '0.61';
 
 var
   last_bar: boolean;
-  multibar: string;
   repeat_sign: string;
-  bar_of_line, bars_of_rest, rest_spacing: integer;
+  bar_of_line{, bars_of_rest}: integer;
 
 { --------------- Bars and rests --------------- }
 
@@ -57,8 +50,6 @@ procedure writeRepeat(var bar: string);
 
 procedure supplyRests(voice: voice_index);
 begin
-  if multi_bar_rest then
-  begin put(multibar,putspace); exit; end;
   if (bar_of_line=1) and pedanticWarnings then
   begin  write('Bar ', bar_no, ' Voice ', voice);
     warning(' Filling missing voice with rests',not print);
@@ -66,36 +57,6 @@ begin
   if pickup>0 then
   put(rests(pickup,meterdenom,visible),nospace);
   put(pause+' ',putspace);
-end;
-
-procedure countBars(note: string);
-  var k, adjust, sign: integer;
-begin  predelete(note,2); k:=pos1('+',note); sign:=1;
-  if k=0 then
-  begin k:=pos1('-',note); if k>0 then sign:=-1; end;
-  if k>0 then
-  begin note[k]:='/'; getTwoNums(note,bars_of_rest,adjust); end
-  else begin getNum(note,bars_of_rest); adjust:=0; end;
-  rest_spacing := 14 + adjust*sign;
-end;
-
-(* FIXME  This procedure had a serious bug.  It now has a smaller bug.
-  Basically there should be a test on whether a break between staves
-  is a break between instruments, in which case the procedure is (now)
-  right; or a break between staves of the same instrument, in which
-  case a '|' instead of a '&' should be output (as it was).  If the Space
-  feature is not used, the bug does not show up. *)
-procedure putMBRest;
-  var i: stave_index;
-begin
-  put('\\\def\atnextbar{\znotes',nospace);
-  for i:=1 to nstaves do
-  begin put('\mbrest{'+toString(bars_of_rest)+'}{'+toString(rest_spacing)
-     +'}0',nospace);
-    if i<nstaves then put('&',nospace) else putLine('\en}\');
-  end;
-  putline('\\\advance\barno'+toString(bars_of_rest-1)+'\');
-  inc(bar_no,bars_of_rest-1);
 end;
 
 { ---------------------------------------------------------------- }
@@ -227,9 +188,8 @@ begin
   repeat note:=getMusicWord(voice);  if note='' then exit;
     { if debugMode then writeln(voice,' ',note); }
     case thisNote(voice) of
-  rword: begin  if multi_bar_rest then
-           begin countBars(note); note:=multibar;
-             if uptextOnRests then
+  rword: begin if multi_bar_rest then
+           begin if uptextOnRests then
                addUptext(voice, no_uptext, pretex);
            end
            else begin
@@ -287,7 +247,6 @@ procedure musicParagraph;
 
   procedure processOneBar;
     var m, cm: paragraph_index0;
-        n1, n2: integer;
         voice, cvoice: voice_index;
         ignore_voice, wrote_repeat, alone: boolean;
   begin
@@ -302,10 +261,7 @@ procedure musicParagraph;
     if last_bar and (new_meter='') and (nleft>pickup) and (meternum>0) then
       new_meter := meterChange(nleft,64,true);
     if new_meter<>'' then putLine(new_meter);
-    wrote_repeat := false;  if multi_bar_rest then
-    begin n1:=64*meternum; n2:=meterdenom; cancel(n1,n2,1);
-       multibar:=rests(n1,n2,blind);
-    end;
+    wrote_repeat := false;  
     for voice:=nvoices downto 1 do
     begin  ignore_voice:=not selected[voice];  cvoice:=companion(voice);
       m:=musicLineNo(voice); cm:=musicLineNo(cvoice);  
@@ -322,13 +278,22 @@ procedure musicParagraph;
           else putLine(' //');
       end;
     end;
-    if multi_bar_rest then putMBRest;
     inc(bar_no); pickup:=0; putLine('');
   end;
 
   procedure putMeter(new_meter_word: string);
   begin if new_meter_word<>old_meter_word then putLine(new_meter_word);
     old_meter_word := new_meter_word;
+  end;
+
+  procedure processMBR;
+  var bars_of_rest: integer;
+      mbr: string;
+  begin  
+    mbr := P[1];
+    predelete(mbr,2); getNum(mbr,bars_of_rest);
+    bar_no := bar_no + bars_of_rest;
+    putLine('rm' + toString(bars_of_rest) + ' /'); putLine('')
   end;
 
 begin
@@ -363,8 +328,9 @@ begin
   if must_respace then respace;
   if (meternum=0) then putMeter(meterChange(beatsPerLine,meterdenom,true));
   if nleft > 0 then inc(nbars);
-  if (nbars=0) and multi_bar_rest then nbars:=1; 
-  for bar_of_line:=1 to nbars do
+  if (nbars=0) and multi_bar_rest then 
+    processMBR
+  else for bar_of_line:=1 to nbars do
     processOneBar;
   restoreDurations;
 end;

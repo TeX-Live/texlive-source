@@ -1,5 +1,6 @@
---- mtx-0.61.orig/globals.c	Thu Dec 17 04:15:57 2015
-+++ mtx-0.61/globals.c	Thu Dec 17 08:57:13 2015
+diff -ur mtx-0.62.orig/globals.c mtx-0.62/globals.c
+--- mtx-0.62.orig/globals.c	Tue Feb 09 05:51:40 2016
++++ mtx-0.62/globals.c	Thu Feb 11 01:50:54 2016
 @@ -223,7 +223,7 @@
      if (outfile != NULL)
        fclose(outfile);
