@@ -9,6 +9,8 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define gregorio_version
 AC_INIT([Gregorio (TeX Live)], gregorio_version, [tex-k@tug.org])
+FILENAME_VERSION="4_1_0-beta3"
+AC_SUBST(FILENAME_VERSION)
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([gregorio-src/src/gregorio-utils.c])
 AC_CONFIG_AUX_DIR([../../build-aux])

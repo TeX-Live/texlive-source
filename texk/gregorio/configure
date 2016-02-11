@@ -724,6 +724,7 @@ am__isrc
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
+FILENAME_VERSION
 target_alias
 host_alias
 build_alias
@@ -2525,7 +2526,7 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-
+FILENAME_VERSION="4_1_0-beta3"
 
 ac_aux_dir=
 for ac_dir in ../../build-aux "$srcdir"/../../build-aux; do
