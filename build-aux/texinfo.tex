@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-02-08.13}
+\def\texinfoversion{2016-02-09.12}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1474,10 +1474,12 @@ output) for that.)}
     \ifx\pdfoutlinedest\empty
       \def\pdfoutlinedest{#4}%
     \fi
-    \turnoffactive
-    % In the case of XeTeX, xdvipdfmx converts strings to UTF-16.
-    % Therefore \txiescapepdf is not necessary.
-    \special{pdf:out [-] #2 << /Title (#1) /A << /S /GoTo /D (name\pdfoutlinedest) >> >> }%
+    {
+      \turnoffactive
+      % In the case of XeTeX, xdvipdfmx converts strings to UTF-16.
+      % Therefore \txiescapepdf is not necessary.
+      \special{pdf:out [-] #2 << /Title (#1) /A << /S /GoTo /D (name\pdfoutlinedest) >> >> }%
+    }
   }
   %
   \def\pdfmakeoutlines{%
@@ -10816,41 +10818,37 @@ directory should work if nowhere else does.}
   \unicodechardefs
 }
 
+\newif\ifpassthroughchars
+\passthroughcharsfalse
+
 % For native Unicode (XeTeX and LuaTeX)
-% Definition macro to replace the Unicode character
+% Definition macro to replace / pass-through the Unicode character
 %
 \def\DeclareUnicodeCharacterNative#1#2{%
   \catcode"#1=\active
+  \def\dodeclareunicodecharacternative##1##2##3{%
+    \begingroup
+      \uccode`\~="##2\relax
+      \uppercase{\gdef~}{%
+        \ifpassthroughchars
+          ##1%
+        \else
+          ##3%
+        \fi
+      }
+    \endgroup
+  }
   \begingroup
-    \uccode`\~="#1\relax
-    \uppercase{\gdef~}{#2}%
-  \endgroup}
+    \uccode`\.="#1\relax
+    \uppercase{\def\UTFNativeTmp{.}}%
+    \expandafter\dodeclareunicodecharacternative\UTFNativeTmp{#1}{#2}%
+  \endgroup
+}
 
 % Native Unicode (XeTeX and LuaTeX) character replacing definitions
 % It makes the setting that replace the Unicode characters.
 \def\nativeunicodechardefs{%
   \let\DeclareUnicodeCharacter\DeclareUnicodeCharacterNative
-  \unicodechardefs
-}
-
-% For native Unicode (XeTeX and LuaTeX)
-% Definition macro not to make the Unicode character expand to a non-active 
-% token with the same character code.  Used when writing to auxiliary files.
-%
-\def\DeclareUnicodeCharacterNativeThru#1#2{%
-  \catcode"#1=\active
-  \begingroup
-    \uccode`\.="#1\relax
-    \uppercase{\endgroup \def\UTFNativeTmp{.}}%
-  \begingroup
-    \uccode`\~="#1\relax
-    \uppercase{\endgroup \edef~}{\UTFNativeTmp}%
-}
-
-% Native Unicode (XeTeX and LuaTeX) character ``through'' definitions.
-% It makes the setting that does not replace the Unicode characters.
-\def\nativeunicodechardefsthru{%
-  \let\DeclareUnicodeCharacter\DeclareUnicodeCharacterNativeThru
   \unicodechardefs
 }
 
@@ -10941,7 +10939,7 @@ directory should work if nowhere else does.}
   \iftxiusebytewiseio
     \nonasciistringdefs
   \else
-    \nativeunicodechardefsthru
+    \passthroughcharstrue
   \fi
 }
 
