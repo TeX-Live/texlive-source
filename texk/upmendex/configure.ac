@@ -12,6 +12,8 @@ AC_CONFIG_SRCDIR([main.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
+AC_PROG_CXX
+
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([upmendex], [no-define])
 
