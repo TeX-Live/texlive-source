@@ -8,7 +8,7 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = upmendex
 
-mendex_SOURCES = \
+upmendex_SOURCES = \
 	convert.c \
 	exkana.h \
 	exvar.h \
@@ -27,7 +27,7 @@ mendex_SOURCES = \
 	styfile.c \
 	var.h
 
-$(mendex_OBJECTS): $(KPATHSEA_DEPEND)
+$(upmendex_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)
 
