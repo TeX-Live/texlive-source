@@ -2,7 +2,7 @@
 //
 //   A fuzzing function to test FreeType with libFuzzer.
 //
-// Copyright 2015 by
+// Copyright 2015-2016 by
 // David Turner, Robert Wilhelm, and Werner Lemberg.
 //
 // This file is part of the FreeType project, and may only be used,
@@ -143,7 +143,7 @@
   setIntermediateAxis( FT_Face  face )
   {
     // only handle Multiple Masters and GX variation fonts
-    if ( !( face->face_flags & FT_FACE_FLAG_MULTIPLE_MASTERS ) )
+    if ( !FT_HAS_MULTIPLE_MASTERS( face ) )
       return;
 
     // get variation data for current instance

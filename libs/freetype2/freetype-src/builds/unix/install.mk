@@ -3,7 +3,7 @@
 #
 
 
-# Copyright 1996-2015 by
+# Copyright 1996-2016 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -28,8 +28,11 @@
 # installing new files to avoid interferences with files installed by
 # previous FreeType versions (which use slightly different locations).
 #
+# We also remove `$(includedir)/ft2build.h' for the same reason.
+#
 install: $(PROJECT_LIBRARY)
 	-$(DELDIR) $(DESTDIR)$(includedir)/freetype2
+	-$(DELETE) $(DESTDIR)$(includedir)/ft2build.h
 	$(MKINSTALLDIRS) $(DESTDIR)$(libdir)                               \
                          $(DESTDIR)$(libdir)/pkgconfig                     \
                          $(DESTDIR)$(includedir)/freetype2/freetype/config \

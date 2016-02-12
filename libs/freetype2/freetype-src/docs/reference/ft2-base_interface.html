@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>FreeType-2.6.2 API Reference</title>
+<title>FreeType-2.6.3 API Reference</title>
 <style type="text/css">
   a:link { color: #0000EF; }
   a:visited { color: #51188E; }
@@ -100,58 +100,57 @@
 <body>
 
 <table class="index-toc-link"><tr><td class="left">[<a href="ft2-index.html">Index</a>]</td><td class="right">[<a href="ft2-toc.html">TOC</a>]</td></tr></table>
-<h1>FreeType-2.6.2 API Reference</h1>
+<h1>FreeType-2.6.3 API Reference</h1>
 
 <h1 id="base_interface">Base Interface</h1>
 <h2>Synopsis</h2>
 <table class="synopsis">
-<tr><td><a href="#FT_Library">FT_Library</a></td><td><a href="#FT_Glyph_Metrics">FT_Glyph_Metrics</a></td><td><a href="#FT_LOAD_COLOR">FT_LOAD_COLOR</a></td></tr>
-<tr><td><a href="#FT_Face">FT_Face</a></td><td><a href="#FT_SubGlyph">FT_SubGlyph</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_Size">FT_Size</a></td><td>&nbsp;</td><td><a href="#FT_LOAD_VERTICAL_LAYOUT">FT_LOAD_VERTICAL_LAYOUT</a></td></tr>
-<tr><td><a href="#FT_GlyphSlot">FT_GlyphSlot</a></td><td><a href="#FT_Bitmap_Size">FT_Bitmap_Size</a></td><td><a href="#FT_LOAD_IGNORE_TRANSFORM">FT_LOAD_IGNORE_TRANSFORM</a></td></tr>
-<tr><td><a href="#FT_CharMap">FT_CharMap</a></td><td>&nbsp;</td><td><a href="#FT_LOAD_FORCE_AUTOHINT">FT_LOAD_FORCE_AUTOHINT</a></td></tr>
-<tr><td><a href="#FT_Encoding">FT_Encoding</a></td><td><a href="#FT_Init_FreeType">FT_Init_FreeType</a></td><td><a href="#FT_LOAD_NO_RECURSE">FT_LOAD_NO_RECURSE</a></td></tr>
-<tr><td><a href="#FT_ENC_TAG">FT_ENC_TAG</a></td><td><a href="#FT_Done_FreeType">FT_Done_FreeType</a></td><td><a href="#FT_LOAD_PEDANTIC">FT_LOAD_PEDANTIC</a></td></tr>
+<tr><td><a href="#FT_Library">FT_Library</a></td><td><a href="#FT_Glyph_Metrics">FT_Glyph_Metrics</a></td><td><a href="#FT_LOAD_NO_AUTOHINT">FT_LOAD_NO_AUTOHINT</a></td></tr>
+<tr><td><a href="#FT_Face">FT_Face</a></td><td><a href="#FT_SubGlyph">FT_SubGlyph</a></td><td><a href="#FT_LOAD_COLOR">FT_LOAD_COLOR</a></td></tr>
+<tr><td><a href="#FT_Size">FT_Size</a></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_GlyphSlot">FT_GlyphSlot</a></td><td><a href="#FT_Bitmap_Size">FT_Bitmap_Size</a></td><td><a href="#FT_LOAD_VERTICAL_LAYOUT">FT_LOAD_VERTICAL_LAYOUT</a></td></tr>
+<tr><td><a href="#FT_CharMap">FT_CharMap</a></td><td>&nbsp;</td><td><a href="#FT_LOAD_IGNORE_TRANSFORM">FT_LOAD_IGNORE_TRANSFORM</a></td></tr>
+<tr><td><a href="#FT_Encoding">FT_Encoding</a></td><td><a href="#FT_Init_FreeType">FT_Init_FreeType</a></td><td><a href="#FT_LOAD_FORCE_AUTOHINT">FT_LOAD_FORCE_AUTOHINT</a></td></tr>
+<tr><td><a href="#FT_ENC_TAG">FT_ENC_TAG</a></td><td><a href="#FT_Done_FreeType">FT_Done_FreeType</a></td><td><a href="#FT_LOAD_NO_RECURSE">FT_LOAD_NO_RECURSE</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><a href="#FT_LOAD_PEDANTIC">FT_LOAD_PEDANTIC</a></td></tr>
+<tr><td><a href="#FT_FaceRec">FT_FaceRec</a></td><td><a href="#FT_New_Face">FT_New_Face</a></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td><a href="#FT_Done_Face">FT_Done_Face</a></td><td><a href="#FT_LOAD_TARGET_NORMAL">FT_LOAD_TARGET_NORMAL</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_SCALABLE">FT_FACE_FLAG_SCALABLE</a></td><td><a href="#FT_Reference_Face">FT_Reference_Face</a></td><td><a href="#FT_LOAD_TARGET_LIGHT">FT_LOAD_TARGET_LIGHT</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_FIXED_SIZES">FT_FACE_FLAG_FIXED_SIZES</a></td><td><a href="#FT_New_Memory_Face">FT_New_Memory_Face</a></td><td><a href="#FT_LOAD_TARGET_MONO">FT_LOAD_TARGET_MONO</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_FIXED_WIDTH">FT_FACE_FLAG_FIXED_WIDTH</a></td><td><a href="#FT_Open_Face">FT_Open_Face</a></td><td><a href="#FT_LOAD_TARGET_LCD">FT_LOAD_TARGET_LCD</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_HORIZONTAL">FT_FACE_FLAG_HORIZONTAL</a></td><td><a href="#FT_Open_Args">FT_Open_Args</a></td><td><a href="#FT_LOAD_TARGET_LCD_V">FT_LOAD_TARGET_LCD_V</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_VERTICAL">FT_FACE_FLAG_VERTICAL</a></td><td><a href="#FT_Parameter">FT_Parameter</a></td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_FACE_FLAG_COLOR">FT_FACE_FLAG_COLOR</a></td><td><a href="#FT_Attach_File">FT_Attach_File</a></td><td><a href="#FT_LOAD_TARGET_MODE">FT_LOAD_TARGET_MODE</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_SFNT">FT_FACE_FLAG_SFNT</a></td><td><a href="#FT_Attach_Stream">FT_Attach_Stream</a></td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_FACE_FLAG_CID_KEYED">FT_FACE_FLAG_CID_KEYED</a></td><td>&nbsp;</td><td><a href="#FT_Render_Glyph">FT_Render_Glyph</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_TRICKY">FT_FACE_FLAG_TRICKY</a></td><td><a href="#FT_Set_Char_Size">FT_Set_Char_Size</a></td><td><a href="#FT_Render_Mode">FT_Render_Mode</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_KERNING">FT_FACE_FLAG_KERNING</a></td><td><a href="#FT_Set_Pixel_Sizes">FT_Set_Pixel_Sizes</a></td><td><a href="#FT_Get_Kerning">FT_Get_Kerning</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_MULTIPLE_MASTERS">FT_FACE_FLAG_MULTIPLE_MASTERS</a></td><td><a href="#FT_Request_Size">FT_Request_Size</a></td><td><a href="#FT_Kerning_Mode">FT_Kerning_Mode</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_GLYPH_NAMES">FT_FACE_FLAG_GLYPH_NAMES</a></td><td><a href="#FT_Select_Size">FT_Select_Size</a></td><td><a href="#FT_Get_Track_Kerning">FT_Get_Track_Kerning</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_EXTERNAL_STREAM">FT_FACE_FLAG_EXTERNAL_STREAM</a></td><td><a href="#FT_Size_Request_Type">FT_Size_Request_Type</a></td><td><a href="#FT_Get_Glyph_Name">FT_Get_Glyph_Name</a></td></tr>
+<tr><td><a href="#FT_FACE_FLAG_HINTER">FT_FACE_FLAG_HINTER</a></td><td><a href="#FT_Size_RequestRec">FT_Size_RequestRec</a></td><td><a href="#FT_Get_Postscript_Name">FT_Get_Postscript_Name</a></td></tr>
+<tr><td>&nbsp;</td><td><a href="#FT_Size_Request">FT_Size_Request</a></td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_HAS_HORIZONTAL">FT_HAS_HORIZONTAL</a></td><td><a href="#FT_Set_Transform">FT_Set_Transform</a></td><td><a href="#FT_CharMapRec">FT_CharMapRec</a></td></tr>
+<tr><td><a href="#FT_HAS_VERTICAL">FT_HAS_VERTICAL</a></td><td><a href="#FT_Load_Glyph">FT_Load_Glyph</a></td><td><a href="#FT_Select_Charmap">FT_Select_Charmap</a></td></tr>
+<tr><td><a href="#FT_HAS_KERNING">FT_HAS_KERNING</a></td><td><a href="#FT_Get_Char_Index">FT_Get_Char_Index</a></td><td><a href="#FT_Set_Charmap">FT_Set_Charmap</a></td></tr>
+<tr><td><a href="#FT_HAS_FIXED_SIZES">FT_HAS_FIXED_SIZES</a></td><td><a href="#FT_Get_First_Char">FT_Get_First_Char</a></td><td><a href="#FT_Get_Charmap_Index">FT_Get_Charmap_Index</a></td></tr>
+<tr><td><a href="#FT_HAS_GLYPH_NAMES">FT_HAS_GLYPH_NAMES</a></td><td><a href="#FT_Get_Next_Char">FT_Get_Next_Char</a></td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_HAS_MULTIPLE_MASTERS">FT_HAS_MULTIPLE_MASTERS</a></td><td><a href="#FT_Get_Name_Index">FT_Get_Name_Index</a></td><td><a href="#FT_Get_FSType_Flags">FT_Get_FSType_Flags</a></td></tr>
+<tr><td><a href="#FT_HAS_COLOR">FT_HAS_COLOR</a></td><td><a href="#FT_Load_Char">FT_Load_Char</a></td><td><a href="#FT_Get_SubGlyph_Info">FT_Get_SubGlyph_Info</a></td></tr>
 <tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_FaceRec">FT_FaceRec</a></td><td><a href="#FT_New_Face">FT_New_Face</a></td><td><a href="#FT_LOAD_TARGET_NORMAL">FT_LOAD_TARGET_NORMAL</a></td></tr>
-<tr><td>&nbsp;</td><td><a href="#FT_Done_Face">FT_Done_Face</a></td><td><a href="#FT_LOAD_TARGET_LIGHT">FT_LOAD_TARGET_LIGHT</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_SCALABLE">FT_FACE_FLAG_SCALABLE</a></td><td><a href="#FT_Reference_Face">FT_Reference_Face</a></td><td><a href="#FT_LOAD_TARGET_MONO">FT_LOAD_TARGET_MONO</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_FIXED_SIZES">FT_FACE_FLAG_FIXED_SIZES</a></td><td><a href="#FT_New_Memory_Face">FT_New_Memory_Face</a></td><td><a href="#FT_LOAD_TARGET_LCD">FT_LOAD_TARGET_LCD</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_FIXED_WIDTH">FT_FACE_FLAG_FIXED_WIDTH</a></td><td><a href="#FT_Open_Face">FT_Open_Face</a></td><td><a href="#FT_LOAD_TARGET_LCD_V">FT_LOAD_TARGET_LCD_V</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_HORIZONTAL">FT_FACE_FLAG_HORIZONTAL</a></td><td><a href="#FT_Open_Args">FT_Open_Args</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_FACE_FLAG_VERTICAL">FT_FACE_FLAG_VERTICAL</a></td><td><a href="#FT_Parameter">FT_Parameter</a></td><td><a href="#FT_LOAD_TARGET_MODE">FT_LOAD_TARGET_MODE</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_COLOR">FT_FACE_FLAG_COLOR</a></td><td><a href="#FT_Attach_File">FT_Attach_File</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_FACE_FLAG_SFNT">FT_FACE_FLAG_SFNT</a></td><td><a href="#FT_Attach_Stream">FT_Attach_Stream</a></td><td><a href="#FT_Render_Glyph">FT_Render_Glyph</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_CID_KEYED">FT_FACE_FLAG_CID_KEYED</a></td><td>&nbsp;</td><td><a href="#FT_Render_Mode">FT_Render_Mode</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_TRICKY">FT_FACE_FLAG_TRICKY</a></td><td><a href="#FT_Set_Char_Size">FT_Set_Char_Size</a></td><td><a href="#FT_Get_Kerning">FT_Get_Kerning</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_KERNING">FT_FACE_FLAG_KERNING</a></td><td><a href="#FT_Set_Pixel_Sizes">FT_Set_Pixel_Sizes</a></td><td><a href="#FT_Kerning_Mode">FT_Kerning_Mode</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_MULTIPLE_MASTERS">FT_FACE_FLAG_MULTIPLE_MASTERS</a></td><td><a href="#FT_Request_Size">FT_Request_Size</a></td><td><a href="#FT_Get_Track_Kerning">FT_Get_Track_Kerning</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_GLYPH_NAMES">FT_FACE_FLAG_GLYPH_NAMES</a></td><td><a href="#FT_Select_Size">FT_Select_Size</a></td><td><a href="#FT_Get_Glyph_Name">FT_Get_Glyph_Name</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_EXTERNAL_STREAM">FT_FACE_FLAG_EXTERNAL_STREAM</a></td><td><a href="#FT_Size_Request_Type">FT_Size_Request_Type</a></td><td><a href="#FT_Get_Postscript_Name">FT_Get_Postscript_Name</a></td></tr>
-<tr><td><a href="#FT_FACE_FLAG_HINTER">FT_FACE_FLAG_HINTER</a></td><td><a href="#FT_Size_RequestRec">FT_Size_RequestRec</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_FACE_FLAG_TRICKY">FT_FACE_FLAG_TRICKY</a></td><td><a href="#FT_Size_Request">FT_Size_Request</a></td><td><a href="#FT_CharMapRec">FT_CharMapRec</a></td></tr>
-<tr><td>&nbsp;</td><td><a href="#FT_Set_Transform">FT_Set_Transform</a></td><td><a href="#FT_Select_Charmap">FT_Select_Charmap</a></td></tr>
-<tr><td><a href="#FT_HAS_HORIZONTAL">FT_HAS_HORIZONTAL</a></td><td><a href="#FT_Load_Glyph">FT_Load_Glyph</a></td><td><a href="#FT_Set_Charmap">FT_Set_Charmap</a></td></tr>
-<tr><td><a href="#FT_HAS_VERTICAL">FT_HAS_VERTICAL</a></td><td><a href="#FT_Get_Char_Index">FT_Get_Char_Index</a></td><td><a href="#FT_Get_Charmap_Index">FT_Get_Charmap_Index</a></td></tr>
-<tr><td><a href="#FT_HAS_KERNING">FT_HAS_KERNING</a></td><td><a href="#FT_Get_First_Char">FT_Get_First_Char</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_HAS_FIXED_SIZES">FT_HAS_FIXED_SIZES</a></td><td><a href="#FT_Get_Next_Char">FT_Get_Next_Char</a></td><td><a href="#FT_Get_FSType_Flags">FT_Get_FSType_Flags</a></td></tr>
-<tr><td><a href="#FT_HAS_GLYPH_NAMES">FT_HAS_GLYPH_NAMES</a></td><td><a href="#FT_Get_Name_Index">FT_Get_Name_Index</a></td><td><a href="#FT_Get_SubGlyph_Info">FT_Get_SubGlyph_Info</a></td></tr>
-<tr><td><a href="#FT_HAS_MULTIPLE_MASTERS">FT_HAS_MULTIPLE_MASTERS</a></td><td><a href="#FT_Load_Char">FT_Load_Char</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_HAS_COLOR">FT_HAS_COLOR</a></td><td>&nbsp;</td><td><a href="#FT_Face_Internal">FT_Face_Internal</a></td></tr>
-<tr><td>&nbsp;</td><td><a href="#FT_OPEN_MEMORY">FT_OPEN_MEMORY</a></td><td><a href="#FT_Size_Internal">FT_Size_Internal</a></td></tr>
-<tr><td><a href="#FT_IS_SFNT">FT_IS_SFNT</a></td><td><a href="#FT_OPEN_STREAM">FT_OPEN_STREAM</a></td><td><a href="#FT_Slot_Internal">FT_Slot_Internal</a></td></tr>
-<tr><td><a href="#FT_IS_SCALABLE">FT_IS_SCALABLE</a></td><td><a href="#FT_OPEN_PATHNAME">FT_OPEN_PATHNAME</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_IS_FIXED_WIDTH">FT_IS_FIXED_WIDTH</a></td><td><a href="#FT_OPEN_DRIVER">FT_OPEN_DRIVER</a></td><td><a href="#FT_FACE_FLAG_XXX">FT_FACE_FLAG_XXX</a></td></tr>
-<tr><td><a href="#FT_IS_CID_KEYED">FT_IS_CID_KEYED</a></td><td><a href="#FT_OPEN_PARAMS">FT_OPEN_PARAMS</a></td><td><a href="#FT_STYLE_FLAG_XXX">FT_STYLE_FLAG_XXX</a></td></tr>
-<tr><td><a href="#FT_IS_TRICKY">FT_IS_TRICKY</a></td><td>&nbsp;</td><td><a href="#FT_OPEN_XXX">FT_OPEN_XXX</a></td></tr>
-<tr><td>&nbsp;</td><td><a href="#FT_LOAD_DEFAULT">FT_LOAD_DEFAULT</a></td><td><a href="#FT_LOAD_XXX">FT_LOAD_XXX</a></td></tr>
-<tr><td><a href="#FT_STYLE_FLAG_BOLD">FT_STYLE_FLAG_BOLD</a></td><td><a href="#FT_LOAD_RENDER">FT_LOAD_RENDER</a></td><td><a href="#FT_LOAD_TARGET_XXX">FT_LOAD_TARGET_XXX</a></td></tr>
-<tr><td><a href="#FT_STYLE_FLAG_ITALIC">FT_STYLE_FLAG_ITALIC</a></td><td><a href="#FT_LOAD_MONOCHROME">FT_LOAD_MONOCHROME</a></td><td><a href="#FT_SUBGLYPH_FLAG_XXX">FT_SUBGLYPH_FLAG_XXX</a></td></tr>
-<tr><td>&nbsp;</td><td><a href="#FT_LOAD_LINEAR_DESIGN">FT_LOAD_LINEAR_DESIGN</a></td><td><a href="#FT_FSTYPE_XXX">FT_FSTYPE_XXX</a></td></tr>
-<tr><td><a href="#FT_SizeRec">FT_SizeRec</a></td><td><a href="#FT_LOAD_NO_SCALE">FT_LOAD_NO_SCALE</a></td><td>&nbsp;</td></tr>
-<tr><td><a href="#FT_Size_Metrics">FT_Size_Metrics</a></td><td><a href="#FT_LOAD_NO_HINTING">FT_LOAD_NO_HINTING</a></td><td><a href="#FT_HAS_FAST_GLYPHS">FT_HAS_FAST_GLYPHS</a></td></tr>
-<tr><td>&nbsp;</td><td><a href="#FT_LOAD_NO_BITMAP">FT_LOAD_NO_BITMAP</a></td><td></td></tr>
-<tr><td><a href="#FT_GlyphSlotRec">FT_GlyphSlotRec</a></td><td><a href="#FT_LOAD_NO_AUTOHINT">FT_LOAD_NO_AUTOHINT</a></td><td></td></tr>
+<tr><td><a href="#FT_IS_SFNT">FT_IS_SFNT</a></td><td><a href="#FT_OPEN_MEMORY">FT_OPEN_MEMORY</a></td><td><a href="#FT_Face_Internal">FT_Face_Internal</a></td></tr>
+<tr><td><a href="#FT_IS_SCALABLE">FT_IS_SCALABLE</a></td><td><a href="#FT_OPEN_STREAM">FT_OPEN_STREAM</a></td><td><a href="#FT_Size_Internal">FT_Size_Internal</a></td></tr>
+<tr><td><a href="#FT_IS_FIXED_WIDTH">FT_IS_FIXED_WIDTH</a></td><td><a href="#FT_OPEN_PATHNAME">FT_OPEN_PATHNAME</a></td><td><a href="#FT_Slot_Internal">FT_Slot_Internal</a></td></tr>
+<tr><td><a href="#FT_IS_CID_KEYED">FT_IS_CID_KEYED</a></td><td><a href="#FT_OPEN_DRIVER">FT_OPEN_DRIVER</a></td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_IS_TRICKY">FT_IS_TRICKY</a></td><td><a href="#FT_OPEN_PARAMS">FT_OPEN_PARAMS</a></td><td><a href="#FT_FACE_FLAG_XXX">FT_FACE_FLAG_XXX</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;</td><td><a href="#FT_STYLE_FLAG_XXX">FT_STYLE_FLAG_XXX</a></td></tr>
+<tr><td><a href="#FT_STYLE_FLAG_BOLD">FT_STYLE_FLAG_BOLD</a></td><td><a href="#FT_LOAD_DEFAULT">FT_LOAD_DEFAULT</a></td><td><a href="#FT_OPEN_XXX">FT_OPEN_XXX</a></td></tr>
+<tr><td><a href="#FT_STYLE_FLAG_ITALIC">FT_STYLE_FLAG_ITALIC</a></td><td><a href="#FT_LOAD_RENDER">FT_LOAD_RENDER</a></td><td><a href="#FT_LOAD_XXX">FT_LOAD_XXX</a></td></tr>
+<tr><td>&nbsp;</td><td><a href="#FT_LOAD_MONOCHROME">FT_LOAD_MONOCHROME</a></td><td><a href="#FT_LOAD_TARGET_XXX">FT_LOAD_TARGET_XXX</a></td></tr>
+<tr><td><a href="#FT_SizeRec">FT_SizeRec</a></td><td><a href="#FT_LOAD_LINEAR_DESIGN">FT_LOAD_LINEAR_DESIGN</a></td><td><a href="#FT_SUBGLYPH_FLAG_XXX">FT_SUBGLYPH_FLAG_XXX</a></td></tr>
+<tr><td><a href="#FT_Size_Metrics">FT_Size_Metrics</a></td><td><a href="#FT_LOAD_NO_SCALE">FT_LOAD_NO_SCALE</a></td><td><a href="#FT_FSTYPE_XXX">FT_FSTYPE_XXX</a></td></tr>
+<tr><td>&nbsp;</td><td><a href="#FT_LOAD_NO_HINTING">FT_LOAD_NO_HINTING</a></td><td>&nbsp;</td></tr>
+<tr><td><a href="#FT_GlyphSlotRec">FT_GlyphSlotRec</a></td><td><a href="#FT_LOAD_NO_BITMAP">FT_LOAD_NO_BITMAP</a></td><td><a href="#FT_HAS_FAST_GLYPHS">FT_HAS_FAST_GLYPHS</a></td></tr>
 </table>
 
 
@@ -2080,21 +2079,6 @@
 </pre>
 
 <p>Convert a given glyph image to a bitmap. It does so by inspecting the glyph image format, finding the relevant renderer, and invoking it.</p>
-<p>When FreeType outputs a bitmap of a glyph, it really outputs an alpha coverage map. If a pixel is completely covered by a filled-in outline, the bitmap contains 0xFF at that pixel, meaning that 0xFF/0xFF fraction of that pixel is covered, meaning the pixel is 100% black (or 0% bright). If a pixel is only 50% covered (value 0x80), the pixel is made 50% black (50% bright or a middle shade of grey). 0% covered means 0% black (100% bright or white).</p>
-<p>On high-DPI screens like on smartphones and tablets, the pixels are so small that their chance of being completely covered and therefore completely black are fairly good. On the low-DPI screens, however, the situation is different. The pixels are too large for most of the details of a glyph and shades of gray are the norm rather than the exception.</p>
-<p>This is relevant because all our screens have a second problem: they are not linear. 1&nbsp;+&nbsp;1 is not&nbsp;2. Twice the value does not result in twice the brightness. When a pixel is only 50% covered, the coverage map says 50% black, and this translates to a pixel value of 128 when you use 8&nbsp;bits per channel (0-255). However, this does not translate to 50% brightness for that pixel on our sRGB and gamma&nbsp;2.2 screens. Due to their non-linearity, they dwell longer in the darks and only a pixel value of about 186 results in 50% brightness – 128 ends up too dark on both bright and dark backgrounds. The net result is that dark text looks burnt-out, pixely and blotchy on bright background, bright text too frail on dark backgrounds, and colored text on colored background (for example, red on green) seems to have dark halos or &lsquo;dirt&rsquo; around it. The situation is especially ugly for diagonal stems like in &lsquo;w&rsquo; glyph shapes where the quality of FreeType's anti-aliasing depends on the correct display of grays. On high-DPI screens where smaller, fully black pixels reign supreme, this doesn't matter, but on our low-DPI screens with all the gray shades, it does. 0% and 100% brightness are the same things in linear and non-linear space, just all the shades in-between aren't.</p>
-<p>The blending function for placing text over a background is</p>
-<pre class="colored">
-  dst = alpha * src + (1 - alpha) * dst    ,                       
-</pre>
-<p>which is known as the OVER operator.</p>
-<p>To correctly composite an antialiased pixel of a glyph onto a surface,</p>
-<p>1. take the foreground and background colors (e.g., in sRGB space) and apply gamma to get them in a linear space,</p>
-<p>2. use OVER to blend the two linear colors using the glyph pixel as the alpha value (remember, the glyph bitmap is an alpha coverage bitmap), and</p>
-<p>3. apply inverse gamma to the blended pixel and write it back to the image.</p>
-<p>Internal testing at Adobe found that a target inverse gamma of&nbsp;1.8 for step&nbsp;3 gives good results across a wide range of displays with an sRGB gamma curve or a similar one.</p>
-<p>This process can cost performance. There is an approximation that does not need to know about the background color; see <a href="https://bel.fi/alankila/lcd/">https://bel.fi/alankila/lcd/</a> and <a href="https://bel.fi/alankila/lcd/alpcor.html">https://bel.fi/alankila/lcd/alpcor.html</a> for details.</p>
-<p><b>ATTENTION</b>: Linear blending is even more important when dealing with subpixel-rendered glyphs to prevent color-fringing! A subpixel-rendered glyph must first be filtered with a filter that gives equal weight to the three color primaries and does not exceed a sum of 0x100, see section &lsquo;<a href="ft2-lcd_filtering.html#lcd_filtering">LCD Filtering</a>&rsquo;. Then the only difference to gray linear blending is that subpixel-rendered linear blending is done 3&nbsp;times per pixel: red foreground subpixel to red background subpixel and so on for green and blue.</p>
 
 <h4>inout</h4>
 <table class="fields">
@@ -2115,6 +2099,21 @@
 
 <h4>note</h4>
 <p>To get meaningful results, font scaling values must be set with functions like <a href="ft2-base_interface.html#FT_Set_Char_Size">FT_Set_Char_Size</a> before calling FT_Render_Glyph.</p>
+<p>When FreeType outputs a bitmap of a glyph, it really outputs an alpha coverage map. If a pixel is completely covered by a filled-in outline, the bitmap contains 0xFF at that pixel, meaning that 0xFF/0xFF fraction of that pixel is covered, meaning the pixel is 100% black (or 0% bright). If a pixel is only 50% covered (value 0x80), the pixel is made 50% black (50% bright or a middle shade of grey). 0% covered means 0% black (100% bright or white).</p>
+<p>On high-DPI screens like on smartphones and tablets, the pixels are so small that their chance of being completely covered and therefore completely black are fairly good. On the low-DPI screens, however, the situation is different. The pixels are too large for most of the details of a glyph and shades of gray are the norm rather than the exception.</p>
+<p>This is relevant because all our screens have a second problem: they are not linear. 1&nbsp;+&nbsp;1 is not&nbsp;2. Twice the value does not result in twice the brightness. When a pixel is only 50% covered, the coverage map says 50% black, and this translates to a pixel value of 128 when you use 8&nbsp;bits per channel (0-255). However, this does not translate to 50% brightness for that pixel on our sRGB and gamma&nbsp;2.2 screens. Due to their non-linearity, they dwell longer in the darks and only a pixel value of about 186 results in 50% brightness – 128 ends up too dark on both bright and dark backgrounds. The net result is that dark text looks burnt-out, pixely and blotchy on bright background, bright text too frail on dark backgrounds, and colored text on colored background (for example, red on green) seems to have dark halos or &lsquo;dirt&rsquo; around it. The situation is especially ugly for diagonal stems like in &lsquo;w&rsquo; glyph shapes where the quality of FreeType's anti-aliasing depends on the correct display of grays. On high-DPI screens where smaller, fully black pixels reign supreme, this doesn't matter, but on our low-DPI screens with all the gray shades, it does. 0% and 100% brightness are the same things in linear and non-linear space, just all the shades in-between aren't.</p>
+<p>The blending function for placing text over a background is</p>
+<pre class="colored">
+  dst = alpha * src + (1 - alpha) * dst    ,                       
+</pre>
+<p>which is known as the OVER operator.</p>
+<p>To correctly composite an antialiased pixel of a glyph onto a surface,</p>
+<p>1. take the foreground and background colors (e.g., in sRGB space) and apply gamma to get them in a linear space,</p>
+<p>2. use OVER to blend the two linear colors using the glyph pixel as the alpha value (remember, the glyph bitmap is an alpha coverage bitmap), and</p>
+<p>3. apply inverse gamma to the blended pixel and write it back to the image.</p>
+<p>Internal testing at Adobe found that a target inverse gamma of&nbsp;1.8 for step&nbsp;3 gives good results across a wide range of displays with an sRGB gamma curve or a similar one.</p>
+<p>This process can cost performance. There is an approximation that does not need to know about the background color; see <a href="https://bel.fi/alankila/lcd/">https://bel.fi/alankila/lcd/</a> and <a href="https://bel.fi/alankila/lcd/alpcor.html">https://bel.fi/alankila/lcd/alpcor.html</a> for details.</p>
+<p><b>ATTENTION</b>: Linear blending is even more important when dealing with subpixel-rendered glyphs to prevent color-fringing! A subpixel-rendered glyph must first be filtered with a filter that gives equal weight to the three color primaries and does not exceed a sum of 0x100, see section &lsquo;<a href="ft2-lcd_filtering.html#lcd_filtering">LCD Filtering</a>&rsquo;. Then the only difference to gray linear blending is that subpixel-rendered linear blending is done 3&nbsp;times per pixel: red foreground subpixel to red background subpixel and so on for green and blue.</p>
 
 <hr>
 <table class="index-toc-link"><tr><td class="left">[<a href="ft2-index.html">Index</a>]</td><td class="middle">[<a href="#">Top</a>]</td><td class="right">[<a href="ft2-toc.html">TOC</a>]</td></tr></table></div>
