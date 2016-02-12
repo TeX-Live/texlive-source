@@ -1,3 +1,9 @@
+2016-02-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_pdfm.c: Remove maybe-redundant code to obtain consistency
+	between dvi (dvipdfmx) and xdv (xdvipdfmx) with respect to
+	\special{pdf:dest...}.
+
 2016-02-09  Jiang Jiang  <gzjjgod@gmail.com>
 
 	* dvi.c: Tweak skip_native_font_def() to make it handle more
