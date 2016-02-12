@@ -113,8 +113,10 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-upmendex_SOURCES = upmendex.c
-upmendex_OBJECTS = upmendex.$(OBJEXT)
+am_upmendex_OBJECTS = convert.$(OBJEXT) fread.$(OBJEXT) fwrite.$(OBJEXT) \
+	kp.$(OBJEXT) main.$(OBJEXT) pageread.$(OBJEXT) qsort.$(OBJEXT) \
+	sort.$(OBJEXT) styfile.$(OBJEXT)
+upmendex_OBJECTS = $(am_upmendex_OBJECTS)
 upmendex_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 upmendex_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -156,8 +158,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = upmendex.c
-DIST_SOURCES = upmendex.c
+SOURCES = $(upmendex_SOURCES)
+DIST_SOURCES = $(upmendex_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -545,7 +547,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
 AM_CFLAGS = $(WARNING_CFLAGS)
-mendex_SOURCES = \
+upmendex_SOURCES = \
 	convert.c \
 	exkana.h \
 	exvar.h \
@@ -1234,7 +1236,7 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-$(mendex_OBJECTS): $(KPATHSEA_DEPEND)
+$(upmendex_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 @ICU_RULE@
