@@ -2528,9 +2528,12 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 FILENAME_VERSION="4_1_0-beta3"
 
+
 cat >>confdefs.h <<_ACEOF
 #define FILENAME_VERSION "$FILENAME_VERSION"
 _ACEOF
+
+
 
 ac_aux_dir=
 for ac_dir in ../../build-aux "$srcdir"/../../build-aux; do
