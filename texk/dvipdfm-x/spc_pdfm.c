@@ -1073,8 +1073,17 @@ spc_handler_pdfm_dest (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
+/*
+ * -- FIX ME --
+ * Why reencode here for xdv only? If we disable this reencoding,
+ * it seems that dvi and xdv become consistent with respect to
+ * \special{pdf:dest...}, when we use \special{pdf:tounicode UTF8-UTF16}
+ * in both cases.
+ */
+#if 0
   if (is_xdv && maybe_reencode_utf8(name) < 0)
     WARN("Failed to convert input string to UTF16...");
+#endif
 
   array = parse_pdf_object(&args->curptr, args->endptr, NULL);
   if (!array) {
