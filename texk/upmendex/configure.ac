@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2016 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -13,6 +14,7 @@ AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 AC_PROG_CXX
+KPSE_CXX_HACK
 
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([upmendex], [no-define])
