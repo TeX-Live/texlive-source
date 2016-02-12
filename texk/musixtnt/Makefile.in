@@ -113,16 +113,16 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am__DEPENDENCIES_1 =
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 am_msxlint_OBJECTS = @MUSIXTNT_TREE@/msxlint.$(OBJEXT) \
 	@MUSIXTNT_TREE@/utils.$(OBJEXT)
 msxlint_OBJECTS = $(am_msxlint_OBJECTS)
 msxlint_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
 msxlint_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -675,10 +675,9 @@ clean-binPROGRAMS:
 @MUSIXTNT_TREE@/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) @MUSIXTNT_TREE@/$(DEPDIR)
 	@: > @MUSIXTNT_TREE@/$(DEPDIR)/$(am__dirstamp)
-@MUSIXTNT_TREE@/utils.$(OBJEXT): @MUSIXTNT_TREE@/$(am__dirstamp) \
-	@MUSIXTNT_TREE@/$(DEPDIR)/$(am__dirstamp)
-
 @MUSIXTNT_TREE@/msxlint.$(OBJEXT): @MUSIXTNT_TREE@/$(am__dirstamp) \
+	@MUSIXTNT_TREE@/$(DEPDIR)/$(am__dirstamp)
+@MUSIXTNT_TREE@/utils.$(OBJEXT): @MUSIXTNT_TREE@/$(am__dirstamp) \
 	@MUSIXTNT_TREE@/$(DEPDIR)/$(am__dirstamp)
 
 msxlint$(EXEEXT): $(msxlint_OBJECTS) $(msxlint_DEPENDENCIES) $(EXTRA_msxlint_DEPENDENCIES) 
