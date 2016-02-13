@@ -238,7 +238,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
 	echo ${UNAME_MACHINE_ARCH}-unknown-openbsd${UNAME_RELEASE}
 	exit ;;
     *:LibertyBSD:*:*)
-	UNAME_MACHINE_ARCH=`arch | sed 's/LibertyBSD.//'`
+	UNAME_MACHINE_ARCH=`arch | sed 's/^.*BSD\.//'`
 	echo ${UNAME_MACHINE_ARCH}-unknown-libertybsd${UNAME_RELEASE}
 	exit ;;
     *:ekkoBSD:*:*)
