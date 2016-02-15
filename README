@@ -51,7 +51,7 @@ amd64-netbsd:
   and maybe others) that are to be found in different locations on the
   different systems.
   
-i386-solaris, x86_64-solaris: Solaris 10.
+i386-solaris, x86_64-solaris: Solaris 10.  See doc/README.solaris.
 
 i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.
   ./Build (with --enable-xindy for i386).
@@ -61,7 +61,7 @@ powerpc-linux (Debian Squeeze)
   ppc64 Debian GNU/Linux 6.0
   (only the kernel is 64bit, the entire userland is 32bit)
 
-sparc-solaris: Solaris 10, gcc.  Detailed wget/xz info in doc/README.solaris.
+sparc-solaris: Solaris 10, gcc.  See doc/README.solaris.
 
 universal-darwin, x86_64-darwin: a menagerie of versions.
   See Master/source/mactexdoc.tar.xz.

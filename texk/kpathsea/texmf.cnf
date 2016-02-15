@@ -554,10 +554,10 @@ shell_escape = p
 % 
 % The programs listed here are as safe as any we know: they either do
 % not write any output files, respect openout_any, or have hard-coded
-% restrictions similar or higher to openout_any=p.  They also have no
-% features to invoke arbitrary other programs, and no known exploitable
-% bugs.  All to the best of our knowledge.  They also have practical use
-% for being called from TeX.
+% restrictions similar to or higher than openout_any=p.  They also have
+% no features to invoke arbitrary other programs, and no known
+% exploitable bugs.  All to the best of our knowledge.  They also have
+% practical use for being called from TeX.
 % 
 shell_escape_commands = \
 bibtex,bibtex8,\
@@ -581,7 +581,7 @@ repstopdf,\
 % ulqda - but requires optional SHA1.pm, so why bother.
 % tex, latex, etc. - need to forbid --shell-escape, and inherit openout_any.
 
-% plain TeX should remain unenhanced.
+% plain "tex" should remain unenhanced.
 shell_escape.tex = f
 shell_escape.initex = f
 
@@ -591,14 +591,15 @@ shell_escape.initex = f
 TEXMF_RESTRICTED_SCRIPTS = \
   {!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
 
-% Allow TeX \openin, \openout, or \input on filenames starting with `.'
-% (e.g., .rhosts) or outside the current tree (e.g., /etc/passwd)?
+% Do we allow TeX \input or \openin (openin_any), or \openout
+% (openout_any) on filenames starting with `.' (e.g., .rhosts) or
+% outside the current tree (e.g., /etc/passwd)?
 % a (any)        : any file can be opened.
-% r (restricted) : disallow opening "dotfiles".
+% r (restricted) : disallow opening dot files
 % p (paranoid)   : as `r' and disallow going to parent directories, and
 %                  restrict absolute paths to be under $TEXMFOUTPUT.
-openout_any = p
 openin_any = a
+openout_any = p
 
 % Write .log/.dvi/etc. files here, if the current directory is unwritable.
 %TEXMFOUTPUT = /tmp
@@ -614,7 +615,7 @@ MISSFONT_LOG = missfont.log
 % To suppress nothing, use TEX_HUSH = none or do not set the variable at all.
 TEX_HUSH = none
 
-% Allow TeX, and MF to parse the first line of an input file for
+% Allow TeX and MF to parse the first line of an input file for
 % the %&format construct.
 parse_first_line = t
 

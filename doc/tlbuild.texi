@@ -1,8 +1,8 @@
 \input texinfo
 @setfilename tlbuild.info
 
-@set version 2015
-@set month-year May 2015
+@set version 2016
+@set month-year February 2016
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -14,6 +14,7 @@
 @copying
 This file documents the @TL{} build system and more.
 
+Copyright @copyright{} 2016 Karl Berry.@*
 Copyright @copyright{} 2013, 2014, 2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
@@ -47,7 +48,7 @@ approved by the @TeX{} Users Group.
 
 @dircategory TeX
 @direntry
-* TL-build: (tlbuild).          TeX Live configuration and development.
+* TLbuild: (tlbuild).           TeX Live configuration and development.
 @end direntry
 
 @titlepage
@@ -56,7 +57,7 @@ approved by the @TeX{} Users Group.
 @subtitle @value{month-year}
 @author Peter Breitenlohner
 @author Karl Berry
-@author @url{http://tug.org/tex-live}
+@author @url{http://tug.org/texlive}
 
 @page
 @vskip 0pt plus 1filll
@@ -98,8 +99,16 @@ This manual (dated @value{month-year}) corresponds to the @TL{}
 @value{version} release.
 
 This manual is aimed at system installers and programmers, and focuses
-on how to configure, build, and develop the @TL{} (TL) sources.  The
-sources can be acquired in a number of ways; see
+on how to configure, build, and develop the @TL{} (TL) sources.  It is
+also available as plain text files in the source tree:
+@file{source/README.*}.
+
+The @file{source/README} file in the TL source tree provides the
+maximally-terse information for doing a build, and portability
+information for different systems, along with
+@file{source/doc/README.solaris}.
+
+For information on acquiring the TL sources, see
 @url{http://tug.org/texlive/svn}.
 
 This manual does not duplicate the (primarily user-level) information
@@ -387,6 +396,7 @@ suffices to build and install all of TL.
 This is useful for checking consistency of the source tree and
 Makefiles, but the result is not a complete or even usable @TeX{}
 system, since all the support files are lacking; @pxref{Installing}.
+
 
 @node Build one package
 @section Build one package
@@ -2203,17 +2213,11 @@ into a subdirectory that is configured natively as is done for
 @file{texk/web2c/web2c}, @file{texk/dvipsk/squeeze}, and
 @file{texk/xdvik/squeeze}.  The module @file{libs/freetype2} uses the
 value of @code{CC_BUILD}, @file{@var{build}-gcc}, @file{gcc}, or
-@file{cc} as compiler for the auxiliary program.
-
-@pindex txt2zlib
-Building Lua@TeX{} (or LuaJIT@TeX{}) uses the auxiliary program
-@file{txt2zlib} to create @file{pdflua.c} and, if necessary, update the
-distributed version of that file.  In a cross compilation we simply use that
-distributed file.
+@file{cc} as the compiler for the auxiliary program.
 
 @cindex ICU cross compiling
 The situation for installable programs needed by the build process is
-somewhat different.  A quite expensive possibility, chosen for the ICU
+somewhat different.  A rather expensive possibility, chosen for the ICU
 libraries in module @file{libs/icu}, is to first compile natively for
 the build system and in a second step to use these (uninstalled)
 programs during the cross compilation.

@@ -1,3 +1,12 @@
+2016-01-21  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Cross problems): Lua[JIT]TeX no longer uses
+	pdflua.c and thus no txt2zlib, so remove paragraph.
+	From Luigi, 18 Jan 2016 09:11:53.
+
+	* build-tools.txt (flex): now at 2.6.0.
+	(makeinfo): texinfo-6.1.
+
 2015-05-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* README.solaris (new): Moved from ../ to here.
