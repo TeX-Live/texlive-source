@@ -8,7 +8,7 @@ bibdoiadd.pl - add DOI numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibdoiadd [B<-c> I<config_file>]  [B<-o> I<output>] I<bib_file>
+bibdoiadd [B<-c> I<config_file>] [B<-f>] [B<-o> I<output>] I<bib_file>
 
 =head1 OPTIONS
 
@@ -19,6 +19,9 @@ bibdoiadd [B<-c> I<config_file>]  [B<-o> I<output>] I<bib_file>
 Configuration file.  If this file is absent, some defaults are used.
 See below for its format.
 
+=item B<-f>
+
+Force checking doi number even if one is present
 
 =item B<-o> I<output>
 
@@ -72,7 +75,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014  Boris Veytsman
+Copyright (C) 2014-2016  Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -82,19 +85,23 @@ extent permitted by law.
 =cut
 
 use strict;
-use Text::BibTeX;
-use Text::BibTeX::Name;
+BEGIN {
+    # find files relative to our installed location within TeX Live
+    chomp(my $TLMaster = `kpsewhich -var-value=SELFAUTOPARENT`); # TL root
+    if (length($TLMaster)) {
+	unshift @INC, "$TLMaster/texmf-dist/scripts/bibtexperllibs";
+    }
+}
+use IO::File;
+use BibTeX::Parser;
+use LaTeX::ToUnicode qw (convert);
 use Getopt::Std;
 use URI::Escape;
 use LWP::Simple;
-use TeX::Encode;
-use Encode;
-use HTML::Entities;
-use XML::Entities;
 
-my $USAGE="USAGE: $0 [-c config] [-o output] file\n";
+my $USAGE="USAGE: $0 [-c config] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibdoiadd v1.0
+bibdoiadd v2.0
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -102,7 +109,7 @@ extent permitted by law.
 $USAGE
 END
 my %opts;
-getopts('c:o:hV',\%opts) or die $USAGE;
+getopts('fc:o:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -122,6 +129,9 @@ $outputfile =~ s/\.([^\.]*)$/_doi.$1/;
 if ($opts{o}) {
     $outputfile = $opts{o};
 }
+
+my $forceSearch=$opts{f};
+
 
 our $mode='free';
 our $email;
@@ -149,10 +159,12 @@ if ($mode eq 'paid' && (!length($username) || !length($password))) {
 	"Crossref requires a username and password for the paid mode queries\n";
 }
 
-my $input = new Text::BibTeX::File "$inputfile" or 
-    die "Cannot BibTeX file $inputfile\n";
-my $output = new Text::BibTeX::File "> $outputfile" or 
-    die "Cannot write to $outputfile\n";
+my $input= IO::File->new($inputfile) or 
+    die "Cannot find BibTeX file $inputfile\n$USAGE\n";
+my $output = IO::File->new("> $outputfile") or 
+    die "Cannot write to $outputfile\n$USAGE\n";
+
+my $parser=new BibTeX::Parser($input);
 
 my $prefix = 
     "http://www.crossref.org/openurl?redirect=false";
@@ -164,30 +176,31 @@ if ($mode eq 'free') {
 }
 
 # Processing the input
-while (my $entry = new Text::BibTeX::Entry $input) {
+while (my $entry = $parser->next) {
     if (!$entry->parse_ok()) {
 	print STDERR "Cannot understand entry: ";
 	$entry->print(*STDERR);
 	print STDERR "Skipping this entry\n";
 	next;
     }
-    if (!(($entry->metatype() eq BTE_REGULAR) &&
-	  ($entry->type() eq 'article'))) {
-	$entry->write($output);
+
+    if (!($entry->type() eq 'ARTICLE')) {
+	print $output $entry->raw_bibtex(), "\n\n";
 	next;
     }
-    if ($entry->exists('doi')) {
-	$entry->write($output);
+    if ($entry->has('doi') && !$forceSearch) {
+	print $output $entry->raw_bibtex(), "\n\n";
 	next;
     }
     
+    
 
-    # Now we have an entry with no doi.  Let us get to work.
-    my $doi = GetDoi($prefix,$entry);
-    if (length($doi)) {
-	$entry->set('doi',$doi);
-    }
-    $entry->write($output);
+     my $doi = GetDoi($prefix, $entry);
+     if (length($doi)) {
+ 	$entry->field('doi',$doi);
+     }
+    print $output $entry->to_string(), "\n\n";
+
 
 }
 
@@ -201,33 +214,30 @@ exit 0;
 
 sub GetDoi {
     my ($url,$entry) = @_;
-    if ($entry->exists('issn')) {
-	$url .= "&issn=".uri_escape(SanitizeText($entry->get('issn')));
+    if ($entry->has('issn')) {
+	$url .= "&issn=".uri_escape_utf8(SanitizeText($entry->field('issn')));
     }
-    if ($entry->exists('journal')) {
-	$url .= "&title=".uri_escape(SanitizeText($entry->get('journal')));
+    if ($entry->has('journal')) {
+	$url .= "&title=".uri_escape_utf8(SanitizeText($entry->field('journal')));
     }
-    my @names=$entry->names ('author');
+    my @names=$entry->author();
     if (scalar(@names)) {
-	my @lastnames = $names[0]->part ('last');
-	if (scalar(@lastnames)) {
-	    my $lastname = SanitizeText(join(' ',@lastnames));
-	    $url .= "&aulast=".uri_escape($lastname);
-	}
+	my $lastname = SanitizeText($names[0]->last());
+	$url .= "&aulast=".uri_escape_utf8($lastname);
     }
-    if ($entry->exists('volume')) {
-	$url .= "&volume=".uri_escape($entry->get('volume'));
+    if ($entry->has('volume')) {
+	$url .= "&volume=".uri_escape_utf8($entry->field('volume'));
     }    
-    if ($entry->exists('number')) {
-	$url .= "&issue=".uri_escape($entry->get('number'));
+    if ($entry->has('number')) {
+	$url .= "&issue=".uri_escape_utf8($entry->field('number'));
     }    
-    if ($entry->exists('pages')) {
-	my $pages=$entry->get('pages');
+    if ($entry->has('pages')) {
+	my $pages=$entry->field('pages');
 	$pages =~ s/-.*$//;
-	$url .= "&spage=".uri_escape($pages);
+	$url .= "&spage=".uri_escape_utf8($pages);
     }    
-    if ($entry->exists('year')) {
-	$url .= "&date=".uri_escape($entry->get('year'));
+    if ($entry->has('year')) {
+	$url .= "&date=".uri_escape_utf8($entry->field('year'));
     }    
 
     my $result=get($url);
@@ -244,24 +254,22 @@ sub GetDoi {
 ###############################################################
 sub SanitizeText {
     my $string = shift;
-    # There is a bug in the decode function, which we need to work 
-    # around:  it adds space to constructions like \o x
-    $string =~ s/(\\[a-zA-Z])\s+/$1/g;
+    $string = convert($string);
     $string =~ s/\\newblock//g;
+    $string =~ s/\\bgroup//g;
+    $string =~ s/\\egroup//g;
+    $string =~ s/\\scshape//g;
     $string =~ s/\\urlprefix//g;
     $string =~ s/\\emph//g;
+    $string =~ s/\\textbf//g;
     $string =~ s/\\enquote//g;
     $string =~ s/\\url/URL: /g;
     $string =~ s/\\doi/DOI: /g;
     $string =~ s/\\\\/ /g;
-    $string = decode('latex', $string);
-    $string =~ s/\\[a-zA-Z]+/ /g;
-    $string =~ s/\\\\/ /g;
-    $string =~ s/[\[\{\}\]]/ /g;
-    $string = encode_entities($string);
-    $string = XML::Entities::numify('all', $string);
-    $string =~ s/amp;//g;
+    $string =~ s/\$//g;
+    $string =~ s/\\checkcomma/,/g;
     $string =~ s/~/ /g;
-    $string =~ s/\s*([\.;,])/$1/g;
+    $string =~ s/[\{\}]//g;
     return $string;
 }
+
