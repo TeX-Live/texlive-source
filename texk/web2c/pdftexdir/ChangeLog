@@ -1,3 +1,8 @@
+2016-02-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web, pdftoepdf.cc: Add \pdfsuppressptexinfo, imported from
+	the upstream.
+
 2016-01-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdftex.web: Avoid to crash for unusual virtual fonts which lead to
