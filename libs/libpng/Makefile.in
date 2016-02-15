@@ -561,7 +561,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(LIBPNG_TREE) $(LIBPNG_TREE)-PATCHES
+EXTRA_DIST = $(LIBPNG_TREE) libpng-PATCHES
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed

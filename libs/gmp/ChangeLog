@@ -1,3 +1,8 @@
+2016-02-15  Karl Berry  <karl@tug.org>
+
+	* gmp-PATCHES: rename from gmp-src-PATCHES.
+	* Makefile.am (EXTRA_DIST): likewise.
+
 2015-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import gmp-6.1.0.
