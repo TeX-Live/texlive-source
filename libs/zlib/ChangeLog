@@ -1,3 +1,8 @@
+2016-02-15  Karl Berry  <karl@tug.org>
+
+	* zlib-src: rename dir from zlib-1.2.8.
+	* zlib-PATCHES: rename dir from zlib-1.2.8-PATCHES.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
@@ -90,4 +95,3 @@
 
 	Adapt to TL2009 build system.
 	Add a test case for 'make check'.
-

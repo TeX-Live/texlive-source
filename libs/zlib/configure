@@ -585,7 +585,7 @@ PACKAGE_STRING='zlib (TeX Live) 1.2.8'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="zlib-1.2.8/zlib.h"
+ac_unique_file="zlib-src/zlib.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -5146,7 +5146,7 @@ $as_echo "#define STDC_HEADERS 1" >>confdefs.h
 fi
 
 if test "x$ac_cv_header_stdc" != xyes; then
-  as_fn_error $? "Sorry, can't do anything for you" "$LINENO" 5
+  as_fn_error $? "Sorry, can't do anything for you without header_stdc" "$LINENO" 5
 fi
 
 # On IRIX 5.3, sys/types and inttypes.h are conflicting.
@@ -5187,7 +5187,7 @@ fi
 
 done
 
-ZCONF_SRC=zlib-1.2.8/zconf.h.in
+ZCONF_SRC=zlib-src/zconf.h.in
 if test x"$ac_cv_header_unistd_h" = xyes; then
   zconf_sh='sed <$srcdir/'"$ZCONF_SRC"' "/^#ifdef HAVE_UNISTD_H.* may be/s/def HAVE_UNISTD_H\\(.*\\) may be/ 1\\1 was/" >'
 else
@@ -5568,7 +5568,7 @@ fi
 
 
 
-ZLIB_TREE=zlib-1.2.8
+ZLIB_TREE=zlib-src
 
 
 if test -f $srcdir/$ZLIB_TREE/zconf.h; then
