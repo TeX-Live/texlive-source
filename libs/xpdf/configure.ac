@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
+dnl   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
 dnl   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -9,7 +10,7 @@ dnl
 m4_include([version.ac])[] dnl define xpdf_version
 AC_INIT([xpdf (TeX Live)], xpdf_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([xpdf-]xpdf_version[/xpdf/Array.cc])
+AC_CONFIG_SRCDIR([xpdf-src/xpdf/Array.cc])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -82,7 +83,7 @@ AH_TOP([/*
 #undef USE_EXCEPTIONS])
 AH_BOTTOM([#endif])
 
-XPDF_TREE=xpdf-[]xpdf_version
+XPDF_TREE=xpdf-src
 AC_SUBST([XPDF_TREE])
 
 dnl Use $XPDF_TREE to exclude $XPDF_TREE/aconf2.h from DIST_COMMON

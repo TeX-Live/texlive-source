@@ -1,3 +1,9 @@
+2016-02-15  Karl Berry  <karl@tug.org>
+
+	* xpdf-PATCHES: rename from xpdf-3.04-PATCHES.
+	* xpdf-foolabs: rename from xpdf-3.04-foolabs.
+	* Makefile.am (EXTRA_DIST): likewise.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
