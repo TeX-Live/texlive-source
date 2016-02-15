@@ -1,3 +1,4 @@
+$Id$
 (This file is public domain.)
 
 This directory contains Web2c, a system which converts TeX, Metafont,
@@ -11,8 +12,7 @@ part of TeX Live (http://tug.org/texlive).
 See `NEWS' for changes by release, `ChangeLog` for all changes.
 See `INSTALL' for installation instructions.
 See `PROJECTS' for future improvements you might like to work on.
-See `../kpathsea/BUGS' for details on reporting bugs.
 
-If present, see *dir/README for more details on those packages.
+If present, see *dir/README for more details on each package.
 
 Web2c is free software.
