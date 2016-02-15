@@ -1,7 +1,8 @@
 ## Proxy Makefile.am to build GNU MP for TeX Live.
 ##
+##   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
+##   Copyright (C) 2014-2015 Peter Breitenlohner <tex-live@tug.org>
 ##   Copyright (C) 2014 Taco Hoekwater <taco@metatex.org>
-##   Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -13,7 +14,7 @@ EXTRA_DIST = $(GMP_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += $(GMP_TREE)-PATCHES
+EXTRA_DIST += gmp-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

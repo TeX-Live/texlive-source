@@ -914,7 +914,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(CAIRO_TREE) $(CAIRO_TREE)-PATCHES
+EXTRA_DIST = $(CAIRO_TREE) cairo-PATCHES
 CAIRO_SRC = $(CAIRO_TREE)/src
 NEVER_DIST = `find . $(NEVER_NAMES)`
 

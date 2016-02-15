@@ -1,5 +1,6 @@
 ## Proxy Makefile.am to build harfbuzz for TeX Live.
 ##
+##   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
 ##   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
@@ -12,7 +13,7 @@ EXTRA_DIST = $(HARFBUZZ_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += $(HARFBUZZ_TREE)-PATCHES
+EXTRA_DIST += harfbuzz-PATCHES
 
 HARFBUZZ_SRC = $(HARFBUZZ_TREE)/src
 
