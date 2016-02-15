@@ -1,5 +1,6 @@
 ## Proxy Makefile.am to build xpdf for TeX Live.
 ##
+##   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
 ##   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
@@ -26,11 +27,11 @@ EXTRA_DIST = $(XPDF_TREE)
 ## Official patches as obtained from ftp://ftp.foolabs.com/pub/xpdf
 ## (if any)
 ##
-EXTRA_DIST += $(XPDF_TREE)-foolabs
+EXTRA_DIST += xpdf-foolabs
 
 ## Actual patches applied to the original source tree
 ##
-EXTRA_DIST += $(XPDF_TREE)-PATCHES
+EXTRA_DIST += xpdf-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

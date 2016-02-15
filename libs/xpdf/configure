@@ -585,7 +585,7 @@ PACKAGE_STRING='xpdf (TeX Live) 3.04'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="xpdf-3.04/xpdf/Array.cc"
+ac_unique_file="xpdf-src/xpdf/Array.cc"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -6152,7 +6152,7 @@ ac_config_headers="$ac_config_headers aconf.h"
 
 
 
-XPDF_TREE=xpdf-3.04
+XPDF_TREE=xpdf-src
 
 
 ac_config_links="$ac_config_links aconf2.h:$XPDF_TREE/aconf2.h"
