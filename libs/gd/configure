@@ -585,7 +585,7 @@ PACKAGE_STRING='gd (TeX Live) 2.1.1'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="libgd-2.1.1/src/gd.c"
+ac_unique_file="libgd-src/src/gd.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -5961,7 +5961,7 @@ $as_echo "#define HAVE_LIBFREETYPE 1" >>confdefs.h
 $as_echo "#define HAVE_FT2BUILD_H 1" >>confdefs.h
 
 
-GD_TREE=libgd-2.1.1
+GD_TREE=libgd-src
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
