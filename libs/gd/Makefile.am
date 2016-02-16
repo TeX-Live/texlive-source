@@ -12,7 +12,7 @@ EXTRA_DIST = $(GD_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += $(GD_TREE)-PATCHES
+EXTRA_DIST += libgd-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

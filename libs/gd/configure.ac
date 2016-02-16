@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define gd_version
 AC_INIT([gd (TeX Live)], gd_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([libgd-]gd_version[/src/gd.c])
+AC_CONFIG_SRCDIR([libgd-src/src/gd.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -65,7 +65,7 @@ AC_DEFINE([HAVE_PNG_H], 1)
 AC_DEFINE([HAVE_LIBFREETYPE], 1, [ Define if you have the freetype library.])
 AC_DEFINE([HAVE_FT2BUILD_H], 1)
 
-AC_SUBST([GD_TREE], [libgd-]gd_version)
+AC_SUBST([GD_TREE], [libgd-src])
 
 KPSE_COND_WIN32
 
