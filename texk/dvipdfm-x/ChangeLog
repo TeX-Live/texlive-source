@@ -1,3 +1,7 @@
+2016-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* spc_pdfm.c: Remaining fix for that on 2016-02-13.
+
 2016-02-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_pdfm.c: Remove maybe-redundant code to obtain consistency
