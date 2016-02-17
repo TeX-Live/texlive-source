@@ -21,7 +21,7 @@
 // Copyright (C) 2006, 2007, 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2008, 2009 Chris Wilson <chris@chris-wilson.co.uk>
-// Copyright (C) 2008, 2012, 2014 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2008, 2012, 2014, 2016 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2009 Darren Kenny <darren.kenny@sun.com>
 // Copyright (C) 2010 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
 // Copyright (C) 2010 Jan Kümmel <jan+freedesktop@snorc.org>
@@ -499,6 +499,7 @@ CairoFreeTypeFont *CairoFreeTypeFont::create(GfxFont *gfxFont, XRef *xref,
     codeToGIDLen = n;
     /* Fall through */
   case fontTrueType:
+  case fontTrueTypeOT:
     if (font_data != NULL) {
       ff = FoFiTrueType::make(font_data, font_data_len);
     } else {
@@ -509,7 +510,7 @@ CairoFreeTypeFont *CairoFreeTypeFont::create(GfxFont *gfxFont, XRef *xref,
       goto err2;
     }
     /* This might be set already for the CIDType2 case */
-    if (fontType == fontTrueType) {
+    if (fontType == fontTrueType || fontType == fontTrueTypeOT) {
       codeToGID = ((Gfx8BitFont *)gfxFont)->getCodeToGIDMap(ff);
       codeToGIDLen = 256;
     }
@@ -544,7 +545,41 @@ CairoFreeTypeFont *CairoFreeTypeFont::create(GfxFont *gfxFont, XRef *xref,
       goto err2;
     }
     break;
-    
+
+  case fontCIDType0COT:
+    codeToGID = NULL;
+    n = 0;
+    if (((GfxCIDFont *)gfxFont)->getCIDToGID()) {
+      n = ((GfxCIDFont *)gfxFont)->getCIDToGIDLen();
+      if (n) {
+	codeToGID = (int *)gmallocn(n, sizeof(int));
+	memcpy(codeToGID, ((GfxCIDFont *)gfxFont)->getCIDToGID(),
+	       n * sizeof(int));
+      }
+    }
+    codeToGIDLen = n;
+
+    if (!codeToGID) {
+      if (!useCIDs) {
+	if (font_data != NULL) {
+	  ff = FoFiTrueType::make(font_data, font_data_len);
+	} else {
+	  ff = FoFiTrueType::load(fileNameC);
+	}
+	if (ff) {
+	  if (ff->isOpenTypeCFF()) {
+	    codeToGID = ff->getCIDToGIDMap((int *)&codeToGIDLen);
+	  }
+	  delete ff;
+	}
+      }
+    }
+    if (! _ft_new_face (lib, fileNameC, font_data, font_data_len, &face, &font_face)) {
+      error(errSyntaxError, -1, "could not create cid (OT) face\n");
+      goto err2;
+    }
+    break;
+
   default:
     fprintf (stderr, "font type %d not handled\n", (int)fontType);
     goto err2;

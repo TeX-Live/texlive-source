@@ -1,3 +1,45 @@
+commit 5689c990a187108ddc0a88b9825ba3bea644368f
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue Feb 16 01:44:31 2016 +0100
+
+    Adjust limit check and check in addition bitmap pointer
+
+    Bug #94053
+
+ poppler/SplashOutputDev.cc | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+commit 57bc52b93e6431f0dc7762e2001dedd614383001
+Author: Jakub Wilk <jwilk@debian.org>
+Date:   Sun Feb 14 11:22:31 2016 +0100
+
+    pdfinfo manpage: corrupted description of -js and -rawdates
+
+ utils/pdfinfo.1 | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit ab3c9ccb630004be049cb59f303612aa2a35f408
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Fri Feb 12 20:15:46 2016 +1030
+
+    cairo: add missing font types (fontCIDType0COT and fontTrueTypeOT)
+
+    bug 93559
+
+ poppler/CairoFontEngine.cc | 41 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 38 insertions(+), 3 deletions(-)
+
+commit f1c4d8ac1fe4293566285117170e8234c1be3943
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Feb 4 01:08:59 2016 +0100
+
+    pdfseparate: Refine resource detection
+
+    Related to bug #87637
+
+ poppler/PDFDoc.cc | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
 commit 449d45fab8e61393d858549460e61599e4dbd7eb
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Wed Jan 13 23:19:12 2016 +0100

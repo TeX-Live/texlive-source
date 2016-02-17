@@ -26,7 +26,7 @@
 // Copyright (C) 2010 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2010 Srinivas Adicherla <srinivas.adicherla@geodesic.com>
 // Copyright (C) 2010 Philip Lorenz <lorenzph+freedesktop@gmail.com>
-// Copyright (C) 2011-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011-2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
@@ -701,6 +701,13 @@ int PDFDoc::savePageAs(GooString *name, int pageNo)
   markPageObjects(catDict, yRef, countRef, 0, refPage->num, rootNum + 2);
 
   Dict *pageDict = page.getDict();
+  if (resourcesObj.isNull() && !pageDict->hasKey("Resources")) {
+    Dict *resourceDict = getCatalog()->getPage(pageNo)->getResourceDict();
+    if (resourceDict != NULL) {
+      resourcesObj.initDict(resourceDict);
+      markPageObjects(resourcesObj.getDict(), yRef, countRef, 0, refPage->num, rootNum + 2);
+    }
+  }
   markPageObjects(pageDict, yRef, countRef, 0, refPage->num, rootNum + 2);
   pageDict->lookupNF("Annots", &annotsObj);
   if (!annotsObj.isNull()) {
