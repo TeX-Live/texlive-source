@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 39054 2015-12-08 21:47:09Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2015 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 39054 $';
+my $svnrev = '$Revision: 39362 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -77,7 +76,6 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
   TeXLive::TLUtils::create_language_lua($tlpdb,$dest,$localconf);
   TeXLive::TLUtils::time_estimate($totalsize, $donesize, $starttime)
   TeXLive::TLUtils::install_packages($from_tlpdb,$media,$to_tlpdb,$what,$opt_src, $opt_doc)>);
-  TeXLive::TLUtils::install_package($what, $filelistref, $target, $platform);
   TeXLive::TLUtils::do_postaction($how, $tlpobj, $do_fileassocs, $do_menu, $do_desktop, $do_script);
   TeXLive::TLUtils::announce_execute_actions($how, @executes, $what);
   TeXLive::TLUtils::add_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info);
@@ -1341,96 +1339,9 @@ sub install_packages {
     foreach my $h (@::install_packages_hook) {
       &$h($n,$totalnr);
     }
-    my $real_opt_doc = $opt_doc;
-    my $container;
-    my @installfiles;
-    push @installfiles, $tlpobj->runfiles;
-    push @installfiles, $tlpobj->allbinfiles;
-    push @installfiles, $tlpobj->srcfiles if ($opt_src);
-    push @installfiles, $tlpobj->docfiles if ($real_opt_doc);
-    if ($media eq 'local_uncompressed') {
-      $container = [ $root, @installfiles ];
-    } elsif ($media eq 'local_compressed') {
-      if (-r "$root/$Archive/$package.zip") {
-        $container = "$root/$Archive/$package.zip";
-      } elsif (-r "$root/$Archive/$package.tar.xz") {
-        $container = "$root/$Archive/$package.tar.xz";
-      } else {
-        tlwarn("No package $package (.zip or .xz) in $root/$Archive\n");
-        next;
-      }
-    } elsif ($media eq 'NET') {
-      $container = "$root/$Archive/$package.$DefaultContainerExtension";
-    }
-    if (!install_package($container, $reloc, $tlpobj->containersize,
-                         $tlpobj->containermd5, \@installfiles,
-                         $totlpdb->root, $vars{'this_platform'})) {
-      # we already warn in install_package that something bad happened,
-      # so only return here
-      return 0;
-    }
-    # if we are installing from compressed media we have to fetch the respective
-    # source and doc packages $pkg.source and $pkg.doc and install them, too
-    if (($media eq 'NET') || ($media eq 'local_compressed')) {
-      # we install split containers under the following conditions:
-      # - the container were split generated
-      # - src/doc files should be installed
-      # (- the package is not already a split one (like .i386-linux))
-      # the above test has been removed since that would mean that packages
-      # with a dot like texlive.infra will never have the docfiles installed
-      # that is already happening ...bummer. But since we already check
-      # whether there are src/docfiles present at all that is fine
-      # - there are actually src/doc files present
-      if ($container_src_split && $opt_src && $tlpobj->srcfiles) {
-        my $srccontainer = $container;
-        $srccontainer =~ s/(\.tar\.xz|\.zip)$/.source$1/;
-        if (!install_package($srccontainer, $reloc, $tlpobj->srccontainersize,
-                             $tlpobj->srccontainermd5, \@installfiles,
-                             $totlpdb->root, $vars{'this_platform'})) {
-          return 0;
-        }
-      }
-      if ($container_doc_split && $real_opt_doc && $tlpobj->docfiles) {
-        my $doccontainer = $container;
-        $doccontainer =~ s/(\.tar\.xz|\.zip)$/.doc$1/;
-        if (!install_package($doccontainer, $reloc,
-                             $tlpobj->doccontainersize,
-                             $tlpobj->doccontainermd5, \@installfiles,
-                             $totlpdb->root, $vars{'this_platform'})) {
-          return 0;
-        }
-      }
-    }
-    # we don't want to have wrong information in the tlpdb, so remove the
-    # src/doc files if they are not installed ...
-    if (!$opt_src) {
-      $tlpobj->clear_srcfiles;
-    }
-    if (!$real_opt_doc) {
-      $tlpobj->clear_docfiles;
-    }
-    # if a package is relocatable we have to cancel the reloc prefix
-    # before we save it to the local tlpdb
-    if ($tlpobj->relocated) {
-      $tlpobj->replace_reloc_prefix;
-    }
-    $totlpdb->add_tlpobj($tlpobj);
-
-    # we have to write out the tlpobj file since it is contained in the
-    # archives (.tar.xz), but at uncompressed-media install time we
-    # don't have them.
-    my $tlpod = $totlpdb->root . "/tlpkg/tlpobj";
-    mkdirhier($tlpod);
-    my $count = 0;
-    my $tlpobj_file = ">$tlpod/" . $tlpobj->name . ".tlpobj";
-    until (open(TMP, $tlpobj_file)) {
-      # The open might fail for no good reason on Windows.
-      # Try again for a while, but not forever.
-      if ($count++ == 100) { die "$0: open($tlpobj_file) failed: $!"; }
-      select (undef, undef, undef, .1);  # sleep briefly
-    }
-    $tlpobj->writeout(\*TMP);
-    close(TMP);
+    # TODO TODO
+    # we do NOT check the return value!!!
+    $fromtlpdb->install_package($package, $totlpdb);
     $donesize += $tlpsizes{$package};
   }
   my $totaltime = time() - $starttime;
@@ -1439,173 +1350,6 @@ sub install_packages {
   info(sprintf("Time used for installing the packages: %02d:%02d\n",
        $totmin, $totsec));
   $totlpdb->save;
-  return 1;
-}
-
-
-=item C<install_package($what, $reloc, $size, $md5, $filelistref, $target, $platform)>
-
-This function installs the files given in @$filelistref from C<$what>
-into C<$target>.
-
-C<$size> gives the size in bytes of the container, or -1 if we are
-installing from uncompressed media, i.e., from a list of files to be copied.
-
-If C<$what> is a reference to a list of files then these files are
-assumed to be readable and are copied to C<$target>, creating dirs on
-the way. In this case the list C<@$filelistref> is not taken into
-account.
-
-If C<$what> starts with C<http://> or C<ftp://> then C<$what> is
-downloaded from the net and piped through C<xzdec> and C<tar>.
-
-If $what ends with C<.tar.xz> (but does not start with C<http://> or
-C<ftp://>, but possibly with C<file:/>) it is assumed to be a readable
-file on the system and is likewise piped through C<xzdec> and C<tar>.
-
-In both of these cases currently the list C<$@filelistref> currently
-is not taken into account (should be fixed!).
-
-if C<$reloc> is true the container (NET or local_compressed mode) is packaged in a way
-that the initial texmf-dist is missing.
-
-Returns 1 on success and 0 on error.
-
-=cut
-
-sub install_package {
-  my ($what, $reloc,  $whatsize, $whatmd5, $filelistref, $target, $platform) = @_;
-
-  my @filelist = @$filelistref;
-
-  my $tempdir = "$target/temp";
-
-  # we assume that $::progs has been set up!
-  my $wget = $::progs{'wget'};
-  my $xzdec = quotify_path_with_spaces($::progs{'xzdec'});
-  if (!defined($wget) || !defined($xzdec)) {
-    tlwarn("install_package: wget/xzdec programs not set up properly.\n");
-    return 0;
-  }
-  if (ref $what) {
-    # we are getting a ref to a list of files, so install from uncompressed media
-    my ($root, @files) = @$what;
-    foreach my $file (@files) {
-      # @what is taken, not @filelist!
-      # is this still needed?
-      my $dn=dirname($file);
-      mkdirhier("$target/$dn");
-      copy "$root/$file", "$target/$dn";
-    }
-  } elsif ($what =~ m,\.tar.xz$,) {
-    # this is the case when we install from compressed media
-    #
-    # in all other cases we create temp files .tar.xz (or use the present
-    # one), xzdec them, and then call tar
-
-    # if we are unpacking a relocated container we adjust the target
-    if ($reloc) {
-      $target .= "/$TeXLive::TLConfig::RelocTree" if $reloc;
-      mkdir($target) if (! -d $target);
-    }
-
-    my $fn = basename($what);
-    my $pkg = $fn;
-    $pkg =~ s/\.tar\.xz$//;
-    mkdirhier("$tempdir");
-    my $xzfile = "$tempdir/$fn";
-    my $tarfile  = "$tempdir/$fn"; $tarfile =~ s/\.xz$//;
-    my $xzfile_quote = $xzfile;
-    my $tarfile_quote = $tarfile;
-    if (win32()) {
-      $xzfile =~ s!/!\\!g;
-      $tarfile =~ s!/!\\!g;
-      $target =~ s!/!\\!g;
-    }
-    $xzfile_quote = "\"$xzfile\"";
-    $tarfile_quote = "\"$tarfile\"";
-    my $gotfiledone = 0;
-    if (-r $xzfile) {
-      # check that the downloaded file is not partial
-      if ($whatsize >= 0) {
-        # we have the size given, so check that first
-        my $size = (stat $xzfile)[7];
-        if ($size == $whatsize) {
-          # we want to check also the md5sum if we have it present
-          if ($whatmd5) {
-            if (tlmd5($xzfile) eq $whatmd5) {
-              $gotfiledone = 1;
-            } else {
-              tlwarn("Downloaded $what, size equal, but md5sum differs;\n",
-                     "downloading again.\n");
-            }
-          } else {
-            # size ok, no md5sum
-            tlwarn("Downloaded $what, size equal, but no md5sum available;\n",
-                   "continuing, with fingers crossed.");
-            $gotfiledone = 1;
-          }
-        } else {
-          tlwarn("Partial download of $what found, removing it.\n");
-          unlink($tarfile, $xzfile);
-        }
-      } else {
-        # ok no size information, hopefully we have md5 sums
-        if ($whatmd5) {
-          if (tlmd5($xzfile) eq $whatmd5) {
-            $gotfiledone = 1;
-          } else {
-            tlwarn("Downloaded file, but md5sum differs, removing it.\n");
-          }
-        } else {
-          tlwarn("Container found, but cannot verify size of md5sum;\n",
-                 "continuing, with fingers crossed.\n");
-          $gotfiledone = 1;
-        }
-      }
-      debug("Reusing already downloaded container $xzfile\n")
-        if ($gotfiledone);
-    }
-    if (!$gotfiledone) {
-      if ($what =~ m,http://|ftp://,) {
-        # we are installing from the NET
-        # download the file and put it into temp
-        if (!download_file($what, $xzfile) || (! -r $xzfile)) {
-          tlwarn("Downloading $what did not succeed.\n");
-          return 0;
-        }
-      } else {
-        # we are installing from local compressed media
-        # copy it to temp
-        copy($what, $tempdir);
-      }
-    }
-    debug("un-xzing $xzfile to $tarfile\n");
-    system("$xzdec < $xzfile_quote > $tarfile_quote");
-    if (! -f $tarfile) {
-      tlwarn("Unpacking $xzfile did not succeed.\n");
-      return 0;
-    }
-    if (!TeXLive::TLUtils::untar($tarfile, $target, 1)) {
-      tlwarn("untarring $tarfile failed, stopping install.\n");
-      return 0;
-    }
-    # we remove the created .tlpobj it is recreated anyway in
-    # install_packages above in the right place. This way we also
-    # get rid of the $pkg.source.tlpobj which are useless
-    unlink ("$target/tlpkg/tlpobj/$pkg.tlpobj")
-      if (-r "$target/tlpkg/tlpobj/$pkg.tlpobj");
-    if ($what =~ m,http://|ftp://,) {
-      # we downloaded the original .tar.lzma from the net, so we keep it
-    } else {
-      # we are downloading it from local compressed media, so we can unlink it to save
-      # disk space
-      unlink($xzfile);
-    }
-  } else {
-    tlwarn("Sorry, no idea how to install $what\n");
-    return 0;
-  }
   return 1;
 }
 
@@ -2203,102 +1947,130 @@ sub w32_remove_from_path {
 
 =pod
 
-=item C<unpack($what, $targetdir>
+=item C<check_file($what, $checksum, $checksize>
+
+Remove C<$what> if either the given C<$checksum> or C<$checksize> does
+not agree. Does nothing if neither of the check arguments is given.
+
+=cut
+
+sub check_file {
+  my ($xzfile, $checksum, $size) = @_;
+  if ($checksum) {
+    if (tlmd5($xzfile) ne $checksum) {
+      tlwarn("TLUtils::check_file: found $xzfile, but hashsums differ, removing it.\n");
+      unlink($xzfile);
+      return;
+    }
+  }
+  if ($size) {
+    my $filesize = (stat $xzfile)[7];
+    if ($filesize != $size) {
+      tlwarn("TLUtils::check_file: found $xzfile, but sizes differ, removing it.\n");
+      unlink($xzfile);
+      return;
+    }
+  } 
+  # We cannot remove the file here, otherwise restoring of backups
+  # or unwind packages might die.
+}
+
+=pod
+
+=item C<unpack($what, $targetdir, @opts>
 
 If necessary, downloads C$what>, and then unpacks it into C<$targetdir>.
-Returns the name of the unpacked package (determined from the name of C<$what>)
-in case of success, otherwise undefined.
+C<@opts> is assigned to a hash and can contain the following 
+options: C<tmpdir> (use this directory for downloaded files), 
+C<checksum> (check downloaded file against this checksum), 
+C<size> (check downloaded file against this size),
+C<remove> (remove temporary files after operation).
+Returns a pair of values: in case of error return 0 and an additional
+explanation, in case of success return 1 and the name of the package.
 
 =cut
 
 sub unpack {
-  my ($what, $target) = @_;
+  my ($what, $target, %opts) = @_;
+  # remove by default
+  my $remove = (defined($opts{'remove'}) ? $opts{'remove'} : 1);
+  my $tempdir = (defined($opts{'tmpdir'}) ? $opts{'tmpdir'} : tl_tmpdir());
+  my $checksum = (defined($opts{'checksum'}) ? $opts{'checksum'} : 0);
+  my $size = (defined($opts{'size'}) ? $opts{'size'} : 0);
 
   if (!defined($what)) {
-    tlwarn("TLUtils::unpack: nothing to unpack!\n");
-    return;
+    return (0, "nothing to unpack");
   }
 
   # we assume that $::progs has been set up!
   my $wget = $::progs{'wget'};
   my $xzdec = TeXLive::TLUtils::quotify_path_with_spaces($::progs{'xzdec'});
   if (!defined($wget) || !defined($xzdec)) {
-    tlwarn("_install_package: programs not set up properly, strange.\n");
-    return;
+    return (0, "programs not set up properly");
   }
 
   my $type;
-  if ($what =~ m,\.tar(\.xz)?$,) {
-    $type = defined($what) ? "xz" : "tar";
-  } else {
-    tlwarn("TLUtils::unpack: don't know how to unpack this: $what\n");
-    return;
+  if ($what !~ m/\.tar\.xz$/) {
+    return(0, "don't know how to unpack");
   }
 
-  my $tempdir = tl_tmpdir();
-
-  # we are still here, so something was handed in and we have either .tar or .tar.xz
   my $fn = basename($what);
   my $pkg = $fn;
-  $pkg =~ s/\.tar(\.xz)?$//;
+  $pkg =~ s/\.tar\.xz$//;
   my $tarfile;
-  my $remove_tarfile = 1;
-  if ($type eq "xz") {
-    my $xzfile = "$tempdir/$fn";
-    $tarfile  = "$tempdir/$fn"; $tarfile =~ s/\.xz$//;
-    my $xzfile_quote = $xzfile;
-    my $tarfile_quote = $tarfile;
-    my $target_quote = $target;
-    if (win32()) {
-      $xzfile =~ s!/!\\!g;
-      $tarfile =~ s!/!\\!g;
-      $target =~ s!/!\\!g;
-    }
-    $xzfile_quote = "\"$xzfile\"";
-    $tarfile_quote = "\"$tarfile\"";
-    $target_quote = "\"$target\"";
-    if ($what =~ m,http://|ftp://,) {
-      # we are installing from the NET
-      # download the file and put it into temp
-      if (!download_file($what, $xzfile) || (! -r $xzfile)) {
-        tlwarn("Downloading \n");
-        tlwarn("   $what\n");
-        tlwarn("did not succeed, please retry.\n");
-        unlink($tarfile, $xzfile);
-        return;
-      }
-    } else {
-      # we are installing from local compressed files
-      # copy it to temp
-      TeXLive::TLUtils::copy($what, $tempdir);
-    }
-    debug("un-xzing $xzfile to $tarfile\n");
-    system("$xzdec < $xzfile_quote > $tarfile_quote");
-    if (! -f $tarfile) {
-      tlwarn("TLUtils::unpack: Unpacking $xzfile failed, please retry.\n");
-      unlink($tarfile, $xzfile);
-      return;
-    }
-    unlink($xzfile);
-  } else {
-    $tarfile = "$tempdir/$fn";
-    if ($what =~ m,http://|ftp://,) {
-      if (!download_file($what, $tarfile) || (! -r $tarfile)) {
-        tlwarn("Downloading \n");
-        tlwarn("   $what\n");
-        tlwarn("failed, please retry.\n");
-        unlink($tarfile);
-        return;
-      }
-    } else {
-      $tarfile = $what;
-      $remove_tarfile = 0;
-    }
+  my $remove_xzfile = $remove;
+  my $xzfile = "$tempdir/$fn";
+  $tarfile  = "$tempdir/$fn"; $tarfile =~ s/\.xz$//;
+  my $xzfile_quote;
+  my $tarfile_quote;
+  my $target_quote;
+  if (win32()) {
+    $xzfile =~ s!/!\\!g;
+    $tarfile =~ s!/!\\!g;
+    $target =~ s!/!\\!g;
   }
-  if (untar($tarfile, $target, $remove_tarfile)) {
-    return "$pkg";
+  $xzfile_quote = "\"$xzfile\"";
+  $tarfile_quote = "\"$tarfile\"";
+  $target_quote = "\"$target\"";
+  if ($what =~ m,^(http|ftp)://,) {
+    # we are installing from the NET
+    # check for the presence of $what in $tempdir
+    if (-r $xzfile) {
+      check_file($xzfile, $checksum, $size);
+    }
+    # if the file is now not present, we can use it
+    if (! -r $xzfile) {
+      # try download the file and put it into temp
+      download_file($what, $xzfile);
+      # remove false downloads
+      check_file($xzfile, $checksum, $size);
+      if ( ! -r $xzfile ) {
+        return(0, "downloading did not succeed");
+      }
+    }
   } else {
-    return;
+    # we are installing from local compressed files
+    # copy it to temp
+    TeXLive::TLUtils::copy($what, $tempdir);
+
+    check_file($xzfile, $checksum, $size);
+    if (! -r $xzfile) {
+      return (0, "consistency checks failed");
+    }
+    # we can remove it afterwards
+    $remove_xzfile = 1;
+  }
+  debug("un-xzing $xzfile to $tarfile\n");
+  system("$xzdec < $xzfile_quote > $tarfile_quote");
+  if (! -f $tarfile) {
+    unlink($tarfile, $xzfile);
+    return(0, "Unpacking $xzfile failed");
+  }
+  unlink($xzfile) if $remove_xzfile;
+  if (untar($tarfile, $target, 1)) {
+    return (1, "$pkg");
+  } else {
+    return (0, "untar failed");
   }
 }
 
