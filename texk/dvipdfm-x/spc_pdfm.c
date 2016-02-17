@@ -508,7 +508,7 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
       CMap *cmap = CMap_cache_get(cd->cmap_id);
       if (needreencode(kp, vp, cd))
         r = reencodestring(cmap, vp);
-    } else if (is_xdv) {
+    } else if (is_xdv && cd && cd->taintkeys) {
       /* Please fix this... PDF string object is not always a text string.
        * needreencode() is assumed to do a simple check if given string
        * object is actually a text string.
