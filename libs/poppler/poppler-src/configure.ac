@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[40])
+m4_define([poppler_version_minor],[41])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 

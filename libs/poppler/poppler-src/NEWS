@@ -1,3 +1,12 @@
+Release 0.41.0
+        core:
+         * CairoOutputDev: add missing font types (fontCIDType0COT and fontTrueTypeOT). Bug #93559
+         * SplashOutputDev: Adjust limit check and check in addition bitmap pointer. Bug #94053
+
+        utils:
+         * pdfseparate: Refine resource detection
+         * pdfinfo: fix man page
+
 Release 0.40.0
         core:
          * CairoOutputDev: Use shape mask with soft mask. Bug #91931

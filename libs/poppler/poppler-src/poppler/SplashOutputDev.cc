@@ -20,7 +20,7 @@
 // Copyright (C) 2006 Scott Turner <scotty1024@mac.com>
 // Copyright (C) 2007 Koji Otani <sho@bbr.jp>
 // Copyright (C) 2009 Petr Gajdos <pgajdos@novell.com>
-// Copyright (C) 2009-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009-2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2014, 2015 William Bader <williambader@hotmail.com>
 // Copyright (C) 2010 Patrick Spendrin <ps_ml@gmx.de>
@@ -4481,7 +4481,7 @@ GBool SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfxA, Catalog *ca
     repeatX = x1 - x0;
     repeatY = y1 - y0;
   } else {
-    if ((unsigned long) result_width * result_height > 0x800000L) {
+    if ((unsigned long) surface_width * surface_height > 0x800000L) {
       state->setCTM(savedCTM[0], savedCTM[1], savedCTM[2], savedCTM[3], savedCTM[4], savedCTM[5]);
       return gFalse;
     }
@@ -4525,6 +4525,13 @@ GBool SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfxA, Catalog *ca
 
   bitmap = new SplashBitmap(surface_width, surface_height, 1,
                             (paintType == 1) ? colorMode : splashModeMono8, gTrue);
+  if (bitmap->getDataPtr() == NULL) {
+    SplashBitmap *tBitmap = bitmap;
+    bitmap = formerBitmap;
+    delete tBitmap;
+    state->setCTM(savedCTM[0], savedCTM[1], savedCTM[2], savedCTM[3], savedCTM[4], savedCTM[5]);
+    return gFalse;
+  }
   splash = new Splash(bitmap, gTrue);
   if (paintType == 2) {
     SplashColor clearColor;
