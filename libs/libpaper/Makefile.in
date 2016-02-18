@@ -402,7 +402,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in \
+	$(top_srcdir)/libpaper-src/man/paperconf.1.in \
 	../../build-aux/compile ../../build-aux/config.guess \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
@@ -544,7 +544,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(LIBPAPER_TREE) $(LIBPAPER_TREE)-PATCHES
+EXTRA_DIST = $(LIBPAPER_TREE) libpaper-PATCHES
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
@@ -626,7 +626,7 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-paperconf.1: $(top_builddir)/config.status $(top_srcdir)/libpaper-1.1.24+nmu2/man/paperconf.1.in
+paperconf.1: $(top_builddir)/config.status $(top_srcdir)/libpaper-src/man/paperconf.1.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstLIBRARIES:

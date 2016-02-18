@@ -1,0 +1,27 @@
+.TH PAPERINIT 3 "24 September 1996"
+.SH NAME
+paperinit, paperdone \- begin and end using the paper library
+.SH SYNOPSYS
+.nf
+.B #include <paper.h>
+.sp
+.B "void paperinit(void)"
+.B "void paperdone(void)"
+.fi
+.SH DESCRIPTION
+.B paperinit()
+initializes the paper library, allocating any resources that are
+necessary for its use.
+This function must be called before any other function of the paper
+library is used.
+.PP
+.B paperdone()
+frees any resources that were allocated for the paper library.
+No function of the library should be called after a call to this
+function.
+.SH SEE ALSO
+.BR defaultpapername (3),
+.BR paperinfo (3)
+.br
+.BR papersize (5)
+
