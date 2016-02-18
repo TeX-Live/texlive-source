@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define libpaper_version
 AC_INIT([libpaper (TeX Live)], libpaper_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([libpaper-]libpaper_version[/lib/paper.h])
+AC_CONFIG_SRCDIR([libpaper-src/lib/paper.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4])
 
@@ -39,10 +39,10 @@ AC_SUBST([PAPERSIZEVAR], [PAPERSIZE])
 AC_DEFINE_UNQUOTED([PAPERSIZEVAR], ["$PAPERSIZEVAR"],
                    [Environment variable that overrides the default paper size])
 
-AC_SUBST([LIBPAPER_TREE], [libpaper-]libpaper_version)
+AC_SUBST([LIBPAPER_TREE], [libpaper-src])
 
 AC_CONFIG_FILES([Makefile 
                 include/Makefile
-                paperconf.1:libpaper-]libpaper_version[/man/paperconf.1.in])
+                paperconf.1:libpaper-src/man/paperconf.1.in])
 
 AC_OUTPUT

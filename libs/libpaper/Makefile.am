@@ -12,7 +12,7 @@ EXTRA_DIST = $(LIBPAPER_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += $(LIBPAPER_TREE)-PATCHES
+EXTRA_DIST += libpaper-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

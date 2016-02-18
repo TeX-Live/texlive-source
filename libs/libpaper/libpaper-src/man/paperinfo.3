@@ -1,0 +1,65 @@
+.TH PAPERINFO 3 "24 September 1996"
+.SH NAME
+paperinfo, paperwithsize, paperfirst, paperlast, papernext, paperprev
+\- return informations about a paper
+.SH SYNOPSYS
+.nf
+.B #include <paper.h>
+.sp
+.B "const struct paper* paperinfo(const char* papername)"
+.B "const struct paper* paperwithsize(double psw, double psh)"
+.sp
+.B "char*  papername(const struct paper*)"
+.B "double paperpswidth(const struct paper*)"
+.B "double paperpsheigth(const struct paper*)"
+.sp
+.B "const struct paper* paperfirst(void)"
+.B "const struct paper* papernext(const struct paper* pinfo)"
+.B "const struct paper* paperprev(const struct paper* pinfo)"
+.B "const struct paper* paperlast(void)"
+.fi
+.SH DESCRIPTION
+.B paperinfo()
+returns a pointer to a
+.B struct paper
+containing informations about the paper with name
+.B papername
+.
+.B paperwithsize()
+looks for a paper whose width and height is
+.B psw
+and
+.B psh
+in PostScript points, and return a pointer to a
+.B struct paper
+corresponding to the paper found.
+.PP
+.B papername()
+returns the name of a paper described by an opaque struct paper object
+.
+.B paperpswidth()
+returns the width, in PostScript points, of a paper described by an
+opaque struct paper object
+.
+.B paperpsheight()
+returns the height, in PostScript points, of a paper described by an
+opaque struct paper object
+.
+.PP
+.B paperfirst()
+and
+.B paperlast()
+return the first and last entries for papers.
+Iteration from one entry to the next or the previous one can be done
+with
+.B papernext()
+and
+.B paperprev()
+respectively.
+.SH SEE ALSO
+.BR paperinit (3),
+.BR paperdone (3)
+.BR defaultpapername (3)
+.br
+.BR papersize (5)
+

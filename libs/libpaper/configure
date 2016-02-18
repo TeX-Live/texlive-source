@@ -585,7 +585,7 @@ PACKAGE_STRING='libpaper (TeX Live) 1.1.24+nmu2'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="libpaper-1.1.24+nmu2/lib/paper.h"
+ac_unique_file="libpaper-src/lib/paper.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -5234,10 +5234,10 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 
-LIBPAPER_TREE=libpaper-1.1.24+nmu2
+LIBPAPER_TREE=libpaper-src
 
 
-ac_config_files="$ac_config_files Makefile include/Makefile paperconf.1:libpaper-1.1.24+nmu2/man/paperconf.1.in"
+ac_config_files="$ac_config_files Makefile include/Makefile paperconf.1:libpaper-src/man/paperconf.1.in"
 
 
 cat >confcache <<\_ACEOF
@@ -5981,7 +5981,7 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "include/Makefile") CONFIG_FILES="$CONFIG_FILES include/Makefile" ;;
-    "paperconf.1") CONFIG_FILES="$CONFIG_FILES paperconf.1:libpaper-1.1.24+nmu2/man/paperconf.1.in" ;;
+    "paperconf.1") CONFIG_FILES="$CONFIG_FILES paperconf.1:libpaper-src/man/paperconf.1.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
