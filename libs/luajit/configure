@@ -595,7 +595,7 @@ PACKAGE_STRING='luajit for TeX Live 2.1.0-beta1'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="LuaJIT-2.1.0-beta1/src/luajit.h"
+ac_unique_file="LuaJIT-src/src/luajit.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -14134,7 +14134,7 @@ case $host_os in #(
     LJHOST='Other' ;;
 esac
 lj_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-2.1.0-beta1/src $LUAJIT_DEFINES -dM"
+CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-src/src $LUAJIT_DEFINES -dM"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <lj_arch.h>
@@ -14330,7 +14330,7 @@ fi
 echo timestamp >config.force
 fi
 
-LUAJIT_TREE=LuaJIT-2.1.0-beta1
+LUAJIT_TREE=LuaJIT-src
 
 
 ac_config_headers="$ac_config_headers config.h"

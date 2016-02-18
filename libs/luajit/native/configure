@@ -585,7 +585,7 @@ PACKAGE_STRING='luajit native 2.1.0-beta1'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="../LuaJIT-2.1.0-beta1/src/luajit.h"
+ac_unique_file="../LuaJIT-src/src/luajit.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -5304,7 +5304,7 @@ esac
 
 
 
-LUAJIT_TREE=../LuaJIT-2.1.0-beta1
+LUAJIT_TREE=../LuaJIT-src
 
 
 ac_config_headers="$ac_config_headers config.h"

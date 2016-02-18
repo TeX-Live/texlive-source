@@ -9,7 +9,7 @@ dnl
 m4_include([../version.ac])[] dnl define luajit_version
 AC_INIT([luajit native], luajit_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([../LuaJIT-]luajit_version[/src/luajit.h])
+AC_CONFIG_SRCDIR([../LuaJIT-src/src/luajit.h])
 AC_CONFIG_AUX_DIR([../../../build-aux])
 AC_CONFIG_MACRO_DIR([../../../m4])
 
@@ -31,7 +31,7 @@ KPSE_SEARCH_LIBS([MATH_LIB], [pow], [m])
 
 AC_SUBST([DASM_ARCH])
 
-AC_SUBST([LUAJIT_TREE], [../LuaJIT-]luajit_version)
+AC_SUBST([LUAJIT_TREE], [../LuaJIT-src])
 
 dnl Not used but avoids putting a zillion useless -D's on the command line.
 AC_CONFIG_HEADERS([config.h])
