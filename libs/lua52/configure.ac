@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define lua52_version
 AC_INIT([lua52 (TeX Live)], lua52_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([lua-]lua52_version[/src/lua.c])
+AC_CONFIG_SRCDIR([lua52-src/src/lua.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -39,7 +39,7 @@ if test "x$ac_cv_header_stdc" = xyes; then
   LUA52_DEFINES="$LUA52_DEFINES -DHAVE_UNISTD_H"
 fi
 
-AC_SUBST([LUA52_TREE], [lua-]lua52_version)
+AC_SUBST([LUA52_TREE], [lua52-src])
 
 AC_CONFIG_FILES([Makefile include/Makefile texlua52.pc])
 
