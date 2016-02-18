@@ -601,20 +601,6 @@ TEXMF_RESTRICTED_SCRIPTS = \
 openin_any = a
 openout_any = p
 
-% As of TeX Live 2016, the LuaTeX engines reimplemented the `p' setting
-% such that even the simplest documents could not be run.  Besides, most
-% safeguards can be bypassed through Lua with sufficient effort.
-% Therefore we specific the reality here.  For those concerned with
-% security and luatex, the --safer option is the place to start, and
-% running entirely in a sandboxed environment (ConTeXt has support for
-% this) is probably the place to end.
-openout_any.dvilualatex = a
-openout_any.dviluatex = a
-openout_any.luajittex = a
-openout_any.lualatex = a
-openout_any.lualollipop = a
-openout_any.luatex = a
-
 % Write .log/.dvi/.aux/etc. files here, if the current directory is unwritable.
 %TEXMFOUTPUT = /tmp
 
