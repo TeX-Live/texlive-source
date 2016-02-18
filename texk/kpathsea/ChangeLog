@@ -1,8 +1,3 @@
-2016-02-17  Karl Berry  <karl@tug.org>
-
-	* texmf.cnf (openout_any.*lua*): set to a, since otherwise nothing
-	nontrivial can be run, as of TL'16.  As I understand it.
-
 2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.[ch], mingw32.[ch]: Define a function
