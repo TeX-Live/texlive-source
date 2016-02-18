@@ -595,7 +595,7 @@ PACKAGE_STRING='lua52 (TeX Live) 5.2.4'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="lua-5.2.4/src/lua.c"
+ac_unique_file="lua52-src/src/lua.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -13816,7 +13816,7 @@ if test "x$ac_cv_header_stdc" = xyes; then
   LUA52_DEFINES="$LUA52_DEFINES -DHAVE_UNISTD_H"
 fi
 
-LUA52_TREE=lua-5.2.4
+LUA52_TREE=lua52-src
 
 
 ac_config_files="$ac_config_files Makefile include/Makefile texlua52.pc"

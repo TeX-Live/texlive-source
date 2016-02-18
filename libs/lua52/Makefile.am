@@ -12,7 +12,7 @@ EXTRA_DIST = $(LUA52_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += $(LUA52_TREE)-PATCHES
+EXTRA_DIST += lua52-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
