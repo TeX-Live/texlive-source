@@ -16,7 +16,7 @@ EXTRA_DIST = $(DVISVGM_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST += $(DVISVGM_TREE)-PATCHES
+EXTRA_DIST += dvisvgm-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

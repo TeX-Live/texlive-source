@@ -702,7 +702,7 @@ top_srcdir = @top_srcdir@
 #  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
 #
 #************************************************************************
-EXTRA_DIST = $(DVISVGM_TREE) $(DVISVGM_TREE)-PATCHES $(TESTS)
+EXTRA_DIST = $(DVISVGM_TREE) dvisvgm-PATCHES $(TESTS)
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
