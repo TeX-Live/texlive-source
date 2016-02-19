@@ -494,7 +494,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(MTX_TREE) $(MTX_TREE)-PATCHES $(TESTS) tests/mozart.mtx \
+EXTRA_DIST = $(MTX_TREE) mtx-PATCHES $(TESTS) tests/mozart.mtx \
 	tests/mozart.pmx
 NEVER_DIST = `find . $(NEVER_NAMES)`
 

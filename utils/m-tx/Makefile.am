@@ -6,7 +6,7 @@
 ## We want to re-distribute the whole original mtx source tree.
 EXTRA_DIST = $(MTX_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += $(MTX_TREE)-PATCHES
+EXTRA_DIST += mtx-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
