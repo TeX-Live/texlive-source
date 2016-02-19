@@ -116,7 +116,7 @@ Calculates the baseline correction for the glyphs.  Dependent on \texttt{gre@fac
 \macroname{\textbackslash gre@computespaces}{}{gregoriotex-spaces.tex}
 Aggregates all of the global distance calculations and calls them in the order needed to respect dependencies.
 
-\macroname{\textbackslash gre@calculate@glyphraisevalue}{\#1\#2}{gregoriotex-spaces.tex}
+\macroname{\textbackslash gre@calculate@glyphraisevalue}{\#1\#2\#3}{gregoriotex-spaces.tex}
 Calculates the raise value for a glyph (glyphraisevalue) based on where it is to be placed and what kind of a glyph it is.  This is a time of use calculation.
 
 \begin{argtable}
@@ -137,6 +137,12 @@ Calculates the raise value for a glyph (glyphraisevalue) based on where it is to
 	& \texttt{14} & case of the punctum mora in a space with a note on the line below it\\
 	& \texttt{15} & case of the over-the-notes slur\\
 	& \texttt{16} & case of the under-the-notes slur\\
+	\#3 & \texttt{0} & for horizontal episema cases, use automatic positioning within the space\\
+	& \texttt{1} & for horizontal episema cases, position in the middle of the space\\
+	& \texttt{2} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{3} & for horizontal episema cases, position high within the space as if the episema is under the note\\
+	& \texttt{4} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{5} & for horizontal episema cases, position high within the space as if the episema is under the note\\
 \end{argtable}
 
 \macroname{\textbackslash gre@stafflinefactor}{}{gregoriotex-spaces.tex}
@@ -603,7 +609,7 @@ Macro for aligning clivis syllables according to the flag \verb=\gre@clivisalign
 	& \texttt{1} & this is for the next syllable\\
 \end{argtable}
 
-\macroname{\textbackslash gre@hepisorline}{\#1\#2\#3\#4\#5}{gregoriotex-signs.tex}
+\macroname{\textbackslash gre@hepisorline}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
 Macro to typeset a horizontal line (either an additional staff line or an episema).
 
 \begin{argtable}
@@ -622,6 +628,13 @@ Macro to typeset a horizontal line (either an additional staff line or an episem
 	& \texttt{l} & a small episema aligned left\\
 	& \texttt{c} & a small episema aligned center\\
 	& \texttt{r} & for a small episema aligned right\\
+	\#6 & string & a positive or negative "nudge" (dimension) for the vertical position of the horizontal episema\\
+	\#7 & \texttt{0} & for horizontal episema cases, use automatic positioning within the space\\
+	& \texttt{1} & for horizontal episema cases, position in the middle of the space\\
+	& \texttt{2} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{3} & for horizontal episema cases, position high within the space as if the episema is under the note\\
+	& \texttt{4} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{5} & for horizontal episema cases, position high within the space as if the episema is under the note\\
 \end{argtable}
 
 \macroname{\textbackslash gre@hepisorlineaux}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
@@ -1843,8 +1856,9 @@ rather than have multiple definitions.
 	\texttt{8} & flexus with an ambitus of one\\
 	\texttt{9} & flexus deminutus\\
 	\texttt{10} & virgula\\
-	\texttt{11} & divisio minima, minor and maior\\
-	\texttt{12} & divisio finalis
+	\texttt{11} & divisio minima, minor, maior or dominican bar\\
+	\texttt{12} & divisio finalis\\
+	\texttt{13} & no note
  \end{tabulary}
 
 \subsection{Episema Special}\label{EpisemaSpecial}

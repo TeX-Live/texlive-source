@@ -90,6 +90,22 @@ static const char *dump_pitch(const char height, const char highest_pitch) {
     return buf;
 }
 
+static void dump_hepisema_adjustment(FILE *const f, const gregorio_note *note,
+        const gregorio_sign_orientation orientation, const char *const which) {
+    unsigned short index = note->he_adjustment_index[orientation];
+    if (index) {
+        gregorio_hepisema_adjustment *adj = gregorio_get_hepisema_adjustment(
+                index);
+        fprintf(f, "         %s hepisema group   %d\n", which, index);
+        fprintf(f, "         %s hep. vbasepos    %d (%s)\n", which,
+                adj->vbasepos,
+                gregorio_hepisema_vbasepos_to_string(adj->vbasepos));
+        if (adj->nudge) {
+            fprintf(f, "         %s hepisema nudge   %s\n", which, adj->nudge);
+        }
+    }
+}
+
 void dump_write_score(FILE *f, gregorio_score *score)
 {
     gregorio_voice_info *voice_info = score->first_voice_info;
@@ -452,6 +468,9 @@ void dump_write_score(FILE *f, gregorio_score *score)
                                             dump_bool(note->h_episema_below_connect));
                                 }
                             }
+                            dump_hepisema_adjustment(f, note, SO_OVER, "above");
+                            dump_hepisema_adjustment(f, note, SO_UNDER,
+                                    "below");
                             if (note->explicit_high_ledger_line) {
                                 fprintf(f, "         explicit high line     %s\n",
                                         dump_bool(note->supposed_high_ledger_line));

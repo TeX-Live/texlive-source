@@ -42,7 +42,19 @@ If you prefer the old behavior, you may switch this off by issuing `\gresetledge
 
 In the past, Gregorio handled the notes of an `<eu>` block like any other, which meant that a custos would appear before the `<eu>` block if it happened to start on a new line.  However, the '<eu>' block is not a continuation of the melody, but rather a reminder of the ending to use for the paired psalm tone.  As a result, a custos immediately before an EUOUAE block is now suppressed by default.  If you desire the old behaviour, use `\greseteolcustosbeforeeuouae{auto}` in your TeX document.  To once again suppress the custos, use `\greseteolcustosbeforeeuouae{suppressed}`.
 
-### Spacing around bars (divisio) with text underneath
+### Spacing around bars
+
+#### New algorithm
+
+A new algorithm has been implemented but is turned off by default. We hope this will be a significant improvement over previous one, but it still has a few bugs. You can turn it on with
+
+```
+\gresetbarspacing{new}
+```
+
+If you do give it a try, please be sure to report any bugs you find.
+
+#### Spaces difference according to presence of text
 
 The following spaces have been added:
 
@@ -56,7 +68,7 @@ By default, these are sized one half millimeter larger than their "non-text" cou
 
 ### Oriscus orientation
 
-The oriscus orientation (whether it points up or down) is now dependent on the note the follows, even if the note is not directly connected to the oriscus (as it would be in a salicus or a pressus).  Appending a `<` to an unconnected oriscus in gabc will force the oriscus to point upwards and `>` will force the oriscus to point downwards.
+The oriscus orientation (whether it points up or down) is now dependent on the note the follows, even if the note is not directly connected to the oriscus (as it would be in a salicus or a pressus).  Appending a `1` to an unconnected oriscus in gabc will force the oriscus to point upwards and `0` will force the oriscus to point downwards.
 
 Prior to version 4.1, Gregorio automatically oriented the oriscus when it was within a neume, but left the orientation up the user otherwise.  If you prefer this behavior, set the `oriscus-orientation` header in gabc to `legacy`.  In legacy mode, the orientation of an unconnected oriscus will (by default) point downwards and may be reversed by appending `<` or `>` to the oriscus.
 

@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include "support.h"
+#include "struct.h"
 #include "messages.h"
 
 /* Our version of snprintf; this is NOT semantically the same as C99's
@@ -82,6 +83,23 @@ char *gregorio_strdup(const char *s)
     return (char *)assert_successful_allocation(strdup(s), "gregorio_strdup");
 }
 
+void *_gregorio_grow_buffer(void *buffer, size_t *nmemb, size_t size)
+{
+    if (buffer == NULL) {
+        return gregorio_malloc(*nmemb * size);
+    }
+    if (*nmemb >= MAX_BUF_GROWTH) {
+        /* it's not realistic to test this case */
+        /* LCOV_EXCL_START */
+        gregorio_message(_("buffer too large"), "gregorio_grow_buffer",
+                VERBOSITY_FATAL, 0);
+        gregorio_exit(1);
+        /* LCOV_EXCL_STOP */
+    }
+    *nmemb <<= 1;
+    return gregorio_realloc(buffer, *nmemb * size);
+}
+
 #ifdef USE_KPSE
 static kpathsea kpse = NULL;
 #define USED_FOR_KPSE
@@ -94,6 +112,7 @@ void gregorio_support_init(const char *const program USED_FOR_KPSE,
 {
     gregorio_set_error_out(stderr);
     gregorio_set_verbosity_mode(VERBOSITY_ERROR);
+    gregorio_struct_init();
 #ifdef USE_KPSE
     kpse = kpathsea_new();
     kpathsea_set_program_name(kpse, argv0, program);
@@ -152,7 +171,7 @@ static bool gregorio_readline(char **buf, size_t *bufsize, FILE *file)
     size_t oldsize;
     if (*buf == NULL) {
         *bufsize = 128;
-        *buf = (char *)gregorio_malloc(*bufsize);
+        *buf = gregorio_grow_buffer(NULL, bufsize, char);
     } else {
         if (*bufsize < 128) {
             /* not reachable unless there's a programming error */
@@ -184,18 +203,8 @@ static bool gregorio_readline(char **buf, size_t *bufsize, FILE *file)
             return (*buf)[0] != '\0';
         }
 
-        if (*bufsize >= MAX_BUF_GROWTH) {
-            /* it's not realistic to test this case */
-            /* LCOV_EXCL_START */
-            gregorio_message(_("Line too long"), "gregorio_getline",
-                    VERBOSITY_FATAL, 0);
-            gregorio_exit(1);
-            /* LCOV_EXCL_STOP */
-        }
-
         oldsize = *bufsize;
-        *bufsize <<= 1;
-        *buf = gregorio_realloc(*buf, *bufsize);
+        *buf = gregorio_grow_buffer(*buf, bufsize, char);
     }
 }
 #endif
@@ -268,5 +277,6 @@ void gregorio_exit(int status)
         kpathsea_finish(kpse);
     }
 #endif
+    gregorio_struct_destroy();
     exit(status);
 } /* the prior line exits; LCOV_EXCL_LINE */

@@ -6,7 +6,7 @@
 ## We want to re-distribute the whole original gregorio source tree.
 EXTRA_DIST = $(GREGORIO_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += $(GREGORIO_TREE)-PATCHES
+EXTRA_DIST += gregorio-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

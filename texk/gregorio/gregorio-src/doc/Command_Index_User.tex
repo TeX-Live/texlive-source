@@ -926,10 +926,10 @@ Macro to change the behaviour for separation between notes of two syllables when
 	& \texttt{never} & punctum mora are never ignored\\
 \end{argtable}
 
-When a punctum mora is ignored, the bar will also be shifted by \texttt{barmoraadjustment} (zero by default), see its description in the \textbf{Distances} section.
+When a punctum mora is ignored, the bar will also be shifted by \texttt{moraadjustmentbar} (zero by default), see its description in the \nameref{distances} section.
 
 \macroname{\textbackslash gresetbarspacing}{\{\#1\}}{gregoriotex-syllable.tex}
-Macro to activate the new bar spacing algorithm.  The new algorithm attempts to place the bar line exactly midway between its surrounding notes.  Any text associated with the bar is placed midway between its surrounding text.  Since this might result in the bar line and the text being widely separated, there is also a limit to the distance between their centers: \texttt{maxbaroffset}.
+Macro to activate the new bar spacing algorithm.  The new algorithm attempts to place the bar line exactly midway between its surrounding notes.  Any text associated with the bar is placed midway between its surrounding text.  Since this might result in the bar line and the text being widely separated, there are also a limits to the distance between their respective centers: \texttt{maxbaroffsettextleft} and \texttt{maxbaroffsettextright} (when text center is respectively on the left or on the right of bar center).
 
 \begin{argtable}
 	\#1 & \texttt{new} & Activates the new spacing algorithm\\
@@ -1021,11 +1021,11 @@ a different value be desired.
 \subsubsection{Headers}
 
 \macroname{\textbackslash gresetheadercapture}{\{\#1\}\{\#2\}\{\#3\}}{gregoriotex-main.tex}
-Macro to tell Gregorio\TeX{} to capture a given header by calling a specified
-macro.  Passing an empty \#2 will cancel capture of the given header.
+Macro to tell Gregorio\TeX{} to capture a given header of the gabc file, passing it to a
+specified \TeX{} macro.  Passing an empty \#2 will cancel capture of the given header.
 
 \begin{argtable}
-	\#1 & string & The name of the header\\
+	\#1 & string & The name of the gabc header\\
 	\#2 & string & The name of the macro to use (without the leading backslash)
 								 or empty to stop capturing the given header\\
 	\#3 & string & a comma-separated list of options\\
@@ -1038,15 +1038,15 @@ The options are:
 	\texttt{string} & The header value should be passed to the macro as a string\\
 \end{tabular}
 
-If the \texttt{name} option is not supplied, the macro supplied must take one
+If the \texttt{name} option is not supplied, the macro is called with one
 argument: the value of the header.
 
-If the \texttt{name} option is supplied, the macro supplied must take two
+If the \texttt{name} option is supplied, the macro is called with two
 arguments: the name and the value of the header (in that order).
 
-If the \texttt{string} option is supplied, the value will be passed with all
-non-space characters as \TeX{} catcode 12 (and all spaces as catcode 10).
-If not, the value will be evaluated as \TeX{}.
+If the \texttt{string} option is supplied, the value will be passed with
+catcode 12 associated with all non-space characters (and catcode 10 for all spaces).
+If not, the value will be evaluated as regular \TeX{} input.
 
 Other than the headers that define macros, which are not passed to \TeX{},
 the headers will be processed in the order they were presented in the gabc
@@ -1055,12 +1055,16 @@ file.  Headers will be processed in the \TeX{} state at the point of the
 capturing macro produce something, it will be typeset within the same
 paragraph as the \verb=\gregorioscore= call.
 
-Gregorio will call whatever is passed to \verb=\grebeforeheaders= before
-processing a given set of headers and to \verb=\greafterheaders= after
-processing them.
+As an example, you can use
+
+\verb=\gresetheadercapture{commentary}{grecommentary}{string}=
+
+\noindent to capture the
+\texttt{commentary} header of gabc files and feed it to \verb=\grecommentary=,
+thus automatically printing the content of the header above the score.
 
 \macroname{\textbackslash grebeforeheaders}{\{\#1\}}{gregoriotex-main.tex}
-Specifies something to be done before a set of headers is processed.
+Specifies \TeX{} code processed before the processing of the headers of a score.
 Defaults to nothing.  If this is called multiple times, the most recent call
 will define the behavior at the next set of headers.
 
@@ -1069,7 +1073,7 @@ will define the behavior at the next set of headers.
 \end{argtable}
 
 \macroname{\textbackslash greafterheaders}{\{\#1\}}{gregoriotex-main.tex}
-Specifies something to be done after a set of headers is processed.
+Specifies \TeX{} code processed after the processing of the headers of a score.
 Defaults to nothing.  If this is called multiple times, the most recent call
 will define the behavior at the next set of headers.
 
@@ -1079,7 +1083,7 @@ will define the behavior at the next set of headers.
 
 
 \subsubsection{Ancient Notation}
-For a full description of how to make use of the ancient notation capabilities of gregorio and Gregorio\TeX, look at the GregorioNabcRef documentation.  The commands listed here allow the manipulation of settings related to that notation.
+For a full description of how to make use of the ancient notation capabilities of Gregorio and Gregorio\TeX, look at the GregorioNabcRef documentation.  The commands listed here allow the manipulation of settings related to that notation.
 
 \macroname{\textbackslash gresetnabcfont}{\{\#1\}\{\#2\}}{gregoriotex-nabc.tex}
 Macro to set the font to be used for the ancient notation.
@@ -1176,12 +1180,21 @@ Space after a clef at the beginning of a line.
 Minimum space between notes of different syllables.
 \end{gdimension}
 
+\begin{gdimension}{intersyllablespacestretchhyphen}
+Stretching added in the case where the text of two syllables of the same word are
+separated with an automatic hyphen.
+\end{gdimension}
+
 \begin{gdimension}{interwordspacenotes}
 Minimum space between notes of syllables from different words.
 \end{gdimension}
 
 \begin{gdimension}{interwordspacetext}
 Minimum space between texts of different words. Please keep the same \texttt{plus} and \texttt{minus} as \texttt{interwordspacenotes}.
+\end{gdimension}
+
+\begin{gdimension}{interwordspacetext@bars}
+Minimum space between texts of different words when one of the syllable contains only a bar.
 \end{gdimension}
 
 \begin{gdimension}{interwordspacenotes@alteration}
@@ -1198,6 +1211,10 @@ Same as \texttt{interwordspacenotes} for \texttt{euouae} blocks.
 
 \begin{gdimension}{interwordspacetext@euouae}
 Same as \texttt{interwordspacetext} for \texttt{euouae} blocks.
+\end{gdimension}
+
+\begin{gdimension}{interwordspacetext@bars@euouae}
+Same as \texttt{interwordspacetext@bars} for \texttt{euouae} blocks.
 \end{gdimension}
 
 \begin{gdimension}{bitrivirspace}
@@ -1329,7 +1346,7 @@ Additional space that will appear around bars that are preceded by a custos and 
 \end{gdimension}
 
 \begin{gdimension}{textbartextspace}
-Space between the text and the text of the bar.
+Space between the text of previous syllable and the text associated with the bar (old bar spacing algorithm only).
 \end{gdimension}
 
 \begin{gdimension}{notebarspace}
@@ -1467,8 +1484,64 @@ Distance an over-the-notes slur will be raised above the baseline of a note at t
 Distance an under-the-notes slur will be raised above the baseline of a note at the same height.
 \end{gdimension}
 
-\begin{gdimension}{maxbaroffset}
-When the new bar spacing algorithm is active, this is the maximum distance by which a bar and its associated text can be separated.
+\begin{gdimension}{maxbaroffsettextleft}
+Maximum distance by which the center of a bar and the center of its associated text can be separated, when the center of the text goes left of the center of the bar (new bar spacing algorithm only).
+\end{gdimension}
+
+\begin{gdimension}{maxbaroffsettextright}
+Same as \texttt{maxbaroffsettextleft} but when the center of the text goes right of the center of the bar.
+\end{gdimension}
+
+\begin{gdimension}{overhepisemalowshift}
+Distance to place a a horizontal episema over a note in a low position in the space.
+\end{gdimension}
+
+\begin{gdimension}{overhepisemahighshift}
+Distance to place a horizontal episema over a note in a high position in the space.
+\end{gdimension}
+
+\begin{gdimension}{underhepisemalowshift}
+Distance to place a horizontal episema under a note in a low position in the space.
+\end{gdimension}
+
+\begin{gdimension}{underhepisemahighshift}
+Distance to place a horizontal episema under a note in a high position in the space.
+\end{gdimension}
+
+\begin{gdimension}{hepisemamiddleshift}
+Distance to place a horizontal episema in the middle of a space.
+\end{gdimension}
+
+\begin{gdimension}{vepisemalowshift}
+Distance to place a vertical episema in a low position in the space.
+\end{gdimension}
+
+\begin{gdimension}{vepisemahighshift}
+Distance to place a vertical episema in a high position in the space.
+\end{gdimension}
+
+\begin{gdimension}{linepunctummorashift}
+Vertical distance to place a punctum mora for a note on a line.
+\end{gdimension}
+
+\begin{gdimension}{spacepunctummorashift}
+Vertical distance to place a punctum mora for a note in a space.
+\end{gdimension}
+
+\begin{gdimension}{spaceamonepespunctummorashift}
+Vertical distance to place a punctum mora for the second note (in a space) of a pes with ambitus one.
+\end{gdimension}
+
+\begin{gdimension}{lineporrectuspunctummorashift}
+Vertical distance to place a punctum mora for the second note in a porrectus (or similar figure), on a line
+\end{gdimension}
+
+\begin{gdimension}{spaceporrectuspunctummorashift}
+Vertical distance to place a punctum mora for the second note in a porrectus (or similar figure), in a space
+\end{gdimension}
+
+\begin{gdimension}{raresignshift}
+Distance to place a ``rare'' sign above the top space in a score.
 \end{gdimension}
 
 

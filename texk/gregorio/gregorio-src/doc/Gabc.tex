@@ -220,9 +220,8 @@ line (\textit{d}). Most of the time they will take a short form:
 But when a ledger line is drawn below these notes, they should take a long
 form. The problem is that many cases are ambiguous: for instance if a note
 is close to a ledger line, one may want to make it long, others may not.
-To solve this problem, you can add \texttt{[ll:0]} to any note of a glyph to
-force the stem of the glyph to get its short form, or \texttt{[ll:1]} to force
-its long form.
+To solve this problem, you can add \texttt{[ll:0]} to the note carrying the stem
+to get its short form, or \texttt{[ll:1]} to force its long form.
 
 % This snippet makes LuaTeX segfault!
 %\gabcsnippet{
@@ -283,22 +282,107 @@ the same meaning as before, but applies to both ends of the slur.
 Use \texttt{uslur} instead of \texttt{oslur} (with either form) to create an
 under-the-staff slur.
 
+\subsection{Horizontal episema placement for very high and low notes}
+
+Gregorio places horizontal episema under c and above k (or the not above upper line when
+staff does not have exactly 4 lines) closer to the notes when no ledger line is present.
+The heuristics used by Gregorio are not perfect so it may be necessary to make
+the presence or absence of ledger line explicit for horizontal episema placement.
+This is done in the exact same way as for stem length: place \texttt{[ll:0]} or
+\texttt{[ll:1]} on the note carrying the episema, to force gregorio to consider the
+absence or presence of a ledger line in episema placement.
+
+\subsection{Horizontal Episema Tuning}
+
+The horizontal episema position within the space can be adjusted should the
+defaults not be satisfactory.
+
+There are five tunable dimensions:
+
+\begin{tabularx}{\textwidth}{l|X}
+	Dimension & Description \\
+	\hline
+	\texttt{overhepisemalowshift} & The shift for positioning a horizontal episema that is over a note in a low position in the space\\
+	\texttt{overhepisemahighhift} & The shift for positioning a horizontal episema that is over a note in a high position in the space\\
+	\texttt{underhepisemalowshift} & The shift for positioning a horizontal episema that is under a note in a low position in the space\\
+	\texttt{underhepisemahighhift} & The shift for positioning a horizontal episema that is under a note in a high position in the space\\
+	\texttt{hepisemamiddleshift} & The shift for centering the horizontal episema in the middle of a space\\
+\end{tabularx}
+
+In addition, gabc allows you to adjust the positioning of a given episema by
+appending \texttt{[oh:\textit{p}]} (for the episema over the note) or
+\texttt{[uh:\textit{p}]} (for the episema under the note).  Here,
+\texttt{\textit{p}} is an optional position specifier followed by an optional
+nudge.  However at least one or the other must be specified.
+
+The position specifier allows you to select which of the five tunable
+dimensions will be used for the base position:
+
+\begin{tabularx}{\textwidth}{l|X}
+	Specifier & Base shift \\
+	\hline
+	\textit{omitted} & Use the default shift based on the position of the episema relative to the note\\
+	\texttt{m} & Use \texttt{hepisemamiddleshift}.\\
+	\texttt{l} & Use \texttt{overhepisemalowshift} or \texttt{underhepisemalowshift} depending on whether the episema is over or under the note.\\
+	\texttt{h} & Use \texttt{overhepisemahighshift} or \texttt{underhepisemahighshift} depending on whether the episema is over or under the note.\\
+	\texttt{ol} & Use \texttt{overhepisemalowshift}.\\
+	\texttt{oh} & Use \texttt{overhepisemahighshift}.\\
+	\texttt{ul} & Use \texttt{underhepisemalowshift}.\\
+	\texttt{uh} & Use \texttt{underhepisemahighshift}.\\
+\end{tabularx}
+
+The nudge is a \TeX{} dimension specification (number and units) that starts
+with \texttt{+} for a nudge upwards or \texttt{-} for a nudge downwards from
+base position selected by the position speciifer.  If omitted, the episema will
+be drawn at the base position.
+
+In addition, gabc also allows you to specify that a block of notes---possibly
+separated with spaces and in different syllables--should be considered a single
+unit when it comes to positioning the horizontal episema.  To do this, put
+\texttt{[oh:\textit{p}\{]} (for the episema over the note) or
+\texttt{[uh:\textit{p}\{]} (for the episema under the note) before the first
+note of the block and the corresponding \texttt{[oh\}]} or \texttt{[uh\}]}
+after the last note of the block.  When using this syntax, \texttt{\textit{p}}
+is the position specifier as before, but is entirely optional, and when
+completely omitted, allows the \texttt{:} to also be omitted.
+
 \subsection{Lyric Centering}
 
 Gregorio centers the text of each syllable around the first note of each
-syllable.  There are three basic modes: \verb:syllable:, \verb:vowel:, and \verb:firstletter:, which are selected with the command \verb=\gresetlyriccentering{<mode>}=. In \texttt{syllable} mode, the
-entire syllable is centered around the first note.  This is common in
-modern music.  In \texttt{vowel} mode, the vowel sound of the syllable is
-centered around the first note.  This is common in most Gregorian chant
-books with text in Latin.  In \texttt{firstletter} mode, the first letter of the syllable is centered around the first note.  While not a common choice, this was explicitly requested by a user and we try to be responsive to our user base.
+syllable.  There are three basic modes, selected with the command \verb=\gresetlyriccentering{<mode>}=:
+
+\begin{description}
+\item[syllable] the entire syllable is centered around the first note
+\item[firstletter] the first letter of the syllable is centered around the first note
+\item[vowel] the vowel sound of the syllable is centered around the first note
+\end{description}
+
+The default is \texttt{vowel}, being common in most Gregorian chant
+books with text in Latin.
+
+All modes allow you to force the centering with curly brackets,
+for example \verb=a{b}c= will center the notes around \texttt{b}.
+
+\subsubsection{Vowel detection}
 
 The default rules built into Gregorio for \texttt{vowel} mode are for
 Ecclesiatical Latin and work fairly well (though not perfectly) for
 other languages (especially Romance languages).  However, Gregorio
 provides a gabc \texttt{language} header which allows the language of
-the lyrics to be set.  Gregorio will look for a file named
+the lyrics to be set. The default is Latin.
+
+Special characters (input with \texttt{<sp>}) or verbatim text (\texttt{<v>})
+count as consonants, so you have to force centering around them, for example
+\verb=gr{<sp>'ae</sp>}=. If an elision (input with \texttt{<e>}) is present in
+the syllable, Gregorio will consider it as consonant too.
+
+If no vowel is found, the notes are centered around the whole syllable.
+
+\subsubsection{Vowel file}
+
+When run, Gregorio will look for a file named
 \texttt{gregorio-vowels.dat} in your working directory or amongst the
-GregorioTeX files.  If it finds the requested language (matched in a
+GregorioTeX files.  If it finds the language requested by the header (matched in a
 \emph{case-sensitive} fashion) in one of these files (henceforth called
 vowel files), Gregorio will use the rules contained within for vowel
 centering.  If it cannot find the requested language in any of the vowel

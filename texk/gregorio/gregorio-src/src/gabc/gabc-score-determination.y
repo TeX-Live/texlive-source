@@ -576,6 +576,10 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                             oriscus->u.note.shape =
                                                     S_ORISCUS_DESCENDENS;
                                             break;
+                                        case S_ORISCUS_SCAPUS_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_SCAPUS_DESCENDENS;
+                                            break;
                                         case S_ORISCUS_CAVUM_UNDETERMINED:
                                             oriscus->u.note.shape =
                                                     S_ORISCUS_CAVUM_DESCENDENS;
@@ -595,6 +599,10 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                         case S_ORISCUS_UNDETERMINED:
                                             oriscus->u.note.shape =
                                                     S_ORISCUS_ASCENDENS;
+                                            break;
+                                        case S_ORISCUS_SCAPUS_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_SCAPUS_ASCENDENS;
                                             break;
                                         case S_ORISCUS_CAVUM_UNDETERMINED:
                                             oriscus->u.note.shape =
@@ -616,6 +624,7 @@ static void determine_oriscus_orientation(gregorio_score *score) {
 
                                 switch (note->u.note.shape) {
                                 case S_ORISCUS_UNDETERMINED:
+                                case S_ORISCUS_SCAPUS_UNDETERMINED:
                                 case S_ORISCUS_CAVUM_UNDETERMINED:
                                     oriscus = note;
                                     break;
@@ -636,6 +645,9 @@ static void determine_oriscus_orientation(gregorio_score *score) {
         switch(oriscus->u.note.shape) {
         case S_ORISCUS_UNDETERMINED:
             oriscus->u.note.shape = S_ORISCUS_DESCENDENS;
+            break;
+        case S_ORISCUS_SCAPUS_UNDETERMINED:
+            oriscus->u.note.shape = S_ORISCUS_SCAPUS_DESCENDENS;
             break;
         case S_ORISCUS_CAVUM_UNDETERMINED:
             oriscus->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;

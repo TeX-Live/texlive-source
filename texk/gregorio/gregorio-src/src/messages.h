@@ -29,12 +29,12 @@
 #if ENABLE_NLS == 1
 #include "gettext.h"
 #define _(str) gettext(str)
-#define N_(str) str
+#define N_(str) (str)
 #define ngt_(str, strtwo, count) ngettext(str, strtwo, count)
 #else
-#define _(str) str
-#define N_(str) str
-#define ngt_(str, strtwo, count) str
+#define _(str) (str)
+#define N_(str) (str)
+#define ngt_(str, strtwo, count) (str)
 #endif
 
 typedef enum gregorio_verbosity {

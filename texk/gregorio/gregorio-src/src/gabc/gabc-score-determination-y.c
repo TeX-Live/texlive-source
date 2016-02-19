@@ -650,6 +650,10 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                             oriscus->u.note.shape =
                                                     S_ORISCUS_DESCENDENS;
                                             break;
+                                        case S_ORISCUS_SCAPUS_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_SCAPUS_DESCENDENS;
+                                            break;
                                         case S_ORISCUS_CAVUM_UNDETERMINED:
                                             oriscus->u.note.shape =
                                                     S_ORISCUS_CAVUM_DESCENDENS;
@@ -669,6 +673,10 @@ static void determine_oriscus_orientation(gregorio_score *score) {
                                         case S_ORISCUS_UNDETERMINED:
                                             oriscus->u.note.shape =
                                                     S_ORISCUS_ASCENDENS;
+                                            break;
+                                        case S_ORISCUS_SCAPUS_UNDETERMINED:
+                                            oriscus->u.note.shape =
+                                                    S_ORISCUS_SCAPUS_ASCENDENS;
                                             break;
                                         case S_ORISCUS_CAVUM_UNDETERMINED:
                                             oriscus->u.note.shape =
@@ -690,6 +698,7 @@ static void determine_oriscus_orientation(gregorio_score *score) {
 
                                 switch (note->u.note.shape) {
                                 case S_ORISCUS_UNDETERMINED:
+                                case S_ORISCUS_SCAPUS_UNDETERMINED:
                                 case S_ORISCUS_CAVUM_UNDETERMINED:
                                     oriscus = note;
                                     break;
@@ -710,6 +719,9 @@ static void determine_oriscus_orientation(gregorio_score *score) {
         switch(oriscus->u.note.shape) {
         case S_ORISCUS_UNDETERMINED:
             oriscus->u.note.shape = S_ORISCUS_DESCENDENS;
+            break;
+        case S_ORISCUS_SCAPUS_UNDETERMINED:
+            oriscus->u.note.shape = S_ORISCUS_SCAPUS_DESCENDENS;
             break;
         case S_ORISCUS_CAVUM_UNDETERMINED:
             oriscus->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
@@ -799,7 +811,7 @@ static void gabc_y_add_notes(char *notes, YYLTYPE loc) {
     }
 }
 
-#line 803 "gabc/gabc-score-determination-y.c" /* yacc.c:339  */
+#line 815 "gabc/gabc-score-determination-y.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -984,7 +996,7 @@ int gabc_score_determination_parse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 988 "gabc/gabc-score-determination-y.c" /* yacc.c:358  */
+#line 1000 "gabc/gabc-score-determination-y.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -1289,15 +1301,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   765,   765,   769,   774,   775,   779,   783,   789,   794,
-     803,   809,   814,   819,   824,   829,   834,   842,   850,   860,
-     869,   874,   878,   883,   884,   888,   893,   899,   910,   914,
-     922,   923,   924,   928,   931,   934,   937,   940,   943,   946,
-     949,   952,   955,   964,   967,   970,   973,   976,   979,   982,
-     985,   988,   991,  1000,  1003,  1009,  1012,  1018,  1019,  1022,
-    1023,  1024,  1025,  1029,  1032,  1037,  1038,  1039,  1043,  1049,
-    1052,  1058,  1064,  1069,  1077,  1080,  1089,  1092,  1098,  1099,
-    1102,  1103
+       0,   777,   777,   781,   786,   787,   791,   795,   801,   806,
+     815,   821,   826,   831,   836,   841,   846,   854,   862,   872,
+     881,   886,   890,   895,   896,   900,   905,   911,   922,   926,
+     934,   935,   936,   940,   943,   946,   949,   952,   955,   958,
+     961,   964,   967,   976,   979,   982,   985,   988,   991,   994,
+     997,  1000,  1003,  1012,  1015,  1021,  1024,  1030,  1031,  1034,
+    1035,  1036,  1037,  1041,  1044,  1049,  1050,  1051,  1055,  1061,
+    1064,  1070,  1076,  1081,  1089,  1092,  1101,  1104,  1110,  1111,
+    1114,  1115
 };
 #endif
 
@@ -2079,7 +2091,7 @@ yyparse (void)
   yychar = YYEMPTY; /* Cause a token to be read.  */
 
 /* User initialization code.  */
-#line 729 "gabc/gabc-score-determination.y" /* yacc.c:1429  */
+#line 741 "gabc/gabc-score-determination.y" /* yacc.c:1429  */
 {
     yylloc.first_line = 1;
     yylloc.first_column = 0;
@@ -2089,7 +2101,7 @@ yyparse (void)
     yylloc.last_offset = 0;
 }
 
-#line 2093 "gabc/gabc-score-determination-y.c" /* yacc.c:1429  */
+#line 2105 "gabc/gabc-score-determination-y.c" /* yacc.c:1429  */
   yylsp[0] = yylloc;
   goto yysetstate;
 
@@ -2276,41 +2288,41 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 769 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 781 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         end_definitions();
     }
-#line 2284 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2296 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 779 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 791 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         (yyval).text = (yyvsp[-1]).text;
     }
-#line 2292 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2304 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 783 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 795 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         (yyval).text = NULL;
     }
-#line 2300 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2312 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 789 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 801 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         /* these definitions are not passed through */
         free(macros[(yyvsp[-1]).character - '0']);
         macros[(yyvsp[-1]).character - '0'] = (yyvsp[0]).text;
     }
-#line 2310 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2322 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 794 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 806 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0]).text == NULL) {
             gregorio_message("name can't be empty","det_score",
@@ -2320,72 +2332,72 @@ yyreduce:
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->name = (yyvsp[0]).text;
     }
-#line 2324 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2336 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 803 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 815 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("language", got_language);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         gregorio_set_centering_language((yyvsp[0]).text);
         got_language = true;
     }
-#line 2335 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2347 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 809 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 821 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("gabc-copyright", score->gabc_copyright != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->gabc_copyright = (yyvsp[0]).text;
     }
-#line 2345 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2357 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 814 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 826 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("score_copyright", score->score_copyright != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->score_copyright = (yyvsp[0]).text;
     }
-#line 2355 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2367 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 819 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 831 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("mode", score->mode != 0);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->mode = (yyvsp[0]).text;
     }
-#line 2365 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2377 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 824 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 836 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("mode-modifier", score->mode_modifier != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->mode_modifier = (yyvsp[0]).text;
     }
-#line 2375 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2387 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 829 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 841 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("mode-differentia", score->mode_differentia != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->mode_differentia = (yyvsp[0]).text;
     }
-#line 2385 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2397 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 834 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 846 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("staff-lines", got_staff_lines);
         if ((yyvsp[0]).text) {
@@ -2394,11 +2406,11 @@ yyreduce:
             got_staff_lines = true;
         }
     }
-#line 2398 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2410 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 842 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 854 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("nabc lines", score->nabc_lines != 0);
         if ((yyvsp[0]).text) {
@@ -2407,11 +2419,11 @@ yyreduce:
             score->nabc_lines=nabc_lines;
         }
     }
-#line 2411 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2423 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 850 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 862 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if ((yyvsp[0]).text) {
             /* DEPRECATED by 4.1 */
@@ -2422,11 +2434,11 @@ yyreduce:
             free((yyvsp[0]).text);
         }
     }
-#line 2426 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2438 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 860 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 872 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (score->annotation [MAX_ANNOTATIONS - 1]) {
             gregorio_messagef("det_score", VERBOSITY_WARNING, 0,
@@ -2436,59 +2448,59 @@ yyreduce:
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         gregorio_set_score_annotation(score, (yyvsp[0]).text);
     }
-#line 2440 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2452 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 869 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 881 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         check_multiple("author", score->author != NULL);
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->author = (yyvsp[0]).text;
     }
-#line 2450 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2462 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 874 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 886 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
         score->legacy_oriscus_orientation = (strcmp((yyvsp[0]).text, "legacy") == 0);
     }
-#line 2459 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2471 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 878 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 890 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_add_score_header(score, (yyvsp[-1]).text, (yyvsp[0]).text);
     }
-#line 2467 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2479 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 888 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 900 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
         free((yyvsp[-1]).text);
         nabc_state=0;
     }
-#line 2477 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2489 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 893 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 905 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gabc_y_add_notes((yyvsp[-1]).text, (yylsp[-1]));
         free((yyvsp[-1]).text);
         nabc_state=0;
         update_position_with_space();
     }
-#line 2488 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2500 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 899 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 911 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (!nabc_lines) {
             gregorio_message(_("You used character \"|\" in gabc without "
@@ -2500,294 +2512,294 @@ yyreduce:
         free((yyvsp[-1]).text);
         nabc_state = (nabc_state + 1) % (nabc_lines+1);
     }
-#line 2504 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2516 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 910 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 922 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         elements[voice]=NULL;
         nabc_state=0;
     }
-#line 2513 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2525 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 914 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 926 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         elements[voice]=NULL;
         nabc_state=0;
         update_position_with_space();
     }
-#line 2523 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2535 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 928 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 940 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_ITALIC);
     }
-#line 2531 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2543 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 931 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 943 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_TT);
     }
-#line 2539 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2551 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 934 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 946 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_UNDERLINED);
     }
-#line 2547 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2559 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 937 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 949 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_COLORED);
     }
-#line 2555 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2567 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 940 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 952 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_BOLD);
     }
-#line 2563 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2575 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 943 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 955 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_SMALL_CAPS);
     }
-#line 2571 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2583 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 946 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 958 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_VERBATIM);
     }
-#line 2579 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2591 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 949 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 961 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_SPECIAL_CHAR);
     }
-#line 2587 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2599 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 952 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 964 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_ELISION);
     }
-#line 2595 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2607 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 955 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 967 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (!center_is_determined) {
             gregorio_gabc_add_style(ST_FORCED_CENTER);
             center_is_determined=CENTER_HALF_DETERMINED;
         }
     }
-#line 2606 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2618 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 964 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 976 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_ITALIC);
     }
-#line 2614 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2626 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 967 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 979 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_TT);
     }
-#line 2622 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2634 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 970 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 982 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_UNDERLINED);
     }
-#line 2630 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2642 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 973 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 985 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_COLORED);
     }
-#line 2638 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2650 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 976 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 988 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_BOLD);
     }
-#line 2646 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2658 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 979 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 991 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_SMALL_CAPS);
     }
-#line 2654 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2666 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 982 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 994 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_VERBATIM);
     }
-#line 2662 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2674 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 985 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 997 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_SPECIAL_CHAR);
     }
-#line 2670 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2682 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 988 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1000 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_end_style(ST_ELISION);
     }
-#line 2678 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2690 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 991 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1003 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         if (center_is_determined==CENTER_HALF_DETERMINED) {
             gregorio_gabc_end_style(ST_FORCED_CENTER);
             center_is_determined=CENTER_FULLY_DETERMINED;
         }
     }
-#line 2689 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2701 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 1000 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1012 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         euouae = EUOUAE_BEGINNING;
     }
-#line 2697 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2709 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 1003 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1015 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         euouae = EUOUAE_END;
     }
-#line 2705 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2717 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 1009 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1021 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         no_linebreak_area = NLBA_BEGINNING;
     }
-#line 2713 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2725 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 1012 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1024 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         no_linebreak_area = NLBA_END;
     }
-#line 2721 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2733 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 1019 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1031 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_text((yyvsp[0]).text);
     }
-#line 2729 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2741 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 1029 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1041 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_text(gregorio_strdup("-"));
     }
-#line 2737 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2749 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 1032 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1044 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_text(gregorio_strdup("-"));
     }
-#line 2745 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2757 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 1043 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1055 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         start_translation(TR_NORMAL);
     }
-#line 2753 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2765 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 1049 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1061 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         end_translation();
     }
-#line 2761 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2773 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 1052 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1064 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         start_translation(TR_WITH_CENTER_END);
     }
-#line 2769 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2781 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 1058 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1070 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         abovelinestext = (yyvsp[-1]).text;
     }
-#line 2777 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2789 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 1064 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1076 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         ready_characters();
         first_text_character = current_character;
         close_syllable(&(yylsp[-2]));
     }
-#line 2787 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2799 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 1069 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1081 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_VERBATIM);
         gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
@@ -2796,46 +2808,46 @@ yyreduce:
         first_text_character = current_character;
         close_syllable(&(yylsp[-3]));
     }
-#line 2800 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2812 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 1077 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1089 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         close_syllable(&(yylsp[-3]));
     }
-#line 2808 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2820 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 1080 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1092 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         gregorio_gabc_add_style(ST_VERBATIM);
         gregorio_gabc_add_text(gregorio_strdup("\\GreForceHyphen"));
         gregorio_gabc_end_style(ST_VERBATIM);
         close_syllable(&(yylsp[-4]));
     }
-#line 2819 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2831 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 1089 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1101 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         close_syllable(NULL);
     }
-#line 2827 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2839 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 1092 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
+#line 1104 "gabc/gabc-score-determination.y" /* yacc.c:1646  */
     {
         close_syllable(NULL);
     }
-#line 2835 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2847 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
     break;
 
 
-#line 2839 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
+#line 2851 "gabc/gabc-score-determination-y.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

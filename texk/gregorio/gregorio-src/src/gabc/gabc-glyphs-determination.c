@@ -281,7 +281,9 @@ static char gregorio_add_note_to_a_glyph(gregorio_glyph_type current_glyph_type,
         *end_of_glyph = DET_END_OF_PREVIOUS;
         next_glyph_type = G_PES_QUILISMA_QUADRATUM_FIRST_PART;
         break;
-    case S_ORISCUS_SCAPUS:
+    case S_ORISCUS_SCAPUS_UNDETERMINED:
+    case S_ORISCUS_SCAPUS_ASCENDENS:
+    case S_ORISCUS_SCAPUS_DESCENDENS:
         if (current_glyph_type == G_PUNCTUM && last_pitch < current_pitch) {
             next_glyph_type = G_VIRGA_STRATA;
         } else {
@@ -997,7 +999,7 @@ gregorio_glyph *gabc_det_glyphs_from_notes(gregorio_note *current_note,
                     switch (current_note->u.note.shape) {
                     case S_PUNCTUM:
                     case S_ORISCUS_UNDETERMINED:
-                    case S_ORISCUS_SCAPUS:
+                    case S_ORISCUS_SCAPUS_UNDETERMINED:
                     case S_QUILISMA:
                     case S_QUADRATUM:
                     case S_QUILISMA_QUADRATUM:
