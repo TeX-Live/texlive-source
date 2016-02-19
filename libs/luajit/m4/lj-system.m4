@@ -94,7 +94,7 @@ AC_MSG_RESULT([$LJHOST $LJARCH $DASM_ARCH])
 # Determine host and build system characteristics.
 AC_DEFUN([LJ_ARCH], [dnl
 lj_save_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-luajit_version/src $LUAJIT_DEFINES -dM"
+CPPFLAGS="$CPPFLAGS -I$srcdir/LuaJIT-src/src $LUAJIT_DEFINES -dM"
 AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <lj_arch.h>]])],
                   [lj_cpp=ok; _LJ_ARCH])
 CPPFLAGS=$lj_save_CPPFLAGS
