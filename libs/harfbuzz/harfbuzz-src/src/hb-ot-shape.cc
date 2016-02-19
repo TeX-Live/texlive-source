@@ -584,8 +584,6 @@ hb_ot_substitute_complex (hb_ot_shape_context_t *c)
 
   c->plan->substitute (c->font, buffer);
 
-  hb_ot_layout_substitute_finish (c->font, buffer);
-
   return;
 }
 
@@ -616,29 +614,8 @@ zero_mark_width (hb_glyph_position_t *pos)
 }
 
 static inline void
-zero_mark_widths_by_unicode (hb_buffer_t *buffer, bool adjust_offsets)
-{
-  if (!(buffer->scratch_flags & HB_BUFFER_SCRATCH_FLAG_HAS_NON_ASCII))
-    return;
-
-  unsigned int count = buffer->len;
-  hb_glyph_info_t *info = buffer->info;
-  for (unsigned int i = 0; i < count; i++)
-    if (_hb_glyph_info_get_general_category (&info[i]) == HB_UNICODE_GENERAL_CATEGORY_NON_SPACING_MARK)
-    {
-      if (adjust_offsets)
-        adjust_mark_offsets (&buffer->pos[i]);
-      zero_mark_width (&buffer->pos[i]);
-    }
-}
-
-static inline void
 zero_mark_widths_by_gdef (hb_buffer_t *buffer, bool adjust_offsets)
 {
-  /* This one is a hack; Technically GDEF can mark ASCII glyphs as marks, but we don't listen. */
-  if (!(buffer->scratch_flags & HB_BUFFER_SCRATCH_FLAG_HAS_NON_ASCII))
-    return;
-
   unsigned int count = buffer->len;
   hb_glyph_info_t *info = buffer->info;
   for (unsigned int i = 0; i < count; i++)
@@ -686,9 +663,12 @@ hb_ot_position_default (hb_ot_shape_context_t *c)
 static inline bool
 hb_ot_position_complex (hb_ot_shape_context_t *c)
 {
+  hb_ot_layout_position_start (c->font, c->buffer);
+
   bool ret = false;
   unsigned int count = c->buffer->len;
   bool has_positioning = (bool) hb_ot_layout_has_positioning (c->face);
+
   /* If the font has no GPOS, AND, no fallback positioning will
    * happen, AND, direction is forward, then when zeroing mark
    * widths, we shift the mark with it, such that the mark
@@ -707,15 +687,8 @@ hb_ot_position_complex (hb_ot_shape_context_t *c)
       zero_mark_widths_by_gdef (c->buffer, adjust_offsets_when_zeroing);
       break;
 
-    /* Not currently used for any shaper:
-    case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_UNICODE_EARLY:
-      zero_mark_widths_by_unicode (c->buffer, adjust_offsets_when_zeroing);
-      break;
-    */
-
     default:
     case HB_OT_SHAPE_ZERO_WIDTH_MARKS_NONE:
-    case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_UNICODE_LATE:
     case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_GDEF_LATE:
       break;
   }
@@ -748,20 +721,20 @@ hb_ot_position_complex (hb_ot_shape_context_t *c)
 
   switch (c->plan->shaper->zero_width_marks)
   {
-    case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_UNICODE_LATE:
-      zero_mark_widths_by_unicode (c->buffer, adjust_offsets_when_zeroing);
-      break;
-
     case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_GDEF_LATE:
       zero_mark_widths_by_gdef (c->buffer, adjust_offsets_when_zeroing);
       break;
 
     default:
     case HB_OT_SHAPE_ZERO_WIDTH_MARKS_NONE:
-    //case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_UNICODE_EARLY:
     case HB_OT_SHAPE_ZERO_WIDTH_MARKS_BY_GDEF_EARLY:
       break;
   }
+
+  /* Finishing off GPOS has to follow a certain order. */
+  hb_ot_layout_position_finish_advances (c->font, c->buffer);
+  hb_ot_zero_width_default_ignorables (c);
+  hb_ot_layout_position_finish_offsets (c->font, c->buffer);
 
   return ret;
 }
@@ -769,15 +742,11 @@ hb_ot_position_complex (hb_ot_shape_context_t *c)
 static inline void
 hb_ot_position (hb_ot_shape_context_t *c)
 {
-  hb_ot_layout_position_start (c->font, c->buffer);
+  c->buffer->clear_positions ();
 
   hb_ot_position_default (c);
 
   hb_bool_t fallback = !hb_ot_position_complex (c);
-
-  hb_ot_zero_width_default_ignorables (c);
-
-  hb_ot_layout_position_finish (c->font, c->buffer);
 
   if (fallback && c->plan->shaper->fallback_position)
     _hb_ot_shape_fallback_position (c->plan, c->font, c->buffer);
