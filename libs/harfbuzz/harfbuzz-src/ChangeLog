@@ -1,3 +1,682 @@
+commit c3731559042e1730e85d19574321ad850010f7de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 19 15:13:07 2016 +0700
+
+    [fuzzing] Add test for recent fix
+
+    Test from https://github.com/behdad/harfbuzz/issues/223
+
+    I forgot that we do run hb-fuzzer on tests in
+    shaping/tests/fuzzed.tests.
+
+ .../sha1sum/205edd09bd3d141cc9580f650109556cc28b22cb.ttf | Bin 0 ->
+ 1966 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ test/shaping/tests/fuzzed.tests                          |   1 +
+ 3 files changed, 2 insertions(+)
+
+commit aa33cb72ab29c31e87f0cca9a0e72fe3a68247b7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 19 15:12:24 2016 +0700
+
+    [fuzzing] Make test runner actually work
+
+ test/fuzzing/Makefile.am | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 2735555c6b0c95db7dfc2b391f92a1a5c06084c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 19 15:12:16 2016 +0700
+
+    [fuzzing] Add TODO item
+
+ test/fuzzing/hb-fuzzer.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit b87e36f6f119fac80b8fd55f3abae563c2c5b798
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 19 14:52:31 2016 +0700
+
+    Avoid buffer->move_to() in case of buffer error
+
+    Fixes https://github.com/behdad/harfbuzz/issues/223
+
+    Right now we cannot test this because it has to be tested using
+    hb-fuzzer.
+    We should move all fuzzing tests from test/shaping/tests/fuzzed.tests
+    to
+    test/fuzzing/ and have its own test runner.  At that point, should add
+    test from this issue as well.
+
+ src/hb-buffer.cc                     | 2 ++
+ src/hb-ot-layout-gsubgpos-private.hh | 2 +-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+commit 7e76bbabbaa56af314abff8ddba8866c634919cd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 19 14:43:39 2016 +0700
+
+    [fuzzing] Make "make hb-fuzzer" build lib dependency
+
+    Not going to do with util/, but is convenient here.
+
+ test/fuzzing/Makefile.am | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 568a0c60e8695a6ad8a93ec60d55b137c48890cb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 18 19:31:51 2016 +0700
+
+    Remove pointless overflow check in pointer math
+
+    Fixes https://github.com/behdad/harfbuzz/issues/227
+
+ src/hb-blob.cc | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit aae2847099cbf05bf0668fbe526fc58736837c1b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 18 17:06:25 2016 +0700
+
+    Emoji skin tone modifiers need to be treated as combining marks
+
+    Fixes https://github.com/behdad/harfbuzz/issues/169
+
+ src/hb-ot-layout-private.hh | 15 ++++++++++++++-
+ src/hb-unicode-private.hh   |  5 +++--
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+
+commit da41e48f0a1a6af6d44ef25185d2421a29bd4166
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 16 17:16:33 2016 +0700
+
+    [USE] Zero mark advances by GDEF early
+
+    This is what Microsoft's implementation does.  Marks that need advance
+    need to add it back using 'dist' or other feature in GPOS.
+    Update tests to
+    match.
+
+ src/hb-ot-shape-complex-use.cc                           |   2 +-
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ .../sha1sum/f518eb6f6b5eec2946c9fbbbde44e45d46f5e2ac.ttf | Bin 0 ->
+ 1356 bytes
+ test/shaping/tests/context-matching.tests                |   2 +-
+ test/shaping/tests/use.tests                             |   2 ++
+ 5 files changed, 5 insertions(+), 2 deletions(-)
+
+commit 86c68c7a2c971efe8e35b1f1bd99401dc8b688d2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 16 16:07:20 2016 +0700
+
+    [GPOS] Fix interaction of mark attachments and cursive chaining
+
+    Fixes https://github.com/behdad/harfbuzz/issues/211
+
+    What happens in that bug is that a mark is attached to base first,
+    then a second mark is cursive-chained to the first mark.  This only
+    "works" because it's in the Indic shaper where mark advances are
+    not zeroed.
+
+    Before, we didn't allow cursive to run on marks at all.  Fix that.
+    We also where updating mark major offsets at the end of GPOS, such
+    that changes in advance of base will not change the mark attachment
+    position.  That was superior to the alternative (which is what
+    Uniscribe
+    does BTW), but made it hard to apply cursive to the mark after it
+    was positioned.  We could track major-direction offset changes and
+    apply that to cursive in the post process, but that's a much trickier
+    thing to do than the fix here, which is to immediately apply the
+    major-direction advance-width offsets...  Ie.:
+
+    https://github.com/behdad/harfbuzz/issues/211#issuecomment-183194739
+
+    If this breaks any fonts, the font should be fixed to do mark
+    attachment
+    after all the advances are set up first (kerning, etc).
+
+    Finally, this, still doesn't make us match Uniscribe, for I explained
+    in that bug.  Looks like Uniscribe applies minor-direction cursive
+    adjustment immediate as well.  We don't, and we like it our way, at
+    least for now.  Eg. the sequence in the test case does this:
+
+    - The first subscript attaches with mark-to-base, moving in x only,
+    - The second subscript attaches with cursive attachment to first
+    subscript
+      moving in x only,
+    - A final context rule moves the first subscript up by 104 units.
+
+    The way we do, the final shift-up, also shifts up the second subscript
+    mark because it's cursively-attached.  Uniscribe doesn't.  We get:
+
+    [ttaorya=0+1307|casubscriptorya=0@-242,104+-231|casubscriptnarroworya=0@20,104+507]
+
+    while Uniscribe gets:
+
+    [ttaorya=0+1307|casubscriptorya=0@-242,104+-211|casubscriptnarroworya=0+487]
+
+    note the different y-offset of the last glyph.  In our view,
+    after cursive,
+    things move together, period.
+
+ src/hb-ot-layout-gpos-table.hh                     |  31
+ +++++++++++----------
+ .../706c5d7b625f207bc0d874c67237aad6f1e9cd6f.ttf   | Bin 0 -> 3868 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                |   1 +
+ test/shaping/tests/cursive-positioning.tests       |   1 +
+ 4 files changed, 18 insertions(+), 15 deletions(-)
+
+commit 80c8855cfeffa028d74a25df884d0e5577c95c6c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 12 12:50:17 2016 +0700
+
+    Minor
+
+ src/hb-common.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6ab920224c32e38072a0bec5e84d4b0d58b74167
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 16:57:52 2016 +0700
+
+    [GPOS] Minor
+
+    No effect.
+
+ src/hb-ot-layout-gpos-table.hh | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit cbc3a76c5a38ab24f72e80357377711bd3f54d56
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 16:48:13 2016 +0700
+
+    [GPOS] Merge fixing of offsets for cursive and mark attachments
+
+    Part of fixing https://github.com/behdad/harfbuzz/issues/211
+
+ src/hb-buffer-private.hh       |  3 +-
+ src/hb-ot-layout-gpos-table.hh | 73
+ ++++++++++++++++++------------------------
+ 2 files changed, 33 insertions(+), 43 deletions(-)
+
+commit 7d8d58ac81fe267e29ea68cdc6f4a4fa8c22d40f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 16:34:28 2016 +0700
+
+    [GPOS] Divide position_finish() into two phases, for advances
+    and offsets
+
+    Right now the position_finish_advances() is empty.  To be used for
+    spacing attachments proposal later.
+
+ src/hb-ot-layout-gpos-table.hh | 11 +++++++++--
+ src/hb-ot-layout-gsub-table.hh |  6 ------
+ src/hb-ot-layout-private.hh    | 19 +++++++++----------
+ src/hb-ot-layout.cc            | 16 ++++++++--------
+ src/hb-ot-shape.cc             |  7 +++----
+ 5 files changed, 29 insertions(+), 30 deletions(-)
+
+commit 8474231567a08873cc5e0aa08fea60316a04c27e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 16:27:41 2016 +0700
+
+    [ot] Minor shuffling code around
+
+ src/hb-ot-layout-gpos-table.hh |  2 --
+ src/hb-ot-shape.cc             | 13 ++++++++-----
+ 2 files changed, 8 insertions(+), 7 deletions(-)
+
+commit b0b11614e9fb9ecd1faae28b0ed71ac6bf5c1266
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 15:28:55 2016 +0700
+
+    [GPOS] Add harmless recursion in fix_mark_attachment()
+
+    Will do nothing.  Just useful for merging two functions.
+
+ src/hb-ot-layout-gpos-table.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 686567baab5a32ffea843538643e01de2885fa4f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 15:25:28 2016 +0700
+
+    [GPOS] Merge attach_chain() and cursive_chain()
+
+    Differentiate, using new attach_type().
+
+ src/hb-ot-layout-gpos-table.hh | 50
+ +++++++++++++++++++++++++++---------------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
+
+commit 806ad8dc65931ab7893bff7d5592a67a9bd237ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 14:53:11 2016 +0700
+
+    [GPOS] Minor shuffling
+
+ src/hb-ot-layout-gpos-table.hh | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 0f6278d1fbb75856132f1fa2d29648979f033316
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 14:49:10 2016 +0700
+
+    [GPOS] Negate sign of attach_lookback(), and rename it to
+    attach_chain()
+
+    No behavior change.  Preparing to unify how cursive and mark
+    attachments
+    work.
+
+ src/hb-ot-layout-gpos-table.hh | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+commit 5b5dc2c0406d8180e72d97a54334c722fda325b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 12:15:38 2016 +0700
+
+    [tests] Add test for advance zeroing of an ASCII letter marked as
+    mark in GDEF
+
+ test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ .../sha1sum/a98e908e2ed21b22228ea59ebcc0f05034c86f2e.ttf | Bin 0 ->
+ 1016 bytes
+ test/shaping/tests/zero-width-marks.tests                |   1 +
+ 3 files changed, 2 insertions(+)
+
+commit 660c9d3fc21172e8dc340b017122c084dac6334c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 11 12:14:27 2016 +0700
+
+    Remove font-dependent ASCII-only perf hack
+
+    Is confusing.  I already hit it myself.  Remove.  We can optimize
+    ASCII based on Unicode properties.  But should not do based on
+    assumptions on the font.
+
+ src/hb-ot-shape.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit 3fe0cf10401875f1e9b8b5fbaf59826e64ea61d2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 18:43:43 2016 +0700
+
+    Fix previous commit!
+
+ test/shaping/fonts/sha1sum/MANIFEST       | 6 +++---
+ test/shaping/tests/zero-width-marks.tests | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+commit 293a210eee0a53b59f4b33298f42ec6e59d785e0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 18:39:59 2016 +0700
+
+    [tests] Fix fonts in cc4a78bf22c4a735b84c89b04be3bb531f42135e
+
+    They had an invalid LookupFlag (32).
+
+ .../sha1sum/0dd3a51c3ea50997cb1f72515d1060408f8b4b59.ttf | Bin 1412 ->
+ 0 bytes
+ .../sha1sum/56cfd0e18d07f41c38e9598545a6d369127fc6f9.ttf | Bin 0 ->
+ 1412 bytes
+ .../sha1sum/828114d00931885bc25abf7cdb878b2914a2e743.ttf | Bin 1448 ->
+ 0 bytes
+ .../sha1sum/894e96a367f00c196d82e6243673a1d4414f4f6a.ttf | Bin 1448 ->
+ 0 bytes
+ .../sha1sum/cc5f3d2d717fb6bd4dfae1c16d48a2cb8e12233b.ttf | Bin 0 ->
+ 1448 bytes
+ .../sha1sum/ffa0f5d2d9025486d8469d8b1fdd983e7632499b.ttf | Bin 0 ->
+ 1448 bytes
+ 6 files changed, 0 insertions(+), 0 deletions(-)
+
+commit eaadcbbc53e02838c847e53ef214a55d6915d677
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 18:29:54 2016 +0700
+
+    Remove now-unused mark zeroing BY_UNICODE
+
+ src/hb-ot-shape-complex-private.hh |  2 --
+ src/hb-ot-shape.cc                 | 29 -----------------------------
+ 2 files changed, 31 deletions(-)
+
+commit cc4a78bf22c4a735b84c89b04be3bb531f42135e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 18:24:08 2016 +0700
+
+    [tests] Add tests for Latin mark zeroing
+
+ .../sha1sum/0dd3a51c3ea50997cb1f72515d1060408f8b4b59.ttf | Bin 0 ->
+ 1412 bytes
+ .../sha1sum/828114d00931885bc25abf7cdb878b2914a2e743.ttf | Bin 0 ->
+ 1448 bytes
+ .../sha1sum/894e96a367f00c196d82e6243673a1d4414f4f6a.ttf | Bin 0 ->
+ 1448 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   4 ++++
+ .../sha1sum/fcdcffbdf1c4c97c05308d7600e4c283eb47dbca.ttf | Bin 0 ->
+ 1344 bytes
+ test/shaping/tests/zero-width-marks.tests                |   4 ++++
+ 6 files changed, 8 insertions(+)
+
+commit 55ff34b9c157a839d026465af8f30424ce7f891b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 18:20:02 2016 +0700
+
+    [tests] Add tests for Thai mark zeroing
+
+ .../sha1sum/45855bc8d46332b39c4ab9e2ee1a26b1f896da6b.ttf | Bin 0 ->
+ 1088 bytes
+ .../sha1sum/7a37dc4d5bf018456aea291cee06daf004c0221c.ttf | Bin 0 ->
+ 1080 bytes
+ .../sha1sum/8099955657a54e9ee38a6ba1d6f950ce58e3cc25.ttf | Bin 0 ->
+ 1024 bytes
+ test/shaping/fonts/sha1sum/MANIFEST                      |   4 ++++
+ .../sha1sum/bb0c53752e85c3d28973ebc913287b8987d3dfe8.ttf | Bin 0 ->
+ 976 bytes
+ test/shaping/tests/zero-width-marks.tests                |   4 ++++
+ 6 files changed, 8 insertions(+)
+
+commit b3582a8ee82942a931130a83b2867b239f8ca71a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 18:10:15 2016 +0700
+
+    Change default mark advance zeroing behavior from Unicode to GDEF
+
+    See thread at:
+    https://lists.freedesktop.org/archives/harfbuzz/2016-February/005462.html
+
+ src/hb-ot-shape-complex-default.cc | 2 +-
+ src/hb-ot-shape-complex-thai.cc    | 2 +-
+ src/hb-ot-shape-complex-tibetan.cc | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 43bb2b8fb00705c3334730a58ade7984181018b2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 14:11:43 2016 +0700
+
+    Minor
+
+ test/shaping/hb_test_tools.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit bdaa784bb610ec65626d63cc068a0958ff5005fc
+Merge: a168db4 f6ffba6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 11:11:36 2016 +0700
+
+    Merge pull request #164 from fanc999/msvc.build
+
+    Enable Build of HarfBuzz under Visual Studio using NMake Makefiles
+
+commit a168db4739148459bc33c7dae88e73efa0153d72
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 10 11:10:08 2016 +0700
+
+    [README] Add ABI Tracker link
+
+ README | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f6ffba634bb33d6d4b051abce9c23fcae280c3fe
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Wed Dec 9 14:57:15 2015 +0800
+
+    MSVC builds: Add support to build DirectWrite shaping backend
+
+    Add into the NMake Makefiles to build the DirectWrite shaping backend,
+    but as PR #134 mentions, this is considered to be in an experimental
+    state,
+    so don't include this in the build by default for now.  This is
+    most probably
+    going to replace the Uniscribe backend eventually, since DirectWrite
+    is meant
+    to be Uniscribe's replacement, and is needed for Windows Store apps
+    if a
+    system shaping API is to be used.
+
+ win32/README.txt        |  4 ++++
+ win32/config-msvc.mak   | 10 ++++++++++
+ win32/config.h.win32.in |  3 +++
+ win32/info-msvc.mak     |  7 +++++++
+ 4 files changed, 24 insertions(+)
+
+commit c6792854557ca104948e8f0b142c9384105b0d05
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Wed Feb 3 18:31:23 2016 +0800
+
+    build: Build the DirectWrite sources if requested
+
+    This adds to the autotools build system so that the (experimental)
+    DirectWrite support for HarfBuzz is built (and dist'ed).
+
+ configure.ac         | 25 +++++++++++++++++++++++++
+ src/Makefile.am      |  7 +++++++
+ src/Makefile.sources |  3 +++
+ 3 files changed, 35 insertions(+)
+
+commit d7b6636e5ebf1ddf7d7a04007ffbc411cf7e462e
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Tue Nov 3 19:00:42 2015 +0800
+
+    build: Support Visual Studio builds using NMake
+
+    This adds a set of NMake Makefiles that can be used to build
+    HarfBuzz, from
+    the standard basic build building the minimal HarfBuzz DLL (consisting
+    of OpenType, fallback and Uniscribe support only), to a full
+    fledged build
+    consisting of GLib and FreeType support, as well as building the
+    utilities,
+    the test programs in src/ and test/api, and HarfBuzz-ICU and
+    HarfBuzz-GObject, and up to building the introspection files.
+    This means a
+    flexible build mechanism is supported here, so anything that is
+    supported
+    for a Windows build (code-wise), should all be supported by this build
+    system.
+
+    As in an earlier commit, the source listings are shared with the
+    autotools
+    builds with the various Makefile.sources in src/, src/hb-ucdn and
+    util/, and
+    this set of NMake Makefiles will transform these lists into the
+    form they
+    want.
+
+    In the current form, all the test programs in test/api pass, and
+    this has
+    been checked successfully with 'make -j8 distcheck'.
+
+ BUILD.md                        |   4 +-
+ Makefile.am                     |   2 +-
+ configure.ac                    |   2 +
+ win32/Makefile.am               |  14 +++
+ win32/Makefile.vc               |  52 +++++++++++
+ win32/README.txt                |  75 ++++++++++++++++
+ win32/build-rules-msvc.mak      | 140 ++++++++++++++++++++++++++++++
+ win32/config-msvc.mak           | 188
+ ++++++++++++++++++++++++++++++++++++++++
+ win32/create-lists-msvc.mak     | 151 ++++++++++++++++++++++++++++++++
+ win32/create-lists.bat          |  42 +++++++++
+ win32/detectenv-msvc.mak        | 136 +++++++++++++++++++++++++++++
+ win32/generate-msvc.mak         |  26 ++++++
+ win32/hb-introspection-msvc.mak |  42 +++++++++
+ win32/info-msvc.mak             | 130 +++++++++++++++++++++++++++
+ win32/install.mak               |  29 +++++++
+ win32/introspection-msvc.mak    |  73 ++++++++++++++++
+ 16 files changed, 1104 insertions(+), 2 deletions(-)
+
+commit 5c3e7260bcb4999b8b7cb9afb26e6eaff867634b
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Tue Nov 3 18:52:46 2015 +0800
+
+    MSVC builds: Add a pre-configured config.h(.win32) template
+
+    This adds a pre-configured config.h template that can be used
+    for Visual
+    Studio builds, where autotools is not normally available.  This has
+    the
+    configs that are suitable for Visual Studio builds, as well as all the
+    features used for Windows builds enabled (HAVE_OT, HAVE_FALLBACK and
+    HAVE_UNISCRIBE).
+
+    Note that the optional features are not enabled here, they are
+    enabled by
+    /D's (or -D's) in the NMake Makefiles as requested.
+
+ win32/config.h.win32.in | 155
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 155 insertions(+)
+
+commit 35ded3af74a5bc4b038a07308354d5f7501ae3c7
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Tue Nov 3 16:56:27 2015 +0800
+
+    build: Move source listings into separate Makefile snippets
+
+    This moves all the source listings in src/Makefile.am,
+    src/hb-ucdn/Makefile.am and util/Makefile.am into separate Makefile
+    snippets, so that they may be shared between different Makefile-based
+    build systems, such as NMake for Visual Studio.
+
+ src/Makefile.am              | 165
+ +++++++++----------------------------------
+ src/Makefile.sources         | 147 ++++++++++++++++++++++++++++++++++++++
+ src/hb-ucdn/Makefile.am      |   6 +-
+ src/hb-ucdn/Makefile.sources |   4 ++
+ util/Makefile.am             |  34 ++-------
+ util/Makefile.sources        |  32 +++++++++
+ 6 files changed, 223 insertions(+), 165 deletions(-)
+
+commit b894a85ad1e7c3ecfb6d3732a7c9779f5462fe70
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 2 16:39:19 2016 +0800
+
+    Fix more hangs in case of buffer allocation errors
+
+    Hopefully
+    fixes https://github.com/behdad/harfbuzz/issues/214
+
+ src/hb-ot-shape-complex-indic.cc   | 2 +-
+ src/hb-ot-shape-complex-myanmar.cc | 2 +-
+ src/hb-ot-shape-complex-use.cc     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit b693992ea160b66541f678dc9be29b513c77a30b
+Merge: 9a6a33c 498574e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 2 12:33:32 2016 +0800
+
+    Merge pull request #222 from n8willis/master
+
+    Add usermanual chapter on cluster levels
+
+commit 498574e6c1a83bbd2768925af6e39806fe1ea8bb
+Author: n8willis <nwillis@glyphography.com>
+Date:   Thu Jan 28 12:21:32 2016 -0600
+
+    Update Makefile.am
+
+ docs/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit e12fc666994573dbabb6928a8b2e8698667088ce
+Author: n8willis <nwillis@glyphography.com>
+Date:   Thu Jan 28 12:14:12 2016 -0600
+
+    Added initial usermanual chapter on cluster levels.
+
+ docs/harfbuzz-docs.xml       |   1 +
+ docs/usermanual-clusters.xml | 304
+ +++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 305 insertions(+)
+
+commit 9a6a33ccbea8a2e23e779bd955958fa41974c1c7
+Merge: d05b783 146fe25
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 18 12:47:18 2016 +0100
+
+    Merge pull request #216 from mhosken/master
+
+    Refactor graphite2 to make ovleraps into negative width spaces
+
+commit 146fe252c3ebd0253344ce20981554e40926497b
+Author: Martin Hosken <martin_hosken@sil.org>
+Date:   Sat Jan 16 17:24:00 2016 -0600
+
+    Refactor graphite2 to make ovleraps into negative width spaces
+
+ src/hb-graphite2.cc | 71
+ ++++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 43 insertions(+), 28 deletions(-)
+
+commit d05b783322d90208b2ddf06a5ebffc7c301be3d7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 12 16:17:21 2016 +0000
+
+    Fix compiler warning
+
+    Fixes https://github.com/behdad/harfbuzz/issues/212
+
+ src/hb-ot-tag.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d163dc18e66c9e2f404d09310482464245cae704
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Jan 12 13:05:01 2016 +0000
+
+    Minor
+
+ src/hb-ot-layout-common-private.hh | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+commit 505b7d4732c6a8c423f43c0de46e05dc583e82c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 11 18:31:04 2016 +0000
+
+    [fuzzing] Fuzz input text
+
+    Very rudimentary right now, but will get kcc's bot going.
+
+    From
+    https://github.com/behdad/harfbuzz/issues/139#issuecomment-163580783
+
+ test/fuzzing/hb-fuzzer.cc | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
+
+commit 3e704521f67e021fb51cda7319925fd39eba4f97
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 11 17:38:41 2016 +0000
+
+    [OT] Get list of lookup subtables once and loop through them
+
+    This speeds up shaping the Amiri font by over 15%.
+
+    This was primarily needed for my work on OpenType GX, since
+    we will be collecting only sublookups that are "active" for
+    current font instance; but it's a nice boost in general as
+    well.
+
+    We might, in the future, collect subtables in the lookup_accel.
+    That would also allow us to do a per-subtbale set-digest, which
+    should speed things up some more, specially for ContextChainFormat3
+    lookups...  Amiri, for example, contains one lookup with 53
+    subtables!
+
+ src/hb-ot-layout.cc | 120
+ +++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 81 insertions(+), 39 deletions(-)
+
+commit 11441291bbf4326dca9b14ec3e9cad3d4d229303
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 11 13:16:35 2016 +0000
+
+    1.1.3
+
+ NEWS         | 29 +++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
+
 commit 97624d9244de0fdb9c03f60e03fe242028efa8a1
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Jan 11 12:58:45 2016 +0000
