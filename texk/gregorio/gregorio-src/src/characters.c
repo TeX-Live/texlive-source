@@ -893,16 +893,29 @@ void gregorio_rebuild_characters(gregorio_character **const param_character,
             switch (current_character->cos.s.type) {
             case ST_T_BEGIN:
                 /* the beginning of a style */
+
+                if (center_is_determined == CENTER_DETERMINING_MIDDLE
+                        && index == end - 1) {
+                    /* if we are determining the end of the center and we have
+                     * a, ELISION, VERBATIM or SPECIAL_CHAR style, we end the
+                     * center determination */
+                    switch (style) {
+                    case ST_VERBATIM:
+                    case ST_SPECIAL_CHAR:
+                    case ST_ELISION:
+                        end_center(center_type, current_character, &first_style);
+                        center_is_determined = CENTER_FULLY_DETERMINED;
+                        break;
+
+                    default:
+                        /* something else; don't do anything */
+                        break;
+                    }
+                }
+
                 switch (style) {
                 case ST_VERBATIM:
                 case ST_SPECIAL_CHAR:
-                    /* if we are determining the end of the middle and we have
-                     * a VERBATIM or SPECIAL_CHAR style, we end the center
-                     * determination */
-                    if (center_is_determined == CENTER_DETERMINING_MIDDLE) {
-                        end_center(center_type, current_character, &first_style);
-                        center_is_determined = CENTER_FULLY_DETERMINED;
-                    }
                     /* Here we pass all the characters after a verbatim (or
                      * special char) beginning, until we find a style (begin or
                      * end) */

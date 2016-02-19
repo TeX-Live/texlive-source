@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[4.1.0-beta3],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
-FILENAME_VERSION="4_1_0-beta3"
+AC_INIT([gregorio],[4.1.0-rc1],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
+FILENAME_VERSION="4_1_0-rc1"
 AC_SUBST(FILENAME_VERSION)
 AC_DEFINE_UNQUOTED(FILENAME_VERSION, "$FILENAME_VERSION", [version suitable for file names])
 MK=""

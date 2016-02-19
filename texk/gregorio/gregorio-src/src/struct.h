@@ -108,7 +108,8 @@ ENUM(gregorio_clef, GREGORIO_CLEF);
     E(S_ORISCUS_ASCENDENS) \
     E(S_ORISCUS_DESCENDENS) \
     E(S_ORISCUS_DEMINUTUS) \
-    E(S_ORISCUS_SCAPUS) \
+    E(S_ORISCUS_SCAPUS_ASCENDENS) \
+    E(S_ORISCUS_SCAPUS_DESCENDENS) \
     E(S_QUILISMA) \
     E(S_STROPHA) \
     E(S_STROPHA_AUCTA) \
@@ -130,6 +131,7 @@ ENUM(gregorio_clef, GREGORIO_CLEF);
      * and quilisma quadratum is the shape of the first note of a pes
      * quislisma quadratum */ \
     E(S_ORISCUS_UNDETERMINED) \
+    E(S_ORISCUS_SCAPUS_UNDETERMINED) \
     E(S_ORISCUS_CAVUM_UNDETERMINED) \
     E(S_QUADRATUM) \
     /* those shapes are for now used only in gregoriotex */ \
@@ -362,6 +364,21 @@ ENUM(gregorio_euouae, GREGORIO_EUOUAE);
     L(WORD_ONE_SYLLABLE)
 ENUM(gregorio_word_position, GREGORIO_WORD_POSITION);
 
+#define GREGORIO_SIGN_ORIENTATION(A,E,X,L) \
+    A(SO_OVER, 0) \
+    X(SO_UNDER, 1)
+ENUM(gregorio_sign_orientation, GREGORIO_SIGN_ORIENTATION);
+
+/* the numeric values will be directly passed to TeX */
+#define GREGORIO_HEPISEMA_VBASEPOS(A,E,X,L) \
+    A(HVB_AUTO, 0) \
+    A(HVB_MIDDLE, 1) \
+    A(HVB_O_LOW, 2) \
+    A(HVB_O_HIGH, 3) \
+    A(HVB_U_LOW, 4) \
+    X(HVB_U_HIGH, 5)
+ENUM(gregorio_hepisema_vbasepos, GREGORIO_HEPISEMA_VBASEPOS);
+
 typedef struct gregorio_extra_info {
     char *ad_hoc_space_factor;
     ENUM_BITFIELD(gregorio_bar) bar:4;
@@ -438,6 +455,7 @@ typedef struct gregorio_note {
 
     /* these go to the end for structure alignment */
     unsigned short src_line, src_column, src_offset;
+    unsigned short he_adjustment_index[2];
 
     /* we have seen that notes are always real notes, that is to say
      * GRE_NOTE. the type is always that in the final structure. But there
@@ -704,6 +722,12 @@ typedef struct gregorio_voice_info {
     struct gregorio_voice_info *next_voice_info;
 } gregorio_voice_info;
 
+typedef struct gregorio_hepisema_adjustment {
+    gregorio_hepisema_vbasepos vbasepos;
+    char *nudge;
+    signed char pitch_extremum;
+} gregorio_hepisema_adjustment;
+
 /* the maximum number of voices, more than this is total nonsense in
  * gregorian chant. */
 #define MAX_NUMBER_OF_VOICES 10
@@ -755,9 +779,13 @@ static __inline bool is_fused(char liquescentia)
 #define DUMMY_PITCH (LOWEST_PITCH + 6)
 #define LOW_LEDGER_LINE_PITCH (LOWEST_PITCH + 1)
 
+#define NO_PITCH -128
+
 /* defines the maximal interval between two notes of the same glyph */
 #define MAX_AMBITUS 5
 
+void gregorio_struct_init(void);
+void gregorio_struct_destroy(void);
 gregorio_score *gregorio_new_score(void);
 void gregorio_add_note(gregorio_note **current_note, signed char pitch,
         gregorio_shape shape, gregorio_sign signs,
@@ -855,6 +883,10 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
         gregorio_element *element, gregorio_glyph *glyph);
 const char *gregorio_unknown(int value);
 gregorio_element *gregorio_get_clef_change(gregorio_syllable *syllable);
+unsigned short gregorio_add_hepisema_adjustment(
+        gregorio_hepisema_vbasepos vbasepos, char *nudge);
+gregorio_hepisema_adjustment *gregorio_get_hepisema_adjustment(
+        unsigned short index);
 
 static __inline void gregorio_go_to_first_character_c(gregorio_character **character)
 {

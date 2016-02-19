@@ -454,7 +454,7 @@ Macro used to pass headers to TeX.
 	\#2 & string & The header value.\\
 \end{argtable}
 
-\macroname{\textbackslash GreHEpisema}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreHEpisema}{\#1\#2\#3\#4\#5\#6\#7\#8\#9}{gregoriotex-signs.tex}
 Macro to typeset an horizontal episema.
 
 \begin{argtable}
@@ -473,9 +473,16 @@ Macro to typeset an horizontal episema.
 	& \texttt{r} & a small episema aligned right\\
 	\#6 & integer & Replacement for \#1 if a bridge causes a height substitution.\\
 	\#7 & \TeX\ code & code that sets heuristics\\
+	\#8 & string & a positive or negative "nudge" (dimension) for the vertical position of the horizontal episema\\
+	\#9 & \texttt{0} & for horizontal episema cases, use automatic positioning within the space\\
+	& \texttt{1} & for horizontal episema cases, position in the middle of the space\\
+	& \texttt{2} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{3} & for horizontal episema cases, position high within the space as if the episema is under the note\\
+	& \texttt{4} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{5} & for horizontal episema cases, position high within the space as if the episema is under the note\\
 \end{argtable}
 
-\macroname{\textbackslash GreHEpisemaBridge}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreHEpisemaBridge}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
 Macro to typeset a bridge episema for the last note of a glyph
 (element, syllable) if the next episema is at the same height.
 
@@ -496,6 +503,13 @@ Macro to typeset a bridge episema for the last note of a glyph
 	& \texttt{10} & Space between puncta inclinata (also debilis for now), larger ambitus (range=3rd).\\
 	& \texttt{11} & Space between puncta inclinata (also debilis for now), larger ambitus (range=4th or more).\\
 	\#4 & \TeX\ code & code that sets heuristics\\
+	\#5 & string & a positive or negative "nudge" (dimension) for the vertical position of the horizontal episema\\
+	\#6 & \texttt{0} & for horizontal episema cases, use automatic positioning within the space\\
+	& \texttt{1} & for horizontal episema cases, position in the middle of the space\\
+	& \texttt{2} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{3} & for horizontal episema cases, position high within the space as if the episema is under the note\\
+	& \texttt{4} & for horizontal episema cases, position low within the space as if the episema is over the note\\
+	& \texttt{5} & for horizontal episema cases, position high within the space as if the episema is under the note\\
 \end{argtable}
 
 \macroname{\textbackslash GreHighChoralSign}{\#1\#2\#3}{gregoriotex-signs.tex}

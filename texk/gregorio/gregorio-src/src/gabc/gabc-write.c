@@ -450,6 +450,12 @@ static void write_note_heuristics(FILE *f, gregorio_note *note) {
     }
 }
 
+typedef struct glyph_context {
+    gregorio_syllable *syllable;
+    gregorio_element *element;
+    unsigned short he_adjustment_index[2];
+} glyph_context;
+
 /*
  * 
  * The function that writes one gregorio_note.
@@ -509,16 +515,24 @@ static void gabc_write_gregorio_note(FILE *f, gregorio_note *note,
         fprintf(f, "%cV", pitch_letter(note->u.note.pitch));
         break;
     case S_ORISCUS_ASCENDENS:
+        fprintf(f, "%co1", pitch_letter(note->u.note.pitch));
+        break;
     case S_ORISCUS_DESCENDENS:
+        fprintf(f, "%co0", pitch_letter(note->u.note.pitch));
+        break;
     case S_ORISCUS_DEMINUTUS:
         fprintf(f, "%co", pitch_letter(note->u.note.pitch));
-        /* Note: the ASCENDENS, DESCENDENS, or DEMINUTUS is also in the liquescentia */
+        /* Note: the DEMINUTUS is also in the liquescentia */
         break;
     case S_ORISCUS_CAVUM_ASCENDENS:
+        fprintf(f, "%co1r", pitch_letter(note->u.note.pitch));
+        break;
     case S_ORISCUS_CAVUM_DESCENDENS:
+        fprintf(f, "%co0r", pitch_letter(note->u.note.pitch));
+        break;
     case S_ORISCUS_CAVUM_DEMINUTUS:
         fprintf(f, "%cor", pitch_letter(note->u.note.pitch));
-        /* Note: the ASCENDENS, DESCENDENS, or DEMINUTUS is also in the liquescentia */
+        /* Note: the DEMINUTUS is also in the liquescentia */
         break;
     case S_QUILISMA:
         if (is_quadratum) {
@@ -539,8 +553,11 @@ static void gabc_write_gregorio_note(FILE *f, gregorio_note *note,
     case S_LINEA_PUNCTUM_CAVUM:
         fprintf(f, "%cr0", pitch_letter(note->u.note.pitch));
         break;
-    case S_ORISCUS_SCAPUS:
-        fprintf(f, "%cO", pitch_letter(note->u.note.pitch));
+    case S_ORISCUS_SCAPUS_ASCENDENS:
+        fprintf(f, "%cO1", pitch_letter(note->u.note.pitch));
+        break;
+    case S_ORISCUS_SCAPUS_DESCENDENS:
+        fprintf(f, "%cO0", pitch_letter(note->u.note.pitch));
         break;
     case S_STROPHA:
     case S_STROPHA_AUCTA:
@@ -630,6 +647,141 @@ static void gabc_write_gregorio_note(FILE *f, gregorio_note *note,
     }
 }
 
+static void get_next_hepisema_adjustments(unsigned short *adjustment_index,
+        const gregorio_syllable *syllable, const gregorio_element *element,
+        const gregorio_glyph *glyph, const gregorio_note *note)
+{
+    while (note) {
+        note = note->next;
+        if (!note) {
+            while (glyph) {
+                glyph = glyph->next;
+                if (!glyph) {
+                    while (element) {
+                        element = element->next;
+                        if (!element) {
+                            syllable = syllable->next_syllable;
+                            if (syllable) {
+                                element = syllable->elements[0];
+                            }
+                        }
+                        if (element && element->type == GRE_ELEMENT) {
+                            glyph = element->u.first_glyph;
+                            break;
+                        }
+                    }
+                }
+                if (glyph && glyph->type == GRE_GLYPH) {
+                    note = glyph->u.notes.first_note;
+                    break;
+                }
+            }
+        }
+        if (note && note->type == GRE_NOTE) {
+            break;
+        }
+    }
+
+    if (note) {
+        adjustment_index[SO_OVER] = note->he_adjustment_index[SO_OVER];
+        adjustment_index[SO_UNDER] = note->he_adjustment_index[SO_UNDER];
+    } else {
+        adjustment_index[SO_OVER] = 0;
+        adjustment_index[SO_UNDER] = 0;
+    }
+}
+
+static __inline void emit_hepisema_adjustment(FILE *const f,
+        const gregorio_note *const note, const gregorio_sign_orientation index,
+        const char which, const bool open_brace)
+{
+    gregorio_hepisema_adjustment *adj = gregorio_get_hepisema_adjustment(
+            note->he_adjustment_index[index]);
+
+    fprintf(f, "[%ch", which);
+    if (adj->vbasepos || adj->nudge) {
+        fputc(':', f);
+        switch (adj->vbasepos) {
+        case HVB_AUTO:
+            break;
+        case HVB_MIDDLE:
+            fputc('m', f);
+            break;
+        case HVB_O_LOW:
+            if (index == SO_OVER) {
+                fputc('l', f);
+            } else {
+                fprintf(f, "ol");
+            }
+            break;
+        case HVB_O_HIGH:
+            if (index == SO_OVER) {
+                fputc('h', f);
+            } else {
+                fprintf(f, "oh");
+            }
+            break;
+        case HVB_U_LOW:
+            if (index == SO_UNDER) {
+                fputc('l', f);
+            } else {
+                fprintf(f, "ul");
+            }
+            break;
+        case HVB_U_HIGH:
+            if (index == SO_UNDER) {
+                fputc('h', f);
+            } else {
+                fprintf(f, "uh");
+            }
+            break;
+        }
+        if (adj->nudge) {
+            fprintf(f, "%s", adj->nudge);
+        }
+    }
+    if (open_brace) {
+        fputc('{', f);
+    }
+    fputc(']', f);
+}
+
+static __inline void open_hepisema_adjustment(FILE *const f,
+        const gregorio_note *const note,
+        const unsigned short *const prev_adjustment_index,
+        const unsigned short *const next_adjustment_index,
+        const gregorio_sign_orientation index, const char which)
+{
+    const unsigned short adjustment_index =
+            note->he_adjustment_index[index];
+
+    if (adjustment_index
+            && adjustment_index != prev_adjustment_index[index]
+            && adjustment_index == next_adjustment_index[index]) {
+        emit_hepisema_adjustment(f, note, index, which, true);
+    }
+}
+
+static __inline void close_hepisema_adjustment(FILE *const f,
+        const gregorio_note *const note,
+        const unsigned short *const prev_adjustment_index,
+        const unsigned short *const next_adjustment_index,
+        const gregorio_sign_orientation index, const char which)
+{
+    const unsigned short adjustment_index =
+            note->he_adjustment_index[index];
+
+    if (adjustment_index) {
+        if (adjustment_index != next_adjustment_index[index]) {
+            if (adjustment_index == prev_adjustment_index[index]) {
+                fprintf(f, "[%ch}]", which);
+            } else {
+                emit_hepisema_adjustment(f, note, index, which, false);
+            }
+        }
+    }
+}
+
 /*
  * 
  * The function that writes one glyph. If it is really a glyph (meaning not a
@@ -638,9 +790,10 @@ static void gabc_write_gregorio_note(FILE *f, gregorio_note *note,
  * 
  */
 
-static void gabc_write_gregorio_glyph(FILE *f, gregorio_glyph *glyph)
+static void gabc_write_gregorio_glyph(FILE *f, gregorio_glyph *glyph,
+        glyph_context *context)
 {
-
+    unsigned short next_adjustment_index[2] = { 0, 0 };
     gregorio_note *current_note;
 
     gregorio_assert(glyph, gabc_write_gregorio_glyph, "call with NULL argument",
@@ -688,10 +841,33 @@ static void gabc_write_gregorio_glyph(FILE *f, gregorio_glyph *glyph)
 
         current_note = glyph->u.notes.first_note;
         while (current_note) {
+            get_next_hepisema_adjustments(next_adjustment_index,
+                    context->syllable, context->element, glyph, current_note);
+
+            open_hepisema_adjustment(f, current_note,
+                    context->he_adjustment_index, next_adjustment_index,
+                    SO_OVER, 'o');
+            open_hepisema_adjustment(f, current_note,
+                    context->he_adjustment_index, next_adjustment_index,
+                    SO_UNDER, 'u');
+
+            /* third argument necessary for the special shape pes quadratum */
             gabc_write_gregorio_note(f, current_note,
                     glyph->u.notes.glyph_type == G_PES_QUADRATUM
                     && current_note == glyph->u.notes.first_note);
-            /* third argument necessary for the special shape pes quadratum */
+
+            close_hepisema_adjustment(f, current_note,
+                    context->he_adjustment_index, next_adjustment_index,
+                    SO_OVER, 'o');
+            close_hepisema_adjustment(f, current_note,
+                    context->he_adjustment_index, next_adjustment_index,
+                    SO_UNDER, 'u');
+
+            context->he_adjustment_index[SO_OVER] =
+                    current_note->he_adjustment_index[SO_OVER];
+            context->he_adjustment_index[SO_UNDER] =
+                    current_note->he_adjustment_index[SO_UNDER];
+
             current_note = current_note->next;
         }
         gabc_write_end_liquescentia(f, glyph->u.notes.liquescentia);
@@ -715,7 +891,8 @@ static void gabc_write_gregorio_glyph(FILE *f, gregorio_glyph *glyph)
  * 
  */
 
-static void gabc_write_gregorio_element(FILE *f, gregorio_element *element)
+static void gabc_write_gregorio_element(FILE *f, gregorio_element *element,
+        glyph_context *context)
 {
     gregorio_glyph *current_glyph;
     gregorio_assert(element, gabc_write_gregorio_element,
@@ -724,7 +901,7 @@ static void gabc_write_gregorio_element(FILE *f, gregorio_element *element)
     switch (element->type) {
     case GRE_ELEMENT:
         while (current_glyph) {
-            gabc_write_gregorio_glyph(f, current_glyph);
+            gabc_write_gregorio_glyph(f, current_glyph, context);
             current_glyph = current_glyph->next;
         }
         break;
@@ -803,10 +980,13 @@ static void gabc_write_gregorio_element(FILE *f, gregorio_element *element)
  * 
  */
 
-static void gabc_write_gregorio_elements(FILE *f, gregorio_element *element)
+static bool gabc_write_gregorio_elements(FILE *f, gregorio_element *element,
+        glyph_context *context)
 {
+    bool linebreak_or_bar_in_element = false;
     while (element) {
-        gabc_write_gregorio_element(f, element);
+        context->element = element;
+        gabc_write_gregorio_element(f, element, context);
         /* we don't want a bar after an end of line */
         if (element->type != GRE_END_OF_LINE
             && (element->type != GRE_SPACE
@@ -814,8 +994,13 @@ static void gabc_write_gregorio_elements(FILE *f, gregorio_element *element)
             && element->next && element->next->type == GRE_ELEMENT) {
             fprintf(f, "/");
         }
+        if (element->type == GRE_END_OF_LINE || element->type == GRE_BAR)
+        {
+            linebreak_or_bar_in_element = true;
+        }
         element = element->next;
     }
+    return linebreak_or_bar_in_element;
 }
 
 /*
@@ -824,9 +1009,10 @@ static void gabc_write_gregorio_elements(FILE *f, gregorio_element *element)
  * 
  */
 
-static void gabc_write_gregorio_syllable(FILE *f, gregorio_syllable *syllable)
+static void gabc_write_gregorio_syllable(FILE *f, gregorio_syllable *syllable,
+        glyph_context *context)
 {
-    int voice = 0;
+    bool linebreak_or_bar_in_element;
     gregorio_assert(syllable, gabc_write_gregorio_syllable,
             "call with NULL argument", return);
     if (syllable->no_linebreak_area == NLBA_BEGINNING) {
@@ -859,14 +1045,19 @@ static void gabc_write_gregorio_syllable(FILE *f, gregorio_syllable *syllable)
     }
     fprintf(f, "(");
     /* we write all the elements of the syllable. */
-    gabc_write_gregorio_elements(f, syllable->elements[voice]);
-    if (syllable->position == WORD_END
-        || syllable->position == WORD_ONE_SYLLABLE
-        || gregorio_is_only_special(syllable->elements[0]))
+    linebreak_or_bar_in_element = gabc_write_gregorio_elements(f, syllable->elements[0], context);
+    if (linebreak_or_bar_in_element)
     {
-        fprintf(f, ") ");
+        fprintf(f, ")\n");
     } else {
-        fprintf(f, ")");
+        if (syllable->position == WORD_END
+            || syllable->position == WORD_ONE_SYLLABLE
+            || gregorio_is_only_special(syllable->elements[0]))
+        {
+            fprintf(f, ") ");
+        } else {
+            fprintf(f, ")");
+        }
     }
 }
 
@@ -879,10 +1070,14 @@ static void gabc_write_gregorio_syllable(FILE *f, gregorio_syllable *syllable)
 
 void gabc_write_score(FILE *f, gregorio_score *score)
 {
+    glyph_context context;
     gregorio_syllable *syllable;
     gregorio_header *header;
 
     gregorio_assert(f, gabc_write_score, "call with NULL file", return);
+
+    context.he_adjustment_index[0] = 0;
+    context.he_adjustment_index[1] = 0;
 
     for (header = score->headers; header; header = header->next) {
         gabc_write_str_attribute(f, header->name, header->value);
@@ -901,7 +1096,8 @@ void gabc_write_score(FILE *f, gregorio_score *score)
     syllable = score->first_syllable;
     /* the we write every syllable */
     while (syllable) {
-        gabc_write_gregorio_syllable(f, syllable);
+        context.syllable = syllable;
+        gabc_write_gregorio_syllable(f, syllable, &context);
         syllable = syllable->next_syllable;
     }
     fprintf(f, "\n");

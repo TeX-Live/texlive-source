@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <assert.h>
 #include "struct.h"
 #include "unicode.h"
@@ -60,6 +61,32 @@ gregorio_clef_info gregorio_default_clef = {
     /*.secondary_clef =*/ CLEF_C, /* not used since secondary_line is 0 */
     /*.secondary_flatted =*/ false,
 };
+
+static size_t hepisema_adjustments_capacity;
+static unsigned short hepisema_adjustments_last;
+static gregorio_hepisema_adjustment *hepisema_adjustments;
+
+void gregorio_struct_init(void)
+{
+    hepisema_adjustments_capacity = 8;
+    hepisema_adjustments = gregorio_grow_buffer(NULL,
+            &hepisema_adjustments_capacity, gregorio_hepisema_adjustment);
+    hepisema_adjustments[0].vbasepos = HVB_AUTO;
+    hepisema_adjustments[0].nudge = NULL;
+}
+
+void gregorio_struct_destroy(void)
+{
+    size_t i;
+    gregorio_hepisema_adjustment *adj;
+    for (i = 0, adj = hepisema_adjustments; i <= hepisema_adjustments_last;
+            ++i, ++adj) {
+        if (adj->nudge) {
+            free(adj->nudge);
+        }
+    }
+    free(hepisema_adjustments);
+}
 
 static gregorio_note *create_and_link_note(gregorio_note **current_note,
         const gregorio_scanner_location *const loc)
@@ -127,6 +154,10 @@ void gregorio_add_note(gregorio_note **current_note, signed char pitch,
         set_h_episema_below(element, prototype->h_episema_below,
                 prototype->h_episema_below_size,
                 prototype->h_episema_below_connect);
+        element->he_adjustment_index[SO_OVER] =
+                prototype->he_adjustment_index[SO_OVER];
+        element->he_adjustment_index[SO_UNDER] =
+                prototype->he_adjustment_index[SO_UNDER];
     }
     element->texverb = NULL;
     element->choral_sign = NULL;
@@ -326,20 +357,32 @@ static void fix_oriscus_liquescentia(gregorio_note *const note,
             break;
         }
     } else {
+        note->u.note.liquescentia &= ((~TAIL_LIQUESCENTIA_MASK) | L_DEMINUTUS);
+        if (note->u.note.liquescentia & L_DEMINUTUS) {
+            note->u.note.shape = S_ORISCUS_DEMINUTUS;
+        }
+    }
+}
+
+static void fix_oriscus_scapus_liquescentia(gregorio_note *const note,
+        const bool legacy_oriscus_orientation)
+{
+    if (legacy_oriscus_orientation) {
         switch (note->u.note.liquescentia) {
         case L_AUCTUS_ASCENDENS:
-            note->u.note.shape = S_ORISCUS_ASCENDENS;
-            break;
+            note->u.note.liquescentia =
+                    (note->u.note.liquescentia & ~TAIL_LIQUESCENTIA_MASK)
+                    | L_AUCTUS_DESCENDENS;
+            /* fall through */
         case L_AUCTUS_DESCENDENS:
-            note->u.note.shape = S_ORISCUS_DESCENDENS;
-            break;
-        case L_DEMINUTUS:
-            note->u.note.shape = S_ORISCUS_DEMINUTUS;
+            note->u.note.shape = S_ORISCUS_SCAPUS_DESCENDENS;
             break;
         default:
-            note->u.note.shape = S_ORISCUS_UNDETERMINED;
+            note->u.note.shape = S_ORISCUS_SCAPUS_ASCENDENS;
             break;
         }
+    } else {
+        note->u.note.liquescentia &= ~TAIL_LIQUESCENTIA_MASK;
     }
 }
 
@@ -364,19 +407,9 @@ static void fix_oriscus_cavum_liquescentia(gregorio_note *const note,
             break;
         }
     } else {
-        switch (note->u.note.liquescentia) {
-        case L_AUCTUS_ASCENDENS:
-            note->u.note.shape = S_ORISCUS_CAVUM_ASCENDENS;
-            break;
-        case L_AUCTUS_DESCENDENS:
-            note->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
-            break;
-        case L_DEMINUTUS:
+        note->u.note.liquescentia &= ((~TAIL_LIQUESCENTIA_MASK) | L_DEMINUTUS);
+        if (note->u.note.liquescentia & L_DEMINUTUS) {
             note->u.note.shape = S_ORISCUS_CAVUM_DEMINUTUS;
-            break;
-        default:
-            note->u.note.shape = S_ORISCUS_CAVUM_UNDETERMINED;
-            break;
         }
     }
 }
@@ -403,10 +436,21 @@ void gregorio_change_shape(gregorio_note *const note,
             break;
 
         case S_ORISCUS_UNDETERMINED:
-        case S_ORISCUS_ASCENDENS:
-        case S_ORISCUS_DESCENDENS:
         case S_ORISCUS_DEMINUTUS:
+        case S_ORISCUS_SCAPUS_UNDETERMINED:
             note->u.note.shape = S_ORISCUS_CAVUM_UNDETERMINED;
+            fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+            break;
+
+        case S_ORISCUS_ASCENDENS:
+        case S_ORISCUS_SCAPUS_ASCENDENS:
+            note->u.note.shape = S_ORISCUS_CAVUM_ASCENDENS;
+            fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+            break;
+
+        case S_ORISCUS_DESCENDENS:
+        case S_ORISCUS_SCAPUS_DESCENDENS:
+            note->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
             fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
             break;
 
@@ -425,11 +469,15 @@ void gregorio_change_shape(gregorio_note *const note,
         switch (old_shape) {
         case S_PUNCTUM_CAVUM:
         case S_PUNCTUM_CAVUM_INCLINATUM:
+            note->u.note.shape = S_ORISCUS_CAVUM_UNDETERMINED;
+            fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+            break;
+
         case S_ORISCUS_CAVUM_UNDETERMINED:
         case S_ORISCUS_CAVUM_ASCENDENS:
         case S_ORISCUS_CAVUM_DESCENDENS:
         case S_ORISCUS_CAVUM_DEMINUTUS:
-            note->u.note.shape = S_ORISCUS_CAVUM_UNDETERMINED;
+            note->u.note.shape = old_shape;
             fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
             break;
 
@@ -437,6 +485,48 @@ void gregorio_change_shape(gregorio_note *const note,
             fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
             break;
         }
+        break;
+
+    case S_ORISCUS_ASCENDENS:
+        switch (old_shape) {
+        case S_PUNCTUM_CAVUM:
+        case S_PUNCTUM_CAVUM_INCLINATUM:
+        case S_ORISCUS_CAVUM_UNDETERMINED:
+        case S_ORISCUS_CAVUM_ASCENDENS:
+        case S_ORISCUS_CAVUM_DESCENDENS:
+        case S_ORISCUS_CAVUM_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_CAVUM_ASCENDENS;
+            fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+            break;
+
+        default:
+            fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
+            break;
+        }
+        break;
+
+    case S_ORISCUS_DESCENDENS:
+        switch (old_shape) {
+        case S_PUNCTUM_CAVUM:
+        case S_PUNCTUM_CAVUM_INCLINATUM:
+        case S_ORISCUS_CAVUM_UNDETERMINED:
+        case S_ORISCUS_CAVUM_ASCENDENS:
+        case S_ORISCUS_CAVUM_DESCENDENS:
+        case S_ORISCUS_CAVUM_DEMINUTUS:
+            note->u.note.shape = S_ORISCUS_CAVUM_DESCENDENS;
+            fix_oriscus_cavum_liquescentia(note, legacy_oriscus_orientation);
+            break;
+
+        default:
+            fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
+            break;
+        }
+        break;
+
+    case S_ORISCUS_SCAPUS_UNDETERMINED:
+    case S_ORISCUS_SCAPUS_ASCENDENS:
+    case S_ORISCUS_SCAPUS_DESCENDENS:
+        fix_oriscus_scapus_liquescentia(note, legacy_oriscus_orientation);
         break;
 
     default:
@@ -458,6 +548,10 @@ void gregorio_add_tail_liquescentia(gregorio_note *note,
         | (liq & TAIL_LIQUESCENTIA_MASK);
 
     switch (note->u.note.shape) {
+    case S_PUNCTUM_CAVUM_INCLINATUM:
+        fix_punctum_cavum_inclinatum_liquescentia(note);
+        break;
+
     case S_STROPHA:
     case S_DISTROPHA:
     case S_TRISTROPHA:
@@ -475,8 +569,10 @@ void gregorio_add_tail_liquescentia(gregorio_note *note,
         fix_oriscus_liquescentia(note, legacy_oriscus_orientation);
         break;
 
-    case S_PUNCTUM_CAVUM_INCLINATUM:
-        fix_punctum_cavum_inclinatum_liquescentia(note);
+    case S_ORISCUS_SCAPUS_UNDETERMINED:
+    case S_ORISCUS_SCAPUS_ASCENDENS:
+    case S_ORISCUS_SCAPUS_DESCENDENS:
+        fix_oriscus_scapus_liquescentia(note, legacy_oriscus_orientation);
         break;
 
     case S_ORISCUS_CAVUM_UNDETERMINED:
@@ -1441,6 +1537,37 @@ gregorio_element *gregorio_get_clef_change(gregorio_syllable *syllable)
     return NULL;
 }
 
+unsigned short gregorio_add_hepisema_adjustment(
+        const gregorio_hepisema_vbasepos vbasepos, char *const nudge)
+{
+    if (hepisema_adjustments_last == USHRT_MAX) {
+        /* It's not reasonable to trigger this condition while testing */
+        /* LCOV_EXCL_START */
+        gregorio_message(_("too many horizontal episema adjustments"),
+                "gregorio_add_hepisema_adjustment", VERBOSITY_ERROR, 0);
+        return 0;
+        /* LCOV_EXCL_STOP */
+    }
+    ++hepisema_adjustments_last;
+    if (hepisema_adjustments_last >= hepisema_adjustments_capacity) {
+        hepisema_adjustments = gregorio_grow_buffer(hepisema_adjustments,
+                &hepisema_adjustments_capacity, gregorio_hepisema_adjustment);
+    }
+    hepisema_adjustments[hepisema_adjustments_last].vbasepos = vbasepos;
+    hepisema_adjustments[hepisema_adjustments_last].nudge = nudge;
+    hepisema_adjustments[hepisema_adjustments_last].pitch_extremum = NO_PITCH;
+    return hepisema_adjustments_last;
+}
+
+gregorio_hepisema_adjustment *gregorio_get_hepisema_adjustment(
+        const unsigned short index)
+{
+    gregorio_assert(index <= hepisema_adjustments_last,
+            gregorio_get_hepisema_adjustment, "array index out of bounds",
+            return &hepisema_adjustments[0]);
+    return &hepisema_adjustments[index];
+}
+
 ENUM_TO_STRING(gregorio_type, GREGORIO_TYPE)
 ENUM_TO_STRING(gregorio_shape, GREGORIO_SHAPE)
 ENUM_TO_STRING(gregorio_bar, GREGORIO_BAR)
@@ -1451,8 +1578,8 @@ ENUM_TO_STRING(grehepisema_size, GREHEPISEMA_SIZE)
 ENUM_TO_STRING(gregorio_vposition, GREGORIO_VPOSITION)
 ENUM_TO_STRING(gregorio_glyph_type, GREGORIO_GLYPH_TYPE)
 ENUM_TO_STRING(grestyle_style, GRESTYLE_STYLE)
-/* ENUM_TO_STRING(grestyle_type, GRESTYLE_TYPE) */
 ENUM_TO_STRING(gregorio_tr_centering, GREGORIO_TR_CENTERING)
 ENUM_TO_STRING(gregorio_nlba, GREGORIO_NLBA)
 ENUM_TO_STRING(gregorio_euouae, GREGORIO_EUOUAE)
 ENUM_TO_STRING(gregorio_word_position, GREGORIO_WORD_POSITION)
+ENUM_TO_STRING(gregorio_hepisema_vbasepos, GREGORIO_HEPISEMA_VBASEPOS)

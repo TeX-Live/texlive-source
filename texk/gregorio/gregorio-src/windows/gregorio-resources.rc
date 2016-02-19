@@ -1,7 +1,7 @@
 IDI_ICON1 ICON DISCARDABLE "gregorio.ico"
 1 VERSIONINFO
-FILEVERSION     4,1,0,13
-PRODUCTVERSION  4,1,0,13
+FILEVERSION     4,1,0,21
+PRODUCTVERSION  4,1,0,21
 BEGIN
   BLOCK "StringFileInfo"
   BEGIN
@@ -9,12 +9,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Gregorio project"
       VALUE "FileDescription", "Gregorio"
-      VALUE "FileVersion", "4.1.0-beta3"
+      VALUE "FileVersion", "4.1.0-rc1"
       VALUE "InternalName", "gregorio"
       VALUE "LegalCopyright", "See COPYING in the installation directory."
       VALUE "OriginalFilename", "gregorio.exe"
       VALUE "ProductName", "Gregorio"
-      VALUE "ProductVersion", "4.1.0-beta3"
+      VALUE "ProductVersion", "4.1.0-rc1"
     END
   END
 

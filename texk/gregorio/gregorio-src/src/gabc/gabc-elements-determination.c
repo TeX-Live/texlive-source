@@ -28,40 +28,37 @@
 
 #include "gabc.h"
 
-/*
- * 
- * two inline functions that will be useful in the future: they are the tests
- * to put in a if statement to determine if a glyph type is puncta incliata
- * ascendens or descendens
- * 
- */
+#define SINGLE_NOTE_GLYPH \
+         G_PUNCTUM: \
+    case G_VIRGA: \
+    case G_BIVIRGA: \
+    case G_TRIVIRGA: \
+    case G_VIRGA_REVERSA: \
+    case G_STROPHA: \
+    case G_STROPHA_AUCTA: \
+    case G_DISTROPHA: \
+    case G_DISTROPHA_AUCTA: \
+    case G_TRISTROPHA: \
+    case G_TRISTROPHA_AUCTA
 
-static __inline bool is_puncta_ascendens(gregorio_glyph_type glyph)
-{
-    switch (glyph) {
-    case G_2_PUNCTA_INCLINATA_ASCENDENS:
-    case G_3_PUNCTA_INCLINATA_ASCENDENS:
-    case G_4_PUNCTA_INCLINATA_ASCENDENS:
-    case G_5_PUNCTA_INCLINATA_ASCENDENS:
-    case G_PUNCTUM_INCLINATUM:
-        return true;
-    default:
-        return false;
-    }
-}
+#define PUNCTA_INCLINATA_ASCENDENS_GLYPH \
+         G_2_PUNCTA_INCLINATA_ASCENDENS: \
+    case G_3_PUNCTA_INCLINATA_ASCENDENS: \
+    case G_4_PUNCTA_INCLINATA_ASCENDENS: \
+    case G_5_PUNCTA_INCLINATA_ASCENDENS
 
-static __inline bool is_puncta_descendens(gregorio_glyph_type glyph)
+#define PUNCTA_INCLINATA_DESCENDENS_GLYPH \
+         G_2_PUNCTA_INCLINATA_DESCENDENS: \
+    case G_3_PUNCTA_INCLINATA_DESCENDENS: \
+    case G_4_PUNCTA_INCLINATA_DESCENDENS: \
+    case G_5_PUNCTA_INCLINATA_DESCENDENS
+
+static __inline signed char glyph_note_ambitus(
+        const gregorio_glyph *const current_glyph,
+        const gregorio_glyph *const previous_glyph)
 {
-    switch (glyph) {
-    case G_2_PUNCTA_INCLINATA_DESCENDENS:
-    case G_3_PUNCTA_INCLINATA_DESCENDENS:
-    case G_4_PUNCTA_INCLINATA_DESCENDENS:
-    case G_5_PUNCTA_INCLINATA_DESCENDENS:
-    case G_PUNCTUM_INCLINATUM:
-        return true;
-    default:
-        return false;
-    }
+    return current_glyph->u.notes.first_note->u.note.pitch -
+            gregorio_glyph_last_note(previous_glyph)->u.note.pitch;
 }
 
 /*
@@ -93,14 +90,12 @@ static void close_element(gregorio_element **current_element,
  */
 static __inline void cut_before(gregorio_glyph *current_glyph,
                               gregorio_glyph **first_glyph,
-                              gregorio_glyph **previous_glyph,
                               gregorio_element **current_element)
 {
     if (*first_glyph != current_glyph) {
         close_element(current_element, first_glyph, current_glyph);
         /* yes, this is changing value close_element sets for first_glyph */
         *first_glyph = current_glyph;
-        *previous_glyph = current_glyph;
     }
 }
 
@@ -123,10 +118,9 @@ static gregorio_element *gabc_det_elements_from_glyphs(
     gregorio_glyph *first_glyph = current_glyph;
     /* the last real (GRE_GLYPH) that we have processed */
     gregorio_glyph *previous_glyph = NULL;
-    /* a char that is necessary to determine some cases */
+    /* boolean necessary to determine some cases */
     bool do_not_cut = false;
-    /* a char that is necesarry to determine the type of the current_glyph */
-    gregorio_glyph_type current_glyph_type;
+    bool force_cut = false;
 
     gregorio_not_null(current_glyph, gabc_det_elements_from_glyphs, return NULL);
     /* first we go to the first glyph in the chained list of glyphs (maybe to
@@ -135,6 +129,7 @@ static gregorio_element *gabc_det_elements_from_glyphs(
 
     while (current_glyph) {
         if (current_glyph->type != GRE_GLYPH) {
+            force_cut = false;
             /* we must not cut after a glyph-level space */
             if (current_glyph->type == GRE_SPACE) {
                 switch (current_glyph->u.misc.unpitched.info.space) {
@@ -151,9 +146,8 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                     /* any other space should be handled normally */
                     break;
                 }
-            }
-            /* we must not cut after a texverb */
-            if (current_glyph->type == GRE_TEXVERB_GLYPH) {
+            } else if (current_glyph->type == GRE_TEXVERB_GLYPH) {
+                /* we must not cut after a texverb */
                 if (!current_glyph->next) {
                     close_element(&current_element, &first_glyph, current_glyph);
                 }
@@ -162,8 +156,7 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                 continue;
             }
             /* clef change or space or end of line */
-            cut_before(current_glyph, &first_glyph, &previous_glyph,
-                       &current_element);
+            cut_before(current_glyph, &first_glyph, &current_element);
             /* if statement to make neumatic cuts not appear in elements, as
              * there is always one between elements, unless the next element
              * is a space */
@@ -189,84 +182,94 @@ static gregorio_element *gabc_det_elements_from_glyphs(
 
         if (is_fused(current_glyph->u.notes.liquescentia)) {
             do_not_cut = true;
+        } else if (force_cut) {
+            cut_before(current_glyph, &first_glyph, &current_element);
+            previous_glyph = NULL;
         }
+        force_cut = false;
 
-        if (is_puncta_ascendens(current_glyph->u.notes.glyph_type)) {
-            current_glyph_type = G_PUNCTA_ASCENDENS;
-        } else {
-            if (is_puncta_descendens(current_glyph->u.notes.glyph_type)) {
-                current_glyph_type = G_PUNCTA_DESCENDENS;
-            } else {
-                current_glyph_type = current_glyph->u.notes.glyph_type;
-            }
-        }
-        switch (current_glyph_type) {
-        case G_PUNCTA_ASCENDENS:
+        switch (current_glyph->u.notes.glyph_type) {
+        case PUNCTA_INCLINATA_ASCENDENS_GLYPH:
+        case G_PUNCTUM_INCLINATUM:
         case G_ALTERATION:
             if (!do_not_cut) {
-                cut_before(current_glyph, &first_glyph, &previous_glyph,
-                           &current_element);
+                cut_before(current_glyph, &first_glyph, &current_element);
                 do_not_cut = true;
-            } else {
-                previous_glyph = current_glyph;
             }
             break;
-        case G_PUNCTA_DESCENDENS:
+
+        case PUNCTA_INCLINATA_DESCENDENS_GLYPH:
             /* we don't cut before, so we don't do anything */
             if (do_not_cut) {
                 do_not_cut = false;
             }
             break;
-        /* one note glyphs */
-        case G_PUNCTUM:
-        case G_VIRGA:
-        case G_BIVIRGA:
-        case G_TRIVIRGA:
-        case G_VIRGA_REVERSA:
-        case G_STROPHA:
-        case G_STROPHA_AUCTA:
-        case G_DISTROPHA:
-        case G_DISTROPHA_AUCTA:
-        case G_TRISTROPHA:
-        case G_TRISTROPHA_AUCTA:
-            if (previous_glyph && !is_tail_liquescentia(
+
+        default:
+            if (previous_glyph && previous_glyph->type == GRE_GLYPH
+                    && !is_tail_liquescentia(
                         previous_glyph->u.notes.liquescentia)) {
-                if (previous_glyph) {
-                    signed char last_pitch;
+                bool break_early = false;
+                signed char ambitus;
+
+                switch (previous_glyph->u.notes.glyph_type) {
+                case SINGLE_NOTE_GLYPH:
                     /* we determine the last pitch */
-                    gregorio_note *tmp_note;
-                    tmp_note = previous_glyph->u.notes.first_note;
-                    while (tmp_note->next) {
-                        tmp_note = tmp_note->next;
-                    }
-                    last_pitch = tmp_note->u.note.pitch;
-                    if (current_glyph->u.notes.first_note->u.note.pitch
-                            == last_pitch) {
+                    ambitus = glyph_note_ambitus(current_glyph, previous_glyph);
+                    if (ambitus == 0) {
                         do_not_cut = false;
-                        previous_glyph = current_glyph;
+                        break_early = true;
+                    }
+                    break;
+
+                case PUNCTA_INCLINATA_DESCENDENS_GLYPH:
+                case G_PUNCTUM_INCLINATUM:
+                    switch (current_glyph->u.notes.glyph_type) {
+                    case SINGLE_NOTE_GLYPH:
+                        ambitus = glyph_note_ambitus(current_glyph, previous_glyph);
+                        if (ambitus > -2 && ambitus < 2) {
+                            do_not_cut = false;
+                            break_early = true;
+                        }
+                        break;
+
+                    default:
+                        /* do nothing in particular */
                         break;
                     }
+                    break;
+
+                default:
+                    /* do nothing in particular */
+                    break;
+                }
+
+                if (break_early) {
+                    break;
                 }
             }
-            /* else we fall in the default case */
-        default:
+
             if (do_not_cut) {
                 do_not_cut = false;
-                previous_glyph = current_glyph;
             } else {
-                cut_before(current_glyph, &first_glyph, &previous_glyph,
-                           &current_element);
+                cut_before(current_glyph, &first_glyph, &current_element);
             }
         }
-        /*
-         * we must determine the first element, that we will return 
-         */
+
+        if (gregorio_glyph_last_note(current_glyph)->signs
+                & (_PUNCTUM_MORA | _AUCTUM_DUPLEX)) {
+            force_cut = true;
+        }
+
+        /* we must determine the first element, that we will return */
         if (!first_element && current_element) {
             first_element = current_element;
         }
         if (!current_glyph->next) {
             close_element(&current_element, &first_glyph, current_glyph);
         }
+
+        previous_glyph = current_glyph;
         current_glyph = current_glyph->next;
     } /* end of while */
 

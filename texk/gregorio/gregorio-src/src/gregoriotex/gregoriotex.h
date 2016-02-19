@@ -145,5 +145,7 @@ const char *gregoriotex_determine_glyph_name(const gregorio_glyph *const glyph,
         gtex_alignment *const  type, gtex_type *const gtype);
 void gregoriotex_compute_positioning(const gregorio_element *element,
         const gregorio_score *score);
+void gregoriotex_compute_cross_syllable_positioning(
+        const gregorio_score *score);
 
 #endif

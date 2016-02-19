@@ -561,7 +561,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(GREGORIO_TREE) $(GREGORIO_TREE)-PATCHES $(TESTS)
+EXTRA_DIST = $(GREGORIO_TREE) gregorio-PATCHES $(TESTS)
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed

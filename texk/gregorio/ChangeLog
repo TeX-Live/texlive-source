@@ -1,3 +1,8 @@
+2016-02-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gregorio-4.1.0-rc1.
+	* version.ac: Adapted.
+
 2016-02-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import gregorio-4.1.0-beta3.

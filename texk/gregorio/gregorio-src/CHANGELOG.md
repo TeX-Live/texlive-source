@@ -5,6 +5,30 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [4.1.0-rc1] - 2016-02-18
+### Fixed
+- New bar spacing algorithm now accounts for translations (and other below lyrics stuff).
+- Horizontal episema on initio debilis is now sized correctly (see [#880](https://github.com/gregorio-project/gregorio/issues/880)).
+- Elisions immediately after the vowel are now properly left out of the center (see [#907](https://github.com/gregorio-project/gregorio/issues/907))
+- New bar spacing algorithm now respects the setting of `\gresetshiftaftermora`.  See [#919](https://github.com/gregorio-project/gregorio/issues/919)
+- Space between the text of two syllables of the same word when no hyphen is necessary is now strictly 0 (see [#922](https://github.com/gregorio-project/gregorio/issues/922))
+- A horizontal episema on the first note of a torculus deminutus is now placed correctly.  See [#926](https://github.com/gregorio-project/gregorio/issues/926).
+- Corrected determination of repercussive figures and other edge cases (introduced in 4.1.0-beta2).  See [#928](https://github.com/gregorio-project/gregorio/issues/928) and [#929](https://github.com/gregorio-project/gregorio/issues/929).
+
+### Changed
+- Adjustments to the heuristic for ledger lines to include adjacent notes (see [#862](https://github.com/gregorio-project/gregorio/issues/862)).
+- The stem length determination will use the ledger line below the note with the stem (see [#863](https://github.com/gregorio-project/gregorio/issues/863)).
+- Made the oriscus orientation dependent on the note that follows.  Using `1` will force the ascending oriscus and `0` will force the descending oriscus.  The old behavior may be restored by setting the `oriscus-orientation` gabc header to `legacy`.  See UPGRADE.md for details (for the change request, see [#774](https://github.com/gregorio-project/gregorio/issues/774) and [#898](https://github.com/gregorio-project/gregorio/issues/898)).
+- Add new lines as needed to the gabc output. (see [#905](https://github.com/gregorio-project/gregorio/issues/905)).
+- Syllable with no notes are now treated as bar syllables rather than note syllables.  This increase their spacing under the old algorithm and, more importantly, allows them to use the new spacing algorithm.
+- `maxbaroffset` has been split into `maxbaroffsettextleft` and `maxbaroffsettextright`
+
+### Added
+- Controls for tuning horizontal episema vertical position.  See GregorioRef for details (for the change request, see [#872](https://github.com/gregorio-project/gregorio/issues/872)).
+- More dimensions are tunable: `overhepisemalowshift`, `overhepisemahighshift`, `underhepisemalowshift`, `underhepisemahighshift`, `hepisemamiddleshift`, `vepisemalowshift`, `vepisemahighshift`, `linepunctummorashift`, `spacepunctummorashift`, `spaceamonepespunctummorashift`, `lineporrectuspunctummorashift`, `spaceporrectuspunctummorashift`, `raresignshift`, `interwordspacetext@bars`, `interwordspacetext@bars@euouae`.  See GregorioRef for details (for the change request for most of these, see comments in [#872](https://github.com/gregorio-project/gregorio/issues/872)).
+- A new dimension, `intersyllablespacestretchhyphen` is now available to add stretching in the case of syllables separated by an hyphen (see comments in [#922](https://github.com/gregorio-project/gregorio/issues/922))
+
+
 ## [4.1.0-beta3] - 2016-02-09
 ### Fixed
 - Missing file from manifests and system-setup scripts has been added (new bug in 4.1.0-beta2)
@@ -54,7 +78,6 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - The space between note and horizontal episema has been tightened for notes at the `c` or `k` height when there is no ledger line.  Due to the intricacies of measurement, the system tries to make a best guess as to the existence of the ledger line.  If the guess is wrong, you may use the `[hl:n]` and `[ll:n]` notations in gabc to override the guess.  See [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#716](https://github.com/gregorio-project/gregorio/issues/716)).
 - The custos that might appear immediately before a `<eu>` block is now suppressed by default.  This behavior is controlled by the `\greseteolcustosbeforeeuouae` command.  See GregorioRef and [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#761](https://github.com/gregorio-project/gregorio/issues/761)).
 - Different glyphs will now be used for the liquescent stropha on a line or between lines, if supported by the font.  If you prefer the old behavior, use `\grechangeglyph{StrophaAuctaLongtail}{*}{StrophaAucta}` in your TeX file.  See [#773](https://github.com/gregorio-project/gregorio/issues/773).
-- Made the oriscus orientation dependent on the note that follows.  Using `<` will force the ascending oriscus and `>` will force the descending oriscus.  The old behavior may be restored by setting the `oriscus-orientation` gabc header to `legacy`.  See UPGRADE.md for details (for the change request, see [#774](https://github.com/gregorio-project/gregorio/issues/774)).
 - Headers not recognized by gregorio, rather than inducing an error, are now simply accepted by gregorio.  Most of the old "standard" headers, like `book` and `manuscript-location`, are now handled in this way and thus are no longer limited to one instance.  See GregorioRef for details.
 - `mode` will now be converted to Roman numerals in lower case so that it shows up as small capitals using the default `modeline` style.  See [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#756](https://github.com/gregorio-project/gregorio/issues/756)).
 - `\grecommentary` is now less restrictive about where it occurs and need not occur directly before the score anymore.

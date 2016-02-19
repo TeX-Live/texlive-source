@@ -49,10 +49,12 @@ pdf-local: doc
 distclean-local:
 	latexmk -quiet -c -f -jobname=GregorioRef-@FILENAME_VERSION@ GregorioRef.tex
 	latexmk -quiet -c -f -jobname=GregorioNabcRef-@FILENAME_VERSION@ GregorioNabcRef.tex
-	rm -rf _minted* factus.gtex veni.gtex
+	rm -rf _minted* *.gtex *.aux *.gaux
 
 EXTRA_DIST = $(SRCFILES) $(NABCSRCFILES) \
 	     GregorioRef-@FILENAME_VERSION@.pdf \
 	     GregorioNabcRef-@FILENAME_VERSION@.pdf
-MAINTAINERCLEANFILES = GregorioRef-@FILENAME_VERSION@.pdf \
-		       GregorioNabcRef-@FILENAME_VERSION@.pdf
+
+maintainer-clean-local:
+	rm -rf GregorioRef*.pdf
+	rm -rf GregorioRef-* GregorioNabcRef-*
