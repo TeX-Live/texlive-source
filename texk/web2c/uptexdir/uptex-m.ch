@@ -1,4 +1,4 @@
-% This is a change file for upTeX u1.20
+% This is a change file for upTeX u1.21
 % By Takuji Tanaka.
 %
 % (02/26/2007) TTK  upTeX u0.01
@@ -33,6 +33,7 @@
 % (04/29/2012) TTK  upTeX u1.10
 % (08/13/2012) TTK  upTeX u1.11
 % (12/29/2014) TTK  upTeX u1.20
+% (02/20/2016) TTK  upTeX u1.21
 
 @x upTeX: banner
   {printed when p\TeX\ starts}
@@ -40,8 +41,8 @@
   {printed when p\TeX\ starts}
 @#
 @d upTeX_version=1
-@d upTeX_revision==".20"
-@d upTeX_version_string=='-u1.20' {current up\TeX\ version}
+@d upTeX_revision==".21"
+@d upTeX_version_string=='-u1.21' {current up\TeX\ version}
 @#
 @d upTeX_banner=='This is upTeX, Version 3.14159265',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
@@ -228,7 +229,7 @@ for k:=0 to 255 do
   auto_xsp_code(k):=0; inhibit_xsp_code(k):=0; inhibit_xsp_type(k):=0;
   kinsoku_code(k):=0; kinsoku_type(k):=0;
   end;
-for k:=0 to 512 do
+for k:=0 to 511 do
   begin kcat_code(k):=other_kchar;
   end;
 @z
@@ -254,12 +255,12 @@ if (isinternalUPTEX) then begin
   @t\hskip10pt@>kcat_code(@"72):=kanji; { CJK Unified Ideographs Extension A }
   @t\hskip10pt@>kcat_code(@"74):=kanji; { CJK Unified Ideographs }
   @t\hskip10pt@>kcat_code(@"84):=hangul; { Hangul Jamo Extended-A }
-  @t\hskip10pt@>kcat_code(@"8E):=hangul; { Hangul Syllables }
-  @t\hskip10pt@>kcat_code(@"8F):=hangul; { Hangul Jamo Extended-B }
-  @t\hskip10pt@>kcat_code(@"94):=kanji; { CJK Compatibility Ideographs }
-  { @t\hskip10pt@>kcat_code(@"9D):=other_kchar; Halfwidth and Fullwidth Forms }
-  @t\hskip10pt@>kcat_code(@"DD):=kana; { Kana Supplement }
-  @+@t\1@>for k:=@"F4 to @"F7 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. CJK Compatibility Ideographs Supplement }
+  @t\hskip10pt@>kcat_code(@"8F):=hangul; { Hangul Syllables }
+  @t\hskip10pt@>kcat_code(@"90):=hangul; { Hangul Jamo Extended-B }
+  @t\hskip10pt@>kcat_code(@"95):=kanji; { CJK Compatibility Ideographs }
+  { @t\hskip10pt@>kcat_code(@"9E):=other_kchar; Halfwidth and Fullwidth Forms }
+  @t\hskip10pt@>kcat_code(@"E4):=kana; { Kana Supplement }
+  @+@t\1@>for k:=@"FD to @"101 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. CJK Compatibility Ideographs Supplement }
   @t\hskip10pt@>kcat_code(@"1FE):=kana; { Fullwidth digit and latin alphabet }
   @t\hskip10pt@>kcat_code(@"1FF):=kana; { Halfwidth katakana }
 end else begin
