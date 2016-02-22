@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl *********************************************************************
 dnl
-dnl  Adapted for TeX Live from xindy-2.4-rc1/configure.ac
+dnl  Adapted for TeX Live from xindy-src/configure.ac
 dnl  Copyright (C) 2004-2005 by Gour.
 dnl  Copyright (C) 2008,2009 by Joachim Schrod.
 dnl
@@ -17,7 +17,7 @@ dnl
 m4_include([version.ac])[] dnl define xindy_version
 AC_INIT([xindy (TeX Live)], xindy_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([xindy-]xindy_version[/ChangeLog.Gour])
+AC_CONFIG_SRCDIR([xindy-src/ChangeLog.Gour])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -118,22 +118,22 @@ fi
 
 KPSE_COND_WIN32_WRAP
 
-AC_SUBST([XINDY_TREE], [xindy-]xindy_version)
+AC_SUBST([XINDY_TREE], [xindy-src])
 
 AM_CONDITIONAL([CLISP_RUNTIME], [test "x$with_clisp_runtime" != xsystem])
 AM_CONDITIONAL([BUILDRULES], [test "x$enable_xindy_rules" = xyes])
 AM_CONDITIONAL([BUILDDOCS], [test "x$enable_xindy_docs" = xyes])
 
 AC_CONFIG_FILES([Makefile \
-		xindy-]xindy_version[/Makefile \
-		xindy-]xindy_version[/src/Makefile \
-		xindy-]xindy_version[/tex2xindy/Makefile \
-		xindy-]xindy_version[/modules/Makefile \
-		xindy-]xindy_version[/user-commands/Makefile \
-		xindy-]xindy_version[/make-rules/Makefile \
-		xindy-]xindy_version[/make-rules/alphabets/Makefile \
-		xindy-]xindy_version[/make-rules/inputenc/Makefile \
-		xindy-]xindy_version[/doc/Makefile \
+		xindy-src/Makefile \
+		xindy-src/src/Makefile \
+		xindy-src/tex2xindy/Makefile \
+		xindy-src/modules/Makefile \
+		xindy-src/user-commands/Makefile \
+		xindy-src/make-rules/Makefile \
+		xindy-src/make-rules/alphabets/Makefile \
+		xindy-src/make-rules/inputenc/Makefile \
+		xindy-src/doc/Makefile \
 ])
 
 AC_OUTPUT
