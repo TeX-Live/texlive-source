@@ -7,7 +7,7 @@ EXTRA_DIST = $(XPDFOPEN_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += $(XPDFOPEN_TREE)-PATCHES
+EXTRA_DIST += xpdfopen-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

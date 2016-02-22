@@ -584,7 +584,7 @@ PACKAGE_STRING='xpdfopen (TeX Live) 0.86'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="xpdfopen-0.86/pdfopen.c"
+ac_unique_file="xpdfopen-src/pdfopen.c"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -5293,7 +5293,7 @@ fi
 fi
 
 
-XPDFOPEN_TREE=xpdfopen-0.86
+XPDFOPEN_TREE=xpdfopen-src
 
 
 ac_config_files="$ac_config_files Makefile"
