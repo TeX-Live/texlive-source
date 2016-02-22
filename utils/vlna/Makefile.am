@@ -6,7 +6,7 @@
 ## We want to re-distribute the whole original vlna source tree.
 EXTRA_DIST = $(VLNA_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += $(VLNA_TREE)-PATCHES
+EXTRA_DIST += vlna-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
