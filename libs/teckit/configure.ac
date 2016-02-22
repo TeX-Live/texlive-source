@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define zziplib_version
 AC_INIT([TECkit (TeX Live)], TECkit_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([TECkit-]TECkit_version[/source/UnicodeNames.cpp])
+AC_CONFIG_SRCDIR([TECkit-src/source/UnicodeNames.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -49,7 +49,7 @@ fi
 
 AC_DEFINE([HAVE_LIBZ], 1, [Define if you have zlib.])
 
-AC_SUBST([TECKIT_TREE], [TECkit-]TECkit_version)
+AC_SUBST([TECKIT_TREE], [TECkit-src])
 
 AC_CONFIG_FILES([Makefile include/teckit/Makefile])
 

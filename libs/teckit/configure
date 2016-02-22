@@ -585,7 +585,7 @@ PACKAGE_STRING='TECkit (TeX Live) 2.5.4'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="TECkit-2.5.4/source/UnicodeNames.cpp"
+ac_unique_file="TECkit-src/source/UnicodeNames.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -6695,7 +6695,7 @@ fi
 $as_echo "#define HAVE_LIBZ 1" >>confdefs.h
 
 
-TECKIT_TREE=TECkit-2.5.4
+TECKIT_TREE=TECkit-src
 
 
 ac_config_files="$ac_config_files Makefile include/teckit/Makefile"
