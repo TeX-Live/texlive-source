@@ -584,7 +584,7 @@ PACKAGE_STRING='ps2eps (TeX Live) 1.68'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="ps2eps-1.68/bin/ps2eps.pl"
+ac_unique_file="ps2eps-src/bin/ps2eps.pl"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -4495,7 +4495,7 @@ fi
 
 
 
-PS2EPS_TREE=ps2eps-1.68
+PS2EPS_TREE=ps2eps-src
 
 
 ac_config_files="$ac_config_files Makefile"
