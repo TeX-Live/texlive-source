@@ -12,7 +12,7 @@ DIST_SUBDIRS = $(SUBDIRS)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST += $(XINDY_TREE)-PATCHES
+EXTRA_DIST += xindy-PATCHES
 
 ## We must explicitly distribute some top-level files.
 ##

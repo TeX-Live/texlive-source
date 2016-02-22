@@ -584,7 +584,7 @@ PACKAGE_STRING='xindy (TeX Live) 2.5.1'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="xindy-2.5.1/ChangeLog.Gour"
+ac_unique_file="xindy-src/ChangeLog.Gour"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -5105,7 +5105,7 @@ fi
 
 
 
-XINDY_TREE=xindy-2.5.1
+XINDY_TREE=xindy-src
 
 
  if test "x$with_clisp_runtime" != xsystem; then
@@ -5133,7 +5133,7 @@ else
 fi
 
 
-ac_config_files="$ac_config_files Makefile xindy-2.5.1/Makefile xindy-2.5.1/src/Makefile xindy-2.5.1/tex2xindy/Makefile xindy-2.5.1/modules/Makefile xindy-2.5.1/user-commands/Makefile xindy-2.5.1/make-rules/Makefile xindy-2.5.1/make-rules/alphabets/Makefile xindy-2.5.1/make-rules/inputenc/Makefile xindy-2.5.1/doc/Makefile"
+ac_config_files="$ac_config_files Makefile xindy-src/Makefile xindy-src/src/Makefile xindy-src/tex2xindy/Makefile xindy-src/modules/Makefile xindy-src/user-commands/Makefile xindy-src/make-rules/Makefile xindy-src/make-rules/alphabets/Makefile xindy-src/make-rules/inputenc/Makefile xindy-src/doc/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -5911,15 +5911,15 @@ do
   case $ac_config_target in
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "xindy-2.5.1/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/Makefile" ;;
-    "xindy-2.5.1/src/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/src/Makefile" ;;
-    "xindy-2.5.1/tex2xindy/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/tex2xindy/Makefile" ;;
-    "xindy-2.5.1/modules/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/modules/Makefile" ;;
-    "xindy-2.5.1/user-commands/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/user-commands/Makefile" ;;
-    "xindy-2.5.1/make-rules/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/make-rules/Makefile" ;;
-    "xindy-2.5.1/make-rules/alphabets/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/make-rules/alphabets/Makefile" ;;
-    "xindy-2.5.1/make-rules/inputenc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/make-rules/inputenc/Makefile" ;;
-    "xindy-2.5.1/doc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-2.5.1/doc/Makefile" ;;
+    "xindy-src/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/Makefile" ;;
+    "xindy-src/src/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/src/Makefile" ;;
+    "xindy-src/tex2xindy/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/tex2xindy/Makefile" ;;
+    "xindy-src/modules/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/modules/Makefile" ;;
+    "xindy-src/user-commands/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/user-commands/Makefile" ;;
+    "xindy-src/make-rules/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/make-rules/Makefile" ;;
+    "xindy-src/make-rules/alphabets/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/make-rules/alphabets/Makefile" ;;
+    "xindy-src/make-rules/inputenc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/make-rules/inputenc/Makefile" ;;
+    "xindy-src/doc/Makefile") CONFIG_FILES="$CONFIG_FILES xindy-src/doc/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
