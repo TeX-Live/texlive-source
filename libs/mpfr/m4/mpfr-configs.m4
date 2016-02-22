@@ -3,7 +3,7 @@
 # Contributed by the AriC and Caramel projects, INRIA.
 #
 # Copyright (C) 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
-# Extracted from mpfr-3.1.2/acinclude.m4 and adapted for TeX Live.
+# Extracted from mpfr-src/acinclude.m4 and adapted for TeX Live.
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -80,7 +80,7 @@ AC_CHECK_TYPES([intmax_t])
 if test "x$ac_cv_type_intmax_t" = xyes; then
   AC_CACHE_CHECK([for working INTMAX_MAX], [mpfr_cv_have_intmax_max], [
     saved_CPPFLAGS=$CPPFLAGS
-    CPPFLAGS="$CPPFLAGS -I$srcdir/mpfr-]mpfr_version[/src"
+    CPPFLAGS="$CPPFLAGS -I$srcdir/mpfr-src/src"
     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "mpfr-intmax.h"]],
                                        [[intmax_t x = INTMAX_MAX;]])],
       [mpfr_cv_have_intmax_max=yes], [mpfr_cv_have_intmax_max=no])
