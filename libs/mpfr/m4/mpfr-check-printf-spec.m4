@@ -3,7 +3,7 @@
 # Contributed by the AriC and Caramel projects, INRIA.
 #
 # Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
-# Extracted from mpfr-3.1.2/acinclude.m4 and adapted for TeX Live.
+# Extracted from mpfr-src/acinclude.m4 and adapted for TeX Live.
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,

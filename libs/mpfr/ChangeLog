@@ -1,3 +1,7 @@
+2016-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Makefile.am, configure.ac: New convention.
+
 2015-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
