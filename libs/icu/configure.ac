@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define icu_version
 AC_INIT([icu (TeX Live)], icu_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([icu-]icu_version[/source/common/unicode/utypes.h])
+AC_CONFIG_SRCDIR([icu-src/source/common/unicode/utypes.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -24,7 +24,7 @@ AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
 AC_PROG_CXX
 AC_PROG_LN_S
 
-ICU_TREE=[icu-]icu_version
+ICU_TREE=[icu-src]
 AC_SUBST([ICU_TREE])
 
 # Prepare configure arguments for ICU.

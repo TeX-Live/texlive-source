@@ -584,7 +584,7 @@ PACKAGE_STRING='icu (TeX Live) 56.1'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="icu-56.1/source/common/unicode/utypes.h"
+ac_unique_file="icu-src/source/common/unicode/utypes.h"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
@@ -4227,7 +4227,7 @@ $as_echo "no, using $LN_S" >&6; }
 fi
 
 
-ICU_TREE=icu-56.1
+ICU_TREE=icu-src
 
 
 # Prepare configure arguments for ICU.
