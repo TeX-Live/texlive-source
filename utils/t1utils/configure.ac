@@ -8,14 +8,14 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl *********************************************************************
 dnl
-dnl  Adapted for TeX Live from t1utils-1.34/configure.in
+dnl  Adapted for TeX Live from t1utils-src/configure.in
 dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define t1utils_version
 AC_INIT([t1utils (TeX Live)], t1utils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([t1utils-]t1utils_version[/t1ascii.c])
+AC_CONFIG_SRCDIR([t1utils-src/t1ascii.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -111,7 +111,7 @@ char *strerror(int errno);
 
 #endif /* T1UTILS_CONFIG_H */])
 
-AC_SUBST([T1UTILS_TREE], [t1utils-]t1utils_version)
+AC_SUBST([T1UTILS_TREE], [t1utils-src])
 
 dnl
 dnl Output
