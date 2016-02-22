@@ -528,7 +528,7 @@ top_srcdir = @top_srcdir@
 #  Adapted for TeX Live from t1utils/Makefile.am
 #
 #************************************************************************
-EXTRA_DIST = $(T1UTILS_TREE) $(T1UTILS_TREE)-PATCHES $(TESTS) \
+EXTRA_DIST = $(T1UTILS_TREE) t1utils-PATCHES $(TESTS) \
 	tests/Symbol.pfa tests/Symbol.pfb tests/Symbol.raw
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
