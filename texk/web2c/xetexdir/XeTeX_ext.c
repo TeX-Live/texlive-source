@@ -1937,11 +1937,55 @@ get_native_glyph(void* pNode, unsigned index)
 }
 
 void
-store_justified_native_glyphs(void* node)
+store_justified_native_glyphs(void* pNode)
 {
-#ifdef XETEX_MAC /* this is only called for AAT fonts */
-    (void)DoAATLayout(node, 1);
+    memoryword* node = (memoryword*)pNode;
+    unsigned f = native_font(node);
+
+#ifdef XETEX_MAC /* separate Mac-only codepath for AAT fonts */
+    if (fontarea[f] == AAT_FONT_FLAG) {
+        (void)DoAATLayout(node, 1);
+        return;
+    }
 #endif
+
+    /* save desired width */
+    int savedWidth = node_width(node);
+
+    measure_native_node(node, 0);
+
+    if (node_width(node) != savedWidth) {
+        /* see how much adjustment is needed overall */
+        double justAmount = Fix2D(savedWidth - node_width(node));
+
+        /* apply justification to spaces (or if there are none, distribute it to all glyphs as a last resort) */
+        FixedPoint* locations = (FixedPoint*)native_glyph_info_ptr(node);
+        uint16_t* glyphIDs = (uint16_t*)(locations + native_glyph_count(node));
+        int glyphCount = native_glyph_count(node);
+        int spaceCount = 0, i;
+
+        int spaceGlyph = mapchartoglyph(f, ' ');
+        for (i = 0; i < glyphCount; ++i)
+            if (glyphIDs[i] == spaceGlyph)
+                spaceCount++;
+
+        if (spaceCount > 0) {
+            double adjustment = 0;
+            int spaceIndex = 0;
+            for (i = 0; i < glyphCount; ++i) {
+                locations[i].x = D2Fix(Fix2D(locations[i].x) + adjustment);
+                if (glyphIDs[i] == spaceGlyph) {
+                    spaceIndex++;
+                    adjustment = justAmount * spaceIndex / spaceCount;
+                }
+            }
+        } else {
+            for (i = 1; i < glyphCount; ++i)
+                locations[i].x = D2Fix(Fix2D(locations[i].x) + justAmount * i / (glyphCount - 1));
+        }
+
+        node_width(node) = savedWidth;
+    }
 }
 
 void
@@ -2064,10 +2108,10 @@ measure_native_node(void* pNode, int use_glyph_metrics)
                     locations[i].x = D2Fix(positions[i].x);
                     locations[i].y = D2Fix(positions[i].y);
                 }
-                width = D2Fix(positions[totalGlyphCount].x);
+                width = positions[totalGlyphCount].x;
             }
 
-            node_width(node) = width;
+            node_width(node) = D2Fix(width);
             native_glyph_count(node) = totalGlyphCount;
             native_glyph_info_ptr(node) = glyph_info;
 

@@ -346,7 +346,10 @@ known as `\eTeX'.
 @d XeTeX_default_input_encoding_code=7 {|str_number| of encoding name if |mode =| ICU}
 @#
 @d XeTeX_tracing_fonts_code=8 {non-zero to log native fonts used}
-@d eTeX_states=9 {number of \eTeX\ state variables in |eqtb|}
+@d XeTeX_interword_space_shaping_code=9 { controls shaping of space chars in context when using native fonts;
+                                          set to 1 for contextual adjustment of space width only,
+                                          and 2 for full cross-space shaping (e.g. multi-word ligatures) }
+@d eTeX_states=10 {number of \eTeX\ state variables in |eqtb|}
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -3549,6 +3552,7 @@ inserted from \.{\\mkern} specifications in math formulas).
 @d kern_node=11 {|type| of a kern node}
 @d explicit=1 {|subtype| of kern nodes from \.{\\kern} and \.{\\/}}
 @d acc_kern=2 {|subtype| of kern nodes from accents}
+@d space_adjustment=3 {|subtype| of kern nodes from \.{\\XeTeXinterwordspaceshaping} adjustment}
 
 @# {memory structure for marginal kerns}
 @d margin_kern_node = 40
@@ -4238,8 +4242,9 @@ if subtype(p)<>mu_glue then
   begin print_esc("kern");
   if subtype(p)<>normal then print_char(" ");
   print_scaled(width(p));
-  if subtype(p)=acc_kern then print(" (for accent)");
+  if subtype(p)=acc_kern then print(" (for accent)")
 @.for accent@>
+  else if subtype(p)=space_adjustment then print(" (space adjustment)");
   end
 else  begin print_esc("mkern"); print_scaled(width(p)); print("mu");
   end
@@ -6062,8 +6067,8 @@ A global boolean variable called |no_new_control_sequence| is set to
 
 @ Primitive support needs a few extra variables and definitions
 
-@d prim_size=481 {maximum number of primitives }
-@d prim_prime=409 {about 85\pct! of |primitive_size|}
+@d prim_size=500 {maximum number of primitives }
+@d prim_prime=431 {about 85\pct! of |primitive_size|}
 @d prim_base=1
 @d prim_next(#) == prim[#].lh {link for coalesced lists}
 @d prim_text(#) == prim[#].rh {string number for control sequence name}
@@ -13917,7 +13922,9 @@ var base_line: scaled; {the baseline coordinate for this box}
 begin cur_g:=0; cur_glue:=float_constant(0);
 this_box:=temp_ptr; g_order:=glue_order(this_box);
 g_sign:=glue_sign(this_box);
-@<Merge sequences of words using AAT fonts and inter-word spaces into single nodes@>;
+if XeTeX_interword_space_shaping_state > 1 then begin
+  @<Merge sequences of words using native fonts and inter-word spaces into single nodes@>;
+end;
 p:=list_ptr(this_box);
 incr(cur_s);
 if cur_s>0 then dvi_out(push);
@@ -13939,13 +13946,22 @@ end;
 @d is_native_word_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node)))
 @d is_glyph_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = glyph_node)))
 
-@<Merge sequences of words using AAT fonts and inter-word spaces into single nodes@>=
+@d node_is_invisible_to_interword_space(#)==
+  not is_char_node(#) and
+  ((type(#) = penalty_node) or
+   (type(#) = ins_node) or
+   (type(#) = mark_node) or
+   (type(#) = adjust_node) or
+   ((type(#) = whatsit_node) and (subtype(#) <= 4)))
+     { This checks for |subtype|s in the range open/write/close/special/language,
+       but the definitions haven't appeared yet in the .web file so we cheat. }
+
+@<Merge sequences of words using native fonts and inter-word spaces into single nodes@>=
 p:=list_ptr(this_box);
 prev_p:=this_box+list_offset;
 while p<>null do begin
   if link(p) <> null then begin {not worth looking ahead at the end}
-    if is_native_word_node(p) and (font_area[native_font(p)] = aat_font_flag)
-        and (font_letter_space[native_font(p)] = 0) then begin
+    if is_native_word_node(p) and (font_letter_space[native_font(p)] = 0) then begin
       {got a word in an AAT font, might be the start of a run}
       r:=p; {|r| is start of possible run}
       k:=native_length(r);
@@ -13953,15 +13969,30 @@ while p<>null do begin
 check_next:
       @<Advance |q| past ignorable nodes@>;
       if (q <> null) and not is_char_node(q) then begin
-        if (type(q) = glue_node) and (subtype(q) = normal) and (glue_ptr(q) = font_glue[native_font(r)]) then begin
-          {found a normal space; if the next node is another word in the same font, we'll merge}
-          q:=link(q);
-          @<Advance |q| past ignorable nodes@>;
-          if is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
-            p:=q; {record new tail of run in |p|}
-            k:=k + 1 + native_length(q);
+        if (type(q) = glue_node) and (subtype(q) = normal) then begin
+          if (glue_ptr(q) = font_glue[native_font(r)]) then begin
+            {found a normal space; if the next node is another word in the same font, we'll merge}
             q:=link(q);
-            goto check_next;
+            @<Advance |q| past ignorable nodes@>;
+            if is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
+              p:=q; {record new tail of run in |p|}
+              k:=k + 1 + native_length(q);
+              q:=link(q);
+              goto check_next;
+            end
+          end else q:=link(q);
+          {we'll also merge if if space-adjustment was applied at this glue,
+           even if it wasn't the font's standard inter-word space}
+          if (q <> null) and not is_char_node(q) and (type(q) = kern_node) and
+             (subtype(q) = space_adjustment) then begin
+            q:=link(q);
+            @<Advance |q| past ignorable nodes@>;
+            if is_native_word_node(q) and (native_font(q) = native_font(r)) then begin
+              p:=q; {record new tail of run in |p|}
+              k:=k + 1 + native_length(q);
+              q:=link(q);
+              goto check_next;
+            end
           end;
           goto end_node_run;
         end;
@@ -13998,22 +14029,44 @@ end_node_run: {now |r| points to first |native_word_node| of the run, and |p| to
                 end
               end
             end
+          end else if type(q) = kern_node then begin
+            k:=k + width(q);
           end;
           {discretionary and deleted nodes can be discarded here}
           if q = p then break
           else q:=link(q);
         end;
+        { create the new merged node |q| }
         q:=new_native_word_node(native_font(r), cur_length);
-        link(prev_p):=q;
         for j:=0 to cur_length - 1 do
           set_native_char(q, j, str_pool[str_start_macro(str_ptr) + j]);
-        link(q):=link(p);
-        link(p):=null;
-        flush_node_list(r);
+        { impose the required width on |q|, and shape its text accordingly }
         width(q):=k;
         set_justified_native_glyphs(q);
-        p:=q;
+        { link |q| into the list in place of |r|..|p| }
+        link(prev_p):=q;
+        link(q):=link(p);
+        link(p):=null;
+        { Extract any "invisible" nodes from the old list and insert them after the new node,
+          so we don't lose them altogether. Note that the first node cannot be one of these,
+          as we always start merging at a native_word node. }
+        prev_p := r;
+        p := link(r);
+        while p <> null do begin
+          if node_is_invisible_to_interword_space(p) then begin
+            link(prev_p) := link(p);
+            link(p) := link(q);
+            link(q) := p;
+            q := p;
+          end;
+          prev_p := p;
+          p := link(p);
+        end;
+        { discard the remains of the old list }
+        flush_node_list(r);
+        { clean up and prepare for the next round }
         pool_ptr:=str_start_macro(str_ptr); {flush the temporary string data}
+        p:=q;
       end
     end;
     prev_p:=p;
@@ -14022,7 +14075,7 @@ end_node_run: {now |r| points to first |native_word_node| of the run, and |p| to
 end
 
 @ @<Advance |q| past ignorable nodes@>=
-while (q <> null) and (not is_char_node(q)) and (type(q) = disc_node) do
+while (q <> null) and node_is_invisible_to_interword_space(q) do
     q:=link(q)
 
 @ We ought to give special care to the efficiency of one part of |hlist_out|,
@@ -19418,7 +19471,8 @@ width of this glue is subtracted from the background; and we also look
 ahead to eliminate all subsequent glue and penalty and kern and math
 nodes, subtracting their widths as well.
 
-Kern nodes do not disappear at a line break unless they are |explicit|.
+Kern nodes do not disappear at a line break unless they are |explicit|
+or |space_adjustment|.
 
 @d set_break_width_to_background(#)==break_width[#]:=background[#]
 
@@ -20282,7 +20336,7 @@ loop@+  begin q:=link(r);
   {now |q| cannot be |null|}
   if is_char_node(q) then goto done1;
   if non_discardable(q) then goto done1;
-  if type(q)=kern_node then if subtype(q)<>explicit then goto done1;
+  if type(q)=kern_node then if (subtype(q)<>explicit) and (subtype(q)<>space_adjustment) then goto done1;
   r:=q; {now |type(q)=glue_node|, |kern_node|, |math_node| or |penalty_node|}
   if type(q)=math_node then if TeXXeT_en then
     @<Adjust \(t)the LR stack for the |post_line_break| routine@>;
@@ -23643,6 +23697,80 @@ collected:
       for main_p:=0 to main_k - 1 do
         set_native_char(tail, main_p, native_text[main_p]);
       set_native_metrics(tail, XeTeX_use_glyph_metrics);
+    end
+  end;
+
+  if XeTeX_interword_space_shaping_state > 0 then begin
+    { |tail| is a word we have just appended. If it is preceded by another word
+      with a normal inter-word space between (all in the same font), then we will
+      measure that space in context and replace it with an adjusted glue value
+      if it differs from the font's normal space. }
+
+    { First we look for the most recent native_word in the list and set |main_pp| to it.
+      This is potentially expensive, in the case of very long paragraphs,
+      but in practice it's negligible compared to the cost of shaping and measurement. }
+    main_p := head;
+    main_pp := null;
+    while main_p <> tail do begin
+      if is_native_word_node(main_p) then main_pp := main_p;
+      main_p := link(main_p);
+    end;
+
+    if (main_pp <> null) then begin
+      { check if the font matches; if so, check the intervening nodes }
+      if (native_font(main_pp) = main_f) then begin
+        main_p := link(main_pp);
+
+        { Skip nodes that should be invisible to inter-word spacing,
+          so that e.g. |\nobreak\ | doesn't prevent contextual measurement.
+          This loop is guaranteed to end safely because it'll eventually hit
+          |tail|, which is a native_word node, if nothing else intervenes. }
+        while node_is_invisible_to_interword_space(main_p) do
+          main_p := link(main_p);
+
+        if not is_char_node(main_p) and (type(main_p) = glue_node) then begin
+          { We found a glue node: we might have an inter-word space to deal with.
+            Again, skip nodes that should be invisible to inter-word spacing.
+            We leave |main_p| pointing to the glue node; |main_pp| is the preceding word. }
+          main_ppp := link(main_p);
+          while node_is_invisible_to_interword_space(main_ppp) do
+            main_ppp := link(main_ppp);
+
+          if main_ppp = tail then begin
+            { We found a candidate inter-word space! Collect the characters of both words,
+              separated by a single space, into a native_word node and measure its overall width. }
+            temp_ptr := new_native_word_node(main_f, native_length(main_pp) + 1 + native_length(tail));
+            main_k := 0;
+            for t := 0 to native_length(main_pp)-1 do begin
+              set_native_char(temp_ptr, main_k, get_native_char(main_pp, t));
+              incr(main_k);
+            end;
+            set_native_char(temp_ptr, main_k, " ");
+            incr(main_k);
+            for t := 0 to native_length(tail)-1 do begin
+              set_native_char(temp_ptr, main_k, get_native_char(tail, t));
+              incr(main_k);
+            end;
+            set_native_metrics(temp_ptr, XeTeX_use_glyph_metrics);
+
+            { The contextual space width is the difference between this width and
+              the sum of the two words measured separately. }
+            t := width(temp_ptr) - width(main_pp) - width(tail);
+            free_node(temp_ptr, native_size(temp_ptr));
+
+            { If the desired width differs from the font's default word space,
+              we will insert a suitable kern after the existing glue.
+              Because kerns are discardable, this will behave OK during line breaking,
+              and it's easier than actually modifying/replacing the glue node. }
+            if t <> width(font_glue[main_f]) then begin
+              temp_ptr := new_kern(t - width(font_glue[main_f]));
+              subtype(temp_ptr) := space_adjustment;
+              link(temp_ptr) := link(main_p);
+              link(main_p) := temp_ptr;
+            end
+          end
+        end
+      end
     end
   end;
 
@@ -30898,6 +31026,8 @@ and is never inhibited for words originating from horizontal mode.
 @d XeTeX_input_normalization_state == eTeX_state(XeTeX_input_normalization_code)
 @d XeTeX_tracing_fonts_state == eTeX_state(XeTeX_tracing_fonts_code)
 
+@d XeTeX_interword_space_shaping_state==eTeX_state(XeTeX_interword_space_shaping_code)
+
 @d XeTeX_default_input_mode == eTeX_state(XeTeX_default_input_mode_code)
 @d XeTeX_default_input_encoding == eTeX_state(XeTeX_default_input_encoding_code)
 
@@ -30910,6 +31040,7 @@ eTeX_state_code+XeTeX_inter_char_tokens_code:print_esc("XeTeXinterchartokenstate
 eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
 eTeX_state_code+XeTeX_input_normalization_code:print_esc("XeTeXinputnormalization");
 eTeX_state_code+XeTeX_tracing_fonts_code:print_esc("XeTeXtracingfonts");
+eTeX_state_code+XeTeX_interword_space_shaping_code:print_esc("XeTeXinterwordspaceshaping");
 
 @ @<Generate all \eTeX...@>=
 primitive("suppressfontnotfounderror",assign_int,int_base+suppress_fontnotfound_error_code);@/
@@ -30929,6 +31060,9 @@ primitive("XeTeXinputnormalization",assign_int,eTeX_state_base+XeTeX_input_norma
 @!@:XeTeX_input_normalization_}{\.{\\XeTeXinputnormalization} primitive@>
 
 primitive("XeTeXtracingfonts",assign_int,eTeX_state_base+XeTeX_tracing_fonts_code);
+
+primitive("XeTeXinterwordspaceshaping",assign_int,eTeX_state_base+XeTeX_interword_space_shaping_code);
+@!@:XeTeX_interword_space_shaping_}{\.{\\XeTeXinterwordspaceshaping} primitive@>
 
 primitive("XeTeXinputencoding",extension,XeTeX_input_encoding_extension_code);
 primitive("XeTeXdefaultencoding",extension,XeTeX_default_encoding_extension_code);
