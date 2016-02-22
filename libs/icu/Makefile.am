@@ -11,7 +11,7 @@ EXTRA_DIST = $(ICU_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST += $(ICU_TREE)-PATCHES
+EXTRA_DIST += icu-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
