@@ -12,7 +12,7 @@ dnl
 m4_include([version.ac])[] dnl define zziplib_version
 AC_INIT([zziplib (TeX Live)], zziplib_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([zziplib-]zziplib_version[/zziplib.spec])
+AC_CONFIG_SRCDIR([zziplib-src/zziplib.spec])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
@@ -80,7 +80,7 @@ KPSE_RESTORE_FLAGS
 echo timestamp >config.force
 fi
 
-AC_SUBST([ZZIPLIB_TREE], [zziplib-]zziplib_version)
+AC_SUBST([ZZIPLIB_TREE], [zziplib-src])
 
 # -----------------------------------------------------------------------
 AC_MSG_RESULT([creating include/zzip/_msvc.in via zzip/_msvc.sed of config.h.in])

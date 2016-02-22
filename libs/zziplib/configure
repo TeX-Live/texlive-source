@@ -585,7 +585,7 @@ PACKAGE_STRING='zziplib (TeX Live) 0.13.62'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="zziplib-0.13.62/zziplib.spec"
+ac_unique_file="zziplib-src/zziplib.spec"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -6804,7 +6804,7 @@ LIBS=$kpse_save_LIBS
 echo timestamp >config.force
 fi
 
-ZZIPLIB_TREE=zziplib-0.13.62
+ZZIPLIB_TREE=zziplib-src
 
 
 # -----------------------------------------------------------------------
