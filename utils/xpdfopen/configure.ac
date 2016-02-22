@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define xpdfopen_version
 AC_INIT([xpdfopen (TeX Live)], xpdfopen_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([xpdfopen-]xpdfopen_version[/pdfopen.c])
+AC_CONFIG_SRCDIR([xpdfopen-src/pdfopen.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -20,7 +20,7 @@ AC_PROG_CC
 dnl Find Xlibs.
 AC_PATH_XTRA
 
-AC_SUBST([XPDFOPEN_TREE], [xpdfopen-]xpdfopen_version)
+AC_SUBST([XPDFOPEN_TREE], [xpdfopen-src])
 
 AC_CONFIG_FILES([Makefile])
 
