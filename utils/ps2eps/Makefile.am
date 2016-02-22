@@ -6,7 +6,7 @@
 ## We want to re-distribute the whole original ps2eps source tree.
 EXTRA_DIST = $(PS2EPS_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += $(PS2EPS_TREE)-PATCHES
+EXTRA_DIST += ps2eps-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
