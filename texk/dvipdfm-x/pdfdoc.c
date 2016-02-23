@@ -1595,6 +1595,7 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
 {
   pdf_obj *subtype = NULL, *A = NULL, *S = NULL, *D = NULL, *D_new, *dict;
   const char *dest, *key;
+  int destlen = 0;
 
   if (!pdoc.check_gotos)
     return;
@@ -1641,8 +1642,10 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
     }
   }
 
-  if (PDF_OBJ_STRINGTYPE(D))
+  if (PDF_OBJ_STRINGTYPE(D)) {
     dest = (char *) pdf_string_value(D);
+    destlen = pdf_string_length(D);
+  }
 #if 0
   /* Names as destinations are not supported by dvipdfmx */
   else if (PDF_OBJ_NAMETYPE(D))
@@ -1655,7 +1658,7 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
   else
     goto error;
 
-  D_new = ht_lookup_table(&pdoc.gotos, dest, strlen(dest));
+  D_new = ht_lookup_table(&pdoc.gotos, dest, destlen);
   if (!D_new) {
     char buf[10];
 
@@ -1664,7 +1667,7 @@ pdf_doc_add_goto (pdf_obj *annot_dict)
      */
     sprintf(buf, "%x", ht_table_size(&pdoc.gotos));
     D_new = pdf_new_string(buf, strlen(buf));
-    ht_append_table(&pdoc.gotos, dest, strlen(dest), D_new);
+    ht_append_table(&pdoc.gotos, dest, destlen, D_new);
   }
 
   {
