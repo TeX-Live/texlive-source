@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define psutils_version
 AC_INIT([psutils (TeX Live)], psutils_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([psutils-]psutils_version[/psutil.c])
+AC_CONFIG_SRCDIR([psutils-src/psutil.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -28,12 +28,12 @@ KPSE_LIBPAPER_FLAGS
 
 KPSE_COND_WIN32_WRAP
 
-AC_SUBST([PSUTILS_TREE], [psutils-]psutils_version)
+AC_SUBST([PSUTILS_TREE], [psutils-src])
 
 AC_CONFIG_FILES([Makefile])
 
-AC_CONFIG_LINKS([extractres.pl:psutils-]psutils_version[/extractres])
-AC_CONFIG_LINKS([includeres.pl:psutils-]psutils_version[/extractres])
-AC_CONFIG_LINKS([psjoin.pl:psutils-]psutils_version[/psjoin])
+AC_CONFIG_LINKS([extractres.pl:psutils-src/extractres])
+AC_CONFIG_LINKS([includeres.pl:psutils-src/extractres])
+AC_CONFIG_LINKS([psjoin.pl:psutils-src/psjoin])
 
 AC_OUTPUT
