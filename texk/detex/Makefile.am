@@ -6,7 +6,7 @@
 ## We want to re-distribute the whole original detex source tree.
 EXTRA_DIST = $(DETEX_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += $(DETEX_TREE)-PATCHES
+EXTRA_DIST += detex-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
