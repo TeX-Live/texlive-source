@@ -16,7 +16,7 @@ dnl
 m4_include([version.ac])[] dnl define dvipng_version
 AC_INIT([dvipng (TeX Live)], dvipng_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([dvipng-]dvipng_version[/dvipng.c])
+AC_CONFIG_SRCDIR([dvipng-src/dvipng.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
@@ -179,7 +179,7 @@ AC_MSG_RESULT([
 
 AC_CONFIG_HEADERS([config.h])
 
-AC_SUBST([DVIPNG_TREE], [dvipng-]dvipng_version)
+AC_SUBST([DVIPNG_TREE], [dvipng-src])
 
 KPSE_WIN32_CALL
 
