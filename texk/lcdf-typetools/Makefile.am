@@ -5,7 +5,7 @@
 ##
 #************************************************************************
 #
-#  Adapted for TeX Live from lcdf-typetools-2.88/Makefile.am
+#  Adapted for TeX Live from lcdf-typetools-src/Makefile.am
 #  Copyright (c) 2003-2011 Eddie Kohler
 #
 #************************************************************************
@@ -17,7 +17,7 @@ DIST_SUBDIRS = $(SUBDIRS)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST = $(LCDF_TYPETOOLS_TREE)-PATCHES
+EXTRA_DIST = lcdf-typetools-PATCHES
 
 ## We must explicitly distribute some top-level files.
 ##
