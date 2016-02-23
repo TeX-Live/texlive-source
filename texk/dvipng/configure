@@ -595,7 +595,7 @@ PACKAGE_STRING='dvipng (TeX Live) 1.15'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="dvipng-1.15/dvipng.c"
+ac_unique_file="dvipng-src/dvipng.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -16664,7 +16664,7 @@ $as_echo "
 ac_config_headers="$ac_config_headers config.h"
 
 
-DVIPNG_TREE=dvipng-1.15
+DVIPNG_TREE=dvipng-src
 
 
  if test "x$kpse_cv_have_win32" != xno; then
