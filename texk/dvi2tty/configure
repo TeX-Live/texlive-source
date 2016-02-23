@@ -595,7 +595,7 @@ PACKAGE_STRING='dvi2tty (TeX Live) 5.3.4'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="dvi2tty-5.3.4/dvi2tty.c"
+ac_unique_file="dvi2tty-src/dvi2tty.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -14955,7 +14955,7 @@ $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc
 fi
 
 
-DVI2TTY_TREE=dvi2tty-5.3.4
+DVI2TTY_TREE=dvi2tty-src
 
 
 ac_config_files="$ac_config_files Makefile"
