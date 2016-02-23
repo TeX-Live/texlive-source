@@ -453,8 +453,8 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/psutils-1.23/extractres \
-	$(top_srcdir)/psutils-1.23/psjoin ../../build-aux/compile \
+	$(top_srcdir)/psutils-src/extractres \
+	$(top_srcdir)/psutils-src/psjoin ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
@@ -604,7 +604,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(PSUTILS_TREE) $(PSUTILS_TREE)-PATCHES \
+EXTRA_DIST = $(PSUTILS_TREE) psutils-PATCHES \
 	$(top_builddir)/../../build-aux/relpath $(TESTS) tests/play.ps \
 	tests/playbook.2 tests/playnup.2 tests/playnup1.2 \
 	tests/playps.2 tests/playres.ps tests/playsel.2 \

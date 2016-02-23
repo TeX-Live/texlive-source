@@ -595,7 +595,7 @@ PACKAGE_STRING='psutils (TeX Live) 1.23'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="psutils-1.23/psutil.c"
+ac_unique_file="psutils-src/psutil.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -15080,17 +15080,17 @@ fi
 
 
 
-PSUTILS_TREE=psutils-1.23
+PSUTILS_TREE=psutils-src
 
 
 ac_config_files="$ac_config_files Makefile"
 
 
-ac_config_links="$ac_config_links extractres.pl:psutils-1.23/extractres"
+ac_config_links="$ac_config_links extractres.pl:psutils-src/extractres"
 
-ac_config_links="$ac_config_links includeres.pl:psutils-1.23/extractres"
+ac_config_links="$ac_config_links includeres.pl:psutils-src/extractres"
 
-ac_config_links="$ac_config_links psjoin.pl:psutils-1.23/psjoin"
+ac_config_links="$ac_config_links psjoin.pl:psutils-src/psjoin"
 
 
 cat >confcache <<\_ACEOF
@@ -16124,9 +16124,9 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "extractres.pl") CONFIG_LINKS="$CONFIG_LINKS extractres.pl:psutils-1.23/extractres" ;;
-    "includeres.pl") CONFIG_LINKS="$CONFIG_LINKS includeres.pl:psutils-1.23/extractres" ;;
-    "psjoin.pl") CONFIG_LINKS="$CONFIG_LINKS psjoin.pl:psutils-1.23/psjoin" ;;
+    "extractres.pl") CONFIG_LINKS="$CONFIG_LINKS extractres.pl:psutils-src/extractres" ;;
+    "includeres.pl") CONFIG_LINKS="$CONFIG_LINKS includeres.pl:psutils-src/extractres" ;;
+    "psjoin.pl") CONFIG_LINKS="$CONFIG_LINKS psjoin.pl:psutils-src/psjoin" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

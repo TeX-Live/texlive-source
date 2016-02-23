@@ -6,7 +6,7 @@
 ## We want to re-distribute the whole original psutils source tree.
 EXTRA_DIST = $(PSUTILS_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += $(PSUTILS_TREE)-PATCHES
+EXTRA_DIST += psutils-PATCHES
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
