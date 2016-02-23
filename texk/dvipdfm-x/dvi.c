@@ -357,13 +357,13 @@ find_post (void)
   /* file_position now points to last non padding character or
    * beginning of file */
   if (dvi_file_size - current < 4 || current == 0 ||
-      !(ch == DVI_ID || ch == DVIV_ID || ch == XDV_ID)) {
+      !(ch == DVI_ID || ch == DVIV_ID || ch == XDV_ID || ch == XDV_ID_OLD)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   } 
 
   post_id_byte = ch;
-  is_xdv = ch == XDV_ID;
+  is_xdv = (ch == XDV_ID || ch == XDV_ID_OLD);
   is_ptex = ch == DVIV_ID;
 
   /* Make sure post_post is really there */
@@ -388,7 +388,7 @@ find_post (void)
     ERROR(invalid_signature);
   }
   ch = get_unsigned_byte(dvi_file);
-  if (!(ch == DVI_ID || ch == XDV_ID)) {
+  if (!(ch == DVI_ID || ch == XDV_ID || ch == XDV_ID_OLD)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   }
@@ -484,13 +484,13 @@ get_preamble_dvi_info (void)
   
   /* An Ascii pTeX DVI file has id_byte DVI_ID in the preamble but DVIV_ID in the postamble. */
   ch = get_unsigned_byte(dvi_file);
-  if (!(ch == DVI_ID || ch == XDV_ID)) {
+  if (!(ch == DVI_ID || ch == XDV_ID || ch == XDV_ID_OLD)) {
     MESG("DVI ID = %d\n", ch);
     ERROR(invalid_signature);
   }
 
   pre_id_byte = ch;
-  is_xdv = ch == XDV_ID;
+  is_xdv = (ch == XDV_ID || ch == XDV_ID_OLD);
   is_ptex = ch == DVI_ID; /* maybe */
   
   dvi_info.unit_num = get_positive_quad(dvi_file, "DVI", "unit_num");
@@ -1648,7 +1648,7 @@ skip_glyphs (void)
 }
 
 static void
-do_glyphs (void)
+do_glyphs (int do_actual_text)
 {
   struct loaded_font *font;
   spt_t  width, height, depth, *xloc, *yloc, glyph_width = 0;
@@ -1659,6 +1659,22 @@ do_glyphs (void)
     ERROR("No font selected!");
 
   font  = &loaded_fonts[current_font];
+
+  if (do_actual_text) {
+    slen = (unsigned int) get_buffered_unsigned_pair();
+    if (lr_mode >= SKIMMING) {
+      for (i = 0; i < slen; i++) {
+        skip_bufferd_bytes(2);
+      }
+    } else {
+      uint16_t *unicodes = NEW(slen, uint16_t);
+      for (i = 0; i < slen; i++) {
+        unicodes[i] = (uint16_t) get_buffered_unsigned_pair();
+      }
+      pdf_dev_begin_actualtext (unicodes, slen);
+      RELEASE(unicodes);
+    }
+  }
 
   width = get_buffered_signed_quad();
 
@@ -1739,6 +1755,10 @@ do_glyphs (void)
   RELEASE(xloc);
   RELEASE(yloc);
 
+  if (do_actual_text) {
+    pdf_dev_end_actualtext();
+  }
+
   if (lr_mode == LTYPESETTING)
     dvi_right(width);
 
@@ -1767,7 +1787,7 @@ check_postamble (void)
   }
   skip_bytes(4, dvi_file);
   post_id_byte = get_unsigned_byte(dvi_file);
-  if (!(post_id_byte == DVI_ID || post_id_byte == DVIV_ID || post_id_byte == XDV_ID)) {
+  if (!(post_id_byte == DVI_ID || post_id_byte == DVIV_ID || post_id_byte == XDV_ID || post_id_byte == XDV_ID_OLD)) {
     MESG("DVI ID = %d\n", post_id_byte);
     ERROR(invalid_signature);
   }
@@ -1919,7 +1939,11 @@ dvi_do_page (double page_paper_height, double hmargin, double vmargin)
     /* XeTeX extensions */
     case XDV_GLYPHS:
       need_XeTeX(opcode);
-      do_glyphs();
+      do_glyphs(0);
+      break;
+    case XDV_TEXT_AND_GLYPHS:
+      need_XeTeX(opcode);
+      do_glyphs(1);
       break;
     /* should not occur - processed during pre-scanning */
     case XDV_NATIVE_FONT_DEF:
@@ -2453,6 +2477,14 @@ dvi_scan_specials (int page_no,
       break;
     case XDV_GLYPHS:
       need_XeTeX(opcode);
+      get_and_buffer_bytes(fp, 4);            /* width */
+      len = get_and_buffer_unsigned_pair(fp); /* glyph count */
+      get_and_buffer_bytes(fp, len * 10);     /* 2 bytes ID + 8 bytes x,y-location per glyph */
+      break;
+    case XDV_TEXT_AND_GLYPHS:
+      need_XeTeX(opcode);
+      len = get_and_buffer_unsigned_pair(fp); /* utf16 code unit count */
+      get_and_buffer_bytes(fp, len * 2);      /* 2 bytes per code unit */
       get_and_buffer_bytes(fp, 4);            /* width */
       len = get_and_buffer_unsigned_pair(fp); /* glyph count */
       get_and_buffer_bytes(fp, len * 10);     /* 2 bytes ID + 8 bytes x,y-location per glyph */

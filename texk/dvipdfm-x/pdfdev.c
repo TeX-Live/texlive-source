@@ -1949,3 +1949,56 @@ transform_info_clear (transform_info *info)
 
   info->flags    = 0;
 }
+
+void
+pdf_dev_begin_actualtext (uint16_t *unicodes, int count)
+{
+  int len, i, pdf_doc_enc = 1;
+
+  /* check whether we can use PDFDocEncoding for this string
+     (we punt on the 0x80..0xA0 range that does not directly correspond to unicode)  */
+  for (i = 0; i < count; i++) {
+    if (unicodes[i] > 0xff || (unicodes[i] > 0x7f && unicodes[i] < 0xa1)) {
+      pdf_doc_enc = 0;
+      break;
+    }
+  }
+
+  graphics_mode();
+
+  len = sprintf(work_buffer, "\n/Span<</ActualText(");
+  if (!pdf_doc_enc) {
+    len += sprintf(work_buffer + len, "\xFE\xFF");
+  }
+  pdf_doc_add_page_content(work_buffer, len);
+
+  while (count-- > 0) {
+    unsigned char s[2] = { *unicodes >> 8, *unicodes & 0xff };
+    i = pdf_doc_enc; /* if using PDFDocEncoding, we only care about the low 8 bits,
+                        so start with the second byte of our pair */
+    len = 0;
+    for (; i < 2; i++) {
+      unsigned char c = s[i];
+      if (c == '(' || c == ')' || c == '\\') {
+        len += sprintf(work_buffer + len, "\\%c", c);
+      } else if (c < ' ') {
+        len += sprintf(work_buffer + len, "\\%03o", c);
+      } else {
+        len += sprintf(work_buffer + len, "%c", c);
+      }
+    }
+    pdf_doc_add_page_content(work_buffer, len);
+    ++unicodes;
+  }
+
+  len = sprintf(work_buffer, ")>>BDC");
+  pdf_doc_add_page_content(work_buffer, len);
+}
+
+void
+pdf_dev_end_actualtext ()
+{
+  graphics_mode();
+
+  pdf_doc_add_page_content(" EMC", 4);
+}

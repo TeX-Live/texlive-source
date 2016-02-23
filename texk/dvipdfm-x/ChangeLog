@@ -1,3 +1,8 @@
+2016-02-23  Jonathan Kew  <jfkthame@gmail.com>
+
+	* dvicodes.h, dvi.c, pdfdev.[ch]: Support xetex 0.99995 output
+	(dvi format 7) that includes ActualText content.
+
 2016-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* spc_pdfm.c: Remaining fix for that on 2016-02-13.
