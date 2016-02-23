@@ -9,7 +9,7 @@ dnl
 m4_include([version.ac])[] dnl define cjk_version
 AC_INIT([CJK utils (TeX Live)], cjk_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([cjkutils-]cjk_version[/hbf2gf/hbf.h])
+AC_CONFIG_SRCDIR([cjkutils-src/hbf2gf/hbf.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -63,7 +63,7 @@ AM_CONDITIONAL([do_cweb], [test "x$do_cweb" = xyes])
 
 KPSE_COND_WIN32
 
-AC_SUBST([CJKUTILS_TREE], [cjkutils-]cjk_version)
+AC_SUBST([CJKUTILS_TREE], [cjkutils-src])
 
 AC_CONFIG_FILES([Makefile])
 

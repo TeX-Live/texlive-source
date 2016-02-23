@@ -595,7 +595,7 @@ PACKAGE_STRING='CJK utils (TeX Live) 4.8.4'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="cjkutils-4.8.4/hbf2gf/hbf.h"
+ac_unique_file="cjkutils-src/hbf2gf/hbf.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -15214,7 +15214,7 @@ fi
 
 
 
-CJKUTILS_TREE=cjkutils-4.8.4
+CJKUTILS_TREE=cjkutils-src
 
 
 ac_config_files="$ac_config_files Makefile"
