@@ -9,7 +9,7 @@ dnl
 m4_define([detex_version], [2.8])[]dnl using unmodified detex source tree
 AC_INIT([detex (TeX Live)], detex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([detex-]detex_version[/detex.l])
+AC_CONFIG_SRCDIR([detex-src/detex.l])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
@@ -23,7 +23,7 @@ AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 KPSE_KPATHSEA_FLAGS
 
-DETEX_TREE=detex-[]detex_version
+DETEX_TREE=detex-src
 AC_SUBST([DETEX_TREE])
 
 AC_CONFIG_FILES([Makefile])
