@@ -1,3 +1,7 @@
+2016-02-23  Masamichi HOSODA  <trueroad@trueroad.jp>
+
+	* pdfdoc.c: Support UTF-16 with null bytes as labels.
+
 2016-02-23  Jonathan Kew  <jfkthame@gmail.com>
 
 	* dvicodes.h, dvi.c, pdfdev.[ch]: Support xetex 0.99995 output
