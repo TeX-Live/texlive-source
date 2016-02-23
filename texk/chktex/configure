@@ -595,7 +595,7 @@ PACKAGE_STRING='ChkTeX (TeX Live) 1.7.4'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="chktex-1.7.4/ChkTeX.c"
+ac_unique_file="chktex-src/ChkTeX.c"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -13786,7 +13786,7 @@ fi
 
 
 
-CHKTEX_TREE=chktex-1.7.4
+CHKTEX_TREE=chktex-src
 
 PERL5='/usr/bin/env perl'
 
@@ -15251,9 +15251,9 @@ if test "x$kpse_cv_kpse_debug" != xyes; then :
 fi
 
 
-ac_config_files="$ac_config_files Makefile ChkTeX.t:chktex-1.7.4/ChkTeX.tex.in"
+ac_config_files="$ac_config_files Makefile ChkTeX.t:chktex-src/ChkTeX.tex.in"
 
-ac_config_files="$ac_config_files deweb.pl:chktex-1.7.4/deweb.in"
+ac_config_files="$ac_config_files deweb.pl:chktex-src/deweb.in"
 
 
 cat >confcache <<\_ACEOF
@@ -16287,8 +16287,8 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "ChkTeX.t") CONFIG_FILES="$CONFIG_FILES ChkTeX.t:chktex-1.7.4/ChkTeX.tex.in" ;;
-    "deweb.pl") CONFIG_FILES="$CONFIG_FILES deweb.pl:chktex-1.7.4/deweb.in" ;;
+    "ChkTeX.t") CONFIG_FILES="$CONFIG_FILES ChkTeX.t:chktex-src/ChkTeX.tex.in" ;;
+    "deweb.pl") CONFIG_FILES="$CONFIG_FILES deweb.pl:chktex-src/deweb.in" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
