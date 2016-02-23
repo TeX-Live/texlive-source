@@ -595,7 +595,7 @@ PACKAGE_STRING='LCDF typetools (TeX Live) 2.105'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="lcdf-typetools-2.105/NEWS"
+ac_unique_file="lcdf-typetools-src/NEWS"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -21425,24 +21425,24 @@ _ACEOF
 
 
 
-LCDF_TYPETOOLS_TREE=lcdf-typetools-2.105
+LCDF_TYPETOOLS_TREE=lcdf-typetools-src
 
 
-ac_config_files="$ac_config_files Makefile lcdf-typetools-2.105/Makefile"
+ac_config_files="$ac_config_files Makefile lcdf-typetools-src/Makefile"
 
-ac_config_files="$ac_config_files lcdf-typetools-2.105/liblcdf/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/libefont/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/cfftot1/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/mmafm/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/mmpfb/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/otfinfo/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/otftotfm/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/t1dotlessj/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/t1lint/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/t1rawafm/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/t1reencode/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/t1testpage/Makefile"
-ac_config_files="$ac_config_files lcdf-typetools-2.105/ttftotype42/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/liblcdf/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/libefont/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/cfftot1/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/mmafm/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/mmpfb/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/otfinfo/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/otftotfm/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/t1dotlessj/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/t1lint/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/t1rawafm/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/t1reencode/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/t1testpage/Makefile"
+ac_config_files="$ac_config_files lcdf-typetools-src/ttftotype42/Makefile"
 
 
 cat >confcache <<\_ACEOF
@@ -22581,20 +22581,20 @@ do
     "autoconf.h") CONFIG_HEADERS="$CONFIG_HEADERS autoconf.h" ;;
     "CXXLD.sh") CONFIG_COMMANDS="$CONFIG_COMMANDS CXXLD.sh" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "lcdf-typetools-2.105/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/Makefile" ;;
-    "lcdf-typetools-2.105/liblcdf/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/liblcdf/Makefile" ;;
-    "lcdf-typetools-2.105/libefont/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/libefont/Makefile" ;;
-    "lcdf-typetools-2.105/cfftot1/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/cfftot1/Makefile" ;;
-    "lcdf-typetools-2.105/mmafm/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/mmafm/Makefile" ;;
-    "lcdf-typetools-2.105/mmpfb/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/mmpfb/Makefile" ;;
-    "lcdf-typetools-2.105/otfinfo/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/otfinfo/Makefile" ;;
-    "lcdf-typetools-2.105/otftotfm/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/otftotfm/Makefile" ;;
-    "lcdf-typetools-2.105/t1dotlessj/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/t1dotlessj/Makefile" ;;
-    "lcdf-typetools-2.105/t1lint/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/t1lint/Makefile" ;;
-    "lcdf-typetools-2.105/t1rawafm/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/t1rawafm/Makefile" ;;
-    "lcdf-typetools-2.105/t1reencode/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/t1reencode/Makefile" ;;
-    "lcdf-typetools-2.105/t1testpage/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/t1testpage/Makefile" ;;
-    "lcdf-typetools-2.105/ttftotype42/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-2.105/ttftotype42/Makefile" ;;
+    "lcdf-typetools-src/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/Makefile" ;;
+    "lcdf-typetools-src/liblcdf/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/liblcdf/Makefile" ;;
+    "lcdf-typetools-src/libefont/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/libefont/Makefile" ;;
+    "lcdf-typetools-src/cfftot1/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/cfftot1/Makefile" ;;
+    "lcdf-typetools-src/mmafm/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/mmafm/Makefile" ;;
+    "lcdf-typetools-src/mmpfb/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/mmpfb/Makefile" ;;
+    "lcdf-typetools-src/otfinfo/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/otfinfo/Makefile" ;;
+    "lcdf-typetools-src/otftotfm/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/otftotfm/Makefile" ;;
+    "lcdf-typetools-src/t1dotlessj/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/t1dotlessj/Makefile" ;;
+    "lcdf-typetools-src/t1lint/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/t1lint/Makefile" ;;
+    "lcdf-typetools-src/t1rawafm/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/t1rawafm/Makefile" ;;
+    "lcdf-typetools-src/t1reencode/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/t1reencode/Makefile" ;;
+    "lcdf-typetools-src/t1testpage/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/t1testpage/Makefile" ;;
+    "lcdf-typetools-src/ttftotype42/Makefile") CONFIG_FILES="$CONFIG_FILES lcdf-typetools-src/ttftotype42/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

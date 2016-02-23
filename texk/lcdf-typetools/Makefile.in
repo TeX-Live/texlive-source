@@ -562,13 +562,13 @@ top_srcdir = @top_srcdir@
 
 #************************************************************************
 #
-#  Adapted for TeX Live from lcdf-typetools-2.88/Makefile.am
+#  Adapted for TeX Live from lcdf-typetools-src/Makefile.am
 #  Copyright (c) 2003-2011 Eddie Kohler
 #
 #************************************************************************
 SUBDIRS = . $(LCDF_TYPETOOLS_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
-EXTRA_DIST = $(LCDF_TYPETOOLS_TREE)-PATCHES \
+EXTRA_DIST = lcdf-typetools-PATCHES \
 	$(LCDF_TYPETOOLS_TREE)/autoconf.h.in \
 	$(LCDF_TYPETOOLS_TREE)/configure.ac $(LCDF_TYPETOOLS_TREE)/m4 \
 	$(TESTS) tests/t2c.enc tests/uhvrrc8a.pfb tests/uhv_dl.pfa \

@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl *********************************************************************
 dnl
-dnl  Adapted for TeX Live from lcdf-typetools-2.88/configure.ac
+dnl  Adapted for TeX Live from lcdf-typetools-src/configure.ac
 dnl  Copyright (c) 1997-2011 Eddie Kohler
 dnl
 dnl *********************************************************************
@@ -16,7 +16,7 @@ dnl
 m4_include([version.ac])[] dnl define lcdf_typetools_version
 AC_INIT([LCDF typetools (TeX Live)], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([lcdf-typetools-]lcdf_typetools_version[/NEWS])
+AC_CONFIG_SRCDIR([lcdf-typetools-src/NEWS])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
@@ -411,10 +411,10 @@ dnl
 dnl Output
 dnl
 
-AC_SUBST([LCDF_TYPETOOLS_TREE], [lcdf-typetools-]lcdf_typetools_version)
+AC_SUBST([LCDF_TYPETOOLS_TREE], [lcdf-typetools-src])
 
-AC_CONFIG_FILES([Makefile lcdf-typetools-]lcdf_typetools_version[/Makefile])
+AC_CONFIG_FILES([Makefile lcdf-typetools-src/Makefile])
 AC_FOREACH([Kpse_Prog], [liblcdf libefont] kpse_lcdf_typetools_progs,
-           [AC_CONFIG_FILES([lcdf-typetools-]lcdf_typetools_version[/]Kpse_Prog[/Makefile])])
+           [AC_CONFIG_FILES([lcdf-typetools-src/]Kpse_Prog[/Makefile])])
 
 AC_OUTPUT
