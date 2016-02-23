@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-02-16.15}
+\def\texinfoversion{2016-02-20.23}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -3477,13 +3477,16 @@ end
 \newif\ifseenauthor
 \newif\iffinishedtitlepage
 
-% Do an implicit @contents or @shortcontents after @end titlepage if the
-% user says @setcontentsaftertitlepage or @setshortcontentsaftertitlepage.
-%
-\newif\ifsetcontentsaftertitlepage
- \let\setcontentsaftertitlepage = \setcontentsaftertitlepagetrue
-\newif\ifsetshortcontentsaftertitlepage
- \let\setshortcontentsaftertitlepage = \setshortcontentsaftertitlepagetrue
+% @setcontentsaftertitlepage used to do an implicit @contents or
+% @shortcontents after @end titlepage, but it is now obsolete.
+\def\setcontentsaftertitlepage{%
+  \errmessage{@setcontentsaftertitlepage has been removed as a Texinfo
+              command; move your @contents command if you want the contents
+              after the title page.}}%
+\def\setshortcontentsaftertitlepage{%
+  \errmessage{@setshortcontentsaftertitlepage has been removed as a Texinfo
+              command; move your @shortcontents and @contents commands if you 
+              want the contents after the title page.}}%
 
 \parseargdef\shorttitlepage{%
   \begingroup \hbox{}\vskip 1.5in \chaprm \centerline{#1}%
@@ -3525,20 +3528,6 @@ end
   % Need this before the \...aftertitlepage checks so that if they are
   % in effect the toc pages will come out with page numbers.
   \HEADINGSon
-  %
-  % If they want short, they certainly want long too.
-  \ifsetshortcontentsaftertitlepage
-    \shortcontents
-    \contents
-    \global\let\shortcontents = \relax
-    \global\let\contents = \relax
-  \fi
-  %
-  \ifsetcontentsaftertitlepage
-    \contents
-    \global\let\contents = \relax
-    \global\let\shortcontents = \relax
-  \fi
 }
 
 \def\finishtitlepage{%
@@ -6369,30 +6358,6 @@ end
   \leftskip = \rightskip
   \parfillskip = 0pt
 }
-
-
-% I don't think this chapter style is supported any more, so I'm not
-% updating it with the new noderef stuff.  We'll see.  --karl, 11aug03.
-%
-\parseargdef\setchapterstyle{\csname CHAPF#1\endcsname}
-%
-\def\unnchfopen #1{%
-  \chapoddpage
-  \vbox{\chapfonts \raggedtitlesettings #1\par}%
-  \nobreak\bigskip\nobreak
-}
-\def\chfopen #1#2{\chapoddpage {\chapfonts
-\vbox to 3in{\vfil \hbox to\hsize{\hfil #2} \hbox to\hsize{\hfil #1} \vfil}}%
-\par\penalty 5000 %
-}
-\def\centerchfopen #1{%
-  \chapoddpage
-  \vbox{\chapfonts \raggedtitlesettings \hfill #1\hfill}%
-  \nobreak\bigskip \nobreak
-}
-\def\CHAPFopen{%
-  \global\let\chapmacro=\chfopen
-  \global\let\centerchapmacro=\centerchfopen}
 
 
 % Section titles.  These macros combine the section number parts and
