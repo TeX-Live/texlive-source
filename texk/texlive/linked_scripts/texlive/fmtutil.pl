@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 39056 2015-12-08 23:55:42Z karl $
+# $Id: fmtutil.pl 39813 2016-02-22 05:25:37Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2015 Norbert Preining
+# Copyright 2014-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 39056 2015-12-08 23:55:42Z karl $';
-my $lastchdate = '$Date: 2015-12-09 00:55:42 +0100 (Wed, 09 Dec 2015) $';
+my $svnid = '$Id: fmtutil.pl 39813 2016-02-22 05:25:37Z preining $';
+my $lastchdate = '$Date: 2016-02-22 06:25:37 +0100 (Mon, 22 Feb 2016) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 39056 $';
+my $svnrev = '$Revision: 39813 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -451,9 +451,37 @@ sub select_and_rebuild_format {
   # TODO
   # original fmtutil.sh was stricter about existence of the hyphen file
   # not sure how we proceed here; let's implicitly ignore.
-  $doit = 1 if ($what eq 'byhyphen' &&
-                $whatarg eq 
-                (split(/,/ , $alldata->{'merged'}{$fmt}{$eng}{'hyphen'}))[0]);
+  #
+  # original fmtutil.sh seemed to have accepted full path to the hyphen
+  # file, so that one could give
+  #   --byhyphen /full/path/to/the/hyphen/file
+  # but this does not work anymore (see Debian bug report #815416)
+  if ($what eq 'byhyphen') {
+    my $fmthyp = (split(/,/ , $alldata->{'merged'}{$fmt}{$eng}{'hyphen'}))[0];
+    if ($fmthyp ne '-') {
+      if ($whatarg =~ m!^/!) {
+        # $whatarg is a full path, we need to expand $fmthyp, too
+        chomp (my $fmthyplong = `kpsewhich -progname=$fmt -engine=$eng $fmthyp`) ;
+        if ($fmthyplong) {
+          $fmthyp = $fmthyplong;
+        } else {
+          # we might have searched language.dat --engine=tex --progname=tex
+          # which will not work. Search again without engine/format
+          chomp ($fmthyplong = `kpsewhich $fmthyp`) ;
+          if ($fmthyplong) {
+            $fmthyp = $fmthyplong;
+          } else {
+            # don't give warnings or errors, it might be that the hyphen
+            # file is not existing at all. See TODO above
+            #print_deferred_warning("hyphen $fmthyp for $fmt/$eng cannot be expanded.\n");
+          }
+        }
+      }
+      if ($whatarg eq $fmthyp) {
+        $doit = 1;
+      }
+    }
+  }
   if ($doit) {
     return rebuild_one_format($fmt,$eng);
   } else {

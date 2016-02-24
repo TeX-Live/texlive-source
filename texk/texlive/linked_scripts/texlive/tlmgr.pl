@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 39410 2016-01-17 00:07:22Z karl $
+# $Id: tlmgr.pl 39763 2016-02-18 13:45:29Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 39410 $';
-my $datrev = '$Date: 2016-01-17 01:07:22 +0100 (Sun, 17 Jan 2016) $';
+my $svnrev = '$Revision: 39763 $';
+my $datrev = '$Date: 2016-02-18 14:45:29 +0100 (Thu, 18 Feb 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1030,7 +1030,7 @@ sub action_remove {
   info("$prg remove: dry run, no changes will be made\n") if $opts{"dry-run"};
   my @packs = @ARGV;
   #
-  # we have to be carefull not to remove too many packages. The idea is
+  # we have to be careful not to remove too many packages. The idea is
   # as follows:
   # - let A be the set of all packages to be removed from the cmd line
   # - let A* be the set of A with all dependencies expanded
@@ -1481,8 +1481,8 @@ sub action_info {
       }
     }
     # some packages might depend on other packages, so do not
-    # include arbitrary package in the list of collections, but
-    # only collectons:
+    # include arbitrary packages in the list of collections, but
+    # only collections:
     @colls = grep {m;^collection-;} @colls;
     print "package:     ", $tlp->name, "\n";
     print "repository:  ", $source_found, "\n" if (defined($source_found));
@@ -2019,25 +2019,25 @@ sub action_backup {
 # =====================================================================
 #                  INFRASTRUCTURE UPDATE ON WINDOWS
 # =====================================================================
-#      Infrastructure files cannot be updated directly from the 
-# tlmgr.pl script due to file locking problem on Windows - files that 
-# are in use (either open or executing) cannot be removed or replaced. 
-# For that reason the update process is performed by a batch script 
+#      Infrastructure files cannot be updated directly from the
+# tlmgr.pl script due to file locking problem on Windows - files that
+# are in use (either open or executing) cannot be removed or replaced.
+# For that reason the update process is performed by a batch script
 # outside of tlmgr.pl.
-#      There are three pieces involved in the update: tlmgr.bat 
-# launcher, write_w32_updater subroutine below and a batch 
+#      There are three pieces involved in the update: tlmgr.bat
+# launcher, write_w32_updater subroutine below and a batch
 # updater script. Their roles are as follows:
 # * tlmgr.bat is a watchdog, it launches tlmgr.pl and watches for
-#   the updater script that is to be executed. If the updater script 
-#   exists before tlmgr.pl is launched, it will be removed or 
-#   tlmgr.bat will abort if it fails to do so. This means that the 
-#   updater script has to be created by the current invocation of 
-#   tlmgr.pl. Futhermore, the updater script is renamed from 
-#   updater-w32 to updater-w32.bat just before it is run, and thus 
+#   the updater script that is to be executed. If the updater script
+#   exists before tlmgr.pl is launched, it will be removed or
+#   tlmgr.bat will abort if it fails to do so. This means that the
+#   updater script has to be created by the current invocation of
+#   tlmgr.pl. Furthermore, the updater script is renamed from
+#   updater-w32 to updater-w32.bat just before it is run, and thus
 #   it can be executed only once.
 # * write_w32_updater subroutine in tlmgr.pl prepares the update
 #   and writes the updater script. Packages in .xz archives are
-#   dowloaded/copied and uncompressed to .tar files. Also .tar 
+#   downloaded/copied and uncompressed to .tar files. Also .tar
 #   backups of the current packages are made. If everything is 
 #   successful, the update script is created from the template. 
 #   Otherwise the update is aborted.
@@ -2104,7 +2104,7 @@ sub write_w32_updater {
     my $localtlp = $localtlpdb->get_package($pkg);
     my $oldrev = $localtlp->revision;
     my $newrev = $mediatlp->revision;
-    # we do install documenation files for category Documentation even if
+    # we do install documentation files for category Documentation even if
     # option("install_docfiles") is false
     my $opt_real_doc = ($mediatlp->category =~ m/documentation/i) ? 1 : $opt_doc;
     my @pkg_parts = ($pkg);
@@ -2827,10 +2827,10 @@ sub action_update {
       }
     }
     #
-    # the idea of supressing warnings is simply that if a file is present
+    # the idea of suppressing warnings is simply that if a file is present
     # in more than one package either in the beginning or after a full 
     # update then this should give a warning. In all other cases
-    # the warning should be supressed.
+    # the warning should be suppressed.
     for my $f (keys %old_files_to_pkgs) {
       my @a = @{$old_files_to_pkgs{$f}};
       $do_warn_on_move{$f} = 1 if ($#a > 0)
@@ -3477,7 +3477,7 @@ sub check_announce_format_triggers {
 #   take .ARCH deps into account
 #
 # tlmgr install --reinstall ...
-#   behaves exactely like without --reinstall BUT the following two
+#   behaves exactly like without --reinstall BUT the following two
 #   differences:
 #   . dependencies are not expanded from collection to collection, so
 #     if you reinstall a collection then all its dependencies of type
@@ -6357,7 +6357,7 @@ debugging.
 
 C<tlmgr> logs all package actions (install, remove, update, failed
 updates, failed restores) to a separate log file, by default
-C<TEXMFSYSVAR/web2c/tlmgr.log>.  This option allows you to specific a
+C<TEXMFSYSVAR/web2c/tlmgr.log>.  This option allows you to specify a
 different file for the log.
 
 =item B<--pause>

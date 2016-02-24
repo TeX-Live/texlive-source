@@ -95,7 +95,7 @@ host_triplet = @host@
 
 # do we build docs?
 @BUILDDOCS_TRUE@am__append_2 = doc
-subdir = xindy-2.5.1
+subdir = xindy-src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-progs.m4 \
@@ -346,9 +346,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-2.5.1/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign xindy-2.5.1/Makefile
+	  $(AUTOMAKE) --foreign xindy-src/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \

@@ -93,7 +93,7 @@ bin_PROGRAMS = otftotfm$(EXEEXT)
 @have_kpathsea_TRUE@am__append_2 = $(KPATHSEA_INCLUDES)
 @have_kpathsea_TRUE@am__append_3 = $(KPATHSEA_LIBS)
 @have_kpathsea_TRUE@am__append_4 = $(KPATHSEA_DEPEND)
-subdir = lcdf-typetools-2.105/otftotfm
+subdir = lcdf-typetools-src/otftotfm
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_template_objs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
@@ -405,9 +405,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign lcdf-typetools-2.105/otftotfm/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign lcdf-typetools-src/otftotfm/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign lcdf-typetools-2.105/otftotfm/Makefile
+	  $(AUTOMAKE) --foreign lcdf-typetools-src/otftotfm/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
