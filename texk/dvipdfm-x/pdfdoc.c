@@ -437,11 +437,14 @@ pdf_doc_set_eop_content (const char *content, unsigned length)
 static int32_t
 compute_timezone_offset()
 {
-  const time_t now = time(NULL);
+  time_t now;
   struct tm tm;
   struct tm local;
   time_t gmtoff;
 
+  now = get_unique_time_if_given();
+  if (now == 0)
+    now = time(NULL);
   localtime_r(&now, &local);
   gmtime_r(&now, &tm);
   return (mktime(&local) - mktime(&tm));
@@ -460,7 +463,9 @@ asn_date (char *date_string)
   time_t      current_time;
   struct tm  *bd_time;
 
-  time(&current_time);
+  current_time = get_unique_time_if_given();
+  if (current_time == 0)
+    time(&current_time);
   bd_time = localtime(&current_time);
 
 #ifdef HAVE_TM_GMTOFF

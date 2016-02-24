@@ -97,9 +97,13 @@ void pdf_enc_set_verbose (void)
 static void
 pdf_enc_init (int use_aes, int encrypt_metadata)
 {
+  time_t current_time;
   struct pdf_sec *p = &sec_data;
 
-  srand((unsigned) time(NULL)); /* For AES IV */
+  current_time = get_unique_time_if_given();
+  if (current_time == 0)
+    current_time = time(NULL);
+  srand(current_time); /* For AES IV */
   p->setting.use_aes = use_aes;
   p->setting.encrypt_metadata = encrypt_metadata;
 }
@@ -122,7 +126,9 @@ pdf_enc_compute_id_string (char *dviname, char *pdfname)
   MD5_init(&md5);
 
   date_string = NEW(15, char);
-  time(&current_time);
+  current_time = get_unique_time_if_given();
+  if (current_time == 0)
+    time(&current_time);
   bd_time = localtime(&current_time);
   sprintf(date_string, "%04d%02d%02d%02d%02d%02d",
           bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,

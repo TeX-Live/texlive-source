@@ -41,7 +41,7 @@
 #include "dvipdfmx.h"
 #include "pdflimits.h"
 
-int PageBox = 0;
+static int PageBox = 0;
 /*
  PageBox=0 :default
  PageBox=1 :cropbox
@@ -94,7 +94,9 @@ static void do_time(FILE *file)
   time_t current_time;
   struct tm *bd_time;
 
-  time(&current_time);
+  current_time = get_unique_time_if_given();
+  if (current_time == 0)
+    time(&current_time);
   bd_time = localtime(&current_time);
   fprintf(file, "%%%%CreationDate: %s\n", asctime(bd_time));
 }
