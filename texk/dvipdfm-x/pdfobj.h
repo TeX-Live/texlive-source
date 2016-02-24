@@ -198,9 +198,6 @@ extern int      pdfobj_escape_str (char *buffer, int size, const unsigned char *
 
 extern pdf_obj *pdf_new_indirect  (pdf_file *pf, unsigned label, unsigned short generation);
 
-#define MAX_IMAGES 5000 /* This may be enough */
-extern int PageBox;
-extern uint8_t PageBox_of_id[];
-extern int ImageSpecial;
+extern time_t get_unique_time_if_given(void);
 
 #endif  /* _PDFOBJ_H_ */

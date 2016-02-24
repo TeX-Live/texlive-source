@@ -83,6 +83,34 @@ pdf_font_set_dpi (int font_dpi)
   PKFont_set_dpi(font_dpi);
 }
 
+
+#if defined(_MSC_VER)
+#define strtoll _strtoi64
+#endif
+
+/* If an environment variable SOURCE_DATE_EPOCH is correctly defined like
+ * SOURCE_DATE_EPOCH=1456304492, then returns this value, to be used as the
+ * 'current time', otherwise returns 0.
+ */
+
+time_t
+get_unique_time_if_given(void)
+{
+  const char *source_date_epoch;
+  int64_t epoch;
+  char *endptr;
+  time_t ret = 0;
+
+  source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+  if (source_date_epoch) {
+    errno = 0;
+    epoch = strtoll(source_date_epoch, &endptr, 10);
+    if (!(epoch < 0 || *endptr != '\0' || errno != 0))
+      ret = (time_t) epoch;
+  }
+  return ret;
+}
+
 void
 pdf_font_make_uniqueTag (char *tag)
 {
@@ -91,7 +119,11 @@ pdf_font_make_uniqueTag (char *tag)
   static char first = 1;
 
   if (first) {
-    srand(time(NULL));
+    time_t current_time;
+    current_time = get_unique_time_if_given();
+    if (current_time == 0)
+      current_time = time(NULL);
+    srand(current_time);
     first = 0;
   }
 
