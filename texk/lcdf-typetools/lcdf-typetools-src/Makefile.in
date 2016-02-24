@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = lcdf-typetools-2.105
+subdir = lcdf-typetools-src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_template_objs.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
@@ -430,9 +430,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign lcdf-typetools-2.105/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign lcdf-typetools-src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign lcdf-typetools-2.105/Makefile
+	  $(AUTOMAKE) --foreign lcdf-typetools-src/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \

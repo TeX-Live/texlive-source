@@ -87,7 +87,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = xindy-2.5.1/make-rules/alphabets
+subdir = xindy-src/make-rules/alphabets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-progs.m4 \
@@ -668,9 +668,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/al
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-2.5.1/make-rules/alphabets/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign xindy-src/make-rules/alphabets/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign xindy-2.5.1/make-rules/alphabets/Makefile
+	  $(AUTOMAKE) --foreign xindy-src/make-rules/alphabets/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
