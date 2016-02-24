@@ -1824,7 +1824,7 @@ was, erroneously, an hlist box).
 @c
 /* extracts a page of height |h| from box |n| */
 
-halfword vsplit(halfword n, scaled h)
+halfword vsplit(halfword n, scaled h, int m)
 {
     halfword v;  /* the box to be split */
     int vdir;    /* the direction of the box to be split */
@@ -1889,10 +1889,13 @@ halfword vsplit(halfword n, scaled h)
         /* the |eq_level| of the box stays the same */
         box(n) = null;
     } else {
-        box(n) =
-           filtered_vpackage(q, 0, additional, dimen_par(max_depth_code),       split_keep_group, vdir, 0);
+        box(n) = filtered_vpackage(q, 0, additional, dimen_par(max_depth_code), split_keep_group, vdir, 0);
     }
-    return filtered_vpackage(p, h, exactly,    dimen_par(split_max_depth_code), split_off_group,  vdir, 0);
+    if (m == exactly) {
+        return filtered_vpackage(p, h, exactly, dimen_par(split_max_depth_code), split_off_group, vdir, 0);
+    } else {
+        return filtered_vpackage(p, 0, additional, dimen_par(max_depth_code), split_off_group, vdir, 0);
+    }
 }
 
 @ Now that we can see what eventually happens to boxes, we can consider the first
@@ -1972,7 +1975,7 @@ void begin_box(int box_context)
                 error();
             }
             scan_normal_dimen();
-            cur_box = vsplit(n, cur_val);
+            cur_box = vsplit(n, cur_val, additional);
             break;
         default:
             /*

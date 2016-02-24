@@ -2432,6 +2432,10 @@ void finish_pdf_file(PDF pdf, int luatexversion, str_number luatexrevision)
             } else if (callback_id > 0) {
                 run_callback(callback_id, "->");
             }
+        } else {
+            if (callback_id > 0) {
+                run_callback(callback_id, "->");
+            }
         }
         libpdffinish(pdf);
         if (pdf->draftmode == 0)

@@ -1600,13 +1600,12 @@ static int lua_nodelib_hpack(lua_State * L)
                     m = 2;
                 } else if (lua_key_eq(s, subst_ex_font)) {
                     m = 3;
-                } else {
-                    luaL_error(L, "3rd argument should be either additional or exactly");
                 }
             } else if (lua_type(L, 3) == LUA_TNUMBER) {
                 m = (int) lua_tointeger(L, 3);
-            } else {
-                lua_pushstring(L, "incorrect 3rd argument");
+            }
+            if ((m<0) || (m>3)) {
+                luaL_error(L, "wrong mode in hpack");
             }
             if (lua_gettop(L) > 3) {
                 if (lua_type(L, 4) == LUA_TSTRING) {

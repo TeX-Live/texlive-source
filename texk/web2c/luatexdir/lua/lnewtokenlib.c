@@ -186,6 +186,104 @@ static int run_get_next(lua_State * L)
     return 1;
 }
 
+/*
+    This is experimental code:
+
+        local t1 = token.get_next()
+        local t2 = token.get_next()
+        local t3 = token.get_next()
+        local t4 = token.get_next()
+        -- watch out, we flush in sequence
+        token.put_next { t1, t2 }
+        -- but this one gets pushed in front
+        token.put_next ( t3, t4 )
+        -- so when we get wxyz we put yzwx!
+
+    At some point we can consider a token.print that delays and goes via
+    the same rope mechanism as texio.prints and friends but then one can
+    as well serialize the tokens and do a normal print so there is no real
+    gain in it. After all, the tokenlib operates at the input level so we
+    might as well keep it there.
+
+*/
+
+inline static int run_put_next(lua_State * L)
+{
+    int n = lua_gettop(L);
+    int m = 0;
+    int i = 0;
+    halfword h = null;
+    halfword t = null;
+    halfword x = null;
+    lua_token *p ;
+    if (n == 0) {
+        /* we accept a single nil argument */
+        return 0;
+    }
+    lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(luatex_token)); /* n+1 */
+    lua_gettable(L, LUA_REGISTRYINDEX); /* n+1 */
+    m = lua_gettop(L);
+    if (lua_type(L,1) == LUA_TTABLE) {
+        if (n>1) {
+            normal_error("token lib","only one table permitted in put_next");
+        } else {
+            for (i = 1;; i++) {
+                lua_rawgeti(L, 1, i); /* table mt token */
+                if (lua_type(L,-1) == LUA_TNIL) {
+                    break;
+                } else {
+                    p = lua_touserdata(L, -1);
+                    if (p == NULL) {
+                        normal_error("token lib","lua <token> expected in put_next (1)");
+                    } else if (!lua_getmetatable(L, -1)) { /* table mt token mt */
+                        normal_error("token lib","lua <token> expected in put_next (2)");
+                    } else if (!lua_rawequal(L, m, -1)) {
+                        normal_error("token lib","lua <token> expected in put_next (3)");
+                    } else {
+                        fast_get_avail(x) ;
+                        token_info(x) = token_info(p->token);
+                        if (h == null) {
+                            h = x;
+                        } else {
+                            token_link(t) = x;
+                        }
+                        t = x;
+                    }
+                    lua_pop(L, 1);
+                }
+            }
+        }
+    } else {
+        for (i = 1; i <= n; i++) {
+            p = lua_touserdata(L,i);
+            if (p == NULL) {
+                normal_error("token lib","lua <token> expected in put_next (4)");
+            } else if (!lua_getmetatable(L, i)) { /* table mt token mt */
+                normal_error("token lib","lua <token> expected in put_next (5)");
+            } else if (!lua_rawequal(L, m, -1)) {
+                normal_error("token lib","lua <token> expected in put_next (6)");
+            } else {
+                fast_get_avail(x) ;
+                token_info(x) = token_info(p->token);
+                if (h == null) {
+                    h = x;
+                } else {
+                    token_link(t) = x;
+                }
+                t = x;
+            }
+            lua_pop(L, 1);
+        }
+    }
+    if (h == null) {
+        /* can't happen */
+    } else {
+        begin_token_list(h,0);
+    }
+    lua_settop(L,n);
+    return 0;
+}
+
 static int run_scan_keyword(lua_State * L)
 {
     saved_tex_scanner texstate;
@@ -831,6 +929,7 @@ static const struct luaL_Reg tokenlib[] = {
     { "is_token", lua_tokenlib_is_token },
     /* scanners */
     { "get_next", run_get_next },
+    { "put_next", run_put_next },
     { "scan_keyword", run_scan_keyword },
     { "scan_int", run_scan_int },
     { "scan_dimen", run_scan_dimen },

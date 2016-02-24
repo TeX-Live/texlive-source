@@ -221,7 +221,7 @@ static struct option long_options[] = {
     {"progname", 1, 0, 0},
     {"version", 0, 0, 0},
     {"credits", 0, 0, 0},
-    {"recorder", 0, &recorder_enabled, 1},
+    {"recorder", 0, 0, 0},
     {"etex", 0, 0, 0},
     {"output-comment", 1, 0, 0},
     {"output-directory", 1, 0, 0},
@@ -282,6 +282,8 @@ unsigned int lua_unsigned_numeric_field_by_index(lua_State * L, int name_index, 
 }
 
 @ @c
+static int recorderoption = 0;
+
 static void parse_options(int ac, char **av)
 {
 #ifdef WIN32
@@ -396,6 +398,8 @@ static void parse_options(int ac, char **av)
         } else if (ARGUMENT_IS("synctex")) {
             /* Synchronize TeXnology: catching the command line option as a long  */
             synctexoption = (int) strtol(optarg, NULL, 0);
+        } else if (ARGUMENT_IS("recorder")) {
+            recorderoption = 1 ; 
         } else if (ARGUMENT_IS("help")) {
             usagehelp(LUATEX_IHELP, BUG_ADDRESS);
         } else if (ARGUMENT_IS("version")) {
@@ -532,6 +536,7 @@ static char *find_filename(char *name, const char *envkey)
 }
 
 @ @c
+
 static void init_kpse(void)
 {
     if (!user_progname) {
@@ -568,7 +573,10 @@ static void init_kpse(void)
 
     kpse_set_program_name(argv[0], user_progname);
     init_shell_escape();        /* set up 'restrictedshell' */
-    program_name_set = 1;
+    program_name_set = 1 ;
+    if (recorderoption) {
+        recorder_enabled = 1;
+    }
 }
 
 @ @c
@@ -585,7 +593,7 @@ static void fix_dumpname(void)
     } else {
         /* For |dump_name| to be NULL is a bug.  */
         if (!ini_version)
-            abort();
+            normal_error("luatex","no format given");
     }
 }
 

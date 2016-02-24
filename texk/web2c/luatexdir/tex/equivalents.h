@@ -286,10 +286,12 @@ the |number_regs| \.{\\dimen} registers.
 #  define math_old_code 95                                              /* this one is stable */
 #  define math_option_code 96
 
-#  define backend_int_base (int_base+97)
-#  define backend_int_last (int_base+116)
+#  define first_valid_language_code 97
 
-#  define tex_int_pars (117)                                            /* total number of integer parameters */
+#  define backend_int_base (int_base+98)
+#  define backend_int_last (int_base+117)
+
+#  define tex_int_pars (118)                                            /* total number of integer parameters */
 
 #  define page_direction_code (tex_int_pars)
 #  define body_direction_code (tex_int_pars+1)
