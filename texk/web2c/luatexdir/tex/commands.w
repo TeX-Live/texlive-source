@@ -115,6 +115,7 @@ void initialize_commands(void)
     primitive_tex("newlinechar", assign_int_cmd, int_base + new_line_char_code, int_base);
     primitive_tex("language", assign_int_cmd, int_base + language_code, int_base);
     primitive_tex("setlanguage", assign_int_cmd, int_base + cur_lang_code, int_base);
+    primitive_tex("firstvalidlanguage", assign_int_cmd, int_base + first_valid_language_code, int_base);
     primitive_tex("exhyphenchar", assign_int_cmd, int_base + ex_hyphen_char_code, int_base);
     primitive_tex("lefthyphenmin", assign_int_cmd, int_base + left_hyphen_min_code, int_base);
     primitive_tex("righthyphenmin", assign_int_cmd, int_base + right_hyphen_min_code, int_base);

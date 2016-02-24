@@ -193,8 +193,8 @@ void load_tex_patterns(int curlang, halfword head)
     uindex = uni2string(uindex, xx); \
 } while (0)
 
-@ Cleans one word which is returned in |cleaned|, returns the new offset
-into |buffer|
+@ Cleans one word which is returned in |cleaned|, returns the new offset into
+|buffer|
 
 @c
 const char *clean_hyphenation(int id, const char *buff, char **cleaned)
@@ -243,17 +243,17 @@ const char *clean_hyphenation(int id, const char *buff, char **cleaned)
             }
             if (u == '}') {
                 items++;
-                u = uword[i++];;
+                u = uword[i++];
             }
             if (u == '{') {
-                u = uword[i++];;
+                u = uword[i++];
             }
             while (u && u != '}') {
                 STORE_CHAR(id,u);
                 u = uword[i++];
             }
             if (u == '}') {
-	        items++;
+                items++;
             }
             if (items != 3) {   /* syntax error */
                 *cleaned = NULL;
@@ -318,16 +318,15 @@ void clear_hyphenation(struct tex_language *lang)
     }
 }
 
-
 void load_tex_hyphenation(int curlang, halfword head)
 {
     char *s = tokenlist_to_cstring(head, 1, NULL);
     load_hyphenation(get_language(curlang), (unsigned char *) s);
 }
 
-@ TODO: clean this up. The |delete_attribute_ref()| statements are not very
-   nice, but needed. Also, in the post-break, it would be nicer to get the
-   attribute list from |vlink(n)|. No rush, as it is currently not used much.
+@ TODO: clean this up. The |delete_attribute_ref()| statements are not very nice,
+but needed. Also, in the post-break, it would be nicer to get the attribute list
+from |vlink(n)|. No rush, as it is currently not used much.
 
 @c
 halfword insert_discretionary(halfword t, halfword pre, halfword post,
@@ -512,9 +511,7 @@ char *exception_strings(struct tex_language *lang)
         while (lua_next(L, -2) != 0) {
             value = lua_tolstring(L, -1, &l);
             if (current + 2 + l > size) {
-                ret =
-                    xrealloc(ret,
-                             (unsigned) ((size + size / 5) + current + l + 1024));
+                ret = xrealloc(ret, (unsigned) ((size + size / 5) + current + l + 1024));
                 size = (size + size / 5) + current + l + 1024;
             }
             *(ret + current) = ' ';
@@ -526,8 +523,8 @@ char *exception_strings(struct tex_language *lang)
     return ret;
 }
 
-@ the sequence from |wordstart| to |r| can contain only normal characters
-it could be faster to modify a halfword pointer and return an integer
+@ the sequence from |wordstart| to |r| can contain only normal characters it
+could be faster to modify a halfword pointer and return an integer
 
 @c
 static halfword find_exception_part(unsigned int *j, unsigned int *uword, int len)
@@ -593,8 +590,7 @@ static void do_exception(halfword wordstart, halfword r, char *replacement)
 
     for (i = 0; i < len; i++) {
         if (uword[i + 1] == '-') {      /* a hyphen follows */
-            while (vlink(t) != r
-                   && (type(t) != glyph_node || !is_simple_character(t)))
+            while (vlink(t) != r && (type(t) != glyph_node || !is_simple_character(t)))
                 t = vlink(t);
             if (vlink(t) == r)
                 break;
@@ -641,75 +637,69 @@ static void do_exception(halfword wordstart, halfword r, char *replacement)
     }
 }
 
-@ This is a documentation section from the pascal web file. It is not
-true any more, but I do not have time right now to rewrite it -- Taco
+@ This is a documentation section from the pascal web file. It is not true any
+more, but I do not have time right now to rewrite it -- Taco
 
 When the line-breaking routine is unable to find a feasible sequence of
-breakpoints, it makes a second pass over the paragraph, attempting to
-hyphenate the hyphenatable words. The goal of hyphenation is to insert
-discretionary material into the paragraph so that there are more
-potential places to break.
+breakpoints, it makes a second pass over the paragraph, attempting to hyphenate
+the hyphenatable words. The goal of hyphenation is to insert discretionary
+material into the paragraph so that there are more potential places to break.
 
-The general rules for hyphenation are somewhat complex and technical,
-because we want to be able to hyphenate words that are preceded or
-followed by punctuation marks, and because we want the rules to work
-for languages other than English. We also must contend with the fact
-that hyphens might radically alter the ligature and kerning structure
-of a word.
+The general rules for hyphenation are somewhat complex and technical, because we
+want to be able to hyphenate words that are preceded or followed by punctuation
+marks, and because we want the rules to work for languages other than English. We
+also must contend with the fact that hyphens might radically alter the ligature
+and kerning structure of a word.
 
-A sequence of characters will be considered for hyphenation only if it
-belongs to a ``potentially hyphenatable part'' of the current paragraph.
-This is a sequence of nodes $p_0p_1\ldots p_m$ where $p_0$ is a glue node,
-$p_1\ldots p_{m-1}$ are either character or ligature or whatsit or
-implicit kern nodes, and $p_m$ is a glue or penalty or insertion or adjust
-or mark or whatsit or explicit kern node.  (Therefore hyphenation is
-disabled by boxes, math formulas, and discretionary nodes already inserted
-by the user.) The ligature nodes among $p_1\ldots p_{m-1}$ are effectively
-expanded into the original non-ligature characters; the kern nodes and
-whatsits are ignored. Each character |c| is now classified as either a
-nonletter (if |lc_code(c)=0|), a lowercase letter (if
-|lc_code(c)=c|), or an uppercase letter (otherwise); an uppercase letter
-is treated as if it were |lc_code(c)| for purposes of hyphenation. The
-characters generated by $p_1\ldots p_{m-1}$ may begin with nonletters; let
-$c_1$ be the first letter that is not in the middle of a ligature. Whatsit
-nodes preceding $c_1$ are ignored; a whatsit found after $c_1$ will be the
-terminating node $p_m$. All characters that do not have the same font as
-$c_1$ will be treated as nonletters. The |hyphen_char| for that font
-must be between 0 and 255, otherwise hyphenation will not be attempted.
-\TeX\ looks ahead for as many consecutive letters $c_1\ldots c_n$ as
-possible; however, |n| must be less than 64, so a character that would
-otherwise be $c_{64}$ is effectively not a letter. Furthermore $c_n$ must
-not be in the middle of a ligature.  In this way we obtain a string of
-letters $c_1\ldots c_n$ that are generated by nodes $p_a\ldots p_b$, where
-|1<=a<=b+1<=m|. If |n>=l_hyf+r_hyf|, this string qualifies for hyphenation;
-however, |uc_hyph| must be positive, if $c_1$ is uppercase.
+A sequence of characters will be considered for hyphenation only if it belongs to
+a ``potentially hyphenatable part'' of the current paragraph. This is a sequence
+of nodes $p_0p_1\ldots p_m$ where $p_0$ is a glue node, $p_1\ldots p_{m-1}$ are
+either character or ligature or whatsit or implicit kern nodes, and $p_m$ is a
+glue or penalty or insertion or adjust or mark or whatsit or explicit kern node.
+(Therefore hyphenation is disabled by boxes, math formulas, and discretionary
+nodes already inserted by the user.) The ligature nodes among $p_1\ldots p_{m-1}$
+are effectively expanded into the original non-ligature characters; the kern
+nodes and whatsits are ignored. Each character |c| is now classified as either a
+nonletter (if |lc_code(c)=0|), a lowercase letter (if |lc_code(c)=c|), or an
+uppercase letter (otherwise); an uppercase letter is treated as if it were
+|lc_code(c)| for purposes of hyphenation. The characters generated by $p_1\ldots
+p_{m-1}$ may begin with nonletters; let $c_1$ be the first letter that is not in
+the middle of a ligature. Whatsit nodes preceding $c_1$ are ignored; a whatsit
+found after $c_1$ will be the terminating node $p_m$. All characters that do not
+have the same font as $c_1$ will be treated as nonletters. The |hyphen_char| for
+that font must be between 0 and 255, otherwise hyphenation will not be attempted.
+\TeX\ looks ahead for as many consecutive letters $c_1\ldots c_n$ as possible;
+however, |n| must be less than 64, so a character that would otherwise be
+$c_{64}$ is effectively not a letter. Furthermore $c_n$ must not be in the middle
+of a ligature. In this way we obtain a string of letters $c_1\ldots c_n$ that are
+generated by nodes $p_a\ldots p_b$, where |1<=a<=b+1<=m|. If |n>=l_hyf+r_hyf|,
+this string qualifies for hyphenation; however, |uc_hyph| must be positive, if
+$c_1$ is uppercase.
 
 The hyphenation process takes place in three stages. First, the candidate
-sequence $c_1\ldots c_n$ is found; then potential positions for hyphens
-are determined by referring to hyphenation tables; and finally, the nodes
-$p_a\ldots p_b$ are replaced by a new sequence of nodes that includes the
-discretionary breaks found.
+sequence $c_1\ldots c_n$ is found; then potential positions for hyphens are
+determined by referring to hyphenation tables; and finally, the nodes $p_a\ldots
+p_b$ are replaced by a new sequence of nodes that includes the discretionary
+breaks found.
 
-Fortunately, we do not have to do all this calculation very often, because
-of the way it has been taken out of \TeX's inner loop. For example, when
-the second edition of the author's 700-page book {\sl Seminumerical
-Algorithms} was typeset by \TeX, only about 1.2 hyphenations needed to be
-@^Knuth, Donald Ervin@>
-tried per paragraph, since the line breaking algorithm needed to use two
-passes on only about 5 per cent of the paragraphs.
+Fortunately, we do not have to do all this calculation very often, because of the
+way it has been taken out of \TeX's inner loop. For example, when the second
+edition of the author's 700-page book {\sl Seminumerical Algorithms} was typeset
+by \TeX, only about 1.2 hyphenations needed to be @^Knuth, Donald Ervin@> tried
+per paragraph, since the line breaking algorithm needed to use two passes on only
+about 5 per cent of the paragraphs.
 
-When a word been set up to contain a candidate for hyphenation,
-\TeX\ first looks to see if it is in the user's exception dictionary. If not,
-hyphens are inserted based on patterns that appear within the given word,
-using an algorithm due to Frank~M. Liang.
-@^Liang, Franklin Mark@>
+When a word been set up to contain a candidate for hyphenation, \TeX\ first looks
+to see if it is in the user's exception dictionary. If not, hyphens are inserted
+based on patterns that appear within the given word, using an algorithm due to
+Frank~M. Liang. @^Liang, Franklin Mark@>
 
-@ This is incompatible with TEX because the first word of a paragraph
-can be hyphenated, but most european users seem to agree that
-prohibiting hyphenation there was not the best idea ever.
+@ This is incompatible with TEX because the first word of a paragraph can be
+hyphenated, but most european users seem to agree that prohibiting hyphenation
+there was not the best idea ever.
 
 @c
-static halfword find_next_wordstart(halfword r)
+static halfword find_next_wordstart(halfword r, halfword first_language)
 {
     register int l;
     register int start_ok = 1;
@@ -758,7 +748,7 @@ static halfword find_next_wordstart(halfword r)
                     } else {
                         start_ok = 0;
                     }
-                } else if (start_ok && (char_lang(r)>0) && ((l = get_hj_code(char_lang(r),chr)) > 0)) {
+                } else if (start_ok && (char_lang(r)>=first_language) && ((l = get_hj_code(char_lang(r),chr)) > 0)) {
                     if (char_uchyph(r) || l == chr) {
                         return r;
                     } else {
@@ -813,8 +803,8 @@ void hnj_hyphenation(halfword head, halfword tail)
     char *hy = utf8word;
     char *replacement = NULL;
     boolean explicit_hyphen = false;
-    halfword s, r = head, wordstart = null, save_tail1 = null, left =
-        null, right = null;
+    halfword first_language = int_par(first_valid_language_code);
+    halfword s, r = head, wordstart = null, save_tail1 = null, left = null, right = null;
 
     /* this first movement assures two things:
      \item{a)} that we won't waste lots of time on something that has been
@@ -828,7 +818,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         r = vlink(r);
     }
     /* this will make |r| a glyph node with subtype character */
-    r = find_next_wordstart(r);
+    r = find_next_wordstart(r,first_language);
     if (r == null)
         return;
 
@@ -852,8 +842,18 @@ void hnj_hyphenation(halfword head, halfword tail)
         hmin = get_hyphenation_min(clang);
         langdata.pre_hyphen_char = get_pre_hyphen_char(clang);
         langdata.post_hyphen_char = get_post_hyphen_char(clang);
-        while (r != null && type(r) == glyph_node && is_simple_character(r) && clang == char_lang(r) &&
-              (((clang > 0) && (lchar = get_hj_code(clang,character(r))) > 0) || (character(r) == ex_hyphen_char && (lchar = ex_hyphen_char)))) {
+        while (    r != null
+                && type(r) == glyph_node
+                && is_simple_character(r)
+                && clang == char_lang(r)
+                && (    (     (clang >= first_language)
+                           && (lchar = get_hj_code(clang,character(r))) > 0
+                        )
+                     || (     character(r) == ex_hyphen_char
+                           && (lchar = ex_hyphen_char)
+                        )
+                   )
+              ) {
             if (character(r) == ex_hyphen_char)
     	        explicit_hyphen = true;
             wordlen++;
@@ -863,12 +863,17 @@ void hnj_hyphenation(halfword head, halfword tail)
             end_word = r;
             r = vlink(r);
         }
-        if (valid_wordend(r) && wordlen >= lhmin + rhmin && (hmin <= 0 || wordlen >= hmin)
-            && (hyf_font != 0) && clang >=0 && (lang = tex_languages[clang]) != NULL) {
+        if (     valid_wordend(r)
+              && clang >= first_language
+              && wordlen >= lhmin + rhmin
+              && (hmin <= 0 || wordlen >= hmin)
+              && (hyf_font != 0)
+              && (lang = tex_languages[clang]) != NULL
+           ) {
             *hy = 0;
-            if (lang->exceptions != 0 &&
-                (replacement =
-                 hyphenation_exception(lang->exceptions, utf8word)) != NULL) {
+            if (    lang->exceptions != 0
+                 && (replacement = hyphenation_exception(lang->exceptions, utf8word)) != NULL
+               ) {
 #ifdef VERBOSE
                 formatted_warning("hyphenation","replacing %s (c=%d) by %s", utf8word, clang, replacement);
 #endif
@@ -887,17 +892,15 @@ void hnj_hyphenation(halfword head, halfword tail)
                         if (character(rr) == ex_hyphen_char) {
                             t = compound_word_break(rr, clang);
                             subtype(t) = automatic_disc;
-	                    while(character(alink(rr)) == ex_hyphen_char)
-	                       rr = alink(rr);
-	                    if (rr == wordstart)
-	                       break;
+                            while (character(alink(rr)) == ex_hyphen_char)
+                                rr = alink(rr);
+                            if (rr == wordstart)
+                                break;
                         }
                     }
                     rr = alink(rr);
                 }
-
             } else if (lang->patterns != NULL) {
-
                 left = wordstart;
                 for (i = lhmin; i > 1; i--) {
                     left = vlink(left);
@@ -910,11 +913,9 @@ void hnj_hyphenation(halfword head, halfword tail)
                     while (!is_simple_character(right))
                         right = alink(right);
                 }
-
 #ifdef VERBOSE
                 formatted_warning("hyphenation","hyphenate %s (c=%d,l=%d,r=%d) from %c to %c",
-                    utf8word, clang, lhmin, rhmin, character(left),
-                    character(right));
+                    utf8word, clang, lhmin, rhmin, character(left), character(right));
 #endif
                 (void) hnj_hyphen_hyphenate(lang->patterns, wordstart, end_word, wordlen, left, right, &langdata);
             }
@@ -924,7 +925,7 @@ void hnj_hyphenation(halfword head, halfword tail)
         hy = utf8word;
         if (r == null)
             break;
-        r = find_next_wordstart(r);
+        r = find_next_wordstart(r,first_language);
     }
     flush_node(vlink(tail));
     vlink(tail) = save_tail1;
@@ -1083,8 +1084,8 @@ void new_patterns(void)
 }
 
 @ `\.{\\prehyphenchar}', sets the |pre_break| character, and
-`\.{\\posthyphenchar}' the |post_break| character. Their respective
-defaults are ascii hyphen ("-") and zero (nul).
+`\.{\\posthyphenchar}' the |post_break| character. Their respective defaults are
+ascii hyphen ("-") and zero (nul).
 
 @c
 void new_pre_hyphen_char(void)
@@ -1102,8 +1103,8 @@ void new_post_hyphen_char(void)
 }
 
 @ `\.{\\preexhyphenchar}', sets the |pre_break| character, and
-`\.{\\postexhyphenchar}' the |post_break| character. Their
-defaults are both zero (nul).
+`\.{\\postexhyphenchar}' the |post_break| character. Their defaults are both zero
+(nul).
 
 @c
 void new_pre_exhyphen_char(void)

@@ -1078,10 +1078,25 @@ static int getbox(lua_State * L)
 
 static int splitbox(lua_State * L)
 {
+    const char *s;
     int k = get_box_id(L, 1, true);
     check_index_range(k, "splitbox");
     if (lua_isnumber(L, 2)) {
-        nodelist_to_lua(L, vsplit(k,lua_tointeger(L,2)));
+        int m = 1;
+        if (lua_type(L, 3) == LUA_TSTRING) {
+            s = lua_tostring(L, 3);
+            if (lua_key_eq(s, exactly)) {
+                m = 0;
+            } else if (lua_key_eq(s, additional)) {
+                m = 1;
+            }
+        } else if (lua_type(L, 3) == LUA_TNUMBER) {
+            m = (int) lua_tointeger(L, 3);
+        }
+        if ((m<0) || (m>1)) {
+            luaL_error(L, "wrong mode in splitbox");
+        }
+        nodelist_to_lua(L, vsplit(k,lua_tointeger(L,2),m));
     } else {
         /* maybe a warning */
         lua_pushnil(L);

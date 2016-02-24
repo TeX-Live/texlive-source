@@ -87,7 +87,7 @@ extern scaled active_height[10];        /* distance from first active node to~|c
 extern scaled best_height_plus_depth;   /* height of the best box, without stretching or shrinking */
 
 extern halfword vert_break(halfword p, scaled h, scaled d);
-extern halfword vsplit(halfword n, scaled h); /* extracts a page of height |h| from box |n| */
+extern halfword vsplit(halfword n, scaled h, int m); /* extracts a page of height |h| from box |n| */
 
 #  define box_code      0 /* |chr_code| for `\.{\\box}' */
 #  define copy_code     1 /* |chr_code| for `\.{\\copy}' */
