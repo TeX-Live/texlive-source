@@ -4,7 +4,7 @@
 	a unique pdf file from a unique xdv/dvi file. If an environment
 	variable SOURCE_DATE_EPOCH is defined correctly like
 	SOURCE_DATE_EPOCH=1456304783, the value is used as the current time,
-	and if the name of the output pdf file is the same, its contents is
+	and if the name of the output pdf file is the same, its content is
 	exactly unique.
 
 2016-02-23  Masamichi HOSODA  <trueroad@trueroad.jp>
