@@ -145,7 +145,7 @@ _hb_ot_shaper_face_data_destroy (hb_ot_shaper_face_data_t *data)
 struct hb_ot_shaper_font_data_t {};
 
 hb_ot_shaper_font_data_t *
-_hb_ot_shaper_font_data_create (hb_font_t *font)
+_hb_ot_shaper_font_data_create (hb_font_t *font HB_UNUSED)
 {
   return (hb_ot_shaper_font_data_t *) HB_SHAPER_DATA_SUCCEEDED;
 }
@@ -267,13 +267,14 @@ hb_form_clusters (hb_buffer_t *buffer)
       buffer->cluster_level != HB_BUFFER_CLUSTER_LEVEL_MONOTONE_GRAPHEMES)
     return;
 
-  /* Loop duplicated in hb_ensure_native_direction(). */
+  /* Loop duplicated in hb_ensure_native_direction(), and in _hb-coretext.cc */
   unsigned int base = 0;
   unsigned int count = buffer->len;
   hb_glyph_info_t *info = buffer->info;
   for (unsigned int i = 1; i < count; i++)
   {
-    if (likely (!HB_UNICODE_GENERAL_CATEGORY_IS_MARK (_hb_glyph_info_get_general_category (&info[i]))))
+    if (likely (!HB_UNICODE_GENERAL_CATEGORY_IS_MARK (_hb_glyph_info_get_general_category (&info[i])) &&
+		!_hb_glyph_info_is_joiner (&info[i])))
     {
       buffer->merge_clusters (base, i);
       base = i;

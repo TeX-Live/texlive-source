@@ -1,3 +1,313 @@
+commit 525cc7d28cbe4e8149ddba677224f134dc0a3274
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 23 15:19:27 2016 +0900
+
+    Add note re only adding tests with Free Software fonts
+
+ test/shaping/README.md | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 6a09d7e34b949f9929f616ee53278b2edfd9b7ea
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 23 13:47:16 2016 +0900
+
+    [test] Add README about how to add shaping tests
+
+ test/shaping/Makefile.am |  1 +
+ test/shaping/README.md   | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+
+commit f8ee7906d0454d950081c621f2b04a6d08e1b92f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 23 13:45:38 2016 +0900
+
+    Remove MANIFEST files
+
+    They are unused currently.  We can add later if we hook them up
+    to anything useful.
+
+ test/shaping/fonts/sha1sum/MANIFEST                | 52
+ ----------------------
+ test/shaping/tests/MANIFEST                        | 19 --------
+ test/shaping/texts/MANIFEST                        |  1 -
+ test/shaping/texts/in-tree/MANIFEST                |  9 ----
+ test/shaping/texts/in-tree/shaper-arabic/MANIFEST  |  6 ---
+ .../in-tree/shaper-arabic/script-arabic/MANIFEST   |  3 --
+ .../script-arabic/language-persian/MANIFEST        |  1 -
+ .../script-arabic/language-urdu/MANIFEST           |  1 -
+ .../script-arabic/language-urdu/crulp/MANIFEST     |  1 -
+ .../language-urdu/crulp/ligatures/MANIFEST         |  7 ---
+ .../shaper-arabic/script-arabic/misc/MANIFEST      |  1 -
+ .../script-arabic/misc/diacritics/MANIFEST         |  7 ---
+ .../in-tree/shaper-arabic/script-mandaic/MANIFEST  |  1 -
+ .../shaper-arabic/script-mandaic/misc/MANIFEST     |  0
+ .../shaper-arabic/script-mongolian/MANIFEST        |  1 -
+ .../shaper-arabic/script-mongolian/misc/MANIFEST   |  4 --
+ .../in-tree/shaper-arabic/script-nko/MANIFEST      |  1 -
+ .../in-tree/shaper-arabic/script-nko/misc/MANIFEST |  1 -
+ .../in-tree/shaper-arabic/script-phags-pa/MANIFEST |  1 -
+ .../shaper-arabic/script-phags-pa/misc/MANIFEST    |  1 -
+ .../in-tree/shaper-arabic/script-syriac/MANIFEST   |  1 -
+ .../shaper-arabic/script-syriac/misc/MANIFEST      |  2 -
+ test/shaping/texts/in-tree/shaper-default/MANIFEST |  5 ---
+ .../shaper-default/script-ethiopic/MANIFEST        |  1 -
+ .../shaper-default/script-ethiopic/misc/MANIFEST   |  1 -
+ .../in-tree/shaper-default/script-han/MANIFEST     |  1 -
+ .../shaper-default/script-han/misc/MANIFEST        |  1 -
+ .../shaper-default/script-hiragana/MANIFEST        |  1 -
+ .../shaper-default/script-hiragana/misc/MANIFEST   |  2 -
+ .../shaper-default/script-linear-b/MANIFEST        |  1 -
+ .../shaper-default/script-linear-b/misc/MANIFEST   |  1 -
+ .../shaper-default/script-tifinagh/MANIFEST        |  1 -
+ .../shaper-default/script-tifinagh/misc/MANIFEST   |  1 -
+ test/shaping/texts/in-tree/shaper-hangul/MANIFEST  |  1 -
+ .../in-tree/shaper-hangul/script-hangul/MANIFEST   |  1 -
+ .../shaper-hangul/script-hangul/misc/MANIFEST      |  1 -
+ test/shaping/texts/in-tree/shaper-hebrew/MANIFEST  |  1 -
+ .../in-tree/shaper-hebrew/script-hebrew/MANIFEST   |  1 -
+ .../shaper-hebrew/script-hebrew/misc/MANIFEST      |  1 -
+ test/shaping/texts/in-tree/shaper-indic/MANIFEST   |  2 -
+ .../texts/in-tree/shaper-indic/indic/MANIFEST      | 11 -----
+ .../shaper-indic/indic/script-assamese/MANIFEST    |  2 -
+ .../indic/script-assamese/misc/MANIFEST            |  0
+ .../indic/script-assamese/utrrs/MANIFEST           |  3 --
+ .../indic/script-assamese/utrrs/codepoint/MANIFEST |  7 ---
+ .../indic/script-assamese/utrrs/gpos/MANIFEST      |  2 -
+ .../indic/script-assamese/utrrs/gsub/MANIFEST      |  1 -
+ .../shaper-indic/indic/script-bengali/MANIFEST     |  2 -
+ .../indic/script-bengali/misc/MANIFEST             |  2 -
+ .../indic/script-bengali/utrrs/MANIFEST            |  3 --
+ .../indic/script-bengali/utrrs/codepoint/MANIFEST  |  7 ---
+ .../indic/script-bengali/utrrs/gpos/MANIFEST       |  2 -
+ .../indic/script-bengali/utrrs/gsub/MANIFEST       |  1 -
+ .../shaper-indic/indic/script-devanagari/MANIFEST  |  2 -
+ .../indic/script-devanagari/misc/MANIFEST          |  6 ---
+ .../indic/script-devanagari/utrrs/MANIFEST         |  3 --
+ .../script-devanagari/utrrs/codepoint/MANIFEST     |  9 ----
+ .../indic/script-devanagari/utrrs/gpos/MANIFEST    |  2 -
+ .../indic/script-devanagari/utrrs/gsub/MANIFEST    |  1 -
+ .../shaper-indic/indic/script-gujarati/MANIFEST    |  2 -
+ .../indic/script-gujarati/misc/MANIFEST            |  0
+ .../indic/script-gujarati/utrrs/MANIFEST           |  3 --
+ .../indic/script-gujarati/utrrs/codepoint/MANIFEST |  7 ---
+ .../indic/script-gujarati/utrrs/gpos/MANIFEST      |  2 -
+ .../indic/script-gujarati/utrrs/gsub/MANIFEST      |  1 -
+ .../shaper-indic/indic/script-gurmukhi/MANIFEST    |  2 -
+ .../indic/script-gurmukhi/misc/MANIFEST            |  1 -
+ .../indic/script-gurmukhi/utrrs/MANIFEST           |  3 --
+ .../indic/script-gurmukhi/utrrs/codepoint/MANIFEST |  7 ---
+ .../indic/script-gurmukhi/utrrs/gpos/MANIFEST      |  2 -
+ .../indic/script-gurmukhi/utrrs/gsub/MANIFEST      |  1 -
+ .../shaper-indic/indic/script-kannada/MANIFEST     |  2 -
+ .../indic/script-kannada/misc/MANIFEST             |  2 -
+ .../indic/script-kannada/utrrs/MANIFEST            |  3 --
+ .../indic/script-kannada/utrrs/codepoint/MANIFEST  |  8 ----
+ .../indic/script-kannada/utrrs/gpos/MANIFEST       |  1 -
+ .../indic/script-kannada/utrrs/gsub/MANIFEST       |  1 -
+ .../shaper-indic/indic/script-malayalam/MANIFEST   |  2 -
+ .../indic/script-malayalam/misc/MANIFEST           |  3 --
+ .../indic/script-malayalam/utrrs/MANIFEST          |  2 -
+ .../script-malayalam/utrrs/codepoint/MANIFEST      |  7 ---
+ .../indic/script-malayalam/utrrs/gsub/MANIFEST     |  1 -
+ .../shaper-indic/indic/script-oriya/MANIFEST       |  2 -
+ .../shaper-indic/indic/script-oriya/misc/MANIFEST  |  2 -
+ .../shaper-indic/indic/script-oriya/utrrs/MANIFEST |  2 -
+ .../indic/script-oriya/utrrs/codepoint/MANIFEST    |  9 ----
+ .../indic/script-oriya/utrrs/gsub/MANIFEST         |  1 -
+ .../shaper-indic/indic/script-sinhala/MANIFEST     |  2 -
+ .../indic/script-sinhala/misc/MANIFEST             |  4 --
+ .../indic/script-sinhala/utrrs/MANIFEST            |  3 --
+ .../indic/script-sinhala/utrrs/codepoint/MANIFEST  |  5 ---
+ .../indic/script-sinhala/utrrs/gpos/MANIFEST       |  1 -
+ .../indic/script-sinhala/utrrs/gsub/MANIFEST       |  7 ---
+ .../shaper-indic/indic/script-tamil/MANIFEST       |  2 -
+ .../shaper-indic/indic/script-tamil/misc/MANIFEST  |  1 -
+ .../shaper-indic/indic/script-tamil/utrrs/MANIFEST |  3 --
+ .../indic/script-tamil/utrrs/codepoint/MANIFEST    | 10 -----
+ .../indic/script-tamil/utrrs/gpos/MANIFEST         |  2 -
+ .../indic/script-tamil/utrrs/gsub/MANIFEST         |  1 -
+ .../shaper-indic/indic/script-telugu/MANIFEST      |  2 -
+ .../shaper-indic/indic/script-telugu/misc/MANIFEST |  1 -
+ .../indic/script-telugu/utrrs/MANIFEST             |  3 --
+ .../indic/script-telugu/utrrs/codepoint/MANIFEST   |  7 ---
+ .../indic/script-telugu/utrrs/gpos/MANIFEST        |  1 -
+ .../indic/script-telugu/utrrs/gsub/MANIFEST        |  1 -
+ .../in-tree/shaper-indic/south-east-asian/MANIFEST |  1 -
+ .../south-east-asian/script-khmer/MANIFEST         |  1 -
+ .../south-east-asian/script-khmer/misc/MANIFEST    |  3 --
+ test/shaping/texts/in-tree/shaper-myanmar/MANIFEST |  1 -
+ .../in-tree/shaper-myanmar/script-myanmar/MANIFEST |  1 -
+ .../shaper-myanmar/script-myanmar/misc/MANIFEST    |  3 --
+ test/shaping/texts/in-tree/shaper-thai/MANIFEST    |  2 -
+ .../texts/in-tree/shaper-thai/script-lao/MANIFEST  |  1 -
+ .../in-tree/shaper-thai/script-lao/misc/MANIFEST   |  1 -
+ .../texts/in-tree/shaper-thai/script-thai/MANIFEST |  1 -
+ .../in-tree/shaper-thai/script-thai/misc/MANIFEST  |  4 --
+ test/shaping/texts/in-tree/shaper-tibetan/MANIFEST |  1 -
+ .../in-tree/shaper-tibetan/script-tibetan/MANIFEST |  1 -
+ .../shaper-tibetan/script-tibetan/misc/MANIFEST    |  1 -
+ test/shaping/texts/in-tree/shaper-use/MANIFEST     |  6 ---
+ .../texts/in-tree/shaper-use/script-batak/MANIFEST |  1 -
+ .../in-tree/shaper-use/script-buginese/MANIFEST    |  1 -
+ .../texts/in-tree/shaper-use/script-cham/MANIFEST  |  1 -
+ .../in-tree/shaper-use/script-kaithi/MANIFEST      |  1 -
+ .../in-tree/shaper-use/script-kharoshti/MANIFEST   |  1 -
+ .../in-tree/shaper-use/script-tai-tham/MANIFEST    |  2 -
+ 126 files changed, 381 deletions(-)
+
+commit 815bdd7700155efcffa9a4c3ca5bfc31833d0586
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 18:22:44 2016 +0900
+
+    In cluster-level=0, group ZWJ/ZWNJ with previous cluster
+
+    This better emulates Unicode grapheme clusters.
+
+    Note that Uniscribe does NOT do this, but should be harmless with
+    most clients,
+    and improve fallback with clients that use HarfBuzz cluster as unit
+    of fallback.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/217
+
+ src/hb-ot-layout-private.hh                           | 6 ++++++
+ src/hb-ot-shape.cc                                    | 3 ++-
+ test/shaping/tests/indic-joiner-candrabindu.tests     | 2 +-
+ test/shaping/tests/mongolian-variation-selector.tests | 2 +-
+ 4 files changed, 10 insertions(+), 3 deletions(-)
+
+commit 89137e325a19d62fb00979e1e8ab2ca59a2c1147
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 16:00:59 2016 +0900
+
+    Minor
+
+ src/hb-coretext.cc | 2 +-
+ src/hb-ot-shape.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 15063b12f7619d4f44981248e28f38c172d12e1f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:56:29 2016 +0900
+
+    [coretext] Move CTFont construction to face_data
+
+ src/hb-coretext.cc | 66
+ +++++++++++++++++++++++++-----------------------------
+ 1 file changed, 30 insertions(+), 36 deletions(-)
+
+commit ba3d49d9a56932d341bf1916a30f322be665e3a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:50:12 2016 +0900
+
+    [coretext] Move code around
+
+ src/hb-coretext.cc | 70
+ +++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 40 insertions(+), 30 deletions(-)
+
+commit 90194efb8480d58c55b7a19962624c7aadbdca63
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:42:53 2016 +0900
+
+    [coretext] Move code around
+
+ src/hb-coretext.cc | 46 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 20 deletions(-)
+
+commit ca539e37a4b71e585a267a288db1a3975cbb99fc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:37:18 2016 +0900
+
+    [build] git.mk fix for m4/gtk-doc.m4
+
+ Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 54788cb1ecc5a5ffd63d07cd1f0b07b2afa9a8ca
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:32:52 2016 +0900
+
+    [win32] Install git.mk
+
+ win32/Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 9a13ed453ef96822a47d6e6f58332b87f38d5c59
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 11:44:45 2016 +0900
+
+    Make FixedVersion a template
+
+ src/hb-open-file-private.hh          | 4 ++--
+ src/hb-open-type-private.hh          | 9 +++++----
+ src/hb-ot-head-table.hh              | 4 ++--
+ src/hb-ot-hhea-table.hh              | 2 +-
+ src/hb-ot-layout-gdef-table.hh       | 2 +-
+ src/hb-ot-layout-gsubgpos-private.hh | 2 +-
+ src/hb-ot-layout-jstf-table.hh       | 2 +-
+ src/hb-ot-maxp-table.hh              | 2 +-
+ 8 files changed, 14 insertions(+), 13 deletions(-)
+
+commit 238b943e850ea1ab0093e12c74d2cd7c686f318e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:31:22 2016 +0900
+
+    [coretext] Fix leak!
+
+ src/hb-coretext.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit e561122856a50ed405d71cb1629317e7ae63f316
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:28:37 2016 +0900
+
+    [coretext] Move code around
+
+ src/hb-coretext.cc | 109
+ ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 62 insertions(+), 47 deletions(-)
+
+commit 04c64431530a4a6d9ebd33674c4665a8e6d25bdd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:12:27 2016 +0900
+
+    [coretext] Ignore PPEM in font size selection
+
+ src/hb-coretext.cc | 14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
+
+commit 62c2711121fe78f373c15c0f53090b62b52d11c1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 15:07:20 2016 +0900
+
+    [coretext] Limit grapheme-cluster forming to cluster-level=0
+
+ src/hb-coretext.cc | 1 +
+ src/hb-ot-shape.cc | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 061105ec443eb7350ffe217305f9d8902c179e2f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Feb 22 14:59:39 2016 +0900
+
+    [coretext] Fix shaping with varying font size
+
+    Fixes https://github.com/libass/libass/issues/212
+
+ src/hb-coretext.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 27847cab1264b4ce8342603f4626b4e0645979e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 19 15:56:50 2016 +0700
+
+    1.2.0
+
+ NEWS         | 20 ++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 21 insertions(+), 1 deletion(-)
+
 commit c3731559042e1730e85d19574321ad850010f7de
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Feb 19 15:13:07 2016 +0700
