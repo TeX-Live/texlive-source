@@ -5,6 +5,29 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [4.1.0-rc2] - 2016-02-25
+### Fixed
+- Hyphens now shouldn't go right of the staff lines (see [#845](https://github.com/gregorio-project/gregorio/issues/845)).
+- Offset limit calculations now function better in both directions for new bar spacing algorithm.
+- Bars ending a line are now at a correct (closer) distance from end of line.
+
+### Changed
+- The treatment of syllables with no notes has been reverted when the old spacing algorithm is used.  Such syllables are now treated as notes syllables under the old algorithm (as was the case in 4.1.0-beta3 and earlier) and as bar syllables under the new algorithm.
+- The names of the spaces around bars have changed, see `gsp-default` or GregorioRef for the new names. It is now possible to tune the spacing of the virgula separately from the divisio minima, and the dominican bar separately from the divisio minor.
+- When using the new bar spacing algorithm, it is now possible to assign different spaces to bar in three different cases: inside a syllable, in a separate syllable with text, and in a separate syllable without text (see [#944](https://github.com/gregorio-project/gregorio/issues/944) for request).
+
+### Added
+- It is now possible to turn off rythmic signs (separately or all together) with `\greprintsigns`, see GregorioRef for details (and [#936](https://github.com/gregorio-project/gregorio/issues/936) for request).
+- Added `maxbaroffsettextright@nobar` and `maxbaroffsettextleft@nobar` which function identically to the normal version except that they are used then the "bar" is empty (i.e. something like `*()` in gabc).
+- Space between the two bars of a divisio finalis is now tunable through `divisiofinalissep`.
+- Added `notesonly` argument to `\gresetshiftaftermora` (see [#948](https://github.com/gregorio-project/gregorio/issues/948)).
+- Added `maxbaroffsettextright@eol` and `maxbaroffsettextleft@eol` which function identically to the normal version except that they are used then the bar is immediately followed by a manual line break (i.e. something like `test(::z)` in gabc).
+
+### Known Bugs
+- When there is no manual break, the spacing around bars at the end of a line in the new spacing algorithm is not perfect, this should be visible ony in edge cases. If you encounter such a bad spacing, you are advised to force a line break manually. See [#959](https://github.com/gregorio-project/gregorio/issues/959).
+- Above lines text does not move to account for high notes which occur in the same place.  As a result the two may overlap.  You can work around this by changing `abovelinestextraise` but this is a global setting, affecting the entire score.  See [#960](https://github.com/gregorio-project/gregorio/issues/960).
+- A manual custos in a low note position will not push down the text associated with it, resulting in the two overlapping.  See [#961](https://github.com/gregorio-project/gregorio/issues/961).
+
 ## [4.1.0-rc1] - 2016-02-18
 ### Fixed
 - New bar spacing algorithm now accounts for translations (and other below lyrics stuff).

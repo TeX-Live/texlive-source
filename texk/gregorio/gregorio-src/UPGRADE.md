@@ -54,17 +54,24 @@ A new algorithm has been implemented but is turned off by default. We hope this 
 
 If you do give it a try, please be sure to report any bugs you find.
 
-#### Spaces difference according to presence of text
+#### Renaming of spaces
 
-The following spaces have been added:
+The spaces around bars are now:
 
-- `spacearoundsmallbartext` - for the space around virgula and divisio minima with text underneath
-- `spacearoundminortext` - for the space around divisio minor with text underneath
-- `spacearoundmaiortext` - for the space around divisio maior with text underneath
-- `spacearoundfinalistext` - for the space around divisio finalis with text underneath
-- `spacebeforefinalfinalistext` - for the space before a divisio finalis at the end of a score
+- `bar@virgula`
+- `bar@minima` (both replacing `spacearoundsmallbars`)
+- `bar@minor` (replacing `spacearoundminor`)
+- `bar@maior` (replacing `spacearoundmaior`)
+- `bar@dominican` (new)
 
-By default, these are sized one half millimeter larger than their "non-text" counterparts.  This may cause minor spacing changes in your existing scores.  Adjust them as necessary to get the look you want.
+They have variants for the new bar spacing algorithm only:
+
+- `bar@xxx@standalone@text` (where `xxx` is `virgula` or `minima`, etc.) are used when the bar is in a standalone syllable with text
+- `bar@xxx@standalone@notext` for bars in a standalone syllable without text
+
+### Hyphens going right of staff lines
+
+Hyphens should now not go right of staff lines. If you prefer the old behavior, `\gresethyphenprotrusion{100}` should restore it.
 
 ### Oriscus orientation
 
