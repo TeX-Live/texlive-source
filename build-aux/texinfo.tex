@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-02-20.23}
+\def\texinfoversion{2016-02-22.15}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1525,7 +1525,7 @@ output) for that.)}
   \def\pdfmkdest#1{{%
     % We have to set dummies so commands such as @code, and characters
     % such as \, aren't expanded when present in a section title.
-    \indexnofonts
+    \indexnofonts  % For avoiding UTF-16 convert issue of xdvipdfmx 20150315.
     \makevalueexpandable
     % In the case of XeTeX, xdvipdfmx converts strings to UTF-16.
     % Therefore \txiescapepdf is not necessary.
@@ -1574,7 +1574,7 @@ output) for that.)}
       % In the case of XeTeX, xdvipdfmx converts strings to UTF-16.
       % Therefore, the encoding and the language may not be considered.
       %
-      \indexnofonts
+      \indexnofonts % For avoiding UTF-16 convert issue of xdvipdfmx 20150315.
       \setupdatafile
       % We can have normal brace characters in the PDF outlines, unlike
       % Texinfo index files.  So set that up.
@@ -1591,16 +1591,11 @@ output) for that.)}
   ]
 
   \special{pdf:docview << /PageMode /UseOutlines >> }
-  \openin 1 uptex.tex % upTeX has UTF8-UTF16 cmap
-  \ifeof 1
-    % upTeX does not exist. To use UTF8-UCS2 cmap.
-    % In this case, non-BMP characters (over U+FFFF) can not be used.
-    \special{pdf:tounicode UTF8-UCS2}
-  \else
-    % upTeX exists. To use UTF8-UTF16 cmap.
-    % Non-BMP characters (over U+FFFF) can be used.
-    \special{pdf:tounicode UTF8-UTF16}
-  \fi
+  % ``\special{pdf:tounicode ...}'' is not necessary
+  % because xdvipdfmx converts strings from UTF-8 to UTF-16 without it.
+  % However, due to UTF-16 convert issue of xdvipdfmx 20150315,
+  % ``\special{pdf:dest ...}'' can not handle non-ASCII strings.
+  % It fixed by xdvipdfmx 20160106 (TeX Live SVN r39753).
 \fi
 
 %
