@@ -1,3 +1,8 @@
+2016-02-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c: Change the default value of pdfdecimaldigits from 2
+	to 3, to be consistent with pdfTeX.
+
 2016-02-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfdoc.c, pdfencrypt.c, pdffont.c, pdfobj.h, xbb.c: Support to output
