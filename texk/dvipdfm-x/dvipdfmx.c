@@ -92,7 +92,7 @@ static int    really_quiet  = 0;
  * Precision is essentially limited to 0.01pt.
  * See, dev_set_string() in pdfdev.c.
  */
-static int pdfdecimaldigits = 2;
+static int pdfdecimaldigits = 3;
 
 /* Image cache life in hours */
 /*  0 means erase all old images and leave new images */
