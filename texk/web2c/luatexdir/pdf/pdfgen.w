@@ -577,7 +577,7 @@ void print_pdffloat(PDF pdf, pdffloat f)
                 pdf_out(pdf, '1');
             } else {
                 char a[24];
-                snprintf(a, 23, "%" LONGINTEGER_PRI "d", m);
+                snprintf(a, 23, "%" LONGINTEGER_PRI "i", m);
                 pdf_puts(pdf, a);
             }
         } else {
@@ -585,16 +585,16 @@ void print_pdffloat(PDF pdf, pdffloat f)
             if (t == m) {
                 pdf_out(pdf, '1');
             } else {
-                int i;
+                int i, l, w;
                 char a[24];
-                int l = m / t;
-                int w = snprintf(a, 23, "%i", l);
-                pdf_out_block(pdf, (const char *) a, (size_t) w);
                 if (m < 0) {
-                    l = - m % t;
-                } else {
-                    l = m % t;
+                    pdf_out(pdf, '-');
+                    m *= -1;
                 }
+                l = m / t;
+                w = snprintf(a, 23, "%i", l);
+                pdf_out_block(pdf, (const char *) a, (size_t) w);
+                l = m % t;
                 if (l != 0) {
                     pdf_out(pdf, '.');
                     snprintf(a, 23, "%d", l + t);
