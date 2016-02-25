@@ -1,3 +1,234 @@
+commit 988165021f8d48dc7120b071d056491256569f4f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 25 12:23:02 2016 +0900
+
+    Disable internal buffer variable bookkeeping in NDEBUG builds
+
+    Saves some sweet time and binary size!
+
+ src/Makefile.am          |  1 +
+ src/hb-buffer-private.hh | 30 ++++++++++++++++++++----------
+ src/hb-buffer.cc         |  6 ++++--
+ 3 files changed, 25 insertions(+), 12 deletions(-)
+
+commit 94dd0bb7e78125994cb7c833a5b03110f1ffc822
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 25 11:31:03 2016 +0900
+
+    Add blacklist signature for Times New Roman (Bold) Italic on OS X
+
+ src/hb-ot-layout.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit dd8598c1c7f29fc92253b0cd4e856c1941b1d0c0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 25 11:20:05 2016 +0900
+
+    [test] Pass closure to hb_font_set_glyph_func()
+
+    Exercises fix in c335fd7986fe360ab8e1c032c9b988d0d30511eb
+
+ test/api/test-shape.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e23cf902e91142a10229e3514be4ceee69efde04
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 25 11:11:15 2016 +0900
+
+    Blacklist GDEF table of timesi.ttf and timesbi.ttf on Win 7
+
+    See discussion:
+    https://lists.freedesktop.org/archives/harfbuzz/2016-February/005489.html
+
+ src/hb-ot-layout.cc | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+commit c335fd7986fe360ab8e1c032c9b988d0d30511eb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 25 09:16:05 2016 +0900
+
+    In trampoline implementation of get_glyph(), don't destroy user
+    data twice!
+
+ src/hb-font.cc | 41 +++++++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
+
+commit 23335deaad9d4d9824ff41343264514d3f9f7e37
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 20:27:13 2016 +0900
+
+    [ot-font] Accelerate cmap format4 get_glyph
+
+ src/hb-ot-cmap-table.hh | 111
+ ++++++++++++++++++++++++++++--------------------
+ src/hb-ot-font.cc       |  14 +++++-
+ 2 files changed, 77 insertions(+), 48 deletions(-)
+
+commit e0f16a715bc3e621ff21a8be88102e9672630574
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 19:52:36 2016 +0900
+
+    [ot-font] Towards accelerating get_glyph()
+
+ src/hb-ot-font.cc | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
+
+commit 5473ebfb84c7b6059ac16e04676b363acc51aa00
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 19:32:43 2016 +0900
+
+    [ot-font] Remove level of indirection in get_glyph_variant
+
+ src/hb-ot-cmap-table.hh | 14 ++------------
+ src/hb-ot-font.cc       | 13 +++++++++----
+ 2 files changed, 11 insertions(+), 16 deletions(-)
+
+commit 49fe6ecf19522413e79a11a29aa0ffc5bdfcd2f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 19:10:06 2016 +0900
+
+    [TODO] Update
+
+    This file is rather obsolete.  Still, give it a refresh.
+
+ TODO | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+commit 8b5bc141cd3a6bfcea3c91a882a630426876ceb3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 19:05:23 2016 +0900
+
+    Add get_nominal_glyph() and get_variation_glyph() instead of
+    get_glyph()
+
+    New API:
+    - hb_font_get_nominal_glyph_func_t
+    - hb_font_get_variation_glyph_func_t
+    - hb_font_funcs_set_nominal_glyph_func()
+    - hb_font_funcs_set_variation_glyph_func()
+    - hb_font_get_nominal_glyph()
+    - hb_font_get_variation_glyph()
+
+    Deprecated API:
+    - hb_font_get_glyph_func_t
+    - hb_font_funcs_set_glyph_func()
+
+    Clients that implement their own font-funcs are encouraged to replace
+    their get_glyph() implementation with a get_nominal_glyph() and
+    get_variation_glyph() pair.  The variation version can assume that
+    variation_selector argument is not zero.
+
+ src/hb-deprecated.h                |  10 ++
+ src/hb-fallback-shape.cc           |   4 +-
+ src/hb-font-private.hh             |  26 +++--
+ src/hb-font.cc                     | 203
+ ++++++++++++++++++++++++++++++++++---
+ src/hb-font.h                      |  55 +++++++---
+ src/hb-ft.cc                       |  38 ++++---
+ src/hb-ot-font.cc                  |  57 +++++++----
+ src/hb-ot-shape-complex-indic.cc   |   8 +-
+ src/hb-ot-shape-complex-myanmar.cc |   2 +-
+ src/hb-ot-shape-complex-use.cc     |   2 +-
+ src/hb-ot-shape-fallback.cc        |   6 +-
+ src/hb-ot-shape-normalize.cc       |  18 ++--
+ src/hb-ot-shape.cc                 |   6 +-
+ 13 files changed, 344 insertions(+), 91 deletions(-)
+
+commit b30a971bf792b9c683c345e1be25c5a5869a113c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 17:32:22 2016 +0900
+
+    1.2.2
+
+ NEWS         | 14 +++++++++++++-
+ configure.ac |  2 +-
+ 2 files changed, 14 insertions(+), 2 deletions(-)
+
+commit af48e3d27c01c538f46f1dc376d994a0c24a8170
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 16:06:40 2016 +0900
+
+    Fix recent test
+
+    Not sure why the FT functions were returning advance 1024.  This
+    caused failure on drone.io.  Switch to hb-ot-font and disable
+    glyph names.
+
+ test/shaping/tests/cursive-positioning.tests | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 17c831701756bb46300c412fd64b19d67f299c18
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 16:06:23 2016 +0900
+
+    [tests] Fix for multiple options in test runner scripts
+
+ test/shaping/run-tests.sh | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit ebd7431f824c718db6ce5b85e94f2b3911127af4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 15:53:40 2016 +0900
+
+    Partially revert 86c68c7a2c971efe8e35b1f1bd99401dc8b688d2
+
+    That commit moved the advance adjustment for mark positioning to
+    be applied immediately, instead of doing late before.  This breaks
+    if mark advances are zeroed late, like in Arabic.  Also, easier to
+    hit it in RTL scripts since a single mark with non-zero advance is
+    enough to hit the bug, whereas in LTR, at least two marks are needed.
+
+    This reopens https://github.com/behdad/harfbuzz/issues/211
+    The cursive+mark interaction is broken again.  To be fixed in a
+    different way.
+
+ src/hb-ot-layout-gpos-table.hh               | 28
+ ++++++++++++----------------
+ test/shaping/tests/cursive-positioning.tests |  2 +-
+ 2 files changed, 13 insertions(+), 17 deletions(-)
+
+commit 284481b3120963353f5f34ed094f07ffc13480ef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 15:52:37 2016 +0900
+
+    Add test for mark positioning in rtl with non-zero mark advance
+
+    Apparently I broke this 86c68c7a2c971efe8e35b1f1bd99401dc8b688d2.
+    Fix coming.
+
+ .../sha1sum/07f054357ff8638bac3711b422a1e31180bba863.ttf  | Bin 0 ->
+ 848 bytes
+ test/shaping/tests/cursive-positioning.tests              |   1 +
+ 2 files changed, 1 insertion(+)
+
+commit 56a84e8dd18c63782b8db3a86e94651dae5bb01b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 15:50:33 2016 +0900
+
+    [tests] Allow commenting out tests to be skipped
+
+ test/shaping/run-tests.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 7cfd6cc486f2751d7f78c5008a636d677af4e12f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 24 12:30:57 2016 +0900
+
+    [Android.mk] Update with warning flags
+
+ Android.mk | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit dabf32a5ad706726412ba5c64e1ea614a707b928
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 23 15:38:43 2016 +0900
+
+    1.2.1
+
+ NEWS         | 13 +++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
 commit 525cc7d28cbe4e8149ddba677224f134dc0a3274
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Tue Feb 23 15:19:27 2016 +0900
