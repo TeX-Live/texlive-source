@@ -47,6 +47,8 @@ static char *job_name = NULL;
 static char *job_area = NULL;
 static int dvitomp_only = 0;
 static int ini_version_test = false;
+string output_directory;     /* Defaults to NULL.  */
+
 @<getopt structures@>;
 @<Declarations@>;
 
@@ -538,15 +540,49 @@ static int get_random_seed (void) {
 @ @<Register the callback routines@>=
 options->random_seed = get_random_seed();
 
+
+@ Handle -output-directory.
+
+@c
+static char *mpost_find_in_output_directory(const char *s,const char *fmode)
+{
+    if (output_directory && !kpse_absolute_p(s, false)) {
+        char *ftemp = concat3(output_directory, DIR_SEP_STRING, s);
+        return ftemp;
+    }
+    return NULL;
+}
+
+
+
 @ @c 
 static char *mpost_find_file(MP mp, const char *fname, const char *fmode, int ftype)  {
   size_t l ;
   char *s;
+  char *ofname; 
   (void)mp;
   s = NULL;
-  if (fname == NULL || (fmode[0]=='r' &&  !kpse_in_name_ok(fname)) ||
-      (fmode[0]=='w' &&  !kpse_out_name_ok(fname)))
+  ofname = NULL ;
+
+
+  if (fname == NULL || (fmode[0]=='r' &&  !kpse_in_name_ok(fname)) )
     return NULL;  /* disallowed filename */
+
+
+  if  (fmode[0]=='w') {
+      if (output_directory) { 
+        ofname = mpost_find_in_output_directory(fname,fmode);
+	if  (ofname == NULL || (fmode[0]=='w' &&  !kpse_out_name_ok(ofname))) {
+	  mpost_xfree(ofname);
+	  return NULL;  /* disallowed filename */
+	}
+      } else {
+	if (!kpse_out_name_ok(fname))
+	  return NULL;  /* disallowed filename */
+      }
+  }  
+
+
   if (fmode[0]=='r') {
 	if ((job_area != NULL) &&
         (ftype>=mp_filetype_text || ftype==mp_filetype_program )) {
@@ -618,8 +654,14 @@ static char *mpost_find_file(MP mp, const char *fname, const char *fmode, int ft
       }
     }
   } else {
-    if (fname!=NULL)
-      s = mpost_xstrdup(fname); /* when writing */
+    /* when writing */
+    if (ofname) {
+       s = mpost_xstrdup(ofname); 
+       mpost_xfree(ofname);
+    } else {
+      s = mpost_xstrdup(fname); 
+    }
+
   }
   return s;
 }
@@ -714,6 +756,7 @@ void run_set_list (MP mp) {
   }
 }
    
+
 
 @ @c 
 static void *mpost_open_file(MP mp, const char *fname, const char *fmode, int ftype)  {
@@ -879,11 +922,12 @@ static struct option mpost_options[]
       }   
     } else if (ARGUMENT_IS("halt-on-error")) {
       options->halt_on_error = true;
+    } else if (ARGUMENT_IS("output-directory"))  {
+      output_directory = optarg ;
     } else if (ARGUMENT_IS("8bit") ||
                ARGUMENT_IS("parse-first-line")) {
       /* do nothing, these are always on */
     } else if (ARGUMENT_IS("translate-file") ||
-               ARGUMENT_IS("output-directory") ||
                ARGUMENT_IS("no-parse-first-line")) {
       fprintf(stdout,"warning: %s: unimplemented option %s\n", argv[0], argv[optind]);
     } 

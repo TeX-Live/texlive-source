@@ -1,3 +1,7 @@
+2015-12-16  Luigi Scarso  <luigi.scarso@gmail.com>
+	Updated to cairo-1.14.6, gmp-6.1.0 and libpng-1.6.20.
+	Fixed some issues with tfm files.
+
 2015-11-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mp.w: Sync with the upstream.
@@ -25,26 +29,25 @@
 	* mptraptest.test (new):  ... into this.
 	* am/mplib.am: Better dependencies for 'make check'.
 
-2015-03-21  Luigi Scarso  <luigi.scarso@gmail.com>
 
+2015-03-21  Luigi Scarso  <luigi.scarso@gmail.com>
 	make_text for mplib only.
 
-2015-03-19  Luigi Scarso  <luigi.scarso@gmail.com>
 
+2015-03-19  Luigi Scarso  <luigi.scarso@gmail.com>
 	Fixed normal rand. generator for double/decimal/binary
 	systems.
 
 2015-01-20  Luigi Scarso  <luigi.scarso@gmail.com>
-
 	Added cur_sym_mod() == mp_normal_sym 
 	to the cur_sym==0 condition mp_cur_tok 
 
-2015-01-19  Luigi Scarso  <luigi.scarso@gmail.com>
 
+2015-01-19  Luigi Scarso  <luigi.scarso@gmail.com>
 	fixed a bug in mp_recycle_value with NULL node
 
-2015-01-15  Luigi Scarso  <luigi.scarso@gmail.com>
 
+2015-01-15  Luigi Scarso  <luigi.scarso@gmail.com>
 	 mpmathdecimal.w: better management for static data in mpmathdecimal.w 
 	(thanks to Philipp Gesang <phg@phi-gamma.net>)
 
