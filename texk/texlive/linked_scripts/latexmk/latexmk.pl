@@ -112,8 +112,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.43a';
-$version_details = "$My_name, John Collins, 5 February 2015";
+$version_num = '4.44';
+$version_details = "$My_name, John Collins, 24 February 2016";
 
 use Config;
 use File::Basename;
@@ -186,6 +186,17 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##     24 Feb 2016  John Collins  Further fix for malformed bcf issue
+##                                   Locate error, and create dummy bbl file.
+##     18 Feb 2016  John Collins  Correct use of %hash_calc_ignore_pattern
+##                                V. 4.44
+##      9 Sep 2015  John Collins  Correct diagnostic when calling internal
+##                                subroutine for command to handle quoted 
+##                                arguments better.
+##     14 Mar 2015  John Collins  Remove superfluous debugging statements
+##      9 Mar 2015  John Collins  Correct normalization of filenames, so that 
+##                         initial "./" is always removed. This prevents
+##                         custom dependencies being run twice on the same file.
 ##      5 Feb 2015  John Collins  Deletion of synctex.gz file is with full clean
 ##                                  (-C option), not with the small clean (-c)
 ##     27 Jan 2015  John Collins  Comments added.
@@ -3538,6 +3549,7 @@ sub check_biber_log {
     #        5: failed to find bib file;
     #        6: missing file, one of which is control file
     #       10: only error is missing \citation commands.
+    #       11: Malformed bcf file (normally due to error in pdflatex run)
     # Side effect: add source files @biber_source
     my $base = $_[0];
     my $Pbiber_source = $_[1];
@@ -3556,6 +3568,7 @@ sub check_biber_log {
     my $bibers_warning_count = 0;   # From biber's counting of warnings
     my $not_found_count = 0;
     my $control_file_missing = 0;
+    my $control_file_malformed = 0;
     while (<$log_file>) {
         if (/> WARN /) { 
             print "Biber warning: $_"; 
@@ -3574,6 +3587,11 @@ sub check_biber_log {
                 $control_file_missing = 1;
                 push @$Pbiber_source, $2;
             }
+            elsif ( /> ERROR - .*\.bcf is malformed/ ) {
+		#  Special treatment: Malformed .bcf file commonly results from error
+		#  in (pdf)latex run.  This error must be ignored.
+		$control_file_malformed = 1;
+	    }
             else {
                 $have_error = 1;
                 $error_count ++;
@@ -3600,6 +3618,7 @@ sub check_biber_log {
         }
     }
     close $log_file;
+    if ($control_file_malformed){return 11;} 
 
     my @not_found = &find_file_list1( $Pbiber_source, $Pbiber_source,
                                       '', \@BIBINPUTS );
@@ -4575,9 +4594,8 @@ sub normalize_filename {
    # Remove initial component equal to current working directory.
    # Use \Q and \E round directory name in regex to avoid interpretation
    #   of metacharacters in directory name:
-   foreach my $dir ( @dirs, './', $cwd ) {
+   foreach my $dir ( @dirs, '.', $cwd ) {
      if ( $file =~ s(^\Q$dir\E/)() ) {
-#print "===normalize_filename: '$file1' changed to '$file'\n";
         last;
      }
    }
@@ -6614,6 +6632,23 @@ sub rdb_run1 {
             # Biber doesn't generate a bbl file in this situation.
             $return = -2;
         }
+        elsif ($retcode == 11) {
+            push @warnings, "Biber: malformed bcf file for '$$Pbase'.  IGNORE";
+	    if (!$silent) {
+               warn "$My_name: biber found malformed bcf file for '$$Pbase'.\n",
+   	            "  I'll ignore error, and delete any bbl file.\n";
+	    }
+	    # Malformed bcf file is a downstream consequence, normally,
+            # of an error in (pdf)latex run.  So this is not an error
+	    # condition in biber itself.
+	    # Current version of biber deletes bbl file.
+	    # Older versions (pre-2016) made an incorrect bbl file, which
+            # tended to cause latex errors, and give a self-perpetuating error.
+	    # To be safe, ensure the bbl file doesn't exist.
+	    unlink $$Pdest;
+	    # The missing bbl file is now not an error:
+            $return = -2;
+        }
     }
     if ( $rule =~ /^bibtex/ ) {
         my $retcode = check_bibtex_log($$Pbase);
@@ -6930,9 +6965,6 @@ sub rdb_file_change1 {
         $check_time_argument = max( $$Pcheck_time, $$Prun_time );
     }
     my ($new_time, $new_size, $new_md5) = fdb_get($file, $check_time_argument );
-#??    print "FC1 '$rule':$file $$Pout_of_date TK=$$Ptest_kind\n"; 
-#??    print "    OLD $$Ptime, $$Psize, $$Pmd5\n",
-#??          "    New $new_time, $new_size, $new_md5\n";
     my $ext_no_period = ext_no_period( $file );
     if ( ($new_size < 0) && ($$Psize >= 0) ) {
         # print "Disappeared '$file' in '$rule'\n";
@@ -6953,8 +6985,16 @@ sub rdb_file_change1 {
     if ( ($new_size < 0) && ($$Psize < 0) ) {
         return;
     }
-    if ( ($new_size != $$Psize) || ($new_md5 ne $$Pmd5) ) {
-#??        print "FC1: changed $file: ($new_size != $$Psize) $new_md5 ne $$Pmd5)\n";
+    # Primarily use md5 signature to determine whether file contents have
+    #   changed.
+    # Backup by file size change, but only in the case where there is
+    #   no pattern of lines to ignore in testing for a change
+    if ( ($new_md5 ne $$Pmd5) 
+         || (
+              (! exists $hash_calc_ignore_pattern{$ext_no_period})
+              && ($new_size != $$Psize)   
+            )
+       ) {
         push @changed, $file;
         $$Pout_of_date = 1;
         if ( ! exists $generated_exts_all{$ext_no_period} ) {
@@ -6962,14 +7002,12 @@ sub rdb_file_change1 {
         }
     }
     elsif ( $new_time != $$Ptime ) {
-#warn "--==-- Unchanged $file, changed time, update filetime in $rule\n";
         $$Ptime = $new_time;
     }
     if ( ( ($$Ptest_kind == 2) || ($$Ptest_kind == 3) )
          && (! exists $generated_exts_all{$ext_no_period} )
          && ( $new_time > $dest_mtime )
         ) {
-#??        print "FC1: changed $file: ($new_time > $dest_mtime)\n";
             push @changed, $file;
             $$Pout_of_date = $$Pout_of_date_user = 1;
     }
@@ -7808,7 +7846,7 @@ sub get_checksum_md5 {
     my $source = shift;
     my $input = new FileHandle;
     my $md5 = Digest::MD5->new;
-    my $ignore_pattern = '';
+    my $ignore_pattern = undef;
 
 #&traceback;
 #warn "======= GETTING MD5: $source\n";
@@ -7830,12 +7868,11 @@ sub get_checksum_md5 {
         }
     }
 
-    if ( $ignore_pattern ) {
+    if ( defined $ignore_pattern ) {
         while (<$input>) {
-            if ( /$ignore_pattern/ ){
-                $_= '';
+            if ( ! /$ignore_pattern/ ){
+                $md5->add($_);
             }
-            $md5->add($_);
         }
     }
     else {
@@ -8362,7 +8399,7 @@ sub Run {
     if ( $cmd_line =~ /^internal\s+([a-zA-Z_]\w*)\s+(.*)$/ ) {
         my $routine = $1;
         my @args = parse_quotes( $2 );
-        warn "$My_name: calling $routine( @args )\n";
+        warn "$My_name: calling $routine( $2 )\n";
         return ( 0, &$routine( @args ) );
     }
     elsif ( $cmd_line =~ /^internal\s+([a-zA-Z_]\w*)\s*$/ ) {
