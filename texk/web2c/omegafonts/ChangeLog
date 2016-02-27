@@ -1,3 +1,7 @@
+2016-02-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* omfonts.c, help.test: Add an option -charcode-format for compatibility.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
