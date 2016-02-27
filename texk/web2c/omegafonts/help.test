@@ -7,14 +7,14 @@ echo && echo "*** omfonts -help"
 ./omfonts -help || exit 1
 
 echo && echo "*** ofm2opl -help"
-./omfonts -ofm2opl -char=foo -num=bar -text=baz -help || exit 1
+./omfonts -ofm2opl -char-format=foo -num=bar -text=baz -help || exit 1
 
 echo && echo "*** opl2ofm -help"
-./omfonts -opl2ofm -char=num -num=hex -text=mixed -help || exit 1
+./omfonts -opl2ofm -char-format=num -num=hex -text=mixed -help || exit 1
 
 echo && echo "*** ovf2ovp -help"
-./omfonts -ovf2ovp -char=foo -num=bar -text=baz -help || exit 1
+./omfonts -ovf2ovp -char-format=foo -num=bar -text=baz -help || exit 1
 
 echo && echo "*** ovp2ovf -help"
-./omfonts -ovp2ovf -char=ascii -num=octal -text=upper -help || exit 1
+./omfonts -ovp2ovf -char-format=ascii -num=octal -text=upper -help || exit 1
 
