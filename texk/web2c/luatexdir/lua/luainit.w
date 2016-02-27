@@ -1,6 +1,6 @@
 % luainit.w
 %
-% Copyright 2006-2015 Taco Hoekwater <taco@@luatex.org>
+% Copyright 2006-2016 Taco Hoekwater <taco@@luatex.org>
 %
 % This file is part of LuaTeX.
 %
@@ -410,7 +410,7 @@ static void parse_options(int ac, char **av)
                  "the terms of the GNU General Public License, version 2 or (at your option)\n"
                  "any later version. For more information about these matters, see the file\n"
                  "named COPYING and the LuaTeX source.\n\n"
-                 "LuaTeX is Copyright 2015 Taco Hoekwater and the LuaTeX Team.\n");
+                 "LuaTeX is Copyright 2016 Taco Hoekwater and the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
