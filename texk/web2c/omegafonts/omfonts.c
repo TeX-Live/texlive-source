@@ -107,6 +107,7 @@ static struct option long_options[] = {
     {"verbose", 0, &verbose_option, 1},
     {"char-format", 1, 0, 0},
     {"num-format", 1, 0, 0},
+    {"charcode-format", 1, 0, 0},
     {"text-format", 1, 0, 0},
     {"ofm2opl", 0, 0, 0},
     {"opl2ofm", 0, 0, 0},
@@ -170,6 +171,19 @@ main (int argc, string *argv)
             if (!strcmp(optarg, "hex")) num_format = NUM_CODE_HEX;
             else if (!strcmp(optarg, "octal")) num_format = NUM_CODE_OCTAL;
             else warning_s("Bad number code format (%s)", optarg);
+        } else if (!strcmp(long_options[option_index ].name, "charcode-format")) {
+            if (!strcmp(optarg, "ascii")) {
+                char_format = CHAR_CODE_ASCII;
+                num_format = NUM_CODE_HEX;
+            } else if (!strcmp(optarg, "hex")) {
+                char_format = CHAR_CODE_NUM;
+                num_format = NUM_CODE_HEX;
+            } else if (!strcmp(optarg, "octal")) {
+                char_format = CHAR_CODE_NUM;
+                num_format = NUM_CODE_OCTAL;
+            } else {
+                warning_s("Bad character code format (%s)", optarg);
+            }
         } else if (!strcmp(long_options[option_index ].name, "text-format")) {
             if (!strcmp(optarg, "upper")) text_format = TEXT_CODE_UPPER;
             else if (!strcmp(optarg, "mixed")) text_format = TEXT_CODE_MIXED;
