@@ -1,3 +1,8 @@
+2016-02-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* kpsewhich.c: Allow Unicode file name for upmendex in kpsewhich.
+	(Windows only)
+
 2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.[ch], mingw32.[ch]: Define a function
@@ -1328,7 +1333,7 @@
 	* texmf.cnf (shell_escape_commands): turns out fc-list is not
 	needed after all.
 
-2010-05-30  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+2010-05-30  Manuel PÃ©gouriÃ©-Gonnard <mpg@elzevir.fr>
 
 	* texmf.cnf: relax LUAINPUTS not to require and extra "lua"
 	subdirectory for modules in texmfscripts.
@@ -1435,7 +1440,7 @@
 	from 'string *' to 'const_string *', drop kpse_fontmap_lookup.
 	* tex-file.c (target_fontmaps), tex-glyph.c (try_fontmap): Adjust.
 
-2010-04-27  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+2010-04-27  Manuel PÃ©gouriÃ©-Gonnard <mpg@elzevir.fr>
 
 	* texmf.cnf: - s/pdf(lua(la)?tex)/dvi\1/
 	- add luatex before generic (for generic package specific to luatex) and
@@ -1882,11 +1887,11 @@
 
 	* texmf.cnf (shell_escape): doc fixes to discourage shell_escape=p.
 
-2009-10-19  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+2009-10-19  Manuel PÃ©gouriÃ©-Gonnard <mpg@elzevir.fr>
 
 	* texmf.cnf: set shell_escape back to 'f': 'p' is broken on Unix.
 
-2009-10-15  Manuel Pégourié-Gonnard <mpg@elzevir.fr>
+2009-10-15  Manuel PÃ©gouriÃ©-Gonnard <mpg@elzevir.fr>
 
 	* texmf.cnf (shell_escape_commands): add repstopdf, a version of
 	epstopdf with restrictions intended to make it safer.
@@ -2470,15 +2475,15 @@
 	autoheader templates ...
 	* acconfig.h: ... removed.
 
-2008-02-24  Martin Schröder <martin@pdftex.org>
+2008-02-24  Martin SchrÃ¶der <martin@pdftex.org>
 
 	* lib.h: systypes.h instead of c-std.h
 
-2008-02-23  Martin Schröder <martin@pdftex.org>
+2008-02-23  Martin SchrÃ¶der <martin@pdftex.org>
 
 	* lib.h: include c-std.h to get off_t from stdio.h
 
-2008-02-21  Martin Schröder <martin@pdftex.org>
+2008-02-21  Martin SchrÃ¶der <martin@pdftex.org>
 
 	* lib.h, xfseek.c, xftell.c: LFS support: use off_t instead of long
 	and fseeko instead of fseek
@@ -2977,7 +2982,7 @@
 	addition to the compiler name.  From Harald Koenig
 	<koenig@science-computing.de>.
 
-	* mktexpk: Add guesses for dpi 360 and 720.  From Frank Küster
+	* mktexpk: Add guesses for dpi 360 and 720.  From Frank KÃ¼ster
 	<frank@kuesterei.ch> (Debian maintainer).
 
 	* mktexlsr: Write all regular progress messages to stderr, instead
@@ -3767,7 +3772,7 @@
 
 2002-05-28  Olaf Weber  <olaf@infovore.xs4all.nl>
 
-	* mktexdir: Guard $KPSE_DOT with quotes.  From Emmanuel_Thomé
+	* mktexdir: Guard $KPSE_DOT with quotes.  From Emmanuel_ThomÃ©
 	<thome@lix.polytechnique.fr>.
 
 2002-04-01  Olaf Weber  <olaf@infovore.xs4all.nl>
@@ -4177,7 +4182,7 @@
 
 	* Makefile.in: TEXMF_CNF -> VARTEXMF
 
-	* mktexmf: Small fix to a case statement from Berthold Höllmann
+	* mktexmf: Small fix to a case statement from Berthold HÃ¶llmann
 	<bhoel@starship.python.net>.
 
 1999-03-15  Olaf Weber  <olaf@infovore.xs4all.nl>

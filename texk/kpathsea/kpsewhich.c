@@ -714,9 +714,12 @@ main (int argc,  string *argv)
      || strstr(kpse->program_name,"uptex") || strstr(kpse->program_name,"uplatex")
      || strstr(kpse->program_name,"dvipdfm") || strstr(kpse->program_name,"extractbb")
      || strstr(kpse->program_name,"xbb") || strstr(kpse->program_name,"ebb")
-     || strstr(kpse->program_name,"dvips"))
+     || strstr(kpse->program_name,"dvips") || strstr(kpse->program_name,"upmendex"))
   {
-    enc = kpathsea_var_value (kpse, "command_line_encoding");
+    if (strstr(kpse->program_name,"upmendex"))
+      enc = "utf-8";
+    else
+      enc = kpathsea_var_value (kpse, "command_line_encoding");
     if (get_command_line_args_utf8(enc, &ac, &av)) {
       optind = 0;
       read_command_line (kpse, ac, av);
