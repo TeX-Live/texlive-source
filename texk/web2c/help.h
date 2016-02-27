@@ -224,6 +224,10 @@ const_string OFM2OPLHELP[] = {
     "                        either `hex' or `octal'; default is hex",
     "-text-format=TYPE      output coding scheme and family according to TYPE,",
     "                        either `mixed' or `upper' case; default is mixed",
+    "-charcode-format=TYPE  (just for compatibility)",
+    "                       output character codes according to TYPE,",
+    "                        `hex' , `octal' or `ascii'; default is hex,",
+    "                        ascii = ascii letters and digits, hex for all else",
 #else
     "-charcode-format=TYPE  output character codes according to TYPE,",
     "                        either `hex' or `ascii'; default is hex,",
@@ -278,6 +282,10 @@ const_string OVF2OVPHELP[] = {
     "                        either `hex' or `octal'; default is hex",
     "-text-format=TYPE      output coding scheme and family according to TYPE,",
     "                        either `mixed' or `upper' case; default is mixed",
+    "-charcode-format=TYPE  (just for compatibility)",
+    "                       output character codes according to TYPE,",
+    "                        `hex' , `octal' or `ascii'; default is hex,",
+    "                        ascii = ascii letters and digits, hex for all else",
 #else
     "-charcode-format=TYPE  output character codes according to TYPE,",
     "                        either `hex' or `ascii'; default is hex,",
