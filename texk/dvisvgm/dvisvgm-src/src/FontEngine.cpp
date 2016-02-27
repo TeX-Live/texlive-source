@@ -19,7 +19,6 @@
 *************************************************************************/
 
 #include <config.h>
-#include <iostream>
 #include <sstream>
 #include <ft2build.h>
 #include FT_ADVANCES_H
@@ -53,17 +52,16 @@ static inline FT_Fixed to_16dot16 (int val) {
 FontEngine::FontEngine () : _currentFace(0), _currentFont(0)
 {
 	_currentChar = _currentGlyphIndex = 0;
-	_horDeviceRes = _vertDeviceRes = 300;
 	if (FT_Init_FreeType(&_library))
-		Message::estream(true) << "FontEngine: error initializing FreeType library\n";
+		Message::estream(true) << "failed to initialize FreeType library\n";
 }
 
 
 FontEngine::~FontEngine () {
 	if (_currentFace && FT_Done_Face(_currentFace))
-		Message::estream(true) << "FontEngine: error removing glyph\n";
+		Message::estream(true) << "failed to release font\n";
 	if (FT_Done_FreeType(_library))
-		Message::estream(true) << "FontEngine: error removing FreeType library\n";
+		Message::estream(true) << "failed to release FreeType library\n";
 }
 
 
@@ -84,21 +82,15 @@ string FontEngine::version () {
 }
 
 
-void FontEngine::setDeviceResolution (int x, int y) {
-	_horDeviceRes = x;
-	_vertDeviceRes = y;
-}
-
-
 /** Sets the font to be used.
  * @param[in] fname path to font file
  * @param[in] fontindex index of font in font collection (multi-font files, like TTC)
  * @return true on success */
 bool FontEngine::setFont (const string &fname, int fontindex, const CharMapID &charMapID) {
 	if (_currentFace && FT_Done_Face(_currentFace))
-		Message::estream(true) << "FontEngine: error removing font\n";
+		Message::estream(true) << "failed to release font\n";
 	if (FT_New_Face(_library, fname.c_str(), fontindex, &_currentFace)) {
-		Message::estream(true) << "FontEngine: error reading file " << fname << '\n';
+		Message::estream(true) << "can't read font file " << fname << '\n';
 		return false;
 	}
 	if (charMapID.valid())
@@ -396,7 +388,7 @@ static bool trace_outline (FT_Face face, const Font *font, int index, Glyph &gly
 		FT_Outline_Decompose(&outline, &funcs, &glyph);
 		return true;
 	}
-	Message::wstream(true) << "FontEngine: can't trace outline, no font face selected\n";
+	Message::wstream(true) << "can't trace outline (no font selected)\n";
 	return false;
 }
 
@@ -409,8 +401,5 @@ static bool trace_outline (FT_Face face, const Font *font, int index, Glyph &gly
  *  @param[in] scale if true the current pt size will be considered otherwise the plain TrueType units are used.
  *  @return false on errors */
 bool FontEngine::traceOutline (const Character &c, Glyph &glyph, bool scale) const {
-	if (_currentFace)
-		return trace_outline(_currentFace, _currentFont, charIndex(c), glyph, scale);
-	Message::wstream(true) << "FontEngine: can't trace outline, no font face selected\n";
-	return false;
+	return trace_outline(_currentFace, _currentFont, charIndex(c), glyph, scale);
 }

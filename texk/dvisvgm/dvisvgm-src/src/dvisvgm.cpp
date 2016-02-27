@@ -23,7 +23,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <string>
 #include <xxhash.h>
 #include "gzstream.h"
 #include "CommandLine.h"
@@ -31,21 +30,15 @@
 #include "DVIToSVGActions.h"
 #include "EPSToSVG.h"
 #include "FileFinder.h"
-#include "FilePath.h"
 #include "FileSystem.h"
 #include "Font.h"
-#include "FontCache.h"
 #include "FontEngine.h"
-#include "FontMap.h"
 #include "Ghostscript.h"
 #include "HtmlSpecialHandler.h"
-#include "InputReader.h"
-#include "Message.h"
 #include "PageSize.h"
 #include "PSInterpreter.h"
 #include "PsSpecialHandler.h"
 #include "SignalHandler.h"
-#include "SpecialManager.h"
 #include "SVGOutput.h"
 #include "System.h"
 
@@ -114,15 +107,15 @@ static bool set_cache_dir (const CommandLine &args) {
 	if (args.cache_given() && !args.cache_arg().empty()) {
 		if (args.cache_arg() == "none")
 			PhysicalFont::CACHE_PATH = 0;
-		else if (FileSystem::exists(args.cache_arg().c_str()))
+		else if (FileSystem::exists(args.cache_arg()))
 			PhysicalFont::CACHE_PATH = args.cache_arg().c_str();
 		else
 			Message::wstream(true) << "cache directory '" << args.cache_arg() << "' does not exist (caching disabled)\n";
 	}
 	else if (const char *userdir = FileSystem::userdir()) {
 		static string cachepath = userdir + string("/.dvisvgm/cache");
-		if (!FileSystem::exists(cachepath.c_str()))
-			FileSystem::mkdir(cachepath.c_str());
+		if (!FileSystem::exists(cachepath))
+			FileSystem::mkdir(cachepath);
 		PhysicalFont::CACHE_PATH = cachepath.c_str();
 	}
 	if (args.cache_given() && args.cache_arg().empty()) {
@@ -266,6 +259,7 @@ int main (int argc, char *argv[]) {
 	SVGTree::ZOOM_FACTOR = args.zoom_arg();
 	SVGTree::RELATIVE_PATH_CMDS = args.relative_given();
 	SVGTree::MERGE_CHARS = !args.no_merge_given();
+	SVGTree::ADD_COMMENTS = args.comments_given();
 	DVIToSVG::TRACE_MODE = args.trace_all_given() ? (args.trace_all_arg() ? 'a' : 'm') : 0;
 	Message::LEVEL = args.verbosity_arg();
 	PhysicalFont::EXACT_BBOX = args.exact_given();

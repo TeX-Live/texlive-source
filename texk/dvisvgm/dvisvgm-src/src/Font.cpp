@@ -20,26 +20,19 @@
 
 #include <config.h>
 #include <cstdlib>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include "CMap.h"
 #include "FileFinder.h"
 #include "FileSystem.h"
 #include "Font.h"
-#include "FontEncoding.h"
 #include "FontEngine.h"
-#include "GFGlyphTracer.h"
-#include "Glyph.h"
 #include "Message.h"
 #include "MetafontWrapper.h"
-#include "TFM.h"
-#include "VFReader.h"
 #include "SignalHandler.h"
 #include "Subfont.h"
 #include "SVGTree.h"
 #include "Unicode.h"
-#include "macros.h"
 
 
 using namespace std;
@@ -307,6 +300,25 @@ int PhysicalFont::descent () const {
 }
 
 
+std::string PhysicalFont::familyName () const {
+	if (type() == MF)
+		return "";
+	FontEngine::instance().setFont(*this);
+	const char *family = FontEngine::instance().getFamilyName();
+	return family ? family : "";
+}
+
+
+std::string PhysicalFont::styleName () const {
+	if (type() == MF)
+		return "";
+	FontEngine::instance().setFont(*this);
+	const char *style = FontEngine::instance().getStyleName();
+	return style ? style : "";
+}
+
+
+
 /** Extracts the glyph outlines of a given character.
  *  @param[in]  c character code of requested glyph
  *  @param[out] glyph path segments of the glyph outline
@@ -510,7 +522,7 @@ UInt32 PhysicalFontImpl::unicode (UInt32 c) const {
 		// try to get the Unicode point from the character name
 		string glyphname = glyphName(c);
 		UInt32 codepoint;
-		if (!glyphname.empty() && (codepoint = Unicode::psNameToCodepoint(glyphname)) != 0)
+		if (!glyphname.empty() && (codepoint = Unicode::aglNameToCodepoint(glyphname)) != 0)
 			return codepoint;
 		if (c <= 0x1900)  // does character code c fit into Private Use Zone U+E000?
 			return 0xe000+c;
@@ -538,7 +550,7 @@ void PhysicalFontImpl::tidy () const {
 	if (type() == MF) {
 		const char *ext[] = {"gf", "tfm", "log", 0};
 		for (const char **p=ext; *p; ++p) {
-			if (FileSystem::exists((name()+"."+(*p)).c_str()))
+			if (FileSystem::exists(name()+"."+(*p)))
 				FileSystem::remove(name()+"."+(*p));
 		}
 	}

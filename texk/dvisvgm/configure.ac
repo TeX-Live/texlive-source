@@ -8,7 +8,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl *********************************************************************
 dnl
-dnl  Adapted for TeX Live from dvisvgm-0.8.7/configure.ac
+dnl  Adapted for TeX Live from dvisvgm-src/configure.ac
 dnl  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
 dnl
 dnl *********************************************************************
