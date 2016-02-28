@@ -315,8 +315,8 @@ known as `\eTeX'.
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
 @d XeTeX_version=0 { \.{\\XeTeXversion} }
-@d XeTeX_revision==".99994" { \.{\\XeTeXrevision} }
-@d XeTeX_version_string=='-0.99994' {current \XeTeX\ version}
+@d XeTeX_revision==".99995" { \.{\\XeTeXrevision} }
+@d XeTeX_version_string=='-0.99995' {current \XeTeX\ version}
 @#
 @d XeTeX_banner=='This is XeTeX, Version 3.14159265',eTeX_version_string,XeTeX_version_string
   {printed when \XeTeX\ starts}
@@ -349,7 +349,8 @@ known as `\eTeX'.
 @d XeTeX_interword_space_shaping_code=9 { controls shaping of space chars in context when using native fonts;
                                           set to 1 for contextual adjustment of space width only,
                                           and 2 for full cross-space shaping (e.g. multi-word ligatures) }
-@d eTeX_states=10 {number of \eTeX\ state variables in |eqtb|}
+@d XeTeX_generate_actual_text_code=10 { controls output of /ActualText for native-word nodes }
+@d eTeX_states=11 {number of \eTeX\ state variables in |eqtb|}
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -3325,7 +3326,8 @@ There are also |glyph_node|s; these are like |native_word_node|s in having
 than size and length fields, and there's no subsidiary C pointer.
 
 @d native_word_node=40 {|subtype| of whatsits that hold |native_font| words}
-@d glyph_node=41 {|subtype| in whatsits that hold glyph numbers}
+@d native_word_node_AT=41 {a |native_word_node| that should output ActualText}
+@d glyph_node=42 {|subtype| in whatsits that hold glyph numbers}
 
 @d native_node_size=6 {size of a |native_word| node (plus the actual chars) -- see also \.{xetex.h}}
 @d glyph_node_size=5
@@ -3367,8 +3369,8 @@ So |pic_node_size|, which does not include any space for the picture file pathna
 
 A |pdf_node| is just like |pic_node|, but generate a different \.{XDV} file code.
 
-@d pic_node=42 {|subtype| in whatsits that hold picture file references}
-@d pdf_node=43 {|subtype| in whatsits that hold PDF page references}
+@d pic_node=43 {|subtype| in whatsits that hold picture file references}
+@d pdf_node=44 {|subtype| in whatsits that hold PDF page references}
 @#
 @d pic_node_size=9 {must sync with \.{xetex.h}}
 @d pic_path_length(#)==mem[#+4].hh.b0
@@ -3961,7 +3963,7 @@ hlist_node,vlist_node,ins_node,mark_node,adjust_node,
   unset_node: print("[]");
 whatsit_node:
   case subtype(p) of
-    native_word_node: begin
+    native_word_node, native_word_node_AT: begin
       if native_font(p)<>font_in_short_display then begin
         print_esc(font_id_text(native_font(p)));
         print_char(" ");
@@ -13145,6 +13147,8 @@ the following commands are used in \.{XDV} files.
 
 \yskip\hang|set_glyphs| 253 |w[4]| |k[2]| |xy[8k]| |g[2k]|.
 
+\yskip\hang|set_text_and_glyphs| 254 |l[2]| |t[2l]| |w[4]| |k[2]| |xy[8k]| |g[2k]|.
+
 \yskip\noindent Commands 250 and 255 are undefined in normal \.{XDV} files.
 
 @ @d set_char_0=0 {typeset character 0 and move right}
@@ -13177,14 +13181,15 @@ the following commands are used in \.{XDV} files.
 
 @d define_native_font=252 {define native font}
 @d set_glyphs=253 {sequence of glyphs with individual x-y coordinates}
+@d set_text_and_glyphs=254 {run of Unicode (UTF16) text followed by positioned glyphs}
 
 @ The preamble contains basic information about the file as a whole. As
 stated above, there are six parameters:
 $$\hbox{|@!i[1]| |@!num[4]| |@!den[4]| |@!mag[4]| |@!k[1]| |@!x[k]|.}$$
-The |i| byte identifies \.{DVI} format; in \XeTeX\ this byte is set to~6, as we
+The |i| byte identifies \.{DVI} format; in \XeTeX\ this byte is set to~7, as we
 have new \.{DVI} opcodes, while in \TeX82 it is always set to~2. (The value
 |i=3| is used for an extended format that allows a mixture of right-to-left and
-left-to-right typesetting. Older versions of \XeTeX\ used |i=4| and |i=5|.)
+left-to-right typesetting. Older versions of \XeTeX\ used |i=4|, |i=5| and |i=6|.)
 
 The next two parameters, |num| and |den|, are positive integers that define
 the units of measurement; they are the numerator and denominator of a
@@ -13207,7 +13212,7 @@ users to override the |mag|~setting when a \.{DVI} file is being printed.)
 Finally, |k| and |x| allow the \.{DVI} writer to include a comment, which is not
 interpreted further. The length of comment |x| is |k|, where |0<=k<256|.
 
-@d id_byte=6 {identifies the kind of \.{DVI} files described here}
+@d id_byte=7 {identifies the kind of \.{DVI} files described here}
 
 @ Font definitions for a given font number |k| contain further parameters
 $$\hbox{|c[4]| |s[4]| |d[4]| |a[1]| |l[1]| |n[a+l]|.}$$
@@ -13943,7 +13948,7 @@ end;
 
 @ Extra stuff for justifiable AAT text; need to merge runs of words and normal spaces.
 
-@d is_native_word_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = native_word_node)))
+@d is_native_word_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and ((subtype(#) = native_word_node) or (subtype(#) = native_word_node_AT))))
 @d is_glyph_node(#) == (((#)<>null and (not is_char_node(#)) and (type(#) = whatsit_node) and (subtype(#) = glyph_node)))
 
 @d node_is_invisible_to_interword_space(#)==
@@ -14009,7 +14014,7 @@ end_node_run: {now |r| points to first |native_word_node| of the run, and |p| to
         q:=r;
         loop begin
           if type(q) = whatsit_node then begin
-            if subtype(q) = native_word_node then begin
+            if (subtype(q) = native_word_node) or (subtype(q) = native_word_node_AT) then begin
               for j:=0 to native_length(q)-1 do
                 append_char(get_native_char(q, j));
               k:=k + width(q);
@@ -14038,6 +14043,7 @@ end_node_run: {now |r| points to first |native_word_node| of the run, and |p| to
         end;
         { create the new merged node |q| }
         q:=new_native_word_node(native_font(r), cur_length);
+        subtype(q):=subtype(r);
         for j:=0 to cur_length - 1 do
           set_native_char(q, j, str_pool[str_start_macro(str_ptr) + j]);
         { impose the required width on |q|, and shape its text accordingly }
@@ -15837,7 +15843,8 @@ begin
 
   q:=get_node(l);
   type(q):=whatsit_node;
-  subtype(q):=native_word_node;
+  if XeTeX_generate_actual_text_en then subtype(q):=native_word_node_AT
+  else subtype(q):=native_word_node;
 
   native_size(q):=l;
   native_font(q):=f;
@@ -19552,6 +19559,7 @@ else  case type(v) of
     break_width[1]:=break_width[1]-width(v);
   whatsit_node:
     if (subtype(v)=native_word_node)
+    or (subtype(v)=native_word_node_AT)
     or (subtype(v)=glyph_node)
     or (subtype(v)=pic_node)
     or (subtype(v)=pdf_node)
@@ -19576,6 +19584,7 @@ else  case type(s) of
     break_width[1]:=break_width[1]+width(s);
   whatsit_node:
     if (subtype(s)=native_word_node)
+    or (subtype(s)=native_word_node_AT)
     or (subtype(s)=glyph_node)
     or (subtype(s)=pic_node)
     or (subtype(s)=pdf_node)
@@ -20162,6 +20171,7 @@ else  case type(s) of
     disc_width:=disc_width+width(s);
   whatsit_node:
     if (subtype(s)=native_word_node)
+    or (subtype(s)=native_word_node_AT)
     or (subtype(s)=glyph_node)
     or (subtype(s)=pic_node)
     or (subtype(s)=pdf_node)
@@ -20186,6 +20196,7 @@ else  case type(s) of
     act_width:=act_width+width(s);
   whatsit_node:
     if (subtype(s)=native_word_node)
+    or (subtype(s)=native_word_node_AT)
     or (subtype(s)=glyph_node)
     or (subtype(s)=pic_node)
     or (subtype(s)=pdf_node)
@@ -20737,6 +20748,7 @@ end;
 
 @ @<Split the |native_word_node| at |l| and link the second part after |ha|@>=
   q:=new_native_word_node(hf, native_length(ha) - l);
+  subtype(q):=subtype(ha);
   for i:=l to native_length(ha) - 1 do
     set_native_char(q, i - l, get_native_char(ha, i));
   set_native_metrics(q, XeTeX_use_glyph_metrics);
@@ -20765,7 +20777,7 @@ loop@+  begin if is_char_node(s) then
   else if (type(s)=math_node)and(subtype(s)>=L_code) then goto continue
   else if type(s)=whatsit_node then
     begin
-      if subtype(s) = native_word_node then begin
+      if (subtype(s) = native_word_node) or (subtype(s) = native_word_node_AT) then begin
         { we only consider the node if it contains at least one letter, otherwise we'll skip it }
         for l:=0 to native_length(s) - 1 do begin
           c:=get_native_usv(s, l);
@@ -20945,6 +20957,7 @@ for j:=l_hyf to hn - r_hyf do begin
 
     { make a |native_word_node| for the fragment before the hyphen }
     q:=new_native_word_node(hf, j - hyphen_passed);
+    subtype(q):=subtype(ha);
     for i:=0 to j - hyphen_passed - 1 do
       set_native_char(q, i, get_native_char(ha, i + hyphen_passed));
     set_native_metrics(q, XeTeX_use_glyph_metrics);
@@ -20964,6 +20977,7 @@ end;
 { make a |native_word_node| for the last fragment of the word }
 hn:=native_length(ha); { ensure trailing punctuation is not lost! }
 q:=new_native_word_node(hf, hn - hyphen_passed);
+subtype(q):=subtype(ha);
 for i:=0 to hn - hyphen_passed - 1 do
   set_native_char(q, i, get_native_char(ha, i + hyphen_passed));
 set_native_metrics(q, XeTeX_use_glyph_metrics);
@@ -25097,7 +25111,7 @@ begin if tail<>head then
   begin if is_char_node(tail) then p:=tail
   else if type(tail)=ligature_node then p:=lig_char(tail)
   else if (type(tail)=whatsit_node) then begin
-    if (subtype(tail)=native_word_node) then begin
+    if (subtype(tail)=native_word_node) or (subtype(tail)=native_word_node_AT) then begin
       tail_append(new_kern(get_native_italic_correction(tail))); subtype(tail):=explicit;
     end
     else if (subtype(tail)=glyph_node) then begin
@@ -25199,7 +25213,7 @@ q:=head; p:=link(q); n:=0;
 while p<>null do
   begin if not is_char_node(p) then if type(p)>rule_node then
     if type(p)<>kern_node then if type(p)<>ligature_node then
-    if (type(p)<>whatsit_node) or ((subtype(p)<>native_word_node)
+    if (type(p)<>whatsit_node) or ((subtype(p)<>native_word_node) and (subtype(p)<>native_word_node_AT)
                                      and (subtype(p)<>glyph_node)) then
       begin print_err("Improper discretionary list");
 @.Improper discretionary list@>
@@ -29019,7 +29033,7 @@ language_node:begin print_esc("setlanguage");
   print_int(what_lhm(p)); print_char(",");
   print_int(what_rhm(p)); print_char(")");
   end;
-native_word_node:begin print_esc(font_id_text(native_font(p)));
+native_word_node, native_word_node_AT:begin print_esc(font_id_text(native_font(p)));
   print_char(" ");
   print_native_word(p);
   end;
@@ -29052,7 +29066,7 @@ write_node,special_node: begin r:=get_node(write_node_size);
 close_node,language_node: begin r:=get_node(small_node_size);
   words:=small_node_size;
   end;
-native_word_node: begin words:=native_size(p);
+native_word_node, native_word_node_AT: begin words:=native_size(p);
   r:=get_node(words);
   while words > 0 do
     begin decr(words); mem[r+words]:=mem[p+words]; end;
@@ -29078,7 +29092,7 @@ write_node,special_node: begin delete_token_ref(write_tokens(p));
   free_node(p,write_node_size); goto done;
   end;
 close_node,language_node: free_node(p,small_node_size);
-native_word_node: begin free_native_glyph_info(p); free_node(p,native_size(p)); end;
+native_word_node, native_word_node_AT: begin free_native_glyph_info(p); free_node(p,native_size(p)); end;
 glyph_node: free_node(p,glyph_node_size);
 pic_node,pdf_node: free_node(p,total_pic_node_size(p));
 pdf_save_pos_node:
@@ -29103,7 +29117,7 @@ end
 @ @<Incorporate a whatsit node into an hbox@>=
 begin
   case subtype(p) of
-  native_word_node: begin
+  native_word_node, native_word_node_AT: begin
     { merge with any following word fragments in same font, discarding discretionary breaks }
     if type(q) = disc_node then k:=replace_count(q) else k:=0;
     while (link(q) <> p) do begin
@@ -29115,7 +29129,7 @@ begin
     restart:
     if (k <= 0) and (pp <> null) and (not is_char_node(pp)) then begin
       if (type(pp) = whatsit_node)
-        and (subtype(pp) = native_word_node)
+        and ((subtype(pp) = native_word_node) or (subtype(pp) = native_word_node_AT))
         and (native_font(pp) = native_font(p)) then begin
         pp:=link(pp);
         goto restart;
@@ -29147,6 +29161,7 @@ begin
 
       p:=link(q); { the first fragment again }
       pp:=new_native_word_node(native_font(p), total_chars); { make new node for merged word }
+      subtype(pp):=subtype(p);
       link(q):=pp; { link to preceding material }
       link(pp):=link(ppp); { attach remainder of hlist to it }
       link(ppp):=null; { and detach from the old fragments }
@@ -29188,6 +29203,7 @@ end
 
 @ @<Let |d| be the width of the whatsit |p|, and |goto found| if ``visible''@>=
 if (subtype(p)=native_word_node)
+or (subtype(p)=native_word_node_AT)
 or (subtype(p)=glyph_node)
 or (subtype(p)=pic_node)
 or (subtype(p)=pdf_node)
@@ -29202,6 +29218,7 @@ end else
     set_hyph_index;
     end
   else if (subtype(#)=native_word_node)
+  or (subtype(#)=native_word_node_AT)
   or (subtype(#)=glyph_node)
   or (subtype(#)=pic_node)
   or (subtype(#)=pdf_node)
@@ -29297,7 +29314,7 @@ else
 @ @<Output the whatsit node |p| in an hlist@>=
 begin
   case subtype(p) of
-  native_word_node, glyph_node: begin
+  native_word_node, native_word_node_AT, glyph_node: begin
     synch_h; synch_v; {Sync DVI state to TeX state}
     f:=native_font(p);
     if f<>dvi_f then @<Change font |dvi_f| to |f|@>;
@@ -29310,11 +29327,25 @@ begin
       dvi_two(native_glyph(p));
       cur_h:=cur_h + width(p);
     end else begin
-      if native_glyph_info_ptr(p) <> null_ptr then begin
-        dvi_out(set_glyphs);
-        len:=make_xdv_glyph_array_data(p);
-        for k:=0 to len-1 do
-          dvi_out(xdv_buffer_byte(k));
+      if subtype(p) = native_word_node_AT then begin
+        if (native_length(p) > 0) or (native_glyph_info_ptr(p) <> null_ptr) then begin
+          dvi_out(set_text_and_glyphs);
+          len:=native_length(p);
+          dvi_two(len);
+          for k:=0 to len-1 do begin
+            dvi_two(get_native_char(p, k));
+          end;
+          len:=make_xdv_glyph_array_data(p);
+          for k:=0 to len-1 do
+            dvi_out(xdv_buffer_byte(k));
+        end
+      end else begin
+        if native_glyph_info_ptr(p) <> null_ptr then begin
+          dvi_out(set_glyphs);
+          len:=make_xdv_glyph_array_data(p);
+          for k:=0 to len-1 do
+            dvi_out(xdv_buffer_byte(k));
+        end
       end;
       cur_h:=cur_h + width(p);
     end;
@@ -31028,6 +31059,9 @@ and is never inhibited for words originating from horizontal mode.
 
 @d XeTeX_interword_space_shaping_state==eTeX_state(XeTeX_interword_space_shaping_code)
 
+@d XeTeX_generate_actual_text_state == eTeX_state(XeTeX_generate_actual_text_code)
+@d XeTeX_generate_actual_text_en == (XeTeX_generate_actual_text_state>0)
+
 @d XeTeX_default_input_mode == eTeX_state(XeTeX_default_input_mode_code)
 @d XeTeX_default_input_encoding == eTeX_state(XeTeX_default_input_encoding_code)
 
@@ -31041,6 +31075,7 @@ eTeX_state_code+XeTeX_dash_break_code:print_esc("XeTeXdashbreakstate");
 eTeX_state_code+XeTeX_input_normalization_code:print_esc("XeTeXinputnormalization");
 eTeX_state_code+XeTeX_tracing_fonts_code:print_esc("XeTeXtracingfonts");
 eTeX_state_code+XeTeX_interword_space_shaping_code:print_esc("XeTeXinterwordspaceshaping");
+eTeX_state_code+XeTeX_generate_actual_text_code:print_esc("XeTeXgenerateactualtext");
 
 @ @<Generate all \eTeX...@>=
 primitive("suppressfontnotfounderror",assign_int,int_base+suppress_fontnotfound_error_code);@/
@@ -31063,6 +31098,9 @@ primitive("XeTeXtracingfonts",assign_int,eTeX_state_base+XeTeX_tracing_fonts_cod
 
 primitive("XeTeXinterwordspaceshaping",assign_int,eTeX_state_base+XeTeX_interword_space_shaping_code);
 @!@:XeTeX_interword_space_shaping_}{\.{\\XeTeXinterwordspaceshaping} primitive@>
+
+primitive("XeTeXgenerateactualtext",assign_int,eTeX_state_base+XeTeX_generate_actual_text_code);
+@!@:XeTeX_generate_actual_text_}{\.{\\XeTeXgenerateactualtext} primitive@>
 
 primitive("XeTeXinputencoding",extension,XeTeX_input_encoding_extension_code);
 primitive("XeTeXdefaultencoding",extension,XeTeX_default_encoding_extension_code);
@@ -31350,6 +31388,7 @@ end
 @<Cases of |reverse|...@>=
 whatsit_node:
   if (subtype(p)=native_word_node)
+  or (subtype(p)=native_word_node_AT)
   or (subtype(p)=glyph_node)
   or (subtype(p)=pic_node)
   or (subtype(p)=pdf_node)

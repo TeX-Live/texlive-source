@@ -1,4 +1,20 @@
 ==============================================================
+XeTeX 0.99995 (targeting TeXLive 2016)
+==============================================================
+
+XeTeX:
+* Added \XeTeXgenerateactualtext primitive; bumped the DVI id byte to 7,
+  as this uses a new opcode that requires support in the driver.
+
+==============================================================
+XeTeX 0.99994 (unreleased experimental version)
+==============================================================
+
+XeTeX:
+* Increased character class limit to 4096.
+* Added \XeTeXinterwordspaceshaping primitive.
+
+==============================================================
 XeTeX 0.99993 was not really "released", but in July 2015 the
 version number was bumped in the TeXLive source when a new
 primitive was added.
