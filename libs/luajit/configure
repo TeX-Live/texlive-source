@@ -14130,6 +14130,8 @@ case $host_os in #(
     LJHOST='SunOS' ;; #(
   linux*) :
     LJHOST='Linux' ;; #(
+  freebsd*) :
+    LJHOST='FreeBSD' ;; #(
   *) :
     LJHOST='Other' ;;
 esac
@@ -14252,6 +14254,8 @@ case $LJHOST in #(
     echo '-DLUAJIT_OS=LUAJIT_OS_OSX' >>native_flags ;; #(
   Linux) :
     echo '-DLUAJIT_OS=LUAJIT_OS_LINUX' >>native_flags ;; #(
+  SunOS | FreeBSD) :
+     ;; #(
   *) :
     echo '-DLUAJIT_OS=LUAJIT_OS_OTHER' >>native_flags ;;
 esac

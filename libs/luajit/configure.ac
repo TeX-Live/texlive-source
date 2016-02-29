@@ -44,6 +44,7 @@ AS_CASE([$host_os],
         [darwin*], [LJHOST='Darwin'],
         [solaris* | sunos*], [LJHOST='SunOS'],
         [linux*], [LJHOST='Linux'],
+        [freebsd*], [LJHOST='FreeBSD'],
                   [LJHOST='Other'])
 LJ_ARCH()
 AS_CASE([$LJHOST],
