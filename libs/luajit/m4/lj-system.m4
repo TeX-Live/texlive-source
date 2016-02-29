@@ -85,6 +85,7 @@ AS_CASE([$LJHOST],
         [Windows], [echo '-DLUAJIT_OS=LUAJIT_OS_WINDOWS' >>native_flags],
         [Darwin | iOS], [echo '-DLUAJIT_OS=LUAJIT_OS_OSX' >>native_flags],
         [Linux], [echo '-DLUAJIT_OS=LUAJIT_OS_LINUX' >>native_flags],
+        [SunOS | FreeBSD], [],
                  [echo '-DLUAJIT_OS=LUAJIT_OS_OTHER' >>native_flags])
 AC_MSG_RESULT([$LJHOST $LJARCH $DASM_ARCH])
 ]) # _LJ_ARCH
