@@ -1,10 +1,8 @@
 2016-03-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* dvipdfmx.c, dvipdfmx.h, mpost.c: Introduce a new option --fixorigin,
-	in order to support direct use of \special{psfile=mpostcreatedps}.
-	By default, assuming the use of dvipdfmx.def, or xetex.def, the origin
-	is translated suitably because dvipdfmx.def requires llx = lly = 0.
-	With the option --fixorigin, the translation of the origin is disabled.
+	* dvipdfmx.c, dvipdfmx.h, mpost.c: Introduce a new option --mvorigin.
+	The translation of the origin in MP inclusion by using dvipdfmx.def
+	or xdvipdfmx.def is enabled only if the option --mvorigin is set.
 
 2016-02-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

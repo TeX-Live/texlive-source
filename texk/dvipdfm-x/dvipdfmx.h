@@ -27,7 +27,7 @@
 
 extern int compat_mode;
 extern int is_xdv;
-extern int not_translate_origin;
+extern int translate_origin;
 extern const char *my_name;
 
 extern int extractbb(int argc, char *argv[]);
