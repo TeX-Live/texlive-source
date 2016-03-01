@@ -31,7 +31,7 @@ static boolean prior_file_enc = false;
 
 #ifndef NOFILE
 # ifndef OPEN_MAX
-#  define OPEN_MAX 24 /* The POSIX minimum. */
+#  define OPEN_MAX 132 /* sup_max_in_open(127) +alpha */
 # endif
 # define NOFILE OPEN_MAX
 #endif
