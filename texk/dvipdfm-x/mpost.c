@@ -243,7 +243,7 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
 	return -1;
       } else {
 	/* The new xetex.def and dvipdfmx.def require bbox->llx = bbox->lly = 0.  */
-        if (not_translate_origin == 0) {
+        if (translate_origin) {
           bbox->llx = 0;
           bbox->lly = 0;
           bbox->urx = values[2] - values[0];

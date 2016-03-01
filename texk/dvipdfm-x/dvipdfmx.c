@@ -64,7 +64,7 @@
 #include "error.h"
 
 int is_xdv = 0;
-int not_translate_origin = 0;
+int translate_origin = 0;
 
 const char *my_name;
 
@@ -179,7 +179,7 @@ show_usage (void)
   printf ("  --dvipdfm\tEnable DVIPDFM emulation mode\n");
   printf ("  -d number\tSet PDF decimal digits (0-5) [3]\n");
   printf ("  -f filename\tSet font map file name [pdftex.map]\n");
-  printf ("  --fixorigin\tDo not translate the origin for MP inclusion\n");
+  printf ("  --mvorigin\tTtranslate the origin for MP inclusion\n");
   printf ("  -g dimension\tAnnotation \"grow\" amount [0.0in]\n");
   printf ("  -h | --help \tShow this help message and exit\n");
   printf ("  -l \t\tLandscape mode\n");
@@ -395,7 +395,7 @@ static struct option long_options[] = {
   {"version", 0, 0, 130},
   {"showpaper", 0, 0, 131},
   {"dvipdfm", 0, 0, 132},
-  {"fixorigin", 0, 0, 1000},
+  {"mvorigin", 0, 0, 1000},
   {"kpathsea-debug", 1, 0, 133},
   {0, 0, 0, 0}
 };
@@ -422,8 +422,8 @@ do_early_args (int argc, char *argv[])
       exit(0);
       break;
 
-    case 1000: /* --fixorigin */
-      not_translate_origin = 1;
+    case 1000: /* --mvorigin */
+      translate_origin = 1;
       break;
 
     case 'q':
@@ -942,7 +942,7 @@ main (int argc, char *argv[])
   
   opterr = 0;
 
-  /* Special-case single option --fixorigin, --help, --showpaper, or --version,
+  /* Special-case single option --mvorigin, --help, --showpaper, or --version,
      to avoid possible diagnostics about config files, etc.
      Also handle -q and -v that cannot be set in config file. */
   do_early_args(argc, argv);
