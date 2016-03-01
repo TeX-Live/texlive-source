@@ -50,6 +50,7 @@
 #include "pdfximage.h"
 
 #include "mpost.h"
+#include "dvipdfmx.h"
 
 /*
  * Define the origin as (llx, lly) in order to
@@ -242,15 +243,24 @@ mps_scan_bbox (const char **pp, const char *endptr, pdf_rect *bbox)
 	return -1;
       } else {
 	/* The new xetex.def and dvipdfmx.def require bbox->llx = bbox->lly = 0.  */
-	bbox->llx = 0;
-	bbox->lly = 0;
-	bbox->urx = values[2] - values[0];
-	bbox->ury = values[3] - values[1];
+        if (not_translate_origin == 0) {
+          bbox->llx = 0;
+          bbox->lly = 0;
+          bbox->urx = values[2] - values[0];
+          bbox->ury = values[3] - values[1];
 
-	Xorigin = (double)values[0];
-	Yorigin = (double)values[1];
+          Xorigin = (double)values[0];
+          Yorigin = (double)values[1];
+        } else {
+          bbox->llx = values[0];
+          bbox->lly = values[1];
+          bbox->urx = values[2];
+          bbox->ury = values[3];
 
-	return 0;
+          Xorigin = 0.0;
+          Yorigin = 0.0;
+        }
+        return 0;
       }
     }
     skip_line (pp, endptr);
