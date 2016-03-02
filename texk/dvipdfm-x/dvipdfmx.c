@@ -183,7 +183,7 @@ show_usage (void)
   printf ("  -h | --help \tShow this help message and exit\n");
   printf ("  -l \t\tLandscape mode\n");
   printf ("  -m number\tSet additional magnification [1.0]\n");
-  printf ("  --mvorigin\tTtranslate the origin for MP inclusion\n");
+  printf ("  --mvorigin\tTranslate the origin for MP inclusion\n");
   printf ("  -o filename\tSet output file name, \"-\" for stdout [DVIFILE.pdf]\n");
   printf ("  -p papersize\tSet papersize [a4]\n");
   printf ("  -q \t\tBe quiet\n");
