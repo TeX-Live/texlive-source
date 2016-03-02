@@ -537,13 +537,27 @@ static const char *fusible_queued_shape(const gregorio_note *const note,
             name = ambitus_one? base_shape : longqueue_shape;
             break;
         }
-    } else {
+    } else if (glyph->u.notes.fuse_to_next_glyph) {
+        /* TODO (5.0?) handle queue size on upwards fusion */
         switch (queuetype_of(note)) {
         case Q_ON_SPACE_BELOW_BOTTOM_LINE:
         case Q_ON_SPACE_ABOVE_BOTTOM_LINE:
+        case Q_ON_BOTTOM_LINE:
             name = base_shape;
             break;
+        case Q_ON_LINE_ABOVE_BOTTOM_LINE:
+            name = longqueue_shape;
+            break;
+        }
+    } else {
+        switch (queuetype_of(note)) {
+        case Q_ON_SPACE_ABOVE_BOTTOM_LINE:
+            name = base_shape;
+            break;
+        case Q_ON_SPACE_BELOW_BOTTOM_LINE:
         case Q_ON_BOTTOM_LINE:
+            name = openqueue_shape;
+            break;
         case Q_ON_LINE_ABOVE_BOTTOM_LINE:
             name = longqueue_shape;
             break;
@@ -1132,19 +1146,41 @@ static bool is_last_of_line(gregorio_syllable *syllable)
     return false;
 }
 
-/* determines if there are more GRE_GLYPHs */
-static bool has_more_notes(const gregorio_element *element) {
-    for (element = element->next; element; element = element->next) {
-        if (element->type == GRE_ELEMENT) {
-            const gregorio_glyph *glyph;
-            for (glyph = element->u.first_glyph; glyph; glyph = glyph->next) {
-                if (glyph->type == GRE_GLYPH) {
-                    return true;
-                }
+static __inline bool has_notes(const gregorio_element *const element)
+{
+    if (element->type == GRE_CUSTOS) {
+        return true;
+    }
+    if (element->type == GRE_ELEMENT) {
+        const gregorio_glyph *glyph;
+        for (glyph = element->u.first_glyph; glyph; glyph = glyph->next) {
+            if (glyph->type == GRE_GLYPH) {
+                return true;
             }
         }
     }
     return false;
+}
+
+/* determines if there are more GRE_GLYPHs */
+static __inline bool has_more_notes(const gregorio_element *element)
+{
+    for (element = element->next; element; element = element->next) {
+        if (has_notes(element)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static __inline void handle_last_of_score(FILE *const f,
+        const gregorio_syllable *const syllable,
+        const gregorio_element *const element)
+{
+    if (!syllable->next_syllable && !has_more_notes(element)
+            && has_notes(element)) {
+        fprintf(f, "\\GreLastOfScore");
+    }
 }
 
 /*
@@ -3526,9 +3562,6 @@ static void write_syllable(FILE *f, gregorio_syllable *syllable,
                     }
                 }
             }
-            if (!syllable->next_syllable && !has_more_notes(element)) {
-                fprintf(f, "\\GreLastOfScore");
-            }
             switch (element->type) {
             case GRE_SPACE:
                 switch (element->u.misc.unpitched.info.space) {
@@ -3618,6 +3651,7 @@ static void write_syllable(FILE *f, gregorio_syllable *syllable,
                      * We don't print custos before a bar at the end of a line
                      */
                     /* we also print an unbreakable larger space before the custo */
+                    handle_last_of_score(f, syllable, element);
                     fprintf(f, "\\GreEndOfElement{1}{1}%%\n\\GreCustos{%d}"
                             "\\GreNextCustos{%d}%%\n",
                             pitch_value(element->u.misc.pitched.pitch),
@@ -3649,8 +3683,9 @@ static void write_syllable(FILE *f, gregorio_syllable *syllable,
                 break;
 
             default:
-                /* there current_element->type is GRE_ELEMENT */
+                /* here current_element->type is GRE_ELEMENT */
                 assert(element->type == GRE_ELEMENT);
+                handle_last_of_score(f, syllable, element);
                 write_element(f, syllable, element, status, score);
                 if (element->next && (element->next->type == GRE_ELEMENT
                                 || (element->next->next
