@@ -62,6 +62,8 @@ The spaces around bars are now:
 - `bar@minima` (both replacing `spacearoundsmallbars`)
 - `bar@minor` (replacing `spacearoundminor`)
 - `bar@maior` (replacing `spacearoundmaior`)
+- `bar@finalis` (replacing `spacearoundfinalis`)
+- `bar@finalifinalis` (replaceing `spacebeforefinalfinalis`)
 - `bar@dominican` (new)
 
 They have variants for the new bar spacing algorithm only:
@@ -187,7 +189,7 @@ This would have made the text which was wrapped with `<alt></alt>` in your gabc 
 
 ### Centering scheme
 
-The gabc `centering-scheme` header is now deprecated and will disappear soon.  Use the `\grelyriccentering` command from TeX instead.  If you were using `centering-scheme: latine;` in gabc, now use `\grelyriccentering{vowel}` in the TeX file that includes the gabc.  If you were using `centering-scheme: english;` in gabc, now use `\grelyriccentering{syllable}` in the TeX file that includes the gabc.
+The gabc `centering-scheme` header is now deprecated and will disappear soon.  Use the `\gresetlyriccentering` command from TeX instead.  If you were using `centering-scheme: latine;` in gabc, now use `\gresetlyriccentering{vowel}` in the TeX file that includes the gabc.  If you were using `centering-scheme: english;` in gabc, now use `\gresetlyriccentering{syllable}` in the TeX file that includes the gabc.
 
 Using the gabc header will, in this release, do that for you, but it will produce a deprecation warning.  This header will no longer be available in the next release.
 

@@ -671,6 +671,10 @@ text directly.
 
 \textbf{Nota Bene:} The same rules apply for \#1 as in \verb=\gresetspecial=.
 
+\macroname{\textbackslash gretilde}{}{gregoriotex-main.tex}
+Macro to print $\sim$.  This macro is set using the above for \texttt{<sp>~</sp>}.
+
+
 
 \subsubsection{Styling}
 Different elements of an include score have different styles applied.  These elements and their defaults are listed below:
@@ -724,8 +728,8 @@ Examples:\par\medskip
 
 	% This one is LaTeX only, and would make the above lines
 	% text small and italic
-	\grechangestyle{abovelinetext}{\begin{small}\begin{italic}}%
-		[\end{italic}\end{small}]
+	\grechangestyle{abovelinestext}{\begin{small}\begin{itshape}}%
+		[\end{itshape}\end{small}]
 
 	% This would make the initial print in 36pt font.
 	\grechangestyle{initial}{\fontsize{36}{36}\selectfont}
@@ -1598,6 +1602,14 @@ Minimum space between texts of different words when one of the syllable contains
 
 \begin{gdimension}{interwordspacetext@bars@euouae}
 Same as \texttt{interwordspacetext@bars} for \texttt{euouae} blocks (so quite rare).
+\end{gdimension}
+
+\begin{gdimension}{interwordspacetext@bars@notext}
+Minimum space between texts of adjacent words when they are separated by a bar syllable which has no text associated with it (new bar spacing algorithm only).
+\end{gdimension}
+
+\begin{gdimension}{interwordspacetext@bars@notext@euouae}
+Same as \texttt{interwordspacetext@bars@notext} for \texttt{euouae} blocks (so quite rare).
 \end{gdimension}
 
 \begin{gdimension}{textbartextspace}

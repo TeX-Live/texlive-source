@@ -517,12 +517,14 @@ Count to track where on the line we are.  Values are \texttt{0} (we are not near
 \macroname{\textbackslash gre@savedlastoflinecount}{}{gregoriotex-main.tex}
 A spot to save the \verb=\gre@lastoflinecount= so we can change it temporarily and revert to the saved value later.
 
-\macroname{\textbackslash gre@newlinecommon}{\#1}{gregoriotex-main.tex}
+\macroname{\textbackslash gre@newlinecommon}{\#1\#2}{gregoriotex-main.tex}
 The macro which needs to be called each time a new lines is started.
 
 \begin{argtable}
 	\#1 & \texttt{0} & Justifying the line being ended\\
 	& \texttt{1} & Do not justify the line being ended\\
+	\#2 & \texttt{0} & Take care of eolshift\\
+	& \texttt{1} & Do not adjust end of line (when already done by the new spacing algorithm)\\
 \end{argtable}
 
 \macroname{\textbackslash gre@endafterbar}{\#1}{gregoriotex-main.tex}
@@ -1347,6 +1349,11 @@ The divisio maior.
 \macroname{\textbackslash gre@char@normalhyphen}{}{gregoriotex-main.tex}
 A normal hyphen in the text font.
 
+\macroname{\textbackslash gre@char@zerohyph}{}{gregoriotex-main.tex}
+Macro to typeset a zero-width hyphen (the hyphen is visible, it is only
+treated as if it had 0 width when calculating spaces).  Used for fine tuning spacing
+(especially at line endings).
+
 \macroname{\textbackslash gre@char@fuse@debilis}{}{gregoriotex-chars.tex}
 A fused character consisting of a leading punctum initio debilis (of ambitus one) and a regular punctum.
 
@@ -1591,7 +1598,7 @@ Boolean to disable the printing of horizontal episemata.
 \macroname{\textbackslash ifgre@disablemora}{}{gregoriotex-signs.tex}
 Boolean to disable the printing of punctum morae.
 
-\macroname{\textbackslash ifgre@disablevepsiema}{}{gregoriotex-signs.tex}
+\macroname{\textbackslash ifgre@disablevepisema}{}{gregoriotex-signs.tex}
 Boolean to disable the printing of vertical episemata.
 
 \macroname{\textbackslash ifgre@lastendswithmorasave}{}{gregoriotex-syllable.tex}
