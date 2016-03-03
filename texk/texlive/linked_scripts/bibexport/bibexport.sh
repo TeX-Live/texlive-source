@@ -7,7 +7,7 @@
 ##
 ## bibexport.dtx  (with options: `script')
 ## 
-## (c) 2011/11/28 Nicolas Markey <markey at lsv dot ens-cachan dot fr>
+## (c) 2016/03/02 Nicolas Markey <bibexport at markey dot fr>
 ## 
 ## This work may  be distributed and/or modified under  the conditions of
 ## the LaTeX Project  Public License, either version 1.3  of this license
@@ -46,8 +46,7 @@ function checkversion()
 -----------"
   grep -q $VDATE `kpsewhich expkeys.bst` ||
     echo "-----------
---Warning-- the version of the .bst files does not match with that of this
-script.
+--Warning-- the version of the .bst files does not match with that of this script.
 -----------"
 }
 function usage()
@@ -84,9 +83,9 @@ if [ ${TOOLATE} -ne 0 ]; then
 fi
 }
 ## Version number
-VERSION="3.01";
+VERSION="3.02";
 ## Release date
-VDATE="2011/11/28";
+VDATE="2016/03/02";
 
 # ALL is a flag set to 1 when '-a' is given
 ALL="0";
