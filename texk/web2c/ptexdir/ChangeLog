@@ -1,3 +1,10 @@
+2016-03-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Add new primitives \textbaselineshiftfactor (=1000),
+	\scriptbaselineshiftfactor (=700), \scriptscriptbaselineshiftfactor (=500)
+	to improve typesetting with non-vanishing \ybaselineshift.
+	If all three are zero, the old features are recovered.
+
 2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ptriptest.test: Also check tripos.tex.

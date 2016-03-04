@@ -1,3 +1,7 @@
+2016-03-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* etex.ch1: Adapt to changes in ptexdir/ptex-base.ch.
+
 2016-02-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* eptex.ech: Add a new primitive \epTeXinputencoding. (from N. Abe).

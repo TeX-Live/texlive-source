@@ -52,6 +52,8 @@
 % (2014-04-17) KB  pTeX p3.5 (TL 2014)
 % (2014-03-15) KB  pTeX p3.6 (TL 2015)
 % (2015-09-10) AK  pTeX p3.7 Bug fix by Hironori Kitagawa in flushing choice node.
+% (2016-03-04) AK  Hironori Kitagawa added new primitives to improve typesetting
+%                  with non-vanishing \ybaselineshift.
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
@@ -1260,10 +1262,13 @@ if n<math_code_base then
 @d error_context_lines_code=55 {maximum intermediate line pairs shown}
 @d jchr_widow_penalty_code=56
 			{penalty for creating a widow KANJI character line}
-@d char_sub_def_min_code=57 {smallest value in the charsubdef list}
-@d char_sub_def_max_code=58 {largest value in the charsubdef list}
-@d tracing_char_sub_def_code=59 {traces changes to a charsubdef def}
-@d int_pars=60 {total number of integer parameters}
+@d text_baseline_shift_factor_code=57
+@d script_baseline_shift_factor_code=58
+@d scriptscript_baseline_shift_factor_code=59
+@d char_sub_def_min_code=60 {smallest value in the charsubdef list}
+@d char_sub_def_max_code=61 {largest value in the charsubdef list}
+@d tracing_char_sub_def_code=62 {traces changes to a charsubdef def}
+@d int_pars=63 {total number of integer parameters}
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @z
 
@@ -1275,6 +1280,9 @@ if n<math_code_base then
 @d cur_jfam==int_par(cur_jfam_code)
 @d escape_char==int_par(escape_char_code)
 @d jchr_widow_penalty==int_par(jchr_widow_penalty_code)
+@d text_baseline_shift_factor==int_par(text_baseline_shift_factor_code)
+@d script_baseline_shift_factor==int_par(script_baseline_shift_factor_code)
+@d scriptscript_baseline_shift_factor==int_par(scriptscript_baseline_shift_factor_code)
 @z
 
 @x [17.237] l.5244 - pTeX: cur_jfam_code, jchr_window_penalty_code
@@ -1283,6 +1291,9 @@ new_line_char_code:print_esc("newlinechar");
 new_line_char_code:print_esc("newlinechar");
 cur_jfam_code:print_esc("jfam");
 jchr_widow_penalty_code:print_esc("jcharwidowpenalty");
+text_baseline_shift_factor_code:print_esc("textbaselineshiftfactor");
+script_baseline_shift_factor_code:print_esc("scriptbaselineshiftfactor");
+scriptscript_baseline_shift_factor_code:print_esc("scriptscriptbaselineshiftfactor");
 @z
 
 @x [17.238] l.5365 - pTeX: cur_jfam_code, jchr_window_penalty_code
@@ -1295,6 +1306,12 @@ primitive("jfam",assign_int,int_base+cur_jfam_code);@/
 @!@:cur_jfam_}{\.{\\jfam} primitive@>
 primitive("jcharwidowpenalty",assign_int,int_base+jchr_widow_penalty_code);@/
 @!@:jchr_widow_penalty}{\.{\\jcharwidowpenalty} primitive@>
+primitive("textbaselineshiftfactor",assign_int,int_base+text_baseline_shift_factor_code);@/
+@!@:text_baseline_shift_factor}{\.{\\textbaselineshiftfactor} primitive@>
+primitive("scriptbaselineshiftfactor",assign_int,int_base+script_baseline_shift_factor_code);@/
+@!@:script_baseline_shift_factor}{\.{\\scriptbaselineshiftfactor} primitive@>
+primitive("scriptscriptbaselineshiftfactor",assign_int,int_base+scriptscript_baseline_shift_factor_code);@/
+@!@:scriptscript_baseline_shift_factor}{\.{\\scriptscriptbaselineshiftfactor} primitive@>
 @z
 
 @x [17.247] l.5490 - pTeX: kinsoku, t_baseline_shift, y_baseline_shift
@@ -3358,9 +3375,29 @@ internal kanji code number.
 @d math_kcode_nucleus(#)==info(#+3)
 	{the |kanji character| field offset from nucleus}
 @#
-@d math_jchar=5
-@d math_text_jchar=6
+@d math_jchar=6
+@d math_text_jchar=7
 @z
+
+@x [35.681] pTeX: explicit box in math mode
+@d math_char=1 {|math_type| when the attribute is simple}
+@d sub_box=2 {|math_type| when the attribute is a box}
+@d sub_mlist=3 {|math_type| when the attribute is a formula}
+@d math_text_char=4 {|math_type| when italic correction is dubious}
+@y
+@d math_char=1 {|math_type| when the attribute is simple}
+@d sub_box=2 {|math_type| when the attribute is a box}
+@d sub_exp_box=3 {|math_type| when the attribute is an explicit created box}
+@d sub_mlist=4 {|math_type| when the attribute is a formula}
+@d math_text_char=5 {|math_type| when italic correction is dubious}
+
+@<Initialize table entries...@>=
+text_baseline_shift_factor:=1000;
+script_baseline_shift_factor:=700;
+scriptscript_baseline_shift_factor:=500;
+
+@z
+
 
 @x [34.683] radical with japanese char
 @d left_delimiter(#)==#+4 {first delimiter field of a noad}
@@ -3407,9 +3444,13 @@ else  begin KANJI(cx):=math_kcode_nucleus(p); print_kanji(cx);
 
 @x [34.692] l.14266 - pTeX: print_subsidiary_data
   math_char: begin print_ln; print_current_string; print_fam_and_char(p);
+    end;
+  sub_box: show_info; {recursive call}
 @y
   math_char, math_jchar: begin print_ln; print_current_string;
     print_fam_and_char(p,math_type(p));
+    end;
+  sub_box, sub_exp_box: show_info; {recursive call}
 @z
 
 @x [34.696] l.14327 - pTeX: print_fam_and_char
@@ -3419,7 +3460,7 @@ accent_noad: begin print_esc("accent");
   print_fam_and_char(accent_chr(p),math_char);
 @z
 
-@x pTeX: flush choice_node
+@x [35.698] pTeX: flush choice_node
   begin if math_type(nucleus(p))>=sub_box then
     flush_node_list(info(nucleus(p)));
   if math_type(supscr(p))>=sub_box then
@@ -3468,17 +3509,39 @@ accent_noad: begin print_esc("accent");
 @x [36.720] l.14783 - pTeX: clean_box
 function clean_box(@!p:pointer;@!s:small_number):pointer;
 @y
+function shift_sub_exp_box(@!q:pointer):pointer;
+  { We assume that |math_type(q)=sub_exp_box| }
+  var d: halfword; {displacement}
+  begin
+    if direction=dir_tate then d:=t_baseline_shift
+    else d:=y_baseline_shift;
+    if cur_style<script_style then 
+      d:=xn_over_d(d,text_baseline_shift_factor, 1000)
+    else if cur_style<script_script_style then 
+      d:=xn_over_d(d,script_baseline_shift_factor, 1000)
+    else
+      d:=xn_over_d(d,scriptscript_baseline_shift_factor, 1000);
+    shift_amount(info(q)):=shift_amount(info(q))-d;
+    math_type(q):=sub_box;
+    shift_sub_exp_box:=info(q);
+  end;
 function clean_box(@!p:pointer;@!s:small_number;@!jc:halfword):pointer;
 @z
 
 @x [36.720] l.14790 - pTeX: clean_box
 math_char: begin cur_mlist:=new_noad; mem[nucleus(cur_mlist)]:=mem[p];
   end;
+sub_box: begin q:=info(p); goto found;
+  end;
 @y
 math_char: begin cur_mlist:=new_noad; mem[nucleus(cur_mlist)]:=mem[p];
   end;
 math_jchar: begin cur_mlist:=new_noad; mem[nucleus(cur_mlist)]:=mem[p];
   math_kcode(cur_mlist):=jc;
+  end;
+sub_box: begin q:=info(p); goto found;
+  end;
+sub_exp_box: begin q:=shift_sub_exp_box(p); goto found;
   end;
 @z
 
@@ -3763,6 +3826,13 @@ exit:end;
 math_char, math_text_char:
 @y
 math_char, math_text_char, math_jchar, math_text_jchar:
+@z
+
+@x [36.754] pTeX:
+sub_box: p:=info(nucleus(q));
+@y
+sub_box: p:=info(nucleus(q));
+sub_exp_box: p:=shift_sub_exp_box(nucleus(q));
 @z
 
 @x [36.755] l.15475 - pTeX: convert math text to KANJI char_node
@@ -4736,6 +4806,14 @@ q:pointer;
   if box_dir(cur_box)<>abs(direction) then
     cur_box:=new_dir_node(cur_box,abs(direction));
   shift_amount(cur_box):=box_context;
+@z
+
+@x [47.1076] pTeX: sub_exp_box
+    else  begin p:=new_noad;
+      math_type(nucleus(p)):=sub_box;
+@y
+    else  begin p:=new_noad;
+      math_type(nucleus(p)):=sub_exp_box;
 @z
 
 @x [47.1078] l.21585 - pTeX: box_dir adjust
