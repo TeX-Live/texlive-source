@@ -1,3 +1,8 @@
+2016-03-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* synctex-ep-mem.ch1, synctex-p-mem.ch1: Adapt to changes in
+	ptexdir/ptex-base.ch.
+
 2015-12-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* synctex-luatex.h: update for the new texnode.h in LuaTeX beta-0.87.0.
