@@ -35,7 +35,7 @@ rc=0
 
 ./dvi2tty -u $test_src/table.dvi >tableu.out && diff $srcdir/tableu.tty tableu.out || rc=4
 
-./dvi2tty -u -C $test_src/table.dvi >tableuC.out && diff $srcdir/tableu.tty tableuC.out || rc=5
+./dvi2tty -u -C $test_src/table.dvi >tableuC.out && diff $srcdir/tableuC.tty tableuC.out || rc=5
 
 ./dvi2tty -Eu $test_src/table.dvi >tableEu.out && diff $srcdir/tableEu.tty tableEu.out || rc=6
 
