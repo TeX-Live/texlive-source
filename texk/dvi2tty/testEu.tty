@@ -1,0 +1,75 @@
+
+
+
+
+accents: é
+LATEX
+now inline: blaé test
+now inline: bla étest
+now inline: bla é test
+real spaces  xxx
+tildes accent õ
+horizontal 2 - is –
+horizontal 3 - is —
+ligatures: ﬄ ﬁ ﬂ Yp
+what about vertical bars —
+horizontal bar -
+and tildes
+¡ funny carrots ¿
+copyright c◯
+pounds $
+euro diamond3 scandinavian ae æAE Æ o ø O Ø AA Å aa å Z ˇz
+alphaα eta η
+nu ν
+tau τ
+beta β
+theta θ
+xi ξ
+upsilon υ
+gamma γ
+iota ι
+phi ϕ
+delta δ
+kappa κ
+pi π
+chi χ
+epsilon ε
+lambda λ
+rho ρ
+psi ψ
+zeta ζ
+mu μ
+sigma σ
+omega_ω____
+ 1 | 2 |3||
+ 4 | 5 |6||
+_7_|_8_|9||_
+so far not in verbatim (tt font)
+
+
+
+                              1
+
+
+
+
+now in verbatim (tt font)
+accents: \’{e}
+\LaTeX
+now inline: bla\’{e} test
+now inline: bla \’{e}test
+now inline: bla \’{e} test
+real spaces˜˜˜xxx
+tildes  accent \õ
+horizontal 2 -  is --
+horizontal 3 -  is ---
+ligatures: ffl fi fl Yp
+what about vertical bars |
+horizontal bar -
+and tildes ˜
+< funny carrots >
+or other symbols: \\ { } [ ] _ ^ ? = ; / . , + * ( ) ’ & % $ # ” !
+
+
+
+                                 2

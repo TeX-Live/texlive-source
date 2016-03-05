@@ -1,0 +1,343 @@
+% You may freely use, modify and/or distribute this file.
+
+\documentclass{report}
+\topmargin 0mm
+\textheight 210mm
+\usepackage[OT1,OT2,T2A,T2B,T2C,X2,T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{color}
+\parindent0pt
+
+\newcommand\BC[1]{%
+  \textcolor{blue}{%
+    {\usefont{OT1}{cmr}{m}{n}\selectfont(}%
+     \textcolor{black}{#1}%
+    {\usefont{OT1}{cmr}{m}{n}\selectfont)}%
+  }%
+}
+\newcommand\B[2]{%
+  \BC{#1}\BC{#2}%
+}
+\makeatletter
+\newcounter{i} \newcounter{j} \newcounter{s} \newcounter{m}
+
+\newcommand\Mktable[1]{%
+  \c@i=0 \@whilenum\c@i<#1 \do{%
+    {\usefont{OT1}{cmtt}{m}{n}\selectfont
+    "\ifcase\c@i00\or10\or20\or30\or40\or50\or60\or70\or
+       80\or90\or A0\or B0\or C0\or D0\or E0\or F0\fi:}%
+    \c@m=\c@i \multiply\c@m16
+    \c@j=0 \@whilenum\c@j<16 \do{%
+      \c@s=\c@j \advance\c@s\c@m
+      \BC{\char\c@s}%
+      \advance\c@j1
+    }%
+    \par
+    \advance\c@i1
+  }
+}
+\newcommand\MktableSevenBit{\Mktable{8}}
+\newcommand\MktableEightBit{\Mktable{16}}
+\makeatother
+
+
+\begin{document}
+\chapter{Code Tables}
+\section{OT1}
+\subsection{cmr}
+{
+ \fontencoding{OT1}\selectfont
+ \MktableSevenBit
+}
+\subsection{cmtt}
+{
+ \fontencoding{OT1}\selectfont\ttfamily
+ \MktableSevenBit
+}
+
+\newpage
+\section{OML}
+\subsection{cmmi}
+{
+ \usefont{OML}{cmr}{m}{n}\selectfont
+ \MktableSevenBit
+}
+\section{OMS}
+\subsection{cmsy}
+{
+ \usefont{OMS}{cmr}{m}{n}\selectfont
+ \MktableSevenBit
+}
+
+\newpage
+\section{OT2}
+\subsection{wnr}
+{
+ \fontencoding{OT2}\selectfont
+ \MktableSevenBit
+}
+\subsection{wntt}
+{
+ \fontencoding{OT2}\selectfont\ttfamily
+ \MktableSevenBit
+}
+
+\newpage
+\section{T1}
+\subsection{ecrm}
+{
+ \fontencoding{T1}\selectfont
+ \MktableEightBit
+}
+\subsection{ectt}
+{
+ \fontencoding{T1}\selectfont\ttfamily
+ \MktableEightBit
+}
+
+\newpage
+\section{TS1}
+\subsection{tcrm}
+{
+ \fontencoding{TS1}\selectfont
+ \MktableEightBit
+}
+
+
+\newpage
+\section{T2A}
+\subsection{larm}
+{
+ \fontencoding{T2A}\selectfont
+ \MktableEightBit
+}
+\subsection{latt}
+{
+ \fontencoding{T2A}\selectfont\ttfamily
+ \MktableEightBit
+}
+
+
+\newpage
+\section{T2B}
+\subsection{lbrm}
+{
+ \fontencoding{T2B}\selectfont
+ \MktableEightBit
+}
+\subsection{lbtt}
+{
+ \fontencoding{T2B}\selectfont\ttfamily
+ \MktableEightBit
+}
+
+\newpage
+\section{T2C}
+\subsection{lcrm}
+{
+ \fontencoding{T2C}\selectfont
+ \MktableEightBit
+}
+\subsection{lctt}
+{
+ \fontencoding{T2C}\selectfont\ttfamily
+ \MktableEightBit
+}
+
+\newpage
+\section{X2}
+\subsection{rxrm}
+{
+ \fontencoding{X2}\selectfont
+ \MktableEightBit
+}
+\subsection{rxtt}
+{
+ \fontencoding{X2}\selectfont\ttfamily
+ \MktableEightBit
+}
+
+
+
+\chapter{Composition}
+\section{OT1}
+\subsection{cmr}
+{
+ \fontencoding{OT1}\selectfont
+ in Latin-1:\\
+ ligature \B{\AE}{\ae}\\
+ stroke \B{\O}{\o}\\
+ grave \B{\`A}{\`a} \B{\`E}{\`e} \B{\`I}{\`i} \B{\`O}{\`o} \B{\`U}{\`u}\\
+ acute \B{\'A}{\'a} \B{\'E}{\'e} \B{\'I}{\'i} \B{\'O}{\'o} \B{\'U}{\'u} \B{\'Y}{\'y}\\
+ circumflex \B{\^A}{\^a} \B{\^E}{\^e} \B{\^I}{\^i} \B{\^O}{\^o} \B{\^U}{\^u}\\
+ tilde \B{\~A}{\~a} \B{\~O}{\~o}\\
+ diaeresis \B{\"A}{\"a} \B{\"E}{\"e} \B{\"I}{\"i} \B{\"O}{\"o} \B{\"U}{\"u} \B{-}{\"y}\\
+ ring above \B\AA\aa\\
+ cedilla \B{\c{C}}{\c{c}}\\
+ tilde \B{\~N}{\~n}
+
+ in T1 encoding but not in Latin-1:\\
+ ligature \BC{ff}\BC{fi}\BC{fl}\BC{ffi}\BC{ffl} \B{\OE}{\oe} \B{\IJ}{\ij}\\% \B{\NG}{\ng}\\
+ stroke \B{\L}{\l}\\
+ acute \B{\'C}{\'c} \B{\'L}{\'l} \B{\'N}{\'n} \B{\'R}{\'r} \B{\'S}{\'s} \B{\'Z}{\'z}\\
+ caron \B{\v{C}}{\v{c}} \B{\v{D}}{\v{d}} \B{\v{E}}{\v{e}} \B{\v{L}}{\v{l}} \B{\v{N}}{\v{n}}
+   \B{\v{R}}{\v{r}} \B{\v{S}}{\v{s}} \B{\v{T}}{\v{t}} \B{\v{Z}}{\v{z}}\\
+ breve \B{\u{A}}{\u{a}} \B{\u{G}}{\u{g}}\\
+% ogonek \B{\k{A}}{\k{a}} \B{\k{E}}{\k{e}}\\
+ double acute \B{\H{O}}{\H{o}} \B{\H{U}}{\H{u}}\\
+ cedilla \B{\c{S}}{\c{s}} \B{\c{T}}{\c{t}}\\
+ diaeresis \B{\"Y}{-}\\
+ ring above \B{\r{U}}{\r{u}}\\
+ dot \B{\.Z}{\.z} \B{\.I}{-}
+}
+\subsection{cmtt}
+{
+ \fontencoding{OT1}\selectfont\ttfamily
+ in Latin-1:\\
+ ligature \B{\AE}{\ae}\\
+ stroke \B{\O}{\o}\\
+ grave \B{\`A}{\`a} \B{\`E}{\`e} \B{\`I}{\`i} \B{\`O}{\`o} \B{\`U}{\`u}\\
+ acute \B{\'A}{\'a} \B{\'E}{\'e} \B{\'I}{\'i} \B{\'O}{\'o} \B{\'U}{\'u} \B{\'Y}{\'y}\\
+ circumflex \B{\^A}{\^a} \B{\^E}{\^e} \B{\^I}{\^i} \B{\^O}{\^o} \B{\^U}{\^u}\\
+ tilde \B{\~A}{\~a} \B{\~O}{\~o}\\
+ diaeresis \B{\"A}{\"a} \B{\"E}{\"e} \B{\"I}{\"i} \B{\"O}{\"o} \B{\"U}{\"u} \B{-}{\"y}\\
+ ring above \B\AA\aa\\
+ cedilla \B{\c{C}}{\c{c}}\\
+ tilde \B{\~N}{\~n}
+
+ in T1 encoding but not in Latin-1:\\
+ ligature \BC{ff}\BC{fi}\BC{fl}\BC{ffi}\BC{ffl} \B{\OE}{\oe} \B{\IJ}{\ij}\\% \B{\NG}{\ng}\\
+% stroke \B{\L}{\l}\\
+ acute \B{\'C}{\'c} \B{\'L}{\'l} \B{\'N}{\'n} \B{\'R}{\'r} \B{\'S}{\'s} \B{\'Z}{\'z}\\
+ caron \B{\v{C}}{\v{c}} \B{\v{D}}{\v{d}} \B{\v{E}}{\v{e}} \B{\v{L}}{\v{l}} \B{\v{N}}{\v{n}}
+   \B{\v{R}}{\v{r}} \B{\v{S}}{\v{s}} \B{\v{T}}{\v{t}} \B{\v{Z}}{\v{z}}\\
+ breve \B{\u{A}}{\u{a}} \B{\u{G}}{\u{g}}\\
+% ogonek \B{\k{A}}{\k{a}} \B{\k{E}}{\k{e}}\\
+% double acute \B{\H{O}}{\H{o}} \B{\H{U}}{\H{u}}\\
+ cedilla \B{\c{S}}{\c{s}} \B{\c{T}}{\c{t}}\\
+ diaeresis \B{\"Y}{-}\\
+ ring above \B{\r{U}}{\r{u}}\\
+% dot \B{\.Z}{\.z} \B{\.I}{-}
+}
+
+\section{T1}
+\subsection{ecrm}
+{
+ \fontencoding{T1}\selectfont
+ in Latin-1:\\
+ ligature \B{\AE}{\ae}\\
+ stroke \B{\O}{\o} \B{\DH}{\dh}\\
+ grave \B{\`A}{\`a} \B{\`E}{\`e} \B{\`I}{\`i} \B{\`O}{\`o} \B{\`U}{\`u}\\
+ acute \B{\'A}{\'a} \B{\'E}{\'e} \B{\'I}{\'i} \B{\'O}{\'o} \B{\'U}{\'u} \B{\'Y}{\'y}\\
+ circumflex \B{\^A}{\^a} \B{\^E}{\^e} \B{\^I}{\^i} \B{\^O}{\^o} \B{\^U}{\^u}\\
+ tilde \B{\~A}{\~a} \B{\~O}{\~o}\\
+ diaeresis \B{\"A}{\"a} \B{\"E}{\"e} \B{\"I}{\"i} \B{\"O}{\"o} \B{\"U}{\"u} \B{-}{\"y}\\
+ ring above \B\AA\aa\\
+ cedilla \B{\c{C}}{\c{c}}\\
+ tilde \B{\~N}{\~n}
+
+ in T1 encoding but not in Latin-1:\\
+ ligature \BC{ff}\BC{fi}\BC{fl}\BC{ffi}\BC{ffl} \B{\OE}{\oe} \B{\IJ}{\ij} \B{\NG}{\ng}\\
+ stroke \B{\L}{\l} \B{-}{\dj}\\
+ acute \B{\'C}{\'c} \B{\'L}{\'l} \B{\'N}{\'n} \B{\'R}{\'r} \B{\'S}{\'s} \B{\'Z}{\'z}\\
+ caron \B{\v{C}}{\v{c}} \B{\v{D}}{\v{d}} \B{\v{E}}{\v{e}} \B{\v{L}}{\v{l}} \B{\v{N}}{\v{n}}
+   \B{\v{R}}{\v{r}} \B{\v{S}}{\v{s}} \B{\v{T}}{\v{t}} \B{\v{Z}}{\v{z}}\\
+ breve \B{\u{A}}{\u{a}} \B{\u{G}}{\u{g}}\\
+ ogonek \B{\k{A}}{\k{a}} \B{\k{E}}{\k{e}}\\
+ double acute \B{\H{O}}{\H{o}} \B{\H{U}}{\H{u}}\\
+ cedilla \B{\c{S}}{\c{s}} \B{\c{T}}{\c{t}}\\
+ diaeresis \B{\"Y}{-}\\
+ ring above \B{\r{U}}{\r{u}}\\
+ dot \B{\.Z}{\.z} \B{\.I}{-}
+}
+\subsection{ectt}
+{
+ \fontencoding{T1}\selectfont\ttfamily
+ in Latin-1:\\
+ ligature \B{\AE}{\ae}\\
+ stroke \B{\O}{\o} \B{\DH}{\dh}\\
+ grave \B{\`A}{\`a} \B{\`E}{\`e} \B{\`I}{\`i} \B{\`O}{\`o} \B{\`U}{\`u}\\
+ acute \B{\'A}{\'a} \B{\'E}{\'e} \B{\'I}{\'i} \B{\'O}{\'o} \B{\'U}{\'u} \B{\'Y}{\'y}\\
+ circumflex \B{\^A}{\^a} \B{\^E}{\^e} \B{\^I}{\^i} \B{\^O}{\^o} \B{\^U}{\^u}\\
+ tilde \B{\~A}{\~a} \B{\~O}{\~o}\\
+ diaeresis \B{\"A}{\"a} \B{\"E}{\"e} \B{\"I}{\"i} \B{\"O}{\"o} \B{\"U}{\"u} \B{-}{\"y}\\
+ ring above \B\AA\aa\\
+ cedilla \B{\c{C}}{\c{c}}\\
+ tilde \B{\~N}{\~n}
+
+ in T1 encoding but not in Latin-1:\\
+ ligature \BC{ff}\BC{fi}\BC{fl}\BC{ffi}\BC{ffl} \B{\OE}{\oe} \B{\IJ}{\ij} \B{\NG}{\ng}\\
+ stroke \B{\L}{\l} \B{-}{\dj}\\
+ acute \B{\'C}{\'c} \B{\'L}{\'l} \B{\'N}{\'n} \B{\'R}{\'r} \B{\'S}{\'s} \B{\'Z}{\'z}\\
+ caron \B{\v{C}}{\v{c}} \B{\v{D}}{\v{d}} \B{\v{E}}{\v{e}} \B{\v{L}}{\v{l}} \B{\v{N}}{\v{n}}
+   \B{\v{R}}{\v{r}} \B{\v{S}}{\v{s}} \B{\v{T}}{\v{t}} \B{\v{Z}}{\v{z}}\\
+ breve \B{\u{A}}{\u{a}} \B{\u{G}}{\u{g}}\\
+ ogonek \B{\k{A}}{\k{a}} \B{\k{E}}{\k{e}}\\
+ double acute \B{\H{O}}{\H{o}} \B{\H{U}}{\H{u}}\\
+ cedilla \B{\c{S}}{\c{s}} \B{\c{T}}{\c{t}}\\
+ diaeresis \B{\"Y}{-}\\
+ ring above \B{\r{U}}{\r{u}}\\
+ dot \B{\.Z}{\.z} \B{\.I}{-}
+}
+
+\section{T2A}
+\subsection{larm}
+{
+ \fontencoding{T2A}\selectfont
+ in Latin-1:\\
+ ligature \B{\AE}{\ae}\\
+ stroke \B{\O}{\o}\\
+ grave \B{\`A}{\`a} \B{\`E}{\`e} \B{\`I}{\`i} \B{\`O}{\`o} \B{\`U}{\`u}\\
+ acute \B{\'A}{\'a} \B{\'E}{\'e} \B{\'I}{\'i} \B{\'O}{\'o} \B{\'U}{\'u} \B{\'Y}{\'y}\\
+ circumflex \B{\^A}{\^a} \B{\^E}{\^e} \B{\^I}{\^i} \B{\^O}{\^o} \B{\^U}{\^u}\\
+ tilde \B{\~A}{\~a} \B{\~O}{\~o}\\
+ diaeresis \B{\"A}{\"a} \B{\"E}{\"e} \B{\"I}{\"i} \B{\"O}{\"o} \B{\"U}{\"u} \B{-}{\"y}\\
+ ring above \B\AA\aa\\
+ cedilla \B{\c{C}}{\c{c}}\\
+ tilde \B{\~N}{\~n}
+
+ in T1 encoding but not in Latin-1:\\
+ ligature \BC{ff}\BC{fi}\BC{fl}\BC{ffi}\BC{ffl} \B{\OE}{\oe} \B{\IJ}{\ij}\\% \B{\NG}{\ng}\\
+ stroke \B{\L}{\l}\\
+ acute \B{\'C}{\'c} \B{\'L}{\'l} \B{\'N}{\'n} \B{\'R}{\'r} \B{\'S}{\'s} \B{\'Z}{\'z}\\
+ caron \B{\v{C}}{\v{c}} \B{\v{D}}{\v{d}} \B{\v{E}}{\v{e}} \B{\v{L}}{\v{l}} \B{\v{N}}{\v{n}}
+   \B{\v{R}}{\v{r}} \B{\v{S}}{\v{s}} \B{\v{T}}{\v{t}} \B{\v{Z}}{\v{z}}\\
+ breve \B{\u{A}}{\u{a}} \B{\u{G}}{\u{g}}\\
+ ogonek \B{\k{A}}{\k{a}} \B{\k{E}}{\k{e}}\\
+ double acute \B{\H{O}}{\H{o}} \B{\H{U}}{\H{u}}\\
+ cedilla \B{\c{S}}{\c{s}} \B{\c{T}}{\c{t}}\\
+ diaeresis \B{\"Y}{-}\\
+ ring above \B{\r{U}}{\r{u}}\\
+ dot \B{\.Z}{\.z} \B{\.I}{-}
+}
+\subsection{latt}
+{
+ \fontencoding{T2A}\selectfont\ttfamily
+ in Latin-1:\\
+ ligature \B{\AE}{\ae}\\
+ stroke \B{\O}{\o}\\
+ grave \B{\`A}{\`a} \B{\`E}{\`e} \B{\`I}{\`i} \B{\`O}{\`o} \B{\`U}{\`u}\\
+ acute \B{\'A}{\'a} \B{\'E}{\'e} \B{\'I}{\'i} \B{\'O}{\'o} \B{\'U}{\'u} \B{\'Y}{\'y}\\
+ circumflex \B{\^A}{\^a} \B{\^E}{\^e} \B{\^I}{\^i} \B{\^O}{\^o} \B{\^U}{\^u}\\
+ tilde \B{\~A}{\~a} \B{\~O}{\~o}\\
+ diaeresis \B{\"A}{\"a} \B{\"E}{\"e} \B{\"I}{\"i} \B{\"O}{\"o} \B{\"U}{\"u} \B{-}{\"y}\\
+ ring above \B\AA\aa\\
+ cedilla \B{\c{C}}{\c{c}}\\
+ tilde \B{\~N}{\~n}
+
+ in T1 encoding but not in Latin-1:\\
+ ligature \BC{ff}\BC{fi}\BC{fl}\BC{ffi}\BC{ffl} \B{\OE}{\oe} \B{\IJ}{\ij}\\% \B{\NG}{\ng}\\
+% stroke \B{\L}{\l}\\
+ acute \B{\'C}{\'c} \B{\'L}{\'l} \B{\'N}{\'n} \B{\'R}{\'r} \B{\'S}{\'s} \B{\'Z}{\'z}\\
+ caron \B{\v{C}}{\v{c}} \B{\v{D}}{\v{d}} \B{\v{E}}{\v{e}} \B{\v{L}}{\v{l}} \B{\v{N}}{\v{n}}
+   \B{\v{R}}{\v{r}} \B{\v{S}}{\v{s}} \B{\v{T}}{\v{t}} \B{\v{Z}}{\v{z}}\\
+ breve \B{\u{A}}{\u{a}} \B{\u{G}}{\u{g}}\\
+ ogonek \B{\k{A}}{\k{a}} \B{\k{E}}{\k{e}}\\
+ double acute \B{\H{O}}{\H{o}} \B{\H{U}}{\H{u}}\\
+ cedilla \B{\c{S}}{\c{s}} \B{\c{T}}{\c{t}}\\
+ diaeresis \B{\"Y}{-}\\
+ ring above \B{\r{U}}{\r{u}}\\
+ dot \B{\.Z}{\.z} \B{\.I}{-}
+}
+
+\end{document}

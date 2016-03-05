@@ -18,7 +18,7 @@
  *
  */
 
-#define VERSION "5.3.4"
+#define VERSION "6.0.0"
 
 #define Progname "dvi2tty"
 #define Copyright "Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
@@ -123,6 +123,8 @@ extern bool   pageswitchon;            /* user-set pages to print(dvistuff.c)*/
 extern bool   sequenceon;              /* not TeX pagenrs (dvistuff.c)       */
 extern bool   scascii;                 /* Scand. nat. chars (dvistuff.c)     */
 extern bool   latin1;                  /* latin1 chars (dvistuff.c)          */
+extern bool   utf8;                    /* print by utf8 encoding (dvistuff.c) */
+extern bool   noligaturefi;            /* do not use ligature for ff,fi,fl,ffi,ffl (dvistuff.c) */
 extern bool   accent;                  /* Output accent stuff(dvistuff.c)    */
 extern bool   ttfont;                  /* tt font assumed   (dvistuff.c)     */
 extern bool   jautodetect;             /* Autodetect NTT jTeX, ASCII pTeX and upTeX (dvistuff.c) */
@@ -132,7 +134,8 @@ extern bool   uptex;                   /* upTeX font support (dvistuff.c)    */
 extern bool   japan;                   /* japanized TeX font support (dvistuff.c) */
 extern bool   noffd;                   /* output ^L or formfeed (dvistuff.c) */
 extern bool   printfont;               /* include font switches (dvistuff.c) */
-extern bool   allchar;                 /* output all characters (dvistuff.c  */
+extern bool   compose;                 /* try to compose a combining character sequence (dvistuff.c) */
+extern bool   allchar;                 /* output all characters (dvistuff.c) */
 
 extern printlisttype *currentpage;     /* current page to print (dvi2tty.c)  */
 extern printlisttype *firstpage;       /* first page selected (dvi2tty.c)    */

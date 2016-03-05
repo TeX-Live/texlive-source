@@ -1,3 +1,19 @@
+2016-03-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	dvi2tty-6.0.0.
+	Support T1,TS1,OT2,T2A,T2B,T2C,X2 encodings.
+	Add utf8 output for the latin, cyrillic encodings and
+	OML,OMS encodings.
+	Add option '-C' not to compose a combining character sequence.
+	* dvi2tty.c, dvi2tty.h: Add new option '-C', '-Eu1' and inner flags.
+	* tex2ucs.h (new), dvistuff.c: Add utf8 support and new encodings.
+	* test/table.tex, table.dvi, dvi2tty.test: Add a new test.
+	* table{,c,s,u,uC,Eu,Eu1,EuC,Eua}.tty,
+	  testEu.tty, ligtest{u,Eu}.tty (new);
+	  test{,s,u}.tty, ligtest.tty (update): Expected output.
+	* Makefile{,.am,.in}: Add the new test and the new header file.
+	* configure{,.ac}: Update version number.
+
 2016-02-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

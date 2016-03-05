@@ -58,10 +58,10 @@
     /*------------------ end of customization constants ---------------------*/
 
 #if defined(MSDOS) || defined(VMS) || defined(AMIGA)
-#define OPTSET      "haJweEpPousltvbcANU" /* legal options                   */
+#define OPTSET      "haJweEpPousltvbcANUC" /* legal options                  */
 #define OPTWARG     "weEpPovb"  /* options with argument                     */
 #else
-#define OPTSET      "haJweEpPousqlfFtvbcANU" /* legal options                */
+#define OPTSET      "haJweEpPousqlfFtvbcANUC" /* legal options               */
 #define OPTWARG     "weEpPoFvb"     /* options with argument                 */
 #endif
 
@@ -79,8 +79,9 @@
 #define onepp  8                /* only one page list allowed        */
 #define noarg  9                /* argument expected                 */
 #define confl  10               /* -J, -N, -A, and -U conflict       */
+#define incone 11               /* inconsistent output encoding      */
 #if defined(THINK_C)
-#define nored  11               /* if no input file, redirect stdin  */
+#define nored 100               /* if no input file, redirect stdin  */
 #endif
 
 
@@ -88,7 +89,7 @@
  * Variable definitions
  */
 
-const char *dvi2tty = "@(#) dvi2tty.c " VERSION " 20101030 M.J.E. Mol (c) 1989-2010";
+const char *dvi2tty = "@(#) dvi2tty.c " VERSION " 20160305 M.J.E. Mol (c) 1989-2010, and contributors (c) -2016";
 
 
 printlisttype * currentpage;    /* current page to print                     */
@@ -267,10 +268,13 @@ void getargs(void)
     noffd        = FALSE;       /* print formfeed between pages              */
     scascii      = DEFSCAND;    /* scandinavian, compile time option         */
     latin1       = DEFLATIN1;   /* latin1 support, compile time option       */
+    utf8         = FALSE;       /* print by utf encoding                     */
+    noligaturefi = FALSE;       /* do not use ligature for ff,fi,fl,ffi,ffl  */
     ttywidth     = 80;          /* default terminal width                    */
     espace       = 0;           /* to fake ttywith calcs                     */
     DVIfound     = FALSE;
     printfont    = FALSE;       /* do not print font switches                */
+    compose      = TRUE;        /* try to compose a combining character sequence */
     allchar      = FALSE;       /* do not put out all characters             */
 
 #if !defined(MSDOS) && !defined(VMS) && !defined(THINK_C) && !defined(AMIGA)
@@ -418,7 +422,12 @@ void setoption(const char *optarg)
                        case 'j' :
                            set_enc_string ("jis", NULL);  break;
                        case 'u' :
-                           set_enc_string ("utf8", NULL); break;
+                           utf8 = TRUE;
+                           set_enc_string ("utf8", NULL);
+                           if (optarg[1]=='1') {
+                               noligaturefi = TRUE; j++;
+                           }
+                           break;
                        default :
                            usage(noarg);
                 }
@@ -429,6 +438,7 @@ void setoption(const char *optarg)
 	    case 's' : scascii ^= 1; break;
 	    case 'u' : latin1  ^= 1; break;
 	    case 'a' : accent  = FALSE; break;
+	    case 'C' : compose = FALSE; break;
 	    case 'c' : allchar = TRUE; break;
             case 'P' : sequenceon = TRUE;     /* fall through */
             case 'p' : if (pageswitchon)
@@ -480,6 +490,11 @@ void setoption(const char *optarg)
         (nttj && (asciip || uptex)) ||
         (jautodetect && (nttj || asciip || uptex))) {
         usage(confl);
+    }
+    if (((jautodetect || asciip || uptex || nttj || utf8)
+	  && (scascii || latin1)) ||
+        (scascii && latin1)) {
+        usage(incone);
     }
 
     return;
@@ -787,6 +802,8 @@ void usage(int uerr)
                             break;
             case   confl  : fprintf(stderr, "-J, -N, -A, and -U are mutually exclusive");
                             break;
+            case   incone : fprintf(stderr, "output encoding is not consistent");
+                            break;
 #if defined(THINK_C)
             case   nored  : fprintf(stderr, "\nIf no input file is given in\
  command string,\n\Standard Input must be redirected with the radio button.");
@@ -851,7 +868,10 @@ void usage(int uerr)
     fprintf(stderr,
             " -U       Support upTeX dvi.\n");
     fprintf(stderr,
-            " -Eenc    Output Japanese encoding. e:EUC s:SJIS j:JIS, u:UTF8.\n");
+            " -Eenc    Output multibyte encoding. u:UTF8, e:EUC-JP s:Shift_JIS j:JIS\n"
+            "                             u1:UTF8 (do not use ligature for ff,fi,fl,ffi,ffl).\n");
+    fprintf(stderr,
+            " -C       Don't try to compose a combining character sequence.\n");
     fprintf(stderr,
             " -c       Override -a -u -s and print all characters 0-255.\n");
     fprintf(stderr,
