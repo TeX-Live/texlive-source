@@ -1,4 +1,10 @@
 /******************************************************************************
+ * Takuji Tanaka: 20160305 (ttk@t-lab.opal.ne.jp)
+ *               Version 6.0.0
+ *               Supported T1,TS1,OT2,T2A,T2B,T2C,X2 encodings.
+ *               Added utf8 output for the latin, cyrillic encodings and
+ *               OML,OMS encodings.
+ *               Added option -C not to compose a combining character sequence.
  * Takuji Tanaka: 20111119 (KXD02663@nifty.ne.jp)
  *               Used ptexenc library for Japanese TeX.
  *               Enabled UTF8 output for Japanese TeX with option -Eu.

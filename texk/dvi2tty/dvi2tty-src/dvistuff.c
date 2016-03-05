@@ -41,7 +41,7 @@
 #endif
 
 #include "commands.h"
-
+#include "tex2ucs.h"
 
 
 /*
@@ -74,6 +74,10 @@
 #define DEL             127    /* delete                                   */
 
 #define LASTCHAR        127    /* max dvi character, above are commands    */
+#define LASTCHAR8B      255
+
+#define IS_UNICODE  0x400000    /* flag for unicode                        */
+#define MAX_UNICODE 0x10FFFF    /* max unicode                             */
 
 #define IMIN(a, b)      (a<b ? a : b)
 #define IMAX(a, b)      (a>b ? a : b)
@@ -108,28 +112,38 @@ typedef struct lineptr {        /* the lines of text to be output to outfile */
     int             charactercount;     /* pos of last char on line          */
     struct lineptr *prev;               /* preceding line                    */
     struct lineptr *next;               /* succeeding line                   */
-    unsigned char   text[LINELEN+1];    /* leftmargin...rightmargin          */
+    long            text[LINELEN+1];    /* leftmargin...rightmargin          */
 } linetype;
 
 typedef struct _font {
     long    num;
     struct _font * next;
     char  * name;
-    char    flags; /* to store font types, to get rid of nttj/asciip/uptex/ttfont/symbolfon/mifont vars */
+    unsigned char  flags; /* to store font encoding types */
     int     fontnum; /* helper for japanese fonts */
+    bool    is8bit;  /* 8bit fonts */
 } font;
 
-#define SYMFONT   0x01
-#define TTFONT    0x02
-#define MIFONT    0x04
-#define JAPFONT   0x08
-#define JASCFONT  0x10
+#define TTFONT    0x01
+#define SYMFONT   0x02
+#define MIFONT    0x03
+#define T1FONT    0x04
+#define TS1FONT   0x05
+#define OT2FONT   0x10
+#define T2AFONT   0x11
+#define T2BFONT   0x12
+#define T2CFONT   0x13
+#define X2FONT    0x14
+#define JPFONT    0x80
+
 
 
 bool        pageswitchon;       /* true if user-set pages to print           */
 bool        sequenceon;         /* false if pagesw-nrs refers to TeX-nrs     */
 bool        scascii;            /* if true make Scand. nat. chars right      */
 bool        latin1;             /* if true make latin1 chars right           */
+bool        utf8;               /* if true print by utf8 encoding            */
+bool        noligaturefi;       /* if true do not use ligature for ff,fi,fl,ffi,ffl  */
 bool        accent;             /* if true output accents etc: \'{e} etc.    */
 bool        ttfont = FALSE;     /* if true we assumed ttfonts, not cmr       */
 bool        symbolfont = FALSE; /* true if font is a symbol font             */
@@ -140,9 +154,11 @@ bool        japan = FALSE;      /* switch to NTT/ASCII/.. japanese fonts ... */
 bool        jautodetect = FALSE; /* switch if do auto detection of Japanese TeX */
 bool        jdetect = FALSE;     /* switch if Japanese TeX detection is done */
 bool        mifont = FALSE;      /* ASCII japanese font ??? */
+bool        is8bit = FALSE;     /* true if 8bit encoding font                */
 bool        noffd;              /* if true output ^L instead of formfeed     */
 const char *delim;              /* -bdelim for font switch printing          */
 bool        printfont;          /* true if user wants font switches printed  */
+bool        compose;            /* if true try to compose a combining character sequence */
 bool        allchar;            /* true if user sets all characters          */
                                 /* overrides sscasci, accent                 */
 
@@ -199,14 +215,20 @@ unsigned long   num             (int);
 long            snum            (int);
 void            dochar          (unsigned char);
 void            symchar         (unsigned char);
-void            normchar        (unsigned char);
-void            outchar         (unsigned char);
+void            michar          (unsigned char);
+void            normchar        (char, unsigned char);
+void            t1char          (unsigned char);
+void            ts1char         (unsigned char);
+void            ot2char         (unsigned char);
+void            t2char          (char, unsigned char);
+void            outchar         (long);
 void            putcharacter    (long);
 void            setchar         (long);
 void            fontdef         (int);
 void            setfont         (long);
 void            jischar         (unsigned long);
 int             compute_jis     (int, unsigned int, unsigned int *, unsigned int *);
+void            dounichar       (long);
 void            dokanji         (long);
 int             getjsubfont     (char *);
 
@@ -229,14 +251,20 @@ unsigned long   num             (int size);
 long            snum            (int size);
 void            dochar          (unsigned char ch);
 void            symchar         (unsigned char ch);
-void            normchar        (unsigned char ch);
-void            outchar         (unsigned char ch);
+void            michar          (unsigned char ch);
+void            normchar        (char flag, unsigned char ch);
+void            t1char          (unsigned char ch);
+void            ts1char         (unsigned char ch);
+void            ot2char         (unsigned char ch);
+void            t2char          (char flag, unsigned char ch);
+void            outchar         (long ch);
 void            putcharacter    (long charnr);
 void            setchar         (long charnr);
 void            fontdef         (int x);
 void            setfont         (long fntnum);
 void            jischar         (unsigned long ch);
 void            compute_jis     (int f, unsigned int c, unsigned int * ku, unsigned int * ten);
+void            dounichar       (long ch);
 void            dokanji         (long ch);
 int             getjsubfont     (char * s);
 #if defined(VMS)
@@ -609,7 +637,7 @@ void skippage(void)
 void printpage(void)
 {
     register int  i, j, k;
-    register unsigned char ch;
+    register long ch, mbch;
     unsigned char buff[4];
 
     if (sptr != 0)
@@ -629,7 +657,7 @@ void printpage(void)
                    i++, j++) {
                 ch = currentline->text[i - leftmargin];
 
-		if (japan) {
+		if (japan && !(ch & IS_UNICODE)) {
 		  if (ch > 127) {
 		    for (k = 0; k < 4; k++) {
 		      if (i - leftmargin + k < LINELEN+1)
@@ -650,7 +678,14 @@ void printpage(void)
 		}
 
                 if (ch >= SPACE || allchar) {
-		  if (japan) {
+		  if (utf8 && (ch & IS_UNICODE)) {
+		    mbch = UCStoUTF8(ch & MAX_UNICODE);
+		    if (BYTE1(mbch) != 0) putc((unsigned char)BYTE1(mbch), output);
+		    if (BYTE2(mbch) != 0) putc((unsigned char)BYTE2(mbch), output);
+		    if (BYTE3(mbch) != 0) putc((unsigned char)BYTE3(mbch), output);
+		    /* always */          putc((unsigned char)BYTE4(mbch), output);
+		  }
+		  else if (japan) {
 		    for (k = 0; k < kanji1; k++) {
 		      putc2(ch, output);
 		      i++; j++;
@@ -961,22 +996,53 @@ long snum(int size)
 
 
 /*
+ * DOUNICHAR -- Process a Unicode character
+ */
+
+void dounichar(long ch)
+{
+    unsigned char c[4] = {}, *cc;
+
+    if (noligaturefi && 0xFB00<=ch && ch<=0xFB04) {
+        switch (ch) {
+            case 0xFB00: strcpy(c,"ff");  break;
+            case 0xFB01: strcpy(c,"fi");  break;
+            case 0xFB02: strcpy(c,"fl");  break;
+            case 0xFB03: strcpy(c,"ffi"); break;
+            case 0xFB04: strcpy(c,"ffl"); break;
+        }
+        cc=c;
+        while (*cc) { outchar(*cc); cc++; }
+        return;
+    }
+    if (ch>0x7F)
+        outchar((long)(ch | IS_UNICODE));
+    else {
+        outchar((long)ch);
+    }
+
+    return;
+
+} /* dounichar */
+
+
+/*
  * DOKANJI -- Process a kanji character opcode.
  */
  
 void dokanji(long ch)
 {
     long i;
-
     i = toBUFF(fromDVI(ch));
+
     kanji1 = 3;
-    if (BYTE1(i) != 0) outchar((unsigned char)BYTE1(i));
+    if (BYTE1(i) != 0) outchar((long)BYTE1(i));
     kanji1 = 2;
-    if (BYTE2(i) != 0) outchar((unsigned char)BYTE2(i));
+    if (BYTE2(i) != 0) outchar((long)BYTE2(i));
     kanji1 = 1;
-    /* always */       outchar((unsigned char)BYTE3(i));
+    if (BYTE3(i) != 0) outchar((long)BYTE3(i));
     kanji1 = 0;
-    /* always */       outchar((unsigned char)BYTE4(i));
+    /* always */       outchar((long)BYTE4(i));
 
     return;
 
@@ -990,13 +1056,26 @@ void dokanji(long ch)
 
 void dochar(unsigned char ch)
 {
+    char flag;
+    flag = fnt->flags;
 
     if (nttj && fnt->fontnum)
         jischar((long) ch);
-    else if (symbolfont == TRUE)
+    else if (symbolfont)
         symchar(ch);
+    else if (mifont)
+        michar(ch);
+    else if (flag == T1FONT)
+        t1char(ch);
+    else if (flag == TS1FONT)
+        ts1char(ch);
+    else if (flag == OT2FONT)
+        ot2char(ch);
+    else if (flag == T2AFONT || flag == T2BFONT ||
+             flag == T2CFONT || flag == X2FONT)
+        t2char(flag, ch);
     else
-        normchar(ch);
+        normchar(flag, ch);
 
     return;
 
@@ -1010,27 +1089,62 @@ void dochar(unsigned char ch)
 
 void symchar(unsigned char ch)
 {
+    unsigned char c[4] = {}, *cc;
+    long ucs;
 
-    switch (ch) {       /* can do a lot more on MSDOS/latin1/unicode machines ... */
-       case   0: ch = '-'; break;
-       case   1: ch = '.'; break;
-       case   2: ch = 'x'; break;
-       case   3: ch = '*'; break;
-       case  13: ch = 'O'; break;
-       case  14: ch = 'O'; break;
-       case  15: ch = 'o'; break;
-       case  24: ch = '~'; break;
-       case  32: ch = nttj ? '<' : 32; break; /* really only for japan? */
-       case  33: ch = nttj ? '>' : 33; break; /* really only for japan? */
-       case 102: ch = '{'; break;
-       case 103: ch = '}'; break;
-       case 104: ch = '<'; break;
-       case 105: ch = '>'; break;
-       case 106: ch = '|'; break;
-       case 110: ch = '\\'; break;
+    ucs = oms_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
     }
 
-    outchar(ch);
+    switch (ch) {       /* can do a lot more on MSDOS/latin1/unicode machines ... */
+       case   0: c[0] = '-'; break;
+       case   1: c[0] = '.'; break;
+       case   2: c[0] = 'x'; break;
+       case   3: c[0] = '*'; break;
+       case   4: c[0] = '/'; break;
+       case   6: c[0] = '+'; c[1] = '-'; break;
+       case   7: c[0] = '-'; c[1] = '+'; break;
+       case  13: c[0] = 'O'; break;
+       case  14: c[0] = 'O'; break;
+       case  15: c[0] = 'o'; break;
+       case  24: c[0] = '~'; break;
+       case  28: c[0] = '<'; c[1] = '<'; break;
+       case  29: c[0] = '>'; c[1] = '>'; break;
+       case  32: c[0] = '<'; c[1] = '-'; break;
+       case  33: c[0] = '-'; c[1] = '>'; break;
+       case  34: c[0] = '^'; break;
+       case  35: c[0] = 'v'; break;
+       case  36: c[0] = '<'; c[1] = '-'; c[2] = '>'; break;
+       case  40: c[0] = '<'; c[1] = '='; break;
+       case  41: c[0] = '='; c[1] = '>'; break;
+       case  42: c[0] = '^'; break;
+       case  43: c[0] = 'v'; break;
+       case  44: c[0] = '<'; c[1] = '='; c[2] = '>'; break;
+       case  60: c[0] = 'R'; c[1] = 'e'; break;
+       case  61: c[0] = 'I'; c[1] = 'm'; break;
+       case 102: c[0] = '{'; break;
+       case 103: c[0] = '}'; break;
+       case 104: c[0] = '<'; break;
+       case 105: c[0] = '>'; break;
+       case 106: c[0] = '|'; break;
+       case 107: c[0] = '|'; c[1] = '|'; break;
+       case 110: c[0] = '\\'; break;
+       case 120: c[0] = 'S'; break;
+       case 121: c[0] = '*'; break;
+       case 122: c[0] = '*'; c[1] = '*'; break;
+       case 123: c[0] = 'P'; break;
+
+       default: c[0] = '#';
+    }
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
 
     return;
 
@@ -1039,136 +1153,824 @@ void symchar(unsigned char ch)
 
 
 /*
+ * MICHAR -- Process a character opcode for OML font.
+ */
+
+void michar(unsigned char ch)
+{
+    unsigned char c[4] = {}, *cc;
+    long ucs;
+
+    if (allchar) {
+        outchar(ch);
+        return;
+    }
+    ucs = oml_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
+    }
+
+    switch (ch) {
+        case 0x3a:  c[0] = '.'; break;              /* .               */
+        case 0x3b:  c[0] = ','; break;              /* ,               */
+        case 0x3d:  c[0] = '/'; break;              /* /               */
+        case 0x3e:  c[0] = '*'; break;              /* \star           */
+        case 0x40:  c[0] = 'd'; break;              /* \partial        */
+        case 0x60:  c[0] = 'l'; break;              /* \ell            */
+        case 0x7b:  c[0] = 'i'; break;              /* dotless i       */
+        case 0x7c:  c[0] = 'j'; break;              /* dotless j       */
+        case 0x7d:  c[0] = 'P'; break;              /* \wp             */
+
+        default  :  c[0] = '#';
+    }
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
+
+    return;
+
+} /* michar */
+
+
+/*
  * NORMCHAR -- Process a character opcode for a normal font.
  */
 
-void normchar(unsigned char ch)
+void normchar(char flag, unsigned char ch)
 {
+    unsigned char c[4] = {}, *cc;
+    const unsigned short *tex_to_ucs;
+    long ucs;
+
+    if (allchar) {
+        outchar(ch);
+        return;
+    }
+    if (!accent) {
+        switch (ch) {
+            case 18  :  /* grave        from \` */
+            case 19  :  /* acute        from \' */
+            case 20  :  /* caron        from \v */
+            case 21  :  /* breve        from \u */
+            case 22  :  /* macron       from \= */
+            case 23  :  /* ring above   from \r */
+            case 24  :  /* cedilla      from \c */
+            case 32  :  /* stroke    i.e. \L,\l */
+            case 94  :  /* circumflex   from \^ */
+            case 126 :  /* tilde        from \~ */
+            case 127 :  /* diaeresis    from \" */
+                return;
+            case 125 :  /* double acute from \H */
+            case 95  :  /* dot          from \. */
+                if (!ttfont) return;
+        }
+    }
+    switch (flag) {
+        case TTFONT : tex_to_ucs=tt_to_ucs;  break;
+        default :     tex_to_ucs=ot1_to_ucs;
+    }
+    ucs = tex_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
+    }
 
     switch (ch) {
         case 11  :  if (ttfont)
-                        ch = '^';                   /* up symbol       */
-                    else if (!allchar) {
-                        outchar('f'); ch = 'f';     /* ligature        */
+                        c[0] = '^';                 /* up symbol       */
+                    else {
+                        c[0] = 'f'; c[1] = 'f';     /* ligature        */
                     }
                     break;
         case 12  :  if (ttfont)
-                        ch = 'v';                   /* low symbol       */
-                    else if (!allchar) {
-                        outchar('f'); ch = 'i';     /* ligature        */
+                        c[0] = 'v';                 /* low symbol       */
+                    else {
+                        c[0] = 'f'; c[1] = 'i';     /* ligature        */
                     }
                     break;
         case 13  :  if (ttfont)
-                        ch = '`';
-                    else if (!allchar) {
-                        outchar('f'); ch = 'l';     /* ligature        */
+                        c[0] = '`';
+                    else {
+                        c[0] = 'f'; c[1] = 'l';     /* ligature        */
                     }
                     break;
         case 14  :  if (ttfont)
-                        ch = 'i';                   /* spanish !        */
-                    else if (!allchar) {
-                        outchar('f'); outchar('f');
-                                  ch = 'i';         /* ligature        */
+                        c[0] = 'i';                 /* spanish !        */
+                    else {
+                        c[0] = 'f'; c[1] = 'f';
+                                  c[2] = 'i';       /* ligature        */
                     }
                     break;
         case 15  :  if (ttfont)
-                        ch = '.';                   /* spanish ?        */
-                    else if (!allchar) {
-                        outchar('f'); outchar('f');
-                                  ch = 'l';         /* ligature        */
+                        c[0] = '.';                 /* spanish ?        */
+                    else {
+                        c[0] = 'f'; c[1] = 'f';
+                                  c[2] = 'l';       /* ligature        */
                     }
                     break;
-        case 16  :  if (!allchar) ch = 'i'; break;
-        case 17  :  if (!allchar) ch = 'j'; break;
-        case 25  :  if (!allchar) {
-                        if (latin1) {
-                            ch = 0xdf;
-                        }
-                        else {
-                            outchar('s');
-                            ch = 's';
-                        }
+        case 16  :  c[0] = 'i'; break;
+        case 17  :  c[0] = 'j'; break;
+        case 25  :  if (latin1)
+                        c[0] = 0xdf;
+                    else {
+                        c[0] = 's'; c[1] = 's';
                     }
                     break;  /* German double s */
-        case 26  :  if (!allchar) {
-                        if (latin1) {
-                            ch = 0xe6;
-                        }
-                        else {
-                            outchar('a');
-                            ch = 'e';
-                        }
+        case 26  :  if (latin1)
+                        c[0] = 0xe6;
+                    else {
+                        c[0] = 'a'; c[1] = 'e';
                     }
                     break;  /* Dane/Norw ae    */
-        case 27  :  if (!allchar) {
-                        outchar('o');
-                        ch = 'e';
-                    }
+        case 27  :  c[0] = 'o'; c[1] = 'e';
                     break;  /* Dane/Norw oe    */
-        case 28  :  if (!allchar) {
-                        if (scascii)
-                            ch = '|';
-                        else if (latin1)
-                            ch = 0xf8;
-                        else
-                            ch = 'o';
-                    }
+        case 28  :  if (scascii)
+                        c[0] = '|';
+                    else if (latin1)
+                        c[0] = 0xf8;
+                    else
+                        c[0] = 'o';
                     break; /* Dane/Norw /o    */
-        case 29  :  if (!allchar) {
-                        if (latin1) {
-                            ch = 0xc6;
-                        }
-                        else {
-                            outchar('A');
-                            ch = 'E';
-                        }
+        case 29  :  if (latin1)
+                        c[0] = 0xc6;
+                    else {
+                        c[0] = 'A'; c[1] = 'E';
                     }
                     break;  /* Dane/Norw AE    */
-        case 30  :  if (!allchar) {
-                        outchar('O');
-                        ch = 'E';
-                    }
+        case 30  :  c[0] = 'O'; c[1] = 'E';
                     break;  /* Dane/Norw OE    */
-        case 31  :  if (!allchar) {
-                        if (scascii)
-                            ch = '\\';
-                        else if (latin1)
-                            ch = 0xd8;
-                        else
-                            ch = 'O';
-                    }
+        case 31  :  if (scascii)
+                        c[0] = '\\';
+                    else if (latin1)
+                        c[0] = 0xd8;
+                    else
+                        c[0] = 'O';
                     break; /* Dane/Norw /O    */
-        case 32  :  ch = allchar || ttfont ? ch : '_'; break;
-                                                        /* underlined blank */
-        case 58  :  ch = allchar || !mifont ? ch : '.'; break; /* if japan */
-        case 59  :  ch = allchar || !mifont ? ch : ','; break; /* if japan */
-        case 92  :  ch = allchar || ttfont ? ch : '"'; break;  /* \ from `` */
-        case 123 :  ch = allchar || ttfont ? ch : '-'; break;  /* { from -- */
-        case 124 :  ch = allchar || ttfont ? ch : '_'; break;  /* | from --- */
-        case 125 :  ch = allchar || ttfont ? ch : '"'; break;  /* } from \H */
-        case 126 :  ch = allchar || ttfont ? ch : '"'; break;  /* ~ from \~ */
-        case 127 :  if (!allchar) ch = '"'; break;             /* DEL from \" */
-       
-        /*
-         * Should SPACE be useed for non-accents ???
-         * This seems to work ...
-         */
-        case 18  :  ch = !allchar && accent ? '`' : ch; break;  /* from \` */
-        case 19  :  ch = !allchar && accent ? 0x27 : ch; break; /* from \' */
-        case 20  :  ch = !allchar && accent ? '~' : ch; break;  /* from \v */
-        case 21  :  ch = !allchar && accent ? '~' : ch; break;  /* from \u */
-        case 22  :  ch = !allchar && accent ? '~' : ch; break;  /* from \= */
-        case 24  :  ch = !allchar && accent ? ',' : ch; break;  /* from \c */
-        case 94  :  ch = (!allchar && accent && !ttfont) ? '^' : ch; break;
-                                                                /* ^ from \^ */
-        case 95  :  ch = (!allchar && accent && !ttfont) ? '`' : ch; break;
-                                                                /* _ from \. */
+        case 60  :  if (ttfont)
+                        c[0] = ch;   /* '>' */
+                    else if (latin1)
+                        c[0] = 0xa1;
+                    else
+                        c[0] = '!';
+                    break; /* inverted !    */
+        case 62  :  if (ttfont)
+                        c[0] = ch;   /* '<' */
+                    else if (latin1)
+                        c[0] = 0xbf;
+                    else
+                        c[0] = '?';
+                    break; /* inverted ?    */
+        case 32  :  c[0] = ttfont ? ch : '_'; break;  /* underlined blank */
+        case 92  :  c[0] = ttfont ? ch : '"'; break;  /* \ from `` */
+        case 123 :  if (ttfont)
+                        c[0] = ch;                    /* {         */
+                    else {
+                        c[0] = '-'; c[1] = '-';       /* --        */
+                    }
+                    break;
+        case 124 :  if (ttfont)
+                        c[0] = ch;                    /* |         */
+                    else {
+                        c[0] = '-'; c[1] = '-';       /* ---       */
+                        c[2] = '-';
+                    }
+                    break;
+        case 125 :  if (ttfont)
+                        c[0] = ch;                    /* }         */
+                    else
+                        c[0] = '"';        /* double acute from \H */
+                    break;
+        case 34  :                                    /* " */
+        case 39  :                                    /* ' */
+        case 96  :  c[0] = ch; break;                 /* ` */
+
+	/* diacritical marks */
+        case 18  :  c[0] = '`'  ; break;   /* grave        from \` */
+        case 19  :  c[0] = latin1 ? 0xb4 : '\''; break;
+                                           /* acute        from \' */
+        case 20  :  c[0] = '~'  ; break;   /* caron        from \v */
+        case 21  :  c[0] = '~'  ; break;   /* breve        from \u */
+        case 22  :  c[0] = '~'  ; break;   /* macron       from \= */
+        case 23  :  c[0] = latin1 ? 0xb0 : '~'; break;
+                                           /* ring above   from \r */
+        case 24  :  c[0] = latin1 ? 0xb8 : ','; break;
+                                           /* cedilla      from \c */
+        case 94  :  c[0] = '^'  ; break;   /* circumflex   from \^ */
+        case 95  :  c[0] = !ttfont ? '.' : ch; break;
+                                           /* dot          from \. */
+        case 126 :  c[0] = '~'  ; break;   /* tilde        from \~ */
+        case 127 :  c[0] = '"'  ; break;   /* diaeresis    from \" */
+
+        default  :  c[0] = '#';
     }
-    outchar(ch); 
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
 
     return;
 
 } /* normchar */
+
+
+/*
+ * T1CHAR -- Process a character opcode for a T1 encoding font.
+ */
+
+void t1char(unsigned char ch)
+{
+    unsigned char c[4] = {}, *cc;
+    long ucs;
+
+    if (allchar) {
+        outchar(ch);
+        return;
+    }
+    if (!accent) {
+        switch (ch) {
+            case 0x00:  /* grave        from \` */
+            case 0x01:  /* acute        from \' */
+            case 0x02:  /* circumflex   from \^ */
+            case 0x03:  /* tilde        from \~ */
+            case 0x04:  /* diaeresis    from \" */
+            case 0x05:  /* double acute from \H */
+            case 0x06:  /* ring above   from \r */
+            case 0x07:  /* caron        from \v */
+            case 0x08:  /* breve        from \u */
+            case 0x09:  /* macron       from \= */
+            case 0x0a:  /* dot          from \. */
+            case 0x0b:  /* cedilla      from \c */
+            case 0x0c:  /* ogonek       from \k */
+                return;
+        }
+    }
+    if (ch==0xdf) {
+        outchar('S'); outchar('S');                 /* SS              */
+        return;
+    }
+    ucs = t1_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
+    }
+
+    switch (ch) {
+        case 0x17:  return;                      /* \textcompwordmark  */
+        case 0x0d:                               /* \quotesinglbase    */
+        case 0x27:                               /* \textquoteright    */
+        case 0x60:  c[0] = '\''; break;          /* \textquoteleft     */
+        case 0x10:                               /* \textquotedblleft  */
+        case 0x11:                               /* \textquotedblright */
+        case 0x12:  c[0] = '"'; break;           /* \quotedblbase      */
+        case 0x0e:  c[0] = '<'; break;           /* \guilsinglleft     */
+        case 0x0f:  c[0] = '>'; break;           /* \guilsinglright    */
+        case 0x13:  c[0] = '<'; c[1] = '<';      /* \guillemotleft     */
+                    break;
+        case 0x14:  c[0] = '>'; c[1] = '>';      /* \guillemotright    */
+                    break;
+        case 0x15:  c[0] = '-'; c[1] = '-';      /* \textendash        */
+                    break;
+        case 0x16:  c[0] = '-'; c[1] = '-';      /* \textemdash        */
+                    c[2] = '-'; break;
+        case 0x20:  c[0] = '_'; break;           /* \textvisiblespace  */
+        case 0x7f:  c[0] = '-'; break;              /* -               */
+        case 0x19:  c[0] = 'i'; break;              /* dotless i       */
+        case 0x1a:  c[0] = 'j'; break;              /* dotless j       */
+        case 0x1b:  c[0] = 'f'; c[1] = 'f';         /* ligature        */
+                    break;
+        case 0x1c:  c[0] = 'f'; c[1] = 'i';         /* ligature        */
+                    break;
+        case 0x1d:  c[0] = 'f'; c[1] = 'l';         /* ligature        */
+                    break;
+        case 0x1e:  c[0] = 'f'; c[1] = 'f';
+                    c[2] = 'i';                     /* ligature        */
+                    break;
+        case 0x1f:  c[0] = 'f'; c[1] = 'f';
+                    c[2] = 'l';                     /* ligature        */
+                    break;
+        case 0xff:  c[0] = 's'; c[1] = 's';
+                    break;  /* German double s */
+        case 0xe6:  c[0] = 'a'; c[1] = 'e';
+                    break;  /* Dane/Norw ae    */
+        case 0xf7:  c[0] = 'o'; c[1] = 'e';
+                    break;  /* Dane/Norw oe    */
+        case 0xf8:  c[0] = '/'; c[1] = 'o';
+                    break;  /* Dane/Norw /o    */
+        case 0xc6:  c[0] = 'A'; c[1] = 'E';
+                    break;  /* Dane/Norw AE    */
+        case 0xd7:  c[0] = 'O'; c[1] = 'E';
+                    break;  /* Dane/Norw OE    */
+        case 0xd8:  c[0] = '/'; c[1] = 'O';
+                    break;  /* Dane/Norw /O    */
+        case 0x9c:  c[0] = 'I'; c[1] = 'J';
+                    break;  /* IJ              */
+        case 0xbc:  c[0] = 'i'; c[1] = 'j';
+                    break;  /* ij              */
+        case 0x8d:  c[0] = 'N'; c[1] = 'G';
+                    break;  /* ENG             */
+        case 0xad:  c[0] = 'n'; c[1] = 'g';
+                    break;  /* eng             */
+        case 0xde:  c[0] = 'T'; c[1] = 'H';
+                    break;  /* THORN           */
+        case 0xfe:  c[0] = 't'; c[1] = 'h';
+                    break;  /* thorn           */
+        case 0x80:  c[0] = '~';  c[1] ='A'; break;   /* uA */
+        case 0x81:  c[0] = ',';  c[1] ='A'; break;   /* ,A */
+        case 0x82:  c[0] = '\''; c[1] ='C'; break;   /* 'C */
+        case 0x83:  c[0] = '~';  c[1] ='C'; break;   /* vC */
+        case 0x84:  c[0] = '~';  c[1] ='D'; break;   /* vD */
+        case 0x85:  c[0] = '~';  c[1] ='E'; break;   /* vE */
+        case 0x86:  c[0] = ',';  c[1] ='E'; break;   /* ,E */
+        case 0x87:  c[0] = '~';  c[1] ='G'; break;   /* uG */
+        case 0x88:  c[0] = '\''; c[1] ='L'; break;   /* 'L */
+        case 0x89:  c[0] = '\''; c[1] ='L'; break;   /* 'L */
+        case 0x8a:  c[0] = '-';  c[1] ='L'; break;   /* -L */
+        case 0x8b:  c[0] = '\''; c[1] ='N'; break;   /* 'N */
+        case 0x8c:  c[0] = '~';  c[1] ='N'; break;   /* vN */
+        case 0x8e:  c[0] = '"';  c[1] ='O'; break;   /* "O */
+        case 0x8f:  c[0] = '\''; c[1] ='R'; break;   /* 'R */
+        case 0x90:  c[0] = '~';  c[1] ='R'; break;   /* vR */
+        case 0x91:  c[0] = '\''; c[1] ='S'; break;   /* 'S */
+        case 0x92:  c[0] = '~';  c[1] ='S'; break;   /* vS */
+        case 0x93:  c[0] = ',';  c[1] ='S'; break;   /* ,S */
+        case 0x94:  c[0] = '~';  c[1] ='T'; break;   /* vT */
+        case 0x95:  c[0] = ',';  c[1] ='T'; break;   /* ,T */
+        case 0x96:  c[0] = '"';  c[1] ='U'; break;   /* "U */
+        case 0x97:  c[0] = '\''; c[1] ='U'; break;   /* oU */
+        case 0x98:  c[0] = '"';  c[1] ='Y'; break;   /* "Y */
+        case 0x99:  c[0] = '\''; c[1] ='Z'; break;   /* 'Z */
+        case 0x9a:  c[0] = '~';  c[1] ='Z'; break;   /* vZ */
+        case 0x9b:  c[0] = '\''; c[1] ='Z'; break;   /* .Z */
+        case 0x9d:  c[0] = '\''; c[1] ='I'; break;   /* .I */
+        case 0x9e:  c[0] = '-';  c[1] ='d'; break;   /* -d */
+        case 0x9f:  c[0] = 'S';  break;   /* section sign */
+
+        case 0xa0:  c[0] = '~';  c[1] ='a'; break;   /* ua */
+        case 0xa1:  c[0] = ',';  c[1] ='a'; break;   /* ,a */
+        case 0xa2:  c[0] = '\''; c[1] ='c'; break;   /* 'c */
+        case 0xa3:  c[0] = '~';  c[1] ='c'; break;   /* vc */
+        case 0xa4:  c[0] = '\''; c[1] ='d'; break;   /* 'd */
+        case 0xa5:  c[0] = '~';  c[1] ='e'; break;   /* ve */
+        case 0xa6:  c[0] = ',';  c[1] ='e'; break;   /* ,e */
+        case 0xa7:  c[0] = '~';  c[1] ='g'; break;   /* ug */
+        case 0xa8:  c[0] = '\''; c[1] ='l'; break;   /* 'l */
+        case 0xa9:  c[0] = '\''; c[1] ='l'; break;   /* 'l */
+        case 0xaa:  c[0] = '-';  c[1] ='l'; break;   /* -l */
+        case 0xab:  c[0] = '\''; c[1] ='n'; break;   /* 'n */
+        case 0xac:  c[0] = '~';  c[1] ='n'; break;   /* vn */
+        case 0xae:  c[0] = '"';  c[1] ='o'; break;   /* "o */
+        case 0xaf:  c[0] = '\''; c[1] ='r'; break;   /* 'r */
+
+        case 0xb0:  c[0] = '~';  c[1] ='r'; break;   /* vr */
+        case 0xb1:  c[0] = '\''; c[1] ='s'; break;   /* 's */
+        case 0xb2:  c[0] = '~';  c[1] ='s'; break;   /* vs */
+        case 0xb3:  c[0] = ',';  c[1] ='s'; break;   /* ,s */
+        case 0xb4:  c[0] = '\''; c[1] ='t'; break;   /* 't */
+        case 0xb5:  c[0] = ',';  c[1] ='t'; break;   /* ,t */
+        case 0xb6:  c[0] = '"';  c[1] ='u'; break;   /* "u */
+        case 0xb7:  c[0] = '\''; c[1] ='u'; break;   /* ou */
+        case 0xb8:  c[0] = '"';  c[1] ='y'; break;   /* "y */
+        case 0xb9:  c[0] = '\''; c[1] ='z'; break;   /* 'z */
+        case 0xba:  c[0] = '~';  c[1] ='z'; break;   /* vz */
+        case 0xbb:  c[0] = '\''; c[1] ='z'; break;   /* .z */
+
+        case 0xbd:  c[0] = '!';  break;   /* inversed ! */
+        case 0xbe:  c[0] = '?';  break;   /* inversed ? */
+        case 0xbf:  c[0] = 'L';  break;   /* pound sign */
+
+        case 0xc0:  c[0] = '`';  c[1] ='A'; break;   /* `A */
+        case 0xc1:  c[0] = '\''; c[1] ='A'; break;   /* 'A */
+        case 0xc2:  c[0] = '^';  c[1] ='A'; break;   /* ^A */
+        case 0xc3:  c[0] = '~';  c[1] ='A'; break;   /* ~A */
+        case 0xc4:  c[0] = '"';  c[1] ='A'; break;   /* "A */
+        case 0xc5:  c[0] = 'A';  c[1] ='A'; break;   /* oA */
+        case 0xc7:  c[0] = ',';  c[1] ='C'; break;   /* ,C */
+        case 0xc8:  c[0] = '`';  c[1] ='E'; break;   /* `E */
+        case 0xc9:  c[0] = '\''; c[1] ='E'; break;   /* 'E */
+        case 0xca:  c[0] = '^';  c[1] ='E'; break;   /* ^E */
+        case 0xcb:  c[0] = '^';  c[1] ='E'; break;   /* "E */
+        case 0xcc:  c[0] = '`';  c[1] ='I'; break;   /* `I */
+        case 0xcd:  c[0] = '\''; c[1] ='I'; break;   /* 'I */
+        case 0xce:  c[0] = '^';  c[1] ='I'; break;   /* ^I */
+        case 0xcf:  c[0] = '"';  c[1] ='I'; break;   /* "I */
+        case 0xd0:  c[0] = '-';  c[1] ='D'; break;   /* -D */
+        case 0xd1:  c[0] = '~';  c[1] ='n'; break;   /* ~n */
+        case 0xd2:  c[0] = '`';  c[1] ='O'; break;   /* `O */
+        case 0xd3:  c[0] = '\''; c[1] ='O'; break;   /* 'O */
+        case 0xd4:  c[0] = '^';  c[1] ='O'; break;   /* ^O */
+        case 0xd5:  c[0] = '~';  c[1] ='O'; break;   /* ~O */
+        case 0xd6:  c[0] = '"';  c[1] ='O'; break;   /* "O */
+        case 0xd9:  c[0] = '`';  c[1] ='U'; break;   /* `U */
+        case 0xda:  c[0] = '\''; c[1] ='U'; break;   /* 'U */
+        case 0xdb:  c[0] = '^';  c[1] ='U'; break;   /* ^U */
+        case 0xdc:  c[0] = '"';  c[1] ='U'; break;   /* "U */
+        case 0xdd:  c[0] = '\''; c[1] ='Y'; break;   /* 'Y */
+        case 0xe0:  c[0] = '`';  c[1] ='a'; break;   /* `a */
+        case 0xe1:  c[0] = '\''; c[1] ='a'; break;   /* 'a */
+        case 0xe2:  c[0] = '^';  c[1] ='a'; break;   /* ^a */
+        case 0xe3:  c[0] = '~';  c[1] ='a'; break;   /* ~a */
+        case 0xe4:  c[0] = '"';  c[1] ='a'; break;   /* "a */
+        case 0xe5:  c[0] = 'a';  c[1] ='a'; break;   /* oa */
+        case 0xe7:  c[0] = ',';  c[1] ='c'; break;   /* ,c */
+        case 0xe8:  c[0] = '`';  c[1] ='e'; break;   /* `e */
+        case 0xe9:  c[0] = '\''; c[1] ='e'; break;   /* 'e */
+        case 0xea:  c[0] = '^';  c[1] ='e'; break;   /* ^e */
+        case 0xeb:  c[0] = '^';  c[1] ='e'; break;   /* "e */
+        case 0xec:  c[0] = '`';  c[1] ='i'; break;   /* `i */
+        case 0xed:  c[0] = '\''; c[1] ='i'; break;   /* 'i */
+        case 0xee:  c[0] = '^';  c[1] ='i'; break;   /* ^i */
+        case 0xef:  c[0] = '"';  c[1] ='i'; break;   /* "i */
+        case 0xf0:  c[0] = '-';  c[1] ='d'; break;   /* -d */
+        case 0xf1:  c[0] = '~';  c[1] ='n'; break;   /* ~n */
+        case 0xf2:  c[0] = '`';  c[1] ='o'; break;   /* `o */
+        case 0xf3:  c[0] = '\''; c[1] ='o'; break;   /* 'o */
+        case 0xf4:  c[0] = '^';  c[1] ='o'; break;   /* ^o */
+        case 0xf5:  c[0] = '~';  c[1] ='o'; break;   /* ~o */
+        case 0xf6:  c[0] = '"';  c[1] ='o'; break;   /* "o */
+        case 0xf9:  c[0] = '`';  c[1] ='u'; break;   /* `u */
+        case 0xfa:  c[0] = '\''; c[1] ='u'; break;   /* 'u */
+        case 0xfb:  c[0] = '^';  c[1] ='u'; break;   /* ^u */
+        case 0xfc:  c[0] = '"';  c[1] ='u'; break;   /* "u */
+        case 0xfd:  c[0] = '\''; c[1] ='y'; break;   /* 'y */
+
+	/* diacritical marks */
+        case 0x00:  c[0] = '`'  ; break;   /* grave        from \` */
+        case 0x01:  c[0] = latin1 ? 0xb4 : '\''; break;
+                                           /* acute        from \' */
+        case 0x02:  c[0] = '^'  ; break;   /* circumflex   from \^ */
+        case 0x03:  c[0] = '~'  ; break;   /* tilde        from \~ */
+        case 0x04:  c[0] = '"'  ; break;   /* diaeresis    from \" */
+        case 0x05:  c[0] = '"'  ; break;   /* double acute from \H */
+        case 0x06:  c[0] = latin1 ? 0xb0 : '~'; break;
+                                           /* ring above   from \r */
+        case 0x07:  c[0] = '~'  ; break;   /* caron        from \v */
+        case 0x08:  c[0] = '~'  ; break;   /* breve        from \u */
+        case 0x09:  c[0] = '~'  ; break;   /* macron       from \= */
+        case 0x0a:  c[0] = '.'  ; break;   /* dot          from \. */
+        case 0x0b:  c[0] = latin1 ? 0xb8 : ','; break;
+                                           /* cedilla      from \c */
+        case 0x0c:  c[0] = ','  ; break;   /* ogonek       from \k */
+
+        default  :  c[0] = '#';
+    }
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
+
+    return;
+
+} /* t1char */
+
+
+/*
+ * TS1CHAR -- Process a character opcode for a TS1 encoding font.
+ */
+
+void ts1char(unsigned char ch)
+{
+    unsigned char c[4] = {}, *cc;
+    long ucs;
+
+    if (allchar) {
+        outchar(ch);
+        return;
+    }
+    ucs = ts1_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
+    }
+
+    switch (ch) {
+        case 0x17:                          /* \capitalcompwordmark      */
+        case 0x1F:  return;                 /* \textascendercompwordmark */
+        case 0x0D:                          /* \textquotestraightbase    */
+        case 0x27:  c[0] = '\''; break;     /* \textquotesingle          */
+        case 0x12:  c[0] = '"'; break;      /* \textquotestraghtdblbase  */
+        case 0x15:  c[0] = '-'; break;      /* \texttwelveudash          */
+        case 0x16:  c[0] = '-'; c[1] = '-'; /* \textthreequartersemdash  */
+                    break;
+        case 0x18:  c[0] = '<'; c[1] = '-'; /* \textleftarrow            */
+                    break;
+        case 0x19:  c[0] = '-'; c[1] = '>'; /* \textrightarrow           */
+                    break;
+        case 0x2A:  c[0] = '*'; break;      /* \textasteriskcentered     */
+        case 0x2D:  c[0] = '='; break;      /* \textdblhyphen            */
+        case 0x2F:  c[0] = '/'; break;      /* \textfractionsolidus      */
+        case 0x3C:  c[0] = '<'; break;      /* \textlangle               */
+        case 0x3D:  c[0] = '-'; break;      /* \textminus                */
+        case 0x3E:  c[0] = '>'; break;      /* \textrangle               */
+        case 0x5B:  c[0] = '['; break;      /* \textlbrackdbl            */
+        case 0x5D:  c[0] = ']'; break;      /* \textrbrackdbl            */
+        case 0x5E:  c[0] = '^'; break;      /* \textuparrow              */
+        case 0x5F:  c[0] = 'v'; break;      /* \textdownarrow            */
+        case 0x7E:  c[0] = '~'; break;      /* \texttildelow             */
+        case 0x7F:  c[0] = '='; break;      /* \textdblhyphenchar        */
+        case 0x84:  c[0] = '*'; break;      /* \textdagger               */
+        case 0x85:  c[0] = '*'; c[1] = '*'; /* \textdaggerdbl            */
+                    break;
+        case 0x86:  c[0] = '|'; c[1] = '|'; /* \textbardbl               */
+                    break;
+        case 0x89:  if (latin1) {
+                        c[0] = 0xb0; c[1] = 'C';
+                    }
+                    else
+                        c[0] = 'C';
+                    break;                  /* \textcelsius              */
+        case 0x8B:  c[0] = 'c'; break;      /* \textcent                 */
+        case 0x8C:  c[0] = 'f'; break;      /* \textflorin               */
+        case 0x8D:  c[0] = 'C'; break;      /* \textcentoldstyle         */
+        case 0x8E:  c[0] = 'W'; break;      /* \textwon                  */
+        case 0x8F:  c[0] = 'N'; break;      /* \textnaira                */
+        case 0x90:  c[0] = 'G'; break;      /* \textguarani              */
+        case 0x91:  c[0] = 'P'; break;      /* \textpeso                 */
+        case 0x92:  c[0] = 'L'; break;      /* \textlira                 */
+        case 0x93:  c[0] = 'R'; break;      /* \textrecipe               */
+        case 0x94:                          /* \textinterrobang          */
+        case 0x95:  c[0] = '!'; c[1] = '?'; /* \textinterrobangdown      */
+                    break;
+        case 0x97:  c[0] = 'T'; c[1] = 'M'; /* \texttrademark            */
+                    break;
+        case 0x99:  c[0] = 'P'; break;      /* \textpilcrow              */
+        case 0x9B:  c[0] = 'N'; c[1] = 'o'; /* \textnumero               */
+                    break;
+        case 0x9F:  c[0] = 'S'; c[1] = 'M'; /* \textservicemark          */
+                    break;
+        case 0xA0:  c[0] = '{'; break;      /* \textlquill               */
+        case 0xA1:  c[0] = '}'; break;      /* \textrquill               */
+        case 0xA2:  c[0] = 'c'; break;      /* \textcent                 */
+        case 0xA3:  c[0] = 'L'; break;      /* \textsterling             */
+        case 0xA5:  c[0] = 'Y'; break;      /* \textyen                  */
+        case 0xA6:  c[0] = '|'; break;      /* \textbrokenbar            */
+        case 0xA7:  c[0] = 'S'; break;      /* \textsection              */
+        case 0xA9:  c[0] = 'C'; break;      /* \textcopyright            */
+        case 0xAD:  c[0] = 'P'; break;      /* \textcircledP             */
+        case 0xAE:  c[0] = 'R'; break;      /* \textregistered           */
+        case 0xB6:  c[0] = 'P'; break;      /* \textparagraph            */
+        case 0xB1:  c[0] = '+'; c[1] = '-'; /* \textpm                   */
+                    break;
+        case 0xBC:  c[0] = '1'; c[1] = '/'; /* \textonequarter           */
+                    c[2] = '4'; break;
+        case 0xBD:  c[0] = '1'; c[1] = '/'; /* \textonehalf              */
+                    c[2] = '2'; break;
+        case 0xBE:  c[0] = '3'; c[1] = '/'; /* \textthreequarters        */
+                    c[2] = '4'; break;
+        case 0xBF:  c[0] = 'E'; break;      /* \texteuro                 */
+        case 0xD6:  c[0] = 'x'; break;      /* \texttimes                */
+        case 0xF6:  c[0] = '/'; break;      /* \textdiv                  */
+
+        case 0x30:  case 0x31:  case 0x32:  case 0x33:
+        case 0x34:  case 0x35:  case 0x36:  case 0x37:
+        case 0x38:  case 0x39:  case 0x3A:  case 0x3B:
+                    c[0] = ch; break;
+
+	/* diacritical marks */
+        case 0x00:  c[0] = '`'  ; break;   /* grave        from \` */
+        case 0x01:  c[0] = latin1 ? 0xb4 : '\''; break;
+                                           /* acute        from \' */
+        case 0x02:  c[0] = '^'  ; break;   /* circumflex   from \^ */
+        case 0x03:  c[0] = '~'  ; break;   /* tilde        from \~ */
+        case 0x04:  c[0] = '"'  ; break;   /* diaeresis    from \" */
+        case 0x05:  c[0] = '"'  ; break;   /* double acute from \H */
+        case 0x06:  c[0] = latin1 ? 0xb0 : '~'; break;
+                                           /* ring above   from \r */
+        case 0x07:  c[0] = '~'  ; break;   /* caron        from \v */
+        case 0x08:  c[0] = '~'  ; break;   /* breve        from \u */
+        case 0x09:  c[0] = '~'  ; break;   /* macron       from \= */
+        case 0x0a:  c[0] = '.'  ; break;   /* dot          from \. */
+        case 0x0b:  c[0] = latin1 ? 0xb8 : ','; break;
+                                           /* cedilla      from \c */
+        case 0x0c:  c[0] = ','  ; break;   /* ogonek       from \k */
+
+        default  :  c[0] = '#';
+    }
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
+
+    return;
+
+} /* ts1char */
+
+
+/*
+ * T2CHAR -- Process a character opcode for a T2A/T2B/T2C/X2 encoding font.
+ */
+
+void t2char(char flag, unsigned char ch)
+{
+    unsigned char c[4] = {}, *cc;
+    const unsigned short *tex_to_ucs;
+    long ucs;
+
+    if (allchar) {
+        outchar(ch);
+        return;
+    }
+    if (!accent) {
+        switch (ch) {
+            case 0x00:  /* grave        from \` */
+            case 0x01:  /* acute        from \' */
+            case 0x02:  /* circumflex   from \^ */
+            case 0x03:  /* tilde        from \~ */
+            case 0x04:  /* diaeresis    from \" */
+            case 0x05:  /* double acute from \H */
+            case 0x06:  /* ring above   from \r */
+            case 0x07:  /* caron        from \v */
+            case 0x08:  /* breve        from \u */
+            case 0x09:  /* macron       from \= */
+            case 0x0a:  /* dot          from \. */
+            case 0x0b:  /* cedilla      from \c */
+            case 0x0c:  /* ogonek       from \k */
+            case 0x12:  /*              from \f */
+            case 0x13:  /*              from \C */
+            case 0x14:  /* breve        from \U */
+                return;
+        }
+    }
+    switch (flag) {
+        case T2AFONT: tex_to_ucs=t2a_to_ucs; break;
+        case T2BFONT: tex_to_ucs=t2b_to_ucs; break;
+        case T2CFONT: tex_to_ucs=t2c_to_ucs; break;
+        case X2FONT : tex_to_ucs=x2_to_ucs;  break;
+        default : exit; /* not supported */
+    }
+    ucs = tex_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
+    }
+
+    switch (ch) {
+        case 0x49:  c[0] = 'I'; break;           /* \CYRII             */
+        case 0x69:  c[0] = 'i'; break;           /* \cyrii             */
+        case 0x4A:  c[0] = 'J'; break;           /* \CYRJE             */
+        case 0x6A:  c[0] = 'j'; break;           /* \cyrje             */
+        case 0x51:  c[0] = 'Q'; break;           /* \CYRQ              */
+        case 0x53:  c[0] = 'S'; break;           /* \CYRDZE            */
+        case 0x57:  c[0] = 'W'; break;           /* \CYRW              */
+        case 0x71:  c[0] = 'q'; break;           /* \cyrq              */
+        case 0x73:  c[0] = 's'; break;           /* \cyrdze            */
+        case 0x77:  c[0] = 'w'; break;           /* \cyrw              */
+        case 0x0E:  c[0] = '<'; break;           /* \cyrlangle         */
+        case 0x0F:  c[0] = '>'; break;           /* \cyrrangle         */
+        case 0x15:  c[0] = '-'; c[1] = '-';      /* \textendash        */
+                    break;
+        case 0x16:  c[0] = '-'; c[1] = '-';      /* \textemdash        */
+                    c[2] = '-'; break;
+        case 0x27:                               /* \textquoteright    */
+        case 0x60:  c[0] = '\''; break;          /* \textquoteleft     */
+        case 0x10:                               /* \textquotedblleft  */
+        case 0x11:                               /* \textquotedblright */
+        case 0xBD:  c[0] = '"'; break;           /* \quotedblbase      */
+        case 0x20:  c[0] = '_'; break;           /* \textvisiblespace  */
+        case 0x17:  return;                      /* \textcompwordmark  */
+        case 0x7E:  c[0] = '~'; break;           /* \textasciitilde    */
+        case 0x9D:  c[0] = 'N'; c[1] = 'o';      /* \textnumero        */
+                    break;
+        case 0x9F:  c[0] = 'S'; break;           /* \textsection       */
+        case 0xBE:  c[0] = '<'; c[1] = '<';      /* \guillemotleft     */
+                    break;
+        case 0xBF:  c[0] = '>'; c[1] = '>';      /* \guillemotright    */
+                    break;
+
+	/* diacritical marks */
+        case 0x00:  c[0] = '`'  ; break;   /* grave        from \` */
+        case 0x01:  c[0] = latin1 ? 0xb4 : '\''; break;
+                                           /* acute        from \' */
+        case 0x02:  c[0] = '^'  ; break;   /* circumflex   from \^ */
+        case 0x03:  c[0] = '~'  ; break;   /* tilde        from \~ */
+        case 0x04:  c[0] = '"'  ; break;   /* diaeresis    from \" */
+        case 0x05:  c[0] = '"'  ; break;   /* double acute from \H */
+        case 0x06:  c[0] = latin1 ? 0xb0 : '~'; break;
+                                           /* ring above   from \r */
+        case 0x07:  c[0] = '~'  ; break;   /* caron        from \v */
+        case 0x08:  c[0] = '~'  ; break;   /* breve        from \u */
+        case 0x09:  c[0] = '~'  ; break;   /* macron       from \= */
+        case 0x0a:  c[0] = '.'  ; break;   /* dot          from \. */
+        case 0x0b:  c[0] = latin1 ? 0xb8 : ','; break;
+                                           /* cedilla      from \c */
+        case 0x0c:  c[0] = ','  ; break;   /* ogonek       from \k */
+        case 0x14:  c[0] = '~'  ; break;   /* breve        from \U */
+
+        default  :  c[0] = '#';
+    }
+    if (flag != X2FONT) {
+    switch (ch) {
+        case 0x19:  c[0] = 'i'; break;           /* dotless i          */
+        case 0x1A:  c[0] = 'j'; break;           /* dotless j          */
+        case 0x1B:  c[0] = 'f'; c[1] = 'f';      /* ligature           */
+                    break;
+        case 0x1C:  c[0] = 'f'; c[1] = 'i';      /* ligature           */
+                    break;
+        case 0x1D:  c[0] = 'f'; c[1] = 'l';      /* ligature           */
+                    break;
+        case 0x1E:  c[0] = 'f'; c[1] = 'f';      /* ligature           */
+                    c[2] = 'i'; break;
+        case 0x1F:  c[0] = 'f'; c[1] = 'f';      /* ligature           */
+                    c[2] = 'l'; break;
+    }
+    }
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
+
+    return;
+
+} /* t2char */
+
+
+/*
+ * OT2CHAR -- Process a character opcode for a OT2 encoding font.
+ */
+
+void ot2char(unsigned char ch)
+{
+    unsigned char c[4] = {}, *cc;
+    long ucs;
+
+    if (allchar) {
+        outchar(ch);
+        return;
+    }
+    if (!accent) {
+        switch (ch) {
+            case 0x20:  /* diaeresis    from \" */
+            case 0x24:  /* breve        from \U */
+            case 0x26:  /* acute        from \' */
+            case 0x40:  /* breve        from \u */
+                return;
+        }
+    }
+    ucs = ot2_to_ucs[ch];
+    if (utf8) {
+        dounichar(ucs);
+        return;
+    }
+    else if ((latin1 && ucs<0x100) || ucs<0x80) {
+        outchar(ucs);
+        return;
+    }
+
+    switch (ch) {
+        case 0x04:  c[0] = 'I'; break;           /* \CYRII             */
+        case 0x0C:  c[0] = 'i'; break;           /* \cyrii             */
+        case 0x4A:  c[0] = 'J'; break;           /* \CYRJE             */
+        case 0x6A:  c[0] = 'j'; break;           /* \cyrje             */
+        case 0x16:  c[0] = 'S'; break;           /* \CYRDZE            */
+        case 0x1E:  c[0] = 's'; break;           /* \cyrdze            */
+        case 0x7B:  c[0] = '-'; c[1] = '-';      /* \textendash        */
+                    break;
+        case 0x7C:  c[0] = '-'; c[1] = '-';      /* \textemdash        */
+                    c[2] = '-'; break;
+        case 0x7D:  c[0] = 'N'; c[1] = 'o';      /* \textnumero        */
+                    break;
+        case 0x3C:  c[0] = '<'; c[1] = '<';      /* \guillemotleft     */
+                    break;
+        case 0x3D:  c[0] = 'i'; break;           /* dotless i          */
+        case 0x3E:  c[0] = '>'; c[1] = '>';      /* \guillemotright    */
+                    break;
+        case 0x27:                               /* \textquoteright    */
+        case 0x60:  c[0] = '\''; break;          /* \textquoteleft     */
+        case 0x22:                               /* \textquotedblright */
+        case 0x5C:  c[0] = '"'; break;           /* \textquotedblleft  */
+       
+	/* diacritical marks */
+        case 0x20:  c[0] = '"'  ; break;   /* diaeresis    from \" */
+        case 0x24:  c[0] = '~'  ; break;   /* breve        from \u */
+        case 0x26:  c[0] = latin1 ? 0xb4 : '\''; break;
+                                           /* acute        from \' */
+        case 0x40:  c[0] = '~'  ; break;   /* breve        from \U */
+
+        default  :  c[0] = '#';
+    }
+
+    cc=c;
+    while (*cc) { outchar(*cc); cc++; }
+
+    return;
+
+} /* ot2char */
 
 
 
@@ -1180,9 +1982,10 @@ void normchar(unsigned char ch)
  *            SHOULD BE MOVED OUT.
  */
 
-void outchar(unsigned char ch)
+void outchar(long ch)
 {
     register int i, j;
+    register long dia;
 
 /*     fprintf(stderr, "hor: %ld, ver: %ld\n", h, v); */
 
@@ -1217,8 +2020,8 @@ void outchar(unsigned char ch)
      * or dots and if one is found the corresponding national char *
      * replaces the special character codes.                       *
      */
-    if (!allchar && (scascii || latin1)) {
-        if ((ch == 'a') || (ch == 'A') || (ch == 'o') || (ch == 'O') || (ch == 'u') || (ch == 'U')) {
+    if (!allchar && compose && scascii) {
+        if (strchr("aAoO", ch) != NULL) {
             for (i = IMAX(leftmargin, j-2);
                  i <= IMIN(rightmargin, j+2);
                  i++)
@@ -1232,24 +2035,120 @@ void outchar(unsigned char ch)
                     case 127 :
                     case 34  :                         /* DEL or " */
                                if (ch == 'a')
-                                   ch = latin1 ? 0xe4 : '{';            /* } vi */
+                                   ch = '{';            /* } vi */
                                else if (ch == 'A')      /* dots ... */
-                                   ch = latin1 ? 0xc4 : '[';
+                                   ch = '[';
                                else if (ch == 'o')
-                                   ch = latin1 ? 0xf6 : '|';
+                                   ch = '|';
                                else if (ch == 'O')
-                                   ch = latin1 ? 0xd6 : '\\';
-                               else if (ch == 'u')
-                                   ch = latin1 ? 0xfc : 'u';
-                               else if (ch == 'U')
-                                   ch = latin1 ? 0xdc : 'U';
+                                   ch = '\\';
                                break;
                     case 23  : if (ch == 'a')
-                                   ch = latin1 ? 0xe5 : '}';  /* { vi */
+                                   ch = '}';  /* { vi */
                                else if (ch == 'A')      /* circle */
-                                   ch = latin1 ? 0xc5 : ']';
+                                   ch = ']';
                                break;
                 }
+            }
+        }
+    }
+    if (!allchar && compose && (latin1 || utf8)) {
+	  if (strchr("aAeEiIoOuUnCcNYy", ch) != NULL || (ch & MAX_UNICODE) == 0x131) {
+            for (i = IMAX(leftmargin, j-2);
+                 i <= IMIN(rightmargin, j+2);
+                 i++) {
+                dia = currentline->text[i - leftmargin] & MAX_UNICODE;
+                if ((dia == 0x60)  || /* grave      */
+                    (dia == 0xB0)  || /* ring above */
+                    (dia == 0x2DA) || /* ring above */
+                    (dia == 0xB4)  || /* acute      */
+                    (dia == 0x5E)  || /* circumflex */
+                    (dia == 0xA8)  || /* diaeresis  */
+                    (dia == 0xB8)  || /* cedilla    */
+                    (dia == 0x7E)  || /* tilde      */
+                    (dia == 0x2DC))   /* tilde      */
+                    foo = i;
+            }
+            if (foo >= leftmargin) {
+                j = (int) foo;
+                dia = currentline->text[j - leftmargin] & MAX_UNICODE;
+                switch (dia) {
+                    case 0x60: /* grave */
+                               if      (ch == 'a') ch = 0xe0;
+                               else if (ch == 'A') ch = 0xc0;
+                               else if (ch == 'e') ch = 0xe8;
+                               else if (ch == 'E') ch = 0xc8;
+                               else if (ch == 'i') ch = 0xec;
+                               else if ((ch & MAX_UNICODE) == 0x131) ch = 0xec;
+                               else if (ch == 'I') ch = 0xcc;
+                               else if (ch == 'o') ch = 0xf2;
+                               else if (ch == 'O') ch = 0xd2;
+                               else if (ch == 'u') ch = 0xf9;
+                               else if (ch == 'U') ch = 0xd9;
+                               break;
+                    case 0xB0: /* ring above */
+                    case 0x2DA:
+                               if      (ch == 'a') ch = 0xe5;
+                               else if (ch == 'A') ch = 0xc5;
+                               break;
+                    case 0xB4: /* acute */
+                               if      (ch == 'a') ch = 0xe1;
+                               else if (ch == 'A') ch = 0xc1;
+                               else if (ch == 'e') ch = 0xe9;
+                               else if (ch == 'E') ch = 0xc9;
+                               else if (ch == 'i') ch = 0xed;
+                               else if ((ch & MAX_UNICODE) == 0x131) ch = 0xed;
+                               else if (ch == 'I') ch = 0xcd;
+                               else if (ch == 'o') ch = 0xf3;
+                               else if (ch == 'O') ch = 0xd3;
+                               else if (ch == 'u') ch = 0xfa;
+                               else if (ch == 'U') ch = 0xda;
+                               else if (ch == 'y') ch = 0xfd;
+                               else if (ch == 'Y') ch = 0xdd;
+                               break;
+                    case 0x5E: /* circumflex */
+                               if      (ch == 'a') ch = 0xe2;
+                               else if (ch == 'A') ch = 0xc2;
+                               else if (ch == 'e') ch = 0xea;
+                               else if (ch == 'E') ch = 0xca;
+                               else if (ch == 'i') ch = 0xee;
+                               else if ((ch & MAX_UNICODE) == 0x131) ch = 0xee;
+                               else if (ch == 'I') ch = 0xce;
+                               else if (ch == 'o') ch = 0xf4;
+                               else if (ch == 'O') ch = 0xd4;
+                               else if (ch == 'u') ch = 0xfb;
+                               else if (ch == 'U') ch = 0xdb;
+                               break;
+                    case 0xA8: /* diaeresis */
+                               if      (ch == 'a') ch = 0xe4;
+                               else if (ch == 'A') ch = 0xc4;
+                               else if (ch == 'e') ch = 0xeb;
+                               else if (ch == 'E') ch = 0xcb;
+                               else if (ch == 'i') ch = 0xef;
+                               else if ((ch & MAX_UNICODE) == 0x131) ch = 0xef;
+                               else if (ch == 'I') ch = 0xcf;
+                               else if (ch == 'o') ch = 0xf6;
+                               else if (ch == 'O') ch = 0xd6;
+                               else if (ch == 'u') ch = 0xfc;
+                               else if (ch == 'U') ch = 0xdc;
+                               else if (ch == 'y') ch = 0xff;
+                               else if (ch == 'Y' && utf8) ch = 0x178;
+                               break;
+                    case 0xB8: /* cedilla */
+                               if      (ch == 'c') ch = 0xe7;
+                               else if (ch == 'C') ch = 0xc7; /* It does not seem to work */
+                               break;
+                    case 0x7E: /* tilde */
+                    case 0x2DC:
+                               if      (ch == 'a') ch = 0xe3;
+                               else if (ch == 'A') ch = 0xc3;
+                               else if (ch == 'o') ch = 0xf5;
+                               else if (ch == 'O') ch = 0xd5;
+                               else if (ch == 'n') ch = 0xf1;
+                               else if (ch == 'N') ch = 0xd1;
+                               break;
+                }
+                if (utf8 && ch>0x7f) ch |= IS_UNICODE;
             }
         }
     }
@@ -1265,9 +2164,7 @@ void outchar(unsigned char ch)
         }
       } else {
         while (j < rightmargin &&
-               ( (currentline->text[j - leftmargin] != SPACE) ||
-                 (kanji1 && (currentline->text[j+1 - leftmargin] != SPACE))
-               ) ) {
+               (currentline->text[j - leftmargin] != SPACE)) {
             j++;
             h += charwidth;
         }
@@ -1302,7 +2199,7 @@ void putcharacter(long charnr)
     register long saveh;
 
     saveh = h;
-    if (nttj)
+    if (nttj || is8bit)
         dochar((unsigned char) charnr);
     else if (allchar || ((charnr >= 0) && (charnr <= LASTCHAR)))
         outchar((unsigned char) charnr);
@@ -1325,7 +2222,10 @@ void putcharacter(long charnr)
 void setchar(long charnr)
 {
 
-    outchar((unsigned char)(allchar ? charnr : '#'));
+    if (is8bit)
+        dochar((unsigned char) charnr);
+    else
+        outchar((unsigned char)(allchar ? charnr : '#'));
 
     return;
 
@@ -1419,6 +2319,7 @@ void fontdef(int x)
      * some magic to learn about font types...
      */
     fonts->flags = 0;
+    fonts->is8bit = FALSE;
 
     if ((asciip == FALSE && nttj == FALSE && uptex == FALSE)
         && (!jdetect) && jautodetect) {
@@ -1442,7 +2343,7 @@ void fontdef(int x)
             nttj = TRUE;
             asciip = uptex = FALSE;
             japan = jdetect = TRUE;
-            fonts->flags |= JAPFONT;
+            fonts->flags |= JPFONT;
             set_enc_string (NULL, JTEX_INTERNAL_ENC);
         }
     }
@@ -1451,12 +2352,47 @@ void fontdef(int x)
     else
         fonts->fontnum = 0;
 
+    if ((strncmp(name, "ec", 2)) == 0) {
+            fonts->flags = T1FONT;
+            fonts->is8bit = TRUE;
+            return;
+    }
+    else if ((strncmp(name, "tc", 2)) == 0 ||
+             (strncmp(name, "ts1", 3)) == 0) {
+            fonts->flags = TS1FONT;
+            fonts->is8bit = TRUE;
+            return;
+    }
+    else if ((strncmp(name, "wn", 2)) == 0) {
+            fonts->flags = OT2FONT;
+            return;
+    }
+    else if ((strncmp(name, "la", 2)) == 0) {
+            fonts->flags = T2AFONT;
+            fonts->is8bit = TRUE;
+            return;
+    }
+    else if ((strncmp(name, "lb", 2)) == 0) {
+            fonts->flags = T2BFONT;
+            fonts->is8bit = TRUE;
+            return;
+    }
+    else if ((strncmp(name, "lc", 2)) == 0) {
+            fonts->flags = T2CFONT;
+            fonts->is8bit = TRUE;
+            return;
+    }
+    else if ((strncmp(name, "rx", 2)) == 0) {
+            fonts->flags = X2FONT;
+            fonts->is8bit = TRUE;
+            return;
+    }
     if ((strstr(name, "sy")) != NULL)
-            fonts->flags |= SYMFONT;
+            fonts->flags = SYMFONT;
     if ((strstr(name, "tt")) != NULL)
-            fonts->flags |= TTFONT;
+            fonts->flags = TTFONT;
     if ((strstr(name, "mi")) != NULL)
-            fonts->flags |= MIFONT;
+            fonts->flags = MIFONT;
 
     return;
 
@@ -1516,9 +2452,10 @@ void setfont(long fntnum)
     }
 
     if (fnt->fontnum == 0) {
-        symbolfont = fnt->flags & SYMFONT;
-        ttfont = fnt->flags & TTFONT;
-        mifont = fnt->flags & MIFONT;
+        symbolfont = fnt->flags == SYMFONT;
+        ttfont = fnt->flags == TTFONT;
+        mifont = fnt->flags == MIFONT;
+        is8bit = fnt->is8bit;
     }
 
     s = fnt->name;
