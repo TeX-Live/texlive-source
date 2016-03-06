@@ -1,3 +1,7 @@
+2016-03-06  Karl Berry  <karl@tug.org>
+
+	* version.ac: remove /dev to prepare for 2016.
+
 2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* version.ac: Switch 2015 => 2016/dev.
