@@ -1,3 +1,7 @@
+2016-03-06  Karl Berry  <karl@tug.org>
+
+	* version.ac: remove /dev for start of 2016 builds.
+
 2016-02-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* kpsewhich.c: Allow Unicode file name for upmendex in kpsewhich.
