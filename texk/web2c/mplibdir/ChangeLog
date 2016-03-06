@@ -1,3 +1,8 @@
+2016-03-06  Luigi Scarso  <luigi.scarso@gmail.com>
+	Bump to version 1.9991.
+
+
+
 2015-12-16  Luigi Scarso  <luigi.scarso@gmail.com>
 	Updated to cairo-1.14.6, gmp-6.1.0 and libpng-1.6.20.
 	Fixed some issues with tfm files.
