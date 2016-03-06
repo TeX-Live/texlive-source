@@ -22,7 +22,7 @@
 @y
 #ifdef UPMP
 #define P_UP "up"
-#define metapost_version "1.9991-0.04-u1.11"
+#define metapost_version "1.9991-0.04-u1.21"
 #else
 #define P_UP "p"
 #define metapost_version "1.9991-0.04"
