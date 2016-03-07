@@ -1,3 +1,8 @@
+2016-03-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* configure.ac, tests/*.[bb,xbb]: Update version number to 20160307
+	for TeX Live 2016.
+
 2016-03-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvipdfmx.c, dvipdfmx.h, mpost.c: Introduce a new option --mvorigin.
