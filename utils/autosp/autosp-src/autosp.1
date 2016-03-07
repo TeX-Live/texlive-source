@@ -1,0 +1,232 @@
+.\" This manpage is licensed under the GNU Public License
+.TH AUTOSP 1 2016-01-30  "" ""
+
+.SH NAME
+autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
+
+.SH SYNOPSIS
+.B autosp 
+.RB  [ \-v\ |\ \-\-version\ |\ \-h\ |\ \-\-help ]
+
+.B autosp
+.RB [ \-d\ |\ \-\-dotted ]
+.RB [ \-l\ |\ \-\-log ]
+.IR infile [\ \fR.aspc\fP\ |\ \fR.tex\fP\ ]
+.RI [ outfile [ \fR.tex\fP ]]
+
+
+This program makes it easier to create MusiXTeX scores by converting (non-standard) commands of the 
+form \\anotes ... \\en into one or more conventional
+note-spacing commands (\\notes \\Notes \\NOtes ...), 
+determined by the actual note values, with \\sk spacing commands inserted as necessary.
+The coding
+for an entire measure can be entered one part at a time, 
+without
+concern for note-spacing changes within the part or spacing requirements of other parts.
+
+For example, if applied to
+.nf
+
+    \\anotes\\qa J\\qa K&\\ca l\\qa m\\ca n\\en 
+
+.fi
+.B autosp
+generates
+.nf
+
+    \\Notes\\qa J\\sk\\qa K\\sk&\\ca l\\qa m\\sk\\ca n\\en
+
+.fi
+Typically,
+an
+\\anotes command is expanded into several conventional
+note-spacing commands.
+
+If the
+.I infile
+argument
+has .tex extension, 
+.B autosp
+will process conventional note-spacing commands
+(but not \\vnotes or \\znotes) 
+similarly. 
+This is intended to 
+correct spacing in an extracted single-instrument part,
+but may not produce satisfactory output when applied to a conventional multi-instrument MusiXTeX score.
+
+If the 
+.I infile
+argument 
+has neither .aspc nor .tex extension, input is taken from 
+.IR infile .aspc 
+if that file exists, or from 
+.IR infile .tex 
+otherwise.
+
+For
+\\anotes commands (and, for a .tex file, all conventional note-spacing commands), 
+line breaks and spaces may precede note segments, allowing more flexible source formatting; 
+the line breaks and spaces will be elided from the output. 
+
+For example, 
+.nf
+
+  \\anotes
+    \\ibl0K0\\qb0K\\nbbl0\\qb0{.K}\\tbbbl0\\tbbl0\\tql0L&
+    \\ibbl1m{-2}\\qb1{.m}\\tbbbl1\\tbbl1\\qb1l\\tql1k\\en
+
+.fi
+is acceptable and generates
+.nf
+
+  \\notesp\\ibl0K0\\qb0K&\\ibbl1m{-2}\\qb1{.m}\\en
+  \\nnotes\\sk&\\tbbbl1\\tbbl1\\qb1l\\en
+  \\notesp\\nbbl0\\qb0{.K}&\\tql1k\\en
+  \\nnotes\\tbbbl0\\tbbl0\\tql0L&\\sk\\en
+
+.fi
+
+
+If
+no 
+.IR outfile
+argument is provided, 
+output goes to
+.IR infile .tex 
+if the 
+.I infile 
+name
+has extension .aspc, or to standard output otherwise.
+
+If the 
+.B \-l 
+( \fB\-\-log\fP ) option is used, a log 
+.IR infile .alog
+is generated.
+
+If the 
+.B \-d  
+( \fB--dotted\fP )
+option is used, 
+.I dotted 
+beam notes of the form \\qb{\fIn\fP}{\fB.\fP\fIp\fP} are 
+.I not 
+given extra space;
+it is assumed that the subsequent note will be shifted
+by 
+a \\roff-like command 
+or a spacing command such as \\qsk or \\hqsk.
+Commands of the form \\qlp{\fIp\fP}, \\qlpp{\fIp\fP}, ..., \\qpb{\fIn\fP}{\fIp\fP} and 
+\\qppb{\fIn\fP}{\fIp\fP} are always spaced
+as indicated. 
+
+If there is a single staff, consecutive whole-bar rest bars
+are merged into a multi-bar rest. Bar-centered rests can be
+coded using the standard \\def\\atnextbar notation but also
+the non-standard command \\Cpause in a note segment generates a
+bar-centered rest.
+
+Spacing commands \\sk and \\hsk
+(but not \\qsk, \\hqsk or \\qqsk)
+in the source are discarded.
+A note segment can be completely empty, but if a note segment should start
+with or contain a "space," the note-value
+of that space must be made explicit with a command of the
+form \\ha{*}, \\qa{.*}, \\qa{*}, \\ca{*}, etc. 
+
+All other conventional MusiXTeX commands are output exactly as given in the input.
+
+
+.SH OPERATION
+
+.B autosp
+determines the spacing for ordinary notes from the note
+commands themselves; for example, 
+.TP 3
++
+\\qa, \\qu, \\ql, \\qp result in
+\\NOtes; 
+.TP 3
++
+\\ca, \\cu, \\cl, \\ds result in \\Notes; 
+.PP
+and so on. 
+ 
+The spacing for 
+.IR beamed 
+notes is determined by the beam
+multiplicity, so that \\ib... results in \\Notes, \\ibb... results in
+\\notes, etc. 
+
+Collective coding of note sequences (including accidentals and dots) is handled 
+by expanding the sequence
+into a sequence of individual note commands.
+
+.SH LIMITATIONS
+
+.B autosp
+assumes that & and | (rather than \\nextinstrument and \\nextstaff) are used to separate instruments and staffs.
+
+
+Appoggiaturas and grace notes are recognized by the use of \\tinynotesize; note-spacing
+of 1.45\\elemskip is used. If this isn't suitable and can't be corrected with a small skip, a
+\\vnotes command with any desired spacing can be used.
+
+.B autosp 
+supports 
+.I x-tuplets 
+introduced using \\xtuplet{\fIx\fP}
+and 
+.I triplets 
+introduced
+using any of the following commands (regardless of any re-definition of \\txt or \\tuplettxt):
+.nf
+
+  \\triolet
+  \\uptrio
+  \\downtrio
+  \\uptuplet
+  \\downtuplet
+
+.fi
+However,
+MusiXTeX notation does not 
+specify the 
+.I intended 
+duration of an x-tuplet.
+.B autosp 
+assumes that an x-tuplet is to be played in 
+(\fIx\fP\-1)/\fIx\fP 
+of the apparent x-tuplet duration.
+So, for example, a triplet in eighths is assumed to be played in the time of one quarter note.
+If these assumptions
+isn't valid, the x-tuplet must
+be coded explicitly using a \\vnotes command; see the first
+measure of barsant2.aspc for an example of a non-standard x-tuplet: a 5-tuple 
+of 64th notes with an intended duration
+of 
+.I six 
+64ths.
+
+
+User-defined macros are not processed or expanded.
+
+All staffs are assumed to have the same meter; see kinder2.aspc for
+an example of how to work around this.
+
+.B autosp
+will not be effective for music with more than one voice in a single staff. It might be
+advisable to use a separate staff for each voice, or to omit certain voices
+initially and add them into the resulting TeX file.
+
+.SH EXAMPLES
+See files quod2.aspc, kinder2.aspc, geminiani.aspc and barsant2.aspc for scores suitable for input to  
+.BR autosp .
+
+.SH SEE ALSO
+.BR msxlint (1)
+.PP 
+musixdoc.pdf
+
+.SH AUTHOR 
+This program and manual page were written by Bob Tennent <rdt@cs.queensu.ca>.

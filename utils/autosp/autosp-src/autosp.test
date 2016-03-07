@@ -1,0 +1,28 @@
+#! /bin/sh
+
+# Copyright 2016 Karl Berry <tex-live@tug.org>
+# Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+if test -z "$test_srcdir"; then
+  # If not set, then we are not running from `make check'.
+  test_srcdir=`echo "$0" | sed -e 's,/[^\\/]*$,,'`  # == dirname $0
+  test "$test_srcdir" = "$0" && test_srcdir=.       # in case subst failed
+fi
+
+echo && echo "*** autosp --help"
+./autosp --help || exit 1
+
+echo && echo "*** autosp --version"
+./autosp --version || exit 1
+
+echo && echo "*** autosp -dd (missing infile)"
+./autosp -dd && exit 1
+
+echo && echo "*** autosp tests/quod2.aspc quod2.aspc"
+cp $test_srcdir/tests/quod2.aspc .
+rm -f quod2.tex
+./autosp quod2.aspc || exit 1
+
+echo && echo "*** diff quod2.tex tests/quod2.tex"
+diff quod2.tex $test_srcdir/tests/quod2.tex || exit 1

@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2015 TeX Users Group.
+Copyright 2006-2016 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -40,8 +40,7 @@ detex 2.8 - checked 10may12
 dtl - ?
 
 dvi2tty 5.3.4 - checked 10may12
-  http://www.mesa.nl/pub/dvi2tty/
-  ftp://ftp.mesa.nl/pub/dvi2tty/
+  https://github.com/t-tk/dvi2tty
 
 dvidvi - maintained here.
 

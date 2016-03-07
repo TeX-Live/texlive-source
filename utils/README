@@ -11,15 +11,18 @@ asymptote 2.36 - checked 7feb16
   see http://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
+autosp 2016-01-30 - checked 7mar16
+  http://ctan.org/pkg/autosp
+  
 devnag - from devanagari package installed in texmf-dist.
 
 lacheck - maintained here, by us
 
 m-tx 0.62 - checked 10feb16
-  http://mirror.ctan.org/support/m-tx/
+  http://ctan.org/pkg/m-tx/
 
 pmx 2.7.3 - checked 10feb16
-  http://mirror.ctan.org/support/pmx/
+  http://ctan.org/pkg/pmx/
 
 ps2eps 1.68 - checked 10may12
   http://tm.uka.de/~bless/ps2eps
@@ -31,7 +34,7 @@ texdoctk - reluctantly maintained here in TL
   If anyone would like to resume development, just let us know.
   
 tpic2pdftex 1.97 - checked 10may12
-  http://mirror.ctan.org/graphics/tpic2pdftex/
+  http://ctan.org/pkg/tpic2pdftex/
 
 vlna 1.5 - checked 10may12
   ftp://math.feld.cvut.cz/pub/olsak/vlna/
@@ -39,12 +42,12 @@ vlna 1.5 - checked 10may12
 xindy - see just below
 
 xpdfopen 0.86 - checked 24may14
-  http://mirror.ctan.org/support/xpdfopen/
+  http://ctan.org/pkg/xpdfopen/
   http://cs.acadiau.ca/~jdiamond/xpdfopen/
 
 
 xindy 2.5.1 - checked 15sep14
-  http://www.ctan.org/tex-archive/indexing/xindy/base/
+  http://www.ctan.org/pkg/xindy
 
 After building clisp as described below, run the TL
   Build --enable-xindy CLISP=$clisp_builddir/clisp

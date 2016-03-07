@@ -1,0 +1,73 @@
+.\" This manpage is licensed under the GNU Public License
+.TH REBAR 1 2015-07-14  "" ""
+
+.SH NAME
+rebar \- corrects bar-number comments in MusiXTeX scores
+
+.SH SYNOPSIS
+.B rebar 
+.RB  [ \-v\ |\ \-\-version\ |\ \-h\ |\ \-\-help ]
+
+.B rebar
+[
+.IB infile .tex 
+[
+.IR outfile [\fB.tex\fP]
+] ]
+
+.B rebar
+[
+.IB infile .aspc 
+[
+.IR outfile [\fB.aspc\fP]
+] ]
+
+.SH DESCRIPTION
+
+.B rebar
+reads a MusiXTeX score and generates a copy
+with bar-number comments
+of the form
+.I %barno
+appended to the following commands:
+.RS 0.25in
+.nf
+
+\\bar
+\\alaligne 
+\\alapage 
+\\leftrepeat
+\\rightrepeat
+\\leftrightrepeat
+\\startpiece
+\\startextract
+\\changecontext
+\\Changecontext
+\\contpiece
+\\Contpiece
+\\xbar
+
+.fi
+.RE
+replacing any existing comments.  The following commands are 
+respected:
+.RS 0.25in
+.nf
+
+\\startbarnumber=...
+\\barno=...
+\\advance\\barno...
+
+.fi
+.RE
+Bar-numbering in the MusiXTeX output is not affected.
+
+If no output filename is provided, output goes to standard output. If no
+input filename is provided, input comes from standard input.
+
+.SH SEE ALSO
+.PP 
+musixdoc.pdf
+
+.SH AUTHOR 
+This program and manual page were written by Bob Tennent <rdt@cs.queensu.ca>.

@@ -1,0 +1,129 @@
+This is the README for the autosp package, 
+version 2016-01-30.
+
+autosp is a preprocessor that generates note-spacing
+commands for MusiXTeX scores. It simplifies the creation
+of MusiXTeX scores by converting (non-standard) commands
+of the form \anotes ... \en into one or more conventional
+note-spacing commands, as determined by the note values
+themselves, with \sk spacing commands inserted as necessary.
+The coding for an entire measure can be entered one part at
+a time, without concern for note-spacing changes within the
+part or spacing requirements of other parts.
+
+For example,
+
+\anotes\qa J\qa K&\ca l\qa m\ca n\en
+
+generates
+
+\Notes\qa J\sk\qa K\sk&\ca l\qa m\sk\ca n\en
+
+The format of \anotes commands is similar to conventional
+notes commands, except that line breaks and spaces may
+precede note segments, allowing more flexible source
+formatting; the line breaks and spaces will be elided from
+the output.
+
+If applied to a file with .tex extension, autosp will
+process conventional note-spacing commands (but not \vnotes
+or \znotes) similarly. This is intended to correct spacing
+in an extracted single-instrument part, but may not
+produce satisfactory output when applied to a conventional
+multi-instrument MusiXTeX score.
+
+If there is a single staff, consecutive whole-bar rest bars
+are merged into a multi-bar rest. Bar-centered rests can be
+coded using the standard \def\atnextbar notation but also
+by using the non-standard command \Cpause in a note segment.
+
+Spacing commands \sk and \hsk (but not \qsk, \hqsk or
+\qqsk) in the source are discarded. A note segment can be
+completely empty, but if a note segment should start with or
+contain a "space," the note-value of that space must be made
+explicit with a command of the form \ha{*}, \qa{.*}, \qa{*},
+\ca{*}, etc.
+
+All other conventional MusiXTeX commands are output exactly
+as given in the input.
+
+autosp determines the spacing for ordinary notes from the
+note commands themselves; for example,
+
++ \qa, \qu, \ql, \qp result in \NOtes;
++ \ca, \cu, \cl, \ds result in \Notes;
+
+and so on.
+
+The spacing for beamed notes is determined by the beam
+multiplicity: \ib... results in \Notes, \ibb... results in
+\notes, etc.
+
+Collective coding of note sequences (including accidentals
+and dots) is handled by expanding the sequence into a
+sequence of individual note commands.
+
+Limitations
+
+Appoggiaturas and grace notes are recognized by the use of
+\tinynotesize; note-spacing of 1.45\elemskip is used. If
+this isn't suitable and can't be corrected with a small
+skip, a \vnotes command with any desired spacing can be
+used.
+
+autosp supports triplets introduced using any of the
+following commands:
+
+\triolet
+\uptrio
+\downtrio
+\uptuplet
+\downtuplet
+
+and x-tuplets introduced using \xtuplet{x}; however,
+MusiXTeX notation does not specify the intended duration
+of an x-tuplet. autosp assumes that an x-tuplet is to be
+played in (x-1)/x of the apparent x-tuplet duration. So, for
+example, a triplet in eighths is assumed to be played in
+the time of one quarter note. If these assumptions aren't
+valid, the x-tuplet must be coded explicitly using a \vnotes
+command; see the first measure of barsant2.aspc for an
+example of a non-standard x-tuplet: a 5-tuple of 64th notes
+with an intended duration of *six* 64ths.
+
+User-defined macros are not processed or expanded.
+
+All staffs are assumed to have the same meter; see
+kinder2.aspc for an example of how to work around this.
+
+autosp will not be effective for music with more than one
+voice in a single staff. It might be advisable to use a
+separate staff for each voice, or to omit certain voices
+initially and add them into the resulting TeX file.
+
+See files quod2.aspc, kinder2.aspc, geminiani.aspc and
+barsant2.aspc for scores suitable for input to autosp.
+musixtex.tex version 1.21 or later is needed.
+
+Included in the autosp package is a small utility rebar that
+reads a MusiXTeX score and generates a copy with bar-number
+comments of the form %barno appended to commands such as
+\bar, \alaligne, etc. replacing any existing comments.
+Bar-numbering in the MusiXTeX output is not affected
+
+To install the autosp package, unzip autosp.tds.zip
+at the root of a local or personal texmf tree and
+update the file-name database.  This will install
+documentation and examples.
+
+On Windows or MacOSX, install the relevant binaries on the
+PATH of executables. On Unix-like systems, unpack the
+.tar.gz archive, and compile and install using the sequence
+
+./configure && make && sudo make install
+
+autosp is licensed under the GPL, version 2 or
+(at your option) any later version.
+
+Bob T.
+rdt(at)cs(dot)queensu(dot)ca
