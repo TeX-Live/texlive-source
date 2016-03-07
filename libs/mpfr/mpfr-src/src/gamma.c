@@ -1,7 +1,7 @@
 /* mpfr_gamma -- gamma function
 
-Copyright 2001-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2001-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -70,6 +70,9 @@ bits_fac (unsigned long n)
 {
   mpfr_t x, y;
   unsigned long r, k;
+  MPFR_SAVE_EXPO_DECL (expo);
+
+  MPFR_SAVE_EXPO_MARK (expo);
   mpfr_init2 (x, 38);
   mpfr_init2 (y, 38);
   mpfr_set_ui (x, n, MPFR_RNDZ);
@@ -86,6 +89,8 @@ bits_fac (unsigned long n)
     r -= n / k;
   mpfr_clear (x);
   mpfr_clear (y);
+  MPFR_SAVE_EXPO_FREE (expo);
+
   return r;
 }
 

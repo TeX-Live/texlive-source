@@ -1,7 +1,7 @@
 dnl  MPFR specific autoconf macros
 
-dnl  Copyright 2000, 2002-2015 Free Software Foundation, Inc.
-dnl  Contributed by the AriC and Caramel projects, INRIA.
+dnl  Copyright 2000, 2002-2016 Free Software Foundation, Inc.
+dnl  Contributed by the AriC and Caramba projects, INRIA.
 dnl
 dnl  This file is part of the GNU MPFR Library.
 dnl
@@ -401,11 +401,12 @@ dnl    there is some ld configuration problem. One of the effects can
 dnl    be that thread-local variables always evaluate to 0. So, it is
 dnl    important to run the test below.
 if test "$enable_thread_safe" != no; then
-AC_MSG_CHECKING(for TLS support)
+AC_MSG_CHECKING(for TLS support using C11)
 saved_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS -I$srcdir/src"
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #define MPFR_USE_THREAD_SAFE 1
+#define MPFR_USE_C11_THREAD_SAFE 1
 #include "mpfr-thread.h"
 MPFR_THREAD_ATTR int x = 17;
 int main (void) {
@@ -414,20 +415,46 @@ int main (void) {
   ]])],
      [AC_MSG_RESULT(yes)
       AC_DEFINE([MPFR_USE_THREAD_SAFE],1,[Build MPFR as thread safe])
+      AC_DEFINE([MPFR_USE_C11_THREAD_SAFE],1,[Build MPFR as thread safe using C11])
+      tls_c11_support=yes
      ],
      [AC_MSG_RESULT(no)
-      if test "$enable_thread_safe" = yes; then
-        AC_MSG_ERROR([please configure with --disable-thread-safe])
-      fi
      ],
-     [if test "$enable_thread_safe" = yes; then
-        AC_MSG_RESULT([cannot test, assume yes])
-        AC_DEFINE([MPFR_USE_THREAD_SAFE],1,[Build MPFR as thread safe])
-      else
-        AC_MSG_RESULT([cannot test, assume no])
-      fi
+     [AC_MSG_RESULT([cannot test, assume no])
      ])
 CPPFLAGS="$saved_CPPFLAGS"
+
+if test "$tls_c11_support" != "yes"
+then
+
+ AC_MSG_CHECKING(for TLS support)
+ saved_CPPFLAGS="$CPPFLAGS"
+ CPPFLAGS="$CPPFLAGS -I$srcdir/src"
+ AC_RUN_IFELSE([AC_LANG_SOURCE([[
+ #define MPFR_USE_THREAD_SAFE 1
+ #include "mpfr-thread.h"
+ MPFR_THREAD_ATTR int x = 17;
+ int main (void) {
+   return x != 17;
+ }
+   ]])],
+      [AC_MSG_RESULT(yes)
+       AC_DEFINE([MPFR_USE_THREAD_SAFE],1,[Build MPFR as thread safe])
+      ],
+      [AC_MSG_RESULT(no)
+       if test "$enable_thread_safe" = yes; then
+         AC_MSG_ERROR([please configure with --disable-thread-safe])
+       fi
+      ],
+      [if test "$enable_thread_safe" = yes; then
+         AC_MSG_RESULT([cannot test, assume yes])
+         AC_DEFINE([MPFR_USE_THREAD_SAFE],1,[Build MPFR as thread safe])
+       else
+         AC_MSG_RESULT([cannot test, assume no])
+       fi
+      ])
+ CPPFLAGS="$saved_CPPFLAGS"
+ fi
 fi
 ])
 dnl end of MPFR_CONFIGS

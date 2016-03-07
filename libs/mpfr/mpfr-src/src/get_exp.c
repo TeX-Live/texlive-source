@@ -1,7 +1,7 @@
 /* mpfr_get_exp - get the exponent of a floating-point number
 
-Copyright 2002-2004, 2006-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2002-2004, 2006-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 

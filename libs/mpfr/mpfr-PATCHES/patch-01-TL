@@ -1,6 +1,6 @@
-diff -ur mpfr-3.1.3.orig/src/mparam_h.in mpfr-3.1.3/src/mparam_h.in
---- mpfr-3.1.3.orig/src/mparam_h.in	2015-06-19 21:55:10.000000000 +0200
-+++ mpfr-3.1.3/src/mparam_h.in	2015-06-20 12:11:28.000000000 +0200
+diff -ur mpfr-3.1.4.orig/src/mparam_h.in mpfr-3.1.4/src/mparam_h.in
+--- mpfr-3.1.4.orig/src/mparam_h.in	Sun Mar 06 20:33:05 2016
++++ mpfr-3.1.4/src/mparam_h.in	Mon Mar 07 21:52:59 2016
 @@ -27,7 +27,9 @@
     for example with gcc -dM -E -xc /dev/null
     As of gcc 4.2, you can also use: -march=native or -mtune=native */
@@ -12,9 +12,9 @@ diff -ur mpfr-3.1.3.orig/src/mparam_h.in mpfr-3.1.3/src/mparam_h.in
  #define MPFR_TUNE_CASE "src/x86_64/pentium4/mparam.h"
  #include "x86_64/pentium4/mparam.h"
  
-diff -ur mpfr-3.1.3.orig/src/mpfr-impl.h mpfr-3.1.3/src/mpfr-impl.h
---- mpfr-3.1.3.orig/src/mpfr-impl.h	2015-06-19 21:55:09.000000000 +0200
-+++ mpfr-3.1.3/src/mpfr-impl.h	2015-06-20 12:14:04.000000000 +0200
+diff -ur mpfr-3.1.4.orig/src/mpfr-impl.h mpfr-3.1.4/src/mpfr-impl.h
+--- mpfr-3.1.4.orig/src/mpfr-impl.h	Sun Mar 06 20:33:04 2016
++++ mpfr-3.1.4/src/mpfr-impl.h	Mon Mar 07 21:55:06 2016
 @@ -23,6 +23,11 @@
  #ifndef __MPFR_IMPL_H__
  #define __MPFR_IMPL_H__
@@ -27,16 +27,16 @@ diff -ur mpfr-3.1.3.orig/src/mpfr-impl.h mpfr-3.1.3/src/mpfr-impl.h
  /* Let's include some standard headers unconditionally as they are
     already needed by several source files or when some options are
     enabled/disabled, and it is easy to forget them (some configure
-@@ -56,12 +61,6 @@
+@@ -55,12 +60,6 @@
+ /******************************************************
   ****************** Include files *********************
   ******************************************************/
- 
+-
 -/* Include 'config.h' before using ANY configure macros if needed
 -   NOTE: It isn't MPFR 'config.h', but GMP's one! */
 -#ifdef HAVE_CONFIG_H
 -# include "config.h"
 -#endif
--
+ 
  /* For the definition of MPFR_THREAD_ATTR. GCC/ICC detection macros are
     no longer used, as they sometimes gave incorrect information about
-    the support of thread-local variables. A configure check is now done. */

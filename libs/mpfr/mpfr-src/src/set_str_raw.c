@@ -1,7 +1,7 @@
 /* mpfr_set_str_binary -- set a floating-point number from a binary string
 
-Copyright 1999-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 1999-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 

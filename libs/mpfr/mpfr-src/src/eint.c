@@ -1,7 +1,7 @@
 /* mpfr_eint, mpfr_eint1 -- the exponential integral
 
-Copyright 2005-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2005-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -206,7 +206,7 @@ mpfr_eint (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd)
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (x)))
     {
-      /* exp(NaN) = exp(-Inf) = NaN */
+      /* eint(NaN) = eint(-Inf) = NaN */
       if (MPFR_IS_NAN (x) || (MPFR_IS_INF (x) && MPFR_IS_NEG(x)))
         {
           MPFR_SET_NAN (y);

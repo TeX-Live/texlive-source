@@ -1,5 +1,5 @@
-Copyright 2000-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2000-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -19,6 +19,11 @@ http://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 ##############################################################################
+
+Changes from version 3.1.3 to version 3.1.4:
+- Improved MPFR manual.
+- Bug fixes (see <http://www.mpfr.org/mpfr-3.1.3/#fixed> and ChangeLog file).
+- MinGW (MS Windows): Added support for thread-safe DLL (shared library).
 
 Changes from version 3.1.2 to version 3.1.3:
 - Better support for Automake 1.13+ (now used to generate the tarball).
