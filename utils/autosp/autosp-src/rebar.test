@@ -1,0 +1,21 @@
+#! /bin/sh
+
+# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+echo && echo "*** rebar --help"
+./rebar --help || exit 1
+
+echo && echo "*** rebar --version"
+./rebar --version || exit 1
+
+echo && echo "*** rebar -dd (missing infile)"
+./rebar -dd && exit 1
+
+echo && echo "*** rebar quod2.aspc quod3.aspc"
+cp tests/quod2.aspc .
+rm -f quod3.aspc
+./rebar quod2.aspc quod3.aspc || exit 1
+
+echo && echo "*** diff quod3.aspc tests/quod3.aspc"
+diff quod3.aspc tests/quod3.aspc || exit 1

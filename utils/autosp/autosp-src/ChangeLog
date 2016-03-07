@@ -1,0 +1,64 @@
+AUTOSP
+
+2016-01-30
+
+  Correct coding for \tqq and \tqqq.
+  ps(0) outputs "0" rather than "MAX_SPACING"
+  Allow for \wq.
+  Defer \Changeclefs until after \def\atnextbar ...
+  Corrected bracketing for 8 and 9-bar rests.
+  Modern noatation for multi-bar rests.
+  Initial output to stdout.
+
+2015-07-23
+
+  Correct parsing of arguments of \zcharnote et al.
+  Allow % at the end of a line in \anotes ...
+  Correct nastaffs settings to allow more than one \startpiece
+  Delete \mxvernumber test
+  \znotes calls output_rests if single-staff and restbars > 0
+  Add -l (--log) option and don't generate log by default.
+
+2015-06-29
+  add internal documentation 
+  don't treat \caesura like \ca
+  increase BARREST_SPACING to allow for 12/8 signatures
+  treat \def\atnextbar like \def if no \centerpause
+  Add extra space before outputting \en in terminate_notes.
+  Process \stoppiece, \startextract, \endextract and \raggedstoppiece
+
+2015-05-25
+  Allow for double-dotted notes
+  Change \cpause to \Cpause
+  re-organize spacing_note analysis
+  re-organize output_rests
+
+2015-05-17
+  Allow for \qqsk.
+  Preclude output of *only* virtual notes.
+  Support appoggiaturas.
+  Support bar-centered rests.
+  Support application to .tex files.
+  Introduced -d option.
+  Support semi-automatic beams.
+
+2015-04-27   
+  New command-line processing.
+  New logging functions.
+  Missing line feed in xtuplet processing.
+  Allow for pointed rests \hsp, \qsp, etc.
+  Save/restore global values for xtuplet duration calculation.
+  Allow for empty note segments.
+
+2015-04-21   
+  1st released version
+
+
+REBAR
+
+2016-01-30
+
+  Allow for command-line file arguments.
+
+2015-06-29
+  1st released version

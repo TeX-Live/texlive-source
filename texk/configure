@@ -696,6 +696,7 @@ enable_native_texlive_build
 enable_multiplatform
 enable_cxx_runtime_hack
 enable_libtool_hack
+enable_autosp
 enable_devnag
 enable_lacheck
 enable_m_tx
@@ -1516,6 +1517,7 @@ Optional Features:
                           lib/PLATFORM
   --enable-cxx-runtime-hack  link C++ runtime statically
   --enable-libtool-hack   ignore libtool dependency_libs
+  --disable-autosp        do not build the autosp package
   --disable-devnag        do not build the devnag package
   --disable-lacheck       do not build the lacheck package
   --disable-m-tx          do not build the m-tx package
@@ -3397,6 +3399,24 @@ $as_echo "$as_me: $host -> \`--disable-mfluajit'" >&6;}
   *) :
      ;;
 esac ;;
+esac
+
+## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
+## configure options and TL libraries required for vlna
+# Check whether --enable-autosp was given.
+if test "${enable_autosp+set}" = set; then :
+  enableval=$enable_autosp;
+fi
+case $enable_autosp in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_autosp=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-autosp=$enable_autosp'" >&5
+$as_echo "$as_me: Assuming \`--enable-autosp=$enable_autosp'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-autosp=$enable_autosp'"
+    ;;
 esac
 
 ## utils/devnag/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/devnag/
