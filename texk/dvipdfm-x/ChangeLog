@@ -1,3 +1,8 @@
+2016-03-07  Karl Berry  <karl@tug.org>
+
+	* man/dvipdfmx.1: .B not .b.
+	Report on tex-k from esr, 29 Feb 2016 12:30:31.
+
 2016-03-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* configure.ac, tests/*.[bb,xbb]: Update version number to 20160307
