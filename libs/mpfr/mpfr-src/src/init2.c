@@ -1,7 +1,7 @@
 /* mpfr_init2 -- initialize a floating-point number with given precision
 
-Copyright 2001-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2001-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 

@@ -1,7 +1,7 @@
 /* mpfr_out_str -- output a floating-point number to a stream
 
-Copyright 1999, 2001-2002, 2004, 2006-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 1999, 2001-2002, 2004, 2006-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 

@@ -1,7 +1,7 @@
 /* mpfr_powerof2_raw -- test whether a floating-point number is a power of 2
 
-Copyright 2002-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2002-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 

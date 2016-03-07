@@ -2,10 +2,10 @@
 	========================================
 
 This directory libs/mpfr/ uses a proxy Makefile.am to build the GNU MPFR
-library 'libmpfr' from the unmodified source tree in libs/mpfr/mpfr-x.y.z/,
+library 'libmpfr' from the unmodified source tree in libs/mpfr/mpfr-src/,
 bypassing the original build system.
 
-As far as applicable, the tests in libs/mpfr/mpfr-x.y.z/configure have been
+As far as applicable, the tests in libs/mpfr/mpfr-src/configure have been
 translated into equivalent test in libs/mpfr/configure.ac.
 
 =============================

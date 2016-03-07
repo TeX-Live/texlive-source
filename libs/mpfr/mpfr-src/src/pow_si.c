@@ -1,7 +1,7 @@
 /* mpfr_pow_si -- power function x^y with y a signed int
 
-Copyright 2001-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2001-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 

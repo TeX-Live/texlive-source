@@ -1,8 +1,8 @@
 /* mpfr_get_d, mpfr_get_d_2exp -- convert a multiple precision floating-point
                                   number to a machine double precision float
 
-Copyright 1999-2015 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 1999-2016 Free Software Foundation, Inc.
+Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
