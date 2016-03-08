@@ -1,3 +1,7 @@
+2016-03-08  Karl Berry  <karl@tug.org>
+
+	* ttf2afm.man: document -m.  tldoc mail from esr, 7 Mar 2016 09:34:07.
+
 2015-06-16  Karl Berry  <karl@tug.org>
 
 	* *.man: remove spurious "for troff" and "for nroff" non-comments.
