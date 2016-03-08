@@ -1,4 +1,4 @@
-.TH TTF2AFM 1 "16 June 2015" "Web2C @VERSION@"
+.TH TTF2AFM 1 "8 March 2016" "Web2C @VERSION@"
 .PP 
 .SH "NAME" 
 ttf2afm \- utility to generate AFM files for TrueType fonts
@@ -36,6 +36,7 @@ encode AFM output using encoding vector from \fIenc\fP
 .IP "\fB-o\fP \fIoutfile\fP" 
 output to file \fIoutfile\fP instead of standard output
 .IP "\fB-m\fP \fInum\fP" 
+use Unicode mapping \fInum\fP in the font
 .PP 
 Platform numbers can be one of
 .IP "0" 
@@ -71,4 +72,4 @@ Send bug reports to <pdftex@tug\&.org> (public mailing list)\&.
 \fBttf2afm\fP is part of pdfTeX and was written by Han The Thanh\&.
 .PP 
 This manual page was originally written by C\&.M\&. Connelly, for the
-Debian GNU/Linux system, and updated by Karl Berry.
+Debian GNU/Linux system, and updated by Karl Berry and others.
