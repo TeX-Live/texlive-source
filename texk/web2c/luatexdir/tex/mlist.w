@@ -51,10 +51,10 @@ to italics. Axis are another area of concern, as it looks like opentype math fon
 already apply that shift.
 
 @ @c
-#define math_old                      int_par(math_old_code)
-#define math_no_italic_compensation   int_par(math_no_italic_compensation_code)
-#define math_no_char_italic           int_par(math_no_char_italic_code)
-#define math_use_old_fraction_scaling int_par(math_use_old_fraction_scaling_code)
+#define math_old                      mathoption_int_par(c_mathoption_old_code)
+#define math_no_italic_compensation   mathoption_int_par(c_mathoption_no_italic_compensation_code)
+#define math_no_char_italic           mathoption_int_par(c_mathoption_no_char_italic_code)
+#define math_use_old_fraction_scaling mathoption_int_par(c_mathoption_use_old_fraction_scaling_code)
 
 #define is_new_mathfont(A)   ((font_math_params(A) >0) && (math_old == 0))
 #define is_old_mathfont(A,B) ((font_math_params(A)==0) && (font_params(A)>=(B)))

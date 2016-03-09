@@ -399,7 +399,7 @@ static void parse_options(int ac, char **av)
             /* Synchronize TeXnology: catching the command line option as a long  */
             synctexoption = (int) strtol(optarg, NULL, 0);
         } else if (ARGUMENT_IS("recorder")) {
-            recorderoption = 1 ; 
+            recorderoption = 1 ;
         } else if (ARGUMENT_IS("help")) {
             usagehelp(LUATEX_IHELP, BUG_ADDRESS);
         } else if (ARGUMENT_IS("version")) {
@@ -759,7 +759,6 @@ static void setup_lua_path(lua_State * L)
 int tex_table_id;
 int pdf_table_id;
 int token_table_id;
-int oldtoken_table_id;
 int node_table_id;
 
 @ @c
@@ -955,7 +954,6 @@ void lua_initialize(int ac, char **av)
         /* hide the 'tex' and 'pdf' table */
         tex_table_id = hide_lua_table(Luas, "tex");
         token_table_id = hide_lua_table(Luas, "token");
-        oldtoken_table_id = hide_lua_table(Luas, "oldtoken");
         node_table_id = hide_lua_table(Luas, "node");
         pdf_table_id = hide_lua_table(Luas, "pdf");
 
@@ -988,7 +986,6 @@ void lua_initialize(int ac, char **av)
         unhide_lua_table(Luas, "tex", tex_table_id);
         unhide_lua_table(Luas, "pdf", pdf_table_id);
         unhide_lua_table(Luas, "token", token_table_id);
-        unhide_lua_table(Luas, "oldtoken", oldtoken_table_id);
         unhide_lua_table(Luas, "node", node_table_id);
 
         /* |kpse_init| */

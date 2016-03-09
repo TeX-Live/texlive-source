@@ -202,6 +202,39 @@ static int luacsprint(lua_State * L)
     return do_luacprint(L, PARTIAL_LINE, DEFAULT_CAT_TABLE);
 }
 
+static int luaccprint(lua_State * L)
+{
+    /* so a negative value is a specific catcode with offset 1 */
+    int cattable = lua_tointeger(L,1);
+    if (cattable < 0 || cattable > 15) {
+        cattable = - 12 - 0xFF ;
+    } else {
+        cattable = - cattable - 0xFF;
+    }
+    if (lua_type(L, 2) == LUA_TTABLE) {
+        int i;
+        for (i = 1;; i++) {
+            lua_rawgeti(L, 2, i);
+            if (lua_isstring(L,-1)) { /* or number */
+                luac_store(L, -1, PARTIAL_LINE, cattable);
+                lua_pop(L, 1);
+            } else {
+                break;
+            }
+        }
+    } else {
+        int i;
+        int n = lua_gettop(L);
+        for (i = 2; i <= n; i++) {
+            if (!lua_isstring(L,1)) { /* or number */
+                luaL_error(L, "no string to print");
+            }
+            luac_store(L, i, PARTIAL_LINE, cattable);
+        }
+    }
+    return 0;
+}
+
 static int luactprint(lua_State * L)
 {
     int i, j;
@@ -1827,6 +1860,14 @@ static int getlist(lua_State * L)
             alink(vlink(contrib_head)) = null ;
             lua_pushinteger(L, vlink(contrib_head));
             lua_nodelib_push(L);
+        } else if (lua_key_eq(str,page_discards_head)) {
+            alink(vlink(page_disc)) = null ;
+            lua_pushinteger(L, page_disc);
+            lua_nodelib_push(L);
+        } else if (lua_key_eq(str,split_discards_head)) {
+            alink(vlink(split_disc)) = null ;
+            lua_pushinteger(L, split_disc);
+            lua_nodelib_push(L);
         } else if (lua_key_eq(str,page_head)) {
             alink(vlink(page_head)) = null ;/*hh-ls */
             lua_pushinteger(L, vlink(page_head));
@@ -1903,6 +1944,10 @@ static int setlist(lua_State * L)
                 page_tail = (n == 0 ? page_head : tail_of_list(n));
             } else if (lua_key_eq(str,temp_head)) {
                 vlink(temp_head) = n;
+            } else if (lua_key_eq(str,page_discards_head)) {
+                page_disc = n;
+            } else if (lua_key_eq(str,split_discards_head)) {
+                split_disc = n;
             } else if (lua_key_eq(str,hold_head)) {
                 vlink(hold_head) = n;
             } else if (lua_key_eq(str,adjust_head)) {
@@ -2597,7 +2642,6 @@ static int tex_run_boot(lua_State * L)
     unhide_lua_table(Luas, "tex", tex_table_id);
     unhide_lua_table(Luas, "pdf", pdf_table_id);
     unhide_lua_table(Luas, "token", token_table_id);
-    unhide_lua_table(Luas, "oldtoken", oldtoken_table_id);
     unhide_lua_table(Luas, "node", node_table_id);
 
     lua_pushboolean(L, 1);      /* true */
@@ -2824,6 +2868,7 @@ static const struct luaL_Reg texlib[] = {
     { "write", luacwrite },
     { "print", luacprint },
     { "tprint", luactprint },
+    { "cprint", luaccprint },
     { "error", texerror },
     { "sprint", luacsprint },
     { "set", settex },

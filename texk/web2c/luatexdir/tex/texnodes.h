@@ -66,7 +66,7 @@ extern void undump_node_mem(void);
 #  define node_size(a)  varmem[(a)].hh.v.LH
 
 #  define rlink(a)      vlink((a)+1) /* aka alink() */
-#  define llink(a)      vinfo((a)+1) /* overlaps with node_attr() */
+#  define tlink(a)      vinfo((a)+1) /* overlaps with node_attr() */
 
 #  define add_glue_ref(a) glue_ref_count(a)++   /* new reference to a glue spec */
 
@@ -167,7 +167,6 @@ typedef enum {
 #  define pre_break(a)        vinfo((a)+3)
 #  define post_break(a)       vlink((a)+3)
 #  define no_break(a)         vlink((a)+4)
-#  define tlink llink
 
 #  define vlink_pre_break(a)  vlink(pre_break_head(a))
 #  define vlink_post_break(a) vlink(post_break_head(a))

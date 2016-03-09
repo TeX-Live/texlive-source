@@ -22,6 +22,7 @@
 #include "lua/luatex-api.h"
 #include "lua/lauxlib_bridge.h"
 
+
 @ @c
 lua_State *Luas = NULL;
 
@@ -161,23 +162,13 @@ static void do_openlibs(lua_State * L)
     }
 }
 
-@ @c
-static int load_aux (lua_State *L, int status) {
-  if (status == 0)  /* OK? */
-    return 1;
-  else {
-    lua_pushnil(L);
-    lua_insert(L, -2);  /* put before error message */
-    return 2;  /* return nil plus error message */
-  }
-}
 
 @ @c
 static int luatex_loadfile (lua_State *L) {
   int status = 0;
   const char *fname = luaL_optstring(L, 1, NULL);
   const char *mode = luaL_optstring(L, 2, NULL);
-  int env = !lua_isnone(L, 3);  /* 'env' parameter? */
+  /*int env = !lua_isnone(L, 3);*/  /* 'env' parameter? */
   if (!lua_only && !fname && interaction == batch_mode) {
      lua_pushnil(L);
      lua_pushstring(L, "reading from stdin is disabled in batch mode");
@@ -186,12 +177,12 @@ static int luatex_loadfile (lua_State *L) {
   status = luaL_loadfilex(L, fname, mode);
   if (status == LUA_OK) {
     recorder_record_input(fname);
-    if (env) {  /* 'env' parameter? */
-      lua_pushvalue(L, 3);
-      lua_setupvalue(L, -2, 1);  /* set it as 1st upvalue of loaded chunk */
-    }
+    /* if (env) {  *//* 'env' parameter? */
+    /*  lua_pushvalue(L, 3); */
+    /*  lua_setupvalue(L, -2, 1); *//* set it as 1st upvalue of loaded chunk */
+    /*}                       */
   }
-  return load_aux(L, status);
+  return RESERVED_load_aux_JIT(L, status,3);
 }
 
 @ @c

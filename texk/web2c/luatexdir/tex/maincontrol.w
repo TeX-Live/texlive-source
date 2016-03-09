@@ -697,29 +697,28 @@ static void run_normal (void) {
 
 /*
     this is experimental and not used for production, only for testing and writing
-    macros
+    macros (some options stay)
 
 */
+
+#define mathoption_set_int(A) \
+    scan_int(); \
+    word_define(mathoption_int_base+A, cur_val);
 
 static void run_option(void) {
     int a = 0 ;
     switch (cur_chr) {
         case math_option_code:
             if (scan_keyword("old")) {
-                scan_int();
-                word_define(int_base+math_old_code, cur_val);
-                /* math_no_char_italic = cur_val; */
+                mathoption_set_int(c_mathoption_old_code);
             } else if (scan_keyword("noitaliccompensation")) {
-                scan_int();
-                word_define(int_base+math_no_italic_compensation_code, cur_val);
-                /* math_no_italic_compensation = cur_val; */
+                mathoption_set_int(c_mathoption_no_italic_compensation_code);
             } else if (scan_keyword("nocharitalic")) {
-                scan_int();
-                word_define(int_base+math_no_char_italic_code, cur_val);
-                /* math_no_char_italic = cur_val; */
+                mathoption_set_int(c_mathoption_no_char_italic_code);
             } else if (scan_keyword("useoldfractionscaling")) {
-                scan_int();
-                word_define(int_base+math_use_old_fraction_scaling_code, cur_val);
+                mathoption_set_int(c_mathoption_use_old_fraction_scaling_code);
+            } else if (scan_keyword("umathcodemeaning")) {
+                mathoption_set_int(c_mathoption_umathcode_meaning_code);
             } else {
                 normal_warning("mathoption","unknown key");
             }
@@ -973,8 +972,8 @@ void main_control(void)
         begin_token_list(equiv(every_job_loc), every_job_text);
 
     while (1) {
-	if (main_control_state == goto_skip_token)
-            main_control_state = goto_next; /* reset */
+        if (main_control_state == goto_skip_token)
+                main_control_state = goto_next; /* reset */
         else
             get_x_token();
 
@@ -992,7 +991,7 @@ void main_control(void)
         (jump_table[(abs(mode) + cur_cmd)])(); /* run the command */
 
         if (main_control_state == goto_return) {
-	    return;
+            return;
         }
     }
     return; /* not reached */
@@ -2345,23 +2344,22 @@ void prefixed_command(void)
                 break;
             case math_char_def_code:
                 mval = scan_mathchar(tex_mathcode);
-                cur_val =
-                    (mval.class_value * 16 + mval.family_value) * 256 +
-                    mval.character_value;
-                define(p, math_given_cmd, cur_val);
+                if (mathoption_int_par(c_mathoption_umathcode_meaning_code) == 1) {
+                    cur_val = (mval.class_value + (8 * mval.family_value)) * (65536 * 32) + mval.character_value;
+                    define(p, xmath_given_cmd, cur_val);
+                } else {
+                    cur_val = (mval.class_value * 16 + mval.family_value) * 256 + mval.character_value;
+                    define(p, math_given_cmd, cur_val);
+                }
                 break;
             case xmath_char_def_code:
                 mval = scan_mathchar(umath_mathcode);
-                cur_val =
-                    (mval.class_value + (8 * mval.family_value)) * (65536 * 32) +
-                    mval.character_value;
+                cur_val = (mval.class_value + (8 * mval.family_value)) * (65536 * 32) + mval.character_value;
                 define(p, xmath_given_cmd, cur_val);
                 break;
             case umath_char_def_code:
                 mval = scan_mathchar(umathnum_mathcode);
-                cur_val =
-                    (mval.class_value + (8 * mval.family_value)) * (65536 * 32) +
-                    mval.character_value;
+                cur_val = (mval.class_value + (8 * mval.family_value)) * (65536 * 32) + mval.character_value;
                 define(p, xmath_given_cmd, cur_val);
                 break;
             default:

@@ -279,23 +279,21 @@ the |number_regs| \.{\\dimen} registers.
 #  define math_display_skip_mode_code 88
 #  define math_scripts_mode_code 89
 #  define synctex_code 90                                               /* is synctex file generation enabled ?  */
+#  define first_valid_language_code 91
 
-#  define math_no_italic_compensation_code 92                           /* just for tracing, can change */
-#  define math_no_char_italic_code 93                                   /* just for tracing, can change */
-#  define math_use_old_fraction_scaling_code 94                         /* just for tracing, can change */
-#  define math_old_code 95                                              /* this one is stable */
-#  define math_option_code 96
+#  define math_option_code 92
 
-#  define first_valid_language_code 97
+#  define mathoption_int_base (int_base+93)
+#  define mathoption_int_last (int_base+99)
 
-#  define backend_int_base (int_base+98)
-#  define backend_int_last (int_base+117)
+#  define backend_int_base (int_base+100)
+#  define backend_int_last (int_base+119)
 
-#  define tex_int_pars (118)                                            /* total number of integer parameters */
+#  define tex_int_pars (120)                                            /* total number of integer parameters */
 
 #  define page_direction_code (tex_int_pars)
 #  define body_direction_code (tex_int_pars+1)
-#  define par_direction_code (tex_int_pars+2)
+#  define par_direction_code  (tex_int_pars+2)
 #  define text_direction_code (tex_int_pars+3)
 #  define math_direction_code (tex_int_pars+4)
 
@@ -424,6 +422,16 @@ extern void print_save_stack(void);
 #  define dimen_par(A) eqtb[dimen_base+(A)].cint
 #  define loc_par(A)   equiv(local_base+(A))
 #  define glue_par(A)  equiv(glue_base+(A))
+
+typedef enum {
+    c_mathoption_old_code = 0,                  /* this one is stable */
+    c_mathoption_no_italic_compensation_code,   /* just for tracing, can change */
+    c_mathoption_no_char_italic_code,           /* just for tracing, can change */
+    c_mathoption_use_old_fraction_scaling_code, /* just for tracing, can change */
+    c_mathoption_umathcode_meaning_code,        /* this one is stable */
+} math_option_codes ;
+
+#  define mathoption_int_par(A) eqtb[mathoption_int_base+(A)].cint
 
 /* if nonzero, this magnification should be used henceforth */
 
