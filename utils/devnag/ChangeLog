@@ -1,3 +1,9 @@
+2016-03-09  Karl Berry  <karl@tug.org>
+
+	* devnag.1: new file, originally written by Norbert.
+	Double backslash per esr, tldoc mail 29 Feb 2016 06:35:27.
+	* Makefile.am (man1_MANS): list it.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.

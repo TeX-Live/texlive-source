@@ -1,0 +1,35 @@
+.TH DEVNAG "1" "8 March 2016" "TeX Live"
+.SH NAME
+devnag \- Devanagari for TeX preprocessor
+.SH SYNOPSIS
+.B devnag in[.dn] [out[.tex]]
+.SH DESCRIPTION
+.PP
+.B devnag
+is a preprocessor that reads transliterated Devanagari input delimited by
+\\dn and converts it into a form with which TeX is familiar.
+.PP
+The preprocessor
+handles the details of character placement such as the alignment of
+vowel diacritics and consonant ligatures. The rest of the layout,
+however, must be managed by the user. 
+.PP
+For specification of the format please see the documentation accompanying
+the package.
+.SH OPTIONS
+.TP
+in[.dn] out[.tex]
+The default file extension for an input file is .dn and for an output
+file .tex. The output filename is optional. If an output filename is
+not specified, the preprocessor will name it after the input file.
+.TP
+\fB\-v\fR 
+report devnag version
+.SH AUTHORS
+.B devnag
+was written by Frans J. Velthuis and is currently maintained by Zdenek
+Wagner as part of TeX Live <tex-live@tug.org>.
+.PP
+This manpage was written by Norbert Preining for Debian/GNU Linux and
+may be used, modified and/or distributed freely by anyone.
+
