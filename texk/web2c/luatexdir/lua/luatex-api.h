@@ -128,7 +128,6 @@ extern int luaopen_vf(lua_State * L);
 extern int font_to_lua(lua_State * L, int f);
 extern int font_from_lua(lua_State * L, int f); /* return is boolean */
 
-extern int luaopen_oldtoken(lua_State * L);
 extern int luaopen_token(lua_State * L);
 extern void tokenlist_to_lua(lua_State * L, int p);
 extern void tokenlist_to_luastring(lua_State * L, int p);
@@ -218,7 +217,6 @@ extern void init_tex_table(lua_State * L);
 extern int tex_table_id;
 extern int pdf_table_id;
 extern int token_table_id;
-extern int oldtoken_table_id;
 extern int node_table_id;
 extern int main_initialize(void);
 
@@ -596,7 +594,6 @@ make_lua_key(lua);\
 make_lua_key(lua_functions);\
 make_lua_key(luatex);\
 make_lua_key(luatex_node);\
-make_lua_key(luatex_oldtoken);\
 make_lua_key(luatex_token);\
 make_lua_key(mLTL);\
 make_lua_key(mRTT);\
@@ -646,6 +643,7 @@ make_lua_key(pTLT);\
 make_lua_key(pTRT);\
 make_lua_key(page);\
 make_lua_key(pages);\
+make_lua_key(page_discards_head);\
 make_lua_key(page_head);\
 make_lua_key(page_ins_head);\
 make_lua_key(pageattributes);\
@@ -710,6 +708,7 @@ make_lua_key(space_stretch);\
 make_lua_key(spacefactor);\
 make_lua_key(spec);\
 make_lua_key(special);\
+make_lua_key(split_discards_head);\
 make_lua_key(split_keep);\
 make_lua_key(split_off);\
 make_lua_key(stack);\
@@ -933,7 +932,6 @@ init_lua_key(lua);\
 init_lua_key(lua_functions);\
 init_lua_key(luatex);\
 init_lua_key(luatex_node);\
-init_lua_key(luatex_oldtoken);\
 init_lua_key(luatex_token);\
 init_lua_key(marginkern);\
 init_lua_key(mark);\
@@ -973,6 +971,7 @@ init_lua_key(output);\
 init_lua_key(overlay_accent);\
 init_lua_key(page);\
 init_lua_key(pages);\
+init_lua_key(page_discards_head);\
 init_lua_key(page_head);\
 init_lua_key(page_ins_head);\
 init_lua_key(pageattributes);\
@@ -1036,6 +1035,7 @@ init_lua_key(space_stretch);\
 init_lua_key(spacefactor);\
 init_lua_key(spec);\
 init_lua_key(special);\
+init_lua_key(split_discards_head);\
 init_lua_key(split_keep);\
 init_lua_key(split_off);\
 init_lua_key(stack);\
@@ -1315,7 +1315,6 @@ use_lua_key(lua);
 use_lua_key(lua_functions);
 use_lua_key(luatex);
 use_lua_key(luatex_node);
-use_lua_key(luatex_oldtoken);
 use_lua_key(luatex_token);
 use_lua_key(mLTL);
 use_lua_key(mRTT);
@@ -1365,6 +1364,7 @@ use_lua_key(pTLT);
 use_lua_key(pTRT);
 use_lua_key(page);
 use_lua_key(pages);
+use_lua_key(page_discards_head);
 use_lua_key(page_head);
 use_lua_key(page_ins_head);
 use_lua_key(pagebox);
@@ -1429,6 +1429,7 @@ use_lua_key(space_stretch);
 use_lua_key(spacefactor);
 use_lua_key(spec);
 use_lua_key(special);
+use_lua_key(split_discards_head);
 use_lua_key(split_keep);
 use_lua_key(split_off);
 use_lua_key(stack);

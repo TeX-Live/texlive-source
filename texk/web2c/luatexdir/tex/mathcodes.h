@@ -45,6 +45,7 @@ mathcodeval scan_delimiter_as_mathchar(int extcode);
 
 mathcodeval mathchar_from_integer(int value, int extcode);
 void show_mathcode_value(mathcodeval d);
+void show_mathcode_value_old(int value);
 
 typedef struct delcodeval {
     int class_value;

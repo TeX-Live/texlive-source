@@ -63,15 +63,23 @@ static sa_tree delcode_head = NULL;
     two_hex((A)%256);         \
   } while (0)
 
+/*
+    At some point we will drop the mathchardef 8 bit storage (c_mathoption_umathcode_meaning_code => 1)
+    and then some of the conversion can go away. Like mathchar_from_integer: only wide characters are
+    possible then.
+*/
+
+
 @ @c
 mathcodeval mathchar_from_integer(int value, int extcode)
 {
     mathcodeval mval;
     if (extcode == tex_mathcode) {
+     /* printf("can't happen: tex_mathcode\n"); */
         mval.class_value = (value / 0x1000);
         mval.family_value = ((value % 0x1000) / 0x100);
         mval.character_value = (value % 0x100);
-    } else { /* some xetexended xetex thing */
+    } else {
         int mfam = (value / 0x200000) & 0x7FF;
         mval.class_value = mfam % 0x08;
         mval.family_value = mfam / 0x08;
@@ -81,6 +89,11 @@ mathcodeval mathchar_from_integer(int value, int extcode)
 }
 
 @ @c
+void show_mathcode_value_old(int value)
+{
+    print_char('"');
+    four_hex(value);
+}
 void show_mathcode_value(mathcodeval c)
 {
     print_char('"');

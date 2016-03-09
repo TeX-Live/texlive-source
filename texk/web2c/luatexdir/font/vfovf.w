@@ -217,7 +217,7 @@ vf_def_font(internal_font_number f, unsigned char *vf_buffer, int *vf_cr)
     four_quarters cs;
     memory_word tmp_w;          /* accumulator */
     int junk;
-    unsigned long checksum;
+    unsigned int checksum;
     cs.b0 = vf_buffer[(*vf_cr)];
     cs.b1 = vf_buffer[(*vf_cr) + 1];
     cs.b2 = vf_buffer[(*vf_cr) + 2];

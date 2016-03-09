@@ -159,6 +159,7 @@ extern void conv_toks(void);
 extern str_number the_convert_string(halfword c, int i);
 extern void do_variable(void);
 extern void do_feedback(void);
+extern void do_mathoption(void);
 
 extern halfword lua_str_toks(lstring b);
 extern boolean in_lua_escape;
