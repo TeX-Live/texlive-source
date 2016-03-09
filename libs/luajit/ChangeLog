@@ -1,3 +1,9 @@
+2016-03-09 Luigi Scarso <luigi.scarso@gmail.com>
+
+	Import LuaJIT-2.1.0-beta2.
+	* version.ac: Adjust.
+
+
 2016-02-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

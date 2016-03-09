@@ -170,6 +170,8 @@ LUALIB_API void (luaL_addstring) (luaL_Buffer *B, const char *s);
 LUALIB_API void (luaL_addvalue) (luaL_Buffer *B);
 LUALIB_API void (luaL_pushresult) (luaL_Buffer *B);
 
+/* Luajittex needs this one because it overloads loadfile */
+LUALIB_API int (RESERVED_load_aux_JIT) (lua_State *L, int status, int envarg);
 
 /* }====================================================== */
 

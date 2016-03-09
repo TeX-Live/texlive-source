@@ -1,6 +1,6 @@
 /*
 ** Load and dump code.
-** Copyright (C) 2005-2015 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2016 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #include <errno.h>
@@ -166,3 +166,19 @@ LUA_API int lua_dump(lua_State *L, lua_Writer writer, void *data)
     return 1;
 }
 
+/* -- Luajittex needs this one because it overloads loadfile  -- */
+LUALIB_API int RESERVED_load_aux_JIT(lua_State *L, int status, int envarg)
+{
+  if (status == 0) {
+    if (tvistab(L->base+envarg-1)) {
+      GCfunc *fn = funcV(L->top-1);
+      GCtab *t = tabV(L->base+envarg-1);
+      setgcref(fn->c.env, obj2gco(t));
+      lj_gc_objbarrier(L, fn, t);
+    }
+    return 1;
+  } else {
+    setnilV(L->top-2);
+    return 2;
+  }
+}

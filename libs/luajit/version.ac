@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current luajit version
-m4_define([luajit_version], [2.1.0-beta1])
+m4_define([luajit_version], [2.1.0-beta2])
