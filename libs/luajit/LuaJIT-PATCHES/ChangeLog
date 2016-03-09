@@ -1,3 +1,10 @@
+2016-03-07 Luigi Scarso <luigi.scarso@gmail.com>
+	Luajit-2.1.0-beta2
+
+2016-03-04 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* added RESERVED_load_aux_JIT needed to Luajittex loadfile
+
 2015-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-07-x86_64-cygwin (new): Backport from upstream git.

@@ -1,6 +1,6 @@
-diff -ur LuaJIT-2.1.0-beta1.orig/src/host/buildvm.c LuaJIT-2.1.0-beta1/src/host/buildvm.c
---- LuaJIT-2.1.0-beta1.orig/src/host/buildvm.c	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/host/buildvm.c	2015-09-04 09:03:00.000000000 +0200
+diff -bur LuaJIT-src-orig/src/host/buildvm.c LuaJIT-src/src/host/buildvm.c
+--- LuaJIT-src-orig/src/host/buildvm.c	2016-03-07 09:43:42.728069718 +0100
++++ LuaJIT-src/src/host/buildvm.c	2016-03-07 12:29:03.891904786 +0100
 @@ -113,7 +113,7 @@
        name[0] = '@';
      else
@@ -10,10 +10,11 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/host/buildvm.c LuaJIT-2.1.0-beta1/src/host/
      /* Keep @plt etc. */
  #else
      *p = '\0';
-diff -ur LuaJIT-2.1.0-beta1.orig/src/lj_arch.h LuaJIT-2.1.0-beta1/src/lj_arch.h
---- LuaJIT-2.1.0-beta1.orig/src/lj_arch.h	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/lj_arch.h	2015-09-04 08:58:07.000000000 +0200
-@@ -324,7 +324,7 @@
+
+diff -bur LuaJIT-src-orig/src/lj_arch.h LuaJIT-src/src/lj_arch.h
+--- LuaJIT-src-orig/src/lj_arch.h	2016-03-07 09:43:42.712069718 +0100
++++ LuaJIT-src/src/lj_arch.h	2016-03-07 12:31:33.351902301 +0100
+@@ -350,7 +350,7 @@
  #if __GNUC__ < 4
  #error "Need at least GCC 4.0 or newer"
  #endif

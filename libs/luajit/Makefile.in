@@ -182,10 +182,12 @@ nodist_libtexluajit_la_OBJECTS = $(am__objects_1) \
 	@LUAJIT_TREE@/src/lj_parse.lo @LUAJIT_TREE@/src/lj_profile.lo \
 	@LUAJIT_TREE@/src/lj_record.lo @LUAJIT_TREE@/src/lj_snap.lo \
 	@LUAJIT_TREE@/src/lj_state.lo @LUAJIT_TREE@/src/lj_str.lo \
-	@LUAJIT_TREE@/src/lj_strfmt.lo @LUAJIT_TREE@/src/lj_strscan.lo \
-	@LUAJIT_TREE@/src/lj_tab.lo @LUAJIT_TREE@/src/lj_trace.lo \
-	@LUAJIT_TREE@/src/lj_udata.lo @LUAJIT_TREE@/src/lj_vmevent.lo \
-	@LUAJIT_TREE@/src/lj_vmmath.lo $(am__objects_2)
+	@LUAJIT_TREE@/src/lj_strfmt.lo \
+	@LUAJIT_TREE@/src/lj_strfmt_num.lo \
+	@LUAJIT_TREE@/src/lj_strscan.lo @LUAJIT_TREE@/src/lj_tab.lo \
+	@LUAJIT_TREE@/src/lj_trace.lo @LUAJIT_TREE@/src/lj_udata.lo \
+	@LUAJIT_TREE@/src/lj_vmevent.lo @LUAJIT_TREE@/src/lj_vmmath.lo \
+	$(am__objects_2)
 libtexluajit_la_OBJECTS = $(dist_libtexluajit_la_OBJECTS) \
 	$(nodist_libtexluajit_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -710,6 +712,7 @@ nodist_libtexluajit_la_SOURCES = $(ljlib_sources) \
 	@LUAJIT_TREE@/src/lj_profile.c @LUAJIT_TREE@/src/lj_record.c \
 	@LUAJIT_TREE@/src/lj_snap.c @LUAJIT_TREE@/src/lj_state.c \
 	@LUAJIT_TREE@/src/lj_str.c @LUAJIT_TREE@/src/lj_strfmt.c \
+	@LUAJIT_TREE@/src/lj_strfmt_num.c \
 	@LUAJIT_TREE@/src/lj_strscan.c @LUAJIT_TREE@/src/lj_tab.c \
 	@LUAJIT_TREE@/src/lj_trace.c @LUAJIT_TREE@/src/lj_udata.c \
 	@LUAJIT_TREE@/src/lj_vmevent.c @LUAJIT_TREE@/src/lj_vmmath.c \
@@ -950,6 +953,8 @@ clean-libLTLIBRARIES:
 	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @LUAJIT_TREE@/src/lj_strfmt.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
 	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@LUAJIT_TREE@/src/lj_strfmt_num.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
+	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @LUAJIT_TREE@/src/lj_strscan.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
 	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @LUAJIT_TREE@/src/lj_tab.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
@@ -1055,6 +1060,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_state.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_str.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_strfmt.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_strfmt_num.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_strscan.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_tab.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_trace.Plo@am__quote@

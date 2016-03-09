@@ -1,6 +1,6 @@
-diff -ur LuaJIT-2.1.0-beta1.orig/src/lauxlib.h LuaJIT-2.1.0-beta1/src/lauxlib.h
---- LuaJIT-2.1.0-beta1.orig/src/lauxlib.h	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/lauxlib.h	2015-09-04 08:42:39.000000000 +0200
+diff -bur LuaJIT-src-orig/src/lauxlib.h LuaJIT-src/src/lauxlib.h
+--- LuaJIT-src-orig/src/lauxlib.h	2016-03-07 09:43:42.708069718 +0100
++++ LuaJIT-src/src/lauxlib.h	2016-03-04 16:52:23.000000000 +0100
 @@ -86,6 +86,32 @@
  				int level);
  
@@ -34,9 +34,18 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/lauxlib.h LuaJIT-2.1.0-beta1/src/lauxlib.h
  /*
  ** ===============================================================
  ** some useful macros
-diff -ur LuaJIT-2.1.0-beta1.orig/src/lib_init.c LuaJIT-2.1.0-beta1/src/lib_init.c
---- LuaJIT-2.1.0-beta1.orig/src/lib_init.c	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/lib_init.c	2015-09-04 08:42:39.000000000 +0200
+@@ -144,6 +170,8 @@
+ LUALIB_API void (luaL_addvalue) (luaL_Buffer *B);
+ LUALIB_API void (luaL_pushresult) (luaL_Buffer *B);
+ 
++/* Luajittex needs this one because it overloads loadfile */
++LUALIB_API int (RESERVED_load_aux_JIT) (lua_State *L, int status, int envarg);
+ 
+ /* }====================================================== */
+ 
+diff -bur LuaJIT-src-orig/src/lib_init.c LuaJIT-src/src/lib_init.c
+--- LuaJIT-src-orig/src/lib_init.c	2016-03-07 09:43:42.720069718 +0100
++++ LuaJIT-src/src/lib_init.c	2016-03-07 11:47:15.847946480 +0100
 @@ -26,6 +26,7 @@
    { LUA_DBLIBNAME,	luaopen_debug },
    { LUA_BITLIBNAME,	luaopen_bit },
@@ -45,9 +54,9 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/lib_init.c LuaJIT-2.1.0-beta1/src/lib_init.
    { NULL,		NULL }
  };
  
-diff -ur LuaJIT-2.1.0-beta1.orig/src/lib_package.c LuaJIT-2.1.0-beta1/src/lib_package.c
---- LuaJIT-2.1.0-beta1.orig/src/lib_package.c	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/lib_package.c	2015-09-04 08:42:39.000000000 +0200
+diff -bur LuaJIT-src-orig/src/lib_package.c LuaJIT-src/src/lib_package.c
+--- LuaJIT-src-orig/src/lib_package.c	2016-03-07 09:43:42.712069718 +0100
++++ LuaJIT-src/src/lib_package.c	2016-03-07 11:49:15.655944489 +0100
 @@ -362,6 +362,29 @@
    return 1;  /* library loaded successfully */
  }
@@ -100,10 +109,45 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/lib_package.c LuaJIT-2.1.0-beta1/src/lib_pa
  static int lj_cf_package_loader_preload(lua_State *L)
  {
    const char *name = luaL_checkstring(L, 1);
-diff -ur LuaJIT-2.1.0-beta1.orig/src/lua.h LuaJIT-2.1.0-beta1/src/lua.h
---- LuaJIT-2.1.0-beta1.orig/src/lua.h	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/lua.h	2015-09-04 08:42:39.000000000 +0200
-@@ -348,6 +348,16 @@
+
+diff -bur LuaJIT-src-orig/src/lj_load.c LuaJIT-src/src/lj_load.c
+--- LuaJIT-src-orig/src/lj_load.c	2016-03-07 09:43:42.716069718 +0100
++++ LuaJIT-src/src/lj_load.c	2016-03-07 12:09:10.771924621 +0100
+@@ -166,3 +166,19 @@
+     return 1;
+ }
+ 
++/* -- Luajittex needs this one because it overloads loadfile  -- */
++LUALIB_API int RESERVED_load_aux_JIT(lua_State *L, int status, int envarg)
++{
++  if (status == 0) {
++    if (tvistab(L->base+envarg-1)) {
++      GCfunc *fn = funcV(L->top-1);
++      GCtab *t = tabV(L->base+envarg-1);
++      setgcref(fn->c.env, obj2gco(t));
++      lj_gc_objbarrier(L, fn, t);
++    }
++    return 1;
++  } else {
++    setnilV(L->top-2);
++    return 2;
++  }
++}
+
+diff -bur LuaJIT-src-orig/src/lua.h LuaJIT-src/src/lua.h
+--- LuaJIT-src-orig/src/lua.h	2016-03-07 09:43:42.716069718 +0100
++++ LuaJIT-src/src/lua.h	2016-03-07 11:56:24.855937353 +0100
+@@ -103,6 +103,9 @@
+ typedef LUA_INTEGER lua_Integer;
+ 
+ 
++/* communication with LuaJiTTeX */
++LUA_API int luajittex_choose_hash_function; 
++
+ 
+ /*
+ ** state manipulation
+@@ -349,6 +352,16 @@
  		       const char *chunkname, const char *mode);
  
  
@@ -120,9 +164,10 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/lua.h LuaJIT-2.1.0-beta1/src/lua.h
  struct lua_Debug {
    int event;
    const char *name;	/* (n) */
-diff -ur LuaJIT-2.1.0-beta1.orig/src/lualib.h LuaJIT-2.1.0-beta1/src/lualib.h
---- LuaJIT-2.1.0-beta1.orig/src/lualib.h	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/lualib.h	2015-09-04 08:42:39.000000000 +0200
+
+diff -bur LuaJIT-src-orig/src/lualib.h LuaJIT-src/src/lualib.h
+--- LuaJIT-src-orig/src/lualib.h	2016-03-07 09:43:42.724069718 +0100
++++ LuaJIT-src/src/lualib.h	2016-03-07 11:58:19.151935453 +0100
 @@ -22,6 +22,8 @@
  #define LUA_JITLIBNAME	"jit"
  #define LUA_FFILIBNAME	"ffi"
@@ -141,10 +186,11 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/lualib.h LuaJIT-2.1.0-beta1/src/lualib.h
  LUALIB_API void luaL_openlibs(lua_State *L);
  
  #ifndef lua_assert
-diff -ur LuaJIT-2.1.0-beta1.orig/src/Makefile LuaJIT-2.1.0-beta1/src/Makefile
---- LuaJIT-2.1.0-beta1.orig/src/Makefile	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/Makefile	2015-09-04 08:42:39.000000000 +0200
-@@ -97,7 +97,7 @@
+
+diff -bur LuaJIT-src-orig/src/Makefile LuaJIT-src/src/Makefile
+--- LuaJIT-src-orig/src/Makefile	2016-03-07 09:43:42.716069718 +0100
++++ LuaJIT-src/src/Makefile	2016-03-07 12:02:42.319931078 +0100
+@@ -99,7 +99,7 @@
  # enabled by default. Some other features that *might* break some existing
  # code (e.g. __pairs or os.execute() return values) can be enabled here.
  # Note: this does not provide full compatibility with Lua 5.2 at this time.
@@ -153,7 +199,7 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/Makefile LuaJIT-2.1.0-beta1/src/Makefile
  #
  # Disable the JIT compiler, i.e. turn LuaJIT into a pure interpreter.
  #XCFLAGS+= -DLUAJIT_DISABLE_JIT
-@@ -456,7 +456,7 @@
+@@ -471,7 +471,7 @@
  LJVM_BOUT= $(LJVM_S)
  LJVM_MODE= elfasm
  
@@ -162,9 +208,9 @@ diff -ur LuaJIT-2.1.0-beta1.orig/src/Makefile LuaJIT-2.1.0-beta1/src/Makefile
  	 lib_io.o lib_os.o lib_package.o lib_debug.o lib_jit.o lib_ffi.o
  LJLIB_C= $(LJLIB_O:.o=.c)
  
-diff -ur LuaJIT-2.1.0-beta1.orig/src/Makefile.dep LuaJIT-2.1.0-beta1/src/Makefile.dep
---- LuaJIT-2.1.0-beta1.orig/src/Makefile.dep	2015-08-25 23:35:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta1/src/Makefile.dep	2015-09-04 08:46:10.000000000 +0200
+diff -bur LuaJIT-src-orig/src/Makefile.dep LuaJIT-src/src/Makefile.dep
+--- LuaJIT-src-orig/src/Makefile.dep	2016-03-07 09:43:42.696069718 +0100
++++ LuaJIT-src/src/Makefile.dep	2016-03-07 12:05:19.343928468 +0100
 @@ -6,6 +6,7 @@
   lj_tab.h lj_meta.h lj_state.h lj_ctype.h lj_cconv.h lj_bc.h lj_ff.h \
   lj_ffdef.h lj_dispatch.h lj_jit.h lj_ir.h lj_char.h lj_strscan.h \

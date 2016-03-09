@@ -78,6 +78,7 @@ nodist_libtexluajit_la_SOURCES = \
 	@LUAJIT_TREE@/src/lj_state.c \
 	@LUAJIT_TREE@/src/lj_str.c \
 	@LUAJIT_TREE@/src/lj_strfmt.c \
+	@LUAJIT_TREE@/src/lj_strfmt_num.c \
 	@LUAJIT_TREE@/src/lj_strscan.c \
 	@LUAJIT_TREE@/src/lj_tab.c \
 	@LUAJIT_TREE@/src/lj_trace.c \
