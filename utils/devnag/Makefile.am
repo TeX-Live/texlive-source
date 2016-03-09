@@ -1,5 +1,7 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory utils/devnag/
 ##
+## Copyright 2016 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -17,6 +19,9 @@ config.force: $(KPATHSEA_DEPEND)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 
+man1_MANS = \
+	devnag.1
+
 DISTCLEANFILES = config.force
 
 ## Tests.
@@ -32,4 +37,3 @@ EXTRA_DIST += \
 	tests/vedasample.dn tests/vedasample.tex
 
 DISTCLEANFILES += captions.dn examples.dn *.tex
-
