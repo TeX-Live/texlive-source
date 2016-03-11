@@ -1604,6 +1604,21 @@ Boolean to disable the printing of vertical episemata.
 \macroname{\textbackslash ifgre@lastendswithmorasave}{}{gregoriotex-syllable.tex}
 Boolean for saving \verb=\ifgre@lastendswithmora= for later restoration.
 
+\macroname{\textbackslash gre@lasteuouaeindex}{}{gregoriotex-main.tex}
+Count which keeps track of the most recent euouae area.
+
+\macroname{\textbackslash ifgre@firstin@euouae}{}{gregoriotex-main.tex}
+Boolean indicating we're dealing with the first syllable in an euouae area.
+
+\macroname{\textbackslash ifgre@gabcforcecenters}{}{gregoriotex-syllable.tex}
+Boolean for determining whether forced centers in gabc are allowed to determine syllable alignment in \texttt{syllable} and \texttt{firstletter} alignment modes.
+
+\macroname{\textbackslash ifgre@forcedcentering}{}{gregoriotex-syllable.tex}
+Boolean indicating that the current syllable had a forced center in the gabc which is to be respected.
+
+\macroname{\textbackslash ifgre@nextforcedcentering}{}{gregoriotex-syllable.tex}
+Boolean indicating that the next syllable had a forced center in the gabc which is to be respected.
+
 
 \subsection{Boxes}
 
@@ -1692,6 +1707,9 @@ Dimension representing extra space below the staff needed for low notes.
 
 \macroname{\textbackslash gre@dimen@additionaltopspace}{}{gregoriotex-spaces.tex}
 Dimension representing extra space above the staff needed for high notes.
+
+\macroname{\textbackslash gre@dimen@additionaltopspacealt}{}{gregoriotex-spaces.tex}
+Dimension representing extra space above the staff needed for above lines text.
 
 \macroname{\textbackslash gre@dimen@textlower}{}{gregoriotex-spaces.tex}
 Dimension representing the height of the separation between the 0th
