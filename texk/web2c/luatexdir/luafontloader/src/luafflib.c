@@ -1928,6 +1928,16 @@ static void handle_splinefont(lua_State * L, struct splinefont *sf)
         dump_intfield(L, "glyphcnt", 0);
     }
 
+    if (sf->names != NULL) {
+        /*
+            this is not the best way to determine it but for now it will do; otherwise
+            we need to mess with the ff library
+        */
+        lua_pushstring(L, "truetype");
+        lua_pushboolean(L, 1);
+        lua_rawset(L, -3);
+    }
+
     dump_intfield(L, "glyphmax", sf->glyphmax - 1);
     dump_intfield(L, "glyphmin", sf->glyphmin);
     dump_intfield(L, "units_per_em", sf->units_per_em);

@@ -2,6 +2,14 @@
 This file is in the public domain.
 
 ==============================================================
+Luatex Release 0.89.4 was released 2016031100 
+==============================================================
+
+Intermediary release. Several bugs fixed.
+
+
+
+==============================================================
 Luatex Release 0.89.2 was released 2016022700 
 ==============================================================
 
@@ -2667,7 +2675,7 @@ Other news:
    we probably introduced new problems as well).
 
 * Most (all?) files now have a corrected Copyright header,
-   and link in $Id: NEWS 5808 2016-02-27 07:12:11Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
+   and link in $Id: NEWS 5840 2016-03-11 10:30:17Z luigi $ and  $URL: https://foundry.supelec.fr/svn/luatex/trunk/source/texk/web2c/luatexdir/NEWS $ into the object file.
 
 * Some unnecessary files were removed from the distribution.
 

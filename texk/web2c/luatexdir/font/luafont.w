@@ -495,10 +495,9 @@ int font_to_lua(lua_State * L, int f)
     return 1;
 }
 
-#define count_hash_items(L,name_index,n) \
+#define count_hash_items(L,name,n) \
     n = 0; \
-    lua_rawgeti(L, LUA_REGISTRYINDEX, name_index); \
-    lua_rawget(L, -2); \
+    lua_key_rawgeti(name); \
     if (lua_type(L, -1) == LUA_TTABLE) { \
         lua_pushnil(L); \
         while (lua_next(L, -2) != 0) { \
@@ -985,8 +984,7 @@ static void store_math_kerns(lua_State * L, int index, charinfo * co, int id)
 {
     int l, k;
     scaled ht, krn;
-    lua_rawgeti(L, LUA_REGISTRYINDEX, index);
-    lua_rawget(L, -2);
+    lua_key_direct_rawgeti(index);
     if (lua_istable(L, -1) && ((k = (int) lua_rawlen(L, -1)) > 0)) {
         for (l = 0; l < k; l++) {
             lua_rawgeti(L, -1, (l + 1));
@@ -1122,8 +1120,7 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
                 set_charinfo_remainder(co, k);
             }
 
-            lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(extensible));
-            lua_rawget(L, -2);
+            lua_key_rawgeti(extensible);
             if (lua_istable(L, -1)) {
                 int top, bot, mid, rep;
                 top = lua_numeric_field_by_index(L, lua_key_index(top), 0);
@@ -1140,8 +1137,7 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
             }
             lua_pop(L, 1);
 
-            lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(horiz_variants));
-            lua_rawget(L, -2);
+            lua_key_rawgeti(horiz_variants);
             if (lua_istable(L, -1)) {
                 int glyph, startconnect, endconnect, advance, extender;
                 extinfo *h;
@@ -1166,8 +1162,7 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
             }
             lua_pop(L, 1);
 
-            lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(vert_variants));
-            lua_rawget(L, -2);
+            lua_key_rawgeti(vert_variants);
             if (lua_istable(L, -1)) {
                 int glyph, startconnect, endconnect, advance, extender;
                 extinfo *h;
@@ -1204,10 +1199,9 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
 
             */
 
-            lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(mathkern));
-            lua_rawget(L, -2);
+            lua_key_rawgeti(mathkern);
             if (lua_istable(L, -1)) {
-	        store_math_kerns(L,lua_key_index(top_left), co, top_left_kern);
+                store_math_kerns(L,lua_key_index(top_left), co, top_left_kern);
                 store_math_kerns(L,lua_key_index(top_right), co, top_right_kern);
                 store_math_kerns(L,lua_key_index(bottom_right), co, bottom_right_kern);
                 store_math_kerns(L,lua_key_index(bottom_left), co, bottom_left_kern);
@@ -1215,7 +1209,7 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
             lua_pop(L, 1);
         }
         /* end of |has_math| */
-        count_hash_items(L, lua_key_index(kerns), nk);
+        count_hash_items(L, kerns, nk);
         if (nk > 0) {
             /* kerns table still on stack */
             ckerns = xcalloc((unsigned) (nk + 1), sizeof(kerninfo));
@@ -1258,8 +1252,7 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
         }
 
         /* packet commands */
-        lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(commands));
-        lua_rawget(L, -2);
+        lua_key_rawgeti(commands);
         if (lua_istable(L, -1)) {
             lua_pushnil(L);     /* first key */
             if (lua_next(L, -2) != 0) {
@@ -1270,7 +1263,7 @@ static void font_char_from_lua(lua_State * L, internal_font_number f, int i, int
         lua_pop(L, 1);
 
         /* ligatures */
-        count_hash_items(L, lua_key_index(ligatures),nl);
+        count_hash_items(L, ligatures, nl);
         if (nl > 0) {
             /* ligatures table still on stack */
             cligs = xcalloc((unsigned) (nl + 1), sizeof(liginfo));
@@ -1421,7 +1414,7 @@ int font_from_lua(lua_State * L, int f)
     }
 
     /* now fetch the base fonts, if needed */
-    count_hash_items(L, lua_key_index(fonts), n);
+    count_hash_items(L, fonts, n);
     if (n > 0) {
         /* font table still on stack */
         l_fonts = xmalloc((unsigned) ((unsigned) (n + 2) * sizeof(int)));
@@ -1485,9 +1478,7 @@ int font_from_lua(lua_State * L, int f)
     read_lua_cidinfo(L, f);
 
     /* characters */
-    /*lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(characters));lua_rawget(L, -2);*/
     lua_key_rawgeti(characters);
-     /*lua_getfield(L, -1, "characters");*/
     if (lua_istable(L, -1)) {
         /* find the array size values */
         int num = 0;            /* number of charinfo's to add */

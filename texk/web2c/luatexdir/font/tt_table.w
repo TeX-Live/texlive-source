@@ -416,8 +416,7 @@ tt_get_name(sfnt * sfont, char *dest, USHORT destlen,
         if ((p_id == plat_id) && (e_id == enco_id) &&
             (lang_id == 0xffffu || l_id == lang_id) && (n_id == name_id)) {
             if (length > destlen - 1) {
-                fprintf(stderr,
-                        "\n** Notice: Name string too long. Truncating **\n");
+                normal_warning("ttf","truncating a very long name");
                 length = (USHORT) (destlen - 1);
             }
             sfnt_seek_set(sfont, (long) (name_offset + string_offset + offset));

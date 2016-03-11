@@ -506,44 +506,20 @@ static int l_registerannot(lua_State * L)
     return 0;
 }
 
-static int l_get_pdf_value(lua_State * L, int key)
-{
-    lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(pdf_data));
-    lua_gettable(L, LUA_REGISTRYINDEX);
-    /* [table] */
-    lua_rawgeti(L, LUA_REGISTRYINDEX, key);
-    /* [table] [key] */
-    lua_rawget(L,-2);
+#define l_get_pdf_value(key) \
+    lua_get_metatablelua(pdf_data); \
+    lua_key_rawgeti(key); \
     return 1;
-}
 
-static int l_get_pageresources(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(pageresources));
-}
-static int l_get_pageattributes(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(pageattributes));
-}
-static int l_get_pagesattributes(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(pagesattributes));
-}
-static int l_get_catalog(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(catalog));
-}
-static int l_get_info(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(info));
-}
-static int l_get_names(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(names));
-}
-static int l_get_trailer(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(trailer));
-}
-static int l_get_xformresources(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(xformresources));
-}
-static int l_get_xformattributes(lua_State * L) {
-    return l_get_pdf_value(L,lua_key_index(xformattributes));
-}
+static int l_get_pageresources  (lua_State * L) { l_get_pdf_value(pageresources); }
+static int l_get_pageattributes (lua_State * L) { l_get_pdf_value(pageattributes); }
+static int l_get_pagesattributes(lua_State * L) { l_get_pdf_value(pagesattributes); }
+static int l_get_catalog        (lua_State * L) { l_get_pdf_value(catalog); }
+static int l_get_info           (lua_State * L) { l_get_pdf_value(info); }
+static int l_get_names          (lua_State * L) { l_get_pdf_value(names); }
+static int l_get_trailer        (lua_State * L) { l_get_pdf_value(trailer); }
+static int l_get_xformresources (lua_State * L) { l_get_pdf_value(xformresources); }
+static int l_get_xformattributes(lua_State * L) { l_get_pdf_value(xformattributes); }
 
 # define valid_pdf_key ( \
     lua_key_eq(s,catalog) || \
@@ -571,8 +547,7 @@ static int getpdf(lua_State * L)
             lua_pushinteger(L, static_pdf->posstruct->pos.v);
             return 1;
         } else if (valid_pdf_key) {
-            lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(pdf_data));
-            lua_gettable(L, LUA_REGISTRYINDEX);
+            lua_get_metatablelua(pdf_data);
             /* [pdf table] [key] [pdf.data table] */
             lua_replace(L, -3);
             /* [pdf.data table] [key] */
@@ -583,49 +558,24 @@ static int getpdf(lua_State * L)
     return 0;
 }
 
-static int l_set_pdf_value(lua_State * L, int key)
-{
-    if (lua_type(L,-1) == LUA_TSTRING) {
-        /* [value] */
-        lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(pdf_data));
-        lua_gettable(L, LUA_REGISTRYINDEX);
-        /* [value] [table]  */
-        lua_rawgeti(L, LUA_REGISTRYINDEX, key);
-        /* [value] [table] [key] */
-        lua_pushvalue(L, -3);
-        /* [table] [key] [value] */
-        lua_rawset(L,-3);
-    }
+#define l_set_pdf_value(key) \
+    if (lua_type(L,-1) == LUA_TSTRING) { \
+        lua_get_metatablelua(pdf_data); \
+        lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(key)); \
+        lua_pushvalue(L, -3); \
+        lua_rawset(L,-3); \
+    } \
     return 0;
-}
 
-static int l_set_pageresources(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(pageresources));
-}
-static int l_set_pageattributes(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(pageattributes));
-}
-static int l_set_pagesattributes(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(pagesattributes));
-}
-static int l_set_catalog(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(catalog));
-}
-static int l_set_info(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(info));
-}
-static int l_set_names(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(names));
-}
-static int l_set_trailer(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(trailer));
-}
-static int l_set_xformresources(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(xformresources));
-}
-static int l_set_xformattributes(lua_State * L) {
-    return l_set_pdf_value(L,lua_key_index(xformattributes));
-}
+static int l_set_pageresources  (lua_State * L) { l_set_pdf_value(pageresources); }
+static int l_set_pageattributes (lua_State * L) { l_set_pdf_value(pageattributes); }
+static int l_set_pagesattributes(lua_State * L) { l_set_pdf_value(pagesattributes); }
+static int l_set_catalog        (lua_State * L) { l_set_pdf_value(catalog); }
+static int l_set_info           (lua_State * L) { l_set_pdf_value(info); }
+static int l_set_names          (lua_State * L) { l_set_pdf_value(names); }
+static int l_set_trailer        (lua_State * L) { l_set_pdf_value(trailer); }
+static int l_set_xformresources (lua_State * L) { l_set_pdf_value(xformresources); }
+static int l_set_xformattributes(lua_State * L) { l_set_pdf_value(xformattributes); }
 
 static int setpdf(lua_State * L)
 {
@@ -637,8 +587,7 @@ static int setpdf(lua_State * L)
     if (lua_type(L, -2) == LUA_TSTRING) {
         s = lua_tostring(L, -1);
         if (valid_pdf_key) {
-            lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(pdf_data));
-            lua_gettable(L, LUA_REGISTRYINDEX);
+            lua_get_metatablelua(pdf_data);
             /* [pdf table] [key] [value] [pdf.data table] */
             lua_replace(L, -4);
             /* [pdf.data table] [key] [value] */

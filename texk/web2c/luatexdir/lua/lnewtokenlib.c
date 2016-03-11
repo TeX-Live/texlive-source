@@ -102,8 +102,7 @@ static lua_token *maybe_istoken(lua_State * L, int ud)
     lua_token *p = lua_touserdata(L, ud);
     if (p != NULL) {
         if (lua_getmetatable(L, ud)) {
-            lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(luatex_token));
-            lua_gettable(L, LUA_REGISTRYINDEX);
+            lua_get_metatablelua(luatex_token);
             if (!lua_rawequal(L, -1, -2))
                 p = NULL;
             lua_pop(L, 2);
@@ -133,8 +132,7 @@ static void make_new_token(lua_State * L, int cmd, int chr, int cs)
     fast_get_avail(thetok->token);
     tok = (cs ? cs_token_flag + cs : token_val(cmd, chr));
     set_token_info(thetok->token, tok);
-    lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(luatex_token));
-    lua_gettable(L, LUA_REGISTRYINDEX);
+    lua_get_metatablelua(luatex_token);
     lua_setmetatable(L, -2);
 }
 
@@ -143,8 +141,7 @@ static void push_token(lua_State * L, int tok)
     lua_token *thetok = lua_newuserdata(L, sizeof(lua_token));
     thetok->origin = LUA_ORIGIN;
     thetok->token = tok;
-    lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(luatex_token));
-    lua_gettable(L, LUA_REGISTRYINDEX);
+    lua_get_metatablelua(luatex_token);
     lua_setmetatable(L, -2);
 }
 
@@ -220,8 +217,7 @@ inline static int run_put_next(lua_State * L)
         /* we accept a single nil argument */
         return 0;
     }
-    lua_rawgeti(L, LUA_REGISTRYINDEX, luaS_index(luatex_token)); /* n+1 */
-    lua_gettable(L, LUA_REGISTRYINDEX); /* n+1 */
+    lua_get_metatablelua(luatex_token);
     m = lua_gettop(L);
     if (lua_type(L,1) == LUA_TTABLE) {
         if (n>1) {
@@ -540,10 +536,7 @@ static int run_build(lua_State * L)
         int chr = (int) lua_tointeger(L, 1);
         int cmd = (int) luaL_optinteger(L, 2, get_cat_code(int_par(cat_code_table_code),chr));
         if (cmd == 0 || cmd == 9 || cmd == 14 || cmd == 15) {
-            fprintf(stdout,
-                    "\n\nluatex error: not a good token.\nCatcode %i can not be returned, so I replaced it by 12 (other)",
-                    (int) cmd);
-            error();
+            formatted_warning("token lib","not a good token, catcode %i can not be returned, so 12 will be used",(int) cmd);
             cmd = 12;
         } else if (cmd == 13) {
             cs = active_to_cs(chr, false);

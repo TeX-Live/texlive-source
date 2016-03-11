@@ -341,6 +341,16 @@ void set_prev_char_p(halfword p)
     prev_char_p = p;
 }
 
+/*
+    the kern stretch / shrink code was (or had become) rather weird ... the width field
+    is set, and then used in a second calculation, repeatedly, so why is that ... maybe some
+    some weird left-over ... anyway, the values are so small that in practice they are not
+    significant at all when the backend sees them because a few hundred sp positive or
+    negative are just noise there (so adjustlevel 3 has hardly any consequence for the
+    result but is more efficient)
+*/
+
+
 @ @c
 scaled char_stretch(halfword p)
 {
@@ -350,7 +360,7 @@ scaled char_stretch(halfword p)
         int c = character(p);
         int ef = get_ef_code(f, c);
         if (ef > 0) {
-            scaled dw = calc_char_width(f, c, m) - char_width(f, c);
+            scaled dw = calc_char_width(f, c, m) - char_width(f, c) - x_advance(p);
             if (dw > 0) {
                 return round_xn_over_d(dw, ef, 1000);
             }
@@ -368,7 +378,7 @@ scaled char_shrink(halfword p)
         int c = character(p);
         int ef = get_ef_code(f, c);
         if (ef > 0) {
-            scaled dw = char_width(f, c) - calc_char_width(f, c, -m);
+            scaled dw = char_width(f, c) + x_advance(p) - calc_char_width(f, c, -m);
             if (dw > 0) {
                 return round_xn_over_d(dw, ef, 1000);
             }
@@ -378,6 +388,7 @@ scaled char_shrink(halfword p)
 }
 
 @ @c
+/*
 scaled kern_stretch(halfword p)
 {
     halfword l, r;
@@ -386,23 +397,69 @@ scaled kern_stretch(halfword p)
     if ((prev_char_p == null) || (vlink(prev_char_p) != p) || (vlink(p) == null))
         return 0;
     l = prev_char_p;
-    /* we need a left char */
+    // we need a left char
     if (!is_char_node(l))
         return 0;
     r = vlink(p);
-    /* and a right char */
+    // and a right char
     if (!is_char_node(r))
         return 0;
-    /* and a reason to kern */
+    // and a reason to kern
     if ((font(l) != font(r)) || (font_max_stretch(font(l)) == 0))
         return 0;
     m = font_max_stretch(font(l));
-    d = get_kern(font(l), character(l), character(r));
+    d = get_kern(font(l), character(l), character(r)); // real kern, so what is width(p) then; the messed up one
     d = round_xn_over_d(d, 1000 + m, 1000);
     return round_xn_over_d(d - width(p), get_ef_code(font(l), character(l)), 1000);
 }
+*/
+
+scaled kern_stretch(halfword p)
+{
+    int m;
+    scaled d, e, x;
+    scaled w = width(p) ;
+    halfword l;
+    halfword r;
+    if (w == 0)  {
+        /* why bother about zero kerns */
+        return 0;
+    }
+    l = prev_char_p ;
+    if ((l == null) || (vlink(l) != p)) {
+        /* we only care about kerns following a char*/
+        return 0;
+    }
+    r = vlink(p);
+    if (r == null) {
+        /* we only care about kerns between a char and something else */
+    }
+    if (!(is_char_node(l) && is_char_node(r))) {
+        /* we want two chars (but but don't care about the fonts) */
+        return 0;
+    }
+    /* we use the old logic, kind of, but average the ef as we might depend on proper overlap */
+    m = (font_max_shrink(font(l)) + font_max_shrink(font(r)))/2;
+    if (m == 0) {
+        /* nothing to kern */
+        return 0;
+    }
+    d = round_xn_over_d(w, 1000 + m, 1000);
+    /* we use the old logic, kind of, but average the ef as we might depend on proper overlap */
+    e = (get_ef_code(font(l), character(l)) + get_ef_code(font(r), character(r)))/2 ;
+    if (e == 1000) {
+        x = d - w;
+    } else {
+        x = round_xn_over_d(d - w, e, 1000);
+    }
+    /*
+        printf("STRETCH w=%i s=%i x=%i\n",w,e+m,x);
+    */
+    return x;
+}
 
 @ @c
+/*
 scaled kern_shrink(halfword p)
 {
     halfword l, r;
@@ -411,20 +468,64 @@ scaled kern_shrink(halfword p)
     if ((prev_char_p == null) || (vlink(prev_char_p) != p) || (vlink(p) == null))
         return 0;
     l = prev_char_p;
-    /* we need a left char */
+    // we need a left char
     if (!is_char_node(l))
         return 0;
     r = vlink(p);
-    /* and a right char */
+    // and a right char
     if (!is_char_node(r))
         return 0;
-    /* and a reason to kern */
+    // and a reason to kern
     if ((font(l) != font(r)) || (font_max_shrink(font(l)) == 0))
         return 0;
     m = font_max_stretch(font(l));
-    d = get_kern(font(l), character(l), character(r));
+    d = get_kern(font(l), character(l), character(r)); // real kern, so what is width(p) then; the messed up one
     d = round_xn_over_d(d, 1000 - m, 1000);
     return round_xn_over_d(width(p) - d, get_ef_code(font(l), character(l)), 1000);
+}
+*/
+
+scaled kern_shrink(halfword p)
+{
+    int m;
+    scaled d, e, x;
+    scaled w = width(p) ;
+    halfword l;
+    halfword r;
+    if (w == 0)  {
+        /* why bother about zero kerns */
+        return 0;
+    }
+    l = prev_char_p ;
+    if ((l == null) || (vlink(l) != p)) {
+        /* we only care about kerns following a char*/
+        return 0;
+    }
+    r = vlink(p);
+    if (r == null) {
+        /* we only care about kerns between a char and something else */
+    }
+    if (!(is_char_node(l) && is_char_node(r))) {
+        /* we want two chars (but but don't care about the fonts) */
+        return 0;
+    }
+    /* we use the old logic, kind of, but average the ef as we might depend on proper overlap */
+    m = (font_max_shrink(font(l)) + font_max_shrink(font(r)))/2;
+    if (m == 0) {
+        /* nothing to kern */
+        return 0;
+    }
+    d = round_xn_over_d(w, 1000 - m, 1000);
+    e = (get_ef_code(font(l), character(l)) + get_ef_code(font(r), character(r)))/2 ;
+    if (e == 1000) {
+         x = w - d ;
+    } else {
+        x = round_xn_over_d(w - d, e, 1000);
+    }
+    /*
+    printf("SHRINK w=%i s=%i x=%i\n",w,e+m,x);
+    */
+    return x;
 }
 
 @ @c
@@ -513,6 +614,8 @@ halfword new_margin_kern(scaled w, halfword p, int side)
 expansion is being used.
 
 @c
+int font_expand_ratio = 0;  /* current expansion ratio, needed for recursive call */
+
 halfword hpack(halfword p, scaled w, int m, int pack_direction)
 {
     halfword r;                 /* the box node that will be returned */
@@ -530,8 +633,11 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
     halfword pack_interrupt[8];
     scaled font_stretch = 0;
     scaled font_shrink = 0;
-    int font_expand_ratio = 0;  /* current expansion ratio */
-    scaled k = 0;
+    int adjust_spacing = int_par(adjust_spacing_code);
+
+/*
+    int font_expand_ratio = 0;
+*/
     last_badness = 0;
     r = new_node(hlist_node, min_quarterword); /* the box node that will be returned */
     if (pack_direction == -1) {
@@ -554,6 +660,9 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
     vlink(q) = p;
     if (m == cal_expand_ratio) {
         prev_char_p = null; /* why not always */
+    }
+    if (adjust_spacing > 2) {
+        adjust_spacing = 0;
     }
     total_stretch[normal] = 0;
     total_shrink[normal] = 0;
@@ -664,20 +773,27 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                     }
                     break;
                 case kern_node:
-                    if (subtype(p) == normal) {
+                    x += width(p);
+                    if (subtype(p) == font_kern && adjust_spacing) {
+                        /* so only when 1 or 2 */
                         if (m == cal_expand_ratio) {
                             font_stretch = font_stretch + kern_stretch(p);
                             font_shrink = font_shrink + kern_shrink(p);
                         } else if (m == subst_ex_font) {
-                            if (font_expand_ratio > 0)
+                            /* this is the finalizer */
+                            int k = 0;
+                            if (font_expand_ratio > 0) {
                                 k = kern_stretch(p);
-                            else if (font_expand_ratio < 0)
+                            } else if (font_expand_ratio < 0) {
                                 k = kern_shrink(p);
-                            if (k != 0)
-                                width(p) = get_kern(font(prev_char_p), character(prev_char_p), character(vlink(p)));
+                            }
+                            ex_kern(p) = k;
+                            x += k;
+                            /*
+                                if (x!=0) printf("SET %i %i %i\n",font_expand_ratio,k,x);
+                            */
                         }
                     }
-                    x += width(p);
                     break;
                 case disc_node:
                     if (m == subst_ex_font)
@@ -985,10 +1101,13 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
         q = list_ptr(r);
         list_ptr(r) = null;
         flush_node(r);
+        /* this nested call uses the more or less global font_expand_ratio */
         r = hpack(q, w, subst_ex_font, hpack_dir);
     }
     while (dir_ptr1 != null)
         pop_dir_node(dir_ptr1);
+    /* here we reset the font_expan_ratio */
+    font_expand_ratio = 0;
     return r;
 }
 
@@ -1119,8 +1238,10 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
                     }
                     break;
                 case margin_kern_node:
-                case kern_node:
                     siz.wd += width(p);
+                    break;
+                case kern_node:
+                    siz.wd += width(p) + ex_kern(p);
                     break;
                 case disc_node:
                     xx = natural_sizes(no_break(p), null, g_mult, g_sign, g_order, hpack_dir);

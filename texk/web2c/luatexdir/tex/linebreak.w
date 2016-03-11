@@ -1286,7 +1286,7 @@ static void ext_try_break(int pi,
             }
             shortfall += (left_pw(l1) + right_pw(o));
         }
-        if ((shortfall != 0) && (adjust_spacing == 2)) {
+        if (shortfall != 0) {
             margin_kern_stretch = 0;
             margin_kern_shrink = 0;
             if (protrude_chars > 1) {
@@ -1302,14 +1302,12 @@ static void ext_try_break(int pi,
                 }
                 flush_node(cp);
             }
-            if ((shortfall > 0)
-                && ((total_font_stretch + margin_kern_stretch) > 0)) {
+            if ((shortfall > 0) && ((total_font_stretch + margin_kern_stretch) > 0)) {
                 if ((total_font_stretch + margin_kern_stretch) > shortfall)
                     shortfall = ((total_font_stretch + margin_kern_stretch) / (max_stretch_ratio / cur_font_step)) / 2;
                 else
                     shortfall -= (total_font_stretch + margin_kern_stretch);
-            } else if ((shortfall < 0)
-                       && ((total_font_shrink + margin_kern_shrink) > 0)) {
+            } else if ((shortfall < 0) && ((total_font_shrink + margin_kern_shrink) > 0)) {
                 if ((total_font_shrink + margin_kern_shrink) > -shortfall)
                     shortfall = -((total_font_shrink + margin_kern_shrink) / (max_shrink_ratio / cur_font_step)) / 2;
                 else
@@ -1620,6 +1618,9 @@ void ext_do_line_break(int paragraph_dir,
     minimal_demerits[loose_fit] = awful_bad;
     minimal_demerits[very_loose_fit] = awful_bad;
 
+    fewest_demerits = 0;
+    actual_looseness = 0;
+
     /* We compute the values of |easy_line| and the other local variables relating
        to line length when the |line_break| procedure is initializing itself. */
     if (par_shape_ptr == null) {
@@ -1866,8 +1867,9 @@ void ext_do_line_break(int paragraph_dir,
                         if (prev_p != temp_head && (
                                 is_char_node(prev_p)
                              || precedes_break(prev_p)
-                             || ((type(prev_p) == kern_node) && (subtype(prev_p) != explicit_kern &&
-                                                                 subtype(prev_p) != italic_kern   ))
+                             || ( (type(prev_p) == kern_node) && (
+                                        subtype(prev_p) == font_kern || subtype(prev_p) == accent_kern)
+                                )
                             )) {
                             ext_try_break(0, unhyphenated_node, line_break_dir, adjust_spacing,
                                           par_shape_ptr, adj_demerits,

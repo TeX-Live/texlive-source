@@ -37,12 +37,10 @@ unsigned long cidtogid_obj = 0;
 
 @ low-level helpers
 @c
-#define test_loc(l)                                  \
-    if ((f->loc + l) > f->buflen) {                  \
-        fprintf(stderr, "File ended prematurely\n"); \
-        uexit(1);                                    \
+#define test_loc(l) \
+    if ((f->loc + l) > f->buflen) { \
+        normal_error("type 2","the file ended prematurely"); \
     }
-
 
 BYTE get_unsigned_byte(sfnt * f)
 {
@@ -245,7 +243,7 @@ unsigned long ttc_read_offset(sfnt * sfont, int ttc_idx, fd_entry * fd)
     /*version = */(void)sfnt_get_ulong(sfont);
     num_dirs = sfnt_get_ulong(sfont);
     if (ttc_idx < 0 || ttc_idx > (int) (num_dirs - 1)) {
-        fprintf(stderr, "Invalid TTC index number %i (0..%i), using index 0 for font %s\n",
+        formatted_error("type 2","invalid TTC index number %i (0..%i), using index 0 for font %s",
             ttc_idx,(int) (num_dirs - 1),(fd->fm->ps_name ? fd->fm->ps_name : ""));
         return 0 ;
     }
@@ -271,7 +269,7 @@ boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
     char *used_chars = NULL;
     sfnt *sfont;
     pdf_obj *fontfile;
-    int verbose = 0, error = 0;
+    int error = 0;
 
     cidtogidmap = NULL;
 
@@ -285,8 +283,7 @@ boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
     }
 
     if (error < 0) {
-        fprintf(stderr, "Could not parse the ttf directory.\n");
-        uexit(1);
+        normal_error("type 2","parsing the TTF directory fails");
     }
 
     if (sfont->type == SFNT_TYPE_TTC && sfnt_find_table_pos(sfont, "CFF ")) {
@@ -344,18 +341,11 @@ boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
         }
 
         if (num_glyphs == 1) {
-            fprintf(stderr, "No glyphs in subset?.\n");
-            uexit(1);
+            normal_error("type 2","there are no glyphs in the subset");
         }
 
         if (tt_build_tables(sfont, glyphs) < 0) {
-            fprintf(stderr, "Could not parse the ttf buffer.\n");
-            uexit(1);
-        }
-
-        if (verbose > 1) {
-            fprintf(stdout, "[%u glyphs (Max CID: %u)]", glyphs->num_glyphs,
-                    last_cid);
+            normal_error("type 2","the TTF buffer can't be parsed");
         }
 
         tt_build_finish(glyphs);
@@ -364,19 +354,12 @@ boolean make_tt_subset(PDF pdf, fd_entry * fd, unsigned char *buff, int buflen)
     /* Create font file */
 
     for (i = 0; required_table[i].name; i++) {
-        if (sfnt_require_table(sfont,
-                               required_table[i].name,
-                               required_table[i].must_exist) < 0) {
-            fprintf(stderr, "Some required TrueType table does not exist.");
-            uexit(1);
+        if (sfnt_require_table(sfont,required_table[i].name, required_table[i].must_exist) < 0) {
+            normal_error("type 2","some required TrueType table does not exist");
         }
     }
 
     fontfile = sfnt_create_FontFile_stream(sfont);
-
-    if (verbose > 1) {
-        fprintf(stdout, "[%ld bytes]", fontfile->length);
-    }
 
     /* squeeze in the cidgidmap */
     if (cidtogidmap != NULL) {

@@ -764,6 +764,7 @@ int node_table_id;
 @ @c
 int l_pack_type_index       [PACK_TYPE_SIZE] ;
 int l_group_code_index      [GROUP_CODE_SIZE];
+int l_local_par_index       [LOCAL_PAR_SIZE];
 int l_math_style_name_index [MATH_STYLE_NAME_SIZE];
 int l_dir_par_index         [DIR_PAR_SIZE];
 int l_dir_text_index        [DIR_TEXT_SIZE];
@@ -931,6 +932,7 @@ void lua_initialize(int ac, char **av)
     /* here start the key definitions */
     set_l_pack_type_index;
     set_l_group_code_index;
+    set_l_local_par_index;
     set_l_math_style_name_index;
     set_l_dir_par_index;
     set_l_dir_text_index;

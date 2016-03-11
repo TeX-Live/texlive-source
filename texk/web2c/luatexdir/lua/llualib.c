@@ -126,8 +126,7 @@ void undump_luac_registers(void)
 static void bytecode_register_shadow_set(lua_State * L, int k)
 {
     /* the stack holds the value to be set */
-    lua_pushstring(L, "lua.bytecode_shadow");       /* lua.bytecode_shadow */
-    lua_rawget(L, LUA_REGISTRYINDEX);
+    lua_get_metatablelua(lua_bytecodes_indirect);
     if (lua_istable(L, -1)) {
         lua_pushvalue(L, -2);
         lua_rawseti(L, -2, k);
@@ -141,8 +140,7 @@ static int bytecode_register_shadow_get(lua_State * L, int k)
 {
     /* the stack holds the value to be set */
     int ret = 0;
-    lua_pushstring(L, "lua.bytecode_shadow");
-    lua_rawget(L, LUA_REGISTRYINDEX);
+    lua_get_metatablelua(lua_bytecodes_indirect);
     if (lua_istable(L, -1)) {
         lua_rawgeti(L, -1, k);
         if (!lua_isnil(L, -1))
@@ -160,9 +158,7 @@ static int writer(lua_State * L, const void *b, size_t size, void *B)
     bytecode *buf = (bytecode *) B;
     (void) L;                   /* for -Wunused */
     if ((int) (buf->size + (int) size) > buf->alloc) {
-        buf->buf =
-            xrealloc(buf->buf,
-                     (unsigned) (buf->alloc + (int) size + LOAD_BUF_SIZE));
+        buf->buf = xrealloc(buf->buf, (unsigned) (buf->alloc + (int) size + LOAD_BUF_SIZE));
         buf->alloc = buf->alloc + (int) size + LOAD_BUF_SIZE;
     }
     memcpy(buf->buf + buf->size, b, size);
@@ -306,8 +302,7 @@ static int get_luaname(lua_State * L)
 
 static int lua_functions_get_table(lua_State * L) /* hh */
 {
-    lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(lua_functions));
-    lua_gettable(L, LUA_REGISTRYINDEX);
+    lua_get_metatablelua(lua_functions);
     return 1;
 }
 
@@ -329,7 +324,7 @@ int luaopen_lua(lua_State * L, char *fname)
     make_table(L, "bytecode", "tex.bytecode", "getbytecode", "setbytecode");
     make_table(L, "name",     "tex.name", "getluaname", "setluaname");
     lua_newtable(L);
-    lua_setfield(L, LUA_REGISTRYINDEX, "lua.bytecode_shadow");
+    lua_setfield(L, LUA_REGISTRYINDEX, "lua.bytecodes.indirect");
     lua_pushstring(L, LUA_VERSION);
     lua_setfield(L, -2, "version");
     if (fname == NULL) {

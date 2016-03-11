@@ -2326,52 +2326,47 @@ static int tex_enableprimitives(lua_State * L)
     return 0;
 }
 
-#define get_int_par(A,B,C) do {           \
-    lua_pushstring(L,(A));                \
-    lua_gettable(L,-2);                   \
+#define get_int_par(A,B) do {             \
+    lua_key_rawgeti(A);                   \
     if (lua_type(L, -1) == LUA_TNUMBER) { \
-        B = (int) lua_tointeger(L, -1);   \
+        A = (int) lua_tointeger(L, -1);   \
     } else {                              \
-        B = (C);                          \
+        A = (B);                          \
     }                                     \
     lua_pop(L,1);                         \
 } while (0)
 
-
-#define get_intx_par(A,B,C,D,E)  do {              \
-    lua_pushstring(L,(A));                         \
-    lua_gettable(L,-2);                            \
+#define get_intx_par(A,B,C,D)  do {                \
+    lua_key_rawgeti(A);                            \
     if (lua_type(L, -1) == LUA_TNUMBER) {          \
-        B = (int) lua_tointeger(L, -1);            \
-        D = null;                                  \
+        A = (int) lua_tointeger(L, -1);            \
+        C = null;                                  \
     } else if (lua_type(L, -1) == LUA_TTABLE){     \
-        B = 0;                                     \
-        D = nodelib_topenalties(L, lua_gettop(L)); \
+        A = 0;                                     \
+        C = nodelib_topenalties(L, lua_gettop(L)); \
     } else {                                       \
-        B = (C);                                   \
-        D = (E);                                   \
+        A = (B);                                   \
+        C = (D);                                   \
     }                                              \
     lua_pop(L,1);                                  \
 } while (0)
 
-#define get_dimen_par(A,B,C)  do {        \
-    lua_pushstring(L,(A));                \
-    lua_gettable(L,-2);                   \
+#define get_dimen_par(A,B)  do {          \
+    lua_key_rawgeti(A);                   \
     if (lua_type(L, -1) == LUA_TNUMBER) { \
-        B = (int) lua_tointeger(L, -1);   \
+        A = (int) lua_tointeger(L, -1);   \
     } else {                              \
-        B = (C);                          \
+        A = (B);                          \
     }                                     \
     lua_pop(L,1);                         \
 } while (0)
 
-#define get_glue_par(A,B,C)  do {      \
-    lua_pushstring(L,(A));             \
-    lua_gettable(L,-2);                \
+#define get_glue_par(A,B)  do {        \
+    lua_key_rawgeti(A);                \
     if (lua_type(L, -1) != LUA_TNIL) { \
-        B = *check_isnode(L, -1);      \
+        A = *check_isnode(L, -1);      \
     } else {                           \
-        B = (C);                       \
+        A = (B);                       \
     }                                  \
     lua_pop(L,1);                      \
 } while (0)
@@ -2486,15 +2481,13 @@ static int tex_run_linebreak(lua_State * L)
         lua_checkstack(L, 3);
         lua_newtable(L);
     }
-    lua_pushstring(L, "pardir");
-    lua_gettable(L, -2);
+    lua_key_rawgeti(pardir);
     if (lua_type(L, -1) == LUA_TSTRING) {
         paragraph_dir = nodelib_getdir(L, -1, 1);
     }
     lua_pop(L, 1);
 
-    lua_pushstring(L, "parshape");
-    lua_gettable(L, -2);
+    lua_key_rawgeti(parshape);
     if (lua_type(L, -1) == LUA_TTABLE) {
         parshape = nodelib_toparshape(L, lua_gettop(L));
     } else {
@@ -2502,79 +2495,69 @@ static int tex_run_linebreak(lua_State * L)
     }
     lua_pop(L, 1);
 
-    get_int_par("pretolerance",
-        pretolerance, int_par(pretolerance_code));
-    get_int_par("tracingparagraphs",
-        tracingparagraphs, int_par(tracing_paragraphs_code));
-    get_int_par("tolerance",
-        tolerance, int_par(tolerance_code));
-    get_int_par("looseness",
-        looseness, int_par(looseness_code));
-    get_int_par("adjustspacing",
-        adjustspacing, int_par(adjust_spacing_code));
-    get_int_par("adjdemerits",
-        adjdemerits, int_par(adj_demerits_code));
-    get_int_par("protrudechars",
-        protrudechars, int_par(protrude_chars_code));
-    get_int_par("linepenalty",
-        linepenalty, int_par(line_penalty_code));
-    get_int_par("lastlinefit",
-        lastlinefit, int_par(last_line_fit_code));
-    get_int_par("doublehyphendemerits",
-        doublehyphendemerits, int_par(double_hyphen_demerits_code));
-    get_int_par("finalhyphendemerits",
-        finalhyphendemerits, int_par(final_hyphen_demerits_code));
-    get_int_par("hangafter",
-        hangafter, int_par(hang_after_code));
-    get_intx_par("interlinepenalty",
-        interlinepenalty,int_par(inter_line_penalty_code), interlinepenalties, equiv(inter_line_penalties_loc));
-    get_intx_par("clubpenalty",
-        clubpenalty, int_par(club_penalty_code), clubpenalties, equiv(club_penalties_loc));
-    get_intx_par("widowpenalty",
-        widowpenalty, int_par(widow_penalty_code), widowpenalties, equiv(widow_penalties_loc));
-    get_int_par("brokenpenalty",
-        brokenpenalty, int_par(broken_penalty_code));
-    get_dimen_par("emergencystretch",
-        emergencystretch, dimen_par(emergency_stretch_code));
-    get_dimen_par("hangindent",
-        hangindent, dimen_par(hang_indent_code));
-    get_dimen_par("hsize",
-        hsize, dimen_par(hsize_code));
-    get_glue_par("leftskip",
-        leftskip, glue_par(left_skip_code));
-    get_glue_par("rightskip",
-        rightskip, glue_par(right_skip_code));
-
+    get_int_par  (pretolerance, int_par(pretolerance_code));
+    get_int_par  (tracingparagraphs, int_par(tracing_paragraphs_code));
+    get_int_par  (tolerance, int_par(tolerance_code));
+    get_int_par  (looseness, int_par(looseness_code));
+    get_int_par  (adjustspacing, int_par(adjust_spacing_code));
+    get_int_par  (adjdemerits, int_par(adj_demerits_code));
+    get_int_par  (protrudechars, int_par(protrude_chars_code));
+    get_int_par  (linepenalty, int_par(line_penalty_code));
+    get_int_par  (lastlinefit, int_par(last_line_fit_code));
+    get_int_par  (doublehyphendemerits, int_par(double_hyphen_demerits_code));
+    get_int_par  (finalhyphendemerits, int_par(final_hyphen_demerits_code));
+    get_int_par  (hangafter, int_par(hang_after_code));
+    get_intx_par (interlinepenalty,int_par(inter_line_penalty_code), interlinepenalties, equiv(inter_line_penalties_loc));
+    get_intx_par (clubpenalty, int_par(club_penalty_code), clubpenalties, equiv(club_penalties_loc));
+    get_intx_par (widowpenalty, int_par(widow_penalty_code), widowpenalties, equiv(widow_penalties_loc));
+    get_int_par  (brokenpenalty, int_par(broken_penalty_code));
+    get_dimen_par(emergencystretch, dimen_par(emergency_stretch_code));
+    get_dimen_par(hangindent, dimen_par(hang_indent_code));
+    get_dimen_par(hsize, dimen_par(hsize_code));
+    get_glue_par (leftskip, glue_par(left_skip_code));
+    get_glue_par (rightskip, glue_par(right_skip_code));
     ext_do_line_break(paragraph_dir,
-                      pretolerance, tracingparagraphs, tolerance,
-                      emergencystretch, looseness,
+                      pretolerance,
+                      tracingparagraphs,
+                      tolerance,
+                      emergencystretch,
+                      looseness,
                       adjustspacing,
                       parshape,
-                      adjdemerits, protrudechars,
-                      linepenalty, lastlinefit,
-                      doublehyphendemerits, finalhyphendemerits,
-                      hangindent, hsize, hangafter, leftskip, rightskip,
+                      adjdemerits,
+                      protrudechars,
+                      linepenalty,
+                      lastlinefit,
+                      doublehyphendemerits,
+                      finalhyphendemerits,
+                      hangindent,
+                      hsize,
+                      hangafter,
+                      leftskip,
+                      rightskip,
                       interlinepenalties,
-                      interlinepenalty, clubpenalty,
+                      interlinepenalty,
+                      clubpenalty,
                       clubpenalties,
                       widowpenalties,
-                      widowpenalty, brokenpenalty,
+                      widowpenalty,
+                      brokenpenalty,
                       final_par_glue);
 
     /* return the generated list, and its prevdepth */
     get_linebreak_info (&fewest_demerits, &actual_looseness) ;
     lua_nodelib_push_fast(L, vlink(cur_list.head_field));
     lua_newtable(L);
-    lua_pushstring(L, "demerits");
+    lua_push_key(demerits);
     lua_pushinteger(L, fewest_demerits);
     lua_settable(L, -3);
-    lua_pushstring(L, "looseness");
+    lua_push_key(looseness);
     lua_pushinteger(L, actual_looseness);
     lua_settable(L, -3);
-    lua_pushstring(L, "prevdepth");
+    lua_push_key(prevdepth);
     lua_pushinteger(L, cur_list.prev_depth_field);
     lua_settable(L, -3);
-    lua_pushstring(L, "prevgraf");
+    lua_push_key(prevgraf);
     lua_pushinteger(L, cur_list.pg_field);
     lua_settable(L, -3);
 
@@ -2584,6 +2567,13 @@ static int tex_run_linebreak(lua_State * L)
     if (parshape != equiv(par_shape_loc))
         flush_node(parshape);
     return 2;
+}
+
+static int tex_reset_paragraph(lua_State * L)
+{
+    (void) L;
+    normal_paragraph();
+    return 0;
 }
 
 static int tex_shipout(lua_State * L)
@@ -2932,6 +2922,7 @@ static const struct luaL_Reg texlib[] = {
     { "setmath", tex_setmathparm },
     { "getmath", tex_getmathparm },
     { "linebreak", tex_run_linebreak },
+    { "resetparagraph", tex_reset_paragraph },
     /* tex random generators     */
     { "init_rand",   tex_init_rand },
     { "uniform_rand",tex_unif_rand },
