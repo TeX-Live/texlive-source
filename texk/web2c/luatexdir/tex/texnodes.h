@@ -252,6 +252,7 @@ typedef enum {
 #  define x_displace(a)   vinfo((a)+4)
 #  define y_displace(a)   vlink((a)+4)
 #  define ex_glyph(a)     vinfo((a)+5)  /* expansion factor (hz) */
+#  define x_advance(a)    vlink((a)+5)
 
 #  define is_char_node(a)  (a!=null && type(a)==glyph_node)
 
@@ -944,7 +945,7 @@ extern int lua_properties_use_metatable ;
 #define local_left_box equiv(local_left_box_base)
 #define local_right_box equiv(local_right_box_base)
 
-extern halfword make_local_par_node(void);
+extern halfword make_local_par_node(int mode);
 
 #endif
 

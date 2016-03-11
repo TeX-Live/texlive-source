@@ -154,6 +154,8 @@ scaled pack_width(int curdir, int pdir, halfword p, boolean isglyph)
         } else {
             wd = glyph_depth(p) + glyph_height(p);
         }
+/* experimental */
+wd += x_advance(p);
     } else {                    /* hlist, vlist, image, form, rule */
         if (textdir_parallel(pdir, curdir))
             wd = width(p);
@@ -164,8 +166,7 @@ scaled pack_width(int curdir, int pdir, halfword p, boolean isglyph)
 }
 
 @ @c
-scaled_whd pack_width_height_depth(int curdir, int pdir, halfword p,
-                                   boolean isglyph)
+scaled_whd pack_width_height_depth(int curdir, int pdir, halfword p, boolean isglyph)
 {
     scaled_whd whd = { 0, 0, 0 };
     whd.wd = pack_width(curdir, pdir, p, isglyph);

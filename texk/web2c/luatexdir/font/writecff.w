@@ -3545,8 +3545,7 @@ void writetype1w(PDF pdf, fd_entry * fd)
     cur_file_name = ff->ff_path;
 
     if (!fp) {
-        fprintf(stderr, "Type1: Could not open Type1 font: %s", cur_file_name);
-        uexit(1);
+        formatted_error("cff","could not open Type1 font: %s", cur_file_name);
     }
     fclose(fp);
 
@@ -3567,9 +3566,7 @@ void writetype1w(PDF pdf, fd_entry * fd)
         }
         fd->ff_found = 1;
     } else {
-        fprintf(stderr, "Type1: Could not understand Type1 font: %s",
-                cur_file_name);
-        uexit(1);
+        formatted_error("cff","could not understand Type1 font: %s",cur_file_name);
     }
     if (is_subsetted(fd->fm)) {
         report_stop_file(filetype_subset);

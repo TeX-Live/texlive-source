@@ -64,6 +64,7 @@ typedef enum {
     show_warning_message_callback,
     hpack_quality_callback, vpack_quality_callback,
     process_rule_callback,
+    insert_local_par_callback,
     total_callbacks
 } callback_callback_types;
 

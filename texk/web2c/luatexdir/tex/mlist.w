@@ -1590,9 +1590,12 @@ void run_mlist_to_hlist(halfword p, boolean penalties, int mstyle)
             return;
         }
         alink(p) = null ;
-        nodelist_to_lua(L, p);                       /* arg 1 */
-        lua_pushstring(L, math_style_names[mstyle]); /* arg 2 */
-        lua_pushboolean(L, penalties);               /* arg 3 */
+        nodelist_to_lua(L, p);
+        /*
+            lua_pushstring(L, math_style_names[mstyle]);
+        */
+        lua_push_math_style_name(L,mstyle);
+        lua_pushboolean(L, penalties);
         if (lua_pcall(L, 3, 1, 0) != 0) {            /* 3 args, 1 result */
             char errmsg[256]; /* temp hack ... we will have a formatted error */
             snprintf(errmsg, 255, "error: %s\n", lua_tostring(L, -1));

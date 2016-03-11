@@ -70,6 +70,7 @@ static const char *const callbacknames[] = {
     "show_warning_message",
     "hpack_quality", "vpack_quality",
     "process_rule",
+    "insert_local_par",
     NULL
 };
 

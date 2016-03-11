@@ -23,6 +23,13 @@
 #include "ptexlib.h"
 
 @ @c
+#define kern_width(q) width(q) + ex_kern(q)
+
+/*
+    ext_xn_over_d(width(q), 1000000+ex_kern(q), 1000000);
+*/
+
+@ @c
 pos_info_structure pos_info; /* to be accessed from Lua */
 
 static backend_struct *backend = NULL;
@@ -117,13 +124,18 @@ static scaled simple_advance_width(halfword p)
         switch (type(q)) {
             case glyph_node:
                 w += glyph_width(q);
+/* experimental */
+w += x_advance(q);
                 break;
             case hlist_node:
             case vlist_node:
             case rule_node:
             case margin_kern_node:
-            case kern_node:
                 w += width(q);
+                break;
+            case kern_node:
+                /* officially we should check the subtype */
+                w += kern_width(q);
                 break;
             case disc_node:
                 /* hh: the frontend should append already */
@@ -158,8 +170,11 @@ static halfword calculate_width_to_enddir(halfword p, real cur_glue, scaled cur_
                     break;
                 case rule_node:
                 case margin_kern_node:
-                case kern_node:
                     w += width(q);
+                    break;
+                case kern_node:
+                    /* officially we should check the subtype */
+                    w += kern_width(q);
                     break;
                 case math_node:
                     /* begin mathskip code */
@@ -327,7 +342,6 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
 
     if (synctex)
         synctexhlist(this_box);
-
     while (p != null) {
         if (is_char_node(p)) {
             do {
@@ -337,10 +351,13 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
                     synch_pos_with_cur(pdf->posstruct, refpos, tmpcur);
                 }
                 ci = output_one_char(pdf, p);
-                if (textdir_parallel(localpos.dir, dir_TLT))
+                if (textdir_parallel(localpos.dir, dir_TLT)) {
                     cur.h += ci.wd;
-                else
+/* experimental */
+cur.h += x_advance(p);
+                } else {
                     cur.h += ci.ht + ci.dp;
+                }
                 synch_pos_with_cur(pdf->posstruct, refpos, cur);
                 p = vlink(p);
             } while (is_char_node(p));
@@ -556,7 +573,8 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
                 case kern_node:
                     if (synctex)
                         synctexkern(p, this_box);
-                    cur.h += width(p);
+                    /* officially we should check the subtype */
+                    cur.h += kern_width(p);
                     break;
                 case rule_node:
                     if (rule_dir(p) < 0)
