@@ -361,7 +361,11 @@ static scaled get_delimiter_height(scaled max_d, scaled max_h, boolean axis) {
 #define fraction_num_up(a)       get_math_param_or_error(a, fraction_num_up)
 #define fraction_denom_down(a)   get_math_param_or_error(a, fraction_denom_down)
 #define fraction_del_size_new(a) get_math_param_or_error(a, fraction_del_size)
+#define fraction_del_size_new(a) get_math_param_or_error(a, fraction_del_size)
+/*
 #define fraction_del_size_old(a) get_math_param(a, math_param_fraction_del_size)
+*/
+#define fraction_del_size_old(a) get_math_param_or_error(a, fraction_del_size)
 
 #define skewed_fraction_hgap(a)  get_math_param_or_error(a, skewed_fraction_hgap)
 #define skewed_fraction_vgap(a)  get_math_param_or_error(a, skewed_fraction_vgap)
