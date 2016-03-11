@@ -652,6 +652,7 @@ typedef struct gregorio_syllable {
      * and i let you gess what are WORD_MIDDLE and WORD_END. */
     ENUM_BITFIELD(gregorio_word_position) position:3;
     bool first_word:1;
+    bool forced_center:1;
 } gregorio_syllable;
 
 /* Stores a header in a singly-linked list */

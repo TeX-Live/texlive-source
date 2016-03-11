@@ -258,6 +258,14 @@ Macro to turn on or off scaling with the staff size for a particular distance.
 
 \textbf{Nota bene:} This macro also can be used to change whether or not the staff line thickness scales with the staff size by specifying \texttt{stafflinefactor} for the first argument.
 
+\macroname{\textbackslash grechangecount}{\{\#1\}\{\#2\}}{gregoriotex-spaces.tex}
+Macro to change one of Gregorio\TeX’s counts (numeric values).
+
+\begin{argtable}
+	\#1 & string & The name of the count to be changed.  See \nameref{counts} below.\\
+	\#2 & integer & The new value.\\
+\end{argtable}
+
 \macroname{\textbackslash greloadspaceconf}{\{\#1\}}{gregoriotex-spaces.tex}
 Macro to load a space configuration file.  Space configuration file names have the format \verb=gsp-identifier.tex= and must be in the same directory as your project or in your texmf directory.
 
@@ -779,6 +787,8 @@ Sets the number of lines the score initial requires.
 	\#1 & number & The number of lines required by the initial.  If \texttt{0}, the score will have no separated initial.\\
 \end{argtable}
 
+\textbf{Nota Bene:} As currently implemented, you cannot set an initial which is larger than 2 lines and in order to do so you must set manual line breaks in the gabc for the first two lines.
+
 \macroname{\textbackslash gresetmodenumbersystem}{\#1}{gregoriotex-main.tex}
 Sets the number system used for the mode number.
 
@@ -811,6 +821,14 @@ Macro to set how the text of the lyrics aligns with the alignment point of its r
 You can also define your own languages in \texttt{gregorio-vowels.dat}.  If you do define a language, please consider sharing your work by submitting it to the project (see CONTRIBUTING.md for instructions).
 
 Finally, in cases where you want some sort of exceptional alignment, you can force Gregorio to consider a particular part of the syllable to be the ``vowel'' by enclosing it in curly braces (``\{'' and ``\}'') in your gabc file.  Curly braces only affect alignment when using vowel centering.  Syllable centering will always use the entire syllable, and firstletter centering will always use the first character of the syllable --- regardless of curly braces in the gabc file.
+
+\macroname{\textbackslash gresetgabcforcecenters}{\{\#1\}}{gregoriotex-syllable.tex}
+Macro to determine whether a forced center (\ie, one specified by curly braces (``\{'' and ``\}'') in your gabc file) should influence the alignment of that syllable when \texttt{syllable} and \texttt{firstletter} alignments are in effect.
+
+\begin{argtable}
+	\#1 & \texttt{allow} & Forced centers in gabc are allowed to influence the syllable alignment (default).\\
+	& \texttt{prohibit} & Forced centers in gabc do not influence the syllable alignment.\\
+\end{argtable}
 
 \macroname{\textbackslash gresettranslationcentering}{\{\#1\}}{gregoriotex-main.tex}
 Macro to specify how the translation text should be aligned with it respective syllable text.
@@ -1127,6 +1145,26 @@ Macro to set the font to be used for the ancient notation.
 	\#2 & integer & point size at which the font should be loaded\\
 \end{argtable}
 
+\subsection{Counts}\label{counts}
+
+Each of the following counts controls some aspect of the configuration of the Gregorio\TeX\ score.  They are changed using \verb=\grechangecount=, documented above.
+
+\macroname{additionaltopspacethreshold}{}{gsp-default.tex}
+
+The threshold above which we start accounting notes above lines for additional
+vertical space. For instance with a threshold of \texttt{2}, notes with a pitch
+of \texttt{k} and \texttt{l} will not interfere with the space above lines.
+Set it to a high value if you don't want high notes to interfere with space
+above lines.
+
+Default: \texttt{2}
+
+\macroname{additionaltopspacealtthreshold}{}{gsp-default.tex}
+
+Same as \texttt{additionaltopspacethreshold} but setting the threshold for
+notes taken into account with above lines text vertical placement.
+
+Default: \texttt{0}
 
 \subsection{Distances}\label{distances}
 
@@ -1707,6 +1745,11 @@ Default: 10001
 Penalty to force a line break.
 
 Default: $-10001$
+
+\macroname{\textbackslash grefinalpenalty}{}{gsp-default.tex}
+The penalty applied after the final element of a score.
+
+Default: $0$
 
 \macroname{\textbackslash grelooseness}{}{gsp-default.tex}
 The \TeX\ looseness within a score.

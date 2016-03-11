@@ -1,5 +1,5 @@
-Changes applied to the gregorio-4.1.0 tree as obtained from:
-	https://github.com/gregorio-project/gregorio/releases/tag/v4.1.0/
+Changes applied to the gregorio-4.1.1 tree as obtained from:
+	https://github.com/gregorio-project/gregorio/releases/tag/v4.1.1/
 
 Remove:
 	Makefile.in

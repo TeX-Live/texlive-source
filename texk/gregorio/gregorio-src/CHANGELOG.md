@@ -2,6 +2,23 @@
 All notable changes to this project will be documented in this file.
 As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+[Unreleased][unreleased]
+
+
+## [4.1.1] - 2016-03-10
+### Fixed
+- Custos now shouldn't go right of the staff lines (was visible only in edge cases, see [#990](https://github.com/gregorio-project/gregorio/issues/990)).
+- Corrected the end-of-line shift for a ragged line break before `<eu>` blocks (see [#988](https://github.com/gregorio-project/gregorio/issues/988)).
+- Additional space is now added on top of lines with very high notes or signs (see [#883](https://github.com/gregorio-project/gregorio/issues/883)).
+- High notes are now taken into account for vertical placement of above lines test (see [#960](https://github.com/gregorio-project/gregorio/issues/960)).
+- Forced syllable centers can be used in to override alignment issues when lyric centering is set to `syllable` or `firstletter`.  This is a restoration of old behavior (pre-4.0), but can be turned off with `\gresetgabcforcecenters{prohibit}`.  See [968](https://github.com/gregorio-project/gregorio/issues/968).
+- Deminutus figures in nabc work again (see [#1015](https://github.com/gregorio-project/gregorio/issues/1015)).
+- Orphaned syllables should appear less frequently at end of score (see [1019](https://github.com/gregorio-project/gregorio/issues/1019)).
+
+### Added
+- The macro `\grechangecount` now allows to change some numeric values of the configuration. This version introduces two of them: `additionaltopspacethreshold` and `additionaltopspacealtthreshold`, see GregorioRef for details.
+- The penalty `grefinalpenalty` (0 by default) is added at the end of the score. Be sure you know what you're doing before modifying it.
+
 ## [4.1.0] - 2016-03-01
 ### Fixed
 - Hyphens now shouldn't go right of the staff lines (see [#845](https://github.com/gregorio-project/gregorio/issues/845)).
@@ -51,21 +68,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - Controls for tuning horizontal episema vertical position.  See GregorioRef for details (for the change request, see [#872](https://github.com/gregorio-project/gregorio/issues/872)).
 - More dimensions are tunable: `overhepisemalowshift`, `overhepisemahighshift`, `underhepisemalowshift`, `underhepisemahighshift`, `hepisemamiddleshift`, `vepisemalowshift`, `vepisemahighshift`, `linepunctummorashift`, `spacepunctummorashift`, `spaceamonepespunctummorashift`, `lineporrectuspunctummorashift`, `spaceporrectuspunctummorashift`, `raresignshift`.  See GregorioRef for details (for the change request for most of these, see comments in [#872](https://github.com/gregorio-project/gregorio/issues/872)).
 - A new dimension, `intersyllablespacestretchhyphen` is now available to add stretching in the case of syllables separated by an hyphen (see comments in [#922](https://github.com/gregorio-project/gregorio/issues/922))
-- A new algorithm for placing bar syllables has been added and is now the default. It should make both bars and text centered between respectively notes and text of previous and following syllable. It can be configured in many ways through the following:
-  - `maxbaroffsettextright`
-  - `maxbaroffsettextleft`
-  - `maxbaroffsettextright@nobar`
-  - `maxbaroffsettextleft@nobar`
-  - `maxbaroffsettextright@eol`
-  - `maxbaroffsettextleft@eol`
-  - `bar@*@standalone@text` (where `*` is the type of bar)
-  - `bar@*@standalone@notext` (where `*` is the type of bar)
-  - `interwordspacetext@bars`
-  - `interwordspacetext@bars@euouae`
-  - `interwordspacetext@bars@notext`
-  - `interwordspacetext@bars@notext@euouae`
-  - `bar@rubber`
-The old spacing can be activated with `\gresetbarspacing{old}`.  See the following for various aspects of the implementation:
+- A new algorithm for placing bar syllables has been added and is now the default. See UPGRADE.md for more details.  The old spacing can be activated with `\gresetbarspacing{old}`.  See the following for various aspects of the implementation:
   - [#767](https://github.com/gregorio-project/gregorio/issues/767)
   - [#919](https://github.com/gregorio-project/gregorio/issues/919)
   - [#944](https://github.com/gregorio-project/gregorio/issues/944)

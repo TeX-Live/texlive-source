@@ -170,11 +170,12 @@ defined and re-defined by the \verb=\gresetgregoriofont= macro.
 \macroname{\textbackslash GreCP...}{}{gregoriotex-main.tex}
 A class of macros which point to the individual characters in a Gregoiro\TeX\ compatible font.  This class of macros is dynamically mapped from the glyph names embedded in the \texttt{ttf} file via a Lua script to ensure that the code points match up with the installed font.
 
-\macroname{\textbackslash GreCustos}{\#1}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreCustos}{\#1\#2}{gregoriotex-signs.tex}
 Typesets a custos.
 
 \begin{argtable}
 	\#1 & integer & Height number of custos.\\
+	\#2 & integer & Indicate if the custo is the last of the score.\\
 \end{argtable}
 
 \macroname{\textbackslash GreDagger}{}{gregoriotex-symbols.tex}
@@ -465,7 +466,7 @@ Macro to typeset an horizontal episema.
 		flexus.\\
 	\#4 & \texttt{0} & an horizontal episema\\
 	& \texttt{1} & an horizontal episema under a note\\
-	& \texttt{2} & a line at the top\\ 
+	& \texttt{2} & a line at the top\\
 	& \texttt{3} & a line at the bottom\\
 	\#5 & \texttt{f} & a normal episema\\
 	& \texttt{l} & a small episema aligned left\\
@@ -558,6 +559,15 @@ Macro to set \verb=\gre@lastoflinecount= to 1 (\ie, mark that this syllable is t
 \macroname{\textbackslash GreLastOfScore}{}{gregoriotex-main.tex}
 Macro to mark the syllable as the last of the score.
 
+\macroname{\textbackslash GreLastSyllableBeforeEUOUAE}{\#1\#2}{gregoriotex-syllable.tex}
+Indicates that this syllable is the last syllable before a EUOUAE block.
+
+\begin{argtable}
+	\#1 & integer & The identifier of the EUOUAE block.\\
+	\#2 & \texttt{0} & There is no line break between this syllable and the EUOUAE block.\\
+			& \texttt{1} & There is a line break between this syllable and the beginning of the EUOUAE block.\\
+\end{argtable}
+
 \macroname{\textbackslash GreLinea}{\#1\#2\#3}{gregoriotex-signs.tex}
 Macro for typesetting a linea.
 
@@ -628,11 +638,13 @@ where this macro is called.
 	\#1 & integer & Height number of the custos.\\
 \end{argtable}
 
-\macroname{\textbackslash GreNextSyllableBeginsEUOUAE}{\#1}{gregoriotex-syllable.tex}
+\macroname{\textbackslash GreNextSyllableBeginsEUOUAE}{\#1\#2}{gregoriotex-syllable.tex}
 Indicates that the syllable which follows begins a EUOUAE block.
 
 \begin{argtable}
 	\#1 & integer & The identifier of the EUOUAE block.\\
+	\#2 & \texttt{0} & There is no line break between this syllable and the EUOUAE block.\\
+			& \texttt{1} & There is a line break between this syllable and the beginning of the EUOUAE block.\\
 \end{argtable}
 
 \macroname{\textbackslash GreOriscusCavum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
@@ -1088,6 +1100,13 @@ Macro which formats the mode in roman or arabic numerals according to the approp
 
 \macroname{\textbackslash GreNoNoteSyllable}{}{gregoriotex-syllable.tex}
 Alias for \verb=\GreSyllable= or \verb=\GreBarSyllable= depending on whether the old or new bar spacing algorithm (respectively) is active.  This is used only for syllables which have no notes.
+
+\macroname{\textbackslash GreGABCForceCenters}{}{gregoriotex-syllable.tex}
+Macro inserted into \verb=\GreSyllable= and \verb=\GreBarSyllable= to indicate that the center of the of the current syllable was forced in the gabc with curly braces (``\{'' and ``\}'').
+
+\macroname{\textbackslash GreGABCNextForceCenters}{}{gregoriotex-syllable.tex}
+Macro inserted into \verb=\GreSyllable= and \verb=\GreBarSyllable= to indicate that the center of the of the next syllable was forced in the gabc with curly braces (``\{'' and ``\}'').
+
 
 %%% Local Variables:
 %%% mode: latex

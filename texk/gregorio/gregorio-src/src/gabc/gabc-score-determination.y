@@ -213,7 +213,7 @@ static bool check_score_integrity(gregorio_score *score_to_check)
             } else if (ch->cos.s.style == ST_ELISION) {
                 gregorio_message(
                         _("score initial may not be in an elision"),
-                        "rebuild_characters", VERBOSITY_ERROR, 0);
+                        "check_score_integrity", VERBOSITY_ERROR, 0);
                 break;
             }
         }
@@ -373,8 +373,7 @@ static void rebuild_score_characters(void)
 {
     if (score->first_syllable) {
         gregorio_syllable *syllable;
-        /* leave the first syllable text untouched at this time */
-        for (syllable = score->first_syllable->next_syllable; syllable;
+        for (syllable = score->first_syllable; syllable;
                 syllable = syllable->next_syllable) {
             const gregorio_character *t;
 
@@ -382,9 +381,15 @@ static void rebuild_score_characters(void)
             gregorio_center_determination center = CENTER_NOT_DETERMINED;
             for (t = syllable->text; t; t = t->next_character) {
                 if (!t->is_character && t->cos.s.style == ST_FORCED_CENTER) {
+                    syllable->forced_center = true;
                     center = CENTER_FULLY_DETERMINED;
                     break;
                 }
+            }
+
+            if (syllable == score->first_syllable) {
+                /* leave the first syllable text untouched at this time */
+                continue;
             }
 
             gregorio_rebuild_characters(&(syllable->text), center, false);
