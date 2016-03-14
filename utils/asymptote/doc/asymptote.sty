@@ -17,10 +17,11 @@
 %% Licence: GPL2+
 %% 
 \ProvidesPackage{asymptote}
-  [2015/05/10 v1.29 Asymptote style file for LaTeX]
+  [2016/02/09 v1.30 Asymptote style file for LaTeX]
 \def\Asymptote{{\tt Asymptote}}
 \InputIfFileExists{\jobname.pre}{}{}
 \newbox\ASYbox
+\newdimen\ASYdimen
 \newcounter{asy}
 \newwrite\AsyStream
 \newwrite\AsyPreStream

@@ -1,3 +1,459 @@
+commit 0240be5ed61de2394cc5cc614a9c4b480f2f51d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 23:31:54 2016 -0600
+
+    Add missing variable.
+
+commit a33a69444b667675706f42653c3620da583e0130
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 21:05:19 2016 -0600
+
+    Update diagnostic.
+
+commit 3a8360af8637891ad54a6d756026780286c44ea8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 20:57:00 2016 -0600
+
+    Merge port of xasy to Python3, courtesy of Mojca and Orest.
+
+commit 48e84c5bc8d62b7f06528682e8fd7275828345e6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 20:45:07 2016 -0600
+
+    Add -P arguments to pngalpha ghostscript driver calls.
+
+commit d789c4df72983f70934f702a9ee3ee80fd82b81f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 12 21:59:02 2016 -0700
+
+    Make quiet suppress output unless verbosity > 1.
+
+commit 740c8c1df8127012ff983fe9979a096d0f71e81e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 12 21:26:01 2016 -0700
+
+    Make settings.quiet suppress noninteractive standard output when verbose=0.
+    Add progress function.
+
+commit bcbf941fdd0fa9db5c3b77d7a3477fa358a291ac
+Merge: 97f3b6c ae0af70
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 22:33:57 2016 -0700
+
+    Merge branch 'trianglewithnormals'
+
+commit 97f3b6c3958028f16e130af9a76d404b91289a0c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 21:16:03 2016 -0700
+
+    Don't require kpsewhich in make check for TeXLive version.
+
+commit 121bef8befae717eb00bc550a4e94e05b73a9202
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 21:12:26 2016 -0700
+
+    Look for kpsewhich first in the same directory as the asy executable.
+
+commit ae0af708d12981318936697c7c289fe71723dabe
+Merge: 815b738 6fc23e0
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Mar 6 20:07:38 2016 -0800
+
+    Merge branch 'master' into trianglewithnormals
+
+commit 815b7381ec98e7bd8fff428145c4ff37f4c6ef42
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Mar 6 20:04:10 2016 -0800
+
+    Revise comments on smoothcontour3 for bezier triangles.
+
+commit 6fc23e01ac254e6e016fa2ce37f190a9b3c027c7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 20:07:15 2016 -0700
+
+    Improve script portability.
+
+commit ab000e7a922e6f21dc6aabad21e6dfed864acf2b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 18:34:57 2016 -0700
+
+    Move compile-time check for epsdriver into environment variable
+    ASYMPTOTE_EPSDRIVER.
+
+commit 3cf0adc19ab1ca13ca70dc6e700c6386ccf73e37
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 14:20:31 2016 -0700
+
+    Add EPSWRITE compiler flag to support ghostscript versions older than 9.14.
+
+commit cbb7e37c1a8ed7168bdfb61b5c48ef775b9dd668
+Merge: 9004183 6c1ad05
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 10:04:21 2016 -0700
+
+    Merge branch 'trianglewithnormals'
+
+commit 900418390224e6f56ed33a5df55c0b47e418e1f0
+Merge: ce19f61 9a36fe8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 09:45:19 2016 -0700
+
+    Merge branch 'improverootfinder'
+
+commit ce19f613e620c3fd953417301a7d9fd1e4db3a70
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 09:40:49 2016 -0700
+
+    Port xasy integer division to Python 3.
+
+commit dc788693ea22f5a6bd990a21b357af605f179e27
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 09:36:23 2016 -0700
+
+    Port xasy color handling to Python 3.
+
+commit c16b1d2a6e320e197d41a8df8698e49810737473
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 4 23:15:13 2016 -0700
+
+    Change CFLAGS to CXXFLAGS in documentation.
+
+commit 9a36fe85944c15cbb67c5f1cf777b0bf7e5bd581
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 28 23:53:11 2016 -0700
+
+    Remove default values of fa and fb from _findroot; force margin to (b-a)*1e-3.
+
+commit 6c1ad05b445578368eec7d54842f5ae46cac1213
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 28 22:17:37 2016 -0800
+
+    Correct spacing in smoothcontour3.asy. Replace tabs by spaces for consistent spacing across editors.
+
+commit 4502339c241f74eaf2f02c9315c378f90b44e6a3
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 28 22:03:59 2016 -0800
+
+    Document usetriangles option for smoothcontour3.
+
+commit 29832acfab74cadeb749926b2db3d3ac5f965515
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 28 21:55:51 2016 -0800
+
+    Add smoothcontour3 option to use bezier triangles (default) or not.
+
+commit 50b1420e4d9e46982ab124f7319b30bc7e57b358
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 28 20:09:07 2016 -0800
+
+    Simplify reversing cyclic array.
+
+commit becf736defe152799976999c6ede67e40e5975fd
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 28 19:27:19 2016 -0800
+
+    Change adaptive rendering constant for bezier triangles.
+
+commit fc81a2ed70019cca10eed52b2caa3bff713d0d7f
+Merge: cd9f875 e78de7f
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 28 19:23:17 2016 -0800
+
+    Merge remote-tracking branch 'origin' into trianglewithnormals
+
+commit 184bea914c95dd92c32380bce6001916607d2482
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 24 20:56:21 2016 -0700
+
+    Move rootfinder interface to math.asy.
+
+commit e92e7571479c2024522a882b3ee95a99120c09a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 24 20:40:10 2016 -0700
+
+    Reorder tolerance parameter as in original asy code and allow user control of default value.
+
+commit e435513b1a4faa461e3ce4387461653374eecf7a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 23 23:20:56 2016 -0700
+
+    Port findroot to C++ code, but reorder tolerance parameter to end of
+    signature, to agree with argument order in calls from smoothcontour3.
+
+commit e78de7f99a7b94876805b6eea9b15c7a0c164c96
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 23 20:40:48 2016 -0700
+
+    Implement minor rendering optimization.
+
+commit 87c6ee109e9a615a51ebc76d4ea92b959ea4c20d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 23 19:00:20 2016 -0700
+
+    Fix bug #219 Asymptote forks in an uncontrolled way.
+
+commit cd9f8755715b8ce7e5b239ecd77fdff4d336411a
+Merge: e6454cb 344698e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 16 17:41:59 2016 -0700
+
+    Merge branch 'master' into trianglewithnormals
+
+commit 344698e2cf2f16379139e8473c4a0970433689e5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 16 17:41:21 2016 -0700
+
+    Fix epsilon.
+
+commit e6454cb2370e412699d467f451519ab89efd3f40
+Merge: e5394af 75ce996
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 16 17:29:10 2016 -0700
+
+    Merge branch 'master' into trianglewithnormals
+
+commit c3099c59cc61721fa9d08e1cd7ab22ddb0026bb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 16 09:32:10 2016 -0700
+
+    Fix epsilon.
+
+commit e5394afc350161459e7b78c28fd025f390a2f60e
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 14 22:16:08 2016 -0800
+
+    Fix overlapedges for triangular patches.
+
+commit aa8a94e605e42c9742b880c50a62cf6432309d32
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 14 22:10:49 2016 -0800
+
+    Subdivide triangles with bad normals.
+
+commit f4f03e779e9e0d7143c98ca7a4f82e41ec3c2d6e
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 14 21:57:12 2016 -0800
+
+    Make array reversal consistent with path reversal
+
+commit 58852de50bba1ee05eef4c7cd1042131006e711d
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 14 21:09:17 2016 -0800
+
+    Make the orientation of the patches consistent.
+
+commit 652f8bbc027dd78d1d2be0f5cb8af24496fea2e5
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 14 17:09:01 2016 -0800
+
+    Use quadratic interpolation for rootfinder
+
+commit 75ce99693e881bc87a25ee1a57a90e2c8a88c95c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 12 16:13:26 2016 -0700
+
+    Fix bug #217 Reversion of one point guides.
+
+commit 213d56942fe5b9ef605e0ccf545527833319348d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 12 14:43:37 2016 -0700
+
+    Fix bug #218 Core dump in subpath routine.
+
+commit b7bcfe1c90e491e8fc284ea8e746af85495fb087
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 10 01:29:02 2016 -0700
+
+    Fix str().c_str() bugs.
+
+commit 2aed7cc04bb0ab928aa6a7086b977dc90c078a5e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 9 22:27:30 2016 -0700
+
+    Move \ASYdimen to asymptote.sty (version 1.30 now required).
+    Remove support for obsolete media 9 package from 2013.
+
+commit 8d0eef70c60ce380f8919f8aa8d45467f2d9c3bd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 9 18:12:40 2016 -0700
+
+    Increase maxrefinements in bezulate.
+
+commit 25617a38c05e1cf7e5c0322c3cdb0b53c5f3a909
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 9 16:50:13 2016 -0700
+
+    Fix bug #215 Line adjustment won't work with scaled pens.
+
+commit 9ee82946a46323ca939a6ae10d666231486127df
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 7 23:19:06 2016 -0700
+
+    Document in the manual that example file names link to the PDF output whereas
+    their .asy extensions link to the corresponding Asymptote code.
+
+commit 760fddca0f402acc49894b8cc81056b4b97759be
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 7 17:06:50 2016 -0800
+
+    Non compiling: start maketriangle function.
+
+commit 57d9d51c1bc79c2efe55087e291c35f51790b842
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 7 17:00:05 2016 -0700
+
+    Update copyright date.
+
+commit 691e8ef9241001b18dd3e3ad6f667f73da76c41e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 7 16:57:54 2016 -0700
+
+    Fix links in documentation.
+
+commit 2ad4f66eda6e71aaf24b15e67c5a1eb5c15332ae
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 7 16:46:58 2016 -0700
+
+    Fix links in documentation.
+
+commit 7c33a39dbf1b41e29f251a81778019f722a38497
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 7 16:21:01 2016 -0700
+
+    Add links to documentation examples.
+
+commit d422d99bd9d22bfa57013fdf8de5d33aa637a71e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 7 11:12:47 2016 -0700
+
+    Fix bug #214 Minor bug in 'format'.
+
+commit 4c3480c2e5ae04e644382ceb9fa871206bcfee51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 6 23:19:05 2016 -0700
+
+    Support --disable-gl again.
+
+commit afbd271363fde72afe17f54d5c5a408d24931437
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 6 17:06:42 2016 -0700
+
+    Improve comments in beziertriangle.cc.
+
+commit 5569c8d4fd3d84f121362aa18966eb8114cbe88d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 5 17:47:36 2016 -0700
+
+    Simplify code.
+
+commit b2d975013dfec4c2163b66286eacb8e6b9a71b56
+Merge: a2dc301 ce719eb
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Fri Feb 5 08:34:14 2016 -0800
+
+    Merge branch 'trianglewithnormals' of github.com:vectorgraphics/asymptote into trianglewithnormals
+
+commit ce719ebe712ae40a4fd31dc5e59b6c1f382cdfca
+Merge: 30d63a3 9b9e8f5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 23:18:11 2016 -0700
+
+    Merge branch 'master' into trianglewithnormals
+
+commit 9b9e8f579e58ce016754626275d9c03b1dc1cf11
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 23:05:28 2016 -0700
+
+    Simplify code.
+
+commit ab2042f994b6dd71c204ddaa59124b7f3644ee58
+Merge: 5d97e7d a873617
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 23:03:06 2016 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 5d97e7d70965fefa3814f09911be2e1a74cf1979
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 22:31:31 2016 -0700
+
+    Handle degeneracy in Bezier triangle normal calculation for render=0.
+
+commit a2dc30108b3979adb818333771fed8e278bd697c
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 4 21:31:58 2016 -0800
+
+    Amend one comment.
+
+commit 8ec9865cc3fd4bc2cbded6e754ad4670e1920730
+Merge: 6ca1083 a873617
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 4 21:20:20 2016 -0800
+
+    Merge branch 'master' into trianglewithnormals to incorporate bug fix for meshpen with bezier triangles.
+
+commit 6ca10836bade3c2540ebfbe4dc0c27ff782ad2f8
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 4 21:15:39 2016 -0800
+
+    Add comments documenting the trianglewithnormals function.
+
+commit b2efab65fb612318202964ae6fb80b50c925d315
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 4 21:11:31 2016 -0800
+
+    Simpler names for normals in trianglewithnormals parameters.
+
+commit a873617b4e481ea90c2ebce361932212b4c70df1
+Author: Orest Shardt <shardtor@gmail.com>
+Date:   Thu Feb 4 16:35:35 2016 -0500
+
+    Fix hex representation of colours
+
+commit 26629e8a350204d9fbd9095e5c59ca4bda35f6d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 13:24:27 2016 -0700
+
+    Fix planar Bezier triangles under render=0.
+
+commit 64e1d1ad3777e898febba132ac0aae152882c52d
+Merge: 03a2310 29806bc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 01:37:46 2016 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 03a2310b72610252698115ba3d1ec44b0aba16a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 01:34:24 2016 -0700
+
+    Use git suffix for development tags and no suffix for release tags.
+
+commit 29806bc76d22752c59df49fb776f0a2f935d4331
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 4 01:34:24 2016 -0700
+
+    Use git suffix for development tags and no suffix for release tags.
+
+commit 30d63a35b8903e0a7fe45828c62bb4c1a0e0524a
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 4 00:04:31 2016 -0800
+
+    Modify smoothcontour3 to use bezier triangles when convenient.
+
+commit 48b96a7f01add22951ac01806d22de912f9524bc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 3 16:53:47 2016 -0700
+
+    Add "git" suffix to version number for out-of-git builds to avoid confusion
+    with official releases. Simplify Makefile.
+
+commit 12d4161bd25c0eda0d95a37437ba774b04a1eacb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 3 02:44:53 2016 -0700
+
+    Increment version to 2.37.
+
 commit e469422d232659d27a70527ddffc7f106be89698
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Feb 3 01:12:14 2016 -0700

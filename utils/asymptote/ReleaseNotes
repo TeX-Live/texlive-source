@@ -1,3 +1,21 @@
+Release Notes for Version 2.37
+
+The xasy graphical user interface now runs under both Python 2.7 and Python 3.
+Legacy versions (prior to 9.14) of Ghostscript can be supported by
+assigning settings.epsdriver="epswrite" (or by setting the environment
+variable ASYMPTOTE_EPSDRIVER to epswrite). The quiet flag suppresses
+noninteractive standard output when settings.verbosity <= 1. A progress
+function was added to the plain_strings module. The smoothcontour3 module
+was optimized to use Bezier triangles where appropriate, along with a
+built-in least-squares routine and an improved root finder based on
+quadratic interpolation. If settings.sysdir is empty, preference is given
+to a version of kpsewhich in the same directory as the executable for
+determining the correct sysdir. The handling of degenerate normals of
+Bezier triangles was fixed. Bugs in forking, integer formatting, dash
+adjustment, subpaths, and guide reversion were fixed. Version 1.30 of
+asymptote.sty (auto-generated) and version 0.35 (or later) of media9.sty
+are now required.
+
 Release Notes for Version 2.36
 
 Bezier triangle patches have been implemented in place of degenerate Bezier
@@ -1980,7 +1998,3 @@ the frame for filling with a background color; they also return the boundary
 as a guide. A workaround was added for a bug in gcc version 3.3 to
 facilitate compilation under Darwin (MacOS). Many internal coding
 improvements were made.
-
-LocalWords:  epswrite ghostscript boolean meshlight nolight nonsquare asy
-LocalWords:  SimpleHead smoothcontour3 writtten Staats lemniscate xelatex
-LocalWords:  asymptote asylatexdir pdflatex aligndir

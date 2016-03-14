@@ -1440,7 +1440,7 @@ void gen_runtime111(stack *Stack)
   guidevector v;
   size_t start=cyclic ? n : n-1;
   knot curr=f.Nodes(start);
-  knot next;
+  knot next=curr;
   for(size_t i=start; i > 0; --i) {
     next=f.Nodes(i-1);
     v.push_back(new pairguide(curr.z));
