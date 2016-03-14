@@ -9,7 +9,9 @@
 
 namespace camp {
 
-static const double pixel=0.5; // Adaptive rendering constant.
+#ifdef HAVE_GL
+
+static const double pixel=0.25; // Adaptive rendering constant.
 
 extern const double Fuzz;
 extern const double Fuzz2;
@@ -24,9 +26,10 @@ inline triple maxabs(triple u, triple v)
 inline triple displacement1(const triple& z0, const triple& c0,
                             const triple& c1, const triple& z1)
 {
-  // z0-z1 is computed twice. This is unnecessary, although perhaps not a big
-  // deal and way easier to understand in this case.
-  return maxabs(displacement(c0,z0,z1),displacement(c1,z0,z1));
+  triple Z0=c0-z0;
+  triple Q=unit(z1-z0);
+  triple Z1=c1-z0;
+  return maxabs(Z0-dot(Z0,Q)*Q,Z1-dot(Z1,Q)*Q);
 }
 
 // return the perpendicular displacement of a point z from the plane
@@ -39,26 +42,21 @@ inline triple displacement2(const triple& z, const triple& u, const triple& n)
   
 triple displacement(const triple *controls)
 {
-  triple d=drawElement::zero;
-
   triple z0=controls[0];
   triple z1=controls[6];
   triple z2=controls[9];
 
-  // Optimize straight & planar cases.
-
-  //for(size_t i=1; i < 10; ++i)
   // The last three lines compute how straight the edges are. This should be a
-  // sufficient test for the boundry points, so only the central point is
-  // tested for deviance from the main triangle.
-  d=maxabs(d,displacement2(controls[4],z0,unit(cross(z1-z0,z2-z0))));
+  // sufficient test for the boundry points, so only the internal point is
+  // tested for deviance from the triangle formed by the vertices.
+  // We assume that the Jacobian is nonzero so that we only need to calculate
+  // the perpendicular displacement of the internal point from this triangle.
+  
+  triple d=displacement2(controls[4],z0,unit(cross(z1-z0,z2-z0)));
 
   d=maxabs(d,displacement1(z0,controls[1],controls[3],z1));
   d=maxabs(d,displacement1(z0,controls[2],controls[5],z2));
   d=maxabs(d,displacement1(z1,controls[7],controls[8],z2));
-
-  // TODO: calculate displacement d from interior
-  // Or simply assume a nondegenerate Jacobian.
 
   return d;
 }
@@ -381,7 +379,7 @@ struct Render
     this->res=res;
 
     triple po=p[0];
-    double epsilon=0;
+    epsilon=0;
     for(int i=1; i < 10; ++i)
       epsilon=max(epsilon,abs2(p[i]-po));
   
@@ -431,12 +429,15 @@ struct Render
 
 Render R;
 
-void bezierTriangle(const triple *g, bool straight, double Size2, triple Size3,
+void bezierTriangle(const triple *g, bool straight, double ratio,
                     bool havebillboard, triple center, GLfloat *colors)
 {
   R.init(havebillboard,center);
-  R.render(g,pixel*length(Size3)/fabs(Size2),colors,straight ? 0 : 8);
+  R.render(g,pixel*ratio,colors,straight ? 0 : 8);
   R.clear();
 }
 
+#endif
+
 } //namespace camp
+

@@ -83,6 +83,7 @@ const bool havegl=false;
 mode_t mask;
   
 string systemDir=ASYMPTOTE_SYSDIR;
+string defaultEPSdriver="eps2write";
 
 #ifndef __MSDOS__
   
@@ -1239,7 +1240,7 @@ void initSettings() {
                             true));
                             
   addOption(new boolSetting("quiet", 'q',
-                            "Suppress welcome message"));
+                            "Suppress welcome text and noninteractive stdout"));
   addOption(new boolSetting("localhistory", 0,
                             "Use a local interactive history file"));
   addOption(new IntSetting("historylines", 0, "n",
@@ -1301,6 +1302,7 @@ void initSettings() {
   addOption(new envSetting("psviewer", defaultPSViewer));
   addOption(new envSetting("gs", defaultGhostscript));
   addOption(new envSetting("libgs", defaultGhostscriptLibrary));
+  addOption(new envSetting("epsdriver", defaultEPSdriver));
   addOption(new envSetting("texpath", ""));
   addOption(new envSetting("texcommand", ""));
   addOption(new envSetting("dvips", "dvips"));
@@ -1371,7 +1373,11 @@ string lookup(const string& symbol)
 {
   string s;
   mem::vector<string> cmd;
-  cmd.push_back("kpsewhich");
+  string kpsewhich="kpsewhich";
+  string fullname=stripFile(argv0)+kpsewhich;
+  std::ifstream exists(fullname.c_str());
+  if(!exists) fullname=kpsewhich;
+  cmd.push_back(fullname);
   cmd.push_back("--var-value="+symbol);
   iopipestream pipe(cmd);
   pipe >> s;
