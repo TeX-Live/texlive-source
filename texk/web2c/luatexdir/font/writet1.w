@@ -1709,15 +1709,15 @@ void writet1(PDF pdf, fd_entry * fd)
 
     t1_save_offset = 0;
     if (!is_subsetted(fd_cur->fm)) {    /* include entire font */
-        if (!(fd->ff_found = t1_open_fontfile(filetype_subset)))
+        if (!(fd->ff_found = t1_open_fontfile(filetype_font)))
             return;
         t1_include(pdf);
-        t1_close_font_file(7);
+        t1_close_font_file(filetype_font);
         xfree(t1_buffer);
         return;
     }
     /* partial downloading */
-    if (!(fd->ff_found = t1_open_fontfile(filetype_font)))
+    if (!(fd->ff_found = t1_open_fontfile(filetype_subset)))
         return;
     t1_subset_ascii_part(pdf);
     t1_start_eexec(pdf);
@@ -1726,7 +1726,7 @@ void writet1(PDF pdf, fd_entry * fd)
     t1_read_subrs(pdf);
     t1_subset_charstrings(pdf);
     t1_subset_end(pdf);
-    t1_close_font_file(3);
+    t1_close_font_file(filetype_subset);
     xfree(t1_buffer);
 }
 
