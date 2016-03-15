@@ -71,3 +71,16 @@ diff -bur LuaJIT-src-orig/src/lj_str.c LuaJIT-src/src/lj_str.c
    o = gcref(g->strhash[h & g->strmask]);
    if (LJ_LIKELY((((uintptr_t)str+len-1) & (LJ_PAGESIZE-1)) <= LJ_PAGESIZE-4)) {
 
+diff -bur LuaJIT-src-orig/src/lj_err.c LuaJIT-src/src/lj_err.c
+--- LuaJIT-src-orig/src/lj_err.c	2016-03-15 12:06:56.844436191 +0100
++++ LuaJIT-src/src/lj_err.c	2016-03-15 11:58:30.000000000 +0100
+@@ -310,7 +310,6 @@
+ #define _US_FORCE_UNWIND                8
+ 
+ typedef struct _Unwind_Control_Block _Unwind_Control_Block;
+-typedef struct _Unwind_Context _Unwind_Context;
+ 
+ struct _Unwind_Control_Block {
+   uint64_t exclass;
+
+
