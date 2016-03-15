@@ -1,5 +1,6 @@
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
+## Copyright (C) 2016 Karl Berry <tex-live@tug.org>
 ## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -147,6 +148,7 @@ texmf_other_scripts = \
 	musixtex/musixflx.lua \
 	musixtex/musixtex.lua \
 	oberdiek/pdfatfi.pl \
+	parades/parades.py \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
 	pedigree-perl/pedigree.pl \
