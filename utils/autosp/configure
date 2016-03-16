@@ -3989,6 +3989,7 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
+# Copied from autosp-src/configure.ac.
 # Checks for programs.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -5248,6 +5249,7 @@ _ACEOF
 fi
 done
 
+# End of checks frmo autosp-src/configure.ac.
 
 # trailing tl stuff.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} sets \$(MAKE)" >&5
