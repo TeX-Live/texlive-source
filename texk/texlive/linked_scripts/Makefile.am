@@ -148,7 +148,6 @@ texmf_other_scripts = \
 	musixtex/musixflx.lua \
 	musixtex/musixtex.lua \
 	oberdiek/pdfatfi.pl \
-	parades/parades.py \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
 	pedigree-perl/pedigree.pl \
