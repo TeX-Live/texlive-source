@@ -48,6 +48,9 @@
 /* Have ICU library */
 #undef HAVE_ICU
 
+/* Use hb-icu Unicode callbacks */
+#undef HAVE_ICU_BUILTIN
+
 /* Have Intel __sync_* atomic primitives */
 #undef HAVE_INTEL_ATOMIC_PRIMITIVES
 
