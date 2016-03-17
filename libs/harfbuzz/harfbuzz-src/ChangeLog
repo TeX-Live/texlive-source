@@ -1,19 +1,248 @@
+commit 69f9fbc4200442a35484d3c790ae8f4979be5d60
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Mar 17 11:59:43 2016 -0700
+
+    Synthesize GDEF glyph class for any glyph that does not have one
+    in GDEF
+
+    Previously we only synthesized GDEF glyph classes if the glyphClassDef
+    array in GDEF was null.  This worked well enough, and is indeed what
+    OpenType requires: "If the font does not include a GlyphClassDef
+    table,
+    the client must define and maintain this information when using the
+    GSUB and GPOS tables."  That sentence does not quite make sense since
+    one needs Unicode properties as well, but is close enough.
+
+    However, looks like Arial Unicode as shipped on WinXP, does have GDEF
+    glyph class array, but defines no classes for Hebrew.  This results
+    in Hebrew marks not getting their widths zeroed.  So, with this
+    change,
+    we synthesize glyph class for any glyph that is not specified in the
+    GDEF glyph class table.  Since, from our point of view, a glyph not
+    being listed in that table is a font bug, any unwanted consequence of
+    this change is a font bug :).
+
+    Note that we still don't get the same rendering as Uniscribe, since
+    Uniscribe seems to do fallback positioning as well, even though the
+    font does have a GPOS table (which does NOT cover Hebrew!).  We are
+    not going to try to match that though.
+
+    Test string for Arial Unicode:
+
+	U+05E9,U+05B8,U+05C1,U+05DC
+
+    Before:		[gid1166=3+991|gid1142=0+737|gid5798=0+1434]
+    After:		[gid1166=3+991|gid1142=0+0|gid5798=0+1434]
+    Uniscribe:	[gid1166=3+991|gid1142=0@348,0+0|gid5798=0+1434]
+
+    Note that our new output matches what we were generating until July
+    2014, because the Hebrew shaper used to zero mark advances based on
+    Unicode, NOT GDEF.	That's 9e834e29e0b657f0555df1ab9cea79ff7abcf08d.
+
+    Reported by Greg Douglas.
+
+ src/hb-ot-layout-gsub-table.hh | 22 ++++++++++++++++++++--
+ src/hb-ot-shape.cc		| 29 -----------------------------
+ 2 files changed, 20 insertions(+), 31 deletions(-)
+
+commit fef5dd9a72f326c160a7194f558749d24bac7283
+Merge: 01ea9ea 5f995db
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Sat Mar 12 19:15:15 2016 -0800
+
+    Merge pull request #232 from c0nk/wip-icu
+
+    Add --with-icu=builtin option; fix compile error
+
+commit 01ea9eaac373d9f3de6e56c1ca26cdcd259ecc8e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Fri Mar 11 18:50:02 2016 -0800
+
+    [build] Use tar-ustar instead of tar-pax
+
+    The default tar-v7 is not good enough for us (99 char filename
+    limit), so I have had bumped to tar-pax.  We got one complaint
+    that someone's tar couldn't handle tar-pax.  Set to tar-ustar
+    which is ~13 years earlier than tar-pax and is good enough for us.
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 3e10460a1dd41de32752e308771aa30d23565cc0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Fri Mar 11 18:45:19 2016 -0800
+
+    Minor comment
+
+ src/hb-unicode-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit d14fea4bdcc1423fe9a585af3abdefa9605d17e6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Tue Mar 8 12:16:41 2016 -0800
+
+    Remove default clause in minor switch statements
+
+    Bending to clang warnings...
+    https://bugs.chromium.org/p/chromium/issues/detail?id=593057
+
+ src/hb-ot-shape-complex-indic.cc | 4 ----
+ src/hb-ot-shape-complex-thai.cc  | 1 -
+ 2 files changed, 5 deletions(-)
+
+commit ce8ae9970102f83b67bb1e8e8b2bf894a0e26c07
+Merge: 731a430 71248a8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Fri Mar 4 17:20:35 2016 -0800
+
+    Merge pull request #231 from KonstantinRitt/post123buildfix
+
+    Fix build with HB_DISABLE_DEPRECATED
+
+commit 731a430cd36caabcef04e099b21ebc6daedd536f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Wed Mar 2 13:32:42 2016 -0800
+
+    Fix requiredFeature stage handling logic
+
+    Originally the way Jonathan had written this was correct in
+    "continue"ing:
+
+    https://github.com/jfkthame/harfbuzz/commit/35e28c7a733eaffcd9f062b18d7db9fbb3d990fc#diff-ead86a33a5cc9ad7f6e6381031a0baddR199
+
+    When I rewrote his patch, I messed it up:
+
+    https://github.com/behdad/harfbuzz/commit/da132937989acb4d8ca9bd41c79f98750e7dda30#diff-ead86a33a5cc9ad7f6e6381031a0baddR209
+
+    the intended behavior was NOT to set found=TRUE and NOT to continue.
+    This was resulting in feature_index[table_index] being left unset.
+    Oops!
+
+ src/hb-ot-map.cc | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+commit 68b6296d3333fd38bd5442d2ba087ced481603bc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Tue Mar 1 16:41:53 2016 +0900
+
+    Add F2DOT14 type
+
+ src/hb-open-type-private.hh | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 082b79fe9f06607998178dcdcbe817af28b017de
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Tue Mar 1 16:41:26 2016 +0900
+
+    Use FWORD and UFWORD when it makes sense
+
+    I had forgotten about those types.
+
+ src/hb-ot-glyf-table.hh | 8 ++++----
+ src/hb-ot-hmtx-table.hh | 6 +++---
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 5f995db10381172ec63fd7ffbb0acf2c6b3dae5e
+Author: Kal Conley <kcconley@gmail.com>
+Date:	Fri Feb 26 00:36:17 2016 +0100
+
+    Fix missing ICU #include
+
+    Fix compile error in hb-icu.cc when ICU configured with
+    U_NO_DEFAULT_INCLUDE_UTF_HEADERS=1
+
+ src/hb-icu.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit b424b6c372dfe4c0ed75a49761eb34a416819446
+Author: Kal Conley <kcconley@gmail.com>
+Date:	Fri Feb 26 00:35:15 2016 +0100
+
+    Add --with-icu=builtin configure option
+
+ configure.ac	 | 33 +++++++++++++++++++--------------
+ src/Makefile.am |  7 +++++++
+ 2 files changed, 26 insertions(+), 14 deletions(-)
+
+commit 71248a843f976c86022eb5bb8c6e8880b2499937
+Author: Konstantin Ritt <ritt.ks@gmail.com>
+Date:	Thu Feb 25 18:55:28 2016 +0400
+
+    Fix build with HB_DISABLE_DEPRECATED
+
+    When HB_DISABLE_DEPRECATED is defined, no code from hb-deprecated.h
+    should be used, even from within HB itself.
+
+ src/hb-font.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 0c7fb7419c20d04b803412945565562c32b42929
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Thu Feb 25 14:40:09 2016 +0900
+
+    Speed up buffer variable allocation sanity check
+
+    This makes defining HB_NDEBUG much less relevant, to the
+    point of irrelevance.  Sorry about all the fuss in previous
+    release!
+
+ src/hb-buffer-private.hh | 67
+ ++++++++++++++++++++++++++++-----------------
+ src/hb-buffer.cc	  | 70
+ ------------------------------------------------
+ 2 files changed, 43 insertions(+), 94 deletions(-)
+
+commit 91dd11565221bdb108c138662ea013aac14bb968
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Thu Feb 25 13:56:47 2016 +0900
+
+    Add HB_NDEBUG
+
+    API changes:
+    - If NDEBUG is defined, define HB_NDEBUG
+    - Disable costlier sanity checks if HB_NDEBUG is defined.
+
+    In 1.2.3 introduced some code to disable costly sanity checks if
+    NDEBUG is defined.	NDEBUG, however, disables all assert()s as
+    well.  With HB_NDEBUG, one can disable costlier checks but keep
+    assert()s.
+
+    I'll probably add a way to define HB_NDEBUG automatically in
+    release tarballs.  But for now, production systems that do NOT
+    define NDEBUG, are encouraged to define HB_NDEBUG for our build.
+
+ src/Makefile.am	  | 2 +-
+ src/hb-buffer-private.hh | 4 ++--
+ src/hb-buffer.cc	  | 4 ++--
+ src/hb-private.hh	  | 9 +++++++++
+ 4 files changed, 14 insertions(+), 5 deletions(-)
+
+commit 75568b0a7f811ea18e23037735ec8541a7431f88
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:	Thu Feb 25 12:26:26 2016 +0900
+
+    1.2.3
+
+ NEWS	      | 42 ++++++++++++++++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 43 insertions(+), 1 deletion(-)
+
 commit 988165021f8d48dc7120b071d056491256569f4f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 25 12:23:02 2016 +0900
+Date:	Thu Feb 25 12:23:02 2016 +0900
 
     Disable internal buffer variable bookkeeping in NDEBUG builds
 
     Saves some sweet time and binary size!
 
- src/Makefile.am          |  1 +
+ src/Makefile.am	  |  1 +
  src/hb-buffer-private.hh | 30 ++++++++++++++++++++----------
- src/hb-buffer.cc         |  6 ++++--
+ src/hb-buffer.cc	  |  6 ++++--
  3 files changed, 25 insertions(+), 12 deletions(-)
 
 commit 94dd0bb7e78125994cb7c833a5b03110f1ffc822
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 25 11:31:03 2016 +0900
+Date:	Thu Feb 25 11:31:03 2016 +0900
 
     Add blacklist signature for Times New Roman (Bold) Italic on OS X
 
@@ -22,7 +251,7 @@ Date:   Thu Feb 25 11:31:03 2016 +0900
 
 commit dd8598c1c7f29fc92253b0cd4e856c1941b1d0c0
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 25 11:20:05 2016 +0900
+Date:	Thu Feb 25 11:20:05 2016 +0900
 
     [test] Pass closure to hb_font_set_glyph_func()
 
@@ -33,7 +262,7 @@ Date:   Thu Feb 25 11:20:05 2016 +0900
 
 commit e23cf902e91142a10229e3514be4ceee69efde04
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 25 11:11:15 2016 +0900
+Date:	Thu Feb 25 11:11:15 2016 +0900
 
     Blacklist GDEF table of timesi.ttf and timesbi.ttf on Win 7
 
@@ -45,7 +274,7 @@ Date:   Thu Feb 25 11:11:15 2016 +0900
 
 commit c335fd7986fe360ab8e1c032c9b988d0d30511eb
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 25 09:16:05 2016 +0900
+Date:	Thu Feb 25 09:16:05 2016 +0900
 
     In trampoline implementation of get_glyph(), don't destroy user
     data twice!
@@ -55,18 +284,18 @@ Date:   Thu Feb 25 09:16:05 2016 +0900
 
 commit 23335deaad9d4d9824ff41343264514d3f9f7e37
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 20:27:13 2016 +0900
+Date:	Wed Feb 24 20:27:13 2016 +0900
 
     [ot-font] Accelerate cmap format4 get_glyph
 
  src/hb-ot-cmap-table.hh | 111
  ++++++++++++++++++++++++++++--------------------
- src/hb-ot-font.cc       |  14 +++++-
+ src/hb-ot-font.cc	 |  14 +++++-
  2 files changed, 77 insertions(+), 48 deletions(-)
 
 commit e0f16a715bc3e621ff21a8be88102e9672630574
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 19:52:36 2016 +0900
+Date:	Wed Feb 24 19:52:36 2016 +0900
 
     [ot-font] Towards accelerating get_glyph()
 
@@ -75,17 +304,17 @@ Date:   Wed Feb 24 19:52:36 2016 +0900
 
 commit 5473ebfb84c7b6059ac16e04676b363acc51aa00
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 19:32:43 2016 +0900
+Date:	Wed Feb 24 19:32:43 2016 +0900
 
     [ot-font] Remove level of indirection in get_glyph_variant
 
  src/hb-ot-cmap-table.hh | 14 ++------------
- src/hb-ot-font.cc       | 13 +++++++++----
+ src/hb-ot-font.cc	 | 13 +++++++++----
  2 files changed, 11 insertions(+), 16 deletions(-)
 
 commit 49fe6ecf19522413e79a11a29aa0ffc5bdfcd2f8
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 19:10:06 2016 +0900
+Date:	Wed Feb 24 19:10:06 2016 +0900
 
     [TODO] Update
 
@@ -96,7 +325,7 @@ Date:   Wed Feb 24 19:10:06 2016 +0900
 
 commit 8b5bc141cd3a6bfcea3c91a882a630426876ceb3
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 19:05:23 2016 +0900
+Date:	Wed Feb 24 19:05:23 2016 +0900
 
     Add get_nominal_glyph() and get_variation_glyph() instead of
     get_glyph()
@@ -118,39 +347,39 @@ Date:   Wed Feb 24 19:05:23 2016 +0900
     get_variation_glyph() pair.  The variation version can assume that
     variation_selector argument is not zero.
 
- src/hb-deprecated.h                |  10 ++
- src/hb-fallback-shape.cc           |   4 +-
- src/hb-font-private.hh             |  26 +++--
- src/hb-font.cc                     | 203
+ src/hb-deprecated.h		    |  10 ++
+ src/hb-fallback-shape.cc	    |	4 +-
+ src/hb-font-private.hh		    |  26 +++--
+ src/hb-font.cc			    | 203
  ++++++++++++++++++++++++++++++++++---
- src/hb-font.h                      |  55 +++++++---
- src/hb-ft.cc                       |  38 ++++---
- src/hb-ot-font.cc                  |  57 +++++++----
- src/hb-ot-shape-complex-indic.cc   |   8 +-
- src/hb-ot-shape-complex-myanmar.cc |   2 +-
- src/hb-ot-shape-complex-use.cc     |   2 +-
- src/hb-ot-shape-fallback.cc        |   6 +-
- src/hb-ot-shape-normalize.cc       |  18 ++--
- src/hb-ot-shape.cc                 |   6 +-
+ src/hb-font.h			    |  55 +++++++---
+ src/hb-ft.cc			    |  38 ++++---
+ src/hb-ot-font.cc		    |  57 +++++++----
+ src/hb-ot-shape-complex-indic.cc   |	8 +-
+ src/hb-ot-shape-complex-myanmar.cc |	2 +-
+ src/hb-ot-shape-complex-use.cc     |	2 +-
+ src/hb-ot-shape-fallback.cc	    |	6 +-
+ src/hb-ot-shape-normalize.cc	    |  18 ++--
+ src/hb-ot-shape.cc		    |	6 +-
  13 files changed, 344 insertions(+), 91 deletions(-)
 
 commit b30a971bf792b9c683c345e1be25c5a5869a113c
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 17:32:22 2016 +0900
+Date:	Wed Feb 24 17:32:22 2016 +0900
 
     1.2.2
 
- NEWS         | 14 +++++++++++++-
+ NEWS	      | 14 +++++++++++++-
  configure.ac |  2 +-
  2 files changed, 14 insertions(+), 2 deletions(-)
 
 commit af48e3d27c01c538f46f1dc376d994a0c24a8170
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 16:06:40 2016 +0900
+Date:	Wed Feb 24 16:06:40 2016 +0900
 
     Fix recent test
 
-    Not sure why the FT functions were returning advance 1024.  This
+    Not sure why the FT functions were returning advance 1024.	This
     caused failure on drone.io.  Switch to hb-ot-font and disable
     glyph names.
 
@@ -159,7 +388,7 @@ Date:   Wed Feb 24 16:06:40 2016 +0900
 
 commit 17c831701756bb46300c412fd64b19d67f299c18
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 16:06:23 2016 +0900
+Date:	Wed Feb 24 16:06:23 2016 +0900
 
     [tests] Fix for multiple options in test runner scripts
 
@@ -168,7 +397,7 @@ Date:   Wed Feb 24 16:06:23 2016 +0900
 
 commit ebd7431f824c718db6ce5b85e94f2b3911127af4
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 15:53:40 2016 +0900
+Date:	Wed Feb 24 15:53:40 2016 +0900
 
     Partially revert 86c68c7a2c971efe8e35b1f1bd99401dc8b688d2
 
@@ -182,14 +411,14 @@ Date:   Wed Feb 24 15:53:40 2016 +0900
     The cursive+mark interaction is broken again.  To be fixed in a
     different way.
 
- src/hb-ot-layout-gpos-table.hh               | 28
+ src/hb-ot-layout-gpos-table.hh		      | 28
  ++++++++++++----------------
  test/shaping/tests/cursive-positioning.tests |  2 +-
  2 files changed, 13 insertions(+), 17 deletions(-)
 
 commit 284481b3120963353f5f34ed094f07ffc13480ef
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 15:52:37 2016 +0900
+Date:	Wed Feb 24 15:52:37 2016 +0900
 
     Add test for mark positioning in rtl with non-zero mark advance
 
@@ -198,12 +427,12 @@ Date:   Wed Feb 24 15:52:37 2016 +0900
 
  .../sha1sum/07f054357ff8638bac3711b422a1e31180bba863.ttf  | Bin 0 ->
  848 bytes
- test/shaping/tests/cursive-positioning.tests              |   1 +
+ test/shaping/tests/cursive-positioning.tests		   |   1 +
  2 files changed, 1 insertion(+)
 
 commit 56a84e8dd18c63782b8db3a86e94651dae5bb01b
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 15:50:33 2016 +0900
+Date:	Wed Feb 24 15:50:33 2016 +0900
 
     [tests] Allow commenting out tests to be skipped
 
@@ -212,7 +441,7 @@ Date:   Wed Feb 24 15:50:33 2016 +0900
 
 commit 7cfd6cc486f2751d7f78c5008a636d677af4e12f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 24 12:30:57 2016 +0900
+Date:	Wed Feb 24 12:30:57 2016 +0900
 
     [Android.mk] Update with warning flags
 
@@ -221,17 +450,17 @@ Date:   Wed Feb 24 12:30:57 2016 +0900
 
 commit dabf32a5ad706726412ba5c64e1ea614a707b928
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 23 15:38:43 2016 +0900
+Date:	Tue Feb 23 15:38:43 2016 +0900
 
     1.2.1
 
- NEWS         | 13 +++++++++++++
+ NEWS	      | 13 +++++++++++++
  configure.ac |  2 +-
  2 files changed, 14 insertions(+), 1 deletion(-)
 
 commit 525cc7d28cbe4e8149ddba677224f134dc0a3274
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 23 15:19:27 2016 +0900
+Date:	Tue Feb 23 15:19:27 2016 +0900
 
     Add note re only adding tests with Free Software fonts
 
@@ -240,7 +469,7 @@ Date:   Tue Feb 23 15:19:27 2016 +0900
 
 commit 6a09d7e34b949f9929f616ee53278b2edfd9b7ea
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 23 13:47:16 2016 +0900
+Date:	Tue Feb 23 13:47:16 2016 +0900
 
     [test] Add README about how to add shaping tests
 
@@ -250,121 +479,121 @@ Date:   Tue Feb 23 13:47:16 2016 +0900
 
 commit f8ee7906d0454d950081c621f2b04a6d08e1b92f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 23 13:45:38 2016 +0900
+Date:	Tue Feb 23 13:45:38 2016 +0900
 
     Remove MANIFEST files
 
-    They are unused currently.  We can add later if we hook them up
+    They are unused currently.	We can add later if we hook them up
     to anything useful.
 
- test/shaping/fonts/sha1sum/MANIFEST                | 52
+ test/shaping/fonts/sha1sum/MANIFEST		    | 52
  ----------------------
- test/shaping/tests/MANIFEST                        | 19 --------
- test/shaping/texts/MANIFEST                        |  1 -
- test/shaping/texts/in-tree/MANIFEST                |  9 ----
+ test/shaping/tests/MANIFEST			    | 19 --------
+ test/shaping/texts/MANIFEST			    |  1 -
+ test/shaping/texts/in-tree/MANIFEST		    |  9 ----
  test/shaping/texts/in-tree/shaper-arabic/MANIFEST  |  6 ---
  .../in-tree/shaper-arabic/script-arabic/MANIFEST   |  3 --
- .../script-arabic/language-persian/MANIFEST        |  1 -
- .../script-arabic/language-urdu/MANIFEST           |  1 -
+ .../script-arabic/language-persian/MANIFEST	    |  1 -
+ .../script-arabic/language-urdu/MANIFEST	    |  1 -
  .../script-arabic/language-urdu/crulp/MANIFEST     |  1 -
- .../language-urdu/crulp/ligatures/MANIFEST         |  7 ---
- .../shaper-arabic/script-arabic/misc/MANIFEST      |  1 -
- .../script-arabic/misc/diacritics/MANIFEST         |  7 ---
+ .../language-urdu/crulp/ligatures/MANIFEST	    |  7 ---
+ .../shaper-arabic/script-arabic/misc/MANIFEST	    |  1 -
+ .../script-arabic/misc/diacritics/MANIFEST	    |  7 ---
  .../in-tree/shaper-arabic/script-mandaic/MANIFEST  |  1 -
  .../shaper-arabic/script-mandaic/misc/MANIFEST     |  0
- .../shaper-arabic/script-mongolian/MANIFEST        |  1 -
+ .../shaper-arabic/script-mongolian/MANIFEST	    |  1 -
  .../shaper-arabic/script-mongolian/misc/MANIFEST   |  4 --
- .../in-tree/shaper-arabic/script-nko/MANIFEST      |  1 -
+ .../in-tree/shaper-arabic/script-nko/MANIFEST	    |  1 -
  .../in-tree/shaper-arabic/script-nko/misc/MANIFEST |  1 -
  .../in-tree/shaper-arabic/script-phags-pa/MANIFEST |  1 -
  .../shaper-arabic/script-phags-pa/misc/MANIFEST    |  1 -
  .../in-tree/shaper-arabic/script-syriac/MANIFEST   |  1 -
- .../shaper-arabic/script-syriac/misc/MANIFEST      |  2 -
+ .../shaper-arabic/script-syriac/misc/MANIFEST	    |  2 -
  test/shaping/texts/in-tree/shaper-default/MANIFEST |  5 ---
- .../shaper-default/script-ethiopic/MANIFEST        |  1 -
+ .../shaper-default/script-ethiopic/MANIFEST	    |  1 -
  .../shaper-default/script-ethiopic/misc/MANIFEST   |  1 -
  .../in-tree/shaper-default/script-han/MANIFEST     |  1 -
- .../shaper-default/script-han/misc/MANIFEST        |  1 -
- .../shaper-default/script-hiragana/MANIFEST        |  1 -
+ .../shaper-default/script-han/misc/MANIFEST	    |  1 -
+ .../shaper-default/script-hiragana/MANIFEST	    |  1 -
  .../shaper-default/script-hiragana/misc/MANIFEST   |  2 -
- .../shaper-default/script-linear-b/MANIFEST        |  1 -
+ .../shaper-default/script-linear-b/MANIFEST	    |  1 -
  .../shaper-default/script-linear-b/misc/MANIFEST   |  1 -
- .../shaper-default/script-tifinagh/MANIFEST        |  1 -
+ .../shaper-default/script-tifinagh/MANIFEST	    |  1 -
  .../shaper-default/script-tifinagh/misc/MANIFEST   |  1 -
  test/shaping/texts/in-tree/shaper-hangul/MANIFEST  |  1 -
  .../in-tree/shaper-hangul/script-hangul/MANIFEST   |  1 -
- .../shaper-hangul/script-hangul/misc/MANIFEST      |  1 -
+ .../shaper-hangul/script-hangul/misc/MANIFEST	    |  1 -
  test/shaping/texts/in-tree/shaper-hebrew/MANIFEST  |  1 -
  .../in-tree/shaper-hebrew/script-hebrew/MANIFEST   |  1 -
- .../shaper-hebrew/script-hebrew/misc/MANIFEST      |  1 -
+ .../shaper-hebrew/script-hebrew/misc/MANIFEST	    |  1 -
  test/shaping/texts/in-tree/shaper-indic/MANIFEST   |  2 -
- .../texts/in-tree/shaper-indic/indic/MANIFEST      | 11 -----
+ .../texts/in-tree/shaper-indic/indic/MANIFEST	    | 11 -----
  .../shaper-indic/indic/script-assamese/MANIFEST    |  2 -
- .../indic/script-assamese/misc/MANIFEST            |  0
- .../indic/script-assamese/utrrs/MANIFEST           |  3 --
+ .../indic/script-assamese/misc/MANIFEST	    |  0
+ .../indic/script-assamese/utrrs/MANIFEST	    |  3 --
  .../indic/script-assamese/utrrs/codepoint/MANIFEST |  7 ---
- .../indic/script-assamese/utrrs/gpos/MANIFEST      |  2 -
- .../indic/script-assamese/utrrs/gsub/MANIFEST      |  1 -
+ .../indic/script-assamese/utrrs/gpos/MANIFEST	    |  2 -
+ .../indic/script-assamese/utrrs/gsub/MANIFEST	    |  1 -
  .../shaper-indic/indic/script-bengali/MANIFEST     |  2 -
- .../indic/script-bengali/misc/MANIFEST             |  2 -
- .../indic/script-bengali/utrrs/MANIFEST            |  3 --
+ .../indic/script-bengali/misc/MANIFEST		    |  2 -
+ .../indic/script-bengali/utrrs/MANIFEST	    |  3 --
  .../indic/script-bengali/utrrs/codepoint/MANIFEST  |  7 ---
- .../indic/script-bengali/utrrs/gpos/MANIFEST       |  2 -
- .../indic/script-bengali/utrrs/gsub/MANIFEST       |  1 -
+ .../indic/script-bengali/utrrs/gpos/MANIFEST	    |  2 -
+ .../indic/script-bengali/utrrs/gsub/MANIFEST	    |  1 -
  .../shaper-indic/indic/script-devanagari/MANIFEST  |  2 -
- .../indic/script-devanagari/misc/MANIFEST          |  6 ---
- .../indic/script-devanagari/utrrs/MANIFEST         |  3 --
+ .../indic/script-devanagari/misc/MANIFEST	    |  6 ---
+ .../indic/script-devanagari/utrrs/MANIFEST	    |  3 --
  .../script-devanagari/utrrs/codepoint/MANIFEST     |  9 ----
  .../indic/script-devanagari/utrrs/gpos/MANIFEST    |  2 -
  .../indic/script-devanagari/utrrs/gsub/MANIFEST    |  1 -
  .../shaper-indic/indic/script-gujarati/MANIFEST    |  2 -
- .../indic/script-gujarati/misc/MANIFEST            |  0
- .../indic/script-gujarati/utrrs/MANIFEST           |  3 --
+ .../indic/script-gujarati/misc/MANIFEST	    |  0
+ .../indic/script-gujarati/utrrs/MANIFEST	    |  3 --
  .../indic/script-gujarati/utrrs/codepoint/MANIFEST |  7 ---
- .../indic/script-gujarati/utrrs/gpos/MANIFEST      |  2 -
- .../indic/script-gujarati/utrrs/gsub/MANIFEST      |  1 -
+ .../indic/script-gujarati/utrrs/gpos/MANIFEST	    |  2 -
+ .../indic/script-gujarati/utrrs/gsub/MANIFEST	    |  1 -
  .../shaper-indic/indic/script-gurmukhi/MANIFEST    |  2 -
- .../indic/script-gurmukhi/misc/MANIFEST            |  1 -
- .../indic/script-gurmukhi/utrrs/MANIFEST           |  3 --
+ .../indic/script-gurmukhi/misc/MANIFEST	    |  1 -
+ .../indic/script-gurmukhi/utrrs/MANIFEST	    |  3 --
  .../indic/script-gurmukhi/utrrs/codepoint/MANIFEST |  7 ---
- .../indic/script-gurmukhi/utrrs/gpos/MANIFEST      |  2 -
- .../indic/script-gurmukhi/utrrs/gsub/MANIFEST      |  1 -
+ .../indic/script-gurmukhi/utrrs/gpos/MANIFEST	    |  2 -
+ .../indic/script-gurmukhi/utrrs/gsub/MANIFEST	    |  1 -
  .../shaper-indic/indic/script-kannada/MANIFEST     |  2 -
- .../indic/script-kannada/misc/MANIFEST             |  2 -
- .../indic/script-kannada/utrrs/MANIFEST            |  3 --
+ .../indic/script-kannada/misc/MANIFEST		    |  2 -
+ .../indic/script-kannada/utrrs/MANIFEST	    |  3 --
  .../indic/script-kannada/utrrs/codepoint/MANIFEST  |  8 ----
- .../indic/script-kannada/utrrs/gpos/MANIFEST       |  1 -
- .../indic/script-kannada/utrrs/gsub/MANIFEST       |  1 -
+ .../indic/script-kannada/utrrs/gpos/MANIFEST	    |  1 -
+ .../indic/script-kannada/utrrs/gsub/MANIFEST	    |  1 -
  .../shaper-indic/indic/script-malayalam/MANIFEST   |  2 -
- .../indic/script-malayalam/misc/MANIFEST           |  3 --
- .../indic/script-malayalam/utrrs/MANIFEST          |  2 -
- .../script-malayalam/utrrs/codepoint/MANIFEST      |  7 ---
+ .../indic/script-malayalam/misc/MANIFEST	    |  3 --
+ .../indic/script-malayalam/utrrs/MANIFEST	    |  2 -
+ .../script-malayalam/utrrs/codepoint/MANIFEST	    |  7 ---
  .../indic/script-malayalam/utrrs/gsub/MANIFEST     |  1 -
- .../shaper-indic/indic/script-oriya/MANIFEST       |  2 -
+ .../shaper-indic/indic/script-oriya/MANIFEST	    |  2 -
  .../shaper-indic/indic/script-oriya/misc/MANIFEST  |  2 -
  .../shaper-indic/indic/script-oriya/utrrs/MANIFEST |  2 -
  .../indic/script-oriya/utrrs/codepoint/MANIFEST    |  9 ----
- .../indic/script-oriya/utrrs/gsub/MANIFEST         |  1 -
+ .../indic/script-oriya/utrrs/gsub/MANIFEST	    |  1 -
  .../shaper-indic/indic/script-sinhala/MANIFEST     |  2 -
- .../indic/script-sinhala/misc/MANIFEST             |  4 --
- .../indic/script-sinhala/utrrs/MANIFEST            |  3 --
+ .../indic/script-sinhala/misc/MANIFEST		    |  4 --
+ .../indic/script-sinhala/utrrs/MANIFEST	    |  3 --
  .../indic/script-sinhala/utrrs/codepoint/MANIFEST  |  5 ---
- .../indic/script-sinhala/utrrs/gpos/MANIFEST       |  1 -
- .../indic/script-sinhala/utrrs/gsub/MANIFEST       |  7 ---
- .../shaper-indic/indic/script-tamil/MANIFEST       |  2 -
+ .../indic/script-sinhala/utrrs/gpos/MANIFEST	    |  1 -
+ .../indic/script-sinhala/utrrs/gsub/MANIFEST	    |  7 ---
+ .../shaper-indic/indic/script-tamil/MANIFEST	    |  2 -
  .../shaper-indic/indic/script-tamil/misc/MANIFEST  |  1 -
  .../shaper-indic/indic/script-tamil/utrrs/MANIFEST |  3 --
  .../indic/script-tamil/utrrs/codepoint/MANIFEST    | 10 -----
- .../indic/script-tamil/utrrs/gpos/MANIFEST         |  2 -
- .../indic/script-tamil/utrrs/gsub/MANIFEST         |  1 -
- .../shaper-indic/indic/script-telugu/MANIFEST      |  2 -
+ .../indic/script-tamil/utrrs/gpos/MANIFEST	    |  2 -
+ .../indic/script-tamil/utrrs/gsub/MANIFEST	    |  1 -
+ .../shaper-indic/indic/script-telugu/MANIFEST	    |  2 -
  .../shaper-indic/indic/script-telugu/misc/MANIFEST |  1 -
- .../indic/script-telugu/utrrs/MANIFEST             |  3 --
+ .../indic/script-telugu/utrrs/MANIFEST		    |  3 --
  .../indic/script-telugu/utrrs/codepoint/MANIFEST   |  7 ---
- .../indic/script-telugu/utrrs/gpos/MANIFEST        |  1 -
- .../indic/script-telugu/utrrs/gsub/MANIFEST        |  1 -
+ .../indic/script-telugu/utrrs/gpos/MANIFEST	    |  1 -
+ .../indic/script-telugu/utrrs/gsub/MANIFEST	    |  1 -
  .../in-tree/shaper-indic/south-east-asian/MANIFEST |  1 -
- .../south-east-asian/script-khmer/MANIFEST         |  1 -
+ .../south-east-asian/script-khmer/MANIFEST	    |  1 -
  .../south-east-asian/script-khmer/misc/MANIFEST    |  3 --
  test/shaping/texts/in-tree/shaper-myanmar/MANIFEST |  1 -
  .../in-tree/shaper-myanmar/script-myanmar/MANIFEST |  1 -
@@ -381,14 +610,14 @@ Date:   Tue Feb 23 13:45:38 2016 +0900
  .../texts/in-tree/shaper-use/script-batak/MANIFEST |  1 -
  .../in-tree/shaper-use/script-buginese/MANIFEST    |  1 -
  .../texts/in-tree/shaper-use/script-cham/MANIFEST  |  1 -
- .../in-tree/shaper-use/script-kaithi/MANIFEST      |  1 -
+ .../in-tree/shaper-use/script-kaithi/MANIFEST	    |  1 -
  .../in-tree/shaper-use/script-kharoshti/MANIFEST   |  1 -
  .../in-tree/shaper-use/script-tai-tham/MANIFEST    |  2 -
  126 files changed, 381 deletions(-)
 
 commit 815bdd7700155efcffa9a4c3ca5bfc31833d0586
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 18:22:44 2016 +0900
+Date:	Mon Feb 22 18:22:44 2016 +0900
 
     In cluster-level=0, group ZWJ/ZWNJ with previous cluster
 
@@ -401,15 +630,15 @@ Date:   Mon Feb 22 18:22:44 2016 +0900
 
     Fixes https://github.com/behdad/harfbuzz/issues/217
 
- src/hb-ot-layout-private.hh                           | 6 ++++++
- src/hb-ot-shape.cc                                    | 3 ++-
+ src/hb-ot-layout-private.hh			       | 6 ++++++
+ src/hb-ot-shape.cc				       | 3 ++-
  test/shaping/tests/indic-joiner-candrabindu.tests     | 2 +-
  test/shaping/tests/mongolian-variation-selector.tests | 2 +-
  4 files changed, 10 insertions(+), 3 deletions(-)
 
 commit 89137e325a19d62fb00979e1e8ab2ca59a2c1147
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 16:00:59 2016 +0900
+Date:	Mon Feb 22 16:00:59 2016 +0900
 
     Minor
 
@@ -419,7 +648,7 @@ Date:   Mon Feb 22 16:00:59 2016 +0900
 
 commit 15063b12f7619d4f44981248e28f38c172d12e1f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:56:29 2016 +0900
+Date:	Mon Feb 22 15:56:29 2016 +0900
 
     [coretext] Move CTFont construction to face_data
 
@@ -429,7 +658,7 @@ Date:   Mon Feb 22 15:56:29 2016 +0900
 
 commit ba3d49d9a56932d341bf1916a30f322be665e3a6
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:50:12 2016 +0900
+Date:	Mon Feb 22 15:50:12 2016 +0900
 
     [coretext] Move code around
 
@@ -439,7 +668,7 @@ Date:   Mon Feb 22 15:50:12 2016 +0900
 
 commit 90194efb8480d58c55b7a19962624c7aadbdca63
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:42:53 2016 +0900
+Date:	Mon Feb 22 15:42:53 2016 +0900
 
     [coretext] Move code around
 
@@ -448,7 +677,7 @@ Date:   Mon Feb 22 15:42:53 2016 +0900
 
 commit ca539e37a4b71e585a267a288db1a3975cbb99fc
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:37:18 2016 +0900
+Date:	Mon Feb 22 15:37:18 2016 +0900
 
     [build] git.mk fix for m4/gtk-doc.m4
 
@@ -457,7 +686,7 @@ Date:   Mon Feb 22 15:37:18 2016 +0900
 
 commit 54788cb1ecc5a5ffd63d07cd1f0b07b2afa9a8ca
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:32:52 2016 +0900
+Date:	Mon Feb 22 15:32:52 2016 +0900
 
     [win32] Install git.mk
 
@@ -466,23 +695,23 @@ Date:   Mon Feb 22 15:32:52 2016 +0900
 
 commit 9a13ed453ef96822a47d6e6f58332b87f38d5c59
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 11:44:45 2016 +0900
+Date:	Mon Feb 22 11:44:45 2016 +0900
 
     Make FixedVersion a template
 
- src/hb-open-file-private.hh          | 4 ++--
- src/hb-open-type-private.hh          | 9 +++++----
- src/hb-ot-head-table.hh              | 4 ++--
- src/hb-ot-hhea-table.hh              | 2 +-
+ src/hb-open-file-private.hh	      | 4 ++--
+ src/hb-open-type-private.hh	      | 9 +++++----
+ src/hb-ot-head-table.hh	      | 4 ++--
+ src/hb-ot-hhea-table.hh	      | 2 +-
  src/hb-ot-layout-gdef-table.hh       | 2 +-
  src/hb-ot-layout-gsubgpos-private.hh | 2 +-
  src/hb-ot-layout-jstf-table.hh       | 2 +-
- src/hb-ot-maxp-table.hh              | 2 +-
+ src/hb-ot-maxp-table.hh	      | 2 +-
  8 files changed, 14 insertions(+), 13 deletions(-)
 
 commit 238b943e850ea1ab0093e12c74d2cd7c686f318e
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:31:22 2016 +0900
+Date:	Mon Feb 22 15:31:22 2016 +0900
 
     [coretext] Fix leak!
 
@@ -491,7 +720,7 @@ Date:   Mon Feb 22 15:31:22 2016 +0900
 
 commit e561122856a50ed405d71cb1629317e7ae63f316
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:28:37 2016 +0900
+Date:	Mon Feb 22 15:28:37 2016 +0900
 
     [coretext] Move code around
 
@@ -501,7 +730,7 @@ Date:   Mon Feb 22 15:28:37 2016 +0900
 
 commit 04c64431530a4a6d9ebd33674c4665a8e6d25bdd
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:12:27 2016 +0900
+Date:	Mon Feb 22 15:12:27 2016 +0900
 
     [coretext] Ignore PPEM in font size selection
 
@@ -510,7 +739,7 @@ Date:   Mon Feb 22 15:12:27 2016 +0900
 
 commit 62c2711121fe78f373c15c0f53090b62b52d11c1
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 15:07:20 2016 +0900
+Date:	Mon Feb 22 15:07:20 2016 +0900
 
     [coretext] Limit grapheme-cluster forming to cluster-level=0
 
@@ -520,7 +749,7 @@ Date:   Mon Feb 22 15:07:20 2016 +0900
 
 commit 061105ec443eb7350ffe217305f9d8902c179e2f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Feb 22 14:59:39 2016 +0900
+Date:	Mon Feb 22 14:59:39 2016 +0900
 
     [coretext] Fix shaping with varying font size
 
@@ -531,17 +760,17 @@ Date:   Mon Feb 22 14:59:39 2016 +0900
 
 commit 27847cab1264b4ce8342603f4626b4e0645979e4
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 19 15:56:50 2016 +0700
+Date:	Fri Feb 19 15:56:50 2016 +0700
 
     1.2.0
 
- NEWS         | 20 ++++++++++++++++++++
+ NEWS	      | 20 ++++++++++++++++++++
  configure.ac |  2 +-
  2 files changed, 21 insertions(+), 1 deletion(-)
 
 commit c3731559042e1730e85d19574321ad850010f7de
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 19 15:13:07 2016 +0700
+Date:	Fri Feb 19 15:13:07 2016 +0700
 
     [fuzzing] Add test for recent fix
 
@@ -552,13 +781,13 @@ Date:   Fri Feb 19 15:13:07 2016 +0700
 
  .../sha1sum/205edd09bd3d141cc9580f650109556cc28b22cb.ttf | Bin 0 ->
  1966 bytes
- test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
- test/shaping/tests/fuzzed.tests                          |   1 +
+ test/shaping/fonts/sha1sum/MANIFEST			  |   1 +
+ test/shaping/tests/fuzzed.tests			  |   1 +
  3 files changed, 2 insertions(+)
 
 commit aa33cb72ab29c31e87f0cca9a0e72fe3a68247b7
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 19 15:12:24 2016 +0700
+Date:	Fri Feb 19 15:12:24 2016 +0700
 
     [fuzzing] Make test runner actually work
 
@@ -567,7 +796,7 @@ Date:   Fri Feb 19 15:12:24 2016 +0700
 
 commit 2735555c6b0c95db7dfc2b391f92a1a5c06084c4
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 19 15:12:16 2016 +0700
+Date:	Fri Feb 19 15:12:16 2016 +0700
 
     [fuzzing] Add TODO item
 
@@ -576,7 +805,7 @@ Date:   Fri Feb 19 15:12:16 2016 +0700
 
 commit b87e36f6f119fac80b8fd55f3abae563c2c5b798
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 19 14:52:31 2016 +0700
+Date:	Fri Feb 19 14:52:31 2016 +0700
 
     Avoid buffer->move_to() in case of buffer error
 
@@ -589,13 +818,13 @@ Date:   Fri Feb 19 14:52:31 2016 +0700
     test/fuzzing/ and have its own test runner.  At that point, should add
     test from this issue as well.
 
- src/hb-buffer.cc                     | 2 ++
+ src/hb-buffer.cc		      | 2 ++
  src/hb-ot-layout-gsubgpos-private.hh | 2 +-
  2 files changed, 3 insertions(+), 1 deletion(-)
 
 commit 7e76bbabbaa56af314abff8ddba8866c634919cd
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 19 14:43:39 2016 +0700
+Date:	Fri Feb 19 14:43:39 2016 +0700
 
     [fuzzing] Make "make hb-fuzzer" build lib dependency
 
@@ -606,7 +835,7 @@ Date:   Fri Feb 19 14:43:39 2016 +0700
 
 commit 568a0c60e8695a6ad8a93ec60d55b137c48890cb
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 18 19:31:51 2016 +0700
+Date:	Thu Feb 18 19:31:51 2016 +0700
 
     Remove pointless overflow check in pointer math
 
@@ -617,19 +846,19 @@ Date:   Thu Feb 18 19:31:51 2016 +0700
 
 commit aae2847099cbf05bf0668fbe526fc58736837c1b
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 18 17:06:25 2016 +0700
+Date:	Thu Feb 18 17:06:25 2016 +0700
 
     Emoji skin tone modifiers need to be treated as combining marks
 
     Fixes https://github.com/behdad/harfbuzz/issues/169
 
  src/hb-ot-layout-private.hh | 15 ++++++++++++++-
- src/hb-unicode-private.hh   |  5 +++--
+ src/hb-unicode-private.hh   |	5 +++--
  2 files changed, 17 insertions(+), 3 deletions(-)
 
 commit da41e48f0a1a6af6d44ef25185d2421a29bd4166
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 16 17:16:33 2016 +0700
+Date:	Tue Feb 16 17:16:33 2016 +0700
 
     [USE] Zero mark advances by GDEF early
 
@@ -638,17 +867,17 @@ Date:   Tue Feb 16 17:16:33 2016 +0700
     Update tests to
     match.
 
- src/hb-ot-shape-complex-use.cc                           |   2 +-
- test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ src/hb-ot-shape-complex-use.cc				  |   2 +-
+ test/shaping/fonts/sha1sum/MANIFEST			  |   1 +
  .../sha1sum/f518eb6f6b5eec2946c9fbbbde44e45d46f5e2ac.ttf | Bin 0 ->
  1356 bytes
- test/shaping/tests/context-matching.tests                |   2 +-
- test/shaping/tests/use.tests                             |   2 ++
+ test/shaping/tests/context-matching.tests		  |   2 +-
+ test/shaping/tests/use.tests				  |   2 ++
  5 files changed, 5 insertions(+), 2 deletions(-)
 
 commit 86c68c7a2c971efe8e35b1f1bd99401dc8b688d2
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 16 16:07:20 2016 +0700
+Date:	Tue Feb 16 16:07:20 2016 +0700
 
     [GPOS] Fix interaction of mark attachments and cursive chaining
 
@@ -700,16 +929,16 @@ Date:   Tue Feb 16 16:07:20 2016 +0700
     after cursive,
     things move together, period.
 
- src/hb-ot-layout-gpos-table.hh                     |  31
+ src/hb-ot-layout-gpos-table.hh			    |  31
  +++++++++++----------
  .../706c5d7b625f207bc0d874c67237aad6f1e9cd6f.ttf   | Bin 0 -> 3868 bytes
- test/shaping/fonts/sha1sum/MANIFEST                |   1 +
- test/shaping/tests/cursive-positioning.tests       |   1 +
+ test/shaping/fonts/sha1sum/MANIFEST		    |	1 +
+ test/shaping/tests/cursive-positioning.tests	    |	1 +
  4 files changed, 18 insertions(+), 15 deletions(-)
 
 commit 80c8855cfeffa028d74a25df884d0e5577c95c6c
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Feb 12 12:50:17 2016 +0700
+Date:	Fri Feb 12 12:50:17 2016 +0700
 
     Minor
 
@@ -718,7 +947,7 @@ Date:   Fri Feb 12 12:50:17 2016 +0700
 
 commit 6ab920224c32e38072a0bec5e84d4b0d58b74167
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 16:57:52 2016 +0700
+Date:	Thu Feb 11 16:57:52 2016 +0700
 
     [GPOS] Minor
 
@@ -729,47 +958,47 @@ Date:   Thu Feb 11 16:57:52 2016 +0700
 
 commit cbc3a76c5a38ab24f72e80357377711bd3f54d56
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 16:48:13 2016 +0700
+Date:	Thu Feb 11 16:48:13 2016 +0700
 
     [GPOS] Merge fixing of offsets for cursive and mark attachments
 
     Part of fixing https://github.com/behdad/harfbuzz/issues/211
 
- src/hb-buffer-private.hh       |  3 +-
+ src/hb-buffer-private.hh	|  3 +-
  src/hb-ot-layout-gpos-table.hh | 73
  ++++++++++++++++++------------------------
  2 files changed, 33 insertions(+), 43 deletions(-)
 
 commit 7d8d58ac81fe267e29ea68cdc6f4a4fa8c22d40f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 16:34:28 2016 +0700
+Date:	Thu Feb 11 16:34:28 2016 +0700
 
     [GPOS] Divide position_finish() into two phases, for advances
     and offsets
 
-    Right now the position_finish_advances() is empty.  To be used for
+    Right now the position_finish_advances() is empty.	To be used for
     spacing attachments proposal later.
 
  src/hb-ot-layout-gpos-table.hh | 11 +++++++++--
  src/hb-ot-layout-gsub-table.hh |  6 ------
- src/hb-ot-layout-private.hh    | 19 +++++++++----------
- src/hb-ot-layout.cc            | 16 ++++++++--------
- src/hb-ot-shape.cc             |  7 +++----
+ src/hb-ot-layout-private.hh	| 19 +++++++++----------
+ src/hb-ot-layout.cc		| 16 ++++++++--------
+ src/hb-ot-shape.cc		|  7 +++----
  5 files changed, 29 insertions(+), 30 deletions(-)
 
 commit 8474231567a08873cc5e0aa08fea60316a04c27e
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 16:27:41 2016 +0700
+Date:	Thu Feb 11 16:27:41 2016 +0700
 
     [ot] Minor shuffling code around
 
  src/hb-ot-layout-gpos-table.hh |  2 --
- src/hb-ot-shape.cc             | 13 ++++++++-----
+ src/hb-ot-shape.cc		| 13 ++++++++-----
  2 files changed, 8 insertions(+), 7 deletions(-)
 
 commit b0b11614e9fb9ecd1faae28b0ed71ac6bf5c1266
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 15:28:55 2016 +0700
+Date:	Thu Feb 11 15:28:55 2016 +0700
 
     [GPOS] Add harmless recursion in fix_mark_attachment()
 
@@ -780,7 +1009,7 @@ Date:   Thu Feb 11 15:28:55 2016 +0700
 
 commit 686567baab5a32ffea843538643e01de2885fa4f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 15:25:28 2016 +0700
+Date:	Thu Feb 11 15:25:28 2016 +0700
 
     [GPOS] Merge attach_chain() and cursive_chain()
 
@@ -792,7 +1021,7 @@ Date:   Thu Feb 11 15:25:28 2016 +0700
 
 commit 806ad8dc65931ab7893bff7d5592a67a9bd237ca
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 14:53:11 2016 +0700
+Date:	Thu Feb 11 14:53:11 2016 +0700
 
     [GPOS] Minor shuffling
 
@@ -801,7 +1030,7 @@ Date:   Thu Feb 11 14:53:11 2016 +0700
 
 commit 0f6278d1fbb75856132f1fa2d29648979f033316
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 14:49:10 2016 +0700
+Date:	Thu Feb 11 14:49:10 2016 +0700
 
     [GPOS] Negate sign of attach_lookback(), and rename it to
     attach_chain()
@@ -815,25 +1044,25 @@ Date:   Thu Feb 11 14:49:10 2016 +0700
 
 commit 5b5dc2c0406d8180e72d97a54334c722fda325b1
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 12:15:38 2016 +0700
+Date:	Thu Feb 11 12:15:38 2016 +0700
 
     [tests] Add test for advance zeroing of an ASCII letter marked as
     mark in GDEF
 
- test/shaping/fonts/sha1sum/MANIFEST                      |   1 +
+ test/shaping/fonts/sha1sum/MANIFEST			  |   1 +
  .../sha1sum/a98e908e2ed21b22228ea59ebcc0f05034c86f2e.ttf | Bin 0 ->
  1016 bytes
- test/shaping/tests/zero-width-marks.tests                |   1 +
+ test/shaping/tests/zero-width-marks.tests		  |   1 +
  3 files changed, 2 insertions(+)
 
 commit 660c9d3fc21172e8dc340b017122c084dac6334c
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Feb 11 12:14:27 2016 +0700
+Date:	Thu Feb 11 12:14:27 2016 +0700
 
     Remove font-dependent ASCII-only perf hack
 
     Is confusing.  I already hit it myself.  Remove.  We can optimize
-    ASCII based on Unicode properties.  But should not do based on
+    ASCII based on Unicode properties.	But should not do based on
     assumptions on the font.
 
  src/hb-ot-shape.cc | 4 ----
@@ -841,17 +1070,17 @@ Date:   Thu Feb 11 12:14:27 2016 +0700
 
 commit 3fe0cf10401875f1e9b8b5fbaf59826e64ea61d2
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 18:43:43 2016 +0700
+Date:	Wed Feb 10 18:43:43 2016 +0700
 
     Fix previous commit!
 
- test/shaping/fonts/sha1sum/MANIFEST       | 6 +++---
+ test/shaping/fonts/sha1sum/MANIFEST	   | 6 +++---
  test/shaping/tests/zero-width-marks.tests | 6 +++---
  2 files changed, 6 insertions(+), 6 deletions(-)
 
 commit 293a210eee0a53b59f4b33298f42ec6e59d785e0
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 18:39:59 2016 +0700
+Date:	Wed Feb 10 18:39:59 2016 +0700
 
     [tests] Fix fonts in cc4a78bf22c4a735b84c89b04be3bb531f42135e
 
@@ -873,17 +1102,17 @@ Date:   Wed Feb 10 18:39:59 2016 +0700
 
 commit eaadcbbc53e02838c847e53ef214a55d6915d677
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 18:29:54 2016 +0700
+Date:	Wed Feb 10 18:29:54 2016 +0700
 
     Remove now-unused mark zeroing BY_UNICODE
 
  src/hb-ot-shape-complex-private.hh |  2 --
- src/hb-ot-shape.cc                 | 29 -----------------------------
+ src/hb-ot-shape.cc		    | 29 -----------------------------
  2 files changed, 31 deletions(-)
 
 commit cc4a78bf22c4a735b84c89b04be3bb531f42135e
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 18:24:08 2016 +0700
+Date:	Wed Feb 10 18:24:08 2016 +0700
 
     [tests] Add tests for Latin mark zeroing
 
@@ -893,15 +1122,15 @@ Date:   Wed Feb 10 18:24:08 2016 +0700
  1448 bytes
  .../sha1sum/894e96a367f00c196d82e6243673a1d4414f4f6a.ttf | Bin 0 ->
  1448 bytes
- test/shaping/fonts/sha1sum/MANIFEST                      |   4 ++++
+ test/shaping/fonts/sha1sum/MANIFEST			  |   4 ++++
  .../sha1sum/fcdcffbdf1c4c97c05308d7600e4c283eb47dbca.ttf | Bin 0 ->
  1344 bytes
- test/shaping/tests/zero-width-marks.tests                |   4 ++++
+ test/shaping/tests/zero-width-marks.tests		  |   4 ++++
  6 files changed, 8 insertions(+)
 
 commit 55ff34b9c157a839d026465af8f30424ce7f891b
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 18:20:02 2016 +0700
+Date:	Wed Feb 10 18:20:02 2016 +0700
 
     [tests] Add tests for Thai mark zeroing
 
@@ -911,15 +1140,15 @@ Date:   Wed Feb 10 18:20:02 2016 +0700
  1080 bytes
  .../sha1sum/8099955657a54e9ee38a6ba1d6f950ce58e3cc25.ttf | Bin 0 ->
  1024 bytes
- test/shaping/fonts/sha1sum/MANIFEST                      |   4 ++++
+ test/shaping/fonts/sha1sum/MANIFEST			  |   4 ++++
  .../sha1sum/bb0c53752e85c3d28973ebc913287b8987d3dfe8.ttf | Bin 0 ->
  976 bytes
- test/shaping/tests/zero-width-marks.tests                |   4 ++++
+ test/shaping/tests/zero-width-marks.tests		  |   4 ++++
  6 files changed, 8 insertions(+)
 
 commit b3582a8ee82942a931130a83b2867b239f8ca71a
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 18:10:15 2016 +0700
+Date:	Wed Feb 10 18:10:15 2016 +0700
 
     Change default mark advance zeroing behavior from Unicode to GDEF
 
@@ -933,7 +1162,7 @@ Date:   Wed Feb 10 18:10:15 2016 +0700
 
 commit 43bb2b8fb00705c3334730a58ade7984181018b2
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 14:11:43 2016 +0700
+Date:	Wed Feb 10 14:11:43 2016 +0700
 
     Minor
 
@@ -943,7 +1172,7 @@ Date:   Wed Feb 10 14:11:43 2016 +0700
 commit bdaa784bb610ec65626d63cc068a0958ff5005fc
 Merge: a168db4 f6ffba6
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 11:11:36 2016 +0700
+Date:	Wed Feb 10 11:11:36 2016 +0700
 
     Merge pull request #164 from fanc999/msvc.build
 
@@ -951,7 +1180,7 @@ Date:   Wed Feb 10 11:11:36 2016 +0700
 
 commit a168db4739148459bc33c7dae88e73efa0153d72
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Feb 10 11:10:08 2016 +0700
+Date:	Wed Feb 10 11:10:08 2016 +0700
 
     [README] Add ABI Tracker link
 
@@ -960,7 +1189,7 @@ Date:   Wed Feb 10 11:10:08 2016 +0700
 
 commit f6ffba634bb33d6d4b051abce9c23fcae280c3fe
 Author: Chun-wei Fan <fanchunwei@src.gnome.org>
-Date:   Wed Dec 9 14:57:15 2015 +0800
+Date:	Wed Dec 9 14:57:15 2015 +0800
 
     MSVC builds: Add support to build DirectWrite shaping backend
 
@@ -975,29 +1204,29 @@ Date:   Wed Dec 9 14:57:15 2015 +0800
     if a
     system shaping API is to be used.
 
- win32/README.txt        |  4 ++++
- win32/config-msvc.mak   | 10 ++++++++++
+ win32/README.txt	 |  4 ++++
+ win32/config-msvc.mak	 | 10 ++++++++++
  win32/config.h.win32.in |  3 +++
- win32/info-msvc.mak     |  7 +++++++
+ win32/info-msvc.mak	 |  7 +++++++
  4 files changed, 24 insertions(+)
 
 commit c6792854557ca104948e8f0b142c9384105b0d05
 Author: Chun-wei Fan <fanchunwei@src.gnome.org>
-Date:   Wed Feb 3 18:31:23 2016 +0800
+Date:	Wed Feb 3 18:31:23 2016 +0800
 
     build: Build the DirectWrite sources if requested
 
     This adds to the autotools build system so that the (experimental)
     DirectWrite support for HarfBuzz is built (and dist'ed).
 
- configure.ac         | 25 +++++++++++++++++++++++++
+ configure.ac	      | 25 +++++++++++++++++++++++++
  src/Makefile.am      |  7 +++++++
  src/Makefile.sources |  3 +++
  3 files changed, 35 insertions(+)
 
 commit d7b6636e5ebf1ddf7d7a04007ffbc411cf7e462e
 Author: Chun-wei Fan <fanchunwei@src.gnome.org>
-Date:   Tue Nov 3 19:00:42 2015 +0800
+Date:	Tue Nov 3 19:00:42 2015 +0800
 
     build: Support Visual Studio builds using NMake
 
@@ -1028,28 +1257,28 @@ Date:   Tue Nov 3 19:00:42 2015 +0800
     this has
     been checked successfully with 'make -j8 distcheck'.
 
- BUILD.md                        |   4 +-
- Makefile.am                     |   2 +-
- configure.ac                    |   2 +
- win32/Makefile.am               |  14 +++
- win32/Makefile.vc               |  52 +++++++++++
- win32/README.txt                |  75 ++++++++++++++++
- win32/build-rules-msvc.mak      | 140 ++++++++++++++++++++++++++++++
- win32/config-msvc.mak           | 188
+ BUILD.md			 |   4 +-
+ Makefile.am			 |   2 +-
+ configure.ac			 |   2 +
+ win32/Makefile.am		 |  14 +++
+ win32/Makefile.vc		 |  52 +++++++++++
+ win32/README.txt		 |  75 ++++++++++++++++
+ win32/build-rules-msvc.mak	 | 140 ++++++++++++++++++++++++++++++
+ win32/config-msvc.mak		 | 188
  ++++++++++++++++++++++++++++++++++++++++
- win32/create-lists-msvc.mak     | 151 ++++++++++++++++++++++++++++++++
- win32/create-lists.bat          |  42 +++++++++
- win32/detectenv-msvc.mak        | 136 +++++++++++++++++++++++++++++
- win32/generate-msvc.mak         |  26 ++++++
+ win32/create-lists-msvc.mak	 | 151 ++++++++++++++++++++++++++++++++
+ win32/create-lists.bat		 |  42 +++++++++
+ win32/detectenv-msvc.mak	 | 136 +++++++++++++++++++++++++++++
+ win32/generate-msvc.mak	 |  26 ++++++
  win32/hb-introspection-msvc.mak |  42 +++++++++
- win32/info-msvc.mak             | 130 +++++++++++++++++++++++++++
- win32/install.mak               |  29 +++++++
- win32/introspection-msvc.mak    |  73 ++++++++++++++++
+ win32/info-msvc.mak		 | 130 +++++++++++++++++++++++++++
+ win32/install.mak		 |  29 +++++++
+ win32/introspection-msvc.mak	 |  73 ++++++++++++++++
  16 files changed, 1104 insertions(+), 2 deletions(-)
 
 commit 5c3e7260bcb4999b8b7cb9afb26e6eaff867634b
 Author: Chun-wei Fan <fanchunwei@src.gnome.org>
-Date:   Tue Nov 3 18:52:46 2015 +0800
+Date:	Tue Nov 3 18:52:46 2015 +0800
 
     MSVC builds: Add a pre-configured config.h(.win32) template
 
@@ -1071,7 +1300,7 @@ Date:   Tue Nov 3 18:52:46 2015 +0800
 
 commit 35ded3af74a5bc4b038a07308354d5f7501ae3c7
 Author: Chun-wei Fan <fanchunwei@src.gnome.org>
-Date:   Tue Nov 3 16:56:27 2015 +0800
+Date:	Tue Nov 3 16:56:27 2015 +0800
 
     build: Move source listings into separate Makefile snippets
 
@@ -1080,18 +1309,18 @@ Date:   Tue Nov 3 16:56:27 2015 +0800
     snippets, so that they may be shared between different Makefile-based
     build systems, such as NMake for Visual Studio.
 
- src/Makefile.am              | 165
+ src/Makefile.am	      | 165
  +++++++++----------------------------------
- src/Makefile.sources         | 147 ++++++++++++++++++++++++++++++++++++++
+ src/Makefile.sources	      | 147 ++++++++++++++++++++++++++++++++++++++
  src/hb-ucdn/Makefile.am      |   6 +-
  src/hb-ucdn/Makefile.sources |   4 ++
- util/Makefile.am             |  34 ++-------
- util/Makefile.sources        |  32 +++++++++
+ util/Makefile.am	      |  34 ++-------
+ util/Makefile.sources	      |  32 +++++++++
  6 files changed, 223 insertions(+), 165 deletions(-)
 
 commit b894a85ad1e7c3ecfb6d3732a7c9779f5462fe70
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 2 16:39:19 2016 +0800
+Date:	Tue Feb 2 16:39:19 2016 +0800
 
     Fix more hangs in case of buffer allocation errors
 
@@ -1106,7 +1335,7 @@ Date:   Tue Feb 2 16:39:19 2016 +0800
 commit b693992ea160b66541f678dc9be29b513c77a30b
 Merge: 9a6a33c 498574e
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Feb 2 12:33:32 2016 +0800
+Date:	Tue Feb 2 12:33:32 2016 +0800
 
     Merge pull request #222 from n8willis/master
 
@@ -1114,7 +1343,7 @@ Date:   Tue Feb 2 12:33:32 2016 +0800
 
 commit 498574e6c1a83bbd2768925af6e39806fe1ea8bb
 Author: n8willis <nwillis@glyphography.com>
-Date:   Thu Jan 28 12:21:32 2016 -0600
+Date:	Thu Jan 28 12:21:32 2016 -0600
 
     Update Makefile.am
 
@@ -1123,7 +1352,7 @@ Date:   Thu Jan 28 12:21:32 2016 -0600
 
 commit e12fc666994573dbabb6928a8b2e8698667088ce
 Author: n8willis <nwillis@glyphography.com>
-Date:   Thu Jan 28 12:14:12 2016 -0600
+Date:	Thu Jan 28 12:14:12 2016 -0600
 
     Added initial usermanual chapter on cluster levels.
 
@@ -1135,7 +1364,7 @@ Date:   Thu Jan 28 12:14:12 2016 -0600
 commit 9a6a33ccbea8a2e23e779bd955958fa41974c1c7
 Merge: d05b783 146fe25
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Jan 18 12:47:18 2016 +0100
+Date:	Mon Jan 18 12:47:18 2016 +0100
 
     Merge pull request #216 from mhosken/master
 
@@ -1143,7 +1372,7 @@ Date:   Mon Jan 18 12:47:18 2016 +0100
 
 commit 146fe252c3ebd0253344ce20981554e40926497b
 Author: Martin Hosken <martin_hosken@sil.org>
-Date:   Sat Jan 16 17:24:00 2016 -0600
+Date:	Sat Jan 16 17:24:00 2016 -0600
 
     Refactor graphite2 to make ovleraps into negative width spaces
 
@@ -1153,7 +1382,7 @@ Date:   Sat Jan 16 17:24:00 2016 -0600
 
 commit d05b783322d90208b2ddf06a5ebffc7c301be3d7
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Jan 12 16:17:21 2016 +0000
+Date:	Tue Jan 12 16:17:21 2016 +0000
 
     Fix compiler warning
 
@@ -1164,7 +1393,7 @@ Date:   Tue Jan 12 16:17:21 2016 +0000
 
 commit d163dc18e66c9e2f404d09310482464245cae704
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Jan 12 13:05:01 2016 +0000
+Date:	Tue Jan 12 13:05:01 2016 +0000
 
     Minor
 
@@ -1173,7 +1402,7 @@ Date:   Tue Jan 12 13:05:01 2016 +0000
 
 commit 505b7d4732c6a8c423f43c0de46e05dc583e82c0
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Jan 11 18:31:04 2016 +0000
+Date:	Mon Jan 11 18:31:04 2016 +0000
 
     [fuzzing] Fuzz input text
 
@@ -1187,7 +1416,7 @@ Date:   Mon Jan 11 18:31:04 2016 +0000
 
 commit 3e704521f67e021fb51cda7319925fd39eba4f97
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Jan 11 17:38:41 2016 +0000
+Date:	Mon Jan 11 17:38:41 2016 +0000
 
     [OT] Get list of lookup subtables once and loop through them
 
@@ -1201,7 +1430,7 @@ Date:   Mon Jan 11 17:38:41 2016 +0000
     We might, in the future, collect subtables in the lookup_accel.
     That would also allow us to do a per-subtbale set-digest, which
     should speed things up some more, specially for ContextChainFormat3
-    lookups...  Amiri, for example, contains one lookup with 53
+    lookups...	Amiri, for example, contains one lookup with 53
     subtables!
 
  src/hb-ot-layout.cc | 120
@@ -1210,17 +1439,17 @@ Date:   Mon Jan 11 17:38:41 2016 +0000
 
 commit 11441291bbf4326dca9b14ec3e9cad3d4d229303
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Jan 11 13:16:35 2016 +0000
+Date:	Mon Jan 11 13:16:35 2016 +0000
 
     1.1.3
 
- NEWS         | 29 +++++++++++++++++++++++++++++
+ NEWS	      | 29 +++++++++++++++++++++++++++++
  configure.ac |  2 +-
  2 files changed, 30 insertions(+), 1 deletion(-)
 
 commit 97624d9244de0fdb9c03f60e03fe242028efa8a1
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Jan 11 12:58:45 2016 +0000
+Date:	Mon Jan 11 12:58:45 2016 +0000
 
     [docs] Minor fixes.
 
@@ -1229,7 +1458,7 @@ Date:   Mon Jan 11 12:58:45 2016 +0000
 
 commit a39ff95fce39226e80850ff251cb34a7aad12bd7
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Mon Jan 11 12:28:37 2016 +0000
+Date:	Mon Jan 11 12:28:37 2016 +0000
 
     [coretext] Speed up CoreText font fallback
 
@@ -1240,7 +1469,7 @@ Date:   Mon Jan 11 12:28:37 2016 +0000
 
 commit 5afebbdcb2dab0e9a42d580df629d8e60b50d2f9
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Jan 7 22:53:59 2016 +0000
+Date:	Thu Jan 7 22:53:59 2016 +0000
 
     Add Homebrew build instructions
 
@@ -1249,7 +1478,7 @@ Date:   Thu Jan 7 22:53:59 2016 +0000
 
 commit e8a27d79476a5d7a83cf2287d92ca291257546f4
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Jan 7 22:52:16 2016 +0000
+Date:	Thu Jan 7 22:52:16 2016 +0000
 
     Don't build hb-fuzzer in "make", only "make check"
 
@@ -1258,7 +1487,7 @@ Date:   Thu Jan 7 22:52:16 2016 +0000
 
 commit 25671466d245449187f8ab17e1a233f1d087d5ed
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Jan 7 19:11:41 2016 +0000
+Date:	Thu Jan 7 19:11:41 2016 +0000
 
     Add 9 reserved entries to hb_font_extents_t
 
@@ -1270,7 +1499,7 @@ Date:   Thu Jan 7 19:11:41 2016 +0000
 
 commit e6d5e4c3106180cb22253c2c278b40f7c4c98f2f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Jan 6 12:29:50 2016 +0000
+Date:	Wed Jan 6 12:29:50 2016 +0000
 
     [uniscribe] Fix negative advance
 
@@ -1281,21 +1510,21 @@ Date:   Wed Jan 6 12:29:50 2016 +0000
 
 commit 99d34955762d0fff4b66a30e6fbe65fd1cf9976b
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Jan 6 12:20:47 2016 +0000
+Date:	Wed Jan 6 12:20:47 2016 +0000
 
     [test] Add test text for Kaithi
 
- test/shaping/texts/in-tree/shaper-hangul/MANIFEST            | 1 +
- test/shaping/texts/in-tree/shaper-hebrew/MANIFEST            | 1 +
- test/shaping/texts/in-tree/shaper-tibetan/MANIFEST           | 1 +
- test/shaping/texts/in-tree/shaper-use/MANIFEST               | 1 +
+ test/shaping/texts/in-tree/shaper-hangul/MANIFEST	      | 1 +
+ test/shaping/texts/in-tree/shaper-hebrew/MANIFEST	      | 1 +
+ test/shaping/texts/in-tree/shaper-tibetan/MANIFEST	      | 1 +
+ test/shaping/texts/in-tree/shaper-use/MANIFEST		      | 1 +
  test/shaping/texts/in-tree/shaper-use/script-kaithi/MANIFEST | 1 +
  test/shaping/texts/in-tree/shaper-use/script-kaithi/misc.txt | 6 ++++++
  6 files changed, 11 insertions(+)
 
 commit 53c47c85827a7e3ca82000e3baa9aa87c5770ce9
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Jan 5 13:26:20 2016 +0000
+Date:	Tue Jan 5 13:26:20 2016 +0000
 
     Increase sanitize edit count from 8 to 32
 
@@ -1306,7 +1535,7 @@ Date:   Tue Jan 5 13:26:20 2016 +0000
 
 commit da2fcfdc51a2cc0d0a782efa6c91b733f7aa84ba
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Tue Jan 5 13:23:45 2016 +0000
+Date:	Tue Jan 5 13:23:45 2016 +0000
 
     Don't count fixing-up FeatureParams offset as error
 
@@ -1325,7 +1554,7 @@ Date:   Tue Jan 5 13:23:45 2016 +0000
 
 commit d0adc80965506810820f9ec165b8df80cc8907e3
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Sat Jan 2 13:25:18 2016 +0000
+Date:	Sat Jan 2 13:25:18 2016 +0000
 
     Check magicNumber in head table during sanitize
 
@@ -1335,7 +1564,7 @@ Date:   Sat Jan 2 13:25:18 2016 +0000
 commit 3a48c776701a919e11b067129586e40372d90d54
 Merge: 9230911 4b4948d
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Sat Jan 2 00:59:14 2016 +0000
+Date:	Sat Jan 2 00:59:14 2016 +0000
 
     Merge pull request #208 from khaledhosny/travis-trusty
 
@@ -1343,7 +1572,7 @@ Date:   Sat Jan 2 00:59:14 2016 +0000
 
 commit 4b4948d360a2141e0ffda2994aa308645dc32f59
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Sat Jan 2 00:36:19 2016 +0400
+Date:	Sat Jan 2 00:36:19 2016 +0400
 
     [travis] Try building on Trusty
 
@@ -1356,7 +1585,7 @@ Date:   Sat Jan 2 00:36:19 2016 +0400
 
 commit 9230911facf90c06626e54023ca4d99f5e05f1a4
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Jan 1 19:06:43 2016 +0000
+Date:	Fri Jan 1 19:06:43 2016 +0000
 
     [travis] Only run coveralls if testing behdad/harfbuzz
 
@@ -1369,7 +1598,7 @@ Date:   Fri Jan 1 19:06:43 2016 +0000
 commit 6f66f05757d3d5738571b3d4ee40afffb8f26ff9
 Merge: bfdf684 9ab9f97
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Jan 1 16:44:01 2016 +0000
+Date:	Fri Jan 1 16:44:01 2016 +0000
 
     Merge pull request #207 from khaledhosny/docs-4
 
@@ -1377,23 +1606,23 @@ Date:   Fri Jan 1 16:44:01 2016 +0000
 
 commit 9ab9f974d42e0001966e243a23a64e6aefbd4764
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Fri Jan 1 20:38:21 2016 +0400
+Date:	Fri Jan 1 20:38:21 2016 +0400
 
     [docs] More buffers documentation
 
  docs/harfbuzz-sections.txt |  4 +-
  src/hb-buffer-serialize.cc | 85
  ++++++++++++++++++++++++++++++-------------
- src/hb-buffer.cc           | 91
+ src/hb-buffer.cc	    | 91
  +++++++++++++++++++++++++++++++++++-----------
- src/hb-buffer.h            | 78 +++++++++++++++++++++++++--------------
- src/hb-shape.cc            | 10 +++--
+ src/hb-buffer.h	    | 78 +++++++++++++++++++++++++--------------
+ src/hb-shape.cc	    | 10 +++--
  5 files changed, 187 insertions(+), 81 deletions(-)
 
 commit bfdf684f7957645dd016fbf76700c5911c4bee2d
 Merge: d7ed6f5 85c2443
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 22:20:14 2015 +0100
+Date:	Wed Dec 30 22:20:14 2015 +0100
 
     Merge pull request #205 from khaledhosny/more-docs
 
@@ -1402,7 +1631,7 @@ Date:   Wed Dec 30 22:20:14 2015 +0100
 commit d7ed6f50b4ff13a94701131913d931f13a4d1266
 Merge: b758e5e a7f0e25
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 22:20:00 2015 +0100
+Date:	Wed Dec 30 22:20:00 2015 +0100
 
     Merge pull request #206 from nico/patch-3
 
@@ -1410,7 +1639,7 @@ Date:   Wed Dec 30 22:20:00 2015 +0100
 
 commit a7f0e25dafa90bd21b01c38cb0782ade54b75cdc
 Author: Nico Weber <nicolasweber@gmx.de>
-Date:   Wed Dec 30 16:05:52 2015 -0500
+Date:	Wed Dec 30 16:05:52 2015 -0500
 
     Remove unused HB_SHAPER_DATA_ENSURE_DECLARE lines.
 
@@ -1425,7 +1654,7 @@ Date:   Wed Dec 30 16:05:52 2015 -0500
 
 commit 85c2443b737335b77c7e9bb6fd6741912f70fcef
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Wed Dec 30 22:57:04 2015 +0400
+Date:	Wed Dec 30 22:57:04 2015 +0400
 
     [docs] Reduce gtkdoc-check errors
 
@@ -1440,7 +1669,7 @@ Date:   Wed Dec 30 22:57:04 2015 +0400
 
 commit 9cffe329f15b3a74a3af4e68c1884f1dbda49666
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Wed Dec 30 22:50:08 2015 +0400
+Date:	Wed Dec 30 22:50:08 2015 +0400
 
     [docs] Typo
 
@@ -1450,7 +1679,7 @@ Date:   Wed Dec 30 22:50:08 2015 +0400
 commit b758e5ea223eced0fde9a3e62d0fdf04c04914a1
 Merge: 266bfa3 8b1224f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 16:44:19 2015 +0100
+Date:	Wed Dec 30 16:44:19 2015 +0100
 
     Merge pull request #203 from nico/patch-1
 
@@ -1458,7 +1687,7 @@ Date:   Wed Dec 30 16:44:19 2015 +0100
 
 commit 266bfa3772e75fedcd93db22bf8672a13ad7a7d9
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 16:25:48 2015 +0100
+Date:	Wed Dec 30 16:25:48 2015 +0100
 
     [docs] Minor
 
@@ -1467,17 +1696,17 @@ Date:   Wed Dec 30 16:25:48 2015 +0100
 
 commit d08035f8f15b7ddd89a318ea34bc386a9e33a8ea
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 16:15:36 2015 +0100
+Date:	Wed Dec 30 16:15:36 2015 +0100
 
     [docs] Fix up build, really
 
  .ci/deploy-docs.sh | 9 ++++-----
- .travis.yml        | 2 +-
+ .travis.yml	    | 2 +-
  2 files changed, 5 insertions(+), 6 deletions(-)
 
 commit 0d45c3cf63692151166ca7071f755dfaa8922a67
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 16:09:39 2015 +0100
+Date:	Wed Dec 30 16:09:39 2015 +0100
 
     [docs] Turn bash tracing on
 
@@ -1486,7 +1715,7 @@ Date:   Wed Dec 30 16:09:39 2015 +0100
 
 commit 33b2d981a0b12ea165ef9282204a73f4a1ce0477
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 15:56:56 2015 +0100
+Date:	Wed Dec 30 15:56:56 2015 +0100
 
     [docs] Another try, not sure why the bot isn't building
 
@@ -1495,7 +1724,7 @@ Date:   Wed Dec 30 15:56:56 2015 +0100
 
 commit f3a051149b3b565b5ad4e489bf730c5203c3549e
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 15:45:43 2015 +0100
+Date:	Wed Dec 30 15:45:43 2015 +0100
 
     [docs] Shuffling code around in deploy-docs.sh
 
@@ -1507,7 +1736,7 @@ Date:   Wed Dec 30 15:45:43 2015 +0100
 commit 8f31d0a94b27bb658aabe600472fc10bc47885f6
 Merge: 9d280cf fb192c2
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 30 15:13:37 2015 +0100
+Date:	Wed Dec 30 15:13:37 2015 +0100
 
     Merge pull request #202 from khaledhosny/doc-fixes
 
@@ -1515,52 +1744,52 @@ Date:   Wed Dec 30 15:13:37 2015 +0100
 
 commit fb192c263e17081c87f4cc971274d9be42f19513
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Wed Dec 30 15:05:50 2015 +0400
+Date:	Wed Dec 30 15:05:50 2015 +0400
 
     [docs] A bit more buffers documentation
 
  docs/harfbuzz-sections.txt |  2 ++
- src/hb-buffer.cc           |  7 +++---
- src/hb-buffer.h            | 56
+ src/hb-buffer.cc	    |  7 +++---
+ src/hb-buffer.h	    | 56
  ++++++++++++++++++++++++++++++++++++++++++++--
  3 files changed, 60 insertions(+), 5 deletions(-)
 
 commit 8ab797c5b86c33eab6ee024471fd3c147325d26a
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Tue Dec 29 17:42:16 2015 +0400
+Date:	Tue Dec 29 17:42:16 2015 +0400
 
     [docs] A bit more buffers documentation
 
  docs/harfbuzz-sections.txt | 60 +++++++++++++++---------------
- src/hb-buffer.cc           | 93
+ src/hb-buffer.cc	    | 93
  +++++++++++++++++++++++++++++++---------------
- src/hb-buffer.h            |  7 +++-
- src/hb-common.cc           | 43 +++++++++++++--------
- src/hb-common.h            | 15 +++++---
+ src/hb-buffer.h	    |  7 +++-
+ src/hb-common.cc	    | 43 +++++++++++++--------
+ src/hb-common.h	    | 15 +++++---
  5 files changed, 135 insertions(+), 83 deletions(-)
 
 commit f18d2226b62f20d29e6299c01ae8467c725ea971
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Tue Dec 29 15:21:20 2015 +0400
+Date:	Tue Dec 29 15:21:20 2015 +0400
 
     [docs] Some documentation on buffers
 
     Some of it (create, reference, destroy) are adapted from Cairo docs.
 
  docs/harfbuzz-sections.txt |  55 +++++++-------
- src/hb-buffer.cc           | 174
+ src/hb-buffer.cc	    | 174
  +++++++++++++++++++++++++++------------------
  2 files changed, 132 insertions(+), 97 deletions(-)
 
 commit d7bf9d05c519a369a7b3a02e9ed5ecc05a20cd3e
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Tue Dec 29 02:23:24 2015 +0400
+Date:	Tue Dec 29 02:23:24 2015 +0400
 
     [docs] Fix comment syntax
 
     To lower the number of gtk-doc warnings.
 
- .travis.yml           |  2 +-
+ .travis.yml	       |  2 +-
  src/hb-directwrite.cc |  4 ++--
  src/hb-ot-layout.cc   | 14 ++++++++++++++
  src/hb-unicode.h      | 16 ++++++++++++++++
@@ -1568,7 +1797,7 @@ Date:   Tue Dec 29 02:23:24 2015 +0400
 
 commit 8b1224f0eece7a5b6846e206333e57ac4653a705
 Author: Nico Weber <nicolasweber@gmx.de>
-Date:   Mon Dec 28 21:31:28 2015 -0500
+Date:	Mon Dec 28 21:31:28 2015 -0500
 
     Remove unused `retry:` label.
 
@@ -1580,7 +1809,7 @@ Date:   Mon Dec 28 21:31:28 2015 -0500
 
 commit 1f5559293f9bb1b4e911f4bdecf276ff1f6ae01c
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Tue Dec 29 02:15:21 2015 +0400
+Date:	Tue Dec 29 02:15:21 2015 +0400
 
     [docs] Ignore the new HB_EXTERN decoration
 
@@ -1591,7 +1820,7 @@ Date:   Tue Dec 29 02:15:21 2015 +0400
 
 commit 9d280cf49f25181f64c978752f926b79e7c3746a
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Sat Dec 26 06:45:51 2015 +0400
+Date:	Sat Dec 26 06:45:51 2015 +0400
 
     Fix previous commit
 
@@ -1600,7 +1829,7 @@ Date:   Sat Dec 26 06:45:51 2015 +0400
 
 commit b789199f107912cfce5e4a95d6152f9a1a7993f2
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Sat Dec 26 06:35:08 2015 +0400
+Date:	Sat Dec 26 06:35:08 2015 +0400
 
     [travis] Build docs only on tagged revisions
 
@@ -1611,7 +1840,7 @@ Date:   Sat Dec 26 06:35:08 2015 +0400
 
 commit e5b90c08a4c1f475560209a5e47628f695606d89
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 25 18:41:41 2015 +0100
+Date:	Fri Dec 25 18:41:41 2015 +0100
 
     [travis] Remove secure var
 
@@ -1620,13 +1849,13 @@ Date:   Fri Dec 25 18:41:41 2015 +0100
     to set the var here.
 
  .ci/deploy-docs.sh | 2 +-
- .travis.yml        | 1 -
+ .travis.yml	    | 1 -
  2 files changed, 1 insertion(+), 2 deletions(-)
 
 commit e75c1ffdf548185ce1f1df7937f0d028e5e40efe
 Merge: 6173c2a d25317f
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 25 18:21:08 2015 +0100
+Date:	Fri Dec 25 18:21:08 2015 +0100
 
     Merge pull request #199 from behdad/travis-docs
 
@@ -1634,7 +1863,7 @@ Date:   Fri Dec 25 18:21:08 2015 +0100
 
 commit 6173c2a6fc6ea0bf812f7f398770b5342974f9bf
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 25 18:18:23 2015 +0100
+Date:	Fri Dec 25 18:18:23 2015 +0100
 
     Fix flaky test
 
@@ -1644,16 +1873,16 @@ Date:   Fri Dec 25 18:18:23 2015 +0100
 
     Fixes https://github.com/behdad/harfbuzz/issues/201
 
- .../1c2fb74c1b2aa173262734c1f616148f1648cfd6.ttf   | Bin 0 -> 4064 bytes
- test/shaping/fonts/sha1sum/MANIFEST                |   2 +-
- .../c78d1f25ea1df1210414f2fe2e0e1e53082bba76.ttf   | Bin 4064 -> 0 bytes
- test/shaping/tests/ligature-id.tests               |  70
+ ...> 1c2fb74c1b2aa173262734c1f616148f1648cfd6.ttf} | Bin 4064 ->
+ 4064 bytes
+ test/shaping/fonts/sha1sum/MANIFEST		    |	2 +-
+ test/shaping/tests/ligature-id.tests		    |  70
  ++++++++++-----------
- 4 files changed, 36 insertions(+), 36 deletions(-)
+ 3 files changed, 36 insertions(+), 36 deletions(-)
 
 commit 3fcae6d82da389c9944386a8ab41eb1c13b99330
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 25 18:18:02 2015 +0100
+Date:	Fri Dec 25 18:18:02 2015 +0100
 
     [tests] Add --reference, for re-recording tests
 
@@ -1662,57 +1891,51 @@ Date:   Fri Dec 25 18:18:02 2015 +0100
 
 commit d25317f67f3c5c77f9059961935b0f35cbaa9ac4
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Wed Dec 23 01:29:48 2015 +0400
+Date:	Wed Dec 23 01:29:48 2015 +0400
 
     Move more docs from FreeDesktop page
 
- docs/Makefile.am                     |  1 +
- docs/harfbuzz-docs.xml               | 15 ++++----
+ docs/Makefile.am		      |  1 +
+ docs/harfbuzz-docs.xml		      | 15 ++++----
  docs/usermanual-install-harfbuzz.xml | 70
  ++++++++++++++++++++++++++++++++++++
  3 files changed, 80 insertions(+), 6 deletions(-)
 
 commit 493a92220844c8996be67c8a7a2c5447942fe2c1
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Wed Dec 23 00:33:41 2015 +0400
+Date:	Wed Dec 23 00:33:41 2015 +0400
 
     Rename user manual files
 
     Use chapter ids instead of numbers, so that we can reorder them,
     introduce new ones etc. without the numbers becoming out of date.
 
- docs/Makefile.am                                   |  12 +-
- docs/harfbuzz-docs.xml                             |  12 +-
- ...anual-buffers-language-script-and-direction.xml |  77 +++++++++
- docs/usermanual-ch01.xml                           | 115 -------------
- docs/usermanual-ch02.xml                           | 183
- ---------------------
- docs/usermanual-ch03.xml                           |  77 ---------
- docs/usermanual-ch04.xml                           |  18 --
- docs/usermanual-ch05.xml                           |  13 --
- docs/usermanual-ch06.xml                           |   8 -
- docs/usermanual-fonts-and-faces.xml                |  18 ++
- docs/usermanual-glyph-information.xml              |   8 +
- docs/usermanual-hello-harfbuzz.xml                 | 183
- +++++++++++++++++++++
- docs/usermanual-opentype-features.xml              |  13 ++
- docs/usermanual-what-is-harfbuzz.xml               | 115 +++++++++++++
- 14 files changed, 426 insertions(+), 426 deletions(-)
+ docs/Makefile.am					      | 12
+ ++++++------
+ docs/harfbuzz-docs.xml					      | 12
+ ++++++------
+ ... => usermanual-buffers-language-script-and-direction.xml} |  0
+ docs/{usermanual-ch04.xml => usermanual-fonts-and-faces.xml} |  0
+ ...{usermanual-ch06.xml => usermanual-glyph-information.xml} |  0
+ docs/{usermanual-ch02.xml => usermanual-hello-harfbuzz.xml}  |  0
+ ...{usermanual-ch05.xml => usermanual-opentype-features.xml} |  0
+ .../{usermanual-ch01.xml => usermanual-what-is-harfbuzz.xml} |  0
+ 8 files changed, 12 insertions(+), 12 deletions(-)
 
 commit 4dc2265918089ee08c6d82eed0cfd41e02d7d231
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Wed Dec 23 00:26:20 2015 +0400
+Date:	Wed Dec 23 00:26:20 2015 +0400
 
     Intro from freedesktop.org/wiki/Software/HarfBuzz/
 
- docs/HarfBuzz.png      | Bin 0 -> 3419 bytes
- docs/Makefile.am       |   3 ++-
+ docs/HarfBuzz.png	| Bin 0 -> 3419 bytes
+ docs/Makefile.am	|   3 ++-
  docs/harfbuzz-docs.xml |  31 ++++++++++++++++++++++++++++++-
  3 files changed, 32 insertions(+), 2 deletions(-)
 
 commit 22b07782ced6503a0bf33f2fe157b70540238f6d
 Author: Khaled Hosny <khaledhosny@eglug.org>
-Date:   Mon Dec 14 23:33:51 2015 +0400
+Date:	Mon Dec 14 23:33:51 2015 +0400
 
     Deploy docs to gh-pages branch from Travis builds
 
@@ -1720,12 +1943,12 @@ Date:   Mon Dec 14 23:33:51 2015 +0400
     them available at http://behdad.github.io/harfbuzz/
 
  .ci/deploy-docs.sh | 25 +++++++++++++++++++++++++
- .travis.yml        |  4 ++++
+ .travis.yml	    |  4 ++++
  2 files changed, 29 insertions(+)
 
 commit fc38e6034c76d5450f5398d667184bc3696efcc4
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Wed Dec 23 14:50:53 2015 +0100
+Date:	Wed Dec 23 14:50:53 2015 +0100
 
     [layout] Collect coverage glyphs in PairPos
 
@@ -1737,7 +1960,7 @@ Date:   Wed Dec 23 14:50:53 2015 +0100
 
 commit 8718dae818b22c3933c33bdfc8a7413ef4c3110a
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 18 19:53:40 2015 +0000
+Date:	Fri Dec 18 19:53:40 2015 +0000
 
     [python] Hook up sample debugger
 
@@ -1746,7 +1969,7 @@ Date:   Fri Dec 18 19:53:40 2015 +0000
 
 commit 0475ef2f97e3035a2eea9a0f96031331e07e8e29
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 18 18:17:07 2015 +0000
+Date:	Fri Dec 18 18:17:07 2015 +0000
 
     [buffer] Add debugging, aka, message, API
 
@@ -1757,26 +1980,26 @@ Date:   Fri Dec 18 18:17:07 2015 +0000
     is specified.
 
  src/hb-buffer-private.hh | 18 ++++++++++++++++++
- src/hb-buffer.cc         | 44
+ src/hb-buffer.cc	  | 44
  ++++++++++++++++++++++++++++++++++++++++++++
- src/hb-buffer.h          | 15 +++++++++++++++
- src/hb-ot-layout.cc      | 12 ++----------
+ src/hb-buffer.h	  | 15 +++++++++++++++
+ src/hb-ot-layout.cc	  | 12 ++----------
  util/main-font-text.hh   | 18 ++++++++++++++++++
  5 files changed, 97 insertions(+), 10 deletions(-)
 
 commit 9ea0aa43ac5cf243b698aae0ec80241b5efd7488
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 18 17:30:18 2015 +0000
+Date:	Fri Dec 18 17:30:18 2015 +0000
 
     Don't deserialize positions if buffer has no positions
 
  src/hb-buffer-serialize.cc | 3 +++
- src/hb-ot-layout.cc        | 2 --
+ src/hb-ot-layout.cc	    | 2 --
  2 files changed, 3 insertions(+), 2 deletions(-)
 
 commit 862b1644e9469a7e70555141f53729409d50d0d2
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 18 13:54:06 2015 +0000
+Date:	Fri Dec 18 13:54:06 2015 +0000
 
     [use] Only set syllable-based topographical features if not
     Arabic-joining
@@ -1786,7 +2009,7 @@ Date:   Fri Dec 18 13:54:06 2015 +0000
 
 commit 45b7ec365225109eb0854e6c417f48860b5f24af
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 18 13:47:16 2015 +0000
+Date:	Fri Dec 18 13:47:16 2015 +0000
 
     [indic] Followup fix for Malayalam context matching
 
@@ -1812,7 +2035,7 @@ Date:   Fri Dec 18 13:47:16 2015 +0000
 
 commit 2813e3049a69d64e5395f68c52c4690e1d256d55
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Fri Dec 18 11:05:11 2015 +0000
+Date:	Fri Dec 18 11:05:11 2015 +0000
 
     [indic] Update data tables to Unicode 8.0
 
@@ -1836,17 +2059,17 @@ Date:   Fri Dec 18 11:05:11 2015 +0000
 
     MYANMAR: 1123865 out of 1123883 tests passed. 18 failed (0.00160159%)
 
- src/gen-indic-table.py                   |   1 +
+ src/gen-indic-table.py			  |   1 +
  src/hb-ot-shape-complex-indic-private.hh |  40 ++--
  src/hb-ot-shape-complex-indic-table.cc   | 372
  ++++++++++++++++++-------------
- src/hb-ot-shape-complex-indic.cc         |  23 +-
- src/hb-ot-shape-complex-myanmar.cc       |   4 +
+ src/hb-ot-shape-complex-indic.cc	  |  23 +-
+ src/hb-ot-shape-complex-myanmar.cc	  |   4 +
  5 files changed, 244 insertions(+), 196 deletions(-)
 
 commit fc06cff40f136440f6402d0a5e735e2a4a3c062a
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Dec 17 17:47:35 2015 +0000
+Date:	Thu Dec 17 17:47:35 2015 +0000
 
     Remove HB_OT_SHAPE_ZERO_WIDTH_MARKS_DEFAULT
 
@@ -1860,7 +2083,7 @@ Date:   Thu Dec 17 17:47:35 2015 +0000
 
 commit 508cc3d3cfcfb0383df0fe795cc28db4e0fd5729
 Author: Behdad Esfahbod <behdad@behdad.org>
-Date:   Thu Dec 17 17:31:17 2015 +0000
+Date:	Thu Dec 17 17:31:17 2015 +0000
 
     [indic] Allow context when matching for Malayalam new-spec
 
@@ -4373,32 +4596,22 @@ Date:	Mon Aug 31 19:18:10 2015 +0100
 
     [docs] Move docs/reference/ contents into docs/
 
- configure.ac			       |   3 +-
- docs/Makefile.am		       | 117 +++++++-
- docs/harfbuzz-docs.xml		       |  78 ++++++
- docs/harfbuzz-overrides.txt	       |   0
- docs/harfbuzz-sections.txt	       | 498
- ++++++++++++++++++++++++++++++++++
- docs/reference/Makefile.am	       | 118 --------
- docs/reference/harfbuzz-docs.xml      |  78 ------
- docs/reference/harfbuzz-overrides.txt |   0
- docs/reference/harfbuzz-sections.txt  | 498
- ----------------------------------
- docs/reference/usermanual-ch01.xml    | 115 --------
- docs/reference/usermanual-ch02.xml    | 183 -------------
- docs/reference/usermanual-ch03.xml    |  77 ------
- docs/reference/usermanual-ch04.xml    |  18 --
- docs/reference/usermanual-ch05.xml    |  13 -
- docs/reference/usermanual-ch06.xml    |   8 -
- docs/reference/version.xml.in	       |   1 -
- docs/usermanual-ch01.xml	       | 115 ++++++++
- docs/usermanual-ch02.xml	       | 183 +++++++++++++
- docs/usermanual-ch03.xml	       |  77 ++++++
- docs/usermanual-ch04.xml	       |  18 ++
- docs/usermanual-ch05.xml	       |  13 +
- docs/usermanual-ch06.xml	       |   8 +
- docs/version.xml.in		       |   1 +
- 23 files changed, 1108 insertions(+), 1112 deletions(-)
+ configure.ac				     |	 3 +-
+ docs/Makefile.am			     | 117
+ ++++++++++++++++++++++++++-
+ docs/{reference => }/harfbuzz-docs.xml      |	 0
+ docs/{reference => }/harfbuzz-overrides.txt |	 0
+ docs/{reference => }/harfbuzz-sections.txt  |	 0
+ docs/reference/Makefile.am		     | 118
+ ----------------------------
+ docs/{reference => }/usermanual-ch01.xml    |	 0
+ docs/{reference => }/usermanual-ch02.xml    |	 0
+ docs/{reference => }/usermanual-ch03.xml    |	 0
+ docs/{reference => }/usermanual-ch04.xml    |	 0
+ docs/{reference => }/usermanual-ch05.xml    |	 0
+ docs/{reference => }/usermanual-ch06.xml    |	 0
+ docs/{reference => }/version.xml.in	     |	 0
+ 13 files changed, 117 insertions(+), 121 deletions(-)
 
 commit cd5e3a13a6e0b6606d3a421f8cd44cdfb8314907
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -4406,23 +4619,15 @@ Date:	Mon Aug 31 19:16:41 2015 +0100
 
     [docs] Fix out-of-tree build
 
- docs/reference/Makefile.am	    |	9 +-
- docs/reference/harfbuzz-docs.xml   |  12 +--
- docs/reference/usermanual-ch01.xml | 115 +++++++++++++++++++++++
- docs/reference/usermanual-ch02.xml | 183
- +++++++++++++++++++++++++++++++++++++
- docs/reference/usermanual-ch03.xml |  77 ++++++++++++++++
- docs/reference/usermanual-ch04.xml |  18 ++++
- docs/reference/usermanual-ch05.xml |  13 +++
- docs/reference/usermanual-ch06.xml |	8 ++
- docs/usermanual-ch01.xml	    | 115 -----------------------
- docs/usermanual-ch02.xml	    | 183
- -------------------------------------
- docs/usermanual-ch03.xml	    |  77 ----------------
- docs/usermanual-ch04.xml	    |  18 ----
- docs/usermanual-ch05.xml	    |  13 ---
- docs/usermanual-ch06.xml	    |	8 --
- 14 files changed, 428 insertions(+), 421 deletions(-)
+ docs/reference/Makefile.am		  |  9 ++++++++-
+ docs/reference/harfbuzz-docs.xml	  | 12 ++++++------
+ docs/{ => reference}/usermanual-ch01.xml |  0
+ docs/{ => reference}/usermanual-ch02.xml |  0
+ docs/{ => reference}/usermanual-ch03.xml |  0
+ docs/{ => reference}/usermanual-ch04.xml |  0
+ docs/{ => reference}/usermanual-ch05.xml |  0
+ docs/{ => reference}/usermanual-ch06.xml |  0
+ 8 files changed, 14 insertions(+), 7 deletions(-)
 
 commit 3899795fa3c3e058e3885ec7a6638f0597a752cc
 Merge: d205965 01e16e8
@@ -4993,24 +5198,27 @@ Date:	Thu Jul 23 12:59:17 2015 +0100
 
     [test] Remove shaper-sea texts under shaper-use
 
- test/shaping/texts/in-tree/MANIFEST		    |  1 -
- test/shaping/texts/in-tree/shaper-sea/MANIFEST     |  2 --
- .../texts/in-tree/shaper-sea/script-cham/MANIFEST  |  1 -
- .../in-tree/shaper-sea/script-cham/misc/MANIFEST   |  1 -
- .../in-tree/shaper-sea/script-cham/misc/misc.txt   |  3 ---
- .../in-tree/shaper-sea/script-tai-tham/MANIFEST    |  1 -
- .../shaper-sea/script-tai-tham/misc/MANIFEST	    |  2 --
- .../shaper-sea/script-tai-tham/misc/misc.txt	    |  2 --
- .../shaper-sea/script-tai-tham/misc/torture.txt    | 23
- ----------------------
- test/shaping/texts/in-tree/shaper-use/MANIFEST     |  2 ++
- .../texts/in-tree/shaper-use/script-cham/MANIFEST  |  1 +
- .../texts/in-tree/shaper-use/script-cham/misc.txt  |  3 +++
- .../in-tree/shaper-use/script-tai-tham/MANIFEST    |  2 ++
- .../in-tree/shaper-use/script-tai-tham/misc.txt    |  2 ++
- .../in-tree/shaper-use/script-tai-tham/torture.txt | 23
- ++++++++++++++++++++++
- 15 files changed, 33 insertions(+), 36 deletions(-)
+ test/shaping/texts/in-tree/MANIFEST					 |
+ 1 -
+ test/shaping/texts/in-tree/shaper-sea/MANIFEST				 |
+ 2 --
+ test/shaping/texts/in-tree/shaper-sea/script-cham/MANIFEST		 |
+ 1 -
+ test/shaping/texts/in-tree/shaper-sea/script-tai-tham/MANIFEST		 |
+ 1 -
+ test/shaping/texts/in-tree/shaper-use/MANIFEST				 |
+ 2 ++
+ .../{shaper-sea/script-cham/misc => shaper-use/script-cham}/MANIFEST
+ | 0
+ .../{shaper-sea/script-cham/misc => shaper-use/script-cham}/misc.txt
+ | 0
+ .../script-tai-tham/misc => shaper-use/script-tai-tham}/MANIFEST
+ | 0
+ .../script-tai-tham/misc => shaper-use/script-tai-tham}/misc.txt
+ | 0
+ .../script-tai-tham/misc => shaper-use/script-tai-tham}/torture.txt
+ | 0
+ 10 files changed, 2 insertions(+), 5 deletions(-)
 
 commit 67ba7320cc5545baeacfcff64cea338223b9bd6d
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -11810,29 +12018,29 @@ Date:	Mon Apr 28 12:43:18 2014 -0700
 
     Reshuffle test data
 
- test/shaping/texts/in-tree/MANIFEST			  |  3 +++
- test/shaping/texts/in-tree/shaper-default/MANIFEST	  |  3 ---
- .../texts/in-tree/shaper-default/script-hangul/MANIFEST  |  1 -
- .../in-tree/shaper-default/script-hangul/misc/MANIFEST   |  1 -
- .../in-tree/shaper-default/script-hangul/misc/misc.txt   |  4 ----
- .../texts/in-tree/shaper-default/script-hebrew/MANIFEST  |  1 -
- .../in-tree/shaper-default/script-hebrew/misc/MANIFEST   |  1 -
- .../shaper-default/script-hebrew/misc/diacritics.txt	  | 16
- ----------------
- .../texts/in-tree/shaper-default/script-tibetan/MANIFEST |  1 -
- .../in-tree/shaper-default/script-tibetan/misc/MANIFEST  |  1 -
- .../in-tree/shaper-default/script-tibetan/misc/misc.txt  |  1 -
- .../texts/in-tree/shaper-hangul/script-hangul/MANIFEST   |  1 +
- .../in-tree/shaper-hangul/script-hangul/misc/MANIFEST	  |  1 +
- .../in-tree/shaper-hangul/script-hangul/misc/misc.txt	  |  4 ++++
- .../texts/in-tree/shaper-hebrew/script-hebrew/MANIFEST   |  1 +
- .../in-tree/shaper-hebrew/script-hebrew/misc/MANIFEST	  |  1 +
- .../shaper-hebrew/script-hebrew/misc/diacritics.txt	  | 16
- ++++++++++++++++
- .../texts/in-tree/shaper-tibetan/script-tibetan/MANIFEST |  1 +
- .../in-tree/shaper-tibetan/script-tibetan/misc/MANIFEST  |  1 +
- .../in-tree/shaper-tibetan/script-tibetan/misc/misc.txt  |  1 +
- 20 files changed, 30 insertions(+), 30 deletions(-)
+ test/shaping/texts/in-tree/MANIFEST					|
+ 3 +++
+ test/shaping/texts/in-tree/shaper-default/MANIFEST			|
+ 3 ---
+ .../script-tibetan => shaper-hangul/script-hangul}/MANIFEST		|
+ 0
+ .../script-tibetan => shaper-hangul/script-hangul}/misc/MANIFEST
+ | 0
+ .../{shaper-default => shaper-hangul}/script-hangul/misc/misc.txt
+ | 0
+ .../in-tree/{shaper-default => shaper-hebrew}/script-hebrew/MANIFEST
+ | 0
+ .../{shaper-default => shaper-hebrew}/script-hebrew/misc/MANIFEST
+ | 0
+ .../script-hebrew/misc/diacritics.txt					|
+ 0
+ .../script-hangul => shaper-tibetan/script-tibetan}/MANIFEST		|
+ 0
+ .../script-hangul => shaper-tibetan/script-tibetan}/misc/MANIFEST
+ | 0
+ .../{shaper-default => shaper-tibetan}/script-tibetan/misc/misc.txt
+ | 0
+ 11 files changed, 3 insertions(+), 3 deletions(-)
 
 commit b082ef373cefb35dd98b5f2f0b677ccc7806f51e
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -12003,19 +12211,18 @@ Date:	Mon Mar 24 14:26:36 2014 -0700
 
     Start fleshing out builtin font functions
 
- src/Makefile.am	 |   3 +-
- src/hb-glib.cc		 |   2 +-
- src/hb-icu.cc		 |   2 +-
- src/hb-ot-font.cc	 | 260
- ++++++++++++++++++++++++++++++++++++++++++++++++
- src/hb-ot-font.h	 |  41 ++++++++
- src/hb-ot-hhea-table.hh |   2 +-
- src/hb-ot-hmtx-table.hh |   2 +-
- src/hb-ot.h		 |   1 +
- src/hb-tt-font.cc	 |  77 --------------
- util/Makefile.am	 |   4 +-
- util/options.cc	 |   4 +
- 11 files changed, 314 insertions(+), 84 deletions(-)
+ src/Makefile.am		     |	 3 +-
+ src/hb-glib.cc			     |	 2 +-
+ src/hb-icu.cc			     |	 2 +-
+ src/hb-ot-font.cc		     | 260
+ ++++++++++++++++++++++++++++++++++++
+ src/{hb-tt-font.cc => hb-ot-font.h} |	56 ++------
+ src/hb-ot-hhea-table.hh	     |	 2 +-
+ src/hb-ot-hmtx-table.hh	     |	 2 +-
+ src/hb-ot.h			     |	 1 +
+ util/Makefile.am		     |	 4 +-
+ util/options.cc		     |	 4 +
+ 10 files changed, 283 insertions(+), 53 deletions(-)
 
 commit 343a0e4e747d93eeeb724c5d585f5ba036a0df84
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -12197,13 +12404,13 @@ Date:	Mon Mar 10 14:57:55 2014 -0700
 
     Minor
 
- .../shaper-myanmar/script-myanmar/misc/MANIFEST    |  1 -
- .../shaper-myanmar/script-myanmar/misc/torture.txt | 23
- ----------------------
- .../shaper-sea/script-tai-tham/misc/MANIFEST	    |  1 +
- .../shaper-sea/script-tai-tham/misc/torture.txt    | 23
- ++++++++++++++++++++++
- 4 files changed, 24 insertions(+), 24 deletions(-)
+ test/shaping/texts/in-tree/shaper-myanmar/script-myanmar/misc/MANIFEST
+ | 1 -
+ test/shaping/texts/in-tree/shaper-sea/script-tai-tham/misc/MANIFEST
+ | 1 +
+ .../script-myanmar => shaper-sea/script-tai-tham}/misc/torture.txt
+ | 0
+ 3 files changed, 1 insertion(+), 1 deletion(-)
 
 commit bb8ffb581b89cf27fb8e0743b81bbda21654233e
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -16931,9 +17138,8 @@ Date:	Wed Mar 6 20:20:45 2013 -0500
 
     Move valgrind suppressions to the correct directory
 
- test/.valgrind-suppressions	 | 0
- test/api/.valgrind-suppressions | 0
- 2 files changed, 0 insertions(+), 0 deletions(-)
+ test/{ => api}/.valgrind-suppressions | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
 
 commit a8ac1d33c731f6200ee472ab6c37a80b72770564
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -17414,37 +17620,25 @@ Date:	Tue Feb 19 00:50:46 2013 -0500
 
     Moving files around
 
- test/shaping/texts/in-tree/MANIFEST					|
+ test/shaping/texts/in-tree/MANIFEST					 |
  2 --
- test/shaping/texts/in-tree/script-default/MANIFEST			|
- 1 -
- test/shaping/texts/in-tree/script-default/misc/MANIFEST		|
- 1 -
- test/shaping/texts/in-tree/script-default/misc/misc.txt		|
- 1 -
- test/shaping/texts/in-tree/shaper-default/MANIFEST			|
+ test/shaping/texts/in-tree/shaper-default/MANIFEST			 |
  2 ++
- test/shaping/texts/in-tree/shaper-default/script-hangul/MANIFEST	|
- 1 +
- test/shaping/texts/in-tree/shaper-default/script-hangul/misc/MANIFEST	|
- 1 +
- test/shaping/texts/in-tree/shaper-default/script-hangul/misc/misc.txt	|
- 3 +++
- test/shaping/texts/in-tree/shaper-default/script-tibetan/MANIFEST	|
- 1 +
- test/shaping/texts/in-tree/shaper-default/script-tibetan/misc/MANIFEST |
- 1 +
- test/shaping/texts/in-tree/shaper-default/script-tibetan/misc/misc.txt |
- 1 +
- test/shaping/texts/in-tree/shaper-hangul/MANIFEST			|
+ .../in-tree/{shaper-hangul => shaper-default}/script-hangul/MANIFEST
+ | 0
+ .../{shaper-hangul => shaper-default}/script-hangul/misc/MANIFEST
+ | 0
+ .../{shaper-hangul => shaper-default}/script-hangul/misc/misc.txt
+ | 0
+ .../in-tree/{script-default => shaper-default/script-tibetan}/MANIFEST
+ | 0
+ .../{script-default => shaper-default/script-tibetan}/misc/MANIFEST
+ | 0
+ .../{script-default => shaper-default/script-tibetan}/misc/misc.txt
+ | 0
+ test/shaping/texts/in-tree/shaper-hangul/MANIFEST			 |
  1 -
- test/shaping/texts/in-tree/shaper-hangul/script-hangul/MANIFEST	|
- 1 -
- test/shaping/texts/in-tree/shaper-hangul/script-hangul/misc/MANIFEST	|
- 1 -
- test/shaping/texts/in-tree/shaper-hangul/script-hangul/misc/misc.txt	|
- 3 ---
- 15 files changed, 10 insertions(+), 11 deletions(-)
+ 9 files changed, 2 insertions(+), 3 deletions(-)
 
 commit b1f440759161cb5a54e1b1b910f3a8383b8e8472
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -18085,33 +18279,28 @@ Date:	Tue Feb 12 12:14:10 2013 -0500
 
  src/Makefile.am				    |  12 +-
  src/gen-indic-table.py				    |	9 +-
- src/hb-ot-shape-complex-indic-private.hh	    | 241 +-----
- src/hb-ot-shape-complex-indic-table.cc		    | 869
- ++++++++++++++++++++
- src/hb-ot-shape-complex-indic-table.hh		    | 872
- ---------------------
- src/hb-ot-shape-complex-indic.cc		    | 239 ++++++
+ src/hb-ot-shape-complex-indic-private.hh	    | 241 +------------
+ ...table.hh => hb-ot-shape-complex-indic-table.cc} |	9 +-
+ src/hb-ot-shape-complex-indic.cc		    | 239 ++++++++++++
  src/hb-ot-shape-complex-myanmar.cc		    |	2 +-
  src/hb-ot-shape-complex-private.hh		    |  28 +-
- src/hb-ot-shape-complex-sea-machine.rl		    | 102 +++
- src/hb-ot-shape-complex-sea.cc			    | 400 ++++++++++
+ src/hb-ot-shape-complex-sea-machine.rl		    | 102 ++++++
+ src/hb-ot-shape-complex-sea.cc			    | 400
+ +++++++++++++++++++++
  test/shaping/texts/in-tree/MANIFEST		    |	1 +
  .../in-tree/shaper-indic/south-east-asian/MANIFEST |	1 -
- .../south-east-asian/script-new-tai-lue/MANIFEST   |	1 -
- .../script-new-tai-lue/misc/MANIFEST		    |	1 -
- .../script-new-tai-lue/misc/misc.txt		    |	1 -
  test/shaping/texts/in-tree/shaper-myanmar/MANIFEST |	1 +
  test/shaping/texts/in-tree/shaper-sea/MANIFEST     |	3 +
- .../texts/in-tree/shaper-sea/script-cham/MANIFEST  |	1 +
- .../in-tree/shaper-sea/script-cham/misc/MANIFEST   |	1 +
+ .../script-cham}/MANIFEST			    |	0
+ .../script-cham}/misc/MANIFEST			    |	0
  .../in-tree/shaper-sea/script-cham/misc/misc.txt   |	1 +
  .../in-tree/shaper-sea/script-new-tai-lue/MANIFEST |	1 +
  .../shaper-sea/script-new-tai-lue/misc/MANIFEST    |	1 +
- .../shaper-sea/script-new-tai-lue/misc/misc.txt    |	1 +
+ .../script-new-tai-lue/misc/misc.txt		    |	0
  .../in-tree/shaper-sea/script-tai-tham/MANIFEST    |	1 +
  .../shaper-sea/script-tai-tham/misc/MANIFEST	    |	1 +
  .../shaper-sea/script-tai-tham/misc/misc.txt	    |	2 +
- 26 files changed, 1661 insertions(+), 1132 deletions(-)
+ 22 files changed, 792 insertions(+), 263 deletions(-)
 
 commit fb960212063016656dfaba83f072c81d1efc3202
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -18121,29 +18310,23 @@ Date:	Tue Feb 12 10:33:58 2013 -0500
 
  test/shaping/texts/in-tree/MANIFEST
  | 1 +
- test/shaping/texts/in-tree/script-default/MANIFEST
- | 1 +
- test/shaping/texts/in-tree/script-default/misc/MANIFEST
- | 1 +
- test/shaping/texts/in-tree/script-default/misc/misc.txt
- | 1 +
+ .../south-east-asian/script-thai => script-default}/MANIFEST
+ | 0
+ .../south-asian/script-tibetan => script-default}/misc/MANIFEST
+ | 0
+ .../south-asian/script-tibetan => script-default}/misc/misc.txt
+ | 0
  test/shaping/texts/in-tree/shaper-indic/MANIFEST
  | 1 -
  test/shaping/texts/in-tree/shaper-indic/south-asian/MANIFEST
  | 1 -
  .../texts/in-tree/shaper-indic/south-asian/script-tibetan/MANIFEST
  | 1 -
- .../texts/in-tree/shaper-indic/south-asian/script-tibetan/misc/MANIFEST
- | 1 -
- .../texts/in-tree/shaper-indic/south-asian/script-tibetan/misc/misc.txt
- | 1 -
  test/shaping/texts/in-tree/shaper-indic/south-east-asian/MANIFEST
- | 1 -
- .../texts/in-tree/shaper-indic/south-east-asian/script-thai/MANIFEST
  | 1 -
  .../in-tree/shaper-indic/south-east-asian/script-thai/misc/MANIFEST
  | 0
- 12 files changed, 4 insertions(+), 7 deletions(-)
+ 9 files changed, 1 insertion(+), 4 deletions(-)
 
 commit 5676d5d52784e16068ae483103d59111a8081854
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -18266,23 +18449,25 @@ Date:	Mon Feb 11 14:24:03 2013 -0500
 
     Shuffle test data around
 
- test/shaping/texts/in-tree/MANIFEST		    |  1 +
- .../in-tree/shaper-indic/south-east-asian/MANIFEST |  1 -
- .../south-east-asian/script-myanmar/MANIFEST	    |  1 -
- .../south-east-asian/script-myanmar/misc/MANIFEST  |  2 --
- .../south-east-asian/script-myanmar/misc/misc.txt  |  1 -
- .../south-east-asian/script-myanmar/misc/utn11.txt | 34
- ----------------------
- .../south-east-asian/script-thai/misc/MANIFEST     |  1 -
- .../south-east-asian/script-thai/misc/misc.txt     | 11 -------
- .../in-tree/shaper-myanmar/script-myanmar/MANIFEST |  1 +
- .../shaper-myanmar/script-myanmar/misc/MANIFEST    |  2 ++
- .../shaper-myanmar/script-myanmar/misc/misc.txt    |  1 +
- .../shaper-myanmar/script-myanmar/misc/utn11.txt   | 34
- ++++++++++++++++++++++
- .../in-tree/shaper-thai/script-thai/misc/MANIFEST  |  1 +
- .../in-tree/shaper-thai/script-thai/misc/misc.txt  | 11 +++++++
- 14 files changed, 51 insertions(+), 51 deletions(-)
+ test/shaping/texts/in-tree/MANIFEST
+ | 1 +
+ test/shaping/texts/in-tree/shaper-indic/south-east-asian/MANIFEST
+ | 1 -
+ .../in-tree/shaper-indic/south-east-asian/script-thai/misc/MANIFEST
+ | 1 -
+ .../south-east-asian => shaper-myanmar}/script-myanmar/MANIFEST
+ | 0
+ .../south-east-asian => shaper-myanmar}/script-myanmar/misc/MANIFEST
+ | 0
+ .../south-east-asian => shaper-myanmar}/script-myanmar/misc/misc.txt
+ | 0
+ .../south-east-asian => shaper-myanmar}/script-myanmar/misc/utn11.txt
+ | 0
+ test/shaping/texts/in-tree/shaper-thai/script-thai/misc/MANIFEST
+ | 1 +
+ .../south-east-asian => shaper-thai}/script-thai/misc/misc.txt
+ | 0
+ 9 files changed, 2 insertions(+), 2 deletions(-)
 
 commit 98628cac9f733f2674d6409954cddb7d0634c233
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -18467,12 +18652,11 @@ Date:	Mon Feb 4 23:06:50 2013 -0500
 
     Merge check-internal-symbols.sh and check-exported-symbols.sh
 
- src/Makefile.am	       |  3 +--
- src/check-exported-symbols.sh | 40 ----------------------------------
- src/check-internal-symbols.sh | 34 -----------------------------
- src/check-symbols.sh	       | 50
- +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 51 insertions(+), 76 deletions(-)
+ src/Makefile.am				    |  3 +-
+ src/check-internal-symbols.sh			    | 34
+ ----------------------
+ ...{check-exported-symbols.sh => check-symbols.sh} | 16 ++++++++--
+ 3 files changed, 14 insertions(+), 39 deletions(-)
 
 commit ceeae30f47b9d628484ae398bc38f3f60ee8eab4
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -20396,12 +20580,12 @@ Date:	Wed Nov 14 15:51:54 2012 -0800
 
     Move Thai shaper into a separate file
 
- src/Makefile.am		    |	3 +-
- src/hb-ot-shape-complex-default.cc | 225 ++++++++++++++++++++++++
- src/hb-ot-shape-complex-misc.cc    | 339
- -------------------------------------
- src/hb-ot-shape-complex-thai.cc    | 141 +++++++++++++++
- 4 files changed, 368 insertions(+), 340 deletions(-)
+ src/Makefile.am				    |	3 +-
+ ...plex-misc.cc => hb-ot-shape-complex-default.cc} | 114
+ -----------------
+ src/hb-ot-shape-complex-thai.cc		    | 141
+ +++++++++++++++++++++
+ 3 files changed, 143 insertions(+), 115 deletions(-)
 
 commit ba82325b7a6311b787ae47f41a56964e2f2cba9f
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -23026,37 +23210,35 @@ Date:	Fri Aug 10 09:06:30 2012 -0400
 
     [test] Move around
 
- .../in-tree/shaper-arabic/script-arabic/MANIFEST   |	 2 +-
- .../shaper-arabic/script-arabic/crulp/MANIFEST     |	 1 -
- .../script-arabic/crulp/ligatures/2grams.txt	    |  601 --
- .../script-arabic/crulp/ligatures/3grams.txt	    | 3415 -----------
- .../script-arabic/crulp/ligatures/4grams.txt	    | 6316
- --------------------
- .../script-arabic/crulp/ligatures/5grams.txt	    | 5029
- ----------------
- .../script-arabic/crulp/ligatures/6grams.txt	    | 1542 -----
- .../script-arabic/crulp/ligatures/7grams.txt	    |  354 --
- .../script-arabic/crulp/ligatures/8grams.txt	    |	26 -
- .../script-arabic/crulp/ligatures/LICENSE	    |	 3 -
- .../script-arabic/crulp/ligatures/MANIFEST	    |	 7 -
- .../script-arabic/crulp/ligatures/README	    |	16 -
- .../script-arabic/crulp/ligatures/SOURCES	    |	 4 -
- .../script-arabic/language-urdu/MANIFEST	    |	 1 +
- .../script-arabic/language-urdu/crulp/MANIFEST     |	 1 +
- .../language-urdu/crulp/ligatures/2grams.txt	    |  601 ++
- .../language-urdu/crulp/ligatures/3grams.txt	    | 3415 +++++++++++
- .../language-urdu/crulp/ligatures/4grams.txt	    | 6316
- ++++++++++++++++++++
- .../language-urdu/crulp/ligatures/5grams.txt	    | 5029
- ++++++++++++++++
- .../language-urdu/crulp/ligatures/6grams.txt	    | 1542 +++++
- .../language-urdu/crulp/ligatures/7grams.txt	    |  354 ++
- .../language-urdu/crulp/ligatures/8grams.txt	    |	26 +
- .../language-urdu/crulp/ligatures/LICENSE	    |	 3 +
- .../language-urdu/crulp/ligatures/MANIFEST	    |	 7 +
- .../language-urdu/crulp/ligatures/README	    |	16 +
- .../language-urdu/crulp/ligatures/SOURCES	    |	 4 +
- 26 files changed, 17316 insertions(+), 17315 deletions(-)
+ test/shaping/texts/in-tree/shaper-arabic/script-arabic/MANIFEST	 |
+ 2 +-
+ .../texts/in-tree/shaper-arabic/script-arabic/language-urdu/MANIFEST	 |
+ 1 +
+ .../shaper-arabic/script-arabic/{ => language-urdu}/crulp/MANIFEST
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/2grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/3grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/4grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/5grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/6grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/7grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/8grams.txt
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/LICENSE
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/MANIFEST
+ | 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/README		 |
+ 0
+ .../script-arabic/{ => language-urdu}/crulp/ligatures/SOURCES
+ | 0
+ 14 files changed, 2 insertions(+), 1 deletion(-)
 
 commit 7a484c601e0958533eb85a6902296733c39537fe
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -23331,15 +23513,15 @@ Date:	Wed Aug 8 14:33:37 2012 -0400
 
     Minor renaming
 
- src/Makefile.am			      |   4 +-
- src/hb-ot-shape-fallback-private.hh	      |  39 ++++
- src/hb-ot-shape-fallback.cc		      | 276
- +++++++++++++++++++++++++++
- src/hb-ot-shape-position-fallback-private.hh |  39 ----
- src/hb-ot-shape-position-fallback.cc	      | 276
- ---------------------------
- src/hb-ot-shape.cc			      |   4 +-
- 6 files changed, 319 insertions(+), 319 deletions(-)
+ src/Makefile.am						   |
+ 4 ++--
+ ...sition-fallback-private.hh => hb-ot-shape-fallback-private.hh} |
+ 8 ++++----
+ src/{hb-ot-shape-position-fallback.cc => hb-ot-shape-fallback.cc} |
+ 4 ++--
+ src/hb-ot-shape.cc						   |
+ 4 ++--
+ 4 files changed, 10 insertions(+), 10 deletions(-)
 
 commit 801298b590effd768607bb532dc83c73ba65d16b
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -24935,29 +25117,25 @@ Date:	Thu Jul 26 17:34:25 2012 -0400
 
     Add global shape_plan.  Unused so far.
 
- src/Makefile.am		  |  15 ++--
- src/hb-coretext-private.hh	  |  42 ---------
- src/hb-coretext.cc		  |   6 +-
- src/hb-fallback-shape-private.hh |  41 ---------
- src/hb-fallback-shape.cc	  |  62 ++++++++++++-
- src/hb-font-private.hh		  |  12 +++
- src/hb-font.cc			  |  15 +++-
- src/hb-graphite2-private.hh	  |  42 ---------
- src/hb-old-private.hh		  |  40 ---------
- src/hb-old.cc			  | 109 ++++++++++++++++++-----
- src/hb-ot-shape-private.hh	  |   8 --
- src/hb-ot-shape.cc		  |  60 ++++++++++++-
- src/hb-shape-plan-private.hh	  |  52 +++++++++++
- src/hb-shape-plan.cc		  |  85 ++++++++++++++++++
- src/hb-shape-plan.h		  |  60 +++++++++++++
- src/hb-shape.cc		  |  48 ++--------
- src/hb-shaper-impl-private.hh	  |  44 +++++++++
- src/hb-shaper-list.hh		  |  50 +++++++++++
- src/hb-shaper-private.hh	  |  81 +++++++++++++++++
- src/hb-uniscribe-private.hh	  |  42 ---------
- src/hb-uniscribe.cc		  | 186
- ++++++++++++++++++++++++---------------
- 21 files changed, 735 insertions(+), 365 deletions(-)
+ src/Makefile.am				    |  15 +-
+ src/hb-coretext-private.hh			    |  42 -----
+ src/hb-coretext.cc				    |	6 +-
+ src/hb-fallback-shape.cc			    |  62 ++++++-
+ src/hb-font-private.hh				    |  12 ++
+ src/hb-font.cc					    |  15 +-
+ src/hb-old.cc					    | 109 +++++++++---
+ src/hb-ot-shape-private.hh			    |	8 -
+ src/hb-ot-shape.cc				    |  60 ++++++-
+ ...aphite2-private.hh => hb-shape-plan-private.hh} |  28 +++-
+ src/hb-shape-plan.cc				    |  85 ++++++++++
+ ...b-fallback-shape-private.hh => hb-shape-plan.h} |  39 +++--
+ src/hb-shape.cc				    |  48 +-----
+ ...scribe-private.hh => hb-shaper-impl-private.hh} |  20 ++-
+ src/{hb-old-private.hh => hb-shaper-list.hh}	    |  30 ++--
+ src/hb-shaper-private.hh			    |  81 +++++++++
+ src/hb-uniscribe.cc				    | 186
+ +++++++++++++--------
+ 17 files changed, 608 insertions(+), 238 deletions(-)
 
 commit fa2dfcd560444d8c54b6349ee106134d3536f79b
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -27312,13 +27490,11 @@ Date:	Tue Jul 3 11:38:46 2012 -0400
  test/shaping/texts/in-tree/shaper-thai/MANIFEST		     |
  2 +-
  test/shaping/texts/in-tree/shaper-thai/misc/MANIFEST		     | 1 -
- test/shaping/texts/in-tree/shaper-thai/misc/misc.txt		     |
- 6 ------
  test/shaping/texts/in-tree/shaper-thai/script-thai/MANIFEST	     | 1 +
  test/shaping/texts/in-tree/shaper-thai/script-thai/misc/MANIFEST    | 1 +
- test/shaping/texts/in-tree/shaper-thai/script-thai/misc/sara-am.txt |
- 4 ++++
- 6 files changed, 7 insertions(+), 8 deletions(-)
+ .../shaper-thai/{misc/misc.txt => script-thai/misc/sara-am.txt}     |
+ 6 ++----
+ 5 files changed, 5 insertions(+), 6 deletions(-)
 
 commit aa116582e69d18777448e7993078e5d6335ddfed
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -28360,50 +28536,49 @@ Date:	Mon Jun 4 10:21:22 2012 -0400
 
     s/script-punjabi/script-gurmukhi/
 
- .../texts/in-tree/shaper-indic/indic/MANIFEST	    |	2 +-
- .../shaper-indic/indic/script-gurmukhi/MANIFEST    |	2 +
- .../indic/script-gurmukhi/misc/MANIFEST	    |	1 +
- .../indic/script-gurmukhi/misc/misc.txt	    |	1 +
- .../indic/script-gurmukhi/utrrs/LICENSE	    |  19 +++
- .../indic/script-gurmukhi/utrrs/MANIFEST	    |	3 +
- .../indic/script-gurmukhi/utrrs/README		    |  13 ++
- .../indic/script-gurmukhi/utrrs/SOURCES	    |	2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |  38 ++++++
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	9 ++
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |  10 ++
- .../IndicFontFeatureCodepoint-GurmukhiSpecific.txt |	6 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |  10 ++
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	6 +
- .../indic/script-gurmukhi/utrrs/codepoint/MANIFEST |	7 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  22 +++
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |	2 +
- .../indic/script-gurmukhi/utrrs/gpos/MANIFEST	    |	2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    | 152
- +++++++++++++++++++++
- .../indic/script-gurmukhi/utrrs/gsub/MANIFEST	    |	1 +
- .../shaper-indic/indic/script-punjabi/MANIFEST     |	2 -
- .../indic/script-punjabi/misc/MANIFEST		    |	1 -
- .../indic/script-punjabi/misc/misc.txt		    |	1 -
- .../indic/script-punjabi/utrrs/LICENSE		    |  19 ---
- .../indic/script-punjabi/utrrs/MANIFEST	    |	3 -
- .../shaper-indic/indic/script-punjabi/utrrs/README |  13 --
- .../indic/script-punjabi/utrrs/SOURCES		    |	2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |  38 ------
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	9 --
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |  10 --
- .../IndicFontFeatureCodepoint-GurmukhiSpecific.txt |	6 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |  10 --
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	6 -
- .../indic/script-punjabi/utrrs/codepoint/MANIFEST  |	7 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  22 ---
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |	2 -
- .../indic/script-punjabi/utrrs/gpos/MANIFEST	    |	2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    | 152
- ---------------------
- .../indic/script-punjabi/utrrs/gsub/MANIFEST	    |	1 -
- 41 files changed, 309 insertions(+), 309 deletions(-)
+ test/shaping/texts/in-tree/shaper-indic/indic/MANIFEST			 |
+ 2 +-
+ .../shaper-indic/indic/{script-punjabi => script-gurmukhi}/MANIFEST
+ | 0
+ .../indic/{script-punjabi => script-gurmukhi}/misc/MANIFEST		 |
+ 0
+ .../indic/{script-punjabi => script-gurmukhi}/misc/misc.txt		 |
+ 0
+ .../indic/{script-punjabi => script-gurmukhi}/utrrs/LICENSE		 |
+ 0
+ .../indic/{script-punjabi => script-gurmukhi}/utrrs/MANIFEST		 |
+ 0
+ .../shaper-indic/indic/{script-punjabi => script-gurmukhi}/utrrs/README
+ | 0
+ .../indic/{script-punjabi => script-gurmukhi}/utrrs/SOURCES		 |
+ 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt		 |
+ 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt		 |
+ 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-GurmukhiSpecific.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt
+ | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt		 |
+ 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt
+ | 0
+ .../indic/{script-punjabi => script-gurmukhi}/utrrs/codepoint/MANIFEST
+ | 0
+ .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt			 |
+ 0
+ .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt			 |
+ 0
+ .../indic/{script-punjabi => script-gurmukhi}/utrrs/gpos/MANIFEST
+ | 0
+ .../utrrs/gsub/IndicFontFeatureGSUB.txt				 |
+ 0
+ .../indic/{script-punjabi => script-gurmukhi}/utrrs/gsub/MANIFEST
+ | 0
+ 21 files changed, 1 insertion(+), 1 deletion(-)
 
 commit c1885483120d4b686b2fe95b217dce7248e040b1
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -28709,9 +28884,8 @@ Date:	Wed May 23 21:50:43 2012 -0400
  +++++++++++++++++++++
  .../misc/diacritics/language-persian.txt	    |  48 ++
  .../misc/diacritics/language-urdu.txt		    | 188 ++++++
- .../misc/diacritics/ligature-diacritics.txt	    |	1 +
- .../script-arabic/misc/ligature-diacritics.txt     |	1 -
- 8 files changed, 966 insertions(+), 2 deletions(-)
+ .../misc/{ => diacritics}/ligature-diacritics.txt  |	0
+ 7 files changed, 965 insertions(+), 1 deletion(-)
 
 commit ed2f1363a391add41f10cff18792003583a10257
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -28737,21 +28911,23 @@ Date:	Fri May 18 15:04:35 2012 -0400
     From:
     http://people.mozilla.org/~jdaggett/tests/cjkcompat.html
 
- test/shaping/texts/in-tree/shaper-default/MANIFEST |  3 +-
- .../in-tree/shaper-default/script-han/MANIFEST     |  1 +
- .../shaper-default/script-han/misc/MANIFEST	    |  1 +
- .../shaper-default/script-han/misc/cjk-compat.txt  |  3 ++
- .../shaper-default/script-hiragana/MANIFEST	    |  1 +
- .../shaper-default/script-hiragana/misc/MANIFEST   |  2 +
- .../script-hiragana/misc/kazuraki-liga-lines.txt   |  8 ++++
- .../script-hiragana/misc/kazuraki-liga.txt	    | 53
- ++++++++++++++++++++++
- .../shaper-default/script-japanese/MANIFEST	    |  1 -
- .../shaper-default/script-japanese/misc/MANIFEST   |  2 -
- .../script-japanese/misc/kazuraki-liga-lines.txt   |  8 ----
- .../script-japanese/misc/kazuraki-liga.txt	    | 53
- ----------------------
- 12 files changed, 71 insertions(+), 65 deletions(-)
+ test/shaping/texts/in-tree/shaper-default/MANIFEST			|
+ 3 ++-
+ .../in-tree/shaper-default/{script-japanese => script-han}/MANIFEST
+ | 0
+ test/shaping/texts/in-tree/shaper-default/script-han/misc/MANIFEST	|
+ 1 +
+ .../texts/in-tree/shaper-default/script-han/misc/cjk-compat.txt	|
+ 3 +++
+ test/shaping/texts/in-tree/shaper-default/script-hiragana/MANIFEST	|
+ 1 +
+ .../shaper-default/{script-japanese => script-hiragana}/misc/MANIFEST
+ | 0
+ .../{script-japanese => script-hiragana}/misc/kazuraki-liga-lines.txt
+ | 0
+ .../{script-japanese => script-hiragana}/misc/kazuraki-liga.txt
+ | 0
+ 8 files changed, 7 insertions(+), 1 deletion(-)
 
 commit 20fdb0f41d81b226e076a4830d4b0d03da31fc19
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -28898,15 +29074,14 @@ Date:	Tue May 15 23:10:39 2012 -0400
 
     [util] Refactor to accommodate for upcoming new tool
 
- util/Makefile.am	| 10 ++++---
- util/hb-shape.cc	| 70 +++++++++++++++++++------------------------
- util/hb-view.cc	|  8 +++--
- util/hb-view.hh	| 80
- --------------------------------------------------
- util/main-font-text.hh | 80
- ++++++++++++++++++++++++++++++++++++++++++++++++++
- util/shape-consumer.hh | 69 +++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 191 insertions(+), 126 deletions(-)
+ util/Makefile.am			| 10 +++--
+ util/hb-shape.cc			| 70
+ +++++++++++++++-------------------
+ util/hb-view.cc			|  8 ++--
+ util/{hb-view.hh => main-font-text.hh} | 48 +++++++++++------------
+ util/shape-consumer.hh			| 69
+ +++++++++++++++++++++++++++++++++
+ 5 files changed, 135 insertions(+), 70 deletions(-)
 
 commit 1d6846db9ebf84561bb30a4e48c6c43184914099
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -30824,25 +30999,24 @@ Date:	Thu Apr 12 14:53:53 2012 -0400
 
     More shaper API coming in preparation for plan/planned API.
 
- configure.ac			  |  6 ++---
- src/Makefile.am		  | 11 +++++----
- src/hb-fallback-shape-private.hh |  9 ++++----
- src/hb-fallback-shape.cc	  |  9 ++++----
- src/hb-graphite2-private.hh	  | 42 +++++++++++++++++++++++++++++++++++
- src/hb-graphite2.cc		  |  5 ++---
- src/hb-graphite2.h		  |  7 ------
- src/hb-ot-shape-private.hh	  |  8 +++++--
- src/hb-ot-shape.cc		  | 11 ++++-----
- src/hb-ot-shape.h		  | 48
- ----------------------------------------
- src/hb-ot.h			  |  1 -
- src/hb-shape.cc		  | 24 ++++++++------------
- src/hb-shape.h			  |  1 -
- src/hb-uniscribe-private.hh	  | 42 +++++++++++++++++++++++++++++++++++
- src/hb-uniscribe.cc		  |  9 ++++----
- src/hb-uniscribe.h		  |  7 ------
- util/options.hh		  |  2 +-
- 17 files changed, 126 insertions(+), 116 deletions(-)
+ configure.ac					|  6 ++--
+ src/Makefile.am				| 11 +++----
+ src/hb-fallback-shape-private.hh		|  9 +++---
+ src/hb-fallback-shape.cc			|  9 +++---
+ src/{hb-ot-shape.h => hb-graphite2-private.hh} | 30 ++++++++----------
+ src/hb-graphite2.cc				|  5 ++-
+ src/hb-graphite2.h				|  7 -----
+ src/hb-ot-shape-private.hh			|  8 +++--
+ src/hb-ot-shape.cc				| 11 +++----
+ src/hb-ot.h					|  1 -
+ src/hb-shape.cc				| 24 ++++++---------
+ src/hb-shape.h					|  1 -
+ src/hb-uniscribe-private.hh			| 42
+ ++++++++++++++++++++++++++
+ src/hb-uniscribe.cc				|  9 +++---
+ src/hb-uniscribe.h				|  7 -----
+ util/options.hh				|  2 +-
+ 16 files changed, 96 insertions(+), 86 deletions(-)
 
 commit c6035cf802c60f0526f421f39a55886061df94ee
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -31146,23 +31320,17 @@ Date:	Sat Apr 7 22:07:23 2012 -0400
 
     Move around
 
- test/shaping/texts/in-tree/MANIFEST				       |
- 1 +
- test/shaping/texts/in-tree/shaper-default/MANIFEST		       |
- 1 -
- test/shaping/texts/in-tree/shaper-default/script-hangul/MANIFEST      |
- 1 -
- test/shaping/texts/in-tree/shaper-default/script-hangul/misc/MANIFEST |
- 1 -
- test/shaping/texts/in-tree/shaper-default/script-hangul/misc/misc.txt |
- 2 --
- test/shaping/texts/in-tree/shaper-hangul/script-hangul/MANIFEST       |
- 1 +
- test/shaping/texts/in-tree/shaper-hangul/script-hangul/misc/MANIFEST  |
- 1 +
- test/shaping/texts/in-tree/shaper-hangul/script-hangul/misc/misc.txt  |
- 2 ++
- 8 files changed, 5 insertions(+), 5 deletions(-)
+ test/shaping/texts/in-tree/MANIFEST
+ | 1 +
+ test/shaping/texts/in-tree/shaper-default/MANIFEST
+ | 1 -
+ .../in-tree/{shaper-default => shaper-hangul}/script-hangul/MANIFEST
+ | 0
+ .../{shaper-default => shaper-hangul}/script-hangul/misc/MANIFEST
+ | 0
+ .../{shaper-default => shaper-hangul}/script-hangul/misc/misc.txt
+ | 0
+ 5 files changed, 1 insertion(+), 1 deletion(-)
 
 commit d4cc44716c1e098f8abbc0e495404598026ef242
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -32029,433 +32197,221 @@ Date:	Fri Jan 20 17:16:35 2012 -0500
 
     Move
 
- test/shaping/texts/MANIFEST			    |	 4 +-
- test/shaping/texts/in-tree/MANIFEST		    |	 3 +
- test/shaping/texts/in-tree/shaper-arabic/MANIFEST  |	 5 +
- .../in-tree/shaper-arabic/script-arabic/MANIFEST   |	 0
- .../in-tree/shaper-arabic/script-mandaic/MANIFEST  |	 0
- .../shaper-arabic/script-mongolian/MANIFEST	    |	 0
- .../in-tree/shaper-arabic/script-nko/MANIFEST	    |	 0
- .../in-tree/shaper-arabic/script-syriac/MANIFEST   |	 0
- test/shaping/texts/in-tree/shaper-default/MANIFEST |	 0
- test/shaping/texts/in-tree/shaper-indic/MANIFEST   |	 1 +
- .../texts/in-tree/shaper-indic/indic/MANIFEST	    |	11 +
- .../shaper-indic/indic/script-assamese/MANIFEST    |	 1 +
- .../indic/script-assamese/utrrs/LICENSE	    |	19 +
- .../indic/script-assamese/utrrs/MANIFEST	    |	 3 +
- .../indic/script-assamese/utrrs/README		    |	13 +
- .../indic/script-assamese/utrrs/SOURCES	    |	 2 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 4 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	40 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	10 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	11 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 +
- .../indic/script-assamese/utrrs/codepoint/MANIFEST |	 7 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	59 +
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  131 ++
- .../indic/script-assamese/utrrs/gpos/MANIFEST	    |	 2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  139 ++
- .../indic/script-assamese/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-bengali/MANIFEST     |	 1 +
- .../indic/script-bengali/utrrs/LICENSE		    |	19 +
- .../indic/script-bengali/utrrs/MANIFEST	    |	 3 +
- .../shaper-indic/indic/script-bengali/utrrs/README |	13 +
- .../indic/script-bengali/utrrs/SOURCES		    |	 2 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 1 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	36 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	10 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	12 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 +
- .../indic/script-bengali/utrrs/codepoint/MANIFEST  |	 7 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	58 +
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  119 ++
- .../indic/script-bengali/utrrs/gpos/MANIFEST	    |	 2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  215 +++
- .../indic/script-bengali/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-devanagari/MANIFEST  |	 1 +
- .../indic/script-devanagari/utrrs/LICENSE	    |	19 +
- .../indic/script-devanagari/utrrs/MANIFEST	    |	 3 +
- .../indic/script-devanagari/utrrs/README	    |	13 +
- .../indic/script-devanagari/utrrs/SOURCES	    |	 2 +
- ...icFontFeatureCodepoint-AdditionalConsonants.txt |	 8 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 4 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	45 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	14 +
- ...tFeatureCodepoint-DevnagariSpecificAddition.txt |	 1 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...ndicFontFeatureCodepoint-GenericPunctuation.txt |	 2 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	16 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	10 +
- .../script-devanagari/utrrs/codepoint/MANIFEST     |	 9 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  185 +++
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  185 +++
- .../indic/script-devanagari/utrrs/gpos/MANIFEST    |	 2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    | 1367
- ++++++++++++++++++++
- .../indic/script-devanagari/utrrs/gsub/MANIFEST    |	 1 +
- .../shaper-indic/indic/script-gujarati/MANIFEST    |	 1 +
- .../indic/script-gujarati/utrrs/LICENSE	    |	19 +
- .../indic/script-gujarati/utrrs/MANIFEST	    |	 3 +
- .../indic/script-gujarati/utrrs/README		    |	13 +
- .../indic/script-gujarati/utrrs/SOURCES	    |	 2 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 1 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	34 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	12 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	13 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 7 +
- .../indic/script-gujarati/utrrs/codepoint/MANIFEST |	 7 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  170 +++
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  170 +++
- .../indic/script-gujarati/utrrs/gpos/MANIFEST	    |	 2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    | 1156
- +++++++++++++++++
- .../indic/script-gujarati/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-kannada/MANIFEST     |	 1 +
- .../indic/script-kannada/utrrs/LICENSE		    |	19 +
- .../indic/script-kannada/utrrs/MANIFEST	    |	 3 +
- .../shaper-indic/indic/script-kannada/utrrs/README |	13 +
- .../indic/script-kannada/utrrs/SOURCES		    |	 2 +
- ...icFontFeatureCodepoint-AdditionalConsonants.txt |	 1 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 4 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	40 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	13 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	14 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 9 +
- .../indic/script-kannada/utrrs/codepoint/MANIFEST  |	 8 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  188 +++
- .../indic/script-kannada/utrrs/gpos/MANIFEST	    |	 1 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  306 +++++
- .../indic/script-kannada/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-malayalam/MANIFEST   |	 1 +
- .../indic/script-malayalam/utrrs/LICENSE	    |	19 +
- .../indic/script-malayalam/utrrs/MANIFEST	    |	 2 +
- .../indic/script-malayalam/utrrs/README	    |	13 +
- .../indic/script-malayalam/utrrs/SOURCES	    |	 2 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	36 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	12 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	14 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 4 +
- .../script-malayalam/utrrs/codepoint/MANIFEST	    |	 7 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  254 ++++
- .../indic/script-malayalam/utrrs/gsub/MANIFEST     |	 1 +
- .../shaper-indic/indic/script-oriya/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-oriya/utrrs/LICENSE  |	19 +
- .../shaper-indic/indic/script-oriya/utrrs/MANIFEST |	 2 +
- .../shaper-indic/indic/script-oriya/utrrs/README   |	13 +
- .../shaper-indic/indic/script-oriya/utrrs/SOURCES  |	 2 +
- ...icFontFeatureCodepoint-AdditionalConsonants.txt |	 3 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	34 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	12 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	12 +
- .../IndicFontFeatureCodepoint-OriyaSpecific.txt    |	 2 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 8 +
- .../indic/script-oriya/utrrs/codepoint/MANIFEST    |	 9 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  170 +++
- .../indic/script-oriya/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-punjabi/MANIFEST     |	 1 +
- .../indic/script-punjabi/utrrs/LICENSE		    |	19 +
- .../indic/script-punjabi/utrrs/MANIFEST	    |	 3 +
- .../shaper-indic/indic/script-punjabi/utrrs/README |	13 +
- .../indic/script-punjabi/utrrs/SOURCES		    |	 2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	38 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	 9 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- .../IndicFontFeatureCodepoint-GurmukhiSpecific.txt |	 6 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	10 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 +
- .../indic/script-punjabi/utrrs/codepoint/MANIFEST  |	 7 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	22 +
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |	 2 +
- .../indic/script-punjabi/utrrs/gpos/MANIFEST	    |	 2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  152 +++
- .../indic/script-punjabi/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-sinhala/MANIFEST     |	 1 +
- .../indic/script-sinhala/utrrs/LICENSE		    |	19 +
- .../indic/script-sinhala/utrrs/MANIFEST	    |	 3 +
- .../shaper-indic/indic/script-sinhala/utrrs/README |	13 +
- .../indic/script-sinhala/utrrs/SOURCES		    |	 2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	41 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	17 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	18 +
- .../IndicFontFeatureCodepoint-Punctuation.txt	    |	 1 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 3 +
- .../indic/script-sinhala/utrrs/codepoint/MANIFEST  |	 5 +
- .../utrrs/gpos/IndicFontFeatureGPOS.txt	    |  162 +++
- .../indic/script-sinhala/utrrs/gpos/MANIFEST	    |	 1 +
- .../utrrs/gsub/IndicFontFeatureGSUB-Conjunct.txt   |	 1 +
- .../gsub/IndicFontFeatureGSUB-Rakaaraansaya.txt    |	41 +
- .../utrrs/gsub/IndicFontFeatureGSUB-Repaya.txt     |	42 +
- .../gsub/IndicFontFeatureGSUB-Special-Cases.txt    |	 2 +
- .../gsub/IndicFontFeatureGSUB-TouchingLetters.txt  |	 1 +
- .../utrrs/gsub/IndicFontFeatureGSUB-Yansaya.txt    |	41 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |	 1 +
- .../indic/script-sinhala/utrrs/gsub/MANIFEST	    |	 7 +
- .../shaper-indic/indic/script-tamil/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-tamil/utrrs/LICENSE  |	19 +
- .../shaper-indic/indic/script-tamil/utrrs/MANIFEST |	 3 +
- .../shaper-indic/indic/script-tamil/utrrs/README   |	13 +
- .../shaper-indic/indic/script-tamil/utrrs/SOURCES  |	 2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	23 +
- .../IndicFontFeatureCodepoint-CurrencySymbols.txt  |	 1 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	11 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	12 +
- .../IndicFontFeatureCodepoint-Numerics.txt	    |	 3 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-Symbols.txt	    |	 6 +
- .../IndicFontFeatureCodepoint-TamilSymbol.txt	    |	 1 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 4 +
- .../indic/script-tamil/utrrs/codepoint/MANIFEST    |	10 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	64 +
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |	44 +
- .../indic/script-tamil/utrrs/gpos/MANIFEST	    |	 2 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |	 4 +
- .../indic/script-tamil/utrrs/gsub/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-telugu/MANIFEST	    |	 1 +
- .../shaper-indic/indic/script-telugu/utrrs/LICENSE |	19 +
- .../indic/script-telugu/utrrs/MANIFEST		    |	 3 +
- .../shaper-indic/indic/script-telugu/utrrs/README  |	13 +
- .../shaper-indic/indic/script-telugu/utrrs/SOURCES |	 2 +
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 2 +
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	38 +
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	13 +
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 +
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	14 +
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 +
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 +
- .../indic/script-telugu/utrrs/codepoint/MANIFEST   |	 7 +
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  385 ++++++
- .../indic/script-telugu/utrrs/gpos/MANIFEST	    |	 1 +
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  287 ++++
- .../indic/script-telugu/utrrs/gsub/MANIFEST	    |	 1 +
- test/shaping/texts/shaper-arabic/MANIFEST	    |	 5 -
- .../texts/shaper-arabic/script-arabic/MANIFEST     |	 0
- .../texts/shaper-arabic/script-mandaic/MANIFEST    |	 0
- .../texts/shaper-arabic/script-mongolian/MANIFEST  |	 0
- .../texts/shaper-arabic/script-nko/MANIFEST	    |	 0
- .../texts/shaper-arabic/script-syriac/MANIFEST     |	 0
- test/shaping/texts/shaper-default/MANIFEST	    |	 0
- test/shaping/texts/shaper-indic/MANIFEST	    |	 1 -
- test/shaping/texts/shaper-indic/indic/MANIFEST     |	11 -
- .../shaper-indic/indic/script-assamese/MANIFEST    |	 1 -
- .../indic/script-assamese/utrrs/LICENSE	    |	19 -
- .../indic/script-assamese/utrrs/MANIFEST	    |	 3 -
- .../indic/script-assamese/utrrs/README		    |	13 -
- .../indic/script-assamese/utrrs/SOURCES	    |	 2 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 4 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	40 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	10 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	11 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 -
- .../indic/script-assamese/utrrs/codepoint/MANIFEST |	 7 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	59 -
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  131 --
- .../indic/script-assamese/utrrs/gpos/MANIFEST	    |	 2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  139 --
- .../indic/script-assamese/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-bengali/MANIFEST     |	 1 -
- .../indic/script-bengali/utrrs/LICENSE		    |	19 -
- .../indic/script-bengali/utrrs/MANIFEST	    |	 3 -
- .../shaper-indic/indic/script-bengali/utrrs/README |	13 -
- .../indic/script-bengali/utrrs/SOURCES		    |	 2 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 1 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	36 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	10 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	12 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 -
- .../indic/script-bengali/utrrs/codepoint/MANIFEST  |	 7 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	58 -
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  119 --
- .../indic/script-bengali/utrrs/gpos/MANIFEST	    |	 2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  215 ---
- .../indic/script-bengali/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-devanagari/MANIFEST  |	 1 -
- .../indic/script-devanagari/utrrs/LICENSE	    |	19 -
- .../indic/script-devanagari/utrrs/MANIFEST	    |	 3 -
- .../indic/script-devanagari/utrrs/README	    |	13 -
- .../indic/script-devanagari/utrrs/SOURCES	    |	 2 -
- ...icFontFeatureCodepoint-AdditionalConsonants.txt |	 8 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 4 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	45 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	14 -
- ...tFeatureCodepoint-DevnagariSpecificAddition.txt |	 1 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...ndicFontFeatureCodepoint-GenericPunctuation.txt |	 2 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	16 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	10 -
- .../script-devanagari/utrrs/codepoint/MANIFEST     |	 9 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  185 ---
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  185 ---
- .../indic/script-devanagari/utrrs/gpos/MANIFEST    |	 2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    | 1367
- --------------------
- .../indic/script-devanagari/utrrs/gsub/MANIFEST    |	 1 -
- .../shaper-indic/indic/script-gujarati/MANIFEST    |	 1 -
- .../indic/script-gujarati/utrrs/LICENSE	    |	19 -
- .../indic/script-gujarati/utrrs/MANIFEST	    |	 3 -
- .../indic/script-gujarati/utrrs/README		    |	13 -
- .../indic/script-gujarati/utrrs/SOURCES	    |	 2 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 1 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	34 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	12 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	13 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 7 -
- .../indic/script-gujarati/utrrs/codepoint/MANIFEST |	 7 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  170 ---
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |  170 ---
- .../indic/script-gujarati/utrrs/gpos/MANIFEST	    |	 2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    | 1156
- -----------------
- .../indic/script-gujarati/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-kannada/MANIFEST     |	 1 -
- .../indic/script-kannada/utrrs/LICENSE		    |	19 -
- .../indic/script-kannada/utrrs/MANIFEST	    |	 3 -
- .../shaper-indic/indic/script-kannada/utrrs/README |	13 -
- .../indic/script-kannada/utrrs/SOURCES		    |	 2 -
- ...icFontFeatureCodepoint-AdditionalConsonants.txt |	 1 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 4 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	40 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	13 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	14 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 9 -
- .../indic/script-kannada/utrrs/codepoint/MANIFEST  |	 8 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  188 ---
- .../indic/script-kannada/utrrs/gpos/MANIFEST	    |	 1 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  306 -----
- .../indic/script-kannada/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-malayalam/MANIFEST   |	 1 -
- .../indic/script-malayalam/utrrs/LICENSE	    |	19 -
- .../indic/script-malayalam/utrrs/MANIFEST	    |	 2 -
- .../indic/script-malayalam/utrrs/README	    |	13 -
- .../indic/script-malayalam/utrrs/SOURCES	    |	 2 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	36 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	12 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	14 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 4 -
- .../script-malayalam/utrrs/codepoint/MANIFEST	    |	 7 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  254 ----
- .../indic/script-malayalam/utrrs/gsub/MANIFEST     |	 1 -
- .../texts/shaper-indic/indic/script-oriya/MANIFEST |	 1 -
- .../shaper-indic/indic/script-oriya/utrrs/LICENSE  |	19 -
- .../shaper-indic/indic/script-oriya/utrrs/MANIFEST |	 2 -
- .../shaper-indic/indic/script-oriya/utrrs/README   |	13 -
- .../shaper-indic/indic/script-oriya/utrrs/SOURCES  |	 2 -
- ...icFontFeatureCodepoint-AdditionalConsonants.txt |	 3 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	34 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	12 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	12 -
- .../IndicFontFeatureCodepoint-OriyaSpecific.txt    |	 2 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 8 -
- .../indic/script-oriya/utrrs/codepoint/MANIFEST    |	 9 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  170 ---
- .../indic/script-oriya/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-punjabi/MANIFEST     |	 1 -
- .../indic/script-punjabi/utrrs/LICENSE		    |	19 -
- .../indic/script-punjabi/utrrs/MANIFEST	    |	 3 -
- .../shaper-indic/indic/script-punjabi/utrrs/README |	13 -
- .../indic/script-punjabi/utrrs/SOURCES		    |	 2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	38 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	 9 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- .../IndicFontFeatureCodepoint-GurmukhiSpecific.txt |	 6 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	10 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 -
- .../indic/script-punjabi/utrrs/codepoint/MANIFEST  |	 7 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	22 -
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |	 2 -
- .../indic/script-punjabi/utrrs/gpos/MANIFEST	    |	 2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  152 ---
- .../indic/script-punjabi/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-sinhala/MANIFEST     |	 1 -
- .../indic/script-sinhala/utrrs/LICENSE		    |	19 -
- .../indic/script-sinhala/utrrs/MANIFEST	    |	 3 -
- .../shaper-indic/indic/script-sinhala/utrrs/README |	13 -
- .../indic/script-sinhala/utrrs/SOURCES		    |	 2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	41 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	17 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	18 -
- .../IndicFontFeatureCodepoint-Punctuation.txt	    |	 1 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 3 -
- .../indic/script-sinhala/utrrs/codepoint/MANIFEST  |	 5 -
- .../utrrs/gpos/IndicFontFeatureGPOS.txt	    |  162 ---
- .../indic/script-sinhala/utrrs/gpos/MANIFEST	    |	 1 -
- .../utrrs/gsub/IndicFontFeatureGSUB-Conjunct.txt   |	 1 -
- .../gsub/IndicFontFeatureGSUB-Rakaaraansaya.txt    |	41 -
- .../utrrs/gsub/IndicFontFeatureGSUB-Repaya.txt     |	42 -
- .../gsub/IndicFontFeatureGSUB-Special-Cases.txt    |	 2 -
- .../gsub/IndicFontFeatureGSUB-TouchingLetters.txt  |	 1 -
- .../utrrs/gsub/IndicFontFeatureGSUB-Yansaya.txt    |	41 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |	 1 -
- .../indic/script-sinhala/utrrs/gsub/MANIFEST	    |	 7 -
- .../texts/shaper-indic/indic/script-tamil/MANIFEST |	 1 -
- .../shaper-indic/indic/script-tamil/utrrs/LICENSE  |	19 -
- .../shaper-indic/indic/script-tamil/utrrs/MANIFEST |	 3 -
- .../shaper-indic/indic/script-tamil/utrrs/README   |	13 -
- .../shaper-indic/indic/script-tamil/utrrs/SOURCES  |	 2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	23 -
- .../IndicFontFeatureCodepoint-CurrencySymbols.txt  |	 1 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	11 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	12 -
- .../IndicFontFeatureCodepoint-Numerics.txt	    |	 3 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-Symbols.txt	    |	 6 -
- .../IndicFontFeatureCodepoint-TamilSymbol.txt	    |	 1 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 4 -
- .../indic/script-tamil/utrrs/codepoint/MANIFEST    |	10 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |	64 -
- .../utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  |	44 -
- .../indic/script-tamil/utrrs/gpos/MANIFEST	    |	 2 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |	 4 -
- .../indic/script-tamil/utrrs/gsub/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-telugu/MANIFEST	    |	 1 -
- .../shaper-indic/indic/script-telugu/utrrs/LICENSE |	19 -
- .../indic/script-telugu/utrrs/MANIFEST		    |	 3 -
- .../shaper-indic/indic/script-telugu/utrrs/README  |	13 -
- .../shaper-indic/indic/script-telugu/utrrs/SOURCES |	 2 -
- .../IndicFontFeatureCodepoint-AdditionalVowels.txt |	 2 -
- .../IndicFontFeatureCodepoint-Consonants.txt	    |	38 -
- .../IndicFontFeatureCodepoint-DependentVowels.txt  |	13 -
- .../codepoint/IndicFontFeatureCodepoint-Digits.txt |	10 -
- ...IndicFontFeatureCodepoint-IndependentVowels.txt |	14 -
- .../IndicFontFeatureCodepoint-Reserved.txt	    |	 2 -
- .../IndicFontFeatureCodepoint-VariousSigns.txt     |	 6 -
- .../indic/script-telugu/utrrs/codepoint/MANIFEST   |	 7 -
- .../utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  |  385 ------
- .../indic/script-telugu/utrrs/gpos/MANIFEST	    |	 1 -
- .../utrrs/gsub/IndicFontFeatureGSUB.txt	    |  287 ----
- .../indic/script-telugu/utrrs/gsub/MANIFEST	    |	 1 -
- 422 files changed, 7601 insertions(+), 7600 deletions(-)
+ test/shaping/texts/MANIFEST					       |
+ 4 +---
+ test/shaping/texts/in-tree/MANIFEST				       |
+ 3 +++
+ test/shaping/texts/{ => in-tree}/shaper-arabic/MANIFEST	       | 0
+ .../{shaper-default => in-tree/shaper-arabic/script-arabic}/MANIFEST  | 0
+ .../script-syriac => in-tree/shaper-arabic/script-mandaic}/MANIFEST   | 0
+ .../script-nko => in-tree/shaper-arabic/script-mongolian}/MANIFEST    | 0
+ .../script-mongolian => in-tree/shaper-arabic/script-nko}/MANIFEST    | 0
+ .../script-mandaic => in-tree/shaper-arabic/script-syriac}/MANIFEST   | 0
+ .../{shaper-arabic/script-arabic => in-tree/shaper-default}/MANIFEST  | 0
+ test/shaping/texts/{ => in-tree}/shaper-indic/MANIFEST		       | 0
+ test/shaping/texts/{ => in-tree}/shaper-indic/indic/MANIFEST	       | 0
+ .../shaper-indic/indic/script-assamese}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/codepoint/MANIFEST      | 0
+ .../script-assamese/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt     | 0
+ .../script-assamese/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt     | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-assamese/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-assamese}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-bengali}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/codepoint/MANIFEST       | 0
+ .../script-bengali/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt      | 0
+ .../script-bengali/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt      | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-bengali/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-bengali}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-devanagari}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-devanagari}/utrrs/LICENSE	       | 0
+ .../shaper-indic/indic/script-devanagari}/utrrs/MANIFEST	       | 0
+ .../shaper-indic/indic/script-devanagari}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-devanagari}/utrrs/SOURCES	       | 0
+ .../codepoint/IndicFontFeatureCodepoint-AdditionalConsonants.txt      | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../codepoint/IndicFontFeatureCodepoint-DevnagariSpecificAddition.txt | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-GenericPunctuation.txt  | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-devanagari/utrrs/codepoint/MANIFEST     | 0
+ .../script-devanagari/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt   | 0
+ .../script-devanagari/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt   | 0
+ .../shaper-indic/indic/script-devanagari}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-devanagari/utrrs/gsub/IndicFontFeatureGSUB.txt       | 0
+ .../shaper-indic/indic/script-devanagari}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-gujarati}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-gujarati}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-gujarati}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-gujarati}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-gujarati}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-gujarati/utrrs/codepoint/MANIFEST       | 0
+ .../script-gujarati/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt     | 0
+ .../script-gujarati/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt     | 0
+ .../shaper-indic/indic/script-gujarati}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-gujarati/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-gujarati}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-kannada}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-kannada}/utrrs/LICENSE		       | 0
+ .../{ => in-tree}/shaper-indic/indic/script-kannada/utrrs/MANIFEST    | 0
+ .../shaper-indic/indic/script-kannada}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-kannada}/utrrs/SOURCES		       | 0
+ .../codepoint/IndicFontFeatureCodepoint-AdditionalConsonants.txt      | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-kannada/utrrs/codepoint/MANIFEST        | 0
+ .../script-kannada/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt      | 0
+ .../shaper-indic/indic/script-kannada}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-kannada/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-kannada}/utrrs/gsub/MANIFEST	       | 0
+ .../texts/{ => in-tree}/shaper-indic/indic/script-malayalam/MANIFEST  | 0
+ .../{ => in-tree}/shaper-indic/indic/script-malayalam/utrrs/LICENSE   | 0
+ .../shaper-indic/indic/script-malayalam}/utrrs/MANIFEST	       | 0
+ .../{ => in-tree}/shaper-indic/indic/script-malayalam/utrrs/README    | 0
+ .../{ => in-tree}/shaper-indic/indic/script-malayalam/utrrs/SOURCES   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-malayalam}/utrrs/codepoint/MANIFEST     | 0
+ .../indic/script-malayalam/utrrs/gsub/IndicFontFeatureGSUB.txt        | 0
+ .../shaper-indic/indic/script-malayalam}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-oriya}/MANIFEST			       | 0
+ .../shaper-indic/indic/script-oriya}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-oriya}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-oriya}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-oriya}/utrrs/SOURCES		       | 0
+ .../codepoint/IndicFontFeatureCodepoint-AdditionalConsonants.txt      | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../script-oriya/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-OriyaSpecific.txt       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-oriya/utrrs/codepoint/MANIFEST	       | 0
+ .../indic/script-oriya/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-oriya}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-punjabi}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-punjabi}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-punjabi}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-punjabi}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-punjabi}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-GurmukhiSpecific.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-punjabi/utrrs/codepoint/MANIFEST        | 0
+ .../script-punjabi/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt      | 0
+ .../script-punjabi/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt      | 0
+ .../shaper-indic/indic/script-punjabi}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-punjabi/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-punjabi}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-sinhala}/MANIFEST		       | 0
+ .../shaper-indic/indic/script-sinhala}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-sinhala}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-sinhala}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-sinhala}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Punctuation.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-sinhala/utrrs/codepoint/MANIFEST        | 0
+ .../indic/script-sinhala/utrrs/gpos/IndicFontFeatureGPOS.txt	       | 0
+ .../shaper-indic/indic/script-sinhala/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Conjunct.txt | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Rakaaraansaya.txt  | 0
+ .../indic/script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Repaya.txt   | 0
+ .../script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Special-Cases.txt  | 0
+ .../utrrs/gsub/IndicFontFeatureGSUB-TouchingLetters.txt	       | 0
+ .../indic/script-sinhala/utrrs/gsub/IndicFontFeatureGSUB-Yansaya.txt  | 0
+ .../indic/script-sinhala/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-sinhala/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-tamil}/MANIFEST			       | 0
+ .../shaper-indic/indic/script-tamil}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-tamil}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-tamil}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-tamil}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-CurrencySymbols.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../script-tamil/utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Numerics.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Symbols.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-TamilSymbol.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-tamil/utrrs/codepoint/MANIFEST	       | 0
+ .../indic/script-tamil/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt  | 0
+ .../indic/script-tamil/utrrs/gpos/IndicFontFeatureGPOS-BelowBase.txt  | 0
+ .../shaper-indic/indic/script-tamil}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-tamil/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-tamil}/utrrs/gsub/MANIFEST	       | 0
+ .../shaper-indic/indic/script-telugu}/MANIFEST			       | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/LICENSE		       | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/MANIFEST		       | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/README		       | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/SOURCES		       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-AdditionalVowels.txt    | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Consonants.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-DependentVowels.txt     | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Digits.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-IndependentVowels.txt   | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-Reserved.txt	       | 0
+ .../utrrs/codepoint/IndicFontFeatureCodepoint-VariousSigns.txt        | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/codepoint/MANIFEST        | 0
+ .../indic/script-telugu/utrrs/gpos/IndicFontFeatureGPOS-AboveBase.txt | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/gpos/MANIFEST	       | 0
+ .../indic/script-telugu/utrrs/gsub/IndicFontFeatureGSUB.txt	       | 0
+ .../shaper-indic/indic/script-telugu}/utrrs/gsub/MANIFEST	       | 0
+ 212 files changed, 4 insertions(+), 3 deletions(-)
 
 commit 45f640c98d752161e51eda63061d70fad9ab9f68
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -32705,12 +32661,9 @@ Date:	Fri Jan 20 13:50:55 2012 -0500
 
     Move hb-diff to test/shaping/
 
- test/shaping/hb-diff | 70
- ++++++++++++++++++++++++++++++++++++++++++++++++++++
- util/Makefile.am     |  2 --
- util/hb-diff	      | 70
- ----------------------------------------------------
- 3 files changed, 70 insertions(+), 72 deletions(-)
+ {util => test/shaping}/hb-diff | 0
+ util/Makefile.am		| 2 --
+ 2 files changed, 2 deletions(-)
 
 commit f868e1b84d2f73688d4d6558d44610b1ac75ec13
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -32718,14 +32671,11 @@ Date:	Fri Jan 20 13:50:05 2012 -0500
 
     Add hb-unicode-decode
 
- test/shaping/hb-manifest-read	  | 36
- ++++++++++++++++++++++++++++++++++++
- test/shaping/hb-manifest-update  | 22 ++++++++++++++++++++++
- test/shaping/hb-read-manifest	  | 36
- ------------------------------------
- test/shaping/hb-unicode-decode   | 19 +++++++++++++++++++
- test/shaping/hb-update-manifests | 22 ----------------------
- 5 files changed, 77 insertions(+), 58 deletions(-)
+ test/shaping/{hb-read-manifest => hb-manifest-read}   |  0
+ .../{hb-update-manifests => hb-manifest-update}       |  0
+ test/shaping/hb-unicode-decode			       | 19
+ +++++++++++++++++++
+ 3 files changed, 19 insertions(+)
 
 commit 9ab23ef4749b51e60464b9ef2a92739cdc2b36ba
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -32864,38 +32814,25 @@ Date:	Thu Jan 19 14:52:02 2012 -0500
 
     Rename test/ to test/api/
 
- configure.ac		       |    1 +
- test/Makefile.am	       |  128 +----
- test/api/Makefile.am	       |  131 +++++
- test/api/hb-test.h	       |  265 +++++++++
- test/api/test-blob.c	       |  301 +++++++++++
- test/api/test-buffer.c        |  783 +++++++++++++++++++++++++++
- test/api/test-c.c	       |   58 ++
- test/api/test-common.c        |  213 ++++++++
- test/api/test-cplusplus.cc    |   30 ++
- test/api/test-font.c	       |  502 +++++++++++++++++
- test/api/test-object.c        |  367 +++++++++++++
- test/api/test-ot-tag.c        |  241 +++++++++
- test/api/test-shape-complex.c | 1189
- +++++++++++++++++++++++++++++++++++++++++
- test/api/test-shape.c	       |  165 ++++++
- test/api/test-unicode.c       |  887 ++++++++++++++++++++++++++++++
- test/api/test-version.c       |   80 +++
- test/hb-test.h		       |  265 ---------
- test/test-blob.c	       |  301 -----------
- test/test-buffer.c	       |  783 ---------------------------
- test/test-c.c		       |   58 --
- test/test-common.c	       |  213 --------
- test/test-cplusplus.cc        |   30 --
- test/test-font.c	       |  502 -----------------
- test/test-object.c	       |  367 -------------
- test/test-ot-tag.c	       |  241 ---------
- test/test-shape-complex.c     | 1189
- -----------------------------------------
- test/test-shape.c	       |  165 ------
- test/test-unicode.c	       |  887 ------------------------------
- test/test-version.c	       |   80 ---
- 29 files changed, 5214 insertions(+), 5208 deletions(-)
+ configure.ac			     |	 1 +
+ test/Makefile.am		     | 128
+ +----------------------------------
+ test/api/Makefile.am		     | 131
+ ++++++++++++++++++++++++++++++++++++
+ test/{ => api}/hb-test.h	     |	 0
+ test/{ => api}/test-blob.c	     |	 0
+ test/{ => api}/test-buffer.c	     |	 0
+ test/{ => api}/test-c.c	     |	 0
+ test/{ => api}/test-common.c	     |	 0
+ test/{ => api}/test-cplusplus.cc    |	 0
+ test/{ => api}/test-font.c	     |	 0
+ test/{ => api}/test-object.c	     |	 0
+ test/{ => api}/test-ot-tag.c	     |	 0
+ test/{ => api}/test-shape-complex.c |	 0
+ test/{ => api}/test-shape.c	     |	 0
+ test/{ => api}/test-unicode.c	     |	 0
+ test/{ => api}/test-version.c	     |	 0
+ 16 files changed, 133 insertions(+), 127 deletions(-)
 
 commit 3b5c22c39b87155f315853fb0c40edcf14e99b54
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -33389,22 +33326,20 @@ Date:	Mon Sep 19 16:41:17 2011 -0400
 
     The output format is kinda cryptic.  Suggestions welcome.
 
- configure.ac	      |   6 -
- util/Makefile.am     |  44 +++---
- util/common.cc       |  43 ------
- util/common.hh       |  57 --------
- util/hb-shape.cc     |  78 +++++++++++
- util/hb-view.cc      |  44 +-----
- util/hb-view.hh      |  79 +++++++++++
- util/helper-cairo.cc | 375
- ++++++++++++++++++++++++++++++++++++++++++++++++++
- util/helper-cairo.hh |  79 +++++++++++
- util/options.cc      |  79 +++++++++++
- util/options.hh      |  53 ++++++-
- util/view-cairo.cc   | 381
- ++-------------------------------------------------
- util/view-cairo.hh   |   8 +-
- 13 files changed, 785 insertions(+), 541 deletions(-)
+ configure.ac			     |	 6 -
+ util/Makefile.am		     |	44 +++--
+ util/{common.cc => hb-shape.cc}     |	57 ++++--
+ util/hb-view.cc		     |	44 +----
+ util/hb-view.hh		     |	79 ++++++++
+ util/helper-cairo.cc		     | 375
+ +++++++++++++++++++++++++++++++++++
+ util/{common.hh => helper-cairo.hh} |	64 ++++--
+ util/options.cc		     |	79 ++++++++
+ util/options.hh		     |	53 ++++-
+ util/view-cairo.cc		     | 381
+ ++----------------------------------
+ util/view-cairo.hh		     |	 8 +-
+ 11 files changed, 717 insertions(+), 473 deletions(-)
 
 commit eb2d8be7a8ede0c0f5e346cf06516792f83f36f7
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -33997,12 +33932,9 @@ Date:	Wed Aug 24 01:31:29 2011 +0200
 
     Minor
 
- src/Makefile.am	   |   2 +-
- src/hb-uniscribe-shape.cc | 454
- ----------------------------------------------
- src/hb-uniscribe.cc	   | 454
- ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 455 insertions(+), 455 deletions(-)
+ src/Makefile.am				| 2 +-
+ src/{hb-uniscribe-shape.cc => hb-uniscribe.cc} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 commit efde8113258b117ec0a7fbffe6d681442d045c41
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -34024,13 +33956,12 @@ Date:	Fri Aug 19 19:59:24 2011 +0200
     need to figure out the naming.  The generated code doesn't have the
     right name.
 
- configure.ac		      |  2 ++
- src/Makefile.am	      | 13 ++++++--
- src/hb-gobject-enums.cc.tmpl | 74
- ++++++++++++++++++++++++++++++++++++++++++++
- src/hb-gobject-structs.cc    | 63 +++++++++++++++++++++++++++++++++++++
- src/hb-gobject.cc	      | 63 -------------------------------------
- 5 files changed, 149 insertions(+), 66 deletions(-)
+ configure.ac				      |  2 +
+ src/Makefile.am			      | 13 +++--
+ src/hb-gobject-enums.cc.tmpl		      | 74
+ ++++++++++++++++++++++++++++
+ src/{hb-gobject.cc => hb-gobject-structs.cc} |  0
+ 4 files changed, 86 insertions(+), 3 deletions(-)
 
 commit 7d235d272f4c9213f54c9c807fb8fba5068c45b0
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -34120,27 +34051,21 @@ Date:	Wed Aug 17 14:19:59 2011 +0200
 
     Rename table files from eg maxp-private.hh to maxp-table.hh
 
- src/Makefile.am		      |   12 +-
- src/hb-font.cc			      |    2 +-
- src/hb-ot-head-private.hh	      |  143 ---
- src/hb-ot-head-table.hh	      |  143 +++
- src/hb-ot-layout-gdef-private.hh     |  427 ---------
- src/hb-ot-layout-gdef-table.hh       |  427 +++++++++
- src/hb-ot-layout-gpos-private.hh     | 1633
- ----------------------------------
- src/hb-ot-layout-gpos-table.hh       | 1633
- ++++++++++++++++++++++++++++++++++
- src/hb-ot-layout-gsub-private.hh     |  943 --------------------
- src/hb-ot-layout-gsub-table.hh       |  943 ++++++++++++++++++++
- src/hb-ot-layout-gsubgpos-private.hh |    2 +-
- src/hb-ot-layout.cc		      |    8 +-
- src/hb-ot-maxp-private.hh	      |   66 --
- src/hb-ot-maxp-table.hh	      |   66 ++
- src/hb-ot-name-private.hh	      |  128 ---
- src/hb-ot-name-table.hh	      |  128 +++
- src/hb-uniscribe-shape.cc	      |    2 +-
- src/main.cc			      |    2 +-
- 18 files changed, 3354 insertions(+), 3354 deletions(-)
+ src/Makefile.am					      | 12
+ ++++++------
+ src/hb-font.cc						      |  2 +-
+ src/{hb-ot-head-private.hh => hb-ot-head-table.hh}	      |  6 +++---
+ ...-ot-layout-gdef-private.hh => hb-ot-layout-gdef-table.hh} |  6 +++---
+ ...-ot-layout-gpos-private.hh => hb-ot-layout-gpos-table.hh} |  6 +++---
+ ...-ot-layout-gsub-private.hh => hb-ot-layout-gsub-table.hh} |  6 +++---
+ src/hb-ot-layout-gsubgpos-private.hh			      |  2 +-
+ src/hb-ot-layout.cc					      |
+ 8 ++++----
+ src/{hb-ot-maxp-private.hh => hb-ot-maxp-table.hh}	      |  6 +++---
+ src/{hb-ot-name-private.hh => hb-ot-name-table.hh}	      |  6 +++---
+ src/hb-uniscribe-shape.cc				      |  2 +-
+ src/main.cc						      |  2 +-
+ 12 files changed, 32 insertions(+), 32 deletions(-)
 
 commit 0b7e4d9f20b3ed947d0c441ca59b43c4097cdb0e
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -34342,15 +34267,12 @@ Date:	Tue Aug 9 15:03:00 2011 +0200
 
     Move hb-view into util/
 
- Makefile.am	  |   3 +-
- configure.ac	  |   1 +
- src/Makefile.am  |  13 --
- src/hb-view.cc   | 568
- -------------------------------------------------------
- util/Makefile.am |  24 +++
- util/hb-view.cc  | 568
- +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 6 files changed, 594 insertions(+), 583 deletions(-)
+ Makefile.am		  |  3 +--
+ configure.ac		  |  1 +
+ src/Makefile.am	  | 13 -------------
+ util/Makefile.am	  | 24 ++++++++++++++++++++++++
+ {src => util}/hb-view.cc |  0
+ 5 files changed, 26 insertions(+), 15 deletions(-)
 
 commit d753ac78da5619a0a545cdaf7a8e65787e996570
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -36513,13 +36435,10 @@ Date:	Wed Jun 1 18:10:10 2011 -0400
 
     Minor rename
 
- src/Makefile.am			 |  2 +-
- src/gen-arabic-joining-table.py	 | 83
- ---------------------------------
- src/gen-arabic-table.py		 | 83
- +++++++++++++++++++++++++++++++++
- src/hb-ot-shape-complex-arabic-table.hh |  2 +-
- 4 files changed, 85 insertions(+), 85 deletions(-)
+ src/Makefile.am					  | 2 +-
+ src/{gen-arabic-joining-table.py => gen-arabic-table.py} | 2 +-
+ src/hb-ot-shape-complex-arabic-table.hh		  | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
 commit 0eafce56eed4c5166ee5b97b121a452ffd292a7a
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -38811,14 +38730,10 @@ Date:	Wed Apr 27 12:15:06 2011 -0400
 
     Rename hb-view.c and test.c to .cc files
 
- src/Makefile.am |   4 +-
- src/hb-view.c	 | 540
- --------------------------------------------------------
- src/hb-view.cc  | 540
- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/test.c	 |  94 ----------
- src/test.cc	 |  97 ++++++++++
- 5 files changed, 639 insertions(+), 636 deletions(-)
+ src/Makefile.am	       | 4 ++--
+ src/{hb-view.c => hb-view.cc} | 2 +-
+ src/{test.c => test.cc}       | 5 ++++-
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
 commit eb5796f58897ecfb9d76fd99915bf1a30669a0fa
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -39114,43 +39029,32 @@ Date:	Wed Apr 20 18:50:27 2011 -0400
     So we can liberally use the simple features of C++ that parts of the
     codebase is already using.
 
- src/Makefile.am			 |  17 +-
- src/hb-blob-private.h			 |  59 ---
- src/hb-blob-private.hh			 |  59 +++
- src/hb-blob.cc				 |   4 +-
- src/hb-buffer-private.hh		 |   2 +-
- src/hb-common.c			 | 222 -----------
- src/hb-common.cc			 | 222 +++++++++++
- src/hb-font-private.h			 |  97 -----
- src/hb-font-private.hh			 |  97 +++++
- src/hb-font.cc				 |   6 +-
- src/hb-ft.c				 | 262 ------------
- src/hb-ft.cc				 | 262 ++++++++++++
- src/hb-glib.cc				 |   2 +-
- src/hb-icu.cc				 |   2 +-
- src/hb-object-private.h		 | 134 -------
- src/hb-object-private.hh		 | 132 +++++++
- src/hb-open-type-private.hh		 |   2 +-
- src/hb-ot-layout-gdef-private.hh	 |   2 +-
- src/hb-ot-layout-private.hh		 |   4 +-
- src/hb-ot-shape-complex-arabic-table.h  | 674
- -------------------------------
- src/hb-ot-shape-complex-arabic-table.hh | 674
- +++++++++++++++++++++++++++++++
- src/hb-ot-shape-complex-arabic.cc	 |   2 +-
- src/hb-ot-shape-complex-private.hh	 |   2 +-
- src/hb-ot-shape-private.hh		 |   2 +-
- src/hb-ot-tag.c			 | 677
- --------------------------------
- src/hb-ot-tag.cc			 | 677
- ++++++++++++++++++++++++++++++++
- src/hb-private.h			 | 301 --------------
- src/hb-private.hh			 | 301 ++++++++++++++
- src/hb-shape.cc			 |   2 +-
- src/hb-unicode-private.hh		 |   2 +-
- src/hb-unicode.cc			 |   2 +-
- src/hb-view.c				 |   6 +
- 32 files changed, 2457 insertions(+), 2452 deletions(-)
+ src/Makefile.am					 | 17
+ +++++++++--------
+ src/{hb-blob-private.h => hb-blob-private.hh}		 |  8 ++++----
+ src/hb-blob.cc						 |  4 ++--
+ src/hb-buffer-private.hh				 |  2 +-
+ src/{hb-common.c => hb-common.cc}			 |  8 ++++----
+ src/{hb-font-private.h => hb-font-private.hh}		 |  8 ++++----
+ src/hb-font.cc						 |  6 +++---
+ src/{hb-ft.c => hb-ft.cc}				 |  4 ++--
+ src/hb-glib.cc						 |  2 +-
+ src/hb-icu.cc						 |  2 +-
+ src/{hb-object-private.h => hb-object-private.hh}	 | 10 ++++------
+ src/hb-open-type-private.hh				 |  2 +-
+ src/hb-ot-layout-gdef-private.hh			 |  2 +-
+ src/hb-ot-layout-private.hh				 |  4 ++--
+ ...abic-table.h => hb-ot-shape-complex-arabic-table.hh} |  8 ++++----
+ src/hb-ot-shape-complex-arabic.cc			 |  2 +-
+ src/hb-ot-shape-complex-private.hh			 |  2 +-
+ src/hb-ot-shape-private.hh				 |  2 +-
+ src/{hb-ot-tag.c => hb-ot-tag.cc}			 |  8 ++++----
+ src/{hb-private.h => hb-private.hh}			 |  8 ++++----
+ src/hb-shape.cc					 |  2 +-
+ src/hb-unicode-private.hh				 |  2 +-
+ src/hb-unicode.cc					 |  2 +-
+ src/hb-view.c						 |  6 ++++++
+ 24 files changed, 63 insertions(+), 58 deletions(-)
 
 commit f19f4f9b0965ad7473a0f3a1ffcdbf16930e35d4
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -39158,12 +39062,9 @@ Date:	Wed Apr 20 18:25:56 2011 -0400
 
     Rename hb-blob.c to hb-blob.cc in preparation of more changes
 
- src/Makefile.am |   2 +-
- src/hb-blob.c	 | 356
- --------------------------------------------------------
- src/hb-blob.cc  | 356
- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 357 insertions(+), 357 deletions(-)
+ src/Makefile.am	       | 2 +-
+ src/{hb-blob.c => hb-blob.cc} | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 commit 04744e73bad22d679986173b5f0d84dbbf49dd57
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -39313,12 +39214,9 @@ Date:	Wed Apr 20 02:56:39 2011 -0400
 
     [test] Rename test-types to test-common
 
- test/Makefile.am   |	2 +-
- test/test-common.c | 166
- +++++++++++++++++++++++++++++++++++++++++++++++++++++
- test/test-types.c  | 166
- -----------------------------------------------------
- 3 files changed, 167 insertions(+), 167 deletions(-)
+ test/Makefile.am		      | 2 +-
+ test/{test-types.c => test-common.c} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 commit f144a8ea840c6452c1fece2fd988b42a8ea7c5a6
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -39366,23 +39264,18 @@ Date:	Wed Apr 20 02:00:47 2011 -0400
 
     unicode: Cleanup implementation
 
- src/Makefile.am	   |   8 +-
- src/hb-buffer-private.hh  |   2 +-
- src/hb-glib.c		   | 230 -------------------------------------
- src/hb-glib.cc		   | 231 +++++++++++++++++++++++++++++++++++++
- src/hb-icu.c		   | 285
- ----------------------------------------------
- src/hb-icu.cc		   | 285
- ++++++++++++++++++++++++++++++++++++++++++++++
- src/hb-ot-shape.cc	   |  14 +--
- src/hb-shape.cc	   |   4 +-
- src/hb-unicode-private.h  |  77 -------------
- src/hb-unicode-private.hh |  96 ++++++++++++++++
- src/hb-unicode.c	   | 256 -----------------------------------------
- src/hb-unicode.cc	   | 223 ++++++++++++++++++++++++++++++++++++
- src/hb-unicode.h	   |  57 +++++-----
- test/test-unicode.c	   |  23 ++--
- 14 files changed, 892 insertions(+), 899 deletions(-)
+ src/Makefile.am				    |	8 +-
+ src/hb-buffer-private.hh			    |	2 +-
+ src/{hb-glib.c => hb-glib.cc}			    |  65 +++----
+ src/{hb-icu.c => hb-icu.cc}			    |  30 +--
+ src/hb-ot-shape.cc				    |  14 +-
+ src/hb-shape.cc				    |	4 +-
+ ...{hb-unicode-private.h => hb-unicode-private.hh} |  65 ++++---
+ src/{hb-unicode.c => hb-unicode.cc}		    | 213
+ +++++++++------------
+ src/hb-unicode.h				    |  57 +++---
+ test/test-unicode.c				    |  23 ++-
+ 10 files changed, 237 insertions(+), 244 deletions(-)
 
 commit ecfb773829a5d98a4f5456a992f3e5ecd6731435
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -41199,17 +41092,15 @@ Date:	Tue Oct 12 16:50:36 2010 -0400
 
     Add hb_ot_complex_shaper_t stuff and start hooking Arabic shaper up
 
- src/Makefile.am		    |	3 +-
- src/hb-ot-map-private.hh	    |	2 +-
- src/hb-ot-map.cc		    |	2 +-
- src/hb-ot-shape-arabic.cc	    | 706
- ------------------------------------
- src/hb-ot-shape-complex-arabic.cc  | 715
- +++++++++++++++++++++++++++++++++++++
- src/hb-ot-shape-complex-private.hh |  88 +++++
- src/hb-ot-shape-private.hh	    |  12 +-
- src/hb-ot-shape.cc		    |	8 +-
- 8 files changed, 813 insertions(+), 723 deletions(-)
+ src/Makefile.am				    |  3 +-
+ src/hb-ot-map-private.hh			    |  2 +-
+ src/hb-ot-map.cc				    |  2 +-
+ ...ape-arabic.cc => hb-ot-shape-complex-arabic.cc} |  9 +++
+ src/hb-ot-shape-complex-private.hh		    | 88
+ ++++++++++++++++++++++
+ src/hb-ot-shape-private.hh			    | 12 +--
+ src/hb-ot-shape.cc				    |  8 +-
+ 7 files changed, 107 insertions(+), 17 deletions(-)
 
 commit 605ed468f380f86d642031f6451447d270cb6de1
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -41888,19 +41779,15 @@ Date:	Fri Jul 23 15:00:13 2010 -0400
 
     Helps with avoiding many "extern C" declarations in source files.
 
- src/Makefile.am		  |   4 +-
- src/check-header-guards.sh	  |   2 +-
- src/hb-font-private.h		  |  95 ++++++++++++++++
- src/hb-font-private.hh		  |  95 ----------------
- src/hb-font.cc			  |   2 +-
- src/hb-ft.c			  | 240
- +++++++++++++++++++++++++++++++++++++++
- src/hb-ft.cc			  | 240
- ---------------------------------------
- src/hb-graphite.cc		  |   2 +-
- src/hb-ot-layout-gdef-private.hh |   2 +-
- src/hb-ot-layout-private.hh	  |   2 +-
- 10 files changed, 342 insertions(+), 342 deletions(-)
+ src/Makefile.am			       | 4 ++--
+ src/check-header-guards.sh		       | 2 +-
+ src/{hb-font-private.hh => hb-font-private.h} | 6 +++---
+ src/hb-font.cc				       | 2 +-
+ src/{hb-ft.cc => hb-ft.c}		       | 2 +-
+ src/hb-graphite.cc			       | 2 +-
+ src/hb-ot-layout-gdef-private.hh	       | 2 +-
+ src/hb-ot-layout-private.hh		       | 2 +-
+ 8 files changed, 11 insertions(+), 11 deletions(-)
 
 commit 0dd200d28f51bf4062d8a377432c8977c80cb210
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -43227,32 +43114,24 @@ Date:	Wed May 12 18:23:21 2010 -0400
 
     In anticipation for buffer revamp coming.
 
- src/Makefile.am		      |  16 +-
- src/hb-buffer-private.h	      | 155 ---------
- src/hb-buffer-private.hh	      | 155 +++++++++
- src/hb-buffer.c		      | 650
- -----------------------------------
- src/hb-buffer.cc		      | 650
- +++++++++++++++++++++++++++++++++++
- src/hb-common.h		      |   1 +
- src/hb-font-private.h		      |  92 -----
- src/hb-font-private.hh		      |  92 +++++
- src/hb-font.cc			      |   4 +-
- src/hb-ft.c			      | 240 -------------
- src/hb-ft.cc			      | 240 +++++++++++++
- src/hb-ot-layout-common-private.hh   |   2 +-
- src/hb-ot-layout-gdef-private.hh     |   2 +-
- src/hb-ot-layout-gsubgpos-private.hh |   2 +-
- src/hb-ot-layout-private.h	      | 121 -------
- src/hb-ot-layout-private.hh	      | 121 +++++++
- src/hb-ot-layout.cc		      |   2 +-
- src/hb-ot-shape-private.h	      |  53 ---
- src/hb-ot-shape-private.hh	      |  53 +++
- src/hb-ot-shape.c		      | 164 ---------
- src/hb-ot-shape.cc		      | 164 +++++++++
- src/hb-shape.c			      | 258 --------------
- src/hb-shape.cc		      | 258 ++++++++++++++
- 23 files changed, 1748 insertions(+), 1747 deletions(-)
+ src/Makefile.am					 | 16
+ ++++++++--------
+ src/{hb-buffer-private.h => hb-buffer-private.hh}	 |  2 +-
+ src/{hb-buffer.c => hb-buffer.cc}			 | 14
+ +++++++-------
+ src/hb-common.h					 |  1 +
+ src/{hb-font-private.h => hb-font-private.hh}		 |  2 +-
+ src/hb-font.cc						 |  4 ++--
+ src/{hb-ft.c => hb-ft.cc}				 |  8 ++++----
+ src/hb-ot-layout-common-private.hh			 |  2 +-
+ src/hb-ot-layout-gdef-private.hh			 |  2 +-
+ src/hb-ot-layout-gsubgpos-private.hh			 |  2 +-
+ src/{hb-ot-layout-private.h => hb-ot-layout-private.hh} |  2 +-
+ src/hb-ot-layout.cc					 |  2 +-
+ src/{hb-ot-shape-private.h => hb-ot-shape-private.hh}	 |  0
+ src/{hb-ot-shape.c => hb-ot-shape.cc}			 |  4 ++--
+ src/{hb-shape.c => hb-shape.cc}			 |  6 +++---
+ 15 files changed, 34 insertions(+), 33 deletions(-)
 
 commit c3df649f258b334e93c7626a43cd8ebfbd5a610e
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -46454,24 +46333,21 @@ Date:	Mon Nov 2 16:28:39 2009 -0500
 
     Add build system
 
- AUTHORS	 |   0
- COPYING	 |  17 +++++
- Makefile.am	 |   3 +
- NEWS		 |   0
- README		 |   9 +++
- TODO		 |   6 ++
- autogen.sh	 | 189
- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- configure.ac	 |  40 ++++++++++++
- git.mk		 | 184
- ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- harfbuzz.pc.in  |  11 ++++
- src/.gitignore  |   1 -
- src/COPYING	 |  17 -----
- src/Makefile.ng |  11 ----
- src/README	 |   9 ---
- src/TODO	 |   6 --
- 15 files changed, 459 insertions(+), 44 deletions(-)
+ AUTHORS		|   0
+ src/COPYING => COPYING |   0
+ Makefile.am		|   3 +
+ NEWS			|   0
+ src/README => README	|   0
+ src/TODO => TODO	|   0
+ autogen.sh		| 189
+ +++++++++++++++++++++++++++++++++++++++++++++++++
+ configure.ac		|  40 +++++++++++
+ git.mk			| 184
+ +++++++++++++++++++++++++++++++++++++++++++++++
+ harfbuzz.pc.in		|  11 +++
+ src/.gitignore		|   1 -
+ src/Makefile.ng	|  11 ---
+ 12 files changed, 427 insertions(+), 12 deletions(-)
 
 commit c09ed9801ead002d6f8e507ce664b83707b202e9
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -47564,14 +47440,11 @@ Date:	Tue Aug 4 22:06:57 2009 -0400
 
     [HB] Rename open-types to open-type; beauty
 
- src/Makefile.am		    |	2 +-
- src/hb-open-file-private.hh	    |	2 +-
- src/hb-open-type-private.hh	    | 565
- +++++++++++++++++++++++++++++++++++++
- src/hb-open-types-private.hh	    | 565
- -------------------------------------
- src/hb-ot-layout-common-private.hh |	2 +-
- 5 files changed, 568 insertions(+), 568 deletions(-)
+ src/Makefile.am					   | 2 +-
+ src/hb-open-file-private.hh				   | 2 +-
+ src/{hb-open-types-private.hh => hb-open-type-private.hh} | 0
+ src/hb-ot-layout-common-private.hh			   | 2 +-
+ 4 files changed, 3 insertions(+), 3 deletions(-)
 
 commit f4b58d3fc2956a9d1b6178588d809c781f7a5c0c
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -47968,12 +47841,9 @@ Date:	Sun Aug 2 20:06:48 2009 -0400
 
     [HB] Rename hb-font.c to hb-font.cc
 
- src/Makefile.am |   2 +-
- src/hb-font.c	 | 349
- --------------------------------------------------------
- src/hb-font.cc  | 349
- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 350 insertions(+), 350 deletions(-)
+ src/Makefile.am	       | 2 +-
+ src/{hb-font.c => hb-font.cc} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 commit 5f5b24f99f52bbc922e238b65c06061ba07c8548
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -47981,26 +47851,18 @@ Date:	Sun Aug 2 20:03:12 2009 -0400
 
     [OT] Rename C++ header files from *.h to *.hh
 
- src/Makefile.am		      |   14 +-
- src/hb-open-file-private.h	      |  145 ----
- src/hb-open-file-private.hh	      |  145 ++++
- src/hb-open-types-private.h	      |  386 ----------
- src/hb-open-types-private.hh	      |  386 ++++++++++
- src/hb-ot-layout-common-private.h    |  447 -----------
- src/hb-ot-layout-common-private.hh   |  447 +++++++++++
- src/hb-ot-layout-gdef-private.h      |  320 --------
- src/hb-ot-layout-gdef-private.hh     |  320 ++++++++
- src/hb-ot-layout-gpos-private.h      | 1355
- ----------------------------------
- src/hb-ot-layout-gpos-private.hh     | 1355
- ++++++++++++++++++++++++++++++++++
- src/hb-ot-layout-gsub-private.h      |  751 -------------------
- src/hb-ot-layout-gsub-private.hh     |  751 +++++++++++++++++++
- src/hb-ot-layout-gsubgpos-private.h  |  773 -------------------
- src/hb-ot-layout-gsubgpos-private.hh |  773 +++++++++++++++++++
- src/hb-ot-layout.cc		      |    8 +-
- src/main.cc			      |    6 +-
- 17 files changed, 4191 insertions(+), 4191 deletions(-)
+ src/Makefile.am					    | 14
+ +++++++-------
+ src/{hb-open-file-private.h => hb-open-file-private.hh}    |  8 ++++----
+ src/{hb-open-types-private.h => hb-open-types-private.hh}  |  6 +++---
+ ...out-common-private.h => hb-ot-layout-common-private.hh} |  8 ++++----
+ ...-layout-gdef-private.h => hb-ot-layout-gdef-private.hh} |  8 ++++----
+ ...-layout-gpos-private.h => hb-ot-layout-gpos-private.hh} |  8 ++++----
+ ...-layout-gsub-private.h => hb-ot-layout-gsub-private.hh} |  8 ++++----
+ ...gsubgpos-private.h => hb-ot-layout-gsubgpos-private.hh} |  8 ++++----
+ src/hb-ot-layout.cc					    |  8 ++++----
+ src/main.cc						    |  6 +++---
+ 10 files changed, 41 insertions(+), 41 deletions(-)
 
 commit 2098a021a826e76ee27d5db74e32738d7d1c3d30
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -48008,15 +47870,15 @@ Date:	Sun Aug 2 19:57:00 2009 -0400
 
     [HB] Move OT file handling out of ot-layout
 
- src/Makefile.am		   |   3 +-
- src/hb-open-file-private.h	   | 145 +++++++++++
- src/hb-open-types-private.h	   | 386 +++++++++++++++++++++++++++++
- src/hb-ot-layout-common-private.h |   4 +-
- src/hb-ot-layout-open-private.h   | 495
- --------------------------------------
- src/hb-ot-layout.cc		   |   2 +-
- src/main.cc			   |   4 +-
- 7 files changed, 539 insertions(+), 500 deletions(-)
+ src/Makefile.am				    |	3 +-
+ src/hb-open-file-private.h			    | 145
+ +++++++++++++++++++++
+ ...yout-open-private.h => hb-open-types-private.h} | 117
+ +----------------
+ src/hb-ot-layout-common-private.h		    |	4 +-
+ src/hb-ot-layout.cc				    |	2 +-
+ src/main.cc					    |	4 +-
+ 6 files changed, 157 insertions(+), 118 deletions(-)
 
 commit 0ead481a5a8623103565fd7d924666e7342278dd
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -48172,15 +48034,14 @@ Date:	Sat Aug 1 20:29:22 2009 -0400
 
     [HB] Simplify object creation
 
- src/Makefile.am	   |  2 +-
- src/hb-blob.c		   |  6 +--
- src/hb-font-private.h	   |  1 -
- src/hb-font.c		   | 37 ++++++------------
- src/hb-object-private.h   | 97
- +++++++++++++++++++++++++++++++++++++++++++++++
- src/hb-private.h	   |  2 +
- src/hb-refcount-private.h | 87 ------------------------------------------
- 7 files changed, 112 insertions(+), 120 deletions(-)
+ src/Makefile.am				    |  2 +-
+ src/hb-blob.c					    |  6 +---
+ src/hb-font-private.h				    |  1 -
+ src/hb-font.c					    | 37
+ +++++++---------------
+ src/{hb-refcount-private.h => hb-object-private.h} | 14 ++++++--
+ src/hb-private.h				    |  2 ++
+ 6 files changed, 27 insertions(+), 35 deletions(-)
 
 commit c62b503770325819f249885dfc9d4683a69c9efd
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -48971,20 +48832,15 @@ Date:	Wed May 20 05:42:12 2009 -0400
 
     [HB] Rename harfbuzz-buffer to hb-buffer
 
- src/Makefile.am		     |	 5 +-
- src/harfbuzz-buffer-private.h	     | 106 -----------
- src/harfbuzz-buffer.c		     | 349
- ------------------------------------
- src/harfbuzz-buffer.h		     |	94 ----------
- src/hb-buffer-private.h	     | 106 +++++++++++
- src/hb-buffer.c		     | 347
- +++++++++++++++++++++++++++++++++++
- src/hb-buffer.h		     |	94 ++++++++++
- src/hb-ot-layout-gsubgpos-private.h |	 2 +-
- src/hb-ot-layout-private.h	     |	 2 +-
- src/hb-ot-layout.cc		     |	 5 +-
- src/hb-ot-layout.h		     |	 2 +-
- 11 files changed, 556 insertions(+), 556 deletions(-)
+ src/Makefile.am					| 5 +++--
+ src/{harfbuzz-buffer-private.h => hb-buffer-private.h} | 8 ++++----
+ src/{harfbuzz-buffer.c => hb-buffer.c}			| 6 ++----
+ src/{harfbuzz-buffer.h => hb-buffer.h}			| 8 ++++----
+ src/hb-ot-layout-gsubgpos-private.h			| 2 +-
+ src/hb-ot-layout-private.h				| 2 +-
+ src/hb-ot-layout.cc					| 5 +++--
+ src/hb-ot-layout.h					| 2 +-
+ 8 files changed, 19 insertions(+), 19 deletions(-)
 
 commit b857b49c82782d29d6d189f1a9f4a84d39cd84ea
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -50447,8 +50303,7 @@ Date:	Thu Jan 24 03:11:09 2008 -0500
 
     Starting public interface
 
- src/Makefile			 | 11 -----
- src/Makefile.ng		 | 11 +++++
+ src/{Makefile => Makefile.ng}	 |  0
  src/hb-ot-layout-gdef-private.h | 17 ++++----
  src/hb-ot-layout-gsub-private.h |  3 +-
  src/hb-ot-layout-open-private.h | 92
@@ -50457,7 +50312,7 @@ Date:	Thu Jan 24 03:11:09 2008 -0500
  src/hb-ot-layout.cc		 | 67 ++++++++++++++++++++++++++++++
  src/hb-ot-layout.h		 | 35 ++++++++++++++--
  src/main.cc			 |  1 +
- 9 files changed, 236 insertions(+), 52 deletions(-)
+ 8 files changed, 225 insertions(+), 41 deletions(-)
 
 commit 7d6b95b000ec6cd8ca93113b2d81a049ad2f9bbe
 Author: Behdad Esfahbod <behdad@src.gnome.org>
@@ -50537,21 +50392,20 @@ Date:	Wed Jan 23 05:00:30 2008 -0500
 
     Clean up file names, add namespace
 
- src/harfbuzz-common.h		 |  14 -
- src/harfbuzz-gdef-private.h	 | 213 -----------
- src/harfbuzz-gdef.h		 |  11 -
- src/harfbuzz-open-private.h	 | 804
- ----------------------------------------
- src/harfbuzz-open.h		 |  17 -
- src/harfbuzz-private.h		 |  12 -
- src/hb-common.h		 |  14 +
- src/hb-ot-layout-gdef-private.h | 213 +++++++++++
- src/hb-ot-layout-open-private.h | 804
- ++++++++++++++++++++++++++++++++++++++++
- src/hb-ot-layout.h		 |  17 +
- src/hb-private.h		 |  12 +
- src/main.cc			 |   4 +-
- 12 files changed, 1062 insertions(+), 1073 deletions(-)
+ src/harfbuzz-common.h					    | 14
+ --------------
+ src/harfbuzz-gdef.h					    | 11
+ -----------
+ src/hb-common.h					    | 14
+ ++++++++++++++
+ ...harfbuzz-gdef-private.h => hb-ot-layout-gdef-private.h} |  8 ++++----
+ ...harfbuzz-open-private.h => hb-ot-layout-open-private.h} | 10
+ +++++-----
+ src/{harfbuzz-open.h => hb-ot-layout.h}		    | 12
+ ++++++------
+ src/{harfbuzz-private.h => hb-private.h}		    |  6 +++---
+ src/main.cc						    |  4 ++--
+ 8 files changed, 34 insertions(+), 45 deletions(-)
 
 commit 1f437e6f47fb6c15761021bd2078f31778f2179c
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -50871,26 +50725,24 @@ Date:	Thu Oct 25 00:23:46 2007 +0000
 	    and more
 	    type renames and moving code around.
 
- src/Makefile.am	     |	 3 +-
- src/ftglue.c		     | 287
- --------------------------------------------
- src/ftglue.h		     | 151 -----------------------
- src/harfbuzz-dump-main.c    |	48 +-------
- src/harfbuzz-dump.c	     |	30 ++---
- src/harfbuzz-gdef.c	     |	18 +--
- src/harfbuzz-global.h	     |	18 +++
- src/harfbuzz-gpos-private.h |	 2 +-
- src/harfbuzz-gpos.c	     |	90 +++++++-------
- src/harfbuzz-gsub-private.h |	 2 +-
- src/harfbuzz-gsub.c	     |	64 +++++-----
- src/harfbuzz-impl.c	     | 283
- +++++++++++++++++++++++++++++++++++++++++++
- src/harfbuzz-impl.h	     | 114 ++++++++++++++++--
- src/harfbuzz-open-private.h |	14 +--
- src/harfbuzz-open.c	     |	32 ++---
- src/harfbuzz-open.h	     |	16 ---
- src/harfbuzz.c		     |	 4 +-
- 17 files changed, 542 insertions(+), 634 deletions(-)
+ src/Makefile.am		   |   3 +-
+ src/ftglue.h			   | 151
+ --------------------------------------
+ src/harfbuzz-dump-main.c	   |  48 ++----------
+ src/harfbuzz-dump.c		   |  30 ++++----
+ src/harfbuzz-gdef.c		   |  18 ++---
+ src/harfbuzz-global.h		   |  18 +++++
+ src/harfbuzz-gpos-private.h	   |   2 +-
+ src/harfbuzz-gpos.c		   |  90 +++++++++++------------
+ src/harfbuzz-gsub-private.h	   |   2 +-
+ src/harfbuzz-gsub.c		   |  64 ++++++++--------
+ src/{ftglue.c => harfbuzz-impl.c} |  64 ++++++++--------
+ src/harfbuzz-impl.h		   | 114 ++++++++++++++++++++++++++--
+ src/harfbuzz-open-private.h	   |  14 ++--
+ src/harfbuzz-open.c		   |  32 ++++----
+ src/harfbuzz-open.h		   |  16 ----
+ src/harfbuzz.c			   |   4 +-
+ 16 files changed, 289 insertions(+), 381 deletions(-)
 
 commit 5716ae278a82d318ddbfeba01d0785d4efbe1454
 Author: Behdad Esfahbod <behdad@gnome.org>
@@ -51390,15 +51242,15 @@ Date:	Thu Dec 28 06:10:59 2006 -0500
 
     Break and rename, in the layout of old HarfBuzz codebase
 
- src/.gitignore		     |	 1 +
- src/Makefile		     |	 2 +-
- src/harfbuzz-common.h	     |	14 +
- src/harfbuzz-ng.cc	     | 802
- --------------------------------------------
- src/harfbuzz-open-private.h | 697 ++++++++++++++++++++++++++++++++++++++
- src/harfbuzz-open.h	     |	13 +
- src/main.cc		     |	98 ++++++
- 7 files changed, 824 insertions(+), 803 deletions(-)
+ src/.gitignore					 |   1 +
+ src/Makefile					 |   2 +-
+ src/harfbuzz-common.h				 |  14 +++
+ src/{harfbuzz-ng.cc => harfbuzz-open-private.h} | 117
+ ++----------------------
+ src/harfbuzz-open.h				 |  13 +++
+ src/main.cc					 |  98
+ ++++++++++++++++++++
+ 6 files changed, 133 insertions(+), 112 deletions(-)
 
 commit 3158d84b0dfe5032e7c56c03f2da97b8ab549d94
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -51526,12 +51378,9 @@ Date:	Mon Dec 25 10:28:31 2006 -0500
 
     Rename to harfbuzz-ng.cc
 
- src/Makefile		 |   2 +-
- src/harfbuzz-ng.cc	 | 513
- ++++++++++++++++++++++++++++++++++++++++++++++++
- src/hb-types-private.cc | 513
- ------------------------------------------------
- 3 files changed, 514 insertions(+), 514 deletions(-)
+ src/Makefile				     | 2 +-
+ src/{hb-types-private.cc => harfbuzz-ng.cc} | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
 commit f8ba99f6f322800a915428ffc3b5eaf1be2e6c21
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -51898,52 +51747,48 @@ Date:	Fri Mar 31 12:28:09 2006 +0000
 
 	    * pango/pango-ot-*: Updated to use HarfBuzz symbol names.
 
- src/COPYING		     |	 15 +
- src/COPYING.FTL	     |	174 ++
- src/COPYING.GPL	     |	340 +++
- src/FT-license.txt	     |	 28 -
- src/FTL.TXT		     |	174 --
- src/Makefile.am	     |	 89 +-
- src/README		     |	 44 +-
- src/disasm.c		     |	720 -----
- src/disasm.h		     |	 26 -
- src/ftglue.c		     |	 88 +-
- src/ftglue.h		     |	 68 +-
- src/ftxgdef.c		     | 1225 ---------
- src/ftxgdef.h		     |	224 --
- src/ftxgpos.c		     | 6199
- ------------------------------------------
- src/ftxgpos.h		     |	838 ------
- src/ftxgsub.c		     | 4533 -------------------------------
- src/ftxgsub.h		     |	594 ----
- src/ftxopen.c		     | 1552 -----------
- src/ftxopen.h		     |	317 ---
- src/ftxopenf.h		     |	166 --
- src/harfbuzz-buffer.c	     |	227 ++
- src/harfbuzz-buffer.h	     |	106 +
- src/harfbuzz-dump-main.c    |	272 ++
- src/harfbuzz-dump.c	     |	720 +++++
- src/harfbuzz-dump.h	     |	 34 +
- src/harfbuzz-gdef-private.h |	101 +
- src/harfbuzz-gdef.c	     | 1228 +++++++++
- src/harfbuzz-gdef.h	     |	127 +
- src/harfbuzz-gpos-private.h |	683 +++++
- src/harfbuzz-gpos.c	     | 6269
- +++++++++++++++++++++++++++++++++++++++++++
- src/harfbuzz-gpos.h	     |	168 ++
- src/harfbuzz-gsub-private.h |	448 ++++
- src/harfbuzz-gsub.c	     | 4581 +++++++++++++++++++++++++++++++
- src/harfbuzz-gsub.h	     |	132 +
- src/harfbuzz-impl.h	     |	 64 +
- src/harfbuzz-open-private.h |	 81 +
- src/harfbuzz-open.c	     | 1426 ++++++++++
- src/harfbuzz-open.h	     |	285 ++
- src/harfbuzz.c		     |	 19 +
- src/harfbuzz.h		     |	 23 +
- src/otlbuffer.c	     |	238 --
- src/otlbuffer.h	     |	103 -
- src/ottest.c		     |	274 --
- 43 files changed, 17635 insertions(+), 17388 deletions(-)
+ src/COPYING				|   15 +
+ src/{FTL.TXT => COPYING.FTL}		|    0
+ src/COPYING.GPL			|  340 ++
+ src/FT-license.txt			|   28 -
+ src/Makefile.am			|   89 +-
+ src/README				|   44 +-
+ src/ftglue.c				|   88 +-
+ src/ftglue.h				|   68 +-
+ src/ftxgdef.c				| 1225 -------
+ src/ftxgdef.h				|  224 --
+ src/ftxgpos.c				| 6199
+ -------------------------------
+ src/ftxgpos.h				|  838 -----
+ src/ftxgsub.c				| 4533 -----------------------
+ src/ftxgsub.h				|  594 ---
+ src/ftxopen.c				| 1552 --------
+ src/ftxopen.h				|  317 --
+ src/ftxopenf.h				|  166 -
+ src/harfbuzz-buffer.c			|  227 ++
+ src/harfbuzz-buffer.h			|  106 +
+ src/{ottest.c => harfbuzz-dump-main.c} |   84 +-
+ src/{disasm.c => harfbuzz-dump.c}	|  186 +-
+ src/{disasm.h => harfbuzz-dump.h}	|   18 +-
+ src/harfbuzz-gdef-private.h		|  101 +
+ src/harfbuzz-gdef.c			| 1228 +++++++
+ src/harfbuzz-gdef.h			|  127 +
+ src/harfbuzz-gpos-private.h		|  683 ++++
+ src/harfbuzz-gpos.c			| 6269
+ ++++++++++++++++++++++++++++++++
+ src/harfbuzz-gpos.h			|  168 +
+ src/harfbuzz-gsub-private.h		|  448 +++
+ src/harfbuzz-gsub.c			| 4581 +++++++++++++++++++++++
+ src/harfbuzz-gsub.h			|  132 +
+ src/harfbuzz-impl.h			|   64 +
+ src/harfbuzz-open-private.h		|   81 +
+ src/harfbuzz-open.c			| 1426 ++++++++
+ src/harfbuzz-open.h			|  285 ++
+ src/harfbuzz.c				|   19 +
+ src/harfbuzz.h				|   23 +
+ src/otlbuffer.c			|  238 --
+ src/otlbuffer.h			|  103 -
+ 39 files changed, 16582 insertions(+), 16335 deletions(-)
 
 commit dd2a8d4d490df1d310e7553ba6c7c8de661f28a1
 Author: Behdad Esfahbod <behdad@gnome.org>
