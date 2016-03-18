@@ -1,3 +1,7 @@
+2016-03-16  Karl Berry  <karl@tug.org>
+
+	* Build: check for exitstatus.txt not having an exit status.
+
 2016-03-06  Karl Berry  <karl@tug.org>
 
 	* version.ac: remove /dev to prepare for 2016.
