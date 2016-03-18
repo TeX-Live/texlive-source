@@ -1,5 +1,33 @@
 Release 0.41.0
         core:
+         * Add the support for version 5 + revision 6 documents. Bug #85368
+         * Add initial support for Signature handling
+         * Initialize gamut mapping multipliers in ::copy() functions. Bug #90697
+         * Implement jpx streams support with depth < 8
+         * Handle SMaskInData = 0 for JPX encoded images. Bug #93468
+         * Fix rendering of some broken PDF files. Bug #92508
+         * PSOutputDev: Support for LZW encoding
+         * PSOutputDev: Add support for Flate compression in Level 3 output.
+         * SplashOuputDev: Implement function shading. Bug #94441
+         * SplashOuputDev: Improve rendering of some non embedded fonts. Bug #94054
+         * SplashOuputDev: Fall back to Gfx implementation of tiling pattern if repetition rate is small. Bug #90596
+         * SplashOuputDev: Implementation of Matte entries in softmasks of softmasked images. Bug #22473
+         * SplashOuputDev: assure line width > 0 in case of text stroke. Bug #94038
+         * TextOuputDev: Cache result of inner loop in visitDepthFirst. Bug #77087
+         * Avoid attempting a tiling pattern fill with a singular transform matrix
+
+        utils:
+         * pdfinfo: Add option to show document structure
+         * pdfsig: New command that gives information about signature
+
+        qt4:
+         * Fix bug in links to remote documents getting the page number wrong sometimes
+
+        qt5:
+         * Fix bug in links to remote documents getting the page number wrong sometimes
+
+Release 0.41.0
+        core:
          * CairoOutputDev: add missing font types (fontCIDType0COT and fontTrueTypeOT). Bug #93559
          * SplashOutputDev: Adjust limit check and check in addition bitmap pointer. Bug #94053
 

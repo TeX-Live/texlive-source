@@ -2,7 +2,7 @@
 //
 // Gfx.cc
 //
-// Copyright 1996-2003 Glyph & Cog, LLC
+// Copyright 1996-2013 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005 Jonathan Blandford <jrb@redhat.com>
-// Copyright (C) 2005-2013, 2015 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005-2013, 2015, 2016 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2006 Thorkild Stray <thorkild@ifi.uio.no>
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006-2011 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -28,7 +28,7 @@
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2008 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2009 M Joonas Pihlaja <jpihlaja@cc.helsinki.fi>
-// Copyright (C) 2009-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009-2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 William Bader <williambader@hotmail.com>
 // Copyright (C) 2009, 2010 David Benjamin <davidben@mit.edu>
 // Copyright (C) 2010 Nils Höglund <nils.hoglund@gmail.com>
@@ -2126,7 +2126,12 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
   btm = baseMatrix;
   ptm = tPat->getMatrix();
   // iCTM = invert CTM
-  det = 1 / (ctm[0] * ctm[3] - ctm[1] * ctm[2]);
+  det = ctm[0] * ctm[3] - ctm[1] * ctm[2];
+  if (fabs(det) < 0.000001) {
+    error(errSyntaxError, getPos(), "Singular matrix in tiling pattern fill");
+    return;
+  }
+  det = 1 / det;
   ictm[0] = ctm[3] * det;
   ictm[1] = -ctm[1] * det;
   ictm[2] = -ctm[2] * det;
@@ -2149,7 +2154,12 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
   m[5] = m1[4] * ictm[1] + m1[5] * ictm[3] + ictm[5];
 
   // construct a (device space) -> (pattern space) transform matrix
-  det = 1 / (m1[0] * m1[3] - m1[1] * m1[2]);
+  det = m1[0] * m1[3] - m1[1] * m1[2];
+  if (fabs(det) < 0.000001) {
+    error(errSyntaxError, getPos(), "Singular matrix in tiling pattern fill");
+    return;
+  }
+  det = 1 / det;
   imb[0] = m1[3] * det;
   imb[1] = -m1[1] * det;
   imb[2] = -m1[2] * det;
@@ -2335,7 +2345,12 @@ void Gfx::doShadingPatternFill(GfxShadingPattern *sPat,
   btm = baseMatrix;
   ptm = sPat->getMatrix();
   // iCTM = invert CTM
-  det = 1 / (ctm[0] * ctm[3] - ctm[1] * ctm[2]);
+  det = ctm[0] * ctm[3] - ctm[1] * ctm[2];
+  if (fabs(det) < 0.000001) {
+    error(errSyntaxError, getPos(), "Singular matrix in shading pattern fill");
+    return;
+  }
+  det = 1 / det;
   ictm[0] = ctm[3] * det;
   ictm[1] = -ctm[1] * det;
   ictm[2] = -ctm[2] * det;
@@ -4553,7 +4568,34 @@ void Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 	delete maskColorMap;
 	goto err1;
       }
-      //~ handle the Matte entry
+      // handle the Matte entry
+      maskDict->lookup("Matte", &obj1);
+      if (obj1.isArray()) {
+        if (obj1.getArray()->getLength() != colorSpace->getNComps()) {
+          error(errSyntaxError, -1, "Matte entry should have {0:d} components but has {1:d}",
+            colorSpace->getNComps(), obj1.getArray()->getLength());
+        } else if (maskWidth != width || maskHeight != height) {
+          error(errSyntaxError, -1, "Softmask with matte entry {0:d} x {1:d} must have same geometry as the image {2:d} x {3:d}",
+            maskWidth, maskHeight, width, height);
+        } else {
+          GfxColor matteColor;
+          for (i = 0; i < colorSpace->getNComps(); i++) {
+            obj1.getArray()->get(i, &obj2);
+            if (!obj2.isNum()) {
+              obj2.free();
+              error(errSyntaxError, -1, "Matte entry {0:d} should be a number but it's of type {1:d}", i, obj2.getType());
+
+              break;
+            }
+            matteColor.c[i] = dblToCol(obj2.getNum());
+            obj2.free();
+          }
+          if (i == colorSpace->getNComps()) {
+            maskColorMap->setMatteColor(&matteColor);
+          }
+        }
+      }
+      obj1.free();
       haveSoftMask = gTrue;
     } else if (maskObj.isArray()) {
       // color key mask

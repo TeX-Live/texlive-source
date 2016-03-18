@@ -20,7 +20,7 @@
 // Copyright (C) 2009-2011, 2013 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
 // Copyright (C) 2011 Andrea Canciani <ranma42@gmail.com>
-// Copyright (C) 2011-2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011-2014, 2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2013 Lu Wang <coolwanglu@gmail.com>
 // Copyright (C) 2015 Adrian Johnson <ajohnson@redneon.com>
 //
@@ -1194,6 +1194,9 @@ public:
   void getDeviceN(Guchar *x, GfxColor *deviceN);
   void getColor(Guchar *x, GfxColor *color);
 
+  // Matte color ops
+  void setMatteColor(GfxColor *color) { useMatte = gTrue; matteColor = *color; }
+  GfxColor *getMatteColor() { return (useMatte) ? &matteColor : NULL; }
 private:
 
   GfxImageColorMap(GfxImageColorMap *colorMap);
@@ -1212,6 +1215,8 @@ private:
     decodeLow[gfxColorMaxComps];
   double			// max - min value for each component
     decodeRange[gfxColorMaxComps];
+  GBool useMatte;
+  GfxColor matteColor;
   GBool ok;
 };
 

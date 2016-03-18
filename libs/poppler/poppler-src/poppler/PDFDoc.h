@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005, 2006, 2008 Brad Hards <bradh@frogmouth.net>
-// Copyright (C) 2005, 2009, 2014 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2009, 2014, 2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -27,6 +27,8 @@
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
+// Copyright (C) 2015 André Guerreiro <aguerreiro1985@gmail.com>
+// Copyright (C) 2015 André Esser <bepandre@hotmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -47,6 +49,7 @@
 #include "Catalog.h"
 #include "Page.h"
 #include "Annot.h"
+#include "Form.h"
 #include "OptionalContent.h"
 #include "Stream.h"
 
@@ -198,6 +201,8 @@ public:
 
   // Is the file encrypted?
   GBool isEncrypted() { return xref->isEncrypted(); }
+
+  std::vector<FormWidgetSignature*> getSignatureWidgets();
 
   // Check various permissions.
   GBool okToPrint(GBool ignoreOwnerPW = gFalse)

@@ -81,9 +81,9 @@
 #undef ENABLE_LIBPNG
 #endif
 
-/* Use zlib instead of builtin zlib decoder. */
-#ifndef ENABLE_ZLIB
-#undef ENABLE_ZLIB
+/* Use zlib instead of builtin zlib decoder for uncompressing flate streams. */
+#ifndef ENABLE_ZLIB_UNCOMPRESS
+#undef ENABLE_ZLIB_UNCOMPRESS
 #endif
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.

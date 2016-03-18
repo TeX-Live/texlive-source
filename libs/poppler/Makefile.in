@@ -179,6 +179,7 @@ am__objects_3 = @POPPLER_TREE@/poppler/Annot.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/ProfileData.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Rendition.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/SecurityHandler.$(OBJEXT) \
+	@POPPLER_TREE@/poppler/SignatureInfo.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/Sound.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/StdinCachedFile.$(OBJEXT) \
 	@POPPLER_TREE@/poppler/StdinPDFDocBuilder.$(OBJEXT) \
@@ -518,6 +519,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/ProfileData.cc \
 	@POPPLER_TREE@/poppler/Rendition.cc \
 	@POPPLER_TREE@/poppler/SecurityHandler.cc \
+	@POPPLER_TREE@/poppler/SignatureInfo.cc \
 	@POPPLER_TREE@/poppler/Sound.cc \
 	@POPPLER_TREE@/poppler/StdinCachedFile.cc \
 	@POPPLER_TREE@/poppler/StdinPDFDocBuilder.cc \
@@ -818,6 +820,9 @@ clean-noinstLIBRARIES:
 @POPPLER_TREE@/poppler/SecurityHandler.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
+@POPPLER_TREE@/poppler/SignatureInfo.$(OBJEXT):  \
+	@POPPLER_TREE@/poppler/$(am__dirstamp) \
+	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/poppler/Sound.$(OBJEXT):  \
 	@POPPLER_TREE@/poppler/$(am__dirstamp) \
 	@POPPLER_TREE@/poppler/$(DEPDIR)/$(am__dirstamp)
@@ -937,6 +942,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/ProfileData.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Rendition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/SecurityHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/SignatureInfo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/Sound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StdinCachedFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/poppler/$(DEPDIR)/StdinPDFDocBuilder.Po@am__quote@

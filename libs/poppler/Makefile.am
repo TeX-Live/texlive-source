@@ -59,6 +59,8 @@ fofi_libfofi_a_sources = \
 	@POPPLER_TREE@/fofi/FoFiType1.cc \
 	@POPPLER_TREE@/fofi/FoFiType1C.cc
 
+
+
 poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/Annot.cc \
 	@POPPLER_TREE@/poppler/Array.cc \
@@ -109,6 +111,7 @@ poppler_libpoppler_a_sources = \
 	@POPPLER_TREE@/poppler/ProfileData.cc \
 	@POPPLER_TREE@/poppler/Rendition.cc \
 	@POPPLER_TREE@/poppler/SecurityHandler.cc \
+	@POPPLER_TREE@/poppler/SignatureInfo.cc \
 	@POPPLER_TREE@/poppler/Sound.cc \
 	@POPPLER_TREE@/poppler/StdinCachedFile.cc \
 	@POPPLER_TREE@/poppler/StdinPDFDocBuilder.cc \
