@@ -906,7 +906,7 @@ void fire_up(halfword c)
     save_vfuzz = vfuzz;
     vfuzz = max_dimen;          /* inhibit error messages */
     box(output_box) = filtered_vpackage(vlink(page_head),
-        best_size, exactly, page_max_depth, output_group, body_direction, 0);
+        best_size, exactly, page_max_depth, output_group, body_direction, 0, 0);
     vbadness = save_vbadness;
     vfuzz = save_vfuzz;
     if (last_glue != max_halfword)
@@ -1029,6 +1029,6 @@ void resume_after_output(void)
     flush_node_list(page_disc);
     page_disc = null;
     pop_nest();
-    lua_node_filter_s(buildpage_filter_callback,lua_key_index(after_output));
+    normal_page_filter(after_output);
     build_page();
 }

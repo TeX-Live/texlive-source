@@ -71,6 +71,7 @@ static const char *const callbacknames[] = {
     "hpack_quality", "vpack_quality",
     "process_rule",
     "insert_local_par",
+    "contribute_filter",
     NULL
 };
 

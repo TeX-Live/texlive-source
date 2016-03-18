@@ -267,8 +267,11 @@ const char *node_fields_whatsit_pdf_restore[] = {
 const char *node_subtypes_glue[] = {
     "userskip", "lineskip", "baselineskip", "parskip", "abovedisplayskip", "belowdisplayskip",
     "abovedisplayshortskip", "belowdisplayshortskip", "leftskip", "rightskip", "topskip",
-    "splittopskip", "tabskip", "spaceskip", "xspaceskip", "parfillskip", "thinmuskip",
-    "medmuskip", "thickmuskip", "mathskip", NULL
+    "splittopskip", "tabskip", "spaceskip", "xspaceskip", "parfillskip",
+    "mathskip", "thinmuskip", "medmuskip", "thickmuskip", NULL
+};
+const char *node_subtypes_mathglue[] = { /* 98+ */
+    "conditionalmathskip", "muglue", NULL
 };
 const char *node_subtypes_leader[] = { /* 100+ */
     "leaders", "cleaders", "xleaders", "gleaders", NULL

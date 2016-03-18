@@ -65,6 +65,7 @@ typedef enum {
     hpack_quality_callback, vpack_quality_callback,
     process_rule_callback,
     insert_local_par_callback,
+    contribute_filter_callback,
     total_callbacks
 } callback_callback_types;
 
@@ -145,3 +146,7 @@ static const char *const filetypes_right[] = { "?", ")", "}", ">", ">", ">>" } ;
 } while (0)
 
 #endif
+
+#define normal_page_filter(A) lua_node_filter_s(buildpage_filter_callback,lua_key_index(A))
+#define checked_page_filter(A) if (!output_active) lua_node_filter_s(buildpage_filter_callback,lua_key_index(A))
+#define checked_break_filter(A) if (!output_active) lua_node_filter_s(contribute_filter_callback,lua_key_index(A))

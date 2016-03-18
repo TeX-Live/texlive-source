@@ -49,7 +49,7 @@ in production versions of \TeX.
 #  define sup_nest_size   4000
 
 #  define inf_max_in_open   6
-#  define sup_max_in_open   127
+#  define sup_max_in_open   600 /* was 127. now okay for some 512 nested lua calls */
 
 #  define inf_param_size   60
 #  define sup_param_size   32767

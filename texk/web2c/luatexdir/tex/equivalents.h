@@ -143,10 +143,10 @@ the |number_regs| \.{\\dimen} registers.
 #  define space_skip_code 12                                            /* glue between words (if not |zero_glue|) */
 #  define xspace_skip_code 13                                           /* glue after sentences (if not |zero_glue|) */
 #  define par_fill_skip_code 14                                         /* glue on last line of paragraph */
-#  define thin_mu_skip_code 15                                          /* thin space in math formula */
-#  define med_mu_skip_code 16                                           /* medium space in math formula */
-#  define thick_mu_skip_code 17                                         /* thick space in math formula */
-#  define math_skip_code 18
+#  define math_skip_code 15
+#  define thin_mu_skip_code 16                                          /* thin space in math formula */
+#  define med_mu_skip_code 17                                           /* medium space in math formula */
+#  define thick_mu_skip_code 18                                         /* thick space in math formula */
 #  define glue_pars 19                                                  /* total number of glue parameters */
 
 #  define skip_base (glue_base+glue_pars)                               /* table of |number_regs| ``skip'' registers */

@@ -1300,20 +1300,37 @@ void scan_dimen(boolean mu, boolean inf, boolean shortcut)
             \TeX, a specification like `\.{filllll}' or `\.{fill L L L}' will lead to
             two error messages (one for each additional keyword \.{"l"}). Not so for
             \LuaTeX, it just parses the construct in reverse.
-        */
-        if (scan_keyword("filll")) {
-            cur_order = filll;
+
+             if (scan_keyword("filll")) {
+                 cur_order = filll;
+                 goto ATTACH_FRACTION;
+             } else if (scan_keyword("fill")) {
+                 cur_order = fill;
+                 goto ATTACH_FRACTION;
+             } else if (scan_keyword("fil")) {
+                 cur_order = fil;
+                 goto ATTACH_FRACTION;
+             } else if (scan_keyword("fi")) {
+                 cur_order = sfi;
+                 goto ATTACH_FRACTION;
+             }
+
+            But ... it failed in alignments so now we do this. And, as we support an extra
+            l we don't issue an error message (we didn't do that anyway).
+         */
+         if (scan_keyword("fi")) {
+             cur_order = sfi;
+             if (scan_keyword("l")) {
+                cur_order = fil;
+                if (scan_keyword("l")) {
+                    cur_order = fill;
+                    if (scan_keyword("l")) {
+                        cur_order = filll;
+                    }
+                }
+            }
             goto ATTACH_FRACTION;
-        } else if (scan_keyword("fill")) {
-            cur_order = fill;
-            goto ATTACH_FRACTION;
-        } else if (scan_keyword("fil")) {
-            cur_order = fil;
-            goto ATTACH_FRACTION;
-        } else if (scan_keyword("fi")) {
-            cur_order = sfi;
-            goto ATTACH_FRACTION;
-        }
+         }
     }
     /*
         Scan for (u)units that are internal dimensions; |goto attach_sign| with

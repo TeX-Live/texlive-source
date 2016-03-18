@@ -51,6 +51,7 @@ void lua_node_filter_s(int filterid, int extrainfo)
 }
 
 @ @c
+/*
 void lua_node_filter(int filterid, int extrainfo, halfword head_node, halfword * tail_node)
 {
     halfword ret;
@@ -66,10 +67,10 @@ void lua_node_filter(int filterid, int extrainfo, halfword head_node, halfword *
         lua_settop(L, s_top);
         return;
     }
-    alink(vlink(head_node)) = null ; /* hh-ls */
-    nodelist_to_lua(L, vlink(head_node));       /* arg 1 */
-    lua_push_group_code(L,extrainfo); /* arg 2 */
-    if (lua_pcall(L, 2, 1, 0) != 0) {   /* no arg, 1 result */
+    alink(vlink(head_node)) = null ;
+    nodelist_to_lua(L, vlink(head_node));
+    lua_push_group_code(L,extrainfo);
+    if (lua_pcall(L, 2, 1, 0) != 0) {
         fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
         lua_settop(L, s_top);
         error();
@@ -84,7 +85,7 @@ void lua_node_filter(int filterid, int extrainfo, halfword head_node, halfword *
         a = nodelist_from_lua(L);
         try_couple_nodes(head_node,a);
     }
-    lua_pop(L, 2);              /* result and callback container table */
+    lua_pop(L, 2);
     if (fix_node_lists)
         fix_node_list(head_node);
     ret = vlink(head_node);
@@ -95,6 +96,78 @@ void lua_node_filter(int filterid, int extrainfo, halfword head_node, halfword *
     } else {
         *tail_node = head_node;
     }
+    lua_settop(L, s_top);
+    return;
+}
+*/
+
+void lua_node_filter(int filterid, int extrainfo, halfword head_node, halfword * tail_node)
+{
+    halfword start_node, start_done, last_node;
+    lua_State *L = Luas;
+    int s_top = lua_gettop(L);
+    int callback_id = callback_defined(filterid);
+    if (head_node == null || callback_id <= 0) {
+        lua_settop(L, s_top);
+        return;
+    }
+    /* we start after head */
+    start_node = vlink(head_node);
+    if (start_node == null || !get_callback(L, callback_id)) {
+        lua_settop(L, s_top);
+        return;
+    }
+    /* we make sure we have no prev */
+    alink(start_node) = null ;
+    /* the action */
+    nodelist_to_lua(L, start_node);
+    lua_push_group_code(L,extrainfo);
+    if (lua_pcall(L, 2, 1, 0) != 0) {
+        fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
+        lua_settop(L, s_top);
+        error();
+        return;
+    }
+    /* the result */
+    if (lua_isboolean(L, -1)) {
+        if (lua_toboolean(L, -1) != 1) {
+            /* discard */
+            flush_node_list(start_node);
+            vlink(head_node) = null;
+        } else {
+            /* keep */
+        }
+    } else {
+        /* append to old head */
+        start_done = nodelist_from_lua(L);
+        try_couple_nodes(head_node,start_done);
+    }
+    /* redundant as we set top anyway */
+    lua_pop(L, 2);
+    /* find tail in order to update tail */
+    start_node = vlink(head_node);
+    if (start_node != null) {
+        /* maybe just always slide (harmless and fast) */
+        last_node = vlink(start_node);
+        if (fix_node_lists) {
+            while (last_node != null) {
+                alink(last_node) = start_node;
+                start_node = last_node;
+                last_node = vlink(start_node);
+            }
+        } else {
+            while (last_node != null) {
+                start_node = last_node;
+                last_node = vlink(start_node);
+            }
+        }
+        /* we're at the end now */
+        *tail_node = start_node;
+    } else {
+        /* we're already at the end */
+        *tail_node = head_node;
+    }
+    /* clean up */
     lua_settop(L, s_top);
     return;
 }
@@ -176,7 +249,7 @@ int lua_appendtovlist_callback(halfword box, int location, halfword prev_depth, 
 }
 
 @ @c
-halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type, int extrainfo, int pack_direction)
+halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type, int extrainfo, int pack_direction, halfword attr)
 {
     halfword ret;
     lua_State *L = Luas;
@@ -195,11 +268,17 @@ halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type, int ex
     lua_push_group_code(L,extrainfo);
     lua_pushinteger(L, size);
     lua_push_pack_type(L,pack_type);
-    if (pack_direction >= 0)
+    if (pack_direction >= 0) {
         lua_push_dir_par(L, pack_direction);
-    else
+    } else {
         lua_pushnil(L);
-    if (lua_pcall(L, 5, 1, 0) != 0) {   /* no arg, 1 result */
+    }
+    if (attr != null) {
+        nodelist_to_lua(L, attr);
+    } else {
+        lua_pushnil(L);
+    }
+    if (lua_pcall(L, 6, 1, 0) != 0) {
         fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
         lua_settop(L, s_top);
         error();
@@ -225,7 +304,7 @@ halfword lua_hpack_filter(halfword head_node, scaled size, int pack_type, int ex
 
 @ @c
 halfword lua_vpack_filter(halfword head_node, scaled size, int pack_type, scaled maxd,
-                 int extrainfo, int pack_direction)
+                 int extrainfo, int pack_direction, halfword attr)
 {
     halfword ret;
     int callback_id;
@@ -254,11 +333,17 @@ halfword lua_vpack_filter(halfword head_node, scaled size, int pack_type, scaled
     lua_pushinteger(L, size);
     lua_push_pack_type(L,pack_type);
     lua_pushinteger(L, maxd);
-    if (pack_direction >= 0)
+    if (pack_direction >= 0) {
          lua_push_dir_par(L, pack_direction);
-    else
+    } else {
         lua_pushnil(L);
-    if (lua_pcall(L, 6, 1, 0) != 0) {   /* no arg, 1 result */
+    }
+    if (attr != null) {
+        nodelist_to_lua(L, attr);
+    } else {
+        lua_pushnil(L);
+    }
+    if (lua_pcall(L, 7, 1, 0) != 0) {
         fprintf(stdout, "error: %s\n", lua_tostring(L, -1));
         lua_settop(L, s_top);
         error();
