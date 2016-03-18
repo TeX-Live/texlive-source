@@ -63,14 +63,14 @@ extern halfword new_margin_kern(scaled w, halfword p, int side);
 	    A = vlink(A); \
     } while (0)
 
-extern halfword filtered_hpack(halfword p, halfword qt, scaled w, int m, int grp, int d, int just_pack);
+extern halfword filtered_hpack(halfword p, halfword qt, scaled w, int m, int grp, int d, int just_pack, halfword attr);
 extern scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult, int g_sign, int g_order, int d);
 extern halfword hpack(halfword p, scaled w, int m, int d);
 
 extern int pack_begin_line;
 
 extern halfword vpackage(halfword p, scaled h, int m, scaled l, int d);
-extern halfword filtered_vpackage(halfword p, scaled h, int m, scaled l, int grp, int d, int just_pack);
+extern halfword filtered_vpackage(halfword p, scaled h, int m, scaled l, int grp, int d, int just_pack, halfword attr);
 extern void finish_vcenter(void);
 extern void package(int c);
 extern void append_to_vlist(halfword b, int location);

@@ -148,6 +148,11 @@ static boolean writepk(PDF pdf, internal_font_number f)
     cd.rastersize = 256;
     cd.raster = xtalloc((unsigned long) cd.rastersize, halfword);
     check_preamble = true;
+    if (dpi==0) {
+        normal_error("type 3","invalid dpi value 0");
+    }  else if (newdpi==0) {
+        newdpi = dpi;
+    }
     while (readchar(check_preamble, &cd) != 0) {
         check_preamble = false;
         if (!pdf_char_marked(f, cd.charcode))

@@ -503,7 +503,6 @@ boolean scan_keyword(const char *s)
     halfword q;                 /* new node being added to the token list via |store_new_token| */
     const char *k;              /* index into |str_pool| */
     halfword save_cur_cs = cur_cs;
-    int saved_align_state = align_state;
     if (strlen(s) == 0)        /* was assert (strlen(s) > 1); */
       return false ;           /* but not with newtokenlib  zero keyword simply doesn't match  */
     p = backup_head;
@@ -511,8 +510,7 @@ boolean scan_keyword(const char *s)
     k = s;
     while (*k) {
         get_x_token();      /* recursion is possible here */
-        if ((cur_cs == 0) &&
-            ((cur_chr == *k) || (cur_chr == *k - 'a' + 'A'))) {
+        if ((cur_cs == 0) && ((cur_chr == *k) || (cur_chr == *k - 'a' + 'A'))) {
             store_new_token(cur_tok);
             k++;
         } else if ((cur_cmd != spacer_cmd) || (p != backup_head)) {
@@ -522,8 +520,6 @@ boolean scan_keyword(const char *s)
                 token_link(q) = null;
                 token_link(p) = q;
                 begin_token_list(token_link(backup_head), backed_up);
-                if (cur_cmd != endv_cmd)
-                    align_state = saved_align_state;
             } else {
                 back_input();
             }
@@ -534,8 +530,6 @@ boolean scan_keyword(const char *s)
     if (token_link(backup_head) != null)
         flush_list(token_link(backup_head));
     cur_cs = save_cur_cs;
-    if (cur_cmd != endv_cmd)
-        align_state = saved_align_state;
     return true;
 }
 

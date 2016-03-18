@@ -451,21 +451,17 @@ void ext_post_line_break(int paragraph_dir,
         /* /Call the packaging subroutine, setting |just_box| to the justified box; */
 
         if ((vlink(contrib_head) != null))
-            if (!output_active)
-                lua_node_filter_s(buildpage_filter_callback, lua_key_index(pre_box));
+            checked_break_filter(pre_box);
         if (pre_adjust_head != pre_adjust_tail) {
             append_list(pre_adjust_head, pre_adjust_tail);
-            if (!output_active)
-                lua_node_filter_s(buildpage_filter_callback, lua_key_index(pre_adjust));
+            checked_break_filter(pre_adjust);
         }
         pre_adjust_tail = null;
         append_to_vlist(just_box,lua_key_index(post_linebreak));
-        if (!output_active)
-            lua_node_filter_s(buildpage_filter_callback, lua_key_index(box));
+        checked_break_filter(box);
         if (adjust_head != adjust_tail) {
             append_list(adjust_head, adjust_tail);
-            if (!output_active)
-                lua_node_filter_s(buildpage_filter_callback, lua_key_index(adjust));
+            checked_break_filter(adjust);
         }
         adjust_tail = null;
 

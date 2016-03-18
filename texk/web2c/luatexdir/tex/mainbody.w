@@ -350,7 +350,7 @@ int main_initialize(void)
         bad = 3;
     if (hash_prime > hash_size)
         bad = 5;
-    if (max_in_open >= 128)
+    if (max_in_open >= (sup_max_in_open+1)) /* 128 */
         bad = 6;
     /* Here are the inequalities that the quarterword and halfword values
        must satisfy (or rather, the inequalities that they mustn't satisfy): */

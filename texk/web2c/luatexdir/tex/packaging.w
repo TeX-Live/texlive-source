@@ -1112,19 +1112,7 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
 }
 
 @ @c
-/*
-halfword filtered_hpack(halfword p, halfword qt, scaled w, int m, int grp, int pac)
-{
-    halfword q;
-    new_hyphenation(p, qt);
-    (void) new_ligkern(p, qt);  // we don't care about the tail in this case
-    q = vlink(p);
-    q = lua_hpack_filter(q, w, m, grp, pac);
-    return hpack(q, w, m, pac);
-}
-*/
-
-halfword filtered_hpack(halfword p, halfword qt, scaled w, int m, int grp, int pac, int just_pack)
+halfword filtered_hpack(halfword p, halfword qt, scaled w, int m, int grp, int pac, int just_pack, halfword attr)
 {
     halfword q;
     if (just_pack) {
@@ -1142,7 +1130,7 @@ halfword filtered_hpack(halfword p, halfword qt, scaled w, int m, int grp, int p
         (void) new_ligkern(p, qt);  /* we don't care about the tail in this case */
         q = vlink(p);
         /* maybe here: alink(p) = null */
-        q = lua_hpack_filter(q, w, m, grp, pac); /* ignores empty anyway */ /* maybe also pass tail */
+        q = lua_hpack_filter(q, w, m, grp, pac, attr); /* ignores empty anyway */ /* maybe also pass tail */
     }
     return hpack(q, w, m, pac);
 }
@@ -1555,12 +1543,12 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
 }
 
 @ @c
-halfword filtered_vpackage(halfword p, scaled h, int m, scaled l, int grp, int pack_direction, int just_pack)
+halfword filtered_vpackage(halfword p, scaled h, int m, scaled l, int grp, int pack_direction, int just_pack, halfword attr)
 {
     halfword q = p;
     if (!just_pack)
  /* if (q != null) */
-        q = lua_vpack_filter(q, h, m, l, grp, pack_direction);
+        q = lua_vpack_filter(q, h, m, l, grp, pack_direction, attr);
     return vpackage(q, h, m, l, pack_direction);
 }
 
@@ -1590,11 +1578,11 @@ void package(int c)
     saved4 = saved_value(4);
     if (cur_list.mode_field == -hmode) {
         cur_box = filtered_hpack(cur_list.head_field, cur_list.tail_field,
-            saved_value(1), saved_level(1), grp, saved_level(2), saved4);
+            saved_value(1), saved_level(1), grp, saved_level(2), saved4, saved3);
         subtype(cur_box) = hbox_list;
     } else {
         cur_box = filtered_vpackage(vlink(cur_list.head_field),
-            saved_value(1), saved_level(1), d, grp, saved_level(2), saved4);
+            saved_value(1), saved_level(1), d, grp, saved_level(2), saved4, saved3);
         if (c == vtop_code) {
             /*
                 Read just the height and depth of |cur_box|, for \.{\\vtop}. The
@@ -2010,12 +1998,12 @@ halfword vsplit(halfword n, scaled h, int m)
         /* the |eq_level| of the box stays the same */
         box(n) = null;
     } else {
-        box(n) = filtered_vpackage(q, 0, additional, dimen_par(max_depth_code), split_keep_group, vdir, 0);
+        box(n) = filtered_vpackage(q, 0, additional, dimen_par(max_depth_code), split_keep_group, vdir, 0, 0);
     }
     if (m == exactly) {
-        return filtered_vpackage(p, h, exactly, dimen_par(split_max_depth_code), split_off_group, vdir, 0);
+        return filtered_vpackage(p, h, exactly, dimen_par(split_max_depth_code), split_off_group, vdir, 0, 0);
     } else {
-        return filtered_vpackage(p, 0, additional, dimen_par(max_depth_code), split_off_group, vdir, 0);
+        return filtered_vpackage(p, 0, additional, dimen_par(max_depth_code), split_off_group, vdir, 0, 0);
     }
 }
 

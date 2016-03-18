@@ -223,24 +223,27 @@ static scaled accent_base_height(int f)
     return a;
 }
 
-@ the non-staticness of this function is for the benefit of |texmath.w|
+@ The non-staticness of this function is for the benefit of |texmath.w|. Watch out,
+this one uses the style! The style and size numbers don't match because we have
+cramped styles.
 
 @c
-scaled get_math_quad(int var)
+scaled get_math_quad_style(int var)
 {
     scaled a = get_math_param(math_param_quad, var);
     if (a == undefined_math_parameter) {
         math_param_error("quad", var);
-        a = 0;
+        return 0;
+    } else {
+        return a;
     }
-    return a;
 }
 
-@ this parameter is different because it is called with a size
+@ For this reason the next one is different because it is called with a size
 specifier instead of a style specifier.
 
 @c
-static scaled math_axis(int b)
+static scaled math_axis_size(int b)
 {
     scaled a;
     int var;
@@ -253,13 +256,14 @@ static scaled math_axis(int b)
     a = get_math_param(math_param_axis, var);
     if (a == undefined_math_parameter) {
         math_param_error("axis", var);
-        a = 0;
+        return 0;
+    } else {
+        return a;
     }
-    return a;
 }
 
 @ @c
-static scaled get_math_quad_size(int b)
+scaled get_math_quad_size(int b)
 {
     int var;
     if (b == script_size)
@@ -309,7 +313,7 @@ static scaled do_get_math_param_or_error(int var, int param, const char *name)
 static scaled get_delimiter_height(scaled max_d, scaled max_h, boolean axis) {
     scaled delta, delta1, delta2;
     if (axis) {
-        delta2 = max_d + math_axis(cur_size);
+        delta2 = max_d + math_axis_size(cur_size);
     } else {
         delta2 = max_d;
     }
@@ -361,7 +365,6 @@ static scaled get_delimiter_height(scaled max_d, scaled max_h, boolean axis) {
 #define fraction_num_up(a)       get_math_param_or_error(a, fraction_num_up)
 #define fraction_denom_down(a)   get_math_param_or_error(a, fraction_denom_down)
 #define fraction_del_size_new(a) get_math_param_or_error(a, fraction_del_size)
-#define fraction_del_size_new(a) get_math_param_or_error(a, fraction_del_size)
 /*
 #define fraction_del_size_old(a) get_math_param(a, math_param_fraction_del_size)
 */
@@ -393,6 +396,7 @@ static scaled get_delimiter_height(scaled max_d, scaled max_h, boolean axis) {
 @ @c
 void fixup_math_parameters(int fam_id, int size_id, int f, int lvl)
 {
+
     if (is_new_mathfont(f)) {   /* fix all known parameters */
 
         DEFINE_MATH_PARAMETERS(math_param_quad, size_id,
@@ -927,15 +931,14 @@ static const char *math_size_string(int s)
 information:
 
 @c
-#define setup_cur_size(a) do {                   \
-        if (a==script_style ||                   \
-            a==cramped_script_style)             \
-            cur_size=script_size;                \
-        else if (a==script_script_style ||       \
-                 a==cramped_script_script_style) \
-            cur_size=script_script_size;         \
-        else cur_size=text_size;                 \
-    } while (0)
+#define setup_cur_size(a) do { \
+    if (a==script_style || a==cramped_script_style) \
+        cur_size = script_size; \
+    else if (a==script_script_style || a==cramped_script_script_style) \
+        cur_size = script_script_size; \
+    else \
+        cur_size = text_size; \
+} while (0)
 
 
 @ a simple routine that creates a flat copy of a nucleus
@@ -1458,7 +1461,7 @@ static pointer do_delimiter(pointer q, pointer d, int s, scaled v, boolean flat,
         /* vertical variant */
         shift_amount(b) = half(height(b) - depth(b));
         if (shift) {
-            shift_amount(b) -= math_axis(s);
+            shift_amount(b) -= math_axis_size(s);
         }
     }
     delete_attribute_ref(att);
@@ -1808,7 +1811,7 @@ static void make_vcenter(pointer q)
     if (type(v) != vlist_node)
         confusion("vcenter");
     delta = height(v) + depth(v);
-    height(v) = math_axis(cur_size) + half(delta);
+    height(v) = math_axis_size(cur_size) + half(delta);
     depth(v) = delta - height(v);
 }
 
@@ -2421,14 +2424,14 @@ static void make_fraction(pointer q, int cur_style)
         clr2 = fraction_denom_vgap(cur_style);
         delta = half(thickness(q));
         if (fractionexact(q)) {
-            delta1 = clr1 - ((shift_up   - depth(x) ) - (math_axis(cur_size) + delta));
-            delta2 = clr2 - ((shift_down - height(z)) + (math_axis(cur_size) - delta));
+            delta1 = clr1 - ((shift_up   - depth(x) ) - (math_axis_size(cur_size) + delta));
+            delta2 = clr2 - ((shift_down - height(z)) + (math_axis_size(cur_size) - delta));
         } else {
             delta = half(thickness(q));
             clr1 = ext_xn_over_d(clr1, thickness(q), fraction_rule(cur_style));
             clr2 = ext_xn_over_d(clr2, thickness(q), fraction_rule(cur_style));
-            delta1 = clr1 - ((shift_up   - depth(x) ) - (math_axis(cur_size) + delta));
-            delta2 = clr2 - ((shift_down - height(z)) + (math_axis(cur_size) - delta));
+            delta1 = clr1 - ((shift_up   - depth(x) ) - (math_axis_size(cur_size) + delta));
+            delta2 = clr2 - ((shift_down - height(z)) + (math_axis_size(cur_size) - delta));
         }
         if (delta1 > 0) {
             shift_up = shift_up + delta1;
@@ -2444,7 +2447,7 @@ static void make_fraction(pointer q, int cur_style)
         shift_up = skewed_fraction_vgap(cur_style);
 
         if (!fractionnoaxis(q)) {
-            shift_up += half(math_axis(cur_size));
+            shift_up += half(math_axis_size(cur_size));
         }
 
         shift_down = shift_up;
@@ -2525,11 +2528,11 @@ static void make_fraction(pointer q, int cur_style)
             couple_nodes(p,z);
         } else {
             y = do_fraction_rule(thickness(q), node_attr(q));
-            p = new_kern((math_axis(cur_size) - delta) - (height(z) - shift_down));
+            p = new_kern((math_axis_size(cur_size) - delta) - (height(z) - shift_down));
             reset_attributes(p, node_attr(q));
             couple_nodes(y,p);
             couple_nodes(p,z);
-            p = new_kern((shift_up - depth(x)) - (math_axis(cur_size) + delta));
+            p = new_kern((shift_up - depth(x)) - (math_axis_size(cur_size) + delta));
             couple_nodes(p,y);
         }
         reset_attributes(p, node_attr(q));
@@ -2552,7 +2555,6 @@ static void make_fraction(pointer q, int cur_style)
     } else {
         delta = fraction_del_size_old(cur_style);
     }
-
     l = do_delimiter(q, left_delimiter(q), cur_size, delta, false, cur_style, true, NULL, NULL);
     left_delimiter(q) = null;
     r = do_delimiter(q, right_delimiter(q), cur_size, delta, false, cur_style, true, NULL, NULL);
@@ -2649,7 +2651,7 @@ static scaled make_op(pointer q, int cur_style)
         }
         if (axis_shift) {
             /* center vertically */
-            shift_amount(x) = half(height(x) - depth(x)) - math_axis(cur_size);
+            shift_amount(x) = half(height(x) - depth(x)) - math_axis_size(cur_size);
         }
         type(nucleus(q)) = sub_box_node;
         math_list(nucleus(q)) = x;
@@ -3470,9 +3472,9 @@ static small_number make_left_right(pointer q, int style, scaled max_d, scaled m
             delimiterdepth(q)  = depth(tmp)  + shift_amount(tmp);
         }
         if (delimiteraxis(q)) {
-            delimiterheight(q) += math_axis(cur_size);
-            delimiterdepth(q)  -= math_axis(cur_size);
-            shift_amount(tmp)  -= math_axis(cur_size);
+            delimiterheight(q) += math_axis_size(cur_size);
+            delimiterdepth(q)  -= math_axis_size(cur_size);
+            shift_amount(tmp)  -= math_axis_size(cur_size);
         }
         lst = new_node(hlist_node,0);
         reset_attributes(lst, node_attr(q));
@@ -3801,7 +3803,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     scaled cur_mu;                        /* the math unit width corresponding to |cur_size| */
     r_subtype = op_noad_type_normal;
     setup_cur_size(cur_style);
-    cur_mu = x_over_n(get_math_quad(cur_size), 18);
+    cur_mu = x_over_n(get_math_quad_size(cur_size), 18);
     while (q != null) {
         /*
             we use the fact that no character nodes appear in an mlist, hence
@@ -3905,7 +3907,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         case style_node:
             cur_style = subtype(q);
             setup_cur_size(cur_style);
-            cur_mu = x_over_n(get_math_quad(cur_style), 18);
+            cur_mu = x_over_n(get_math_quad_style(cur_style), 18);
             goto DONE_WITH_NODE;
             break;
         case choice_node:
@@ -4026,7 +4028,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             r_subtype = left_noad_side;
             cur_style = style;
             setup_cur_size(cur_style);
-            cur_mu = x_over_n(get_math_quad(cur_size), 18);
+            cur_mu = x_over_n(get_math_quad_size(cur_size), 18); /* style */
         }
       DONE_WITH_NODE:
         q = vlink(q);
@@ -4052,7 +4054,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     r_subtype = 0;
     cur_style = style;
     setup_cur_size(cur_style);
-    cur_mu = x_over_n(get_math_quad(cur_size), 18);
+    cur_mu = x_over_n(get_math_quad_size(cur_size), 18);
   NEXT_NODE:
     while (q != null) {
         /*
@@ -4099,7 +4101,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
             /* Change the current style and |goto delete_q| */
             cur_style = subtype(q);
             setup_cur_size(cur_style);
-            cur_mu = x_over_n(get_math_quad(cur_size), 18);
+            cur_mu = x_over_n(get_math_quad_style(cur_style), 18);
             goto DELETE_Q;
             break;
         case whatsit_node:

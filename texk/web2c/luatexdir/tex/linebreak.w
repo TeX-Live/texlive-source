@@ -118,8 +118,7 @@ void line_break(boolean d, int line_break_context)
     couple_nodes(cur_list.tail_field, final_par_glue);
     cur_list.tail_field = vlink(cur_list.tail_field);
     lua_node_filter(pre_linebreak_filter_callback,
-                    line_break_context,
-                    temp_head,
+                    line_break_context, temp_head,
                     addressof(cur_list.tail_field));
     last_line_fill = cur_list.tail_field;
     pop_nest();
