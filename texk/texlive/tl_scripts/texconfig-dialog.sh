@@ -43,7 +43,10 @@ cleanup()
   rc=$1
   $needsCleanup && test -n "$tmpdir" && test -d "$tmpdir" \
     && { cd / && rm -rf "$tmpdir"; }
-  termCtl reset
+  # use clear rather than reset since we cannot easily save and restore
+  # the terminal settings, which is what would be ideal.  See thread
+  # starting at http://tug.org/pipermail/tex-live/2016-March/037852.html.
+  termCtl clear
   (exit $rc); exit $rc
 }
 
