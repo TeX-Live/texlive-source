@@ -1,7 +1,7 @@
-diff -ur poppler-0.41.0.orig/poppler/Object.h poppler-0.41.0/poppler/Object.h
---- poppler-0.41.0.orig/poppler/Object.h	Mon Nov 16 06:05:22 2015
-+++ poppler-0.41.0/poppler/Object.h	Wed Feb 17 15:39:51 2016
-@@ -140,7 +140,7 @@
+diff -ur poppler-src-orig/poppler/Object.h poppler-src/poppler/Object.h
+--- poppler-src-orig/poppler/Object.h	2016-03-02 00:35:28.000000000 +0100
++++ poppler-src/poppler/Object.h	2016-03-17 10:53:37.000000000 +0100
+@@ -147,7 +147,7 @@
    Object *initStream(Stream *streamA);
    Object *initRef(int numA, int genA)
      { initObj(objRef); ref.num = numA; ref.gen = genA; return this; }
@@ -10,7 +10,7 @@ diff -ur poppler-0.41.0.orig/poppler/Object.h poppler-0.41.0/poppler/Object.h
      { initObj(objCmd); cmd = copyString(cmdA); return this; }
    Object *initError()
      { initObj(objError); return this; }
-@@ -186,7 +186,7 @@
+@@ -194,7 +194,7 @@
    GBool isName(const char *nameA)
      { return type == objName && !strcmp(name, nameA); }
    GBool isDict(const char *dictType);
@@ -19,7 +19,7 @@ diff -ur poppler-0.41.0.orig/poppler/Object.h poppler-0.41.0/poppler/Object.h
    GBool isCmd(const char *cmdA)
      { return type == objCmd && !strcmp(cmd, cmdA); }
  
-@@ -233,7 +233,7 @@
+@@ -243,7 +243,7 @@
    Object *dictGetValNF(int i, Object *obj);
  
    // Stream accessors.
@@ -28,7 +28,7 @@ diff -ur poppler-0.41.0.orig/poppler/Object.h poppler-0.41.0/poppler/Object.h
    void streamReset();
    void streamClose();
    int streamGetChar();
-@@ -337,10 +337,10 @@
+@@ -347,10 +347,10 @@
  
  #include "Stream.h"
  

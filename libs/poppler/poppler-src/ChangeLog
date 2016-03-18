@@ -1,3 +1,364 @@
+commit ef21f651a4af801502d6b4b4f7258d54f14e7aea
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 16 20:23:39 2016 +0100
+
+    Some (C) updating
+
+ poppler/FlateStream.cc      | 1 +
+ poppler/Gfx.cc              | 2 +-
+ poppler/PSOutputDev.cc      | 2 +-
+ poppler/SignatureHandler.cc | 2 +-
+ poppler/SplashOutputDev.cc  | 2 +-
+ poppler/SplashOutputDev.h   | 2 +-
+ poppler/Stream.cc           | 2 +-
+ poppler/Stream.h            | 2 +-
+ poppler/TextOutputDev.cc    | 2 +-
+ poppler/TextOutputDev.h     | 2 +-
+ 10 files changed, 10 insertions(+), 9 deletions(-)
+
+commit 57b7a52cc6b3675bfbff29ef20a509eadce091ac
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Mar 16 10:36:22 2016 +0100
+
+    Fix rendering of some broken PDF files
+
+    Call constructXRef if necessary xref can't be fetched and the PDF
+    don't use xref streams
+
+    Bug #92508
+
+ poppler/XRef.cc | 8 +++++++-
+ poppler/XRef.h  | 3 ++-
+ 2 files changed, 9 insertions(+), 2 deletions(-)
+
+commit 04f3448d73ff7a3a2f1bf885aea64e96cc29a69d
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Mar 16 00:58:35 2016 +0100
+
+    Initialize gamut mapping multipliers in ::copy() functions
+
+    Bug #90697
+
+ poppler/GfxState.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 69ffeb71a79b686d5c79d20832c4666c498098e8
+Author: Alok Anand <alok4nand@gmail.com>
+Date:   Mon Mar 14 20:18:32 2016 +0100
+
+    Add the support for version 5 + revision 6 documents.
+
+    Bug #85368
+
+ poppler/Decrypt.cc         | 357
+ ++++++++++++++++++++++++++++++++++++++++++++-
+ poppler/SecurityHandler.cc |   9 +-
+ 2 files changed, 358 insertions(+), 8 deletions(-)
+
+commit 2dcfefb43c0d4ca86a4f4b2d019882e134201b27
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sat Mar 12 03:52:01 2016 +0100
+
+    handle SMaskInData = 0 for JPX encoded images
+
+    Bug #93468
+
+ poppler/JPEG2000Stream.cc | 77
+ +++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 61 insertions(+), 16 deletions(-)
+
+commit e58d310c1802b77a6356ec0d3d0180a2a1605b41
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Mar 10 12:05:28 2016 +0100
+
+    Implement function shading in splash
+
+    Bug #94441
+
+ poppler/SplashOutputDev.cc | 117
+ +++++++++++++++++++++++++++++++++++++++++++++
+ poppler/SplashOutputDev.h  |  31 +++++++++++-
+ 2 files changed, 147 insertions(+), 1 deletion(-)
+
+commit 09e2ae234179c42ccf06b040a0f6c89d65d69713
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue Mar 8 23:08:53 2016 +0100
+
+    assure line width > 0 in case of text stroke
+
+    Bug #94038
+
+ poppler/SplashOutputDev.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 37c7469955d465e006d74eecebb766eb8513bbf3
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Mon Mar 7 20:23:11 2016 +0100
+
+    JPXStream: Don't scale image comps to 8 bits in case of an indexed
+    colorspace
+
+    Followup of bug #94371
+
+ poppler/JPEG2000Stream.cc | 58
+ +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 38 insertions(+), 20 deletions(-)
+
+commit d4e24e5754f5a0bf335ddf83747d0dc85b7c409f
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun Mar 6 22:46:23 2016 +0100
+
+    implement jpx streams with depth < 8
+
+    Bug #94371
+
+ poppler/JPEG2000Stream.cc | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+commit 5f79b6485b107fb0939563837046fea6b4b89fdc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 3 00:45:34 2016 +0100
+
+    (C) here too
+
+ qt5/src/poppler-link.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a80a036269eb18daf0ec69c23a8bc71fb4852acb
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 3 00:44:27 2016 +0100
+
+    Qt: Only check the link page for local links
+
+ qt4/src/poppler-link.cc | 32 +++++++++++++++++---------------
+ qt5/src/poppler-link.cc | 28 +++++++++++++++-------------
+ 2 files changed, 32 insertions(+), 28 deletions(-)
+
+commit a3c7f6184d1be3f2737086cf650f4012075515f8
+Author: Adrián Pérez de Castro <aperez@igalia.com>
+Date:   Wed Mar 2 11:58:24 2016 +0200
+
+    Tagged-PDF: Document new pdfinfo flags in its manual page
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=64816
+
+ utils/pdfinfo.1 | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+commit 7cf52e56677e11b15d610017bccd0cc3f74badaf
+Author: Emmanuele Bassi <ebassi@gnome.org>
+Date:   Wed Mar 2 04:38:52 2016 +0000
+
+    Use correct includes for NSPR/NSS headers
+
+    The header files provided by NSS3 are inside versioned directories,
+    `$includedir/nss3` and `$includedir/nspr4`, which are provided by the
+    nss3 pkg-config file as include directives for the compiler.
+
+    We can also use nspr.h as a single entry point, to avoid cherry
+    picking
+    specific headers.
+
+    https://bugzilla.freedesktop.org/show_bug.cgi?id=94360
+
+ poppler/SignatureHandler.cc |  2 +-
+ poppler/SignatureHandler.h  | 22 +++++++++-------------
+ 2 files changed, 10 insertions(+), 14 deletions(-)
+
+commit 1f7cb78f8b771bae8bfd96a7a7ca3afbaf89c749
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 2 09:51:46 2016 +0100
+
+    Fix memory leak in Matte parsing
+
+    Also remove unneeded comment
+
+ poppler/Gfx.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 36c276f1af7e0f1d8a207f6cdcaa80a24e95e044
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Mar 2 09:50:01 2016 +0100
+
+    Splash: Implementation of matte entries in softmasks of softmasked
+    images
+
+    Bug #22473
+
+ poppler/Gfx.cc             | 30 +++++++++++++++--
+ poppler/GfxState.cc        |  7 ++--
+ poppler/GfxState.h         |  7 +++-
+ poppler/SplashOutputDev.cc | 80
+ +++++++++++++++++++++++++++++++++++++++++++++-
+ poppler/SplashOutputDev.h  |  3 +-
+ 5 files changed, 120 insertions(+), 7 deletions(-)
+
+commit 810605dae2d7f239ce29640a31a9befe511c3190
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 2 00:49:00 2016 +0100
+
+    Compile++
+
+ poppler/Form.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 9d33825e6f6167f07b2739645b93249b2bc043da
+Merge: a8853b1 f3e3ebe
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 2 00:37:11 2016 +0100
+
+    Merge remote-tracking branch 'origin/signatureHandling'
+
+commit f3e3ebe51483050cfdf8773dbd0d6646521f17cb
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Wed Mar 2 00:35:05 2016 +0100
+
+    Load NSS root certs module
+
+    This change is needed to actually do certificate validation, because
+    as it is NSS is trying to load the module which contains all the
+    builtin root certs from the Firefox profile directory where it is
+    usually missing. This way it will load the module from a system
+    library directory.
+
+ poppler/SignatureHandler.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit a8853b1df0a15570dff6ecc333769257bbf874c3
+Author: Adrian Perez de Castro <aperez@igalia.com>
+Date:   Thu May 9 19:11:26 2013 +0300
+
+    Tagged-PDF: Modify pdfinfo to show the document structure
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=64816
+
+ utils/pdfinfo.cc | 96
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 96 insertions(+)
+
+commit 1bf0ffdf1c68019515349262a14425c78c90ea18
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Feb 25 22:52:32 2016 +1030
+
+    Add missing files that got dropped from the previous commit
+    (989ceb6bd90)
+
+ poppler/FlateEncoder.cc | 148
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ poppler/FlateEncoder.h  |  73 ++++++++++++++++++++++++
+ 2 files changed, 221 insertions(+)
+
+commit 989ceb6bd90cc8a79dd48c58183f1855de269c9b
+Author: William Bader <william@newspapersystems.com>
+Date:   Thu Feb 25 21:01:16 2016 +1030
+
+    Add support for Flate compression in Level 3 PostScript output.
+
+    The changes to the build variables are from Adrian Johnson's
+    DeflateStream
+    patches at https://bugs.freedesktop.org/attachment.cgi?id=89776
+
+ CMakeLists.txt              |  21 ++++++--
+ config.h.cmake              |   5 +-
+ configure.ac                |  97 +++++++++++++++++++++--------------
+ poppler/FlateStream.cc      |  14 +++++
+ poppler/Makefile.am         |  13 ++++-
+ poppler/PSOutputDev.cc      | 122
+ +++++++++++++++++++++++++++++---------------
+ poppler/PSOutputDev.h       |  10 +++-
+ poppler/Stream.cc           |   4 +-
+ poppler/Stream.h            |   2 +-
+ poppler/poppler-config.h.in |   6 +--
+ 10 files changed, 202 insertions(+), 92 deletions(-)
+
+commit 91c0be60f3e7a53373ba660702358cf52f74d1b2
+Author: William Bader <william@newspapersystems.com>
+Date:   Thu Feb 25 20:50:10 2016 +1030
+
+    xpdf304: Merge xpdf-3.04 support for LZW encoding in PSOutputDev
+    and Stream.
+
+    Level 2 and Level 3 PostScript now use LZW encoding instead of Run
+    Length encoding, which can make some images one tenth the size.
+    PSOutputDev provides setEnableLZW() and getEnableLZW() to control
+    support for LZW encoding.
+
+ poppler/PSOutputDev.cc | 164
+ ++++++++++++++++++++++++++++++++++---------------
+ poppler/PSOutputDev.h  |   3 +
+ poppler/Stream.cc      | 145 +++++++++++++++++++++++++++++++++++++++++++
+ poppler/Stream.h       |  38 ++++++++++++
+ 4 files changed, 301 insertions(+), 49 deletions(-)
+
+commit b88e68f9c84d987a814716aab50543bf8a5cb8f8
+Author: William Bader <william@newspapersystems.com>
+Date:   Thu Feb 25 20:41:48 2016 +1030
+
+    xpdf304: Merge change from poppler/Gfx.cc to avoid attempting a
+    tiling pattern fill
+
+    with a singular transform matrix (abs(determinant) < 0.000001).
+
+ poppler/Gfx.cc | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
+
+commit 3f5f0796d855cb8b8c3a038484d4ca7c6f1a55f2
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Fri Feb 19 10:54:29 2016 -0600
+
+    Cache result of inner loop in visitDepthFirst
+
+    Speeds up sorting of text blocks.
+
+    bug #77087
+
+ poppler/TextOutputDev.cc | 42 ++++++++++++++++++++++++++++++++++--------
+ poppler/TextOutputDev.h  |  4 ++++
+ 2 files changed, 38 insertions(+), 8 deletions(-)
+
+commit 448169bd96137e2bf0145783012276220bb0c51a
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Feb 17 23:02:53 2016 +0100
+
+    Fall back to Gfx implementation of tiling pattern if repetition rate
+    is small
+
+    Bug #90596
+
+ poppler/SplashOutputDev.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 23e4291f2545f56432b0a9c4d709048825327bc2
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Feb 17 22:59:30 2016 +0100
+
+    Check if PDF knows the witdh of 'm' in case of substituted font
+
+    To check wether the PDF font declaration includes the width of
+    the letter 'm', compare it with the width of code 0. Code 0 is the
+    replacement glyph in a font and has the width of a blank. The width
+    table is initialized with this value, and the blank is always smaller
+    than a 'm'.
+
+    Bug #94054
+
+ poppler/SplashOutputDev.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 88415426df363f1ef86b741cbc3587a89d31aa1f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Feb 17 00:11:49 2016 +0100
+
+    0.41.0
+
+ CMakeLists.txt   | 2 +-
+ NEWS             | 9 +++++++++
+ configure.ac     | 2 +-
+ cpp/Doxyfile     | 2 +-
+ qt4/src/Doxyfile | 2 +-
+ qt5/src/Doxyfile | 2 +-
+ 6 files changed, 14 insertions(+), 5 deletions(-)
+
 commit 5689c990a187108ddc0a88b9825ba3bea644368f
 Author: Thomas Freitag <Thomas.Freitag@alfa.de>
 Date:   Tue Feb 16 01:44:31 2016 +0100
@@ -103,6 +464,35 @@ Date:   Mon Jan 11 19:26:02 2016 +1030
 
  utils/pdftocairo.cc | 14 ++++++++------
  1 file changed, 8 insertions(+), 6 deletions(-)
+
+commit dcefd7a232ba17af878b95efaa4ffaf147d095b7
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Fri Jan 8 16:49:25 2016 +1030
+
+    check all byte ranges in signature dictionary
+
+ poppler/Form.cc  | 60
+ +++++++++++++++++++++++++++++---------------------------
+ poppler/Object.h | 12 +++++++++++-
+ 2 files changed, 42 insertions(+), 30 deletions(-)
+
+commit e5104973197c63c3a46e6d2c0f41c9de111d4686
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Fri Jan 8 17:02:35 2016 +1030
+
+    Improve robustness of SignatureHandler::validateCertificate
+
+ poppler/SignatureHandler.cc | 18 +++++++-----------
+ 1 file changed, 7 insertions(+), 11 deletions(-)
+
+commit 4b0f6e5ec04058d12fbf7537c80b662cbea931b9
+Author: Markus Kilås <digital@markuspage.com>
+Date:   Wed Jan 6 23:36:17 2016 +0100
+
+    Fix printf for unsigned int
+
+ utils/pdfsig.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 commit 01d4bb222d63eda7dc5ec903c0735179edf77c0e
 Author: Albert Astals Cid <aacid@kde.org>
@@ -587,6 +977,44 @@ Date:   Sat Oct 31 18:32:49 2015 +1030
  utils/pdftocairo.cc | 42 ++++++++++++++++++++----------------------
  1 file changed, 20 insertions(+), 22 deletions(-)
 
+commit 8859cebef5bb5308757505c8f2c8ca9fc12e154d
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sat Oct 31 08:04:51 2015 +1030
+
+    gitignore
+
+ utils/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 946eb417e6da11491f6409669119254c769b6945
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Oct 29 21:59:06 2015 +1030
+
+    man pages: remove final comma in see also list
+
+ utils/pdfdetach.1   | 2 +-
+ utils/pdffonts.1    | 2 +-
+ utils/pdfimages.1   | 2 +-
+ utils/pdfinfo.1     | 2 +-
+ utils/pdfseparate.1 | 2 +-
+ utils/pdfsig.1      | 2 +-
+ utils/pdftocairo.1  | 2 +-
+ utils/pdftohtml.1   | 2 +-
+ utils/pdftoppm.1    | 2 +-
+ utils/pdftops.1     | 2 +-
+ utils/pdftotext.1   | 2 +-
+ utils/pdfunite.1    | 2 +-
+ 12 files changed, 12 insertions(+), 12 deletions(-)
+
+commit 1c66076bac768774e8b2b514bc0c555bc0395348
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Thu Oct 29 21:55:46 2015 +1030
+
+    pdfsig: update man page
+
+ utils/pdfsig.1 | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
 commit 3167964d70647d7b04e3ef8f415d5935990ecc9a
 Author: Thomas Freitag <Thomas.Freitag@alfa.de>
 Date:   Wed Oct 28 23:13:44 2015 +0100
@@ -604,6 +1032,80 @@ Date:   Wed Oct 28 23:13:44 2015 +0100
  splash/SplashState.cc      | 11 ++++++++++-
  splash/SplashState.h       |  5 ++++-
  8 files changed, 46 insertions(+), 6 deletions(-)
+
+commit 298caa2fc52cf50e92e1afda39b77b11f2de9743
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Wed Oct 28 20:54:43 2015 +1030
+
+    Add pdfsig reference (and other missing utils) to man pages
+
+ utils/pdfdetach.1   |  5 ++++-
+ utils/pdffonts.1    |  3 +++
+ utils/pdfimages.1   |  5 ++++-
+ utils/pdfinfo.1     |  3 +++
+ utils/pdfseparate.1 | 10 ++++++++++
+ utils/pdftocairo.1  |  3 +++
+ utils/pdftohtml.1   |  3 +++
+ utils/pdftoppm.1    |  3 +++
+ utils/pdftops.1     |  3 +++
+ utils/pdftotext.1   |  5 ++++-
+ utils/pdfunite.1    | 10 ++++++++++
+ 11 files changed, 50 insertions(+), 3 deletions(-)
+
+commit 5a6d6f5ec8782bb69a5805d8d8379a33aa00edec
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Wed Oct 28 20:54:23 2015 +1030
+
+    Add pdfsig man page
+
+ utils/pdfsig.1 | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
+commit 1f8e1a029773cefe0c31357c1e450cc4ecd5a5b5
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Wed Oct 28 19:38:14 2015 +1030
+
+    pdfsig: rename -c to -nocert
+
+    and make help options consistent with other tools (add -? and list
+    help options last)
+
+ utils/pdfsig.cc | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+commit 9d5bf425bd82dda303362380c488559be0007d78
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Wed Oct 28 19:34:26 2015 +1030
+
+    rename pdfsigverify to pdfsig
+
+ utils/CMakeLists.txt  |  12 ++--
+ utils/Makefile.am     |   6 +-
+ utils/pdfsig.cc       | 173
+ ++++++++++++++++++++++++++++++++++++++++++++++++++
+ utils/pdfsigverify.cc | 173
+ --------------------------------------------------
+ 4 files changed, 182 insertions(+), 182 deletions(-)
+
+commit 1d97f708ceb7cd34ccdb1a4f85192efe83d1853c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Oct 27 22:27:31 2015 +0100
+
+    Differentiate between unknown and untrusted issuer
+
+ poppler/SignatureHandler.cc | 4 +++-
+ poppler/SignatureInfo.h     | 4 +++-
+ utils/pdfsigverify.cc       | 7 +++++--
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+commit 19e20dc69a631f92bf4fdc0be0dd840a460cfc92
+Author: Markus Kilås <digital@markuspage.com>
+Date:   Tue Oct 27 22:23:06 2015 +0100
+
+    Handle untrusted issuer
+
+ poppler/SignatureHandler.cc | 2 ++
+ 1 file changed, 2 insertions(+)
 
 commit c20f68ce434366bbec4077824da97ce843ecdff3
 Author: Marek Kasik <mkasik@redhat.com>
@@ -630,6 +1132,19 @@ Date:   Fri Oct 23 10:15:47 2015 +0200
 
  poppler/CharCodeToUnicode.cc | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 02d3564faa5d8174ed93ce66fcda975b1a898ec5
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Wed Oct 14 22:50:05 2015 +0200
+
+    Incremental hashing + large file support for digital signatures
+
+ poppler/Form.cc             | 63
+ +++++++++++++++++++++++++++++++++------------
+ poppler/Form.h              |  1 +
+ poppler/SignatureHandler.cc | 34 ++++++++++++++----------
+ poppler/SignatureHandler.h  |  9 +++++--
+ 4 files changed, 76 insertions(+), 31 deletions(-)
 
 commit fb906dca8b84d03267099cc3174c50e932a55236
 Author: Adrian Johnson <ajohnson@redneon.com>
@@ -678,6 +1193,31 @@ Date:   Fri Oct 9 23:28:03 2015 +0200
  qt5/src/Doxyfile       |  2 +-
  qt5/src/Makefile.am    |  2 +-
  12 files changed, 36 insertions(+), 19 deletions(-)
+
+commit 5570c70a20ae62a9b3341372fafc64e916774adb
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Mon Oct 5 16:50:30 2015 +0200
+
+    NSS conditional build
+
+ CMakeLists.txt       | 19 ++++++++++++++-----
+ config.h.cmake       |  3 +++
+ configure.ac         | 20 +++++++++++++++++++-
+ poppler/Form.cc      |  7 ++++++-
+ poppler/Makefile.am  | 28 ++++++++++++++++++++++------
+ utils/CMakeLists.txt | 16 +++++++++-------
+ utils/Makefile.am    |  5 ++++-
+ 7 files changed, 77 insertions(+), 21 deletions(-)
+
+commit c7c0207b1cfe49a4353d6cda93dbebef4508138f
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Mon Oct 5 15:57:04 2015 +0200
+
+    Support for adbe.pkcs7.sha1 signatures
+
+ poppler/Form.cc             |  2 +-
+ poppler/SignatureHandler.cc | 27 +++++++++++++++++++++++++--
+ 2 files changed, 26 insertions(+), 3 deletions(-)
 
 commit e8cb16bff48dbe2d9efd988ddb09608406d2633b
 Author: Adrian Johnson <ajohnson@redneon.com>
@@ -781,6 +1321,15 @@ Date:   Fri Sep 25 00:30:58 2015 +0200
  poppler/Annot.cc | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
+commit 4f7903ebc037c63683637973285bc34ea83542dc
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Thu Sep 24 23:57:46 2015 +0200
+
+    Fix for Buffer overflow
+
+ poppler/Form.cc | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
 commit 9aa19159bff4db02889cba48b9b31e40247e5314
 Author: Even Rouault <even.rouault@spatialys.com>
 Date:   Fri Sep 11 13:56:05 2015 +0200
@@ -836,6 +1385,214 @@ Date:   Tue Sep 15 14:43:21 2015 -0500
 
  poppler/CairoOutputDev.cc | 10 +++++++++-
  1 file changed, 9 insertions(+), 1 deletion(-)
+
+commit 10693fb236ff92c6aa0c0a9f762362d2fd9ea738
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 20:19:00 2015 +0200
+
+    include shuffling
+
+ poppler/PDFDoc.cc           | 2 --
+ poppler/PDFDoc.h            | 3 ---
+ poppler/SignatureHandler.cc | 1 -
+ utils/pdfsigverify.cc       | 1 +
+ 4 files changed, 1 insertion(+), 6 deletions(-)
+
+commit 6e24d374987fbba0f5a133d73dfcb3e73129b534
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 19:59:09 2015 +0200
+
+    Simplify biterange handling
+
+ poppler/Form.cc | 22 +++++++---------------
+ poppler/Form.h  |  2 +-
+ 2 files changed, 8 insertions(+), 16 deletions(-)
+
+commit 7afa26fc389f4b2aa67cdf286e9c4ebfb3d78de5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 19:50:56 2015 +0200
+
+    Disable SignatureInfo and SignatureHandler copy ctr and assignment
+    operator
+
+ poppler/SignatureHandler.h | 3 +++
+ poppler/SignatureInfo.h    | 3 +++
+ 2 files changed, 6 insertions(+)
+
+commit 5348f8d080ae9f0ee58d75fd7ae2bc9f23692eca
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 19:46:23 2015 +0200
+
+    Fix some leaks in SignatureHandler
+
+ poppler/SignatureHandler.cc | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit 17b3a8dc2f8ab50696dd1247c4b6dd75991ab17e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 19:40:30 2015 +0200
+
+    Signatures: keep Goostring and convert to uchar when needed
+
+ poppler/Form.cc | 11 ++++++-----
+ poppler/Form.h  |  5 ++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
+
+commit a4ac855435325225e3d89d83870ff08ec73d86f8
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:52:41 2015 +0200
+
+    PDFDoc::getSignatureWidgets: Do not assume a given page exists
+
+ poppler/PDFDoc.cc | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+commit 6509068cf6e4a92359bcc5402f9e9eb9649d641c
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:45:47 2015 +0200
+
+    SignatureHandler initialize members on constructor
+
+ poppler/SignatureHandler.cc | 4 ++++
+ poppler/SignatureHandler.h  | 8 ++++----
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+commit 5d8dfaa9d55932cde638880bcee063a6f084689f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:43:16 2015 +0200
+
+    SignatureInfo::setSignerName: free old signer_name
+
+ poppler/SignatureInfo.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f284cfc7394175ea675d7c76d97a1f8461cf17d2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:42:11 2015 +0200
+
+    Start function names on lowercase
+
+ poppler/Form.cc             | 4 ++--
+ poppler/SignatureHandler.cc | 5 +++--
+ poppler/SignatureHandler.h  | 5 +++--
+ 3 files changed, 8 insertions(+), 6 deletions(-)
+
+commit 127ad3bb038d90ad7579e2e94cff2890869e2f43
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:40:31 2015 +0200
+
+    FormFieldSignature::parseInfo: check for isString instead !isNull
+
+ poppler/Form.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e428a3b8449830bf00706b4ccf86c27a55970f1f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:39:57 2015 +0200
+
+    FormFieldSignature::parseInfo: Use shorter isName version
+
+ poppler/Form.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ba3a4ec30fcd303e91ef41bef491c230a822bd32
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:36:44 2015 +0200
+
+    Delete the signature_info in FormFieldSignature not in pdfsigverify
+
+ poppler/Form.cc       | 1 +
+ utils/pdfsigverify.cc | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit e6b3d696adea70c79f60a67c275e23c29d2534c3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:33:56 2015 +0200
+
+    Make signature code more resilient
+
+    Do not abort with sign-a-pdf-with-reader-enabled.pdf
+
+ poppler/Form.cc | 68
+ +++++++++++++++++++++++++++++++--------------------------
+ 1 file changed, 37 insertions(+), 31 deletions(-)
+
+commit 23fa84ff91666d1feb2242fe4572eb397c791c55
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:28:18 2015 +0200
+
+    cmake: No need if NSS3_FOUND if it's required
+
+ CMakeLists.txt | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+commit 7a1dac27d380f0b1a68383525a4ae4a0c7f3e6f5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:26:31 2015 +0200
+
+    FormFieldSignature::validateSignature: Free to_check earlier
+
+ poppler/Form.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 71cc344d85aba7a4ae79e2c4c454341096a2329b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:25:31 2015 +0200
+
+    Remove PDFDoc::countSignatures
+
+ poppler/PDFDoc.cc     | 7 +------
+ poppler/PDFDoc.h      | 3 +--
+ utils/pdfsigverify.cc | 9 +++------
+ 3 files changed, 5 insertions(+), 14 deletions(-)
+
+commit c68954dd73202f21b62899dc335fd74218d5b595
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:20:41 2015 +0200
+
+    pdfsigverify: move assignment before if
+
+ utils/pdfsigverify.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8727fe6c08b7326523d6e15c90ce89e5e9d7300e
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Sep 14 01:20:16 2015 +0200
+
+    pdfsigverify: no if before delete
+
+ utils/pdfsigverify.cc | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit eb1a6a6254fb393555d6d30b99f4ea800d8d446b
+Author: André Guerreiro <aguerreiro1985@gmail.com>
+Date:   Mon Sep 14 01:17:30 2015 +0200
+
+    Core: Support for digital signatures
+
+    Coded with André Esser <bepandre@hotmail.com>
+
+    Bug #16770
+
+ CMakeLists.txt               |   9 ++
+ cmake/modules/FindNSS3.cmake |  22 ++++
+ configure.ac                 |   2 +
+ poppler/DateInfo.cc          |  26 ++++
+ poppler/DateInfo.h           |   3 +
+ poppler/Form.cc              | 116 ++++++++++++++++-
+ poppler/Form.h               |  16 +++
+ poppler/Makefile.am          |   6 +
+ poppler/PDFDoc.cc            |  27 ++++
+ poppler/PDFDoc.h             |   9 ++
+ poppler/SignatureHandler.cc  | 301
+ +++++++++++++++++++++++++++++++++++++++++++
+ poppler/SignatureHandler.h   |  65 ++++++++++
+ poppler/SignatureInfo.cc     |  86 +++++++++++++
+ poppler/SignatureInfo.h      |  66 ++++++++++
+ utils/CMakeLists.txt         |   8 ++
+ utils/Makefile.am            |   4 +
+ utils/pdfsigverify.cc        | 174 +++++++++++++++++++++++++
+ 17 files changed, 938 insertions(+), 2 deletions(-)
 
 commit b14d4b0968f7b0ad783c3fa56ad863d7fda235fe
 Author: Albert Astals Cid <aacid@kde.org>

@@ -20,7 +20,7 @@
 // Copyright (C) 2007 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2009, 2010 Ilya Gorenbein <igorenbein@finjan.com>
 // Copyright (C) 2010 Hib Eris <hib@hiberis.nl>
-// Copyright (C) 2012, 2013 Thomas Freitag <Thomas.Freitag@kabelmail.de>
+// Copyright (C) 2012, 2013, 2016 Thomas Freitag <Thomas.Freitag@kabelmail.de>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Pino Toscano <pino@kde.org>
@@ -297,6 +297,7 @@ void XRef::init() {
   ownerPasswordOk = gFalse;
   rootNum = -1;
   strOwner = gFalse;
+  xrefReconstructed = gFalse;
 }
 
 XRef::XRef() {
@@ -1249,6 +1250,11 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
   return obj;
 
  err:
+  if (!xRefStream && !xrefReconstructed) {
+    rootNum = -1;
+    constructXRef(&xrefReconstructed);
+    return fetch(num, gen, obj, ++recursion);
+  }
   return obj->initNull();
 }
 

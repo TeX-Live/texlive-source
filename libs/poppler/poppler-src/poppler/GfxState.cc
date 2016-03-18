@@ -18,7 +18,7 @@
 // Copyright (C) 2006, 2010 Carlos Garcia Campos <carlosgc@gnome.org>
 // Copyright (C) 2006-2015 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2009, 2012 Koji Otani <sho@bbr.jp>
-// Copyright (C) 2009, 2011-2015 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2009, 2011-2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2009 Christian Persch <chpe@gnome.org>
 // Copyright (C) 2010 Paweł Wiejacha <pawel.wiejacha@gmail.com>
 // Copyright (C) 2010 Christian Feuersänger <cfeuersaenger@googlemail.com>
@@ -809,6 +809,9 @@ GfxColorSpace *GfxCalGrayColorSpace::copy() {
   cs->blackY = blackY;
   cs->blackZ = blackZ;
   cs->gamma = gamma;
+  cs->kr = kr;
+  cs->kg = kg;
+  cs->kb = kb;
 #ifdef USE_CMS
   cs->transform = transform;
   if (transform != NULL) transform->ref();
@@ -1190,6 +1193,9 @@ GfxColorSpace *GfxCalRGBColorSpace::copy() {
   cs->gammaR = gammaR;
   cs->gammaG = gammaG;
   cs->gammaB = gammaB;
+  cs->kr = kr;
+  cs->kg = kg;
+  cs->kb = kb;
   for (i = 0; i < 9; ++i) {
     cs->mat[i] = mat[i];
   }
@@ -5821,6 +5827,7 @@ GfxImageColorMap::GfxImageColorMap(int bitsA, Object *decode,
   GBool useByteLookup;
 
   ok = gTrue;
+  useMatte = gFalse;
 
   // bits per component and color space
   bits = bitsA;
@@ -5983,6 +5990,8 @@ GfxImageColorMap::GfxImageColorMap(GfxImageColorMap *colorMap) {
   bits = colorMap->bits;
   nComps = colorMap->nComps;
   nComps2 = colorMap->nComps2;
+  useMatte = colorMap->useMatte;
+  matteColor = colorMap->matteColor;
   colorSpace2 = NULL;
   for (k = 0; k < gfxColorMaxComps; ++k) {
     lookup[k] = NULL;
@@ -6570,7 +6579,7 @@ void GfxPath::offset(double dx, double dy) {
 }
 
 //------------------------------------------------------------------------
-// GfxState
+//
 //------------------------------------------------------------------------
 GfxState::ReusablePathIterator::ReusablePathIterator(GfxPath *path)
  : path(path),

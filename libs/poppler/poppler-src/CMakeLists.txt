@@ -22,7 +22,7 @@ if (ECM_FOUND)
 endif()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "41")
+set(POPPLER_MINOR_VERSION "42")
 set(POPPLER_MICRO_VERSION "0")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
@@ -38,7 +38,8 @@ option(ENABLE_CPP "Compile poppler cpp wrapper." ON)
 set(ENABLE_LIBOPENJPEG "auto" CACHE STRING "Use libopenjpeg for JPX streams. Possible values: auto, openjpeg1, openjpeg2. 'auto' prefers openjpeg1 over openjpeg2 if both are available. Unset to not use openjpeg.")
 set(ENABLE_CMS "auto" CACHE STRING "Use color management system. Possible values: auto, lcms1, lcms2. 'auto' prefers lcms2 over lcms1 if both are available. Unset to disable color management system.")
 option(ENABLE_LIBCURL "Build libcurl based HTTP support." OFF)
-option(ENABLE_ZLIB "Build with zlib (not totally safe)." OFF)
+option(ENABLE_ZLIB "Build with zlib." ON)
+option(ENABLE_ZLIB_UNCOMPRESS "Use zlib to uncompress flate streams (not totally safe)." OFF)
 option(SPLASH_CMYK "Include support for CMYK rasterization." OFF)
 option(USE_FIXEDPOINT "Use fixed point arithmetic in the Splash backend" OFF)
 option(USE_FLOAT "Use single precision arithmetic in the Splash backend" OFF)
@@ -105,6 +106,7 @@ endif(WITH_FONTCONFIGURATION_FONTCONFIG)
 macro_optional_find_package(JPEG)
 macro_optional_find_package(PNG)
 macro_optional_find_package(TIFF)
+macro_optional_find_package(NSS3)
 if(JPEG_FOUND)
   set(ENABLE_LIBJPEG ${JPEG_FOUND})
 endif(JPEG_FOUND)
@@ -158,6 +160,10 @@ if(ENABLE_ZLIB)
   endif(ZLIB_FOUND)
   set(ENABLE_ZLIB ${ZLIB_FOUND})
 endif(ENABLE_ZLIB)
+if(ENABLE_ZLIB_UNCOMPRESS AND NOT ENABLE_ZLIB)
+  message("Warning: ENABLE_ZLIB_UNCOMPRESS requires ENABLE_ZLIB")
+  set(ENABLE_ZLIB_UNCOMPRESS FALSE)
+endif(ENABLE_ZLIB_UNCOMPRESS AND NOT ENABLE_ZLIB)
 set(USE_OPENJPEG1 FALSE)
 set(USE_OPENJPEG2 FALSE)
 set(WITH_OPENJPEG FALSE)
@@ -234,6 +240,11 @@ endif(CMAKE_USE_PTHREADS_INIT)
 if(ENABLE_ZLIB)
   include_directories(${ZLIB_INCLUDE_DIR})
 endif(ENABLE_ZLIB)
+
+if (NSS3_FOUND)
+  add_definitions(${NSS3_CFLAGS})
+  set(ENABLE_NSS3 ON)
+endif(NSS3_FOUND)
 if(JPEG_FOUND)
   include_directories(${JPEG_INCLUDE_DIR})
   set(ENABLE_LIBJPEG ON)
@@ -364,6 +375,7 @@ set(poppler_SRCS
   poppler/ProfileData.cc
   poppler/PreScanOutputDev.cc
   poppler/PSTokenizer.cc
+  poppler/SignatureInfo.cc
   poppler/Stream.cc
   poppler/StructTreeRoot.cc
   poppler/StructElement.cc
@@ -412,6 +424,7 @@ endif(ENABLE_SPLASH)
 if(FONTCONFIG_FOUND)
   set(poppler_LIBS ${poppler_LIBS} ${FONTCONFIG_LIBRARIES})
 endif(FONTCONFIG_FOUND)
+
 if(JPEG_FOUND)
   set(poppler_SRCS ${poppler_SRCS}
     poppler/DCTStream.cc
@@ -420,10 +433,15 @@ if(JPEG_FOUND)
 endif(JPEG_FOUND)
 if(ENABLE_ZLIB)
   set(poppler_SRCS ${poppler_SRCS}
-    poppler/FlateStream.cc
+    poppler/FlateEncoder.cc
   )
   set(poppler_LIBS ${poppler_LIBS} ${ZLIB_LIBRARIES})
 endif(ENABLE_ZLIB)
+if(ENABLE_ZLIB_UNCOMPRESS)
+  set(poppler_SRCS ${poppler_SRCS}
+    poppler/FlateStream.cc
+  )
+endif(ENABLE_ZLIB_UNCOMPRESS)
 if(ENABLE_LIBCURL)
   set(poppler_SRCS ${poppler_SRCS}
     poppler/CurlCachedFile.cc
@@ -431,6 +449,12 @@ if(ENABLE_LIBCURL)
   )
   set(poppler_LIBS ${poppler_LIBS} ${CURL_LIBRARIES})
 endif(ENABLE_LIBCURL)
+if (ENABLE_NSS3)
+  set(poppler_SRCS ${poppler_SRCS}
+    poppler/SignatureHandler.cc
+  )
+  set(poppler_LIBS ${poppler_LIBS} ${NSS3_LIBRARIES})
+endif(ENABLE_NSS3)  
 if(LIBOPENJPEG_FOUND)
   set(poppler_SRCS ${poppler_SRCS}
     poppler/JPEG2000Stream.cc
@@ -477,7 +501,7 @@ add_library(poppler STATIC ${poppler_SRCS})
 else(MSVC)
 add_library(poppler SHARED ${poppler_SRCS})
 endif(MSVC)
-set_target_properties(poppler PROPERTIES VERSION 58.0.0 SOVERSION 58)
+set_target_properties(poppler PROPERTIES VERSION 59.0.0 SOVERSION 59)
 target_link_libraries(poppler LINK_PRIVATE ${poppler_LIBS})
 install(TARGETS poppler RUNTIME DESTINATION bin LIBRARY DESTINATION lib${LIB_SUFFIX} ARCHIVE DESTINATION lib${LIB_SUFFIX})
 
@@ -716,7 +740,9 @@ show_end_message("use gtk-doc" "not supported with this CMake build system")
 show_end_message_yesno("use libjpeg" ENABLE_LIBJPEG)
 show_end_message_yesno("use libpng" ENABLE_LIBPNG)
 show_end_message_yesno("use libtiff" ENABLE_LIBTIFF)
-show_end_message_yesno("use zlib" ENABLE_ZLIB)
+show_end_message_yesno("use zlib compress" ENABLE_ZLIB)
+show_end_message_yesno("use zlib uncompress" ENABLE_ZLIB_UNCOMPRESS)
+show_end_message_yesno("use nss3" ENABLE_NSS3)
 show_end_message_yesno("use curl" ENABLE_LIBCURL)
 show_end_message_yesno("use libopenjpeg" WITH_OPENJPEG)
 if(USE_OPENJPEG1)
@@ -747,9 +773,9 @@ if(NOT ENABLE_LIBJPEG)
   message("Warning: Using libjpeg is recommended. The internal DCT decoder is unmaintained.")
 endif(NOT ENABLE_LIBJPEG)
 
-if(ENABLE_ZLIB)
+if(ENABLE_ZLIB_UNCOMPRESS)
   message("Warning: Using zlib is not totally safe")
-endif(ENABLE_ZLIB)
+endif(ENABLE_ZLIB_UNCOMPRESS)
 
 if(NOT WITH_OPENJPEG)
   message("Warning: Using libopenjpeg is recommended. The internal JPX decoder is unmaintained.")

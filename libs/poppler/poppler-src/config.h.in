@@ -18,11 +18,17 @@
 /* Build against libtiff. */
 #undef ENABLE_LIBTIFF
 
+/* Build Poppler against NSS for digital signature support. */
+#undef ENABLE_NSS3
+
 /* Do not hardcode the library location */
 #undef ENABLE_RELOCATABLE
 
-/* Use zlib instead of builtin zlib decoder. */
+/* Build against zlib. */
 #undef ENABLE_ZLIB
+
+/* Use zlib instead of builtin zlib decoder to uncompress flate streams. */
+#undef ENABLE_ZLIB_UNCOMPRESS
 
 /* Use cairo for rendering. */
 #undef HAVE_CAIRO
