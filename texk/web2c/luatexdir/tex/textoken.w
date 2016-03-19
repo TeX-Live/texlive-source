@@ -514,15 +514,24 @@ boolean scan_keyword(const char *s)
             store_new_token(cur_tok);
             k++;
         } else if ((cur_cmd != spacer_cmd) || (p != backup_head)) {
+            /*
+                crashes on some alignments:
+
+                if (p != backup_head) {
+                    q = get_avail();
+                    token_info(q) = cur_tok;
+                    token_link(q) = null;
+                    token_link(p) = q;
+                    begin_token_list(token_link(backup_head), backed_up);
+                } else {
+                    back_input();
+                }
+            */
+            back_input();
             if (p != backup_head) {
-                q = get_avail();
-                token_info(q) = cur_tok;
-                token_link(q) = null;
-                token_link(p) = q;
                 begin_token_list(token_link(backup_head), backed_up);
-            } else {
-                back_input();
             }
+            /*  */
             cur_cs = save_cur_cs;
             return false;
         }
