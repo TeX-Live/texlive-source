@@ -1,3 +1,9 @@
+XeTeX 0.99996 (just squeaked into TeXLive 2016)
+
+XeTeX:
+* Added \XeTeXhyphenatablelength primitive that sets the maximum
+  length of word that XeTeX will attempt to hyphenate (default: 63).
+
 ==============================================================
 XeTeX 0.99995 (targeting TeXLive 2016)
 ==============================================================
