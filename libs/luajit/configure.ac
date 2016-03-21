@@ -77,6 +77,14 @@ AS_IF([test "x$lj_cpp" != xok],
 echo timestamp >config.force
 fi
 
+# Check log2, on some systems is still not defined
+LUAJIT_HAS_NOT_LOG2=
+AC_CHECK_DECLS([log2], [], [LUAJIT_HAS_NOT_LOG2=[-DLUAJIT_NO_LOG2]], [[#include <math.h>]])
+AC_SUBST([LUAJIT_HAS_NOT_LOG2])
+
+
+
+
 AC_SUBST([LUAJIT_TREE], [LuaJIT-src])
 
 dnl Not used but avoids putting a zillion useless -D's on the command line.
