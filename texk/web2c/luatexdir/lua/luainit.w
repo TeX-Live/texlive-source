@@ -427,7 +427,7 @@ static void parse_options(int ac, char **av)
                  "pdftex    : Han The Thanh and friends\n"
                  "kpathsea  : Karl Berry, Olaf Weber and others\n"
                  "lua       : Roberto Ierusalimschy, Waldemar Celes and Luiz Henrique de Figueiredo\n"
-                 "metapost  : John Hobby, Taco Hoekwater and friends.\n"
+                 "metapost  : John Hobby, Taco Hoekwater and friends\n"
                  "poppler   : Derek Noonburg, Kristian H\\ogsberg (partial)\n"
                  "fontforge : George Williams (partial)\n"
                  "luajit    : Mike Pall (used in LuajitTeX)\n");
