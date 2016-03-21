@@ -639,7 +639,7 @@ LTLIBOBJS
 LIBOBJS
 subdirs
 LUAJIT_TREE
-LUAJIT_HAS_LOG2
+LUAJIT_HAS_NOT_LOG2
 build_FALSE
 build_TRUE
 LIBLUAJIT_LDEXTRA
@@ -14383,7 +14383,7 @@ echo timestamp >config.force
 fi
 
 # Check log2, on some systems is still not defined
-LUAJIT_HAS_LOG2=
+LUAJIT_HAS_NOT_LOG2=
 ac_fn_c_check_decl "$LINENO" "log2" "ac_cv_have_decl_log2" "#include <math.h>
 "
 if test "x$ac_cv_have_decl_log2" = xyes; then :
@@ -14398,7 +14398,7 @@ _ACEOF
 if test $ac_have_decl = 1; then :
 
 else
-  LUAJIT_HAS_LOG2=-DLUAJIT_NO_LOG2
+  LUAJIT_HAS_NOT_LOG2=-DLUAJIT_NO_LOG2
 fi
 
 
