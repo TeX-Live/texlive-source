@@ -407,17 +407,27 @@ static int priv_mfweb_LUAGLOBALGET_boundary_char(lua_State *L)
 /**************************************************************/
 int mfluabeginprogram(void)
 {
-  lua_State *L = luaL_newstate();
-  char* luafile = kpse_find_file("begin_program.lua", kpse_lua_format, 0);
+  lua_State *L ;
+  char* luafile ;
   int res ;
+
+  L = luaL_newstate();
   luaL_openlibs(L);
   Luas[0] = L;
+
+  luafile = kpse_find_file("begin_program.lua", kpse_lua_format, 0);
   /* execute Lua external "begin_program.lua" */
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"begin_program.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
   res = luaL_loadfile(L, luafile);
-  if(luafile) free(luafile);
+  free(luafile);
   if ( res==0 ) {
-      res = lua_pcall(L, 0, 0, 0);
-    }
+    res = lua_pcall(L, 0, 0, 0);
+  }
   /* stackdump_g(L); */
   priv_lua_reporterrors(L, res);
   return 0;
@@ -425,11 +435,21 @@ int mfluabeginprogram(void)
 
 int mfluaendprogram(void)
 {
-  lua_State *L = Luas[0];
-   /* execute Lua external "end_program.lua" */
-  char* file = kpse_find_file("end_program.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if(file) free(file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  /* execute Lua external "end_program.lua" */
+  luafile = kpse_find_file("end_program.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"end_program.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free(luafile);
   if ( res==0 ) {
       res = lua_pcall(L, 0, 0, 0);
     }
@@ -441,10 +461,20 @@ int mfluaendprogram(void)
 
 int mfluaPREstartofMF(void)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("start_of_MF.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("start_of_MF.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"start_of_MF.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -475,10 +505,20 @@ int mfluaPREstartofMF(void)
 
 int mfluaPREmaincontrol(void)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("main_control.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("main_control.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"main_control.lua");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -509,10 +549,20 @@ int mfluaPREmaincontrol(void)
 
 int mfluaPOSTmaincontrol(void)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("main_control.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("main_control.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"main_control.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -540,14 +590,21 @@ int mfluaPOSTmaincontrol(void)
 
 }
 
-
-
+  
 int mfluainitialize(void)
 {
-  /* execute Lua external "mfluaini.lua" */
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("mfluaini.lua", kpse_lua_format, 0);
+  lua_State *L;
+  char* luafile;
   int res ;
+
+  L = Luas[0];
+  luafile = kpse_find_file("mfluaini.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"mfluaini.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
   /* register lua functions */
   luaopen_kpse(L);
   lua_pushcfunction(L, priv_mfweb_link);lua_setglobal(L, "link");
@@ -584,11 +641,9 @@ int mfluainitialize(void)
   lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_fillin);lua_setglobal(L,"LUAGLOBALGET_fillin");
   lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_turning_check);lua_setglobal(L,"LUAGLOBALGET_turning_check");
   lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_boundary_char);lua_setglobal(L,"LUAGLOBALGET_boundary_char");
-
-  /*lua_pushcfunction(L, priv_mfweb_SKELETON);lua_setglobal(L, "SKELETON");*/
   /* execute Lua external "mfluaini.lua" */
-  res = luaL_loadfile(L, file);
-  if (file) free (file);
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ) {
       res = lua_pcall(L, 0, 0, 0);
     }
@@ -599,10 +654,20 @@ int mfluainitialize(void)
 
 int mfluaPOSTfinalcleanup(void)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("final_cleanup.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("final_cleanup.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"final_cleanup.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   /*if (res!=0) {fprintf(stderr,"\n! Warning: file final_cleanup not loaded\n",lua_tostring(L, -1)); return res;}*/
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
@@ -668,10 +733,20 @@ int mfluaPOSTfinalcleanup(void)
 
 int mfluaprintpath(halfword h, strnumber s, boolean nuline)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("print_path.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("print_path.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"print_path.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -706,10 +781,20 @@ int mfluaprintpath(halfword h, strnumber s, boolean nuline)
 int mfluaprintedges(strnumber s, boolean nuline, integer xoff, integer yoff)
 {
 
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("print_edges.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("print_edges.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"print_edges.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -787,10 +872,20 @@ int mfluaprintedges(strnumber s, boolean nuline, integer xoff, integer yoff)
 int mfluaPREoffsetprep(halfword c, halfword h)
 {
 
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("offset_prep.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("offset_prep.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"offset_prep.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -823,10 +918,20 @@ int mfluaPREoffsetprep(halfword c, halfword h)
 int mfluaPOSToffsetprep(halfword c, halfword h)
 {
 
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("offset_prep.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("offset_prep.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"offset_prep.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -859,10 +964,20 @@ int mfluaPOSToffsetprep(halfword c, halfword h)
 
 int mfluaPREfillenveloperhs(halfword rhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -893,10 +1008,20 @@ int mfluaPREfillenveloperhs(halfword rhs)
 
 int mfluaPOSTfillenveloperhs(halfword rhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -928,10 +1053,20 @@ int mfluaPOSTfillenveloperhs(halfword rhs)
 
 int mfluaPREfillenvelopelhs(halfword lhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+ 
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -962,10 +1097,20 @@ int mfluaPREfillenvelopelhs(halfword lhs)
 
 int mfluaPOSTfillenvelopelhs(halfword lhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+  
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -997,10 +1142,20 @@ int mfluaPOSTfillenvelopelhs(halfword lhs)
 
 int mfluaPREfillspecrhs(halfword rhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+  
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1031,10 +1186,20 @@ int mfluaPREfillspecrhs(halfword rhs)
 
 int mfluaPOSTfillspecrhs(halfword rhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1065,10 +1230,20 @@ int mfluaPOSTfillspecrhs(halfword rhs)
 
 int mfluaPREfillspeclhs(halfword lhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1099,10 +1274,20 @@ int mfluaPREfillspeclhs(halfword lhs)
 
 int mfluaPOSTfillspeclhs(halfword lhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1132,10 +1317,20 @@ int mfluaPOSTfillspeclhs(halfword lhs)
 
 int mfluaPREmovetoedges(halfword lhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("fill_spec.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("fill_spec.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"fill_spec.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1167,10 +1362,20 @@ int mfluaPREmovetoedges(halfword lhs)
 
 int mfluaPOSTmovetoedges(halfword lhs)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("fill_spec.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("fill_spec.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"fill_spec.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1202,10 +1407,20 @@ int mfluaPOSTmovetoedges(halfword lhs)
 
 int mfluaPREmakechoices(halfword p)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("scan_direction.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("scan_direction.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"scan_direction.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1236,10 +1451,20 @@ int mfluaPREmakechoices(halfword p)
 
 int mfluaPOSTmakechoices(halfword p)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("scan_direction.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("scan_direction.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"scan_direction.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1274,10 +1499,20 @@ int mfluaPOSTmakechoices(halfword p)
 
 int mfluaprintretrogradeline(integer x0, integer y0, integer cur_x, integer cur_y)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("skew_line_edges.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("skew_line_edges.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"skew_line_edges.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1312,10 +1547,20 @@ int mfluaprintretrogradeline(integer x0, integer y0, integer cur_x, integer cur_
 
 int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , integer tx, integer ty,integer q)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("make_ellipse.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("make_ellipse.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"make_ellipse.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1352,10 +1597,20 @@ int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , 
 
 int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer theta , integer tx, integer ty,integer q)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("make_ellipse.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("make_ellipse.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"make_ellipse.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1390,18 +1645,22 @@ int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer theta ,
 }
 
 
-
-
-
-
-
-
 int mfluaprinttransitionlinefrom(integer x, integer y)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("fill_envelope.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("fill_envelope.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"fill_envelope.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
@@ -1432,10 +1691,20 @@ int mfluaprinttransitionlinefrom(integer x, integer y)
 
 int mfluaprinttransitionlineto(integer x, integer y)
 {
-  lua_State *L = Luas[0];
-  char* file = kpse_find_file("fill_envelope.lua", kpse_lua_format, 0);
-  int res = luaL_loadfile(L, file);
-  if (file) free (file);
+  lua_State *L;
+  char* luafile;
+  int res;
+
+  L = Luas[0];
+  luafile = kpse_find_file("fill_envelope.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"fill_envelope.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
   if ( res==0 ){
       res = lua_pcall(L, 0, 0, 0);
       if (res==0){
