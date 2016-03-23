@@ -1,3 +1,24 @@
+pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)
+- changes:
+  - if environment variable SOURCE_DATE_EPOCH is set, use its value for
+    the CreationDate and ModDate values, and to seed the trailer /ID.
+    This by itself should suffice to create reproducible PDFs.  The
+    other changes support more granular output tweaks along the same lines.
+    
+  - new primitive \pdfinfoomitdate to omit CreationDate and ModDate keys.
+  - new primitive \pdftrailer to allow adding to the trailer dictionary.
+  - new primitive \pdftrailerid to set seed for the trailer /ID
+    computation; with an empty argument \pdftrailerid{}, the /ID is omitted.
+  - new primitive \pdfsuppressptexinfo to omit PTEX.* keys from output;
+    the value is a bitmask:
+    % 1 -> PTEX.Fullbanner
+    % 2 -> PTEX.FileName
+    % 4 -> PTEX.PageNumber
+    % 8 -> PTEX.InfoDict (/Producer /Creator /CreationDate /ModDate /Trapped)
+
+- bugfixes:
+  - do not crash if font size of a vf >= 2048pt.
+---------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.16 (TeX Live 2015)
 - changes:
   - support JPEG Exif as well as JFIF.

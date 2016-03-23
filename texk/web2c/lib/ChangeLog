@@ -1,3 +1,11 @@
+2016-03-22  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c: no uexit after FATAL.
+
+2016-03-21  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c (initstarttime): wording of invalid SOURCE_DATE_EPOCH.
+
 2016-01-26  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Improve to skip BOM (win32 only).
