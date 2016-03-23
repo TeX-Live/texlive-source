@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-03-06.18}
+\def\texinfoversion{2016-03-21.10}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1513,10 +1513,13 @@ output) for that.)}
 \fi  % \ifx\pdfoutput
 
 %
-% PDF outline support for XeTeX
+% For XeTeX
 %
 \ifx\XeTeXrevision\thisisundefined
 \else
+  %
+  % PDF outline support
+  %
   \pdfmakepagedesttrue \relax
   % Emulate the primitive of pdfTeX
   \def\pdfdest name#1 xyz{%
@@ -1596,14 +1599,9 @@ output) for that.)}
   % However, due to UTF-16 convert issue of xdvipdfmx 20150315,
   % ``\special{pdf:dest ...}'' can not handle non-ASCII strings.
   % It fixed by xdvipdfmx 20160106 (TeX Live SVN r39753).
-\fi
-
 %
-% @image support for XeTeX
-%
-\newif\ifxeteximgpdf
-\ifx\XeTeXrevision\thisisundefined
-\else
+  %
+  % @image support
   %
   % #1 is image name, #2 width (might be empty/whitespace), #3 height (ditto).
   \def\doxeteximage#1#2#3{%
@@ -1615,7 +1613,6 @@ output) for that.)}
     % someone has a scalable image, presumably better to use that than a
     % bitmap.
     \let\xeteximgext=\empty
-    \xeteximgpdffalse
     \begingroup
       \openin 1 #1.pdf \ifeof 1
         \openin 1 #1.PDF \ifeof 1
@@ -1632,17 +1629,23 @@ output) for that.)}
             \fi
           \else \gdef\xeteximgext{png}%
           \fi
-        \else \gdef\xeteximgext{PDF} \global\xeteximgpdftrue%
+        \else \gdef\xeteximgext{PDF}%
         \fi
-      \else \gdef\xeteximgext{pdf} \global\xeteximgpdftrue%
+      \else \gdef\xeteximgext{pdf}%
       \fi
       \closein 1
     \endgroup
     %
-    \ifxeteximgpdf
+    \def\xetexpdfext{pdf}%
+    \ifx\xeteximgext\xetexpdfext
       \XeTeXpdffile "#1".\xeteximgext ""
     \else
-      \XeTeXpicfile "#1".\xeteximgext ""
+      \def\xetexpdfext{PDF}%
+      \ifx\xeteximgext\xetexpdfext
+        \XeTeXpdffile "#1".\xeteximgext ""
+      \else
+        \XeTeXpicfile "#1".\xeteximgext ""
+      \fi
     \fi
     \ifdim \wd0 >0pt width \xeteximagewidth \fi
     \ifdim \wd2 >0pt height \xeteximageheight \fi \relax
@@ -10865,6 +10868,10 @@ directory should work if nowhere else does.}
   \unicodechardefs
 }
 
+% Whether the active definitions of non-ASCII characters expand to
+% non-active tokens with the same character code.  This is used to
+% write characters literally, instead of using active definitions for
+% printing the correct glyphs.
 \newif\ifpassthroughchars
 \passthroughcharsfalse
 
@@ -10916,13 +10923,6 @@ directory should work if nowhere else does.}
 \def\asciichardefs{% nothing need be done
    \relax
 }
-
-% Whether the active definitions of non-ASCII characters expand to
-% non-active tokens with the same character code.  This is used to
-% write characters literally, instead of using active definitions for
-% printing the correct glyphs.
-\newif\ifpassthroughchars
-\passthroughcharsfalse
 
 % define all the unicode characters we know about, for the sake of @U.
 \iftxinativeunicodecapable
