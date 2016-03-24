@@ -771,8 +771,8 @@ static char **t1_builtin_enc(void)
     for (i = 0; i < 256; i++)
         glyph_names[i] = notdef;
     if (t1_suffix("def")) {     /* predefined encoding */
-        sscanf(t1_line_array + strlen("/Encoding"), "%256s", t1_buf_array);
-        if (strcmp(t1_buf_array, "StandardEncoding") == 0) {
+        if (sscanf(t1_line_array + strlen("/Encoding"), "%255s", t1_buf_array) == 1
+            && strcmp(t1_buf_array, "StandardEncoding") == 0) {
             t1_encoding = ENC_STANDARD;
             for (i = 0; i < 256; i++) {
                 if (standard_glyph_names[i] != notdef)
@@ -837,7 +837,7 @@ static char **t1_builtin_enc(void)
             /*
                check for `dup <index> <glyph> put'
              */
-            if (sscanf(p, "dup %i%256s put", &i, t1_buf_array) == 2 &&
+            if (sscanf(p, "dup %i%255s put", &i, t1_buf_array) == 2 &&
                 *t1_buf_array == '/' && valid_code(i)) {
                 if (strcmp(t1_buf_array + 1, notdef) != 0)
                     glyph_names[i] = xstrdup(t1_buf_array + 1);
