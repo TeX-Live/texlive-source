@@ -2449,7 +2449,7 @@ static void  t1_builtin_enc (MP mp) {
      * At this moment "/Encoding" is the prefix of |mp->ps->t1_line_array|
      */
     if (t1_suffix ("def")) {    /* predefined encoding */
-        (void)sscanf (mp->ps->t1_line_array + strlen ("/Encoding"), "%256s", mp->ps->t1_buf_array);
+        (void)sscanf (mp->ps->t1_line_array + strlen ("/Encoding"), "%255s", mp->ps->t1_buf_array);
         if (strcmp (mp->ps->t1_buf_array, "StandardEncoding") == 0) {
             for (i = 0; i < 256; i++) {
                 if (mp->ps->t1_builtin_glyph_names[i] != notdef)
@@ -2535,7 +2535,7 @@ static void  t1_builtin_enc (MP mp) {
             /*
                check for `dup <index> <glyph> put'
              */
-            if (sscanf (p, "dup %i%256s put", &i, mp->ps->t1_buf_array) == 2 &&
+            if (sscanf (p, "dup %i%255s put", &i, mp->ps->t1_buf_array) == 2 &&
                 *mp->ps->t1_buf_array == '/' && valid_code (i)) {
                 if (strcmp (mp->ps->t1_buf_array + 1, notdef) != 0) {
                     if (mp->ps->t1_builtin_glyph_names[i] != notdef)
