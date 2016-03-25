@@ -550,15 +550,17 @@ static int lua_nodelib_direct_setsubtype(lua_State * L)
 
 static int lua_nodelib_getfont(lua_State * L)
 {
-    halfword *p = lua_touserdata(L, 1);
-    if ( (p == NULL) || (! lua_getmetatable(L,1)) ) {
+    halfword *n = lua_touserdata(L, 1);
+    if ( (n == NULL) || (! lua_getmetatable(L,1)) ) {
         lua_pushnil(L);
     } else {
-        lua_get_metatablelua(luatex_node);
-        if ( (!lua_rawequal(L, -1, -2)) || (type(*p) != glyph_node) ) {
-            lua_pushnil(L);
+        halfword t = type(*n);
+        if (t == glyph_node) {
+            lua_pushinteger(L, font(*n));
+        } else if ((t == math_char_node) || (t == math_text_char_node)) {
+            lua_pushinteger(L, fam_fnt(math_fam(*n), 0));
         } else {
-            lua_pushinteger(L, font(*p));
+            lua_pushnil(L);
         }
     }
     return 1;
@@ -3296,6 +3298,8 @@ static int lua_nodelib_fast_getfield(lua_State * L)
             lua_pushinteger(L, math_fam(n));
         } else if (lua_key_eq(s, char)) {
             lua_pushinteger(L, math_character(n));
+        } else if (lua_key_eq(s, font)) {
+            lua_pushinteger(L, fam_fnt(math_fam(n), 0));
         } else {
             lua_pushnil(L);
         }
@@ -4014,6 +4018,8 @@ static int lua_nodelib_direct_getfield(lua_State * L)
             lua_pushinteger(L, math_fam(n));
         } else if (lua_key_eq(s, char)) {
             lua_pushinteger(L, math_character(n));
+        } else if (lua_key_eq(s, font)) {
+            lua_pushinteger(L, fam_fnt(math_fam(n), 0));
         } else {
             lua_pushnil(L);
         }
