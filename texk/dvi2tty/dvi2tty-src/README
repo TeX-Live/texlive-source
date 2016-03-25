@@ -58,3 +58,23 @@ at Paypal marcel@mesa.nl. Thanks
 # The Netherlands                       #
 #                                       #
 #########################################
+
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+                dvi2tty-6.0.0 (20160305)
+
+  * Support TeX encodings in dvi:
+      OT1, OML, OMS, T1, TS1, OT2, T2A, T2B, T2C, X2
+  * Support plain text encodings in output:
+      ASCII, LATIN1, UTF-8
+  * Support Japanese TeX (NTT JTeX, ASCII pTeX, upTeX) dvi and
+      plain text encodings ISO-2022-JP, EUC-JP, Shift_JIS, UTF-8
+  * Work along with kpathea, ptexenc libraries
+
+
+Since March 2016, dvi2tty has been maintained by
+TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+at
+https://github.com/t-tk/dvi2tty
+
+-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
