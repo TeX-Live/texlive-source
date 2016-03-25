@@ -132,6 +132,7 @@ typedef enum {
     c_pdf_inclusion_copy_font,
     c_pdf_gen_tounicode,
     c_pdf_pk_fixed_dpi,
+    c_pdf_suppress_optional_info,
 } pdf_backend_counters ;
 
 typedef enum {
@@ -150,6 +151,7 @@ typedef enum {
     t_pdf_xform_attr,
     t_pdf_xform_resources,
     t_pdf_pk_mode,
+    t_pdf_trailer_id,
 } pdf_backend_tokenlists ;
 
 extern int pdf_last_annot;
@@ -175,6 +177,7 @@ extern int pdf_retval;
 #  define pdf_inclusion_copy_font     get_tex_extension_count_register(c_pdf_inclusion_copy_font)
 #  define pdf_gen_tounicode           get_tex_extension_count_register(c_pdf_gen_tounicode)
 #  define pdf_pk_fixed_dpi            get_tex_extension_count_register(c_pdf_pk_fixed_dpi)
+#  define pdf_suppress_optional_info  get_tex_extension_count_register(c_pdf_suppress_optional_info)
 
 #  define pdf_h_origin                get_tex_extension_dimen_register(d_pdf_h_origin)
 #  define pdf_v_origin                get_tex_extension_dimen_register(d_pdf_v_origin)
@@ -189,6 +192,7 @@ extern int pdf_retval;
 #  define pdf_xform_attr              get_tex_extension_toks_register(t_pdf_xform_attr)
 #  define pdf_xform_resources         get_tex_extension_toks_register(t_pdf_xform_resources)
 #  define pdf_pk_mode                 get_tex_extension_toks_register(t_pdf_pk_mode)
+#  define pdf_trailer_id              get_tex_extension_toks_register(t_pdf_trailer_id)
 
 #  define set_pdf_minor_version(i)    set_tex_extension_count_register(c_pdf_minor_version,i)
 #  define set_pdf_compress_level(i)   set_tex_extension_count_register(c_pdf_compress_level,i)

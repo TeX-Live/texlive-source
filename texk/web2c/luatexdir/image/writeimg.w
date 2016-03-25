@@ -589,7 +589,7 @@ void write_img(PDF pdf, image_dict * idict)
             break;
         case IMG_TYPE_PDFMEMSTREAM:
         case IMG_TYPE_PDF:
-            write_epdf(pdf, idict);
+            write_epdf(pdf, idict,(int) pdf_suppress_optional_info);
             break;
         case IMG_TYPE_PDFSTREAM:
             write_pdfstream(pdf, idict);
@@ -666,8 +666,8 @@ void idict_to_array(image_dict * idict)
 
 void pdf_dict_add_img_filename(PDF pdf, image_dict * idict)
 {
-    char s[21], *p;
-    if (pdf_image_addfilename>0) {
+    char *p;
+    if ((pdf_image_addfilename > 0) && ((pdf_suppress_optional_info & 2) == 0)) {
         /* for now PTEX.FileName only for PDF, but prepared for JPG, PNG, ... */
         if (! ( (img_type(idict) == IMG_TYPE_PDF) || (img_type(idict) == IMG_TYPE_PDFMEMSTREAM) ))
             return;
@@ -682,8 +682,7 @@ void pdf_dict_add_img_filename(PDF pdf, image_dict * idict)
             p = img_filepath(idict);
         }
         // write additional information
-        snprintf(s, 20, "%s.FileName", pdfkeyprefix);
-        pdf_add_name(pdf, s);
+        pdf_add_name(pdf, "PTEX.FileName");
         pdf_printf(pdf, " (%s)", convertStringToPDFString(p, strlen(p)));
     }
 }

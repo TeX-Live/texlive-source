@@ -1425,48 +1425,60 @@ and that they should be reasonably unique. Since it's difficult to get the file
 size at this point in the execution of pdfTeX and scanning the info dict is also
 difficult, we start with a simpler implementation using just the first two items.
 
+
 @c
 static void print_ID(PDF pdf)
 {
-    time_t t;
-    size_t size;
-    char time_str[32];
-    md5_state_t state;
-    md5_byte_t digest[16];
-    char id[64];
-    char pwd[4096];
-    /* start md5 */
-    md5_init(&state);
-    /* get the time */
-    t = time(NULL);
-    size = strftime(time_str, sizeof(time_str), "%Y%m%dT%H%M%SZ", gmtime(&t));
-    md5_append(&state, (const md5_byte_t *) time_str, (int) size);
-    /* get the file name */
-    if (getcwd(pwd, sizeof(pwd)) == NULL)
-        formatted_error("pdf backend","getcwd() failed (%s), (path too long?)", strerror(errno));
+    if ((pdf_suppress_optional_info & 512) == 0) {
+        if (pdf_trailer_id != 0) {
+            char *s = NULL;
+            int len;
+            s = tokenlist_to_cstring(pdf_trailer_id, true, &len);
+            /* this had better be an array! sp maybe we need to check for [] and error otherwise */
+            pdf_add_name(pdf, "ID");
+            pdf_out_block(pdf,s,len);
+        } else {
+            time_t t;
+            size_t size;
+            char time_str[32];
+            md5_state_t state;
+            md5_byte_t digest[16];
+            char id[64];
+            char pwd[4096];
+            /* start md5 */
+            md5_init(&state);
+            /* get the time */
+            t = time(NULL);
+            size = strftime(time_str, sizeof(time_str), "%Y%m%dT%H%M%SZ", gmtime(&t));
+            md5_append(&state, (const md5_byte_t *) time_str, (int) size);
+            /* get the file name */
+            if (getcwd(pwd, sizeof(pwd)) == NULL) {
+                formatted_error("pdf backend","getcwd() failed (%s), (path too long?)", strerror(errno));
+            }
 #ifdef WIN32
-    {
-        char *p;
-        for (p = pwd; *p; p++) {
-            if (*p == '\\')
-                *p = '/';
-            else if (IS_KANJI(p))
-                p++;
+            {
+                char *p;
+                for (p = pwd; *p; p++) {
+                    if (*p == '\\')
+                        *p = '/';
+                    else if (IS_KANJI(p))
+                        p++;
+                }
+            }
+#endif
+            md5_append(&state, (const md5_byte_t *) pwd, (int) strlen(pwd));
+            md5_append(&state, (const md5_byte_t *) "/", 1);
+            md5_append(&state, (const md5_byte_t *) pdf->file_name, (int) strlen(pdf->file_name));
+            /* finish md5 */
+            md5_finish(&state, digest);
+            /* write the IDs */
+            convertStringToHexString((char *) digest, id, 16);
+            pdf_add_name(pdf, "ID");
+            pdf_begin_array(pdf);
+            pdf_printf(pdf, "<%s> <%s>", id, id);
+            pdf_end_array(pdf);
         }
     }
-#endif
-    md5_append(&state, (const md5_byte_t *) pwd, (int) strlen(pwd));
-    md5_append(&state, (const md5_byte_t *) "/", 1);
-    md5_append(&state, (const md5_byte_t *) pdf->file_name,
-               (int) strlen(pdf->file_name));
-    /* finish md5 */
-    md5_finish(&state, digest);
-    /* write the IDs */
-    convertStringToHexString((char *) digest, id, 16);
-    pdf_add_name(pdf, "ID");
-    pdf_begin_array(pdf);
-    pdf_printf(pdf, "<%s> <%s>", id, id);
-    pdf_end_array(pdf);
 }
 
 @ Print the /CreationDate entry.
@@ -2155,8 +2167,7 @@ static int pdf_print_info(PDF pdf, int luatexversion,
         pdf_puts(pdf, p); /* no free, pointer */
         pdf_out(pdf, '\n');
     }
-    if (!producer_given) {
-        /* Print the Producer key */
+    if ((pdf_suppress_optional_info & 128) == 0 && !producer_given) {
         pdf_add_name(pdf, "Producer");
         pdf_puts(pdf, " (LuaTeX-");
         pdf_print_int(pdf, luatexversion / 100);
@@ -2166,20 +2177,23 @@ static int pdf_print_info(PDF pdf, int luatexversion,
         pdf_print(pdf, luatexrevision);
         pdf_out(pdf, ')');
     }
-    if (!creator_given)
+    if ((pdf_suppress_optional_info & 16) == 0 && !creator_given) {
         pdf_dict_add_string(pdf, "Creator", "TeX");
-    if (!creationdate_given) {
+    }
+    if ((pdf_suppress_optional_info & 32) == 0 && !creationdate_given) {
         init_start_time(pdf);
         pdf_dict_add_string(pdf, "CreationDate", pdf->start_time_str);
     }
-    if (!moddate_given) {
+    if ((pdf_suppress_optional_info & 64) == 0 && !moddate_given) {
         init_start_time(pdf);
         pdf_dict_add_string(pdf, "ModDate", pdf->start_time_str);
     }
-    if (!trapped_given) {
+    if ((pdf_suppress_optional_info & 256) == 0 && !trapped_given) {
         pdf_dict_add_name(pdf, "Trapped", "False");
     }
-    pdf_dict_add_string(pdf, "PTEX.Fullbanner", luatex_banner);
+    if ((pdf_suppress_optional_info & 1) == 0) {
+        pdf_dict_add_string(pdf, "PTEX.FullBanner", luatex_banner);
+    }
     pdf_end_dict(pdf);
     pdf_end_obj(pdf);
     return k;

@@ -29,7 +29,7 @@ void flush_pdf_info(image_dict *);
 /*   flush_pdfstream_info(image_dict *); */ /* somehow doesn't work due to xfree macro */
 void unrefPdfDocument(char *);
 void unrefMemStreamPdfDocument(char *);
-void write_epdf(PDF, image_dict *);
+void write_epdf(PDF, image_dict *, int suppress_optional_info);
 void epdf_check_mem(void);
 void copyReal(PDF pdf, double d);
 

@@ -2317,38 +2317,40 @@ static int do_variable_dvi(halfword c)
 
 static int do_variable_pdf(halfword c)
 {
-         if (scan_keyword("compresslevel"))       { do_variable_backend_int(c_pdf_compress_level); }
-    else if (scan_keyword("decimaldigits"))       { do_variable_backend_int(c_pdf_decimal_digits); }
-    else if (scan_keyword("imageresolution"))     { do_variable_backend_int(c_pdf_image_resolution); }
-    else if (scan_keyword("pkresolution"))        { do_variable_backend_int(c_pdf_pk_resolution); }
-    else if (scan_keyword("uniqueresname"))       { do_variable_backend_int(c_pdf_unique_resname); }
-    else if (scan_keyword("minorversion"))        { do_variable_backend_int(c_pdf_minor_version); }
-    else if (scan_keyword("pagebox"))             { do_variable_backend_int(c_pdf_pagebox); }
-    else if (scan_keyword("inclusionerrorlevel")) { do_variable_backend_int(c_pdf_inclusion_errorlevel); }
-    else if (scan_keyword("ignoreunknownimages")) { do_variable_backend_int(c_pdf_ignore_unknown_images); }
-    else if (scan_keyword("gamma"))               { do_variable_backend_int(c_pdf_gamma); }
-    else if (scan_keyword("imageapplygamma"))     { do_variable_backend_int(c_pdf_image_apply_gamma); }
-    else if (scan_keyword("imagegamma"))          { do_variable_backend_int(c_pdf_image_gamma); }
-    else if (scan_keyword("imagehicolor"))        { do_variable_backend_int(c_pdf_image_hicolor); }
-    else if (scan_keyword("imageaddfilename"))    { do_variable_backend_int(c_pdf_image_addfilename); }
-    else if (scan_keyword("objcompresslevel"))    { do_variable_backend_int(c_pdf_objcompresslevel); }
-    else if (scan_keyword("inclusioncopyfonts"))  { do_variable_backend_int(c_pdf_inclusion_copy_font); }
-    else if (scan_keyword("gentounicode"))        { do_variable_backend_int(c_pdf_gen_tounicode); }
-    else if (scan_keyword("pkfixeddpi"))          { do_variable_backend_int(c_pdf_pk_fixed_dpi); }
+         if (scan_keyword("compresslevel"))        { do_variable_backend_int(c_pdf_compress_level); }
+    else if (scan_keyword("decimaldigits"))        { do_variable_backend_int(c_pdf_decimal_digits); }
+    else if (scan_keyword("imageresolution"))      { do_variable_backend_int(c_pdf_image_resolution); }
+    else if (scan_keyword("pkresolution"))         { do_variable_backend_int(c_pdf_pk_resolution); }
+    else if (scan_keyword("uniqueresname"))        { do_variable_backend_int(c_pdf_unique_resname); }
+    else if (scan_keyword("minorversion"))         { do_variable_backend_int(c_pdf_minor_version); }
+    else if (scan_keyword("pagebox"))              { do_variable_backend_int(c_pdf_pagebox); }
+    else if (scan_keyword("inclusionerrorlevel"))  { do_variable_backend_int(c_pdf_inclusion_errorlevel); }
+    else if (scan_keyword("ignoreunknownimages"))  { do_variable_backend_int(c_pdf_ignore_unknown_images); }
+    else if (scan_keyword("gamma"))                { do_variable_backend_int(c_pdf_gamma); }
+    else if (scan_keyword("imageapplygamma"))      { do_variable_backend_int(c_pdf_image_apply_gamma); }
+    else if (scan_keyword("imagegamma"))           { do_variable_backend_int(c_pdf_image_gamma); }
+    else if (scan_keyword("imagehicolor"))         { do_variable_backend_int(c_pdf_image_hicolor); }
+    else if (scan_keyword("imageaddfilename"))     { do_variable_backend_int(c_pdf_image_addfilename); }
+    else if (scan_keyword("objcompresslevel"))     { do_variable_backend_int(c_pdf_objcompresslevel); }
+    else if (scan_keyword("inclusioncopyfonts"))   { do_variable_backend_int(c_pdf_inclusion_copy_font); }
+    else if (scan_keyword("gentounicode"))         { do_variable_backend_int(c_pdf_gen_tounicode); }
+    else if (scan_keyword("pkfixeddpi"))           { do_variable_backend_int(c_pdf_pk_fixed_dpi); }
+    else if (scan_keyword("suppressoptionalinfo")) { do_variable_backend_int(c_pdf_suppress_optional_info); }
 
-    else if (scan_keyword("horigin"))             { do_variable_backend_dimen(d_pdf_h_origin); }
-    else if (scan_keyword("vorigin"))             { do_variable_backend_dimen(d_pdf_v_origin); }
-    else if (scan_keyword("threadmargin"))        { do_variable_backend_dimen(d_pdf_thread_margin); }
-    else if (scan_keyword("destmargin"))          { do_variable_backend_dimen(d_pdf_dest_margin); }
-    else if (scan_keyword("linkmargin"))          { do_variable_backend_dimen(d_pdf_link_margin); }
-    else if (scan_keyword("xformmargin"))         { do_variable_backend_dimen(d_pdf_xform_margin); }
+    else if (scan_keyword("horigin"))              { do_variable_backend_dimen(d_pdf_h_origin); }
+    else if (scan_keyword("vorigin"))              { do_variable_backend_dimen(d_pdf_v_origin); }
+    else if (scan_keyword("threadmargin"))         { do_variable_backend_dimen(d_pdf_thread_margin); }
+    else if (scan_keyword("destmargin"))           { do_variable_backend_dimen(d_pdf_dest_margin); }
+    else if (scan_keyword("linkmargin"))           { do_variable_backend_dimen(d_pdf_link_margin); }
+    else if (scan_keyword("xformmargin"))          { do_variable_backend_dimen(d_pdf_xform_margin); }
 
-    else if (scan_keyword("pageattr"))            { do_variable_backend_toks(t_pdf_page_attr); }
-    else if (scan_keyword("pageresources"))       { do_variable_backend_toks(t_pdf_page_resources); }
-    else if (scan_keyword("pagesattr"))           { do_variable_backend_toks(t_pdf_pages_attr); }
-    else if (scan_keyword("xformattr"))           { do_variable_backend_toks(t_pdf_xform_attr); }
-    else if (scan_keyword("xformresources"))      { do_variable_backend_toks(t_pdf_xform_resources); }
-    else if (scan_keyword("pkmode"))              { do_variable_backend_toks(t_pdf_pk_mode); }
+    else if (scan_keyword("pageattr"))             { do_variable_backend_toks(t_pdf_page_attr); }
+    else if (scan_keyword("pageresources"))        { do_variable_backend_toks(t_pdf_page_resources); }
+    else if (scan_keyword("pagesattr"))            { do_variable_backend_toks(t_pdf_pages_attr); }
+    else if (scan_keyword("xformattr"))            { do_variable_backend_toks(t_pdf_xform_attr); }
+    else if (scan_keyword("xformresources"))       { do_variable_backend_toks(t_pdf_xform_resources); }
+    else if (scan_keyword("pkmode"))               { do_variable_backend_toks(t_pdf_pk_mode); }
+    else if (scan_keyword("trailerid"))            { do_variable_backend_toks(t_pdf_trailer_id); }
 
     else
         return 0;

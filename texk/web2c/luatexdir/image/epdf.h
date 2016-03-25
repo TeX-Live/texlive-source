@@ -123,7 +123,7 @@ extern "C" {
     /* pdftoepdf.cc */
     extern void read_pdf_info(image_dict *);
     extern void flush_pdf_info(image_dict *);
-    extern void write_epdf(PDF, image_dict *);
+    extern void write_epdf(PDF, image_dict *, int suppress_optional_info);
     extern void unrefPdfDocument(char *);
     extern void unrefMemStreamPdfDocument(char *);
     extern void epdf_free(void);
