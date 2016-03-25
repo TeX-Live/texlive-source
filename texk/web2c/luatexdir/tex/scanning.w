@@ -1477,13 +1477,11 @@ most of the work has already been done.
 
 @c
 void scan_glue(int level)
-{                               /* sets |cur_val| to a glue spec pointer */
-    boolean negative;           /* should the answer be negated? */
-    halfword q;                 /* new glue specification */
-    boolean mu;                 /* does |level=mu_val|? */
-    mu = (level == mu_val_level);
-    /* Get the next non-blank non-sign... */
-    negative = false;
+{
+    boolean negative = false;             /* should the answer be negated? */
+    halfword q = null;                    /* new glue specification */
+    boolean mu = (level == mu_val_level); /* does |level=mu_val|? */
+    /* Get the next non-blank non-sign ... */
     do {
         /* Get the next non-blank non-call token */
         do {
@@ -1494,7 +1492,6 @@ void scan_glue(int level)
             cur_tok = other_token + '+';
         }
     } while (cur_tok == other_token + '+');
-
     if ((cur_cmd >= min_internal_cmd) && (cur_cmd <= max_internal_cmd)) {
         scan_something_internal(level, negative);
         if (cur_val_level >= glue_val_level) {
@@ -1512,19 +1509,39 @@ void scan_glue(int level)
         if (negative)
             negate(cur_val);
     }
-    /* Create a new glue specification whose width is |cur_val|; scan for its
-       stretch and shrink components  */
-    q = new_spec(zero_glue);
-    width(q) = cur_val;
+    /*
+        Create a new glue specification whose width is |cur_val|; scan for its
+        stretch and shrink components.
+    */
+    /*
+        In several places there is a test for zero glue, for instance in protrusion
+        left/right node detection. In that case a \hskip\dimen<n> with the dimen being
+        zero will not be seen as zero glue. Therefore we delay the allocation of
+        glue till we know for sure that there are no fils involved. (!!)
+    */
+    if (cur_val != 0) { /* !! new test */
+        q = new_spec(zero_glue);
+        width(q) = cur_val;
+    }
     if (scan_keyword("plus")) {
+        if (q == null) { /* !! new test */
+            q = new_spec(zero_glue);
+        }
         scan_dimen(mu, true, false);
         stretch(q) = cur_val;
         stretch_order(q) = (quarterword) cur_order;
     }
     if (scan_keyword("minus")) {
+        if (q == null) { /* !! new test */
+            q = new_spec(zero_glue);
+        }
         scan_dimen(mu, true, false);
         shrink(q) = cur_val;
         shrink_order(q) = (quarterword) cur_order;
+    }
+    if (q == null) { /* !! new test */
+        q = zero_glue ;
+        add_glue_ref(zero_glue);
     }
     cur_val = q;
 }

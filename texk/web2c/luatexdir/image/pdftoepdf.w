@@ -707,7 +707,7 @@ void read_pdf_info(image_dict * idict)
     that can happen during PDF inclusion will arise here.
 */
 
-void write_epdf(PDF pdf, image_dict * idict)
+void write_epdf(PDF pdf, image_dict * idict, int suppress_optional_info)
 {
     PdfDocument *pdf_doc = NULL;
     PDFDoc *doc = NULL;
@@ -719,7 +719,7 @@ void write_epdf(PDF pdf, image_dict * idict)
     PDFRectangle *pagebox;
     int i, l;
     double bbox[4];
-    char s[256];
+    /* char s[256]; */
     const char *pagedictkeys[] = {
         "Group", "LastModified", "Metadata", "PieceInfo", "Resources", "SeparationInfo", NULL
     };
@@ -743,20 +743,23 @@ void write_epdf(PDF pdf, image_dict * idict)
     pdf_begin_dict(pdf);
     pdf_dict_add_name(pdf, "Type", "XObject");
     pdf_dict_add_name(pdf, "Subtype", "Form");
-    if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0)
+    if (img_attr(idict) != NULL && strlen(img_attr(idict)) > 0) {
         pdf_printf(pdf, "\n%s\n", img_attr(idict));
+    }
     pdf_dict_add_int(pdf, "FormType", 1);
     /* write additional information */
     pdf_dict_add_img_filename(pdf, idict);
-    snprintf(s, 30, "%s.PageNumber", pdfkeyprefix);
-    pdf_dict_add_int(pdf, s, (int) img_pagenum(idict));
-    doc->getDocInfoNF(&obj1);
-    if (obj1.isRef()) {
-        /* the info dict must be indirect (PDF Ref p. 61) */
-        snprintf(s, 30, "%s.InfoDict", pdfkeyprefix);
-        pdf_dict_add_ref(pdf, s, addInObj(pdf, pdf_doc, obj1.getRef()));
+    if ((suppress_optional_info & 4) == 0) {
+        pdf_dict_add_int(pdf, "PTEX.PageNumber", (int) img_pagenum(idict));
     }
-    obj1.free();
+    if ((suppress_optional_info & 8) == 0) {
+        doc->getDocInfoNF(&obj1);
+        if (obj1.isRef()) {
+            /* the info dict must be indirect (PDF Ref p. 61) */
+            pdf_dict_add_ref(pdf, "PTEX.InfoDict", addInObj(pdf, pdf_doc, obj1.getRef()));
+        }
+        obj1.free();
+    }
     if (img_is_bbox(idict)) {
         bbox[0] = sp2bp(img_bbox(idict)[0]);
         bbox[1] = sp2bp(img_bbox(idict)[1]);

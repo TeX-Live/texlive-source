@@ -506,6 +506,23 @@ static int l_registerannot(lua_State * L)
     return 0;
 }
 
+/*
+
+# define valid_pdf_key ( \
+    lua_key_eq(s,pageresources) \
+    lua_key_eq(s,pageattributes) || \
+    lua_key_eq(s,pagesattributes) || \
+    lua_key_eq(s,catalog) || \
+    lua_key_eq(s,info) || \
+    lua_key_eq(s,names) || \
+    lua_key_eq(s,trailer) || \
+    lua_key_eq(s,xformresources) || \
+    lua_key_eq(s,xformattributes) || \
+    lua_key_eq(s,trailerid) \
+)
+
+*/
+
 #define l_get_pdf_value(key) \
     lua_get_metatablelua(pdf_data); \
     lua_key_rawgeti(key); \
@@ -520,20 +537,12 @@ static int l_get_names          (lua_State * L) { l_get_pdf_value(names); }
 static int l_get_trailer        (lua_State * L) { l_get_pdf_value(trailer); }
 static int l_get_xformresources (lua_State * L) { l_get_pdf_value(xformresources); }
 static int l_get_xformattributes(lua_State * L) { l_get_pdf_value(xformattributes); }
+static int l_get_trailerid      (lua_State * L) { l_get_pdf_value(trailerid); }
 
-# define valid_pdf_key ( \
-    lua_key_eq(s,catalog) || \
-    lua_key_eq(s,info) || \
-    lua_key_eq(s,trailer) || \
-    lua_key_eq(s,names) || \
-    lua_key_eq(s,pageattributes) || \
-    lua_key_eq(s,pagesattributes) || \
-    lua_key_eq(s,pageresources) \
-)
+/*
 
 static int getpdf(lua_State * L)
 {
-    /* [pdf table] [key] */
     const char *s ;
     if (lua_gettop(L) != 2) {
         return 0;
@@ -548,15 +557,14 @@ static int getpdf(lua_State * L)
             return 1;
         } else if (valid_pdf_key) {
             lua_get_metatablelua(pdf_data);
-            /* [pdf table] [key] [pdf.data table] */
             lua_replace(L, -3);
-            /* [pdf.data table] [key] */
             lua_rawget(L, -2);
             return 1;
         }
     }
     return 0;
 }
+*/
 
 #define l_set_pdf_value(key) \
     if (lua_type(L,-1) == LUA_TSTRING) { \
@@ -576,10 +584,12 @@ static int l_set_names          (lua_State * L) { l_set_pdf_value(names); }
 static int l_set_trailer        (lua_State * L) { l_set_pdf_value(trailer); }
 static int l_set_xformresources (lua_State * L) { l_set_pdf_value(xformresources); }
 static int l_set_xformattributes(lua_State * L) { l_set_pdf_value(xformattributes); }
+static int l_set_trailerid      (lua_State * L) { l_set_pdf_value(trailerid); }
+
+/*
 
 static int setpdf(lua_State * L)
 {
-    /* [pdf table] [key] [value] */
     const char *s ;
     if (lua_gettop(L) != 3) {
         return 0;
@@ -588,14 +598,14 @@ static int setpdf(lua_State * L)
         s = lua_tostring(L, -1);
         if (valid_pdf_key) {
             lua_get_metatablelua(pdf_data);
-            /* [pdf table] [key] [value] [pdf.data table] */
             lua_replace(L, -4);
-            /* [pdf.data table] [key] [value] */
         }
     }
     lua_rawset(L, -3);
     return 0;
 }
+
+*/
 
 static int l_objtype(lua_State * L)
 {
@@ -1008,6 +1018,18 @@ static int getpdfignoreunknownimages(lua_State * L) {
     return 1;
 }
 
+    static int l_set_suppress_optional_info(lua_State * L) {
+    if (lua_type(L, 1) == LUA_TNUMBER) {
+        set_tex_extension_count_register(c_pdf_suppress_optional_info,lua_tointeger(L, 1));
+    }
+    return 0;
+}
+
+static int l_get_suppress_optional_info(lua_State * L) {
+    lua_pushinteger(L,get_tex_extension_count_register(c_pdf_suppress_optional_info));
+    return 1;
+}
+
 static int newpdfcolorstack(lua_State * L)
 {
     const char *s = NULL;
@@ -1064,6 +1086,7 @@ static const struct luaL_Reg pdflib[] = {
     { "setpagesattributes", l_set_pagesattributes },
     { "setxformresources", l_set_xformresources },
     { "setxformattributes", l_set_xformattributes },
+    { "settrailerid", l_set_trailerid },
     { "getcatalog", l_get_catalog },
     { "getinfo", l_get_info },
     { "getnames", l_get_names },
@@ -1073,6 +1096,7 @@ static const struct luaL_Reg pdflib[] = {
     { "getpagesattributes", l_get_pagesattributes },
     { "getxformresources", l_get_xformresources },
     { "getxformattributes", l_get_xformattributes },
+    { "gettrailerid", l_get_trailerid },
     { "getlastlink", l_get_lastlink },
     { "getretval", l_get_retval },
     { "getlastobj", l_get_lastobj },
@@ -1085,6 +1109,8 @@ static const struct luaL_Reg pdflib[] = {
     { "setdecimaldigits", l_set_decimal_digits },
     { "getpkresolution", l_get_pk_resolution },
     { "setpkresolution", l_set_pk_resolution },
+    { "getsuppressoptionalinfo", l_get_suppress_optional_info },
+    { "setsuppressoptionalinfo", l_set_suppress_optional_info },
     /* moved from tex table */
     { "fontname", getpdffontname },
     { "fontobjnum", getpdffontobjnum },
@@ -1121,15 +1147,15 @@ int luaopen_pdf(lua_State * L)
     lua_settable(L,LUA_REGISTRYINDEX);
     /* */
     luaL_register(L, "pdf", pdflib);
-    /* build meta table */
+    /*
     luaL_newmetatable(L, "pdf.meta");
     lua_pushstring(L, "__index");
     lua_pushcfunction(L, getpdf);
-    /* do these later, NYI */
     lua_settable(L, -3);
     lua_pushstring(L, "__newindex");
     lua_pushcfunction(L, setpdf);
     lua_settable(L, -3);
-    lua_setmetatable(L, -2);    /* meta to itself */
+    lua_setmetatable(L, -2);
+    */
     return 1;
 }

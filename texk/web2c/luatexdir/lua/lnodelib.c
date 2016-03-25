@@ -1932,7 +1932,9 @@ static int lua_nodelib_is_char(lua_State * L)
 {
     halfword n = *(check_isnode(L, 1));
     if (type(n) != glyph_node) {
-        lua_pushnil(L); /* no glyph at all */
+        lua_pushnil(L);             /* no glyph at all */
+        lua_pushinteger(L,type(n)); /* can save a lookup call */
+        return 2;
     } else if (subtype(n) >= 256) {
         lua_pushboolean(L,0); /* a done glyph */
     } else if (lua_type(L,2) == LUA_TNUMBER) {
@@ -1946,6 +1948,19 @@ static int lua_nodelib_is_char(lua_State * L)
         lua_pushinteger(L,character(n)); /* a todo glyph */
     }
     return 1;
+}
+
+static int lua_nodelib_is_glyph(lua_State * L)
+{
+    halfword n = *(check_isnode(L, 1));
+    if (type(n) != glyph_node) {
+        lua_pushboolean(L,0);
+        lua_pushinteger(L,type(n));
+    } else {
+        lua_pushinteger(L,character(n));
+        lua_pushinteger(L,font(n));
+    }
+    return 2;
 }
 
 /* node.direct.has_field */
@@ -5847,6 +5862,8 @@ static int lua_nodelib_direct_is_char(lua_State * L)
     halfword n = lua_tointeger(L, 1);
     if (type(n) != glyph_node) {
         lua_pushnil(L); /* no glyph at all */
+        lua_pushinteger(L,type(n)); /* can save a lookup call */
+        return 2;
     } else if (subtype(n) >= 256) {
         lua_pushboolean(L,0); /* a done glyph */
     } else if (lua_type(L,2) == LUA_TNUMBER) {
@@ -5860,6 +5877,19 @@ static int lua_nodelib_direct_is_char(lua_State * L)
         lua_pushinteger(L,character(n)); /* a todo glyph */
     }
     return 1;
+}
+
+static int lua_nodelib_direct_is_glyph(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (type(n) != glyph_node) {
+        lua_pushboolean(L,0);
+        lua_pushinteger(L,type(n));
+    } else {
+        lua_pushinteger(L,character(n));
+        lua_pushinteger(L,font(n));
+    }
+    return 2;
 }
 
 static int lua_nodelib_direct_setdiscretionary(lua_State * L)
@@ -6752,6 +6782,7 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"get_attribute", lua_nodelib_direct_get_attribute},
     {"has_field", lua_nodelib_direct_has_field},
     {"is_char", lua_nodelib_direct_is_char},
+    {"is_glyph", lua_nodelib_direct_is_glyph},
     {"hpack", lua_nodelib_direct_hpack},
  /* {"id", lua_nodelib_id}, */ /* no node argument */
     {"insert_after", lua_nodelib_direct_insert_after},
@@ -6842,6 +6873,7 @@ static const struct luaL_Reg nodelib_f[] = {
     {"get_attribute", lua_nodelib_get_attribute},
     {"has_field", lua_nodelib_has_field},
     {"is_char", lua_nodelib_is_char},
+    {"is_glyph", lua_nodelib_is_glyph},
     {"hpack", lua_nodelib_hpack},
     {"id", lua_nodelib_id},
     {"insert_after", lua_nodelib_insert_after},

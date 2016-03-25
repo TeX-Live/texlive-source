@@ -794,6 +794,7 @@ make_lua_key(top_right);\
 make_lua_key(tounicode);\
 make_lua_key(tracingparagraphs);\
 make_lua_key(trailer);\
+make_lua_key(trailerid);\
 make_lua_key(transform);\
 make_lua_key(trim);\
 make_lua_key(type);\
@@ -1148,6 +1149,7 @@ init_lua_key(top_right);\
 init_lua_key(tounicode);\
 init_lua_key(tracingparagraphs);\
 init_lua_key(trailer);\
+init_lua_key(trailerid);\
 init_lua_key(transform);\
 init_lua_key(trim);\
 init_lua_key(type);\
@@ -1570,6 +1572,7 @@ use_lua_key(top_right);
 use_lua_key(tounicode);
 use_lua_key(tracingparagraphs);
 use_lua_key(trailer);
+use_lua_key(trailerid);
 use_lua_key(transform);
 use_lua_key(trim);
 use_lua_key(type);
