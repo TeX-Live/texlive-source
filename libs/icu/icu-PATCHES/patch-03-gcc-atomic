@@ -1,8 +1,7 @@
 	It seems gcc-4.4 uses external calls.
 
-diff -ur -N -x config.guess -x config.sub -x install-sh icu-56.1.orig/source/common/putilimp.h icu-56.1/source/common/putilimp.h
---- icu-56.1.orig/source/common/putilimp.h	2015-09-24 00:32:40.000000000 +0200
-+++ icu-56.1/source/common/putilimp.h	2015-09-27 15:22:44.000000000 +0200
+--- source/common/putilimp.h	(revision 40154)
++++ source/common/putilimp.h	(working copy)
 @@ -191,7 +191,7 @@
      /* Use the predefined value. */
  #elif U_PLATFORM == U_PF_MINGW
