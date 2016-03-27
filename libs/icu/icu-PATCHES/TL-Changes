@@ -16,15 +16,38 @@ diff -qr . /tmp/icu/ | sed -n -e 's,^Only in \./\(.*\): ,\1/,p'
 svn rm `!!`
 diff ...			# rerun, should be empty now
 
-[not done yet]
-Updated:
-	source/config.guess
-	source/config.sub
-	source/install-sh
+# update generic files (still in icu-src):
+aux=/usr/local/src/dist/build-aux
+cp $aux/config.guess $aux/config.sub $aux/install-sh source/
 
-Reduced size of source/data/in/icudt53l.dat
-	icupkg -r 'curr/*' IN OUT
-	icupkg -r 'lang/*' IN OUT
-	icupkg -r 'region/*' IN OUT
-	icupkg -r 'rfc*.spp' IN OUT
-	icupkg -r 'zone/*' IN OUT
+# apply ./patch-* files, as needed.
+# Run svn diff after each, update patch-* file.
+# Don't lose our leading comments.
+
+# autoreconf.
+# rebuild; must rerun configure (not just config.status),
+# so easiest is to just do a whole new build.
+# That will also test use of the new icu version by our programs.
+
+# Assuming all seems ok, reduce size of source/data/in/icudt*.dat
+# to decrease data segment size, e.g., for old BSD.  First, check
+# that we successfully built the full .dat:
+srcdat=.../source/libs/icu/icu-src/source/data/in/icudt57l.dat 
+cd .../Work/libs/icu/icu-build/data/out/build/icudt57l
+indat=../../tmp/icudt57l.dat
+diff $srcdat $indat
+# should be identical, amazingly enough.
+
+# we need to use icupkg, which may need LD_LIBRARY_PATH since it is a
+# C++ binary and we didn't cxx-hack it.
+icupkg="env LD_LIBRARY_PATH=$gnu/lib ../../../../bin/icupkg"
+
+# then remove some unused-by-xetex elements, as discussed with xetex dev.
+outdat=icudt57l.dat
+$icupkg -r 'curr/*' $indat $outdat && mv $outdat $indat
+$icupkg -r 'lang/*' $indat $outdat && mv $outdat $indat
+$icupkg -r 'region/*' $indat $outdat && mv $outdat $indat
+$icupkg -r 'rfc*.spp' $indat $outdat && mv $outdat $indat
+$icupkg -r 'zone/*' $indat $outdat && mv $outdat $indat
+ls -l $indat $srcdat # indat should be much smaller
+cp $indat $srcdat 
