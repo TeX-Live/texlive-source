@@ -70,6 +70,9 @@
     <ClCompile Include="rbbitst.cpp">
       <Filter>break iteration</Filter>
     </ClCompile>
+    <ClCompile Include="rbbimonkeytest.cpp">
+      <Filter>break iteration</Filter>
+      </ClCompile>
     <ClCompile Include="itspoof.cpp">
       <Filter>spoof detection</Filter>
     </ClCompile>
@@ -292,7 +295,7 @@
     <ClCompile Include="selfmts.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
-    <ClCompile Include="simplepatternformattertest.cpp">
+    <ClCompile Include="simpleformattertest.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
     <ClCompile Include="tchcfmt.cpp">
@@ -502,6 +505,9 @@
       <Filter>break iteration</Filter>
     </ClInclude>
     <ClInclude Include="rbbitst.h">
+      <Filter>break iteration</Filter>
+    </ClInclude>
+    <ClInclude Include="rbbimonkeytest.h">
       <Filter>break iteration</Filter>
     </ClInclude>
     <ClInclude Include="itspoof.h">

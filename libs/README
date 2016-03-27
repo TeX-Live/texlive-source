@@ -27,7 +27,7 @@ graphite2 1.3.7 - checked 15mar16
 harfbuzz 1.2.4 - checked 17mar16
   http://www.freedesktop.org/software/harfbuzz/release/
 
-icu 56.1 (release) - checked 8oct15
+icu 57.1 (release) - checked 27mar16
   http://download.icu-project.org/files/icu4c/
 
 libpaper 1.1.24+nmu2 - checked 24oct13

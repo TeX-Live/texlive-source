@@ -2,7 +2,7 @@
 #
 # Yves Arrouye.
 #
-# Copyright (C) 2000-2014, International Business Machines Corporation and others.
+# Copyright (C) 2000-2016, International Business Machines Corporation and others.
 # All Rights Reserved.
 
 #
@@ -165,8 +165,8 @@ COMPILE.c=    $(CC) $(CPPFLAGS) $(DEFS) $(CFLAGS) -c
 COMPILE.cc=   $(CXX) $(CPPFLAGS) $(DEFS) $(CXXFLAGS) -c
 
 # Commands to link
-LINK.c=       $(CC) $(CFLAGS) $(LDFLAGS)
-LINK.cc=      $(CXX) $(CXXFLAGS) $(LDFLAGS)
+LINK.c=       $(CC) $(CFLAGS) $(LDFLAGS) $(LINKFLAGS)
+LINK.cc=      $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LINKFLAGS)
 
 # Commands to make a shared library
 SHLIB.c=      $(CC) $(CFLAGS) $(LDFLAGS) -shared $(LD_SOOPTIONS)
@@ -207,13 +207,13 @@ LIBICU = $(LIBPREFIX)$(ICUPREFIX)
 
 ## If we can't use the shared libraries, use the static libraries
 ifneq ($(ENABLE_SHARED),YES)
-STATIC_PREFIX_WHEN_USED =
+STATIC_PREFIX_WHEN_USED = s
 else
 STATIC_PREFIX_WHEN_USED = 
 endif
 
 # Static library prefix and file extension
-STATIC_PREFIX =
+STATIC_PREFIX = s
 LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
 A = a
 SOBJ = $(SO)

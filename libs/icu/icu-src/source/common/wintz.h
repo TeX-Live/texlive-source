@@ -14,7 +14,7 @@
 
 #include "unicode/utypes.h"
 
-#if U_PLATFORM_USES_ONLY_WIN32_API
+#if U_PLATFORM_HAS_WIN32_API
 
 /**
  * \file 
@@ -29,6 +29,6 @@ U_CDECL_END
 U_CFUNC const char* U_EXPORT2
 uprv_detectWindowsTimeZone();
 
-#endif /* U_PLATFORM_USES_ONLY_WIN32_API */
+#endif /* U_PLATFORM_HAS_WIN32_API */
 
 #endif /* __WINTZ */
