@@ -1,5 +1,5 @@
 # -*- icu-dependencies -*-
-# Copyright (C) 2011-2015, International Business Machines
+# Copyright (C) 2011-2016, International Business Machines
 # Corporation and others. All Rights Reserved.
 #
 # file name: dependencies.txt
@@ -140,6 +140,7 @@ library: common
     idna2003 stringprep
     stringenumeration
     unistr_props unistr_case unistr_case_locale unistr_titlecase_brkiter unistr_cnv
+    cstr
     uniset_core uniset_props uniset_closure usetiter uset uset_props
     uiter
     ucasemap ucasemap_titlecase_brkiter script_runs
@@ -148,8 +149,10 @@ library: common
     listformatter
     resourcebundle service_registration resbund_cnv ures_cnv icudataver ucat
     loclikely
+    currency
+    locale_display_names2
     conversion converter_selector ucnv_set ucnvdisp
-    messagepattern simplepatternformatter
+    messagepattern simpleformatter
     icu_utility icu_utility_with_props
     ustr_wcs
     unifiedcache
@@ -350,6 +353,11 @@ group: unistr_cnv
   deps
     conversion
 
+group: cstr
+    cstr.o
+  deps
+    unistr_cnv
+
 group: uscript
     uscript.o  # uscript_getCode() accepts a locale ID and loads its script code data
   deps
@@ -394,8 +402,8 @@ group: messagepattern  # for MessageFormat and tools
   deps
     patternprops platform
 
-group: simplepatternformatter
-    simplepatternformatter.o
+group: simpleformatter
+    simpleformatter.o
   deps
     platform
 
@@ -519,7 +527,7 @@ group: service_registration
 group: listformatter
     listformatter.o ulistformatter.o
   deps
-    resourcebundle simplepatternformatter
+    resourcebundle simpleformatter
 
 group: ucat  # message-catalog-like API
     ucat.o
@@ -527,9 +535,20 @@ group: ucat  # message-catalog-like API
     resourcebundle
 
 group: locale_display_names
-    locdispnames.o
+    locdispnames.o  # Locale.getDisplayName()
   deps
     locresdata
+
+group: locale_display_names2
+    locdspnm.o  # class LocaleDisplayNames
+  deps
+    resourcebundle currency simpleformatter unistr_titlecase_brkiter uchar
+
+group: currency
+    ucurr.o
+  deps
+    loclikely resourcebundle ulist ustring_case_locale
+    stdlib_qsort  # for ucurr.o (which does not use ICU's uarrsort.o)
 
 group: icudataver  # u_getDataVersion()
     icudataver.o
@@ -559,7 +578,7 @@ group: ures_cnv  # ures_openU, path is a Unicode string
     conversion resourcebundle
 
 group: resourcebundle
-    resbund.o uresbund.o uresdata.o
+    resource.o resbund.o uresbund.o uresdata.o
     locavailable.o
     # uloc_tag.c and uloc_keytype.cpp convert between
     # old ICU/LDML/CLDR locale IDs and newer BCP 47 IDs.
@@ -750,6 +769,7 @@ library: i18n
   deps
     region localedata genderinfo charset_detector spoof_detection
     alphabetic_index collation collation_builder string_search
+    dayperiodrules
     formatting formattable_cnv regex regex_cnv translit
     universal_time_scale
     uclean_i18n
@@ -820,12 +840,13 @@ group: string_search
   deps
     breakiterator collation
 
+group: dayperiodrules
+    dayperiodrules.o
+  deps
+    resourcebundle uclean_i18n
+
 group: formatting
     # TODO: Try to subdivide this ball of wax.
-    # locale_display_names2
-    locdspnm.o
-    # currency
-    ucurr.o
     # currencyformat
     curramt.o currfmt.o currpinf.o currunit.o
     # decimalformat
@@ -857,12 +878,11 @@ group: formatting
     choicfmt.o msgfmt.o plurfmt.o selfmt.o umsg.o
   deps
     digitlist formattable format
-    pluralrules
+    dayperiodrules pluralrules
     collation collation_builder  # for rbnf
     common
     floating_point  # sqrt() for astro.o
     trigonometry  # for astro.o
-    stdlib_qsort  # for ucurr.o (which does not use ICU's uarrsort.o)
     sharedbreakiterator # for reldatefmt.o
     uclean_i18n
 
@@ -893,7 +913,7 @@ group: format
     resourcebundle parsepos uvector32
 
 group: pluralrules
-    plurrule.o upluralrules.o
+    standardplural.o plurrule.o upluralrules.o
   deps
     digitlist  # plurals depend on decimals
     patternprops resourcebundle uvector uvector32 unifiedcache

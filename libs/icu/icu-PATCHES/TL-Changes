@@ -1,13 +1,22 @@
-Changes applied to the icu-56.1/ tree as obtained from:
-	http://download.icu-project.org/files/icu4c/56.1/icu4c-56_1-src.tgz
+Changes applied to the icu-57.1/ tree as obtained from:
+	http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz
 
-Removed:
-	as_is/
-	packaging/
+cd /tmp # or wherever
+tar xf icu4c-*-src.tgz
+cd .../texlive/Build/source/libs/icu/icu-src
+\cp -arf /tmp/icu/* .
+rm -r as_is packaging		# don't bother including these in our tree
+#
+# files to add:
+svn status | sed -n 's/^\?//p'
+svn add `!!`
+svn status | sed -n 's/^\?//p'  # rerun, should be empty now
+#
+diff -qr . /tmp/icu/ | sed -n -e 's,^Only in \./\(.*\): ,\1/,p'
+svn rm `!!`
+diff ...			# rerun, should be empty now
 
-Removed empty directory:
-	source/config/m4/
-
+[not done yet]
 Updated:
 	source/config.guess
 	source/config.sub
@@ -19,4 +28,3 @@ Reduced size of source/data/in/icudt53l.dat
 	icupkg -r 'region/*' IN OUT
 	icupkg -r 'rfc*.spp' IN OUT
 	icupkg -r 'zone/*' IN OUT
-

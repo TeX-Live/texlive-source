@@ -1,7 +1,7 @@
 /*
 *******************************************************************************
 *
-*   Copyright (C) 1999-2015, International Business Machines
+*   Copyright (C) 1999-2016, International Business Machines
 *   Corporation and others.  All Rights Reserved.
 *
 *******************************************************************************
@@ -204,7 +204,7 @@ main(int argc, char* argv[]) {
         UBool fromICUData = !uprv_strcmp(inputDir, "-");
         if (!fromICUData) {
             UBool absfilename = *arg == U_FILE_SEP_CHAR;
-#if U_PLATFORM_HAS_WIN32_API && U_PLATFORM != U_PF_CYGWIN
+#if U_PLATFORM_HAS_WIN32_API
             if (!absfilename) {
                 absfilename = (uprv_strlen(arg) > 2 && isalpha(arg[0])
                     && arg[1] == ':' && arg[2] == U_FILE_SEP_CHAR);
@@ -342,7 +342,7 @@ static UChar *quotedString(const UChar *string) {
 
             case 0x0022:
                 *np++ = 0x005C;
-
+                U_FALLTHROUGH;
             default:
                 *np++ = *sp;
                 break;

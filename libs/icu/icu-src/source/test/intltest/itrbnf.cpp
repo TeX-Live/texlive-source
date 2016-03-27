@@ -1,7 +1,7 @@
 /*
  *******************************************************************************
- * Copyright (C) 1996-2015, International Business Machines Corporation and    *
- * others. All Rights Reserved.                                                *
+ * Copyright (C) 1996-2016, International Business Machines Corporation and
+ * others. All Rights Reserved.
  *******************************************************************************
  */
 
@@ -19,6 +19,7 @@
 #include "unicode/ustring.h"
 #include "unicode/decimfmt.h"
 #include "unicode/udata.h"
+#include "cmemory.h"
 #include "putilimp.h"
 #include "testutil.h"
 
@@ -959,7 +960,7 @@ void IntlTestRBNF::TestLLong()
             &NEG_TWO_TO_32X5, &TWO_TO_32, &NEG_FIVE
         };
         const int TUPLE_WIDTH = 3;
-        const int TUPLE_COUNT = (int)(sizeof(tuples)/sizeof(tuples[0]))/TUPLE_WIDTH;
+        const int TUPLE_COUNT = UPRV_LENGTHOF(tuples)/TUPLE_WIDTH;
         for (int i = 0; i < TUPLE_COUNT; ++i) {
             const llong lhs = *tuples[i*TUPLE_WIDTH+0];
             const llong rhs = *tuples[i*TUPLE_WIDTH+1];
@@ -1039,7 +1040,7 @@ void IntlTestRBNF::TestLLong()
             &BIG_FIVEp1, &FIVE, &ONE
         };
         const int TUPLE_WIDTH = 3;
-        const int TUPLE_COUNT = (int)(sizeof(tuples)/sizeof(tuples[0]))/TUPLE_WIDTH;
+        const int TUPLE_COUNT = UPRV_LENGTHOF(tuples)/TUPLE_WIDTH;
         for (int i = 0; i < TUPLE_COUNT; ++i) {
             const llong lhs = *tuples[i*TUPLE_WIDTH+0];
             const llong rhs = *tuples[i*TUPLE_WIDTH+1];
@@ -1165,9 +1166,8 @@ IntlTestRBNF::TestEnglishSpellout()
         doTest(formatter, testData, TRUE);
 
 #if !UCONFIG_NO_COLLATION
-        if( !logKnownIssue("9503") ) {
-          formatter->setLenient(TRUE);
-          static const char* lpTestData[][2] = {
+        formatter->setLenient(TRUE);
+        static const char* lpTestData[][2] = {
             { "fifty-7", "57" },
             { " fifty-7", "57" },
             { "  fifty-7", "57" },
@@ -1175,9 +1175,8 @@ IntlTestRBNF::TestEnglishSpellout()
             { "fifteen hundred and zero", "1,500" },
             { "FOurhundred     thiRTY six", "436" },
             { NULL, NULL}
-          };
-          doLenientParseTest(formatter, lpTestData);
-        }
+        };
+        doLenientParseTest(formatter, lpTestData);
 #endif
     }
     delete formatter;
@@ -1813,7 +1812,7 @@ IntlTestRBNF::TestLocalizations(void)
                 "<<%main>,<'en', \"it's ok\">>", // double quotes work too
                 "  \n <\n  <\n  %main\n  >\n  , \t <\t   en\t  ,  \tfoo \t\t > \n\n >  \n ", // Pattern_White_Space ok
            }; 
-            int32_t goodLocsLen = sizeof(goodLocs)/sizeof(goodLocs[0]);
+            int32_t goodLocsLen = UPRV_LENGTHOF(goodLocs);
 
             static const char* badLocs[] = {
                 " ", // non-zero length
@@ -1840,7 +1839,7 @@ IntlTestRBNF::TestLocalizations(void)
                 "<<%main>> x", // extra non-space text at end
 
             };
-            int32_t badLocsLen = sizeof(badLocs)/sizeof(badLocs[0]);
+            int32_t badLocsLen = UPRV_LENGTHOF(badLocs);
 
             for (i = 0; i < goodLocsLen; ++i) {
                 logln("[%d] '%s'", i, goodLocs[i]);
@@ -1895,7 +1894,7 @@ IntlTestRBNF::TestAllLocales()
                 continue;
             }
 #if !UCONFIG_NO_COLLATION
-            for (unsigned int numidx = 0; numidx < sizeof(numbers)/sizeof(double); numidx++) {
+            for (unsigned int numidx = 0; numidx < UPRV_LENGTHOF(numbers); numidx++) {
                 double n = numbers[numidx];
                 UnicodeString str;
                 f->format(n, str);

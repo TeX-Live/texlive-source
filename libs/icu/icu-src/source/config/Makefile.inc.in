@@ -44,7 +44,7 @@ PACKAGE = @PACKAGE@
 LIBICU = lib$(ICUPREFIX)
 
 # Static library prefix and file extension
-STATIC_PREFIX =
+STATIC_PREFIX = s
 LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
 A = a
 

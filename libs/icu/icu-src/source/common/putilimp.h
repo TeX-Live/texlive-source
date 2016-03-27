@@ -148,7 +148,7 @@ typedef size_t uintptr_t;
 
 #ifdef U_HAVE_MMAP
     /* Use the predefined value. */
-#elif U_PLATFORM_USES_ONLY_WIN32_API
+#elif U_PLATFORM_HAS_WIN32_API
 #   define U_HAVE_MMAP 0
 #else
 #   define U_HAVE_MMAP 1
@@ -171,7 +171,7 @@ typedef size_t uintptr_t;
  */
 #ifdef U_HAVE_DIRENT_H
     /* Use the predefined value. */
-#elif U_PLATFORM_USES_ONLY_WIN32_API
+#elif U_PLATFORM_HAS_WIN32_API
 #   define U_HAVE_DIRENT_H 0
 #else
 #   define U_HAVE_DIRENT_H 1
@@ -191,7 +191,7 @@ typedef size_t uintptr_t;
     /* Use the predefined value. */
 #elif U_PLATFORM == U_PF_MINGW
     #define U_HAVE_GCC_ATOMICS 0
-#elif U_GCC_MAJOR_MINOR >= 405 || defined(__clang__)
+#elif U_GCC_MAJOR_MINOR >= 404 || defined(__clang__)
     /* TODO: Intel icc and IBM xlc on AIX also support gcc atomics.  (Intel originated them.)
      *       Add them for these compilers.
      * Note: Clang sets __GNUC__ defines for version 4.2, so misses the 4.4 test here.
