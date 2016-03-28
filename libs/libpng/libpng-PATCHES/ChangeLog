@@ -1,3 +1,9 @@
+2016-03-28  Mojca Miklavec <mojca.miklavec.lists@gmail.com>
+
+	Create patch-02-backport-20160314-12e63e9:
+	* libpng-src/configure.ac: Force back to C89 if needed
+	(needed on Solaris with GCC 5 and later)
+
 2009-08-13  Martin Schröder <martin@oneiros.de>
 
 	* patch-01-static: Remove; has been integrated into libpng-1.2.39.
@@ -12,3 +18,4 @@
 	* libpng-1.2.37/png.c (png_64bit_product): declare as static to
 	avoid compiler warning.
 
+(This ChangeLog is public domain.)
