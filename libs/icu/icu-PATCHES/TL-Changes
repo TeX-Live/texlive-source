@@ -1,4 +1,4 @@
-Changes applied to the icu-57.1/ tree as obtained from:
+Changes applied to the icu-57.1 tree as obtained from:
 	http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz
 
 cd /tmp # or wherever
@@ -50,4 +50,6 @@ $icupkg -r 'region/*' $indat $outdat && mv $outdat $indat
 $icupkg -r 'rfc*.spp' $indat $outdat && mv $outdat $indat
 $icupkg -r 'zone/*' $indat $outdat && mv $outdat $indat
 ls -l $indat $srcdat # indat should be much smaller
-cp $indat $srcdat 
+cp $indat $srcdat
+
+# then commit.

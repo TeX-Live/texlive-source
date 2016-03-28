@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 39763 2016-02-18 13:45:29Z preining $
+# $Id: tlmgr.pl 40150 2016-03-27 00:20:46Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 39763 $';
-my $datrev = '$Date: 2016-02-18 14:45:29 +0100 (Thu, 18 Feb 2016) $';
+my $svnrev = '$Revision: 40150 $';
+my $datrev = '$Date: 2016-03-27 01:20:46 +0100 (Sun, 27 Mar 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1148,10 +1148,10 @@ sub action_paper {
   init_local_db();
   my $texmfconfig;
   if ($opts{"usermode"}) {
-    chomp($texmfconfig = `kpsewhich -var-value=TEXMFCONFIG`);
-  } else {
-    chomp($texmfconfig = `kpsewhich -var-value=TEXMFSYSCONFIG`);
+    tlwarn("$prg: action `paper' not supported in usermode\n");
+    return ($F_ERROR);
   }
+  chomp($texmfconfig = `kpsewhich -var-value=TEXMFSYSCONFIG`);
   $ENV{"TEXMFCONFIG"} = $texmfconfig;
 
   my $action = shift @ARGV;
