@@ -1,9 +1,12 @@
+2016-03-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-04-ULLONG-constants: new patch.
+
 2016-03-18  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	Imported poppler-0.42.0 source tree from:
 	  http://poppler.freedesktop.org/
 	Added  @POPPLER_TREE@/poppler/SignatureInfo.cc to Makefile.am
-
 
 2016-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
