@@ -4889,6 +4889,39 @@ esac
 ac_config_headers="$ac_config_headers config.h"
 
 
+# For GCC 5 the default mode for C is -std=gnu11 instead of -std=gnu89
+# In pngpriv.h we request just the POSIX 1003.1 and C89 APIs by defining _POSIX_SOURCE to 1
+# This is incompatible with the new default mode, so we test for that and force the
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking if we need to force back C standard to C89" >&5
+$as_echo_n "checking if we need to force back C standard to C89... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#define _POSIX_SOURCE 1
+#include <stdio.h>
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+else
+
+if test "x$GCC" != "xyes"; then
+  as_fn_error $? "Forcing back to C89 is required but the flags are unknown for other compilers than GCC" "$LINENO" 5
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+CFLAGS="$CFLAGS -std=c89"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 # Checks for header files.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
