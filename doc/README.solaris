@@ -105,16 +105,9 @@ is desired by changing the map file.
 Building texlive
 ================
 
-Two extra settings were needed to compile TeX Live with gcc 5.2:
-  * export LIBPNG_USER_CPPFLAGS="-D_XOPEN_SOURCE=600"
+Additional settings were needed to compile TeX Live with gcc 5.2:
   * ./Build --without-iconv
 
-The second option makes sure to avoid linking against libiconv
+The '--without-iconv' makes sure to avoid linking against libiconv
 which is not available on SunOS by default.
-
-The first option is only needed on Solaris 10 to circumvent a problem
-in libpng <https://sourceforge.net/p/libpng/bugs/245/>.
-
-Using `#define _POSIX_SOURCE 1` will fail to compile on Solaris 10 with gcc 5.x
-unless one of `_XPG6`, `_XOPEN_SOURCE = 600`, or `_POSIX_C_SOURCE = 200112L` is set.
 
