@@ -1,0 +1,73 @@
+	The supplied g++-4.2 compiler on 32-bit MacOSX apparently
+	mishandled private enum in the implementation (since newer
+	compilers are ok with it).  This can be removed when we drop
+	support for 32-bit MacOSX.
+	http://tug.org/pipermail/tlbuild/2016q1/003438.html
+	(and starting at http://tug.org/pipermail/tlbuild/2016q1/003433.html)
+
+Index: icu-src/source/i18n/dayperiodrules.h
+===================================================================
+--- icu-src/source/i18n/dayperiodrules.h	(revision 40174)
++++ icu-src/source/i18n/dayperiodrules.h	(working copy)
+@@ -53,7 +53,7 @@
+     // Returns the center of dayPeriod. Half hours are indicated with a .5 .
+     double getMidPointForDayPeriod(DayPeriod dayPeriod, UErrorCode &errorCode) const;
+ 
+-private:
++/* nothing private to placate old compilers --karl/koch private: */
+     DayPeriodRules();
+ 
+     // Translates "morning1" to DAYPERIOD_MORNING1, for example.
+Index: icu-src/source/i18n/unicode/dtitvinf.h
+===================================================================
+--- icu-src/source/i18n/unicode/dtitvinf.h	(revision 40174)
++++ icu-src/source/i18n/unicode/dtitvinf.h	(working copy)
+@@ -150,7 +150,8 @@
+ 
+ class U_I18N_API DateIntervalInfo U_FINAL : public UObject {
+ public:
+-#ifndef U_HIDE_INTERNAL_API
++/* nothing private to placate old compilers --karl/koch */
++/* ifndef U_HIDE_INTERNAL_API */
+     /**
+      * Default constructor.
+      * It does not initialize any interval patterns except
+@@ -165,7 +166,7 @@
+      * @internal ICU 4.0
+      */
+     DateIntervalInfo(UErrorCode& status);
+-#endif  /* U_HIDE_INTERNAL_API */
++/* endif */  /* U_HIDE_INTERNAL_API */
+ 
+ 
+     /**
+@@ -328,7 +329,7 @@
+     static UClassID U_EXPORT2 getStaticClassID();
+ 
+ 
+-private:
++/* nothing private to placate old compilers --karl/koch private: */
+     /**
+      * DateIntervalFormat will need access to
+      * getBestSkeleton(), parseSkeleton(), enum IntervalPatternIndex,
+@@ -359,7 +360,8 @@
+         kIPI_MAX_INDEX
+     };
+ public:
+-#ifndef U_HIDE_INTERNAL_API
++/* nothing private to placate old compilers --karl/koch */
++/* ifndef U_HIDE_INTERNAL_API */
+     /**
+      * Max index for stored interval patterns
+      * @internal ICU 4.4
+@@ -367,8 +369,8 @@
+      enum {
+          kMaxIntervalPatternIndex = kIPI_MAX_INDEX
+      };
+-#endif  /* U_HIDE_INTERNAL_API */
+-private:
++/* endif */  /* U_HIDE_INTERNAL_API */
++/* nothing private to placate old compilers --karl/koch private: */
+ 
+ 
+     /**

@@ -150,7 +150,8 @@ U_NAMESPACE_BEGIN
 
 class U_I18N_API DateIntervalInfo U_FINAL : public UObject {
 public:
-#ifndef U_HIDE_INTERNAL_API
+/* nothing private to placate old compilers --karl/koch */
+/* ifndef U_HIDE_INTERNAL_API */
     /**
      * Default constructor.
      * It does not initialize any interval patterns except
@@ -165,7 +166,7 @@ public:
      * @internal ICU 4.0
      */
     DateIntervalInfo(UErrorCode& status);
-#endif  /* U_HIDE_INTERNAL_API */
+/* endif */  /* U_HIDE_INTERNAL_API */
 
 
     /**
@@ -328,7 +329,7 @@ public:
     static UClassID U_EXPORT2 getStaticClassID();
 
 
-private:
+/* nothing private to placate old compilers --karl/koch private: */
     /**
      * DateIntervalFormat will need access to
      * getBestSkeleton(), parseSkeleton(), enum IntervalPatternIndex,
@@ -359,7 +360,8 @@ private:
         kIPI_MAX_INDEX
     };
 public:
-#ifndef U_HIDE_INTERNAL_API
+/* nothing private to placate old compilers --karl/koch */
+/* ifndef U_HIDE_INTERNAL_API */
     /**
      * Max index for stored interval patterns
      * @internal ICU 4.4
@@ -367,8 +369,8 @@ public:
      enum {
          kMaxIntervalPatternIndex = kIPI_MAX_INDEX
      };
-#endif  /* U_HIDE_INTERNAL_API */
-private:
+/* endif */  /* U_HIDE_INTERNAL_API */
+/* nothing private to placate old compilers --karl/koch private: */
 
 
     /**
