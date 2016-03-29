@@ -1,3 +1,8 @@
+2016-03-30  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (AM_CPPFLAGS): remove LIBPNG_USER_CPPFLAGS per Mojca.
+	http://tug.org/pipermail/tlbuild/2016q1/003440.html
+
 2016-03-28  Karl Berry  <karl@tug.org>
 
 	* configure.ac: insert check for -std=c89 from Mojca.
