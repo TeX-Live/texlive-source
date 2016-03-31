@@ -1063,17 +1063,15 @@ static scaled stack_into_box(pointer b, internal_font_number f, int c)
 }
 
 static void stack_glue_into_box(pointer b, scaled min, scaled max) {
-    pointer p, q;               /* new node placed into |b| */
-    q = new_spec(zero_glue);
-    width(q) = min;
-    stretch(q) = max-min;
-    p = new_glue(q);
+    halfword p = new_glue(zero_glue);
+    width(p) = min;
+    stretch(p) = max - min;
     reset_attributes(p, node_attr(b));
     if (type(b) == vlist_node) {
         try_couple_nodes(p,list_ptr(b));
         list_ptr(b) = p;
     } else {
-        q = list_ptr(b);
+        halfword q = list_ptr(b);
         if (q == null) {
             list_ptr(b) = p;
         } else {
@@ -1543,7 +1541,7 @@ static pointer math_glue(pointer g, scaled m)
         decr(n);
         f = f + unity;
     }
-    p = new_node(glue_spec_node, 0);
+    p = new_node(glue_node, 0);
     width(p) = mu_mult(width(g)); /* convert \.{mu} to \.{pt} */
     stretch_order(p) = stretch_order(g);
     if (stretch_order(p) == normal)
@@ -1951,12 +1949,12 @@ static pointer wrapup_over_under_delimiter(pointer x, pointer y, pointer q, scal
 
 #define fixup_widths(q,x,y) do { \
     if (width(y) >= width(x)) { \
-        if (radicalwidth(q) != zero_glue) { \
+        if (radicalwidth(q) != 0) { \
             shift_amount(x) += half(width(y)-width(x)) ; \
         } \
         width(x) = width(y); \
     } else { \
-        if (radicalwidth(q) != zero_glue) { \
+        if (radicalwidth(q) != 0) { \
             shift_amount(y) += half(width(x)-width(y)) ; \
         } \
         width(y) = width(x); \
@@ -1965,7 +1963,7 @@ static pointer wrapup_over_under_delimiter(pointer x, pointer y, pointer q, scal
 
 
 #define check_radical(q,stack,r,t) do { \
-    if (!stack && (width(r) >= width(t)) && (radicalwidth(q) != zero_glue) && (radicalwidth(q) != width(r))) { \
+    if (!stack && (width(r) >= width(t)) && (radicalwidth(q) != 0) && (radicalwidth(q) != width(r))) { \
         if (radicalleft(q)) { \
             halfword p = new_kern(radicalwidth(q)-width(r)); \
             reset_attributes(p, node_attr(q)); \
@@ -1990,7 +1988,7 @@ static pointer wrapup_over_under_delimiter(pointer x, pointer y, pointer q, scal
 } while (0)
 
 #define check_widths(q,p) do { \
-    if (radicalwidth(q) != zero_glue) { \
+    if (radicalwidth(q) != 0) { \
         wd = radicalwidth(q); \
     } else { \
         wd = width(p); \
@@ -3710,13 +3708,11 @@ static pointer math_spacing_glue(int l_type, int r_type, int mstyle, scaled mmu)
             /* trap thin/med/thick settings cf. old TeX */
             y = math_glue(glue_par(x), mmu);
             z = new_glue(y);
-            glue_ref_count(y) = null;
             /* store a symbolic subtype */
             subtype(z) = (quarterword) (x + 1);
         } else {
             y = math_glue(x, mmu);
             z = new_glue(y);
-            glue_ref_count(y) = null;
         }
     }
     return z;
@@ -3968,10 +3964,9 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
 
             */
             if (subtype(q) == mu_glue) {
-                x = glue_ptr(q);
+                x = q; /* was ptr */
                 y = math_glue(x, cur_mu);
-                delete_glue_ref(x);
-                glue_ptr(q) = y;
+                q = y; /* we can get rid of the indirect */
                 subtype(q) = normal;
             } else if ((cur_size != text_size) && (subtype(q) == cond_math_glue)) {
                 p = vlink(q);

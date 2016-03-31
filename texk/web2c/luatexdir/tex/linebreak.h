@@ -82,7 +82,7 @@ extern halfword find_protchar_right(halfword l, halfword r);
 )
 
 #  define cp_skipable(a) ( (! is_char_node((a))) && ( \
-    ((type((a)) == glue_node) && (glue_ptr((a)) == zero_glue)) \
+    ((type((a)) == glue_node) && (glue_is_zero((a)))) \
  ||  (type((a)) == penalty_node) \
  || ((type((a)) == disc_node) && empty_disc(a)) \
  || ((type((a)) == kern_node) && ((width((a)) == 0) || (subtype((a)) == normal))) \

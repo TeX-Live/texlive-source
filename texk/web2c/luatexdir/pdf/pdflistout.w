@@ -112,7 +112,7 @@ void init_backend_functionpointers(output_mode o_mode)
 track of the needed width in |w|. When it finds the node that will end
 this segment, it stores the accumulated with in the |dir_dvi_h| field
 of that end node, so that when that node is found later in the
-processing, the correct glue correction can be applied.
+processing, the correct glue correction can be applied (obsolete).
 
 @c
 static scaled simple_advance_width(halfword p)
@@ -154,7 +154,6 @@ static halfword calculate_width_to_enddir(halfword p, real cur_glue, scaled cur_
     int dir_nest = 1;
     halfword q = p, enddir_ptr = p;
     scaled w = 0;
-    halfword g;     /* this is normally a global variable, but that is just too hideous */
     real glue_temp; /* glue value before rounding */
     int g_sign = glue_sign(this_box);
     int g_order = glue_order(this_box);
@@ -178,7 +177,7 @@ static halfword calculate_width_to_enddir(halfword p, real cur_glue, scaled cur_
                     break;
                 case math_node:
                     /* begin mathskip code */
-                    if (glue_ptr(q) == zero_glue) {
+                    if (glue_is_zero(q)) {
                         w += surround(q);
                         break;
                     } else {
@@ -186,17 +185,16 @@ static halfword calculate_width_to_enddir(halfword p, real cur_glue, scaled cur_
                     }
                     /* end mathskip code */
                 case glue_node:
-                    g = glue_ptr(q);
-                    w += width(g) - cur_g;
+                    w += width(q) - cur_g;
                     if (g_sign != normal) {
                         if (g_sign == stretching) {
-                            if (stretch_order(g) == g_order) {
-                                cur_glue = cur_glue + stretch(g);
+                            if (stretch_order(q) == g_order) {
+                                cur_glue = cur_glue + stretch(q);
                                 vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                                 cur_g = float_round(glue_temp);
                             }
-                        } else if (shrink_order(g) == g_order) {
-                            cur_glue = cur_glue - shrink(g);
+                        } else if (shrink_order(q) == g_order) {
+                            cur_glue = cur_glue - shrink(q);
                             vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                             cur_g = float_round(glue_temp);
                         }
@@ -442,17 +440,16 @@ cur.h += x_advance(p);
                 case glue_node:
                     {
                         /* move right or output leaders, we use real multiplication */
-                        halfword g = glue_ptr(p);
-                        rule.wd = width(g) - cur_g;
+                        rule.wd = width(p) - cur_g;
                         if (g_sign != normal) {
                             if (g_sign == stretching) {
-                                if (stretch_order(g) == g_order) {
-                                    cur_glue = cur_glue + stretch(g);
+                                if (stretch_order(p) == g_order) {
+                                    cur_glue = cur_glue + stretch(p);
                                     vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                                     cur_g = float_round(glue_temp);
                                 }
-                            } else if (shrink_order(g) == g_order) {
-                                cur_glue = cur_glue - shrink(g);
+                            } else if (shrink_order(p) == g_order) {
+                                cur_glue = cur_glue - shrink(p);
                                 vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                                 cur_g = float_round(glue_temp);
                             }
@@ -654,7 +651,7 @@ cur.h += x_advance(p);
                         synctexmath(p, this_box);
                     }
                     /* begin mathskip code */
-                    if (glue_ptr(p) == zero_glue) {
+                    if (glue_is_zero(p)) {
                         cur.h += surround(p);
                         break;
                     } else {
@@ -880,17 +877,16 @@ void vlist_out(PDF pdf, halfword this_box, int rule_callback_id)
             case glue_node:
                 {
                     /* move down or output leaders, we use real multiplication */
-                    halfword g = glue_ptr(p);
-                    rule.ht = width(g) - cur_g;
+                    rule.ht = width(p) - cur_g;
                     if (g_sign != normal) {
                         if (g_sign == stretching) {
-                            if (stretch_order(g) == g_order) {
-                                cur_glue = cur_glue + stretch(g);
+                            if (stretch_order(p) == g_order) {
+                                cur_glue = cur_glue + stretch(p);
                                 vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                                 cur_g = float_round(glue_temp);
                             }
-                        } else if (shrink_order(g) == g_order) {
-                            cur_glue = cur_glue - shrink(g);
+                        } else if (shrink_order(p) == g_order) {
+                            cur_glue = cur_glue - shrink(p);
                             vet_glue(float_cast(glue_set(this_box)) * cur_glue);
                             cur_g = float_round(glue_temp);
                         }

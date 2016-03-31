@@ -1427,17 +1427,25 @@ difficult, we start with a simpler implementation using just the first two items
 
 
 @c
+
+/*
+    A user supplied trailerid had better be an array! So maybe we need to check
+    for [] and error otherwise.
+*/
+
 static void print_ID(PDF pdf)
 {
     if ((pdf_suppress_optional_info & 512) == 0) {
-        if (pdf_trailer_id != 0) {
-            char *s = NULL;
-            int len;
-            s = tokenlist_to_cstring(pdf_trailer_id, true, &len);
-            /* this had better be an array! sp maybe we need to check for [] and error otherwise */
-            pdf_add_name(pdf, "ID");
-            pdf_out_block(pdf,s,len);
+        const char *p = NULL;
+        pdf_add_name(pdf, "ID");
+        p = get_pdf_table_string("trailerid");
+        if (p && strlen(p) > 0) {
+            pdf_puts(pdf,p);
+        } else if (pdf_trailer_id != 0) {
+            /* user provided one */
+            pdf_print_toks(pdf, pdf_trailer_id);
         } else {
+            /* system provided one */
             time_t t;
             size_t size;
             char time_str[32];
@@ -1473,7 +1481,6 @@ static void print_ID(PDF pdf)
             md5_finish(&state, digest);
             /* write the IDs */
             convertStringToHexString((char *) digest, id, 16);
-            pdf_add_name(pdf, "ID");
             pdf_begin_array(pdf);
             pdf_printf(pdf, "<%s> <%s>", id, id);
             pdf_end_array(pdf);

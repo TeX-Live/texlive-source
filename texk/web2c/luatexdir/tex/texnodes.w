@@ -89,10 +89,10 @@ const char *node_fields_disc[] = {
     "attr", "pre", "post", "replace", "penalty", NULL
 };
 const char *node_fields_math[] = {
-    "attr", "surround", NULL
+    "attr", "surround", "width", "stretch", "shrink", "stretch_order", "shrink_order", NULL
 };
 const char *node_fields_glue[] = {
-    "attr", "spec", "leader", NULL
+    "attr", "leader", "width", "stretch", "shrink", "stretch_order", "shrink_order", NULL
 };
 const char *node_fields_kern[] = {
     "attr", "kern", "expansion_factor", NULL
@@ -112,7 +112,8 @@ const char *node_fields_glyph[] = {
     "xoffset", "yoffset", "width", "height", "depth", "expansion_factor", NULL
 };
 const char *node_fields_inserting[] = {
-    "height", "last_ins_ptr", "best_ins_ptr", NULL
+    "height", "last_ins_ptr", "best_ins_ptr",
+    "width", "stretch", "shrink", "stretch_order", "shrink_order", NULL
 };
 const char *node_fields_splitup[] = {
     "height", "last_ins_ptr", "best_ins_ptr", "broken_ptr", "broken_ins", NULL
@@ -121,8 +122,7 @@ const char *node_fields_attribute[] = {
     "number", "value", NULL
 };
 const char *node_fields_glue_spec[] = {
-    "width", "stretch", "shrink", "stretch_order", "shrink_order", "ref_count",
-   "writable", NULL
+    "width", "stretch", "shrink", "stretch_order", "shrink_order", NULL
 };
 const char *node_fields_attribute_list[] = {
     NULL
@@ -132,7 +132,7 @@ const char *node_fields_local_par[] = {
     "box_right", "box_right_width", NULL
 };
 const char *node_fields_dir[] = {
-    "attr", "dir", "level", "dvi_ptr", "dvi_h", NULL
+    "attr", "dir", "level", NULL
 };
 const char *node_fields_boundary[] = {
     "attr", "value", NULL
@@ -620,7 +620,6 @@ static int test_count = 1;
     } } while (0)
 
 #define check_action_ref(a)    { dorangetest(p,a,var_mem_max); }
-#define check_glue_ref(a)      { dorangetest(p,a,var_mem_max); }
 #define check_attribute_ref(a) { dorangetest(p,a,var_mem_max); }
 #define check_token_ref(a)     { confusion("fuzzy token cleanup in node"); }
 
@@ -1078,7 +1077,6 @@ halfword copy_node(const halfword p)
             copy_sub_list(lig_ptr(r),lig_ptr(p)) ;
             break;
         case glue_node:
-            add_glue_ref(glue_ptr(p));
             copy_sub_list(leader_ptr(r),leader_ptr(p)) ;
             break;
         case hlist_node:
@@ -1116,12 +1114,8 @@ halfword copy_node(const halfword p)
             }
             break;
         case math_node:
-            if (glue_ptr(p) != zero_glue) {
-                add_glue_ref(glue_ptr(p));
-            }
             break;
         case ins_node:
-            add_glue_ref(split_top_ptr(p));
             copy_sub_list(ins_ptr(r),ins_ptr(p)) ;
             break;
         case margin_kern_node:
@@ -1173,8 +1167,6 @@ halfword copy_node(const halfword p)
             copy_sub_node(right_delimiter(r),right_delimiter(p)) ;
             break;
         case glue_spec_node:
-            glue_ref_count(r) = null;
-            break;
         case dir_node:
         case local_par_node:
         case boundary_node:
@@ -1320,7 +1312,6 @@ void flush_node(halfword p)
             free_sub_list(lig_ptr(p));
             break;
         case glue_node:
-            delete_glue_ref(glue_ptr(p));
             free_sub_list(leader_ptr(p));
             break;
         case hlist_node:
@@ -1337,24 +1328,14 @@ void flush_node(halfword p)
         case rule_node:
         case kern_node:
         case penalty_node:
-            break;
         case math_node:
-            /* begin mathskip code */
-            if (glue_ptr(p) != zero_glue) {
-                delete_glue_ref(glue_ptr(p));
-            }
-            /* end mathskip code */
             break;
         case glue_spec_node:
             /* this allows free-ing of lua-allocated glue specs */
-            if (valid_node(p)) {
-                if (glue_ref_count(p)!=null) {
-                    decr(glue_ref_count(p));
-                } else {
-                    free_node(p, get_node_size(type(p), subtype(p)));
-                }
-            }
-            return ;
+//if (valid_node(p)) {
+//    free_node(p, subtype(p));
+//}
+//            return ;
             break ;
         case dir_node:
         case local_par_node:
@@ -1372,7 +1353,6 @@ void flush_node(halfword p)
             break;
         case ins_node:
             flush_node_list(ins_ptr(p));
-            delete_glue_ref(split_top_ptr(p));
             break;
         case margin_kern_node:
             flush_node(margin_char(p));
@@ -1579,7 +1559,6 @@ void check_node(halfword p)
             dorangetest(p, lig_ptr(p), var_mem_max);
             break;
         case glue_node:
-            check_glue_ref(glue_ptr(p));
             dorangetest(p, leader_ptr(p), var_mem_max);
             break;
         case hlist_node:
@@ -1590,7 +1569,6 @@ void check_node(halfword p)
             break;
         case ins_node:
             dorangetest(p, ins_ptr(p), var_mem_max);
-            check_glue_ref(split_top_ptr(p));
             break;
         case whatsit_node:
             w = subtype(p) ;
@@ -1606,11 +1584,6 @@ void check_node(halfword p)
             check_node(margin_char(p));
             break;
         case math_node:
-            /* begin mathskip code */
-            if (glue_ptr(p) != zero_glue) {
-                check_glue_ref(glue_ptr(p));
-            }
-            /* end mathskip code */
             break;
         case disc_node:
             dorangetest(p, vlink(pre_break(p)), var_mem_max);
@@ -1804,7 +1777,6 @@ void init_node_mem(int t)
     node_size(rover) = (t - rover);
     var_used = 0;
     /* initialize static glue specs */
-    glue_ref_count(zero_glue) = null + 1;
     width(zero_glue) = 0;
     type(zero_glue) = glue_spec_node;
     vlink(zero_glue) = null;
@@ -1812,7 +1784,6 @@ void init_node_mem(int t)
     stretch_order(zero_glue) = normal;
     shrink(zero_glue) = 0;
     shrink_order(zero_glue) = normal;
-    glue_ref_count(sfi_glue) = null + 1;
     width(sfi_glue) = 0;
     type(sfi_glue) = glue_spec_node;
     vlink(sfi_glue) = null;
@@ -1820,7 +1791,6 @@ void init_node_mem(int t)
     stretch_order(sfi_glue) = sfi;
     shrink(sfi_glue) = 0;
     shrink_order(sfi_glue) = normal;
-    glue_ref_count(fil_glue) = null + 1;
     width(fil_glue) = 0;
     type(fil_glue) = glue_spec_node;
     vlink(fil_glue) = null;
@@ -1828,7 +1798,6 @@ void init_node_mem(int t)
     stretch_order(fil_glue) = fil;
     shrink(fil_glue) = 0;
     shrink_order(fil_glue) = normal;
-    glue_ref_count(fill_glue) = null + 1;
     width(fill_glue) = 0;
     type(fill_glue) = glue_spec_node;
     vlink(fill_glue) = null;
@@ -1836,7 +1805,6 @@ void init_node_mem(int t)
     stretch_order(fill_glue) = fill;
     shrink(fill_glue) = 0;
     shrink_order(fill_glue) = normal;
-    glue_ref_count(ss_glue) = null + 1;
     width(ss_glue) = 0;
     type(ss_glue) = glue_spec_node;
     vlink(ss_glue) = null;
@@ -1844,7 +1812,6 @@ void init_node_mem(int t)
     stretch_order(ss_glue) = fil;
     shrink(ss_glue) = unity;
     shrink_order(ss_glue) = fil;
-    glue_ref_count(fil_neg_glue) = null + 1;
     width(fil_neg_glue) = 0;
     type(fil_neg_glue) = glue_spec_node;
     vlink(fil_neg_glue) = null;
@@ -2507,7 +2474,7 @@ void print_short_node_contents(halfword p)
             print_char('|');
             break;
         case glue_node:
-            if (glue_ptr(p) != zero_glue)
+            if (! glue_is_zero(p))
                 print_char(' ');
             break;
         case math_node:
@@ -3048,7 +3015,7 @@ void show_node_list(int p)
                         normal_warning("nodes","weird glue leader subtype ignored");
                     }
                     tprint("leaders ");
-                    print_spec(glue_ptr(p), NULL);
+                    print_spec(p, NULL);
                     node_list_display(leader_ptr(p));   /* recursive call */
                 } else {
                     tprint_esc("glue");
@@ -3070,9 +3037,9 @@ void show_node_list(int p)
                     if (subtype(p) != cond_math_glue) {
                         print_char(' ');
                         if (subtype(p) < cond_math_glue)
-                            print_spec(glue_ptr(p), NULL);
+                            print_spec(p, NULL);
                         else
-                            print_spec(glue_ptr(p), "mu");
+                            print_spec(p, "mu");
                     }
                 }
                 break;
@@ -3169,7 +3136,6 @@ void show_node_list(int p)
 @c
 pointer actual_box_width(pointer r, scaled base_width)
 {
-    pointer q;                               /* glue specification when calculating |pre_display_size| */
     scaled d;                                /* increment to |v| */
     scaled w = -max_dimen;                   /* calculated |size| */
     scaled v = shift_amount(r) + base_width; /* |w| plus possible glue amount */
@@ -3194,7 +3160,7 @@ pointer actual_box_width(pointer r, scaled base_width)
                 break;
             case math_node:
                 /* begin mathskip code */
-                if (glue_ptr(p) == zero_glue) {
+                if (glue_is_zero(p)) {
                     d = surround(p);
                     break;
                 } else {
@@ -3208,15 +3174,12 @@ pointer actual_box_width(pointer r, scaled base_width)
                    |pre_display_size|, since \TeX82 is supposed to make the same decisions on all
                    machines.
                  */
-                q = glue_ptr(p);
-                d = width(q);
+                d = width(p);
                 if (glue_sign(r) == stretching) {
-                    if ((glue_order(r) == stretch_order(q))
-                        && (stretch(q) != 0))
+                    if ((glue_order(r) == stretch_order(p)) && (stretch(p) != 0))
                         v = max_dimen;
                 } else if (glue_sign(r) == shrinking) {
-                    if ((glue_order(r) == shrink_order(q))
-                        && (shrink(q) != 0))
+                    if ((glue_order(r) == shrink_order(p)) && (shrink(p) != 0))
                         v = max_dimen;
                 }
                 if (subtype(p) >= a_leaders)
@@ -3252,26 +3215,10 @@ halfword tail_of_list(halfword p)
     return q;
 }
 
-@ |delete_glue_ref| is called when a pointer to a glue
-   specification is being withdrawn.
 
-@c
-void delete_glue_ref(halfword p)
-{   /* |p| points to a glue specification */
-    if (type(p) == glue_spec_node) {
-        if (glue_ref_count(p) == null) {
-          flush_node(p);
-        } else {
-          decr(glue_ref_count(p));
-        }
-    } else {
-        normal_error("nodes","invalid glue spec node");
-    }
-}
 
 @ @c
 int var_used;
-halfword temp_ptr;  /* a pointer variable for occasional emergency use */
 
 @ Attribute lists need two extra globals to increase processing efficiency.
 |max_used_attr| limits the test loop that checks for set attributes, and
@@ -3585,10 +3532,8 @@ to be exactly one reference to the new specification.
 
 @c
 halfword new_spec(halfword p)
-{                               /* duplicates a glue specification */
-    halfword q = copy_node(p);
-    glue_ref_count(q) = null;
-    return q;
+{
+    return copy_node(p == null ? zero_glue : p);
 }
 
 @ And here's a function that creates a glue node for a given parameter
@@ -3601,8 +3546,11 @@ halfword new_param_glue(int n)
 {
     halfword p = new_node(glue_node, n + 1);
     halfword q = glue_par(n);
-    glue_ptr(p) = q;
-    incr(glue_ref_count(q));
+    width(p) = width(q);
+    stretch(p) = stretch(q);
+    shrink(p) = shrink(q);
+    stretch_order(p) = stretch_order(q);
+    shrink_order(p) = shrink_order(q);
     return p;
 }
 
@@ -3613,8 +3561,11 @@ whose argument points to a glue specification.
 halfword new_glue(halfword q)
 {
     halfword p = new_node(glue_node, normal);
-    glue_ptr(p) = q;
-    incr(glue_ref_count(q));
+    width(p) = width(q);
+    stretch(p) = stretch(q);
+    shrink(p) = shrink(q);
+    stretch_order(p) = stretch_order(q);
+    shrink_order(p) = shrink_order(q);
     return p;
 }
 
@@ -3622,17 +3573,22 @@ halfword new_glue(halfword q)
 of |new_param_glue| and |new_glue|. It creates a glue node for one of
 the current glue parameters, but it makes a fresh copy of the glue
 specification, since that specification will probably be subject to change,
-while the parameter will stay put. The global variable |temp_ptr| is
-set to the address of the new spec.
+while the parameter will stay put.
+
+/*
+    The global variable |temp_ptr| is set to the address of the new spec.
+*/
 
 @c
 halfword new_skip_param(int n)
 {
-    halfword p;                 /* the new node */
-    temp_ptr = new_spec(glue_par(n));
-    p = new_glue(temp_ptr);
-    glue_ref_count(temp_ptr) = null;
-    subtype(p) = (quarterword) (n + 1);
+    halfword p = new_node(glue_node, n + 1);
+    halfword q = glue_par(n);
+    width(p) = width(q);
+    stretch(p) = stretch(q);
+    shrink(p) = shrink(q);
+    stretch_order(p) = stretch_order(q);
+    shrink_order(p) = shrink_order(q);
     return p;
 }
 

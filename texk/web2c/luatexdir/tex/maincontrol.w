@@ -130,11 +130,7 @@ and kerns, is part of \TeX's ``inner loop''; the whole program runs
 efficiently when its inner loop is fast, so this part has been written
 with particular care.
 
-@c
-static halfword main_p;         /* temporary register for list manipulation */
-static halfword main_s;         /* space factor value */
-
-@ We leave the |space_factor| unchanged if |sf_code(cur_chr)=0|; otherwise we
+We leave the |space_factor| unchanged if |sf_code(cur_chr)=0|; otherwise we
 set it equal to |sf_code(cur_chr)|, except that it should never change
 from a value less than 1000 to a value exceeding 1000. The most common
 case is |sf_code(cur_chr)=1000|, so we want that case to be fast.
@@ -142,16 +138,16 @@ case is |sf_code(cur_chr)=1000|, so we want that case to be fast.
 @c
 void adjust_space_factor(void)
 {
-    main_s = get_sf_code(cur_chr);
-    if (main_s == 1000) {
+    halfword s = get_sf_code(cur_chr);
+    if (s == 1000) {
         space_factor = 1000;
-    } else if (main_s < 1000) {
-        if (main_s > 0)
-            space_factor = main_s;
+    } else if (s < 1000) {
+        if (s > 0)
+            space_factor = s;
     } else if (space_factor < 1000) {
         space_factor = 1000;
     } else {
-        space_factor = main_s;
+        space_factor = s;
     }
 }
 
@@ -159,10 +155,6 @@ void adjust_space_factor(void)
 both time and memory.''  That may be true, but it also punches through
 the API wall for fonts, so I removed that -- Taco. But a bit of caching
 is very welcome, which is why I need to have the next two globals:
-
-@c
-internal_font_number space_spec_font;
-halfword space_spec_cache;
 
 @ To handle the execution state of |main_control|'s eternal loop,
 an extra global variable is used, along with a macro to define
@@ -208,38 +200,32 @@ is zero or~not.
 
 @c
 static void run_app_space (void) {
+    halfword p; /* was a global temp_ptr */
     int method = int_par(disable_space_code) ;
     if (method == 1) {
         /* don't inject anything, not even zero skip */
     } else if (method == 2) {
-        temp_ptr = new_glue(zero_glue);
-        couple_nodes(tail,temp_ptr);
-        tail = temp_ptr;
+        p = new_glue(zero_glue);
+        couple_nodes(tail,p);
+        tail = p;
     } else if ((abs(mode) + cur_cmd == hmode + spacer_cmd) && (!(space_factor == 1000))) {
         app_space();
     } else {
         /* Append a normal inter-word space to the current list */
-        if (space_skip == zero_glue) {
-            /* Find the glue specification, |main_p|, for
-               text spaces in the current font */
-            if (cur_font != space_spec_font) {
-                if (space_spec_cache != zero_glue)
-                    delete_glue_ref(space_spec_cache);
-                space_spec_cache = new_spec(zero_glue);
-                width(space_spec_cache) = space(cur_font);
-                stretch(space_spec_cache) = space_stretch(cur_font);
-                shrink(space_spec_cache) = space_shrink(cur_font);
-                space_spec_font = cur_font;
-            }
-            main_p = space_spec_cache;
-            temp_ptr = new_glue(main_p);
+        if (glue_is_zero(space_skip)) {
+            /* Find the glue specification for text spaces in the current font */
+            p = new_glue(zero_glue);
+            width(p) = space(cur_font);
+            stretch(p) = space_stretch(cur_font);
+            shrink(p) = space_shrink(cur_font);
+
         } else {
-            temp_ptr = new_param_glue(space_skip_code);
+            p = new_param_glue(space_skip_code);
         }
-/* so from now we have a subtype with spaces: */
-subtype(temp_ptr) = space_skip_code + 1 ;
-        couple_nodes(tail,temp_ptr);
-        tail = temp_ptr;
+        /* so from now we have a subtype with spaces: */
+        subtype(p) = space_skip_code + 1 ;
+        couple_nodes(tail,p);
+        tail = p;
     }
 }
 
@@ -1001,28 +987,27 @@ void main_control(void)
 void app_space(void)
 {                               /* handle spaces when |space_factor<>1000| */
     halfword q;                 /* glue node */
-    if ((space_factor >= 2000) && (xspace_skip != zero_glue)) {
+    if ((space_factor >= 2000) && (! glue_is_zero(xspace_skip))) {
         q = new_param_glue(xspace_skip_code);
-/* so from now we have a subtype with spaces: */
-subtype(q) = xspace_skip_code + 1;
+        /* so from now we have a subtype with spaces: */
+        subtype(q) = xspace_skip_code + 1;
     } else {
-        if (space_skip != zero_glue) {
-            main_p = new_spec(space_skip);
+        if (!glue_is_zero(space_skip)) {
+            q = new_glue(space_skip);
         } else {
-            main_p = new_spec(zero_glue);
-            width(main_p) = space(cur_font);
-            stretch(main_p) = space_stretch(cur_font);
-            shrink(main_p) = space_shrink(cur_font);
+            q = new_glue(zero_glue);
+            width(q) = space(cur_font);
+            stretch(q) = space_stretch(cur_font);
+            shrink(q) = space_shrink(cur_font);
         }
-        /* Modify the glue specification in |main_p| according to the space factor */
+        /* Modify the glue specification in |q| according to the space factor */
         if (space_factor >= 2000)
-            width(main_p) = width(main_p) + extra_space(cur_font);
-        stretch(main_p) = xn_over_d(stretch(main_p), space_factor, 1000);
-        shrink(main_p) = xn_over_d(shrink(main_p), 1000, space_factor);
-        q = new_glue(main_p);
-        glue_ref_count(main_p) = null;
-/* so from now we have a subtype with spaces: */
-subtype(q) = space_skip_code + 1;
+            width(q) = width(q) + extra_space(cur_font);
+        stretch(q) = xn_over_d(stretch(q), space_factor, 1000);
+        shrink(q) = xn_over_d(shrink(q), 1000, space_factor);
+
+        /* so from now we have a subtype with spaces: */
+        subtype(q) = space_skip_code + 1;
     }
     couple_nodes(tail, q);
     tail = q;
@@ -1136,20 +1121,19 @@ used in at least one place where that would be a mistake.
 @c
 void append_glue(void)
 {
-    int s;                      /* modifier of skip command */
-    s = cur_chr;
+    int s = cur_chr;
     switch (s) {
         case fil_code:
-            cur_val = fil_glue;
+            cur_val = new_glue(fil_glue);
             break;
         case fill_code:
-            cur_val = fill_glue;
+            cur_val = new_glue(fill_glue);
             break;
         case ss_code:
-            cur_val = ss_glue;
+            cur_val = new_glue(ss_glue);
             break;
         case fil_neg_code:
-            cur_val = fil_neg_glue;
+            cur_val = new_glue(fil_neg_glue);
             break;
         case skip_code:
             scan_glue(glue_val_level);
@@ -1157,12 +1141,12 @@ void append_glue(void)
         case mskip_code:
             scan_glue(mu_val_level);
             break;
-    }                           /* now |cur_val| points to the glue specification */
+    }
+    /* now |cur_val| points to the glue specification */
     tail_append(new_glue(cur_val));
-    if (s >= skip_code) {
-        decr(glue_ref_count(cur_val));
-        if (s > skip_code)
-            subtype(tail) = mu_glue;
+    flush_node(cur_val);
+    if (s > skip_code) {
+        subtype(tail) = mu_glue;
     }
 }
 
@@ -1287,8 +1271,7 @@ void handle_right_brace(void)
             break;
         case insert_group:
             end_graf(insert_group);
-            q = split_top_skip;
-            add_glue_ref(q);
+            q = new_glue(split_top_skip);
             d = split_max_depth;
             f = floating_penalty;
             unsave();
@@ -1306,7 +1289,7 @@ void handle_right_brace(void)
             } else if (saved_type(0) == saved_adjust) {
                 tail_append(new_node(adjust_node, saved_value(0)));
                 adjust_ptr(tail) = list_ptr(p);
-                delete_glue_ref(q);
+                flush_node(q);
             } else {
                 confusion("insert_group");
             }
@@ -2539,7 +2522,6 @@ void prefixed_command(void)
                 scan_glue(mu_val_level);
             else
                 scan_glue(glue_val_level);
-            trap_zero_glue();
             define(p, glue_ref_cmd, cur_val);
             break;
         case def_char_code_cmd:
@@ -2638,7 +2620,6 @@ void prefixed_command(void)
                     scan_dimen(false, false, false);
             } else {
                 scan_glue(mu_val_level);
-                trap_zero_glue();
                 if (cur_val == glue_par(thin_mu_skip_code))
                     cur_val = thin_mu_skip_code;
                 else if (cur_val == glue_par(med_mu_skip_code))
@@ -2992,21 +2973,6 @@ void assign_internal_value(int a, halfword p, int val)
     }
 }
 
-@ When a glue register or parameter becomes zero, it will always point to
-|zero_glue| because of the following procedure. (Exception: The tabskip
-glue isn't trapped while preambles are being scanned.)
-
-@c
-void trap_zero_glue(void)
-{
-    if ((width(cur_val) == 0) && (stretch(cur_val) == 0)
-        && (shrink(cur_val) == 0)) {
-        add_glue_ref(zero_glue);
-        delete_glue_ref(cur_val);
-        cur_val = zero_glue;
-    }
-}
-
 @ We use the fact that |register<advance<multiply<divide|
 
 Compute the register location |l| and its type |p|; but |return| if invalid
@@ -3065,20 +3031,20 @@ void do_register_command(int a)
             if (q == advance_cmd)
                 cur_val = cur_val + eqtb[l].cint;
         } else {
+            /* we can probably save a copy */
             scan_glue(p);
             if (q == advance_cmd) {
                 /* Compute the sum of two glue specs */
                 halfword r = equiv(l);
                 q = new_spec(cur_val);
-                delete_glue_ref(cur_val);
+                flush_node(cur_val);
                 width(q) = width(q) + width(r);
                 if (stretch(q) == 0) {
                     stretch_order(q) = normal;
                 }
                 if (stretch_order(q) == stretch_order(r)) {
                     stretch(q) = stretch(q) + stretch(r);
-                } else if ((stretch_order(q) < stretch_order(r))
-                           && (stretch(r) != 0)) {
+                } else if ((stretch_order(q) < stretch_order(r)) && (stretch(r) != 0)) {
                     stretch(q) = stretch(r);
                     stretch_order(q) = stretch_order(r);
                 }
@@ -3087,8 +3053,7 @@ void do_register_command(int a)
                 }
                 if (shrink_order(q) == shrink_order(r)) {
                     shrink(q) = shrink(q) + shrink(r);
-                } else if ((shrink_order(q) < shrink_order(r))
-                           && (shrink(r) != 0)) {
+                } else if ((shrink_order(q) < shrink_order(r)) && (shrink(r) != 0)) {
                     shrink(q) = shrink(r);
                     shrink_order(q) = shrink_order(r);
                 }
@@ -3128,7 +3093,7 @@ void do_register_command(int a)
         help2("I can't carry out that multiplication or division,",
               "since the result is out of range.");
         if (p >= glue_val_level)
-            delete_glue_ref(cur_val);
+            flush_node(cur_val);
         error();
         return;
     }
@@ -3143,7 +3108,6 @@ void do_register_command(int a)
         else
             word_define(l, cur_val);
     } else {
-        trap_zero_glue();
         define(l, glue_ref_cmd, cur_val);
     }
 }
@@ -3599,11 +3563,9 @@ void initialize(void)
         set_equiv(glue_base, zero_glue);
         set_eq_level(glue_base, level_one);
         set_eq_type(glue_base, glue_ref_cmd);
-        for (k = glue_base + 1; k <= local_base - 1; k++)
+        for (k = glue_base + 1; k <= local_base - 1; k++) {
             eqtb[k] = eqtb[glue_base];
-        glue_ref_count(zero_glue) =
-            glue_ref_count(zero_glue) + local_base - glue_base;
-
+        }
         par_shape_ptr = null;
         set_eq_type(par_shape_loc, shape_ref_cmd);
         set_eq_level(par_shape_loc, level_one);
