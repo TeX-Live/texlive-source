@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40150 2016-03-27 00:20:46Z preining $
+# $Id: tlmgr.pl 40189 2016-03-31 00:38:03Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40150 $';
-my $datrev = '$Date: 2016-03-27 01:20:46 +0100 (Sun, 27 Mar 2016) $';
+my $svnrev = '$Revision: 40189 $';
+my $datrev = '$Date: 2016-03-31 02:38:03 +0200 (Thu, 31 Mar 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -589,6 +589,14 @@ for the full story.\n";
   # load the config file and set the config options
   # load it BEFORE starting downloads as we set persistent-downloads there!
   load_config_file();
+
+  # in system mode verify that the selected action is allowed
+  if (!$opts{"usermode"} && $config{'allowed-actions'}) {
+    if (!TeXLive::TLUtils::member($action, @{$config{'allowed-actions'}})) {
+      tlwarn("$prg: action not allowed in system mode: $action\n");
+      exit ($F_ERROR);
+    }
+  }
 
   # set global variable if execute actions should be suppressed
   $::no_execute_actions = 1 if (defined($opts{'no-execute-actions'}));
@@ -5480,6 +5488,7 @@ sub action_init_usertree {
   # and for tlmgr.log file
   mkdir ("$usertree/web2c");
   mkdir ("$usertree/tlpkg/tlpobj");
+  return ($F_OK);
 }
 
 #  CONF
@@ -6006,15 +6015,27 @@ sub load_config_file {
   # by default we remove packages
   $config{"auto-remove"} = 1;
 
+  # loads system config file, this cannot be changes with tlmgr
+  chomp (my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
+  my $fnsys = "$TEXMFSYSCONFIG/tlmgr/config";
+  my $tlmgr_sys_config_file = TeXLive::TLConfFile->new($fnsys, "#", "=");
+  load_options_from_config($tlmgr_sys_config_file, 'sys') 
+    if $tlmgr_sys_config_file;
+
   chomp (my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
   my $fn = "$TEXMFCONFIG/tlmgr/config";
   $tlmgr_config_file = TeXLive::TLConfFile->new($fn, "#", "=");
+  load_options_from_config($tlmgr_config_file) if $tlmgr_config_file;
 
   # switched names for this one after initial release.
   if ($tlmgr_config_file->key_present("gui_expertmode")) {
     $tlmgr_config_file->rename_key("gui_expertmode", "gui-expertmode");
   }
+}
 
+sub load_options_from_config {
+  my ($tlmgr_config_file, $sysmode) = @_;
+  my $fn = $tlmgr_config_file->file;
   for my $key ($tlmgr_config_file->keys) {
     my $val = $tlmgr_config_file->value($key);
     if ($key eq "gui-expertmode") {
@@ -6045,6 +6066,14 @@ sub load_config_file {
         tlwarn("$prg: $fn: Unknown value for auto-remove: $val\n");
       }
 
+    } elsif ($sysmode) {
+      # keys here are only allowed in sys mode
+      if ($key eq "allowed-actions") {
+        my @acts = split(/,/, $val);
+        $config{'allowed-actions'} = \@acts;
+      } else {
+        tlwarn("$prg: $fn: Unknown tlmgr configuration variable: $key\n");
+      }
     } else {
       tlwarn("$prg: $fn: Unknown tlmgr configuration variable: $key\n");
     }
@@ -7530,13 +7559,17 @@ creates configuration files in user tree
 
 =head1 CONFIGURATION FILE FOR TLMGR
 
-A small subset of the command line options can be set in a config file
-for C<tlmgr> which resides in C<TEXMFCONFIG/tlmgr/config>.  By default, the
-config file is in C<~/.texliveYYYY/texmf-config/tlmgr/config> (replacing
-C<YYYY> with the year of your TeX Live installation). This is I<not>
-C<TEXMFSYSVAR>, so that the file is specific to a single user.
+There are two configuration files for C<tlmgr>: One is system wide
+in C<TEXMFSYSCONFIG/tlmgr/config>, and one user-specific in
+C<TEXMFCONFIG/tlmgr/config> (which is in the default setup
+C<~/.texliveYYYY/texmf-config/tlmgr/config> replacing
+C<YYYY> with the year of your TeX Live installation).
 
-In this file, empty lines and lines starting with # are ignored.  All
+A small subset of the command line options can be set in these
+configuration file. In addition, the system-wide can contain a directive
+to restrict the number of allowed actions.
+
+In these config files, empty lines and lines starting with # are ignored.  All
 other lines must look like
 
   key = value
@@ -7550,6 +7583,12 @@ the respective command line options of the same name.  C<gui-expertmode>
 switches between the full GUI and a simplified GUI with only the
 important and mostly used settings.
 
+In addition, the system-wide config file can contain the key
+C<allowed-actions>. The value is a comma separated list of actions that
+are allowed to be executed when C<tlmgr> is called in system mode (that is
+without C<--usermode>). This allows distributors to include the C<tlmgr>
+in the packaging but allow only for a very restricted set of actions not
+to interfere with package managers.
 
 =head1 MULTIPLE REPOSITORIES
 
