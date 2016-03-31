@@ -176,7 +176,6 @@ extern void fixup_directions(void);
 
 extern void get_r_token(void);
 extern void assign_internal_value(int a, halfword p, int cur_val);
-extern void trap_zero_glue(void);
 extern void do_register_command(int a);
 extern void alter_aux(void);
 extern void alter_prev_graf(void);

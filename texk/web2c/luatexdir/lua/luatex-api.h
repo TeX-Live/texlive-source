@@ -556,7 +556,6 @@ make_lua_key(disc);\
 make_lua_key(display);\
 make_lua_key(doublehyphendemerits);\
 make_lua_key(down);\
-make_lua_key(dvi_ptr);\
 make_lua_key(embedding);\
 make_lua_key(emergencystretch);\
 make_lua_key(empty_string);\
@@ -756,7 +755,6 @@ make_lua_key(space);\
 make_lua_key(space_shrink);\
 make_lua_key(space_stretch);\
 make_lua_key(spacefactor);\
-make_lua_key(spec);\
 make_lua_key(special);\
 make_lua_key(split_discards_head);\
 make_lua_key(split_keep);\
@@ -815,7 +813,6 @@ make_lua_key(visiblefilename);\
 make_lua_key(vtop);\
 make_lua_key(widowpenalty);\
 make_lua_key(width);\
-make_lua_key(writable);\
 make_lua_key(x_height);\
 make_lua_key(xadvance);\
 make_lua_key(xformresources);\
@@ -922,7 +919,6 @@ init_lua_key(disc);\
 init_lua_key(display);\
 init_lua_key(doublehyphendemerits);\
 init_lua_key(down);\
-init_lua_key(dvi_ptr);\
 init_lua_key(embedding);\
 init_lua_key(emergencystretch);\
 init_lua_key(encodingbytes);\
@@ -1112,7 +1108,6 @@ init_lua_key(space);\
 init_lua_key(space_shrink);\
 init_lua_key(space_stretch);\
 init_lua_key(spacefactor);\
-init_lua_key(spec);\
 init_lua_key(special);\
 init_lua_key(split_discards_head);\
 init_lua_key(split_keep);\
@@ -1170,7 +1165,6 @@ init_lua_key(visiblefilename);\
 init_lua_key(vtop);\
 init_lua_key(widowpenalty);\
 init_lua_key(width);\
-init_lua_key(writable);\
 init_lua_key(x_height);\
 init_lua_key(xadvance);\
 init_lua_key(xformresources);\
@@ -1334,7 +1328,6 @@ use_lua_key(disc);
 use_lua_key(display);
 use_lua_key(doublehyphendemerits);
 use_lua_key(down);
-use_lua_key(dvi_ptr);
 use_lua_key(embedding);
 use_lua_key(emergencystretch);
 use_lua_key(empty_string);
@@ -1534,7 +1527,6 @@ use_lua_key(space);
 use_lua_key(space_shrink);
 use_lua_key(space_stretch);
 use_lua_key(spacefactor);
-use_lua_key(spec);
 use_lua_key(special);
 use_lua_key(split_discards_head);
 use_lua_key(split_keep);
@@ -1593,7 +1585,6 @@ use_lua_key(visiblefilename);
 use_lua_key(vtop);
 use_lua_key(widowpenalty);
 use_lua_key(width);
-use_lua_key(writable);
 use_lua_key(x_height);
 use_lua_key(xadvance);
 use_lua_key(xformresources);

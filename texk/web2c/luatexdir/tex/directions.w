@@ -86,7 +86,6 @@ halfword new_dir(int s)
 {
     halfword p = new_node(dir_node, 0);
     dir_dir(p) = s;
-    dir_dvi_ptr(p) = -1;
     dir_level(p) = cur_level;
     return p;
 }
