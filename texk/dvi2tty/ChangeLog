@@ -1,3 +1,9 @@
+2016-04-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Delete the directory dvi2tty-PATCHES/ because upstream
+	has been changed and the TeX Live svn repository is now
+	synchronizing with the upstream.
+
 2016-03-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	dvi2tty-6.0.0.
