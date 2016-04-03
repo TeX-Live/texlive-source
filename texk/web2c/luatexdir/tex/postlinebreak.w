@@ -163,7 +163,10 @@ void ext_post_line_break(int paragraph_dir,
                 while(q != null) {
                     if (type(q) == math_node) {
                         surround(q) = 0 ;
-                        reset_glue_to_zero(q);
+                        if (glue_ptr(q) != zero_glue) {
+                            delete_glue_ref(glue_ptr(q));
+                            glue_ptr(q) = zero_glue;
+                        }
                         break;
                     } else if ((type(q) == hlist_node) && (subtype(q) == indent_list)) {
                         /* go on */
@@ -199,11 +202,16 @@ void ext_post_line_break(int paragraph_dir,
         } else if (type(r) == math_node) {
             surround(r) = 0;
             /* begin mathskip code */
-            reset_glue_to_zero(r);
+            if (glue_ptr(r) != zero_glue) {
+                delete_glue_ref(glue_ptr(r));
+                glue_ptr(r) = zero_glue;
+            }
             /* end mathskip code */
         } else if (type(r) == glue_node) {
-            copy_glue_values(r,right_skip);
+            delete_glue_ref(glue_ptr(r));
+            glue_ptr(r) = right_skip;
             subtype(r) = right_skip_code + 1;
+            incr(glue_ref_count(right_skip));
             glue_break = true;
             /* |q| refers to the last node of the line */
             q = r;
@@ -349,8 +357,9 @@ void ext_post_line_break(int paragraph_dir,
            then we append |rightskip| after |q| now */
         if (!glue_break) {
             /* Put the \.{\\rightskip} glue after node |q|; */
-            halfword r1 = new_glue((right_skip == null ? zero_glue : right_skip));
-            subtype(r1) = right_skip_code+1;
+            halfword r1 = new_glue((right_skip == null ? null : copy_node(right_skip)));
+	    glue_ref_count(glue_ptr(r1)) = null;
+	    subtype(r1) = right_skip_code+1;
             try_couple_nodes(r1,vlink(q));
             delete_attribute_ref(node_attr(r1));
             node_attr(r1) = node_attr(q);
@@ -390,7 +399,7 @@ void ext_post_line_break(int paragraph_dir,
         }
         /*at this point |q| is the leftmost node; all discardable nodes have been discarded */
         if (protrude_chars > 0) {
-            halfword p;
+	    halfword p;
             p = q;
             p = find_protchar_left(p, false);   /* no more discardables */
             w = char_pw(p, left_side);
@@ -403,8 +412,9 @@ void ext_post_line_break(int paragraph_dir,
                 q = k;
             }
         }
-        if (! glue_is_zero(left_skip)) {
-            r = new_glue(left_skip);
+        if (left_skip != zero_glue) {
+            r = new_glue(copy_node(left_skip));
+            glue_ref_count(glue_ptr(r)) = null;
             subtype(r) = left_skip_code+1;
             delete_attribute_ref(node_attr(r));
             node_attr(r) = node_attr(q);
@@ -552,7 +562,11 @@ void ext_post_line_break(int paragraph_dir,
                 if (type(q) == math_node) {
                     /* begin mathskip code */
                     surround(q) = 0 ;
-                    reset_glue_to_zero(q);
+                    if (glue_ptr(q) != zero_glue) {
+                        delete_glue_ref(glue_ptr(q));
+                        glue_ptr(q) = zero_glue;
+                        add_glue_ref(glue_ptr(q));
+                    }
                     /* end mathskip code */
                 }
                 if (q == cur_break(cur_p)) {

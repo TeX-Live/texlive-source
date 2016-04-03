@@ -316,14 +316,15 @@ void build_page(void)
         p = vlink(contrib_head);
         /* Update the values of |last_glue|, |last_penalty|, and |last_kern| */
         if (last_glue != max_halfword) {
-            flush_node(last_glue);
+            delete_glue_ref(last_glue);
             last_glue = max_halfword;
         }
         last_penalty = 0;
         last_kern = 0;
         last_node_type = type(p) + 1;
         if (type(p) == glue_node) {
-            last_glue = new_glue(p);
+            last_glue = glue_ptr(p);
+            add_glue_ref(last_glue);
         } else if (type(p) == penalty_node) {
             last_penalty = penalty(p);
         } else if (type(p) == kern_node) {
@@ -359,17 +360,17 @@ void build_page(void)
                     freeze_page_specs(box_there);
                 else
                     page_contents = box_there;
-                q = new_skip_param(top_skip_code);
+                q = new_skip_param(top_skip_code);      /* now |temp_ptr=glue_ptr(q)| */
                 if ((type(p) == hlist_node) && is_mirrored(body_direction)) {
-                    if (width(q) > depth(p))
-                        width(q) = width(q) - depth(p);
+                    if (width(temp_ptr) > depth(p))
+                        width(temp_ptr) = width(temp_ptr) - depth(p);
                     else
-                        width(q) = 0;
+                        width(temp_ptr) = 0;
                 } else {
-                    if (width(q) > height(p))
-                        width(q) = width(q) - height(p);
+                    if (width(temp_ptr) > height(p))
+                        width(temp_ptr) = width(temp_ptr) - height(p);
                     else
-                        width(q) = 0;
+                        width(temp_ptr) = 0;
                 }
                 couple_nodes(q, p);
                 couple_nodes(contrib_head, q);
@@ -632,24 +633,32 @@ void build_page(void)
 
         /* Update the current page measurements with respect to the
            glue or kern specified by node~|p| */
-        if (type(p) != kern_node) {
-            if (stretch_order(p) > 1)
-                page_so_far[1 + stretch_order(p)] = page_so_far[1 + stretch_order(p)] + stretch(p);
+        if (type(p) == kern_node) {
+            q = p;
+        } else {
+            q = glue_ptr(p);
+            if (stretch_order(q) > 1)
+                page_so_far[1 + stretch_order(q)] =
+                    page_so_far[1 + stretch_order(q)] + stretch(q);
             else
-                page_so_far[2 + stretch_order(p)] = page_so_far[2 + stretch_order(p)] + stretch(p);
-            page_shrink = page_shrink + shrink(p);
-            if ((shrink_order(p) != normal) && (shrink(p) != 0)) {
+                page_so_far[2 + stretch_order(q)] =
+                    page_so_far[2 + stretch_order(q)] + stretch(q);
+            page_shrink = page_shrink + shrink(q);
+            if ((shrink_order(q) != normal) && (shrink(q) != 0)) {
                 print_err("Infinite glue shrinkage found on current page");
                 help4("The page about to be output contains some infinitely",
                       "shrinkable glue, e.g., `\\vss' or `\\vskip 0pt minus 1fil'.",
                       "Such glue doesn't belong there; but you can safely proceed,",
                       "since the offensive shrinkability has been made finite.");
                 error();
-                reset_glue_to_zero(p);
-                shrink_order(p) = normal;
+                r = new_spec(q);
+                shrink_order(r) = normal;
+                delete_glue_ref(q);
+                glue_ptr(p) = r;
+                q = r;
             }
         }
-        page_total = page_total + page_depth + width(p);
+        page_total = page_total + page_depth + width(q);
         page_depth = 0;
 
       CONTRIBUTE:              /* go here to link a node into the current page */
@@ -805,7 +814,6 @@ void fire_up(halfword c)
                     s = last_ins_ptr(r);
                     vlink(s) = ins_ptr(p);
                     if (best_ins_ptr(r) == p) {
-                        halfword t; /* was a global temp_ptr */
                         /* Wrap up the box specified by node |r|, splitting node |p| if
                            called for; set |wait:=true| if node |p| holds a remainder after
                            splitting */
@@ -818,20 +826,22 @@ void fire_up(halfword c)
                                 ins_ptr(p) =
                                     prune_page_top(broken_ptr(r), false);
                                 if (ins_ptr(p) != null) {
-                                    t = vpack(ins_ptr(p), 0, additional, -1);
-                                    height(p) = height(t) + depth(t);
-                                    list_ptr(t) = null;
-                                    flush_node(t);
+                                    temp_ptr =
+                                        vpack(ins_ptr(p), 0, additional, -1);
+                                    height(p) =
+                                        height(temp_ptr) + depth(temp_ptr);
+                                    list_ptr(temp_ptr) = null;
+                                    flush_node(temp_ptr);
                                     wait = true;
                                 }
                             }
                         }
                         best_ins_ptr(r) = null;
                         n = subtype(r);
-                        t = list_ptr(box(n));
+                        temp_ptr = list_ptr(box(n));
                         list_ptr(box(n)) = null;
                         flush_node(box(n));
-                        box(n) = vpack(t, 0, additional, body_direction);
+                        box(n) = vpack(temp_ptr, 0, additional, body_direction);
 
                     } else {
                         while (vlink(s) != null)
@@ -900,7 +910,7 @@ void fire_up(halfword c)
     vbadness = save_vbadness;
     vfuzz = save_vfuzz;
     if (last_glue != max_halfword)
-        flush_node(last_glue);
+        delete_glue_ref(last_glue);
     /* Start a new current page */
     start_new_page();           /* this sets |last_glue:=max_halfword| */
     if (q != hold_head) {
@@ -911,7 +921,6 @@ void fire_up(halfword c)
     /* Delete the page-insertion nodes */
     r = vlink(page_ins_head);
     while (r != page_ins_head) {
-	    /* todo: couple */ 
         q = vlink(r);
         flush_node(r);
         r = q;

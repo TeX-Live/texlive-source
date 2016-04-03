@@ -549,8 +549,7 @@ been scanned and |its_all_over|\kern-2pt.
 void final_cleanup(void)
 {
     int c;                      /* 0 for \.{\\end}, 1 for \.{\\dump} */
-    halfword i;                 /* for looping marks  */
-    halfword t;                 /* was a global temp_ptr */
+    halfword i;                 /*  for looping marks  */
     c = cur_chr;
     if (job_name == 0)
         open_log_file();
@@ -579,16 +578,17 @@ void final_cleanup(void)
         tprint(" was incomplete)");
         if_line = if_line_field(cond_ptr);
         cur_if = subtype(cond_ptr);
-        t = cond_ptr;
+        temp_ptr = cond_ptr;
         cond_ptr = vlink(cond_ptr);
-        flush_node(t);
+        flush_node(temp_ptr);
     }
     if (callback_defined(stop_run_callback) == 0)
         if (history != spotless)
             if ((history == warning_issued) || (interaction < error_stop_mode))
                 if (selector == term_and_log) {
                     selector = term_only;
-                    tprint_nl("(see the transcript file for additional information)");
+                    tprint_nl
+                        ("(see the transcript file for additional information)");
                     selector = term_and_log;
                 }
     if (c == 1) {
@@ -602,9 +602,8 @@ void final_cleanup(void)
             }
             for (c = last_box_code; c <= vsplit_code; c++)
                 flush_node_list(disc_ptr[c]);
-            if (last_glue != max_halfword) {
-                flush_node(last_glue);
-            }
+            if (last_glue != max_halfword)
+                delete_glue_ref(last_glue);
             while (pseudo_files != null)
                 pseudo_close(); /* flush pseudo files */
             store_fmt_file();
