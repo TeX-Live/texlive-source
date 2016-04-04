@@ -2454,9 +2454,8 @@ void after_math(void)
         }
         tail_append(new_math(math_surround, before));
         /* begin mathskip code */
-        if (math_skip != zero_glue) {
-            glue_ptr(tail) = math_skip;
-            add_glue_ref(math_skip);
+        if (! glue_is_zero(math_skip)) {
+            copy_glue_values(tail,math_skip);
         }
         /* end mathskip code */
         if (dir_math_save) {
@@ -2464,17 +2463,17 @@ void after_math(void)
         }
         run_mlist_to_hlist(p, (mode > 0), text_style);
         vlink(tail) = vlink(temp_head);
-        while (vlink(tail) != null)
+        while (vlink(tail) != null) {
             tail = vlink(tail);
+        }
         if (dir_math_save) {
             tail_append(new_dir(math_direction - dir_swap));
         }
         dir_math_save = false;
         tail_append(new_math(math_surround, after));
         /* begin mathskip code */
-        if (math_skip != zero_glue) {
-            glue_ptr(tail) = math_skip;
-            add_glue_ref(math_skip);
+        if (! glue_is_zero(math_skip)) {
+            copy_glue_values(tail,math_skip);
         }
         /* end mathskip code */
         space_factor = 1000;
