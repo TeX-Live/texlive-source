@@ -567,6 +567,8 @@ within |save_stack|, so these counts must be handled carefully.
 @^reference counts@>
 
 @c
+/* we don't need to destroy when an assignment has the same node */
+
 void eq_destroy(memory_word w)
 {                               /* gets ready to forget |w| */
     halfword q;                 /* |equiv| field of |w| */
@@ -578,7 +580,7 @@ void eq_destroy(memory_word w)
             delete_token_ref(equiv_field(w));
             break;
         case glue_ref_cmd:
-            delete_glue_ref(equiv_field(w));
+            flush_node(equiv_field(w));
             break;
         case shape_ref_cmd:
             q = equiv_field(w);     /* we need to free a \.{\\parshape} block */

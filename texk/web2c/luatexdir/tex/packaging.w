@@ -625,7 +625,6 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
     scaled x = 0;               /* natural width */
     scaled_whd whd;
     scaled s;                   /* shift amount */
-    halfword g;                 /* points to a glue specification */
     int o;                      /* order of infinity */
     halfword dir_ptr1 = null;   /* for managing the direction stack */
     int hpack_dir;              /* the current direction */
@@ -758,14 +757,13 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                 /* */
                 case glue_node:
                     /* Incorporate glue into the horizontal totals */
-                    g = glue_ptr(p);
-                    x += width(g);
-                    o = stretch_order(g);
-                    total_stretch[o] = total_stretch[o] + stretch(g);
-                    o = shrink_order(g);
-                    total_shrink[o] = total_shrink[o] + shrink(g);
+                    x += width(p);
+                    o = stretch_order(p);
+                    total_stretch[o] = total_stretch[o] + stretch(p);
+                    o = shrink_order(p);
+                    total_shrink[o] = total_shrink[o] + shrink(p);
                     if (subtype(p) >= a_leaders) {
-                        g = leader_ptr(p);
+                        halfword g = leader_ptr(p);
                         if (height(g) > h)
                             h = height(g);
                         if (depth(g) > d)
@@ -817,7 +815,7 @@ halfword hpack(halfword p, scaled w, int m, int pack_direction)
                     break;
                 case math_node:
                     /* begin mathskip code */
-                    if (glue_ptr(p) == zero_glue) {
+                    if (glue_is_zero(p)) {
                         x += surround(p);
                         break;
                     } else {
@@ -1198,7 +1196,7 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
                 /* */
                 case math_node:
                     /* begin mathskip code */
-                    if (glue_ptr(p) == zero_glue) {
+                    if (glue_is_zero(p)) {
                         siz.wd += surround(p);
                         break;
                     } else {
@@ -1206,15 +1204,14 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
                     }
                     /* end mathskip code */
                 case glue_node:
-                    g = glue_ptr(p);
-                    siz.wd += width(g);
+                    siz.wd += width(p);
                     if (g_sign != normal) {
                         if (g_sign == stretching) {
-                            if (stretch_order(g) == g_order) {
-                                siz.wd += float_round(float_cast(g_mult) * float_cast(stretch(g)));
+                            if (stretch_order(p) == g_order) {
+                                siz.wd += float_round(float_cast(g_mult) * float_cast(stretch(p)));
                             }
-                        } else if (shrink_order(g) == g_order) {
-                            siz.wd -= float_round(float_cast(g_mult) * float_cast(shrink(g)));
+                        } else if (shrink_order(p) == g_order) {
+                            siz.wd -= float_round(float_cast(g_mult) * float_cast(shrink(p)));
                         }
                     }
                     if (subtype(p) >= a_leaders) {
@@ -1276,7 +1273,6 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
     scaled x = 0;               /* natural height */
     scaled_whd whd;
     scaled s;                   /* shift amount */
-    halfword g;                 /* points to a glue specification */
     int o;                      /* order of infinity */
     last_badness = 0;
     r = new_node(vlist_node, 0);
@@ -1347,14 +1343,13 @@ halfword vpackage(halfword p, scaled h, int m, scaled l, int pack_direction)
                 /* Incorporate glue into the vertical totals */
                 x += d;
                 d = 0;
-                g = glue_ptr(p);
-                x += width(g);
-                o = stretch_order(g);
-                total_stretch[o] = total_stretch[o] + stretch(g);
-                o = shrink_order(g);
-                total_shrink[o] = total_shrink[o] + shrink(g);
+                x += width(p);
+                o = stretch_order(p);
+                total_stretch[o] = total_stretch[o] + stretch(p);
+                o = shrink_order(p);
+                total_shrink[o] = total_shrink[o] + shrink(p);
                 if (subtype(p) >= a_leaders) {
-                    g = leader_ptr(p);
+                    halfword g = leader_ptr(p);
                     if (width(g) > w)
                         w = width(g);
                 }
@@ -1643,8 +1638,7 @@ void append_to_vlist(halfword b, int location)
                 p = new_param_glue(line_skip_code);
             } else {
                 p = new_skip_param(baseline_skip_code);
-                /* |temp_ptr=glue_ptr(p)| */
-                width(temp_ptr) = d;
+                width(p) = d;
             }
             couple_nodes(cur_list.tail_field, p);
             cur_list.tail_field = p;
@@ -1702,11 +1696,10 @@ halfword prune_page_top(halfword p, boolean s)
             q = new_skip_param(split_top_skip_code);
             vlink(prev_p) = q;
             vlink(q) = p;
-            /* now |temp_ptr=glue_ptr(q)| */
-            if (width(temp_ptr) > height(p))
-                width(temp_ptr) = width(temp_ptr) - height(p);
+            if (width(q) > height(p))
+                width(q) = width(q) - height(p);
             else
-                width(temp_ptr) = 0;
+                width(q) = 0;
             p = null;
             break;
         case boundary_node:
@@ -1775,7 +1768,6 @@ halfword vert_break(halfword p, scaled h, scaled d)
 {
     halfword prev_p = p;        /* if |p| is a glue node, |type(prev_p)| determines whether |p| is a
                                    legal breakpoint, an initial glue node is not a legal breakpoint */
-    halfword q, r;              /* glue specifications */
     int pi = 0;                 /* penalty value */
     int b;                      /* badness at a trial breakpoint */
     int t;                      /* |type| of the node following a kern */
@@ -1881,27 +1873,20 @@ halfword vert_break(halfword p, scaled h, scaled d)
            contain infinite shrinkability, since that would permit any amount of
            information to ``fit'' on one page. */
 
-        if (type(p) == kern_node) {
-            q = p;
-        } else {
-            q = glue_ptr(p);
-            active_height[2 + stretch_order(q)] += stretch(q);
-            active_height[7] += shrink(q);
-            if ((shrink_order(q) != normal) && (shrink(q) != 0)) {
+        if (type(p) != kern_node) {
+            active_height[2 + stretch_order(p)] += stretch(p);
+            active_height[7] += shrink(p);
+            if ((shrink_order(p) != normal) && (shrink(p) != 0)) {
                 print_err("Infinite glue shrinkage found in box being split");
                 help4("The box you are \\vsplitting contains some infinitely",
                       "shrinkable glue, e.g., `\\vss' or `\\vskip 0pt minus 1fil'.",
                       "Such glue doesn't belong there; but you can safely proceed,",
                       "since the offensive shrinkability has been made finite.");
                 error();
-                r = new_spec(q);
-                shrink_order(r) = normal;
-                delete_glue_ref(q);
-                glue_ptr(p) = r;
-                q = r;
+                shrink_order(p) = normal;
             }
         }
-        cur_height = cur_height + prev_dp + width(q);
+        cur_height = cur_height + prev_dp + width(p);
         prev_dp = 0;
       NOT_FOUND:
         if (prev_dp > d) {

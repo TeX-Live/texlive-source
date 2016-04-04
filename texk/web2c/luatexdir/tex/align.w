@@ -518,7 +518,7 @@ void init_row(void)
         space_factor = 0;
     else
         prev_depth = 0;
-    tail_append(new_glue(glue_ptr(preamble)));
+    tail_append(new_glue(preamble));
     subtype(cur_list.tail_field) = tab_skip_code + 1;
     cur_align = vlink(preamble);
     cur_tail = cur_head;
@@ -650,7 +650,7 @@ boolean fin_col(void)
             v_part(p) = token_link(hold_token_head);
 
             cur_loop = vlink(cur_loop);
-            r = new_glue(glue_ptr(cur_loop));
+            r = new_glue(cur_loop);
             vlink(p) = r;
         } else {
             const char *hlp[] =
@@ -719,7 +719,7 @@ boolean fin_col(void)
         cur_list.tail_field = u;
 
         /* Copy the tabskip glue between columns */
-        tail_append(new_glue(glue_ptr(vlink(cur_align))));
+        tail_append(new_glue(vlink(cur_align)));
         subtype(cur_list.tail_field) = tab_skip_code + 1;
 
         if (extra_info(cur_align) >= cr_code) {
@@ -803,13 +803,13 @@ set so that the columns line up, taking due account of spanned columns.
 @c
 void fin_align(void)
 {
-    pointer p, q, r, s, u, v, rr;       /* registers for the list operations */
+    pointer p, q, r, s, u, rr;  /* registers for the list operations */
     scaled t, w;                /* width of column */
     scaled o;                   /* shift offset for unset boxes */
     halfword n;                 /* matching span amount */
     scaled rule_save;           /* temporary storage for |overfull_rule| */
     halfword pd;                /* temporary storage for |prev_depth| */
-    halfword ng;               /*  temporary storage for |new_glue| */
+    halfword ng;                /*  temporary storage for |new_glue| */
     if (cur_group != align_group)
         confusion("align1");
     unsave();                   /* that |align_group| was for individual entries */
@@ -856,12 +856,7 @@ value is changed to zero and so is the next tabskip.
             /* Nullify |width(q)| and the tabskip glue following this column */
             width(q) = 0;
             r = vlink(q);
-            s = glue_ptr(r);
-            if (s != zero_glue) {
-                add_glue_ref(zero_glue);
-                delete_glue_ref(s);
-                glue_ptr(r) = zero_glue;
-            }
+            reset_glue_to_zero(r); /* is a lready copy */ 
         }
         if (span_ptr(q) != end_span) {
             /* Merge the widths in the span nodes of |q| with those of |p|,
@@ -874,7 +869,7 @@ value is changed to zero and so is the next tabskip.
                have been processed, and the successor of |s| matches |r| or precedes |r|
                or follows |r|, according as |link(r)=n| or |link(r)>n| or |link(r)<n|.
              */
-            t = width(q) + width(glue_ptr(vlink(q)));
+            t = width(q) + width(vlink(q));
             r = span_ptr(q);
             s = end_span;
             span_ptr(s) = p;
@@ -987,22 +982,17 @@ value is changed to zero and so is the next tabskip.
                            and update |s| and |t| as the prototype nodes are passed */
 
                         s = vlink(s);
-                        v = glue_ptr(s);
-                        ng = new_glue(v);
+                        ng = new_glue(s);
                         vlink(u) = ng;
                         u = vlink(u);
                         subtype(u) = tab_skip_code + 1;
-                        t = t + width(v);
+                        t = t + width(s);
                         if (glue_sign(p) == stretching) {
-                            if (stretch_order(v) == glue_order(p))
-                                t = t +
-                                    round(float_cast(glue_set(p)) *
-                                          float_cast(stretch(v)));
+                            if (stretch_order(s) == glue_order(p))
+                                t = t + round(float_cast(glue_set(p)) * float_cast(stretch(s)));
                         } else if (glue_sign(p) == shrinking) {
-                            if (shrink_order(v) == glue_order(p))
-                                t = t -
-                                    round(float_cast(glue_set(p)) *
-                                          float_cast(shrink(v)));
+                            if (shrink_order(s) == glue_order(p))
+                                t = t - round(float_cast(glue_set(p)) * float_cast(shrink(s)));
                         }
                         s = vlink(s);
                         rr = new_null_box();

@@ -139,10 +139,10 @@ int cur_val;                    /* value returned by numeric scanners */
 int cur_val1;                   /* delcodes are sometimes 51 digits */
 int cur_val_level;              /* the ``level'' of this value */
 
-#define scanned_result(A,B) do {		\
-	cur_val=A;				\
-	cur_val_level=B;			\
-    } while (0)
+#define scanned_result(A,B) do { \
+    cur_val=A; \
+    cur_val_level=B; \
+} while (0)
 
 @ When a |glue_val| changes to a |dimen_val|, we use the width component
 of the glue; there is no need to decrease the reference count, since it
@@ -158,7 +158,7 @@ static void downgrade_cur_val(boolean delete_glue)
         m = cur_val;
         cur_val = width(m);
         if (delete_glue)
-            delete_glue_ref(m);
+            flush_node(m);
     } else if (cur_val_level == mu_val_level) {
         mu_error();
     }
@@ -172,7 +172,7 @@ static void negate_cur_val(boolean delete_glue)
         m = cur_val;
         cur_val = new_spec(m);
         if (delete_glue)
-            delete_glue_ref(m);
+            flush_node(m);
         /* Negate all three glue components of |cur_val| */
         negate(width(cur_val));
         negate(stretch(cur_val));
@@ -215,9 +215,11 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
         break;
     case assign_glue_cmd:
         scanned_result(equiv(m), glue_val_level);
+// cur_val = new_spec(cur_val);
         break;
     case assign_mu_glue_cmd:
         scanned_result(equiv(m), mu_val_level);
+// cur_val = new_spec(cur_val);
         break;
     case math_style_cmd:
         scanned_result(m, int_val_level);
@@ -401,7 +403,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                         cur_val = stretch(q);
                     else
                         cur_val = shrink(q);
-                    delete_glue_ref(q);
+                    flush_node(q);
                     break;
                 }               /* there are no other cases */
                 cur_val_level = dimen_val_level;
@@ -478,7 +480,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                         cur_val = stretch_order(q);
                     else
                         cur_val = shrink_order(q);
-                    delete_glue_ref(q);
+                    flush_node(q);
                     break;
                 }               /* there are no other cases */
                 cur_val_level = int_val_level;
@@ -510,7 +512,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                     break;
                 case lastskip_code:
                     if (type(cur_list.tail_field) == glue_node)
-                        cur_val = glue_ptr(cur_list.tail_field);
+                        cur_val = new_glue(cur_list.tail_field);
                     if (subtype(cur_list.tail_field) == mu_glue)
                         cur_val_level = mu_val_level;
                     break;
@@ -529,7 +531,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
                     break;
                 case lastskip_code:
                     if (last_glue != max_halfword)
-                        cur_val = last_glue;
+                        cur_val = last_glue; /* maybe new_glue */ 
                     break;
                 case last_node_type_code:
                     cur_val = last_node_type;
@@ -554,9 +556,8 @@ static boolean short_scan_something_internal(int cmd, int chr, int level,
          */
         if (negative) {
             negate_cur_val(false);
-        } else if ((cur_val_level >= glue_val_level)
-                   && (cur_val_level <= mu_val_level)) {
-            add_glue_ref(cur_val);
+        } else if ((cur_val_level >= glue_val_level) && (cur_val_level <= mu_val_level)) {
+			cur_val = new_glue(cur_val);
         }
     }
     return succeeded;
@@ -853,9 +854,8 @@ void scan_something_internal(int level, boolean negative)
          */
         if (negative) {
             negate_cur_val(false);
-        } else if ((cur_val_level >= glue_val_level) &&
-                   (cur_val_level <= mu_val_level)) {
-            add_glue_ref(cur_val);
+        } else if ((cur_val_level >= glue_val_level) && (cur_val_level <= mu_val_level)) {
+			cur_val = new_glue(cur_val);
         }
     }
 }
@@ -1103,7 +1103,7 @@ static void coerce_glue(void)
     int v;
     if (cur_val_level >= glue_val_level) {
         v = width(cur_val);
-        delete_glue_ref(cur_val);
+        flush_node(cur_val);
         cur_val = v;
     }
 }
@@ -1513,35 +1513,17 @@ void scan_glue(int level)
         Create a new glue specification whose width is |cur_val|; scan for its
         stretch and shrink components.
     */
-    /*
-        In several places there is a test for zero glue, for instance in protrusion
-        left/right node detection. In that case a \hskip\dimen<n> with the dimen being
-        zero will not be seen as zero glue. Therefore we delay the allocation of
-        glue till we know for sure that there are no fils involved. (!!)
-    */
-    if (cur_val != 0) { /* !! new test */
-        q = new_spec(zero_glue);
-        width(q) = cur_val;
-    }
+    q = new_spec(zero_glue);
+    width(q) = cur_val;
     if (scan_keyword("plus")) {
-        if (q == null) { /* !! new test */
-            q = new_spec(zero_glue);
-        }
         scan_dimen(mu, true, false);
         stretch(q) = cur_val;
         stretch_order(q) = (quarterword) cur_order;
     }
     if (scan_keyword("minus")) {
-        if (q == null) { /* !! new test */
-            q = new_spec(zero_glue);
-        }
         scan_dimen(mu, true, false);
         shrink(q) = cur_val;
         shrink_order(q) = (quarterword) cur_order;
-    }
-    if (q == null) { /* !! new test */
-        q = zero_glue ;
-        add_glue_ref(zero_glue);
     }
     cur_val = q;
 }
@@ -1698,11 +1680,11 @@ halfword the_toks(void)
             break;
         case glue_val_level:
             print_spec(cur_val, "pt");
-            delete_glue_ref(cur_val);
+            flush_node(cur_val);
             break;
         case mu_val_level:
             print_spec(cur_val, "mu");
-            delete_glue_ref(cur_val);
+            flush_node(cur_val);
             break;
         }                       /* there are no other cases */
         selector = old_setting;
@@ -1744,11 +1726,11 @@ str_number the_scanned_result(void)
             break;
         case glue_val_level:
             print_spec(cur_val, "pt");
-            delete_glue_ref(cur_val);
+            flush_node(cur_val);
             break;
         case mu_val_level:
             print_spec(cur_val, "mu");
-            delete_glue_ref(cur_val);
+            flush_node(cur_val);
             break;
         }                       /* there are no other cases */
         r = make_string();
@@ -2203,8 +2185,7 @@ typedef enum {
 @c
 #define glue_error(A) do { \
     arith_error=true; \
-    delete_glue_ref(A); \
-    A=new_spec(zero_glue); \
+    reset_glue_to_zero(A); \
 } while (0)
 
 #define normalize_glue(A) do { \
@@ -2510,9 +2491,11 @@ static void scan_expr(void)
            unless the next operator is a right parenthesis; this allows us later on
            to simply modify the glue components.
          */
+        t = f;
         if ((l >= glue_val_level) && (o != expr_none)) {
+	        /* do we really need to copy here ? */ 
             t = new_spec(f);
-            delete_glue_ref(f);
+            flush_node(f);
             normalize_glue(t);
         } else {
             t = f;
@@ -2588,7 +2571,7 @@ static void scan_expr(void)
                 shrink(e) = shrink(t);
                 shrink_order(e) = shrink_order(t);
             }
-            delete_glue_ref(t);
+            flush_node(t);
             normalize_glue(e);
         }
         r = o;
@@ -2617,9 +2600,7 @@ static void scan_expr(void)
               "since the result is out of range.");
         error();
         if (l >= glue_val_level) {
-            delete_glue_ref(e);
-            e = zero_glue;
-            add_glue_ref(e);
+            reset_glue_to_zero(e);
         } else {
             e = 0;
         }

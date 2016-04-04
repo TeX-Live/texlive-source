@@ -108,11 +108,10 @@ void line_break(boolean d, int line_break_context)
     } else if (type(cur_list.tail_field) != glue_node) {
         tail_append(new_penalty(inf_penalty));
     } else {
-        type(cur_list.tail_field) = penalty_node;
-        delete_glue_ref(glue_ptr(cur_list.tail_field));
-        if (leader_ptr(cur_list.tail_field) != null)
-            flush_node_list(leader_ptr(cur_list.tail_field));
-        penalty(cur_list.tail_field) = inf_penalty;
+        halfword t = alink(cur_list.tail_field);
+		flush_node(cur_list.tail_field);
+		cur_list.tail_field = t;
+		tail_append(new_penalty(inf_penalty));
     }
     final_par_glue = new_param_glue(par_fill_skip_code);
     couple_nodes(cur_list.tail_field, final_par_glue);
@@ -210,7 +209,6 @@ static boolean no_shrink_error_yet;     /*have we complained about infinite shri
 
 static halfword finite_shrink(halfword p)
 {                               /* recovers from infinite shrinkage */
-    halfword q;                 /*new glue specification */
     const char *hlp[] = {
         "The paragraph just ended includes some glue that has",
         "infinite shrinkability, e.g., `\\hskip 0pt minus 1fil'.",
@@ -223,10 +221,8 @@ static halfword finite_shrink(halfword p)
         no_shrink_error_yet = false;
         tex_error("Infinite glue shrinkage found in a paragraph", hlp);
     }
-    q = new_spec(p);
-    shrink_order(q) = normal;
-    delete_glue_ref(p);
-    return q;
+    shrink_order(p) = normal;
+    return p;
 }
 
 @ A pointer variable |cur_p| runs through the given horizontal list as we look
@@ -900,7 +896,7 @@ static void compute_break_width(int break_type, int line_break_dir, int adjust_s
         switch (type(s)) {
             case math_node:
                 /* begin mathskip code */
-                if (math_skip == zero_glue) {
+                if (glue_is_zero(math_skip)) {
                     break_width[1] -= surround(s);
                     break;
                 } else {
@@ -909,12 +905,9 @@ static void compute_break_width(int break_type, int line_break_dir, int adjust_s
                 /* end mathskip code */
             case glue_node:
                 /*Subtract glue from |break_width|; */
-                {
-                    halfword v = glue_ptr(s);
-                    break_width[1] -= width(v);
-                    break_width[2 + stretch_order(v)] -= stretch(v);
-                    break_width[7] -= shrink(v);
-                }
+                break_width[1] -= width(s);
+                break_width[2 + stretch_order(s)] -= stretch(s);
+                break_width[7] -= shrink(s);
                 break;
             case penalty_node:
                 break;
@@ -1698,7 +1691,7 @@ void ext_do_line_break(int paragraph_dir,
      */
     do_last_line_fit = false;
     if (last_line_fit > 0) {
-        q = glue_ptr(last_line_fill);
+        q = last_line_fill;
         if ((stretch(q) > 0) && (stretch_order(q) > normal)) {
             if ((background[3] == 0) && (background[4] == 0) &&
                 (background[5] == 0) && (background[6] == 0)) {
@@ -1845,7 +1838,7 @@ void ext_do_line_break(int paragraph_dir,
                 case math_node:
                     auto_breaking = (subtype(cur_p) == after);
                     /* begin mathskip code */
-                    if (math_skip == zero_glue) {
+                    if (glue_is_zero(math_skip)) {
                         kern_break();
                         break;
                     } else {
@@ -1886,16 +1879,10 @@ void ext_do_line_break(int paragraph_dir,
                         }
                     }
                     /* *INDENT-ON* */
-                    check_shrinkage(glue_ptr(cur_p));
-                    q = glue_ptr(cur_p);
-                    active_width[1] += width(q);
-                    active_width[2 + stretch_order(q)] += stretch(q);
-                    active_width[7] += shrink(q);
-                    /* begin mathskip code */
-                    if (type(cur_p)==math_node) {
-                        active_width[1]+=surround(cur_p);
-                    }
-                    /* end mathskip code */
+                    check_shrinkage(cur_p);
+                    active_width[1] += width(cur_p);
+                    active_width[2 + stretch_order(cur_p)] += stretch(cur_p);
+                    active_width[7] += shrink(cur_p);
                     break;
                 case kern_node:
                     if (subtype(cur_p) == explicit_kern || subtype(cur_p) == italic_kern) {
@@ -2122,11 +2109,8 @@ void ext_do_line_break(int paragraph_dir,
         if (active_short(best_bet) == 0) {
             do_last_line_fit = false;
         } else {
-            q = new_spec(glue_ptr(last_line_fill));
-            delete_glue_ref(glue_ptr(last_line_fill));
-            width(q) += (active_short(best_bet) - active_glue(best_bet));
-            stretch(q) = 0;
-            glue_ptr(last_line_fill) = q;
+            width(last_line_fill) += (active_short(best_bet) - active_glue(best_bet));
+            stretch(last_line_fill) = 0;
         }
     }
 

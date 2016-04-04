@@ -890,6 +890,54 @@ static int getskip(lua_State * L)
     return 1;
 }
 
+static int setglue(lua_State * L)
+{
+    int isglobal = 0;
+    int index = 1;
+    halfword value = copy_node(zero_glue);
+    int top = lua_gettop(L);
+    check_item_global(L,top,isglobal);
+    if (isglobal) {
+        index = 2;
+        top -= 1;
+    }
+    /* [global] slot [width] [stretch] [shrink] [stretch_order] [shrink_order] */
+    if (top > 1) {
+        width(value) = lua_tointeger(L,index+1);
+    }
+    if (top > 2) {
+        stretch(value) = lua_tointeger(L,index+2);
+    }
+    if (top > 3) {
+        shrink(value) = lua_tointeger(L,index+3);
+    }
+    if (top > 4) {
+        stretch_order(value) = lua_tointeger(L,index+4);
+    }
+    if (top > 5) {
+        shrink_order(value) = lua_tointeger(L,index+5);
+    }
+    set_item_index_plus(L, index, skip_base, "skip", value, isglobal, is_glue_assign, set_tex_skip_register, true);
+    return 0;
+}
+
+static int getglue(lua_State * L)
+{
+    int value = 0;
+    get_item_index_plus(L, lua_gettop(L), skip_base, "skip", value, is_glue_assign, get_tex_skip_register, true);
+    if (value == null) {
+        lua_pushnil(L);
+        return 1;
+    } else {
+        lua_pushinteger(L,width(value));
+        lua_pushinteger(L,stretch(value));
+        lua_pushinteger(L,shrink(value));
+        lua_pushinteger(L,stretch_order(value));
+        lua_pushinteger(L,shrink_order(value));
+        return 5;
+    }
+}
+
 static int ismuskip(lua_State * L)
 {
     check_register(mu_skip_base);
@@ -912,6 +960,54 @@ static int getmuskip(lua_State * L)
     get_item_index_plus(L, lua_gettop(L), mu_skip_base, "muskip", value, is_mu_glue_assign, get_tex_mu_skip_register, true);
     lua_nodelib_push_fast(L, copy_node(value));
     return 1;
+}
+
+static int setmuglue(lua_State * L)
+{
+    int isglobal = 0;
+    int index = 1;
+    halfword value = copy_node(zero_glue);
+    int top = lua_gettop(L);
+    check_item_global(L,top,isglobal);
+    if (isglobal) {
+        index = 2;
+        top -= 1;
+    }
+    /* [global] slot [width] [stretch] [shrink] [stretch_order] [shrink_order] */
+    if (top > 1) {
+        width(value) = lua_tointeger(L,index+1);
+    }
+    if (top > 2) {
+        stretch(value) = lua_tointeger(L,index+2);
+    }
+    if (top > 3) {
+        shrink(value) = lua_tointeger(L,index+3);
+    }
+    if (top > 4) {
+        stretch_order(value) = lua_tointeger(L,index+4);
+    }
+    if (top > 5) {
+        shrink_order(value) = lua_tointeger(L,index+5);
+    }
+    set_item_index_plus(L, index, mu_skip_base, "muskip", value, isglobal, is_mu_glue_assign, set_tex_mu_skip_register, true);
+    return 0;
+}
+
+static int getmuglue(lua_State * L)
+{
+    int value = 0;
+    get_item_index_plus(L, lua_gettop(L), mu_skip_base, "muskip", value, is_mu_glue_assign, get_tex_mu_skip_register, true);
+    if (value == null) {
+        lua_pushnil(L);
+        return 1;
+    } else {
+        lua_pushinteger(L,width(value));
+        lua_pushinteger(L,stretch(value));
+        lua_pushinteger(L,shrink(value));
+        lua_pushinteger(L,stretch_order(value));
+        lua_pushinteger(L,shrink_order(value));
+        return 5;
+    }
 }
 
 static int iscount(lua_State * L)
@@ -2869,9 +2965,13 @@ static const struct luaL_Reg texlib[] = {
     { "isskip", isskip },
     { "setskip", setskip },
     { "getskip", getskip },
+    { "setglue", setglue },
+    { "getglue", getglue },
     { "ismuskip", ismuskip },
     { "setmuskip", setmuskip },
     { "getmuskip", getmuskip },
+    { "setmuglue", setmuglue },
+    { "getmuglue", getmuglue },
     { "isattribute", isattribute },
     { "setattribute", setattribute },
     { "getattribute", getattribute },
@@ -2945,7 +3045,9 @@ int luaopen_tex(lua_State * L)
     /* *INDENT-OFF* */
     make_table(L, "attribute", "tex.attribute", "getattribute", "setattribute");
     make_table(L, "skip",      "tex.skip",      "getskip",      "setskip");
+    make_table(L, "glue",      "tex.glue",      "getglue",      "setglue");
     make_table(L, "muskip",    "tex.muskip",    "getmuskip",    "setmuskip");
+    make_table(L, "muglue",    "tex.muglue",    "getmuglue",    "setmuglue");
     make_table(L, "dimen",     "tex.dimen",     "getdimen",     "setdimen");
     make_table(L, "count",     "tex.count",     "getcount",     "setcount");
     make_table(L, "toks",      "tex.toks",      "gettoks",      "settoks");
