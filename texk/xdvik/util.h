@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2013 the xdvik development team
+ * Copyright (c) 2002-2015 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -67,6 +67,7 @@ extern char *read_child_error(int fd, void *data);
 extern Boolean fork_process(const char *file, Boolean redirect_stdout,
 			    const char *dirname,
 			    childProcT exit_proc, void *data,
+			    int killsig,
 			    char *const argv[]);
 extern void prep_fd(int fd, wide_bool noblock);
 
@@ -110,7 +111,6 @@ extern void close_a_file(void);
 extern unsigned long get_bytes(FILE *, int);
 extern long get_lbytes(FILE *, int);
 
-extern void xdvi_exit(int);
 extern void do_abort(void);
 
 /* various levels of warning/error messages */

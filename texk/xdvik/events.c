@@ -1,6 +1,6 @@
 /*======================================================================*\
 
-Copyright (c) 1990-2014  Paul Vojta and others
+Copyright (c) 1990-2016  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -80,6 +80,7 @@ in xdvi.c.
 #include "statusline.h"
 #include "hypertex.h"
 #include "dvi-init.h"
+#include "exit-handlers.h"
 #include "Tip.h"
 #include "browser.h"
 #include "search-internal.h"
@@ -409,6 +410,7 @@ static void Act_source_special(Widget, XEvent *, String *, Cardinal *);
 static void Act_show_source_specials(Widget, XEvent *, String *, Cardinal *);
 static void Act_source_what_special(Widget, XEvent *, String *, Cardinal *);
 static void Act_unpause_or_next(Widget, XEvent *, String *, Cardinal *);
+static void Act_user_exec(Widget, XEvent *, String *, Cardinal *);
 static void Act_ruler_snap_origin(Widget w, XEvent *event, String *params, Cardinal *num_params);
 static void Act_load_url(Widget w, XEvent *event, String *params, Cardinal *num_params);
 #ifdef MOTIF
@@ -483,6 +485,7 @@ static XtActionsRec m_actions[] = {
     {"show-source-specials", Act_show_source_specials},
     {"source-what-special", Act_source_what_special},
     {"unpause-or-next", Act_unpause_or_next},
+    {"user-exec", Act_user_exec},
 #if 0 /* not implemented yet */
     {"set-papersize", Act_set_papersize},
     {"set-paper-landscape", Act_set_paper_landscape},
@@ -3948,6 +3951,42 @@ Act_source_what_special(Widget w, XEvent *event,
     source_reverse_search(my_x, my_y, False);
 }
 
+static const char *user_exec_help =
+"The user-exec() action lets you run a child process. "
+"It takes a single string, which is tokenized on whitespace.";
+
+void
+Act_user_exec(Widget w, XEvent *event,
+	      String *params, Cardinal *num_params)
+{
+    char **argv;
+    int i;
+    char *errmsg = NULL;
+
+    if (*num_params == 0)
+	errmsg = "No arguments supplied to the user-exec() action.";
+    else if (*num_params > 1)
+	errmsg = "Too many arguments supplied to the user-exec() action.";
+    else if (setenv("XDVI_FILE", globals.dvi_name, 1) == -1)
+        errmsg = strerror(errno);
+
+    if (errmsg) {
+	popup_message(globals.widgets.top_level,
+		      MSG_ERR,
+		      /* helptext */
+		      user_exec_help,
+		      /* popup */
+		      errmsg);
+	return;
+    }
+
+    argv = get_separated_list(params[0], " \t", True);
+    fork_process(argv[0], False, NULL, NULL, NULL, 0, argv);
+    for (i = 0; argv[i] != NULL; i++)
+	free(argv[i]);	
+    free(argv);
+}
+
 static void
 select_cb(const char *filename, void *data)
 {
@@ -5073,38 +5112,70 @@ do_sigsegv(void)
 
 
 /*
- *	Handle termination signals.  Kill child processes, if permitted.
- *	Otherwise, leave it up to the caller.  This is the only place where
- *	the EV_TERM event flag is set, and it can only happen if there's an
- *	active non-killable process.  This should only happen if read_events()
- *	is called from one of a very few select locations.
+ *	Handle termination signals.  Just call xdvi_exit, which does all the
+ *	work, since that is the common exit point.
  */
 
 static void
 do_sigterm(void)
 {
+    sig_flags &= ~SF_TERM;
+
+    xdvi_exit(EXIT_SUCCESS);
+}
+
+/*
+ * This routine should be used for all exits. (SU: This is different
+ * from non-k xdvi, where it's only used for `non-early' exits; all
+ * routines called here should be aware of their own state and either
+ * perform cleanup or just return, unless xdvi_exit() itself checks for
+ * the status).
+ */
+
+void
+xdvi_exit(int status)
+{
     struct xchild   *cp;
 
-    sig_flags &= ~SF_TERM;
+    /* do the following only if the window has been opened: */
+    if (globals.widgets.top_level != 0 && XtIsRealized(globals.widgets.top_level)) {
+	char *filehist;
+	file_history_set_page(current_page);
+	filehist = file_history_get_list();
+	store_preference(NULL, "fileHistory", "%s", filehist);
+	free(filehist);
+
+#if MOTIF
+	if (preferences_changed()) {
+	    return;
+	}
+	/*      else { */
+	/*  	fprintf(stderr, "Preferences not changed.\n"); */
+	/*      } */
+#endif
+	/* try to save user preferences, unless we're exiting with an error */
+	if (status == EXIT_SUCCESS && !save_user_preferences(True))
+	    return;
+    
+	/* Clean up the "xdvi windows" property in the root window.  */
+	update_window_property(XtWindow(globals.widgets.top_level), False);
+    }
+
+#if PS
+    ps_destroy_nofree();
+#endif
 
     /* loop through child processes */
     for (cp = child_recs; cp != NULL; cp = cp->next) {
-	if (cp->killable)
-	    kill(cp->pid, SIGKILL);
+	if (cp->killsig > 0)
+	    kill(cp->pid, cp->killsig);
+	else if (cp->killsig < 0)
+	    kill(-cp->pid, -cp->killsig);
     }
 
-    /* SU: Unlike non-k xdvi, we don't care about whether all children have been
-       killed, since processes forked via fork_process() (e.g. the web browser)
-       may still continue running. So we just exit here.
-    */
-    xdvi_exit(EXIT_SUCCESS);
+    call_exit_handlers();
 
-    /* BUG ALERT: since xdvi_exit() may return (checks before writing to ~/.xdvirc),
-       we mustn't do the following which is in non-k xdvi, else we'll end up in a busy loop.
-       I don't know who the `caller' is anyway ...
-
-       globals.ev.flags |= EV_TERM; /\* otherwise, let the caller handle it *\/
-    */
+    exit(status);
 }
 
 
@@ -5306,7 +5377,7 @@ xi2_emulate_action(struct xdvi_action *actp, struct xi2_valinfo *valinfo,
 		}
 
 		if (actp->proc == Act_wheel) {
-#  if XAW
+#  if !MOTIF
 		    if (globals.widgets.y_bar != NULL)
 			XtCallCallbacks(globals.widgets.y_bar, XtNscrollProc,
 			  cast_int_to_XtPointer(dist));
@@ -5317,7 +5388,7 @@ xi2_emulate_action(struct xdvi_action *actp, struct xi2_valinfo *valinfo,
 #  endif /* MOTIF */
 		}
 		else {	/* Act_hwheel */
-#  if XAW
+#  if !MOTIF
 		    if (globals.widgets.x_bar != NULL)
 			XtCallCallbacks(globals.widgets.x_bar, XtNscrollProc,
 			  cast_int_to_XtPointer(dist));
@@ -6151,15 +6222,12 @@ do_pages(void)
 				      True,
 #endif
 				      &errflag)) {
-#if PS
-			ps_clear_cache();
 #if PS_GS
 			if (resource.gs_alpha) {
 			    /* restart gs so that user has a method for fixing GS artifacts with gs_alpha
 			       by using `reload' (see also GS_PIXMAP_CLEARING_HACK) */
 			    ps_destroy();
 			}
-#endif
 #endif
 			statusline_info(STATUS_SHORT, "File reloaded.");
 		    }

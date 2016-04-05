@@ -9,6 +9,39 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.87.03 (2016-04-02):
+	+ incorporated changes in xdvik itself from the TeX Live version:
+	  m4/xdvi-check-iconv.m4: Somewhat improved logic.
+	  many places: avoided compiler warnings and cleaned up including of
+	  header files.
+	+ events.c: Fixed bug #391 (compilation with xaw3d).
+	+ m4/xdvi-xinput-2-1.m4: Added check for -lXi (in addition to headers)
+	+ events.h, main.c, dvi-init.c, special.c, xdvi.c:  Fixed bug in which
+	  papersize specials were ignored if the numbers in them had too many
+	  digits.  Also fixed rounding of negative numbers.
+	+ psgs.c: Fixed bug #395 (strings.h --> string.h in psgs.c)
+	+ texmf/XDvi: Fixed bug #397 (error message "Cannot convert string ...
+	  to type FontStruct")
+	+ events.c, events.h, util.c, util.h, and elsewhere:  Fixed killing of
+	  subprocesses in fork_process().
+	+ exit-handlers.c:  Ignore duplicate requests (such as
+	  remove_tmp_dvi_file).
+	+ events.c, xdvi.1.in:  Added (unbound) user-exec() action.
+	+ dvi-draw.c:  Fixed bug #398 (crashed with message "currinf.set_char_p
+	  is not a registered routine!" during scanning (string searches
+	  or source specials))
+	+ many places:  Update from TeX Live, as of 2016-03-18:
+	  Disable smooth scrolling by default for native TeX Live builds
+	  Change handling of subdirectory squeeze (when cross compiling)
+	  Avoid undefined behaviour when char is signed
+	  Use link instead of compile check for XInput 2.1
+	  Do not include c-auto.h from headers
+	  Minor changes to avoid some compiler warnings
+	  psheader.txt: Remove psfig macros due to copyright issues
+	  Pulled in updated libraries, etc.
+	  Removed outdated copies of the freetype2 library
+	+ Internal changes in handling of PostScript file inclusion
+
    * 22.87 (2014-04-12):
 	+ ft.c: Avoid a compiler warning.
 	+ font-open.c: Add support for .runlibfileifexists in gs Fontmap file;

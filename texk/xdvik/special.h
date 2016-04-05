@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004 the xdvik development team
+ * Copyright (c) 2002-2016 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -44,8 +44,8 @@ struct psprocs {
     void (*newdoc)	(void);
 };
 
-extern void ps_clear_cache(void);
 extern void ps_destroy(void);
+extern void ps_destroy_nofree(void);
 extern void drawbegin_none(int, int, const char *);
 extern void draw_bbox(void);
 extern void display_bboxes(void);

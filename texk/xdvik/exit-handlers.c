@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 Stefan Ulrich
+ * Copyright (c) 2004-2015 Stefan Ulrich and the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -34,19 +34,27 @@
 static struct exit_list {
     exit_procedure proc;
     void *arg;
+    struct exit_list *next;
 } *exit_procs = NULL;
-
-static size_t exit_procs_size = 0;
 
 void register_exit_handler(exit_procedure proc, void *arg)
 {
-    size_t idx = exit_procs_size;
-    exit_procs_size++;
-    exit_procs = xrealloc(exit_procs, sizeof *exit_procs * exit_procs_size);
-    exit_procs[idx].proc = proc;
-    exit_procs[idx].arg = arg;
+    struct exit_list *ep;
+
+    /* first check for duplicates (needed because of remove_tmp_dvi_file) */
+    for (ep = exit_procs; ep != NULL; ep = ep->next) {
+	if (ep->proc == proc && ep->arg == arg)
+	    return;
+    }
+
+    ep = xmalloc(sizeof *ep);
+    ep->proc = proc;
+    ep->arg = arg;
+    ep->next = exit_procs;
+    exit_procs = ep;
 }
 
+#if 0	/* This is currently unused.  */
 void unregister_exit_handler(exit_procedure proc)
 {
     size_t i;
@@ -58,14 +66,21 @@ void unregister_exit_handler(exit_procedure proc)
 	}
     }
 }
+#endif
 
 void call_exit_handlers(void)
 {
-    size_t i;
-    for (i = 0; i < exit_procs_size; i++) {
-	if (exit_procs[i].proc)
-	    exit_procs[i].proc(exit_procs[i].arg);
+    struct exit_list *ep;
+
+    for (ep = exit_procs; ep != NULL; ep = ep->next) {
+	ep->proc(ep->arg);
 	/* 	fprintf(stderr, "calling exit proc %lu\n", (unsigned long)i); */
     }
-    free(exit_procs);
+
+    /* free them */
+    while (exit_procs != NULL) {
+	ep = exit_procs;
+	exit_procs = exit_procs->next;
+	free(ep);
+    }
 }

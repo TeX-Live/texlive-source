@@ -618,9 +618,9 @@ motif_create_dialog(struct save_or_print_info *info)
     char ofstring[1024];
     
     Widget form, pane, box;
-    Widget print_or_save_frame, destination_label, destination_form;
+    Widget print_or_save_frame, destination_form;
     Widget dvips_options_label;
-    Widget pages_frame, pages_label, pages_form;
+    Widget pages_frame, pages_form;
     Widget print_to_file_text, to_file_radio_or_label;
     Widget dvips_options_text;
     Widget print_to_file_button;
@@ -689,11 +689,11 @@ motif_create_dialog(struct save_or_print_info *info)
 					       NULL);
 	
 	str = XmStringCreateLocalized("Print to:");
-	destination_label = XtVaCreateManagedWidget("title", xmLabelGadgetClass,
-						    print_or_save_frame,
-						    XmNchildType, XmFRAME_TITLE_CHILD,
-						    XmNlabelString, str,
-						    NULL);
+	XtVaCreateManagedWidget("title", xmLabelGadgetClass,
+				print_or_save_frame,
+				XmNchildType, XmFRAME_TITLE_CHILD,
+				XmNlabelString, str,
+				NULL);
 	XmStringFree(str);
 	
 	destination_form = XtVaCreateWidget("destination_form", xmFormWidgetClass, print_or_save_frame,
@@ -796,10 +796,11 @@ motif_create_dialog(struct save_or_print_info *info)
 					       NULL);
     
 	str = XmStringCreateLocalized("Save as:");
-	destination_label = XtVaCreateManagedWidget("title", xmLabelGadgetClass, print_or_save_frame,
-						    XmNchildType, XmFRAME_TITLE_CHILD,
-						    XmNlabelString, str,
-						    NULL);
+	XtVaCreateManagedWidget("title", xmLabelGadgetClass,
+				print_or_save_frame,
+				XmNchildType, XmFRAME_TITLE_CHILD,
+				XmNlabelString, str,
+				NULL);
 	XmStringFree(str);
 
 	destination_form = XtVaCreateWidget("destination_form", xmFormWidgetClass, print_or_save_frame,
@@ -966,7 +967,7 @@ motif_create_dialog(struct save_or_print_info *info)
 				   NULL);
 
     str = XmStringCreateLocalized("Pages:");
-    pages_label = XtVaCreateManagedWidget("title", xmLabelGadgetClass, pages_frame,
+    XtVaCreateManagedWidget("title", xmLabelGadgetClass, pages_frame,
 					  XmNchildType, XmFRAME_TITLE_CHILD,
 					  XmNlabelString, str,
 					  NULL);

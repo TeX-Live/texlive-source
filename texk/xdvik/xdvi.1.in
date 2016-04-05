@@ -2673,6 +2673,33 @@ is
 then the corresponding shrink factor is the ratio
 .IR p / n ,
 rounded to the nearest integer.
+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.TP
+.B user-exec()
+This action takes one (required) argument. Runs an external program
+specified by the argument, which is tokenized on whitespace. The
+.B XDVI_FILE
+environment variable is set to the absolute pathname of the DVI file,
+so that the program can find the DVI. As an example, to establish the
+key
+.RB ` m '
+as a keybinding that regenerates the DVI file with `make', put the
+following into your
+.I ~/.Xdefaults
+file:
+.sp
+xdvi.mainTranslations: #override\e
+.br
+<Key>m: user-exec(xdvi-remake)\en
+
+where `xdvi-remake' names a program in your
+.B PATH
+analogous to `cd $(dirname $XDVI_FILE) && make $(basename $XDVI_FILE)'.
+(See also the section
+.B SIGNALS
+for a way to get
+.B xdvi
+to reload the DVI file once it has been regenerated.)
 .PP
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

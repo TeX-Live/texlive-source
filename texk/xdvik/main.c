@@ -641,12 +641,12 @@ init_check_resources(void)
 
     /* margins */
     if (resource.sidemargin)
-	resource.sidemargin_int = atopix(resource.sidemargin, False);
+	resource.sidemargin_int = atopix(resource.sidemargin);
     if (resource.topmargin)
-	resource.topmargin_int = atopix(resource.topmargin, False);
-    resource.xoffset_int = resource.xoffset ? atopix(resource.xoffset, True)
+	resource.topmargin_int = atopix(resource.topmargin);
+    resource.xoffset_int = resource.xoffset ? atopix_signed(resource.xoffset)
 	: resource.pixels_per_inch;
-    resource.yoffset_int = resource.yoffset ? atopix(resource.yoffset, True)
+    resource.yoffset_int = resource.yoffset ? atopix_signed(resource.yoffset)
 	: resource.pixels_per_inch;
 
     /* paper type */

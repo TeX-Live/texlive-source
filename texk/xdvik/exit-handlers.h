@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004 Stefan Ulrich
+ * Copyright (c) 2004-2015 Stefan Ulrich and the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -26,8 +26,8 @@
 
 typedef void (*exit_procedure) (void *);
 
-extern void unregister_exit_handler(exit_procedure proc);
 extern void register_exit_handler(exit_procedure proc, void *arg);
+/* extern void unregister_exit_handler(exit_procedure proc); */
 extern void call_exit_handlers(void);
 
 #endif /* EXIT_HANDLERS_H_ */

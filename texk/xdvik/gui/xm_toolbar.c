@@ -309,7 +309,6 @@ create_pixmap(Widget parent, int iconidx, Pixmap *sen, Pixmap *insen)
 	{"topShadowColor", NULL, 0},
 	{"selectColor", NULL, 0}
     };
-    static int screenNum;
     static Pixmap tools_map;
     static Pixmap tools_mask;
     static Pixmap shade_map;
@@ -336,7 +335,6 @@ create_pixmap(Widget parent, int iconidx, Pixmap *sen, Pixmap *insen)
 					  NULL);
 	XtRealizeWidget(dummy); /* note: doesn't pop it up */
 	rootWindow = XtWindow(dummy);
-	screenNum = DefaultScreen(XtDisplay(globals.widgets.top_level));
 	ASSERT(rootWindow != 0, "");
 	XtVaGetValues(parent,
 		      XmNbackground, &color[BACKGROUND].pixel,

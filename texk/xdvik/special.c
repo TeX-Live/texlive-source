@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2004  Paul Vojta
+Copyright (c) 1990-2016  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -946,106 +946,120 @@ drawbegin_none(int xul, int yul, const char *cp)
 }
 
 
-struct tickrec {
-    struct tickrec *next;
-    int pageno;
-    char *command;
-    char *tempname;
-};
-
-static struct tickrec *tickhead = NULL;	/* head of linked list of */
-/* cached information */
-static int nticks = 0;	/* number of records total */
-
-#ifndef	TICKCACHESIZE
-#define	TICKCACHESIZE	3
-#endif
-
-#ifndef	TICKTMP
-#define	TICKTMP		"/tmp"
-#endif
-
 /*
- *	cachetick() - returns:
- *		NULL		error;
- *		fp == NULL	string was not in cache, fd = file
- *		fp != NULL	string was in cache, fp = cached file
+ *	Mechanism to keep track of included PS files.
  */
 
-static struct tickrec *
-cachetick(const char *filename, kpse_file_format_type pathinfo, FILE **fp, int *fdp)
+struct avl_psinfo {
+    AVL_COMMON;
+    char *fullpath;
+    char *tempname;
+    dev_t ps_dev;
+    ino_t ps_ino;
+    time_t ps_mtime;
+    Boolean is_new;	/* set if previous use failed because of !allow_shell */
+};
+
+static struct avl_psinfo *psinfo_head = NULL;
+
+
+/*
+ *	ps_clear_cache() resets the cache to the empty state.
+ */
+
+static void
+clear_psinfo_node(struct avl_psinfo *psinfp)
 {
-    struct tickrec **linkp;
-    struct tickrec *tikp;
-    struct tickrec **freerecp;
-
-    linkp = &tickhead;
-    freerecp = NULL;
-    for (;;) {	/* see if we have it already */
-	tikp = *linkp;
-	if (tikp == NULL) {	/* if end of list */
-	    int fd;
-
-	    if (nticks >= TICKCACHESIZE && freerecp != NULL) {
-		tikp = *freerecp;
-		*freerecp = tikp->next;
-		free(tikp->command);
-		unlink(tikp->tempname);
-		/* reuse tikp and tikp->tempname */
-	    }
-	    else {
-		tikp = xmalloc(sizeof(struct tickrec));
-		tikp->tempname = NULL;
-		++nticks;
-	    }
-	    fd = xdvi_temp_fd(&tikp->tempname);
-	    if (fd == -1) {
-		perror("Cannot create temporary file");
-		free(tikp->tempname);
-		free(tikp);
-		return NULL;
-	    }
-	    tikp->command = xstrdup(filename);
-	    *fp = NULL;
-	    *fdp = fd;
-	    break;
-	}
-	if (strcmp(filename, tikp->command) == 0) {	/* found it */
-	    *linkp = tikp->next;	/* unlink it */
-	    *fp = XFOPEN(tikp->tempname, OPEN_MODE);
-	    if (*fp == NULL) {
-		perror(tikp->tempname);
-		free(tikp->tempname);
-		free(tikp->command);
-		free(tikp);
-		return NULL;
-	    }
-	    break;
-	}
-	if (tikp->pageno != current_page)
-	    freerecp = linkp;
-	linkp = &tikp->next;
+    if (psinfp->fullpath != NULL) {
+	free(psinfp->fullpath);
+	psinfp->fullpath = NULL;
     }
-    tikp->next = tickhead;	/* link it in */
-    tickhead = tikp;
-    tikp->pageno = pathinfo != kpse_tex_ps_header_format ? current_page : -1;
-    return tikp;
+    if (psinfp->tempname != NULL) {
+	if (unlink(psinfp->tempname) < 0)
+	    perror(psinfp->tempname);
+	free(psinfp->tempname);
+	psinfp->tempname = NULL;
+    }
 }
 
-void
+static void
+clear_psinfo_tree(struct avl_psinfo *psinfp)
+{
+    if (psinfp == NULL)
+	return;
+
+    clear_psinfo_tree((struct avl_psinfo *) psinfp->left);
+    clear_psinfo_tree((struct avl_psinfo *) psinfp->right);
+    free((char *) psinfp->key);
+    clear_psinfo_node(psinfp);
+    free(psinfp);
+}
+
+static void
 ps_clear_cache(void)
 {
-    struct tickrec *tikp;
+    clear_psinfo_tree(psinfo_head);
+    psinfo_head = NULL;
+}
 
-    while (tickhead != NULL) {
-	tikp = tickhead;
-	tickhead = tickhead->next;
-	free(tikp->command);
-	unlink(tikp->tempname);
-	free((char *)tikp->tempname);
-	free(tikp);
+
+/*
+ *	ps_clear_cache_nofree() does the same thing as ps_clear_cache(), but
+ *	without ever calling free().  This is because it may be called
+ *	following a segmentation fault, in which case the heap may be corrupted.
+ */
+
+static void
+clear_psinfo_node_nofree(struct avl_psinfo *psinfp)
+{
+    if (psinfp->fullpath != NULL) {
+	psinfp->fullpath = NULL;
     }
-    nticks = 0;
+    if (psinfp->tempname != NULL) {
+	if (unlink(psinfp->tempname) < 0)
+	    perror(psinfp->tempname);
+	psinfp->tempname = NULL;
+    }
+}
+
+static void
+clear_psinfo_tree_nofree(struct avl_psinfo *psinfp)
+{
+    if (psinfp == NULL)
+	return;
+
+    clear_psinfo_tree_nofree((struct avl_psinfo *) psinfp->left);
+    clear_psinfo_tree_nofree((struct avl_psinfo *) psinfp->right);
+    clear_psinfo_node_nofree(psinfp);
+}
+
+static void
+ps_clear_cache_nofree(void)
+{
+    clear_psinfo_tree_nofree(psinfo_head);
+    psinfo_head = NULL;
+}
+
+
+/*
+ *	ps_new_tempfile() - Opens a new temporary file.
+ *		Returns the fd, or -1 if an error occurred.
+ */
+
+static int
+ps_new_tempfile(struct avl_psinfo *psinfp)
+{
+    int fd;
+
+    fd = xdvi_temp_fd(&psinfp->tempname);
+    if (fd == -1) {
+	XDVI_ERROR((stderr,
+	  "Cannot create temporary file for PostScript figure file: %s",
+	  strerror(errno)));
+	free(psinfp->tempname);
+	psinfp->tempname = NULL;
+    }
+    return fd;
 }
 
 #ifndef	UNCOMPRESS
@@ -1081,18 +1095,20 @@ try_open_tempname(int status, struct xchild *this)
 	if (WEXITSTATUS(status) != 0) {
 	    /* default error procedure */
 	    handle_child_exit(status, this);
+	    this = NULL;	/* prevent freeing it twice */
 	}
 	else {
-	    struct tickrec *tikp = (struct tickrec *)this->data;
-	    FILE *f = XFOPEN(tikp->tempname, OPEN_MODE);
-	    fprintf(stderr, "FILE: %s\n", tikp->tempname);
+	    struct avl_psinfo *psinfp = (struct avl_psinfo *) this->data;
+	    FILE *f = XFOPEN(psinfp->tempname, OPEN_MODE);
+
+	    fprintf(stderr, "FILE: %s\n", psinfp->tempname);
 	    if (f == NULL) {
-		perror(tikp->tempname);
+		perror(psinfp->tempname);
 	    }
 	    else {
-		fprintf(stderr, "sending file: %s, %p\n", tikp->tempname, (void *)f);
+		fprintf(stderr, "sending file: %s, %p\n", psinfp->tempname, (void *)f);
 		/* There's no point in invoking
-		   psp.drawfile(tikp->tempname, f);
+		   psp.drawfile(psinfp->tempname, f);
 		   here, since usually it will be already too late (draw_part() which
 		   had called us via applicationDoSpecial() will already have terminated).
 		   So instead, we just close the file and force a redraw of the entire page.
@@ -1120,6 +1136,11 @@ try_open_tempname(int status, struct xchild *this)
 		      NULL,
 		      "Process `%s' terminated with unknown status.", this->name);
     }
+    if (this != NULL) {	/* if it wasn't freed already */
+	free(this->name);
+	free(this->io);
+	free(this);
+    }
 }
 
 static void
@@ -1129,8 +1150,8 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
     int fd;
     static const char *argv[] = { NULL, "-c", NULL, NULL };
     char *bufp = NULL;
-    struct tickrec *volatile tikp;
     size_t len;
+    struct avl_psinfo *volatile psinfp;
     char magic1, magic2, magic3;
     static Boolean warned_about_shellescape = False;
     static size_t ffline_len = 0;
@@ -1141,7 +1162,18 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 	return;
     }
 
+    len = strlen(filename);
+    psinfp = (struct avl_psinfo *) avladd(filename, len,
+      (struct avl **) &psinfo_head, sizeof(struct avl_psinfo));
+
+    if (psinfp->key == filename) {	/* if new record */
+	psinfp->is_new = True;
+	psinfp->key = xmemdup(filename, len + 1);
+	psinfp->fullpath = psinfp->tempname = NULL;
+    }
+
     if (filename[0] == '`') {
+	/* To test this code, use \special{psfile="`cat file.ps"} */
 	if (!resource.allow_shell) {
 	    if (!warned_about_shellescape) {
 		choice_dialog_sized(globals.widgets.top_level,
@@ -1185,113 +1217,195 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 	    return;
 	}
 
-	tikp = cachetick(filename, pathinfo, &f, &fd);
-	if (tikp == NULL)	/* if error */
-	    return;
-	if (f == NULL) {
+	if (!psinfp->is_new) {	/* if we already have it */
+	    if (psinfp->tempname == NULL) {	/* if previously known error */
+		draw_bbox();
+		return;
+	    }
+	    f = XFOPEN(psinfp->tempname, OPEN_MODE);
+	    if (f == NULL) {
+		perror(psinfp->tempname);
+		/* WARN1(XmDIALOG_ERROR,
+		  "Cannot open temporary PostScript file:\n%s",
+		  psinfp->tempname); */
+		clear_psinfo_node(psinfp);
+		draw_bbox();
+		return;
+	    }
+	    psp.drawfile(psinfp->tempname, f);
+	}
+	else {	/* it is new */
 	    char *argv[4];
-	    /* if not cached, need to create.
-	       Fork so that we can collect the process' error messages. */
 
-	    /* FIXME: Insecure - this is a /tmp race; shouldn't close(fd), just re-use it */
+	    psinfp->is_new = False;
+
+	    /* Create the file (it wasn't cached).
+	       Fork so that we can collect the process's error messages. */
+
+	    fd = ps_new_tempfile(psinfp);
+	    if (fd == -1) {	/* if error */
+		draw_bbox();
+		return;
+	    }
+
+	    /* FIXME: Insecure - this is a /tmp race;
+	       shouldn't close(fd), just re-use it */
 	    close(fd);
 
-	    len = strlen(filename) + strlen(tikp->tempname) + (4 - 1);
+	    len = strlen(filename) + strlen(psinfp->tempname) + (4 - 1);
 	    if (len > ffline_len) {
 		ffline_len += FFLINE_STEP;
 		ffline = xrealloc(ffline, ffline_len);
 	    }
 	    
-	    sprintf(ffline, "%s > %s", filename + 1, tikp->tempname);
+	    sprintf(ffline, "%s > %s", filename + 1, psinfp->tempname);
 	    argv[0] = "/bin/sh";
 	    argv[1] = "-c";
 	    argv[2] = ffline;
 	    argv[3] = NULL;
-	    fork_process("/bin/sh", False, globals.dvi_file.dirname, try_open_tempname, tikp, argv);
-	}
-	else {
-	    bufp = tikp->tempname;
-	    psp.drawfile(bufp, f);
+	    fork_process("/bin/sh", False, globals.dvi_file.dirname,
+	      try_open_tempname, psinfp, -SIGKILL, argv);
 	}
     }
-    else {
+    else {	/* not shell escape */
 	char *expanded_filename = NULL;
 	struct stat statbuf;
-	expanded_filename = find_file(filename, &statbuf, pathinfo);
 
-	if (expanded_filename == NULL &&
-	    (pathinfo == kpse_enc_format || pathinfo == kpse_type1_format)) {
-	    /* in this case, we also kpathsea-search in the `old' place for
-	       backwards compatibility: kpse_tex_ps_header_format (see comment
-	       for load_vector(), dvi-draw.c for details) */
-	    expanded_filename = kpse_find_file(filename, kpse_tex_ps_header_format, True);
-	}
-	if (expanded_filename == NULL) {
-	    expanded_filename = kpse_find_file(filename, kpse_program_text_format, True);
-	}
-	if (expanded_filename == NULL) { /* still no success, complain */
-	    /* FIXME: this warning may be overwritten by warning about raw PS specials,
-	       so additinally dump to stderr. TODO: make statusline printing respect
-	       more important messages. */
-	    XDVI_WARNING((stderr, "Could not find graphics file \"%s\"", filename));
-	    statusline_info(STATUS_MEDIUM, "Warning: Could not find graphics file \"%s\"",
-			     filename);
-	    draw_bbox();
-	    return;
-	}
-	if (globals.debug & DBG_OPEN)
-	    printf("%s:%d: |%s| expanded to |%s|\n", __FILE__, __LINE__, filename, expanded_filename);
-
-	/* may need to adjust ffline_len, ffline */
-	while (strlen(expanded_filename) + 1 > ffline_len) {
-	    ffline_len += FFLINE_STEP;
-	    ffline = xrealloc(ffline, ffline_len);
-	}
-	strcpy(ffline, expanded_filename);
-	bufp = ffline;
-	f = XFOPEN(expanded_filename, OPEN_MODE);
-	if (f == NULL) {
-	    XDVI_WARNING((stderr, "Could not open graphics file \"%s\": %s", expanded_filename, strerror(errno)));
-	    statusline_info(STATUS_MEDIUM, "Warning: Could not open graphics file \"%s\": %s",
-			     expanded_filename, strerror(errno));
-	    free(expanded_filename);
-	    draw_bbox();
-	    return;
-	}
-	free(expanded_filename);
-
-	/* check for compressed files */
-	len = strlen(filename);
-	magic1 = '\037';
-	magic3 = '\0';
-	if ((len > 2 && strcmp(filename + len - 2, ".Z") == 0
-	     && (argv[0] = UNCOMPRESS, magic2 = '\235', True))
-	    || (len > 3 && strcmp(filename + len - 3, ".gz") == 0
-		&& (argv[0] = GUNZIP, magic2 = '\213', True))
-	    || (len > 4 && strcmp(filename + len - 4, ".bz2") == 0
-		&& (argv[0] = BUNZIP2, magic1 = 'B', magic2 = 'Z',
-		    magic3 = 'h', True))) {
-	    if (getc(f) != magic1 || (char)getc(f) != magic2
-		|| (magic3 != '\0' && getc(f) != magic3)) {
-		rewind(f);
+	if (psinfp->fullpath != NULL) {	/* if existing rec., no error */
+	    /* Check file modification time */
+	    if (stat(psinfp->fullpath, &statbuf) != 0) {
+		perror(psinfp->fullpath);
+		if (psinfp->ps_mtime != 0) {
+		    clear_psinfo_node(psinfp);
+		    psinfp->is_new = True;
+		}
 	    }
 	    else {
-		fclose(f);
+		if (psinfp->ps_dev != statbuf.st_dev
+		  || psinfp->ps_ino != statbuf.st_ino
+		  || psinfp->ps_mtime != statbuf.st_mtime) {
+		    clear_psinfo_node(psinfp);
+		    psinfp->is_new = True;
+		}
+	    }
+	}
 
-		tikp = cachetick(filename, pathinfo, &f, &fd);
-		if (tikp == NULL)	/* if error */
+	if (!psinfp->is_new) {
+	    bufp = psinfp->tempname;
+	    if (bufp == NULL) {
+		bufp = psinfp->fullpath;
+		if (bufp == NULL) {		/* if error already noted */
+		    draw_bbox();
 		    return;
-		if (f == NULL) {	/* if not cached, need to create */
+		}
+	    }
+	    f = XFOPEN(bufp, OPEN_MODE);
+	    if (f == NULL) {
+		XDVI_WARNING((stderr, "Could not find graphics or temporary file \"%s\"",
+			      bufp));
+		statusline_info(STATUS_MEDIUM, "Warning: Could not find graphics or temporary file \"%s\"",
+				bufp);
+		clear_psinfo_node(psinfp);
+		draw_bbox();
+		return;
+	    }
+	}
+	else {	/* node is new */
+	    psinfp->is_new = False;
+
+	    expanded_filename = find_file(filename, &statbuf, pathinfo);
+
+	    if (expanded_filename == NULL &&
+		(pathinfo == kpse_enc_format || pathinfo == kpse_type1_format))
+	    {
+		/* in this case, we also kpathsea-search in the `old' place for
+		   backwards compatibility: kpse_tex_ps_header_format
+		   (see comment for load_vector(), dvi-draw.c for details) */
+		expanded_filename = kpse_find_file(filename,
+					kpse_tex_ps_header_format, True);
+	    }
+	    if (expanded_filename == NULL) {
+		expanded_filename = kpse_find_file(filename,
+					kpse_program_text_format, True);
+	    }
+	    if (expanded_filename == NULL) { /* still no success, complain */
+		/* FIXME: this warning may be overwritten by warning about raw
+		   PS specials, so additinally dump to stderr.
+		   TODO: make statusline printing respect more important
+		   messages. */
+		XDVI_WARNING((stderr, "Could not find graphics file \"%s\"",
+			      filename));
+		statusline_info(STATUS_MEDIUM,
+			         "Warning: Could not find graphics file \"%s\"",
+				 filename);
+		draw_bbox();
+		return;
+	    }
+	    if (globals.debug & DBG_OPEN)
+		printf("%s:%d: |%s| expanded to |%s|\n", __FILE__, __LINE__,
+		       filename, expanded_filename);
+
+	    f = XFOPEN(expanded_filename, OPEN_MODE);
+	    if (f == NULL) {
+		XDVI_WARNING((stderr, "Could not open graphics file \"%s\": %s",
+			      expanded_filename, strerror(errno)));
+		statusline_info(STATUS_MEDIUM,
+			"Warning: Could not open graphics file \"%s\": %s",
+			expanded_filename, strerror(errno));
+		free(expanded_filename);
+		draw_bbox();
+		return;
+	    }
+
+	    bufp = psinfp->fullpath = expanded_filename;
+
+	    if (fstat(fileno(f), &statbuf) == 0) {	/* get mod. time */
+		psinfp->ps_dev = statbuf.st_dev;
+		psinfp->ps_ino = statbuf.st_ino;
+		psinfp->ps_mtime = statbuf.st_mtime;
+	    }
+	    else {
+		perror(bufp);
+		psinfp->ps_dev = 0;
+		psinfp->ps_ino = 0;
+		psinfp->ps_mtime = 0;
+	    }
+
+	    /* check for compressed files */
+
+	    len = strlen(filename);
+	    magic1 = '\037';
+	    magic3 = '\0';
+	    if ((len > 2 && strcmp(filename + len - 2, ".Z") == 0
+		 && (argv[0] = UNCOMPRESS, magic2 = '\235', True))
+		|| (len > 3 && strcmp(filename + len - 3, ".gz") == 0
+		    && (argv[0] = GUNZIP, magic2 = '\213', True))
+		|| (len > 4 && strcmp(filename + len - 4, ".bz2") == 0
+		    && (argv[0] = BUNZIP2, magic1 = 'B', magic2 = 'Z',
+			magic3 = 'h', True))) {
+		if (getc(f) != magic1 || (char)getc(f) != magic2
+		    || (magic3 != '\0' && getc(f) != magic3)) {
+		    rewind(f);
+		}
+		else {
 		    pid_t pid;
 		    int status;
 
+		    fclose(f);
+
+		    fd = ps_new_tempfile(psinfp);
+		    if (fd == -1) {	/* if error */
+			clear_psinfo_node(psinfp);
+			return;
+		    }
 		    argv[2] = bufp;
 		    fflush(stderr);	/* avoid double flushing */
 		    pid = vfork();
 		    if (pid == 0) {	/* if child */
 			(void)dup2(fd, 1);
 			(void)execvp(argv[0], (char **)argv);
-			XDVI_ERROR((stderr, "Execvp of %s failed: %s", argv[0], strerror(errno)));
+			XDVI_ERROR((stderr, "Execvp of %s failed: %s", argv[0],
+				    strerror(errno)));
 			_exit(EXIT_FAILURE);
 		    }
 		    (void)close(fd);
@@ -1320,13 +1434,14 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 			perror("[xdvik] waitpid");
 			return;
 		    }
-		    f = XFOPEN(tikp->tempname, OPEN_MODE);
+		    f = XFOPEN(psinfp->tempname, OPEN_MODE);
 		    if (f == NULL) {
-			perror(tikp->tempname);
+			perror(psinfp->tempname);
+			draw_bbox();
 			return;
 		    }
+		    bufp = psinfp->tempname;
 		}
-		bufp = tikp->tempname;
 	    }
 	}
 	/* Success! */
@@ -1338,14 +1453,24 @@ send_ps_file(const char *filename, kpse_file_format_type pathinfo)
 void
 ps_destroy(void)
 {
-    struct tickrec	*tikp;
-
     /* Note:  old NeXT systems (at least) lack atexit/on_exit.  */
     psp.destroy();
-    for (tikp = tickhead; tikp != NULL; tikp = tikp->next)
-	if (unlink(tikp->tempname) < 0)
-	    perror(tikp->tempname);
+    ps_clear_cache();
 }
+
+
+/*
+ *	Same as above, but refrains from calling free() (may be called
+ *	following a seg fault).
+ */
+
+void
+ps_destroy_nofree(void)
+{
+    psp.destroy();
+    ps_clear_cache_nofree();
+}
+
 
 #endif	/* PS */
 
@@ -1353,10 +1478,6 @@ ps_destroy(void)
 void
 init_prescan(void)
 {
-#if PS
-    struct tickrec	*tikp;
-#endif
-
     scanned_page = scanned_page_reset = resource.prescan ? -1 : total_pages + 1;
 #if PS
     scanned_page_ps = scanned_page_ps_bak = scanned_page;
@@ -1370,8 +1491,7 @@ init_prescan(void)
     if (resource.postscript == 0)
 	scanned_page_ps = total_pages + 1;
 
-    for (tikp = tickhead; tikp != NULL; tikp = tikp->next)
-	tikp->pageno = -1;
+    ps_clear_cache();
     psp.newdoc();
 #endif
 
@@ -2268,14 +2388,14 @@ myatopix(const char **pp)
 	/* if units are present */
 	if (p1 - p0 <= SCR_LEN - 3) {
 	    sprintf(scr, "%.*s%c%c", (int)(p1 - p0), p0, *cp, cp[1]);
-	    value = atopix(scr, False);
+	    value = atopix(scr);
 	}
 	else
 	    value = 0;
 	cp += 2;
     }
     else
-	value = atopix(p0, False);
+	value = atopix(p0);
 
     *pp = cp;
     return value;

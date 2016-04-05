@@ -2943,7 +2943,12 @@ text_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 	do_load_freetype_font();
 #endif
 
-    if (currinf.set_char_p == load_n_set_char) {
+#if FREETYPE
+    while (currinf.set_char_p == load_n_set_char)
+#else
+    if (currinf.set_char_p == load_n_set_char)
+#endif
+    {
 	if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 	    return 0;
 	if (!load_font(currinf.fontp
@@ -3072,7 +3077,12 @@ geom_do_char(FILE *fp, struct scan_info *info, wide_ubyte ch)
 	do_load_freetype_font();
 #endif
 
-    if (currinf.set_char_p == load_n_set_char) {
+#if FREETYPE
+    while (currinf.set_char_p == load_n_set_char)
+#else
+    if (currinf.set_char_p == load_n_set_char)
+#endif
+    {
 	if (globals.ev.flags & EV_GE_NEWDOC)	/* if abort */
 	    return 0;
 	if (!load_font(currinf.fontp
@@ -3781,7 +3791,7 @@ src_spawn_editor(const struct src_parsed_special *parsed)
 	argv = src_format_arguments(get_separated_list(resource.editor, " \t", True),
 				    expanded_filename, parsed->line, parsed->col);
 	
-	fork_process(argv[0], False, NULL, NULL, NULL, argv);
+	fork_process(argv[0], False, NULL, NULL, NULL, 0, argv);
 
 	free(expanded_filename);
 	for (i = 0; argv[i] != NULL; i++)

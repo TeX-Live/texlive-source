@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1990-2004  Paul Vojta and the xdvik development team
+ * Copyright (c) 1990-2015  Paul Vojta and the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -87,10 +87,10 @@ typedef void (*childProcT)(int exitval, struct xchild *this);
 struct xchild {
     struct xchild *next;	/* link to next in list */
     pid_t pid;		/* pid of process, or 0 */
-    Boolean killable;	/* if can be killed with SIGKILL */
     char *name;		/* name of process, for printing error message */
     struct xio *io;	/* pointer to i/o structure for reading error msg. */
     void *data;		/* arbitrary data passed to proc */
+    int killsig;	/* signal to use when killing it, or 0 */
 
     /* proc is a pointer to a function to call when the child exits; it will be
      * called with 2 arguments:
@@ -125,7 +125,8 @@ extern void cancel_timer(struct xtimer *tp);
 extern int get_num_actions(void);
 extern XtActionsRec *get_actions(void);
 
-extern int atopix(const char *, Boolean);
+extern int atopix(const char *);
+extern int atopix_signed(const char *);
 
 extern int check_goto_page(int pageno, Boolean insert_into_pagehist);
 extern Boolean get_int_arg(String * param, Cardinal *num_params, int *res);
@@ -150,6 +151,7 @@ extern void set_chld(struct xchild *);
 extern void clear_chld(struct xchild *);
 extern void set_io(struct xio *);
 extern void clear_io(struct xio *);
+extern void xdvi_exit(int);
 extern unsigned int read_events(unsigned int);
 
 typedef void (*home_proc) (wide_bool);

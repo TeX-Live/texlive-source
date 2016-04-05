@@ -125,7 +125,7 @@ Ctrl<Btn5Down>:set-shrink-factor(-)\n\
 !!!------------------------------------------------------------------------------
 !!! background color and font:
 *tipShell.background: cornsilk
-*tipShell.fontSet: -*-helvetica-medium-r-*-*-12-*-*-*-*-*-*
+*tipShell.fontSet: -*-helvetica-medium-r-*-*-12-*-*-*-*-*-*-*
 
 !!! time the mouse needs to stay on a button until tooltips pop up,
 !!! in milliseconds; set to a negative value to disable:
@@ -135,9 +135,9 @@ Ctrl<Btn5Down>:set-shrink-factor(-)\n\
 !!!------------------------------------------------------------------------------
 !!!------------------------------ Fonts and colors ------------------------------
 !!!------------------------------------------------------------------------------
-*font:     -*-helvetica-medium-r-*-*-12-*-*-*-*-*-*
+*font:     -*-helvetica-medium-r-*-*-12-*-*-*-*-*-*-*
 !!! Use a smaller font for the statusline in the Xaw version:
-*statusline.font: -*-helvetica-medium-r-*-*-10-*-*-*-*-*-*
+*statusline.font: -*-helvetica-medium-r-*-*-10-*-*-*-*-*-*-*
 
 !!! Motif fonts. Meaning of the tags is:
 !!! NORMAL: Ordinary text, labels etc.
