@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2016
-@set month-year February 2016
+@set month-year April 2016
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -238,7 +238,11 @@ that are not installed by default.
 
 @item xetex
 @cindex @code{fontconfig} library, required by @code{xetex}
-requires @file{fontconfig} (again both headers and library).
+@cindex @code{ApplicationServices} Mac framework, required by @code{xetex}
+@cindex @code{Cocoa} Mac framework, required by @code{xetex}
+requires @file{fontconfig} (again both headers and library), or, for
+MacOSX only, the @code{ApplicationServices} and @code{Cocoa}
+frameworks.
 
 @item xindy
 @cindex @code{clisp}, required by @code{xindy}
@@ -289,13 +293,13 @@ do a normal build.
 The top-level @file{Build} script is intended to simplify building the
 binaries distributed with @TL{} itself---we call this the ``native''
 TL build.  It configures and makes everything in a subdirectory of the
-main build tree (default @file{Work/}), installs everything in an
-other subdirectory (default @file{inst/}), and finally runs @code{make
+main build tree (default @file{Work/}), installs everything in another
+subdirectory (default @file{inst/}), and finally runs @code{make
 check}.  The exact directory and command names can be specified via
 environment variables and a few leading options.  All remaining
 arguments (assignments or options) are passed to the @file{configure}
-script.  Please take a look at the script itself for more information;
-it is not complicated.
+script.  Please take a look at the @file{./Build} source file itself
+for more information; it is a straightforward shell script.
 
 @cindex source directory building, not supported
 @cindex build directory, required
@@ -404,7 +408,7 @@ system, since all the support files are lacking; @pxref{Installing}.
 @cindex build one package
 @cindex one package, building
 
-@vindex --disable-all-packages configure @r{option}
+@vindex --disable-all-packages
 @cindex build on demand
 To build one package, the basic idea is to use the @code{configure}
 option @code{--disable-all-pkgs} (@pxref{@code{--disable-all-pkgs}}).
@@ -413,9 +417,9 @@ However, the @file{Makefile}s still contain all build rules and
 dependencies and can be invoked to build an individual program or
 library and causes to first build any required libraries.
 
-This ``build-on-demand'' procedure is used, e.g., in the @code{luatex}
-repository to build Lua@TeX{}, essentially from a subset of the
-complete @TL{} tree.  Similarly, when, e.g., building the original
+This ``build-on-demand'' procedure is used, e.g., in the upstream
+Lua@TeX{} repository to build Lua@TeX{}, essentially from a subset of
+the complete @TL{} tree.  Similarly, when, e.g., building the original
 e-@TeX{} has been disabled (as it is by default), one can run
 @code{make etex} (or @code{make etex.exe}) in @file{texk/web2c/} to
 build e-@TeX{} (although there is no comparably simple way to install
@@ -471,6 +475,28 @@ of libraries, or the intricacies of the dependencies (such as
 For an example, see the @code{build-pdftex.sh} script in the
 @code{pdftex} development sources (@url{http://pdftex.org}), which are
 indeed a cut-down TL source tree.
+
+@vindex --enable-missing @r{to ignore dependencies}
+Caveat 1: even with @code{--disable-all-pkgs}, dependencies will be
+checked.  For instance, if a non-MacOSX system does not have
+@code{fontconfig}, Xe@TeX{} cannot be built (@pxref{Prerequisites})
+and @code{configure} will terminate.  To proceed without such
+dependencies, specify @code{--enable-missing} also.  (Arguably this
+should happen automatically.)
+
+@vindex CC=@var{c-compiler}
+@vindex CXX=@var{c++-compiler}
+@vindex OBJCXX=@var{objc-compiler}
+@cindex ICU, prefers @code{clang} compilers
+@cindex @code{clang} compilers, preferred by ICU
+Caveat 2: unless @code{CC} and @code{CXX} and @code{OBJCXX} are
+explicitly specified, each package will configure its own compiler(s).
+In practice, this results in a conflict in only one instance: the ICU
+(@file{libs/icu}) library will prefer @code{clang} and @code{clang++}
+over all others if they are installed, whereas everything else prefers
+@code{gcc} and @code{g++}.  Usually the results will be interoperable,
+but it can cause extra confusion and problems when debugging a program
+that uses ICU.
 
 
 @node Installing
@@ -727,7 +753,7 @@ Currently the versions we use are:
 @end display
 
 @pindex reautoconf
-@vindex --enable-maintainer-mode configure @r{option}
+@vindex --enable-maintainer-mode
 These versions should be used to update the generated files (e.g.,
 @file{configure} or @file{Makefile.in}) in all or parts of the TL tree
 after their dependencies have been changed.  This can be done
@@ -929,7 +955,7 @@ or @code{kpse_cv_visibility_cxxflags} variable.
 @defmac KPSE_CXX_HACK
 @cindex static linking for C++
 @cindex linking C++ libraries statically
-@vindex --enable-cxx-runtime-hack configure @r{option}
+@vindex --enable-cxx-runtime-hack
 @pindex libstc++@r{, statically linking}
 Provide the configure option @code{--enable-cxx-runtime-hack}.  If
 enabled and when using @code{g++}, try to statically link with
