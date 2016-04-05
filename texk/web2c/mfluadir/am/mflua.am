@@ -1,6 +1,7 @@
 ## texk/web2c/mfluadir/am/mflua.am: Makefile fragment for MFLua.
 ##
-## Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## MFLua
@@ -18,7 +19,6 @@ else !WIN32
 if !MFLUAN
 bin_links += mflua$(EXEEXT):mflua-nowin
 endif !MFLUAN
-bin_links += mflua$(EXEEXT):inimflua
 endif !WIN32
 endif MFLUA
 EXTRA_PROGRAMS += mflua mflua-nowin
@@ -34,12 +34,10 @@ install-mflua-links: call_mflua$(EXEEXT)
 if !MFLUAN
 	$(INSTALL_PROGRAM) call_mflua$(EXEEXT) $(DESTDIR)$(bindir)/mflua-nowin$(EXEEXT)
 endif !MFLUAN
-	$(INSTALL_PROGRAM) call_mflua$(EXEEXT) $(DESTDIR)$(bindir)/inimflua$(EXEEXT)
 uninstall-mflua-links:
 if !MFLUAN
 	rm -f $(DESTDIR)$(bindir)/mflua-nowin$(EXEEXT)
 endif !MFLUAN
-	rm -f $(DESTDIR)$(bindir)/inimflua$(EXEEXT)
 endif WIN32
 
 dist_mflua_SOURCES = mfluadir/mfluaextra.c mfluadir/mfluaextra.h mfluadir/mflua_version.h
