@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40189 2016-03-31 00:38:03Z preining $
+# $Id: tlmgr.pl 40203 2016-03-31 23:25:42Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40189 $';
-my $datrev = '$Date: 2016-03-31 02:38:03 +0200 (Thu, 31 Mar 2016) $';
+my $svnrev = '$Revision: 40203 $';
+my $datrev = '$Date: 2016-04-01 01:25:42 +0200 (Fri, 01 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -7559,24 +7559,24 @@ creates configuration files in user tree
 
 =head1 CONFIGURATION FILE FOR TLMGR
 
-There are two configuration files for C<tlmgr>: One is system wide
-in C<TEXMFSYSCONFIG/tlmgr/config>, and one user-specific in
-C<TEXMFCONFIG/tlmgr/config> (which is in the default setup
-C<~/.texliveYYYY/texmf-config/tlmgr/config> replacing
-C<YYYY> with the year of your TeX Live installation).
+There are two configuration files for C<tlmgr>: One is system-wide in
+C<TEXMFSYSCONFIG/tlmgr/config>, and the other is user-specific in
+C<TEXMFCONFIG/tlmgr/config> (in the default setup, that is
+C<~/.texliveYYYY/texmf-config/tlmgr/config>, where C<YYYY> is the
+release year of your TeX Live installation).
 
 A small subset of the command line options can be set in these
-configuration file. In addition, the system-wide can contain a directive
-to restrict the number of allowed actions.
+configuration files.  In addition, the system-wide file can contain a
+directive to restrict the number of allowed actions.
 
-In these config files, empty lines and lines starting with # are ignored.  All
-other lines must look like
+In these config files, empty lines and lines starting with # are
+ignored.  All other lines must look like
 
   key = value
 
 where the allowed keys are C<gui-expertmode> (value 0 or 1),
 C<persistent-downloads> (value 0 or 1), C<auto-remove> (value 0 or 1),
-and C<gui-lang> (value like in the command line option).
+and C<gui-lang> (value as with the command-line option).
 
 C<persistent-downloads>, C<gui-lang>, and C<auto-remove> correspond to
 the respective command line options of the same name.  C<gui-expertmode>
@@ -7584,11 +7584,12 @@ switches between the full GUI and a simplified GUI with only the
 important and mostly used settings.
 
 In addition, the system-wide config file can contain the key
-C<allowed-actions>. The value is a comma separated list of actions that
-are allowed to be executed when C<tlmgr> is called in system mode (that is
-without C<--usermode>). This allows distributors to include the C<tlmgr>
-in the packaging but allow only for a very restricted set of actions not
-to interfere with package managers.
+C<allowed-actions>. The value is a comma-separated list of actions that
+are allowed to be executed when C<tlmgr> is called in system mode (that
+is, without C<--usermode>).  This allows distributors to include the
+C<tlmgr> in their packaging, but allow only a restricted set of actions
+that do not interfere with the distro package managers.  (For native TeX
+Live installations, it doesn't make sense to set this.)
 
 =head1 MULTIPLE REPOSITORIES
 
@@ -7602,11 +7603,11 @@ The simplest and most reliable method is to temporarily set the
 installation source to any repository (with the C<-repository> or
 C<option repository> command line options), and perform your operations.
 
-When you are using multiple repositories over a sustained time, however,
-explicitly switching between them becomes inconvenient.  Thus, it's
-possible to tell C<tlmgr> about additional repositories you want to use.
-The basic command is C<tlmgr repository add>.  The rest of this section
-explains further.
+When you are using multiple repositories over a sustained length of
+time, however, explicitly switching between them becomes inconvenient.
+Thus, it's possible to tell C<tlmgr> about additional repositories you
+want to use.  The basic command is C<tlmgr repository add>.  The rest of
+this section explains further.
 
 When using multiple repositories, one of them has to be set as the main
 repository, which distributes most of the installed packages.  When you

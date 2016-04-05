@@ -42,7 +42,8 @@ diff $srcdat $indat
 # C++ binary and we didn't cxx-hack it.
 icupkg="env LD_LIBRARY_PATH=$gnu/lib ../../../../bin/icupkg"
 
-# then remove some unused-by-xetex elements, as discussed with xetex dev.
+# then remove some elements unused by the icu clients in our tree, namely
+# bibtexu (in texk/bibtex-x), upmendex, and xetex (in texk/web2c/xetexdir).
 outdat=icudt57l.dat
 $icupkg -r 'curr/*' $indat $outdat && mv $outdat $indat
 $icupkg -r 'lang/*' $indat $outdat && mv $outdat $indat
