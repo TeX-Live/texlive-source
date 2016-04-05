@@ -1,20 +1,28 @@
-Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+$Id$
+Copyright 2016      Karl Berry <tex-live@tug.org>
+Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 This directory is the central repository for auxiliary files, mostly
 shell scripts, needed to build the TeX Live (TL) tree.  They are used by
-all packages `owned' by the TL tree, i.e., maintained as part of TL.
+all packages included in the TL tree, whether or not TL is the actual
+owner/maintainer of the package
 
-compile, missing, test-driver, and ylwrap come from automake; ltmain.sh
-comes from libtool.  Those must be manually updated when new versions of the
-packages are installed.  The Master/tlpkg/dev/srclist.txt file has checks
-for these, but updates are not automatic.  (We generally try to use the
-latest official release, as it is available directly from GNU, not any
-distro version.)
+The files fall into three sets:
 
-relpath is locally written.
+0) relpath is locally written.
 
-The rest of these files are maintained elsewhere and are available from
-the GNU gnulib project (http://savannah.gnu.org/projects/gnulib).  The
-script Master/tlpkg/bin/tl-update-auto attempts to keep those up to date
-(except when the TL sources are frozen).
+1) Those in GNU Gnulib (http://savannah.gnu.org/projects/gnulib).  The
+script Master/tlpkg/bin/tl-update-auto attempts to keep these up to date
+nightly (except when the TL sources are frozen).
+
+2) Those not in Gnulib, that must come directly from an automake or
+libtool installation.  These must be manually updated when new versions
+of those GNU packages are installed.  The Master/tlpkg/dev/srclist.txt
+file checks for these relative to installation on the local machine, but
+updates are not automatic.
+
+There should be no other files in this directory.
+
+We generally try to use the latest official release, as it is available
+directly from GNU, rather than any distro or other patched version.
