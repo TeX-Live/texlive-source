@@ -1532,11 +1532,9 @@ one that is expressed in `\.{mu}', given the value of the math unit.
 
 static pointer math_glue(pointer g, scaled m)
 {
-    pointer p; /* the new glue specification */
-    int n;     /* integer part of |m| */
-    scaled f;  /* fraction part of |m| */
-    n = x_over_n(m, unity);
-    f = tex_remainder;
+    int n = x_over_n(m, unity); /* integer part of |m| */
+    scaled f = tex_remainder;   /* fraction part of |m| */
+    pointer p;                  /* the new glue specification */
     if (f < 0) {
         decr(n);
         f = f + unity;
@@ -1554,6 +1552,22 @@ static pointer math_glue(pointer g, scaled m)
     else
         shrink(p) = shrink(g);
     return p;
+}
+
+static void math_glue_to_glue(pointer p, scaled m)
+{
+    int n = x_over_n(m, unity); /* integer part of |m| */
+    scaled f = tex_remainder;   /* fraction part of |m| */
+    if (f < 0) {
+        decr(n);
+        f = f + unity;
+    }
+    width(p) = mu_mult(width(p)); /* convert \.{mu} to \.{pt} */
+    if (stretch_order(p) == normal)
+        stretch(p) = mu_mult(stretch(p));
+    if (shrink_order(p) == normal)
+        shrink(p) = mu_mult(shrink(p));
+    subtype(p) = normal;
 }
 
 @ The |math_kern| subroutine removes |mu_glue| from a kern node, given
@@ -3789,8 +3803,6 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     int t;                                /* the effective |type| of noad |q| during the second pass */
     int t_subtype;                        /* the effective |subtype| of noad |q| during the second pass */
     pointer p = null;
-    pointer x = null;
-    pointer y = null;
     pointer z = null;
     int pen;                              /* a penalty to be inserted */
     scaled max_hl = 0;                    /* maximum height of the list translated so far */
@@ -3964,10 +3976,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
 
             */
             if (subtype(q) == mu_glue) {
-                x = q; /* was ptr */
-                y = math_glue(x, cur_mu);
-                q = y; /* we can get rid of the indirect */
-                subtype(q) = normal;
+                math_glue_to_glue(q, cur_mu);
             } else if ((cur_size != text_size) && (subtype(q) == cond_math_glue)) {
                 p = vlink(q);
                 if (p != null)
