@@ -1,6 +1,10 @@
+2016-04-05  Karl Berry  <karl@tug.org>
+
+	* am/mflua.am: no need for inimflua.
+
 2016-03-22  Luigi Scarso <luigi.scarso@gmail.com>
 
-	mflua.c: return if a lua file is not found. 
+	* mflua.c: return if a lua file is not found. 
 
 2015-09-27  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
