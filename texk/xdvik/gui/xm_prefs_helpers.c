@@ -837,7 +837,7 @@ prefs_helpers(struct topic_info *tinfo)
 {
     /*     struct prefs_choice *prefs = (struct prefs_choice *)info->data; */
     Widget form, /* frame, */ form1;
-    Widget browser_command, editor_command;
+    Widget browser_command;
 
     form = XmCreateForm(tinfo->right_form, "helpers_form", NULL, 0);
 
@@ -863,13 +863,13 @@ prefs_helpers(struct topic_info *tinfo)
 				       m_browser_list,
 				       select_browser_cb, tinfo);
     
-    editor_command = h_create_command(Xdvi_EDITOR_COMBO_NAME,
-				      Xdvi_EDITOR_MENU_NAME,
-				      "Editor for Source Specials: ",
-				      resource.editor,
-				      form1, browser_command,
-				      m_editor_list,
-				      select_editor_cb, tinfo);
+    h_create_command(Xdvi_EDITOR_COMBO_NAME,
+		     Xdvi_EDITOR_MENU_NAME,
+		     "Editor for Source Specials: ",
+		     resource.editor,
+		     form1, browser_command,
+		     m_editor_list,
+		     select_editor_cb, tinfo);
     
     /* #if PS_GS */
     /*     Widget b2 = XmCreateLabelGadget(rowcol, "[x] Use Ghostscript to interpret PS specials", NULL, 0); */

@@ -121,5 +121,18 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        uptex - https://texwiki.texjp.org/?upTeX%2CupLaTeX
        xetex - http://tug.org/xetex/
    
-xdvik 22.87 - checked 14apr14
+xdvik 22.87.03 - checked 6apr16
   http://sourceforge.net/projects/xdvi/files/xdvik/
+  Procedure for updating xdvik from sourceforge release:
+tar xf ...
+diff -crN2 \
+  -x .cvsignore -x configure -x autom4te.cache -x Makefile.in -x ChangeLog \
+  xdvik xdvik-22.87.03/texk/xdvik >/tmp/c
+cd xdvik
+patch -p1 </tmp/c
+reautoconf
+add import entry to ChangeLog, update texk/README
+remove unpacked ../xdvik-*
+make sure it builds
+commit.
+

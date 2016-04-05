@@ -81,7 +81,8 @@
 # define XIO_OUT 2
 #endif /* HAVE_POLL */
 
-static struct xchild print_child = {NULL, 0, True, "dvips", NULL, NULL, NULL };
+static struct xchild print_child = {NULL, 0, "dvips", NULL, NULL, SIGKILL, NULL
+				   };
 
 static char *read_from_dvips(int, void *);
 
@@ -512,7 +513,8 @@ call_ps2pdf(const char *path, const struct save_or_print_info *info)
 
     /* need to run this in globals.xdvi_dir again, since the dvips conversion directory
        globals.dvi_file.dirname may not be writable! */
-    if (!fork_process("ps2pdf", True, globals.cwd, ps2pdf_exited, (void *)info, (char **)argv)) {
+    if (!fork_process("ps2pdf", True, globals.cwd, ps2pdf_exited, (void *)info,
+      0, (char **)argv)) {
 	popup_message(globals.widgets.top_level,
 		      MSG_ERR,
 		      NULL, "Couldn't fork %s process: %s\n", argv[0], strerror(errno));

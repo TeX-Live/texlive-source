@@ -763,22 +763,26 @@ static WidgetClassRec drawingWidgetClass = {
 
 
 int
-atopix(const char *arg, Boolean allow_minus)
+atopix(const char *arg)
 {
     int len = strlen(arg);
     const char *arg_end = arg;
-    char tmp[11];
-    double factor;
+    char tmp[16];
+    double factor, val;
 
-    if (allow_minus && *arg_end == '-')
-	++arg_end;
     while ((*arg_end >= '0' && *arg_end <= '9') || *arg_end == '.')
-	if (arg_end >= arg + XtNumber(tmp) - 1)
-	    return 0;
-	else
-	    ++arg_end;
-    memcpy(tmp, arg, arg_end - arg);
-    tmp[arg_end - arg] = '\0';
+	++arg_end;
+
+    if (arg_end >= arg + XtNumber(tmp) - 1) {	/* should be rare */
+	char *tmp_var = xstrndup(arg, arg_end - arg);
+	val = atof(tmp_var);
+	free(tmp_var);
+    }
+    else {
+	memcpy(tmp, arg, arg_end - arg);
+	tmp[arg_end - arg] = '\0';
+	val = atof(tmp);
+    }
 
 #if A4
     factor = 1.0 / 2.54;	/* cm */
@@ -819,7 +823,13 @@ atopix(const char *arg, Boolean allow_minus)
 	    break;
 	}
 
-    return factor * atof(tmp) * resource.pixels_per_inch + 0.5;
+    return factor * val * resource.pixels_per_inch + 0.5;
+}
+
+int
+atopix_signed(const char *arg)
+{
+    return *arg == '-' ? -atopix(arg + 1) : atopix(arg);
 }
 
 #if CHECK_APP_FILEVERSION
@@ -1893,8 +1903,8 @@ compile_modifiers(const char **pp, struct mouse_acts *mactp)
 {
     const char		*p = *pp;
     const char		*p1;
-    LateBindingsPtr		latep = NULL;
-    int			nlate;
+    LateBindingsPtr	latep = NULL;
+    int			nlate = 3;
 
     while (*p == ' ' || *p == '\t')
 	++p;
@@ -1983,7 +1993,7 @@ compile_modifiers(const char **pp, struct mouse_acts *mactp)
 		LateBindingsPtr lp1;
 
 		if (latep == NULL) {
-		    nlate = 3;
+		    /* nlate = 3; (done earlier to avoid compiler warning) */
 		    latep = xmalloc(3 * sizeof(LateBindings));
 		    latep->ref_count = 1;
 		}

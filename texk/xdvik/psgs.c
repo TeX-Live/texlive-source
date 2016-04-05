@@ -37,7 +37,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 /* Condition for retrying a write */
 #include <errno.h>
-#include <strings.h>
+#include <string.h>
 
 #include "kpathsea/c-pathmx.h"
 #include "dvi-init.h"
@@ -174,7 +174,7 @@ static	struct xio	gs_xio		= {NULL, 0, XIO_IN,
 					   NULL /* data */
 };
 
-static struct xchild gs_child = { NULL, 0, True, NULL, NULL, NULL, gs_died };
+static struct xchild gs_child = { NULL, 0, NULL, NULL, NULL, SIGKILL, gs_died };
 #define	GS_pid		(gs_child.pid)
 
 /* It seems that XtTimers don't work reliably with xdvi's event treatment;

@@ -33,7 +33,10 @@ CPPFLAGS="$X_CFLAGS $CPPFLAGS"
 LDFLAGS="$X_LIBS $LDFLAGS"
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <X11/extensions/XInput2.h>]],
                                 [[Display *DISP; int ndevices;
-XIDeviceInfo *info = XIQueryDevice(DISP, XIAllDevices, &ndevices);]])],
+XIDeviceInfo *info = XIQueryDevice(DISP, XIAllDevices, &ndevices);
+#if (XI_2_Major < 2 || (XI_2_Major == 2 && XI_2_Minor < 1))
+choke me "XInput version is < 2.1"
+#endif]])],
                [xdvi_cv_xinput_2_1=yes],
                [xdvi_cv_xinput_2_1=no])
 LIBS=$xdvi_xi2_save_LIBS

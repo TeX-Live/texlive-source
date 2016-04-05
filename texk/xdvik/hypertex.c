@@ -1954,7 +1954,7 @@ launch_xdvi(const char *filename, const char *anchor_name)
       printing to stderr, so we use plain fork/exec (see comments in util.c)
     */
 #if 0
-    fork_process(argv[0], False, NULL, NULL, NULL, argv);
+    fork_process(argv[0], False, NULL, NULL, NULL, 0, argv);
 #else
     {
 	int pid;
@@ -2138,7 +2138,7 @@ launch_program(const char *filename)
     strcpy(syscmd + offset + (ptr - viewer) + strlen(fullpath), ptr + strlen(format_string));
 
     /*
-      mailcap(4) says that the mailcap command shall be passed to system(),
+      mailcap(5) says that the mailcap command shall be passed to system(),
       so we musn't use fork_process() directly here. Instead, we pass the command
       to `/bin/sh -c', but via fork_process so that
       
@@ -2154,9 +2154,11 @@ launch_program(const char *filename)
     argv[2] = syscmd;
     argv[3] = NULL;
 #if COPY_TMP_FILE
-    fork_process("/bin/sh", False, globals.dvi_file.dirname, remove_temp_file, fullpath, argv);
+    fork_process("/bin/sh", False, globals.dvi_file.dirname, remove_temp_file,
+      fullpath, 0, argv);
 #else
-    fork_process("/bin/sh", False, globals.dvi_file.dirname, NULL, NULL, argv);
+    fork_process("/bin/sh", False, globals.dvi_file.dirname, NULL,
+      NULL, 0, argv);
 #endif
 
     FREE(viewer);

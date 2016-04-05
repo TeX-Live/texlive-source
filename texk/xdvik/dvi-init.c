@@ -894,8 +894,8 @@ set_paper_type(const char *arg)
     arg1 = strchr(arg, 'x');
     if (arg1 == NULL)
 	return False;
-    m_paper_unshrunk_w = atopix(arg, False);
-    m_paper_unshrunk_h = atopix(arg1 + 1, False);
+    m_paper_unshrunk_w = atopix(arg);
+    m_paper_unshrunk_h = atopix(arg1 + 1);
 
     globals.grid_paper_unit = atopixunit(arg);
     

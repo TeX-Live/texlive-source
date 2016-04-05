@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2013  Paul Vojta and others
+Copyright (c) 1990-2015  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -49,7 +49,6 @@ in xdvi.c.
 #include "search-internal.h"
 #include "encodings.h"
 #include "filehist.h"
-#include "exit-handlers.h"
 #include "xm_prefs.h" /* for preferences_changed() */
 
 #include <errno.h>
@@ -282,50 +281,6 @@ try_open_mode(const char *fname, int flags, mode_t mode)
     return fd;
 }
 
-
-/*
- * This routine should be used for all exits. (SU: This is different
- * from non-k xdvi, where it's only used for `non-early' exits; all
- * routines called here should be aware of their own state and either
- * perform cleanup or just return, unless xdvi_exit() itself checks for
- * the status).
- */
-
-void
-xdvi_exit(int status)
-{
-    /* do the following only if the window has been opened: */
-    if (globals.widgets.top_level != 0 && XtIsRealized(globals.widgets.top_level)) {
-	char *filehist;
-	file_history_set_page(current_page);
-	filehist = file_history_get_list();
-	store_preference(NULL, "fileHistory", "%s", filehist);
-	free(filehist);
-
-#if MOTIF
-	if (preferences_changed()) {
-	    return;
-	}
-	/*      else { */
-	/*  	fprintf(stderr, "Preferences not changed.\n"); */
-	/*      } */
-#endif
-	/* try to save user preferences, unless we're exiting with an error */
-	if (status == EXIT_SUCCESS && !save_user_preferences(True))
-	    return;
-    
-	/* Clean up the "xdvi windows" property in the root window.  */
-	update_window_property(XtWindow(globals.widgets.top_level), False);
-    }
-
-#if PS
-    ps_destroy();
-#endif
-
-    call_exit_handlers();
-
-    exit(status);
-}
 
 /*
  *	invoked on SIGSEGV: try to stop gs before aborting, to prevent gs
@@ -1008,11 +963,18 @@ read_child_error(int fd, void *data)
  *
  * If dirname != NULL, the child will chdir into dirname before running the
  * command.
+ *
+ * If killsig == 0, the process will not be killed when xdvi terminates.
+ * If killsig > 0, the process will be sent this signal when xdvi terminates.
+ * If killsig < 0, the process will be given its own group, and the whole group
+ * will be sent -killsig when xdvi terminates.  This is useful when invoking
+ * /bin/sh.  Generally killsig (if nonzero) should be SIGKILL or -SIGKILL.
  */
 Boolean
 fork_process(const char *proc_name, Boolean redirect_stdout,
 	     const char *dirname,
 	     childProcT exit_proc, void *data,
+	     int killsig,
 	     char *const argv[])
 {
     int i, pid;
@@ -1069,6 +1031,15 @@ fork_process(const char *proc_name, Boolean redirect_stdout,
 #endif /* TRY_FIX */
 	close(err_pipe[0]);	/* no reading from stderr */
 
+	/* (Maybe) set session ID, so that kill will also affect subprocesses */
+	if (killsig < 0) {
+	    if (setsid() == -1) {
+		perror("setsid");
+		_exit(EXIT_FAILURE);
+		return False;	/* make compiler happy */
+	    }
+	}
+
 	/* redirect writing to stderr */
 	if (dup2(err_pipe[1], STDERR_FILENO) != STDERR_FILENO) {
 	    perror("dup2 for stderr");
@@ -1116,6 +1087,7 @@ fork_process(const char *proc_name, Boolean redirect_stdout,
 	my_child->pid = pid;
 	my_child->name = buf;
 	my_child->data = data;
+	my_child->killsig = killsig;
 	if (exit_proc == NULL) { /* use default exit procedure */
 	    my_child->proc = handle_child_exit;
 	}
