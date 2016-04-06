@@ -208,6 +208,7 @@ read_all_cnf (kpathsea kpse)
         /* Concatenate consecutive lines that end with \.  */
         while (len > 0 && line[len - 1] == '\\') {
           string next_line = read_line (cnf_file);
+          lineno++;
           line[len - 1] = 0;
           if (!next_line) {
             WARNING2 ("%s:%d: (kpathsea) Last line of file ends with \\",
