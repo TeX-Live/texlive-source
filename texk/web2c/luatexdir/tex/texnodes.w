@@ -3022,11 +3022,9 @@ void show_node_list(int p)
                     if (subtype(p) != normal) {
                         print_char('(');
                         if ((subtype(p) - 1) < thin_mu_skip_code) {
-                            print_cmd_chr(assign_glue_cmd,
-                                          glue_base + (subtype(p) - 1));
+                            print_cmd_chr(assign_glue_cmd, glue_base + (subtype(p) - 1));
                         } else if (subtype(p) < cond_math_glue) {
-                            print_cmd_chr(assign_mu_glue_cmd,
-                                          glue_base + (subtype(p) - 1));
+                            print_cmd_chr(assign_mu_glue_cmd, glue_base + (subtype(p) - 1));
                         } else if (subtype(p) == cond_math_glue) {
                             tprint_esc("nonscript");
                         } else {
@@ -3074,9 +3072,12 @@ void show_node_list(int p)
                     tprint("on");
                 else
                     tprint("off");
-                if (width(p) != 0) {
+                if (!glue_is_zero(p)) {
+                    tprint(", glued ");
+                    print_spec(p, NULL);
+                } else if (surround(p) != 0) {
                     tprint(", surrounded ");
-                    print_scaled(width(p));
+                    print_scaled(surround(p));
                 }
                 break;
             case penalty_node:

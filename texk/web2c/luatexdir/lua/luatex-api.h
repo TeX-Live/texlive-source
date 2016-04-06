@@ -698,7 +698,6 @@ make_lua_key(parameters);\
 make_lua_key(pardir);\
 make_lua_key(parshape);\
 make_lua_key(pdf_data);\
-make_lua_key(pdftex);\
 make_lua_key(pdf_destination);\
 make_lua_key(pdf_literal);\
 make_lua_key(pen_broken);\
@@ -797,7 +796,6 @@ make_lua_key(transform);\
 make_lua_key(trim);\
 make_lua_key(type);\
 make_lua_key(uchyph);\
-make_lua_key(umath);\
 make_lua_key(units_per_em);\
 make_lua_key(used);\
 make_lua_key(user_id);\
@@ -1051,7 +1049,6 @@ init_lua_key(pagesattributes);\
 init_lua_key(parameters);\
 init_lua_key(pardir);\
 init_lua_key(parshape);\
-init_lua_key(pdftex);\
 init_lua_key(pdf_destination);\
 init_lua_key(pdf_literal);\
 init_lua_key(pen_broken);\
@@ -1149,7 +1146,6 @@ init_lua_key(transform);\
 init_lua_key(trim);\
 init_lua_key(type);\
 init_lua_key(uchyph);\
-init_lua_key(umath);\
 init_lua_key(units_per_em);\
 init_lua_key(used);\
 init_lua_key(user_id);\
@@ -1470,7 +1466,6 @@ use_lua_key(parameters);
 use_lua_key(pardir);
 use_lua_key(parshape);
 use_lua_key(pdf_data);
-use_lua_key(pdftex);
 use_lua_key(pdf_destination);
 use_lua_key(pdf_literal);
 use_lua_key(pen_broken);
@@ -1569,7 +1564,6 @@ use_lua_key(transform);
 use_lua_key(trim);
 use_lua_key(type);
 use_lua_key(uchyph);
-use_lua_key(umath);
 use_lua_key(units_per_em);
 use_lua_key(used);
 use_lua_key(user_id);
