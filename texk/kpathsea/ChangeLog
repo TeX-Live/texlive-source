@@ -1,3 +1,7 @@
+2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmf.cnf: Typo.
+
 2016-04-06  Karl Berry  <karl@tug.org>
 
 	* kpsewhich.c, et al.: copyright 2016.
