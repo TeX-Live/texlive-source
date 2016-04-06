@@ -1,6 +1,6 @@
 /* cnf.c: read config files.
 
-   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2016 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -39,14 +39,18 @@
 
 #define CNF_HASH_SIZE 751
 #define CNF_NAME "texmf.cnf"
-
-/* Do a single line in a cnf file: if it's blank or a comment, skip it.
-   Otherwise, parse <variable>[.<program>] [=] <value>.  Do
-   this even if the <variable> is already set in the environment, since
-   the envvalue might contain a trailing :, in which case we'll be
-   looking for the cnf value.  */
 
-static void
+
+/* Do a single line in a cnf file: if it's blank or a comment or
+   erroneous, skip it.  Otherwise, parse
+     <variable>[.<program>] [=] <value>
+   Do this even if the <variable> is already set in the environment,
+   since the envvalue might contain a trailing :, in which case we'll be
+   looking for the cnf value.
+   
+   We return NULL if ok, an error string otherwise.  */
+
+static string
 do_line (kpathsea kpse, string line)
 {
   unsigned len;
@@ -55,16 +59,16 @@ do_line (kpathsea kpse, string line)
   string prog = NULL;
 
   /* Skip leading whitespace.  */
-  while (ISSPACE (*line))
+  while (*line && ISSPACE (*line))
     line++;
 
   /* More to do only if we have non-comment material left.  */
   if (*line == 0 || *line == '%' || *line == '#')
-    return;
+    return NULL;
 
   /* Remove trailing comment: a % or # preceded by whitespace.  Also
      remove any whitespace before that.  For example, the value for
-       foo = a#b %something
+       foo = a#b  %something
      is a#b.  */
   value = line + strlen (line) - 1; /* start at end of line */
   while (value > line) {            
@@ -79,17 +83,21 @@ do_line (kpathsea kpse, string line)
 
   /* The variable name is everything up to the next space or = or `.'.  */
   start = line;
-  while (!ISSPACE (*line) && *line != '=' && *line != '.')
+  while (*line && !ISSPACE (*line) && *line != '=' && *line != '.')
     line++;
 
   /* `line' is now one character past the end of the variable name.  */
   len = line - start;
-  var = (string)xmalloc (len + 1);
+  if (len == 0) {
+    return ("No cnf variable name");
+  }
+  
+  var = (string) xmalloc (len + 1);
   strncpy (var, start, len);
   var[len] = 0;
 
   /* If the variable is qualified with a program name, find out which. */
-  while (ISSPACE (*line))
+  while (*line && ISSPACE (*line))
     line++;
   if (*line == '.') {
     /* Skip spaces, then everything up to the next space or =.  */
@@ -103,17 +111,17 @@ do_line (kpathsea kpse, string line)
     /* It's annoying to repeat all this, but making a tokenizing
        subroutine would be just as long and annoying.  */
     len = line - start;
-    prog = (string)xmalloc (len + 1);
+    prog = (string) xmalloc (len + 1);
     strncpy (prog, start, len);
     prog[len] = 0;
   }
 
   /* Skip whitespace, an optional =, more whitespace.  */
-  while (ISSPACE (*line))
+  while (*line && ISSPACE (*line))
     line++;
   if (*line == '=') {
     line++;
-    while (ISSPACE (*line))
+    while (*line && ISSPACE (*line))
       line++;
   }
 
@@ -122,8 +130,11 @@ do_line (kpathsea kpse, string line)
   len = strlen (start);
   while (len > 0 && ISSPACE (start[len - 1]))
     len--;
-
-  value = (string)xmalloc (len + 1);
+  if (len == 0) {
+    return ("No cnf value");
+  }
+  
+  value = (string) xmalloc (len + 1);
   strncpy (value, start, len);
   value[len] = 0;
 
@@ -155,10 +166,13 @@ do_line (kpathsea kpse, string line)
     free (prog);
     var = lhs;
   }
+  /* last-ditch debug */
+  /* fprintf (stderr, "kpse/cnf.c hash_insert(%s,%s)\n", var, value); */
   hash_insert (&(kpse->cnf_hash), var, value);
 
-  /* We could check that anything remaining is preceded by a comment
-     character, but let's not bother.  */
+  /* We should check that anything remaining is preceded by a comment
+     character, but we don't.  Sorry.  */
+  return NULL;
 }
 
 /* Read all the configuration files in the path.  */
@@ -176,12 +190,16 @@ read_all_cnf (kpathsea kpse)
   if (cnf_files && *cnf_files) {
     for (cnf = cnf_files; *cnf; cnf++) {
       string line;
+      string msg;
+      unsigned lineno = 0;
       FILE *cnf_file = xfopen (*cnf, FOPEN_R_MODE);
       if (kpse->record_input)
         kpse->record_input (*cnf);
 
       while ((line = read_line (cnf_file)) != NULL) {
-        unsigned len = strlen (line);
+        unsigned len;
+        lineno++;
+        len = strlen (line);
         /* Strip trailing spaces. */
         while (len > 0 && ISSPACE(line[len-1])) {
           line[len - 1] = 0;
@@ -192,7 +210,8 @@ read_all_cnf (kpathsea kpse)
           string next_line = read_line (cnf_file);
           line[len - 1] = 0;
           if (!next_line) {
-            WARNING1 ("kpathsea: %s: Last line of file ends with \\", *cnf);
+            WARNING2 ("%s:%d: (kpathsea) Last line of file ends with \\",
+                       *cnf, lineno);
           } else {
             string new_line;
             new_line = concat (line, next_line);
@@ -202,7 +221,11 @@ read_all_cnf (kpathsea kpse)
           }
         }
 
-        do_line (kpse, line);
+        msg = do_line (kpse, line);
+        if (msg) {
+          WARNING4 ("%s:%d: (kpathsea) %s on line: %s",
+                    *cnf, lineno, msg, line);
+        }
         free (line);
       }
 

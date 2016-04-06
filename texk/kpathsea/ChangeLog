@@ -1,3 +1,13 @@
+2016-04-06  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFVAR, TEXMFCONFIG): 2016.
+
+	* cnf.c (do_line): do not keep checking ISSPACE beyond
+	end of string.  (Can crash on lines without spaces.)
+	Return error string if problems.
+	* kpathsea_cnf_get: give warning, with line number,
+        if do_line returns a message.
+
 2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmf.cnf: Typo.
