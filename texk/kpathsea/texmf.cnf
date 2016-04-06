@@ -4,12 +4,13 @@
 % If you modify this original file, YOUR CHANGES WILL BE LOST when it is
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy! -- in ../../texmf.cnf.  That is, if this file is
-% installed in /some/path/to/texlive/2015/texmf-dist/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2015/texmf.cnf.
+% installed in /some/path/to/texlive/2016/texmf-dist/web2c/texmf.cnf,
+% add your custom settings to /some/path/to/texlive/2016/texmf.cnf.
 % 
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
 %
+% Each statement must be
 % Any identifier (sticking to A-Za-z_ for names is safest) can be assigned.
 % The `=' (and surrounding spaces) is optional.
 % $foo (or ${foo}) in a value expands to the envvar or cnf value of foo.
@@ -76,10 +77,10 @@ TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 TEXMFHOME = ~/texmf
 
 % TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
-TEXMFVAR = ~/.texlive2015/texmf-var
+TEXMFVAR = ~/.texlive2016/texmf-var
 
 % TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
-TEXMFCONFIG = ~/.texlive2015/texmf-config
+TEXMFCONFIG = ~/.texlive2016/texmf-config
 
 % List all the texmf trees. For an explanation of what they are, see the
 % TeX Live manual.
@@ -562,6 +563,7 @@ shell_escape = p
 shell_escape_commands = \
 bibtex,bibtex8,\
 extractbb,\
+gregorio,
 kpsewhich,\
 makeindex,\
 mpost,\
@@ -571,9 +573,6 @@ repstopdf,\
 % dvips - but external commands can be executed, need at least -R1.
 % epspdf, ps2pdf, pstopdf - need to respect openout_any,
 %   and gs -dSAFER must be used and check for shell injection with filenames.
-% (img)convert (ImageMagick) - delegates.mgk possible misconfig, besides,
-%   without Unix convert it hardly seems worth it, and Windows convert
-%   is something completely different that destroys filesystems, so skip.
 % pygmentize - but is the filter feature insecure?
 % ps4pdf - but it calls an unrestricted latex.
 % rpdfcrop - maybe ok, but let's get experience with repstopdf first.
@@ -649,8 +648,8 @@ file_line_error_style = f
 % Used by makempx to run TeX.  We use "etex" because MetaPost is
 % expecting DVI, and not "tex" because we want first line parsing.
 TEX = etex
-#
-# Use Japanese eptex for Japanese pmpost.
+
+% Use Japanese eptex for Japanese pmpost.
 TEX.pmpost = eptex
 
 % These variables specify the external program called for the

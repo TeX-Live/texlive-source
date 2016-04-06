@@ -1,6 +1,6 @@
 /* mingw32.h: declarations for mingw32.
 
-   Copyright 2009-2014 Taco Hoekwater <taco@luatex.org>.
+   Copyright 2009-2016 Taco Hoekwater <taco@luatex.org>.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
