@@ -10,11 +10,14 @@
 % What follows is a super-summary of what this .cnf file can
 % contain. Please read the Kpathsea manual for more information.
 %
-% Each statement must be
+% Each statement in this file boils down to:
+%   <variable>[.<program>] [=] <value>
+%
+% Neither the <variable> nor the <value> may be empty.
 % Any identifier (sticking to A-Za-z_ for names is safest) can be assigned.
 % The `=' (and surrounding spaces) is optional.
 % $foo (or ${foo}) in a value expands to the envvar or cnf value of foo.
-% Long lines can be continued with a \.
+% Lines can be continued with a \; no whitespace removal is done.
 %
 % Earlier entries (in the same or another file) override later ones, and
 % an environment variable foo overrides any texmf.cnf definition of foo.
@@ -37,8 +40,7 @@
 %   expanded into the compile-time default. Probably not what you want.
 %
 % Brace notation is supported, for example: /usr/local/{mytex,othertex}
-% expands to /usr/local/mytex:/usr/local/othertex.  We make extensive
-% use of this.
+% expands to /usr/local/mytex:/usr/local/othertex.
 
 
 %  Part 1: Search paths and directories.
