@@ -1,3 +1,11 @@
+2016-04-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftex.web (Replace |z|...): also check alpha<@'400
+	to avoid crash with pathological/recursive virtual fonts.
+	Report from Hans and Luigi, 12 Nov 2015 19:51:59 (et al.), per
+	http://tracker.luatex.org/view.php?id=560#c1508
+	(Installed by Karl.)
+
 2016-04-06  Karl Berry  <karl@tug.org>
 
 	* pdftexextra.h (COPYRIGHT_HOLDER): don't specifically mention peb
