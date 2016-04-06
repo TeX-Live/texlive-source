@@ -1,3 +1,7 @@
+2016-04-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* All *.c, *.h files: Copyright year 2016.
+
 2015-06-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dirutil.h, getdestdir.h, mktexupd.h (removed): Merged ...
