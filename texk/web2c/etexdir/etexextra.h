@@ -2,7 +2,7 @@
 
    This is included by e-TeX, from etexextra.c.
 
-Copyright (C) 1995, 1996, 2009, 2014 Karl Berry.
+Copyright (C) 1995, 1996, 2009, 2014, 2016 Karl Berry.
 Copyright (C) 2004 Olaf Weber.
 
 This program is free software; you can redistribute it and/or modify
@@ -15,14 +15,13 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
+You should have received a copy of the GNU General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <etexdir/etex_version.h> /* for ETEX_VERSION */
 
 #define BANNER "This is e-TeX, Version 3.14159265-" ETEX_VERSION
-#define COPYRIGHT_HOLDER "Peter Breitenlohner"
+#define COPYRIGHT_HOLDER "Peter Breitenlohner et al"
 #define AUTHOR NULL
 #define PROGRAM_HELP ETEXHELP
 #define BUG_ADDRESS "tex-k@tug.org"

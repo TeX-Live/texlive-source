@@ -1,3 +1,8 @@
+2016-04-06  Karl Berry  <karl@tug.org>
+
+	* etexextra.h (COPYRIGHT_HOLDER): add et al. since
+	peb passed away in 2015 so can't hold later copyrights.
+
 2015-09-22  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* etriptest.test: Also check tripos.tex and etrip.out.
