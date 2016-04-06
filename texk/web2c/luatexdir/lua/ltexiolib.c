@@ -147,7 +147,11 @@ void flush_loggable_info(void)
 
 static int texio_setescape(lua_State * L)
 {
-    escape_controls = lua_tointeger(L,-1);
+    if (lua_type(L, 1) == LUA_TBOOLEAN) {
+        escape_controls = lua_toboolean(L,1);
+    } else {
+        escape_controls = lua_tointeger(L,1);
+    }
     return 0 ;
 }
 

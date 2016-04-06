@@ -2456,6 +2456,7 @@ void after_math(void)
         /* begin mathskip code */
         if (! glue_is_zero(math_skip)) {
             copy_glue_values(tail,math_skip);
+            surround(tail) = 0;
         }
         /* end mathskip code */
         if (dir_math_save) {
@@ -2474,6 +2475,7 @@ void after_math(void)
         /* begin mathskip code */
         if (! glue_is_zero(math_skip)) {
             copy_glue_values(tail,math_skip);
+            surround(tail) = 0;
         }
         /* end mathskip code */
         space_factor = 1000;
