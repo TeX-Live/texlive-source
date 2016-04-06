@@ -1,3 +1,7 @@
+2016-04-06  Karl Berry  <karl@tug.org>
+
+	* kpsewhich.c, et al.: copyright 2016.
+
 2016-03-06  Karl Berry  <karl@tug.org>
 
 	* version.ac: remove /dev for start of 2016 builds.
