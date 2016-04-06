@@ -1,5 +1,7 @@
 #!/bin/sh
 # Convert WEB programs not needing special treatment to C.
+# Public domain.  Originally written ca.1985 by Tom Rokicki,
+# Tim Morgan, Karl Berry, et al.
 
 : ${srcdir=.}
 
@@ -105,9 +107,13 @@ eval "cat $srcdir/web2c/common.defines $more_defines $pascalfile \
 # Using the above pipeline as the condition of an if does no good, since
 # typical sh's use the status of the first command as the pipeline result.
 # So check for an empty output file, or one with the error marker we put in.
-if test ! -s $cfile || grep @error@ $output_files >/dev/null; then
+if test ! -s "$cfile" || grep @error@ $output_files >/dev/null; then
   : ${TMPDIR=/tmp}
   # Don't just delete it, since it may be useful for debugging.
+  if test ! -s "$pascalfile"; then
+    echo "$0: $pascalfile empty, removing it." >&2
+    rm -f $pascalfile
+  fi
   echo "$0: conversion of $pascalfile failed, moving dregs:" >&2
   cmd="mv $output_files $TMPDIR"
   (cd $TMPDIR && rm -f $output_files)

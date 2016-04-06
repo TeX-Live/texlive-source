@@ -1,3 +1,8 @@
+2016-04-06  Karl Berry  <karl@tug.org>
+
+	* convert: remove $pascalfile if it is empty,
+	along with moving the non-empty .c output, etc.
+
 2015-06-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Integrate MFLua and MFLuaJIT.
