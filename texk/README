@@ -111,7 +111,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        eptex - https://osdn.jp/projects/eptex/
         etex - maintained here
       euptex - https://texwiki.texjp.org/?e-pTeX
-  mflua[jit] - https://github.com/luigiScarso/mflua
+  mflua[jit] - https://foundry.supelec.fr/projects/mflua/
     mplibdir - http://tug.org/metapost
       luatex - http://luatex.org
       pdftex - http://pdftex.org
@@ -135,4 +135,3 @@ add import entry to ChangeLog, update texk/README
 remove unpacked ../xdvik-*
 make sure it builds
 commit.
-

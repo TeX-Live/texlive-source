@@ -11,8 +11,8 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 \fi
 @end tex
 
-@set version 2015
-@set month-year May 2015
+@set version 2016
+@set month-year April 2016
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
