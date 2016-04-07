@@ -54,3 +54,9 @@ timestamps--notably, 'use-commit-times' must be set to 'yes' in your
 Subversion configuration (*note Build system tools::).  Barring buggy
 commits, no infrastructure tools are needed to do a normal build.
 
+
+Building on Debian
+------------------
+
+On Debian systems the necessary build dependencies are installed by
+	apt-get install libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev
