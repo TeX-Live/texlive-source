@@ -2331,7 +2331,7 @@ static int do_variable_pdf(halfword c)
     else if (scan_keyword("imagegamma"))           { do_variable_backend_int(c_pdf_image_gamma); }
     else if (scan_keyword("imagehicolor"))         { do_variable_backend_int(c_pdf_image_hicolor); }
     else if (scan_keyword("imageaddfilename"))     { do_variable_backend_int(c_pdf_image_addfilename); }
-    else if (scan_keyword("objcompresslevel"))     { do_variable_backend_int(c_pdf_objcompresslevel); }
+    else if (scan_keyword("objcompresslevel"))     { do_variable_backend_int(c_pdf_obj_compress_level); }
     else if (scan_keyword("inclusioncopyfonts"))   { do_variable_backend_int(c_pdf_inclusion_copy_font); }
     else if (scan_keyword("gentounicode"))         { do_variable_backend_int(c_pdf_gen_tounicode); }
     else if (scan_keyword("pkfixeddpi"))           { do_variable_backend_int(c_pdf_pk_fixed_dpi); }

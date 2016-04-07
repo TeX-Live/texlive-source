@@ -879,6 +879,7 @@ extern const char *node_subtypes_glyph[];
 extern const char *node_subtypes_disc[];
 extern const char *node_subtypes_marginkern[];
 extern const char *node_subtypes_list[];
+extern const char *node_subtypes_adjust[];
 extern const char *node_subtypes_math[];
 extern const char *node_subtypes_noad[];
 extern const char *node_subtypes_radical[];

@@ -237,8 +237,7 @@ const char *node_fields_whatsit_pdf_dest[] = {
     "xyz_zoom", "objnum", NULL
 };
 const char *node_fields_whatsit_pdf_action[] = {
-    "action_type", "named_id", "action_id", "file", "new_window", "data",
-    "ref_count", NULL
+    "action_type", "named_id", "action_id", "file", "new_window", "data", NULL
 };
 const char *node_fields_whatsit_pdf_thread[] = {
     "attr", "width", "depth", "height",  "named_id", "thread_id", "thread_attr", NULL
@@ -299,6 +298,9 @@ const char *node_subtypes_marginkern[] = {
 };
 const char *node_subtypes_list[] = {
     "unknown", "line", "box", "indent", "alignment", "cell", "equation", "equationnumber", NULL
+};
+const char *node_subtypes_adjust[] = {
+    "normal", "pre", NULL
 };
 const char *node_subtypes_math[] = {
     "beginmath", "endmath", NULL
