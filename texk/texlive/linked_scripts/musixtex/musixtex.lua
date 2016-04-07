@@ -1,12 +1,12 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.15"
+VERSION = "0.16c"
 
 --[[
      musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
      autosp as pre-processors (and deletes intermediate files)
 
-     (c) Copyright 2011-2015 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2011-2016 Bob Tennent rdt@cs.queensu.ca
                              and Dirk Laurie dirk.laurie@gmail.com
 
      This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,19 @@ VERSION = "0.15"
 --[[
 
   ChangeLog:
+
+     version 0.16c  2016-02-24 RDT
+       -interaction batchmode for -q
+       report_error reports only the first error
+
+     version 0.16b  2016-02-20 DL
+       Improved help message as suggested by Bob Tennent.
+
+     version 0.16a  2015-12-30 DL
+       Corrects bug in -g option reported by Christian Mondrup.
+
+     version 0.16  2015-12-24 DL
+       Versions read from tempfile and written to musixtex.log.
 
      version 0.15  2015-12-03 DL
        Option -q added, which redirects most screen output into 
@@ -109,7 +122,7 @@ Options: -v  version
          -s  stop at dvi
          -g  stop at ps
          -i  retain intermediate and log files
-         -q  quiet mode (give only musixtex's own messages)
+         -q  quiet mode (redirect screen logs, write summary on musixtex.log)
          -1  one-pass [pdf][la]tex processing
          -x  run makeindex
          -f  restore default processing
@@ -118,10 +131,14 @@ Four TeX engines are available via the -l and -p options.
     latex     -l
     pdfetex   -p
     pdflatex  -l -p
-The -F option allows any engine to be named. In that case, an attempt is made
-to deduce implied -l and -p settings from the presence or absence of the 
-strings `latex` and `pdf` in the name of the engine. If this is not correct,
-the user should explicitly specify the appropriate option.]]
+If the -F option is used, options -l and -p need to be set if the engine 
+name does not contain "latex" and "pdf" respectively. For example, the 
+above four engines can be replaced by:
+  -F "luatex --output-format=dvi" 
+  -F "lualatex --output-format=dvi"
+  -F "luatex" -p
+  -F "lualatex" -p
+]]
 end
 
 function whoami ()
@@ -172,6 +189,7 @@ function defaults()
   quiet = ""     -- set by "-q"
 end  
   
+------------------------------------------------------------------------ 
 
 if #arg == 0 then
   whoami()
@@ -187,6 +205,8 @@ if not musixlog then
    print"!! Can't open files for writing in current directory, aborting"
    os.exit(1)
 end
+
+------------------------------------------------------------------------
 
 print = function(...)
    orig_print(...)
@@ -228,6 +248,10 @@ function report_error(filename)
   end
   local trigger = false
   for line in log:lines() do
+    if trigger and line:match"^!" then 
+      -- report just the first error   
+      break
+    end
     trigger = trigger or line:match"^!"
     if trigger then
       io.stderr:write("!  "..line,"\n")
@@ -235,7 +259,7 @@ function report_error(filename)
   end
 end 
 
- function process_option(this_arg)
+function process_option(this_arg)
   if this_arg == "-v" then
     os.exit(0)
   elseif this_arg == "-h" then
@@ -256,9 +280,9 @@ end
     tex = arg[narg]
     force_engine = true
   elseif this_arg == "-s" then
-    dvi = false; ps2pdf = nil; 
+    dvi = false; ps2pdf = nil; protect.dvi = true
   elseif this_arg == "-g" then
-    dvi = dvips; ps2pdf = nil
+    dvi = dvips; ps2pdf = nil; protect.ps = true
   elseif this_arg == "-i" then
     cleanup = false
   elseif this_arg == "-x" then
@@ -269,8 +293,10 @@ end
     defaults()
   elseif this_arg == "-t" then
     tex, dvi, ps2pdf = nil,nil,nil
+    protect.tex = true
   elseif this_arg == "-m" then
-    pmx, tex, dvi, ps2pdf = nil,nil,nil
+    pmx, tex, dvi, ps2pdf = nil,nil,nil,nil
+    protect.pmx = true
   elseif this_arg == "-q" then
     if not tempname then
       tempname = tempname or os.tmpname()
@@ -381,7 +407,7 @@ function tex_process(tex,basename,extension)
     latex = true
   end
   if quiet ~= "" then
-    tex = tex .. " -halt-on-error"
+    tex = tex .. " -interaction batchmode"
   end
   local OK = (execute(tex .. " " .. filename) == 0)
   if passes ~= 1 then 
@@ -421,12 +447,70 @@ function tex_process(tex,basename,extension)
   end
 end
 
+--    Extracting version and path information from tempname.
+-- The targets below rely on the exact output format used by various
+-- programs and TeX files.
+targets = {
+mtxtex = "%(([^(]+mtx%.tex)%s*$",
+mtxlatex = "%(([^(]+mtxlatex%.sty)",
+mtxLaTeX = ".*mtxLaTeX.*",
+pmxtex = "%(([^(]+pmx%.tex)",
+musixtex = "%(([^(]+musixtex%.tex)",
+musixltx = "%(([^(]+musixltx%.tex)",
+musixlyr = "%(([^(]+musixlyr%.tex)",
+MTx = "This is (M%-Tx.->)",
+PMX = "This is (PMX[^\n]+)",
+pdftex = "This is (pdfTeX[^\n]+)",
+musixflx = "Musixflx%S+",
+autosp = "This is autosp.*$",
+index = "autosp,MTx,mtxtex,mtxlatex,mtxLaTeX,PMX,pmxtex,"..
+  "musixtex,musixltx,musixlyr,musixflx,pdftex"
+}
+
+extra_line = { mtxtex=true, musixtex=true, musixltx=true, pmxtex=true, 
+  musixlyr=true }
+
+function report_versions(tempname)
+  if not tempname then return end  -- only available with -q
+  local logs = io.open(tempname)
+  if not logs then 
+     print ("No version information: could not open "..tempname)
+     return
+  end
+  local versions = {}
+  local extra
+  musixlog:write("---   Packages actually used according to "..
+    tempname.."   ---\n")
+  for line in logs:lines() do
+    if extra then 
+      versions[extra] = versions[extra] .. "\n  " ..line
+      extra = false
+    else for target, pattern in pairs(targets) do 
+      if not versions[target] then
+        local found = line:match(pattern) 
+        if found then
+          extra = extra_line[target] and target
+          versions[target] = found
+        end 
+      end
+    end end
+  end
+  logs:close()
+  for target in targets.index:gmatch"[^,]+" do if versions[target] then
+    if target=="mtxLaTeX" then musixlog:write"  " end
+    musixlog:write(versions[target],"\n")
+  end end 
+end
+
+------------------------------------------------------------------------
+
 whoami()
 
 defaults()
 
 exit_code = 0
 narg = 1
+protect = {}  -- extensions not to be deleted, even if cleanup requested
 
 repeat
   this_arg = arg[narg]
@@ -438,12 +522,15 @@ repeat
     if basename and cleanup then
       remove("pmxaerr.dat")
       for ext in ("mx1,mx2,dvi,ps,idx,log,ilg,pml"):gmatch"[^,]+" do
-        remove(basename.."."..ext)
+        if not protect[ext] then remove(basename.."."..ext)
+        end
       end
-    end 
+    end
+    protect = {}
   end 
   narg = narg+1
 until narg > #arg 
 
+report_versions(tempname)
 musixlog:close()
 os.exit( exit_code )
