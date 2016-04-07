@@ -1,4 +1,4 @@
-(This file public domain.  Originally written by Mojca Miklavec, 2015.)
+(This file public domain.  Originally written by Mojca Miklavec, 2015-16.)
 
 Compiling TeX binaries on Solaris
 
@@ -55,7 +55,7 @@ the OpenCSW community):
     https://buildfarm.opencsw.org/source/xref/opencsw/csw/mgar/pkg/wget/trunk/files/map.wget
 
 > cat mapfile
-libc.so - SUNW_1.22.5 SUNWprivate_1.1 $ADDVERS=SUNW_1.22.5;
+libc.so - SUNW_1.22 SUNWprivate_1.1 $ADDVERS=SUNW_1.22;
 
 export LD_OPTIONS="-M $PWD/mapfile"
 
@@ -67,17 +67,20 @@ are not installed on Solaris by default):
               --without-libintl-prefix --without-libuuid --without-libpsl \
               --without-ssl --without-zlib
 
-The binary was built with gcc 4.9.2.
+The binary was built with gcc 5.2.
+The definition '#define _XOPEN_SOURCE 500' has been removed from 'src/sysdep.h'
+to avoid compile error due to the fact that GCC 5 switched to -std=99. 
 
 > pvs Master/tlpkg/installer/wget/wget.sparc-solaris
     libsocket.so.1 (SUNW_1.4);
     libnsl.so.1 (SUNW_1.7);
     librt.so.1 (SUNW_1.2);
-    libc.so.1 (SUNW_1.22.5, SUNWprivate_1.1);
+    libc.so.1 (SUNW_1.22, SUNWprivate_1.1);
 
 > ./Master/tlpkg/installer/wget/wget.sparc-solaris --version
-    GNU Wget 1.16.3 built on solaris2.10.
-    +digest -https +ipv6 -iri +large-file -nls -ntlm +opie -psl -ssl 
+    GNU Wget 1.17.1 built on solaris2.10.
+    +digest -gpgme -https +ipv6 -iri +large-file -metalink -nls -ntlm 
+    +opie -psl -ssl 
 
 (That list of configure options is current as of the above version of
 wget; not all those dependencies are present in earlier versions.)
@@ -88,6 +91,9 @@ Building xz
 The xz binaries would likewise depend on SUNW_1.22.6 by default, so we
 used the same hack with a map file to make it work on slightly older
 systems.
+
+> cat mapfile
+libc.so - SUNW_1.22 SUNWprivate_1.1 $ADDVERS=SUNW_1.22;
 
 > export LD_OPTIONS="-M $PWD/mapfile"
 > ./configure --disable-nls --disable-shared
