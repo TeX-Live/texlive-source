@@ -1956,10 +1956,13 @@ static int lua_nodelib_subtypes(lua_State * L)
         s = lua_tostring(L,1);
              if (lua_key_eq(s,glyph))           subtypes = node_subtypes_glyph;
         else if (lua_key_eq(s,glue))          { subtypes = node_subtypes_glue; l = 1; }
+        else if (lua_key_eq(s,boundary))        subtypes = node_subtypes_boundary;
         else if (lua_key_eq(s,penalty))         subtypes = node_subtypes_penalty;
         else if (lua_key_eq(s,kern))            subtypes = node_subtypes_kern;
         else if (lua_key_eq(s,rule))            subtypes = node_subtypes_rule;
-        else if (lua_key_eq(s,list))            subtypes = node_subtypes_list;
+        else if (lua_key_eq(s,list)
+             ||  lua_key_eq(s,hlist)
+             ||  lua_key_eq(s,vlist))           subtypes = node_subtypes_list; /* too many but ok as reserved */
         else if (lua_key_eq(s,adjust))          subtypes = node_subtypes_adjust;
         else if (lua_key_eq(s,disc))            subtypes = node_subtypes_disc;
         else if (lua_key_eq(s,fill))            subtypes = node_subtypes_fill;
@@ -1978,11 +1981,12 @@ static int lua_nodelib_subtypes(lua_State * L)
         t = lua_tointeger(L,1);
              if (t == glyph_node)               subtypes = node_subtypes_glyph;
         else if (t == glue_node)              { subtypes = node_subtypes_glue; l = 1; }
+        else if (t == boundary_node)            subtypes = node_subtypes_boundary;
         else if (t == penalty_node)             subtypes = node_subtypes_penalty;
         else if (t == kern_node)                subtypes = node_subtypes_kern;
         else if (t == rule_node)                subtypes = node_subtypes_rule;
-        else if (t == hlist_node)               subtypes = node_subtypes_list;
-        else if (t == vlist_node)               subtypes = node_subtypes_list;
+        else if((t == hlist_node)
+             || (t == vlist_node))              subtypes = node_subtypes_list;
         else if (t == adjust_node)              subtypes = node_subtypes_adjust;
         else if (t == disc_node)                subtypes = node_subtypes_disc;
         else if (t == glue_spec_node)           subtypes = node_subtypes_fill;
@@ -3131,6 +3135,8 @@ static int lua_nodelib_fast_getfield(lua_State * L)
             fast_metatable_or_nil(vlink(post_break(n)));
         } else if (lua_key_eq(s, replace)) {
             fast_metatable_or_nil(vlink(no_break(n)));
+        } else if (lua_key_eq(s, penalty)) {
+            lua_pushinteger(L, disc_penalty(n));
         } else {
             lua_pushnil(L);
         }
@@ -3875,6 +3881,8 @@ static int lua_nodelib_direct_getfield(lua_State * L)
             nodelib_pushdirect_or_nil(vlink(post_break(n)));
         } else if (lua_key_eq(s, replace)) {
             nodelib_pushdirect_or_nil(vlink(no_break(n)));
+        } else if (lua_key_eq(s, penalty)) {
+            lua_pushinteger(L, disc_penalty(n));
         } else {
             lua_pushnil(L);
         }
@@ -5136,6 +5144,8 @@ static int lua_nodelib_fast_setfield(lua_State * L)
             set_disc_field(post_break(n), nodelib_getlist(L, 3));
         } else if (lua_key_eq(s, replace)) {
             set_disc_field(no_break(n), nodelib_getlist(L, 3));
+        } else if (lua_key_eq(s, penalty)) {
+            disc_penalty(n) = (quarterword) lua_tointeger(L, 3);
         } else {
             return nodelib_cantset(L, n, s);
         }
@@ -5892,7 +5902,7 @@ static int lua_nodelib_direct_setdiscretionary(lua_State * L)
                     if (t > 4) {
                         subtype(n) = (quarterword) lua_tointeger(L,5);
                         if (t > 5) {
-                            penalty(n) = lua_tointeger(L,6);
+                            disc_penalty(n) = lua_tointeger(L,6);
                         }
                     }
                 } else {
@@ -6022,6 +6032,8 @@ static int lua_nodelib_direct_setfield(lua_State * L)
             set_disc_field(post_break(n), nodelib_popdirect(3));
         } else if (lua_key_eq(s, replace)) {
             set_disc_field(no_break(n), nodelib_popdirect(3));
+        } else if (lua_key_eq(s, penalty)) {
+            disc_penalty(n) = (quarterword) lua_tointeger(L, 3);
         } else {
             return nodelib_cantset(L, n, s);
         }

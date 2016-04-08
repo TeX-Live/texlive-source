@@ -348,7 +348,8 @@ static boolean check_expand_pars(internal_font_number f)
                     l = pop_node(); /* don't visit this node again */
                     run = false;
                 }
-if ((vlink(l) != null) && (type(l) == boundary_node) && ((subtype(l) == 1) || (subtype(l) == 3))) {
+if ((vlink(l) != null) && (type(l) == boundary_node) && (subtype(l) == protrusion_boundary) &&
+        ((boundary_value(l) == 1) || (boundary_value(l) == 3))) {
     /* skip next node */
     l = vlink(l);
 }
@@ -392,7 +393,8 @@ if ((vlink(l) != null) && (type(l) == boundary_node) && ((subtype(l) == 1) || (s
                 l = pop_node();
             }
             if ((r != l) && (r != null)) {
-if ((alink(r) != null) && (type(r) == boundary_node) && ((subtype(r) == 2) || (subtype(r) == 3))) {
+if ((alink(r) != null) && (type(r) == boundary_node) && (subtype(r) == protrusion_boundary) &&
+        ((boundary_value(r) == 2) || (boundary_value(r) == 3))) {
     /* skip next node */
     r = alink(r);
 }

@@ -139,8 +139,7 @@ typedef enum {
     end_group_cmd,                        /* end local grouping ( \.{\\endgroup} ) */
     omit_cmd,                             /* omit alignment template ( \.{\\omit} ) */
     ex_space_cmd,                         /* explicit space ( \.{\\\ } ) */
-    boundary_cmd,                         /* insert boundry node with value ( \.{\\boundary} ) */
-    no_boundary_cmd,                      /* suppress boundary ligatures ( \.{\\noboundary} ) */
+    boundary_cmd,                         /* insert boundry node with value ( \.{\\*boundary} ) */
     radical_cmd,                          /* square root and similar signs ( \.{\\radical} ) */
     super_sub_script_cmd,                 /* explicit super- or subscript */
     math_shift_cs_cmd,                    /* start- and endmath */

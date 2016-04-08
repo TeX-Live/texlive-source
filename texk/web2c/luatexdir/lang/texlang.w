@@ -709,6 +709,10 @@ static halfword find_next_wordstart(halfword r, halfword first_language)
     while (r != null) {
         switch (type(r)) {
         case boundary_node:
+            if (subtype(r) == word_boundary) {
+                start_ok = 1;
+            }
+            break;
         case whatsit_node:
             break;
         case glue_node:

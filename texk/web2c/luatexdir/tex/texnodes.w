@@ -278,6 +278,9 @@ const char *node_subtypes_leader[] = { /* 100+ */
 const char *node_subtypes_fill[] = {
     "stretch", "fi", "fil", "fill", "filll", NULL
 };
+const char *node_subtypes_boundary[] = {
+    "cancel", "user", "protrusion", "word", NULL
+};
 const char *node_subtypes_penalty[] = {
     "userpenalty", NULL
 };
@@ -2978,11 +2981,24 @@ void show_node_list(int p)
             case boundary_node:
                 if (subtype(p)==0) {
                     tprint_esc("noboundary");
-                } else{
-                    tprint_esc("boundary");
+                } else {
+                    switch (subtype(p)) {
+                        case 1:
+                            tprint_esc("boundary");
+                            break;
+                        case 2:
+                            tprint_esc("protrusionboundary");
+                            break;
+                        case 3:
+                            tprint_esc("wordboundary");
+                            break;
+                        default:
+                            tprint_esc("boundary");
+                            print_char(':');
+                            print_int(subtype(p));
+                            break;
+                    }
                     print_char('=');
-                    print_int(subtype(p));
-                    print_char(':');
                     print_int(boundary_value(p));
                 }
                 break;
