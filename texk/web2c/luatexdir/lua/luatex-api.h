@@ -503,6 +503,7 @@ make_lua_key(bot);\
 make_lua_key(bot_accent);\
 make_lua_key(bottom_left);\
 make_lua_key(bottom_right);\
+make_lua_key(boundary);\
 make_lua_key(box);\
 make_lua_key(box_left);\
 make_lua_key(box_left_width);\
@@ -597,6 +598,7 @@ make_lua_key(hangindent);\
 make_lua_key(hbox);\
 make_lua_key(head);\
 make_lua_key(height);\
+make_lua_key(hlist);\
 make_lua_key(hmode_par);\
 make_lua_key(hold_head);\
 make_lua_key(horiz_variants);\
@@ -808,6 +810,7 @@ make_lua_key(vert_italic);\
 make_lua_key(vert_variants);\
 make_lua_key(vmode_par);\
 make_lua_key(visiblefilename);\
+make_lua_key(vlist);\
 make_lua_key(vtop);\
 make_lua_key(widowpenalty);\
 make_lua_key(width);\
@@ -864,6 +867,7 @@ init_lua_key(bot);\
 init_lua_key(bot_accent);\
 init_lua_key(bottom_left);\
 init_lua_key(bottom_right);\
+init_lua_key(boundary);\
 init_lua_key(box);\
 init_lua_key(box_left);\
 init_lua_key(box_left_width);\
@@ -957,6 +961,7 @@ init_lua_key(hangindent);\
 init_lua_key(hbox);\
 init_lua_key(head);\
 init_lua_key(height);\
+init_lua_key(hlist);\
 init_lua_key(hmode_par);\
 init_lua_key(hold_head);\
 init_lua_key(horiz_variants);\
@@ -1158,6 +1163,7 @@ init_lua_key(vert_italic);\
 init_lua_key(vert_variants);\
 init_lua_key(vmode_par);\
 init_lua_key(visiblefilename);\
+init_lua_key(vlist);\
 init_lua_key(vtop);\
 init_lua_key(widowpenalty);\
 init_lua_key(width);\
@@ -1271,6 +1277,7 @@ use_lua_key(bot);
 use_lua_key(bot_accent);
 use_lua_key(bottom_left);
 use_lua_key(bottom_right);
+use_lua_key(boundary);
 use_lua_key(box);
 use_lua_key(box_left);
 use_lua_key(box_left_width);
@@ -1365,6 +1372,7 @@ use_lua_key(hangindent);
 use_lua_key(hbox);
 use_lua_key(head);
 use_lua_key(height);
+use_lua_key(hlist);
 use_lua_key(hmode_par);
 use_lua_key(hold_head);
 use_lua_key(horiz_variants);
@@ -1576,6 +1584,7 @@ use_lua_key(vert_italic);
 use_lua_key(vert_variants);
 use_lua_key(vmode_par);
 use_lua_key(visiblefilename);
+use_lua_key(vlist);
 use_lua_key(vtop);
 use_lua_key(widowpenalty);
 use_lua_key(width);

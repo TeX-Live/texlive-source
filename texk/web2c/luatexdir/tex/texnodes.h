@@ -649,7 +649,9 @@ typedef enum {
 
 typedef enum {
     cancel_boundary = 0,
-    user_boundary
+    user_boundary,
+    protrusion_boundary,
+    word_boundary,
 } boundary_subtypes ;
 
 #  define boundary_size 3
@@ -872,6 +874,7 @@ extern const char *node_subtypes_glue[];
 extern const char *node_subtypes_mathglue[];
 extern const char *node_subtypes_leader[];
 extern const char *node_subtypes_fill[];
+extern const char *node_subtypes_boundary[];
 extern const char *node_subtypes_penalty[];
 extern const char *node_subtypes_kern[];
 extern const char *node_subtypes_rule[];
