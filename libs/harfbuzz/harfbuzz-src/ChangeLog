@@ -1,11 +1,39 @@
-commit ba8370d07317e0103f1fd486524774d415056186
+commit 4f3d59a1877dcb94d09da48e9694a6c1b05a86fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Apr 8 13:41:20 2016 -0700
+
+    Blacklist another set of timesi.ttf and timesbi.ttf
+
+ src/hb-ot-layout.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit ef476be80d773332e0c768a3465d99381d76edd9
+Merge: a0331b5 d3134a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Apr 8 13:16:33 2016 -0700
+
+    Merge pull request #239 from ebraminio/dwfix
+
+    Improve DirectWrite backend
+
+commit d3134a66ad551ded726db9528d3c25459088f105
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Apr 5 21:01:05 2016 +0000
+
+    Fix when no feature is given
+
+ src/hb-directwrite.cc | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit a0331b55f7b45437980e1fc323251f4091bf2c4e
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Apr 4 16:25:32 2016 -0700
 
     1.2.5
 
- NEWS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ NEWS         | 7 +++++++
+ configure.ac | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
 commit 6e55199b5f097ac93bad38f32e9813e2da14c5a7
 Author: Behdad Esfahbod <behdad@behdad.org>
@@ -41,6 +69,95 @@ Date:   Mon Apr 4 14:34:25 2016 -0700
 
  src/hb-open-type-private.hh | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 4a104021697439fd21390a1f4cdc9310348882fa
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Apr 2 13:47:59 2016 +0000
+
+    Hide justification behind HB_DIRECTWRITE_EXPERIMENTAL_JUSTIFICATION
+
+ src/hb-directwrite.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 63ee9ca5d81b53eb035972754ed95572821c393c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 1 15:47:07 2016 +0000
+
+    Use standard types instead Windows favourites ones
+
+ src/hb-directwrite.cc | 100
+ +++++++++++++++++++++++++-------------------------
+ 1 file changed, 50 insertions(+), 50 deletions(-)
+
+commit adf20ba0d18d1506e633dcd9b4827a6c93abcadd
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 1 15:36:40 2016 +0000
+
+    Limit GetJustifiedGlyphs only to scripts with custom justification
+    character
+
+ src/hb-directwrite.cc | 98
+ +++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 60 insertions(+), 38 deletions(-)
+
+commit 32ae9d1b3ffbe7e26e654437a56a26a95fe9f5a6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Apr 1 06:39:57 2016 +0000
+
+    Add justification support
+
+ src/hb-directwrite.cc | 321
+ ++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 205 insertions(+), 116 deletions(-)
+
+commit 10c3d9e41520595c88dd2a8321590e03ce8fcf47
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 31 18:19:44 2016 +0000
+
+    Basic opentype features support
+
+ src/hb-directwrite.cc | 62
+ ++++++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 42 insertions(+), 20 deletions(-)
+
+commit d129897120d3ad414220d603557c15a60aa69fa6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 31 13:45:37 2016 +0000
+
+    Refactor and remove dupe getglyphs call
+
+ src/hb-directwrite.cc | 106
+ ++++++++++++++++++++++++--------------------------
+ 1 file changed, 51 insertions(+), 55 deletions(-)
+
+commit 5f1a8961008b93f72acc47336109af3a64e248d0
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Mar 31 12:26:16 2016 +0000
+
+    Better glyph offset support
+
+ src/hb-directwrite.cc | 44 ++++++++++++++++++++++++--------------------
+ 1 file changed, 24 insertions(+), 20 deletions(-)
+
+commit d691ba3f405738c6857450752b8cc0911dfcdb01
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Mar 30 20:21:40 2016 +0000
+
+    Don't fail when language is not set
+
+ src/hb-directwrite.cc | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+commit 1c00a46c7a608ebc0b03c5abfcfe7f2b9881d0df
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Wed Mar 30 20:15:09 2016 +0000
+
+    Make DirectWrite backend to work with different font sizes
+
+    Actually copyedited same logic from Uniscribe to make it just work
+
+ src/hb-directwrite.cc | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 commit 0251b0cc5c39272d2299d4b2ab802faaafe96837
 Author: Behdad Esfahbod <behdad@behdad.org>
