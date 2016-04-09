@@ -1,3 +1,7 @@
+2016-04-10  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_other_scripts): remove m-tx and pmx2pdf.
+
 2015-04-20  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am (texmf_other_scripts): Add fmtutil-sys.sh and
@@ -268,3 +272,4 @@
 
 	* Makefile.am (nobase_dist_script_SCRIPTS): add accfonts scripts.
 
+(This ChangeLog public domain.)
