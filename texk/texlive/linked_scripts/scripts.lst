@@ -80,7 +80,7 @@ lilyglyphs/lily-image-commands.py
 lilyglyphs/lily-rebuild-pdfs.py
 ltximg/ltximg.pl
 luaotfload/luaotfload-tool.lua
-m-tx/m-tx.lua
+makedtx/makedtx.pl
 make4ht/make4ht
 match_parens/match_parens
 mathspic/mathspic.pl
@@ -96,11 +96,11 @@ pax/pdfannotextractor.pl
 pdfcrop/pdfcrop.pl
 pedigree-perl/pedigree.pl
 perltex/perltex.pl
+petri-nets/pn2pdf
 pfarrei/a5toa4.tlu
 pfarrei/pfarrei.tlu
 pkfix-helper/pkfix-helper
 pkfix/pkfix.pl
-pmx/pmx2pdf.lua
 pmxchords/pmxchords.lua
 pst2pdf/pst2pdf.pl
 ptex2pdf/ptex2pdf.lua
@@ -110,6 +110,7 @@ pythontex/depythontex.py
 pythontex/pythontex.py
 rubik/rubikrotation.pl
 splitindex/splitindex.pl
+srcredact/srcredact.pl
 sty2dtx/sty2dtx.pl
 svn-multi/svn-multi.pl
 tex4ebook/tex4ebook
