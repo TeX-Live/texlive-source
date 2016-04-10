@@ -1,7 +1,7 @@
 /* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
-   Copyright 2010, 2014 Akira Kakuto.
-   Copyright 2013, 2014 TANAKA Takuji.
+   Copyright 2010, 2016 Akira Kakuto.
+   Copyright 2013, 2016 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -277,7 +277,6 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
       *p_av = argv;
       return file_system_codepage;
     } else {
-      WARNING1("kpathsea: Ignoring unknown encoding `%s'", enc);
       return 0;
     }
 }

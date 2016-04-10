@@ -1,3 +1,7 @@
+2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	*knj.c: Disable unnecessary warning (w32 only).
+
 2016-04-06  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFVAR, TEXMFCONFIG): 2016.
