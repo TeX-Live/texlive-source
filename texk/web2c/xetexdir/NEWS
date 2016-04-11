@@ -1,40 +1,34 @@
-XeTeX 0.99996 (just squeaked into TeXLive 2016)
+XeTeX 0.99996 (March 2016, for TeX Live 2016)
 
-XeTeX:
 * Added \XeTeXhyphenatablelength primitive that sets the maximum
   length of word that XeTeX will attempt to hyphenate (default: 63).
 
 ==============================================================
-XeTeX 0.99995 (targeting TeXLive 2016)
-==============================================================
+XeTeX 0.99995 (targeting TeX Live 2016)
 
-XeTeX:
-* Added \XeTeXgenerateactualtext primitive; bumped the DVI id byte to 7,
-  as this uses a new opcode that requires support in the driver.
+* Added \XeTeXgenerateactualtext primitive to record original Unicode
+  text in /ActualText annotations.
+* Bumped the DVI id byte to 7, as this uses a new opcode that requires
+  support in the driver.
 
 ==============================================================
 XeTeX 0.99994 (unreleased experimental version)
-==============================================================
 
-XeTeX:
 * Increased character class limit to 4096.
-* Added \XeTeXinterwordspaceshaping primitive.
+* Added \XeTeXinterwordspaceshaping primitive, for contextual
+  measurement (when set to 1) or full glyph shaping (when set to 2) of
+  interword space with smart-enough fonts.
 
 ==============================================================
-XeTeX 0.99993 was not really "released", but in July 2015 the
-version number was bumped in the TeXLive source when a new
-primitive was added.
-==============================================================
+XeTeX 0.99993 (July 2015)
 
-XeTeX:
 * Added \mdfivesum primitive
-* Removed -q from the default xdvipdfmx output-driver command line.
+* Removed -q from the default xdvipdfmx output-driver command line
+  (reverted 20160209, r39630 in TeX Live).
 
 ==============================================================
-XeTeX 0.99992 was released 20150507
-==============================================================
+XeTeX 0.99992 was released 20150507 (in TeX Live 2015)
 
-XeTeX:
 * New \Uchar and \Ucharcat primitives
 * Fix various issues with UTF-16 and characters >= U+10000.
 * Various image handling fixes by Akira Kakuto.
@@ -48,9 +42,7 @@ XeTeX:
 
 ==============================================================
 XeTeX 0.99991 was released 20140614
-==============================================================
 
-XeTeX:
 * Drop build date from “--version” output.
 * Drop Mac-specific image loading code, as it makes little sense after we
   dropped xdv2pdf. Supported image formats are the same on all platforms now.
@@ -70,9 +62,7 @@ XeTeX:
 
 ==============================================================
 XeTeX 0.9999.3 was released 20130528
-==============================================================
 
-XeTeX:
 * Fix bug with extensible accents resulting in invalid glyph id some times.
 * Fix alternate index in multiple alternates features to be start from zero
   like pre-0.9999 XeTeX.
@@ -80,9 +70,7 @@ XeTeX:
 
 ==============================================================
 XeTeX 0.9999.2 was released 20130406
-==============================================================
 
-XeTeX:
 * Fix regression in \XeTeXOT* primitives with fonts where the number of
   languages in a given script is not the same in both GSUB and GPOS tables.
 
@@ -104,9 +92,7 @@ xdvipdfmx:
 
 ==============================================================
 XeTeX 0.9999.1 was released 20130322
-==============================================================
 
-XeTeX:
 * Fix loading font files on PPC Mac OS 10.5 (and potentially other versions of
   Mac).
 
@@ -130,7 +116,6 @@ xdvipdfmx:
 
 ==============================================================
 XeTeX 0.9999.0 was released 20130311
-==============================================================
 
 * Port OpenType layout from ICU LayoutEngine to HarfBuzz.
   HarfBuzz is actively maintained and generally have much wider support for
@@ -203,7 +188,6 @@ XeTeX 0.9999.0 was released 20130311
 
 ==============================================================
 XeTeX 0.9998 was released 20120708
-==============================================================
 
 * Fix mismatch between fonts loaded by XeTeX and xdvipdfmx when multiple
   versions of the font exist.
