@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40203 2016-03-31 23:25:42Z karl $
+# $Id: tlmgr.pl 40376 2016-04-10 00:31:57Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40203 $';
-my $datrev = '$Date: 2016-04-01 01:25:42 +0200 (Fri, 01 Apr 2016) $';
+my $svnrev = '$Revision: 40376 $';
+my $datrev = '$Date: 2016-04-10 02:31:57 +0200 (Sun, 10 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1989,8 +1989,9 @@ sub action_backup {
     my %backups = get_available_backups($opts{"backupdir"}, 0);
     init_local_db(1);
     for my $p (sort keys %backups) {
-      clear_old_backups ($p, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"});
+      clear_old_backups ($p, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"}, 1);
     }
+    info("no action taken due to --dry-run\n") if $opts{"dry-run"};
     return ($F_OK | $F_NOPOSTACTION);
   }
 
@@ -2009,7 +2010,7 @@ sub action_backup {
   }
   foreach my $pkg (@todo) {
     if ($clean_mode) {
-      clear_old_backups ($pkg, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"});
+      clear_old_backups ($pkg, $opts{"backupdir"}, $opts{"clean"}, $opts{"dry-run"}, 1);
     } else {
       my $tlp = $localtlpdb->get_package($pkg);
       info("saving current status of $pkg to $opts{'backupdir'}/${pkg}.r" .
@@ -2020,6 +2021,7 @@ sub action_backup {
       }
     }
   }
+  info("no action taken due to --dry-run\n") if $opts{"dry-run"};
   # TODO_ERRORCHECKING neets checking of the above
   return ($F_OK);
 }
@@ -6129,8 +6131,9 @@ sub norm_tlpdb_path {
 # mind that with $autobackup == 0 all packages are cleared
 #
 sub clear_old_backups {
-  my ($pkg, $backupdir, $autobackup, $dry) = @_;
+  my ($pkg, $backupdir, $autobackup, $dry, $v) = @_;
 
+  my $verb = ($v ? 1 : 0);
   my $dryrun = 0;
   $dryrun = 1 if ($dry);
   # keep arbitrary many backups
@@ -6148,7 +6151,13 @@ sub clear_old_backups {
   my $i = 1;
   for my $e (reverse sort {$a <=> $b} @backups) {
     if ($i > $autobackup) {
-      log ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
+      # only echo out if explicitly asked for verbose which is done
+      # in the backup --clean action
+      if ($verb) {
+        info ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
+      } else {
+        log ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
+      }
       unlink("$backupdir/$pkg.r$e.tar.xz") unless $dryrun;
     }
     $i++;
