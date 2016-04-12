@@ -963,7 +963,6 @@ static void init_pdf_outputparameters(PDF pdf)
     pdf->draftmode = fix_int(int_par(draft_mode_code), 0, 1);
     pdf->compress_level = fix_int(pdf_compress_level, 0, 9);
     pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 5);
-/*    pdf->decimal_digits = fix_int(pdf_decimal_digits, 3, 6);*//* later, maybe (LS)*/
     pdf->gamma = fix_int(pdf_gamma, 0, 1000000);
     pdf->image_gamma = fix_int(pdf_image_gamma, 0, 1000000);
     pdf->image_hicolor = fix_int(pdf_image_hicolor, 0, 1);
@@ -1693,7 +1692,6 @@ char *get_resname_prefix(PDF pdf)
 
 void pdf_begin_page(PDF pdf)
 {
-    pdffloat f;
     int xform_attributes;
     scaled form_margin = pdf_xform_margin; /* was one_bp until SVN4066 */
     ensure_output_state(pdf, ST_HEADER_WRITTEN);
@@ -1755,16 +1753,6 @@ void pdf_begin_page(PDF pdf)
     pdf_dict_add_streaminfo(pdf);
     pdf_end_dict(pdf);
     pdf_begin_stream(pdf);
-    if (global_shipping_mode == SHIPPING_PAGE) {
-        /* Adjust transformation matrix for the magnification ratio */
-        if (mag != 1000) {
-            setpdffloat(f, mag, 3);
-            print_pdffloat(pdf, f);
-            pdf_puts(pdf, " 0 0 ");
-            print_pdffloat(pdf, f);
-            pdf_puts(pdf, " 0 0 cm\n");
-        }
-    }
     pos_stack_used = 0; /* start with empty stack */
     if (global_shipping_mode == SHIPPING_PAGE) {
         colorstackpagestart();
