@@ -593,7 +593,7 @@ PACKAGE_TARNAME='gregorio--tex-live-'
 PACKAGE_VERSION='4.1.1'
 PACKAGE_STRING='Gregorio (TeX Live) 4.1.1'
 PACKAGE_BUGREPORT='tex-k@tug.org'
-PACKAGE_URL=''
+PACKAGE_URL='http://gregorio-project.github.io/'
 
 ac_unique_file="gregorio-src/src/gregorio-utils.c"
 # Factoring default headers for most tests.
