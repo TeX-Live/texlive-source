@@ -1,3 +1,10 @@
+2016-04-12  Karl Berry  <karl@tug.org>
+
+	* mfluac.c (mfluaPREstartofMF): look for start_of_mf.lua
+	rather than start_of_MF.lua.
+	* mfluatrap/start_of_mf.lua: rename file.
+	* install mfluatrap/*.lua in Master/texmf-dist/scripts/mflua.
+
 2016-04-05  Karl Berry  <karl@tug.org>
 
 	* am/mflua.am: no need for inimflua.
