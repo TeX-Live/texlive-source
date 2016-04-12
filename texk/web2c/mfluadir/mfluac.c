@@ -466,10 +466,10 @@ int mfluaPREstartofMF(void)
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("start_of_MF.lua", kpse_lua_format, 0);
+  luafile = kpse_find_file("start_of_mf.lua", kpse_lua_format, 0);
   if (luafile==NULL) {
     res = 1;
-    lua_pushstring(L,"start_of_MF.lua not found");
+    lua_pushstring(L,"start_of_mf.lua not found");
     priv_lua_reporterrors(L, res);
     return 0;
   }

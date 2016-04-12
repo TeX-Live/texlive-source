@@ -2167,7 +2167,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	mfluadir/mfluatrap/print_path.lua \
 	mfluadir/mfluatrap/scan_direction.lua \
 	mfluadir/mfluatrap/skew_line_edges.lua \
-	mfluadir/mfluatrap/start_of_MF.lua \
+	mfluadir/mfluatrap/start_of_mf.lua \
 	mfluadir/mfluatrap/texmf.cnf \
 	mfluadir/mfluatrap/mfluatrap.diffs $(mfluajit_web_srcs) \
 	$(mfluajit_ch_src) mfluajitdir/mfluajit.defines \

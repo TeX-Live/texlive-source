@@ -145,6 +145,6 @@ EXTRA_DIST += \
 	mfluadir/mfluatrap/print_path.lua \
 	mfluadir/mfluatrap/scan_direction.lua \
 	mfluadir/mfluatrap/skew_line_edges.lua \
-	mfluadir/mfluatrap/start_of_MF.lua \
+	mfluadir/mfluatrap/start_of_mf.lua \
 	mfluadir/mfluatrap/texmf.cnf \
 	mfluadir/mfluatrap/mfluatrap.diffs
