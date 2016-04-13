@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 40251 $';
+my $svnrev = '$Revision: 40460 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -98,6 +98,10 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
   TeXLive::TLUtils::give_ctan_mirror();
   TeXLive::TLUtils::give_ctan_mirror_base();
   TeXLive::TLUtils::tlmd5($path);
+  TeXLive::TLUtils::tlchecksum($path);
+  TeXLive::TLUtils::setup_gpg();
+  TeXLive::TLUtils::verify_checksum($file, $url);
+  TeXLive::TLUtils::verify_signature($file, $url);
   TeXLive::TLUtils::compare_tlpobjs($tlpA, $tlpB);
   TeXLive::TLUtils::compare_tlpdbs($tlpdbA, $tlpdbB);
   TeXLive::TLUtils::report_tlpdb_differences(\%ret);
@@ -172,6 +176,10 @@ BEGIN {
     &create_mirror_list
     &extract_mirror_entry
     &tlmd5
+    &tlchecksum
+    &setup_gpg
+    &verify_checksum
+    &verify_signature
     &wsystem
     &xsystem
     &run_cmd
@@ -198,6 +206,7 @@ BEGIN {
 
 use Cwd;
 use Digest::MD5;
+use Digest::SHA;
 use Getopt::Long;
 use File::Temp;
 
@@ -1957,7 +1966,7 @@ not agree. Does nothing if neither of the check arguments is given.
 sub check_file {
   my ($xzfile, $checksum, $size) = @_;
   if ($checksum) {
-    if (tlmd5($xzfile) ne $checksum) {
+    if (tlchecksum($xzfile) ne $checksum) {
       tlwarn("TLUtils::check_file: found $xzfile, but hashsums differ, removing it.\n");
       unlink($xzfile);
       return;
@@ -2239,7 +2248,7 @@ sub setup_programs {
 # Return 0 if failure, 1 if success.
 #
 sub setup_unix_one {
-  my ($p, $def, $arg) = @_;
+  my ($p, $def, $arg, $donotwarn) = @_;
   our $tmp;
   my $test_fallback = 0;
   if (-r $def) {
@@ -2313,9 +2322,13 @@ sub setup_unix_one {
       if ($ret == 0) {
         debug("Using system $p (tested).\n");
       } else {
-        tlwarn("$0: Initialization failed (in setup_unix_one):\n");
-        tlwarn("$0: could not find a usable $p.\n");
-        tlwarn("$0: Please install $p and try again.\n");
+        if ($donotwarn) {
+          debug("$0: initialization of $p failed but ignored!\n");
+        } else {
+          tlwarn("$0: Initialization failed (in setup_unix_one):\n");
+          tlwarn("$0: could not find a usable $p.\n");
+          tlwarn("$0: Please install $p and try again.\n");
+        }
         return 0;
       }
     } else {
@@ -3575,6 +3588,221 @@ sub tlmd5 {
   } else {
     tlwarn("tlmd5, given file not readable: $file\n");
     return "";
+  }
+}
+
+sub tldigest {
+  return (Digest::SHA::sha512_hex(shift));
+}
+sub tl_short_digest {
+  return (Digest::MD5::md5_hex(shift));
+}
+
+sub tlchecksum {
+  my ($file) = @_;
+  if (-r $file) {
+    open(FILE, $file) || die "open($file) failed: $!";
+    binmode(FILE);
+    my $cshash = Digest::SHA->new(512)->addfile(*FILE)->hexdigest;
+    close(FILE);
+    return $cshash;
+  } else {
+    tlwarn("tlchecksum: given file not readable: $file\n");
+    return "";
+  }
+}
+
+sub tlchecksum_data {
+  my ($data) = @_;
+  my $cshash = Digest::SHA->new(512)->add($data)->hexdigest;
+  return $cshash;
+}
+
+
+=pod
+
+=item C<< setup_gpg() >>
+
+Tries to set up gpg command line C<$::gpg> used for
+verification of downloads.
+
+Returns 1/0 on success/failure.
+
+=cut
+
+sub setup_gpg {
+  my $master = shift;
+  # first search for a gpg binary
+  return 0 if (!setup_unix_one( 'gpg' , '/no/such/path', '--version', 1));
+  # ok, we found one
+  # Set up the gpg invocation:
+  $::gpg = "$::progs{'gpg'} ";
+  my $gpghome = ($ENV{'TL_GNUPGHOME'} ? $ENV{'TL_GNUPGHOME'} : 
+                                        "$master/tlpkg/gpg" );
+  $gpghome =~ s!/!\\!g if win32();
+  my $gpghome_quote = "\"$gpghome\"";
+  # mind the final space for following args
+  $::gpg .= "--homedir $gpghome_quote ";
+  if ($ENV{'TL_GNUPGARGS'}) {
+    $::gpg .= $ENV{'TL_GNUPGARGS'};
+  } else {
+    $::gpg .= "--no-secmem-warning --no-permission-warning ";
+  }
+  debug("gpg command line: $::gpg\n");
+  return 1;
+}
+
+=pod
+
+=item C<< slurp_file($file) >>
+
+Reads the whole file and returns the content in a scalar.
+
+=cut
+
+sub slurp_file {
+  my $file = shift;
+  my $file_data = do {
+    local $/ = undef;
+    open my $fh, "<", $file || die "open($file) failed: $!";
+    <$fh>;
+  };
+  return($file_data);
+}
+
+
+=pod
+
+=item C<< verify_checksum($file, $checksum_url) >>
+
+Verifies that C<$file> has checksum C<$checksum_url>.
+
+Returns 0 on success, -1 on connection error, 1 on checksum error.
+In case of errors returns an informal message as second argument.
+
+=cut
+
+sub verify_checksum {
+  my ($file, $checksum_url) = @_;
+  my $checksum_file = download_to_temp_or_file($checksum_url);
+  # next step is verification of tlpdb checksum with checksum file
+  # existenc of checksum_file was checked above
+  if (!$checksum_file) {
+    return(-1, "download did not succeed: $checksum_url");
+  }
+  # check the signature
+  my ($ret, $msg) = verify_signature($checksum_file, $checksum_url);
+  return ($ret, $msg) if ($ret != 0);
+
+  # verify local data
+  open $cs_fh, "<$checksum_file" or die("cannot read file: $!");
+  if (read ($cs_fh, $remote_digest, $ChecksumLength) != $ChecksumLength) {
+    close($cs_fh);
+    return(1, "incomplete read from $checksum_file");
+  } else {
+    close($cs_fh);
+    ddebug("found remote digest: $remote_digest\n");
+  }
+  $local_digest = tlchecksum($file);
+  ddebug("local_digest = $local_digest\n");
+  if ($local_digest ne $remote_digest) {
+    return(1, "digest disagree");
+  }
+
+  # we are still here, so checksum also succeeded
+  debug("checksum of local copy identical with remote hash\n");
+
+  return(0);
+}
+
+=pod
+
+=item C<< download_to_temp_or_file($url) >>
+
+If C<$url> tries to download the file into a temporary file.
+In both cases returns the local file.
+
+Returns the local file name if succeeded, otherwise undef.
+
+=cut
+
+sub download_to_temp_or_file {
+  my $url = shift;
+  my ($url_fh, $url_file);
+  if ($url =~ m,^(http|ftp|file)://,) {
+    ($url_fh, $url_file) = File::Temp::tempfile(UNLINK => 1);
+    # now $url_fh filehandle is open, the file created
+    # TLUtils::download_file will just overwrite what is there
+    # on windows that doesn't work, so we close the fh immediately
+    # this creates a short loophole, but much better than before anyway
+    close($url_fh);
+    $ret = download_file($url, $url_file);
+  } else {
+    $url_file = $url;
+    $ret = 1;
+  }
+  if ($ret && (-r "$url_file")) {
+    return $url_file;
+  }
+  return;
+}
+
+=pod
+
+=item C<< verify_signature($file, $url) >>
+
+Verifies a download of C<$url> into C<$file> by cheking the 
+gpg signature in C<$url.asc>.
+
+Returns 0 on success, -1 on connection error, 1 on checksum error.
+In case of errors returns an informal message as second argument.
+
+=cut
+
+sub verify_signature {
+  my ($file, $url) = @_;
+  my $signature_url = "$url.asc";
+
+  # if we have $::gpg set, we try to verify cryptographic signatures
+  if ($::gpg) {
+    my $signature_file = download_to_temp_or_file($signature_url);
+    if ($signature_file) {
+      if (TeXLive::TLUtils::gpg_verify_signature($file, $signature_file)) {
+        info("cryptographic signature of $url verified\n");
+      } else {
+        return(1, <<GPGERROR);
+cryptograpic verification of
+  $file
+against
+  $signature_url
+failed. Please report to texlive\@tug.org
+GPGERROR
+      }
+    } else {
+      debug("no access to cryptographic signature $signature_url\n");
+    }
+  } else {
+    debug("gpg prog not defined, no checking of signatures\n");
+  }
+  return (0);
+}
+
+sub gpg_verify_signature {
+  my ($file, $sig) = @_;
+  my ($file_quote, $sig_quote);
+  if (win32()) {
+    $file =~ s!/!\\!g;
+    $sig =~ s!/!\\!g;
+  }
+  $file_quote = "\"$file\"";
+  $sig_quote = "\"$sig\"";
+  my ($out, $ret) = run_cmd("$::gpg --verify $sig_quote $file_quote 2>&1");
+  if ($ret == 0) {
+    debug("verification succeeded, output:\n$out\n");
+    return 1;
+  } else {
+    tlwarn("verification failed, output:\n$out\n");
+    return 0;
   }
 }
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40376 2016-04-10 00:31:57Z preining $
+# $Id: tlmgr.pl 40467 2016-04-12 06:14:51Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40376 $';
-my $datrev = '$Date: 2016-04-10 02:31:57 +0200 (Sun, 10 Apr 2016) $';
+my $svnrev = '$Revision: 40467 $';
+my $datrev = '$Date: 2016-04-12 08:14:51 +0200 (Tue, 12 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -74,9 +74,16 @@ BEGIN {
     # if not in bootstrapping mode => kpsewhich exists, so use it to get $Master
     chomp($Master = `kpsewhich -var-value=SELFAUTOPARENT`);
   }
-  $::installerdir = $Master;
 
-  #
+  # if we have no directory in which to find our modules,
+  # no point in going on.
+  if (! $Master) {
+    die ("Could not determine directory of tlmgr executable, "
+         . "maybe shared library woes?\nCheck for error messages above");
+  }
+
+  $::installerdir = $Master;  # for config.guess et al., see TLUtils.pm
+
   # make Perl find our packages first:
   unshift (@INC, "$Master/tlpkg");
   unshift (@INC, "$Master/texmf-dist/scripts/texlive");
@@ -128,22 +135,6 @@ our $common_fmtutil_args =
 # option variables
 $::gui_mode = 0;
 $::machinereadable = 0;
-
-my %globaloptions = (
-  "gui" => 1,
-  "gui-lang" => "=s",
-  "debug-translation" => 1,
-  "location|repository|repo" => "=s",
-  "machine-readable" => 1,
-  "package-logfile" => "=s",
-  "persistent-downloads" => "!",
-  "no-execute-actions" => 1,
-  "pin-file" => "=s",
-  "pause" => 1,
-  "print-platform|print-arch" => 1,
-  "version" => 1,
-  "help" => 1,
-  "h|?" => 1);
 
 my %action_specification = (
   '_include_tlpobj' => {
@@ -347,6 +338,7 @@ sub main {
     "print-platform|print-arch" => 1,
     "usermode|user-mode" => 1,
     "usertree|user-tree" => "=s",
+    "verify-downloads" => "!",
     "version" => 1,
   );
 
@@ -629,6 +621,21 @@ for the full story.\n";
       debug("tlmgr:main: ::tldownload_server defined\n");
     }
   }
+
+  #
+  # setup gpg if available
+  # first line: --(no-)verify-downloads was passed in (opts defined)
+  # second line: not passed in but in config
+  if ((defined($opts{"verify-downloads"}) && $opts{"verify-downloads"})
+      ||
+      (!defined($opts{"verify-downloads"}) && $config{"verify-downloads"})) {
+    if (TeXLive::TLUtils::setup_gpg($Master)) {
+      log("Trying to verify cryptographic signatures!\n")
+    } else {
+      tlwarn("Setting up gpg did not succeed!\n");
+    }
+  }
+
 
   my $ret = execute_action($action, @ARGV);
 
@@ -2130,7 +2137,7 @@ sub write_w32_updater {
     push (@rst_info, "$pkg ^($oldrev^)");
     next if ($opts{"dry-run"});
     # create backup; make_container expects file name in a format: some-name.r[0-9]+
-    my ($size, $md5, $fullname) = $localtlp->make_container("tar", $root, $temp, "__BACKUP_$pkg.r$oldrev");
+    my ($size, $checksum, $fullname) = $localtlp->make_container("tar", $root, $temp, "__BACKUP_$pkg.r$oldrev");
     if ($size <= 0) {
       tlwarn("$prg: Creation of backup container of $pkg failed.\n");
       return 1; # backup failed? abort
@@ -5499,11 +5506,16 @@ sub action_init_usertree {
 #
 sub action_conf {
   my $arg = shift @ARGV;
+  my $ret = $F_OK;
+
   if (!defined($arg)) {
     texconfig_conf_mimic();
-    return;
-  }
-  if ($arg eq "tlmgr" || $arg eq "texmf" || $arg eq "updmap") {
+
+  } elsif ($arg !~ /^(tlmgr|texmf|updmap)$/) {
+    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf or updmap)\n";
+    $ret = $F_ERROR;
+
+  } else {
     my ($fn,$cf);
     if ($opts{'conffile'}) {
       $fn = $opts{'conffile'} ;
@@ -5531,6 +5543,7 @@ sub action_conf {
         }
       } else {
         info("$arg config file $fn not present\n");
+        $ret = $F_WARNING;
       }
     } else {
       if (!defined($val)) {
@@ -5540,6 +5553,7 @@ sub action_conf {
             $cf->delete_key($key);
           } else {
             info("$arg $key not defined, cannot remove ($fn)\n");
+            $ret = $F_WARNING;
           }
         } else {
           if (defined($cf->value($key))) {
@@ -5561,6 +5575,7 @@ sub action_conf {
       } else {
         if (defined($opts{'delete'})) {
           warning("$arg --delete and value for key $key given, don't know what to do!\n");
+          $ret = $F_ERROR;
         } else {
           info("setting $arg $key to $val (in $fn)\n");
           $cf->value($key, $val);
@@ -5570,8 +5585,6 @@ sub action_conf {
     if ($cf->is_changed) {
       $cf->save;
     }
-  } else {
-    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf or updmap)\n";
   }
 }
 
@@ -5839,7 +5852,7 @@ sub setup_one_remotetlpdb {
   my $local_copy_tlpdb_used = 0;
   if ($location =~ m;^(http|ftp)://;) {
     # first check that the saved tlpdb is present at all
-    my $loc_digest = Digest::MD5::md5_hex($location);
+    my $loc_digest = TeXLive::TLUtils::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
       "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
     ddebug("loc_digest = $loc_digest\n");
@@ -5848,11 +5861,11 @@ sub setup_one_remotetlpdb {
       ddebug("loc copy found!\n");
       # we found the tlpdb matching the current location
       # check for the remote hash
-      my $path = "$location/$InfraLocation/$DatabaseName.md5";
+      my $path = "$location/$InfraLocation/$DatabaseName.$TeXLive::TLConfig::ChecksumExtension";
       ddebug("remote path of digest = $path\n");
-      my $fh = TeXLive::TLUtils::download_file($path, "|");
-      my $rem_digest;
-      if (read ($fh, $rem_digest, 32) != 32) {
+
+      my ($ret, $msg) = TeXLive::TLUtils::verify_checksum($loc_copy_of_remote_tlpdb, $path);
+      if ($ret < 0) {
         info(<<END_NO_INTERNET);
 No connection to the internet.
 Unable to download the checksum of the remote TeX Live database,
@@ -5865,25 +5878,20 @@ http://tug.org/texlive/doc/install-tl.html
 
 END_NO_INTERNET
         # above text duplicated in install-tl
-
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
+      } elsif ($ret > 0) {
+        # no problem, checksum is wrong, we need to get new tlpdb
       } else {
-        ddebug("found remote digest: $rem_digest\n");
-        my $rem_copy_digest = TeXLive::TLUtils::tlmd5($loc_copy_of_remote_tlpdb);
-        ddebug("rem_copy_digest = $rem_copy_digest\n");
-        if ($rem_copy_digest eq $rem_digest) {
-          debug("md5 of local copy identical with remote hash\n");
-          $remotetlpdb = TeXLive::TLPDB->new(root => $location,
-            tlpdbfile => $loc_copy_of_remote_tlpdb);
-          $local_copy_tlpdb_used = 1;
-        }
+        $remotetlpdb = TeXLive::TLPDB->new(root => $location,
+          tlpdbfile => $loc_copy_of_remote_tlpdb);
+        $local_copy_tlpdb_used = 1;
       }
     }
   }
   if (!$local_copy_tlpdb_used) {
-    $remotetlpdb = TeXLive::TLPDB->new(root => $location);
+    $remotetlpdb = TeXLive::TLPDB->new(root => $location, verify => 1);
   }
   if (!defined($remotetlpdb)) {
     return(undef, $loadmediasrcerror . $location);
@@ -5959,9 +5967,9 @@ FROZEN
 
   # save remote database if it is a net location
   # make sure that the writeout of the tlpdb is done in UNIX mode
-  # since otherwise the sha256 will change.
+  # since otherwise the checksum will change.
   if (!$local_copy_tlpdb_used && $location =~ m;^(http|ftp)://;) {
-    my $loc_digest = Digest::MD5::md5_hex($location);
+    my $loc_digest = TeXLive::TLUtils::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
       "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
     my $tlfh;
@@ -6016,6 +6024,8 @@ sub load_config_file {
   #
   # by default we remove packages
   $config{"auto-remove"} = 1;
+  #
+  $config{"verify-downloads"} = 1;
 
   # loads system config file, this cannot be changes with tlmgr
   chomp (my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
@@ -6066,6 +6076,15 @@ sub load_options_from_config {
         $config{"auto-remove"} = 1;
       } else {
         tlwarn("$prg: $fn: Unknown value for auto-remove: $val\n");
+      }
+
+    } elsif ($key eq "verify-downloads") {
+      if ($val eq "0") {
+        $config{"verify-downloads"} = 0;
+      } elsif ($val eq "1") {
+        $config{"verify-downloads"} = 1;
+      } else {
+        tlwarn("$prg: $fn: Unknown value for verify-downloads: $val\n");
       }
 
     } elsif ($sysmode) {
@@ -6430,6 +6449,15 @@ Activates user mode for this run of C<tlmgr>; see L<USER MODE> below.
 
 Uses I<dir> for the tree in user mode; see L<USER MODE> below.
 
+=item B<--verify-downloads>
+
+=item B<--no-verify-downloads>
+
+Enables or disables cryptographic verification of downloaded database files.
+A working GnuPG (C<gpg>) binary needs to be present in the path, otherwise
+this option has no effect. See L<CRYPTOGRAPHIC VERIFICATION> below for details.
+
+
 =back
 
 The standard options for TeX Live programs are also accepted:
@@ -6545,7 +6573,8 @@ Live Database are present.
 
 =item B<runfiles>
 
-List those filenames that are occurring more than one time in the runfiles.
+List those filenames that are occurring more than one time in the
+runfiles sections.
 
 =back
 
@@ -6569,12 +6598,13 @@ like the C<texconfig conf> call, but works on all supported platforms.
 
 With either C<conf texmf>, C<conf tlmgr>, or C<conf updmap> given in
 addition, shows all key/value pairs (i.e., all settings) as saved in
-C<ROOT/texmf.cnf>, the tlmgr configuration file (see below), or the
+C<ROOT/texmf.cnf>, the C<tlmgr> configuration file (see below), or the
 first found (via kpsewhich) C<updmap.cfg> file, respectively.
 
 If I<key> is given in addition, shows the value of only that I<key> in
-the respective file.  If option I<--delete> is also given, the
-configuration file -- it is removed, not just commented out!
+the respective file.  If option I<--delete> is also given, the value in
+the given configuration file is entirely removed (not just commented
+out).
 
 If I<value> is given in addition, I<key> is set to I<value> in the 
 respective file.  I<No error checking is done!>
@@ -6582,9 +6612,13 @@ respective file.  I<No error checking is done!>
 In all cases the file used can be explicitly specified via the option
 C<--conffile I<file>>, in case one wants to operate on a different file.
 
-Practical application: if the execution of (some or all) system commands
-via C<\write18> was left enabled during installation, you can disable
-it afterwards:
+The PATH value shown is that used by C<tlmgr>.  The directory in which
+the C<tlmgr> executable is found is automatically prepended to the PATH
+value inherited from the environment.
+
+Practical application of changing configuration values: if the execution
+of (some or all) system commands via C<\write18> was left enabled during
+installation, you can disable it afterwards:
   
   tlmgr conf texmf shell_escape 0
 
@@ -6726,7 +6760,7 @@ location in C<TEXMFLOCAL>).
 
 =item B<--rebuild-sys>
 
-tells tlmgr to run necessary programs after config files have been
+tells C<tlmgr> to run necessary programs after config files have been
 regenerated. These are:
 C<fmtutil-sys --all> after C<generate fmtutil>,
 C<fmtutil-sys --byhyphen .../language.dat> after C<generate language.dat>,
@@ -6790,10 +6824,8 @@ dependencies in a similar way.
 
 =item B<--only-installed>
 
-If this options is given,  the installation source will
-not be used; only locally installed packages, collections, or schemes
-are listed.
-(Does not work for listing of packages for now)
+If this option is given, the installation source will not be used; only
+locally installed packages, collections, or schemes are listed.
 
 =back
 
@@ -6931,7 +6963,9 @@ is not likely to be of interest except perhaps to developers.
 
 The C<docfiles> and C<srcfiles> options control the installation of
 their respective files of a package. By default both are enabled (1).
-This can be disabled (set to 0) if disk space is (very) limited.
+Either or both can be disabled (set to 0) if disk space is limited or
+for minimal testing installations, etc.  When disabled, the respective
+files are not downloaded at all.
 
 The options C<autobackup> and C<backupdir> determine the defaults for
 the actions C<update>, C<backup> and C<restore>.  These three actions
@@ -7212,7 +7246,7 @@ Otherwise, if neither I<pkg> nor I<rev> are given, list the available
 backup revisions for all packages.  With I<pkg> given but no I<rev>,
 list all available backup revisions of I<pkg>.
 
-When listing available packages tlmgr shows the revision, and in 
+When listing available packages, C<tlmgr> shows the revision, and in
 parenthesis the creation time if available (in format yyyy-mm-dd hh:mm).
 
 If (and only if) both I<pkg> and a valid revision number I<rev> are
@@ -7484,6 +7518,25 @@ fallback information, but if you don't like them accumulating (e.g.,
 on each run C<mirror.ctan.org> might resolve to a new host, resulting in
 a different hash), it's harmless to delete them.
 
+=head1 CRYPTOGRAPHIC VERIFICATION
+
+If a working GnuPG binary (C<gpg>) is found, by default verification of
+downloaded files is performed. This can be supressed by specifying
+C<--no-verify-downloads> on the command line, or adding an entry
+C<verify-downloads = 0> to a tlmgr config file.
+
+Verification is performed as follows: For each C<texlive.tlpdb> loaded
+for a repository, the respective checksum C<texlive.tlpdb.sha512> is
+always downloaded, too, and C<tlmgr> confirms whether the checksum
+of the download tlpdb file agrees with the download data. This is done
+in any case.
+
+If cryptographic verification is done, then a signature of the checksum
+file is downloaded and the signature verified. The signature is done with
+the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed
+by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key 0x6CACA448.
+All of these keys are obtainable from the standard key servers.
+
 =head1 USER MODE
 
 C<tlmgr> provides a restricted way, called ``user mode'', to manage
@@ -7585,12 +7638,13 @@ ignored.  All other lines must look like
 
 where the allowed keys are C<gui-expertmode> (value 0 or 1),
 C<persistent-downloads> (value 0 or 1), C<auto-remove> (value 0 or 1),
+C<verify-downloads> (value 0 or 1),
 and C<gui-lang> (value as with the command-line option).
 
-C<persistent-downloads>, C<gui-lang>, and C<auto-remove> correspond to
-the respective command line options of the same name.  C<gui-expertmode>
-switches between the full GUI and a simplified GUI with only the
-important and mostly used settings.
+C<persistent-downloads>, C<gui-lang>, C<auto-remove>, and C<verify-downloads>
+correspond to the respective command line options of the same name.  
+C<gui-expertmode> switches between the full GUI and a simplified GUI
+with only the important and mostly used settings.
 
 In addition, the system-wide config file can contain the key
 C<allowed-actions>. The value is a comma-separated list of actions that
