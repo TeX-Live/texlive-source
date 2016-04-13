@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 39813 2016-02-22 05:25:37Z preining $
+# $Id: fmtutil.pl 40475 2016-04-12 20:56:58Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 39813 2016-02-22 05:25:37Z preining $';
-my $lastchdate = '$Date: 2016-02-22 06:25:37 +0100 (Mon, 22 Feb 2016) $';
+my $svnid = '$Id: fmtutil.pl 40475 2016-04-12 20:56:58Z karl $';
+my $lastchdate = '$Date: 2016-04-12 22:56:58 +0200 (Tue, 12 Apr 2016) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 39813 $';
+my $svnrev = '$Revision: 40475 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -502,7 +502,7 @@ sub rebuild_one_format {
   my $addargs = $alldata->{'merged'}{$fmt}{$eng}{'args'};
 
   # running parameters
-  my $texengine;
+  my $enginedir;
   my $jobswitch = "-jobname=$fmt";
   my $prgswitch = "-progname=" ;
   my $recorderswitch = ($opts{'recorder'} ? "-recorder" : "");
@@ -533,15 +533,15 @@ sub rebuild_one_format {
   if ($eng eq "mpost") { 
     $fmtfile .= ".mem" ; 
     $kpsefmt = "mp" ; 
-    $texengine = "metapost"; # the directory, not the executable
-  } elsif ($eng =~ m/^mf(w|-nowin)?$/) {
+    $enginedir = "metapost"; # the directory, not the executable
+  } elsif ($eng =~ m/^mf(lua(jit)?)?(w|-nowin)?$/) {
     $fmtfile .= ".base" ; 
     $kpsefmt = "mf" ; 
-    $texengine = "metafont";
+    $enginedir = "metafont";
   } else {
     $fmtfile .= ".fmt" ; 
     $kpsefmt = "tex" ; 
-    $texengine = $eng;
+    $enginedir = $eng;
   }
   
   # check for existence of ini file before doing anything else
@@ -663,7 +663,7 @@ sub rebuild_one_format {
   if ($opts{'no-engine-subdir'}) {
     $fulldestdir = $opts{'fmtdir'};
   } else {
-    $fulldestdir = "$opts{'fmtdir'}/$texengine";
+    $fulldestdir = "$opts{'fmtdir'}/$enginedir";
   }
   TeXLive::TLUtils::mkdirhier($fulldestdir);
   
