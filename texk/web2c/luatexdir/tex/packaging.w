@@ -1144,6 +1144,8 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
     int hpack_dir;
     scaled_whd xx; /* for recursion */
     scaled_whd whd, siz = { 0, 0, 0 };
+    scaled gp = 0;
+    scaled gm = 0;
     if (pack_direction == -1) {
         hpack_dir = text_direction;
     } else {
@@ -1208,10 +1210,16 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
                     if (g_sign != normal) {
                         if (g_sign == stretching) {
                             if (stretch_order(p) == g_order) {
-                                siz.wd += float_round(float_cast(g_mult) * float_cast(stretch(p)));
+                                /*
+                                    siz.wd += float_round(float_cast(g_mult) * float_cast(stretch(p)));
+                                */
+                                gp += stretch(p);
                             }
                         } else if (shrink_order(p) == g_order) {
-                            siz.wd -= float_round(float_cast(g_mult) * float_cast(shrink(p)));
+                            /*
+                                siz.wd -= float_round(float_cast(g_mult) * float_cast(shrink(p)));
+                            */
+                            gm += shrink(p);
                         }
                     }
                     if (subtype(p) >= a_leaders) {
@@ -1242,6 +1250,13 @@ scaled_whd natural_sizes(halfword p, halfword pp, glue_ratio g_mult,
             p = vlink(p);
         }
 
+    }
+    if (g_sign != normal) {
+        if (g_sign == stretching) {
+            siz.wd += float_round(float_cast(g_mult) * float_cast(gp));
+        } else {
+            siz.wd -= float_round(float_cast(g_mult) * float_cast(gm));
+        }
     }
     return siz;
 }
