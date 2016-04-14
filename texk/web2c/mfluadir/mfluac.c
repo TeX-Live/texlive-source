@@ -25,6 +25,16 @@ static void priv_lua_reporterrors(lua_State *L, int status)
   }
 }
 
+
+static void priv_lua_writemessage(lua_State *L, char *startmsg, char *bodymsg, char *endmsg, int status)
+{
+  (void) L;
+  if ( status!=0 ) {
+    fprintf(stdout,"%s%s%s\n",startmsg,bodymsg,endmsg);
+  }
+}
+
+
 #define link_field(p) mem[p].hhfield.rh /* {the |link| field of a memory word} */
 static int priv_mfweb_link(lua_State *L)
 {
@@ -423,6 +433,7 @@ int mfluabeginprogram(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free(luafile);
   if ( res==0 ) {
@@ -448,6 +459,7 @@ int mfluaendprogram(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free(luafile);
   if ( res==0 ) {
@@ -473,6 +485,7 @@ int mfluaPREstartofMF(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -517,6 +530,7 @@ int mfluaPREmaincontrol(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -561,6 +575,7 @@ int mfluaPOSTmaincontrol(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -605,6 +620,7 @@ int mfluainitialize(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   /* register lua functions */
   luaopen_kpse(L);
   lua_pushcfunction(L, priv_mfweb_link);lua_setglobal(L, "link");
@@ -666,6 +682,7 @@ int mfluaPOSTfinalcleanup(void)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   /*if (res!=0) {fprintf(stderr,"\n! Warning: file final_cleanup not loaded\n",lua_tostring(L, -1)); return res;}*/
@@ -745,6 +762,7 @@ int mfluaprintpath(halfword h, strnumber s, boolean nuline)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -793,6 +811,7 @@ int mfluaprintedges(strnumber s, boolean nuline, integer xoff, integer yoff)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -884,6 +903,7 @@ int mfluaPREoffsetprep(halfword c, halfword h)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -930,6 +950,7 @@ int mfluaPOSToffsetprep(halfword c, halfword h)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -976,6 +997,7 @@ int mfluaPREfillenveloperhs(halfword rhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1020,6 +1042,7 @@ int mfluaPOSTfillenveloperhs(halfword rhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1065,6 +1088,7 @@ int mfluaPREfillenvelopelhs(halfword lhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1109,6 +1133,7 @@ int mfluaPOSTfillenvelopelhs(halfword lhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1154,6 +1179,7 @@ int mfluaPREfillspecrhs(halfword rhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1198,6 +1224,7 @@ int mfluaPOSTfillspecrhs(halfword rhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1242,6 +1269,7 @@ int mfluaPREfillspeclhs(halfword lhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1286,6 +1314,7 @@ int mfluaPOSTfillspeclhs(halfword lhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1329,6 +1358,7 @@ int mfluaPREmovetoedges(halfword lhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1374,6 +1404,7 @@ int mfluaPOSTmovetoedges(halfword lhs)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1419,6 +1450,7 @@ int mfluaPREmakechoices(halfword p)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1463,6 +1495,7 @@ int mfluaPOSTmakechoices(halfword p)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1511,6 +1544,7 @@ int mfluaprintretrogradeline(integer x0, integer y0, integer cur_x, integer cur_
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1559,6 +1593,7 @@ int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , 
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1609,6 +1644,7 @@ int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer theta ,
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1659,6 +1695,7 @@ int mfluaprinttransitionlinefrom(integer x, integer y)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
@@ -1703,6 +1740,7 @@ int mfluaprinttransitionlineto(integer x, integer y)
     priv_lua_reporterrors(L, res);
     return 0;
   }
+  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free (luafile);
   if ( res==0 ){
