@@ -1,3 +1,10 @@
+2016-04-14  Karl Berry  <karl@freefriends.org>
+
+	* ofm2opl.man,
+	* ovf2ovp.man: document current options, i.e., from the omfonts
+	(../omegafonts) implementation.  Akira re-implemented the web
+	-charcode-format option in r39877, ca.27 Feb 2016 10:23:20.
+
 2016-03-08  Karl Berry  <karl@tug.org>
 
 	* ttf2afm.man: document -m.  tldoc mail from esr, 7 Mar 2016 09:34:07.
