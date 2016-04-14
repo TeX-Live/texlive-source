@@ -2030,6 +2030,9 @@ open_in_or_pipe (FILE **f_ptr, int filefmt, const_string fopen_mode)
       *f_ptr = NULL;
       fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
+      if (fullnameoffile)
+        free(fullnameoffile);
+      fullnameoffile = xstrdup(fname);
       recorder_record_input (fname + 1);
       *f_ptr = runpopen(fname+1,"r");
       free(fname);
@@ -2072,6 +2075,9 @@ u_open_in_or_pipe(unicodefile* f, integer filefmt, const_string fopen_mode, inte
       (*f)->f = NULL;
       fname = xmalloc(strlen((const_string)(nameoffile+1))+1);
       strcpy(fname,(const_string)(nameoffile+1));
+      if (fullnameoffile)
+        free(fullnameoffile);
+      fullnameoffile = xstrdup(fname);
       recorder_record_input (fname + 1);
       (*f)->f = runpopen(fname+1,"r");
       free(fname);
