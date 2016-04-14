@@ -1,36 +1,46 @@
-.TH OVF2OVP "16 June 2015" "Web2C @VERSION@"
+.TH OVF2OVP "14 April 2016" "Web2C @VERSION@"
 .PP 
 .SH "NAME" 
-ovf2ovp \- convert a virtual font file and its associated font metric file into property-list format
+ovf2ovp \- convert virtual font file and associated font metrics to property-list format
 .PP 
 .SH "SYNOPSIS" 
 .PP 
 .B ovf2ovp
-.RI [ OPTIONS ]
-.IR OVFNAME [ \fB.ovf\fP ]
-.RI [ OFMNAME [ \fB.ofm\fP ]
-.RI [ OVPFILE [ \fB.ovp\fP ]]]
+.RI [ options ]
+.IR ovfname [ \fB.ovf\fP ]
+.RI [ ofmname [ \fB.ofm\fP ]
+.RI [ ovpfile [ \fB.ovp\fP ]]]
 .PP 
 .SH "DESCRIPTION" 
 .PP 
-\fBovf2ovp\fP translates a virtual font (OVF) file, \fIOVFNAME\fP,
-and its companion font metric (OFM) file, \fIOFMNAME\fP, into a
+\fBovf2ovp\fP translates a virtual font (OVF) file, \fIovfname\fP,
+and its companion font metric (OFM) file, \fIofmname\fP, into a
 human-readable property-list format\&.  The program writes to standard
-output (by default) or to a file specified as \fIOVPNAME\fP\&.
+output (by default) or to a file specified as \fIovpname\fP\&.
 .PP 
-The program also works with TeX VF and TFM files, producing TeX VP
-files\&.  (\fBovf2ovp\fP is based on the WEB source code for
-\fBvftovp\fP(1)\&.)
+The program also works with TeX VF and TFM files, producing TeX VPL
+files\&.
 .PP 
 .SH "OPTIONS" 
-.PP 
-.IP 
-.IP "\fB-charcode-format=\fP\fITYPE\fP" 
-output character codes
-according to \fITYPE\fP, which can be either `hex\&' or `ascii\&'\&.
-Default is `hex\&'\&.  ascii specifes all ASCII letters and digits; hex
-gets you everything else\&.
-.IP 
+.PP
+(Same as \fBofm2opl\fP).
+.IP
+.IP "\fB-charcode-format=\fP\fItype\fP" 
+output character codes according to \fItype\fP,
+either `hex\&', `octal\&' or `ascii\&'\&.  Default is
+`hex\&'\&; `ascii' says to use
+ASCII for letters and digits, hex for all else\&.
+.IP "\fB-char-format=\fP\fIstype\fP"
+output character codes according to \fIstype\fP,
+either `num\&' or `ascii\&'\&. Default is `num'; `ascii' as in
+-charcode-format.  (These two redundant options both exist only for
+historical compatibility.)
+.IP "\fB-num-format=\fP\fIntype\fP"
+output numbers according to \fIntype\fP,
+either `hex' or `octal'; default is hex.
+.IP "\fB-text-format=\fP\fIttype\fP"
+output coding scheme and family according to \fIttype\fP,
+either `mixed' or `upper' case; default is mixed.
 .IP "\fB-help\fP" 
 display a brief summary of syntax and options 
 .IP "\fB-verbose\fP" 
@@ -41,27 +51,25 @@ output version information and exit
 .PP 
 .SH "FILES" 
 .PP 
-.IP "\fIOVPFILE\fP" 
+.IP "\fIovpfile\fP" 
 Omega Virtual Property List file
-.IP "\fIOFMNAME\fP" 
+.IP "\fIofmname\fP" 
 Omega Font Metric file
-.IP "\fIOVFNAME\fP" 
+.IP "\fIovfname\fP" 
 Omega Virtual Font file
 .PP 
 .SH "BUGS" 
 .PP 
-None known, but report any found to <omega@ens\&.fr> (mailing list)\&.  You should also
-check to see if the bug is also in \fBvftovp\fP(1)\&.
+Send bug reports to <http://lists.tug.org/tex-k>
+(mailing list); may also check if the same bug is present in
+\fBvftovp\fP(1)\&.  General discussion of Omega (and Aleph) can take place
+on the <http://lists.tug.org/omega> mailing list.
 .PP 
 .SH "SEE ALSO" 
 .PP 
-\fBomega\fP(1), \fBofm2opl\fP(1), \fBovp2ovf\fP(1),
+\fBomega\fP(1), \fBaleph\fP(1), \fBofm2opl\fP(1), \fBovp2ovf\fP(1),
 \fBpltotf\fP(1), \fBtftopl\fP(1), \fBvftovp\fP(1),
 \fBvptovf\fP(1)
-.PP 
-\fIDraft Manual for the Omega System\fP (\fIomega-manual\&.dvi\fP)\&.
-.PP 
-Web page: <http://www\&.gutenberg\&.eu\&.org/omega/>
 .PP 
 .SH "AUTHOR" 
 .PP 
@@ -69,16 +77,19 @@ According to the WEB documentation:
 .PP 
 .RS 
 \fBVFtoVP\fP is an extended version of the program \fBTFtoPL\fP,
-which is part of the standard tex()ware library\&.  The idea of a
+which is part of the standard TeXware library\&.  The idea of a
 virtual font was inspired by the work of David R\&. Fuchs who designed a
 similar set of conventions in 1984 while developing a device driver
 for ArborText, Inc\&.  He wrote a somewhat similar program called
 \fBAMFtoXPL\fP\&.
 .RE 
+.PP
+Thus, \fBovf2ovp\fP is based on the WEB source code for \fBvftovp\fP(1),
+although nowadays it is a link to \fBomfonts\fP, implemented entirely in
+C.
 .PP 
-The primary authors of Omega are John Plaice
-<plaice@cse\&.unsw\&.edu\&.au> and Yannis Haralambous 
-<yannis@fluxus-virus\&.com>\&.
+The primary authors of Omega are John Plaice and Yannis Haralambous.
+Omega (and Aleph) are now maintained as part of TeX Live.
 .PP 
 This manual page was written by C\&.M\&. Connelly
 <cmc@debian\&.org>, for
@@ -86,4 +97,3 @@ the Debian GNU/Linux system\&.  It may be used by other distributions
 without contacting the author\&.  Any mistakes or omissions in the
 manual page are my fault; inquiries about or corrections to this
 manual page should be directed to me (and not to the primary author)\&.
-.PP 
