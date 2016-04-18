@@ -330,7 +330,7 @@ node_info node_data[] = { /* the last entry in a row is the etex number */
     { ins_node,            ins_node_size,         node_fields_insert,                        "ins",             4 },
     { mark_node,           mark_node_size,        node_fields_mark,                          "mark",            5 },
     { adjust_node,         adjust_node_size,      node_fields_adjust,                        "adjust",          6 },
-    { boundary_node,       boundary_size,         node_fields_boundary,                      "boundary",       -1 },
+    { boundary_node,       boundary_node_size,    node_fields_boundary,                      "boundary",       -1 },
     { disc_node,           disc_node_size,        node_fields_disc,                          "disc",            8 },
     { whatsit_node,        -1,                    NULL,                                      "whatsit",         9 },
     { local_par_node,      local_par_size,        node_fields_local_par,                     "local_par",      -1 },
@@ -626,7 +626,13 @@ static int test_count = 1;
 
 #define check_action_ref(a)    { dorangetest(p,a,var_mem_max); }
 #define check_attribute_ref(a) { dorangetest(p,a,var_mem_max); }
-#define check_token_ref(a)     { confusion("fuzzy token cleanup in node"); }
+#define check_token_ref(a) { \
+    if (type(p) == whatsit_node) { \
+        formatted_error("nodes","fuzzy token cleanup in whatsit node with id %i and subtype %i",type(p),subtype(p)); \
+    } else { \
+        formatted_error("nodes","fuzzy token cleanup in node with id %i",type(p)); \
+    } \
+}
 
 #ifdef CHECK_NODE_USAGE
 
