@@ -654,7 +654,7 @@ typedef enum {
     word_boundary,
 } boundary_subtypes ;
 
-#  define boundary_size 3
+#  define boundary_node_size 3
 #  define boundary_value(a) vinfo((a)+2)
 
 #  define special_node_size 3
