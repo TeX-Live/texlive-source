@@ -61,8 +61,12 @@ void ship_out(PDF pdf, halfword p, shipping_mode_e shipping_mode)
         Start sheet {\sl Sync\TeX} information record; we assume that |pdf_output| is
         properly set up.
     */
-    if ((output_mode_used == OMODE_DVI) && int_par(synctex_code)) {
-        synctexsheet(mag);
+    if (int_par(synctex_code)) {
+        if (output_mode_used == OMODE_DVI) {
+            synctexsheet(mag);
+        } else {
+            synctexsheet(1000);
+        }
     }
     pre_callback_id = callback_defined(start_page_number_callback);
     post_callback_id = callback_defined(stop_page_number_callback);
