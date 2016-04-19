@@ -77,7 +77,7 @@ class SVGTree
 		void popContextElement ();
 		void removeRedundantElements ();
 		void setBBox (const BoundingBox &bbox);
-		void setFont (int id, const Font *font);
+		void setFont (int id, const Font &font);
 		void setX (double x)              {_xchanged = true;}
 		void setY (double y)              {_ychanged = true;}
 		void setMatrix (const Matrix &m)  {_matrix.set(m);}
@@ -99,6 +99,8 @@ class SVGTree
 
 	protected:
 		void newTextNode (double x, double y);
+		void appendCharAsText (int c, double x, double y, const Font &font);
+		void appendCharAsPath (int c, double x, double y, const Font &font);
 
 	private:
 		XMLDocument _doc;
