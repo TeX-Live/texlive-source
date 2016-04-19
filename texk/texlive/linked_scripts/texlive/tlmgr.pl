@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40467 2016-04-12 06:14:51Z preining $
+# $Id: tlmgr.pl 40615 2016-04-19 07:41:55Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40467 $';
-my $datrev = '$Date: 2016-04-12 08:14:51 +0200 (Tue, 12 Apr 2016) $';
+my $svnrev = '$Revision: 40615 $';
+my $datrev = '$Date: 2016-04-19 09:41:55 +0200 (Tue, 19 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -621,21 +621,6 @@ for the full story.\n";
       debug("tlmgr:main: ::tldownload_server defined\n");
     }
   }
-
-  #
-  # setup gpg if available
-  # first line: --(no-)verify-downloads was passed in (opts defined)
-  # second line: not passed in but in config
-  if ((defined($opts{"verify-downloads"}) && $opts{"verify-downloads"})
-      ||
-      (!defined($opts{"verify-downloads"}) && $config{"verify-downloads"})) {
-    if (TeXLive::TLUtils::setup_gpg($Master)) {
-      log("Trying to verify cryptographic signatures!\n")
-    } else {
-      tlwarn("Setting up gpg did not succeed!\n");
-    }
-  }
-
 
   my $ret = execute_action($action, @ARGV);
 
@@ -4323,7 +4308,7 @@ sub action_platform {
   my @extra_w32_packs = qw/tlperl.win32 tlgs.win32 tlpsv.win32
                            collection-wintools
                            dviout.win32 wintools.win32/;
-  if ($^O=~/^MSWin(32|64)$/i) {
+  if ($^O =~ /^MSWin/i) {
     warn("action `platform' not supported on Windows\n");
     return ($F_WARNING);
   }
@@ -4637,7 +4622,7 @@ sub action_gui {
       $tkmissing = 1;
     }
     if ($tkmissing) {
-      if ($^O=~/^MSWin(32|64)$/i) {
+      if ($^O =~ /^MSWin/i) {
         # that should not happen, we are shipping Tk!!
         require Win32;
         my $msg = "Cannot load Tk, that should not happen as we ship it!\nHow did you start tlmgrgui??\n(Error message: $@)\n";
@@ -5709,6 +5694,53 @@ sub init_local_db {
   }
 }
 
+sub handle_gpg_config_settings {
+  # setup gpg if available
+  # by default we setup gpg
+  # default value
+  my $do_setup_gpg = 1;
+  # the value is set in the config file
+  if (defined($config{'verify-downloads'})) {
+    $do_setup_gpg = $config{'verify-downloads'};
+  }
+  # command line
+  if (defined($opts{'verify-downloads'})) {
+    $do_setup_gpg = $opts{'verify-downloads'};
+  }
+  # now we know whether we setup gpg or not
+  if ($do_setup_gpg) {
+    if (TeXLive::TLUtils::setup_gpg($Master)) {
+      log("will verify cryptographic signatures\n")
+    } else {
+      my $prefix = "$prg: No gpg found"; # just to shorten the strings
+      if ($opts{'verify-downloads'}) {
+        # verification was requested on the command line, but did not succeed, die
+        tldie("$prefix, verification explicitly requested on command line, quitting.\n");
+      }
+      if ($config{'verify-downloads'}) {
+        # verification explicitely requested in config file, but not gpg, die
+        tldie("$prefix, verification explicitly requested in config file, quitting.\n");
+      }
+      # it was requested via the default setting, so just warn
+      info ("$prefix, verification implicitly requested, "
+            . "continuing without verification\n");
+    }
+  } else {
+    # we do not setup gpg: when explicitly requested, be silent, otherwise info
+    my $prefix = "$prg: not setting up gpg";
+    if (defined($opts{'verify-downloads'})) {
+      # log normally is *NOT* logged to a file
+      # tlmgr does by default *NOT* set up a log file (cmd line option)
+      # user requested it, so don't bother with output
+      log("$prefix, requested on command line\n");
+    } elsif (defined($config{'verify-downloads'})) {
+      log("$prefix, requested in config file\n");
+    } else {
+      tldie("$prg: how could this happen? gpg setup.\n");
+    }
+  }
+}
+
 
 # initialize the global $remotetlpdb object, or die.
 # uses the global $location.
@@ -5734,6 +5766,9 @@ sub init_tlmedia {
     $localtlpdb->save;
     %repos = repository_to_array($location);
   }
+  # do the gpg stuff only when loading the remote tlpdb
+  handle_gpg_config_settings();
+
   # check if we are only one tag/repo
   if ($#tags == 0) {
     # go to normal mode
@@ -6025,7 +6060,9 @@ sub load_config_file {
   # by default we remove packages
   $config{"auto-remove"} = 1;
   #
-  $config{"verify-downloads"} = 1;
+  # do NOT set this here, we distinguish between explicitly set in the config file
+  # or implicitly true
+  # $config{"verify-downloads"} = 1;
 
   # loads system config file, this cannot be changes with tlmgr
   chomp (my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
@@ -7520,7 +7557,8 @@ a different hash), it's harmless to delete them.
 
 =head1 CRYPTOGRAPHIC VERIFICATION
 
-If a working GnuPG binary (C<gpg>) is found, by default verification of
+If a working GnuPG binary (C<gpg>) is found (see below for how it is 
+searched), by default verification of
 downloaded files is performed. This can be supressed by specifying
 C<--no-verify-downloads> on the command line, or adding an entry
 C<verify-downloads = 0> to a tlmgr config file.
@@ -7536,6 +7574,18 @@ file is downloaded and the signature verified. The signature is done with
 the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed
 by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key 0x6CACA448.
 All of these keys are obtainable from the standard key servers.
+
+=head2 Configuration of GnuPG invocation
+
+The executable used for GnuPG is searched as follows: If the environment
+variable C<TL_GNUPG> is set, it is tested and used. Otherwise C<gpg> is
+checked, and finally C<gpg2>.
+
+Further adaption of the invocation of C<gpg> can be done using the 
+two enviroment variables C<TL_GNUPGHOME>, which is passed to
+C<gpg> with C<--homedir>, and C<TL_GNUPGARGS>, which replaces the
+default arguments C<--no-secmem-warning --no-permission-warning>.
+
 
 =head1 USER MODE
 

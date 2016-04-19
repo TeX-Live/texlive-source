@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 40475 $';
+my $svnrev = '$Revision: 40600 $';
 my $_modulerevision;
 if ($svnrev =~ m/: ([0-9]+) /) {
   $_modulerevision = $1;
@@ -107,7 +107,7 @@ our $RelocPrefix = "RELOC";
 
 our @CriticalPackagesList = qw/texlive.infra/;
 our $CriticalPackagesRegexp = '^(texlive\.infra)';
-if ($^O =~ /^MSWin(32|64)$/i) {
+if ($^O =~ /^MSWin/i) {
   push (@CriticalPackagesList, "tlperl.win32");
   $CriticalPackagesRegexp = '^(texlive\.infra|tlperl\.win32$)';
 }
