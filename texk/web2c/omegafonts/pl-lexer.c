@@ -1,5 +1,5 @@
 
-#line 3 "pl-lexer.c"
+#line 3 "../../../../texk/web2c/omegafonts/pl-lexer.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -7,8 +7,8 @@
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_MINOR_VERSION 6
+#define YY_FLEX_SUBMINOR_VERSION 0
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -141,7 +141,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -368,6 +376,9 @@ extern char yytext[];
 static yy_state_type yy_get_previous_state (void );
 static yy_state_type yy_try_NUL_trans (yy_state_type current_state  );
 static int yy_get_next_buffer (void );
+#if defined(__GNUC__) && __GNUC__ >= 3
+__attribute__((__noreturn__))
+#endif
 static void yy_fatal_error (yyconst char msg[]  );
 
 /* Done after the current pattern has been matched and before the
@@ -484,7 +495,7 @@ static yyconst flex_int16_t yy_accept[800] =
 
     } ;
 
-static yyconst flex_int32_t yy_ec[256] =
+static yyconst YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -516,7 +527,7 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[42] =
+static yyconst YY_CHAR yy_meta[42] =
     {   0,
         1,    2,    3,    1,    1,    4,    4,    1,    5,    5,
         5,    5,    5,    5,    6,    1,    7,    7,    7,    7,
@@ -525,7 +536,7 @@ static yyconst flex_int32_t yy_meta[42] =
         1
     } ;
 
-static yyconst flex_int16_t yy_base[806] =
+static yyconst flex_uint16_t yy_base[806] =
     {   0,
         0,    0,  848,  849,  845,  849,  849,  849,  819,   15,
        18,   53,   42,  806,   44,  817,   43,  806,  809,   32,
@@ -711,7 +722,7 @@ static yyconst flex_int16_t yy_def[806] =
       799,  799,  799,  799,  799
     } ;
 
-static yyconst flex_int16_t yy_nxt[891] =
+static yyconst flex_uint16_t yy_nxt[891] =
     {   0,
         4,    5,    6,    7,    8,    4,    4,    9,    4,    4,
         4,    4,    4,    4,    4,    4,   10,   11,   12,   13,
@@ -947,8 +958,8 @@ int yy_flex_debug = 0;
 
 char yytext[YYLMAX];
 char *yytext_ptr;
-#line 1 "pl-lexer.l"
-#line 4 "pl-lexer.l"
+#line 1 "../../../../texk/web2c/omegafonts/pl-lexer.l"
+#line 4 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 /* pl-lexer.l: Lexical analysis of property list files.
 
 This file is part of Omega,
@@ -1006,7 +1017,7 @@ static void scan_hex_string(void);
 
 /* For Solaris's lex, to increase tables sizes --RP */
 /* Space before number keeps ancient flex happy. */
-#line 1010 "pl-lexer.c"
+#line 1021 "../../../../texk/web2c/omegafonts/pl-lexer.c"
 
 #define INITIAL 0
 
@@ -1039,11 +1050,11 @@ void yyset_extra (YY_EXTRA_TYPE user_defined  );
 
 FILE *yyget_in (void );
 
-void yyset_in  (FILE * in_str  );
+void yyset_in  (FILE * _in_str  );
 
 FILE *yyget_out (void );
 
-void yyset_out  (FILE * out_str  );
+void yyset_out  (FILE * _out_str  );
 
 yy_size_t yyget_leng (void );
 
@@ -1051,7 +1062,7 @@ char *yyget_text (void );
 
 int yyget_lineno (void );
 
-void yyset_lineno (int line_number  );
+void yyset_lineno (int _line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1065,8 +1076,12 @@ extern int yywrap (void );
 #endif
 #endif
 
+#ifndef YY_NO_UNPUT
+    
     static void yyunput (int c,char *buf_ptr  );
     
+#endif
+
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -1087,7 +1102,12 @@ static int input (void );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -1174,7 +1194,7 @@ extern int yylex (void);
 
 /* Code executed at the end of each rule. */
 #ifndef YY_BREAK
-#define YY_BREAK break;
+#define YY_BREAK /*LINTED*/break;
 #endif
 
 #define YY_RULE_SETUP \
@@ -1184,9 +1204,9 @@ extern int yylex (void);
  */
 YY_DECL
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp, *yy_bp;
-	register int yy_act;
+	yy_state_type yy_current_state;
+	char *yy_cp, *yy_bp;
+	int yy_act;
     
 	if ( !(yy_init) )
 		{
@@ -1215,12 +1235,12 @@ YY_DECL
 		}
 
 	{
-#line 74 "pl-lexer.l"
+#line 74 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 
 
-#line 1222 "pl-lexer.c"
+#line 1242 "../../../../texk/web2c/omegafonts/pl-lexer.c"
 
-	while ( 1 )		/* loops until end-of-file is reached */
+	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
 		yy_cp = (yy_c_buf_p);
 
@@ -1236,7 +1256,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
+			YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
 			if ( yy_accept[yy_current_state] )
 				{
 				(yy_last_accepting_state) = yy_current_state;
@@ -1283,1041 +1303,1041 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 76 "pl-lexer.l"
+#line 76 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 77 "pl-lexer.l"
+#line 77 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {line_number++; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 79 "pl-lexer.l"
+#line 79 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(LEFT);
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 80 "pl-lexer.l"
+#line 80 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(RIGHT);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 82 "pl-lexer.l"
+#line 82 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_int(8);  return(NUMBER); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 83 "pl-lexer.l"
+#line 83 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_int(10); return(NUMBER); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 84 "pl-lexer.l"
+#line 84 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_int(16); return(NUMBER); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 85 "pl-lexer.l"
+#line 85 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_char();  return(NUMBER); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 86 "pl-lexer.l"
+#line 86 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_fix();   return(FIX);    }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 88 "pl-lexer.l"
+#line 88 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("CODINGSCHEME", KEEP_CONVERT, LEN_CODING_SCHEME);
                  return(CODINGSCHEME); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 90 "pl-lexer.l"
+#line 90 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("FAMILY", KEEP_CONVERT, LEN_FAMILY);
                  return(FAMILY); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 92 "pl-lexer.l"
+#line 92 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("VTITLE", KEEP_ALL, LEN_VTITLE);
                  return(VTITLE); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 94 "pl-lexer.l"
+#line 94 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("FONTNAME", KEEP_ALL, LEN_FONT_NAME);
                  return(FONTNAME); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 96 "pl-lexer.l"
+#line 96 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("FONTAREA", KEEP_ALL, LEN_FONT_AREA);
                  return(FONTAREA); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 98 "pl-lexer.l"
+#line 98 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("SPECIAL", KEEP_ALL, 0);
                  return(SPECIAL); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 100 "pl-lexer.l"
+#line 100 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_string("COMMENT", KEEP_NONE, 0);
                  return(COMMENT); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 103 "pl-lexer.l"
+#line 103 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {scan_hex_string(); return(SPECIALHEX); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 106 "pl-lexer.l"
+#line 106 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint=1; return(SEVENBITSAFEFLAG); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 107 "pl-lexer.l"
+#line 107 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint=0; return(SEVENBITSAFEFLAG); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 109 "pl-lexer.l"
+#line 109 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHECKSUM);
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 110 "pl-lexer.l"
+#line 110 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(DESIGNSIZE);
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 111 "pl-lexer.l"
+#line 111 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(DESIGNUNITS);
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 112 "pl-lexer.l"
+#line 112 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FACE);
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 113 "pl-lexer.l"
+#line 113 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(HEADER);
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 114 "pl-lexer.l"
+#line 114 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(BOUNDARYCHAR);
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 115 "pl-lexer.l"
+#line 115 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTDIMEN);
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 116 "pl-lexer.l"
+#line 116 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(LIGTABLE);
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 117 "pl-lexer.l"
+#line 117 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARACTER);
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 119 "pl-lexer.l"
+#line 119 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(PARAMETER);
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 120 "pl-lexer.l"
+#line 120 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(LABEL);
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 121 "pl-lexer.l"
+#line 121 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(KRN);
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 122 "pl-lexer.l"
+#line 122 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(STOP);
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 123 "pl-lexer.l"
+#line 123 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(SKIP);
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 124 "pl-lexer.l"
+#line 124 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(NEXTLARGER);
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 125 "pl-lexer.l"
+#line 125 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(VARCHAR);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 127 "pl-lexer.l"
+#line 127 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_WD; return(CHARMEASURE); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 128 "pl-lexer.l"
+#line 128 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_HT; return(CHARMEASURE); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 129 "pl-lexer.l"
+#line 129 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_DP; return(CHARMEASURE); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 130 "pl-lexer.l"
+#line 130 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_IC; return(CHARMEASURE); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 132 "pl-lexer.l"
+#line 132 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = E_TOP; return(EXTEN); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 133 "pl-lexer.l"
+#line 133 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = E_MID; return(EXTEN); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 134 "pl-lexer.l"
+#line 134 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = E_BOT; return(EXTEN); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 135 "pl-lexer.l"
+#line 135 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = E_REP; return(EXTEN); }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 137 "pl-lexer.l"
+#line 137 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_0;    return(LIG); }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 138 "pl-lexer.l"
+#line 138 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_B;    return(LIG); }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 139 "pl-lexer.l"
+#line 139 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_A;    return(LIG); }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 140 "pl-lexer.l"
+#line 140 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_AB;   return(LIG); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 141 "pl-lexer.l"
+#line 141 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_Bx;   return(LIG); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 142 "pl-lexer.l"
+#line 142 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_Ax;   return(LIG); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 143 "pl-lexer.l"
+#line 143 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_ABx;  return(LIG); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 144 "pl-lexer.l"
+#line 144 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = L_ABxx; return(LIG); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 146 "pl-lexer.l"
+#line 146 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_MRR; return(NUMBER); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 147 "pl-lexer.l"
+#line 147 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_MIR; return(NUMBER); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 148 "pl-lexer.l"
+#line 148 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_BRR; return(NUMBER); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 149 "pl-lexer.l"
+#line 149 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_BIR; return(NUMBER); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 150 "pl-lexer.l"
+#line 150 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_LRR; return(NUMBER); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 151 "pl-lexer.l"
+#line 151 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_LIR; return(NUMBER); }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 152 "pl-lexer.l"
+#line 152 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_MRC; return(NUMBER); }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 153 "pl-lexer.l"
+#line 153 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_MIC; return(NUMBER); }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 154 "pl-lexer.l"
+#line 154 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_BRC; return(NUMBER); }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 155 "pl-lexer.l"
+#line 155 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_BIC; return(NUMBER); }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 156 "pl-lexer.l"
+#line 156 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_LRC; return(NUMBER); }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 157 "pl-lexer.l"
+#line 157 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_LIC; return(NUMBER); }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 158 "pl-lexer.l"
+#line 158 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_MRE; return(NUMBER); }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 159 "pl-lexer.l"
+#line 159 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_MIE; return(NUMBER); }
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 160 "pl-lexer.l"
+#line 160 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_BRE; return(NUMBER); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 161 "pl-lexer.l"
+#line 161 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_BIE; return(NUMBER); }
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 162 "pl-lexer.l"
+#line 162 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_LRE; return(NUMBER); }
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 163 "pl-lexer.l"
+#line 163 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = F_LIE; return(NUMBER); }
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 165 "pl-lexer.l"
+#line 165 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SLANT;      return(NAMEDPARAMETER); }
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 166 "pl-lexer.l"
+#line 166 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SPACE;      return(NAMEDPARAMETER); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 167 "pl-lexer.l"
+#line 167 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_STRETCH;    return(NAMEDPARAMETER); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 168 "pl-lexer.l"
+#line 168 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SHRINK;     return(NAMEDPARAMETER); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 169 "pl-lexer.l"
+#line 169 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_XHEIGHT;    return(NAMEDPARAMETER); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 170 "pl-lexer.l"
+#line 170 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_QUAD;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 171 "pl-lexer.l"
+#line 171 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_EXTRASPACE; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 172 "pl-lexer.l"
+#line 172 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_NUM1;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 173 "pl-lexer.l"
+#line 173 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_NUM2;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 174 "pl-lexer.l"
+#line 174 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_NUM3;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 175 "pl-lexer.l"
+#line 175 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_DENOM1;     return(NAMEDPARAMETER); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 176 "pl-lexer.l"
+#line 176 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_DENOM2;     return(NAMEDPARAMETER); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 177 "pl-lexer.l"
+#line 177 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUP1;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 178 "pl-lexer.l"
+#line 178 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUP2;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 179 "pl-lexer.l"
+#line 179 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUP3;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 180 "pl-lexer.l"
+#line 180 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUB1;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 181 "pl-lexer.l"
+#line 181 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUB2;       return(NAMEDPARAMETER); }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 182 "pl-lexer.l"
+#line 182 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUPDROP;    return(NAMEDPARAMETER); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 183 "pl-lexer.l"
+#line 183 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_SUBDROP;    return(NAMEDPARAMETER); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 184 "pl-lexer.l"
+#line 184 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_DELIM1;     return(NAMEDPARAMETER); }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 185 "pl-lexer.l"
+#line 185 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_DELIM2;     return(NAMEDPARAMETER); }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 186 "pl-lexer.l"
+#line 186 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_AXISHEIGHT; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 188 "pl-lexer.l"
+#line 188 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_DEFAULTRULETHICKNESS;
 			 return(NAMEDPARAMETER); }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 190 "pl-lexer.l"
+#line 190 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_BIGOPSPACING1; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 191 "pl-lexer.l"
+#line 191 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_BIGOPSPACING2; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 192 "pl-lexer.l"
+#line 192 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_BIGOPSPACING3; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 193 "pl-lexer.l"
+#line 193 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_BIGOPSPACING4; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 194 "pl-lexer.l"
+#line 194 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = P_BIGOPSPACING5; return(NAMEDPARAMETER); }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 196 "pl-lexer.l"
+#line 196 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(MAPFONT); }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 197 "pl-lexer.l"
+#line 197 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(FONTCHECKSUM); }
 	YY_BREAK
 case 100:
 YY_RULE_SETUP
-#line 198 "pl-lexer.l"
+#line 198 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(FONTAT); }
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 199 "pl-lexer.l"
+#line 199 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(FONTDSIZE); }
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 200 "pl-lexer.l"
+#line 200 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(MAP); }
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 201 "pl-lexer.l"
+#line 201 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(SELECTFONT); }
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 202 "pl-lexer.l"
+#line 202 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(SETCHAR); }
 	YY_BREAK
 case 105:
 YY_RULE_SETUP
-#line 203 "pl-lexer.l"
+#line 203 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(SETRULE); }
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 204 "pl-lexer.l"
+#line 204 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(PUSH); }
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 205 "pl-lexer.l"
+#line 205 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {return(POP); }
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 207 "pl-lexer.l"
+#line 207 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = M_RIGHT; return(MOVE); }
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 208 "pl-lexer.l"
+#line 208 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = M_LEFT;  return(MOVE); }
 	YY_BREAK
 case 110:
 YY_RULE_SETUP
-#line 209 "pl-lexer.l"
+#line 209 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = M_UP;    return(MOVE); }
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 210 "pl-lexer.l"
+#line 210 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = M_DOWN;  return(MOVE); }
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 212 "pl-lexer.l"
+#line 212 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(OFMLEVEL);
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 213 "pl-lexer.l"
+#line 213 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = ACC_TOP; return(ACCENT); }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 214 "pl-lexer.l"
+#line 214 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = ACC_MID; return(ACCENT); }
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 215 "pl-lexer.l"
+#line 215 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = ACC_BOT; return(ACCENT); }
 	YY_BREAK
 case 116:
 YY_RULE_SETUP
-#line 217 "pl-lexer.l"
+#line 217 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_TL; return(FONTDIR);}
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 218 "pl-lexer.l"
+#line 218 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_LT; return(FONTDIR);}
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 219 "pl-lexer.l"
+#line 219 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_TR; return(FONTDIR);}
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 220 "pl-lexer.l"
+#line 220 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_LB; return(FONTDIR);}
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 221 "pl-lexer.l"
+#line 221 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_BL; return(FONTDIR);}
 	YY_BREAK
 case 121:
 YY_RULE_SETUP
-#line 222 "pl-lexer.l"
+#line 222 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_RT; return(FONTDIR);}
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 223 "pl-lexer.l"
+#line 223 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_BR; return(FONTDIR);}
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 224 "pl-lexer.l"
+#line 224 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_ORD+DIR_RB; return(FONTDIR);}
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 225 "pl-lexer.l"
+#line 225 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_TL; return(FONTDIR);}
 	YY_BREAK
 case 125:
 YY_RULE_SETUP
-#line 226 "pl-lexer.l"
+#line 226 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_LT; return(FONTDIR);}
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 227 "pl-lexer.l"
+#line 227 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_TR; return(FONTDIR);}
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 228 "pl-lexer.l"
+#line 228 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_LB; return(FONTDIR);}
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 229 "pl-lexer.l"
+#line 229 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_BL; return(FONTDIR);}
 	YY_BREAK
 case 129:
 YY_RULE_SETUP
-#line 230 "pl-lexer.l"
+#line 230 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_RT; return(FONTDIR);}
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 231 "pl-lexer.l"
+#line 231 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_BR; return(FONTDIR);}
 	YY_BREAK
 case 131:
 YY_RULE_SETUP
-#line 232 "pl-lexer.l"
+#line 232 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_RB; return(FONTDIR);}
 	YY_BREAK
 /* for compatibility with the omegaware versions */
 case 132:
 YY_RULE_SETUP
-#line 234 "pl-lexer.l"
+#line 234 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_TL; return(FONTDIR);}
 	YY_BREAK
 case 133:
 YY_RULE_SETUP
-#line 235 "pl-lexer.l"
+#line 235 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_LT; return(FONTDIR);}
 	YY_BREAK
 case 134:
 YY_RULE_SETUP
-#line 236 "pl-lexer.l"
+#line 236 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_TR; return(FONTDIR);}
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 237 "pl-lexer.l"
+#line 237 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_LB; return(FONTDIR);}
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 238 "pl-lexer.l"
+#line 238 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_BL; return(FONTDIR);}
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 239 "pl-lexer.l"
+#line 239 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_RT; return(FONTDIR);}
 	YY_BREAK
 case 138:
 YY_RULE_SETUP
-#line 240 "pl-lexer.l"
+#line 240 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_BR; return(FONTDIR);}
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 241 "pl-lexer.l"
+#line 241 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = DIR_NAT+DIR_RB; return(FONTDIR);}
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 243 "pl-lexer.l"
+#line 243 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTIVALUE);
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 244 "pl-lexer.l"
+#line 244 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTFVALUE);
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 245 "pl-lexer.l"
+#line 245 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTMVALUE);
 	YY_BREAK
 case 143:
 YY_RULE_SETUP
-#line 246 "pl-lexer.l"
+#line 246 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTPENALTY);
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 247 "pl-lexer.l"
+#line 247 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTRULE);
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 248 "pl-lexer.l"
+#line 248 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FONTGLUE);
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 250 "pl-lexer.l"
+#line 250 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(IVALUE);
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 251 "pl-lexer.l"
+#line 251 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FVALUE);
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 252 "pl-lexer.l"
+#line 252 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(MVALUE);
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 253 "pl-lexer.l"
+#line 253 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(PENALTY);
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 254 "pl-lexer.l"
+#line 254 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(RULE);
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 255 "pl-lexer.l"
+#line 255 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(GLUE);
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 257 "pl-lexer.l"
+#line 257 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(IVALUEVAL);
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 258 "pl-lexer.l"
+#line 258 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(FVALUEVAL);
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 259 "pl-lexer.l"
+#line 259 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(MVALUEVAL);
 	YY_BREAK
 case 155:
 YY_RULE_SETUP
-#line 260 "pl-lexer.l"
+#line 260 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(PENALTYVAL);
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 262 "pl-lexer.l"
+#line 262 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 { yylval.yint = RULE_WD; return(RULEMEASURE); }
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 263 "pl-lexer.l"
+#line 263 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 { yylval.yint = RULE_HT; return(RULEMEASURE); }
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 264 "pl-lexer.l"
+#line 264 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 { yylval.yint = RULE_DP; return(RULEMEASURE); }
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 266 "pl-lexer.l"
+#line 266 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(GLUEWD);
 	YY_BREAK
 case 160:
 YY_RULE_SETUP
-#line 267 "pl-lexer.l"
+#line 267 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 { yylval.yint = GLUE_STRETCH; return(GLUESHRINKSTRETCH); }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 268 "pl-lexer.l"
+#line 268 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 { yylval.yint = GLUE_SHRINK; return(GLUESHRINKSTRETCH); }
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 270 "pl-lexer.l"
+#line 270 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(GLUETYPE);
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 271 "pl-lexer.l"
+#line 271 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(GLUERULE);
 	YY_BREAK
 case 164:
 YY_RULE_SETUP
-#line 272 "pl-lexer.l"
+#line 272 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(GLUECHAR);
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 274 "pl-lexer.l"
+#line 274 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARIVALUE);
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 275 "pl-lexer.l"
+#line 275 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARFVALUE);
 	YY_BREAK
 case 167:
 YY_RULE_SETUP
-#line 276 "pl-lexer.l"
+#line 276 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARMVALUE);
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
-#line 277 "pl-lexer.l"
+#line 277 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARPENALTY);
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 278 "pl-lexer.l"
+#line 278 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARRULE);
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 279 "pl-lexer.l"
+#line 279 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARGLUE);
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 281 "pl-lexer.l"
+#line 281 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CKRN);
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 282 "pl-lexer.l"
+#line 282 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CGLUE);
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 283 "pl-lexer.l"
+#line 283 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CPENALTY);
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 284 "pl-lexer.l"
+#line 284 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CPENGLUE);
 	YY_BREAK
 case 175:
 YY_RULE_SETUP
-#line 285 "pl-lexer.l"
+#line 285 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CLABEL);
 	YY_BREAK
 case 176:
 YY_RULE_SETUP
-#line 287 "pl-lexer.l"
+#line 287 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 return(CHARREPEAT);
 	YY_BREAK
 case 177:
 YY_RULE_SETUP
-#line 290 "pl-lexer.l"
+#line 290 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = O_FILLL; return(GLUEORDER); }
 	YY_BREAK
 case 178:
 YY_RULE_SETUP
-#line 291 "pl-lexer.l"
+#line 291 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = O_FILL;  return(GLUEORDER); }
 	YY_BREAK
 case 179:
 YY_RULE_SETUP
-#line 292 "pl-lexer.l"
+#line 292 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = O_FIL;   return(GLUEORDER); }
 	YY_BREAK
 case 180:
 YY_RULE_SETUP
-#line 293 "pl-lexer.l"
+#line 293 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = O_FI;    return(GLUEORDER); }
 	YY_BREAK
 case 181:
 YY_RULE_SETUP
-#line 294 "pl-lexer.l"
+#line 294 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = O_UNIT;  return(GLUEORDER); }
 	YY_BREAK
 case 182:
 YY_RULE_SETUP
-#line 296 "pl-lexer.l"
+#line 296 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = K_NORMAL;   return(GLUEKIND); }
 	YY_BREAK
 case 183:
 YY_RULE_SETUP
-#line 297 "pl-lexer.l"
+#line 297 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = K_ALEADERS; return(GLUEKIND); }
 	YY_BREAK
 case 184:
 YY_RULE_SETUP
-#line 298 "pl-lexer.l"
+#line 298 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = K_CLEADERS; return(GLUEKIND); }
 	YY_BREAK
 case 185:
 YY_RULE_SETUP
-#line 299 "pl-lexer.l"
+#line 299 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = K_XLEADERS; return(GLUEKIND); }
 	YY_BREAK
 case 186:
 YY_RULE_SETUP
-#line 301 "pl-lexer.l"
+#line 301 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_SECWD;        return(CHARMEASURE); }
 	YY_BREAK
 case 187:
 YY_RULE_SETUP
-#line 302 "pl-lexer.l"
+#line 302 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_SECHT;        return(CHARMEASURE); }
 	YY_BREAK
 case 188:
 YY_RULE_SETUP
-#line 303 "pl-lexer.l"
+#line 303 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_SECDP;        return(CHARMEASURE); }
 	YY_BREAK
 case 189:
 YY_RULE_SETUP
-#line 304 "pl-lexer.l"
+#line 304 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_SECIC;        return(CHARMEASURE); }
 	YY_BREAK
 case 190:
 YY_RULE_SETUP
-#line 306 "pl-lexer.l"
+#line 306 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_TOPAXIS;    return(CHARMEASURE); }
 	YY_BREAK
 case 191:
 YY_RULE_SETUP
-#line 307 "pl-lexer.l"
+#line 307 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_TOPAXISBIs; return(CHARMEASURE); }
 	YY_BREAK
 case 192:
 YY_RULE_SETUP
-#line 308 "pl-lexer.l"
+#line 308 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_BOTAXIS;    return(CHARMEASURE); }
 	YY_BREAK
 case 193:
 YY_RULE_SETUP
-#line 309 "pl-lexer.l"
+#line 309 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_BOTAXISBIS; return(CHARMEASURE); }
 	YY_BREAK
 case 194:
 YY_RULE_SETUP
-#line 310 "pl-lexer.l"
+#line 310 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_MIDHOR;     return(CHARMEASURE); }
 	YY_BREAK
 case 195:
 YY_RULE_SETUP
-#line 311 "pl-lexer.l"
+#line 311 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_MIDVERT;    return(CHARMEASURE); }
 	YY_BREAK
 case 196:
 YY_RULE_SETUP
-#line 312 "pl-lexer.l"
+#line 312 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_P_BASESLANT;  return(CHARMEASURE); }
 	YY_BREAK
 case 197:
 YY_RULE_SETUP
-#line 314 "pl-lexer.l"
+#line 314 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_TOPAXIS;    return(CHARMEASURE); }
 	YY_BREAK
 case 198:
 YY_RULE_SETUP
-#line 315 "pl-lexer.l"
+#line 315 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_TOPAXISBIs; return(CHARMEASURE); }
 	YY_BREAK
 case 199:
 YY_RULE_SETUP
-#line 316 "pl-lexer.l"
+#line 316 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_BOTAXIS;    return(CHARMEASURE); }
 	YY_BREAK
 case 200:
 YY_RULE_SETUP
-#line 317 "pl-lexer.l"
+#line 317 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_BOTAXISBIS; return(CHARMEASURE); }
 	YY_BREAK
 case 201:
 YY_RULE_SETUP
-#line 318 "pl-lexer.l"
+#line 318 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_MIDHOR;     return(CHARMEASURE); }
 	YY_BREAK
 case 202:
 YY_RULE_SETUP
-#line 319 "pl-lexer.l"
+#line 319 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_MIDVERT;    return(CHARMEASURE); }
 	YY_BREAK
 case 203:
 YY_RULE_SETUP
-#line 320 "pl-lexer.l"
+#line 320 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {yylval.yint = C_S_BASESLANT;  return(CHARMEASURE); }
 	YY_BREAK
 case 204:
 YY_RULE_SETUP
-#line 322 "pl-lexer.l"
+#line 322 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 {lex_error_1("unexpected character (%x); ignored",
                              yytext[0]);}
 	YY_BREAK
 case 205:
 YY_RULE_SETUP
-#line 324 "pl-lexer.l"
+#line 324 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 ECHO;
 	YY_BREAK
-#line 2321 "pl-lexer.c"
+#line 2341 "../../../../texk/web2c/omegafonts/pl-lexer.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2461,9 +2481,9 @@ case YY_STATE_EOF(INITIAL):
  */
 static int yy_get_next_buffer (void)
 {
-    	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-	register char *source = (yytext_ptr);
-	register int number_to_move, i;
+    	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+	char *source = (yytext_ptr);
+	yy_size_t number_to_move, i;
 	int ret_val;
 
 	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
@@ -2492,7 +2512,7 @@ static int yy_get_next_buffer (void)
 	/* Try to read more data. */
 
 	/* First move last chars to start of buffer. */
-	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
+	number_to_move = (yy_size_t) ((yy_c_buf_p) - (yytext_ptr)) - 1;
 
 	for ( i = 0; i < number_to_move; ++i )
 		*(dest++) = *(source++);
@@ -2595,14 +2615,14 @@ static int yy_get_next_buffer (void)
 
     static yy_state_type yy_get_previous_state (void)
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp;
+	yy_state_type yy_current_state;
+	char *yy_cp;
     
 	yy_current_state = (yy_start);
 
 	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
 		{
-		register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+		YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
 		if ( yy_accept[yy_current_state] )
 			{
 			(yy_last_accepting_state) = yy_current_state;
@@ -2627,10 +2647,10 @@ static int yy_get_next_buffer (void)
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-	register int yy_is_jam;
-    	register char *yy_cp = (yy_c_buf_p);
+	int yy_is_jam;
+    	char *yy_cp = (yy_c_buf_p);
 
-	register YY_CHAR yy_c = 1;
+	YY_CHAR yy_c = 1;
 	if ( yy_accept[yy_current_state] )
 		{
 		(yy_last_accepting_state) = yy_current_state;
@@ -2648,9 +2668,11 @@ static int yy_get_next_buffer (void)
 		return yy_is_jam ? 0 : yy_current_state;
 }
 
-    static void yyunput (int c, register char * yy_bp )
+#ifndef YY_NO_UNPUT
+
+    static void yyunput (int c, char * yy_bp )
 {
-	register char *yy_cp;
+	char *yy_cp;
     
     yy_cp = (yy_c_buf_p);
 
@@ -2660,10 +2682,10 @@ static int yy_get_next_buffer (void)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		register yy_size_t number_to_move = (yy_n_chars) + 2;
-		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
+		yy_size_t number_to_move = (yy_n_chars) + 2;
+		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		register char *source =
+		char *source =
 				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
 
 		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
@@ -2688,6 +2710,8 @@ static int yy_get_next_buffer (void)
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
 }
+
+#endif
 
 #ifndef YY_NO_INPUT
 #ifdef __cplusplus
@@ -2843,7 +2867,7 @@ static void yy_load_buffer_state  (void)
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
-	b->yy_buf_size = size;
+	b->yy_buf_size = (yy_size_t)size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
@@ -2998,7 +3022,7 @@ static void yyensure_buffer_stack (void)
 		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
 		 * immediate realloc on the next call.
          */
-		num_to_alloc = 1;
+		num_to_alloc = 1; // After all that talk, this was set to 1 anyways...
 		(yy_buffer_stack) = (struct yy_buffer_state**)yyalloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								);
@@ -3015,7 +3039,7 @@ static void yyensure_buffer_stack (void)
 	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
 
 		/* Increase the buffer to prepare for a possible push. */
-		int grow_size = 8 /* arbitrary grow size */;
+		yy_size_t grow_size = 8 /* arbitrary grow size */;
 
 		num_to_alloc = (yy_buffer_stack_max) + grow_size;
 		(yy_buffer_stack) = (struct yy_buffer_state**)yyrealloc
@@ -3123,7 +3147,7 @@ YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len 
 
 static void yy_fatal_error (yyconst char* msg )
 {
-    	(void) fprintf( stderr, "%s\n", msg );
+			(void) fprintf( stderr, "%s\n", msg );
 	exit( YY_EXIT_FAILURE );
 }
 
@@ -3189,29 +3213,29 @@ char *yyget_text  (void)
 }
 
 /** Set the current line number.
- * @param line_number
+ * @param _line_number line number
  * 
  */
-void yyset_lineno (int  line_number )
+void yyset_lineno (int  _line_number )
 {
     
-    yylineno = line_number;
+    yylineno = _line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
- * @param in_str A readable stream.
+ * @param _in_str A readable stream.
  * 
  * @see yy_switch_to_buffer
  */
-void yyset_in (FILE *  in_str )
+void yyset_in (FILE *  _in_str )
 {
-        yyin = in_str ;
+        yyin = _in_str ;
 }
 
-void yyset_out (FILE *  out_str )
+void yyset_out (FILE *  _out_str )
 {
-        yyout = out_str ;
+        yyout = _out_str ;
 }
 
 int yyget_debug  (void)
@@ -3219,9 +3243,9 @@ int yyget_debug  (void)
         return yy_flex_debug;
 }
 
-void yyset_debug (int  bdebug )
+void yyset_debug (int  _bdebug )
 {
-        yy_flex_debug = bdebug ;
+        yy_flex_debug = _bdebug ;
 }
 
 static int yy_init_globals (void)
@@ -3284,7 +3308,8 @@ int yylex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-	register int i;
+		
+	int i;
 	for ( i = 0; i < n; ++i )
 		s1[i] = s2[i];
 }
@@ -3293,7 +3318,7 @@ static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-	register int n;
+	int n;
 	for ( n = 0; s[n]; ++n )
 		;
 
@@ -3303,11 +3328,12 @@ static int yy_flex_strlen (yyconst char * s )
 
 void *yyalloc (yy_size_t  size )
 {
-	return (void *) malloc( size );
+			return (void *) malloc( size );
 }
 
 void *yyrealloc  (void * ptr, yy_size_t  size )
 {
+		
 	/* The cast to (char *) in the following accommodates both
 	 * implementations that use char* generic pointers, and those
 	 * that use void* generic pointers.  It works with the latter
@@ -3320,12 +3346,12 @@ void *yyrealloc  (void * ptr, yy_size_t  size )
 
 void yyfree (void * ptr )
 {
-	free( (char *) ptr );	/* see yyrealloc() for (char *) cast */
+			free( (char *) ptr );	/* see yyrealloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"
 
-#line 324 "pl-lexer.l"
+#line 324 "../../../../texk/web2c/omegafonts/pl-lexer.l"
 
 
 
