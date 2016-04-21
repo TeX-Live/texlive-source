@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40640 2016-04-21 00:31:43Z preining $
+# $Id: tlmgr.pl 40652 2016-04-21 19:08:52Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40640 $';
-my $datrev = '$Date: 2016-04-21 02:31:43 +0200 (Thu, 21 Apr 2016) $';
+my $svnrev = '$Revision: 40652 $';
+my $datrev = '$Date: 2016-04-21 21:08:52 +0200 (Thu, 21 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -91,7 +91,6 @@ BEGIN {
 
 use Cwd qw/abs_path/;
 use File::Spec;
-use Digest::MD5;
 use Pod::Usage;
 use Getopt::Long qw(:config no_autoabbrev permute);
 use strict;
@@ -103,6 +102,7 @@ use TeXLive::TLUtils;
 use TeXLive::TLWinGoo;
 use TeXLive::TLDownload;
 use TeXLive::TLConfFile;
+use TeXLive::TLCrypto;
 TeXLive::TLUtils->import(qw(member info give_ctan_mirror win32 dirname
                             mkdirhier copy debug tlcmp));
 use TeXLive::TLPaper;
@@ -5710,7 +5710,7 @@ sub handle_gpg_config_settings {
   }
   # now we know whether we setup gpg or not
   if ($do_setup_gpg) {
-    if (TeXLive::TLUtils::setup_gpg($Master)) {
+    if (TeXLive::TLCrypto::setup_gpg($Master)) {
       debug("will verify cryptographic signatures\n")
     } else {
       my $prefix = "$prg: No gpg found"; # just to shorten the strings
@@ -5722,8 +5722,9 @@ sub handle_gpg_config_settings {
         # verification explicitely requested in config file, but not gpg, die
         tldie("$prefix, verification explicitly requested in config file, quitting.\n");
       }
-      # it was requested via the default setting, so just warn
-      info ("$prefix, verification implicitly requested, "
+      # it was requested via the default setting, so just debug it
+      # the list of repositories will contain verified/not verified statements
+      debug ("$prefix, verification implicitly requested, "
             . "continuing without verification\n");
     }
   } else {
@@ -5819,12 +5820,15 @@ sub init_tlmedia {
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
-  info("$prg: package repositories" . 
-    ($::gpg ? " (all verified)" : "") . ":\n");
-  info("\tmain = " . $repos{'main'} . "\n");
+  info("$prg: package repositories\n");
+  info("\tmain = " . $repos{'main'} . " (" . 
+    ($remotetlpdb->virtual_get_tlpdb('main')->is_verified ? "" : "not ") .
+    "verified)\n");
   for my $t (@tags) {
     if ($t ne 'main') {
-      info("\t$t = " . $repos{$t} . "\n");
+      info("\t$t = " . $repos{$t} . " (" .
+        ($remotetlpdb->virtual_get_tlpdb($t)->is_verified ? "" : "not ") .
+        "verified)\n");
     }
   }
   return 1;
@@ -5859,8 +5863,8 @@ sub _init_tlmedia {
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$location\n" if $::machinereadable;
-  info("$prg: package repository $location" . 
-    ($::gpg ? " (verified)" : "") . "\n");
+  info("$prg: package repository $location (" . 
+    ($remotetlpdb->is_verified ? "" : "not ") . "verified)\n");
   return 1;
 }
 
@@ -5890,7 +5894,7 @@ sub setup_one_remotetlpdb {
   my $local_copy_tlpdb_used = 0;
   if ($location =~ m;^(http|ftp)://;) {
     # first check that the saved tlpdb is present at all
-    my $loc_digest = TeXLive::TLUtils::tl_short_digest($location);
+    my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
       "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
     ddebug("loc_digest = $loc_digest\n");
@@ -5902,8 +5906,9 @@ sub setup_one_remotetlpdb {
       my $path = "$location/$InfraLocation/$DatabaseName.$TeXLive::TLConfig::ChecksumExtension";
       ddebug("remote path of digest = $path\n");
 
-      my ($ret, $msg) = TeXLive::TLUtils::verify_checksum($loc_copy_of_remote_tlpdb, $path);
-      if ($ret < 0) {
+      my ($ret,$msg)
+        = TeXLive::TLCrypto::verify_checksum($loc_copy_of_remote_tlpdb, $path);
+      if ($ret == -1) {
         info(<<END_NO_INTERNET);
 No connection to the internet.
 Unable to download the checksum of the remote TeX Live database,
@@ -5919,6 +5924,9 @@ END_NO_INTERNET
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
+      } elsif ($ret == -2) {
+        # the remote database has not be signed, warn
+        debug("$0: remote database is not signed, continuing anyway!\n");
       } elsif ($ret == 1) {
         # no problem, checksum is wrong, we need to get new tlpdb
       } elsif ($ret == 2) {
@@ -6014,7 +6022,7 @@ FROZEN
   # make sure that the writeout of the tlpdb is done in UNIX mode
   # since otherwise the checksum will change.
   if (!$local_copy_tlpdb_used && $location =~ m;^(http|ftp)://;) {
-    my $loc_digest = TeXLive::TLUtils::tl_short_digest($location);
+    my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
       "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
     my $tlfh;
