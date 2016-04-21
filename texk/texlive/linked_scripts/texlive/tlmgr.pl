@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40615 2016-04-19 07:41:55Z preining $
+# $Id: tlmgr.pl 40640 2016-04-21 00:31:43Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40615 $';
-my $datrev = '$Date: 2016-04-19 09:41:55 +0200 (Tue, 19 Apr 2016) $';
+my $svnrev = '$Revision: 40640 $';
+my $datrev = '$Date: 2016-04-21 02:31:43 +0200 (Thu, 21 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -104,7 +104,7 @@ use TeXLive::TLWinGoo;
 use TeXLive::TLDownload;
 use TeXLive::TLConfFile;
 TeXLive::TLUtils->import(qw(member info give_ctan_mirror win32 dirname
-                            mkdirhier copy log debug tlcmp));
+                            mkdirhier copy debug tlcmp));
 use TeXLive::TLPaper;
 
 #
@@ -746,7 +746,7 @@ sub do_cmd_and_check {
   }
   if ($ret == 0) {
     info("done running $cmd.\n");
-    log("--output of $cmd:\n$out\n--end of output of $cmd.");
+    ddebug("--output of $cmd:\n$out\n--end of output of $cmd.");
     return ($F_OK);
   } else {
     info("\n");
@@ -864,7 +864,7 @@ sub handle_execute_actions {
     if ($opt_fmt && !$::regenerate_all_formats) {
       # first regenerate all formats --byengine 
       for my $e (keys %updated_engines) {
-        log ("updating formats based on $e\n");
+        debug ("updating formats based on $e\n");
         $errors += do_cmd_and_check
                     ("$invoke_fmtutil --no-error-if-no-format --byengine $e");
       }
@@ -873,7 +873,7 @@ sub handle_execute_actions {
         next if defined($updated_engines{$format_to_engine{$f}});
         # ignore disabled formats
         next if !$::execute_actions{'enable'}{'formats'}{$f}{'mode'};
-        log ("(re)creating format dump $f\n");
+        debug ("(re)creating format dump $f\n");
         $errors += do_cmd_and_check ("$invoke_fmtutil --byfmt $f");
         $done_formats{$f} = 1;
       }
@@ -2573,7 +2573,7 @@ sub action_update {
   # don't do anything if we have been invoked in a strange way
   if (!@todo) {
     if ($opts{"self"}) {
-      info("$prg: no updates for tlmgr present.\n");
+      info("$prg: no self-updates for tlmgr available.\n");
     } else {
       tlwarn("$prg update: please specify a list of packages, --all, or --self.\n");
       return ($F_ERROR);
@@ -3418,8 +3418,9 @@ sub action_update {
   }
   
   # if a real update from default disk location didn't find anything,
-  # warn if nothing is updated.
-  if (!(@new || @updated)) {
+  # warn if nothing is updated.  Unless they said --self, in which case
+  # we've already reported it.
+  if (!(@new || @updated) && ! $opts{"self"}) {
     info("$prg: no updates available\n");
     if ($remotetlpdb->media ne "NET"
         && $remotetlpdb->media ne "virtual"
@@ -5710,7 +5711,7 @@ sub handle_gpg_config_settings {
   # now we know whether we setup gpg or not
   if ($do_setup_gpg) {
     if (TeXLive::TLUtils::setup_gpg($Master)) {
-      log("will verify cryptographic signatures\n")
+      debug("will verify cryptographic signatures\n")
     } else {
       my $prefix = "$prg: No gpg found"; # just to shorten the strings
       if ($opts{'verify-downloads'}) {
@@ -5732,9 +5733,9 @@ sub handle_gpg_config_settings {
       # log normally is *NOT* logged to a file
       # tlmgr does by default *NOT* set up a log file (cmd line option)
       # user requested it, so don't bother with output
-      log("$prefix, requested on command line\n");
+      debug("$prefix, requested on command line\n");
     } elsif (defined($config{'verify-downloads'})) {
-      log("$prefix, requested in config file\n");
+      debug("$prefix, requested in config file\n");
     } else {
       tldie("$prg: how could this happen? gpg setup.\n");
     }
@@ -5818,7 +5819,8 @@ sub init_tlmedia {
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
-  info("$prg: package repositories:\n");
+  info("$prg: package repositories" . 
+    ($::gpg ? " (all verified)" : "") . ":\n");
   info("\tmain = " . $repos{'main'} . "\n");
   for my $t (@tags) {
     if ($t ne 'main') {
@@ -5857,7 +5859,8 @@ sub _init_tlmedia {
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   print "location-url\t$location\n" if $::machinereadable;
-  info("$prg: package repository $location\n");
+  info("$prg: package repository $location" . 
+    ($::gpg ? " (verified)" : "") . "\n");
   return 1;
 }
 
@@ -5916,12 +5919,19 @@ END_NO_INTERNET
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
-      } elsif ($ret > 0) {
+      } elsif ($ret == 1) {
         # no problem, checksum is wrong, we need to get new tlpdb
-      } else {
+      } elsif ($ret == 2) {
+        # umpf, signature error
+        # TODO should we die here? Probably yes because one of 
+        # checksum file or signature file has changed!
+        tldie("$0: verification of checksum for $location failed: $msg\n");
+      } elsif ($ret == 0) {
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
+      } else {
+        tldie("$0: unexpected return value from verify_checksum: $ret\n");
       }
     }
   }
@@ -6212,7 +6222,7 @@ sub clear_old_backups {
       if ($verb) {
         info ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
       } else {
-        log ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
+        debug ("Removing backup $backupdir/$pkg.r$e.tar.xz\n");
       }
       unlink("$backupdir/$pkg.r$e.tar.xz") unless $dryrun;
     }
@@ -7557,11 +7567,11 @@ a different hash), it's harmless to delete them.
 
 =head1 CRYPTOGRAPHIC VERIFICATION
 
-If a working GnuPG binary (C<gpg>) is found (see below for how it is 
-searched), by default verification of
-downloaded files is performed. This can be supressed by specifying
-C<--no-verify-downloads> on the command line, or adding an entry
-C<verify-downloads = 0> to a tlmgr config file.
+If a working GnuPG binary (C<gpg>) is found (see below for the search
+method), by default verification of downloaded files is performed. This
+can be suppressed by specifying C<--no-verify-downloads> on the command
+line, or adding an entry C<verify-downloads = 0> to a tlmgr config file
+(described in another section below).
 
 Verification is performed as follows: For each C<texlive.tlpdb> loaded
 for a repository, the respective checksum C<texlive.tlpdb.sha512> is
@@ -7569,11 +7579,12 @@ always downloaded, too, and C<tlmgr> confirms whether the checksum
 of the download tlpdb file agrees with the download data. This is done
 in any case.
 
-If cryptographic verification is done, then a signature of the checksum
-file is downloaded and the signature verified. The signature is done with
-the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed
-by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key 0x6CACA448.
-All of these keys are obtainable from the standard key servers.
+If cryptographic verification is also requested, then a signature of the
+checksum file is downloaded and the signature verified. The signature is
+done with the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is
+signed by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key
+0x6CACA448.  All of these keys are obtainable from the standard key
+servers.
 
 =head2 Configuration of GnuPG invocation
 
@@ -7581,10 +7592,10 @@ The executable used for GnuPG is searched as follows: If the environment
 variable C<TL_GNUPG> is set, it is tested and used. Otherwise C<gpg> is
 checked, and finally C<gpg2>.
 
-Further adaption of the invocation of C<gpg> can be done using the 
-two enviroment variables C<TL_GNUPGHOME>, which is passed to
-C<gpg> with C<--homedir>, and C<TL_GNUPGARGS>, which replaces the
-default arguments C<--no-secmem-warning --no-permission-warning>.
+Further adaptation of the C<gpg> invocation can be made using the two
+enviroment variables C<TL_GNUPGHOME>, which is passed to C<gpg> as the
+value for C<--homedir>, and C<TL_GNUPGARGS>, which replaces the default
+arguments C<--no-secmem-warning --no-permission-warning>.
 
 
 =head1 USER MODE
