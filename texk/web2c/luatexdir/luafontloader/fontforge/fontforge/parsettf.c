@@ -5871,6 +5871,10 @@ static SplineFont *SFFillFromTTF(struct ttfinfo *info) {
 	SymbolFixup(info);
     if ( info->map==NULL && info->subfonts==NULL )		/* Can happen when reading a ttf from a pdf */
 	info->map = EncMapFromEncoding(sf,FindOrMakeEncoding("original"));
+    if (info->map==NULL) {
+        LogError("Dummy map vector added");
+        info->map = EncMapNew(info->glyph_cnt,info->glyph_cnt,&custom);
+    }
     if ( info->subfontcnt==0 )
 	PsuedoEncodeUnencoded(info->map,info);
     MapDoBack(info->map,info);

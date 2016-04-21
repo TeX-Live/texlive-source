@@ -91,17 +91,6 @@ void unsave_math_data(int lvl);
   or |denom_style|).
 */
 
-typedef enum {
-    display_style = 0,          /* |subtype| for \.{\\displaystyle} */
-    cramped_display_style,      /* |subtype| for \.{\\crampeddisplaystyle} */
-    text_style,                 /* |subtype| for \.{\\textstyle} */
-    cramped_text_style,         /* |subtype| for \.{\\crampedtextstyle} */
-    script_style,               /* |subtype| for \.{\\scriptstyle} */
-    cramped_script_style,       /* |subtype| for \.{\\crampedscriptstyle} */
-    script_script_style,        /* |subtype| for \.{\\scriptscriptstyle} */
-    cramped_script_script_style,        /* |subtype| for \.{\\crampedscriptscriptstyle} */
-} math_style_subtypes;
-
 extern const char *math_style_names[];
 
 #  define cramped 1             /* add this to an uncramped style if you want to cramp it */
