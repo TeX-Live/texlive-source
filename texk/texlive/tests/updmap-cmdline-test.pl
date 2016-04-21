@@ -10,11 +10,12 @@ require "$srcdir/../tests/common-test.pl";
 exit (&main ());
 
 sub main {
-  my $ret = &test_run ("$srcdir/linked_scripts/texlive/updmap.pl", "--version");
+  my $ret = &test_run ("$srcdir/linked_scripts/texlive/updmap.pl","--version");
 
-  # we aren't going to fix this in the current updmap.pl.
-                       # "foo", "--enable Map"
-                       # "-n", "--quiet",
+  # erroneous invocations we should check for and/or handle better:
+  #   updmap foo
+  #   updmap --enable Map
+
   my $bad = $ret != 0;
   return $bad;
 }
