@@ -1610,9 +1610,6 @@ void run_mlist_to_hlist(halfword p, boolean penalties, int mstyle)
         }
         alink(p) = null ;
         nodelist_to_lua(L, p);
-        /*
-            lua_pushstring(L, math_style_names[mstyle]);
-        */
         lua_push_math_style_name(L,mstyle);
         lua_pushboolean(L, penalties);
         if (lua_pcall(L, 3, 1, 0) != 0) {            /* 3 args, 1 result */
@@ -2186,6 +2183,7 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
     scaled w;              /* width of the accentee, not including sub/superscripts */
     boolean s_is_absolute; /* will be true if a top-accent is placed in |s| */
     scaled fraction ;
+    scaled ic = 0;
     scaled target ;
     extinfo *ext;
     pointer attr_p;
@@ -2277,6 +2275,12 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
             delta = delta + height(x) - h;
             h = height(x);
         }
+    } else if ((vlink(q) != null) && (type(nucleus(q)) == math_char_node)) {
+        /* only pure math char nodes */
+        internal_font_number f = fam_fnt(math_fam(nucleus(q)),cur_size);
+        if (is_new_mathfont(f)) {
+            ic = char_italic(f,math_character(nucleus(q)));
+        }
     }
     /* the top accents of both characters are aligned */
     if (s_is_absolute) {
@@ -2339,6 +2343,10 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
         }
     } else {
         shift_amount(y) = -(h - height(y));
+    }
+    if (ic != 0) {
+        /* old font codepath has ic built in, new font code doesn't */
+        width(r) += ic ;
     }
     math_list(nucleus(q)) = y;
     type(nucleus(q)) = sub_box_node;

@@ -30,11 +30,6 @@
     extern const char *dir_strings[128];
 */
 
-#  define dir_TLT  0 /* maybe use this one as unset value */
-#  define dir_TRT  1 /* or should we avoid that one because it's a signal too */
-#  define dir_LTL  2
-#  define dir_RTT  3
-
 extern const char *dir_strings[8];
 
 extern int dir_swap;

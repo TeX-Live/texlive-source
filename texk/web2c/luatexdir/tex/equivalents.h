@@ -478,6 +478,32 @@ typedef enum {
     fin_row_group        /* box code for a provisory line in an alignment */
 } tex_group_codes;
 
+typedef enum {
+    new_graf_par_code = 0,
+    local_box_par_code,
+    hmode_par_par_code,
+    penalty_par_code,
+    math_par_code,
+} tex_par_codes ;
+
+typedef enum {
+    display_style = 0,           /* |subtype| for \.{\\displaystyle} */
+    cramped_display_style,       /* |subtype| for \.{\\crampeddisplaystyle} */
+    text_style,                  /* |subtype| for \.{\\textstyle} */
+    cramped_text_style,          /* |subtype| for \.{\\crampedtextstyle} */
+    script_style,                /* |subtype| for \.{\\scriptstyle} */
+    cramped_script_style,        /* |subtype| for \.{\\crampedscriptstyle} */
+    script_script_style,         /* |subtype| for \.{\\scriptscriptstyle} */
+    cramped_script_script_style, /* |subtype| for \.{\\crampedscriptscriptstyle} */
+} math_style_subtypes;
+
+typedef enum {
+    dir_TLT = 0,
+    dir_TRT,
+    dir_LTL,
+    dir_RTT,
+} dir_codes;
+
 #  define max_group_code local_box_group                        /* which is wrong, but is what the web says */
 
 extern int cur_cmd;                                             /* current command set by |get_next| */

@@ -348,72 +348,72 @@ extern int l_dir_text_index        [DIR_TEXT_SIZE];
 #define lua_push_string_by_name(L,index)       lua_rawgeti(L, LUA_REGISTRYINDEX, lua_key_index(index))
 
 #define set_l_pack_type_index \
-l_pack_type_index[0] = lua_key_index(exactly); \
-l_pack_type_index[1] = lua_key_index(additional); \
-l_pack_type_index[2] = lua_key_index(cal_expand_ratio);\
-l_pack_type_index[3] = lua_key_index(subst_ex_font);
+l_pack_type_index[exactly]          = lua_key_index(exactly); \
+l_pack_type_index[additional]       = lua_key_index(additional); \
+l_pack_type_index[cal_expand_ratio] = lua_key_index(cal_expand_ratio);\
+l_pack_type_index[subst_ex_font]    = lua_key_index(subst_ex_font);
 
 #define set_l_group_code_index \
-l_group_code_index[0]  = lua_key_index(empty_string);\
-l_group_code_index[1]  = lua_key_index(simple);\
-l_group_code_index[2]  = lua_key_index(hbox);\
-l_group_code_index[3]  = lua_key_index(adjusted_hbox);\
-l_group_code_index[4]  = lua_key_index(vbox);\
-l_group_code_index[5]  = lua_key_index(vtop);\
-l_group_code_index[6]  = lua_key_index(align);\
-l_group_code_index[7]  = lua_key_index(no_align);\
-l_group_code_index[8]  = lua_key_index(output);\
-l_group_code_index[9]  = lua_key_index(math);\
-l_group_code_index[10] = lua_key_index(disc);\
-l_group_code_index[11] = lua_key_index(insert);\
-l_group_code_index[12] = lua_key_index(vcenter);\
-l_group_code_index[13] = lua_key_index(math_choice);\
-l_group_code_index[14] = lua_key_index(semi_simple);\
-l_group_code_index[15] = lua_key_index(math_shift);\
-l_group_code_index[16] = lua_key_index(math_left);\
-l_group_code_index[17] = lua_key_index(local_box);\
-l_group_code_index[18] = lua_key_index(split_off);\
-l_group_code_index[19] = lua_key_index(split_keep);\
-l_group_code_index[20] = lua_key_index(preamble);\
-l_group_code_index[21] = lua_key_index(align_set);\
-l_group_code_index[22] = lua_key_index(fin_row)
+l_group_code_index[bottom_level]        = lua_key_index(empty_string);\
+l_group_code_index[simple_group]        = lua_key_index(simple);\
+l_group_code_index[hbox_group]          = lua_key_index(hbox);\
+l_group_code_index[adjusted_hbox_group] = lua_key_index(adjusted_hbox);\
+l_group_code_index[vbox_group]          = lua_key_index(vbox);\
+l_group_code_index[vtop_group]          = lua_key_index(vtop);\
+l_group_code_index[align_group]         = lua_key_index(align);\
+l_group_code_index[no_align_group]      = lua_key_index(no_align);\
+l_group_code_index[output_group]        = lua_key_index(output);\
+l_group_code_index[math_group]          = lua_key_index(math);\
+l_group_code_index[disc_group]          = lua_key_index(disc);\
+l_group_code_index[insert_group]        = lua_key_index(insert);\
+l_group_code_index[vcenter_group]       = lua_key_index(vcenter);\
+l_group_code_index[math_choice_group]   = lua_key_index(math_choice);\
+l_group_code_index[semi_simple_group]   = lua_key_index(semi_simple);\
+l_group_code_index[math_shift_group]    = lua_key_index(math_shift);\
+l_group_code_index[math_left_group]     = lua_key_index(math_left);\
+l_group_code_index[local_box_group]     = lua_key_index(local_box);\
+l_group_code_index[split_off_group]     = lua_key_index(split_off);\
+l_group_code_index[split_keep_group]    = lua_key_index(split_keep);\
+l_group_code_index[preamble_group]      = lua_key_index(preamble);\
+l_group_code_index[align_set_group]     = lua_key_index(align_set);\
+l_group_code_index[fin_row_group]       = lua_key_index(fin_row)
 
 #define set_l_local_par_index \
-l_local_par_index[0] = lua_key_index(new_graf);\
-l_local_par_index[1] = lua_key_index(local_box);\
-l_local_par_index[2] = lua_key_index(hmode_par);\
-l_local_par_index[3] = lua_key_index(penalty);\
-l_local_par_index[4] = lua_key_index(math);
+l_local_par_index[new_graf_par_code]  = lua_key_index(new_graf);\
+l_local_par_index[local_box_par_code] = lua_key_index(local_box);\
+l_local_par_index[hmode_par_par_code] = lua_key_index(hmode_par);\
+l_local_par_index[penalty_par_code]   = lua_key_index(penalty);\
+l_local_par_index[math_par_code]      = lua_key_index(math);
 
 #define set_l_math_style_name_index \
-l_math_style_name_index[0] = lua_key_index(display);\
-l_math_style_name_index[1] = lua_key_index(crampeddisplay);\
-l_math_style_name_index[2] = lua_key_index(text);\
-l_math_style_name_index[3] = lua_key_index(crampedtext);\
-l_math_style_name_index[4] = lua_key_index(script);\
-l_math_style_name_index[5] = lua_key_index(crampedscript);\
-l_math_style_name_index[6] = lua_key_index(scriptscript);\
-l_math_style_name_index[7] = lua_key_index(crampedscriptscript)
+l_math_style_name_index[display_style]               = lua_key_index(display);\
+l_math_style_name_index[cramped_display_style]       = lua_key_index(crampeddisplay);\
+l_math_style_name_index[text_style]                  = lua_key_index(text);\
+l_math_style_name_index[cramped_text_style]          = lua_key_index(crampedtext);\
+l_math_style_name_index[script_style]                = lua_key_index(script);\
+l_math_style_name_index[cramped_script_style]        = lua_key_index(crampedscript);\
+l_math_style_name_index[script_script_style]         = lua_key_index(scriptscript);\
+l_math_style_name_index[cramped_script_script_style] = lua_key_index(crampedscriptscript)
 
 #define set_l_dir_par_index \
-l_dir_par_index[0] = lua_key_index(TLT);\
-l_dir_par_index[1] = lua_key_index(TRT);\
-l_dir_par_index[2] = lua_key_index(LTL);\
-l_dir_par_index[3] = lua_key_index(RTT);\
-l_dir_par_index[4] = lua_key_index(TLT);\
-l_dir_par_index[5] = lua_key_index(TRT);\
-l_dir_par_index[6] = lua_key_index(LTL);\
-l_dir_par_index[7] = lua_key_index(RTT);\
+l_dir_par_index[dir_TLT]   = lua_key_index(TLT);\
+l_dir_par_index[dir_TRT]   = lua_key_index(TRT);\
+l_dir_par_index[dir_LTL]   = lua_key_index(LTL);\
+l_dir_par_index[dir_RTT]   = lua_key_index(RTT);\
+l_dir_par_index[dir_TLT+3] = lua_key_index(TLT);\
+l_dir_par_index[dir_TRT+3] = lua_key_index(TRT);\
+l_dir_par_index[dir_LTL+3] = lua_key_index(LTL);\
+l_dir_par_index[dir_RTT+3] = lua_key_index(RTT);\
 
 #define set_l_dir_text_index \
-l_dir_text_index[0] = lua_key_index(mTLT);\
-l_dir_text_index[1] = lua_key_index(mTRT);\
-l_dir_text_index[2] = lua_key_index(mLTL);\
-l_dir_text_index[3] = lua_key_index(mRTT);\
-l_dir_text_index[4] = lua_key_index(pTLT);\
-l_dir_text_index[5] = lua_key_index(pTRT);\
-l_dir_text_index[6] = lua_key_index(pLTL);\
-l_dir_text_index[7] = lua_key_index(pRTT);\
+l_dir_text_index[dir_TLT]   = lua_key_index(mTLT);\
+l_dir_text_index[dir_TRT]   = lua_key_index(mTRT);\
+l_dir_text_index[dir_LTL]   = lua_key_index(mLTL);\
+l_dir_text_index[dir_RTT]   = lua_key_index(mRTT);\
+l_dir_text_index[dir_TLT+3] = lua_key_index(pTLT);\
+l_dir_text_index[dir_TRT+3] = lua_key_index(pTRT);\
+l_dir_text_index[dir_LTL+3] = lua_key_index(pLTL);\
+l_dir_text_index[dir_RTT+3] = lua_key_index(pRTT);\
 
 #define img_parms_max     25
 #define img_pageboxes_max  6

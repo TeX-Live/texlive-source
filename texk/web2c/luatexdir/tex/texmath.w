@@ -2137,8 +2137,8 @@ static void resume_after_display(void)
     push_nest();
     mode = hmode;
     space_factor = 1000;
-    tail_append(make_local_par_node(4)); /* this needs to be intercepted in
-                                            the display math start ! */
+    /* this needs to be intercepted in the display math start ! */
+    tail_append(make_local_par_node(penalty_par_code));
     get_x_token();
     if (cur_cmd != spacer_cmd)
         back_input();

@@ -1499,7 +1499,7 @@ void new_graf(boolean indented)
     mode = hmode;
     space_factor = 1000;
     /* LOCAL: Add local paragraph node */
-    tail_append(make_local_par_node(0));
+    tail_append(make_local_par_node(new_graf_par_code));
     if (indented) {
         p = new_null_box();
         box_dir(p) = par_direction;
@@ -1869,7 +1869,7 @@ void build_local_box(void)
         eq_define(local_right_box_base, box_ref_cmd, p);
     if (abs(mode) == hmode) {
         /* LOCAL: Add local paragraph node */
-        tail_append(make_local_par_node(1));
+        tail_append(make_local_par_node(local_box_par_code));
     }
     eq_word_define(int_base + no_local_whatsits_code, no_local_whatsits + 1);
 }
@@ -2830,7 +2830,7 @@ void fixup_directions(void)
         }
         if (temp_no_whatsits != 0) {
             /* LOCAL: Add local paragraph node */
-            tail_append(make_local_par_node(2));
+            tail_append(make_local_par_node(hmode_par_par_code));
         }
     }
 }
@@ -2940,7 +2940,7 @@ void assign_internal_value(int a, halfword p, int val)
             ((p == (int_base + local_inter_line_penalty_code)) ||
              (p == (int_base + local_broken_penalty_code)))) {
             /* LOCAL: Add local paragraph node */
-            tail_append(make_local_par_node(3));
+            tail_append(make_local_par_node(penalty_par_code));
 
             eq_word_define(int_base + no_local_whatsits_code,
                            no_local_whatsits + 1);
