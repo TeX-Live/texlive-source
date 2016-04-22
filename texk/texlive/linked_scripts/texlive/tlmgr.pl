@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40652 2016-04-21 19:08:52Z karl $
+# $Id: tlmgr.pl 40671 2016-04-21 23:11:29Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40652 $';
-my $datrev = '$Date: 2016-04-21 21:08:52 +0200 (Thu, 21 Apr 2016) $';
+my $svnrev = '$Revision: 40671 $';
+my $datrev = '$Date: 2016-04-22 01:11:29 +0200 (Fri, 22 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3800,7 +3800,7 @@ sub action_pinning {
   if (!$remotetlpdb->is_virtual) {
     tlwarn("$prg: only one repository configured, "
            . "pinning actions not supported.\n");
-    return;
+    return $F_WARNING;
   }
   my $pinref = $remotetlpdb->virtual_pindata();
   my $pf = $remotetlpdb->virtual_pinning();
@@ -3809,23 +3809,23 @@ sub action_pinning {
     my @pins = @$pinref;
     if (!@pins) {
       tlwarn("$prg: no pinning data present.\n");
-      return 0;
+      return $F_OK;
     }
     info("$prg: this pinning data is defined:\n");
     for my $p (@pins) {
       info("  ", $p->{'repo'}, ":", $p->{'glob'}, "\n");
     }
-    return 1;
+    return $F_OK;
 
   } elsif ($what =~ m/^check$/i) {
     tlwarn("$prg: not implemented yet, sorry!\n");
-    return 0;
+    return $F_WARNING;
 
   } elsif ($what =~ m/^add$/i) {
     # we need at least two more arguments
     if (@ARGV < 2) {
       tlwarn("$prg: need at least two arguments to pinning add\n");
-      return;
+      return $F_ERROR;
     }
     my $repo = shift @ARGV;
     my @new = ();
@@ -3842,24 +3842,24 @@ sub action_pinning {
     $remotetlpdb->virtual_update_pins();
     $pf->save;
     info("$prg: new pinning data for $repo: @new\n") if @new;
-    return 1;
+    return $F_OK;
 
   } elsif ($what =~ m/^remove$/i) {
     my $repo = shift @ARGV;
     if (!defined($repo)) {
       tlwarn("$prg: missing repository argument to pinning remove\n");
-      return 0;
+      return $F_ERROR;
     }
     if ($opts{'all'}) {
       if (@ARGV) {
         tlwarn("$prg: additional argument(s) not allowed with --all: @ARGV\n");
-        return 0;
+        return $F_ERROR;
       }
       $pf->delete_key($repo);
       $remotetlpdb->virtual_update_pins();
       $pf->save;
       info("$prg: all pinning data removed for repository $repo\n");
-      return 1;
+      return $F_OK;
     }
     # complicated case, we want to remove only one setting
     my @ov = $pf->value($repo);
@@ -3869,7 +3869,7 @@ sub action_pinning {
     }
     if ($#ov == $#nv) {
       info("$prg: no changes in pinning data for $repo\n");
-      return 1;
+      return $F_OK;
     }
     if (@nv) {
       $pf->value($repo, @nv);
@@ -3879,17 +3879,17 @@ sub action_pinning {
     $remotetlpdb->virtual_update_pins();
     $pf->save;
     info("$prg: removed pinning data for repository $repo: @ARGV\n");
-    return 1;
+    return $F_OK;
 
   } else {
     tlwarn("$prg: unknown argument for pinning action: $what\n");
-    return 0;
+    return $F_ERROR;
   }
   # $pin{'repo'} = $repo;
   # $pin{'glob'} = $glob;
   # $pin{'re'} = $re;
   # $pin{'line'} = $line; # for debug/warning purpose
-  return 0;
+  return $F_ERROR;
 }
 
 #  REPOSITORY

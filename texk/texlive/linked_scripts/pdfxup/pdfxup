@@ -1,0 +1,1080 @@
+#!/bin/bash
+shopt -s extglob
+shopt -s lastpipe
+
+VERSION="1.30"
+VDATE="2015/10/06"
+## see release notes at the end of this file.
+
+: ${GS=`which gs`}
+if [ ! $? ]; then
+    echo "ghostscript not found; aborting.";
+    exit 1;
+fi
+: ${PDFLATEX=`which pdflatex`}
+if [ ! $? ]; then
+    echo "pdflatex not found; aborting.";
+    exit 1;
+fi
+
+declare -A BB NOBB;
+
+function defaultvalues()
+{
+  : ${dfpdfxupCOLS=2}
+  : ${dfpdfxupROWS=1}
+  : ${dfpdfxupLANDSC=1}
+  : ${dfpdfxupPAP="a4"}
+  : ${dfpdfxupBOOKLET=0}
+  : ${dfpdfxupOUTF="pdfxup.pdf"}
+  : ${dfpdfxupIHM="5pt"}
+  : ${dfpdfxupIVM="5pt"}
+  : ${dfpdfxupIM="5pt"}
+  : ${dfpdfxupHM="5pt"}
+  : ${dfpdfxupVM="5pt"}
+  : ${dfpdfxupM="5pt"}
+  : ${dfpdfxupIHS="1pt"}
+  : ${dfpdfxupIVS="1pt"}
+  : ${dfpdfxupIS="1pt"}
+  : ${dfpdfxupFW=".4pt"}
+  : ${dfpdfxupPAGES="-"}
+  : ${dfpdfxupBB="-"}
+  : ${dfpdfxupGBB="0"}
+  : ${dfpdfxupVERB=1}
+  : ${dfpdfxupDEBUG=0}
+}
+function usage()
+{
+defaultvalues;
+echo "pdfxup: n-up pages of a PDF document, preserving readability
+usage:  `basename $0` [OPTIONS] file
+Available OPTIONS are:
+  -x n           n columns per page                    [default: \"$dfpdfxupCOLS\"]
+  -y n           n lines per page                      [default: \"$dfpdfxupROWS\"]
+  -l [0|1]       landscape-mode                        [default: \"$dfpdfxupLANDSC\"]
+  -b [0|1|le|se] booklet-mode                          [default: \"$dfpdfxupBOOKLET\"]
+  -im n          inner margins                         [default: \"$dfpdfxupIM\"]
+  -m n           margins                               [default: \"$dfpdfxupM\"]
+  -is n          interm. spaces                        [default: \"$dfpdfxupIS\"]
+  -fw n          frame width                           [default: \"$dfpdfxupFW\"] 
+  -o file        write output to file                  [default: \"$dfpdfxupOUTF\"]
+  -p range       restrict to range of pages            [default: \"$dfpdfxupPAGES\"]
+  -nobb range    page range to omit for computing bbox [default: \"$dfpdfxupNOBB\"]
+  -bb range      page range to use for computing bbox  [default: \"$dfpdfxupBB\"]
+  -g [0|1]       only computes bounding box            [default: \"$dfpdfxupGBB\"]
+  -s x y X Y     force bounding box                    [default: unset]
+  -V [0-3]       select verbosity                      [default: \"$dfpdfxupVERB\"]
+  -q             run quietly (equiv. '-V=0')
+  -i             ask before overwriting/removing files
+  -d             debug mode: keep intermediary files
+  -v             show version number and exit
+  -h             show this help message";
+
+##
+## Some options are not presented, for the sake of brevity...
+##
+##  -ihm n         inner horizontal margin               [default: \"$dfpdfxupIHM\"]
+##  -ivm n         inner vertical margin                 [default: \"$dfpdfxupIVM\"]
+##  -hm n          horizontal margin                     [default: \"$dfpdfxupHM\"]
+##  -vm n          vertical margin                       [default: \"$dfpdfxupVM\"]
+##  -ihs n         interm. horizontal space              [detault: \"$dfpdfxupIHS\"]
+##  -ivs n         interm. vertical space                [detault: \"$dfpdfxupIVS\"]
+##  -ps s          output paper size                     [default: \"$dfpdfxupPAP\"]
+##
+##
+##
+
+exit 0;
+}
+
+function setdefaultvalues()
+{
+  COLS=$dfpdfxupCOLS;
+  ROWS=$dfpdfxupROWS;
+  LANDSC=$dfpdfxupLANDSC;
+  BOOKLET=$dfpdfxupBOOKLET;
+  PAP=$dfpdfxupPAP;
+  OUTF=$dfpdfxupOUTF
+  IHM=$dfpdfxupIHM;
+  IVM=$dfpdfxupIVM;
+  IM=$dfpdfxupIM;
+  HM=$dfpdfxupHM;
+  VM=$dfpdfxupVM;
+  M=$dfpdfxupM;
+  IHS=$dfpdfxupIHS;
+  IVS=$dfpdfxupIVS;
+  IS=$dfpdfxupIS;
+  FW=$dfpdfxupFW;
+  VERB=$dfpdfxupVERB;
+  DEBUG=$dfpdfxupDEBUG;
+  nbNOBB=0;
+  nbBB=0;
+  GBB=$dfpdfxupGBB;
+  SBB=0;
+  x0=-1
+  y0=-1
+  h0=-1
+  w0=-1
+  ## the names for h and w should actually be X and Y: they are not width and height, 
+  ## but coordinates of upper right corner.
+}
+
+function dimtopt()
+{
+    dim=$1;
+    case $dim in
+	*pt)
+	    ;;
+	*mm)
+	    dim=${dim%mm};
+	    eval dim=$((dim*2845/100))pt;
+	    ;;
+	*cm)
+	    dim=${dim%cm};
+	    eval dim=$((dim*284/10))pt;
+	    ;;
+	*in)
+	    dim=${dim%in};
+	    eval dim=$((dim*723/10))pt;
+	    ;;
+	*[!0-9]*)
+	    ## should not occur... has been filtered out by main 'case'
+	    echo "Illegal unit of measure in option '$3'; ignoring"; 
+	    dim=$2;
+	    ;;
+	*)
+	    dim=${dim}pt;
+	    ;;
+    esac
+}
+
+function testdim()
+{
+    dim=$1;
+    case $dim in
+	+([0-9])@(pt|in|cm|mm))
+	    ;;
+	+([0-9]))
+	    dim=${dim}pt
+	    ;;
+	+([0-9])*)
+	    echo "Illegal unit of measure in option '$3'; ignoring";
+	    dim=$2;
+	    ;;
+	*)
+	    echo "Not a valid dimension in option '$3'; ignoring";
+	    dim=$2;
+	    ;;
+    esac
+}
+
+function testrange()
+{
+    declare -a list=("${!2}");
+
+    in=0;
+    if [[ $3 -eq 0 ]]; then 
+	return;
+    fi
+    n=$1;
+    l=$3
+    i=0;
+    while ( true ); do
+	if [[ $i -ge $l ]]; then break; fi
+	case ${list[$i]} in
+	    +([0-9]))
+                 first=${list[$i]};
+                 last=${list[$i]};
+		 shift;;
+	    -+([0-9]))
+                 first=1;
+		 last=${list[$i]:1};
+		 shift;;
+            +([0-9])-)
+                 first=${list[$i]::-1};
+	         last=$nbp;
+	         shift;;
+            +([0-9])-+([0-9]))
+                 first=${list[$i]%-*}
+		 last=${list[$i]#*-}
+		 shift;;
+	esac
+	if [[ $n -ge $first && $n -le $last ]]; then
+	    in=1;
+	    return;
+	fi
+	eval i=$(( i+1 ))
+    done
+}
+
+function myecho()
+{
+    ECHO=0;
+    case $1 in
+	+([0-9])\+)
+            if [[ $VERB -ge ${1%+} ]]; then ECHO=1; fi;;
+	+([0-9]))
+            if [[ $VERB -eq $1 ]]; then ECHO=1; fi;;
+	+([0-9])-)
+            if [[ $VERB -le ${1%-} ]]; then ECHO=1; fi;;
+    esac
+    if [[ $ECHO == 1 ]]; then
+	case $2 in
+	    -*)
+		echo $2 "$3";;
+	    *)
+		echo "$2";;
+	esac
+    fi
+}
+
+ARGS=$@;
+if [ $# -eq 0 ]; then
+  usage;
+fi
+
+defaultvalues;
+setdefaultvalues;
+filename="temp-pdfxup-`date +%s`";
+
+while [ $# != 0 ]; do
+    case $1 in
+	-x|--columns)
+	    COLS=$2;
+	    shift 2;;
+	-x?(=)+([0-9]))
+	    COLS=`echo $1|sed -re "s/-x=?//"`;
+	    shift;;
+	-y|--rows)
+	    ROWS=$2;
+	    shift 2;;
+	-y?(=)+([0-9]))
+	    ROWS=`echo $1|sed -re "s/-y=?//"`;
+	    shift;;
+	-l|--landscape)
+	    case $2 in
+		0|1)
+		    LANDSC=$2;
+		    SHIFT=2;
+		    ;;
+		yes|y)
+		    LANDSC=1;
+		    SHIFT=2;
+		    ;;
+		no|n)
+		    LANDSC=0;
+		    SHIFT=2;
+		    ;;
+		-*)
+		    LANDSC=1;
+		    SHIFT=1;
+		    ;;
+		*)
+		    LANDSC=1;
+		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
+		    #echo "Assuming you want landscape outupt...";
+		    SHIFT=1;
+	    esac
+	    shift $SHIFT;;
+	-l*)
+	    ANS=`echo $1|sed -re "s/-l=?//"`;
+	    case $ANS in
+		0|1)
+		    LANDSC=$ANS;
+		    ;;
+		yes|y)
+		    LANDSC=1;
+		    ;;
+		no|n)
+		    LANDSC=0;
+		    ;;
+		*)
+		    LANDSC=1;
+		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
+		    #echo "Assuming you want landscape outupt...";
+	    esac
+	    shift;;
+	-nl|--portrait|--no-landscape|--nolandscape)
+	    LANDSC=0;
+	    shift;;
+	-b|--booklet)
+	    case $2 in
+		0|1|le|se)
+		    BOOKLET=$2;
+		    SHIFT=2;
+		    ;;
+		yes|y)
+		    BOOKLET=1;
+		    SHIFT=2;
+		    ;;
+		no|n)
+		    BOOKLET=0;
+		    SHIFT=2;
+		    ;;
+		-*)
+		    BOOKLET=1;
+		    SHIFT=1;
+		    ;;
+		*)
+		    BOOKLET=1;
+		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
+		    #echo "Assuming you want booklet outupt...";
+		    SHIFT=1;
+	    esac
+	    if [[ $BOOKLET != 0 ]]; then
+		FW=0pt
+	    fi
+	    shift $SHIFT;;
+	-b[^b]*)
+	    ANS=`echo $1|sed -re "s/-b=?//"`;
+	    case $ANS in
+		0|1|le|se)
+		    BOOKLET=$ANS;
+		    ;;
+		yes|y)
+		    BOOKLET=1;
+		    ;;
+		no|n)
+		    BOOKLET=0;
+		    ;;
+		*)
+		    BOOKLET=1;
+		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
+		    #echo "Assuming you want booklet outupt...";
+	    esac
+	    if [[ $BOOKLET != 0 ]]; then
+		FW=0pt
+	    fi
+	    shift;;
+	-ps|--paper|--paper-size)
+	    PAP=$2;
+	    shift 2;;
+	-ps=*|--paper=*|--paper-size=*)
+	    ## '=' is compulsory, as we expect a string...
+	    ANS=`echo $1|sed -re "s/(-ps=|--paper=|--paper-size=)//"`;
+	    PAP=$ANS;
+	    shift;;
+	-p|--pages|--page)
+	    PAGES=$2;
+	    shift 2;;
+	-p*|--page*)
+	    ANS=`echo $1|sed -re "s/(-p|--pages?)=?//"`;
+	    PAGES=$ANS;
+	    shift 2;;
+	-o|--out|--output-file|--outfile)
+	    OUTF=$2;
+	    shift 2;;
+	-o*)
+	    ANS=`echo $1|sed -re "s/-o=?//"`;
+	    OUTF=$ANS;
+	    shift;;
+	-ihm|--innerhmargin)
+	    dimtopt $2 $dfpdfxupIHM "$1 $2";
+	    IHM=$dim;
+	    shift 2;;
+	-ihm?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-ihm=?//"`;
+	    dimtopt $ANS $dfpdfxupIHM $1;
+	    IHM=$dim;
+	    shift;;
+	-ivm|--innervmargin)
+	    dimtopt $2 $dfpdfxupIVM "$1 $2";
+	    IVM=$dim;
+	    shift 2;;
+	-ivm?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-ivm=?//"`;
+	    dimtopt $ANS $dfpdfxupIVM $1;
+	    IVM=$dim;
+	    shift;;
+	-im|--innermargins)
+	    dimtopt $2 $dfpdfxupIM "$1 $2";
+	    IHM=$dim;
+	    IVM=$dim;
+	    shift 2;;
+	-im?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-im=?//"`;
+	    dimtopt $ANS $dfpdfxupIM $1;
+	    IHM=$dim;
+	    IVM=$dim;
+	    shift;;
+	-hm|--hmargin)
+	    testdim $2 $dfpdfxupHM "$1 $2";
+	    HM=$dim;
+	    shift 2;;
+	-hm?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-hm=?//"`;
+	    testdim $ANS $dfpdfxupHM $1;
+	    HM=$dim;
+	    shift;;
+	-vm|--vmargin)
+	    testdim $2 $dfpdfxupVM "$1 $2";
+	    VM=$dim;
+	    shift 2;;
+	-vm?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-vm=?//"`;
+	    testdim $ANS $dfpdfxupVM $1;
+	    VM=$dim;
+	    shift;;
+	-m|--margins)
+	    testdim $2 $dfpdfxupM "$1 $2";
+	    HM=$dim;
+	    VM=$dim;
+	    shift 2;;
+	-m?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-m=?//"`;
+	    testdim $ANS $dfpdfxupM $1;
+	    HM=$dim;
+	    VM=$dim;
+	    shift;;
+	-ihs|--inthspace)
+	    testdim $2 $dfpdfxupIHS "$1 $2";
+	    IHS=$dim;
+	    shift 2;;
+	-ihs?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-ihs=?//"`;
+	    testdim $ANS $dfpdfxupIHS $1;
+	    IHS=$dim;
+	    shift;;
+	-ivs|--intvspace)
+	    testdim $2 $dfpdfxupIVS "$1 $2";
+	    IVS=$dim;
+	    shift 2;;
+	-ivs?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-ivs=?//"`;
+	    testdim $ANS $dfpdfxupIVS $1;
+	    IVS=$dim;
+	    shift;;
+	-is|--intspaces)
+	    testdim $2 $dfpdfxupIS "$1 $2";
+	    IHS=$dim;
+	    IVS=$dim;
+	    shift 2;;
+	-is?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-is=?//"`;
+	    testdim $ANS $dfpdfxupIS $1;
+	    IHS=$dim;
+	    IVS=$dim;
+	    shift;;
+	-fw|--framewidth)
+	    testdim $2 $dfpdfxupFW "$1 $2";
+	    FW=$dim;
+	    shift 2;;
+	-fw?(=)+([0-9])*)
+	    ANS=`echo $1|sed -re "s/-fw=?//"`;
+	    testdim $ANS $dfpdfxupFW $1;
+	    FW=$dim;
+	    shift;;
+	-i)
+	    MVopt="-i";
+	    RMopt="-i";
+	    shift;;
+	-nobb|--nobb|-no-bb|--no-bb)
+	    NOBB[$nbNOBB]=$2;
+	    eval nbNOBB=$(( nbNOBB+1 ));
+	    shift 2;;
+	-nobb*|--nobb*|-no-bb*|--no-bb*)
+	    ANS=`echo $1|sed -re "s/--?no-?bb=?//"`;
+	    NOBB[$nbNOBB]=$ANS;
+	    eval nbNOBB=$(( nbNOBB+1 ));
+	    shift;;
+	-bb|--bb)
+	    BB[$nbBB]=$2;
+	    eval nbBB=$(( nbBB+1 ));
+	    shift 2;;
+	-bb*|--bb*)
+	    ANS=`echo $1|sed -re "s/--?bb=?//"`;
+	    BB[$nbBB]=$ANS;
+	    eval nbBB=$(( nbBB+1 ));
+	    shift;;
+
+
+	-g|--get-bb|--getbb)
+	    case $2 in
+		0|1)
+		    GBB=$2;
+		    SHIFT=2;
+		    ;;
+		yes|y)
+		    GBB=1;
+		    SHIFT=2;
+		    ;;
+		no|n)
+		    GBB=0;
+		    SHIFT=2;
+		    ;;
+		-*)
+		    GBB=1;
+		    SHIFT=1;
+		    ;;
+		*)
+		    GBB=1;
+		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
+		    #echo "Assuming you want landscape outupt...";
+		    SHIFT=1;
+	    esac
+	    shift $SHIFT;;
+	-g*)
+	    ANS=`echo $1|sed -re "s/-g=?//"`;
+	    case $ANS in
+		0|1)
+		    GBB=$ANS;
+		    ;;
+		yes|y)
+		    GBB=1;
+		    ;;
+		no|n)
+		    GBB=0;
+		    ;;
+		*)
+		    GBB=1;
+		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
+		    #echo "Assuming you want landscape outupt...";
+	    esac
+	    shift;;
+
+	-s|--set-bb|--setbb)
+	    case "$2$3$4$5" in
+                +([0-9]))
+		    SBB=1;
+		    BBX=$2;
+		    BBY=$3;
+		    BBW=$4;
+		    BBH=$5;;
+	    esac
+	    shift 5;;
+
+	-V)
+	    case $2 in
+		@(0|1|2|3))
+		    VERB=$2;
+		    SHIFT=2;;
+		*)
+		    VERB=2;
+		    SHIFT=1;;
+	    esac
+	    shift $SHIFT;;
+	-V?(=)@(0|1|2|3))
+	    VERB=`echo $1|sed -re "s/-V=?//"`;
+	    shift;;
+	-V?(=)+([0-9]))
+	    VERB=9;
+	    shift;;
+	-VV)
+	    VERB=2;
+	    shift;;
+	-VVV)
+	    VERB=3;
+	    shift;;
+	-q|--quiet)
+	    VERB=0;
+	    shift;;
+	-v|--version)
+	    echo "pdfxup version $VERSION (released $VDATE)";
+	    exit 0;;
+	-d|--debug)
+	    DEBUG=1;
+	    shift;;
+	-*)
+	    usage;;
+	*:[0-9\-]*)
+	    ARG=$1;
+	    file=${ARG%:*}
+	    PAGES=${ARG#*:}
+	    break;;
+	*)
+	    file=$1;
+	    ## only one file is allowed, and no options
+	    ## should appear after the file name...
+	    break;;
+    esac;
+done
+
+if [[ $file == "" ]]; then
+    echo "pdfxup: no input file given; exiting.";
+    exit 0;
+fi
+
+if [[ ! -e $file && `basename $file .pdf` == $file ]]; then
+    myecho 2+ "-> changing file name '$file' to '$file.pdf'";
+    file="$file.pdf";
+fi;
+
+if [[ ! -e $file ]]; then
+    echo "pdfxup: file $file not found; exiting.";
+    exit 0;
+fi
+
+## get number of pages
+nbp=`$GS -sDEVICE=bbox -dNOPAUSE -dQUIET -c "($file) (r) file runpdfbegin pdfpagecount = quit"`
+
+if [[ $BOOKLET != 0 ]]; then
+  if [[ $COLS != 2 || $ROWS != 1 || $LANDSC == 0 ]]; then
+      echo "forcing booklet mode: 2 cols, 1 row, landscape";
+      COLS=2; ROWS=1; LANDSC=1;
+  fi
+fi
+
+firstp=1;
+lastp=$nbp;
+if [[ $PAGES =~ ([0-9]+|[0-9]*-[0-9]*) ]]; then
+    BB[$nbBB]=$PAGES;
+    eval nbBB=$(( nbBB+1 ));
+    case $PAGES in
+	-)
+	    firstp=1;
+	    lastp=$nbp;;
+	+([0-9]))
+            firstp=${PAGES};
+            lastp=${PAGES};;
+	-+([0-9]))
+            firstp=1;
+	    lastp=${PAGES:1};;
+      +([0-9])-)
+            firstp=${PAGES::-1};
+	    lastp=$nbp;;
+      +([0-9])-+([0-9]))
+            firstp=${PAGES%-*};
+            lastp=${PAGES#*-};;
+    esac
+fi
+
+if [[ $nbBB == 0 ]]; then
+    BB[$nbBB]=$dfpdfxupBB;
+    nbBB=1;
+fi
+
+if [[ $nbNOBB == 0 ]]; then
+    NOBB[0]="";
+fi
+
+
+
+if [[ $SBB == 0 ]]; then
+    myecho 1+ -n "-> computing bounding box";
+    myecho 2+ "";
+    
+    x=$x0
+    y=$y0
+    w=$w0
+    h=$h0
+    curr=0
+    page=0
+    
+# $GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -sDEVICE=bbox $file 2>&1 |\
+#   grep "%%BoundingBox" |\
+#   sed "s/^.*Box: //" > $filename-bb.txt
+# for i in `cat $filename-bb.txt`; do 
+#     case $curr in
+# 	0)
+# 	    thisx=$i;
+# 	    #if [[ $x -gt $i ]]; then x=$i; fi
+# 	    ;;
+# 	1)
+# 	    thisy=$i;
+# 	    #if [[ $y -gt $i ]]; then y=$i; fi
+# 	    ;;
+# 	2)
+# 	    thisw=$i;
+# 	    #if [[ $w -lt $i ]]; then w=$i; fi
+# 	    ;;
+# 	3)
+# 	    thish=$i;
+# 	    #if [[ $h -lt $i ]]; then h=$i; fi
+# 	    if [[ $x -lt 0 || $x -gt $thisx && $thisx+$thisw -gt 0 ]]; then x=$thisx; fi
+# 	    if [[ $y -lt 0 || $y -gt $thisy && $thisy+$thish -gt 0 ]]; then y=$thisy; fi
+# 	    if [[ $w -lt 0 || $w -lt $thisw && $thisx+$thisw -gt 0 ]]; then w=$thisw; fi
+# 	    if [[ $h -lt 0 || $h -lt $thish && $thisy+$thish -gt 0 ]]; then h=$thish; fi
+# 	    ;;
+#     esac
+#     eval curr=$(( (curr+1) % 4 ));
+# done
+# rm $filename-bb.txt
+
+    for (( b=0; b<$nbBB; b++ ))
+    do 
+	case ${BB[$b]} in
+	    -)
+		first=1;
+		last=$nbp;;
+	    +([0-9]))
+                first=${BB[$b]};
+                last=${BB[$b]};;
+	    -+([0-9]))
+                first=1;
+	        last=${BB[$b]:1};;
+	    +([0-9])-)
+                first=${BB[$b]::-1};
+	        last=$nbp;;
+	    +([0-9])-+([0-9]))
+                first=${BB[$b]%-*};
+		last=${BB[$b]#*-};;
+	esac
+	myecho 3+ " > $GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -dFirstPage=$first -dLastPage=$last -sDEVICE=bbox $file"
+	$GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -dFirstPage=$first -dLastPage=$last -sDEVICE=bbox $file 2>&1 | 
+	while IFS= read -r line; do
+	    bbox=`echo $line | grep "%%BoundingBox" | sed "s/^.*Box: //"`;
+	    if [[ $bbox != "" ]]; then 
+		for i in `echo $line | grep "%%BoundingBox" | sed "s/^.*Box: //"`; do
+		    if [[ $curr == 0 ]]; then
+			eval page=$(( page+1 ));
+		    fi
+		    case $curr in
+ 			0)
+ 			    thisx=$i;
+ 			    #if [[ $x -gt $i ]]; then x=$i; fi
+ 			    ;;
+ 			1)
+ 			    thisy=$i;
+ 			    #if [[ $y -gt $i ]]; then y=$i; fi
+ 			    ;;
+ 			2)
+ 			    thisw=$i;
+ 			    #if [[ $w -lt $i ]]; then w=$i; fi
+ 			    ;;
+ 			3)
+ 			    thish=$i;
+ 			    #if [[ $h -lt $i ]]; then h=$i; fi
+			    testrange $page NOBB[@] $nbNOBB
+			    if [ $in == 0 ]; then
+ 				if [[ $x -lt 0 || $x -gt $thisx && $thisx+$thisw -gt 0 ]]; then x=$thisx; fi
+ 				if [[ $y -lt 0 || $y -gt $thisy && $thisy+$thish -gt 0 ]]; then y=$thisy; fi
+ 				if [[ $w -lt 0 || $w -lt $thisw && $thisx+$thisw -gt 0 ]]; then w=$thisw; fi
+ 				if [[ $h -lt 0 || $h -lt $thish && $thisy+$thish -gt 0 ]]; then h=$thish; fi
+				myecho 1 -n "."
+				myecho 2 -ne "    bbox: x=$x y=$y X=$w Y=$h  (page $page)       \\r";
+				myecho 3+    "    bbox: x=$x y=$y X=$w Y=$h  (page $page)       ";
+			    fi
+ 			    ;;
+		    esac
+		    eval curr=$(( (curr+1) % 4 ));
+		done
+	    fi
+	done;
+    done;
+else
+    x=$BBX;
+    y=$BBY;
+    w=$BBW;
+    h=$BBH;
+fi
+
+
+if [[ $x -eq $x0 &&
+      $y -eq $y0 && 
+      $h -eq $h0 && 
+      $w -eq $w0 ]]; then 
+    echo "empty bounding box; aborting."
+    exit 1;
+fi
+
+if [[ $SBB == 0 ]]; then
+    myecho 1 -n "."
+    myecho 2+ -ne "    bbox: x=$x y=$y X=$w Y=$h  (final)              \\r";
+    
+    myecho 1+ "";
+fi
+
+if [[ $GBB != 0 ]]; then
+    myecho 1 "-> final bounding box: x=$x y=$y X=$w Y=$h";
+    exit 0;
+fi
+
+
+IHM=${IHM%pt};
+IVM=${IVM%pt};
+eval x=$((x-IHM))
+eval y=$((y-IVM))
+eval w=$((w+IHM))
+eval h=$((h+IVM))
+
+
+
+cat > $filename.tex <<EOF
+  \newif\ifbooklet
+  \newif\iflongedge
+EOF
+case $BOOKLET in
+    0)
+	echo "  \bookletfalse" >> $filename.tex;;
+    se)
+	echo "  \booklettrue" >> $filename.tex
+	echo "  \longedgefalse" >> $filename.tex;;
+    *)
+	echo "  \booklettrue" >> $filename.tex
+	echo "  \longedgetrue" >> $filename.tex;;
+esac
+
+cat >> $filename.tex <<EOF
+  \documentclass{article}
+  \usepackage[margin=0pt]{geometry}
+  \usepackage{graphicx}
+  \IfFileExists{grffile.sty}{\usepackage{grffile}}{}
+  \topskip=0pt
+
+  \def\file{$file}
+  \pdfximage{\file}
+  \parindent=0pt
+
+  \def\outputpaper{$PAP}
+  \def\outputlandscape{$LANDSC}
+  \def\nbhoriz{$COLS}
+  \def\nbvert{$ROWS}
+
+  \expandafter\geometry\expandafter{\outputpaper paper}
+  \ifnum\outputlandscape=1\relax\geometry{landscape}\fi
+
+  \newcounter{outpage}
+  \newcounter{lastpage}
+  %\setcounter{outpage}{\the\pdflastximagepages}
+  \setcounter{outpage}{$lastp}
+  \makeatletter
+  \addtocounter{outpage}{-1}
+  \divide\c@outpage by \nbhoriz
+  \divide\c@outpage by \nbvert
+  \ifbooklet
+    \divide\c@outpage by 2
+  \fi
+  \stepcounter{outpage}
+  \ifbooklet
+    \multiply\c@outpage by 2
+  \fi
+  \setcounter{lastpage}{\value{outpage}}
+  \multiply\c@lastpage by \nbhoriz
+  \multiply\c@lastpage by \nbvert
+  %\showthe\c@outpage
+  \makeatother
+  %
+  \newlength\outputvmargin
+  \newlength\outputhmargin
+  \setlength\outputvmargin{$VM}
+  \setlength\outputhmargin{$HM}
+  \newlength\outputindivvmargin
+  \newlength\outputindivhmargin
+  \setlength\outputindivvmargin{$IVS}
+  \setlength\outputindivhmargin{$IHS}
+  %
+  \fboxsep=0pt%
+  \setlength\fboxrule{$FW}
+  \newlength\hresult
+  \newlength\vresult
+  \hresult=\paperwidth
+  \advance\hresult by -\nbhoriz\fboxrule
+  \advance\hresult by -\nbhoriz\fboxrule
+  \vresult=\paperheight 
+  \advance\vresult by -\nbvert\fboxrule
+  \advance\vresult by -\nbvert\fboxrule
+  %
+  \advance\hresult by -2\outputhmargin
+  \advance\vresult by -2\outputvmargin
+  %
+  \advance\hresult by -\nbhoriz \outputindivhmargin
+  \advance\vresult by -\nbvert \outputindivvmargin
+  \advance\hresult by \outputindivhmargin
+  \advance\vresult by \outputindivvmargin
+  %
+  \divide\hresult by \nbhoriz
+  \divide\vresult by \nbvert
+
+  % computing actual scale
+  \newcounter{origx}
+  \setcounter{origx}{$w}
+  \addtocounter{origx}{-$x}
+  \newcounter{origy}
+  \setcounter{origy}{$h}
+  \addtocounter{origy}{-$y}
+  \newlength\finalx
+  \newlength\finaly
+  \finalx=\hresult
+  \finaly=\vresult
+  \divide\finalx by \value{origx}
+  \divide\finaly by \value{origy}
+  \newwrite\scale
+  \immediate\openout\scale=$filename.scl
+  \ifdim\finalx>\finaly
+    \multiply\finaly by 100
+    \immediate\write\scale{\the\finaly}
+  \else
+    \multiply\finalx by 100
+    \immediate\write\scale{\the\finalx}
+  \fi
+  \immediate\closeout\scale
+
+  \begin{document}
+  %\tracingoutput=1
+  %\tracingpages=1
+  %\tracingparagraphs=1
+  \makeatletter
+  \newcounter{curroutpage}
+  \setcounter{curroutpage}{$firstp}
+  \addtocounter{curroutpage}{-1}
+  \newcounter{currpage}
+  \newcounter{currcol}
+  \newcounter{currline}
+  \newcounter{realout}
+  %\showthe\value{outpage}
+  %\showthe\value{curroutpage}
+  \@whilenum \value{outpage}>\value{curroutpage} \do%
+    {\stepcounter{curroutpage}%
+    \setcounter{currpage}{\value{curroutpage}}%
+    \advance\c@currpage by -1%
+    \multiply\c@currpage by \nbhoriz%
+    \multiply\c@currpage by \nbvert%
+    \hrule \@height\z@%
+    \setcounter{currline}{0}%
+    \vskip \outputvmargin%
+    \@whilenum\value{currline}<\nbvert \do%
+      {\hrule \@height\z@\vskip \outputindivvmargin%
+        \ifnum\value{currline}>0\vskip \outputindivvmargin\fi%
+        \global\stepcounter{currline}%
+        \setcounter{currcol}{0}%
+        \hskip \outputhmargin%
+        \@whilenum\value{currcol}<\nbhoriz \do%
+          {\ifnum\value{currcol}>0\hskip\outputindivhmargin\fi%
+            \global\stepcounter{currcol}%
+            \global\stepcounter{currpage}%
+            \ifnum\value{currpage}>\value{lastpage}\else
+              \setcounter{realout}{\value{currpage}}%
+              \def\ang{0}%
+              \ifbooklet
+               \iflongedge
+                %% long edge:
+                %% 1->n, 2->1, 3->n-1 (rotated), 4->2(rotated)...
+                \ifodd\value{realout}%           -> 1 or 3
+                  \addtocounter{realout}{-1}%
+                  \divide\c@realout by 2\relax
+                  \ifodd\value{realout}%         -> 3
+                    \def\ang{180}%
+                  \else%                         -> 1
+                  \fi
+                  \setcounter{realout}{-\value{realout}}%
+                  \addtocounter{realout}{\value{outpage}}%
+                  \addtocounter{realout}{\value{outpage}}%
+                \else%                           -> 2 or 4
+                  \divide\c@realout by 2\relax
+                  \ifodd\value{realout}%         -> 2
+                  \else%                         -> 4
+                    \def\ang{180}%
+                  \fi
+                \fi
+               \else 
+                %% short edge:
+                %% 1->n, 2->1, 3->2, 4->n-1, 5->n-2, 6->3, 7->4, 8->n-3
+                \ifodd\value{realout}%           -> 1 or 3
+                  \addtocounter{realout}{-1}%
+                  \divide\c@realout by 2\relax
+                  \ifodd\value{realout}%         -> 3
+                    \stepcounter{realout}
+                  \else%                         -> 1
+                    \setcounter{realout}{-\value{realout}}%
+                    \addtocounter{realout}{\value{outpage}}%
+                    \addtocounter{realout}{\value{outpage}}%
+                  \fi
+                \else%                           -> 2 or 4
+                  \divide\c@realout by 2\relax
+                  \ifodd\value{realout}%         -> 2
+                  \else%                         -> 4
+                    \setcounter{realout}{-\value{realout}}%
+                    \stepcounter{realout}
+                    \addtocounter{realout}{\value{outpage}}%
+                    \addtocounter{realout}{\value{outpage}}%
+                  \fi
+                \fi
+               \fi
+              \fi
+              \ifnum\value{realout}>$lastp
+                \hskip\hresult\hskip2\fboxrule
+              \else\fbox{\hbox to \hresult{\hfill
+                 \expandafter\includegraphics\expandafter[viewport=$x $y $w $h,%
+                    keepaspectratio,height=\vresult,width=\hresult,angle=\ang,%
+                    page=\value{realout}]{\file}\hfill}}%
+              \fi
+            \fi}}%
+        \clearpage%
+  }%
+  \makeatother%
+  \end{document}
+EOF
+
+myecho 1+ "-> producing final file";
+case $VERB in
+    0|1|2)
+	$PDFLATEX -interaction=batchmode $filename.tex > /dev/null 2>&1;;
+    *)
+	myecho 3+ " > $PDFLATEX -interaction=nonstopmode $filename.tex"
+	$PDFLATEX -interaction=nonstopmode $filename.tex;;
+esac
+myecho 1+ "   final scale: "`cat $filename.scl | sed -e "s/pt$//"`"%";
+if [[ $DEBUG == 0 ]]; then
+  myecho 1+ "-> cleaning";
+  myecho 3+ " > mv $MVopt $filename.pdf $OUTF"
+  mv $MVopt $filename.pdf $OUTF
+  myecho 3+ " > rm $RMopt $filename.*"
+  rm $RMopt $filename.*
+fi
+
+exit 0
+
+
+
+
+
+##################################################################
+##
+##     Manual
+##
+##################################################################
+pdfxup creates a PDF document where each page is obtained by
+combining several pages of a PDF file given as output. The
+important feature of pdfxup, compared to similar programs,
+is that it tries to compute the (global) bounding box of the
+input PDF file, in order to remove the margins and to keep
+the text only. Instead of having the font size divided by 2
+(for the case of 2-up output), in some case you may end up
+with the same font size as in the original document (as is
+the case for a default 'article' document produced by LaTeX).
+
+pdfxup has numerous options:
+ * '-x n' and '-y n' can be used to change the number of
+   rows and columns of the resulting document. 
+   [default: -x2 -y1]
+ * '-l n' turns the output to landscape (n=1) or portrait
+   (n=0). 
+   [default: -l1]
+ * '-b n' toggles the 'booklet' mode: the resulting PDF can
+   be printed and folded as a booklet. Printing such a
+   booklet requires 2-sided printing, which can follow
+   either the 'long-edge' or the 'short edge' of the paper.
+   'long-edge' seems to be the most commonly used, but using
+   '-b se' while produce a PDF booklet for 'short-edge'
+   2-sided printing. 
+ * '-p' can be used to only consider a range of pages of the 
+   input file. We do not handle unions of page ranges, so that 
+   only the last occurrence of '-p' will be used. The 
+   restriction applies both for the computation of the 
+   bounding box (and is compatible with the options '-bb' and
+   '-nobb' below) and for creating the final document.
+   Alternatively to '-p', the page range can be specified 
+   after the file name, writing 'file.pdf:n-m' in place of
+   '-p n-m'. 
+ * '-bb' can be used to list the pages to be taken into
+   account when computing the bounding box. This is
+   especially useful for large documents, because computing the
+   bounding box on each page can be long, and because
+   computing the bounding box over the first 10 pages is
+   usually enough... This will not change the number of pages 
+   included in the final document.
+   Several '-bb' options can be given, which will result in
+   considering the union of all the intervals.
+ * '-nobb' is used to remove pages from the computation of
+   the bounding box. This is useful if one page has e.g.
+   special headers (e.g. for arXiv papers). Notice that the
+   bounding box of those pages will still be computed by
+   ghostscript, so this does not save time. I'd be grateful
+   to anyone willing to implement difference of unions of
+   intervals...  ;-)
+ * '-fw d' defines the width of the frame around each page.
+   Set to 0pt to have no frame at all.
+ * inner margins: margins to be added between each frame and
+   its included page.
+ * margins: margins of the final document
+ * spacing: spacing between frames
