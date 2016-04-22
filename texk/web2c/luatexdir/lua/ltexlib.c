@@ -119,7 +119,7 @@ static int do_luacprint(lua_State * L, int partial, int deftable)
     } else {
         int i;
         for (i = startstrings; i <= n; i++) {
-            if (!lua_isstring(L,1)) { /* or number */
+            if (!lua_isstring(L,i)) { /* or number */
                 luaL_error(L, "no string to print");
             }
             luac_store(L, i, partial, cattable);
@@ -226,7 +226,7 @@ static int luaccprint(lua_State * L)
         int i;
         int n = lua_gettop(L);
         for (i = 2; i <= n; i++) {
-            if (!lua_isstring(L,1)) { /* or number */
+            if (!lua_isstring(L,i)) { /* or number */
                 luaL_error(L, "no string to print");
             }
             luac_store(L, i, PARTIAL_LINE, cattable);
