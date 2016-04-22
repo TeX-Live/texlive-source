@@ -76,6 +76,7 @@ texmf_shell_scripts = \
 	pdfjam/pdfjoin \
 	pdfjam/pdfnup \
 	pdfjam/pdfpun \
+	pdfxup/pdfxup \
 	pst-pdf/ps4pdf \
 	simpdftex/simpdftex \
 	typeoutfileinfo/typeoutfileinfo.sh
