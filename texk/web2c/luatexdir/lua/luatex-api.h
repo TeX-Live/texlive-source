@@ -400,20 +400,20 @@ l_dir_par_index[dir_TLT]   = lua_key_index(TLT);\
 l_dir_par_index[dir_TRT]   = lua_key_index(TRT);\
 l_dir_par_index[dir_LTL]   = lua_key_index(LTL);\
 l_dir_par_index[dir_RTT]   = lua_key_index(RTT);\
-l_dir_par_index[dir_TLT+3] = lua_key_index(TLT);\
-l_dir_par_index[dir_TRT+3] = lua_key_index(TRT);\
-l_dir_par_index[dir_LTL+3] = lua_key_index(LTL);\
-l_dir_par_index[dir_RTT+3] = lua_key_index(RTT);\
+l_dir_par_index[dir_TLT+4] = lua_key_index(TLT);\
+l_dir_par_index[dir_TRT+4] = lua_key_index(TRT);\
+l_dir_par_index[dir_LTL+4] = lua_key_index(LTL);\
+l_dir_par_index[dir_RTT+4] = lua_key_index(RTT);\
 
 #define set_l_dir_text_index \
 l_dir_text_index[dir_TLT]   = lua_key_index(mTLT);\
 l_dir_text_index[dir_TRT]   = lua_key_index(mTRT);\
 l_dir_text_index[dir_LTL]   = lua_key_index(mLTL);\
 l_dir_text_index[dir_RTT]   = lua_key_index(mRTT);\
-l_dir_text_index[dir_TLT+3] = lua_key_index(pTLT);\
-l_dir_text_index[dir_TRT+3] = lua_key_index(pTRT);\
-l_dir_text_index[dir_LTL+3] = lua_key_index(pLTL);\
-l_dir_text_index[dir_RTT+3] = lua_key_index(pRTT);\
+l_dir_text_index[dir_TLT+4] = lua_key_index(pTLT);\
+l_dir_text_index[dir_TRT+4] = lua_key_index(pTRT);\
+l_dir_text_index[dir_LTL+4] = lua_key_index(pLTL);\
+l_dir_text_index[dir_RTT+4] = lua_key_index(pRTT);\
 
 #define img_parms_max     25
 #define img_pageboxes_max  6
