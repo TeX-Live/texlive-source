@@ -2,6 +2,16 @@
 This file is in the public domain.
 
 ==============================================================
+LuaTeX Release 0.95 for TeX Live 2016 was released 2016042515
+==============================================================
+
+This is the official frozen TeXlive 2016 version.
+- deleted 'beta' from the luatex_version_string
+
+
+
+
+==============================================================
 LuaTeX Release 0.95 was released 2016040415
 ==============================================================
 
