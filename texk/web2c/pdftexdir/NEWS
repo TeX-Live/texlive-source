@@ -6,7 +6,6 @@ pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)
     other changes support more granular output tweaks along the same lines.
     
   - new primitive \pdfinfoomitdate to omit CreationDate and ModDate keys.
-  - new primitive \pdftrailer to allow adding to the trailer dictionary.
   - new primitive \pdftrailerid to set seed for the trailer /ID
     computation; with an empty argument \pdftrailerid{}, the /ID is omitted.
   - new primitive \pdfsuppressptexinfo to omit PTEX.* keys from output;
