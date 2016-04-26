@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40671 2016-04-21 23:11:29Z preining $
+# $Id: tlmgr.pl 40721 2016-04-24 13:05:42Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40671 $';
-my $datrev = '$Date: 2016-04-22 01:11:29 +0200 (Fri, 22 Apr 2016) $';
+my $svnrev = '$Revision: 40721 $';
+my $datrev = '$Date: 2016-04-24 15:05:42 +0200 (Sun, 24 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1382,6 +1382,11 @@ sub action_info {
     my $tlp = $localtlpdb->get_package($pkg);
     my $installed = 0;
     if (!$tlp) {
+      if ($opts{"only-installed"}) {
+        print "package:     $pkg\n";
+        print "installed:   No\n";
+        next;
+      }
       if (!$remotetlpdb) {
         init_tlmedia_or_die();
       }
@@ -1473,11 +1478,11 @@ sub action_info {
     if ($tlp->category ne "Collection" && $tlp->category ne "Scheme") {
       @colls = $localtlpdb->needed_by($pkg);
       if (!@colls) {
-        # not referenced in the local tlpdb, so try the remote here, too
-        if (!$remotetlpdb) {
-          init_tlmedia_or_die();
+        if (!$opts{"only-installed"}) {
+          # not referenced in the local tlpdb, so try the remote here, too
+          init_tlmedia_or_die() if (!$remotetlpdb);
+          @colls = $remotetlpdb->needed_by($pkg);
         }
-        @colls = $remotetlpdb->needed_by($pkg);
       }
     }
     # some packages might depend on other packages, so do not
@@ -5862,9 +5867,12 @@ sub _init_tlmedia {
 
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
-  print "location-url\t$location\n" if $::machinereadable;
-  info("$prg: package repository $location (" . 
-    ($remotetlpdb->is_verified ? "" : "not ") . "verified)\n");
+  if ($::machinereadable) {
+    print "location-url\t$location\n";
+  } else {
+    info("$prg: package repository $location (" . 
+      ($remotetlpdb->is_verified ? "" : "not ") . "verified)\n");
+  }
   return 1;
 }
 
@@ -5927,6 +5935,9 @@ END_NO_INTERNET
       } elsif ($ret == -2) {
         # the remote database has not be signed, warn
         debug("$0: remote database is not signed, continuing anyway!\n");
+      } elsif ($ret == -3) {
+        # no gpg available
+        debug("$0: no gpg available for verification, continuing anyway!\n");
       } elsif ($ret == 1) {
         # no problem, checksum is wrong, we need to get new tlpdb
       } elsif ($ret == 2) {
