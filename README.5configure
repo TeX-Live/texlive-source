@@ -382,7 +382,7 @@ LuaJITTeX) and XeTeX, and use 'pkg-config' to obtain the required flags.
 '--with-system-xpdf'
 Use a system version (0.12 or better) of 'poppler' (and 'pkg-config')
 for pdfTeX instead of 'xpdf' from the TL tree.  *Note
-'--disable-largefile'::.
+--disable-largefile::.
 
 7.4 Variables for configure
 ===========================

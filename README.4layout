@@ -30,10 +30,10 @@ many extra hassles, so don't do that, tempting as it may be.
      autoconf (GNU Autoconf) 2.69
      automake (GNU automake) 1.15
      bison (GNU Bison) 3.0.4
-     flex 2.5.39
+     flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.17
-     makeinfo (GNU texinfo) 5.2
+     makeinfo (GNU texinfo) 6.1
 
    These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TL tree after their

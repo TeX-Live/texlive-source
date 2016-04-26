@@ -282,6 +282,14 @@ your timestamps---notably, @code{use-commit-times} must be set to
 tools}).  Barring buggy commits, no infrastructure tools are needed to
 do a normal build.
 
+@cindex Debian installation of build prerequisites
+As an example, on Debian systems the necessary build dependencies can
+be installed via:
+
+@example
+apt-get install libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev
+@end example
+
 
 @node Building
 @chapter Building

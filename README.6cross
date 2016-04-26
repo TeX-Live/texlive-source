@@ -88,15 +88,10 @@ avoided if possible and otherwise must supply a pessimistic test result.
 into a subdirectory that is configured natively as is done for
 'texk/web2c/web2c', 'texk/dvipsk/squeeze', and 'texk/xdvik/squeeze'.
 The module 'libs/freetype2' uses the value of 'CC_BUILD', 'BUILD-gcc',
-'gcc', or 'cc' as compiler for the auxiliary program.
-
-   Building LuaTeX (or LuaJITTeX) uses the auxiliary program 'txt2zlib'
-to create 'pdflua.c' and, if necessary, update the distributed version
-of that file.  In a cross compilation we simply use that distributed
-file.
+'gcc', or 'cc' as the compiler for the auxiliary program.
 
    The situation for installable programs needed by the build process is
-somewhat different.  A quite expensive possibility, chosen for the ICU
+somewhat different.  A rather expensive possibility, chosen for the ICU
 libraries in module 'libs/icu', is to first compile natively for the
 build system and in a second step to use these (uninstalled) programs
 during the cross compilation.
