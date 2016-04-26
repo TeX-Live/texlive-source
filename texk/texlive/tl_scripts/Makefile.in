@@ -323,7 +323,8 @@ dist_texconfig_SCRIPTS = tcfmgr
 dist_texconfig_DATA = tcfmgr.map
 web2cdir = $(datarootdir)/texmf-dist/web2c
 dist_web2c_DATA = fmtutil.cnf
-linked_scripts_dir = $(top_srcdir)/linked_scripts/texlive
+Master_dir = $(top_srcdir)/../../../../Master
+tl_scripts_dir = $(Master_dir)/texmf-dist/scripts/texlive
 #
 texlinks_prog = $(DESTDIR)$(bindir)/texlinks
 #
@@ -860,12 +861,12 @@ uninstall-man1-links:
 	done
 .PHONY: xmans xupdmap.1 xfmtutil.1
 xmans: xupdmap.1 xfmtutil.1
-xupdmap.1: updmap.help2man $(linked_scripts_dir)/updmap.pl
+xupdmap.1: updmap.help2man $(tl_scripts_dir)/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
-	  $(linked_scripts_dir)/updmap.pl >/tmp/$@
-xfmtutil.1: fmtutil.help2man $(linked_scripts_dir)/fmtutil.pl
+	  $(tl_scripts_dir)/updmap.pl >/tmp/$@
+xfmtutil.1: fmtutil.help2man $(tl_scripts_dir)/fmtutil.pl
 	help2man --include=$< --source="TeX Live" --no-info \
-	  $(linked_scripts_dir)/fmtutil.pl >/tmp/$@
+	  $(tl_scripts_dir)/fmtutil.pl >/tmp/$@
 
 .PHONY: run-texlinks
 #

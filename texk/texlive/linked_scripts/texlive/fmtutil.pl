@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 40581 2016-04-17 21:37:08Z siepo $
+# $Id: fmtutil.pl 40678 2016-04-22 13:16:07Z siepo $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 40581 2016-04-17 21:37:08Z siepo $';
-my $lastchdate = '$Date: 2016-04-17 23:37:08 +0200 (Sun, 17 Apr 2016) $';
+my $svnid = '$Id: fmtutil.pl 40678 2016-04-22 13:16:07Z siepo $';
+my $lastchdate = '$Date: 2016-04-22 15:16:07 +0200 (Fri, 22 Apr 2016) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 40581 $';
+my $svnrev = '$Revision: 40678 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -330,7 +330,9 @@ sub callback_build_formats {
       $foo = (($texmfvar =~ m!^//!) ? $tmp_deflt : $texmfvar)
         . "/temp.$$." . int(rand(1000000));
       if (! -d $foo) {
-        if (mkdir($foo)) {
+        TeXLive::TLUtils::mkdirhier($foo);
+        sleep 1;
+        if (-d $foo) {
           $tmpdir = $foo;
           last;
         }
