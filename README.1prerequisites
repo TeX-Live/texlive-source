@@ -26,7 +26,8 @@ Automake/Autoconf output in general) should work with any reasonable
      that are not installed by default.
 
 'xetex'
-     requires 'fontconfig' (again both headers and library).
+     requires 'fontconfig' (again both headers and library), or, for
+     MacOSX only, the 'ApplicationServices' and 'Cocoa' frameworks.
 
 'xindy'
      requires GNU 'clisp' and in addition 'perl', 'latex', and
@@ -54,9 +55,8 @@ timestamps--notably, 'use-commit-times' must be set to 'yes' in your
 Subversion configuration (*note Build system tools::).  Barring buggy
 commits, no infrastructure tools are needed to do a normal build.
 
+   As an example, on Debian systems the necessary build dependencies can
+be installed via:
 
-Building on Debian
-------------------
+     apt-get install libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev
 
-On Debian systems the necessary build dependencies are installed by
-	apt-get install libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev

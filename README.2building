@@ -8,13 +8,13 @@
 The top-level 'Build' script is intended to simplify building the
 binaries distributed with TeX Live itself--we call this the "native" TL
 build.  It configures and makes everything in a subdirectory of the main
-build tree (default 'Work/'), installs everything in an other
+build tree (default 'Work/'), installs everything in another
 subdirectory (default 'inst/'), and finally runs 'make check'.  The
 exact directory and command names can be specified via environment
 variables and a few leading options.  All remaining arguments
 (assignments or options) are passed to the 'configure' script.  Please
-take a look at the script itself for more information; it is not
-complicated.
+take a look at the './Build' source file itself for more information; it
+is a straightforward shell script.
 
    An alternative, and the one we will mainly discuss here, is to run
 'configure' and 'make' oneself in a suitable empty subdirectory.
@@ -78,18 +78,18 @@ since all the support files are lacking; *note Installing::.
 =====================
 
 To build one package, the basic idea is to use the 'configure' option
-'--disable-all-pkgs' (*note '--disable-all-pkgs'::).  Then all program
-and library modules are configured but none are made.  However, the
+'--disable-all-pkgs' (*note --disable-all-pkgs::).  Then all program and
+library modules are configured but none are made.  However, the
 'Makefile's still contain all build rules and dependencies and can be
 invoked to build an individual program or library and causes to first
 build any required libraries.
 
-   This "build-on-demand" procedure is used, e.g., in the 'luatex'
-repository to build LuaTeX, essentially from a subset of the complete
-TeX Live tree.  Similarly, when, e.g., building the original e-TeX has
-been disabled (as it is by default), one can run 'make etex' (or 'make
-etex.exe') in 'texk/web2c/' to build e-TeX (although there is no
-comparably simple way to install e-TeX).
+   This "build-on-demand" procedure is used, e.g., in the upstream
+LuaTeX repository to build LuaTeX, essentially from a subset of the
+complete TeX Live tree.  Similarly, when, e.g., building the original
+e-TeX has been disabled (as it is by default), one can run 'make etex'
+(or 'make etex.exe') in 'texk/web2c/' to build e-TeX (although there is
+no comparably simple way to install e-TeX).
 
    If you want to work on a single program within the TL sources, this
 is the recommended way to do it.  Here is an example from start to
@@ -137,4 +137,19 @@ intricacies of the dependencies (such as 'teckit' requiring 'zlib') will
 have undesired side effects.  For an example, see the 'build-pdftex.sh'
 script in the 'pdftex' development sources (<http://pdftex.org>), which
 are indeed a cut-down TL source tree.
+
+   Caveat 1: even with '--disable-all-pkgs', dependencies will be
+checked.  For instance, if a non-MacOSX system does not have
+'fontconfig', XeTeX cannot be built (*note Prerequisites::) and
+'configure' will terminate.  To proceed without such dependencies,
+specify '--enable-missing' also.  (Arguably this should happen
+automatically.)
+
+   Caveat 2: unless 'CC' and 'CXX' and 'OBJCXX' are explicitly
+specified, each package will configure its own compiler(s).  In
+practice, this results in a conflict in only one instance: the ICU
+('libs/icu') library will prefer 'clang' and 'clang++' over all others
+if they are installed, whereas everything else prefers 'gcc' and 'g++'.
+Usually the results will be interoperable, but it can cause extra
+confusion and problems when debugging a program that uses ICU.
 
