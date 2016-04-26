@@ -2,12 +2,14 @@ pdfTeX is an extended version of eTeX that can create PDF directly from
 TeX source files and enhance the result of TeX typesetting with the help
 of PDF. When PDF output is not selected, pdfTeX produces normal DVI
 output, otherwise it produces PDF output that looks essentially
-identical to the DVI output. An important aspect of this project is to
-investigate alternative justification algorithms.
+identical to the DVI output. An important aspect of this project was to
+investigate alternative justification algorithms, resulting in the
+margin kerning and font expansion "microtypgraphy" features, inspired by
+Peter Karow.
 
 pdfTeX is based on the original e-TeX sources and Web2c, and has been
-successfully compiled on many systems. It is no longer under active
-development and only bug fixes and small enhancements are expected.
+successfully compiled on many systems. It is actively maintained, but
+stability is paramount now; only bug fixes and small enhancements are expected.
 
 See the file NEWS for changes to the program.
 Documentation about pdfTeX can be found at http://www.pdftex.org.
