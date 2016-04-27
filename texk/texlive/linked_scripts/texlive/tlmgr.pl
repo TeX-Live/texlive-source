@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40721 2016-04-24 13:05:42Z preining $
+# $Id: tlmgr.pl 40770 2016-04-26 21:42:20Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40721 $';
-my $datrev = '$Date: 2016-04-24 15:05:42 +0200 (Sun, 24 Apr 2016) $';
+my $svnrev = '$Revision: 40770 $';
+my $datrev = '$Date: 2016-04-26 23:42:20 +0200 (Tue, 26 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5773,8 +5773,21 @@ sub init_tlmedia {
     $localtlpdb->save;
     %repos = repository_to_array($location);
   }
-  # do the gpg stuff only when loading the remote tlpdb
-  handle_gpg_config_settings();
+
+  # checksums and gpg stuff
+  if (TeXLive::TLCrypto::setup_checksum_method()) {
+    # it is only possible to do gpg verification if we can
+    # find a checksum method
+    # do the gpg stuff only when loading the remote tlpdb
+    handle_gpg_config_settings();
+  } else {
+    if (!$config{'no-checksums'}) {
+      tlwarn("Cannot determine a checksum method!\n");
+      tlwarn("Please install either Digest::SHA, openssl, or sha512sum.\n");
+      tlwarn("To silence this warning, set 'no-checksums' to 1 in the\n");
+      tlwarn("tlmgr configuration file.\n");
+    }
+  }
 
   # check if we are only one tag/repo
   if ($#tags == 0) {
@@ -6151,6 +6164,15 @@ sub load_options_from_config {
         $config{"verify-downloads"} = 1;
       } else {
         tlwarn("$prg: $fn: Unknown value for verify-downloads: $val\n");
+      }
+
+    } elsif ($key eq "no-checksums") {
+      if ($val eq "1") {
+        $config{"no-checksums"} = 1;
+      } elsif ($val eq "0") {
+        $config{"no-checksums"} = 0;
+      } else {
+        tlwarn("$prg: $fn: Unknown value for no-checksums: $val\n");
       }
 
     } elsif ($sysmode) {
