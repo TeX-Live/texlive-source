@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40770 2016-04-26 21:42:20Z preining $
+# $Id: tlmgr.pl 40782 2016-04-27 10:25:08Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40770 $';
-my $datrev = '$Date: 2016-04-26 23:42:20 +0200 (Tue, 26 Apr 2016) $';
+my $svnrev = '$Revision: 40782 $';
+my $datrev = '$Date: 2016-04-27 12:25:08 +0200 (Wed, 27 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5962,6 +5962,8 @@ END_NO_INTERNET
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
         $local_copy_tlpdb_used = 1;
+        # we did verify this tlpdb, make sure that is recorded
+        $remotetlpdb->is_verified(1);
       } else {
         tldie("$0: unexpected return value from verify_checksum: $ret\n");
       }
