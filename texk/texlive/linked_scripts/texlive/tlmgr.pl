@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40782 2016-04-27 10:25:08Z preining $
+# $Id: tlmgr.pl 40800 2016-04-28 17:56:52Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40782 $';
-my $datrev = '$Date: 2016-04-27 12:25:08 +0200 (Wed, 27 Apr 2016) $';
+my $svnrev = '$Revision: 40800 $';
+my $datrev = '$Date: 2016-04-28 19:56:52 +0200 (Thu, 28 Apr 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -434,7 +434,7 @@ sub main {
   }
 
   if ((!defined($action) || !$action) && !$opts{"help"} && !$opts{"h"}) {
-    die "$prg: missing action; try --help if you need it.\n";
+    die "$prg: no action given; try --help if you need it.\n";
   }
 
   if ($opts{"help"} || $opts{"h"}) {
@@ -593,7 +593,6 @@ for the full story.\n";
   # set global variable if execute actions should be suppressed
   $::no_execute_actions = 1 if (defined($opts{'no-execute-actions'}));
 
-
   # if we are asked to use persistent connections try to start it here
   {
     my $do_persistent;
@@ -684,15 +683,15 @@ sub execute_action {
 
   if (!defined($action_specification{$action}{"function"})) {
     tlwarn ("$prg: action $action defined, but no way to execute it.\n");
-    return ($F_ERROR);
+    return $F_ERROR;
   }
 
   my $ret = $F_OK;
   my $foo = &{$action_specification{$action}{"function"}}();
   if (defined($foo)) {
     if ($foo & $F_ERROR) {
-      # warnings etc are given at the highest level, i.e., in main
-      return($foo);
+      # report of bad messages are given at the top level.
+      return $foo;
     }
     if ($foo & $F_WARNING) {
       tlwarn("$prg: action $action returned an error; continuing.\n");
@@ -700,7 +699,7 @@ sub execute_action {
     }
   } else {
     $ret = $F_OK;
-    tlwarn("$prg: didn't get return value from action $action, assuming ok.\n");
+    tlwarn("$prg: no value returned from action $action, assuming ok.\n");
   }
   my $run_post = 1;
   if ($ret & $F_NOPOSTACTION) {
@@ -5782,10 +5781,15 @@ sub init_tlmedia {
     handle_gpg_config_settings();
   } else {
     if (!$config{'no-checksums'}) {
-      tlwarn("Cannot determine a checksum method!\n");
-      tlwarn("Please install either Digest::SHA, openssl, or sha512sum.\n");
-      tlwarn("To silence this warning, set 'no-checksums' to 1 in the\n");
-      tlwarn("tlmgr configuration file.\n");
+      tlwarn(<<END_NO_CHECKSUMS);
+$prg: warning: Cannot find a checksum implementation.
+Please install Digest::SHA (from CPAN), openssl, or sha512sum.
+To silence this warning, set no-checksums in the tlmgr configuration
+file, e.g., by running:
+  tlmgr conf tlmgr no-checksums 1
+Continuing without checksum verifications ...
+
+END_NO_CHECKSUMS
     }
   }
 
@@ -6688,8 +6692,9 @@ like the C<texconfig conf> call, but works on all supported platforms.
 
 With either C<conf texmf>, C<conf tlmgr>, or C<conf updmap> given in
 addition, shows all key/value pairs (i.e., all settings) as saved in
-C<ROOT/texmf.cnf>, the C<tlmgr> configuration file (see below), or the
-first found (via kpsewhich) C<updmap.cfg> file, respectively.
+C<ROOT/texmf.cnf>, the user-specific C<tlmgr> configuration file (see
+below), or the first found (via C<kpsewhich>) C<updmap.cfg> file,
+respectively.
 
 If I<key> is given in addition, shows the value of only that I<key> in
 the respective file.  If option I<--delete> is also given, the value in
@@ -6706,8 +6711,8 @@ The PATH value shown is that used by C<tlmgr>.  The directory in which
 the C<tlmgr> executable is found is automatically prepended to the PATH
 value inherited from the environment.
 
-Practical application of changing configuration values: if the execution
-of (some or all) system commands via C<\write18> was left enabled during
+Practical example of changing configuration values: if the execution of
+(some or all) system commands via C<\write18> was left enabled during
 installation, you can disable it afterwards:
   
   tlmgr conf texmf shell_escape 0
@@ -6736,11 +6741,11 @@ Options:
 
 =item B<--local>
 
-Dump the local tlpdb.
+Dump the local TLPDB.
 
 =item B<--remote>
 
-Dump the remote tlpdb.
+Dump the remote TLPDB.
 
 =back
 
@@ -7608,32 +7613,107 @@ fallback information, but if you don't like them accumulating (e.g.,
 on each run C<mirror.ctan.org> might resolve to a new host, resulting in
 a different hash), it's harmless to delete them.
 
+=head1 CONFIGURATION FILE FOR TLMGR
+
+There are two configuration files for C<tlmgr>: One is system-wide in
+C<TEXMFSYSCONFIG/tlmgr/config>, and the other is user-specific in
+C<TEXMFCONFIG/tlmgr/config>.  The user-specific one is the default for
+the C<conf tlmgr> action.  (Run C<kpsewhich
+-var-value=TEXMFSYSCONFIG> or C<... TEXMFCONFIG ...> to see the actual
+directory names.)
+
+A few defaults corresponding to command-line options can be set in these
+configuration files.  In addition, the system-wide file can contain a
+directive to restrict the allowed actions.
+
+In these config files, empty lines and lines starting with # are
+ignored.  All other lines must look like:
+
+  key = value
+
+where the spaces are optional but the C<=> is required.
+
+The allowed keys are:
+
+=over 4
+
+=item C<auto-remove, value 0 or 1 (default 1), same as command-line
+option.
+
+=item C<gui-expertmode>, value 0 or 1 (default 1).
+This switches between the full GUI and a simplified GUI with only the
+most common settings.
+
+=item C<gui-lang> I<llcode>, with a language code value as with the
+command-line option.
+
+=item C<no-checksums>, value 0 or 1 (default 0, see below).
+
+=item C<persistent-downloads>, value 0 or 1 (default 1), same as
+command-line option.
+
+=item C<verify-downloads>, value 0 or 1 (default 1), same as
+command-line option.
+
+=back
+
+The system-wide config file can contain one additional key:
+
+=over 4
+
+=item C<allowed-actions> I<action1[,I<action>,...]
+The value is a comma-separated list of C<tlmgr> actions which are
+allowed to be executed when C<tlmgr> is invoked in system mode (that is,
+without C<--usermode>).
+
+This allows distributors to include the C<tlmgr> in their packaging, but
+allow only a restricted set of actions that do not interfere with the
+distro package managers.  For native TeX Live installations, it doesn't
+make sense to set this.
+
+=back
+
+The <no-checksums> key needs more explanation.  By default, package
+checksums computed and stored on the server (in the TLPDB) are compared
+to checksums computed locally after downloading.  C<no-checksums>
+disables this.
+
+The checksum algorithm is SHA-512.  Your system must have (looked for in
+this order) the Perl L<Digest::SHA> module, the C<openssl> program
+(L<openssl.org>), or the C<sha512sum> program (from GNU Coreutils,
+L<http://www.gnu.org/software/coreutils>).  If none of these are
+available, a warning is issued and C<tlmgr> proceeds without checking
+checksums.  (Incidentally, other SHA implementations, such as the pure
+Perl and pure Lua modules, are much too slow to be usable in our
+context.)  C<no-checksums> also avoids the warning.
+
+
 =head1 CRYPTOGRAPHIC VERIFICATION
 
 If a working GnuPG binary (C<gpg>) is found (see below for the search
 method), by default verification of downloaded files is performed. This
 can be suppressed by specifying C<--no-verify-downloads> on the command
 line, or adding an entry C<verify-downloads = 0> to a tlmgr config file
-(described in another section below).
+(described in L<CONFIGURATION FILE FOR TLMGR>).
 
 Verification is performed as follows: For each C<texlive.tlpdb> loaded
 for a repository, the respective checksum C<texlive.tlpdb.sha512> is
-always downloaded, too, and C<tlmgr> confirms whether the checksum
-of the download tlpdb file agrees with the download data. This is done
+always downloaded, too, and C<tlmgr> confirms whether the checksum of
+the downloaded TLPDB file agrees with the download data.  This is done
 in any case.
 
-If cryptographic verification is also requested, then a signature of the
+Unless cryptographic verification is disabled, then a signature of the
 checksum file is downloaded and the signature verified. The signature is
-done with the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is
-signed by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key
+created by the TeX Live Distribution GPG key 0x06BAB6BC, which in turn
+is signed by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key
 0x6CACA448.  All of these keys are obtainable from the standard key
 servers.
 
 =head2 Configuration of GnuPG invocation
 
 The executable used for GnuPG is searched as follows: If the environment
-variable C<TL_GNUPG> is set, it is tested and used. Otherwise C<gpg> is
-checked, and finally C<gpg2>.
+variable C<TL_GNUPG> is set, it is tested and used; otherwise C<gpg> is
+checked; finally C<gpg2> is checked.
 
 Further adaptation of the C<gpg> invocation can be made using the two
 enviroment variables C<TL_GNUPGHOME>, which is passed to C<gpg> as the
@@ -7722,41 +7802,6 @@ In user mode, these actions operate only on the user tree's
 configuration files and/or C<texlive.tlpdb>.
 creates configuration files in user tree
 
-
-=head1 CONFIGURATION FILE FOR TLMGR
-
-There are two configuration files for C<tlmgr>: One is system-wide in
-C<TEXMFSYSCONFIG/tlmgr/config>, and the other is user-specific in
-C<TEXMFCONFIG/tlmgr/config> (in the default setup, that is
-C<~/.texliveYYYY/texmf-config/tlmgr/config>, where C<YYYY> is the
-release year of your TeX Live installation).
-
-A small subset of the command line options can be set in these
-configuration files.  In addition, the system-wide file can contain a
-directive to restrict the number of allowed actions.
-
-In these config files, empty lines and lines starting with # are
-ignored.  All other lines must look like
-
-  key = value
-
-where the allowed keys are C<gui-expertmode> (value 0 or 1),
-C<persistent-downloads> (value 0 or 1), C<auto-remove> (value 0 or 1),
-C<verify-downloads> (value 0 or 1),
-and C<gui-lang> (value as with the command-line option).
-
-C<persistent-downloads>, C<gui-lang>, C<auto-remove>, and C<verify-downloads>
-correspond to the respective command line options of the same name.  
-C<gui-expertmode> switches between the full GUI and a simplified GUI
-with only the important and mostly used settings.
-
-In addition, the system-wide config file can contain the key
-C<allowed-actions>. The value is a comma-separated list of actions that
-are allowed to be executed when C<tlmgr> is called in system mode (that
-is, without C<--usermode>).  This allows distributors to include the
-C<tlmgr> in their packaging, but allow only a restricted set of actions
-that do not interfere with the distro package managers.  (For native TeX
-Live installations, it doesn't make sense to set this.)
 
 =head1 MULTIPLE REPOSITORIES
 
