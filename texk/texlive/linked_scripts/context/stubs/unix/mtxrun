@@ -3280,7 +3280,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-file"] = package.loaded["l-file"] or true
 
--- original size: 21647, stripped down to: 10237
+-- original size: 21648, stripped down to: 10238
 
 if not modules then modules={} end modules ['l-file']={
   version=1.001,
@@ -3519,7 +3519,7 @@ local reslasher=lpeg.replacer(S("\\/"),"/")
 local deslasher=lpeg.replacer(S("\\/")^1,"/")
 function file.join(one,two,three,...)
   if not two then
-    return one=="" and one or lpegmatch(stripper,one)
+    return one=="" and one or lpegmatch(reslasher,one)
   end
   if one=="" then
     return lpegmatch(stripper,three and concat({ two,three,... },"/") or two)
@@ -13918,7 +13918,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-ini"] = package.loaded["data-ini"] or true
 
--- original size: 11445, stripped down to: 7830
+-- original size: 11444, stripped down to: 7830
 
 if not modules then modules={} end modules ['data-ini']={
   version=1.001,
@@ -16894,7 +16894,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-pre"] = package.loaded["data-pre"] or true
 
--- original size: 4092, stripped down to: 3016
+-- original size: 4236, stripped down to: 3144
 
 if not modules then modules={} end modules ['data-pre']={
   version=1.001,
@@ -16958,16 +16958,20 @@ prefixes.pathname=function(str)
   return cleanpath(dirname((fullname~="" and fullname) or str))
 end
 prefixes.selfautoloc=function(str)
-  return cleanpath(joinpath(getenv('SELFAUTOLOC'),str))
+  local pth=getenv('SELFAUTOLOC')
+  return cleanpath(str and joinpath(pth,str) or pth)
 end
 prefixes.selfautoparent=function(str)
-  return cleanpath(joinpath(getenv('SELFAUTOPARENT'),str))
+  local pth=getenv('SELFAUTOPARENT')
+  return cleanpath(str and joinpath(pth,str) or pth)
 end
 prefixes.selfautodir=function(str)
-  return cleanpath(joinpath(getenv('SELFAUTODIR'),str))
+  local pth=getenv('SELFAUTODIR')
+  return cleanpath(str and joinpath(pth,str) or pth)
 end
 prefixes.home=function(str)
-  return cleanpath(joinpath(getenv('HOME'),str))
+  local pth=getenv('HOME')
+  return cleanpath(str and joinpath(pth,str) or pth)
 end
 prefixes.env=prefixes.environment
 prefixes.rel=prefixes.relative
@@ -18739,8 +18743,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 796826
--- stripped bytes    : 289016
+-- original bytes    : 796970
+-- stripped bytes    : 289031
 
 -- end library merge
 
