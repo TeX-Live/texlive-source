@@ -443,11 +443,14 @@ compute_timezone_offset()
   time_t gmtoff;
 
   now = get_unique_time_if_given();
-  if (now == 0)
+  if (now == 0) {
     now = time(NULL);
-  localtime_r(&now, &local);
-  gmtime_r(&now, &tm);
-  return (mktime(&local) - mktime(&tm));
+    localtime_r(&now, &local);
+    gmtime_r(&now, &tm);
+    return (mktime(&local) - mktime(&tm));
+  } else {
+    return(0);
+  }
 }
 
 #endif /* HAVE_TIMEZONE */
@@ -464,20 +467,23 @@ asn_date (char *date_string)
   struct tm  *bd_time;
 
   current_time = get_unique_time_if_given();
-  if (current_time == 0)
+  if (current_time == 0) {
     time(&current_time);
-  bd_time = localtime(&current_time);
+    bd_time = localtime(&current_time);
 
 #ifdef HAVE_TM_GMTOFF
-  tz_offset = bd_time->tm_gmtoff;
+    tz_offset = bd_time->tm_gmtoff;
 #else
 #  ifdef HAVE_TIMEZONE
-  tz_offset = -timezone;
+    tz_offset = -timezone;
 #  else
-  tz_offset = compute_timezone_offset();
+    tz_offset = compute_timezone_offset();
 #  endif /* HAVE_TIMEZONE */
 #endif /* HAVE_TM_GMTOFF */
-
+  } else {
+    bd_time = gmtime(&current_time);
+    tz_offset = 0;
+  }
   sprintf(date_string, "D:%04d%02d%02d%02d%02d%02d%c%02d'%02d'",
           bd_time->tm_year + 1900, bd_time->tm_mon + 1, bd_time->tm_mday,
           bd_time->tm_hour, bd_time->tm_min, bd_time->tm_sec,

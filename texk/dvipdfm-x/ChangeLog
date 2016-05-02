@@ -1,3 +1,11 @@
+2016-05-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfdoc.c, xbb.c: Apply the patch by Alexis,
+	http://tug.org/pipermail/tex-live/2016-May/038339.html
+	for the support of SOURCE_DATE_EPOCH.
+	* pdfencrypt.c: Use gmtime instead of localtime if SOURCE_DATE_EPOCH
+	is given, to be consistent with the patch by Alexis.
+
 2016-03-07  Karl Berry  <karl@tug.org>
 
 	* man/dvipdfmx.1: .B not .b.

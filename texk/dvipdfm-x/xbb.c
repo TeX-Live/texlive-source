@@ -95,9 +95,12 @@ static void do_time(FILE *file)
   struct tm *bd_time;
 
   current_time = get_unique_time_if_given();
-  if (current_time == 0)
+  if (current_time == 0) {
     time(&current_time);
-  bd_time = localtime(&current_time);
+    bd_time = localtime(&current_time);
+  } else {
+    bd_time = gmtime(&current_time);
+  }
   fprintf(file, "%%%%CreationDate: %s\n", asctime(bd_time));
 }
 
