@@ -1,5 +1,11 @@
 #!/usr/bin/env perl
 
+# ?? Still need to fix bcf error issue.
+# Don't keep looping after error
+# pvc: Only re-run on USER FILE CHANGE.
+# See # ??????? BCF
+
+
 # !!!!!!!!!! Don't forget to document $silence_logfile_warnings.!!!
 
 # N.B. !!!!!!!!!!!  See 17 July 2012 comments !!!!!!!!!!!!!!!!!!
@@ -112,8 +118,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.44';
-$version_details = "$My_name, John Collins, 24 February 2016";
+$version_num = '4.45';
+$version_details = "$My_name, John Collins, 22 April 2016";
 
 use Config;
 use File::Basename;
@@ -186,6 +192,16 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##     22 Apr 2016  John Collins  Fix problem of -C not always working correctly
+##                                when compilation was with -pdf and clear was default.
+##                                (Correctly default set of rules in rdb_make_rule_list.)
+##                                Ver. 4.45
+##      8 Apr 2016  John Collins  Commented out delegated-source diagnostic
+##      6 Apr 2016  John Collins  Correct " ge " to " >= "
+##     27 Mar 2016  John Collins  Extra diagnostics in find_process_id
+##                                Fix bug in find_process_id due to extra
+##                                leading space in output of ps under OS-X
+##     27 Feb 2016  John Collins  Attempt at yet another fix for malformed bcf issue
 ##     24 Feb 2016  John Collins  Further fix for malformed bcf issue
 ##                                   Locate error, and create dummy bbl file.
 ##     18 Feb 2016  John Collins  Correct use of %hash_calc_ignore_pattern
@@ -2213,7 +2229,7 @@ foreach $filename ( @file_list )
     # ?? Should I also initialize file database?
     %rule_list = ();
     &rdb_make_rule_list;
-    &rdb_set_rules(\%rule_list, \%extra_rule_spec );
+    &rdb_set_rules( \%rule_list, \%extra_rule_spec );
 
     if ( $cleanup_mode > 0 ) {
 # ?? MAY NEED TO FIX THE FOLLOWING IF $aux_dir or $out_dir IS SET.
@@ -2612,9 +2628,11 @@ sub rdb_make_rule_list {
     );
 
 # Ensure we only have one way to make pdf file, and that it is appropriate:
-    if ($pdf_mode == 1) { delete $rule_list{'dvipdf'}; delete $rule_list{'ps2pdf'}; }
-    elsif ($pdf_mode == 2) { delete $rule_list{'dvipdf'}; delete $rule_list{'pdflatex'}; }
-    else { delete $rule_list{'pdflatex'}; delete $rule_list{'ps2pdf'}; }
+    if    ($pdf_mode == 2) { delete $rule_list{'dvipdf'}; delete $rule_list{'pdflatex'}; }
+    elsif ($pdf_mode == 3) { delete $rule_list{'pdflatex'}; delete $rule_list{'ps2pdf'}; }
+    else                   { # Default is to leave pdflatex
+                             delete $rule_list{'dvipdf'}; delete $rule_list{'ps2pdf'};
+                           }
 
 } # END rdb_make_rule_list 
 
@@ -2831,7 +2849,8 @@ sub do_update_view {
                 if $diagnostics ;             
         }
         elsif ( defined $viewer_update_signal) {
-            print "$My_name: signalling viewer, process ID $$Pviewer_process\n"
+            print "$My_name: signalling viewer, process ID $$Pviewer_process ",
+                  "with signal $viewer_update_signal\n"
                 if $diagnostics ;
             kill $viewer_update_signal, $$Pviewer_process;
         }
@@ -3998,7 +4017,7 @@ LINE:
             }
             # Block has ended.
             if ($block_type eq 'conversion') {
-print "=== $delegated_source -> $delegated_output\n";
+#print "=== $delegated_source -> $delegated_output\n";
                  $new_conversions{$delegated_source} =  $delegated_output;
             }
             $current_pkg = $block_type 
@@ -6325,7 +6344,7 @@ sub rdb_make1 {
     my $return = 0;   # Return code from called routine
     # Rule may have been created since last run:
     if ( ! defined $pass{$rule} ) {$pass{$rule} = 0; }
-    if ( $pass{$rule} ge $max_repeat ) {
+    if ( $pass{$rule} >= $max_repeat ) {
         # Avoid infinite loop by having a maximum repeat count
         # Getting here represents some kind of weird error.
         warn "$My_name: Maximum runs of $rule reached ",
@@ -6648,6 +6667,16 @@ sub rdb_run1 {
 	    unlink $$Pdest;
 	    # The missing bbl file is now not an error:
             $return = -2;
+# ??????? BCF
+# Following is intended to work, but creates infinite loop
+# in malformed bcf file situation under -pvc.
+# since on each check for change in ANY	file, pvc finds changed file
+# Need to restrict pvc reruns to case of changed USER files
+#	    # To give good properties for (pdf)latex rule, it is best
+#	    # to have a valid bbl file that exists:
+#	    create_empty_file( $$Pdest );
+#            $return = 0;
+	    
         }
     }
     if ( $rule =~ /^bibtex/ ) {
@@ -6995,6 +7024,7 @@ sub rdb_file_change1 {
               && ($new_size != $$Psize)   
             )
        ) {
+#print "========= CHANGED: '$file' from '$$Pfrom_rule'\n";
         push @changed, $file;
         $$Pout_of_date = 1;
         if ( ! exists $generated_exts_all{$ext_no_period} ) {
@@ -7885,6 +7915,17 @@ sub get_checksum_md5 {
 #************************************************************
 #************************************************************
 
+sub create_empty_file {
+    my $name = shift;
+    my $h = new FileHandle ">$name"
+	or return 1;
+    close ($h);
+    return 0;
+}
+
+#************************************************************
+#************************************************************
+
 sub find_file1 {
 #?? Need to use kpsewhich, if possible
 
@@ -8506,6 +8547,7 @@ sub find_process_id {
 
     my $looking_for = $_[0];
     my @ps_output = `$pscmd`;
+    my @ps_lines = ();
 
 # There may be multiple processes.  Find only latest, 
 #   almost surely the one with the highest process number
@@ -8517,9 +8559,10 @@ sub find_process_id {
     shift(@ps_output);  # Discard the header line from ps
     foreach (@ps_output)   {
         next unless ( /$looking_for/ ) ;
+	s/^\s*//;
         my @ps_line = split ('\s+');
-# OLD       return($ps_line[$pid_position]);
         push @found, $ps_line[$pid_position];
+        push @ps_lines, $_;
     }
 
     if ($#found < 0) {
@@ -8531,6 +8574,8 @@ sub find_process_id {
        print "Found the following processes concerning '$looking_for'\n",
              "   @found\n",
              "   I will use $found[0]\n";
+       print "   The relevant lines from '$pscmd' were:\n";
+       foreach (@ps_lines) { print "   $_"; }
     }
     return $found[0];
 }
