@@ -525,7 +525,7 @@ void write_out(halfword p)
     expand_macros_in_tokenlist(p);
     old_setting = selector;
     j = write_stream(p);
-    if (write_open[j]) {
+    if (file_can_be_written(j)) {
         selector = j;
     } else if ((j == term_only) && (selector == term_and_log)) {
         /* write to the terminal if file isn't open */
