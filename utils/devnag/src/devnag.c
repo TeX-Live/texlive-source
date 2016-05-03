@@ -1,9 +1,9 @@
 /*  $Id: devnag.c,v 1.15 2008-03-09 15:57:59 icebearsoft Exp $
-    Version 2.15
+    Version 2.16
 
  *
  Preprocessor for Devanagari for TeX package
- Copyright (C) 1991-1998  University of Groningen, The Netherlands
+ Copyright (C) 1991-2016  University of Groningen, The Netherlands
  *
  Author   : Frans J. Velthuis <velthuis@rc.rug.nl>
  Date     : 09 May 1991
@@ -277,7 +277,15 @@
  (requested by Karl Berry)
 */
 
-const char *version = "2.15";
+/*
+ Modifications in version 2.16:
+
+ Character and string handling commands were improved by TeX Live developers,
+ these commands cuased errors in several platforms.
+
+ */
+
+const char *version = "2.16";
 
 #include <stdio.h>
 #include <ctype.h>
