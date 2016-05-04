@@ -2200,6 +2200,10 @@ catch_interrupt (int arg)
 }
 #endif /* not WIN32 */
 
+#if defined(_MSC_VER)
+#define strtoull _strtoui64
+#endif
+
 static boolean start_time_set = false;
 static time_t start_time = 0;
 
@@ -3028,10 +3032,6 @@ static void makepdftime(time_t t, char *time_str, boolean utc)
         check_nprintf(i, 9);
     }
 }
-
-#if defined(_MSC_VER)
-#define strtoll _strtoi64
-#endif
 
 void initstarttime(void)
 {
