@@ -443,7 +443,7 @@ compute_timezone_offset()
   time_t gmtoff;
 
   now = get_unique_time_if_given();
-  if (now == 0) {
+  if (now == INVALID_EPOCH_VALUE) {
     now = time(NULL);
     localtime_r(&now, &local);
     gmtime_r(&now, &tm);
@@ -467,7 +467,7 @@ asn_date (char *date_string)
   struct tm  *bd_time;
 
   current_time = get_unique_time_if_given();
-  if (current_time == 0) {
+  if (current_time == INVALID_EPOCH_VALUE) {
     time(&current_time);
     bd_time = localtime(&current_time);
 

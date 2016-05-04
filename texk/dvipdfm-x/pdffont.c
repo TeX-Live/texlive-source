@@ -90,7 +90,8 @@ pdf_font_set_dpi (int font_dpi)
 
 /* If an environment variable SOURCE_DATE_EPOCH is correctly defined like
  * SOURCE_DATE_EPOCH=1456304492, then returns this value, to be used as the
- * 'current time', otherwise returns 0.
+ * 'current time', otherwise returns INVALID_EPOCH_VALUE (= 0xfffffffffULL).
+ * The value should be less than about (3000 - 1970) years in seconds.
  */
 
 time_t
@@ -99,7 +100,7 @@ get_unique_time_if_given(void)
   const char *source_date_epoch;
   int64_t epoch;
   char *endptr;
-  time_t ret = 0;
+  time_t ret = INVALID_EPOCH_VALUE;
 
   source_date_epoch = getenv("SOURCE_DATE_EPOCH");
   if (source_date_epoch) {
@@ -121,7 +122,7 @@ pdf_font_make_uniqueTag (char *tag)
   if (first) {
     time_t current_time;
     current_time = get_unique_time_if_given();
-    if (current_time == 0)
+    if (current_time == INVALID_EPOCH_VALUE)
       current_time = time(NULL);
     srand(current_time);
     first = 0;
