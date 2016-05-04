@@ -85,7 +85,32 @@ static struct papsiz defpapsiz = {
 #endif
 #include <time.h> /* asctime() and localtime(), at least on BSD Unix */
 static time_t jobtime;
+
+#if defined(_MSC_VER)
+#define strtoll _strtoi64
 #endif
+
+#define INVALID_EPOCH_VALUE 0x7fffffffffffffffULL
+
+static time_t
+get_unique_time_if_given(void)
+{
+   const char *source_date_epoch;
+   int64_t epoch;
+   char *endptr;
+   time_t ret = INVALID_EPOCH_VALUE;
+
+   source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+   if (source_date_epoch) {
+      errno = 0;
+      epoch = strtoll(source_date_epoch, &endptr, 10);
+      if (!(epoch < 0 || *endptr != '\0' || errno != 0))
+         ret = (time_t) epoch;
+   }
+   return ret;
+}
+#endif /* CREATIONDATE */
+
 /*
  *   This routine copies a file down the pipe.  Search path uses the
  *   header path.
@@ -1388,9 +1413,15 @@ initprinter(sectiontype *sect)
       if (*iname)
          fprintf(bitfile, "%%%%Title: %s\n", iname);
 #ifdef CREATIONDATE
-      jobtime=time(0);
-      fprintf(bitfile, "%%%%CreationDate: %s",
-                                 asctime(localtime(&jobtime)));
+      jobtime = get_unique_time_if_given();
+      if (jobtime == INVALID_EPOCH_VALUE) {
+         jobtime = time(0);
+         fprintf(bitfile, "%%%%CreationDate: %s",
+                                    asctime(localtime(&jobtime)));
+      } else {
+         fprintf(bitfile, "%%%%CreationDate: %s",
+                                    asctime(gmtime(&jobtime)));
+      }
 #endif
       if (! isepsf) {
 /*
