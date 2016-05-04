@@ -90,10 +90,9 @@ pdf_font_set_dpi (int font_dpi)
 
 /* If an environment variable SOURCE_DATE_EPOCH is correctly defined like
  * SOURCE_DATE_EPOCH=1456304492, then returns this value, to be used as the
- * 'current time', otherwise returns INVALID_EPOCH_VALUE (= 0xfffffffffULL).
- * Here we follow the limit in Microsoft Visual Studio 2010, that is,
- * the value should be less than 32535291600, so we define 0xfffffffffULL
- * as INVALID_EPOCH_VALUE.
+ * 'current time', otherwise returns INVALID_EPOCH_VALUE (= 0x7fffffffffffffffULL).
+ * In the case of Microsoft Visual Studio 2010, the value should be less
+ * than 32535291600.
  */
 
 time_t
