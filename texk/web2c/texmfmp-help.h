@@ -1,6 +1,6 @@
 /* The help messages for TeX & MF family of programs.
 
-Copyright 1995, 1996, 2008-2015 Karl Berry.
+Copyright 1995, 1996, 2008-2016 Karl Berry.
 Copyright 2001-05 Olaf Weber.
 
 This program is free software; you can redistribute it and/or modify
@@ -464,6 +464,8 @@ const_string PDFTEXHELP[] = {
     "-8bit                   make all characters printable by default",
     "-help                   display this help and exit",
     "-version                output version information and exit",
+    "",
+    "pdfTeX home page: <http://pdftex.org>",
     NULL
 };
 #endif /* pdfTeX */

@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "16 June 2015" "Web2C @VERSION@"
+.TH PDFTEX 1 "4 May 2016" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -318,7 +318,7 @@ line can overrule this setting.
 Print version information and exit.
 .\"=====================================================================
 .SH ENVIRONMENT
-See the Kpathsearch library documentation (the `Path specifications'
+See the Kpathsea library documentation (e.g., the `Path specifications'
 node) for precise details of how the environment variables are used.
 The
 .B kpsewhich
@@ -364,11 +364,6 @@ current directory and ``/home/user/tex'' to the standard search path.
 .B TEXFORMATS
 Search path for format files.
 .TP
-.B TEXPOOL
-search path for
-.B pdftex
-internal strings.
-.TP
 .B TEXEDIT
 Command template for switching to editor.  The default, usually
 .BR vi ,
@@ -378,6 +373,27 @@ is set when pdf\*(TX is compiled.
 Search path for font metric
 .RI ( .tfm )
 files.
+.TP
+.B SOURCE_DATE_EPOCH
+If set, its value, taken to be in epoch-seconds, will be used for the
+timestamps in the PDF output, such as the CreationDate and ModDate keys.
+This is useful for making reproducible builds.
+.TP
+.B SOURCE_DATE_EPOCH_TEX_PRIMITIVES
+If set to the value "1", the time-related \*(TX primitives
+.RI ( \eyear ,
+.IR \emonth ,
+.IR \eday ,
+.IR \etime )
+are also initialized from the value of SOURCE_DATE_EPOCH.  This is not
+recommended if there is any viable alternative.
+.br
+pdf\*(TX also has several primitives to support reproducible builds,
+which are preferable to setting these environment variables; see the
+main manual.
+.PP
+Many, many more environment variables may be consulted related to path
+searching.  See the Kpathsea manual.
 .\"=====================================================================
 .SH FILES
 The location of the files mentioned below varies from system to
@@ -385,11 +401,8 @@ system.  Use the
 .B kpsewhich
 utility to find their locations.
 .TP
-.I pdftex.pool
-Text file containing pdf\*(TX's internal strings.
-.TP
 .I pdftex.map
-Filename mapping definitions.
+Font name mapping definitions.
 .TP
 .I *.tfm
 Metric files for pdf\*(TX's fonts.
@@ -409,14 +422,6 @@ and the info manual
 .IR "Web2C: A TeX implementation" .
 .\"=====================================================================
 .SH BUGS
-This version of pdf\*(TX implements a number of optional extensions.
-In fact, many of these extensions conflict to a greater or lesser
-extent with the definition of pdf\*(TX.  When such extensions are
-enabled, the banner printed when pdf\*(TX starts is changed to print
-.B pdfTeXk
-instead of
-.BR pdfTeX .
-.PP
 This version of pdf\*(TX fails to trap arithmetic overflow when
 dimensions are added or subtracted.  Cases where this occurs are rare,
 but when it does the generated
@@ -427,27 +432,19 @@ file would be usable is unknown.
 .\"=====================================================================
 .SH AVAILABILITY
 pdf\*(TX is available for a large variety of machine architectures
-and operation systems.
+and operating systems.
 pdf\*(TX is part of all major \*(TX distributions.
-.P
-Information on how to get pdf\*(TX and related information
-is available at the
-.B http://www.pdftex.org
-.IR "pdf\*(TX"
-web site.
-.P
-The following pdfe\*(TX related mailing list is available:
-.BR pdftex@tug.org .
-This is a mailman list;
-to subscribe send a message containing
-.I subscribe
-to
-.BR pdftex-request@tug.org .
-A web interface and list archives can be found at the
-.B "http://lists.tug.org/pdftex"
-mailing list web site.
+.br
+The pdf\*(TX home page: http://www.pdftex.org.
+.br
+pdf\*(TX on CTAN: http://www.ctan.org/pkg/pdftex.
+.br
+pdf\*(TX mailing list for all discussion: http://lists.tug.org/pdftex.
 .\"=====================================================================
 .SH "SEE ALSO"
+The full pdf\*(TX manual can be accessed from the home page or CTAN page.
+Same for the Web2C, Kpathsea, and other manuals.
+Some related programs:
 .BR epstopdf (1),
 .BR etex (1),
 .BR latex (1),
@@ -455,7 +452,6 @@ mailing list web site.
 .BR mptopdf (1),
 .BR tex (1),
 .BR mf (1).
-http://pdftex.org, http://tug.org/web2c.
 .\"=====================================================================
 .SH AUTHORS
 The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka,
