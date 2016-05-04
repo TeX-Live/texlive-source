@@ -1,3 +1,8 @@
+2016-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfdoc.c, pdfencrypt.c, pdffont.c, pdfobj.h, xbb.c: Improve the
+	support of SOURCE_DATE_EPOCH.
+
 2016-05-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfdoc.c, xbb.c: Apply the patch by Alexis,

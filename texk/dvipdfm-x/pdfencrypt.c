@@ -101,7 +101,7 @@ pdf_enc_init (int use_aes, int encrypt_metadata)
   struct pdf_sec *p = &sec_data;
 
   current_time = get_unique_time_if_given();
-  if (current_time == 0)
+  if (current_time == INVALID_EPOCH_VALUE)
     current_time = time(NULL);
   srand(current_time); /* For AES IV */
   p->setting.use_aes = use_aes;
@@ -127,7 +127,7 @@ pdf_enc_compute_id_string (char *dviname, char *pdfname)
 
   date_string = NEW(15, char);
   current_time = get_unique_time_if_given();
-  if (current_time == 0) {
+  if (current_time == INVALID_EPOCH_VALUE) {
     time(&current_time);
     bd_time = localtime(&current_time);
   } else {
