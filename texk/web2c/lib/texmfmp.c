@@ -2200,6 +2200,30 @@ catch_interrupt (int arg)
 }
 #endif /* not WIN32 */
 
+static boolean start_time_set = false;
+static time_t start_time = 0;
+
+void init_start_time() {
+    char *source_date_epoch;
+    unsigned long long epoch;
+    char *endptr;
+    if (!start_time_set) {
+        start_time_set = true;
+        source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+        if (source_date_epoch) {
+            errno = 0;
+            epoch = strtoull(source_date_epoch, &endptr, 10);
+            if (epoch < 0 || *endptr != '\0' || errno != 0) {
+FATAL1 ("invalid epoch-seconds-timezone value for environment variable $SOURCE_DATE_EPOCH: %s",
+                      source_date_epoch);
+            }
+            start_time = epoch;
+        } else {
+            start_time = time((time_t *) NULL);
+        }
+    }
+}
+
 /* Besides getting the date and time here, we also set up the interrupt
    handler, for no particularly good reason.  It's just that since the
    `fix_date_and_time' routine is called early on (section 1337 in TeX,
@@ -2210,8 +2234,24 @@ void
 get_date_and_time (integer *minutes,  integer *day,
                    integer *month,  integer *year)
 {
-  time_t myclock = time ((time_t *) 0);
-  struct tm *tmptr = localtime (&myclock);
+  struct tm *tmptr;
+  string sde_texprim = getenv ("SOURCE_DATE_EPOCH_TEX_PRIMITIVES");
+  if (sde_texprim && STREQ (sde_texprim, "1")) {
+    init_start_time ();
+    tmptr = gmtime (&start_time);
+  } else {
+    /* whether the envvar was not set (usual case) or invalid,
+       use current time.  */
+    time_t myclock = time ((time_t *) 0);
+    tmptr = localtime (&myclock);
+
+    /* warn if they gave an invalid value, empty (null string) ok.  */
+    if (sde_texprim && strlen (sde_texprim) > 0
+        && !STREQ (sde_texprim, "0")) {
+WARNING1 ("invalid value (expected 0 or 1) for environment variable $SOURCE_DATE_EPOCH_TEX_PRIMITIVES: %s", 
+          sde_texprim);
+    }
+  }
 
   *minutes = tmptr->tm_hour * 60 + tmptr->tm_min;
   *day = tmptr->tm_mday;
@@ -2930,8 +2970,7 @@ void pdftex_fail(const char *fmt, ...)
 #endif /* not pdfTeX */
 
 #if !defined(XeTeX)
-static boolean start_time_set = false;
-static time_t start_time = 0;
+
 #define TIME_STR_SIZE 30
 char start_time_str[TIME_STR_SIZE];
 static char time_str[TIME_STR_SIZE];
@@ -2996,25 +3035,12 @@ static void makepdftime(time_t t, char *time_str, boolean utc)
 
 void initstarttime(void)
 {
-    char *source_date_epoch;
-    int64_t epoch;
-    char *endptr;
     if (!start_time_set) {
-        start_time_set = true;
-        source_date_epoch = getenv("SOURCE_DATE_EPOCH");
-        if (source_date_epoch) {
-            errno = 0;
-            epoch = strtoll(source_date_epoch, &endptr, 10);
-            if (epoch < 0 || *endptr != '\0' || errno != 0) {
-       FATAL1 ("invalid value for environment variable $SOURCE_DATE_EPOCH: %s",
-                source_date_epoch);
-            }
-            start_time = epoch;
-            makepdftime(start_time, start_time_str, /* utc= */true);
-        }
-        else {
-            start_time = time((time_t *) NULL);
-            makepdftime(start_time, start_time_str, /* utc= */false);
+        init_start_time ();
+        if (getenv ("SOURCE_DATE_EPOCH")) {
+            makepdftime (start_time, start_time_str, /* utc= */true);
+        } else {
+            makepdftime (start_time, start_time_str,  /* utc= */false);
         }
     }
 }

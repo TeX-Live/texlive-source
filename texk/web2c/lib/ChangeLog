@@ -1,3 +1,12 @@
+2016-05-04  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c (init_start_time): new fn, factored out from
+	initstarttime.
+	(get_date_and_time): if envvar SOURCE_DATE_EPOCH_TEX_PRIMITIVES
+	is set, initialize minutes, day, month, year, from
+	SOURCE_DATE_EPOCH value.  Requested by Debian, thread starting at
+	http://tug.org/pipermail/tex-k/2016-May/002691.html.
+
 2016-04-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Fix a bug to show input file name in the case of pipe input.
