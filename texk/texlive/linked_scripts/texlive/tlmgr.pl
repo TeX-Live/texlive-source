@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40800 2016-04-28 17:56:52Z karl $
+# $Id: tlmgr.pl 40844 2016-05-02 23:46:44Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40800 $';
-my $datrev = '$Date: 2016-04-28 19:56:52 +0200 (Thu, 28 Apr 2016) $';
+my $svnrev = '$Revision: 40844 $';
+my $datrev = '$Date: 2016-05-03 01:46:44 +0200 (Tue, 03 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -7637,7 +7637,7 @@ The allowed keys are:
 
 =over 4
 
-=item C<auto-remove, value 0 or 1 (default 1), same as command-line
+=item C<auto-remove>, value 0 or 1 (default 1), same as command-line
 option.
 
 =item C<gui-expertmode>, value 0 or 1 (default 1).
@@ -7661,7 +7661,7 @@ The system-wide config file can contain one additional key:
 
 =over 4
 
-=item C<allowed-actions> I<action1[,I<action>,...]
+=item C<allowed-actions> I<action1> [,I<action>,...]
 The value is a comma-separated list of C<tlmgr> actions which are
 allowed to be executed when C<tlmgr> is invoked in system mode (that is,
 without C<--usermode>).
@@ -7679,13 +7679,13 @@ to checksums computed locally after downloading.  C<no-checksums>
 disables this.
 
 The checksum algorithm is SHA-512.  Your system must have (looked for in
-this order) the Perl L<Digest::SHA> module, the C<openssl> program
-(L<openssl.org>), or the C<sha512sum> program (from GNU Coreutils,
-L<http://www.gnu.org/software/coreutils>).  If none of these are
-available, a warning is issued and C<tlmgr> proceeds without checking
-checksums.  (Incidentally, other SHA implementations, such as the pure
-Perl and pure Lua modules, are much too slow to be usable in our
-context.)  C<no-checksums> also avoids the warning.
+this order) the Perl C<Digest::SHA> module, the C<openssl> program
+(L<http://openssl.org>), or the C<sha512sum> program (from GNU
+Coreutils, L<http://www.gnu.org/software/coreutils>).  If none of these
+are available, a warning is issued and C<tlmgr> proceeds without
+checking checksums.  (Incidentally, other SHA implementations, such as
+the pure Perl and pure Lua modules, are much too slow to be usable in
+our context.)  C<no-checksums> also avoids the warning.
 
 
 =head1 CRYPTOGRAPHIC VERIFICATION

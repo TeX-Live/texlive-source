@@ -7,10 +7,11 @@
 --      LICENSE:  GPL v2.0
 -----------------------------------------------------------------------
 
-luaotfload          = luaotfload or { }
-local version       = "2.7"
-luaotfload.version  = version
-luaotfload.self     = "luaotfload-tool"
+luaotfload                     = luaotfload or { }
+local version                  = "2.7"
+luaotfload.version             = version
+luaotfload.min_luatex_version  = { 0, 95, 0 }   --- i. e. 0.95.0
+luaotfload.self                = "luaotfload-tool"
 
 --[[doc--
 
@@ -33,16 +34,6 @@ see the luaotfload documentation for more info. Report bugs to
 
 kpse.set_program_name "luatex"
 
---[[doc--
-
-    We test for Lua 5.1 by means of capability detection to see if
-    we’re running an outdated Luatex.  If so, we bail.
-
-    \url{http://lua-users.org/wiki/LuaVersionCompatibility}
-
---doc]]--
-
-
 local iowrite         = io.write
 local kpsefind_file   = kpse.find_file
 local mathfloor       = math.floor
@@ -59,19 +50,32 @@ local texiowrite      = texio.write
 local tonumber        = tonumber
 local type            = type
 
-local runtime
-if _G.getfenv ~= nil then -- 5.1 or LJ
-    if _G.jit ~= nil then
-        runtime = { "jit", jit.version }
-    else
-        runtime = { "stock", _VERSION }
-        print "FATAL ERROR"
-        print "Luaotfload requires a Luatex version >=0.76."
-        print "Please update your TeX distribution!"
-        os.exit (-1)
+do
+    local runtime         = _G.jit and { "jit"  , jit.version }
+                                    or { "stock", _VERSION }
+    local stats           = status and status.list ()
+    local minimum         = luaotfload.min_luatex_version
+    local actual          = { 0, 0, 0 }
+    if stats then
+        local major    = stats.luatex_version / 100
+        local minor    = stats.luatex_version % 100
+        local revision = stats.luatex_revision --[[ : string ]]
+        local revno    = tonumber (revision)
+        actual         = { major, minor, revno or 0 }
     end
-else -- 5.2
-    runtime = { "stock", _VERSION }
+
+    if actual [1] < minimum [1] or actual [2] < minimum [2]
+    or actual [3] < minimum [3]
+    then
+        texio.write_nl ("term and log",
+                        string.format ("\tFATAL ERROR\n\z
+                                        \tLuaotfload requires a Luatex version >= %d.%d.%d.\n\z
+                                        \tPlease update your TeX distribution!\n\n",
+                                       (unpack or table.unpack) (minimum)))
+        error "version check failed"
+    end
+    luaotfload.runtime        = runtime
+    luaotfload.luatex_version = actual
 end
 
 local C, Ct, P, S  = lpeg.C, lpeg.Ct, lpeg.P, lpeg.S
@@ -336,15 +340,21 @@ local version_msg = function ( )
     local out   = function (...) texiowrite_nl (stringformat (...)) end
     local uname = os.uname ()
     local meta  = fonts.names.getmetadata ()
-    local info  = status.list ()
+
+    local runtime = luaotfload.runtime
+    local actual  = luaotfload.luatex_version
+    local status  = config.luaotfload.status
+    local notes   = status and status.notes or { }
+
     out (about, luaotfload.self)
     out ("%s version: %q", luaotfload.self, version)
-    out ("Revision: %q", config.luaotfload.status.notes.revision)
+    if notes.description then
+        out ("Luaotfload: %q", notes.description)
+    end
+    out ("Revision: %q", notes.revision)
     out ("Lua interpreter: %s; version %q", runtime[1], runtime[2])
 --[[out ("Luatex SVN revision: %d", info.luatex_svn)]] --> SVN r5624
-    out ("Luatex version: %.2f.%d",
-         info.luatex_version / 100,
-         info.luatex_revision)
+    out ("Luatex version: %d.%d", actual [1], actual [2])
     out ("Platform: type=%s name=%s", os.type, os.name)
 
     local uname_vars = tablesortedkeys (uname)
@@ -356,7 +366,7 @@ local version_msg = function ( )
         out("No database metadata available.")
     else
         out ("Index: version=%q created=%q modified=%q",
-             config.luaotfload.status.notes.revision,
+             meta.version or "too old",
              meta.created or "ages ago",
              meta.modified or "ages ago")
     end
@@ -1160,16 +1170,21 @@ actions.query = function (job)
         tmpspec.size = 655360 --- assume 10pt
     end
 
-    local foundname, subfont, success
+    local foundname, subfont, success, needle
 
-    if tmpspec.lookup == "name"
-    or tmpspec.lookup == "anon" --- not *exactly* as resolvers.anon
-    then
-        foundname, _, success = fonts.names.lookup_font_name (tmpspec)
-        if foundname then
-            foundname, _, success = fonts.names.lookup_font_file (foundname)
+    if tmpspec.lookup == "name" then
+        if fonts.definers.resolvers.name (tmpspec) then
+            needle = tmpspec.resolved
+        end
+    elseif tmpspec.lookup == "anon" then
+        if fonts.definers.resolvers.anon (tmpspec) then
+            needle = tmpspec.resolved or tmpspec.name
         end
     elseif tmpspec.lookup == "file" then
+        needle = tmpspec.name
+    end
+
+    if needle then
         foundname, _, success = fonts.names.lookup_font_file (tmpspec.name)
     end
 
