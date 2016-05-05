@@ -1,3 +1,12 @@
+2016-05-06  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (init_start_time, get_date_and_time) [onlyTeX]:
+	ignore SOURCE_DATE_EPOCH... envvars for original TeX.
+
+2016-05-05  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c (strtoull) [_MSC_VER]: #define as _strtoi64.
+
 2016-05-04  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp.c (init_start_time): new fn, factored out from
