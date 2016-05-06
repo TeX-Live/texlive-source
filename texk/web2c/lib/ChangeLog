@@ -5,7 +5,7 @@
 
 2016-05-05  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* texmfmp.c (strtoull) [_MSC_VER]: #define as _strtoi64.
+	* texmfmp.c (strtoull) [_MSC_VER]: #define as _strtoui64.
 
 2016-05-04  Karl Berry  <karl@freefriends.org>
 
