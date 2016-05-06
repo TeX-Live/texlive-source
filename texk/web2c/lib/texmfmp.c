@@ -2222,6 +2222,10 @@ void init_start_time() {
 FATAL1 ("invalid epoch-seconds-timezone value for environment variable $SOURCE_DATE_EPOCH: %s",
                       source_date_epoch);
             }
+#if defined(_MSC_VER)
+            if (epoch > 32535291599ULL)
+                epoch = 32535291599ULL;
+#endif
             start_time = epoch;
         } else
 #endif /* not onlyTeX */
