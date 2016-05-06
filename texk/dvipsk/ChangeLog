@@ -1,6 +1,6 @@
 2016-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* output.c: Avoid to crash for to large a value of SOURCE_DATE_EPOCH
+	* output.c: Avoid to crash for too large a value of SOURCE_DATE_EPOCH
 	(w32 only). 
 
 2016-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
