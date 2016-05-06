@@ -116,6 +116,67 @@ libc.so - SUNW_1.22 SUNWprivate_1.1 $ADDVERS=SUNW_1.22;
 If users need binaries to run on even older systems, we can target what
 is desired by changing the map file.
 
+Building asymptote
+==================
+
+Asymptote has been built with the following flags:
+
+export CC=/opt/csw/bin/gcc-5.2
+export CXX=/opt/csw/bin/g++-5.2
+./configure --prefix=/tmp/asyinst --enable-texlive-build \
+    --disable-fftw --disable-offscreen \
+    --disable-gl --disable-gsl --disable-readline
+
+Even though GL, GSL and readline should generally not be disabled,
+the resulting binaries would not be portable enough otherwise.
+
+Because a newer gcc compiler was used we had to link statically against stdlib.
+In the last command that builds the asy binary the following part:
+    -lnsl -lrt -lz -lm gc-7.4.2/.libs/libgc.a
+was replaced by:
+    gc-7.4.2/.libs/libgc.a -nodefaultlibs -Wl,-Bstatic -lstdc++ \
+    -Wl,-Bdynamic -lnsl -lrt -lz -lm -lgcc_eh -lgcc -lc
+
+The resulting binary depends on:
+
+> pvs asy
+    libnsl.so.1 (SUNW_0.7);
+    librt.so.1 (SUNW_1.2);
+    libm.so.2 (SUNW_1.2);
+    libc.so.1 (SUNW_1.22, SUNWprivate_1.1);
+> ldd asy
+    libnsl.so.1 =>   /lib/libnsl.so.1
+    librt.so.1 =>    /lib/librt.so.1
+    libz.so.1 =>     /usr/lib/libz.so.1
+    libm.so.2 =>     /lib/libm.so.2
+    libc.so.1 =>     /lib/libc.so.1
+    libmp.so.2 =>    /lib/libmp.so.2
+    libmd.so.1 =>    /lib/libmd.so.1
+    libscf.so.1 =>   /lib/libscf.so.1
+    libaio.so.1 =>   /lib/libaio.so.1
+    libdoor.so.1 =>  /lib/libdoor.so.1
+    libuutil.so.1 => /lib/libuutil.so.1
+    libgen.so.1 =>   /lib/libgen.so.1
+
+Additional notes:
+
+* gc-7.4.2 doesn't support sparc properly, so the sources for sparc were fetched from
+  https://github.com/ivmai/bdwgc/tree/release-7_4
+  and put into gc-7.4.2
+  Running ./autogen.sh was needed before proceeding
+
+* Workarounds were needed for:
+  * https://github.com/vectorgraphics/asymptote/issues/19
+    CC and CXX env variables are not respected when building GC
+  * https://github.com/vectorgraphics/asymptote/issues/20
+    Provide a configure-time option to disable sigsegv
+  * https://github.com/vectorgraphics/asymptote/pull/21
+    Makefile.in: replace 'test ! -e' => 'test ! -s'
+  * https://github.com/vectorgraphics/asymptote/issues/22
+    Wrong expansion of revision in Bourne Shell
+
+* Patches used are listed below.
+
 Building texlive
 ================
 
@@ -124,4 +185,61 @@ Additional settings were needed to compile TeX Live with gcc 5.2:
 
 The '--without-iconv' makes sure to avoid linking against libiconv
 which is not available on SunOS by default.
+
+
+
+Patches for Asymptote
+=====================
+
+--- Makefile.in (revision 40918)
++++ Makefile.in (working copy)
+@@ -114,7 +114,7 @@
+        fi
+ 
+ version: $(GCLIB) $(FILES:=.o)
+-       if test ! -e revision.cc -o "$(revision)" != "$(last)"; then     \
++       if test ! -s revision.cc -o "$(revision)" != "$(last)"; then     \
+          echo $(REVISION)\"$(revision)\"\; > revision.cc; \
+        fi
+        $(CXX) $(OPTS) $(INCL) -o revision.o -c revision.cc;
+@@ -160,7 +160,7 @@
+          mv gc-7.2 gc-7.2d; \
+        fi
+        cd $(GC) && \
+-       ./configure $(GCOPTIONS); \
++       ./configure CC="$(CC)" CXX="$(CXX)" $(GCOPTIONS); \
+        $(MAKE) check
+
+ $(GCPPLIB): $(GCLIB)
+--- configure.ac        (revision 40918)
++++ configure.ac        (working copy)
+@@ -223,15 +223,15 @@
+ AC_SUBST(OPTIONS)
+ 
+ # Checks for libraries.
+-AC_CHECK_LIB([ncurses], [setupterm], [AC_DEFINE(HAVE_LIBCURSES)
+-                        LIBS=$LIBS"-lncurses "],
+-                        AC_CHECK_LIB([curses], [setupterm]))
++#AC_CHECK_LIB([ncurses], [setupterm], [AC_DEFINE(HAVE_LIBCURSES)
++#                       LIBS=$LIBS"-lncurses "],
++#                       AC_CHECK_LIB([curses], [setupterm]))
+ AC_CHECK_LIB([m], [sqrt],,
+ AC_MSG_ERROR([*** Please install libm on your system ***]))
+ AC_CHECK_LIB([z], [deflate],,
+ AC_MSG_ERROR([*** Please install libz or zlib-devel on your system ***]))
+ AX_PTHREAD
+-AC_CHECK_LIB([sigsegv], [stackoverflow_install_handler])
++#AC_CHECK_LIB([sigsegv], [stackoverflow_install_handler])
+ AC_CHECK_LIB([rt], [sched_yield])
+ 
+ AC_ARG_ENABLE(readline,
+@@ -254,7 +254,7 @@
+ # Checks for header files.
+ AC_HEADER_SYS_WAIT
+ AC_CHECK_HEADERS([fenv.h stddef.h libintl.h])
+-AC_CHECK_HEADERS([ncurses/curses.h ncurses.h curses.h], [break])
++#AC_CHECK_HEADERS([ncurses/curses.h ncurses.h curses.h], [break])
+ AC_CHECK_HEADERS(fpu_control.h)
+ 
+ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "xstream.h"])],
 
