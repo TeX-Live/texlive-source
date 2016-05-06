@@ -1,3 +1,8 @@
+2016-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdffont.c: Avoid to crash for too large a value of SOURCE_DATE_EPOCH.
+	(w32 only).
+
 2016-05-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfdoc.c, pdfencrypt.c, pdffont.c, pdfobj.h, xbb.c: Improve the
