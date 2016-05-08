@@ -2216,7 +2216,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
 {
   char  *q;
   const char *p = buf, *endptr;
-  int    ns_pdf = 0, error = 0;
+  int    ns_pdf = 0, ns_dvipdfmx = 0, error = 0;
   double tmp;
 
   endptr = p + size;
@@ -2240,6 +2240,15 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
       skip_white(&p, endptr);
       RELEASE(q);
       q = parse_c_ident(&p, endptr);
+    }
+  }
+  else if (q && !strcmp(q, "dvipdfmx")) {
+    skip_white(&p, endptr);
+    if (p < endptr && *p == ':') {
+      p++;
+      skip_white(&p, endptr);
+      RELEASE(q);
+      q = parse_c_ident(&p, endptr); ns_dvipdfmx = 1;
     }
   }
   skip_white(&p, endptr);
@@ -2372,6 +2381,8 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
         }
         skip_white(&p, endptr);
       }
+    } else if (ns_dvipdfmx && !strcmp(q, "config")) {
+      read_config_special(&p, endptr);
     }
     RELEASE(q);
   }

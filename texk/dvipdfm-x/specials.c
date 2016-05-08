@@ -47,6 +47,7 @@
 #include "spc_misc.h"
 #include "spc_color.h"
 #include "spc_dvips.h"
+#include "spc_dvipdfmx.h"
 #include "spc_xtx.h"
 
 #include "specials.h"
@@ -382,6 +383,15 @@ static struct {
    NULL,
    spc_xtx_check_special,
    spc_xtx_setup_handler
+  },
+
+  {"dvipdfmx:",
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   spc_dvipdfmx_check_special,
+   spc_dvipdfmx_setup_handler
   },
 
   {"ps:",

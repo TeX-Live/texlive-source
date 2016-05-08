@@ -151,15 +151,15 @@ am_xdvipdfmx_OBJECTS = agl.$(OBJEXT) bmpimage.$(OBJEXT) cff.$(OBJEXT) \
 	pdfobj.$(OBJEXT) pdfparse.$(OBJEXT) pdfresource.$(OBJEXT) \
 	pdfximage.$(OBJEXT) pkfont.$(OBJEXT) pngimage.$(OBJEXT) \
 	pst.$(OBJEXT) pst_obj.$(OBJEXT) sfnt.$(OBJEXT) \
-	spc_color.$(OBJEXT) spc_dvips.$(OBJEXT) spc_html.$(OBJEXT) \
-	spc_misc.$(OBJEXT) spc_pdfm.$(OBJEXT) spc_tpic.$(OBJEXT) \
-	spc_util.$(OBJEXT) spc_xtx.$(OBJEXT) specials.$(OBJEXT) \
-	subfont.$(OBJEXT) t1_char.$(OBJEXT) t1_load.$(OBJEXT) \
-	tfm.$(OBJEXT) truetype.$(OBJEXT) tt_aux.$(OBJEXT) \
-	tt_cmap.$(OBJEXT) tt_glyf.$(OBJEXT) tt_gsub.$(OBJEXT) \
-	tt_post.$(OBJEXT) tt_table.$(OBJEXT) type0.$(OBJEXT) \
-	type1.$(OBJEXT) type1c.$(OBJEXT) unicode.$(OBJEXT) \
-	vf.$(OBJEXT) xbb.$(OBJEXT)
+	spc_color.$(OBJEXT) spc_dvipdfmx.$(OBJEXT) spc_dvips.$(OBJEXT) \
+	spc_html.$(OBJEXT) spc_misc.$(OBJEXT) spc_pdfm.$(OBJEXT) \
+	spc_tpic.$(OBJEXT) spc_util.$(OBJEXT) spc_xtx.$(OBJEXT) \
+	specials.$(OBJEXT) subfont.$(OBJEXT) t1_char.$(OBJEXT) \
+	t1_load.$(OBJEXT) tfm.$(OBJEXT) truetype.$(OBJEXT) \
+	tt_aux.$(OBJEXT) tt_cmap.$(OBJEXT) tt_glyf.$(OBJEXT) \
+	tt_gsub.$(OBJEXT) tt_post.$(OBJEXT) tt_table.$(OBJEXT) \
+	type0.$(OBJEXT) type1.$(OBJEXT) type1c.$(OBJEXT) \
+	unicode.$(OBJEXT) vf.$(OBJEXT) xbb.$(OBJEXT)
 xdvipdfmx_OBJECTS = $(am_xdvipdfmx_OBJECTS)
 xdvipdfmx_LDADD = $(LDADD)
 xdvipdfmx_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -705,6 +705,8 @@ xdvipdfmx_SOURCES = \
 	sfnt.h \
 	spc_color.c \
 	spc_color.h \
+	spc_dvipdfmx.c \
+	spc_dvipdfmx.h \
 	spc_dvips.c \
 	spc_dvips.h \
 	spc_html.c \
@@ -1011,6 +1013,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pst_obj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sfnt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_color.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_dvipdfmx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_dvips.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_html.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spc_misc.Po@am__quote@

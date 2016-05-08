@@ -705,6 +705,43 @@ read_config_file (const char *config)
     MFCLOSE(fp);
 }
 
+void
+read_config_special (const char **start, const char *end)
+{
+  char *option;
+  static char argv0[] = "config_special";
+  char *argv[3];
+  int argc = 1;
+
+  argv[0] = argv0;
+
+  skip_white (start, end);
+  if (*start >= end)
+    return;
+  /* Build up an argument list as if it were passed on the command
+     line */
+  if ((option = parse_ident (start, end))) {
+    argc = 2;
+    argv[1] = NEW (strlen(option)+2, char);
+    strcpy (argv[1]+1, option);
+    RELEASE (option);
+    *argv[1] = '-';
+    skip_white (start, end);
+    if (*start < end) {
+      argc += 1;
+      if (**start == '"') {
+	argv[2] = parse_c_string (start, end);
+      }
+      else
+	argv[2] = parse_ident (start, end);
+    }
+  }
+  do_args (argc, argv, argv0);
+  while (argc > 1) {
+    RELEASE (argv[--argc]);
+  }
+}
+
 static void
 system_default (void)
 {
