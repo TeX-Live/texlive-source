@@ -112,6 +112,8 @@ xdvipdfmx_SOURCES = \
 	sfnt.h \
 	spc_color.c \
 	spc_color.h \
+	spc_dvipdfmx.c \
+	spc_dvipdfmx.h \
 	spc_dvips.c \
 	spc_dvips.h \
 	spc_html.c \

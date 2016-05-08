@@ -1,3 +1,11 @@
+2016-05-08  Masamichi HOSODA  <trueroad@trueroad.jp>
+
+	* dvi.c, dvipdfmx.c, dvipdfmx.h, special.c: Add new specials to handle
+	command line options.
+	* spc_dvipdfmx.c, spc_dvipdfmx.h: Add for the new specials.
+	* Makefile.am, Makefile.in: Change for the added spc_dvipdfmx.c,
+	and spc_dvipdfmx.h.
+
 2016-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdffont.c: Avoid to crash for too large a value of SOURCE_DATE_EPOCH.
