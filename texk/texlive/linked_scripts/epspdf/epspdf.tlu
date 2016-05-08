@@ -7,9 +7,10 @@ kpse.set_program_name('texlua')
 -- 0.6.0: first texlua version
 -- 0.6.1: allow TeX installation on path with spaces
 -- 0.6.2: compatibility fix for luatex 0.81
+-- 0.6.3: compatibility fixes for luatex 0.9x
 
-ep_version = '0.6.2'
-ep_copyright = '2006, 2008, 2009, 2010, 2011, 2013, 2014, 2015'
+ep_version = '0.6.3'
+ep_copyright = '2006, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016'
 
 --[[
 
@@ -58,15 +59,6 @@ POSSIBLE EXTENSIONS
 
 -- some general utilities and globals ---------------------------
 
---[[
-
-Simple-minded error handling. At most, we call a function which
-tries to write the error message to log before re-raising the error.
-
-When run from the Tcl/Tk gui, this gui will capture error messages.
-
---]]
-
 -- early initializations
 
 eol = false
@@ -88,9 +80,12 @@ from_gui = false -- whether epspdf is run from the epspsdtk gui
 
 cwd = ''
 
--- Windows: miktex, TL or neither
+-- Windows: miktex, TL or neither.
+-- Actual values determined during system-dependent initialization
 is_miktex = false
 is_tl_w32 = false
+-- recent versions of miktex include pdftops
+auto_psp = true -- configuration of pdftops_prog not needed or not allowed
 
 -- some global file- and directory names
 gs_prog = false
@@ -128,6 +123,7 @@ function print_log(s)
     print(s) -- intercepted by the gui
   end
 end
+
 function write_log(s)
     print_log(string.format('%s %s',
         os.date('%Y/%m/%d %H:%M:%S', os.time()), s))
@@ -138,6 +134,11 @@ function log_cmd(cmd)
 end
 
 -- error- and debug -------------------------
+
+-- Simple-minded error handling. At most, we call a function which
+-- tries to write the error message to log before re-raising the error.
+
+-- When run from the Tcl/Tk gui, this gui will capture error messages.
 
 function errror(mess)
   if logfile then pcall(write_log, mess) end
@@ -598,8 +599,8 @@ function write_settings (file)
     end
   else -- stdout to be captured by epspdftk
     f = io.output()
-    if os.type=='windows' and not is_tl_w32 then
-      f:write('tl_w = no', eol)
+    if os.type=='windows' and not auto_psp then
+      f:write('psp_config = yes', eol)
     end
   end
   for k, v in pairs(settings) do
@@ -732,7 +733,7 @@ end
 
 -- boundingboxes ---------------------------------------------------
 
--- Bb.coords names now same as those of epdf PDFRectangle
+-- [HR]Bb.coords names now same as those of epdf PDFRectangle
 
 Bb = {}
 Bb.coords = {'x1', 'y1', 'x2', 'y2'}
@@ -777,7 +778,7 @@ function Bb:from_comment(s)
   return Bb:from_rect(b)
 end
 
---[[
+--[[ some no-longer-used bbox functions
 
 function Bb:copy ()
   local b = {}
@@ -807,7 +808,7 @@ function Bb:expand ()
   end
 end
 
--- no longer used: gs handles this
+-- gs handles this now
 -- call this via pcall
 function Bb:wrapper()
   local fn = mktemp('ps')
@@ -1424,7 +1425,7 @@ function PsPdf:eps_crop()
   return psp
 end -- eps_crop
 
---[===[ real conversions involving a single call of gs or pdftops --------
+--[===[ real conversions involving a single call of gs, pdftops or texlua
 
 Each conversion fullfills all options that it can: gray, bbox and
 page. gray when converting to pdf, bbox when converting from eps or
@@ -1458,38 +1459,43 @@ function PsPdf:pdf_crop()
     errror('PsPdf:pdf_crop called with non-existent page '.. options.page)
   end
   local pg = options.page or 1
-  local bb, hrbb
-  if options.bbox then
-    bb, hrbb = self:bb_from_gs(pg)
-  else
-    -- dbg('about to use epdf')
-    -- use [Trim|Crop|Media]Box instead
-    -- if os.type=='windows' then waitasec() end
-    local dummy = epdf.open(self.path)
-    -- if os.type=='windows' then waitasec() end
-    if not dummy then
+  local bb, hrbb, pgbox, pgboxname
+  do
+    local pdoc, pcat, ppage
+    -- we already have the pages, miver and maver properties
+    -- but need properties of the desired page as well
+    pdoc = epdf.open(self.path)
+    if not pdoc then
       errror('Epdf: cannot open '..self.path)
     end
     -- dbg('about to get catalog')
-    dummy = dummy:getCatalog()
-    if not dummy then
+    pcat = pdoc:getCatalog()
+    if not pcat then
       errror('Cannot open catalog of '..self.path)
     end
     -- dbg('got catalog')
-    dummy = dummy:getPage(pg)
-    if not dummy then
+    ppage = pcat:getPage(pg)
+    if not ppage then
       errror('Epdf: cannot open page object '..tostring(pg)..' of '..self.path)
     end
-    hrbb = dummy:getTrimBox()
-    if not hrbb then
-      hrbb = dummy:getCropBox()
+    pgboxname = 'trimbox'
+    pgbox = ppage:getTrimBox()
+    if not pgbox then
+      pgboxname = 'cropbox'
+      pgbox = ppage:getCropBox()
     end
-    if not hrbb then
-      hrbb = dummy:getMediaBox()
+    if not pgbox then
+      pgboxname = 'mediabox'
+      pgbox = ppage:getMediaBox()
     end
-    -- further checks, including for non-nil, by Bb:from_rect,
-    -- which errors out on failures
-    hrbb = HRBb:from_rect(hrbb)
+    -- normalization and further checks, including for non-nil,
+    -- by Bb:from_rect, which errors out on failures
+    pgbox = HRBb:from_rect(pgbox)
+  end
+  if options.bbox then
+    bb, hrbb = self:bb_from_gs(pg)
+  else
+    hrbb = pgbox
   end
 
   -- luatex on searchpath
@@ -1497,115 +1503,53 @@ function PsPdf:pdf_crop()
 
   -- write TeX file which includes cropped pdf page
   -- adapted from Heiko Oberdiek's pdfcrop utility.
-  -- first, create a table with the component strings for the tex source
-  dummy = {}
-  dummy[1] = [[
-\catcode37 14 % percent
-\catcode33 12 % exclam
-\catcode34 12 % quote
-\catcode35  6 % hash
-\catcode39 12 % apostrophe
-\catcode40 12 % left parenthesis
-\catcode41 12 % right parenthesis
-\catcode45 12 % minus
-\catcode46 12 % period
-\catcode60 12 % less
-\catcode61 12 % equals
-\catcode62 12 % greater
-\catcode64 12 % at
-\catcode91 12 % left square
-\catcode93 12 % right square
-\catcode96 12 % back tick
-\catcode123 1 % left curly brace
-\catcode125 2 % right curly brace
-\catcode126 12 % tilde
-\catcode`\#=6 %
-\escapechar=92 %
-\def\IfUndefined#1#2#3{%
-  \begingroup\expandafter\expandafter\expandafter\endgroup
-  \expandafter\ifx\csname#1\endcsname\relax
-    #2%
-  \else
-    #3%
-  \fi
-}
+  -- the table `pieces' will contain the component strings for the tex source
+  -- first, for texlua <= 0.81
+  local pieces = {}
+  if status.luatex_version <= 80 then
+    pieces[1] = '\\pdfoutput=1\n'
+  else
+    pieces[1] = [[
+\edef\pdfminorversion {\pdfvariable minorversion}
+\edef\pdfcompresslevel {\pdfvariable compresslevel}
+\edef\pdfobjcompresslevel {\pdfvariable objcompresslevel}
+\edef\pdfdecimaldigits {\pdfvariable decimaldigits}
+\edef\pdfhorigin {\pdfvariable horigin}
+\edef\pdfvorigin {\pdfvariable vorigin}
+\let\pdfpagewidth\pagewidth
+\let\pdfpageheight\pageheight
+\let\pdfximage\saveimageresource
+\let\pdfrefximage\useimageresource
+\let\pdflastximage\lastsavedimageresourceindex
 
-% future modification: \pdfoutput => \outputmode
-\begingroup\expandafter\expandafter\expandafter\endgroup
-  \expandafter\ifx\csname pdfoutput\endcsname\relax
-  \let\pdfoutput \outputmode
-\fi
-
-\begingroup
-  \newlinechar=10 %
-  \endlinechar=\newlinechar %
-  \ifnum0%
-      \directlua{%
-        if tex.enableprimitives then
-          tex.enableprimitives('TEST', {
-            'luatexversion',
-            'pdfoutput',
-            'pdfcompresslevel',
-            'pdfhorigin',
-            'pdfvorigin',
-            'pagewidth',
-            'pageheight',
-            'pdfmapfile',
-            'pdfximage',
-            'pdflastximage',
-            'pdfrefximage',
-            'pdfminorversion',
-            'pdfobjcompresslevel',
-          })
-          tex.print('1')
-        end
-      }%
-      \ifx\TESTluatexversion\UnDeFiNeD\else 1\fi %
-      =11 %
-    \global\let\luatexversion\luatexversion %
-    \global\let\pdfoutput\TESTpdfoutput %
-    \global\let\pdfcompresslevel\TESTpdfcompresslevel %
-    \global\let\pdfhorigin\TESTpdfhorigin %
-    \global\let\pdfvorigin\TESTpdfvorigin %
-    \global\let\pagewidth\TESTpagewidth %
-    \global\let\pageheight\TESTpageheight %
-    \global\let\pdfmapfile\TESTpdfmapfile %
-    \global\let\pdfximage\TESTpdfximage %
-    \global\let\pdflastximage\TESTpdflastximage %
-    \global\let\pdfrefximage\TESTpdfrefximage %
-    \global\let\pdfminorversion\TESTpdfminorversion %
-    \global\let\pdfobjcompresslevel\TESTpdfobjcompresslevel %
-  \else %
-    \errmessage{%
-      Missing \string\luatexversion %
-    }%
-  \fi %
-\endgroup %
-
-\pdfoutput=1 %
-\pdfcompresslevel=9 %
-\csname pdfmapfile\endcsname{}
-\def\setpdfversion#1#2{%
-  \ifnum#2>1 %
-    \pdfobjcompresslevel=2 %
-    % including unsupported pdf version!
-    \pdfinclusionerrorlevel=0
-    \pdfminorversion=9\relax
-  \else
-    \ifnum#1>4 %
-      \pdfobjcompresslevel=2 %
-    \else
-      \pdfobjcompresslevel=0 %
-    \fi
-    \pdfminorversion=#1\relax
-  \fi
-}
+\outputmode=1
+]]
+  end
+  if self.maver > 1 then
+    pieces[2] = '\\pdfminorversion=9\n'
+  else
+    pieces[2] = '\\pdfminorversion=' .. self.miver .. '\n'
+  end
+  if self.maver > 1 or self.miver > 4 then
+    pieces[3] = [[
+\pdfcompresslevel=9
+\pdfobjcompresslevel=2
+\pdfdecimaldigits=4
+]]
+  else
+    pieces[3] = [[
+\pdfcompresslevel=9
+\pdfobjcompresslevel=0
+\pdfdecimaldigits=4
+]]
+  end
+  pieces[4] = [[
 \def\page #1 [#2 #3 #4 #5]{%
   \count0=#1\relax
   \setbox0=\hbox{%
     \pdfximage page #1 mediabox{]]
-  dummy[2] = self.path
-  dummy[3] = [[}%
+  pieces[5] = self.path
+  pieces[6] = [[}%
     \pdfrefximage\pdflastximage
   }%
   \pdfhorigin=-#2bp\relax
@@ -1618,33 +1562,19 @@ function PsPdf:pdf_crop()
   \shipout\box0\relax
 }
 ]]
-  -- pdf minor version to write to tex header
-  local tex_miver = false
-  if settings.pdf_version=='default' then
-    tex_miver = self.miver
-  else
-    -- in this case, gs should already have converted to
-    -- a sufficiently low version
-    tex_miver = tonumber(settings.pdf_version)
-    if tex_miver>self.miver then
-      errror('Pdf_crop: forgot to reduce pdf version')
-    end
-  end
-  dummy[4] = string.format([[
-\setpdfversion{%d}{%d}
+  pieces[7] = string.format([[
 \page %d [%f %f %f %f]
 \csname @@end\endcsname
 \end
 ]],
-  tex_miver, self.maver, options.page or 1,
-  hrbb.x1, hrbb.y1, hrbb.x2, hrbb.y2)
+  options.page or 1, hrbb.x1, hrbb.y1, hrbb.x2, hrbb.y2)
 
-  local textemp = mktemp('tex') -- this also takes care of pdf:
+  local textemp = mktemp('tex') -- this also took care of pdf:
   local pdftemp = string.gsub(textemp, 'tex$', 'pdf')
   -- if os.type=='windows' then waitasec() end
   local f = io.open(textemp, 'w')
   -- if os.type=='windows' then waitasec() end
-  f:write(table.concat(dummy, ''))
+  f:write(table.concat(pieces, ''))
   f:close()
   local cmd, res, psp
   if os.type=='unix' then
@@ -2137,10 +2067,12 @@ if os.type == 'windows' then cwd = string.gsub(cwd, '\\', '/') end
 -- prepend (lua)tex directory to searchpath, if not already there
 maybe_add_path(os.selfdir, false)
 
--- Windows: miktex, TL or neither
+-- Windows: miktex, TL or neither. is_miktex, is_tl_w32, auto_psp
 -- no support yet for separate ghostscript
 is_miktex = false
 is_tl_w32 = false
+auto_psp = true -- only false for old miktex without included pdftops
+
 if os.type == 'windows' then
   if string.find (string.lower(kpse.version()), 'miktex') then
     is_miktex = true
@@ -2164,6 +2096,10 @@ if os.type == 'windows' then
           '/release-texlive.txt; TeX installation not supported.', 0)
     end -- if isfile
   end -- if not miktex
+  -- recent miktex and any windows tl include pdftops
+  if not lfs.isfile(string.gsub(os.selfdir, '\\', '/') .. '/pdftops.exe') then
+    auto_psp = false
+  end
 end -- if windows
 
 -- without Ghostscript we are dead in the water.
@@ -2275,7 +2211,8 @@ settings.use_hires_bb = false
 -- it will not be used for TeX Live and only be read and written on Windows.
 
 settings.pdftops_prog = false
-descriptions.pdftops_prog = 'Full path to pdftops.exe (not used with TeX Live)'
+descriptions.pdftops_prog =
+  'Full path to pdftops.exe (not used if TeX bin dir contains pdftops)'
 
 settings.use_pdftops = true
 descriptions.use_pdftops = 'Use pdftops if available'
@@ -2408,7 +2345,7 @@ do -- main program
       help = descriptions.pdf_version
     }
 
-    if os.type=='windows' and not is_tl_w32 then
+    if os.type=='windows' and not auto_psp then
       opts.pdftops_prog = {
         type = 'string', val = nil,
         forms = {'--pdftops'},
@@ -2497,7 +2434,7 @@ do -- main program
          'pdftops_prog', 'use_pdftops', 'save', 'info', 'debug',
          'version', 'help'}) do
         local v = opts[o]
-        if v~='pdftops_prog' or is_miktex then
+        if v~='pdftops_prog' or not auto_psp then
           if v and v.help then
             local synt = join(v.forms, ', ')
             if v.type ~= 'boolean' then synt = synt .. ' ' .. v.placeholder end
@@ -2518,7 +2455,7 @@ do -- main program
               end
             end
           end
-        end -- ~=pdftops_prog or is_miktex
+        end -- ~=pdftops_prog or not auto_psp
       end -- for
       if mess then os.exit(1) else os.exit() end
     end -- help
@@ -2660,13 +2597,13 @@ do -- main program
     -- pdftops program; pdftops has already been been initialized to false
 
     -- pdftops_prog as command-line option
-    if os.type=='windows' and not is_tl_w32 and opts.pdftops_prog.val then
+    if os.type=='windows' and not auto_psp and
+        opts.pdftops_prog.val then
       settings.pdftops_prog = is_prog(opts.pdftops_prog.val)
     end
 
-    -- pdftops should be on the path.
-    -- for miktex, make it so if possible.
-    if os.type=='windows' and not is_tl_w32 then
+    -- pdftops should be on the path. otherwise, make it so if possible.
+    if os.type=='windows' and not auto_psp then
       if settings.use_pdftops then
         pdftops = is_prog(settings.pdftops_prog)
         if pdftops then
@@ -2700,7 +2637,7 @@ do -- main program
       help()
     end
 
-    -- opts.info.val: need to get infile first
+    -- opts.info.val: do later; need to get infile first
 
     if opts.version.val then
       show_version()

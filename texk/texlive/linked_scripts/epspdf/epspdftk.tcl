@@ -3,7 +3,7 @@
 # epspdf conversion utility, GUI frontend
 
 #####
-# Copyright (C) 2006, 2008, 2009, 2010, 2011, 2013, 2014, 2015 Siep Kroonenberg
+# Copyright (C) 2006, 2008, 2009, 2010, 2011, 2013, 2014, 2015, 2016 Siep Kroonenberg
 # n dot s dot kroonenberg at rug dot nl
 #
 # This program is free software, licensed under the GNU GPL, >=2.0.
@@ -95,7 +95,8 @@ proc is_prog {x} {
 # create a global empty settings array
 array set ::settings [list]
 
-set ::is_tl 1
+# windows: pdftops from tex distro?
+set ::psp_config 0
 
 # ask epspdf.tlu for currently configured settings.
 # this does not include automatically configured or transient settings.
@@ -107,7 +108,7 @@ proc getsettings {} {
   # write_log "settings from epspdf.tlu:\n$set_str\n"
   set l [split $set_str "\r\n"]
   if {$::tcl_platform(platform) eq "windows"} {
-    set ::is_tl 1
+    set ::psp_config 0
     set settings(pdftops_prog) ""
   }
   foreach e $l {
@@ -121,8 +122,8 @@ proc getsettings {} {
       set val [string trim [string range $e [expr $i+1] end]]
       if {$val eq "true"} {set val 1}
       if {$val eq "false"} {set val 0}
-      if {$para eq "tl_w"} {
-        set ::is_tl 0
+      if {$para eq "psp_config"} {
+        set ::psp_config 1
         write_log "TL for Windows not detected by epspdf"
       } else {
         set ::settings($para) $val
@@ -503,7 +504,7 @@ spacing .config_t
 packf [frame .config_t.psf] -ipadx 4 -fill x
 pack [label .config_t.psf.l_ps -text "Conversion to EPS and PostScript" \
           -font boldfont] -anchor w
-if {! $::is_tl} {
+if { $::psp_config} {
   if {[string tolower [string range $::settings(pdftops_prog) end-3 end]] ne \
           ".exe"} {set ::settings(pdftops_prog) ""}
   pack [label .config_t.psf.l_pdftops -text "Find pdftops"] -anchor w
