@@ -157,6 +157,7 @@ texmf_other_scripts = \
 	pfarrei/pfarrei.tlu \
 	pkfix-helper/pkfix-helper \
 	pkfix/pkfix.pl \
+	pmx/pmx2pdf.lua \
 	pmxchords/pmxchords.lua \
 	pst2pdf/pst2pdf.pl \
 	ptex2pdf/ptex2pdf.lua \
