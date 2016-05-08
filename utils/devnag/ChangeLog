@@ -1,3 +1,13 @@
+2016-05-06  Ken Brown  <kbrow1i@gmail.com>
+
+	* tests/*.tex: udpate version number.
+
+2016-05-03  Zdenek Wagner  <zdenek.wagner@gmail.com>
+
+	* devnag.c: update version number to 2.16.
+	* NEWS, README: remove.  The maintained README
+	is in the package's doc/ directory (in Master = CTAN).
+
 2016-03-09  Karl Berry  <karl@tug.org>
 
 	* devnag.1: new file, originally written by Norbert.
@@ -104,3 +114,4 @@
  since its original release. It is based on version 1.6 (there are
  no releases 1.7, 1.8 or 1.9).
 
+(This ChangeLog file is public domain.)
