@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40844 2016-05-02 23:46:44Z karl $
+# $Id: tlmgr.pl 40915 2016-05-06 10:04:53Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40844 $';
-my $datrev = '$Date: 2016-05-03 01:46:44 +0200 (Tue, 03 May 2016) $';
+my $svnrev = '$Revision: 40915 $';
+my $datrev = '$Date: 2016-05-06 12:04:53 +0200 (Fri, 06 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -214,6 +214,10 @@ my %action_specification = (
     "run-post" => 1,
     "function" => \&action_install
   },
+  "key" => {
+    "run-post" => 0,
+    "function" => \&action_key
+  },
   "option" => { 
     "run-post" => 1,
     "function" => \&action_option
@@ -339,6 +343,7 @@ sub main {
     "usermode|user-mode" => 1,
     "usertree|user-tree" => "=s",
     "verify-downloads" => "!",
+    "require-verification" => "!",
     "version" => 1,
   );
 
@@ -378,9 +383,9 @@ sub main {
 
   $action = shift @ARGV;
   if (!defined($action)) {
-    if ($opts{"gui"}) {			# -gui = gui
+    if ($opts{"gui"}) {   # -gui = gui
       $action = "gui";
-    } elsif ($opts{"print-platform"}) {	# -print-arch = print-arch
+    } elsif ($opts{"print-platform"}) { # -print-arch = print-arch
       $action = "print-platform";
     } else {
       $action = "";
@@ -594,31 +599,14 @@ for the full story.\n";
   $::no_execute_actions = 1 if (defined($opts{'no-execute-actions'}));
 
   # if we are asked to use persistent connections try to start it here
-  {
-    my $do_persistent;
-    if (defined($opts{'persistent-downloads'})) {
-      # a command line argument for persistent-downloads has been given,
-      # either with --no-... or --... that overrides any other setting
-      $do_persistent = $opts{'persistent-downloads'};
-    } else {
-      # check if it is set in the config file
-      if (defined($config{'persistent-downloads'})) {
-        $do_persistent = $config{'persistent-downloads'};
-      }
-    }
-    # default method is doing persistent downloads:
-    if (!defined($do_persistent)) {
-      $do_persistent = 1;
-    }
-    ddebug("tlmgr:main: do persistent downloads = $do_persistent\n");
-    if ($do_persistent) {
-      TeXLive::TLUtils::setup_persistent_downloads() ;
-    }
-    if (!defined($::tldownload_server)) {
-      debug("tlmgr:main: ::tldownload_server not defined\n");
-    } else {
-      debug("tlmgr:main: ::tldownload_server defined\n");
-    }
+  debug("tlmgr:main: do persistent downloads = $opts{'persistent-downloads'}\n");
+  if ($opts{'persistent-downloads'}) {
+    TeXLive::TLUtils::setup_persistent_downloads() ;
+  }
+  if (!defined($::tldownload_server)) {
+    debug("tlmgr:main: ::tldownload_server not defined\n");
+  } else {
+    debug("tlmgr:main: ::tldownload_server defined\n");
   }
 
   my $ret = execute_action($action, @ARGV);
@@ -5630,6 +5618,92 @@ sub texconfig_conf_mimic {
 }
 
 
+# Action key
+#
+# general key management
+#
+# tlmgr key list
+# tlmgr key add <filename>
+# tlmgr key delete <keyid>
+sub action_key {
+  my $arg = shift @ARGV;
+
+
+
+  if (!defined($arg)) {
+    tlwarn("missing arguments to action `key'\n");
+    return $F_ERROR;
+  }
+
+  $arg = lc($arg);
+  if ($arg =~ /^(add|delete|list)$/) {
+    handle_gpg_config_settings();
+    if (!$::gpg) {
+      tlwarn("gnupg is not found or setup, cannot continue with action `key'\n");
+      return $F_ERROR;
+    }
+    chomp (my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
+    my $local_keyring = "$Master/tlpkg/gpg/repository-keys.gpg";
+    if ($arg eq 'list') {
+      debug("running $::gpg --list-keys\n");
+      system("$::gpg --list-keys");
+      return $F_OK;
+    } elsif ($arg eq 'delete') {
+      my $what = shift @ARGV;
+      if (!$what) {
+        tlwarn("missing argument to `key add'\n");
+        return $F_ERROR;
+      }
+      # we need to make sure that $local_keyring is existent!
+      if (! -r $local_keyring) {
+        tlwarn("no local keyring available, cannot delete anything!\n");
+        return $F_ERROR;
+      }
+      debug("running: $::gpg --primary-keyring repository-keys.gpg  --delete-key $what\n");
+      my ($out, $ret) = 
+          TeXLive::TLUtils::run_cmd("$::gpg --primary-keyring repository-keys.gpg --delete-key \"$what\" 2>&1");
+      if ($ret == 0) {
+        info("key successfully removed\n");
+        return $F_OK;
+      } else {
+        tlwarn("key removal failed, output:\n$out\n");
+        return $F_ERROR;
+      }
+      
+    } elsif ($arg eq 'add') {
+      my $what = shift @ARGV;
+      if (!$what) {
+        tlwarn("missing argument to `key add'\n");
+        return $F_ERROR;
+      }
+      # we need to make sure that $local_keyring is existent!
+      if (! -r $local_keyring) {
+        open(FOO, ">$local_keyring") || die("Cannot create $local_keyring: $!");
+        close(FOO);
+      }
+      debug("running: $::gpg --primary-keyring repository-keys.gpg  --import $what\n");
+      my ($out, $ret) = 
+          TeXLive::TLUtils::run_cmd("$::gpg --primary-keyring repository-keys.gpg  --import \"$what\" 2>&1");
+      if ($ret == 0) {
+        info("key successfully imported\n");
+        return $F_OK;
+      } else {
+        tlwarn("key import failed, output:\n$out\n");
+        return $F_ERROR;
+      }
+    } else {
+      tldie("should not be reached: tlmgr key $arg\n");
+    }
+    
+  } else {
+    tlwarn("unknown directive `$arg' to action `key'\n");
+    return $F_ERROR;
+  }
+  return $F_OK;
+}
+
+
+
 # Subroutines galore.
 #
 # set global $location variable.
@@ -5843,14 +5917,24 @@ END_NO_CHECKSUMS
   # depend on it:
   print "location-url\t$locstr\n" if $::machinereadable;
   info("$prg: package repositories\n");
+  my $verstat = "";
+  if (!$remotetlpdb->virtual_get_tlpdb('main')->is_verified) {
+    $verstat = ": ";
+    $verstat .= $remotetlpdb->virtual_get_tlpdb('main')->verification_status;
+  }
   info("\tmain = " . $repos{'main'} . " (" . 
     ($remotetlpdb->virtual_get_tlpdb('main')->is_verified ? "" : "not ") .
-    "verified)\n");
+    "verified$verstat)\n");
   for my $t (@tags) {
     if ($t ne 'main') {
+      $verstat = "";
+      if (!$remotetlpdb->virtual_get_tlpdb($t)->is_verified) {
+        $verstat = ": ";
+        $verstat .= $remotetlpdb->virtual_get_tlpdb($t)->verification_status;
+      }
       info("\t$t = " . $repos{$t} . " (" .
         ($remotetlpdb->virtual_get_tlpdb($t)->is_verified ? "" : "not ") .
-        "verified)\n");
+        "verified$verstat)\n");
     }
   }
   return 1;
@@ -5881,14 +5965,18 @@ sub _init_tlmedia {
     return(0, $errormsg);
   }
 
-
   # this "location-url" line should not be changed since GUI programs
   # depend on it:
   if ($::machinereadable) {
     print "location-url\t$location\n";
   } else {
+    my $verstat = "";
+    if (!$remotetlpdb->is_verified) {
+      $verstat = ": ";
+      $verstat .= $remotetlpdb->verification_status;
+    }
     info("$prg: package repository $location (" . 
-      ($remotetlpdb->is_verified ? "" : "not ") . "verified)\n");
+      ($remotetlpdb->is_verified ? "" : "not ") . "verified$verstat)\n");
   }
   return 1;
 }
@@ -5951,17 +6039,20 @@ END_NO_INTERNET
         $local_copy_tlpdb_used = 1;
       } elsif ($ret == -2) {
         # the remote database has not be signed, warn
-        debug("$0: remote database is not signed, continuing anyway!\n");
+        debug("$prg: remote database is not signed, continuing anyway!\n");
       } elsif ($ret == -3) {
         # no gpg available
-        debug("$0: no gpg available for verification, continuing anyway!\n");
+        debug("$prg: no gpg available for verification, continuing anyway!\n");
+      } elsif ($ret == -4) {
+        # pubkey missing
+        debug("$prg: $msg, continuing anyway!\n");
       } elsif ($ret == 1) {
         # no problem, checksum is wrong, we need to get new tlpdb
       } elsif ($ret == 2) {
         # umpf, signature error
         # TODO should we die here? Probably yes because one of 
         # checksum file or signature file has changed!
-        tldie("$0: verification of checksum for $location failed: $msg\n");
+        tldie("$prg: verification of checksum for $location failed: $msg\n");
       } elsif ($ret == 0) {
         $remotetlpdb = TeXLive::TLPDB->new(root => $location,
           tlpdbfile => $loc_copy_of_remote_tlpdb);
@@ -5969,7 +6060,7 @@ END_NO_INTERNET
         # we did verify this tlpdb, make sure that is recorded
         $remotetlpdb->is_verified(1);
       } else {
-        tldie("$0: unexpected return value from verify_checksum: $ret\n");
+        tldie("$prg: unexpected return value from verify_checksum: $ret\n");
       }
     }
   }
@@ -5979,6 +6070,10 @@ END_NO_INTERNET
   if (!defined($remotetlpdb)) {
     return(undef, $loadmediasrcerror . $location);
   }
+  if ($opts{"require-verification"} && !$remotetlpdb->is_verified) {
+    tldie("Remote TeX Live database ($location) is not verified, exiting.\n");
+  }
+
   # we allow a range of years to be specified by the remote tlpdb
   # for which it might work.
   # the lower limit is TLPDB->config_minrelease
@@ -6101,13 +6196,10 @@ sub finish {
 sub load_config_file {
   #
   # first set default values
-  # the default for gui-expertmode is 1 since that is what we
-  # have shipped till now
   $config{"gui-expertmode"} = 1;
-  #
-  # by default we remove packages
   $config{"auto-remove"} = 1;
-  #
+  $config{"require-verification"} = 0;
+  $config{"persistent-downloads"} = 1;
   # do NOT set this here, we distinguish between explicitly set in the config file
   # or implicitly true
   # $config{"verify-downloads"} = 1;
@@ -6123,6 +6215,14 @@ sub load_config_file {
   my $fn = "$TEXMFCONFIG/tlmgr/config";
   $tlmgr_config_file = TeXLive::TLConfFile->new($fn, "#", "=");
   load_options_from_config($tlmgr_config_file) if $tlmgr_config_file;
+
+  # set $opts{"key"} from $config{"key"} if not passed in on cmd line
+  if (!defined($opts{"require-verification"})) {
+    $opts{"require-verification"} = $config{"require-verification"};
+  }
+  if (!defined($opts{"persistent-downloads"})) {
+    $opts{"persistent-downloads"} = $config{"persistent-downloads"};
+  }
 
   # switched names for this one after initial release.
   if ($tlmgr_config_file->key_present("gui_expertmode")) {
@@ -6161,6 +6261,15 @@ sub load_options_from_config {
         $config{"auto-remove"} = 1;
       } else {
         tlwarn("$prg: $fn: Unknown value for auto-remove: $val\n");
+      }
+
+    } elsif ($key eq "require-verification") {
+      if ($val eq "0") {
+        $config{"require-verification"} = 0;
+      } elsif ($val eq "1") {
+        $config{"require-verification"} = 1;
+      } else {
+        tlwarn("$prg: $fn: Unknown value for require-verification: $val\n");
       }
 
     } elsif ($key eq "verify-downloads") {
@@ -6534,6 +6643,15 @@ disable these persistent connections, use C<--no-persistent-downloads>.
 Change the pinning file location from C<TEXMFLOCAL/tlpkg/pinning.txt>
 (see L</Pinning> below).  Documented only for completeness, as this is
 only useful in debugging.
+
+=item B<--require-verification>
+
+=item B<--no-require-verification>
+
+Instructs C<tlmgr> to only accept signed and verified remotes. In any
+other case C<tlmgr> will quit operation.
+See L<CRYPTOGRAPHIC VERIFICATION> below for details.
+
 
 =item B<--usermode>
 
@@ -6998,6 +7116,29 @@ C<--reinstall>, as in (using the C<fontspec> package as the example):
 
 =back
 
+=head2 key I<args>
+
+=over 4
+
+=item B<key list>
+
+=item B<key add I<what>>
+
+=item B<key remove I<keyid>>
+
+The action C<key> allows listing, adding and removing additional keys
+to the set of trusted keys, that is those that are used to verify the
+TeX Live databases. 
+
+With the C<list> argument lists all keys.
+
+The C<add> argument requires another argument, either a filename or
+C<-> for stdin, from which the key is added. The key is added to the
+local keyring C<GNUPGHOME/repository-keys.gpg>, which normally is
+C<tlpkg/gpg/repository-keys.gpg>.
+
+The C<delete> argument requires a key id and removes the requested id
+from the local keyring.
 
 =head2 option
 
@@ -7652,6 +7793,9 @@ command-line option.
 =item C<persistent-downloads>, value 0 or 1 (default 1), same as
 command-line option.
 
+=item C<require-verification>, value 0 or 1 (default 1), same as
+command-line option.
+
 =item C<verify-downloads>, value 0 or 1 (default 1), same as
 command-line option.
 
@@ -7673,7 +7817,7 @@ make sense to set this.
 
 =back
 
-The <no-checksums> key needs more explanation.  By default, package
+The C<no-checksums> key needs more explanation.  By default, package
 checksums computed and stored on the server (in the TLPDB) are compared
 to checksums computed locally after downloading.  C<no-checksums>
 disables this.
@@ -7694,7 +7838,10 @@ If a working GnuPG binary (C<gpg>) is found (see below for the search
 method), by default verification of downloaded files is performed. This
 can be suppressed by specifying C<--no-verify-downloads> on the command
 line, or adding an entry C<verify-downloads = 0> to a tlmgr config file
-(described in L<CONFIGURATION FILE FOR TLMGR>).
+(described in L<CONFIGURATION FILE FOR TLMGR>). On the other hand,
+it is possible to B<require> verification by either specifying 
+C<--require-verification> on the command line, or adding an entry
+C<require-verification = 1> to a tlmgr config file.
 
 Verification is performed as follows: For each C<texlive.tlpdb> loaded
 for a repository, the respective checksum C<texlive.tlpdb.sha512> is
@@ -7708,6 +7855,8 @@ created by the TeX Live Distribution GPG key 0x06BAB6BC, which in turn
 is signed by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key
 0x6CACA448.  All of these keys are obtainable from the standard key
 servers.
+
+Additional trusted keys can be added using the C<key> action.
 
 =head2 Configuration of GnuPG invocation
 
@@ -7789,6 +7938,10 @@ collections.  For example, in normal mode C<tlmgr install
 collection-context> would install C<collection-basic> and other
 collections, while in user mode, I<only> the packages mentioned in
 C<collection-context> are installed.
+
+If a package shipping map files is installed in user mode, a backup of
+the user's C<updmap.cfg> in C<USERTREE/web2c/> is made, and then this file
+regenerated from the list of installed packages.
 
 =head2 User mode backup, restore, remove, update
 
