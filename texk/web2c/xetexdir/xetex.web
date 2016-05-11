@@ -29129,7 +29129,7 @@ begin
   case subtype(p) of
   native_word_node, native_word_node_AT: begin
     { merge with any following word fragments in same font, discarding discretionary breaks }
-    if type(q) = disc_node then k:=replace_count(q) else k:=0;
+    if (q <> r+list_offset) and (type(q) = disc_node) then k:=replace_count(q) else k:=0;
     while (link(q) <> p) do begin
       decr(k);
       q:=link(q); { bring q up in preparation for deletion of nodes starting at p }
