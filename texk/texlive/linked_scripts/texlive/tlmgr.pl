@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40915 2016-05-06 10:04:53Z preining $
+# $Id: tlmgr.pl 40982 2016-05-09 22:33:36Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40915 $';
-my $datrev = '$Date: 2016-05-06 12:04:53 +0200 (Fri, 06 May 2016) $';
+my $svnrev = '$Revision: 40982 $';
+my $datrev = '$Date: 2016-05-10 00:33:36 +0200 (Tue, 10 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2453,7 +2453,7 @@ sub action_update {
   # we require:
   # if no --list is given: either --self or --all or <pkgs> 
   # if --list is given:    nothing
-  # other options just change the behaviour
+  # other options just change the behavior
   if (!($opts{"list"} || @ARGV || $opts{"all"} || $opts{"self"})) {
     tlwarn("$prg update: specify --list, --all, --self, or a list of package names.\n");
     return ($F_ERROR);
@@ -5624,11 +5624,9 @@ sub texconfig_conf_mimic {
 #
 # tlmgr key list
 # tlmgr key add <filename>
-# tlmgr key delete <keyid>
+# tlmgr key remove <keyid>
 sub action_key {
   my $arg = shift @ARGV;
-
-
 
   if (!defined($arg)) {
     tlwarn("missing arguments to action `key'\n");
@@ -5636,10 +5634,10 @@ sub action_key {
   }
 
   $arg = lc($arg);
-  if ($arg =~ /^(add|delete|list)$/) {
+  if ($arg =~ /^(add|remove|list)$/) {
     handle_gpg_config_settings();
     if (!$::gpg) {
-      tlwarn("gnupg is not found or setup, cannot continue with action `key'\n");
+      tlwarn("gnupg is not found or not set up, cannot continue with action `key'\n");
       return $F_ERROR;
     }
     chomp (my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
@@ -5648,15 +5646,15 @@ sub action_key {
       debug("running $::gpg --list-keys\n");
       system("$::gpg --list-keys");
       return $F_OK;
-    } elsif ($arg eq 'delete') {
+    } elsif ($arg eq 'remove') {
       my $what = shift @ARGV;
       if (!$what) {
-        tlwarn("missing argument to `key add'\n");
+        tlwarn("missing argument to `key remove'\n");
         return $F_ERROR;
       }
-      # we need to make sure that $local_keyring is existent!
+      # we need to make sure that $local_keyring exists.
       if (! -r $local_keyring) {
-        tlwarn("no local keyring available, cannot delete anything!\n");
+        tlwarn("no local keyring available, cannot remove!\n");
         return $F_ERROR;
       }
       debug("running: $::gpg --primary-keyring repository-keys.gpg  --delete-key $what\n");
@@ -7116,28 +7114,20 @@ C<--reinstall>, as in (using the C<fontspec> package as the example):
 
 =back
 
-=head2 key I<args>
+=head2 key list|add I<file>|remove I<keyid>
 
-=over 4
+The action C<key> allows listing, adding and removing additional GPG
+keys to the set of trusted keys, that is, those that are used to verify
+the TeX Live databases.
 
-=item B<key list>
-
-=item B<key add I<what>>
-
-=item B<key remove I<keyid>>
-
-The action C<key> allows listing, adding and removing additional keys
-to the set of trusted keys, that is those that are used to verify the
-TeX Live databases. 
-
-With the C<list> argument lists all keys.
+With the C<list> argument, C<key> lists all keys.
 
 The C<add> argument requires another argument, either a filename or
 C<-> for stdin, from which the key is added. The key is added to the
-local keyring C<GNUPGHOME/repository-keys.gpg>, which normally is
+local keyring C<GNUPGHOME/repository-keys.gpg>, which is normally)
 C<tlpkg/gpg/repository-keys.gpg>.
 
-The C<delete> argument requires a key id and removes the requested id
+The C<remove> argument requires a key id and removes the requested id
 from the local keyring.
 
 =head2 option
@@ -7228,7 +7218,7 @@ The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
 Unix-like systems to control the generation of links for executables,
 info files and man pages. See the C<path> action for details.
 
-The last three options control behaviour on Windows installations.  If
+The last three options control behavior on Windows installations.  If
 C<desktop_integration> is set, then some packages will install items in
 a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.  If
 C<fileassocs> is set, Windows file associations are made (see also the
@@ -7834,14 +7824,14 @@ our context.)  C<no-checksums> also avoids the warning.
 
 =head1 CRYPTOGRAPHIC VERIFICATION
 
-If a working GnuPG binary (C<gpg>) is found (see below for the search
+If a working GnuPG binary (C<gpg>) is found (see below for search
 method), by default verification of downloaded files is performed. This
 can be suppressed by specifying C<--no-verify-downloads> on the command
-line, or adding an entry C<verify-downloads = 0> to a tlmgr config file
-(described in L<CONFIGURATION FILE FOR TLMGR>). On the other hand,
-it is possible to B<require> verification by either specifying 
-C<--require-verification> on the command line, or adding an entry
-C<require-verification = 1> to a tlmgr config file.
+line, or adding an entry C<verify-downloads = 0> to a C<tlmgr> config
+file (described in L<CONFIGURATION FILE FOR TLMGR>). On the other hand,
+it is possible to I<require> verification by specifying
+C<--require-verification> on the command line, or by adding an entry
+C<require-verification = 1> to a C<tlmgr> config file.
 
 Verification is performed as follows: For each C<texlive.tlpdb> loaded
 for a repository, the respective checksum C<texlive.tlpdb.sha512> is
@@ -7865,7 +7855,7 @@ variable C<TL_GNUPG> is set, it is tested and used; otherwise C<gpg> is
 checked; finally C<gpg2> is checked.
 
 Further adaptation of the C<gpg> invocation can be made using the two
-enviroment variables C<TL_GNUPGHOME>, which is passed to C<gpg> as the
+environment variables C<TL_GNUPGHOME>, which is passed to C<gpg> as the
 value for C<--homedir>, and C<TL_GNUPGARGS>, which replaces the default
 arguments C<--no-secmem-warning --no-permission-warning>.
 
