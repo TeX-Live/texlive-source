@@ -653,10 +653,14 @@ CIDFont_type2_dofont (CIDFont *font)
 	c = h_used_chars[i];
 	break;
       }
+    }
+    for (i = 8191; i >= 0; i--) {
       if (v_used_chars && v_used_chars[i] != 0) {
-	last_cid = i * 8 + 7;
-	c = v_used_chars[i];
-	break;
+	if (i * 8 + 7 >= last_cid) {
+	  c = (i * 8 + 7 > last_cid) ? (v_used_chars[i]) : (c | v_used_chars[i]);
+	  last_cid = i * 8 + 7;
+	  break;
+	}
       }
     }
     if (last_cid > 0) {

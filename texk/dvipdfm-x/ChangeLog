@@ -1,3 +1,8 @@
+2016-05-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* cidtype2.c: Fix bugs in horizontal-vertical mixed scripts by
+	TrueType fonts.
+
 2016-05-08  Masamichi HOSODA  <trueroad@trueroad.jp>
 
 	* dvi.c, dvipdfmx.c, dvipdfmx.h, special.c: Add new specials to handle
