@@ -1,3 +1,92 @@
+commit 3f044f05ca7f3d30d3f61edcf1d991bd6ccc69dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 12 02:16:25 2016 -0600
+
+    Move bug tracking to github.
+
+commit b9ca1650f3086a265eb9d39649261680fe032ba5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 12 02:05:12 2016 -0600
+
+    Require ncurses library only with --enable-readline.
+    Implement --disable-sigsegv configuration option.
+
+commit da2c3f8c7af68645c6cff8c04f555676413e47ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 12 01:08:40 2016 -0600
+
+    Minor optimization.
+
+commit 8a956632265c5b540b21249d8411216788812e30
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 11 08:55:31 2016 -0600
+
+    Use # operator for integer division.
+
+commit 11f06b200a9ca5382e2c15d251140e44902f0f04
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 9 13:55:55 2016 -0600
+
+    Update CXXFLAGS and LDFLAGS documentation.
+
+commit 563d53bf8eba994e903e460361f30d93f6a5da14
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 8 22:19:25 2016 -0600
+
+    Port Makefile.in to Bourne shell.
+
+commit 04b86da8e09ed0772d46520e43e4875878aff4f8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 7 20:34:12 2016 -0600
+
+    Fix longitudinal splitting in revolution.
+
+commit 0d7435b299f721fbe4d788edc3f5334f8bddabb9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 6 20:49:46 2016 -0600
+
+    Pass CC and CXX to gc configure.
+
+commit a40b6c087091bdc15ffe44d00c51ca15cb1d4877
+Merge: 656cf97 0f1f6d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 6 09:45:34 2016 -0600
+
+    Merge pull request #21 from mojca/posix-test
+    
+    Makefile.in: replace 'test ! -e' => 'test ! -s'
+
+commit 0f1f6d1c73ebc6b494fc23d76a1f00966de9f5fb
+Author: Mojca Miklavec <mojca.miklavec.lists@gmail.com>
+Date:   Fri May 6 16:49:41 2016 +0200
+
+    Makefile.in: replace 'test ! -e' => 'test ! -s'
+    for compatibility with older shell (on systems like Solaris)
+
+commit 656cf9764dc937aa12bd50fe8dc2e0354c7c5e64
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 18 16:42:22 2016 -0600
+
+    Minor optimization.
+
+commit ee9839887c7006a4e5138afe8b039669082c904a
+Author: Orest Shardt <shardtor@gmail.com>
+Date:   Tue Mar 15 15:14:38 2016 -0400
+
+    correct parsing of control points
+
+commit 1032cd60aedd0dec0f376410e5fdf525eda65f39
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 14 17:11:21 2016 -0600
+
+    Update copyright and FSF address.
+
+commit 24628251a11faf6d4e4ed0034c716cc6b4289cb6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 14 01:09:15 2016 -0600
+
+    Increment version to 2.38.
+
 commit 0240be5ed61de2394cc5cc614a9c4b480f2f51d1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 13 23:31:54 2016 -0600

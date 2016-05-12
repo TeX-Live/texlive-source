@@ -1,3 +1,11 @@
+Release Notes for Version 2.38
+
+An integer division operator # was added. Control points in xasy are now
+correctly parsed. Longitudinal splitting in the revolution structure of
+the solids module was fixed. Portability fixes were implemented.
+The ncurses library is now only required with --enable-readline.
+A --disable-sigsegv configuration option was added.
+
 Release Notes for Version 2.37
 
 The xasy graphical user interface now runs under both Python 2.7 and Python 3.
