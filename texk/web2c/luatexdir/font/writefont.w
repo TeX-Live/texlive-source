@@ -681,7 +681,7 @@ static void create_fontdictionary(PDF pdf, internal_font_number f)
     fo->tex_font = f;
     if (is_reencoded(fo->fm)) { /* at least the map entry tells so */
         fo->fe = get_fe_entry(fo->fm->encname); /* returns |NULL| if .enc file couldn't be opened */
-        if (fo->fe != NULL && (is_type1(fo->fm) || is_opentype(fo->fm))) {
+        if (fo->fe != NULL && (is_type1(fo->fm) || is_opentype(fo->fm))) {  /* not entered for truetype */
             if (fo->fe->fe_objnum == 0)
                 fo->fe->fe_objnum = pdf_create_obj(pdf, obj_type_others, 0);    /* then it will be written out */
             /* mark encoding pairs used by TeX to optimize encoding vector */
