@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 6.0 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.37.
+This file documents 'Asymptote', version 2.38.
 
    <http://asymptote.sourceforge.net>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.37.
+This file documents 'Asymptote', version 2.38.
 
    <http://asymptote.sourceforge.net>
 
@@ -531,7 +531,7 @@ done as the root user.  To install without root privileges, change the
 with './configure --disable-gc'.  For a list of other configuration
 options, say './configure --help'.  For example, one can tell configure
 to look for header files and libraries in nonstandard locations:
-./configure CXXFLAGS=-I/opt/usr/include LDFLAGS=-L/opt/usr/lib
+./configure CXXFLAGS=-I/opt/local/include LDFLAGS=-L/opt/local/lib
 
    If you are compiling 'Asymptote' with 'gcc', you will need a
 relatively recent version (e.g. 3.4.4 or later).  For full interactive
@@ -3436,22 +3436,27 @@ File: asymptote.info,  Node: Arithmetic & logical,  Next: Self & prefix operator
 'Asymptote' uses the standard binary arithmetic operators.  However,
 when one integer is divided by another, both arguments are converted to
 real values before dividing and a real quotient is returned (since this
-is usually what is intended).  The function 'int quotient(int x, int y)'
-returns the greatest integer less than or equal to 'x/y'.  In all other
-cases both operands are promoted to the same type, which will also be
-the type of the result:
+is typically what is intended; otherwise one can use the function 'int
+quotient(int x, int y)', which returns greatest integer less than or
+equal to 'x/y').  In all other cases both operands are promoted to the
+same type, which will also be the type of the result:
 '+'
      addition
 '-'
-     subtraction
+     subtractiona
 '*'
      multiplication
 '/'
      division
+'#'
+     integer division; equivalent to 'quotient(x,y)'.  Noting that the
+     'Python3' community adopted our comment symbol ('//') for integer
+     division, we decided to reciprocate and use their comment symbol
+     for integer division in 'Asymptote'!
 '%'
      modulo; the result always has the same sign as the divisor.  In
-     particular, this makes 'q*quotient(p,q)+p%q == p' for all integers
-     'p' and nonzero integers 'q'.
+     particular, this makes 'q*(p # q)+p % q == p' for all integers 'p'
+     and nonzero integers 'q'.
 '^'
      power; if the exponent (second argument) is an int, recursive
      multiplication is used; otherwise, logarithms and exponentials are
@@ -3500,8 +3505,8 @@ File: asymptote.info,  Node: Self & prefix operators,  Next: User-defined operat
 6.9.2 Self & prefix operators
 -----------------------------
 
-As in C, each of the arithmetic operators '+', '-', '*', '/', '%', and
-'^' can be used as a self operator.  The prefix operators '++'
+As in C, each of the arithmetic operators '+', '-', '*', '/', '#', '%',
+and '^' can be used as a self operator.  The prefix operators '++'
 (increment by one) and '--' (decrement by one) are also defined.  For
 example,
 int i=1;
@@ -8420,9 +8425,8 @@ To receive announcements of upcoming releases, please subscribe to
      <http://freecode.com/projects/asy>
 If you find a bug in 'Asymptote', please check (if possible) whether the
 bug is still present in the latest 'git' developmental code (*note
-Git::) before submitting a bug report.  New bugs can be submitted using
-the Bug Tracking System at
-     <http://sourceforge.net/projects/asymptote>
+Git::) before submitting a bug report.  New bugs can be reported at
+     <https://github.com/vectorgraphics/asymptote/issues>
 To see if the bug has already been fixed, check bugs with Status
 'Closed' and recent lines in
      <http://asymptote.sourceforge.net/ChangeLog>
@@ -8533,25 +8537,27 @@ Index
 * Menu:
 
 * '!':                                   Arithmetic & logical.
-                                                             (line   52)
+                                                             (line   57)
 * '!=':                                  Structures.         (line   62)
 * '!=' <1>:                              Arithmetic & logical.
-                                                             (line   32)
-* '%':                                   Arithmetic & logical.
+                                                             (line   37)
+* '#':                                   Arithmetic & logical.
                                                              (line   20)
+* '%':                                   Arithmetic & logical.
+                                                             (line   25)
 * '%' <1>:                               Interactive mode.   (line   16)
 * '%=':                                  Self & prefix operators.
                                                              (line    6)
 * '&':                                   Bezier curves.      (line   84)
 * '&' <1>:                               Arithmetic & logical.
-                                                             (line   44)
+                                                             (line   49)
 * '&&':                                  Arithmetic & logical.
-                                                             (line   42)
+                                                             (line   47)
 * '*':                                   Pens.               (line   15)
 * '*' <1>:                               Arithmetic & logical.
                                                              (line   16)
 * '**':                                  Arithmetic & logical.
-                                                             (line   26)
+                                                             (line   31)
 * '*=':                                  Self & prefix operators.
                                                              (line    6)
 * '+':                                   Pens.               (line   15)
@@ -8586,32 +8592,32 @@ Index
 * 3D grids:                              grid3.              (line    6)
 * 3D 'PostScript':                       three.              (line  580)
 * ':':                                   Arithmetic & logical.
-                                                             (line   56)
+                                                             (line   61)
 * '::':                                  Bezier curves.      (line   70)
 * '<':                                   Arithmetic & logical.
-                                                             (line   34)
+                                                             (line   39)
 * '<=':                                  Arithmetic & logical.
-                                                             (line   36)
+                                                             (line   41)
 * '==':                                  Structures.         (line   62)
 * '==' <1>:                              Arithmetic & logical.
-                                                             (line   31)
+                                                             (line   36)
 * '>':                                   Arithmetic & logical.
-                                                             (line   40)
+                                                             (line   45)
 * '>=':                                  Arithmetic & logical.
-                                                             (line   38)
+                                                             (line   43)
 * '?':                                   Arithmetic & logical.
-                                                             (line   56)
+                                                             (line   61)
 * '^':                                   Arithmetic & logical.
-                                                             (line   24)
+                                                             (line   29)
 * '^' <1>:                               Arithmetic & logical.
-                                                             (line   50)
+                                                             (line   55)
 * '^=':                                  Self & prefix operators.
                                                              (line    6)
 * '^^':                                  Paths.              (line   23)
 * '|':                                   Arithmetic & logical.
-                                                             (line   48)
+                                                             (line   53)
 * '||':                                  Arithmetic & logical.
-                                                             (line   46)
+                                                             (line   51)
 * 'a4':                                  Configuring.        (line   59)
 * 'abort':                               Data types.         (line  358)
 * 'abs':                                 Data types.         (line   65)
@@ -8649,7 +8655,7 @@ Index
 * 'Allow':                               Pens.               (line  343)
 * 'and':                                 Bezier curves.      (line   56)
 * 'AND':                                 Arithmetic & logical.
-                                                             (line   63)
+                                                             (line   68)
 * 'angle':                               Data types.         (line   73)
 * 'animate':                             Configuring.        (line   65)
 * 'animate' <1>:                         Files.              (line  155)
@@ -8851,7 +8857,7 @@ Index
 * 'clear' <1>:                           Debugger.           (line   23)
 * 'clip':                                clip.               (line    6)
 * 'CLZ':                                 Arithmetic & logical.
-                                                             (line   63)
+                                                             (line   68)
 * 'cm':                                  Figure size.        (line   18)
 * 'cmd':                                 Configuring.        (line   32)
 * 'cmyk':                                Pens.               (line   34)
@@ -8874,7 +8880,7 @@ Index
 * 'concat':                              Arrays.             (line  167)
 * conditional:                           Programming.        (line   26)
 * conditional <1>:                       Arithmetic & logical.
-                                                             (line   56)
+                                                             (line   61)
 * 'config':                              Configuring.        (line   65)
 * 'config' <1>:                          Options.            (line  117)
 * configuration file:                    Configuring.        (line   22)
@@ -8913,7 +8919,7 @@ Index
 * crosshatch:                            Pens.               (line  282)
 * 'csv':                                 Arrays.             (line  351)
 * 'CTZ':                                 Arithmetic & logical.
-                                                             (line   63)
+                                                             (line   68)
 * 'cubicroots':                          Arrays.             (line  308)
 * 'curl':                                Bezier curves.      (line   66)
 * 'curl' <1>:                            three.              (line    6)
@@ -9256,14 +9262,14 @@ Index
 * installation:                          Installation.       (line    6)
 * 'int':                                 Data types.         (line   30)
 * integer division:                      Arithmetic & logical.
-                                                             (line    6)
+                                                             (line   20)
 * interactive mode:                      Drawing in interactive mode.
                                                              (line    6)
 * interactive mode <1>:                  Interactive mode.   (line    6)
 * 'interior':                            Paths and guides.   (line  290)
 * international characters:              unicode.            (line    6)
 * 'interp':                              Arithmetic & logical.
-                                                             (line   59)
+                                                             (line   64)
 * 'interpolate':                         interpolate.        (line    6)
 * 'intersect':                           Paths and guides.   (line  195)
 * 'intersect' <1>:                       math.               (line   13)
@@ -9360,7 +9366,7 @@ Index
 * 'libm' routines:                       Mathematical functions.
                                                              (line    6)
 * 'libsigsegv':                          Functions.          (line  100)
-* 'libsigsegv' <1>:                      Help.               (line   28)
+* 'libsigsegv' <1>:                      Help.               (line   27)
 * 'limits':                              graph.              (line  640)
 * 'line':                                Arrays.             (line  333)
 * 'line' <1>:                            Arrays.             (line  337)
@@ -9486,7 +9492,7 @@ Index
 * 'normal':                              three.              (line  470)
 * 'nosafe':                              Options.            (line  170)
 * 'NOT':                                 Arithmetic & logical.
-                                                             (line   63)
+                                                             (line   68)
 * 'notaknot':                            graph.              (line   36)
 * 'NoTicks':                             graph.              (line  160)
 * 'NoTicks3':                            graph3.             (line   35)
@@ -9525,7 +9531,7 @@ Index
 * operators:                             Operators.          (line    6)
 * options:                               Options.            (line    6)
 * 'OR':                                  Arithmetic & logical.
-                                                             (line   63)
+                                                             (line   68)
 * 'orient':                              Data types.         (line  108)
 * 'orient' <1>:                          three.              (line  501)
 * 'orientation':                         Frames and pictures.
@@ -9742,7 +9748,7 @@ Index
 * 'seek':                                Files.              (line   93)
 * 'seekeof':                             Files.              (line   93)
 * 'segment':                             math.               (line   50)
-* segmentation fault:                    Help.               (line   28)
+* segmentation fault:                    Help.               (line   27)
 * self operators:                        Self & prefix operators.
                                                              (line    6)
 * 'sequence':                            Arrays.             (line  118)
@@ -9822,7 +9828,7 @@ Index
                                                              (line   39)
 * stack overflow:                        Functions.          (line  100)
 * stack overflow <1>:                    Functions.          (line  100)
-* stack overflow <2>:                    Help.               (line   28)
+* stack overflow <2>:                    Help.               (line   27)
 * 'static':                              Static.             (line    6)
 * 'stats':                               stats.              (line    6)
 * 'stdin':                               Files.              (line   48)
@@ -10023,7 +10029,7 @@ Index
 * 'xequals':                             graph.              (line  278)
 * 'xlimits':                             graph.              (line  640)
 * 'XOR':                                 Arithmetic & logical.
-                                                             (line   63)
+                                                             (line   68)
 * 'xpart':                               Data types.         (line   94)
 * 'xpart' <1>:                           Data types.         (line  184)
 * 'xscale':                              Transforms.         (line   30)
@@ -10089,142 +10095,142 @@ Ref: psview14549
 Node: Configuring15485
 Node: Search paths19720
 Node: Compiling from UNIX source20559
-Node: Editing modes23589
-Node: Git26010
-Node: Uninstall26409
-Node: Tutorial26751
-Node: Drawing in batch mode27639
-Node: Drawing in interactive mode28514
-Node: Figure size29546
-Node: Labels31138
-Node: Paths31965
-Ref: unitcircle32580
-Node: Drawing commands34480
-Node: draw36195
-Ref: arrows37377
-Node: fill42625
-Ref: gradient shading43671
-Node: clip48187
-Node: label48783
-Ref: Label49383
-Node: Bezier curves55227
-Node: Programming59124
-Ref: array iteration60877
-Node: Data types61044
-Ref: format71494
-Node: Paths and guides75913
-Ref: circle76167
-Ref: extension85849
-Node: Pens92628
-Ref: fillrule100135
-Ref: basealign101039
-Ref: transparency103873
-Ref: makepen107418
-Ref: overwrite108296
-Node: Transforms109510
-Node: Frames and pictures111292
-Ref: envelope112450
-Ref: size113543
-Ref: unitsize114530
-Ref: shipout115603
-Ref: filltype117954
-Ref: add121126
-Ref: add about122132
-Ref: tex125136
-Node: Files126031
-Ref: cd127018
-Ref: scroll131703
-Node: Variable initializers134621
-Node: Structures137338
-Node: Operators144835
-Node: Arithmetic & logical145149
-Node: Self & prefix operators147108
-Node: User-defined operators147897
-Node: Implicit scaling148807
-Node: Functions149370
-Ref: stack overflow152438
-Node: Default arguments152720
-Node: Named arguments153476
-Node: Rest arguments156046
-Node: Mathematical functions159167
-Node: Arrays163830
-Ref: sort170812
-Ref: tridiagonal173241
-Ref: solve174472
-Node: Slices178611
-Node: Casts182519
-Node: Import184490
-Node: Static189737
-Node: LaTeX usage192630
-Node: Base modules199135
-Node: plain201692
-Node: simplex202366
-Node: math202640
-Node: interpolate205349
-Node: geometry205628
-Node: trembling206222
-Node: stats206491
-Node: patterns206751
-Node: markers206987
-Node: tree208847
-Node: binarytree209032
-Node: drawtree209698
-Node: syzygy209899
-Node: feynman210173
-Node: roundedpath210448
-Node: animation210731
-Ref: animate211152
-Node: embed212269
-Node: slide213224
-Node: MetaPost213565
-Node: unicode214284
-Node: latin1215158
-Node: babel215527
-Node: labelpath215757
-Node: labelpath3216578
-Node: annotate216889
-Node: CAD217359
-Node: graph217670
-Ref: ticks224820
-Ref: pathmarkers238452
-Ref: marker238922
-Ref: markuniform239276
-Ref: errorbars241074
-Ref: automatic scaling245358
-Node: palette256634
-Ref: images256752
-Ref: image260926
-Ref: logimage261446
-Ref: penimage262551
-Ref: penfunctionimage262813
-Node: three263584
-Ref: PostScript3D290593
-Node: obj292332
-Node: graph3292581
-Ref: GaussianSurface297860
-Node: grid3299009
-Node: solids299793
-Node: tube300785
-Node: flowchart303019
-Node: contour307627
-Node: contour3312938
-Node: smoothcontour3313251
-Node: slopefield314970
-Node: ode316458
-Node: Options316715
-Ref: configuration file322878
-Ref: settings322878
-Ref: texengines324121
-Ref: convert324121
-Node: Interactive mode327444
-Ref: history329593
-Node: GUI330897
-Node: GUI installation331448
-Node: GUI usage332359
-Node: PostScript to Asymptote333267
-Node: Help334025
-Node: Debugger335701
-Node: Credits337457
-Node: Index338439
+Node: Editing modes23593
+Node: Git26014
+Node: Uninstall26413
+Node: Tutorial26755
+Node: Drawing in batch mode27643
+Node: Drawing in interactive mode28518
+Node: Figure size29550
+Node: Labels31142
+Node: Paths31969
+Ref: unitcircle32584
+Node: Drawing commands34484
+Node: draw36199
+Ref: arrows37381
+Node: fill42629
+Ref: gradient shading43675
+Node: clip48191
+Node: label48787
+Ref: Label49387
+Node: Bezier curves55231
+Node: Programming59128
+Ref: array iteration60881
+Node: Data types61048
+Ref: format71498
+Node: Paths and guides75917
+Ref: circle76171
+Ref: extension85853
+Node: Pens92632
+Ref: fillrule100139
+Ref: basealign101043
+Ref: transparency103877
+Ref: makepen107422
+Ref: overwrite108300
+Node: Transforms109514
+Node: Frames and pictures111296
+Ref: envelope112454
+Ref: size113547
+Ref: unitsize114534
+Ref: shipout115607
+Ref: filltype117958
+Ref: add121130
+Ref: add about122136
+Ref: tex125140
+Node: Files126035
+Ref: cd127022
+Ref: scroll131707
+Node: Variable initializers134625
+Node: Structures137342
+Node: Operators144839
+Node: Arithmetic & logical145153
+Node: Self & prefix operators147393
+Node: User-defined operators148187
+Node: Implicit scaling149097
+Node: Functions149660
+Ref: stack overflow152728
+Node: Default arguments153010
+Node: Named arguments153766
+Node: Rest arguments156336
+Node: Mathematical functions159457
+Node: Arrays164120
+Ref: sort171102
+Ref: tridiagonal173531
+Ref: solve174762
+Node: Slices178901
+Node: Casts182809
+Node: Import184780
+Node: Static190027
+Node: LaTeX usage192920
+Node: Base modules199425
+Node: plain201982
+Node: simplex202656
+Node: math202930
+Node: interpolate205639
+Node: geometry205918
+Node: trembling206512
+Node: stats206781
+Node: patterns207041
+Node: markers207277
+Node: tree209137
+Node: binarytree209322
+Node: drawtree209988
+Node: syzygy210189
+Node: feynman210463
+Node: roundedpath210738
+Node: animation211021
+Ref: animate211442
+Node: embed212559
+Node: slide213514
+Node: MetaPost213855
+Node: unicode214574
+Node: latin1215448
+Node: babel215817
+Node: labelpath216047
+Node: labelpath3216868
+Node: annotate217179
+Node: CAD217649
+Node: graph217960
+Ref: ticks225110
+Ref: pathmarkers238742
+Ref: marker239212
+Ref: markuniform239566
+Ref: errorbars241364
+Ref: automatic scaling245648
+Node: palette256924
+Ref: images257042
+Ref: image261216
+Ref: logimage261736
+Ref: penimage262841
+Ref: penfunctionimage263103
+Node: three263874
+Ref: PostScript3D290883
+Node: obj292622
+Node: graph3292871
+Ref: GaussianSurface298150
+Node: grid3299299
+Node: solids300083
+Node: tube301075
+Node: flowchart303309
+Node: contour307917
+Node: contour3313228
+Node: smoothcontour3313541
+Node: slopefield315260
+Node: ode316748
+Node: Options317005
+Ref: configuration file323168
+Ref: settings323168
+Ref: texengines324411
+Ref: convert324411
+Node: Interactive mode327734
+Ref: history329883
+Node: GUI331187
+Node: GUI installation331738
+Node: GUI usage332649
+Node: PostScript to Asymptote333557
+Node: Help334315
+Node: Debugger335969
+Node: Credits337725
+Node: Index338707
 
 End Tag Table

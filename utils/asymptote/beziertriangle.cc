@@ -1,3 +1,4 @@
+
 /*****
  * drawbeziertriangle.cc
  * Authors: Jesse Frohlich and John C. Bowman
@@ -40,7 +41,7 @@ inline triple displacement2(const triple& z, const triple& u, const triple& n)
   return n != triple(0,0,0) ? dot(Z,n)*n : Z;
 }
   
-triple displacement(const triple *controls)
+inline triple displacement(const triple *controls)
 {
   triple z0=controls[0];
   triple z1=controls[6];
@@ -184,13 +185,9 @@ struct Render
   void mesh(const triple *p, const GLuint *I)
   {
     // Draw the frame of the control points of a cubic Bezier mesh
-    GLuint I0=I[0];
-    GLuint I1=I[1];
-    GLuint I2=I[2];
-
-    indices.push_back(I0);
-    indices.push_back(I1);
-    indices.push_back(I2);
+    indices.push_back(I[0]);
+    indices.push_back(I[1]);
+    indices.push_back(I[2]);
   }
   
 // Pi is the full precision value indexed by Ii.
@@ -378,32 +375,34 @@ struct Render
   void render(const triple *p, double res, GLfloat *c0, int n) {
     this->res=res;
 
-    triple po=p[0];
+    triple p0=p[0];
     epsilon=0;
     for(int i=1; i < 10; ++i)
-      epsilon=max(epsilon,abs2(p[i]-po));
+      epsilon=max(epsilon,abs2(p[i]-p0));
   
     epsilon *= Fuzz2;
     
     GLuint i0,i1,i2;
     
+    triple p6=p[6];
+    triple p9=p[9];
     if(c0) {
       GLfloat *c1=c0+4;
       GLfloat *c2=c0+8;
     
-      i0=vertex(p[0],normal(p[9],p[5],p[2],p[0],p[1],p[3],p[6]),c0);
-      i1=vertex(p[6],normal(p[0],p[1],p[3],p[6],p[7],p[8],p[9]),c1);
-      i2=vertex(p[9],normal(p[6],p[7],p[8],p[9],p[5],p[2],p[0]),c2);
+      i0=vertex(p0,normal(p9,p[5],p[2],p0,p[1],p[3],p6),c0);
+      i1=vertex(p6,normal(p0,p[1],p[3],p6,p[7],p[8],p9),c1);
+      i2=vertex(p9,normal(p6,p[7],p[8],p9,p[5],p[2],p0),c2);
     
       if(n > 0)
-        render(p,n,i0,i1,i2,p[0],p[6],p[9],false,false,false,c0,c1,c2);
+        render(p,n,i0,i1,i2,p0,p6,p9,false,false,false,c0,c1,c2);
     } else {
-      i0=vertex(p[0],normal(p[9],p[5],p[2],p[0],p[1],p[3],p[6]));
-      i1=vertex(p[6],normal(p[0],p[1],p[3],p[6],p[7],p[8],p[9]));
-      i2=vertex(p[9],normal(p[6],p[7],p[8],p[9],p[5],p[2],p[0]));
+      i0=vertex(p0,normal(p9,p[5],p[2],p0,p[1],p[3],p6));
+      i1=vertex(p6,normal(p0,p[1],p[3],p6,p[7],p[8],p9));
+      i2=vertex(p9,normal(p6,p[7],p[8],p9,p[5],p[2],p0));
     
       if(n > 0)
-        render(p,n,i0,i1,i2,p[0],p[6],p[9],false,false,false);
+        render(p,n,i0,i1,i2,p0,p6,p9,false,false,false);
     }
     
     if(n == 0) {
