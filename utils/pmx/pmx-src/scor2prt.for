@@ -1,6 +1,6 @@
 cccccccccccccccccccccccccc
 cc                      
-cc  scor2prt 7/24/11 for PMX 2.615                     
+cc  scor2prt 2/19/16 for PMX 2.74                     
 cccccccccccccccccccccccccc
 c This program, developed by Don Simons (dsimons@roadrunner.com), is 
 c part of the PMX distribution, PMX is a preprocessor for MusiXTeX. In concert 
@@ -22,7 +22,11 @@ c
 c You should have received a copy of the GNU General Public License
 c along with this program.  If not, see <http://www.gnu.org/licenses/>.
 c
-c
+c 2/19/16
+c   Exit gracefully when last input line is comment, with mods in
+c     subroutine chkcom, adding logical argument goto999
+c     which is set to .true. in that case, causing input file to
+c     be closed after exiting.
 c 4/9/12
 c   Add logical declarations to subroutine dosetup
 c 8/8/11
@@ -94,7 +98,8 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
       character*128 instrum(noimax),udpfnq(noimax)
       character*128 line,holdln,templine
       logical termrpt,isachar,frstln,oneof2,botv,clefpend,fexist,
-     *        insetup,replacing,gotname,yesodd
+     *        insetup,replacing,gotname,yesodd,goto999
+      character*1 dumq
       data achar /'P','m','V','R','A','h','w','K','M','I'/
       clefpend = .false.
       insetup = .true.
@@ -102,7 +107,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
       frstln = .true.
       lenhold = 0
       sq = char(92)
-      print*,'This is scor2prt for PMX 2.7, 2 April 2013'
+      print*,'This is scor2prt for PMX 2.74, 19 February 2016'
       numargs = iargc()
       if (numargs .eq. 0) then
         print*,'You could have entered a jobname on the command line,'
@@ -145,7 +150,7 @@ c
         ludpfn(iv) = 0
 19    continue
       read(10,'(a)')line
-      call chkcom(line)
+      call chkcom(line,goto999)
       if (line(1:3) .eq. '---') then
         call allparts(line,128)
 31      read(10,'(a)')line
@@ -155,7 +160,7 @@ c
         end if
         call allparts(line,128)
         read(10,'(a)')line
-        call chkcom(line)
+        call chkcom(line,goto999)
       end if
       iccount = 0
       nv = readin(line,iccount,1)+.1
@@ -212,7 +217,7 @@ c
 c  Must leave insetup=.true. else could bypass ALL instrument names.
 c
       read(10,'(a)')line
-      call chkcom(line)
+      call chkcom(line,goto999)
 	backspace(10)
 c
 c  Normally this puts pointer at start of line with 1st inst name
@@ -269,14 +274,14 @@ c
 c  Clef string:  Note insetup is still T, so "%%" will be treated specially
 c
       read(10,'(a)')line
-      call chkcom(line)
+      call chkcom(line,goto999)
 	if (replacing) then
 c
 c  If here, we have next line after "%%", containing score's clef string
 c  Assume all clefs are handled with instrument comments.
 c
         read(10,'(a)')line
-        call chkcom(line)
+        call chkcom(line,goto999)
         backspace(10)
       else
 c
@@ -333,11 +338,13 @@ c
       iv = 1
       iinst = 1
       termrpt = .false.
-4     read(10,'(a)',end=999)line
+4     continue
+      read(10,'(a)',end=999)line
       lenline = lenstr(line,128)
       if (lenline .eq. 0) go to 4
       call zapbl(line,128)
-      call chkcom(line)
+      call chkcom(line,goto999)
+      if (goto999) go to 999
       lenline = lenstr(line,128)
 	if (lenline .eq. 0) go to 4
       if (line(1:1) .eq. 'T') then
@@ -482,7 +489,7 @@ c                if (line(1:1) .eq.'%') then
 23              if (line(1:1) .eq.'%') then
 c                  call allparts(line,128)
 c                  go to 20
-                  call chkcom(line)
+                  call chkcom(line,goto999)
                   go to 23
                 end if
 c
@@ -1286,7 +1293,7 @@ c
       parameter (noimax=24)
       common /all/ noinow,iorig(noimax),noinst,insetup,replacing,
      *       instnum(noimax),botv(noimax),nvi(noimax),nsyst,nvnow
-      logical insetup,replacing,botv
+      logical insetup,replacing,botv,goto999
 c
 c  Reads a piece of setup data from line, gets a new line from
 c  file 10 (jobname.pmx) if needed, Transfers comment lines into all parts.
@@ -1308,7 +1315,7 @@ c
 4     if (iccount .eq. 128) then
         read(10,'(a)')line
         if (replacing) replacing = .false.
-        call chkcom(line)
+        call chkcom(line,goto999)
         iccount = 0
       end if
       iccount = iccount+1
@@ -1360,16 +1367,17 @@ c
       end if
       return
       end
-      subroutine chkcom(line)
+      subroutine chkcom(line,goto999)
       parameter (noimax=24)
       common /all/ noinow,iorig(noimax),noinst,insetup,replacing,
      *       instnum(noimax),botv(noimax),nvi(noimax),nsyst,nvnow
-      logical insetup,replacing,clefpend,botv
+      logical insetup,replacing,clefpend,botv,goto999
       character*128 line
 c
 c  Assume that line has just been read. No need to change iccount since we only
 c  process full lines.
 c
+      goto999 = .false.
 1     if (line(1:1) .ne. '%') return
 c
 c  If here, line has some sort of comment
@@ -1464,6 +1472,7 @@ c
       call zapbl(line,128)
       go to 1
 2     continue
+      goto999 = .true.
       return
       end
       subroutine dosetup(iv,line,mtrnum,mtrden)

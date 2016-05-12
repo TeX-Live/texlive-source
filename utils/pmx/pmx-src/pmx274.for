@@ -63,13 +63,21 @@ c   Undotted chord notes with dotted main note.
 c   Forced line break without line number
 c   Fix dot moving when 2nds in chord get flipped
 c   To do: increase length on notexq in dodyn
+c 2.74
+c   For staff-crossing beamed xtuplet chords, if 2nd segment of a joined beam
+c     starts with a blank rest, put '\sk' into the TeX. 
+c     To enable high-to-both beamed etup staff-crossing chord, for blank
+c     rest at start of forced beam, shift \sk's from before to after \ib..;
+c     so \ib is at start and note in upper voice has a beam to connect to.
+c   Expand range of vertical xtup number shift, now stored in mult(16-22) 
+c   Check for and allow \" within lyrics strings, for umlauts.
 c 2.73 (160121)
 c   Dirk's "..." command, to convert "text" into \pmxlyr{text}\ and insert as
 c     inline TeX. Replace all '~' inside "..." and not preceded with '\', by 
 c     '\lk '. Right after 2nd ", replace @[a,b][+,-]n with \at{[a,b][+,-]n}\
 c     Include definitions of \ly and \at in pmx.tex (2 Feb 16). After first ",
 c     add (as type 2 string) '\\input musixlyr \'
-c   After inputting pathname, change any '\' to '/', for Linux compatibility. 
+c   After inputting pathname, change any '\' to '/', for Linux compatibility.
 c 2.72 (160110)
 c   Really finalize \mbrest...go back to 3 args to deal with clef changes.
 c   Fine tune centered whole bar rests to deal with clef changes
@@ -754,8 +762,8 @@ c   nmidsec  section starts and stops based on PLAYING macros (not recording).
 c 
 ccccccccccccccccccccccccc
 c
-	data date /'2 Feb 16'/
-	data version /'2.73'/
+	data date /'20 Feb 16'/
+	data version /'2.74'/
 c
 ccccccccccccccccccccccccc
       data maxit,ncalls /200,0/
@@ -2014,6 +2022,15 @@ c
         end if
       end if
 c
+c Check for end of 2nd seg of staff-jump xtup chord blank rest
+c
+c      if (isbjmp.and.ivx.eq.ivbj2
+      if (isbjmp
+     *    .and.btest(islur(ivx,ip),29)) then
+        notexq = notexq(1:lnote)//sq//'sk'
+        return
+      end if
+c
 c  And now the note
 c
       if (lnote .gt. 0) then
@@ -2236,7 +2253,9 @@ c
                 call putxtn(mprint,iflop,multip,iud,wheadpt,poenom,
      *            nolev1(ivx),islope(ivx),slfac,
      *            xnlmid,islur(ivx,ip),lnote,notexq,ncmid(iv,ip),nlnum,
-     *            eloff(ivx,nxtinbm(ivx)),iup,irest(ivx,ip),.false.)
+c     *            eloff(ivx,nxtinbm(ivx)),iup,irest(ivx,ip),.false.)
+     *            eloff(ivx,nxtinbm(ivx)),iup,irest(ivx,ip),
+     *            mult(ivx,ip),.false.)
                 end if
               call notefq(noteq,lnoten,nole,ncmid(iv,ip))
             else
@@ -2258,53 +2277,66 @@ c
           call notefq(noteq,lnoten,nole,ncmid(iv,ip))
         end if
 c
-c Check if multiplicity changes in a way requiring action
+c Check if multiplicity changes in a way requiring action,
+c unless (160211) it's blank rest on start of 2nd seg of joined beam
 c
-        ipleft = ip-1
-        if (btest(irest(ivx,ipleft),0)) ipleft = ipleft-1
-        if (.not.btest(islur(ivx,ipleft),20)) then
-          multl = iand(15,mult(ivx,ipleft))-8
-        else
-          multl = 1
-        end if
-        mub = multip - multl
-        ipright = ip+1
-        if (btest(irest(ivx,ipright),0)) ipright = ipright+1
-        if (.not.btest(islur(ivx,ip),20)) then
-          multr = iand(15,mult(ivx,ipright))-8
-        else
-          multr = 1
-        end if
-        mua = multr-multip
-        if (mub.gt.0 .or. mua .lt. 0) then
+        if(.not.btest(irest(ivx,ip-1),24)
+     *         .or..not.btest(islur(ivx,ip-1),29)) then
+          ipleft = ip-1
+          if (btest(irest(ivx,ipleft),0)) ipleft = ipleft-1
+          if (.not.btest(islur(ivx,ipleft),20)) then
+            multl = iand(15,mult(ivx,ipleft))-8
+          else
+            multl = 1
+          end if
+          mub = multip - multl
+          ipright = ip+1
+          if (btest(irest(ivx,ipright),0)) ipright = ipright+1
+          if (.not.btest(islur(ivx,ip),20)) then
+            multr = iand(15,mult(ivx,ipright))-8
+          else
+            multr = 1
+          end if
+          mua = multr-multip
+          if (mub.gt.0 .or. mua .lt. 0) then
 c
 c  Multiplicity has increased from left or will decrease to right. Need action.
 c
-          if (isbjmp .and. ivx.eq.ivbj2) then
-            ivb = ivbj1
-            ulqq = chax(225-ichar(ulq(ivx,ibmcnt(ivx))))
-          else
-            ivb = ivx
-            ulqq = ulq(ivx,ibmcnt(ivx))
-          end if
-          if (mua .ge. 0) then
-            call ntrbbb(multip,'n',ulqq,ivb,notexq,lnote)
-          else if (multl .ge. multr) then
-            do 1 im = multip , 1+multr, -1
-              call ntrbbb(im,'t',ulqq,ivb,notexq,lnote)
-1           continue
-          else
-            do 2 im = 1+multr, multip
-              call ntrbbb(im,'r',ulqq,ivb,notexq,lnote)
-2           continue
-            call ntrbbb(multr,'n',ulqq,ivb,notexq,lnote)
-          end if
-        else if (ip .gt. 1) then
+            if (isbjmp .and. ivx.eq.ivbj2) then
+              ivb = ivbj1
+              ulqq = chax(225-ichar(ulq(ivx,ibmcnt(ivx))))
+            else
+              ivb = ivx
+              ulqq = ulq(ivx,ibmcnt(ivx))
+            end if
+            if (mua .ge. 0) then
+              call ntrbbb(multip,'n',ulqq,ivb,notexq,lnote)
+c            else if (multl .ge. multr) then
+c  Test for next note being blank rest, assuming staff-crossing
+c    xtup chord
+c
+            else if (multl .ge. multr .and.
+     *               .not.btest(islur(ivx,ip+1),29)) then
+              do 1 im = multip , 1+multr, -1
+                call ntrbbb(im,'t',ulqq,ivb,notexq,lnote)
+1             continue
+c            else
+c  Test for next note being blank rest, assuming staff-crossing
+c    xtup chord
+c
+            else if (.not.btest(islur(ivx,ip+1),29)) then
+              do 2 im = 1+multr, multip
+                call ntrbbb(im,'r',ulqq,ivb,notexq,lnote)
+2             continue
+              call ntrbbb(multr,'n',ulqq,ivb,notexq,lnote)
+            end if
+          else if (ip .gt. 1) then
 c
 c  Check for 2nd member of dotted xtup
 c
-	    if (btest(nacc(ivx,ip-1),27)) call ntrbbb(multip+1,'t',
+            if (btest(nacc(ivx,ip-1),27)) call ntrbbb(multip+1,'t',
      *                       ulq(ivx,ibmcnt(ivx)),ivx,notexq,lnote)
+          end if
         end if
 c
 c Now put in the note
@@ -2596,11 +2628,13 @@ c
       character*79 notexq,tempq
       integer nornb(nm),ihornb(nm,24)
       real*4 space(80),squez(80)
-      logical novshrinktop,cstuplet,usexnumt
+      logical novshrinktop,cstuplet,usexnumt,writebrests
       common /comnvst/ novshrinktop,cstuplet
       common /comfig/ itfig(2,74),figq(2,74),ivupfig(2,74),nfigs(2),
      *                fullsize(nm),ivxfig2,ivvfig(2,74)
       character*10 figq
+      common /xjbeambrests/ nbrests
+      writebrests = .true.
       ibc = ibmcnt(ivx)
       ipb1 = ibm1(ivx,ibc)
       multb = iand(15,mult(ivx,ipb1))-8
@@ -2692,7 +2726,8 @@ c
           call putxtn(mprint,iflop,multb,iud,wheadpt,
      *      poenom,nolev1(ivx),islope(ivx),slfac,xnlmid,islur(ivx,ipb1),
      *      lnote,notexq,ncmid(iv,ipb1),nlnum,eloff(ivx,nxtinbm(ivx)),
-     *      iup,irest(ivx,ipb1),usexnumt)
+c     *      iup,irest(ivx,ipb1),usexnumt)
+     *      iup,irest(ivx,ipb1),mult(ivx,ipb1),usexnumt)
         end if
         if (.not.drawbm(ivx)) then
 c
@@ -2850,15 +2885,22 @@ c
         if (ixrest(ivx) .eq. 1) then
 c
 c  Insert rest at start of beamed xtup.  See above note for possible problem.
+c  But first check if blank rest and if in forced beam (assuming xtuplet),
+c    and if so, count rest from beginning, add \sk's AFTER starting beam '\ib*'
 c
-          nodur(ivx,ipb1) = 2**(4-multb)
-          call notex(tempq,ltemp)
-          if (lnote .gt. 0) then
-            notexq = notexq(1:lnote)//tempq(1:ltemp)
+          if (btest(islur(ivx,ip),29) .and. btest(ipl(ivx,ip),30)) then
+            nbrests = nbrests+1
+            writebrests = .false.
           else
-            notexq = tempq(1:ltemp)
+            nodur(ivx,ipb1) = 2**(4-multb)
+            call notex(tempq,ltemp)
+            if (lnote .gt. 0) then
+              notexq = notexq(1:lnote)//tempq(1:ltemp)
+            else
+              notexq = tempq(1:ltemp)
+            end if
+            lnote = lnote+ltemp
           end if
-          lnote = lnote+ltemp
 c
 c  Re-zero just in case!
 c
@@ -2923,7 +2965,7 @@ c  Beam segment start.  New start level
 4           continue
           end if
         end if
-	end if
+      end if
       iadj = igetbits(islur(ivx,ipb1),2,27)
       addbrack = .false.
       if (btest(ipl(ivx,ipb1),30)) then
@@ -2993,6 +3035,18 @@ c
       if (addbrack) then
         notexq = notexq(1:lnote)//'}'
         lnote = lnote+1
+      end if
+c
+c  Add in \sk's for very special case of staff-crossing xtup chords
+c  Assumes we are in lower (first) voice of up-to-both beamed xtup
+c    that starts with blank rests (notes in upper voice here).
+c
+      if (nbrests.gt.0 .and. writebrests) then
+        do 7 isk = 1 , nbrests
+          notexq = notexq(1:lnote)//chax(92)//'sk'
+          lnote = lnote+3
+7       continue
+        nbrests = 0
       end if
 c
 c  Get 'floor' zmin for figures
@@ -4508,8 +4562,6 @@ c
 c
 c  Arpeggio signal
 c
-c          call putarp(tnow,iv,ip,nolev,ncm,soutq,lsout)
-      print*,'Calling putarp chord, iv,ivx:',iv,ivx
           call putarp(tnow,ivx,ip,nolev,ncm,soutq,lsout)
         end if
         call addstr(notexq,lnote,soutq,lsout)
@@ -7767,7 +7819,8 @@ c
 c        else if (index('ulare',durq) .gt. 0) then
         else if (index('ularec',durq) .gt. 0) then
           go to 2
-        else if (durq .eq. 'S') then
+c        else if (durq .eq. 'S') then
+        else if (index('LS',durq) .gt. 0) then
 c
 c Stemlength change
 c
@@ -7780,16 +7833,18 @@ c
           if (durq .eq. ':') then
             if (.not.stickyS) then
               call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *         'Turned off sticky stemshrinks without turning on!')
+     *       'Turned off sticky stemlegth changes without turning on!')
               call stop1()
             end if
             stickyS = .false.
             go to 2
           end if
           call readnum(lineq,iccount,durq,dum)
-          if (dum.lt..5 .or. dum.gt.4.) then
+c          if (dum.lt..5 .or. dum.gt.4.) then
+          if ((durq.eq.'L'.and.dum.gt.20.).or.
+     *                (durq.eq.'S'.and.dum.gt.4.)) then
             call errmsg(lineq,iccount-1,ibarcnt-ibaroff+nbars+1,
-     *         'Stemlength shortening must be from .5 to 4!')
+     *         'Stemlength change amount too big!')
             call stop1()
           end if
           if (durq .ne. ':') then
@@ -7894,7 +7949,8 @@ c
               end if
               call readnum(lineq,iccount,durq,snum)
               iccount = iccount-1
-              if ((numshft.eq.1 .and. snum.gt.15.1) .or. 
+c              if ((numshft.eq.1 .and. snum.gt.15.1) .or. 
+              if ((numshft.eq.1 .and. snum.gt.64.) .or. 
      *            (numshft.eq.2 .and. snum.gt.1.51)) then
                 call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *              'Shift number after "n" in xtup is out of range!')
@@ -8393,9 +8449,14 @@ c
               call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *         'In xtup, this character is not allowed!')
               call stop1()
-            else if (durq.eq.'r' .and. itup.eq.ntup) then
+c            else if (durq.eq.'r' .and. itup.eq.ntup) then
+c              call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
+c     *         'Sorry, PMX cannot end an xtuplet with a rest!')
+c              call stop1()
+            else if (durq.eq.'r' .and. itup.eq.ntup .and.
+     *          index(lineq(iccount+1:iccount+2),'b').eq.0) then
               call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
-     *         'Sorry, PMX cannot end an xtuplet with a rest!')
+     *       'Sorry, PMX cannot end an xtuplet with a non-blank rest!')
               call stop1()
             end if
 7           call g1etchar(lineq,iccount,durq)
@@ -11001,7 +11062,7 @@ c
       end if
       go to 1
       end
-      subroutine getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,
+      subroutine getmidi(noinstarg,lineq,iccount,ibarcnt,ibaroff,nbars,
      *                   lenbar,
 c      subroutine getmidi(nv,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *                    mtrdenl,first)
@@ -11030,7 +11091,7 @@ c
      *       debugmidi
       logical debugmidi
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
-     *                ,miditran(nm),midtc(0:nm),noinstdum,iinsiv(nm)
+     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
       integer*2 iinsiv
       character*1 durq
       character*2 instq
@@ -11107,7 +11168,7 @@ cc  Instrument numbers or letters.  Expect nv of them.
 c  Instrument numbers or letters.  Expect noinst of them.
 c
 c        do 2 ivx = 1 , nv
-        do 2 ivx = 1 , noinst
+        do 2 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           if (ichar(durq) .gt. 96) then
 c
@@ -11152,7 +11213,7 @@ c Get volumes for each instrument.  Expect nv of them.
 c    Follow same pattern as for insttrument numbers above.
 c 	
 c        do 7 ivx = 1 , nv
-        do 7 ivx = 1 , noinst
+        do 7 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -11175,7 +11236,7 @@ c Get balance for each instrument.  Expect nv of them.
 c    Follow same pattern as for instrument numbers above.
 c 	
 c        do 8 ivx = 1 , nv
-        do 8 ivx = 1 , noinst
+        do 8 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           if (index('123456789',durq) .eq. 0) then
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
@@ -11198,7 +11259,7 @@ c Get transposition for each instrument.  Expect nv of them.
 c    Follow similar pattern as above, but separator is +|-.
 c 	
 c        do 9 ivx = 1 , nv
-        do 9 ivx = 1 , noinst
+        do 9 ivx = 1 , noinstarg
           call getchar(lineq,iccount,durq)
           ipm = index('-+',durq)
           if (ipm .eq. 0) then
@@ -11531,6 +11592,7 @@ c
       common /commidisig/ midisig
       common /comlyr/ inputmlyr
       logical inputmlyr
+      data inputmlyr /.false./
       cdot = .false.
 1     call getchar(lineq,iccount,charq)
       if (lastchar) return
@@ -11606,8 +11668,10 @@ c
 c  Grab stemlength shortening parameters from prior note
 c
           mult(ivx,nnl(ivx)) = ibset(mult(ivx,nnl(ivx)),27)
-          call setbits (mult(ivx,nnl(ivx)),3,28,
-     *                  igetbits(mult(ivx,nnl(ivx)-1),3,28))
+c          call setbits (mult(ivx,nnl(ivx)),3,28,
+c     *                  igetbits(mult(ivx,nnl(ivx)-1),3,28))
+          call setbits (mult(ivx,nnl(ivx)),6,10,
+     *                  igetbits(mult(ivx,nnl(ivx)-1),6,10))
         end if
         if (autofbon .and. tautofb.gt.tol .and. .not.fbon) then 
 c
@@ -11849,13 +11913,17 @@ c
                 if (numshft .eq. 1) then
 c
 c  Vertical shift
+c  160214 Allow (-64,64)
+c                  iofforn = iofforn*nint(xofforn) + 16
+                  iofforn = iofforn*nint(xofforn) + 64
 c
-                  iofforn = iofforn*nint(xofforn) + 16
+cc  Turn on bit 1; set bits 2-6 to iofforn
+c  Turn on bit 1 of irest; set bits 16-22 of mult to iofforn
 c
-c  Turn on bit 1; set bits 2-6 to iofforn
-c
-                  irest(ivx,nnl(ivx)) =
-     *               ior(irest(ivx,nnl(ivx)),2+4*iofforn)
+c                  irest(ivx,nnl(ivx)) =
+c     *               ior(irest(ivx,nnl(ivx)),2+4*iofforn)
+                  irest(ivx,nnl(ivx)) = ibset(irest(ivx,nnl(ivx)),1)
+                  call setbits(mult(ivx,nnl(ivx)),8,16,iofforn)
                 else
 c
 c  Horizontal shift
@@ -11982,22 +12050,9 @@ c
               call littex(islur,nnl(ivx),ivx,topmods,lineq,iccount)
               go to 7
             else if (charq .eq. '"') then
-cc
-cc  pmxlyr string in xtup. Expand "..." to \pmxlyr{...}\
-cc
-c              do 90 i2nd = iccount+1 , 128
-c                if (lineq(i2nd:i2nd) .eq. '"') go to 91
-c90            continue
-c91            continue
-c              if (iccount .eq. 1) then
-c                lineqt = sq//'pmxlyr{'//lineq(2:i2nd-1)//'}'//sq
-c     *             //lineq(i2nd+1:128)
-c              else
-c                lineqt = lineq(1:iccount-1)//sq//'pmxlyr{'
-c     *             //lineq(iccount+1:i2nd-1)//'}'//sq
-c     *             //lineq(i2nd+1:128)
-c              end if
-c              lineq = lineqt
+c
+c  pmxlyr string in xtup. Expand "..." to \pmxlyr{...}\
+c
               call dopmxlyr(lineq,iccount)
               charq = sq
               call littex(islur,nnl(ivx),ivx,topmods,lineq,iccount)
@@ -12438,20 +12493,24 @@ c
           ipl(ivx,nnl(ivx)) = ibset(ipl(ivx,nnl(ivx)),8)
           irest(ivx,nnl(ivx)) = ibset(irest(ivx,nnl(ivx)),27)
           go to 2
-        else if (durq .eq. 'S') then
+c        else if (durq .eq. 'S') then
+        else if (index('LS',durq) .gt. 0) then
 c
-c  Stemlength change.  Get -dstemlen in \internotes.  Allowable values are .5 to 4
-c    Set mult(27).  Map value to 0 to 7, store in mult(28-30).  Later convert to
+c  Stemlength change.  Get dstemlen in \internotes.  Allowable values are -4 to 27.5
+c    Set mult(27).  Map value to 0 to 63, store in mult(10-15).  Later convert to
 c    interbeams = internotes*2/3.
 c
+c
+          isign = 1
+          if (durq .eq. 'S') isign = -1
           mult(ivx,nnl(ivx)) = ibset(mult(ivx,nnl(ivx)),27)
           call getchar(lineq,iccount,durq)
           if (durq .eq. ':') then
 c
 c  End stickyS.  Grab data now from prior note, since we have to shut off stickyS.
 c
-            call setbits (mult(ivx,nnl(ivx)),3,28,
-     *                    igetbits(mult(ivx,nnl(ivx)-1),3,28))
+            call setbits (mult(ivx,nnl(ivx)),6,10,
+     *                    igetbits(mult(ivx,nnl(ivx)-1),6,10))
             stickyS = .false.  
             go to 2
           end if
@@ -12459,7 +12518,8 @@ c
 c  If durq .ne. ':' then iccount is now on the start of the number
 c
           call readnum(lineq,iccount,durq,dum)
-          call setbits (mult(ivx,nnl(ivx)),3,28,nint((dum-.5)*2))
+          dum = isign*dum
+          call setbits (mult(ivx,nnl(ivx)),6,10,nint((dum+4.)*2))
           if (durq .eq. ':') then
             stickyS = .true.
           else
@@ -14432,7 +14492,7 @@ c
 c
 c 160130 Replace '\' by '/'
 c
-12    ipos = index(pathnameq,'\')
+12    ipos = index(pathnameq,'\\')
       if (ipos .gt. 0) then
         pathnameq(ipos:ipos)='/'
         print*,'Changed pathname to ',pathnameq(1:lpath)
@@ -15971,6 +16031,8 @@ c 130316
      *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
       common /comclefrests/ centrests
       logical centrests
+      common /xjbeambrests/ nbrests
+      nbrests = 0
 c
 c  Set up main ib loop within which a block (notes group) is written
 c
@@ -16718,7 +16780,6 @@ c  Arpeggio on a main (non-chordal) note?
 c
             if (btest(iornq(ivx,ip),27)) then
 c              call putarp(tnow,iv,ip,nolev(ivx,ip),ncmid(iv,ip),
-      print*,'Calling putarp main, iv,ivx:',iv,ivx
               call putarp(tnow,ivx,ip,nolev(ivx,ip),ncmid(iv,ip),
      *                    soutq,lsout)
             end if
@@ -16737,7 +16798,6 @@ c
      *            nolev(ivx,ip).le.50) 
      *            call chkkbdrests(ip,iv,ivx,nn,islur,irest,nolev,
      *                ivmx,nib,nv,ibar,tnow,tol,nodur,2,levtopr,levbotr,
-c     *                mult)
      *                mult,ipl)
                 call beamstrt(notexq,lnote,nornb,ihornb,space,squez,ib)
 c
@@ -17081,12 +17141,13 @@ c
      *           soutq,lsout,igetbits(islur(ivx,ip),1,3))
             end if
 c
-c  Stemlength shortening?
+c  Stemlength changes
 c
             if (btest(mult(ivx,ip),27)) then
-              stemshort = 4.66-.667*(igetbits(mult(ivx,ip),3,28)+1)*.5
+              dstemlen = igetbits(mult(ivx,ip),6,10)*.5-4. 
+              stemshort = 4.66+.667*dstemlen
               call addstr(sq//'stemlength{',12,soutq,lsout)
-              write(notexq,'(f4.2)')stemshort
+              write(notexq,'(f4.1)')stemshort
               call addstr(notexq(1:4)//'}',5,soutq,lsout)
             else if (ip .gt. 1) then
               if (btest(mult(ivx,ip-1),27))
@@ -17116,9 +17177,14 @@ c
      *            nolev(ivx,ip).le.50) 
      *            call chkkbdrests(ip,iv,ivx,nn,islur,irest,nolev,
      *                ivmx,nib,nv,ibar,tnow,tol,nodur,2,levtopr,levbotr,
-c     *                mult)
      *                mult,ipl)
-                call beamn1(notexq,lnote)
+                if (btest(islur(ivx,ip),29) 
+     *               .and.btest(irest(ivx,ip),24)) then
+                  notexq = chax(92)//'sk'
+                  lnote = 3
+                else
+                  call beamn1(notexq,lnote)
+                end if
               end if
               bspend = .false.
 c
@@ -17153,7 +17219,6 @@ c
      *            nolev(ivx,ip).le.50) 
      *            call chkkbdrests(ip,iv,ivx,nn,islur,irest,nolev,
      *                ivmx,nib,nv,ibar,tnow,tol,nodur,2,levtopr,levbotr,
-c     *                mult)
      *                mult,ipl)
               call beamid(notexq,lnote)
 c
@@ -19546,7 +19611,8 @@ cc  irest  cc
 ccccccccccccc
 c  0        rest=1, no rest = 0
 c  1        There will be a vertical shift for number of this xtup
-c  2-6      Height shift, 1 => -15, 31 => +15  Indicate by +/- [n] after 'n'
+c  Moved hgt shft to mult 16-22, so could span -64,64.
+cc  2-6      Height shift, 1 => -15, 31 => +15  Indicate by +/- [n] after 'n'
 c  7        There is a horizontal shift for xtup number
 c  9-13     Horiz shift, 1=>-1.5, ... , 31=>+1.5
 c  14       Flip up/down-ness of xtup number
@@ -19597,8 +19663,10 @@ ccccccccccccc
 c  0-3      Multiplicity+8 (mult= # of flags)
 c  4        Set if slope adjustment for xtup bracket
 c  5-9      16+slope adjustment
+c  10-15    New stem length, [0-63] => (-4,0,+27.5)
+c  16-22    64+Vertical offset of xtup #
 c  27       Stemlength override
-c  28-30    New stem length.
+cc  28-30    New stem length.
 ccccccccccccc
 cc  isdat1 cc
 ccccccccccccc
@@ -19788,7 +19856,7 @@ cccccccccccccccccccccccccccccccc
       common /comclefrests/ centrests
       logical newclef, centrests
       common /comlyr/ inputmlyr
-      logical inputmlyr /.false./
+      logical inputmlyr 
       if (.not.optimize) then
         print*
         print*,'Starting second PMX pass'
@@ -22493,7 +22561,8 @@ c
       end
       subroutine putxtn(ntupv,iflop,multb,iud,wheadpt,poenom,
      *  nolev1,islope,slfac,xnlmid,islur,lnote,notexq,ncmid,nlnum,
-     *  eloff,iup,irest,usexnumt)
+c     *  eloff,iup,irest,usexnumt)
+     *  eloff,iup,irest,mult,usexnumt)
 c
 c  Places digit for xtuplet.
 c
@@ -22518,7 +22587,8 @@ c
 c
 c  Only print number when wanted.  First check vert, horiz offset
 c
-        if (btest(irest,1)) nlnum = nlnum+iand(31,ishft(irest,-2))-16
+c        if (btest(irest,1)) nlnum = nlnum+iand(31,ishft(irest,-2))-16
+        if (btest(irest,1)) nlnum = nlnum+igetbits(mult,8,16)-64
         if (btest(irest,7)) eloff = eloff+
      *          (.1*iand(31,ishft(irest,-9))-1.6)*wheadpt/poenom
         if (.not.usexnumt) then 
@@ -24382,7 +24452,9 @@ c
       if (iccount .eq. 121) then
         lyrerr = 2
         return
-      else if (charq.eq.'"') then
+c      else if (charq.eq.'"') then
+      else if (charq.eq.'"' .and. 
+     *  .not.(lineq(iccount-1:iccount-1).eq.char(92))) then
         call g1etchar(lineq,iccount,charq)
 c
 c  Check for raise/lower command
@@ -24426,9 +24498,19 @@ c   with \pmxlyr{...}\, but also look for ~ in lyrics and replace with '\ll ',
 c   (unless preceded with '\'), check length
 c
       character*128 lineq,lineqt
-      character*1 sq /'\'/
+      character*1 sq 
+      data sq /'\\'/
       iend = lenstr(lineq,128)
+c
+c      i2nd = iccount+index(lineq(iccount+1:128),'"')
+c Find position of closing '"'; must bypass any \" which is used for umlaut
+c
       i2nd = iccount+index(lineq(iccount+1:128),'"')
+2     continue
+      if (lineq(i2nd-1:i2nd-1).eq.char(92)) then
+        i2nd = i2nd+index(lineq(i2nd+1:128),'"')
+        go to 2
+      end if
       istart = iccount
 1     itilde = istart+index(lineq(istart+1:i2nd-1),'~')
       if (itilde.gt.istart.and.itilde.lt.i2nd) then
