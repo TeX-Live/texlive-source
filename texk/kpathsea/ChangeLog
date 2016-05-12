@@ -1,3 +1,8 @@
+2016-05-13  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (RISINPUTS, BLTXMLINPUTS): $TEXMF/biber
+	rather than $TEXMF/bibtex.
+
 2016-02-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	*knj.c: Disable unnecessary warning (w32 only).
