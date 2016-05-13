@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 40982 2016-05-09 22:33:36Z karl $
+# $Id: tlmgr.pl 41048 2016-05-11 21:43:33Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 40982 $';
-my $datrev = '$Date: 2016-05-10 00:33:36 +0200 (Tue, 10 May 2016) $';
+my $svnrev = '$Revision: 41048 $';
+my $datrev = '$Date: 2016-05-11 23:43:33 +0200 (Wed, 11 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4998,7 +4998,7 @@ sub check_runfiles {
             |cid2code\.txt
             |etex\.src
             |fithesis.*
-            |kinsoku\.tex
+            |u?kinsoku\.tex
             |language\.dat
             |language\.def
             |local\.mf
