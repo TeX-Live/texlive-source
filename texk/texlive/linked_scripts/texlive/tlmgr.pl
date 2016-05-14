@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41048 2016-05-11 21:43:33Z karl $
+# $Id: tlmgr.pl 41103 2016-05-13 23:13:18Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41048 $';
-my $datrev = '$Date: 2016-05-11 23:43:33 +0200 (Wed, 11 May 2016) $';
+my $svnrev = '$Revision: 41103 $';
+my $datrev = '$Date: 2016-05-14 01:13:18 +0200 (Sat, 14 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -3168,7 +3168,7 @@ sub action_update {
         # dirs from the new package before re-installing the old one.
         # TODO
         logpackage("failed update: $pkg ($rev -> $mediarevstr)");
-        tlwarn("$prg: Installation of new version of $pkg did fail, trying to unwind.\n");
+        tlwarn("$prg: Installation of new version of $pkg failed, trying to unwind.\n");
         if (win32()) {
           # w32 is notorious for not releasing a file immediately
           # we experienced permission denied errors
@@ -4994,7 +4994,7 @@ sub check_runfiles {
       =~ /^((czech|slovak)\.sty
             |Changes
             |Makefile
-            |README
+            |README.*
             |cid2code\.txt
             |etex\.src
             |fithesis.*
