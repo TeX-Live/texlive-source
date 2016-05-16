@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41175 2016-05-16 00:33:33Z preining $
+# $Id: tlmgr.pl 41187 2016-05-16 14:04:50Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41175 $';
-my $datrev = '$Date: 2016-05-16 02:33:33 +0200 (Mon, 16 May 2016) $';
+my $svnrev = '$Revision: 41187 $';
+my $datrev = '$Date: 2016-05-16 16:04:50 +0200 (Mon, 16 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -187,7 +187,23 @@ my %action_specification = (
     "function" => \&action_get_mirror
   },
   "gui" => { 
-    "options"  => { "load" => 1 },
+    "options"  => {
+      "load" => 1,
+      # Tk::CmdLine options
+      "font" => "=s",
+      "background" => "=s",
+      "class" => "=s",
+      "display" => "=s",
+      "screen" => "=s",
+      "foreground" => "=s",
+      "geometry" => "=s",
+      "name" => "=s",
+      "title" => "=s",
+      "xrm" => "=s",
+      "iconic" => 1,
+      "motif" => 1,
+      "synchronous" => 1,
+    },
     "run-post" => 1,
     "function" => \&action_gui
   },
