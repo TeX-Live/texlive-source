@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 40652 $';
+my $svnrev = '$Revision: 41175 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -31,8 +31,9 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
 
   TeXLive::TLUtils::getenv($string);
   TeXLive::TLUtils::which($string);
-  TeXLive::TLUtils::get_system_tmpdir();
+  TeXLive::TLUtils::initialize_global_tmpdir();
   TeXLive::TLUtils::tl_tmpdir();
+  TeXLive::TLUtils::tl_tmpfile();
   TeXLive::TLUtils::xchdir($dir);
   TeXLive::TLUtils::wsystem($msg,@args);
   TeXLive::TLUtils::xsystem(@args);
@@ -123,7 +124,7 @@ BEGIN {
     &unix
     &getenv
     &which
-    &get_system_tmpdir
+    &initialize_global_tmpdir
     &dirname
     &basename
     &dirname_and_basename
@@ -190,6 +191,7 @@ BEGIN {
 use Cwd;
 use Getopt::Long;
 use File::Temp;
+use File::Copy qw//;
 
 use TeXLive::TLConfig;
 
@@ -453,20 +455,17 @@ sub which {
   return 0;
 }
 
-=item C<get_system_tmpdir>
+=item C<initialize_global_tmpdir();>
 
-Evaluate the environment variables C<TMPDIR>, C<TMP>, and C<TEMP> in
-order to find the system temporary directory.
+Initializes a directory for all temporary files. This uses C<File::Temp>
+and thus honors various env variables like  C<TMPDIR>, C<TMP>, and C<TEMP>.
 
 =cut
 
-sub get_system_tmpdir {
-  my $systmp=0;
-  $systmp||=getenv 'TMPDIR';
-  $systmp||=getenv 'TMP';
-  $systmp||=getenv 'TEMP';
-  $systmp||='/tmp';
-  return "$systmp";
+sub initialize_global_tmpdir {
+  $::tl_tmpdir = File::Temp::tempdir(CLEANUP => 1);
+  debug("tl_tempdir: creating global tempdir $::tl_tmpdir\n");
+  return ($::tl_tmpdir);
 }
 
 =item C<tl_tmpdir>
@@ -477,8 +476,27 @@ is terminated.
 =cut
 
 sub tl_tmpdir {
-  return (File::Temp::tempdir(CLEANUP => 1));
+  initialize_global_tmpdir() if (!defined($::tl_tmpdir));
+  my $tmp = File::Temp::tempdir(DIR => $::tl_tmpdir, CLEANUP => 1);
+  debug("tl_tempdir: creating tempdir $tmp\n");
+  return ($tmp);
 }
+
+=item C<tl_tmpfile>
+
+Create a temporary file which is removed when the program
+is terminated. Returns file handle and file name.
+Arguments are passed on to C<File::Temp::tempfile>.
+
+=cut
+
+sub tl_tmpfile {
+  initialize_global_tmpdir() if (!defined($::tl_tmpdir));
+  my ($fh, $fn) = File::Temp::tempfile(@_, DIR => $::tl_tmpdir, UNLINK => 1);
+  debug("tl_tempfile: creating tempfile $fn\n");
+  return ($fh, $fn);
+}
+
 
 =item C<xchdir($dir)>
 
@@ -1337,9 +1355,10 @@ sub install_packages {
     foreach my $h (@::install_packages_hook) {
       &$h($n,$totalnr);
     }
-    # TODO TODO
-    # we do NOT check the return value!!!
-    $fromtlpdb->install_package($package, $totlpdb);
+    # return false if something went wrong
+    if (!$fromtlpdb->install_package($package, $totlpdb)) {
+      return 0;
+    }
     $donesize += $tlpsizes{$package};
   }
   my $totaltime = time() - $starttime;
@@ -1954,7 +1973,8 @@ not agree. If a check argument is not given, that check is not performed.
 
 sub check_file {
   my ($xzfile, $checksum, $checksize) = @_;
-  if ($checksum) {
+  # only run checksum tests if we can actually compute the checksum
+  if ($checksum && $::checksum_method) {
     my $tlchecksum = TeXLive::TLCrypto::tlchecksum($xzfile);
     if ($tlchecksum ne $checksum) {
       tlwarn("TLUtils::check_file: removing $xzfile, checksums differ:\n");
@@ -2042,7 +2062,9 @@ sub unpack {
     # if the file is now not present, we can use it
     if (! -r $xzfile) {
       # try download the file and put it into temp
-      download_file($what, $xzfile);
+      if (!download_file($what, $xzfile)) {
+        return(0, "downloading did not succeed");
+      }
       # remove false downloads
       check_file($xzfile, $checksum, $size);
       if ( ! -r $xzfile ) {
@@ -2365,6 +2387,13 @@ sub download_file {
     tlwarn ("download_file: Programs not set up, trying literal wget\n");
     $wget = "wget";
   }
+  #
+  # create output dir if necessary
+  my $par;
+  if ($dest ne "|") {
+    $par = dirname($dest);
+    mkdirhier ($par) unless -d "$par";
+  }
   my $url;
   if ($relpath =~ m;^file://*(.*)$;) {
     my $filetoopen = "/$1";
@@ -2375,7 +2404,6 @@ sub download_file {
       # opening to a pipe always succeeds, so we return immediately
       return \*RETFH;
     } else {
-      my $par = dirname ($dest);
       if (-r $filetoopen) {
         copy ($filetoopen, $par);
         return 1;
@@ -2625,7 +2653,7 @@ sub check_for_old_updmap_cfg {
     my $nn = "$oldupd.DISABLED";
     if (-r $nn) {
       my $fh;
-      ($fh, $nn) = File::Temp::tempfile( 
+      ($fh, $nn) = tl_tmpfile( 
         "updmap.cfg.DISABLED.XXXXXX", DIR => "$tmfsysconf/web2c");
     }
     print "Renaming old config file from 
@@ -2725,6 +2753,7 @@ sub _create_config_files {
       $tlpdblinesref, @postlines) = @_;
   my $root = $tlpdb->root;
   my @lines = ();
+  my $usermode = $tlpdb->setting( "usertree" );
   if (-r "$root/$headfile") {
     # we might be in user mode and do *not* want that the generation
     # of the configuration file just boils out.
@@ -2733,11 +2762,7 @@ sub _create_config_files {
     @lines = <INFILE>;
     close (INFILE);
   } else {
-    tlwarn("TLUtils::_create_config_files: $root/$headfile missing!\n");
-    # TODO
-    # if we allow tlmgr generate to generate language.* file in usermode
-    # we need to remove the die here!
-    die ("Giving up.");
+    die ("Giving up.") if (!$usermode);
   }
   push @lines, @$tlpdblinesref;
   if (defined($localconf) && -r $localconf) {
@@ -2753,17 +2778,19 @@ sub _create_config_files {
   if (@postlines) {
     push @lines, @postlines;
   }
-  if ($#lines >= 0) {
-    open(OUTFILE,">$dest")
-      or die("Cannot open $dest for writing: $!");
-
-    if (!$keepfirstline) {
-      print OUTFILE $cc;
-      printf OUTFILE " Generated by %s on %s\n", "$0", scalar localtime;
-    }
-    print OUTFILE @lines;
-    close(OUTFILE) || warn "close(>$dest) failed: $!";
+  if ($usermode && -e $dest) {
+    tlwarn("Updating $dest, backup copy in $dest.backup\n");
+    File::Copy::copy($dest, "$dest.backup");
   }
+  open(OUTFILE,">$dest")
+    or die("Cannot open $dest for writing: $!");
+
+  if (!$keepfirstline) {
+    print OUTFILE $cc;
+    printf OUTFILE " Generated by %s on %s\n", "$0", scalar localtime;
+  }
+  print OUTFILE @lines;
+  close(OUTFILE) || warn "close(>$dest) failed: $!";
 }
 
 sub parse_AddHyphen_line {
@@ -3180,7 +3207,11 @@ Uses C<tlwarn> to issue a warning, then exits with exit code 1.
 
 sub tldie {
   tlwarn(@_);
-  exit(1);
+  if ($::gui_mode) {
+    Tk::exit(1);
+  } else {
+    exit(1);
+  }
 }
 
 =item C<debug_hash ($label, hash))>
@@ -3610,7 +3641,7 @@ sub download_to_temp_or_file {
   my $url = shift;
   my ($url_fh, $url_file);
   if ($url =~ m,^(http|ftp|file)://,) {
-    ($url_fh, $url_file) = File::Temp::tempfile(UNLINK => 1);
+    ($url_fh, $url_file) = tl_tmpfile();
     # now $url_fh filehandle is open, the file created
     # TLUtils::download_file will just overwrite what is there
     # on windows that doesn't work, so we close the fh immediately

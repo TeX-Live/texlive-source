@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 39067 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2015-12-10 23:28:26 +0100 (Thu, 10 Dec 2015) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 40700 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2016-04-23 14:35:18 +0200 (Sat, 23 Apr 2016) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -253,6 +253,8 @@ local docstr = [[
         - more slash flipping for the sake of vbscript and unc paths
     2015/12/11
     	- fix spurious arguments for updmap and fmtutil
+    2016/04/22
+    	- Warning if external perl is requested but missing
 ]]
 
 -- HELPER SUBROUTINES --
@@ -471,7 +473,15 @@ local scripts4tlperl = {
 local try_extern_perl = (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL') == '1') and 
                         not (guimode or is_restricted_progname or scripts4tlperl[progname])
 local PERLEXE = try_extern_perl and search_path('perl.exe', PATH)
-if not PERLEXE then 
+local extperl_warn
+if not PERLEXE then
+  if try_extern_perl then extperl_warn = [[
+External Perl missing or outdated. Please install a recent Perl, or configure
+TeX Live to always use the builtin Perl:
+  tlmgr conf texmf TEXLIVE_WINDOWS_TRY_EXTERNAL_PERL 0
+Meanwhile, continuing with built-in Perl...
+]]
+  end -- if try_extern_perl
   PERLEXE = TEXDIR..'/tlpkg/tlperl/bin/perl.exe'
   os.setenv('PERL5LIB', TEXDIR..'/tlpkg/tlperl/lib')
   PATH = prepend_path(PATH, TEXDIR..'/tlpkg/tlperl/bin')
@@ -662,6 +672,10 @@ end
 
 if ARGV then
   table.insert(ARGV, argline) -- pass through original arguments
+  if string.find (table.concat(ARGV, ' '), 'perl.exe') and extperl_warn then
+
+    io.stderr:write(extperl_warn)
+  end
   local ret = assert(os.spawn(ARGV))
   if ret ~= 0 then
     local dbginfo = debug.getinfo(1)
@@ -687,6 +701,6 @@ if not success then
 end
 
 -- about RUNSCRIPT_ERROR_MESSAGE environment variable:
--- it stores an error message that is catched and displayed 
+-- it stores an error message that is caught and displayed 
 -- in a message box on the C side at process exit 
 -- (currently used only by gui mode stubs)
