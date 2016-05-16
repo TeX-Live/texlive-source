@@ -7049,7 +7049,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-prs"] = package.loaded["util-prs"] or true
 
--- original size: 22839, stripped down to: 15769
+-- original size: 23411, stripped down to: 16177
 
 if not modules then modules={} end modules ['util-prs']={
   version=1.001,
@@ -7083,6 +7083,8 @@ local lbrace=P("{")
 local rbrace=P("}")
 local lparent=P("(")
 local rparent=P(")")
+local lbracket=P("[")
+local rbracket=P("]")
 local period=S(".")
 local punctuation=S(".,:;")
 local spacer=lpegpatterns.spacer
@@ -7092,6 +7094,7 @@ local anything=lpegpatterns.anything
 local endofstring=lpegpatterns.endofstring
 local nobrace=1-(lbrace+rbrace )
 local noparent=1-(lparent+rparent)
+local nobracket=1-(lbracket+rbracket)
 local escape,left,right=P("\\"),P('{'),P('}')
 lpegpatterns.balanced=P {
   [1]=((escape*(left+right))+(1-(left+right))+V(2))^0,
@@ -7099,6 +7102,7 @@ lpegpatterns.balanced=P {
 }
 local nestedbraces=P { lbrace*(nobrace+V(1))^0*rbrace }
 local nestedparents=P { lparent*(noparent+V(1))^0*rparent }
+local nestedbrackets=P { lbracket*(nobracket+V(1))^0*rbracket }
 local spaces=space^0
 local argument=Cs((lbrace/"")*((nobrace+nestedbraces)^0)*(rbrace/""))
 local content=(1-endofstring)^0
@@ -7206,6 +7210,11 @@ function parsers.settings_to_array(str,strict)
   else
     return { str }
   end
+end
+local value=P(lbrace*C((nobrace+nestedbraces)^0)*rbrace)+C((nestedbraces+nestedbrackets+nestedparents+(1-comma))^0)
+local pattern=spaces*Ct(value*(separator*value)^0)
+function parsers.settings_to_array_obey_fences(str)
+  return lpegmatch(pattern,str)
 end
 local cache_a={}
 local cache_b={}
@@ -18743,8 +18752,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-mrg.lua util-tpl.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 796985
--- stripped bytes    : 289033
+-- original bytes    : 797557
+-- stripped bytes    : 289197
 
 -- end library merge
 

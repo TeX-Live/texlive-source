@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41103 2016-05-13 23:13:18Z karl $
+# $Id: tlmgr.pl 41175 2016-05-16 00:33:33Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41103 $';
-my $datrev = '$Date: 2016-05-14 01:13:18 +0200 (Sat, 14 May 2016) $';
+my $svnrev = '$Revision: 41175 $';
+my $datrev = '$Date: 2016-05-16 02:33:33 +0200 (Mon, 16 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2533,7 +2533,7 @@ sub action_update {
 
   # these two variables are used throughout this function
   my $root = $localtlpdb->root;
-  my $temp = "$root/temp";
+  my $temp = TeXLive::TLUtils::tl_tmpdir();
 
   # remove old _BACKUP packages that have piled up in temp
   # they can be recognized by their name starting with __BACKUP_
