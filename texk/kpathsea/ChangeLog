@@ -1,3 +1,7 @@
+2016-05-20  Karl Berry  <karl@tug.org>
+
+	* Version 6.2.2 for TeX Live 2016.
+
 2016-05-13  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (RISINPUTS, BLTXMLINPUTS): $TEXMF/biber

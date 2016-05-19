@@ -30,7 +30,7 @@ my $prj         = 'pdfatfi';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
 my $version     = "2.7";
-my $date        = "2012/04/18";
+my $date        = "2016/05/16";
 my $author      = "Heiko Oberdiek";
 my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #
@@ -38,7 +38,7 @@ my $copyright   = "Copyright (c) 2005-2010, 2012 by $author.";
 #   2005/05/21 v1.0: First release.
 #   2006/08/16 v2.2: Included in DTX file of attachfile2.dtx.
 #   2010/09/27 v2.6: Keys ModDateTZ and CreationDateTZ added.
-#   2012/04/18 v2.7: Option --version added.
+#   2016/05/16 v2.8: Option --version added.
 #
 
 use POSIX qw(strftime); # %z is used (GNU)

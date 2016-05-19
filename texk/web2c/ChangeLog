@@ -1,3 +1,7 @@
+2016-05-20  Karl Berry  <karl@tug.org>
+
+	* TeX Live 2016 release.
+
 2016-05-04  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp-help.h (PDFTEXHELP) [pdfTeX]: mention pdftex.org.
