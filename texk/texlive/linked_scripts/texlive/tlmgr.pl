@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41187 2016-05-16 14:04:50Z preining $
+# $Id: tlmgr.pl 41258 2016-05-19 15:23:37Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41187 $';
-my $datrev = '$Date: 2016-05-16 16:04:50 +0200 (Mon, 16 May 2016) $';
+my $svnrev = '$Revision: 41258 $';
+my $datrev = '$Date: 2016-05-19 17:23:37 +0200 (Thu, 19 May 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -143,9 +143,9 @@ my %action_specification = (
   },
   "backup" => { 
     "options" => {
+      "all" => 1,
       "backupdir" => "=s",
       "clean" => ":-99",
-      "all" => 1,
       "dry-run|n" => 1
     },
     "run-post" => 1,
@@ -175,8 +175,8 @@ my %action_specification = (
   },
   "generate" => { 
     "options"  => {
-      "localcfg" => "=s",
       "dest" => "=s",
+      "localcfg" => "=s",
       "rebuild-sys" => 1
     },
     "run-post" => 1,
@@ -190,19 +190,19 @@ my %action_specification = (
     "options"  => {
       "load" => 1,
       # Tk::CmdLine options
-      "font" => "=s",
       "background" => "=s",
       "class" => "=s",
       "display" => "=s",
-      "screen" => "=s",
+      "font" => "=s",
       "foreground" => "=s",
       "geometry" => "=s",
-      "name" => "=s",
-      "title" => "=s",
-      "xrm" => "=s",
       "iconic" => 1,
       "motif" => 1,
+      "name" => "=s",
+      "screen" => "=s",
       "synchronous" => 1,
+      "title" => "=s",
+      "xrm" => "=s",
     },
     "run-post" => 1,
     "function" => \&action_gui
@@ -218,12 +218,12 @@ my %action_specification = (
   },
   "install" => {
     "options"  => {
+      "dry-run|n" => 1,
+      "file" => 1,
+      "force" => 1,
       "no-depends"        => 1,
       "no-depends-at-all" => 1,
-      "file" => 1,
       "reinstall" => 1,
-      "force" => 1,
-      "dry-run|n" => 1,
       "with-doc" => 1,
       "with-src" => 1,
     },
@@ -260,9 +260,9 @@ my %action_specification = (
   },
   "postaction" => {
     "options" => {
-      "w32mode" => "=s",
       "all" => 1,
-      "fileassocmode" => "=i"
+      "fileassocmode" => "=i",
+      "w32mode" => "=s",
     },
     "run-post" => 0,
     "function" => \&action_postaction
@@ -274,10 +274,10 @@ my %action_specification = (
   },
   "remove" => { 
     "options"  => {
+      "dry-run|n" => 1,
+      "force" => 1,
       "no-depends"        => 1,
       "no-depends-at-all" => 1,
-      "force" => 1,
-      "dry-run|n" => 1
     },
     "run-post" => 1,
     "function" => \&action_remove
@@ -289,9 +289,9 @@ my %action_specification = (
   },
   "restore" => {
     "options"  => {
+      "all" => 1,
       "backupdir" => "=s",
       "dry-run|n" => 1,
-      "all" => 1,
       "force" => 1
     },
     "run-post" => 1,
@@ -299,10 +299,10 @@ my %action_specification = (
   },
   "search" => {
     "options"  => {
+      "all" => 1,
+      "file" => 1,
       "global" => 1,
       "word" => 1,
-      "file" => 1,
-      "all" => 1,
     },
     "run-post" => 1,
     "function" => \&action_search
@@ -314,19 +314,19 @@ my %action_specification = (
   },
   "update" => {
     "options"  => {
+      "all" => 1,
+      "backup" => 1,
+      "backupdir" => "=s",
+      "dry-run|n" => 1,
+      "exclude" => "=s@",
+      "force" => 1,
+      "list" => 1,
+      "no-auto-install"            => 1,
+      "no-auto-remove"             => 1,
       "no-depends"                 => 1,
       "no-depends-at-all"          => 1,
-      "all" => 1,
-      "self" => 1,
-      "list" => 1,
-      "no-auto-remove"             => 1,
-      "no-auto-install"            => 1,
       "reinstall-forcibly-removed" => 1,
-      "force" => 1,
-      "backupdir" => "=s",
-      "backup" => 1,
-      "exclude" => "=s@",
-      "dry-run|n" => 1
+      "self" => 1,
     },
     "run-post" => 1,
     "function" => \&action_update
@@ -2099,6 +2099,9 @@ sub write_w32_updater {
   foreach my $pkg (@w32_updated) {
     my $repo;
     my $mediatlp;
+    # need to update the media type to the original, as it is
+    # reset below
+    $media = $remotetlpdb->media;
     if ($media eq "virtual") {
       my $maxtlpdb;
       (undef, undef, $mediatlp, $maxtlpdb) = 
@@ -2130,7 +2133,7 @@ sub write_w32_updater {
     push (@rst_info, "$pkg ^($oldrev^)");
     next if ($opts{"dry-run"});
     # create backup; make_container expects file name in a format: some-name.r[0-9]+
-    my ($size, $checksum, $fullname) = $localtlp->make_container("tar", $root, $temp, "__BACKUP_$pkg.r$oldrev");
+    my ($size, undef, $fullname) = $localtlp->make_container("tar", $root, $temp, "__BACKUP_$pkg.r$oldrev");
     if ($size <= 0) {
       tlwarn("$prg: Creation of backup container of $pkg failed.\n");
       return 1; # backup failed? abort
@@ -3128,7 +3131,7 @@ sub action_update {
         # no backup was made, so let us create a temporary .tar file
         # of the package
         my $tlp = $localtlpdb->get_package($pkg);
-        my ($s, $m, $fullname) = $tlp->make_container("tar", $root, $temp,
+        my ($s, undef, $fullname) = $tlp->make_container("tar", $root, $temp,
                                       "__BACKUP_${pkg}.r" . $tlp->revision,
                                       $tlp->relocated);
         if ($s <= 0) {
@@ -5633,6 +5636,7 @@ sub texconfig_conf_mimic {
   }
 }
 
+
 
 # Action key
 #
@@ -6497,7 +6501,7 @@ __END__
 
 =head1 NAME
 
-tlmgr - the TeX Live Manager
+tlmgr - the native TeX Live Manager
 
 =head1 SYNOPSIS
 
@@ -6582,7 +6586,6 @@ L</option> action).
 For backward compatibility and convenience, C<--location> and C<--repo>
 are accepted as aliases for this option.
 
-
 =item B<--gui> [I<action>]
 
 C<tlmgr> has a graphical interface as well as the command line
@@ -6666,7 +6669,6 @@ Instructs C<tlmgr> to only accept signed and verified remotes. In any
 other case C<tlmgr> will quit operation.
 See L<CRYPTOGRAPHIC VERIFICATION> below for details.
 
-
 =item B<--usermode>
 
 Activates user mode for this run of C<tlmgr>; see L<USER MODE> below.
@@ -6683,7 +6685,6 @@ Enables or disables cryptographic verification of downloaded database files.
 A working GnuPG (C<gpg>) binary needs to be present in the path, otherwise
 this option has no effect. See L<CRYPTOGRAPHIC VERIFICATION> below for details.
 
-
 =back
 
 The standard options for TeX Live programs are also accepted:
@@ -6694,7 +6695,6 @@ the C<TeXLive::TLUtils> documentation.
 The C<--version> option shows version information about the TeX Live
 release and about the C<tlmgr> script itself.  If C<-v> is also given,
 revision number for the loaded TeX Live Perl modules are shown, too.
-
 
 =head1 ACTIONS
 
@@ -6759,7 +6759,6 @@ performed are written to the terminal.
 
 =back
 
-
 =head2 candidates I<pkg>
 
 =over 4
@@ -6768,7 +6767,6 @@ performed are written to the terminal.
 
 Shows the available candidate repositories for package I<pkg>.
 See L</MULTIPLE REPOSITORIES> below.
-
 
 =back
 
@@ -6815,7 +6813,6 @@ checking the TL development repository.
 
 =back
 
-
 =head2 conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]
 
 With only C<conf>, show general configuration information for TeX Live,
@@ -6860,7 +6857,6 @@ Warning: The general facility is here, but tinkering with settings in
 this way is very strongly discouraged.  Again, no error checking on
 either keys or values is done, so any sort of breakage is possible.
 
-
 =head2 dump-tlpdb [--local|--remote]
 
 Dump complete local or remote TLPDB to standard output, as-is.  The
@@ -6892,7 +6888,6 @@ where C<location-url> is the literal field name, followed by a tab, and
 I<location> is the file or url to the repository.
 
 Line endings may be either LF or CRLF depending on the current platform.
-
 
 =head2 generate [I<option>]... I<what>
 
@@ -7003,15 +6998,13 @@ succession before invoking these programs.
 
 The respective locations are as follows:
 
-  tex/generic/config/language.dat (and language-local.dat);
-  tex/generic/config/language.def (and language-local.def);
-  tex/generic/config/language.dat.lua (and language-local.dat.lua);
-
+  tex/generic/config/language.dat (and language-local.dat)
+  tex/generic/config/language.def (and language-local.def)
+  tex/generic/config/language.dat.lua (and language-local.dat.lua)
 
 =head2 gui
 
 Start the graphical user interface. See B<GUI> below.
-
 
 =head2 info [I<option>...] [collections|schemes|I<pkg>...]
 
@@ -7056,13 +7049,11 @@ locally installed packages, collections, or schemes are listed.
 
 =back
 
-
 =head2 init-usertree
 
 Sets up a texmf tree for so-called user mode management, either the
 default user tree (C<TEXMFHOME>), or one specified on the command line
 with C<--usertree>.  See L<USER MODE> below.
-
 
 =head2 install [I<option>]... I<pkg>...
 
@@ -7242,7 +7233,6 @@ C<postaction> action).  Finally, if C<multiuser> is set, then adaptions
 to the registry and the menus are done for all users on the system
 instead of only the current user.  All three options are on by default.
 
-
 =head2 paper
 
 =over 4
@@ -7277,7 +7267,6 @@ C<texconfig> script, which supports other configuration settings for
 some programs, notably C<dvips>.  C<tlmgr> does not support those extra
 settings.
 
-
 =head2 path [--w32mode=user|admin] [add|remove]
 
 On Unix, merely adds or removes symlinks for binaries, man pages, and
@@ -7304,7 +7293,6 @@ If the user does not have admin rights, and the option C<--w32mode>
 is given, it must be B<user> and the user path will be adjusted. If a
 user without admin rights uses the option C<--w32mode admin> a warning
 is issued that the caller does not have enough privileges.
-
 
 =head2 pinning 
 
@@ -7370,7 +7358,6 @@ written to the terminal.
 
 =back
 
-
 =cut
 
 # keep the following on *ONE* line otherwise Losedows perldoc does
@@ -7396,13 +7383,11 @@ set to 1 (the default), only new associations are added; if it is set to
 2, all associations are set to the TeX Live programs.  (See also
 C<option fileassocs>.)
 
-
 =head2 print-platform
 
 Print the TeX Live identifier for the detected platform
 (hardware/operating system) combination to standard output, and exit.
 C<--print-arch> is a synonym.
-
 
 =head2 remove [I<option>]... I<pkg>...
 
@@ -7439,7 +7424,6 @@ written to the terminal.
 
 =back
 
-
 =head2 repository
 
 =over 4
@@ -7475,7 +7459,6 @@ In all cases, one of the repositories must be tagged as C<main>;
 otherwise, all operations will fail!
 
 =back
-
 
 =head2 restore [--backupdir I<dir>] [--all | I<pkg> [I<rev>]]
 
@@ -7520,7 +7503,6 @@ Don't ask questions.
 
 =back
 
-
 =head2 search [I<option>...] I<what>
 
 =head3 search [I<option>...] --file I<what>
@@ -7557,7 +7539,6 @@ C<tables> (unless they also contain the word C<table> on its own).
 
 =back
 
-
 =head2 uninstall
 
 Uninstalls the entire TeX Live installation.  Options:
@@ -7569,7 +7550,6 @@ Uninstalls the entire TeX Live installation.  Options:
 Do not ask for confirmation, remove immediately.
 
 =back
-
 
 =head2 update [I<option>]... [I<pkg>]...
 
@@ -7799,7 +7779,7 @@ command-line option.
 =item C<persistent-downloads>, value 0 or 1 (default 1), same as
 command-line option.
 
-=item C<require-verification>, value 0 or 1 (default 1), same as
+=item C<require-verification>, value 0 or 1 (default 0), same as
 command-line option.
 
 =item C<verify-downloads>, value 0 or 1 (default 1), same as
@@ -7817,50 +7797,54 @@ allowed to be executed when C<tlmgr> is invoked in system mode (that is,
 without C<--usermode>).
 
 This allows distributors to include the C<tlmgr> in their packaging, but
-allow only a restricted set of actions that do not interfere with the
-distro package managers.  For native TeX Live installations, it doesn't
+allow only a restricted set of actions that do not interfere with their
+distro package manager.  For native TeX Live installations, it doesn't
 make sense to set this.
 
 =back
 
 The C<no-checksums> key needs more explanation.  By default, package
 checksums computed and stored on the server (in the TLPDB) are compared
-to checksums computed locally after downloading.  C<no-checksums>
-disables this.
+to checksums computed locally after downloading.  That is, for each
+C<texlive.tlpdb> loaded from a repository, the corresponding checksum
+file C<texlive.tlpdb.sha512> is also downloaded, and C<tlmgr> confirms
+whether the checksum of the downloaded TLPDB file agrees with the
+download data.  C<no-checksums> disables this process.
 
-The checksum algorithm is SHA-512.  Your system must have (looked for in
-this order) the Perl C<Digest::SHA> module, the C<openssl> program
-(L<http://openssl.org>), or the C<sha512sum> program (from GNU
-Coreutils, L<http://www.gnu.org/software/coreutils>).  If none of these
-are available, a warning is issued and C<tlmgr> proceeds without
-checking checksums.  (Incidentally, other SHA implementations, such as
-the pure Perl and pure Lua modules, are much too slow to be usable in
-our context.)  C<no-checksums> also avoids the warning.
-
+The checksum algorithm is SHA-512.  Your system must have one of (looked
+for in this order) the Perl C<Digest::SHA> module, the C<openssl>
+program (L<http://openssl.org>), the C<sha512sum> program (from GNU
+Coreutils, L<http://www.gnu.org/software/coreutils>), or finally the
+C<shasum> program (just to support old Macs).  If none of these are
+available, a warning is issued and C<tlmgr> proceeds without checking
+checksums.  (Incidentally, other SHA implementations, such as the pure
+Perl and pure Lua modules, are much too slow to be usable in our
+context.)  C<no-checksums> avoids the warning.
 
 =head1 CRYPTOGRAPHIC VERIFICATION
 
-If a working GnuPG binary (C<gpg>) is found (see below for search
-method), by default verification of downloaded files is performed. This
-can be suppressed by specifying C<--no-verify-downloads> on the command
-line, or adding an entry C<verify-downloads = 0> to a C<tlmgr> config
-file (described in L<CONFIGURATION FILE FOR TLMGR>). On the other hand,
-it is possible to I<require> verification by specifying
-C<--require-verification> on the command line, or by adding an entry
-C<require-verification = 1> to a C<tlmgr> config file.
+C<tlmgr> and C<install-tl> perform cryptographic verification if
+possible.  If verification is performed and successful, the programs
+report C<(verified)> after loading the TLPDB; otherwise, they report
+C<(not verified)>.  Either way, by default the installation and/or
+updates proceed normally.
 
-Verification is performed as follows: For each C<texlive.tlpdb> loaded
-for a repository, the respective checksum C<texlive.tlpdb.sha512> is
-always downloaded, too, and C<tlmgr> confirms whether the checksum of
-the downloaded TLPDB file agrees with the download data.  This is done
-in any case.
+The attempted verification can be suppressed by specifying
+C<--no-verify-downloads> on the command line, or the entry
+C<verify-downloads = 0> in a C<tlmgr> config file (described in
+L<CONFIGURATION FILE FOR TLMGR>).  On the other hand, it is possible to
+I<require> verification by specifying C<--require-verification> on the
+command line, or C<require-verification = 1> in a C<tlmgr> config file;
+in this case, if verification is not possible, the program quits.
 
-Unless cryptographic verification is disabled, then a signature of the
-checksum file is downloaded and the signature verified. The signature is
-created by the TeX Live Distribution GPG key 0x06BAB6BC, which in turn
-is signed by Karl Berry's key 0x9DEB46C0 and Norbert Preining's key
-0x6CACA448.  All of these keys are obtainable from the standard key
-servers.
+Cryptographic verification requires checksum checking (described just
+above) to succeed, and a working GnuPG (C<gpg>) program (see below for
+search method).  Then, unless cryptographic verification has been
+disabled, a signature file (C<texlive.tlpdb.*.asc>) of the checksum file
+is downloaded and the signature verified. The signature is created by
+the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed by
+Karl Berry's key 0x9DEB46C0 and Norbert Preining's key 0x6CACA448.  All
+of these keys are obtainable from the standard key servers.
 
 Additional trusted keys can be added using the C<key> action.
 
@@ -7873,8 +7857,7 @@ checked; finally C<gpg2> is checked.
 Further adaptation of the C<gpg> invocation can be made using the two
 environment variables C<TL_GNUPGHOME>, which is passed to C<gpg> as the
 value for C<--homedir>, and C<TL_GNUPGARGS>, which replaces the default
-arguments C<--no-secmem-warning --no-permission-warning>.
-
+options C<--no-secmem-warning --no-permission-warning>.
 
 =head1 USER MODE
 
@@ -7960,7 +7943,6 @@ just as in normal mode.
 In user mode, these actions operate only on the user tree's
 configuration files and/or C<texlive.tlpdb>.
 creates configuration files in user tree
-
 
 =head1 MULTIPLE REPOSITORIES
 
@@ -8055,18 +8037,19 @@ from a given repository:
 
 A summary of the C<tlmgr pinning> actions is given above.
 
-
 =head1 GUI FOR TLMGR
 
-The graphical user interface for C<tlmgr> needs Perl/Tk to be installed.
-For Windows the necessary modules are shipped within TeX Live, for all
-other (i.e., Unix-based) systems Perl/Tk (as well as Perl of course) has
-to be installed.  L<http://tug.org/texlive/distro.html#perltk> has a
-list of invocations for some distros.
+The graphical user interface for C<tlmgr> requires Perl/Tk
+L<http://search.cpan.org/search?query=perl%2Ftk>.  For Windows the
+necessary modules are shipped within TeX Live, for all other (i.e.,
+Unix-based) systems Perl/Tk (as well as Perl of course) has to be
+installed outside of TL.  L<http://tug.org/texlive/distro.html#perltk>
+has a list of invocations for some distros.
 
-When started with C<tlmgr gui> the graphical user interface will be
-shown.  The main window contains a menu bar, the main display, and a
-status area where messages normally shown on the console are displayed.
+The GUI is started with the invocation C<tlmgr gui>; assuming Tk is
+loadable, the graphical user interface will be shown.  The main window
+contains a menu bar, the main display, and a status area where messages
+normally shown on the console are displayed.
 
 Within the main display there are three main parts: the C<Display
 configuration> area, the list of packages, and the action buttons.
@@ -8077,7 +8060,6 @@ repository.  To load a different repository, see the C<tlmgr> menu item.
 
 Finally, the status area at the bottom of the window gives additional
 information about what is going on.
-
 
 =head2 Main display
 
@@ -8201,7 +8183,6 @@ action needs the option C<backupdir> set (see C<Options -> General>).
 
 =back
 
-
 =head2 Menu bar
 
 The following entries can be found in the menu bar:
@@ -8252,6 +8233,41 @@ L<http://tug.org/texlive/doc.html>) and the usual ``About'' box.
 
 =back
 
+=head2 GUI options
+
+Some generic Perl/Tk options can be specified with C<tlmgr gui> to
+control the display:
+
+=over 4
+
+=item C<-background> I<color>
+
+Set background color.
+
+=item C<-font "> I<fontname> I<fontsize> C<">
+
+Set font, e.g., C<tlmgr gui -font "helvetica 18">.  The argument to
+C<-font> must be quoted, i.e., passed as a single string.
+
+=item C<-foreground> I<color>
+
+Set foreground color.
+
+=item C<-geometry> I<geomspec>
+
+Set the X geometry, e.g., C<tlmgr gui -geometry 1024x512-0+0> creates
+the window of (approximately) the given size in the upper-right corner
+of the display.
+
+=item C<-xrm> I<xresource>
+
+Pass the arbitrary X resource string I<xresource>.
+
+=back
+
+A few other obscure options are recognized but not mentioned here.  See
+the Perl/Tk documentation (L<http://search.cpan.org/perldoc?Tk>) for the
+complete list, and any X documentation for general information.
 
 =head1 MACHINE-READABLE OUTPUT
 
@@ -8265,7 +8281,6 @@ Currently this option only applies to the
 L<update|/update [I<option>]... [I<pkg>]...>,
 L<install|/install [I<option>]... I<pkg>...>, and
 L</option> actions.  
-
 
 =head2 Machine-readable C<update> and C<install> output
 
@@ -8400,7 +8415,6 @@ If a value is not saved in the database the string C<(not set)> is shown.
 If you are developing a program that uses this output, and find that
 changes would be helpful, do not hesitate to write the mailing list.
 
-
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
@@ -8409,7 +8423,7 @@ GNU General Public License Version 2 or later.
 
 =cut
 
-# to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/foo/tlmgr.html.
+# to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
 
 ### Local Variables:
 ### perl-indent-level: 2
