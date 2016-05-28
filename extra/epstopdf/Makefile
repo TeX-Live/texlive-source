@@ -15,6 +15,7 @@ check: check-help check-version \
        check-atend \
        check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
+       check-gray \
        check-gscmd check-gsopt check-gsopts \
        check-filter check-filter-outfile \
        check-gscmd \
@@ -70,20 +71,24 @@ check-filter-outfile:
 	cat test-simple.eps | $(e2p) --outfile=test-filter.pdf --filter
 	pdfinfo test-filter.pdf | grep "Page size:"
 
+check-gray:
+	$(e2p) --gray test-tiger.eps
+	pdfinfo test-tiger.pdf | grep "Page size:"
+
 check-write-error:
-	-$(e2p) test-simple.eps --outfile=/dev/full
+	! $(e2p) test-simple.eps --outfile=/dev/full
 
 check-gscmd:
-	-$(e2p) --gscmd=true test-simple.eps
-	-$(e2p) --gscmd='foo bar' test-simple.eps # fails
+	! $(e2p) --gscmd=true test-simple.eps
+	! $(e2p) --gscmd='foo bar' test-simple.eps # fails
 
 check-gsopt:
-	-$(e2p) --gscmd=echo --gsopt=foo --gsopt=bar test-simple.eps
-	-$(e2p) --restricted --gsopt=bar test-simple.eps # fails
+	! $(e2p) --gscmd=echo --gsopt=foo --gsopt=bar test-simple.eps
+	! $(e2p) --restricted --gsopt=bar test-simple.eps # fails
 
 check-gsopts:
-	-$(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
-	-$(e2p) --restricted --gsopts=bar test-simple.eps # fails
+	! $(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
+	! $(e2p) --restricted --gsopts=bar test-simple.eps # fails
 
 check-simple:
 	$(MAKE) file=test-simple check1

@@ -35,21 +35,21 @@ write result to \fIfile\fP.  If this option is not given, and
 otherwise, the default is to construct the output file name by replacing
 any extension in the input file with `.pdf'.
 .IP "\fB--\fP[\fBno\fP]\fBdebug\fP"
-write debugging info (default: off).
+write debugging info (default: false).
 .IP "\fB--\fP[\fBno\fP]\fBexact\fP"
-scan ExactBoundingBox (default: off).
+scan ExactBoundingBox (default: false).
 .IP "\fB--\fP[\fBno\fP]\fBfilter\fP"
 read standard input and (unless \fB--outfile\fP is given) write standard
-output (default: off).
+output (default: false).
 .IP "\fB--\fP[\fBno\fP]\fBgs\fP"
-run Ghostscript (default: on).  With \fB--nogs\fP, output (to standard
+run Ghostscript (default: true).  With \fB--nogs\fP, output (to standard
 output by default) the PostScript that would normally be converted; that
 is, the input PostScript as modified by \fBepstopdf\fP.
 .IP "\fB--\fP[\fBno\fP]\fBhires\fP"
-scan HiresBoundingBox (default: off).
+scan HiresBoundingBox (default: false).
 .IP "\fB--restricted\fP=\fIval\fP"
-turn on restricted mode (default: [on for repstopdf, else off]);
-this forbids the use of \fB--gscmd\fP and \fB--gsopt\fP and imposes
+turn on restricted mode (default: [true for repstopdf, else false]);
+this forbids the use of \fB--gscmd\fP and other options and imposes
 restrictions on the input and output file names according to the values
 of openin_any and openout_any (see the Web2c manual, http://tug.org/web2c).
 .PP
@@ -57,25 +57,27 @@ Options for Ghostscript (more info below):
 .IP "\fB--gscmd\fP=\fIval\fP"
 pipe output to \fIval\fP (default: [\fBgswin32c\fP on Windows, else \fBgs\fP])
 .IP "\fB--gsopt\fP=\fIval\fP"
-include \fIval\fP as one argument in the gs command (can be repeated),
+include \fIval\fP as one argument in the gs command (can be repeated).
 .IP "\fB--gsopts\fP=\fIval\fP"
-split \fIval\fP at whitespace, include each resulting word as an
-argument in the gs command (can be repeated)
+split \fIval\fP at whitespace and include each resulting word as an
+argument in the gs command (can be repeated).
 .IP "\fB--autorotate\fP=\fIval\fP"
 set AutoRotatePages (default: None); recognized \fIval\fP choices:
 None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
-use compression in the output (default: on).
+use compression in the output (default: true).
 .IP "\fB--device\fP=\fIdev\fP"
 use -sDEVICE=\fIdev\fP (default: pdfwrite); not allowed in restricted mode.
 .IP "\fB--\fP[\fBno\fP]\fBembed\fP"
-embed fonts (default: on).
+embed fonts (default: true).
+.IP "\fB--\fP[\fBno\fP]\fBgray\fP"
+grayscale output (default: false).
 .IP "\fB--pdfsettings\fP=\fIval\fP"
 use -dPDFSETTINGS=/\fIval\fP (default is `prepress' if \fB--embed\fP,
 else empty); recognized \fIval\fP choices: screen, ebook, printer,
-prepress, default.
+repress, default.
 .IP "\fB--\fP[\fBno\fP]\fBquiet\fP"
-use -q, a.k.a. -dQUIET (default: off).
+use -q, a.k.a. -dQUIET (default: false).
 .IP "\fB--res\fP=\fIdpi, dpi\fPx\fIdpi\fP"
 set image resolution (default: [use gs default]); ignored if
 \fB--debug\fP is set.
