@@ -12,15 +12,20 @@ default:
 # making sure we don't crash.
 check: check-help check-version \
        check-help-r \
-       check-nogs \
-       check-restricted-gscmd \
-       check-gscmd check-gsopt check-gsopts \
-       check-filter check-filter-outfile check-write-error check-gscmd \
-       check-restricted-safe-in check-restricted-safe-out \
-       check-simple check-atend check-binary check-bin2 \
+       check-atend \
+       check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
+       check-gscmd check-gsopt check-gsopts \
+       check-filter check-filter-outfile \
+       check-gscmd \
+       check-nogs \
        check-percent \
-       check-tn5002 #check-floral
+       check-restricted-device \
+       check-restricted-gscmd \
+       check-restricted-safe-in check-restricted-safe-out \
+       check-simple \
+       check-tn5002 \
+       check-write-error \
 
 check-help:
 	$(e2p) --help
@@ -38,6 +43,9 @@ check-nogs:
 	
 $(re2p_script):
 	ln -s $(prg).pl $@
+
+check-restricted-device:
+	! $(re2p) --device=unsafe test-simple.eps
 
 check-restricted-gscmd:
 	! $(re2p) --gscmd=/bin/unsafe test-simple.eps

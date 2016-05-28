@@ -37,6 +37,9 @@
 my $ver = "2.23";
 
 # History
+#  2016// (Karl Berry)
+#    * disallow --device completely in restricted mode,
+#      to avoid maintenance of device list.
 #  2015/01/22 v2.23 (Karl Berry)
 #    * use # instead of = to placate msys; report from KUROKI Yusuke,
 #      tex-k mail 20 Jan 2015 12:40:16.
@@ -199,7 +202,7 @@ my $default_device = 'pdfwrite';
 $::opt_autorotate = "None";
 $::opt_compress = 1;
 $::opt_debug = 0;
-$::opt_device= $default_device;
+$::opt_device = $default_device;
 $::opt_embed = 1;
 $::opt_exact = 0;
 $::opt_filter = 0;
@@ -315,32 +318,11 @@ my %optcheck = qw<
 # In any case not suitable for restricted:
 # -dDOPS
 
-### restricted devices
-# More or less copied from ghostscript's configure:
-# BMP_DEVS, JPEG_DEVS, PNG_DEVS, TIFF_DEVS, PCX_DEVS, PBM_DEVS
-# PS_DEVS (without text devices)
-my @restricted_devlist = ($default_device);
-my @restricted_devlist_ext = qw[
-  bmpmono bmpgray bmpsep1 bmpsep8 bmp16 bmp256 bmp16m bmp32b
-  jpeg jpeggray jpegcmyk
-  pbm pbmraw pgm pgmraw pgnm pgnmraw pnm pnmraw ppm ppmraw
-    pkm pkmraw pksm pksmraw pam pamcmyk4 pamcmyk32 plan plang
-    planm planc plank
-  pcxmono pcxgray pcx16 pcx256 pcx24b pcxcmyk pcx2up
-  png16 png16m png256 png48 pngalpha pnggray pngmono
-  psdf psdcmyk psdrgb pdfwrite pswrite ps2write epswrite psgray psmono psrgb
-  tiffs tiff12nc tiff24nc tiff48nc tiff32nc tiff64nc tiffcrle tifflzw
-    tiffpack tiffgray tiffsep tiffsep1 tiffscaled tiffscaled8 tiffscaled24
-  svg svgwrite
-];
-push (@restricted_devlist, @restricted_devlist_ext);
-my %restricted_devlist = ( map {$_, 1} @restricted_devlist );
-
 ### usage
 my @bool = ("false", "true");
 my $resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 my $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
-my $defgsopts = "-q -dNOPAUSE -sDEVICE=pdfwrite";
+
 my $usage = <<"END_OF_USAGE";
 ${title}Usage: $program [OPTION]... [EPSFILE]
 
@@ -407,7 +389,7 @@ More about the options for Ghostscript:
     It can be used multiple times to specify options separately,
     and is necessary if an option or its value contains whitespace.
   In restricted mode, options are limited to those with names and values
-    known to be safe; some options taking booleans, integers or fixed
+    known to be safe.  Some options taking booleans, integers or fixed
     names are allowed, those taking general strings are not.
 
 All options to epstopdf may start with either - or --, and may be
@@ -514,8 +496,7 @@ if ($::opt_filter) {
 }
 
 ### emacs-page
-### start building GS command line for the pipe
-### take --safer and --gsopts into account
+### building the gs invocation.
 
 ### option gscmd
 if ($::opt_gscmd) {
@@ -534,12 +515,14 @@ push @GS, $::opt_safer ? '-dSAFER' : '-dNOSAFER';
 push @GS, '-dNOPAUSE';
 push @GS, '-dBATCH';
 
-if ($::opt_device and $restricted and
-    not $restricted_devlist{$::opt_device}) {
-  error "Option forbidden in restricted mode: --device=$::opt_device";
-  $::opt_device = '';
+### option device
+if ($::opt_device) {
+  if ($restricted) {
+    error "Option forbidden in restricted mode: --device";
+  } else {
+    debug "Switching from $default_device to $::opt_device";
+  }
 }
-$::opt_device = $default_device unless $::opt_device;
 push @GS, "-sDEVICE=$::opt_device";
 
 ### option outfile

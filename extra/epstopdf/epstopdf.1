@@ -1,4 +1,4 @@
-.TH EPSTOPDF 1 "17 January 2014"
+.TH EPSTOPDF 1 "28 May 2016"
 .\" $Id$
 .SH NAME
 epstopdf, repstopdf \- convert an EPS file to PDF
@@ -22,8 +22,7 @@ be resulting problems.
 .SH OPTIONS
 Options may start with either "\fB-\fP" or "\fB--\fP", and may be
 unambiguously abbreviated.  It is best to use the full option name in
-scripts, though, to avoid possible collisions with new options in the
-future.
+scripts to avoid possible collisions with new options in the future.
 .PP
 General script options:
 .IP "\fB--help\fP
@@ -68,8 +67,7 @@ None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
 use compression in the output (default: on).
 .IP "\fB--device\fP=\fIdev\fP"
-use -sDEVICE=\fIdev\fP (default: pdfwrite); not all devices are allowed
-in restricted mode.
+use -sDEVICE=\fIdev\fP (default: pdfwrite); not allowed in restricted mode.
 .IP "\fB--\fP[\fBno\fP]\fBembed\fP"
 embed fonts (default: on).
 .IP "\fB--pdfsettings\fP=\fIval\fP"
@@ -97,11 +95,11 @@ line.  It can be used multiple times to specify options separately,
 and is necessary if an option or its value contains whitespace.
 .PP
 In restricted mode, options are limited to those with names and values
-known to be safe; some options taking booleans, integers or fixed
+known to be safe.  Some options taking booleans, integers or fixed
 names are allowed, those taking general strings are not.
 
 .SH EXAMPLES
-Examples all equivalently converting `test.eps' to `test.pdf':
+These examples all equivalently convert `test.eps' to `test.pdf':
 .nf
 epstopdf test.eps
 cat test.eps | epstopdf --filter >test.pdf
@@ -113,7 +111,7 @@ Example for using HiResBoundingBox instead of BoundingBox:
 epstopdf --hires test.eps
 .fi
 .PP
-Example for producing \fBepstopdf\fP's attempt at corrected PostScript:
+Example for \fBepstopdf\fP's attempt at correcting PostScript:
 .nf
 $program --nogs test.ps >testcorr.ps
 .fi
