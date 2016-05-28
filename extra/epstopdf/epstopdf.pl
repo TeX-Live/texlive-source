@@ -34,12 +34,15 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.23";
+my $ver = "2.24";
 
 # History
-#  2016// (Karl Berry)
+#  2016/05/28 v2.24 (Karl Berry)
+#    * new option --gray; patch from William Bader,
+#      tex-k mail 9 Feb 2016 19:37:08.
 #    * disallow --device completely in restricted mode,
 #      to avoid maintenance of device list.
+#      tex-live mail 10 Feb 2016 10:36:26.
 #  2015/01/22 v2.23 (Karl Berry)
 #    * use # instead of = to placate msys; report from KUROKI Yusuke,
 #      tex-k mail 20 Jan 2015 12:40:16.
@@ -206,6 +209,7 @@ $::opt_device = $default_device;
 $::opt_embed = 1;
 $::opt_exact = 0;
 $::opt_filter = 0;
+$::opt_gray = 0;
 $::opt_gs = 1;
 $::opt_gscmd = "";
 @::opt_gsopt = ();
@@ -358,6 +362,7 @@ Options for Ghostscript:
   --(no)compress     use compression        (default: $bool[$::opt_compress])
   --device=DEV       use -sDEVICE=DEV       (default: $::opt_device)
   --(no)embed        embed fonts            (default: $bool[$::opt_embed])
+  --(no)gray         grayscale output       (default: $bool[$::opt_gray])
   --pdfsettings=VAL  use -dPDFSETTINGS=/VAL (default is prepress if --embed,
                        else empty); recognized VAL choices:
                        screen, ebook, printer, prepress, default.
@@ -383,8 +388,8 @@ is doing.
 More about the options for Ghostscript:
   Additional options to be used with gs can be specified
     with either or both of the two cumulative options --gsopts and --gsopt.
-  --gsopts takes a single string of options, which is split at whitespace,
-    each resulting word then added to the gs command line individually.
+  --gsopts takes a single string of options, which is split at whitespace
+    and each resulting word then added to the gs command line individually.
   --gsopt adds its argument as a single option to the gs command line.
     It can be used multiple times to specify options separately,
     and is necessary if an option or its value contains whitespace.
@@ -394,10 +399,9 @@ More about the options for Ghostscript:
 
 All options to epstopdf may start with either - or --, and may be
 unambiguously abbreviated.  It is best to use the full option name in
-scripts, though, to avoid possible collisions with new options in the
-future.
+scripts to avoid possible collisions with new options in the future.
 
-When reporting bugs, please include an input file and command line
+When reporting bugs, please include an input file and all command line
 options so the problem can be reproduced.
 
 Report bugs to: tex-k\@tug.org
@@ -413,6 +417,7 @@ GetOptions (
   "device=s",
   "embed!",
   "exact!",
+  "gray!",
   "filter!",
   "gs!",
   "gscmd=s",              # \ref{val_gscmd}
@@ -565,8 +570,10 @@ push @GS, qw[
   -dEmbedAllFonts=true
 ] if $::opt_embed;
 
-
 push @GS, '-dUseFlateCompression=false' unless $::opt_compress;
+
+push @GS, qw(-sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray)
+  if $::opt_gray;
 
 if ($::opt_res and
     not $::opt_res =~ /^(\d+(x\d+)?)$/) {
