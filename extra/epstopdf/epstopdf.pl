@@ -37,7 +37,7 @@
 my $ver = "2.24";
 
 # History
-#  2016/05/28 v2.24 (Karl Berry)
+#  2016/05/29 v2.24 (Karl Berry)
 #    * new option --gray; patch from William Bader,
 #      tex-k mail 9 Feb 2016 19:37:08.
 #    * disallow --device completely in restricted mode,
@@ -581,7 +581,7 @@ if ($::opt_res and
   $::opt_res = '';
 }
 push @GS, "-r$::opt_res" if $::opt_res;
-$resmsg= $::opt_res ? $::opt_res : "[use gs default]";
+$resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 
 # \label{val_autorotate}
 if ($::opt_autorotate and
@@ -639,10 +639,12 @@ if ($restricted and not safe_name('out', $OutputFilename)) {
 ### option gs
 if ($::opt_gs) {
   debug "Ghostscript command:", $GS;
-  debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "PDFSettings:", $::opt_pdfsettings;
   debug "Embedding:", ($::opt_embed) ? "on" : "off";
-  debug "Rotation:", $rotmsg;
+  debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "Grayscale:", ($::opt_gray) ? "on" : "off";
   debug "Resolution:", $resmsg;
+  debug "Rotation:", $rotmsg;
 }
 
 ### emacs-page

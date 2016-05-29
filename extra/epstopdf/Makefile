@@ -79,15 +79,15 @@ check-write-error:
 	! $(e2p) test-simple.eps --outfile=/dev/full
 
 check-gscmd:
-	! $(e2p) --gscmd=true test-simple.eps
+	! $(e2p) --gscmd=false test-simple.eps
 	! $(e2p) --gscmd='foo bar' test-simple.eps # fails
 
 check-gsopt:
-	! $(e2p) --gscmd=echo --gsopt=foo --gsopt=bar test-simple.eps
+	! $(e2p) --gscmd=false --gsopt=foo --gsopt=bar test-simple.eps
 	! $(e2p) --restricted --gsopt=bar test-simple.eps # fails
 
 check-gsopts:
-	! $(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
+	$(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
 	! $(e2p) --restricted --gsopts=bar test-simple.eps # fails
 
 check-simple:

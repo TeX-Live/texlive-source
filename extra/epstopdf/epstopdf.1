@@ -65,17 +65,20 @@ argument in the gs command (can be repeated).
 set AutoRotatePages (default: None); recognized \fIval\fP choices:
 None, All, PageByPage.  For EPS files, PageByPage is equivalent to All.
 .IP "\fB--\fP[\fBno\fP]\fBcompress\fP"
-use compression in the output (default: true).
+use compression in the output (default: true); if turned off, passes
+.IR -dUseFlateCompression=false .
 .IP "\fB--device\fP=\fIdev\fP"
 use -sDEVICE=\fIdev\fP (default: pdfwrite); not allowed in restricted mode.
 .IP "\fB--\fP[\fBno\fP]\fBembed\fP"
-embed fonts (default: true).
+embed fonts (default: true); passes
+.I -dMaxSubsetPct=100 -dSubsetFonts=true -dEmbedAllFonts=true.
 .IP "\fB--\fP[\fBno\fP]\fBgray\fP"
-grayscale output (default: false).
+grayscale output (default: false); passes
+.I -sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray.
 .IP "\fB--pdfsettings\fP=\fIval\fP"
 use -dPDFSETTINGS=/\fIval\fP (default is `prepress' if \fB--embed\fP,
 else empty); recognized \fIval\fP choices: screen, ebook, printer,
-repress, default.
+prepress, default.
 .IP "\fB--\fP[\fBno\fP]\fBquiet\fP"
 use -q, a.k.a. -dQUIET (default: false).
 .IP "\fB--res\fP=\fIdpi, dpi\fPx\fIdpi\fP"
