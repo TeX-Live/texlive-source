@@ -1,3 +1,9 @@
+2016-05-22  Karl Berry  <karl@freefriends.org>
+
+        * tex4ht-c.tex (search_file): return NULL rather than FALSE
+        to placate MiKTeX.  Report from Mojca,
+        https://sourceforge.net/p/miktex/bugs/2488.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
