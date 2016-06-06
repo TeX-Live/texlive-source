@@ -1304,7 +1304,7 @@ executable_filep (kpathsea kpse, const_string fname, boolean silent)
       pp = kpse->suffixlist;
       if (pp && q) {
         while (*pp) {
-          if (strchr (fname, ':') || !strcmp (q, *pp)) {
+          if (!strcmp (q, *pp)) {
             if (!silent)
               fprintf (stderr, "\n%s: Forbidden to open for writing\n", fname);
             free (base);

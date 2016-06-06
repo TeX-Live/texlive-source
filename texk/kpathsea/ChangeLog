@@ -1,3 +1,8 @@
+2016-05-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex-file.c: Fix a bug that TEXMFOUTPUT does not work (w32 only).
+	See http://tug.org/pipermail/tex-k/2016-May/002719.html.
+
 2016-05-20  Karl Berry  <karl@tug.org>
 
 	* Version 6.2.2 for TeX Live 2016.
