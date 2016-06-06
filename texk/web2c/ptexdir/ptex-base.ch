@@ -54,12 +54,14 @@
 % (2015-09-10) AK  pTeX p3.7 Bug fix by Hironori Kitagawa in flushing choice node.
 % (2016-03-04) AK  Hironori Kitagawa added new primitives to improve typesetting
 %                  with non-vanishing \ybaselineshift.
+% (2016-06-06) AK  Hironori Kitagawa fixed a bug in check_box(box_p:pointer).
+%                  pTeX p3.7.1.
 %
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.7' {current p\TeX\ version}
+@d pTeX_version_string=='-p3.7.1' {current p\TeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
@@ -6502,6 +6504,23 @@ while p<>null do
         last_char:=p; flag:=true;
       end
     else do_nothing; {\.{\\beginR} etc.}
+  kern_node:
+    if subtype(p)=acc_kern then
+      begin p:=link(p);
+        if is_char_node(p) then
+	  if font_dir[font(p)]<>dir_default then p:=link(p);
+        p:=link(link(p));
+        if find_first_char then
+          begin find_first_char:=false; first_char:=p;
+          end;
+        last_char:=p; flag:=true;
+        if font_dir[font(p)]<>dir_default then p:=link(p);
+        end
+    else
+      begin flag:=true;
+        if find_first_char then find_first_char:=false
+        else last_char:=null;
+        end;
   othercases begin flag:=true;
     if find_first_char then find_first_char:=false
     else last_char:=null;
