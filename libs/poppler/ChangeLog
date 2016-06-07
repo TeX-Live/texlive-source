@@ -1,14 +1,22 @@
+2016-05-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import poppler-0.44.0.
+	* version.ac: Adjust.
+
+2016-04-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import poppler-0.43.0.
+	* version.ac: Adjust.
+
 2016-03-18  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	Import poppler-0.42.0.
 	* version.ac: Adjust.
 
-
 2016-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import poppler-0.41.0.
 	* version.ac: Adjust.
-
 
 2016-02-15  Karl Berry  <karl@tug.org>
 

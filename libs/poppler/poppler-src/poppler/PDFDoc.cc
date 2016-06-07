@@ -544,8 +544,48 @@ Linearization *PDFDoc::getLinearization()
 {
   if (!linearization) {
     linearization = new Linearization(str);
+    linearizationState = 0;
   }
   return linearization;
+}
+
+GBool PDFDoc::checkLinearization() {
+  if (linearization == NULL)
+    return gFalse;
+  if (linearizationState == 1)
+    return gTrue;
+  if (linearizationState == 2)
+    return gFalse;
+  if (!hints) {
+    hints = new Hints(str, linearization, getXRef(), secHdlr);
+  }
+  for (int page = 1; page <= linearization->getNumPages(); page++) {
+    Object obj;
+    Ref pageRef;
+
+    pageRef.num = hints->getPageObjectNum(page);
+    if (!pageRef.num) {
+      linearizationState = 2;
+      return gFalse;
+    }
+
+    // check for bogus ref - this can happen in corrupted PDF files
+    if (pageRef.num < 0 || pageRef.num >= xref->getNumObjects()) {
+      linearizationState = 2;
+      return gFalse;
+    }
+
+    pageRef.gen = xref->getEntry(pageRef.num)->gen;
+    xref->fetch(pageRef.num, pageRef.gen, &obj);
+    if (!obj.isDict("Page")) {
+      obj.free();
+      linearizationState = 2;
+      return gFalse;
+    }
+    obj.free();
+  }
+  linearizationState = 1;
+  return gTrue;
 }
 
 GBool PDFDoc::isLinearized(GBool tryingToReconstruct) {
@@ -1963,7 +2003,7 @@ Page *PDFDoc::getPage(int page)
 {
   if ((page < 1) || page > getNumPages()) return NULL;
 
-  if (isLinearized()) {
+  if (isLinearized() && checkLinearization()) {
     pdfdocLocker();
     if (!pageCache) {
       pageCache = (Page **) gmallocn(getNumPages(), sizeof(Page *));

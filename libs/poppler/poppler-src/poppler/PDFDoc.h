@@ -22,7 +22,7 @@
 // Copyright (C) 2009 Kovid Goyal <kovid@kovidgoyal.net>
 // Copyright (C) 2010, 2014 Hib Eris <hib@hiberis.nl>
 // Copyright (C) 2010 Srinivas Adicherla <srinivas.adicherla@geodesic.com>
-// Copyright (C) 2011, 2013, 2014 Thomas Freitag <Thomas.Freitag@alfa.de>
+// Copyright (C) 2011, 2013, 2014, 2016 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2012 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Adam Reichold <adamreichold@myopera.com>
@@ -111,6 +111,7 @@ public:
 
   // Get the linearization table.
   Linearization *getLinearization();
+  GBool checkLinearization();
 
   // Get the xref table.
   XRef *getXRef() { return xref; }
@@ -324,6 +325,10 @@ private:
   int pdfMajorVersion;
   int pdfMinorVersion;
   Linearization *linearization;
+  // linearizationState = 0: unchecked
+  // linearizationState = 1: checked and valid
+  // linearizationState = 2: checked and invalid
+  int linearizationState;
   XRef *xref;
   SecurityHandler *secHdlr;
   Catalog *catalog;

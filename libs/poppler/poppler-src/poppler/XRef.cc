@@ -973,7 +973,12 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
 	do {
 	  ++p;
 	} while (*p && isdigit(*p & 0xff));
-	if (isspace(*p & 0xff)) {
+	if ((*p & 0xff) == 0 || isspace(*p & 0xff)) {
+          if ((*p & 0xff) == 0) {
+            //new line, continue with next line!
+            str->getLine(buf, 256);
+            p = buf - 1;
+          }
 	  do {
 	    ++p;
 	  } while (*p && isspace(*p & 0xff));
@@ -982,7 +987,12 @@ GBool XRef::constructXRef(GBool *wasReconstructed, GBool needCatalogDict) {
 	    do {
 	      ++p;
 	    } while (*p && isdigit(*p & 0xff));
-	    if (isspace(*p & 0xff)) {
+	    if ((*p & 0xff) == 0 || isspace(*p & 0xff)) {
+              if ((*p & 0xff) == 0) {
+                //new line, continue with next line!
+                str->getLine(buf, 256);
+                p = buf - 1;
+              }
 	      do {
 		++p;
 	      } while (*p && isspace(*p & 0xff));
@@ -1251,6 +1261,7 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
 
  err:
   if (!xRefStream && !xrefReconstructed) {
+    error(errInternal, -1, "xref num {0:d} not found but needed, try to reconstruct\n", num);
     rootNum = -1;
     constructXRef(&xrefReconstructed);
     return fetch(num, gen, obj, ++recursion);
