@@ -9,7 +9,7 @@ dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define gregorio_version
 AC_INIT([Gregorio (TeX Live)], gregorio_version, [tex-k@tug.org], [gregorio--tex-live-], [http://gregorio-project.github.io/])
-FILENAME_VERSION="4_1_1"
+FILENAME_VERSION="4_1_4"
 AC_SUBST(FILENAME_VERSION)
 AC_DEFINE_UNQUOTED(FILENAME_VERSION, "$FILENAME_VERSION", [version suitable for file names])
 AC_PREREQ([2.65])

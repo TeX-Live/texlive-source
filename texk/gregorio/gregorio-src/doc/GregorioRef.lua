@@ -234,11 +234,11 @@ local LIQUESCENCE = {
 
 GregorioRef = {}
 
-function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
+function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_granapadano)
   local common_glyphs = {}
   local greciliae = {}
   local gregorio = {}
-  local parmesan = {}
+  local granapadano = {}
 
   local function index_font(csname, variants, common)
     local glyphs = font.fonts[font.id(csname)].resources.unicodes
@@ -264,7 +264,7 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
 
   index_font(cs_greciliae, greciliae, common_glyphs)
   index_font(cs_gregorio, gregorio)
-  index_font(cs_parmesan, parmesan)
+  index_font(cs_granapadano, granapadano)
 
   local function maybe_emit_glyph(csname, variants, name, variant)
     local cp = variants[name]
@@ -307,10 +307,10 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
     end
     tex.sprint(string.format(
         [[{\scriptsize %s{\bfseries %s}{\itshape %s}%s%s}&{\ttfamily\small %s}&{\%s\char%d}&{\%s\char%d}&{\%s\char%d}&]],
-        fusion, shape, ambitus, debilis, liquescence, gabc or '', cs_greciliae, char, cs_gregorio, char, cs_parmesan, char
+        fusion, shape, ambitus, debilis, liquescence, gabc or '', cs_greciliae, char, cs_gregorio, char, cs_granapadano, char
     ))
     local emitted = false, i, variant
-    for i, variant in ipairs(sort_unique_keys{greciliae[name], gregorio[name], parmesan[name]}) do
+    for i, variant in ipairs(sort_unique_keys{greciliae[name], gregorio[name], granapadano[name]}) do
       if emitted then
         tex.sprint([[\nopagebreak&&&&&]])
       else
@@ -319,7 +319,7 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_parmesan)
       tex.sprint(string.format([[{\scriptsize %s}]], variant))
       maybe_emit_glyph('greciliae', greciliae, name, variant)
       maybe_emit_glyph('gregorio', gregorio, name, variant)
-      maybe_emit_glyph('parmesan', parmesan, name, variant)
+      maybe_emit_glyph('granapadano', granapadano, name, variant)
       tex.print([[\\]])
     end
     if not emitted then

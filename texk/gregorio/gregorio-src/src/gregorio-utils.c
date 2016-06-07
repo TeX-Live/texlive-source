@@ -210,7 +210,7 @@ Formats:\n\
   dump      plain text dump (for debugging purpose)\n\
 \n\
 See <" PACKAGE_URL "> for general documentation,\n\
-GregorioRef-" FILENAME_VERSION ".pdf and GregorioNabcRef-" FILENAME_VERSION ".pdf for full documentation.\
+GregorioRef.pdf and GregorioNabcRef.pdf for full documentation.\
 \n"));
 }
 

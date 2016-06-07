@@ -26,34 +26,34 @@ NABCSRCFILES = GregorioNabcRef.tex veni.gabc
 # I know these rules look wrong, but they must not depend on anything that
 # gets generated or make distcheck will fail.
 
-GregorioRef-@FILENAME_VERSION@.pdf: $(SRCFILES)
+GregorioRef.pdf: $(SRCFILES)
 	$(MAKE) $(AM_MAKEFLAGS) -C ../src gregorio
 	../src/gregorio -o factus.gtex $(<D)/factus.gabc
 	TEXINPUTS=$(<D):$(<D)/../tex: LUAINPUTS=$(<D):$(<D)/../tex: \
 		 TTFONTS=$(<D)/../fonts: PATH=../src:${PATH} latexmk -recorder -pdf \
 		 -pdflatex='lualatex --shell-escape %O %S' \
-		 -jobname=GregorioRef-@FILENAME_VERSION@ $<
+		 -jobname=GregorioRef $<
 
-GregorioNabcRef-@FILENAME_VERSION@.pdf: $(NABCSRCFILES)
+GregorioNabcRef.pdf: $(NABCSRCFILES)
 	$(MAKE) $(AM_MAKEFLAGS) -C ../src gregorio
 	../src/gregorio -o veni.gtex $(<D)/veni.gabc
 	TEXINPUTS=$(<D):$(<D)/../tex: LUAINPUTS=$(<D):$(<D)/../tex: \
 		 TTFONTS=$(<D)/../fonts: PATH=../src:${PATH} latexmk -recorder -pdf \
 		 -pdflatex='lualatex --shell-escape %O %S' \
-		 -jobname=GregorioNabcRef-@FILENAME_VERSION@ $<
+		 -jobname=GregorioNabcRef $<
 
-doc: GregorioRef-$(FILENAME_VERSION).pdf GregorioNabcRef-$(FILENAME_VERSION).pdf
+doc: GregorioRef.pdf GregorioNabcRef.pdf
 
 pdf-local: doc
 
 distclean-local:
-	latexmk -quiet -c -f -jobname=GregorioRef-@FILENAME_VERSION@ GregorioRef.tex
-	latexmk -quiet -c -f -jobname=GregorioNabcRef-@FILENAME_VERSION@ GregorioNabcRef.tex
+	latexmk -quiet -c -f -jobname=GregorioRef GregorioRef.tex
+	latexmk -quiet -c -f -jobname=GregorioNabcRef GregorioNabcRef.tex
 	rm -rf _minted* *.gtex *.aux *.gaux
 
 EXTRA_DIST = $(SRCFILES) $(NABCSRCFILES) \
-	     GregorioRef-@FILENAME_VERSION@.pdf \
-	     GregorioNabcRef-@FILENAME_VERSION@.pdf
+	     GregorioRef.pdf \
+	     GregorioNabcRef.pdf
 
 maintainer-clean-local:
 	rm -rf GregorioRef*.pdf
