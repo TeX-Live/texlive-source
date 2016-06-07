@@ -1,5 +1,5 @@
-Changes applied to the libpng-1.6.21/ tree as obtained from:
-	http://www.libpng.org/ libpng-1.6.21.tar.xz
+Changes applied to the libpng-1.6.22/ tree as obtained from:
+	http://www.libpng.org/ libpng-1.6.22.tar.xz
 
 Copied:
 	scripts/pnglibconf.h.prebuilt -> pnglibconf.h

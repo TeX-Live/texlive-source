@@ -1,3 +1,8 @@
+2016-05-26  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+
+	Remove patch-02-backport-20160314-12e63e9, since it is now
+	in the original libpng-1.6.22.
+
 2016-03-28  Mojca Miklavec <mojca.miklavec.lists@gmail.com>
 
 	Create patch-02-backport-20160314-12e63e9:
