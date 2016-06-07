@@ -11,11 +11,11 @@
 # -- use latin1 character set instead of utf8
 # -- update macro and variable names (with "gre" prefix) as needed
 # -- add 'redlines'
-# -- 
+# --
 #
 # v0.1
 # Copyright (C) 2008 Richard Chonak <chonak@yahoo.com>
-# 
+#
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ if ($#ARGV < 0) {
 my $GABCFILE = $ARGV[0];
 my $GABCNAME = $GABCFILE;
 $GABCNAME =~ s/.gabc//;
-my $SCORENAME; 
+my $SCORENAME;
 my $ANNOTATION;
 my $REFERENCE;
 my $OFFICEPART;
@@ -122,10 +122,10 @@ foreach (@TEMPLATELINES){
 ####  WRITE TEX WRAPPER FILE ####
 
 open (TEXWRAP,">".$SCOREWRAPTEX) or die "Cannot write file $SCOREWRAPTEX\n";
-print TEXWRAP @TEMPLATELINES; 
+print TEXWRAP @TEMPLATELINES;
 close (TEXWRAP);
 
-#### RUN GREGORIO, LATEX, AND KPDF ####
+#### RUN LATEX ####
 my $PDFFILE = $SCOREWRAPTEX;
 $PDFFILE =~ s/tex$/pdf/;
 my $AUXFILE = $SCOREWRAPTEX;
@@ -137,6 +137,8 @@ $GAUXFILE =~ s/tex$/gaux/;
 # from a prior run
 unlink $PDFFILE;
 
+do_cmd("$TEXCOMPILER $SCOREWRAPTEX");
+# Run twice to calculate line heights.
 do_cmd("$TEXCOMPILER $SCOREWRAPTEX");
 unlink $AUXFILE;
 unlink $GAUXFILE;
@@ -157,7 +159,7 @@ sub do_subst {
 sub do_cmd {
 	my $CMD = $_[0];
 #debugging	print "Doing command: \n  $CMD\n\n";
-	system ($CMD) == 0 
+	system ($CMD) == 0
 	   or die "\n\nSystem command failed: $CMD : $?\n";
 };
 
@@ -168,7 +170,6 @@ __END__
 \documentclass[12pt, letterpaper]{article}
 \usepackage{fullpage}
 \usepackage[T1]{fontenc}
-\usepackage[utf8]{luainputenc}
 \usepackage{palatino}
 \usepackage[autocompile,allowdeprecated=false]{gregoriotex}
 \pagestyle{empty}
@@ -179,5 +180,4 @@ __END__
 \gregorioscore{XXXX-GABCFILE-XXXX}
 
 \end{document}
-
 

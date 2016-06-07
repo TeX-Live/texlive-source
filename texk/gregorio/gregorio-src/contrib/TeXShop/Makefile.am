@@ -15,22 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = src examples tex contrib fonts doc
-
-ACLOCAL_AMFLAGS = -I m4
-
-EXTRA_DIST = README.md CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md \
-			 UPGRADE.md COPYING.md .gregorio-version VersionManager.py \
-			 build.sh install.sh install-gtex.sh
-
-fonts: make-fonts
-make-fonts:
-	make -C fonts fonts
-
-export TOP_LEVEL_MAKE = true
-
-gregoriotex.tds.zip: dist install-gtex.sh
-	./install-gtex.sh tds
-
-ctan: dist gregoriotex.tds.zip build-ctan.sh
-	./build-ctan.sh
+EXTRA_DIST = auto-configure.command LuaLaTeX+se.engine

@@ -12,8 +12,8 @@
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_MINOR_VERSION 6
+#define YY_FLEX_SUBMINOR_VERSION 0
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -115,7 +115,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 #ifndef YY_TYPEDEF_YY_BUFFER_STATE
@@ -201,12 +209,15 @@ void gregorio_vowel_rulefile_free (void *  );
 
 /* Begin user sect3 */
 
-#define gregorio_vowel_rulefile_wrap() 1
+#define gregorio_vowel_rulefile_wrap() (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 extern int gregorio_vowel_rulefile_lineno;
 
 extern char *gregorio_vowel_rulefile_text;
+#ifdef yytext_ptr
+#undef yytext_ptr
+#endif
 #define yytext_ptr gregorio_vowel_rulefile_text
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
@@ -244,11 +255,11 @@ void gregorio_vowel_rulefile_set_extra (YY_EXTRA_TYPE user_defined  );
 
 FILE *gregorio_vowel_rulefile_get_in (void );
 
-void gregorio_vowel_rulefile_set_in  (FILE * in_str  );
+void gregorio_vowel_rulefile_set_in  (FILE * _in_str  );
 
 FILE *gregorio_vowel_rulefile_get_out (void );
 
-void gregorio_vowel_rulefile_set_out  (FILE * out_str  );
+void gregorio_vowel_rulefile_set_out  (FILE * _out_str  );
 
 yy_size_t gregorio_vowel_rulefile_get_leng (void );
 
@@ -256,7 +267,7 @@ char *gregorio_vowel_rulefile_get_text (void );
 
 int gregorio_vowel_rulefile_get_lineno (void );
 
-void gregorio_vowel_rulefile_set_lineno (int line_number  );
+void gregorio_vowel_rulefile_set_lineno (int _line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -284,7 +295,12 @@ static int yy_flex_strlen (yyconst char * );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Number of entries by which start-condition stack grows. */
@@ -320,6 +336,6 @@ extern int gregorio_vowel_rulefile_lex (void);
 #line 94 "vowel/vowel-rules.l"
 
 
-#line 324 "vowel/vowel-rules-l.h"
+#line 340 "vowel/vowel-rules-l.h"
 #undef gregorio_vowel_rulefile_IN_HEADER
 #endif /* gregorio_vowel_rulefile_HEADER_H */

@@ -2,7 +2,26 @@
 
 This file contains instructions to upgrade to a new release of Gregorio.
 
-## Unreleased
+## 4.1.2
+
+### Changes to texmf tree
+
+To better comply with the TeXLive directory structure, the location of `gregoriotex.sty` and `gregoriosyms.sty` have changed.
+
+*Linux and other users installing from source:* `install-gtex.sh` should remove the old versions before installing the new one.
+
+*Mac users installing via pkg installer:* The installer does not attempt to remove the old versions before installing the new ones.  Please run Uninstall-Gregorio.pkg before installing 4.2 to ensure that the old versions don't cause any problems.
+
+*Windows users:* Your installer already should remove old versions of GregorioTeX before installing the new ones.
+
+As always, please file a bug report if you have any problems with the update process.
+
+
+### Parmesan font renamed to Grana Padano
+
+To avoid conflicts with the LilyPond Parmesan font, the Gregorio Parmesan font is now called Grana Padano.  If you were using `\gresetgregoriofont{parmesan}`, you should now use `\gresetgregoriofont{granapadano}`.
+
+## 4.1.1
 
 ### Vertical spacings
 
@@ -137,7 +156,7 @@ Old command names should still work for now, but will raise a deprecation warnin
 
 - `\grescaledim`: This function now takes two arguments.  The second should be `yes`, `true`, `on`, or `scalable` to acheive the old behavior.
 
-Additionally a new package option has been added. This option, `deprecated=false`, is helpful if you wish to ensure that your TeX file is compliant with the new naming system. This option causes all deprecated commands to raise an error, halting TeX, thus allowing you to actively find all deprecated commands and update them in your TeX file.
+Additionally a new package option has been added. This option, `allowdeprecated=false`, is helpful if you wish to ensure that your TeX file is compliant with the new naming system. This option causes all deprecated commands to raise an error, halting TeX, thus allowing you to actively find all deprecated commands and update them in your TeX file.
 
 ### Barred letters
 

@@ -12,8 +12,8 @@
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_MINOR_VERSION 6
+#define YY_FLEX_SUBMINOR_VERSION 0
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -115,7 +115,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 #ifndef YY_TYPEDEF_YY_BUFFER_STATE
@@ -201,12 +209,15 @@ void gabc_score_determination_free (void *  );
 
 /* Begin user sect3 */
 
-#define gabc_score_determination_wrap() 1
+#define gabc_score_determination_wrap() (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 extern int gabc_score_determination_lineno;
 
 extern char *gabc_score_determination_text;
+#ifdef yytext_ptr
+#undef yytext_ptr
+#endif
 #define yytext_ptr gabc_score_determination_text
 
 #ifdef YY_HEADER_EXPORT_START_CONDITIONS
@@ -249,11 +260,11 @@ void gabc_score_determination_set_extra (YY_EXTRA_TYPE user_defined  );
 
 FILE *gabc_score_determination_get_in (void );
 
-void gabc_score_determination_set_in  (FILE * in_str  );
+void gabc_score_determination_set_in  (FILE * _in_str  );
 
 FILE *gabc_score_determination_get_out (void );
 
-void gabc_score_determination_set_out  (FILE * out_str  );
+void gabc_score_determination_set_out  (FILE * _out_str  );
 
 yy_size_t gabc_score_determination_get_leng (void );
 
@@ -261,7 +272,7 @@ char *gabc_score_determination_get_text (void );
 
 int gabc_score_determination_get_lineno (void );
 
-void gabc_score_determination_set_lineno (int line_number  );
+void gabc_score_determination_set_lineno (int _line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -289,7 +300,12 @@ static int yy_flex_strlen (yyconst char * );
 
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Number of entries by which start-condition stack grows. */
@@ -325,6 +341,6 @@ extern int gabc_score_determination_lex (void);
 #line 432 "gabc/gabc-score-determination.l"
 
 
-#line 329 "gabc/gabc-score-determination-l.h"
+#line 345 "gabc/gabc-score-determination-l.h"
 #undef gabc_score_determination_IN_HEADER
 #endif /* gabc_score_determination_HEADER_H */

@@ -27,8 +27,8 @@
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 5
-#define YY_FLEX_SUBMINOR_VERSION 39
+#define YY_FLEX_MINOR_VERSION 6
+#define YY_FLEX_SUBMINOR_VERSION 0
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -161,7 +161,15 @@ typedef unsigned int flex_uint32_t;
 
 /* Size of default input buffer. */
 #ifndef YY_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k.
+ * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+ * Ditto for the __ia64__ case accordingly.
+ */
+#define YY_BUF_SIZE 32768
+#else
 #define YY_BUF_SIZE 16384
+#endif /* __ia64__ */
 #endif
 
 /* The state buf must be large enough to hold one state per character in the main buffer.
@@ -353,7 +361,7 @@ void gregorio_vowel_rulefile_free (void *  );
 
 /* Begin user sect3 */
 
-#define gregorio_vowel_rulefile_wrap() 1
+#define gregorio_vowel_rulefile_wrap() (/*CONSTCOND*/1)
 #define YY_SKIP_YYWRAP
 
 typedef unsigned char YY_CHAR;
@@ -367,11 +375,17 @@ extern int gregorio_vowel_rulefile_lineno;
 int gregorio_vowel_rulefile_lineno = 1;
 
 extern char *gregorio_vowel_rulefile_text;
+#ifdef yytext_ptr
+#undef yytext_ptr
+#endif
 #define yytext_ptr gregorio_vowel_rulefile_text
 
 static yy_state_type yy_get_previous_state (void );
 static yy_state_type yy_try_NUL_trans (yy_state_type current_state  );
 static int yy_get_next_buffer (void );
+#if defined(__GNUC__) && __GNUC__ >= 3
+__attribute__((__noreturn__))
+#endif
 static void yy_fatal_error (yyconst char msg[]  );
 
 /* Done after the current pattern has been matched and before the
@@ -404,7 +418,7 @@ static yyconst flex_int32_t yy_accept[71] =
         0,    3,    0,    4,    0,    0,    1,    0,    5,    0
     } ;
 
-static yyconst flex_int32_t yy_ec[256] =
+static yyconst YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         2,    2,    4,    1,    1,    1,    1,    1,    1,    1,
@@ -436,7 +450,7 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[32] =
+static yyconst YY_CHAR yy_meta[32] =
     {   0,
         1,    2,    3,    3,    2,    2,    2,    1,    4,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -444,7 +458,7 @@ static yyconst flex_int32_t yy_meta[32] =
         1
     } ;
 
-static yyconst flex_int32_t yy_base[78] =
+static yyconst flex_uint32_t yy_base[78] =
     {   0,
         0,   30,   60,   66,   72,    0,   94,  102,   92,  139,
       139,  139,    0,  139,   74,   80,   68,    0,   69,   58,
@@ -468,7 +482,7 @@ static yyconst flex_int32_t yy_def[78] =
        70,   70,   70,   70,   70,   70,   70
     } ;
 
-static yyconst flex_int32_t yy_nxt[171] =
+static yyconst flex_uint32_t yy_nxt[171] =
     {   0,
        70,   11,   12,   11,   13,   70,   14,   40,   40,   15,
        70,   70,   34,   30,   40,   40,   16,   70,   70,   17,
@@ -583,7 +597,7 @@ static __inline void invalid(void)
 
 
 
-#line 587 "vowel/vowel-rules-l.c"
+#line 601 "vowel/vowel-rules-l.c"
 
 #define INITIAL 0
 #define chars 1
@@ -619,11 +633,11 @@ void gregorio_vowel_rulefile_set_extra (YY_EXTRA_TYPE user_defined  );
 
 FILE *gregorio_vowel_rulefile_get_in (void );
 
-void gregorio_vowel_rulefile_set_in  (FILE * in_str  );
+void gregorio_vowel_rulefile_set_in  (FILE * _in_str  );
 
 FILE *gregorio_vowel_rulefile_get_out (void );
 
-void gregorio_vowel_rulefile_set_out  (FILE * out_str  );
+void gregorio_vowel_rulefile_set_out  (FILE * _out_str  );
 
 yy_size_t gregorio_vowel_rulefile_get_leng (void );
 
@@ -631,7 +645,7 @@ char *gregorio_vowel_rulefile_get_text (void );
 
 int gregorio_vowel_rulefile_get_lineno (void );
 
-void gregorio_vowel_rulefile_set_lineno (int line_number  );
+void gregorio_vowel_rulefile_set_lineno (int _line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -643,6 +657,10 @@ extern "C" int gregorio_vowel_rulefile_wrap (void );
 #else
 extern int gregorio_vowel_rulefile_wrap (void );
 #endif
+#endif
+
+#ifndef YY_NO_UNPUT
+    
 #endif
 
 #ifndef yytext_ptr
@@ -669,7 +687,12 @@ static int input (void );
     
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
+#ifdef __ia64__
+/* On IA-64, the buffer size is 16k, not 8k */
+#define YY_READ_BUF_SIZE 16384
+#else
 #define YY_READ_BUF_SIZE 8192
+#endif /* __ia64__ */
 #endif
 
 /* Copy whatever the last rule matched to the standard output. */
@@ -756,7 +779,7 @@ extern int gregorio_vowel_rulefile_lex (void);
 
 /* Code executed at the end of each rule. */
 #ifndef YY_BREAK
-#define YY_BREAK break;
+#define YY_BREAK /*LINTED*/break;
 #endif
 
 #define YY_RULE_SETUP \
@@ -766,9 +789,9 @@ extern int gregorio_vowel_rulefile_lex (void);
  */
 YY_DECL
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp, *yy_bp;
-	register int yy_act;
+	yy_state_type yy_current_state;
+	char *yy_cp, *yy_bp;
+	int yy_act;
     
 	if ( !(yy_init) )
 		{
@@ -800,9 +823,9 @@ YY_DECL
 #line 75 "vowel/vowel-rules.l"
 
 
-#line 804 "vowel/vowel-rules-l.c"
+#line 827 "vowel/vowel-rules-l.c"
 
-	while ( 1 )		/* loops until end-of-file is reached */
+	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
 		yy_cp = (yy_c_buf_p);
 
@@ -818,7 +841,7 @@ YY_DECL
 yy_match:
 		do
 			{
-			register YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
+			YY_CHAR yy_c = yy_ec[YY_SC_TO_UI(*yy_cp)] ;
 			if ( yy_accept[yy_current_state] )
 				{
 				(yy_last_accepting_state) = yy_current_state;
@@ -944,7 +967,7 @@ YY_RULE_SETUP
 #line 94 "vowel/vowel-rules.l"
 ECHO;
 	YY_BREAK
-#line 948 "vowel/vowel-rules-l.c"
+#line 971 "vowel/vowel-rules-l.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(chars):
 case YY_STATE_EOF(lang):
@@ -1090,9 +1113,9 @@ case YY_STATE_EOF(langname):
  */
 static int yy_get_next_buffer (void)
 {
-    	register char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
-	register char *source = (yytext_ptr);
-	register int number_to_move, i;
+    	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
+	char *source = (yytext_ptr);
+	yy_size_t number_to_move, i;
 	int ret_val;
 
 	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
@@ -1121,7 +1144,7 @@ static int yy_get_next_buffer (void)
 	/* Try to read more data. */
 
 	/* First move last chars to start of buffer. */
-	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr)) - 1;
+	number_to_move = (yy_size_t) ((yy_c_buf_p) - (yytext_ptr)) - 1;
 
 	for ( i = 0; i < number_to_move; ++i )
 		*(dest++) = *(source++);
@@ -1224,14 +1247,14 @@ static int yy_get_next_buffer (void)
 
     static yy_state_type yy_get_previous_state (void)
 {
-	register yy_state_type yy_current_state;
-	register char *yy_cp;
+	yy_state_type yy_current_state;
+	char *yy_cp;
     
 	yy_current_state = (yy_start);
 
 	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
 		{
-		register YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
+		YY_CHAR yy_c = (*yy_cp ? yy_ec[YY_SC_TO_UI(*yy_cp)] : 1);
 		if ( yy_accept[yy_current_state] )
 			{
 			(yy_last_accepting_state) = yy_current_state;
@@ -1256,10 +1279,10 @@ static int yy_get_next_buffer (void)
  */
     static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )
 {
-	register int yy_is_jam;
-    	register char *yy_cp = (yy_c_buf_p);
+	int yy_is_jam;
+    	char *yy_cp = (yy_c_buf_p);
 
-	register YY_CHAR yy_c = 1;
+	YY_CHAR yy_c = 1;
 	if ( yy_accept[yy_current_state] )
 		{
 		(yy_last_accepting_state) = yy_current_state;
@@ -1276,6 +1299,10 @@ static int yy_get_next_buffer (void)
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
+
+#ifndef YY_NO_UNPUT
+
+#endif
 
 #ifndef YY_NO_INPUT
 #ifdef __cplusplus
@@ -1426,7 +1453,7 @@ static void gregorio_vowel_rulefile__load_buffer_state  (void)
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in gregorio_vowel_rulefile__create_buffer()" );
 
-	b->yy_buf_size = size;
+	b->yy_buf_size = (yy_size_t)size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
@@ -1581,7 +1608,7 @@ static void gregorio_vowel_rulefile_ensure_buffer_stack (void)
 		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
 		 * immediate realloc on the next call.
          */
-		num_to_alloc = 1;
+		num_to_alloc = 1; // After all that talk, this was set to 1 anyways...
 		(yy_buffer_stack) = (struct yy_buffer_state**)gregorio_vowel_rulefile_alloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								);
@@ -1598,7 +1625,7 @@ static void gregorio_vowel_rulefile_ensure_buffer_stack (void)
 	if ((yy_buffer_stack_top) >= ((yy_buffer_stack_max)) - 1){
 
 		/* Increase the buffer to prepare for a possible push. */
-		int grow_size = 8 /* arbitrary grow size */;
+		yy_size_t grow_size = 8 /* arbitrary grow size */;
 
 		num_to_alloc = (yy_buffer_stack_max) + grow_size;
 		(yy_buffer_stack) = (struct yy_buffer_state**)gregorio_vowel_rulefile_realloc
@@ -1706,7 +1733,7 @@ YY_BUFFER_STATE gregorio_vowel_rulefile__scan_bytes  (yyconst char * yybytes, yy
 
 static void yy_fatal_error (yyconst char* msg )
 {
-    	(void) fprintf( stderr, "%s\n", msg );
+			(void) fprintf( stderr, "%s\n", msg );
 	exit( YY_EXIT_FAILURE );
 }
 
@@ -1772,29 +1799,29 @@ char *gregorio_vowel_rulefile_get_text  (void)
 }
 
 /** Set the current line number.
- * @param line_number
+ * @param _line_number line number
  * 
  */
-void gregorio_vowel_rulefile_set_lineno (int  line_number )
+void gregorio_vowel_rulefile_set_lineno (int  _line_number )
 {
     
-    gregorio_vowel_rulefile_lineno = line_number;
+    gregorio_vowel_rulefile_lineno = _line_number;
 }
 
 /** Set the input stream. This does not discard the current
  * input buffer.
- * @param in_str A readable stream.
+ * @param _in_str A readable stream.
  * 
  * @see gregorio_vowel_rulefile__switch_to_buffer
  */
-void gregorio_vowel_rulefile_set_in (FILE *  in_str )
+void gregorio_vowel_rulefile_set_in (FILE *  _in_str )
 {
-        gregorio_vowel_rulefile_in = in_str ;
+        gregorio_vowel_rulefile_in = _in_str ;
 }
 
-void gregorio_vowel_rulefile_set_out (FILE *  out_str )
+void gregorio_vowel_rulefile_set_out (FILE *  _out_str )
 {
-        gregorio_vowel_rulefile_out = out_str ;
+        gregorio_vowel_rulefile_out = _out_str ;
 }
 
 int gregorio_vowel_rulefile_get_debug  (void)
@@ -1802,9 +1829,9 @@ int gregorio_vowel_rulefile_get_debug  (void)
         return gregorio_vowel_rulefile__flex_debug;
 }
 
-void gregorio_vowel_rulefile_set_debug (int  bdebug )
+void gregorio_vowel_rulefile_set_debug (int  _bdebug )
 {
-        gregorio_vowel_rulefile__flex_debug = bdebug ;
+        gregorio_vowel_rulefile__flex_debug = _bdebug ;
 }
 
 static int yy_init_globals (void)
@@ -1872,7 +1899,8 @@ int gregorio_vowel_rulefile_lex_destroy  (void)
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
-	register int i;
+		
+	int i;
 	for ( i = 0; i < n; ++i )
 		s1[i] = s2[i];
 }
@@ -1881,7 +1909,7 @@ static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 #ifdef YY_NEED_STRLEN
 static int yy_flex_strlen (yyconst char * s )
 {
-	register int n;
+	int n;
 	for ( n = 0; s[n]; ++n )
 		;
 
@@ -1891,11 +1919,12 @@ static int yy_flex_strlen (yyconst char * s )
 
 void *gregorio_vowel_rulefile_alloc (yy_size_t  size )
 {
-	return (void *) malloc( size );
+			return (void *) malloc( size );
 }
 
 void *gregorio_vowel_rulefile_realloc  (void * ptr, yy_size_t  size )
 {
+		
 	/* The cast to (char *) in the following accommodates both
 	 * implementations that use char* generic pointers, and those
 	 * that use void* generic pointers.  It works with the latter
@@ -1908,7 +1937,7 @@ void *gregorio_vowel_rulefile_realloc  (void * ptr, yy_size_t  size )
 
 void gregorio_vowel_rulefile_free (void * ptr )
 {
-	free( (char *) ptr );	/* see gregorio_vowel_rulefile_realloc() for (char *) cast */
+			free( (char *) ptr );	/* see gregorio_vowel_rulefile_realloc() for (char *) cast */
 }
 
 #define YYTABLES_NAME "yytables"
