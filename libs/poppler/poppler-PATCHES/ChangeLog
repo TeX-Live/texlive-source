@@ -1,3 +1,17 @@
+2016-05-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Imported poppler-0.44.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-LLONG_MAX, patch-03-Object-functions: Adapted.
+	* patch-04-ULLONG-constants: Removed.
+
+2016-04-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Imported poppler-0.43.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-LLONG_MAX, patch-03-Object-functions,
+	patch-04-ULLONG-constants: Adapted.
+
 2016-03-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-04-ULLONG-constants: new patch.

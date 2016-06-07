@@ -1,7 +1,7 @@
-diff -ur poppler-src-orig/goo/GooString.h poppler-src/goo/GooString.h
---- poppler-src-orig/goo/GooString.h	2016-02-19 10:05:07.000000000 +0100
-+++ poppler-src/goo/GooString.h	2016-03-17 10:52:54.000000000 +0100
-@@ -35,6 +35,21 @@
+diff -ur poppler-0.44.0.orig/goo/GooString.h poppler-0.44.0/goo/GooString.h
+--- poppler-0.44.0.orig/goo/GooString.h	Wed May 11 07:47:44 2016
++++ poppler-0.44.0/goo/GooString.h	Sun May 22 07:38:25 2016
+@@ -36,6 +36,21 @@
  #endif
  
  #include <limits.h> // for LLONG_MAX and ULLONG_MAX

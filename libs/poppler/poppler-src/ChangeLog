@@ -1,3 +1,371 @@
+commit 58f56a7af99b477f39e57aed74443b6851afe15f
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sat May 21 18:25:22 2016 +0200
+
+    Fix Compile in 32bit linux
+
+    Bug #95492
+
+ poppler/Decrypt.cc | 65
+ +++++++++++++++++++++++++++---------------------------
+ 1 file changed, 33 insertions(+), 32 deletions(-)
+
+commit 853e94995255591b35d9bdbeb0174476838097c0
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Apr 17 16:02:57 2016 +0930
+
+    pdftocairo: add -antialias option
+
+    Bug 94977
+
+ poppler/CairoOutputDev.cc | 24 +++++++++++++++++
+ poppler/CairoOutputDev.h  |  4 ++-
+ utils/pdftocairo.1        | 26 +++++++++++++++++++
+ utils/pdftocairo.cc       | 66
+ ++++++++++++++++++++++++++++++++++++++++++-----
+ 4 files changed, 112 insertions(+), 8 deletions(-)
+
+commit 8453966178de8535cdabac090e78ec17857f8975
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Tue May 17 01:00:37 2016 +0200
+
+    Improve rendering of some dotted lines
+
+    Bug #84693
+
+ splash/Splash.cc | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+commit 182abe4ed5c0773073c6751a26a7c4e40e99e02e
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Fri May 13 00:07:24 2016 +0200
+
+    Splash: type 3 chars. restore the current position also in output
+    device
+
+    Bug #95344
+
+ poppler/Gfx.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 9c35dc79ec777d9495796124ac7a42bf2b4cf83f
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Wed May 11 23:34:53 2016 +0200
+
+    goo: refactor GooString::Set()
+
+    it is used only once to concatenate strings and it is in a GooString
+    constructor used specifically for that
+    so I think concatenation should take place in the constructor and
+    GooString::Set
+    should do exactly what it says which is setting the string.
+
+    Bug #94201
+
+ goo/GooString.cc | 40 ++++++++++++++--------------------------
+ goo/GooString.h  | 10 +++++-----
+ 2 files changed, 19 insertions(+), 31 deletions(-)
+
+commit 0ecec576faf7e1ef644f5973f17e0b8244560912
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 4 23:23:04 2016 +0200
+
+    Fix typo in GfxPatchMeshShading::parse
+
+ poppler/GfxState.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 890178f9c946931ec34b8b227493ec9f1c6109aa
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 4 01:32:47 2016 +0200
+
+    Fix potential crash in SplashOutputDev::doUpdateFont
+
+    If we delete fontLoc we need to set it to NULL since it's not set
+    to any value in all of the
+    branches of this code
+
+ poppler/SplashOutputDev.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 86572d7d2835fdd77e82eeb428e3a56c2d0f271d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 4 01:27:54 2016 +0200
+
+    Fix memory leak in SignatureHandler::getDefaultFirefoxCertDB_Linux
+
+ poppler/SignatureHandler.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 3707f9d17c5f8a883ddb9614b11676ad49ade5b2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 4 00:59:01 2016 +0200
+
+    Fix potential crash in TextPage::coalesce
+
+    When flows is not null flow was still pointing to an now deleted
+    flow that
+    may had made it crash in the for loop below
+
+ poppler/TextOutputDev.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 6d26d02c39de6546f57b20c46922f8c56aad78a0
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 4 00:58:12 2016 +0200
+
+    Remove call that does nothing
+
+    We don't use dict after this call and streamGetDict is a pure getter,
+    i.e. it doesn't change the stream at all
+
+ poppler/GfxState.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 56c71fcaae71c2b3cc91bb981715541518e05684
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed May 4 00:55:06 2016 +0200
+
+    Fix memory leak in PSOutputDev::filterPSLabel
+
+ poppler/PSOutputDev.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit a0c3fd3f18232c126815a129158e0c4cd3a819a9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 29 00:14:24 2016 +0200
+
+    New version and soversion
+
+ CMakeLists.txt      | 4 ++--
+ configure.ac        | 2 +-
+ cpp/Doxyfile        | 2 +-
+ gtk-doc.make        | 2 +-
+ poppler/Makefile.am | 2 +-
+ qt4/src/Doxyfile    | 2 +-
+ qt5/src/Doxyfile    | 2 +-
+ 7 files changed, 8 insertions(+), 8 deletions(-)
+
+commit da91593e834d4e617213466331226347f1688a53
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 29 00:12:59 2016 +0200
+
+    News
+
+ NEWS | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+commit bdd25a2583552fe8e72dcf4bc17d9f488b7c1268
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Apr 29 00:07:24 2016 +0200
+
+    Update Cs
+
+ poppler/CairoFontEngine.cc | 2 +-
+ poppler/CairoOutputDev.cc  | 2 +-
+ poppler/CairoOutputDev.h   | 1 +
+ poppler/GfxFont.cc         | 2 +-
+ utils/pdftocairo.cc        | 1 +
+ 5 files changed, 5 insertions(+), 3 deletions(-)
+
+commit dbbe1590d49e620ef0743cb1b99b0b5b9a1f36ec
+Author: Arseniy Lartsev <arseniy@alumni.chalmers.se>
+Date:   Thu Apr 28 23:59:05 2016 +0200
+
+    qt: Fix crash on certain PDF form item activation actions
+
+    Bug #94873
+
+ qt4/src/poppler-page.cc | 3 ++-
+ qt5/src/poppler-page.cc | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
+
+commit 1cc93886eee3204e2ccd8bcc8b90306e809255e0
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Apr 28 23:53:06 2016 +0200
+
+    Allow newlines in '<num> <gen> obj' sequence
+
+    Bug #94756
+
+ poppler/XRef.cc | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+commit a8e3399487258e53df0fd4a79c570c8d71188bed
+Author: Takahiro Hashimoto <kenya888.en@gmail.com>
+Date:   Wed Apr 27 00:16:52 2016 +0200
+
+    Compile with C++11 compilers that don't define isinfinite
+
+    Bug #94761
+
+ poppler/SplashOutputDev.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit 6eafb6570765605108cf3525f78b10223439ee1d
+Author: Pino Toscano <pino@kde.org>
+Date:   Thu Apr 21 08:30:25 2016 +0200
+
+    configure: remove unused check for gethostbyname
+
+ configure.ac | 5 -----
+ 1 file changed, 5 deletions(-)
+
+commit d9408c186f9b5c992a4e1492a58dda506d8453ac
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Apr 10 10:29:05 2016 +0200
+
+    typo fixes
+
+    - "indentical" -> "identical"
+    - "numberals" -> "numerals"
+    - "paremeters" -> "parameters"
+
+ poppler/PageLabelInfo_p.h | 2 +-
+ qt4/src/poppler-media.cc  | 8 ++++----
+ qt5/src/poppler-media.cc  | 8 ++++----
+ utils/pdfimages.1         | 2 +-
+ 4 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 5ac54db9150e949ed0e41eec1f19a7f5ec880646
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Apr 10 10:16:36 2016 +0200
+
+    utils: ship pdfsig.1 if pdfsig is built
+
+ utils/Makefile.am | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 92c6799a40b0755ff2d43f33241d442cc5d4e323
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Apr 10 09:43:29 2016 +0200
+
+    remove +x modes
+
+ poppler/SecurityHandler.cc | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+
+commit 9c39db64ba2eb20ca769a103d83a830f406486f0
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Mon Jan 18 20:56:18 2016 -0600
+
+    Add SymbolMT as an alias for the Symbol font
+
+    A document using the SymbolMT font will have the wrong glyphs drawn.
+    Add it as
+    an alias for the Symbol font so the correct font and encoding
+    are used.
+
+    Bug #93168
+
+ poppler/GfxFont.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit af332349d7a5e3737ea53608cda2f1cad6159108
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Mon Mar 28 21:36:52 2016 -0500
+
+    pdftocairo: Calculate rotation before scaling
+
+    Scaling calculation (-scale-to-x and -scale-to-y) is wrong if a
+    page is
+    rotated.  Fix by moving scale calculation to after rotation
+    calculation.
+
+    bug #94655
+
+ utils/pdftocairo.cc | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+commit db87dc7fa28537f7532328c278c05d8b60f90d6f
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Sun Feb 21 22:54:15 2016 -0600
+
+    cairo: save mask state and don't extend image mask
+
+    Don't extend an image mask pattern.  Save and restore the mask in
+    tilingPatternFill.
+
+    bug #94234
+
+ poppler/CairoOutputDev.cc | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit b68a4ee1dcd1da5b48b2c1f0bb2b6a789ca18ea5
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Thu Feb 18 01:59:42 2016 -0600
+
+    cairo: Check if PDF knows the width of 'm' in case of substituted font
+
+    Bug #94054
+
+ poppler/CairoFontEngine.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 7d8dfb09d2b9d69d4e80838ce58fdbd091bce7ec
+Author: Jason Crain <jason@aquaticape.us>
+Date:   Sun Feb 28 16:18:05 2016 -0600
+
+    cairo: fix fillToStrokePathClip crash and rendering
+
+    The cairo backend can crash if the dash pattern changes between
+    calling
+    clipToStrokePathClip and fillToStrokePathClip because
+    fillToStrokePathClip
+    calls cairo_set_dash with the saved dash pattern but the current
+    dash count.
+
+    Fixes the crash by removing the call to cairo_get_dash_count in
+    fillToStrokePathClip.  Makes strokePathClip reference counted
+    because when
+    drawing tiling patterns it may need to be kept around for more than
+    one drawing
+    operation.  Uses fillToStrokePathClip in a few more places to fix
+    rendering.
+
+    bug #62905
+
+ poppler/CairoOutputDev.cc | 38 ++++++++++++++++++++++++++++++--------
+ poppler/CairoOutputDev.h  |  1 +
+ 2 files changed, 31 insertions(+), 8 deletions(-)
+
+commit 67bc280c4068ae9501053c06ee05341b95a5e6db
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Sun Mar 20 12:39:24 2016 +0100
+
+    Implement sanity check for linearization usage
+
+    Bug #92482
+
+ poppler/PDFDoc.cc | 42 +++++++++++++++++++++++++++++++++++++++++-
+ poppler/PDFDoc.h  |  7 ++++++-
+ 2 files changed, 47 insertions(+), 2 deletions(-)
+
+commit a24ac96e9f5c914c1c979319ca1043dabd334763
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 17 00:08:37 2016 +0100
+
+    meh typo
+
+ NEWS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f8ff943650e7e2a4cb836be43bf04907a5e156fc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 16 23:40:00 2016 +0100
+
+    0.42
+
+ CMakeLists.txt      |  4 ++--
+ Makefile.am         |  1 +
+ NEWS                | 28 ++++++++++++++++++++++++++++
+ configure.ac        |  2 +-
+ cpp/Doxyfile        |  2 +-
+ poppler/Makefile.am |  4 ++--
+ qt4/src/Doxyfile    |  2 +-
+ qt5/src/Doxyfile    |  2 +-
+ 8 files changed, 37 insertions(+), 8 deletions(-)
+
 commit ef21f651a4af801502d6b4b4f7258d54f14e7aea
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Wed Mar 16 20:23:39 2016 +0100
