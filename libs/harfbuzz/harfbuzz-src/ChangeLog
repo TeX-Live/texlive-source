@@ -1,3 +1,225 @@
+commit 9879fc1db3cad684f412c2f3d6b49e0435697d0e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 2 10:29:12 2016 +0200
+
+    [ot-font] Remove unused 'post' table include for now
+
+    To make a release...
+
+ src/hb-ot-font.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f8061ae7972462ad800c23be7cd7b3d7ab94b93b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 2 10:28:24 2016 +0200
+
+    [tests] Fix test
+
+ test/shaping/Makefile.am                                                |
+ 2 +-
+ .../tests/{fallback-positioning.test => fallback-positioning.tests}
+ | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+commit f00ab2a33ab34ba64f38cbbe65830c770a3e071e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon May 2 10:24:00 2016 +0200
+
+    [hb-ot-font] Make 'glyf' table loading lazy
+
+    Apparently some clients have reference-table callbacks that copy
+    the table.
+    As such, avoid loading 'glyf' table which is only needed if fallback
+    positioning
+    happens.
+
+ src/hb-ot-font.cc                                  |  45
+ ++++++++++++++++++++-
+ test/shaping/Makefile.am                           |   1 +
+ .../7ef276fc886ea502a03b9b0e5c8b547d5dc2b61c.ttf   | Bin 0 -> 784 bytes
+ test/shaping/tests/fallback-positioning.test       |   2 +
+ 4 files changed, 46 insertions(+), 2 deletions(-)
+
+commit 587d46227a56940a7f5bb053cbeda6144394acf7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Apr 30 19:20:56 2016 +0200
+
+    [ot-font] Start implementing 'post' table, for accessing glyph names
+
+ src/Makefile.sources        |   1 +
+ src/hb-open-type-private.hh |  12 ++++-
+ src/hb-ot-font.cc           |   1 +
+ src/hb-ot-post-table.hh     | 119
+ ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 132 insertions(+), 1 deletion(-)
+
+commit 9abaaac409b8e3a0a9182b67dc384133013f7878
+Merge: 2f560ee 264b7a7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Apr 27 03:38:24 2016 -0700
+
+    Merge commit '264b7a728a41becfbf23ce258fc2a3af19d0cbbe' into HEAD
+
+commit 2f560ee44b7b08683e8e6955fe3b95187e8bda32
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Apr 27 03:11:41 2016 -0700
+
+    [tibetan] Reorder marks to better match Uniscribe
+
+    Fixes https://github.com/behdad/harfbuzz/issues/237
+
+    Note that Uniscribe enforces a certain syllable order.  We don't.
+    But with this change, I get all of the tibetan contractions pass
+    with Microsoft Himalaya font.
+
+ src/hb-unicode-private.hh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit f68390f196216718c22c434e1d8921118e646824
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Apr 27 02:44:35 2016 -0700
+
+    [test] Add text for Tibetan shorthand contractions
+
+    From http://www.babelstone.co.uk/Tibetan/Contractions.html
+
+ .../script-tibetan/misc/contractions.txt           | 612
+ +++++++++++++++++++++
+ 1 file changed, 612 insertions(+)
+
+commit 264b7a728a41becfbf23ce258fc2a3af19d0cbbe
+Merge: 7e2da03 adafdcd
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Apr 27 03:48:23 2016 +0300
+
+    Merge pull request #247 from khaledhosny/update-opentype-language-tags
+
+    Update opentype language tags
+
+commit adafdcddced076da4bfa3114a00e15a387aaf1f7
+Author: Arthur Reutenauer <arthur.reutenauer@normalesup.org>
+Date:   Sat Nov 7 23:37:21 2015 +0000
+
+    Mass-added “difficult” tags – to be curated.
+
+ src/hb-ot-tag.cc | 69
+ +++++++++++++++++++++++++++++---------------------------
+ 1 file changed, 36 insertions(+), 33 deletions(-)
+
+commit 3d6a2c0d7d9f6c5b3097f78c1123f9e59dcc76e2
+Author: Arthur Reutenauer <arthur.reutenauer@normalesup.org>
+Date:   Sat Nov 7 22:59:13 2015 +0000
+
+    Initial import of missing OpenType 1.7 language tags.
+
+ src/hb-ot-tag.cc | 67
+ +++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 61 insertions(+), 6 deletions(-)
+
+commit 7e2da035f68e46ce8f4759b67b4ed3a1b211d793
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Apr 26 16:42:25 2016 -0700
+
+    Undo accidental change
+
+ src/hb-ot-shape-complex-arabic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit b20305022a8235b19e6b640bc62651854e1336f1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Apr 26 16:41:17 2016 -0700
+
+    Do NOT ignore Mongolian Free Variation Selectors during matching
+
+    Fixes https://github.com/behdad/harfbuzz/issues/234
+
+ src/hb-ot-layout-gsubgpos-private.hh               |   2 +-
+ src/hb-ot-layout-private.hh                        |  23
+ +++++++++++++++++++--
+ src/hb-ot-shape-complex-arabic.cc                  |   2 +-
+ .../a34a7b00f22ffb5fd7eef6933b81c7e71bc2cdfb.ttf   | Bin 0 -> 3700 bytes
+ .../tests/mongolian-variation-selector.tests       |   1 +
+ 5 files changed, 24 insertions(+), 4 deletions(-)
+
+commit 21ab5501f5f5267d20cf23256866dd9d82a667ef
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Apr 26 16:02:04 2016 -0700
+
+    Move ZWJ/ZWNJ bits to top byte of unicode_props()
+
+    To make room to remember Mongolian Free Variation Selectors.
+    Part of fixing https://github.com/behdad/harfbuzz/issues/234
+
+ src/hb-ot-layout-private.hh | 40 ++++++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 18 deletions(-)
+
+commit de508516cb06ddb064d75bd7be8e843a5ebcf70d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Apr 26 11:28:37 2016 -0700
+
+    [util] Print out --debug buffer to stderr
+
+ util/main-font-text.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 29393884b9f045460fb65d6ad10a94461ba93430
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Apr 26 10:35:23 2016 -0700
+
+    Annotate blacklisted fonts with their sha1sum
+
+ src/hb-ot-layout.cc | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+commit 14bb4a56971fd45063cd6c1288d911627088abb2
+Merge: 1c625df 5069062
+Author: Sascha Brawer <sascha@brawer.ch>
+Date:   Tue Apr 26 11:38:16 2016 +0200
+
+    Merge pull request #245 from KonstantinRitt/fixes/ce
+
+    Unbreak build on Windows CE
+
+commit 5069062d0a9342bb716eebf3ddc1efad91924caa
+Author: Konstantin Ritt <ritt.ks@gmail.com>
+Date:   Tue Apr 26 12:02:26 2016 +0400
+
+    Unbreak build on Windows CE
+
+    0475ef2f97e3035a2eea9a0f96031331e07e8e29 broke the build by using
+    vsnprintf(), which is not defined on Windows CE
+
+ src/hb-private.hh | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 1c625dff2269c54ff429ca45be88893ff1fa6c34
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Apr 9 12:53:23 2016 -0700
+
+    Minor
+
+ src/hb-ot-layout.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 851b0db36d1b724fc1e0db506445119c78186285
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Apr 8 23:46:55 2016 -0700
+
+    Minor.  We should never get to this branch, but fix it anyway.
+
+ src/hb-ot-layout-common-private.hh | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 00ea66f35754a1e6e4d3b7b139d611a9a623a9d1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Apr 8 13:51:01 2016 -0700
+
+    1.2.6
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
 commit 4f3d59a1877dcb94d09da48e9694a6c1b05a86fe
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Apr 8 13:41:20 2016 -0700
