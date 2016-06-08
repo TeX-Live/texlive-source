@@ -803,7 +803,13 @@ sub xindy_expression () {
 	push (@temp_files, $style_file);
 	$style_file=quotify($style_file);
 	foreach my $module ( @modules ) {
-	    print $sf "(require \"$module\")\n";
+	    my $fnmodule=`kpsewhich -progname=xindy -format=othertext $module`;
+	    if ($fnmodule) {
+		chomp($fnmodule);
+		print $sf "(require \"$fnmodule\")\n";
+	    } else {
+		print $sf "(require \"$module\")\n";
+	    }
 	}
 	close ($sf);
     }
