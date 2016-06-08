@@ -1,3 +1,9 @@
+2016-06-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xindy-src/user-commands/xindy.in: Use kpsewhich to search for modules.
+	Performance is lost. However user modules specified by the -M option
+	can be under <anytexmf>/xindy/modules/.
+
 2016-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.
