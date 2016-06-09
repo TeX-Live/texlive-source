@@ -1,3 +1,9 @@
+2016-06-09  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+
+	Import libpng-1.6.23.
+	Forgot to remove patch-02-backport-20160314-12e63e9 in 1.6.22.
+	Here really remove patch-02-backport-20160314-12e63e9.
+
 2016-05-26  Akira Kakuto <kakuto@fuk.kindai.ac.jp>
 
 	Remove patch-02-backport-20160314-12e63e9, since it is now
