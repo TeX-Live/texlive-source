@@ -26,10 +26,14 @@
    This work has the LPPL maintenance status `maintained'.
   
    History:
-   * 1.1 changed first line from lua to texlua
+   * 1.2
+     - added check for \@gls@extramakeindexopts
+     - added check for nil codepage
+   * 1.1
+     - changed first line from lua to texlua
 --]]
 
-thisversion = "1.1 2015-07-17"
+thisversion = "1.2 2016-05-27"
 
 quiet = false
 dryrun = false
@@ -49,6 +53,7 @@ makeindex_g = false
 letterorder = false
 makeindex_r = false
 makeindex_p = nil
+makeindex_extra = nil
 makeindex_m = "makeindex"
 
 function version()
@@ -150,6 +155,8 @@ function domakeindex(name, glg, gls, glo)
   if makeindex_g then cmd = cmd .. " -g" end
 
   if letterorder then cmd = cmd .. " -l" end
+
+  if makeindex_extra then cmd = cmd .. " " .. makeindex_extra end
 
   if quiet then cmd = cmd .. " -q" end
 
@@ -348,6 +355,8 @@ then
   end
 end
 
+makeindex_extra = string.match(aux, "\\@gls@extramakeindexopts{([^}]*%.?%a*)}")
+
 if dryrun then print("Dry run mode. No commands will be executed.") end
 
 onlyname = nil
@@ -465,6 +474,10 @@ else
       gls = outfile
     end
 
+  end
+
+  if codepage == nil then
+    codepage = 'utf8';
   end
 
   dorun(onlyname, glg, gls, glo, language, codepage)

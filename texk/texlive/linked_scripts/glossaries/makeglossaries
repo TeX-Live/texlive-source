@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.18
+# Version : 2.19
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.18 (2016-01-24)";
+my $version="2.19 (2016-05-27)";
 
 # History:
+# v2.19 (2016/05/27)
+#   * Improved check in &parse_for_xindy_nosort
 # v2.18 (2016/01/24)
 #   * Added &parse_for_xindy_nosort to help diagnose xindy's empty
 #     index key warning/error.
@@ -184,7 +186,8 @@ if ($opt_d)
 }
 
 # v2.02: added:
-my $xdynotist = 1;
+# v2.19: changed value
+my $xdynotist = 2;
 # v2.13: removed
 #my $needcompatibilitymode=2;
 
@@ -198,19 +201,19 @@ my %makeindex_error_text =
           . "Remember to use \\setStyleFile to specify the name\n"
           . "of the style file rather than redefining \\istfilename\n"
           . "explicitly.",
-   $istnotfound => "Style file not found."
+   $istnotfound => "Style file not found. (Have you used \\noist by mistake?)"
  );
 
 my %xindy_error_text =
  (
-   'nosort'    => "Sort key required for entries only containing command names",
+   'nosort'    => "Sort key required for entries only containing command names.",
    'istnotxdy' =>
       "Style name has xdy extension, but may be in makeindex format.\n"
      . "Remember to use \\setStyleFile to specify the name\n"
      . "of the style file rather than redefining \\istfilename\n"
      . "explicitly.",
    'missingendquote' =>
-       "You may have missed a \" character in a command such as \\GlsAddXdyLocation",
+       "You may have missed a \" character in a command such as \\GlsAddXdyLocation.",
     'nolanguage' =>
        "No language detected.\nHave you remembered to use \\printglossary\n".
        "or \\printglossaries in your document?",
@@ -221,7 +224,8 @@ my %xindy_error_text =
         "You may have forgotten to add a location \n"
         . "class with \\GlsAddLocation or you may have \n"
         . "the format incorrect.\n",
-    'comp207' => "You may need to add 'compatible-2.07' package option.\n",
+    'comp207' => "You may need to add 'compatible-2.07' package option.",
+    'noxdyfile' => "Style file not found. (Have you used \\noist by mistake?)"
  );
 
 # define known extensions
@@ -297,6 +301,9 @@ my $istfile = "";
 # should letter ordering be used? (v1.5 added)
 
 my $letterordering = defined($opt_l);
+
+# v2.19 added:
+my $extramkidxopts = '';
 
 # check aux file for other glossary types
 # and for ist file name
@@ -376,6 +383,11 @@ if ($opt_g)
 if ($opt_p)
 {
    $mkidxopts .= " -p $opt_p";
+}
+
+if ($extramkidxopts)
+{
+  $mkidxopts .= " $extramkidxopts";
 }
 
 # v2.01 replaced 'unless ($opt_s eq "")' with 'if ($opt_s)'
@@ -699,6 +711,12 @@ sub scan_aux{
            $codepage{$1} = $2;
         }
 
+        # v2.19 added
+        if (m/\\\@gls\@extramakeindexopts\{(.*)\}/)
+        {
+           $extramkidxopts .= $1;
+        }
+
         # v1.5 added
         # Allow -l switch to override specification in aux file
         unless (defined($opt_l))
@@ -857,7 +875,8 @@ sub run_app{
    }
 
    if ($log=~/\(0 entries accepted,/
-    or ( ($log=~/(\d+) warnings?/ and $1 gt 0)))
+    or ( ($log=~/(\d+) warnings?/ and $1 gt 0))
+    or $log=~/not found/)
    {
       # Attempt to diagnose what's gone wrong
 
@@ -868,10 +887,12 @@ sub run_app{
             if (/Index style file .* not found/)
             {
                $errno = $istnotfound;
+               last;
             }
             elsif (/Unknown specifier ;/)
             {
                $errno = $xdynotist;
+               last;
             }
             elsif (/## Warning \(.*\):\s*$/)
             {
@@ -910,7 +931,13 @@ sub makeindex{
       }
       else
       {
-         $diagnostic = "Can't find diagnostic message for error number $errno";
+         $diagnostic = "Can't find diagnostic message for error code $errno";
+      }
+
+      if (open LOGFILE, ">>$trans")
+      {
+         print LOGFILE "\nmakeglossaries diagnostic messages:\n$diagnostic\n";
+         close LOGFILE;
       }
 
       die "\n***Call to makeindex failed***\n", 
@@ -1183,9 +1210,15 @@ sub xindy{
 
          $diagnostic .= &parse_for_xindy_nosort($in);
       }
-      elsif ($status=~/variable % has no value/m)
+      elsif ($status=~/variable .+ has no value/m)
       {
-         $diagnostic = $xindy_error_text{istnotxindy};
+         # v2.19 fixed misspelt key
+         $diagnostic = $xindy_error_text{istnotxdy};
+      }
+      elsif ($status=~/Could not find file /m)
+      {
+         # v2.19 added
+         $diagnostic = $xindy_error_text{noxdyfile};
       }
       elsif ($status=~/Possible read-error due to ill-formed string " :sep/m)
       {
@@ -1209,6 +1242,13 @@ sub xindy{
 
              $diagnostic .= $xindy_error_text{nomain};
           }
+      }
+
+      # v2.19 added:
+      if ($diagnostic and open LOGFILE, ">>$trans")
+      {
+         print LOGFILE "\nmakeglossaries diagnostic messages:\n\n$diagnostic\n";
+         close LOGFILE;
       }
 
       die "\n***Call to xindy failed***\n", 
@@ -1274,7 +1314,7 @@ sub parse_for_xindy_nosort{
   my ($in) = @_;
 
   my $msg = join("\n", "", 
-                 "Attempting to determine which entries have problem sort keys",
+                 "Attempting to determine which entries have problem sort keys.",
                  "Parsing '$in'");
 
   my %entries = ();
@@ -1283,11 +1323,43 @@ sub parse_for_xindy_nosort{
   {
      while (<FD>)
      {
-        if (/:tkey \(\("(\\\\[a-zA-Z@]+ *)" "\\\\glossentry\{(.*)\}"\) \)/)
+# v2.19 extra conditions added
+        if (/:tkey \(\("((?:\\\\[a-zA-Z@]+ *)+)" "\\\\glossentry\{(.*)\}"\) \)/)
         {
-           unless ($entries{$2})
+           my $label = $2;
+
+           unless ($entries{$label})
            {
-              $entries{$2} = $1;
+              $entries{$label}->{sort} = $label;
+              $entries{$label}->{suggestion} = $label;
+              $entries{$label}->{suggestion}=~s/([\\\s]+)//g;
+
+           }
+        }
+        elsif (/:tkey \(\("(\\\\[a-zA-Z@]+ *{(?:\\\\[a-zA-Z@]+ *)+})+" "\\\\glossentry\{(.*)\}"\) \)/)
+        {
+# name in the form \cs{\cs}
+           my $label = $2;
+
+           unless ($entries{$label})
+           {
+              $entries{$label}->{sort} = $1;
+              $entries{$label}->{suggestion} = $label;
+              $entries{$label}->{suggestion}=~s/^[a-zA-Z]+[:\-\.]//;
+              $entries{$label}->{suggestion}=~s/([^\w]+)//g;
+           }
+        }
+        elsif (/:tkey \(\("(\$\s*(?:\{?\\\\[a-zA-Z@]+ *\}?)+\$)" "\\\\glossentry\{(.*)\}"\) \)/)
+        {
+# name in the form $\cs$
+           my $label = $2;
+
+           unless ($entries{$label})
+           {
+              $entries{$label}->{sort} = $1;
+              $entries{$label}->{suggestion} = $label;
+              $entries{$label}->{suggestion}=~s/^[a-zA-Z]+[:\-\.]//;
+              $entries{$label}->{suggestion}=~s/([^\w]+)//g;
            }
         }
      }
@@ -1309,12 +1381,10 @@ sub parse_for_xindy_nosort{
 
         foreach my $label (@labels)
         {
-           my $sort = $entries{$label};
+           my $thisentry = $entries{$label};
 
-           $sort=~s/^\\\\([a-zA-Z@]+) *$/$1/;
-
-           $msg .= "\nLabel: '$label'. Sort value : '$entries{$label}'";
-           $msg .= "\n(Try adding sort={$sort} to the definition.)";
+           $msg .= "\nLabel: '$label'. Sort value : '$thisentry->{sort}'";
+           $msg .= "\n(Try adding sort={$thisentry->{suggestion}} to the definition.)";
         }
      }
   }
