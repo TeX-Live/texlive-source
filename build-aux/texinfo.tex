@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-06-03.20}
+\def\texinfoversion{2016-06-07.21}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1192,6 +1192,7 @@ where each line of input produces a line of output.}
   \ifx\pdfescapestring\thisisundefined
     % No primitive available; should we give a warning or log?
     % Many times it won't matter.
+    \xdef#1{#1}%
   \else
     % The expandable \pdfescapestring primitive escapes parentheses,
     % backslashes, and other special chars.
@@ -1311,8 +1312,10 @@ output) for that.)}
     % We have to set dummies so commands such as @code, and characters
     % such as \, aren't expanded when present in a section title.
     \indexnofonts
-    \turnoffactive
     \makevalueexpandable
+    \turnoffactive
+    % Use ASCII approximations in destination names.
+    \passthroughcharsfalse
     \def\pdfdestname{#1}%
     \txiescapepdf\pdfdestname
     \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
@@ -1357,8 +1360,21 @@ output) for that.)}
       \fi
       %
       % Also escape PDF chars in the display string.
-      \edef\pdfoutlinetext{#1}%
-      \txiescapepdf\pdfoutlinetext
+      \bgroup
+        \ifx \declaredencoding \latone
+          % The PDF format can use an extended form of Latin-1 in bookmark
+          % strings.  See Appendix D of the PDF Reference, Sixth Edition, for
+          % the "PDFDocEncoding".
+          \passthroughcharstrue
+        \fi
+        \ifx \declaredencoding \utfeight
+          % TODO: the PDF format can use UTF-16 in bookmark strings, but the
+          % code for this isn't done yet.
+        \fi
+        \globaldefs=1
+        \edef\pdfoutlinetext{#1}%
+        \txiescapepdf\pdfoutlinetext
+      \egroup
       %
       \pdfoutline goto name{\pdfmkpgn{\pdfoutlinedest}}#2{\pdfoutlinetext}%
     }
