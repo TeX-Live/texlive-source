@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 36129 2015-01-24 00:30:11Z karl $
+# $Id: epstopdf.pl 41287 2016-05-28 18:09:45Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,9 +34,15 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.23";
+my $ver = "2.24";
 
 # History
+#  2016/05/28 v2.24 (Karl Berry)
+#    * new option --gray; patch from William Bader,
+#      tex-k mail 9 Feb 2016 19:37:08.
+#    * disallow --device completely in restricted mode,
+#      to avoid maintenance of device list.
+#      tex-live mail 10 Feb 2016 10:36:26.
 #  2015/01/22 v2.23 (Karl Berry)
 #    * use # instead of = to placate msys; report from KUROKI Yusuke,
 #      tex-k mail 20 Jan 2015 12:40:16.
@@ -171,7 +177,7 @@ my $ver = "2.23";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 36129 2015-01-24 00:30:11Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 41287 2016-05-28 18:09:45Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2014 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -199,10 +205,11 @@ my $default_device = 'pdfwrite';
 $::opt_autorotate = "None";
 $::opt_compress = 1;
 $::opt_debug = 0;
-$::opt_device= $default_device;
+$::opt_device = $default_device;
 $::opt_embed = 1;
 $::opt_exact = 0;
 $::opt_filter = 0;
+$::opt_gray = 0;
 $::opt_gs = 1;
 $::opt_gscmd = "";
 @::opt_gsopt = ();
@@ -315,32 +322,11 @@ my %optcheck = qw<
 # In any case not suitable for restricted:
 # -dDOPS
 
-### restricted devices
-# More or less copied from ghostscript's configure:
-# BMP_DEVS, JPEG_DEVS, PNG_DEVS, TIFF_DEVS, PCX_DEVS, PBM_DEVS
-# PS_DEVS (without text devices)
-my @restricted_devlist = ($default_device);
-my @restricted_devlist_ext = qw[
-  bmpmono bmpgray bmpsep1 bmpsep8 bmp16 bmp256 bmp16m bmp32b
-  jpeg jpeggray jpegcmyk
-  pbm pbmraw pgm pgmraw pgnm pgnmraw pnm pnmraw ppm ppmraw
-    pkm pkmraw pksm pksmraw pam pamcmyk4 pamcmyk32 plan plang
-    planm planc plank
-  pcxmono pcxgray pcx16 pcx256 pcx24b pcxcmyk pcx2up
-  png16 png16m png256 png48 pngalpha pnggray pngmono
-  psdf psdcmyk psdrgb pdfwrite pswrite ps2write epswrite psgray psmono psrgb
-  tiffs tiff12nc tiff24nc tiff48nc tiff32nc tiff64nc tiffcrle tifflzw
-    tiffpack tiffgray tiffsep tiffsep1 tiffscaled tiffscaled8 tiffscaled24
-  svg svgwrite
-];
-push (@restricted_devlist, @restricted_devlist_ext);
-my %restricted_devlist = ( map {$_, 1} @restricted_devlist );
-
 ### usage
 my @bool = ("false", "true");
 my $resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 my $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
-my $defgsopts = "-q -dNOPAUSE -sDEVICE=pdfwrite";
+
 my $usage = <<"END_OF_USAGE";
 ${title}Usage: $program [OPTION]... [EPSFILE]
 
@@ -376,6 +362,7 @@ Options for Ghostscript:
   --(no)compress     use compression        (default: $bool[$::opt_compress])
   --device=DEV       use -sDEVICE=DEV       (default: $::opt_device)
   --(no)embed        embed fonts            (default: $bool[$::opt_embed])
+  --(no)gray         grayscale output       (default: $bool[$::opt_gray])
   --pdfsettings=VAL  use -dPDFSETTINGS=/VAL (default is prepress if --embed,
                        else empty); recognized VAL choices:
                        screen, ebook, printer, prepress, default.
@@ -401,21 +388,20 @@ is doing.
 More about the options for Ghostscript:
   Additional options to be used with gs can be specified
     with either or both of the two cumulative options --gsopts and --gsopt.
-  --gsopts takes a single string of options, which is split at whitespace,
-    each resulting word then added to the gs command line individually.
+  --gsopts takes a single string of options, which is split at whitespace
+    and each resulting word then added to the gs command line individually.
   --gsopt adds its argument as a single option to the gs command line.
     It can be used multiple times to specify options separately,
     and is necessary if an option or its value contains whitespace.
   In restricted mode, options are limited to those with names and values
-    known to be safe; some options taking booleans, integers or fixed
+    known to be safe.  Some options taking booleans, integers or fixed
     names are allowed, those taking general strings are not.
 
 All options to epstopdf may start with either - or --, and may be
 unambiguously abbreviated.  It is best to use the full option name in
-scripts, though, to avoid possible collisions with new options in the
-future.
+scripts to avoid possible collisions with new options in the future.
 
-When reporting bugs, please include an input file and command line
+When reporting bugs, please include an input file and all command line
 options so the problem can be reproduced.
 
 Report bugs to: tex-k\@tug.org
@@ -431,6 +417,7 @@ GetOptions (
   "device=s",
   "embed!",
   "exact!",
+  "gray!",
   "filter!",
   "gs!",
   "gscmd=s",              # \ref{val_gscmd}
@@ -514,8 +501,7 @@ if ($::opt_filter) {
 }
 
 ### emacs-page
-### start building GS command line for the pipe
-### take --safer and --gsopts into account
+### building the gs invocation.
 
 ### option gscmd
 if ($::opt_gscmd) {
@@ -534,12 +520,14 @@ push @GS, $::opt_safer ? '-dSAFER' : '-dNOSAFER';
 push @GS, '-dNOPAUSE';
 push @GS, '-dBATCH';
 
-if ($::opt_device and $restricted and
-    not $restricted_devlist{$::opt_device}) {
-  error "Option forbidden in restricted mode: --device=$::opt_device";
-  $::opt_device = '';
+### option device
+if ($::opt_device) {
+  if ($restricted) {
+    error "Option forbidden in restricted mode: --device";
+  } else {
+    debug "Switching from $default_device to $::opt_device";
+  }
 }
-$::opt_device = $default_device unless $::opt_device;
 push @GS, "-sDEVICE=$::opt_device";
 
 ### option outfile
@@ -582,8 +570,10 @@ push @GS, qw[
   -dEmbedAllFonts=true
 ] if $::opt_embed;
 
-
 push @GS, '-dUseFlateCompression=false' unless $::opt_compress;
+
+push @GS, qw(-sColorConversionStrategy=Gray -dProcessColorModel=/DeviceGray)
+  if $::opt_gray;
 
 if ($::opt_res and
     not $::opt_res =~ /^(\d+(x\d+)?)$/) {
