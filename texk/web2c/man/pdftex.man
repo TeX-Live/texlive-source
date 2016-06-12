@@ -379,7 +379,7 @@ If set, its value, taken to be in epoch-seconds, will be used for the
 timestamps in the PDF output, such as the CreationDate and ModDate keys.
 This is useful for making reproducible builds.
 .TP
-.B SOURCE_DATE_EPOCH_TEX_PRIMITIVES
+.B FORCE_SOURCE_DATE
 If set to the value "1", the time-related \*(TX primitives
 .RI ( \eyear ,
 .IR \emonth ,

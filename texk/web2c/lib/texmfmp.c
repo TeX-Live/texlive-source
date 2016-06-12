@@ -2247,7 +2247,7 @@ get_date_and_time (integer *minutes,  integer *day,
 {
   struct tm *tmptr;
 #ifndef onlyTeX
-  string sde_texprim = getenv ("SOURCE_DATE_EPOCH_TEX_PRIMITIVES");
+  string sde_texprim = getenv ("FORCE_SOURCE_DATE");
   if (sde_texprim && STREQ (sde_texprim, "1")) {
     init_start_time ();
     tmptr = gmtime (&start_time);
@@ -2263,7 +2263,7 @@ get_date_and_time (integer *minutes,  integer *day,
     /* warn if they gave an invalid value, empty (null string) ok.  */
     if (sde_texprim && strlen (sde_texprim) > 0
         && !STREQ (sde_texprim, "0")) {
-WARNING1 ("invalid value (expected 0 or 1) for environment variable $SOURCE_DATE_EPOCH_TEX_PRIMITIVES: %s", 
+WARNING1 ("invalid value (expected 0 or 1) for environment variable $FORCE_SOURCE_DATE: %s", 
           sde_texprim);
     }
 #endif /* not onlyTeX */
