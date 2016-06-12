@@ -1,8 +1,11 @@
 - changes:
   - rename envvar SOURCE_DATE_EPOCH_TEX_PRIMITIVES to FORCE_SOURCE_DATE;
     no changes in functionality.
+
+- bugfixes:
+  - \pdflastmatch more reliable when there was no match
 ---------------------------------------------------
-pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)
+pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)  (May 20, 2016)
 - changes:
   - if the environment variable SOURCE_DATE_EPOCH is set, use its value for
     the PDF CreationDate and ModDate values, and to seed the trailer /ID.

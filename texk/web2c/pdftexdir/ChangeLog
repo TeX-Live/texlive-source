@@ -1,3 +1,17 @@
+2016-06-12  Karl Berry  <karl@freefriends.org>
+        and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* utils.c (last_match_succeeded): new static boolean.
+	(matchstrings): set it.
+	(getmatch): use it, plus check for non-NULL match_string sooner,
+	plus check that rm_eo >= rm_so.
+	Original bug report from David Carlisle,
+        http://tug.org/pipermail/tex-live/2016-June/038664.html
+
+2016-05-20  Karl Berry  <karl@tug.org>
+
+	* TeX Live 2016 release.
+
 2016-04-06  Karl Berry  <karl@tug.org>
 
 	* pdftexextra.h (COPYRIGHT_HOLDER): don't specifically mention peb
