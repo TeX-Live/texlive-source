@@ -5,6 +5,10 @@
 	http://tug.org/pipermail/tex-k/2016-June/002722.html
 	(and surrounding thread, starting in May)
 
+2016-05-20  Karl Berry  <karl@tug.org>
+
+	* TeX Live 2016 release.
+
 2016-05-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: Avoid crash for too large a value of SOURCE_DATE_EPOCH.
