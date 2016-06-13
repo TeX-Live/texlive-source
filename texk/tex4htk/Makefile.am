@@ -1,6 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/tex4htk/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We distribute the whole java tree.
@@ -26,7 +27,9 @@ LDADD = $(KPATHSEA_LIBS)
 @KPATHSEA_RULE@
 
 perl_scripts = mk4ht
-shell_scripts = ht htcontext htlatex htmex httex httexi htxelatex htxetex
+shell_scripts = ht htcontext htlatex htmex httex httexi \
+  htxelatex htxetex xhlatex
+
 scriptsdir = texmf-dist/scripts/tex4ht
 nodist_bin_SCRIPTS =
 
@@ -144,7 +147,6 @@ EXTRA_DIST += \
 	wxelatex \
 	wxetex \
 	xhcontext \
-	xhlatex \
 	xhmcontext \
 	xhmex \
 	xhmlatex \

@@ -131,7 +131,7 @@ tex4ht_OBJECTS = $(am_tex4ht_OBJECTS)
 tex4ht_LDADD = $(LDADD)
 tex4ht_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__dist_bin_SCRIPTS_DIST = ht.bat htcontext.bat htlatex.bat htmex.bat \
-	httex.bat httexi.bat htxelatex.bat htxetex.bat
+	httex.bat httexi.bat htxelatex.bat htxetex.bat xhlatex.bat
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -392,8 +392,8 @@ EXTRA_DIST = java $(top_builddir)/../../build-aux/relpath dbcontext \
 	teixelatex teixetex test.tex test1.tex testa.tex testb.tex \
 	uxhcontext uxhlatex uxhmex uxhtex uxhtexi uxhxelatex uxhxetex \
 	wcontext wlatex wmex wtex wtexi wxelatex wxetex xhcontext \
-	xhlatex xhmcontext xhmex xhmlatex xhmmex xhmtex xhmtexi \
-	xhmxelatex xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java
+	xhmcontext xhmex xhmlatex xhmmex xhmtex xhmtexi xhmxelatex \
+	xhmxetex xhtex xhtexi xhxelatex xhxetex xv4ht.java
 NEVER_DIST = `find . $(NEVER_NAMES)`
 NEVER_NAMES = -name .svn
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
@@ -406,7 +406,9 @@ t4ht_SOURCES = t4ht.c
 tex4ht_SOURCES = tex4ht.c
 LDADD = $(KPATHSEA_LIBS)
 perl_scripts = mk4ht
-shell_scripts = ht htcontext htlatex htmex httex httexi htxelatex htxetex
+shell_scripts = ht htcontext htlatex htmex httex httexi \
+  htxelatex htxetex xhlatex
+
 scriptsdir = texmf-dist/scripts/tex4ht
 nodist_bin_SCRIPTS = $(am__append_1)
 all_scripts = $(lua_scripts) $(perl_scripts) $(shell_scripts)
