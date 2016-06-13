@@ -179,7 +179,7 @@ my $ver = "2.24";
 my $program = "epstopdf";
 my $ident = '($Id$)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2014 Karl Berry et al.
+Copyright 2009-2016 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
