@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 41287 2016-05-28 18:09:45Z karl $
+# $Id$
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -34,12 +34,10 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.25";
+my $ver = "2.24";
 
 # History
-#  2016/06/16 v2.25 (Norbert Preining)
-#    * fix device handling
-#  2016/05/28 v2.24 (Karl Berry)
+#  2016/05/29 v2.24 (Karl Berry)
 #    * new option --gray; patch from William Bader,
 #      tex-k mail 9 Feb 2016 19:37:08.
 #    * disallow --device completely in restricted mode,
@@ -179,9 +177,9 @@ my $ver = "2.25";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 41287 2016-05-28 18:09:45Z karl $)' . " $ver";
+my $ident = '($Id$)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2014 Karl Berry et al.
+Copyright 2009-2016 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -207,7 +205,7 @@ my $default_device = 'pdfwrite';
 $::opt_autorotate = "None";
 $::opt_compress = 1;
 $::opt_debug = 0;
-$::opt_device = "";
+$::opt_device = $default_device;
 $::opt_embed = 1;
 $::opt_exact = 0;
 $::opt_filter = 0;
@@ -362,7 +360,7 @@ Options for Ghostscript:
                        recognized VAL choices: None, All, PageByPage;
                        for EPS files, PageByPage is equivalent to All.
   --(no)compress     use compression        (default: $bool[$::opt_compress])
-  --device=DEV       use -sDEVICE=DEV       (default: $default_device)
+  --device=DEV       use -sDEVICE=DEV       (default: $::opt_device)
   --(no)embed        embed fonts            (default: $bool[$::opt_embed])
   --(no)gray         grayscale output       (default: $bool[$::opt_gray])
   --pdfsettings=VAL  use -dPDFSETTINGS=/VAL (default is prepress if --embed,
@@ -529,10 +527,7 @@ if ($::opt_device) {
   } else {
     debug "Switching from $default_device to $::opt_device";
   }
-} else {
-  $::opt_device = $default_device;
 }
-
 push @GS, "-sDEVICE=$::opt_device";
 
 ### option outfile
@@ -586,7 +581,7 @@ if ($::opt_res and
   $::opt_res = '';
 }
 push @GS, "-r$::opt_res" if $::opt_res;
-$resmsg= $::opt_res ? $::opt_res : "[use gs default]";
+$resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 
 # \label{val_autorotate}
 if ($::opt_autorotate and
@@ -644,10 +639,12 @@ if ($restricted and not safe_name('out', $OutputFilename)) {
 ### option gs
 if ($::opt_gs) {
   debug "Ghostscript command:", $GS;
-  debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "PDFSettings:", $::opt_pdfsettings;
   debug "Embedding:", ($::opt_embed) ? "on" : "off";
-  debug "Rotation:", $rotmsg;
+  debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "Grayscale:", ($::opt_gray) ? "on" : "off";
   debug "Resolution:", $resmsg;
+  debug "Rotation:", $rotmsg;
 }
 
 ### emacs-page
