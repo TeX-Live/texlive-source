@@ -150,6 +150,9 @@
 /* Define to 1 if you have the <tiffio.h> header file. */
 #undef HAVE_TIFFIO_H
 
+/* Defines if timegm is available on your system */
+#undef HAVE_TIMEGM
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 

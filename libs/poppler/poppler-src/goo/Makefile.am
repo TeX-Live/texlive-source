@@ -40,7 +40,8 @@ libgoo_la_SOURCES =				\
 	ImgWriter.cc				\
 	gtypes_p.h				\
 	gstrtod.cc				\
-	grandom.cc
+	grandom.cc                              \
+	glibc.cc
 
 if BUILD_LIBJPEG
 libjpeg_includes = $(LIBJPEG_CFLAGS)
@@ -64,3 +65,5 @@ libgoo_la_CPPFLAGS =				\
 	$(libtiff_includes)                     \
 	$(libjpeg2000_includes)                 \
 	$(libpng_includes)
+
+EXTRA_DIST = glibc.h

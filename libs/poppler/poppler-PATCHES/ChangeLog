@@ -1,3 +1,9 @@
+2016-06-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Imported poppler-0.45.0 source tree from:
+	  http://poppler.freedesktop.org/
+	* patch-02-LLONG_MAX, patch-03-Object-functions: Adapted.
+
 2016-05-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Imported poppler-0.44.0 source tree from:
