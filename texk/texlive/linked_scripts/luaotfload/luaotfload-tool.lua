@@ -145,8 +145,6 @@ require "fontloader-fonts-enc"
 require "fontloader-font-cid"
 require "fontloader-font-map"
 require "fontloader-font-tfm"
-require "fontloader-font-afm"
-require "fontloader-font-afk"
 require "fontloader-font-oti"
 require "fontloader-font-otr"
 require "fontloader-font-cff"
@@ -159,6 +157,9 @@ require "fontloader-font-oto"
 ------- "fontloader-font-ota"
 ------- "fontloader-font-ots"
 ------- "fontloader-font-osd"
+require "fontloader-font-onr"
+require "fontloader-font-one"
+require "fontloader-font-afk"
 require "fontloader-font-lua"
 require "fontloader-font-def"
 require "fontloader-fonts-ext"
@@ -797,7 +798,7 @@ actions.blacklist = function (job)
 end
 
 actions.generate = function (job)
-    local _ = fonts.names.update (fontnames, job.force_reload, job.dry_run)
+    local _ = fonts.names.update ({ }, job.force_reload, job.dry_run)
     local namedata = fonts.names.data ()
     if namedata then
         logreport ("info", 2, "db",

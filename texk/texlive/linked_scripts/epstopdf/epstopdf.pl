@@ -34,9 +34,11 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.24";
+my $ver = "2.25";
 
 # History
+#  2016/06/16 v2.25 (Norbert Preining)
+#    * fix device handling
 #  2016/05/28 v2.24 (Karl Berry)
 #    * new option --gray; patch from William Bader,
 #      tex-k mail 9 Feb 2016 19:37:08.
@@ -205,7 +207,7 @@ my $default_device = 'pdfwrite';
 $::opt_autorotate = "None";
 $::opt_compress = 1;
 $::opt_debug = 0;
-$::opt_device = $default_device;
+$::opt_device = "";
 $::opt_embed = 1;
 $::opt_exact = 0;
 $::opt_filter = 0;
@@ -360,7 +362,7 @@ Options for Ghostscript:
                        recognized VAL choices: None, All, PageByPage;
                        for EPS files, PageByPage is equivalent to All.
   --(no)compress     use compression        (default: $bool[$::opt_compress])
-  --device=DEV       use -sDEVICE=DEV       (default: $::opt_device)
+  --device=DEV       use -sDEVICE=DEV       (default: $default_device)
   --(no)embed        embed fonts            (default: $bool[$::opt_embed])
   --(no)gray         grayscale output       (default: $bool[$::opt_gray])
   --pdfsettings=VAL  use -dPDFSETTINGS=/VAL (default is prepress if --embed,
@@ -527,7 +529,10 @@ if ($::opt_device) {
   } else {
     debug "Switching from $default_device to $::opt_device";
   }
+} else {
+  $::opt_device = $default_device;
 }
+
 push @GS, "-sDEVICE=$::opt_device";
 
 ### option outfile
