@@ -115,6 +115,7 @@ libpoppler_a_AR = $(AR) $(ARFLAGS)
 libpoppler_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 = @POPPLER_TREE@/goo/gfile.$(OBJEXT) \
+	@POPPLER_TREE@/goo/glibc.$(OBJEXT) \
 	@POPPLER_TREE@/goo/gmem.$(OBJEXT) \
 	@POPPLER_TREE@/goo/gmempp.$(OBJEXT) \
 	@POPPLER_TREE@/goo/grandom.$(OBJEXT) \
@@ -451,6 +452,7 @@ nodist_libpoppler_a_SOURCES = \
 
 goo_libGoo_a_sources = \
 	@POPPLER_TREE@/goo/gfile.cc \
+	@POPPLER_TREE@/goo/glibc.cc \
 	@POPPLER_TREE@/goo/gmem.cc \
 	@POPPLER_TREE@/goo/gmempp.cc \
 	@POPPLER_TREE@/goo/grandom.cc \
@@ -616,6 +618,8 @@ clean-noinstLIBRARIES:
 	@: > @POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/goo/gfile.$(OBJEXT):  \
 	@POPPLER_TREE@/goo/$(am__dirstamp) \
+	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
+@POPPLER_TREE@/goo/glibc.$(OBJEXT): @POPPLER_TREE@/goo/$(am__dirstamp) \
 	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @POPPLER_TREE@/goo/gmem.$(OBJEXT): @POPPLER_TREE@/goo/$(am__dirstamp) \
 	@POPPLER_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
@@ -889,6 +893,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooString.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/GooTimer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/glibc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gmem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/gmempp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@POPPLER_TREE@/goo/$(DEPDIR)/grandom.Po@am__quote@

@@ -1,3 +1,22 @@
+Release 0.45.0
+        core:
+         * SplashOutputDev: Fix iccTransform + splashModeXBGR8
+         * Fix memory leaks
+         * Fix crash in broken files. Bug #95567. Bug #96027
+         * Emulate some non portable glibc functions when not available
+
+        utils:
+         * pdftohtml: Fix crash in broken files. Bug #95563
+         * pdfinfo: convert dates to local time zone
+         * pdfinfo: add -isodates for printing dates in ISO-8601 format
+         * pdfinfo: Fix memory leaks
+
+        glib:
+         * return date in UTC instead of local time. Bug #94173
+
+        cpp:
+         * switched from detail::convert_date() to core's dateStringToTime()
+
 Release 0.44.0
         core:
          * Fix Compile in 32bit linux. Bug #95492
