@@ -67,7 +67,6 @@ static inline int SAPPENDF(char *buf, const char *format, ...)
 
 static void fprint_uchar(FILE *fp, const UChar *a, const int mode, const int len)
 {
-	int k;
 	char str[3*INITIALLENGTH+1];
 	UChar istr[INITIALLENGTH];
 	int olen, wclen;
