@@ -142,11 +142,6 @@ yes|no) ;;
 esac],
 [enable_assembly=yes])
 
-if test "$enable_assembly" = "yes"; then
-  AC_DEFINE(WANT_ASSEMBLY,1,
-  [Defined to 1 as per --enable-assembly])
-fi
-
 
 AC_ARG_ENABLE(fft,
 AC_HELP_STRING([--enable-fft],[enable FFTs for multiplication [default=yes]]),
@@ -625,35 +620,23 @@ case $host in
     # either enforce them, or organise to strip paths as the corresponding
     # options fail.
     case $host_cpu in
-      armv7*)
-	path="arm/v6t2 arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv7-a"
-	;;
-      armv6t2*)
-	path="arm/v6t2 arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6t2"
-	;;
-      armv6*)
-	path="arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6"
-	;;
-      armsa1 | arm9tdmi | armv4*)
+      armsa1 | arm7t* | arm9t* | armv4t*)
 	path="arm"
 	gcc_cflags_arch="-march=armv4"
 	;;
-      armxscale | arm9te | arm10 | armv5*)
+      armxscale | arm7ej | arm9te | arm9e* | arm10* | armv5*)
 	path="arm/v5 arm"
 	gcc_cflags_arch="-march=armv5"
 	;;
-      arm11mpcore | arm1136 | arm1176*)
-	path="arm/v6 arm/v5 arm"
-	gcc_cflags_arch="-march=armv6"
-	;;
-      arm1156)
+      arm1156 | armv6t2*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv6t2"
 	;;
-      armcortexa5)
+      arm11* | armv6*)
+	path="arm/v6 arm/v5 arm"
+	gcc_cflags_arch="-march=armv6"
+	;;
+      armcortexa5 | armv7*)
 	path="arm/v6t2 arm/v6 arm/v5 arm"
 	gcc_cflags_arch="-march=armv7-a"
 	;;
@@ -703,6 +686,8 @@ case $host in
 	;;
       *)
 	path="arm"
+	gcc_cflags_arch="-march=armv4"
+	GMP_DEFINE_RAW(["define(<NOTHUMB>,1)"])
 	;;
     esac
     ;;
@@ -1800,7 +1785,7 @@ case $host in
 	path_64="x86_64/coreibwl x86_64/coreihwl x86_64/coreisbr x86_64/coreinhm x86_64/core2 x86_64"
 	# extra_functions_64="missing"	 # enable for bmi2/adx simulation
 	;;
-      skylake | skylakenoavx | cabylake | cabylakenoavx)
+      skylake | skylakenoavx | kabylake | kabylakenoavx)
 	gcc_cflags_cpu="-mtune=skylake -mtune=broadwell -mtune=corei7 -mtune=core2 -mtune=k8"
 	# Don't pass -march=skylake for now as then some compilers emit AVX512.
 	gcc_cflags_arch="-march=broadwell -march=corei7 -march=core2 -march=core2~-mno-sse2 -march=k8 -march=k8~-mno-sse2"
@@ -2470,7 +2455,7 @@ esac
 
 if test "$enable_assembly" = "no"; then
   path="generic"
-  CFLAGS="$CFLAGS -DNO_ASM"
+  AC_DEFINE([NO_ASM],1,[Define to 1 to disable the use of inline assembly])
 #  for abi in $abilist; do
 #    eval unset "path_\$abi"
 #    eval gcc_${abi}_cflags=\"\$gcc_${abi}_cflags -DNO_ASM\"

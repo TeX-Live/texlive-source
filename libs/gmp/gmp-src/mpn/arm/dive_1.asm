@@ -112,7 +112,7 @@ L(end):	sbc	cy, r5, cy
 	mul	r9, r4, cy
 	str	r9, [rp]
 	pop	{r4-r9}
-	bx	r14
+	ret	r14
 
 L(unnorm):
 	rsb	tnc, cnt, #32
@@ -136,7 +136,7 @@ L(edu):	sbc	cy, r5, cy
 	mul	r9, r4, cy
 	str	r9, [rp]
 	pop	{r4-r9}
-	bx	r14
+	ret	r14
 EPILOGUE()
 
 	RODATA
