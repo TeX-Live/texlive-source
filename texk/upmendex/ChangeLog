@@ -1,3 +1,9 @@
+2016-06-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.51  Beta version.
+	* fwrite.c: Fix bug of option "hanzi_head" in style file.
+	Thanks to Dr. Werner Fink.
+
 2016-02-12  Karl Berry  <karl@tug.org>
 
 	* configure.ac (KPSE_CXX_HACK): add to avoid usual libstdc++.so
