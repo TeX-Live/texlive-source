@@ -206,6 +206,49 @@ int __gmpn_cpuvec_initialized = 0;
    asm routines only operate correctly up to their own defined threshold,
    not an arbitrary value.  */
 
+static int
+gmp_workaround_skylake_cpuid_bug ()
+{
+  char feature_string[49];
+  char processor_name_string[49];
+  static const char *bad_cpus[] = {" G44", " G45", " G39" /* , "6600" */ };
+  int i;
+
+  /* Example strings:                                   */
+  /* "Intel(R) Pentium(R) CPU G4400 @ 3.30GHz"          */
+  /* "Intel(R) Core(TM) i5-6600K CPU @ 3.50GHz"         */
+  /*                  ^               ^               ^ */
+  /*     0x80000002       0x80000003      0x80000004    */
+  /* We match out just the 0x80000003 part here. */
+
+  /* In their infinitive wisdom, Intel decided to use one register order for
+     the vendor string, and another for the processor name string.  We shuffle
+     things about here, rather than write a new variant of our assembly cpuid.
+  */
+
+  unsigned int eax, ebx, ecx, edx;
+  eax = __gmpn_cpuid (feature_string, 0x80000003);
+  ebx = ((unsigned int *)feature_string)[0];
+  edx = ((unsigned int *)feature_string)[1];
+  ecx = ((unsigned int *)feature_string)[2];
+
+  ((unsigned int *) (processor_name_string))[0] = eax;
+  ((unsigned int *) (processor_name_string))[1] = ebx;
+  ((unsigned int *) (processor_name_string))[2] = ecx;
+  ((unsigned int *) (processor_name_string))[3] = edx;
+
+  processor_name_string[16] = 0;
+
+  for (i = 0; i < sizeof (bad_cpus) / sizeof (char *); i++)
+    {
+      if (strstr (processor_name_string, bad_cpus[i]) != 0)
+	return 1;
+    }
+  return 0;
+}
+
+enum {BMI2_BIT = 8};
+
 void
 __gmpn_cpuvec_init (void)
 {
@@ -311,8 +354,9 @@ __gmpn_cpuvec_init (void)
 	      /* Some Haswells lack BMI2.  Let them appear as Sandybridges for
 		 now.  */
 	      __gmpn_cpuid (dummy_string, 7);
-	      if ((dummy_string[0 + 8 / 8] & (1 << (8 % 8))) != 0)
-		CPUVEC_SETUP_coreihwl;
+	      if ((dummy_string[0 + BMI2_BIT / 8] & (1 << (BMI2_BIT % 8))) == 0)
+		break;
+	      CPUVEC_SETUP_coreihwl;
 	      break;
 	    case 0x3d:		/* Broadwell */
 	    case 0x47:		/* Broadwell */
@@ -321,17 +365,23 @@ __gmpn_cpuvec_init (void)
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
+	      if ((dummy_string[0 + BMI2_BIT / 8] & (1 << (BMI2_BIT % 8))) == 0)
+		break;
 	      CPUVEC_SETUP_coreihwl;
 	      CPUVEC_SETUP_coreibwl;
 	      break;
 	    case 0x4e:		/* Skylake client */
 	    case 0x55:		/* Skylake server */
 	    case 0x5e:		/* Skylake */
-	    case 0x8e:		/* Cabylake */
-	    case 0x9e:		/* Cabylake */
+	    case 0x8e:		/* Kabylake */
+	    case 0x9e:		/* Kabylake */
 	      CPUVEC_SETUP_core2;
 	      CPUVEC_SETUP_coreinhm;
 	      CPUVEC_SETUP_coreisbr;
+	      if ((dummy_string[0 + BMI2_BIT / 8] & (1 << (BMI2_BIT % 8))) == 0)
+		break;
+	      if (gmp_workaround_skylake_cpuid_bug ())
+		break;
 	      CPUVEC_SETUP_coreihwl;
 	      CPUVEC_SETUP_coreibwl;
 	      CPUVEC_SETUP_skylake;

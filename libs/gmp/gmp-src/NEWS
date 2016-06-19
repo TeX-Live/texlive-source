@@ -1,8 +1,19 @@
-Copyright 1996, 1999-2015 Free Software Foundation, Inc.
+Copyright 1996, 1999-2016 Free Software Foundation, Inc.
 
 Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
 
+
+Changes between GMP version 6.1.0 and 6.1.1
+
+  BUGS FIXED
+  * Make Intel Broadwell configurations work on Windows.
+
+  FEATURES
+  * Work around faulty cpuid on some recent Intel chips (this allows GMP to run
+    on Skylake Pentiums).
+
+  * Support thumb-less ARM chips.
 
 Changes between GMP version 6.0.* and 6.1.0
 

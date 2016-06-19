@@ -1,3 +1,80 @@
+2016-06-18  Torbjörn Granlund  <tg@gmplib.org>
+
+	* Version 6.1.1 released.
+
+2015-03-20  Marc Glisse  <marc.glisse@inria.fr>
+
+	* configure.ac (WANT_ASSEMBLY): Remove.
+	(NO_ASM): Remove from CFLAGS, add to AC_DEFINE.
+	* tests/misc.c: Test NO_ASM instead of WANT_ASSEMBLY.
+
+2016-02-25  Pavel Kopyl  <p.kopyl@samsung.com>
+
+	* acinclude.m4 (GMP_ASM_UNDERSCORE): Tighten gurkmacka detection.
+
+2016-01-04 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
+	* gmp-h.in: Bump version.
+
+2016-01-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/cxx/clocale.c: Do not re-define localeconv for mingw.
+	* tests/misc/t-locale.c: Likewise (Thanks Alexander).
+
+2015-12-26  Torbjörn Granlund  <torbjorng@google.com>
+
+	* tests/misc.c (tests_start): Assert library version.
+
+2015-12-19  Marc Glisse  <marc.glisse@inria.fr>
+
+	* gmp-impl.h (fft_table_nk): Use gmp_uint_least32_t.
+	* mpn/generic/trialdiv.c (gmp_primes_ptab): Likewise.
+
+2015-12-14  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/fat/fat.c (gmp_workaround_skylake_cpuid_bug):
+	New function.
+	(__gmpn_cpuvec_init): Handle more BMI2 crippled CPUs.
+
+2015-12-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/arm32call.asm: bx->ret to support thumb-less chips 
+	  (thanks Martin Husemann).
+
+2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.sub: Fix spelling of kabylake.
+	* acinclude.m4: Likewise.
+	* mpn/x86_64/fat/fat.c: Likewise.
+
+2015-12-10 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* tests/misc/t-printf.c: Test a sequence of '%'.
+	* printf/doprnt.c: Avoid buffer overread with long long limbs.
+
+2015-12-06  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac (arm*): Conditionally define NOTHUMB.
+	Simplify and generalise.
+	* mpn/arm/arm-defs.m4 (ret): New macro, conditional on NOTHUMB.
+	* mpn/arm/*.asm: Use ret.
+
+2015-12-03  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Work around skylake cpuid bug.
+	Fix spelling of kabylake.
+
+2015-12-01  Torbjörn Granlund  <torbjorng@google.com>
+
+	* mpn/x86_64/coreibwl/mul_basecase.asm: Add FUNC_EXITs.
+
+2015-11-21 Marco Bodrato <bodrato@mail.dm.unipi.it>
+
+	* gmp-impl.h (MPN_TOOM22_MUL_MINSIZE): Consider ToomX2 limits
+	  (thanks Paul).
+	* tests/mpn/t-toom22.c: Keep on testing small sizes.
+
 2015-11-01 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
 	* Version 6.1.0 released.
@@ -673,7 +750,7 @@
 
 	* tune/tune-gcd-p.c: Add casts for C++ compatibility.
 
-	* tune/tuneup.c:  Add casts for C++ compatibility.
+	* tune/tuneup.c: Add casts for C++ compatibility.
 	(mpn_divrem_1_tune, mpn_mod_1_tune): Mark as extern "C".
 	(INSERT_FFTTAB): Produce sentinels differently to silence compiler.
 
@@ -701,12 +778,12 @@
 
 	* mpn/powerpc32/addmul_1.asm: Avoid negative stack pointer references.
 	* mpn/powerpc32/lshift.asm: Likewise.
-	* mpn/powerpc32/lshiftc.asm:  Likewise.
-	* mpn/powerpc32/p3-p7/aors_n.asm:  Likewise.
-	* mpn/powerpc32/rshift.asm:  Likewise.
-	* mpn/powerpc32/sec_tabselect.asm:  Likewise.
-	* mpn/powerpc32/submul_1.asm:  Likewise.
-	* mpn/powerpc32/vmx/mod_34lsub1.asm:  Likewise.
+	* mpn/powerpc32/lshiftc.asm: Likewise.
+	* mpn/powerpc32/p3-p7/aors_n.asm: Likewise.
+	* mpn/powerpc32/rshift.asm: Likewise.
+	* mpn/powerpc32/sec_tabselect.asm: Likewise.
+	* mpn/powerpc32/submul_1.asm: Likewise.
+	* mpn/powerpc32/vmx/mod_34lsub1.asm: Likewise.
 
 2014-10-13  Torbjörn Granlund  <torbjorng@google.com>
 
@@ -2033,8 +2110,8 @@
 
 	* mpn/powerpc64/mode64/divrem_1.asm: Remove explicit nop after CALL.
 	* mpn/powerpc64/mode64/divrem_2.asm: Likewise.
-	* mpn/powerpc64/mode64/mod_1_1.asm:  Likewise.
-	* mpn/powerpc64/mode64/mod_1_4.asm:  Likewise.
+	* mpn/powerpc64/mode64/mod_1_1.asm: Likewise.
+	* mpn/powerpc64/mode64/mod_1_4.asm: Likewise.
 
 2013-07-13  Torbjorn Granlund  <tege@gmplib.org>
 
@@ -2429,7 +2506,7 @@
 	* mpn/arm/dive_1.asm: New file.
 	* mpn/arm/v6/dive_1.asm: New file.
 
-	* mpn/arm/v6t2/mode1o.asm:  Make trivial change to avoid v6t2...
+	* mpn/arm/v6t2/mode1o.asm: Make trivial change to avoid v6t2...
 	* mpn/arm/v6/mode1o.asm: ...instruction, move file accordingly.
 
 	* mpn/powerpc64/mode64/invert_limb.asm: Put all multiplies low-limb first.
@@ -4777,7 +4854,7 @@
 	Reintroduce previously removed RP argument.
 	* mpn/x86_64/redc_1.asm: Likewise.
 
-	* mpn/generic/redc_2.c:  Remove mpn_sub_n call, return carry from
+	* mpn/generic/redc_2.c: Remove mpn_sub_n call, return carry from
 	mpn_add_n call.
 
 	* gmp-impl.h (mpn_redc_1, mpn_redc_2): Now return an mp_limb_t.
