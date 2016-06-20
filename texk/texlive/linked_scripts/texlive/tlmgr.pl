@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41258 2016-05-19 15:23:37Z karl $
+# $Id: tlmgr.pl 41476 2016-06-18 00:45:25Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41258 $';
-my $datrev = '$Date: 2016-05-19 17:23:37 +0200 (Thu, 19 May 2016) $';
+my $svnrev = '$Revision: 41476 $';
+my $datrev = '$Date: 2016-06-18 02:45:25 +0200 (Sat, 18 Jun 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1765,7 +1765,7 @@ sub restore_one_package {
     return ($F_ERROR);
   }
   $localtlpdb->remove_package($pkg);
-  TeXLive::TLPDB->_install_package($restore_file , 0, [] ,$localtlpdb);
+  TeXLive::TLPDB->_install_data($restore_file , 0, [] ,$localtlpdb);
   logpackage("restore: $pkg ($rev)");
   # now we have to read the .tlpobj file and add it to the DB
   my $tlpobj = TeXLive::TLPOBJ->new;
