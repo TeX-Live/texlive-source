@@ -797,6 +797,7 @@ with_sysroot
 enable_libtool_lock
 enable_largefile
 enable_precondition_checking
+enable_adobe_code
 enable_cxx_runtime_hack
 enable_cfftot1
 enable_mmafm
@@ -1467,8 +1468,8 @@ Optional Features:
   --disable-largefile     omit support for large files
   --enable-precondition-checking
                           include precondition checking assertions
-  --enable-cxx-runtime-hack  link C++ runtime statically
   --disable-adobe-code    do not include Adobe code
+  --enable-cxx-runtime-hack  link C++ runtime statically
   --disable-cfftot1       do not build the cfftot1 program
   --disable-mmafm         do not build the mmafm program
   --disable-mmpfb         do not build the mmpfb program
@@ -17990,7 +17991,6 @@ if test "$enable_adobe_code" = yes; then
 $as_echo "#define HAVE_ADOBE_CODE 1" >>confdefs.h
 
 fi
-
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking where template objects are stored" >&5
 $as_echo_n "checking where template objects are stored... " >&6; }
