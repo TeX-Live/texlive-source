@@ -234,7 +234,7 @@ class ErrorHandler { public:
      * @param val format arguments
      *
      * Shorthand for xmessage(@a anno, vformat(@a fmt, @a val)). */
-    int vxmessage(const String &anno, const char *fmt, va_list val) {
+    int xmessage(const String &anno, const char *fmt, va_list val) {
 	return xmessage(anno, vformat(fmt, val));
     }
     /** @brief Print an error message, adding landmark and other annotations.
@@ -257,8 +257,8 @@ class ErrorHandler { public:
      *
      * Shorthand for xmessage(@a landmark, @a anno, vformat(@a fmt, @a
      * val)). */
-    int vxmessage(const String &landmark, const String &anno,
-		  const char *fmt, va_list val) {
+    int xmessage(const String &landmark, const String &anno,
+		 const char *fmt, va_list val) {
 	return xmessage(landmark, anno, vformat(fmt, val));
     }
 

@@ -16,7 +16,7 @@ dnl
 m4_include([version.ac])[] dnl define lcdf_typetools_version
 AC_INIT([LCDF typetools (TeX Live)], lcdf_typetools_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([lcdf-typetools-src/NEWS])
+AC_CONFIG_SRCDIR([lcdf-typetools-src/NEWS.md])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
@@ -38,6 +38,13 @@ AC_ARG_ENABLE([precondition-checking],
   [if test "$enableval" = yes; then
     AC_DEFINE([HAVE_PRECONDITION_CHECKING], [1], [Define to include precondition checking assertions.])
   fi])
+
+AC_ARG_ENABLE([adobe-code],
+  [AS_HELP_STRING([--disable-adobe-code], [do not include Adobe code])],
+  [], [enable_adobe_code=yes])
+if test "$enable_adobe_code" = yes; then
+   AC_DEFINE([HAVE_ADOBE_CODE], [1], [Define to incldue Adobe code in output fonts.])
+fi
 
 AC_CXX_TEMPLATE_OBJS
 

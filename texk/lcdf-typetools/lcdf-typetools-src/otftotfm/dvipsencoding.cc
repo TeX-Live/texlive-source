@@ -1,6 +1,6 @@
 /* dvipsencoding.{cc,hh} -- store a DVIPS encoding
  *
- * Copyright (c) 2003-2012 Eddie Kohler
+ * Copyright (c) 2003-2016 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free

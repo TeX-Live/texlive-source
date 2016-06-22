@@ -1,6 +1,6 @@
 /* automatic.{cc,hh} -- code for automatic mode and interfacing with kpathsea
  *
- * Copyright (c) 2003-2014 Eddie Kohler
+ * Copyright (c) 2003-2016 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -336,7 +336,7 @@ update_odir(int o, String file, ErrorHandler *errh)
     if (!success && writable_texdir.find_left('\'') < 0 && directory.find_left('\'') < 0 && file.find_left('\'') < 0) {
 	// look for mktexupd script
 	if (!mktexupd_tried) {
-#ifdef WIN32
+#ifdef _WIN32
 	    mktexupd = "mktexupd";
 #else
 	    mktexupd = kpsei_string(kpsei_find_file("mktexupd", KPSEI_FMT_WEB2C));

@@ -59,7 +59,9 @@ class Type1CharstringGenInterp : public CharstringInterp { public:
 
     int nhints() const                  { return _stem_hstem.size(); }
     double max_flex_height() const      { return _max_flex_height; }
-    bool bad_flex() const               { return _bad_flex; }
+    bool had_flex() const               { return _had_flex; }
+    bool had_bad_flex() const           { return _had_bad_flex; }
+    bool had_hr() const                 { return _had_hr; }
 
     const Type1CharstringGen &csgen() const     { return _csgen; }
 
@@ -102,7 +104,9 @@ class Type1CharstringGenInterp : public CharstringInterp { public:
 
     // Flex
     double _max_flex_height;
-    bool _bad_flex;
+    bool _had_flex;
+    bool _had_bad_flex;
+    bool _had_hr;
 
     inline void gen_number(double, int = 0);
     inline void gen_command(int);

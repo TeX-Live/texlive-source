@@ -1,3 +1,8 @@
+2016-06-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import lcdf-typetools-2.106.
+	* configure.ac, version.ac: Adapted.
+
 2016-02-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.
