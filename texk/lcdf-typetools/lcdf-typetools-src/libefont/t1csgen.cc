@@ -2,7 +2,7 @@
 
 /* t1csgen.{cc,hh} -- Type 1 charstring generation
  *
- * Copyright (c) 1998-2012 Eddie Kohler
+ * Copyright (c) 1998-2016 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -293,7 +293,8 @@ Type1CharstringGen::callsubr_string(int subr)
 Type1CharstringGenInterp::Type1CharstringGenInterp(int precision)
     : _csgen(precision), _hint_csgen(precision),
       _direct_hr(false), _hr_storage(0),
-      _max_flex_height(0), _bad_flex(false)
+      _max_flex_height(0),
+      _had_flex(false), _had_bad_flex(false), _had_hr(false)
 {
 }
 
@@ -441,6 +442,7 @@ Type1CharstringGenInterp::act_hintmask(int cmd, const unsigned char *data, int n
             subrno = nsubrs;
 
         if (subrno >= 0) {
+            _had_hr = true;
             _csgen.gen_number(subrno);
             _csgen.gen_number(4);
             _csgen.gen_command(Cs::cCallsubr);
@@ -543,6 +545,7 @@ Type1CharstringGenInterp::act_flex(int cmd, const Point &p0, const Point &p1, co
 
     // generate flex commands
     if (v_ok || h_ok) {
+        _had_flex = true;
         Point p_reference = (h_ok ? Point(p3_4.x, p0.y) : Point(p0.x, p3_4.y));
 
         _csgen.gen_number(1);
@@ -586,7 +589,7 @@ Type1CharstringGenInterp::act_flex(int cmd, const Point &p0, const Point &p1, co
         if (flex_height > _max_flex_height)
             _max_flex_height = flex_height;
     } else {
-        _bad_flex = true;
+        _had_bad_flex = true;
         act_curve(cmd, p0, p1, p2, p3_4);
         act_curve(cmd, p3_4, p5, p6, p7);
     }

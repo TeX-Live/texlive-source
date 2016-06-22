@@ -1,6 +1,6 @@
 /* maket1font.{cc,hh} -- translate CFF fonts to Type 1 fonts
  *
- * Copyright (c) 2002-2012 Eddie Kohler
+ * Copyright (c) 2002-2016 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -50,7 +50,7 @@ class MakeType1CharstringInterp : public Type1CharstringGenInterp { public:
 
     // output
     Type1Font *_output;
-    bool _flex_message;
+    int _flex_message;
 
     // subroutines
     int _subr_bias;
@@ -146,7 +146,7 @@ MakeType1CharstringInterp::Subr::has_call(Subr *s) const
  **/
 
 MakeType1CharstringInterp::MakeType1CharstringInterp(int precision)
-    : Type1CharstringGenInterp(precision), _flex_message(false)
+    : Type1CharstringGenInterp(precision), _flex_message(0)
 {
 }
 
@@ -405,11 +405,23 @@ MakeType1CharstringInterp::run(const CharstringContext &g, Type1Charstring &out,
 {
     Type1CharstringGenInterp::run(g, out);
 
-    if (Type1CharstringGenInterp::bad_flex() && !_flex_message) {
+    if (Type1CharstringGenInterp::had_bad_flex() && !(_flex_message & 1)) {
 	errh->lwarning(landmark(errh), "complex flex hint replaced with curves");
-	errh->message("(This Type 2 format font contains flex hints prohibited by Type 1.\nI%,ve safely replaced them with ordinary curves.)");
-	_flex_message = true;
+	errh->message("(This font contains flex hints prohibited by Type 1. They%,ve been\nreplaced by ordinary curves.)");
+	_flex_message |= 1;
     }
+#if !HAVE_ADOBE_CODE
+    if (Type1CharstringGenInterp::had_flex() && !(_flex_message & 2)) {
+        errh->lwarning(landmark(errh), "flex hints required");
+        errh->message("(This program was compiled without Adobe code for flex hint support,\nso its output may not work on all devices.)");
+        _flex_message |= 2;
+    }
+    if (Type1CharstringGenInterp::had_hr() && !(_flex_message & 4)) {
+        errh->lwarning(landmark(errh), "hint replacement required");
+        errh->message("(This program was compiled without Adobe code for hint replacement,\nso its output may not work on all devices.)");
+        _flex_message |= 4;
+    }
+#endif
 }
 
 void

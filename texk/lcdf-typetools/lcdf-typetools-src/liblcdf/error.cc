@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2013 Eddie Kohler
+ * Copyright (c) 2001-2016 Eddie Kohler
  * Copyright (c) 2008 Meraki, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -464,6 +464,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	    s++;
 	    goto width_flags;
 	case 'z':
+	case 't':
 	    if (width_flag)
 		break;
 	    width_flag = *s++;
@@ -616,6 +617,9 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 #if SIZEOF_SIZE_T == 4
 	    case 'z':
 #endif
+#if SIZEOF_PTRDIFF_T == 4
+	    case 't':
+#endif
 		num = va_arg(val, unsigned);
 		if ((flags & cf_signed) && (int) num < 0)
 		    num = -(int) num, flags |= cf_negative;
@@ -629,6 +633,9 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 # endif
 # if SIZEOF_SIZE_T == 8
 	    case 'z':
+# endif
+# if SIZEOF_PTRDIFF_T == 8
+	    case 't':
 # endif
 	    case -64: {
 		uint64_t qnum = va_arg(val, uint64_t);
@@ -674,7 +681,7 @@ ErrorHandler::vxformat(int default_flags, const char *s, va_list val)
 	    }
 	    void* v = va_arg(val, void*);
 	    s2 = numbuf + NUMBUF_SIZE;
-	    s1 = do_number((uintptr_t) v, (char*) s2, 16, flags);
+	    s1 = do_number((unsigned long) v, (char*) s2, 16, flags);
 	    s1 = do_number_flags((char*) s1, (char*) s2, 16, flags | cf_alternate_form, precision, field_width);
 	    break;
 	}
@@ -783,7 +790,7 @@ ErrorHandler::debug(const char *fmt, ...)
 {
     va_list val;
     va_start(val, fmt);
-    vxmessage(String::make_stable(e_debug, 3), fmt, val);
+    xmessage(String::make_stable(e_debug, 3), fmt, val);
     va_end(val);
 }
 
@@ -792,7 +799,7 @@ ErrorHandler::message(const char *fmt, ...)
 {
     va_list val;
     va_start(val, fmt);
-    vxmessage(String::make_stable(e_info, 3), fmt, val);
+    xmessage(String::make_stable(e_info, 3), fmt, val);
     va_end(val);
 }
 
@@ -801,7 +808,7 @@ ErrorHandler::warning(const char *fmt, ...)
 {
     va_list val;
     va_start(val, fmt);
-    int r = vxmessage(String::make_stable(e_warning_annotated, 12), fmt, val);
+    int r = xmessage(String::make_stable(e_warning_annotated, 12), fmt, val);
     va_end(val);
     return r;
 }
@@ -811,7 +818,7 @@ ErrorHandler::error(const char *fmt, ...)
 {
     va_list val;
     va_start(val, fmt);
-    int r = vxmessage(String::make_stable(e_error, 3), fmt, val);
+    int r = xmessage(String::make_stable(e_error, 3), fmt, val);
     va_end(val);
     return r;
 }
@@ -821,7 +828,7 @@ ErrorHandler::fatal(const char *fmt, ...)
 {
     va_list val;
     va_start(val, fmt);
-    int r = vxmessage(String::make_stable(e_fatal, 4), fmt, val);
+    int r = xmessage(String::make_stable(e_fatal, 4), fmt, val);
     va_end(val);
     abort();
 }
@@ -832,7 +839,7 @@ ErrorHandler::ldebug(const String &landmark, const char *fmt, ...)
     va_list val;
     va_start(val, fmt);
     String l = make_landmark_anno(landmark);
-    vxmessage(String::make_stable(e_debug, 3) + l, fmt, val);
+    xmessage(String::make_stable(e_debug, 3) + l, fmt, val);
     va_end(val);
 }
 
@@ -842,7 +849,7 @@ ErrorHandler::lmessage(const String &landmark, const char *fmt, ...)
     va_list val;
     va_start(val, fmt);
     String l = make_landmark_anno(landmark);
-    vxmessage(String::make_stable(e_info, 3) + l, fmt, val);
+    xmessage(String::make_stable(e_info, 3) + l, fmt, val);
     va_end(val);
 }
 
@@ -852,7 +859,7 @@ ErrorHandler::lwarning(const String &landmark, const char *fmt, ...)
     va_list val;
     va_start(val, fmt);
     String l = make_landmark_anno(landmark);
-    int r = vxmessage(l + String::make_stable(e_warning_annotated, 12), fmt, val);
+    int r = xmessage(l + String::make_stable(e_warning_annotated, 12), fmt, val);
     va_end(val);
     return r;
 }
@@ -863,7 +870,7 @@ ErrorHandler::lerror(const String &landmark, const char *fmt, ...)
     va_list val;
     va_start(val, fmt);
     String l = make_landmark_anno(landmark);
-    int r = vxmessage(String::make_stable(e_error, 3) + l, fmt, val);
+    int r = xmessage(String::make_stable(e_error, 3) + l, fmt, val);
     va_end(val);
     return r;
 }
@@ -874,7 +881,7 @@ ErrorHandler::lfatal(const String &landmark, const char *fmt, ...)
     va_list val;
     va_start(val, fmt);
     String l = make_landmark_anno(landmark);
-    int r = vxmessage(String::make_stable(e_fatal, 4) + l, fmt, val);
+    int r = xmessage(String::make_stable(e_fatal, 4) + l, fmt, val);
     va_end(val);
     abort();
 }
@@ -1084,7 +1091,7 @@ ErrorVeneer::account(int level)
 ContextErrorHandler::ContextErrorHandler(ErrorHandler *errh, const char *fmt,
 					 ...)
     : ErrorVeneer(errh), _indent(String::make_stable("  ", 2)),
-      _context_printed(false)
+      _context_printed(false), _context_landmark("{l:}")
 {
     va_list val;
     va_start(val, fmt);

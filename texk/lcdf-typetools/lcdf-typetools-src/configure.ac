@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([lcdf-typetools], [2.105])
-AC_CONFIG_SRCDIR([NEWS])
+AC_INIT([lcdf-typetools], [2.106])
+AC_CONFIG_SRCDIR([NEWS.md])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([autoconf.h])
 AM_MAINTAINER_MODE
@@ -23,6 +23,13 @@ AC_ARG_ENABLE([precondition-checking],
   [if test "$enableval" = yes; then
     AC_DEFINE([HAVE_PRECONDITION_CHECKING], [1], [Define to include precondition checking assertions.])
   fi])
+
+AC_ARG_ENABLE([adobe-code],
+  [AS_HELP_STRING([--disable-adobe-code], [do not include Adobe code])],
+  [], [enable_adobe_code=yes])
+if test "$enable_adobe_code" = yes; then
+   AC_DEFINE([HAVE_ADOBE_CODE], [1], [Define to incldue Adobe code in output fonts.])
+fi
 
 
 dnl AN_MAKEVAR([AR], [AC_PROG_AR])

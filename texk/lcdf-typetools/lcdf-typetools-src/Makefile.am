@@ -1,12 +1,12 @@
 ## Process this file with automake to produce Makefile.in
-AUTOMAKE_OPTIONS = foreign check-news
+AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = liblcdf libefont @SELECTED_SUBDIRS@
 DIST_SUBDIRS = liblcdf libefont cfftot1 mmafm mmpfb otfinfo otftotfm \
 	t1dotlessj t1lint t1rawafm t1reencode t1testpage ttftotype42
 
 EXTRA_DIST = \
-	ONEWS README.md \
+	ONEWS README.md NEWS.md \
 	lcdf-typetools.spec \
 	include/config.h \
 	include/lcdf/bezier.hh \

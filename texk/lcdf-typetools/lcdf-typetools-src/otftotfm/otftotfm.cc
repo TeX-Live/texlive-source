@@ -1,6 +1,6 @@
 /* otftotfm.cc -- driver for translating OpenType fonts to TeX metrics
  *
- * Copyright (c) 2003-2014 Eddie Kohler
+ * Copyright (c) 2003-2016 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -305,7 +305,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     if (!error_message)
 	errh->message("Usage: %s [OPTION]... FONT", program_name);
     else
-	errh->vxmessage(ErrorHandler::e_error, error_message, val);
+	errh->xmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
 }
@@ -716,9 +716,13 @@ output_pl(Metrics &metrics, const String &ps_name, int boundary_char,
 	    if (i >= 256)
 		continue;
 
+            char* expected_name_end;
 	    if (expected_name
-		&& name.length() >= expected_name.length()
-		&& memcmp(name.c_str(), expected_name.c_str(), expected_name.length()) == 0)
+                && (name == expected_name
+                    || (name.length() == 7
+                        && memcmp(name.data(), "uni00", 5) == 0
+                        && strtol(name.c_str() + 3, &expected_name_end, 16) == i
+                        && *expected_name_end == 0)))
 		glyph_ids.push_back("C " + String((char)i));
 	    else
 		glyph_ids.push_back("D " + String(i));
@@ -2171,7 +2175,7 @@ main(int argc, char *argv[])
 
 	  case VERSION_OPT:
 	    printf("otftotfm (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2014 Eddie Kohler\n\
+	    printf("Copyright (C) 2002-2016 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

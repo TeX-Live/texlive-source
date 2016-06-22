@@ -35,6 +35,9 @@ class PermString { struct Doodad; public:
     inline int length() const;
     char operator[](int i) const;
 
+    inline const char* data() const {
+        return _rep;
+    }
     inline const char *c_str() const {
 	return _rep;
     }
