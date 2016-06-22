@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2016 Free Software Foundation, Inc.
 
-timestamp='2016-06-14'
+timestamp='2016-06-20'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1397,7 +1397,7 @@ case $os in
 	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
 	      | -chorusos* | -chorusrdb* | -cegcc* \
 	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
-	      | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
+	      | -midipix* | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
 	      | -linux-newlib* | -linux-musl* | -linux-uclibc* \
 	      | -uxpv* | -beos* | -mpeix* | -udk* | -moxiebox* \
 	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
