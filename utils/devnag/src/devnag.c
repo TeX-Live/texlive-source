@@ -1,5 +1,5 @@
 /*  $Id: devnag.c,v 1.15 2008-03-09 15:57:59 icebearsoft Exp $
-    Version 2.16
+    Version 2.17
 
  *
  Preprocessor for Devanagari for TeX package
@@ -282,10 +282,18 @@
 
  Character and string handling commands were improved by TeX Live developers,
  these commands cuased errors in several platforms.
+*/
 
- */
+/*
+ Modification in version 2.17
 
-const char *version = "2.16";
+ Character '\0' replaced with an empty string so that it compiles
+ using a C++ compiler.
+ The patch is taken from here:
+ https://sourceforge.net/p/miktex/patches/11/
+*/
+
+const char *version = "2.17";
 
 #include <stdio.h>
 #include <ctype.h>
@@ -1575,6 +1583,7 @@ void dnproc(void) {
    int test_val;                           /* Marc Csernel */
    char savchr = 0;
    char wrong[10];
+   const char *empty = "";
    brace_lev = 1;
    saved = FALSE;
    dnready = FALSE;
@@ -1801,13 +1810,13 @@ void dnproc(void) {
 	 }
 	 break;
        case ill_char:
-	 err_ill('\0');
+	 err_ill(empty);
 	 break;
        case end_of_file:
 	 fputs("Error: missing }", stderr);
 	 exit(1);
        default:
-	 if (symbol < 0) err_ill('\0');  /* accented character inside dn mode */
+	 if (symbol < 0) err_ill(empty);  /* accented character inside dn mode */
 	 i = 0;
 	 do { i++; } while ((i != 10) && (chset4[i-1] != symbol));
 	 if (i == 10) put_ch(symbol);
