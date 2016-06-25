@@ -1,3 +1,10 @@
+2016-06-25  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	Modify to make PDF/A generation a bit easier.
+	* pdfobj.c: Do not compress XMP Metadata.
+	* cidtype2.c, type1.c, type1c.c: Always write CIDSet for CIDType2 and
+	CharSet for Type1 font. Check consistency of glyph width.
+
 2016-06-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvipdfmx.c: Disable overriding "D" option setting from
