@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 40652 $';
+my $svnrev = '$Revision: 41437 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -57,9 +57,6 @@ $ReleaseYear = 2016;
 # same as the release year, or any number of releases earlier.
 # Generally not tested.
 $MinRelease = 2016;
-
-# users can NOT upgrade due to internal changes, force a full installation
-#$MinRelease = $ReleaseYear;
 
 # Meta Categories do not ship files, but only call for other packages.
 our @MetaCategories = qw/Collection Scheme/;

@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 40678 2016-04-22 13:16:07Z siepo $
+# $Id: fmtutil.pl 41529 2016-06-23 03:12:14Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 40678 2016-04-22 13:16:07Z siepo $';
-my $lastchdate = '$Date: 2016-04-22 15:16:07 +0200 (Fri, 22 Apr 2016) $';
+my $svnid = '$Id: fmtutil.pl 41529 2016-06-23 03:12:14Z preining $';
+my $lastchdate = '$Date: 2016-06-23 05:12:14 +0200 (Thu, 23 Jun 2016) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 40678 $';
+my $svnrev = '$Revision: 41529 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -91,7 +91,9 @@ if (win32()) {
 our $texmfconfig = $TEXMFCONFIG;
 our $texmfvar    = $TEXMFVAR;
 our $alldata;
-our %opts = ( quiet => 0 );
+# command line options with defaults
+# 20160623 - switch to turn on strict mode
+our %opts = ( quiet => 0 , strict => 1 );
 
 # make a list of all the commands (as opposed to options), so we can
 # reasonably check for multiple commands being (erroneously) given.
@@ -117,7 +119,7 @@ our @cmdline_options = (  # in same order as help message
   "no-error-if-no-format",
   "nohash",
   "recorder",
-  "strict",
+  "strict!",
   "quiet|silent|q",
   "catcfg",
   "dolinks",
@@ -1280,9 +1282,9 @@ Options:
   --no-error-if-no-engine=ENGINE1,ENGINE2,...
                           exit successfully even if a required engine
                            is missing, if it is included in the list.
+  --no-strict             don't exit with bad status if a format fails to build
   --nohash                don't update ls-R files
   --recorder              pass the -recorder option and save .fls files
-  --strict                exit with bad status if a format fails to build
   --quiet                 be silent
   --catcfg                (does nothing, exists for compatibility)
   --dolinks               (does nothing, exists for compatibility)
