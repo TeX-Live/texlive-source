@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 41175 $';
+my $svnrev = '$Revision: 41437 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2755,14 +2755,15 @@ sub _create_config_files {
   my @lines = ();
   my $usermode = $tlpdb->setting( "usertree" );
   if (-r "$root/$headfile") {
-    # we might be in user mode and do *not* want that the generation
-    # of the configuration file just boils out.
     open (INFILE, "<$root/$headfile")
       || die "open($root/$headfile) failed, but -r ok: $!";
     @lines = <INFILE>;
     close (INFILE);
-  } else {
-    die ("Giving up.") if (!$usermode);
+  } elsif (!$usermode) {
+    # we might be in user mode and then do *not* want the generation
+    # of the configuration file to just bail out.
+    tldie ("TLUtils::_create_config_files: giving up, unreadable: "
+           . "$root/$headfile\n")
   }
   push @lines, @$tlpdblinesref;
   if (defined($localconf) && -r $localconf) {
