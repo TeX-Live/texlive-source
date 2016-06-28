@@ -1,6 +1,6 @@
 /* types.h: general types for kpathsea.
 
-   Copyright 1993, 1995, 1996, 2005, 2008-2014 Karl Berry.
+   Copyright 1993, 1995, 1996, 2005, 2008-2014, 2016 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -292,6 +292,16 @@ typedef struct kpathsea_instance {
     struct passwd the_passwd;
     int __system_allow_multiple_cmds;
 #endif /* WIN32 && !__MINGW32__ */
+#if defined(WIN32)
+    int Is_cp932_system;
+    int File_system_codepage;
+    int getc_len;
+    int getc_buff[4];
+    wchar_t wcbuf;
+    int st_len;
+    char st_buff[5];
+    char *st_str;
+#endif
 } kpathsea_instance;
 
 /* these come from kpathsea.c */

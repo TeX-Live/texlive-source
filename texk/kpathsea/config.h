@@ -1,7 +1,7 @@
 /* config.h: master configuration file, included first by all compilable
    source files (not headers).
 
-   Copyright 1993, 1995, 1996, 1997, 2008, 2010, 2011 Karl Berry.
+   Copyright 1993, 1995, 1996, 1997, 2008, 2010, 2011, 2016 Karl Berry.
    Copyright 2000, 2003, 2004, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -95,12 +95,13 @@
   but before "lib.h". FP.
 */
 #if defined (WIN32) || defined (_WIN32)
-#include <kpathsea/knj.h>
 #ifdef __MINGW32__
 #include <kpathsea/mingw32.h>
 #else
 #include <kpathsea/win32lib.h>
 #endif
+#include <kpathsea/types.h>
+#include <kpathsea/knj.h>
 #endif
 
 #if defined(WIN32) || defined(WRAP_SNPRINTF)

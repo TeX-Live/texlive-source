@@ -1,6 +1,6 @@
 /* xgetcwd.c: a from-scratch version of getwd.  Ideas from tcsh 5.20 source.
 
-   Copyright 1992, 1994, 1996, 2008, 2011 Karl Berry.
+   Copyright 1992, 1994, 1996, 2008, 2011, 2016 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -61,8 +61,10 @@ xgetcwd (void)
     for (pp = path; *pp; pp++) {
         if (*pp == '\\')
             *pp = '/';
+#if defined (KPSE_COMPAT_API)
         else if (IS_KANJI(pp))
             pp++;
+#endif
     }
 #endif
 

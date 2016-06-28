@@ -3,6 +3,7 @@
    Copyright 1999 Karl Berry.
    Copyright 2005 Olaf Weber.
    Copyright 2011 Peter Breitenlohner.
+   Copyright 2016 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -100,10 +101,10 @@ from_kanji (char *str) {
 }
 
 static void
-do_kanji (void) {
+do_kanji (kpathsea kpse) {
     const char **p;
 
-    printf("\nAssuming CP %s 932\n", is_cp932_system ? "is" : "is not");
+    printf("\nAssuming CP %s 932\n", kpse->Is_cp932_system ? "is" : "is not");
 
     for (p = ktab; *p; p++) {
         char *q = to_kanji(*p);
@@ -117,18 +118,18 @@ do_kanji (void) {
 }
 
 static void
-kanji_test(void) {
-    int save_cp932 = is_cp932_system;
+kanji_test(kpathsea kpse) {
+    int save_cp932 = kpse->Is_cp932_system;
 
     printf("\nTesting 2-Byte Kanji (CP 932, SJIS) codes with 'K' representing 0x81\n");
 
-    is_cp932_system = 932;	/* pretend CP is 932 */
-    do_kanji();
+    kpse->Is_cp932_system = 932;	/* pretend CP is 932 */
+    do_kanji(kpse);
 
-    is_cp932_system = 0;	/* pretend CP is not 932 */
-    do_kanji();
+    kpse->Is_cp932_system = 0;	/* pretend CP is not 932 */
+    do_kanji(kpse);
 
-    is_cp932_system = save_cp932;
+    kpse->Is_cp932_system = save_cp932;
 }
 #endif
 
@@ -150,7 +151,7 @@ int main(int argc, char **argv)
     }
 
 #if defined (WIN32)
-    kanji_test();
+    kanji_test(kpse);
 #endif
 
     return 0;

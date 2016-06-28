@@ -1,6 +1,6 @@
 /* hash.c: hash table operations.
 
-   Copyright 1994-2000, 2002, 2005, 2008, 2012
+   Copyright 1994-2000, 2002, 2005, 2008, 2012, 2016
    Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ hash (hash_table_type table,  const_string key)
   /* Our keys aren't often anagrams of each other, so no point in
      weighting the characters.  */
   while (*key != 0)
-#if defined(WIN32)
+#if defined (WIN32) && defined (KPSE_COMPAT_API)
     if (IS_KANJI(key)) {
       n = (n + n + (unsigned)(*key++)) % table.size;
       n = (n + n + (unsigned)(*key++)) % table.size;

@@ -1,7 +1,7 @@
 /* expand.c: general expansion.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2005, 2008, 2009, 2011,
-             2012 Karl Berry.
+             2012, 2016 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -226,7 +226,7 @@ kpathsea_path_expand (kpathsea kpse, const_string path)
   for (p = zpath; *p; p++)
     if (*p == '\\')
       *p = '/';
-    else if (IS_KANJI(p))
+    else if (kpathsea_IS_KANJI(kpse, p))
       p++;
 
   ypath = zpath;
@@ -343,7 +343,7 @@ brace_expand (kpathsea kpse, const_string *text)
                 for (p+=2; *p!='}';++p);
         }
 #if defined(WIN32)
-        else if (IS_KANJI(p))
+        else if (kpathsea_IS_KANJI(kpse, p))
             p++;
 #endif
     }

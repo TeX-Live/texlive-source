@@ -1,6 +1,6 @@
 /* db.c: an external database to avoid filesystem lookups.
 
-   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2014 Karl Berry.
+   Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2014, 2016 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -106,7 +106,7 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
 
 #if defined(WIN32)
       for (pp = line; *pp; pp++) {
-        if (IS_KANJI(pp))
+        if (kpathsea_IS_KANJI(kpse, pp))
           pp++;
         else
           *pp = TRANSFORM(*pp);

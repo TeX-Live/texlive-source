@@ -172,7 +172,7 @@ void texlive_gs_init(void)
                1 if succeeded
 */
 
-int getlongpath(char *buff, char *input, int len)
+int kpathsea_getlongpath(kpathsea kpse, char *buff, char *input, int len)
 {
    HANDLE hnd;
    WIN32_FIND_DATA ffd;
@@ -202,7 +202,7 @@ UNC name
       p += 2;
       r += 2;
       while(*p != '\\' && *p) {
-         if (IS_KANJI(p)) {
+         if (kpathsea_IS_KANJI(kpse, p)) {
             cnt++;
             if(cnt > len) return 0;
             *r++ = *p++;
@@ -216,7 +216,7 @@ UNC name
       *r++ = '/';
       if(*p) p++;
       while(*p != '\\' && *p) {
-         if (IS_KANJI(p)) {
+         if (kpathsea_IS_KANJI(kpse, p)) {
             cnt++;
             if(cnt > len) return 0;
             *r++ = *p++;
@@ -244,7 +244,7 @@ drive name
    }
 
    for( ; *p; p++) {
-      if(IS_KANJI(p)) {
+      if(kpathsea_IS_KANJI(kpse, p)) {
          p++;
          continue;
       }
@@ -292,7 +292,7 @@ file itself
 /* Sync'ed with Emacs 19.34.6 by Marc Paquette <marcpa@cam.org> */
 /* Adapted to fpTeX 0.4 by Fabrice Popineau <Fabrice.Popineau@supelec.fr> */
 
-char * get_home_directory()
+char * kpathsea_get_home_directory(kpathsea kpse)
 {
   char *p;
   char *home = getenv("HOME");
@@ -301,7 +301,7 @@ char * get_home_directory()
   if(home) {
     home = xstrdup(home);
     for(p = home; *p; p++) {
-      if(IS_KANJI(p)) {
+      if(kpathsea_IS_KANJI(kpse, p)) {
         p++;
         continue;
       }
@@ -360,7 +360,7 @@ kpathsea_init_user_info (kpathsea kpse)
 
    /* Ensure HOME and SHELL are defined. */
 
-   home = get_home_directory();
+   home = kpathsea_get_home_directory(kpse);
    if (home) {
       putenv(concat("HOME=", home));
    }
@@ -381,7 +381,7 @@ kpathsea_init_user_info (kpathsea kpse)
    }
 
    /* Set dir and shell from environment variables. */
-   strcpy (kpse->the_passwd.pw_dir, get_home_directory());
+   strcpy (kpse->the_passwd.pw_dir, kpathsea_get_home_directory(kpse));
    strcpy (kpse->the_passwd.pw_shell, getenv ("SHELL"));
 }
 
@@ -424,6 +424,16 @@ int win32_system(const char *cmd)
 }
 
 #if defined (KPSE_COMPAT_API)
+int getlongpath(char *buff, char *input, int len)
+{
+  return kpathsea_getlongpath(kpse_def, buff, input, len);
+}
+
+char * get_home_directory(void)
+{
+  return kpathsea_get_home_directory(kpse_def);
+}
+
 int 
 getuid (void) 
 { 

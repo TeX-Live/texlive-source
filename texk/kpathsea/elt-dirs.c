@@ -1,6 +1,6 @@
 /* elt-dirs.c: Translate a path element to its corresponding director{y,ies}.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010, 2011 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010, 2011, 2016 Karl Berry.
    Copyright 1997, 1998, 1999, 2000, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -133,7 +133,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
 #if defined (WIN32)
   strcpy(dirname, FN_STRING(name));
   strcat(dirname, "/*.*");         /* "*.*" or "*" -- seems equivalent. */
-  get_wstring_from_fsyscp(dirname, dirnamew);
+  get_wstring_from_mbstring(kpse->File_system_codepage, dirname, dirnamew);
   hnd = FindFirstFileW(dirnamew, &find_file_data);
 
   if (hnd == INVALID_HANDLE_VALUE) {
@@ -158,7 +158,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
       int links;
 
       /* Construct the potential subdirectory name.  */
-      potname = get_fsyscp_from_wstring(find_file_data.cFileName, potname=NULL);
+      potname = get_mbstring_from_wstring(kpse->File_system_codepage, find_file_data.cFileName, potname=NULL);
       fn_str_grow (&name, potname);
       free(potname);
 
@@ -368,7 +368,7 @@ kpathsea_normalize_path (kpathsea kpse, string elt)
   for (i = 0; elt[i]; i++) {
     if (elt[i] == '\\')
       elt[i] = '/';
-    else if (IS_KANJI(elt + i))
+    else if (kpathsea_IS_KANJI(kpse, elt + i))
       i++;
   }
 #endif

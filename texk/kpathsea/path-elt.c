@@ -1,6 +1,6 @@
 /* path-elt.c: return the stuff between colons.
 
-   Copyright 1993, 1996 2008 Karl Berry.
+   Copyright 1993, 1996 2008, 2016 Karl Berry.
    Copyright 1997, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -56,7 +56,7 @@ element (kpathsea kpse, const_string passed_path,  boolean env_p)
     if (*p == '{') ++brace_level;
     else if (*p == '}') --brace_level;
 #if defined(WIN32)
-    else if (IS_KANJI(p))
+    else if (kpathsea_IS_KANJI(kpse, p))
         p++;
 #endif
     p++;
