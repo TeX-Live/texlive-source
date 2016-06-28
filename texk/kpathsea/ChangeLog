@@ -1,3 +1,11 @@
+2016-06-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* config.h, db.c, elt-dirs.c, expand.c, find-suffix.c, hash.c, knj.c,
+	knj.h, kpsewhich.c, make-suffix.c, path-elt.c, progname.c, readable.c,
+	tilde.c, types.h, variable.c, win32lib.c, win32lib.h, xbasename.c,
+	xdirname.c, xdirtest.c, xgetcwd.c: Eliminate global and static
+	variables (w32 only).
+
 2016-05-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex-file.c: Fix a bug that TEXMFOUTPUT does not work (w32 only).

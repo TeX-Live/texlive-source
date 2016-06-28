@@ -1,6 +1,6 @@
 /* progname.c: the executable name we were invoked as; general initialization.
 
-   Copyright 1994, 1996, 1997, 2008-2013 Karl Berry.
+   Copyright 1994, 1996, 1997, 2008-2013, 2016 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -501,14 +501,14 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
   }
 
 #if defined(WIN32)
-  if (!file_system_codepage)
-    file_system_codepage = AreFileApisANSI() ? GetACP() : GetOEMCP();
-  cp = file_system_codepage;
+  if (!kpse->File_system_codepage)
+    kpse->File_system_codepage = AreFileApisANSI() ? GetACP() : GetOEMCP();
+  cp = kpse->File_system_codepage;
   if (cp == 932 || cp == 936 || cp == 950) {
-    is_cp932_system = cp;
+    kpse->Is_cp932_system = cp;
   }
   else
-    is_cp932_system = 0;
+    kpse->Is_cp932_system = 0;
 
 #if defined(__MINGW32__)
   /* Set various info about user. Among many things,
@@ -585,7 +585,7 @@ kpathsea_set_program_name (kpathsea kpse,  const_string argv0,
     for (fp = path; fp && *fp; fp++)
         if (IS_DIR_SEP(*fp)) *fp = DIR_SEP;
 #else /* !__MINGW32__ */
-    if (getlongpath(path, short_path, PATH_MAX) == 0)
+    if (kpathsea_getlongpath(kpse, path, short_path, PATH_MAX) == 0)
         FATAL1("Can't get long name for %s.\n", short_path);
     if ((hnd = FindFirstFile(short_path, &ffd)) == INVALID_HANDLE_VALUE)
         FATAL1("The following path points to an invalid file : %s\n", path);

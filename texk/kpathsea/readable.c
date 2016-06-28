@@ -1,6 +1,6 @@
 /* readable.c: check if a filename is a readable non-directory file.
 
-   Copyright 1993, 1995, 1996, 2008, 2011, 2012 Karl Berry.
+   Copyright 1993, 1995, 1996, 2008, 2011, 2012, 2016 Karl Berry.
    Copyright 1998, 1999, 2000, 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -38,10 +38,10 @@
 #elif defined (WIN32)
 /* st must be an unsigned int under Windows */
 static boolean
-READABLE(const_string fn, unsigned int st)
+READABLE(kpathsea kpse, const_string fn, unsigned int st)
 {
   wchar_t *fnw;
-  fnw = get_wstring_from_fsyscp(fn, fnw=NULL);
+  fnw = get_wstring_from_mbstring(kpse->File_system_codepage, fn, fnw=NULL);
   if ((st = GetFileAttributesW(fnw)) != 0xFFFFFFFF) {
       /* succeeded */
       errno = 0;
@@ -82,7 +82,11 @@ kpathsea_readable_file (kpathsea kpse, string name)
 #endif
 
   kpathsea_normalize_path (kpse, name);
+#ifdef WIN32
+  if (READABLE (kpse, name, st)) {
+#else
   if (READABLE (name, st)) {
+#endif
       return name;
 #ifdef ENAMETOOLONG
   } else if (errno == ENAMETOOLONG) {
@@ -95,7 +99,7 @@ kpathsea_readable_file (kpathsea kpse, string name)
           if (c_len <= NAME_MAX)
               t = s;
 #if defined(WIN32)
-          if (IS_KANJI (s)) {
+          if (kpathsea_IS_KANJI (kpse, s)) {
               s++;
               c_len += 2;
               continue;
@@ -118,7 +122,11 @@ kpathsea_readable_file (kpathsea kpse, string name)
 
       /* Perhaps some other error will occur with the truncated name, so
          let's call access again.  */
+#ifdef WIN32
+      if (READABLE (kpse, name, st)) /* Success.  */
+#else
       if (READABLE (name, st)) /* Success.  */
+#endif
           return name;
 #endif /* ENAMETOOLONG */
   } else { /* Some other error.  */

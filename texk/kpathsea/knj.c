@@ -20,36 +20,15 @@
 #include <kpathsea/debug.h>
 #include <wchar.h>
 
-int is_cp932_system, file_system_codepage;
-
-int isknj(int c)
+static int
+is_include_space(const char *s)
 {
-  c &= 0xff;
-  switch (is_cp932_system) {
-  case 932:
-    return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
-  case 936:
-    return(c>=0x81 && c<=0xfe);
-  case 950:
-    return((c>=0xa1 && c<=0xc6) || (c>=0xc9 && c<=0xf9));
-  default:
-    return(0);
-  }
-}
-
-int isknj2(int c)
-{
-  c &= 0xff;
-  switch (is_cp932_system) {
-  case 932:
-    return(c>=0x40 && c<=0xfc && c!=0x7f);
-  case 936:
-    return(c>=0x40 && c<=0xfe && c!=0x7f);
-  case 950:
-    return((c>=0x40 && c<=0x7e) || (c>=0xa1 && c<=0xfe));
-  default:
-    return(0);
-  }
+    char *p;
+    p = strchr(s, ' ');
+    if(p) return 1;
+    p = strchr(s, '\t');
+    if(p) return 1;
+    return 0;
 }
 
 /*
@@ -96,27 +75,55 @@ get_mbstring_from_wstring(int cp, const wchar_t *wstr, char *mbstr)
   return mbstr;
 }
 
+int
+kpathsea_isknj(kpathsea kpse, int c)
+{
+  c &= 0xff;
+  switch (kpse->Is_cp932_system) {
+  case 932:
+    return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
+  case 936:
+    return(c>=0x81 && c<=0xfe);
+  case 950:
+    return((c>=0xa1 && c<=0xc6) || (c>=0xc9 && c<=0xf9));
+  default:
+    return(0);
+  }
+}
+
+int
+kpathsea_isknj2(kpathsea kpse, int c)
+{
+  c &= 0xff;
+  switch (kpse->Is_cp932_system) {
+  case 932:
+    return(c>=0x40 && c<=0xfc && c!=0x7f);
+  case 936:
+    return(c>=0x40 && c<=0xfe && c!=0x7f);
+  case 950:
+    return((c>=0x40 && c<=0x7e) || (c>=0xa1 && c<=0xfe));
+  default:
+    return(0);
+  }
+}
+
 /*
   xfopen by file system codepage
 */
 FILE *
-fsyscp_xfopen (const char *filename, const char *mode)
+kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
 {
     FILE *f;
     wchar_t *fnamew, modew[4];
     int i;
-#if defined (KPSE_COMPAT_API)
-    kpathsea kpse;
-#endif
+
     assert(filename && mode);
 
-    fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
+    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, filename, fnamew=NULL);
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
     if (f == NULL)
         FATAL_PERROR(filename);
-#if defined (KPSE_COMPAT_API)
-    kpse = kpse_def;
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
         DEBUGF_START ();
         fprintf (stderr, "fsyscp_xfopen(%s [", filename);
@@ -128,7 +135,6 @@ fsyscp_xfopen (const char *filename, const char *mode)
 #endif
         DEBUGF_END ();
     }
-#endif
     free(fnamew);
 
     return f;
@@ -138,22 +144,18 @@ fsyscp_xfopen (const char *filename, const char *mode)
   fopen by file system codepage
 */
 FILE *
-fsyscp_fopen (const char *filename, const char *mode)
+kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
 {
     FILE *f;
     wchar_t *fnamew, modew[4];
     int i;
-#if defined (KPSE_COMPAT_API)
-    kpathsea kpse;
-#endif
+
     assert(filename && mode);
 
-    fnamew = get_wstring_from_fsyscp(filename, fnamew=NULL);
+    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, filename, fnamew=NULL);
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
-#if defined (KPSE_COMPAT_API)
     if (f != NULL) {
-        kpse = kpse_def;
         if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
             DEBUGF_START ();
             fprintf (stderr, "fsyscp_fopen(%s [", filename);
@@ -166,35 +168,19 @@ fsyscp_fopen (const char *filename, const char *mode)
             DEBUGF_END ();
         }
     }
-#endif
     free(fnamew);
 
     return f;
 }
 
-/*
-  popen by file system codepage
-*/
-static int
-is_include_space(const char *s)
-{
-    char *p;
-    p = strchr(s, ' ');
-    if(p) return 1;
-    p = strchr(s, '\t');
-    if(p) return 1;
-    return 0;
-}
 
 FILE *
-fsyscp_popen (const char *command, const char *mode)
+kpathsea_fsyscp_popen (kpathsea kpse, const char *command, const char *mode)
 {
     FILE *f;
     wchar_t *commandw, modew[4];
     int i;
-#if defined (KPSE_COMPAT_API)
-    kpathsea kpse;
-#endif
+
     assert(command && mode);
 
     if (is_include_space (command)) {
@@ -208,16 +194,15 @@ fsyscp_popen (const char *command, const char *mode)
             *q++ = *p++;
         *q++ = '\"';
         *q = '\0';
-        commandw = get_wstring_from_fsyscp(command2, commandw=NULL);
+        commandw = get_wstring_from_mbstring(kpse->File_system_codepage,command2, commandw=NULL);
         free (command2);
     } else {
-        commandw = get_wstring_from_fsyscp(command, commandw=NULL);
+        commandw = get_wstring_from_mbstring(kpse->File_system_codepage,command, commandw=NULL);
     }
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wpopen(commandw, modew);
-#if defined (KPSE_COMPAT_API)
+
     if (f != NULL) {
-        kpse = kpse_def;
         if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
             DEBUGF_START ();
             fprintf (stderr, "fsyscp_popen(%s [", command);
@@ -230,7 +215,7 @@ fsyscp_popen (const char *command, const char *mode)
             DEBUGF_END ();
         }
     }
-#endif
+
     free (commandw);
 /* We use always binary mode on Windows */
     if(f) _setmode (fileno (f), _O_BINARY);
@@ -239,7 +224,7 @@ fsyscp_popen (const char *command, const char *mode)
 }
 
 int
-get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
+kpathsea_get_command_line_args_utf8 (kpathsea kpse, const_string enc, int *p_ac, char ***p_av)
 {
     int argc;
     string *argv;
@@ -258,8 +243,8 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
       HANDLE hStderr;
       hStderr = GetStdHandle( STD_ERROR_HANDLE );
 #endif /* DEBUG */
-      file_system_codepage = CP_UTF8;
-      is_cp932_system = 0;
+      kpse->File_system_codepage = CP_UTF8;
+      kpse->Is_cp932_system = 0;
       argvw = CommandLineToArgvW(GetCommandLineW(), &argcw);
       argc = argcw;
       argv = xmalloc(sizeof(char *)*(argcw+1));
@@ -275,7 +260,7 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
       argv[argcw] = NULL;
       *p_ac = argc;
       *p_av = argv;
-      return file_system_codepage;
+      return kpse->File_system_codepage;
     } else {
       return 0;
     }
@@ -285,7 +270,7 @@ get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
   spawnvp by file system codepage
 */
 int
-fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
+kpathsea_fsyscp_spawnvp (kpathsea kpse, int mode, const char *command, const char* const *argv)
 {
     int ret;
     wchar_t *commandw, **argvw, **pw;
@@ -296,11 +281,11 @@ fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
     for (i = 0, p = argv; *p; p++)
       i++;
     argvw = xcalloc (i + 3, sizeof (wchar_t *));
-    commandw = get_wstring_from_fsyscp(command, commandw=NULL);
+    commandw = get_wstring_from_mbstring(kpse->File_system_codepage, command, commandw=NULL);
     p = argv;
     pw = argvw;
     while (*p) {
-      *pw = get_wstring_from_fsyscp(*p, *pw=NULL);
+      *pw = get_wstring_from_mbstring(kpse->File_system_codepage, *p, *pw=NULL);
       p++;
       pw++;
     }
@@ -323,7 +308,7 @@ fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
   system by file system codepage
 */
 int
-fsyscp_system (const char *cmd)
+kpathsea_fsyscp_system (kpathsea kpse, const char *cmd)
 {
     const char *p;
     char  *q;
@@ -353,17 +338,15 @@ fsyscp_system (const char *cmd)
       *q++ = '"';
     *q = '\0';
     av[3] = NULL;
-    ret = fsyscp_spawnvp (_P_WAIT, av[0], (const char* const*) av);
+    ret = kpathsea_fsyscp_spawnvp (kpse, _P_WAIT, av[0], (const char* const*) av);
     free (av[0]);
     free (av[1]);
     free (av[2]);
     return ret;
 }
 
-static int getc_len;
-static int getc_buff[4];
-
-int win32_getc(FILE *fp)
+int
+kpathsea_win32_getc(kpathsea kpse, FILE *fp)
 {
     const int fd = fileno(fp);
     HANDLE hStdin;
@@ -371,17 +354,16 @@ int win32_getc(FILE *fp)
     wchar_t wc[3];
     char mbc[5];
     int j;
-    static wchar_t wcbuf = L'\0';
 
-    if (!(fd == fileno(stdin) && _isatty(fd) && file_system_codepage == CP_UTF8))
+    if (!(fd == fileno(stdin) && _isatty(fd) && kpse->File_system_codepage == CP_UTF8))
         return getc(fp);
 
-    if (getc_len == 0)
+    if (kpse->getc_len == 0)
     {
         hStdin = GetStdHandle(STD_INPUT_HANDLE);
-        if (wcbuf) {
-            wc[0] = wcbuf;
-            wcbuf = L'\0';
+        if (kpse->wcbuf) {
+            wc[0] = kpse->wcbuf;
+            kpse->wcbuf = L'\0';
         }
         else if (ReadConsoleW(hStdin, wc, 1, &ret, NULL) == 0)
             return EOF;
@@ -391,7 +373,7 @@ int win32_getc(FILE *fp)
             if (0xdc00<=wc[1] && wc[1]<0xe000) {
                 wc[2]=L'\0';
             } else {
-                wcbuf=wc[1];
+                kpse->wcbuf=wc[1];
                 wc[0]=0xfffd;    /* illegal surrogate pair */
                 wc[1]=L'\0';
             }
@@ -404,21 +386,22 @@ int win32_getc(FILE *fp)
         get_utf8_from_wstring(wc,mbc);
         j=strlen(mbc)-1;
         while(j>=0) {
-            getc_buff[getc_len++]=(int)mbc[j--];
+            kpse->getc_buff[kpse->getc_len++]=(int)mbc[j--];
         }
     }
-    return getc_buff[--getc_len];
+    return kpse->getc_buff[--kpse->getc_len];
 }
 
-int win32_ungetc(int c, FILE *fp)
+int
+kpathsea_win32_ungetc(kpathsea kpse, int c, FILE *fp)
 {
     const int fd = fileno(fp);
 
-    if (!(fd == fileno(stdin) && _isatty(fd) && file_system_codepage == CP_UTF8))
+    if (!(fd == fileno(stdin) && _isatty(fd) && kpse->File_system_codepage == CP_UTF8))
         return ungetc(c, fp);
 
-    assert(getc_len < 4);
-    return getc_buff[getc_len++] = c;
+    assert(kpse->getc_len < 4);
+    return kpse->getc_buff[kpse->getc_len++] = c;
 }
 
 static int __win32_fputs(const char *str, HANDLE hStdout)
@@ -437,13 +420,14 @@ static int __win32_fputs(const char *str, HANDLE hStdout)
     return ret;
 }
 
-int win32_fputs(const char *str, FILE *fp)
+int
+kpathsea_win32_fputs(kpathsea kpse, const char *str, FILE *fp)
 {
     const int fd = fileno(fp);
     HANDLE hStdout;
 
     if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
-        && file_system_codepage == CP_UTF8))
+        && kpse->File_system_codepage == CP_UTF8))
         return fputs(str, fp);
 
     hStdout = (fd == fileno(stdout)) ?
@@ -454,7 +438,8 @@ int win32_fputs(const char *str, FILE *fp)
 
 #define MAX_PROMPT_STR_SIZE 8192
 
-int win32_vfprintf(FILE *fp, const char *format, va_list argp)
+int
+kpathsea_win32_vfprintf(kpathsea kpse, FILE *fp, const char *format, va_list argp)
 {
     const int fd = fileno(fp);
     HANDLE hStdout;
@@ -462,7 +447,7 @@ int win32_vfprintf(FILE *fp, const char *format, va_list argp)
     int ret;
 
     if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
-        && file_system_codepage == CP_UTF8))
+        && kpse->File_system_codepage == CP_UTF8))
         return vfprintf(fp, format, argp);
 
     hStdout = (fd == fileno(stdout)) ?
@@ -475,25 +460,25 @@ int win32_vfprintf(FILE *fp, const char *format, va_list argp)
     return ret;
 }
 
-int win32_puts(const char *str)
+int
+kpathsea_win32_puts(kpathsea kpse, const char *str)
 {
-    if (win32_fputs(str, stdout)==EOF) {
+    if (kpathsea_win32_fputs(kpse, str, stdout)==EOF) {
         return EOF;
     }
     return puts("");
 }
 
-int win32_putc(int c, FILE *fp)
+int
+kpathsea_win32_putc(kpathsea kpse, int c, FILE *fp)
 {
     const int fd = fileno(fp);
     HANDLE hStdout;
     DWORD ret;
     wchar_t wstr[3];
-    static int len = 0;
-    static char buff[5], *str;
 
     if (!((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)
-        && file_system_codepage == CP_UTF8))
+        && kpse->File_system_codepage == CP_UTF8))
         return putc(c, fp);
 
     hStdout = (fd == fileno(stdout)) ?
@@ -502,31 +487,158 @@ int win32_putc(int c, FILE *fp)
     c &= 0xff;
 
     if (c < 0x80) {
-        str = buff;
-        len = 1;
+        kpse->st_str = kpse->st_buff;
+        kpse->st_len = 1;
     }
     if (c < 0xc0) { /* ASCII or trailer */
-        *str++ = c;
-        len--;
-        if (len == 0) {
-            *str = '\0';
-            get_wstring_from_utf8(buff, wstr);
+        *(kpse->st_str)++ = c;
+        kpse->st_len--;
+        if (kpse->st_len == 0) {
+            *(kpse->st_str) = '\0';
+            get_wstring_from_utf8(kpse->st_buff, wstr);
             if (WriteConsoleW(hStdout, wstr, wcslen(wstr), &ret, NULL) == 0) {
-                len = 0;
+                kpse->st_len = 0;
                 return EOF;
             }
         }
-        else if (len < 0) return EOF;
+        else if (kpse->st_len < 0) return EOF;
         return c;
     }
-    else if (c < 0xc2) { len = 0; return EOF; }  /* illegal */
-    else if (c < 0xe0) len = 2;
-    else if (c < 0xf0) len = 3;
-    else if (c < 0xf5) len = 4;
-    else { len = 0; return EOF; }
+    else if (c < 0xc2) { kpse->st_len = 0; return EOF; }  /* illegal */
+    else if (c < 0xe0) kpse->st_len = 2;
+    else if (c < 0xf0) kpse->st_len = 3;
+    else if (c < 0xf5) kpse->st_len = 4;
+    else { kpse->st_len = 0; return EOF; }
 
-    str = buff;
-    *str++ = c;
-    len--;
+    kpse->st_str = kpse->st_buff;
+    *(kpse->st_str)++ = c;
+    kpse->st_len--;
     return c;
 }
+
+int
+kpathsea_IS_KANJI(kpathsea kpse, char *p)
+{
+  int ret;
+
+  ret = kpse->Is_cp932_system && kpathsea_isknj(kpse, *(p)) &&
+        kpathsea_isknj2(kpse, *(p+1));
+  return ret;
+}
+
+char *
+kpathsea_get_fsyscp_from_wstring(kpathsea kpse, const wchar_t *w,char *mb)
+{
+  return get_mbstring_from_wstring(kpse->File_system_codepage, w, mb);
+}
+
+wchar_t *
+kpathsea_get_wstring_from_fsyscp(kpathsea kpse, const char *mb,wchar_t *w)
+{
+  return get_wstring_from_mbstring(kpse->File_system_codepage, mb, w);
+}
+
+#if defined (KPSE_COMPAT_API)
+
+int
+isknj(int c)
+{
+  return kpathsea_isknj(kpse_def, c);
+}
+
+int
+isknj2(int c)
+{
+  return kpathsea_isknj2(kpse_def, c);
+}
+
+FILE *
+fsyscp_xfopen (const char *filename, const char *mode)
+{
+  return kpathsea_fsyscp_xfopen (kpse_def, filename, mode);
+}
+
+FILE *
+fsyscp_fopen (const char *filename, const char *mode)
+{
+  return kpathsea_fsyscp_fopen (kpse_def, filename, mode);
+}
+
+FILE *
+fsyscp_popen (const char *command, const char *mode)
+{
+  return kpathsea_fsyscp_popen (kpse_def, command, mode);
+}
+
+int
+get_command_line_args_utf8 (const_string enc, int *p_ac, char ***p_av)
+{
+  return kpathsea_get_command_line_args_utf8 (kpse_def, enc, p_ac, p_av);
+}
+
+int
+fsyscp_spawnvp (int mode, const char *command, const char* const *argv)
+{
+  return kpathsea_fsyscp_spawnvp (kpse_def, mode, command, argv);
+}
+
+int
+fsyscp_system (const char *cmd)
+{
+  return kpathsea_fsyscp_system (kpse_def, cmd);
+}
+
+int
+win32_getc(FILE *fp)
+{
+  return kpathsea_win32_getc(kpse_def, fp);
+}
+
+int
+win32_ungetc(int c, FILE *fp)
+{
+  return kpathsea_win32_ungetc(kpse_def, c, fp);
+}
+
+int
+win32_fputs(const char *str, FILE *fp)
+{
+  return kpathsea_win32_fputs(kpse_def, str, fp);
+}
+
+int
+win32_vfprintf(FILE *fp, const char *format, va_list argp)
+{
+  return kpathsea_win32_vfprintf(kpse_def, fp, format, argp);
+}
+
+int
+win32_puts(const char *str)
+{
+  return kpathsea_win32_puts(kpse_def, str);
+}
+
+int
+win32_putc(int c, FILE *fp)
+{
+  return kpathsea_win32_putc(kpse_def, c, fp);
+}
+
+int
+IS_KANJI(char *p)
+{
+  return kpathsea_IS_KANJI(kpse_def, p);
+}
+
+char *
+get_fsyscp_from_wstring(const wchar_t *w,char *mb)
+{
+  return kpathsea_get_fsyscp_from_wstring(kpse_def, w, mb);
+}
+
+wchar_t *
+get_wstring_from_fsyscp(const char *mb,wchar_t *w)
+{
+  return kpathsea_get_wstring_from_fsyscp(kpse_def, mb, w);
+}
+#endif

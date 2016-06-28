@@ -1,6 +1,6 @@
 /* find-suffix.c: return the stuff after a dot.
 
-   Copyright 1992, 1993, 1995, 2008, 2011 Karl Berry.
+   Copyright 1992, 1993, 1995, 2008, 2011, 2016 Karl Berry.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -47,10 +47,6 @@ find_suffix (const_string name)
   for (p = dot_pos + 1; *p; p++) {
     if (IS_DIR_SEP (*p))
       return NULL;
-#if defined(WIN32)
-    else if (IS_KANJI(p))
-      p++;
-#endif
   }
 
   return dot_pos + 1;

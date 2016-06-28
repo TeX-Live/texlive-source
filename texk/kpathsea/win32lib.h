@@ -275,8 +275,13 @@ extern KPSEDLL int pclose(FILE * f);
 extern KPSEDLL int system(const char * cmd);
 
 extern KPSEDLL void texlive_gs_init(void);
+extern KPSEDLL int kpathsea_getlongpath (kpathsea kpse, char *output, char *input, int len);
+extern KPSEDLL char *kpathsea_get_home_directory (kpathsea kpse);
+
+#if defined (KPSE_COMPAT_API)
 extern KPSEDLL int getlongpath (char *output, char *input, int len);
 extern KPSEDLL char *get_home_directory (void);
+#endif
 
 #define off_t __int64
 #define xfseeko xfseek64

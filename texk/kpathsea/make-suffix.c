@@ -1,6 +1,6 @@
 /* make-suffix.c: unconditionally add a filename suffix.
 
-   Copyright 1992, 1993, 1995, 2008, 2011 Karl Berry.
+   Copyright 1992, 1993, 1995, 2008, 2011, 2016 Karl Berry.
    Copyright 2001, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -38,7 +38,7 @@ make_suffix (const_string s,  const_string suffix)
         dot_pos = NULL;
         break;
       }
-#if defined(WIN32)
+#if defined(WIN32) && defined(KPSE_COMPAT_API)
       else if (IS_KANJI(p))
         p++;
 #endif
@@ -59,8 +59,10 @@ make_suffix (const_string s,  const_string suffix)
   for (q = new_s; *q; q++) {
     if (*q == '\\')
       *q = '/';
+#if defined(KPSE_COMPAT_API)
     else if (IS_KANJI(q))
       q++;
+#endif
   }
 #endif
 

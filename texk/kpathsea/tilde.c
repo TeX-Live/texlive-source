@@ -1,7 +1,7 @@
 /* tilde.c: expand user's home directories.
 
     Copyright 1997, 1998, 2005, Olaf Weber.
-    Copyright 1993, 1995, 1996, 1997, 2008, 2011 Karl Berry.
+    Copyright 1993, 1995, 1996, 1997, 2008, 2011, 2016 Karl Berry.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -88,7 +88,7 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
       c = 2;
       while (!IS_DIR_SEP (name[c]) && name[c] != 0) {  /* find user name */
 #if defined(WIN32)
-        if (IS_KANJI(name+c))
+        if (kpathsea_IS_KANJI(kpse, name+c))
           c++;
 #endif
         c++;
@@ -130,7 +130,7 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
       for (q = home; *q; q++) {
         if (IS_DIR_SEP (*q) && q[1] == 0)
           c++;
-        else if (IS_KANJI(q))
+        else if (kpathsea_IS_KANJI(kpse, q))
           q++;
       }
 #else
@@ -146,7 +146,7 @@ kpathsea_tilde_expand (kpathsea kpse, string name)
   for (p = expansion; *p; p++) {
     if (*p == '\\')
       *p = '/'; 
-    else if (IS_KANJI(p))
+    else if (kpathsea_IS_KANJI(kpse, p))
       p++;
   }
 #endif
