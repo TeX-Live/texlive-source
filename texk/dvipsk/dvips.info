@@ -2278,13 +2278,7 @@ first place are available from 'CTAN:/support/hypertex'.  For CTAN info,
    This hypertext support (and original form of the documentation) was
 written by Mark Doyle and Tanmoy Bhattacharya as the 'dvihps' program.
 You can retrieve their software and additional documentation via the
-CTAN reference above.  You may also be interested in the Java previewer
-IDVI, available at <http://www.win.tue.nl/~dickie/idvi>, and/or in
-<http://www.emrg.com/texpdf.html>, which describes the process of making
-PDF files from TeX files in more detail.
-
-   Mail archives for the original project are at
-<http://math.albany.edu:8800/hm/ht/>.
+CTAN reference above.
 
 * Menu:
 
@@ -2351,7 +2345,7 @@ PostScript fonts use this character code for characters other than space
 (notably the Greek letter psi in the 'Symbol' font), and so these
 characters are dropped.  This bug is fixed in version 2.1.
 
-   If you can't upgrade, One workaround is to change all the trailing
+   If you can't upgrade, one workaround is to change all the trailing
 blanks in strings to a character code that isn't in the font.  This
 works because the default behavior is to substitute a blank for a
 missing character, i.e., the distiller is fooled into substituting the
@@ -4666,35 +4660,35 @@ Node: Literal headers89784
 Node: PostScript hooks90493
 Node: Literal examples92589
 Node: Hypertext94043
-Node: Hypertext caveats95591
-Node: Hypertext specials99979
-Node: PostScript fonts102613
-Node: Font concepts103730
-Node: Metric files104897
-Node: Glyph files107677
-Node: Virtual fonts110036
-Node: Encodings111862
-Node: PostScript typesetting114265
-Node: Making a font available117350
-Node: Invoking afm2tfm122384
-Node: Changing font encodings123401
-Node: Changing TeX encodings124192
-Node: Changing PostScript encodings125294
-Node: Changing both encodings126638
-Node: Reencoding with Afm2tfm127312
-Node: Encoding file format130415
-Node: Special font effects134619
-Node: Afm2tfm options136879
-Node: psfonts.map140404
-Node: Color145134
-Node: Color macro files146178
-Node: User-definable colors149371
-Node: Color subtleties150647
-Node: Ted Turner152299
-Node: Color device configuration153524
-Node: Color support details155968
-Node: Color specifications156346
-Node: Color specials157750
-Node: Index159879
+Node: Hypertext caveats95272
+Node: Hypertext specials99660
+Node: PostScript fonts102294
+Node: Font concepts103411
+Node: Metric files104578
+Node: Glyph files107358
+Node: Virtual fonts109717
+Node: Encodings111543
+Node: PostScript typesetting113946
+Node: Making a font available117031
+Node: Invoking afm2tfm122065
+Node: Changing font encodings123082
+Node: Changing TeX encodings123873
+Node: Changing PostScript encodings124975
+Node: Changing both encodings126319
+Node: Reencoding with Afm2tfm126993
+Node: Encoding file format130096
+Node: Special font effects134300
+Node: Afm2tfm options136560
+Node: psfonts.map140085
+Node: Color144815
+Node: Color macro files145859
+Node: User-definable colors149052
+Node: Color subtleties150328
+Node: Ted Turner151980
+Node: Color device configuration153205
+Node: Color support details155649
+Node: Color specifications156027
+Node: Color specials157431
+Node: Index159560
 
 End Tag Table
