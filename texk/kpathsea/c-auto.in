@@ -23,7 +23,7 @@
 #define KPATHSEA_C_AUTO_H
 
 /* kpathsea: the version string. */
-#define KPSEVERSION "kpathsea version 6.2.2"
+#define KPSEVERSION "kpathsea version 6.2.3/dev"
 
 /* Define to 1 if the `closedir' function returns void instead of `int'. */
 #undef CLOSEDIR_VOID
