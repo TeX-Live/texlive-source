@@ -2877,13 +2877,7 @@ CTAN info, @pxref{unixtex.ftp,,, kpathsea, Kpathsea}.
 This hypertext support (and original form of the documentation) was
 written by Mark Doyle and Tanmoy Bhattacharya as the @samp{dvihps}
 program. You can retrieve their software and additional documentation
-via the CTAN reference above.  You may also be interested in the Java
-previewer IDVI, available at @url{http://www.win.tue.nl/~dickie/idvi},
-and/or in @url{http://www.emrg.com/texpdf.html}, which describes
-the process of making PDF files from TeX files in more detail.
-
-Mail archives for the original project are at
-@url{http://math.albany.edu:8800/hm/ht/}.
+via the CTAN reference above.
 
 
 @menu
@@ -2962,7 +2956,7 @@ use this character code for characters other than space (notably the
 Greek letter psi in the @code{Symbol} font), and so these characters are
 dropped.  This bug is fixed in version 2.1.
 
-If you can't upgrade, One workaround is to change all the trailing
+If you can't upgrade, one workaround is to change all the trailing
 blanks in strings to a character code that isn't in the font. This works
 because the default behavior is to substitute a blank for a missing
 character, i.e., the distiller is fooled into substituting the right
