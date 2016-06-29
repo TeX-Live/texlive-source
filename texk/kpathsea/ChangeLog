@@ -1,3 +1,7 @@
+2016-06-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kpsewhich.c: Remove unnecessary w32 changes,
+
 2016-06-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* config.h, db.c, elt-dirs.c, expand.c, find-suffix.c, hash.c, knj.c,

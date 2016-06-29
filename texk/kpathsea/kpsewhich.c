@@ -491,19 +491,10 @@ static void
 help_message (kpathsea kpse, string *argv)
 {
   printf ("Usage: %s [OPTION]... [FILENAME]...\n", argv[0]);
-#ifdef WIN32
-  kpathsea_win32_fputs (kpse, USAGE, stdout);
-#else
   fputs (USAGE, stdout);
-#endif
   putchar ('\n');
-#ifdef WIN32
-  kpathsea_win32_fputs (kpse, kpathsea_bug_address, stdout);
-  kpathsea_win32_fputs (kpse, "Kpathsea home page: http://tug.org/kpathsea/\n", stdout);
-#else
   fputs (kpathsea_bug_address, stdout);
   fputs ("Kpathsea home page: http://tug.org/kpathsea/\n", stdout);
-#endif
   exit (0);
 }
 
@@ -515,13 +506,8 @@ help_formats (kpathsea kpse, string *argv)
   /* Have to set this for init_format to work.  */
   kpathsea_set_program_name (kpse, argv[0], progname);
 
-#ifdef WIN32
-  kpathsea_win32_puts (kpse, kpathsea_version_string); 
-  kpathsea_win32_puts (kpse, "\nRecognized Kpathsea format names and their (abbreviations) and suffixes:");
-#else
   puts (kpathsea_version_string); 
   puts ("\nRecognized Kpathsea format names and their (abbreviations) and suffixes:");
-#endif
   for (f = 0; f < kpse_last_format; f++) {
     const_string *ext;
 
@@ -572,13 +558,8 @@ help_formats (kpathsea kpse, string *argv)
             kpse->format_info[f].path_source, kpse->format_info[f].raw_path);
   }
 
-#ifdef WIN32
-  kpathsea_win32_fputs (kpse, "\nTo see paths after expansion, use --show-path=FMT.\n\n", stdout);
-  kpathsea_win32_fputs (kpse, kpathsea_bug_address, stdout);
-#else
   fputs ("\nTo see paths after expansion, use --show-path=FMT.\n\n", stdout);
   fputs (kpathsea_bug_address, stdout);
-#endif
   exit (0);
 }
 
@@ -696,19 +677,11 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       var_to_value = optarg;
 
     } else if (ARGUMENT_IS ("version")) {
-#ifdef WIN32
-      kpathsea_win32_puts (kpse, kpathsea_version_string);
-      kpathsea_win32_puts (kpse, "Copyright 2016 Karl Berry & Olaf Weber.\n\
-License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n\
-This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n");
-#else
       puts (kpathsea_version_string);
       puts ("Copyright 2016 Karl Berry & Olaf Weber.\n\
 License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <http://gnu.org/licenses/lgpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
 There is NO WARRANTY, to the extent permitted by law.\n");
-#endif
       exit (0);
     }
 
@@ -718,11 +691,7 @@ There is NO WARRANTY, to the extent permitted by law.\n");
   if (user_path && user_format_string) {
     fprintf (stderr, "-path (%s) and -format (%s) are mutually exclusive.\n",
              user_path, user_format_string);
-#ifdef WIN32
-    kpathsea_win32_fputs (kpse, "Try `kpsewhich --help' for more information.\n", stderr);
-#else
     fputs ("Try `kpsewhich --help' for more information.\n", stderr);
-#endif
     exit (1);
   }
 
@@ -730,13 +699,8 @@ There is NO WARRANTY, to the extent permitted by law.\n");
       && !var_to_expand && !braces_to_expand && !path_to_expand
       && !path_to_show && !var_to_value
       && !safe_in_name && !safe_out_name) {
-#ifdef WIN32
-    kpathsea_win32_fputs (kpse, "Missing argument. Try `kpsewhich --help' for more information.\n",
-           stderr);
-#else
     fputs ("Missing argument. Try `kpsewhich --help' for more information.\n",
            stderr);
-#endif
     exit (1);
   }
 }
