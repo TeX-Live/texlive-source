@@ -37,8 +37,9 @@
 my $ver = "2.25";
 
 # History
-#  2016/06/16 v2.25 (Norbert Preining)
-#    * fix device handling
+#  2016/06/30 v2.25 (Norbert Preining, Karl Berry)
+#    * don't set (default) device until after restricted check.
+#    * a few more debugging lines.
 #  2016/05/29 v2.24 (Karl Berry)
 #    * new option --gray; patch from William Bader,
 #      tex-k mail 9 Feb 2016 19:37:08.
@@ -644,10 +645,10 @@ if ($restricted and not safe_name('out', $OutputFilename)) {
 ### option gs
 if ($::opt_gs) {
   debug "Ghostscript command:", $GS;
-  debug "PDFSettings:", $::opt_pdfsettings;
-  debug "Embedding:", ($::opt_embed) ? "on" : "off";
   debug "Compression:", ($::opt_compress) ? "on" : "off";
+  debug "Embedding:", ($::opt_embed) ? "on" : "off";
   debug "Grayscale:", ($::opt_gray) ? "on" : "off";
+  debug "PDFSettings:", $::opt_pdfsettings;
   debug "Resolution:", $resmsg;
   debug "Rotation:", $rotmsg;
 }
