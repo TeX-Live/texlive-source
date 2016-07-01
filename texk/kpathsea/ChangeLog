@@ -1,3 +1,7 @@
+2016-07-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* knj.c, knj.h: Avoid compiler warnings.
+
 2016-06-30  Karl Berry  <karl@tug.org>
 
 	* version.ac (kpse_version): 6.2.2 => 6.2.3dev.

@@ -39,7 +39,7 @@ extern KPSEDLL int kpathsea_win32_fputs(kpathsea kpse, const char *str, FILE *fp
 extern KPSEDLL int kpathsea_win32_puts(kpathsea kpse, const char *str);
 extern KPSEDLL int kpathsea_win32_vfprintf(kpathsea kpse, FILE *fp, const char *format, va_list argp);
 extern KPSEDLL int kpathsea_win32_putc(kpathsea kpse, int c, FILE *fp);
-extern KPSEDLL int kpathsea_IS_KANJI(kpathsea kpse, char *p);
+extern KPSEDLL int kpathsea_IS_KANJI(kpathsea kpse, const char *p);
 extern KPSEDLL char *kpathsea_get_fsyscp_from_wstring(kpathsea kpse, const wchar_t *w,char *mb);
 extern KPSEDLL wchar_t *kpathsea_get_wstring_from_fsyscp(kpathsea kpse, const char *mb,wchar_t *w);
 
@@ -61,7 +61,7 @@ extern KPSEDLL int win32_fputs(const char *str, FILE *fp);
 extern KPSEDLL int win32_puts(const char *str);
 extern KPSEDLL int win32_vfprintf(FILE *fp, const char *format, va_list argp);
 extern KPSEDLL int win32_putc(int c, FILE *fp);
-extern KPSEDLL int IS_KANJI(char *p);
+extern KPSEDLL int IS_KANJI(const char *p);
 extern KPSEDLL char *get_fsyscp_from_wstring(const wchar_t *w,char *mb);
 extern KPSEDLL wchar_t *get_wstring_from_fsyscp(const char *mb,wchar_t *w);
 #endif

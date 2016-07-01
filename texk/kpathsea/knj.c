@@ -517,7 +517,7 @@ kpathsea_win32_putc(kpathsea kpse, int c, FILE *fp)
 }
 
 int
-kpathsea_IS_KANJI(kpathsea kpse, char *p)
+kpathsea_IS_KANJI(kpathsea kpse, const char *p)
 {
   int ret;
 
@@ -625,7 +625,7 @@ win32_putc(int c, FILE *fp)
 }
 
 int
-IS_KANJI(char *p)
+IS_KANJI(const char *p)
 {
   return kpathsea_IS_KANJI(kpse_def, p);
 }
