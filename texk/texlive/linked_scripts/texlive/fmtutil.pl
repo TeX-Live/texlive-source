@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 41529 2016-06-23 03:12:14Z preining $
+# $Id: fmtutil.pl 41566 2016-06-29 16:04:35Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 41529 2016-06-23 03:12:14Z preining $';
-my $lastchdate = '$Date: 2016-06-23 05:12:14 +0200 (Thu, 23 Jun 2016) $';
+my $svnid = '$Id: fmtutil.pl 41566 2016-06-29 16:04:35Z karl $';
+my $lastchdate = '$Date: 2016-06-29 18:04:35 +0200 (Wed, 29 Jun 2016) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 41529 $';
+my $svnrev = '$Revision: 41566 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1271,6 +1271,9 @@ If not operating in mktexfmt mode, exactly one command must be given,
 extensions should generally not be specified, no non-option arguments
 are allowed, and multiple formats can be generated, as follows.
 
+By default, the return status is zero if all formats requested are
+successfully built, else nonzero.
+
 Options:
   --sys                   use TEXMFSYS{VAR,CONFIG} instead of TEXMF{VAR,CONFIG}
   --cnffile FILE          read FILE instead of fmtutil.cnf
@@ -1282,7 +1285,7 @@ Options:
   --no-error-if-no-engine=ENGINE1,ENGINE2,...
                           exit successfully even if a required engine
                            is missing, if it is included in the list.
-  --no-strict             don't exit with bad status if a format fails to build
+  --no-strict             exit successfully even if a format fails to build
   --nohash                don't update ls-R files
   --recorder              pass the -recorder option and save .fls files
   --quiet                 be silent

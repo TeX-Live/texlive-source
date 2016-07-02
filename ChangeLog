@@ -1,5 +1,8 @@
 2016-06-30  Karl Berry  <karl@tug.org>
 
+	* extra/epstopdf/epstopdf.pl: sort debugging lines, history (for
+		release to CTAN)
+
 	* version.ac (tex_live_version): 2016 => 2017/dev.
 	* tardate.ac (tex_live_tardate): 2015-05-12 => 2016-05-23.
 	(Though this is not used for any release.)
