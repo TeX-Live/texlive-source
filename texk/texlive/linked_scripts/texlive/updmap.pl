@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 37866 2015-07-17 19:00:04Z preining $
+# $Id: updmap.pl 41566 2016-06-29 16:04:35Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011-2015 Norbert Preining
+# Copyright 2011-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 37866 2015-07-17 19:00:04Z preining $';
+my $svnid = '$Id: updmap.pl 41566 2016-06-29 16:04:35Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2015-07-17 21:00:04 +0200 (Fri, 17 Jul 2015) $';
+my $lastchdate = '$Date: 2016-06-29 18:04:35 +0200 (Wed, 29 Jun 2016) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 37866 $';
+my $svnrev = '$Revision: 41566 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1457,7 +1457,6 @@ sub enable_disable_maps {
   my $tc = $alldata->{'changes_config'};
   die "$prg: top config file $tc has not been read."
     if (!defined($alldata->{'updmap'}{$tc}));
-  my $changed = 0;
 
   for my $w (@what) {
     if ($w =~ m/=/) {
@@ -2247,12 +2246,39 @@ Commands:
   --listavailablemaps       list available maps (details below)
   --syncwithtrees           disable unavailable map files in updmap.cfg
 
-Explanation of the map types: the (only) difference between Map and
-MixedMap is that MixedMap entries are not added to psfonts_pk.map.
-The purpose is to help users with devices that render Type 1 outline
-fonts worse than mode-tuned Type 1 bitmap fonts.  So, MixedMap is used
-for fonts that are available as both Type 1 and Metafont.
-KanjiMap entries are added to psfonts_t1.map and kanjix.map.
+The main output:
+
+  The main output of updmap is the files containing the individual font
+  map lines which the drivers (dvips, pdftex, etc.) read to handle fonts.
+  
+  The map files for dvips (psfonts.map) and pdftex and dvipdfmx
+  (pdftex.map) are written to TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/.
+  
+  In addition, information about Kanji fonts is written to
+  TEXMFVAR/fonts/map/updmap/dvipdfmx/kanjix.map, and optionally to 
+  TEXMFVAR/fonts/map/updmap/pxdvi/xdvi-ptex.map.  These are for Kanji
+  only and are not like other map files.  dvipdfmx reads pdftex.map for
+  the map entries for non-Kanji fonts.
+  
+  If no option is given, so the invocation is just "updmap" or
+  "updmap-sys", these output files are always recreated.
+
+  Otherwise, if an option such as --enable or --disable is given, the
+  output files are recreated if the list of enabled map files (from
+  updmap.cfg) has changed.  The --force option overrides this,
+  always recreating the output files.
+  
+Explanation of the map types:
+
+  The normal type is Map.
+  
+  The only difference between Map and MixedMap is that MixedMap entries
+  are not added to psfonts_pk.map.  The purpose is to help users with
+  devices that render Type 1 outline fonts worse than mode-tuned Type 1
+  bitmap fonts.  So, MixedMap is used for fonts that are available as
+  both Type 1 and Metafont.
+
+  KanjiMap entries are added to psfonts_t1.map and kanjix.map.
 
 Explanation of the OPTION names for --showoptions, --showoption, --setoption:
 
@@ -2329,7 +2355,7 @@ Where and which updmap.cfg changes are saved:
   specified that an updmap.cfg needs to be updated.  In this case:
 
   1) If config files are given on the command line, then the first one
-  given will be used to save any such changes.
+  given is used to save any such changes.
   
   2) If the config files are taken from kpsewhich output, then the
   algorithm is more complex:
@@ -2376,20 +2402,6 @@ Disabling maps:
     Map mt-yy.map
   and call $prg.
 
-The main output:
-
-  The main output of updmap is the files containing the individual font
-  map lines which the drivers (dvips, pdftex, etc.) read to handle fonts.
-  
-  The map files for dvips (psfonts.map) and pdftex (pdftex.map) are
-  written to TEXMFVAR/fonts/map/updmap/{dvips,pdftex}/.
-  
-  In addition, information about Kanji fonts is written to
-  TEXMFVAR/fonts/map/updmap/dvipdfmx/kanjix.map, and optionally to 
-  TEXMFVAR/fonts/map/updmap/pxdvi/xdvi-ptex.map.  These are for Kanji
-  only and are not like other map files.  dvipdfmx reads pdftex.map for
-  the map entries for non-Kanji fonts.
-
 Listing of maps:
 
   The two options --listmaps and --listavailablemaps list all maps
@@ -2420,7 +2432,7 @@ The log file is written to TEXMFVAR/web2c/updmap.log.
 
 For step-by-step instructions on making new fonts known to TeX, read
 http://tug.org/fonts/fontinstall.html.  For even more terse
-instructions, read the beginning of the main updmap.cfg.
+instructions, read the beginning of the main updmap.cfg file.
 
 Report bugs to: tex-live\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
