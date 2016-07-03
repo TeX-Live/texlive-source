@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 41287 2016-05-28 18:09:45Z karl $
+# $Id: epstopdf.pl 41577 2016-06-30 16:38:01Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,10 @@
 my $ver = "2.25";
 
 # History
-#  2016/06/16 v2.25 (Norbert Preining)
-#    * fix device handling
-#  2016/05/28 v2.24 (Karl Berry)
+#  2016/06/30 v2.25 (Norbert Preining, Karl Berry)
+#    * don't set (default) device until after restricted check.
+#    * a few more debugging lines.
+#  2016/05/29 v2.24 (Karl Berry)
 #    * new option --gray; patch from William Bader,
 #      tex-k mail 9 Feb 2016 19:37:08.
 #    * disallow --device completely in restricted mode,
@@ -179,9 +180,9 @@ my $ver = "2.25";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 41287 2016-05-28 18:09:45Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 41577 2016-06-30 16:38:01Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2014 Karl Berry et al.
+Copyright 2009-2016 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -586,7 +587,7 @@ if ($::opt_res and
   $::opt_res = '';
 }
 push @GS, "-r$::opt_res" if $::opt_res;
-$resmsg= $::opt_res ? $::opt_res : "[use gs default]";
+$resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 
 # \label{val_autorotate}
 if ($::opt_autorotate and
@@ -646,8 +647,10 @@ if ($::opt_gs) {
   debug "Ghostscript command:", $GS;
   debug "Compression:", ($::opt_compress) ? "on" : "off";
   debug "Embedding:", ($::opt_embed) ? "on" : "off";
-  debug "Rotation:", $rotmsg;
+  debug "Grayscale:", ($::opt_gray) ? "on" : "off";
+  debug "PDFSettings:", $::opt_pdfsettings;
   debug "Resolution:", $resmsg;
+  debug "Rotation:", $rotmsg;
 }
 
 ### emacs-page
