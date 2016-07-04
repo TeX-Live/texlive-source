@@ -19,6 +19,7 @@
 *************************************************************************/
 
 #include <config.h>
+#include "macros.h"
 #include "XMLDocument.h"
 
 using namespace std;
@@ -65,8 +66,10 @@ void XMLDocument::setRootNode (XMLElementNode *root) {
 ostream& XMLDocument::write (ostream &os) const {
 	if (_rootElement) { // no root element => no output
 		os << "<?xml version='1.0' encoding='UTF-8'?>\n";
-		FORALL(_nodes, list<XMLNode*>::const_iterator, i)
+		FORALL(_nodes, list<XMLNode*>::const_iterator, i) {
 			(*i)->write(os);
+			os << '\n';
+		}
 		_rootElement->write(os);
 	}
 	return os;

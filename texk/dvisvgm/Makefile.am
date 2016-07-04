@@ -100,6 +100,7 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
 	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/PapersizeSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
 	@DVISVGM_TREE@/src/PSPattern.cpp \
 	@DVISVGM_TREE@/src/PSPreviewFilter.cpp \
@@ -112,7 +113,12 @@ nodist_libdvisvgm_a_SOURCES = \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/psdefs.cpp \
 	@DVISVGM_TREE@/src/RangeMap.cpp \
+	@DVISVGM_TREE@/src/SVGCharHandler.cpp \
+	@DVISVGM_TREE@/src/SVGCharHandlerFactory.cpp \
+	@DVISVGM_TREE@/src/SVGCharPathHandler.cpp \
+	@DVISVGM_TREE@/src/SVGCharTspanTextHandler.cpp \
 	@DVISVGM_TREE@/src/SVGOutput.cpp \
+	@DVISVGM_TREE@/src/SVGSingleCharTextHandler.cpp \
 	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/ShadingPatch.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \

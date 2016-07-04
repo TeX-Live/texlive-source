@@ -184,6 +184,7 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/Message.$(OBJEXT) \
 	@DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT) \
 	@DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/PapersizeSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSPattern.$(OBJEXT) \
 	@DVISVGM_TREE@/src/PSPreviewFilter.$(OBJEXT) \
@@ -196,7 +197,12 @@ nodist_libdvisvgm_a_OBJECTS =  \
 	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/psdefs.$(OBJEXT) \
 	@DVISVGM_TREE@/src/RangeMap.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGCharHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGCharHandlerFactory.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGCharPathHandler.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGCharTspanTextHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SVGOutput.$(OBJEXT) \
+	@DVISVGM_TREE@/src/SVGSingleCharTextHandler.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
 	@DVISVGM_TREE@/src/ShadingPatch.$(OBJEXT) \
 	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
@@ -769,6 +775,7 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/Matrix.cpp @DVISVGM_TREE@/src/Message.cpp \
 	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
 	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
+	@DVISVGM_TREE@/src/PapersizeSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/PSInterpreter.cpp \
 	@DVISVGM_TREE@/src/PSPattern.cpp \
 	@DVISVGM_TREE@/src/PSPreviewFilter.cpp \
@@ -780,7 +787,12 @@ nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
 	@DVISVGM_TREE@/src/Process.cpp \
 	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
 	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/RangeMap.cpp \
+	@DVISVGM_TREE@/src/SVGCharHandler.cpp \
+	@DVISVGM_TREE@/src/SVGCharHandlerFactory.cpp \
+	@DVISVGM_TREE@/src/SVGCharPathHandler.cpp \
+	@DVISVGM_TREE@/src/SVGCharTspanTextHandler.cpp \
 	@DVISVGM_TREE@/src/SVGOutput.cpp \
+	@DVISVGM_TREE@/src/SVGSingleCharTextHandler.cpp \
 	@DVISVGM_TREE@/src/SVGTree.cpp \
 	@DVISVGM_TREE@/src/ShadingPatch.cpp \
 	@DVISVGM_TREE@/src/SignalHandler.cpp \
@@ -1024,6 +1036,9 @@ libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libcl
 @DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/PapersizeSpecialHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1060,7 +1075,22 @@ libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libcl
 @DVISVGM_TREE@/src/RangeMap.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGCharHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGCharHandlerFactory.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGCharPathHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGCharTspanTextHandler.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SVGOutput.$(OBJEXT):  \
+	@DVISVGM_TREE@/src/$(am__dirstamp) \
+	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@DVISVGM_TREE@/src/SVGSingleCharTextHandler.$(OBJEXT):  \
 	@DVISVGM_TREE@/src/$(am__dirstamp) \
 	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
@@ -1260,6 +1290,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MetafontWrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PapersizeSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSInterpreter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPattern.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPreviewFilter.Po@am__quote@
@@ -1271,7 +1302,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Process.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PsSpecialHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/RangeMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharHandlerFactory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharPathHandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharTspanTextHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGOutput.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGSingleCharTextHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGTree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ShadingPatch.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SignalHandler.Po@am__quote@

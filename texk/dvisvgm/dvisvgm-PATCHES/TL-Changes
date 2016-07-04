@@ -1,8 +1,5 @@
-Changes applied to the dvisvgm-1.15.1 tree as obtained from:
+Changes applied to the dvisvgm-1.16 tree as obtained from:
 	http://dvisvgm.bplaced.net/Downloads
-
-patch-01-process: received from dvisvgm author for TL16,
-should be in next release.
 
 Removed:
 	Makefile.in
