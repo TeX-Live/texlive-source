@@ -1,3 +1,8 @@
+2016-07-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import release 1.16
+	* patch-01-process: removed since it is included in the upstream.
+
 2016-04-25  Karl Berry  <karl@tug.org>
 
 	* patch-01-process: received from dvisvgm author.
