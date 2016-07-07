@@ -1,3 +1,8 @@
+2016-07-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* patch-01-xindy-needs-language, patch-02-win32-paths-with-spaces:
+	Unify into patch-01-xindy-script.
+
 2015-08-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-win32-paths-with-spaces: Fix from Joachim Schrod.
