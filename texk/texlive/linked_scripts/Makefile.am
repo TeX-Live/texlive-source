@@ -79,6 +79,7 @@ texmf_shell_scripts = \
 	pdfxup/pdfxup \
 	pst-pdf/ps4pdf \
 	simpdftex/simpdftex \
+	texosquery/texosquery \
 	typeoutfileinfo/typeoutfileinfo.sh
 texmf_other_scripts = \
 	a2ping/a2ping.pl \
