@@ -11,13 +11,13 @@
 # indicate that you have read the license and understand and accept it
 # fully.
 
-AC_INIT([FreeType], [2.6.4], [freetype@nongnu.org], [freetype])
+AC_INIT([FreeType], [2.6.5], [freetype@nongnu.org], [freetype])
 AC_CONFIG_SRCDIR([ftconfig.in])
 
 
 # Don't forget to update `docs/VERSIONS.TXT'!
 
-version_info='18:4:12'
+version_info='18:5:12'
 AC_SUBST([version_info])
 ft_version=`echo $version_info | tr : .`
 AC_SUBST([ft_version])
