@@ -1,3 +1,91 @@
+2016-07-12  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.6.5 released.
+	=========================
+
+
+	Tag sources with `VER-2-6-5'.
+
+	* include/freetype/config/ftoption.h
+	(TT_CONFIG_OPTION_SUBPIXEL_HINTING): Comment out.
+
+	* docs/VERSION.TXT: Add entry for version 2.6.5.
+
+	* README, Jamfile (RefDoc), builds/windows/vc2005/freetype.vcproj,
+	builds/windows/vc2005/index.html,
+	builds/windows/vc2008/freetype.vcproj,
+	builds/windows/vc2008/index.html,
+	builds/windows/vc2010/freetype.vcxproj,
+	builds/windows/vc2010/index.html,
+	builds/windows/visualc/freetype.dsp,
+	builds/windows/visualc/freetype.vcproj,
+	builds/windows/visualc/index.html,
+	builds/windows/visualce/freetype.dsp,
+	builds/windows/visualce/freetype.vcproj,
+	builds/windows/visualce/index.html,
+	builds/wince/vc2005-ce/freetype.vcproj,
+	builds/wince/vc2005-ce/index.html,
+	builds/wince/vc2008-ce/freetype.vcproj,
+	builds/wince/vc2008-ce/index.html: s/2.6.4/2.6.5/, s/264/265/.
+
+	* include/freetype/freetype.h (FREETYPE_PATCH): Set to 5.
+
+	* builds/unix/configure.raw (version_info): Set to 18:5:12.
+	* CMakeLists.txt (VERSION_PATCH): Set to 5.
+
+	* docs/CHANGES: Updated.
+
+2016-07-09  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	[mac] Fix ftexport.sym target in Jamfile.
+
+	* Jamfile: Update the directories of the header files scanned for
+	ftexport.sym.  They were incorrect since the migration of the
+	header files, on 2015-06-22.  Either inexisting include/cache
+	(removed on 2006-03-20) is not needed to be listed explicitly.
+	Now ftmac.h is scanned only in the case of Mac OS & Mac OS X.
+
+2016-07-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[smooth] Sub-banding protocol revision.
+
+	Rasterization sub-banding is utilized at large sizes while using a
+	rather small fixed memory pool.  Indeed it is possible to make an
+	educated guess how much memory is necessary at a given size for a
+	given glyph.  It turns out that, for a large majority of European
+	glyphs, you should store about 8 times more boundary pixels than
+	their height.  Or, vice versa, if your memory pool can hold 800
+	pixels the band height should be 100 and you should sub-band
+	anything larger than that.  Should you still run out of memory,
+	FreeType bisects the band but you have wasted some time.  This is
+	what has been implemented in FreeType since the beginning.
+
+	It was overlooked, however, that the top band could grow to twice
+	the default band size leading to unnecessary memory overflows there.
+	This commit fixes that.  Now the bands are distributed more evenly
+	and cannot exceed the default size.
+
+	Now the magic number 8 is really suitable for rather simple European
+	scripts.  For complex Chinese logograms the magic number should be
+	13 but that is subject for another day.
+
+	* src/smooth/ftgrays.c (gray_convert_glyph): Revise sub-banding
+	protocol.
+
+2016-07-07  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	[mac] Fix Savannah bug #48417.
+
+	Mac OS X linker throws errors when `-exported_symbol_list' input
+	file includes non-existing symbols.  Reported by Ryan Schmidt.
+
+	* builds/exports.mk: Exclude ftmac.h from the headers for apinames
+	by default.  Include it when ftmac.c would be compiled.
+
+2016-07-06  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttinterp.c (TInstruction_Function): Removed, unused.
+
 2016-07-05  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.6.4 released.
