@@ -1,3 +1,9 @@
+2016-07-15  Karl Berry  <karl@tug.org>
+
+	* config.ps (ieeecs): new paper size for IEEE Computer Society
+	Journals, requested by Michael Shell for his IEEEtran,
+	13 Jul 2016 20:04:25.
+
 2016-06-29  Karl Berry  <karl@tug.org>
 
 	* dvips.texi: remove idvi reference, long gone.
