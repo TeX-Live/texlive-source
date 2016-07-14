@@ -1,3 +1,10 @@
+2016-07-15  Karl Berry  <karl@tug.org>
+
+	* configure.ac (AC_CHECK_ALIGNOF): add.
+	* gregorio-src/src/sha1.c (UNALIGNED_P): handle differently.
+	For Mojca, 14 Jul 2016 13:35:25,
+	https://github.com/gregorio-project/gregorio/pull/1186.
+
 2016-05-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import gregorio-4.1.4.

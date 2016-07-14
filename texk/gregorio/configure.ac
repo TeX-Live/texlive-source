@@ -97,6 +97,8 @@ dnl Checks for header files.
 AC_CHECK_HEADERS([stdint.h])
 AC_CHECK_HEADERS([stdalign.h])
 
+AC_CHECK_ALIGNOF(uint32_t)
+
 AC_C_BIGENDIAN
 
 AC_SUBST([GREGORIO_TREE], [gregorio-src])
