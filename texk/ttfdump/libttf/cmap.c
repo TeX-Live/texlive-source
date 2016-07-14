@@ -225,6 +225,9 @@ void ttfFreeCMAP(CMAPPtr cmap)
 {
     USHORT i;
     
+    if (!cmap)
+	return;
+
     free(cmap->encoding);
 
     for (i = 0; i < cmap->numberOfMaps; i++)

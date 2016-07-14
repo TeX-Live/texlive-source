@@ -72,6 +72,10 @@ void ttfPrintNAME(FILE *fp,NAMEPtr name)
 void ttfFreeNAME(NAMEPtr name)
 {
     USHORT i;
+
+    if (!name)
+	return;
+
     for (i=0;i<name->numberOfRecords;i++)
 	ttfFreeNameRecordData(name->NameRecords+i);
     free(name->NameRecords);

@@ -1,3 +1,11 @@
+2016-07-15  Adrian Johnson <ajohnson@redneon.com>
+
+	* libttf/cmap.c,
+	* libttf/name.c,
+	* libttf/post.c: check for null before dereferencing in case
+	of missing cmap/name/post tables.
+	tex-live mail of 9 Jul 2016 18:17:16.
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
