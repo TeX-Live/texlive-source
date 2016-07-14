@@ -129,6 +129,10 @@ void ttfPrintPOST(FILE *fp,POSTPtr post)
 void ttfFreePOST(POSTPtr post)
 {
     USHORT i, numGlyphs;
+
+    if (!post)
+	return;
+
     switch (post->format)
 	{
 	case 0x00020000:
