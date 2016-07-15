@@ -9,6 +9,9 @@
 # 2006-07-14: Better temp dir handling (suggested by Karl Berry) (RN).
 # 2006-07-23: New option --Xps2pdf and code cleanup (thanks to Karl Berry) (RN).
 # 2008-08-04: Remove the parameter "-Ppdf" from the dvips call (RN).
+# 2016-07-02: New option "--xelatex",   (hv)
+#                        "--lualatex" , (hv)
+# 2016-07-11: Better tests if xelatex or lualatex (RN)
 
 # First, work around bugs/limitations in some shells on some systems:
 test -f /bin/sh5 && test -z "$RUNNING_SH5" \
@@ -84,6 +87,14 @@ tmpdir=${TMPDIR-${TEMP-${TMP-/tmp}}}/.$progname$$
 log=$tmpdir/log
 version="1.0"
 
+## the defaults
+ENGINE1=latex
+OPTIONS=
+ENGINE2=pdflatex
+DVIPS=dvips
+PS2PDF=ps2pdf
+FILE=$1
+
 # look for optional things first
 while
   case $1 in
@@ -93,8 +104,17 @@ while
               echo "--Xps2pdf OPT passes OPT to ps2pdf."
               echo " (-dAutoRotatePages=/None is always passed.)"
               echo "--crop runs pdfcrop on ps2pdf output."
-  		                   exit 0;;
+              echo "--lualatex using the luatex engine for .dvi and .pdf" 
+              echo "--xelatex using the xetex engine for .xdv and .pdf" 
+              exit 0;;
    --version) echo "$progname version $version"; exit 0;;
+   --lualatex) ENGINE1=lualatex; 
+               OPTIONS="--output-format=dvi"; 
+               ENGINE2=lualatex; FILE=$2;;
+   --xelatex)  ENGINE1=xelatex;   
+               OPTIONS="-no-pdf";              
+               ENGINE2=xelatex;  
+               DVIPS=xdvipdfmx; FILE=$2;;
    --crop|-c) crop=true;;
    --Xps2pdf|-Xps2pdf) shift; ps2pdf_opts="$ps2pdf_opts $1";;
    -q) silent=true;;
@@ -107,8 +127,7 @@ do
 done
 
 # remaining option: filename
-file=$1
-if test -z "$file"; then
+if test -z "$FILE"; then
   echo "$0: no file to process, try --help for more information." >&2
   exit 1
 fi
@@ -118,17 +137,21 @@ fi
 job=`echo "x$1" | sed 's@x@@; s@.*/@@; s@\.[^.]*$@@'`
 
 setupTmpDir
-myexec latex \
-    "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$file}"
-test -f "$job.dvi" && myexec dvips -o "$job-pics.ps" "$job.dvi"
-test -f "$job-pics.ps" && myexec ps2pdf \
-  "$ps2pdf_opts" "$job-pics.ps" "$job-pics.pdf"
+myexec ${ENGINE1} ${OPTIONS} "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$FILE}"
+
+if test "$ENGINE1" = "latex" || test "$ENGINE1" = "lualatex"; then 
+  myexec ${DVIPS} -o "$job-pics.ps" "$job.dvi" 
+else
+  myexec ${DVIPS} -o "$job-pics.pdf" "$job.xdv"   
+fi
+
+test -f "$job-pics.ps" && myexec ${PS2PDF} "$ps2pdf_opts" "$job-pics.ps" "$job-pics.pdf"
+
 if $crop; then
   myexec pdfcrop "$job-pics.pdf" "$job-pics-crop.pdf" 
   mv "$job-pics-crop.pdf" "$job-pics.pdf"
 fi
-myexec pdflatex \
-    "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$file}"
+myexec ${ENGINE2} "\AtBeginDocument{\RequirePackage{pst-pdf}} \input{$FILE}"
 true
 cleanup
 
