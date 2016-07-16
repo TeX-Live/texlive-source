@@ -1,3 +1,9 @@
+2016-07-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdftoepdf.cc: Use zround(stemV->getNum()) instead of stemV->getInt()
+	in epdf_create_fontdescriptor(), since the value of stemV may be real
+	in general.
+
 2016-06-12  Karl Berry  <karl@freefriends.org>
         and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

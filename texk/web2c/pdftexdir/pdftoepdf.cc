@@ -71,6 +71,7 @@ extern "C" {
 // does not allow it.
 extern int getpdfsuppresswarningpagegroup(void);
 extern integer getpdfsuppressptexinfo(void);
+extern integer zround(double);
 }
 
 // The prefix "PTEX" for the PDF keys is special to pdfTeX;
@@ -427,7 +428,7 @@ static void copyFont(char *tag, Object * fontRef)
         && (fontmap = lookup_fontmap(basefont->getName())) != NULL) {
         // copy the value of /StemV
         fontdesc->dictLookup("StemV", &stemV);
-        fd = epdf_create_fontdescriptor(fontmap, stemV->getInt());
+        fd = epdf_create_fontdescriptor(fontmap, zround(stemV->getNum()));
         if (fontdesc->dictLookup("CharSet", &charset) &&
             charset->isString() && is_subsetable(fontmap))
             epdf_mark_glyphs(fd, charset->getString()->getCString());
