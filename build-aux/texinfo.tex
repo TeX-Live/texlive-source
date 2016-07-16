@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-06-18.21}
+\def\texinfoversion{2016-07-13.18}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -8477,8 +8477,7 @@ end
 % its parameters, looking like "\xeatspaces{\hash 1}".
 %    \paramno is the number of parameters
 %    \paramlist is a TeX parameter text, e.g. "#1,#2,#3,"
-% There are eight cases: recursive and nonrecursive macros of zero, one,
-% up to nine, and many arguments.
+% There are four cases: macros of zero, one, up to nine, and many arguments.
 % \xdef is used so that macro definitions will survive the file
 % they're defined in: @include reads the file inside a group.
 %
@@ -8493,91 +8492,48 @@ end
   \else
     \let\xeatspaces\relax % suppress expansion
   \fi
-  \ifrecursive   %%%%%%%%%%%%%% Recursive %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \ifcase\paramno
-    % 0
+  \ifcase\paramno
+  % 0
+    \expandafter\xdef\csname\the\macname\endcsname{%
+      \noexpand\scanmacro{\macrobody}}%
+  \or % 1
+    \expandafter\xdef\csname\the\macname\endcsname{%
+       \bgroup
+       \noexpand\braceorline
+       \expandafter\noexpand\csname\the\macname @@@\endcsname}%
+    \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
+      \egroup
+      \noexpand\scanmacro{\macrobody}%
+      }%
+  \else % at most 9
+    \ifnum\paramno<10\relax
+      % @MACNAME sets the context for reading the macro argument
+      % @MACNAME@@ gets the argument, processes backslashes and appends a 
+      % comma.
+      % @MACNAME@@@ removes braces surrounding the argument list.
+      % @MACNAME@@@@ scans the macro body with arguments substituted.
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \noexpand\scanmacro{\macrobody}}%
-    \or % 1
-      \expandafter\xdef\csname\the\macname\endcsname{%
-         \bgroup
-         \noexpand\braceorline
-         \expandafter\noexpand\csname\the\macname @@@\endcsname}%
+        \bgroup
+        \noexpand\expandafter  % This \expandafter skip any spaces after the
+        \noexpand\macroargctxt % macro before we change the catcode of space.
+        \noexpand\expandafter
+        \expandafter\noexpand\csname\the\macname @@\endcsname}%
+      \expandafter\xdef\csname\the\macname @@\endcsname##1{%
+          \noexpand\passargtomacro
+          \expandafter\noexpand\csname\the\macname @@@\endcsname{##1,}}%
       \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
-        \egroup
-        \noexpand\scanmacro{\macrobody}%
-        }%
-    \else
-      \ifnum\paramno<10\relax % at most 9
-        % See non-recursive section below for comments
-        \expandafter\xdef\csname\the\macname\endcsname{%
-          \bgroup
-          \noexpand\expandafter
-          \noexpand\macroargctxt
-          \noexpand\expandafter
-          \expandafter\noexpand\csname\the\macname @@\endcsname}%
-        \expandafter\xdef\csname\the\macname @@\endcsname##1{%
-            \noexpand\passargtomacro
-            \expandafter\noexpand\csname\the\macname @@@\endcsname{##1,}}%
-        \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
-            \expandafter\noexpand\csname\the\macname @@@@\endcsname ##1}%
-        \expandafter\expandafter
-        \expandafter\xdef
-        \expandafter\expandafter
-          \csname\the\macname @@@@\endcsname\paramlist{%
-            \egroup\noexpand\scanmacro{\macrobody}}%
-      \else % 10 or more
-        \expandafter\xdef\csname\the\macname\endcsname{%
-          \noexpand\getargvals@{\the\macname}{\argl}%
-        }%    
-        \global\expandafter\let\csname mac.\the\macname .body\endcsname\macrobody
-        \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\gobble
-      \fi
-    \fi
-  \else  %%%%%%%%%%%%%%%%%%%%%% Non-recursive %%%%%%%%%%%%%%%%%%%%%%%%%%
-    \ifcase\paramno
-    % 0
+          \expandafter\noexpand\csname\the\macname @@@@\endcsname ##1}%
+      \expandafter\expandafter
+      \expandafter\xdef
+      \expandafter\expandafter
+        \csname\the\macname @@@@\endcsname\paramlist{%
+          \egroup\noexpand\scanmacro{\macrobody}}%
+    \else % 10 or more:
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \noexpand\scanmacro{\macrobody}}%
-    \or % 1
-      \expandafter\xdef\csname\the\macname\endcsname{%
-         \bgroup
-         \noexpand\braceorline
-         \expandafter\noexpand\csname\the\macname @@@\endcsname}%
-      \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
-        \egroup
-        \noexpand\scanmacro{\macrobody}%
-        }%
-    \else % at most 9
-      \ifnum\paramno<10\relax
-        % @MACNAME sets the context for reading the macro argument
-        % @MACNAME@@ gets the argument, processes backslashes and appends a 
-        % comma.
-        % @MACNAME@@@ removes braces surrounding the argument list.
-        % @MACNAME@@@@ scans the macro body with arguments substituted.
-        \expandafter\xdef\csname\the\macname\endcsname{%
-          \bgroup
-          \noexpand\expandafter  % This \expandafter skip any spaces after the
-          \noexpand\macroargctxt % macro before we change the catcode of space.
-          \noexpand\expandafter
-          \expandafter\noexpand\csname\the\macname @@\endcsname}%
-        \expandafter\xdef\csname\the\macname @@\endcsname##1{%
-            \noexpand\passargtomacro
-            \expandafter\noexpand\csname\the\macname @@@\endcsname{##1,}}%
-        \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
-            \expandafter\noexpand\csname\the\macname @@@@\endcsname ##1}%
-        \expandafter\expandafter
-        \expandafter\xdef
-        \expandafter\expandafter
-          \csname\the\macname @@@@\endcsname\paramlist{%
-            \egroup\noexpand\scanmacro{\macrobody}}%
-      \else % 10 or more:
-        \expandafter\xdef\csname\the\macname\endcsname{%
-          \noexpand\getargvals@{\the\macname}{\argl}%
-        }%
-        \global\expandafter\let\csname mac.\the\macname .body\endcsname\macrobody
-        \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\norecurse
-      \fi
+        \noexpand\getargvals@{\the\macname}{\argl}%
+      }%
+      \global\expandafter\let\csname mac.\the\macname .body\endcsname\macrobody
+      \global\expandafter\let\csname mac.\the\macname .recurse\endcsname\gobble
     \fi
   \fi}
 
