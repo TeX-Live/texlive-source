@@ -22,8 +22,10 @@ pdfjam/pdfjam-slides6up
 pdfjam/pdfjoin
 pdfjam/pdfnup
 pdfjam/pdfpun
+pdfxup/pdfxup
 pst-pdf/ps4pdf
 simpdftex/simpdftex
+texosquery/texosquery
 typeoutfileinfo/typeoutfileinfo.sh
 a2ping/a2ping.pl
 accfonts/mkt1font
@@ -80,6 +82,7 @@ lilyglyphs/lily-image-commands.py
 lilyglyphs/lily-rebuild-pdfs.py
 ltximg/ltximg.pl
 luaotfload/luaotfload-tool.lua
+m-tx/m-tx.lua
 makedtx/makedtx.pl
 make4ht/make4ht
 match_parens/match_parens
@@ -101,6 +104,7 @@ pfarrei/a5toa4.tlu
 pfarrei/pfarrei.tlu
 pkfix-helper/pkfix-helper
 pkfix/pkfix.pl
+pmx/pmx2pdf.lua
 pmxchords/pmxchords.lua
 pst2pdf/pst2pdf.pl
 ptex2pdf/ptex2pdf.lua
