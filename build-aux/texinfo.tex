@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-07-13.18}
+\def\texinfoversion{2016-07-16.19}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -3886,7 +3886,7 @@ end
 
 
 \message{tables,}
-% Tables -- @table, @ftable, @vtable, @item(x).
+% Tables -- @table, @ftable, @ktable, @vtable, @item(x).
 
 % default indentation of table text
 \newdimen\tableindent \tableindent=.8in
@@ -3898,7 +3898,7 @@ end
 % used internally for \itemindent minus \itemmargin
 \newdimen\itemmax
 
-% Note @table, @ftable, and @vtable define @item, @itemx, etc., with
+% Note @table, @ftable, @ktable and @vtable define @item, @itemx, etc., with
 % these defs.
 % They also define \itemindex
 % to index the item name in whatever manner is desired (perhaps none).
@@ -3966,7 +3966,7 @@ end
 \def\item{\errmessage{@item while not in a list environment}}
 \def\itemx{\errmessage{@itemx while not in a list environment}}
 
-% @table, @ftable, @vtable.
+% @table, @ftable, @ktable, @vtable.
 \envdef\table{%
   \let\itemindex\gobble
   \tablecheck{table}%
@@ -3974,6 +3974,10 @@ end
 \envdef\ftable{%
   \def\itemindex ##1{\doind {fn}{\code{##1}}}%
   \tablecheck{ftable}%
+}
+\envdef\ktable{%
+  \def\itemindex ##1{\doind {ky}{\code{##1}}}%
+  \tablecheck{ktable}%
 }
 \envdef\vtable{%
   \def\itemindex ##1{\doind {vr}{\code{##1}}}%
@@ -4018,6 +4022,7 @@ end
 }
 \def\Etable{\endgraf\afterenvbreak}
 \let\Eftable\Etable
+\let\Ektable\Etable
 \let\Evtable\Etable
 \let\Eitemize\Etable
 \let\Eenumerate\Etable
@@ -8038,7 +8043,7 @@ end
 \newif\ifrecursive  % Is it recursive?
 
 % List of all defined macros in the form
-%    \definedummyword\macro1\definedummyword\macro2...
+%    \commondummyword\macro1\commondummyword\macro2...
 % Currently is also contains all @aliases; the list can be split
 % if there is a need.
 \def\macrolist{}
@@ -8046,7 +8051,7 @@ end
 % Add the macro to \macrolist
 \def\addtomacrolist#1{\expandafter \addtomacrolistxxx \csname#1\endcsname}
 \def\addtomacrolistxxx#1{%
-     \toks0 = \expandafter{\macrolist\definedummyword#1}%
+     \toks0 = \expandafter{\macrolist\commondummyword#1}%
      \xdef\macrolist{\the\toks0}%
 }
 
@@ -8187,7 +8192,7 @@ end
     % Remove the macro name from \macrolist:
     \begingroup
       \expandafter\let\csname#1\endcsname \relax
-      \let\definedummyword\unmacrodo
+      \let\commondummyword\unmacrodo
       \xdef\macrolist{\macrolist}%
     \endgroup
   \else
@@ -8202,7 +8207,7 @@ end
   \ifx #1\relax
     % remove this
   \else
-    \noexpand\definedummyword \noexpand#1%
+    \noexpand\commondummyword \noexpand#1%
   \fi
 }
 
