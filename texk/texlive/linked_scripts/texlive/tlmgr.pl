@@ -6929,10 +6929,10 @@ specifies to be disabled, and finally appending the local file.
 
 (Historical note: The formerly supported C<updmap-local.cfg> and
 C<fmtutil-local.cnf> are no longer read, since C<updmap> and C<fmtutil>
-now reads and supports multiple configuration files.  Thus, local
-additions can and should be put into an C<updmap.cfg>
-resp. C<fmtutil.cnf> file in C<TEXMFLOCAL>.  The C<generate updmap> and
-C<generate fmtutil> actions no longer exist.)
+now reads and supports multiple configuration files.  Thus,
+local additions can and should be put into an C<updmap.cfg> of C<fmtutil.cnf>
+file in C<TEXMFLOCAL>.  The C<generate updmap> and C<generate fmtutil> actions
+no longer exist.)
 
 Local files specify entries to be disabled with a comment line, namely
 one of these:

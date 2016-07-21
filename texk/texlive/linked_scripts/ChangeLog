@@ -1,3 +1,7 @@
+2016-07-20  Karl Berry  <karl@tug.org>
+
+	* scripts.lst: update scripts.lst
+
 2016-04-10  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texmf_other_scripts): remove m-tx and pmx2pdf.
