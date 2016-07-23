@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-07-16.19}
+\def\texinfoversion{2016-07-20.14}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1541,11 +1541,21 @@ output) for that.)}
   %
   % XeTeX version check
   %
-  \ifnum\strcmp{\the\XeTeXversion\XeTeXrevision}{0.99995}>-1
+  \ifnum\strcmp{\the\XeTeXversion\XeTeXrevision}{0.99996}>-1
+    % TeX Live 2016 contains XeTeX 0.99996 and xdvipdfmx 20160307.
+    % It can be used `dvipdfmx:config' special (from TeX Live SVN r40941).
+    % For avoiding PDF destination name replacement, we use the special
+    % instead of xdvipdfmx commandline option `-C 0x0010'.
+    \special{dvipdfmx:config C 0x0010}
     % XeTeX 0.99995+ contains xdvipdfmx 20160307+.
     % It can handle Unicode destination name for PDF.
     \txiuseunicodedestnametrue
   \else
+    % XeTeX < 0.99996 (TeX Live < 2016) cannot be used
+    % `dvipdfmx:config' special.
+    % So for avoiding PDF destination name replacement,
+    % xdvipdfmx commandline option `-C 0x0010' is necessary.
+    %
     % XeTeX < 0.99995 can not handle Unicode destination name for PDF
     % because xdvipdfmx 20150315 has UTF-16 convert issue.
     % It fixed by xdvipdfmx 20160106 (TeX Live SVN r39753).
@@ -1556,7 +1566,7 @@ output) for that.)}
   %
   % Emulate the primitive of pdfTeX
   \def\pdfdest name#1 xyz{%
-    \special{pdf:dest (name#1) [@thispage /XYZ @xpos @ypos]}%
+    \special{pdf:dest (name#1) [@thispage /XYZ @xpos @ypos null]}%
   }
   \def\pdfmkdest#1{{%
     % We have to set dummies so commands such as @code, and characters
@@ -8885,6 +8895,9 @@ end
          % In this case, the replaced destination names of
          % remote PDF cannot be known. In order to avoid replacement,
          % you can use commandline option `-C 0x0010' for xdvipdfmx.
+         % If you use XeTeX 0.99996+ (TeX Live 2016+),
+         % the commandline option is not neccesary
+         % because we can use `dvipdfmx:config' special.
          \special{pdf:bann << /Border [0 0 0] /Type /Annot /Subtype /Link /A
            << /S /GoToR /F (\the\filename.pdf) /D (name\pdfxrefdest) >> >>}%
        \else
