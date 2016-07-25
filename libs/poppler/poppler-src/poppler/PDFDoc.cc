@@ -34,6 +34,7 @@
 // Copyright (C) 2015 Li Junling <lijunling@sina.com>
 // Copyright (C) 2015 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright (C) 2015 André Esser <bepandre@hotmail.com>
+// Copyright (C) 2016 Jakub Kucharski <jakubkucharski97@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -600,6 +601,72 @@ GBool PDFDoc::isLinearized(GBool tryingToReconstruct) {
   }
 }
 
+void PDFDoc::setDocInfoModified(Object *infoObj)
+{
+  Object infoObjRef;
+  getDocInfoNF(&infoObjRef);
+  xref->setModifiedObject(infoObj, infoObjRef.getRef());
+  infoObjRef.free();
+}
+
+void PDFDoc::setDocInfoStringEntry(const char *key, GooString *value)
+{
+  GBool removeEntry = !value || value->getLength() == 0;
+
+  Object infoObj;
+  getDocInfo(&infoObj);
+
+  if (infoObj.isNull() && removeEntry) {
+    // No info dictionary, so no entry to remove.
+    return;
+  }
+
+  createDocInfoIfNoneExists(&infoObj);
+
+  Object gooStrObj;
+  if (removeEntry) {
+    gooStrObj.initNull();
+  } else {
+    gooStrObj.initString(value);
+  }
+
+  // gooStrObj is set to value or null by now. The latter will cause a removal.
+  infoObj.dictSet(key, &gooStrObj);
+
+  if (infoObj.dictGetLength() == 0) {
+    // Info dictionary is empty. Remove it altogether.
+    removeDocInfo();
+  } else {
+    setDocInfoModified(&infoObj);
+  }
+
+  infoObj.free();
+}
+
+GooString *PDFDoc::getDocInfoStringEntry(const char *key) {
+  Object infoObj;
+  getDocInfo(&infoObj);
+  if (infoObj.isNull()) {
+      return NULL;
+  }
+
+  Object entryObj;
+  infoObj.dictLookup(key, &entryObj);
+
+  GooString *result;
+
+  if (entryObj.isString()) {
+    result = entryObj.takeString();
+  } else {
+    result = NULL;
+  }
+
+  entryObj.free();
+  infoObj.free();
+
+  return result;
+}
+
 static GBool
 get_id (GooString *encodedidstring, GooString *id) {
   const char *encodedid = encodedidstring->getCString();
@@ -865,17 +932,7 @@ int PDFDoc::saveAs(GooString *name, PDFWriteMode mode) {
 }
 
 int PDFDoc::saveAs(OutStream *outStr, PDFWriteMode mode) {
-
-  // find if we have updated objects
-  GBool updated = gFalse;
-  for(int i=0; i<xref->getNumObjects(); i++) {
-    if (xref->getEntry(i)->getFlag(XRefEntry::Updated)) {
-      updated = gTrue;
-      break;
-    }
-  }
-
-  if (!updated && mode == writeStandard) {
+  if (!xref->isModified() && mode == writeStandard) {
     // simply copy the original file
     saveWithoutChangesAs (outStr);
   } else if (mode == writeForceRewrite) {

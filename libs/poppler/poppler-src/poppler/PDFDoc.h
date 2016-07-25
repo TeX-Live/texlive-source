@@ -29,6 +29,7 @@
 // Copyright (C) 2013 Adrian Perez de Castro <aperez@igalia.com>
 // Copyright (C) 2015 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright (C) 2015 André Esser <bepandre@hotmail.com>
+// Copyright (C) 2016 Jakub Kucharski <jakubkucharski97@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -231,6 +232,43 @@ public:
   Object *getDocInfo(Object *obj) { return xref->getDocInfo(obj); }
   Object *getDocInfoNF(Object *obj) { return xref->getDocInfoNF(obj); }
 
+  // Create and return the document's Info dictionary if none exists.
+  // Otherwise return the existing one.
+  Object *createDocInfoIfNoneExists(Object *obj) { return xref->createDocInfoIfNoneExists(obj); }
+
+  // Remove the document's Info dictionary and update the trailer dictionary.
+  void removeDocInfo() { xref->removeDocInfo(); }
+
+  // Set doc info string entry. NULL or empty value will cause a removal.
+  // Takes ownership of value.
+  void setDocInfoStringEntry(const char *key, GooString *value);
+
+  // Set document's properties in document's Info dictionary.
+  // NULL or empty value will cause a removal.
+  // Takes ownership of value.
+  void setDocInfoTitle(GooString *title) { setDocInfoStringEntry("Title", title); }
+  void setDocInfoAuthor(GooString *author) { setDocInfoStringEntry("Author", author); }
+  void setDocInfoSubject(GooString *subject) { setDocInfoStringEntry("Subject", subject); }
+  void setDocInfoKeywords(GooString *keywords) { setDocInfoStringEntry("Keywords", keywords); }
+  void setDocInfoCreator(GooString *creator) { setDocInfoStringEntry("Creator", creator); }
+  void setDocInfoProducer(GooString *producer) { setDocInfoStringEntry("Producer", producer); }
+  void setDocInfoCreatDate(GooString *creatDate) { setDocInfoStringEntry("CreationDate", creatDate); }
+  void setDocInfoModDate(GooString *modDate) { setDocInfoStringEntry("ModDate", modDate); }
+
+  // Get document's properties from document's Info dictionary.
+  // Returns NULL on fail.
+  // Returned GooStrings should be freed by the caller.
+  GooString *getDocInfoStringEntry(const char *key);
+
+  GooString *getDocInfoTitle() { return getDocInfoStringEntry("Title"); }
+  GooString *getDocInfoAuthor() { return getDocInfoStringEntry("Author"); }
+  GooString *getDocInfoSubject() { return getDocInfoStringEntry("Subject"); }
+  GooString *getDocInfoKeywords() { return getDocInfoStringEntry("Keywords"); }
+  GooString *getDocInfoCreator() { return getDocInfoStringEntry("Creator"); }
+  GooString *getDocInfoProducer() { return getDocInfoStringEntry("Producer"); }
+  GooString *getDocInfoCreatDate() { return getDocInfoStringEntry("CreationDate"); }
+  GooString *getDocInfoModDate() { return getDocInfoStringEntry("ModDate"); }
+
   // Return the PDF version specified by the file.
   int getPDFMajorVersion() { return pdfMajorVersion; }
   int getPDFMinorVersion() { return pdfMinorVersion; }
@@ -314,6 +352,9 @@ private:
   // linearized document (0 for non linearized documents).
   Goffset getMainXRefEntriesOffset(GBool tryingToReconstruct = gFalse);
   long long strToLongLong(char *s);
+
+  // Mark the document's Info dictionary as modified.
+  void setDocInfoModified(Object *infoObj);
 
   GooString *fileName;
 #ifdef _WIN32
