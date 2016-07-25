@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[45])
+m4_define([poppler_version_minor],[46])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -772,7 +772,7 @@ if test x$enable_poppler_qt5 = xyes; then
   AC_CHECK_TOOL(MOCQT5, moc)
   AC_MSG_CHECKING([for Qt5 moc])
   mocversion=`$MOCQT5 -v 2>&1`
-  mocversiongrep=`echo $mocversion | grep "Qt 5\|moc 5"`
+  mocversiongrep=`echo $mocversion | grep -E "Qt 5|moc 5"`
   if test x"$mocversiongrep" != x"$mocversion"; then
     AC_MSG_RESULT([no])
     # moc was not the qt5 one, try with moc-qt5
@@ -957,8 +957,8 @@ case "$enable_compile_warnings" in
 esac
 
 case "$host_os" in
-  mingw*)
-    # mingw prints "warning: -fPIC ignored for target (all code is position independent)"
+  mingw*|cygwin*)
+    # mingw and cygwin print "warning: -fPIC ignored for target (all code is position independent)"
     # for every file
     ;;
   *)

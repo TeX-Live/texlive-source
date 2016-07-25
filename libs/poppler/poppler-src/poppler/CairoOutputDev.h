@@ -18,7 +18,7 @@
 // Copyright (C) 2005, 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2005 Nickolay V. Shmyrev <nshmyrev@yandex.ru>
 // Copyright (C) 2006-2011, 2013 Carlos Garcia Campos <carlosgc@gnome.org>
-// Copyright (C) 2008, 2009, 2011-2015 Adrian Johnson <ajohnson@redneon.com>
+// Copyright (C) 2008, 2009, 2011-2016 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2008 Michael Vrable <mvrable@cs.ucsd.edu>
 // Copyright (C) 2010-2013 Thomas Freitag <Thomas.Freitag@alfa.de>
 // Copyright (C) 2015 Suzuki Toshiya <mpsuzuki@hiroshima-u.ac.jp>
@@ -289,7 +289,7 @@ protected:
 #if CAIRO_VERSION >= CAIRO_VERSION_ENCODE(1, 14, 0)
   GBool setMimeDataForJBIG2Globals (Stream *str, cairo_surface_t *image);
 #endif
-  void setAntialias(cairo_t *cr, cairo_antialias_t antialias);
+  static void setContextAntialias(cairo_t *cr, cairo_antialias_t antialias);
 
   GfxRGB fill_color, stroke_color;
   cairo_pattern_t *fill_pattern, *stroke_pattern;

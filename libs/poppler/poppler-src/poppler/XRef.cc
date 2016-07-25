@@ -24,6 +24,7 @@
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2013, 2014 Adrian Johnson <ajohnson@redneon.com>
 // Copyright (C) 2013 Pino Toscano <pino@kde.org>
+// Copyright (C) 2016 Jakub Kucharski <jakubkucharski97@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -286,6 +287,7 @@ void XRef::init() {
   entries = NULL;
   capacity = 0;
   size = 0;
+  modified = gFalse;
   streamEnds = NULL;
   streamEndsLen = 0;
   objStrs = new PopplerCache(5);
@@ -1290,6 +1292,40 @@ Object *XRef::getDocInfoNF(Object *obj) {
   return trailerDict.dictLookupNF("Info", obj);
 }
 
+Object *XRef::createDocInfoIfNoneExists(Object *obj) {
+  getDocInfo(obj);
+
+  if (!obj->isNull()) {
+    return obj;
+  }
+
+  obj->initDict(this);
+
+  Ref ref = addIndirectObject(obj);
+
+  Object objRef;
+  objRef.initRef(ref.num, ref.gen);
+
+  trailerDict.dictSet("Info", &objRef);
+
+  objRef.free();
+
+  return obj;
+}
+
+void XRef::removeDocInfo() {
+  Object infoObjRef;
+  getDocInfoNF(&infoObjRef);
+  if (infoObjRef.isNull()) {
+    return;
+  }
+
+  trailerDict.dictRemove("Info");
+
+  removeIndirectObject(infoObjRef.getRef());
+  infoObjRef.free();
+}
+
 GBool XRef::getStreamEnd(Goffset streamStart, Goffset *streamEnd) {
   int a, b, m;
 
@@ -1373,6 +1409,7 @@ void XRef::setModifiedObject (Object* o, Ref r) {
   e->obj.free();
   o->copy(&(e->obj));
   e->setFlag(XRefEntry::Updated, gTrue);
+  setModified();
 }
 
 Ref XRef::addIndirectObject (Object* o) {
@@ -1398,6 +1435,7 @@ Ref XRef::addIndirectObject (Object* o) {
   e->type = xrefEntryUncompressed;
   o->copy(&e->obj);
   e->setFlag(XRefEntry::Updated, gTrue);
+  setModified();
 
   Ref r;
   r.num = entryIndexToUse;
@@ -1419,6 +1457,7 @@ void XRef::removeIndirectObject(Ref r) {
   e->type = xrefEntryFree;
   e->gen++;
   e->setFlag(XRefEntry::Updated, gTrue);
+  setModified();
 }
 
 void XRef::writeXRef(XRef::XRefWriter *writer, GBool writeAllEntries) {

@@ -1,3 +1,320 @@
+commit 5641644f485b402cd906d3db73a22a00eb00489b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jul 25 00:14:30 2016 +0200
+
+    Poppler 0.46
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 33 +++++++++++++++++++++++++++++++++
+ configure.ac           |  2 +-
+ cpp/CMakeLists.txt     |  2 +-
+ cpp/Doxyfile           |  2 +-
+ cpp/Makefile.am        |  2 +-
+ glib/CMakeLists.txt    |  2 +-
+ glib/Makefile.am       |  2 +-
+ poppler/Makefile.am    |  2 +-
+ qt4/src/CMakeLists.txt |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt4/src/Makefile.am    |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 15 files changed, 48 insertions(+), 15 deletions(-)
+
+commit 97375143f458a9f12009d798ec43364d548051b9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 24 23:59:09 2016 +0200
+
+    update Copyrights
+
+ poppler/CairoOutputDev.cc | 2 +-
+ poppler/CairoOutputDev.h  | 2 +-
+ poppler/Link.cc           | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+commit bc1e3df84adff679194c33ce2dc52caa70b24df8
+Author: Richard Palo <richard@netbsd.org>
+Date:   Sun Jul 24 23:52:52 2016 +0200
+
+    Work with non gnu greps
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit df6904366d587133760adf0d43a128aa4d35a712
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 24 13:14:39 2016 +0200
+
+    qt5: fix memory leaks in Document::modificationDate() and
+    Document::creationDate()
+
+ qt5/src/poppler-document.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit d89ea6ae0ddd70916700a402649a9e0423ae9fbb
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 24 13:14:19 2016 +0200
+
+    qt4: fix memory leaks in Document::modificationDate() and
+    Document::creationDate()
+
+ qt4/src/poppler-document.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 844ede567f188997bb49ab1fc435797b4f31f5e9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 24 12:47:21 2016 +0200
+
+    qt5: Fix memory leak in new implementation of ::date
+
+ qt5/src/poppler-document.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit d34ac7cedf4213020f5a4c05e09aa8d781bc6e43
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 24 12:43:41 2016 +0200
+
+    qt5: Added document property setters & getters
+
+    Part of Bug #36653
+
+ qt5/src/poppler-document.cc | 234
+ ++++++++++++++++++++++++++++++++++++--------
+ qt5/src/poppler-private.cc  |   9 ++
+ qt5/src/poppler-private.h   |   3 +
+ qt5/src/poppler-qt5.h       | 118 ++++++++++++++++++++++
+ 4 files changed, 321 insertions(+), 43 deletions(-)
+
+commit 720718739c8002304e8da33d9ca87bc0c1511425
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jul 24 12:40:04 2016 +0200
+
+    qt4: Fix memory leak in new implementation of ::date
+
+ qt4/src/poppler-document.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit e7cbc36467dfac9415d7d1cac70b77e04566e75d
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 24 12:39:34 2016 +0200
+
+    qt4: Added document property setters & getters
+
+    Part of Bug #36653
+
+ qt4/src/poppler-document.cc | 234
+ ++++++++++++++++++++++++++++++++++++--------
+ qt4/src/poppler-private.cc  |   9 ++
+ qt4/src/poppler-private.h   |   3 +
+ qt4/src/poppler-qt4.h       | 118 ++++++++++++++++++++++
+ 4 files changed, 321 insertions(+), 43 deletions(-)
+
+commit 977669048b93e0561fc86e15b42ac69884e36fab
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 24 12:20:58 2016 +0200
+
+    cpp: Added document property setters & getters
+
+    Part of Bug #36653
+
+ cpp/poppler-document.cpp | 445
+ ++++++++++++++++++++++++++++++++++++++++++++---
+ cpp/poppler-document.h   |  24 +++
+ 2 files changed, 447 insertions(+), 22 deletions(-)
+
+commit 7f4a201226bc1112a121c749eb73f2a78e5149e3
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 24 12:19:52 2016 +0200
+
+    cpp: Added functions to save a document
+
+    Part of Bug #36653
+
+ cpp/poppler-document.cpp | 30 ++++++++++++++++++++++++++++++
+ cpp/poppler-document.h   |  4 ++++
+ 2 files changed, 34 insertions(+)
+
+commit 8d5778feeb3c6cd932ecd7abeba7d1e670d2af66
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Tue Jul 19 22:58:39 2016 +0930
+
+    cairo: try finding glyphs in substitute fonts by unicode value
+
+    if the glyph name can not be found in the substitute font, try
+    converting the name to unicode value in see of the font cmap has a
+    mapping for the character.
+
+    Bug 96994
+
+ poppler/CairoFontEngine.cc | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+commit 954ee650047c185523f3e20e92f8fc4c67308196
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Jul 17 21:38:54 2016 +0930
+
+    pdftocairo: Use fprintf for printing errors
+
+ utils/pdftocairo.cc | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 92f283ba931b605935646e2c55007b75c7e82288
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Sun Jul 17 01:42:19 2016 +0200
+
+    glib: make document metatag gobject properties writeable
+
+ glib/poppler-document.cc | 56
+ +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 48 insertions(+), 8 deletions(-)
+
+commit 13f0333a46e2a498700ee6bff9845ae0eceafe80
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Tue Jul 5 06:54:54 2016 +0930
+
+    pdfinfo: update man page for listenc, meta, js, and struct* options
+
+ utils/pdfinfo.1 | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit c91483aceb1b640771f572cb3df9ad707e5cad0d
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Mon Jul 4 21:55:53 2016 +0930
+
+    pdfinfo: Don't print pdf info when printing metadata, javascript,
+    or structure
+
+    Bug 96801
+
+ utils/pdfinfo.cc | 579
+ +++++++++++++++++++++++++++----------------------------
+ 1 file changed, 289 insertions(+), 290 deletions(-)
+
+commit 95d30fe3dd0cf265ccefd80d7deac00c7f430b14
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Tue Jul 12 23:02:35 2016 +0200
+
+    cpp: pass len to GooString constructor in
+    detail::ustring_to_unicode_GooString()
+
+    Bug #96426
+
+ cpp/poppler-private.cpp | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8a0b8b2ea57e3b9ac60e17e82aa22994f26d6213
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jul 5 23:35:57 2016 +0200
+
+    Be less strict when parsing FitH Link destinations
+
+    Would need the same for other kind of destinations too but since
+    don't have a file that needs it i'll refrain from changing it
+
+    Bug #96661
+
+ poppler/Link.cc | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+commit 7f893f546dd9753967b986d3a7a56becf9b8d02f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jul 5 23:30:29 2016 +0200
+
+    Remove checks that are already at the beginning of the function
+
+ poppler/Link.cc | 8 --------
+ 1 file changed, 8 deletions(-)
+
+commit 82476b0d6967ce5e61dce4666fe556edd63c16e6
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Mon Jun 6 22:17:57 2016 +0200
+
+    glib: Added document property setters & simplified getters
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=36653
+
+ glib/poppler-document.cc            | 347
+ +++++++++++++++++++++++++++---------
+ glib/poppler-document.h             |  18 ++
+ glib/reference/poppler-docs.sgml    |   4 +
+ glib/reference/poppler-sections.txt |   8 +
+ 4 files changed, 288 insertions(+), 89 deletions(-)
+
+commit 4f7c67b59b9c55b9b896378d3adbecbb73f6eb63
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Tue Feb 23 16:46:43 2016 +0100
+
+    Added DocInfo setters & getters
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=36653
+
+ poppler/Object.h  |  7 +++++-
+ poppler/PDFDoc.cc | 67
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ poppler/PDFDoc.h  | 41 ++++++++++++++++++++++++++++++++++
+ poppler/XRef.cc   | 34 ++++++++++++++++++++++++++++
+ poppler/XRef.h    |  7 ++++++
+ 5 files changed, 155 insertions(+), 1 deletion(-)
+
+commit e2851dd8166fa5a1df0518959ad71c9d81bd9152
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Tue Feb 23 15:36:43 2016 +0100
+
+    Added XRef modification flag
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=36653
+
+ poppler/PDFDoc.cc | 12 +-----------
+ poppler/XRef.cc   |  5 +++++
+ poppler/XRef.h    |  7 +++++++
+ 3 files changed, 13 insertions(+), 11 deletions(-)
+
+commit 9faa9b05171e46815924b48d31a7c45a1285c403
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Jun 5 22:44:56 2016 +0930
+
+    Fix tiling patterns with BBox with non-zero x,y
+
+ poppler/CairoOutputDev.cc | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+commit 500fb06a23c95109547fded267a21647c8629502
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Tue Jun 21 20:05:44 2016 +0930
+
+    Don't use -fPIC on cygwin
+
+    it emits a warning for every file stating that -fPIC is ignored
+
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 5f939d683a8978cdfdb65a3471296bf9e5940055
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Jun 19 11:07:09 2016 +0930
+
+    pdftocairo: revert the use of groups for blending into white page
+
+    This was added in 853e949 but has since been found to cause
+    regressions eg the test case in bug 63587.
+
+ utils/pdftocairo.cc | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+commit 5165c1a59332a0bc9da60a1a8d53dace039aae32
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sun Jun 19 11:19:24 2016 +0930
+
+    cairo: fix bug in setAntialias()
+
+    Was setting the member cairo instead of cr parameter. Also rename the
+    function to avoid confusion with the public setAntialias() and make it
+    static to prevent this type of bug in future.
+
+ poppler/CairoOutputDev.cc | 16 ++++++++--------
+ poppler/CairoOutputDev.h  |  2 +-
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
 commit dfbb98327cbbc173a63f5db36b6606a93e5166aa
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Fri Jun 17 00:04:25 2016 +0200

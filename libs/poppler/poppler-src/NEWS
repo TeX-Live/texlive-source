@@ -1,3 +1,36 @@
+Release 0.46.0
+        core:
+         * cairo: fix bug in setAntialias()
+         * cairo: Fix tiling patterns with BBox with non-zero x,y
+         * cairo: try finding glyphs in substitute fonts by unicode value. Bug #96994
+         * Added XRef modification flag
+         * Added DocInfo setters & getters
+         * Be less strict when parsing FitH Link destinations. Bug #96661
+
+        utils:
+         * pdftocairo: revert the use of groups for blending into white page
+         * pdftocairo: Use fprintf for printing errors
+         * pdfinfo: Don't print pdf info when printing metadata, javascript, or structure. Bug #96801
+
+        glib:
+         * Added document property setters & simplified getters
+         * make document metatag gobject properties writeable
+
+        cpp:
+         * pass len to GooString constructor in detail::ustring_to_unicode_GooString(). Bug #96426
+         * Added functions to save a document
+         * Added document property setters & getters
+
+        qt4:
+         * Added document property setters & simplified getters
+
+        qt5:
+         * Added document property setters & simplified getters
+
+        build system:
+         * configure: Don't use -fPIC on cygwin
+         * configure: Work with non gnu greps
+
 Release 0.45.0
         core:
          * SplashOutputDev: Fix iccTransform + splashModeXBGR8

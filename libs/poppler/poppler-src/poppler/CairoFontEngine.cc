@@ -467,6 +467,11 @@ CairoFreeTypeFont *CairoFreeTypeFont::create(GfxFont *gfxFont, XRef *xref,
       if ((name = enc[i])) {
 	codeToGID[i] = FT_Get_Name_Index(face, (char*)name);
 	if (codeToGID[i] == 0) {
+	  Unicode u;
+	  u = globalParams->mapNameToUnicodeText (name);
+	  codeToGID[i] = FT_Get_Char_Index (face, u);
+	}
+	if (codeToGID[i] == 0) {
 	  name = GfxFont::getAlternateName(name);
 	  if (name) {
 	    codeToGID[i] = FT_Get_Name_Index(face, (char*)name);
