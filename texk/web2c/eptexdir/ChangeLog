@@ -1,3 +1,7 @@
+2016-07-29  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Improve \pdfsavepos as pointed out by N. Abe.
+
 2016-03-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* etex.ch1: Adapt to changes in ptexdir/ptex-base.ch.
