@@ -945,7 +945,7 @@ begin
   pdf_last_x_pos := pdf_last_x_pos + 4736286;
   case dvi_dir of
   dir_tate,dir_dtou:
-    pdf_last_y_pos := cur_page_width - pdf_last_y_pos - 4736286;
+    pdf_last_y_pos := cur_page_height - pdf_last_y_pos - 4736286;
   dir_yoko:
     pdf_last_y_pos := cur_page_height - pdf_last_y_pos - 4736286;
   endcases;
@@ -955,16 +955,24 @@ end
 @ @<Calculate DVI page dimensions and margins@>=
   if pdf_page_height <> 0 then
     cur_page_height := pdf_page_height
+  else if (type(p)=dir_node) then begin
+    if (box_dir(list_ptr(p))=dir_tate)or(box_dir(list_ptr(p))=dir_dtou) then
+        cur_page_height := width(p) + 2*v_offset + 2*4736286
+    else
+      cur_page_height := height(p) + depth(p) + 2*v_offset + 2*4736286;
+    end
   else
     cur_page_height := height(p) + depth(p) + 2*v_offset + 2*4736286;
   if pdf_page_width <> 0 then
     cur_page_width := pdf_page_width
+  else if (type(p)=dir_node) then begin
+    if (box_dir(list_ptr(p))=dir_tate)or(box_dir(list_ptr(p))=dir_dtou) then
+      cur_page_width := height(p) + depth(p) + 2*h_offset + 2*4736286
+    else
+      cur_page_width := width(p) + 2*h_offset + 2*4736286;
+    end
   else
     cur_page_width := width(p) + 2*h_offset + 2*4736286;
-  if (type(p)=dir_node) then
-    if (box_dir(list_ptr(p))=dir_tate)or(box_dir(list_ptr(p))=dir_dtou) then begin
-      t:=cur_page_height; cur_page_height:=cur_page_width;
-      cur_page_width:=t; end;
 
 
 @ Of course \epTeX\ can produce a \.{DVI} file only, not a PDF file.
