@@ -152,6 +152,7 @@ texmf_other_scripts = \
 	oberdiek/pdfatfi.pl \
 	pax/pdfannotextractor.pl \
 	pdfcrop/pdfcrop.pl \
+	pdflatexpicscale/pdflatexpicscale.pl \
 	pedigree-perl/pedigree.pl \
 	perltex/perltex.pl \
 	petri-nets/pn2pdf \
