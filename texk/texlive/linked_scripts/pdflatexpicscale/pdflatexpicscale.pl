@@ -1,19 +1,20 @@
 #!/usr/bin/perl -w
 # Scale pictures to be included into a LaTeX generated PDF file.
-# version 0.1 written by peter willadt 
+# version 0.2 written by peter willadt 
 # contact willadt at t-online.de
 # this software is subject to the LaTeX project public license.
 # changes:
-# 2016-08-01 first public release
-
+# 2016-07-27 first public release
+# 2016-08-02 changed regex to prevent problem with long filenames
+# 2016-08-02 changed > to gt (shame on me)
 use strict;
 use File::Basename;
 use File::Spec;
 use File::Copy;
 use Getopt::Long;
 
-my $version = '0.1';
-my $versiondate = '2016-07-28';
+my $version = '0.2';
+my $versiondate = '2016-08-02';
 my $showversion;
 
 my $verbose;
@@ -72,7 +73,7 @@ sub handleImage
     $dstdirs[1] = $printfolderprefix;
     $dstfilename = File::Spec->catfile(@dstdirs, basename($filename));
     if($filename eq $dstfilename){
-	unless ($srcfolder > ' ') {
+	unless ($srcfolder gt ' ') {
 	    printInplaceError($filename);
 	    $skipped++;
 	    return;
@@ -159,25 +160,32 @@ sub readlog
     my $logfilename = shift;
     $logfilename .= '.log';
     my ($picname, $picext, $picwidth, $picheight);
-    my ($picextu, $needsize);
+    my ($picextu, $state, $buffer);
     open LOGFILE, "<$logfilename" or die "Cannot read $logfilename";
-    $needsize = 0;
+    $state = 0;
     while (<LOGFILE>){
-	if (/^Package pdftex\.def Info\: (\S*)\.(\w+) used /){
-	    $picname = $1;
-	    $picext = $2;
-	    ($picextu = $picext) =~ tr/a-z/A-Z/;
-	    if( defined $canhandle{$picextu}){
-		$needsize = 1;
-		next;
+	if (/^Package pdftex\.def\sInfo\:\s/){
+	    $buffer = $_;
+	    unless (/\sused/){
+		chomp $buffer;
+		$buffer .= <LOGFILE>;
+	    }
+	    if($buffer =~ /Info:\s(\S*)\.(\w+)\sused/){
+		$picname = $1;
+		$picext = $2;
+		($picextu = $picext) =~ tr/a-z/A-Z/;
+		if(defined $canhandle{$picextu}){
+		    $state = 1;
+		    next;
+		}
 	    }
 	}
-	next unless ($needsize == 1);
+	next unless ($state == 1);
 	next unless /Requested size: (\d+\.\d+)pt x (\d+\.\d+)pt/;
 	$picwidth  = $1;
 	$picheight = $2;
 	handleImage("$picname.$picext", $picwidth, $picheight);
-	$needsize = 0;
+	$state = 0;
     }
 }
 
