@@ -1,3 +1,9 @@
+2016-08-04  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (max_strings.bibtex, et al.): increase to 100,000
+	per report from Michael Perryman,
+	http://tug.org/pipermail/tex-live/2016-July/039109.html.
+
 2016-07-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* knj.c, knj.h: Avoid compiler warnings.
