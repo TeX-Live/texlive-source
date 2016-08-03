@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 41437 $';
+my $svnrev = '$Revision: 41618 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2960,28 +2960,26 @@ sub sort_uniq {
 }
 
 
-=item C<push_uniq(\@list, @items)>
+=item C<push_uniq(\@list, @new_items)>
 
-The C<push_uniq> function pushes the last elements on the list referenced
-by the first argument.
+The C<push_uniq> function pushes the last argument @ITEMS to the $LIST
+referenced by the first argument, if they are not already in the list.
 
 =cut
 
 sub push_uniq {
-  # can't we use $l as a reference, and then use my?  later ...
-  local (*l, @le) = @_;
-  foreach my $e (@le) {
-    if (! &member($e, @l)) {
-      push @l, $e;
+  my ($l, @new_items) = @_;
+  for my $e (@new_items) {
+    if (! &member($e, @$l)) {
+      push (@$l, $e);
     }
   }
 }
 
-
 =item C<member($item, @list)>
 
-The C<member> function returns true if the the first argument is contained
-in the list of the remaining arguments.
+The C<member> function returns true if the first argument 
+is also inclued in the list of the remaining arguments.
 
 =cut
 
