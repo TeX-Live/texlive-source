@@ -778,10 +778,10 @@ screen_depth.mf = 1200
 % BibTeX only (max_strings also determines hash_size and hash_prime).
 ent_str_size =  250
 glob_str_size = 20000
-max_strings.bibtex = 35307
-max_strings.bibtex8 = 35307
-max_strings.bibtexu = 35307
-max_strings.pbibtex = 35307
+max_strings.bibtex  = 100000
+max_strings.bibtex8 = 100000
+max_strings.bibtexu = 100000
+max_strings.pbibtex = 100000
 
 % GFtype only.
 line_length.gftype = 500
