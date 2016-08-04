@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-07-31.07}
+\def\texinfoversion{2016-08-01.14}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1561,6 +1561,46 @@ output) for that.)}
     % It is fixed by xdvipdfmx 20160106 (TeX Live SVN r39753).
     \txiuseunicodedestnamefalse
   \fi
+  %
+  % Color support
+  %
+  \def\rgbDarkRed{0.50 0.09 0.12}
+  \def\rgbBlack{0 0 0}
+  %
+  \def\pdfsetcolor#1{\special{pdf:scolor [#1]}}
+  %
+  % Set color, and create a mark which defines \thiscolor accordingly,
+  % so that \makeheadline knows which color to restore.
+  \def\setcolor#1{%
+    \xdef\lastcolordefs{\gdef\noexpand\thiscolor{#1}}%
+    \domark
+    \pdfsetcolor{#1}%
+  }
+  %
+  \def\maincolor{\rgbBlack}
+  \pdfsetcolor{\maincolor}
+  \edef\thiscolor{\maincolor}
+  \def\lastcolordefs{}
+  %
+  \def\makefootline{%
+    \baselineskip24pt
+    \line{\pdfsetcolor{\maincolor}\the\footline}%
+  }
+  %
+  \def\makeheadline{%
+    \vbox to 0pt{%
+      \vskip-22.5pt
+      \line{%
+        \vbox to8.5pt{}%
+        % Extract \thiscolor definition from the marks.
+        \getcolormarks
+        % Typeset the headline with \maincolor, then restore the color.
+        \pdfsetcolor{\maincolor}\the\headline\pdfsetcolor{\thiscolor}%
+      }%
+      \vss
+    }%
+    \nointerlineskip
+  }
   %
   % PDF outline support
   %
@@ -5924,49 +5964,46 @@ end
   \dimen@ = \ht0
   \advance\dimen@ by \topskip
   \advance\dimen@ by-\baselineskip
-  \ifdim\dimen@<14\baselineskip
+  \ifdim\dimen@<5\baselineskip
     % Don't split a short final column in two.
     \setbox2=\vbox{}%
   \else
     \divide\dimen@ by 2 % target to split to
     \dimen@ii = \dimen@
     \splittopskip = \topskip
-    % Loop until the second column is no higher than the first
+    % Loop until left column is at least as high as the right column.
     {%
       \vbadness = 10000
       \loop
         \global\setbox3 = \copy0
         \global\setbox1 = \vsplit3 to \dimen@
-        % Remove glue from bottom of first column to
-        % make sure it is higher than the second.
+        % Remove glue from bottom of columns to compare
+        % apparent heights.
         \global\setbox1 = \vbox{\unvbox1\unpenalty\unskip}%
-      \ifdim\ht3>\ht1
+        \global\setbox3 = \vbox{\unvbox3\unpenalty\unskip}%
+      \ifdim\ht1<\ht3
         \global\advance\dimen@ by 1pt
       \repeat
     }%
+    % Now the left column is in box 1, and the right column in box 3.
+    % Check whether the left column has come out higher than the page itself.  
+    % (Note that we have doubled \vsize for the double columns, so
+    % the actual height of the page is 0.5\vsize).
     \ifdim2\ht1>\vsize
-      % The left column has come out longer than the page itself.  (Note
-      % that we have doubled \vsize for the double columns, so
-      % the actual height of the page is 0.5\vsize).  Just split the last
-      % of the double column material roughly in half.
+      % Just split the last of the double column material roughly in half.
       \setbox2=\box0
       \setbox0 = \vsplit2 to \dimen@ii
       \setbox0=\vbox to\dimen@ii{\unvbox0}%
       \setbox2=\vbox to\dimen@ii{\unvbox2}%
     \else
-      \multiply\dimen@ii by 5
-      \divide\dimen@ii by 4
-      \global\setbox3 = \copy0
-      \global\setbox1 = \vsplit3 to \dimen@ii
-      \global\setbox\balancedcolumns=\vbox{\pagesofar}%
-      \ifdim\ht3<\dimen@ii
+      % Compare the heights of the two columns.
+      \ifdim4\ht1>5\ht3
         % Column heights are too different, so don't make their bottoms
-        % flush with each other.  The glue at the end of the second column
-        % allows a second column to stretch, reducing the difference in
-        % height between the two.
-        \setbox0=\vbox to\dimen@{\unvbox1\vfill}%
-        \setbox2=\vbox to\dimen@{\unvbox3\vskip 0pt plus 0.3\ht0}%
+        % flush with each other.
+        \setbox2=\vbox to \ht1 {\unvbox3\vfill}%
+        \setbox0=\vbox to \ht1 {\unvbox1\vfill}%
       \else
+        % Make column bottoms flush with each other.
         \setbox0=\vbox to\dimen@{\unvbox1}%
         \setbox2=\vbox to\dimen@{\unvbox3}%
       \fi
