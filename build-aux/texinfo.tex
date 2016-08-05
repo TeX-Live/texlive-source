@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-08-01.14}
+\def\texinfoversion{2016-08-03.13}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1622,6 +1622,11 @@ output) for that.)}
     \txiescapepdf\pdfdestname
     \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
   }}
+  %
+  % by default, use black for everything.
+  \def\urlcolor{\rgbBlack}
+  \def\linkcolor{\rgbBlack}
+  \def\endlink{\setcolor{\maincolor}\pdfendlink}
   %
   \def\dopdfoutline#1#2#3#4{%
     \iftxiuseunicodedestname
@@ -8840,16 +8845,21 @@ end
   \ifpdf
     % For pdfTeX and LuaTeX
     {\indexnofonts
-     \turnoffactive
      \makevalueexpandable
+     %
+     % This (wrongly) does not take account of leading or trailing
+     % spaces in #1, which should be ignored.
+     \ifx\luatexversion\thisisundefined
+       \edef\pdfxrefdest{#1}% pdfTeX: Replace Unicode characters with ASCII.
+     \else
+       \def\pdfxrefdest{#1}% LuaTeX: Pass through Unicode characters.
+     \fi
+     \turnoffactive
      % This expands tokens, so do it after making catcode changes, so _
      % etc. don't get their TeX definitions.  This ignores all spaces in
      % #4, including (wrongly) those in the middle of the filename.
      \getfilename{#4}%
      %
-     % This (wrongly) does not take account of leading or trailing
-     % spaces in #1, which should be ignored.
-     \edef\pdfxrefdest{#1}%
      \ifx\pdfxrefdest\empty
        \def\pdfxrefdest{Top}% no empty targets
      \else
@@ -8870,12 +8880,7 @@ end
     \else
       % For XeTeX
       {\indexnofonts
-       \turnoffactive
        \makevalueexpandable
-       % This expands tokens, so do it after making catcode changes, so _
-       % etc. don't get their TeX definitions.  This ignores all spaces in
-       % #4, including (wrongly) those in the middle of the filename.
-       \getfilename{#4}%
        %
        % This (wrongly) does not take account of leading or trailing
        % spaces in #1, which should be ignored.
@@ -8884,6 +8889,12 @@ end
        \else
          \edef\pdfxrefdest{#1}% Replace Unicode characters with ASCII.
        \fi
+       \turnoffactive
+       % This expands tokens, so do it after making catcode changes, so _
+       % etc. don't get their TeX definitions.  This ignores all spaces in
+       % #4, including (wrongly) those in the middle of the filename.
+       \getfilename{#4}%
+       %
        \ifx\pdfxrefdest\empty
          \def\pdfxrefdest{Top}% no empty targets
        \else
@@ -9956,6 +9967,18 @@ directory should work if nowhere else does.}
   \fi % latone
   \fi % lattwo
   \fi % ascii
+  %
+  \ifx\XeTeXrevision\thisisundefined
+  \else
+    \ifx \declaredencoding \utfeight
+    \else
+      \ifx \declaredencoding \ascii
+      \else
+        \message{Warning: XeTeX with non-UTF-8 encodings cannot handle %
+        non-ASCII characters in auxiallity files.}%
+      \fi
+    \fi
+  \fi
 }
 
 % emacs-page
