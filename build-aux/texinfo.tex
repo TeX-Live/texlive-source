@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-08-03.13}
+\def\texinfoversion{2016-08-03.21}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1314,8 +1314,12 @@ output) for that.)}
     \indexnofonts
     \makevalueexpandable
     \turnoffactive
-    % Use ASCII approximations in destination names.
-    \passthroughcharsfalse
+    \ifx\luatexversion\thisisundefined
+      % pdfTeX: Use ASCII approximations in destination names.
+      \passthroughcharsfalse
+    \else
+      % LuaTeX: Pass through Unicode characters.
+    \fi
     \def\pdfdestname{#1}%
     \txiescapepdf\pdfdestname
     \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
@@ -4842,8 +4846,8 @@ end
   \definedummyletter\ %
   %
   % For texindex which always views { and } as separators.
-  \def\{{\lbracechar}%
-  \def\}{\rbracechar}%
+  \def\{{\lbracechar{}}%
+  \def\}{\rbracechar{}}%
   %
   % Do the redefinitions.
   \definedummies
@@ -5465,7 +5469,7 @@ end
       \let\indexlbrace\{   % Likewise, set these sequences for braces
       \let\indexrbrace\}   % used in the sort key.
       \begindoublecolumns
-      \let\entryorphanpenalty=\indexorphanpenalty
+      \let\entrywidowpenalty=\indexwidowpenalty
       %
       % Read input from the index file line by line.
       \loopdo
@@ -5700,7 +5704,7 @@ end
   \endgroup
   % delay text of entry until after penalty
   \bgroup\aftergroup\insertindexentrybox
-  \entryorphanpenalty
+  \entrywidowpenalty
 }}
 
 \newskip\thinshrinkable
@@ -5725,13 +5729,13 @@ end
 \newdimen\entrylinedepth
 
 % Default is no penalty
-\let\entryorphanpenalty\egroup
+\let\entrywidowpenalty\egroup
 
 % Used from \printindex.  \firsttoken should be the first token
 % after the \entry.  If it's not another \entry, we are at the last
 % line of a group of index entries, so insert a penalty to discourage
-% orphaned index entries.
-\long\def\indexorphanpenalty{%
+% widowed index entries.
+\long\def\indexwidowpenalty{%
   \def\isentry{\entry}%
   \ifx\firsttoken\isentry
   \else
@@ -5998,8 +6002,8 @@ end
       % Just split the last of the double column material roughly in half.
       \setbox2=\box0
       \setbox0 = \vsplit2 to \dimen@ii
-      \setbox0=\vbox to\dimen@ii{\unvbox0}%
-      \setbox2=\vbox to\dimen@ii{\unvbox2}%
+      \setbox0=\vbox to\ht2{\unvbox0\vfill}%
+      \setbox2=\vbox to\ht2{\unvbox2\vfill}%
     \else
       % Compare the heights of the two columns.
       \ifdim4\ht1>5\ht3
@@ -9975,7 +9979,7 @@ directory should work if nowhere else does.}
       \ifx \declaredencoding \ascii
       \else
         \message{Warning: XeTeX with non-UTF-8 encodings cannot handle %
-        non-ASCII characters in auxiallity files.}%
+        non-ASCII characters in auxiliary files.}%
       \fi
     \fi
   \fi
