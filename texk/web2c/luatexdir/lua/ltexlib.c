@@ -1388,6 +1388,7 @@ static int getcatcode(lua_State * L)
     return 1;
 }
 
+/*
 
 static int setmathcode(lua_State * L)
 {
@@ -1426,6 +1427,52 @@ static int setmathcode(lua_State * L)
     return 0;
 }
 
+*/
+
+/*
+    [global] code { c f ch }
+    [global] code   c f ch   (a bit easier on memory, counterpart of getter)
+*/
+
+static int setmathcode(lua_State * L)
+{
+    int ch;
+    halfword cval, fval, chval;
+    int level = cur_level;
+    int f = 1;
+    if (lua_type(L,1) == LUA_TSTRING) {
+        const char *s = lua_tostring(L,1);
+        if (lua_key_eq(s,global)) {
+            level = level_one;
+            f = 2;
+        }
+    }
+    ch = luaL_checkinteger(L, f);
+    check_char_range(ch, "setmathcode", 65536*17);
+    f += 1 ;
+    if (lua_type(L,f) == LUA_TNUMBER) {
+        cval = luaL_checkinteger(L, f);
+        fval = luaL_checkinteger(L, f+1);
+        chval = luaL_checkinteger(L, f+2);
+    } else if (lua_type(L,f) == LUA_TTABLE) {
+        lua_rawgeti(L, f, 1);
+        cval = (halfword) luaL_checkinteger(L, -1);
+        lua_rawgeti(L, f, 2);
+        fval = (halfword) luaL_checkinteger(L, -1);
+        lua_rawgeti(L, f, 3);
+        chval = (halfword) luaL_checkinteger(L, -1);
+        lua_pop(L,3);
+    } else {
+        luaL_error(L, "Bad arguments for tex.setmathcode()");
+        return 0;
+    }
+    check_char_range(cval, "setmathcode", 8);
+    check_char_range(fval, "setmathcode", 256);
+    check_char_range(chval, "setmathcode", 65536*17);
+    set_math_code(ch, cval,fval, chval, (quarterword) (level));
+    return 0;
+}
+
 static int getmathcode(lua_State * L)
 {
     mathcodeval mval = { 0, 0, 0 };
@@ -1453,6 +1500,8 @@ static int getmathcodes(lua_State * L)
     lua_pushinteger(L,mval.character_value);
     return 3;
 }
+
+/*
 
 static int setdelcode(lua_State * L)
 {
@@ -1491,6 +1540,56 @@ static int setdelcode(lua_State * L)
     check_char_range(lcval, "setdelcode", 65536*17);
     set_del_code(ch, sfval, scval, lfval, lcval, (quarterword) (level));
 
+    return 0;
+}
+
+*/
+
+/*
+    [global] code { c f ch }
+    [global] code   c f ch   (a bit easier on memory, counterpart of getter)
+*/
+
+static int setdelcode(lua_State * L)
+{
+    int ch;
+    halfword sfval, scval, lfval, lcval;
+    int level = cur_level;
+    int f = 1;
+    if (lua_type(L,1) == LUA_TSTRING) {
+        const char *s = lua_tostring(L,1);
+        if (lua_key_eq(s,global)) {
+            level = level_one;
+            f = 2;
+        }
+    }
+    ch = luaL_checkinteger(L, f);
+    check_char_range(ch, "setdelcode", 65536*17);
+    f += 1;
+    if (lua_type(L,f) == LUA_TNUMBER) {
+        sfval = luaL_checkinteger(L, f);
+        scval = luaL_checkinteger(L, f+1);
+        lfval = luaL_checkinteger(L, f+2);
+        lcval = luaL_checkinteger(L, f+3);
+    } else if (lua_type(L,f) == LUA_TTABLE) {
+        lua_rawgeti(L, f, 1);
+        sfval = (halfword) luaL_checkinteger(L, -1);
+        lua_rawgeti(L, f, 2);
+        scval = (halfword) luaL_checkinteger(L, -1);
+        lua_rawgeti(L, f, 3);
+        lfval = (halfword) luaL_checkinteger(L, -1);
+        lua_rawgeti(L, f, 4);
+        lcval = (halfword) luaL_checkinteger(L, -1);
+        lua_pop(L,4);
+    } else {
+        luaL_error(L, "Bad arguments for tex.setdelcode()");
+        return 0;
+    }
+    check_char_range(sfval, "setdelcode", 256);
+    check_char_range(scval, "setdelcode", 65536*17);
+    check_char_range(lfval, "setdelcode", 256);
+    check_char_range(lcval, "setdelcode", 65536*17);
+    set_del_code(ch, sfval, scval, lfval, lcval, (quarterword) (level));
     return 0;
 }
 
