@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-08-06.12}
+\def\texinfoversion{2016-08-07.14}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1115,7 +1115,7 @@ where each line of input produces a line of output.}
 \else
   % Use Unicode destination names
   \txiuseunicodedestnametrue
-  % Escape PDF strings UTF-8 to UTF-16
+  % Escape PDF strings with converting UTF-16 from UTF-8
   \begingroup
     \catcode`\%=12
     \directlua{
@@ -1143,7 +1143,24 @@ where each line of input produces a line of output.}
       end
     }
   \endgroup
-  \def\pdfescapestring#1{\directlua{UTF16oct('\luaescapestring{#1}')}}
+  \def\pdfescapestrutfsixteen#1{\directlua{UTF16oct('\luaescapestring{#1}')}}
+  % Escape PDF strings without converting
+  \begingroup
+    \directlua{
+      function PDFescstr(str)
+        for c in string.bytes(str) do
+          if c <= 0x20 or c >= 0x80 or c == 0x28 or c == 0x29 or c == 0x5c then
+            tex.sprint(
+              string.format(string.char(0x5c) .. string.char(0x25) .. '03o',
+                            c))
+          else
+            tex.sprint(string.char(c))
+          end
+        end
+      end
+    }
+  \endgroup
+  \def\pdfescapestring#1{\directlua{PDFescstr('\luaescapestring{#1}')}}
   \ifnum\luatexversion>84
     % For LuaTeX >= 0.85
     \def\pdfdest{\pdfextension dest}
@@ -1202,6 +1219,14 @@ where each line of input produces a line of output.}
     % The expandable \pdfescapestring primitive escapes parentheses,
     % backslashes, and other special chars.
     \xdef#1{\pdfescapestring{#1}}%
+  \fi
+}
+\def\txiescapepdfutfsixteen#1{%
+  \ifx\pdfescapestrutfsixteen\thisisundefined
+    % No UTF-16 converting macro available.
+    \txiescapepdf{#1}%
+  \else
+    \xdef#1{\pdfescapestrutfsixteen{#1}}%
   \fi
 }
 
@@ -1423,9 +1448,13 @@ output) for that.)}
       \ifx\pdfoutlinedest\empty
         \def\pdfoutlinedest{#4}%
       \else
+        % LuaTeX: Use UTF-8
+        % pdfTeX: Use ASCII
         \txiescapepdf\pdfoutlinedest
       \fi
-      \txiescapepdf\pdfoutlinetext
+      % LuaTeX: Convert to UTF-16
+      % pdfTeX: Use Latin-1 as PDFDocEncoding
+      \txiescapepdfutfsixteen\pdfoutlinetext
       %
       \pdfoutline goto name{\pdfmkpgn{\pdfoutlinedest}}#2{\pdfoutlinetext}%
     }
@@ -1684,6 +1713,8 @@ output) for that.)}
     \turnoffactive
     % Always use Unicode characters in title texts.
     \def\pdfoutlinetext{#1}%
+    % For XeTeX, xdvipdfmx converts to UTF-16.
+    % So we do not convert.
     \txiescapepdf\pdfoutlinetext
     \iftxiuseunicodedestname
       % Pass through Unicode characters.
@@ -1695,6 +1726,7 @@ output) for that.)}
     \ifx\pdfoutlinedest\empty
       \def\pdfoutlinedest{#4}%
     \fi
+    % Use UTF-8 or ASCII
     \txiescapepdf\pdfoutlinedest
     %
     \special{pdf:out [-] #2 << /Title (\pdfoutlinetext) /A
@@ -5834,8 +5866,6 @@ end
 
 \newbox\partialpage
 \newdimen\doublecolumnhsize
-\newdimen\doublecolumntopgap
-\doublecolumntopgap = 0pt
 
 % Use inside an output routine to save \topmark and \firstmark
 \def\savemarks{%
@@ -5918,11 +5948,7 @@ end
   %
   % Double the \vsize as well.  (We don't need a separate register here,
   % since nobody clobbers \vsize.)
-  \global\doublecolumntopgap = \topskip
-  \global\advance\doublecolumntopgap by -1\baselineskip
-  \advance\vsize by -1\doublecolumntopgap
   \vsize = 2\vsize
-  \topskip=0pt
   %
   % For the benefit of balancing columns
   \advance\baselineskip by 0pt plus 0.5pt
@@ -5955,9 +5981,7 @@ end
   %
   \hsize = \doublecolumnhsize
   \wd0=\hsize \wd2=\hsize
-  \vbox{%
-    \vskip\doublecolumntopgap
-    \hbox to\txipagewidth{\box0\hfil\box2}}%
+  \hbox to\txipagewidth{\box0\hfil\box2}%
 }
 
 
@@ -6053,8 +6077,8 @@ end
       % Just split the last of the double column material roughly in half.
       \setbox2=\box0
       \setbox0 = \vsplit2 to \dimen@ii
-      \setbox0=\vbox to\ht2{\unvbox0\vfill}%
-      \setbox2=\vbox to\ht2{\unvbox2\vfill}%
+      \setbox0=\vbox to \dimen@ii {\unvbox0\vfill}%
+      \setbox2=\vbox to \dimen@ii {\unvbox2\vfill}%
     \else
       % Compare the heights of the two columns.
       \ifdim4\ht1>5\ht3
