@@ -4688,6 +4688,8 @@ static int lua_nodelib_direct_has_glyph(lua_State * L)
 
 /* this is too simplistic, but it helps Hans to get going */
 
+/*
+
 static halfword do_ligature_n(halfword prev, halfword stop, halfword lig)
 {
     vlink(lig) = vlink(stop);
@@ -4697,7 +4699,11 @@ static halfword do_ligature_n(halfword prev, halfword stop, halfword lig)
     return lig;
 }
 
+*/
+
 /* node.do_ligature_n(node prev, node last, node lig) */
+
+/*
 
 static int lua_nodelib_do_ligature_n(lua_State * L)
 {
@@ -4718,7 +4724,11 @@ static int lua_nodelib_do_ligature_n(lua_State * L)
     return 1;
 }
 
+*/
+
 /* node.direct.do_ligature_n(node prev, node last, node lig) */
+
+/*
 
 static int lua_nodelib_direct_do_ligature_n(lua_State * L)
 {
@@ -4741,6 +4751,8 @@ static int lua_nodelib_direct_do_ligature_n(lua_State * L)
     }
     return 1;
 }
+
+*/
 
 /* node.usedlist */
 
@@ -6782,7 +6794,6 @@ static int lua_nodelib_effective_glue(lua_State * L)
     return 1;
 }
 
-
 static int lua_nodelib_direct_effective_glue(lua_State * L)
 {
     halfword glue = lua_tointeger(L, 1);
@@ -6807,6 +6818,70 @@ static int lua_nodelib_direct_effective_glue(lua_State * L)
     return 1;
 }
 
+/*
+    Disc nodes are kind of special in the sense that their head is not the head as we
+    see it, but a special node that has status info of which head and tail are part.
+    Normally when proper set/get functions are used this status node is all right but
+    if a macro package permits arbitrary messing around, then it can at some point
+    call the following cleaner, just before linebreaking kicks in. This one is not
+    called automatically because if significantly slows down the line break routing.
+
+*/
+
+#define check_disc(c) \
+    p = c ; \
+    if (p != null && vlink(p) != null) \
+        tlink(p) = tail_of_list(vlink(p));
+
+static int lua_nodelib_direct_check_discretionaries(lua_State * L) {
+    halfword c = lua_tointeger(L, 1);
+    halfword p ;
+    while (c != null) {
+        if (type(c) == disc_node) {
+            check_disc(no_break(c)) ;
+            check_disc(pre_break(c)) ;
+            check_disc(post_break(c)) ;
+        }
+        c = vlink(c) ;
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_check_discretionary(lua_State * L) {
+    halfword c = lua_tointeger(L, 1);
+    if (c != null && type(c) == disc_node) {
+        halfword p ;
+        check_disc(no_break(c)) ;
+        check_disc(pre_break(c)) ;
+        check_disc(post_break(c)) ;
+    }
+    return 0;
+}
+
+static int lua_nodelib_check_discretionaries(lua_State * L) {
+    halfword c = *check_isnode(L, 1);
+    halfword p ;
+    while (c != null) {
+        if (type(c) == disc_node) {
+            check_disc(no_break(c)) ;
+            check_disc(pre_break(c)) ;
+            check_disc(post_break(c)) ;
+        }
+        c = vlink(c) ;
+    }
+    return 0;
+}
+
+static int lua_nodelib_check_discretionary(lua_State * L) {
+    halfword c = *check_isnode(L, 1);
+    if (c != null && type(c) == disc_node) {
+        halfword p ;
+        check_disc(no_break(c)) ;
+        check_disc(pre_break(c)) ;
+        check_disc(post_break(c)) ;
+    }
+    return 0;
+}
 
 static const struct luaL_Reg nodelib_p[] = {
     {"__index",    lua_nodelib_get_property_t},
@@ -6836,7 +6911,7 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"count", lua_nodelib_direct_count},
     {"current_attr", lua_nodelib_direct_currentattr},
     {"dimensions", lua_nodelib_direct_dimensions},
-    {"do_ligature_n", lua_nodelib_direct_do_ligature_n},
+ /* {"do_ligature_n", lua_nodelib_direct_do_ligature_n}, */
     {"end_of_math", lua_nodelib_direct_end_of_math},
  /* {"family_font", lua_nodelib_mfont}, */ /* no node argument */
  /* {"fields", lua_nodelib_fields}, */ /* no node argument */
@@ -6917,6 +6992,8 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"getproperty", lua_nodelib_direct_get_property},
     {"setproperty", lua_nodelib_direct_set_property},
     {"effective_glue", lua_nodelib_direct_effective_glue},
+    {"check_discretionary", lua_nodelib_direct_check_discretionary},
+    {"check_discretionaries", lua_nodelib_direct_check_discretionaries},
     /* done */
     {NULL, NULL} /* sentinel */
 };
@@ -6929,7 +7006,7 @@ static const struct luaL_Reg nodelib_f[] = {
     {"count", lua_nodelib_count},
     {"current_attr", lua_nodelib_currentattr},
     {"dimensions", lua_nodelib_dimensions},
-    {"do_ligature_n", lua_nodelib_do_ligature_n},
+ /* {"do_ligature_n", lua_nodelib_do_ligature_n}, */
     {"end_of_math", lua_nodelib_end_of_math},
     {"family_font", lua_nodelib_mfont},
     {"fields", lua_nodelib_fields},
@@ -7004,6 +7081,8 @@ static const struct luaL_Reg nodelib_f[] = {
     {"getproperty", lua_nodelib_get_property}, /* hh experiment */
     {"setproperty", lua_nodelib_set_property}, /* hh experiment */
     {"effective_glue", lua_nodelib_effective_glue},
+    {"check_discretionary", lua_nodelib_check_discretionary},
+    {"check_discretionaries", lua_nodelib_check_discretionaries},
     /* done */
     {NULL, NULL} /* sentinel */
 };

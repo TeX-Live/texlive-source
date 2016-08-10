@@ -907,6 +907,13 @@ static int getpdfversion(lua_State * L)
     return 1 ;
 }
 
+static int getpdfcreationdate(lua_State * L)
+{
+    initialize_start_time(static_pdf);
+    lua_pushstring(L,static_pdf->start_time_str);
+    return 1 ;
+}
+
 static int getpdfminorversion(lua_State * L)
 {
  /* lua_pushinteger(L,static_pdf->minor_version); */
@@ -1154,6 +1161,7 @@ static const struct luaL_Reg pdflib[] = {
     { "fontsize", getpdffontsize },
     { "xformname", getpdfxformname },
     { "getversion", getpdfversion },
+    { "getcreationdate", getpdfcreationdate },
     { "getminorversion", getpdfminorversion },
     { "setminorversion", setpdfminorversion },
     { "newcolorstack", newpdfcolorstack },
