@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-08-07.14}
+\def\texinfoversion{2016-08-08.23}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -1338,7 +1338,7 @@ output) for that.)}
       \pdfrefximage \pdflastximage
     \fi}
   %
-  \def\pdfmkdest#1{{%
+  \def\setpdfdestname#1{{%
     % We have to set dummies so commands such as @code, and characters
     % such as \, aren't expanded when present in a section title.
     \indexnofonts
@@ -1362,8 +1362,52 @@ output) for that.)}
     \fi
     \def\pdfdestname{#1}%
     \txiescapepdf\pdfdestname
-    \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
   }}
+  %
+  \def\setpdfoutlinetext#1{{%
+    \indexnofonts
+    \makevalueexpandable
+    \turnoffactive
+    \ifx \declaredencoding \latone
+      % The PDF format can use an extended form of Latin-1 in bookmark
+      % strings.  See Appendix D of the PDF Reference, Sixth Edition, for
+      % the "PDFDocEncoding".
+      \passthroughcharstrue
+      % Pass through Latin-1 characters.
+      %   LuaTeX: Convert to Unicode
+      %   pdfTeX: Use Latin-1 as PDFDocEncoding
+      \def\pdfoutlinetext{#1}%
+    \else
+      \ifx \declaredencoding \utfeight
+        \ifx\luatexversion\thisisundefined
+          % For pdfTeX  with UTF-8.
+          % TODO: the PDF format can use UTF-16 in bookmark strings,
+          % but the code for this isn't done yet.
+          % Use ASCII approximations.
+          \passthroughcharsfalse
+          \def\pdfoutlinetext{#1}%
+        \else
+          % For LuaTeX with UTF-8.
+          % Pass through Unicode characters for title texts.
+          \passthroughcharstrue
+          \def\pdfoutlinetext{#1}%
+        \fi
+      \else
+        % For non-Latin-1 or non-UTF-8 encodings.
+        % Use ASCII approximations.
+        \passthroughcharsfalse
+        \def\pdfoutlinetext{#1}%
+      \fi
+    \fi
+    % LuaTeX: Convert to UTF-16
+    % pdfTeX: Use Latin-1 as PDFDocEncoding
+    \txiescapepdfutfsixteen\pdfoutlinetext
+  }}
+  %
+  \def\pdfmkdest#1{%
+    \setpdfdestname{#1}%
+    \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
+  }
   %
   % used to mark target names; must be expandable.
   \def\pdfmkpgn#1{#1}
@@ -1392,72 +1436,13 @@ output) for that.)}
     % page number.  We could generate a destination for the section
     % text in the case where a section has no node, but it doesn't
     % seem worth the trouble, since most documents are normally structured.
-    {
-      \turnoffactive
-      \ifx \declaredencoding \latone
-        % The PDF format can use an extended form of Latin-1 in bookmark
-        % strings.  See Appendix D of the PDF Reference, Sixth Edition, for
-        % the "PDFDocEncoding".
-        \passthroughcharstrue
-        % Pass through Latin-1 characters.
-        %   LuaTeX: Convert to Unicode
-        %   pdfTeX: Use Latin-1 as PDFDocEncoding
-        \edef\pdfoutlinetext{#1}%
-        \iftxiuseunicodedestname
-          % Pass through Latin-1 characters.
-          % LuaTeX with byte wise I/O converts Latin-1 characters to Unicode.
-          \edef\pdfoutlinedest{#3}%
-        \else
-          % Use ASCII approximations in destination names.
-          \passthroughcharsfalse
-          \edef\pdfoutlinedest{#3}% 
-        \fi
-      \else
-        \ifx \declaredencoding \utfeight
-          \ifx\luatexversion\thisisundefined
-            % For pdfTeX  with UTF-8.
-            % TODO: the PDF format can use UTF-16 in bookmark strings,
-            % but the code for this isn't done yet.
-            % Use ASCII approximations.
-            \passthroughcharsfalse
-            \edef\pdfoutlinetext{#1}%
-            \edef\pdfoutlinedest{#3}% 
-          \else
-            % For LuaTeX with UTF-8.
-            % Pass through Unicode characters for title texts.
-            \passthroughcharstrue
-            \edef\pdfoutlinetext{#1}%
-            \iftxiuseunicodedestname
-              % Pass through Unicode characters for destination names.
-              \edef\pdfoutlinedest{#3}%
-            \else
-              % Use ASCII approximations in destination names.
-              \passthroughcharsfalse
-              \edef\pdfoutlinedest{#3}% 
-            \fi
-          \fi
-        \else
-          % For non-Latin-1 or non-UTF-8 encodings.
-          % Use ASCII approximations.
-          \passthroughcharsfalse
-          \edef\pdfoutlinetext{#1}%
-          \edef\pdfoutlinedest{#3}% 
-        \fi
-      \fi
-      %
-      \ifx\pdfoutlinedest\empty
-        \def\pdfoutlinedest{#4}%
-      \else
-        % LuaTeX: Use UTF-8
-        % pdfTeX: Use ASCII
-        \txiescapepdf\pdfoutlinedest
-      \fi
-      % LuaTeX: Convert to UTF-16
-      % pdfTeX: Use Latin-1 as PDFDocEncoding
-      \txiescapepdfutfsixteen\pdfoutlinetext
-      %
-      \pdfoutline goto name{\pdfmkpgn{\pdfoutlinedest}}#2{\pdfoutlinetext}%
-    }
+    \setpdfoutlinetext{#1}
+    \setpdfdestname{#3}
+    \ifx\pdfdestname\empty
+      \def\pdfdestname{#4}%
+    \fi
+    %
+    \pdfoutline goto name{\pdfmkpgn{\pdfdestname}}#2{\pdfoutlinetext}%
   }
   %
   \def\pdfmakeoutlines{%
@@ -1687,7 +1672,8 @@ output) for that.)}
   \def\pdfdest name#1 xyz{%
     \special{pdf:dest (#1) [@thispage /XYZ @xpos @ypos null]}%
   }
-  \def\pdfmkdest#1{{%
+  %
+  \def\setpdfdestname#1{{%
     % We have to set dummies so commands such as @code, and characters
     % such as \, aren't expanded when present in a section title.
     \indexnofonts
@@ -1701,37 +1687,37 @@ output) for that.)}
     \fi
     \def\pdfdestname{#1}%
     \txiescapepdf\pdfdestname
-    \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
   }}
   %
-  % by default, use black for everything.
-  \def\urlcolor{\rgbBlack}
-  \def\linkcolor{\rgbBlack}
-  \def\endlink{\setcolor{\maincolor}\pdfendlink}
-  %
-  \def\dopdfoutline#1#2#3#4{{%
+  \def\setpdfoutlinetext#1{{%
     \turnoffactive
     % Always use Unicode characters in title texts.
     \def\pdfoutlinetext{#1}%
     % For XeTeX, xdvipdfmx converts to UTF-16.
     % So we do not convert.
     \txiescapepdf\pdfoutlinetext
-    \iftxiuseunicodedestname
-      % Pass through Unicode characters.
-    \else
-      % Use ASCII approximations in destination names.
-      \passthroughcharsfalse
+  }}
+  %
+  \def\pdfmkdest#1{%
+    \setpdfdestname{#1}%
+    \safewhatsit{\pdfdest name{\pdfdestname} xyz}%
+  }
+  %
+  % by default, use black for everything.
+  \def\urlcolor{\rgbBlack}
+  \def\linkcolor{\rgbBlack}
+  \def\endlink{\setcolor{\maincolor}\pdfendlink}
+  %
+  \def\dopdfoutline#1#2#3#4{%
+    \setpdfoutlinetext{#1}
+    \setpdfdestname{#3}
+    \ifx\pdfdestname\empty
+      \def\pdfdestname{#4}%
     \fi
-    \def\pdfoutlinedest{#3}%
-    \ifx\pdfoutlinedest\empty
-      \def\pdfoutlinedest{#4}%
-    \fi
-    % Use UTF-8 or ASCII
-    \txiescapepdf\pdfoutlinedest
     %
     \special{pdf:out [-] #2 << /Title (\pdfoutlinetext) /A
-      << /S /GoTo /D (\pdfoutlinedest) >> >> }%
-  }}
+      << /S /GoTo /D (\pdfdestname) >> >> }%
+  }
   %
   \def\pdfmakeoutlines{%
     \begingroup
@@ -8933,35 +8919,18 @@ end
      %
      % This (wrongly) does not take account of leading or trailing
      % spaces in #1, which should be ignored.
-     \iftxiuseunicodedestname
-       \ifx \declaredencoding \latone
-         % Pass through Latin-1 characters.
-       \else
-         \ifx \declaredencoding \utfeight
-           % Pass through Unicode characters.
-         \else
-           % Use ASCII approximations in destination names.
-           \passthroughcharsfalse
-         \fi
-       \fi
-     \else
-       % Use ASCII approximations in destination names.
-       \passthroughcharsfalse
-     \fi
-     \def\pdfxrefdest{#1}%
+     \setpdfdestname{#1}%
      %
-     \ifx\pdfxrefdest\empty
-       \def\pdfxrefdest{Top}% no empty targets
-     \else
-       \txiescapepdf\pdfxrefdest  % escape PDF special chars
+     \ifx\pdfdestname\empty
+       \def\pdfdestname{Top}% no empty targets
      \fi
      %
      \leavevmode
      \startlink attr{/Border [0 0 0]}%
      \ifnum\filenamelength>0
-       goto file{\the\filename.pdf} name{\pdfxrefdest}%
+       goto file{\the\filename.pdf} name{\pdfdestname}%
      \else
-       goto name{\pdfmkpgn{\pdfxrefdest}}%
+       goto name{\pdfmkpgn{\pdfdestname}}%
      \fi
     }%
     \setcolor{\linkcolor}%
@@ -8979,18 +8948,10 @@ end
        %
        % This (wrongly) does not take account of leading or trailing
        % spaces in #1, which should be ignored.
-       \iftxiuseunicodedestname
-         % Pass through Unicode characters.
-       \else
-         % Use ASCII approximations in destination names.
-         \passthroughcharsfalse
-       \fi
-       \def\pdfxrefdest{#1}%
+       \setpdfdestname{#1}%
        %
-       \ifx\pdfxrefdest\empty
-         \def\pdfxrefdest{Top}% no empty targets
-       \else
-         \txiescapepdf\pdfxrefdest  % escape PDF special chars
+       \ifx\pdfdestname\empty
+         \def\pdfdestname{Top}% no empty targets
        \fi
        %
        \leavevmode
@@ -9004,10 +8965,10 @@ end
          % this command line option is no longer necessary
          % because we can use the `dvipdfmx:config' special.
          \special{pdf:bann << /Border [0 0 0] /Type /Annot /Subtype /Link /A
-           << /S /GoToR /F (\the\filename.pdf) /D (\pdfxrefdest) >> >>}%
+           << /S /GoToR /F (\the\filename.pdf) /D (\pdfdestname) >> >>}%
        \else
          \special{pdf:bann << /Border [0 0 0] /Type /Annot /Subtype /Link /A
-           << /S /GoTo /D (\pdfxrefdest) >> >>}%
+           << /S /GoTo /D (\pdfdestname) >> >>}%
        \fi
       }%
       \setcolor{\linkcolor}%
