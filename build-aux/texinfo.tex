@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-08-08.23}
+\def\texinfoversion{2016-08-09.22}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -4998,6 +4998,7 @@ end
   \definedummyword\TeX
   %
   % Assorted special characters.
+  \definedummyword\atchar
   \definedummyword\arrow
   \definedummyword\bullet
   \definedummyword\comma
@@ -5214,37 +5215,40 @@ end
   \def\LaTeX{LaTeX}%
   \def\TeX{TeX}%
   %
-  % Assorted special characters.
-  % (The following {} will end up in the sort string, but that's ok.)
-  \def\arrow{->}%
-  \def\bullet{bullet}%
-  \def\comma{,}%
-  \def\copyright{copyright}%
-  \def\dots{...}%
-  \def\enddots{...}%
-  \def\equiv{==}%
-  \def\error{error}%
-  \def\euro{euro}%
-  \def\expansion{==>}%
-  \def\geq{>=}%
-  \def\guillemetleft{<<}%
-  \def\guillemetright{>>}%
-  \def\guilsinglleft{<}%
-  \def\guilsinglright{>}%
-  \def\leq{<=}%
-  \def\minus{-}%
-  \def\point{.}%
-  \def\pounds{pounds}%
-  \def\print{-|}%
-  \def\quotedblbase{"}%
-  \def\quotedblleft{"}%
-  \def\quotedblright{"}%
-  \def\quoteleft{`}%
-  \def\quoteright{'}%
-  \def\quotesinglbase{,}%
-  \def\registeredsymbol{R}%
-  \def\result{=>}%
-  \def\textdegree{o}%
+  % Assorted special characters.  \defglyph gives the control sequence a
+  % definition that removes the {} that follows its use.
+  \defglyph\atchar{@}%
+  \defglyph\arrow{->}%
+  \defglyph\bullet{bullet}%
+  \defglyph\comma{,}%
+  \defglyph\copyright{copyright}%
+  \defglyph\dots{...}%
+  \defglyph\enddots{...}%
+  \defglyph\equiv{==}%
+  \defglyph\error{error}%
+  \defglyph\euro{euro}%
+  \defglyph\expansion{==>}%
+  \defglyph\geq{>=}%
+  \defglyph\guillemetleft{<<}%
+  \defglyph\guillemetright{>>}%
+  \defglyph\guilsinglleft{<}%
+  \defglyph\guilsinglright{>}%
+  \defglyph\leq{<=}%
+  \defglyph\lbracechar{\{}%
+  \defglyph\minus{-}%
+  \defglyph\point{.}%
+  \defglyph\pounds{pounds}%
+  \defglyph\print{-|}%
+  \defglyph\quotedblbase{"}%
+  \defglyph\quotedblleft{"}%
+  \defglyph\quotedblright{"}%
+  \defglyph\quoteleft{`}%
+  \defglyph\quoteright{'}%
+  \defglyph\quotesinglbase{,}%
+  \defglyph\rbracechar{\}}%
+  \defglyph\registeredsymbol{R}%
+  \defglyph\result{=>}%
+  \defglyph\textdegree{o}%
   %
   % We need to get rid of all macros, leaving only the arguments (if present).
   % Of course this is not nearly correct, but it is the best we can do for now.
@@ -5259,6 +5263,7 @@ end
   \macrolist
   \let\value\indexnofontsvalue
 }
+\def\defglyph#1#2{\def#1##1{#2}} % see above
 
 
 
@@ -6047,10 +6052,6 @@ end
       \loop
         \global\setbox3 = \copy0
         \global\setbox1 = \vsplit3 to \dimen@
-        % Remove glue from bottom of columns to compare
-        % apparent heights.
-        \global\setbox1 = \vbox{\unvbox1\unpenalty\unskip}%
-        \global\setbox3 = \vbox{\unvbox3\unpenalty\unskip}%
       \ifdim\ht1<\ht3
         \global\advance\dimen@ by 1pt
       \repeat
@@ -6074,8 +6075,8 @@ end
         \setbox0=\vbox to \ht1 {\unvbox1\vfill}%
       \else
         % Make column bottoms flush with each other.
-        \setbox0=\vbox to\dimen@{\unvbox1}%
-        \setbox2=\vbox to\dimen@{\unvbox3}%
+        \setbox2=\vbox to\ht1{\unvbox3\unskip}%
+        \setbox0=\vbox to\ht1{\unvbox1\unskip}%
       \fi
     \fi
   \fi
