@@ -938,9 +938,9 @@ static int setpdforigin(lua_State * L)
     int h = 0 ;
     int v = 0 ;
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        h = (int) lua_tointeger(L, 1);
+        h = (int) lua_roundnumber(L, 1);
         if (lua_type(L, 2) == LUA_TNUMBER) {
-            v = (int) lua_tointeger(L, 1);
+            v = (int) lua_roundnumber(L, 1);
         } else {
             v = h;
         }
@@ -973,28 +973,28 @@ static int getpdfimageresolution(lua_State * L)
 
 static int setpdfthreadmargin(lua_State * L) {
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        set_tex_extension_dimen_register(d_pdf_thread_margin,lua_tointeger(L, 1));
+        set_tex_extension_dimen_register(d_pdf_thread_margin,lua_roundnumber(L, 1));
     }
     return 0;
 }
 
 static int setpdfdestmargin(lua_State * L) {
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        set_tex_extension_dimen_register(d_pdf_dest_margin,lua_tointeger(L, 1));
+        set_tex_extension_dimen_register(d_pdf_dest_margin,lua_roundnumber(L, 1));
     }
     return 0;
 }
 
 static int setpdflinkmargin(lua_State * L) {
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        set_tex_extension_dimen_register(d_pdf_link_margin,lua_tointeger(L, 1));
+        set_tex_extension_dimen_register(d_pdf_link_margin,lua_roundnumber(L, 1));
     }
     return 0;
 }
 
 static int setpdfxformmargin(lua_State * L) {
     if (lua_type(L, 1) == LUA_TNUMBER) {
-        set_tex_extension_dimen_register(d_pdf_xform_margin,lua_tointeger(L, 1));
+        set_tex_extension_dimen_register(d_pdf_xform_margin,lua_roundnumber(L, 1));
     }
     return 0;
 }
