@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # Inspired by latexpand by D. Musliner, University of Michigan
-# 2012, 2013, 2014, 2015: Matthieu Moy <Matthieu.Moy@imag.fr>
+# 2012, 2013, 2014, 2015, 2016: Matthieu Moy <Matthieu.Moy@imag.fr>
 # BSD License
 
 use strict;
@@ -53,7 +53,7 @@ sub get_version
 {
 	# $VERSION's value will be substituted by 'make dist', but the
 	# next line won't (the string has to be broken to avoid it).
-	my $VERSION = 'v1.2-1-g47e2cee';
+	my $VERSION = 'v1.3';
 	if ($VERSION eq '@LATEXPAND' . '_VERSION@') {
 		my($vol,$dir,$file) = File::Spec->splitpath($0);
 		chdir($dir);
@@ -78,8 +78,8 @@ if ($empty_comments) {
 }
 
 if ($output && $output ne "-") {
-	open OUTPUT, '>', "$output" or die $!;
-	STDOUT->fdopen(\*OUTPUT, 'w') or die $!;
+	open (my $OUTPUT, '>', "$output") or die $!;
+	STDOUT->fdopen(\*$OUTPUT, 'w') or die $!;
 }
 
 sub say
@@ -105,9 +105,8 @@ sub process_file
 	my $file = shift;
 	my $prefix = (shift || "");
 	my $in_comment = 0;
-	local(*FILE);
-	open(FILE, $file) or die "could not open input file '$file'\n";
-	while (my $line = <FILE>) {
+	open(my $FILE, "<", $file) or die "could not open input file '$file'\n";
+	while (my $line = <$FILE>) {
 		if ($line =~ /^[ \t]*\\endinput/) {
 			$line =~ s/(\\endinput.*)\n/% $1/;
 			$in_comment = 1;
@@ -123,17 +122,18 @@ sub process_file
 		# ignored by LaTeX, but we don't allow anything before
 		# to avoid e.g. \verb|\end{document}| from terminating
 		# the file.
-		if (!$keep_comments && $line =~ /^[ \t]*\\end{document}/) {
+		if (!$keep_comments && $line =~ /^[ \t]*\\end\{document\}/) {
 			last;
 		}
 	}
-	close(FILE);
+	close($FILE);
 	return $in_comment;
 }
 
 sub process_line
 {
-	my ($_, $prefix, $file) = @_;
+	my ($line, $prefix, $file) = @_;
+	$_ = $line;
 	# Consider \makeatletter only in preamble, because we do want
 	# to warn on \someCommand{\makeatletter\command@with@arobase}.
 	if ($in_preamble && /^[^%]*\\makeatletter/) {
@@ -149,13 +149,23 @@ sub process_line
 		print STDERR "Warning: consider using --makeatletter if the result is not compilable.\n";
 	}
 	unless ($keep_comments) {
-		if ($empty_comments) {
-			s/^%.*$/%/;
-			s/([^\\])%.*$/$1%/;
-		} else {
-			s/^%.*\n//;
-			s/([^\\])%.*\n/$1/;
+		if (!$empty_comments) {
+			# Include \n in pattern to avoid matching
+			# comments at end of files
+
+			# remove comments + whitespace-only lines completely
+			s/^\s*%.*\n//;
+
+			# remove only the comment if the line has actual content
+			s/([^\\])%.*\n/$1\n/;
 		}
+		# Apply the "empty comments" treatment unconditionally
+		# for end-of-files comments not matched above (it
+		# doesn't harm to keep an empty comment sometimes, but
+		# it may harm to leave a real comment if the goal was
+		# to strip them).
+		s/^%.*$/%/;
+		s/([^\\])%.*$/$1%/;
 	}
 
 	unless ($keep_includes) {
@@ -203,7 +213,7 @@ sub process_line
 	if ($expand_usepackage) {
 		# Don't bother with before and after text, we just require the
 		# usepackage to be alone on its line.
-		if (my ($package_name) = /^\s*\\usepackage{([^}]*)}\s*(%.*)?$/) {
+		if (my ($package_name) = /^\s*\\usepackage\{([^\}]*)\}\s*(%.*)?$/) {
 			my $full = find_file($package_name . ".sty", $TEXINPUTS);
 			if ($full) {
 				say $prefix . "Found package file: $full\n";
@@ -216,7 +226,7 @@ sub process_line
 	}
 	if ($expand_bbl) {
 		if (my ($before, $bib_name, $after)
-			 = /^(.*)\\bibliography{([^}]*)}(.*)$/) {
+			 = /^(.*)\\bibliography\{([^\}]*)\}(.*)$/) {
 			# The BBL file is not necessarily $bib_name.
 			# Take it from the command-line.
 			print $before . $nl;
@@ -233,7 +243,7 @@ sub process_line
 			print STDERR "$full\n";
 		}
 	}
-	if (/^[ \t]*\\begin{document}/) {
+	if (/^[ \t]*\\begin\{document\}/) {
 		$in_preamble = 0;
 		if ($makeatletter) {
 			print '\makeatletter' . $nl;
@@ -257,7 +267,7 @@ sub find_tex_file
 		die "ERROR: Could not find file [$file]\n";
 	} else {
 		print STDERR "Warning: Could not find file [$file]\n";
-		return undef;
+		return;
 	}
 }
 
@@ -334,7 +344,7 @@ problems by outputing a single LaTeX file that contain no comment.
 
 The latest version of latexpand is available here:
 
-  https://gitorious.org/latexpand
+  https://gitlab.com/latexpand/latexpand
 
 Versions are uploaded to ctan.org from time to time:
 
@@ -342,7 +352,12 @@ Versions are uploaded to ctan.org from time to time:
 
 =head1 BUGS
 
-Please, report bugs to Matthieu Moy <Matthieu.Moy@imag.fr>.
+Please, report bugs on the issue tracker on the project site:
+
+  https://gitlab.com/latexpand/latexpand/issues
+
+Alternatively, you may email directly the author: Matthieu Moy
+<Matthieu.Moy@imag.fr>.
 
 =head2 Known bugs
 
@@ -351,6 +366,9 @@ Please, report bugs to Matthieu Moy <Matthieu.Moy@imag.fr>.
 latexpand currently ignores \begin{verbatim} ... \end{verbatim}, and
 will therefore process any \include, \input, ... directives that
 appear within verbatim environments (while it shouldn't).
+
+LaTeX comments inside verbatim environments are also incorrectly
+stripped. You can use --keep-comments as a workaround to avoid this.
 
 =head3 Comment environment
 
@@ -401,4 +419,4 @@ https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
 
 =head1 VERSION
 
-This is latexpand version v1.2-1-g47e2cee.
+This is latexpand version v1.3.

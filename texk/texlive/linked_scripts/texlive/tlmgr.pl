@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41476 2016-06-18 00:45:25Z preining $
+# $Id: tlmgr.pl 41794 2016-08-03 23:11:36Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41476 $';
-my $datrev = '$Date: 2016-06-18 02:45:25 +0200 (Sat, 18 Jun 2016) $';
+my $svnrev = '$Revision: 41794 $';
+my $datrev = '$Date: 2016-08-04 01:11:36 +0200 (Thu, 04 Aug 2016) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -7843,7 +7843,7 @@ search method).  Then, unless cryptographic verification has been
 disabled, a signature file (C<texlive.tlpdb.*.asc>) of the checksum file
 is downloaded and the signature verified. The signature is created by
 the TeX Live Distribution GPG key 0x06BAB6BC, which in turn is signed by
-Karl Berry's key 0x9DEB46C0 and Norbert Preining's key 0x6CACA448.  All
+Karl Berry's key 0x30D155AD and Norbert Preining's key 0x6CACA448.  All
 of these keys are obtainable from the standard key servers.
 
 Additional trusted keys can be added using the C<key> action.
