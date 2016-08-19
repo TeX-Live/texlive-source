@@ -3,10 +3,10 @@
 # latexdiff-vc  - wrapper script for applying latexdiff to rcs managed files
 #                 and for automatised creation of postscript or pdf from difference file
 #
-#   Copyright (C) 2005-13  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2005-16  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository:         https://github.com/ftilmann/latexdiff
-# CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+# CTAN page:          http://www.ctan.org/pkg/latexdiff
 #
 #
 #   Contributors: S Utcke, H Bruyninckx, C Junghans
@@ -26,6 +26,9 @@
 # Detailed usage information at the end of the file
 #
 # TODO/IDEAS: - option to call external pre-processing codes
+#             - choose type of latex processor / bibtex (luatex, xelatex etc)
+# versio 1.2.0:
+#    - depracation fix: left brace in RegEx now needs to be escaped
 #
 # version 1.1.1:
 #    - better detection of RCS system 
@@ -60,8 +63,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.1.1
-  (c) 2005-2015 F J Tilmann
+This is LATEXDIFF-VC 1.2.0
+  (c) 2005-2016 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
@@ -444,14 +447,14 @@ foreach $diff ( @difffiles ) {
 sub findchangedpages {
   my ($auxfile) =@_;
   my $j;
-  my (%pages);		# note that I use a hash with page numbers as keys and arbitrary values - this way I can use perl's built-in functions to get red of duplicates
+  my (%pages);		# note that I use a hash with page numbers as keys and arbitrary values - this way I can use Perl's built-in functions to get rid of duplicates
   my %start;
   open(AUX,$auxfile) or die ("Could open aux file $auxfile . System error: $!");
   while (<AUX>) {
-    if (m/\\zref\@newlabel{DIFchgb(\d*)}{.*\\abspage{(\d*)}}/ ) { 
+    if (m/\\zref\@newlabel\{DIFchgb(\d*)\}\{.*\\abspage\{(\d*)\}\}/ ) { 
       $start{$1}=$2; $pages{$2}=1;
     }
-    if (m/\\zref\@newlabel{DIFchge(\d*)}{.*\\abspage{(\d*)}}/) { 
+    if (m/\\zref\@newlabel\{DIFchge(\d*)\}\{.*\\abspage\{(\d*)\}\}/) { 
       if (defined($start{$1})) {
 	for ($j=$start{$1}; $j<=$2; $j++) {
 	  $pages{$j}=1;
@@ -638,8 +641,8 @@ L<latexdiff>
 
 =head1 PORTABILITY
 
-I<latexdiff-vc> uses external commands and is therefore
-limited to Unix-like systems. It also requires the a version control
+I<latexdiff-vc> uses external commands and is therefore dependent on the system architecture; it has been
+tested mainly on Unix-like systems. It also requires the a version control
 system and latex to be installed on the system to make use of all features.  Modules from Perl 5.8
 or higher are required.
 
@@ -651,8 +654,8 @@ or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the version number 
 
 =head1 AUTHOR
 
-Version 1.1.1
-Copyright (C) 2005-2015 Frederik Tilmann
+Version 1.2.0
+Copyright (C) 2005-2016 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
