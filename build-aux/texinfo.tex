@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2016-08-09.22}
+\def\texinfoversion{2016-08-16.20}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -5642,6 +5642,12 @@ end
 \def\entry{%
   \begingroup
     %
+    % For pdfTeX and XeTeX.
+    % The redefinition of \domark stops marks being added in \pdflink to 
+    % preserve coloured links across page boundaries.  Otherwise the marks
+    % would get in the way of \lastbox in \insertindexentrybox.
+    \let\domark\relax
+    %
     % Start a new paragraph if necessary, so our assignments below can't
     % affect previous text.
     \par
@@ -5688,20 +5694,13 @@ end
       %
       \ifpdf
         \pdfgettoks#1.%
-        \bgroup\let\domark\relax
-          \hskip\skip\thinshrinkable\the\toksA
-        \egroup
-        % The redefinion of \domark stops marks being added in \pdflink to 
-        % preserve coloured links across page boundaries.  Otherwise the marks
-        % would get in the way of \lastbox in \insertindexentrybox.
+        \hskip\skip\thinshrinkable\the\toksA
       \else
         \ifx\XeTeXrevision\thisisundefined
           \hskip\skip\thinshrinkable #1%
         \else
           \pdfgettoks#1.%
-          \bgroup\let\domark\relax
-            \hskip\skip\thinshrinkable\the\toksA
-          \egroup
+          \hskip\skip\thinshrinkable\the\toksA
         \fi
       \fi
     \fi
