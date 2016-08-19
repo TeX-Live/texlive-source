@@ -14,7 +14,7 @@
 // under GPL version 2 or later
 //
 // Copyright (C) 2005, 2006, 2008 Brad Hards <bradh@frogmouth.net>
-// Copyright (C) 2005, 2007-2009, 2011-2015 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2005, 2007-2009, 2011-2016 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2008 Julien Rebetez <julienr@svn.gnome.org>
 // Copyright (C) 2008, 2010 Pino Toscano <pino@kde.org>
 // Copyright (C) 2008, 2010, 2011 Carlos Garcia Campos <carlosgc@gnome.org>
@@ -612,6 +612,9 @@ void PDFDoc::setDocInfoModified(Object *infoObj)
 void PDFDoc::setDocInfoStringEntry(const char *key, GooString *value)
 {
   GBool removeEntry = !value || value->getLength() == 0;
+  if (removeEntry) {
+    delete value;
+  }
 
   Object infoObj;
   getDocInfo(&infoObj);
@@ -646,7 +649,7 @@ void PDFDoc::setDocInfoStringEntry(const char *key, GooString *value)
 GooString *PDFDoc::getDocInfoStringEntry(const char *key) {
   Object infoObj;
   getDocInfo(&infoObj);
-  if (infoObj.isNull()) {
+  if (!infoObj.isDict()) {
       return NULL;
   }
 

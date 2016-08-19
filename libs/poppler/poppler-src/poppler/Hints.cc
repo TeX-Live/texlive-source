@@ -5,7 +5,7 @@
 // This file is licensed under the GPLv2 or later
 //
 // Copyright 2010, 2012 Hib Eris <hib@hiberis.nl>
-// Copyright 2010, 2011, 2013, 2014 Albert Astals Cid <aacid@kde.org>
+// Copyright 2010, 2011, 2013, 2014, 2016 Albert Astals Cid <aacid@kde.org>
 // Copyright 2010, 2013 Pino Toscano <pino@kde.org>
 // Copyright 2013 Adrian Johnson <ajohnson@redneon.com>
 // Copyright 2014 Fabio D'Urso <fabiodurso@hotmail.it>
@@ -43,7 +43,13 @@ Hints::Hints(BaseStream *str, Linearization *linearization, XRef *xref, Security
       pageObjectFirst);
     pageObjectFirst = 0;
   }
-  pageOffsetFirst = xref->getEntry(pageObjectFirst)->offset;
+  XRefEntry *pageObjectFirstXRefEntry = xref->getEntry(pageObjectFirst);
+  if (!pageObjectFirstXRefEntry) {
+      error(errSyntaxWarning, -1, "No XRef entry for first page object");
+      pageOffsetFirst = 0;
+  } else {
+      pageOffsetFirst = pageObjectFirstXRefEntry->offset;
+  }
 
   if (nPages >= INT_MAX / (int)sizeof(Guint)) {
      error(errSyntaxWarning, -1, "Invalid number of pages ({0:d}) for hints table", nPages);

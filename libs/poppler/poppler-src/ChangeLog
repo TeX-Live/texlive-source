@@ -1,3 +1,64 @@
+commit 0889366a5872316919dbb640b6cc5cda85295169
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Mon Aug 1 01:10:18 2016 +0200
+
+    XRef::createDocInfoIfNoneExists(): don't presume that DocInfo is
+    a dictionary
+
+    In case a PDF document doesn't comply with the PDF reference and
+    its DocInfo
+    object isn't a dictionary, remove it and create a dictionary in
+    its place.
+
+ poppler/XRef.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 7ba975630e12a3242d73372a685e016101c5e479
+Author: Jakub Kucharski <jakubkucharski97@gmail.com>
+Date:   Mon Aug 1 01:17:08 2016 +0200
+
+    PDFDoc::setDocInfoStringEntry(): free empty value string
+
+    Normally the ownership of value is passed on to the Object class. In
+    case value
+    is an empty string, it doesn't happen, so we have to free it in
+    order to have
+    a uniform behaviour managing memory and not to introduce memory leaks.
+
+ poppler/PDFDoc.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit f0feeed3513899558c59b65f798f294212309486
+Author: Matthias Kilian <kili@outback.escape.de>
+Date:   Mon Aug 1 22:50:44 2016 +0200
+
+    Work with non gnu grep
+
+ configure.ac | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 3f5c84e17acfa71dfd44514384398f5a4c449630
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Jul 30 17:50:42 2016 +0200
+
+    Check for XRefEntry existing before using it
+
+    Bug #97005
+
+ poppler/Hints.cc | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+commit 7d3aea760a14a73962e429059f73d97391660367
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Jul 30 17:32:59 2016 +0200
+
+    Fix abort on documents where the docinfo obj is not a dict
+
+    Bug #97134
+
+ poppler/PDFDoc.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
 commit 5641644f485b402cd906d3db73a22a00eb00489b
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Mon Jul 25 00:14:30 2016 +0200
