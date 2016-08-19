@@ -3,10 +3,10 @@
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-12  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2004-16  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository/issue tracker:   https://github.com/ftilmann/latexdiff
-# CTAN page:          http://www.ctan.org/tex-archive/support/latexdiff
+# CTAN page:          http://www.ctan.org/pkg/latexdiff
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,14 @@
 # Detailed usage information at the end of the file
 #
 # ToDo:
+#
+# Version 1.2.0:
+#    - highlight new and deleted figures
+#    - bug fix in title mark-up. Previously deleted commands in title (such as \title, \author or \date) were marked up erroneously
+#    - (minor) bug fixes in new 1.1.1 features: disabled label was commented out twice, additional spaces were introduced before list environment begin and end commands
+#    - depracation fix: left brace in RegEx now needs to be escaped
+#    - add type PDFCOMMENT based on issue #49 submitted by github user peci1 (Martin Pecka)
+#    - make utf8 the default encoding
 #
 # Version 1.1.1
 #    - patch mhchem: allow ce in equations
@@ -589,13 +597,15 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.1.1  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2015 F J Tilmann
+This is LATEXDIFF 1.2.0  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2016 F J Tilmann
 EOF
 
 # Configuration variables: these have to be visible from the subroutines
 my $MINWORDSBLOCK=3; # minimum number of tokens to form an independent block
                      # shorter identical blocks will be merged to the previous word
+my $SCALEDELGRAPHICS=0.5; # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
+                      # this is only used for --graphics-markup=BOTH option
 my $FLOATENV='(?:figure|table|plate)[\w\d*@]*' ;   # Environments in which FL variants of defined commands are used
 my $PICTUREENV='(?:picture|tikzpicture|DIFnomarkup)[\w\d*@]*' ;   # Environments in which all change markup is removed
 my $MATHENV='(?:equation[*]?|displaymath|DOLLARDOLLAR)[*]?' ;           # Environments turning on display math mode (code also knows about \[ and \])
@@ -689,6 +699,13 @@ use constant {
   COARSE => 2,
   FINE => 3
 };
+# MNEMNONICS for graphicsmarkup
+my $graphicsmarkup;
+use constant {
+  NONE => 0,
+  NEWONLY => 1,
+  BOTH => 2
+};
 
 my ($mboxcmd);
 
@@ -702,9 +719,9 @@ my ($assign,@config);
 # Hash where keys corresponds to the names of  all included packages (including the documentclass as another package
 # the optional arguments to the package are the values of the hash elements
 my ($pkg,%packages);
+
 # Defaults
 $mathmarkup=COARSE;
-
 $verbose=0;
 # output debug and intermediate files, set to 0 in final distribution
 $debug=0; 
@@ -712,6 +729,7 @@ $debug=0;
 # Note that this failed with mini example (or other files, where packages used in latexdiff preamble
 # are called again with incompatible options in preamble of resulting file)
 $earlylatexdiffpreamble=0;
+
 
 # define character properties
 sub IsNonAsciiPunct { return <<'END'    # Unicode punctuation but excluding ASCII punctuation
@@ -758,6 +776,7 @@ GetOptions('type|t=s' => \$type,
            'packages=s' => \@packagelist,
 	   'allow-spaces' => \$allowspaces,
            'math-markup=s' => \$mathmarkup,
+           'graphics-markup=s' => \$graphicsmarkup,
            'enable-citation-markup|enforce-auto-mbox' => \$enablecitmark,
            'disable-citation-markup|disable-auto-mbox' => \$disablecitmark,
 	   'verbose|V' => \$verbose,
@@ -765,7 +784,7 @@ GetOptions('type|t=s' => \$type,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'version' => \$version,
-	   'help|h|H' => \$help,
+	   'help|h' => \$help,
 	   'debug!' => \$debug );
 
 if ( $help ) {
@@ -802,10 +821,12 @@ if (defined($mathmarkup)) {
   } elsif ( $mathmarkup eq 'FINE' ){
     $mathmarkup=FINE;
   } elsif ( $mathmarkup !~ m/^[0123]$/ ) {
-    die "Illegal value: ($mathmarkup)  for option--math-markup. Possible values: OFF,WHOLE,COARSE,FINE,0- ";
+    die "latexdiff Illegal value: ($mathmarkup)  for option--math-markup. Possible values: OFF,WHOLE,COARSE,FINE,0-3\n";
   }
   # else use numerical value
 }
+
+
 
 # setting extra preamble commands
 if (defined($preamblefile)) {
@@ -907,6 +928,7 @@ foreach $assign ( @config ) {
   elsif ( $1 eq "MATHARRREPL" ) { $MATHARRREPL = $2 ; }
   elsif ( $1 eq "ARRENV" ) { $ARRENV = $2 ; }
   elsif ( $1 eq "COUNTERCMD" ) { $COUNTERCMD = $2 ; }
+  elsif ( $1 eq "SCALEDELGRAPHICS" ) { $SCALEDELGRAPHICS = $2 ; }
   else { die "Unknown variable $1 in assignment.";}
 }
 
@@ -919,6 +941,8 @@ if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
 foreach $pkg ( @packagelist ) {
   map { $packages{$_}="" } split(/,/,$pkg) ;
 }
+
+
 
 if ($showpreamble) {
   print "\nPreamble commands:\n";
@@ -1008,7 +1032,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # word: sequence of letters or accents followed by letter
   my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
   my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
-  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|]|\\\\(?:[|{}]|\w+))';
+  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
   my $cmdoptseq='\\\\[\w\d\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat0.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat0.'\]|\{'. $pat_n . '\})*';
@@ -1016,6 +1040,9 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 ## the current maths command cannot cope with newline within the math expression
   my $comment='%.*?\n';
   my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+
+
+
 
 # now we are done setting up and can start working   
 my ($oldfile, $newfile) = @ARGV;
@@ -1094,22 +1121,73 @@ if ( length $oldpreamble && length $newpreamble ) {
   # Base this assessment on the new preamble
   add_safe_commands($newpreamble);
 
-  # get a list of packages from preamble if not predefine
+  # get a list of packages from preamble if not predefined
   %packages=list_packages($newpreamble) unless %packages;
   if ( %packages && $debug ) { my $key ; foreach $key (keys %packages) { print STDERR "DEBUG \\usepackage[",$packages{$key},"]{",$key,"}\n" ;} }
+}
 
-  if (defined $packages{"hyperref"} ) {
-    # deleted lines should not generate or appear in link names:
-    print STDERR "hyperref package detected.\n" if $verbose ;
-    $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
-    $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
-    $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
-    ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
-    ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
-    ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
-    ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+# have to return to all processing to properly add preamble additions based on packages found
+if (defined($graphicsmarkup)) {
+  $graphicsmarkup=~tr/a-z/A-Z/;
+  if ( $graphicsmarkup eq 'OFF' or $graphicsmarkup eq 'NONE' ) {
+    $graphicsmarkup=NONE;
+  } elsif ( $graphicsmarkup eq 'NEWONLY' or $graphicsmarkup eq 'NEW-ONLY' ) {
+    $graphicsmarkup=NEWONLY;
+  } elsif ( $graphicsmarkup eq 'BOTH' ) {
+    $graphicsmarkup=BOTH;
+  } elsif ( $graphicsmarkup !~ m/^[012]$/ ) {
+    die "latexdiff Illegal value: ($graphicsmarkup)  for option --highlight-graphics. Possible values: OFF,WHOLE,COARSE,FINE,0-2\n";
   }
+  # else use numerical value
+} else {
+  # Default: no explicit setting in menu
+  if ( defined $packages{"graphicx"} or defined $packages{"graphics"} ) {
+    $graphicsmarkup=NEWONLY; 
+  } else {
+    $graphicsmarkup=NONE;
+  }
+}
 
+if (defined $packages{"hyperref"} ) {
+  # deleted lines should not generate or appear in link names:
+  print STDERR "hyperref package detected.\n" if $verbose ;
+  $latexdiffpreamble =~ s/\{\\DIFadd\}/{\\DIFaddtex}/g;
+  $latexdiffpreamble =~ s/\{\\DIFdel\}/{\\DIFdeltex}/g;
+  $latexdiffpreamble .= join "\n",(extrapream("HYPERREF"),"");
+  ###    $latexdiffpreamble .= '%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+  ###    $latexdiffpreamble .= '\providecommand{\DIFadd}[1]{\texorpdfstring{\DIFaddtex{#1}}{#1}}' . "\n";
+  ###    $latexdiffpreamble .= '\providecommand{\DIFdel}[1]{\texorpdfstring{\DIFdeltex{#1}}{}}' . "\n";
+  ###    $latexdiffpreamble .= '%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF FOR HYPERREF PACKAGE' . "\n";
+}
+
+# add commands for figure highlighting to preamble
+if ($graphicsmarkup != NONE ) {
+  my @matches;
+  # Check if \DIFaddbeginFL definition calls \DIFaddbegin - if so we will issue an error message that graphics highlighting is
+  # is not compatible with this.
+  # (A more elegant solution would be to suppress the redefinitions of the \DIFaddbeginFL etc commands, but for this narrow use case
+  #  I currently don't see this as an efficient use of time)
+  foreach my $cmd ( "DIFaddbegin","DIFaddend","DIFdelbegin","DIFdelend" ) {
+    @matches=( $latexdiffpreamble =~ m/command{\\DIFaddbeginFL}{($pat_n)}/sg ) ;
+    # we look at the last one of the list to take into account possible redefinition but almost always matches should have exactly one elemen
+    if ( $matches[$#matches] =~ m/\\DIFaddbegin/ ) {
+      die "Cannot combine graphics markup with float styles defining \\DIFaddbeginFL in terms of \\DIFaddbegin. Use --graphics-markup=none option or choose a different float style."; 
+      exit 10;
+    }
+  }
+  $latexdiffpreamble .= join "\n",("\\newcommand{\\DIFscaledelfig}{$SCALEDELGRAPHICS}",extrapream("HIGHLIGHTGRAPHICS"),"");
+
+  # only change required for highlighting both is to declare \includegraphics safe, as preamble already contains commands for deleted environment
+  if ( $graphicsmarkup == BOTH ) {
+    init_regex_arr_ext(\@SAFECMDLIST,'includegraphics');
+  }
+}
+
+# adding begin and end marker lines to preamble
+$latexdiffpreamble = "%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF\n" . $ latexdiffpreamble . "%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF\n";
+
+# and return to preamble specific processing
+if ( length $oldpreamble && length $newpreamble ) {
   print STDERR "Differencing preamble.\n" if $verbose;
 
   # insert dummy first line such that line count begins with line 1 (rather than perl's line 0) - just so that line numbers inserted by linediff are correct
@@ -1301,7 +1379,7 @@ print STDERR "(",exetime()," s)\n","Done.\n" if $verbose;
 
 ## guess_encoding(filename)
 ## reads the first 20 lines of filename and looks for call of inputenc package
-## if found, return the option of this package (encoding), otherwise return ascii
+## if found, return the option of this package (encoding), otherwise return utf8
 sub guess_encoding {
   my ($filename)=@_;
   my ($i,$enc);
@@ -1316,7 +1394,8 @@ sub guess_encoding {
     last if (++$i > 20 ); # scan at most 20 non-comment lines
   }
   close(FH);
-  return("ascii");
+  ### return("ascii");
+  return("utf8");
 }
 
 
@@ -1465,7 +1544,7 @@ sub flatten {
   $bblfile=~s/\.tex$//;
   $bblfile.=".bbl";
 
-  if ( ($includeonly) = ($preamble =~ m/\\includeonly{(.*?)}/ ) ) {
+  if ( ($includeonly) = ($preamble =~ m/\\includeonly\{(.*?)\}/ ) ) {
     $includeonly =~ s/,/|/g;
   } else {
     $includeonly = '.*?';
@@ -1479,7 +1558,7 @@ sub flatten {
 	    $fname = $2 if defined($2) ;
 	    $fname = $3 if defined($3) ;
             #      # add tex extension unless there is a three letter extension already 
-            $fname .= ".tex" unless $fname =~ m|\.\w{3}|;
+            $fname .= ".tex" unless $fname =~ m|\.\w{3}$|;
             print STDERR "DEBUG Beg of line match |$1|\n" if defined($1) && $debug ;
             print STDERR "Include file $fname\n" if $verbose;
             print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
@@ -1491,7 +1570,7 @@ sub flatten {
 	    "$begline$newpage$replacement$newpage";
           }/exgm;
   # replace bibliography with bbl file if it exists
-  $text=~s/(^(?:[^%\n]|\\%)*)\\bibliography{(.*?)}/{ 
+  $text=~s/(^(?:[^%\n]|\\%)*)\\bibliography\{(.*?)\}/{ 
            if ( -f $bblfile ){
 	     $replacement=read_file_with_encoding(File::Spec->catfile($bblfile), $encoding);
 	   } else {
@@ -1502,7 +1581,7 @@ sub flatten {
 	   "$begline$replacement";
   }/exgm;
   # replace subfile with contents (subfile package)
-  $text=~s/(^(?:[^%\n]|\\%)*)\\subfile{(.*?)}/{ 
+  $text=~s/(^(?:[^%\n]|\\%)*)\\subfile\{(.*?)\}/{ 
            $begline=(defined($1)? $1 : "") ;
      	   $fname = $2; 
            #      # add tex extension unless there is a three letter extension already 
@@ -1535,7 +1614,8 @@ sub print_regex_arr {
 # reads line from appendix (end of file after __END__ token)
 sub extrapream {
   my $type;
-  my @retval=("%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF") ;
+  ###my @retval=("%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF") ;
+  my @retval=();
   my ($copy);
 
   while (@_) {
@@ -1572,7 +1652,7 @@ sub extrapream {
       seek DATA,0,0;    # rewind DATA handle to file begin
     }
   }
-  push (@retval,"%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF")  ;
+  ###push (@retval,"%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF")  ;
   return @retval;
 }
 
@@ -2244,8 +2324,8 @@ sub take_comments_and_enter_from_frac() {
 sub preprocess {
   for (@_) { 
     #    Change \{ to \QLEFTBRACE, \} to \QRIGHTBRACE, and \& to \AMPERSAND
-    s/(?<!\\)\\{/\\QLEFTBRACE /sg;
-    s/(?<!\\)\\}/\\QRIGHTBRACE /sg;
+    s/(?<!\\)\\\{/\\QLEFTBRACE /sg;
+    s/(?<!\\)\\\}/\\QRIGHTBRACE /sg;
     s/(?<!\\)\\&/\\AMPERSAND /sg;
 # replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
     1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
@@ -2355,7 +2435,7 @@ sub fromhash {
 # 2.   If --block-math-markup option set: Convert \MATHBLOCKmath{..} commands back to environments
 #
 #      Convert all PICTUREblock{..} commands back to the appropriate environments
-# 3. Convert DIFadd, DIFdel, DIFFaddbegin , ... into FL varieties
+# 3. Convert DIFadd, DIFdel, DIFaddbegin , ... into FL varieties
 #    within floats (currently recognised float environments: plate,table,figure
 #    plus starred varieties).
 # 4. Remove empty %DIFDELCMD < lines 
@@ -2411,7 +2491,7 @@ sub postprocess {
 	# also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
 	### pre-0.42 obsolete version which did not work on eqnarray test      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHENV)\}\s*?\n)(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/$1\\end{$MATHREPL}$AUXCMD\n$3\n\\begin{$MATHREPL}$AUXCMD\n$4/sg;
 	###0.5:      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
-	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end\{MATHMODE\}$AUXCMD\n$1$3\n\\begin\{MATHMODE\}$AUXCMD\n$4/sg;
   
         # now look for unpaired %DIFDELCMD < \begin{MATHENV}; if found add \begin{$MATHREPL} and insert \end{$MATHREPL} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
@@ -2420,8 +2500,8 @@ sub postprocess {
         }
         # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
-	  $delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end\{MATHMODE\}$AUXCMD\n/sg ) {
+	  $delblock =~ s/(\\DIFdelend$)/\\begin\{MATHMODE\}$AUXCMD\n$1/s ;
 	}
 
 
@@ -2480,7 +2560,7 @@ sub postprocess {
 
 #    bb. disable active labels within deleted blocks (as these are not safe commands, this should normally only
 #        happen within deleted maths blocks
-      $delblock=~ s/(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
+      $delblock=~ s/(?<!$DELCMDOPEN)(\\$LABELCMD(?:${extraspace})\{(?:[^{}])*\}[\t ]*)\n?/${DELCMDOPEN}$1${DELCMDCLOSE}/smg ;
 
 
 #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
@@ -2555,7 +2635,7 @@ sub postprocess {
       }
       $_ } @textparts;     # end of map command
     # replace the main text with the modified version
-    $_= "@newtextparts";
+    $_= join("",@newtextparts);
 
 
 
@@ -2569,9 +2649,9 @@ sub postprocess {
       1 while s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin{MATHMODE})))*?)\\end{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
       1 while s/\\begin{MATHMODE}((?:.(?!\\end{MATHMODE}))*?)\\end{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
       # convert remaining \begin{MATHMODE} \end{MATHMODE} (and not containing & or \\ )into MATHREPL environments
-      s/\\begin{MATHMODE}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end{MATHMODE}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
+      s/\\begin\{MATHMODE\}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end\{MATHMODE\}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
       # others into MATHARRREPL
-      s/\\begin{MATHMODE}(.*?)\\end{MATHMODE}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
+      s/\\begin\{MATHMODE\}(.*?)\\end\{MATHMODE\}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
 
       # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
       s/\\begin{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end{\1}$AUXCMD\n/$2/sg;       
@@ -2652,27 +2732,27 @@ sub postprocess {
     # undo renaming of the \begin and \end,{,}  and dollars in comments 
     1 while s/(%.*)DOLLARDIF/$1\$/mg ;
 #   Convert \begin{SQUAREBRACKET} \end{SQUAREBRACKET} into \[ \]
-    s/\\end{SQUAREBRACKET}/\\\]/sg;
-    s/\\begin{SQUAREBRACKET}/\\\[/sg;
+    s/\\end\{SQUAREBRACKET\}/\\\]/sg;
+    s/\\begin\{SQUAREBRACKET\}/\\\[/sg;
 # 4. Convert \begin{DOLLARDOLLAR} \end{DOLLARDOLLAR} into $$ $$
     s/\\begin\{DOLLARDOLLAR\}(.*?)\\end\{DOLLARDOLLAR\}/\$\$$1\$\$/sg;
 # 5. Convert  \SUPERSCRIPTNB{n} into ^n  and  \SUPERSCRIPT{nn} into ^{nnn}
-    1 while s/\\SUPERSCRIPT(\s*{($pat_n)})/^$1/g ;
-    1 while s/\\SUPERSCRIPTNB{(\s*$pat0)}/^$1/g ;
+    1 while s/\\SUPERSCRIPT(\s*\{($pat_n)\})/^$1/g ;
+    1 while s/\\SUPERSCRIPTNB\{(\s*$pat0)\}/^$1/g ;
     # Convert  \SUBSCRIPNB{n} into _n  and  \SUBCRIPT{nn} into _{nnn}
-    1 while s/\\SUBSCRIPT(\s*{($pat_n)})/_$1/g ;
-    1 while s/\\SUBSCRIPTNB{(\s*$pat0)}/_$1/g ;
+    1 while s/\\SUBSCRIPT(\s*\{($pat_n)\})/_$1/g ;
+    1 while s/\\SUBSCRIPTNB\{(\s*$pat0)\}/_$1/g ;
     # Convert  \SQRT{n} into \sqrt{n}  and  \SQRTNB{nn} into \sqrt nn
-    1 while s/\\SQRT(\s*{($pat_n)})/\\sqrt$1/g ;
-    1 while s/\\SQRTNB{(\s*$pat0)}/\\sqrt$1/g ;
+    1 while s/\\SQRT(\s*\{($pat_n)\})/\\sqrt$1/g ;
+    1 while s/\\SQRTNB\{(\s*$pat0)\}/\\sqrt$1/g ;
  
     1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
     1 while s/(%.*)\\CLEFTBRACE (.*)$/$1\{$2/mg ;
 
 
 #    Change \QLEFTBRACE, \QRIGHTBRACE to \{,\}
-    s/\\QLEFTBRACE /\\{/sg;
-    s/\\QRIGHTBRACE /\\}/sg;
+    s/\\QLEFTBRACE /\\\{/sg;
+    s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
 
   return;
@@ -2724,6 +2804,7 @@ sub preprocess_preamble {
   $titlecmd =~ s/[\$\^]//g; 
   # make sure to not match on comment lines:
   $titlecmdpat=qr/^(?:[^%\n]|\\%)*(\\($titlecmd)$extraspace(?:\[($brat0)\])?(?:\{($pat_n)\}))/ms;
+  ###print STDERR "DEBUG:",$titlecmdpat,"\n";
   @oldtitlecommands= ( $$oldpreambleref =~ m/$titlecmdpat/g );
   @newtitlecommands= ( $$newpreambleref =~ m/$titlecmdpat/g );
 
@@ -2764,7 +2845,7 @@ sub preprocess_preamble {
       $optargold="";
     }
 
-    if ( defined($oldhash{$cmd}) ) {
+    if ( defined($oldhash{$cmd}->[2]) ) {
       $argold=$oldhash{$cmd}->[2];
     } else {
       $argold="";
@@ -2796,6 +2877,8 @@ sub preprocess_preamble {
   foreach $cmd ( keys %oldhash ) {
     # if this has already been dealt with above can just skip
     next if defined($newhash{$cmd}) ;
+    $argold=$oldhash{$cmd}->[2];
+    $argdiff="{" . join("",bodydiff($argold,"")) ."}";
     if ( defined($oldhash{$cmd}->[1])) {
       $optargold=$oldhash{$cmd}->[1];
       $optargdiff="[".join("",bodydiff($optargold,""))."]" ;
@@ -2805,7 +2888,6 @@ sub preprocess_preamble {
     } else {
       $optargdiff="";
     }
-    $argdiff="{" . join("",bodydiff($argold,"")) ."}";
     $auxline = "\\$cmd$optargdiff$argdiff";
     $auxline =~s/$/$AUXCMD/sg;
     push @auxlines,$auxline;
@@ -2890,7 +2972,7 @@ sub init_regex_arr_data {
 
 
 # init_regex_arr_ext(\@array,$arg)
-# fills array with regular expressions.
+# appends array with regular expressions.
 # if arg is a file name, then read in list of regular expressions from that file
 # (one expression per line)
 # Otherwise treat arg as a comma separated list of regular expressions
@@ -2945,7 +3027,7 @@ format as new.tex but has all changes relative to old.tex marked up or commented
 --type=markupstyle
 -t markupstyle         Add code to preamble for selected markup style
                        Available styles: UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD
+                                         CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD PDFCOMMENT
                        [ Default: UNDERLINE ]
 
 --subtype=markstyle
@@ -3051,8 +3133,9 @@ format as new.tex but has all changes relative to old.tex marked up or commented
                           MATHARRREPL (String)
                           MATHENV (RegEx)
                           MATHREPL (String)
-                          MINWORDSBLOCK (integer)
+                          MINWORDSBLOCK (Integer)
                           PICTUREENV (RegEx)
+                          SCALEDELGRAPHICS (Float)
                        This option can be repeated.
 
 
@@ -3103,6 +3186,16 @@ Other configuration options:
                       fine or 3: Detect small change in equations and mark up and fine granularity.
                                This mode is most suitable, if only minor changes to equations are
                                expected, e.g. correction of typos. 
+
+--graphics-markup=level   Change highlight style for graphics embedded with \\includegraphics commands
+                      Possible values for level:
+                      none,off or 0: no highlighting for figures
+                      new-only or 1: surround newly added or changed figures with a blue frame [Default]
+                      both or 2:     highlight new figures with a blue frame and show deleted figures 
+                                at reduced scale, and crossed out with a red diagonal cross. Use configuration
+                                variable SCALEDELGRAPHICS to set size of deleted figures.
+                      Note that changes to the optional parameters will make the figure appear as changed 
+                      to latexdiff, and this figure will thus be highlighted.
 
 --disable-citation-markup 
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
@@ -3301,7 +3394,7 @@ C<\DIFadd> and C<\DIFdel> commands.
 Available styles: 
 
 C<UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
-CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD>
+CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCBHBAR BOLD PDFCOMMENT>
 
 [ Default: C<UNDERLINE> ]
 
@@ -3521,9 +3614,11 @@ C<MATHENV> (RegEx)
 
 C<MATHREPL> (String)
 
-C<MINWORDSBLOCK> (integer)
+C<MINWORDSBLOCK> (Integer)
 
 C<PICTUREENV> (RegEx)
+
+C<SCALEDELGRAPHICS> (Float)
 
 =item B<--show-safecmd>
 
@@ -3581,6 +3676,22 @@ being changed. [Default]
 C<fine> or C<3>: Detect small change in equations and mark up at fine granularity.
 This mode is most suitable, if only minor changes to equations are
 expected, e.g. correction of typos. 
+
+=item B<--graphics-markup=level>
+
+ Change highlight style for graphics embedded with C<\includegraphics> commands.
+                      Possible values for level:
+
+                      C<none, C<off> or C<0>: no highlighting for figures
+
+                      C<new-only> or C<1>: surround newly added or changed figures with a blue frame [Default if graphicx package loaded]
+
+                      C<both> or C<2>:     highlight new figures with a blue frame and show deleted figures at reduced 
+                                scale, and crossed out with a red diagonal cross. Use configuration
+                                variable SCALEDELGRAPHICS to set size of deleted figures.
+
+Note that changes to the optional parameters will make the figure appear as changed 
+to latexdiff, and this figure will thus be highlighted
 
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
@@ -3721,6 +3832,10 @@ No visible markup (but generic markup commands will still be inserted.
 =item C<BOLD>
 
 Added text is set in bold face, discarded is not shown.
+
+=item C<PDFCOMMENT>
+
+The pdfcomment package is used to underline new text, and mark deletions with a PDF comment. Note that this markup might appear differently or not at all based on the pdf viewer used. The viewer with best support for pdf markup is probably acroread. This style is only recommended if the number of differences is small. 
 
 =back
 
@@ -3863,6 +3978,12 @@ inconsistent markup but this situation should be rare).
 
 [ Default: S<C<(?:picture|DIFnomarkup)[\w\d*@]*> >]
 
+=item C<SCALEDELGRAPHICS>
+
+If C<--graphics-markup=both> is chosen, C<SCALEDELGRAPHICS> is the factor, by which deleted figures will be scaled (i.e. 0.5 implies they are shown at half linear size).
+
+[ Default: 0.5 ]
+
 =back
 
 =head1 COMMON PROBLEMS AND FAQ
@@ -3933,7 +4054,7 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.1.1
+Version 1.2.0
 Copyright (C) 2004-2015 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
@@ -4289,6 +4410,12 @@ institute
 \providecommand{\DIFdel}[1]{}
 %DIF END BOLD PREAMBLE
 
+%DIF PDFCOMMENT PREAMBLE
+\RequirePackage{pdfcomment} %DIF PREAMBLE
+\providecommand{\DIFadd}[1]{\pdfmarkupcomment[author=ADD:,markup=Underline]{#1}{}}
+\providecommand{\DIFdel}[1]{\pdfcomment[icon=Insert,author=DEL:,hspace=12pt]{#1}}
+%DIF END PDFCOMMENT PREAMBLE
+
 %% SUBTYPES (Markers for beginning and end of changed blocks)
 
 %DIF SAFE PREAMBLE
@@ -4443,6 +4570,51 @@ institute
 \providecommand{\DIFdelbeginFL}{}
 \providecommand{\DIFdelendFL}{}
 %DIF END TRADITIONALSAFE PREAMBLE
+
+% see:
+%  http://tex.stackexchange.com/questions/47351/can-i-redefine-a-command-to-contain-itself 
+
+%DIF HIGHLIGHTGRAPHICS PREAMBLE
+\RequirePackage{settobox}
+\RequirePackage{letltxmacro}
+\newsavebox{\DIFdelgraphicsbox}
+\newlength{\DIFdelgraphicswidth}
+\newlength{\DIFdelgraphicsheight}
+% store original definition of \includegraphics
+\LetLtxMacro{\DIFOincludegraphics}{\includegraphics}
+\newcommand{\DIFaddincludegraphics}[2][]{{\color{blue}\fbox{\DIFOincludegraphics[#1]{#2}}}}
+\newcommand{\DIFdelincludegraphics}[2][]{%
+\sbox{\DIFdelgraphicsbox}{\DIFOincludegraphics[#1]{#2}}%
+\settoboxwidth{\DIFdelgraphicswidth}{\DIFdelgraphicsbox}
+\settoboxtotalheight{\DIFdelgraphicsheight}{\DIFdelgraphicsbox}
+\scalebox{\DIFscaledelfig}{%
+\parbox[b]{\DIFdelgraphicswidth}{\usebox{\DIFdelgraphicsbox}\\[-\baselineskip] \rule{\DIFdelgraphicswidth}{0em}}\llap{\resizebox{\DIFdelgraphicswidth}{\DIFdelgraphicsheight}{%
+\setlength{\unitlength}{\DIFdelgraphicswidth}%
+\begin{picture}(1,1)%
+\thicklines\linethickness{2pt}
+{\color[rgb]{1,0,0}\put(0,0){\framebox(1,1){}}}%
+{\color[rgb]{1,0,0}\put(0,0){\line( 1,1){1}}}%
+{\color[rgb]{1,0,0}\put(0,1){\line(1,-1){1}}}%
+\end{picture}%
+}\hspace*{3pt}}}
+}
+\LetLtxMacro{\DIFOaddbegin}{\DIFaddbegin}
+\LetLtxMacro{\DIFOaddend}{\DIFaddend}
+\LetLtxMacro{\DIFOdelbegin}{\DIFdelbegin}
+\LetLtxMacro{\DIFOdelend}{\DIFdelend}
+\DeclareRobustCommand{\DIFaddbegin}{\DIFOaddbegin \let\includegraphics\DIFaddincludegraphics}
+\DeclareRobustCommand{\DIFaddend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics}
+\DeclareRobustCommand{\DIFdelbegin}{\DIFOdelbegin \let\includegraphics\DIFdelincludegraphics}
+\DeclareRobustCommand{\DIFdelend}{\DIFOaddend \let\includegraphics\DIFOincludegraphics}
+\LetLtxMacro{\DIFOaddbeginFL}{\DIFaddbeginFL}
+\LetLtxMacro{\DIFOaddendFL}{\DIFaddendFL}
+\LetLtxMacro{\DIFOdelbeginFL}{\DIFdelbeginFL}
+\LetLtxMacro{\DIFOdelendFL}{\DIFdelendFL}
+\DeclareRobustCommand{\DIFaddbeginFL}{\DIFOaddbeginFL \let\includegraphics\DIFaddincludegraphics}
+\DeclareRobustCommand{\DIFaddendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics}
+\DeclareRobustCommand{\DIFdelbeginFL}{\DIFOdelbeginFL \let\includegraphics\DIFdelincludegraphics}
+\DeclareRobustCommand{\DIFdelendFL}{\DIFOaddendFL \let\includegraphics\DIFOincludegraphics}
+%DIF END HIGHLIGHTGRAPHICS PREAMBLE
 
 %% SPECIAL PACKAGE PREAMBLE COMMANDS
 
