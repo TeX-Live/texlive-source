@@ -1295,8 +1295,12 @@ Object *XRef::getDocInfoNF(Object *obj) {
 Object *XRef::createDocInfoIfNoneExists(Object *obj) {
   getDocInfo(obj);
 
-  if (!obj->isNull()) {
+  if (obj->isDict()) {
     return obj;
+  } else if (!obj->isNull()) {
+    // DocInfo exists, but isn't a dictionary (doesn't comply with the PDF reference)
+    obj->free();
+    removeDocInfo();
   }
 
   obj->initDict(this);

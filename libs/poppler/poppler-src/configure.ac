@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[46])
+m4_define([poppler_version_minor],[47])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -779,13 +779,13 @@ if test x$enable_poppler_qt5 = xyes; then
     AC_CHECK_TOOL(MOCQT52, moc-qt5)
     AC_MSG_CHECKING([for Qt5 moc-qt5])
     mocversion=`$MOCQT52 -v 2>&1`
-    mocversiongrep=`echo $mocversion | grep "Qt 5\|moc-qt5 5\|moc 5"`
+    mocversiongrep=`echo $mocversion | grep -E "Qt 5|moc-qt5 5|moc 5"`
     if test x"$mocversiongrep" != x"$mocversion"; then
       AC_CHECK_TOOL(QTCHOOSER, qtchooser)
       AC_MSG_CHECKING([for qtchooser])
       qt5tooldir=`QT_SELECT=qt5 qtchooser -print-env | grep QTTOOLDIR | cut -d '=' -f 2 | cut -d \" -f 2`
       mocversion=`$qt5tooldir/moc -v 2>&1`
-      mocversiongrep=`echo $mocversion | grep "Qt 5\|moc 5"`
+      mocversiongrep=`echo $mocversion | grep -E "Qt 5|moc 5"`
       if test x"$mocversiongrep" != x"$mocversion"; then
         # no valid moc found
         enable_poppler_qt5=no;
