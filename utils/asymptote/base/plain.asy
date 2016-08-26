@@ -280,3 +280,12 @@ if(settings.autoimport != "") {
 }
 
 cputime();
+
+texpreamble("\newdimen\paperwidth");
+texpreamble("\newdimen\paperheight");
+bool luatex=settings.tex == "luatex";
+if(settings.tex == "lualatex" || luatex) {
+  texpreamble("\let\pdfpagewidth\paperwidth");
+  texpreamble("\let\pdfpageheight\paperheight");
+  if(luatex) texpreamble("\input luatex85.sty");
+}
