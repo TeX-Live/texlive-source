@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2016 Free Software Foundation, Inc.
 
-timestamp='2016-06-20'
+timestamp='2016-08-25'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1030,7 +1030,7 @@ case $basic_machine in
 	ppc-* | ppcbe-*)
 		basic_machine=powerpc-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
-	ppcle | powerpclittle | ppc-le | powerpc-little)
+	ppcle | powerpclittle)
 		basic_machine=powerpcle-unknown
 		;;
 	ppcle-* | powerpclittle-*)
@@ -1040,7 +1040,7 @@ case $basic_machine in
 		;;
 	ppc64-*) basic_machine=powerpc64-`echo $basic_machine | sed 's/^[^-]*-//'`
 		;;
-	ppc64le | powerpc64little | ppc64-le | powerpc64-little)
+	ppc64le | powerpc64little)
 		basic_machine=powerpc64le-unknown
 		;;
 	ppc64le-* | powerpc64little-*)
