@@ -270,13 +270,15 @@ char_given,math_given: scanned_result(cur_chr)(int_val);
 %-----------------------------------------------
 @x
 @ @<Fetch a character code from some table@>=
-begin scan_char_num;
-if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
+begin
+if m=math_code_base then
+  begin scan_ascii_num;
+  scanned_result(ho(math_code(cur_val)))(int_val); end
 @y
 @ @<Fetch a character code from some table@>=
-begin scan_char_num;
+begin
 if m=math_code_base then begin
-  cur_val1:=ho(math_code(cur_val));
+  scan_ascii_num; cur_val1:=ho(math_code(cur_val));
   if ((cur_val1 div @"10000)>8) or
      (((cur_val1 mod @"10000) div @"100)>15) then
     begin print_err("Extended mathchar used as mathchar");
@@ -289,14 +291,14 @@ if m=math_code_base then begin
   scanned_result(cur_val1)(int_val);
   end
 else if m=(math_code_base+128) then begin
-  cur_val1:=ho(math_code(cur_val));
+  scan_ascii_num; cur_val1:=ho(math_code(cur_val));
   cur_val:=(cur_val1 div @"10000) * @"1000000 
            +((cur_val1 div @"100) mod @"100) * @"10000
            +(cur_val1 mod @"100);
   scanned_result(cur_val)(int_val);
   end
 else if m=del_code_base then begin
-  cur_val1:=del_code(cur_val); cur_val:=del_code1(cur_val);
+  scan_ascii_num; cur_val1:=del_code(cur_val); cur_val:=del_code1(cur_val);
   if ((cur_val1 div @"100) mod @"100 >= 16) or (cur_val>=@"1000) then
   begin print_err("Extended delimiter code used as delcode");
 @.Bad delimiter code@>
@@ -308,7 +310,7 @@ else if m=del_code_base then begin
   end
 else if m=(del_code_base+128) then begin
   { Aleph seems \.{\\odelcode} always returns $-1$.}
-  scanned_result(-1)(int_val);
+  scan_ascii_num; scanned_result(-1)(int_val);
   end
 @z
 %-----------------------------------------------
@@ -1176,11 +1178,10 @@ primitive("odelcode",def_code,del_code_base+128);
 def_code: begin
   @<Let |m| be the minimal legal code value, based on |cur_chr|@>;
   @<Let |n| be the largest legal code value, based on |cur_chr|@>;
-  p:=cur_chr; scan_char_num;
-  if p=kcat_code_base then p:=p+kcatcodekey(cur_val) 
-  else if not is_char_ascii(cur_val) then p:=p+Hi(cur_val) 
-    { If |cur_val| is a KANJI code, we use its upper half, as the case of retrieving. }
-  else p:=p+cur_val;
+  p:=cur_chr;
+  if p=kcat_code_base then
+    begin scan_char_num; p:=p+kcatcodekey(cur_val) end
+  else begin scan_ascii_num; p:=p+cur_val; end;
   scan_optional_equals; scan_int;
   if ((cur_val<m)and(p<del_code_base))or(cur_val>n) then
   begin print_err("Invalid code ("); print_int(cur_val);
@@ -1207,28 +1208,26 @@ def_code: begin
 @y
 @<Assignments@>=
 def_code: begin
- if cur_chr=(del_code_base+128) then begin
-   p:=cur_chr-128; scan_char_num; p:=p+cur_val; scan_optional_equals;
-   scan_int; cur_val1:=cur_val; scan_int; {backwards}
-   if (cur_val1>@"FFFFFF) or (cur_val>@"FFFFFF) then
-     begin print_err("Invalid code ("); print_int(cur_val1); print(" ");
-     print_int(cur_val);
-     print("), should be at most ""FFFFFF ""FFFFFF");
-     help1("I'm going to use 0 instead of that illegal code value.");@/
-     error; cur_val1:=0; cur_val:=0;
-     end;
-   cur_val1:=(cur_val1 div @"10000)*@"100+(cur_val1 mod @"100);
-   cur_val:=(cur_val div @"10000)*@"100+(cur_val mod @"100);
-   del_word_define(p,cur_val1,cur_val);
-   end
+  if cur_chr=(del_code_base+128) then begin
+    p:=cur_chr-128; scan_ascii_num; p:=p+cur_val; scan_optional_equals;
+    scan_int; cur_val1:=cur_val; scan_int; {backwards}
+    if (cur_val1>@"FFFFFF) or (cur_val>@"FFFFFF) then
+      begin print_err("Invalid code ("); print_int(cur_val1); print(" ");
+      print_int(cur_val);
+      print("), should be at most ""FFFFFF ""FFFFFF");
+      help1("I'm going to use 0 instead of that illegal code value.");@/
+      error; cur_val1:=0; cur_val:=0;
+      end;
+    cur_val1:=(cur_val1 div @"10000)*@"100+(cur_val1 mod @"100);
+    cur_val:=(cur_val div @"10000)*@"100+(cur_val mod @"100);
+    del_word_define(p,cur_val1,cur_val);
+    end
   else begin
     @<Let |m| be the minimal legal code value, based on |cur_chr|@>;
     @<Let |n| be the largest legal code value, based on |cur_chr|@>;
-    p:=cur_chr; cur_val1:=p; scan_char_num;
-    if p=kcat_code_base then p:=p+kcatcodekey(cur_val) 
-    else if not is_char_ascii(cur_val) then p:=p+Hi(cur_val) 
-      { If |cur_val| is a KANJI code, we use its upper half, as the case of retrieving. }
-    else p:=p+cur_val;
+    p:=cur_chr; cur_val1:=p;
+    if p=kcat_code_base then begin scan_char_num; p:=p+kcatcodekey(cur_val) end
+    else begin scan_ascii_num; p:=p+cur_val; end;
     scan_optional_equals; scan_int;
     if ((cur_val<m)and(p<del_code_base))or(cur_val>n) then
     begin print_err("Invalid code ("); print_int(cur_val);

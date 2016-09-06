@@ -2008,22 +2008,24 @@ toks_register,assign_toks,def_family,set_font,def_font,def_jfont,def_tfont:
 @z
 
 @x [26.414] l.8373 - pTeX:
+begin scan_char_num;
 if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
 else if m<math_code_base then scanned_result(equiv(m+cur_val))(int_val)
 else scanned_result(eqtb[m+cur_val].int)(int_val);
 @y
-if m=math_code_base then scanned_result(ho(math_code(cur_val)))(int_val)
-else if m=kcat_code_base then scanned_result(equiv(m+kcatcodekey(cur_val)))(int_val)
+begin
+if m=math_code_base then
+  begin scan_ascii_num;
+  scanned_result(ho(math_code(cur_val)))(int_val); end
+else if m=kcat_code_base then
+  begin scan_char_num;
+  scanned_result(equiv(m+kcatcodekey(cur_val)))(int_val); end
 else if m<math_code_base then { \.{\\lccode}, \.{\\uccode}, \.{\\sfcode}, \.{\\catcode} }
-  begin if not is_char_ascii(cur_val) then
-  scanned_result(equiv(m+Hi(cur_val)))(int_val)
-  else scanned_result(equiv(m+cur_val))(int_val)
-  end
+  begin scan_ascii_num;
+  scanned_result(equiv(m+cur_val))(int_val) end
 else { \.{\\delcode} }
-  begin if not is_char_ascii(cur_val) then
-  scanned_result(eqtb[m+Hi(cur_val)].int)(int_val)
-  else scanned_result(eqtb[m+cur_val].int)(int_val)
-  end;
+  begin scan_ascii_num;
+  scanned_result(eqtb[m+cur_val].int)(int_val) end;
 @z
 
 @x [26.420] l.8474 - pTeX: Fetch a box dimension: dir_node
@@ -2120,6 +2122,15 @@ if (cur_val<0)or(cur_val>255) then
   end;
 end;
 @y
+procedure scan_ascii_num;
+begin scan_int;
+if (cur_val<0)or(cur_val>255) then
+  begin print_err("Bad character code");
+@.Bad character code@>
+  help2("A character number must be between 0 and 255.")@/
+    ("I changed this one to zero."); int_error(cur_val); cur_val:=0;
+  end;
+end;
 procedure scan_char_num;
 begin scan_int;
 if not is_char_ascii(cur_val) and not is_char_kanji(cur_val) then
@@ -5819,11 +5830,10 @@ def_code: begin @<Let |n| be the largest legal code value, based on |cur_chr|@>;
 def_code: begin
   @<Let |m| be the minimal legal code value, based on |cur_chr|@>;
   @<Let |n| be the largest legal code value, based on |cur_chr|@>;
-  p:=cur_chr; scan_char_num;
-  if p=kcat_code_base then p:=p+kcatcodekey(cur_val) 
-  else if not is_char_ascii(cur_val) then p:=p+Hi(cur_val) 
-    { If |cur_val| is a KANJI code, we use its upper half, as the case of retrieving. }
-  else p:=p+cur_val;
+  p:=cur_chr;
+  if p=kcat_code_base then
+    begin scan_char_num; p:=p+kcatcodekey(cur_val) end
+  else begin scan_ascii_num; p:=p+cur_val; end;
   scan_optional_equals; scan_int;
   if ((cur_val<m)and(p<del_code_base))or(cur_val>n) then
   begin print_err("Invalid code ("); print_int(cur_val);

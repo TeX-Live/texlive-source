@@ -1,3 +1,7 @@
+2016-09-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* fam256.ch: Allow only 8bit arguments for \catcode etc.
+
 2016-07-29  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Improve \pdfsavepos as pointed out by N. Abe.
