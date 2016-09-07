@@ -1,6 +1,6 @@
 AC_PREREQ([2.64])
 AC_INIT([HarfBuzz],
-        [1.3.0],
+        [1.3.1],
         [https://github.com/behdad/harfbuzz/issues/new],
         [harfbuzz],
         [http://harfbuzz.org/])
@@ -288,7 +288,7 @@ AM_CONDITIONAL(HAVE_ICU_BUILTIN, $have_icu && test "x$with_icu" = "xbuiltin")
 dnl ===========================================================================
 
 have_ucdn=true
-if $have_glib || $have_icu && test "x$with_icu" = "xbuiltin"; then
+if $have_glib || test \( $have_icu -a "x$with_icu" = "xbuiltin" \); then
 	have_ucdn=false
 fi
 if $have_ucdn; then

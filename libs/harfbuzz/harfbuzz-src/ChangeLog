@@ -1,3 +1,247 @@
+commit b717cd7be506217e466e32a456df9af4d2720c0c
+Author: Dominik Röttsches <d-r@roettsches.de>
+Date:   Wed Sep 7 23:56:57 2016 +0300
+
+    Do reconfigure the cascade list for Emoji font on OS X 10.9.5 (#313)
+
+    This seems to fix crash issues on 10.9.5 reported on Chrome, compare
+    crbug.com/549610
+
+ src/hb-coretext.cc | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
+
+commit 67e9fdf427e8536f0a134f84ad3bf1740245fe12
+Author: Dominik Röttsches <d-r@roettsches.de>
+Date:   Mon Sep 5 11:27:25 2016 +0300
+
+    Blacklist Padauk 2.80 and 3.00 (#311)
+
+    According to comments in issue #305 broken GDEF tables lead
+    to incorrect rendering of Latin characters. Blacklisting
+    this font.
+
+ src/hb-ot-layout.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit 17f0dd2dfb9a15aed9d1a229115940cc23bdbc97
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Sep 2 01:21:48 2016 +0430
+
+    [ci] Add msys2 build to CI and run its testsuite on Windows (#310)
+
+ appveyor.yml | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+commit 5362ce6a6455c539d615e7fb221a904ac744b74c
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Sep 1 20:05:45 2016 +0430
+
+    [dwrite] Minor, don't include unnecessary headers (#309)
+
+ src/hb-directwrite.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit c4f36b04e32ae5111ef11d225e5d6e82c8216185
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Thu Sep 1 17:31:16 2016 +0430
+
+    [ci] Add Windows CI support, provided by AppVeyor (#308)
+
+ README                  |  1 +
+ appveyor.yml            | 28 ++++++++++++++++++++++++++++
+ win32/generate-msvc.mak |  2 +-
+ 3 files changed, 30 insertions(+), 1 deletion(-)
+
+commit 3d976d20f1b97c771e64a9cfed2760ebec64037a
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sat Aug 27 16:38:42 2016 +0300
+
+    Show the shaper name in the debug message (#306)
+
+ src/hb-shape-plan.cc | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit 547ddb0721365dca985aef5b759d08718f7c5f82
+Merge: bd1aac9 e7ecbba
+Author: Sascha Brawer <sascha@brawer.ch>
+Date:   Thu Aug 18 22:33:14 2016 +0200
+
+    Merge pull request #303 from behdad/fonnapa
+
+    Support Americanist Phonetic Notation
+
+commit e7ecbba2cc3c9369c5e7dc7296cb210018aca3bb
+Author: Sascha Brawer <sascha@brawer.ch>
+Date:   Thu Aug 18 12:48:38 2016 +0200
+
+    Support Americanist Phonetic Notation
+
+    OpenType language system tag: `APPH`
+    https://www.microsoft.com/typography/otspec/languagetags.htm
+
+    IETF BCP47 variant tag: `fonnapa`
+    http://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
+
+ src/hb-ot-tag.cc       | 14 ++++++++++++--
+ test/api/test-ot-tag.c |  6 ++++++
+ 2 files changed, 18 insertions(+), 2 deletions(-)
+
+commit bd1aac9c0021a936058637424a478abf792533dd
+Merge: 18c19dd a0f1b44
+Author: Sascha Brawer <sascha@brawer.ch>
+Date:   Thu Aug 18 13:59:38 2016 +0200
+
+    Merge pull request #302 from khaledhosny/master
+
+    [travis] Fix MacOS libtool issue
+
+commit a0f1b44b6c0e3b1e6a1ba63dde2be22e0425353f
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Aug 16 03:09:04 2016 +0200
+
+    [coretext] Blind fix for build on MacOS 10.9
+
+ src/hb-coretext.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0634d5600e559a69a92d49173ffb8e715fe7576c
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Aug 16 02:49:48 2016 +0200
+
+    [travis] Fix MacOS libtool issue
+
+    Reveals another MacOS build breakage in the Core Text shaper.
+
+ .travis.yml | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 18c19dd34dcdcaab0a6d47768339f8fb70c0d3f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Aug 9 13:03:14 2016 -0700
+
+    Fix build
+
+ test/api/test-ot-tag.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+commit 91f2585411aaf5565fcf0c991b9055b0b397f1cd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 8 18:08:08 2016 -0700
+
+    Actually add test
+
+ test/shaping/Makefile.am | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit f1b76275da716a4174092e6389979e03c0e3be59
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 8 18:06:09 2016 -0700
+
+    Add tests for Chinese language tags
+
+    Using font from https://github.com/behdad/harfbuzz/issues/300
+
+ .../sha1sum/6991b13ce889466be6de3f66e891de2bc0f117ee.ttf | Bin 0 ->
+ 5596 bytes
+ test/shaping/tests/language-tags.tests                   |  12
+ ++++++++++++
+ 2 files changed, 12 insertions(+)
+
+commit 37f21bdbb75c98d741e749b7f1e0f367941aef4e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 8 17:57:06 2016 -0700
+
+    Map Macao to ZHH lang tag
+
+    Fixes https://github.com/behdad/harfbuzz/issues/300
+
+ src/hb-ot-tag.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 09c7a2d6bf00dc902343e999f92cac0e8146f949
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 8 17:28:54 2016 -0700
+
+    Limit bits-per-feature to eight
+
+    Limits number of alternatives per glyph per feature to 255, so be it.
+    That's better than possibly breaking shaping because of one bad
+    feature
+    value.
+
+ src/hb-ot-map.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 333173103bb618f721bd25d0c565a3c3c9ea224e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 8 17:24:04 2016 -0700
+
+    Fix sign of shift operators
+
+    This one:
+
+      map->mask = (1 << (next_bit + bits_needed)) - (1 << next_bit);
+
+    before the fix, the shift was done as an int, causing overflow
+    if it ever got to 1 << 31.  Sprinkle 'u's around.
+
+    Fixes https://bugs.chromium.org/p/chromium/issues/detail?id=634805
+
+ src/hb-buffer-private.hh | 6 +++---
+ src/hb-cache-private.hh  | 8 ++++----
+ src/hb-coretext.cc       | 2 +-
+ src/hb-directwrite.cc    | 2 +-
+ src/hb-face.cc           | 2 --
+ src/hb-font.cc           | 2 --
+ src/hb-ft.cc             | 6 ++++--
+ src/hb-ot-map.cc         | 4 ++--
+ src/hb-set-private.hh    | 4 ++--
+ src/hb-uniscribe.cc      | 4 ++--
+ 10 files changed, 19 insertions(+), 21 deletions(-)
+
+commit 10a0d4aa2254f783758bb908175047df3a0b41fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Aug 8 16:51:08 2016 -0700
+
+    Map zh-Hant-HK to ZHH
+
+    Fixes https://github.com/behdad/harfbuzz/issues/300
+
+ src/hb-ot-tag.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit dd31fc9f7e6d23b414b22874de96eb3c002c80ba
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Jul 22 02:26:54 2016 +0300
+
+    Don’t build UCDN support when building with GLib (#296)
+
+    Regression from: b424b6c372dfe4c0ed75a49761eb34a416819446.
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 489acf6c3180d3726158864fa0e1adeea3c23fae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jul 22 17:41:43 2016 -0700
+
+    [coretext] "Fix" crashes on CoreText < 10.10
+
+    Fixes https://github.com/behdad/harfbuzz/issues/297
+
+ src/hb-coretext.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit a732e00ea4fffebaa85a89420f09df4c11d650e0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jul 21 01:58:00 2016 -0700
+
+    1.3.0
+
+ NEWS         | 15 +++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
 commit 08c08af2f9ed683ad20322c3ef1ba0f87ce15426
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Jul 21 01:23:33 2016 -0700
