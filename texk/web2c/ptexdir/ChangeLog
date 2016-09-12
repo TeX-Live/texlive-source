@@ -1,3 +1,7 @@
+2016-09-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: New primitive \ifmbox to realize better box in math mode.
+
 2016-09-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Allow only 8bit arguments for \catcode etc.
