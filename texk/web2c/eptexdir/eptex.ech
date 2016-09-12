@@ -51,15 +51,15 @@
 In \eTeX\ the |subtype| field records the box direction mode |box_lr|.
 @y
 In \eTeX\ the |subtype| field records the box direction mode |box_lr|.
-In \epTeX\ the |subtype| field is |qi(8*box_lr+box_dir)|.
+In \epTeX\ the |subtype| field is |qi(16*box_lr+box_dir)|.
 @z
 
 @x
-@d box_dir(#) == (qo(subtype(#))) {direction of a box}
+@d box_dir(#) == (qo(subtype(#))-dir_max) {direction of a box}
 @d set_box_dir(#) == subtype(#):=set_box_dir_end
 @y
-@d box_dir(#) == ((qo(subtype(#)))mod 8) {direction of a box}
-@d set_box_dir(#) == subtype(#):=box_lr(#)*8+set_box_dir_end
+@d box_dir(#) == ((qo(subtype(#)))mod 16 - dir_max) {direction of a box}
+@d set_box_dir(#) == subtype(#):=box_lr(#)*16+set_box_dir_end
 @z
 
 @x [26.413] l.8343 - e-pTeX: scan_something_internal
@@ -188,9 +188,9 @@ end
 @d set_box_lr(#) ==  subtype(#):=set_box_lr_end
 @d set_box_lr_end(#) == qi(#)
 @y
-@d box_lr(#) == ((qo(subtype(#)))div 8) {direction mode of a box}
-@d set_box_lr(#) == subtype(#):=box_dir(#)+set_box_lr_end
-@d set_box_lr_end(#) == qi(8*(#))
+@d box_lr(#) == ((qo(subtype(#)))div 16) {direction mode of a box}
+@d set_box_lr(#) == subtype(#):=box_dir(#)+dir_max+set_box_lr_end
+@d set_box_lr_end(#) == qi(16*(#))
 @z
 
 @x [45.996] l.19420
