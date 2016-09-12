@@ -588,25 +588,25 @@ pdf_strcmp_code: print_int(cur_val);
 @z
 
 @x \[if]pdfprimitive
-@d if_dbox_code=if_ybox_code+1 { `\.{\\ifdbox}' }
+@d if_mbox_code=if_dbox_code+1 { `\.{\\ifmbox}' }
 @y
-@d if_dbox_code=if_ybox_code+1 { `\.{\\ifdbox}' }
+@d if_mbox_code=if_dbox_code+1 { `\.{\\ifmbox}' }
 @#
-@d if_pdfprimitive_code=if_dbox_code+1 { `\.{\\ifpdfprimitive}' }
+@d if_pdfprimitive_code=if_mbox_code+1 { `\.{\\ifpdfprimitive}' }
 @z
 
 @x \[if]pdfprimitive
-  if_dbox_code:print_esc("ifdbox");
+  if_mbox_code:print_esc("ifmbox");
 @y
-  if_dbox_code:print_esc("ifdbox");
+  if_mbox_code:print_esc("ifmbox");
   if_pdfprimitive_code:print_esc("ifpdfprimitive");
 @z
 
 @x \[if]pdfprimitive
-if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code:
+if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code, if_mbox_code:
   @<Test box register status@>;
 @y
-if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code:
+if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code, if_mbox_code:
   @<Test box register status@>;
 if_pdfprimitive_code: begin
   save_scanner_status:=scanner_status;
