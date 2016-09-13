@@ -1,3 +1,8 @@
+2016-09-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import freetype-2.7.0.
+	* version.ac: Adjusted.
+
 2016-07-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import freetype-2.6.5.
