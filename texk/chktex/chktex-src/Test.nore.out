@@ -14,6 +14,12 @@ Message 1 in Test.tex: Command terminated with space.
 \foo This is an error.  
     ^
 Message 1 in Test.tex: Command terminated with space.
+So is this \foo  
+               ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+\smallskip This is a not. $\foo Neither$ is this.  
+                          ^^^^^^^^^^^^^^
+Message 1 in Test.tex: Command terminated with space.
 \stoptext  
          ^
 Message 9 in Test.tex: `section' expected, found `text'.
@@ -28,6 +34,9 @@ This is a faulty reference to \ref{foo}
 Message 22 in Test.tex: Comment displayed.
 % Warning 3  
 ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$[(ab)^{-1}]^{-2}$  is not beautiful  
+^^^^^^^^^^^^^^^^^^
 Message 3 in Test.tex: You should enclose the previous parenthesis with `{}'.
 $[(ab)^{-1}]^{-2}$  is not beautiful  
      ^
@@ -37,6 +46,9 @@ $[(ab)^{-1}]^{-2}$  is not beautiful
 Message 30 in Test.tex: Multiple spaces detected in input.
 $[(ab)^{-1}]^{-2}$  is not beautiful  
                   ^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+${{[{(ab)}^{-1}]}}^{-2}$ is beautiful  
+^^^^^^^^^^^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 4-6, 28  
 ^
@@ -88,9 +100,15 @@ Message 22 in Test.tex: Comment displayed.
 Message 7 in Test.tex: Accent command `\'' needs use of `\i'.
 This \'is a test of $\hat{j}$ accents.  
      ^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+This \'is a test of $\hat{j}$ accents.  
+                    ^^^^^^^^^
 Message 7 in Test.tex: Accent command `\hat' needs use of `\jmath'.
 This \'is a test of $\hat{j}$ accents.  
                      ^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+This \'{\i}s a test of $\hat{\jmath}$ accents.  
+                       ^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 8  
 ^
@@ -181,18 +199,42 @@ Message 22 in Test.tex: Comment displayed.
 Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
 Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
    ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
+           ^^^^^^^^^
 Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
 Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
               ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
+                      ^^^^^^^^^
 Message 11 in Test.tex: You should use \cdots to achieve an ellipsis.
 Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
                          ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
+                                 ^^^^^^^^^^^^
 Message 11 in Test.tex: You should use \ldots to achieve an ellipsis.
 Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
                                     ^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
+                                               ^^^^^^^^^^^^^^^^^^^^
 Message 11 in Test.tex: You should use \cdots to achieve an ellipsis.
 Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.  
                                                       ^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo\dots bar. $1,\ldots,3$. $1+\cdots+3$. $1,\ldots,3$. $1\cdot\cdots\cdot3$.  
+              ^^^^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo\dots bar. $1,\ldots,3$. $1+\cdots+3$. $1,\ldots,3$. $1\cdot\cdots\cdot3$.  
+                            ^^^^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo\dots bar. $1,\ldots,3$. $1+\cdots+3$. $1,\ldots,3$. $1\cdot\cdots\cdot3$.  
+                                          ^^^^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Foo\dots bar. $1,\ldots,3$. $1+\cdots+3$. $1,\ldots,3$. $1\cdot\cdots\cdot3$.  
+                                                        ^^^^^^^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 12  
 ^
@@ -275,11 +317,26 @@ Message 24 in Test.tex: Delete this space to maintain correct pagereferences.
 Indexing text \index{text} is fun!  
              ^
 Message 22 in Test.tex: Comment displayed.
+Indexing text%  
+             ^
+Message 30 in Test.tex: Multiple spaces detected in input.
+     \index{text} is fun!  
+ ^^^^
+Message 24 in Test.tex: Delete this space to maintain correct pagereferences.
+     \index{text} is fun!  
+    ^
+Message 22 in Test.tex: Comment displayed.
 % Warning 25  
 ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$5\cdot10^10$  
+^^^^^^^^^^^^^
 Message 25 in Test.tex: You might wish to put this between a pair of `{}'
 $5\cdot10^10$  
           ^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$5\cdot10^{10}$  
+^^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 26  
 ^
@@ -307,6 +364,9 @@ Message 22 in Test.tex: Comment displayed.
 Message 29 in Test.tex: $\times$ may look prettier here.
 The program opens a screen sized 640x200 pixels  
                                     ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+The program opens a screen sized $640\times200$ pixels  
+                                 ^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 30  
 ^
@@ -343,12 +403,18 @@ This is either an 'example`, an ''example`` or an `"`example'`'.
 Message 22 in Test.tex: Comment displayed.
 % Warning 35  
 ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$sin^2 + cos^2 = 1$  
+^^^^^^^^^^^^^^^^^^^
 Message 35 in Test.tex: You should perhaps use `\sin' instead.
 $sin^2 + cos^2 = 1$  
  ^^^
 Message 35 in Test.tex: You should perhaps use `\cos' instead.
 $sin^2 + cos^2 = 1$  
          ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$\sin^2 + \cos^2 = 1$  
+^^^^^^^^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 36-37  
 ^
@@ -394,12 +460,24 @@ For output codes, see table ~\ref{tab:fmtout}.
 Message 22 in Test.tex: Comment displayed.
 % Warning 40  
 ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$\this,$ and $$this$$.  
+^^^^^^^^
 Message 40 in Test.tex: You should put punctuation outside inner math mode.
 $\this,$ and $$this$$.  
       ^
+Message 45 in Test.tex: Use \[ ... \] instead of $$ ... $$.
+$\this,$ and $$this$$.  
+             ^^^^^^^^
 Message 40 in Test.tex: You should put punctuation inside display math mode.
 $\this,$ and $$this$$.  
                      ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+$\this$, and $$this.$$  
+^^^^^^^
+Message 45 in Test.tex: Use \[ ... \] instead of $$ ... $$.
+$\this$, and $$this.$$  
+             ^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 41  
 ^
@@ -418,36 +496,66 @@ This is a footnote \footnote{foo}.
 Message 22 in Test.tex: Comment displayed.
 % Warning 43  
 ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Here is a mistake $\left{x\right}$.  
+                  ^^^^^^^^^^^^^^^^
 Message 43 in Test.tex: `\left' is normally not followed by `{'.
 Here is a mistake $\left{x\right}$.  
                    ^^^^^
 Message 43 in Test.tex: `\right' is normally not followed by `}'.
 Here is a mistake $\left{x\right}$.  
                           ^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+This one triggers warning 22 $\left\{x\right\}$.  
+                             ^^^^^^^^^^^^^^^^^^
 Message 21 in Test.tex: This command might not be intended.
 This one triggers warning 22 $\left\{x\right\}$.  
                                    ^^
 Message 21 in Test.tex: This command might not be intended.
 This one triggers warning 22 $\left\{x\right\}$.  
                                             ^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Here \chktex\ doesn't complain $\left\lbrace x\right\rbrace$.  
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 44 -- user regex -- default message  
 ^
 Message 22 in Test.tex: Comment displayed.
 % Warning 44 -- user regex -- user message  
 ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+For every $p\not|n$ you have an ugly prime which doesn't divide $n$.  
+          ^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+For every $p\not|n$ you have an ugly prime which doesn't divide $n$.  
+                                                                ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+For every $p\nmid n$ you have a cute prime which doesn't divide $n$.  
+          ^^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+For every $p\nmid n$ you have a cute prime which doesn't divide $n$.  
+                                                                ^^^
 Message 22 in Test.tex: Comment displayed.
 % Math mode check  
 ^
 Message 35 in Test.tex: You should perhaps use `\sin' instead.
 \ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}  
             ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+\ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}  
+                                                                    ^^^^^^^
 Message 35 in Test.tex: You should perhaps use `\sin' instead.
 \ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}  
                                                                      ^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Also, $x(3)\text{ is not x(3) but it is $x(3)$}$  
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Message 36 in Test.tex: You should put a space in front of parenthesis.
 Also, $x(3)\text{ is not x(3) but it is $x(3)$}$  
                           ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Also, $x(3)\text{ is not x(3) but it is $x(3)$}$  
+                                        ^^^^^^
 Message 22 in Test.tex: Comment displayed.
 This is\\% a comment. Nothing here should be checked(right)?  
          ^
@@ -457,6 +565,9 @@ But this is not a \% comment, so we should find this error(right)?
 Message 22 in Test.tex: Comment displayed.
 Here(on this line only)is a warning $sin(x)$ suppressed. % chktex 36 chktex 35  
                                                          ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Here(on this line only)is a warning $sin(x)$ suppressed. % chktex 36 chktex 35  
+                                    ^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
                                                          ^
@@ -466,6 +577,9 @@ Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36
 Message 36 in Test.tex: You should put a space after parenthesis.
 Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
                        ^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Here(on this line only)is a warning $sin(x)$ suppressed. % CHKTEX 35 36  
+                                    ^^^^^^^^
 Message 22 in Test.tex: Comment displayed.
 In section~\ref{sec:4} it is suppressed. % chktex -1  
                                          ^
@@ -483,6 +597,21 @@ Message 31 in Test.tex: This text may be ignored.
                ^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 16,15  
+^
+Message 45 in Test.tex: Use \[ ... \] instead of $$ ... $$.
+$$(  
+^^^^^^^
+Message 22 in Test.tex: Comment displayed.
+% Local Variables:  
+^
+Message 22 in Test.tex: Comment displayed.
+% require-final-newline: nil  
+^
+Message 22 in Test.tex: Comment displayed.
+% End:  
+^
+Message 22 in Test.tex: Comment displayed.
+% There should be no newline at the end of this file to test bug #46539 
 ^
 Message 16 in Test.tex: Mathmode still on at end of LaTeX file.
 

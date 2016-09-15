@@ -104,6 +104,10 @@
 #if defined(__unix__) || defined(__unix) || defined(unix)
 #undef __unix__
 #define __unix__ 1
+#elif defined(__APPLE__) && defined(__MACH__)
+/* OS X should be considered a UNIX */
+#undef __unix__
+#define __unix__ 1
 #elif defined(MSDOS) || defined(__MSDOS__) || defined(__msdos__)
 #undef __MSDOS__
 #define __MSDOS__ 1
@@ -272,8 +276,8 @@ extern struct ErrMsg PrgMsgs[pmMaxFault + 1];
 struct ErrInfo
 {
     char *Data;
-    const char *LineBuf;
-    const char *File;
+    char *LineBuf;
+    char *File;
     unsigned long Line, Column, ErrLen;
     enum
     {

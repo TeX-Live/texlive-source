@@ -10,6 +10,7 @@ are nonsense in a TeXnical manner.
 % Warning 1
 
 \foo This is an error.
+So is this \foo
 \smallskip This is a not. $\foo Neither$ is this.
 
 \startsection[title={Testing ConTeXt}]
@@ -113,6 +114,10 @@ That bug is \unknown\ to me.
 
 Indexing text \index{text} is fun!
 Indexing text\index{text} is fun!
+Indexing text%
+     \index{text} is fun!
+Indexing text
+     \index{text} is fun!
 
 % Warning 25
 
@@ -225,3 +230,8 @@ In section~\ref{sec:4} it is suppressed. % chktex -1
 % Warning 16,15
 
 $$(
+
+% Local Variables:
+% require-final-newline: nil
+% End:
+% There should be no newline at the end of this file to test bug #46539

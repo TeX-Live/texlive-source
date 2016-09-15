@@ -51,6 +51,10 @@ int NumRegexes = 0;
 
 #endif
 
+int FoundErr = EXIT_SUCCESS;
+int LastWasComment = FALSE;
+int SeenSpace = FALSE;
+
 /***************************** ERROR MESSAGES ***************************/
 
 #undef MSG
@@ -148,7 +152,6 @@ static uint64_t UserLineSuppressions;
 static unsigned long Line;
 
 static const char *RealBuf;
-static char *LineCpy = NULL;
 static char *BufPtr;
 
 static int ItFlag = efNone;
@@ -292,17 +295,6 @@ static char *GetLTXArg(char *SrcBuf, char *OrigDest, const int Until,
 }
 
 
-static char *MakeCpy(void)
-{
-    if (!LineCpy)
-        LineCpy = strdup(RealBuf);
-
-    if (!LineCpy)
-        PrintPrgErr(pmStrDupErr);
-
-    return (LineCpy);
-}
-
 static char *PreProcess(void)
 {
     char *TmpPtr;
@@ -317,6 +309,7 @@ static char *PreProcess(void)
 
     TmpPtr = Buf;
 
+    LastWasComment = FALSE;
     while ((TmpPtr = strchr(TmpPtr, '%')))
     {
         char *EscapePtr = TmpPtr;
@@ -330,6 +323,7 @@ static char *PreProcess(void)
         /* If there is an even number of backslashes, then it's a comment. */
         if ((NumBackSlashes % 2) == 0)
         {
+            LastWasComment = TRUE;
             PSERR(TmpPtr - Buf, 1, emComment);
             *TmpPtr = 0;
             /* Check for line suppressions */
@@ -668,7 +662,7 @@ static void PerformBigCmd(char *CmdPtr)
             if (CmdBuffer[1] == 'b')
             {
                 if (!(PushErr(ArgBuffer, Line, CmdPtr - Buf,
-                              CmdLen, MakeCpy(), &EnvStack)))
+                              CmdLen, RealBuf, &EnvStack)))
                     PrintPrgErr(pmNoStackMem);
             }
             else
@@ -703,7 +697,7 @@ static void PerformBigCmd(char *CmdPtr)
         {
             TmpPtr = CmdBuffer + 6;
             if (!(PushErr(TmpPtr, Line, CmdPtr - Buf + 6,
-                          CmdLen - 6, MakeCpy(), &EnvStack)))
+                          CmdLen - 6, RealBuf, &EnvStack)))
                 PrintPrgErr(pmNoStackMem);
         }
         else
@@ -851,12 +845,15 @@ static void CheckRest(void)
                     {
                         CommentEnd = strchr(pattern, ')');
                         /* TODO: check for PCRE/POSIX only regexes */
-                        *CommentEnd = '\0';
-                        /* We're leaking a little here, but this was never freed until exit anyway... */
-                        UserWarnRegex.Stack.Data[NumRegexes] = pattern+3;
+                        if ( CommentEnd != NULL )
+                        {
+                            *CommentEnd = '\0';
+                            /* We're leaking a little here, but this was never freed until exit anyway... */
+                            UserWarnRegex.Stack.Data[NumRegexes] = pattern+3;
 
-                        /* Compile past the end of the comment so that it works with POSIX too. */
-                        pattern = CommentEnd + 1;
+                            /* Compile past the end of the comment so that it works with POSIX too. */
+                            pattern = CommentEnd + 1;
+                        }
                     }
 
                     /* Ignore PCRE and POSIX specific regexes.
@@ -958,7 +955,17 @@ static void CheckRest(void)
                                (int)(MATCH.rm_eo - MATCH.rm_so),
                                TmpBuffer + offset + MATCH.rm_so);
                     }
-                    offset += MATCH.rm_eo;
+                    if ( MATCH.rm_eo == 0 )
+                    {
+                        /* Break out of loop if the match was empty.
+                         * This avoids an infinite loop when the match
+                         * is empty, e.g $ */
+                        offset = len;
+                    }
+                    else
+                    {
+                        offset += MATCH.rm_eo;
+                    }
 #undef MATCH
                 }
             }
@@ -1164,7 +1171,7 @@ static void HandleBracket(char Char)
         else                    /* Opening bracket of some sort  */
         {
             if ((ei = PushChar(Char, Line, BufPtr - Buf - 1,
-                               &CharStack, MakeCpy())))
+                               &CharStack, RealBuf)))
             {
                 if (Char == '{')
                 {
@@ -1309,14 +1316,32 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
     enum DotLevel dotlev;
 
+    FoundErr = EXIT_SUCCESS;
+
     if (_RealBuf)
     {
         RealBuf = _RealBuf;
         Line = _Line;
 
+        if (!LastWasComment)
+        {
+            SeenSpace = TRUE;
+        }
         BufPtr = PreProcess();
 
         BufPtr = SkipVerb();
+
+        /* Skip past leading whitespace which is insignificant in TeX to avoid
+         * spurious warnings (Delete this space to maintain correct
+         * pagereferences).  If we have seen a space we don't _need_ to skip
+         * past, and doing so misses Message 30 (Multiple spaces detected).  We
+         * can miss some of Message 30 in the "not SeenSpace" case too, but I
+         * think it's less important, since Message 30 is for newbies.
+         */
+        if (!SeenSpace && BufPtr)
+        {
+            SKIP_AHEAD(BufPtr, TmpC, LATEX_SPACE(TmpC));
+        }
 
         while (BufPtr && *BufPtr)
         {
@@ -1623,12 +1648,18 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
             case '\\':         /* Command encountered  */
                 BufPtr = GetLTXToken(--BufPtr, CmdBuffer);
 
-                if (LATEX_SPACE(*PrePtr))
+                if (SeenSpace)
                 {
+                    /* We must be careful to not point to the "previous space"
+                     * when it was actually on the previous line.  This could
+                     * cause us to write into someone else's memory (inside of
+                     * PrintError). */
                     if (HasWord(CmdBuffer, &Linker))
-                        PSERR(PrePtr - Buf, 1, emNBSpace);
+                        PSERR( (PrePtr > Buf) ? (PrePtr - Buf) : 0,
+                               1, emNBSpace);
                     if (HasWord(CmdBuffer, &PostLink))
-                        PSERR(PrePtr - Buf, 1, emFalsePage);
+                        PSERR( (PrePtr > Buf) ? (PrePtr - Buf) : 0,
+                               1, emFalsePage);
                 }
 
                 if (LATEX_SPACE(*BufPtr) && !MathMode &&
@@ -1683,12 +1714,25 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
                 if (*PrePtr != '\\')
                 {
                     if (*BufPtr == '$')
+                    {
                         BufPtr++;
+                        TmpPtr = BufPtr;
+                        SKIP_AHEAD(TmpPtr, TmpC, (TmpC != '$' && TmpC != '\0'));
+                        PSERR(BufPtr - Buf - 2, TmpPtr-BufPtr+4, emDisplayMath);
+                    }
+                    else
+                    {
+                        TmpPtr = BufPtr;
+                        SKIP_AHEAD(TmpPtr, TmpC, (TmpC != '$' && TmpC != '\0'));
+                        PSERR(BufPtr - Buf - 1, TmpPtr-BufPtr+2, emInlineMath);
+                    }
                     MathMode ^= TRUE;
                 }
 
                 break;
             }
+
+            SeenSpace = LATEX_SPACE(Char);
         }
 
         if (!VerbMode)
@@ -1698,13 +1742,7 @@ int FindErr(const char *_RealBuf, const unsigned long _Line)
 
     }
 
-    /* Free and reset LineCpy if it was used */
-    if ( LineCpy != NULL )
-    {
-        free(LineCpy);
-        LineCpy = NULL;
-    }
-    return (TRUE);
+    return FoundErr;
 }
 
 /*
@@ -1834,6 +1872,7 @@ PrintError(const char *File, const char *String,
             }
             else
             {
+                FoundErr = EXIT_FAILURE;
                 Context = LaTeXMsgs[Error].Context;
 
                 if (!HeadErrOut)

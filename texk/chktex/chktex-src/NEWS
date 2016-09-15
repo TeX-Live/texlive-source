@@ -1,6 +1,25 @@
 Development of ChkTeX is now in a maintainance mode.  All versions
 1.6.x are essentially bug fixes.  Version 1.7 added some new features.
 
+1.7.6 (2016-09-09), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Properly copy and free strings.  This caused incorrect file
+      reporting in some cases #49000
+  * Add "verbatim" commands and environments from tipa #46734
+  * Avoid infinite loop when a regex matches an empty string
+  * Fix crash on invalid regular expression
+  * Add warnings for $$...$$ and $...$ #47044
+  * Update the banner to reflect current bug reporting contacts
+
+1.7.5 (2015-12-07), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Track whether the previous line ended in a comment #45980
+  * Add a few source code environments to VerbEnvir
+  * Don't show long line warning if the last line doesn't have a newline #46539
+  * Fix deweb's handling of file names #46043,#46042
+  * Use the exit status to indicate warnings were found #45979
+  * Consider OS X a UNIX
+
 1.7.4 (2015-04-11), released by Ivan Andrus <darthandrus@gmail.com>
 
   * Fixed undefined behavior (patch from TeXLive)
