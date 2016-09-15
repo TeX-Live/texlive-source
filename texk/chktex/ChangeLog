@@ -1,3 +1,9 @@
+2016-09-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import ChkTeX 1.7.6.
+	* version.ac: adapted.
+	* ChkTeX.tex, ChkTeX.pdf: updated.
+
 2016-02-23  Akira Kakuto  <kakuto@kakuto.fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

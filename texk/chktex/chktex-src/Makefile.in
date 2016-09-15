@@ -124,7 +124,7 @@ endif
 
 OBJS= ChkTeX.o FindErrs.o OpSys.o Resource.o Utility.o
 
-MAKETEST= (builddir=`pwd` ; cd $(srcdir) ; $${builddir}/chktex -mall -r -g0 -lchktexrc -v5 Test.tex)
+MAKETEST= (builddir=`pwd` ; cd $(srcdir) ; $${builddir}/chktex -mall -r -g0 -lchktexrc -v5 Test.tex || :)
 
 # We can't grep the output of chtex because it might not be built yet
 TestOutFile := $(shell sed -n 's/.*HAVE_\(.*RE\) 1.*/\1/p' config.h | tr "A-Z_" "a-z-")
@@ -321,3 +321,6 @@ Post: %t*N\
 	-./chktex -w30 Test.tex
 	-./chktex -g --localrc=.testrc -d2 Test.tex
 	for file in $(CSOURCES); do gcov $(GCOVOPTS) $$file; done
+
+valgrind: chktex
+	valgrind --tool=memcheck --leak-check=full chktex -mall -r -g0 -lchktexrc -v5 Test.tex | grep ^[-=][-=]

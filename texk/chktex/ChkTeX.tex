@@ -1,5 +1,5 @@
 %%
-%%  ChkTeX v1.7.4, LaTeX documentation for ChkTeX program.
+%%  ChkTeX v1.7.6, LaTeX documentation for ChkTeX program.
 %%  Copyright (C) 1995-96 Jens T. Berger Thielemann
 %%
 %%  This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@
 %endlatex
 
 
-\title{\chktex\ v1.7.4}
+\title{\chktex\ v1.7.6}
 \author{Jens~T. Berger~Thielemann}
 \date{\today}
 
@@ -1145,7 +1145,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\begin{errdesc}{You should use "'" (ASCII 39)  instead  of
+\begin{errdesc*}{You should use "'" (ASCII 39)  instead  of
     "'" (ASCII 180).} On some keyboards you might get the wrong quote.
   This quote looks, IMHO, \emph{ugly} compared to the standard
   quotes, it doesn't even come out as a quote!  Just see in the
@@ -1160,7 +1160,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
     \verb@``There's quotes and there's quotes''@ \\*
     ``There's quotes and there's quotes'' \\*
   \end{errexam}
-\end{errdesc}
+\end{errdesc*}
 
 \Keyword{UserWarn}
 \begin{errdesc}{User-specified pattern found: \%s.}
@@ -1546,6 +1546,21 @@ keyword in the \rsrc\ file which controls the discussed warning.
     \verb+(?!#-4! Always! use! \nmid)\\not! *(\||\\mid)+\\*
   \end{errexam}
 \end{errdesc}
+
+\begin{errdesc}{Use \textbackslash[ ... \textbackslash] instead of \$\$ ... \$\$.}
+
+  In \LaTeX\ documents, using \verb+\[...\]+ is strongly preferred over \verb+$$...$$+.
+  This is because using \verb+$$+ will change the vertical spacing in the
+  equations making them inconsistent.
+
+\end{errdesc}
+
+\begin{errdesc*}{Use \textbackslash( ... \textbackslash) instead of \$ ... \$.}
+
+  In \LaTeX\ documents using \verb+\(...\)+ is slightly preferred over \verb+$...$+.
+  Some error messages might be clearer with \verb+\(...\)+.
+
+\end{errdesc*}
 
 \section{Future plans}
 

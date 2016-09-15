@@ -96,8 +96,9 @@ static const char *BigBanner =
     "ChkTeX comes with ABSOLUTELY NO WARRANTY; details on this and\n"
     "distribution conditions in the GNU General Public License file.\n"
     "Type \"ChkTeX -h\" for help, \"ChkTeX -i\" for distribution info.\n"
-    "Author: Jens Berger, Spektrumvn. 4, N-0666 Oslo, Norway.\n"
-    "E-mail: <jensthi@ifi.uio.no>\n"
+    "Author: Jens Berger.\n"
+    "Bug reports: https://savannah.nongnu.org/bugs/?group=chktex\n"
+    "             or darthandrus@gmail.com\n"
     "Press " STDIN_BREAK " to terminate stdin input.\n";
 
 static const char *Distrib =
@@ -337,7 +338,7 @@ static void ExpandTabs(char *From, char *To, long TSize, long MaxDiff)
 
 int main(int argc, char **argv)
 {
-    int retval = EXIT_FAILURE, CurArg;
+    int retval = EXIT_FAILURE, ret, CurArg;
     unsigned long Count;
     int StdInUse = FALSE;
     long Tab = 8;
@@ -380,6 +381,7 @@ int main(int argc, char **argv)
 
     if ((CurArg = ParseArgs((unsigned long) argc, argv)))
     {
+        retval = EXIT_SUCCESS;
         if (CmdLine.Stack.Used)
         {
             ParseArgs(CmdLine.Stack.Used, (char **) CmdLine.Stack.Data);
@@ -491,11 +493,13 @@ int main(int argc, char **argv)
                             strcpy(ReadBuffer, TmpBuffer);
 
                             strcat(ReadBuffer, " ");
-                            FindErr(ReadBuffer, CurStkLine(&InputStack));
+                            ret = FindErr(ReadBuffer, CurStkLine(&InputStack));
+                            if ( ret != EXIT_SUCCESS ) {
+                                retval = ret;
+                            }
                         }
 
                         PrintStatus(CurStkLine(&InputStack));
-                        retval = EXIT_SUCCESS;
                     }
                 }
             }

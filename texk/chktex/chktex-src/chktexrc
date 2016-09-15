@@ -493,6 +493,8 @@ WipeArg
     \citet:*[][]{} \citep:*[][]{} \citealt:*{} \citealp:*[]{} \citeauthor:*{}
     \Citet:*[][]{} \Citep:*[][]{} \Citealt:*{} \Citealp:*[]{} \Citeauthor:{}
     \citetext:{} \citeyear:*{} \citeyearpar:{}
+    # tipa which uses "
+    \textipa:{}
 }
 
 #####################################################################
@@ -545,7 +547,7 @@ TextCmd
 VerbEnvir
 {
     verbatim comment listing verbatimtab rawhtml errexam picture texdraw
-    filecontents pgfpicture tikzpicture
+    filecontents pgfpicture tikzpicture minted lstlisting IPA
 }
 
 #####################################################################
