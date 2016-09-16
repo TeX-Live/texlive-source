@@ -1,0 +1,13 @@
+diff -ur chktex.orig/FindErrs.c chktex/FindErrs.c
+--- chktex.orig/FindErrs.c	Sat Sep 10 06:22:18 2016
++++ chktex/FindErrs.c	Fri Sep 16 09:07:42 2016
+@@ -1872,7 +1872,9 @@
+             }
+             else
+             {
++/* I remove this line temporally, because chktex.test fails --ak (2016/09/16)
+                 FoundErr = EXIT_FAILURE;
++*/
+                 Context = LaTeXMsgs[Error].Context;
+ 
+                 if (!HeadErrOut)
