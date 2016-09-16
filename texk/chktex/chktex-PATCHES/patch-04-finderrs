@@ -1,14 +1,19 @@
-diff -u chktex.orig/FindErrs.c chktex/FindErrs.c
+diff -ur chktex.orig/FindErrs.c chktex/FindErrs.c
 --- chktex.orig/FindErrs.c	Sat Sep 10 06:22:18 2016
-+++ chktex/FindErrs.c	Fri Sep 16 10:09:42 2016
-@@ -1872,7 +1872,9 @@
++++ chktex/FindErrs.c	Fri Sep 16 14:09:38 2016
+@@ -1872,7 +1872,6 @@
              }
              else
              {
-+/* I remove this line temporarily, because chktex.test fails. --ak (2016/09/16)
-                 FoundErr = EXIT_FAILURE;
-+*/
+-                FoundErr = EXIT_FAILURE;
                  Context = LaTeXMsgs[Error].Context;
  
                  if (!HeadErrOut)
-Common subdirectories: chktex.orig/m4 and chktex/m4
+@@ -1892,6 +1891,7 @@
+                     break;
+                 case etErr:
+                     ErrPrint++;
++                    FoundErr = EXIT_FAILURE;
+                     break;
+                 case etMsg:
+                     break;
