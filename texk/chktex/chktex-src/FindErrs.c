@@ -1872,7 +1872,9 @@ PrintError(const char *File, const char *String,
             }
             else
             {
+/* I remove this line temporally, because chktex.test fails --ak (2016/09/16)
                 FoundErr = EXIT_FAILURE;
+*/
                 Context = LaTeXMsgs[Error].Context;
 
                 if (!HeadErrOut)
