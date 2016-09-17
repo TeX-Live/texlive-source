@@ -1,4 +1,4 @@
-% $Id: mp.w 2091 2016-09-16 23:07:58Z luigi $
+% $Id: mp.w 2092 2016-09-17 15:02:46Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -13932,6 +13932,7 @@ if (number_zero(dx) && !(number_zero(dy)) && number_zero(x0) && number_zero(x2) 
      set_number_from_substraction (dx, dx, epsilon_t);  
     }
 } 
+/* this patch can conflict with the previous one */
 /* hm what about dx=dy=0 ? */
 if (number_zero(dx_ap) && !number_zero(dx)){
   set_number_to_zero(dx);
