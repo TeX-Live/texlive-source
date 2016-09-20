@@ -1,3 +1,8 @@
+2016-09-21  Karl Berry  <karl@tug.org>
+
+	* tex4ht.c (main): allow any id byte <= 10, for xetex.
+	It was updated to 7 in XeTeX for TL 2016.
+
 2016-06-14  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (shell_scripts): re-add xhlatex.
