@@ -2,7 +2,7 @@
  * Gregorio is a program that translates gabc files to GregorioTeX
  * This header defines the Gregorio data structures and functions.
  *
- * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  *
@@ -98,7 +98,8 @@ ENUM(gregorio_clef, GREGORIO_CLEF);
     A(S_UNDETERMINED, 0) \
     E(S_PUNCTUM) \
     E(S_PUNCTUM_END_OF_GLYPH) \
-    E(S_PUNCTUM_INCLINATUM) \
+    E(S_PUNCTUM_INCLINATUM_ASCENDENS) \
+    E(S_PUNCTUM_INCLINATUM_DESCENDENS) \
     E(S_PUNCTUM_INCLINATUM_DEMINUTUS) \
     E(S_PUNCTUM_INCLINATUM_AUCTUS) \
     E(S_VIRGA) \
@@ -134,6 +135,7 @@ ENUM(gregorio_clef, GREGORIO_CLEF);
     E(S_ORISCUS_SCAPUS_UNDETERMINED) \
     E(S_ORISCUS_CAVUM_UNDETERMINED) \
     E(S_QUADRATUM) \
+    E(S_PUNCTUM_INCLINATUM_UNDETERMINED) \
     /* those shapes are for now used only in gregoriotex */ \
     E(S_QUILISMA_QUADRATUM) \
     E(S_PUNCTUM_AUCTUS_ASCENDENS) \
@@ -283,7 +285,6 @@ ENUM(gregorio_vposition, GREGORIO_VPOSITION);
     E(G_SALICUS_FLEXUS) \
     E(G_VIRGA_STRATA) \
     E(G_TORCULUS_LIQUESCENS) \
-    E(G_PES_QUILISMA) \
     /* additional glyph types, necessary for determination */ \
     E(G_PORRECTUS_NO_BAR) \
     E(G_PORRECTUS_FLEXUS_NO_BAR) \
@@ -403,7 +404,7 @@ typedef union gregorio_misc_element_info {
     struct {
         /* The pitch of the glyph. */
         signed char pitch;
-        /* boolean indicating a clef with a B-flat */
+        /* boolean indicating whether the pitch is forced */
         bool force_pitch:1;
     } pitched;
     /* clef is used for GRE_CLEF */
@@ -692,7 +693,7 @@ typedef struct gregorio_score {
     char *annotation[MAX_ANNOTATIONS];
     /* field giving informations on the initial (no initial, normal initial
      * or two lines initial) */
-    signed char initial_style; /* DEPRECATED */
+    signed char initial_style; /* DEPRECATED for removal in 5.0 */
     size_t nabc_lines;
     char *user_notes;
     /* the determination method (maximal ambitus, etc.) */
@@ -705,6 +706,7 @@ typedef struct gregorio_score {
     unsigned char staff_lines;
     signed char highest_pitch;
     signed char high_ledger_line_pitch;
+    signed char virgula_far_pitch;
     bool legacy_oriscus_orientation;
 } gregorio_score;
 
@@ -739,11 +741,12 @@ typedef struct gregorio_hepisema_adjustment {
 #define F_KEY 'f'
 #define NO_KEY -5
 
+extern unsigned short tex_position_id;
 extern gregorio_clef_info gregorio_default_clef;
 
 #define MONOPHONY 0
 
-/* the different initial styles - DEPRECATED by 4.1 */
+/* the different initial styles - DEPRECATED for removal in 5.0 */
 #define INITIAL_NOT_SPECIFIED -1
 
 #define USELESS_VALUE 0
@@ -779,6 +782,8 @@ static __inline bool is_fused(char liquescentia)
 #define LOWEST_PITCH 3
 #define DUMMY_PITCH (LOWEST_PITCH + 6)
 #define LOW_LEDGER_LINE_PITCH (LOWEST_PITCH + 1)
+#define LOW_LINE_PITCH (LOWEST_PITCH + 3)
+#define MAX_PITCH (LOWEST_PITCH + 4 + (2 * 5))
 
 #define NO_PITCH -128
 
@@ -880,8 +885,9 @@ void gregorio_begin_style(gregorio_character **current_character,
 void gregorio_end_style(gregorio_character **current_character,
         grestyle_style style);
 gregorio_character *gregorio_clone_characters(const gregorio_character *source);
-signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
-        gregorio_element *element, gregorio_glyph *glyph);
+signed char gregorio_determine_next_pitch(const gregorio_syllable *syllable,
+        const gregorio_element *element, const gregorio_glyph *glyph,
+        gregorio_shape *next_pitch_alteration);
 const char *gregorio_unknown(int value);
 gregorio_element *gregorio_get_clef_change(gregorio_syllable *syllable);
 unsigned short gregorio_add_hepisema_adjustment(

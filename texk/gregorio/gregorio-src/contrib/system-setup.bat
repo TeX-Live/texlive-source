@@ -1,5 +1,5 @@
 @echo off
-SETLOCAL ENABLEEXTENSIONS
+SETLOCAL ENABLEEXTENSIONS EnableDelayedExpansion
 
 set output="%TEMP%\system-setup.log"
 
@@ -79,49 +79,134 @@ echo. >> %output%
 echo. >> %output%
 
 echo ###	Gregorio Setup >> %output%
-echo ####	Version >> %output%
-echo. >> %output%
-gregorio -V >> %output% 2>&1
-echo. >> %output%
-echo #### 	Location >> %output%
-echo. >> %output%
-@for %%e in (%PATHEXT%) do @for %%i in (gregorio%%e) do @if NOT "%%~$PATH:i"=="" echo %%~$PATH:i >> %output% 2>&1
-echo. >> %output%
+echo ####	Locations and Versions >> %output%
+for /f "delims=" %%G in ('where /f gregorio*') do (
+  echo %%G >> %output%
+  for /f "delims=" %%H in ('%%G -V') do echo %%H >> %output% 2>&1
+  echo. >> %output%
+)
 echo ####	GregorioTeX Locations >> %output%
 echo. >> %output%
 
-set files=gregorio-vowels.dat ^
-gregoriosyms.sty ^
+:: Files using GREGORIO_VERSION in {}
+set files=gregoriosyms.sty ^
 gregoriotex-chars.tex ^
 gregoriotex-main.tex ^
-gregoriotex-ictus.tex ^
-gregoriotex-nabc.lua ^
 gregoriotex-nabc.tex ^
-gregoriotex-signs.lua ^
 gregoriotex-signs.tex ^
 gregoriotex-spaces.tex ^
 gregoriotex-syllable.tex ^
-gregoriotex-symbols.lua ^
-gregoriotex-symbols.tex ^
-gregoriotex.lua ^
-gregoriotex.sty ^
-gregoriotex.tex ^
-gsp-default.tex ^
-greciliae.ttf ^
+gregoriotex-symbols.tex
+
+for %%G in (%files%) do (
+	echo ##### %%G >> %output%
+	for /f "delims=" %%H in ('kpsewhich -all %%G') do (
+		set loc=%%H
+		set loc=!loc:/=\!
+		echo !loc! >> %output%
+		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" !loc!') do set ver=%%I
+		set ver=!ver:*{=!
+		set ver=!ver:*{=!
+		set trash=}!ver:*}=!
+		call set ver=%%ver:!trash!=%%
+		echo !ver! >> %output% 2>&1
+		set ver=
+	)
+)
+
+:: Files using GREGORIO_VERSION in spaces
+set files=gregoriotex-nabc.lua ^
+gregoriotex-signs.lua ^
+gregoriotex-symbols.lua
+
+for %%G in (%files%) do (
+	echo ##### %%G >> %output%
+	for /f "delims=" %%H in ('kpsewhich -all %%G') do (
+		set loc=%%H
+		set loc=!loc:/=\!
+		echo !loc! >> %output%
+		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" !loc!') do set ver=%%I
+		set ver=!ver:*N =!
+		echo !ver! >> %output% 2>&1
+		set ver=
+	)
+)
+
+:: Files using GREGORIO_VERSION in ''
+set files=gregoriotex.lua
+
+for %%G in (%files%) do (
+	echo ##### %%G >> %output%
+	for /f "delims=" %%H in ('kpsewhich -all %%G') do (
+		set loc=%%H
+		set loc=!loc:/=\!
+		echo !loc! >> %output%
+		for /f "delims=" %%I in ('findstr /r "GREGORIO_VERSION" !loc!') do set ver=%%I
+		set ver=!ver:*'=!
+		set trash='!ver:*'=!
+		call set ver=%%ver:!trash!=%%
+		echo !ver! >> %output% 2>&1
+		set ver=
+	)
+)
+
+:: Files using PARSE_VERSION_DATE_LTX
+set files=gregoriotex.sty ^
+gregoriotex.tex
+
+for %%G in (%files%) do (
+	echo ##### %%G >> %output%
+	for /f "delims=" %%H in ('kpsewhich -all %%G') do (
+		set loc=%%H
+		set loc=!loc:/=\!
+		echo !loc! >> %output%
+		for /f "delims=" %%I in ('findstr /r "PARSE_VERSION_DATE_LTX" !loc!') do set ver=%%I
+		set ver=!ver:*v=!
+		set trash=G!ver:*G=!
+		call set ver=%%ver:!trash!=%%
+		echo !ver! >> %output% 2>&1
+		set ver=
+	)
+)
+
+:: Font Files
+set files=greciliae.ttf ^
 greciliae-op.ttf ^
 greextra.ttf ^
 gregorio.ttf ^
 gregorio-op.ttf ^
-gresym.ttf ^
 granapadano.ttf ^
 granapadano-op.ttf ^
-gregall.ttf ^
+gregall.ttf
+
+for %%G in (%files%) do (
+	echo ##### %%G >> %output%
+	for /f "delims=" %%H in ('kpsewhich -all %%G') do (
+		set loc=%%H
+		set loc=!loc:/=\!
+		echo !loc! >> %output%
+		otfinfo --font-version !loc! >> %output% 2>&1
+	)
+)
+
+:: Unversioned and Obsolete Files
+set files=gregorio-vowels.dat ^
+gsp-default.tex ^
+gregoriotex-ictus.tex ^
+gresym.ttf ^
+parmesan.ttf ^
+parmesan-op.ttf ^
 gregsmodern.ttf
 
 for %%G in (%files%) do (
 	echo ##### %%G >> %output%
-	kpsewhich -all %%G >> %output% 2>&1
+	for /f "delims=" %%H in ('kpsewhich -all %%G') do (
+		set loc=%%H
+		set loc=!loc:/=\!
+		echo !loc! >> %output%
+	)
 )
+
 echo. >> %output%
 echo ####	kpsewhich --all -engine luatex -progname lualatex gregoriotex.sty >> %output%
 kpsewhich --all -engine luatex -progname lualatex gregoriotex.sty >> %output% 2>&1

@@ -1,6 +1,6 @@
 #License of Gregorio
 
-The program Gregorio is (C) 2007-2015 The Gregorio project, see
+The program Gregorio is (C) 2007-2016 The Gregorio project, see
 [CONTRIBUTORS.md](CONTRIBUTORS.md) for authors. It is distributed under
 the GPLv3 license, printed below.
 

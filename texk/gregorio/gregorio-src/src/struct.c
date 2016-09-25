@@ -2,7 +2,7 @@
  * Gregorio is a program that translates gabc files to GregorioTeX
  * This file implements the Gregorio data structures.
  *
- * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  *
@@ -52,6 +52,8 @@
 #include "support.h"
 #include "characters.h"
 #include "support.h"
+
+unsigned short tex_position_id = 0;
 
 gregorio_clef_info gregorio_default_clef = {
     /*.line =*/ 3,
@@ -430,7 +432,9 @@ void gregorio_change_shape(gregorio_note *const note,
     case S_PUNCTUM_CAVUM:
         /* S_PUNCTUM_CAVUM morphs other shapes */
         switch (old_shape) {
-        case S_PUNCTUM_INCLINATUM:
+        case S_PUNCTUM_INCLINATUM_UNDETERMINED:
+        case S_PUNCTUM_INCLINATUM_ASCENDENS:
+        case S_PUNCTUM_INCLINATUM_DESCENDENS:
             note->u.note.shape = S_PUNCTUM_CAVUM_INCLINATUM;
             fix_punctum_cavum_inclinatum_liquescentia(note);
             break;
@@ -1260,6 +1264,11 @@ void gregorio_set_score_staff_lines(gregorio_score *const score,
     score->staff_lines = staff_lines;
     score->highest_pitch = LOWEST_PITCH + 4 + (2 * staff_lines);
     score->high_ledger_line_pitch = score->highest_pitch - 1;
+    score->virgula_far_pitch = score->highest_pitch - 6;
+
+    gregorio_assert(score->highest_pitch <= MAX_PITCH,
+            gregorio_set_score_staff_lines, "highest pitch exceeds MAX_PITCH",
+            return);
 }
 
 void gregorio_add_score_header(gregorio_score *score, char *name, char *value)
@@ -1317,11 +1326,52 @@ int gregorio_calculate_new_key(gregorio_clef_info clef)
     }
 }
 
-static signed char gregorio_syllable_first_note(gregorio_syllable *syllable)
+/* shape is an output parameter */
+static __inline signed char next_pitch_from_glyph(const gregorio_glyph *glyph,
+        gregorio_shape *const alterations, gregorio_shape *const shape)
+{
+    while (glyph) {
+        if (glyph->type == GRE_GLYPH) {
+            if (glyph->u.notes.glyph_type == G_ALTERATION) {
+                const gregorio_note *note;
+                for (note = glyph->u.notes.first_note; note;
+                        note = note->next) {
+                    switch (note->u.note.shape) {
+                    case S_FLAT:
+                    case S_SHARP:
+                    case S_NATURAL:
+                        if (note->u.note.pitch >= LOWEST_PITCH &&
+                                note->u.note.pitch <= MAX_PITCH) {
+                            alterations[note->u.note.pitch] =
+                                    note->u.note.shape;
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            } else if (glyph->u.notes.first_note) {
+                assert(glyph->u.notes.first_note->type == GRE_NOTE);
+                if (shape) {
+                    *shape = alterations[
+                            glyph->u.notes.first_note->u.note.pitch];
+                }
+                return glyph->u.notes.first_note->u.note.pitch;
+            }
+        }
+        glyph = glyph->next;
+    }
+    return 0;
+}
+
+/* shape is an output parameter */
+static signed char syllable_first_note(const gregorio_syllable *syllable,
+        gregorio_shape *const alterations, gregorio_shape *const shape)
 {
     gregorio_element *element;
     gregorio_glyph *glyph;
-    gregorio_not_null(syllable, gregorio_syllable_first_note, return 0);
+    signed char pitch;
+    gregorio_not_null(syllable, syllable_first_note, return 0);
     element = syllable->elements[0];
     while (element) {
         if (element->type == GRE_CUSTOS) {
@@ -1329,14 +1379,9 @@ static signed char gregorio_syllable_first_note(gregorio_syllable *syllable)
         }
         if (element->type == GRE_ELEMENT && element->u.first_glyph) {
             glyph = element->u.first_glyph;
-            while (glyph) {
-                if (glyph->type == GRE_GLYPH
-                        && glyph->u.notes.glyph_type != G_ALTERATION
-                        && glyph->u.notes.first_note) {
-                    assert(glyph->u.notes.first_note->type == GRE_NOTE);
-                    return glyph->u.notes.first_note->u.note.pitch;
-                }
-                glyph = glyph->next;
+            pitch = next_pitch_from_glyph(glyph, alterations, shape);
+            if (pitch) {
+                return pitch;
             }
         }
         element = element->next;
@@ -1344,10 +1389,19 @@ static signed char gregorio_syllable_first_note(gregorio_syllable *syllable)
     return 0;
 }
 
-signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
-        gregorio_element *element, gregorio_glyph *glyph)
+/* shape is an output parameter */
+signed char gregorio_determine_next_pitch(const gregorio_syllable *syllable,
+        const gregorio_element *element, const gregorio_glyph *glyph,
+        gregorio_shape *const shape)
 {
-    signed char temp;
+    signed char pitch;
+    gregorio_shape alterations[MAX_PITCH + 1];
+
+    memset(alterations, 0, sizeof alterations);
+
+    if (shape) {
+        *shape = S_UNDETERMINED;
+    }
     gregorio_not_null(element, gregorio_determine_next_pitch,
             return DUMMY_PITCH);
     gregorio_not_null(syllable, gregorio_determine_next_pitch,
@@ -1355,14 +1409,9 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
     /* we first explore the next glyphs to find a note, if there is one */
     if (glyph) {
         glyph = glyph->next;
-        while (glyph) {
-            if (glyph->type == GRE_GLYPH
-                    && glyph->u.notes.glyph_type != G_ALTERATION
-                    && glyph->u.notes.first_note) {
-                assert(glyph->u.notes.first_note->type == GRE_NOTE);
-                return glyph->u.notes.first_note->u.note.pitch;
-            }
-            glyph = glyph->next;
+        pitch = next_pitch_from_glyph(glyph, alterations, shape);
+        if (pitch) {
+            return pitch;
         }
     }
     /* then we do the same with the elements */
@@ -1373,14 +1422,9 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
         }
         if (element->type == GRE_ELEMENT && element->u.first_glyph) {
             glyph = element->u.first_glyph;
-            while (glyph) {
-                if (glyph->type == GRE_GLYPH
-                        && glyph->u.notes.glyph_type != G_ALTERATION
-                        && glyph->u.notes.first_note) {
-                    assert(glyph->u.notes.first_note->type == GRE_NOTE);
-                    return glyph->u.notes.first_note->u.note.pitch;
-                }
-                glyph = glyph->next;
+            pitch = next_pitch_from_glyph(glyph, alterations, shape);
+            if (pitch) {
+                return pitch;
             }
         } /* I think this is optimized out; LCOV_EXCL_LINE */
         element = element->next;
@@ -1391,14 +1435,17 @@ signed char gregorio_determine_next_pitch(gregorio_syllable *syllable,
     while (syllable) {
         /* we call another function that will return the pitch of the first
          * note if syllable has a note, and 0 else */
-        temp = gregorio_syllable_first_note(syllable);
-        if (temp) {
-            return temp;
+        pitch = syllable_first_note(syllable, alterations, shape);
+        if (pitch) {
+            return pitch;
         }
         syllable = syllable->next_syllable;
     }
     /* here it means that there is no next note, so we return a stupid value,
      * but it won' t be used */
+    if (shape) {
+        *shape = S_UNDETERMINED;
+    }
     return DUMMY_PITCH;
 }
 

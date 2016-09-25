@@ -44,6 +44,7 @@ VERSION_FILE = '.gregorio-version'
 GREGORIO_FILES = ["configure.ac",
                   "windows/gregorio-resources.rc",
                   "macosx/Gregorio.pkgproj",
+                  "macosx/douninstall.sh",
                   "windows/gregorio.iss",
                   "doc/GregorioRef.tex",
                   "tex/gregoriotex.sty",
@@ -61,6 +62,7 @@ GREGORIO_FILES = ["configure.ac",
                   "tex/gregoriotex-nabc.lua",
                   "tex/gregoriosyms.sty",
                   "fonts/squarize.py",
+                  "contrib/gregorio-scribus.lua",
                  ]
 
 def get_parser():

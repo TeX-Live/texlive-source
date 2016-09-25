@@ -1,3 +1,12 @@
+2016-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gregorio-4.2.0.
+
+2016-08-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gregorio-4.2.0-rc3.
+	* patch-04-alignof: remove since included upstream.
+
 2016-07-15  Karl Berry  <karl@tug.org>
 
 	* patch-04-alignof: add.

@@ -2,7 +2,7 @@
  * Gregorio is a program that translates gabc files to GregorioTeX.
  * This file provides functions for determining elements from notes.
  *
- * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  * 
@@ -198,8 +198,15 @@ static gregorio_element *gabc_det_elements_from_glyphs(
             }
             break;
 
+        case G_STROPHA_AUCTA:
+        case G_STROPHA:
+            if (current_glyph->u.notes.liquescentia
+                    & (L_AUCTUS_ASCENDENS | L_AUCTUS_DESCENDENS)) {
+                force_cut = true;
+            }
+            /* fall through */
         case PUNCTA_INCLINATA_DESCENDENS_GLYPH:
-            /* we don't cut before, so we don't do anything */
+            /* we don't cut before, so we don't do anything else */
             if (do_not_cut) {
                 do_not_cut = false;
             }
@@ -236,6 +243,16 @@ static gregorio_element *gabc_det_elements_from_glyphs(
                     default:
                         /* do nothing in particular */
                         break;
+                    }
+                    break;
+
+                case G_PODATUS:
+                    if (current_glyph->u.notes.glyph_type == G_VIRGA) {
+                        ambitus = glyph_note_ambitus(current_glyph, previous_glyph);
+                        if (ambitus >= 0) {
+                            do_not_cut = false;
+                            break_early = true;
+                        }
                     }
                     break;
 
@@ -294,23 +311,27 @@ static gregorio_element *gabc_det_elements_from_glyphs(
 
 static gregorio_element *gabc_det_elements_from_notes(
         gregorio_note *current_note, int *current_key,
+        gregorio_shape *const punctum_inclinatum_orientation,
         const gregorio_score *const score)
 {
     gregorio_element *final = NULL;
     gregorio_glyph *tmp = gabc_det_glyphs_from_notes(current_note, current_key,
-            score);
+            punctum_inclinatum_orientation, score);
     final = gabc_det_elements_from_glyphs(tmp);
     return final;
 }
 
 gregorio_element *gabc_det_elements_from_string(char *const str,
         int *const current_key, char *macros[10],
-        gregorio_scanner_location *const loc, const gregorio_score *const score)
+        gregorio_scanner_location *const loc,
+        gregorio_shape *const punctum_inclinatum_orientation,
+        const gregorio_score *const score)
 {
     gregorio_element *final;
     gregorio_note *tmp;
     tmp = gabc_det_notes_from_string(str, macros, loc, score);
-    final = gabc_det_elements_from_notes(tmp, current_key, score);
+    final = gabc_det_elements_from_notes(tmp, current_key,
+            punctum_inclinatum_orientation, score);
     return final;
 }
 

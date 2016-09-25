@@ -10,7 +10,8 @@ endif
 syn match gabcAttributeName /^[^:]*:/
 syn match gabcAttributeEnd ";"
 syn match gabcNoteError "." contained
-syn match gabcBasicNote "[a-npA-NP]" contained
+syn match gabcBasicNote "[a-np]" contained
+syn match gabcBasicNote "[A-NP][01]\?" contained
 syn match gabcAlteration "[\<\>~xy#vVwWqQR\-Ss\.+]" contained
 syn match gabcAlteration "_[0-5]*" contained
 syn match gabcAlteration "[oO'\.][01]\?" contained
@@ -37,7 +38,7 @@ syn match gabcSpace "Z[-+]\?" contained
 syn match gabcSpace "/\[[^\]]*\]" contained extend
 syn match gabcCommand "@\@<!\[[^\]]*\]" contained extend
 
-syn region gabcComment start="%" end="$" contained keepend extend
+syn region gabcComment start="%" end="$" keepend extend
 syn region gabcAlt matchgroup=gabcTextMarkup start="<alt>" end="</alt>"
             \ contained
 syn region gabcSpecial matchgroup=gabcTextMarkup start="<sp>" end="</sp>"
@@ -45,13 +46,13 @@ syn region gabcSpecial matchgroup=gabcTextMarkup start="<sp>" end="</sp>"
 syn region gabcVerbatim matchgroup=gabcTextMarkup start="<v>" end="</v>"
             \ contained
 syn region gabcNabc matchgroup=gabcNabcCut start="|" end="[|)]" keepend
-syn cluster gabcFusable contains=gabcBasicNote,gabcAlteration,gabcBar,gabcSpace,
+syn cluster gabcFusible contains=gabcBasicNote,gabcAlteration,gabcBar,gabcSpace,
             \gabcComment,gabcCommand,gabcNoteError,gabcFuse,
             \gabcTextOrNoteMarkup,gabcClef,gabcNabc
 syn region gabcFuseGroup matchGroup=gabcFuseGroup start="@\[" end="\]"
-            \ contains=@gabcFusable,gabcFuseEnd contained keepend
+            \ contains=@gabcFusible,gabcFuseEnd contained keepend
 syn region gabcNotes matchgroup=gabcNote start="(" end=")"
-            \ contains=@gabcFusable,gabcFuseGroup contained keepend
+            \ contains=@gabcFusible,gabcFuseGroup contained keepend
 syn region gabcTranslation matchgroup=gabcTextMarkup start="\[" end="\]"
             \ contained extend
 syn region gabcText start="^\(%%\)\@=" end="\%$"

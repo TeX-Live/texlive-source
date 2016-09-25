@@ -1,5 +1,22 @@
 % !TEX program = LuaLaTeX+se
-
+%
+% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+%
 \documentclass[a4paper]{article}
 \usepackage{color}
 \usepackage[margin=1cm]{geometry}
@@ -200,8 +217,8 @@ variant.
 The \textit{pitch descriptor} allows to specify the vertical position of the
 neume.  There are no staves, so the vertical position is only rough.  For
 pitches the same letters as in \texttt{gabc} are used, \texttt{a} through
-\texttt{m}.  If the \textit{pitch descriptor} is missing, the default is
-\texttt{hf}, otherwise it consists of the letter \texttt{h} followed by
+\texttt{n} and \texttt{p}.  If the \textit{pitch descriptor} is missing, the default
+is \texttt{hf}, otherwise it consists of the letter \texttt{h} followed by
 the pitch letter.  Within the \textit{complex glyph descriptor}, each
 \textit{basic glyph descriptor} has its own pitch, but in the current fonts
 there are no glyphs with different relative pitches, so if you use a
@@ -524,6 +541,7 @@ only present in the font source file to help drawing the glyphs.}
 \texttt{C118C} Clamaverunt iusti \texttt{GT454}\\
 \texttt{C122I} In omnem terram \texttt{GT427}\\
 \texttt{C123C} Constitues eos \texttt{GT426}\\
+\texttt{C132D} Domine praevenisti \texttt{GT509}\\
 \texttt{C134B} Benedicite Dominum \texttt{GT608}\\
 \texttt{C137A} Audi filia \texttt{GT406}\\
 \texttt{C139A} Alleluia Benedictus es \texttt{GT375}\\
@@ -640,9 +658,24 @@ only present in the font source file to help drawing the glyphs.}
 \texttt{H269R} Repleti sunt omnes \texttt{NR494}\\
 \texttt{H270S} Spiritus Domini \texttt{AM520}\\
 \texttt{H271L} Loquebantur variis \texttt{AM521}\\
+\texttt{H297B} Beatam me dicent \texttt{NR[172]}\\
+\texttt{H305H} Hodie nata est \texttt{NR278*}\\
+\texttt{H305G} Gloriosae virginis Mariae \texttt{NR279*}\\
+\texttt{H306N} Nativitas gloriosae \texttt{NR280*}\\
+\texttt{H307N} Nativitas tua \texttt{NR281*}\\
+\texttt{H307F} Felix namque \texttt{NR[171]}\\
+\texttt{H320R} Regem confessorum\\
+\texttt{H322B} Beatus Gallus zelo\\
+\texttt{H322C} Columbanus itaque beato\\
+\texttt{H323B} Beatus Gallus cum\\
+\texttt{H323D} Domine Iesu Christe\\
+\texttt{H324P} Pater sanctus\\
+\texttt{H324V} Vir Deo plenus\\
+\texttt{H325I} Iste sanctus digne\\
 \texttt{H367V} Viri sancti \texttt{NR[54]}\\
 \texttt{H424M} Magnificat\\
-\texttt{H428A} Ascendens Iesus \texttt{AM593}
+\texttt{H428A} Ascendens Iesus \texttt{AM593}\\
+\texttt{H443V} Venite exsultemus \texttt{NRXXVIII}
 
 \noindent\textbf{St.\ Gall codex 339}
 
@@ -868,7 +901,10 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{visu2sux1} & \texttt{visu2sux1} & \texttt{H48B} & mater & \fbox{1.7x}\\
 \sneume{vi-sut1su2} & \texttt{vi-sut1su2} & \texttt{H22S} & elegi & \fbox{1.71x}\\
 \sneume{vi-su1suu1} & \texttt{vi-su1suu1} & \texttt{H114C} & gloriam & \fbox{1.71x}\\
-\sneume{vi-su1suu1su2} & \texttt{vi-su1suu1su2} & \texttt{H114N} & nobis & \fbox{1.71x}\\ \hline
+\sneume{vi-su1suu1su2} & \texttt{vi-su1suu1su2} & \texttt{H114N} & nobis & \fbox{1.71x}\\
+\sneume{vi-su1sut2} & \texttt{vi-su1sut2} & \texttt{H324P} & aetatis & \fbox{2.0x}\\
+\sneume{vi-su3} & \texttt{vi-su3} & \texttt{H307F} & natalem & \fbox{2.0x}\\
+\sneume{vi-sut1suu1} & \texttt{vi-sut1suu1} & \texttt{325I} & peregrinatione & \fbox{2.0x}\\ \hline
 & \multicolumn{3}{l}{\textbf{scandicus}} & \\
 \sneume{sc} & \texttt{sc} & \texttt{G11P} & imperium & \fbox{0.85x}\\
 \sneume{sc1} & \texttt{sc1} \textit{Cf.} \sneume{vipp4} & \multicolumn{3}{l}{\texttt{vipp4} minus first punctum}\\
@@ -935,7 +971,12 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{peSsut1su2} & \texttt{peSsut1su2} & \texttt{E13P} & Domine & \fbox{2.133x}\\
 \sneume{pesu1sux1} & \texttt{pesu1sux1} & \texttt{H25E} & angelum & \fbox{1.7x}\\
 \sneume{pe-1su1suw1} & \texttt{pe-1su1suw1} & \texttt{H29E} & deprecabuntur & \fbox{1.7x}\\
-\sneume{pesu1sut1} & \texttt{pesu1sut1} \textit{Cf.} \sneume{pesu1sut3} & \multicolumn{3}{l}{\texttt{pesu1sut3} minus 2 tractulis}\\ \hline
+\sneume{pesu1sut1} & \texttt{pesu1sut1} \textit{Cf.} \sneume{pesu1sut3} & \multicolumn{3}{l}{\texttt{pesu1sut3} minus 2 tractulis}\\
+\sneume{pe-1su1sut1} & \texttt{pe-1su1sut1} & \texttt{H306N} & de & \fbox{2.0x}\\
+\sneume{pe-1su1sut2} & \texttt{pe-1su1sut2} & \texttt{H305G} & Mariae & \fbox{2.0x}\\
+\sneume{pe-1su1suu2} & \texttt{pe-1su1suu2} & \texttt{H305G} & vidente & \fbox{2.0x}\\
+\sneume{pe-su4} & \texttt{pe-su4} & \texttt{C139A} & Alleluia\\
+\sneume{pesuv1su1sut1} & \texttt{pesuv1su1sut1} & \texttt{C139A} & Alleluia\\ \hline
 & \multicolumn{3}{l}{\textbf{scandicus flexus}} & \\
 \sneume{sf} & \texttt{sf} & \texttt{C64Q} & habitat\\
 \sneume{sflsc3} & \texttt{sflsc3} & \texttt{C27E} & Deus\\
@@ -959,7 +1000,8 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{tr-~} & \texttt{tr-\char`\~} & \texttt{C27Q} & et\\
 \sneume{tr-~1} & \texttt{tr-\char`\~1} & \texttt{C107A} & Alleluia.\\
 \sneume{trS-} & \texttt{trS-} & \texttt{C89T} & pedes,\\
-\sneume{trS1} & \texttt{trS1} & \texttt{E26L} & eeiieiue & \fbox{2.166x}\\ \hline
+\sneume{trS1} & \texttt{trS1} & \texttt{E26L} & eeiieiue & \fbox{2.166x}\\
+\sneume{tr-3} & \texttt{tr-3} & \texttt{H323D} & honore & \fbox{2.0x}\\ \hline
 & \multicolumn{3}{l}{\textbf{stropha}} & \\
 \sneume{st} & \texttt{st} & \texttt{C80Q} & commovebitur\\
 \sneume{st-} & \texttt{st-} & \texttt{C52P} & Desiderium\\
@@ -1044,7 +1086,8 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{saM3} & \texttt{saM3} & \texttt{N53A} & fratres\\
 \sneume{saM-4} & \texttt{saM-4} & \texttt{N296V} & amoris\\
 \sneume{sa>2} & \texttt{sa>2} & \texttt{H73S} & viderunt\\
-\sneume{sa1!cl->} & \texttt{sa1!cl->} & \texttt{H32N} & eius & \fbox{1.7x}\\ \hline
+\sneume{sa1!cl->} & \texttt{sa1!cl->} & \texttt{H32N} & eius & \fbox{1.7x}\\
+\sneume{sapp1} & \texttt{sapp1} & \texttt{H320R} & venite & \fbox{2.0x}\\ \hline
 & \multicolumn{3}{l}{\textbf{pes quassus}} & \\
 \sneume{pq} & \texttt{pq} & \texttt{C27E} & sacrificia.\\
 \sneume{pqlsfr1} & \texttt{pqlsfr1} & \texttt{C150L} & nostri\\
@@ -1106,7 +1149,10 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{sut2suu1} & \texttt{sut2suu1} \textit{Cf.} \sneume{ql-ppt1sut2suu1} & \multicolumn{2}{l}{\texttt{ql-ppt1sut2suu1}}\\
 \sneume{suu3} & \texttt{suu3} \textit{Cf.} \sneume{vi-suu3} & \multicolumn{2}{l}{\texttt{vi-suu3}}\\
 \sneume{su1} & \texttt{su1} \textit{Cf.} \sneume{ci} & \multicolumn{2}{l}{\texttt{ci}}\\
-\sneume{sut1} & \texttt{sut1} \textit{Cf.} \sneume{ciS1} & \multicolumn{2}{l}{\texttt{ciS1}}\\ \hline
+\sneume{sut1} & \texttt{sut1} \textit{Cf.} \sneume{ciS1} & \multicolumn{2}{l}{\texttt{ciS1}}\\
+\sneume{su1suv1su2} & \texttt{su1suv1su2} \textit{Cf.} \sneume{ql-ppt2su1suv1su2} & \multicolumn{2}{l}{\texttt{ql-ppt2su1suv1su2}}\\
+\sneume{sut1suu1} & \texttt{sut1suu1} \textit{Cf.} \sneume{vi-sut1suu1} & \multicolumn{2}{l}{\texttt{vi-sut1suu1}}\\
+\sneume{suv1su1sut1} & \texttt{suv1su1sut1} \textit{Cf.} \sneume{pesuv1su1sut1} & \multicolumn{2}{l}{\texttt{pesuv1su1sut1}}\\ \hline
 \\
 & \multicolumn{3}{l}{\textbf{prepunctis}} & \\
 \sneume{pp2} & \texttt{pp2} \textit{Cf.} \sneume{vi-pp2} & \texttt{vi-pp2}\\
@@ -1145,6 +1191,11 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{ql!vssut2} & \texttt{ql!vssut2} \textit{Cf.} \sneume{ql!vsppt1sut2} & \multicolumn{3}{l}{\texttt{ql!vsppt1sut2} minus tractulus}\\
 \sneume{qi!vs} & \texttt{qi!vs} \textit{Cf.} \sneume{qi!vssu2} & \multicolumn{3}{l}{\texttt{qi!vssu2} minus subbipunctis}\\
 \sneume{qi!vssu2} & \texttt{qi!vssu2} \textit{Cf.} \sneume{qi!vsppt1su2} & \multicolumn{3}{l}{\texttt{qi!vsppt1su2} minus tractulus}\\
+\sneume{ql-su1suu1} & \texttt{ql-su1suu1} \textit{Cf.} \sneume{ql-ppt1su1suu1} & \multicolumn{3}{l}{\texttt{ql-ppt1su1suu1} minus tractulus}\\
+\sneume{ql-su1suv1su2} & \texttt{ql-su1suv1su2} \textit{Cf.} \sneume{ql-ppt2su1suv1su2} & \multicolumn{3}{l}{\texttt{ql-ppt2su1suv1su2} minus tractulis}\\
+\sneume{qisut2} & \texttt{qisut2} \textit{Cf.} \sneume{qippt2sut2} & \multicolumn{3}{l}{\texttt{qippt2sut2} minus tractulis}\\
+\sneume{ql-su3} & \texttt{ql-su3} \textit{Cf.} \sneume{ql-ppt1su3} & \multicolumn{3}{l}{\texttt{ql-ppt1su3} minus tractulus}\\
+\sneume{qlsut3} & \texttt{qlsut3} \textit{Cf.} \sneume{qlppt1sut3} & \multicolumn{3}{l}{\texttt{qlppt1sut3} minus tractulus}\\
 \sneume{ql-su2} & \texttt{ql-su2} \textit{Cf.} \sneume{ql-ppt1su2} & \multicolumn{3}{l}{\texttt{ql-ppt1su2} minus tractulus}\\
 \sneume{ql-sut2} & \texttt{ql-sut2} & \texttt{H73S} & cedebat\\
 \sneume{ql-su1sux1} & \texttt{ql-su1sux1} \textit{Cf.} \sneume{ql-ppt1su1sux1} & \multicolumn{3}{l}{\texttt{ql-ppt1su1sux1} minus tractulus}\\
@@ -1196,6 +1247,14 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{ql!vsppt1} & \texttt{ql!vsppt1} \textit{Cf.} \sneume{ql!vsppt1su2} & \multicolumn{3}{l}{\texttt{ql!vsppt1su2} minus subbipunctis}\\
 \sneume{ql!vsppt1sut2} & \texttt{ql!vsppt1sut2} & \texttt{H73S} & gaudio\\
 \sneume{qi!vsppt1su2} & \texttt{qi!vsppt1su2} & \texttt{H74I} & Domini\\
+\sneume{qi-sut3} & \texttt{qi-sut3} & \texttt{H322B} & in & \fbox{2.0x}\\
+\sneume{ql-ppt1su1suu1} & \texttt{ql-ppt1su1suu1} & \texttt{H305H} & David & \fbox{2.0x}\\
+\sneume{ql-ppt1su3} & \texttt{ql-ppt1su3} & \texttt{H323D} & subire & \fbox{2.0x}\\
+\sneume{qlppt1sut3} & \texttt{qlppt1sut3} & \texttt{H305G} & Redemptorem & \fbox{2.0x}\\
+\sneume{ql-ppt2su1suv1su2} & \texttt{ql-ppt2su1suv1su2} & \texttt{H306N} & illustrat & \fbox{2.0x}\\
+\sneume{ql-su1sut1} & \texttt{ql-su1sut1} & \texttt{H307F} & iustitiae & \fbox{2.0x}\\
+\sneume{qippt2sut2} & \texttt{qippt2sut2} & \texttt{H297B} & generationes & \fbox{2.0x}\\
+\sneume{ql!vssu3} & \texttt{ql!vssu3} & \texttt{H443V} & ei & \fbox{2.0x}\\
 \sneume{to!ciG} & \texttt{to!ciG} & \texttt{C28T} & gloriae.\\
 \sneume{to!cl} & \texttt{to!cl} & \texttt{C84T} & pupillo\\
 \sneume{to!cl!cl!cl} & \texttt{to!cl!cl!cl} & \texttt{C64Q} & sepavit,\\
@@ -1221,11 +1280,17 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{cl!po} & \texttt{cl!po} & \texttt{C26A} & nobis.\\
 \sneume{cl!po-1} & \texttt{cl!po-1} & \texttt{H119C} & in\\
 \sneume{tr-1su2} & \texttt{tr-1su2} & \texttt{H73O} & dona\\
+\sneume{trSsut2} & \texttt{trSsut2} & \texttt{H305H} & devotissime & \fbox{2.0x}\\
 \sneume{ci-pp2} & \texttt{ci-pp2} & \texttt{H73S} & magno\\
 \sneume{toS2su2} & \texttt{toS2su2} & \texttt{H73S} & eam\\
 \sneume{toS2sut2} & \texttt{toS2sut2} & \texttt{C150L} & dicta\\
-\sneume{po-1pp2su1sux1} & \texttt{po-1pp2su1sux1} & \texttt{E75G} & filium & \fbox{2.2x}\\
-\sneume{po-1su1sux1} & \texttt{po-1su1sux1} \textit{Cf.} \sneume{po-1pp2su1sux1} & \multicolumn{3}{l}{\texttt{po-1pp2su1sux1} minus bipunctis}\\ \hline
+\sneume{to-1su2} & \texttt{to-1su2} & \texttt{H322C} & ostendere & \fbox{2.0x}\\
+\sneume{to-1su1} & \texttt{to-1su1} & \texttt{H323B} & Gallus & \fbox{2.0x}\\
+\sneume{to-1suu1su2} & \texttt{to-1suu1su2} & \texttt{H324V} & cognovi & \fbox{2.0x}\\
+\sneume{po-1pp2su1sux1} & \texttt{po-1pp2su1sux1} & \texttt{H323D} & desiderium & \fbox{2.0x}\\
+\sneume{po-1su1sux1} & \texttt{po-1su1sux1} \textit{Cf.} \sneume{po-1pp2su1sux1} & \multicolumn{3}{l}{\texttt{po-1pp2su1sux1} minus bipunctis}\\
+\sneume{pisu1} & \texttt{pisu1} & \texttt{H307N} & annuntiavit & \fbox{2.0x}\\
+\sneume{pq-su2} & \texttt{pq-su2} & \texttt{C132D} & praetioso\\ \hline
 \end{supertabular}
 
 \begin{supertabular}{llllll}\noindent

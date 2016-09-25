@@ -2,7 +2,7 @@
  * Gregorio is a program that translates gabc files to GregorioTeX
  * This header prototypes the message logging functions.
  *
- * Copyright (C) 2009-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2009-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  *
@@ -54,6 +54,7 @@ void gregorio_messagef(const char *function_name,
         __attribute__ ((__format__ (__printf__, 4, 5)));
 void gregorio_set_verbosity_mode(gregorio_verbosity verbosity);
 void gregorio_set_debug_messages(bool debug);
+void gregorio_set_deprecation_errors(bool deprecation_errors);
 void gregorio_set_error_out(FILE *f);
 int gregorio_get_return_value(void);
 

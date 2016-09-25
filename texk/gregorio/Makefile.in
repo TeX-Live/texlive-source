@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = gregorio$(EXEEXT)
+bin_PROGRAMS = gregorio-$(FILENAME_VERSION)$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -124,6 +124,7 @@ am_gregorio_OBJECTS = @GREGORIO_TREE@/src/characters.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gabc/gabc-elements-determination.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gabc/gabc-glyphs-determination.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gabc/gabc-notes-determination-l.$(OBJEXT) \
+	@GREGORIO_TREE@/src/gabc/gabc-score-determination.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gabc/gabc-score-determination-l.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gabc/gabc-score-determination-y.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gabc/gabc-write.$(OBJEXT) \
@@ -588,6 +589,7 @@ gregorio_SOURCES = \
 	@GREGORIO_TREE@/src/gabc/gabc-elements-determination.c \
 	@GREGORIO_TREE@/src/gabc/gabc-glyphs-determination.c \
 	@GREGORIO_TREE@/src/gabc/gabc-notes-determination-l.c \
+	@GREGORIO_TREE@/src/gabc/gabc-score-determination.c \
 	@GREGORIO_TREE@/src/gabc/gabc-score-determination-l.c \
 	@GREGORIO_TREE@/src/gabc/gabc-score-determination-y.c \
 	@GREGORIO_TREE@/src/gabc/gabc-write.c \
@@ -755,6 +757,9 @@ clean-binPROGRAMS:
 @GREGORIO_TREE@/src/gabc/gabc-notes-determination-l.$(OBJEXT):  \
 	@GREGORIO_TREE@/src/gabc/$(am__dirstamp) \
 	@GREGORIO_TREE@/src/gabc/$(DEPDIR)/$(am__dirstamp)
+@GREGORIO_TREE@/src/gabc/gabc-score-determination.$(OBJEXT):  \
+	@GREGORIO_TREE@/src/gabc/$(am__dirstamp) \
+	@GREGORIO_TREE@/src/gabc/$(DEPDIR)/$(am__dirstamp)
 @GREGORIO_TREE@/src/gabc/gabc-score-determination-l.$(OBJEXT):  \
 	@GREGORIO_TREE@/src/gabc/$(am__dirstamp) \
 	@GREGORIO_TREE@/src/gabc/$(DEPDIR)/$(am__dirstamp)
@@ -818,6 +823,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-elements-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-glyphs-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-notes-determination-l.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination-l.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination-y.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-write.Po@am__quote@
