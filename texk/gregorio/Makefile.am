@@ -20,7 +20,7 @@ AM_CPPFLAGS = \
 	$(KPATHSEA_INCLUDES) -D_GNU_SOURCE -DUSE_KPSE
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-bin_PROGRAMS = gregorio
+bin_PROGRAMS = gregorio-$(FILENAME_VERSION)
 
 gregorio_SOURCES = \
 	@GREGORIO_TREE@/src/characters.c \
@@ -34,6 +34,7 @@ gregorio_SOURCES = \
 	@GREGORIO_TREE@/src/gabc/gabc-elements-determination.c \
 	@GREGORIO_TREE@/src/gabc/gabc-glyphs-determination.c \
 	@GREGORIO_TREE@/src/gabc/gabc-notes-determination-l.c \
+	@GREGORIO_TREE@/src/gabc/gabc-score-determination.c \
 	@GREGORIO_TREE@/src/gabc/gabc-score-determination-l.c \
 	@GREGORIO_TREE@/src/gabc/gabc-score-determination-y.c \
 	@GREGORIO_TREE@/src/gabc/gabc-write.c \
@@ -57,4 +58,3 @@ TESTS = gregorio.test
 gregorio.log: gregorio$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 DISTCLEANFILES = factus.gtex veni.gtex
-

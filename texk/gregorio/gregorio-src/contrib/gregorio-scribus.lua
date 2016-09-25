@@ -22,7 +22,7 @@ This program allows gregorio to be integrated in Scribus.
 
 require"lfs"
 
-local gregoriobin = 'gregorio'
+local gregoriobin = 'gregorio-4_2_0' -- FILENAME_VERSION
 local lualatexbin = "lualatex"
 
 local function basename(name)

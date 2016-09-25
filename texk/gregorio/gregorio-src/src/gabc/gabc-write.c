@@ -2,7 +2,7 @@
  * Gregorio is a program that translates gabc files to GregorioTeX
  * This file provides functions for writing gabc from Gregorio structures.
  *
- * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  * 
@@ -480,8 +480,11 @@ static void gabc_write_gregorio_note(FILE *f, gregorio_note *note,
             fprintf(f, "%c", pitch_letter(note->u.note.pitch));
         }
         break;
-    case S_PUNCTUM_INCLINATUM:
-        fprintf(f, "%c", toupper((unsigned char)pitch_letter(note->u.note.pitch)));
+    case S_PUNCTUM_INCLINATUM_ASCENDENS:
+        fprintf(f, "%c1", toupper((unsigned char)pitch_letter(note->u.note.pitch)));
+        break;
+    case S_PUNCTUM_INCLINATUM_DESCENDENS:
+        fprintf(f, "%c0", toupper((unsigned char)pitch_letter(note->u.note.pitch)));
         break;
     case S_PUNCTUM_INCLINATUM_DEMINUTUS:
         if (note->next) {

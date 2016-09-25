@@ -82,7 +82,7 @@ while read line; do
         cleanup=true
     else
         if $cleanup; then
-            echo "cleanup-patterns:	\$jobname.gaux *-*_*_*.gtex" >> "$CONFIG"
+            echo "cleanup-patterns:	\$jobname.gaux \$jobname.glog *-*_*_*.gtex" >> "$CONFIG"
             cleanup=false
         fi
     fi

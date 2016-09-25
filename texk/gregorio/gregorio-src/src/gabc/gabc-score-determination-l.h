@@ -225,7 +225,7 @@ extern char *gabc_score_determination_text;
 #define attribute 1
 #define score 2
 #define notes 3
-#define style 4
+#define sp 4
 #define verb 5
 #define comments 6
 #define inicomments 7
@@ -338,7 +338,7 @@ extern int gabc_score_determination_lex (void);
 #undef YY_DECL
 #endif
 
-#line 432 "gabc/gabc-score-determination.l"
+#line 401 "gabc/gabc-score-determination.l"
 
 
 #line 345 "gabc/gabc-score-determination-l.h"

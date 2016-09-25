@@ -2,7 +2,7 @@
  * Gregorio is a program that translates gabc files to GregorioTeX
  * This file implements the command line interface of Gregorio.
  *
- * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
  *
@@ -139,8 +139,8 @@ static char *get_base_filename(char *fbasename)
     int l;
     char *ret;
     p = strrchr(fbasename, '.');
-    if (!p) {
-        return NULL;
+    if (!p || strchr(p, '/') || strchr(p, '\\')) {
+        return gregorio_strdup(fbasename);
     }
     l = strlen(fbasename) - strlen(p);
     ret = (char *) gregorio_malloc(l + 1);
@@ -202,6 +202,7 @@ printf(_("  -f, --input-format FORMAT\n\
   -L, --license             print licence\n\
   -v, --verbose             verbose mode\n\
   -W, --all-warnings        output warnings\n\
+  -D, --deprecation-errors  treat deprecation warnings as errors\n\
   -d, --debug               output debug information\n\
 \n\
 Formats:\n\
@@ -324,6 +325,7 @@ int main(int argc, char **argv)
     gregorio_file_format input_format = FORMAT_UNSET;
     gregorio_file_format output_format = FORMAT_UNSET;
     gregorio_verbosity verb_mode = 0;
+    bool deprecation_errors = false;
     bool point_and_click = false;
     char *point_and_click_filename = NULL;
     bool debug = false;
@@ -341,6 +343,7 @@ int main(int argc, char **argv)
         {"licence", 0, 0, 'L'},
         {"verbose", 0, 0, 'v'},
         {"all-warnings", 0, 0, 'W'},
+        {"deprecation-errors", 0, 0, 'D'},
         {"point-and-click", 0, 0, 'p'},
         {"debug", 0, 0, 'd'},
     };
@@ -356,7 +359,7 @@ int main(int argc, char **argv)
     setlocale(LC_CTYPE, "C");
 
     while (1) {
-        c = getopt_long(argc, argv, "o:SF:l:f:shOLVvWpd",
+        c = getopt_long(argc, argv, "o:SF:l:f:shOLVvWDpd",
                         long_options, &option_index);
         if (c == -1)
             break;
@@ -481,6 +484,15 @@ int main(int argc, char **argv)
                 verb_mode = VERBOSITY_WARNING;
             }
             break;
+        case 'D':
+            if (deprecation_errors) {
+                fprintf(stderr, "warning: deprecation-errors option passed "
+                        "several times\n");
+                must_print_short_usage = true;
+                break;
+            }
+            deprecation_errors = true;
+            break;
         case 'L':
             print_licence();
             gregorio_exit(0);
@@ -548,6 +560,7 @@ int main(int argc, char **argv)
     }
 
     gregorio_set_debug_messages(debug);
+    gregorio_set_deprecation_errors(deprecation_errors);
 
     if (!input_format) {
         input_format = DEFAULT_INPUT_FORMAT;

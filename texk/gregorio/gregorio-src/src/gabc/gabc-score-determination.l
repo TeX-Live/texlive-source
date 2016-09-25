@@ -4,22 +4,22 @@
  * This file implements the score lexer.
  *
  * Gregorio score determination in gabc input.
- * Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+ * Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
  *
  * This file is part of Gregorio.
- * 
+ *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
  * Software Foundation, either version 3 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
  * more details.
- * 
- * You should have received a copy of the GNU General Public License along with 
- * this program.  If not, see <http://www.gnu.org/licenses/>. 
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -35,8 +35,34 @@
 #include "gabc-score-determination.h"
 #include "gabc-score-determination-y.h"
 
-static unsigned char style_stack = 0;
 static bool eof_found = false;
+
+#define START_STYLE(STYLE) \
+    if (*styles & SB_ ## STYLE) { \
+        gregorio_messagef("gabc_score_determination_lex", VERBOSITY_ERROR, 0, \
+                _("style already started: %s"), gabc_score_determination_text); \
+    } else { \
+        *styles ^= SB_ ## STYLE; \
+        return STYLE ## _BEGIN; \
+    }
+
+#define END_STYLE(STYLE) \
+    if (*styles & SB_ ## STYLE) { \
+        *styles ^= SB_ ## STYLE; \
+        return STYLE ## _END; \
+    } else { \
+        gregorio_messagef("gabc_score_determination_lex", VERBOSITY_ERROR, 0, \
+                _("style not started: %s"), gabc_score_determination_text); \
+    }
+
+#define RETURN_CHARACTERS \
+    gabc_score_determination_lval.text = \
+            gregorio_strdup(gabc_score_determination_text); \
+    return CHARACTERS
+
+#define RETURN_SPACE \
+    gabc_score_determination_lval.text = gregorio_strdup(" "); \
+    return CHARACTERS
 
 #define YY_NO_INPUT
 
@@ -78,7 +104,7 @@ static bool eof_found = false;
 %x attribute
 %x score
 %x notes
-%x style
+%x sp
 %x verb
 %x comments
 %x inicomments
@@ -106,7 +132,7 @@ double semicolon, (b) multi-line values, which end at a double
 semicolon. */
 
 %%
-<INITIAL>^(\xBB|\xEF|\xBF)* {
+<INITIAL>^(\xBB|\xEF|\xBF)+ {
         /* BOM written by a lot of windows softwares when they write UTF-8 */
     }
 <INITIAL>^[\n\r]+ {
@@ -118,7 +144,7 @@ semicolon. */
 <inicomments>(\n|\r)+ {
         BEGIN(INITIAL);
     }
-<inicomments>[^\n\r]* {
+<inicomments>[^\n\r]+ {
         /* ignored */
     }
 <INITIAL>:(\ )? {
@@ -154,7 +180,7 @@ semicolon. */
         return GABC_COPYRIGHT;
     }
 <INITIAL>initial-style {
-        /* DEPRECATED by 4.1 */
+        /* DEPRECATED for removal in 5.0 */
         return INITIAL_STYLE;
     }
 <INITIAL>mode {
@@ -216,120 +242,76 @@ semicolon. */
                 _("unrecognized character: \"%c\" in definition part"),
                 gabc_score_determination_text[0]);
     }
-<score>[^-\{\}\(\[\]<%]+ {
-        gabc_score_determination_lval.text =
-                gregorio_strdup(gabc_score_determination_text);
-        return CHARACTERS;
+<score>[\n\r][\n\r \t]* {
+        RETURN_SPACE;
+    }
+<score,sp>[^-\{\}\(\[\]<%\n\r]+ {
+        RETURN_CHARACTERS;
     }
 <score>- {
         return HYPHEN;
     }
-<score,style><nlba> {
+<score><nlba> {
         return NLBA_B;
     }
-<score,style><\/nlba> {
+<score><\/nlba> {
         return NLBA_E;
     }
-<score,style><i> {
-        BEGIN(style);
-        style_stack ++;
-        return I_BEGIN;
+<score><i> {
+        START_STYLE(I);
     }
-<style><\/i> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return I_END;
+<score><\/i> {
+        END_STYLE(I);
     }
-<score,style><tt> {
-        BEGIN(style);
-        style_stack ++;
-        return TT_BEGIN;
+<score><tt> {
+        START_STYLE(TT);
     }
-<style><\/tt> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return TT_END;
+<score><\/tt> {
+        END_STYLE(TT);
     }
-<score,style><ul> {
-        BEGIN(style);
-        style_stack ++;
-        return UL_BEGIN;
+<score><ul> {
+        START_STYLE(UL);
     }
-<style><\/ul> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return UL_END;
+<score><\/ul> {
+        END_STYLE(UL);
     }
-<score,style><c> {
-        BEGIN(style);
-        style_stack ++;
-        return C_BEGIN;
+<score><c> {
+        START_STYLE(C);
     }
-<style><\/c> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return C_END;
+<score><\/c> {
+        END_STYLE(C);
     }
-<score,style><b> {
-        BEGIN(style);
-        style_stack ++;
-        return B_BEGIN;
+<score><b> {
+        START_STYLE(B);
     }
-<style><\/b> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return B_END;
+<score><\/b> {
+        END_STYLE(B);
     }
-<score,style><sc> {
-        BEGIN(style);
-        style_stack ++;
-        return SC_BEGIN;
+<score><sc> {
+        START_STYLE(SC);
     }
-<style><\/sc> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return SC_END;
+<score><\/sc> {
+        END_STYLE(SC);
     }
-<score,style><e> {
-        BEGIN(style);
-        style_stack ++;
-        return ELISION_BEGIN;
+<score><e> {
+        START_STYLE(ELISION);
     }
-<style><\/e> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
-        return ELISION_END;
+<score><\/e> {
+        END_STYLE(ELISION);
     }
-<score,style><sp> {
-        BEGIN(style);
-        style_stack ++;
+<score><sp> {
+        BEGIN(sp);
         return SP_BEGIN;
     }
-<style><\/sp> {
-        style_stack --;
-        if (style_stack == 0) {
-            BEGIN(score);
-        }
+<sp><\/sp> {
+        BEGIN(score);
         return SP_END;
     }
-<style>[^<\{\}]* {
-        gabc_score_determination_lval.text =
-                gregorio_strdup(gabc_score_determination_text);
-        return CHARACTERS;
+<sp>[\n\r][\n\r \t]* {
+        RETURN_SPACE;
+    }
+<sp>[^<\{\}\n\r]+ {
+        RETURN_CHARACTERS;
     }
 <score>\% {
         BEGIN(comments);
@@ -337,45 +319,32 @@ semicolon. */
 <comments>(\n|\r)+ {
         BEGIN(score);
     }
-<comments>[^\n\r]* {
+<comments>[^\n\r]+ {
         /* ignored */
     }
-<style,score><v> {
+<score><v> {
         BEGIN(verb);
         return VERB_BEGIN;
     }
 <verb><\/v> {
-        if (style_stack == 0) {
-            BEGIN(score);
-        } else {
-            BEGIN(style);
-        }
+        BEGIN(score);
         return VERB_END;
     }
-<verb>[^<]* {
-        gabc_score_determination_lval.text =
-                gregorio_strdup(gabc_score_determination_text);
-        return CHARACTERS;
+<verb,alt>[^<]+ {
+        RETURN_CHARACTERS;
     }
-<verb,style,score,alt>< {
-        gabc_score_determination_lval.text =
-                gregorio_strdup(gabc_score_determination_text);
-        return CHARACTERS;
+<verb,sp,score,alt>< {
+        RETURN_CHARACTERS;
     }
-<score,style>\{ {
+<score>\{ {
         return CENTER_BEGIN;
     }
-<score,style>\} {
+<score>\} {
         return CENTER_END;
     }
 <score><alt> {
         BEGIN(alt);
         return ALT_BEGIN;
-    }
-<alt>[^<]* {
-        gabc_score_determination_lval.text =
-                gregorio_strdup(gabc_score_determination_text);
-        return CHARACTERS;
     }
 <alt><\/alt> {
         BEGIN(score);
@@ -400,7 +369,7 @@ semicolon. */
         BEGIN(notes);
         return OPENING_BRACKET;
     }
-<notes>[^|\)]* {
+<notes>[^|\)]+ {
         gabc_score_determination_lval.text =
                 gregorio_strdup(gabc_score_determination_text);
         return NOTES;

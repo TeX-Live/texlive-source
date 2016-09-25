@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -23,11 +23,22 @@ EXTRA_DIST = README.md CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md \
 			 UPGRADE.md COPYING.md .gregorio-version VersionManager.py \
 			 build.sh install.sh install-gtex.sh
 
+export TOP_LEVEL_MAKE = true
+
+gregorio:
+	make -C src all
+
 fonts: make-fonts
 make-fonts:
 	make -C fonts fonts
 
-export TOP_LEVEL_MAKE = true
+clean-fonts:
+	make -C fonts clean-fonts
+
+doc: pdf
+clean-pdf: clean-doc
+clean-doc:
+	make -C doc clean-doc
 
 gregoriotex.tds.zip: dist install-gtex.sh
 	./install-gtex.sh tds

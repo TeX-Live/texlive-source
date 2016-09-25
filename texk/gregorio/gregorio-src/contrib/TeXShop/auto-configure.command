@@ -62,10 +62,12 @@ defaults write "$TeXShopDir/Contents/Info.plist" CFBundleDocumentTypes -array-ad
 echo "Adding Gregorio file extensions to appropriate preference lists"
 #enable syntax coloring and the Typeset button for gabc files
 defaults write TeXShop OtherTeXExtensions -array-add "gabc"
+defaults write TeXShop OtherTeXExtensions -array-add "gtex"
 
 #Add gtex and gaux to the list of aux files deleted with Trash Aux Files
 defaults write TeXShop OtherTrashExtensions -array-add "gtex"
 defaults write TeXShop OtherTrashExtensions -array-add "gaux"
+defaults write TeXShop OtherTrashExtensions -array-add "glog"
 
 echo "Configuration complete"
 exit 0

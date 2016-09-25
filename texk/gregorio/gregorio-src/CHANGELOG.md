@@ -2,6 +2,85 @@
 All notable changes to this project will be documented in this file.
 As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+## [4.2.0] - 2016-09-23
+### Fixed
+- When the note after an oriscus is at the same pitch, the oriscus will now point downwards by default (see [#1177](https://github.com/gregorio-project/gregorio/issues/1177)).
+- When the last note in a score is not in the last syllable, it no longer merges into the (no-note) syllable(s) that follow (see [#1205](https://github.com/gregorio-project/gregorio/issues/1205)).
+- A two-line initial on a two-line score no longer generates an error (see [#1139](https://github.com/gregorio-project/gregorio/issues/1139)).
+- Staff lines after a two-line initial should now be sized correctly in a more consistent way (see [#1141](https://github.com/gregorio-project/gregorio/issues/1141)).
+- Space at the end of line was not always correct when a line is cut in the middle of a word (see [#1155](https://github.com/gregorio-project/gregorio/issues/1155)).
+- In rare cases, the very last bar or glyph of a score could appear alone at the beginning of the final line (see [#1152](https://github.com/gregorio-project/gregorio/issues/1152)).
+- In cases of a syllable without note, the space between notes of the previous and next syllables was sometimes not enough (see [#1137](https://github.com/gregorio-project/gregorio/issues/1137)).
+- `moraadjustment` and `moraadjustmentbar` did not scale when changing factor, they do now.
+- The `900_gregorio.xml` file for Scribus now matches `main-lualatex.tex` again (see [#1087](https://github.com/gregorio-project/gregorio/issues/1087)).
+- Multiple subsequent lines in gabc no longer cause TeX to fail (see [#1111](https://github.com/gregorio-project/gregorio/issues/1111)).
+- Old bar spacing algorithm will no longer separate the text and bar when the bar is preceeded by a puncutm mora (see [#1078](https://github.com/gregorio-project/gregorio/issues/1078)).
+- Scores which end with a no-note syllable under the new bar spacing algorithm will no longer have their text pushed out into the right hand margin.  See [#1110](https://github.com/gregorio-project/gregorio/issues/1110).
+- PlainTeX will now respect underline requests in gabc.
+- PlainTeX will now raise a warning when small caps are requested but `\sc` has not been defined.
+- A manual custos at the end of the score will now be spaced like regular end of line custos [#1034](https://github.com/gregorio-project/gregorio/issues/1034).
+- Custos glyphs heights are now counted when adjusting line heights (see [#961](https://github.com/gregorio-project/gregorio/issues/961)).
+
+### Added
+- Some vertical spaces can now be adjusted for a particular line in a score.  Use `\grechangenextscorelinedim` prior to including the score to set the desired values.  `spaceabovelines`, `spacebeneathtext`, and `spacelinestext` may be changed with this command.  See GregorioRef and [#1156](https://github.com/gregorio-project/gregorio/issues/1156) for details.
+- Nabc now supports pitches `hn` and `hp` in addition to previously supported `ha` through `hm`.
+- 32 new St. Gall neume glyphs have been added to the `gregall` font and glyphs for nabc `po-1pp2su1sux1` and `po-1su1sux1` have been changed.
+- 31 new St. Gall neume glyphs have been added to the `gresgmodern` font and glyph for nabc `tr-1` has been changed.
+- It is now possible to set `\parskip`, `\lineskip`, `\baselineskip`, and `\lineskiplimit` to have different values within a score using `\grechangedim`.  See [#1038](https://github.com/gregorio-project/gregorio/issues/1038).
+- It is now possible to invert the oriscus orientation on pes quassus and oriscus flexus shapes.  Use `o0` or `o1` to force the oriscus into the orientation you desire.  It is also possible to fuse the oriscus from either direction in either orientation.  See [#898](https://github.com/gregorio-project/gregorio/issues/898) and [#972](https://github.com/gregorio-project/gregorio/issues/972).
+- Formerly missing torculus figures starting with an oriscus are now rendered using neume fusion (see [#1013](https://github.com/gregorio-project/gregorio/issues/1013)).
+- Gregorio will keep together (prevent line breaks between) a user-configurable number of notes (by default, 4) at the start and end of the syllable.  Further, Gregorio will prevent line breaks in a syllable with fewer than a user-configurable number of notes (by default, 10).  These values may be changed by using the `\gresetunbreakablesyllablenotes` command.  See GregorioRef for details (for the change request, see [#1044](https://github.com/gregorio-project/gregorio/issues/1044)).
+- The visibility of notes and lyrics can now be toggled on an off using `\gresetlyrics` and `\gresetnotes`.  See [#1039](https://github.com/gregorio-project/gregorio/issues/1039).
+- An alteration (flat, natural, or sharp) will now appear on a custos if the next note is so altered.  Use `\gresetcustosalteration{invisible}` if you prefer the old behavior.  See [#1049](https://github.com/gregorio-project/gregorio/issues/1049).
+- `gregoriosyms.sty` and `gregoriotex.tex` now contain definitions for `gregoriocolor` and `grebackgroundcolor` and the appropriate score commands dealing with color now work under PlainTeX
+
+### Changed
+- In order to facilitate installation alongside TeX Live, the version number is now appended to the gregorio executable file name.  If you are running the executable directly in your custom scripts, you will need to change them to include the version number.  If you are not using the TeX-Live-packaged version of Gregorio, you will probably need to use the `--shell-escape` option when compiling your `.tex` files.  Note that in TeX Live 2016, which includes Gregorio 4.1.1, the executable filename does not include the version number, though that will change starting with TeX Live 2017.  See UPGRADE.md and [#1197](https://github.com/gregorio-project/gregorio/issues/1197) for more information.
+- When the clef and the first note are at a reasonable vertical distance, `shortspaceafterlineclef` is used instead of `spaceafterlineclef` (make them equal if you don't want this feature). This is used only on the first line, when there is an initial on one line. See [#1138](https://github.com/gregorio-project/gregorio/issues/1138).
+- When an alteration follows a bar, it is not completely taken into consideration in the new bar spacing algorithm (similarly to the punctum mora), this behavior can be tuned with the newly introduced space `alterationadjustmentbar`. See [#1146](https://github.com/gregorio-project/gregorio/issues/1146).
+- Very small improvement in the design of the porrectus auctus and torculus resupinus auctus (see [#1169](https://github.com/gregorio-project/gregorio/issues/1169)).
+- When the notes around a virgula or divisio minima are lower than two spaces below the top staff line, the spaces used are new shorter spaces with a `@short` suffix. To cancel this feature, make them the same as their normal version. See [#1144](https://github.com/gregorio-project/gregorio/issues/1144).
+- Different glyphs are now used for puncta inclinata in an ascent versus in a descent.  A heuristic algorithm is used to ensure that the glyphs match when grouped together.  If the algorithm chooses the wrong shape, use `0` (for descending) or `1` (for ascending) to force an orientation.  See [UPGRADE.md](UPGRADE.md) and [#856](https://github.com/gregorio-project/gregorio/issues/856) for details.
+- The shape of the fused oriscus at ambitus one in the greciliae font has been tweaked to form a nicer connection (see [#1079](https://github.com/gregorio-project/gregorio/issues/1079)).
+- Syllables are now rewritten to improve ligature rendering.  This may be disabled by issuing `\gresetsyllablerewriting{off}`.  See GregorioRef for details (for the change request, see [#1098](https://github.com/gregorio-project/gregorio/issues/1098)).
+- Default mode style for PlainTeX no longer tries to invoke small caps since they are not defined by default.
+- Italic, bold, underlined, small capital, teletype, and colored styles now span multiple syllables.  Gregorio will also more consistently raise errors when styles are improperly started or ended.  See [UPGRADE.md](UPGRADE.md) and [#1121](https://github.com/gregorio-project/gregorio/issues/1121) for details.
+- The stemmed oriscus flexus `(gOe)` is now consistent with the unstemmed oriscus flexus `(goe)` in that the oriscus points downward at the note that follows.  If you prefer to have the oriscus point upward, use `(gO1e)` for force upward orientation.
+- Space before a custos appearing in the middle of a line is now set by `spacebeforeinlinecustos`.
+- The space between two puncta inclinata at the unison may be tuned by changing `punctuminclinatumunisonshift` (see [#1042](https://github.com/gregorio-project/gregorio/issues/1042)).
+- A podatus followed by a virga `(eghv)` will now be kept together (no line break between the shapes),  If you would like to allow a line break there, use `(eg/hv)` instead (see UPGRADE.md and [#1045](https://github.com/gregorio-project/gregorio/issues/1045)).
+- Penalties must now be changed using the `\grechangecount` command.  See GregorioRef and [UPGRADE.md](UPGRADE.md) for details (for the change request, see [#1021](https://github.com/gregorio-project/gregorio/issues/1021)).
+- `\greemergencystretch` must now be set by changing `emergencystretch` using `\grechangedim` instead of redefining the macro.
+- An isolated stropha will now be considered part of the previous neume group and line breaks will be prevented at that point.  In order to force a line break there, use a breaking space such as `/` before the stropha in gabc.  See [#1056](https://github.com/gregorio-project/gregorio/issues/1056).
+- `interwordspacetext` and it's related distances have been redefined to be smaller and dependent on a font based distance (`ex`).  They are also no longer scale with the staff size by default.  See [#1036](https://github.com/gregorio-project/gregorio/issues/1036) & [gregoriot-test#208](https://github.com/gregorio-project/gregorio-test/pull/208).
+- `\grecreatedim` and `\grechangedim` can now be used to link two distances.  To do this the second argument should be the name of the master distance and the third argument should be `inherited`.  See [#962](https://github.com/gregorio-project/gregorio/issues/962).
+
+### Removed
+- `\grescorereference`
+- `\grenewlinepenalty`
+- `\grenobreakpenalty`
+- `\greendofwordpenalty`
+- `\greendofsyllablepenalty`
+- `\greendafterbarpenalty`
+- `\greendafterbaraltpenalty`
+- `\grefinalpenalty`
+- `\greendofelementpenalty`
+- `\grehyphenpenalty`
+- `\grebrokenpenalty`
+- `\grewidowpenalty`
+- `\greclubpenalty`
+- `\grelooseness`
+- `\gretolerance`
+- `\grepretolerance`
+- `\greemergencystretch`
+
+
+## [4.1.5] - 2016-08-18
+### Fixed
+- Use node.travese_id() to find our desired nodes when doing translation centering across syllables, thereby preventing a conflict with other packages which insert nodes (such as luatex-ja).  See [#1180](https://github.com/gregorio-project/gregorio/issues/1180).
+- Explicitly communicate the rescaling of `\gre@skip@temp@four` back to TeX, thereby fixing the problem with custom spacings.  See [#1199](https://github.com/gregorio-project/gregorio/issues/1199).
+- With thanks to Claudio Beccari (@OldClaudio), adding a commentary no longer generates a bad `\hbox` during TeX processing (see [#1202](https://github.com/gregorio-project/gregorio/issues/1202)).
+
 ## [4.1.4] - 2016-05-29
 ### Fixed
 - Package conflict with luatex-ja also affected the custos.  Have now fixed that problem too.  See [this thread](http://www.mail-archive.com/gregorio-users@gna.org/msg03520.html).
@@ -115,13 +194,13 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - `\grescorereference`
 
 ### Removed
-- `\GreSetStaffLinesFormat`, supplanted by `\grechangeformat{normalstafflines}...`
-- `\greinitialformat`, if you were redefining this command, use `\grechangeformat{initial}...` instead
-- `\grebiginitialformat`, if you were redefining this command, use `\grechangeformat{biginitial}...` instead
-- `\gretranslationformat`, if you were redefining this command, use `\grechangeformat{translation}...` instead
-- `\greabovelinestextstyle`, if you were redefining this command, use `\grechangeformat{abovelinestext}...` instead
-- `\grelowchoralsignstyle`, if you were redefining this command, use `\grechangeformat{lowchoralsign}...` instead
-- `\grehighchoralsignstyle`, if you were redefining this command, use `\grechangeformat{highchoralsign}...` instead
+- `\GreSetStaffLinesFormat`, supplanted by `\grechangestyle{normalstafflines}...`
+- `\greinitialformat`, if you were redefining this command, use `\grechangestyle{initial}...` instead
+- `\grebiginitialformat`, if you were redefining this command, use `\grechangestyle{biginitial}...` instead
+- `\gretranslationformat`, if you were redefining this command, use `\grechangestyle{translation}...` instead
+- `\greabovelinestextstyle`, if you were redefining this command, use `\grechangestyle{abovelinestext}...` instead
+- `\grelowchoralsignstyle`, if you were redefining this command, use `\grechangestyle{lowchoralsign}...` instead
+- `\grehighchoralsignstyle`, if you were redefining this command, use `\grechangestyle{highchoralsign}...` instead
 - `\setaboveinitialseparation`, supplanted by `\grechangedim{annotationseparation}...`
 - `\scorereference`
 - `\GreScoreReference`

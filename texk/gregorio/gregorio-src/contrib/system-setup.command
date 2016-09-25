@@ -107,22 +107,21 @@ echo "" >> $OUTPUT
 echo "" >> $OUTPUT
 
 echo "###	Gregorio Setup" >> $OUTPUT
-echo "####	Version" >> $OUTPUT
+echo "####	Locations and Versions" >> $OUTPUT
 echo "" >> $OUTPUT
-gregorio -V >> $OUTPUT 2>&1
-echo "" >> $OUTPUT
-echo "#### 	Location" >> $OUTPUT
-echo "" >> $OUTPUT
-which -a gregorio >> $OUTPUT 2>&1
-echo "" >> $OUTPUT
+progs=`compgen -cbka -A function 'gregorio'`
+for prog in $progs; do
+  which -a $prog >> $OUTPUT 2>&1
+  $prog -V >> $OUTPUT 2>&1
+  echo "" >> $OUTPUT
+done
 echo "####	GregorioTeX Locations" >> $OUTPUT
 echo "" >> $OUTPUT
 
-files="gregorio-vowels.dat
-gregoriosyms.sty
+# Files using GREGORIO_VERSION
+files="gregoriosyms.sty
 gregoriotex-chars.tex
 gregoriotex-main.tex
-gregoriotex-ictus.tex
 gregoriotex-nabc.lua
 gregoriotex-nabc.tex
 gregoriotex-signs.lua
@@ -131,19 +130,59 @@ gregoriotex-spaces.tex
 gregoriotex-syllable.tex
 gregoriotex-symbols.lua
 gregoriotex-symbols.tex
-gregoriotex.lua
-gregoriotex.sty
-gregoriotex.tex
-gsp-default.tex
-greciliae.ttf
+gregoriotex.lua"
+
+for f in $files
+do
+	echo "##### $f" >> $OUTPUT
+	locations=`kpsewhich -all $f`
+	for loc in $locations; do
+	  echo $loc >> $OUTPUT 2>&1
+	  grep -m 1 'GREGORIO_VERSION' $loc | grep -o '[0-9]*\.[0-9]*\.[0-9]*-*[betarc]*[0-9]*' >> $OUTPUT 2>&1
+	done
+done
+
+# Files using PARSE_VERSION_DATE_LTX
+files="gregoriotex.sty
+gregoriotex.tex"
+
+for f in $files
+do
+	echo "##### $f" >> $OUTPUT
+	locations=`kpsewhich -all $f`
+	for loc in $locations; do
+	  echo $loc >> $OUTPUT 2>&1
+	  grep -m 1 'PARSE_VERSION_DATE_LTX' $loc | grep -o '[0-9]*\.[0-9]*\.[0-9]*-*[betarc]*[0-9]*' >> $OUTPUT 2>&1
+	done
+done
+
+# Font Files
+files="greciliae.ttf
 greciliae-op.ttf
 greextra.ttf
 gregorio.ttf
 gregorio-op.ttf
-gresym.ttf
 granapadano.ttf
 granapadano-op.ttf
-gregall.ttf
+gregall.ttf"
+
+for f in $files
+do
+	echo "##### $f" >> $OUTPUT
+	locations=`kpsewhich -all $f`
+	for loc in $locations; do
+	  echo $loc >> $OUTPUT 2>&1
+	  otfinfo --font-version $loc >> $OUTPUT 2>&1
+	done
+done
+
+# Unversioned and Obsolete Files
+files="gregorio-vowels.dat
+gsp-default.tex
+gregoriotex-ictus.tex
+gresym.ttf
+parmesan.ttf
+parmesan-op.ttf
 gregsmodern.ttf"
 
 for f in $files
@@ -152,11 +191,13 @@ do
 	kpsewhich -all $f >> $OUTPUT 2>&1
 done
 
+
 echo "" >> $OUTPUT
-echo "####	kpsewhich --all -engine luatex -progname lualatex gregoriotex.sty" >> $OUTPUT
+echo "###	LuaTeX Double Checks" >> $OUTPUT
+echo "#### kpsewhich --all -engine luatex -progname lualatex gregoriotex.sty" >> $OUTPUT
 kpsewhich --all -engine luatex -progname lualatex gregoriotex.sty >> $OUTPUT 2>&1
 echo "" >> $OUTPUT
-echo "####	kpsewhich --all -engine luatex gregoriotex.tex" >> $OUTPUT
+echo "#### kpsewhich --all -engine luatex gregoriotex.tex" >> $OUTPUT
 kpsewhich --all -engine luatex gregoriotex.tex >> $OUTPUT 2>&1
 echo "" >> $OUTPUT
 echo "" >> $OUTPUT

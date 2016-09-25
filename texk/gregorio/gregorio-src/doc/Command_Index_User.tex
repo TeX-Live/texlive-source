@@ -1,5 +1,23 @@
 % !TEX root = GregorioRef.tex
 % !TEX program = LuaLaTeX+se
+%
+% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+%
 \section{User Controls}
 
 These functions are available to the user to customize elements of the
@@ -234,7 +252,8 @@ Macro to create one of Gregorio\TeX’s distances.  Used to initialize distances
 	\#1 & string & The name of the distance to be changed.  See \nameref{distances} below.\\
 	\#2 & string & The distance in string format.  \textbf{Note:} You cannot use a length register for this argument.  You \emph{must} use a string because of the way that Gregorio\TeX\ handles spaces.\\
 	\#3 & \texttt{fixed} & Distance will not scale when staff size is changed.\\
-	& \texttt{scalable} & Distance will scale when staff size is changed.
+	& \texttt{scalable} & Distance will scale when staff size is changed.\\
+	& \texttt{inherited} & Distance will inherit its value from another distance.  When this argument is used, then \#2 should be the name of another Gregorio\TeX\ distance.
 \end{argtable}
 
 \macroname{\textbackslash grechangedim}{\{\#1\}\{\#2\}\{\#3\}}{gregoriotex-spaces.tex}
@@ -244,7 +263,20 @@ Macro to change one of Gregorio\TeX’s distances.  This function will check to 
 	\#1 & string & The name of the distance to be changed.  See \nameref{distances} below.\\
 	\#2 & string & The distance in string format.  \textbf{Note:} You cannot use a length register for this argument.  You \emph{must} use a string because of the way that Gregorio\TeX\ handles spaces.\\
 	\#3 & \texttt{fixed} & Distance will not scale when staff size is changed.\\
-	& \texttt{scalable} & Distance will scale when staff size is changed.
+	& \texttt{scalable} & Distance will scale when staff size is changed.\\
+	& \texttt{inherited} & Distance will inherit its value from another distance.  When this argument is used, then \#2 should be the name of another Gregorio\TeX\ distance.
+\end{argtable}
+
+\macroname{\textbackslash grechangenextscorelinedim}{\{\#1\}\{\#2\}\{\#3\}\{\#4\}}{gregoriotex-spaces.tex}
+Changes one of Gregorio\TeX’s distances for a given line in the next included score.  This works with \texttt{spaceabovelines}, \texttt{spacebeneathtext}, and \texttt{spacelinestext}.
+
+\begin{argtable}
+	\#1 & integer & The number of the line in the next score to be adjusted.\\
+	\#2 & string & The name of the distance to be changed.  See \nameref{distances} below.\\
+	\#3 & string & The distance in string format.  \textbf{Note:} You cannot use a length register for this argument.  You \emph{must} use a string because of the way that Gregorio\TeX\ handles spaces.\\
+	\#4 & \texttt{fixed} & Distance will not scale when staff size is changed.\\
+	& \texttt{scalable} & Distance will scale when staff size is changed.\\
+	& \texttt{inherited} & Distance will inherit its value from another distance.  When this argument is used, then \#3 should be the name of another Gregorio\TeX\ distance.
 \end{argtable}
 
 \macroname{\textbackslash grescaledim}{\{\#1\}\{\#2\}}{gregoriotex-spaces.tex}
@@ -259,10 +291,10 @@ Macro to turn on or off scaling with the staff size for a particular distance.
 \textbf{Nota bene:} This macro also can be used to change whether or not the staff line thickness scales with the staff size by specifying \texttt{stafflinefactor} for the first argument.
 
 \macroname{\textbackslash grechangecount}{\{\#1\}\{\#2\}}{gregoriotex-spaces.tex}
-Macro to change one of Gregorio\TeX’s counts (numeric values).
+Macro to change one of Gregorio\TeX’s counts or penalities (numeric values).
 
 \begin{argtable}
-	\#1 & string & The name of the count to be changed.  See \nameref{counts} below.\\
+	\#1 & string & The name of the count to be changed.  See \nameref{counts} and \nameref{penalties} below.\\
 	\#2 & integer & The new value.\\
 \end{argtable}
 
@@ -707,10 +739,10 @@ Different elements of an include score have different styles applied.  These ele
 	\stylename{initial} & Score initial (the first letter of the score, when offset from the rest of the text) & 40 pt font\\
 	\stylename{lowchoralsign} & low choral signs & none\\
 	\stylename{modedifferentia} & the rendered annotation from the \texttt{mode-differentia: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textbf{bold}}\\
-	\stylename{modeline} & the rendered annotation from the \texttt{mode: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textsc{\textbf{bold small capitals}}}\\
+	\stylename{modeline} & the rendered annotation from the \texttt{mode: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textsc{\textbf{bold small capitals}}} (\LaTeX)\\
+	& & \textbf{bold} (Plain\TeX)\\
 	\stylename{modemodifier} & the rendered annotation from the \texttt{mode-modifier: ;} header in the gabc file & \parbox[t]{2.2cm}{\raggedleft\textit{\textbf{bold italics}}}\\
-	\stylename{nabc} & ancient notation & {\color{gregoriocolor}gregoriocolor} (\LaTeX)\\
-									 && none (Plain \TeX)\\
+	\stylename{nabc} & ancient notation & {\color{gregoriocolor}gregoriocolor}\\
 	\stylename{normalstafflines} & Full length staff lines & none\\
 	\stylename{translation} & Translation text (appears below lyrics) & {\it italics}\\
 \end{tabular}
@@ -780,7 +812,7 @@ Macro to add an illuminated initial.
 
 \textbf{Nota Bene:} Usually the argument of this command should be an \verb=\includegraphics= command, but you may use what ever you want as the illuminated initial.
 
-\macroname{\textbackslash gresetinitiallines}{\#1}{gregoriotex-syllable.tex}
+\macroname{\textbackslash gresetinitiallines}{\{\#1\}}{gregoriotex-syllable.tex}
 Sets the number of lines the score initial requires.
 
 \begin{argtable}
@@ -789,14 +821,23 @@ Sets the number of lines the score initial requires.
 
 \textbf{Nota Bene:} As currently implemented, you cannot set an initial which is larger than 2 lines and in order to do so you must set manual line breaks in the gabc for the first two lines.
 
-\macroname{\textbackslash gresetmodenumbersystem}{\#1}{gregoriotex-main.tex}
+\macroname{\textbackslash gresetmodenumbersystem}{\{\#1\}}{gregoriotex-main.tex}
 Sets the number system used for the mode number.
 
 \begin{argtable}
-	\#1 & \texttt{roman-minuscule} & Use lower-case Roman numerals (the default, good for small capitals).\\
-			& \texttt{roman-majuscule} & Use upper-case Roman numerals.\\
+	\#1 & \texttt{roman-minuscule} & Use lower-case Roman numerals (the default in \LaTeX, good for small capitals).\\
+			& \texttt{roman-majuscule} & Use upper-case Roman numerals (the default in Plain\TeX).\\
 			& \texttt{arabic} & Use Arabic numerals.\\
 \end{argtable}
+
+\macroname{\textbackslash gresetlyrics}{\{\#1\}}{gregoriotex-syllable.tex}
+Sets the visibility of the lyrics.
+
+\begin{argtable}
+	\#1 & \texttt{visible} & Lyrics are visible (default).\\
+	& \texttt{invisible} & Lyrics are not visible.\\
+\end{argtable}
+
 
 \subsubsection{Text Alignment}
 Gregorio\TeX\ allows you to manipulate the global alignment behavior of some text elements using the following commands.
@@ -857,6 +898,21 @@ Macro to specify which part of the control line in the annotation should be alig
 
 \textbf{Nota Bene:} These variable refer to the actual contents of the line and not to the ``hypothetical'' limits for the font.  As a result if the top of an annotation containing only short letters will be different from one which contains tall ones even if both use the same font.  Likewise, if the annotation contains no descenders, then baseline and bottom will be the same.  If this is a problem, then the use of struts within the annotation can be used to control the line height (distance from baseline to top) and depth (distance from baseline to bottom).
 
+\macroname{\textbackslash gresetsyllablerewriting}{\{\#1\}}{gregoriotex-syllable.tex}
+Sets whether the last part of a non-final syllable of a word is moved to the
+next syllable when there is no hyphen.  The ``last part'' of a syllable is
+the part that comes after the part that is centered under the first note of
+the syllable.  This feature may allow Lua\TeX{} to find better opportunities
+for ligaturing based on \TeX{} and font settings.
+
+\begin{argtable}
+	\#1 & \texttt{auto} & Gregorio\TeX{} will move the last part of a syllable
+												to the next syllable in a word when there is no
+												hyphen (default).\\
+			& \texttt{off}  & Gregorio\TeX{} will not attempt to rewrite any
+												syllables.\\
+\end{argtable}
+
 \subsubsection{End of Line Behavior}
 While Gregorio\TeX\ will automatically wrap scores to fit your page, there are several ways to fine tune that line breaking behavior with the following commands.
 
@@ -893,6 +949,15 @@ Macro to determine whether line breaks are allowed inside a translation.
 \begin{argtable}
 	\#1 & \texttt{allow} & Line breaks are allowed\\
 	& \texttt{prohibit} & Line breaks are prohibited, the entire translation should appear on one line
+\end{argtable}
+
+\macroname{\textbackslash gresetcustosalteration}{\{\#1\}}{gregoriotex-signs.tex}
+Macro for setting whether an alteration (flat, sharp, or natural) should be
+rendered before a custos or not.
+
+\begin{argtable}
+	\#1 & \texttt{visible} & The custos alteration should be printed (default)\\
+			& \texttt{invisible} & The custos alteration should not be printed
 \end{argtable}
 
 \macroname{\textbackslash greseteolcustos}{\{\#1\}}{gregoriotex-main.tex}
@@ -939,6 +1004,21 @@ Macro to determine whether the last line of the score should be justified or not
 	& \texttt{ragged} & Set the last line ragged (default)
 \end{argtable}
 
+\macroname{\textbackslash gresetunbreakablesyllablenotes}{\{\#1\}\{\#2\}\{\#3\}}{gregoriotex-syllable.tex}
+Configures how notes should be kept together on line breaks.
+
+\begin{argtable}
+	\#1 & integer & The minimum number of notes in the syllable before the
+									syllable may be broken across lines.  Defaults to
+									\getgrecount{unbreakabletotalnotes}.\\
+	\#2 & integer & The minimum number of notes at the start of a syllable that
+									must be kept together when the syllable is broken across
+									lines.  Defaults to \getgrecount{unbreakableinitialnotes}.\\
+	\#3 & integer & The minimum number of notes at the end of a syllable that
+									must be kept together when the syllable is broken across
+									lines.  Defaults to \getgrecount{unbreakablefinalnotes}.\\
+\end{argtable}
+
 
 \subsubsection{Bar spacing}
 
@@ -960,11 +1040,21 @@ When a punctum mora is ignored, the bar will also be shifted by \texttt{moraadju
 Macro to activate the new bar spacing algorithm.  The new algorithm attempts to place the bar line exactly midway between its surrounding notes.  Any text associated with the bar is placed midway between its surrounding text.  Since this might result in the bar line and the text being widely separated, there are also a limits to the distance between their respective centers: \texttt{maxbaroffsettextleft} and \texttt{maxbaroffsettextright} (when text center is respectively on the left or on the right of bar center).
 
 \begin{argtable}
-	\#1 & \texttt{new} & Activates the new spacing algorithm\\
-	& \texttt{old} & Activates the old behavior (Default)\\
+	\#1 & \texttt{new} & Activates the new spacing algorithm (Default)\\
+	& \texttt{old} & Activates the old behavior\\
 \end{argtable}
 
 \subsubsection{Sign printing}
+
+\macroname{\textbackslash gresetnotes}{\{\#1\}}{gregoriotex-syllable.tex}
+Sets the visibility of the notes.
+
+\begin{argtable}
+	\#1 & \texttt{visible} & Notes are visible (default).\\
+	& \texttt{invisible} & Notes are not visible.\\
+\end{argtable}
+
+\textbf{Nota Bene:} If the notes are set to be invisible, then bar lines, rythmic signs, and the like will also be invisible.  However, the staff lines and clefs will still show up (since their visibility is controlled by other settings).
 
 \macroname{\textbackslash greprintsigns}{\{\#1\}\{\#2\}}{gregoriotex-signs.tex}
 Macro to prevent rythmic signs from printing (all signs are printed by default):
@@ -975,7 +1065,7 @@ Macro to prevent rythmic signs from printing (all signs are printed by default):
 	& \texttt{mora} & sets the printing of punctum mora and auctum duplex\\
 	& \texttt{all} & set the printing of all of these\\
 	\#2 & \texttt{enable} & enable the printing\\
-	& \texttt{disable} & disable the priting\\
+	& \texttt{disable} & disable the printing\\
 \end{argtable}
 
 Note that punctum mora and auctum duplex have an influence on spacings, so removing them will have an impact on that matter.
@@ -1149,22 +1239,24 @@ Macro to set the font to be used for the ancient notation.
 
 Each of the following counts controls some aspect of the configuration of the Gregorio\TeX\ score.  They are changed using \verb=\grechangecount=, documented above.
 
-\macroname{additionaltopspacethreshold}{}{gsp-default.tex}
-
+\begin{gcount}{additionaltopspacethreshold}
 The threshold above which we start accounting notes above lines for additional
 vertical space. For instance with a threshold of \texttt{2}, notes with a pitch
 of \texttt{k} and \texttt{l} will not interfere with the space above lines.
 Set it to a high value if you don't want high notes to interfere with space
 above lines.
+\end{gcount}
 
-Default: \texttt{2}
-
-\macroname{additionaltopspacealtthreshold}{}{gsp-default.tex}
-
+\begin{gcount}{additionaltopspacealtthreshold}
 Same as \texttt{additionaltopspacethreshold} but setting the threshold for
 notes taken into account with above lines text vertical placement.
+\end{gcount}
 
-Default: \texttt{0}
+\begin{gcount}{additionaltopspacenabcthreshold}
+Same as \texttt{additionaltopspacethreshold} but setting the threshold for
+notes taken into account with above lines nabc neume vertical placement
+baseline.
+\end{gcount}
 
 \subsection{Distances}\label{distances}
 
@@ -1290,7 +1382,11 @@ Space between notes of a bistropha or tristrophae.
 \end{gdimension}
 
 \begin{gdimension}{punctuminclinatumshift}
-Space between two punctum inclinatum.
+Space between two descending puncta inclinata.
+\end{gdimension}
+
+\begin{gdimension}{punctuminclinatumunisonshift}
+Space between two unison puncta inclinata.
 \end{gdimension}
 
 \begin{gdimension}{beforepunctainclinatashift}
@@ -1298,7 +1394,8 @@ Space before puncta inclinata.
 \end{gdimension}
 
 \begin{gdimension}{punctuminclinatumanddebilisshift}
-Space between a punctum inclinatum and a punctum inclinatum deminutus.
+Space between a punctum inclinatum and a punctum inclinatum deminutus,
+descending.
 \end{gdimension}
 
 \begin{gdimension}{punctuminclinatumdebilisshift}
@@ -1306,11 +1403,15 @@ Space between two punctum inclinatum deminutus.
 \end{gdimension}
 
 \begin{gdimension}{punctuminclinatumbigshift}
-Space between puncta inclinata, larger ambitus (range=3rd).
+Space between descending puncta inclinata, larger ambitus (range=3rd).
 \end{gdimension}
 
 \begin{gdimension}{punctuminclinatummaxshift}
-Space between puncta inclinata, larger ambitus (range=4th or 5th).
+Space between descending puncta inclinata, larger ambitus (range=4th or 5th).
+\end{gdimension}
+
+\begin{gdimension}{descendingpunctuminclinatumascendingshift}
+Space between descending puncta inclinata shapes in an ascent of pitch.
 \end{gdimension}
 
 \begin{gdimension}{ascendingpunctuminclinatumshift}
@@ -1328,6 +1429,10 @@ Space between ascending puncta inclinata, larger ambitus (range=3rd).
 
 \begin{gdimension}{ascendingpunctuminclinatummaxshift}
 Space between ascending puncta inclinata, larger ambitus (range=4th or 5th).
+\end{gdimension}
+
+\begin{gdimension}{ascendingpunctuminclinatumdescendingshift}
+Space between ascending puncta inclinata shapes in a descent of pitch.
 \end{gdimension}
 
 \begin{gdimension}{descendinginclinatumtonobarshift}
@@ -1552,18 +1657,46 @@ Vertical distance to place a punctum mora for the second note in a porrectus (or
 Distance to place a ``rare'' sign above the top space in a score.
 \end{gdimension}
 
-\subsubsection*{Bar distances}
+\begin{gdimension}{parskip}
+The effective \verb=\parskip= inside of a score.
+\end{gdimension}
+
+\begin{gdimension}{lineskip}
+The effective \verb=\lineskip= inside of a score.
+\end{gdimension}
+
+\begin{gdimension}{baselineskip}
+The effective \verb=\baselineskip= inside of a score.
+\end{gdimension}
+
+\begin{gdimension}{lineskiplimit}
+The effective \verb=\lineskiplimit= inside of a score.
+\end{gdimension}
+
+\begin{gdimension}{shortspaceafterlineclef}
+Space after a clef at the beginning of a line, when the clef and first note are vertically distant.
+\end{gdimension}
+
+\subsubsection{Bar distances}
 
 \begin{gdimension}{bar@finalfinalis}
 This space is added before the final divisio final of a score (old bar spacing algorithm only).
 \end{gdimension}
 
-Spaces around bars when they are typeset inside a syllable:
+Spaces around bars when they are typeset inside a syllable. The \verb=@short= suffix for virgula
+and divisio minima indicates the space used when the notes surrounding the bar are strictly lower
+than \texttt{g} (in a four-line score).
 
 \begin{gdimension}{bar@virgula}
 \end{gdimension}
 
+\begin{gdimension}{bar@virgula@short}
+\end{gdimension}
+
 \begin{gdimension}{bar@minima}
+\end{gdimension}
+
+\begin{gdimension}{bar@minima@short}
 \end{gdimension}
 
 \begin{gdimension}{bar@minor}
@@ -1583,7 +1716,13 @@ Spaces around bars in standalone syllables, when these have text (new bar spacin
 \begin{gdimension}{bar@virgula@standalone@text}
 \end{gdimension}
 
+\begin{gdimension}{bar@virgula@standalone@text@short}
+\end{gdimension}
+
 \begin{gdimension}{bar@minima@standalone@text}
+\end{gdimension}
+
+\begin{gdimension}{bar@minima@standalone@text@short}
 \end{gdimension}
 
 \begin{gdimension}{bar@minor@standalone@text}
@@ -1606,7 +1745,13 @@ Spaces around bars in standalone syllables, when these have no text (new bar spa
 \begin{gdimension}{bar@virgula@standalone@notext}
 \end{gdimension}
 
+\begin{gdimension}{bar@virgula@standalone@notext@short}
+\end{gdimension}
+
 \begin{gdimension}{bar@minima@standalone@notext}
+\end{gdimension}
+
+\begin{gdimension}{bar@minima@standalone@notext@short}
 \end{gdimension}
 
 \begin{gdimension}{bar@minor@standalone@notext}
@@ -1682,89 +1827,79 @@ Maximum distance by which the center of a bar and the center of its associated t
 Same as \texttt{maxbaroffsettextleft@eol} but when the center of the text goes right of the center of the bar.
 \end{gdimension}
 
+\begin{gdimension}{alterationadjustmentbar}
+In the case of an alteration after a bar, the alteration will go a bit left of this value. This can be compared to \texttt{moraadjustmentbar}.
+\end{gdimension}
 
 \subsection{Penalties}\label{penalties}
-Penalties are used by \TeX\ to determine where line and page breaks should occur.  Gregorio\TeX\ modifies or defines a few of its own to help with that process in scores.
+Penalties are used by \TeX\ to determine where line and page breaks should occur.  Gregorio\TeX\ modifies or defines a few of its own to help with that process in scores.  With the exception of \texttt{emergencystretch} (which should be changed using \verb=\grechangedim=) these should be changed using \verb=\grechangecount=, described above.
 
-\macroname{\textbackslash grebrokenpenalty}{}{gsp-default.tex}
+\begin{gcount}{brokenpenalty}
 The vertical penalty inserted after a break on a clef change.
+\end{gcount}
 
-Default: 0
-
-\macroname{\textbackslash greclubpenalty}{}{gsp-default.tex}
+\begin{gcount}{clubpenalty}
 The club penalty (determines how important it is to prevent orphans from occurring).
+\end{gcount}
 
-Default: 0
-
-\macroname{\textbackslash grewidowpenalty}{}{gsp-default.tex}
+\begin{gcount}{widowpenalty}
 The widow penalty (determines how important it is to prevent widows from occurring).
+\end{gcount}
 
-Default: 0
-
-\macroname{\textbackslash greemergencystretch}{}{gsp-default.tex}
-The value of the last ditch stretch for overfull boxes.
+\macroname{emergencystretch}{}{gsp-default.tex}
+The value of the last ditch stretch for overfull boxes.  This should be set using \verb=\grechangedim=.
 
 Default: \verb=\emergencystretch=
 
-\macroname{\textbackslash greendafterbarpenalty}{}{gsp-default.tex}
+\begin{gcount}{endafterbarpenalty}
 The end after bar penalty.
+\end{gcount}
 
-Default: $-200$
-
-\macroname{\textbackslash greendafterbaraltpenalty}{}{gsp-default.tex}
+\begin{gcount}{endafterbaraltpenalty}{}{gsp-default.tex}
 The alternate end after bar penalty (used when there is no text under the bar).
+\end{gcount}
 
-Default: $-200$
-
-\macroname{\textbackslash greendofelementpenalty}{}{gsp-default.tex}
+\begin{gcount}{endofelementpenalty}{}{gsp-default.tex}
 The end of element penalty.
+\end{gcount}
 
-Default: $-50$
-
-\macroname{\textbackslash greendofsyllablepenalty}{}{gsp-default.tex}
+\begin{gcount}{endofsyllablepenalty}{}{gsp-default.tex}
 The end of element penalty.
+\end{gcount}
 
-Default: $-50$
-
-\macroname{\textbackslash greendofwordpenalty}{}{gsp-default.tex}
+\begin{gcount}{endofwordpenalty}{}{gsp-default.tex}
 The end of element penalty.
+\end{gcount}
 
-Default: $-100$
-
-\macroname{\textbackslash grehyphenpenalty}{}{gsp-default.tex}
+\begin{gcount}{hyphenpenalty}{}{gsp-default.tex}
 The hyphen penalty.
+\end{gcount}
 
-Default: $-200$
-
-\macroname{\textbackslash grenobreakpenalty}{}{gsp-default.tex}
+\begin{gcount}{nobreakpenalty}{}{gsp-default.tex}
 Penalty to prevent a line break.
+\end{gcount}
 
-Default: 10001
-
-\macroname{\textbackslash grenewlinepenalty}{}{gsp-default.tex}
+\begin{gcount}{newlinepenalty}
 Penalty to force a line break.
+\end{gcount}
 
-Default: $-10001$
-
-\macroname{\textbackslash grefinalpenalty}{}{gsp-default.tex}
+\begin{gcount}{finalpenalty}
 The penalty applied after the final element of a score.
+\end{gcount}
 
-Default: $0$
-
-\macroname{\textbackslash grelooseness}{}{gsp-default.tex}
+\macroname{looseness}{}{gsp-default.tex}
 The \TeX\ looseness within a score.
 
 Default: \verb=\looseness=
 
-\macroname{\textbackslash gretolerance}{}{gsp-default.tex}
+\begin{gcount}{tolerance}
 The \TeX\ tolerance within a score.  See \url{https://en.wikibooks.org/wiki/TeX/tolerance} for an explanation of what tolerance is.
+\end{gcount}
 
-Default: 9000
-
-\macroname{\textbackslash grepretolerance}{}{gsp-default.tex}
+\macroname{pretolerance}{}{gsp-default.tex}
 The \TeX\ pretolerance within a score.  See \url{https://en.wikibooks.org/wiki/TeX/pretolerance} for an explanation of what pretolerance is.
 
-Default: $-1$ (Lua\TeX\ versions prior to 0.80) or \verb=\pretolerance= (versions after, and including, 0.80)
+Default: $-1$ (Lua\TeX\ versions prior to 0.80) or \verb=\pretolerance= (versions after, and including, 0.80)]
 
 \textit{Nota bene:} For more details on why this is necessary see the comments in gsp-default.tex.
 
@@ -1773,11 +1908,8 @@ Default: $-1$ (Lua\TeX\ versions prior to 0.80) or \verb=\pretolerance= (version
 
 
 \subsection{Colors}\label{colors}
-Colors are strictly a \LaTeX\ phenomena as currently implemented.  All
-commands which change a color will raise a warning in Plain \TeX, but will not alter the document.
-
 All colors can be redefined using \verb=\definecolor=.  See the
-\verb=xcolor= package for documentation.
+\verb=xcolor= (\LaTeX) or \verb=color= (Plain\TeX) package for documentation.
 
 Example:\par\medskip
 \begin{latexcode}

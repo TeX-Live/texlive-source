@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -16,19 +16,16 @@
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
 AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/gabc  -I$(top_srcdir)/src/dump  -I$(top_srcdir)/src/gregoriotex
-AM_CFLAGS =
+AM_CFLAGS = $(KPSE_CFLAGS)
+LDADD = $(KPSE_LIBS)
 
-gregorio_CFLAGS = $(KPSE_CFLAGS)
-gregorio_LDADD = $(KPSE_LIBS)
-
-bin_PROGRAMS = gregorio
-gregorio_SOURCES = gregorio-utils.c characters.c characters.h \
-					messages.c messages.h struct.c struct.h enum_generator.h \
-					unicode.c unicode.h sha1.c sha1.h support.c support.h \
-					config.h bool.h plugins.h utf8strings.h dump/dump.c \
-					gregoriotex/gregoriotex-write.c \
-					gregoriotex/gregoriotex-position.c \
-					gregoriotex/gregoriotex.h
+bin_PROGRAMS = gregorio-$(FILENAME_VERSION)
+gregorio___FILENAME_VERSION__SOURCES = \
+	gregorio-utils.c characters.c characters.h messages.c messages.h struct.c \
+	struct.h struct_iter.h enum_generator.h unicode.c unicode.h sha1.c sha1.h \
+	support.c support.h config.h bool.h plugins.h utf8strings.h dump/dump.c \
+	gregoriotex/gregoriotex-write.c gregoriotex/gregoriotex-position.c \
+	gregoriotex/gregoriotex.h
 
 @MK@ifneq ($(wildcard ../.git),)
 @MK@  _tag_ = $(shell git describe --exact-match HEAD 2>/dev/null)
@@ -46,40 +43,33 @@ gregorio_SOURCES = gregorio-utils.c characters.c characters.h \
 @MK@endif
 
 # gabc files
-gregorio_SOURCES += gabc/gabc-elements-determination.c gabc/gabc-write.c \
-					gabc/gabc-glyphs-determination.c gabc/gabc.h \
-					gabc/gabc-score-determination.h \
-					gabc/gabc-score-determination-y.h \
-					gabc/gabc-score-determination-y.c \
-					gabc/gabc-score-determination-l.h \
-					gabc/gabc-score-determination-l.c \
-					gabc/gabc-notes-determination-l.c \
-					vowel/vowel.h vowel/vowel.c vowel/vowel-rules.h \
-					vowel/vowel-rules-l.h vowel/vowel-rules-l.c \
-					vowel/vowel-rules-y.h vowel/vowel-rules-y.c
+gregorio___FILENAME_VERSION__SOURCES += \
+	gabc/gabc-elements-determination.c gabc/gabc-write.c \
+	gabc/gabc-glyphs-determination.c gabc/gabc.h \
+	gabc/gabc-score-determination.h gabc/gabc-score-determination.c \
+	gabc/gabc-score-determination-y.h gabc/gabc-score-determination-y.c \
+	gabc/gabc-score-determination-l.h gabc/gabc-score-determination-l.c \
+	gabc/gabc-notes-determination-l.c vowel/vowel.h vowel/vowel.c \
+	vowel/vowel-rules.h  vowel/vowel-rules-l.h vowel/vowel-rules-l.c \
+	vowel/vowel-rules-y.h vowel/vowel-rules-y.c
 
 EXTRA_DIST = encode_utf8strings.c utf8strings.h.in utf8strings.h \
-					gabc/gabc-notes-determination.l \
-					gabc/gabc-notes-determination-l.c \
-					gabc/gabc-score-determination.h \
-					gabc/gabc-score-determination.y \
-					gabc/gabc-score-determination-y.h \
-					gabc/gabc-score-determination-y.c \
-					gabc/gabc-score-determination.l \
-					gabc/gabc-score-determination-l.h \
-					gabc/gabc-score-determination-l.c \
-					vowel/vowel-rules.l \
-					vowel/vowel-rules-l.h vowel/vowel-rules-l.c \
-					vowel/vowel-rules.y \
-					vowel/vowel-rules-y.h vowel/vowel-rules-y.c
+			 gabc/gabc-notes-determination.l gabc/gabc-notes-determination-l.c \
+			 gabc/gabc-score-determination.h gabc/gabc-score-determination.y \
+			 gabc/gabc-score-determination-y.h \
+			 gabc/gabc-score-determination-y.c gabc/gabc-score-determination.l \
+			 gabc/gabc-score-determination-l.h \
+			 gabc/gabc-score-determination-l.c vowel/vowel-rules.l \
+			 vowel/vowel-rules-l.h vowel/vowel-rules-l.c vowel/vowel-rules.y \
+			 vowel/vowel-rules-y.h vowel/vowel-rules-y.c
 
 if HAVE_RC
 # Windows resources (see windows/README.md)
 gregorio-resources.o: ../windows/gregorio-resources.rc ../windows/gregorio.ico
 	$(RC) $(RCFLAGS) $< -o $@
 
-gregorio_SOURCES += ../windows/gregorio-resources.rc ../windows/gregorio.ico
-gregorio_LDADD += gregorio-resources.o
+gregorio___FILENAME_VERSION__SOURCES += ../windows/gregorio-resources.rc ../windows/gregorio.ico
+LDADD += gregorio-resources.o
 endif
 
 gabc/gabc-score-determination-y.c: gabc/gabc-score-determination.y
@@ -136,16 +126,13 @@ clean-local:
 	find . -name '*.gcno' -print | xargs rm -f --
 	find . -name '*.gcda' -print | xargs rm -f --
 
-BUILT_SOURCES = utf8strings.h \
-					gabc/gabc-notes-determination-l.c \
-					gabc/gabc-score-determination-l.c \
-					gabc/gabc-score-determination-l.h \
-					gabc/gabc-score-determination-y.c \
-					gabc/gabc-score-determination-y.h \
-					vowel/vowel-rules-l.c \
-					vowel/vowel-rules-l.h \
-					vowel/vowel-rules-y.c \
-					vowel/vowel-rules-y.h
+BUILT_SOURCES = utf8strings.h gabc/gabc-notes-determination-l.c \
+				gabc/gabc-score-determination-l.c \
+				gabc/gabc-score-determination-l.h \
+				gabc/gabc-score-determination-y.c \
+				gabc/gabc-score-determination-y.h vowel/vowel-rules-l.c \
+				vowel/vowel-rules-l.h vowel/vowel-rules-y.c \
+				vowel/vowel-rules-y.h
 
 CLEANFILES = encode_utf8strings${EXEEXT}
 MAINTAINERCLEANFILES = $(BUILT_SOURCES)

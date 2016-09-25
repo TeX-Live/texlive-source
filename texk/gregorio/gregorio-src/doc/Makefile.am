@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2015 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -21,40 +21,49 @@ SRCFILES = GregorioRef.tex Command_Index_gregorio.tex \
 		   Gabc.tex Appendix_Font_Tables.tex GregorioRef.lua factus.gabc
 NABCSRCFILES = GregorioNabcRef.tex veni.gabc
 
+GREGORIO=gregorio-$(FILENAME_VERSION)
+
 .NOTPARALLEL:
 
 # I know these rules look wrong, but they must not depend on anything that
 # gets generated or make distcheck will fail.
 
 GregorioRef.pdf: $(SRCFILES)
-	$(MAKE) $(AM_MAKEFLAGS) -C ../src gregorio
-	../src/gregorio -o factus.gtex $(<D)/factus.gabc
+	$(MAKE) $(AM_MAKEFLAGS) -C ../src $(GREGORIO)
+	../src/$(GREGORIO) -o factus.gtex $(<D)/factus.gabc
 	TEXINPUTS=$(<D):$(<D)/../tex: LUAINPUTS=$(<D):$(<D)/../tex: \
-		 TTFONTS=$(<D)/../fonts: PATH=../src:${PATH} latexmk -recorder -pdf \
+		 TTFONTS=$(<D)/../fonts: PATH=../src:${PATH} latexmk -f -recorder -pdf \
+		 -interaction=nonstopmode -halt-on-error \
 		 -pdflatex='lualatex --shell-escape %O %S' \
-		 -jobname=GregorioRef $<
+		 -jobname=GregorioRef $< || rm $@
 
 GregorioNabcRef.pdf: $(NABCSRCFILES)
-	$(MAKE) $(AM_MAKEFLAGS) -C ../src gregorio
-	../src/gregorio -o veni.gtex $(<D)/veni.gabc
+	$(MAKE) $(AM_MAKEFLAGS) -C ../src $(GREGORIO)
+	../src/$(GREGORIO) -o veni.gtex $(<D)/veni.gabc
 	TEXINPUTS=$(<D):$(<D)/../tex: LUAINPUTS=$(<D):$(<D)/../tex: \
 		 TTFONTS=$(<D)/../fonts: PATH=../src:${PATH} latexmk -recorder -pdf \
+		 -interaction=nonstopmode -halt-on-error \
 		 -pdflatex='lualatex --shell-escape %O %S' \
-		 -jobname=GregorioNabcRef $<
+		 -jobname=GregorioNabcRef $< || rm $@
 
 doc: GregorioRef.pdf GregorioNabcRef.pdf
 
 pdf-local: doc
 
-distclean-local:
+clean-doc-intermediate:
 	latexmk -quiet -c -f -jobname=GregorioRef GregorioRef.tex
 	latexmk -quiet -c -f -jobname=GregorioNabcRef GregorioNabcRef.tex
-	rm -rf _minted* *.gtex *.aux *.gaux
+	rm -rf _minted* *.gtex *.aux *.gaux *.glog
+
+clean-doc: clean-doc-intermediate
+	rm -rf GregorioRef.pdf
+	rm -rf GregorioNabcRef.pdf
+
+distclean-local: clean-doc-intermediate
+
+maintainer-clean-local: clean-doc
 
 EXTRA_DIST = $(SRCFILES) $(NABCSRCFILES) \
 	     GregorioRef.pdf \
-	     GregorioNabcRef.pdf
-
-maintainer-clean-local:
-	rm -rf GregorioRef*.pdf
-	rm -rf GregorioRef-* GregorioNabcRef-*
+	     GregorioNabcRef.pdf \
+	     README.md

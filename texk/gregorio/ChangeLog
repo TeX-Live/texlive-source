@@ -1,3 +1,16 @@
+2016-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gregorio-4.2.0.
+	* version.ac, configure.ac: Adapted.
+	* gregorio.test: Change program name by
+	gregorio=gregorio-$FILENAME_VERSION.
+
+2016-08-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import gregorio-4.2.0-rc3.
+	* version.ac, configure.ac: Adapted.
+	* Makefile.am: bin_PROGRAMS = gregorio-$(FILENAME_VERSION).
+
 2016-07-15  Karl Berry  <karl@tug.org>
 
 	* configure.ac (AC_CHECK_ALIGNOF): add.

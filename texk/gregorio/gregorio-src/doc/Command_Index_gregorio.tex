@@ -1,5 +1,23 @@
 % !TEX root = GregorioRef.tex
 % !TEX program = LuaLaTeX+se
+%
+% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+%
 \section{Gregorio Controls}
 
 These functions are the ones written by gregorio to the gtex file.
@@ -61,13 +79,14 @@ Macro to typeset the additional line above or below the staff.
 	\#3 & integer & Set horizontal episema (0), horizontal episema under a note (1), line at top of staff (2), line at bottom of staff (3), choral sign (4).\\
 \end{argtable}
 
-\macroname{\textbackslash GreAdHocSpaceEndOfElement}{\#1\#2}{gregoriotex-main.tex}
+\macroname{\textbackslash GreAdHocSpaceEndOfElement}{\#1\#2\#3}{gregoriotex-main.tex}
 Macro to end an element with an ad-hoc space.
 
 \begin{argtable}
 	\#1 & float & The factor to scale the default space for use as an ad-hoc space.\\
 	\#2 & \texttt{0} & Space is breakable.\\
 	& \texttt{1} & Space is unbreakable.\\
+	\#3 & integer & The number of notes in the syllable prior to this macro.\\
 \end{argtable}
 
 \macroname{\textbackslash GreAugmentumDuplex}{\#1\#2\#3}{gregoriotex-signs.tex}
@@ -175,7 +194,10 @@ Typesets a custos.
 
 \begin{argtable}
 	\#1 & integer & Height number of custos.\\
-	\#2 & integer & Indicate if the custo is the last of the score.\\
+	\#2 & \texttt{Flat} & The custos should have a flat.\\
+			& \texttt{Natural} & The custos should have a natural.\\
+			& \texttt{Sharp} & The custos should have a sharp.\\
+			& \textit{empty} & The custos should not have an alteration.\\
 \end{argtable}
 
 \macroname{\textbackslash GreDagger}{}{gregoriotex-symbols.tex}
@@ -208,13 +230,15 @@ Macro to typeset a divisio maior.
 	\#2 & \TeX\ code & Macros which may happen before the skip but after the divisio maior (typically \verb=\grevepisema=).\\
 \end{argtable}
 
-\macroname{\textbackslash GreDivisioMinima}{\#1\#2}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreDivisioMinima}{\#1\#2\#3}{gregoriotex-signs.tex}
 Macro to typeset a divisio minima.
 
 \begin{argtable}
 	\#1 & \texttt{0} & There is no text under the bar.\\
 	& \texttt{1} & There is text under the bar.\\
 	\#2 & \TeX\ code & Macros which may happen before the skip but after the divisio minima (typically \verb=\grevepisema=).\\
+	\#3 & \texttt{0} & The notes around the bar are vertically close to the bar.\\
+	& \texttt{1} & The notes around the bar are far, \verb=@short= versions of spaces will be used.\\
 \end{argtable}
 
 \macroname{\textbackslash GreDivisioMinor}{\#1\#2}{gregoriotex-signs.tex}
@@ -273,7 +297,7 @@ Macro to mark the end of a EUOUAE block.
 	& \texttt{3} & before bar
 \end{argtable}
 
-\macroname{\textbackslash GreEndOfElement}{\#1\#2}{gregoriotex-main.tex}
+\macroname{\textbackslash GreEndOfElement}{\#1\#2\#3}{gregoriotex-main.tex}
 Macro to end elements.
 
 \begin{argtable}
@@ -284,6 +308,7 @@ Macro to end elements.
 	& \texttt{4} & Ad-hoc space.\\
 	\#2 & \texttt{0} & Space is breakable.\\
 	& \texttt{1} & Space is unbreakable.\\
+	\#3 & integer & The number of notes in the syllable prior to this macro.\\
 \end{argtable}
 
 \macroname{\textbackslash GreEndNLBArea}{\#1\#2}{gregoriotex-main.tex}
@@ -327,11 +352,15 @@ Macro to end a glyph without ending the element.
 	& \texttt{22} & Half-space. \\
 \end{argtable}
 
-\macroname{\textbackslash GreFinalCustos}{\#1}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreFinalCustos}{\#1\#2}{gregoriotex-signs.tex}
 Typesets a custos after the final bar in a score.
 
 \begin{argtable}
 	\#1 & integer & Height number of custos.\\
+	\#2 & \texttt{Flat} & The custos should have a flat.\\
+			& \texttt{Natural} & The custos should have a natural.\\
+			& \texttt{Sharp} & The custos should have a sharp.\\
+			& \textit{empty} & The custos should not have an alteration.\\
 \end{argtable}
 
 \macroname{\textbackslash GreFinalDivisioFinalis}{\#1}{gregoriotex-signs.tex}
@@ -415,7 +444,7 @@ Macro to typeset a glyph.
 \begin{argtable}
 	\#1 & character & the character that it must call\\
 	\#2 & integer & The number for where the glyph is located.  \texttt{a} in gabc is 1, \texttt{b} is 2, \etc\\
-	\#3 & integer & height number of the next note\\
+	\#3 & \TeX\ code & code to set the next custos (using \verb=\GreNextCustos=)\\
 	\#4 & \texttt{0} & One-note glyph or more than two notes glyph except porrectus: \ie,  we must put the aligncenter in the middle of the first note\\
 	& \texttt{1} & Two notes glyph (podatus is considered as a one-note glyph): \ie, we put the aligncenter in the middle of the glyph\\
 	& \texttt{2} & Porrectus: has a special align center.\\
@@ -532,7 +561,7 @@ Same as \verb=\GreDivisioFinalis= except inside a syllable.
 \macroname{\textbackslash GreInDivisioMaior}{\#1\#2}{gregoriotex-signs.tex}
 Same as \verb=\GreDivisioMaior= except inside a syllable.
 
-\macroname{\textbackslash GreInDivisioMinima}{\#1\#2}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreInDivisioMinima}{\#1\#2\#3}{gregoriotex-signs.tex}
 Same as \verb=\GreDivisioMinima= except inside a syllable.
 
 \macroname{\textbackslash GreInDivisioMinor}{\#1\#2}{gregoriotex-signs.tex}
@@ -541,7 +570,7 @@ Same as \verb=\GreDivisioMinor= except inside a syllable.
 \macroname{\textbackslash GreInDominica}{\#1\#2\#3}{gregoriotex-signs.tex}
 Same as \verb=\GreDominica= except inside a syllable.
 
-\macroname{\textbackslash GreInVirgula}{\#1\#2}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreInVirgula}{\#1\#2\#3}{gregoriotex-signs.tex}
 Same as \verb=\GreVirgula= except inside a syllable.
 
 \macroname{\textbackslash GreItalic}{\#1}{gregoriotex.sty or gregoriotex.tex}
@@ -630,12 +659,19 @@ Macro to call if you want to go to the next line.
 \macroname{\textbackslash GreNewParLine}{}{gregoriotex-main.tex}
 Same as \verb=\GreNewLine= except line is not justified.
 
-\macroname{\textbackslash GreNextCustos}{\#1}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreFinalNewLine}{}{gregoriotex-main.tex}
+Handles a new line after the final bar.  This currently just advances \verb=\gre@knownline= in order to prevent a potential error message with a two-line initial on a two-line score.
+
+\macroname{\textbackslash GreNextCustos}{\#1\#2}{gregoriotex-signs.tex}
 Sets the pitch to use for the next custos if it were to happen at the point
 where this macro is called.
 
 \begin{argtable}
 	\#1 & integer & Height number of the custos.\\
+	\#2 & \texttt{Flat} & The custos should have a flat.\\
+			& \texttt{Natural} & The custos should have a natural.\\
+			& \texttt{Sharp} & The custos should have a sharp.\\
+			& \textit{empty} & The custos should not have an alteration.\\
 \end{argtable}
 
 \macroname{\textbackslash GreNextSyllableBeginsEUOUAE}{\#1\#2}{gregoriotex-syllable.tex}
@@ -647,8 +683,8 @@ Indicates that the syllable which follows begins a EUOUAE block.
 			& \texttt{1} & There is a line break between this syllable and the beginning of the EUOUAE block.\\
 \end{argtable}
 
-\macroname{\textbackslash GreOriscusCavum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
-Macro to typeset an oriscus cavum (the oriscus points at a higher note).
+\macroname{\textbackslash GreAscendensOriscusCavum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
+Macro to typeset an ascending oriscus cavum (the oriscus points at a higher note).
 
 \begin{argtable}
 	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
@@ -659,8 +695,8 @@ Macro to typeset an oriscus cavum (the oriscus points at a higher note).
 	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled.
 \end{argtable}
 
-\macroname{\textbackslash GreOriscusCavumAuctus}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
-Macro to typeset a reverse oriscus cavum (the oriscus points at a lower note).
+\macroname{\textbackslash GreDescendensOriscusCavum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
+Macro to typeset a descending oriscus cavum (the oriscus points at a lower note).
 
 \begin{argtable}
 	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
@@ -839,7 +875,7 @@ ligatures. In this example we should call \verb=\grefixedtext{\textit{ffj}}=.
 	\#1 & character & The initial letter of the score.\\
 \end{argtable}
 
-\macroname{\textbackslash GreSetInitialClef}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreSetInitialClef}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
 Macro for writing initial clef.
 
 \begin{argtable}
@@ -849,6 +885,7 @@ Macro for writing initial clef.
 	\#4 & \texttt{c} or \texttt{f} & Type of secondary clef.\\
 	\#5 & \texttt{0}--\texttt{5} & Line of secondary clef (\texttt{0} for no secondary clef).\\
 	\#6 & integer & Height of flat in secondary clef (\texttt{3} for no flat).\\
+	\#7 & integer & \texttt{0} if clef and first note are far enough to use a shorter space, 1 otherwise.\\
 \end{argtable}
 
 \macroname{\textbackslash GreSetLinesClef}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-main.tex}
@@ -863,6 +900,14 @@ Macro to define the clef that will appear at the beginning of the lines.
 	\#5 & \texttt{c} or \texttt{f} & Type of secondary clef.\\
 	\#6 & \texttt{0}--\texttt{5} & Line of secondary clef (\texttt{0} for no secondary clef).\\
 	\#7 & integer & Height of flat in secondary clef (\texttt{3} for no flat).\\
+\end{argtable}
+
+\macroname{\textbackslash GreSetNabcAboveLines}{\#1}{gregoriotex-main.tex}
+Macro to place argument containing Nabc neumes above the lines and empty
+\verb=\gre@currenttextabovelines= when done.
+
+\begin{argtable}
+	\#1 & string & Nabc neumes to be placed above the lines.\\
 \end{argtable}
 
 \macroname{\textbackslash GreSetNextSyllable}{\#1\#2\#3}{gregoriotex-syllable.tex}
@@ -963,6 +1008,13 @@ Macro to typeset the syllable.
 	\#9 & Gregorio\TeX\ glyphs & all the notes
 \end{argtable}
 
+\macroname{\textbackslash GreSyllableNoteCount}{\#1}{gregoriotex-syllable.tex}
+Indicates the number of notes in the current syllable.
+
+\begin{argtable}
+	\#1 & integer & The number of notes in the current syllable.\\
+\end{argtable}
+
 \macroname{\textbackslash GreTranslationCenterEnd}{}{gregoriotex-main.tex}
 Macro to end the centering of the translation text.
 
@@ -1035,13 +1087,15 @@ Macro for typesetting the vertical episema.
 	\#2 & string  & Type of glyph the episema is attached to. See \nameref{EpisemaSpecial} argument for description of options.\\
 \end{argtable}
 
-\macroname{\textbackslash GreVirgula}{\#1\#2}{gregoriotex-signs.tex}
+\macroname{\textbackslash GreVirgula}{\#1\#2\#3}{gregoriotex-signs.tex}
 Macro to typeset a virgula.
 
 \begin{argtable}
 	\#1 & \texttt{0} & There is no text under the bar.\\
 	& \texttt{1} & There is text under the bar.\\
 	\#2 & code & Macros which may happen before the skip but after the virgula (typically \verb=\grevepisema=).\\
+	\#3 & \texttt{0} & The notes around the bar are vertically close to the bar.\\
+	& \texttt{1} & The notes around the bar are far, \verb=@short= versions of spaces will be used.\\
 \end{argtable}
 
 \macroname{\textbackslash GreWriteTranslation}{\#1}{gregoriotex-main.tex}
