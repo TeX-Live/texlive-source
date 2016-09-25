@@ -1,3 +1,11 @@
+2016-09-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* MathTable.h, XeTeXOTMath.cpp: Sync with the upstream..
+
+2016-09-24  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* xetex.web: Sync with the upstream..
+
 2016-02-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* XeTeX_ext.c: Revert the change on 2015-11-06.
