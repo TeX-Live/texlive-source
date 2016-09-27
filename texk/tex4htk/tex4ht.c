@@ -1,6 +1,6 @@
 
 /* tex4ht.c (2012-07-25-19:36), generated from tex4ht-c.tex
-   Copyright (C) 2009-2012 TeX Users Group
+   Copyright (C) 2009-2016 TeX Users Group
    Copyright (C) 1996-2009 Eitan M. Gurari
 
 %
@@ -3987,7 +3987,7 @@ if( (file = f_open(str, flags)) != NULL ){
 
   str[i] = '\0';
   return  subs?  search_file_ext( name, str, flags):
-                FALSE;
+                NULL;
 }
 
 
@@ -6809,8 +6809,8 @@ if( (i<4)
     ||
     ((ch != 
 2 
-) && (ch != 
-5
+) && (ch >
+10
 
 ))
   )  bad_dvi;
