@@ -1,3 +1,14 @@
+2016-09-21  Karl Berry  <karl@tug.org>
+
+	* tex4ht.c (main): allow any id byte <= 10, for xetex.
+	It was updated to 7 in XeTeX for TL 2016.
+
+2016-05-22  Karl Berry  <karl@freefriends.org>
+
+        * tex4ht-c.tex (search_file): return NULL rather than FALSE
+        to placate MiKTeX.  Report from Mojca,
+        https://sourceforge.net/p/miktex/bugs/2488.
+
 2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Use the fragment ../../am/dist_hook.am.
