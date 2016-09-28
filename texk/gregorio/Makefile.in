@@ -797,8 +797,8 @@ clean-binPROGRAMS:
 	@GREGORIO_TREE@/src/vowel/$(am__dirstamp) \
 	@GREGORIO_TREE@/src/vowel/$(DEPDIR)/$(am__dirstamp)
 
-gregorio$(EXEEXT): $(gregorio_OBJECTS) $(gregorio_DEPENDENCIES) $(EXTRA_gregorio_DEPENDENCIES) 
-	@rm -f gregorio$(EXEEXT)
+gregorio-$(FILENAME_VERSION)$(EXEEXT): $(gregorio_OBJECTS) $(gregorio_DEPENDENCIES) $(EXTRA_gregorio_DEPENDENCIES) 
+	@rm -f gregorio$(EXEEXT) gregorio-$(FILENAME_VERSION)$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gregorio_OBJECTS) $(gregorio_LDADD) $(LIBS)
 
 mostlyclean-compile:
@@ -1401,7 +1401,7 @@ dist-hook:
 $(gregorio_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
-gregorio.log: gregorio$(EXEEXT)
+gregorio.log: gregorio-$(FILENAME_VERSION)$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
