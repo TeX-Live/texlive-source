@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = gregorio-$(FILENAME_VERSION)$(EXEEXT)
+bin_PROGRAMS = gregorio$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -463,7 +463,6 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
-FILENAME_VERSION = @FILENAME_VERSION@
 GREGORIO_TREE = @GREGORIO_TREE@
 GREP = @GREP@
 INSTALL = @INSTALL@
@@ -797,8 +796,8 @@ clean-binPROGRAMS:
 	@GREGORIO_TREE@/src/vowel/$(am__dirstamp) \
 	@GREGORIO_TREE@/src/vowel/$(DEPDIR)/$(am__dirstamp)
 
-gregorio-$(FILENAME_VERSION)$(EXEEXT): $(gregorio_OBJECTS) $(gregorio_DEPENDENCIES) $(EXTRA_gregorio_DEPENDENCIES) 
-	@rm -f gregorio$(EXEEXT) gregorio-$(FILENAME_VERSION)$(EXEEXT)
+gregorio$(EXEEXT): $(gregorio_OBJECTS) $(gregorio_DEPENDENCIES) $(EXTRA_gregorio_DEPENDENCIES) 
+	@rm -f gregorio$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(gregorio_OBJECTS) $(gregorio_LDADD) $(LIBS)
 
 mostlyclean-compile:
@@ -823,9 +822,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-elements-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-glyphs-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-notes-determination-l.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination-l.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination-y.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-score-determination.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gabc/$(DEPDIR)/gabc-write.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gregoriotex/$(DEPDIR)/gregoriotex-position.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GREGORIO_TREE@/src/gregoriotex/$(DEPDIR)/gregoriotex-write.Po@am__quote@
@@ -1401,7 +1400,7 @@ dist-hook:
 $(gregorio_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
-gregorio.log: gregorio-$(FILENAME_VERSION)$(EXEEXT)
+gregorio.log: gregorio$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
