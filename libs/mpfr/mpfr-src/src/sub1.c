@@ -96,16 +96,15 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
       /* A = S*ABS(B) +/- ulp(a) */
       MPFR_SET_EXP (a, MPFR_GET_EXP (b));
       MPFR_RNDRAW_EVEN (inexact, a, MPFR_MANT (b), MPFR_PREC (b),
-                        rnd_mode, MPFR_SIGN (a),
-                        if (MPFR_UNLIKELY ( ++MPFR_EXP (a) > __gmpfr_emax))
-                        inexact = mpfr_overflow (a, rnd_mode, MPFR_SIGN (a)));
-      /* inexact = mpfr_set4 (a, b, rnd_mode, MPFR_SIGN (a));  */
+                        rnd_mode, MPFR_SIGN (a), ++ MPFR_EXP (a));
       if (inexact == 0)
         {
           /* a = b (Exact)
              But we know it isn't (Since we have to remove `c')
              So if we round to Zero, we have to remove one ulp.
              Otherwise the result is correctly rounded. */
+          /* An overflow is not possible. */
+          MPFR_ASSERTD (MPFR_EXP (a) <= __gmpfr_emax);
           if (MPFR_IS_LIKE_RNDZ (rnd_mode, MPFR_IS_NEG (a)))
             {
               mpfr_nexttozero (a);
@@ -136,9 +135,14 @@ mpfr_sub1 (mpfr_ptr a, mpfr_srcptr b, mpfr_srcptr c, mpfr_rnd_t rnd_mode)
              i.e. inexact= MPFR_EVEN_INEX */
           if (MPFR_UNLIKELY (inexact == MPFR_EVEN_INEX*MPFR_INT_SIGN (a)))
             {
-              mpfr_nexttozero (a);
+              if (MPFR_UNLIKELY (MPFR_EXP (a) > __gmpfr_emax))
+                mpfr_setmax (a, __gmpfr_emax);
+              else
+                mpfr_nexttozero (a);
               inexact = -MPFR_INT_SIGN (a);
             }
+          else if (MPFR_UNLIKELY (MPFR_EXP (a) > __gmpfr_emax))
+            inexact = mpfr_overflow (a, rnd_mode, MPFR_SIGN (a));
           MPFR_RET (inexact);
         }
     }

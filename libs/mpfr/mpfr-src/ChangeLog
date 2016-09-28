@@ -1,4 +1,285 @@
 ------------------------------------------------------------------------
+r10891 | vlefevre | 2016-09-27 07:48:20 +0000 (Tue, 27 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.5.
+------------------------------------------------------------------------
+r10889 | vlefevre | 2016-09-23 14:09:21 +0000 (Fri, 23 Sep 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/examples/version.c
+
+[examples/version.c] A bit more output.
+(merged changeset r10888 from the trunk)
+------------------------------------------------------------------------
+r10887 | vlefevre | 2016-09-23 13:57:32 +0000 (Fri, 23 Sep 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/examples/version.c
+
+[examples/version.c] Update from the trunk (with svn merge on
+changesets r8034,8036,8128,10885-10886).
+------------------------------------------------------------------------
+r10873 | vlefevre | 2016-09-14 08:09:05 +0000 (Wed, 14 Sep 2016) | 4 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tdiv.c
+
+[tests/tdiv.c] Improved code readability, fixing a small bug
+(found by David Binderman using cppcheck) at the same time.
+This bug could only affect the error message if the test failed.
+(merged changesets r10871-10872 from the trunk)
+------------------------------------------------------------------------
+r10868 | vlefevre | 2016-09-13 17:17:12 +0000 (Tue, 13 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
+r10867 | vlefevre | 2016-09-13 17:09:26 +0000 (Tue, 13 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/doc/mpfr.texi
+
+[doc/mpfr.texi] Updated the month.
+------------------------------------------------------------------------
+r10866 | vlefevre | 2016-09-13 17:08:30 +0000 (Tue, 13 Sep 2016) | 2 lines
+Changed paths:
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/Makefile.am
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.5-rc1 and updated libmpfr_la_LDFLAGS in
+src/Makefile.am for the next release.
+------------------------------------------------------------------------
+r10857 | vlefevre | 2016-09-12 12:22:08 +0000 (Mon, 12 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/src/get_ld.c
+
+[src/get_ld.c] Re-added a blank line that disappeared in a merge.
+------------------------------------------------------------------------
+r10856 | vlefevre | 2016-09-12 12:17:31 +0000 (Mon, 12 Sep 2016) | 2 lines
+Changed paths:
+   M /branches/3.1/src/get_ld.c
+
+[src/get_ld.c] Removed a "see below", which refers to a comment that
+is in the trunk but not in this branch.
+------------------------------------------------------------------------
+r10855 | vlefevre | 2016-09-12 12:00:15 +0000 (Mon, 12 Sep 2016) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tset_ld.c
+
+[tests/tset_ld.c] In bug_20160907, fixed the method to get the smallest
+subnormal (now, OK with gcc -mpc64 or under NetBSD 6-).
+(merged changesets r10835-10839 from the trunk)
+------------------------------------------------------------------------
+r10854 | vlefevre | 2016-09-12 11:30:20 +0000 (Mon, 12 Sep 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tabs.c
+
+[tests/tabs.c] Removed mpfr_test_init (not needed here).
+(merged changeset r10822 from the trunk)
+------------------------------------------------------------------------
+r10853 | vlefevre | 2016-09-12 11:28:24 +0000 (Mon, 12 Sep 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tset_ld.c
+
+[tests/tset_ld.c] Move tests_start_mpfr and mpfr_test_init earlier.
+(merged changesets r8688,10821 from the trunk)
+------------------------------------------------------------------------
+r10852 | vlefevre | 2016-09-12 11:25:44 +0000 (Mon, 12 Sep 2016) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tset_ld.c
+
+[tests/tset_ld.c] Corrected a type (due to a printf with %ld) and fixed
+a loop in case an extended range is used.
+(merged changesets r10818-10819 from the trunk)
+------------------------------------------------------------------------
+r10815 | vlefevre | 2016-09-08 09:53:52 +0000 (Thu, 08 Sep 2016) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/get_ld.c
+   M /branches/3.1/tests/tset_ld.c
+
+[src/get_ld.c] Fixed bug for little-endian x86 extended precision.
+[tests/tset_ld.c] Added test case.
+(merged changesets r10807-10809,10811-10812 from the trunk)
+------------------------------------------------------------------------
+r10814 | vlefevre | 2016-09-08 09:05:08 +0000 (Thu, 08 Sep 2016) | 1 line
+Changed paths:
+   M /branches/3.1/NEWS
+
+[NEWS] Update for GNU MPFR 3.1.5.
+------------------------------------------------------------------------
+r10792 | vlefevre | 2016-09-05 12:04:43 +0000 (Mon, 05 Sep 2016) | 10 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+   M /branches/3.1/src/powerof2.c
+   M /branches/3.1/src/round_p.c
+   M /branches/3.1/src/round_prec.c
+   M /branches/3.1/tests/tcan_round.c
+
+Fixed various bugs in mpfr_can_round_raw, which affected mpfr_can_round:
+there could still be false positives (i.e. mpfr_can_round could say that
+rounding was possible while correct rounding was not guaranteed), and
+also false negatives, some of which could yield infinite Ziv loops in
+user code in practice.
+Added tests triggering these bugs, in particular a comprehensive test
+against a naive implementation.
+(merged changesets
+  r10679-10686,10717-10718,10743,10746-10748,10752,10754,10756
+from the trunk)
+------------------------------------------------------------------------
+r10791 | vlefevre | 2016-09-05 09:31:14 +0000 (Mon, 05 Sep 2016) | 3 lines
+Changed paths:
+   M /branches/3.1/tests/tzeta.c
+
+[tests/tzeta.c] Updated test_generic invocation based on the trunk
+in order to reduce the test time (increased since r9849).
+(merged changesets r9955,10667,10672,10790 from the trunk)
+------------------------------------------------------------------------
+r10742 | vlefevre | 2016-08-22 11:42:38 +0000 (Mon, 22 Aug 2016) | 2 lines
+Changed paths:
+   M /branches/3.1/tests/tmul.c
+
+[tests/tmul.c] Added underflow test from the trunk (merged changesets
+from r10601 to r10716 for tmul.c only).
+------------------------------------------------------------------------
+r10728 | vlefevre | 2016-08-04 20:31:01 +0000 (Thu, 04 Aug 2016) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tsi_op.c
+
+[tests/tsi_op.c] Fixed a macro. There were no consequences except
+spurious null statements.
+(merged changeset r10724 from the trunk)
+------------------------------------------------------------------------
+r10722 | vlefevre | 2016-08-04 12:18:54 +0000 (Thu, 04 Aug 2016) | 3 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tset_si.c
+   M /branches/3.1/tests/tset_sj.c
+
+[tests/tset_{si,sj}.c] Fixed macros. There were no consequences except
+spurious null statements.
+(merged changeset r10721 from the trunk)
+------------------------------------------------------------------------
+r10720 | vlefevre | 2016-08-04 01:52:45 +0000 (Thu, 04 Aug 2016) | 6 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tpow_z.c
+   M /branches/3.1/tests/tset_si.c
+   M /branches/3.1/tests/tset_sj.c
+   M /branches/3.1/tests/tsi_op.c
+
+[tests] C++ compatibility: avoid errors with "g++ -std=c++11" or later.
+Note that as of GCC 6, "the default mode for C++ is now -std=gnu++14
+instead of -std=gnu++98" <https://gcc.gnu.org/gcc-6/changes.html>.
+So, this fixes the failures in the build of the MPFR tests with g++
+from GCC 6 without particular options.
+(merged changeset r10719 from the trunk)
+------------------------------------------------------------------------
+r10387 | vlefevre | 2016-05-30 07:55:29 +0000 (Mon, 30 May 2016) | 2 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/tests/tsub.c
+
+[tests/tsub.c] Added comments for check_max_almosteven.
+(merged changeset r10386 from the trunk)
+------------------------------------------------------------------------
+r10384 | vlefevre | 2016-05-29 18:55:04 +0000 (Sun, 29 May 2016) | 12 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/sub1.c
+   M /branches/3.1/tests/tsub.c
+
+[src/sub1.c] Fixed bug in mpfr_sub1 (real subtraction a = b - c, with
+  |b| > |c|): In MPFR_RNDN (round-to-nearest mode), when
+    * |b| is the midpoint between the maximum finite number in the
+      precision of a and 2^emax (the maximum finite number + 1 ulp),
+      which is possible only if PREC(b) > PREC(a),
+    * c is small enough (i.e. no overlap with a and b),
+  mpfr_sub1 returns an infinity (with overflow flag set) instead of
+  ± the maximum number (no overflow). The cause is that an overflow
+  is generated too early, in an intermediate rounding.
+[tests/tsub.c] Added test cases.
+(merged changeset r10383 from the trunk, with conflict resolved in
+src/sub1.c and mpfr_flags_t replaced by unsigned int)
+------------------------------------------------------------------------
+r10304 | vlefevre | 2016-05-22 10:05:37 +0000 (Sun, 22 May 2016) | 5 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src/add_ui.c
+   M /branches/3.1/src/sub_ui.c
+   M /branches/3.1/tests/tadd_ui.c
+   M /branches/3.1/tests/tsub_ui.c
+
+For mpfr_add_ui and mpfr_sub_ui, make sure that all the expected flags
+are set (in practice, only NaN was affected). Added testcases from the
+trunk (merged r10298 and r10303).
+Note: the trunk was fixed with a partial rewrite for some optimization
+and to improve consistency, but here, the changes are kept minimal.
+------------------------------------------------------------------------
+r10264 | vlefevre | 2016-04-13 21:17:07 +0000 (Wed, 13 Apr 2016) | 9 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] Removed the detection of possible inconsistencies
+under Unix because the tests could yield spurious errors with Cygwin32
+or other similar implementations. Moreover, such tests were used for
+debugging purpose or to detect potential problems in the environment,
+thus were not really useful for the end user. They were initially
+added in the win-thread-safe-dll branch (r9682, following a problem
+found in r9680). One alternative for checking by the MPFR developers
+would be to output the status of some internal macros in tversion.
+(merged changeset r10260 from the trunk)
+------------------------------------------------------------------------
+r10234 | vlefevre | 2016-03-15 12:17:53 +0000 (Tue, 15 Mar 2016) | 5 lines
+Changed paths:
+   M /branches/3.1
+   M /branches/3.1/src
+   M /branches/3.1/src/mpfr-impl.h
+
+[src/mpfr-impl.h] Fixed and improved some sign-related macros
+(some parentheses were missing). Note: the code in the 3.1 branch
+was not affected by these missing parentheses; however this could
+break later patches or ports of new functions using MPFR internals.
+(merged changeset r9295 from the trunk)
+------------------------------------------------------------------------
+r10204 | vlefevre | 2016-03-06 13:09:13 +0000 (Sun, 06 Mar 2016) | 1 line
+Changed paths:
+   M /branches/3.1/INSTALL
+   M /branches/3.1/VERSION
+   M /branches/3.1/configure.ac
+   M /branches/3.1/doc/mpfr.texi
+   M /branches/3.1/src/mpfr.h
+   M /branches/3.1/src/version.c
+
+Updated version to 3.1.5-dev.
+------------------------------------------------------------------------
+r10201 | vlefevre | 2016-03-06 11:22:21 +0000 (Sun, 06 Mar 2016) | 1 line
+Changed paths:
+   M /branches/3.1/ChangeLog
+
+ChangeLog update with "TZ=UTC svn log -rHEAD:0 -v" (in UTF-8 locales).
+------------------------------------------------------------------------
 r10200 | vlefevre | 2016-03-06 11:20:09 +0000 (Sun, 06 Mar 2016) | 1 line
 Changed paths:
    M /branches/3.1/doc/mpfr.texi

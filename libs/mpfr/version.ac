@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current mpfr version
-m4_define([mpfr_version], [3.1.4])
+m4_define([mpfr_version], [3.1.5])

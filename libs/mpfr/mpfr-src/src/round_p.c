@@ -35,10 +35,16 @@ mpfr_round_p (mp_limb_t *bp, mp_size_t bn, mpfr_exp_t err0, mpfr_prec_t prec)
 
   i1 = mpfr_round_p_2 (bp, bn, err0, prec);
 
-  /* compare with mpfr_can_round_raw */
+  /* Note: since revision 10747, mpfr_can_round_raw is supposed to be always
+     correct, whereas mpfr_round_p_2 might return 0 in some cases where one
+     could round, for example with err0=67 and prec=54:
+     b = 1111101101010001100011111011100010100011101111011011101111111111
+     thus we cannot compare i1 and i2, we only can check that we don't have
+     i1 <> 0 and i2 = 0.
+  */
   i2 = mpfr_can_round_raw (bp, bn, MPFR_SIGN_POS, err0,
                            MPFR_RNDN, MPFR_RNDZ, prec);
-  if (i1 != i2)
+  if (i1 && (i2 == 0))
     {
       fprintf (stderr, "mpfr_round_p(%d) != mpfr_can_round(%d)!\n"
                "bn = %lu, err0 = %ld, prec = %lu\nbp = ", i1, i2,
