@@ -1,3 +1,7 @@
+2016-09-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* styfile.c: Use mfgets() instead of fgets() in bfgets().
+
 2016-02-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mendex.1, mendex.doc: Convert encoding
