@@ -49,6 +49,7 @@ mpfr_add_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long int u, mpfr_rnd_t rnd_mode
       MPFR_SAVE_EXPO_MARK (expo);
       MPFR_SET_EXP (uu, GMP_NUMB_BITS - cnt);
       inex = mpfr_add(y, x, uu, rnd_mode);
+      MPFR_SAVE_EXPO_UPDATE_FLAGS (expo, __gmpfr_flags);
       MPFR_SAVE_EXPO_FREE (expo);
       return mpfr_check_range(y, inex, rnd_mode);
     }

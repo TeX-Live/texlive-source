@@ -1,4 +1,4 @@
-Changes applied to the mpfr-3.1.4/ tree as obtained from:
+Changes applied to the mpfr-3.1.5/ tree as obtained from:
 	http://ftp.gnu.org/gnu/mpfr/
 
 Removed:
@@ -23,4 +23,3 @@ Removed:
 	tests/
 	tools/
 	tune/
-

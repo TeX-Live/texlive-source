@@ -37,17 +37,17 @@ MPFR).
    not been done yet and if patches are available. You can check
    on the release page:
 
-     http://www.mpfr.org/mpfr-3.1.4/
+     http://www.mpfr.org/mpfr-3.1.5/
 
    which may have additional information. The patches can be applied
    with commands like:
 
-     wget http://www.mpfr.org/mpfr-3.1.4/allpatches
+     wget http://www.mpfr.org/mpfr-3.1.5/allpatches
      patch -N -Z -p1 < allpatches
 
    or
 
-     curl http://www.mpfr.org/mpfr-3.1.4/allpatches | patch -N -Z -p1
+     curl http://www.mpfr.org/mpfr-3.1.5/allpatches | patch -N -Z -p1
 
    (Those instructions are for the GNU patch command, for example
    /usr/bin/gpatch on Solaris.)
@@ -338,7 +338,7 @@ Several documents may help you to solve the problem:
   * the FAQ (either the FAQ.html file distributed with MPFR, or the
     on-line version <http://www.mpfr.org/faq.html>, which may be more
     up-to-date);
-  * the MPFR web page for this version <http://www.mpfr.org/mpfr-3.1.4/>,
+  * the MPFR web page for this version <http://www.mpfr.org/mpfr-3.1.5/>,
     which lists bugs found in this version and provides some patches.
 
 If the "configure" fails, please check that the C compiler and its
