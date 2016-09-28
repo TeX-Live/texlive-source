@@ -57,6 +57,6 @@ $(gregorio_OBJECTS): $(KPATHSEA_DEPEND)
 ##
 TESTS_ENVIRONMENT = GREGORIO_TREE='$(GREGORIO_TREE)'
 TESTS = gregorio.test
-gregorio.log: gregorio-$(FILENAME_VERSION)$(EXEEXT)
+gregorio.log: gregorio$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 DISTCLEANFILES = factus.gtex veni.gtex

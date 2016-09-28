@@ -1,8 +1,9 @@
 2016-09-29  Karl Berry  <karl@tug.org>
 
-	* Makefile.am (bin_PROGRAMS): just "gregorio" (same as TL'16).
 	* configure.ac (FILENAME_VERSION): no need to define for TL.
 	* gregorio.test (gregorio): do not use $FILENAME_VERSION.
+	* Makefile.am (bin_PROGRAMS): just "gregorio" (same as TL'16).
+	(gregorio.log): likewise.
 
 2016-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
