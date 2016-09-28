@@ -1,6 +1,7 @@
 #! /bin/sh
-
-# Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+# $Id$
+# Copyright 2016 Karl Berry <tex-live@tug.org>
+# Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -9,7 +10,7 @@ export TEXMFCNF
 
 DOCSRC=$srcdir/$GREGORIO_TREE/doc
 
-gregorio=gregorio-$FILENAME_VERSION
+gregorio=gregorio
 
 failed=
 

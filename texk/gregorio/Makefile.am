@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/gregorio/
 ##
-## Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original gregorio source tree.
@@ -20,7 +22,7 @@ AM_CPPFLAGS = \
 	$(KPATHSEA_INCLUDES) -D_GNU_SOURCE -DUSE_KPSE
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-bin_PROGRAMS = gregorio-$(FILENAME_VERSION)
+bin_PROGRAMS = gregorio
 
 gregorio_SOURCES = \
 	@GREGORIO_TREE@/src/characters.c \
