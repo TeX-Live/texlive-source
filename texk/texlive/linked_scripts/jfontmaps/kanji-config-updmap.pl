@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20151002.0
+# Version 20160929.0
 #
 # formerly known as updmap-setup-kanji
 #
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
-# Copyright 2011-2015 by PREINING Norbert
+# Copyright 2011-2016 by PREINING Norbert
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
@@ -21,7 +21,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20151002.0';
+my $version = '20160929.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -75,7 +75,9 @@ my %representatives = (
   "ipa"           => "ipam.ttf",
   "ipaex"         => "ipaexm.ttf",
   "ms"            => "msgothic.ttc",
-  "yu-win"        => "yumin.ttf",
+  "ms-osx"        => "MS-Gothic.ttf",
+  "yu-win"        => "yugothib.ttf",
+  "yu-win10"      => "YuGothB.ttc",
   "yu-osx"        => "YuMin-Medium.otf",
 );
 my %available;
