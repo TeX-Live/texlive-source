@@ -61,6 +61,13 @@
 #endif
 #endif
 
+#if defined(MIKTEX)
+#if defined(__APPLE__)
+#include <sys/syslimits.h>
+#  define _MAX_PATH     PATH_MAX
+#endif
+#endif
+
 static int verbose = 0;
 int keep_cache = 0;
 
