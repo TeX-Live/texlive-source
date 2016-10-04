@@ -62,9 +62,8 @@
 #endif
 
 #if defined(MIKTEX)
-#if defined(__APPLE__)
-#include <sys/syslimits.h>
-#  define _MAX_PATH     PATH_MAX
+#if !defined(PATH_MAX)
+#  define PATH_MAX 256
 #endif
 #endif
 
@@ -85,7 +84,6 @@ static int qcheck_filetype (const char *fqpn, dpx_res_type type);
 #if defined(TESTCOMPILE) && !defined(MIKTEX)
 #  define MIKTEX        1
 #  define PATH_SEP_CHR  '/'
-#  define _MAX_PATH     256
 
 static int
 miktex_get_acrobat_font_dir (char *buf)
@@ -103,7 +101,7 @@ miktex_find_file (const char *filename, const char *dirlist, char *buf)
   fqpn = kpse_path_search(dirlist, filename, 0);
   if (!fqpn)
     return  0;
-  if (strlen(fqpn) > _MAX_PATH)
+  if (strlen(fqpn) > PATH_MAX)
     r = 0;
   else {
     strcpy(buf, fqpn);
@@ -126,7 +124,7 @@ miktex_find_app_input_file (const char *progname, const char *filename, char *bu
 
   if (!fqpn)
     return  0;
-  if (strlen(fqpn) > _MAX_PATH)
+  if (strlen(fqpn) > PATH_MAX)
     r = 0;
   else {
     strcpy(buf, fqpn);
@@ -147,7 +145,7 @@ miktex_find_psheader_file (const char *filename, char *buf)
 
   if (!fqpn)
     return  0;
-  if (strlen(fqpn) > _MAX_PATH)
+  if (strlen(fqpn) > PATH_MAX)
     r = 0;
   else {
     strcpy(buf, fqpn);
@@ -164,7 +162,7 @@ miktex_find_psheader_file (const char *filename, char *buf)
 #ifndef PATH_SEP_CHR
 #  define PATH_SEP_CHR '\\'
 #endif
-static char  _tmpbuf[_MAX_PATH+1];
+static char  _tmpbuf[PATH_MAX+1];
 #endif /* MIKTEX */
 
 static int exec_spawn (char *cmd)
@@ -560,11 +558,11 @@ dpx_find_cmap_file (const char *filename)
 #if  defined(MIKTEX_NO_KPATHSEA)
   /* Find in Acrobat's Resource/CMap dir */
   {
-    char  _acrodir[_MAX_PATH+1];
+    char  _acrodir[PATH_MAX+1];
     char  *q;
     int    r;
 
-    memset(_acrodir, 0, _MAX_PATH+1);
+    memset(_acrodir, 0, PATH_MAX+1);
     r = miktex_get_acrobat_font_dir(_acrodir);
     if (r &&
         strlen(_acrodir) > strlen("Font")) {
@@ -582,7 +580,7 @@ dpx_find_cmap_file (const char *filename)
         }
       }
     }
-    memset(_tmpbuf, 0, _MAX_PATH+1);
+    memset(_tmpbuf, 0, PATH_MAX+1);
   }
 #else
   fqpn = kpse_find_file(filename, kpse_cmap_format, 0); 
@@ -829,7 +827,7 @@ dpx_create_temp_file (void)
 
 #if defined(MIKTEX)
   {
-    tmp = NEW(_MAX_PATH + 1, char);
+    tmp = NEW(PATH_MAX + 1, char);
     miktex_create_temp_file_name(tmp); /* FIXME_FIXME */
 #if defined(MIKTEX_WINDOWS)
     {
