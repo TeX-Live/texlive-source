@@ -61,10 +61,8 @@
 #endif
 #endif
 
-#if defined(MIKTEX)
 #if !defined(PATH_MAX)
 #  define PATH_MAX 256
-#endif
 #endif
 
 static int verbose = 0;
