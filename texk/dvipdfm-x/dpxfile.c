@@ -61,9 +61,14 @@
 #endif
 #endif
 
+#if defined(MIKTEX) || defined(TESTCOMPILE)
+#if defined(__APPLE__)
+#  include <sys/syslimits.h>
+#endif
 #if !defined(PATH_MAX)
 #  define PATH_MAX 256
 #endif
+#endif /* MIKTEX || TESTCOMPILE */
 
 static int verbose = 0;
 int keep_cache = 0;
