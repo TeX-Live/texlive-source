@@ -1,4 +1,4 @@
-2016-10-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2016-10-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dpxfile.c: Use PATH_MAX instead of _MAX_PATH.
 
