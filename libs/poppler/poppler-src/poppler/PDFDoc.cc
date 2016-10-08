@@ -560,6 +560,10 @@ GBool PDFDoc::checkLinearization() {
   if (!hints) {
     hints = new Hints(str, linearization, getXRef(), secHdlr);
   }
+  if (!hints->isOk()) {
+    linearizationState = 2;
+    return gFalse;
+  }
   for (int page = 1; page <= linearization->getNumPages(); page++) {
     Object obj;
     Ref pageRef;

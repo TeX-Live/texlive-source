@@ -190,14 +190,8 @@ private:
   // You can tweak the final object size for different time/space tradeoffs.
   // In libc malloc(), rounding is 16 so it's best to choose a value that
   // is a multiple of 16.
-  class MemoryLayout {
-      char c[sizeof(char*)];
-      int i;
-      char* s;
-  };
-
   static const int STR_FINAL_SIZE = 32;
-  static const int STR_STATIC_SIZE = STR_FINAL_SIZE - sizeof(MemoryLayout) + sizeof(char*);
+  static const int STR_STATIC_SIZE = STR_FINAL_SIZE - sizeof(int) - sizeof(char*);
 
   int  roundedSize(int len);
 

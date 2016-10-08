@@ -1,3 +1,15 @@
+Release 0.48.0
+        core:
+         * Fix crashes and memory leaks in invalid files.
+         * Small memory usage improvements.
+         * TextOutputDev: Remove null characters from PDF text. Bug #97144
+         * TextOutputDev: Break words on all whitespace characters. Bug #97399
+         * Fix UTF16 decoding of document outline title. Bug #97156
+         * Add functions for named destination name in name-tree/dict
+
+        glib:
+         * Increase glib requirement to 2.41
+
 Release 0.47.0
         core:
          * Fix abort on documents where the docinfo obj is not a dict. Bug #97134

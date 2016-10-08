@@ -518,6 +518,8 @@ FormField::FormField(PDFDoc *docA, Object *aobj, const Ref& aref, FormField *par
 
           if (terminal) {
             error(errSyntaxWarning, -1, "Field can't have both Widget AND Field as kids\n");
+            childObj.free();
+            childRef.free();
             continue;
           }
 
@@ -530,6 +532,8 @@ FormField::FormField(PDFDoc *docA, Object *aobj, const Ref& aref, FormField *par
             error(errSyntaxWarning, -1, "Field can't have both Widget AND Field as kids\n");
             obj2.free();
             obj3.free();
+            childObj.free();
+            childRef.free();
             continue;
           }
           _createWidget(&childObj, ref);

@@ -3346,6 +3346,10 @@ GBool PSOutputDev::checkPageSlice(Page *page, double /*hDPI*/, double /*vDPI*/,
   }
   nStripes = (int)ceil((double)(sliceW * sliceH) /
 		       (double)rasterizationSliceSize);
+  if (unlikely(nStripes == 0)) {
+      delete splashOut;
+      return gFalse;
+  }
   stripeH = (sliceH + nStripes - 1) / nStripes;
 
   // render the stripes

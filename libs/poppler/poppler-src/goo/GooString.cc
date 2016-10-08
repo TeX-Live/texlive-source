@@ -18,7 +18,7 @@
 // Copyright (C) 2006 Kristian Høgsberg <krh@redhat.com>
 // Copyright (C) 2006 Krzysztof Kowalczyk <kkowalczyk@gmail.com>
 // Copyright (C) 2007 Jeff Muizelaar <jeff@infidigm.net>
-// Copyright (C) 2008-2011 Albert Astals Cid <aacid@kde.org>
+// Copyright (C) 2008-2011, 2016 Albert Astals Cid <aacid@kde.org>
 // Copyright (C) 2011 Kenji Uno <ku@digitaldolphins.jp>
 // Copyright (C) 2012, 2013 Fabio D'Urso <fabiodurso@hotmail.it>
 // Copyright (C) 2012 Adrian Johnson <ajohnson@redneon.com>
@@ -163,7 +163,7 @@ void inline GooString::resize(int newLength) {
       // assert(s != s1) the roundedSize condition ensures this
       if (newLength < length) {
 	memcpy(s1, s, newLength);
-      } else {
+      } else if (length > 0) {
 	memcpy(s1, s, length);
       }
       if (s != sStatic)
@@ -200,6 +200,10 @@ GooString::GooString() {
   s = NULL;
   length = 0;
   Set(NULL);
+
+#if __cplusplus >= 201103L
+  static_assert(sizeof(GooString) == GooString::STR_FINAL_SIZE, "You should check memory alignment or STR_STATIC_SIZE calculation.");
+#endif
 }
 
 GooString::GooString(const char *sA) {
