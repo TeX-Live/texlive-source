@@ -1642,9 +1642,7 @@ Splash::~Splash() {
     restoreState();
   }
   delete state;
-  if (vectorAntialias) {
-    delete aaBuf;
-  }
+  delete aaBuf;
 }
 
 //------------------------------------------------------------------------

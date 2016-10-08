@@ -22,7 +22,7 @@ if (ECM_FOUND)
 endif()
 
 set(POPPLER_MAJOR_VERSION "0")
-set(POPPLER_MINOR_VERSION "47")
+set(POPPLER_MINOR_VERSION "48")
 set(POPPLER_MICRO_VERSION "0")
 set(POPPLER_VERSION "${POPPLER_MAJOR_VERSION}.${POPPLER_MINOR_VERSION}.${POPPLER_MICRO_VERSION}")
 
@@ -96,7 +96,7 @@ set(TEXTOUT_WORD_LIST ON)
 # setting the minimum required versions for some components
 set(QT4_MIN_VERSION "4.7.0")
 set(CAIRO_VERSION "1.10.0")
-set(GLIB_REQUIRED "2.18")
+set(GLIB_REQUIRED "2.41")
 
 macro_bool_to_01(ENABLE_SPLASH HAVE_SPLASH)
 find_package(Freetype REQUIRED)
@@ -502,7 +502,7 @@ add_library(poppler STATIC ${poppler_SRCS})
 else(MSVC)
 add_library(poppler SHARED ${poppler_SRCS})
 endif(MSVC)
-set_target_properties(poppler PROPERTIES VERSION 63.0.0 SOVERSION 63)
+set_target_properties(poppler PROPERTIES VERSION 64.0.0 SOVERSION 64)
 target_link_libraries(poppler LINK_PRIVATE ${poppler_LIBS})
 install(TARGETS poppler RUNTIME DESTINATION bin LIBRARY DESTINATION lib${LIB_SUFFIX} ARCHIVE DESTINATION lib${LIB_SUFFIX})
 
