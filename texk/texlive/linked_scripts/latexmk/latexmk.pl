@@ -118,8 +118,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.45';
-$version_details = "$My_name, John Collins, 22 April 2016";
+$version_num = '4.48';
+$version_details = "$My_name, John Collins, 5 Sep. 2016";
 
 use Config;
 use File::Basename;
@@ -192,6 +192,12 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##      5 Sep 2016  John Collins  Add routines: rdb_list_source, rdb_set_source
+##     17 Aug 2016  John Collins  Add XDG Base Directory compatibility
+##                                   for per-user rc file
+##      1 May 2016  John Collins  Correct creation of output and aux directories
+##                                to correctly handle relative paths when -cd
+##                                is used.
 ##     22 Apr 2016  John Collins  Fix problem of -C not always working correctly
 ##                                when compilation was with -pdf and clear was default.
 ##                                (Correctly default set of rules in rdb_make_rule_list.)
@@ -1529,6 +1535,16 @@ if (exists $ENV{'HOME'} ) {
 elsif (exists $ENV{'USERPROFILE'} ) {
     $HOME = $ENV{'USERPROFILE'};
 }
+# XDG configuration home
+$XDG_CONFIG_HOME = '';
+if (exists $ENV{'XDG_CONFIG_HOME'} ) {
+    $XDG_CONFIG_HOME = $ENV{'XDG_CONFIG_HOME'};
+}
+elsif ($HOME ne '') {
+    if ( -d "$HOME/.config") {
+        $XDG_CONFIG_HOME = "$HOME/.config";
+    }
+}
 
 
 #==================================================
@@ -1569,11 +1585,18 @@ if ( $auto_rc_use ) {
     # System rc file:
     read_first_rc_file_in_list( @rc_system_files );
 }
-if ( $auto_rc_use && ($HOME ne "" ) ) {    
+if ( $auto_rc_use && ($HOME ne "" ) ) {
     # User rc file:
+    @user_rc = ();
+    if ( $XDG_CONFIG_HOME ) { 
+       push @user_rc, "$XDG_CONFIG_HOME/latexmk/latexmkrc";
+    }
     # N.B. $HOME equals "" if latexmk couldn't determine a home directory.
     # In that case, we shouldn't look for an rc file there.
-    read_first_rc_file_in_list( "$HOME/.latexmkrc" );
+    if ( $HOME ) { 
+       push @user_rc, "$HOME/.latexmkrc";
+    }
+    read_first_rc_file_in_list( @user_rc );
 }
 if ( $auto_rc_use ) { 
     # Rc file in current directory:
@@ -2005,40 +2028,20 @@ if ( $recorder ) {
     add_option( "-recorder", \$latex, \$pdflatex );
 }
 
-# If the output and/or aux directories are specified: Fix the (pdf)latex
-#   commands to use them, and ensure that the directories exist.
-# N.B. We are immune against cd'ing to directory of TeX file, because in
-#   that case we have forced the directories to be absolute.
+# If the output and/or aux directories are specified, fix the (pdf)latex
+#   commands to use them.
+# N.B. We'll ensure that the directories actually exist only after a
+#   possible cd to the document directory, since the directories can be
+#   relative to the document.
 
 if ( $out_dir ) {
     add_option( "-output-directory=\"$out_dir\"", \$latex, \$pdflatex );
-    if ( ! -e $out_dir ) {
-        warn "$My_name: making output directory '$out_dir'\n"
-            if ! $silent;
-        make_path $out_dir;
-    }
-    elsif ( ! -d $out_dir ) {
-        warn "$My_name: you requested output directory '$out_dir',\n",
-             "     but an ordinary file of the same name exists, which will\n",
-             "     probably give an error later\n";
-    }
 }
-
 if ( $aux_dir && ($aux_dir ne $out_dir) ) {
     # N.B. If $aux_dir and $out_dir are the same, then the -output-directory
     # option is sufficient, especially because the -aux-directory exists
     # only in MiKTeX, not in TeXLive.
     add_option( "-aux-directory=\"$aux_dir\"", \$latex, \$pdflatex );
-    if ( ! -e $aux_dir ) {
-        warn "$My_name: making auxiliary directory '$aux_dir'\n"
-            if ! $silent;
-        make_path $aux_dir;
-    }
-    elsif ( ! -d $aux_dir ) {
-        warn "$My_name: you requested aux directory '$aux_dir',\n",
-             "     but an ordinary file of the same name exists, which will\n",
-             "     probably give an error later\n";
-    }
 }
 
 if ( $jobname ne '' ) { 
@@ -2199,6 +2202,35 @@ foreach $filename ( @file_list )
         $path = '';
     }
 
+    # Ensure the output/auxiliary directories exist, if need be
+    if ( $out_dir ) {
+        if ( ! -e $out_dir ) {
+             warn "$My_name: making output directory '$out_dir'\n"
+                if ! $silent;
+             make_path $out_dir;
+        }
+        elsif ( ! -d $out_dir ) {
+            warn "$My_name: you requested output directory '$out_dir',\n",
+                 "     but an ordinary file of the same name exists, which will\n",
+                 "     probably give an error later\n";
+	}
+    }
+
+    if ( $aux_dir && ($aux_dir ne $out_dir) ) {
+        # N.B. If $aux_dir and $out_dir are the same, then the -output-directory
+        # option is sufficient, especially because the -aux-directory exists
+        # only in MiKTeX, not in TeXLive.
+        if ( ! -e $aux_dir ) {
+            warn "$My_name: making auxiliary directory '$aux_dir'\n"
+               if ! $silent;
+            make_path $aux_dir;
+	}
+        elsif ( ! -d $aux_dir ) {
+            warn "$My_name: you requested aux directory '$aux_dir',\n",
+                 "     but an ordinary file of the same name exists, which will\n",
+                 "     probably give an error later\n";
+	}
+    }
 
     ## remove extension from filename if was given.
     if ( &find_basename($filename, $root_filename, $texfile_name) )
@@ -7503,7 +7535,7 @@ sub rdb_ensure_file {
 #************************************************************
 
 sub rdb_remove_files {
-    # rdb_remove_file( rule, file,... )
+    # rdb_remove_file( rule, file, ... )
     # Removes file(s) for the rule.  
     my $rule = shift;
     if (!$rule) { return; }
@@ -7512,6 +7544,36 @@ sub rdb_remove_files {
                   sub{ foreach (@files) { delete ${$PHsource}{$_}; }  }
     );
 } #END rdb_remove_files
+
+#************************************************************
+
+sub rdb_list_source {
+    # rdb_list_source( rule )
+    # Return array of source files for rule.
+    my $rule = shift;
+    my @files = ();
+    rdb_one_rule( $rule, 
+                  sub{ @files = keys %$PHsource; }
+    );
+    return @files;
+} #END rdb_list_source
+
+#************************************************************
+
+sub rdb_set_source {
+    # rdb_set_source( rule, file, ... )
+    my $rule = shift;
+    if (!$rule) { return; }
+    my %files = ();
+    foreach (@_) {
+	rdb_ensure_file( $rule, $_ );
+	$files{$_} = 1;
+    }
+    foreach ( rdb_list_source($rule) ) {
+        if ( ! exists $files{$_} ) { rdb_remove_files( $rule, $_ ); }
+    }    
+    return;
+} #END rdb_list_source
 
 #************************************************************
 
