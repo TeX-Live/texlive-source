@@ -6,7 +6,7 @@
 ##
 ## TeX Live's extra scripts.
 
-## Build lists of texmf and texmf-dist scripts.
+## Build lists of scripts.
 ##
 scripts-list: Makefile
 	@echo "Create $@"
@@ -125,6 +125,7 @@ texmf_other_scripts = \
 	kotex-utils/komkindex.pl \
 	kotex-utils/ttf2kotexfont.pl \
 	latex-git-log/latex-git-log \
+	latex-papersize/latex-papersize.py \
 	latex2man/latex2man \
 	latexdiff/latexdiff-vc.pl \
 	latexdiff/latexdiff.pl \
