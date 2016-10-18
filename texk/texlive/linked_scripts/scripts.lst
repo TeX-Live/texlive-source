@@ -72,6 +72,7 @@ kotex-utils/ttf2kotexfont.pl
 latex-git-log/latex-git-log
 latex-papersize/latex-papersize.py
 latex2man/latex2man
+latex2nemeth/latex2nemeth
 latexdiff/latexdiff-vc.pl
 latexdiff/latexdiff.pl
 latexdiff/latexrevise.pl
