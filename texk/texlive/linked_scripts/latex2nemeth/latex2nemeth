@@ -1,0 +1,3 @@
+#!/bin/sh
+jarpath=`kpsewhich --progname=latex2nemeth --format=texmfscripts latex2nemeth-v1.0.jar`
+exec java -jar "$jarpath" "$@"
