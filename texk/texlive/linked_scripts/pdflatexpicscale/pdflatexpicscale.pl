@@ -7,17 +7,21 @@
 # 2016-07-27 first public release
 # 2016-08-02 changed regex to prevent problem with long filenames
 # 2016-08-02 changed > to gt (shame on me)
+# 2016-10-20 corrected behaviour when program gets called without arguments
+# (shame on me, again)
+# 2016-10-20 added undocumented switch --help to show usage.
 use strict;
 use File::Basename;
 use File::Spec;
 use File::Copy;
 use Getopt::Long;
 
-my $version = '0.2';
-my $versiondate = '2016-08-02';
+my $version = '0.3';
+my $versiondate = '2016-10-20';
 my $showversion;
 
 my $verbose;
+my $help;
 my $TeXproject;
 
 # folders for scaled graphics, relative names
@@ -169,6 +173,10 @@ sub readlog
 	    unless (/\sused/){
 		chomp $buffer;
 		$buffer .= <LOGFILE>;
+	    } # twice ought to be enough
+	    unless (/\sused/){
+		chomp $buffer;
+		$buffer .= <LOGFILE>;
 	    }
 	    if($buffer =~ /Info:\s(\S*)\.(\w+)\sused/){
 		$picname = $1;
@@ -215,21 +223,29 @@ GetOptions('verbose'       => \$verbose,
 	   'destdir=s'     => \$printfolderprefix,
 	   'tolerance=i'   => \$tolerance,
            'srcdir=s'      => \$srcfolder,
-           'version'       => \$showversion);
+           'version'       => \$showversion,
+	   'help'          => \$help,
+	   'usage'         => \$help,
+    );
 
-$TeXproject = shift;
 
 if($showversion){
     print "pdflatexpicscale Version $version $versiondate\n";
 }
 
-unless ($TeXproject gt ' '){
+if($help){
     usage();
-    end();
 }
 
-readlog($TeXproject);
-if($verbose) {
-    print "$copied file(s) copied, $scaled file(s) converted " .
-	"and $skipped occurence(s) skipped.\n";
+$TeXproject = shift;
+
+if((defined $TeXproject) && ($TeXproject gt ' ')){
+    readlog($TeXproject);
+    if($verbose) {
+	print "pdflatexpicscale Version $version:\n"
+	    . "$copied file(s) copied, $scaled file(s) converted " .
+	    "and $skipped occurence(s) skipped for:\n${TeXproject}.log.\n";
+    }
+}else {    
+    usage();
 }
