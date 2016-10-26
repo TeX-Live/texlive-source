@@ -1,3 +1,274 @@
+commit 118164293cc7eb18ba03896f602aff816400134b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 16:04:30 2016 +0200
+
+    Fix "make distcheck"
+
+ configure.ac | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit b6c765871b752c9436ec993e47b48f9d4fecaed5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 10:33:33 2016 +0200
+
+    [ci] Fix appveyor.yml syntax error
+
+ appveyor.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0e79ebb3ca9b7b6d238a0007e5ca022845ee9afc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Oct 23 14:39:43 2016 +0200
+
+    [gobject] Update for new MATH structs
+
+ src/hb-gobject-structs.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 8c854dc023b1f9e081a3bbd16416b88a4671c267
+Merge: bb9805f c3fa5d0
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Tue Oct 25 00:31:36 2016 +0300
+
+    Merge pull request #352 from fred-wang/makefile-am
+
+    Remove inexistent file ttx file from test/api/Makefile.am
+
+commit c3fa5d0e03b57be131c66ea8720806c946d0e10f
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Mon Oct 24 21:42:04 2016 +0200
+
+    Remove inexistent file ttx file from test/api/Makefile.am
+
+ test/api/Makefile.am | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit bb9805f5419f18c7f5cab32d660fd4109c30f7cc
+Merge: 702d9f5 755a0c2
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sat Oct 22 12:23:05 2016 +0330
+
+    Merge pull request #349 from ebraminio/mergebackvcpkgpatches
+
+    [ci] Enable hb-freetype on Windows build tests
+
+commit 755a0c20798e3c3e6bb933a28e38f9667fccdadc
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 21 11:48:58 2016 +0330
+
+    [ci] Enable freetype on msvc using vcpkg
+
+ appveyor.yml | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+commit 4631d84c2bb51395efe3156f9c9f1a6b0e277947
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 18 14:30:00 2016 +0330
+
+    Merge back @vlj's local patches of vcpkg
+
+ win32/config-msvc.mak    | 7 +++++++
+ win32/detectenv-msvc.mak | 3 +++
+ 2 files changed, 10 insertions(+)
+
+commit 702d9f522d1ac4797700f0ea056f69169b8d1a78
+Merge: 331c46c d8e2eb9
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 14 13:54:55 2016 +0330
+
+    Merge pull request #340 from ebraminio/nouniscribe
+
+    Make Uniscribe optional on nmake win32 builds
+
+commit d8e2eb9ee0f47af7e90056d8db5949d10a88786a
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Sun Oct 9 09:06:05 2016 +0330
+
+    Make Uniscribe optional on nmake win32 builds
+
+    Most of harfbuzz clients don't need Uniscribe and DirectWrite support
+    at all
+    as harfbuzz is a replacement for Uniscribe so Chromium and Firefox
+    are using
+    harfbuzz without them on Windows.
+
+    This removal also helps win32 nmake clients to have reduced binary
+    size and
+    libs count.
+
+ appveyor.yml            |  2 +-
+ win32/README.txt        | 13 +++++++------
+ win32/config-msvc.mak   | 18 +++++++++++++-----
+ win32/config.h.win32.in |  2 +-
+ win32/info-msvc.mak     | 11 +++++++++--
+ 5 files changed, 31 insertions(+), 15 deletions(-)
+
+commit 331c46c79b4d18cb4948be12c78ebb71a143e7ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 11 13:45:22 2016 -0700
+
+    Fix configure on iOS
+
+    Fixes https://github.com/behdad/harfbuzz/issues/342
+
+ configure.ac | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit f6e194e77a2c34cd118b47c0d73a22afde85dfda
+Merge: 7201fdd bef240b
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Tue Oct 11 17:23:41 2016 +0330
+
+    Merge pull request #344 from ebraminio/fixmacci
+
+    [ci] Whitelist more symbols and unbreak mac CI
+
+commit bef240b36ee9086b0d92e351e4c5118c0bbb5df6
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Mon Oct 10 17:27:52 2016 +0330
+
+    [ci] Whitelist more symbols and unbreak mac CI
+
+    Thanks to @khaledhosny, actually this is his work :)
+
+ src/check-symbols.sh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 7201fdd0a8e26d49b13e289b53de375d5b1c9fcb
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Oct 4 14:53:17 2016 -0700
+
+    LFS (large file system?) support in hb-*shap*, hb-view
+
+    Fixes https://github.com/behdad/harfbuzz/issues/336
+
+ configure.ac | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 34fc4a2cfa61089b7ec2d9510d99cdc4c13bceb4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Sep 28 19:17:27 2016 +0200
+
+    Fix dist
+
+ test/api/Makefile.am | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+commit d1c62370a0c2bdb365a1468dc8d782b9a7245946
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Sep 28 19:11:22 2016 +0200
+
+    Aim math API for 1.3.3 instead of 1.4.0
+
+ docs/harfbuzz-docs.xml     |  6 +++---
+ docs/harfbuzz-sections.txt | 12 ++++++------
+ src/hb-ot-layout.cc        | 18 +++++++++---------
+ src/hb-ot-math.h           | 10 +++++-----
+ 4 files changed, 23 insertions(+), 23 deletions(-)
+
+commit 7adbc5dd62ca03a65d1886e0f32e7026964dc5e5
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Sep 30 04:01:24 2016 -0700
+
+    Fix building math docs (#335)
+
+ src/hb-ot-layout.cc | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+commit fd7a245d3525905ffbce57472b52900fcb0e330b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 17:56:35 2016 +0200
+
+    Require glib >= 2.38.0 for G_TEST_DIST
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 6d3e6abf0c6ad55dabae96c76b4da9ab14bf16ef
+Merge: f73a87d c3e21a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 17:15:59 2016 +0200
+
+    Merge branch 'math'
+
+    Supercedes https://github.com/behdad/harfbuzz/pull/326
+    Fixes https://github.com/behdad/harfbuzz/pull/331
+
+commit c3e21a6620c35500afa350d11620f69802920df3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 16:51:38 2016 +0200
+
+    [MATH] Fix more docs
+
+ src/hb-ot-layout.cc | 18 +++++++++---------
+ src/hb-ot-math.h    | 25 +++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+), 9 deletions(-)
+
+commit 46cc4a3a2a529c80677babe38ca1542f9c773ac0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 16:44:22 2016 +0200
+
+    [MATH] Rename hb_math_*_t types to hb_ot_math_*_t
+
+    With this, I believe MATH table API is not ready to be merged.
+
+ docs/harfbuzz-sections.txt     |  6 +++---
+ src/hb-ot-layout-math-table.hh | 12 ++++++------
+ src/hb-ot-layout.cc            |  8 ++++----
+ src/hb-ot-math.h               | 16 ++++++++--------
+ test/api/test-ot-math.c        |  4 ++--
+ 5 files changed, 23 insertions(+), 23 deletions(-)
+
+commit db5ebcf10f8595d1f4a9df27befd6cb5e76ca94d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 16:42:25 2016 +0200
+
+    Update docs
+
+ docs/harfbuzz-docs.xml     |  9 +++++++++
+ docs/harfbuzz-sections.txt | 30 ++++++++++++++++++++++++++++--
+ 2 files changed, 37 insertions(+), 2 deletions(-)
+
+commit 0762b35474c47171e5661904e93851eb73a44e5c
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Tue Sep 27 15:28:35 2016 +0200
+
+    Document API for MathVariants (#330)
+
+ src/hb-ot-layout.cc | 56
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
+
+commit 8d622f1114d6a0eca1786b94c7fc1a0bcd87f74b
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Tue Sep 27 13:53:34 2016 +0200
+
+    Add tests for get_mathvariant (#329)
+
+ test/api/test-ot-math.c | 160
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 160 insertions(+)
+
+commit f73a87d9a8c76a181794b74b527ea268048f78e3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 13:50:54 2016 +0200
+
+    1.3.2
+
+ NEWS         | 7 +++++++
+ configure.ac | 2 +-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+commit 485e4873fb7cacfa9d853272c2275bbc5826023e
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Tue Sep 27 13:18:00 2016 +0200
+
+    Add tests for hb_ot_math_get_glyph_variants (#328)
+
+ test/api/test-ot-math.c | 126
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+
 commit f16bf6c2dacf5b9c82b2d1ffacc092cc396189a7
 Author: Phil Krylov <phil.krylov@gmail.com>
 Date:   Tue Sep 27 12:38:49 2016 +0200
@@ -6,6 +277,317 @@ Date:   Tue Sep 27 12:38:49 2016 +0200
 
  configure.ac | 10 ++++++++++
  1 file changed, 10 insertions(+)
+
+commit a5629a2ed9c2e69f2b4ebb74d85fbe0b5ba2be67
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 11:30:44 2016 +0200
+
+    [MATH] Simplify test
+
+ test/api/test-ot-math.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit edcfa789bf92c18f5badad31c0ad04a6a77d7226
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Tue Sep 27 11:02:08 2016 +0200
+
+    test-ot-math: Use different scales for vertical
+    and horizontal directions and add test for
+    hb_ot_math_get_min_connector_overlap. (#327)
+
+ test/api/test-ot-math.c | 81
+ ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 49 insertions(+), 32 deletions(-)
+
+commit bc19f7fe20e89823dba07a46c3d48c7406b781b6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Sep 27 10:58:08 2016 +0200
+
+    [MATH] Add HB_OT_MATH_SCRIPT
+
+ src/hb-ot-math.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit cdc9eef7da934ae71578694f29665e439686c3bd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 22:18:41 2016 +0200
+
+    [MATH] Enable tests for glyph-assembly italics-correction
+
+ test/api/test-ot-math.c | 49
+ ++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
+
+commit 86106c7528d9bff8de6bc3e1487be780c31ea4fd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 22:12:48 2016 +0200
+
+    [MATH] Rename all API to hb_ot_math_*
+
+ src/hb-ot-layout-private.hh    |  10 --
+ src/hb-ot-layout.cc            |  69 ++++----
+ src/hb-ot-math.h               |  56 +++---
+ test/api/Makefile.am           |   6 +-
+ test/api/test-ot-layout-math.c | 382
+ -----------------------------------------
+ test/api/test-ot-math.c        | 381
+ ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 447 insertions(+), 457 deletions(-)
+
+commit 1ba767cd4e3606beb9dc59806b83b1e61f5958d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 21:57:14 2016 +0200
+
+    [MATH] Move API from hb-ot-layout.h to hb-ot-math.h
+
+ src/hb-ot-layout.h | 52
+ --------------------------------------------------
+ src/hb-ot-math.h   | 56
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot.h        |  1 +
+ 3 files changed, 57 insertions(+), 52 deletions(-)
+
+commit 97b72da6006d8d6355ee90d514f627e6604a4936
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 21:53:25 2016 +0200
+
+    Whitespace
+
+ src/hb-ot-layout-math-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 559eb564472575ae4d87a241314b8a3ca24418c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 21:46:05 2016 +0200
+
+    [MATH] Wire up get_glyph_assembly()
+
+ src/hb-ot-layout-math-table.hh | 64
+ ++++++++++++++++++++++++++++++++++++++----
+ src/hb-ot-layout.cc            | 26 +++++++++--------
+ src/hb-ot-layout.h             | 14 ++++-----
+ 3 files changed, 81 insertions(+), 23 deletions(-)
+
+commit 353f455af7ccbc1af8338dcb0c8ab87aef866c79
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 21:22:48 2016 +0200
+
+    [MATH] Wire up get_glyph_variants()
+
+ src/hb-font-private.hh         |  11 ++-
+ src/hb-ot-layout-math-table.hh | 178
+ +++++++++++++++++++----------------------
+ src/hb-ot-layout.cc            |   7 +-
+ src/hb-ot-layout.h             |   2 +-
+ 4 files changed, 95 insertions(+), 103 deletions(-)
+
+commit 7fe0e28c22331a353d396f8bc1e3a60f1580a96d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 17:51:47 2016 +0100
+
+    [MATH] Start fleshing out glyph variant API
+
+ src/hb-font-private.hh         |  4 +++
+ src/hb-ot-layout-math-table.hh | 10 ++----
+ src/hb-ot-layout.cc            | 73
+ +++++++++++++++---------------------------
+ src/hb-ot-layout.h             | 20 ++++++++++++
+ src/hb-ot-math.h               | 18 +++++++++++
+ 5 files changed, 71 insertions(+), 54 deletions(-)
+
+commit 1f3327f21045df8a050a21a949b44b9ce186ceaa
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 16:10:08 2016 +0100
+
+    [MATH] Clean up math variants
+
+ src/hb-ot-layout-math-table.hh | 35 +++++++++--------------------------
+ 1 file changed, 9 insertions(+), 26 deletions(-)
+
+commit 51da7a1cd672aada84bdbb3a2a8dd77ab1134249
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Thu Aug 25 11:17:50 2016 +0200
+
+    MATH table: Add API to access math variants.
+
+ src/hb-ot-layout-math-table.hh          | 253
+ +++++++++++++++++++++++++++++++-
+ src/hb-ot-layout-private.hh             |  10 ++
+ src/hb-ot-layout.cc                     |  54 +++++++
+ test/api/fonts/MathTestFontPartial4.otf | Bin 0 -> 14360 bytes
+ test/api/test-ot-layout-math.c          |  51 +++++++
+ 5 files changed, 364 insertions(+), 4 deletions(-)
+
+commit 722e620f20fa2225cf874f4aeb115a064142fcf1
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Mon Sep 26 11:51:36 2016 +0200
+
+    Use G_TEST_DIST to build the path of math test fonts
+
+ test/api/Makefile.am           | 2 ++
+ test/api/test-ot-layout-math.c | 8 ++++++--
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+commit 8d58e3433e242bd9dd18aa08f55ab0a406583fb0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 13:39:58 2016 +0100
+
+    [MATH] Fix get_kerning() with negative y-scale
+
+ src/hb-ot-layout-math-table.hh | 36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
+
+commit 94f5df5626b223ad92d0c167f560c1f2e2f19042
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 13:31:47 2016 +0100
+
+    [MATH] Clean up get_kerning()
+
+ src/hb-ot-layout-math-table.hh | 29 +++++++++++++++++------------
+ src/hb-ot-layout.cc            |  5 +----
+ 2 files changed, 18 insertions(+), 16 deletions(-)
+
+commit 17ff30e9afde79e41c17786223293e867b49ebba
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 12:18:32 2016 +0100
+
+    [MATH] Clean up get_top_accent_attachment()
+
+    Note, the function now returns "half of horizontal advance width"
+    if top accent attachment for glyph is not explicitly defined.
+    This is what the spec requires.  Updated tests.
+
+ src/hb-ot-layout-math-table.hh | 31 +++++++++++--------------------
+ src/hb-ot-layout.cc            |  7 +------
+ test/api/test-ot-layout-math.c |  8 ++++----
+ 3 files changed, 16 insertions(+), 30 deletions(-)
+
+commit 8bcf517fe59608d2247a8974445b3ff0f4b4b4ac
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 12:12:41 2016 +0100
+
+    [MATH] Clean up get_italics_correction()
+
+ src/hb-ot-layout-math-table.hh | 16 ++++++++--------
+ src/hb-ot-layout.cc            | 17 ++++++-----------
+ src/hb-ot-layout.h             |  4 ++--
+ test/api/test-ot-layout-math.c | 18 +++++++++---------
+ 4 files changed, 25 insertions(+), 30 deletions(-)
+
+commit 06003f71ba0d0327fb1a17098a9d7faa8fb336f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 12:07:29 2016 +0100
+
+    [MATH] Clean up a bit more
+
+ src/hb-ot-layout-math-table.hh | 12 +--------
+ src/hb-ot-layout.cc            | 57
+ ++++++++++++++++--------------------------
+ 2 files changed, 22 insertions(+), 47 deletions(-)
+
+commit 54c0cc38fba24fa4370231408ba121589b190a28
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 11:56:40 2016 +0100
+
+    [MATH] Clean up get_math_constant implementation
+
+ src/hb-ot-layout-math-table.hh | 10 +++++-----
+ src/hb-ot-layout.cc            |  5 ++---
+ 2 files changed, 7 insertions(+), 8 deletions(-)
+
+commit 8a8cfad9a0834fe278a747c1d755144bd78f564b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 11:47:05 2016 +0100
+
+    [MATH] Cleanup previous commit a bit
+
+ src/hb-ot-layout-math-table.hh | 186
+ ++++++++++++++++++++---------------------
+ src/hb-ot-layout.cc            |  30 +++----
+ src/hb-ot-layout.h             |  14 ++--
+ 3 files changed, 113 insertions(+), 117 deletions(-)
+
+commit d7182d129612c619b9026ee9b15f2dcfada132db
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Thu Aug 25 11:15:31 2016 +0200
+
+    MATH Table: Add API to access glyph info.
+
+ src/hb-ot-layout-math-table.hh          | 271
+ +++++++++++++++++++++++++++++++-
+ src/hb-ot-layout.cc                     | 114 ++++++++++++++
+ src/hb-ot-layout.h                      |  18 +++
+ src/hb-ot-math.h                        |   7 +
+ test/api/fonts/MathTestFontPartial1.otf | Bin 0 -> 14348 bytes
+ test/api/fonts/MathTestFontPartial2.otf | Bin 0 -> 14356 bytes
+ test/api/fonts/MathTestFontPartial3.otf | Bin 0 -> 14380 bytes
+ test/api/test-ot-layout-math.c          | 155 ++++++++++++++++++
+ 8 files changed, 563 insertions(+), 2 deletions(-)
+
+commit 6fd2fe418dc838743f0d4a8a2222cdcaf587500c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 11:24:39 2016 +0100
+
+    [MATH] Fixup math constants commit a bit more
+
+ src/hb-ot-layout-math-table.hh | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+commit 1a381153a2e6a15bded1f8e31f6b0e0cadb078af
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 11:15:59 2016 +0100
+
+    [MATH] Fixups for math constants commit
+
+ src/hb-ot-layout-math-table.hh | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+commit 319ff59161e6b027391f8b9fdce0db6dd44cc20d
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Thu Aug 25 11:06:41 2016 +0200
+
+    MATH Table: Add API to access math contants.
+
+ src/Makefile.sources                |   1 +
+ src/hb-ot-layout-math-table.hh      | 146
+ +++++++++++++++++++++++++++++++++++-
+ src/hb-ot-layout.cc                 |  25 ++++++
+ src/hb-ot-layout.h                  |   5 ++
+ src/hb-ot-math.h                    | 100 ++++++++++++++++++++++++
+ test/api/fonts/MathTestFontFull.otf | Bin 0 -> 25412 bytes
+ test/api/test-ot-layout-math.c      |  72 ++++++++++++++++++
+ 7 files changed, 345 insertions(+), 4 deletions(-)
+
+commit 4d3892e9b05a4df67b2f5cfd6dd3a1e0f5b38fc7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Sep 26 10:45:58 2016 +0100
+
+    [MATH] Fixups for previous commit
+
+ src/hb-ot-layout-math-table.hh |  8 ++++----
+ src/hb-ot-layout.cc            | 29 +++++++++++++++++++----------
+ src/hb-ot-layout.h             |  2 ++
+ test/api/Makefile.am           |  6 ++----
+ test/api/test-ot-layout-math.c | 16 +++++++++-------
+ 5 files changed, 36 insertions(+), 25 deletions(-)
+
+commit 5fbcb992bd7887f95b1cf2ca045c9226de8148fc
+Author: Frédéric Wang <fred.wang@free.fr>
+Date:   Thu Aug 25 10:47:15 2016 +0200
+
+    MATH Table: Add API to check availability of math data.
+
+ src/Makefile.sources                 |   1 +
+ src/hb-ot-layout-math-table.hh       |  60 +++++++++++++++++++++
+ src/hb-ot-layout-private.hh          |   3 ++
+ src/hb-ot-layout.cc                  |  45 ++++++++++++++++
+ src/hb-ot-layout.h                   |   7 +++
+ test/api/Makefile.am                 |  14 ++++-
+ test/api/fonts/MathTestFontEmpty.otf | Bin 0 -> 14320 bytes
+ test/api/fonts/MathTestFontNone.otf  | Bin 0 -> 14284 bytes
+ test/api/test-ot-layout-math.c       |  98
+ +++++++++++++++++++++++++++++++++++
+ 9 files changed, 227 insertions(+), 1 deletion(-)
 
 commit 02bfd965af588640250c47f344ad3096c8a373e0
 Author: Gregory Morse <gregory.morse@live.com>

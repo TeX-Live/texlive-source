@@ -81,9 +81,11 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsubgpos-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsub-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-jstf-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-layout-math-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-map-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-math.h \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
