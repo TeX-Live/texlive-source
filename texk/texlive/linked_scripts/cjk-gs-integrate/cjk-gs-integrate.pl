@@ -2,7 +2,7 @@
 #
 # cjk-gs-integrate - setup ghostscript for CID/TTF CJK fonts
 #
-# Copyright 2015 by Norbert Preining
+# Copyright 2015-2016 by Norbert Preining
 #
 # Based on research and work by Yusuke Kuroki, Bruno Voisin, Munehiro Yamamoto
 # and the TeX Q&A wiki page
@@ -27,7 +27,7 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20160115.0';
+my $version = '20161026.0';
 
 if (win32()) {
   print_error("Sorry, currently not supported on Windows!\n");
@@ -627,9 +627,7 @@ sub do_aliases {
   # Jun101Pro-Light
   #
   # the order of fonts selected is
-  # Morisawa Pr6, Morisawa, Hiragino ProN, Hiragino, 
-  # Yu OSX, Yu Win, Kozuka ProN, Kozuka, IPAex, IPA
-  # but is defined in the Provides(Priority): Name in the font definiton
+  # defined in the Provides(Priority): Name in the font definiton
   #
   $outp .= "\n\n% Aliases\n";
   #
@@ -791,29 +789,35 @@ sub check_for_files {
       push @extradirs, "c:/windows/fonts//";
     } else {
       # other dirs to check, for normal unix?
-      for my $d (qw!/Library/Fonts /System/Library/Fonts /Library/Fonts/Microsoft/ /Network/Library/Fonts!) {
-        push @extradirs, $d if (-d $d);
+      for my $d (qw!/Library/Fonts /System/Library/Fonts /System/Library/Assets /Network/Library/Fonts /usr/share/fonts!) {
+        push @extradirs, "$d//" if (-d $d); # recursive search
       }
       my $home = $ENV{'HOME'};
-      push @extradirs, "$home/Library/Fonts" if (-d "$home/Library/Fonts");
+      push @extradirs, "$home/Library/Fonts//" if (-d "$home/Library/Fonts");
     }
     #
     if (@extradirs) {
-      # we want that files in OSFONTDIR are found first, before 
+      # TODO: we want that files in OSFONTDIR are found first, before
       # links that we have created in TEXMFLOCAL
       # Thus, instead of setting OSFONTDIR which is at the *END* of
-      # the kpsewhich variables OPENTYPEFONTS and TTFONTS, we put
-      # all these fonts at the front of them
+      # the kpsewhich variables OPENTYPEFONTS and TTFONTS, we'd like to
+      # put all these fonts at the front of them
+      # However, when we explicitly update OPENTYPEFONTS and TTFONTS,
+      # kpathsea does not distinguish uppercase and lowercase letters
+      # So for now, we do NOT set OPENTYPEFONTS and TTFONTS -- HY (2016/09/27)
       # push current value of OSFONTDIR
       push @extradirs, $ENV{'OSFONTDIR'} if $ENV{'OSFONTDIR'};
-      # update OPENTYPEFONTS and TTFONTS
       if (@extradirs) {
-        my $newotf = join(':', @extradirs) . ':';
-        my $newttf = $newotf;
-        $newotf .= $ENV{'OPENTYPEFONTS'} if ($ENV{'OPENTYPEFONTS'});
-        $newttf .= $ENV{'TTFONTS'} if ($ENV{'TTFONTS'});
-        $ENV{'OPENTYPEFONTS'} = $newotf;
-        $ENV{'TTFONTS'} = $newttf;
+      # comment out -- HY (2016/09/27)
+#        my $newotf = join($sep, @extradirs) . $sep;
+#        my $newttf = $newotf;
+#        $newotf .= $ENV{'OPENTYPEFONTS'} if ($ENV{'OPENTYPEFONTS'});
+#        $newttf .= $ENV{'TTFONTS'} if ($ENV{'TTFONTS'});
+#        $ENV{'OPENTYPEFONTS'} = $newotf;
+#        $ENV{'TTFONTS'} = $newttf;
+      # new code for uppercase/lowercase workaround -- HY (2016/09/27)
+        my $extrafontdir = join($sep, @extradirs) . $sep;
+        $ENV{'OSFONTDIR'} = $extrafontdir;
       }
     }
     # prepare for kpsewhich call, we need to do quoting
@@ -1040,25 +1044,49 @@ sub read_font_database {
 }
 
 sub find_gs_resource {
-  # we assume that gs is in the path
-  # on Windows we probably have to try something else
-  chomp( my @ret = `gs --help 2>$nul` );
   my $foundres = '';
-  if ($?) {
-    print_error("Cannot find gs ...\n");
-  } else {
-    # try to find resource line
-    for (@ret) {
-      if (m!Resource/Font!) {
-        $foundres = $_;
-        # extract the first substring of non-space chars
-        # up to Resource/Font and drop the /Font part
-        $foundres =~ s!^.*\s(\S*Resource)/Font.*$!$1!;
-        last;
+  if (!win32()) {
+    # we assume that gs is in the path
+    # on Windows we probably have to try something else
+    chomp( my $gsver = `gs --version 2>$nul` );
+    if ($?) {
+      print_error("Cannot get gs version ...\n");
+    } else {
+      # trial 1: assume the relative path
+      # when /path/to/bin/gs is found, then there should be
+      # /path/to/share/ghostscript/$(gs --version)/Resource
+      print_debug("Finding gs resource by assuming relative path ...\n");
+      chomp( $foundres = `which gs` );
+      $foundres =~ s!/bin/gs!/share/ghostscript/$gsver/Resource!;
+      if ( ! -d $foundres ) {
+        $foundres = '';
+      }
+      if (!$foundres) {
+        print_debug("Found gs but no resource, try another routine ...\n");
       }
     }
     if (!$foundres) {
-      print_error("Found gs but no resource???\n");
+      chomp( my @ret = `gs --help 2>$nul` );
+      if ($?) {
+        print_error("Cannot run gs --help ...\n");
+      } else {
+        # trial 2: parse gs help message
+        print_debug("Finding gs resource by parsing help message ...\n");
+        $foundres = '';
+        # try to find resource line
+        for (@ret) {
+          if (m!Resource/Font!) {
+            $foundres = $_;
+            # extract the first substring of non-space chars
+            # up to Resource/Font and drop the /Font part
+            $foundres =~ s!^.*\s(\S*Resource)/Font.*$!$1!;
+            last;
+          }
+        }
+        if (!$foundres) {
+          print_error("Found gs but no resource???\n");
+        }
+      }
     }
   }
   return $foundres;
@@ -1187,7 +1215,7 @@ Japanese:
 
 Korean:
 
-    HYGoThic-Medium HYSMyeongJo-Medium
+    HYSMyeongJo-Medium HYGoThic-Medium HYRGoThic-Medium
 
 Simplified Chinese:
 
@@ -1203,11 +1231,21 @@ In addition, we also include provide entries for the OTF Morisawa names:
 
 The order is determined by the Provides setting in the font database,
 and for the Japanese fonts it is currently:
-    Morisawa Pr6, Morisawa, Hiragino ProN, Hiragino, 
-    Yu OSX, Yu Win, Kozuka ProN, Kozuka, IPAex, IPA
+    Morisawa Pr6N, Morisawa, Hiragino ProN, Hiragino,
+    Yu OSX, Yu Win, Kozuka Pr6N, Kozuka ProVI, Kozuka,
+    MS, IPAex, IPA
 
 That is, the first font found in this order will be used to provide the
 alias if necessary.
+
+For the Korean fonts:
+    (Hanyang,) Solaris-hanyang, Adobe, MS, Apple, Unfonts, Baekmuk
+
+For the Simplified Chinese:
+    [Not yet]
+
+For the Traditional Chinese:
+    [Not yet]
 
 #### Overriding aliases ####
 
@@ -1220,8 +1258,8 @@ requirements of `LL` and `RR` must be fulfilled:
 
   my $authors = "
 The script and its documentation was written by Norbert Preining, based
-on research and work by Yusuke Kuroki, Bruno Voisin, Munehiro Yamamoto
-and the TeX Q&A wiki page.
+on research and work by Yusuke Kuroki, Bruno Voisin, Hironobu Yamashita,
+Munehiro Yamamoto and the TeX Q&A wiki page.
 
 The script is licensed under GNU General Public License Version 3 or later.
 The contained font data is not copyrightable.
@@ -1306,22 +1344,24 @@ __DATA__
 # CJK FONT DEFINITIONS
 #
 
-# JAPAN
+#
+# JAPANESE FONTS
+#
 
 # Morisawa
 
-Name: A-OTF-FutoGoB101Pr6N-Bold
-PSName: FutoGoB101Pr6N-Bold
+Name: A-OTF-RyuminPr6N-Light
+PSName: RyuminPr6N-Light
 Class: Japan
-Provides(10): FutoGoB101-Bold
-Provides(10): FutoGoB101Pro-Bold
-Filename: A-OTF-FutoGoB101Pr6N-Bold.otf
+Provides(10): Ryumin-Light
+Provides(10): RyuminPro-Light
+Filename: A-OTF-RyuminPr6N-Light.otf
 
-Name: A-OTF-FutoGoB101Pro-Bold
-PSName: FutoGoB101Pro-Bold
+Name: A-OTF-RyuminPro-Light
+PSName: RyuminPro-Light
 Class: Japan
-Provides(20): FutoGoB101-Bold
-Filename: A-OTF-FutoGoB101Pro-Bold.otf
+Provides(20): Ryumin-Light
+Filename: A-OTF-RyuminPro-Light.otf
 
 Name: A-OTF-FutoMinA101Pr6N-Bold
 PSName: FutoMinA101Pr6N-Bold
@@ -1349,11 +1389,18 @@ Class: Japan
 Provides(20): GothicBBB-Medium
 Filename: A-OTF-GothicBBBPro-Medium.otf
 
-Name: A-OTF-Jun101Pro-Light
-PSName: Jun101Pro-Light
+Name: A-OTF-FutoGoB101Pr6N-Bold
+PSName: FutoGoB101Pr6N-Bold
 Class: Japan
-Provides(20): Jun101-Light
-Filename: A-OTF-Jun101Pro-Light.otf
+Provides(10): FutoGoB101-Bold
+Provides(10): FutoGoB101Pro-Bold
+Filename: A-OTF-FutoGoB101Pr6N-Bold.otf
+
+Name: A-OTF-FutoGoB101Pro-Bold
+PSName: FutoGoB101Pro-Bold
+Class: Japan
+Provides(20): FutoGoB101-Bold
+Filename: A-OTF-FutoGoB101Pro-Bold.otf
 
 Name: A-OTF-MidashiGoPr6N-MB31
 PSName: MidashiGoPr6N-MB31
@@ -1368,18 +1415,21 @@ Class: Japan
 Provides(20): MidashiGo-MB31
 Filename: A-OTF-MidashiGoPro-MB31.otf
 
-Name: A-OTF-RyuminPr6N-Light
-PSName: RyuminPr6N-Light
+# A-OTF-Jun101Pr6N-Light has been replaced by A-OTF-ShinMGoPr6N-Light
+# in otf-(up-)morisawa-pr6n.map since jfontmaps 20140301.0
+# now unnecessary, but reserved for backward compatibility
+Name: A-OTF-Jun101Pr6N-Light
+PSName: Jun101Pr6N-Light
 Class: Japan
-Provides(10): Ryumin-Light
-Provides(10): RyuminPro-Light
-Filename: A-OTF-RyuminPr6N-Light.otf
+Provides(11): Jun101-Light
+Provides(11): Jun101Pro-Light
+Filename: A-OTF-Jun101Pr6N-Light.otf
 
-Name: A-OTF-RyuminPro-Light
-PSName: RyuminPro-Light
+Name: A-OTF-Jun101Pro-Light
+PSName: Jun101Pro-Light
 Class: Japan
-Provides(20): Ryumin-Light
-Filename: A-OTF-RyuminPro-Light.otf
+Provides(20): Jun101-Light
+Filename: A-OTF-Jun101Pro-Light.otf
 
 Name: A-OTF-ShinMGoPr6N-Light
 PSName: ShinMGoPr6N-Light
@@ -1388,8 +1438,105 @@ Provides(10): Jun101-Light
 Provides(10): Jun101Pro-Light
 Filename: A-OTF-ShinMGoPr6N-Light.otf
 
+# Morisawa others (for moriprop);
+# A-OTF-Jun101Pro-Light.otf and A-OTF-RyuminPro-Light.otf already added
 
-# Hiragino
+Name: A-OTF-Jun201Pro-Regular
+PSName: Jun201Pro-Regular
+Class: Japan
+Provides(20): Jun201Pro-Regular
+Filename: A-OTF-Jun201Pro-Regular.otf
+
+Name: A-OTF-Jun34Pro-Medium
+PSName: Jun34Pro-Medium
+Class: Japan
+Provides(20): Jun34Pro-Medium
+Filename: A-OTF-Jun34Pro-Medium.otf
+
+Name: A-OTF-Jun501Pro-Bold
+PSName: Jun501Pro-Bold
+Class: Japan
+Provides(20): Jun501Pro-Bold
+Filename: A-OTF-Jun501Pro-Bold.otf
+
+Name: A-OTF-RyuminPro-Regular
+PSName: RyuminPro-Regular
+Class: Japan
+Provides(20): Ryumin-Regular
+Filename: A-OTF-RyuminPro-Regular.otf
+
+Name: A-OTF-RyuminPro-Medium
+PSName: RyuminPro-Medium
+Class: Japan
+Provides(20): Ryumin-Medium
+Filename: A-OTF-RyuminPro-Medium.otf
+
+Name: A-OTF-RyuminPro-Bold
+PSName: RyuminPro-Bold
+Class: Japan
+Provides(20): RyuminPro-Bold
+Filename: A-OTF-RyuminPro-Bold.otf
+
+Name: A-OTF-RyuminPro-Heavy
+PSName: RyuminPro-Heavy
+Class: Japan
+Provides(20): Ryumin-Heavy
+Filename: A-OTF-RyuminPro-Heavy.otf
+
+Name: A-OTF-RyuminPro-Ultra
+PSName: RyuminPro-Ultra
+Class: Japan
+Provides(20): Ryumin-Ultra
+Filename: A-OTF-RyuminPro-Ultra.otf
+
+Name: A-OTF-ShinGoPro-Light
+PSName: ShinGoPro-Light
+Class: Japan
+Provides(20): ShinGo-Light
+Filename: A-OTF-ShinGoPro-Light.otf
+
+Name: A-OTF-ShinGoPro-Regular
+PSName: ShinGoPro-Regular
+Class: Japan
+Provides(20): ShinGo-Regular
+Filename: A-OTF-ShinGoPro-Regular.otf
+
+Name: A-OTF-ShinGoPro-Medium
+PSName: ShinGoPro-Medium
+Class: Japan
+Provides(20): ShinGo-Medium
+Filename: A-OTF-ShinGoPro-Medium.otf
+
+Name: A-OTF-ShinGoPro-Bold
+PSName: ShinGoPro-Bold
+Class: Japan
+Provides(20): ShinGoPro-Bold
+Filename: A-OTF-ShinGoPro-Bold.otf
+
+Name: A-OTF-ShinGoPro-Heavy
+PSName: ShinGoPro-Heavy
+Class: Japan
+Provides(20): ShinGo-Heavy
+Filename: A-OTF-ShinGoPro-Heavy.otf
+
+Name: A-OTF-ShinGoPro-Ultra
+PSName: ShinGoPro-Ultra
+Class: Japan
+Provides(20): ShinGo-Ultra
+Filename: A-OTF-ShinGoPro-Ultra.otf
+
+# Hiragino (OS X)
+
+# Note about Mac OS X:
+#   ヒラギノ角ゴ {Pro,ProN} {W3,W6}.otf
+#   ヒラギノ角ゴ {Std,StdN} W8.otf
+#   ヒラギノ丸ゴ {Pro,ProN} W4.otf
+#   ヒラギノ明朝 {Pro,ProN} {W3,W6}.otf
+# are bundled with OS X 10.10.5 Yosemite or earlier versions.
+#   ヒラギノ角ゴシック {W0,...W9}.ttc
+#   ヒラギノ丸ゴ ProN W4.ttc
+#   ヒラギノ明朝 ProN {W3,W6}.ttc
+# are bundled with OS X 10.11 El Capitan or later versions.
 
 Name: HiraKakuPro-W3
 Class: Japan
@@ -1584,7 +1731,6 @@ Filename(30): ヒラギノ明朝 ProN W3.ttc(0)
 Filename(29): ヒラギノ明朝 ProN W3.ttc(0)
 Filename(28): HiraginoSerif-W3.ttc(0)
 
-
 Name: HiraMinProN-W6
 Class: Japan
 Provides(30): FutoMinA101-Bold
@@ -1596,21 +1742,29 @@ Filename(30): ヒラギノ明朝 ProN W6.ttc(0)
 Filename(29): ヒラギノ明朝 ProN W6.ttc(0)
 Filename(28): HiraginoSerif-W6.ttc(0)
 
-
-Name: HiraginoSansGB-W3
-Class: GB
-Filename(20): Hiragino Sans GB W3.otf
-Filename(10): HiraginoSansGB-W3.otf
-Filename(30): Hiragino Sans GB W3.ttc(0)
-
-Name: HiraginoSansGB-W6
-Class: GB
-Filename(20): Hiragino Sans GB W6.otf
-Filename(10): HiraginoSansGB-W6.otf
-Filename(30): Hiragino Sans GB W6.ttc(0)
-
-
 # Yu-fonts MacOS version
+
+# Note about Mac OS X:
+#   Yu Gothic Medium.otf
+#   Yu Gothic Bold.otf
+# are bundled with OS X 10.9 Mavericks or later versions.
+#   Yu Mincho Medium.otf
+#   Yu Mincho Demibold.otf
+# are bundled with OS X 10.9 Mavericks -- 10.10.5 Yosemite.
+#   YuMincho.ttc
+#     index 0: YuMin-Medium
+#     index 1: YuMin-Demibold
+#     index 2: YuMin_36pKn-Medium
+#     index 3: YuMin_36pKn-Demibold
+# is bundled with OS X 10.11 -- 10.11.6 El Capitan.
+#   YuMincho.ttc
+#     index 0: YuMin-Medium
+#     index 1: YuMin-Demibold
+#     index 2: YuMin-Extrabold
+#     index 3: YuMin_36pKn-Medium
+#     index 4: YuMin_36pKn-Demibold
+#     index 5: YuMin_36pKn-Extrabold
+# is bundled with macOS 10.12.0 Sierra or later versions.
 
 Name: YuGo-Medium
 Class: Japan
@@ -1646,13 +1800,24 @@ Filename(20): Yu Mincho Demibold.otf
 Filename(10): YuMin-Demibold.otf
 Filename(30): YuMincho.ttc(1)
 
-Name: YuMin_36pKn-Medium
+# Following four entries are for macOS 10.12 Sierra
+# The index for OS X 10.11.x El Capitan is different!
+
+Name: YuMin-Extrabold
 Class: Japan
 Filename(30): YuMincho.ttc(2)
 
-Name: YuMin_36pKn-Demibold
+Name: YuMin_36pKn-Medium
 Class: Japan
 Filename(30): YuMincho.ttc(3)
+
+Name: YuMin_36pKn-Demibold
+Class: Japan
+Filename(30): YuMincho.ttc(4)
+
+Name: YuMin_36pKn-Extrabold
+Class: Japan
+Filename(30): YuMincho.ttc(5)
 
 # Yu-fonts Windows version
 
@@ -1661,31 +1826,37 @@ Class: Japan
 Provides(60): Ryumin-Light
 Provides(60): RyuminPro-Light
 Filename(20): yumin.ttf
-Filename(10): YuMincho-Regular.ttf
+#Filename(10): YuMincho-Regular.ttf
 
 Name: YuMincho-Light
 Class: Japan
 Filename(20): yuminl.ttf
-Filename(10): YuMincho-Light.ttf
+#Filename(10): YuMincho-Light.ttf
 
 Name: YuMincho-DemiBold
 Class: Japan
 Provides(60): FutoMinA101-Bold
 Provides(60): FutoMinA101Pro-Bold
 Filename(20): yumindb.ttf
-Filename(10): YuMincho-DemiBold.ttf
+#Filename(10): YuMincho-DemiBold.ttf
 
 Name: YuGothic-Regular
 Class: Japan
 Provides(60): GothicBBB-Medium
 Provides(60): GothicBBBPro-Medium
 Filename(20): yugothic.ttf
-Filename(10): YuGothic-Regular.ttf
+#Filename(10): YuGothic-Regular.ttf
+Filename(30): YuGothR.ttc(0)
+
+Name: YuGothic-Medium
+Class: Japan
+Filename(30): YuGothM.ttc(0)
 
 Name: YuGothic-Light
 Class: Japan
 Filename(20): yugothil.ttf
-Filename(10): YuGothic-Light.ttf
+#Filename(10): YuGothic-Light.ttf
+Filename(30): YuGothL.ttc(0)
 
 Name: YuGothic-Bold
 Class: Japan
@@ -1696,9 +1867,10 @@ Provides(60): Jun101Pro-Light
 Provides(60): MidashiGo-MB31
 Provides(60): MidashiGoPro-MB31
 Filename(20): yugothib.ttf
-Filename(10): YuGothic-Bold.ttf
+#Filename(10): YuGothic-Bold.ttf
+Filename(30): YuGothB.ttc(0)
 
-# IPA fonts
+# IPA (free)
 
 Name: IPAMincho
 Class: Japan
@@ -1707,7 +1879,7 @@ Provides(110): RyuminPro-Light
 Provides(110): FutoMinA101-Bold
 Provides(110): FutoMinA101Pro-Bold
 Filename(20): ipam.ttf
-Filename(10): IPAMincho.ttf
+#Filename(10): IPAMincho.ttf
 
 Name: IPAGothic
 Class: Japan
@@ -1720,7 +1892,7 @@ Provides(110): Jun101Pro-Light
 Provides(110): MidashiGo-MB31
 Provides(110): MidashiGoPro-MB31
 Filename(20): ipag.ttf
-Filename(10): IPAGothic.ttf
+#Filename(10): IPAGothic.ttf
 
 Name: IPAexMincho
 Class: Japan
@@ -1729,7 +1901,7 @@ Provides(100): RyuminPro-Light
 Provides(100): FutoMinA101-Bold
 Provides(100): FutoMinA101Pro-Bold
 Filename(20): ipaexm.ttf
-Filename(10): IPAexMincho.ttf
+#Filename(10): IPAexMincho.ttf
 
 Name: IPAexGothic
 Class: Japan
@@ -1742,9 +1914,21 @@ Provides(100): Jun101Pro-Light
 Provides(100): MidashiGo-MB31
 Provides(100): MidashiGoPro-MB31
 Filename(20): ipaexg.ttf
-Filename(10): IPAexGothic.ttf
+#Filename(10): IPAexGothic.ttf
 
-# Kozuka fonts
+# IPA proportional (free)
+
+Name: IPAPMincho
+Class: Japan
+Filename(20): ipamp.ttf
+#Filename(10): IPAPMincho.ttf
+
+Name: IPAPGothic
+Class: Japan
+Filename(20): ipagp.ttf
+#Filename(10): IPAPGothic.ttf
+
+# Kozuka (Adobe)
 
 Name: KozGoPr6N-Bold
 Class: Japan
@@ -1778,15 +1962,6 @@ Name: KozGoPr6N-Light
 Class: Japan
 Filename: KozGoPr6N-Light.otf
 
-Name: KozGoPro-ExtraLight
-Class: Japan
-Filename: KozGoPro-ExtraLight.otf
-
-Name: KozGoPro-Light
-Class: Japan
-Filename: KozGoPro-Light.otf
-
-
 Name: KozGoPro-Bold
 Class: Japan
 Provides(90): FutoGoB101-Bold
@@ -1810,6 +1985,14 @@ Filename: KozGoPro-Medium.otf
 Name: KozGoPro-Regular
 Class: Japan
 Filename: KozGoPro-Regular.otf
+
+Name: KozGoPro-ExtraLight
+Class: Japan
+Filename: KozGoPro-ExtraLight.otf
+
+Name: KozGoPro-Light
+Class: Japan
+Filename: KozGoPro-Light.otf
 
 Name: KozGoProVI-Bold
 Class: Japan
@@ -1841,9 +2024,13 @@ Provides(70): FutoMinA101-Bold
 Provides(70): FutoMinA101Pro-Bold
 Filename: KozMinPr6N-Bold.otf
 
-Name: KozMinPr6N-Light
+Name: KozMinPr6N-Heavy
 Class: Japan
-Filename: KozMinPr6N-Light.otf
+Filename: KozMinPr6N-Heavy.otf
+
+Name: KozMinPr6N-Medium
+Class: Japan
+Filename: KozMinPr6N-Medium.otf
 
 Name: KozMinPr6N-Regular
 Class: Japan
@@ -1851,15 +2038,27 @@ Provides(70): Ryumin-Light
 Provides(70): RyuminPro-Light
 Filename: KozMinPr6N-Regular.otf
 
+Name: KozMinPr6N-ExtraLight
+Class: Japan
+Filename: KozMinPr6N-ExtraLight.otf
+
+Name: KozMinPr6N-Light
+Class: Japan
+Filename: KozMinPr6N-Light.otf
+
 Name: KozMinPro-Bold
 Class: Japan
 Provides(90): FutoMinA101-Bold
 Provides(90): FutoMinA101Pro-Bold
 Filename: KozMinPro-Bold.otf
 
-Name: KozMinPro-Light
+Name: KozMinPro-Heavy
 Class: Japan
-Filename: KozMinPro-Light.otf
+Filename: KozMinPro-Heavy.otf
+
+Name: KozMinPro-Medium
+Class: Japan
+Filename: KozMinPro-Medium.otf
 
 Name: KozMinPro-Regular
 Class: Japan
@@ -1867,15 +2066,19 @@ Provides(90): Ryumin-Light
 Provides(90): RyuminPro-Light
 Filename: KozMinPro-Regular.otf
 
+Name: KozMinPro-ExtraLight
+Class: Japan
+Filename: KozMinPro-ExtraLight.otf
+
+Name: KozMinPro-Light
+Class: Japan
+Filename: KozMinPro-Light.otf
+
 Name: KozMinProVI-Bold
 Class: Japan
 Provides(80): FutoMinA101-Bold
 Provides(80): FutoMinA101Pro-Bold
 Filename: KozMinProVI-Bold.otf
-
-Name: KozMinProVI-Light
-Class: Japan
-Filename: KozMinProVI-Light.otf
 
 Name: KozMinProVI-Regular
 Class: Japan
@@ -1883,34 +2086,23 @@ Provides(80): Ryumin-Light
 Provides(80): RyuminPro-Light
 Filename: KozMinProVI-Regular.otf
 
-Name: KozMinPr6N-ExtraLight
+Name: KozMinProVI-Light
 Class: Japan
-Filename: KozMinPr6N-ExtraLight.otf
+Filename: KozMinProVI-Light.otf
 
-Name: KozMinPr6N-Medium
-Class: Japan
-Filename: KozMinPr6N-Medium.otf
+# other Mac OS X fonts
 
-Name: KozMinPr6N-Heavy
-Class: Japan
-Filename: KozMinPr6N-Heavy.otf
+# Note about Mac OS X:
+#   Klee.ttc
+#   Tsukushi{A,B}MaruGothic.ttc
+# are bundled with OS X 10.11 El Capitan or later versions.
+#   Kyokasho.ttc
+#   ToppanBunkyuMincho-Regular.otf
+#   ToppanBunkyuGothic.ttc
+#   ToppanBunkyuMidashiMincho-ExtraBold.otf
+#   ToppanBunkyuMidashiGothic-ExtraBold.otf
+# are bundled with macOS 10.12 Sierra or later versions.
 
-Name: KozMinPro-ExtraLight
-Class: Japan
-Filename: KozMinPro-ExtraLight.otf
-
-Name: KozMinPro-Medium
-Class: Japan
-Filename: KozMinPro-Medium.otf
-
-Name: KozMinPro-Heavy
-Class: Japan
-Filename: KozMinPro-Heavy.otf
-
-#
-# other OSX 11 fonts
-
-# TODO TODO should they provide Maru Gothic ???
 Name: TsukuARdGothic-Regular
 Class: Japan
 Filename: TsukushiAMaruGothic.ttc(0)
@@ -1935,9 +2127,73 @@ Name: Klee-Demibold
 Class: Japan
 Filename: Klee.ttc(0)
 
+Name: YuKyo_Yoko-Medium
+Class: Japan
+Filename: Kyokasho.ttc(0)
+
+Name: YuKyo_Yoko-Bold
+Class: Japan
+Filename: Kyokasho.ttc(1)
+
+Name: YuKyo-Medium
+Class: Japan
+Filename: Kyokasho.ttc(2)
+
+Name: YuKyo-Bold
+Class: Japan
+Filename: Kyokasho.ttc(3)
+
+Name: ToppanBunkyuMinchoPr6N-Regular
+Class: Japan
+Filename: ToppanBunkyuMincho-Regular.otf
+
+Name: ToppanBunkyuGothicPr6N-DB
+Class: Japan
+Filename: ToppanBunkyuGothic.ttc(0)
+
+Name: ToppanBunkyuGothicPr6N-Regular
+Class: Japan
+Filename: ToppanBunkyuGothic.ttc(1)
+
+Name: ToppanBunkyuMidashiMinchoStdN-ExtraBold
+Class: Japan
+Filename: ToppanBunkyuMidashiMincho-ExtraBold.otf
+
+Name: ToppanBunkyuMidashiGothicStdN-ExtraBold
+Class: Japan
+Filename: ToppanBunkyuMidashiGothic-ExtraBold.otf
+
 #
 # CHINESE FONTS
 #
+
+# Hiragino chinese (OS X)
+
+Name: HiraginoSansGB-W3
+Class: GB
+Filename(20): Hiragino Sans GB W3.otf
+Filename(10): HiraginoSansGB-W3.otf
+Filename(30): Hiragino Sans GB W3.ttc(0)
+Filename(28): HiraginoSansGB-W3.ttc(0)
+
+Name: HiraginoSansGB-W6
+Class: GB
+Filename(20): Hiragino Sans GB W6.otf
+Filename(10): HiraginoSansGB-W6.otf
+Filename(30): Hiragino Sans GB W6.ttc(0)
+Filename(28): HiraginoSansGB-W6.ttc(0)
+
+Name: HiraginoSansCNS-W3
+Class: CNS
+Filename(30): Hiragino Sans CNS.ttc(0)
+Filename(28): HiraginoSansCNS.ttc(0)
+
+Name: HiraginoSansCNS-W6
+Class: CNS
+Filename(30): Hiragino Sans CNS.ttc(1)
+Filename(28): HiraginoSansCNS.ttc(1)
+
+# DynaComware (OS X)
 
 Name: LiHeiPro
 Class: CNS
@@ -1951,6 +2207,8 @@ Provides(50): MSung-Medium
 Provides(50): MSung-Light
 Filename(20): 儷宋 Pro.ttf
 Filename(10): LiSongPro.ttf
+
+# Changzhou SinoType (OS X)
 
 Name: STXihei
 Class: GB
@@ -1967,25 +2225,29 @@ Filename(10): STHeiti.ttf
 Name: STHeitiSC-Light
 Class: GB
 Provides(10): STHeiti-Light
-Filename(10): STHeiti Light.ttc(1)
-Filename(20): STHeitiSC-Light.ttf
+Filename(10): STHeiti-Light.ttc(1)
+Filename(20): STHeiti Light.ttc(1)
+#Filename(30): STHeitiSC-Light.ttf
 
 Name: STHeitiSC-Medium
 Class: GB
 Provides(40): STHeiti-Regular
-Filename(10): STHeiti Medium.ttc(1)
-Filename(20): STHeitiSC-Medium.ttf
+Filename(10): STHeiti-Medium.ttc(1)
+Filename(20): STHeiti Medium.ttc(1)
+#Filename(30): STHeitiSC-Medium.ttf
 
 Name: STHeitiTC-Light
 Class: CNS
-Filename(10): STHeiti Light.ttc(0)
-Filename(20): STHeitiTC-Light.ttf
+Filename(10): STHeiti-Light.ttc(0)
+Filename(20): STHeiti Light.ttc(0)
+#Filename(30): STHeitiTC-Light.ttf
 
 Name: STHeitiTC-Medium
 Class: CNS
 Provides(40): MHei-Medium
-Filename(10): STHeiti Medium.ttc(0)
-Filename(20): STHeitiTC-Medium.ttf
+Filename(10): STHeiti-Medium.ttc(0)
+Filename(20): STHeiti Medium.ttc(0)
+#Filename(30): STHeitiTC-Medium.ttf
 
 Name: STFangsong
 Class: GB
@@ -1994,103 +2256,324 @@ Provides(40): STFangsong-Regular
 Filename(20): 华文仿宋.ttf
 Filename(10): STFangsong.ttf
 
+# ----- Prevent wrong symlink Songti.ttc -> 华文宋体.ttf -- HY (2016/09/26)
+# TTC entry for Mountain Lion (10.8) or later
 Name: STSong
 Class: GB
 Provides(50): STSong-Light
 Filename(10): Songti.ttc(4)
 Filename(20): 宋体.ttc(3)
-Filename(30): 华文宋体.ttf
-Filename(40): STSong.ttf
+
+# TTF entry for Lion (10.7) or earlier
+Name: STSong
+Class: GB
+Provides(50): STSong-Light
+Filename(30): STSong.ttf
+Filename(40): 华文宋体.ttf
 
 Name: STSongti-SC-Light
 Class: GB
 Provides(40): STSong-Light
 Filename(10): Songti.ttc(3)
 Filename(20): 宋体.ttc(2)
-Filename(30): STSongti-SC-Light.ttf
+#Filename(30): STSongti-SC-Light.ttf
 
 Name: STSongti-SC-Regular
 Class: GB
 Filename(10): Songti.ttc(6)
 Filename(20): 宋体.ttc(4)
-Filename(30): STSongti-SC-Regular.ttf
+#Filename(30): STSongti-SC-Regular.ttf
 
 Name: STSongti-SC-Bold
 Class: GB
 Filename(10): Songti.ttc(1)
 Filename(20): 宋体.ttc(1)
-Filename(30): STSongti-SC-Bold.ttf
+#Filename(30): STSongti-SC-Bold.ttf
 
 Name: STSongti-SC-Black
 Class: GB
 Filename(10): Songti.ttc(0)
 Filename(20): 宋体.ttc(0)
-Filename(30): STSongti-SC-Black.ttf
+#Filename(30): STSongti-SC-Black.ttf
 
 Name: STSongti-TC-Light
 Class: CNS
 Provides(40): MSung-Light
 Filename(10): Songti.ttc(5)
-Filename(20): STSongti-TC-Light.ttf
+#Filename(20): STSongti-TC-Light.ttf
 
 Name: STSongti-TC-Regular
 Class: CNS
 Provides(40): MSung-Medium
 Filename(10): Songti.ttc(7)
-Filename(20): STSongti-TC-Regular.ttf
+#Filename(20): STSongti-TC-Regular.ttf
 
 Name: STSongti-TC-Bold
 Class: CNS
 Filename(10): Songti.ttc(2)
-Filename(20): STSongti-TC-Bold.ttf
+#Filename(20): STSongti-TC-Bold.ttf
 
+# Note about Mac OS X:
+#   Kaiti.ttc
+# contained 6 fonts before OS X 10.11.6 El Capitan.
+# After macOS 10.12 Sierra, it contains 7 fonts and
+# the order of ttc index has completely changed.
+
+# ----- Prevent wrong symlink Kaiti.ttc -> 华文楷体.ttf -- HY (2016/09/26)
+# TTC entry for Mountain Lion (10.8) or later
+# GB
 Name: STKaiti
 Class: GB
 Provides(50): STKaiti-Regular
-Filename(10): Kaiti.ttc(4)
+Filename(10): Kaiti.ttc(1) # for Sierra (10.12) or later
+#Filename(10): Kaiti.ttc(4) # for El Capitan (10.11.6) or earlier
 Filename(20): 楷体.ttc(3)
-Filename(30): 华文楷体.ttf
-Filename(40): STKaiti.ttf
+# CNS
+Name: STKaiti-Adobe-CNS1
+Class: CNS
+Provides(50): MKai-Medium
+Filename(10): Kaiti.ttc(1) # for Sierra (10.12) or later
+#Filename(10): Kaiti.ttc(4) # for El Capitan (10.11.6) or earlier
+Filename(20): 楷体.ttc(3)
 
+# TTF entry for Lion (10.7) or earlier
+# GB
+Name: STKaiti
+Class: GB
+Provides(50): STKaiti-Regular
+Filename(30): STKaiti.ttf
+Filename(40): 华文楷体.ttf
+# CNS
+Name: STKaiti-Adobe-CNS1
+Class: CNS
+Provides(50): MKai-Medium
+Filename(30): STKaiti.ttf
+Filename(40): 华文楷体.ttf
+
+# for El Capitan (10.11.6) or earlier
 Name: STKaiti-SC-Regular
 Class: GB
 Provides(40): STKaiti-Regular
 Filename(10): Kaiti.ttc(3)
 Filename(20): 楷体.ttc(2)
-Filename(30): STKaiti-SC-Regular.ttf
+#Filename(30): STKaiti-SC-Regular.ttf
 
+# for Sierra (10.12) or later
+Name: STKaitiSC-Regular
+Class: GB
+Provides(39): STKaiti-Regular
+Filename(10): Kaiti.ttc(0)
+
+# for El Capitan (10.11.6) or earlier
 Name: STKaiti-SC-Bold
 Class: GB
 Filename(10): Kaiti.ttc(1)
 Filename(20): 楷体.ttc(1)
-Filename(30): STKaiti-SC-Bold.ttf
+#Filename(30): STKaiti-SC-Bold.ttf
 
+# for Sierra (10.12) or later
+Name: STKaitiSC-Bold
+Class: GB
+Filename(10): Kaiti.ttc(3)
+
+# for El Capitan (10.11.6) or earlier
 Name: STKaiti-SC-Black
 Class: GB
 Filename(10): Kaiti.ttc(0)
 Filename(20): 楷体.ttc(0)
-Filename(30): STKaiti-SC-Black.ttf
+#Filename(30): STKaiti-SC-Black.ttf
 
+# for Sierra (10.12) or later
+Name: STKaitiSC-Black
+Class: GB
+Filename(10): Kaiti.ttc(5)
+
+# for El Capitan (10.11.6) or earlier
 Name: STKaiTi-TC-Regular
 Class: CNS
 Provides(40): MKai-Medium
 Filename(10): Kaiti.ttc(5)
-Filename(20): STKaiTi-TC-Regular.ttf
+#Filename(20): STKaiTi-TC-Regular.ttf
 
+# for Sierra (10.12) or later
+Name: STKaitiTC-Regular
+Class: CNS
+Provides(39): MKai-Medium
+Filename(10): Kaiti.ttc(2)
+
+# for El Capitan (10.11.6) or earlier
 Name: STKaiTi-TC-Bold
 Class: CNS
 Filename(10): Kaiti.ttc(2)
-Filename(20): STKaiTi-TC-Bold.ttf
+#Filename(20): STKaiTi-TC-Bold.ttf
 
-Name: STKaiti-Adobe-CNS1
+# for Sierra (10.12) or later
+Name: STKaitiTC-Bold
 Class: CNS
-Provides(50): MKai-Medium
 Filename(10): Kaiti.ttc(4)
-Filename(20): 楷体.ttc(3)
-Filename(30): 华文楷体.ttf
-Filename(40): STKaiti.ttf
 
-# Adobe fonts
+# for Sierra (10.12) or later (New!)
+Name: STKaitiTC-Black
+Class: CNS
+Filename(10): Kaiti.ttc(6)
+
+Name: STBaoliSC-Regular
+Class: GB
+Filename: Baoli.ttc(0)
+
+Name: STBaoliTC-Regular
+Class: CNS
+Filename: Baoli.ttc(1)
+
+Name: STLibianSC-Regular
+Class: GB
+Filename: Libian.ttc(0)
+
+Name: STLibianTC-Regular
+Class: CNS
+Filename: Libian.ttc(1)
+
+Name: STXingkaiSC-Bold
+Class: GB
+Filename: Xingkai.ttc(0)
+
+Name: STXingkaiTC-Bold
+Class: CNS
+Filename: Xingkai.ttc(1)
+
+Name: STXingkaiSC-Light
+Class: GB
+Filename: Xingkai.ttc(2)
+
+Name: STXingkaiTC-Light
+Class: CNS
+Filename: Xingkai.ttc(3)
+
+Name: STYuanti-SC-Regular
+Class: GB
+Filename: Yuanti.ttc(0)
+
+Name: STYuanti-TC-Regular
+Class: CNS
+Filename: Yuanti.ttc(1)
+
+Name: STYuanti-SC-Bold
+Class: GB
+Filename: Yuanti.ttc(2)
+
+Name: STYuanti-TC-Bold
+Class: CNS
+Filename: Yuanti.ttc(3)
+
+Name: STYuanti-SC-Light
+Class: GB
+Filename: Yuanti.ttc(4)
+
+Name: STYuanti-TC-Light
+Class: CNS
+Filename: Yuanti.ttc(5)
+
+# Beijing Founder Electronics (OS X)
+
+# Lantinghei SC Demibold
+Name: FZLTZHK--GBK1-0
+Class: GB
+Filename: Lantinghei.ttc(0)
+
+# Lantinghei SC Extralight
+Name: FZLTXHK--GBK1-0
+Class: GB
+Filename: Lantinghei.ttc(1)
+
+# Lantinghei SC Heavy
+Name: FZLTTHK--GBK1-0
+Class: GB
+Filename: Lantinghei.ttc(2)
+
+# Lantinghei TC Demibold
+Name: FZLTZHB--B51-0
+Class: CNS
+Filename: Lantinghei.ttc(3)
+
+# Lantinghei TC Extralight
+Name: FZLTXHB--B51-0
+Class: CNS
+Filename: Lantinghei.ttc(4)
+
+# Lantinghei TC Heavy
+Name: FZLTTHB--B51-0
+Class: CNS
+Filename: Lantinghei.ttc(5)
+
+# Arphic Font Design Team (OS X)
+
+Name: Weibei-SC-Bold
+Class: GB
+Filename: WeibeiSC-Bold.otf
+
+Name: Weibei-TC-Bold
+Class: CNS
+Filename: WeibeiTC-Bold.otf
+
+# Monotype Imaging (OS X)
+
+Name: YuppySC-Regular
+Class: GB
+Filename: YuppySC-Regular.otf
+
+Name: YuppyTC-Regular
+Class: CNS
+Filename: YuppyTC-Regular.otf
+
+# Monotype Hong Kong (OS X)
+
+Name: MLingWaiMedium-SC
+Class: GB
+Filename: LingWaiSC-Medium.otf
+
+Name: MLingWaiMedium-TC
+Class: CNS
+Filename: LingWaiTC-Medium.otf
+
+# DynaComware Taiwan (OS X)
+
+Name: DFWaWaSC-W5
+Class: GB
+Filename: WawaSC-Regular.otf
+
+Name: HannotateSC-W5
+Class: GB
+Filename: Hannotate.ttc(0)
+
+Name: HannotateTC-W5
+Class: CNS
+Filename: Hannotate.ttc(1)
+
+Name: HannotateSC-W7
+Class: GB
+Filename: Hannotate.ttc(2)
+
+Name: HannotateTC-W7
+Class: CNS
+Filename: Hannotate.ttc(3)
+
+Name: HanziPenSC-W3
+Class: GB
+Filename: Hanzipen.ttc(0)
+
+Name: HanziPenTC-W3
+Class: CNS
+Filename: Hanzipen.ttc(1)
+
+Name: HanziPenSC-W5
+Class: GB
+Filename: Hanzipen.ttc(2)
+
+Name: HanziPenTC-W5
+Class: CNS
+Filename: Hanzipen.ttc(3)
+
+# Adobe chinese fonts
 
 # simplified chinese
 
@@ -2130,39 +2613,240 @@ Provides(30): MHei-Medium
 Provides(30): MKai-Medium
 Filename(20): AdobeFanHeitiStd-Bold.otf
 
-# korean
-
-Name: AdobeMyungjoStd-Medium
-Class: Korea
-Provides(20): HYSMyeongJo-Medium
-Filename: AdobeMyungjoStd-Medium.otf
-
-Name: AdobeGothicStd-Bold
-Class: Korea
-Provides(20): HYGoThic-Medium
-Provides(50): HYRGoThic-Medium
-Filename: AdobeGothicStd-Bold.otf
-
 #
 # KOREAN FONTS
 #
 
-# apple fonts
+# Solaris-hanyang (Solaris 10, 11)
 
-Name: AppleMyungjo
+Name: Myeongjo
 Class: Korea
-Provides(50): HYSMyeongJo-Medium
-Filename: AppleMyungjo.ttf
+Provides(20): HYSMyeongJo-Medium
+Filename: h2mjsm.ttf
 
-Name: AppleGothic
+Name: Gothic
 Class: Korea
-Provides(50): HYGoThic-Medium
-Provides(80): HYRGoThic-Medium
-Filename: AppleGothic.ttf
+Provides(20): HYGoThic-Medium
+Filename: h2gtrm.ttf
+
+Name: RoundedGothic
+Class: Korea
+Provides(20): HYRGoThic-Medium
+Filename: h2drrm.ttf
+
+Name: Haeseo
+Class: Korea
+Filename: h2hsrm.ttf
+
+Name: SunDotum
+Class: Korea
+Filename: sundotump.ttf
+
+Name: SunDotumChe
+Class: Korea
+Filename: sundotumf.ttf
+
+# Baekmuk (free)
+# This is a special case, because "batang.ttf" in baekmuk and
+# "Batang.ttf" in Microsoft Mac Office font share the same filename;
+# symlink name should be "Baekmuk-Batang.ttf"
+# similar for "Gulim.ttf" -- HY (2016/09/29)
+
+Name: Baekmuk-Batang
+Class: Korea
+Provides(70): HYSMyeongJo-Medium
+Filename(20): batang.ttf
+Filename(10): Baekmuk-Batang.ttf
+
+Name: Baekmuk-Dotum
+Class: Korea
+Provides(70): HYGoThic-Medium
+Filename(20): dotum.ttf
+Filename(10): Baekmuk-Dotum.ttf
+
+Name: Baekmuk-Gulim
+Class: Korea
+Provides(70): HYRGoThic-Medium
+Filename(20): gulim.ttf
+Filename(10): Baekmuk-Gulim.ttf
+
+Name: Baekmuk-Headline
+Class: Korea
+Filename(20): hline.ttf
+Filename(10): Baekmuk-Headline.ttf
+
+# Unfonts-core (free)
+
+Name: UnBatang
+Class: Korea
+Provides(60): HYSMyeongJo-Medium
+Filename: UnBatang.ttf
+
+Name: UnBatang-Bold
+Class: Korea
+Filename: UnBatangBold.ttf
+
+Name: UnDotum
+Class: Korea
+Provides(60): HYGoThic-Medium
+Filename: UnDotum.ttf
+
+Name: UnDotum-Bold
+Class: Korea
+Filename: UnDotumBold.ttf
+
+Name: UnDinaru
+Class: Korea
+Provides(60): HYRGoThic-Medium
+Filename: UnDinaru.ttf
+
+Name: UnDinaru-Bold
+Class: Korea
+Filename: UnDinaruBold.ttf
+
+Name: UnDinaru-Light
+Class: Korea
+Filename: UnDinaruLight.ttf
+
+Name: UnGraphic
+Class: Korea
+Filename: UnGraphic.ttf
+
+Name: UnGraphic-Bold
+Class: Korea
+Filename: UnGraphicBold.ttf
+
+Name: UnGungseo
+Class: Korea
+Filename: UnGungseo.ttf
+
+Name: UnPilgi
+Class: Korea
+Filename: UnPilgi.ttf
+
+Name: UnPilgi-Bold
+Class: Korea
+Filename: UnPilgiBold.ttf
+
+# Unfonts-extra (free)
+
+Name: UnBom
+Class: Korea
+Filename: UnBom.ttf
+
+Name: UnPen
+Class: Korea
+Filename: UnPen.ttf
+
+Name: UnPenheulim
+Class: Korea
+Filename: UnPenheulim.ttf
+
+Name: UnPilgia
+Class: Korea
+Filename: UnPilgia.ttf
+
+Name: UnShinmun
+Class: Korea
+Filename: UnShinmun.ttf
+
+Name: UnVada
+Class: Korea
+Filename: UnVada.ttf
+
+Name: UnYetgul
+Class: Korea
+Filename: UnYetgul.ttf
+
+Name: UnTaza
+Class: Korea
+Filename: UnTaza.ttf
+
+# UnJamo... family has proportional metrics
+Name: UnJamoBatang
+Class: Korea
+Filename: UnJamoBatang.ttf
+
+Name: UnJamoDotum
+Class: Korea
+Filename: UnJamoDotum.ttf
+
+Name: UnJamoNovel
+Class: Korea
+Filename: UnJamoNovel.ttf
+
+Name: UnJamoSora
+Class: Korea
+Filename: UnJamoSora.ttf
+
+# Nanum (free)
+# note that all fonts have narrow metrics
 
 Name: NanumMyeongjo
 Class: Korea
-Provides(30): HYSMyeongJo-Medium
+Filename: NanumMyeongjo.ttf
+
+Name: NanumMyeongjoBold
+Class: Korea
+Filename: NanumMyeongjoBold.ttf
+
+Name: NanumGothic
+Class: Korea
+Filename: NanumGothic.ttf
+
+Name: NanumGothicBold
+Class: Korea
+Filename: NanumGothicBold.ttf
+
+Name: NanumBarunGothic
+Class: Korea
+Filename: NanumBarunGothic.ttf
+
+Name: NanumBarunGothicBold
+Class: Korea
+Filename: NanumBarunGothicBold.ttf
+
+Name: NanumMyeongjoExtraBold
+Class: Korea
+Filename: NanumMyeongjoExtraBold.ttf
+
+Name: NanumGothicExtraBold
+Class: Korea
+Filename: NanumGothicExtraBold.ttf
+
+Name: NanumGothicLight
+Class: Korea
+Filename: NanumGothicLight.ttf
+
+Name: NanumBarunGothicLight
+Class: Korea
+Filename: NanumBarunGothicLight.ttf
+
+Name: NanumBarunGothicUltraLight
+Class: Korea
+Filename: NanumBarunGothicUltraLight.ttf
+
+Name: NanumBarunpen
+Class: Korea
+Filename: NanumBarunpenR.ttf
+
+Name: NanumBarunpen-Bold
+Class: Korea
+Filename: NanumBarunpenB.ttf
+
+Name: NanumBrush
+Class: Korea
+Filename: NanumBrush.ttf
+
+Name: NanumPen
+Class: Korea
+Filename: NanumPen.ttf
+
+# Nanum OS X (free, but converted to ttc format)
+# note that all fonts have narrow metrics
+
+Name: NanumMyeongjo
+Class: Korea
 Filename: NanumMyeongjo.ttc(0)
 
 Name: NanumMyeongjoBold
@@ -2175,8 +2859,6 @@ Filename: NanumMyeongjo.ttc(2)
 
 Name: NanumGothic
 Class: Korea
-Provides(30): HYGoThic-Medium
-Provides(60): HYRGoThic-Medium
 Filename: NanumGothic.ttc(0)
 
 Name: NanumGothicBold
@@ -2194,6 +2876,19 @@ Filename: NanumScript.ttc(0)
 Name: NanumPen
 Class: Korea
 Filename: NanumScript.ttc(1)
+
+# Apple
+
+Name: AppleMyungjo
+Class: Korea
+Provides(50): HYSMyeongJo-Medium
+Filename: AppleMyungjo.ttf
+
+Name: AppleGothic
+Class: Korea
+Provides(50): HYGoThic-Medium
+Provides(100): HYRGoThic-Medium
+Filename: AppleGothic.ttf
 
 Name: AppleSDGothicNeo-Thin
 Class: Korea
@@ -2231,28 +2926,42 @@ Name: AppleSDGothicNeo-Heavy
 Class: Korea
 Filename: AppleSDGothicNeo-Heavy.otf
 
+# Adobe korean fonts
+
+Name: AdobeMyungjoStd-Medium
+Class: Korea
+Provides(30): HYSMyeongJo-Medium
+Filename: AdobeMyungjoStd-Medium.otf
+
+Name: AdobeGothicStd-Bold
+Class: Korea
+Provides(30): HYGoThic-Medium
+Provides(80): HYRGoThic-Medium
+Filename: AdobeGothicStd-Bold.otf
+
 #
 # Microsoft Mac Office fonts
 #
 
-# Korea
-
-Name: Gulim
-Class: Korea
-Provides(70): HYRGoThic-Medium
-Provides(70): HYGoThic-Medium
-Filename(30): Gulim.ttf
-Filename(50): gulim.ttc
-
-Name: Dotum
-Class: Korea
-Provides(40): HYGoThic-Medium
-Filename(50): Dotum.ttf
+# korea
 
 Name: Batang
 Class: Korea
 Provides(40): HYSMyeongJo-Medium
 Filename(50): Batang.ttf
+
+# TODO: Does this font really exist? -- HY (2016/09/29)
+Name: Dotum
+Class: Korea
+Provides(40): HYGoThic-Medium
+Filename(50): Dotum.ttf
+
+Name: Gulim
+Class: Korea
+Provides(40): HYRGoThic-Medium
+Provides(90): HYGoThic-Medium
+Filename(30): Gulim.ttf
+Filename(50): gulim.ttc
 
 # simplified chinese
 
