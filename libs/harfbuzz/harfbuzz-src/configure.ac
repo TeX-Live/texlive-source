@@ -1,6 +1,6 @@
 AC_PREREQ([2.64])
 AC_INIT([HarfBuzz],
-        [1.3.2],
+        [1.3.3],
         [https://github.com/behdad/harfbuzz/issues/new],
         [harfbuzz],
         [http://harfbuzz.org/])
@@ -19,9 +19,11 @@ LT_PREREQ([2.2])
 LT_INIT([disable-static])
 
 # Check for programs
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AC_SYS_LARGEFILE
 PKG_PROG_PKG_CONFIG([0.20])
 AM_MISSING_PROG([RAGEL], [ragel])
 AM_MISSING_PROG([GIT], [git])
@@ -145,7 +147,7 @@ AC_ARG_WITH(glib,
 			[Use glib @<:@default=auto@:>@])],,
 	[with_glib=auto])
 have_glib=false
-GLIB_DEPS="glib-2.0 >= 2.16"
+GLIB_DEPS="glib-2.0 >= 2.38"
 AC_SUBST(GLIB_DEPS)
 if test "x$with_glib" = "xyes" -o "x$with_glib" = "xauto"; then
 	PKG_CHECK_MODULES(GLIB, $GLIB_DEPS, have_glib=true, :)
@@ -411,7 +413,8 @@ if test "x$with_coretext" = "xyes" -o "x$with_coretext" = "xauto"; then
 	else
 		# On iOS CoreText and CoreGraphics are stand-alone frameworks
 		if test "x$have_coretext" != "xtrue"; then
-			AC_CHECK_TYPE(CTFontRef, have_coretext=true,, [#include <CoreText/CoreText.h>])
+			# Check for a different symbol to avoid getting cached result.
+			AC_CHECK_TYPE(CTRunRef, have_coretext=true,, [#include <CoreText/CoreText.h>])
 		fi
 
 		if $have_coretext; then
