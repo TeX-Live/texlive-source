@@ -1,5 +1,9 @@
 2016-10-30  Karl Berry  <karl@tug.org>
 
+	* output.c (INVALID_EPOCH_VALUE): define as (time_t) -1,
+	to avoid warning with huge unsigned value on 32-bit systems.
+	(open_output): don't duplicate writing of %%CreationDate.
+
 	* dvips.texi (Invoking Dvips): TEXCONFIG does not include
 	. by default.
 
