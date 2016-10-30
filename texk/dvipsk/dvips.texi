@@ -1277,10 +1277,9 @@ loaded (if it exists).
 
 Because the @file{.dvipsrc} file is read before the printer-specific
 configuration files, individual users cannot override settings in the
-latter.  On the other hand, the @code{TEXCONFIG} path usually includes
-the current directory, and can in any case be set to anything, so the
-users can always define their own printer-specific configuration files
-to be found before the system's.
+latter.  On the other hand, the @code{TEXCONFIG} path can be set to
+anything, so the users can always define their own printer-specific
+configuration files to be found before the system's.
 
 A few command-line options are treated specially, in that they are not
 overridden by configuration files:
