@@ -1,3 +1,8 @@
+2016-10-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.defines, eptex.ech, eptex_version.h, pdfutils.ch:
+	Use initstarttime() to improve CreationDate.
+
 2016-09-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech, pdfutils.ch: Realize better box in math mode.
