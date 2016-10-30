@@ -1063,10 +1063,9 @@ or individually by each user.
 
    Because the '.dvipsrc' file is read before the printer-specific
 configuration files, individual users cannot override settings in the
-latter.  On the other hand, the 'TEXCONFIG' path usually includes the
-current directory, and can in any case be set to anything, so the users
-can always define their own printer-specific configuration files to be
-found before the system's.
+latter.  On the other hand, the 'TEXCONFIG' path can be set to anything,
+so the users can always define their own printer-specific configuration
+files to be found before the system's.
 
    A few command-line options are treated specially, in that they are
 not overridden by configuration files:
@@ -4634,61 +4633,61 @@ Node: Option details21206
 Node: Environment variables40851
 Node: Config files43712
 Node: Configuration file searching44382
-Node: Configuration file commands47635
-Node: Paper size and landscape55292
-Node: papersize special56890
-Node: Config file paper sizes58299
-Node: Paper trays62455
-Node: Interaction with PostScript63789
-Node: PostScript figures64442
-Node: Bounding box65168
-Node: \includegraphics68540
-Node: EPSF macros70833
-Node: EPSF scaling72833
-Node: EPSF clipping75403
-Node: psfile special76045
-Node: Dynamic creation of graphics78437
-Node: Fonts in figures79755
-Node: Header files81405
-Node: Including headers from TeX82615
-Node: Including headers from the command line84653
-Node: Headers and memory usage85752
-Node: Literal PS86963
-Node: " special87545
-Node: ps special88286
-Node: Literal headers89784
-Node: PostScript hooks90493
-Node: Literal examples92589
-Node: Hypertext94043
-Node: Hypertext caveats95272
-Node: Hypertext specials99660
-Node: PostScript fonts102294
-Node: Font concepts103411
-Node: Metric files104578
-Node: Glyph files107358
-Node: Virtual fonts109717
-Node: Encodings111543
-Node: PostScript typesetting113946
-Node: Making a font available117031
-Node: Invoking afm2tfm122065
-Node: Changing font encodings123082
-Node: Changing TeX encodings123873
-Node: Changing PostScript encodings124975
-Node: Changing both encodings126319
-Node: Reencoding with Afm2tfm126993
-Node: Encoding file format130096
-Node: Special font effects134300
-Node: Afm2tfm options136560
-Node: psfonts.map140085
-Node: Color144815
-Node: Color macro files145859
-Node: User-definable colors149052
-Node: Color subtleties150328
-Node: Ted Turner151980
-Node: Color device configuration153205
-Node: Color support details155649
-Node: Color specifications156027
-Node: Color specials157431
-Node: Index159560
+Node: Configuration file commands47579
+Node: Paper size and landscape55236
+Node: papersize special56834
+Node: Config file paper sizes58243
+Node: Paper trays62399
+Node: Interaction with PostScript63733
+Node: PostScript figures64386
+Node: Bounding box65112
+Node: \includegraphics68484
+Node: EPSF macros70777
+Node: EPSF scaling72777
+Node: EPSF clipping75347
+Node: psfile special75989
+Node: Dynamic creation of graphics78381
+Node: Fonts in figures79699
+Node: Header files81349
+Node: Including headers from TeX82559
+Node: Including headers from the command line84597
+Node: Headers and memory usage85696
+Node: Literal PS86907
+Node: " special87489
+Node: ps special88230
+Node: Literal headers89728
+Node: PostScript hooks90437
+Node: Literal examples92533
+Node: Hypertext93987
+Node: Hypertext caveats95216
+Node: Hypertext specials99604
+Node: PostScript fonts102238
+Node: Font concepts103355
+Node: Metric files104522
+Node: Glyph files107302
+Node: Virtual fonts109661
+Node: Encodings111487
+Node: PostScript typesetting113890
+Node: Making a font available116975
+Node: Invoking afm2tfm122009
+Node: Changing font encodings123026
+Node: Changing TeX encodings123817
+Node: Changing PostScript encodings124919
+Node: Changing both encodings126263
+Node: Reencoding with Afm2tfm126937
+Node: Encoding file format130040
+Node: Special font effects134244
+Node: Afm2tfm options136504
+Node: psfonts.map140029
+Node: Color144759
+Node: Color macro files145803
+Node: User-definable colors148996
+Node: Color subtleties150272
+Node: Ted Turner151924
+Node: Color device configuration153149
+Node: Color support details155593
+Node: Color specifications155971
+Node: Color specials157375
+Node: Index159504
 
 End Tag Table
