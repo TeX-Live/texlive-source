@@ -1061,5 +1061,8 @@ begin
         flush_string;
 end;
 
+@ @<Set initial values of key variables@>=
+  init_start_time;
+
 @* \[54] System-dependent changes.
 @z
