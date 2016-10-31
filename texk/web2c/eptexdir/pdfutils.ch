@@ -631,13 +631,6 @@ if_pdfprimitive_code: begin
 @<Calculate DVI page dimensions and margins@>;
 @z
 
-@x
-@!old_setting:0..max_selector; {saved |selector| setting}
-@y
-@!old_setting:0..max_selector; {saved |selector| setting}
-@!t: scaled;
-@z
-
 @x \[if]pdfprimitive: main_loop
 any_mode(ignore_spaces): begin @<Get the next non-blank non-call...@>;
   goto reswitch;
