@@ -1,6 +1,8 @@
+## $Id$
 ## Proxy Makefile.am to install harfbuzz headers for TeX Live.
 ##
-##   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright 2015-2016 Karl Berry <tex-live@tug.org>
+##   Copyright 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -29,6 +31,7 @@ hdr_links += \
 	$(HARFBUZZ_SRC)/hb-ot.h \
 	$(HARFBUZZ_SRC)/hb-ot-font.h \
 	$(HARFBUZZ_SRC)/hb-ot-layout.h \
+	$(HARFBUZZ_SRC)/hb-ot-math.h \
 	$(HARFBUZZ_SRC)/hb-ot-shape.h \
 	$(HARFBUZZ_SRC)/hb-ot-tag.h
 
