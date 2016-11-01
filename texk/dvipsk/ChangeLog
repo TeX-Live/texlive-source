@@ -1,3 +1,9 @@
+2016-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dospecial.c, dvips.c, dvips.help, protos.h, resident.c:
+	Add a new option -L*  Last special papersize wins.
+	dvips -L0 ... gives the old behavior.
+
 2016-10-30  Karl Berry  <karl@tug.org>
 
 	* output.c (INVALID_EPOCH_VALUE): define as (time_t) -1,

@@ -673,6 +673,9 @@ case 'E' :
 case 'K':
          removecomments = (was_inline[1] != '0');
          break;
+case 'L':
+         lastpsizwins = (was_inline[1] != '0');
+         break;
 case 'U':
          nosmallchars = (was_inline[1] != '0');
          break;

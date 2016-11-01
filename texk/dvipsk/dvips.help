@@ -14,7 +14,7 @@ Options:
 -i*  Separate file per section
 -j*  Download fonts partially
 -k*  Print crop marks                -K*  Pull comments from inclusions
--l # Last page
+-l # Last page                       -L*  Last special papersize wins
 -m*  Manual feed                     -M*  Don't make fonts
 -mode s Metafont device name
 -n # Maximum number of pages         -N*  No structured comments
