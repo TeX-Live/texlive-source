@@ -1,3 +1,9 @@
+2016-11-02  Karl Berry  <karl@tug.org>
+
+	* mktexdir: try a silent mkdir before a non-silent mkdir,
+	to try to work around the inevitable race condition.
+	https://bugs.debian.org/794228.
+
 2016-08-04  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (max_strings.bibtex, et al.): increase to 100,000
