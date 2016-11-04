@@ -77,7 +77,7 @@ const_string CWEAVEHELP[] = {
     "-f          do not force a newline after every C statement in output",
     "-h          suppress success message on completion",
     "-p          suppress progress report messages",
-    "-x          omit indices and table of contents",
+    "-x          omit indices, section names, table of contents",
     "+e          enclose C material in \\PB{...}",
     "+s          print usage statistics",
     "--help      display this help and exit",
