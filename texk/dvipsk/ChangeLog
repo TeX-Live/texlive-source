@@ -1,3 +1,9 @@
+2016-11-08  Karl Berry  <karl@freefriends.org>
+
+	* dvips.texi,
+	* NEWS: document new papersize special behavior and options.
+	Original report at http://tex.stackexchange.com/questions/336545.
+
 2016-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dospecial.c, dvips.c, dvips.help, protos.h, resident.c:
