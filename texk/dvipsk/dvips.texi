@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 5.996
-@set month-year April 2016
+@set month-year November 2016
 
 @copying
 This manual documents Dvips version @value{version}
@@ -22,8 +22,6 @@ PostScript.  You may freely use, modify and/or distribute this file.
 @syncodeindex op cp
 @syncodeindex pg cp
 @syncodeindex vr cp
-
-@ifclear INSTALLONLY
 
 @dircategory TeX
 @direntry
@@ -125,9 +123,6 @@ So if you don't use Dvips on your system, get it today.
 
 @cindex Rokicki, Tomas
 Tom Rokicki wrote and maintains the original Dvips program.
-
-@end ifclear
-@c INSTALLONLY
 
 
 @node Installation
@@ -462,7 +457,6 @@ Any application which generates graphics output containing raw binary
 (not ASCII hex) will probably fail with Dvips.
 
 
-@ifclear INSTALLONLY
 @node Invoking Dvips
 @chapter Invoking Dvips
 
@@ -782,6 +776,12 @@ compare with the @TeX{} @samp{\count0} values stored in the DVI file.
 Thus, using @samp{-l =9} will end with the ninth page of the document,
 no matter what the pages are actually numbered.
 
+@item -L*
+@opindex -L
+@cindex @samp{papersize} special, first vs.@: last
+By default or with @code{-L1}, the last @samp{papersize} special wins;
+with @code{-L0}, the first special wins.  @xref{@samp{papersize} special}.
+
 @item -m*
 @opindex -m
 @cindex manual feed
@@ -897,7 +897,7 @@ See the @samp{-f} option for how to override this.
 @cindex offset pages
 @cindex printer offset
 Move the origin by @var{x-offset},@var{y-offset}, a comma-separated
-pair of dimensions such as @samp{.1in,-.3cm} (@pxref{papersize
+pair of dimensions such as @samp{.1in,-.3cm} (@pxref{@samp{papersize}
 special}).  The origin of the page is shifted from the default position
 (of one inch down, one inch to the right from the upper left corner of
 the paper) by this amount.  This is usually best specified in the
@@ -1035,7 +1035,7 @@ you can use @samp{-E} to get pure EPSF output.)
 @item -T @var{hsize},@var{vsize}
 @opindex -T @var{hsize},@var{vsize}
 Set the paper size to (@var{hsize},@var{vsize}), a comma-separated
-pair of dimensions such as @samp{.1in,-.3cm} (@pxref{papersize
+pair of dimensions such as @samp{.1in,-.3cm} (@pxref{@samp{papersize}
 special}).  It overrides any paper size special in the DVI file.  Be
 careful, as the paper size will stick to a predefined size if there is
 one close enough. To disable this behavior, use @samp{-tunknown}.
@@ -1327,11 +1327,11 @@ There is no provision for continuation lines.
 
 @table @samp
 @item @@ @var{name hsize vsize}
-@opindex @@ @r{paper size config command}
+@opindex @@ @r{config command (define paper sizes)}
 Define paper sizes.  @xref{Config file paper sizes}.
 
 @item a*
-@opindex a @r{config command (memory conservation)}
+@opindex a @r{config command (conserve memory)}
 Memory conservation.  Same as @samp{-a}, @pxref{Option details}.
 
 @item b @var{#copies}
@@ -1339,7 +1339,7 @@ Memory conservation.  Same as @samp{-a}, @pxref{Option details}.
 Multiple copies.  Same as @samp{-b}, @pxref{Option details}.
 
 @item c @var{filename}
-@opindex c @r{include additional config file}
+@opindex c @r{config command (include another config file)}
 Include @var{filename} as an additional configuration file, read
 immediately.
 
@@ -1368,16 +1368,16 @@ be printed if the option is used (and warnings are not suppressed).
 Run as a filter.  Same as @samp{-f}, @pxref{Option details}.
 
 @item G*
-@opindex G @r{character shifting config command}
+@opindex G @r{config command (character shifting)}
 Shift low-numbered characters; obsolete.  Same as @samp{-G},
 @pxref{Option details}.
 
 @item h @var{header}
-@opindex h @r{header downloading config command}
+@opindex h @r{config command (download additional header)}
 Prepend @var{header} to output.  Same as @samp{h-}, @pxref{Option details}.
 
 @item H @var{path}
-@opindex H @r{header path config command}
+@opindex H @r{config command (PostScript header path)}
 @cindex header path, defining
 @vindex DVIPSHEADERS@r{, overrides} H
 Use @var{path} to search for PostScript header files.  The environment
@@ -1393,9 +1393,14 @@ details}.
 Partially download Type 1 fonts.  Same as @samp{-j}, @pxref{Option details}.
 
 @item K*
-@opindex K @r{config command (comment-removal)}
+@opindex K @r{config command (comment removal)}
 Remove comments from included PostScript files.  Same as @samp{-K},
 @pxref{Option details}.
+
+@item L*
+@opindex L @r{config command (last paper size wins)}
+If zero, the first paper size specified is effective, else the last.
+Same as @samp{-L}, @pxref{Option details}.
 
 @item m @var{num}
 @opindex m @r{config command (available memory)}
@@ -1436,13 +1441,13 @@ splitting of the output is desirable.  The Dvips config file
 Metafont mode.  Same as @samp{-mode}, @pxref{Option details}.
 
 @item N*
-@opindex N @r{EPS-disabling config command}
+@opindex N @r{ config command (disable EPS)}
 Disable structured comments.  Beware: This also turns off displaying
 page numbers or changing to specific pagenumbers in PostScript viewers.
 Same as @samp{-N}, @pxref{Option details}.
 
 @item o @var{name}
-@opindex o @r{config command (output file)}
+@opindex o @r{config command (output destination)}
 @cindex output file, setting
 Send output to @var{name}.  Same as @samp{-o}, @pxref{Option details}.
 In the file @file{config.foo}, a setting like this is probably
@@ -1455,7 +1460,7 @@ the local printer device @file{PRN} if it doesn't find an executable
 program by that name in the current directory or along the @code{PATH}.
 
 @item O @var{xoff},@var{yoff}
-@opindex O @r{config command (offset)}
+@opindex O @r{config command (page offsets)}
 Origin offset.  Same as @samp{-O}, @pxref{Option details}.
 
 @item p @r{[+]}@var{name}
@@ -1493,7 +1498,7 @@ Run quietly.  Same as @samp{-q}, @pxref{Option details}.
 Page reversal.  Same as @samp{-r}, @pxref{Option details}.
 
 @item R @var{num1 num2 @dots{}}
-@opindex R @r{fallback resolution config command}
+@opindex R @r{config command (fallback resolution)}
 @cindex fallback resolutions
 @cindex default resolutions
 @cindex last-resort scaling, with @code{R}
@@ -1521,7 +1526,7 @@ the Makefile variable @samp{default_texsizes}, defined in the file
 @file{make/paths.make}.
 
 @item s*
-@opindex s @r{config command (save/restore)}
+@opindex s @r{config command (global save/restore)}
 Output global save/restore.  Same as @samp{-s}, @pxref{Option details}.
 
 @item S @var{path}
@@ -1554,7 +1559,7 @@ device-dependent if you use virtual fonts to simulate actual fonts on
 different devices.
 
 @item W @r{[@var{string}]}
-@opindex W @r{config command (warning)}
+@opindex W @r{config command (emit warning)}
 @cindex warning messages, defining
 If @var{string} is supplied, write it to standard error after reading
 all the configuration files; with no @var{string}, cancel any previous
@@ -1571,7 +1576,7 @@ Horizontal resolution.  Same as @samp{-X} (@pxref{Option details}).
 Vertical resolution.  Same as @samp{-Y} (@pxref{Option details}).
 
 @item Z*
-@opindex Z @r{config command (compression)}
+@opindex Z @r{config command (compress fonts)}
 Compress bitmap fonts.  Same as @samp{-Z} (@pxref{Option details}).
 
 @item z*
@@ -1589,19 +1594,19 @@ on the command line, that takes precedence.
 @cindex paper size, general
 
 Most @TeX{} documents at a particular site are designed to use the
-local standard paper size (letter size in the United States, A4 in
-Europe).  The Dvips program can be customized either sitewide or for a
-particular printer.
+local standard paper size (letter size in the United States, A4
+elsewhere).  The Dvips program can be customized either sitewide or
+for a particular printer.
 
 @cindex landscape orientation, defined
 @cindex portrait orientation, defined
-But many documents are designed for other paper sizes.  For instance,
-you may want to design a document that has the long edge of the paper
-horizontal.  This can be useful when typesetting booklets, brochures,
-complex tables, or many other documents.  This type of paper orientation
-is called @dfn{landscape} orientation (the default orientation is
-@dfn{portrait}).  Alternatively, a document might be designed for ledger
-or A3 paper.
+On the other hand, plenty of documents are designed for other paper
+sizes.  For instance, you may want to design a document that has the
+long edge of the paper horizontal.  This can be useful when
+typesetting booklets, brochures, complex tables, or many other
+documents.  This type of paper orientation is called @dfn{landscape}
+orientation (the default orientation is called @dfn{portrait}).
+Alternatively, a document might be designed for ledger or A3 paper.
 
 Since the intended paper size in these cases is a document design
 decision, not a printing decision, such information should be given in
@@ -1615,13 +1620,13 @@ Some @LaTeX{} packages, e.g., @samp{hyperref.sty}, write a
 not and should not attempt to override it manually.
 
 @menu
-* papersize special::           Specifying the paper size in TeX.
+* @samp{papersize} special::           Specifying the paper size in TeX.
 * Config file paper sizes::     Specifying printer- and site-specific sizes.
 * Paper trays::                 Changing paper trays automatically.
 @end menu
 
 
-@node papersize special
+@node @samp{papersize} special
 @section @samp{papersize} special
 
 @findex papersize @r{special}
@@ -1640,7 +1645,7 @@ namely, in (inches), cm (centimeters), mm (millimeters), pt (points), sp
 unit), pc (picas), dd (didot points), and cc (ciceros).
 
 @findex landscape@r{, as @code{\special}}
-For a US letter size landscape document, the @code{papersize} would be:
+For a US letter size landscape document, the @samp{papersize} would be:
 @example
 \special@{papersize=11in,8.5in@}
 @end example
@@ -1653,20 +1658,26 @@ An alternate specification of @code{landscape}:
 
 @noindent
 This is supported for backward compatibility, but it is hoped that
-reventually the @code{papersize} comment will dominate.
+reventually the @samp{papersize} comment will dominate.
 
 Of course, such a @code{\special} only informs Dvips of the desired
 paper size; you must also adjust @code{\hsize} and @code{\vsize} in your
 @TeX{} document typeset to those dimensions.
 
 @findex unknown@r{, paper format for @samp{-t}}
-When using the @code{papersize} special, you generally should not also
+When using the @samp{papersize} special, you generally should not also
 specify @code{-t} on the command line (@pxref{Option details}).  The
 exception is when using a nonstandard paper size that isn't
 predefined; in this case, use @code{-t@tie{}unknown}.
 
-The @code{papersize} special must occur somewhere on the first page of
+The @samp{papersize} special must occur somewhere on the first page of
 the document.  Some packages, notably @samp{hyperref}, insert this special.
+
+By default, if a DVI file contains multiple @samp{papersize} specials,
+the last one wins; this is also the behavior of the @code{dvipdfmx}
+driver.  If the @code{-L0} command line option or @code{L0} config
+file command is specified, the first special wins---this was the
+behavior of Dvips prior to the 2017 release.
 
 
 @node Config file paper sizes
@@ -4647,7 +4658,4 @@ categories of color-like state.
 
 @printindex cp
 
-
-@end ifclear
-@c INSTALLONLY
 @bye
