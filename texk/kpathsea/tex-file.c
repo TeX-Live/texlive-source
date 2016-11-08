@@ -771,7 +771,8 @@ kpathsea_init_format_return_varlist(kpathsea kpse,kpse_file_format_type format)
       break;
     case kpse_opentype_format:
       INIT_FORMAT ("opentype fonts", DEFAULT_OPENTYPEFONTS, OPENTYPE_ENVS);
-      SUFFIXES (".otf");
+#define OPENTYPE_SUFFIXES ".otf", ".OTF"
+      SUFFIXES (OPENTYPE_SUFFIXES);
       FMT_INFO.suffix_search_only = true;
       FMT_INFO.binmode = true;
       break;

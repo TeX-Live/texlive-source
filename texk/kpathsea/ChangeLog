@@ -1,3 +1,7 @@
+2016-11-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* tex-file.c: Add ".OTF" as a suffix of OpenType fonts.
+
 2016-11-02  Karl Berry  <karl@tug.org>
 
 	* mktexdir: try a silent mkdir before a non-silent mkdir,
