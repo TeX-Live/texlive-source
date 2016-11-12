@@ -199,9 +199,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-/*   init hangul tumunja table   */
-	u_strcpy(tumunja,GANADA);
-
 	if (!indfile &&(idxcount-fsti>0)) {
 		indfile=xmalloc(strlen(idxfile[0]+6));
 		for (i=strlen(idxfile[0]);i>=0;i--) {
@@ -232,6 +229,8 @@ int main(int argc, char **argv)
 		logfile=xstrdup("stderr");
 	}
 
+/*   init hangul tumunja table   */
+	u_strcpy(tumunja,GANADA);
 	if (styfile!=NULL) styread(styfile);
 
 	set_icu_attributes();
