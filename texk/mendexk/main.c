@@ -268,16 +268,18 @@ int main(int argc, char **argv)
 	}
 
 	if (!logfile && (idxcount-fsti > 0)) {
-		logfile=xmalloc(strlen(idxfile[0]+6));
+		char llogfile[512];
+		for (i=0; i < 512; i++) llogfile[i] = '\0';
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
-				strncpy(logfile,idxfile[0],i);
-				sprintf(&logfile[i],".ilg");
+				strncpy(llogfile,idxfile[0],i);
+				sprintf(&llogfile[i],".ilg");
 				break;
 			}
 		}
-		if (i==-1) sprintf(logfile,"%s.ilg",idxfile[0]);
-		}
+		if (i==-1) sprintf(llogfile,"%s.ilg",idxfile[0]);
+        	logfile = xstrdup(llogfile);
+	}
 	if (logfile && kpse_out_name_ok(logfile))
 		efp=fopen(logfile,"wb");
 	if(efp == NULL) {
