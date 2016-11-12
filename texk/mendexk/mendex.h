@@ -8,7 +8,7 @@
 
 #ifdef WIN32
 #define nkf_open fopen
-#define nkf_close fclose
+#define nkf_close(fp) {clear_infile_enc(fp); fclose(fp);}
 #endif
 
 struct page {

@@ -21,7 +21,7 @@ static char *
 bfgets (char *buf, int size, FILE *fp)
 {
 	char *p, *q;
-	p = mfgets (buf, size, fp);
+	p = fgets (buf, size, fp);
 	for (q = buf; *q; q++) {
 		if(*q == '\r') {
 			*q++ = '\n';
