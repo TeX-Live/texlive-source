@@ -1,7 +1,7 @@
 2016-11-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mendex.h: Sync with W32TeX (W32 only).
-	* main.c: Avoid access violation on Windows.
+	* main.c: Avoid access violation.
 
 2016-09-28  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
