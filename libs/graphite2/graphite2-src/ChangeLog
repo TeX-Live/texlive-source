@@ -1,3 +1,11 @@
+1.3.9
+    . Add Collision COLL_ISSPACE to allow for visible spaces in collision avoidance
+    . Add segment and pass direction information to tracing output
+    . Bug fix rule length testing in 32-bit
+    . Increase slanted margin distances for collision avoidance
+    . Change kerning algorithm to simple outline expansion. Seems to make no visible difference.
+    . Add trace2svg to test tools
+
 1.3.8
     . Various bug fixes arising from fuzzing
     . Fix regression that stopped piglatin from working
