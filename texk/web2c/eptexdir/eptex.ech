@@ -19,7 +19,7 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-161030'
+@d epTeX_version_string=='-161114'
 @z
 
 @x e-pTeX: banner
@@ -309,7 +309,7 @@ if fm>0 then {drop \.{\\beginM} \.{\\endM} pair}
 @d set_language_code=5 {command modifier for \.{\\setlanguage}}
 @y
 @d set_language_code=5 {command modifier for \.{\\setlanguage}}
-@d epTeX_input_encoding_code=7 {command modifier for \.{\\epTeXinputencoding}}
+@d epTeX_input_encoding_code=6 {command modifier for \.{\\epTeXinputencoding}}
 @z
 
 @x
