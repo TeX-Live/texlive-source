@@ -1,3 +1,8 @@
+2016-11-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* texmfmp.h : Change a condition to support new primitives in
+	eptex and euptex.
+
 2016-11-05  Karl Berry  <karl@tug.org>
 
 	* help.h (CWEAVEHELP) <-x>: mention section names,

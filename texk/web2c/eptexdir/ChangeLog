@@ -1,3 +1,9 @@
+2016-11-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, eptex_version.h, pdfutils.ch: Add new primitives
+	\pdfuniformdeviate, \pdfnormaldeviate, \pdfrandomseed, \pdfsetrandomseed,
+	\pdfelapsedtime, \pdfresettimer.
+
 2016-10-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdfutils.ch: Remove an unused variable to avoid a compiler warning.

@@ -2305,7 +2305,7 @@ WARNING1 ("invalid value (expected 0 or 1) for environment variable $FORCE_SOURC
   }
 }
 
-#if defined(pdfTeX)
+#if defined(pdfTeX) || defined(epTeX) || defined(eupTeX)
 /*
  Getting a high resolution time.
  */

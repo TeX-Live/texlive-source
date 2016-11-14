@@ -1,3 +1,7 @@
+2016-11-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* euptrip/texmf.cnf: Increase pool_size.
+
 2016-10-30  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* euptex.defines: Use initstarttime() to improve CreationDate.

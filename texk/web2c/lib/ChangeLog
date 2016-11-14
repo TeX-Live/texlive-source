@@ -1,3 +1,7 @@
+2016-11-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* texmfmp.c: Change a condition to support new primitives in e(u)ptex.
+
 2016-06-12  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp.c (get_date_and_time):
