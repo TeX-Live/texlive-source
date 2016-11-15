@@ -1,3 +1,8 @@
+2016-11-16  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (install-exec-hook): warn that the
+	result of make install is not in itself usable.
+
 2016-06-30  Karl Berry  <karl@tug.org>
 
 	* version.ac (tex_live_version): 2016 => 2017/dev.
