@@ -15,6 +15,7 @@
 //
 // Copyright (C) 2014 Bogdan Cristea <cristeab@gmail.com>
 // Copyright (C) 2014 Hib Eris <hib@hiberis.nl>
+// Copyright (C) 2016 Tor Lillqvist <tml@collabora.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -186,7 +187,7 @@ char * strtok_r (char *s, const char *delim, char **save_ptr);
 #define GCC_PRINTF_FORMAT(fmt_index, va_index)
 #endif
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && _MSC_VER < 1800
 #define fmax(a, b) std::max(a, b)
 #define fmin(a, b) std::min(a, b)
 #endif

@@ -25,7 +25,7 @@
 // Copyright (C) 2012 Pino Toscano <pino@kde.org>
 // Copyright (C) 2013 Jason Crain <jason@aquaticape.us>
 // Copyright (C) 2015 William Bader <williambader@hotmail.com>
-// Copyright (C) 2016 Jakub Kucharski <jakubkucharski97@gmail.com>
+// Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -912,7 +912,7 @@ GBool GooString::endsWith(const char *suffix) const {
   return strcmp(s + length - suffixLen, suffix) == 0;
 }
 
-GBool GooString::hasUnicodeMarker(void)
+GBool GooString::hasUnicodeMarker(void) const
 {
   return length > 1 && (s[0] & 0xff) == 0xfe && (s[1] & 0xff) == 0xff;
 }

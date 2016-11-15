@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[48])
+m4_define([poppler_version_minor],[49])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -262,7 +262,7 @@ fi
 
 dnl Test for NSS
 AC_ARG_ENABLE(libnss,
-        AC_HELP_STRING([--disable-nss],
+        AC_HELP_STRING([--disable-libnss],
                        [Do not build against libnss3.]),
               enable_libnss=$enableval,
               enable_libnss="try")
