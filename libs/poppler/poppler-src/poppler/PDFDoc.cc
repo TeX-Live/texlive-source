@@ -34,7 +34,7 @@
 // Copyright (C) 2015 Li Junling <lijunling@sina.com>
 // Copyright (C) 2015 André Guerreiro <aguerreiro1985@gmail.com>
 // Copyright (C) 2015 André Esser <bepandre@hotmail.com>
-// Copyright (C) 2016 Jakub Kucharski <jakubkucharski97@gmail.com>
+// Copyright (C) 2016 Jakub Alba <jakubalba@gmail.com>
 //
 // To see a description of the changes please see the Changelog file that
 // came with your tarball or type make ChangeLog if you are building from git
@@ -615,7 +615,7 @@ void PDFDoc::setDocInfoModified(Object *infoObj)
 
 void PDFDoc::setDocInfoStringEntry(const char *key, GooString *value)
 {
-  GBool removeEntry = !value || value->getLength() == 0;
+  GBool removeEntry = !value || value->getLength() == 0 || value->hasJustUnicodeMarker();
   if (removeEntry) {
     delete value;
   }

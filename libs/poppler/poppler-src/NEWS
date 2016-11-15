@@ -1,3 +1,19 @@
+Release 0.49.0
+        core:
+         * Merge type3 glyph handling from xpdf 3.04. Bug #96667
+         * Continue rendering in case of 'Singular matrix in shading pattern fill. Bug #98623
+         * Fix memory leak in parametrized gouraudTriangleShadedFill
+         * Fix crash on broken files
+         * PDFDoc::setDocInfoStringEntry(): treat value consisting of just the unicode marker as an empty string
+         * Fix UBSAN warning
+         * Misc compile fixes
+
+        utils:
+         * pdfseparate: remove extra '%' in error message
+        
+        build system:
+         * configure: Fix typo in disable nss help string
+
 Release 0.48.0
         core:
          * Fix crashes and memory leaks in invalid files.

@@ -1,3 +1,186 @@
+commit 02e2d8e2c3004c36d1f8f798e5a7a30166f48f37
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Nov 15 00:10:43 2016 +0100
+
+    0.49
+
+ CMakeLists.txt      | 4 ++--
+ NEWS                | 5 ++++-
+ configure.ac        | 2 +-
+ cpp/Doxyfile        | 2 +-
+ poppler/Makefile.am | 2 +-
+ qt4/src/Doxyfile    | 2 +-
+ qt5/src/Doxyfile    | 2 +-
+ 7 files changed, 11 insertions(+), 8 deletions(-)
+
+commit f7f0f14e095425d171456a697804f2f34ed26426
+Author: Tor Lillqvist <tml@collabora.com>
+Date:   Tue Nov 15 00:06:26 2016 +0100
+
+    VS 2013 has fmin() and fmax()
+
+ NEWS                           | 13 +++++++++++++
+ poppler/poppler-config.h.cmake |  3 ++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+commit 07ac68603552b36a2a6b8ea5982f22f24f5835b1
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Nov 15 00:03:24 2016 +0100
+
+    Update (C)
+
+ poppler/PSOutputDev.cc      | 1 +
+ poppler/poppler-config.h.in | 1 +
+ utils/pdfseparate.cc        | 2 +-
+ 3 files changed, 3 insertions(+), 1 deletion(-)
+
+commit b837ae3bc69c5c76f1a4e3abaeb22d0574d6b2c8
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Thu Nov 10 00:33:17 2016 +0100
+
+    Continue rendering in case of 'Singular matrix in shading pattern
+    fill'
+
+    Bug #98623
+
+ poppler/Gfx.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 6c01a48458a8b4896d606ef9bcc4af5e03393b72
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Nov 2 23:10:01 2016 +0100
+
+    merge type3 glyph handling from xpdf 3.04
+
+    Fixes bug #96667
+
+ poppler/SplashOutputDev.cc | 28 +++++++++++++++++++++++-----
+ poppler/SplashOutputDev.h  |  1 -
+ 2 files changed, 23 insertions(+), 6 deletions(-)
+
+commit f43cb73939f85952d83afc87a6dc638dc1ae311b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Nov 2 00:13:26 2016 +0100
+
+    Avoid UBSan warning about undefined downcast
+
+    ...of this-ptr of in-construction FormFieldSignature while still in
+    the base
+    FormField ctor by simply casting the parent-class field member
+    when needed
+
+ poppler/Form.cc | 83
+ ++++++++++++++++++++++++++++++++-------------------------
+ poppler/Form.h  |  9 +++----
+ 2 files changed, 50 insertions(+), 42 deletions(-)
+
+commit 4539d0b002efbd19393fd55a6fb87b013acdb8f1
+Author: Caolán McNamara <caolanm@redhat.com>
+Date:   Thu Oct 27 14:31:20 2016 +0200
+
+    PSOutputDev.cc: std::max requires <algorithm>
+
+ poppler/PSOutputDev.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 4619957cbab81ab0b25f3fdd3ed872f0ad93f074
+Author: Tor Lillqvist <tml@collabora.com>
+Date:   Thu Oct 27 14:27:32 2016 +0200
+
+    VS 2013 has fmin() and fmax()
+
+ poppler/poppler-config.h.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit be073d39f72f625bf3d8482ead76881150695bf4
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Oct 31 10:11:56 2016 +0100
+
+    Fix typo in disable nss help string
+
+    Bug #98514
+
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 2a09ec47aef8870dba345f4045e691ffb5a59f4d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Oct 24 20:04:22 2016 +0200
+
+    Fix memory leak in parametrized gouraudTriangleShadedFill
+
+ poppler/SplashOutputDev.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 169889b8e196cfcd288e6555fb048fbbf95ba3f6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Oct 24 20:04:00 2016 +0200
+
+    Fix crash on broken files
+
+ splash/Splash.cc | 38 ++++++++++++++++++++------------------
+ 1 file changed, 20 insertions(+), 18 deletions(-)
+
+commit 269a91e3b03a19acc06fd0f72356f2e48a6368a7
+Author: Jakub Alba <jakubalba@gmail.com>
+Date:   Tue Aug 23 13:20:44 2016 +0200
+
+    PDFDoc::setDocInfoStringEntry(): treat value consisting of just the
+    unicode marker as an empty string
+
+ poppler/PDFDoc.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 43cfdf9de45e6833a2815b173f8cc945f1c5f9d6
+Author: Jakub Alba <jakubalba@gmail.com>
+Date:   Tue Aug 23 13:19:07 2016 +0200
+
+    goo: add GooString::hasJustUnicodeMarker(void)
+
+ goo/GooString.cc | 2 +-
+ goo/GooString.h  | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+commit e3c5bdf4fcd29c5d180046d1c279d3f99c1027a7
+Author: Jakub Alba <jakubalba@gmail.com>
+Date:   Fri Oct 21 23:06:23 2016 +0200
+
+    update copyrights
+
+ cpp/poppler-document.cpp      | 2 +-
+ cpp/poppler-document.h        | 2 +-
+ cpp/poppler-embedded-file.cpp | 2 +-
+ cpp/poppler-global.cpp        | 2 +-
+ cpp/poppler-private.cpp       | 2 +-
+ cpp/poppler-private.h         | 2 +-
+ glib/poppler-document.cc      | 2 +-
+ glib/poppler-document.h       | 2 +-
+ goo/GooString.cc              | 2 +-
+ goo/GooString.h               | 2 +-
+ poppler/Object.h              | 2 +-
+ poppler/PDFDoc.cc             | 2 +-
+ poppler/PDFDoc.h              | 2 +-
+ poppler/XRef.cc               | 2 +-
+ poppler/XRef.h                | 2 +-
+ qt4/src/poppler-document.cc   | 2 +-
+ qt4/src/poppler-private.cc    | 2 +-
+ qt4/src/poppler-private.h     | 2 +-
+ qt4/src/poppler-qt4.h         | 2 +-
+ qt5/src/poppler-document.cc   | 2 +-
+ qt5/src/poppler-private.cc    | 2 +-
+ qt5/src/poppler-private.h     | 2 +-
+ qt5/src/poppler-qt5.h         | 2 +-
+ 23 files changed, 23 insertions(+), 23 deletions(-)
+
+commit 5d15a52aade68c618c356fe403ca500e74917ef7
+Author: Pino Toscano <pino@kde.org>
+Date:   Sun Oct 9 13:04:46 2016 +0200
+
+    pdfseparate: remove extra '%' in error message
+
+ utils/pdfseparate.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit 036bcee237c814197af3324cd3697ea88d9ac6d3
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sat Oct 8 17:55:31 2016 +0200
