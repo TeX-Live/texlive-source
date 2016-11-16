@@ -1,4 +1,4 @@
-% $Id: mp.w 2096 2016-10-14 09:58:16Z luigi $
+% $Id: mp.w 2097 2016-11-16 10:56:03Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -142,20 +142,25 @@ typedef struct MP_instance {
 @ @c
 /*#define DEBUGENVELOPE */
 #ifdef DEBUGENVELOPE 
-#define dbg_str(A) printf("DEBUGENVELOPE %s",#A)
-#define dbg_n(A) printf("DEBUGENVELOPE ['%s']=%s, ", #A, number_tostring(A))
-#define dbg_in(A) printf("DEBUGENVELOPE ['%s']=%d, ", #A, (int)(A))
-#define dbg_dn(A) printf("DEBUGENVELOPE ['%s']=%.100f, ", #A, (double)(A))
-#define dbg_key(A) printf("DEBUGENVELOPE ['%s']= ", #A)
-#define dbg_key_nval(K,V) printf("DEBUGENVELOPE ['%s']=%s", #K,number_tostring(V))
-#define dbg_key_ival(K,V) printf("DEBUGENVELOPE ['%s']=%d", #K,(int)(V))
-#define dbg_key_dval(K,V) printf("DEBUGENVELOPE ['%s']=%.100f", #K,(double)(V))
-#define dbg_comment(A) printf("DEBUGENVELOPE --[==[%s]==]",#A)
-#define dbg_sp printf("DEBUGENVELOPE  ")
-#define dbg_open_t printf("DEBUGENVELOPE {")
-#define dbg_close_t printf("DEBUGENVELOPE }")
-#define dbg_comma printf("DEBUGENVELOPE ,")
-#define dbg_nl printf("DEBUGENVELOPE \n")
+static int DEBUGENVELOPECOUNTER=0;
+#define dbg_str(A)	  printf("\n--[==[%03d DEBUGENVELOPE ]==] %s",		   DEBUGENVELOPECOUNTER++, #A)
+#define dbg_n(A) 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']=%s, ",	   DEBUGENVELOPECOUNTER++, #A, number_tostring(A))
+#define dbg_in(A) 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']=%d, ",	   DEBUGENVELOPECOUNTER++, #A, (int)(A))
+#define dbg_dn(A) 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']=%.100f, ",DEBUGENVELOPECOUNTER++, #A, (double)(A))
+#define dbg_key(A) 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']= ",	   DEBUGENVELOPECOUNTER++, #A)
+#define dbg_key_nval(K,V) printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']=%s",	   DEBUGENVELOPECOUNTER++, #K,number_tostring(V))
+#define dbg_key_ival(K,V) printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']=%d",	   DEBUGENVELOPECOUNTER++, #K,(int)(V))
+#define dbg_key_dval(K,V) printf("\n--[==[%03d DEBUGENVELOPE ]==] ['%s']=%.100f",  DEBUGENVELOPECOUNTER++, #K,(double)(V))
+#define dbg_comment(A) 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] --[==[%s]==]",   DEBUGENVELOPECOUNTER++, #A)
+#define dbg_sp 		  printf("\n--[==[%03d DEBUGENVELOPE ]==]  ",   	   DEBUGENVELOPECOUNTER++)
+#define dbg_open_t 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] {",   	   DEBUGENVELOPECOUNTER++)
+#define dbg_close_t 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] }",   	   DEBUGENVELOPECOUNTER++)
+#define dbg_comma 	  printf("\n--[==[%03d DEBUGENVELOPE ]==] ,",   	   DEBUGENVELOPECOUNTER++)
+#define dbg_nl 		  printf("\n--[==[%03d DEBUGENVELOPE ]==] \n",   	   DEBUGENVELOPECOUNTER++)
+#define dbg_CUBIC         dbg_n(p->x_coord); dbg_n(p->y_coord); \
+			  dbg_n(p->right_x); dbg_n(p->right_y); \
+			  dbg_n(q->left_x);  dbg_n(q->left_y);  \
+			  dbg_n(q->x_coord); dbg_n(q->y_coord)
 #endif
 #define KPATHSEA_DEBUG_H 1
 #include <w2c/config.h>
@@ -13318,6 +13323,7 @@ static mp_knot mp_offset_prep (MP mp, mp_knot c, mp_knot h) {
   k_needed = 0;
 #ifdef DEBUGENVELOPE
 dbg_nl;dbg_str(--[==[BEGIN]==]);dbg_nl; 
+dbg_str(return {);dbg_nl; 
 dbg_n(w0->x_coord);
 dbg_n(w0->y_coord);
 #endif
@@ -13363,7 +13369,7 @@ dbg_n(p->x_coord);dbg_n(p->y_coord);
 dbg_key_ival(info post,mp_knot_info(p));dbg_comma;dbg_nl;
 dbg_n(c->x_coord);dbg_n(c->y_coord);
 dbg_key_ival(info post,mp_knot_info(c));
-dbg_close_t;dbg_comma;dbg_nl;
+dbg_close_t;
 dbg_nl;dbg_str(--[==[END]==]);dbg_nl;
 #endif
   free_number (ss);
@@ -13486,7 +13492,7 @@ if ((q != q0) && (q != c || c == c0))
  #ifdef DEBUGENVELOPE 
  dbg_key(Remove the cubic following p);dbg_open_t;dbg_nl;
  dbg_n(p->x_coord);dbg_n(p->y_coord);
- dbg_key_ival(pre info p,mp_knot_info(p)); dbg_comma; dbg_close_t;dbg_nl;
+ dbg_key_ival(pre info p,mp_knot_info(p));  dbg_close_t;dbg_comma;dbg_nl;
  #endif 
   k_needed = mp_knot_info (p) - zero_off;
   if (r == q) {
@@ -13508,7 +13514,7 @@ if ((q != q0) && (q != c || c == c0))
   #ifdef DEBUGENVELOPE 
   dbg_key(Remove the cubic following p);dbg_open_t;dbg_nl;
   dbg_n(p->x_coord);dbg_n(p->y_coord);
-  dbg_key_ival(post info p,mp_knot_info (p));dbg_comma; dbg_close_t;dbg_nl;
+  dbg_key_ival(post info p,mp_knot_info (p)); dbg_close_t;dbg_comma;dbg_nl;
   #endif 
 }
 
@@ -13586,7 +13592,7 @@ dbg_n(w0->x_coord);dbg_n(w0->y_coord);
 #endif 
 mp_knot_info (p) = zero_off + k_needed;
 #ifdef DEBUGENVELOPE 
-dbg_key_ival(post info p,mp_knot_info(p));dbg_comma; dbg_close_t;dbg_nl;
+dbg_key_ival(post info p,mp_knot_info(p));dbg_close_t;dbg_comma; dbg_nl;
 #endif 
 k_needed = 0;
 @<Prepare for derivative computations;
@@ -13754,25 +13760,56 @@ void mp_fin_offset_prep (MP mp, mp_knot p, mp_knot w, mp_number
   new_number(t2);
   new_fraction(s);
   new_fraction(t);
+#ifdef DEBUGENVELOPE 
+dbg_key(mp_fin_offset_prep);dbg_open_t;dbg_nl;
+#endif
   while (1) {
     if (rise > 0)
       ww = mp_next_knot (w);    /* a pointer to $w\k$ */
     else
       ww = mp_prev_knot (w);    /* a pointer to $w_{k-1}$ */
+#ifdef DEBUGENVELOPE 
+dbg_comment(begin iteration);
+dbg_open_t;dbg_nl;
+dbg_n(w->x_coord);dbg_n(w->y_coord);
+dbg_n(ww->x_coord);dbg_n(ww->y_coord);
+dbg_n(x0);dbg_n(x1);dbg_n(x2);
+dbg_n(y0);dbg_n(y1);dbg_n(y2);
+dbg_in(rise);
+#endif
     @<Compute test coefficients |(t0,t1,t2)|
       for $d(t)$ versus $d_k$ or $d_{k-1}$@>;
+#ifdef DEBUGENVELOPE 
+dbg_comment(crossing_point);
+#endif
     crossing_point (t, t0, t1, t2);
+#ifdef DEBUGENVELOPE 
+dbg_n(t);dbg_n(t0);dbg_n(t1);dbg_n(t2);
+dbg_in(number_greaterequal(t, fraction_one_t));
+dbg_in(turn_amt);
+dbg_close_t; dbg_comma;dbg_nl;
+#endif
     if (number_greaterequal(t, fraction_one_t)) {
       if (turn_amt > 0)
         number_clone(t, fraction_one_t);
       else
         goto RETURN;
     }
+#ifdef DEBUGENVELOPE 
+dbg_comment(Split the cubic at $t$ and split off another cubic if the derivative crosses back);
+#endif
     @<Split the cubic at $t$,
       and split off another cubic if the derivative crosses back@>;
     w = ww;
+#ifdef DEBUGENVELOPE 
+dbg_comment(end iteration);
+#endif
   }
 RETURN:
+#ifdef DEBUGENVELOPE 
+dbg_comment(RETURN);
+dbg_n(t);
+#endif
   free_number (s);
   free_number (t);
   free_number (du);
@@ -13781,6 +13818,9 @@ RETURN:
   free_number (t0);
   free_number (t1);
   free_number (t2);
+#ifdef DEBUGENVELOPE 
+dbg_close_t; dbg_comma;dbg_nl;
+#endif
 }
 
 
@@ -13794,12 +13834,25 @@ begins to fail.
   mp_number abs_du, abs_dv;
   new_number (abs_du);
   new_number (abs_dv);
+#ifdef DEBUGENVELOPE 
+dbg_key(Compute test coefficients |(t0,t1,t2)| for $d(t)$ versus...);dbg_open_t;dbg_nl;
+#endif
   set_number_from_substraction(du, ww->x_coord, w->x_coord);
   set_number_from_substraction(dv, ww->y_coord, w->y_coord);
   number_clone(abs_du, du);
   number_abs(abs_du);
   number_clone(abs_dv, dv);
   number_abs(abs_dv);
+#ifdef DEBUGENVELOPE 
+dbg_CUBIC;
+dbg_n(w->x_coord);dbg_n(w->y_coord);
+dbg_n(ww->x_coord);dbg_n(ww->y_coord);
+dbg_n(x0);dbg_n(x1);dbg_n(x2);
+dbg_n(y0);dbg_n(y1);dbg_n(y2);
+dbg_n(abs_du);dbg_n(abs_dv);
+dbg_n(du);dbg_n(dv);
+dbg_in(number_greaterequal(abs_du, abs_dv));
+#endif
   if (number_greaterequal(abs_du, abs_dv)) {
     mp_number r1;
     new_fraction (r1);
@@ -13837,6 +13890,10 @@ begins to fail.
   free_number (abs_dv);
   if (number_negative(t0))
     set_number_to_zero(t0); /* should be positive without rounding error */
+#ifdef DEBUGENVELOPE 
+dbg_n(t0);dbg_n(t1);dbg_n(t2);
+dbg_close_t; dbg_comma;dbg_nl;
+#endif
 }
 
 
@@ -13868,7 +13925,7 @@ respectively, yielding another solution of $(*)$.
     number_negate(arg2);
     number_clone(arg3, t2);
     number_negate(arg3);
-    crossing_point (t, arg1, arg2, arg3);
+    crossing_point (t, arg1, arg2, arg3); /* arg1 is zero */
     free_number (arg1);
     free_number (arg2);
     free_number (arg3);
@@ -13949,6 +14006,9 @@ dbg_n(q->x_coord);dbg_n(q->y_coord);
 #endif
 mp_dx_dy_approx(mp,&dx_ap,&dy_ap,p,q,ueps_ap); /*|eps|*/
 #ifdef DEBUGENVELOPE
+dbg_close_t;dbg_comma;dbg_nl;
+#endif
+#ifdef DEBUGENVELOPE
 dbg_key(derivatives);dbg_open_t;dbg_nl;
 dbg_n(dx_m);dbg_n(dy_m);
 dbg_n(dx);dbg_n(dy);dbg_n(dx_ap);dbg_n(dy_ap);dbg_close_t;dbg_comma;dbg_nl;
@@ -13960,10 +14020,10 @@ if (number_zero(dx) && !(number_zero(dy)) && number_zero(x0) && number_zero(x2) 
     number_clone(dx_m, epsilon_t);
     if (number_positive(x1)){      
      set_number_from_addition (dx, dx, epsilon_t); 
-     mp_warn(mp,"x component of derivative at t=0 approximated to epsilon.");
+     mp_warn(mp,"x component of the derivative at t=0 approximated to epsilon.");
     } else if (number_negative(x1)) {
      set_number_from_substraction (dx, dx, epsilon_t);  
-     mp_warn(mp,"x component of derivative at t=0 approximated to -epsilon.");
+     mp_warn(mp,"x component of the derivative at t=0 approximated to -epsilon.");
     }
 } 
 #ifdef DEBUGENVELOPE
@@ -13979,7 +14039,7 @@ if (number_zero(dx_ap) && !number_zero(dx) && number_zero(dx_m) ){
   if (p == c) {
     set_number_to_zero(dx0);
     }
-  mp_warn(mp,"x component of derivative at t=0 approximated to zero.");
+  mp_warn(mp,"x component of the derivative at t=0 approximated to zero.");
  } 
 if (number_zero(dy_ap) && !number_zero(dy) && number_zero(dy_m)){
   set_number_to_zero(dy);
@@ -13987,7 +14047,7 @@ if (number_zero(dy_ap) && !number_zero(dy) && number_zero(dy_m)){
   if (p == c) {
     set_number_to_zero(dy0);
     }
-  mp_warn(mp,"y component of derivative at t=0 approximated to zero.");
+  mp_warn(mp,"y component of the derivative at t=0 approximated to zero.");
  } 
 #ifdef DEBUGENVELOPE
 dbg_key(derivatives patched);dbg_open_t;dbg_nl;
@@ -14017,11 +14077,11 @@ dbg_close_t;dbg_comma;
 /* BEGIN PATCH */
 if (number_zero(dxin_ap) && !number_zero(dxin)){
   set_number_to_zero(dxin);
-  mp_warn(mp,"x component of derivative at t=1 approximated to zero.");
+  mp_warn(mp,"x component of the derivative at t=1 approximated to zero.");
  } 
 if (number_zero(dyin_ap) && !number_zero(dyin)){
   set_number_to_zero(dyin);
-  mp_warn(mp,"y component of derivative at t=1 approximated to zero.");
+  mp_warn(mp,"y component of the derivative at t=1 approximated to zero.");
  } 
 /* END PATCH */
 #ifdef DEBUGENVELOPE
@@ -14093,6 +14153,7 @@ dbg_nl;
 #ifdef DEBUGENVELOPE
 dbg_key(w0 before walk);dbg_open_t;dbg_nl;
 dbg_n(w0->x_coord);dbg_n(w0->y_coord);
+dbg_dn(turn_amt);
 dbg_close_t;dbg_comma;
 #endif
   w = mp_pen_walk (mp, w0, turn_amt);
@@ -14206,7 +14267,7 @@ integer mp_get_turn_amt (MP mp, mp_knot w, mp_number dx, mp_number dy, boolean c
       ab_vs_cd (t, dy, arg1, dx, arg2);
 #ifdef DEBUGENVELOPE
      dbg_sp;
-     dbg_open_t;dbg_str(--[==[inside mp_get_turn_amt do loop ]==]);dbg_nl; 
+     dbg_open_t;dbg_str(--[==[inside mp_get_turn_amt do loop for t<0 ]==]);dbg_nl; 
      dbg_n(w->x_coord);dbg_n(w->y_coord);dbg_n(ww->x_coord);dbg_n(ww->y_coord);
      dbg_n(t);dbg_n(dy);dbg_n(arg1);dbg_n(dx);dbg_n(arg2);
      dbg_n(t_ap);dbg_n(dy_ap);dbg_n(dx_ap);
@@ -14262,19 +14323,27 @@ ww = mp_prev_knot (w);
 #ifdef DEBUGENVELOPE 
 dbg_key(Complete the offset splitting process);dbg_open_t;dbg_nl;
 dbg_n(w->x_coord);dbg_n(w->y_coord);
-dbg_n(w0->x_coord);dbg_n(w0->y_coord);
+dbg_n(ww->x_coord);dbg_n(ww->y_coord);
 dbg_close_t; dbg_comma;dbg_nl;
 #endif
 @<Compute test coeff...@>;
 #ifdef DEBUGENVELOPE 
 dbg_key(after Compute test coeff);dbg_open_t;dbg_nl;
 dbg_n(w->x_coord);dbg_n(w->y_coord);
-dbg_n(w0->x_coord);dbg_n(w0->y_coord);
+dbg_n(ww->x_coord);dbg_n(ww->y_coord);
 dbg_close_t; dbg_comma;dbg_nl;
 #endif
 @<Find the first |t| where $d(t)$ crosses $d_{k-1}$ or set
   |t:=fraction_one+1|@>;
 if (number_greater(t, fraction_one_t)) {
+#ifdef DEBUGENVELOPE 
+dbg_key(t > fraction_one_t);dbg_open_t;dbg_nl;
+dbg_n(p->x_coord);dbg_n(p->y_coord);
+dbg_n(w->x_coord);dbg_n(w->y_coord);
+dbg_n(x0);dbg_n(x1);dbg_n(x2);
+dbg_n(y0);dbg_n(y1);dbg_n(y2);
+dbg_close_t; dbg_comma;dbg_nl;
+#endif
   mp_fin_offset_prep (mp, p, w, x0, x1, x2, y0, y1, y2, 1, turn_amt);
 } else {
   mp_split_cubic (mp, p, t);
@@ -14285,6 +14354,16 @@ if (number_greater(t, fraction_one_t)) {
   set_number_from_of_the_way(y1a, t, y0, y1);
   set_number_from_of_the_way(y1,  t, y1, y2);
   set_number_from_of_the_way(y2a, t, y1a, y1);
+#ifdef DEBUGENVELOPE 
+dbg_key(t <= fraction_one_t);dbg_open_t;dbg_nl;
+dbg_n(p->x_coord);dbg_n(p->y_coord);
+dbg_n(t);
+dbg_n(r->x_coord);dbg_n(r->y_coord);
+dbg_n(w->x_coord);dbg_n(w->y_coord);
+dbg_n(x0);dbg_n(x1a);dbg_n(x2a);
+dbg_n(y0);dbg_n(y1a);dbg_n(y2a);
+dbg_close_t; dbg_comma;dbg_nl;
+#endif
   mp_fin_offset_prep (mp, p, w, x0, x1a, x2a, y0, y1a, y2a, 1, 0);
   number_clone(x0, x2a);
   number_clone(y0, y2a);
@@ -14344,6 +14423,9 @@ answer.  If |t2<0|, there is one crossing and it is antiparallel only if
 crossing and the first crossing cannot be antiparallel.
 
 @<Find the first |t| where $d(t)$ crosses $d_{k-1}$ or set...@>=
+#ifdef DEBUGENVELOPE
+dbg_key(Find the first |t| where);dbg_open_t;dbg_nl;
+#endif 
 crossing_point (t, t0, t1, t2);
 if (turn_amt >= 0) {
   if (number_negative(t2)) {
@@ -14358,13 +14440,13 @@ if (turn_amt >= 0) {
     set_number_from_of_the_way(u1, t, x1, x2);
     set_number_from_of_the_way(tmp, t, u0, u1);
     number_clone (arg1, du);
-    number_abs (arg1);
+    number_negate(arg1);
     take_fraction (ss, arg1, tmp);
     set_number_from_of_the_way(v0, t, y0, y1);
     set_number_from_of_the_way(v1, t, y1, y2);
     set_number_from_of_the_way(tmp, t, v0, v1);
     number_clone (arg1, dv);
-    number_abs (arg1);
+    number_negate(arg1);
     take_fraction (r1, arg1, tmp);
     number_add (ss, r1);
     free_number (tmp);
@@ -14378,6 +14460,11 @@ if (turn_amt >= 0) {
 } else if (number_greater(t, fraction_one_t)) {
   number_clone (t, fraction_one_t);
 }
+#ifdef DEBUGENVELOPE
+dbg_n(t);
+dbg_close_t; dbg_comma;dbg_nl;
+#endif 
+
 
 @ @<Other local variables for |offset_prep|@>=
 mp_number u0, u1, v0, v1; /* intermediate values for $d(t)$ calculation */
@@ -23440,7 +23527,7 @@ RESTART:
             mp_flush_cur_exp (mp, new_expr);
           }
           mp_stash_in (mp, black_part (r));
-
+	  if (cur_cmd() == mp_comma) { fprintf(stderr,"Seen another commma!\n");}
         }
       } else {
         mp_init_pair_node (mp, q);
