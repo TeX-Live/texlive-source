@@ -1,4 +1,4 @@
-% $Id: mp.w 2097 2016-11-16 10:56:03Z luigi $
+% $Id: mp.w 2099 2016-11-17 14:06:52Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -14019,10 +14019,10 @@ dbg_n(dx);dbg_n(dy);dbg_n(dx_ap);dbg_n(dy_ap);dbg_close_t;dbg_comma;dbg_nl;
 if (number_zero(dx) && !(number_zero(dy)) && number_zero(x0) && number_zero(x2) && !number_zero(dxin) ){
     number_clone(dx_m, epsilon_t);
     if (number_positive(x1)){      
-     set_number_from_addition (dx, dx, epsilon_t); 
+     /*set_number_from_addition (dx, dx, epsilon_t); */
      mp_warn(mp,"x component of the derivative at t=0 approximated to epsilon.");
     } else if (number_negative(x1)) {
-     set_number_from_substraction (dx, dx, epsilon_t);  
+    /* set_number_from_substraction (dx, dx, epsilon_t);  */
      mp_warn(mp,"x component of the derivative at t=0 approximated to -epsilon.");
     }
 } 
@@ -14034,19 +14034,21 @@ dbg_n(dx);dbg_n(dy);dbg_n(dx_ap);dbg_n(dy_ap);dbg_close_t;dbg_comma;dbg_nl;
 /* this patch can conflict with the previous one */
 /* hm what about dx=dy=0 ? */
 if (number_zero(dx_ap) && !number_zero(dx) && number_zero(dx_m) ){
-  set_number_to_zero(dx);
+/*  set_number_to_zero(dx);
   set_number_from_substraction(dx_m, zero_t,epsilon_t);
   if (p == c) {
     set_number_to_zero(dx0);
     }
+*/
   mp_warn(mp,"x component of the derivative at t=0 approximated to zero.");
  } 
 if (number_zero(dy_ap) && !number_zero(dy) && number_zero(dy_m)){
-  set_number_to_zero(dy);
+/*  set_number_to_zero(dy);
   set_number_from_substraction(dy_m, zero_t,epsilon_t);
   if (p == c) {
     set_number_to_zero(dy0);
     }
+*/
   mp_warn(mp,"y component of the derivative at t=0 approximated to zero.");
  } 
 #ifdef DEBUGENVELOPE
@@ -14076,11 +14078,11 @@ dbg_close_t;dbg_comma;
 #endif
 /* BEGIN PATCH */
 if (number_zero(dxin_ap) && !number_zero(dxin)){
-  set_number_to_zero(dxin);
+ /* set_number_to_zero(dxin);*/
   mp_warn(mp,"x component of the derivative at t=1 approximated to zero.");
  } 
 if (number_zero(dyin_ap) && !number_zero(dyin)){
-  set_number_to_zero(dyin);
+/*  set_number_to_zero(dyin);*/
   mp_warn(mp,"y component of the derivative at t=1 approximated to zero.");
  } 
 /* END PATCH */
@@ -14096,6 +14098,7 @@ $ 1/3 B'(s,0,X_1,0)   =  (-2s^2 + 2s)X_1 \approx 2sX_1 $ for $s\rightarrow 0$ \p
 $ 1/3 B'(1-s,0,X_1,0) = (-2s^2 + 2s)X_1 \approx 2sX_1  $ for $s\rightarrow 0$ $\par
 */
 /* Of course the same should be done for dy and dyin */
+/*
 if ( ((number_zero(dx) && number_positive(dx_m)) && number_positive(dy)) &&
      (number_zero(dxin) && number_positive(dyin)) ){
      number_clone(dx_m, epsilon_t);
@@ -14114,6 +14117,7 @@ if ( ((number_zero(dx) && number_positive(dx_m)) && number_positive(dy)) &&
        set_number_from_substraction (dx, dx, epsilon_t);  
      }
 }
+*/
 #ifdef DEBUGENVELOPE
 dbg_key(dx dy dxin dyin after patch);dbg_open_t;dbg_nl;
 dbg_n(dx);dbg_n(dy);dbg_n(dx_ap);dbg_n(dy_ap);
@@ -14217,6 +14221,7 @@ integer mp_get_turn_amt (MP mp, mp_knot w, mp_number dx, mp_number dy, boolean c
      dbg_nl;
 #endif
       /* BEGIN PATCH */
+/*
       if (number_zero(dx) && number_zero(arg1) && number_positive(dy) && number_positive(arg2) && is_dxdy) 
         break; 
       if (is_dxdy && number_zero(dx) && number_zero(arg1) && number_negative(dy) && number_negative(arg2)  && number_positive(dyin_ap)) 
@@ -14231,7 +14236,8 @@ integer mp_get_turn_amt (MP mp, mp_knot w, mp_number dx, mp_number dy, boolean c
         set_number_to_unity(t);
       if (number_zero(dy) && number_zero(arg2) && number_positive(dx) && number_negative(arg1)) 
         set_number_to_unity(t);
-      /* END PATCH */
+ */
+    /* END PATCH */
       if (number_negative(t)) 
         break;
       incr (s);
@@ -14253,10 +14259,11 @@ integer mp_get_turn_amt (MP mp, mp_knot w, mp_number dx, mp_number dy, boolean c
      dbg_nl;
 #endif
      /* BEGIN PATCH */
-     if (number_negative(dy) && number_zero(arg1) && number_zero(dx) && number_negative(arg2)) {
+   /*  if (number_negative(dy) && number_zero(arg1) && number_zero(dx) && number_negative(arg2)) {
         set_number_to_unity(t);
 	number_negate(t);
       }
+  */
       /* END PATCH */ 
     while (number_negative(t)) {
       decr (s);
@@ -14490,13 +14497,14 @@ dbg_key(Decide on the net change in pen offsets and set turn_amt);dbg_open_t;dbg
 dbg_n(ab_vs_cd);dbg_n(dx);dbg_n(dyin);dbg_n(dxin);dbg_n(dy);
 #endif
 /* BEGIN PATCH */
+/*
  if (number_negative(dy) && number_equal(dy,dyin) && number_equal(dx,epsilon_t))
         set_number_to_unity(ab_vs_cd);
+*/
 #ifdef DEBUGENVELOPE
 dbg_key_nval(ab_vs_cd patched,ab_vs_cd);
 dbg_close_t;dbg_comma;dbg_nl;
 #endif
-
 /* END PATCH */
   if (number_negative (ab_vs_cd))
     d_sign = -1;
@@ -14661,7 +14669,7 @@ dbg_n(ss);dbg_close_t;dbg_comma;
   number_clone(abs_ss,ss);
   number_abs(abs_ss);
   if (number_greaterequal(eps_ss,abs_ss)) {
-    set_number_to_zero(ss);/* a warning here ? */
+    /* set_number_to_zero(ss)*/;/* a warning here ? */
   }
 #ifdef DEBUGENVELOPE
 dbg_key(patch ss after);dbg_open_t;
