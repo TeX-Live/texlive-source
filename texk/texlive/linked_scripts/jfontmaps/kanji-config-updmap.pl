@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20160929.0
+# Version 20161108.0
 #
 # formerly known as updmap-setup-kanji
 #
@@ -21,7 +21,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20160929.0';
+my $version = '20161108.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -67,6 +67,7 @@ my %representatives = (
   "hiragino-pron" => "HiraMinProN-W3.otf",
   "hiragino-elcapitan" => "HiraginoSerif-W3.ttc",
   "hiragino-elcapitan-pron" => "HiraginoSerif-W3.ttc",
+  "toppanbunkyu-sierra" => "ToppanBunkyuGothic.ttc",
   "morisawa"      => "A-OTF-RyuminPro-Light.otf",
   "morisawa-pr6n" => "A-OTF-RyuminPr6N-Light.otf",
   "kozuka"        => "KozMinPro-Regular.otf",
@@ -116,7 +117,8 @@ sub Usage {
      auto:       embed one of the following supported font families
                  automatically:
                    hiragino, hiragino-pron, hiragino-elcapitan,
-                   hiragino-elcapitan-pron, morisawa, morisawa-pr6n,
+                   hiragino-elcapitan-pron, toppanbunkyu-sierra,
+                   morisawa, morisawa-pr6n,
                    kozuka, kozuka-pr6, kozuka-pr6n, ipaex, ipa, ms, 
                    yu-osx, yu-win, yu-win10
                  and fall back to not embedding any font if none of them
@@ -249,7 +251,7 @@ sub SetupReplacement {
         for my $i (qw/
             morisawa-pr6n yu-osx kozuka-pr6n kozuka-pr6
             hiragino-pron hiragino-elcapitan-pron hiragino
-            hiragino-elcapitan
+            hiragino-elcapitan toppanbunkyu-sierra
             morisawa kozuka yu-win yu-win10 ipaex ipa ms/) {
           if ($available{$i}) {
             return SetupMapFile($i);
