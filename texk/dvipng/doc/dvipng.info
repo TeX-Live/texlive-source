@@ -1,4 +1,4 @@
-This is dvipng.info, produced by makeinfo version 5.2 from dvipng.texi.
+This is dvipng.info, produced by makeinfo version 6.3 from dvipng.texi.
 
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
@@ -994,8 +994,8 @@ Index
 * Menu:
 
 * -dSAFER:                               Option details.      (line 163)
-* absolute page number, and '-l':        Option details.      (line 137)
-* absolute page number, and '-p':        Option details.      (line 190)
+* absolute page number, and -l:          Option details.      (line 137)
+* absolute page number, and -p:          Option details.      (line 190)
 * antialiasing levels, number of:        Option details.      (line 243)
 * background color (option):             Option details.      (line  40)
 * base resolution, setting:              Option details.      (line  33)
@@ -1045,8 +1045,8 @@ Index
 * page range:                            Option details.      (line 221)
 * page, first printed:                   Option details.      (line 190)
 * page, last printed:                    Option details.      (line 137)
-* physical page number, and '-l':        Option details.      (line 137)
-* physical page number, and '-p':        Option details.      (line 190)
+* physical page number, and -l:          Option details.      (line 137)
+* physical page number, and -p:          Option details.      (line 190)
 * PNG image format:                      Option details.      (line 217)
 * PostScript inclusion problems:         Encapsulated PostScript.
                                                               (line  21)
