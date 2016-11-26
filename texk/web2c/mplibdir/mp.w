@@ -1,4 +1,4 @@
-% $Id: mp.w 2100 2016-11-18 17:22:55Z luigi $
+% $Id: mp.w 2103 2016-11-25 13:03:37Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -23457,7 +23457,7 @@ RESTART:
 
       q = mp_get_value_node (mp);
       mp_name_type (q) = mp_capsule;
-      if (cur_cmd() == mp_comma) {
+      if (cur_cmd() == mp_comma) { 
         mp_init_color_node (mp, q);
         r = value_node (q);
         mp_stash_in (mp, y_part (r));
@@ -23483,7 +23483,7 @@ RESTART:
         }
         mp_stash_in (mp, blue_part (r));
 
-        if (cur_cmd() == mp_comma) {
+        if (cur_cmd() == mp_comma) { 
           mp_node t;      /* a token */
           mp_init_cmykcolor_node (mp, q);
           t = value_node (q);
@@ -23533,7 +23533,6 @@ RESTART:
             mp_flush_cur_exp (mp, new_expr);
           }
           mp_stash_in (mp, black_part (r));
-	  if (cur_cmd() == mp_comma) { fprintf(stderr,"Seen another commma!\n");}
         }
       } else {
         mp_init_pair_node (mp, q);
