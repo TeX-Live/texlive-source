@@ -1,4 +1,4 @@
-% $Id: mp.w 2103 2016-11-25 13:03:37Z luigi $
+% $Id: mp.w 2104 2016-11-28 15:05:04Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -14810,6 +14810,8 @@ static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
         set_number_from_addition (xtot, qx, w->x_coord);
         set_number_from_addition (ytot, qy, w->y_coord);
         q = mp_insert_knot (mp, q, xtot, ytot);
+ 	free_number (xtot);
+	free_number (ytot);
       }
     }
     if (q != mp_next_knot (p)) {
@@ -15075,7 +15077,7 @@ problems, so we just set |r:=NULL| in that case.
   take_fraction (ysub, tmp, dyout);
   set_number_from_addition(xtot, q->x_coord, xsub);
   set_number_from_addition(ytot, q->y_coord, ysub);
-  r = mp_insert_knot (mp, p, xtot, ytot);
+  r = mp_insert_knot (mp, r, xtot, ytot);
   free_number (xsub);
   free_number (ysub);
   free_number (xtot);
