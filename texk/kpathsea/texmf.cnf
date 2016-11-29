@@ -568,7 +568,6 @@ extractbb,\
 gregorio,\
 kpsewhich,\
 makeindex,\
-mpost,\
 repstopdf,\
 
 % we'd like to allow:
