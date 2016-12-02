@@ -1,3 +1,7 @@
+2016-12-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pmpost.ch: Adapt to the restricted mode in the latest mpost.w.
+
 2016-03-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pmp.ch: Adapt to MetaPost 1.9991.

@@ -244,6 +244,12 @@ else
 @z
 
 @x
+    if (FILESTRCASEEQ(base, "rmpost")){
+@y
+    if (FILESTRCASEEQ(base, "r" P_UP "mpost")){
+@z
+
+@x
     if (FILESTRCASEEQ(base, "dvitomp"))
 @y
     if (FILESTRCASEEQ(base, P_UP "dvitomp"))
@@ -270,13 +276,12 @@ else
   if (dvitomp_only) {
     @<Read and set dvitomp command line options@>;
   } else {
-#ifdef WIN32
-    options->mem_name =
-      strlwr(kpse_program_basename(argv[0]));
-#else
-    options->mem_name =
-      kpse_program_basename(argv[0]);
-#endif
+@z
+
+@x
+    if (FILESTRCASEEQ(kpse_program_name, "rmpost"))
+@y
+    if (FILESTRCASEEQ(kpse_program_name, "r" P_UP "mpost"))
 @z
 
 @x
