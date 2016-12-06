@@ -659,6 +659,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-object-private.hh \
 	@HARFBUZZ_TREE@/src/hb-open-file-private.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cbdt-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-head-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hhea-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-hmtx-table.hh \

@@ -1,3 +1,260 @@
+commit b843c6d8b66c2833cd35407ee494546465e6d775
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Dec 5 13:42:28 2016 -0800
+
+    1.3.4
+
+ NEWS         | 8 ++++++++
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
+commit 8c842e4a44908cce0f416481c73dc0866a0a9c95
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 20:28:38 2016 -0800
+
+    [hb-fuzzer] Get glyph extents for output glyphs
+
+    To exercise glyph-extents codepaths (glyf / CBLC+CBDT).
+
+ test/fuzzing/hb-fuzzer.cc | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+commit 9f6144cdb9dd2bc8cd147306e678d76ae82663d8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 19:55:17 2016 -0800
+
+    [CBDT] Add test for fetching glyph extents
+
+ test/shaping/Makefile.am                                 |   1 +
+ .../sha1sum/ee39587d13b2afa5499cc79e45780aa79293bbd4.ttf | Bin 0 ->
+ 3724 bytes
+ test/shaping/tests/color-fonts.tests                     |   1 +
+ 3 files changed, 2 insertions(+)
+
+commit e4bfccfb2a0f425ff69b0a50ca8a4731c4001069
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 19:43:33 2016 -0800
+
+    [CBDT] Minor
+
+ src/hb-ot-cbdt-table.hh | 21 ++++++++++++++-------
+ src/hb-ot-font.cc       | 38 ++++++++++++++++++++------------------
+ 2 files changed, 34 insertions(+), 25 deletions(-)
+
+commit b7068af423dba30fd831041aabf4b805d26fe349
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 19:36:30 2016 -0800
+
+    [CBDT] Fix thinko!
+
+ src/hb-ot-cbdt-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit a141d1da9bb0f91521a9a7749f9533c75cfe6a2f
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 19:26:54 2016 -0800
+
+    [CBDT] Implement IndexSubtableFormat3
+
+ src/hb-ot-cbdt-table.hh | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
+
+commit 9eda74c92c9024ffb8ec6e9344c99d51dd763f0c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 19:12:52 2016 -0800
+
+    [cbdt] Move some more code around
+
+ src/hb-ot-cbdt-table.hh | 61
+ ++++++++++++++++++++++++++++++++++---------------
+ src/hb-ot-font.cc       | 18 ++++++---------
+ 2 files changed, 49 insertions(+), 30 deletions(-)
+
+commit 654f9ab0d8d5ee032b5da763e34e7b1f454416b9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Dec 4 18:56:24 2016 -0800
+
+    [cbdt] Fix sign bug
+
+    Was introduced in d495fc5e38038f4cfb20425b1109324fa70bf2f9
+
+ src/hb-ot-cbdt-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit c27d6fcf8db6f02e075dd1868ae67d878fff39d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 22:43:05 2016 -0800
+
+    [cbdt] Last of sanitization fixes
+
+    Should be all good now..
+
+ src/hb-ot-font.cc | 23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
+
+commit d495fc5e38038f4cfb20425b1109324fa70bf2f9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 21:36:42 2016 -0800
+
+    [cbdt] Clean up some more
+
+    Almost there..
+
+ src/hb-ot-cbdt-table.hh | 134
+ +++++++++++++++++++++++++++++++++++++++++++-----
+ src/hb-ot-font.cc       |  38 ++++----------
+ 2 files changed, 131 insertions(+), 41 deletions(-)
+
+commit ce09e90e1502d5f944bafd64e51c29e365a963ae
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 20:12:57 2016 -0800
+
+    [cbdt] More sanitize work
+
+ src/hb-ot-cbdt-table.hh | 65
+ +++++++++++++++++++++++++++++--------------------
+ src/hb-ot-font.cc       | 46 ++++++++++++++++++----------------
+ 2 files changed, 63 insertions(+), 48 deletions(-)
+
+commit 70eb2ff682344688635cebb716fee0b73557c925
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 19:51:23 2016 -0800
+
+    Check for offset overflows during sanitize
+
+ src/hb-open-type-private.hh | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 4b58c9e326acde09d389c699014e4e7f6259f50a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 19:25:54 2016 -0800
+
+    [cbdt] Start fixing sanitization (or lack thereof)
+
+ src/hb-ot-cbdt-table.hh | 77
+ ++++++++++++++++++++++++++++++++++++-------------
+ src/hb-ot-font.cc       | 22 +++++++-------
+ 2 files changed, 68 insertions(+), 31 deletions(-)
+
+commit b92ba7bafcd9545a401fb871eb342e6284032c47
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 15:21:43 2016 -0800
+
+    [CBDT] Use CHAR instead of int8_t
+
+ src/hb-open-type-private.hh |  1 +
+ src/hb-ot-cbdt-table.hh     | 28 ++++++++++++++--------------
+ 2 files changed, 15 insertions(+), 14 deletions(-)
+
+commit efca7bf97f9967af4fa399a6665b723af643cecd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Dec 2 15:11:37 2016 -0800
+
+    Rename 'ebdt' to 'cbdt' since we only support the PNG format
+
+ src/Makefile.sources                             |  2 +-
+ src/{hb-ot-ebdt-table.hh => hb-ot-cbdt-table.hh} |  6 +++---
+ src/hb-ot-font.cc                                | 12 ++++++------
+ 3 files changed, 10 insertions(+), 10 deletions(-)
+
+commit 831852594b777f250efedb76d19bee1cfc8eeaa4
+Author: Seigo Nonaka <nona@google.com>
+Date:   Fri Dec 2 15:03:50 2016 -0800
+
+    Introduce get_extent support for color bitmap font. (#351)
+
+    hb_font_get_glyph_extents now works for color bitmap fonts.
+    Currently only font having index format 1 and image format 17
+    is supported.
+
+ src/Makefile.sources    |   1 +
+ src/hb-ot-ebdt-table.hh | 193
+ ++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-font.cc       |  96 ++++++++++++++++++++++++
+ 3 files changed, 290 insertions(+)
+
+commit 261837e7202ec584f653f379851e1c6457396b07
+Author: Ebrahim Byagowi <ebrahim@gnu.org>
+Date:   Fri Oct 28 21:49:11 2016 +0330
+
+    Fix "nmake install" when ADDITIONAL_LIB_DIR is provided and test it
+    on CI (#356)
+
+ appveyor.yml             | 1 +
+ win32/detectenv-msvc.mak | 4 ++--
+ win32/generate-msvc.mak  | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+commit d163cd956246449e3e48b54ce6eb5cdb14e3a0a6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 18:27:48 2016 +0200
+
+    [tests] Add tests for vertical origin with ft and ot font-funcs
+
+ .../sha1sum/f9b1dd4dcb515e757789a22cb4241107746fd3d0.ttf | Bin 0 ->
+ 1004 bytes
+ test/shaping/tests/vertical.tests                        |   2 ++
+ 2 files changed, 2 insertions(+)
+
+commit 2b117720c03869c7714304fd7fbfb2b01199bb3a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 18:12:50 2016 +0200
+
+    Use horizontal ascent as fallback vertical origin
+
+ src/hb-font-private.hh | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit a7b32f2057098012b3ab43121397766ae45b3559
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 18:08:41 2016 +0200
+
+    Move code around
+
+ src/hb-font-private.hh | 38 +++++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
+
+commit 63635c763dd9393df236f49d491510cca18a1ccc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 17:54:04 2016 +0200
+
+    [hb-ot-font] Use ascent+descent as fallback vertical advance
+
+ src/hb-ot-font.cc | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 9ee23c49a7a7b2479ae0d36a64720e92eb8a36e7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 17:44:16 2016 +0200
+
+    Fix vertical glyph origin with hb-ot-font
+
+ src/hb-font-private.hh | 51
+ ++++++++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 22 deletions(-)
+
+commit b3b0816d5fc00298621f738cf400de60f8a42c5d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 17:19:07 2016 +0200
+
+    Fix vertical font metrics
+
+    Ouch!
+
+ src/hb-font-private.hh | 4 ++--
+ src/hb-ot-font.cc      | 8 ++++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+commit 966ac7ecd3d0128a3adacdd26aacef2bd8afa4d4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Oct 26 16:17:15 2016 +0200
+
+    1.3.3
+
+ NEWS         | 24 ++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
+
 commit 118164293cc7eb18ba03896f602aff816400134b
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Wed Oct 26 16:04:30 2016 +0200
