@@ -63,7 +63,14 @@ c   Undotted chord notes with dotted main note.
 c   Forced line break without line number
 c   Fix dot moving when 2nds in chord get flipped
 c   To do: increase length on notexq in dodyn
+c 2.75
+c   Bugfix: unbeamed xtups with dots: in beamn1 and beamid allow dotted 16th, and
+c     2 or 3 flags on shortened note. 
 c 2.74
+c   Bugfix: allow "0" as argument of @ command on lyrics string.
+c   Check for and allow "\ in centered page headings with P command.
+c   Check for and allow "\ in text dynamics with D command.
+c   For lyrics string starting in xtuplet, insert check for inputting musixlyr.
 c   For staff-crossing beamed xtuplet chords, if 2nd segment of a joined beam
 c     starts with a blank rest, put '\sk' into the TeX. 
 c     To enable high-to-both beamed etup staff-crossing chord, for blank
@@ -762,8 +769,8 @@ c   nmidsec  section starts and stops based on PLAYING macros (not recording).
 c 
 ccccccccccccccccccccccccc
 c
-	data date /'20 Feb 16'/
-	data version /'2.74'/
+	data date /'24 Nov 16'/
+	data version /'2.76'/
 c
 ccccccccccccccccccccccccc
       data maxit,ncalls /200,0/
@@ -2146,9 +2153,6 @@ c
             nodur(ivx,ip) = 0
             return
           end if
-c          if (multip.le.0) then
-c          if (multip.le.0 .or. 
-c     *        (multip.eq.1.and.btest(nacc(ivx,ip-1),18))) then
           if (.not.drawbm(ivx)) then
 c
 c  Xtuplet with no beam, just put in the right kind of note
@@ -2176,7 +2180,7 @@ c
               lnote = 3
               if (.not.btest(nacc(ivx,ip-1),27)) then
 c
-c  Prior note is not regular-dotted
+c  Prior note of xtup is not regular-dotted
 c              
                 if (multip .eq. 0) then
                   notexq = sq//'q'//ulq(ivx,ibmcnt(ivx))
@@ -2195,16 +2199,22 @@ c
                 end if
                 if (btest(nacc(ivx,ip),27)) then
 c
-c  This note is regular dotted non-beamed xtup
+c  This xtup note is regular dotted non-beamed xtup
 c
                   notexq = notexq(1:3)//'p'
                   lnote = 4
                 end if
               else
 c
-c  Prior note is regular-dotted so this one is halved
+c  Prior note of xtup is regular-dotted so this one is halved
 c
-                if (multip .eq. 0) then
+                if (multip .eq. 2) then
+                  notexq = sq//'ccc'//ulq(ivx,ibmcnt(ivx))
+                  lnote = 5
+                else if (multip .eq. 1) then
+                  notexq = sq//'cc'//ulq(ivx,ibmcnt(ivx))
+                  lnote = 4
+                else if (multip .eq. 0) then
                   notexq = sq//'c'//ulq(ivx,ibmcnt(ivx))
                 else if (multip .eq. -1) then
                   notexq = sq//'q'//ulq(ivx,ibmcnt(ivx))
@@ -2484,8 +2494,10 @@ c
             call stop1()
           end if
           if (btest(nacc(ivx,ip1),19) .or. btest(nacc(ivx,ip1),27)) then 
-            notexq = notexq(1:3)//'p'
-            lnote = 4
+c            notexq = notexq(1:3)//'p'
+c            lnote = 4
+            notexq = notexq(1:lnote)//'p'
+            lnote = lnote+1
           end if
           notexq = notexq(1:lnote)//noteq
           lnote = lnote+lnoten
@@ -3294,8 +3306,15 @@ c
       if (lineq(iccount+1:iccount+1) .eq. '"') then
 c
 c  Dynamic text
-c
-        iend = index(lineq(iccount+2:128),'"')
+c 
+
+        istart = iccount+2  ! 1 past 1st quote
+3       continue
+        iend = index(lineq(istart:128),'"')
+        if (lineq(istart+iend-2:istart+iend-2) .eq. '\') then
+          istart = iccount+iend+2
+          go to 3
+        end if
         if (iend .eq. 0) then
           call errmsg(lineq,iccount+1,ibar,
      *         'Dynamic text must be terminated with double quote!')
@@ -3304,7 +3323,8 @@ c
 c
 c  Set iccount to character after 2nd ", and set ipm
 c
-        iccount = iccount+iend+2 
+c        iccount = iccount+iend+2 
+        iccount = istart+iend 
         ipm = index('- +',lineq(iccount:iccount))
         if (ipm .eq. 0) then
           call errmsg(lineq,iccount,ibar,
@@ -4995,25 +5015,42 @@ c            ivxip = ivx+16*ip
 c
 c  Font size based on musicsize
 c
+c          if (musize .eq. 20) then
+c            notexq = notexq(1:lnote)//'{'//char(92)//'medtype'
+c     *               //char(92)//'it '
+c            lnote = lnote+13   
+c          else if (musize .eq. 16) then
+c            notexq = notexq(1:lnote)//'{'//char(92)//'normtype'
+c     *               //char(92)//'it '
+c            lnote = lnote+14   
+c          else if (musize .eq. 24) then
+c            notexq = notexq(1:lnote)//'{'//char(92)//'bigtype'
+c     *               //char(92)//'it '
+c            lnote = lnote+13   
+c          else if (musize .eq. 29) then
+c            notexq = notexq(1:lnote)//'{'//char(92)//'Bigtype'
+c     *               //char(92)//'it '
+c            lnote = lnote+13   
+c          end if
+c
+c Do this to insert 1st 2 args of \txtdyn, allow 3rd to be longer (on next line)
+c
+          call addstr(notexq(1:lnote),lnote,soutq,lsout)
           if (musize .eq. 20) then
-            notexq = notexq(1:lnote)//'{'//char(92)//'medtype'
-     *               //char(92)//'it '
-            lnote = lnote+13   
+            notexq = '{'//char(92)//'medtype'//char(92)//'it '
+            lnote = 13   
           else if (musize .eq. 16) then
-            notexq = notexq(1:lnote)//'{'//char(92)//'normtype'
-     *               //char(92)//'it '
-            lnote = lnote+14   
+            notexq = '{'//char(92)//'normtype'//char(92)//'it '
+            lnote = 14   
           else if (musize .eq. 24) then
-            notexq = notexq(1:lnote)//'{'//char(92)//'bigtype'
-     *               //char(92)//'it '
-            lnote = lnote+13   
+            notexq = '{'//char(92)//'bigtype'//char(92)//'it '
+            lnote = 13   
           else if (musize .eq. 29) then
-            notexq = notexq(1:lnote)//'{'//char(92)//'Bigtype'
-     *               //char(92)//'it '
-            lnote = lnote+13   
+            notexq = '{'//char(92)//'Bigtype'//char(92)//'it '
+            lnote = 13   
           end if
-          notexq = notexq(1:lnote)//txtdynq(jtxtdyn)(1:ltxtdyn)
-     *             //'}'
+c
+          notexq = notexq(1:lnote)//txtdynq(jtxtdyn)(1:ltxtdyn)//'}'
           lnote = lnote+ltxtdyn+1
 c
 c  Reset jtxtdyn1 just in case >1 txtdyn on same note.
@@ -7926,7 +7963,7 @@ c
             nacc(ivx,nnl(ivx)) = ibset(nacc(ivx,nnl(ivx)),27)
             call g1etchar(lineq,iccount,durq)
           end if
-		if (durq .eq. 'n') then
+          if (durq .eq. 'n') then
 c
 c  Number alteration stuff.  After 'n', require '+-123456789fs ', no more 'DF'.
 c
@@ -9555,7 +9592,8 @@ c
 c  Quoted name, go to next quote mark
 c
             do 35 iccount = iccount+1 , 127
-              if (lineq(iccount:iccount) .eq. '"') go to 36
+              if (lineq(iccount:iccount).eq.'"' .and. 
+     *            lineq(iccount-1:iccount-1).ne.'\') go to 36
 35          continue
             call errmsg(lineq,iccount,ibarcnt-ibaroff+nbars+1,
      *        'Missing close quote after page number command (P)!')
@@ -10614,13 +10652,17 @@ c
 c  text-dynamic
 c
         ntxtdyn = ntxtdyn+1
-        iend = iccount+index(lineq(iccount+2:128),'"')+2
+        iccountt = iccount
+3       continue
+        iend = iccountt+index(lineq(iccountt+2:128),'"')+2
+        if (lineq(iend-2:iend-2) .eq. '\') then
+          iccountt = iend-2
+          go to 3
+        end if
         txtdynq(ntxtdyn) = lineq(iccount+2:iend-2)
 c
-cc  Store ivx, ip in bits 0-11
 c  Store ivx, ip in bits 0-12
 c
-c        ivxiptxt(ntxtdyn) = idyn
         ivxiptxt(ntxtdyn) = ivx+32*ip
         ipm = index('- +',lineq(iend:iend))
         idno = 0
@@ -11091,7 +11133,7 @@ c
      *       debugmidi
       logical debugmidi
       common /commvel/ midivel(nm),midvelc(0:nm),midibal(nm),midbc(0:nm)
-     *                ,miditran(nm),midtc(0:nm),noinst,iinsiv(nm)
+     *                ,miditran(nm),midtc(0:nm),noinstdum,iinsiv(nm)
       integer*2 iinsiv
       character*1 durq
       character*2 instq
@@ -12053,6 +12095,12 @@ c
 c
 c  pmxlyr string in xtup. Expand "..." to \pmxlyr{...}\
 c
+              if (.not. inputmlyr) then
+                ictemp = 0
+                lineqt = sq//sq//sq//'input musixlyr '//sq
+                call littex(islur,nnl(ivx)+1,ivx,topmods,lineqt,ictemp)
+                inputmlyr = .true.
+              end if
               call dopmxlyr(lineq,iccount)
               charq = sq
               call littex(islur,nnl(ivx),ivx,topmods,lineq,iccount)
@@ -13525,7 +13573,9 @@ c
               quoted = .false.
             end if
             do 35 iccount = namstrt+1, 128
-              if ((quoted .and. lineq(iccount:iccount) .eq. '"') .or.
+c              if ((quoted .and. lineq(iccount:iccount) .eq. '"') .or.
+              if ((quoted .and. lineq(iccount:iccount).eq.'"' .and.
+     *             lineq(iccount-1:iccount-1).ne.'\') .or.
      *           (.not.quoted .and. lineq(iccount:iccount) .eq. ' '))
      *            go to 36
 c
@@ -14492,7 +14542,7 @@ c
 c
 c 160130 Replace '\' by '/'
 c
-12    ipos = index(pathnameq,'\\')
+12    ipos = index(pathnameq,'\')
       if (ipos .gt. 0) then
         pathnameq(ipos:ipos)='/'
         print*,'Changed pathname to ',pathnameq(1:lpath)
@@ -16264,7 +16314,6 @@ c
 c
 c  Add check for non-beamed xtuplets. May be problem with stem direction.
 c
-c            else if (ip-1.le.ibm2(ivx,ibmchk)) then
             else if (ip-1.le.ibm2(ivx,ibmchk) .and. 
      *                .not.btest(islur(ivx,ibm1(ivx,ibmchk)),18)) then
               isflag = .false.
@@ -16398,15 +16447,12 @@ c    subtract a notehead if at start of bar.
 c
 c  Get available space in elemskips (esk)
 c
-c        isfirst = ip.eq.1 .or. to(in).eq.itrpt .or.
-c     *        to(in) .eq. itsig
         isfirst = ip.eq.1 .or. abs(to(in)-itrpt).lt.tol .or.
      *        abs(to(in)-itsig).lt.tol
         if (isfirst) then
 c
 c  At start of bar or after repeat sign or new signature
 c
-c          if (to(in) .eq. itsig) then
           if (abs(to(in)-itsig).lt.tol) then
             esk = 0.
           else
@@ -17340,10 +17386,8 @@ c  The new subroutine call, to replace above code
 c
                 call chkkbdrests(ip,iv,ivx,nn,islur,irest,nolev,
      *            ivmx,nib,nv,ibar,tnow,tol,nodur,1,levtopr,levbotr,
-c     *                mult)
      *                mult,ipl)
               end if
-c2             continue
 c
 c  Write a separate note or rest
 c
@@ -24476,7 +24520,7 @@ c
             return
           end if
           call g1etchar(lineq,iccount,charq)
-          if (index('123456789',charq).eq.0) then
+          if (index('0123456789',charq).eq.0) then
             lyrerr = 5
             return
           end if
@@ -24499,7 +24543,7 @@ c   (unless preceded with '\'), check length
 c
       character*128 lineq,lineqt
       character*1 sq 
-      data sq /'\\'/
+      data sq /'\'/
       iend = lenstr(lineq,128)
 c
 c      i2nd = iccount+index(lineq(iccount+1:128),'"')
