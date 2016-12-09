@@ -1,5 +1,5 @@
-Changes applied to the cairo-1.14.6/ tree as obtained from:
-	http://cairographics.org/releases/cairo-1.14.6.tar.xz
+Changes applied to the cairo-1.14.8/ tree as obtained from:
+	http://cairographics.org/releases/cairo-1.14.8.tar.xz
 
 Removed:
 	Makefile.in

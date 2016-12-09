@@ -1,10 +1,53 @@
+Release 1.14.8    (2016-12-07  Bryce Harrington <bryce@osg.samsung.com>)
+========================================================================
+Bugfix release rolling up backported fixes for the past year.
+
+For a complete log of changes since 1.14.6, please see:
+
+    http://cairographics.org/releases/ChangeLog.cairo-1.14.8
+
+Features
+--------
+None
+
+API Changes
+-----------
+None
+
+Dependency Changes
+------------------
+None
+
+Performance Optimizations
+-------------------------
+None
+
+Bug Fixes
+---------
+* Fix "invalidfont" error on some printers when printing PDFs with
+  embedded fonts that have glyphs (such as spaces) with
+  num_contours == 0.  (Bug #79897)
+* Fix deadlock when destruction of a scaled font indirectly triggers
+  destruction of a second scaled font, causing the global cache to be
+  locked twice.  (Bug #93891)
+* Fix X errors reported to applications when shmdt() is called before
+  the Attach request is processed, due to missing xcb and xlib calls.
+* Fix random failure in record-paint-alpha-clip-mast test case, caused
+  by an incorrect assumption that a deferred clear can be skipped.
+  (Bug #84330)
+* Fix crash when dealing with an XShmGetImage() failure, caused by a
+  double free in _get_image_surface().  (Bug #91967)
+* Fix build issue when using non-GNU strings utility.  (Bug #88639)
+* Cleanup debugging text sent to stdout instead of log.  (Bug #95227)
+
+
 Release 1.14.6    (2015-12-09  Bryce Harrington <bryce@osg.samsung.com>)
 ========================================================================
 Simple bugfix release to fix one Windows issue.
 
 For a complete log of changes since 1.14.4, please see:
 
-    http://cairographics.org/releases/ChangeLog.1.14.6
+    http://cairographics.org/releases/ChangeLog.cairo-1.14.6
 
 Features
 --------
