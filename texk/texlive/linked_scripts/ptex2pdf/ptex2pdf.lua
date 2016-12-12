@@ -1,7 +1,7 @@
 #!/usr/bin/env texlua
 
 NAME = "ptex2pdf[.lua]"
-VERSION = "0.8"
+VERSION = "0.9"
 AUTHOR = "Norbert Preining"
 AUTHOREMAIL = "norbert@preining.info"
 SHORTDESC = "Convert Japanese TeX documents to pdf"
@@ -15,20 +15,22 @@ USAGE = [[
 [texlua] ptex2pdf[.lua] { option | basename[.tex] } ... 
 options: -v  version
          -h  help
-         --help print full help (installation, TeXworks setup)
+         -help print full help (installation, TeXworks setup)
          -e  use eptex class of programs
          -u  use uptex class of programs
          -l  use latex based formats
          -s  stop at dvi
          -i  retain intermediate files
          -ot '<opts>' extra options for TeX
-         -od '<opts>' extra options for dvipdfmx]]
+         -od '<opts>' extra options for dvipdfmx
+         -output-directory '<dir>' directory for created files]]
 
 LICENSECOPYRIGHT = [[
 Originally based on musixtex.lua from Bob Tennent.
 
+(c) Copyright 2016      by Japanese TeX Development Community  
+(c) Copyright 2013-2016 Norbert Preining norbert@preining.info  
 (c) Copyright 2012 Bob Tennent rdt@cs.queensu.ca  
-(c) Copyright 2013-2015 Norbert Preining norbert@preining.info  
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -129,37 +131,43 @@ for platex files in SJIS encoding:
 |             | $fullname                   |
 ]]
 
-DEVELPLACE = "http://github.com/norbusan/ptex2pdf"
+DEVELPLACE = "http://github.com/texjporg/ptex2pdf"
 
 
 CHANGELOG = [[
-- version 0.1  2013-03-08 NP
+- version 0.1  2013-03-08 NP  
   Initial release on blog
-- version 0.2  2013-03-10 NP
-  import into git repository
-  support passing options on to tex and dvipdfm
-  add README with TeXworks config options
-- version 0.3  2013-05-01 NP
-  include the readme in the lua code
-  fix program name for -e -u
-- version 0.4  2013-05-07 NP
-  quote the filename with ", so that special chars do survive
-  add an example for TeXworks for files with different kanji encoding
-- version 0.5  2014-11-05 NP
-  on Windows: set command_line_encoding to utf8 when running uptex
-  (patch by Akira Kakuto)
-- version 0.6  2015-03-08 NP
-  cygwin didn't like the (accidentally inserted) spaces after the
-  texlua in the shebang line, and stopped working with
-    "no such program: "texlua  " ..."
-- version 0.7 2015-04-29
-  move to github as gitorious will be closed, adapt help output
-  to generate github flavored markdown
-  check for files using kpathsea instead of opening directly, to allow
-  for input of files found by kpathsea (closes github issue 1)
-- version 0.8 2015-06-15
-  file name checks: first search for arg as is, then try .tex and .ltx
-  (closes github issue: 3)
+- version 0.2  2013-03-10 NP  
+  import into git repository  
+  support passing options on to tex and dvipdfm  
+  add README with TeXworks config options  
+- version 0.3  2013-05-01 NP  
+  include the readme in the lua code  
+  fix program name for -e -u  
+- version 0.4  2013-05-07 NP  
+  quote the filename with ", so that special chars do survive  
+  add an example for TeXworks for files with different kanji encoding  
+- version 0.5  2014-11-05 NP  
+  on Windows: set command_line_encoding to utf8 when running uptex  
+  (patch by Akira Kakuto)  
+- version 0.6  2015-03-08 NP  
+  cygwin didn't like the (accidentally inserted) spaces after the  
+  texlua in the shebang line, and stopped working with  
+    "no such program: "texlua  " ..."  
+- version 0.7 2015-04-29  
+  move to github as gitorious will be closed, adapt help output  
+  to generate github flavored markdown  
+  check for files using kpathsea instead of opening directly, to allow  
+  for input of files found by kpathsea (closes github issue 1)  
+- version 0.8 2015-06-15  
+  file name checks: first search for arg as is, then try .tex and .ltx  
+  (closes github issue: 3)  
+- version 0.9 2016-12-12  
+  allow for files in sub-directories  
+  add -output-directory option  
+  update copyright and development place (now in texjp)  
+  support 'flag=val' to specify option values  
+  only allow one (1) filename argument  
 ]]
 
 
@@ -249,25 +257,34 @@ intermediate = 1
 use_eptex = 0
 use_uptex = 0
 use_latex = 0
+outputdir = "."
 filename = ""
 bname = ""
 exit_code = 0
 narg = 1
 repeat
   this_arg = arg[narg]
+  -- replace double dash by single dash at the beginning
+  this_arg = string.gsub(this_arg, "^%-%-", "-")
+
   if this_arg == "-v" then
     whoami()
     os.exit(0)
-  elseif this_arg == "--readme" then
+  elseif this_arg == "-readme" then
     makereadme()
     os.exit(0)
-  elseif this_arg == "--print-version" then
+  elseif this_arg == "-output-directory" then
+    narg = narg+1
+    outputdir = arg[narg]
+  elseif (string.sub(this_arg, 1, 18) == "-output-directory=") then
+    outputdir = string.sub(this_arg, 19, -1)
+  elseif this_arg == "-print-version" then
     print(VERSION)
     os.exit(0)
   elseif this_arg == "-h" then
     help()
     os.exit(0)
-  elseif this_arg == "--help" then
+  elseif this_arg == "-help" then
     fullhelp()
     os.exit(0)
   elseif this_arg == "-e" then
@@ -283,11 +300,20 @@ repeat
   elseif this_arg == "-ot" then
     narg = narg+1
     texopts = arg[narg]
+  elseif (string.sub(this_arg, 1, 4) == "-ot=") then
+    texopts = string.sub(this_arg, 5, -1)
   elseif this_arg == "-od" then
     narg = narg+1
     dvipdfopts = arg[narg]
+  elseif (string.sub(this_arg, 1, 4) == "-od=") then
+    dvipdfopts = string.sub(this_arg, 5, -1)
   else
-    filename = this_arg 
+    if filename == "" then
+      filename = this_arg
+    else
+      print("Multiple filename arguments, only one can be processed, exiting.")
+      os.exit(1)
+    end
   end --if this_arg == ...
   narg = narg+1
 until narg > #arg 
@@ -354,6 +380,9 @@ else
     -- if it has already an extension, we need to drop it to get the dvi name
     bname = string.gsub(filename, "^(.*)%.[^.]+$", "%1")
   end
+  -- filename may contain "/" or "\", but the intermediate output is written
+  -- in current directory, so we need to drop it
+  bname = string.gsub(bname, "^.*[/\\](.*)$", "%1")
 end
 
 -- we are still here, so we found a file
@@ -362,6 +391,11 @@ if use_uptex == 1 then
   if os.type == 'windows' then
     os.setenv('command_line_encoding', 'utf8')
   end
+end
+if (outputdir ~= ".") then
+  texopts = "-output-directory \"" .. outputdir .. "\" " .. texopts
+  bname = outputdir .. "/" .. bname
+  dvipdfopts = "-o \"" .. bname .. ".pdf\""
 end
 print("Processing ".. filename)
 if (os.execute(tex .. " " .. texopts .. " \"" .. filename .. "\"") == 0) and
