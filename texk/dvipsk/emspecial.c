@@ -145,21 +145,6 @@ char emunit[30];
 char emstr[500];
 char *emp;
 
-/* Initialize emstr[500] because emstr in the code below may not
-   be a right string, leading to wrong strlen(emstr):
-
-              if (strlen(emstr) - 2 >= sizeof(emstr)) {
-                fprintf(stderr, "em:graph: special too long, truncating\n");
-                break;
-              }
-              emstr[i++] = *emp;
-           }
-*/
-        {
-        int k;
-        for (k = 0; k < 500; k++)
-            emstr[k] = '\0';
-        }
         hvpos();
 	for (emp = p+3; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	if (strncmp(emp, "linewidth", 9) == 0) {
@@ -291,7 +276,7 @@ char *emp;
 	   int i;
 	   for (emp = emp+5; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	   for (i=0; *emp && !isspace((unsigned char)*emp) && !(*emp==','); emp++) {
-	      if (strlen (emstr) > 498) {
+	      if (i > 498) {
                 fprintf(stderr, "em:graph: special too long, truncating\n");
                 break;
 	      }
