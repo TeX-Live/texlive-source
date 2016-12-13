@@ -291,7 +291,7 @@ char *emp;
 	   int i;
 	   for (emp = emp+5; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	   for (i=0; *emp && !isspace((unsigned char)*emp) && !(*emp==','); emp++) {
-	      if (strlen (emstr) > 499) {
+	      if (strlen (emstr) > 498) {
                 fprintf(stderr, "em:graph: special too long, truncating\n");
                 break;
 	      }
