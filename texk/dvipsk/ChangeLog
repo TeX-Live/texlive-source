@@ -1,3 +1,9 @@
+2016-12-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* emspecial.c: Initialize emstr[500] in emspecial(), to fix wrong
+	strlen (emstr). Reported by Norbert Klingen:
+	http://tug.org/pipermail/tex-live/2016-December/039483.html.
+
 2016-11-08  Karl Berry  <karl@freefriends.org>
 
 	* dvips.texi,
