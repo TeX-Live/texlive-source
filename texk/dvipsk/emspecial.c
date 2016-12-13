@@ -160,7 +160,6 @@ char *emp;
         for (k = 0; k < 500; k++)
             emstr[k] = '\0';
         }
-
         hvpos();
 	for (emp = p+3; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	if (strncmp(emp, "linewidth", 9) == 0) {
@@ -292,7 +291,7 @@ char *emp;
 	   int i;
 	   for (emp = emp+5; *emp && isspace((unsigned char)*emp); emp++); /* skip blanks */
 	   for (i=0; *emp && !isspace((unsigned char)*emp) && !(*emp==','); emp++) {
-	      if (strlen(emstr) - 2 >= sizeof(emstr)) {
+	      if (strlen (emstr) > 499) {
                 fprintf(stderr, "em:graph: special too long, truncating\n");
                 break;
 	      }
