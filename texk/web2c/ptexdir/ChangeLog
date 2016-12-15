@@ -1,3 +1,7 @@
+2016-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* ptexextra.h: Use "issue@texjp.org" as BUG_ADDRESS.
+
 2016-09-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: New primitive \ifmbox to realize better box in math mode.

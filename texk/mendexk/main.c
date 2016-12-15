@@ -198,7 +198,7 @@ int main(int argc, char **argv)
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS.(ptex-staff@ml.asciimw.jp)\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS.\n");
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% mendex [-ilqrcgfEJS"
 #ifdef WIN32

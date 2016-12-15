@@ -1,3 +1,7 @@
+2016-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* main.c: Remove email address "ptex-staff@ml.asciimw.jp" as in upmendex.
+
 2016-11-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mendex.h: Sync with W32TeX (W32 only).
