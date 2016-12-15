@@ -1,6 +1,6 @@
 /* kpsestat -- show file permissions of a file in octal form.
 
-   Copyright 2008 Karl Berry.
+   Copyright 2008, 2016 Karl Berry.
    Copyright 1997, 2000, 2001, 2005 Olaf Weber.
 
    This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ main (int argc, char **argv)
 \n\
 --help      display this help and exit\n\
 --version   output version information and exit\n\n", argv[0]);
-        fputs ("Email bug reports to tex-k@mail.tug.org.\n", stdout);
+        fputs ("Email bug reports to tex-k@tug.org.\n", stdout);
         exit(0);
     } else if (argc > 1 && strcmp (argv[1], "--version") == 0) {
         printf ("%s (%s)\n\

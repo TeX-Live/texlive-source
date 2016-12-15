@@ -1,3 +1,7 @@
+2016-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* kpsestat.c: Change tex-k@mail.tug.org to tex-k@tug.org.
+
 2016-11-30  Karl Berry  <karl@ks.tug.org>
 
 	* texmf.cnf (shell_escape_commands): remove mpost, due to
