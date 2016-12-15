@@ -9,7 +9,7 @@
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR NULL
 #define PROGRAM_HELP PTEXHELP
-#define BUG_ADDRESS "ptex-staff@ml.asciimw.jp"
+#define BUG_ADDRESS "issue@texjp.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"

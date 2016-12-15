@@ -12,7 +12,7 @@
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR "Peter Breitenlohner"
 #define PROGRAM_HELP EUPTEXHELP
-#define BUG_ADDRESS "tex-k@tug.org"
+#define BUG_ADDRESS "issue@texjp.org"
 #define DUMP_VAR TEXformatdefault
 #define DUMP_LENGTH_VAR formatdefaultlength
 #define DUMP_OPTION "fmt"
