@@ -1,3 +1,114 @@
+2016-12-16  Torbjörn Granlund  <tg@gmplib.org>
+
+	* Version 6.1.2 released.
+
+2016-12-13  Torbjörn Granlund  <tg@gmplib.org>
+
+	* longlong.h: Test LONGLONG_STANDALONE in two more places.
+
+2016-12-07  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-h.in: Check yet another symbol for FILE.
+
+2016-12-02  Torbjörn Granlund  <tg@gmplib.org>
+
+	Merge configure changes from before 6.1.1:
+
+	2016-03-25  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Prefix all arm CPUs with "arm" to accommodate our
+	matchers.
+	* configure.ac (arm): Match arm CPUs consistently.
+
+	2016-03-21  Torbjörn Granlund  <torbjorng@google.com>
+
+	* configure.ac: Support many arm64 processors.
+
+	2016-03-20  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess (arm*): Handle big.LITTLE CPUs by extracting the
+	lexically largest id.
+	* config.guess (arm*): Add many aarch64 CPUs.
+	* config.guess (main): Corresponding changes.
+
+	* configure.ac (arm*): Support cortex-a5 better.
+
+	2016-01-15  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess (s390): Don't assume /proc/cpuinfo exists.
+
+	2016-01-13  Torbjörn Granlund  <torbjorng@google.com>
+
+	* config.guess: Reorder and generalise ppc code.
+
+2016-12-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tests/misc.c (tests_rand_start): Make shift well-defined.
+
+	* Makefile.am (LIBGMP_LT_*, LIBGMPXX_LT_*): Bump version info.
+	* gmp-h.in: Bump version.
+
+2016-11-29  Torbjörn Granlund  <tg@gmplib.org>
+
+	* gmp-h.in (__GNU_MP__): Bump.
+
+	* mpz/inp_raw.c: Rewrite size computation to avoid overflow.
+
+	* mpz/kronsz.c: Use ABS_CAST to avoid undefined code.
+
+2016-11-27  Torbjörn Granlund  <tg@gmplib.org>
+
+	* tune/time.c (cgt_works_p): Add a missing verbosity check.
+
+	* configure.ac: Make udiv_w_sdiv use conditional on enable_assembly.
+
+2016-11-25  Marc Glisse  <marc.glisse@inria.fr>
+
+	* tests/cxx/t-ops2.cc (checkz): Avoid left shift of negative number.
+
+2016-11-22  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (x86): Define LINUX for GNU/Linux systems.
+	* mpn/x86_64/fat/fat_entry.asm: Set PRETEND_PIC for GNU/Linux.
+
+2016-11-21  Torbjörn Granlund  <tg@gmplib.org>
+
+	* acinclude.m4 (mpn_lshift_com optimization 2): Make it well-defined
+	also for 32-bit systems.
+	(mpn_lshift_com optimization 2): Free allocated memory.
+
+2016-11-01  Torbjörn Granlund  <tg@gmplib.org>
+
+	* mpn/generic/dive_1.c: Remove a forgotten dummy while-loop.  (Spotted
+	by Peter Barfuss.)
+
+2016-10-31   Oleg Oshmyan  <chortos@inbox.lv>
+
+	* gmp-impl.h (x86_64 MPN_IORD_U): Use proper asm constraint.
+
+2016-10-24  Torbjörn Granlund  <tg@gmplib.org>
+
+	* config.guess: Recognise Itanium Poulson.
+
+2016-10-15  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac (arm*-*-*): Amend last change.
+
+2016-10-14  Torbjörn Granlund  <tg@gmplib.org>
+
+	* configure.ac
+	(arm*-*-*): Rewrite arm support to handle armv8 CPUs in 32-bit mode.
+
+2016-08-24  Vlad Zakharov <vzakhar@synopsys.com>
+
+	* longlong.h (arc add_ssaaaa, sub_ddmmss): Replace obsolete 'J'
+	constraint with 'Cal'.
+
+2016-08-22  Marc Glisse  <marc.glisse@inria.fr>
+
+	* longlong.h (umul_ppmm from __umulsidi3): Protect with do ...
+	while (0).
+
 2016-06-18  Torbjörn Granlund  <tg@gmplib.org>
 
 	* Version 6.1.1 released.
@@ -39,7 +150,7 @@
 
 2015-12-13 Marco Bodrato <bodrato@mail.dm.unipi.it>
 
-	* tests/arm32call.asm: bx->ret to support thumb-less chips 
+	* tests/arm32call.asm: bx->ret to support thumb-less chips
 	  (thanks Martin Husemann).
 
 2015-12-13  Torbjörn Granlund  <torbjorng@google.com>
