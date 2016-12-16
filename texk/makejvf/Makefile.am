@@ -26,6 +26,8 @@ dist_check_SCRIPTS = makejvf.test
 TESTS = makejvf.test
 makejvf.log: makejvf$(EXEEXT)
 
+dist_man1_MANS = makejvf.1
+
 EXTRA_DIST += \
 	tests/min10.tfm \
 	tests/min10.vf \

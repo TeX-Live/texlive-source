@@ -1,3 +1,8 @@
+2016-12-16  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	New file makejvf.1.
+	* Makefile.am: Add makejvf.1.
+
 2016-02-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	Update for upTeX-1.21.
