@@ -289,7 +289,7 @@ const n_options = 7; {Pascal won't count array lengths for us.}
 @x
       usage_help (PBIBTEX_HELP, nil);
 @y
-      usage_help (UPBIBTEX_HELP, nil);
+      usage_help (UPBIBTEX_HELP, 'issue@@texjp.org');
 @z
 
 @x

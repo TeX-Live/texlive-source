@@ -321,7 +321,7 @@ const n_options = 5; {Pascal won't count array lengths for us.}
 @x
       usage_help (PLTOTF_HELP, nil);
 @y
-      usage_help (PPLTOTF_HELP, nil);
+      usage_help (PPLTOTF_HELP, 'issue@@texjp.org');
 @z
 
 @x

@@ -9,7 +9,7 @@
 @x
       usage_help (PTFTOPL_HELP, nil);
 @y
-      usage_help (UPTFTOPL_HELP, nil);
+      usage_help (UPTFTOPL_HELP, 'issue@@texjp.org');
 @z
 
 @x
