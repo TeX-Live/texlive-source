@@ -1,4 +1,4 @@
-% $Id: mp.w 2104 2016-11-28 15:05:04Z luigi $
+% $Id: mp.w 2107 2016-12-15 11:40:15Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -639,12 +639,20 @@ if (mp->start_sym != NULL) {    /* insert the `\&{everyjob}' symbol */
 extern MP_options *mp_options (void);
 extern MP mp_initialize (MP_options * opt);
 extern int mp_status (MP mp);
+extern boolean mp_finished (MP mp);
 extern void *mp_userdata (MP mp);
 
 @ @c
 int mp_status (MP mp) {
   return mp->history;
 }
+
+
+@ @c
+boolean mp_finished (MP mp) {
+  return mp->finished;
+}
+
 
 
 @ @c
