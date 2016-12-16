@@ -6783,8 +6783,8 @@ actually present, and lists those missing.
 
 =item B<depends>
 
-Lists those packages which occur as dependencies in an installed collections,
-but are themselves not installed, and those packages that are not
+Lists those packages which occur as dependencies in an installed collection,
+but are themselves not installed, and those packages which are not
 contained in any collection.
 
 If you call C<tlmgr check collections> this test will be carried out

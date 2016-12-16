@@ -26,14 +26,16 @@
    This work has the LPPL maintenance status `maintained'.
   
    History:
-   * 1.2
+   * 1.3
+     - added check for \glsxtr@makeglossaries
+   * 1.2 (2016-05-27)
      - added check for \@gls@extramakeindexopts
      - added check for nil codepage
    * 1.1
      - changed first line from lua to texlua
 --]]
 
-thisversion = "1.2 2016-05-27"
+thisversion = "1.3 2016-12-16"
 
 quiet = false
 dryrun = false
@@ -399,6 +401,22 @@ for name, glg, gls, glo in
 
 end
 
+onlytypes = string.match(aux, "\\glsxtr@makeglossaries{([^}]+)}")
+
+if onlytypes ~= nil
+then
+  if not quiet then
+    print(string.format("Only process subset: '%s'", onlytypes))
+  end
+
+  onlyglossaries = {}
+
+  for name in string.gmatch(onlytypes, '([^,]+)') do
+     onlyglossaries[name] = glossaries[name]
+  end
+
+  glossaries = onlyglossaries
+end
 
 if ext == nil
 then

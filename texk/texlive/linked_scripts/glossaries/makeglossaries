@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.19
+# Version : 2.20
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -27,9 +27,11 @@
 # glossary-super.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries.
 
-my $version="2.19 (2016-05-27)";
+my $version="2.20 (2016-12-16)";
 
 # History:
+# v2.20 (2016/12/16)
+#   * Added check for \glsxtr@makeglossaries
 # v2.19 (2016/05/27)
 #   * Improved check in &parse_for_xindy_nosort
 # v2.18 (2016/01/24)
@@ -298,6 +300,8 @@ unless (-e "$name.aux")
 
 my $istfile = "";
 
+my $glslist = "";
+
 # should letter ordering be used? (v1.5 added)
 
 my $letterordering = defined($opt_l);
@@ -440,8 +444,7 @@ if ($ext)
    my $thislang = "";
    my $thiscodepage = "";
 
-   # v2.15 added:
-   my @types = keys %exttype;
+   my @types = ($glslist ? split /,/, $glslist : keys %exttype);
 
    foreach my $type (@types)
    {
@@ -528,7 +531,9 @@ else
 {
    # no file extension specified so process all glossary types
 
-   foreach my $type (keys %exttype)
+   my @types = ($glslist ? split /,/, $glslist : keys %exttype);
+
+   foreach my $type (@types)
    {
       my %thistype = %{$exttype{$type}};
 
@@ -647,8 +652,19 @@ sub scan_aux{
   {
      while (<AUXFILE>)
      {
+        #v2.20 added
+        if (m/\\glsxtr\@makeglossaries\{(.*)\}/)
+        {
+           $glslist = $1;
+
+           unless ($opt_q)
+           {
+              print "only processing subset '$glslist'\n";
+           }
+        }
+
         #v2.14 added
-        if (m/\\\@gls\@reference/)
+        if (m/\\\@gls\@reference/ and not $glslist)
         {
            die "Your document has used \\makenoidxglossaries\n",
                "You don't need makeindex or xindy.\n";
