@@ -1,3 +1,321 @@
+commit 281f3a2ec4be515a8876a66575341f404a6a0208
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Dec 15 23:32:41 2016 +0100
+
+    Poppler 0.50
+
+ CMakeLists.txt         |  4 ++--
+ NEWS                   | 25 +++++++++++++++++++++++++
+ configure.ac           |  2 +-
+ cpp/Doxyfile           |  2 +-
+ poppler/Makefile.am    |  2 +-
+ qt4/src/CMakeLists.txt |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt4/src/Makefile.am    |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 11 files changed, 36 insertions(+), 11 deletions(-)
+
+commit 1511523450f40b539fb1d58950a907f3712fd5c7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Dec 15 22:04:04 2016 +0100
+
+    Refine previous fix a bit
+
+    Call GfxColorSpace::setupColorProfiles only when we really need it
+
+ poppler/GfxState.cc | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+commit 9b016440725de086fa87fcbf776e27acee2c01b7
+Author: Marek Kasik <mkasik@redhat.com>
+Date:   Wed Sep 21 12:28:16 2016 +0200
+
+    Don't crash when calling cmsGetColorSpace()
+
+    Initialize RGBProfile and displayProfile before their use
+    if they were not initialized in GfxState's constructor.
+
+    https://bugs.freedesktop.org/show_bug.cgi?id=97870
+
+ poppler/GfxState.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 8321b400adf6c042cd630ceea7f54fcf6862211d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Dec 15 18:02:30 2016 +0100
+
+    Add one more const
+
+    Makes clang happier (i.e. gives one warning less)
+
+ fofi/FoFiEncodings.cc | 18 ++++++++++++++++--
+ fofi/FoFiEncodings.h  | 18 ++++++++++++++++--
+ 2 files changed, 32 insertions(+), 4 deletions(-)
+
+commit 1a6e4b65197391b23c2163b939d4787f2058a2e1
+Author: Jason Crain <jason@inspiresomeone.us>
+Date:   Wed Dec 7 09:28:58 2016 -0600
+
+    cairo: initialize CairoOutputDev::antialias
+
+    Initialize CairoOutputDev::antialias to CAIRO_ANTIALIAS_DEFAULT.
+
+    Bug #98983
+
+ poppler/CairoOutputDev.cc | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 2cf901c817fc99e1fa57745c11aa79cdfb4e8c99
+Author: William Bader <william@newspapersystems.com>
+Date:   Thu Dec 8 21:45:18 2016 +0100
+
+    Fix PS conversion for some files
+
+    Bug #63963
+
+ fofi/FoFiTrueType.cc   | 13 ++++++++++++-
+ fofi/FoFiTrueType.h    |  2 ++
+ poppler/PSOutputDev.cc | 26 ++++++++++++++++++++++++++
+ poppler/PSOutputDev.h  |  1 +
+ 4 files changed, 41 insertions(+), 1 deletion(-)
+
+commit 97b801b55b9bd33f20723c7139cf845a1cba5bd3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Dec 7 22:52:24 2016 +0100
+
+    Remove useless include
+
+ utils/pdftohtml.cc | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 7ac94c8f552f0db13334d4d014cfdb54de72c451
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Dec 7 22:38:48 2016 +0100
+
+    nSharedGroups doesn't need to be a class member
+
+    And also mark some variables as const to make it easier to see they
+    don't change
+
+ poppler/Hints.cc | 20 +++++++-------------
+ poppler/Hints.h  |  1 -
+ 2 files changed, 7 insertions(+), 14 deletions(-)
+
+commit 4c4b913802c79eb8bf9c0ce72a08842851f1c5bc
+Author: Jeffrey Morlan <jmmorlan@sonic.net>
+Date:   Wed Dec 7 22:36:26 2016 +0100
+
+    Bail out if nBitsNumObjects or nBitsDiffGroupLength are greater
+    than 32
+
+    Bug #94941
+
+ poppler/Hints.cc | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+commit 21cd08e34bd317b2ecc7c8b4e0d122d85bdf6714
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Dec 3 02:18:58 2016 +0100
+
+    Default to libopenjpeg2 instead of libopenjpeg1
+
+    Tested 2.1.1 and it's better or equal than the old libopenjpeg1
+
+    I thought of doing a version check but i don't think it's common
+    someone will be building a new poppler with an old libopenjpeg2
+
+ CMakeLists.txt | 16 ++++++++--------
+ configure.ac   | 31 ++++++++++++++++---------------
+ 2 files changed, 24 insertions(+), 23 deletions(-)
+
+commit b5f3e935c3a1f4824fcd681e291c35852966bb45
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Dec 2 00:09:38 2016 +0100
+
+    Revert "introduced hex string as a new Object type and used it for
+    file identifier"
+
+    This reverts commit debd1361f4a4cb7811677ab7a8f241b8b6fca5f9.
+
+ poppler/Lexer.cc  |  3 +--
+ poppler/Object.cc | 15 ++-------------
+ poppler/Object.h  | 16 +++-------------
+ poppler/PDFDoc.cc | 10 ----------
+ 4 files changed, 6 insertions(+), 38 deletions(-)
+
+commit 3a260ba8b3db99b4c0a956cc615704168db30e56
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Dec 2 00:09:31 2016 +0100
+
+    Revert "treat file identifier as a hex string, not a basic string"
+
+    This reverts commit 628299bc02ef825609e1ade539f967bbf052be0c.
+
+ poppler/PDFDoc.cc          | 12 ++++++------
+ poppler/PSOutputDev.cc     |  5 ++---
+ poppler/SecurityHandler.cc |  3 +--
+ poppler/StructElement.cc   |  5 ++---
+ 4 files changed, 11 insertions(+), 14 deletions(-)
+
+commit 42ef2ac51543fabb5f5f5c3a19c79020d4fb1238
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Wed Nov 30 00:14:46 2016 +0100
+
+    Read softmask into memstrean in case of matte
+
+    In case of matte the softmask has to be read twice. This is not
+    possible when read from stdin. So this patch allocate a memstream
+    first and read the softmask into this memstream.
+
+    Bug #97803
+
+ poppler/SplashOutputDev.cc | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+commit c448e16dc4f2f3c55b06e3f1e098f45f8abacc18
+Author: William Bader <william@newspapersystems.com>
+Date:   Wed Nov 30 00:00:15 2016 +0100
+
+    patch to add -passlevel1customcolor
+
+    Bug #97193
+
+ poppler/PSOutputDev.cc | 38 ++++++++++++++++----------------------
+ poppler/PSOutputDev.h  |  5 +++++
+ utils/pdftops.cc       |  6 +++++-
+ 3 files changed, 26 insertions(+), 23 deletions(-)
+
+commit 628299bc02ef825609e1ade539f967bbf052be0c
+Author: Jakub Alba <jakubalba@gmail.com>
+Date:   Sun Jul 24 22:46:23 2016 +0200
+
+    treat file identifier as a hex string, not a basic string
+
+ poppler/PDFDoc.cc          | 12 ++++++------
+ poppler/PSOutputDev.cc     |  5 +++--
+ poppler/SecurityHandler.cc |  3 ++-
+ poppler/StructElement.cc   |  5 +++--
+ 4 files changed, 14 insertions(+), 11 deletions(-)
+
+commit debd1361f4a4cb7811677ab7a8f241b8b6fca5f9
+Author: Jakub Alba <jakubalba@gmail.com>
+Date:   Sun Jul 24 22:30:30 2016 +0200
+
+    introduced hex string as a new Object type and used it for file
+    identifier
+
+    File identifiers are usually written as hex strings (and this is
+    how the PDF
+    reference presents them in an example). Until now, poppler was
+    reading hex
+    strings properly, but was forgeting about the fact that a given
+    string is a hex
+    string, so e.g. file identifier was first read as a hex string and
+    then printed as
+    an ordinary string and thanks to that what was printed was actually
+    junk. This
+    commit fixes that.
+
+ poppler/Lexer.cc  |  3 ++-
+ poppler/Object.cc | 15 +++++++++++++--
+ poppler/Object.h  | 16 +++++++++++++---
+ poppler/PDFDoc.cc | 10 ++++++++++
+ 4 files changed, 38 insertions(+), 6 deletions(-)
+
+commit 484d9d46e8995f12ce941be1e080e98e2ff4b95d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Nov 25 20:05:19 2016 +0100
+
+    Spelling fixes spotted by William Bader
+
+ qt4/src/poppler-optcontent.h | 2 +-
+ qt5/src/poppler-optcontent.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit bc11784e143d462d62d3f63fc61e58b4b9640da7
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Fri Nov 25 17:42:27 2016 +0100
+
+    Qt: Support OCG state change links
+
+ qt4/src/poppler-link-private.h       |  57 +++++++++++++++++++
+ qt4/src/poppler-link.cc              |  33 +++++------
+ qt4/src/poppler-link.h               |  34 +++++++++++-
+ qt4/src/poppler-optcontent-private.h |   3 +-
+ qt4/src/poppler-optcontent.cc        | 103
+ +++++++++++++++++++++++------------
+ qt4/src/poppler-optcontent.h         |   8 +++
+ qt4/src/poppler-page.cc              |  11 +++-
+ qt5/src/poppler-link-private.h       |  57 +++++++++++++++++++
+ qt5/src/poppler-link.cc              |  33 +++++------
+ qt5/src/poppler-link.h               |  34 +++++++++++-
+ qt5/src/poppler-optcontent-private.h |   3 +-
+ qt5/src/poppler-optcontent.cc        | 103
+ +++++++++++++++++++++++------------
+ qt5/src/poppler-optcontent.h         |   8 +++
+ qt5/src/poppler-page.cc              |  11 +++-
+ 14 files changed, 382 insertions(+), 116 deletions(-)
+
+commit b4e93c374deaaf31121a666c987a35bc9554beb3
+Author: Kenji Uno <ku@digitaldolphins.jp>
+Date:   Thu Nov 3 10:19:06 2016 +0900
+
+    Fix pdftoppm -tiff -gray/-mono incorrect output.
+
+    - SplashBitmap has imageWriterFormat that ImgWriter
+      should accept.
+
+ splash/SplashBitmap.cc | 93
+ +++++++++++++++++++++++++++++++++++++-------------
+ splash/SplashBitmap.h  |  3 +-
+ 2 files changed, 71 insertions(+), 25 deletions(-)
+
+commit 5a04becc4940b926744e64d3b7d0355adcabf282
+Author: Jakub Alba <jakubalba@gmail.com>
+Date:   Fri Jun 17 13:41:39 2016 +0200
+
+    Fix PDFDoc::saveIncrementalUpdate()'s detection of document being
+    modified
+
+    Bug 96561
+
+ poppler/PDFDoc.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 0c9c2089f52de5bb08717518c439fa8bbb99011f
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Nov 23 20:22:17 2016 +0100
+
+    Fix Outline parsing on broken documents
+
+    Broken documents in which the parent "Last" pointer is earlier than
+    the siblings "Next" pointer
+
+    This mimics Adobe Reader behaviour.
+
+    Bug #98732
+
+ poppler/Outline.cc | 18 ++++--------------
+ poppler/Outline.h  |  4 ++--
+ 2 files changed, 6 insertions(+), 16 deletions(-)
+
+commit e59cbaf9c1ab4a575633ee3263244e03c6d21713
+Author: Jason Crain <jason@inspiresomeone.us>
+Date:   Fri Nov 18 15:44:29 2016 -0600
+
+    glib: Use g_slice_new0 for PopplerActionLayer
+
+    PDFs using PopplerActionLayer will sometimes crash because they are
+    allocated with g_new0 but freed with g_slice_free.  Change the
+    allocation to use g_slice_new0.
+
+    Bug #98786
+
+ glib/poppler-action.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
 commit 02e2d8e2c3004c36d1f8f798e5a7a30166f48f37
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Tue Nov 15 00:10:43 2016 +0100

@@ -1,3 +1,28 @@
+Release 0.50.0
+        core:
+         * PSOutputDev: Fix PS conversion for some files. Bug #63963
+         * Fix Outline parsing on broken documents. Bug #98732
+         * Fix PDFDoc::saveIncrementalUpdate()'s detection of document being modified. Bug #96561
+         * SplashOutputDev: Read softmask into memstrean in case of matte. Bug #97803
+         * Bail out if Hints nBitsNumObjects or nBitsDiffGroupLength are greater than 32. Bug #94941
+         * CairoOutputDev: initialize CairoOutputDev::antialias. Bug #98983
+         * Fix crash when loading some thumbnails. Bug #97870
+
+        utils:
+         * pdftoppm: Fix -tiff -gray/-mono incorrect output.
+         * pdftops: add -passlevel1customcolor. Bug #97193
+
+
+        build system:
+         * Default to libopenjpeg2 instead of libopenjpeg1
+
+        qt:
+         * Support OCG state change links
+
+        glib:
+         * Use g_slice_new0 for PopplerActionLayer. Bug #98786
+
+
 Release 0.49.0
         core:
          * Merge type3 glyph handling from xpdf 3.04. Bug #96667

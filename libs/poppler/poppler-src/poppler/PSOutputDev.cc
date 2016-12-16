@@ -1103,6 +1103,7 @@ PSOutputDev::PSOutputDev(const char *fileName, PDFDoc *doc,
 
   fontIDs = NULL;
   fontNames = new GooHash(gTrue);
+  fontMaxValidGlyph = new GooHash(gTrue);
   t1FontNames = NULL;
   font8Info = NULL;
   font16Enc = NULL;
@@ -1171,6 +1172,7 @@ PSOutputDev::PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
 
   fontIDs = NULL;
   fontNames = new GooHash(gTrue);
+  fontMaxValidGlyph = new GooHash(gTrue);
   t1FontNames = NULL;
   font8Info = NULL;
   font16Enc = NULL;
@@ -1247,6 +1249,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   embedCIDTrueType = gTrue;
   fontPassthrough = gFalse;
   optimizeColorSpace = gFalse;
+  passLevel1CustomColor = gFalse;
   preloadImagesForms = gFalse;
   generateOPI = gFalse;
   useASCIIHex = gFalse;
@@ -1496,6 +1499,7 @@ PSOutputDev::~PSOutputDev() {
     gfree(fontIDs);
   }
   delete fontNames;
+  delete fontMaxValidGlyph;
   if (t1FontNames) {
     for (i = 0; i < t1FontNameLen; ++i) {
       delete t1FontNames[i].psName;
@@ -1649,6 +1653,7 @@ void PSOutputDev::writeXpdfProcset() {
       }
     } else if ((level == psLevel1 && lev1 && nonSep) ||
 	       (level == psLevel1Sep && lev1 && sep) ||
+	       (level == psLevel1Sep && lev2 && sep && getPassLevel1CustomColor()) ||
 	       (level == psLevel2 && lev2 && nonSep) ||
 	       (level == psLevel2Sep && lev2 && sep) ||
 	       (level == psLevel3 && lev3 && nonSep) ||
@@ -2608,10 +2613,15 @@ void PSOutputDev::setupExternalCIDTrueTypeFont(GfxFont *font,
 		outputFunc, outputStream);
       } else {
 	// otherwise: use a non-CID composite font
+	int maxValidGlyph = -1;
 	ffTT->convertToType0(psName->getCString(),
 		codeToGID, codeToGIDLen,
 		needVerticalMetrics,
+		&maxValidGlyph,
 		outputFunc, outputStream);
+	if (maxValidGlyph >= 0 && font->getName()) {
+	  fontMaxValidGlyph->replace(font->getName()->copy(), maxValidGlyph);
+	}
       }
       gfree(codeToGID);
     } else {
@@ -2704,11 +2714,16 @@ void PSOutputDev::setupEmbeddedCIDTrueTypeFont(GfxFont *font, Ref *id,
 				outputFunc, outputStream);
       } else {
 	// otherwise: use a non-CID composite font
+	int maxValidGlyph = -1;
 	ffTT->convertToType0(psName->getCString(),
 			     ((GfxCIDFont *)font)->getCIDToGID(),
 			     ((GfxCIDFont *)font)->getCIDToGIDLen(),
 			     needVerticalMetrics,
+			     &maxValidGlyph,
 			     outputFunc, outputStream);
+	if (maxValidGlyph > 0 && font->getName()) {
+	  fontMaxValidGlyph->replace(font->getName()->copy(), maxValidGlyph);
+	}
       }
       delete ffTT;
     }
@@ -4123,15 +4138,6 @@ void PSOutputDev::updateFillColor(GfxState *state) {
     state->getFillGray(&gray);
     writePSFmt("{0:.4g} g\n", colToDbl(gray));
     break;
-  case psLevel1Sep:
-    state->getFillCMYK(&cmyk);
-    c = colToDbl(cmyk.c);
-    m = colToDbl(cmyk.m);
-    y = colToDbl(cmyk.y);
-    k = colToDbl(cmyk.k);
-    writePSFmt("{0:.4g} {1:.4g} {2:.4g} {3:.4g} k\n", c, m, y, k);
-    addProcessColor(c, m, y, k);
-    break;
   case psLevel2:
   case psLevel3:
     if (state->getFillColorSpace()->getMode() != csPattern) {
@@ -4146,9 +4152,10 @@ void PSOutputDev::updateFillColor(GfxState *state) {
       writePS("] sc\n");
     }
     break;
+  case psLevel1Sep:
   case psLevel2Sep:
   case psLevel3Sep:
-    if (state->getFillColorSpace()->getMode() == csSeparation) {
+    if (state->getFillColorSpace()->getMode() == csSeparation && (level > psLevel1Sep || getPassLevel1CustomColor())) {
       sepCS = (GfxSeparationColorSpace *)state->getFillColorSpace();
       color.c[0] = gfxColorComp1;
       sepCS->getCMYK(&color, &cmyk);
@@ -4189,15 +4196,6 @@ void PSOutputDev::updateStrokeColor(GfxState *state) {
     state->getStrokeGray(&gray);
     writePSFmt("{0:.4g} G\n", colToDbl(gray));
     break;
-  case psLevel1Sep:
-    state->getStrokeCMYK(&cmyk);
-    c = colToDbl(cmyk.c);
-    m = colToDbl(cmyk.m);
-    y = colToDbl(cmyk.y);
-    k = colToDbl(cmyk.k);
-    writePSFmt("{0:.4g} {1:.4g} {2:.4g} {3:.4g} K\n", c, m, y, k);
-    addProcessColor(c, m, y, k);
-    break;
   case psLevel2:
   case psLevel3:
     if (state->getStrokeColorSpace()->getMode() != csPattern) {
@@ -4212,9 +4210,10 @@ void PSOutputDev::updateStrokeColor(GfxState *state) {
       writePS("] SC\n");
     }
     break;
+  case psLevel1Sep:
   case psLevel2Sep:
   case psLevel3Sep:
-    if (state->getStrokeColorSpace()->getMode() == csSeparation) {
+    if (state->getStrokeColorSpace()->getMode() == csSeparation && (level > psLevel1Sep || getPassLevel1CustomColor())) {
       sepCS = (GfxSeparationColorSpace *)state->getStrokeColorSpace();
       color.c[0] = gfxColorComp1;
       sepCS->getCMYK(&color, &cmyk);
@@ -5065,6 +5064,8 @@ void PSOutputDev::drawString(GfxState *state, GooString *s) {
   char buf[8];
   double *dxdy;
   int dxdySize, len, nChars, uLen, n, m, i, j;
+  int maxGlyphInt;
+  CharCode maxGlyph;
 
   // for pdftohtml, output PS without text
   if( displayText == gFalse )
@@ -5084,6 +5085,9 @@ void PSOutputDev::drawString(GfxState *state, GooString *s) {
   if (!(font = state->getFont())) {
     return;
   }
+  maxGlyphInt = (font->getName()? fontMaxValidGlyph->lookupInt(font->getName()): 0);
+  if (maxGlyphInt < 0) maxGlyphInt = 0;
+  maxGlyph = (CharCode) maxGlyphInt;
   wMode = font->getWMode();
 
   // check for a subtitute 16-bit font
@@ -5157,6 +5161,14 @@ void PSOutputDev::drawString(GfxState *state, GooString *s) {
 	  dxdy[2 * nChars] = dx;
 	  dxdy[2 * nChars + 1] = dy;
 	  ++nChars;
+	}
+      } else if (maxGlyph > 0 && code > maxGlyph) {
+	// Ignore this code.
+	// Using it will exceed the number of glyphs in the font and generate
+	// /rangecheck in --xyshow--
+	if (nChars > 0) {
+	  dxdy[2 * (nChars-1) ] += dx;
+	  dxdy[2 * (nChars-1) + 1 ] += dy;
 	}
       } else {
 	if (nChars + 1 > dxdySize) {
@@ -5888,7 +5900,11 @@ void PSOutputDev::doImageL2(Object *ref, GfxImageColorMap *colorMap,
 
   // color space
   if (colorMap) {
-    dumpColorSpaceL2(colorMap->getColorSpace(), gFalse, gTrue, gFalse);
+    // Do not update the process color list for custom colors
+    GBool isCustomColor =
+      (level == psLevel1Sep || level == psLevel2Sep || level == psLevel3Sep) &&
+      colorMap->getColorSpace()->getMode() == csDeviceN;
+    dumpColorSpaceL2(colorMap->getColorSpace(), gFalse, !isCustomColor, gFalse);
     writePS(" setcolorspace\n");
   }
 
@@ -6287,7 +6303,11 @@ void PSOutputDev::doImageL3(Object *ref, GfxImageColorMap *colorMap,
 
   // color space
   if (colorMap) {
-    dumpColorSpaceL2(colorMap->getColorSpace(), gFalse, gTrue, gFalse);
+    // Do not update the process color list for custom colors
+    GBool isCustomColor =
+      (level == psLevel1Sep || level == psLevel2Sep || level == psLevel3Sep) &&
+      colorMap->getColorSpace()->getMode() == csDeviceN;
+    dumpColorSpaceL2(colorMap->getColorSpace(), gFalse, !isCustomColor, gFalse);
     writePS(" setcolorspace\n");
   }
 
