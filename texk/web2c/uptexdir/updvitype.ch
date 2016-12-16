@@ -32,7 +32,7 @@
 @z
 
 @x
-      usage_help (PDVITYPE_HELP, nil);
+      usage_help (PDVITYPE_HELP, 'issue@@texjp.org');
 @y
       usage_help (UPDVITYPE_HELP, 'issue@@texjp.org');
 @z
