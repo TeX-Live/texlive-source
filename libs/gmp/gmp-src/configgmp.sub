@@ -3,7 +3,7 @@
 # GMP config.sub wrapper.
 
 
-# Copyright 2000-2003, 2006, 2009-2015 Free Software Foundation, Inc.
+# Copyright 2000-2003, 2006, 2009-2016 Free Software Foundation, Inc.
 #
 #  This file is part of the GNU MP Library.
 #
@@ -130,7 +130,7 @@ z900esa | z990esa | z9esa | z10esa | z196esa)
 armsa1 | armxscale | arm9tdmi | arm9te |				\
 arm10* | arm11mpcore | armsa1 | arm1136 | arm1156 | arm1176 |		\
 armcortexa5 | armcortexa7 | armcortexa8 | armcortexa9 | armcortexa15 |	\
-armcortexr4 | armcortexr5 | armcortexm3 | arm*neon)
+armcortexr4 | armcortexr5 | armcortexm3 | arm*neon | xgene1 | exynosm1 | thunderx)
   test_cpu="arm";;
 
 *)

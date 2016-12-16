@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current gmp version
-m4_define([gmp_version], [6.1.1])
+m4_define([gmp_version], [6.1.2])

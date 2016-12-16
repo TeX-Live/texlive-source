@@ -743,7 +743,7 @@ main ()
     a[i] = ~0L;
   r = malloc (10000 * sizeof (unsigned long));
   r2 = r;
-  for (i = 0; i < 528; i += 22)
+  for (i = 0; i < 528; i += 23)
     {
       lshift_com (r2, a,
 		  i / (8 * sizeof (unsigned long)) + 1,
@@ -753,6 +753,7 @@ main ()
   if (r[2048] != 0 || r[2049] != 0 || r[2050] != 0 || r[2051] != 0 ||
       r[2052] != 0 || r[2053] != 0 || r[2054] != 0)
     abort ();
+  free (r);
   return 0;
 }
 #else

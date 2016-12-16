@@ -4,6 +4,32 @@ Verbatim copying and distribution of this entire article is permitted in any
 medium, provided this notice is preserved.
 
 
+Changes between GMP version 6.1.1 and 6.1.2
+
+  BUGS FIXED
+  * Mini-GMP: Fixed a division bug, which on a machine with 64-bit
+    unsigned long affects approximately 1 out of 2^32 divisors.
+
+  * Mini-GMP: Fix mpz_set_str crash on inputs with a large number of
+    leading zeros. Also stricter input validation, rejecting inputs
+    with no digits.
+
+  FEATURES
+  * Handle more systems which require PIC code in static libraries (e.g.,
+    "hardened" Gentoo and Debian 9).
+
+  * Configuration for arm (-32 and -64) has been rewritten, fixing poor
+    code selection for many CPUs.
+
+  * Mini-GMP: Updated to the latest development version, including
+    new functions mpn_com and mpn_neg.
+
+  SPEEDUPS
+  * None, except for arm CPUs affected by the configuration rewrite.
+
+  MISC
+  -
+
 Changes between GMP version 6.1.0 and 6.1.1
 
   BUGS FIXED
@@ -35,7 +61,7 @@ Changes between GMP version 6.0.* and 6.1.0
   * Fixed PIC bug in popcount affecting Intel processors using the 32-bit ABI.
 
   SPEEDUPS
-  * Speedup for Intel Broadwell and Skylake though assembly code making use of
+  * Speedup for Intel Broadwell and Skylake through assembly code making use of
     new ADX instructions.
 
   * Square root is now faster when the remainder is not needed. Also the speed
