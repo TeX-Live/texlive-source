@@ -1,3 +1,8 @@
+2016-12-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch:
+	Use "issue@texjp.org" as bug_email in usagehelp().
+
 2016-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexextra.h: Use "issue@texjp.org" as BUG_ADDRESS.

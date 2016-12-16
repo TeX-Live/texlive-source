@@ -34,6 +34,6 @@
 @x
       usage_help (PDVITYPE_HELP, nil);
 @y
-      usage_help (UPDVITYPE_HELP, nil);
+      usage_help (UPDVITYPE_HELP, 'issue@@texjp.org');
 @z
 

@@ -493,7 +493,7 @@ const n_options = 10; {Pascal won't count array lengths for us.}
 @x
       usage_help (DVITYPE_HELP, nil);
 @y
-      usage_help (PDVITYPE_HELP, nil);
+      usage_help (PDVITYPE_HELP, 'issue@@texjp.org');
 @z
 
 @x
