@@ -1,0 +1,27 @@
+.if t .ds TX T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.if t .ds LX L\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.TH MAKEJVF L
+.SH NAME
+makejvf \- Make Japanese VF file from Japanese \*(TX TFM file
+.SH SYNOPSIS
+\fBmakejvf\fR [\fI<options>\fR] \fI<\*(TX TFM file>\fR \fI<TFM name of PS font>\fR
+.SH DESCRIPTION
+\fBmakejvf\fP is a tool to generate Japanese VF file from Japanese \*(TX TFM
+(JFM) file for use with dvips.
+.SH EXAMPLE
+.TP 5
+If you want to use min10 as Ryumin-Light-H, run
+     makejvf min10.tfm rml
+.TP 5
+This generates min10.vf and rml.tfm. Put these files in an appropriate \
+directory under TEXMF tree, and add the following line to psfonts.map.
+     rml Ryumin-Light-H
+.SH SEE ALSO
+More detailed description of \fBmakejvf\fR in Japanese is available at
+     $TEXMFDIST/doc/fonts/ptex-fonts/README_makejvf
+.SH AUTHOR
+This manual page was written by Japanese \*(TX Development Community \
+<https://texjp.org>. For more information, see GitHub repository \
+<https://github.com/texjporg/ptex-fonts>.
+Many thanks to Atsuhito KOHDA <kohda@debian.org>, \
+for providing another manpage in Debian GNU/Linux system.
