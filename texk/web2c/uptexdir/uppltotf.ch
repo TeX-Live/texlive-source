@@ -7,7 +7,7 @@
 @z
 
 @x
-      usage_help (PPLTOTF_HELP, nil);
+      usage_help (PPLTOTF_HELP, 'issue@@texjp.org');
 @y
       usage_help (UPPLTOTF_HELP, 'issue@@texjp.org');
 @z
