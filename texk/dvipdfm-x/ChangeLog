@@ -1,3 +1,9 @@
+2016-12-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c, dvi.h, dvipdfmx.c, mpost.c, pdfencoding.c, pdfobj.c,
+	pdfparse.c, pdfparse.h, tt_cmap.c, type0.c, type1.c, vf.c, xbb.c:
+	Merge libdpx by Clerk Ma at https://github.com/clerkma/ptex-ng.
+
 2016-10-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdffont.c, pdfobj.h: Use (time_t)-1 for INVALID_EPOCH_VALUE.
