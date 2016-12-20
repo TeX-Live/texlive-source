@@ -1638,6 +1638,9 @@ case $basic_machine in
 	sparc-* | *-sun)
 		os=-sunos4.1.1
 		;;
+	pru-*)
+		os=-elf
+		;;
 	*-be)
 		os=-beos
 		;;
