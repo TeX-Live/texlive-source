@@ -39,14 +39,14 @@ dist_man1_MANS = mendex.1
 
 EXTRA_DIST = \
 	COPYRIGHT \
-	COPYRIGHT.jis \
-	ChangeLog.jis
+	COPYRIGHT.ja \
+	ChangeLog.ja
 
 ## Eventually delete these files
 ##
 EXTRA_DIST += \
 	indexsty \
-	mendex.doc
+	mendex.doc mendex.1 mendex.1.ja
 
 ## Tests
 ##
