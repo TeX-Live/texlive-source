@@ -1,416 +1,481 @@
-.if t .ds TX "T\h'-.15m'\v'.2v'E\v'-.2v'\h'-.12m'X
-.if t .ds LX L\v'-.22m'a\v'.22m'T\h'-.1667m'\v'.22m'E\h'-.125m'\v'-.22m'X
+.if t .ds TX T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.if t .ds LX L\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
 .TH MENDEX L
-.SH 名称
-mendex \- 索引整形ツール
-.SH 使用法
-\fBmendex\fR [-ilqrcgEJSU] [\fB-s\fI sty\fR] [\fB-d\fI dic\fR] [\fB-o\fI ind\fR] [\fB-d\fI dic\fR] [\fB-t\fI log\fR] [\fB-p\fI no\fR] [\fB-I\fI enc\fR] [\fB--\fR] [\fI idx0 idx1 idx2 ...\fR]
-.SH 解説
+.SH NAME
+mendex \- Japanese index processor
+.SH SYNOPSIS
+\fBmendex\fR [-ilqrcgfEJSU] [\fB-s\fI sty\fR] [\fB-d\fI dic\fR] [\fB-o\fI ind\fR] [\fB-t\fI log\fR] [\fB-p\fI no\fR] [\fB-I\fI enc\fR] [\fB--help\fR] [\fB--\fR] [\fI idx0 idx1 idx2 ...\fR]
+.SH DESCRIPTION
 .PP
-\fImendex\fR は文書の索引を作成するツールです。 LaTeX により抽出された索引リストファイル(\fI.idx\fR)を並べ替え、実際の索引のソースファイルの形に整形します。 \fImakeindex\fR と互換性があり、さらに「読み」の扱いの手間を減らすように特殊化されています。
+The program \fImendex\fR is a general purpose hierarchical index generator;
+it accepts one or more input files (\fI.idx\fR; often produced by a text
+formatter such as \*(LX), sorts the entries, and produces an output file
+which can be formatted. It is almost compatible with \fImakeindex\fR, and
+additional feature for handling readings of kanji words is also available.
 .RE
-出力される索引の形式は、スタイルファイルに従って決定されます。また、辞書ファイルを与えることにより、索引中の熟語の読みが登録されます。
+The formats of the input and output files are specified in a style file.
+The readings of kanji words can be specified in a dictionary file.
 .RE
-索引の階層は３段階まで作成することができます。
-.SH オプション
+The index can have up to three levels (0, 1, and 2) of subitem nesting.
+.SH OPTIONS
 .PP
 .TP 10
 \fB-i\fR
-索引リストファイルが指定されている場合でも、標準入力を索引リストとして使用します。
+Take input from stdin, even when index files are specified.
 .TP 10
 \fB-l\fR
-索引のソートを文字順で行います。指定されなければ単語順のソートになります(ソート方法については後述)。
+Set \'sort by character order\'. By default, \'sort by word order\' is used.
+Details are described below.
 .TP 10
 \fB-q\fR
-静粛モードです。エラーおよび警告以外は標準エラー出力に出力しません。
+Quiet mode; send no message to \fIstderr\fR, except error
+messages and warnings.
 .TP 10
 \fB-r\fR
-ページ範囲表現を無効にします。指定しないと、連続して出てくる索引については "1--5" のようにページ範囲で表現されます。
+Disable implicit page range formation. By default, three or
+more successive pages are automatically abbreviated as a range
+(e.g. 1\(en5).
 .TP 10
 \fB-c\fR
-スペースやタブといったブランクを短縮して、すべて１個の半角スペースにします。また、前後のブランクは削除されます。
+Compress sequence of intermediate blanks (space(s) and/or tab(s)) into a space
+and ignore leading and trailing blank(s).
+By default, blanks in the index key are retained.
 .TP 10
 \fB-g\fR
-日本語の頭文字の区切りを "あかさた・・・わ" にします。指定しないと "あいうえ・・・わをん" になります。
+Make Japanese index head \fIA\fR-line (\fIA, Ka, Sa, ...\fR) of the gojuon table (Japanese
+syllabary). By default, all the characters in the gojuon table
+are used.
 .TP 10
 \fB-f\fR
-辞書ファイルにない漢字も強制的に出力するモードです。
+Force to output Kanji characters even non-existent in dictionaries.
 .TP 10
 \fB-s\fI sty\fR
-\fIsty\fR ファイルをスタイルファイルと見なします。スタイルファイルを指定しなければ、デフォルトの索引形式で作成します。
+Employ \fIsty\fR as the style file.
 .TP 10
 \fB-d\fI dic\fR
-\fIdic\fR ファイルを辞書ファイルと見なします。辞書ファイルは日本語の <\fI熟語\fR\ \fI読み\fR> のリストで構成されます。
+Employ \fIdic\fR as the dictionary file. The dictionary file is
+composed of lists of <\fIindex_word\fR\ \fIreading\fR>.
 .TP 10
 \fB-o\fI ind\fR
-\fIind\fR ファイルを出力ファイルと見なします。指定がない場合は最初の入力ファイルの拡張子を.indとしたもの、入力ファイルが標準入力のみであれば標準出力に出力します。
+Employ \fIind\fR as the output index file. By default, the file
+name is created by appending the extension \fIind\fR to the base
+name of the first input file.
 .TP 10
 \fB-t\fI log\fR
-\fIlog\fR ファイルをログファイルと見なします。指定がない場合は最初の入力ファイルの拡張子を.ilgとしたもの、入力ファイルが標準入力のみであれば標準エラー出力のみに出力されます。
+Employ \fIlog\fR as the transcript file. By default, the file name
+is created by appending the extension \fIilg\fR to the base name
+of the first input file.
 .TP 10
 \fB-p\fI no\fR
-\fIno\fR を索引ページの先頭ページとして指定します。また、TeXの.log ファイルを参照することにより \fIany\fR(最終ページの次のページから)、\fIodd\fR(最終ページの次の奇数ページから)、\fIeven\fR(最終ページの次の偶数ページから)といった指定の仕方も可能です。
+Set the starting page number of the output index list to be
+\fIno\fR. The argument \fIno\fR may be numerical or one of
+the following: \fIany\fR (the next page to the end of contents), \fIodd\fR
+(the next odd page to the end of contents), \fIeven\fR (the next even page to the end of contents).
 .TP 10
 \fB-E\fR
-漢字コードをEUCに指定します。入力ファイル、出力ファイルともEUCとして扱います。
+Set input/output kanji encoding to EUC-JP.
 .TP 10
 \fB-J\fR
-漢字コードをJISに指定します。入力ファイル、出力ファイルともJISとして扱います。
+Set input/output kanji encoding to JIS (ISO-2022-JP).
 .TP 10
 \fB-S\fR
-漢字コードをShiftJISに指定します。入力ファイル、出力ファイルともShiftJISとして扱います。
+Set input/output kanji encoding to Shift_JIS.
 .TP 10
 \fB-U\fR
-漢字コードをUTF-8に指定します。入力ファイル、出力ファイルともUTF-8として扱います。
+Set input/output kanji encoding to UTF-8.
 .TP 10
 \fB-I\fI enc\fR
-内部バッファのコードを\fIenc\fR に指定します。\fIenc\fR には \fIeuc\fR(EUC-JP) または \fIutf8\fR(UTF-8)が指定可能です。
+Set internal encoding to \fIenc\fR. The argument \fIenc\fR
+may be \fIeuc\fR (EUC-JP) or \fIutf8\fR (UTF-8).
+The normal default is set to \fIeuc\fR, but the default is changed to \fIutf8\fR
+when the option \fB-U\fR is specified explicitly.
+.TP 10
+\fB--help\fR
+Show summary of options.
 .TP 10
 \fB--\fR
-以降はオプション文字列と解釈しません。
+Arguments after \fB--\fR are not taken as options.
 
+.SH "STYLE FILE"
+The style file informs \fImendex\fR about the format of the
+\fIidx\fR input files and the intended format of the final
+output file. The format is upper compatible with the one for
+\fImakeindex\fR. The style file contains a list of
+<\fIspecifier\fR\ \fIattribute\fR> pairs.
+There are two types of specifiers: input and output.
+Pairs do not have to appear in any particular order.
+A line begun by \'%\' is a comment.
 
-.SH スタイルファイル
-スタイルファイルは makeindex のものと上位互換です。 形式は <\fIスタイルパラメータ\fR\ \fI引数\fR> のリストで構成されます。パラメータの順序は自由です。
-以下にスタイルパラメータの一覧を示します。
-`%'以降はコメントと見なされます。
 .PP
-\fB 入力ファイルスタイルパラメータ\fR
+\fBInput file style parameter\fR
 .TP 30
-\fBkeyword\fR  <文字列>
+\fBkeyword\fR  <string>
 "\\\\indexentry"
 .RS
-索引エントリを引数として持つコマンド。
+Command with an argument of index entry.
 .RE
 .TP 30
-\fBarg_open\fR  <文字>
+\fBarg_open\fR  <char>
 \'{\'
 .RS
-索引エントリ文字列開始を表す文字。
+Opening delimiter which shows the beginning of index entry.
 .RE
 .TP 30
-\fBarg_close\fR  <文字>
+\fBarg_close\fR  <char>
 \'}\'
 .RS
-索引エントリ文字列終了を表す文字。
+Closing delimiter which shows the end of index entry.
 .RE
 .TP 30
-\fBrange_open\fR  <文字>
+\fBrange_open\fR  <char>
 \'(\'
 .RS
-ページ範囲の開始を示す文字。
+Opening delimiter which shows the beginning of page range.
 .RE
 .TP 30
-\fBrange_close\fR  <文字>
+\fBrange_close\fR  <char>
 \')\'
 .RS
-ページ範囲の終了を示す文字。
+Closing delimiter which shows the end of page range.
 .RE
 .TP 30
-\fBlevel\fR  <文字>
+\fBlevel\fR  <char>
 \'!\'
 .RS
-従属レベルであることを示す文字。
+Delimiter which shows lower level.
 .RE
 .TP 30
-\fBactual\fR  <文字>
+\fBactual\fR  <char>
 \'@\'
 .RS
-このシンボルに続く文字列が実際の索引文字列として出力ファイルに書かれる。
+Symbol which shows the next sequence is to appear as index strings
+in the output file.
 .RE
 .TP 30
-\fBencap\fR  <文字>
+\fBencap\fR  <char>
 \'|\'
 .RS
-このシンボルに続く文字列が、ページ番号に付くコマンド名として使われる。
+Symbol which shows the next sequence is to be used as command name
+attached to the page number.
 .RE
 .TP 30
-\fBpage_compositor\fR  <文字列>
+\fBpage_compositor\fR  <string>
 "-"
 .RS
-階層化されたページ番号における階層間の区切り文字。
+Separator between page levels for a style with multi-levels of page numbers.
 .RE
 .TP 30
-\fBpage_precedence\fR  <文字列>
+\fBpage_precedence\fR  <string>
 "rnaRA"
 .RS
-ページ番号の記法の優先順位。\'R\'および\'r\'はローマ数字、\'n\'はアラビア数字、\'A\'および\'a\'はアルファベットによる記法を表す。
+Priority of expression for page number.
+\'R\' and \'r\' correspond to Roman. \'n\' corresponds to arabic numeral.
+\'A\' and \'a\' correspond to Latin alphabet.
 .RE
 .TP 30
-\fBquote\fR  <文字>
+\fBquote\fR  <char>
 \'"\'
 .RS
-mendexのパラメータ文字に対するエスケープキャラクタ。
+Escape character for \fImendex\fR parameters.
 .RE
 .TP 30
-\fBescape\fR  <文字>
+\fBescape\fR  <char>
 \'\\\\\'
 .RS
-一般的な文字に対するエスケープキャラクタ。
+Escape character for general scripts.
 .RE
 
-\fB 出力ファイルスタイルパラメータ\fR
-
-\fBpreamble\fR  <文字列>
+\fBOutput file style parameter\fR
+.TP 30
+\fBpreamble\fR  <string>
 "\\\\begin{theindex}\\n"
 .RS
-出力ファイルの文字列。
+Preamble of output file.
 .RE
 .TP 30
-\fBpostamble\fR  <文字列>
+\fBpostamble\fR  <string>
 "\\n\\n\\\\end{theindex}\\n"
 .RS
-出力ファイルの末尾の文字列。
+Postamble of output file.
 .RE
 .TP 30
-\fBsetpage_prefix\fR  <文字列>
+\fBsetpage_prefix\fR  <string>
 "\\n  \\\\setcounter{page}{"
 .RS
-開始ページを設定するときの、ページ番号の前に付ける文字列。
+Prefix of page number if start page is designated.
 .RE
 .TP 30
-\fBsetpage_suffix\fR  <文字列>
+\fBsetpage_suffix\fR  <string>
 "}\\n"
 .RS
-開始ページを設定するときの、ページ番号の後に付ける文字列。
+Suffix of page number if start page is designated.
 .RE
 .TP 30
-\fBgroup_skip\fR  <文字列>
-"\\n\\n  \\\\indexsapce\\n"
+\fBgroup_skip\fR  <string>
+"\\n\\n  \\\\indexspace\\n"
 .RS
-新項目(頭文字)の前に挿入する縦スペースを表す文字列。
+Strings to insert vertical space before new section of index.
 .RE
 .TP 30
-\fBlethead_prefix\fR  <文字列>
+\fBlethead_prefix\fR  <string>
 ""
 .RS
-頭文字の前に付けるコマンド文字列。
+Prefix of heading for newly appeared heading letter.
 .RE
 .TP 30
-\fBheading_prefix\fR  <文字列>
+\fBheading_prefix\fR  <string>
 ""
 .RS
-lethead_prefixと同じ。
+Same as \fBlethead_prefix\fR.
 .RE
 .TP 30
-\fBlethead_suffix\fR  <文字列>
+\fBlethead_suffix\fR  <string>
 ""
 .RS
-頭文字の後に付けるコマンド文字列。
+Suffix of heading for newly appeared heading letter.
 .RE
 .TP 30
-\fBheading_suffix\fR  <文字列>
+\fBheading_suffix\fR  <string>
 ""
 .RS
-lethead_suffixと同じ。
+Same as \fBlethead_suffix\fR.
 .RE
 .TP 30
-\fBlethead_flag\fR  <文字列>
+\fBlethead_flag\fR  <string>
 0
 .RS
-頭文字の出力のフラグ。0のとき出力しない。0より大きいときは英字を大文字で、0より小さいときは小文字で出力する。
+Flag to control output of heading letters.
+\'0\', \'1\' and \'-1\' respectively denotes no output, uppercase and lowercase.
 .RE
 .TP 30
-\fBheading_flag\fR  <文字列>
+\fBheading_flag\fR  <string>
 0
 .RS
-lethead_flagと同じ。
+Same as \fBlethead_flag\fR.
 .RE
 .TP 30
-\fBitem_0\fR  <文字列>
+\fBitem_0\fR  <string>
 "\\n  \\\\item "
 .RS
-主エントリ間に挿入するコマンド。
+Command sequence inserted between primary level entries.
 .RE
 .TP 30
-\fBitem_1\fR  <文字列>
+\fBitem_1\fR  <string>
 "\\n     \\\\subitem "
 .RS
-サブエントリ間に挿入するコマンド。
+Command sequence inserted between sub level entries.
 .RE
 .TP 30
-\fBitem_2\fR  <文字列>
+\fBitem_2\fR  <string>
 "\\n       \\\\subsubitem "
 .RS
-サブサブエントリ間に挿入するコマンド。
+Command sequence inserted between subsub level entries.
 .RE
 .TP 30
-\fBitem_01\fR  <文字列>
+\fBitem_01\fR  <string>
 "\\n    \\\\subitem "
 .RS
-主〜サブエントリ間に挿入するコマンド。
+Command sequence inserted between primaly and sub level entries.
 .RE
 .TP 30
-\fBitem_x1\fR  <文字列>
+\fBitem_x1\fR  <string>
 "\\n    \\\\subitem "
 .RS
-主〜サブエントリ間に挿入するコマンド。(主エントリにページ番号がないとき)
+Command sequence inserted between primary and sub level entries
+when main entry does not have page number.
 .RE
 .TP 30
-\fBitem_12\fR  <文字列>
+\fBitem_12\fR  <string>
 "\\n    \\\\subsubitem "
 .RS
-サブ〜サブサブエントリ間に挿入するコマンド。
+Command sequence inserted between sub and subsub level entries.
 .RE
 .TP 30
-\fBitem_x2\fR  <文字列>
+\fBitem_x2\fR  <string>
 "\\n    \\\\subsubitem "
 .RS
-サブ〜サブサブエントリ間に挿入するコマンド。(サブエントリにページ番号がないとき)
+Command sequence inserted between sub and subsub level entries
+when sub level entry does not have page number.
 .RE
 .TP 30
-\fBdelim_0\fR  <文字列>
+\fBdelim_0\fR  <string>
 ", "
 .RS
-主エントリと最初のページ番号の間の区切り文字列。
+Delimiter string between primary level entry and first page number.
 .RE
 .TP 30
-\fBdelim_1\fR  <文字列>
+\fBdelim_1\fR  <string>
 ", "
 .RS
-サブエントリと最初のページ番号の間の区切り文字列。
+Delimiter string between sub level entry and first page number.
 .RE
 .TP 30
-\fBdelim_2\fR  <文字列>
+\fBdelim_2\fR  <string>
 ", "
 .RS
-サブサブエントリと最初のページ番号の間の区切り文字列。
+Delimiter string between subsub level entry and first page number.
 .RE
 .TP 30
-\fBdelim_n\fR  <文字列>
+\fBdelim_n\fR  <string>
 ", "
 .RS
-ページ番号間の区切り文字列。どのエントリレベルにも共通。
+Delimiter string between page numbers
+commonly used for any entry level.
 .RE
 .TP 30
-\fBdelim_r\fR  <文字列>
+\fBdelim_r\fR  <string>
 "--"
 .RS
-ページ範囲を示すときの、ページ番号間の区切り文字列。
+Delimiter string between pages to show page range.
 .RE
 .TP 30
-\fBdelim_t\fR  <文字列>
+\fBdelim_t\fR  <string>
 ""
 .RS
-ページ番号のリストの終端に出力する文字列。
+Delimiter string output at the end of page number list.
 .RE
 .TP 30
-\fBsuffix_2p\fR  <文字列>
+\fBsuffix_2p\fR  <string>
 ""
 .RS
-ページ番号が2ページ連続する場合に、delim_n と2ページ目の番号の代わりに付加する文字列。
+String to be inserted in place of \fBdelim_n\fR and the next page
+number when the two pages are contiguous.
 .RE
-文字列が定義されている場合にのみ有効。
+It works only when the parameter is defined.
 .RE
 .TP 30
-\fBsuffix_3p\fR  <文字列>
+\fBsuffix_3p\fR  <string>
 ""
 .RS
-ページ番号が3ページ連続する場合に、delim_r と3ページ目の番号の代わりに付加する文字列。suffix_mp より優先される。
+String to be inserted in place of \fBdelim_r\fR and the last page
+number when the three pages are contiguous.
+The parameter is prior to \fBsuffix_mp\fR.
 .RE
-文字列が定義されている場合にのみ有効。
+It works only when the parameter is defined.
 .RE
 .TP 30
-\fBsuffix_mp\fR  <文字列>
+\fBsuffix_mp\fR  <string>
 ""
 .RS
-ページ番号が3ページまたはそれ以上連続する場合に、delim_r と末尾のページ番号の代わりに付加する文字列。
+String to be inserted in place of \fBdelim_r\fR and the last page
+number when the three or more pages are contiguous.
 .RE
-文字列が定義されている場合にのみ有効。
+It works only when the parameter is defined.
 .RE
 .TP 30
-\fBencap_prefix\fR  <文字列>
+\fBencap_prefix\fR  <string>
 "\\\\"
 .RS
-ページ番号にコマンドを付けるときの、コマンド名の前に付ける文字列。
+Prefix for an encapsulating command
+when the encapsulating command is added to the page number.
 .RE
 .TP 30
-\fBencap_infix\fR  <文字列>
+\fBencap_infix\fR  <string>
 "{"
 .RS
-ページ番号にコマンドを付けるときの、ページ番号の前に付ける文字列。
+Prefix just before the page number
+when the encapsulating command is added to the page number.
 .RE
 .TP 30
-\fBencap_suffix\fR  <文字列>
+\fBencap_suffix\fR  <string>
 "}".
 .RS
-ページ番号にコマンドを付けるときの、ページ番号の後に付ける文字列。
+Suffix after the page number
+when the encapsulating command is added to the page number.
 .RE
 .TP 30
-\fBline_max\fR  <数値>
+\fBline_max\fR  <number>
 72
 .RS
-１行の最大文字数。それを超えると折り返す。
+Maximum number of one line.
+If exceed the number, lines are folded.
 .RE
 .TP 30
-\fBindent_space\fR  <文字列>
+\fBindent_space\fR  <string>
 "\t\t"
 .RS
-折り返した行の頭に挿入するスペース。
+Space for indent which inserted to
+top of folded line.
 .RE
 .TP 30
-\fBindent_length\fR  <数値>
+\fBindent_length\fR  <number>
 16
 .RS
-折り返した行の頭に挿入されるスペースの長さ。
+Length of space for indent which inserted to top of folded line.
 .RE
 .TP 30
-\fBsymhead_positive\fR  <文字列>
+\fBsymhead_positive\fR  <string>
 "Symbols"
 .RS
-lethead_flag または heading_flag が正数の場合に数字・記号の頭文字として出力する文字列。
+Strings to output as heading letter for numbers and symbols
+when lethead_flag or heading_flag is positive number.
 .RE
 .TP 30
-\fBsymhead_negative\fR  <文字列>
+\fBsymhead_negative\fR  <string>
 "symbols"
 .RS
-lethead_flag または heading_flag が負数の場合に数字・記号の頭文字として出力する文字列。
+Strings to output as heading letter for numbers and symbols
+when lethead_flag or heading_flag is negative number.
 .RE
 .TP 30
-\fBsymbol\fR  <文字列>
+\fBsymbol\fR  <string>
 ""
 .RS
-symbol_flag が0でない場合に、数字・記号の頭文字として出力する文字列。
+Strings to output as heading letter for numbers and symbols
+when symbol_flag is non zero.
 .RE
-文字列が定義されていれば、symhead_positive および symhead_negative より優先される。(mendex専用)
-.RE
-このパラメータが定義された場合、symhead_positive および symhead_negative より優先される。(mendex専用)
+If specified, the option is prior to symhead_positive and symhead_negative.
+(Extended by mendex)
 .RE
 .TP 30
-\fBsymbol_flag\fR  <数値>
+\fBsymbol_flag\fR  <number>
 1
 .RS
-数字・記号の頭文字の出力フラグ。0のとき出力しない。(mendex専用)
+Flag to output of symbol. If \'0\', do not output.
+(Extended by mendex)
 .RE
 .TP 30
-\fBletter_head\fR  <数値>
+\fBletter_head\fR  <number>
 1
 .RS
-日本語の頭文字の出力のフラグ。1のときカタカナ、2のときひらがなで出力する。(mendex専用)
+Flag of heading letter for Japanese Kana.
+If \'1\' and \'2\', Katakana and Hiragana is used, respectively.
+(Extended by mendex)
 .RE
 .TP 30
-\fBpriority\fR  <数値>
+\fBpriority\fR  <number>
 0
 .RS
-英字と日本語との混在した索引語のソート方法についてのフラグ。0でなければ英字と日本語との間に半角スペースを入れた状態でソートする。(mendex専用)
+Flag of sorting method for index words composed of
+Japanese and non-Japanese (ex. Latin scripts).
+If non zero, one space (U+20) is inserted between
+Japanese sequence and non-Japanese sequence in sorting procedure.
+(Extended by mendex)
 .RE
 .TP 30
-\fBcharacter_order\fR  <文字列>
+\fBcharacter_order\fR  <string>
 "SEJ"
 .RS
-記号、英字、日本語の優先順位。\'S\'は記号、\'E\'は英字、\'J\'は日本語を表す。(mendex専用)
+Order of scripts and symbols.
+\'S\', \'E\' and \'J\' respectively denotes symbol, English and Japanese.
+(Extended by mendex)
 .RE
 .PP
-.SH 日本語の扱いについて
+.SH ABOUT JAPANESE PROCESSING
 .PP
-\fImendex\fR は日本語の索引をできるだけ楽に扱えるようになっています。
+\fImendex\fR has an additional feature to simplify the procedure of handling
+Japanese indexes, compared to \fImakeindex\fR. Users can save the effort
+of manually specifying a reading for every kanji word.
 .RE
-makeindexでは日本語の索引が正しく辞書順にソートするためにはひらがなまたはカタカナに揃え、拗音、撥音、濁点を除いた読みを付けなければなりませんでした(自動的に揃えるバージョンもある)。
+Japanese kanji words are usually sorted by the syllables of their readings
+(\fI\'Yomi\'\fR), which can be represented by kana (Hiragana, Katakana) scripts.
+\fImendex\fR accepts index words specified in kana expression directly on
+an input file, and also accepts conversion from index words to kana scripts
+by referring to Japanese dictionaries.
 .RE
-mendexではカナについてはすべて自動的に揃え、また漢字については辞書ファイルを設定することにより各索引語ごとに読みを付ける作業をかなり解消できます。
 
 .LP
-以下に内部でのカナの変換例を示します。
+Examples of internal simplification of syllables are shown below.
 .PP
 .RS
 .br
@@ -418,13 +483,15 @@ mendexではカナについてはすべて自動的に揃え、また漢字に�
 .br
 マッキントッシュ		まつきんとつしゆ
 .br
-ワープロ				わあふろ
+ワープロ			わあふろ
 .RE
 .LP
-辞書ファイルは<\fI熟語\ \ 読み\fR>のリストで構成されます。
-熟語と読みの区切りはタブまたはスペースです。
+The dictionary file consists of list with <\'index_word\' \'reading\'>.
+The index word can be written in any scripts (kanji, kana, etc),
+and the reading must be in Hiragana or Katakana scripts.
+The delimiter between the index word and its reading is one or more tab(s) or space(s).
 .RE
-以下に辞書の例を示します。
+An example of a Japanese dictionary is shown below.
 .PP
 .RS
 .br
@@ -437,33 +504,45 @@ mendexではカナについてはすべて自動的に揃え、また漢字に�
 α		アルファ
 .RE
 .LP
-辞書に登録する熟語については、読み方が１通りになるよう送り仮名を付けてください。
-「表」、「性質」のように送り仮名によらず２通りの読み方ができる語についてはどちらか１つしか登録できません。他の読み方については各索引語へ読みを付けることで対応してください。
+Here, each index word is allowed to have only one Yomi.
+Though some kanji words (ex. 「表」) may have more than one Yomi\'s
+(ex. 「ひょう」 and 「おもて」), only one of them can be registered in the dictionary.
+When some different Yomi\'s are needed, they should be specified explicitly
+in kana expression (ex. \\index{ひょう@表} or \\index{おもて@表}) on the input file.
 .RE
-また、環境変数<\fIINDEXDEFAULTDICTIONARY\fR>に辞書ファイルを登録することにより、自動的に辞書を参照します。環境変数に登録した辞書は -d で指定した辞書と併用できます。
+Moreover, a dictionary file is automatically referred
+by setting the file name at an environment variable \fIINDEXDEFAULTDICTIONARY\fR.
+The dictionary set by the environment variable can be used
+together with file(s) specified by \fI-d\fR option.
 .PP
-.SH ソート方法について
+.SH ABOUT SORTING PROCEDURE
 .PP
-\fImendex\fR は通常は入力された索引語をそのままソートします。\fI-l\fRオプションが付けられた場合、複数の単語で構成される索引語については、ソートするときに単語と単語の間のスペースを詰めてソートします。
-ここでは前者を単語順ソート、後者を文字順ソートと呼ぶことにします。
+\fImendex\fR sorts indexes as is (\'sort by word order\') by default.
+Setting \fI-l\fR option, spaces between words in an index are truncated prior to
+sorting procedure (\'sort by character order\').
 .RE
-文字順ソートの場合、実際に出力される文字列はスペースを含んだ状態のものですので、索引語自体が変化することはありません。
+Even when sort by character order, the index at output remains the original sequence
+without the truncation.
 .RE
-以下に例を示します。
+Follows show an example.
 .PP
 .RS
-\fI単語順ソート			文字順ソート\fR
+\fIsort by word order		sort by character order\fR
 .br
-X Window				Xlib
+X Window			Xlib
 .br
-Xlib					XView
+Xlib				XView
 .br
 XView				X Window
 .RE
 .LP
-また、日本語〜英字間でも似たようなソート方法があります。スタイルファイルで\fIpriority\fRを０以外に指定した場合、隣接した日本語と英字の間にスペースを入れてソートします。
+In addition, two sorting methods can be applied for indexes
+which contains both Japanese kana and other scripts (e.g. Latin script).
+By setting \fIpriority\fR 0 (default) and 1 at a style file,
+a space between Japanese Kana and other scripts is inserted and
+not inserted respectively, prior to the sorting procedure.
 .RE
-以下に例を示します。
+Follows show an example.
 .PP
 .RS
 \fIpriority=0			priority=1\fR
@@ -473,28 +552,31 @@ index sort			indファイル
 indファイル			index sort
 .RE
 .PP
-.SH 環境変数
-\fImendex\fR では以下のような環境変数を使用しています。
+.SH ENVIRONMENT VARIABLES
+\fImendex\fR refers environment variables as follows.
 .PP
 .TP 10
 \fIINDEXSTYLE\fR
-索引スタイルファイルがあるディレクトリ
+Directory where index style files exist.
 .TP 10
 \fIINDEXDEFAULTSTYLE\fR
-デフォルトで参照する索引スタイルファイル
+Index style file to be referred to as default.
 .TP 10
 \fIINDEXDICTIONARY\fR
-辞書があるディレクトリ
+Directory where dictionary files exist.
 .TP 10
 \fIINDEXDEFAULTDICTIONARY\fR
-常に参照する辞書ファイル
+Dictionary file which is automatically read.
 .PP
-.SH 詳細について
-その他、詳細については \fImakeindex\fR に準拠。
+.SH DETAIL
+Detailed specification is compatible with \fImakeindex\fR.
 .PP
-.SH 問題点等
-複数のページ記法を使用する場合、ページ順に.idxファイルを与えないとページ番号を誤認することがあります。
+.SH KNOWN ISSUES
+When plural page number expression is used, \fI.idx\fR files should be
+specified along with the order of page numbers. Otherwise,
+wrong page numbers might be output.
 .PP
-.SH 参照
+.SH "SEE ALSO"
 tex(l), latex(l), makeindex(l)
-.RE
+.SH AUTHOR
+This manual page was written by Japanese \*(TX Development Community.

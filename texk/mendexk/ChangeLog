@@ -1,3 +1,12 @@
+2016-12-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* mendex.1, mendex.doc, mendex.1.ja: Sync with upstream.
+	Now they are maintained at
+	https://github.com/texjporg/mendex-doc
+	* COPYRIGHT.ja, ChangeLog.ja: Rename from *.jis and convert
+	encoding to UTF-8
+	* Makefile.am: Add those files to EXTRA_DIST.
+
 2016-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* main.c: Remove email address "ptex-staff@ml.asciimw.jp" as in upmendex.
