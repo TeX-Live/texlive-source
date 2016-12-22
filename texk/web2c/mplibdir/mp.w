@@ -1,4 +1,4 @@
-% $Id: mp.w 2107 2016-12-15 11:40:15Z luigi $
+% $Id: mp.w 2108 2016-12-21 09:21:34Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -2881,7 +2881,7 @@ void *do_alloc_node (MP mp, size_t size) {
 
 @c
 void mp_xfree (void *x) {
-  if (x != NULL)
+  if (x != NULL) 
     free (x);
 }
 void *mp_xrealloc (MP mp, void *p, size_t nmem, size_t size) {
