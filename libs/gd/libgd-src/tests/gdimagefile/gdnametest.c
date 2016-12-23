@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "gd.h"
 #include "gdtest.h"
-#include "../test_config.h"
+#include "test_config.h"
 
 #define WIDTH 60
 #define HEIGHT 50
@@ -83,7 +84,7 @@ do_test() {
     for (n = 0; names[n].nm; n++) {
         gdImagePtr orig, copy;
         int status;
-        char full_filename[255];
+        char *full_filename = NULL;
 
         /* Some image readers are buggy and crash the program so we
          * skip them.  Bug fixers should remove these from the list of
@@ -103,33 +104,23 @@ do_test() {
 
         orig = mkcross();
 
-        
-        #ifdef GDTEST_TOP_DIR 
-
-        snprintf(full_filename, sizeof(full_filename), GDTEST_TOP_DIR"/gdimagefile/%s",
-                 names[n].nm);
-
-        #else
-        /* Prepend the test directory; this is expected to be run in
-         * the parent dir. */
-        snprintf(full_filename, sizeof(full_filename), "gdimagefile/%s",
-                 names[n].nm);
-        #endif 
-
-
         /* Write the image unless writing is not supported. */
         if (!names[n].readonly) {
+            /* Prepend the test directory; this is expected to be run in
+             * the parent dir. */
+            full_filename = gdTestTempFile(names[n].nm);
             status = gdImageFile(orig, full_filename);
             gdTestAssertMsg(status == GD_TRUE, "Failed to create %s\n", full_filename);
+        } else {
+            /* Prepend the test directory; this is expected to be run in
+             * the parent dir. */
+            full_filename = gdTestFilePath2("gdimagefile", names[n].nm);
         }/* if */
 
         copy = gdImageCreateFromFile(full_filename);
         gdTestAssertMsg(!!copy, "Failed to load %s\n", full_filename);
         if (!copy) continue;
 
-        /* Debug printf. */
-        //printf("%s -> %d\n", full_filename, gdMaxPixelDiff(orig, copy));
-        
         gdTestAssertMsg(gdMaxPixelDiff(orig, copy) <= names[n].maxdiff,"Pixels different on %s\n", full_filename, full_filename);
 
         if (!names[n].readonly) {
@@ -137,6 +128,7 @@ do_test() {
             gdTestAssertMsg(status == 0, "Failed to delete %s\n", full_filename);
         }/* if */
 
+        free(full_filename);
         gdImageDestroy(orig);
         gdImageDestroy(copy);
     }/* for */
@@ -159,7 +151,7 @@ do_errortest() {
 }/* do_errortest*/
 
 
-int main(int argc, char **argv)
+int main()
 {
 
     do_test();

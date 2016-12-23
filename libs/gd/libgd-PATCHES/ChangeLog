@@ -1,3 +1,12 @@
+2016-12-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import libgd-2.2.3 source tree from:
+	  https://github.com/libgd/libgd/releases
+	* patch-01-win32: Adapted.
+	* patch-02-no-stdcall: Adapted.
+	* patch-03-ceill: Removed.
+	* patch-04-double-semicolon: Removed.
+
 2015-01-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-double-semicolon: Build fix for Visual Studio 2010,

@@ -1,3 +1,8 @@
+2016-12-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import libgd-2.2.3.
+	* Makefile.am, version.ac: Adapted.
+
 2016-02-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

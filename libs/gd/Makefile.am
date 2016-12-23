@@ -74,8 +74,7 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/gdkanji.c \
 	@GD_TREE@/src/gdtables.c \
 	@GD_TREE@/src/gdxpm.c \
-	@GD_TREE@/src/wbmp.c \
-	@GD_TREE@/src/webpimg.c
+	@GD_TREE@/src/wbmp.c
 
 $(libgd_a_OBJECTS): config.force
 
