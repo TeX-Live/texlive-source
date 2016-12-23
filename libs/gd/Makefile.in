@@ -157,7 +157,7 @@ am_libgd_a_OBJECTS = @GD_TREE@/src/gd.$(OBJEXT) \
 	@GD_TREE@/src/gdfx.$(OBJEXT) @GD_TREE@/src/gdhelpers.$(OBJEXT) \
 	@GD_TREE@/src/gdkanji.$(OBJEXT) \
 	@GD_TREE@/src/gdtables.$(OBJEXT) @GD_TREE@/src/gdxpm.$(OBJEXT) \
-	@GD_TREE@/src/wbmp.$(OBJEXT) @GD_TREE@/src/webpimg.$(OBJEXT)
+	@GD_TREE@/src/wbmp.$(OBJEXT)
 libgd_a_OBJECTS = $(am_libgd_a_OBJECTS)
 am_gdtest_OBJECTS = gdtest-gdtest.$(OBJEXT)
 gdtest_OBJECTS = $(am_gdtest_OBJECTS)
@@ -667,8 +667,7 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/gdkanji.c \
 	@GD_TREE@/src/gdtables.c \
 	@GD_TREE@/src/gdxpm.c \
-	@GD_TREE@/src/wbmp.c \
-	@GD_TREE@/src/webpimg.c
+	@GD_TREE@/src/wbmp.c
 
 @build_TRUE@dist_check_SCRIPTS = libgd.test
 @build_TRUE@TESTS = libgd.test
@@ -838,8 +837,6 @@ clean-noinstLIBRARIES:
 	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GD_TREE@/src/wbmp.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
 	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@GD_TREE@/src/webpimg.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
-	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 
 libgd.a: $(libgd_a_OBJECTS) $(libgd_a_DEPENDENCIES) $(EXTRA_libgd_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libgd.a
@@ -906,7 +903,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gdtables.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gdxpm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/wbmp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/webpimg.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

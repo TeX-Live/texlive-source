@@ -1,7 +1,7 @@
-diff -ur libgd-2.1.1.orig/src/gd.h libgd-2.1.1/src/gd.h
---- libgd-2.1.1.orig/src/gd.h	2015-01-14 02:15:47.000000000 +0100
-+++ libgd-2.1.1/src/gd.h	2015-01-14 10:49:15.922009653 +0100
-@@ -62,7 +62,7 @@
+diff -ur libgd-2.2.3.orig/src/gd.h libgd-2.2.3/src/gd.h
+--- libgd-2.2.3.orig/src/gd.h	Thu Jul 21 17:32:27 2016
++++ libgd-2.2.3/src/gd.h	Fri Dec 23 23:10:00 2016
+@@ -63,7 +63,7 @@
  #   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
  #  endif
  # endif
@@ -9,4 +9,4 @@ diff -ur libgd-2.1.1.orig/src/gd.h libgd-2.1.1/src/gd.h
 +# define BGD_STDCALL
  # define BGD_EXPORT_DATA_IMPL
  #else
- # ifdef HAVE_VISIBILITY
+ # if defined(HAVE_VISIBILITY) && HAVE_VISIBILITY==1

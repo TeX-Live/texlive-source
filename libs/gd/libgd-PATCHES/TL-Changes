@@ -1,5 +1,5 @@
-Changes applied to the libgd-2.1.1/ tree as obtained from:
-	https://bitbucket.org/libgd/gd-libgd/downloads
+Changes applied to the libgd-2.2.3/ tree as obtained from:
+	https://github.com/libgd/libgd/releases
 
 Removed:
 	Makefile.in

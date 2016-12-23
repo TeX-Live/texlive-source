@@ -1,4 +1,4 @@
-	Building libgd-2.1.1 as part of the TL tree
+	Building libgd-2.2.3 as part of the TL tree
 	=========================================
 
 This directory libs/gd/ uses a proxy Makefile.am to build the gd library

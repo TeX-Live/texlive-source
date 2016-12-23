@@ -23,7 +23,7 @@ save(gdImagePtr im, const char *filename) {
     gdImagePng(im, out);
     fclose(out);
 #else
-    im, filename;
+    (void)im, (void)filename;
 #endif
 }/* save*/
 
@@ -87,8 +87,7 @@ void blurblank(gdImagePtr im, int radius, double sigma) {
 
 void do_test()
 {
-	gdImagePtr im, imref, tmp;
-    gdImagePtr same, same2;
+	gdImagePtr im, imref;
 
 	im = mkwhite(WIDTH, HEIGHT);
     imref = mkwhite(WIDTH, HEIGHT);
@@ -110,6 +109,9 @@ void do_test()
     blurblank(im, 4, 0.0);
     blurblank(im, 8, 0.0);
     blurblank(im, 16, 0.0);
+
+    gdImageDestroy(im);
+    gdImageDestroy(imref);
 }/* do_test*/
 
 /* Ensure that RGB values are equal, then return r (which is therefore
@@ -185,10 +187,11 @@ void do_crosstest()
     gdTestAssert(getwhite(blurred, 1, LY + 1) <  getwhite(blurred, 1, LY + 3));
     gdTestAssert(getwhite(blurred, 1, LY + 3) <  getwhite(blurred, 1, HEIGHT-1));
 	gdImageDestroy(blurred);
+	gdImageDestroy(im);
 }/* do_crosstest*/
 
 
-int main(int argc, char **argv)
+int main()
 {
 
     do_test();
