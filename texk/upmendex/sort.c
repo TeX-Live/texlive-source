@@ -414,6 +414,7 @@ int is_zhuyin(UChar *c)
 int is_cyrillic(UChar *c)
 {
 	if      ((*c>=0x0400)&&(*c<=0x052F)) return 1; /* Cyrillic, Cyrillic Supplement */
+	else if ((*c>=0x1C80)&&(*c<=0x1C8F)) return 1; /* Cyrillic Extended-C */
 	else if ((*c>=0x2DE0)&&(*c<=0x2DFF)) return 1; /* Cyrillic Extended-A */
 	else if ((*c>=0xA640)&&(*c<=0xA69F)) return 1; /* Cyrillic Extended-B */
 	else return 0;
