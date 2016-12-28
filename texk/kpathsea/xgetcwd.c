@@ -30,7 +30,7 @@ static void
 xchdir (string dirname)
 {
     if (chdir(dirname) != 0)
-        _PERROR(dirname);
+        FATAL_PERROR(dirname);
 }
 
 #endif /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
