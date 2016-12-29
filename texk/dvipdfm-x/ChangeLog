@@ -1,3 +1,8 @@
+2016-12-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* cid_basefont.h: Add data for STHeiti-Regular-Acro, and correct
+	several data.
+
 2016-12-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c, dvi.h, dvipdfmx.c, mpost.c, pdfencoding.c, pdfobj.c,
