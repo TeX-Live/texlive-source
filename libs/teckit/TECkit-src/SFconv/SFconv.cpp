@@ -313,7 +313,7 @@ makeConverter(const string& mappingName, int direction)
 		fprintf(stderr, "unable to read mapping file for %s (file %s)\n", mappingName.c_str(), mapFileName.c_str());
 		exit(1);
 	}
-	fread(buf, 1, fileSize, mapFile);
+	fileSize = fread(buf, 1, fileSize, mapFile);
 	fclose(mapFile);
 	
 	TECkit_Converter	converter;
@@ -629,7 +629,7 @@ process(const char* inputFile, const char* outputFile)
 		// *** Unicode to Byte conversion
 		Byte	bom[3];
 		long	pos = ftell(inFile);
-		if (fread(bom, 3, 1, inFile)) {
+		if (fread(bom, 3, 1, inFile) > 0) {
 			if (bom[0] == 0xef && bom[1] == 0xbb && bom[2] == 0xbf) {
 				inForm = kForm_UTF8;
 			}

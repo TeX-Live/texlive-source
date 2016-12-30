@@ -1,3 +1,8 @@
+2016-12-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import TECkit-2.5.6.
+	* version.ac: Adjust.
+
 2016-02-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.

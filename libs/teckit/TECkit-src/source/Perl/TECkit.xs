@@ -168,6 +168,7 @@ flush(converter, style, hr)
         TECkit_ResetConverter((TECkit_Converter)converter);
     OUTPUT:
         RETVAL
+        hr
 
 void
 DESTROY(converter)

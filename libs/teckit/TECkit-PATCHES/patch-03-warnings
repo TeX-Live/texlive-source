@@ -1,8 +1,8 @@
 	Avoid more compiler warnings.
 
-diff -ur TECkit-2.5.4.orig/source/Compiler.cpp TECkit-2.5.4/source/Compiler.cpp
---- TECkit-2.5.4.orig/source/Compiler.cpp	2014-07-01 02:13:39.000000000 +0200
-+++ TECkit-2.5.4/source/Compiler.cpp	2014-07-18 11:01:30.000000000 +0200
+diff -ur teckit-2.5.6.orig/source/Compiler.cpp teckit-2.5.6/source/Compiler.cpp
+--- teckit-2.5.6.orig/source/Compiler.cpp	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Compiler.cpp	Fri Dec 30 18:04:55 2016
 @@ -189,14 +189,14 @@
  		free(table);
  }
@@ -29,10 +29,10 @@ diff -ur TECkit-2.5.4.orig/source/Compiler.cpp TECkit-2.5.4/source/Compiler.cpp
  	errorState = true;
  	++errorCount;
  }
-diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
---- TECkit-2.5.4.orig/source/Engine.cpp	2014-07-01 02:13:39.000000000 +0200
-+++ TECkit-2.5.4/source/Engine.cpp	2014-07-18 11:01:30.000000000 +0200
-@@ -1087,7 +1087,7 @@
+diff -ur teckit-2.5.6.orig/source/Engine.cpp teckit-2.5.6/source/Engine.cpp
+--- teckit-2.5.6.orig/source/Engine.cpp	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Engine.cpp	Fri Dec 30 18:18:57 2016
+@@ -1093,7 +1075,7 @@
  			if (matchElems == 0 && allowInsertion == false)
  				continue;
  			patternLength = matchElems + READ(rule->postLength);
@@ -41,7 +41,7 @@ diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
  			direction = 1;
  			infoLimit = matchElems;
  
-@@ -2184,7 +2184,7 @@
+@@ -2194,7 +2168,7 @@
  				status = kStatus_BadMappingVersion;
  			else {
  				const Byte*	namePtr;
@@ -50,9 +50,9 @@ diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
  					UInt16	copyBytes = *nameLength < bufferSize ? *nameLength : bufferSize;
  					if (copyBytes > 0)
  						memcpy(nameBuffer, namePtr, copyBytes);
-diff -ur TECkit-2.5.4.orig/source/Engine.h TECkit-2.5.4/source/Engine.h
---- TECkit-2.5.4.orig/source/Engine.h	2014-07-01 02:13:39.000000000 +0200
-+++ TECkit-2.5.4/source/Engine.h	2014-07-18 11:01:30.000000000 +0200
+diff -ur teckit-2.5.6.orig/source/Engine.h teckit-2.5.6/source/Engine.h
+--- teckit-2.5.6.orig/source/Engine.h	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Engine.h	Fri Dec 30 18:09:51 2016
 @@ -117,7 +117,7 @@
  
  	UInt32				match(int index, int repeats, int textLoc);
@@ -62,10 +62,10 @@ diff -ur TECkit-2.5.4.orig/source/Engine.h TECkit-2.5.4/source/Engine.h
  	int					patternLength;
  	int					direction;
  	MatchInfo			info[256];
-diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h TECkit-2.5.4/source/Public-headers/TECkit_Compiler.h
---- TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h	2014-07-01 02:13:39.000000000 +0200
-+++ TECkit-2.5.4/source/Public-headers/TECkit_Compiler.h	2014-07-18 11:01:30.000000000 +0200
-@@ -56,7 +56,7 @@
+diff -ur teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.6/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Public-headers/TECkit_Compiler.h	Fri Dec 30 18:21:02 2016
+@@ -56,7 +59,7 @@
  #define kCompilerOpts_Compress	0x00000010	/* generate compressed mapping table */
  #define kCompilerOpts_XML		0x00000020	/* instead of a compiled binary table, generate an XML representation of the mapping */
  
@@ -74,7 +74,7 @@ diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h TECkit-2.5.4/
  
  TECkit_Status
  WINAPI EXPORTED
-@@ -75,7 +75,7 @@
+@@ -75,7 +78,7 @@
  TECkit_GetCompilerVersion();
  
  /* new APIs for looking up Unicode names (as NUL-terminated C strings) */
@@ -83,9 +83,9 @@ diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h TECkit-2.5.4/
  WINAPI EXPORTED
  TECkit_GetUnicodeName(UInt32 usv);
  	/* returns the Unicode name of usv, if available, else NULL */
-diff -ur TECkit-2.5.4.orig/source/Sample-tools/TECkit_Compile.cpp TECkit-2.5.4/source/Sample-tools/TECkit_Compile.cpp
---- TECkit-2.5.4.orig/source/Sample-tools/TECkit_Compile.cpp	2014-07-01 02:13:39.000000000 +0200
-+++ TECkit-2.5.4/source/Sample-tools/TECkit_Compile.cpp	2014-07-18 11:07:05.000000000 +0200
+diff -ur teckit-2.5.6.orig/source/Sample-tools/TECkit_Compile.cpp teckit-2.5.6/source/Sample-tools/TECkit_Compile.cpp
+--- teckit-2.5.6.orig/source/Sample-tools/TECkit_Compile.cpp	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Sample-tools/TECkit_Compile.cpp	Fri Dec 30 18:14:53 2016
 @@ -24,13 +24,13 @@
  #endif
  

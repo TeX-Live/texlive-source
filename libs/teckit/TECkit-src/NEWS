@@ -1,5 +1,20 @@
-2014-06-30
+2016-04-19
+    Version 2.5.6
+    Added a diversion of /usr/bin/teckit_compile to avoid a conflict with the
+      texlive-binaries package on Linux
+
+2016-04-11
+    Version 2.5.5
+    Split shared libraries into a separate Linux package
+    Made Linux packages multiarch-compatible
+    Fixed compiler warnings
+
+2014-07-09
     Version 2.5.4
+    Improved building and testing scripts
+    Enabled tests to be run on Windows without bash
+
+2014-06-30
     Updated Unicode character names and normalization data to 7.0.0
     Fixed data normalization bug
     Updated tests

@@ -1,8 +1,8 @@
 	For TeX Live we build a static library and not a Dll.
 
-diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
---- TECkit-2.5.4.orig/source/Engine.cpp	2014-07-18 11:11:09.000000000 +0200
-+++ TECkit-2.5.4/source/Engine.cpp	2014-07-18 11:18:02.000000000 +0200
+diff -ur teckit-2.5.6.orig/source/Engine.cpp teckit-2.5.6/source/Engine.cpp
+--- teckit-2.5.6.orig/source/Engine.cpp	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Engine.cpp	Fri Dec 30 18:18:57 2016
 @@ -51,12 +51,6 @@
  #	define NOSERVICE
  #	define NOMCX
@@ -16,9 +16,9 @@ diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
  #endif
  
  #include "Engine.h"
-diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h TECkit-2.5.4/source/Public-headers/TECkit_Compiler.h
---- TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h	2014-07-18 11:01:30.000000000 +0200
-+++ TECkit-2.5.4/source/Public-headers/TECkit_Compiler.h	2014-07-18 11:18:02.000000000 +0200
+diff -ur teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h teckit-2.5.6/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.6.orig/source/Public-headers/TECkit_Compiler.h	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Public-headers/TECkit_Compiler.h	Fri Dec 30 18:21:02 2016
 @@ -30,6 +30,9 @@
  #ifdef _WIN32
  /* MS compiler has predefined _WIN32, so assume Windows target  */
@@ -29,9 +29,9 @@ diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Compiler.h TECkit-2.5.4/
  #else
  /* not the MS compiler, so try Metrowerks' platform macros */
  #ifndef __APPLE__
-diff -ur TECkit-2.5.4.orig/source/Public-headers/TECkit_Engine.h TECkit-2.5.4/source/Public-headers/TECkit_Engine.h
---- TECkit-2.5.4.orig/source/Public-headers/TECkit_Engine.h	2014-07-01 02:13:39.000000000 +0200
-+++ TECkit-2.5.4/source/Public-headers/TECkit_Engine.h	2014-07-18 11:18:02.000000000 +0200
+diff -ur teckit-2.5.6.orig/source/Public-headers/TECkit_Engine.h teckit-2.5.6/source/Public-headers/TECkit_Engine.h
+--- teckit-2.5.6.orig/source/Public-headers/TECkit_Engine.h	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Public-headers/TECkit_Engine.h	Fri Dec 30 18:22:04 2016
 @@ -80,6 +80,9 @@
  #ifdef _WIN32
  /* MS compiler has predefined _WIN32, so assume Windows target  */

@@ -1,6 +1,6 @@
 /*
 	TECkit_Compile.c
-	Copyright (c) 2002-2014 SIL International.
+	Copyright (c) 2002-2016 SIL International.
 	
 	2004-03-12	updated to use v2.1 compiler
 				added -u option to force UTF8 mode
@@ -135,7 +135,7 @@ Usage: %s [-u] [-x] [-z] mapping_description [-o compiled_table]\n\
 	if (mapFileName != 0) {
 		// compile the mapping
 		FILE*	inFile = fopen(mapFileName, "rb");
-		long	len;
+		size_t	len;
 		Byte*	compiledTable;
 		UInt32	compiledSize;
 		TECkit_Status	status;
@@ -165,7 +165,10 @@ Usage: %s [-u] [-x] [-z] mapping_description [-o compiled_table]\n\
 			return 1;	// not enough memory
 		}
 
-		fread(txt, len, 1, inFile);
+		if (fread(txt, len, 1, inFile) != 1) {
+			fprintf(stderr, "not enough data in mapping file\n");
+			return 1;
+		}
 		fclose(inFile);
 		
 		status = TECkit_CompileOpt(txt, len, &errFunc, 0, &compiledTable, &compiledSize,
