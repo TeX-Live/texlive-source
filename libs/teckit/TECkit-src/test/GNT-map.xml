@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!--Copyright (c) 2002-2014 SIL International-->
+<!--Copyright (c) 2002-2016 SIL International-->
 <sfConversion defaultMapping="SILGreek">
 	<sfMarkers escape="\"
 				chars="abcdefghijklmnopqrstuvwxyz_ABCDEFGHIJKLMNOPQRSTUVWXYZ"

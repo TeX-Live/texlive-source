@@ -1,50 +1,60 @@
 	Remove the '#pragma's, they seem to cause problems for MSVC
 	and are certainly not needed otherwise.
 
-diff -ur TECkit-2.5.4.orig/source/Engine.cpp TECkit-2.5.4/source/Engine.cpp
---- TECkit-2.5.4.orig/source/Engine.cpp	2014-07-18 11:01:30.000000000 +0200
-+++ TECkit-2.5.4/source/Engine.cpp	2014-07-18 11:11:09.000000000 +0200
-@@ -102,8 +102,6 @@
+diff -ur teckit-2.5.6.orig/source/Engine.cpp teckit-2.5.6/source/Engine.cpp
+--- teckit-2.5.6.orig/source/Engine.cpp	Tue May 31 05:37:08 2016
++++ teckit-2.5.6/source/Engine.cpp	Fri Dec 30 18:18:57 2016
+@@ -102,10 +96,6 @@
  #endif
  }
  
+-#ifndef __GNUC__
 -#pragma mark --- class Stage ---
+-#endif
 -
  Stage::Stage()
  	: oBuffer(0)
  	, oBufSize(0)
-@@ -125,8 +123,6 @@
+@@ -127,10 +117,6 @@
  	return 0;
  }
  
+-#ifndef __GNUC__
 -#pragma mark --- class Normalizer ---
+-#endif
 -
  #include "NormalizationData.c"
  
  Normalizer::Normalizer(bool compose)
-@@ -396,8 +392,6 @@
+@@ -400,10 +386,6 @@
  	return c;
  }
  
+-#ifndef __GNUC__
 -#pragma mark --- class Pass ---
+-#endif
 -
  Pass::Pass(const TableHeader* inTable, Converter* cnv)
  	: converter(cnv)
  	, tableHeader(inTable)
-@@ -1282,8 +1276,6 @@
+@@ -1288,10 +1270,6 @@
  	return 0;
  }
  
+-#ifndef __GNUC__
 -#pragma mark --- class Converter ---
+-#endif
 -
  Converter::Converter(const Byte* inTable, UInt32 inTableSize, bool inForward,
  						UInt16 inForm, UInt16 outForm)
  	: table(0)
-@@ -1934,8 +1926,6 @@
+@@ -1942,10 +1920,6 @@
  	return true;
  }
  
+-#ifndef __GNUC__
 -#pragma mark --- Public "C" API functions ---
+-#endif
 -
  TECkit_Status
  WINAPI
