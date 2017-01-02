@@ -1,3 +1,7 @@
+2017-01-02  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* printversion.c: 2016 ---> 2017.
+
 2016-11-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* texmfmp.c: Change a condition to support new primitives in e(u)ptex.
