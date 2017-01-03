@@ -1,5 +1,5 @@
-Changes applied to the zlib-1.2.8/ tree as obtained from:
-	http://zlib.net/zlib-1.2.8.tar.xz
+Changes applied to the zlib-1.2.10/ tree as obtained from:
+	http://zlib.net/zlib-1.2.10.tar.xz
 
 Removed:
 	Makefile
