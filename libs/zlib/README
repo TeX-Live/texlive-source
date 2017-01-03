@@ -1,11 +1,11 @@
-	Building zlib-1.2.3 as part of the TL tree
+	Building zlib-1.2.10 as part of the TL tree
 	==========================================
 
 This directory libs/zlib/ uses a proxy Makefile.am to build the zlib library
-'libz' from the unmodified(*) source tree in libs/zlib/zlib-x.y.z/, bypassing
+'libz' from the unmodified(*) source tree in libs/zlib/zlib-src/, bypassing
 the original build system.
 
-As far as applicable, the tests in libs/zlib/zlib-x.y.z/configure have been
+As far as applicable, the tests in libs/zlib/zlib-src/configure have been
 translated into equivalent test in libs/zlib/configure.ac.
 
 -----------------------------
@@ -15,3 +15,4 @@ translated into equivalent test in libs/zlib/configure.ac.
 =============================
 
 2009-01-28	Peter Breitenlohner <peb@mppmu.mpg.de>
+2017-01-03	Akira Kakuto <kakuto@fuk.kindai.ac.jp>
