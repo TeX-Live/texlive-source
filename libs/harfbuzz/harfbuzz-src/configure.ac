@@ -1,6 +1,6 @@
 AC_PREREQ([2.64])
 AC_INIT([HarfBuzz],
-        [1.3.4],
+        [1.4.0],
         [https://github.com/behdad/harfbuzz/issues/new],
         [harfbuzz],
         [http://harfbuzz.org/])
@@ -147,7 +147,7 @@ AC_ARG_WITH(glib,
 			[Use glib @<:@default=auto@:>@])],,
 	[with_glib=auto])
 have_glib=false
-GLIB_DEPS="glib-2.0 >= 2.38"
+GLIB_DEPS="glib-2.0 >= 2.19.1"
 AC_SUBST(GLIB_DEPS)
 if test "x$with_glib" = "xyes" -o "x$with_glib" = "xauto"; then
 	PKG_CHECK_MODULES(GLIB, $GLIB_DEPS, have_glib=true, :)
@@ -346,6 +346,10 @@ if test "x$with_freetype" = "xyes" -a "x$have_freetype" != "xtrue"; then
 fi
 if $have_freetype; then
 	AC_DEFINE(HAVE_FREETYPE, 1, [Have FreeType 2 library])
+	save_libs=$LIBS
+	LIBS="$LIBS $FREETYPE_LIBS"
+	AC_CHECK_FUNCS(FT_Get_Var_Blend_Coordinates)
+	LIBS=$save_libs
 fi
 AM_CONDITIONAL(HAVE_FREETYPE, $have_freetype)
 
