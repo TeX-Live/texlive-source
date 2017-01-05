@@ -135,6 +135,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-font.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-map.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-math.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.$(OBJEXT) \
@@ -693,6 +694,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-math-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-math.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-map-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-math.h \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
@@ -856,6 +858,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-map.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-math.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -938,6 +943,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-font.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-layout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-map.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-math.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-arabic.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-default.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-hangul.Po@am__quote@
