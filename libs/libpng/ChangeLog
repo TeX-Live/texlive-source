@@ -1,3 +1,8 @@
+2017-01-05 Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import libpng-1.6.28.
+	* version.ac: Adjust.
+
 2016-12-29 Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import libpng-1.6.27.
