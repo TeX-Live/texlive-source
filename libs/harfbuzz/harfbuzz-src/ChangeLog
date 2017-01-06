@@ -1,3 +1,42 @@
+commit 31f7b1bb94c2cef7ce58df52ddd1b09b42e8f596
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 5 20:20:06 2017 -0800
+
+    Add tests for USE using Marchen font and text
+
+    From http://www.babelstone.co.uk/Fonts/Marchen.html
+
+ test/shaping/Makefile.am                           |   1 +
+ .../85414f2552b654585b7a8d13dcc3e8fd9f7970a3.ttf   | Bin 0 -> 66936 bytes
+ test/shaping/tests/use-marchen.tests               |  35
+ +++++++++++++++++++++
+ 3 files changed, 36 insertions(+)
+
+commit 53543f8b3e19456279c86f711feba42ce976668c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 5 20:12:32 2017 -0800
+
+    Ship UCDN and use it by default
+
+    So we are not relying on version of Unicode data in glib...
+
+    Fixes https://github.com/behdad/harfbuzz/issues/386
+    Fixes https://github.com/behdad/harfbuzz/issues/388
+
+ configure.ac      | 12 ++++++++----
+ src/hb-unicode.cc |  6 +++---
+ 2 files changed, 11 insertions(+), 7 deletions(-)
+
+commit f3397069479cae34e6bdc658e2875fb178b03e43
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 5 01:27:49 2017 -0800
+
+    1.4.0
+
+ NEWS         | 34 ++++++++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 35 insertions(+), 1 deletion(-)
+
 commit ae00af4a47587308969dfaf7baa93164d7842710
 Author: Frédéric Wang <fred.wang@free.fr>
 Date:   Tue Jan 3 05:55:09 2017 +0100
