@@ -34,9 +34,12 @@
 # "%%BoundingBox: (atend)" when input is not seekable (e.g., from a pipe),
 #
 # emacs-page
-my $ver = "2.25";
-
-# History
+#
+my $ver = "2.26";
+#  2017/01/07 v2.26 (Norbert Preining, Karl Berry)
+#    * allow cmdline of infile outfile.pdf.
+#    * explicitly allow -o as abbreviation for --outfile,
+#      to guard against future --options. (Also --output.)
 #  2016/06/30 v2.25 (Norbert Preining, Karl Berry)
 #    * don't set (default) device until after restricted check.
 #    * a few more debugging lines.
@@ -182,7 +185,7 @@ my $ver = "2.25";
 my $program = "epstopdf";
 my $ident = '($Id: epstopdf.pl 41577 2016-06-30 16:38:01Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2016 Karl Berry et al.
+Copyright 2009-2017 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -331,9 +334,14 @@ my $resmsg = $::opt_res ? $::opt_res : "[use gs default]";
 my $rotmsg = $::opt_autorotate ? $::opt_autorotate : "[use gs default]";
 
 my $usage = <<"END_OF_USAGE";
-${title}Usage: $program [OPTION]... [EPSFILE]
+${title}Usage: $program [OPTION]... [EPSFILE [PDFFILE.pdf]]
 
-Convert EPS to PDF (or other formats), by default using Ghostscript.
+Convert an EPS file to PDF (or other formats), by default using Ghostscript.
+
+By default, the output name is the input name with any extension
+replaced by ".pdf".  An output name ending with .pdf can also be given
+as a second argument on the command line, or the --outfile (-o) option
+can be used with any name.
 
 The resulting output is guaranteed to start at the 0,0 coordinate, and
 sets a page size exactly corresponding to the BoundingBox.  Thus, the
@@ -346,7 +354,7 @@ Options:
   --help             display this help and exit
   --version          display version information and exit
 
-  --outfile=FILE     write result to FILE   (default based on input name)
+  -o, --outfile=FILE write result to FILE   (default based on input name)
   --restricted       use restricted mode    (default: $bool[$restricted])
 
   --(no)debug        output debugging info  (default: $bool[$::opt_debug])
@@ -376,6 +384,7 @@ Options for Ghostscript:
 
 Examples all equivalently converting test.eps to test.pdf:
   \$ $program test.eps
+  \$ $program test.eps test.pdf
   \$ cat test.eps | $program --filter >test.pdf
   \$ cat test.eps | $program -f -o=test.pdf
 
@@ -428,7 +437,7 @@ GetOptions (
   "gsopts=s" => \&gsopts, # \ref{val_gsopts}
   "help|h",
   "hires!",
-  "outfile=s",            # \ref{openout_any}
+  "outfile|output|o=s",   # \ref{openout_any}
   "pdfsettings=s",
   "quiet",
   "res=s",
@@ -447,7 +456,7 @@ $restricted = 1 if $::opt_restricted;
 sub debug      { print STDERR "* @_\n" if $::opt_debug; }
 sub warning    { print STDERR "==> Warning: @_\n"; }
 sub error      { die "$title!!! Error: @_\n"; }
-sub errorUsage { die "Error: @_ (try --help for more information)\n"; }
+sub errorUsage { die "$program: Error: @_ (try --help for more information)\n"; }
 sub warnerr    { $restricted ? error(@_) : warning(@_); }
 
 ### debug messages
@@ -480,13 +489,13 @@ sub safe_name {
 ### help, version options.
 if ($::opt_help) {
   print $usage;
-  exit (0);
+  exit 0;
 }
 
 if ($::opt_version) {
   print $title;
   print $copyright;
-  exit (0);
+  exit 0;
 }
 
 ### get input filename (\ref{openin_any} for validation)
@@ -496,10 +505,24 @@ if ($::opt_filter) {
     errorUsage "Input file cannot be used with filter option";
   debug "Filtering: will read standard input";
 } else {
+  # not filtering.
   @ARGV > 0 or errorUsage "Input filename missing";
-  @ARGV < 2 or errorUsage "Unknown option or too many input files";
+  # allow infile outfile.pdf.
+  if (@ARGV == 2) {
+    if ($::opt_outfile) {
+      errorUsage ("Multiple output specifications: second arg=$ARGV[1],"
+                  . " --outfile=$::opt_outfile");
+    }
+    if ($ARGV[1] !~ m/\.pdf$/i) {
+      errorUsage "Output file argument requires .pdf extension: $ARGV[1]";
+    }
+    # seems we can use it.
+    $::opt_outfile = $ARGV[1];
+    debug "Output filename from argv:", $::opt_outfile;
+  }
+  @ARGV > 2 and errorUsage "Too many arguments: @ARGV";
+  
   $InputFilename = $ARGV[0];
-  #-r $InputFilename or error "\"$InputFilename\" not readable";
   debug "Input filename:", $InputFilename;
 }
 
