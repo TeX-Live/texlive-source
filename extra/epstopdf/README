@@ -3,7 +3,7 @@ This file is public domain.  (Originally written by Karl Berry, 2009.)
 
 This is the README for the epstopdf script distribution.
 
-Primary distribution point: http://mirror.ctan.org/support/epstopdf/
+Primary distribution point: http://ctan.org/pkg/epstopdf
   (list of mirrors at: http://ctan.org/mirrors)
 
 Home page: http://tug.org/epstopdf/
@@ -15,7 +15,12 @@ When reporting bugs, please include an input file and command line
 options, so the problem can be reproduced.
 
 -------------------------------------------------------------------------
-The test-binary and test-bin2 files were supplied by Akira Kakuto and
+Various test files and a Makefile to drive them are in the source
+repository, which is currently a subdirectory of the texlive Subversion
+repo, purely for the developers' convenience:
+  http://tug.org/svn/texlive/trunk/Build/source/extra/epstopdf/
+
+The test-binary and test-bin2 files there were supplied by Akira Kakuto and
 Reinhard Kotucha.  They contain binary data.  They are public domain.
 
 The test-binhdr* files were supplied by Martin von Gagern, constructed

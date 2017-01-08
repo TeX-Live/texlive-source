@@ -6,20 +6,22 @@ e2p = ./$(prg).pl #--debug
 re2p = ./r$(prg) --restricted
 re2p_script = ./r$(prg)
 
-default: 
+default: check
+
+$(re2p_script):
+	ln -s $(prg).pl $@
 
 # These are not comprehensive tests by any means.  Mostly we're just
 # making sure we don't crash.
-check: check-help check-version \
-       check-help-r \
+check: check-help check-version check-help-r check-usage \
        check-atend \
        check-binary check-bin2 \
        check-binhdr-lf check-binhdr-cr check-binhdr-crlf \
+       check-filter check-filter-outfile \
        check-gray \
        check-gscmd check-gsopt check-gsopts \
-       check-filter check-filter-outfile \
-       check-gscmd \
        check-nogs \
+       check-output \
        check-percent \
        check-restricted-device \
        check-restricted-gscmd \
@@ -37,25 +39,22 @@ check-version:
 check-help-r: $(re2p_script)
 	$(re2p_script) --help | grep restricted  # should have default=true
 
-check-nogs:
-	$(e2p) --no-gs test-simple.eps >test-simple.out
-# the two files should be different:
-	cmp -s test-simple.eps test-simple.out || exit 0
-	
-$(re2p_script):
-	ln -s $(prg).pl $@
+check-usage:
+	! $(e2p)                 # no args
+	! $(e2p) arg1 arg2 arg3  # too many args
+	! $(e2p) --nonesuch      # no option
 
-check-restricted-device:
+check-restricted-device: $(re2p_script)
 	! $(re2p) --device=unsafe test-simple.eps
 
-check-restricted-gscmd:
+check-restricted-gscmd: $(re2p_script)
 	! $(re2p) --gscmd=/bin/unsafe test-simple.eps
 	! $(re2p) --gscmd=unsafe test-simple.eps
 
-check-restricted-safe-in:
+check-restricted-safe-in: $(re2p_script)
 	! $(re2p) /unsafe/in.eps
 
-check-restricted-safe-out:
+check-restricted-safe-out: $(re2p_script)
 	! $(re2p) test-simple.eps -o /unsafe/out.eps
 
 check-filter:
@@ -89,6 +88,24 @@ check-gsopt:
 check-gsopts:
 	$(e2p) --gscmd=echo --gsopts='foo bar' test-simple.eps
 	! $(e2p) --restricted --gsopts=bar test-simple.eps # fails
+
+check-nogs:
+	$(e2p) --no-gs test-simple.eps >test-simple.out
+# the two files should be different:
+	cmp -s test-simple.eps test-simple.out || exit 0
+	
+check-output: $(re2p_script)
+	$(re2p) test-simple.eps -o test-p.pdf               # not if restricted
+	# should do this everywhere -- remove first, validate after.
+	#rm -f test-o.pdf; $(e2p) -o test-o.pdf test-simple.eps; pdfinfo test-o.pdf
+	$(e2p) -o test-o.pdf test-simple.eps
+	$(e2p) --outfile test-o.pdf test-simple.eps
+	$(e2p) --outfile=test-o.pdf test-simple.eps
+	$(e2p) --output test-o.pdf test-simple.eps
+	$(e2p) test-simple.eps test-p.pdf
+	$(re2p) test-simple.eps test-p.pdf
+	! $(e2p) test-simple.eps test-p.pdg                # not .pdf
+	! $(e2p) -o test-o.pdf test-simple.eps test-p.pdf  # two methods
 
 check-simple:
 	$(MAKE) file=test-simple check1
@@ -126,10 +143,12 @@ check-tn5002:
 check-floral:
 	$(MAKE) file=test-floral check1
 
+# subtarget for simple test that conversion of $(file) works.
 check1:
 	$(e2p) $(file).eps 
 	pdfinfo $(file).pdf | grep "Page size"
 
+# 
 # put tar contents in a directory for CTAN.
 dist: $(prg).tar.gz $(prg).html
 .PHONY: dist
