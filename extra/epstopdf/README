@@ -15,7 +15,7 @@ When reporting bugs, please include an input file and command line
 options, so the problem can be reproduced.
 
 -------------------------------------------------------------------------
-Various test files and a Makefile to drive them are in the source
+Various test files and a Makefile to exercise them are in the source
 repository, which is currently a subdirectory of the texlive Subversion
 repo, purely for the developers' convenience:
   http://tug.org/svn/texlive/trunk/Build/source/extra/epstopdf/
