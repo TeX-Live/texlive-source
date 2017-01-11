@@ -1,3 +1,8 @@
+2017-01-11  Karl Berry  <karl@tug.org>
+
+	* m4/gmp-alloca.m4: use gmp-src instead of gmp-6.1.2.
+	Found by Akira.
+
 2016-12-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import gmp-6.1.2.
@@ -53,3 +58,5 @@
 2014-03-31  Taco Hoekwater  <taco@metatex.org>
 
 	Imported gmp-5.1.3.
+
+(This ChangeLog file public domain.)
