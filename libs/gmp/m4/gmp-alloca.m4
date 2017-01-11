@@ -1,8 +1,11 @@
+# $Id$
 # Autoconf macros for the GNU MP Library.
-# Copyright (C) 2000-2014 Free Software Foundation, Inc.
 #
-# Copyright (C) 2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # Extracted from gmp-6.0.0/acinclude.m4 and adapted for TeX Live.
+#
+# Copyright (C) 2000-2014 Free Software Foundation, Inc.
 #
 # This file is free software; the copyright holders
 # give unlimited permission to copy and/or distribute it,
@@ -21,7 +24,7 @@ _GMP_HEADER_ALLOCA
 AC_CACHE_CHECK([for alloca (via gmp-impl.h)],
                [gmp_cv_func_alloca],
 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include "gmp-tmp.h"
-#include "$srcdir/gmp-]gmp_version[/gmp-impl.h"]],
+#include "$srcdir/gmp-src/gmp-impl.h"]],
                                     [[char *p = (char *) alloca (1);]])],
   [gmp_cv_func_alloca=yes],
   [gmp_cv_func_alloca=no])])

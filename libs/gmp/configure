@@ -6148,7 +6148,7 @@ else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "gmp-tmp.h"
-#include "$srcdir/gmp-6.1.2/gmp-impl.h"
+#include "$srcdir/gmp-src/gmp-impl.h"
 int
 main ()
 {
