@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = -Wno-portability
 
-bin_PROGRAMS = teckit_compile txtconv sfconv
+bin_PROGRAMS = teckit_compile txtconv
 
 AM_CPPFLAGS  = -I$(top_srcdir)/source/Public-headers
 

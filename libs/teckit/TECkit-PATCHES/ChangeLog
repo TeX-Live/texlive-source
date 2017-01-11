@@ -1,3 +1,8 @@
+2017-01-11  Norbert Preining  <norbert@preining.info>
+
+	Remove SFconv directory, contains non-free ConvertUTF.{c,h}
+	Add patch patch-06-dont-build-sfconv to not build sfconv.
+
 2016-12-30  Akira Kakuto  <kakuto@.fuk.kindai.ac.jp>
 
 	Imported TECkit-2.5.6 source tree (teckit) from

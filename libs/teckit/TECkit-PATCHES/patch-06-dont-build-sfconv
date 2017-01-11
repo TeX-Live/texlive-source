@@ -1,0 +1,12 @@
+diff --git a/Build/source/libs/teckit/TECkit-src/bin/Makefile.am b/Build/source/libs/teckit/TECkit-src/bin/Makefile.am
+index 2337f1d851d..1edc61627bd 100644
+--- TECkit-src/bin/Makefile.am
++++ TECkit-src/bin/Makefile.am
+@@ -1,6 +1,6 @@
+ AUTOMAKE_OPTIONS = -Wno-portability
+ 
+-bin_PROGRAMS = teckit_compile txtconv sfconv
++bin_PROGRAMS = teckit_compile txtconv
+ 
+ AM_CPPFLAGS  = -I$(top_srcdir)/source/Public-headers
+ 
