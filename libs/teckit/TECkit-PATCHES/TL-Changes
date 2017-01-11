@@ -8,11 +8,7 @@ Removed execute permissions from:
 
 Removed:
 	.gitignore
-	SFconv/expat/xmlparse/.cvsignore
-	SFconv/expat/xmlparse/CVS/
-	SFconv/expat/xmltok/.cvsignore
-	SFconv/expat/xmltok/CVS/
-	SFconv/expat/xmlwf/CVS/
+	SFconv/
 	TECkit.mcp
 	build-mac-binaries.sh
 	build-linux-package.sh
