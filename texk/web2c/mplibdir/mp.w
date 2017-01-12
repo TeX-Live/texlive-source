@@ -1,4 +1,4 @@
-% $Id: mp.w 2112 2017-01-09 18:44:19Z luigi $
+% $Id: mp.w 2113 2017-01-11 23:15:32Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -29189,11 +29189,11 @@ static void mp_set_up_boundingpath (MP mp, mp_node p) {
   qq = mp_make_envelope(mp, q, value_knot (p), ljoin, lcap, miterlim);
   set_cur_exp_knot (qq);
   mp->cur_exp.type = mp_path_type;
+
   if (!mp_get_cur_bbox (mp)) {
       mp_bad_binary (mp, p, mp_boundingpath_of);
       set_cur_exp_knot (q);
       mp->cur_exp.type = mp_path_type;
-      mp_free_path(mp,qq);
       return;
   }
   else {
@@ -29206,7 +29206,6 @@ static void mp_set_up_boundingpath (MP mp, mp_node p) {
         mp_bad_binary (mp, p, mp_boundingpath_of);
         set_cur_exp_knot (q);
         mp->cur_exp.type = mp_path_type;
-        mp_free_path(mp,qq);
         return;
       }
       mp_left_type (ll) = mp_endpoint;
