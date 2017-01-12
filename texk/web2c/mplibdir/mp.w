@@ -1,4 +1,4 @@
-% $Id: mp.w 2113 2017-01-11 23:15:32Z luigi $
+% $Id: mp.w 2114 2017-01-12 09:53:45Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -29230,13 +29230,6 @@ static void mp_set_up_boundingpath (MP mp, mp_node p) {
       mp_next_knot (lr) = ur;
       mp_next_knot (ur) = ul;
 
-/*
-      ll = mp_create_knot(mp);
-      mp_set_knot(mp,ll,number_to_double(mp_minx), number_to_double(mp_miny));
-      lr = mp_append_knot(mp,ll,number_to_double(mp_maxx), number_to_double(mp_miny));      
-      ur = mp_append_knot(mp,lr,number_to_double(mp_maxx), number_to_double(mp_maxy));
-      ul = mp_append_knot(mp,ur,number_to_double(mp_minx), number_to_double(mp_maxy));
-*/
       mp_close_path_cycle (mp, ul, ll);
       mp_make_path(mp,ll);
       mp->cur_exp.type = mp_path_type;
