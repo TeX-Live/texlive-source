@@ -1,3 +1,10 @@
+2017-01-13  Karl Berry  <karl@tug.org>
+
+	* ofm2opl.man,
+	* opl2ofm.man,
+	* ovf2ovp.man,
+	* ovp2ovf.man: specify section 1. Report from Julian Gilbey.
+
 2016-04-14  Karl Berry  <karl@freefriends.org>
 
 	* ofm2opl.man,
