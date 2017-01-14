@@ -3,7 +3,7 @@
 @d banner=='This is pBibTeX, Version 0.99d-j0.33'
 @y
 @d my_name=='upbibtex'
-@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.21'
+@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.22'
 @z
 
 @x
@@ -233,22 +233,60 @@ var i:0..last_text_char;    {this is the first one declared}
 
 @x
 { 2 bytes Kanji code break check }
-@y
-{ |2..4| bytes Kanji code break check }
-@z
-@x
+tps:=str_start[pop_lit3];
+while (tps < sp_ptr) do begin
     if str_pool[tps] > 127
     then tps := tps + 2
     else incr(tps);
-@y
-    tps := tps + multibytelen(str_pool[tps]);
-@z
-@x
+end;
+tpe:=tps;
+while (tpe < sp_end) do begin
     if str_pool[tpe] > 127
     then tpe := tpe+2
     else incr(tpe);
+end;
+if tps<>sp_ptr then begin
+    if tps>str_start[pop_lit3]
+    then decr(sp_ptr)
+    else incr(sp_ptr);
+end;
+if tpe<>sp_end then begin
+    if tpe<str_start[pop_lit3+1]
+    then incr(sp_end)
+    else decr(sp_end);
+end;
 @y
-    tpe := tpe + multibytelen(str_pool[tpe]);
+{ |2..4| bytes Kanji code break check }
+tps:=str_start[pop_lit3];
+while (tps < sp_ptr) do begin
+    tps := tps + multibytelen(str_pool[tps])
+end;
+tpe:=tps;
+while (tpe < sp_end) do begin
+    tpe := tpe + multibytelen(str_pool[tpe])
+end;
+if tps<>sp_ptr then begin
+    if (is_internalUPTEX) then begin
+        if tps>str_start[pop_lit3]
+        then while (multibytelen(str_pool[sp_ptr])<0) do decr(sp_ptr)
+        else while (multibytelen(str_pool[sp_ptr])<0) do incr(sp_ptr)
+    end else begin
+        if tps>str_start[pop_lit3]
+        then decr(sp_ptr)
+        else incr(sp_ptr)
+    end;
+end;
+if tpe<>sp_end then begin
+    if (is_internalUPTEX) then begin
+        if tpe<str_start[pop_lit3+1]
+        then while (multibytelen(str_pool[sp_end])<0) do incr(sp_end)
+        else while (multibytelen(str_pool[sp_end])<0) do decr(sp_end)
+    end else begin
+        if tpe<str_start[pop_lit3+1]
+        then incr(sp_end)
+        else decr(sp_end)
+    end;
+end;
 @z
 
 @x
@@ -267,10 +305,7 @@ var i:0..last_text_char;    {this is the first one declared}
         append_char (str_pool[sp_ptr+2]);
     if multibytelen(str_pool[sp_ptr]) > 3 then
         append_char (str_pool[sp_ptr+3]);
-    if multibytelen(str_pool[sp_ptr]) > 0 then
-        sp_ptr := sp_ptr + multibytelen(str_pool[sp_ptr])
-    else
-        incr(sp_ptr);
+    sp_ptr := sp_ptr + multibytelen(str_pool[sp_ptr])
 @z
 
 @x
