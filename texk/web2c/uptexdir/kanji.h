@@ -42,13 +42,8 @@ extern integer kcatcodekey (integer c);
 extern integer multilenbuffchar (integer c);
 
 extern void init_default_kanji (const_string file_str, const_string internal_str);
-#ifdef UPBIBTEX
-/* for upBibTeX */
-#define initkanji() init_default_kanji("utf8", "euc")
-#else
-/* for upTeX, e-upTeX, upDVItype, upPLtoTF, and upTFtoPL */
+/* for upTeX, e-upTeX, upBibTeX, upDVItype, upPLtoTF, and upTFtoPL */
 #define initkanji() init_default_kanji("utf8", "uptex")
-#endif
 /* for upDVItype */
 #define setpriorfileenc() set_prior_file_enc()
 

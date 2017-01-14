@@ -1,3 +1,7 @@
+2017-01-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+	* upbibtex.ch, kanji.h: Fix bug on "substring$".
+	Thanks to Takeda Shiro san.
+
 2016-12-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch:
@@ -130,7 +134,7 @@
 
 	* kanji.c (init_default_kanji): Set defaults before testing
 	PTEX_KANJI_ENC from the environment.
-	* kanji.c: All programs use init_default_kanji("utf8","uptex"). 
+	* kanji.c: All programs use init_default_kanji("utf8","uptex").
 
 2012-08-13  TANAKA Takuji  <KXD02663@nifty.ne.jp>
 
