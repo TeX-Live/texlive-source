@@ -1,3 +1,17 @@
+Release 0.51.0
+        core:
+         * Check for error from NSS in SignatureHandler construct. Bug #99363
+         * Add Form[Field|Widget]::setPartialName
+         * Fix memory leak in PDFDoc::markAnnotations
+
+        qt5:
+         * Implement digital signature support. Bug #94378
+         * Add Poppler::FormField::setName
+         * Fix segfault/assert if LinkDestination is constructed with invalid input string. Bug #99357
+
+        utils:
+         * pdfunite: add fields to AcroForm dict. Bug #99141
+
 Release 0.50.0
         core:
          * PSOutputDev: Fix PS conversion for some files. Bug #63963
@@ -21,7 +35,6 @@ Release 0.50.0
 
         glib:
          * Use g_slice_new0 for PopplerActionLayer. Bug #98786
-
 
 Release 0.49.0
         core:
