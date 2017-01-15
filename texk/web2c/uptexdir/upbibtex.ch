@@ -305,7 +305,10 @@ end;
         append_char (str_pool[sp_ptr+2]);
     if multibytelen(str_pool[sp_ptr]) > 3 then
         append_char (str_pool[sp_ptr+3]);
-    sp_ptr := sp_ptr + multibytelen(str_pool[sp_ptr])
+    if multibytelen(str_pool[sp_ptr]) > 0 then
+        sp_ptr := sp_ptr + multibytelen(str_pool[sp_ptr])
+    else
+        incr(sp_ptr);
 @z
 
 @x

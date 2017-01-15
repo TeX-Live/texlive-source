@@ -166,7 +166,7 @@ int main(int argc, char ** argv)
 
 void usage(void)
 {
-	fputs2("MAKEJVF ver.1.1a-u1.21 -- make Japanese VF file.\n", stderr);
+	fputs2("MAKEJVF ver.1.1a-u1.22 -- make Japanese VF file.\n", stderr);
 	fputs2("%% makejvf [<options>] <TFMfile> <PSfontTFM>\n", stderr);
 	fputs2("options:\n", stderr);
 	fputs2("-C           長体モード\n", stderr);

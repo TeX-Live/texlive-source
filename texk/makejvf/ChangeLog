@@ -1,3 +1,11 @@
+2017-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	Update for upTeX-1.22.
+	* uniblock.c: Update references Unicode blocks Blocks-9.0.0.txt.
+	* main.c: Update version number.
+	* COPYRIGHT.ja: Rename from COPYRIGHT.jis and convert
+	encoding to UTF-8
+
 2016-12-16  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	New file makejvf.1.
