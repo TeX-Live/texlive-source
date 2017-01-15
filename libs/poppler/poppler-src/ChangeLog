@@ -1,4 +1,132 @@
-commit 281f3a2ec4be515a8876a66575341f404a6a0208
+commit dc8edecc437f33305257b6cb208dc2da367b7868
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Jan 15 18:27:49 2017 +0100
+
+    Poppler 0.51
+
+ CMakeLists.txt         |  2 +-
+ NEWS                   | 15 ++++++++++++++-
+ configure.ac           |  2 +-
+ cpp/Doxyfile           |  2 +-
+ qt4/src/Doxyfile       |  2 +-
+ qt5/src/CMakeLists.txt |  2 +-
+ qt5/src/Doxyfile       |  2 +-
+ qt5/src/Makefile.am    |  2 +-
+ 8 files changed, 21 insertions(+), 8 deletions(-)
+
+commit c4de00a93c470020c6c96eb343854039bfc0a424
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sat Jan 14 23:42:32 2017 +0100
+
+    Forgot to update the \since value
+
+ qt5/src/poppler-form.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 0eb28e216fc45fe5ceed1c093a541ceca0dc0397
+Author: Christoph Cullmann <cullmann@kde.org>
+Date:   Fri Jan 13 00:03:27 2017 +0100
+
+    qt5: Fix segfault/assert if LinkDestination is constructed with
+    invalid input string.
+
+    Bug #99357
+
+ qt5/src/poppler-link.cc | 24 +++++++++++++-----------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
+
+commit 4db6507320b51e060f73f7fb0eab364e8a1fee77
+Author: Sebastian Rasmussen <sebras@gmail.com>
+Date:   Wed Jan 11 23:37:54 2017 +0100
+
+    Check for error from NSS in SignatureHandler construct.
+
+    And cascading effects in other SignalHandler members.
+
+    Bug #99363
+
+ poppler/SignatureHandler.cc | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+commit 8bb90fc828a3400a2464a38f0ec9e592754197dd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue Jan 10 17:20:18 2017 +0100
+
+    Qt5: Minor api refinements to the new signature classes
+
+ qt5/src/poppler-form.cc     | 32 +++++++++++++++++++++-----------
+ qt5/src/poppler-form.h      | 22 +++++++++++-----------
+ qt5/tests/poppler-forms.cpp | 14 +++++++-------
+ 3 files changed, 39 insertions(+), 29 deletions(-)
+
+commit aa63debdaa6001ed68333b31cd06c2f9958fd8d2
+Author: Hanno Meyer-Thurow <h.mth@web.de>
+Date:   Tue Jan 10 16:28:14 2017 +0100
+
+    Qt5: Implement digital signature support
+
+    Bug #94378
+
+ qt5/src/poppler-form.cc     | 121
+ ++++++++++++++++++++++++++++++++++++++++++++
+ qt5/src/poppler-form.h      | 106 ++++++++++++++++++++++++++++++++++++++
+ qt5/src/poppler-page.cc     |   7 +++
+ qt5/tests/poppler-forms.cpp |  47 ++++++++++++++++-
+ 4 files changed, 280 insertions(+), 1 deletion(-)
+
+commit 2f831d5b9481e5ab06178409f7fccf74eda6e1a2
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jan 9 00:30:42 2017 +0100
+
+    New year!
+
+ poppler/poppler-config.h.cmake | 2 +-
+ poppler/poppler-config.h.in    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit b6c4d6d1312f63e5e6dcfa28ea48ff3e6935daa9
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Jan 9 00:28:37 2017 +0100
+
+    Fix memory leak in PDFDoc::markAnnotations
+
+ poppler/PDFDoc.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit 3cae7773d2f8ad6506e2712689c56fa6975e01d3
+Author: Thomas Freitag <Thomas.Freitag@alfa.de>
+Date:   Mon Jan 9 00:25:53 2017 +0100
+
+    pdfunite: add fields to AcroForm dict
+
+    Bug #99141
+
+ utils/pdfunite.cc | 33 +++++++++++++++++++++++++++++++--
+ 1 file changed, 31 insertions(+), 2 deletions(-)
+
+commit c301f6c675784a65fb2ebdf99ded5d5d3f8defdd
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Dec 19 22:53:47 2016 +0100
+
+    qt5: Add Poppler::FormField::setName
+
+ qt5/src/poppler-form.cc |  9 ++++++++-
+ qt5/src/poppler-form.h  | 10 ++++++++--
+ 2 files changed, 16 insertions(+), 3 deletions(-)
+
+commit 86c99de95cd16199e0f9f1fb82999c27d54c5b76
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Dec 19 22:53:10 2016 +0100
+
+    Add Form[Field|Widget]::setPartialName
+
+    Useful to repair/tweak pdf files
+
+ poppler/Form.cc | 16 ++++++++++++++++
+ poppler/Form.h  |  2 ++
+ 2 files changed, 18 insertions(+)
+
+commit 56dfa44960b9ab9fb4dcc01d8e3861a9293b0ee0
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Thu Dec 15 23:32:41 2016 +0100
 
@@ -11,11 +139,11 @@ Date:   Thu Dec 15 23:32:41 2016 +0100
  poppler/Makefile.am    |  2 +-
  qt4/src/CMakeLists.txt |  2 +-
  qt4/src/Doxyfile       |  2 +-
- qt4/src/Makefile.am    |  2 +-
+ qt4/src/Makefile.am    |  3 ++-
  qt5/src/CMakeLists.txt |  2 +-
  qt5/src/Doxyfile       |  2 +-
- qt5/src/Makefile.am    |  2 +-
- 11 files changed, 36 insertions(+), 11 deletions(-)
+ qt5/src/Makefile.am    |  3 ++-
+ 11 files changed, 38 insertions(+), 11 deletions(-)
 
 commit 1511523450f40b539fb1d58950a907f3712fd5c7
 Author: Albert Astals Cid <aacid@kde.org>
