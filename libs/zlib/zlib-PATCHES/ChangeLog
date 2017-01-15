@@ -1,7 +1,7 @@
-2017-01-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+2017-01-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	Add patch-01-not-define-WIDECHAR-for-cygwin, in order to not define
-	WIDECHAR for __CYGWIN__. Report from Luigi, David.
+	Import zlib-1.2.11.
+	* Add patch-01-not-define-WIDECHAR-for-cygwin: Adapted.
 
 2017-01-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
