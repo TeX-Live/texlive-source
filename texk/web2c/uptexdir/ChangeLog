@@ -1,4 +1,16 @@
+2017-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-9.0.0.txt Date: 2016-02-05, 23:48:00 GMT [KW]".
+	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
+	uptex_version.h: upTeX version u1.22.
+	* COPYRIGHT, COPYRIGHT.ja:
+	Update copyright name and year.
+	Rename from COPYRIGHT.utf8 to COPYRIGHT.ja.
+
 2017-01-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
 	* upbibtex.ch, kanji.h: Fix bug on "substring$".
 	Thanks to Takeda Shiro san.
 
