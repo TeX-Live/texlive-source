@@ -19,13 +19,14 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.8.2";        # ctanify version number
+our $VERSION = "1.9";          # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
 my $autoinclude = 1;           # 1=automatically include files named in .ins
 my $skipdroppings = 1;         # 1=skip "dropping" files (e.g., "README~")
 my $unixify = 1;               # 1=make text files use Unix line endings
+my $maketds = 1;               # 1=embed a .tds.zip file; 0=don't
 my @manifest;                  # List of files to include
 my %file2tds;                  # Map from specific filenames to TDS directories
 my @tdsdirlist;                # Contents of the TDS tree
@@ -147,6 +148,7 @@ GetOptions("p|pkgname=s"   => \$pkgname,
            "a|auto!"       => \$autoinclude,
            "d|tdsdir=s"    => \$tdsoutdir,
            "T|tex=s"       => \$texmacros,
+           "s|tds!"        => \$maketds,
            "V|version"     => \$wantversion,
            "h|help"        => \$wanthelp)
     || pod2usage(-verbose => 0,
@@ -338,6 +340,7 @@ if (-f "$workdir/$zipname") {
 else {
     $zipname = "";
 }
+$zipname = "" if !$maketds;
 chdir $prevdir || die "${progname}: Failed to switch to $prevdir ($!)\n";
 rmdir $tdsdir || die "${progname}: Failed to remove $tdsdir ($!)\n";
 
@@ -408,6 +411,7 @@ ctanify
 [B<--tdsdir>=I<dirname> ...]
 [B<--tex>=I<macro_pkg>]
 [B<-->[B<no>]B<miscify>]
+[B<-->[B<no>]B<tds>]
 I<filespec>[=I<dirname>] ...
 
 ctanify
@@ -508,6 +512,10 @@ Rename directories containing a single file to C<misc>.  (For example,
 rename C<tex/latex/mypackage/mypackage.sty> to
 C<tex/latex/misc/mypackage.sty>.)  This was common practice in the
 past but is now strongly discouraged.
+
+=item B<-nos>, B<--no-tds>
+
+Do not embed a .tds.zip file in the generated tarball.
 
 =back
 
@@ -691,7 +699,7 @@ Scott Pakin, I<scott+ctify@pakin.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2016 Scott Pakin
+Copyright 2017 Scott Pakin
 
 This work may be distributed and/or modified under the conditions of
 the LaTeX Project Public License, either S<version 1.3c> of this
