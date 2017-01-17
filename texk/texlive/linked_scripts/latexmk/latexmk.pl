@@ -6,6 +6,9 @@
 # See # ??????? BCF
 
 
+#!!!!!!!!???  Check @pwd_log
+
+
 # !!!!!!!!!! Don't forget to document $silence_logfile_warnings.!!!
 
 # N.B. !!!!!!!!!!!  See 17 July 2012 comments !!!!!!!!!!!!!!!!!!
@@ -118,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.48';
-$version_details = "$My_name, John Collins, 5 Sep. 2016";
+$version_num = '4.52';
+$version_details = "$My_name, John Collins, 16 Jan. 2017";
 
 use Config;
 use File::Basename;
@@ -154,7 +157,7 @@ else {
    warn "Something wrong with the perl configuration: No signals?\n";
 }
 
-## Copyright John Collins 1998-2015
+## Copyright John Collins 1998-2016
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -192,6 +195,52 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    16 Jan 2017   John Collins  Clean up
+##                                Add extra item to @file_not_found for
+##                                  xelatex's characteristic message.
+##    14 Jan 2017   John Collins  Fix some diagnostics.
+##                                Detect graphics candidates in log file from
+##                                  <...> constructs.
+##                                Don't look in log file for input files in the
+##                                  (...) and <...> constructs unless forced to
+##                                  by lack of up-to-date fls file.
+##    13 Jan 2017   John Collins  Kpsewhich diagnostics: also if not
+##                                  silent, or when $kpsewhich_show set.
+##                                Optimize calls to kpsewhich to find files
+##                                  given by lines put in log file by
+##                                  graphics package.
+##                                Work around LuaTeX line-wrapping bug.  (LuaTeX 0.95.0)
+##    12 Jan 2017   John Collins  Improve error reporting on failed run.
+##    11 Jan 2017   John Collins  With -diagnositcs, include invocation
+##                                  and results for kpsewhich.
+##     4, 10 Jan 2017  John Collins  Finish fix for read-after-write files
+##     29-31 Dec 2016  John Collins  V. 4.51
+##                                For biber and bibtex rules, included .blg
+##                                   file as extra generated file.
+##                                Similarly for makeindex rule
+##      3 Nov 2016  John Collins  Start to fix problem reported by jfbu
+##                                that with deleted aux file, latexmk
+##                                does too few runs.
+##                                Problems:
+##                                  1. latexmk doesn't create initial
+##                                     dummy aux or fdb when only one
+##                                     fails to exist, but only when
+##                                     both fail to exist.
+##                                  2. latexmk detects the aux file as
+##                                     only read after write, and
+##                                     hence not a true dependent.
+##                                     That is the initial attempt to
+##                                     read, giving a No file message,
+##                                     is not recorded in the fls
+##                                     file.
+##                                First fix: missing aux file => make
+##                                dummy.
+##                                Need better: if source file in fdb
+##                                doesn't exist initially, then it
+##                                should be counted as initially
+##                                read, so not read after write.
+##     18 Oct 2016  John Collins  xelatex support via xdv file for speed.
+##                                lualatex
 ##      5 Sep 2016  John Collins  Add routines: rdb_list_source, rdb_set_source
 ##     17 Aug 2016  John Collins  Add XDG Base Directory compatibility
 ##                                   for per-user rc file
@@ -202,110 +251,6 @@ else {
 ##                                when compilation was with -pdf and clear was default.
 ##                                (Correctly default set of rules in rdb_make_rule_list.)
 ##                                Ver. 4.45
-##      8 Apr 2016  John Collins  Commented out delegated-source diagnostic
-##      6 Apr 2016  John Collins  Correct " ge " to " >= "
-##     27 Mar 2016  John Collins  Extra diagnostics in find_process_id
-##                                Fix bug in find_process_id due to extra
-##                                leading space in output of ps under OS-X
-##     27 Feb 2016  John Collins  Attempt at yet another fix for malformed bcf issue
-##     24 Feb 2016  John Collins  Further fix for malformed bcf issue
-##                                   Locate error, and create dummy bbl file.
-##     18 Feb 2016  John Collins  Correct use of %hash_calc_ignore_pattern
-##                                V. 4.44
-##      9 Sep 2015  John Collins  Correct diagnostic when calling internal
-##                                subroutine for command to handle quoted 
-##                                arguments better.
-##     14 Mar 2015  John Collins  Remove superfluous debugging statements
-##      9 Mar 2015  John Collins  Correct normalization of filenames, so that 
-##                         initial "./" is always removed. This prevents
-##                         custom dependencies being run twice on the same file.
-##      5 Feb 2015  John Collins  Deletion of synctex.gz file is with full clean
-##                                  (-C option), not with the small clean (-c)
-##     27 Jan 2015  John Collins  Comments added.
-##     25,26 Jan 2015  John Collins  Complete MiKTeX fix.
-##     16 Jan 2015  John Collins  V. 4.43
-##                                Try to fix issues caused
-##                                  by MiKTeX's absolute pathnames in 
-##                                  .fls and .log file
-##     10 Jan 2015  John Collins  Fix -cd-associated bugs
-##      9 Jan 2015  John Collins  V. 4.42
-##                                Add missfont.log and synctex.gz to cleaned
-##                                  up files
-##      1 Jan 2015  John Collins  V. 4.41
-##     18 Dec 2014  John Collins  -c also deletes $deps_file if it is used.
-##     16 Dec 2014  John Collins  Finish change of e-mail
-##      5 Dec 2014  John Collins  Quote jobname when needed.
-##      5 Sep 2014  John Collins  Change my e-mail
-##     30 Aug 2014  John Collins  Change my e-mail
-##     13 Aug 2014  John Collins  Try to correct error handling to avoid
-##                                repeated runs of latex after an error.
-##                                Revert to some code from v. 4-32.
-##                                Do I need $retry_msg?
-##      8 Aug 2014  John Collins  Fix up for the making of -eps-converted-to.pdf
-##      4 Aug 2014  John Collins  Sort and remove redundant xxx-undefined
-##                                   warning lines from log file.
-##     23 Jul 2014  John Collins  Fix failure when using both -cd and -output-directory
-##     22 Jul 2014  John Collins  If $HOME not set, then don't read ~/.latexmkrc
-##                                Introduce $silence_logfile_warnings
-##     21 Jul 2014  John Collins  In setting $pscmd, allow for non-existent
-###                                 $ENV{USER}
-##     29 May 2014  John Collins  Correct sub Run for internal cmd w/o arguments
-##     21 Mar 2014  John Collins  Experimental: Add analysis hook for aux file.
-##                                But I need to change rdb_create_rule in someway to 
-##                                allow correct handling of: (a) rule creation if 
-##                                rule doesn't exist, (b) either no change, or rule
-##                                update, if the rule exists.  No change is a bad
-##                                idea, because conditions may change.  Such a 
-##                                change, to effectively rdb_ensure_rule, would also
-##                                help other dependencies, e.g., if a custom
-##                                dependency has been created on one run of latexmk,
-##                                and then on another run the definition is changed.
-##                                With the old method, the old cus-dep is used unless 
-##                                the dependency cache fdb_latexmk is cleared; but
-##                                with the new method the custom dependency will be
-##                                changed correctly.
-##      5 Mar 2014  John Collins  System initialization files: allow them
-##                                  to be named latexmkrc as well as LatexMk,
-##                                  for more consistency with user directory
-##                                  names.  Keep both cases, to preserve
-##                                  backward compatibility.
-##     30 Jan 2014  John Collins  Change sign-on message.  Bug report info with help. V. 4.40a
-##     15 Jan 2014  John Collins  Fix failure to clean up correctly when
-##                                   root filename contains [, which is
-##                                   a glob metacharacter.
-##                                V. 4.40
-##     10 Nov 2013  John Collins  Change split / /, ... to split /\s*/, ...
-##                                   so as to be immune from extra white space.
-##                                Clean up $clean_ext and $clean_full_ext by removing 
-##                                   superfluous white space.
-##      8 Nov 2013  John Collins  Automatic creation of necessary
-##                                   subdirectories of auxdir when
-##                                   needed for writing aux files.
-##      3 Nov 2013  John Collins  Correction to 1 Nov
-##      1 Nov 2013  John Collins  Add error diagnostics to if_source.
-##                                Allow $print_type = 'auto', and make
-##                                  this the default.
-##     30 Oct 2013  John Collins  Do better fix for dealing with special
-##                                  characters in directory names used in
-##                                  regexes.  Use \Q \E.  There are three
-##                                  occurences of the issue.
-##                                Fix potential problem with globbing when
-##                                  a specified (i.e., non-wildcarded) part
-##                                  of the pattern has glob metacharacters.
-##                                Use File::Glob to give glob that doesn't
-##                                  take space character as item separator.
-##     16 Oct 2013  John Collins  Use make_path from File::Path instead of
-##                                mkdir to give autocreation of intermediate
-##                                directories.
-##                                This gives dependency on File::Path
-##     19 Jul 2013  John Collins  V. 4.39. 
-##                                In output of dependencies, include pathname of
-##                                   target file(s) in the rule.
-##     19 Jul 2013  John Collins  V. 4.38.
-##                                In -pvc mode, writing of deps file (caused by
-##                                  -M option) is per make not per overall run.
-##                                %extra_rule_spec variable as hook for templates
-##                                  for new rules.
 ##
 ##   1998-2010, John Collins.  Many improvements and fixes.
 ##       See CHANGE-log.txt for full list, and CHANGES for summary
@@ -313,82 +258,6 @@ else {
 ##   Modified by Evan McLean (no longer available for support)
 ##   Original script (RCS version 2.3) called "go" written by David J. Musliner
 ##
-## 2.0 - Final release, no enhancements.  LatexMk is no longer supported
-##       by the author.
-## 1.9 - Fixed bug that was introduced in 1.8 with path name fix.
-##     - Fixed buglet in man page.
-## 1.8 - Add not about announcement mailling list above.
-##     - Added texput.dvi and texput.aux to files deleted with -c and/or
-##       the -C options.
-##     - Added landscape mode (-l option and a bunch of RC variables).
-##     - Added sensing of "\epsfig{file=...}" forms in dependency generation.
-##     - Fixed path names when specified tex file is not in the current
-##       directory.
-##     - Fixed combined use of -pvc and -s options.
-##     - Fixed a bunch of speling errors in the source. :-)
-##     - Fixed bugs in xdvi patches in contrib directory.
-## 1.7 - Fixed -pvc continuous viewing to reattach to pre-existing
-##       process correctly.
-##     - Added $pscmd to allow changing process grepping for different
-##       systems.
-## 1.6 - Fixed buglet in help message
-##     - Fixed bugs in detection of input and include files.
-## 1.5 - Removed test message I accidentally left in version 1.4
-##     - Made dvips use -o option instead of stdout redirection as some
-##       people had problems with dvips not going to stdout by default.
-##     - Fixed bug in input and include file detection
-##     - Fixed dependency resolution process so it detects new .toc file
-##       and makeindex files properly.
-##     - Added dvi and postscript filtering options -dF and -pF.
-##     - Added -v version commmand.
-## 1.4 - Fixed bug in -pvc option.
-##     - Made "-F" option include non-existant file in the dependency list.
-##       (RC variable: $force_include_mode)
-##     - Added .lot and .lof files to clean up list of extensions.
-##     - Added file "texput.log" to list of files to clean for -c.
-##     - LatexMk now handles file names in a similar fashion to latex.
-##       The ".tex" extension is no longer enforced.
-##     - Added $texfile_search RC variable to look for default files.
-##     - Fixed \input and \include so they add ".tex" extension if necessary.
-##     - Allow intermixing of file names and options.
-##     - Added "-d" and banner options (-bm, -bs, and -bi).
-##       (RC variables: $banner, $banner_message, $banner_scale,
-##       $banner_intensity, $tmpdir)
-##     - Fixed "-r" option to detect an command line syntax errors better.
-## 1.3 - Added "-F" option, patch supplied by Patrick van der Smagt.
-## 1.2 - Added "-C" option.
-##     - Added $clean_ext and $clean_full_ext variables for RC files.
-##     - Added custom dependency generation capabilities.
-##     - Added command line and variable to specify custom RC file.
-##     - Added reading of rc file in current directly.
-## 1.1 - Fixed bug where Dependency file generation header is printed
-##       rependatively.
-##     - Fixed bug where TEXINPUTS path is searched for file that was
-##       specified with absolute an pathname.
-## 1.0 - Ripped from script by David J. Musliner (RCS version 2.3) called "go"
-##     - Fixed a couple of file naming bugs
-##        e.g. when calling latex, left the ".tex" extension off the end
-##             of the file name which could do some interesting things
-##             with some file names.
-##     - Redirected output of dvips.  My version of dvips was a filter.
-##     - Cleaned up the rc file mumbo jumbo and created a dependency file
-##       instead.  Include dependencies are always searched for if a
-##       dependency file doesn't exist.  The -i option regenerates the
-##       dependency file.
-##       Getting rid of the rc file stuff also gave the advantage of
-##       not being restricted to one tex file per directory.
-##     - Can specify multiple files on the command line or no files
-##       on the command line.
-##     - Removed lpr options stuff.  I would guess that generally,
-##       you always use the same options in which case they can
-##       be set up from an rc file with the $lpr variable.
-##     - Removed the dviselect stuff.  If I ever get time (or money :-) )
-##       I might put it back in if I find myself needing it or people
-##       express interest in it.
-##     - Made it possible to view dvi or postscript file automatically
-##       depending on if -ps option selected.
-##     - Made specification of dvi file viewer seperate for -pv and -pvc
-##       options.
 ##-----------------------------------------------------------------------
 
 
@@ -402,8 +271,8 @@ else {
 ##             or retcode from called program.
 
 
-#Line length in log file that indicates wrapping.  
-# This number EXCLUDES line-end characters, and is one-based
+# Line length in log file that indicates wrapping.  
+# This number EXCLUDES line-end characters, and is one-based.
 # It is the parameter max_print_line in the TeX program.  (tex.web)
 $log_wrap = 79;
 
@@ -426,6 +295,7 @@ $log_wrap = 79;
     '^Package .* [fF]ile `([^\\\']*)\\\' not found',
     'Error: pdflatex \(file ([^\)]*)\): cannot find image file',
     ': File (.*) not found:\s*$',
+    '! Unable to load picture or PDF file \\\'([^\\\']+)\\\'.',
 );
 
 ## Hash mapping file extension (w/o period, e.g., 'eps') to a single regexp,
@@ -468,17 +338,24 @@ $log_wrap = 79;
 ## Most of these variables represents the external command needed to 
 ## perform a certain action.  Some represent switches.
 
-## Commands to invoke latex, pdflatex
+## Commands to invoke latex, pdflatex, etc
 $latex  = 'latex %O %S';
 $pdflatex = 'pdflatex %O %S';
+$lualatex = 'lualatex %O %S';
+# xelatex is used to give xdv file, not pdf file
+$xelatex = 'xelatex -no-pdf %O %S';
 
 ## Default switches:
 $latex_default_switches = '';
 $pdflatex_default_switches = '';
+$lualatex_default_switches = '';
+$xelatex_default_switches = '';
 
 ## Switch(es) to make them silent:
 $latex_silent_switch  = '-interaction=batchmode';
 $pdflatex_silent_switch  = '-interaction=batchmode';
+$lualatex_silent_switch  = '-interaction=batchmode';
+$xelatex_silent_switch  = '-interaction=batchmode';
 
 # %input_extensions maps primary_rule_name to pointer to hash of file extensions
 #    used for extensionless files specified in the source file by constructs
@@ -489,6 +366,8 @@ $pdflatex_silent_switch  = '-interaction=batchmode';
 # Instead we'll exercise the user-friendly access routines:
 add_input_ext( 'latex', 'tex', 'eps' );
 add_input_ext( 'pdflatex', 'tex', 'jpg', 'pdf', 'png' );
+add_input_ext( 'lualatex', 'tex', 'jpg', 'pdf', 'png' );
+add_input_ext( 'xelatex', 'tex', 'jpg', 'pdf', 'png' );
 #show_input_ext( 'latex' ); show_input_ext( 'pdflatex' );
 
 # Information about options to latex and pdflatex that latexmk will simply
@@ -564,7 +443,7 @@ foreach (
     "-hash-extra=n           set the extra space for the hash table of control\n".
     "                           sequences",
     "-job-time=file          set the time-stamp of all output files equal to\n".
-    "                           file'stime-stamp",
+    "                           file's time-stamp",
     "-main-memory=n          change the total size (in memory words) of the main\n".
     "                           memory array",
     "-max-in-open=n          set the maximum number of input files and error\n".
@@ -632,6 +511,8 @@ foreach (
 #  is added.
 @extra_latex_options = ();
 @extra_pdflatex_options = ();
+@extra_lualatex_options = ();
+@extra_xelatex_options = ();
 
 
 ## Command to invoke biber & bibtex
@@ -678,6 +559,11 @@ $dvips_silent_switch  = '-q';
 
 ## Command to convert ps file to pdf file:
 $ps2pdf = 'ps2pdf  %O %S %D';
+
+## Command to convert xdv file to pdf file
+$xdvipdfmx  = 'xdvipdfmx -o %D %O %S';
+$xdvipdfmx_silent_switch  = '-q';
+
 
 ## Command to search for tex-related files
 $kpsewhich = 'kpsewhich %S';
@@ -1155,7 +1041,12 @@ $aux_dir = '';          # Directory for aux files (log, aux, etc).
 $recorder = 1;          # Whether to use recorder option on latex/pdflatex
 $silent = 0;            # Silence latex's messages?
 $silence_logfile_warnings = 0; # Do list warnings in log file
+$kpsewhich_show = 0;    # Show calls to and results from kpsewhich
 $landscape_mode = 0;    # default to portrait mode
+$analyze_input_log_always = 0; # Always analyze .log for input files in the
+                        #  <...> and (...) constructions.  Otherwise, only
+                        # do the analysis when fls file doesn't exist or is
+                        # out of date.
 
 # The following two arrays contain lists of extensions (without
 # period) for files that are read in during a (pdf)LaTeX run but that
@@ -1190,6 +1081,8 @@ $pdf_mode = 0;          # No pdf file requested to be made by pdflatex
                         #     1 to create pdf file by pdflatex
                         #     2 to create pdf file by ps2pdf
                         #     3 to create pdf file by dvipdf
+                        #     4 to create pdf file by lualatex
+                        #     5 to create pdf file by xelatex + xdvipdfmx
 $view = 'default';      # Default preview is of highest of dvi, ps, pdf
 $sleep_time = 2;        # time to sleep b/w checks for file changes in -pvc mode
 $banner = 0;            # Non-zero if we have a banner to insert
@@ -1211,7 +1104,7 @@ $cleanup_mode = 0;      # No cleanup of nonessential LaTex-related files.
                         # $cleanup_mode = 0: no cleanup
                         # $cleanup_mode = 1: full cleanup 
                         # $cleanup_mode = 2: cleanup except for dvi,
-                        #                    dviF, pdf, ps, & psF 
+                        #                    dviF, pdf, ps, psF & xdv
 $cleanup_fdb  = 0;      # No removal of file for latexmk's file-database
 $cleanup_only = 0;      # When doing cleanup, do not go on to making files
 $cleanup_includes_generated = 0; 
@@ -1389,10 +1282,12 @@ if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
 # List of known rules.  Rule types: primary, 
 #     external (calls program), internal (calls routine), cusdep.
 
-%possible_primaries = ( 'latex'  => 'primary',  'pdflatex'  => 'primary' );
+%possible_primaries = ( 'latex'  => 'primary',  'pdflatex'  => 'primary',
+                        'lualatex'  => 'primary', 'xelatex'  => 'primary' );
 %primaries = ();    # Hash of rules for primary part of make.  Keys are 
-                    # currently 'latex', 'pdflatex' or both.  Value is
-                    # currently irrelevant.  Use hash for ease of lookup
+                    # currently 'latex', 'pdflatex' or both; also 'lualatex'
+                    # and 'xelatex'.  Value is currently irrelevant.
+                    # Use hash for ease of lookup
    # Make remove this later, if use rdb_makeB
 
 # Hashes, whose keys give names of particular kinds of rule.  We use
@@ -1656,6 +1551,8 @@ while ($_ = $ARGV[0])
   elsif (/^-latexoption=(.*)$/) {
       push @extra_latex_options, $1;
       push @extra_pdflatex_options, $1;
+      push @extra_lualatex_options, $1;
+      push @extra_xelatex_options, $1;
   }
   elsif ( /^-logfilewarninglist$/ || /^-logfilewarnings$/ )
       { $silence_logfile_warnings = 0; }
@@ -1691,6 +1588,8 @@ while ($_ = $ARGV[0])
   elsif (/^-pdf$/)   { $pdf_mode = 1; }
   elsif (/^-pdf-$/)  { $pdf_mode = 0; }
   elsif (/^-pdfdvi$/){ $pdf_mode = 3; }
+  elsif (/^-pdflua$/){ $pdf_mode = 4; }
+  elsif (/^-pdfxe$/) { $pdf_mode = 5; }
 #  elsif (/^-pdflatex$/) {
 #      $pdflatex = "pdflatex %O %S";
 #      $pdf_mode = 1;
@@ -1737,7 +1636,8 @@ while ($_ = $ARGV[0])
            "options known to the (pdf)latex programs that are also recognized by\n",
            "latexmk and trigger special behavior by latexmk.  Since these options\n",
            "appear in the main list given by running 'latexmk --help', they do not\n",
-           "appear in the following list\n",
+	   "appear in the following list\n",
+	   "NOTE ALSO: Not all of these options are supported by all versions of (pdf)latex.\n",
            "\n";
      foreach $option ( sort( keys %allowed_latex_options, keys %allowed_latex_options_with_arg ) ) {
        if (exists $allowed_latex_options{$option} ) { print "   $allowed_latex_options{$option}\n"; }
@@ -1761,13 +1661,11 @@ while ($_ = $ARGV[0])
   elsif (/^-view=ps$/)      { $view = "ps";}
   elsif (/^-view=pdf$/)     { $view = "pdf"; }
   elsif (/^-lualatex$/)      { 
-      $pdflatex = "lualatex %O %S";
-      $pdf_mode = 1;
+      $pdf_mode = 4;
       $dvi_mode = $postscript_mode = 0; 
   }
   elsif (/^-xelatex$/)      { 
-      $pdflatex = "xelatex %O %S";
-      $pdf_mode = 1;
+      $pdf_mode = 5;
       $dvi_mode = $postscript_mode = 0; 
   }
   elsif (/^-e$/) {  
@@ -1830,6 +1728,8 @@ while ($_ = $ARGV[0])
   {
       push @extra_latex_options, $original;
       push @extra_pdflatex_options, $original;
+      push @extra_lualatex_options, $original;
+      push @extra_xelatex_options, $original;
   }
   elsif (/^-/) {
      warn "$My_name: $_ bad option\n"; 
@@ -2001,9 +1901,13 @@ if ( ($jobname ne '') && ($num_files > 1) ) {
 # Add common options
 add_option( $latex_default_switches, \$latex );
 add_option( $pdflatex_default_switches, \$pdflatex );
+add_option( $lualatex_default_switches, \$lualatex );
+add_option( $xelatex_default_switches, \$xelatex );
 
 foreach (@extra_latex_options) { add_option( $_, \$latex ); }
 foreach (@extra_pdflatex_options) { add_option( $_, \$pdflatex ); }
+foreach (@extra_lualatex_options) { add_option( $_, \$lualatex ); }
+foreach (@extra_xelatex_options) { add_option( $_, \$xelatex ); }
 
 
 # If landscape mode, change dvips processor, and the previewers:
@@ -2017,15 +1921,18 @@ if ( $landscape_mode )
 if ( $silent ) { 
     add_option( "$latex_silent_switch", \$latex );
     add_option( "$pdflatex_silent_switch", \$pdflatex );
+    add_option( "$lualatex_silent_switch", \$lualatex );
+    add_option( "$xelatex_silent_switch", \$xelatex );
     add_option( "$biber_silent_switch", \$biber );
     add_option( "$bibtex_silent_switch", \$bibtex );
     add_option( "$makeindex_silent_switch", \$makeindex );
     add_option( "$dvipdf_silent_switch", \$dvipdf );
     add_option( "$dvips_silent_switch", \$dvips );
+    add_option( "$xdvipdfmx_silent_switch", \$xdvipdfmx );
 }
 
 if ( $recorder ) {
-    add_option( "-recorder", \$latex, \$pdflatex );
+    add_option( "-recorder", \$latex, \$pdflatex, \$lualatex, \$xelatex );
 }
 
 # If the output and/or aux directories are specified, fix the (pdf)latex
@@ -2035,13 +1942,15 @@ if ( $recorder ) {
 #   relative to the document.
 
 if ( $out_dir ) {
-    add_option( "-output-directory=\"$out_dir\"", \$latex, \$pdflatex );
+    add_option( "-output-directory=\"$out_dir\"",
+                \$latex, \$pdflatex, \$lualatex, \$xelatex );
 }
 if ( $aux_dir && ($aux_dir ne $out_dir) ) {
     # N.B. If $aux_dir and $out_dir are the same, then the -output-directory
     # option is sufficient, especially because the -aux-directory exists
     # only in MiKTeX, not in TeXLive.
-    add_option( "-aux-directory=\"$aux_dir\"", \$latex, \$pdflatex );
+    add_option( "-aux-directory=\"$aux_dir\"",
+                \$latex, \$pdflatex, \$lualatex, \$xelatex );
 }
 
 if ( $jobname ne '' ) { 
@@ -2083,6 +1992,13 @@ elsif ( $pdf_mode == 2 ) {
 elsif ( $pdf_mode == 3 ) { 
    $requested_filerules{'latex'} = 1;
    $requested_filerules{'dvipdf'} = 1; 
+}
+elsif ( $pdf_mode == 4 ) { 
+   $requested_filerules{'lualatex'} = 1;
+}
+elsif ( $pdf_mode == 5 ) { 
+   $requested_filerules{'xelatex'} = 1;
+   $requested_filerules{'xdvipdfmx'} = 1; 
 }
 if ( $postscript_mode ) { 
    $requested_filerules{'latex'} = 1; 
@@ -2233,7 +2149,7 @@ foreach $filename ( @file_list )
     }
 
     ## remove extension from filename if was given.
-    if ( &find_basename($filename, $root_filename, $texfile_name) )
+    if ( find_basename($filename, $root_filename, $texfile_name) )
     {
         if ( $force_mode ) {
            warn "$My_name: Could not find file [$texfile_name]\n";
@@ -2308,6 +2224,7 @@ foreach $filename ( @file_list )
                          # Maps output file created and read by (pdf)latex
                          #    to source file of conversion.
             local $primary_out = '';   # Actual output file (dvi or pdf). Not used here.
+	    local $fls_file_analyzed = 0;
             &parse_log;
             %other_generated = %generated_log;
         }
@@ -2362,7 +2279,8 @@ foreach $filename ( @file_list )
             &cleanup_cusdep_generated;
         }
         if ( $cleanup_mode == 1 ) { 
-            &cleanup1( $out_dir1, 'dvi', 'dviF', 'ps', 'psF', 'pdf', 'synctex.gz',
+            &cleanup1( $out_dir1, 'dvi', 'dviF', 'ps', 'psF', 'pdf', 
+                       'synctex.gz', 'xdv',
                        split('\s+', $clean_full_ext)
                      );
         }
@@ -2399,15 +2317,22 @@ foreach $filename ( @file_list )
 
     %primaries = ();
     foreach (@accessible_all) {
-        if ( ($_ eq 'latex') || ($_ eq 'pdflatex') ) { $primaries{$_} = 1; }
+        if ( ($_ eq 'latex') || ($_ eq 'pdflatex') || ($_ eq 'lualatex')
+                             || ($_ eq 'xelatex') )
+        { $primaries{$_} = 1; }
     }
 
     $have_fdb = 0;
-    if ( (! -e $fdb_name) && (! -e $aux_main ) ) {
-        # No aux and no fdb file => set up trivial aux file 
+    if (! -e $aux_main ) {
+        # No aux file => set up trivial aux file 
         #    and corresponding fdb_file.  Arrange them to provoke one run 
         #    as minimum, but no more if actual aux file is trivial.
         #    (Useful on big files without cross references.)
+        # If aux file doesn't exist, then any fdb file is surely
+	#    wrong.
+	# Previously, I had condition for this as being both aux and
+	#    fdb files failing to exist.  But it's not obvious what to
+	#    do if aux exists and fdb doesn't.  So I won't do anything.
         &set_trivial_aux_fdb;
     }
 
@@ -2599,6 +2524,7 @@ sub rdb_make_rule_list {
     local $dvi_final = "%Z%R.dvi";
     local $ps_final  = "%Z%R.ps";
     local $pdf_final = "%Z%R.pdf";
+    local $xdv_final = "%Z%R.xdv";
     if ( length($dvi_filter) > 0) {
         $dvi_final = "%Z%R.dviF";
     }
@@ -2648,7 +2574,10 @@ sub rdb_make_rule_list {
     %rule_list = (
         'latex'    => [ 'primary',  "$latex",     '',            "%T",        "%Z%B.dvi",  "%R",   1, ["%Y%R.log"] ],
         'pdflatex' => [ 'primary',  "$pdflatex",  '',            "%T",        "%Z%B.pdf",  "%R",   1, ["%Y%R.log"] ],
+        'lualatex' => [ 'primary',  "$lualatex",  '',            "%T",        "%Z%B.pdf",  "%R",   1, ["%Y%R.log"] ],
+        'xelatex' =>  [ 'primary',  "$xelatex",   '',            "%T",        "%Z%B.xdv",  "%R",   1, ["%Y%R.log"] ],
         'dvipdf'   => [ 'external', "$dvipdf",    'do_viewfile', $dvi_final,  "%B.pdf",    "%Z%R", 2 ],
+        'xdvipdfmx' => [ 'external', "$xdvipdfmx", 'do_viewfile', $xdv_final, "%B.pdf",    "%Z%R", 2 ],
         'dvips'    => [ 'external', "$dvips",     'do_viewfile', $dvi_final,  "%B.ps",     "%Z%R", 2 ],
         'dvifilter'=> [ 'external', $dvi_filter,  'do_viewfile', "%B.dvi",    "%B.dviF",   "%Z%R", 2 ],
         'ps2pdf'   => [ 'external', "$ps2pdf",    'do_viewfile', $ps_final,   "%B.pdf",    "%Z%R", 2 ],
@@ -2660,10 +2589,12 @@ sub rdb_make_rule_list {
     );
 
 # Ensure we only have one way to make pdf file, and that it is appropriate:
-    if    ($pdf_mode == 2) { delete $rule_list{'dvipdf'}; delete $rule_list{'pdflatex'}; }
-    elsif ($pdf_mode == 3) { delete $rule_list{'pdflatex'}; delete $rule_list{'ps2pdf'}; }
+    if    ($pdf_mode == 2) { delete $rule_list{'dvipdf'}; delete $rule_list{'pdflatex'}; delete $rule_list{'lualatex'}; delete $rule_list{'xelatex'}; }
+    elsif ($pdf_mode == 3) { delete $rule_list{'pdflatex'}; delete $rule_list{'ps2pdf'}; delete $rule_list{'lualatex'}; delete $rule_list{'xelatex'}; }
+    elsif ($pdf_mode == 4) { delete $rule_list{'pdflatex'}; delete $rule_list{'ps2pdf'}; delete $rule_list{'dvipdf'}; delete $rule_list{'xelatex'}; }
+    elsif ($pdf_mode == 5) { delete $rule_list{'pdflatex'}; delete $rule_list{'ps2pdf'}; delete $rule_list{'dvipdf'}; delete $rule_list{'lualatex'}; }
     else                   { # Default is to leave pdflatex
-                             delete $rule_list{'dvipdf'}; delete $rule_list{'ps2pdf'};
+                             delete $rule_list{'dvipdf'}; delete $rule_list{'ps2pdf'}; delete $rule_list{'lualatex'}; delete $rule_list{'xelatex'}; 
                            }
 
 } # END rdb_make_rule_list 
@@ -2923,19 +2854,20 @@ sub if_source {
 #************************************************************
 #************************************************************
 
-# Finds the basename of the root file
-# Arguments:
-#  1 - Filename to breakdown
-#  2 - Where to place base file
-#  3 - Where to place tex file
-#  Returns non-zero if tex file does not exist
-#
-# The rules for determining this depend on the implementation of TeX.
-# The variable $extension_treatment determines which rules are used.
+sub find_basename {
+    # Finds the basename of the root file
+    # Arguments:
+    #  1 - Filename to breakdown
+    #  2 - Where to place base file
+    #  3 - Where to place tex file
+    #  Returns non-zero if tex file does not exist
+    #
+    # The rules for determining this depend on the implementation of TeX.
+    # The variable $extension_treatment determines which rules are used.
 
-sub find_basename
-#?? Need to use kpsewhich, if possible
-{
+    # !!!!!!!! I still need to implement use of kpsewhich to match behavior
+    # of (pdf)latex correctly.
+
   local($given_name, $base_name, $ext, $path, $tex_name);
   $given_name = $_[0];
   if ( "$extension_treatment" eq "miktex_old" ) {
@@ -2961,17 +2893,24 @@ sub find_basename
        $_[2] = $tex_name;
   }
   elsif ( "$extension_treatment" eq "unix" ) {
-       # unix (at least web2c 7.3.1) => 
-       #   1. If filename.tex exists, use it, 
-       #   2. else if filename exists, use it.
-       #   3. The base filename is obtained by deleting the path
-       #      component and, if an extension exists, the last
-       #      component of the extension, even if the extension is
-       #      null.  (A name ending in "." has a null extension.)
-       #   4. The names of generated files (log, aux) are obtained by
-       #      appending .log, .aux, etc to the basename.  Note that
-       #      these are all in the CURRENT directory, and the drive/path
-       #      part of the originally given filename is ignored.
+       # unix (at least TeXLive 2016) =>
+       #  A. Finding of tex file:
+       #   1. If filename.tex exists, use it,
+       #   2. else if kpsewhich finds filename.tex, use it
+       #   3. else if filename exists, use it,
+       #   4. else if kpsewhich finds filename, use it.
+       #   (Probably can unify the above by
+       #       1'. If kpsewhich finds filename.tex, use result.
+       #       2'. else if kpsewhich finds filename, use result.
+       #       3'. else report file not found.
+       # B. The base filename is obtained by deleting the path
+       #    component and, if an extension exists, the last
+       #    component of the extension, even if the extension is
+       #    null.  (A name ending in "." has a null extension.)
+       # C. The names of generated files (log, aux) are obtained by
+       #    appending .log, .aux, etc to the basename.  Note that
+       #    these are all in the CURRENT directory, and the drive/path
+       #    part of the originally given filename is ignored.
        #
        #   Thus when the given filename is "/tmp/a.b.c", there are two
        #   cases: 
@@ -2979,8 +2918,10 @@ sub find_basename
        #          and the basename is "a.b.c".
        #      b.  /tmp/a.b.c.tex does not exist.  Then the tex file is
        #          "/tmp/a.b.c", and the basename is "a.b".
+       #   But there are also modifications of this when a file can be
+       #   found by kpsewhich.
 
-      if ( -e "$given_name.tex" ) {
+      if ( -f "$given_name.tex" ) {
          $tex_name = "$given_name.tex";
       }
       else {
@@ -3484,6 +3425,8 @@ sub print_help
   "   -pdflatex=<program> - set program used for pdflatex.\n",
   "                      (replace '<program>' by the program name)\n",
   "   -pdfps - generate pdf by ps2pdf\n",
+  "   -pdflua - generate pdf by lualatex\n",
+  "   -pdfxe - generate pdf by xelatex\n",
   "   -pdf-  - turn off pdf\n",
   "   -ps    - generate postscript\n",
   "   -ps-   - turn off postscript\n",
@@ -3524,9 +3467,9 @@ sub print_help
   "   -view=ps      - viewer is for ps\n",
   "   -view=pdf     - viewer is for pdf\n",
   "   -lualatex     - use lualatex for processing files to pdf\n",
-  "                   and turn pdf mode on, dvi/ps modes off\n",
+  "                   and turn dvi/ps modes off\n",
   "   -xelatex      - use xelatex for processing files to pdf\n",
-  "                   and turn pdf mode on, dvi/ps modes off\n",
+  "                   and turn dvi/ps modes off\n",
   "\n",
   "   filename = the root filename of LaTeX document\n",
   "\n",
@@ -3549,6 +3492,8 @@ sub print_commands {
   warn "Commands used by $my_name:\n",
        "   To run latex, I use \"$latex\"\n",
        "   To run pdflatex, I use \"$pdflatex\"\n",
+       "   To run lualatex, I use \"$lualatex\"\n",
+       "   To run xelatex, I use \"$xelatex\"\n",
        "   To run biber, I use \"$biber\"\n",
        "   To run bibtex, I use \"$bibtex\"\n",
        "   To run makeindex, I use \"$makeindex\"\n",
@@ -3557,6 +3502,7 @@ sub print_commands {
            "I use \"$dvips_landscape\"\n",
        "   To make a pdf file from a dvi file, I use \"$dvipdf\"\n",
        "   To make a pdf file from a ps file, I use \"$ps2pdf\"\n",
+       "   To make a pdf file from an xdv file, I use \"$xdvipdfmx\"\n",
        "   To view a pdf file, I use \"$pdf_previewer\"\n",
        "   To view a ps file, I use \"$ps_previewer\"\n",
        "   To view a ps file in landscape format, ",
@@ -3886,7 +3832,6 @@ sub parse_log {
 
     # Returned info:
     %dependents = ();
-    foreach (@default_includes) { $dependents{$_} = 4; }
     @bbl_files = ();
     %idx_files = ();    # Maps idx_file to (ind_file, base)
     %generated_log = ();
@@ -3904,7 +3849,7 @@ sub parse_log {
     # (a) internally deduced pwd from log file from sequence of lines
     #                  **file
     #                  (dir/file
-    #     if possible
+    #     if possible.  NO THAT'S WRONG if kpsearch is done.
     # (b) from PWD line in fls file (if available), passed as $pwd_latex
     # (c) system-given cwd as interpreted by sub good_cwd.
     # We'll put the first two in  @pwd_log
@@ -3927,7 +3872,10 @@ sub parse_log {
     if ($log_file_binary) { binmode $log_file; }
 # Collect lines of log file
     my @lines = ();
-    while(<$log_file>) { 
+    my $line = 0;
+    my $engine = 'pdfTeX';  # Simple default in case of problems
+    while(<$log_file>) {
+	$line++;
         # Could use chomp here, but that fails if there is a mismatch
         #    between the end-of-line sequence used by latex and that
         #    used by perl.  (Notably a problem with MSWin latex and
@@ -3941,12 +3889,26 @@ sub parse_log {
         #    options open by putting the line into @lines before
         #    and after appending the next line:  
         my $len = length($_);
-        while ( ($len == $log_wrap) && !eof($log_file) ) {
-            push @lines, $_;
-            my $extra = <$log_file>;
-            $extra =~ s/[\n\r]*$//;
-            $len = length($extra);
-            $_ .= $extra;
+	if ($line == 1) {
+	    if ( /^This is ([^,]+), / ) {
+		$engine = $1;
+		print "=== TeX engine is '$engine'\n"
+		    if (!$silent);
+	    }
+	    else {
+		warn "$My_name: First line of .log file '$log_name' is not in standard format.\n";
+	    }
+	}
+	else {
+	    # LuaTeX sometimes wraps at 80 instead of 79, so work around this
+            while ( ( ($len == $log_wrap) || ( ($engine eq 'LuaTeX') && ($len == $log_wrap+1) ) )
+                    && !eof($log_file) ) {
+                push @lines, $_;
+                my $extra = <$log_file>;
+                $extra =~ s/[\n\r]*$//;
+                $len = length($extra);
+                $_ .= $extra;
+	    }
         }
         push @lines, $_;
     }
@@ -3955,7 +3917,7 @@ sub parse_log {
     push @lines, "";   # Blank line to terminate.  So multiline blocks 
               # are always terminated by non-block line, rather than eof.
     
-    my $line = 0;
+    $line = 0;
     my $state = 0;   # 0 => before ** line,
                      # 1 => after **filename line, before next line (first file-reading line)
                      # 2 => pwd_log determined.
@@ -4028,12 +3990,17 @@ LINE:
         }
         elsif ( $state == 1 ) {
             $state = 2;
-            if ( m{^\("([^"]*)[/\\]\Q$source_log\E"} ) {
-                unshift @pwd_log, $1;
+	    if (-e $source_log) {
+		# then the string preceeding $source_log on the line after the
+		# ** line is probably the PWD as it appears in filenames in the
+                # log file, except if the file appears in two locations.
+                if ( m{^\("([^"]*)[/\\]\Q$source_log\E"} ) {
+                    unshift @pwd_log, $1;
+   	        }
+                elsif ( m{^\((.*)[/\\]\Q$source_log\E} ) {
+                    unshift @pwd_log, $1;
+                }
 	    }
-            elsif ( m{^\((.*)[/\\]\Q$source_log\E} ) {
-                unshift @pwd_log, $1;
-            }
         }
 
         if ( $block_type ) {
@@ -4185,6 +4152,7 @@ LINE:
         foreach my $pattern (@file_not_found) {
             if ( /$pattern/ ) {
                 my $file = clean_filename($1);
+                warn "===========$My_name: Missing input file: '$file' from line\n  '$_'\n";
                 warn "$My_name: Missing input file: '$file' from line\n  '$_'\n"
                     unless $silent;
                 $dependents{normalize_filename($file, @pwd_log)} = 0;
@@ -4203,8 +4171,14 @@ LINE:
                 next LINE;
             }
         }
-        if ( /^File: (.+) Graphic file \(type / ) {
+        if ( (! $fls_file_analyzed)
+             && /^File: (.+) Graphic file \(type / ) {
             # First line of message from includegraphics/x
+	    # But this does NOT include full path information
+	    #   (if exact match is not found and a non-trivial
+	    #   kpsearch was done by (pdf)latex).
+	    # But the source-file information is in the fls file,
+	    #   if we are using it.
             $dependents{normalize_clean_filename($1, @pwd_log)} = 1;
             next LINE;
         }
@@ -4239,6 +4213,21 @@ LINE:
                      "----- non-existent subdir\n",
             }
         }
+
+	if ( ($fls_file_analyzed) && (! $analyze_input_log_always) ) {
+	    # Skip the last part, which is all about finding input
+	    # file names which should all appear more reliably in the
+	    # fls file.
+	    next LINE;
+	}
+	
+        my @new_includes = ();
+	
+   GRAPHICS_INCLUDE_CANDIDATE:
+        while ( /<([^>]+)(>|$)/g ) {
+	    if ( -f $1 ) { push @new_includes, $1; }
+         }  # GRAPHICS_INCLUDE_CANDIDATE:
+
    INCLUDE_CANDIDATE:
         while ( /\((.*$)/ ) {
         # Filename found by
@@ -4295,7 +4284,6 @@ LINE:
         #             Thus $_ is putative filename followed by other stuff.
             $_ = $1; 
             # Array of new candidate include files; sometimes more than one.
-            my @new_includes = ();
             my $quoted = 0;
             if ( /^\"([^\"]+)\"/ ) {
                # Quoted file name, as from MikTeX
@@ -4350,27 +4338,28 @@ LINE:
                     # So leave the original candidate in the list
                 }
             }
-        INCLUDE_NAME:
-            foreach my $include_name (@new_includes) {
-                $include_name = normalize_filename( $include_name, @pwd_log );
-                my ($base, $path, $ext) = fileparseB( $include_name );
-                if ( ($path eq './') || ($path eq '.\\') ) {
-                    $include_name = $base.$ext;
-                }
-                if ( $include_name !~ m'[/|\\]' ) {
-                    # Filename does not include a path character
-                    # High potential for misparsed line
-                    $dependents{$include_name} = 2;
-                } else {
-                    $dependents{$include_name} = 3;
-                }
-                if ( $ext eq '.bbl' ) {
-                    warn "$My_name: Found input bbl file '$include_name'\n"
-                       unless $silent;
-                    push @bbl_files, $include_name;
-                }
-            } # INCLUDE_NAME
         } # INCLUDE_CANDIDATE
+
+    INCLUDE_NAME:
+        foreach my $include_name (@new_includes) {
+            $include_name = normalize_filename( $include_name, @pwd_log );
+            my ($base, $path, $ext) = fileparseB( $include_name );
+            if ( ($path eq './') || ($path eq '.\\') ) {
+                $include_name = $base.$ext;
+            }
+            if ( $include_name !~ m'[/|\\]' ) {
+                # Filename does not include a path character
+                # High potential for misparsed line
+                $dependents{$include_name} = 2;
+            } else {
+                $dependents{$include_name} = 3;
+            }
+            if ( $ext eq '.bbl' ) {
+                warn "$My_name: Found input bbl file '$include_name'\n"
+                   unless $silent;
+                push @bbl_files, $include_name;
+            }
+        } # INCLUDE_NAME
     } # LINE
 
     # Default includes are always definitive:
@@ -4382,6 +4371,8 @@ LINE:
     my @misparsed = ();
     my @missing = ();
     my @not_found = ();
+
+    my %kpsearch_candidates = ();
 CANDIDATE:
     foreach my $candidate (keys %dependents) {
         my $code = $dependents{$candidate};
@@ -4410,15 +4401,8 @@ CANDIDATE:
             # We have already tested that file doesn't exist, as given.
             #   so use kpsewhich.  
             # If the file still is not found, assume non-existent;
-            my @kpse_result = kpsewhich( $candidate );
-            if ($#kpse_result > -1) {
-                delete $dependents{$candidate};
-                $dependents{$kpse_result[0]} = 4;
-                next CANDIDATE;
-            }
-            else {
-                push @not_found, $candidate;
-            }
+            $kpsearch_candidates{$candidate} = 1;
+	    delete $dependents{$candidate};
         }
         elsif ($code == 2) {
             # Candidate is from '(...' construct in log file, for input file
@@ -4460,6 +4444,14 @@ CANDIDATE:
             push @missing, $candidate;
         }
     }
+
+    my @kpsearch_candidates = keys %kpsearch_candidates;
+    if (@kpsearch_candidates) {
+	foreach my $result ( kpsewhich( @kpsearch_candidates ) ) {
+	    $dependents{$result} = 4;
+	}
+    }
+        
 CANDIDATE_PAIR:
     foreach my $delegated_source (keys %new_conversions) {
         my $delegated_output = $new_conversions{$delegated_source};
@@ -5301,9 +5293,14 @@ sub rdb_set_latex_deps {
     # Analyze fls file first.  It tells us the working directory as seen by (pdf)latex
     # But we'll use the results later, so that they take priority over the findings
     # from the log file.
-    my $fls_file = "$aux_dir1$root_filename.fls";
-    if ($recorder && test_gen_file($fls_file) ) {
-        parse_fls( $fls_file, \%source_fls, \%generated_fls, \%first_read_after_write, \$pwd_latex );
+    my $fls_name = "$aux_dir1$root_filename.fls";
+    local $fls_file_analyzed = 0;
+    if ($recorder && test_gen_file($fls_name) ) {
+	$fls_file_analyzed = 
+	    (0== parse_fls( $fls_name, \%source_fls, \%generated_fls, \%first_read_after_write, \$pwd_latex ));
+	if (! $fls_file_analyzed ) {
+	    warn "$My_name: fls file '$fls_name' appears to have been made but it couldn't be opened.\n";
+	}
     }
  
     &parse_log;
@@ -5410,7 +5407,7 @@ sub rdb_set_latex_deps {
             print "!!!===Creating rule '$from_rule': '$ind_file' from '$idx_file'\n"
                   if ($diagnostics);
             rdb_create_rule( $from_rule, 'external', $makeindex, '', 1, 
-                             $idx_file, $ind_file, $ind_base, 1, 0, 0 );
+                             $idx_file, $ind_file, $ind_base, 1, 0, 0, 1, [ "$ind_base.ilg" ] );
             print "  ===Source file '$ind_file' for '$rule'\n"
                   if ($diagnostics);
             rdb_ensure_file( $rule, $ind_file, $from_rule );
@@ -5457,17 +5454,21 @@ sub rdb_set_latex_deps {
             print "   ===Creating rule '$from_rule'\n" if ($diagnostics);
             if ( $bib_program eq 'biber' ) {
                 rdb_create_rule( $from_rule, 'external', $biber, '', 1,
-                                 "$bbl_base.bcf", $bbl_file, $bbl_base, 1, 0, 0 );
+                                 "$bbl_base.bcf", $bbl_file, $bbl_base, 1, 0, 0, 1, [ "$bbl_base.blg" ]  );
              }
              else {
                  rdb_create_rule( $from_rule, 'external', $bibtex, 'run_bibtex', 1,
-                                  "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0, 0 );
+                                  "$bbl_base.aux", $bbl_file, $bbl_base, 1, 0, 0, 1, [ "$bbl_base.blg" ]  );
                }
         }
         local %old_sources = ();
         rdb_one_rule( $from_rule, sub { %old_sources = %$PHsource; } );
-        foreach my $source ( @new_bib_files, @new_aux_files, @new_bst_files, @biber_source ) {
-            print "  === Source file '$source' for '$from_rule'\n"
+	my @new_sources = ( @new_bib_files, @new_aux_files, @new_bst_files );
+        if ( $bib_program eq 'biber' ) {
+	    push @new_sources, @biber_source;
+        }
+        foreach my $source ( @new_sources ) {
+            print "  ===Source file '$source' for '$from_rule'\n"
                if ($diagnostics);
             rdb_ensure_file( $from_rule, $source );
             delete $old_sources{$source};
@@ -5505,9 +5506,19 @@ NEW_SOURCE:
     foreach my $new_source (keys %dependents) {
         print "  ===Source file for rule '$rule': '$new_source'\n"
             if ($diagnostics);
-        if ( ($dependents{$new_source} == 5) 
-             || ($dependents{$new_source} == 6) 
-           ) {
+	if ( exists $first_read_after_write{$new_source} ) {
+	    if ( dep_at_start($new_source) ) {
+ 	        #warn "--- READ ONLY AFTER WRITE OF '$new_source'\n";
+		$dependents{$new_source} = 7;
+	    }
+	    else {
+ 	        #warn "--- READ ONLY AFTER CREATE OF '$new_source'\n";
+		$dependents{$new_source} = 6;
+	    }
+        }
+        if ( ($dependents{$new_source} == 5)
+             || ($dependents{$new_source} == 6)
+	    ) {
             # (a) File was detected in "No file..." line in log file. 
             #     Typically file was searched for early in run of 
             #     latex/pdflatex, was not found, and then was written 
@@ -5557,9 +5568,6 @@ NEW_SOURCE:
             $$Pchanged = 1; # New files can be made.  Ignore error.
         }
     }
-    foreach (keys %first_read_after_write) {
-        delete $dependents{$_};
-    }
     if ($diagnostics) {
         if ($num_new > 0 ) {
             print "$num_new new source files for rule '$rule':\n";
@@ -5604,6 +5612,17 @@ sub test_gen_file {
     my $file = shift;
     return exists $generated_log{$file}
            || ( -e $file && ( get_mtime( $file ) >= $$Prun_time ));
+}
+
+#************************************************************
+
+sub dep_at_start {
+    # Usage: dep_at_start( filename )
+    # Tests whether the file was source file and existed at start of run.
+    # Assumes context for primary rule.
+    my $time = undef;
+    rdb_one_file( shift, sub{ $time = $$Ptime; } );
+    return (defined $time) && ($time != 0);
 }
 
 #************************************************************
@@ -6627,11 +6646,11 @@ sub rdb_run1 {
         $return = &$int_cmd( @int_args ); 
     }
     elsif ($$Pext_cmd) {
-        $return = &Run_subst();
+        $return = &Run_subst() / 256;
     }
     else {
         warn "$My_name: Either a bug OR a configuration error:\n",
-             "    Need to implement the command for '$rule'\n";
+             "    No command provided for '$rule'\n";
         &traceback();
         $return = -1;
         $$Plast_result = 2;
@@ -6641,7 +6660,7 @@ sub rdb_run1 {
         my @biber_source = ( );
         my $retcode = check_biber_log( $$Pbase, \@biber_source );
         foreach my $source ( @biber_source ) {
-            print "  === Source file '$source' for '$rule'\n"
+            print "  ===Source file '$source' for '$rule'\n"
                if ($diagnostics);
             rdb_ensure_file( $rule, $source );
         }
@@ -6756,6 +6775,12 @@ sub rdb_run1 {
         $$Plast_result = 2;
         if ($$Plast_message eq '') {
             $$Plast_message = "Command for '$rule' gave return code $return";
+	    if ($rule =~ /^(pdf|lua|xe|)latex/) {
+		$$Plast_message .= "\n      Refer to '$log_name' for details";
+	    }
+            elsif ($rule =~ /^makeindex/) {
+		$$Plast_message .= "\n      Refer to '${aux_dir1}${root_filename}.ilg' for details";
+	    }
         }
     }
     elsif ( $$Pdest && (! -e $$Pdest) && ($return != -2) ) {
@@ -8101,30 +8126,39 @@ sub kpsewhich {
 # Usage: kpsewhich( filespec, ...)
 # Returns array of files with paths as found by kpsewhich
 #    kpsewhich( 'try.sty', 'jcc.bib' );
+# With standard use of kpsewhich (i.e., without -all option), the array
+# has either 0 or 1 element.
 # Can also do, e.g.,
 #    kpsewhich( '-format=bib', 'trial.bib', 'file with spaces');
     my $cmd = $kpsewhich;
     my @args = @_;
+    if ( ($cmd eq '') || ( $cmd =~ /^NONE($| )/ ) ) {
+	# Kpsewhich not set up.
+	warn "$My_name: Kpsewhich command needed but not set up\n";
+	return ();
+    }
     foreach (@args) {
         if ( ! /^-/ ) {
             $_ = "\"$_\"";
         }
     }
-    foreach ($cmd) {
-        s/%[RBTDO]//g;
-    }
+    $cmd =~ s/%[RBTDO]//g;
     $cmd =~ s/%S/@args/g;
     my @found = ();
     local $fh;
+    if ( $kpsewhich_show || $diagnostics ) {
+        print "$My_name.kpsewhich: Running '$cmd'...\n";
+    }
     open $fh, "$cmd|"
         or die "Cannot open pipe for \"$cmd\"\n";
     while ( <$fh> ) {
-        s/^\s*//;
-        s/\s*$//;
+        s/(\r|\n)$//;
         push @found, $_;
     }
     close $fh;
-#    show_array( "Kpsewhich: '$cmd', '$file_list' ==>", @found );
+    if ( $kpsewhich_show || $diagnostics ) {
+	show_array( "$My_name.kpsewhich: '$cmd' ==>", @found );
+    }
     return @found;
 }
 
@@ -8534,7 +8568,7 @@ sub Run_Detached {
 # Runs program detached.  Returns 0 on success, 1 on failure.
 # Under UNIX use a trick to avoid the program being killed when the 
 #    parent process, i.e., me, gets a ctrl/C, which is undesirable for pvc 
-#    mode.  (The simplest method, system ("program arguments &"), makes the 
+#    mode.  (The simplest method, system("program arguments &"), makes the 
 #    child process respond to the ctrl/C.)
 # Return value is a list (pid, exitcode):
 #   If process is spawned sucessfully, and I know the PID,
