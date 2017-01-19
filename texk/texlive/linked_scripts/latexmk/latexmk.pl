@@ -121,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.52';
-$version_details = "$My_name, John Collins, 16 Jan. 2017";
+$version_num = '4.52b';
+$version_details = "$My_name, John Collins, 17 Jan. 2017";
 
 use Config;
 use File::Basename;
@@ -157,7 +157,7 @@ else {
    warn "Something wrong with the perl configuration: No signals?\n";
 }
 
-## Copyright John Collins 1998-2016
+## Copyright John Collins 1998-2017
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -195,6 +195,10 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    17 Jan 2017   John Collins  Fix bbl file detection bug.
+##                                Bbl files were previously only identified
+##                                  from occurrence as input files in log
+##                                  file rather than from fls as well.
 ##    16 Jan 2017   John Collins  Clean up
 ##                                Add extra item to @file_not_found for
 ##                                  xelatex's characteristic message.
@@ -3779,10 +3783,12 @@ sub normalize_force_directory {
 # ------------------------------
 
 sub parse_log {
+
 # Scan log file for: dependent files
 #    reference_changed, bad_reference, bad_citation
 # Return value: 1 if success, 0 if no log file.
-# Set global variables:
+# Put results in UPDATES of global variables (which are normally declared
+# local in calling routine, to be suitably scoped):
 #   %dependents: maps definite dependents to code:
 #      0 = from missing-file line
 #            May have no extension
@@ -3815,10 +3821,21 @@ sub parse_log {
 #   This variable is only set when the needed subdirectories don't exist,
 #   and the aux_dir is non-trivial, which results in an error message in 
 #   the log file
-# Also set
+#  %conversions Internally made conversions from one file to another
+#
+#  These may have earlier found information in them, so they should NOT
+#  be initialized.
+#
+# Also SET
 #   $reference_changed, $bad_reference, $bad_citation
-# Trivial or default values if log file does not exist/cannot be opened
-
+#   $pwd_latex
+#
+# Put in trivial or default values if log file does not exist/cannot be opened
+#
+# Input globals: $primary_out, $fls_file_analyzed
+#
+   
+   
 # Give a quick way of looking up custom-dependency extensions
     my %cusdep_from = ();
     my %cusdep_to = ();
@@ -3829,14 +3846,6 @@ sub parse_log {
     }
 #    print "==== Cusdep from-exts:"; foreach (keys %cusdep_from) {print " '$_'";} print "\n";
 #    print "==== Cusdep to-exts:"; foreach (keys %cusdep_to) {print " '$_'";} print "\n";
-
-    # Returned info:
-    %dependents = ();
-    @bbl_files = ();
-    %idx_files = ();    # Maps idx_file to (ind_file, base)
-    %generated_log = ();
-    %conversions = ();
-    @missing_subdirs = ();
 
 
     # Filenames given in log file may be preceded by a pathname
@@ -5345,6 +5354,7 @@ sub rdb_set_latex_deps {
     # used.
     foreach (keys %source_fls) {
         $dependents{$_} = 4;
+	if ( /\.bbl$/ ) { push @bbl_files, $_; }
     }
     foreach (keys %generated_fls) {
         rdb_add_generated( $_ );
@@ -8152,7 +8162,7 @@ sub kpsewhich {
     open $fh, "$cmd|"
         or die "Cannot open pipe for \"$cmd\"\n";
     while ( <$fh> ) {
-        s/(\r|\n)$//;
+        s/[\r\n]*$//;
         push @found, $_;
     }
     close $fh;
