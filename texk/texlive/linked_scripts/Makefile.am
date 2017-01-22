@@ -1,7 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright (C) 2016 Karl Berry <tex-live@tug.org>
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## TeX Live's extra scripts.
@@ -118,9 +118,6 @@ texmf_other_scripts = \
 	getmap/getmapdl.lua \
 	glossaries/makeglossaries \
 	glossaries/makeglossaries-lite.lua \
-	jfontmaps/kanji-config-updmap-sys.sh \
-	jfontmaps/kanji-config-updmap.pl \
-	jfontmaps/kanji-fontmap-creator.pl \
 	kotex-utils/jamo-normalize.pl \
 	kotex-utils/komkindex.pl \
 	kotex-utils/ttf2kotexfont.pl \
