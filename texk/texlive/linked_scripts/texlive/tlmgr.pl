@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 41794 2016-08-03 23:11:36Z karl $
+# $Id: tlmgr.pl 42960 2017-01-15 11:47:53Z preining $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 41794 $';
-my $datrev = '$Date: 2016-08-04 01:11:36 +0200 (Thu, 04 Aug 2016) $';
+my $svnrev = '$Revision: 42960 $';
+my $datrev = '$Date: 2017-01-15 12:47:53 +0100 (Sun, 15 Jan 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5068,7 +5068,7 @@ sub check_executes {
       if ($e =~ m/add(Mixed|Kanji)?Map\s+(.*)$/) {
         my $foo = $2;
         chomp($foo);
-        if ($foo !~ m/\@kanjiEmbed@/) {
+        if ($foo !~ m/\@(kanji|ja|tc|sc|ko)Embed@/) {
           push @{$maps{$foo}}, $pkg;
         }
       } elsif ($e =~ m/AddFormat\s+(.*)$/) {

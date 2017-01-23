@@ -1,15 +1,20 @@
 #!/usr/bin/perl -w
 # Scale pictures to be included into a LaTeX generated PDF file.
-# version 0.2 written by peter willadt 
-# contact willadt at t-online.de
+# written by peter willadt 
+# contact: willadt at t-online.de
 # this software is subject to the LaTeX project public license.
 # changes:
 # 2016-07-27 first public release
 # 2016-08-02 changed regex to prevent problem with long filenames
 # 2016-08-02 changed > to gt (shame on me)
 # 2016-10-20 corrected behaviour when program gets called without arguments
-# (shame on me, again)
+#            (shame on me, again)
 # 2016-10-20 added undocumented switch --help to show usage.
+# 2017-01-23 Updated documentation (see pdflatexpicscale.tex), 
+#            and corrected version number 
+#            Please note: version numbers will be updated to keep sync
+#            with the documentation, even when the perl code does not change.
+#
 use strict;
 use File::Basename;
 use File::Spec;
@@ -17,7 +22,7 @@ use File::Copy;
 use Getopt::Long;
 
 my $version = '0.3';
-my $versiondate = '2016-10-20';
+my $versiondate = '2017-01-23';           #version %version
 my $showversion;
 
 my $verbose;
