@@ -623,7 +623,7 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
   int            num_fields;
   int            value = 0, offset;
   double         xres = 0.0, yres = 0.0;
-  double         res_unit = 0.0;
+  double         res_unit = 1.0;
   unsigned int   xres_ms = 0;
   unsigned int   yres_ms = 0;
   double         res_unit_ms = 0.0;
