@@ -1,3 +1,9 @@
+2017-01-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* jpegimage.c: Support Exif tags 0x5110, 0x5111, and 0x5112 in order to
+	avoid warnings for some kind of jpeg images. Changes are borrowed from
+	writejpg.w by Luigi in the recent LuaTeX.
+
 2016-12-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* cid_basefont.h: Add data for STHeiti-Regular-Acro, and correct
