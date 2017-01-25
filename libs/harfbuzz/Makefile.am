@@ -82,12 +82,12 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsubgpos-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsub-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-jstf-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-layout-math-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-math.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-map-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-math.h \
+	@HARFBUZZ_TREE@/src/hb-ot-math-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
@@ -113,7 +113,12 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-private.hh
+	@HARFBUZZ_TREE@/src/hb-ot-shape-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-avar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-fvar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-hvar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-var.h
 
 ## ICU library
 AM_CPPFLAGS += $(ICU_INCLUDES)
