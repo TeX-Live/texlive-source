@@ -76,11 +76,11 @@ HB_OT_sources = \
 	hb-ot-layout-gsubgpos-private.hh \
 	hb-ot-layout-gsub-table.hh \
 	hb-ot-layout-jstf-table.hh \
-	hb-ot-layout-math-table.hh \
 	hb-ot-layout-private.hh \
 	hb-ot-map.cc \
 	hb-ot-map-private.hh \
 	hb-ot-math.cc \
+	hb-ot-math-table.hh \
 	hb-ot-shape.cc \
 	hb-ot-shape-complex-arabic.cc \
 	hb-ot-shape-complex-arabic-fallback.hh \
@@ -108,6 +108,10 @@ HB_OT_sources = \
 	hb-ot-shape-fallback-private.hh \
 	hb-ot-shape-fallback.cc \
 	hb-ot-shape-private.hh \
+	hb-ot-var.cc \
+	hb-ot-var-avar-table.hh \
+	hb-ot-var-fvar-table.hh \
+	hb-ot-var-hvar-table.hh \
 	$(NULL)
 
 HB_OT_headers = \
@@ -117,6 +121,7 @@ HB_OT_headers = \
 	hb-ot-math.h \
 	hb-ot-shape.h \
 	hb-ot-tag.h \
+	hb-ot-var.h \
 	$(NULL)
 
 # Optional Sources and Headers with external deps

@@ -1,3 +1,644 @@
+commit 79e8e27ffd3da29ca27d3aebd2ef425bf1cb7f9d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 17:55:31 2017 -0800
+
+    [var] Hook up advance variations to hb-ot-font
+
+    Yay, works!
+
+ src/hb-ot-font.cc | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+commit 607434037199ccca422287e4d097487f17f3cfb5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 17:55:16 2017 -0800
+
+    [var] Fix bug in HVAR/VVAR impl
+
+ src/hb-ot-var-hvar-table.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit bd3b11d92663343350813ca29606b369f691af03
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 17:34:44 2017 -0800
+
+    [var] Prepare for hooking up advance variations to hb-ot-font
+
+ src/hb-ot-font.cc           | 28 +++++++++++++++++-----------
+ src/hb-ot-var-hvar-table.hh |  8 ++++----
+ 2 files changed, 21 insertions(+), 15 deletions(-)
+
+commit a4fca9f0051dbc177390a4e555b2d0fe642f724e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 11:56:08 2017 -0800
+
+    [var] Implement DeltaSetIndexMap and advance delta fetching
+
+    Not hooked up to hb-ot-font yet.
+
+ src/hb-ot-layout-common-private.hh |  8 ++++++
+ src/hb-ot-var-hvar-table.hh        | 56
+ ++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 61 insertions(+), 3 deletions(-)
+
+commit 7b399f73efa76cd97131fd123a9a1566f8639cfd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 11:41:43 2017 -0800
+
+    [var] Start adding HVAR/VVAR
+
+ src/Makefile.sources        |   1 +
+ src/hb-ot-font.cc           |   1 +
+ src/hb-ot-var-avar-table.hh |   1 -
+ src/hb-ot-var-fvar-table.hh |   1 -
+ src/hb-ot-var-hvar-table.hh | 115
+ ++++++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 117 insertions(+), 2 deletions(-)
+
+commit b732c53eb5bd0c2cc86f35a9d9623c92579a0b8c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 20:31:53 2017 -0800
+
+    Add LArrayOf<>
+
+ src/hb-open-type-private.hh        | 1 +
+ src/hb-ot-cbdt-table.hh            | 4 ++--
+ src/hb-ot-layout-common-private.hh | 2 +-
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+commit 5e156fa5ed33cd1a8ff388833563f15930bb12f9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 20:28:56 2017 -0800
+
+    Add LOffsetTo<>
+
+ src/hb-open-file-private.hh          |  2 +-
+ src/hb-open-type-private.hh          |  1 +
+ src/hb-ot-cbdt-table.hh              |  4 ++--
+ src/hb-ot-cmap-table.hh              |  6 +++---
+ src/hb-ot-layout-common-private.hh   | 10 +++++-----
+ src/hb-ot-layout-gdef-table.hh       |  4 ++--
+ src/hb-ot-layout-gsubgpos-private.hh |  2 +-
+ 7 files changed, 15 insertions(+), 14 deletions(-)
+
+commit d6bdbbca307d1a4aed60a78133eea40a1a9d5bf3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 20:16:51 2017 -0800
+
+    [var] Remove HB_OT_TAG_fvar/avar
+
+    We're not going to define public macros for tags for tables.
+    There's little use to those and they are implementation detail.
+
+ docs/harfbuzz-sections.txt  | 2 --
+ src/hb-ot-var-avar-table.hh | 2 ++
+ src/hb-ot-var-fvar-table.hh | 2 ++
+ src/hb-ot-var.h             | 3 ---
+ 4 files changed, 4 insertions(+), 5 deletions(-)
+
+commit a11d9a0466e480efebd69a34827675387cd2ca34
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 20:09:47 2017 -0800
+
+    Minor
+
+ src/hb-ot-font.cc       | 6 +++---
+ src/hb-ot-hmtx-table.hh | 8 +++-----
+ 2 files changed, 6 insertions(+), 8 deletions(-)
+
+commit 7a860f656e4aec45c45e0f5fb28c49a91dc5eef2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 19:52:09 2017 -0800
+
+    [var] Add macros for standard axes
+
+ docs/harfbuzz-sections.txt | 7 +++++++
+ src/hb-ot-var.h            | 6 ++++++
+ 2 files changed, 13 insertions(+)
+
+commit a484e237b11650d00092329855d33dd2f67980e4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 19:41:33 2017 -0800
+
+    [var] Implement 'avar' table mapping
+
+    Untested!
+
+ src/hb-ot-math.cc           |  2 --
+ src/hb-ot-var-avar-table.hh | 46
+ ++++++++++++++++++++++++++++++++++++++++++++-
+ src/hb-ot-var.cc            | 23 +++++++++++++++--------
+ 3 files changed, 60 insertions(+), 11 deletions(-)
+
+commit a42909057207cbed1ef95716170434c05beb0002
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 19:01:07 2017 -0800
+
+    [var] Flesh out --variations documentation
+
+ util/options.cc | 53
+ ++++++++++++++---------------------------------------
+ 1 file changed, 14 insertions(+), 39 deletions(-)
+
+commit 5ec96d30cad1592b5e468bd8ad1832dbaf0ad32b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 18:52:00 2017 -0800
+
+    [var] Adjust API in prep for 'avar' implementation
+
+    The 'avar' table does not allow random access to axis maps,
+    so change API to avoid quadratic-time implementation.
+
+    Removed -hb_ot_var_normalize_axis_value(), added
+    +hb_ot_var_normalize_variations() and
+    +hb_ot_var_normalize_coords() instead.
+
+ docs/harfbuzz-sections.txt |  3 ++-
+ src/Makefile.sources       |  1 +
+ src/hb-font.cc             | 20 +++++---------------
+ src/hb-ot-var.cc           | 45
+ +++++++++++++++++++++++++++++++++++++++------
+ src/hb-ot-var.h            | 16 ++++++++++++----
+ 5 files changed, 59 insertions(+), 26 deletions(-)
+
+commit 8a577aaa0dd760409bcad1ae3d4f5fb561a62a4b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 18:22:40 2017 -0800
+
+    [var] Stub implementation of avar table
+
+ src/hb-ot-var-avar-table.hh | 99
+ +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+
+commit 7647a05a0b37c53465560952b412db4e590f2716
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 17:47:49 2017 -0800
+
+    Minor
+
+ src/hb-font.cc       |  5 ++++-
+ src/hb-font.h        |  2 +-
+ src/hb-ft.cc         |  2 +-
+ util/helper-cairo.cc | 14 +++++++++-----
+ 4 files changed, 15 insertions(+), 8 deletions(-)
+
+commit d2f249e745a9179943ee39c719b73e1057acbc13
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 17:42:33 2017 -0800
+
+    Stub out doc comments for new symbols
+
+ docs/harfbuzz-docs.xml     |  2 +-
+ docs/harfbuzz-sections.txt | 35 +++++++++++++++++++++++++++++++++--
+ src/hb-common.cc           | 10 ++++++++++
+ src/hb-common.h            |  5 +++++
+ src/hb-directwrite.cc      |  2 +-
+ src/hb-directwrite.h       |  2 +-
+ src/hb-font.cc             | 20 ++++++++++++++++++++
+ src/hb-ot-var.cc           | 24 ++++++++++++++++++++++--
+ src/hb-ot-var.h            | 12 +++++-------
+ src/hb-set.cc              |  2 +-
+ 10 files changed, 99 insertions(+), 15 deletions(-)
+
+commit 5dfd341f51543279039ddafe883c0a1de205fb8a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 16:55:40 2017 -0800
+
+    Minor
+
+ src/hb-directwrite.cc | 4 ++--
+ src/hb-shape.cc       | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+commit 825e40407da74576f8e83ce0bacad5b0459b83c8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 22 16:41:45 2017 -0800
+
+    [hb-ft] Remove use of variable-length array
+
+    Hopefully also fixes build failure on msvc.
+
+ src/hb-ft.cc | 33 +++++++++++++++++++++------------
+ 1 file changed, 21 insertions(+), 12 deletions(-)
+
+commit 47ee34e84745756a9aaeb964772377b6c1417ed1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 18:10:08 2017 -0800
+
+    [var] Hook up variations to FreeType face
+
+    hb-view correctly renders variations with ft font-funcs now.
+    hb-ot-font needs HVAR implementation.
+
+ src/hb-ft.cc         | 10 ++++++++++
+ util/helper-cairo.cc | 16 +++++++++++++++-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
+
+commit 111f3e55178f7cd5a8ae4e8ae111cb48aea4acb5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 17:51:41 2017 -0800
+
+    [util] Add --variations
+
+    Is hooked up to the font, but not to FreeType, so raster doesn't
+    show yet.
+
+    Documentation needs to be done.
+
+ util/options.cc | 91
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ util/options.hh |  8 ++++-
+ 2 files changed, 98 insertions(+), 1 deletion(-)
+
+commit bb1e19268f02d4aad2240c52852e72afcf0f79ad
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 17:41:37 2017 -0800
+
+    [var] Rename var_coord to variation
+
+    Looks much better.
+
+ src/hb-common.cc | 36 ++++++++++++++++++------------------
+ src/hb-common.h  | 10 +++++-----
+ src/hb-font.cc   | 20 ++++++++++----------
+ src/hb-font.h    |  6 +++---
+ 4 files changed, 36 insertions(+), 36 deletions(-)
+
+commit 64fe92bf2d43a0ea31743d774e073f202021dbd1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 15:36:35 2017 -0800
+
+    [var] Remove use of variable-length arrays
+
+ src/hb-font.cc | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+commit 2491134b386507f611a47e43e3f7c2766d0d288b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 15:21:50 2017 -0800
+
+    [var] Add hb_font_set_var_coords()
+
+ src/hb-font.cc | 38 ++++++++++++++++++++++++++++++++++++--
+ src/hb-font.h  |  8 ++++++--
+ 2 files changed, 42 insertions(+), 4 deletions(-)
+
+commit 113393efec5e0c4c10c141a6d4b801d50fcd8ab8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 15:12:03 2017 -0800
+
+    Remove a few unused includes
+
+ src/hb-face.cc      | 6 +-----
+ src/hb-font.cc      | 7 -------
+ src/hb-ot-layout.cc | 5 +----
+ src/hb-ot-tag.cc    | 3 ---
+ 4 files changed, 2 insertions(+), 19 deletions(-)
+
+commit 2d40923ca914c90304d07d6e7b9b1040c79c76fe
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 15:06:15 2017 -0800
+
+    Minor
+
+ src/hb-ot-math.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8b2a58047095604dcdc576ecbe3e8c2ebb8f48f0
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 15:05:00 2017 -0800
+
+    [var] Add hb_font_set_var_coords_design()
+
+ src/hb-font.cc | 21 +++++++++++++++++++--
+ src/hb-font.h  |  7 ++++++-
+ 2 files changed, 25 insertions(+), 3 deletions(-)
+
+commit 0dcc7b49a830e2680d3e6d86d953efab85cef6ff
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 14:50:22 2017 -0800
+
+    [var] Minor lifecycle adjustment
+
+ src/hb-font.cc | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit bf0d3a665baac9e33c0f774b22197c321b864c80
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sat Jan 21 14:48:46 2017 -0800
+
+    [var] Add hb_font_get_var_coords_normalized()
+
+ src/hb-font.cc | 10 ++++++++++
+ src/hb-font.h  |  4 ++++
+ 2 files changed, 14 insertions(+)
+
+commit b3c0714b4bbb726b2b3e5e0416ac84cb5c6eb34e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 20:30:03 2017 -0800
+
+    [var] Add hb_var_coord_t and parsing routines
+
+ src/hb-common.cc | 94
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ src/hb-common.h  | 15 ++++++++-
+ 2 files changed, 103 insertions(+), 6 deletions(-)
+
+commit 72364103bc9d910d19f23a3764d045af79d076d5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 20:16:53 2017 -0800
+
+    Move code around
+
+ src/hb-common.cc | 250
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-common.h  |  18 ++++
+ src/hb-shape.cc  | 248
+ ------------------------------------------------------
+ src/hb-shape.h   |  16 ----
+ 4 files changed, 268 insertions(+), 264 deletions(-)
+
+commit 785982bf830723552270db5649abcb9f9f0b46b1
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 19:57:27 2017 -0800
+
+    [var] Flesh out some more
+
+ src/Makefile.am             |  2 ++
+ src/hb-ot-var-fvar-table.hh | 69
+ ++++++++++++++++++++++++++++++++-------------
+ src/hb-ot-var.cc            | 39 ++++++++++++++++++++++++-
+ src/hb-ot-var.h             | 21 +++++++++-----
+ 4 files changed, 104 insertions(+), 27 deletions(-)
+
+commit 422c0c36c80145a2d993f80d5c7d3265e3d8357a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 19:14:54 2017 -0800
+
+    [var] Flesh out a bit
+
+ src/hb-ot-var-fvar-table.hh | 72
+ ++++++++++++++++++++++++++++++++++++---------
+ src/hb-ot-var.h             | 10 ++++++-
+ 2 files changed, 67 insertions(+), 15 deletions(-)
+
+commit b8376b10904e1772b8d34d852d1100ca7e2185e2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 18:19:28 2017 -0800
+
+    Minor
+
+ src/hb-ft.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit f2e73d37e77ccea8b948d1ecf5f11e7a699386dc
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 17:42:18 2017 -0800
+
+    [var] Remove over-optimization
+
+ src/hb-font.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit 469926cc45760cb681d44e5757b18b9bdd736189
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Jan 20 17:40:46 2017 -0800
+
+    [var] Change double to float in API
+
+ src/hb-ot-var.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 55d42fd667b9c34a1109bb850bf2ea7322c01040
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 19 19:35:48 2017 -0800
+
+    Start adding hb-ot-var.h and implementation
+
+    Supports enumerating variation axes, normalizing values, etc.
+
+ src/Makefile.sources        |   3 +
+ src/hb-ot-layout-private.hh |   6 ++
+ src/hb-ot-layout.cc         |   4 ++
+ src/hb-ot-var-fvar-table.hh | 133
+ ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-var.cc            |  63 +++++++++++++++++++++
+ src/hb-ot-var.h             |  81 +++++++++++++++++++++++++++
+ src/hb-ot.h                 |   1 +
+ 7 files changed, 291 insertions(+)
+
+commit 272b5115325b785e92ff5500d4bfc3a67490b6f8
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 19 19:33:07 2017 -0800
+
+    Minor
+
+ src/hb-ot-math.cc | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+commit a8a5e81a52f56f5f8bf975dc4d9f79bede5d895b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 19 16:55:04 2017 -0800
+
+    [test-ot-math] Add test with nil face/font
+
+ test/api/test-ot-math.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit 331d07bd40a3d9ff30db5cdf85fdc4f10f0fcb99
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 19 16:51:36 2017 -0800
+
+    Minor
+
+ test/api/test-ot-math.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit b5ecf1bfa459a755e36bc4c7f545c7f803b7d016
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 19 16:50:29 2017 -0800
+
+    Fix warnings
+
+ test/api/test-ot-math.c | 18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
+
+commit 2f2ceee1853649d1b2ad4315a38cd9c07659932a
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 19 16:48:01 2017 -0800
+
+    Minor
+
+ test/api/test-ot-math.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 2452543fdd383e62b8c4bc44b11bfd6796fc9963
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Jan 18 22:48:13 2017 +0200
+
+    [ot] Fix automatic fraction for RTL scripts (#405)
+
+    The numbers for right-to-left scripts are processed also from right to
+    left, so the order of applying “numr” and “dnom” features
+    should be
+    reversed in such case.
+
+    Fixes https://github.com/behdad/harfbuzz/issues/395
+
+ src/hb-ot-shape.cc                                      |  16
+ ++++++++++++++--
+ test/shaping/Makefile.am                                |   1 +
+ .../15dfc433a135a658b9f4b1a861b5cdd9658ccbb9.ttf        | Bin 0 ->
+ 4936 bytes
+ test/shaping/tests/automatic-fractions.tests            |   3 +++
+ 4 files changed, 18 insertions(+), 2 deletions(-)
+
+commit 1337428e4f8a2a4c78312c581bf4e96cd49d783f
+Author: Sascha Brawer <sascha@brawer.ch>
+Date:   Wed Jan 18 13:51:02 2017 +0100
+
+    Update language tags to OpenType 1.8.1 (#403)
+
+    Resolves https://github.com/behdad/harfbuzz/issues/324
+
+ src/hb-ot-tag.cc       | 77
+ ++++++++++++++++++++++++++++++++++++++++++++------
+ test/api/test-ot-tag.c | 58 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 126 insertions(+), 9 deletions(-)
+
+commit 784d1180de19fbf4948f08ee2124277cc06066dd
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Jan 11 11:58:13 2017 -0800
+
+    Fix build with clang
+
+ src/hb-open-type-private.hh | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit 1f810daf1640f279c2f7aad8c312664cf2293987
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 23:50:56 2017 -0800
+
+    Port math table to hb_lazy_table_loader_t
+
+ src/hb-open-type-private.hh | 22 +++++++++++++++++-----
+ src/hb-ot-layout-private.hh |  4 ++--
+ src/hb-ot-layout.cc         |  7 +++----
+ src/hb-ot-math.cc           | 17 +----------------
+ 4 files changed, 23 insertions(+), 27 deletions(-)
+
+commit ebbcc1112229cde9ed469efdfeac7ef79dfcd834
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 22:45:25 2017 -0800
+
+    Add hb_lazy_table_loader_t
+
+ src/hb-open-type-private.hh | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+commit 1af9d924a474f210fda10b5e8ab6b388241aa0b5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 22:22:37 2017 -0800
+
+    Move lazy-loader to more generic place
+
+ src/hb-open-type-private.hh | 47
+ ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-font.cc           | 48
+ ++-------------------------------------------
+ 2 files changed, 49 insertions(+), 46 deletions(-)
+
+commit ac274331c285e1b42632870e150e1d66a9e21933
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 22:20:38 2017 -0800
+
+    In lazy-loading, remember allocation failure
+
+ src/hb-ot-font.cc | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit 29fb0cb727555ea60460d794a3c6f30179546af9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 21:18:55 2017 -0800
+
+    Minor
+
+ src/hb-face-private.hh | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+commit 93ef684b9bc411b7642df3adeb2248ad6010ee66
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 21:11:00 2017 -0800
+
+    Rename hb-ot-layout-math-table.hh to hb-ot-math-table.hh
+
+ src/Makefile.sources                                    | 2 +-
+ src/{hb-ot-layout-math-table.hh => hb-ot-math-table.hh} | 6 +++---
+ src/hb-ot-math.cc                                       | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+commit 3b5263b0e9e23e56e14ce6a8498c21c5ce95cc35
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 15:49:08 2017 -0800
+
+    Typo
+
+ src/hb-ot-layout-math-table.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ebf927d3d4394159e480fec2042a0456df8dd0f4
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Mon Jan 9 13:12:09 2017 +0330
+
+    Make UCDN default enabled (fixes #389) (#391)
+
+ win32/config-msvc.mak | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+commit 00adf9c8a4573a2b3ef61991197821af03bca310
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 9 00:00:49 2017 -0800
+
+    Minor
+
+    Should be enough to get -hangul.cc out of SOURCES in Firefox build:
+    https://dxr.mozilla.org/mozilla-central/source/gfx/harfbuzz/src/moz.build
+
+    No one else should care!
+
+ src/hb-ot-shape-complex-hangul.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 7cf9952e7fc015d0b08d3de6c95357662d57ad8d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Jan 8 23:55:54 2017 -0800
+
+    [USE] Remove non-canonical decompositions
+
+    We have had added this in Indic shaper to assist shaping these
+    scripts.
+    In Universal Shaping Engine however, it is up to font designer to
+    decompose them.  Hence moving them from Indic shaper to USE was
+    wrong.
+
+    Fixup for f6ba63b2e8eb577385f70758efdd3b8408c8a9cb
+
+    Part of fixing https://github.com/behdad/harfbuzz/issues/387
+
+ src/hb-ot-shape-complex-use.cc | 22 ----------------------
+ 1 file changed, 22 deletions(-)
+
+commit af596a5655ee2ed09da17a7de79f619e1547dcd9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 5 20:24:41 2017 -0800
+
+    1.4.1
+
+ NEWS         | 10 ++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+
 commit 31f7b1bb94c2cef7ce58df52ddd1b09b42e8f596
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Thu Jan 5 20:20:06 2017 -0800

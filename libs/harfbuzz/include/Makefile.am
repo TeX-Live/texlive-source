@@ -33,7 +33,8 @@ hdr_links += \
 	$(HARFBUZZ_SRC)/hb-ot-layout.h \
 	$(HARFBUZZ_SRC)/hb-ot-math.h \
 	$(HARFBUZZ_SRC)/hb-ot-shape.h \
-	$(HARFBUZZ_SRC)/hb-ot-tag.h
+	$(HARFBUZZ_SRC)/hb-ot-tag.h \
+	$(HARFBUZZ_SRC)/hb-ot-var.h
 
 ## ICU library
 hdr_links += $(HARFBUZZ_SRC)/hb-icu.h

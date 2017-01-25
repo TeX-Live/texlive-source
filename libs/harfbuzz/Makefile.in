@@ -150,6 +150,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-var.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-icu.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-graphite2.$(OBJEXT)
 libharfbuzz_a_OBJECTS = $(am_libharfbuzz_a_OBJECTS)
@@ -691,12 +692,12 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsubgpos-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-gsub-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-jstf-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-layout-math-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-math.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-map-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-math.h \
+	@HARFBUZZ_TREE@/src/hb-ot-math-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
@@ -723,6 +724,11 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-private.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-avar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-fvar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-hvar-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-var.h \
 	@HARFBUZZ_TREE@/src/hb-icu.cc \
 	@HARFBUZZ_TREE@/src/hb-graphite2.cc
 @build_TRUE@dist_check_SCRIPTS = harfbuzz.test
@@ -903,6 +909,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-var.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-icu.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -959,6 +968,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-normalize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-tag.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-var.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-set.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-shape-plan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-shape.Po@am__quote@
