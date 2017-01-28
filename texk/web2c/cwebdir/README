@@ -19,7 +19,7 @@
 %
 % DEK takes no responsibility for the changefiles; they should be
 % maintained independently. His job is to correct errors in
-% ctangle.w, cweave.w, common.w, cwebmac.tex, cwebman.tex,
+% ctangle.w, cweave.w, prod.w, common.w, cwebmac.tex, cwebman.tex,
 % and in the files of examples/*.w, nothing more.
 
 This directory contains the following files:
@@ -102,3 +102,9 @@ Note that change files for VMS, AMIGA, MAC, and PCs are provided.  When you
 are first bootstrapping to a new system, you may need to edit common.c and
 ctangle.c by hand, but the vast majority of the change-file changes are
 minor refinements that are not necessary for a rudimentary ctangle.
+
+-----------------------------------------
+These archival sources are maintained only to the extent of fixing
+significant bugs that were unintended at the time of writing.
+A multi-decade ongoing project to improve and extend CWEB can be found at
+  https://github.com/ascherer/cwebbin

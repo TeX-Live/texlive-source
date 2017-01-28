@@ -151,7 +151,7 @@ some of \.{CWEB}'s routines use the fact that it is safe to refer to
 |*(limit+2)| without overstepping the bounds of the array.
 
 @d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
-@d longest_name 1000
+@d longest_name 10000
 @d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
 @d xisspace(c) (isspace(c)&&((unsigned char)c<0200))
 @d xisupper(c) (isupper(c)&&((unsigned char)c<0200))
@@ -615,7 +615,7 @@ usually have |name_ptr->byte_start==byte_ptr|, and certainly
 we want to keep |name_ptr<=name_dir_end| and |byte_ptr<=byte_mem_end|.
 
 @<Defini...@>=
-name_pointer name_ptr; /* first unused position in |byte_start| */
+name_pointer name_ptr; /* first unused position in |name_dir| */
 char *byte_ptr; /* first unused position in |byte_mem| */
 
 @ @<Init...@>=

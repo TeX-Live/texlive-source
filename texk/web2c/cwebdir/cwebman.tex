@@ -1,4 +1,5 @@
 % This file generates the user manual; TeX it, don't read it!
+% update 14 Nov 2016 by DEK: corrected obsolete remarks re debugging info
 
 \def\tangref{3} % where the main explanation of CTANGLing is given
 \input cwebmac
@@ -1087,9 +1088,9 @@ you get the following gibberish on your screen:
 \begingroup
 \verbatim
 [...]
-4:*exp ( +exp+ )...
-11:*exp +exp+ int...
-5:*+exp+ int +unorbinop+...
+14:*exp +(+ exp...
+11:*exp +exp+ raw...
+10:*+exp+ raw +ubinop?+...
 [...]
 60: +fn_decl+*+{+ -stmt- +}-
 55:*+fn_decl+ -stmt-
@@ -1098,7 +1099,7 @@ you get the following gibberish on your screen:
 !endgroup
 \endgroup
 \medskip
-The first line says that grammar rule 4 has just been applied, and \.{CWEAVE}
+The first line says that grammar rule 14 has just been applied, and \.{CWEAVE}
 currently has in its memory a sequence of chunks of \TEX/ code (called
 ``scraps'') that are respectively
 of type \\{exp} (for expression), open-parenthesis,
@@ -1514,7 +1515,7 @@ is to explain some of the possibilities.
 
 \point 1. Four fonts have been declared in addition to the standard fonts of
 \.{PLAIN} format: You can say `\.{\{\\mc UNIX\}}' to get {\mc UNIX} in
-xmedium-size caps; you can say `\.{\{\\sc STUFF\}}' to get {\sc STUFF}
+medium-size caps; you can say `\.{\{\\sc STUFF\}}' to get {\sc STUFF}
 in small caps; and you can select the largish fonts \.{\\titlefont}
 and \.{\\ttitlefont} in the title of your document, where \.{\\ttitlefont}
 is a typewriter style of type. There are macros \.{\\UNIX/} and \.{\\CEE/}

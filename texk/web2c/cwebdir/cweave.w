@@ -5,6 +5,7 @@
 % Version 3.64 --- February 2002
 % (essentially the same as version 3.6, which added
 %  recently introduced features of standard C++ to version 3.4)
+% (In November 2016 I made minor adjustments but changed no code -- DEK)
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -1298,7 +1299,7 @@ be output.
 
 @<Global...@>=
 char out_buf[line_length+1]; /* assembled characters */
-char *out_ptr; /* just after last character in |out_buf| */
+char *out_ptr; /* last character in |out_buf| */
 char *out_buf_end = out_buf+line_length; /* end of |out_buf| */
 int out_line; /* number of next line to be output */
 
@@ -1321,7 +1322,7 @@ of commented-out text).
 @c
 void
 flush_buffer(b,per_cent,carryover)
-char *b;  /* outputs from |out_buf+1| to |b|,where |b<=out_ptr| */
+char *b; /* outputs from |out_buf+1| to |b|,where |b<=out_ptr| */
 boolean per_cent,carryover;
 {
   char *j; j=b; /* pointer into |out_buf| */
@@ -1605,7 +1606,7 @@ if (c=='@@') {
   }
 }
 else if (c=='\\' && *loc!='@@')
-  if (phase==2) app_tok(*(loc++)) else loc++;
+  if (phase==2) app_tok(*(loc++))@; else loc++;
 
 @ We output
 enough right braces to keep \TEX/ happy.
@@ -3890,7 +3891,7 @@ while (k<k_limit) {
 @.\\\_@>
  default: out(b);
     }
-  else if (b!='|') out(b)
+  else if (b!='|') out(b)@;
   else {
     @<Copy the \CEE/ text into the |buffer| array@>;
     save_loc=loc; save_limit=limit; loc=limit+2; limit=j+1;
@@ -3922,7 +3923,7 @@ while (1) {
   }
   b=*(k++);
   if (b=='@@' || (b=='\\' && delim!=0))
-     @<Copy a quoted character into the buffer@>
+     @<Copy a quoted character into the buffer@>@;
   else {
     if (b=='\'' || b=='"')
       if (delim==0) delim=b;
@@ -4478,7 +4479,7 @@ void
 unbucket(d) /* empties buckets having depth |d| */
 eight_bits d;
 {
-  int c;  /* index into |bucket|; cannot be a simple |char| because of sign
+  int c; /* index into |bucket|; cannot be a simple |char| because of sign
     comparison below*/
   for (c=100+128; c>= 0; c--) if (bucket[collate[c]]) {
 @^high-bit character handling@>

@@ -193,3 +193,5 @@ tarfile: $(ALL) examples
 	tar cvhf /tmp/cweb.tar $(ALL) examples
 	gzip -9 /tmp/cweb.tar
 
+tarball:
+	tar zcvhf /tmp/cweb.tgz $(ALL) examples

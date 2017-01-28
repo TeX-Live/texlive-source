@@ -40,7 +40,7 @@ change them in the file |"common.w"|.
   must be less than 10240; used in |"common.w"| */
 @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
 @d hash_size 353 /* should be prime; used in |"common.w"| */
-@d longest_name 1000 /* section names shouldn't be longer than this */
+@d longest_name 10000 /* section names shouldn't be longer than this */
 @d stack_size 50 /* number of simultaneous levels of macro expansion */
 @d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
 @y
@@ -67,7 +67,7 @@ to run \.{CTANGLE} from a makefile.)
   must be less than 10240; used in |"common.w"| */
 @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
 @d hash_size 353 /* should be prime; used in |"common.w"| */
-@d longest_name 1000 /* section names shouldn't be longer than this */
+@d longest_name 10000 /* section names shouldn't be longer than this */
 @d stack_size 50 /* number of simultaneous levels of macro expansion */
 @d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
 @z
@@ -93,7 +93,7 @@ extern char byte_mem[]; /* characters of names */
 extern char *byte_mem_end; /* end of |byte_mem| */
 extern name_info name_dir[]; /* information about names */
 extern name_pointer name_dir_end; /* end of |name_dir| */
-extern name_pointer name_ptr; /* first unused position in |byte_start| */
+extern name_pointer name_ptr; /* first unused position in |name_dir| */
 extern char *byte_ptr; /* first unused position in |byte_mem| */
 extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */
@@ -126,7 +126,7 @@ extern char huge byte_mem[]; /* characters of names */
 extern char huge* byte_mem_end; /* end of |byte_mem| */
 extern name_info name_dir[]; /* information about names */
 extern name_pointer name_dir_end; /* end of |name_dir| */
-extern name_pointer name_ptr; /* first unused position in |byte_start| */
+extern name_pointer name_ptr; /* first unused position in |name_dir| */
 extern char huge* byte_ptr; /* first unused position in |byte_mem| */
 extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */

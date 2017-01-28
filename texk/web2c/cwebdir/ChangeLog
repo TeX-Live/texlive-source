@@ -1,3 +1,23 @@
+2017-01-29  Karl Berry  <karl@tug.org>
+
+	* ../cwebboot.cin,
+	* Makefile,
+	* README,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-bs.ch,
+	* ctangle.w,
+	* cweav-bs.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* cweb.el,
+	* cwebmac.tex,
+	* cwebman.tex,
+	* Master/texmf-dist/tex/plain/cweb/cwebmac.tex: sync all with
+	cweb 3.64ai from DEK, http://ctan.org/pkg/cweb.
+	* cweav-w2c.ch: sync @x blocks with 3.64ai.
+
 2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* comm-w2c.ch, ctang-w2c.ch, cweav-w2c.ch: Avoid useless
