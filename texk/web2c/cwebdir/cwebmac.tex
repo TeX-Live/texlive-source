@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.68 --- January 2016
+% Version 3.69 --- February 2016
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB3.68}
-\chardef\cwebversion=3 \chardef\cwebrevision=68
+\xdef\fmtversion{\fmtversion+CWEB3.69}
+\chardef\cwebversion=3 \chardef\cwebrevision=69
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -10,7 +10,11 @@
 \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
 \newif\ifpdftex
 \ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
-\else \pdftextrue \pdfoutput=1 \input pdfcolor \let\setcolor\pdfsetcolor \fi\fi
+%\else \pdftextrue \pdfoutput=1 \input pdfcolor \let\setcolor\pdfsetcolor \fi\fi
+\else \pdftextrue \pdfoutput=1 % changed in 3.69
+  \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
+  \def\Blue{\pdfliteral{0 0 1 rg 0 0 1 RG}}
+\fi\fi
 \newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
@@ -136,7 +140,7 @@
 \ifpdftex
   \ifx\pdfannotlink\undefined\let\pdfannotlink\pdfstartlink\fi% for pdfTeX 0.14
   \def\pdflink#1#2{\hbox{\pdfannotlink height\ht\strutbox depth\dp\strutbox
-    attr{/Border [0 0 0]} goto num #1 \BlueGreen #1\Black\pdfendlink}}
+    attr{/Border [0 0 0]} goto num #1 \Blue #1\Black\pdfendlink}} % changed 3.69
 \else\def\pdflink#1#2{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
       depth \thedepth << /Type /Annot /Subtype /Link
@@ -166,7 +170,7 @@
 \def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
 \def\pdfURL#1#2{\ifpdftex\pdfannotlink height\ht\strutbox depth\dp\strutbox
   attr {/Border [0 0 0]} user { /Type /Action /Subtype /Link /A
-      << /S /URI /URI (#2) >>}\BlueGreen #1\Black \pdfendlink
+      << /S /URI /URI (#2) >>}\Blue #1\Black \pdfendlink % changed in 3.69
   \else \ifpdf{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth\space height \theheight
       \space depth \thedepth\space << /Border [0 0 0]
@@ -473,7 +477,7 @@
   \def\I{\par\hangindent 2em}\let\*=*
   \ifacro \def\outsecname{Names of the sections} \let\Xpdf\X
 %  \ifpdftex \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
-  \ifpdftex \pdfdest name {NOS} fitb % changed in version 3.68
+  \ifpdftex \pdfdest name {NOS} fith % changed in version 3.69
     \pdfoutline goto name {NOS} count -\secno {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%

@@ -110,6 +110,8 @@ otherwise do an ordinary Meta-y."
       (insert ch)
       (setq arg (1- arg)))))
 (global-set-key "\M-\"" 'ditto)
+; If "ditto" suddenly fails to work, you have probably set goal-column
+; inadvertently. To unset it, say C-u C-x C-n.
 
 ;; OK, here's part (2): Changes to TeX mode.
 ; The WEB modes below are very much like TeX mode, but some improvements were
@@ -210,6 +212,7 @@ for relative module movement. The automatic \" feature is disabled."
   (modify-syntax-entry ?% "@")
   (setq mode-name "CWEB")
   (setq major-mode 'cweb-mode)
+  (setq tex-fontify-script nil) ;; needed in GNU Emacs version 22?
   (run-hooks 'cweb-mode-hook))
 (setq auto-mode-alist (cons '("\\.w$" . cweb-mode) auto-mode-alist))
 (setq auto-mode-alist (cons '("\\.ch$" . cweb-mode) auto-mode-alist))

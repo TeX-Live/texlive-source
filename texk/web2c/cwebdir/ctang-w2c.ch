@@ -1,5 +1,4 @@
-% Kpathsea changes for CWEB by Wlodek Bzyl and Olaf Weber
-% Copyright 2002 Wlodek Bzyl and Olaf Weber
+% Original Kpathsea changes for CWEB by Wlodek Bzyl and Olaf Weber
 % This file is in the Public Domain.
 
 @x l.27

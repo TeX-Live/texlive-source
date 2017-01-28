@@ -116,7 +116,7 @@ change them in the file |"common.w"|.
   must be less than 10240; used in |"common.w"| */
 @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
 @d hash_size 353 /* should be prime; used in |"common.w"| */
-@d longest_name 10000 /* section names shouldn't be longer than this */
+@d longest_name 10000 /* section names and strings shouldn't be longer than this */
 @d stack_size 50 /* number of simultaneous levels of macro expansion */
 @d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
 

@@ -4,7 +4,7 @@
 /*5:*/
 #line 102 "cwebdir/common.w"
 
-#line 74 "cwebdir/comm-w2c.ch"
+#line 73 "cwebdir/comm-w2c.ch"
 #define CWEB
 #include "cpascal.h"
 #include <ctype.h> 
@@ -18,7 +18,7 @@
 /*:8*//*22:*/
 #line 471 "cwebdir/common.w"
 
-#line 213 "cwebdir/comm-w2c.ch"
+#line 212 "cwebdir/comm-w2c.ch"
 #include <kpathsea/kpathsea.h>  
 #include <stdlib.h>  
 #include "help.h"
@@ -46,7 +46,7 @@
 #define minus_gt_ast 027 \
 
 #define buf_size 1000
-#define longest_name 1000
+#define longest_name 10000
 #define long_buf_size (buf_size+longest_name) 
 #define xisspace(c) (isspace((unsigned char) c) &&((unsigned char) c<0200) ) 
 #define xisupper(c) (isupper((unsigned char) c) &&((unsigned char) c<0200) )  \
@@ -226,7 +226,7 @@ name_pointer hash[hash_size];
 hash_pointer hash_end= hash+hash_size-1;
 hash_pointer h;
 
-#line 345 "cwebdir/comm-w2c.ch"
+#line 344 "cwebdir/comm-w2c.ch"
 /*:34*//*58:*/
 #line 1082 "cwebdir/common.w"
 
@@ -250,7 +250,7 @@ FILE*C_file;
 FILE*tex_file;
 FILE*idx_file;
 FILE*scn_file;
-#line 731 "cwebdir/comm-w2c.ch"
+#line 730 "cwebdir/comm-w2c.ch"
 FILE*active_file;
 char*found_filename;
 #line 1376 "cwebdir/common.w"
@@ -271,24 +271,24 @@ char*change_limit;
 /*:11*/
 #line 62 "cwebdir/common.w"
 
-#line 38 "cwebdir/comm-w2c.ch"
+#line 37 "cwebdir/comm-w2c.ch"
 #include "cwebboot.h"
 /*55:*/
 #line 1017 "cwebdir/common.w"
 
-#line 519 "cwebdir/comm-w2c.ch"
+#line 518 "cwebdir/comm-w2c.ch"
 static int section_name_cmp(char**,int,name_pointer);
 #line 1019 "cwebdir/common.w"
 
 /*:55*//*71:*/
 #line 1251 "cwebdir/common.w"
 
-#line 648 "cwebdir/comm-w2c.ch"
+#line 647 "cwebdir/comm-w2c.ch"
 static void scan_args(void);
 #line 1253 "cwebdir/common.w"
 
 /*:71*/
-#line 39 "cwebdir/comm-w2c.ch"
+#line 38 "cwebdir/comm-w2c.ch"
 
 #line 64 "cwebdir/common.w"
 
@@ -296,11 +296,11 @@ static void scan_args(void);
 #line 89 "cwebdir/common.w"
 
 void
-#line 59 "cwebdir/comm-w2c.ch"
+#line 58 "cwebdir/comm-w2c.ch"
  common_init(void)
 #line 92 "cwebdir/common.w"
 {
-#line 65 "cwebdir/comm-w2c.ch"
+#line 64 "cwebdir/comm-w2c.ch"
 /*32:*/
 #line 621 "cwebdir/common.w"
 
@@ -319,22 +319,22 @@ for(h= hash;h<=hash_end;*h++= NULL);
 root= NULL;
 
 /*:43*/
-#line 65 "cwebdir/comm-w2c.ch"
+#line 64 "cwebdir/comm-w2c.ch"
 ;
 /*24:*/
-#line 248 "cwebdir/comm-w2c.ch"
+#line 247 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 #line 473 "cwebdir/common.w"
 
 /*:24*/
-#line 66 "cwebdir/comm-w2c.ch"
+#line 65 "cwebdir/comm-w2c.ch"
 ;
 #line 94 "cwebdir/common.w"
 /*70:*/
 #line 1233 "cwebdir/common.w"
 
-#line 640 "cwebdir/comm-w2c.ch"
+#line 639 "cwebdir/comm-w2c.ch"
 show_banner= show_happiness= show_progress= 1;
 #line 1235 "cwebdir/common.w"
 
@@ -346,14 +346,14 @@ show_banner= show_happiness= show_progress= 1;
 
 scan_args();
 if(program==ctangle){
-#line 740 "cwebdir/comm-w2c.ch"
+#line 739 "cwebdir/comm-w2c.ch"
 if((C_file= fopen(C_file_name,"wb"))==NULL)
 #line 1381 "cwebdir/common.w"
 fatal("! Cannot open output file ",C_file_name);
 
 }
 else{
-#line 746 "cwebdir/comm-w2c.ch"
+#line 745 "cwebdir/comm-w2c.ch"
 if((tex_file= fopen(tex_file_name,"wb"))==NULL)
 #line 1386 "cwebdir/common.w"
 fatal("! Cannot open output file ",tex_file_name);
@@ -367,7 +367,7 @@ fatal("! Cannot open output file ",tex_file_name);
 /*:4*//*9:*/
 #line 172 "cwebdir/common.w"
 
-#line 101 "cwebdir/comm-w2c.ch"
+#line 100 "cwebdir/comm-w2c.ch"
 int input_ln(FILE*fp)
 #line 175 "cwebdir/common.w"
 {
@@ -376,7 +376,7 @@ register char*k;
 if(feof(fp))return(0);
 limit= k= buffer;
 while(k<=buffer_end&&(c= getc(fp))!=EOF&&c!='\n')
-#line 107 "cwebdir/comm-w2c.ch"
+#line 106 "cwebdir/comm-w2c.ch"
 if((*(k++)= c)!=' '&&c!='\r')limit= k;
 #line 182 "cwebdir/common.w"
 if(k> buffer_end)
@@ -392,7 +392,7 @@ return(1);
 /*:9*//*12:*/
 #line 251 "cwebdir/common.w"
 
-#line 129 "cwebdir/comm-w2c.ch"
+#line 128 "cwebdir/comm-w2c.ch"
 static void
 prime_the_change_buffer(void)
 #line 254 "cwebdir/common.w"
@@ -406,7 +406,7 @@ change_line++;
 if(!input_ln(change_file))return;
 if(limit<buffer+2)continue;
 if(buffer[0]!='@')continue;
-#line 136 "cwebdir/comm-w2c.ch"
+#line 135 "cwebdir/comm-w2c.ch"
 if(xisupper(buffer[1]))buffer[1]= tolower((unsigned char)buffer[1]);
 #line 272 "cwebdir/common.w"
 if(buffer[1]=='x')break;
@@ -451,7 +451,7 @@ strncpy(change_buffer,buffer,limit-buffer+1);
 /*:12*//*16:*/
 #line 320 "cwebdir/common.w"
 
-#line 145 "cwebdir/comm-w2c.ch"
+#line 144 "cwebdir/comm-w2c.ch"
 static void
 check_change(void)
 #line 323 "cwebdir/common.w"
@@ -472,7 +472,7 @@ change_limit= change_buffer;changing= 0;
 return;
 }
 if(limit> buffer+1&&buffer[0]=='@'){
-#line 152 "cwebdir/comm-w2c.ch"
+#line 151 "cwebdir/comm-w2c.ch"
 char xyz_code= xisupper(buffer[1])?tolower((unsigned char)buffer[1]):buffer[1];
 #line 341 "cwebdir/common.w"
 /*17:*/
@@ -525,7 +525,7 @@ if(lines_dont_match)n++;
 #line 378 "cwebdir/common.w"
 
 void
-#line 160 "cwebdir/comm-w2c.ch"
+#line 159 "cwebdir/comm-w2c.ch"
  reset_input(void)
 #line 381 "cwebdir/common.w"
 {
@@ -533,7 +533,7 @@ limit= buffer;loc= buffer+1;buffer[0]= ' ';
 /*19:*/
 #line 393 "cwebdir/common.w"
 
-#line 172 "cwebdir/comm-w2c.ch"
+#line 171 "cwebdir/comm-w2c.ch"
 if((found_filename= kpse_find_cweb(web_file_name))==NULL||
 (web_file= fopen(found_filename,"r"))==NULL){
 fatal("! Cannot open input file ",web_file_name);
@@ -545,7 +545,7 @@ free(found_filename);
 
 
 web_file_open= 1;
-#line 185 "cwebdir/comm-w2c.ch"
+#line 184 "cwebdir/comm-w2c.ch"
 if((found_filename= kpse_find_cweb(change_file_name))==NULL||
 (change_file= fopen(found_filename,"r"))==NULL){
 fatal("! Cannot open change file ",change_file_name);
@@ -567,7 +567,7 @@ limit= buffer;loc= buffer+1;buffer[0]= ' ';input_has_ended= 0;
 /*:18*//*21:*/
 #line 426 "cwebdir/common.w"
 
-#line 205 "cwebdir/comm-w2c.ch"
+#line 204 "cwebdir/comm-w2c.ch"
 int get_line(void)
 #line 428 "cwebdir/common.w"
 {
@@ -591,7 +591,7 @@ changed_section[section_count]= 1;change_pending= 0;
 }
 *limit= ' ';
 if(buffer[0]=='@'){
-#line 312 "cwebdir/comm-w2c.ch"
+#line 311 "cwebdir/comm-w2c.ch"
 if(xisupper(buffer[1]))buffer[1]= tolower((unsigned char)buffer[1]);
 #line 554 "cwebdir/common.w"
 if(buffer[1]=='x'||buffer[1]=='y'){
@@ -653,7 +653,7 @@ include_depth++;
 /*25:*/
 #line 474 "cwebdir/common.w"
 {
-#line 261 "cwebdir/comm-w2c.ch"
+#line 260 "cwebdir/comm-w2c.ch"
 char*cur_file_name_end= cur_file_name+max_file_name_length-1;
 char*k= cur_file_name;
 #line 479 "cwebdir/common.w"
@@ -667,7 +667,7 @@ while(*loc!=' '&&*loc!='\t'&&*loc!='"'&&k<=cur_file_name_end)*k++= *loc++;
 if(k> cur_file_name_end)too_long();
 
 *k= '\0';
-#line 268 "cwebdir/comm-w2c.ch"
+#line 267 "cwebdir/comm-w2c.ch"
 if((found_filename= kpse_find_cweb(cur_file_name))!=NULL&&
 (cur_file= fopen(found_filename,"r"))!=NULL){
 
@@ -694,7 +694,7 @@ return 1;
 #line 569 "cwebdir/common.w"
 
 void
-#line 318 "cwebdir/comm-w2c.ch"
+#line 317 "cwebdir/comm-w2c.ch"
  check_complete(void){
 #line 572 "cwebdir/common.w"
 if(change_limit!=change_buffer){
@@ -710,14 +710,14 @@ err_print("! Change file entry did not match");
 #line 660 "cwebdir/common.w"
 
 name_pointer
-#line 357 "cwebdir/comm-w2c.ch"
+#line 356 "cwebdir/comm-w2c.ch"
 
 id_lookup(const char*first,const char*last,char t)
 #line 666 "cwebdir/common.w"
 {
-#line 364 "cwebdir/comm-w2c.ch"
+#line 363 "cwebdir/comm-w2c.ch"
 const char*i= first;
-#line 370 "cwebdir/comm-w2c.ch"
+#line 369 "cwebdir/comm-w2c.ch"
 int h;
 #line 669 "cwebdir/common.w"
 int l;
@@ -727,7 +727,7 @@ l= last-first;
 /*38:*/
 #line 683 "cwebdir/common.w"
 
-#line 379 "cwebdir/comm-w2c.ch"
+#line 378 "cwebdir/comm-w2c.ch"
 h= (unsigned char)*i;
 while(++i<last)h= (h+h+(int)((unsigned char)*i))%hash_size;
 #line 686 "cwebdir/common.w"
@@ -739,13 +739,13 @@ while(++i<last)h= (h+h+(int)((unsigned char)*i))%hash_size;
 /*39:*/
 #line 691 "cwebdir/common.w"
 
-#line 388 "cwebdir/comm-w2c.ch"
+#line 387 "cwebdir/comm-w2c.ch"
 p= hash[h];
 #line 693 "cwebdir/common.w"
 while(p&&!names_match(p,first,l,t))p= p->link;
 if(p==NULL){
 p= name_ptr;
-#line 394 "cwebdir/comm-w2c.ch"
+#line 393 "cwebdir/comm-w2c.ch"
 p->link= hash[h];hash[h]= p;
 #line 697 "cwebdir/common.w"
 }
@@ -773,7 +773,7 @@ return(p);
 #line 764 "cwebdir/common.w"
 
 void
-#line 413 "cwebdir/comm-w2c.ch"
+#line 412 "cwebdir/comm-w2c.ch"
  print_section_name(name_pointer p)
 #line 768 "cwebdir/common.w"
 {
@@ -795,7 +795,7 @@ if(q)term_write("...",3);
 #line 783 "cwebdir/common.w"
 
 void
-#line 423 "cwebdir/comm-w2c.ch"
+#line 422 "cwebdir/comm-w2c.ch"
  sprint_section_name(char*dest,name_pointer p)
 #line 788 "cwebdir/common.w"
 {
@@ -817,7 +817,7 @@ s= p->byte_start;
 /*:45*//*46:*/
 #line 804 "cwebdir/common.w"
 
-#line 433 "cwebdir/comm-w2c.ch"
+#line 432 "cwebdir/comm-w2c.ch"
 static void
 print_prefix_name(name_pointer p)
 #line 808 "cwebdir/common.w"
@@ -831,13 +831,13 @@ if(s+l<(p+1)->byte_start)term_write("...",3);
 /*:46*//*47:*/
 #line 825 "cwebdir/common.w"
 
-#line 444 "cwebdir/comm-w2c.ch"
+#line 443 "cwebdir/comm-w2c.ch"
 
 static int
 web_strcmp(char*j,int j_len,char*k,int k_len)
 #line 829 "cwebdir/common.w"
 {
-#line 456 "cwebdir/comm-w2c.ch"
+#line 455 "cwebdir/comm-w2c.ch"
 char*j1= j+j_len,*k1= k+k_len;
 while(k<k1&&j<j1&&*j==*k)k++,j++;
 if(k==k1)if(j==j1)return equal;
@@ -851,7 +851,7 @@ else return greater;
 /*:47*//*49:*/
 #line 855 "cwebdir/common.w"
 
-#line 484 "cwebdir/comm-w2c.ch"
+#line 483 "cwebdir/comm-w2c.ch"
 static name_pointer
 add_section_name(name_pointer par,int c,char*first,char*last,
 int ispref)
@@ -880,7 +880,7 @@ return par==NULL?(root= p):c==less?(par->llink= p):(par->rlink= p);
 /*:49*//*50:*/
 #line 884 "cwebdir/common.w"
 
-#line 499 "cwebdir/comm-w2c.ch"
+#line 498 "cwebdir/comm-w2c.ch"
 static void
 extend_section_name(name_pointer p,char*first,char*last,int ispref)
 #line 891 "cwebdir/common.w"
@@ -903,7 +903,7 @@ if(ispref)*(byte_ptr-1)= ' ';
 #line 912 "cwebdir/common.w"
 
 name_pointer
-#line 510 "cwebdir/comm-w2c.ch"
+#line 509 "cwebdir/comm-w2c.ch"
 
 section_lookup(char*first,char*last,int ispref)
 #line 917 "cwebdir/common.w"
@@ -996,7 +996,7 @@ return r;
 /*:51*//*56:*/
 #line 1020 "cwebdir/common.w"
 
-#line 530 "cwebdir/comm-w2c.ch"
+#line 529 "cwebdir/comm-w2c.ch"
 static int
 section_name_cmp(char**pfirst,int len,name_pointer r)
 #line 1025 "cwebdir/common.w"
@@ -1031,7 +1031,7 @@ default:return c;
 #line 1095 "cwebdir/common.w"
 
 void
-#line 550 "cwebdir/comm-w2c.ch"
+#line 549 "cwebdir/comm-w2c.ch"
  err_print(const char*s)
 #line 1099 "cwebdir/common.w"
 {
@@ -1066,7 +1066,7 @@ update_terminal;mark_error;
 /*:60*//*63:*/
 #line 1150 "cwebdir/common.w"
 
-#line 570 "cwebdir/comm-w2c.ch"
+#line 569 "cwebdir/comm-w2c.ch"
 int wrap_up(void){
 #line 1152 "cwebdir/common.w"
 putchar('\n');
@@ -1094,7 +1094,7 @@ else return(0);
 /*:63*//*66:*/
 #line 1179 "cwebdir/common.w"
 void
-#line 590 "cwebdir/comm-w2c.ch"
+#line 589 "cwebdir/comm-w2c.ch"
  fatal(const char*s,const char*t)
 #line 1182 "cwebdir/common.w"
 {
@@ -1106,7 +1106,7 @@ history= fatal_message;exit(wrap_up());
 /*:66*//*67:*/
 #line 1190 "cwebdir/common.w"
 void
-#line 599 "cwebdir/comm-w2c.ch"
+#line 598 "cwebdir/comm-w2c.ch"
  overflow(const char*t)
 #line 1193 "cwebdir/common.w"
 {
@@ -1117,7 +1117,7 @@ printf("\n! Sorry, %s capacity exceeded",t);fatal("","");
 /*:67*//*72:*/
 #line 1254 "cwebdir/common.w"
 
-#line 658 "cwebdir/comm-w2c.ch"
+#line 657 "cwebdir/comm-w2c.ch"
 static void
 scan_args(void)
 #line 1257 "cwebdir/common.w"
@@ -1131,40 +1131,40 @@ boolean flag_change;
 
 while(--argc> 0){
 if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*76:*/
-#line 683 "cwebdir/comm-w2c.ch"
+#line 682 "cwebdir/comm-w2c.ch"
 
 {
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 /*86:*/
-#line 798 "cwebdir/comm-w2c.ch"
+#line 797 "cwebdir/comm-w2c.ch"
 
 usagehelp(program==ctangle?CTANGLEHELP:CWEAVEHELP,NULL);
 
 
 /*:86*/
-#line 686 "cwebdir/comm-w2c.ch"
+#line 685 "cwebdir/comm-w2c.ch"
 ;
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 /*87:*/
-#line 807 "cwebdir/comm-w2c.ch"
+#line 806 "cwebdir/comm-w2c.ch"
 
 printversionandexit((program==ctangle?ctangle_banner:cweave_banner),
 "Silvio Levy and Donald E. Knuth",NULL,NULL);
 
 
 /*:87*/
-#line 688 "cwebdir/comm-w2c.ch"
+#line 687 "cwebdir/comm-w2c.ch"
 ;
 #line 1346 "cwebdir/common.w"
 if(**argv=='-')flag_change= 0;
-#line 694 "cwebdir/comm-w2c.ch"
+#line 693 "cwebdir/comm-w2c.ch"
 else flag_change= 1;
 if(*(*argv+1)=='d')
 if(sscanf(*argv+2,"%u",&kpathsea_debug)!=1)/*77:*/
 #line 1352 "cwebdir/common.w"
 
 {
-#line 717 "cwebdir/comm-w2c.ch"
+#line 716 "cwebdir/comm-w2c.ch"
 if(program==ctangle){
 fprintf(stderr,"ctangle: Need one to three file arguments.\n");
 usage("ctangle");
@@ -1176,11 +1176,11 @@ usage("cweave");
 }
 
 /*:77*/
-#line 696 "cwebdir/comm-w2c.ch"
+#line 695 "cwebdir/comm-w2c.ch"
 ;
 #line 1348 "cwebdir/common.w"
 for(dot_pos= *argv+1;*dot_pos> '\0';dot_pos++)
-#line 702 "cwebdir/comm-w2c.ch"
+#line 701 "cwebdir/comm-w2c.ch"
 flags[(unsigned char)*dot_pos]= flag_change;
 #line 1350 "cwebdir/common.w"
 }
@@ -1280,7 +1280,7 @@ sprintf(scn_file_name,"%s.scn",*argv);
 found_out= 1;
 }
 
-#line 683 "cwebdir/comm-w2c.ch"
+#line 682 "cwebdir/comm-w2c.ch"
 /*:75*/
 #line 1277 "cwebdir/common.w"
 
@@ -1288,7 +1288,7 @@ else/*77:*/
 #line 1352 "cwebdir/common.w"
 
 {
-#line 717 "cwebdir/comm-w2c.ch"
+#line 716 "cwebdir/comm-w2c.ch"
 if(program==ctangle){
 fprintf(stderr,"ctangle: Need one to three file arguments.\n");
 usage("ctangle");
@@ -1308,7 +1308,7 @@ if(!found_web)/*77:*/
 #line 1352 "cwebdir/common.w"
 
 {
-#line 717 "cwebdir/comm-w2c.ch"
+#line 716 "cwebdir/comm-w2c.ch"
 if(program==ctangle){
 fprintf(stderr,"ctangle: Need one to three file arguments.\n");
 usage("ctangle");
@@ -1322,7 +1322,7 @@ usage("cweave");
 /*:77*/
 #line 1281 "cwebdir/common.w"
 ;
-#line 668 "cwebdir/comm-w2c.ch"
+#line 667 "cwebdir/comm-w2c.ch"
 if(found_change<=0)strcpy(change_file_name,DEV_NULL);
 #line 1283 "cwebdir/common.w"
 }

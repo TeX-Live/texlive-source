@@ -1,5 +1,4 @@
-% Kpathsea changes for CWEB by Wlodek Bzyl and Olaf Weber
-% Copyright 2002 Wlodek Bzyl and Olaf Weber
+% Original Kpathsea changes for CWEB by Wlodek Bzyl and Olaf Weber
 % This file is in the Public Domain.
 
 
@@ -23,7 +22,7 @@
   \vfill}
 @z
 
-This change can not be applied when `tie' is  used
+This change cannot be applied when `tie' is  used
 (TOC file can not be typeset).
 
 %@x l.51
@@ -471,7 +470,7 @@ Section 78.
 @x l.1322
 void
 flush_buffer(b,per_cent,carryover)
-char *b;  /* outputs from |out_buf+1| to |b|,where |b<=out_ptr| */
+char *b; /* outputs from |out_buf+1| to |b|,where |b<=out_ptr| */
 boolean per_cent,carryover;
 @y
 static void
@@ -582,9 +581,9 @@ copy_comment (boolean is_long_comment, int bal)
 Section 93.
 
 @x l.1608
-  if (phase==2) app_tok(*(loc++)) else loc++;
+  if (phase==2) app_tok(*(loc++))@; else loc++;
 @y
-  {if (phase==2) app_tok(*(loc++)) else loc++;}
+  {if (phase==2) app_tok(*(loc++))@; else loc++;}
 @z
 
 Section 99.
