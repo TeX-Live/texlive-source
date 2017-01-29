@@ -1,6 +1,12 @@
+2017-01-28  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (texarray),
+	* mf.ch (texarray): don't mention nonexistent pool files in error.
+	Thread from http://tug.org/pipermail/tex-live/2017-January/039647.html.
+
 2016-11-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
-	* texmfmp.h : Change a condition to support new primitives in
+	* texmfmp.h: Change a condition to support new primitives in
 	eptex and euptex.
 
 2016-11-05  Karl Berry  <karl@tug.org>
