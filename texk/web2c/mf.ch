@@ -1812,7 +1812,8 @@ libc_free(base_engine);
 undump_int(x);
 if x<>@$ then begin {check that strings are the same}
   wake_up_terminal;
-  wterm_ln('---! ', stringcast(name_of_file+1), ' doesn''t match ', pool_name);
+  wterm_ln('---! ', stringcast(name_of_file+1),
+           'made by different executable version');
   goto off_base;
 end;
 @<Undump |xord|, |xchr|, and |xprn|@>;
