@@ -121,8 +121,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.52b';
-$version_details = "$My_name, John Collins, 17 Jan. 2017";
+$version_num = '4.52c';
+$version_details = "$My_name, John Collins, 19 Jan. 2017";
 
 use Config;
 use File::Basename;
@@ -195,6 +195,8 @@ else {
 ##
 ##   12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+##    19 Jan 2017   John Collins  Make -jobname work with -pdfxe and -pdflua
+##                                (v. 4.53c)
 ##    17 Jan 2017   John Collins  Fix bbl file detection bug.
 ##                                Bbl files were previously only identified
 ##                                  from occurrence as input files in log
@@ -1959,7 +1961,7 @@ if ( $aux_dir && ($aux_dir ne $out_dir) ) {
 
 if ( $jobname ne '' ) { 
     $jobstring = "--jobname=\"$jobname\"";
-    add_option( "$jobstring", \$latex, \$pdflatex );
+    add_option( "$jobstring", \$latex, \$lualatex, \$pdflatex, \$xelatex );
 }
 
 # Which kind of file do we preview?
