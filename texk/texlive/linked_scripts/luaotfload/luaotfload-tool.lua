@@ -2,15 +2,15 @@
 -----------------------------------------------------------------------
 --         FILE:  luaotfload-tool.lua
 --  DESCRIPTION:  database functionality
--- REQUIREMENTS:  luaotfload 2.7
+-- REQUIREMENTS:  luaotfload 2.8
 --       AUTHOR:  Khaled Hosny, Élie Roux, Philipp Gesang
 --      LICENSE:  GPL v2.0
 -----------------------------------------------------------------------
 
 luaotfload                     = luaotfload or { }
-local version                  = "2.7"
+local version                  = "2.8"
 luaotfload.version             = version
-luaotfload.min_luatex_version  = { 0, 95, 0 }   --- i. e. 0.95.0
+luaotfload.min_luatex_version  = { 0, 95, 0 }
 luaotfload.self                = "luaotfload-tool"
 
 --[[doc--
@@ -64,8 +64,9 @@ do
         actual         = { major, minor, revno or 0 }
     end
 
-    if actual [1] < minimum [1] or actual [2] < minimum [2]
-    or actual [3] < minimum [3]
+    if actual [1] < minimum [1]
+    or actual == minimum and actual [2] < minimum [2]
+    or actual == minimum and actual [2] == minimum [2] and actual [3] < minimum [3]
     then
         texio.write_nl ("term and log",
                         string.format ("\tFATAL ERROR\n\z
@@ -138,32 +139,22 @@ require "fontloader-basics-gen.lua"
 texio.write, texio.write_nl          = backup.write, backup.write_nl
 utilities                            = backup.utilities
 
+pdf = pdf or { } --- for font-tfm
+
 require "fontloader-data-con"
 require "fontloader-font-ini"
 require "fontloader-font-con"
 require "fontloader-fonts-enc"
 require "fontloader-font-cid"
 require "fontloader-font-map"
-require "fontloader-font-tfm"
 require "fontloader-font-oti"
 require "fontloader-font-otr"
 require "fontloader-font-cff"
 require "fontloader-font-ttf"
 require "fontloader-font-dsp"
 require "fontloader-font-oup"
-require "fontloader-font-otl"
-require "fontloader-font-oto"
-------- "fontloader-font-otj"
-------- "fontloader-font-ota"
-------- "fontloader-font-ots"
-------- "fontloader-font-osd"
 require "fontloader-font-onr"
-require "fontloader-font-one"
-require "fontloader-font-afk"
-require "fontloader-font-lua"
 require "fontloader-font-def"
-require "fontloader-fonts-ext"
-------- "fontloader-font-gbn"
 
 fonts = fonts or { }
 local fontsnames = fonts.names or { }
@@ -190,7 +181,7 @@ end
 
 require "alt_getopt"
 
-loadmodule "log.lua"       --- this populates the luaotfload.log.* namespace
+loadmodule "log"           --- this populates the luaotfload.log.* namespace
 loadmodule "parsers"       --- fonts.conf, configuration, and request syntax
 loadmodule "configuration" --- configuration file handling
 loadmodule "database"
@@ -664,7 +655,7 @@ subfont_by_name = function (lst, askedname, n)
         if fonts.names.sanitize_fontname (font.fullname) == askedname then
             return font
         end
-        return subfont_by_name (lst, askedname, n)
+        return subfont_by_name (lst, askedname, n + 1)
     end
     return false
 end
@@ -677,7 +668,7 @@ The font info knows two levels of detail:
         returned by readers.loadfont().
 --doc]]--
 
-local show_font_info = function (basename, askedname, detail)
+local show_font_info = function (basename, askedname, detail, subfont)
     local filenames = fonts.names.data().files
     local index     = filenames.base[basename]
     local fullname  = filenames.full[index]
@@ -687,7 +678,7 @@ local show_font_info = function (basename, askedname, detail)
     end
     if fullname then
         local shortinfo = fonts.handlers.otf.readers.getinfo (fullname, {
-                            subfont        = nil,
+                            subfont        = subfont,
                             platformnames  = true,
                             rawfamilynames = true,
                         })
@@ -710,7 +701,8 @@ local show_font_info = function (basename, askedname, detail)
                            [[%s is a font collection]], basename)
                 for subfont = 1, nfonts do
                     logreport (true, 1, "resolve",
-                               [[Showing info for font no. %d]], n)
+                               [[Showing info for font no. %d]],
+                               subfont)
                     show_info_items(shortinfo[subfont])
                     if detail == true then
                         show_full_info(fullname, subfont)
@@ -1182,7 +1174,8 @@ actions.query = function (job)
             needle = tmpspec.resolved or tmpspec.name
         end
     elseif tmpspec.lookup == "file" then
-        needle = tmpspec.name
+        needle  = tmpspec.name
+        subfont = tmpspec.sub
     end
 
     if needle then
@@ -1200,7 +1193,8 @@ actions.query = function (job)
                        "Resolved file name %q", foundname)
         end
         if job.show_info then
-            show_font_info (foundname, query, job.full_info)
+            logreport (false, 3, "resolve", "Dump extra info.")
+            show_font_info (foundname, query, job.full_info, subfont)
             iowrite "\n"
         end
     else
