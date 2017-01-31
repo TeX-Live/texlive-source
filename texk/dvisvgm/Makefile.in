@@ -14,7 +14,15 @@
 
 @SET_MAKE@
 
-
+# $Id$
+# Makefile.am for the TeX Live subdirectory texk/dvisvgm/
+#
+# Copyright 2015-2017 Karl Berry <tex-live@tug.org>
+# Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+#
+# Adapted for TeX Live from original dvisvgm Makefile.am
+# Copyright 2005-2017 Martin Gieseking
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -89,14 +97,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@WIN32_TRUE@am__append_1 = -DTEXLIVEWIN32
-bin_PROGRAMS = dvisvgm$(EXEEXT)
-@dlloader_TRUE@am__append_2 = \
-@dlloader_TRUE@	@DVISVGM_TREE@/src/DLLoader.cpp
-
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
+	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
@@ -120,127 +124,6 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-AM_V_AR = $(am__v_AR_@AM_V@)
-am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
-am__v_AR_0 = @echo "  AR      " $@;
-am__v_AR_1 = 
-libclipper_a_AR = $(AR) $(ARFLAGS)
-libclipper_a_LIBADD =
-am__dirstamp = $(am__leading_dot)dirstamp
-nodist_libclipper_a_OBJECTS =  \
-	@DVISVGM_TREE@/clipper/clipper.$(OBJEXT)
-libclipper_a_OBJECTS = $(nodist_libclipper_a_OBJECTS)
-libdvisvgm_a_AR = $(AR) $(ARFLAGS)
-libdvisvgm_a_LIBADD =
-@dlloader_TRUE@am__objects_1 = @DVISVGM_TREE@/src/DLLoader.$(OBJEXT)
-nodist_libdvisvgm_a_OBJECTS =  \
-	@DVISVGM_TREE@/src/BasicDVIReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Bezier.$(OBJEXT) \
-	@DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Bitmap.$(OBJEXT) \
-	@DVISVGM_TREE@/src/BoundingBox.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CMap.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CMapManager.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CMapReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CRC32.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Calculator.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CharMapID.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CmdLineParserBase.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Color.$(OBJEXT) \
-	@DVISVGM_TREE@/src/ColorSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/CommandLine.$(OBJEXT) \
-	@DVISVGM_TREE@/src/DVIReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/DVIToSVG.$(OBJEXT) \
-	@DVISVGM_TREE@/src/DVIToSVGActions.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Directory.$(OBJEXT) \
-	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/EPSFile.$(OBJEXT) \
-	@DVISVGM_TREE@/src/EPSToSVG.$(OBJEXT) \
-	@DVISVGM_TREE@/src/EmSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/EncFile.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FileFinder.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FilePath.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FileSystem.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Font.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontCache.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontEncoding.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontEngine.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontManager.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontMap.$(OBJEXT) \
-	@DVISVGM_TREE@/src/FontMetrics.$(OBJEXT) \
-	@DVISVGM_TREE@/src/GFReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/GFGlyphTracer.$(OBJEXT) \
-	@DVISVGM_TREE@/src/GFTracer.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Ghostscript.$(OBJEXT) \
-	@DVISVGM_TREE@/src/HtmlSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/InputBuffer.$(OBJEXT) \
-	@DVISVGM_TREE@/src/InputReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/JFM.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Length.$(OBJEXT) \
-	@DVISVGM_TREE@/src/MapLine.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Matrix.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Message.$(OBJEXT) \
-	@DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT) \
-	@DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PapersizeSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PSPattern.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PSPreviewFilter.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PageRanges.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PageSize.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PathClipper.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PreScanDVIReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Process.$(OBJEXT) \
-	@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/psdefs.$(OBJEXT) \
-	@DVISVGM_TREE@/src/RangeMap.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGCharHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGCharHandlerFactory.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGCharPathHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGCharTspanTextHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGOutput.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGSingleCharTextHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SVGTree.$(OBJEXT) \
-	@DVISVGM_TREE@/src/ShadingPatch.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/SpecialManager.$(OBJEXT) \
-	@DVISVGM_TREE@/src/StreamReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/StreamWriter.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Subfont.$(OBJEXT) \
-	@DVISVGM_TREE@/src/System.$(OBJEXT) \
-	@DVISVGM_TREE@/src/TFM.$(OBJEXT) \
-	@DVISVGM_TREE@/src/TensorProductPatch.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Terminal.$(OBJEXT) \
-	@DVISVGM_TREE@/src/ToUnicodeMap.$(OBJEXT) \
-	@DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT) \
-	@DVISVGM_TREE@/src/TriangularPatch.$(OBJEXT) \
-	@DVISVGM_TREE@/src/Unicode.$(OBJEXT) \
-	@DVISVGM_TREE@/src/VFReader.$(OBJEXT) \
-	@DVISVGM_TREE@/src/XMLDocument.$(OBJEXT) \
-	@DVISVGM_TREE@/src/XMLNode.$(OBJEXT) \
-	@DVISVGM_TREE@/src/XMLString.$(OBJEXT) $(am__objects_1)
-libdvisvgm_a_OBJECTS = $(nodist_libdvisvgm_a_OBJECTS)
-libxxhash_a_AR = $(AR) $(ARFLAGS)
-libxxhash_a_LIBADD =
-nodist_libxxhash_a_OBJECTS = @DVISVGM_TREE@/xxHash/xxhash.$(OBJEXT)
-libxxhash_a_OBJECTS = $(nodist_libxxhash_a_OBJECTS)
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
-PROGRAMS = $(bin_PROGRAMS)
-nodist_dvisvgm_OBJECTS = @DVISVGM_TREE@/src/dvisvgm.$(OBJEXT) \
-	@DVISVGM_TREE@/src/gzstream.$(OBJEXT)
-dvisvgm_OBJECTS = $(nodist_dvisvgm_OBJECTS)
-dvisvgm_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
-dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -253,54 +136,72 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC      " $@;
-am__v_CC_1 = 
-CCLD = $(CC)
-LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD    " $@;
-am__v_CCLD_1 = 
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_CXX = $(am__v_CXX_@AM_V@)
-am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
-am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
-CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
-am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
-am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
-SOURCES = $(nodist_libclipper_a_SOURCES) \
-	$(nodist_libdvisvgm_a_SOURCES) $(nodist_libxxhash_a_SOURCES) \
-	$(nodist_dvisvgm_SOURCES)
+SOURCES =
 DIST_SOURCES =
+RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
+	ctags-recursive dvi-recursive html-recursive info-recursive \
+	install-data-recursive install-dvi-recursive \
+	install-exec-recursive install-html-recursive \
+	install-info-recursive install-pdf-recursive \
+	install-ps-recursive install-recursive installcheck-recursive \
+	installdirs-recursive pdf-recursive ps-recursive \
+	tags-recursive uninstall-recursive
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
+  distclean-recursive maintainer-clean-recursive
+am__recursive_targets = \
+  $(RECURSIVE_TARGETS) \
+  $(RECURSIVE_CLEAN_TARGETS) \
+  $(am__extra_recursive_targets)
+AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
+	cscope check recheck distdir dist dist-all distcheck
+am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
+	$(LISP)config.h.in
+# Read a list of newline-separated strings from the standard input,
+# and print each of them once, without duplicates.  Input order is
+# *not* preserved.
+am__uniquify_input = $(AWK) '\
+  BEGIN { nonempty = 0; } \
+  { items[$$0] = 1; nonempty = 1; } \
+  END { if (nonempty) { for (i in items) print i; }; } \
+'
+# Make sure the list of sources is unique.  This is necessary because,
+# e.g., the same source file might be shared among _SOURCES variables
+# for different programs/libraries.
+am__define_uniq_tagged_files = \
+  list='$(am__tagged_files)'; \
+  unique=`for i in $$list; do \
+    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
+  done | $(am__uniquify_input)`
+ETAGS = etags
+CTAGS = ctags
+CSCOPE = cscope
+am__tty_colors_dummy = \
+  mgn= red= grn= lgn= blu= brg= std=; \
+  am__color_tests=no
+am__tty_colors = { \
+  $(am__tty_colors_dummy); \
+  if test "X$(AM_COLOR_TESTS)" = Xno; then \
+    am__color_tests=no; \
+  elif test "X$(AM_COLOR_TESTS)" = Xalways; then \
+    am__color_tests=yes; \
+  elif test "X$$TERM" != Xdumb && { test -t 1; } 2>/dev/null; then \
+    am__color_tests=yes; \
+  fi; \
+  if test $$am__color_tests = yes; then \
+    red='[0;31m'; \
+    grn='[0;32m'; \
+    lgn='[1;32m'; \
+    blu='[1;34m'; \
+    mgn='[0;35m'; \
+    brg='[1m'; \
+    std='[m'; \
+  fi; \
+}
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -328,53 +229,6 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-man1dir = $(mandir)/man1
-NROFF = nroff
-MANS = $(nodist_man_MANS)
-am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) \
-	$(LISP)config.h.in
-# Read a list of newline-separated strings from the standard input,
-# and print each of them once, without duplicates.  Input order is
-# *not* preserved.
-am__uniquify_input = $(AWK) '\
-  BEGIN { nonempty = 0; } \
-  { items[$$0] = 1; nonempty = 1; } \
-  END { if (nonempty) { for (i in items) print i; }; } \
-'
-# Make sure the list of sources is unique.  This is necessary because,
-# e.g., the same source file might be shared among _SOURCES variables
-# for different programs/libraries.
-am__define_uniq_tagged_files = \
-  list='$(am__tagged_files)'; \
-  unique=`for i in $$list; do \
-    if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
-  done | $(am__uniquify_input)`
-ETAGS = etags
-CTAGS = ctags
-CSCOPE = cscope
-AM_RECURSIVE_TARGETS = cscope check recheck
-am__tty_colors_dummy = \
-  mgn= red= grn= lgn= blu= brg= std=; \
-  am__color_tests=no
-am__tty_colors = { \
-  $(am__tty_colors_dummy); \
-  if test "X$(AM_COLOR_TESTS)" = Xno; then \
-    am__color_tests=no; \
-  elif test "X$(AM_COLOR_TESTS)" = Xalways; then \
-    am__color_tests=yes; \
-  elif test "X$$TERM" != Xdumb && { test -t 1; } 2>/dev/null; then \
-    am__color_tests=yes; \
-  fi; \
-  if test $$am__color_tests = yes; then \
-    red='[0;31m'; \
-    grn='[0;32m'; \
-    lgn='[1;32m'; \
-    blu='[1;34m'; \
-    mgn='[0;35m'; \
-    brg='[1m'; \
-    std='[m'; \
-  fi; \
-}
 am__recheck_rx = ^[ 	]*:recheck:[ 	]*
 am__global_test_result_rx = ^[ 	]*:global-test-result:[ 	]*
 am__copy_in_global_log_rx = ^[ 	]*:copy-in-global-log:[ 	]*
@@ -532,7 +386,6 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
-	$(top_srcdir)/../../build-aux/depcomp \
 	$(top_srcdir)/../../build-aux/install-sh \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
@@ -552,6 +405,31 @@ am__remove_distdir = \
       || { sleep 5 && rm -rf "$(distdir)"; }; \
   else :; fi
 am__post_remove_distdir = $(am__remove_distdir)
+am__relativize = \
+  dir0=`pwd`; \
+  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
+  sed_rest='s,^[^/]*/*,,'; \
+  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
+  sed_butlast='s,/*[^/]*$$,,'; \
+  while test -n "$$dir1"; do \
+    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
+    if test "$$first" != "."; then \
+      if test "$$first" = ".."; then \
+        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
+        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
+      else \
+        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
+        if test "$$first2" = "$$first"; then \
+          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
+        else \
+          dir2="../$$dir2"; \
+        fi; \
+        dir0="$$dir0"/"$$first"; \
+      fi; \
+    fi; \
+    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
+  done; \
+  reldir="$$dir2"
 DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 DIST_TARGETS = dist-gzip
@@ -571,6 +449,7 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
+CODE_COVERAGE_RULES = @CODE_COVERAGE_RULES@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
@@ -596,6 +475,7 @@ FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@
 FT2_CONFIG = @FT2_CONFIG@
 GREP = @GREP@
+HAVE_CXX11 = @HAVE_CXX11@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -701,13 +581,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-
-#************************************************************************
-#
-#  Adapted for TeX Live from dvisvgm-0.8.7/Makefile.am
-#  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
-#
-#************************************************************************
+SUBDIRS = . $(DVISVGM_TREE)
+DIST_SUBDIRS = $(SUBDIRS)
 EXTRA_DIST = $(DVISVGM_TREE) dvisvgm-PATCHES $(TESTS)
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
@@ -715,114 +590,15 @@ NEVER_DIST = `find . $(NEVER_NAMES)`
 NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
-AM_CPPFLAGS = -I$(top_srcdir)/$(DVISVGM_TREE)/clipper \
-	-I$(top_srcdir)/$(DVISVGM_TREE)/src \
-	-I$(top_srcdir)/$(DVISVGM_TREE)/xxHash $(KPATHSEA_INCLUDES) \
-	$(POTRACE_INCLUDES) $(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) \
-	$(LIBGS_INCLUDES) $(am__append_1)
-AM_CFLAGS = $(WARNING_CFLAGS)
-AM_CXXFLAGS = $(WARNING_CXXFLAGS)
-nodist_man_MANS = \
-	$(DVISVGM_TREE)/doc/dvisvgm.1
-
-nodist_dvisvgm_SOURCES = \
-	@DVISVGM_TREE@/src/dvisvgm.cpp \
-	@DVISVGM_TREE@/src/gzstream.cpp
-
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
-LDADD = $(noinst_LIBRARIES) $(KPATHSEA_LIBS) $(POTRACE_LIBS) \
-	$(FREETYPE2_LIBS) $(ZLIB_LIBS) $(LIBGS_LIBS)
-noinst_LIBRARIES = libdvisvgm.a libclipper.a libxxhash.a
-nodist_libdvisvgm_a_SOURCES = @DVISVGM_TREE@/src/BasicDVIReader.cpp \
-	@DVISVGM_TREE@/src/Bezier.cpp \
-	@DVISVGM_TREE@/src/BgColorSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/Bitmap.cpp \
-	@DVISVGM_TREE@/src/BoundingBox.cpp @DVISVGM_TREE@/src/CMap.cpp \
-	@DVISVGM_TREE@/src/CMapManager.cpp \
-	@DVISVGM_TREE@/src/CMapReader.cpp @DVISVGM_TREE@/src/CRC32.cpp \
-	@DVISVGM_TREE@/src/Calculator.cpp \
-	@DVISVGM_TREE@/src/CharMapID.cpp \
-	@DVISVGM_TREE@/src/CmdLineParserBase.cpp \
-	@DVISVGM_TREE@/src/Color.cpp \
-	@DVISVGM_TREE@/src/ColorSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/CommandLine.cpp \
-	@DVISVGM_TREE@/src/DVIReader.cpp \
-	@DVISVGM_TREE@/src/DVIToSVG.cpp \
-	@DVISVGM_TREE@/src/DVIToSVGActions.cpp \
-	@DVISVGM_TREE@/src/DependencyGraph.h \
-	@DVISVGM_TREE@/src/Directory.cpp \
-	@DVISVGM_TREE@/src/DvisvgmSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/EPSFile.cpp @DVISVGM_TREE@/src/EPSToSVG.cpp \
-	@DVISVGM_TREE@/src/EmSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/EncFile.cpp \
-	@DVISVGM_TREE@/src/FileFinder.cpp \
-	@DVISVGM_TREE@/src/FilePath.cpp \
-	@DVISVGM_TREE@/src/FileSystem.cpp @DVISVGM_TREE@/src/Font.cpp \
-	@DVISVGM_TREE@/src/FontCache.cpp \
-	@DVISVGM_TREE@/src/FontEncoding.cpp \
-	@DVISVGM_TREE@/src/FontEngine.cpp \
-	@DVISVGM_TREE@/src/FontManager.cpp \
-	@DVISVGM_TREE@/src/FontMap.cpp \
-	@DVISVGM_TREE@/src/FontMetrics.cpp \
-	@DVISVGM_TREE@/src/GFReader.cpp \
-	@DVISVGM_TREE@/src/GFGlyphTracer.cpp \
-	@DVISVGM_TREE@/src/GFTracer.cpp \
-	@DVISVGM_TREE@/src/Ghostscript.cpp \
-	@DVISVGM_TREE@/src/HtmlSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/InputBuffer.cpp \
-	@DVISVGM_TREE@/src/InputReader.cpp @DVISVGM_TREE@/src/JFM.cpp \
-	@DVISVGM_TREE@/src/Length.cpp @DVISVGM_TREE@/src/MapLine.cpp \
-	@DVISVGM_TREE@/src/Matrix.cpp @DVISVGM_TREE@/src/Message.cpp \
-	@DVISVGM_TREE@/src/MetafontWrapper.cpp \
-	@DVISVGM_TREE@/src/NoPsSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/PapersizeSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/PSInterpreter.cpp \
-	@DVISVGM_TREE@/src/PSPattern.cpp \
-	@DVISVGM_TREE@/src/PSPreviewFilter.cpp \
-	@DVISVGM_TREE@/src/PdfSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/PageRanges.cpp \
-	@DVISVGM_TREE@/src/PageSize.cpp \
-	@DVISVGM_TREE@/src/PathClipper.cpp \
-	@DVISVGM_TREE@/src/PreScanDVIReader.cpp \
-	@DVISVGM_TREE@/src/Process.cpp \
-	@DVISVGM_TREE@/src/PsSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/psdefs.cpp @DVISVGM_TREE@/src/RangeMap.cpp \
-	@DVISVGM_TREE@/src/SVGCharHandler.cpp \
-	@DVISVGM_TREE@/src/SVGCharHandlerFactory.cpp \
-	@DVISVGM_TREE@/src/SVGCharPathHandler.cpp \
-	@DVISVGM_TREE@/src/SVGCharTspanTextHandler.cpp \
-	@DVISVGM_TREE@/src/SVGOutput.cpp \
-	@DVISVGM_TREE@/src/SVGSingleCharTextHandler.cpp \
-	@DVISVGM_TREE@/src/SVGTree.cpp \
-	@DVISVGM_TREE@/src/ShadingPatch.cpp \
-	@DVISVGM_TREE@/src/SignalHandler.cpp \
-	@DVISVGM_TREE@/src/SpecialManager.cpp \
-	@DVISVGM_TREE@/src/StreamReader.cpp \
-	@DVISVGM_TREE@/src/StreamWriter.cpp \
-	@DVISVGM_TREE@/src/Subfont.cpp @DVISVGM_TREE@/src/System.cpp \
-	@DVISVGM_TREE@/src/TFM.cpp \
-	@DVISVGM_TREE@/src/TensorProductPatch.cpp \
-	@DVISVGM_TREE@/src/Terminal.cpp \
-	@DVISVGM_TREE@/src/ToUnicodeMap.cpp \
-	@DVISVGM_TREE@/src/TpicSpecialHandler.cpp \
-	@DVISVGM_TREE@/src/TriangularPatch.cpp \
-	@DVISVGM_TREE@/src/Unicode.cpp @DVISVGM_TREE@/src/VFReader.cpp \
-	@DVISVGM_TREE@/src/XMLDocument.cpp \
-	@DVISVGM_TREE@/src/XMLNode.cpp \
-	@DVISVGM_TREE@/src/XMLString.cpp $(am__append_2)
-nodist_libclipper_a_SOURCES = \
-	@DVISVGM_TREE@/clipper/clipper.cpp
-
-nodist_libxxhash_a_SOURCES = \
-	@DVISVGM_TREE@/xxHash/xxhash.c
-
+#
 DISTCLEANFILES = config.force CXXLD.sh
 TESTS = tests/dvisvgm.test
 all: config.h
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .log .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
@@ -873,513 +649,6 @@ $(srcdir)/config.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 distclean-hdr:
 	-rm -f config.h stamp-h1
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-@DVISVGM_TREE@/clipper/$(am__dirstamp):
-	@$(MKDIR_P) @DVISVGM_TREE@/clipper
-	@: > @DVISVGM_TREE@/clipper/$(am__dirstamp)
-@DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) @DVISVGM_TREE@/clipper/$(DEPDIR)
-	@: > @DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/clipper/clipper.$(OBJEXT):  \
-	@DVISVGM_TREE@/clipper/$(am__dirstamp) \
-	@DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp)
-
-libclipper.a: $(libclipper_a_OBJECTS) $(libclipper_a_DEPENDENCIES) $(EXTRA_libclipper_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libclipper.a
-	$(AM_V_AR)$(libclipper_a_AR) libclipper.a $(libclipper_a_OBJECTS) $(libclipper_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libclipper.a
-@DVISVGM_TREE@/src/$(am__dirstamp):
-	@$(MKDIR_P) @DVISVGM_TREE@/src
-	@: > @DVISVGM_TREE@/src/$(am__dirstamp)
-@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) @DVISVGM_TREE@/src/$(DEPDIR)
-	@: > @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/BasicDVIReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Bezier.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/BgColorSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Bitmap.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/BoundingBox.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CMap.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CMapManager.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CMapReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CRC32.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Calculator.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CharMapID.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CmdLineParserBase.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Color.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/ColorSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/CommandLine.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DVIReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DVIToSVG.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DVIToSVGActions.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Directory.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DvisvgmSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/EPSFile.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/EPSToSVG.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/EmSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/EncFile.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FileFinder.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FilePath.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FileSystem.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Font.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontCache.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontEncoding.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontEngine.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontManager.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontMap.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/FontMetrics.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/GFReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/GFGlyphTracer.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/GFTracer.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Ghostscript.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/HtmlSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/InputBuffer.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/InputReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/JFM.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Length.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/MapLine.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Matrix.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Message.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/MetafontWrapper.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/NoPsSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PapersizeSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PSInterpreter.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PSPattern.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PSPreviewFilter.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PdfSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PageRanges.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PageSize.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PathClipper.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PreScanDVIReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Process.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/PsSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/psdefs.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/RangeMap.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGCharHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGCharHandlerFactory.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGCharPathHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGCharTspanTextHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGOutput.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGSingleCharTextHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SVGTree.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/ShadingPatch.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SignalHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/SpecialManager.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/StreamReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/StreamWriter.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Subfont.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/System.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/TFM.$(OBJEXT): @DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/TensorProductPatch.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Terminal.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/ToUnicodeMap.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/TpicSpecialHandler.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/TriangularPatch.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/Unicode.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/VFReader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/XMLDocument.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/XMLNode.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/XMLString.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/DLLoader.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-
-libdvisvgm.a: $(libdvisvgm_a_OBJECTS) $(libdvisvgm_a_DEPENDENCIES) $(EXTRA_libdvisvgm_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libdvisvgm.a
-	$(AM_V_AR)$(libdvisvgm_a_AR) libdvisvgm.a $(libdvisvgm_a_OBJECTS) $(libdvisvgm_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libdvisvgm.a
-@DVISVGM_TREE@/xxHash/$(am__dirstamp):
-	@$(MKDIR_P) @DVISVGM_TREE@/xxHash
-	@: > @DVISVGM_TREE@/xxHash/$(am__dirstamp)
-@DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) @DVISVGM_TREE@/xxHash/$(DEPDIR)
-	@: > @DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/xxHash/xxhash.$(OBJEXT):  \
-	@DVISVGM_TREE@/xxHash/$(am__dirstamp) \
-	@DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp)
-
-libxxhash.a: $(libxxhash_a_OBJECTS) $(libxxhash_a_DEPENDENCIES) $(EXTRA_libxxhash_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libxxhash.a
-	$(AM_V_AR)$(libxxhash_a_AR) libxxhash.a $(libxxhash_a_OBJECTS) $(libxxhash_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libxxhash.a
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
-	fi; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p \
-	 || test -f $$p1 \
-	  ; then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' \
-	    -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' \
-	`; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-@DVISVGM_TREE@/src/dvisvgm.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@DVISVGM_TREE@/src/gzstream.$(OBJEXT):  \
-	@DVISVGM_TREE@/src/$(am__dirstamp) \
-	@DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-
-dvisvgm$(EXEEXT): $(dvisvgm_OBJECTS) $(dvisvgm_DEPENDENCIES) $(EXTRA_dvisvgm_DEPENDENCIES) 
-	@rm -f dvisvgm$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(dvisvgm_OBJECTS) $(dvisvgm_LDADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT)
-	-rm -f @DVISVGM_TREE@/clipper/*.$(OBJEXT)
-	-rm -f @DVISVGM_TREE@/src/*.$(OBJEXT)
-	-rm -f @DVISVGM_TREE@/xxHash/*.$(OBJEXT)
-
-distclean-compile:
-	-rm -f *.tab.c
-
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/clipper/$(DEPDIR)/clipper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BasicDVIReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Bezier.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BgColorSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Bitmap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/BoundingBox.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMapManager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CMapReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CRC32.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Calculator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CharMapID.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CmdLineParserBase.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Color.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ColorSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/CommandLine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DLLoader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIToSVG.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DVIToSVGActions.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Directory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/DvisvgmSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EPSFile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EPSToSVG.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EmSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/EncFile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FileFinder.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FilePath.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FileSystem.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Font.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontCache.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontEncoding.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontEngine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontManager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontMap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/FontMetrics.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/GFGlyphTracer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/GFReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/GFTracer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Ghostscript.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/HtmlSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/InputBuffer.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/InputReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/JFM.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Length.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MapLine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Matrix.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Message.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/MetafontWrapper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSInterpreter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPattern.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PSPreviewFilter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageRanges.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PageSize.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PapersizeSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PathClipper.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PdfSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PreScanDVIReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Process.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/PsSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/RangeMap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharHandlerFactory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharPathHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGCharTspanTextHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGOutput.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGSingleCharTextHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SVGTree.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ShadingPatch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SignalHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/SpecialManager.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/StreamReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/StreamWriter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Subfont.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/System.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TFM.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TensorProductPatch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Terminal.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/ToUnicodeMap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TpicSpecialHandler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/TriangularPatch.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/Unicode.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/VFReader.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLDocument.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLNode.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/XMLString.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/dvisvgm.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/gzstream.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/src/$(DEPDIR)/psdefs.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@@DVISVGM_TREE@/xxHash/$(DEPDIR)/xxhash.Po@am__quote@
-
-.c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
-
-.c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-.cpp.o:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
-
-.cpp.obj:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.cpp.lo:
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
-
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -1388,58 +657,62 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-man1: $(nodist_man_MANS)
-	@$(NORMAL_INSTALL)
-	@list1=''; \
-	list2='$(nodist_man_MANS)'; \
-	test -n "$(man1dir)" \
-	  && test -n "`echo $$list1$$list2`" \
-	  || exit 0; \
-	echo " $(MKDIR_P) '$(DESTDIR)$(man1dir)'"; \
-	$(MKDIR_P) "$(DESTDIR)$(man1dir)" || exit 1; \
-	{ for i in $$list1; do echo "$$i"; done;  \
-	if test -n "$$list2"; then \
-	  for i in $$list2; do echo "$$i"; done \
-	    | sed -n '/\.1[a-z]*$$/p'; \
-	fi; \
-	} | while read p; do \
-	  if test -f $$p; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; echo "$$p"; \
-	done | \
-	sed -e 'n;s,.*/,,;p;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
-	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,' | \
-	sed 'N;N;s,\n, ,g' | { \
-	list=; while read file base inst; do \
-	  if test "$$base" = "$$inst"; then list="$$list $$file"; else \
-	    echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(man1dir)/$$inst'"; \
-	    $(INSTALL_DATA) "$$file" "$(DESTDIR)$(man1dir)/$$inst" || exit $$?; \
-	  fi; \
-	done; \
-	for i in $$list; do echo "$$i"; done | $(am__base_list) | \
-	while read files; do \
-	  test -z "$$files" || { \
-	    echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(man1dir)'"; \
-	    $(INSTALL_DATA) $$files "$(DESTDIR)$(man1dir)" || exit $$?; }; \
-	done; }
 
-uninstall-man1:
-	@$(NORMAL_UNINSTALL)
-	@list=''; test -n "$(man1dir)" || exit 0; \
-	files=`{ for i in $$list; do echo "$$i"; done; \
-	l2='$(nodist_man_MANS)'; for i in $$l2; do echo "$$i"; done | \
-	  sed -n '/\.1[a-z]*$$/p'; \
-	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
-	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
-	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+# This directory's subdirectories are mostly independent; you can cd
+# into them and run 'make' without going through this Makefile.
+# To change the values of 'make' variables: instead of editing Makefiles,
+# (1) if the variable is set in 'config.status', edit 'config.status'
+#     (which will cause the Makefiles to be regenerated when you run 'make');
+# (2) otherwise, pass the desired values on the 'make' command line.
+$(am__recursive_targets):
+	@fail=; \
+	if $(am__make_keepgoing); then \
+	  failcom='fail=yes'; \
+	else \
+	  failcom='exit 1'; \
+	fi; \
+	dot_seen=no; \
+	target=`echo $@ | sed s/-recursive//`; \
+	case "$@" in \
+	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
+	  *) list='$(SUBDIRS)' ;; \
+	esac; \
+	for subdir in $$list; do \
+	  echo "Making $$target in $$subdir"; \
+	  if test "$$subdir" = "."; then \
+	    dot_seen=yes; \
+	    local_target="$$target-am"; \
+	  else \
+	    local_target="$$target"; \
+	  fi; \
+	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
+	  || eval $$failcom; \
+	done; \
+	if test "$$dot_seen" = "no"; then \
+	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
+	fi; test -z "$$fail"
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-am
+tags: tags-recursive
 TAGS: tags
 
 tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
+	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
+	  include_option=--etags-include; \
+	  empty_fix=.; \
+	else \
+	  include_option=--include; \
+	  empty_fix=; \
+	fi; \
+	list='$(SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    test ! -f $$subdir/TAGS || \
+	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
+	  fi; \
+	done; \
 	$(am__define_uniq_tagged_files); \
 	shift; \
 	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
@@ -1452,7 +725,7 @@ tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	      $$unique; \
 	  fi; \
 	fi
-ctags: ctags-am
+ctags: ctags-recursive
 
 CTAGS: ctags
 ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
@@ -1471,7 +744,7 @@ cscope: cscope.files
 clean-cscope:
 	-rm -f cscope.files
 cscope.files: clean-cscope cscopelist
-cscopelist: cscopelist-am
+cscopelist: cscopelist-recursive
 
 cscopelist-am: $(am__tagged_files)
 	list='$(am__tagged_files)'; \
@@ -1679,6 +952,31 @@ distdir: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
+	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
+	  if test "$$subdir" = .; then :; else \
+	    $(am__make_dryrun) \
+	      || test -d "$(distdir)/$$subdir" \
+	      || $(MKDIR_P) "$(distdir)/$$subdir" \
+	      || exit 1; \
+	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
+	    $(am__relativize); \
+	    new_distdir=$$reldir; \
+	    dir1=$$subdir; dir2="$(top_distdir)"; \
+	    $(am__relativize); \
+	    new_top_distdir=$$reldir; \
+	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
+	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
+	    ($(am__cd) $$subdir && \
+	      $(MAKE) $(AM_MAKEFLAGS) \
+	        top_distdir="$$new_top_distdir" \
+	        distdir="$$new_distdir" \
+		am__remove_distdir=: \
+		am__skip_length_check=: \
+		am__skip_mode_fix=: \
+	        distdir) \
+	      || exit 1; \
+	  fi; \
+	done
 	$(MAKE) $(AM_MAKEFLAGS) \
 	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
 	  dist-hook
@@ -1815,21 +1113,19 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: check-am
-all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(MANS) config.h
-installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
-install: install-am
-install-exec: install-exec-am
-install-data: install-data-am
-uninstall: uninstall-am
+check: check-recursive
+all-am: Makefile config.h
+installdirs: installdirs-recursive
+installdirs-am:
+install: install-recursive
+install-exec: install-exec-recursive
+install-data: install-data-recursive
+uninstall: uninstall-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-am
+installcheck: installcheck-recursive
 install-strip:
 	if test -z '$(STRIP)'; then \
 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
@@ -1850,132 +1146,109 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
-	-rm -f @DVISVGM_TREE@/clipper/$(DEPDIR)/$(am__dirstamp)
-	-rm -f @DVISVGM_TREE@/clipper/$(am__dirstamp)
-	-rm -f @DVISVGM_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-	-rm -f @DVISVGM_TREE@/src/$(am__dirstamp)
-	-rm -f @DVISVGM_TREE@/xxHash/$(DEPDIR)/$(am__dirstamp)
-	-rm -f @DVISVGM_TREE@/xxHash/$(am__dirstamp)
 	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-am
+clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
-distclean: distclean-am
+distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR) @DVISVGM_TREE@/xxHash/$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags
+distclean-am: clean-am distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags
 
-dvi: dvi-am
+dvi: dvi-recursive
 
 dvi-am:
 
-html: html-am
+html: html-recursive
 
 html-am:
 
-info: info-am
+info: info-recursive
 
 info-am:
 
-install-data-am: install-man
+install-data-am:
 
-install-dvi: install-dvi-am
+install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am:
 
-install-html: install-html-am
+install-html: install-html-recursive
 
 install-html-am:
 
-install-info: install-info-am
+install-info: install-info-recursive
 
 install-info-am:
 
-install-man: install-man1
+install-man:
 
-install-pdf: install-pdf-am
+install-pdf: install-pdf-recursive
 
 install-pdf-am:
 
-install-ps: install-ps-am
+install-ps: install-ps-recursive
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-am
+maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf @DVISVGM_TREE@/clipper/$(DEPDIR) @DVISVGM_TREE@/src/$(DEPDIR) @DVISVGM_TREE@/xxHash/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-am
+mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
-pdf: pdf-am
+pdf: pdf-recursive
 
 pdf-am:
 
-ps: ps-am
+ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man
+uninstall-am:
 
-uninstall-man: uninstall-man1
+.MAKE: $(am__recursive_targets) all check-am install-am install-strip
 
-.MAKE: all check-am install-am install-strip
-
-.PHONY: CTAGS GTAGS TAGS all all-am am--refresh check check-TESTS \
-	check-am clean clean-binPROGRAMS clean-cscope clean-generic \
-	clean-libtool clean-noinstLIBRARIES cscope cscopelist-am ctags \
+.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
+	am--refresh check check-TESTS check-am clean clean-cscope \
+	clean-generic clean-libtool cscope cscopelist-am ctags \
 	ctags-am dist dist-all dist-bzip2 dist-gzip dist-hook \
 	dist-lzip dist-shar dist-tarZ dist-xz dist-zip distcheck \
-	distclean distclean-compile distclean-generic distclean-hdr \
-	distclean-libtool distclean-tags distcleancheck distdir \
-	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-pdf \
+	distclean distclean-generic distclean-hdr distclean-libtool \
+	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-data install-data-am install-dvi install-dvi-am \
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
 	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-man uninstall-man1
+	recheck tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
-
-$(dvisvgm_OBJECTS): $(noinst_LIBRARIES)
-
-$(libdvisvgm_a_OBJECTS): $(POTRACE_DEPEND)
-
+#
 config.force: $(dvisvgm_dependencies)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
-
-@KPATHSEA_RULE@
-@POTRACE_RULE@
-@FREETYPE2_RULE@
-@ZLIB_RULE@
-tests/dvisvgm.log: dvisvgm$(EXEEXT)
+tests/dvisvgm.log: dvisvgm-src/src/dvisvgm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

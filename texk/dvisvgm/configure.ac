@@ -1,24 +1,25 @@
-dnl Process this file with autoconf to produce a configure script.
+# $Id$
+dnl Process this file with autoconf to produce a configure script
+dnl for dvisvgm in TeX Live.
 dnl
-dnl   Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2015-2017 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-dnl *********************************************************************
-dnl
-dnl  Adapted for TeX Live from dvisvgm-src/configure.ac
-dnl  Copyright (C) 2005-2009 Martin Gieseking <martin.gieseking@uos.de>
-dnl
-dnl *********************************************************************
+dnl  Adapted for TeX Live from original dvisvgm configure.ac
+dnl  Copyright 2005-2017 Martin Gieseking
 dnl
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_AUX_DIR([../../build-aux])
-AC_CONFIG_MACRO_DIR([../../m4])
+AC_CONFIG_MACRO_DIRS([../../m4 m4])
+
+AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
 
 # Common code for all programs using libkpathsea.
 KPSE_COMMON([dvisvgm])
@@ -28,56 +29,41 @@ m4_include([ac/dvisvgm.ac])
 
 AC_CONFIG_HEADERS([config.h])
 
-AC_PROG_CXX
-AC_PROG_CXXCPP
-KPSE_CXX_HACK
-
 AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$host"],
                    [The machine triplet of the target system.])
 
-AC_SEARCH_LIBS([sqrt], [m])
+AC_PROG_CC
+AC_PROG_CC_C99
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([11], [noext])
+KPSE_CXX_HACK
+
+AC_PROG_RANLIB
+AC_LANG(C)
 
 AC_CHECK_FUNCS([ftime gettimeofday])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
+AC_HEADER_TIOCGWINSZ
 
 KPSE_COND_WIN32
-
 KPSE_KPATHSEA_FLAGS
-KPSE_ZLIB_FLAGS
-KPSE_FREETYPE2_FLAGS
 KPSE_POTRACE_FLAGS
+KPSE_FREETYPE2_FLAGS
+KPSE_ZLIB_FLAGS
 
 KPSE_SAVE_FLAGS
 
-AS_IF([test "x$with_libgs" = xno], [libgs_mode=no],
-      [dnl
-if test "x$with_system_libgs" = xyes; then
-  libgs_mode=link
-  AS_CASE([$with_libgs_includes],
-          ["" | yes | no], [LIBGS_INCLUDES=],
-            [LIBGS_INCLUDES="-I$with_libgs_includes"])
-  AS_CASE([$with_libgs_libdir],
-          ["" | yes | no], [LIBGS_LIBS=-lgs],
-            [LIBGS_LIBS="-L$with_libgs_libdir -lgs"])
-  KPSE_ADD_FLAGS([libgs])
-  AC_CHECK_HEADER([ghostscript/iapi.h])
-  AC_CHECK_FUNC([gsapi_new_instance])
-  if test "x$ac_cv_header_ghostscript_iapi_h:$ac_cv_func_gsapi_new_instance" != xyes:yes; then
-    AC_MSG_ERROR([cannot find/use libgs])
-  fi
-  AC_CACHE_CHECK([for Ghostscript version 8.31 or later],
-                 [kpse_cv_new_gsapi],
-                 [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <ghostscript/iapi.h>]],
-                                                     [[gs_main_inst *inst;]])],
-                                    [kpse_cv_new_gsapi=no],
-                                    [kpse_cv_new_gsapi=yes])])
-  if test "x$kpse_cv_new_gsapi" != xyes; then
-    AC_MSG_ERROR([dvisvgm requires Ghostscript version 8.31 or later])
-  fi
-  AC_DEFINE([HAVE_LIBGS], 1,
-            [Define to 1 if you have the `gs' library (-lgs).])
+# emacs-page
+if test "x$enable_native_texlive_build" = xyes; then
+  # TL: always dlload libgs, must avoid shared lib ref in binary.
+  HAVE_LIBGS=0
 else
-  libgs_mode=load
+HAVE_LIBGS=1
+AC_CHECK_HEADER([ghostscript/iapi.h],
+	AC_CHECK_LIB(gs, gsapi_new_instance, , HAVE_LIBGS=0), HAVE_LIBGS=0)
+fi
+
+if test "$HAVE_LIBGS" -eq 0; then
   LIBGS_INCLUDES=
   LIBGS_LIBS=
   # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
@@ -90,21 +76,40 @@ else
     AC_CHECK_HEADER([dlfcn.h])
     AC_CHECK_FUNC([dlopen])
     if test "x$ac_cv_header_dlfcn_h:$ac_cv_func_dlopen" != xyes:yes; then
-      libgs_mode=no
-      KPSE_RESTORE_FLAGS
+      AC_DEFINE(DISABLE_GS, 1,
+                [Set to 1 if PostScript support is to be disabled])
       LIBGS_LIBS=
     fi
   fi
-fi])
-if test "x$libgs_mode" = xno; then
-  AC_DEFINE([DISABLE_GS], 1,
-            [Set to 1 if PostScript support should be disabled.])
+  AC_SUBST([LIBGS_INCLUDES])
+  AC_SUBST([LIBGS_LIBS])
+else
+	# query Ghostscript version
+	AC_MSG_CHECKING([Ghostscript version])
+	AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
+		#include <ghostscript/iapi.h>
+		int main () {
+			gsapi_revision_t r;
+			if (gsapi_revision(&r, sizeof(gsapi_revision_t)) == 0) {
+				FILE *f;
+				f = fopen("gsversion", "w");
+				if (!f) exit(1);
+				fprintf(f, "%ld\n", r.revision);
+				fclose(f);
+				exit(0);
+			}
+		}])],
+		[gsversion=`cat gsversion`], [gsversion=], [gsversion=unknown])
+	AC_MSG_RESULT("$gsversion")
+	rm -f gsversion
+	if test "$gsversion" -lt 831; then
+		# current Ghostscript API was introduced in version 8.31
+		# older versions are not supported
+		LIBS=`echo $LIBS | sed "s/-lgs //" $LIBS`
+		AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])
+		AC_MSG_WARN([Ghostscript version < 8.31 found; PostScript support disabled])
+	fi
 fi
-AC_SUBST([LIBGS_INCLUDES])
-AC_SUBST([LIBGS_LIBS])
-AM_CONDITIONAL([dlloader], [test "x$libgs_mode" = xload])
-
-KPSE_SAVE_FLAGS
 
 if test "x$enable_build" != xno || test -f config.force; then
 
@@ -136,15 +141,60 @@ fi
 
 KPSE_RESTORE_FLAGS
 
-AC_DEFINE([HAVE_LIBZ], 1, [Define to 1 if you have the `z' library (-lz).])
-AC_DEFINE([HAVE_LIBFREETYPE], 1, [Define to 1 if you have the `freetype2' library (-lfreetype).])
+# emacs-page
+# Check for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS([libintl.h stdlib.h string.h strings.h unistd.h])
+
+# Check for typedefs, structures, and compiler characteristics.
+AC_HEADER_STDBOOL
+AC_C_CONST
+AC_C_INLINE
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Check for library functions.
+AC_FUNC_CLOSEDIR_VOID
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_MALLOC
+AC_FUNC_STAT
+AC_FUNC_VPRINTF
+AC_CHECK_FUNCS([memset strcasecmp strtol])
+
+AC_ARG_ENABLE([woff],
+	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@no@:>@])],
+	[],
+	[enable_woff=yes])
+
+AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
+if test "x$enable_woff" != "xyes" ; then
+	AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])
+fi
+
 AC_DEFINE([HAVE_LIBKPATHSEA], 1, [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
+AC_DEFINE([HAVE_LIBFREETYPE], 1, [Define to 1 if you have the `freetype2' library (-lfreetype).])
+AC_DEFINE([HAVE_LIBZ], 1, [Define to 1 if you have the `z' library (-lz).])
 if false; then
   AC_DEFINE([KPSE_CXX_UNSAFE], 1, [Define to 1 if the kpathsea headers are not C++ safe.])
 fi
 
+# TL: not going to attempt code coverage.
+AM_CONDITIONAL([CODE_COVERAGE_ENABLED], false)
+CODE_COVERAGE_RULES=
+AC_SUBST([CODE_COVERAGE_RULES])
+
 AC_SUBST([DVISVGM_TREE], [dvisvgm-src])
 
-AC_CONFIG_FILES([Makefile])
-
+AC_CONFIG_FILES([Makefile
+	dvisvgm-src/Makefile
+	dvisvgm-src/libs/Makefile
+	dvisvgm-src/libs/clipper/Makefile
+	dvisvgm-src/libs/ff-woff/Makefile
+	dvisvgm-src/libs/woff2/Makefile
+	dvisvgm-src/libs/woff2/brotli/Makefile
+	dvisvgm-src/libs/xxHash/Makefile
+	dvisvgm-src/src/Makefile
+	dvisvgm-src/src/version.hpp
+])dnl TL: skipping tests/* and doc/*
 AC_OUTPUT
