@@ -2,7 +2,7 @@
 ** EPSFile.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -22,16 +22,16 @@
 #include <cstring>
 #include <istream>
 #include <limits>
-#include "EPSFile.h"
-#include "InputBuffer.h"
-#include "InputReader.h"
+#include "EPSFile.hpp"
+#include "InputBuffer.hpp"
+#include "InputReader.hpp"
 
 using namespace std;
 
 
 /** Reads a little-endian 32-bit integer from the given input stream. */
-static UInt32 getUInt32 (istream &is) {
-	UInt32 value=0;
+static uint32_t getUInt32 (istream &is) {
+	uint32_t value=0;
 	char buf[4];
 	is.read(buf, 4);
 	for (int i=0; i < 4; i++)

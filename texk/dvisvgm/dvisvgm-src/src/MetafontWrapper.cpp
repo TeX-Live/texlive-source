@@ -2,7 +2,7 @@
 ** MetafontWrapper.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -23,18 +23,23 @@
 #include <cctype>
 #include <fstream>
 #include <sstream>
-#include "FileSystem.h"
-#include "FileFinder.h"
-#include "Message.h"
-#include "MetafontWrapper.h"
-#include "Process.h"
-#include "XMLString.h"
+#include "FileSystem.hpp"
+#include "FileFinder.hpp"
+#include "Message.hpp"
+#include "MetafontWrapper.hpp"
+#include "Process.hpp"
+#include "XMLString.hpp"
 
 using namespace std;
 
 
-MetafontWrapper::MetafontWrapper (const string &fname) : _fontname(fname)
+MetafontWrapper::MetafontWrapper (const string &fname, const string &dir) : _fontname(fname), _dir(dir)
 {
+	// ensure that folder paths ends with slash
+	if (_dir.empty())
+		_dir = "./";
+	else if (_dir != "/" && dir[dir.length()-1] != '/')
+		_dir += '/';
 }
 
 
@@ -45,7 +50,7 @@ MetafontWrapper::MetafontWrapper (const string &fname) : _fontname(fname)
  *  @param[in] mag magnification factor
  *  @return true on success */
 bool MetafontWrapper::call (const string &mode, double mag) {
-	if (!FileFinder::lookup(_fontname+".mf"))
+	if (!FileFinder::instance().lookup(_fontname+".mf"))
 		return false;     // mf file not available => no need to call the "slow" Metafont
 	FileSystem::remove(_fontname+".gf");
 
@@ -55,7 +60,7 @@ bool MetafontWrapper::call (const string &mode, double mag) {
 #else
 	const char *mfname = "mf.exe";
 #endif
-	const char *cmd = FileFinder::lookup(mfname, false);
+	const char *cmd = FileFinder::instance().lookup(mfname, false);
 	if (!cmd) {
 		Message::estream(true) << "can't run Metafont (" << mfname << " not found)\n";
 		return false;
@@ -73,7 +78,7 @@ bool MetafontWrapper::call (const string &mode, double mag) {
 	Message::mstream(false, Message::MC_STATE) << "\nrunning Metafont for " << _fontname << '\n';
 	Process mf_process(cmd, oss.str().c_str());
 	string mf_messages;
-	mf_process.run(&mf_messages);
+	mf_process.run(_dir, &mf_messages);
 
 	// get resolution value from stdout created by above MF command
 	char buf[256];
@@ -88,12 +93,12 @@ bool MetafontWrapper::call (const string &mode, double mag) {
 		}
 	}
 	// compose expected name of GF file (see Metafont Book, p. 324)
-	string gfname = _fontname + ".";
+	string gfname = _dir + _fontname + ".";
 	if (resolution > 0)
 		gfname += XMLString(resolution);
 	gfname += "gf";
-	FileSystem::rename(gfname, _fontname+".gf");  // remove resolution from filename
-	return FileSystem::exists(_fontname+".gf");
+	FileSystem::rename(gfname, _dir+_fontname+".gf");  // remove resolution value from filename
+	return FileSystem::exists(_dir+_fontname+".gf");
 }
 
 
@@ -102,8 +107,8 @@ bool MetafontWrapper::call (const string &mode, double mag) {
  *  @param[in] mag magnification factor
  *  @return true on success */
 bool MetafontWrapper::make (const string &mode, double mag) {
-	ifstream tfm((_fontname+".tfm").c_str());
-	ifstream gf((_fontname+".gf").c_str());
+	ifstream tfm((_dir+_fontname+".tfm").c_str());
+	ifstream gf((_dir+_fontname+".gf").c_str());
 	if (gf && tfm) // @@ distinguish between gf and tfm
 		return true;
 	return call(mode, mag);
@@ -111,24 +116,7 @@ bool MetafontWrapper::make (const string &mode, double mag) {
 
 
 bool MetafontWrapper::success () const {
-	ifstream tfm((_fontname+".tfm").c_str());
-	ifstream gf((_fontname+".gf").c_str());
+	ifstream tfm((_dir+_fontname+".tfm").c_str());
+	ifstream gf((_dir+_fontname+".gf").c_str());
 	return tfm && gf;
-}
-
-
-/** Remove all files created by a Metafont call (tfm, gf, log).
- *  @param[in] keepGF if true, GF files won't be removed */
-void MetafontWrapper::removeOutputFiles (bool keepGF) {
-	removeOutputFiles(_fontname, keepGF);
-}
-
-
-/** Remove all files created by a Metafont call for a given font (tfm, gf, log).
- *  @param[in] fontname name of font whose temporary files should be removed
- *  @param[in] keepGF if true, GF files will be kept */
-void MetafontWrapper::removeOutputFiles (const string &fontname, bool keepGF) {
-	const char *ext[] = {"gf", "tfm", "log", 0};
-	for (const char **p = keepGF ? ext+2 : ext; *p; ++p)
-		FileSystem::remove(fontname + "." + *p);
 }

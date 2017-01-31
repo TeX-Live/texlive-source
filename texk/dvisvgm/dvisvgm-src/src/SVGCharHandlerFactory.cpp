@@ -2,7 +2,7 @@
 ** SVGCharHandlerFactory.cpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,11 +18,11 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include "SVGCharHandlerFactory.h"
-#include "SVGCharPathHandler.h"
-#include "SVGSingleCharTextHandler.h"
-#include "SVGCharTspanTextHandler.h"
-#include "SVGTree.h"
+#include "SVGCharHandlerFactory.hpp"
+#include "SVGCharPathHandler.hpp"
+#include "SVGSingleCharTextHandler.hpp"
+#include "SVGCharTspanTextHandler.hpp"
+#include "SVGTree.hpp"
 
 
 SVGCharHandler* SVGCharHandlerFactory::createHandler () {

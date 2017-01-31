@@ -2,7 +2,7 @@
 ** PsSpecialHandler.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -23,17 +23,17 @@
 #include <fstream>
 #include <memory>
 #include <sstream>
-#include "EPSFile.h"
-#include "FileFinder.h"
-#include "Message.h"
-#include "PathClipper.h"
-#include "PSPattern.h"
-#include "PSPreviewFilter.h"
-#include "PsSpecialHandler.h"
-#include "SpecialActions.h"
-#include "SVGTree.h"
-#include "TensorProductPatch.h"
-#include "TriangularPatch.h"
+#include "EPSFile.hpp"
+#include "FileFinder.hpp"
+#include "Message.hpp"
+#include "PathClipper.hpp"
+#include "PSPattern.hpp"
+#include "PSPreviewFilter.hpp"
+#include "PsSpecialHandler.hpp"
+#include "SpecialActions.hpp"
+#include "SVGTree.hpp"
+#include "TensorProductPatch.hpp"
+#include "TriangularPatch.hpp"
 
 
 using namespace std;
@@ -60,8 +60,8 @@ PsSpecialHandler::PsSpecialHandler () : _psi(this), _actions(0), _previewFilter(
 
 PsSpecialHandler::~PsSpecialHandler () {
 	_psi.setActions(0);     // ensure no further PS actions are performed
-	for (map<int, PSPattern*>::iterator it=_patterns.begin(); it != _patterns.end(); ++it)
-		delete it->second;
+	for (auto &entry : _patterns)
+		delete entry.second;
 }
 
 
@@ -76,7 +76,7 @@ void PsSpecialHandler::initialize () {
 		for (const char **p=headers; *p; ++p)
 			processHeaderFile(*p);
 		// disable bop/eop operators to prevent side-effects by
-		// unexpected bobs/eops present in PS specials
+		// unexpected bops/eops present in PS specials
 		_psi.execute("\nTeXDict begin /bop{pop pop}def /eop{}def end ");
 		_psSection = PS_HEADERS;  // allow to process header specials now
 	}
@@ -101,7 +101,7 @@ void PsSpecialHandler::initgraphics () {
 
 
 void PsSpecialHandler::processHeaderFile (const char *name) {
-	if (const char *path = FileFinder::lookup(name, false)) {
+	if (const char *path = FileFinder::instance().lookup(name, false)) {
 		ifstream ifs(path);
 		_psi.execute(string("%%BeginProcSet: ")+name+" 0 0\n", false);
 		_psi.execute(ifs, false);
@@ -772,7 +772,7 @@ void PsSpecialHandler::clip (Path &path, bool evenodd) {
 	if (path.empty() || !_actions)
 		return;
 
-	Path::WindingRule windingRule = evenodd ? Path::WR_EVEN_ODD : Path::WR_NON_ZERO;
+	Path::WindingRule windingRule = evenodd ? Path::WindingRule::EVEN_ODD : Path::WindingRule::NON_ZERO;
 	path.setWindingRule(windingRule);
 
 	if (!_actions->getMatrix().isIdentity())
@@ -824,11 +824,11 @@ void PsSpecialHandler::shfill (vector<double> &params) {
 
 	// collect common data relevant for all shading types
 	int shadingTypeID = static_cast<int>(params[0]);
-	ColorSpace colorSpace = Color::RGB_SPACE;
+	ColorSpace colorSpace = Color::ColorSpace::RGB;
 	switch (static_cast<int>(params[1])) {
-		case 1: colorSpace = Color::GRAY_SPACE; break;
-		case 3: colorSpace = Color::RGB_SPACE; break;
-		case 4: colorSpace = Color::CMYK_SPACE; break;
+		case 1: colorSpace = Color::ColorSpace::GRAY; break;
+		case 3: colorSpace = Color::ColorSpace::RGB; break;
+		case 4: colorSpace = Color::ColorSpace::CMYK; break;
 	}
 	VectorIterator<double> it = params;
 	it += 2;     // skip shading type and color space
@@ -928,7 +928,7 @@ class ShadingCallback : public ShadingPatch::Callback {
 				_group->addAttribute("clip-path", XMLString("url(#clip")+XMLString(clippathID)+")");
 		}
 
-		void patchSegment (GraphicsPath<double> &path, const Color &color) {
+		void patchSegment (GraphicsPath<double> &path, const Color &color) override {
 			if (!_actions.getMatrix().isIdentity())
 				path.transform(_actions.getMatrix());
 
@@ -950,14 +950,14 @@ class ShadingCallback : public ShadingPatch::Callback {
 /** Handle all patch meshes whose patches and their connections can be processed sequentially.
  *  This comprises free-form triangular, Coons, and tensor-product patch meshes. */
 void PsSpecialHandler::processSequentialPatchMesh (int shadingTypeID, ColorSpace colorSpace, VectorIterator<double> &it) {
-	auto_ptr<ShadingPatch> previousPatch;
+	unique_ptr<ShadingPatch> previousPatch;
 	while (it.valid()) {
 		int edgeflag = static_cast<int>(*it++);
 		vector<DPair> points;
 		vector<Color> colors;
-		auto_ptr<ShadingPatch> patch;
+		unique_ptr<ShadingPatch> patch;
 
-		patch = auto_ptr<ShadingPatch>(ShadingPatch::create(shadingTypeID, colorSpace));
+		patch = unique_ptr<ShadingPatch>(ShadingPatch::create(shadingTypeID, colorSpace));
 		read_patch_data(*patch, edgeflag, it, points, colors);
 		patch->setPoints(points, edgeflag, previousPatch.get());
 		patch->setColors(colors, edgeflag, previousPatch.get());
@@ -978,7 +978,7 @@ void PsSpecialHandler::processSequentialPatchMesh (int shadingTypeID, ColorSpace
 			bbox.transform(_actions->getMatrix());
 			_actions->embed(bbox);
 		}
-		previousPatch = patch;
+		previousPatch = std::move(patch);
 	}
 }
 

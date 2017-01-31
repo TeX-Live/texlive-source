@@ -2,7 +2,7 @@
 ** BoundingBox.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,10 +21,11 @@
 #include <config.h>
 #include <algorithm>
 #include <sstream>
-#include "BoundingBox.h"
-#include "Matrix.h"
-#include "XMLNode.h"
-#include "XMLString.h"
+#include "BoundingBox.hpp"
+#include "Matrix.hpp"
+#include "utility.hpp"
+#include "XMLNode.hpp"
+#include "XMLString.hpp"
 
 using namespace std;
 
@@ -66,27 +67,13 @@ BoundingBox::BoundingBox (const string &boxstr)
 }
 
 
-/** Removes leading and trailing whitespace from the given string. */
-static string& strip (string &str) {
-	size_t n=0;
-	while (n < str.length() && isspace(str[n]))
-		++n;
-	str.erase(0, n);
-	n=str.length()-1;
-	while (n > 0 && isspace(str[n]))
-		--n;
-	str.erase(n+1);
-	return str;
-}
-
-
 /** Extracts a sequence of length values from a given string.
  *  @param[in] boxstr whitespace and/or comma separated string of lengths.
  *  @param[out] the extracted lengths */
 void BoundingBox::extractLengths (string boxstr, vector<Length> &lengths) {
 	const size_t len = boxstr.length();
 	size_t l=0;
-	strip(boxstr);
+	boxstr = util::trim(boxstr);
 	string lenstr;
 	do {
 		while (l < len && isspace(boxstr[l]))
@@ -96,7 +83,7 @@ void BoundingBox::extractLengths (string boxstr, vector<Length> &lengths) {
 			r++;
 		lenstr = boxstr.substr(l, r-l);
 		if (!lenstr.empty()) {
-			lengths.push_back(Length(lenstr));
+			lengths.emplace_back(Length(lenstr));
 			if (boxstr[r] == ',')
 				r++;
 			l = r;

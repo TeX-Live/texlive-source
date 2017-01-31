@@ -2,7 +2,7 @@
 ** PSPattern.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,11 +21,11 @@
 #include <config.h>
 #include <sstream>
 #include <vector>
-#include "BoundingBox.h"
-#include "PSPattern.h"
-#include "SpecialActions.h"
-#include "SVGTree.h"
-#include "XMLNode.h"
+#include "BoundingBox.hpp"
+#include "PSPattern.hpp"
+#include "SpecialActions.hpp"
+#include "SVGTree.hpp"
+#include "XMLNode.hpp"
 
 using namespace std;
 
@@ -155,9 +155,9 @@ void PSUncoloredTilingPattern::apply (SpecialActions &actions) {
 		const char *attribs[] = {"fill", "stroke"};
 		for (int i=0; i < 2; i++) {
 			getGroupNode()->getDescendants(0, attribs[i], colored_elems);
-			for (vector<XMLElementNode*>::iterator it=colored_elems.begin(); it != colored_elems.end(); ++it)
-				if (string((*it)->getAttributeValue(attribs[i])) != "none")
-					(*it)->addAttribute(attribs[i], _currentColor.svgColorString());
+			for (XMLElementNode *elem : colored_elems)
+				if (string(elem->getAttributeValue(attribs[i])) != "none")
+					elem->addAttribute(attribs[i], _currentColor.svgColorString());
 			colored_elems.clear();
 		}
 		PSPattern::apply(actions);

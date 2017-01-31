@@ -6,8 +6,14 @@
 /* Set to 1 if PostScript support should be disabled */
 #undef DISABLE_GS
 
+/* Define if WOFF support is disabled */
+#undef DISABLE_WOFF
+
 /* Define to 1 if `TIOCGWINSZ' requires <sys/ioctl.h>. */
 #undef GWINSZ_IN_SYS_IOCTL
+
+/* define if the compiler supports basic C++11 syntax */
+#undef HAVE_CXX11
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */

@@ -2,7 +2,7 @@
 ** GFTracer.cpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,9 +21,9 @@
 #include <config.h>
 #include <fstream>
 #include <potracelib.h>
-#include "GFTracer.h"
-#include "Glyph.h"
-#include "Message.h"
+#include "GFTracer.hpp"
+#include "Glyph.hpp"
+#include "Message.hpp"
 
 using namespace std;
 
@@ -43,11 +43,11 @@ GFTracer::GFTracer (istream &is, double upp)
 }
 
 
-void GFTracer::beginChar (UInt32 c) {
+void GFTracer::beginChar (uint32_t c) {
 }
 
 
-void GFTracer::endChar (UInt32 c) {
+void GFTracer::endChar (uint32_t c) {
 	const Bitmap &bitmap = getBitmap();
 	if (bitmap.empty())
 		return;

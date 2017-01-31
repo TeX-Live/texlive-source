@@ -1,9 +1,1027 @@
+2017-01-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.1 
+
+  * src/DVIToSVG.cpp, src/DVIToSVGActions.cpp, src/EPSToSVG.cpp: 
+  get program name and version from version.hpp, avoid using macros from 
+  config.h 
+
+  * src/BoundingBox.cpp, src/Color.cpp, src/DVIToSVGActions.cpp, 
+    src/FilePath.cpp, src/FileSystem.cpp, src/FontWriter.cpp, 
+    src/Makefile.am, src/PageSize.cpp, src/SVGOutput.cpp, src/utility.cpp, 
+    src/utility.hpp, tests/Makefile.am, tests/UtilityTest.cpp: 
+  moved common utility functions to separate compilation unit and 
+  namespace 
+
+2017-01-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontWriter.cpp, src/FontWriter.hpp: 
+  print error message if FontWriter can't write temporary files 
+
+  * doc/dvisvgm.txt.in, src/CommandLine.hpp, src/dvisvgm.cpp, 
+    src/options.xml: 
+  added option --tmpdir to select a different temp folder 
+
+  * libs/ff-woff/fontforge/utils.c, src/FileSystem.cpp, src/FileSystem.hpp, 
+    src/Font.cpp, src/FontWriter.cpp, src/GlyphTracerMessages.hpp, 
+    src/MetafontWrapper.cpp, src/MetafontWrapper.hpp, src/Process.cpp, 
+    src/Process.hpp, src/SVGOutput.cpp, src/SVGOutput.hpp: 
+  create temp files in the system's temp folder rather than in cwd (closes 
+  #63) 
+
+2017-01-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * tests/GhostscriptTest.cpp: 
+  disable GS banner in GhostscriptTest 
+
+  * src/DVIToSVG.cpp, src/EPSToSVG.cpp, src/SVGTree.hpp: 
+  print warning message if output file could not be written 
+
+  * src/FilePath.cpp, src/FilePath.hpp, tests/FilePathTest.cpp, 
+    tests/SVGOutputTest.cpp: 
+  retain letter case of filenames (Windows) 
+
+2017-01-10  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp, src/dvisvgm.cpp: 
+  added missing newlines in messages; fixed typo 
+
+2017-01-05  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/AGLTable.hpp, src/genhashmap.cpp, src/glyphlist.txt, 
+    src/glyphlist/Makefile, src/glyphlist/glyphlist-tex.txt, 
+    src/glyphlist/glyphlist.dtd, src/glyphlist/glyphlist.txt, 
+    src/glyphlist/glyphlist.xsl, src/glyphlist/xmlify.py: 
+  updated AGL table and removed colliding codepoints (closes #64) 
+
+2017-01-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * Makefile.am, README, README.md, configure.ac, doc/Makefile.am, 
+    doc/conf-dblatex-man.xsl, doc/conf-dblatex-pdf.xsl, doc/db2html.xsl, 
+    doc/dvisvgm.txt.in, doc/tweak-db-article.xsl, doc/tweak-dblatex-pdf.xsl, 
+    libs/Makefile.am, src/AGLTable.hpp, src/BasicDVIReader.cpp, 
+    src/BasicDVIReader.hpp, src/Bezier.cpp, src/Bezier.hpp, 
+    src/BgColorSpecialHandler.cpp, src/BgColorSpecialHandler.hpp, 
+    src/Bitmap.cpp, src/Bitmap.hpp, src/BoundingBox.cpp, src/BoundingBox.hpp, 
+    src/CLCommandLine.cpp, src/CLCommandLine.hpp, src/CLOption.hpp, 
+    src/CMap.cpp, src/CMap.hpp, src/CMapManager.cpp, src/CMapManager.hpp, 
+    src/CMapReader.cpp, src/CMapReader.hpp, src/CRC32.cpp, src/CRC32.hpp, 
+    src/Calculator.cpp, src/Calculator.hpp, src/CharMapID.cpp, 
+    src/CharMapID.hpp, src/Character.hpp, src/Color.cpp, src/Color.hpp, 
+    src/ColorSpecialHandler.cpp, src/ColorSpecialHandler.hpp, 
+    src/CommandLine.hpp, src/DLLoader.cpp, src/DLLoader.hpp, 
+    src/DVIActions.hpp, src/DVIReader.cpp, src/DVIReader.hpp, 
+    src/DVIToSVG.cpp, src/DVIToSVG.hpp, src/DVIToSVGActions.cpp, 
+    src/DVIToSVGActions.hpp, src/DependencyGraph.hpp, src/Directory.cpp, 
+    src/Directory.hpp, src/DvisvgmSpecialHandler.cpp, 
+    src/DvisvgmSpecialHandler.hpp, src/EPSFile.cpp, src/EPSFile.hpp, 
+    src/EPSToSVG.cpp, src/EPSToSVG.hpp, src/EmSpecialHandler.cpp, 
+    src/EmSpecialHandler.hpp, src/EncFile.cpp, src/EncFile.hpp, 
+    src/FileFinder.cpp, src/FileFinder.hpp, src/FilePath.cpp, 
+    src/FilePath.hpp, src/FileSystem.cpp, src/FileSystem.hpp, 
+    src/FixWord.hpp, src/Font.cpp, src/Font.hpp, src/FontCache.cpp, 
+    src/FontCache.hpp, src/FontEncoding.cpp, src/FontEncoding.hpp, 
+    src/FontEngine.cpp, src/FontEngine.hpp, src/FontManager.cpp, 
+    src/FontManager.hpp, src/FontMap.cpp, src/FontMap.hpp, 
+    src/FontMetrics.cpp, src/FontMetrics.hpp, src/FontStyle.hpp, 
+    src/FontWriter.cpp, src/FontWriter.hpp, src/GFGlyphTracer.cpp, 
+    src/GFGlyphTracer.hpp, src/GFReader.cpp, src/GFReader.hpp, 
+    src/GFTracer.cpp, src/GFTracer.hpp, src/Ghostscript.cpp, 
+    src/Ghostscript.hpp, src/Glyph.hpp, src/GlyphTracerMessages.hpp, 
+    src/GraphicsPath.hpp, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.hpp, src/InputBuffer.cpp, src/InputBuffer.hpp, 
+    src/InputReader.cpp, src/InputReader.hpp, src/JFM.cpp, src/JFM.hpp, 
+    src/Length.cpp, src/Length.hpp, src/Makefile.am, src/Makefile.old, 
+    src/MapLine.cpp, src/MapLine.hpp, src/Matrix.cpp, src/Matrix.hpp, 
+    src/Message.cpp, src/Message.hpp, src/MessageException.hpp, 
+    src/MetafontWrapper.cpp, src/MetafontWrapper.hpp, src/MiKTeXCom.cpp, 
+    src/MiKTeXCom.hpp, src/NoPsSpecialHandler.cpp, 
+    src/NoPsSpecialHandler.hpp, src/NumericRanges.hpp, src/PSFilter.hpp, 
+    src/PSInterpreter.cpp, src/PSInterpreter.hpp, src/PSPattern.cpp, 
+    src/PSPattern.hpp, src/PSPreviewFilter.cpp, src/PSPreviewFilter.hpp, 
+    src/PageRanges.cpp, src/PageRanges.hpp, src/PageSize.cpp, 
+    src/PageSize.hpp, src/Pair.hpp, src/PapersizeSpecialHandler.cpp, 
+    src/PapersizeSpecialHandler.hpp, src/PathClipper.cpp, 
+    src/PathClipper.hpp, src/PdfSpecialHandler.cpp, 
+    src/PdfSpecialHandler.hpp, src/PreScanDVIReader.cpp, 
+    src/PreScanDVIReader.hpp, src/Process.cpp, src/Process.hpp, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/RangeMap.cpp, 
+    src/RangeMap.hpp, src/SVGCharHandler.cpp, src/SVGCharHandler.hpp, 
+    src/SVGCharHandlerFactory.cpp, src/SVGCharHandlerFactory.hpp, 
+    src/SVGCharPathHandler.cpp, src/SVGCharPathHandler.hpp, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGCharTspanTextHandler.hpp, 
+    src/SVGOutput.cpp, src/SVGOutput.hpp, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGSingleCharTextHandler.hpp, src/SVGTree.cpp, src/SVGTree.hpp, 
+    src/SWFWriter.cpp, src/SWFWriter.hpp, src/ShadingPatch.cpp, 
+    src/ShadingPatch.hpp, src/SignalHandler.cpp, src/SignalHandler.hpp, 
+    src/SpecialActions.hpp, src/SpecialHandler.hpp, src/SpecialManager.cpp, 
+    src/SpecialManager.hpp, src/StreamReader.cpp, src/StreamReader.hpp, 
+    src/StreamWriter.cpp, src/StreamWriter.hpp, src/Subfont.cpp, 
+    src/Subfont.hpp, src/System.cpp, src/System.hpp, src/TFM.cpp, 
+    src/TFM.hpp, src/TensorProductPatch.cpp, src/TensorProductPatch.hpp, 
+    src/Terminal.cpp, src/Terminal.hpp, src/ToUnicodeMap.cpp, 
+    src/ToUnicodeMap.hpp, src/TpicSpecialHandler.cpp, 
+    src/TpicSpecialHandler.hpp, src/TriangularPatch.cpp, 
+    src/TriangularPatch.hpp, src/Unicode.cpp, src/Unicode.hpp, 
+    src/VFActions.hpp, src/VFReader.cpp, src/VFReader.hpp, 
+    src/VectorIterator.hpp, src/VectorStream.hpp, src/XMLDocument.cpp, 
+    src/XMLDocument.hpp, src/XMLNode.cpp, src/XMLNode.hpp, src/XMLString.cpp, 
+    src/XMLString.hpp, src/ZLibOutputStream.hpp, src/dvisvgm.cpp, 
+    src/ffwrapper.c, src/ffwrapper.h, src/macros.hpp, src/options.dtd, 
+    src/options.xml, src/psdefs.cpp, src/psdefs.ps, src/version.hpp, 
+    src/version.hpp.in, tests/BezierTest.cpp, tests/BitmapTest.cpp, 
+    tests/BoundingBoxTest.cpp, tests/CMapManagerTest.cpp, 
+    tests/CMapReaderTest.cpp, tests/CMapTest.cpp, tests/CRC32Test.cpp, 
+    tests/CalculatorTest.cpp, tests/ColorSpecialTest.cpp, 
+    tests/ColorTest.cpp, tests/CommandLineTest.cpp, 
+    tests/DependencyGraphTest.cpp, tests/DirectoryTest.cpp, 
+    tests/DvisvgmSpecialTest.cpp, tests/EmSpecialTest.cpp, 
+    tests/FileFinderTest.cpp, tests/FilePathTest.cpp, 
+    tests/FileSystemTest.cpp, tests/FontManagerTest.cpp, 
+    tests/FontMapTest.cpp, tests/GFGlyphTracerTest.cpp, 
+    tests/GFReaderTest.cpp, tests/GraphicsPathTest.cpp, 
+    tests/JFMReaderTest.cpp, tests/LengthTest.cpp, tests/Makefile.am, 
+    tests/MapLineTest.cpp, tests/MatrixTest.cpp, 
+    tests/MessageExceptionTest.cpp, tests/PSInterpreterTest.cpp, 
+    tests/PageRagesTest.cpp, tests/PageSizeTest.cpp, tests/PairTest.cpp, 
+    tests/RangeMapTest.cpp, tests/SVGOutputTest.cpp, 
+    tests/ShadingPatchTest.cpp, tests/SplittedCharInputBufferTest.cpp, 
+    tests/StreamInputBufferTest.cpp, tests/StreamReaderTest.cpp, 
+    tests/StreamWriterTest.cpp, tests/SubfontTest.cpp, 
+    tests/TFMReaderTest.cpp, tests/TensorProductPatchTest.cpp, 
+    tests/ToUnicodeMapTest.cpp, tests/TriangularPatchTest.cpp, 
+    tests/UnicodeTest.cpp, tests/VectorIteratorTest.cpp, 
+    tests/VectorStreamTest.cpp, tests/XMLNodeTest.cpp, 
+    tests/XMLStringTest.cpp, tests/check-conv, tests/create-makefile, 
+    tests/data/Makefile.am, tests/genhashcheck.py, tests/normalize.xsl: 
+  updated year in copyright statements to 2017 
+
+2016-12-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/Makefile.am, doc/conf-dblatex-pdf.xsl, doc/db2html.xsl, 
+    doc/dvisvgm.txt.in, doc/dvisvgm.xpr, doc/tweak-db-article.xsl: 
+  manpage: minor refactorings of the XSLT scripts; added generation of 
+  epub 
+
+2016-12-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/conf-dblatex-pdf.xsl, doc/tweak-dblatex-pdf.xsl: 
+  manpage: use mixed case titles in pdf output 
+
+  * doc/db2html.xsl: 
+  manpage: replace icon of Author section 
+
+  * doc/conf-dblatex-man.xsl, doc/conf-dblatex-pdf.xsl, 
+    doc/tweak-dblatex-pdf.xsl: 
+  indent with tabs rather than spaces 
+
+  * doc/conf-dblatex-man.xsl, doc/conf-dblatex-pdf.xsl, doc/db2html.xsl, 
+    doc/tweak-dblatex-pdf.xsl: 
+  added missing email address to copyright headers 
+
+2016-12-15  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/db2html.xsl, doc/dvisvgm.xpr: 
+  manpage: preserve whitespace in list of supported specials 
+
+2016-11-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac: 
+  ensure compiling C files with --std=c99 
+
+2016-11-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+2016-11-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.0.4 
+
+  * configure.ac, libs/Makefile.am, libs/clipper/Makefile.am, 
+    libs/ff-woff/Makefile.am, libs/woff2/Makefile.am, 
+    libs/woff2/brotli/Makefile.am, libs/woff2/brotli/enc/Makefile.am, 
+    libs/woff2/src/Makefile.am, src/Makefile.am: 
+  added license files of bundled libraries; relocated Makefiles 
+
+  * README, README.md, configure.ac, libs/Makefile.am, libs/ff-woff/LICENSE, 
+    libs/ff-woff/Makefile.am, libs/ff-woff/README.md, 
+    libs/ff-woff/fontforge/PfEd.h, libs/ff-woff/fontforge/alphabet.c, 
+    libs/ff-woff/fontforge/asmfpst.c, libs/ff-woff/fontforge/autohint.c, 
+    libs/ff-woff/fontforge/char.c, libs/ff-woff/fontforge/cjk.c, 
+    libs/ff-woff/fontforge/configure-fontforge.h, 
+    libs/ff-woff/fontforge/cvundoes.c, libs/ff-woff/fontforge/dumppfa.c, 
+    libs/ff-woff/fontforge/edgelist.h, libs/ff-woff/fontforge/edgelist2.h, 
+    libs/ff-woff/fontforge/encoding.c, libs/ff-woff/fontforge/encoding.h, 
+    libs/ff-woff/fontforge/fontforge-config.h, 
+    libs/ff-woff/fontforge/fontforge.h, libs/ff-woff/fontforge/fontforgevw.h, 
+    libs/ff-woff/fontforge/fvfonts.c, libs/ff-woff/fontforge/gwwiconv.c, 
+    libs/ff-woff/fontforge/libffstamp.h, libs/ff-woff/fontforge/lookups.c, 
+    libs/ff-woff/fontforge/macbinary.c, libs/ff-woff/fontforge/macenc.c, 
+    libs/ff-woff/fontforge/mathconstants.c, libs/ff-woff/fontforge/memory.c, 
+    libs/ff-woff/fontforge/mm.c, libs/ff-woff/fontforge/namehash.h, 
+    libs/ff-woff/fontforge/namelist.c, libs/ff-woff/fontforge/nouiutil.c, 
+    libs/ff-woff/fontforge/nowakowskittfinstr.c, 
+    libs/ff-woff/fontforge/parsepfa.c, libs/ff-woff/fontforge/parsettf.c, 
+    libs/ff-woff/fontforge/parsettfatt.c, libs/ff-woff/fontforge/psfont.h, 
+    libs/ff-woff/fontforge/psread.c, libs/ff-woff/fontforge/pua.c, 
+    libs/ff-woff/fontforge/sd.h, libs/ff-woff/fontforge/sfd.c, 
+    libs/ff-woff/fontforge/sfd1.c, libs/ff-woff/fontforge/sfd1.h, 
+    libs/ff-woff/fontforge/splinechar.c, libs/ff-woff/fontforge/splinefont.c, 
+    libs/ff-woff/fontforge/splinefont.h, 
+    libs/ff-woff/fontforge/splineorder2.c, 
+    libs/ff-woff/fontforge/splineoverlap.c, 
+    libs/ff-woff/fontforge/splinerefigure.c, 
+    libs/ff-woff/fontforge/splinesave.c, 
+    libs/ff-woff/fontforge/splinesaveafm.c, 
+    libs/ff-woff/fontforge/splineutil.c, 
+    libs/ff-woff/fontforge/splineutil2.c, libs/ff-woff/fontforge/start.c, 
+    libs/ff-woff/fontforge/stemdb.c, libs/ff-woff/fontforge/stemdb.h, 
+    libs/ff-woff/fontforge/tables.h, libs/ff-woff/fontforge/tottf.c, 
+    libs/ff-woff/fontforge/tottfaat.c, libs/ff-woff/fontforge/tottfgpos.c, 
+    libs/ff-woff/fontforge/tottfvar.c, libs/ff-woff/fontforge/ttf.h, 
+    libs/ff-woff/fontforge/ttfinstrs.c, libs/ff-woff/fontforge/ttfinstrs.h, 
+    libs/ff-woff/fontforge/ttfspecial.c, 
+    libs/ff-woff/fontforge/uiinterface.h, libs/ff-woff/fontforge/unialt.c, 
+    libs/ff-woff/fontforge/ustring.c, libs/ff-woff/fontforge/utils.c, 
+    libs/ff-woff/fontforge/utype.c, libs/ff-woff/fontforge/woff.c, 
+    libs/ff-woff/inc/basics.h, libs/ff-woff/inc/chardata.h, 
+    libs/ff-woff/inc/charset.h, libs/ff-woff/inc/dlist.h, 
+    libs/ff-woff/inc/gimage.h, libs/ff-woff/inc/gnetwork.h, 
+    libs/ff-woff/inc/gwwiconv.h, libs/ff-woff/inc/intl.h, 
+    libs/ff-woff/inc/ustring.h, libs/ff-woff/inc/utype.h, src/Makefile.am: 
+  bundle reduced fontforge library (ff-woff) 
+
+  * doc/dvisvgm.txt.in: 
+  minor changes in manpage 
+
+2016-11-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BasicDVIReader.cpp, src/BasicDVIReader.hpp, src/DVIReader.cpp, 
+    src/DVIReader.hpp: 
+  use const variables for DVI opcodes rather than the values directly 
+
+  * src/CommandLine.hpp, src/options.xml: 
+  fixed a typo in the --help output 
+
+2016-11-01  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontWriter.cpp: 
+  few cosmetic changes; added comments 
+
+2016-09-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README, README.md: 
+  updated NEWS and README 
+
+  * .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.0.3 
+
+2016-09-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIReader.cpp: 
+  fixed positioning of rules 
+
+  * src/DVIReader.cpp, src/DVIReader.hpp, src/DVIToSVG.cpp, 
+    src/DVIToSVG.hpp: 
+  dropped tracking of previous DVI state from DVIReader 
+
+2016-09-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIReader.cpp, src/DVIReader.hpp, src/DVIToSVG.cpp: 
+  fixed regression in character positioning of of virtual fonts 
+
+2016-09-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README.md: 
+  updated NEWS and README 
+
+  * .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.0.2 
+
+  * src/RangeMap.cpp: 
+  don't decrement iterator if it points to begin() 
+
+  * src/DVIReader.cpp: 
+  fixed type regression in computation of DVI positions (closes #61) 
+
+2016-09-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Font.cpp: 
+  fixed sign of character depth computed for native fonts 
+
+2016-09-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README, README.md: 
+  updated NEWS and README 
+
+  * .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.0.1 
+
+2016-08-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/FontWriter.cpp, src/FontWriter.hpp, 
+    src/SVGTree.cpp, src/SVGTree.hpp, src/ffwrapper.c: 
+  added option to autohint fonts created by the FontForge library 
+
+  * README, README.md: 
+  added link to reduced FF library to README 
+
+2016-08-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIToSVGActions.hpp, src/FontManager.hpp, src/MetafontWrapper.hpp: 
+  adapted struct/class forward declarations 
+
+2016-08-28  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS 
+
+  * README, README.md: 
+  updated README files 
+
+  * .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.0 
+
+  * src/CLCommandLine.cpp: 
+  added missing cast to avoid compiler warning 
+
+  * src/FileFinder.cpp, src/FileFinder.hpp: 
+  removed unused variable 
+
+2016-08-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontWriter.cpp, src/FontWriter.hpp, src/ffwrapper.c, 
+    src/ffwrapper.h: 
+  added missing copyright headers 
+
+2016-08-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, doc/dvisvgm.txt.in, libs/Makefile.am, libs/woff2/LICENSE, 
+    libs/woff2/brotli/LICENSE, libs/woff2/brotli/enc/Makefile.am, 
+    libs/woff2/brotli/enc/backward_references.cc, 
+    libs/woff2/brotli/enc/backward_references.h, 
+    libs/woff2/brotli/enc/bit_cost.h, 
+    libs/woff2/brotli/enc/block_splitter.cc, 
+    libs/woff2/brotli/enc/block_splitter.h, 
+    libs/woff2/brotli/enc/brotli_bit_stream.cc, 
+    libs/woff2/brotli/enc/brotli_bit_stream.h, 
+    libs/woff2/brotli/enc/cluster.h, libs/woff2/brotli/enc/command.h, 
+    libs/woff2/brotli/enc/compress_fragment.cc, 
+    libs/woff2/brotli/enc/compress_fragment.h, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.cc, 
+    libs/woff2/brotli/enc/compress_fragment_two_pass.h, 
+    libs/woff2/brotli/enc/compressor.h, libs/woff2/brotli/enc/context.h, 
+    libs/woff2/brotli/enc/dictionary.cc, libs/woff2/brotli/enc/dictionary.h, 
+    libs/woff2/brotli/enc/dictionary_hash.h, libs/woff2/brotli/enc/encode.cc, 
+    libs/woff2/brotli/enc/encode.h, libs/woff2/brotli/enc/encode_parallel.cc, 
+    libs/woff2/brotli/enc/encode_parallel.h, 
+    libs/woff2/brotli/enc/entropy_encode.cc, 
+    libs/woff2/brotli/enc/entropy_encode.h, 
+    libs/woff2/brotli/enc/entropy_encode_static.h, 
+    libs/woff2/brotli/enc/fast_log.h, 
+    libs/woff2/brotli/enc/find_match_length.h, libs/woff2/brotli/enc/hash.h, 
+    libs/woff2/brotli/enc/histogram.cc, libs/woff2/brotli/enc/histogram.h, 
+    libs/woff2/brotli/enc/literal_cost.cc, 
+    libs/woff2/brotli/enc/literal_cost.h, libs/woff2/brotli/enc/metablock.cc, 
+    libs/woff2/brotli/enc/metablock.h, libs/woff2/brotli/enc/port.h, 
+    libs/woff2/brotli/enc/prefix.h, libs/woff2/brotli/enc/ringbuffer.h, 
+    libs/woff2/brotli/enc/static_dict.cc, 
+    libs/woff2/brotli/enc/static_dict.h, 
+    libs/woff2/brotli/enc/static_dict_lut.h, 
+    libs/woff2/brotli/enc/streams.cc, libs/woff2/brotli/enc/streams.h, 
+    libs/woff2/brotli/enc/transform.h, libs/woff2/brotli/enc/types.h, 
+    libs/woff2/brotli/enc/utf8_util.cc, libs/woff2/brotli/enc/utf8_util.h, 
+    libs/woff2/brotli/enc/write_bits.h, libs/woff2/brotli/tools/bro.cc, 
+    libs/woff2/brotli/tools/rfc-format.py, libs/woff2/brotli/tools/version.h, 
+    libs/woff2/src/Makefile.am, libs/woff2/src/buffer.h, 
+    libs/woff2/src/file.h, libs/woff2/src/font.cc, libs/woff2/src/font.h, 
+    libs/woff2/src/glyph.cc, libs/woff2/src/glyph.h, 
+    libs/woff2/src/normalize.cc, libs/woff2/src/normalize.h, 
+    libs/woff2/src/port.h, libs/woff2/src/round.h, 
+    libs/woff2/src/store_bytes.h, libs/woff2/src/table_tags.cc, 
+    libs/woff2/src/table_tags.h, libs/woff2/src/transform.cc, 
+    libs/woff2/src/transform.h, libs/woff2/src/variable_length.cc, 
+    libs/woff2/src/variable_length.h, libs/woff2/src/woff2_common.cc, 
+    libs/woff2/src/woff2_common.h, libs/woff2/src/woff2_dec.h, 
+    libs/woff2/src/woff2_enc.cc, libs/woff2/src/woff2_enc.h, 
+    libs/woff2/src/woff2_out.cc, libs/woff2/src/woff2_out.h, 
+    src/FontWriter.cpp, src/FontWriter.hpp, src/Makefile.am: 
+  added support for embedding WOFF2 fonts 
+
+  * Makefile.am, clipper/License.txt, clipper/Makefile.am, 
+    clipper/clipper.cpp, clipper/clipper.hpp, configure.ac, libs/Makefile.am, 
+    libs/clipper/License.txt, libs/clipper/Makefile.am, 
+    libs/clipper/clipper.cpp, libs/clipper/clipper.hpp, libs/xxHash/LICENSE, 
+    libs/xxHash/Makefile.am, libs/xxHash/xxhash-fileno.patch, 
+    libs/xxHash/xxhash.c, libs/xxHash/xxhash.h, libs/xxHash/xxhsum.c, 
+    src/Makefile.am, tests/Makefile.am, tests/create-makefile, 
+    xxHash/LICENSE, xxHash/Makefile.am, xxHash/xxhash-fileno.patch, 
+    xxHash/xxhash.c, xxHash/xxhash.h, xxHash/xxhsum.c: 
+  moved bundled libraries (clipper, xxHash) to subfolder 'libs' 
+
+2016-08-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/XMLNode.hpp: 
+  added move constructors to XMLNode classes 
+
+2016-08-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, doc/dvisvgm.txt.in, src/CommandLine.hpp, 
+    src/FontWriter.cpp, src/FontWriter.hpp, src/GraphicsPath.hpp, 
+    src/Makefile.am, src/SVGTree.cpp, src/SVGTree.hpp, src/XMLNode.cpp, 
+    src/XMLNode.hpp, src/dvisvgm.cpp, src/ffwrapper.c, src/ffwrapper.h, 
+    src/options.xml: 
+  added option --font-format to select the file format used to embed fonts 
+
+  * src/FontEngine.cpp: 
+  fixed sign of the font descender 
+
+2016-08-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * xxHash/xxhash.c, xxHash/xxhash.h, xxHash/xxhsum.c: 
+  updated xxHash to version 0.6.2 
+
+2016-08-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FixWord.hpp, src/Font.cpp, src/FontMetrics.hpp, src/SVGTree.cpp, 
+    src/TFM.cpp, src/TFM.hpp: 
+  added getters for ascent and descent to TFM-based fonts 
+
+2016-08-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PathClipper.cpp: 
+  added missing initializers 
+
+  * src/Ghostscript.hpp: 
+  removed copy constructor of class Ghostscript 
+
+2016-08-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * CMakeLists.txt, configure.ac, src/CLCommandLine.cpp, 
+    src/CLCommandLine.hpp, src/CommandLine.hpp, src/Makefile.am, 
+    src/dvisvgm.cpp, src/options.dtd, src/options.xml, src/version.hpp, 
+    src/version.hpp.in: 
+  added version.hpp to provide the current version number 
+
+2016-08-10  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/MiKTeX209-session_i.c: 
+  added Makefile rule to invocate midl automatically if MiKTeX's COM 
+  interface changes 
+
+2016-08-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Ghostscript.cpp, src/MiKTeXCom.cpp: 
+  replaced __WIN64__ with pre-defined _WIN64 
+
+  * src/System.cpp, src/dvisvgm.cpp: 
+  minor refactorings of dvisvgm.cpp 
+
+  * src/DVIReader.cpp, src/DVIReader.hpp, src/Directory.cpp, 
+    src/Directory.hpp, src/FilePath.cpp, src/FilePath.hpp, src/Font.cpp, 
+    src/Font.hpp, src/FontManager.cpp, src/FontManager.hpp, src/GFReader.hpp, 
+    src/PageRanges.cpp, src/PageRanges.hpp, src/PageSize.cpp, 
+    src/PageSize.hpp, src/SVGOutput.cpp, src/SVGOutput.hpp, 
+    src/VFActions.hpp, src/VFReader.cpp: 
+  pass string parameters by reference if possible 
+
+2016-08-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CMap.cpp, src/CMapManager.cpp, src/CMapReader.cpp, src/EncFile.cpp, 
+    src/FileFinder.cpp, src/FileFinder.hpp, src/Font.cpp, 
+    src/FontEncoding.cpp, src/FontManager.cpp, src/FontMap.cpp, 
+    src/FontMetrics.cpp, src/Ghostscript.cpp, src/MetafontWrapper.cpp, 
+    src/PsSpecialHandler.cpp, src/Subfont.cpp, src/dvisvgm.cpp, 
+    tests/CMapManagerTest.cpp, tests/FileFinderTest.cpp, 
+    tests/MapLineTest.cpp, tests/SubfontTest.cpp: 
+  made FileFinder a singleton again 
+
+  * CMakeLists.txt, src/CLCommandLine.cpp, src/CLCommandLine.hpp, 
+    src/CLOption.hpp, src/CmdLineParserBase.cpp, src/CmdLineParserBase.hpp, 
+    src/CommandLine.cpp, src/CommandLine.hpp, src/Makefile.am, 
+    src/dvisvgm.cpp, src/options.dtd, src/options.xml, 
+    tests/CommandLineTest.cpp: 
+  reimplemented the CommandLine parser class 
+
+2016-07-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BgColorSpecialHandler.cpp, src/BoundingBox.cpp, 
+    src/DvisvgmSpecialHandler.cpp, src/EmSpecialHandler.cpp, 
+    src/FileSystem.cpp, src/FontCache.cpp, src/FontEngine.cpp, 
+    src/FontManager.cpp, src/GraphicsPath.hpp, src/PSInterpreter.cpp, 
+    src/PapersizeSpecialHandler.cpp, src/PathClipper.cpp, src/RangeMap.cpp, 
+    src/Subfont.cpp, src/TpicSpecialHandler.cpp, src/XMLDocument.cpp, 
+    src/XMLNode.cpp, src/genhashmap.cpp: 
+  replaced insert/push_back with emplace/emplace_back where useful 
+
+2016-07-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CMapReader.cpp: 
+  minor refactoring of class CMapReader 
+
+  * src/PathClipper.cpp: 
+  some minor refactorings of class PathClipper 
+
+2016-07-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontManager.cpp, src/FontManager.hpp: 
+  use unique_ptr to automatically release Font objects in class 
+  FontManager 
+
+  * src/FontMap.cpp, src/FontMap.hpp: 
+  some syntactic refactorings of class FontMap 
+
+2016-07-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/AGLTable.h, src/AGLTable.hpp, src/BasicDVIReader.cpp, 
+    src/BasicDVIReader.h, src/BasicDVIReader.hpp, src/Bezier.cpp, 
+    src/Bezier.h, src/Bezier.hpp, src/BgColorSpecialHandler.cpp, 
+    src/BgColorSpecialHandler.h, src/BgColorSpecialHandler.hpp, 
+    src/Bitmap.cpp, src/Bitmap.h, src/Bitmap.hpp, src/BoundingBox.cpp, 
+    src/BoundingBox.h, src/BoundingBox.hpp, src/CMap.cpp, src/CMap.h, 
+    src/CMap.hpp, src/CMapManager.cpp, src/CMapManager.h, 
+    src/CMapManager.hpp, src/CMapReader.cpp, src/CMapReader.h, 
+    src/CMapReader.hpp, src/CRC32.cpp, src/CRC32.h, src/CRC32.hpp, 
+    src/Calculator.cpp, src/Calculator.h, src/Calculator.hpp, 
+    src/CharMapID.cpp, src/CharMapID.h, src/CharMapID.hpp, src/Character.h, 
+    src/Character.hpp, src/CmdLineParserBase.cpp, src/CmdLineParserBase.h, 
+    src/CmdLineParserBase.hpp, src/Color.cpp, src/Color.h, src/Color.hpp, 
+    src/ColorSpecialHandler.cpp, src/ColorSpecialHandler.h, 
+    src/ColorSpecialHandler.hpp, src/CommandLine.cpp, src/CommandLine.h, 
+    src/CommandLine.hpp, src/DLLoader.cpp, src/DLLoader.h, src/DLLoader.hpp, 
+    src/DVIActions.h, src/DVIActions.hpp, src/DVIReader.cpp, src/DVIReader.h, 
+    src/DVIReader.hpp, src/DVIToSVG.cpp, src/DVIToSVG.h, src/DVIToSVG.hpp, 
+    src/DVIToSVGActions.cpp, src/DVIToSVGActions.h, src/DVIToSVGActions.hpp, 
+    src/DependencyGraph.h, src/DependencyGraph.hpp, src/Directory.cpp, 
+    src/Directory.h, src/Directory.hpp, src/DvisvgmSpecialHandler.cpp, 
+    src/DvisvgmSpecialHandler.h, src/DvisvgmSpecialHandler.hpp, 
+    src/EPSFile.cpp, src/EPSFile.h, src/EPSFile.hpp, src/EPSToSVG.cpp, 
+    src/EPSToSVG.h, src/EPSToSVG.hpp, src/EmSpecialHandler.cpp, 
+    src/EmSpecialHandler.h, src/EmSpecialHandler.hpp, src/EncFile.cpp, 
+    src/EncFile.h, src/EncFile.hpp, src/FileFinder.cpp, src/FileFinder.h, 
+    src/FileFinder.hpp, src/FilePath.cpp, src/FilePath.h, src/FilePath.hpp, 
+    src/FileSystem.cpp, src/FileSystem.h, src/FileSystem.hpp, src/FixWord.h, 
+    src/FixWord.hpp, src/Font.cpp, src/Font.h, src/Font.hpp, 
+    src/FontCache.cpp, src/FontCache.h, src/FontCache.hpp, 
+    src/FontEncoding.cpp, src/FontEncoding.h, src/FontEncoding.hpp, 
+    src/FontEngine.cpp, src/FontEngine.h, src/FontEngine.hpp, 
+    src/FontManager.cpp, src/FontManager.h, src/FontManager.hpp, 
+    src/FontMap.cpp, src/FontMap.h, src/FontMap.hpp, src/FontMetrics.cpp, 
+    src/FontMetrics.h, src/FontMetrics.hpp, src/FontStyle.h, 
+    src/FontStyle.hpp, src/GFGlyphTracer.cpp, src/GFGlyphTracer.h, 
+    src/GFGlyphTracer.hpp, src/GFReader.cpp, src/GFReader.h, 
+    src/GFReader.hpp, src/GFTracer.cpp, src/GFTracer.h, src/GFTracer.hpp, 
+    src/Ghostscript.cpp, src/Ghostscript.h, src/Ghostscript.hpp, src/Glyph.h, 
+    src/Glyph.hpp, src/GlyphTracerMessages.h, src/GlyphTracerMessages.hpp, 
+    src/GraphicsPath.h, src/GraphicsPath.hpp, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.h, src/HtmlSpecialHandler.hpp, 
+    src/InputBuffer.cpp, src/InputBuffer.h, src/InputBuffer.hpp, 
+    src/InputReader.cpp, src/InputReader.h, src/InputReader.hpp, src/JFM.cpp, 
+    src/JFM.h, src/JFM.hpp, src/Length.cpp, src/Length.h, src/Length.hpp, 
+    src/Makefile.am, src/MapLine.cpp, src/MapLine.h, src/MapLine.hpp, 
+    src/Matrix.cpp, src/Matrix.h, src/Matrix.hpp, src/Message.cpp, 
+    src/Message.h, src/Message.hpp, src/MessageException.h, 
+    src/MessageException.hpp, src/MetafontWrapper.cpp, src/MetafontWrapper.h, 
+    src/MetafontWrapper.hpp, src/MiKTeXCom.cpp, src/MiKTeXCom.h, 
+    src/MiKTeXCom.hpp, src/NoPsSpecialHandler.cpp, src/NoPsSpecialHandler.h, 
+    src/NoPsSpecialHandler.hpp, src/NumericRanges.h, src/NumericRanges.hpp, 
+    src/PSFilter.h, src/PSFilter.hpp, src/PSInterpreter.cpp, 
+    src/PSInterpreter.h, src/PSInterpreter.hpp, src/PSPattern.cpp, 
+    src/PSPattern.h, src/PSPattern.hpp, src/PSPreviewFilter.cpp, 
+    src/PSPreviewFilter.h, src/PSPreviewFilter.hpp, src/PageRanges.cpp, 
+    src/PageRanges.h, src/PageRanges.hpp, src/PageSize.cpp, src/PageSize.h, 
+    src/PageSize.hpp, src/Pair.h, src/Pair.hpp, 
+    src/PapersizeSpecialHandler.cpp, src/PapersizeSpecialHandler.h, 
+    src/PapersizeSpecialHandler.hpp, src/PathClipper.cpp, src/PathClipper.h, 
+    src/PathClipper.hpp, src/PdfSpecialHandler.cpp, src/PdfSpecialHandler.h, 
+    src/PdfSpecialHandler.hpp, src/PreScanDVIReader.cpp, 
+    src/PreScanDVIReader.h, src/PreScanDVIReader.hpp, src/Process.cpp, 
+    src/Process.h, src/Process.hpp, src/PsSpecialHandler.cpp, 
+    src/PsSpecialHandler.h, src/PsSpecialHandler.hpp, src/RangeMap.cpp, 
+    src/RangeMap.h, src/RangeMap.hpp, src/SVGCharHandler.cpp, 
+    src/SVGCharHandler.h, src/SVGCharHandler.hpp, 
+    src/SVGCharHandlerFactory.cpp, src/SVGCharHandlerFactory.h, 
+    src/SVGCharHandlerFactory.hpp, src/SVGCharPathHandler.cpp, 
+    src/SVGCharPathHandler.h, src/SVGCharPathHandler.hpp, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGCharTspanTextHandler.h, 
+    src/SVGCharTspanTextHandler.hpp, src/SVGOutput.cpp, src/SVGOutput.h, 
+    src/SVGOutput.hpp, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGSingleCharTextHandler.h, src/SVGSingleCharTextHandler.hpp, 
+    src/SVGTree.cpp, src/SVGTree.h, src/SVGTree.hpp, src/SWFWriter.cpp, 
+    src/SWFWriter.h, src/SWFWriter.hpp, src/ShadingPatch.cpp, 
+    src/ShadingPatch.h, src/ShadingPatch.hpp, src/SignalHandler.cpp, 
+    src/SignalHandler.h, src/SignalHandler.hpp, src/SpecialActions.h, 
+    src/SpecialActions.hpp, src/SpecialHandler.h, src/SpecialHandler.hpp, 
+    src/SpecialManager.cpp, src/SpecialManager.h, src/SpecialManager.hpp, 
+    src/StreamReader.cpp, src/StreamReader.h, src/StreamReader.hpp, 
+    src/StreamWriter.cpp, src/StreamWriter.h, src/StreamWriter.hpp, 
+    src/Subfont.cpp, src/Subfont.h, src/Subfont.hpp, src/System.cpp, 
+    src/System.h, src/System.hpp, src/TFM.cpp, src/TFM.h, src/TFM.hpp, 
+    src/TensorProductPatch.cpp, src/TensorProductPatch.h, 
+    src/TensorProductPatch.hpp, src/Terminal.cpp, src/Terminal.h, 
+    src/Terminal.hpp, src/ToUnicodeMap.cpp, src/ToUnicodeMap.h, 
+    src/ToUnicodeMap.hpp, src/TpicSpecialHandler.cpp, 
+    src/TpicSpecialHandler.h, src/TpicSpecialHandler.hpp, 
+    src/TriangularPatch.cpp, src/TriangularPatch.h, src/TriangularPatch.hpp, 
+    src/Unicode.cpp, src/Unicode.h, src/Unicode.hpp, src/VFActions.h, 
+    src/VFActions.hpp, src/VFReader.cpp, src/VFReader.h, src/VFReader.hpp, 
+    src/VectorIterator.h, src/VectorIterator.hpp, src/VectorStream.h, 
+    src/VectorStream.hpp, src/XMLDocument.cpp, src/XMLDocument.h, 
+    src/XMLDocument.hpp, src/XMLNode.cpp, src/XMLNode.h, src/XMLNode.hpp, 
+    src/XMLString.cpp, src/XMLString.h, src/XMLString.hpp, 
+    src/ZLibOutputStream.h, src/ZLibOutputStream.hpp, src/dvisvgm.cpp, 
+    src/macros.h, src/macros.hpp, src/psdefs.cpp, tests/BezierTest.cpp, 
+    tests/BitmapTest.cpp, tests/BoundingBoxTest.cpp, 
+    tests/CMapManagerTest.cpp, tests/CMapReaderTest.cpp, tests/CMapTest.cpp, 
+    tests/CRC32Test.cpp, tests/CalculatorTest.cpp, 
+    tests/ColorSpecialTest.cpp, tests/ColorTest.cpp, 
+    tests/CommandLineTest.cpp, tests/DependencyGraphTest.cpp, 
+    tests/DirectoryTest.cpp, tests/DvisvgmSpecialTest.cpp, 
+    tests/EmSpecialTest.cpp, tests/FileFinderTest.cpp, 
+    tests/FilePathTest.cpp, tests/FileSystemTest.cpp, 
+    tests/FontManagerTest.cpp, tests/FontMapTest.cpp, 
+    tests/GFGlyphTracerTest.cpp, tests/GFReaderTest.cpp, 
+    tests/GhostscriptTest.cpp, tests/GraphicsPathTest.cpp, 
+    tests/JFMReaderTest.cpp, tests/LengthTest.cpp, tests/Makefile.am, 
+    tests/MapLineTest.cpp, tests/MatrixTest.cpp, 
+    tests/MessageExceptionTest.cpp, tests/PSInterpreterTest.cpp, 
+    tests/PageRagesTest.cpp, tests/PageSizeTest.cpp, tests/PairTest.cpp, 
+    tests/RangeMapTest.cpp, tests/SVGOutputTest.cpp, 
+    tests/ShadingPatchTest.cpp, tests/SplittedCharInputBufferTest.cpp, 
+    tests/StreamInputBufferTest.cpp, tests/StreamReaderTest.cpp, 
+    tests/StreamWriterTest.cpp, tests/SubfontTest.cpp, 
+    tests/TFMReaderTest.cpp, tests/TensorProductPatchTest.cpp, 
+    tests/ToUnicodeMapTest.cpp, tests/TriangularPatchTest.cpp, 
+    tests/UnicodeTest.cpp, tests/VectorIteratorTest.cpp, 
+    tests/VectorStreamTest.cpp, tests/XMLNodeTest.cpp, 
+    tests/XMLStringTest.cpp, tests/create-makefile: 
+  renamed filename extension of C++ headers to .hpp 
+
+2016-07-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIToSVGActions.cpp, src/DVIToSVGActions.h: 
+  create BoxMap object directly, avoid new/delete 
+
+  * src/CMapManager.cpp, src/CMapManager.h, src/FileFinder.cpp, 
+    src/Font.cpp, src/Font.h, src/XMLDocument.cpp, src/XMLDocument.h, 
+    src/XMLNode.cpp, src/XMLNode.h, tests/XMLNodeTest.cpp: 
+  use smart pointers to release heap memory 
+
+  * src/genhashmap.cpp, src/glyphlist.txt: 
+  added genhashmap (generates AGLTable.h from glyphlist.txt) 
+
+2016-07-19  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/AGLTable.h, src/Color.cpp, src/Unicode.cpp, tests/genhashcheck.py: 
+  replaced repeated binary search implementations with calls of 
+  lower_bound() 
+
+2016-07-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FileFinder.cpp, src/Message.cpp: 
+  initialize maps with initializer-lists 
+
+2016-07-05  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Length.cpp, src/TpicSpecialHandler.cpp: 
+  replaced 'id macros' with constexpr functions 
+
+2016-07-04  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS, README.md: 
+  updated NEWS and README 
+
+  * .travis.yml, configure.ac, src/Doxyfile: 
+  set version to 1.16 
+
+  * src/dvisvgm.cpp: 
+  catch exception in set_cache_dir() 
+
+  * src/TFM.cpp: 
+  added missing initializers 
+
+2016-07-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIReader.cpp, src/DVIReader.h, src/Font.cpp, src/Font.h, 
+    src/FontManager.cpp, src/FontManager.h, src/VFActions.h, 
+    src/VFReader.cpp: 
+  transfer DVI snippet of a VF char by move semantics rather than by heap 
+  pointer 
+
+  * AUTHORS, LGPL-2.1.txt, Makefile.am, gzstream/COPYING.LIB, 
+    gzstream/Makefile, gzstream/README, gzstream/gzstream.cpp, 
+    gzstream/gzstream.h, gzstream/index.html, gzstream/logo.gif, 
+    gzstream/test_gunzip.C, gzstream/test_gzip.C, gzstream/version, 
+    src/Makefile.am, src/SVGOutput.cpp, src/SVGOutput.h, 
+    src/ZLibOutputStream.h, src/dvisvgm.cpp, src/gzstream.cpp, 
+    src/gzstream.h, tests/Makefile.am, tests/SVGOutputTest.cpp, 
+    tests/create-makefile: 
+  replaced old gzstream classes 
+
+  * clipper/clipper.hpp, src/AGLTable.h, src/BasicDVIReader.cpp, 
+    src/Bitmap.cpp, src/Bitmap.h, src/BoundingBox.h, src/CMap.cpp, 
+    src/CMap.h, src/CMapReader.cpp, src/CRC32.cpp, src/CRC32.h, 
+    src/CharMapID.h, src/Character.h, src/Color.cpp, src/Color.h, 
+    src/DVIActions.h, src/DVIReader.cpp, src/DVIReader.h, src/DVIToSVG.cpp, 
+    src/DVIToSVG.h, src/DVIToSVGActions.cpp, src/DVIToSVGActions.h, 
+    src/EPSFile.cpp, src/EPSFile.h, src/EncFile.cpp, src/EncFile.h, 
+    src/FileSystem.cpp, src/FileSystem.h, src/FixWord.h, src/Font.cpp, 
+    src/Font.h, src/FontCache.cpp, src/FontCache.h, src/FontEncoding.cpp, 
+    src/FontEncoding.h, src/FontEngine.cpp, src/FontEngine.h, 
+    src/FontManager.cpp, src/FontManager.h, src/FontMetrics.cpp, 
+    src/FontMetrics.h, src/GFGlyphTracer.cpp, src/GFGlyphTracer.h, 
+    src/GFReader.cpp, src/GFReader.h, src/GFTracer.cpp, src/GFTracer.h, 
+    src/Glyph.h, src/GlyphTracerMessages.h, src/InputBuffer.cpp, 
+    src/InputBuffer.h, src/JFM.cpp, src/JFM.h, src/Makefile.am, 
+    src/Message.h, src/Pair.h, src/PathClipper.cpp, src/PreScanDVIReader.cpp, 
+    src/PsSpecialHandler.h, src/RangeMap.cpp, src/RangeMap.h, 
+    src/SVGCharHandler.h, src/SVGCharPathHandler.cpp, 
+    src/SVGCharPathHandler.h, src/SVGCharTspanTextHandler.cpp, 
+    src/SVGCharTspanTextHandler.h, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGSingleCharTextHandler.h, src/SWFWriter.cpp, src/SWFWriter.h, 
+    src/StreamReader.cpp, src/StreamReader.h, src/StreamWriter.cpp, 
+    src/StreamWriter.h, src/Subfont.cpp, src/Subfont.h, src/TFM.cpp, 
+    src/TFM.h, src/ToUnicodeMap.cpp, src/ToUnicodeMap.h, src/Unicode.cpp, 
+    src/Unicode.h, src/VFActions.h, src/VFReader.cpp, src/VFReader.h, 
+    src/XMLString.cpp, src/types.h, tests/BitmapTest.cpp, 
+    tests/CRC32Test.cpp, tests/ColorSpecialTest.cpp, tests/ColorTest.cpp, 
+    tests/GFGlyphTracerTest.cpp, tests/GFReaderTest.cpp, 
+    tests/JFMReaderTest.cpp, tests/Makefile.am, tests/StreamReaderTest.cpp, 
+    tests/TriangularPatchTest.cpp, tests/TypesTest.cpp, 
+    tests/UnicodeTest.cpp: 
+  replaced own fixed-sized integer types with types from cstdint 
+
+  * src/CMapReader.cpp, src/CMapReader.h, src/CmdLineParserBase.cpp, 
+    src/CmdLineParserBase.h, src/Color.cpp, src/Color.h, src/CommandLine.cpp, 
+    src/DVIReader.cpp, src/DVIReader.h, src/DVIToSVG.cpp, 
+    src/EmSpecialHandler.cpp, src/Font.cpp, src/Font.h, src/FontManager.cpp, 
+    src/GraphicsPath.h, src/HtmlSpecialHandler.cpp, src/HtmlSpecialHandler.h, 
+    src/Length.cpp, src/Length.h, src/PathClipper.cpp, 
+    src/PsSpecialHandler.cpp, src/SVGTree.cpp, src/ShadingPatch.cpp, 
+    src/TensorProductPatch.h, tests/BoundingBoxTest.cpp, 
+    tests/LengthTest.cpp, tests/ShadingPatchTest.cpp, 
+    tests/TensorProductPatchTest.cpp, tests/TriangularPatchTest.cpp: 
+  replaced some enums with enum classes 
+
+  * src/NumericRanges.h, src/PapersizeSpecialHandler.cpp, src/Unicode.cpp, 
+    src/VFReader.cpp: 
+  replaced static callback functions with lambdas 
+
+  * configure.ac, m4/ax_cxx_compile_stdcxx.m4: 
+  switch from C++03 to C++11 
+
+2016-07-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BasicDVIReader.h, src/Bitmap.h, src/CMap.h, src/CmdLineParserBase.h, 
+    src/DVIActions.h, src/Font.h, src/FontEncoding.h, src/FontMetrics.h, 
+    src/GFGlyphTracer.h, src/GFReader.h, src/GFTracer.h, src/GraphicsPath.h, 
+    src/InputBuffer.h, src/InputReader.h, src/MessageException.h, 
+    src/PSFilter.h, src/PSInterpreter.h, src/PSPattern.h, 
+    src/SVGCharHandler.h, src/SVGOutput.h, src/ShadingPatch.h, 
+    src/SpecialActions.h, src/SpecialHandler.h, src/StreamReader.h, 
+    src/StreamWriter.h, src/Subfont.h, src/VFActions.h, src/XMLNode.h: 
+  replaced empty virtual destructors with default ones 
+
+  * src/PsSpecialHandler.cpp: 
+  use unique_ptr rather than deprecated auto_ptr 
+
+  * clipper/clipper.hpp, src/BgColorSpecialHandler.h, src/Bitmap.cpp, 
+    src/CMap.h, src/CmdLineParserBase.h, src/ColorSpecialHandler.h, 
+    src/CommandLine.h, src/DVIReader.h, src/DVIToSVG.h, 
+    src/DVIToSVGActions.h, src/DvisvgmSpecialHandler.h, src/EPSToSVG.h, 
+    src/EmSpecialHandler.h, src/EncFile.h, src/Font.h, src/FontCache.cpp, 
+    src/FontEncoding.h, src/FontMetrics.h, src/GFGlyphTracer.h, 
+    src/GFReader.h, src/GFTracer.h, src/GlyphTracerMessages.h, 
+    src/GraphicsPath.h, src/HtmlSpecialHandler.h, src/InputBuffer.h, 
+    src/InputReader.h, src/JFM.h, src/MessageException.h, 
+    src/NoPsSpecialHandler.h, src/PSPattern.h, src/PSPreviewFilter.h, 
+    src/PapersizeSpecialHandler.h, src/PathClipper.cpp, 
+    src/PdfSpecialHandler.h, src/PreScanDVIReader.h, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.h, 
+    src/SVGCharPathHandler.h, src/SVGCharTspanTextHandler.h, src/SVGOutput.h, 
+    src/SVGSingleCharTextHandler.h, src/SpecialActions.h, src/TFM.h, 
+    src/TensorProductPatch.h, src/TpicSpecialHandler.h, 
+    src/TriangularPatch.h, src/VectorStream.h, src/XMLNode.h: 
+  mark overridden methods with 'override' keyword 
+
+  * src/Bitmap.cpp, src/BoundingBox.h, src/CMapManager.cpp, 
+    src/CmdLineParserBase.cpp, src/DVIToSVG.cpp, src/DVIToSVGActions.cpp, 
+    src/DVIToSVGActions.h, src/DependencyGraph.h, 
+    src/DvisvgmSpecialHandler.cpp, src/EmSpecialHandler.cpp, 
+    src/FileFinder.cpp, src/FilePath.cpp, src/FilePath.h, src/Font.cpp, 
+    src/FontCache.cpp, src/FontEncoding.cpp, src/FontManager.cpp, 
+    src/FontMap.cpp, src/FontMap.h, src/GFReader.cpp, src/GFReader.h, 
+    src/GraphicsPath.h, src/HtmlSpecialHandler.cpp, src/NumericRanges.h, 
+    src/PSPattern.cpp, src/PsSpecialHandler.cpp, src/SVGTree.cpp, 
+    src/SVGTree.h, src/SpecialManager.cpp, src/SpecialManager.h, 
+    src/Subfont.cpp, src/Subfont.h, src/TpicSpecialHandler.cpp, 
+    src/XMLDocument.cpp, src/XMLNode.cpp, src/XMLString.cpp, src/macros.h: 
+  use range-based 'for' loop to iterate over containers; drop FORALL macro 
+
+2016-07-01  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BasicDVIReader.h, src/DVIActions.h, src/DVIReader.cpp, 
+    src/DVIReader.h, src/DVIToSVG.cpp, src/DVIToSVG.h, 
+    src/DVIToSVGActions.cpp, src/DVIToSVGActions.h, src/FontManager.cpp, 
+    src/FontManager.h, src/PreScanDVIReader.h, src/dvisvgm.cpp: 
+  refactored the DVI reader classes
+- added higher-level template methods 
+  to process the DVI commands more safely
+- moved triggering of DVIActions 
+  from DVIReader to DVIToSVG 
+
+2016-06-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * xxHash/xxhash.c, xxHash/xxhash.h, xxHash/xxhsum.c: 
+  updated xxHash to version 0.6.1 
+
+  * src/BoundingBox.cpp, src/BoundingBox.h, src/DVIToSVG.cpp, 
+    src/dvisvgm.cpp: 
+  fixed computation of bounding boxes modified by relative --bbox argument 
+
+2016-06-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/TFM.cpp, tests/JFMReaderTest.cpp, tests/TFMReaderTest.cpp: 
+  minor improvements to TFM/JFM tests 
+
+2016-06-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GFReader.cpp: 
+  ensure validity of postpost command in GFReader::executePostamble() 
+
+  * src/DVIReader.cpp, src/VectorStream.h, tests/VectorStreamTest.cpp: 
+  refactored VectorStreamBuffer to keep constness of assigned vector 
+
+2016-06-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BoundingBox.cpp, src/BoundingBox.h, tests/BoundingBoxTest.cpp: 
+  fixed unit conversion in BoundingBox class 
+
+  * src/EmSpecialHandler.cpp, src/EmSpecialHandler.h, 
+    tests/EmSpecialTest.cpp, tests/Makefile.am: 
+  improved the emTeX special handler; added EmSpecialTest 
+
+  * src/XMLNode.h: 
+  added ouput operators for the XML node objects 
+
+  * src/DvisvgmSpecialHandler.cpp, src/TFM.cpp, src/VFReader.cpp: 
+  replaced local definitions of pt2bp with Length::pt2bp 
+
+2016-06-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/Length.cpp, src/Length.h, tests/LengthTest.cpp: 
+  added dd, cc, and sp units to class Length; fixed factor pt2pc 
+
+2016-06-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * xxHash/xxhash-fileno.patch, xxHash/xxhsum.c: 
+  added xxHash test utility 'xxhsum' 
+
+  * src/DLLoader.cpp, src/DLLoader.h, src/Directory.cpp, src/Directory.h, 
+    src/FilePath.cpp, src/FilePath.h, src/FileSystem.cpp, src/GFTracer.cpp, 
+    src/Ghostscript.cpp, src/Ghostscript.h, src/Message.cpp, 
+    src/MetafontWrapper.cpp, src/Process.cpp, src/Terminal.cpp, 
+    src/Terminal.h, src/dvisvgm.cpp: 
+  cleaned up Windows-related #defines 
+
+  * xxHash/xxhash.c, xxHash/xxhash.h: 
+  updated xxHash to version 0.6.0 
+
+2016-06-10  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Length.cpp, src/Length.h, tests/LengthTest.cpp: 
+  added functions to convert between Length::Unit and std::string 
+
+  * src/CommandLine.cpp: 
+  removed redundant #includes 
+
+2016-06-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/SVGCharHandler.h: 
+  added missing initializer to class SVGCharHandler 
+
+  * src/CMapManager.cpp, src/CMapManager.h, src/DVIActions.h, 
+    src/DVIToSVGActions.h, src/DvisvgmSpecialHandler.h, src/Font.h, 
+    src/FontEngine.h, src/FontManager.h, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.h, src/PSPattern.h, src/PSPreviewFilter.h, 
+    src/SVGCharHandler.cpp, src/SVGCharHandler.h, src/SVGCharPathHandler.cpp, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGTree.h, src/SpecialActions.h, src/SpecialHandler.h, 
+    src/SpecialManager.h, src/XMLDocument.cpp, src/XMLNode.h, 
+    tests/XMLNodeTest.cpp: 
+  changed some structs to classes and replaced #includes with forward 
+  declarations 
+
+2016-06-03  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * CMakeLists.txt: 
+  updated CMakeLists.txt 
+
+  * doc/dvisvgm.txt.in, src/DVIToSVG.cpp, src/Makefile.am, 
+    src/PapersizeSpecialHandler.cpp, src/PapersizeSpecialHandler.h, 
+    src/PsSpecialHandler.cpp, src/dvisvgm.cpp: 
+  added evaluation of PS special 'papersize=' 
+
+  * src/DVIReader.cpp, src/DVIReader.h, src/DVIToSVG.cpp, src/DVIToSVG.h, 
+    src/DVIToSVGActions.cpp, src/DVIToSVGActions.h, src/SVGTree.cpp, 
+    src/SVGTree.h: 
+  refactored processing of end-of-page (eop) commands 
+
+  * src/BgColorSpecialHandler.cpp, src/BgColorSpecialHandler.h, 
+    src/ColorSpecialHandler.cpp, src/ColorSpecialHandler.h, src/DVIToSVG.cpp, 
+    src/DVIToSVGActions.cpp, src/DvisvgmSpecialHandler.cpp, 
+    src/DvisvgmSpecialHandler.h, src/EPSToSVG.cpp, src/EmSpecialHandler.cpp, 
+    src/EmSpecialHandler.h, src/HtmlSpecialHandler.cpp, 
+    src/HtmlSpecialHandler.h, src/NoPsSpecialHandler.cpp, 
+    src/NoPsSpecialHandler.h, src/PSPattern.cpp, src/PSPattern.h, 
+    src/PdfSpecialHandler.cpp, src/PdfSpecialHandler.h, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.h, src/SpecialHandler.h, 
+    src/SpecialManager.cpp, src/SpecialManager.h, src/TpicSpecialHandler.cpp, 
+    src/TpicSpecialHandler.h, tests/ColorSpecialTest.cpp, 
+    tests/DvisvgmSpecialTest.cpp: 
+  refactored handling of SpecialAction objects 
+
+2016-06-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIToSVG.cpp: 
+  fixed transformation of background color rectange 
+
+2016-05-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/DVIToSVG.cpp, src/EPSToSVG.cpp: 
+  reworded messages printed after finishing a conversion 
+
+2016-05-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BasicDVIReader.cpp, src/BasicDVIReader.h, src/Bezier.h, 
+    src/TensorProductPatch.h, src/TriangularPatch.h: 
+  replaced leading spaces with tabs 
+
+  * src/DVIToSVGActions.cpp, src/Font.cpp, src/Makefile.am, 
+    src/SVGCharHandler.cpp, src/SVGCharHandler.h, 
+    src/SVGCharHandlerFactory.cpp, src/SVGCharHandlerFactory.h, 
+    src/SVGCharPathHandler.cpp, src/SVGCharPathHandler.h, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGCharTspanTextHandler.h, 
+    src/SVGSingleCharTextHandler.cpp, src/SVGSingleCharTextHandler.h, 
+    src/SVGTree.cpp, src/SVGTree.h, src/dvisvgm.cpp: 
+  replaced static SVG text backend by specialized handler classes 
+
+2016-05-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BasicDVIReader.cpp, src/DVIReader.cpp: 
+  fixed handling of subfont index in native font definition of XDV 7 
+
+2016-05-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/XMLDocument.cpp, src/XMLNode.cpp, src/XMLNode.h, 
+    tests/DvisvgmSpecialTest.cpp: 
+  prevent line wrapping inside text nodes 
+
+2016-05-26  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README.md, doc/dvisvgm.txt.in, src/BasicDVIReader.cpp, 
+    src/BasicDVIReader.h, src/DVIReader.cpp: 
+  added support for XDV version 7 introduced by XeTeX 0.99995 
+
+2016-05-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/TFM.cpp: 
+  prevent reading more than 7 TFM param values (fixes #58) 
+
+2016-05-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/TFM.cpp, tests/JFMReaderTest.cpp, tests/TFMReaderTest.cpp: 
+  fixed calculation of character dimensions in TFM class 
+
+  * src/FontMetrics.h, src/JFM.cpp, src/TFM.cpp, src/TFM.h: 
+  added methods to query space-related parameters from TFM/JFM files 
+
+  * src/JFM.cpp, src/JFM.h, src/TFM.cpp, src/TFM.h: 
+  TFM: store design size in bp units rather than as fixword 
+
+2016-04-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Process.cpp: 
+  fixed collecting stdout/stderr output when executing a process 
+
+2016-04-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CMap.h, src/CMapReader.cpp, tests/CMapManagerTest.cpp, 
+    tests/Makefile.am, tests/data/Makefile.am, tests/data/ot1.cmap: 
+  added CMapManagerTest 
+
 2016-04-19  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS, README, README.md: 
   updated NEWS and README 
 
-  * .travis.yml, configure.ac, src/CommandLine.cpp, src/Doxyfile: 
+  * .travis.yml, configure.ac, src/Doxyfile: 
   set version to 1.15.1 
 
 2016-04-18  Martin Gieseking  <martin.gieseking@uos.de>
@@ -701,9 +1719,9 @@
   * doc/dvisvgm.txt.in: 
   minor additions and formatting changes of the manpage 
 
-  * doc/dvisvgm.txt.in, src/SVGOutput.cpp, src/SVGOutput.h, 
-    tests/Makefile.am, tests/SVGOutputTest.cpp, tests/create-makefile: 
-  added width specifiers and exression evaluation to --output patterns 
+  * src/DVIToSVG.cpp, src/EPSToSVG.cpp, src/Makefile.am, src/SVGOutput.cpp, 
+    src/SVGOutput.h, src/SVGOutputBase.h, src/dvisvgm.cpp: 
+  moved class SVGOutput to separate compilation unit 
 
 2015-02-19  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -728,11 +1746,6 @@
 
   * src/TpicSpecialHandler.cpp: 
   use constant M_PI rather than computing PI locally 
-
-2015-02-17  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * README, README.md: 
-  updated README and README.md 
 
 2015-01-21  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -1049,10 +2062,8 @@ Breaks standard things
   * src/XMLDocument.cpp, src/XMLDocument.h, src/XMLNode.cpp, src/XMLNode.h: 
   removed unused emit() methods from XML classes 
 
-2014-08-06  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * README.md: 
-  minor fixes to README.md 
+  * src/dvisvgm.cpp: 
+  removed old code that moved cache files to new location 
 
 2014-07-31  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -1694,10 +2705,10 @@ Breaks standard things
   replaced local std::map tables used in Font classes with new class 
   CharMap 
 
-2013-08-22  Martin Gieseking  <martin.gieseking@uos.de>
+2013-08-23  Martin Gieseking  <martin.gieseking@uos.de>
 
-  * src/XMLString.cpp: 
-  replace very small floating point numbers by 0 
+  * src/SVGTree.cpp: 
+  appended px unit to font-size attributes in style section 
 
 2013-08-20  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -2000,8 +3011,9 @@ Breaks standard things
     src/VFReader.cpp: 
   added missing member initializations to some classes 
 
-  * src/DVIToSVG.cpp, src/EPSToSVG.cpp, src/dvisvgm.cpp: 
-  avoid output of empty parentheses if TARGET_SYSTEM is not set 
+  * doc/dvisvgm.txt.in, src/CmdLineParserBase.cpp, src/CommandLine.cpp, 
+    src/options.dtd, src/options.xml: 
+  added information about 'dvisvgm -E' to usage line 
 
 2013-04-20  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -2094,10 +3106,20 @@ Breaks standard things
   added methods to lookup attribute values and selected descendant XML 
   nodes 
 
+  * src/XMLNode.cpp, src/XMLNode.h: 
+  added virtual constructor XMLNode::clone() 
+
 2013-02-19  Martin Gieseking  <martin.gieseking@uos.de>
 
   * src/FilePath.cpp: 
   adapt path separators on Windows systems to get the  correct output path 
+
+  * doc/dvisvgm.txt.in, src/CommandLine.cpp, src/CommandLine.h, 
+    src/DVIToSVG.cpp, src/DVIToSVG.h, src/EPSFile.cpp, src/EPSFile.h, 
+    src/EPSToSVG.cpp, src/EPSToSVG.h, src/Makefile.am, 
+    src/PsSpecialHandler.cpp, src/SVGOutputBase.h, src/dvisvgm.cpp, 
+    src/options.xml: 
+  add option to directly convert EPS files to SVG 
 
   * src/PSInterpreter.cpp, src/PSInterpreter.h: 
   added PSInterpreter::limit() to limit the number of bytes to be 
@@ -2114,15 +3136,6 @@ Breaks standard things
   * doc/dvisvgm.txt.in, src/CmdLineParserBase.cpp, src/CmdLineParserBase.h, 
     src/CommandLine.cpp, src/CommandLine.h, src/dvisvgm.cpp, src/options.xml: 
   added optional parameter to option --help to specify output format 
-
-2013-02-06  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * doc/dvisvgm.txt.in, src/BoundingBox.cpp, src/CommandLine.cpp, 
-    src/CommandLine.h, src/EmSpecialHandler.cpp, src/GraphicPath.h, 
-    src/Matrix.cpp, src/PsSpecialHandler.cpp, src/TpicSpecialHandler.cpp, 
-    src/XMLString.cpp, src/XMLString.h, src/dvisvgm.cpp, src/options.xml: 
-  added option --precision to set the number of decimal places applied to 
-  attribute values 
 
 2013-01-30  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -2360,11 +3373,6 @@ Breaks standard things
     tests/StreamInputBufferTest.cpp: 
   some refactorings of class InputReader; added InputReader::find() 
 
-2012-10-24  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * src/DVIToSVG.cpp, src/DVIToSVG.h, src/dvisvgm.cpp: 
-  don't show warning about disabled PS support in list of special handlers 
-
 2012-09-27  Martin Gieseking  <martin.gieseking@uos.de>
 
   * doc/Makefile.am: 
@@ -2381,18 +3389,20 @@ Breaks standard things
   * src/PsSpecialHandler.cpp, src/PsSpecialHandler.h: 
   removed Ghostscript info from ps entry in list of special handlers 
 
-  * src/DVIToSVG.cpp: 
-  show warning if processing of PS specials is disabled 
+2012-09-19  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.ps, src/psdefs.psc: 
+  ignore dvips bop operators that might be present in PS specials 
+
+2012-09-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/StreamReader.cpp: 
+  fixed reading invalid number of string characters 
 
 2012-06-06  Martin Gieseking  <martin.gieseking@uos.de>
 
   * src/gfprint.mak: 
   fixed bugs in gfprint, and added gfprint.mak for easier builds 
-
-2012-04-17  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * doc/Makefile.am: 
-  keep manpage when calling 'make clean' or 'make distclean' 
 
 2012-04-04  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -2447,15 +3457,6 @@ Breaks standard things
 
   * README: 
   updated information about bug reporting 
-
-2012-01-26  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * src/CmdLineParserBase.h, src/DVIActions.h, src/DVIReader.h, 
-    src/DVIToSVGActions.h, src/FontEngine.h, src/FontManager.h, 
-    src/MetafontWrapper.h, src/SVGTree.h, src/SpecialActions.h, 
-    src/SpecialHandler.h, src/SpecialManager.h, src/TFM.h, src/VFReader.h: 
-  adapt forward declarations of classes and structs to their corresponding 
-  definition (SF bug #3480013) 
 
 2012-01-09  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -3306,6 +4307,10 @@ Breaks standard things
     src/SVGFontEmitter.cpp, src/SVGFontEmitter.h: 
   removed class Glyph and incorporated its functionality into Font class 
 
+  * src/Font.h, src/FontEncoding.cpp, src/FontEncoding.h, 
+    src/FontManager.cpp, src/FontManager.h, src/SVGFontEmitter.cpp: 
+  moved method encoding() from class FontManager to class FontEncoding 
+
 2010-02-05  Martin Gieseking  <martin.gieseking@uos.de>
 
   * src/DVIToSVG.cpp: 
@@ -3533,10 +4538,10 @@ Breaks standard things
   * src/GraphicPath.h, src/PsSpecialHandler.cpp: 
   PS handler: replace zero-length paths by dots 
 
-2009-10-29  Martin Gieseking  <martin.gieseking@uos.de>
+2009-10-25  Martin Gieseking  <martin.gieseking@uos.de>
 
-  * src/DVIToSVGActions.cpp, src/Font.cpp, src/Font.h: 
-  fixed positioning of italic characters 
+  * src/DvisvgmSpecialHandler.cpp: 
+  added macro {?nl} to dvisvgm:raw evaluator 
 
 2009-10-18  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -3701,24 +4706,24 @@ Breaks standard things
   * NEWS, src/PsSpecialHandler.cpp: 
   fixed another positioning bug reported by John Bowman 
 
-  * src/PsSpecialHandler.cpp: 
-  convert PS path coordinated to TeX point units 
-
 2009-10-04  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Makefile.old, src/Makefile.orig: 
+  renamed the old original Makefile 
 
   * src/GraphicPath.h, src/PsSpecialHandler.cpp, src/PsSpecialHandler.h: 
   corrected positioning bug introduced with previous PS positioning fix 
+
+  * src/DVIReader.cpp, src/DVIReader.h, src/DVIToSVGActions.cpp, 
+    src/DVIToSVGActions.h, src/PsSpecialHandler.cpp, src/PsSpecialHandler.h, 
+    src/SpecialActions.h, src/psdefs.ps, src/psdefs.psc: 
+  fixed positioning bug reported by John Bowman 
 
 2009-10-02  Martin Gieseking  <martin.gieseking@uos.de>
 
   * doc/Makefile.am, doc/dvisvgm.txt.in: 
   generate pdf manpage directly with groff; adapted manpage source to work 
   with latest asciidoc 
-
-2009-10-01  Martin Gieseking  <martin.gieseking@uos.de>
-
-  * doc/Makefile.am, doc/dvisvgm.txt.in: 
-  replaced backticks in manpage by apostrophes; updated date on homepage 
 
 2009-09-30  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -3731,13 +4736,17 @@ Breaks standard things
   * doc/dvisvgm.txt.in: 
   added dvisvgm:raw example to man page 
 
+  * src/DvisvgmSpecialHandler.cpp: 
+  added optional depth parameter to special dvisvgm:raw 
+
 2009-09-17  Martin Gieseking  <martin.gieseking@uos.de>
 
   * doc/dvisvgm.txt.in: 
   minor changes of the documentation 
 
-  * fedora/dvisvgm.spec: 
-  updated spec file and fixed typo on website 
+  * doc/dvisvgm.txt.in: 
+  corrected info about --verbosity in manual page (reported by John 
+  Bowman) 
 
   * src/PsSpecialHandler.h: 
   increased the default linewidth to 0.5 
@@ -3834,14 +4843,21 @@ Breaks standard things
     src/SpecialManager.cpp, src/SpecialManager.h: 
   PS prologue files referenced in first page are now always loaded 
 
+  * fedora/dvisvgm-0.8.1-potrace.patch, fedora/dvisvgm-gs.patch, 
+    fedora/dvisvgm-potrace.patch, fedora/dvisvgm.spec: 
+  updated Fedora files 
+
   * configure.ac, fedora/dvisvgm.spec, src/Ghostscript.cpp, 
     src/Ghostscript.h, src/Makefile.am: 
   improved Ghostscript and potrace linking checks to simplify usage of 
   external devel files 
 
-  * fedora/dvisvgm-0.8.1-potrace.patch, fedora/dvisvgm-gs.patch, 
-    fedora/dvisvgm-potrace.patch, fedora/dvisvgm.spec: 
-  updated Fedora files 
+2009-08-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * configure.ac, src/DVIToSVGActions.cpp, src/Ghostscript.cpp, 
+    src/Ghostscript.h: 
+  added configuration method to directly bind the Ghostscript shared 
+  library 
 
 2009-08-24  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -4226,10 +5242,10 @@ Breaks standard things
 
 2009-02-25  Martin Gieseking  <martin.gieseking@uos.de>
 
-  * src/DVIToSVGActions.cpp, src/DVIToSVGActions.h, 
-    src/DvisvgmSpecialHandler.cpp, src/EmSpecialHandler.cpp, 
-    src/SpecialActions.h, src/TpicSpecialHandler.cpp: 
-  renamed appendInPage() to appendToPage 
+  * configure.ac, doc/Makefile.am, doc/caution.png, doc/dvisvgm.1.in, 
+    doc/dvisvgm.txt, doc/note.png: 
+  replaced manually written dvisvgm.1.in by an asciidoc file 
+  (dvisvgm.txt.in) 
 
 2009-02-24  Martin Gieseking  <martin.gieseking@uos.de>
 
@@ -4289,9 +5305,14 @@ Breaks standard things
 
 2009-02-17  Martin Gieseking  <martin.gieseking@uos.de>
 
-  * src/DVIReader.cpp: 
-  made DVICommand local to executeCommand, removed unnecessary if 
-  statement 
+  * src/BoundingBox.cpp, src/ColorSpecialHandler.cpp, 
+    src/ColorSpecialHandler.h, src/DVIToSVGActions.cpp, src/FontGlyph.cpp, 
+    src/InputBuffer.cpp, src/InputBuffer.h, src/Makefile.am, src/Pair.h, 
+    src/SpecialActions.h, src/SpecialColorHandler.cpp, 
+    src/SpecialColorHandler.h, src/SpecialEmHandler.cpp, 
+    src/SpecialEmHandler.h, src/TransformationMatrix.cpp, 
+    src/tests/ColorSpecialTest.h: 
+  added skeleton of em special handler; doesn't work yet 
 
 2009-02-15  Martin Gieseking  <martin.gieseking@uos.de>
 

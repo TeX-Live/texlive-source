@@ -2,7 +2,7 @@
 ** Ghostscript.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -19,7 +19,7 @@
 *************************************************************************/
 
 #include <config.h>
-#include "Ghostscript.h"
+#include "Ghostscript.hpp"
 #if !defined(DISABLE_GS)
 #include <cstring>
 #include <iomanip>
@@ -28,7 +28,7 @@
 	#include <ghostscript/ierrors.h>
 #else
 	#include "ierrors.h"
-	#include "FileFinder.h"
+	#include "FileFinder.hpp"
 #endif
 
 using namespace std;
@@ -45,7 +45,7 @@ static string get_path_from_registry () {
 #ifdef RRF_RT_REG_SZ   // RegGetValueA and RRF_RT_REG_SZ may not be defined for some oldish MinGW
 	REGSAM mode = KEY_READ|KEY_QUERY_VALUE;
 #ifdef KEY_WOW64_64KEY
-#ifdef __WIN64__
+#ifdef _WIN64
 	mode |= KEY_WOW64_64KEY;
 #else
 	mode |= KEY_WOW64_32KEY;
@@ -89,13 +89,13 @@ static string get_libgs (const string &fname) {
 	if (!fname.empty())
 		return fname;
 #ifdef MIKTEX
-#if defined(__WIN64__)
+#if defined(_WIN64)
 	const char *gsdll = "mgsdll64.dll";
 #else
 	const char *gsdll = "mgsdll32.dll";
 #endif
 	// try to look up the Ghostscript DLL coming with MiKTeX
-	if (const char *gsdll_path = FileFinder::lookup(gsdll))
+	if (const char *gsdll_path = FileFinder::instance().lookup(gsdll))
 		return gsdll_path;
 #endif // MIKTEX
 #if defined(_WIN32)
@@ -104,7 +104,7 @@ static string get_libgs (const string &fname) {
 	if (!gsdll_path.empty())
 		return gsdll_path;
 #endif
-#if defined(__WIN64__)
+#if defined(_WIN64)
 	return "gsdll64.dll";
 #elif defined(_WIN32)
 	return "gsdll32.dll";

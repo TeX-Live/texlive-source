@@ -2,7 +2,7 @@
 ** Process.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -30,10 +30,9 @@
 #endif
 
 #include <cstdlib>
-#include "FileSystem.h"
-#include "Process.h"
-#include "SignalHandler.h"
-#include "macros.h"
+#include "FileSystem.hpp"
+#include "Process.hpp"
+#include "SignalHandler.hpp"
 
 using namespace std;
 
@@ -201,3 +200,18 @@ bool Process::run (string *out) {
 #endif
 }
 
+
+/** Runs the process in the given working directory and waits until it's finished.
+ *  @param[in] dir working directory
+ *  @param[out] out takes the output written to stdout by the executed process
+ *  @return true if process terminated properly
+ *  @throw SignalException if CTRL-C was pressed during execution */
+bool Process::run (const string &dir, string *out) {
+	bool ret = false;
+	string cwd = FileSystem::getcwd();
+	if (FileSystem::chdir(dir)) {
+		ret = run(out);
+		ret &= FileSystem::chdir(cwd);
+	}
+	return ret;
+}

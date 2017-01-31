@@ -2,7 +2,7 @@
 ** PageRanges.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -20,11 +20,9 @@
 
 #include <config.h>
 #include <sstream>
-#include "InputBuffer.h"
-#include "InputReader.h"
-#include "PageRanges.h"
-
-#include "macros.h"
+#include "InputBuffer.hpp"
+#include "InputReader.hpp"
+#include "PageRanges.hpp"
 
 using namespace std;
 
@@ -34,7 +32,7 @@ using namespace std;
  *  @param[in] str string to parse
  *  @param[in] max_page greatest allowed value
  *  @return true on success; false denotes a syntax error */
-bool PageRanges::parse (string str, int max_page) {
+bool PageRanges::parse (const string &str, int max_page) {
 	StringInputBuffer ib(str);
 	BufferInputReader ir(ib);
 	while (ir) {
