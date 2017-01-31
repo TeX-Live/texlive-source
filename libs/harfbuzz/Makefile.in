@@ -728,8 +728,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-atomic-private.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-fvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-hvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-var.h \
-	@HARFBUZZ_TREE@/src/hb-icu.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-var.h @HARFBUZZ_TREE@/src/hb-icu.cc \
 	@HARFBUZZ_TREE@/src/hb-graphite2.cc
 @build_TRUE@dist_check_SCRIPTS = harfbuzz.test
 @build_TRUE@TESTS = harfbuzz.test

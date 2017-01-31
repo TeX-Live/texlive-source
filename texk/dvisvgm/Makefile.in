@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# $Id$
+# $Id: Makefile.am 43103 2017-01-31 18:39:23Z karl $
 # Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 #
 # Copyright 2015-2017 Karl Berry <tex-live@tug.org>
