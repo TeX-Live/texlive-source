@@ -1,3 +1,16 @@
+2017-01-29  Karl Berry  <karl@freefriends.org>
+
+	Import 2.1; adapt build to use more of original; regenerate files.
+	* configure.ac: generally use more of original configure.ac.
+	(AC_CONFIG_MACRO_DIRS): look in new m4/ subdir.
+	(libgs) [enable_native_texlive_build]: force dlload or failure.
+	* m4: new subdir, for ax_cxx_compile_stdcxx.m4.
+	* Makefile.am (SUBDIRS): define, and build in subdirs instead
+	of building here at the top (TL) level.
+	(tests/dvisvgm.log): dvisvgm binary now in dvisvgm-src/src/ subdir.
+	* tests/dvisvgm.test: new binary location.
+	* version.ac: 2.1.
+
 2016-07-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Imported release 1.16
@@ -276,3 +289,4 @@
 
 	* Imported release 0.8.7.
 
+(This ChangeLog file public domain.)
