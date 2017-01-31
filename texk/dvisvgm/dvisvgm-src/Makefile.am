@@ -1,11 +1,11 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
 AUTOMAKE_OPTIONS = foreign
-EXTRA_DIST = COPYING LGPL-2.1.txt
-SUBDIRS = clipper xxHash src tests doc
+EXTRA_DIST = COPYING
+SUBDIRS = libs src tests doc
 
 if CODE_COVERAGE_ENABLED
 lcov_dir=$(top_builddir)/lcov

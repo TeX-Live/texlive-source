@@ -2,7 +2,7 @@
 ** FileSystem.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -19,11 +19,13 @@
 *************************************************************************/
 
 #include <config.h>
+#include <algorithm>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include "FileSystem.h"
-#include "macros.h"
+#include "FileSystem.hpp"
+#include "utility.hpp"
+#include "version.hpp"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -46,6 +48,43 @@ using namespace std;
 	const char *FileSystem::DEVNULL = "/dev/null";
 	const char FileSystem::PATHSEP = '/';
 #endif
+
+
+FileSystem FileSystem::_fs;
+string FileSystem::TMPDIR;
+const char *FileSystem::TMPSUBDIR = nullptr;
+
+
+/** Private wrapper function for mkdir: creates a single folder.
+ *  @param[in] dir folder name
+ *  @return true on success */
+static bool s_mkdir (const string &dirname) {
+	bool success = true;
+	if (!FileSystem::exists(dirname)) {
+#ifdef _WIN32
+		success = (_mkdir(dirname.c_str()) == 0);
+#else
+		success = (::mkdir(dirname.c_str(), 0775) == 0);
+#endif
+	}
+	return success;
+}
+
+
+static bool inline s_rmdir (const string &dirname) {
+#ifdef _WIN32
+	return (_rmdir(dirname.c_str()) == 0);
+#else
+	return (::rmdir(dirname.c_str()) == 0);
+#endif
+}
+
+
+FileSystem::~FileSystem () {
+	// remove the subdirectory from the system's temp folder (if empty)
+	if (TMPSUBDIR)
+		s_rmdir(tmpdir());
+}
 
 
 bool FileSystem::remove (const string &fname) {
@@ -80,13 +119,13 @@ bool FileSystem::rename (const string &oldname, const string &newname) {
 }
 
 
-UInt64 FileSystem::filesize (const string &fname) {
+uint64_t FileSystem::filesize (const string &fname) {
 #ifdef _WIN32
 	// unfortunately, stat doesn't work properly under Windows
 	// so we have to use this freaky code
 	WIN32_FILE_ATTRIBUTE_DATA attr;
 	GetFileAttributesExA(fname.c_str(), GetFileExInfoStandard, &attr);
-	return (static_cast<UInt64>(attr.nFileSizeHigh) << (8*sizeof(attr.nFileSizeLow))) | attr.nFileSizeLow;
+	return (static_cast<uint64_t>(attr.nFileSizeHigh) << (8*sizeof(attr.nFileSizeLow))) | attr.nFileSizeLow;
 #else
 	struct stat attr;
 	return (stat(fname.c_str(), &attr) == 0) ? attr.st_size : 0;
@@ -95,9 +134,7 @@ UInt64 FileSystem::filesize (const string &fname) {
 
 
 string FileSystem::adaptPathSeperators (string path) {
-	for (size_t i=0; i < path.length(); i++)
-		if (path[i] == PATHSEP)
-			path[i] = '/';
+	std::replace(path.begin(), path.end(), PATHSEP, '/');
 	return path;
 }
 
@@ -121,7 +158,7 @@ bool FileSystem::chdir (const std::string &dirname) {
 #ifdef _WIN32
 		success = (_chdir(cdirname) == 0);
 #else
-		success = (chdir(cdirname) == 0);
+		success = (::chdir(cdirname) == 0);
 #endif
 	}
 	return success;
@@ -152,39 +189,38 @@ const char* FileSystem::userdir () {
 }
 
 
-/** Private wrapper function for mkdir: creates a single folder.
- *  @param[in] dir folder name
- *  @return true on success */
-static bool s_mkdir (const string &dirname) {
-	bool success = true;
-	if (!FileSystem::exists(dirname)) {
+/** Returns the path of the temporary folder. */
+string FileSystem::tmpdir () {
+	string ret;
+	if (!TMPDIR.empty())
+		ret = TMPDIR;
+	else {
 #ifdef _WIN32
-		success = (_mkdir(dirname.c_str()) == 0);
+		char buf[MAX_PATH];
+		if (GetTempPath(MAX_PATH, buf))
+			ret = adaptPathSeperators(buf);
+		else
+			ret = ".";
 #else
-		success = (mkdir(dirname.c_str(), 0775) == 0);
+		if (const char *path = getenv("TMPDIR"))
+			ret = path;
+		else
+			ret = "/tmp";
 #endif
+		if (ret.back() == '/')
+			ret.pop_back();
+		static bool initialized=false;
+		if (!initialized && ret != ".") {
+			TMPSUBDIR = PROGRAM_NAME;
+			s_mkdir(ret + "/" + TMPSUBDIR);
+			initialized = true;
+		}
+		if (TMPSUBDIR)
+			ret += string("/") + TMPSUBDIR;
 	}
-	return success;
-}
-
-
-static bool inline s_rmdir (const string &dirname) {
-#ifdef _WIN32
-	return (_rmdir(dirname.c_str()) == 0);
-#else
-	return (rmdir(dirname.c_str()) == 0);
-#endif
-}
-
-
-/** Removes leading and trailing whitespace from a string. */
-static string trim (const string &str) {
-	int first=0, last=str.length()-1;
-	while (isspace(str[first]))
-		first++;
-	while (isspace(str[last]))
-		last--;
-	return str.substr(first, last-first+1);
+	if (!ret.empty() && ret.back() != '/')
+		ret += '/';
+	return ret;
 }
 
 
@@ -196,7 +232,7 @@ bool FileSystem::mkdir (const string &dirname) {
 	bool success = false;
 	if (const char *cdirname = dirname.c_str()) {
 		success = true;
-		const string dirstr = adaptPathSeperators(trim(cdirname));
+		const string dirstr = adaptPathSeperators(util::trim(cdirname));
 		for (size_t pos=1; success && (pos = dirstr.find('/', pos)) != string::npos; pos++)
 			success &= s_mkdir(dirstr.substr(0, pos));
 		success &= s_mkdir(dirstr);
@@ -311,7 +347,7 @@ int FileSystem::collect (const char *dirname, vector<string> &entries) {
 		string path = string(dirname)+"/"+fname;
 		string typechar = isFile(path) ? "f" : isDirectory(path) ? "d" : "?";
 		if (fname != "." && fname != "..")
-			entries.push_back(typechar+fname);
+			entries.emplace_back(typechar+fname);
 		ready = !FindNextFile(h, &data);
 	}
 	FindClose(h);
@@ -323,12 +359,10 @@ int FileSystem::collect (const char *dirname, vector<string> &entries) {
 			string path = string(dirname)+"/"+fname;
 			string typechar = isFile(path) ? "f" : isDirectory(path) ? "d" : "?";
 			if (fname != "." && fname != "..")
-				entries.push_back(typechar+fname);
+				entries.emplace_back(typechar+fname);
 		}
 		closedir(dir);
 	}
 #endif
 	return entries.size();
 }
-
-

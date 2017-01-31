@@ -2,7 +2,7 @@
 ** GFGlyphTracer.cpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -19,7 +19,7 @@
 *************************************************************************/
 
 #include <config.h>
-#include "GFGlyphTracer.h"
+#include "GFGlyphTracer.hpp"
 
 using namespace std;
 
@@ -49,7 +49,7 @@ void GFGlyphTracer::reset (string &fname, double upp) {
 }
 
 
-bool GFGlyphTracer::executeChar (UInt8 c) {
+bool GFGlyphTracer::executeChar (uint8_t c) {
 	if (!_glyph)
 		return false;
 
@@ -86,7 +86,7 @@ void GFGlyphTracer::closePath () {
 }
 
 
-void GFGlyphTracer::endChar (UInt32 c) {
+void GFGlyphTracer::endChar (uint32_t c) {
 	_glyph->clear();
 	GFTracer::endChar(c);
 }

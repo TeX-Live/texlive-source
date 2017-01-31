@@ -2,7 +2,7 @@
 ** PageSize.cpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -23,15 +23,10 @@
 #include <cctype>
 #include <cmath>
 #include <sstream>
-#include "PageSize.h"
+#include "PageSize.hpp"
+#include "utility.hpp"
 
 using namespace std;
-
-// make sure tolower is a function (and not a macro)
-// so that 'transform' can be applied
-static int my_tolower (int c) {
-	return tolower(c);
-}
 
 
 /** Computes width and height of ISO/DIN An in millimeters.
@@ -86,7 +81,7 @@ static void computeDSize (int n, double &width, double &height) {
 
 /** Constructs a PageSize object of given size.
  *  @param[in] name specifies the page size, e.g. "A4" or "letter" */
-PageSize::PageSize (string name) : _width(0), _height(0) {
+PageSize::PageSize (const string &name) : _width(0), _height(0) {
 	resize(name);
 }
 
@@ -100,7 +95,7 @@ void PageSize::resize (string name) {
 	if (name.length() < 2)
 		throw PageSizeException("unknown page format: "+name);
 
-	transform(name.begin(), name.end(), name.begin(), my_tolower);
+	util::tolower(name);
 	// extract optional suffix
 	size_t pos = name.rfind("-");
 	bool landscape = false;

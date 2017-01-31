@@ -1,237 +1,263 @@
 :## This file is part of dvisvgm
-## Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
 bin_PROGRAMS         = dvisvgm
 noinst_LIBRARIES     = libdvisvgm.a
 
-dvisvgm_SOURCES      = gzstream.h \
-							  dvisvgm.cpp gzstream.cpp
+dvisvgm_SOURCES      = dvisvgm.cpp
 
 dvisvgm_LDADD = \
 	$(noinst_LIBRARIES) \
-	../clipper/libclipper.a \
-	../xxHash/libxxhash.a \
+	../libs/clipper/libclipper.a \
+	../libs/xxHash/libxxhash.a \
 	$(FREETYPE_LIBS) \
+	$(FONTFORGE_LIBS) \
 	$(ZLIB_LIBS)
+
+if ENABLE_WOFF
+dvisvgm_LDADD += \
+	../libs/ff-woff/libfontforge.a \
+	../libs/woff2/libwoff2.a \
+	../libs/woff2/brotli/libbrotli.a
+endif
 
 dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
 
 libdvisvgm_a_SOURCES = \
-	AGLTable.h \
+	AGLTable.hpp \
 	BasicDVIReader.cpp \
-	BasicDVIReader.h \
+	BasicDVIReader.hpp \
 	Bezier.cpp \
-	Bezier.h \
+	Bezier.hpp \
 	BgColorSpecialHandler.cpp \
-	BgColorSpecialHandler.h \
+	BgColorSpecialHandler.hpp \
 	Bitmap.cpp \
-	Bitmap.h \
+	Bitmap.hpp \
 	BoundingBox.cpp \
-	BoundingBox.h \
+	BoundingBox.hpp \
 	Calculator.cpp \
-	Calculator.h \
-	Character.h \
+	Calculator.hpp \
+	Character.hpp \
 	CharMapID.cpp \
-	CharMapID.h \
+	CharMapID.hpp \
+	CLCommandLine.cpp \
+	CLCommandLine.hpp \
+	CLOption.hpp \
 	CMap.cpp \
-	CMap.h \
+	CMap.hpp \
 	CMapManager.cpp \
-	CMapManager.h \
+	CMapManager.hpp \
 	CMapReader.cpp \
-	CMapReader.h \
-	CmdLineParserBase.cpp \
-	CmdLineParserBase.h \
+	CMapReader.hpp \
 	Color.cpp \
-	Color.h \
+	Color.hpp \
 	ColorSpecialHandler.cpp \
-	ColorSpecialHandler.h \
-	CommandLine.cpp \
-	CommandLine.h \
+	ColorSpecialHandler.hpp \
+	CommandLine.hpp \
 	CRC32.cpp \
-	CRC32.h \
-	DependencyGraph.h \
+	CRC32.hpp \
+	DependencyGraph.hpp \
 	Directory.cpp \
-	Directory.h \
+	Directory.hpp \
 	DLLoader.cpp \
-	DLLoader.h \
-	DVIActions.h \
+	DLLoader.hpp \
+	DVIActions.hpp \
 	DVIReader.cpp \
-	DVIReader.h \
+	DVIReader.hpp \
 	DvisvgmSpecialHandler.cpp \
-	DvisvgmSpecialHandler.h \
+	DvisvgmSpecialHandler.hpp \
 	DVIToSVG.cpp \
-	DVIToSVG.h \
+	DVIToSVG.hpp \
 	DVIToSVGActions.cpp \
-	DVIToSVGActions.h \
+	DVIToSVGActions.hpp \
 	EmSpecialHandler.cpp \
-	EmSpecialHandler.h \
+	EmSpecialHandler.hpp \
 	EncFile.cpp \
-	EncFile.h \
+	EncFile.hpp \
 	EPSFile.cpp \
-	EPSFile.h \
+	EPSFile.hpp \
 	EPSToSVG.cpp \
-	EPSToSVG.h \
+	EPSToSVG.hpp \
 	FileFinder.cpp \
-	FileFinder.h \
+	FileFinder.hpp \
 	FilePath.cpp \
-	FilePath.h \
+	FilePath.hpp \
 	FileSystem.cpp \
-	FileSystem.h \
+	FileSystem.hpp \
+	FixWord.hpp \
 	Font.cpp \
-	Font.h \
+	Font.hpp \
 	FontCache.cpp \
-	FontCache.h \
+	FontCache.hpp \
 	FontEncoding.cpp \
-	FontEncoding.h \
+	FontEncoding.hpp \
 	FontEngine.cpp \
-	FontEngine.h \
+	FontEngine.hpp \
 	FontManager.cpp \
-	FontManager.h \
+	FontManager.hpp \
 	FontMap.cpp \
-	FontMap.h \
+	FontMap.hpp \
 	FontMetrics.cpp \
-	FontMetrics.h \
-	FontStyle.h \
+	FontMetrics.hpp \
+	FontStyle.hpp \
+	FontWriter.cpp \
+	FontWriter.hpp \
 	GFGlyphTracer.cpp \
-	GFGlyphTracer.h \
+	GFGlyphTracer.hpp \
 	GFReader.cpp \
-	GFReader.h \
+	GFReader.hpp \
 	GFTracer.cpp \
-	GFTracer.h \
+	GFTracer.hpp \
 	Ghostscript.cpp \
-	Ghostscript.h \
-	Glyph.h \
-	GlyphTracerMessages.h \
-	GraphicsPath.h \
+	Ghostscript.hpp \
+	Glyph.hpp \
+	GlyphTracerMessages.hpp \
+	GraphicsPath.hpp \
 	HtmlSpecialHandler.cpp \
-	HtmlSpecialHandler.h \
+	HtmlSpecialHandler.hpp \
 	InputBuffer.cpp \
-	InputBuffer.h \
+	InputBuffer.hpp \
 	InputReader.cpp \
-	InputReader.h \
+	InputReader.hpp \
 	JFM.cpp \
-	JFM.h \
+	JFM.hpp \
 	Length.cpp \
-	Length.h \
-	macros.h \
+	Length.hpp \
+	macros.hpp \
 	MapLine.cpp \
-	MapLine.h \
+	MapLine.hpp \
 	Matrix.cpp \
-	Matrix.h \
+	Matrix.hpp \
 	Message.cpp \
-	Message.h \
-	MessageException.h \
+	Message.hpp \
+	MessageException.hpp \
 	MetafontWrapper.cpp \
-	MetafontWrapper.h \
+	MetafontWrapper.hpp \
 	NoPsSpecialHandler.cpp \
-	NoPsSpecialHandler.h \
-	NumericRanges.h \
+	NoPsSpecialHandler.hpp \
+	NumericRanges.hpp \
 	PageRanges.cpp \
-	PageRanges.h \
+	PageRanges.hpp \
 	PageSize.cpp \
-	PageSize.h \
-	Pair.h \
+	PageSize.hpp \
+	Pair.hpp \
 	PapersizeSpecialHandler.cpp \
-	PapersizeSpecialHandler.h \
+	PapersizeSpecialHandler.hpp \
 	PathClipper.cpp \
-	PathClipper.h \
+	PathClipper.hpp \
 	PdfSpecialHandler.cpp \
-	PdfSpecialHandler.h \
+	PdfSpecialHandler.hpp \
 	PreScanDVIReader.cpp \
-	PreScanDVIReader.h \
+	PreScanDVIReader.hpp \
 	Process.cpp \
-	Process.h \
+	Process.hpp \
 	psdefs.cpp \
-	PSFilter.h \
+	PSFilter.hpp \
 	PSInterpreter.cpp \
-	PSInterpreter.h \
+	PSInterpreter.hpp \
 	PSPattern.cpp \
-	PSPattern.h \
+	PSPattern.hpp \
 	PSPreviewFilter.cpp \
-	PSPreviewFilter.h \
+	PSPreviewFilter.hpp \
 	PsSpecialHandler.cpp \
-	PsSpecialHandler.h \
+	PsSpecialHandler.hpp \
 	RangeMap.cpp \
-	RangeMap.h \
+	RangeMap.hpp \
 	ShadingPatch.cpp \
-	ShadingPatch.h \
+	ShadingPatch.hpp \
 	SignalHandler.cpp \
-	SignalHandler.h \
-	SpecialActions.h \
-	SpecialHandler.h \
+	SignalHandler.hpp \
+	SpecialActions.hpp \
+	SpecialHandler.hpp \
 	SpecialManager.cpp \
-	SpecialManager.h \
+	SpecialManager.hpp \
 	StreamReader.cpp \
-	StreamReader.h \
+	StreamReader.hpp \
 	StreamWriter.cpp \
-	StreamWriter.h \
+	StreamWriter.hpp \
 	Subfont.cpp \
-	Subfont.h \
+	Subfont.hpp \
 	SVGCharHandler.cpp \
-	SVGCharHandler.h \
+	SVGCharHandler.hpp \
 	SVGCharHandlerFactory.cpp \
-	SVGCharHandlerFactory.h \
+	SVGCharHandlerFactory.hpp \
 	SVGCharPathHandler.cpp \
-	SVGCharPathHandler.h \
+	SVGCharPathHandler.hpp \
 	SVGCharTspanTextHandler.cpp \
-	SVGCharTspanTextHandler.h \
+	SVGCharTspanTextHandler.hpp \
 	SVGOutput.cpp \
-	SVGOutput.h \
+	SVGOutput.hpp \
 	SVGSingleCharTextHandler.cpp \
-	SVGSingleCharTextHandler.h \
+	SVGSingleCharTextHandler.hpp \
 	SVGTree.cpp \
-	SVGTree.h \
+	SVGTree.hpp \
 	System.cpp \
-	System.h \
+	System.hpp \
 	TensorProductPatch.cpp \
-	TensorProductPatch.h \
+	TensorProductPatch.hpp \
 	Terminal.cpp \
-	Terminal.h \
+	Terminal.hpp \
 	TFM.cpp \
-	TFM.h \
+	TFM.hpp \
 	ToUnicodeMap.cpp \
-	ToUnicodeMap.h \
+	ToUnicodeMap.hpp \
 	TpicSpecialHandler.cpp \
-	TpicSpecialHandler.h \
+	TpicSpecialHandler.hpp \
 	TriangularPatch.cpp \
-	TriangularPatch.h \
-	types.h \
+	TriangularPatch.hpp \
 	Unicode.cpp \
-	Unicode.h \
-	VectorIterator.h \
-	VectorStream.h \
-	VFActions.h \
+	Unicode.hpp \
+	utility.hpp \
+	utility.cpp \
+	VectorIterator.hpp \
+	VectorStream.hpp \
+	version.hpp \
+	VFActions.hpp \
 	VFReader.cpp \
-	VFReader.h \
+	VFReader.hpp \
 	XMLDocument.cpp \
-	XMLDocument.h \
+	XMLDocument.hpp \
 	XMLNode.cpp \
-	XMLNode.h \
+	XMLNode.hpp \
 	XMLString.cpp \
-	XMLString.h
+	XMLString.hpp \
+	ZLibOutputStream.hpp
 
-EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.h MiKTeXCom.cpp
+if ENABLE_WOFF
+libdvisvgm_a_SOURCES += ffwrapper.c ffwrapper.h
+endif
+
+EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
+
+AM_CFLAGS = -Wall \
+	$(ZLIB_CFLAGS) \
+	$(CODE_COVERAGE_CFLAGS)
 
 AM_CXXFLAGS = -Wall -Wnon-virtual-dtor \
-	-I$(top_srcdir)/clipper \
-	-I$(top_srcdir)/xxHash \
+	-I$(top_srcdir)/libs/clipper \
+	-I$(top_srcdir)/libs/xxHash \
 	$(FREETYPE_CFLAGS) \
 	$(ZLIB_CFLAGS) \
 	$(CODE_COVERAGE_CFLAGS)
 
+if ENABLE_WOFF
+AM_CFLAGS +=  \
+	-I$(top_srcdir)/libs/ff-woff/fontforge \
+	-I$(top_srcdir)/libs/ff-woff/inc
+
+AM_CXXFLAGS +=  \
+	-I$(top_srcdir)/libs/woff2/brotli/enc \
+	-I$(top_srcdir)/libs/woff2/src
+endif
+
 AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS)
 
-# the command-line parser is generated from options.xml by opt2cpp
-$(srcdir)/CommandLine.cpp: options.xml
-	if test -f opt2cpp.xsl; then \
-		rm -f $@ $*.h; \
-		xsltproc opt2cpp.xsl $<; \
-	elif test -f $(srcdir)/opt2cpp.py; then \
-		rm -f $@ $*.h; \
-		python2 $(srcdir)/opt2cpp.py $< $@ $*.h; \
-	fi
+# the command-line parser class is generated from options.xml by opt2cpp
+$(srcdir)/CommandLine.hpp: options.xml
+	rm -f $@ $*.hpp
+	python $(srcdir)/opt2cpp.py $< >$@
 
 # Create a C string definition containing the PostScript routines psdefs.ps needed by class PSInterpreter
 $(srcdir)/psdefs.cpp: psdefs.ps

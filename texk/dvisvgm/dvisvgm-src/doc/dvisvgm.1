@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
-.\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: 07/04/2016
+.\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
+.\"      Date: 01/19/2017
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 1.16
+.\"    Source: dvisvgm 2.1
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "07/04/2016" "dvisvgm 1\&.16" "dvisvgm Manual"
+.TH "DVISVGM" "1" "01/19/2017" "dvisvgm 2\&.1" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -250,6 +250,29 @@ This option tells dvisvgm to compute the precise bounding box of each character\
 given, dvisvgm analyzes the actual shape of each character and derives a usually tight bounding box\&.
 .RE
 .PP
+\fB\-f, \-\-font\-format\fR=\fIformat\fR
+.RS 4
+Selects the file format used to embed the font data into the SVG files\&. Following formats are supported:
+\fBSVG\fR
+(that\(cqs the default),
+\fBTTF\fR
+(TrueType),
+\fBWOFF\fR, and
+\fBWOFF2\fR
+(Web Open Font Format version 1 and 2)\&. By default, dvisvgm creates unhinted fonts that might look bad on low\-resolution devices\&. In order to improve the display quality, the generated TrueType, WOFF, or WOFF2 fonts can be autohinted\&. The autohinter is enabled by appending
+\fB,autohint\fR
+or
+\fB,ah\fR
+to the font format, e\&.g\&.
+\fB\-\-font\-format=woff,autohint\fR
+or
+\fB\-\-font\-format=woff,ah\fR\&.
+.sp
+Option
+\fB\-\-font\-format\fR
+is only available if dvisvgm was built with WOFF support enabled\&.
+.RE
+.PP
 \fB\-m, \-\-fontmap\fR=\fIfilenames\fR
 .RS 4
 Loads and evaluates a single font map file or a sequence of font map files\&. These files are required to resolve font file names and encodings\&. dvisvgm does not provide its own map files but tries to read available ones coming with dvips or dvipdfm\&. If option
@@ -334,7 +357,7 @@ parameter is an integer value between 0 and 2\&. It selects the display variant 
 .PP
 \fB\-\-keep\fR
 .RS 4
-Disables the removal of temporary files as created by Metafont (usually \&.gf, \&.tfm, and \&.log files)\&.
+Disables the removal of temporary files as created by Metafont (usually \&.gf, \&.tfm, and \&.log files) or the TrueType/WOFF module\&.
 .RE
 .PP
 \fB\-\-libgs\fR=\fIfilename\fR
@@ -562,6 +585,19 @@ is given, relative commands are created instead\&. This slightly reduces the siz
 .RS 4
 Don\(cqt write the SVG output to a file but redirect it to
 \fBstdout\fR\&.
+.RE
+.PP
+\fB\-\-tmpdir\fR[=\fIpath\fR]
+.RS 4
+In some cases, dvisvgm needs to create temporary files to work properly\&. These files go to the system\(cqs temporary folder by default, e\&.g\&.
+\fB/tmp\fR
+on Linux systems\&. Option
+\fB\-\-tmpdir\fR
+allows to specify a different location if necessary for some reason\&. Please note that dvisvgm does not create this folder, so you must ensure that it actually exists before running dvisvgm\&.
+.sp
+If the optional parameter
+\fIpath\fR
+is omitted, dvisvgm prints the location of the system\(cqs temp folder and exits\&.
 .RE
 .PP
 \fB\-T, \-\-transform\fR=\fIcommands\fR
@@ -993,7 +1029,9 @@ The following TeX snippet adds two raw SVG elements to the output and updates th
 .PP
 \fBem\fR
 .RS 4
-These specials were introduced with the emTeX distribution by Eberhard Mattes\&. They provide line drawing statements, instructions for embedding MSP, PCX, and BMP image files, as well as two PCL commands\&. dvisvgm supports only the line drawing statements and ignores all other em specials silently\&. A description of the command syntax can be found in the DVI driver documentation coming with
+These specials were introduced with the
+\fIemTeX\fR
+distribution by Eberhard Mattes\&. They provide line drawing statements, instructions for embedding MSP, PCX, and BMP image files, as well as two PCL commands\&. dvisvgm supports only the line drawing statements and ignores all other em specials silently\&. A description of the command syntax can be found in the DVI driver documentation coming with
 emTeX (\m[blue]http://www.ctan.org/pkg/emtex\m[])\&.
 .RE
 .PP
@@ -1029,9 +1067,11 @@ pdfTeX user manual (\m[blue]http://www.ctan.org/pkg/pdftex\m[])\&.
 .PP
 \fBps\fR
 .RS 4
-The famous DVI driver dvips introduced its own set of specials in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents\&. One aim of dvisvgm is to completely evaluate all PostScript snippets and to convert as many of them as possible to SVG\&. In contrast to dvips, dvisvgm uses floating point arithmetics to compute the precise position of each graphic element, i\&.e\&. it doesn\(cqt round the coordinates\&. Therefore, the relative locations of the graphic elements may slightly differ from those computed by dvips\&.
+The famous DVI driver
+\fIdvips\fR
+introduced its own set of specials in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents\&. One aim of dvisvgm is to completely evaluate all PostScript snippets and to convert as many of them as possible to SVG\&. In contrast to dvips, dvisvgm uses floating point arithmetics to compute the precise position of each graphic element, i\&.e\&. it doesn\(cqt round the coordinates\&. Therefore, the relative locations of the graphic elements may slightly differ from those computed by dvips\&.
 .sp
-Since PostScript is a rather complex language, dvisvgm does not try to implement its own PostScript interpreter but relies on
+Since PostScript is a rather complex language, dvisvgm does not implement its own PostScript interpreter but relies on
 Ghostscript (\m[blue]http://ghostscript.com\m[])
 instead\&. If the Ghostscript library was not linked to the dvisvgm binary, it is looked up and loaded dynamically during runtime\&. In this case, dvisvgm looks for
 \fIlibgs\&.so\&.X\fR
@@ -1292,4 +1332,4 @@ Please report bugs using the bug tracker at GitHub (\m[blue]https://github.com/m
 Written by Martin Gieseking <\m[blue]\fBmartin\&.gieseking@uos\&.de\fR\m[]>
 .SH "COPYING"
 .sp
-Copyright \(co 2005\-2016 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.
+Copyright \(co 2005\-2017 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.

@@ -2,7 +2,7 @@
 ** PreScanDVIReader.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,8 +18,8 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include "DVIActions.h"
-#include "PreScanDVIReader.h"
+#include "DVIActions.hpp"
+#include "PreScanDVIReader.hpp"
 
 using namespace std;
 
@@ -37,7 +37,7 @@ void PreScanDVIReader::cmdBop (int) {
 
 
 void PreScanDVIReader::cmdXXX (int len) {
-	UInt32 numBytes = readUnsigned(len);
+	uint32_t numBytes = readUnsigned(len);
 	string s = readString(numBytes);
 	if (_actions)
 		_actions->special(s, 0, true);  // pre-process special

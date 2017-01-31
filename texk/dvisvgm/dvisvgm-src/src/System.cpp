@@ -2,7 +2,7 @@
 ** System.cpp                                                           **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -20,7 +20,7 @@
 
 #include <config.h>
 #include <ctime>
-#include "System.h"
+#include "System.hpp"
 
 #if defined (HAVE_SYS_TIME_H)
 #include <sys/time.h>
@@ -47,4 +47,3 @@ double System::time () {
 	return double(myclock)/CLOCKS_PER_SEC;
 #endif
 }
-

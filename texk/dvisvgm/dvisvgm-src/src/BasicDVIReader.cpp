@@ -2,7 +2,7 @@
 ** BasicDVIReader.cpp                                                   **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -21,7 +21,7 @@
 #include <config.h>
 #include <algorithm>
 #include <sstream>
-#include "BasicDVIReader.h"
+#include "BasicDVIReader.hpp"
 
 using namespace std;
 
@@ -87,27 +87,27 @@ int BasicDVIReader::evalCommand (CommandHandler &handler, int &param) {
 
 	int num_param_bytes = 0;
 	param = -1;
-	if (opcode >= 0 && opcode <= 127) {
+	if (opcode >= OP_SETCHAR0 && opcode <= OP_SETCHAR127) {
 		handler = &BasicDVIReader::cmdSetChar0;
 		param = opcode;
 	}
-	else if (opcode >= 171 && opcode <= 234) {
+	else if (opcode >= OP_FNTNUM0 && opcode <= OP_FNTNUM63) {
 		handler = &BasicDVIReader::cmdFontNum0;
-		param = opcode-171;
+		param = opcode-OP_FNTNUM0;
 	}
 	else if (evalXDVOpcode(opcode, handler))
 		num_param_bytes = 0;
-	else if (_dviVersion == DVI_PTEX && opcode == 255) {  // direction command set by pTeX?
+	else if (_dviVersion == DVI_PTEX && opcode == OP_DIR) {  // direction command set by pTeX?
 		handler = &BasicDVIReader::cmdDir;
 		num_param_bytes = 1;
 	}
-	else if (opcode >= 250) {
+	else if (opcode > OP_POSTPOST) {
 		ostringstream oss;
 		oss << "undefined DVI command (opcode " << opcode << ')';
 		throw DVIException(oss.str());
 	}
 	else {
-		const int offset = opcode <= 170 ? 128 : 235-(170-128+1);
+		const int offset = opcode < OP_FNTNUM0 ? OP_SET1 : (OP_FNTNUM63+1)-(OP_FNTNUM0-OP_SET1);
 		handler = commands[opcode-offset].handler;
 		num_param_bytes = commands[opcode-offset].length;
 	}
@@ -133,11 +133,11 @@ bool BasicDVIReader::evalXDVOpcode (int op, CommandHandler &handler) const {
 		return false;
 
 	static const CommandHandler handlers[] = {
-		&BasicDVIReader::cmdXPic,
-		&BasicDVIReader::cmdXFontDef,
-		&BasicDVIReader::cmdXGlyphArray,
-		&BasicDVIReader::cmdXTextAndGlyphs,
-		&BasicDVIReader::cmdXGlyphString
+		&BasicDVIReader::cmdXPic,             // 251 (XDV5 only)
+		&BasicDVIReader::cmdXFontDef,         // 252
+		&BasicDVIReader::cmdXGlyphArray,      // 253
+		&BasicDVIReader::cmdXTextAndGlyphs,   // 254 (XDV7 only)
+		&BasicDVIReader::cmdXGlyphString      // 254 (XDV5 only)
 	};
 	index = op-251;
 	if (_dviVersion == DVI_XDV5 && op == 254)
@@ -166,7 +166,7 @@ void BasicDVIReader::executePostPost () {
 
 	seek(-1, ios::end);       // stream pointer to last byte
 	int count=0;
-	while (peek() == 223) {   // count trailing fill bytes
+	while (peek() == DVI_FILL) {   // count trailing fill bytes
 		seek(-1, ios::cur);
 		count++;
 	}
@@ -179,9 +179,9 @@ void BasicDVIReader::executePostPost () {
 
 void BasicDVIReader::executeAllPages () {
 	if (_dviVersion == DVI_NONE)
-		executePostPost();             // get version ID from post_post
-	seek(0);                          // go to preamble
-	while (executeCommand() != 248);  // execute all commands until postamble is reached
+		executePostPost();   // get version ID from post_post
+	seek(0);                // go to preamble
+	while (executeCommand() != OP_POST);  // execute all commands until postamble is reached
 }
 
 
@@ -207,9 +207,9 @@ void BasicDVIReader::setDVIVersion (DVIVersion version) {
  *  Format: pre i[1] num[4] den[4] mag[4] k[1] x[k] */
 void BasicDVIReader::cmdPre (int) {
 	setDVIVersion((DVIVersion)readUnsigned(1)); // identification number
-	seek(12, ios::cur);         // skip numerator, denominator, and mag factor
-	UInt32 k = readUnsigned(1); // length of following comment
-	seek(k, ios::cur);          // skip comment
+	seek(12, ios::cur);           // skip numerator, denominator, and mag factor
+	uint32_t k = readUnsigned(1); // length of following comment
+	seek(k, ios::cur);            // skip comment
 }
 
 
@@ -225,7 +225,7 @@ void BasicDVIReader::cmdPost (int) {
 void BasicDVIReader::cmdPostPost (int) {
 	seek(4, ios::cur);
 	setDVIVersion((DVIVersion)readUnsigned(1));  // identification byte
-	while (readUnsigned(1) == 223);  // skip fill bytes (223), eof bit should be set now
+	while (readUnsigned(1) == DVI_FILL);  // skip fill bytes (223), eof bit should be set now
 }
 
 
@@ -261,9 +261,9 @@ void BasicDVIReader::cmdXXX (int len)     {seek(readUnsigned(len), ios::cur);}
  *  Format: fontdef k[len] c[4] s[4] d[4] a[1] l[1] n[a+l]
  * @param[in] len size of font number variable (in bytes) */
 void BasicDVIReader::cmdFontDef (int len) {
-	seek(len+12, ios::cur);             // skip font number
-	UInt32 pathlen  = readUnsigned(1);  // length of font path
-	UInt32 namelen  = readUnsigned(1);  // length of font name
+	seek(len+12, ios::cur);               // skip font number
+	uint32_t pathlen  = readUnsigned(1);  // length of font path
+	uint32_t namelen  = readUnsigned(1);  // length of font name
 	seek(pathlen+namelen, ios::cur);
 }
 
@@ -272,15 +272,15 @@ void BasicDVIReader::cmdFontDef (int len) {
  *  parameters: box[1] matrix[4][6] p[2] len[2] path[l] */
 void BasicDVIReader::cmdXPic (int) {
 	seek(1+24+2, ios::cur);
-	UInt16 len = readUnsigned(2);
+	uint16_t len = readUnsigned(2);
 	seek(len, ios::cur);
 }
 
 
 void BasicDVIReader::cmdXFontDef (int) {
 	seek(4+4, ios::cur);
-	UInt16 flags = readUnsigned(2);
-	UInt8 len = readUnsigned(1);
+	uint16_t flags = readUnsigned(2);
+	uint8_t len = readUnsigned(1);
 	if (_dviVersion == DVI_XDV5)
 		len += readUnsigned(1)+readUnsigned(1);
 	seek(len, ios::cur);
@@ -295,7 +295,7 @@ void BasicDVIReader::cmdXFontDef (int) {
 	if (flags & 0x4000)   // embolden?
 		seek(4, ios::cur);
 	if ((flags & 0x0800) && (_dviVersion == DVI_XDV5)) { // variations?
-		UInt16 num_variations = readSigned(2);
+		uint16_t num_variations = readSigned(2);
 		seek(4*num_variations, ios::cur);
 	}
 }
@@ -306,7 +306,7 @@ void BasicDVIReader::cmdXFontDef (int) {
  *  parameters: w[4] n[2] xy[(4+4)n] g[2n] */
 void BasicDVIReader::cmdXGlyphArray (int) {
 	seek(4, ios::cur);
-	UInt16 num_glyphs = readUnsigned(2);
+	uint16_t num_glyphs = readUnsigned(2);
 	seek(10*num_glyphs, ios::cur);
 }
 
@@ -316,7 +316,7 @@ void BasicDVIReader::cmdXGlyphArray (int) {
  *  parameters: w[4] n[2] x[4n] y[4] g[2n] */
 void BasicDVIReader::cmdXGlyphString (int) {
 	seek(4, ios::cur);
-	UInt16 num_glyphs = readUnsigned(2);
+	uint16_t num_glyphs = readUnsigned(2);
 	seek(6*num_glyphs, ios::cur);
 }
 
@@ -328,7 +328,7 @@ void BasicDVIReader::cmdXGlyphString (int) {
  *  introduced with XeTeX 0.99995 and can be triggered by <tt>\\XeTeXgenerateactualtext1</tt>.
  *  parameters: l[2] t[2l] w[4] n[2] xy[8n] g[2n] */
 void BasicDVIReader::cmdXTextAndGlyphs (int) {
-	UInt16 l = readUnsigned(2);
+	uint16_t l = readUnsigned(2);
 	seek(2*l, ios::cur);
 	cmdXGlyphArray(0);
 }

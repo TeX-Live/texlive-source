@@ -1,24 +1,26 @@
 # This file is part of dvisvgm
-# Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>
+# Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
 #
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[1.16],[martin.gieseking@uos.de])
-DATE="July 2016"
+AC_INIT([dvisvgm],[2.1],[martin.gieseking@uos.de])
+DATE="January 2017"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 AH_TEMPLATE([TARGET_SYSTEM], [The machine triplet of the target system])
 AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"])
 
 # Checks for programs.
-AC_PROG_CXX
 AC_PROG_CC
+AC_PROG_CC_C99
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX([11], [noext])
 
 AC_PROG_RANLIB
 AC_LANG(C)
@@ -27,9 +29,9 @@ AC_CHECK_FUNCS([ftime gettimeofday])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
 AC_HEADER_TIOCGWINSZ
 
-AC_CHECK_HEADER([kpathsea/kpathsea.h], , 
+AC_CHECK_HEADER([kpathsea/kpathsea.h], ,
 	[AC_MSG_ERROR([please install the kpathsea development package])])
-AC_CHECK_LIB(kpathsea, kpse_find_file, , 
+AC_CHECK_LIB(kpathsea, kpse_find_file, ,
 	[AC_MSG_ERROR([libkpathsea not found, please install the corresponding package first])])
 
 AC_MSG_CHECKING([kpathsea version])
@@ -42,7 +44,7 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
 		fprintf(f, "%s\n", KPSEVERSION);
 		fclose(f);
 		exit(0);
-	}])], 
+	}])],
 	[kpseversion=`cat kpseversion|sed 's/kpathsea version //'`], [kpseversion=], [kpseversion=unknown])
 AC_MSG_RESULT("$kpseversion")
 rm -f kpseversion
@@ -53,7 +55,7 @@ fi
 
 # Check how to link potracelib
 HAVE_LIBPOTRACE=1
-AC_CHECK_HEADER([potracelib.h], 
+AC_CHECK_HEADER([potracelib.h],
 	[AC_CHECK_LIB(m, sqrt) # required to pass potrace check
 	 AC_CHECK_LIB(potrace, potrace_trace, , HAVE_LIBPOTRACE=0)], HAVE_LIBPOTRACE=0)
 
@@ -64,7 +66,7 @@ fi
 
 # Check how to link Ghostscript
 HAVE_LIBGS=1
-AC_CHECK_HEADER([ghostscript/iapi.h], 
+AC_CHECK_HEADER([ghostscript/iapi.h],
 	AC_CHECK_LIB(gs, gsapi_new_instance, , HAVE_LIBGS=0), HAVE_LIBGS=0)
 
 if test "$HAVE_LIBGS" -eq 0; then
@@ -79,7 +81,7 @@ else
 		int main () {
 			gsapi_revision_t r;
 			if (gsapi_revision(&r, sizeof(gsapi_revision_t)) == 0) {
-				FILE *f; 
+				FILE *f;
 				f = fopen("gsversion", "w");
 				if (!f) exit(1);
 				fprintf(f, "%ld\n", r.revision);
@@ -104,6 +106,16 @@ PKG_PROG_PKG_CONFIG
 
 # Check for libraries.
 PKG_CHECK_MODULES([FREETYPE], [freetype2])
+
+AC_ARG_ENABLE([woff],
+	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@no@:>@])],
+	[],
+	[enable_woff=yes])
+
+AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
+if test "x$enable_woff" != "xyes" ; then
+	AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])
+fi
 
 AC_CHECK_LIB(z, gzopen)
 
@@ -173,9 +185,14 @@ AC_SUBST(AM_CPPFLAGS)
 AC_SUBST(AM_LDFLAGS)
 AC_CONFIG_FILES([
 	Makefile
-	clipper/Makefile 
-	xxHash/Makefile
+	libs/Makefile
+	libs/clipper/Makefile
+	libs/ff-woff/Makefile
+	libs/woff2/Makefile
+	libs/woff2/brotli/Makefile
+	libs/xxHash/Makefile
 	src/Makefile
+	src/version.hpp
 	tests/Makefile
 	tests/data/Makefile
 	doc/dvisvgm.txt

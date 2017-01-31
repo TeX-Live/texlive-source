@@ -1,7 +1,27 @@
-#include "Length.h"
-#include "Message.h"
-#include "PapersizeSpecialHandler.h"
-#include "SpecialActions.h"
+/*************************************************************************
+** PapersizeSpecialHandler.cpp                                          **
+**                                                                      **
+** This file is part of dvisvgm -- a fast DVI to SVG converter          **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
+**                                                                      **
+** This program is free software; you can redistribute it and/or        **
+** modify it under the terms of the GNU General Public License as       **
+** published by the Free Software Foundation; either version 3 of       **
+** the License, or (at your option) any later version.                  **
+**                                                                      **
+** This program is distributed in the hope that it will be useful, but  **
+** WITHOUT ANY WARRANTY; without even the implied warranty of           **
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the         **
+** GNU General Public License for more details.                         **
+**                                                                      **
+** You should have received a copy of the GNU General Public License    **
+** along with this program; if not, see <http://www.gnu.org/licenses/>. **
+*************************************************************************/
+
+#include "Length.hpp"
+#include "Message.hpp"
+#include "PapersizeSpecialHandler.hpp"
+#include "SpecialActions.hpp"
 
 using namespace std;
 
@@ -24,7 +44,7 @@ void PapersizeSpecialHandler::preprocess (const char*, std::istream &is, Special
 		if (!_pageSizes.empty() && _pageSizes.back().first == pageno)
 			_pageSizes.back().second = whpair;
 		else
-			_pageSizes.push_back(PageSize(pageno, whpair));
+			_pageSizes.emplace_back(PageSize(pageno, whpair));
 	}
 }
 
@@ -34,19 +54,17 @@ bool PapersizeSpecialHandler::process (const char *, std::istream &, SpecialActi
 }
 
 
-bool PapersizeSpecialHandler::isLess (const PageSize &ps1, const PageSize &ps2) {
-	// order PageSize objects by page number
-	return ps1.first < ps2.first;
-}
-
-
 void PapersizeSpecialHandler::dviEndPage (unsigned pageno, SpecialActions &actions) {
 	if (actions.getBBoxFormatString() != "papersize")
 		return;
 
 	// find number of page with size change not lower than the current one
 	typedef vector<PageSize>::iterator Iterator;
-	Iterator lb_it = lower_bound(_pageSizes.begin(), _pageSizes.end(), PageSize(pageno, DoublePair()), isLess);
+	Iterator lb_it = lower_bound(_pageSizes.begin(), _pageSizes.end(), PageSize(pageno, DoublePair()),
+		[](const PageSize &ps1, const PageSize &ps2) {
+			// order PageSize objects by page number
+			return ps1.first < ps2.first;
+		});
 	Iterator it = _pageSizes.end();
 	if (lb_it != _pageSizes.end() && lb_it->first == pageno)
 		it = lb_it;

@@ -2,7 +2,7 @@
 ** SVGSingleCharTextHandler.cpp                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,12 +18,12 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include "SVGSingleCharTextHandler.h"
-#include "XMLNode.h"
+#include "SVGSingleCharTextHandler.hpp"
+#include "XMLNode.hpp"
 
 using namespace std;
 
-void SVGSingleCharTextHandler::appendChar (UInt32 c, double x, double y) {
+void SVGSingleCharTextHandler::appendChar (uint32_t c, double x, double y) {
 	const Font *font = _font.get();
 	XMLElementNode *textNode = createTextNode(x, y);
 	textNode->append(XMLString(font->unicode(c), false));

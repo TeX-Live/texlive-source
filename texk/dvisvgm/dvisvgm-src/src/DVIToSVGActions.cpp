@@ -2,7 +2,7 @@
 ** DVIToSVGActions.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2016 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,31 +18,25 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <config.h>
 #include <cstring>
 #include <ctime>
-#include "BoundingBox.h"
-#include "DVIToSVG.h"
-#include "DVIToSVGActions.h"
-#include "Font.h"
-#include "FontManager.h"
-#include "GlyphTracerMessages.h"
-#include "System.h"
-
+#include "BoundingBox.hpp"
+#include "DVIToSVG.hpp"
+#include "DVIToSVGActions.hpp"
+#include "Font.hpp"
+#include "FontManager.hpp"
+#include "GlyphTracerMessages.hpp"
+#include "System.hpp"
+#include "utility.hpp"
 
 using namespace std;
 
 
 DVIToSVGActions::DVIToSVGActions (DVIToSVG &dvisvg, SVGTree &svg)
-	: _svg(svg), _dvireader(&dvisvg), _bgcolor(Color::TRANSPARENT), _boxes(0)
+	: _svg(svg), _dvireader(&dvisvg), _bgcolor(Color::TRANSPARENT)
 {
 	_currentFontNum = -1;
 	_pageCount = 0;
-}
-
-
-DVIToSVGActions::~DVIToSVGActions () {
-	delete _boxes;
 }
 
 
@@ -215,12 +209,11 @@ void DVIToSVGActions::special (const string &spc, double dvi2bp, bool preprocess
  *  @param[in] pageno physical page number
  *  @param[in] c array with 10 components representing \\count0 ... \\count9. c[0] contains the
  *               current (printed) page number (may differ from page count) */
-void DVIToSVGActions::beginPage (unsigned pageno, const vector<Int32>&) {
+void DVIToSVGActions::beginPage (unsigned pageno, const vector<int32_t>&) {
 	SpecialManager::instance().notifyBeginPage(pageno, *this);
 	_svg.newPage(++_pageCount);
 	_bbox = BoundingBox();  // clear bounding box
-	if (_boxes)
-		_boxes->clear();
+	_boxes.clear();
 }
 
 
@@ -248,12 +241,10 @@ void DVIToSVGActions::setBgColor (const Color &color) {
 }
 
 
-void DVIToSVGActions::embed(const BoundingBox& bbox) {
+void DVIToSVGActions::embed(const BoundingBox &bbox) {
 	_bbox.embed(bbox);
-	if (_boxes) {
-		FORALL(*_boxes, BoxMap::iterator, it)
-			it->second.embed(bbox);
-	}
+	for (auto &strboxpair : _boxes)
+		strboxpair.second.embed(bbox);
 }
 
 
@@ -262,16 +253,13 @@ void DVIToSVGActions::embed(const DPair& p, double r) {
 		_bbox.embed(p);
 	else
 		_bbox.embed(p, r);
-	if (_boxes)
-		FORALL(*_boxes, BoxMap::iterator, it)
-			it->second.embed(p, r);
+	for (auto &strboxpair : _boxes)
+		strboxpair.second.embed(p, r);
 }
 
 
 BoundingBox& DVIToSVGActions::bbox(const string& name, bool reset) {
-	if (!_boxes)
-		_boxes = new BoxMap;
-	BoundingBox &box = (*_boxes)[name];
+	BoundingBox &box = _boxes[name];
 	if (reset)
 		box = BoundingBox();
 	return box;
@@ -299,8 +287,8 @@ static int digits (int n) {
 	if (n == 0)
 		return 1;
 	if (n > 0)
-		return int(log10(double(n))+1);
-	return int(log10(double(-n))+2);
+		return util::ilog10(n)+1;
+	return util::ilog10(-n)+2;
 }
 
 

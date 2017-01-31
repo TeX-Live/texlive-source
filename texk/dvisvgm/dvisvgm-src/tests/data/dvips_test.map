@@ -1,0 +1,363 @@
+% /var/lib/texmf/fonts/map/dvips/updmap/ps2pk.map: maintained by the script updmap.
+%   Don't change this file directly. Edit texmf/web2c/updmap.cfg
+%   and run updmap to recreate this file.
+% A log of the updmap run that has created this file is available here:
+%   /var/lib/texmf/web2c/updmap.log
+antpb AntykwaPoltawskiego-Bold "encantp ReEncodeFont" <antp.enc <antpb.pfb
+antpbi AntykwaPoltawskiego-BoldItalic "encantp ReEncodeFont" <antp.enc <antpbi.pfb
+antpr AntykwaPoltawskiego-Regular "encantp ReEncodeFont" <antp.enc <antpr.pfb
+antpri AntykwaPoltawskiego-Italic "encantp ReEncodeFont" <antp.enc <antpri.pfb
+bchb8r CharterBT-Bold "TeXBase1Encoding ReEncodeFont" <8r.enc <bchb8a.pfb
+bchb8v VnCharterBT-Bold "T5Encoding ReEncodeFont" <t5.enc <bchb8v.pfb
+bchb8y CharterBT-Bold "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <bchb8a.pfb
+bchbc8a CharterBT-BoldSmallCap <bchbc8a.pfb
+bchbi8r CharterBT-BoldItalic "TeXBase1Encoding ReEncodeFont" <8r.enc <bchbi8a.pfb
+bchbi8v VnCharterBT-BoldItalic "T5Encoding ReEncodeFont" <t5.enc <bchbi8v.pfb
+bchbi8y CharterBT-BoldItalic "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <bchbi8a.pfb
+bchbo8r CharterBT-Bold ".167 SlantFont TeXBase1Encoding ReEncodeFont" <8r.enc <bchb8a.pfb
+bchbo8v VnCharterBT-Bold "0.194 SlantFont T5Encoding ReEncodeFont" <t5.enc <bchb8v.pfb
+bchbo8y CharterBT-Bold "0.194 SlantFont TeXnANSIEncoding ReEncodeFont" <texnansi.enc <bchb8a.pfb
+bchr8r CharterBT-Roman "TeXBase1Encoding ReEncodeFont" <8r.enc <bchr8a.pfb
+bchr8v VnBitstreamCharter "T5Encoding ReEncodeFont" <t5.enc <bchr8v.pfb
+bchr8y CharterBT-Roman "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <bchr8a.pfb
+bchrc8a CharterBT-SmallCap <bchrc8a.pfb
+bchri8r CharterBT-Italic "TeXBase1Encoding ReEncodeFont" <8r.enc <bchri8a.pfb
+bchri8v VnCharterBT-Italic "T5Encoding ReEncodeFont" <t5.enc <bchri8v.pfb
+bchri8y CharterBT-Italic "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <bchri8a.pfb
+bchro8r CharterBT-Roman ".167 SlantFont TeXBase1Encoding ReEncodeFont" <8r.enc <bchr8a.pfb
+bchro8v VnBitstreamCharter "0.194 SlantFont T5Encoding ReEncodeFont" <t5.enc <bchr8v.pfb
+bchro8y CharterBT-Roman "0.194 SlantFont TeXnANSIEncoding ReEncodeFont" <texnansi.enc <bchr8a.pfb
+cmb10 CMB10 <cmb10.pfb
+cmbsy10 CMBSY10 <cmbsy10.pfb
+cmbsy10o CMBSY10 ".167 SlantFont" <cmbsy10.pfb
+cmbsy5 CMBSY5 <cmbsy5.pfb
+cmbsy6 CMBSY7 <cmbsy7.pfb
+cmbsy7 CMBSY7 <cmbsy7.pfb
+cmbsy8 CMBSY7 <cmbsy7.pfb
+cmbsy9 CMBSY10 <cmbsy10.pfb
+cmbx10 CMBX10 <cmbx10.pfb
+cmbx12 CMBX12 <cmbx12.pfb
+cmbx5 CMBX5 <cmbx5.pfb
+cmbx6 CMBX6 <cmbx6.pfb
+cmbx7 CMBX7 <cmbx7.pfb
+cmbx8 CMBX8 <cmbx8.pfb
+cmbx9 CMBX9 <cmbx9.pfb
+cmbxi10f CMBXTI10 "-0.25 SlantFont" <cmbxti10.pfb
+cmbxsl10 CMBXSL10 <cmbxsl10.pfb
+cmbxti10 CMBXTI10 <cmbxti10.pfb
+cmbxti12 CMBXTI10 <cmbxti10.pfb
+cmbxti7 CMBXTI10 <cmbxti10.pfb
+cmcb10 cmcb10 <cmcb10.pfb
+cmcbx10 cmcbx10 <cmcbx10.pfb
+cmcbx12 cmcbx12 <cmcbx12.pfb
+cmcbx5 cmcbx5 <cmcbx5.pfb
+cmcbx6 cmcbx6 <cmcbx6.pfb
+cmcbx7 cmcbx7 <cmcbx7.pfb
+cmcbx8 cmcbx8 <cmcbx8.pfb
+cmcbx9 cmcbx9 <cmcbx9.pfb
+cmcbxsl10 cmcbxsl10 <cmcbxsl1.pfb
+cmcbxti10 cmcbxti10 <cmcbxti1.pfb
+cmccsc10 cmccsc10 <cmccsc10.pfb
+cmccsc8 cmccsc8 <cmccsc8.pfb
+cmccsc9 cmccsc9 <cmccsc9.pfb
+cmcinch cmcinch72 <cmcinch7.pfb
+cmcitt10 cmcitt10 <cmcitt10.pfb
+cmcsc10 CMCSC10 <cmcsc10.pfb
+cmcsc8 CMCSC10 <cmcsc10.pfb
+cmcsc9 CMCSC10 <cmcsc10.pfb
+cmcsl10 cmcsl10 <cmcsl10.pfb
+cmcsl12 cmcsl12 <cmcsl12.pfb
+cmcsl8 cmcsl8 <cmcsl8.pfb
+cmcsl9 cmcsl9 <cmcsl9.pfb
+cmcsltt10 cmcsltt10 <cmcsltt1.pfb
+cmcss10 cmcss10 <cmcss10.pfb
+cmcss12 cmcss12 <cmcss12.pfb
+cmcss17 cmcss17 <cmcss17.pfb
+cmcss8 cmcss8 <cmcss8.pfb
+cmcss9 cmcss9 <cmcss9.pfb
+cmcssbx10 cmcssbx10 <cmcssbx1.pfb
+cmcssdc10 cmcssdc10 <cmcssdc1.pfb
+cmcssi10 cmcssi10 <cmcssi10.pfb
+cmcssi12 cmcssi12 <cmcssi12.pfb
+cmcssi17 cmcssi17 <cmcssi17.pfb
+cmcssi8 cmcssi8 <cmcssi8.pfb
+cmcssi9 cmcssi9 <cmcssi9.pfb
+cmcssq8 cmcssq8 <cmcssq8.pfb
+cmcssqi8 cmcssqi8 <cmcssqi8.pfb
+cmcti10 cmcti10 <cmcti10.pfb
+cmcti12 cmcti12 <cmcti12.pfb
+cmcti7 cmcti7 <cmcti7.pfb
+cmcti8 cmcti8 <cmcti8.pfb
+cmcti9 cmcti9 <cmcti9.pfb
+cmctt10 cmctt10 <cmctt10.pfb
+cmctt12 cmctt12 <cmctt12.pfb
+cmctt8 cmctt8 <cmctt8.pfb
+cmctt9 cmctt9 <cmctt9.pfb
+cmcu10 cmcu10 <cmcu10.pfb
+cmcyr10 cmcyr10 <cmcyr10.pfb
+cmcyr12 cmcyr12 <cmcyr12.pfb
+cmcyr17 cmcyr17 <cmcyr17.pfb
+cmcyr5 cmcyr5 <cmcyr5.pfb
+cmcyr6 cmcyr6 <cmcyr6.pfb
+cmcyr7 cmcyr7 <cmcyr7.pfb
+cmcyr8 cmcyr8 <cmcyr8.pfb
+cmcyr9 cmcyr9 <cmcyr9.pfb
+cmdunh10 CMDUNH10 <cmdunh10.pfb
+cmex10 CMEX10 <cmex10.pfb
+cmex7 TeX-cmex7 <fmex7.pfb
+cmex8 TeX-cmex8 <fmex8.pfb
+cmex9 TeX-cmex9 <fmex9.pfb
+cmff10 CMFF10 <cmff10.pfb
+cmfi10 CMFI10 <cmfi10.pfb
+cmfib8 CMFIB8 <cmfib8.pfb
+cminch CMINCH <cminch.pfb
+cmitt10 CMITT10 <cmitt10.pfb
+cmitt12 CMITT12 <cmitt10.pfb
+cmitt9 CMITT10 <cmitt10.pfb
+cmmi10 CMMI10 <cmmi10.pfb
+cmmi10o CMMI10 ".167 SlantFont" <cmmi10.pfb
+cmmi12 CMMI12 <cmmi12.pfb
+cmmi5 CMMI5 <cmmi5.pfb
+cmmi6 CMMI6 <cmmi6.pfb
+cmmi7 CMMI7 <cmmi7.pfb
+cmmi8 CMMI8 <cmmi8.pfb
+cmmi9 CMMI9 <cmmi9.pfb
+cmmib10 CMMIB10 <cmmib10.pfb
+cmmib10o CMMIB10 ".167 SlantFont" <cmmib10.pfb
+cmmib5 CMMIB5 <cmmib5.pfb
+cmmib6 CMMIB7 <cmmib7.pfb
+cmmib7 CMMIB7 <cmmib7.pfb
+cmmib8 CMMIB7 <cmmib7.pfb
+cmmib9 CMMIB10 <cmmib10.pfb
+cmr10 CMR10 <cmr10.pfb
+cmr12 CMR12 <cmr12.pfb
+cmr17 CMR17 <cmr17.pfb
+cmr5 CMR5 <cmr5.pfb
+cmr6 CMR6 <cmr6.pfb
+cmr7 CMR7 <cmr7.pfb
+cmr8 CMR8 <cmr8.pfb
+cmr9 CMR9 <cmr9.pfb
+cmsl10 CMSL10 <cmsl10.pfb
+cmsl12 CMSL12 <cmsl12.pfb
+cmsl6 CMSL8 <cmsl8.pfb
+cmsl8 CMSL8 <cmsl8.pfb
+cmsl9 CMSL9 <cmsl9.pfb
+cmsltt10 CMSLTT10 <cmsltt10.pfb
+cmsltt9 CMSLTT10 <cmsltt10.pfb
+cmss10 CMSS10 <cmss10.pfb
+cmss12 CMSS12 <cmss12.pfb
+cmss17 CMSS17 <cmss17.pfb
+cmss8 CMSS8 <cmss8.pfb
+cmss9 CMSS9 <cmss9.pfb
+cmssbx10 CMSSBX10 <cmssbx10.pfb
+cmssbxo10 CMSSBX10 ".212 SlantFont" <cmssbx10.pfb
+cmssdc10 CMSSDC10 <cmssdc10.pfb
+cmssi10 CMSSI10 <cmssi10.pfb
+cmssi12 CMSSI12 <cmssi12.pfb
+cmssi17 CMSSI17 <cmssi17.pfb
+cmssi8 CMSSI8 <cmssi8.pfb
+cmssi9 CMSSI9 <cmssi9.pfb
+cmssq8 CMSSQ8 <cmssq8.pfb
+cmssqi8 CMSSQI8 <cmssqi8.pfb
+cmsy10 CMSY10 <cmsy10.pfb
+cmsy10o CMSY10 ".167 SlantFont" <cmsy10.pfb
+cmsy5 CMSY5 <cmsy5.pfb
+cmsy6 CMSY6 <cmsy6.pfb
+cmsy7 CMSY7 <cmsy7.pfb
+cmsy8 CMSY8 <cmsy8.pfb
+cmsy9 CMSY9 <cmsy9.pfb
+cmtcsc10 CMTCSC10 <cmtcsc10.pfb
+cmtex10 CMTEX10 <cmtex10.pfb
+cmtex8 CMTEX8 <cmtex8.pfb
+cmtex9 CMTEX9 <cmtex9.pfb
+cmti10 CMTI10 <cmti10.pfb
+cmti12 CMTI12 <cmti12.pfb
+cmti7 CMTI7 <cmti7.pfb
+cmti8 CMTI8 <cmti8.pfb
+cmti9 CMTI9 <cmti9.pfb
+cmtt10 CMTT10 <cmtt10.pfb
+cmtt12 CMTT12 <cmtt12.pfb
+cmtt8 CMTT8 <cmtt8.pfb
+cmtt9 CMTT9 <cmtt9.pfb
+cmu10 CMU10 <cmu10.pfb
+cmvtt10 CMVTT10 <cmvtt10.pfb
+cmvtt10o CMVTT10 ".167 SlantFont" <cmvtt10.pfb
+cob NimbusMonL-Bold "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ucrb8a.pfb
+cobo NimbusMonL-BoldObli "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ucrbo8a.pfb
+comic8b ComicSansMS8b <8b.enc <ComicSansMS8b.pfb "fontinst-autoenc-8b ReEncodeFont" 
+comicbd8b ComicSansMS8b-Bold <8b.enc <ComicSansMSBold8b.pfb "fontinst-autoenc-8b ReEncodeFont" 
+comicbdo8b ComicSansMS8b-BoldItalic <8b.enc <ComicSansMSBoldItalic8b.pfb "fontinst-autoenc-8b ReEncodeFont" 
+comico8b ComicSansMS8b-Italic <8b.enc <ComicSansMSItalic8b.pfb "fontinst-autoenc-8b ReEncodeFont" 
+com NimbusMonL-Regu "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ucrr8a.pfb
+coo NimbusMonL-ReguObli "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <ucrro8a.pfb
+csb10 csb10 <csb10.pfb
+csbx10 csbx10 <csbx10.pfb
+csbx12 csbx12 <csbx12.pfb
+csbx5 csbx5 <csbx5.pfb
+csbx6 csbx6 <csbx6.pfb
+csbx7 csbx7 <csbx7.pfb
+csbx8 csbx8 <csbx8.pfb
+csbx9 csbx9 <csbx9.pfb
+csbxsl10 csbxsl10 <csbxsl10.pfb
+csbxti10 csbxti10 <csbxti10.pfb
+cscsc10 cscsc10 <cscsc10.pfb
+csdunh10 csdunh10 <csdunh10.pfb
+csff10 csff10 <csff10.pfb
+csfi10 csfi10 <csfi10.pfb
+csfib8 csfib8 <csfib8.pfb
+csinch csinch <csinch.pfb
+csitt10 csitt10 <csitt10.pfb
+csr10 csr10 <csr10.pfb
+csr12 csr12 <csr12.pfb
+csr17 csr17 <csr17.pfb
+csr5 csr5 <csr5.pfb
+csr6 csr6 <csr6.pfb
+csr7 csr7 <csr7.pfb
+csr8 csr8 <csr8.pfb
+csr9 csr9 <csr9.pfb
+cssl10 cssl10 <cssl10.pfb
+cssl12 cssl12 <cssl12.pfb
+cssl8 cssl8 <cssl8.pfb
+cssl9 cssl9 <cssl9.pfb
+cssltt10 cssltt10 <cssltt10.pfb
+csss10 csss10 <csss10.pfb
+csss12 csss12 <csss12.pfb
+csss17 csss17 <csss17.pfb
+csss8 csss8 <csss8.pfb
+csss9 csss9 <csss9.pfb
+csssbx10 csssbx10 <csssbx10.pfb
+csssdc10 csssdc10 <csssdc10.pfb
+csssi10 csssi10 <csssi10.pfb
+csssi12 csssi12 <csssi12.pfb
+csssi17 csssi17 <csssi17.pfb
+csssi8 csssi8 <csssi8.pfb
+csssi9 csssi9 <csssi9.pfb
+csssq8 csssq8 <csssq8.pfb
+csssqi8 csssqi8 <csssqi8.pfb
+cstcsc10 cstcsc10 <cstcsc10.pfb
+csti10 csti10 <csti10.pfb
+csti12 csti12 <csti12.pfb
+csti7 csti7 <csti7.pfb
+csti8 csti8 <csti8.pfb
+csti9 csti9 <csti9.pfb
+cstt10 cstt10 <cstt10.pfb
+cstt12 cstt12 <cstt12.pfb
+cstt8 cstt8 <cstt8.pfb
+cstt9 cstt9 <cstt9.pfb
+csu10 csu10 <csu10.pfb
+csvtt10 csvtt10 <csvtt10.pfb
+dsrom10 dsrom10 <dsrom10.pfb
+dsrom12 dsrom12 <dsrom12.pfb
+dsrom8 dsrom8 <dsrom8.pfb
+dsss10 dsss10 <dsss10.pfb
+dsss12 dsss12 <dsss12.pfb
+dsss8 dsss8 <dsss8.pfb
+euex10 EUEX10 <euex10.pfb
+euex7 EUEX10 <euex10.pfb
+euex8 EUEX10 <euex10.pfb
+euex9 EUEX10 <euex10.pfb
+eufb10 EUFB10 <eufb10.pfb
+eufb5 EUFB5 <eufb5.pfb
+eufb6 EUFB7 <eufb7.pfb
+eufb7 EUFB7 <eufb7.pfb
+eufb8 EUFB7 <eufb7.pfb
+eufb9 EUFB10 <eufb10.pfb
+eufm10 EUFM10 <eufm10.pfb
+eufm5 EUFM5 <eufm5.pfb
+eufm6 EUFM7 <eufm7.pfb
+eufm7 EUFM7 <eufm7.pfb
+eufm8 EUFM7 <eufm7.pfb
+eufm9 EUFM10 <eufm10.pfb
+eurb10 EURB10 <eurb10.pfb
+eurb5 EURB5 <eurb5.pfb
+eurb6 EURB7 <eurb7.pfb
+eurb7 EURB7 <eurb7.pfb
+eurb8 EURB7 <eurb7.pfb
+eurb9 EURB10 <eurb10.pfb
+eurm10 EURM10 <eurm10.pfb
+eurm5 EURM5 <eurm5.pfb
+eurm6 EURM7 <eurm7.pfb
+eurm7 EURM7 <eurm7.pfb
+eurm8 EURM7 <eurm7.pfb
+eurm9 EURM10 <eurm10.pfb
+eusb10 EUSB10 <eusb10.pfb
+eusb5 EUSB5 <eusb5.pfb
+eusb6 EUSB7 <eusb7.pfb
+eusb7 EUSB7 <eusb7.pfb
+eusb8 EUSB7 <eusb7.pfb
+eusb9 EUSB10 <eusb10.pfb
+eusm10 EUSM10 <eusm10.pfb
+eusm5 EUSM5 <eusm5.pfb
+eusm6 EUSM7 <eusm7.pfb
+eusm7 EUSM7 <eusm7.pfb
+eusm8 EUSM7 <eusm7.pfb
+eusm9 EUSM10 <eusm10.pfb
+hvb NimbusSanL-Bold "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <uhvb8a.pfb
+hvbo NimbusSanL-BoldItal "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <uhvbo8a.pfb
+hv NimbusSanL-Regu "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <uhvr8a.pfb
+hvo NimbusSanL-ReguItal "TeXnANSIEncoding ReEncodeFont" <texnansi.enc <uhvro8a.pfb
+Inuitb Inuit-Bold <Inuitb.pfb
+Inuitbo Inuit-Bold-Oblique <Inuitbo.pfb
+Inuit Inuit <Inuit.pfb
+Inuito Inuit-Oblique <Inuito.pfb
+jthb8v Tahoma-Bold "T5DEncoding ReEncodeFont" <t5d.enc <tahomabd.ttf
+jthr8v Tahoma "T5DEncoding ReEncodeFont" <t5d.enc <tahoma.ttf
+jvnb8v Verdana-Bold "T5DEncoding ReEncodeFont" <t5d.enc <verdanab.ttf
+jvnbi8v Verdana-BoldItalic "T5DEncoding ReEncodeFont" <t5d.enc <verdanaz.ttf
+jvnr8v Verdana "T5DEncoding ReEncodeFont" <t5d.enc <verdana.ttf
+jvnri8v Verdana-Italic "T5DEncoding ReEncodeFont" <t5d.enc <verdanai.ttf
+MyriadPro-Bold-7m MyriadPro-Bold "MinionPro-OMLEncoding ReEncodeFont" <my-lf-oml.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-7t MyriadPro-Bold "MinionPro-OT1Encoding ReEncodeFont" <my-lf-ot1.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-8c MyriadPro-Bold "MinionPro-TS1Encoding ReEncodeFont" <my-lf-ts1.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-8t MyriadPro-Bold "MinionPro-T1Encoding ReEncodeFont" <my-lf-t1.enc <MyriadPro-Bold.pfb
+MyriadPro-BoldIt-7m MyriadPro-BoldIt "MinionPro-OMLEncoding ReEncodeFont" <my-lf-oml.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-7t MyriadPro-BoldIt "MinionPro-OT1Encoding ReEncodeFont" <my-lf-ot1.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-8c MyriadPro-BoldIt "MinionPro-TS1Encoding ReEncodeFont" <my-lf-ts1.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-8t MyriadPro-BoldIt "MinionPro-T1Encoding ReEncodeFont" <my-lf-t1.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-k MyriadPro-BoldIt "MinionPro-LGREncoding ReEncodeFont" <my-lf-lgr.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-OSF-7m MyriadPro-BoldIt "MinionPro-OSFOMLEncoding ReEncodeFont" <my-osf-oml.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-OSF-7t MyriadPro-BoldIt "MinionPro-OT1Encoding ReEncodeFont" <my-osf-ot1.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-OSF-8c MyriadPro-BoldIt "MinionPro-TS1Encoding ReEncodeFont" <my-osf-ts1.enc <MyriadPro-BoldIt.pfb
+MyriadPro-BoldIt-OSF-8t MyriadPro-BoldIt "MinionPro-OSFT1Encoding ReEncodeFont" <my-osf-t1.enc <MyriadPro-BoldIt.pfb
+MyriadPro-Bold-k MyriadPro-Bold "MinionPro-LGREncoding ReEncodeFont" <my-lf-lgr.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-OSF-7m MyriadPro-Bold "MinionPro-OSFOMLEncoding ReEncodeFont" <my-osf-oml.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-OSF-7t MyriadPro-Bold "MinionPro-OT1Encoding ReEncodeFont" <my-osf-ot1.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-OSF-8c MyriadPro-Bold "MinionPro-TS1Encoding ReEncodeFont" <my-osf-ts1.enc <MyriadPro-Bold.pfb
+MyriadPro-Bold-OSF-8t MyriadPro-Bold "MinionPro-OSFT1Encoding ReEncodeFont" <my-osf-t1.enc <MyriadPro-Bold.pfb
+MyriadPro-It-7m MyriadPro-It "MinionPro-OMLEncoding ReEncodeFont" <my-lf-oml.enc <MyriadPro-It.pfb
+MyriadPro-It-7t MyriadPro-It "MinionPro-OT1Encoding ReEncodeFont" <my-lf-ot1.enc <MyriadPro-It.pfb
+MyriadPro-It-8c MyriadPro-It "MinionPro-TS1Encoding ReEncodeFont" <my-lf-ts1.enc <MyriadPro-It.pfb
+MyriadPro-It-8t MyriadPro-It "MinionPro-T1Encoding ReEncodeFont" <my-lf-t1.enc <MyriadPro-It.pfb
+MyriadPro-It-k MyriadPro-It "MinionPro-LGREncoding ReEncodeFont" <my-lf-lgr.enc <MyriadPro-It.pfb
+MyriadPro-It-OSF-7m MyriadPro-It "MinionPro-OSFOMLEncoding ReEncodeFont" <my-osf-oml.enc <MyriadPro-It.pfb
+MyriadPro-It-OSF-7t MyriadPro-It "MinionPro-OT1Encoding ReEncodeFont" <my-osf-ot1.enc <MyriadPro-It.pfb
+MyriadPro-It-OSF-8c MyriadPro-It "MinionPro-TS1Encoding ReEncodeFont" <my-osf-ts1.enc <MyriadPro-It.pfb
+MyriadPro-It-OSF-8t MyriadPro-It "MinionPro-OSFT1Encoding ReEncodeFont" <my-osf-t1.enc <MyriadPro-It.pfb
+MyriadPro-Regular-7m MyriadPro-Regular "MinionPro-OMLEncoding ReEncodeFont" <my-lf-oml.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-7t MyriadPro-Regular "MinionPro-OT1Encoding ReEncodeFont" <my-lf-ot1.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-8c MyriadPro-Regular "MinionPro-TS1Encoding ReEncodeFont" <my-lf-ts1.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-8t MyriadPro-Regular "MinionPro-T1Encoding ReEncodeFont" <my-lf-t1.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-k MyriadPro-Regular "MinionPro-LGREncoding ReEncodeFont" <my-lf-lgr.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-OSF-7m MyriadPro-Regular "MinionPro-OSFOMLEncoding ReEncodeFont" <my-osf-oml.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-OSF-7t MyriadPro-Regular "MinionPro-OT1Encoding ReEncodeFont" <my-osf-ot1.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-OSF-8c MyriadPro-Regular "MinionPro-TS1Encoding ReEncodeFont" <my-osf-ts1.enc <MyriadPro-Regular.pfb
+MyriadPro-Regular-OSF-8t MyriadPro-Regular "MinionPro-OSFT1Encoding ReEncodeFont" <my-osf-t1.enc <MyriadPro-Regular.pfb
+stmary10 stmary10 <stmary10.pfb
+stmary5 stmary5 <stmary5.pfb
+stmary6 stmary6 <stmary6.pfb
+stmary7 stmary7 <stmary7.pfb
+stmary8 stmary8 <stmary8.pfb
+stmary9 stmary9 <stmary9.pfb
+sy-anttbz AntykwaTorunska-BoldItalic "encantt-sy ReEncodeFont" <antt-sy.enc <anttbi.pfb
+sy-anttcbz AntykwaTorunskaCond-BoldItalic "encantt-sy ReEncodeFont" <antt-sy.enc <anttcbi.pfb
+sy-anttclz AntykwaTorunskaCondLight-Italic "encantt-sy ReEncodeFont" <antt-sy.enc <anttcli.pfb
+sy-anttcmz AntykwaTorunskaCondMed-Italic "encantt-sy ReEncodeFont" <antt-sy.enc <anttcmi.pfb
+sy-anttcrz AntykwaTorunskaCond-Italic "encantt-sy ReEncodeFont" <antt-sy.enc <anttcri.pfb
+sy-anttlz AntykwaTorunskaLight-Italic "encantt-sy ReEncodeFont" <antt-sy.enc <anttli.pfb
+sy-anttmz AntykwaTorunskaMed-Italic "encantt-sy ReEncodeFont" <antt-sy.enc <anttmi.pfb
+sy-anttrz AntykwaTorunska-Italic "encantt-sy ReEncodeFont" <antt-sy.enc <anttri.pfb
+sy StandardSymL <usyr.pfb
+yfrak yfrak-Regular <yfrak.pfb
+ygoth ygoth-Regular <ygoth.pfb
+yswab yswab-Regular <yswab.pfb
+zd Dingbats <uzdr.pfb

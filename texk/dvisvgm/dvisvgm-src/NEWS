@@ -1,7 +1,40 @@
+dvisvgm-2.1 (2017-01-19)
+- added option --tmpdir to explicitly set temp folder
+- temporary files are no longer created in the current working directory by
+  default but in the system's temp folder (GH bug #63)
+- added warning/error messages if temporary files could not be written
+- fixed collision of Unicode points in AGL table (GH bug #64)
+- retain letter case of filenames even if not significant (Windows only)
+- code refactorings and cleanup
+
+dvisvgm-2.0.4 (2016-11-16)
+- bundled reduced FontForge library (ff-woff) with the sources
+- minor fixes in manpage and --help texts
+- few code improvements
+
+dvisvgm-2.0.3 (2016-09-27)
+- fixed a regression in the character positioning of virtual fonts
+- fixed positioning of rules
+
+dvisvgm-2.0.2 (2016-09-19)
+- fixed computation of the character depths of native fonts
+- fixed a regression in the computation of DVI positions (GH bug #61)
+
+dvisvgm-2.0.1 (2016-09-03)
+- added optional argument parameter "autohint" to option --font-format in order
+  to create autohinted TTF, WOFF, or WOFF2 fonts
+
+dvisvgm-2.0 (2016-08-29)
+- added option --font-format to select the data format of embedded fonts
+  (currently supported formats: SVG, TTF, WOFF, WOFF2)
+- switched the code base from C++03 to C++11
+- reimplemented the command-line parser and the CommandLine class generator
+- major refactorings of several parts of the code
+
 dvisvgm-1.16 (2016-07-04)
-- added support of XDV version 7 introduced by XeTeX 0.99995
+- added support for XDV version 7 introduced by XeTeX 0.99995
 - added optional processing of papersize specials
-- added support of length units cc, dd, and sp
+- added support for length units cc, dd, and sp
 - fixed unit conversion in computation of bounding boxes
 - fixed propagation of resolution value to the glyph vectorizer
 - fixed transformation of background rectangle
