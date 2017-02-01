@@ -2818,6 +2818,8 @@ gettexstring (strnumber s)
   unsigned bytesToWrite = 0;
   poolpointer len, i, j;
   string name;
+  if (strstart[s + 1 - 65536L] < strstart[s - 65536L])
+    return NULL;
   len = strstart[s + 1 - 65536L] - strstart[s - 65536L];
   name = xmalloc(len * 3 + 1); /* max UTF16->UTF8 expansion
                                   (code units, not bytes) */

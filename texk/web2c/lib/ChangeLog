@@ -1,3 +1,9 @@
+2017-02-01  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Avoid a crash in xelatex for
+	http://tug.org/pipermail/xetex/2017-January/026975.html.
+	It is not a fix but a stopgap.
+
 2017-01-02  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* printversion.c: 2016 ---> 2017.
