@@ -1,9 +1,0 @@
-## texk/dvisvgm/ac/libgs.ac: configure.ac fragment for the TeX Live subdirectory texk/dvisvgm/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure checks for dvisvgm and libgs
-if test "x$enable_native_texlive_build:$with_system_libgs" = xyes:yes; then
-  AC_MSG_ERROR([you can not use system libraries for a native TeX Live build])
-fi

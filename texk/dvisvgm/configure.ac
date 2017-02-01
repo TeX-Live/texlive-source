@@ -24,9 +24,6 @@ AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
 # Common code for all programs using libkpathsea.
 KPSE_COMMON([dvisvgm])
 
-dnl Include additional code for dvisvgm.
-m4_include([ac/dvisvgm.ac])
-
 AC_CONFIG_HEADERS([config.h])
 
 AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$host"],
