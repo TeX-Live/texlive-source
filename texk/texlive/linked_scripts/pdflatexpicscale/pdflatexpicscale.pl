@@ -14,6 +14,8 @@
 #            and corrected version number 
 #            Please note: version numbers will be updated to keep sync
 #            with the documentation, even when the perl code does not change.
+# 2017-02-01 pdflatexpicscale did not work correct when log lines were 
+#            wrapped twice. This is fixed.
 #
 use strict;
 use File::Basename;
@@ -21,8 +23,8 @@ use File::Spec;
 use File::Copy;
 use Getopt::Long;
 
-my $version = '0.3';
-my $versiondate = '2017-01-23';           #version %version
+my $version = '0.31';
+my $versiondate = '2017-02-01';           #version %version
 my $showversion;
 
 my $verbose;
@@ -77,7 +79,7 @@ sub handleImage
     my @dstdirs;
     my @convertargs;
     my $idstring;
-
+    print "$filename\n";
     $dstdirs[0] = '.';
     $dstdirs[1] = $printfolderprefix;
     $dstfilename = File::Spec->catfile(@dstdirs, basename($filename));
@@ -175,11 +177,11 @@ sub readlog
     while (<LOGFILE>){
 	if (/^Package pdftex\.def\sInfo\:\s/){
 	    $buffer = $_;
-	    unless (/\sused/){
+	    unless ($buffer =~ /\sused/){
 		chomp $buffer;
 		$buffer .= <LOGFILE>;
 	    } # twice ought to be enough
-	    unless (/\sused/){
+	    unless ($buffer =~ /\sused/){
 		chomp $buffer;
 		$buffer .= <LOGFILE>;
 	    }
