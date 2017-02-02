@@ -1,4 +1,4 @@
-% $Id: mp.w 2114 2017-01-12 09:53:45Z luigi $
+% $Id: mp.w 2115 2017-02-01 13:56:12Z luigi $
 %
 % This file is part of MetaPost;
 % the MetaPost program is in the public domain.
@@ -29161,14 +29161,30 @@ static void mp_set_up_boundingpath (MP mp, mp_node p) {
   unsigned char ljoin, lcap;
   mp_number miterlim;
   mp_knot q = mp_copy_path (mp, cur_exp_knot ());       /* the original path */
+  mp_knot pen; 
   mp_knot qq;
+
   new_number(miterlim);
-  /* TODO: accept elliptical pens for straight paths */
+  pen = (value_knot (p));
+  /* accept elliptical pens for s paths */
+  /* using mp_make_path to convert an elliptical pen to a polygonal one. */
+  /* The approximation of 8 knots should be good enough. */
   if (pen_is_elliptical (value_knot (p))) {
-    mp_bad_envelope_pen (mp);
-    set_cur_exp_knot (q);
-    mp->cur_exp.type = mp_path_type;
-    return;
+    mp_knot kp,kq;
+    pen = copy_pen (value_knot (p));
+    mp_make_path(mp, pen);
+    kq=pen;
+    do {
+      kp = kq;
+      kq = mp_next_knot (kq);
+      mp_prev_knot (kq) = kp;
+    } while (kq != pen);
+    mp_close_path_cycle (mp, kp, pen);
+    /* old one */
+    /*    mp_bad_envelope_pen (mp); */
+    /* set_cur_exp_knot (q); */
+    /* mp->cur_exp.type = mp_path_type; */
+    /*return;*/
   }
   if (number_greater (internal_value (mp_linejoin), unity_t))
     ljoin = 2;
@@ -29186,7 +29202,9 @@ static void mp_set_up_boundingpath (MP mp, mp_node p) {
     set_number_to_unity(miterlim);
   else
     number_clone(miterlim, internal_value (mp_miterlimit));
-  qq = mp_make_envelope(mp, q, value_knot (p), ljoin, lcap, miterlim);
+
+  /*qq = mp_make_envelope(mp, q, value_knot (p), ljoin, lcap, miterlim);*/
+  qq = mp_make_envelope(mp, q, pen, ljoin, lcap, miterlim);
   set_cur_exp_knot (qq);
   mp->cur_exp.type = mp_path_type;
 
