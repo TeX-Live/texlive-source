@@ -402,6 +402,8 @@ mfluaPOST_make_choices(p);
 @z
 
 @x [44.1064] MFLua
+  cur_wt:=w; rhs:=make_spec(rhs,max_offset(cur_pen),internal[tracing_specs]);
+  @<Check the turning number@>;
   if max_offset(cur_pen)=0 then fill_spec(rhs)
   else fill_envelope(rhs);
   if lhs<>null then
@@ -411,11 +413,15 @@ mfluaPOST_make_choices(p);
     if max_offset(cur_pen)=0 then fill_spec(lhs)
     else fill_envelope(lhs);
 @y
+  cur_wt:=w; mfluaPRE_make_spec_rhs(rhs); rhs:=make_spec(rhs,max_offset(cur_pen),internal[tracing_specs]);mfluaPOST_make_spec_rhs(rhs);
+  @<Check the turning number@>;
   if max_offset(cur_pen)=0 then begin mfluaPRE_fill_spec_rhs(rhs); fill_spec(rhs); mfluaPOST_fill_spec_rhs(rhs);end 
   else begin mfluaPRE_fill_envelope_rhs(rhs); fill_envelope(rhs); mfluaPOST_fill_envelope_rhs(rhs); end ;
   if lhs<>null then
     begin rev_turns:=true;
+    mfluaPRE_make_spec_lhs(lhs);
     lhs:=make_spec(lhs,max_offset(cur_pen),internal[tracing_specs]);
+    mfluaPOST_make_spec_lhs(lhs);
     rev_turns:=false;
     if max_offset(cur_pen)=0 then begin mfluaPRE_fill_spec_lhs(lhs); fill_spec(lhs); mfluaPOST_fill_spec_lhs(lhs); end
     else begin mfluaPRE_fill_envelope_lhs(lhs); fill_envelope(lhs); mfluaPOST_fill_envelope_lhs(lhs); end;
