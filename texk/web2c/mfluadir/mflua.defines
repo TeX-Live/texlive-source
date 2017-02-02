@@ -9,6 +9,10 @@
 @define procedure mfluaPOSTfillenveloperhs();
 @define procedure mfluaPREfillenvelopelhs();
 @define procedure mfluaPOSTfillenvelopelhs();
+@define procedure mfluaPREmakespecrhs();
+@define procedure mfluaPOSTmakespecrhs();
+@define procedure mfluaPREmakespeclhs();
+@define procedure mfluaPOSTmakespeclhs();
 @define procedure mfluaPREfillspecrhs();
 @define procedure mfluaPOSTfillspecrhs();
 @define procedure mfluaPREfillspeclhs();

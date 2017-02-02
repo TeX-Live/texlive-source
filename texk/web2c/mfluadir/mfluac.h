@@ -21,6 +21,11 @@ extern int mfluaPOSTfillenveloperhs(halfword);
 extern int mfluaPREfillenvelopelhs(halfword);
 extern int mfluaPOSTfillenvelopelhs(halfword);
 
+extern int mfluaPREmakespecrhs(halfword);
+extern int mfluaPOSTmakespecrhs(halfword);
+extern int mfluaPREmakespeclhs(halfword);
+extern int mfluaPOSTmakespeclhs(halfword);
+
 extern int mfluaPREfillspecrhs(halfword);
 extern int mfluaPOSTfillspecrhs(halfword);
 extern int mfluaPREfillspeclhs(halfword);

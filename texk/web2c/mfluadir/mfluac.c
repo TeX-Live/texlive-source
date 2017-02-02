@@ -982,6 +982,186 @@ int mfluaPOSToffsetprep(halfword c, halfword h)
 
 }
 
+int mfluaPREmakespecrhs(halfword rhs)
+{
+  lua_State *L;
+  char* luafile;
+  int res;
+  
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  priv_lua_writemessage(L,"(",luafile,")",1);
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
+  if ( res==0 ){
+      res = lua_pcall(L, 0, 0, 0);
+      if (res==0){
+	lua_getglobal(L, "PRE_make_spec_rhs");  /* function to be called */
+	lua_pushnumber(L, rhs);   /* push 1st argument */
+	/* do the call (1 arguments, 1 result) */
+	res = lua_pcall(L, 1, 1, 0) ;
+	if (res==0) {
+	  /* retrieve result */
+	  int z = 0;
+	  if (!lua_isnumber(L, -1)){
+	    fprintf(stderr,"\n! Error:function `PRE_make_spec_rhs' must return a number called with %s\n",lua_tostring(L, -1));
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }else {
+	    z = lua_tonumber(L, -1);
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }
+	}
+      }
+  }
+  /*stackdump_g(L);*/
+  priv_lua_reporterrors(L, res);
+  return 0;
+}
+
+
+int mfluaPOSTmakespecrhs(halfword rhs)
+{
+  lua_State *L;
+  char* luafile;
+  int res;
+  
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  priv_lua_writemessage(L,"(",luafile,")",1);
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
+  if ( res==0 ){
+      res = lua_pcall(L, 0, 0, 0);
+      if (res==0){
+	lua_getglobal(L, "POST_make_spec_rhs");  /* function to be called */
+	lua_pushnumber(L, rhs);   /* push 1st argument */
+	/* do the call (1 arguments, 1 result) */
+	res = lua_pcall(L, 1, 1, 0) ;
+	if (res==0) {
+	  /* retrieve result */
+	  int z = 0;
+	  if (!lua_isnumber(L, -1)){
+	    fprintf(stderr,"\n! Error:function `POST_make_spec_rhs' must return a number called with %s\n",lua_tostring(L, -1));
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }else {
+	    z = lua_tonumber(L, -1);
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }
+	}
+      }
+  }
+  /*stackdump_g(L);*/
+  priv_lua_reporterrors(L, res);
+  return 0;
+}
+
+
+int mfluaPREmakespeclhs(halfword lhs)
+{
+  lua_State *L;
+  char* luafile;
+  int res;
+  
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  priv_lua_writemessage(L,"(",luafile,")",1);
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
+  if ( res==0 ){
+      res = lua_pcall(L, 0, 0, 0);
+      if (res==0){
+	lua_getglobal(L, "PRE_make_spec_lhs");  /* function to be called */
+	lua_pushnumber(L, lhs);   /* push 1st argument */
+	/* do the call (1 arguments, 1 result) */
+	res = lua_pcall(L, 1, 1, 0) ;
+	if (res==0) {
+	  /* retrieve result */
+	  int z = 0;
+	  if (!lua_isnumber(L, -1)){
+	    fprintf(stderr,"\n! Error:function `PRE_make_spec_lhs' must return a number called with %s\n",lua_tostring(L, -1));
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }else {
+	    z = lua_tonumber(L, -1);
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }
+	}
+      }
+  }
+  /*stackdump_g(L);*/
+  priv_lua_reporterrors(L, res);
+  return 0;
+}
+
+
+int mfluaPOSTmakespeclhs(halfword lhs)
+{
+  lua_State *L;
+  char* luafile;
+  int res;
+  
+  L = Luas[0];
+  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
+  if (luafile==NULL) {
+    res = 1;
+    lua_pushstring(L,"do_add_to.lua not found");
+    priv_lua_reporterrors(L, res);
+    return 0;
+  }
+  priv_lua_writemessage(L,"(",luafile,")",1);
+  res = luaL_loadfile(L, luafile);
+  free (luafile);
+  if ( res==0 ){
+      res = lua_pcall(L, 0, 0, 0);
+      if (res==0){
+	lua_getglobal(L, "POST_make_spec_lhs");  /* function to be called */
+	lua_pushnumber(L, lhs);   /* push 1st argument */
+	/* do the call (1 arguments, 1 result) */
+	res = lua_pcall(L, 1, 1, 0) ;
+	if (res==0) {
+	  /* retrieve result */
+	  int z = 0;
+	  if (!lua_isnumber(L, -1)){
+	    fprintf(stderr,"\n! Error:function `POST_make_spec_lhs' must return a number called with %s\n",lua_tostring(L, -1));
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }else {
+	    z = lua_tonumber(L, -1);
+	    lua_pop(L, 1);  /* pop returned value */
+	    return z;
+	  }
+	}
+      }
+  }
+  /*stackdump_g(L);*/
+  priv_lua_reporterrors(L, res);
+  return 0;
+}
+
+
 
 int mfluaPREfillenveloperhs(halfword rhs)
 {
