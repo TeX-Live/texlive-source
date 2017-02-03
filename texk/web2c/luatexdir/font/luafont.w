@@ -29,6 +29,14 @@ const char *font_type_strings[] = {
     "unknown", "virtual", "real", NULL
 };
 
+const char *font_writingmode_strings[] = {
+    "unknown", "horizontal", "vertical", NULL
+};
+
+const char *font_identity_strings[] = {
+    "unknown", "horizontal", "vertical", NULL
+};
+
 const char *font_format_strings[] = {
     "unknown", "type1", "type3", "truetype", "opentype", NULL
 };
@@ -427,6 +435,8 @@ int font_to_lua(lua_State * L, int f)
     dump_booleanfield(L,used,(font_used(f) ? true : false));
     dump_stringfield(L,type,font_type_strings[font_type(f)]);
     dump_stringfield(L,format,font_format_strings[font_format(f)]);
+    dump_stringfield(L,writingmode,font_writingmode_strings[font_writingmode(f)]);
+    dump_stringfield(L,identity,font_identity_strings[font_identity(f)]);
     dump_stringfield(L,embedding,font_embedding_strings[font_embedding(f)]);
 
     dump_intfield(L,units_per_em,font_units_per_em(f));
@@ -1409,6 +1419,10 @@ int font_from_lua(lua_State * L, int f)
     set_font_type(f, i);
     i = n_enum_field(L, lua_key_index(format), unknown_format, font_format_strings);
     set_font_format(f, i);
+    i = n_enum_field(L, lua_key_index(writingmode), unknown_writingmode, font_writingmode_strings);
+    set_font_writingmode(f, i);
+    i = n_enum_field(L, lua_key_index(identity), unknown_identity, font_identity_strings);
+    set_font_identity(f, i);
     i = n_enum_field(L, lua_key_index(embedding), unknown_embedding, font_embedding_strings);
     set_font_embedding(f, i);
     if (font_encodingbytes(f) == 0 && (font_format(f) == opentype_format || font_format(f) == truetype_format)) {
