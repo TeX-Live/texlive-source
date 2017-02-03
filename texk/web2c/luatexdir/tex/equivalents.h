@@ -285,16 +285,23 @@ the |number_regs| \.{\\dimen} registers.
 #  define shape_mode_code 94
 #  define first_valid_language_code 95
 #  define hyphenation_bounds_code 96
+#  define math_skip_mode_code 97
 
-#  define math_option_code 97
+#  define math_option_code (math_skip_mode_code+1)
 
-#  define mathoption_int_base (int_base+98)                             /* one reserve */
-#  define mathoption_int_last (int_base+106)
+#  define mathoption_int_base_code (math_option_code+1)                 /* one reserve */
+#  define mathoption_int_last_code (mathoption_int_base_code+8)
 
-#  define backend_int_base (int_base+107)
-#  define backend_int_last (int_base+131)
+#  define backend_int_base_code (mathoption_int_last_code+1)
+#  define backend_int_last_code (backend_int_base_code+32)              /* we need some 25 but take some slack */
 
-#  define tex_int_pars (132)                                            /* total number of integer parameters */
+#  define tex_int_pars (backend_int_last_code+1)                        /* total number of integer parameters */
+
+#  define mathoption_int_base (int_base+mathoption_int_base_code)
+#  define mathoption_int_last (int_base+mathoption_int_last_code)
+
+#  define backend_int_base (int_base+backend_int_base_code)
+#  define backend_int_last (int_base+backend_int_last_code)
 
 #  define page_direction_code (tex_int_pars)
 #  define body_direction_code (tex_int_pars+1)
@@ -552,6 +559,7 @@ extern halfword last_cs_name;
 #define space_skip_par                     glue_par(space_skip_code)
 #define xspace_skip_par                    glue_par(xspace_skip_code)
 #define math_skip_par                      glue_par(math_skip_code)
+#define math_skip_mode                     int_par(math_skip_mode_code)
 
 #define pre_display_size_par               dimen_par(pre_display_size_code)
 #define display_width_par                  dimen_par(display_width_code)
@@ -785,5 +793,10 @@ extern halfword last_cs_name;
 
 #define end_template_token  (cs_token_flag+frozen_end_template)
 #define end_write_token     (cs_token_flag+end_write)
+
+/* for now here */
+
+#define xspace_skip_subtype (xspace_skip_code + 1)
+#define space_skip_subtype  (space_skip_code + 1)
 
 #endif
