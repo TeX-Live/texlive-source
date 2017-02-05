@@ -1,3 +1,7 @@
+2017-02-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ppltotf.ch: Expand the limit of glue/kern and kern tables.
+
 2016-12-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pbibtex.ch, pdvitype.ch, ppltotf.ch, ptftopl.ch:

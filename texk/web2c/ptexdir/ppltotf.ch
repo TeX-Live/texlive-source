@@ -69,7 +69,7 @@ else  begin limit:=input_line2(pl_file,ustringcast(buffer),limit+1,buf_size-1)-1
 @y
 @d character_code=12
 @d type_code=13            {|TYPE| property}
-@d glue_kern_code=14       {|GLUEKRN| property}
+@d glue_kern_code=14       {|GLUEKERN| property}
 @d chars_in_type_code=15   {|CHARSINTYPE| property}
 @d dir_code=16             {|DIRECTION| property}
 @z
@@ -453,9 +453,9 @@ case char_tag[c] of
   list_tag: err_print('Impossible: a list tag in a kanji format file?');
   ext_tag: err_print('Impossible: an extensible tag in a kanji format file?');
 end;
-if nl>255 then
-  err_print('GLUEKERN with more than 255 commands cannot have further labels')
-@.GLUEKERN with more than 255...@>
+if nl>max_lig_steps then
+  err_print('GLUEKERN with more than ',max_lig_steps,' commands cannot have further labels')
+@.GLUEKERN with more than...@>
 else begin char_tag[c]:=lig_tag; char_remainder[c]:=nl;
   lk_step_ended:=false;
   end;
@@ -466,15 +466,15 @@ begin lig_kern[nl].b0:=0; lig_kern[nl].b1:=get_byte;@/
 lig_kern[nl].b2:=kern_flag; kern[nk]:=get_fix; krn_ptr:=0;
 while kern[krn_ptr]<>kern[nk] do incr(krn_ptr);
 if krn_ptr=nk then
-  begin if nk<256 then incr(nk)
-  else begin err_print('At most 256 different kerns are allowed');
-@.At most 256 different kerns...@>
-    krn_ptr:=255;
+  begin if nk<max_kerns then incr(nk)
+  else begin err_print('At most ',max_kerns,' different kerns are allowed');
+@.At most 5000 different kerns...@>
+    krn_ptr:=max_kerns;
     end;
   end;
 lig_kern[nl].b3:=krn_ptr;
-if nl=511 then
-  err_print('GLUEKERN table should never exceed 511 LIG/KRN commands')
+if nl=max_lig_steps then
+  err_print('GLUEKERN table should never exceed ',max_lig_steps,' LIG/KRN commands')
 @.GLUEKERN table should never...@>
 else incr(nl);
 lk_step_ended:=true;
@@ -494,8 +494,8 @@ if krn_ptr=ng then
     end;
   end;
 lig_kern[nl].b3:=krn_ptr;
-if nl=511 then
-  err_print('GLUEKERN table should never exceed 511 GLUE/KRN commands')
+if nl=max_lig_steps then
+  err_print('GLUEKERN table should never exceed ',max_lig_steps,' GLUE/KRN commands')
 @.GLUEKERN table should never...@>
 else incr(nl);
 lk_step_ended:=true;
