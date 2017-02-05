@@ -469,7 +469,7 @@ if krn_ptr=nk then
   begin if nk<max_kerns then incr(nk)
   else begin err_print('At most ',max_kerns,' different kerns are allowed');
 @.At most 5000 different kerns...@>
-    krn_ptr:=max_kerns;
+    krn_ptr:=max_kerns-1;
     end;
   end;
 lig_kern[nl].b3:=krn_ptr;
