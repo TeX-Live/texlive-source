@@ -1,0 +1,43 @@
+## texk/web2c/luatexdir/am/luaffi.am: Makefile fragment for luaffi
+##
+## Copyright (C) 2017 Luigi Scarso <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## luaffi
+## Only for luatex, luajittex has its own module
+
+##
+## Preliminary version
+## UNSTABLE AND UNTESTED !!!!
+##
+
+
+EXTRA_LIBRARIES += libluaffi.a 
+
+#libluaffi_a_DEPENDENCIES = $(ZLIB_DEPEND)
+
+$(libluaffi_a_OBJECTS): $(LUA_DEPEND)
+
+libluaffi_a_CPPFLAGS = \
+	-I$(top_srcdir)/luatexdir/luaffi -I$(top_srcdir)/luatexdir/luaffi/dynasm $(LUA_INCLUDES)
+
+libluaffi_a_CFLAGS = # $(WARNING_CFLAGS)
+
+nodist_libluaffi_a_SOURCES = $(libluaffi_sources)
+
+
+
+libluaffi_sources = \
+	luatexdir/luaffi/call_arm.h \
+	luatexdir/luaffi/call.c \
+	luatexdir/luaffi/call_x64.h \
+	luatexdir/luaffi/call_x64win.h \
+	luatexdir/luaffi/call_x86.h \
+	luatexdir/luaffi/ctype.c \
+	luatexdir/luaffi/ffi.c \
+	luatexdir/luaffi/ffi.h \
+	luatexdir/luaffi/parser.c
+
+## Not used
+##
+#EXTRA_DIST 

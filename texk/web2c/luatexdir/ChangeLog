@@ -1,3 +1,9 @@
+2017-02-07  Luigi Scarso <luigi.scarso@gmail.com>
+
+	* luaffi/: First attempt to implement the ffi module in lua
+	compatible with the ffi module of luajit.
+
+
 2015-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c: Improve a little (w32 only).

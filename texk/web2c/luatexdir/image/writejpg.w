@@ -281,7 +281,7 @@ static void read_APP1_Exif (FILE *fp, unsigned short length, int *xx, int *yy, i
     }
     if (found_res) {
       if (tempx>0 && tempy>0) {
-       if (tempx!=(*xx) || tempy!=(*yy) && (*xx!=0 && (*yy!=0) )  ) {
+       if ((tempx!=(*xx) || tempy!=(*yy)) && (*xx!=0 && (*yy!=0) )  ) {
         formatted_warning("readjpg","Exif resolution  %ddpi x %ddpi differs from the input resolution %ddpi x %ddpi",tempx,tempy,*xx,*yy);
        }
        if (tempx==1 || tempy==1) {

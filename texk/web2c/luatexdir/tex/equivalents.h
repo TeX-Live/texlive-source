@@ -286,6 +286,7 @@ the |number_regs| \.{\\dimen} registers.
 #  define first_valid_language_code 95
 #  define hyphenation_bounds_code 96
 #  define math_skip_mode_code 97
+#  define math_pre_display_gap_factor_code 98
 
 #  define math_option_code (math_skip_mode_code+1)
 
@@ -741,6 +742,8 @@ extern halfword last_cs_name;
 #define math_no_char_italic_par            mathoption_int_par(c_mathoption_no_char_italic_code)
 #define math_use_old_fraction_scaling_par  mathoption_int_par(c_mathoption_use_old_fraction_scaling_code)
 #define math_umathcode_meaning_par         mathoption_int_par(c_mathoption_umathcode_meaning_code)
+
+#define math_pre_display_gap_factor_par    int_par(math_pre_display_gap_factor_code)
 
 #define time_par                           int_par(time_code)
 #define day_par                            int_par(day_code)

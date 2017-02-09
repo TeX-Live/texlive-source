@@ -569,6 +569,107 @@ static int lua_nodelib_direct_getcharacter(lua_State * L)
     return 1;
 }
 
+static int lua_nodelib_direct_getcomponents(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        lua_pushnil(L);
+    } else if (type(n) == glyph_node) {
+        lua_pushinteger(L, lig_ptr(n));
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int lua_nodelib_direct_getlang(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        lua_pushnil(L);
+    } else if (type(n) == glyph_node) {
+        lua_pushinteger(L, char_lang(n));
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int lua_nodelib_direct_getattributelist(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if ((n) && nodetype_has_attributes(type(n))) {
+        lua_pushinteger(L, node_attr(n));
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int lua_nodelib_direct_getpenalty(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        lua_pushnil(L);
+    } else if (type(n) == penalty_node) {
+        lua_pushinteger(L, penalty(n));
+    } else if (type(n) == disc_node) {
+        lua_pushinteger(L, disc_penalty(n));
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int lua_nodelib_direct_getkern(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        lua_pushnil(L);
+    } else if (type(n) == kern_node || type(n) == margin_kern_node) {
+        lua_pushinteger(L, width(n));
+    } else if (type(n) == math_node) {
+        lua_pushinteger(L, surround(n));
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int lua_nodelib_direct_getdir(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        lua_pushnil(L);
+    } else if (type(n) == dir_node) {
+        lua_push_dir_text(L, dir_dir(n));
+    } else if (type(n) == hlist_node || type(n) == vlist_node) {
+        lua_push_dir_par(L, box_dir(n));
+    } else if (type(n) == rule_node) {
+        lua_push_dir_par(L, rule_dir(n));
+    } else if (type(n) == local_par_node) {
+        lua_push_dir_par(L, local_par_dir(n));
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
+static int lua_nodelib_direct_getoffsets(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        lua_pushnil(L);
+    } else if (type(n) == glyph_node) {
+        lua_pushinteger(L, x_displace(n));
+        lua_pushinteger(L, y_displace(n));
+        return 2;
+    } else {
+        lua_pushnil(L);
+    }
+    return 1;
+}
+
 /* node.getdisc */
 
 static int lua_nodelib_direct_getdiscretionary(lua_State * L)
@@ -696,22 +797,25 @@ static int lua_nodelib_direct_setwhd(lua_State * L)
         if ((t == hlist_node) || (t == vlist_node) || (t == rule_node) || (t == unset_node)) {
             int t = lua_gettop(L) ;
             if (t > 1) {
-                width(n) = (halfword) lua_roundnumber(L, 2);
-                if (t > 2) {
-                    height(n) = (halfword) lua_roundnumber(L, 3);
-                    if (t > 3) {
-                        depth(n) = (halfword) lua_roundnumber(L, 4);
-                    } else {
-                        depth(n) = 0;
-                    }
+                if ((lua_type(L, 2) == LUA_TNUMBER)) {
+                    width(n) = (halfword) lua_roundnumber(L, 2);
                 } else {
-                    height(n) = 0;
-                    depth(n) = 0;
+                    /* leave as is */
                 }
-            } else {
-                width(n) = 0;
-                height(n) = 0;
-                depth(n) = 0;
+                if (t > 2) {
+                    if ((lua_type(L, 3) == LUA_TNUMBER)) {
+                        height(n) = (halfword) lua_roundnumber(L, 3);
+                    } else {
+                        /* leave as is */
+                    }
+                    if (t > 3) {
+                        if ((lua_type(L, 4) == LUA_TNUMBER)) {
+                            depth(n) = (halfword) lua_roundnumber(L, 4);
+                        } else {
+                            /* leave as is */
+                        }
+                    }
+                }
             }
         }
     }
@@ -728,6 +832,8 @@ static int lua_nodelib_getlist(lua_State * L)
         lua_pushnil(L);
     } else if ((type(*n) == hlist_node) || (type(*n) == vlist_node)) {
         fast_metatable_or_nil_alink(list_ptr(*n));
+    } else if ((type(*n) == sub_box_node) || (type(*n) == sub_mlist_node)) {
+        fast_metatable_or_nil_alink(math_list(*n));
     } else {
         lua_pushnil(L);
     }
@@ -739,13 +845,21 @@ static int lua_nodelib_getlist(lua_State * L)
 static int lua_nodelib_setlist(lua_State * L)
 {
     halfword *n = lua_touserdata(L, 1);
-    if ((n != null) && ((type(n) == hlist_node) || (type(n) == vlist_node))) {
-        if (lua_type(L,2) == LUA_TNIL) {
-            list_ptr(n) = null;
+    if (n != null) {
+        if ((type(*n) == hlist_node) || (type(*n) == vlist_node)) {
+            if (lua_type(L,2) == LUA_TNIL) {
+                list_ptr(n) = null;
+            } else {
+                halfword *l = lua_touserdata(L, 2);
+                list_ptr(n) = l;
+            }
         } else {
-            halfword *l = lua_touserdata(L, 2);
-            list_ptr(n) = l;
-        }
+            if (lua_type(L,2) == LUA_TNIL) {
+                math_list(n) = null;
+            } else {
+                halfword *l = lua_touserdata(L, 2);
+                math_list(n) = l;
+            }
     }
     return 0;
 }
@@ -759,10 +873,17 @@ static int lua_nodelib_direct_getlist(lua_State * L)
     halfword n = lua_tointeger(L, 1);
     if (n == null) {
         lua_pushnil(L);
-    } else if ((type(n) == hlist_node) || (type(n) == vlist_node)) {
-        nodelib_pushdirect_or_nil_alink(list_ptr(n));
     } else {
-        lua_pushnil(L);
+        halfword t = type(n) ;
+        if ((t == hlist_node) || (t == vlist_node)) {
+            nodelib_pushdirect_or_nil_alink(list_ptr(n));
+        } else if ((t == sub_box_node) || (t == sub_mlist_node)) {
+            nodelib_pushdirect_or_nil_alink(math_list(n));
+        } else if (t == adjust_node) {
+            nodelib_pushdirect_or_nil_alink(adjust_ptr(n));
+        } else {
+            lua_pushnil(L);
+        }
     }
     return 1;
 }
@@ -770,11 +891,26 @@ static int lua_nodelib_direct_getlist(lua_State * L)
 static int lua_nodelib_direct_setlist(lua_State * L)
 {
     halfword n = lua_tointeger(L, 1);
-    if ((n != null) && ((type(n) == hlist_node) || (type(n) == vlist_node))) {
-        if (lua_type(L,2) == LUA_TNUMBER) {
-            list_ptr(n) = (halfword) lua_tointeger(L, 2);
-        } else {
-            list_ptr(n) = null;
+    if (n != null) {
+        halfword t = type(n) ;
+        if ((t == hlist_node) || (t == vlist_node)) {
+            if (lua_type(L,2) == LUA_TNUMBER) {
+                list_ptr(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                list_ptr(n) = null;
+            }
+        } else if ((t == sub_box_node) || (t == sub_mlist_node)) {
+            if (lua_type(L,2) == LUA_TNUMBER) {
+                math_list(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                math_list(n) = null;
+            }
+        } else if (t == adjust_node) {
+            if (lua_type(L,2) == LUA_TNUMBER) {
+                adjust_ptr(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                adjust_ptr(n) = null;
+            }
         }
     }
     return 0;
@@ -874,6 +1010,14 @@ static int lua_nodelib_direct_getnext(lua_State * L)
     halfword p = lua_tointeger(L, 1);
     if (p == null) {
         lua_pushnil(L);
+    } else if ((lua_type(L, 2) == LUA_TNUMBER)) {
+        /* experiment */
+        int n = lua_tointeger(L,2);
+        while (p != null && n > 0) {
+            p = vlink(p);
+            n -= 1;
+        }
+        nodelib_pushdirect_or_nil(p);
     } else {
         nodelib_pushdirect_or_nil(vlink(p));
     }
@@ -889,6 +1033,7 @@ static int lua_nodelib_getprev(lua_State * L)
     if ( (p == NULL) || (! lua_getmetatable(L,1)) ) {
         lua_pushnil(L);
     } else {
+        /* experiment */
         lua_get_metatablelua(luatex_node);
         if (!lua_rawequal(L, -1, -2)) {
             lua_pushnil(L);
@@ -947,6 +1092,13 @@ static int lua_nodelib_direct_getprev(lua_State * L)
     halfword p = lua_tointeger(L, 1);
     if (p == null) {
         lua_pushnil(L);
+    } else if ((lua_type(L, 2) == LUA_TNUMBER)) {
+        int n = lua_tointeger(L,2);
+        while (p != null && n > 0) {
+            p = alink(p);
+            n -= 1;
+        }
+        nodelib_pushdirect_or_nil(p);
     } else {
         nodelib_pushdirect_or_nil(alink(p));
     }
@@ -1351,7 +1503,7 @@ static int lua_nodelib_direct_insert_before(lua_State * L)
             set_t_to_prev(head, current);
         couple_nodes(t, n);
     }
-    couple_nodes(n, current);
+    couple_nodes(n, current); /*  nice but incompatible: couple_nodes(tail_of_list(n),current) */
     if (head == current) {
         lua_pushinteger(L, n);
     } else {
@@ -1427,7 +1579,7 @@ static int lua_nodelib_direct_insert_after(lua_State * L)
         while (vlink(current) != null)
             current = vlink(current);
     }
-    try_couple_nodes(n, vlink(current));
+    try_couple_nodes(n, vlink(current)); /* nice but incompatible: try_couple_nodes(tail_of_list(n), vlink(current)); */
     couple_nodes(current, n);
     lua_pop(L, 2);
     lua_pushinteger(L, n);
@@ -4678,7 +4830,11 @@ static int font_tex_direct_kerning(lua_State * L)
     }
     alink(vlink(tmp_head)) = p ;
     lua_pushinteger(L, vlink(tmp_head));
-    lua_pushinteger(L, t);
+    if (t == null) {
+        lua_pushnil(L);
+    } else {
+        lua_pushinteger(L, t);
+    }
     lua_pushboolean(L, 1);
     flush_node(tmp_head);
     return 3;
@@ -6092,6 +6248,143 @@ static int lua_nodelib_direct_setcharacter(lua_State * L)
     return 0;
 }
 
+static int lua_nodelib_direct_setfont(lua_State * L) /* family_font is not yet in manual, what does arg 2 do */
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n != null) {
+        halfword t = type(n);
+        /* mandate font */
+        if (t == glyph_node) {
+            font(n) = (halfword) lua_tointeger(L,2);
+            /* optional char */
+            if ((lua_type(L, 3) == LUA_TNUMBER)) {
+                character(n) = (halfword) lua_tointeger(L, 3);
+            }
+        }
+    }
+    return 0;
+}
+
+
+static int lua_nodelib_direct_setcomponents(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if ((n) && (lua_type(L, 2) == LUA_TNUMBER)) {
+        if (type(n) == glyph_node) {
+            lig_ptr(n) = (halfword) lua_tointeger(L, 2);
+        }
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_setattributelist(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if ((n) && nodetype_has_attributes(type(n))) {
+        if (lua_type(L, 2) == LUA_TNUMBER) {
+            halfword a =lua_tointeger(L, 2);
+            if (type(a) == attribute_list_node) {
+                reassign_attribute(n,a);
+            } else if (nodetype_has_attributes(type(a))) {
+                reassign_attribute(n,node_attr(a));
+            } else {
+                reassign_attribute(n,null);
+            }
+        } else {
+            reassign_attribute(n,null);
+        }
+        return 0;
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_setlang(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if ((n) && (lua_type(L, 2) == LUA_TNUMBER)) {
+        if (type(n) == glyph_node) {
+            set_char_lang(n,lua_tointeger(L, 2));
+        }
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_setpenalty(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n == null) {
+        if (type(n) == penalty_node) {
+            if (lua_type(L, 2) == LUA_TNUMBER) {
+                penalty(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                penalty(n) = 0;
+            }
+        } else if (type(n) == disc_node) {
+            if (lua_type(L, 2) == LUA_TNUMBER) {
+                disc_penalty(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                penalty(n) = 0;
+            }
+        }
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_setkern(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n != null) {
+        if (type(n) == kern_node || type(n) == margin_kern_node) {
+            if (lua_type(L, 2) == LUA_TNUMBER) {
+                width(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                width(n) = 0;
+            }
+            if (lua_type(L, 3) == LUA_TNUMBER) {
+                subtype(n) = (halfword) lua_tointeger(L, 3);
+            }
+        } else if (type(n) == math_node) {
+            if (lua_type(L, 2) == LUA_TNUMBER) {
+                surround(n) = (halfword) lua_tointeger(L, 2);
+            } else {
+                surround(n) = 0;
+            }
+        }
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_setdir(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if (n != null) {
+        if (type(n) == dir_node) {
+            dir_dir(n) = nodelib_getdir(L, 2, 0);
+        } else if (type(n) == hlist_node || type(n) == vlist_node) {
+            box_dir(n) = nodelib_getdir(L, 2, 1);
+        } else if (type(n) == rule_node) {
+            rule_dir(n) = nodelib_getdir(L, 2, 1);
+        } else if (type(n) == local_par_node) {
+            local_par_dir(n) = nodelib_getdir(L, 3, 1);
+        }
+    }
+    return 0;
+}
+
+static int lua_nodelib_direct_setoffsets(lua_State * L)
+{
+    halfword n = lua_tointeger(L, 1);
+    if ((n) && (type(n) == glyph_node)) {
+        if ((lua_type(L, 2) == LUA_TNUMBER)) {
+            x_displace(n) = (halfword) lua_tointeger(L, 2);
+        }
+        if ((lua_type(L, 3) == LUA_TNUMBER)) {
+            y_displace(n) = (halfword) lua_tointeger(L, 3);
+        }
+    }
+    return 0;
+}
+
 static int lua_nodelib_direct_setnext(lua_State * L)
 {
     halfword n = lua_tointeger(L, 1);
@@ -6136,6 +6429,7 @@ static int lua_nodelib_direct_setboth(lua_State * L)
     return 0;
 }
 
+/*
 static int lua_nodelib_direct_setlink(lua_State * L)
 {
     if (lua_type(L, 1) == LUA_TNUMBER) {
@@ -6152,6 +6446,59 @@ static int lua_nodelib_direct_setlink(lua_State * L)
         alink(b) = null;
     }
     return 0;
+}
+*/
+
+/*
+    a b b nil c d         : prev-a-b-c-next
+    nil a b b nil c d nil : nil-a-b-c-nil
+*/
+
+static int lua_nodelib_direct_setlink(lua_State * L)
+{
+    int n = lua_gettop(L);
+    int i;
+    halfword h = null; /* head node */
+    halfword t = null; /* tail node */
+    halfword c = null; /* current node */
+    for (i=1;i<=n;i++) {
+        /*
+            we don't go for the tail of the current node because we can inject
+            between existing nodes and the nodes themselves can have old values
+            for prev and next, so ... only single nodes are looked at!
+        */
+        if (lua_type(L, i) == LUA_TNUMBER) {
+            c = lua_tointeger(L, i);
+            if (c != t) {
+                if (t != null) {
+                    vlink(t) = c;
+                    alink(c) = t;
+                } else if (i > 1) {
+                    /* we assume that the first node is a kind of head */
+                    alink(c) = null;
+                }
+                t = c;
+                if (h == null) {
+                    h = t;
+                }
+            } else {
+                /* we ignore duplicate nodes which can be tails or the previous */
+            }
+        } else if (t == null) {
+            /* we just ignore nil nodes and have no tail yet */
+        } else {
+            /* safeguard: a nil in the list can be meant as end so we nil the next of tail */
+            vlink(t) = null;
+        }
+    }
+    if (h == null) {
+        /* no head */
+        lua_pushnil(L);
+    } else {
+        /* first valid head */
+        lua_pushinteger(L,h);
+    }
+    return 1;
 }
 
 static int lua_nodelib_direct_is_char(lua_State * L)
@@ -7158,6 +7505,12 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"free", lua_nodelib_direct_free},
     {"getbox", lua_nodelib_direct_getbox},
     {"getchar", lua_nodelib_direct_getcharacter},
+    {"getcomponents", lua_nodelib_direct_getcomponents},
+    {"getlang", lua_nodelib_direct_getlang},
+    {"getkern", lua_nodelib_direct_getkern},
+    {"getpenalty", lua_nodelib_direct_getpenalty},
+    {"getdir", lua_nodelib_direct_getdir},
+    {"getoffsets", lua_nodelib_direct_getoffsets},
     {"getdisc", lua_nodelib_direct_getdiscretionary},
     {"getwhd", lua_nodelib_direct_getwhd},
     {"getfield", lua_nodelib_direct_getfield},
@@ -7169,6 +7522,7 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"getlist", lua_nodelib_direct_getlist},
     {"getleader", lua_nodelib_direct_getleader},
     {"getsubtype", lua_nodelib_direct_getsubtype},
+    {"getattributelist", lua_nodelib_direct_getattributelist},
     {"has_glyph", lua_nodelib_direct_has_glyph},
     {"has_attribute", lua_nodelib_direct_has_attribute},
     {"get_attribute", lua_nodelib_direct_get_attribute},
@@ -7197,6 +7551,13 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"setbox", lua_nodelib_direct_setbox},
     {"setfield", lua_nodelib_direct_setfield},
     {"setchar", lua_nodelib_direct_setcharacter},
+    {"setfont", lua_nodelib_direct_setfont},
+    {"setcomponents", lua_nodelib_direct_setcomponents},
+    {"setlang", lua_nodelib_direct_setlang},
+    {"setkern", lua_nodelib_direct_setkern},
+    {"setpenalty", lua_nodelib_direct_setpenalty},
+    {"setdir", lua_nodelib_direct_setdir},
+    {"setoffsets", lua_nodelib_direct_setoffsets},
     {"setdisc", lua_nodelib_direct_setdiscretionary},
     {"setwhd", lua_nodelib_direct_setwhd},
     {"setnext", lua_nodelib_direct_setnext},
@@ -7206,6 +7567,7 @@ static const struct luaL_Reg direct_nodelib_f[] = {
     {"setlist", lua_nodelib_direct_setlist},
     {"setleader", lua_nodelib_direct_setleader},
     {"setsubtype", lua_nodelib_direct_setsubtype},
+    {"setattributelist", lua_nodelib_direct_setattributelist},
     {"slide", lua_nodelib_direct_slide},
  /* {"subtype", lua_nodelib_subtype}, */ /* no node argument */
     {"tail", lua_nodelib_direct_tail},
