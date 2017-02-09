@@ -156,6 +156,7 @@ void initialize_commands(void)
     primitive_luatex("pagewidth", assign_dimen_cmd, dimen_base + page_width_code, dimen_base);
     primitive_luatex("pageheight", assign_dimen_cmd, dimen_base + page_height_code, dimen_base);
     primitive_luatex("pxdimen", assign_dimen_cmd, dimen_base + px_dimen_code, dimen_base);
+    primitive_luatex("predisplaygapfactor", assign_int_cmd, int_base + math_pre_display_gap_factor_code, int_base);
 
     /* Many of \TeX's primitives need no |equiv|, since they are identifiable
        by their |eq_type| alone. These primitives are loaded into the hash table

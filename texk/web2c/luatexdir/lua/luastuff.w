@@ -125,6 +125,7 @@ static const luaL_Reg lualibs[] = {
     {"zip", luaopen_zip},
     {"bit32", luaopen_bit32},
     {"md5", luaopen_md5},
+    {"ffi", luaopen_ffi},
     {"lfs", luaopen_lfs},
     {"profiler", luaopen_profiler},
     {"lpeg", luaopen_lpeg},
@@ -220,6 +221,7 @@ void luainterpreter(void)
     open_strlibext(L);
     open_lfslibext(L);
 
+
     /* luasockets */
     /* socket and mime are a bit tricky to open because
      they use a load-time  dependency that has to be
@@ -308,6 +310,10 @@ void luainterpreter(void)
         (void) hide_lua_value(L, "lfs", "rmdir");
         (void) hide_lua_value(L, "lfs", "mkdir");
     }
+    /* Maybe we can extend this way to the others tables, using luac. */
+    if ( safer_option || ((shellenabledp == 0) || (shellenabledp == 1 && restrictedshell == 1)) ) {
+       (void)   luaL_dostring(L,"ffi=require[[ffi]]; for k,_ in pairs(ffi) do if k~='gc' then ffi[k]=nil end; end; ffi=nil;");
+    }  
     Luas = L;
 }
 

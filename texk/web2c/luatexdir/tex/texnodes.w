@@ -3167,12 +3167,11 @@ void show_node_list(int p)
   that \TeX82 used for \.{\\predisplaywidth} */
 
 @c
-pointer actual_box_width(pointer r, scaled base_width)
+static pointer get_actual_box_width(pointer r,pointer p, scaled initial_width)
 {
-    scaled d;                                /* increment to |v| */
-    scaled w = -max_dimen;                   /* calculated |size| */
-    scaled v = shift_amount(r) + base_width; /* |w| plus possible glue amount */
-    pointer p = list_ptr(r);                 /* current node when calculating |pre_display_size| */
+    scaled d;                  /* increment to |v| */
+    scaled w = -max_dimen;     /* calculated |size| */
+    scaled v = initial_width;  /* |w| plus possible glue amount */
     while (p != null) {
         if (is_char_node(p)) {
             d = glyph_width(p);
@@ -3190,6 +3189,18 @@ pointer actual_box_width(pointer r, scaled base_width)
                 break;
             case kern_node:
                 d = width(p);
+                break;
+            case disc_node:
+                /* at the end of the line we should actually take the pre */
+                if (no_break(p) != null) {
+                    d = get_actual_box_width(r,vlink_no_break(p),0);
+                    if (d <= -max_dimen || d >= max_dimen) {
+                        d = 0;
+                    }
+                } else {
+                    d = 0;
+                }
+                goto FOUND;
                 break;
             case math_node:
                 /* begin mathskip code */
@@ -3237,6 +3248,15 @@ pointer actual_box_width(pointer r, scaled base_width)
         p = vlink(p);
     }
     return w;
+}
+
+pointer actual_box_width(pointer r, scaled base_width)
+{
+    /* often this is the same as:
+        return + shift_amount(r) + base_width +
+            natural_sizes(list_ptr(r),null,(glue_ratio) glue_set(r),glue_sign(r),glue_order(r),box_dir(r));
+    */
+    return get_actual_box_width(r,list_ptr(r),shift_amount(r) + base_width);
 }
 
 @ @c

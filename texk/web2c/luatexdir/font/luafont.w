@@ -1982,13 +1982,15 @@ static halfword handle_lig_word(halfword cur)
 @c
 halfword handle_ligaturing(halfword head, halfword tail)
 {
-    halfword save_tail1; /* trick to allow explicit |node==null| tests */
+    halfword save_tail1 = null; /* trick to allow explicit |node==null| tests */
     halfword cur, prev;
 
     if (vlink(head) == null)
         return tail;
-    save_tail1 = vlink(tail);
-    vlink(tail) = null;
+    if (tail != null) {
+        save_tail1 = vlink(tail);
+        vlink(tail) = null;
+    }
 
     /* |if (fix_node_lists)| */
     fix_node_list(head);
@@ -2003,10 +2005,12 @@ halfword handle_ligaturing(halfword head, halfword tail)
         prev = cur;
         cur = vlink(cur);
     }
-    if (prev == null)
+    if (prev == null) {
+        /* hh: looks bad to me */
         prev = tail;
+    }
 
-    if (valid_node(save_tail1)) {
+    if (tail != null) {
         try_couple_nodes(prev, save_tail1);
     }
     return prev;
@@ -2085,6 +2089,8 @@ static void do_handle_kerning(halfword root, halfword init_left, halfword init_r
             if (type(cur) == disc_node) {
                 halfword right = type(vlink(cur)) == glyph_node ? vlink(cur) : null;
                 do_handle_kerning(pre_break(cur), left, null);
+                if (vlink_pre_break(cur) != null)
+                    tlink_pre_break(cur) = tail_of_list(vlink_pre_break(cur));
                 do_handle_kerning(post_break(cur), null, right);
                 if (vlink_post_break(cur) != null)
                     tlink_post_break(cur) = tail_of_list(vlink_post_break(cur));
@@ -2123,6 +2129,7 @@ static void do_handle_kerning(halfword root, halfword init_left, halfword init_r
     }
 }
 
+/*
 halfword handle_kerning(halfword head, halfword tail)
 {
     halfword save_link;
@@ -2133,6 +2140,26 @@ halfword handle_kerning(halfword head, halfword tail)
     tail = tlink(head);
     if (valid_node(save_link)) {
         try_couple_nodes(tail, save_link);
+    }
+    return tail;
+}
+*/
+
+halfword handle_kerning(halfword head, halfword tail)
+{
+    halfword save_link = null;
+    if (tail == null) {
+        tlink(head) = null;
+        do_handle_kerning(head, null, null);
+    } else {
+        save_link = vlink(tail);
+        vlink(tail) = null;
+        tlink(head) = tail;
+        do_handle_kerning(head, null, null);
+        tail = tlink(head);
+        if (valid_node(save_link)) {
+            try_couple_nodes(tail, save_link);
+        }
     }
     return tail;
 }

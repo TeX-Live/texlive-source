@@ -8,7 +8,7 @@
 ## and slnunicode)
 EXTRA_LIBRARIES += libluamisc.a libluajitmisc.a
 
-libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a
+libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a libluaffi.a
 libluajitmisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluajitsocket.a
 
 $(libluamisc_a_OBJECTS): $(libluamisc_a_DEPENDENCIES)

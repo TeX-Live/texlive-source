@@ -1,0 +1,78 @@
+This is luaffifb from https://github.com/facebook/luaffifb
+patched to compile for TeXLive..
+
+It should compile even where the ffi is not defined,
+because there is a ffi stub that does nothing:
+
+local info = [[
+The ffi module is available for:
+ 
+    archictures       : ARCH_X86 and ARCH_X64,
+    operating systems : OS_CE, OS_WIN, OS_LINUX, OS BD and OS_POSIX
+
+The ARM processor is currently not supported. There are subtle
+differences between this module and the one in luajitTeX 
+and we hope to be in sync around TeXLive 2018.
+Different OS can have different interfaces,
+for instance OS_WIN has not 'complex.h'. If you want portable
+code, stick to the most common concepts.
+]]
+
+local function stub()
+    texio.write_nl(info)
+end
+
+ffi = {
+    fill      = stub,
+    cast      = stub,
+    offsetof  = stub,
+    copy      = stub,
+    string    = stub,
+    abi       = stub,
+    cdef      = stub,
+    typeof    = stub,
+    sizeof    = stub,
+    type      = stub,
+    number    = stub,
+    gc        = stub,
+    metatype  = stub,
+    errno     = stub,
+    debug     = stub,
+    os        = ''  ,
+    arch      = ''  ,
+    NULL      = nil ,
+    alignof   = stub,
+    new       = stub,
+    u64       = stub,
+    i64       = stub,
+    istype    = stub,
+    load      = stub,
+    C         = nil ,
+}
+
+
+So the following chunk of code can be used as an 
+example of how to check the ffi:
+
+ if ffi then 
+   if (ffi.os=='' and ffi.arch=='') then
+   -- ffi is the stub
+   -- or it's not a sane ffi
+   -- This should print something on terminal
+      print(ffi.cdef(''))
+   else
+   -- ffi looks ok
+   end
+ else
+   -- no ffi at all: perhaps an old luatex ?
+ end
+
+The ARCH enabled ARCH_X86 and ARCH_X64, 
+the OS enabled are OS_CE, OS_WIN, OS_LINUX, OS BD and OS_POSIX.
+Currently ARM is not supported.
+
+The module is not aligned with  luajit-2.1.0.beta2
+(the plan is to be in sync for TeXLive 2018) and 
+test.lua can fail. Be careful that different OS have different 
+interfaces (i.e. OS_WIN has not complex.h, for example)
+so extra care must be take to ensure code portability.

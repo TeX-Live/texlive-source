@@ -1015,7 +1015,7 @@ void enter_display_math(void)
         w = -max_dimen;
     } else {
         line_break(true, math_shift_group);
-        w = actual_box_width(just_box, (2 * quad(get_cur_font())));
+        w = actual_box_width(just_box, x_over_n(quad(get_cur_font()),1000) * math_pre_display_gap_factor_par);
     }
     /* now we are in vertical mode, working on the list that will contain the display */
     /* A displayed equation is considered to be three lines long, so we
