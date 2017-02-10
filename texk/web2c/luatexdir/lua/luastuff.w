@@ -310,10 +310,6 @@ void luainterpreter(void)
         (void) hide_lua_value(L, "lfs", "rmdir");
         (void) hide_lua_value(L, "lfs", "mkdir");
     }
-    /* Maybe we can extend this way to the others tables, using luac. */
-    if ( safer_option || ((shellenabledp == 0) || (shellenabledp == 1 && restrictedshell == 1)) ) {
-       (void)   luaL_dostring(L,"ffi=require[[ffi]]; for k,_ in pairs(ffi) do if k~='gc' then ffi[k]=nil end; end; ffi=nil;");
-    }  
     Luas = L;
 }
 
