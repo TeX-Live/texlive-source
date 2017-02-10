@@ -385,9 +385,8 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/w2c/c-auto.h ff-config.h
-CONFIG_CLEAN_FILES = omegafonts/Makefile otps/Makefile \
-	otps/win32/Makefile window/Makefile web2c-sh tangle-sh \
-	ctangleboot-sh silent-sh synctexdir/synctex.pc callexe.c
+CONFIG_CLEAN_FILES = web2c-sh tangle-sh ctangleboot-sh silent-sh \
+	synctexdir/synctex.pc callexe.c
 CONFIG_CLEAN_VPATH_FILES =
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -1832,11 +1831,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../build-aux/test-driver \
 	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
 	$(top_srcdir)/luatexdir/luafontloader/ff-config.in \
-	$(top_srcdir)/omegafonts/Makefile.in \
-	$(top_srcdir)/otps/Makefile.in \
-	$(top_srcdir)/otps/win32/Makefile.in \
-	$(top_srcdir)/synctexdir/synctex.pc.in \
-	$(top_srcdir)/window/Makefile.in ../../build-aux/compile \
+	$(top_srcdir)/synctexdir/synctex.pc.in ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
@@ -3909,14 +3904,6 @@ stamp-h2: $(top_srcdir)/luatexdir/luafontloader/ff-config.in $(top_builddir)/con
 
 distclean-hdr:
 	-rm -f w2c/c-auto.h w2c/stamp-h1 ff-config.h stamp-h2
-omegafonts/Makefile: $(top_builddir)/config.status $(top_srcdir)/omegafonts/Makefile.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
-otps/Makefile: $(top_builddir)/config.status $(top_srcdir)/otps/Makefile.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
-otps/win32/Makefile: $(top_builddir)/config.status $(top_srcdir)/otps/win32/Makefile.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
-window/Makefile: $(top_builddir)/config.status $(top_srcdir)/window/Makefile.in
-	cd $(top_builddir) && $(SHELL) ./config.status $@
 web2c-sh: $(top_builddir)/config.status $(srcdir)/web2c-sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 tangle-sh: $(top_builddir)/config.status $(srcdir)/tangle-sh.in
