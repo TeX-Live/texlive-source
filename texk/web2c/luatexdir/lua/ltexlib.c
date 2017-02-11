@@ -898,21 +898,11 @@ static int setglue(lua_State * L)
         top -= 1;
     }
     /* [global] slot [width] [stretch] [shrink] [stretch_order] [shrink_order] */
-    if (top > 1) {
-        width(value) = lua_roundnumber(L,index+1);
-    }
-    if (top > 2) {
-        stretch(value) = lua_roundnumber(L,index+2);
-    }
-    if (top > 3) {
-        shrink(value) = lua_roundnumber(L,index+3);
-    }
-    if (top > 4) {
-        stretch_order(value) = lua_tointeger(L,index+4);
-    }
-    if (top > 5) {
-        shrink_order(value) = lua_tointeger(L,index+5);
-    }
+    if (top > 1) { width(value) = lua_roundnumber(L,index+1); }
+    if (top > 2) { stretch(value) = lua_roundnumber(L,index+2); }
+    if (top > 3) { shrink(value) = lua_roundnumber(L,index+3); }
+    if (top > 4) { stretch_order(value) = lua_tointeger(L,index+4); }
+    if (top > 5) { shrink_order(value) = lua_tointeger(L,index+5); }
     set_item_index_plus(L, index, skip_base, "skip", value, isglobal, is_glue_assign, set_tex_skip_register, true);
     return 0;
 }
@@ -921,24 +911,15 @@ static int getglue(lua_State * L)
 {
     int value = 0;
     int top = lua_gettop(L);
-    int b = -1; /* false: only width, true or unset: 5 values */
-    if (lua_type(L, top) == LUA_TBOOLEAN) {
-        b = lua_toboolean(L, top);
-        top -= 1 ;
-    }
     get_item_index_plus(L, top, skip_base, "skip", value, is_glue_assign, get_tex_skip_register, true);
     if (value == null) {
         lua_pushinteger(L,0);
-        if (b == 0)
-            return 1;
         lua_pushinteger(L,0);
         lua_pushinteger(L,0);
         lua_pushinteger(L,0);
         lua_pushinteger(L,0);
     } else {
         lua_pushinteger(L,width(value));
-        if (b == 0)
-            return 1;
         lua_pushinteger(L,stretch(value));
         lua_pushinteger(L,shrink(value));
         lua_pushinteger(L,stretch_order(value));
@@ -983,21 +964,11 @@ static int setmuglue(lua_State * L)
         top -= 1;
     }
     /* [global] slot [width] [stretch] [shrink] [stretch_order] [shrink_order] */
-    if (top > 1) {
-        width(value) = lua_roundnumber(L,index+1);
-    }
-    if (top > 2) {
-        stretch(value) = lua_roundnumber(L,index+2);
-    }
-    if (top > 3) {
-        shrink(value) = lua_roundnumber(L,index+3);
-    }
-    if (top > 4) {
-        stretch_order(value) = lua_tointeger(L,index+4);
-    }
-    if (top > 5) {
-        shrink_order(value) = lua_tointeger(L,index+5);
-    }
+    if (top > 1) { width(value) = lua_roundnumber(L,index+1); }
+    if (top > 2) { stretch(value) = lua_roundnumber(L,index+2); }
+    if (top > 3) { shrink(value) = lua_roundnumber(L,index+3); }
+    if (top > 4) { stretch_order(value) = lua_tointeger(L,index+4); }
+    if (top > 5) { shrink_order(value) = lua_tointeger(L,index+5); }
     set_item_index_plus(L, index, mu_skip_base, "muskip", value, isglobal, is_mu_glue_assign, set_tex_mu_skip_register, true);
     return 0;
 }
@@ -1709,26 +1680,18 @@ static int settex(lua_State * L)
                 assign_internal_value((isglobal ? 4 : 0), equiv(cur_cs1), j);
             } else if (is_glue_assign(cur_cmd1)) {
                 int a = isglobal;
-if (lua_type(L, i) == LUA_TNUMBER) {
-                halfword value = copy_node(zero_glue);
-                width(value) = lua_roundnumber(L,i);
-                if (i > 1) {
-                    stretch(value) = lua_roundnumber(L,i+1);
+                if (lua_type(L, i) == LUA_TNUMBER) {
+                    halfword value = copy_node(zero_glue);
+                    width(value) = lua_roundnumber(L,i);
+                    if (i > 1) { stretch(value) = lua_roundnumber(L,i+1); }
+                    if (i > 3) { shrink(value) = lua_roundnumber(L,i+2); }
+                    if (i > 4) { stretch_order(value) = lua_tointeger(L,i+3); }
+                    if (i > 5) { shrink_order(value) = lua_tointeger(L,i+4); }
+                    define(equiv(cur_cs1), assign_glue_cmd, value);
+                } else {
+                    halfword *j1 = check_isnode(L, i);     /* the value */
+                    define(equiv(cur_cs1), assign_glue_cmd, *j1);
                 }
-                if (i > 3) {
-                    shrink(value) = lua_roundnumber(L,i+2);
-                }
-                if (i > 4) {
-                    stretch_order(value) = lua_tointeger(L,i+3);
-                }
-                if (i > 5) {
-                    shrink_order(value) = lua_tointeger(L,i+4);
-                }
-                define(equiv(cur_cs1), assign_glue_cmd, value);
-} else {
-                halfword *j1 = check_isnode(L, i);     /* the value */
-                define(equiv(cur_cs1), assign_glue_cmd, *j1);
-}
             } else if (is_toks_assign(cur_cmd1)) {
                 if (lua_type(L,i) == LUA_TSTRING) {
                     j = tokenlist_from_lua(L);  /* uses stack -1 */
