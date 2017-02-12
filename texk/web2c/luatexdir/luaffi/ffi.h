@@ -42,7 +42,7 @@ extern "C" {
 #include <sys/mman.h>
 #endif
 
-#ifdef _WIN32
+#ifdef _WIN32 || _FreeBSD__ || __NetBSD__ || __OpenBSD__ || __bsdi__ || __DragonFly__
 /* We should include something equivalent to */
 /* complex.h                                 */
 #else
@@ -50,6 +50,7 @@ extern "C" {
 #define HAVE_COMPLEX
 #define HAVE_LONG_DOUBLE
 #endif
+
 
 #ifndef NDEBUG
 #define DASM_CHECKS
