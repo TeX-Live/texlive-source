@@ -53,7 +53,7 @@ class MapLine
 		SubfontDefinition* sfd () const       {return _sfd;}
 
 	protected:
-		explicit MapLine ();
+		MapLine ();
 		void init ();
 		bool isDVIPSFormat (const char *line) const;
 		void parse (const char *line);
