@@ -2218,7 +2218,7 @@ void init_start_time() {
         if (source_date_epoch) {
             errno = 0;
             epoch = strtoull(source_date_epoch, &endptr, 10);
-            if (epoch < 0 || *endptr != '\0' || errno != 0) {
+            if (*endptr != '\0' || errno != 0) {
 FATAL1 ("invalid epoch-seconds-timezone value for environment variable $SOURCE_DATE_EPOCH: %s",
                       source_date_epoch);
             }
