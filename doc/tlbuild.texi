@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2016
-@set month-year April 2016
+@set month-year February 2017
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -14,8 +14,9 @@
 @copying
 This file documents the @TL{} build system and more.
 
-Copyright @copyright{} 2016 Karl Berry.@*
-Copyright @copyright{} 2013, 2014, 2015 Karl Berry & Peter Breitenlohner.
+@noindent
+Copyright @copyright{} 2016--2017 Karl Berry.@*
+Copyright @copyright{} 2013--2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -138,7 +139,7 @@ As an exception, the full documentation for @code{install-tl} and
 @code{tlmgr} is included here, just because it is convenient to do so.
 The same text is available online (linked from
 @url{http://tug.org/texlive/doc.html}, or by invoking the program with
-@samp{--help} (or look at the end of the source file).
+@samp{--help} (or look at the end of the source).
 
 
 @c The first word of the chapter/section title here is used to
@@ -185,8 +186,8 @@ The primary design goal of the build system is modularity.  Each
 program and library module (or package) specifies its own requirements
 and properties, such as required libraries, whether an installed
 (system) version of a library can be used, @code{configure} options to
-be seen at the top-level, and more.  An explicit list of all available
-modules is kept in only one, central, place (@file{m4/kpse-pkgs.m4}).
+be seen at the top level, and more.  An explicit list of all available
+modules is kept in only one central place, namely @file{m4/kpse-pkgs.m4}.
 
 A second, related goal is to configure and build each library before
 configuring any other (program or library) module which uses that
@@ -198,9 +199,9 @@ All generic libraries and several programs are maintained
 independently.  The corresponding modules use (most of) the
 distributed source tree and document any modifications of that source.
 
-All this is for the sake of simplifying both upgrading of modules
-maintained independently and integrating new modules into the
-TL build system.  (Not to say that either task is trivial.)
+All this is for the sake of simplifying both upgrading of modules and
+integrating new modules into the TL build system.  (Not to say that
+either task is trivial.)
 
 
 @node Prerequisites
@@ -218,14 +219,20 @@ you can set @code{MAKE} in the environment to whatever is necessary.)
 @cindex GNU @code{make}, required
 @cindex @code{gmake}, required
 @cindex FreeType
-Indeed, GNU @code{make} is required only because of some
-third-party libraries, notably FreeType; all the TL-maintained
-directories (and Automake/Autoconf output in general) should work with
-any reasonable @code{make}.
+GNU @code{make} is required only because of some third-party
+libraries, notably FreeType; all the TL-maintained directories (and
+Automake/Autoconf output in general) should work with any reasonable
+@code{make}.
 
 However, a few programs in the tree have additional requirements:
 
 @table @file
+@item dvisvgm
+@cindex @code{dvisvgm} requirement for C++11
+@cindex C++11, required by @code{dvisvgm}
+requires a C++11 compiler, such as gcc 4.8.1 (or later) or clang 3.3
+(or later).
+
 @item web2c
 @cindex @code{perl}, required by @code{web2c}, etc.
 requires @code{perl} for some tests run by @code{make check}.
@@ -367,7 +374,7 @@ to be done unless some source files have been modified.
 @vindex --no-clean Build @r{option}
 If configuring or building a module fails, you should first find and fix the
 problem, then perhaps remove the subdirectory for that module from the build
-tree, and finally rerun the top-level @code{make} (or @file{Build} with
+tree, and finally rerun the top level @code{make} (or @file{Build} with
 @code{--no-clean} as its first argument).
 
 
@@ -400,7 +407,7 @@ by using a configure cache file, i.e., with the option @code{-C}
 @cindex distribution tarball, making
 
 @cindex @code{dist} and @code{distcheck} targets for @code{make}
-Running @code{make dist} at the top-level creates a tarball
+Running @code{make dist} at the top level creates a tarball
 @file{tex-live-@var{yyyy}-@var{mm}-@var{dd}.tar.xz} from the TL source
 tree.  Running @code{make distcheck} also verifies that this tarball
 suffices to build and install all of TL.
@@ -724,12 +731,12 @@ rules to build and install them together with some of their support
 files.
 
 @menu
-* Build system tools::          If modifying infrastructure files.
-* Top-level directories::
-* Autoconf macros::             TL-specific Autoconf macros.
-* Library modules::             Details on some specific libraries,
-* Program modules::             and on some programs.
-* Extending @TL{}::             Adding a new module.
+* Build system tools::      Modifying infrastructure files.
+* Top-level directories::   libs texk utils; am auxdir build-aux m4; doc extra.
+* Autoconf macros::         TL-specific Autoconf macros.
+* Library modules::         Handling libraries, with examples.
+* Program modules::         Handling programs, with examples.
+* Extending @TL{}::      Adding a new module.
 @end menu
 
 
@@ -804,11 +811,12 @@ programs), and @file{libs/} (generic libraries).
 
 @cindex @file{am/} top-level directory
 @cindex @file{m4/} top-level directory
-The top-level directories @file{am/} and @file{m4/} contain
-@file{Makefile.am} fragments and Autoconf macros, respectively, used
-in many places.  Specifically, the file @file{m4/kpse-pkgs.m4}
-contains lists of all program and library modules; missing modules are
-silently ignored.  (This helps in creating cut-down source trees.)
+In addition, the top-level directories @file{am/} and @file{m4/}
+contain @file{Makefile.am} fragments and Autoconf macros,
+respectively, used in many places.  Specifically, the file
+@file{m4/kpse-pkgs.m4} contains lists of all program and library
+modules; missing modules are silently ignored.  (This helps in
+creating cut-down source trees.)
 
 Each module contributes fragments (in separate files) defining its
 capabilities and requirements to the @file{configure.ac} scripts at
@@ -820,22 +828,32 @@ library can be used.  This ultimately determines which modules need to
 be built---although all modules must be configured for the benefit of
 @file{make} targets such as @code{dist} or @code{distcheck}.
 
-@pindex config.guess@r{,} config.sub
+@cindex @file{build-aux/} top-level directory
+@pindex config.guess@r{,} config.sub, @dots{}
 @cindex Gnulib, used for common files
 The top-level @file{build-aux/} directory contains the common files
 @file{compile}, @file{config.guess}, @file{config.sub},
-@file{depcomp}, etc.@ for most packages, pulled from the GNU Gnulib
-sources (@url{http://www.gnu.org/software/gnulib}), which in turn
-synchronizes with the appropriate ultimate upstream repository.  There
-are, however, independent copies in, e.g.,
-@file{libs/freetype2/freetype-*/builds/unix/}, and similar places.
+@file{depcomp}, etc.@ used by most packages.  These are from the GNU
+Gnulib sources (@url{http://www.gnu.org/software/gnulib}), which in
+turn synchronizes with the appropriate ultimate upstream repository.
+There are, however, independent copies in, e.g.,
+@file{libs/freetype2/freetype-*/builds/unix/}, and a few other places.
 The @code{reautoconf} script does not touch those, but a TL cron job
 keeps them in sync (nightly).
 
 @cindex @file{extra/} top-level directory
 The directory @file{extra/} contains things which are not part of the
 TL build, but are present just for (someone's) convenience, e.g.,
-@file{epstopdf} which is developed here.
+is @file{epstopdf} development source is here.
+
+@cindex @file{Work/} top-level directory
+@cindex @file{inst/} top-level directory
+When the top-level @file{./Build} script is used to build TL, two more
+two more top-level directories appear: @file{Work/} for the build tree,
+and @file{inst/} for the install tree (from @code{make install}).
+These names (and everything else about @file{Build}'s operation) can
+be changed by setting environment variables before running it; see the
+script file.
 
 
 @node Autoconf macros
@@ -1121,10 +1139,9 @@ structure and variation.
 
 @pindex png @r{library}
 @pindex libpng @r{library}
-@set libpngversion libpng-1.6.16
 This generic library uses the source tree in, e.g., the subdirectory
-@file{@value{libpngversion}} with all modifications for TL recorded in
-@file{@value{libpngversion}-PATCHES/*}.  The @file{configure.ac} fragment
+@file{libpng-src/} with all modifications for TL recorded in
+@file{TLPATCHES/*}.  The @file{configure.ac} fragment
 @file{ac/withenable.ac} contains
 
 @example
@@ -1267,10 +1284,9 @@ details for a few of the programs in TL.
 @subsection The @code{t1utils} package in @file{utils/t1utils}
 
 @pindex t1utils @r{package}
-@set t1utilsversion t1utils-1.39
 
-Once again we use the distributed source tree @file{@value{t1utilsversion}}
-with modifications documented in @file{@value{t1utilsversion}-PATCHES/*} and
+Once again we use the distributed source tree @file{t1utils-src}
+with modifications documented in @file{TLPATCHES/*} and
 a proxy build system consisting of @file{configure.ac} and
 @file{Makefile.am}.  The fragment @file{ac/withenable.ac} contains
 
@@ -1286,15 +1302,14 @@ supplies the configure option @code{--disable-t1utils}.
 @subsection The @code{xindy} package in @file{utils/xindy}
 
 @pindex xindy
-@set xindyversion xindy-2.5.1
 
-This module uses the distributed source tree @file{@value{xindyversion}}
-with modifications documented in @file{@value{xindyversion}-PATCHES/*}, a
-proxy @file{configure.ac}, and a wrapper @file{Makefile.am} that descends
-into @file{@value{xindyversion}}.  The @code{xindy} build requires that the
-distributed @file{Makefile}s allow a @code{VPATH} build, can handle all
-targets, and do not refer to @code{$@{top_srcdir@}} or
-@code{$@{top_builddir@}}.  The fragment @code{ac/withenable.ac} contains
+This module uses the distributed source tree @file{xindy-src/} with
+modifications documented in @file{TLPATCHES/*}, a proxy
+@file{configure.ac}, and a wrapper @file{Makefile.am} that descends
+into @file{xindy-src}.  The @code{xindy} build requires a @file{make}
+that supports a @code{VPATH} build, can handle all targets, and do not
+refer to @code{$@{top_srcdir@}} or @code{$@{top_builddir@}}.  The
+fragment @code{ac/withenable.ac} contains
 
 @example
 KPSE_ENABLE_PROG([xindy], , [disable native])
@@ -1365,6 +1380,14 @@ their support files.
 
 This section outlines the basic process for adding new packages to the
 TL build system.
+
+In any case, a new package directory @file{foo} should contain the
+original sources, as modified for TL, in @file{foo/foo-src}, and the
+changes should be documented in @file{foo/TLPATCHES/*}; changes should
+also be submitted upstream whenever reasonable, of course.  In
+addition, @file{foo/} will need the usual Automake build-related files
+(@file{configure.ac}, @file{Makefile.am}, etc.  Please keep a
+@file{ChangeLog} for all TL changes.
 
 @menu
 * Adding a new program module::
@@ -2284,8 +2307,9 @@ should produce no (GCC) compiler warnings at all.  In spite of
 considerable efforts into that direction we are still far from that goal and
 there are reasons that we may never fully reach it.  Below are some rules
 about declarations of functions or variables and the use of @code{const}. 
-These rules should be applied to all parts of the @TL{} tree, except some of
-those maintained independently.
+These rules should be applied to most of the @TL{} tree, the exception
+being code that is maintained independently and whose maintainers
+don't want to accept patches.
 
 @menu
 * Declarations and definitions::
