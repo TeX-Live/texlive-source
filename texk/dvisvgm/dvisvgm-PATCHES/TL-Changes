@@ -1,9 +1,17 @@
+(This file public domain.)
+
 Changes applied to the dvisvgm-2.1 tree as obtained from:
 	http://dvisvgm.bplaced.net/Downloads
 
+Update version in ./version.ac.
+
 Removed common and generated files:
-rm compile config.guess config.sub depcomp install-sh missing test-driver
+rm ar-lib compile config.guess config.sub depcomp install-sh
+rm ltmain.sh missing test-driver 
 rm aclocal.m4 configure # reduce chance of confusion?
 
+# patch to integrate into TL build:
 patch -d dvisvgm-src -p1 <dvisvgm-PATCHES/patch-08-makefiles 
 
+# use same automake macro as upstream:
+cp dvisvgm-src/m4/ax_cxx_compile_stdcxx.m4 m4

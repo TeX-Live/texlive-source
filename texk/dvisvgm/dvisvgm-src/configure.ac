@@ -4,10 +4,10 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.59)
-AC_INIT([dvisvgm],[2.1],[martin.gieseking@uos.de])
-DATE="January 2017"
+AC_INIT([dvisvgm],[2.1.2],[martin.gieseking@uos.de])
+DATE="February 2017"
 AC_CONFIG_SRCDIR(src)
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -20,13 +20,15 @@ AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"])
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CXX
-AX_CXX_COMPILE_STDCXX([11], [noext])
+AX_CXX_COMPILE_STDCXX([11])
+AM_PROG_AR
+LT_INIT
 
 AC_PROG_RANLIB
 AC_LANG(C)
 
 AC_CHECK_FUNCS([ftime gettimeofday])
-AC_CHECK_HEADERS([sys/time.h sys/timeb.h])
+AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
 AC_HEADER_TIOCGWINSZ
 
 AC_CHECK_HEADER([kpathsea/kpathsea.h], ,

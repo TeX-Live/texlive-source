@@ -22,6 +22,7 @@ AC_CONFIG_MACRO_DIRS([../../m4 m4])
 AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
 
 # Common code for all programs using libkpathsea.
+AM_PROG_AR
 KPSE_COMMON([dvisvgm])
 
 AC_CONFIG_HEADERS([config.h])
@@ -33,6 +34,7 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX([11], [noext])
+LT_INIT
 KPSE_CXX_HACK
 
 AC_PROG_RANLIB

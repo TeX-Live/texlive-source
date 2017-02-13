@@ -30,7 +30,7 @@ config.force: $(dvisvgm_dependencies)
 #
 DISTCLEANFILES = config.force CXXLD.sh
 
-## Tests.
+## Tests (our trivial one, not the original full test suite).
 ##
 TESTS = tests/dvisvgm.test
 tests/dvisvgm.log: dvisvgm-src/src/dvisvgm$(EXEEXT)
