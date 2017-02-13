@@ -54,6 +54,7 @@ libfontforge_a_SOURCES = \
 	fontforge/stemdb.c \
 	fontforge/stemdb.h \
 	fontforge/tables.h \
+	fontforge/tmpfile2.cpp \
 	fontforge/tottf.c \
 	fontforge/tottfaat.c \
 	fontforge/tottfgpos.c \
@@ -65,17 +66,16 @@ libfontforge_a_SOURCES = \
 	fontforge/uiinterface.h \
 	fontforge/unialt.c \
 	fontforge/ustring.c \
-	fontforge/utils.c \
 	fontforge/utype.c \
 	fontforge/woff.c \
 	inc/basics.h \
 	inc/chardata.h \
 	inc/charset.h \
 	inc/dlist.h \
+	inc/ffintl.h \
 	inc/gimage.h \
 	inc/gnetwork.h \
 	inc/gwwiconv.h \
-	inc/intl.h \
 	inc/ustring.h \
 	inc/utype.h
 

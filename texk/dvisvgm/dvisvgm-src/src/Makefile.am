@@ -1,4 +1,4 @@
-:## This file is part of dvisvgm
+## This file is part of dvisvgm
 ## Copyright (C) 2005-2017 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
@@ -11,7 +11,10 @@ dvisvgm_SOURCES      = dvisvgm.cpp
 dvisvgm_LDADD = \
 	$(noinst_LIBRARIES) \
 	../libs/clipper/libclipper.a \
-	../libs/xxHash/libxxhash.a
+	../libs/xxHash/libxxhash.a \
+	$(FREETYPE_LIBS) \
+	$(FONTFORGE_LIBS) \
+	$(ZLIB_LIBS)
 
 if ENABLE_WOFF
 dvisvgm_LDADD += \
@@ -20,16 +23,7 @@ dvisvgm_LDADD += \
 	../libs/woff2/brotli/libbrotli.a
 endif
 
-dvisvgm_LDADD += \
-	$(KPATHSEA_LIBS) \
-	$(POTRACE_LIBS) \
-	$(FREETYPE2_LIBS) \
-	$(FONTFORGE_LIBS) \
-	$(ZLIB_LIBS) \
-	$(LIBGS_LIBS)
-
 dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
-dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 
 libdvisvgm_a_SOURCES = \
 	AGLTable.hpp \
@@ -237,42 +231,29 @@ endif
 
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 
-dvisvgm_srcdir = $(top_srcdir)/dvisvgm-src
-
-AM_CFLAGS = $(WARNING_CFLAGS) \
-	$(ZLIB_INCLUDES) \
+AM_CFLAGS = -Wall \
+	$(ZLIB_CFLAGS) \
 	$(CODE_COVERAGE_CFLAGS)
 
-AM_CXXFLAGS = $(WARNING_CFLAGS) -Wnon-virtual-dtor \
-	-I$(dvisvgm_srcdir)/libs/clipper \
-	-I$(dvisvgm_srcdir)/libs/xxHash
+AM_CXXFLAGS = -Wall -Wnon-virtual-dtor \
+	-I$(top_srcdir)/libs/clipper \
+	-I$(top_srcdir)/libs/xxHash \
+	$(FREETYPE_CFLAGS) \
+	$(ZLIB_CFLAGS) \
+	$(CODE_COVERAGE_CFLAGS)
 
 if ENABLE_WOFF
 AM_CFLAGS +=  \
-	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
-	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
+	-I$(top_srcdir)/libs/ff-woff/fontforge \
+	-I$(top_srcdir)/libs/ff-woff/inc
 
 AM_CXXFLAGS +=  \
-	-I$(dvisvgm_srcdir)/libs/woff2/brotli/enc \
-	-I$(dvisvgm_srcdir)/libs/woff2/src
+	-I$(top_srcdir)/libs/woff2/brotli/enc \
+	-I$(top_srcdir)/libs/woff2/src
 endif
-
-AM_CXXFLAGS += \
-	$(KPATHSEA_INCLUDES) \
-	$(POTRACE_INCLUDES) \
-	$(FREETYPE2_INCLUDES) \
-	$(ZLIB_INCLUDES) \
-	$(LIBGS_INCLUDES) \
-	$(CODE_COVERAGE_CFLAGS)
-
-if WIN32
-AM_CXXFLAGS += -DTEXLIVEWIN32
-endif WIN32
 
 AM_LDFLAGS = $(CODE_COVERAGE_LDFLAGS)
 
-if ! TEXLIVE_BUILD
-# TL: do not try to rebuild these source files.
 # the command-line parser class is generated from options.xml by opt2cpp
 $(srcdir)/CommandLine.hpp: options.xml
 	rm -f $@ $*.hpp
@@ -285,17 +266,7 @@ $(srcdir)/psdefs.cpp: psdefs.ps
 	fi
 
 psdefs.ps: ;
-endif ! TEXLIVE_BUILD
 
 @CODE_COVERAGE_RULES@
 
 CLEANFILES = *.gcda *.gcno
-
-## Rebuild libkpathsea
-@KPATHSEA_RULE@
-## Rebuild libpotrace
-@POTRACE_RULE@
-## Rebuild libfreetype
-@FREETYPE2_RULE@
-## Rebuild libz
-@ZLIB_RULE@
