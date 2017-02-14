@@ -142,7 +142,7 @@ static void (lua_remove)(lua_State *L, int idx) {
 #elif defined __powerpc64__
 # define ARCH_PPC64
 #else
-# error
+# define UNSUPPORTED_ARCH
 #endif
 
 
