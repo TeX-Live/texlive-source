@@ -2,6 +2,51 @@
 This file is in the public domain.
 
 ==============================================================
+LuaTeX Release 1.0.3  was released 2017021514
+==============================================================
+
+This is a minor upgrade and probably this version will go on texlive. There are a couple
+of fixes and additions.
+- We added a few a few more helpers in the pdf namespace (like set|get]gentounicode,
+  [set|get]omitcidset and set|get]decimaldigits. Some helpers were moved from the tex
+  to the pdf namespace.
+
+- We added a build_page_insert callback for inserts so that one can for instance adapt
+  spacing on demand.
+
+- On the agenda has been some more control over word start and end in hyphenation and
+  this is now possible via hyphenationbounds. We also updated the manual with some more
+  details.
+
+- An old tracker item with respect to control over spacing around math was revived and
+  has resulted in mathsurroundmode (one can wonder how useful this is).
+
+- We improved the resolution detection in included jpeg images.
+
+
+- An ffi library has been added to luatex so that it is more in sync with luajittex. This
+  permits easy and flexible loading of libraries. Our policy is to make luatex as lean
+  as possible with no dependencies and this is a step towards that. Eventually we hope
+  to support all relevant platforms.
+
+- The glue and skip register accessors have been improved as a step in freeing the user
+  from glue spec management.
+
+- We added a few more getters and setters for nodes in order to get a more consistent
+  set.
+
+- Irrelevant fields have been removed from the status table and an engine identifier
+  has been added.
+
+- Of course there are numerous fixes and improvements but none of these have consequences
+  for the interfaces.
+
+- The manual has been updated but will be improved over time.
+
+
+
+
+==============================================================
 LuaTeX Release 0.95 for TeX Live 2016 was released 2016042515
 ==============================================================
 

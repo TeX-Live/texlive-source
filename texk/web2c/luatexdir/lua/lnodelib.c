@@ -538,7 +538,7 @@ static int lua_nodelib_direct_getcomponents(lua_State * L)
 {
     halfword n = lua_tointeger(L, 1);
     if ((n) && (type(n) == glyph_node)) {
-        lua_pushinteger(L, lig_ptr(n));
+        nodelib_pushdirect_or_nil(lig_ptr(n));
     } else {
         lua_pushnil(L);
     }
