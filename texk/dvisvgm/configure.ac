@@ -40,7 +40,6 @@ KPSE_CXX_HACK
 AC_PROG_RANLIB
 AC_LANG(C)
 
-AC_CHECK_FUNCS([ftime gettimeofday])
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
 AC_HEADER_TIOCGWINSZ
 
@@ -159,7 +158,7 @@ AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_FUNC_STAT
 AC_FUNC_VPRINTF
-AC_CHECK_FUNCS([memset strcasecmp strtol])
+AC_CHECK_FUNCS([ftime gettimeofday memset strcasecmp strtol uselocale])
 
 AC_ARG_ENABLE([woff],
 	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@no@:>@])],

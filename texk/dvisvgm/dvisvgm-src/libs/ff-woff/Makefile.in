@@ -125,12 +125,12 @@ am_libfontforge_a_OBJECTS = fontforge/alphabet.$(OBJEXT) \
 	fontforge/asmfpst.$(OBJEXT) fontforge/autohint.$(OBJEXT) \
 	fontforge/char.$(OBJEXT) fontforge/cjk.$(OBJEXT) \
 	fontforge/cvundoes.$(OBJEXT) fontforge/dumppfa.$(OBJEXT) \
-	fontforge/encoding.$(OBJEXT) fontforge/fvfonts.$(OBJEXT) \
-	fontforge/gwwiconv.$(OBJEXT) fontforge/lookups.$(OBJEXT) \
-	fontforge/macbinary.$(OBJEXT) fontforge/macenc.$(OBJEXT) \
-	fontforge/mathconstants.$(OBJEXT) fontforge/memory.$(OBJEXT) \
-	fontforge/mm.$(OBJEXT) fontforge/namelist.$(OBJEXT) \
-	fontforge/nouiutil.$(OBJEXT) \
+	fontforge/encoding.$(OBJEXT) fontforge/fflocale.$(OBJEXT) \
+	fontforge/fvfonts.$(OBJEXT) fontforge/gwwiconv.$(OBJEXT) \
+	fontforge/lookups.$(OBJEXT) fontforge/macbinary.$(OBJEXT) \
+	fontforge/macenc.$(OBJEXT) fontforge/mathconstants.$(OBJEXT) \
+	fontforge/memory.$(OBJEXT) fontforge/mm.$(OBJEXT) \
+	fontforge/namelist.$(OBJEXT) fontforge/nouiutil.$(OBJEXT) \
 	fontforge/nowakowskittfinstr.$(OBJEXT) \
 	fontforge/parsepfa.$(OBJEXT) fontforge/parsettf.$(OBJEXT) \
 	fontforge/parsettfatt.$(OBJEXT) fontforge/psread.$(OBJEXT) \
@@ -394,6 +394,8 @@ libfontforge_a_SOURCES = \
 	fontforge/edgelist2.h \
 	fontforge/encoding.c \
 	fontforge/encoding.h \
+	fontforge/fflocale.c \
+	fontforge/fflocale.h \
 	fontforge/fontforge-config.h \
 	fontforge/fontforge.h \
 	fontforge/fontforgevw.h \
@@ -520,6 +522,8 @@ fontforge/dumppfa.$(OBJEXT): fontforge/$(am__dirstamp) \
 	fontforge/$(DEPDIR)/$(am__dirstamp)
 fontforge/encoding.$(OBJEXT): fontforge/$(am__dirstamp) \
 	fontforge/$(DEPDIR)/$(am__dirstamp)
+fontforge/fflocale.$(OBJEXT): fontforge/$(am__dirstamp) \
+	fontforge/$(DEPDIR)/$(am__dirstamp)
 fontforge/fvfonts.$(OBJEXT): fontforge/$(am__dirstamp) \
 	fontforge/$(DEPDIR)/$(am__dirstamp)
 fontforge/gwwiconv.$(OBJEXT): fontforge/$(am__dirstamp) \
@@ -621,6 +625,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/cvundoes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/dumppfa.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/encoding.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/fflocale.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/fvfonts.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/gwwiconv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@fontforge/$(DEPDIR)/lookups.Po@am__quote@
