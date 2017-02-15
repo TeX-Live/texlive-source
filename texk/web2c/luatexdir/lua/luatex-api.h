@@ -189,6 +189,7 @@ extern int callback_count;
 extern int saved_callback_count;
 
 extern const char *luatex_banner;
+extern const char *engine_name;
 
 /* luastuff.h */
 
