@@ -4421,7 +4421,7 @@ test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
 
-# $Id$
+# $Id: withenable.ac 43246 2017-02-16 18:45:03Z karl $
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 ## configure options and TL libraries required for dvisvgm
 # Check whether --enable-dvisvgm was given.
