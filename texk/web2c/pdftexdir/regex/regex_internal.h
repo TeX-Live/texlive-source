@@ -1,4 +1,5 @@
 /* Extended regular expression matching and search library.
+   Copyright (C) 2017 Karl Berry <tex-live@tug.org>
    Copyright (C) 2002, 2003, 2004, 2005 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
    Contributed by Isamu Hasegawa <isamu@yamato.ibm.com>.
@@ -420,6 +421,7 @@ static unsigned int re_string_context_at (const re_string_t *input, int idx,
 #define re_string_skip_bytes(pstr,idx) ((pstr)->cur_idx += (idx))
 #define re_string_set_index(pstr,idx) ((pstr)->cur_idx = (idx))
 
+#ifndef alloca /* if alloca is already defined, fine */
 #ifdef __GNUC__
 # define alloca(size)   __builtin_alloca (size)
 # define HAVE_ALLOCA 1
@@ -430,6 +432,7 @@ static unsigned int re_string_context_at (const re_string_t *input, int idx,
 #else
 # error No alloca()
 #endif
+#endif /* not alloca */
 
 #ifndef _LIBC
 # if HAVE_ALLOCA
