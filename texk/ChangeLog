@@ -1,3 +1,7 @@
+2017-02-16  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (AC_INIT): tex-live@tug.org instead of peb.
+
 2016-01-16  Karl Berry  <karl@tug.org>
 
 	(web2c/Makefile): do not try to make the nonexistent subtexk target.
@@ -1097,3 +1101,5 @@ Thu Sep 30 14:27:17 1993  Karl Berry  (karl@cs.umb.edu)
 	* Makefile.in (*install*): Only do program directories.
 	(most targets): Add `else true' for stupid sh's.
 	* README: Update appropriately.
+
+(This ChangeLog file public domain.)
