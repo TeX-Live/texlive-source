@@ -1,3 +1,10 @@
+2017-02-16  Karl Berry  <karl@freefriends.org>
+
+	* regex/regex_internal.h (alloca) [!alloca]: do not try
+	to #define if already #defined.
+	Report from Vincent Torri on tex-live list, 7 Jul 2016 10:48:15.
+	(pdftex r765)
+
 2016-11-05  Karl Berry  <karl@tug.org>
 
 	* pdftoepdf.cc: doc fix.
@@ -7,6 +14,17 @@
 	* pdftoepdf.cc: Use zround(stemV->getNum()) instead of stemV->getInt()
 	in epdf_create_fontdescriptor(), since the value of stemV may be real
 	in general.
+
+2016-06-12  Karl Berry  <karl@freefriends.org>
+        and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* utils.c (last_match_succeeded): new static boolean.
+	(matchstrings): set it.
+	(getmatch): use it, plus check for non-NULL match_string sooner,
+	plus check that rm_eo >= rm_so.
+	Original bug report from David Carlisle,
+        http://tug.org/pipermail/tex-live/2016-June/038664.html
+        (pdftex r759)
 
 2016-06-12  Karl Berry  <karl@freefriends.org>
         and Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
@@ -336,7 +354,7 @@
 2012-08-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ptexlib.h: extern void writestreamlength(longinteger, longinteger);
-	for largefile. 
+	for largefile.
 	extern void storepacket(internalfontnumber, integer, strnumber); to
 	avoid a compiler warning.
 	* utils.c: void writestreamlength(longinteger length, longinteger offset)
@@ -421,7 +439,7 @@
 	(escape_eol): new fn, replacing print_str, now returning a string.
 
 	* writettf.c (ttf_reindex_glyphs): use %n to sscanf forms
-	uniABCD and index123. 
+	uniABCD and index123.
 
 	* mapfile.c (suppress_warn): way to avoid dup warnings.
 	
@@ -594,7 +612,7 @@
 	* pdftexextra.c (new): #include <pdftexd.h> and <lib/texmfmp.c>.
 
 	* am/pdftex.am: pdftexextra.[ch] are now distributed;
-	create {e,pdf}tex_version.h instead of {e,pdf}tex.version. 
+	create {e,pdf}tex_version.h instead of {e,pdf}tex.version.
 
 2010-12-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
@@ -803,7 +821,7 @@
 
 	* writet1.c (append_cs_return): Drop unused local variable 'k'.
 
-	* avlstuff.c (destroy_oentry, PdfObjTree_free), 
+	* avlstuff.c (destroy_oentry, PdfObjTree_free),
 	writet1.c (free_glyph_names):
 	Skip unused static functions (via #if 0 ... #endif).
 
@@ -916,7 +934,7 @@
 
 2009-06-25  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
-	* epdf.h, ttf2afm.c, writet1.c: 
+	* epdf.h, ttf2afm.c, writet1.c:
 	removed #include <kpathsea/c-proto.h>.
 	* avlstuff.c, epdf.c: removed #include <kpathsea/c-proto.h> and
 	#include <stdarg.h>.
