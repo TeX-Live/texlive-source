@@ -239,12 +239,12 @@ am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/c-auto.in \
 	$(top_srcdir)/../../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../../build-aux/missing \
 	$(top_srcdir)/../../../build-aux/ylwrap \
-	../../../build-aux/compile ../../../build-aux/config.guess \
-	../../../build-aux/config.sub ../../../build-aux/depcomp \
-	../../../build-aux/install-sh ../../../build-aux/ltmain.sh \
-	../../../build-aux/missing ../../../build-aux/texinfo.tex \
-	../../../build-aux/ylwrap ChangeLog README web2c-lexer.c \
-	web2c-parser.c web2c-parser.h
+	../../../build-aux/ar-lib ../../../build-aux/compile \
+	../../../build-aux/config.guess ../../../build-aux/config.sub \
+	../../../build-aux/depcomp ../../../build-aux/install-sh \
+	../../../build-aux/ltmain.sh ../../../build-aux/missing \
+	../../../build-aux/texinfo.tex ../../../build-aux/ylwrap \
+	ChangeLog README web2c-lexer.c web2c-parser.c web2c-parser.h
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
