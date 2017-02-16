@@ -1330,9 +1330,13 @@ $(proglib): ${top_srcdir}/lib/*.c
 	cd ../lib && $(MAKE) $(AM_MAKEFLAGS)
 
 @KPATHSEA_RULE@
+
+# $Id: bin_links.am 43248 2017-02-16 21:38:29Z karl $
+# am/bin_links.am: Makefile fragment for bindir links.
 .PHONY: install-bin-links uninstall-bin-links
 
 install-bin-links:
+@WIN32_FALSE@	$(MKDIR_P) $(DESTDIR)$(bindir)
 @WIN32_FALSE@	@cd $(DESTDIR)$(bindir) && \
 @WIN32_FALSE@	  for s in $(bin_links); do \
 @WIN32_FALSE@	    link=`echo $$s | sed 's,.*:,,'`; \
