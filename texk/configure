@@ -585,14 +585,12 @@ PACKAGE_BUGREPORT='tex-live@tug.org'
 PACKAGE_URL=''
 
 ac_unique_file="../build-aux/missing"
-enable_option_checking=no
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-CONF_SUBDIRS
 MAKE_SUBDIRS
-subdirs
+CONF_SUBDIRS
 WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
@@ -856,37 +854,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS'
-ac_subdirs_all='web2c
-afm2pl
-bibtex-x
-chktex
-cjkutils
-detex
-dtl
-dvi2tty
-dvidvi
-dviljk
-dvipdfm-x
-dvipng
-dvipos
-dvipsk
-dvisvgm
-gregorio
-gsftopk
-lcdf-typetools
-makeindexk
-makejvf
-mendexk
-musixtnt
-ps2pk
-psutils
-seetexk
-tex4htk
-ttf2pk2
-ttfdump
-upmendex
-xdvik
-texlive'
+
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -4421,7 +4389,6 @@ test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
 
-# $Id: withenable.ac 43246 2017-02-16 18:45:03Z karl $
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 ## configure options and TL libraries required for dvisvgm
 # Check whether --enable-dvisvgm was given.
@@ -6427,259 +6394,133 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeXk programs to build" >&5
 $as_echo_n "checking for TeXk programs to build... " >&6; }
-MAKE_SUBDIRS=
 CONF_SUBDIRS=
-if test -x $srcdir/web2c/configure; then
-  test "x$enable_web2c" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
+MAKE_SUBDIRS=
+if test -x $srcdir/web2c/configure && test "x$enable_web2c" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS web2c"
-  if false; then
-    subdirs="$subdirs web2c"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
 fi
-if test -x $srcdir/afm2pl/configure; then
-  test "x$enable_afm2pl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
+if test -x $srcdir/afm2pl/configure && test "x$enable_afm2pl" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS afm2pl"
-  if false; then
-    subdirs="$subdirs afm2pl"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
 fi
-if test -x $srcdir/bibtex-x/configure; then
-  test "x$enable_bibtex_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
+if test -x $srcdir/bibtex-x/configure && test "x$enable_bibtex_x" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS bibtex-x"
-  if false; then
-    subdirs="$subdirs bibtex-x"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
 fi
-if test -x $srcdir/chktex/configure; then
-  test "x$enable_chktex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
+if test -x $srcdir/chktex/configure && test "x$enable_chktex" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS chktex"
-  if false; then
-    subdirs="$subdirs chktex"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
 fi
-if test -x $srcdir/cjkutils/configure; then
-  test "x$enable_cjkutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
+if test -x $srcdir/cjkutils/configure && test "x$enable_cjkutils" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS cjkutils"
-  if false; then
-    subdirs="$subdirs cjkutils"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
 fi
-if test -x $srcdir/detex/configure; then
-  test "x$enable_detex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
+if test -x $srcdir/detex/configure && test "x$enable_detex" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS detex"
-  if false; then
-    subdirs="$subdirs detex"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
 fi
-if test -x $srcdir/dtl/configure; then
-  test "x$enable_dtl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
+if test -x $srcdir/dtl/configure && test "x$enable_dtl" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dtl"
-  if false; then
-    subdirs="$subdirs dtl"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
 fi
-if test -x $srcdir/dvi2tty/configure; then
-  test "x$enable_dvi2tty" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
+if test -x $srcdir/dvi2tty/configure && test "x$enable_dvi2tty" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvi2tty"
-  if false; then
-    subdirs="$subdirs dvi2tty"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
 fi
-if test -x $srcdir/dvidvi/configure; then
-  test "x$enable_dvidvi" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
+if test -x $srcdir/dvidvi/configure && test "x$enable_dvidvi" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvidvi"
-  if false; then
-    subdirs="$subdirs dvidvi"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
 fi
-if test -x $srcdir/dviljk/configure; then
-  test "x$enable_dviljk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
+if test -x $srcdir/dviljk/configure && test "x$enable_dviljk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dviljk"
-  if false; then
-    subdirs="$subdirs dviljk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
 fi
-if test -x $srcdir/dvipdfm-x/configure; then
-  test "x$enable_dvipdfm_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
+if test -x $srcdir/dvipdfm-x/configure && test "x$enable_dvipdfm_x" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvipdfm-x"
-  if false; then
-    subdirs="$subdirs dvipdfm-x"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
 fi
-if test -x $srcdir/dvipng/configure; then
-  test "x$enable_dvipng" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
+if test -x $srcdir/dvipng/configure && test "x$enable_dvipng" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvipng"
-  if false; then
-    subdirs="$subdirs dvipng"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
 fi
-if test -x $srcdir/dvipos/configure; then
-  test "x$enable_dvipos" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
+if test -x $srcdir/dvipos/configure && test "x$enable_dvipos" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvipos"
-  if false; then
-    subdirs="$subdirs dvipos"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
 fi
-if test -x $srcdir/dvipsk/configure; then
-  test "x$enable_dvipsk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
+if test -x $srcdir/dvipsk/configure && test "x$enable_dvipsk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvipsk"
-  if false; then
-    subdirs="$subdirs dvipsk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
 fi
-if test -x $srcdir/dvisvgm/configure; then
-  test "x$enable_dvisvgm" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
+if test -x $srcdir/dvisvgm/configure && test "x$enable_dvisvgm" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS dvisvgm"
-  if false; then
-    subdirs="$subdirs dvisvgm"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
 fi
-if test -x $srcdir/gregorio/configure; then
-  test "x$enable_gregorio" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gregorio"
+if test -x $srcdir/gregorio/configure && test "x$enable_gregorio" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS gregorio"
-  if false; then
-    subdirs="$subdirs gregorio"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS gregorio"
 fi
-if test -x $srcdir/gsftopk/configure; then
-  test "x$enable_gsftopk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
+if test -x $srcdir/gsftopk/configure && test "x$enable_gsftopk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS gsftopk"
-  if false; then
-    subdirs="$subdirs gsftopk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
 fi
-if test -x $srcdir/lcdf-typetools/configure; then
-  test "x$enable_lcdf_typetools" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
+if test -x $srcdir/lcdf-typetools/configure && test "x$enable_lcdf_typetools" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS lcdf-typetools"
-  if false; then
-    subdirs="$subdirs lcdf-typetools"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
 fi
-if test -x $srcdir/makeindexk/configure; then
-  test "x$enable_makeindexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
+if test -x $srcdir/makeindexk/configure && test "x$enable_makeindexk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS makeindexk"
-  if false; then
-    subdirs="$subdirs makeindexk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
 fi
-if test -x $srcdir/makejvf/configure; then
-  test "x$enable_makejvf" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
+if test -x $srcdir/makejvf/configure && test "x$enable_makejvf" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS makejvf"
-  if false; then
-    subdirs="$subdirs makejvf"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
 fi
-if test -x $srcdir/mendexk/configure; then
-  test "x$enable_mendexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
+if test -x $srcdir/mendexk/configure && test "x$enable_mendexk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS mendexk"
-  if false; then
-    subdirs="$subdirs mendexk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
 fi
-if test -x $srcdir/musixtnt/configure; then
-  test "x$enable_musixtnt" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS musixtnt"
+if test -x $srcdir/musixtnt/configure && test "x$enable_musixtnt" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS musixtnt"
-  if false; then
-    subdirs="$subdirs musixtnt"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS musixtnt"
 fi
-if test -x $srcdir/ps2pk/configure; then
-  test "x$enable_ps2pk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pk"
+if test -x $srcdir/ps2pk/configure && test "x$enable_ps2pk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS ps2pk"
-  if false; then
-    subdirs="$subdirs ps2pk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pk"
 fi
-if test -x $srcdir/psutils/configure; then
-  test "x$enable_psutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS psutils"
+if test -x $srcdir/psutils/configure && test "x$enable_psutils" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS psutils"
-  if false; then
-    subdirs="$subdirs psutils"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS psutils"
 fi
-if test -x $srcdir/seetexk/configure; then
-  test "x$enable_seetexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
+if test -x $srcdir/seetexk/configure && test "x$enable_seetexk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS seetexk"
-  if false; then
-    subdirs="$subdirs seetexk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
 fi
-if test -x $srcdir/tex4htk/configure; then
-  test "x$enable_tex4htk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
+if test -x $srcdir/tex4htk/configure && test "x$enable_tex4htk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS tex4htk"
-  if false; then
-    subdirs="$subdirs tex4htk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
 fi
-if test -x $srcdir/ttf2pk2/configure; then
-  test "x$enable_ttf2pk2" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
+if test -x $srcdir/ttf2pk2/configure && test "x$enable_ttf2pk2" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk2"
-  if false; then
-    subdirs="$subdirs ttf2pk2"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
 fi
-if test -x $srcdir/ttfdump/configure; then
-  test "x$enable_ttfdump" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
+if test -x $srcdir/ttfdump/configure && test "x$enable_ttfdump" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS ttfdump"
-  if false; then
-    subdirs="$subdirs ttfdump"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
 fi
-if test -x $srcdir/upmendex/configure; then
-  test "x$enable_upmendex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS upmendex"
+if test -x $srcdir/upmendex/configure && test "x$enable_upmendex" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS upmendex"
-  if false; then
-    subdirs="$subdirs upmendex"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS upmendex"
 fi
-if test -x $srcdir/xdvik/configure; then
-  test "x$enable_xdvik" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
+if test -x $srcdir/xdvik/configure && test "x$enable_xdvik" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS xdvik"
-  if false; then
-    subdirs="$subdirs xdvik"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
 fi
-if test -x $srcdir/texlive/configure; then
-  test "x$enable_texlive" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
+if test -x $srcdir/texlive/configure && test "x$enable_texlive" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS texlive"
-  if false; then
-    subdirs="$subdirs texlive"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
@@ -7989,151 +7830,6 @@ if test "$no_create" != yes; then
   # Use ||, not &&, to avoid exiting from the if with $? = 1, which
   # would make configure fail if this is the last instruction.
   $ac_cs_success || as_fn_exit 1
-fi
-
-#
-# CONFIG_SUBDIRS section.
-#
-if test "$no_recursion" != yes; then
-
-  # Remove --cache-file, --srcdir, and --disable-option-checking arguments
-  # so they do not pile up.
-  ac_sub_configure_args=
-  ac_prev=
-  eval "set x $ac_configure_args"
-  shift
-  for ac_arg
-  do
-    if test -n "$ac_prev"; then
-      ac_prev=
-      continue
-    fi
-    case $ac_arg in
-    -cache-file | --cache-file | --cache-fil | --cache-fi \
-    | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
-      ac_prev=cache_file ;;
-    -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
-    | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* \
-    | --c=*)
-      ;;
-    --config-cache | -C)
-      ;;
-    -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
-      ac_prev=srcdir ;;
-    -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
-      ;;
-    -prefix | --prefix | --prefi | --pref | --pre | --pr | --p)
-      ac_prev=prefix ;;
-    -prefix=* | --prefix=* | --prefi=* | --pref=* | --pre=* | --pr=* | --p=*)
-      ;;
-    --disable-option-checking)
-      ;;
-    *)
-      case $ac_arg in
-      *\'*) ac_arg=`$as_echo "$ac_arg" | sed "s/'/'\\\\\\\\''/g"` ;;
-      esac
-      as_fn_append ac_sub_configure_args " '$ac_arg'" ;;
-    esac
-  done
-
-  # Always prepend --prefix to ensure using the same prefix
-  # in subdir configurations.
-  ac_arg="--prefix=$prefix"
-  case $ac_arg in
-  *\'*) ac_arg=`$as_echo "$ac_arg" | sed "s/'/'\\\\\\\\''/g"` ;;
-  esac
-  ac_sub_configure_args="'$ac_arg' $ac_sub_configure_args"
-
-  # Pass --silent
-  if test "$silent" = yes; then
-    ac_sub_configure_args="--silent $ac_sub_configure_args"
-  fi
-
-  # Always prepend --disable-option-checking to silence warnings, since
-  # different subdirs can have different --enable and --with options.
-  ac_sub_configure_args="--disable-option-checking $ac_sub_configure_args"
-
-  ac_popdir=`pwd`
-  for ac_dir in : $subdirs; do test "x$ac_dir" = x: && continue
-
-    # Do not complain, so a configure script can configure whichever
-    # parts of a large source tree are present.
-    test -d "$srcdir/$ac_dir" || continue
-
-    ac_msg="=== configuring in $ac_dir (`pwd`/$ac_dir)"
-    $as_echo "$as_me:${as_lineno-$LINENO}: $ac_msg" >&5
-    $as_echo "$ac_msg" >&6
-    as_dir="$ac_dir"; as_fn_mkdir_p
-    ac_builddir=.
-
-case "$ac_dir" in
-.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
-*)
-  ac_dir_suffix=/`$as_echo "$ac_dir" | sed 's|^\.[\\/]||'`
-  # A ".." for each directory in $ac_dir_suffix.
-  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
-  case $ac_top_builddir_sub in
-  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
-  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
-  esac ;;
-esac
-ac_abs_top_builddir=$ac_pwd
-ac_abs_builddir=$ac_pwd$ac_dir_suffix
-# for backward compatibility:
-ac_top_builddir=$ac_top_build_prefix
-
-case $srcdir in
-  .)  # We are building in place.
-    ac_srcdir=.
-    ac_top_srcdir=$ac_top_builddir_sub
-    ac_abs_top_srcdir=$ac_pwd ;;
-  [\\/]* | ?:[\\/]* )  # Absolute name.
-    ac_srcdir=$srcdir$ac_dir_suffix;
-    ac_top_srcdir=$srcdir
-    ac_abs_top_srcdir=$srcdir ;;
-  *) # Relative name.
-    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
-    ac_top_srcdir=$ac_top_build_prefix$srcdir
-    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
-esac
-ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
-
-
-    cd "$ac_dir"
-
-    # Check for guested configure; otherwise get Cygnus style configure.
-    if test -f "$ac_srcdir/configure.gnu"; then
-      ac_sub_configure=$ac_srcdir/configure.gnu
-    elif test -f "$ac_srcdir/configure"; then
-      ac_sub_configure=$ac_srcdir/configure
-    elif test -f "$ac_srcdir/configure.in"; then
-      # This should be Cygnus configure.
-      ac_sub_configure=$ac_aux_dir/configure
-    else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: no configuration information is in $ac_dir" >&5
-$as_echo "$as_me: WARNING: no configuration information is in $ac_dir" >&2;}
-      ac_sub_configure=
-    fi
-
-    # The recursion is here.
-    if test -n "$ac_sub_configure"; then
-      # Make the cache file name correct relative to the subdirectory.
-      case $cache_file in
-      [\\/]* | ?:[\\/]* ) ac_sub_cache_file=$cache_file ;;
-      *) # Relative name.
-	ac_sub_cache_file=$ac_top_build_prefix$cache_file ;;
-      esac
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: running $SHELL $ac_sub_configure $ac_sub_configure_args --cache-file=$ac_sub_cache_file --srcdir=$ac_srcdir" >&5
-$as_echo "$as_me: running $SHELL $ac_sub_configure $ac_sub_configure_args --cache-file=$ac_sub_cache_file --srcdir=$ac_srcdir" >&6;}
-      # The eval makes quoting arguments work.
-      eval "\$SHELL \"\$ac_sub_configure\" $ac_sub_configure_args \
-	   --cache-file=\"\$ac_sub_cache_file\" --srcdir=\"\$ac_srcdir\"" ||
-	as_fn_error $? "$ac_sub_configure failed for $ac_dir" "$LINENO" 5
-    fi
-
-    cd "$ac_popdir"
-  done
 fi
 if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5

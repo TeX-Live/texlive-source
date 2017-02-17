@@ -1,4 +1,3 @@
-# $Id$
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 dnl
 dnl Copyright 2017      Karl Berry <tex-live@tug.org>

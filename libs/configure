@@ -585,14 +585,12 @@ PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
 ac_unique_file="../build-aux/missing"
-enable_option_checking=no
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-CONF_SUBDIRS
 MAKE_SUBDIRS
-subdirs
+CONF_SUBDIRS
 WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
@@ -856,25 +854,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS'
-ac_subdirs_all='harfbuzz
-icu
-teckit
-graphite2
-zziplib
-xpdf
-poppler
-mpfr
-gmp
-cairo
-pixman
-potrace
-gd
-freetype2
-libpng
-libpaper
-luajit
-lua52
-zlib'
+
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -4409,7 +4389,6 @@ test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
 
-# $Id: withenable.ac 43246 2017-02-16 18:45:03Z karl $
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 ## configure options and TL libraries required for dvisvgm
 # Check whether --enable-dvisvgm was given.
@@ -6415,163 +6394,85 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for generic libraries to build" >&5
 $as_echo_n "checking for generic libraries to build... " >&6; }
-MAKE_SUBDIRS=
 CONF_SUBDIRS=
-if test -x $srcdir/harfbuzz/configure; then
-  test "x$with_system_harfbuzz" != xyes && test "x$need_harfbuzz" = xyes && MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
+MAKE_SUBDIRS=
+if test -x $srcdir/harfbuzz/configure && test "x$with_system_harfbuzz" != xyes && test "x$need_harfbuzz" = xyes; then
   CONF_SUBDIRS="harfbuzz $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs harfbuzz"
-
-  fi
+  MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/icu/configure; then
-  test "x$with_system_icu" != xyes && test "x$need_icu" = xyes && MAKE_SUBDIRS="icu $MAKE_SUBDIRS"
+if test -x $srcdir/icu/configure && test "x$with_system_icu" != xyes && test "x$need_icu" = xyes; then
   CONF_SUBDIRS="icu $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs icu"
-
-  fi
+  MAKE_SUBDIRS="icu $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/teckit/configure; then
-  test "x$with_system_teckit" != xyes && test "x$need_teckit" = xyes && MAKE_SUBDIRS="teckit $MAKE_SUBDIRS"
+if test -x $srcdir/teckit/configure && test "x$with_system_teckit" != xyes && test "x$need_teckit" = xyes; then
   CONF_SUBDIRS="teckit $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs teckit"
-
-  fi
+  MAKE_SUBDIRS="teckit $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/graphite2/configure; then
-  test "x$with_system_graphite2" != xyes && test "x$need_graphite2" = xyes && MAKE_SUBDIRS="graphite2 $MAKE_SUBDIRS"
+if test -x $srcdir/graphite2/configure && test "x$with_system_graphite2" != xyes && test "x$need_graphite2" = xyes; then
   CONF_SUBDIRS="graphite2 $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs graphite2"
-
-  fi
+  MAKE_SUBDIRS="graphite2 $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/zziplib/configure; then
-  test "x$with_system_zziplib" != xyes && test "x$need_zziplib" = xyes && MAKE_SUBDIRS="zziplib $MAKE_SUBDIRS"
+if test -x $srcdir/zziplib/configure && test "x$with_system_zziplib" != xyes && test "x$need_zziplib" = xyes; then
   CONF_SUBDIRS="zziplib $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs zziplib"
-
-  fi
+  MAKE_SUBDIRS="zziplib $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/xpdf/configure; then
-  test "x$with_system_xpdf" != xyes && test "x$need_xpdf" = xyes && MAKE_SUBDIRS="xpdf $MAKE_SUBDIRS"
+if test -x $srcdir/xpdf/configure && test "x$with_system_xpdf" != xyes && test "x$need_xpdf" = xyes; then
   CONF_SUBDIRS="xpdf $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs xpdf"
-
-  fi
+  MAKE_SUBDIRS="xpdf $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/poppler/configure; then
-  test "x$with_system_poppler" != xyes && test "x$need_poppler" = xyes && MAKE_SUBDIRS="poppler $MAKE_SUBDIRS"
+if test -x $srcdir/poppler/configure && test "x$with_system_poppler" != xyes && test "x$need_poppler" = xyes; then
   CONF_SUBDIRS="poppler $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs poppler"
-
-  fi
+  MAKE_SUBDIRS="poppler $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/mpfr/configure; then
-  test "x$with_system_mpfr" != xyes && test "x$need_mpfr" = xyes && MAKE_SUBDIRS="mpfr $MAKE_SUBDIRS"
+if test -x $srcdir/mpfr/configure && test "x$with_system_mpfr" != xyes && test "x$need_mpfr" = xyes; then
   CONF_SUBDIRS="mpfr $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs mpfr"
-
-  fi
+  MAKE_SUBDIRS="mpfr $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/gmp/configure; then
-  test "x$with_system_gmp" != xyes && test "x$need_gmp" = xyes && MAKE_SUBDIRS="gmp $MAKE_SUBDIRS"
+if test -x $srcdir/gmp/configure && test "x$with_system_gmp" != xyes && test "x$need_gmp" = xyes; then
   CONF_SUBDIRS="gmp $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs gmp"
-
-  fi
+  MAKE_SUBDIRS="gmp $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/cairo/configure; then
-  test "x$with_system_cairo" != xyes && test "x$need_cairo" = xyes && MAKE_SUBDIRS="cairo $MAKE_SUBDIRS"
+if test -x $srcdir/cairo/configure && test "x$with_system_cairo" != xyes && test "x$need_cairo" = xyes; then
   CONF_SUBDIRS="cairo $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs cairo"
-
-  fi
+  MAKE_SUBDIRS="cairo $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/pixman/configure; then
-  test "x$with_system_pixman" != xyes && test "x$need_pixman" = xyes && MAKE_SUBDIRS="pixman $MAKE_SUBDIRS"
+if test -x $srcdir/pixman/configure && test "x$with_system_pixman" != xyes && test "x$need_pixman" = xyes; then
   CONF_SUBDIRS="pixman $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs pixman"
-
-  fi
+  MAKE_SUBDIRS="pixman $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/potrace/configure; then
-  test "x$with_system_potrace" != xyes && test "x$need_potrace" = xyes && MAKE_SUBDIRS="potrace $MAKE_SUBDIRS"
+if test -x $srcdir/potrace/configure && test "x$with_system_potrace" != xyes && test "x$need_potrace" = xyes; then
   CONF_SUBDIRS="potrace $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs potrace"
-
-  fi
+  MAKE_SUBDIRS="potrace $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/gd/configure; then
-  test "x$with_system_gd" != xyes && test "x$need_gd" = xyes && MAKE_SUBDIRS="gd $MAKE_SUBDIRS"
+if test -x $srcdir/gd/configure && test "x$with_system_gd" != xyes && test "x$need_gd" = xyes; then
   CONF_SUBDIRS="gd $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs gd"
-
-  fi
+  MAKE_SUBDIRS="gd $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/freetype2/configure; then
-  test "x$with_system_freetype2" != xyes && test "x$need_freetype2" = xyes && MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"
+if test -x $srcdir/freetype2/configure && test "x$with_system_freetype2" != xyes && test "x$need_freetype2" = xyes; then
   CONF_SUBDIRS="freetype2 $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs freetype2"
-
-  fi
+  MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/libpng/configure; then
-  test "x$with_system_libpng" != xyes && test "x$need_libpng" = xyes && MAKE_SUBDIRS="libpng $MAKE_SUBDIRS"
+if test -x $srcdir/libpng/configure && test "x$with_system_libpng" != xyes && test "x$need_libpng" = xyes; then
   CONF_SUBDIRS="libpng $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs libpng"
-
-  fi
+  MAKE_SUBDIRS="libpng $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/libpaper/configure; then
-  test "x$with_system_libpaper" != xyes && test "x$need_libpaper" = xyes && MAKE_SUBDIRS="libpaper $MAKE_SUBDIRS"
+if test -x $srcdir/libpaper/configure && test "x$with_system_libpaper" != xyes && test "x$need_libpaper" = xyes; then
   CONF_SUBDIRS="libpaper $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs libpaper"
-
-  fi
+  MAKE_SUBDIRS="libpaper $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/luajit/configure; then
-  test "x$with_system_luajit" != xyes && test "x$need_luajit" = xyes && MAKE_SUBDIRS="luajit $MAKE_SUBDIRS"
+if test -x $srcdir/luajit/configure && test "x$with_system_luajit" != xyes && test "x$need_luajit" = xyes; then
   CONF_SUBDIRS="luajit $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs luajit"
-
-  fi
+  MAKE_SUBDIRS="luajit $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/lua52/configure; then
-  test "x$with_system_lua52" != xyes && test "x$need_lua52" = xyes && MAKE_SUBDIRS="lua52 $MAKE_SUBDIRS"
+if test -x $srcdir/lua52/configure && test "x$with_system_lua52" != xyes && test "x$need_lua52" = xyes; then
   CONF_SUBDIRS="lua52 $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs lua52"
-
-  fi
+  MAKE_SUBDIRS="lua52 $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/zlib/configure; then
-  test "x$with_system_zlib" != xyes && test "x$need_zlib" = xyes && MAKE_SUBDIRS="zlib $MAKE_SUBDIRS"
+if test -x $srcdir/zlib/configure && test "x$with_system_zlib" != xyes && test "x$need_zlib" = xyes; then
   CONF_SUBDIRS="zlib $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs zlib"
-
-  fi
+  MAKE_SUBDIRS="zlib $MAKE_SUBDIRS"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
@@ -7881,151 +7782,6 @@ if test "$no_create" != yes; then
   # Use ||, not &&, to avoid exiting from the if with $? = 1, which
   # would make configure fail if this is the last instruction.
   $ac_cs_success || as_fn_exit 1
-fi
-
-#
-# CONFIG_SUBDIRS section.
-#
-if test "$no_recursion" != yes; then
-
-  # Remove --cache-file, --srcdir, and --disable-option-checking arguments
-  # so they do not pile up.
-  ac_sub_configure_args=
-  ac_prev=
-  eval "set x $ac_configure_args"
-  shift
-  for ac_arg
-  do
-    if test -n "$ac_prev"; then
-      ac_prev=
-      continue
-    fi
-    case $ac_arg in
-    -cache-file | --cache-file | --cache-fil | --cache-fi \
-    | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
-      ac_prev=cache_file ;;
-    -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
-    | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* \
-    | --c=*)
-      ;;
-    --config-cache | -C)
-      ;;
-    -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
-      ac_prev=srcdir ;;
-    -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
-      ;;
-    -prefix | --prefix | --prefi | --pref | --pre | --pr | --p)
-      ac_prev=prefix ;;
-    -prefix=* | --prefix=* | --prefi=* | --pref=* | --pre=* | --pr=* | --p=*)
-      ;;
-    --disable-option-checking)
-      ;;
-    *)
-      case $ac_arg in
-      *\'*) ac_arg=`$as_echo "$ac_arg" | sed "s/'/'\\\\\\\\''/g"` ;;
-      esac
-      as_fn_append ac_sub_configure_args " '$ac_arg'" ;;
-    esac
-  done
-
-  # Always prepend --prefix to ensure using the same prefix
-  # in subdir configurations.
-  ac_arg="--prefix=$prefix"
-  case $ac_arg in
-  *\'*) ac_arg=`$as_echo "$ac_arg" | sed "s/'/'\\\\\\\\''/g"` ;;
-  esac
-  ac_sub_configure_args="'$ac_arg' $ac_sub_configure_args"
-
-  # Pass --silent
-  if test "$silent" = yes; then
-    ac_sub_configure_args="--silent $ac_sub_configure_args"
-  fi
-
-  # Always prepend --disable-option-checking to silence warnings, since
-  # different subdirs can have different --enable and --with options.
-  ac_sub_configure_args="--disable-option-checking $ac_sub_configure_args"
-
-  ac_popdir=`pwd`
-  for ac_dir in : $subdirs; do test "x$ac_dir" = x: && continue
-
-    # Do not complain, so a configure script can configure whichever
-    # parts of a large source tree are present.
-    test -d "$srcdir/$ac_dir" || continue
-
-    ac_msg="=== configuring in $ac_dir (`pwd`/$ac_dir)"
-    $as_echo "$as_me:${as_lineno-$LINENO}: $ac_msg" >&5
-    $as_echo "$ac_msg" >&6
-    as_dir="$ac_dir"; as_fn_mkdir_p
-    ac_builddir=.
-
-case "$ac_dir" in
-.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
-*)
-  ac_dir_suffix=/`$as_echo "$ac_dir" | sed 's|^\.[\\/]||'`
-  # A ".." for each directory in $ac_dir_suffix.
-  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
-  case $ac_top_builddir_sub in
-  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
-  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
-  esac ;;
-esac
-ac_abs_top_builddir=$ac_pwd
-ac_abs_builddir=$ac_pwd$ac_dir_suffix
-# for backward compatibility:
-ac_top_builddir=$ac_top_build_prefix
-
-case $srcdir in
-  .)  # We are building in place.
-    ac_srcdir=.
-    ac_top_srcdir=$ac_top_builddir_sub
-    ac_abs_top_srcdir=$ac_pwd ;;
-  [\\/]* | ?:[\\/]* )  # Absolute name.
-    ac_srcdir=$srcdir$ac_dir_suffix;
-    ac_top_srcdir=$srcdir
-    ac_abs_top_srcdir=$srcdir ;;
-  *) # Relative name.
-    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
-    ac_top_srcdir=$ac_top_build_prefix$srcdir
-    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
-esac
-ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
-
-
-    cd "$ac_dir"
-
-    # Check for guested configure; otherwise get Cygnus style configure.
-    if test -f "$ac_srcdir/configure.gnu"; then
-      ac_sub_configure=$ac_srcdir/configure.gnu
-    elif test -f "$ac_srcdir/configure"; then
-      ac_sub_configure=$ac_srcdir/configure
-    elif test -f "$ac_srcdir/configure.in"; then
-      # This should be Cygnus configure.
-      ac_sub_configure=$ac_aux_dir/configure
-    else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: no configuration information is in $ac_dir" >&5
-$as_echo "$as_me: WARNING: no configuration information is in $ac_dir" >&2;}
-      ac_sub_configure=
-    fi
-
-    # The recursion is here.
-    if test -n "$ac_sub_configure"; then
-      # Make the cache file name correct relative to the subdirectory.
-      case $cache_file in
-      [\\/]* | ?:[\\/]* ) ac_sub_cache_file=$cache_file ;;
-      *) # Relative name.
-	ac_sub_cache_file=$ac_top_build_prefix$cache_file ;;
-      esac
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: running $SHELL $ac_sub_configure $ac_sub_configure_args --cache-file=$ac_sub_cache_file --srcdir=$ac_srcdir" >&5
-$as_echo "$as_me: running $SHELL $ac_sub_configure $ac_sub_configure_args --cache-file=$ac_sub_cache_file --srcdir=$ac_srcdir" >&6;}
-      # The eval makes quoting arguments work.
-      eval "\$SHELL \"\$ac_sub_configure\" $ac_sub_configure_args \
-	   --cache-file=\"\$ac_sub_cache_file\" --srcdir=\"\$ac_srcdir\"" ||
-	as_fn_error $? "$ac_sub_configure failed for $ac_dir" "$LINENO" 5
-    fi
-
-    cd "$ac_popdir"
-  done
 fi
 if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5

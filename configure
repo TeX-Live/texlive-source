@@ -637,14 +637,14 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+subdirs
 cross_FALSE
 cross_TRUE
 ICU_CONFIG
 FT2_CONFIG
 PKG_CONFIG
-CONF_SUBDIRS
 MAKE_SUBDIRS
-subdirs
+CONF_SUBDIRS
 CXXCPP
 WARNING_CXXFLAGS
 am__fastdepCXX_FALSE
@@ -963,9 +963,7 @@ CXX
 CXXFLAGS
 CCC
 CXXCPP'
-ac_subdirs_all='texk/ptexenc
-texk/kpathsea
-auxdir/auxsub libs utils texk'
+ac_subdirs_all='auxdir/auxsub libs utils texk'
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -5211,7 +5209,6 @@ test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
 
-# $Id: withenable.ac 43246 2017-02-16 18:45:03Z karl $
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 ## configure options and TL libraries required for dvisvgm
 # Check whether --enable-dvisvgm was given.
@@ -21079,27 +21076,17 @@ $as_echo "$as_me:     which requires to locate the <kpathsea/paths.h> header fil
   fi
 fi
 
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TeX specific libraries to build" >&5
 $as_echo_n "checking for TeX specific libraries to build... " >&6; }
-MAKE_SUBDIRS=
 CONF_SUBDIRS=
-if test -x $srcdir/texk/ptexenc/configure; then
-  test "x$with_system_ptexenc" != xyes && test "x$need_ptexenc" = xyes && MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
+MAKE_SUBDIRS=
+if test -x $srcdir/texk/ptexenc/configure && test "x$with_system_ptexenc" != xyes && test "x$need_ptexenc" = xyes; then
   CONF_SUBDIRS="texk/ptexenc $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs texk/ptexenc"
-
-  fi
+  MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
 fi
-if test -x $srcdir/texk/kpathsea/configure; then
-  test "x$with_system_kpathsea" != xyes && test "x$need_kpathsea" = xyes && MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
+if test -x $srcdir/texk/kpathsea/configure && test "x$with_system_kpathsea" != xyes && test "x$need_kpathsea" = xyes; then
   CONF_SUBDIRS="texk/kpathsea $CONF_SUBDIRS"
-  if false; then
-    subdirs="$subdirs texk/kpathsea"
-
-  fi
+  MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
@@ -22153,6 +22140,8 @@ else
   cross_TRUE='#'
   cross_FALSE=
 fi
+
+
 
 
 subdirs="$subdirs auxdir/auxsub libs utils texk"
