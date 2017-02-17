@@ -1,3 +1,65 @@
+commit baad9bd0406f63cffa8054c5831ccc3cb5d207e3
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Feb 15 23:05:55 2017 +0100
+
+    Update C years
+
+ poppler/Annot.cc           | 2 +-
+ poppler/OptionalContent.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit 83d4d3ee56b22ef4c0899514abcfc4c220fb4031
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Feb 13 20:47:05 2017 +0100
+
+    Properly initialize some RichMedia variables in corner cases
+
+    Bug #99767
+
+ poppler/Annot.cc | 31 ++++++++++++++-----------------
+ 1 file changed, 14 insertions(+), 17 deletions(-)
+
+commit 8de4b3595a80d8880b842599cb25ab5fd5367689
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Feb 13 01:15:04 2017 +0100
+
+    Fix assert on reading some OCGs
+
+    Check the object is a ref before calling getRef
+
+    Bug #99768
+
+ poppler/OptionalContent.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 0b7c235c3ebe2a7a8d7bd6bfb22e605bf770a022
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Thu Feb 9 21:23:04 2017 +1030
+
+    pdftocairo.1: typo
+
+ utils/pdftocairo.1 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit e7aad35dcba3449bc8a56de070fea7e09cb64833
+Author: Hubert Figuière <hub@figuiere.net>
+Date:   Tue Jan 17 23:58:00 2017 -0500
+
+    Qt: fix memory leaks found when running tests
+
+    -cleanup objects in tests to fix memory leaks.
+    -optcontent was leaking the headers items
+
+    Bug #99449
+
+ qt4/src/poppler-optcontent-private.h | 2 ++
+ qt4/src/poppler-optcontent.cc        | 3 +++
+ qt4/tests/check_links.cpp            | 2 ++
+ qt5/src/poppler-optcontent-private.h | 2 ++
+ qt5/src/poppler-optcontent.cc        | 3 +++
+ qt5/tests/check_links.cpp            | 2 ++
+ 6 files changed, 14 insertions(+)
+
 commit dc8edecc437f33305257b6cb208dc2da367b7868
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Sun Jan 15 18:27:49 2017 +0100

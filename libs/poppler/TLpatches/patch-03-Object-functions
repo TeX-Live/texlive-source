@@ -1,6 +1,6 @@
-diff -ur poppler-0.51.0.orig/poppler/Object.h poppler-0.51.0/poppler/Object.h
---- poppler-0.51.0.orig/poppler/Object.h	Fri Dec 16 04:08:06 2016
-+++ poppler-0.51.0/poppler/Object.h	Mon Jan 16 08:31:27 2017
+diff -ur poppler-0.52.0.orig/poppler/Object.h poppler-0.52.0/poppler/Object.h
+--- poppler-0.52.0.orig/poppler/Object.h	Tue Jan 17 06:36:58 2017
++++ poppler-0.52.0/poppler/Object.h	Fri Feb 17 08:57:36 2017
 @@ -148,7 +148,7 @@
    Object *initStream(Stream *streamA);
    Object *initRef(int numA, int genA)

@@ -1,3 +1,19 @@
+Release 0.52.0
+        core:
+         * Fix assert on reading some OCGs. Bug #99768
+         * Properly initialize some RichMedia variables in corner cases. Bug #99767
+
+        qt4:
+         * optcontent structure was leaking the headers items. Bug #99449
+         * Cleanup objects in tests to fix memory leaks. Bug #99449
+
+        qt5:
+         * optcontent structure was leaking the headers items. Bug #99449
+         * Cleanup objects in tests to fix memory leaks. Bug #99449
+
+        utils:
+         * pdftocairo.1: Fix typo
+
 Release 0.51.0
         core:
          * Check for error from NSS in SignatureHandler construct. Bug #99363
