@@ -1,8 +1,10 @@
-Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+$Id$
+Copyright 2009-2017 Karl Berry <tex-live@tug.org>
+Copyright 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
 This directory is the central repository for Autoconf macros needed to build
-the TeX Live (TL) tree.
+the TeX Live (TL) tree. They are incorporated into the configure scripts.
 
 (1) Public macros such as libtool.m4 used to build the libraries and
 programs in the TL subdirectories libs/*/, utils/*/, and texk/*/ that are
@@ -25,7 +27,9 @@ owned by the TL tree.
 kpse-pkgs.m4: defines lists of subdirectories libs/Lib/, utils/Util/, and
 	tex/Prog/ with libraries and programs that can be built as part of
 	the TL tree.
+
 kpse-setup.m4: macros that walk through these lists to provide configure
 	options.  They depend on configure fragments */*/ac/withenable.ac
 	defining the dependencies between these libraries and programs.
 
+See also the sibling top-level am/ directory.

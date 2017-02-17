@@ -1,5 +1,7 @@
+# $Id$  (m4/kpse-setup.m4)
 # Private macros for the TeX Live (TL) tree.
-# Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2017      Karl Berry <tex-live@tug.org>
+# Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -8,12 +10,13 @@
 # KPSE_SETUP(TOP-LEVEL)
 # ---------------------
 # Initialize path prefix kpse_TL to top-level TeX Live (TL) directory.
-# Sinclude all withenable.ac files providing:
-#   configure options --with-system-LIB, --with-LIB-includes, and --with-LIB-libdir
-#     for libraries
-#   configure option --disable-PKG or --enable-PKG for programs
-#   additional program specific configure options (if any)
-#   library dependencies for programs and libraries
+# Sinclude all pkgdir/ac/withenable.ac files, which are supposed to provide:
+#   configure options for libraries:
+#     --with-system-LIB --with-LIB-includes --with-LIB-libdir
+#   configure options for programs:
+#     --disable-PROG --enable-PROG
+#   additional package-specific configure options, if any
+#   library dependencies for programs and libraries, if any
 AC_DEFUN([KPSE_SETUP], [dnl
 AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
@@ -262,25 +265,24 @@ m4_popdef([Kpse_add])[]dnl
 # _KPSE_RECURSE(LIST, TEXT, COND, [PREFIX])
 # -----------------------------------------
 # Internal subroutine.  Determine which of the libraries or programs in
-# kpse_LIST_pkgs to build, and set output variables MAKE_SUBDIRS and
-# CONF_SUBDIRS.  Cause 'make dist', 'configure -hr', and 'autoreconf'
-# to recurse into all existing ones.
+# kpse_LIST_pkgs to build: if a package's source directory contains a
+# configure script, and COND is true, then add to the output variables
+# MAKE_SUBDIRS and CONF_SUBDIRS.  Thus, if a package directory does not
+# exist at all, or if the package has been disabled, it will be ignored.
+#
 m4_define([_KPSE_RECURSE], [dnl
 AC_MSG_CHECKING([for $2 to build])
-MAKE_SUBDIRS=
 CONF_SUBDIRS=
+MAKE_SUBDIRS=
 KPSE_FOR_PKGS([$1], [dnl
 m4_ifdef([have_]Kpse_pkg, [dnl
-if test -x $srcdir/$4Kpse_Pkg/configure; then
-  $3 && Kpse_add([MAKE_SUBDIRS])
+if test -x $srcdir/$4Kpse_Pkg/configure && $3; then
   Kpse_add([CONF_SUBDIRS])
-  if false; then
-    AC_CONFIG_SUBDIRS($4Kpse_Pkg)
-  fi
+  Kpse_add([MAKE_SUBDIRS])
 fi
 ])[]dnl m4_ifdef
 ])
-AC_SUBST([MAKE_SUBDIRS])[]dnl
 AC_SUBST([CONF_SUBDIRS])[]dnl
+AC_SUBST([MAKE_SUBDIRS])[]dnl
 AC_MSG_RESULT([$MAKE_SUBDIRS])[]dnl
 ]) # _KPSE_RECURSE
