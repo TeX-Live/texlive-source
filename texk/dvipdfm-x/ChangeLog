@@ -1,3 +1,7 @@
+2017-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvi.c: Add possibly forgotten braces.
+
 2017-01-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* jpegimage.c: Support Exif tags 0x5110, 0x5111, and 0x5112 in order to
