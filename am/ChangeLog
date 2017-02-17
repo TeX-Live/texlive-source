@@ -1,0 +1,34 @@
+2017-02-17  Karl Berry  <karl@freefriends.org>
+
+	* recurse.am: doc fixes.
+
+2017-02-16  Karl Berry  <karl@tug.org>
+
+	* bin_links.am: $(MKDIR_P) $(DESTDIR)$(bindir) to be sure,
+	since this can end up being called first with --disable-all-pkgs.
+
+2015-02-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* dist_hook.am (new): Makefile fragment for dist-hook target.
+	* Makefile.am: Use the fragment dist_hook.am.
+
+2014-11-17  Karl Berry  <karl@tug.org>
+
+	* script_links.am: Use w32_wrapper or w64_wrapper.
+
+2013-07-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* rebuild.am: Avoid still more 'parallel make' problems.
+
+2013-07-15  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* rebuild.am: Avoid more 'parallel make' problems.
+
+2013-07-06  Peter Breitenlohner  <peb@mppmu.mpg.de>
+
+	* *.am: Moved Makefile fragments from libs/ and tekk/.
+	* rebuild.am: New Makefile fragment to rebuild a library.
+	* reconfig.am: New Makefile fragment to reconfigure.
+	* recurse.am: New Makefile fragment to recurse into subdirs.
+
+(This file public domain.)

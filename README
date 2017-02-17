@@ -4,18 +4,24 @@ Public domain.  Originally written 2005 by Karl Berry.
 For a high-level overview of building TeX Live, see
 http://tug.org/texlive/build.html.  In brief:
 
-To configure and make the source tree, run ./Build.
-To build (mostly) without optimization, run ./Build --debug.
-To make without configuring, run TL_CONFIGURE=true ./Build.
+- To configure and make the source tree, run ./Build.
+  This builds in subdirectory Work/, and installs into subdirectory inst/.
+
+- To build (mostly) without optimization, run ./Build --debug.
+
+- If the make fails and you want to rebuild without starting from scratch:
+  cd Work/whatever/subdir && make
+
 Email tlbuild@tug.org if problems.
 
 (Nearly everything the Build script does can be overridden via
 environment variables; just take a look to see the names.)
 
 Many more details about the TL build system, such as configuring to work
-on a single program, adding new programs or libraries, recompiling after
-fixing problems, etc., are in the doc/tlbuild* document and the sibling
-README* files here (which are generated from that document).
+on a single program, adding new programs or libraries, documentation
+about the many pieces of the system, etc., are in the doc/tlbuild*
+document and the sibling README* files here (which are generated from
+that document).
 
 
 Build information for some of the platforms.

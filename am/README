@@ -1,0 +1,7 @@
+$Id$
+Public domain.  Originally written 2017 by Karl Berry.
+
+This top-level am/ directory contains fragments which are ultimately used
+in Makefile.am files by automake (a.k.a. the top-level reautoconf).
+
+See also the sibling top-level m4/ directory.

@@ -1,3 +1,12 @@
+2017-02-17  Karl Berry  <karl@freefriends.org>
+
+	* kpse-setup.m4 (_KPSE_RECURSE): do not add a package to
+	CONF_SUBDIRS if --disable-PKG was given. Thus, the directory for a
+	disabled package will no longer be descended into at all, as if it
+	were nonexistent. This way, if a package's configure causes
+	problems on some systems (like dvisvgm v2's new requirement for
+	C++11), --disable-PKG can be given and work can go on.
+
 2016-03-07  Karl Berry  <karl@tug.org>
 
 	* kpse-pkgs (KPSE_UTILS_PKGS): add autosp.
@@ -440,3 +449,5 @@
 2009-08-17  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* kpse-warnings.m4: Implement Objective C compiler warnings.
+
+(This file public domain.)
