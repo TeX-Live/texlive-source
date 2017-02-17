@@ -585,14 +585,12 @@ PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
 ac_unique_file="../build-aux/missing"
-enable_option_checking=no
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
-CONF_SUBDIRS
 MAKE_SUBDIRS
-subdirs
+CONF_SUBDIRS
 WARNING_CFLAGS
 MAINT
 MAINTAINER_MODE_FALSE
@@ -856,18 +854,7 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS'
-ac_subdirs_all='autosp
-devnag
-lacheck
-m-tx
-pmx
-ps2eps
-t1utils
-texdoctk
-tpic2pdftex
-vlna
-xindy
-xpdfopen'
+
 
 # Initialize some variables set by options.
 ac_init_help=
@@ -4402,7 +4389,6 @@ test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
 
-# $Id: withenable.ac 43246 2017-02-16 18:45:03Z karl $
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 ## configure options and TL libraries required for dvisvgm
 # Check whether --enable-dvisvgm was given.
@@ -6408,107 +6394,57 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Utils programs to build" >&5
 $as_echo_n "checking for Utils programs to build... " >&6; }
-MAKE_SUBDIRS=
 CONF_SUBDIRS=
-if test -x $srcdir/autosp/configure; then
-  test "x$enable_autosp" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS autosp"
+MAKE_SUBDIRS=
+if test -x $srcdir/autosp/configure && test "x$enable_autosp" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS autosp"
-  if false; then
-    subdirs="$subdirs autosp"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS autosp"
 fi
-if test -x $srcdir/devnag/configure; then
-  test "x$enable_devnag" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
+if test -x $srcdir/devnag/configure && test "x$enable_devnag" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS devnag"
-  if false; then
-    subdirs="$subdirs devnag"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
 fi
-if test -x $srcdir/lacheck/configure; then
-  test "x$enable_lacheck" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
+if test -x $srcdir/lacheck/configure && test "x$enable_lacheck" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
-  if false; then
-    subdirs="$subdirs lacheck"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
 fi
-if test -x $srcdir/m-tx/configure; then
-  test "x$enable_m_tx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
+if test -x $srcdir/m-tx/configure && test "x$enable_m_tx" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS m-tx"
-  if false; then
-    subdirs="$subdirs m-tx"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
 fi
-if test -x $srcdir/pmx/configure; then
-  test "x$enable_pmx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
+if test -x $srcdir/pmx/configure && test "x$enable_pmx" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS pmx"
-  if false; then
-    subdirs="$subdirs pmx"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
 fi
-if test -x $srcdir/ps2eps/configure; then
-  test "x$enable_ps2eps" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
+if test -x $srcdir/ps2eps/configure && test "x$enable_ps2eps" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS ps2eps"
-  if false; then
-    subdirs="$subdirs ps2eps"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
 fi
-if test -x $srcdir/t1utils/configure; then
-  test "x$enable_t1utils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
+if test -x $srcdir/t1utils/configure && test "x$enable_t1utils" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS t1utils"
-  if false; then
-    subdirs="$subdirs t1utils"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
 fi
-if test -x $srcdir/texdoctk/configure; then
-  test "x$enable_texdoctk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
+if test -x $srcdir/texdoctk/configure && test "x$enable_texdoctk" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS texdoctk"
-  if false; then
-    subdirs="$subdirs texdoctk"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
 fi
-if test -x $srcdir/tpic2pdftex/configure; then
-  test "x$enable_tpic2pdftex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
+if test -x $srcdir/tpic2pdftex/configure && test "x$enable_tpic2pdftex" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS tpic2pdftex"
-  if false; then
-    subdirs="$subdirs tpic2pdftex"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
 fi
-if test -x $srcdir/vlna/configure; then
-  test "x$enable_vlna" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
+if test -x $srcdir/vlna/configure && test "x$enable_vlna" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS vlna"
-  if false; then
-    subdirs="$subdirs vlna"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
 fi
-if test -x $srcdir/xindy/configure; then
-  test "x$enable_xindy" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
+if test -x $srcdir/xindy/configure && test "x$enable_xindy" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS xindy"
-  if false; then
-    subdirs="$subdirs xindy"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
 fi
-if test -x $srcdir/xpdfopen/configure; then
-  test "x$enable_xpdfopen" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
+if test -x $srcdir/xpdfopen/configure && test "x$enable_xpdfopen" = xyes; then
   CONF_SUBDIRS="$CONF_SUBDIRS xpdfopen"
-  if false; then
-    subdirs="$subdirs xpdfopen"
-
-  fi
+  MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
@@ -7818,151 +7754,6 @@ if test "$no_create" != yes; then
   # Use ||, not &&, to avoid exiting from the if with $? = 1, which
   # would make configure fail if this is the last instruction.
   $ac_cs_success || as_fn_exit 1
-fi
-
-#
-# CONFIG_SUBDIRS section.
-#
-if test "$no_recursion" != yes; then
-
-  # Remove --cache-file, --srcdir, and --disable-option-checking arguments
-  # so they do not pile up.
-  ac_sub_configure_args=
-  ac_prev=
-  eval "set x $ac_configure_args"
-  shift
-  for ac_arg
-  do
-    if test -n "$ac_prev"; then
-      ac_prev=
-      continue
-    fi
-    case $ac_arg in
-    -cache-file | --cache-file | --cache-fil | --cache-fi \
-    | --cache-f | --cache- | --cache | --cach | --cac | --ca | --c)
-      ac_prev=cache_file ;;
-    -cache-file=* | --cache-file=* | --cache-fil=* | --cache-fi=* \
-    | --cache-f=* | --cache-=* | --cache=* | --cach=* | --cac=* | --ca=* \
-    | --c=*)
-      ;;
-    --config-cache | -C)
-      ;;
-    -srcdir | --srcdir | --srcdi | --srcd | --src | --sr)
-      ac_prev=srcdir ;;
-    -srcdir=* | --srcdir=* | --srcdi=* | --srcd=* | --src=* | --sr=*)
-      ;;
-    -prefix | --prefix | --prefi | --pref | --pre | --pr | --p)
-      ac_prev=prefix ;;
-    -prefix=* | --prefix=* | --prefi=* | --pref=* | --pre=* | --pr=* | --p=*)
-      ;;
-    --disable-option-checking)
-      ;;
-    *)
-      case $ac_arg in
-      *\'*) ac_arg=`$as_echo "$ac_arg" | sed "s/'/'\\\\\\\\''/g"` ;;
-      esac
-      as_fn_append ac_sub_configure_args " '$ac_arg'" ;;
-    esac
-  done
-
-  # Always prepend --prefix to ensure using the same prefix
-  # in subdir configurations.
-  ac_arg="--prefix=$prefix"
-  case $ac_arg in
-  *\'*) ac_arg=`$as_echo "$ac_arg" | sed "s/'/'\\\\\\\\''/g"` ;;
-  esac
-  ac_sub_configure_args="'$ac_arg' $ac_sub_configure_args"
-
-  # Pass --silent
-  if test "$silent" = yes; then
-    ac_sub_configure_args="--silent $ac_sub_configure_args"
-  fi
-
-  # Always prepend --disable-option-checking to silence warnings, since
-  # different subdirs can have different --enable and --with options.
-  ac_sub_configure_args="--disable-option-checking $ac_sub_configure_args"
-
-  ac_popdir=`pwd`
-  for ac_dir in : $subdirs; do test "x$ac_dir" = x: && continue
-
-    # Do not complain, so a configure script can configure whichever
-    # parts of a large source tree are present.
-    test -d "$srcdir/$ac_dir" || continue
-
-    ac_msg="=== configuring in $ac_dir (`pwd`/$ac_dir)"
-    $as_echo "$as_me:${as_lineno-$LINENO}: $ac_msg" >&5
-    $as_echo "$ac_msg" >&6
-    as_dir="$ac_dir"; as_fn_mkdir_p
-    ac_builddir=.
-
-case "$ac_dir" in
-.) ac_dir_suffix= ac_top_builddir_sub=. ac_top_build_prefix= ;;
-*)
-  ac_dir_suffix=/`$as_echo "$ac_dir" | sed 's|^\.[\\/]||'`
-  # A ".." for each directory in $ac_dir_suffix.
-  ac_top_builddir_sub=`$as_echo "$ac_dir_suffix" | sed 's|/[^\\/]*|/..|g;s|/||'`
-  case $ac_top_builddir_sub in
-  "") ac_top_builddir_sub=. ac_top_build_prefix= ;;
-  *)  ac_top_build_prefix=$ac_top_builddir_sub/ ;;
-  esac ;;
-esac
-ac_abs_top_builddir=$ac_pwd
-ac_abs_builddir=$ac_pwd$ac_dir_suffix
-# for backward compatibility:
-ac_top_builddir=$ac_top_build_prefix
-
-case $srcdir in
-  .)  # We are building in place.
-    ac_srcdir=.
-    ac_top_srcdir=$ac_top_builddir_sub
-    ac_abs_top_srcdir=$ac_pwd ;;
-  [\\/]* | ?:[\\/]* )  # Absolute name.
-    ac_srcdir=$srcdir$ac_dir_suffix;
-    ac_top_srcdir=$srcdir
-    ac_abs_top_srcdir=$srcdir ;;
-  *) # Relative name.
-    ac_srcdir=$ac_top_build_prefix$srcdir$ac_dir_suffix
-    ac_top_srcdir=$ac_top_build_prefix$srcdir
-    ac_abs_top_srcdir=$ac_pwd/$srcdir ;;
-esac
-ac_abs_srcdir=$ac_abs_top_srcdir$ac_dir_suffix
-
-
-    cd "$ac_dir"
-
-    # Check for guested configure; otherwise get Cygnus style configure.
-    if test -f "$ac_srcdir/configure.gnu"; then
-      ac_sub_configure=$ac_srcdir/configure.gnu
-    elif test -f "$ac_srcdir/configure"; then
-      ac_sub_configure=$ac_srcdir/configure
-    elif test -f "$ac_srcdir/configure.in"; then
-      # This should be Cygnus configure.
-      ac_sub_configure=$ac_aux_dir/configure
-    else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: no configuration information is in $ac_dir" >&5
-$as_echo "$as_me: WARNING: no configuration information is in $ac_dir" >&2;}
-      ac_sub_configure=
-    fi
-
-    # The recursion is here.
-    if test -n "$ac_sub_configure"; then
-      # Make the cache file name correct relative to the subdirectory.
-      case $cache_file in
-      [\\/]* | ?:[\\/]* ) ac_sub_cache_file=$cache_file ;;
-      *) # Relative name.
-	ac_sub_cache_file=$ac_top_build_prefix$cache_file ;;
-      esac
-
-      { $as_echo "$as_me:${as_lineno-$LINENO}: running $SHELL $ac_sub_configure $ac_sub_configure_args --cache-file=$ac_sub_cache_file --srcdir=$ac_srcdir" >&5
-$as_echo "$as_me: running $SHELL $ac_sub_configure $ac_sub_configure_args --cache-file=$ac_sub_cache_file --srcdir=$ac_srcdir" >&6;}
-      # The eval makes quoting arguments work.
-      eval "\$SHELL \"\$ac_sub_configure\" $ac_sub_configure_args \
-	   --cache-file=\"\$ac_sub_cache_file\" --srcdir=\"\$ac_srcdir\"" ||
-	as_fn_error $? "$ac_sub_configure failed for $ac_dir" "$LINENO" 5
-    fi
-
-    cd "$ac_popdir"
-  done
 fi
 if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
