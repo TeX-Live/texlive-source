@@ -733,7 +733,7 @@ static int lua_nodelib_direct_getsup(lua_State * L)
     if (n) {
         halfword t = type(n);
         if (t == simple_noad || t == accent_noad || t == radical_noad) {
-            lua_pushinteger(L, subscr(n));
+            lua_pushinteger(L, supscr(n));
             return 1;
         }
     }
