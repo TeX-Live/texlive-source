@@ -136,6 +136,7 @@ texmf_other_scripts = \
 	lilyglyphs/lily-rebuild-pdfs.py \
 	ltximg/ltximg.pl \
 	luaotfload/luaotfload-tool.lua \
+	lwarp/lwarpmk.lua \
 	m-tx/m-tx.lua \
 	makedtx/makedtx.pl \
 	make4ht/make4ht \
