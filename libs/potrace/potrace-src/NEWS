@@ -1,3 +1,15 @@
+February 19, 2017: Release 1.14
+
+ This release consists of bugfixes and minor portability improvements.
+ A number of bugs triggered by malformed BMP files have been fixed,
+ including CVE-2016-8685 and CVE-2016-8686. Error reporting has been
+ improved. The image size is now truncated when the bitmap data ends
+ prematurely. It is now possible to use negative dy in bitmap
+ data. Portability has been improved to encompass C++11. The default
+ compiler is now clang if available. Thanks to Nelson Beebe and Martin
+ Gieseking for reporting portability issues, and to Agostino Sarubbo
+ for reporting bugs.
+
 October 22, 2015: Release 1.13
 
  Some critical bugs in the processing of BMP files were fixed. These
