@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 3.0 --- June 1993 (works also with later versions)
+% Version 3.64 --- February 2017 (works also with later versions)
 
 % Copyright (C) 1987,1990,1993 Silvio Levy and Donald E. Knuth
 
@@ -147,6 +147,7 @@ extern char file_name[][max_file_name_length];
 extern char change_file_name[]; /* name of change file */
 extern line[]; /* number of current line in the stacked files */
 extern change_line; /* number of current line in change file */
+extern change_depth; /* where \.{@@y} originated during a change */
 extern boolean input_has_ended; /* if there is no more input */
 extern boolean changing; /* if the current line is from |change_file| */
 extern boolean web_file_open; /* if the web file is being read */
