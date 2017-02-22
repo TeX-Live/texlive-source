@@ -52,7 +52,7 @@ pixman 0.34.0 - checked 04feb16
 poppler 0.52.0 - checked 17feb17
   http://poppler.freedesktop.org/ - used by luatex and xetex
 
-potrace 1.13 - checked 28dec15
+potrace 1.14 - checked 22feb17
   http://potrace.sourceforge.net
 
 teckit 2.5.6 - checked 30dec16

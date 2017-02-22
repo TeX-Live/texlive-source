@@ -1,5 +1,30 @@
 ChangeLog
 
+v1.14 2017/02/19
+	(2017/02/19) PS1 - speed: use clang as default compiler if
+	available, and no longer use -ffloat-store even with gcc.
+	(2017/02/18) PS1 - corrected some exit codes, added some missing
+	error handlers.
+	(2017/02/17) PS1 - mkbitmap: bugfixes and improvements in parsing
+	image files.
+	(2017/02/15) PS1 - truncate the image size when bitmap data ends
+	prematurely. This fixes CVE-2016-8686, where Potrace appeared to
+	be "hanging" on a crafted input file.
+	(2017/02/14) PS1 - test suite: added tests for plain pnm files.
+	(2017/01/08) PS1 - fixed potential compiler issues due to signed
+	arithmetic overflow and arithmetic shifting.
+	(2017/01/07) PS1 - enable use of negative dy in bitmap data.
+	(2017/01/07) PS1 - test suite: moved data files to a subdirectory.
+	(2017/01/07) PS1 - test suite: added a check for -i flag.
+	(2017/01/07) PS1 - fixed buffer overflow CVE-2016-8685, reported
+	by Agostino Sarubbo.
+	(2015/10/24) PS1 - portability: use const char * for string
+	constants, required by C++11. Reported by Martin Gieseking.
+	(2015/10/24) PS1 - portability: extra spaces around string macros,
+	required by C++11. Reported by Martin Gieseking.
+	(2015/10/24) PS1 - portability: added more potential C compilers
+	to autoconf. Suggested by Nelson Beebe.
+
 v1.13 2015/10/22
 	(2015/07/18) PS1 - fixed heap overflows, null pointer dereference
 	bugs and a memory leak. Reported by Agostino Sarubbo.
@@ -52,8 +77,8 @@ v1.10 2011/08/19
 	(2011/08/02) PS1 - new gimppath backend produces SVG output
 	suitable for current versions of Gimp.
 	(2011/08/02) PS1 - added a --flat option for the SVG backend.
-	(2011/07/31) PS1 - test suite: renamed *.out files to prevent make's
-	built-in implicit rules from accidentally overwriting them.
+	(2011/07/31) PS1 - test suite: renamed *.out files to prevent
+	make's built-in implicit rules from accidentally overwriting them.
 	(2011/07/26) PS1 - added DXF backend. Thanks to Jonas Benedett
 	Dorr for testing.
 	(2011/07/26) PS1 - use high resolution bounding box in EPS, PDF,
