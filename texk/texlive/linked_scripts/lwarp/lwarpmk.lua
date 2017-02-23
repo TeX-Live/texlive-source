@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.20"
+printversion = "v0.21"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -140,17 +140,25 @@ end -- file exists
 -- Select some operating-system commands:
 if opsystem=="Unix" then  -- For Unix / Linux / Mac OS:
 rmname = "rm"
-touchname = "touch"
-chmodcmd = "chmod u+x lateximages.sh"
-lateximagesname = "./lateximages.sh"
+mvname = "mv"
+touchnamepre = "touch"
+touchnamepost = ""
+dirslash = "/"
+opquote= "\'"
 elseif opsystem=="Windows" then -- For Windows
 rmname = "DEL"
-touchname = "TOUCH"
-chmodcmd = ""
-lateximagesname = "lateximages.cmd"
+mvname = "MOVE"
+touchnamepre = "COPY /b"
+touchnamepost = "+,,"
+dirslash = "\\"
+opquote= "\""
 else print ( "lwarpmk: Select Unix or Windows for opsystem" )
 end --- for Windows
 end -- loadconf
+
+function refreshdate ()
+os.execute(touchnamepre .. " " .. sourcename .. ".tex " .. touchnamepost)
+end
 
 -- Scan the LaTeX log file for the phrase "Rerun to get",
 -- indicating that the file should be compiled again.
@@ -221,6 +229,43 @@ function removeaux ()
         )
 end
 
+-- Create lateximages based on lateximages.txt:
+function createlateximages ()
+print ("lwarpmk: Creating lateximages.")
+io.input("lateximages.txt")
+-- Create the lateximages directory, ignore error if alreadt exists
+err = os.execute("mkdir lateximages")
+-- Scan lateximages.txt
+for line in io.lines() do
+-- lwimgpage is the page number in the PDF which has the image
+-- lwimgnum is the sequential lateximage number to assign for the image
+i,j,lwimgpage,lwimgnum = string.find (line,"|(.*)|(.*)|")
+-- For each entry:
+if ( (i~=nil) ) then
+-- Separate out the image into its own single-page pdf:
+err = os.execute(
+"pdfseparate -f " .. lwimgpage .. " -l " ..
+ lwimgpage .. " " .. sourcename .."_html.pdf lateximagetemp-%d.pdf")
+-- Crop the image:
+err = os.execute(
+"pdfcrop --hires lateximagetemp-" .. lwimgpage ..".pdf lateximage-" .. lwimgnum ..".pdf")
+if ( err ~= 0 ) then print ( "lwarpmk: File error.") ; os.exit(1) ; end
+-- Convert the image to svg:
+err = os.execute(
+"pdftocairo -svg lateximage-" .. lwimgnum ..".pdf lateximage-" .. lwimgnum ..".svg")
+if ( err ~= 0 ) then print ( "lwarpmk: File error.") ; os.exit(1) ; end
+-- Move the result into lateximages/:
+err = os.execute(
+mvname .. " lateximage-" .. lwimgnum ..".svg lateximages" .. dirslash )
+if ( err ~= 0 ) then print ( "lwarpmk: File error.") ; os.exit(1) ; end
+-- Remove the temporary files:
+err = os.execute(
+rmname .. " lateximage-" .. lwimgnum ..".pdf lateximagetemp-" .. lwimgpage ..".pdf")
+if ( err ~= 0 ) then print ( "lwarpmk: File error.") ; os.exit(1) ; end
+end
+end -- do
+end -- function
+
 -- lwarpmk --version :
 
 if (arg[1] == "--version") then
@@ -266,7 +311,7 @@ loadconf ()
 print ("lwarpmk: Processing the index.")
 os.execute("texindy -M lwarp_html.xdy " .. sourcename .. ".idx")
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-os.execute(touchname .. " " .. sourcename .. ".tex")
+refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
@@ -278,8 +323,9 @@ if ( uselatexmk == "true" ) then
     -- The recorder option is required to detect changes in <project>.tex
     -- while we are loading <project>_html.tex.
     err=os.execute ( "latexmk -pdf -dvi- -ps- -recorder "
-        .. "-e '$makeindex = q/texindy -M lwarp_html.xdy/' "
-        .. "-pdflatex=\"" .. latexname .." %O %S\" "
+        .. "-e "
+        .. opquote .. "$makeindex = q/texindy -M lwarp_html.xdy/" .. opquote
+        .. " -pdflatex=\"" .. latexname .." %O %S\" "
         .. sourcename .."_html.tex" ) ;
     if ( err ~= 0 ) then print ( "lwarpmk: Compile error.") ; os.exit(1) ; end
     pdftohtml ()
@@ -316,22 +362,20 @@ loadconf ()
 print ("lwarpmk: Processing the index.")
 os.execute("texindy -M lwarp_html.xdy " .. sourcename .. "_html.idx")
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-os.execute(touchname .. " " .. sourcename .. ".tex")
+refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
 -- lwarpmk limages:
--- Make the lateximages command file executable,
--- execute it to create the images,
+-- Scan the lateximages.txt file to create lateximages,
 -- then touch the source to trigger a recompile.
 
 elseif arg[1] == "limages" then
 loadconf ()
 print ("lwarpmk: Processing images.")
-os.execute(chmodcmd)
-os.execute(lateximagesname)
+createlateximages ()
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-os.execute(touchname .. " " .. sourcename .. ".tex") ;
+refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
@@ -341,7 +385,7 @@ print ("lwarpmk: Done.")
 elseif arg[1] == "again" then
 loadconf ()
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
-os.execute(touchname .. " " .. sourcename .. ".tex") ;
+refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
