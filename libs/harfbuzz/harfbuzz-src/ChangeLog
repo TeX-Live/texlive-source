@@ -1,3 +1,313 @@
+commit a657f23ca31237d652b5c101ed24194b6aeadaf8
+Author: Dominik Röttsches <d-r@roettsches.de>
+Date:   Mon Feb 20 21:52:07 2017 +0200
+
+    Blacklist another instance of Padauk (#419)
+
+    In https://crbug.com/681813 another instance of Padauk was identified
+    triggering collapsed glyphs. Blacklist this version by patching
+    hb-ot-layout.cc to print out gdef, gsub, and gpos table length, then
+    adding those to the list of blacklisted versions.
+
+ src/hb-ot-layout.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit 70202983f57fe85b2d3b56a9c205effeee66222d
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Sat Feb 18 10:37:36 2017 +0330
+
+    [ci] Disable vcpkg freetype installation and fix Appveyor CI (#422)
+
+ appveyor.yml | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+commit 44f7d6ecde9bf7427a05cbe73ed5d668b8a72b2a
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Fri Feb 17 03:03:24 2017 +0000
+
+    Guard against underflow when adjusting length (#421)
+
+    * Guard against underflow when adjusting length
+
+    With the fuzz-testcase in mozilla bug 1295299, we end up with a
+    recursed lookup that removes 3 items, when `match_positions[idx]`
+    is 0, which results in (unsigned) `end` wrapping to a huge value.
+
+    Making `end` a signed int is probably the simplest route to a fix.
+
+    Fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1295299.
+
+    * Add testcase for #421.
+
+ src/hb-ot-layout-gsubgpos-private.hh                     |   6 +++---
+ .../sha1sum/558661aa659912f4d30ecd27bd09835171a8e2b0.ttf | Bin 0 ->
+ 1358 bytes
+ test/shaping/tests/fuzzed.tests                          |   1 +
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+commit 45766b673f427bb791c9d5886cadedfac0447066
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Thu Feb 16 17:40:21 2017 +0000
+
+    [indic] Add support for Grantha marks that may be used in Tamil to
+    th… (#401)
+
+    * [indic] Add support for Grantha marks that may be used in Tamil
+    to the Indic table.
+
+    See https://bugzilla.mozilla.org/show_bug.cgi?id=1331339.
+
+    Testcase: U+0BA4,U+0BC6,U+1133c,U+0BAA,U+1133c,U+0BC6,U+1133c
+
+    * [indic] Add test for Grantha nukta that is allowed in Tamil by
+    ScriptExtensions.txt
+
+ src/hb-ot-shape-complex-indic-table.cc                   |   7 +++++++
+ .../sha1sum/3493e92eaded2661cadde752a39f9d58b11f0326.ttf | Bin 0 ->
+ 1400 bytes
+ test/shaping/tests/indic-script-extensions.tests         |   1 +
+ 3 files changed, 8 insertions(+)
+
+commit d4bb52b9fd8a5bc4af13752ea3e464eccfe3223b
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Feb 9 14:13:25 2017 -0800
+
+    Unbreak hb-coretext build
+
+ src/hb-coretext.cc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit c8dfed8e1ee4ab64b6936f5c8561db0666e37647
+Merge: 7c47474f b435c7c4
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 8 14:36:18 2017 -0800
+
+    Merge pull request #357 from khaledhosny/graphite-scale
+
+    [graphite] Fix shaping with varying font sizes
+
+commit 7c47474f209bdf84cf87844c277ed711cad78196
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 8 14:33:28 2017 -0800
+
+    Set LC_ALL instead of LANG when creating harfbuzz.def
+
+    Hopefully fixes Travis faliure?
+    https://github.com/behdad/harfbuzz/pull/413#issuecomment-278481882
+    https://travis-ci.org/khaledhosny/harfbuzz/jobs/199785332#L1065
+
+ src/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit ffde3c9f9effcd2b47f5fd76df45551e68c0b1ec
+Author: Philip Withnall <philip@tecnocode.co.uk>
+Date:   Wed Feb 8 21:56:57 2017 +0000
+
+    hb-font: Fix a potentially undefined use of memcmp() (#413)
+
+    While it’s fine to call memcmp(x, 0, 0) in practice, the C99
+    standard
+    explicitly says that this is not allowed: even if the length is zero,
+    the pointer arguments must be valid.
+
+    http://stackoverflow.com/a/16363034
+
+    Coverity ID: 141178
+
+    Signed-off-by: Philip Withnall <withnall@endlessm.com>
+
+ src/hb-font.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit 09594df1aecbb7d37093055147c25cc7d7b7fef6
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 7 18:25:12 2017 -0800
+
+    Update ax_pthread.m4 to latest upstream version
+
+    Might help with https://github.com/behdad/harfbuzz/issues/399
+
+ m4/ax_pthread.m4 | 394
+ ++++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 285 insertions(+), 109 deletions(-)
+
+commit a6ced90efccf869defc0b310effca220f01cf318
+Author: Philip Withnall <philip@tecnocode.co.uk>
+Date:   Wed Feb 8 02:18:33 2017 +0000
+
+    test: Fix some memory leaks in test-font.c (#409)
+
+    Coverity IDs: 141039, 141040, 141041
+
+ test/api/test-font.c | 35 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
+
+commit 925ceacfed45c44dd2a025c32bebb1358b560741
+Author: Philip Withnall <philip@tecnocode.co.uk>
+Date:   Wed Feb 8 02:17:48 2017 +0000
+
+    util: Add missing field initialisers in constructor (#410)
+
+    Coverity ID: 141042
+
+ util/hb-shape.cc | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+commit 73c6dcbb45269186f204b2212288b6384ce42c9d
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Feb 7 16:53:21 2017 -0800
+
+    Silence Coverity warning
+
+    Fixes https://github.com/behdad/harfbuzz/issues/408
+
+ src/hb-ot-shape-complex-arabic.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 466b3e58bdc64229dab08c6e0e0079c789540370
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 3 16:43:25 2017 -0800
+
+    Shuffle things around a bit
+
+ src/hb-coretext.cc          |  4 ++--
+ src/hb-directwrite.cc       |  4 ++--
+ src/hb-fallback-shape.cc    |  4 ++++
+ src/hb-graphite2.cc         |  4 ++--
+ src/hb-ot-layout-private.hh |  1 -
+ src/hb-ot-layout.cc         |  2 --
+ src/hb-ot-math.cc           |  3 +--
+ src/hb-ot-shape.cc          |  4 ++++
+ src/hb-ot-var.cc            |  2 --
+ src/hb-shape-plan.cc        |  7 -------
+ src/hb-shaper-private.hh    | 11 +++++++----
+ src/hb-uniscribe.cc         |  4 ++--
+ 12 files changed, 24 insertions(+), 26 deletions(-)
+
+commit fc8189b63931f03c5d2e70dde198e9c856bd78f5
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 3 16:17:08 2017 -0800
+
+    Minor
+
+ src/hb-shaper-private.hh | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+commit d3d3691806aaa6aed93a88c845d472e727e7f850
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 3 15:42:03 2017 -0800
+
+    Add dirty-state tracking to hb_face_t
+
+ src/hb-face-private.hh |  9 +++++++++
+ src/hb-face.cc         | 19 ++++++++++++++++++-
+ src/hb-font.cc         |  2 +-
+ 3 files changed, 28 insertions(+), 2 deletions(-)
+
+commit 2171f48b4b1e66a3c16a83cc00b0006d32ae9738
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 3 10:58:09 2017 -0800
+
+    Add dirty-state tracking to hb_font_t
+
+ src/hb-font-private.hh | 12 ++++++++++++
+ src/hb-font.cc         | 30 ++++++++++++++++++++++++++++++
+ 2 files changed, 42 insertions(+)
+
+commit 95808bad2c17a9ef41c58c04faf1b4706fb7d72e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Feb 3 10:39:40 2017 -0800
+
+    Add new API hb_font_set_face()
+
+    For completeness.
+
+ src/hb-font.cc | 29 +++++++++++++++++++++++++++++
+ src/hb-font.h  |  4 ++++
+ 2 files changed, 33 insertions(+)
+
+commit 4ec19319ab195d852708661e12da2a6485fce544
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Thu Feb 2 18:48:23 2017 +0000
+
+    Add Win10 Anniversary Update version of Tahoma to GDEF
+    blacklist. (#412)
+
+ src/hb-ot-layout.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 1dd630a7f2c2cec780fee507367341bc9050cdb3
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Feb 1 11:57:21 2017 -0800
+
+    Minor
+
+    Fixes https://github.com/behdad/harfbuzz/issues/411
+
+ src/hb-fallback-shape.cc     | 2 +-
+ src/hb-ot-shape-normalize.cc | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+commit e888f642db16f52836cbfec29de43ff20236dc85
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Thu Jan 26 14:50:14 2017 -0800
+
+    Route Adlam through Arabic shaper
+
+    Fixes joined Adlam rendering.
+
+    Fixes https://github.com/googlei18n/noto-fonts/issues/828
+
+ src/hb-ot-shape-complex-private.hh                      |   3 +++
+ test/shaping/Makefile.am                                |   1 +
+ .../5dfad7735c6a67085f1b90d4d497e32907db4c78.ttf        | Bin 0 ->
+ 21160 bytes
+ test/shaping/tests/arabic-like-joining.tests            |   1 +
+ 4 files changed, 5 insertions(+)
+
+commit 72c754873c6b15cecb32d9e491c98495f804347a
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Thu Jan 26 22:35:41 2017 +0000
+
+    Add Win7 version of himalaya.ttf to the GDEF table blacklist. (#407)
+
+ src/hb-ot-layout.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 22af28a3f14c6d748ed589f8980b168152116c8c
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 23:42:53 2017 -0800
+
+    [var] Implement MVAR table
+
+    Unhooked. Untested.
+
+ src/Makefile.sources        |   1 +
+ src/hb-font.cc              |   2 +-
+ src/hb-ot-var-mvar-table.hh | 110
+ ++++++++++++++++++++++++++++++++++++++++++++
+ src/hb-ot-var.cc            |   1 +
+ 4 files changed, 113 insertions(+), 1 deletion(-)
+
+commit 67a191164dec2cfcab97363175c58e459f6ff8f9
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 23:21:30 2017 -0800
+
+    [var] Whitespace
+
+ src/hb-ot-var-hvar-table.hh | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 6af6c1114a3495584ac4197c62592741c407b5a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Mon Jan 23 18:35:00 2017 -0800
+
+    1.4.2
+
+ NEWS         | 31 +++++++++++++++++++++++++++++++
+ configure.ac |  2 +-
+ 2 files changed, 32 insertions(+), 1 deletion(-)
+
 commit 79e8e27ffd3da29ca27d3aebd2ef425bf1cb7f9d
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Mon Jan 23 17:55:31 2017 -0800
@@ -628,6 +938,32 @@ Date:   Sun Jan 8 23:55:54 2017 -0800
 
  src/hb-ot-shape-complex-use.cc | 22 ----------------------
  1 file changed, 22 deletions(-)
+
+commit b435c7c46a46350771e837e87fee448fd9dc06d3
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Fri Nov 11 02:16:39 2016 +0200
+
+    [graphite] Stop creating unused gr_face
+
+    It is unused after previous commit, hb_graphite2_font_get_gr_font()
+    makes no sense now so deprecating it.
+
+ src/hb-graphite2.cc | 22 +++++-----------------
+ src/hb-graphite2.h  |  4 ++++
+ 2 files changed, 9 insertions(+), 17 deletions(-)
+
+commit 1b00a3b0488a5d1c6ede141ae0545e2eb9af0ed8
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sun Oct 30 20:16:41 2016 +0200
+
+    [graphite] Fix shaping with varying font sizes
+
+    Shape using design units and scale the output.
+
+    See https://bugs.documentfoundation.org/show_bug.cgi?id=103403#c7
+
+ src/hb-graphite2.cc | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
 commit af596a5655ee2ed09da17a7de79f619e1547dcd9
 Author: Behdad Esfahbod <behdad@behdad.org>

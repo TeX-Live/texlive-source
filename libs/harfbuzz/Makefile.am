@@ -55,6 +55,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-name-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-os2-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-mvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-private.hh \
 	@HARFBUZZ_TREE@/src/hb-set-private.hh \
