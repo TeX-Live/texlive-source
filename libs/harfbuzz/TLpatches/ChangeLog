@@ -2,6 +2,7 @@
 
 	Imported harfbuzz-1.4.3 source tree from:
 	  http://www.freedesktop.org/software/harfbuzz/release/
+	  Add patch-01-HAVE_FALLBACK.
 
 2017-01-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
