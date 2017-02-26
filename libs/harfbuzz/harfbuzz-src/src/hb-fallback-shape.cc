@@ -27,10 +27,10 @@
 #define HB_SHAPER fallback
 #include "hb-shaper-impl-private.hh"
 
-
+#if HAVE_FALLBACK
 HB_SHAPER_DATA_ENSURE_DEFINE(fallback, face)
 HB_SHAPER_DATA_ENSURE_DEFINE(fallback, font)
-
+#endif
 
 /*
  * shaper face data
