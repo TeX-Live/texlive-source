@@ -26,7 +26,8 @@ SUBDIRS = . include
 noinst_LIBRARIES = libharfbuzz.a
 
 ## common
-AM_CPPFLAGS = -DHB_NO_MT -DHB_NO_UNICODE_FUNCS -I$(top_srcdir)/$(HARFBUZZ_SRC)
+AM_CPPFLAGS = -DHB_NO_MT -DHB_NO_UNICODE_FUNCS -DHAVE_FALLBACK=1 \
+	-I$(top_srcdir)/$(HARFBUZZ_SRC)
 libharfbuzz_dependencies =
 libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-atomic-private.hh \
@@ -40,6 +41,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-common.cc \
 	@HARFBUZZ_TREE@/src/hb-face-private.hh \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
+	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
 	@HARFBUZZ_TREE@/src/hb-font-private.hh \
 	@HARFBUZZ_TREE@/src/hb-font.cc \
 	@HARFBUZZ_TREE@/src/hb-mutex-private.hh \
