@@ -1,3 +1,9 @@
+2017-02-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvips.c: In the case of -T option, reverse the default in the change
+	made on 2016-11-01. Thanks Ulrike Fischer:
+	http://tug.org/pipermail/tex-live/2017-February/039743.html.
+
 2016-12-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* emspecial.c: Fix a bug in emspecial(), reported by Norbert Klingen:
