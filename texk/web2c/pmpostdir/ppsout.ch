@@ -68,11 +68,11 @@ static void mp_ps_kanji_string_out (MP mp, char *s)
 };
 @z
 
- @x
+@x
   mp_ps_print_nl(mp, "%%Creator: MetaPost ");
- @y
-  mp_ps_print_nl(mp, "%%Creator: " P_UP "MetaPost ");
- @z
+@y
+  mp_ps_print_nl(mp, "%%Creator: MetaPost (" P_UP ") version ");
+@z
 
 %
 % Call Kanji string output routine if the font is JFM.
