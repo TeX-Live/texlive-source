@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2016-01-30  "" ""
+.TH AUTOSP 1 2016-10-31  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -199,7 +199,7 @@ assumes that an x-tuplet is to be played in
 (\fIx\fP\-1)/\fIx\fP 
 of the apparent x-tuplet duration.
 So, for example, a triplet in eighths is assumed to be played in the time of one quarter note.
-If these assumptions
+If this assumption
 isn't valid, the x-tuplet must
 be coded explicitly using a \\vnotes command; see the first
 measure of barsant2.aspc for an example of a non-standard x-tuplet: a 5-tuple 
@@ -207,7 +207,9 @@ of 64th notes with an intended duration
 of 
 .I six 
 64ths.
-
+.B autosp
+cannot deal with simultaneous x-tuplets in multiple staffs unless the x values and
+note durations are identical.
 
 User-defined macros are not processed or expanded.
 
@@ -215,8 +217,9 @@ All staffs are assumed to have the same meter; see kinder2.aspc for
 an example of how to work around this.
 
 .B autosp
-will not be effective for music with more than one voice in a single staff. It might be
-advisable to use a separate staff for each voice, or to omit certain voices
+may not be effective for music with more than one voice in a single staff. It might be
+advisable to use a separate staff for each voice, to avoid \\anotes when necessary, 
+or to omit certain voices
 initially and add them into the resulting TeX file.
 
 .SH EXAMPLES
