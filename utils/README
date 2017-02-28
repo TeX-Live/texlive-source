@@ -11,9 +11,9 @@ asymptote 2.38 - checked 13may16
   see http://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
-autosp 2016-01-30 - checked 7mar16
+autosp 2016-11-02 - checked 28feb17
   http://ctan.org/pkg/autosp
-  
+
 devnag - from devanagari package installed in texmf-dist.
 
 lacheck - maintained here, by us

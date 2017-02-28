@@ -1,13 +1,31 @@
 AUTOSP
 
+2016-11-02
+
+  support xtuples in more than one staff (provided x and note durations are
+  consistent)
+
+2016-10-26
+
+  \ptr distinguished from \pt
+
+2016-10-20
+
+  BARREST_SPACING replaced by MAX_SPACING
+
+2016-03-02
+
+  Process \rlap{...} as non-spacing.
+  Process numeric notes in collective coding.
+  Process transposition characters ('`!) after a collective note.
+
 2016-01-30
 
   Correct coding for \tqq and \tqqq.
   ps(0) outputs "0" rather than "MAX_SPACING"
   Allow for \wq.
   Defer \Changeclefs until after \def\atnextbar ...
-  Corrected bracketing for 8 and 9-bar rests.
-  Modern noatation for multi-bar rests.
+  Modern notation for multi-bar rests.
   Initial output to stdout.
 
 2015-07-23
