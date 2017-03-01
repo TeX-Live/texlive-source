@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.16e"
+VERSION = "0.17a"
 
 --[[
      musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
@@ -28,6 +28,10 @@ VERSION = "0.16e"
 --[[
 
   ChangeLog:
+
+     version 0.17a   2017-01-08 RDT
+       Added -D option.
+       Avoid writing or concatenating a nil value.
 
      version 0.16e  2016-03-02 DL
        missing version information (caused by batchmode in 0.16c) fixed
@@ -121,7 +125,8 @@ Options: -v  version
          -l  latex source
          -p  direct tex-pdf (pdftex etc)
          -F fmt  use fmt as the TeX processor
-         -d  tex-dvi-pdf (dvipdfm)
+         -d  tex-dvi-pdf (using dvipdfm if -D not used)
+         -D dvixx  use dvixx as the dvi processor
          -c  preprocess pmx file using pmxchords
          -m  stop at pmx
          -t  stop at tex/mid
@@ -162,9 +167,9 @@ function exists (filename, nolog)
   end
 end
 
--- The global variables below may be changed by set_options(). System
---   commands for the various programs are mostly set to nil if the step
---   is to be omitted, which can be tested by a simple "if" statement.
+--   System commands for the various programs are mostly
+--   set to nil if the step is to be omitted, which can be
+--   tested by a simple "if" statement.
 -- Exceptions:
 --    'tex' is the command for processing a TeX file, but it is important
 --       to know whether the user has explicitly specified an option that
@@ -279,6 +284,9 @@ function process_option(this_arg)
     override = override .. 'p'
   elseif this_arg == "-d" then
     dvi = "dvipdfm"; ps2pdf = nil
+  elseif this_arg == "-D" then
+    narg = narg+1
+    dvi = arg[narg]
   elseif this_arg == "-c" then
     pmx = "pmxchords"
   elseif this_arg == "-F" then
@@ -317,7 +325,14 @@ end
 
 function find_file(this_arg)
   basename, extension = this_arg:match"(.*)%.(.*)"  
-  if not extension then
+  if extension then
+  extensions = {["mtx"] = true, ["pmx"] = true, ["aspc"] = true, ["tex"] = true, ["ltx"] = true}
+  if not extensions[extension] then
+      print("!! extension " .. extension .. " unrecognized; valid extensions are mtx|pmx|aspc|tex|ltx.")
+      exit_code = exit_code+1
+      return
+    end
+  else
     basename = this_arg 
     for ext in ("mtx,pmx,aspc,tex,ltx"):gmatch"[^,]+" do
       if exists (basename .. "." .. ext) then
@@ -326,7 +341,7 @@ function find_file(this_arg)
      end
     end
     if not extension then
-      print("!! No file " .. basename .. "[.mtx|.pmx|.aspc|.tex|.ltx]")
+      print("!! No file " .. basename .. ".[mtx|pmx|aspc|tex|ltx]")
       exit_code = exit_code+1
       return
     end
@@ -544,9 +559,9 @@ repeat
   if this_arg:match"^%-" then process_option(this_arg)
   else
     basename, extension = find_file(this_arg)  -- nil,nil if not found
-    extension = preprocess(basename,extension)
+    extension = preprocess(basename, extension)
     tex_process(tex,basename,extension)
-    if io.open(basename..".log") then -- to be printed later
+    if basename and io.open(basename..".log") then -- to be printed later
       versions = report_texfiles(basename..".log")
     end
     if basename and cleanup then
@@ -561,7 +576,7 @@ repeat
   narg = narg+1
 until narg > #arg 
 
-musixlog:write(versions)
+if versions then musixlog:write(versions) end
 report_versions(tempname)
 musixlog:close()
 os.exit( exit_code )
