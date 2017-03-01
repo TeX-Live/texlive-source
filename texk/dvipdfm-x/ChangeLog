@@ -1,3 +1,8 @@
+2017-03-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c: Command line -p option wins papersize and pagesize
+	specials, as dvips.
+
 2017-02-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvi.c: Add possibly forgotten braces.
