@@ -193,11 +193,12 @@ TEXINPUTS.pdfelatex     = .;$TEXMF/tex/{latex,generic,}//
 TEXINPUTS.pdfetex       = .;$TEXMF/tex/{plain,generic,}//
 
 % LuaTeX.
-TEXINPUTS.lualatex      = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
-TEXINPUTS.dvilualatex   = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 TEXINPUTS.luatex        = .;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.luajittex     = .;$TEXMF/tex/{luatex,plain,generic,}//
 TEXINPUTS.dviluatex     = .;$TEXMF/tex/{luatex,plain,generic,}//
+TEXINPUTS.lualatex      = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.luajitlatex   = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
+TEXINPUTS.dvilualatex   = .;$TEXMF/tex/{lualatex,latex,luatex,generic,}//
 
 % XeTeX.
 TEXINPUTS.xelatex       = .;$TEXMF/tex/{xelatex,latex,xetex,generic,}//

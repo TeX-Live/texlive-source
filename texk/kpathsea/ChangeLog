@@ -1,3 +1,8 @@
+2017-03-02  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.luajitlatex): add, same as lualatex.
+	Report from Ulrike Fischer, 2 Mar 2017 17:46:50.
+
 2016-12-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xgetcwd.c: Typo. Thanks Luigi.
