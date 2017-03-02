@@ -1,10 +1,10 @@
 #!/usr/bin/env texlua
 
--- Copyright 2016 Brian Dunn
+-- Copyright 2016-2017 Brian Dunn
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.21"
+printversion = "v0.22"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
