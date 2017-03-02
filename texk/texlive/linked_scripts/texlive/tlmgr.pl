@@ -6535,10 +6535,14 @@ with C<tlmgr>:
 
 =over 4
 
+=item C<tlmgr option repository ctan>
+
 =item C<tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet>
 
 Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
-you installed TeX Live from the DVD image and want continuing updates.
+you installed TeX Live from the DVD image and want continuing
+updates.  The two commands are equivalent, C<ctan> is just an alias for
+the given url.
 
 =item C<tlmgr update --list>
 
