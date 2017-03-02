@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43137 2017-02-04 16:27:16Z karl $
+# $Id: tlmgr.pl 43376 2017-03-01 23:33:53Z karl $
 #
 # Copyright 2008-2016 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43137 $';
-my $datrev = '$Date: 2017-02-04 17:27:16 +0100 (Sat, 04 Feb 2017) $';
+my $svnrev = '$Revision: 43376 $';
+my $datrev = '$Date: 2017-03-02 00:33:53 +0100 (Thu, 02 Mar 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6541,7 +6541,7 @@ with C<tlmgr>:
 
 Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
 you installed TeX Live from the DVD image and want continuing
-updates.  The two commands are equivalent, C<ctan> is just an alias for
+updates.  The two commands are equivalent; C<ctan> is just an alias for
 the given url.
 
 =item C<tlmgr update --list>
