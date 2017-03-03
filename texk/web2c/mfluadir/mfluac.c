@@ -240,6 +240,20 @@ static int priv_mfweb_LUAGLOBALGET_octant(lua_State *L)
 }
 
 
+/* @ The |make_spec| routine has an interesting side effect, namely to set */
+/* the global variable |turning_number| to the number of times the tangent */
+/* vector of the given cyclic path winds around the origin.                */
+
+
+/* @<Glob...@>=                                                            */
+/* @!turning_number:integer; {another output of |make_spec|}               */
+static int priv_mfweb_LUAGLOBALGET_turning_number(lua_State *L)
+{
+  integer p = turningnumber;
+  lua_pushnumber(L,p);
+  return 1;
+}
+
 
 
 
@@ -657,6 +671,7 @@ int mfluainitialize(void)
   lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_fillin);lua_setglobal(L,"LUAGLOBALGET_fillin");
   lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_turning_check);lua_setglobal(L,"LUAGLOBALGET_turning_check");
   lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_boundary_char);lua_setglobal(L,"LUAGLOBALGET_boundary_char");
+  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_turning_number);lua_setglobal(L,"LUAGLOBALGET_turning_number");
   /* execute Lua external "mfluaini.lua" */
   res = luaL_loadfile(L, luafile);
   free (luafile);
