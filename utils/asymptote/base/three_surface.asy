@@ -1273,13 +1273,15 @@ patch subpatch(patch s, pair a, pair b)
   return patch(subpatch(s.P,a,b),s.straight,s.planar);
 }
 
-// return an array containing an intersection times of path p and surface s.
+// return an array containing the times for one intersection of path p and
+// patch s.
 real[] intersect(path3 p, patch s, real fuzz=-1)
 {
   return intersect(p,s.P,fuzz);
 }
 
-// return an array containing an intersection times of path p and surface s.
+// return an array containing the times for one intersection of path p and
+// surface s.
 real[] intersect(path3 p, surface s, real fuzz=-1)
 {
   for(int i=0; i < s.s.length; ++i) {
@@ -1402,14 +1404,9 @@ void draw3D(frame f, int type=0, patch s, triple center=O, material m,
   if(prc())
     PRCshininess=PRCshininess(m.shininess);
   
-  if(s.triangular)
-    drawbeziertriangle(f,s.P,center,s.straight && s.planar,m.p,
-                       m.opacity,m.shininess,PRCshininess,s.colors,
-                       interaction.type);
-  else
-    draw(f,s.P,center,s.straight && s.planar,m.p,m.opacity,m.shininess,
-         PRCshininess,s.planar ? s.normal(0.5,0.5) : O,s.colors,
-         interaction.type,prc);
+  (s.triangular ? drawbeziertriangle : draw)
+    (f,s.P,center,s.straight && s.planar,m.p,m.opacity,m.shininess,
+     PRCshininess,s.colors,interaction.type,prc);
 }
 
 // Draw triangles on a frame.

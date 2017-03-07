@@ -335,7 +335,8 @@ void gen_runlabel3(stack *Stack)
   string dviname=auxname(prefix,"dvi");
   bbox b;
   string texengine=getSetting<string>("tex");
-  bool xe=settings::xe(texengine) || settings::context(texengine);
+  bool xe=settings::xe(texengine) || settings::lua(texengine) ||
+          settings::context(texengine);
   texfile tex(texname,b,true);
   tex.miniprologue();
   
@@ -467,13 +468,13 @@ void gen_runlabel3(stack *Stack)
     readpath(psname,keep,false,0.12,-1.0)); return;}
 }
 
-#line 395 "runlabel.in"
+#line 396 "runlabel.in"
 // patharray2* textpath(stringarray *s, penarray *p);
 void gen_runlabel4(stack *Stack)
 {
   penarray * p=vm::pop<penarray *>(Stack);
   stringarray * s=vm::pop<stringarray *>(Stack);
-#line 396 "runlabel.in"
+#line 397 "runlabel.in"
   size_t n=checkArrays(s,p);
   if(n == 0) {Stack->push<patharray2*>(new array(0)); return;}
   
@@ -546,13 +547,13 @@ void gen_runlabel4(stack *Stack)
   {Stack->push<patharray2*>(readpath(psname,keep,false,0.1)); return;}
 }
 
-#line 469 "runlabel.in"
+#line 470 "runlabel.in"
 // patharray* _strokepath(path g, pen p=CURRENTPEN);
 void gen_runlabel5(stack *Stack)
 {
   pen p=vm::pop<pen>(Stack,CURRENTPEN);
   path g=vm::pop<path>(Stack);
-#line 470 "runlabel.in"
+#line 471 "runlabel.in"
   array *P=new array(0);
   if(g.size() == 0) {Stack->push<patharray*>(P); return;}
   
@@ -590,9 +591,9 @@ void gen_runlabel_venv(venv &ve)
   addFunc(ve, run::gen_runlabel2, realArray(), SYM(texsize), formal(primString(), SYM(s), false, false), formal(primPen(), SYM(p), true, false));
 #line 252 "runlabel.in"
   addFunc(ve, run::gen_runlabel3, pathArray2() , SYM(_texpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 395 "runlabel.in"
+#line 396 "runlabel.in"
   addFunc(ve, run::gen_runlabel4, pathArray2() , SYM(textpath), formal(stringArray() , SYM(s), false, false), formal(penArray() , SYM(p), false, false));
-#line 469 "runlabel.in"
+#line 470 "runlabel.in"
   addFunc(ve, run::gen_runlabel5, pathArray() , SYM(_strokepath), formal(primPath(), SYM(g), false, false), formal(primPen(), SYM(p), true, false));
 }
 

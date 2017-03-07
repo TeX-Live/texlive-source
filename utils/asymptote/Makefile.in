@@ -5,7 +5,7 @@ POLL = poll
 
 GCVERSION = @GCVERSION@
 GC = gc-$(GCVERSION)
-LIBATOMIC = libatomic_ops-$(GCVERSION)
+LIBATOMIC = libatomic_ops-@ATOMICVERSION@
 GCOPTIONS = @GCOPTIONS@
 GCLIB = @GCLIB@
 GCPPLIB = @GCPPLIB@
@@ -24,7 +24,7 @@ vpath %.cc prc
 
 CAMP = camperror path drawpath drawlabel picture psfile texfile util settings \
        guide flatguide knot drawfill path3 drawpath3 drawsurface \
-       beziertriangle pen pipestream
+       beziercurve bezierpatch pen pipestream
 
 RUNTIME_FILES = runtime runbacktrace runpicture runlabel runhistory runarray \
 	runfile runsystem runpair runtriple runpath runpath3d runstring \
@@ -62,15 +62,15 @@ CONTEXTFILES = colo-asy.tex
 ASY = ./asy -dir base -config "" -render=0
 
 DEFS = @DEFS@ @OPTIONS@ @PTHREAD_CFLAGS@ -DFFTWPP_SINGLE_THREAD
-CFLAGS = @CXXFLAGS@ @CFLAGS@ 
-OPTS = $(DEFS) @CPPFLAGS@ $(CFLAGS) 
+CFLAGS = @CFLAGS@
+OPTS = $(DEFS) @CPPFLAGS@ @CXXFLAGS@ $(CFLAGS)
 INCL = -I. @INCL@
 
 # Options for compiling the object files for the shared library.
 # gc has to be configured with the option --disable-threads in order to make a
 # shared library that doesn't seg fault.  For now, just disable gc in the
 # shared library.
-SHAREDOPTS = $(filter-out -DUSEGC, $(DEFS)) $(CFLAGS) -fPIC -DFOR_SHARED
+SHAREDOPTS = $(filter-out -DUSEGC, $(OPTS)) -fPIC -DFOR_SHARED
 
 CXX = @CXX@ -Wall
 CC = @CC@ -Wall
@@ -97,7 +97,7 @@ REVISION = "const char *REVISION="
 last = $(shell cat revision.cc | sed -e 's/.*\"\(.*\)\";/\1/')
 usinggit = $(shell if test -d ".git"; then echo yes; fi)
 ifeq ($(usinggit),yes)
-	revision = $(shell LC_ALL="C" git describe | sed -e 's/git//' \
+	revision = $(shell LC_ALL="C" git describe --long | sed -e 's/git//' \
                     | sed -e 's/-g.*//')
 else
 	revision = @VERSION@

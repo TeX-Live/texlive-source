@@ -306,6 +306,57 @@ inline triple perp(triple v, triple u)
 double xratio(const triple& v);
 double yratio(const triple& v);
 
+inline void bounds(double& x, double &X, double v)
+{
+  if(v < x) x=v;
+  else if(v > X) X=v;
+}
+  
+inline void boundstriples(double& x, double& y, double& z,
+                          double& X, double& Y, double& Z,
+                          size_t n, const triple* v)
+{
+  X=x=v[0].getx();
+  Y=y=v[0].gety();
+  Z=z=v[0].getz();
+    
+  for(size_t i=1; i < n; ++i) {
+    triple V=v[i];
+    bounds(x,X,V.getx());
+    bounds(y,Y,V.gety());
+    bounds(z,Z,V.getz());
+  }
+}
+
+// return the maximum distance squared of points c0 and c1 from 
+// the respective internal control points of z0--z1.
+inline double Straightness(const triple& z0, const triple& c0,
+                           const triple& c1, const triple& z1)
+{
+  static const double third=1.0/3.0;
+  triple v=third*(z1-z0);
+  return std::max(abs2(c0-v-z0),abs2(z1-v-c1));
+}
+
+// return the maximum perpendicular distance squared of points c0 and c1
+// from z0--z1.
+inline double Distance1(const triple& z0, const triple& c0,
+                        const triple& c1, const triple& z1)
+{
+  triple Z0=c0-z0;
+  triple Q=unit(z1-z0);
+  triple Z1=c1-z0;
+  return std::max(abs2(Z0-dot(Z0,Q)*Q),abs2(Z1-dot(Z1,Q)*Q));
+}
+
+// return the perpendicular distance squared of a point z from the plane
+// through u with unit normal n.
+inline double Distance2(const triple& z, const triple& u, const triple& n)
+{
+  double d=dot(z-u,n);
+  return d*d;
+}
+  
 } //namespace camp
 
 GC_DECLARE_PTRFREE(camp::triple);

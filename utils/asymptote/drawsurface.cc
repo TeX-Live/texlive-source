@@ -15,15 +15,17 @@ using namespace prc;
 
 namespace camp {
 
-const double pixel=1.0; // Adaptive rendering constant.
 const triple drawElement::zero;
+
+double T[3]; // z-component of current transform
 
 using vm::array;
 
 #ifdef HAVE_GL
-void bezierTriangle(const triple *g, bool straight, double ratio,
-                    bool havebillboard, triple center, GLfloat *colors);
-  
+BezierCurve drawSurface::C;
+BezierPatch drawBezierPatch::S;
+BezierTriangle drawBezierTriangle::S;
+
 void storecolor(GLfloat *colors, int i, const vm::array &pens, int j)
 {
   pen p=vm::read<camp::pen>(pens,j);
@@ -48,10 +50,32 @@ void setcolors(bool colors, bool lighton,
                const RGBAColour& emissive,
                const RGBAColour& specular, double shininess) 
 {
+  static prc::RGBAColour lastdiffuse;
+  static prc::RGBAColour lastambient;
+  static prc::RGBAColour lastemissive;
+  static prc::RGBAColour lastspecular;
+  static double lastshininess=0.0;
+  static bool lastcolors=false;
+    
+  if(colors != lastcolors) {
+    drawBezierPatch::S.draw();
+    lastcolors=colors;
+  }
+  
+  if(!colors && (diffuse != lastdiffuse || ambient != lastambient || 
+                 emissive != lastemissive || specular != lastspecular ||
+                 shininess != lastshininess)) {
+    drawBezierPatch::S.draw();
+    lastdiffuse=diffuse;
+    lastambient=ambient;
+    lastemissive=emissive;
+    lastspecular=specular;
+    lastshininess=shininess;
+  }
+
   if(colors) {
-    glEnable(GL_COLOR_MATERIAL);
-   if(!lighton) 
-     glColorMaterial(GL_FRONT_AND_BACK,GL_EMISSION);
+    if(!lighton) 
+      glColorMaterial(GL_FRONT_AND_BACK,GL_EMISSION);
 
     GLfloat Black[]={0,0,0,(GLfloat) diffuse.A};
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE,Black);
@@ -82,21 +106,25 @@ void setcolors(bool colors, bool lighton,
 
 #endif  
 
-void drawSurface::bounds(const double* t, bbox3& b)
+void drawBezierPatch::bounds(const double* t, bbox3& b)
 {
   double x,y,z;
   double X,Y,Z;
   
   if(straight) {
-    triple *Vertices;
-    if(t == NULL) Vertices=vertices;
-    else {
-      triple buf[4];
-      Vertices=buf;
-      for(int i=0; i < 4; ++i)
-        Vertices[i]=t*vertices[i];
+    triple Vertices[3];
+    if(t == NULL) {
+      Vertices[0]=controls[0];
+      Vertices[1]=controls[3];
+      Vertices[2]=controls[12];
+      Vertices[3]=controls[15];
+    } else {
+      Vertices[0]=t*controls[0];
+      Vertices[1]=t*controls[3];
+      Vertices[2]=t*controls[12];
+      Vertices[3]=t*controls[15];
     }
-  
+    
     boundstriples(x,y,z,X,Y,Z,4,Vertices);
   } else {
     double cx[16];
@@ -144,20 +172,22 @@ void drawSurface::bounds(const double* t, bbox3& b)
   }
 }
 
-void drawSurface::ratio(const double* t, pair &b, double (*m)(double, double),
+void drawBezierPatch::ratio(const double* t, pair &b, double (*m)(double, double),
                         double fuzz, bool &first)
 {
   triple buf[16];
+  triple* Controls;
   if(straight) {
-    triple *Vertices;
-    if(t == NULL) Vertices=vertices;
+    if(t == NULL) Controls=controls;
     else {
-      Vertices=buf;
-      for(int i=0; i < 4; ++i)
-        Vertices[i]=t*vertices[i];
+      Controls=buf;
+      Controls[0]=t*controls[0];
+      Controls[3]=t*controls[3];
+      Controls[12]=t*controls[12];
+      Controls[15]=t*controls[15];
     }
   
-    triple v=Vertices[0];
+    triple v=Controls[0];
     double x=xratio(v);
     double y=yratio(v);
     if(first) {
@@ -167,19 +197,21 @@ void drawSurface::ratio(const double* t, pair &b, double (*m)(double, double),
       x=m(b.getx(),x);
       y=m(b.gety(),y);
     }
-  
-    for(size_t i=1; i < 4; ++i) {
-      triple v=Vertices[i];
-      x=m(x,xratio(v));
-      y=m(y,yratio(v));
-    }
+    v=Controls[3];
+    x=m(x,xratio(v));
+    y=m(y,yratio(v));
+    v=Controls[12];
+    x=m(x,xratio(v));
+    y=m(y,yratio(v));
+    v=Controls[15];
+    x=m(x,xratio(v));
+    y=m(y,yratio(v));
     b=pair(x,y);
   } else {
-    triple* Controls;
     if(t == NULL) Controls=controls;
     else {
       Controls=buf;
-      for(int i=0; i < 16; ++i)
+      for(unsigned int i=0; i < 16; ++i)
         Controls[i]=t*controls[i];
     }
 
@@ -194,7 +226,7 @@ void drawSurface::ratio(const double* t, pair &b, double (*m)(double, double),
   }
 }
 
-bool drawSurface::write(prcfile *out, unsigned int *, double, groupsmap&)
+bool drawBezierPatch::write(prcfile *out, unsigned int *, double, groupsmap&)
 {
   if(invisible || !prc)
     return true;
@@ -202,6 +234,7 @@ bool drawSurface::write(prcfile *out, unsigned int *, double, groupsmap&)
   PRCmaterial m(ambient,diffuse,emissive,specular,opacity,PRCshininess);
 
   if(straight) {
+    triple vertices[]={controls[0],controls[12],controls[3],controls[15]};
     if(colors)
       out->addQuad(vertices,colors);
     else
@@ -212,192 +245,93 @@ bool drawSurface::write(prcfile *out, unsigned int *, double, groupsmap&)
   return true;
 }
 
-// return the perpendicular displacement of a point z from the plane
-// through u with unit normal n.
-inline triple displacement2(const triple& z, const triple& u, const triple& n)
-{
-  triple Z=z-u;
-  return n != triple(0,0,0) ? dot(Z,n)*n : Z;
-}
-
-inline triple maxabs(triple u, triple v)
-{
-  return triple(max(fabs(u.getx()),fabs(v.getx())),
-                max(fabs(u.gety()),fabs(v.gety())),
-                max(fabs(u.getz()),fabs(v.getz())));
-}
-
-inline triple displacement1(const triple& z0, const triple& c0,
-                            const triple& c1, const triple& z1)
-{
-  return maxabs(displacement(c0,z0,z1),displacement(c1,z0,z1));
-}
-
-void drawSurface::displacement()
-{
-#ifdef HAVE_GL
-  if(normal != zero) {
-    d=zero;
-    
-    if(!straight) {
-      for(size_t i=1; i < 16; ++i) 
-        d=maxabs(d,displacement2(controls[i],controls[0],normal));
-      
-      dperp=d;
-    
-      for(size_t i=0; i < 4; ++i)
-        d=maxabs(d,displacement1(controls[4*i],controls[4*i+1],
-                                 controls[4*i+2],controls[4*i+3]));
-      for(size_t i=0; i < 4; ++i)
-        d=maxabs(d,displacement1(controls[i],controls[i+4],
-                                 controls[i+8],controls[i+12]));
-    }
-  }
-#endif  
-}
-  
-inline double fraction(double d, double size)
-{
-  return size == 0 ? 1.0 : min(fabs(d)/size,1.0);
-}
-
-// estimate the viewport fraction associated with the displacement d
-inline double fraction(const triple& d, const pair& size)
-{
-  return max(fraction(d.getx(),size.getx()),fraction(d.gety(),size.gety()));
-}
-
-void drawSurface::render(GLUnurbs *nurb, double size2,
-                         const triple& Min, const triple& Max,
-                         double perspective, bool lighton, bool transparent)
+void drawBezierPatch::render(GLUnurbs *nurb, double size2,
+                             const triple& b, const triple& B,
+                             double perspective, bool lighton,
+                             bool transparent)
 {
 #ifdef HAVE_GL
   if(invisible || 
      ((colors ? colors[0].A+colors[1].A+colors[2].A+colors[3].A < 4.0 :
        diffuse.A < 1.0) ^ transparent)) return;
-  double s;
-  GLfloat Normal[3];
-  GLfloat v[16];
   
-  const bool havebillboard=interaction == BILLBOARD &&
+  const bool billboard=interaction == BILLBOARD &&
     !settings::getSetting<bool>("offscreen");
   triple m,M;
-  if(perspective || !havebillboard) {
-    double t[16];
-    glGetDoublev(GL_MODELVIEW_MATRIX,t);
-// Like Fortran, OpenGL uses transposed (column-major) format!
-    run::transpose(t,4);
-    
-    bbox3 B(this->Min,this->Max);
-    B.transform(t);
   
-    m=B.Min();
-    M=B.Max();
-  }
-
+  double f,F,s;
   if(perspective) {
-    const double f=m.getz()*perspective;
-    const double F=M.getz()*perspective;
-    if(!havebillboard && (M.getx() < min(f*Min.getx(),F*Min.getx()) || 
-                          m.getx() > max(f*Max.getx(),F*Max.getx()) ||
-                          M.gety() < min(f*Min.gety(),F*Min.gety()) ||
-                          m.gety() > max(f*Max.gety(),F*Max.gety()) ||
-                          M.getz() < Min.getz() ||
-                          m.getz() > Max.getz()))
-      return;
+    f=Min.getz()*perspective;
+    F=Max.getz()*perspective;
+    m=triple(min(f*b.getx(),F*b.getx()),min(f*b.gety(),F*b.gety()),b.getz());
+    M=triple(max(f*B.getx(),F*B.getx()),max(f*B.gety(),F*B.gety()),B.getz());
     s=max(f,F);
   } else {
-    if(!havebillboard && (M.getx() < Min.getx() || m.getx() > Max.getx() ||
-                          M.gety() < Min.gety() || m.gety() > Max.gety() ||
-                          M.getz() < Min.getz() || m.getz() > Max.getz()))
-      return;
+    m=b;
+    M=B;
     s=1.0;
   }
-    
+  
+  const pair size3(s*(B.getx()-b.getx()),s*(B.gety()-b.gety()));
+  
+  double t[16]; // current transform
+  glGetDoublev(GL_MODELVIEW_MATRIX,t);
+// Like Fortran, OpenGL uses transposed (column-major) format!
+  run::transpose(t,4);
+  T[0]=t[8];
+  T[1]=t[9];
+  T[2]=t[10];
+  run::inverse(t,4);
+  bbox3 box(m,M);
+  box.transform(t);
+  m=box.Min();
+  M=box.Max();
+  
+  if(!billboard && (Max.getx() < m.getx() || Min.getx() > M.getx() ||
+                    Max.gety() < m.gety() || Min.gety() > M.gety() ||
+                    Max.getz() < m.getz() || Min.getz() > M.getz()))
+    return;
+
   setcolors(colors,lighton,diffuse,ambient,emissive,specular,shininess);
   
-  const pair size3(s*(Max.getx()-Min.getx()),s*(Max.gety()-Min.gety()));
+  if(billboard) BB.init(center);
   
-  bool havenormal=normal != zero;
-  if(havebillboard) BB.init();
-
+  GLfloat v[16];
   if(colors)
     for(size_t i=0; i < 4; ++i)
       storecolor(v,4*i,colors[i]);
-    
-  if(!straight && (!havenormal || fraction(d,size3)*size2 >= pixel)) {
-    if(lighton) {
-      if(havenormal && fraction(dperp,size3)*size2 <= 0.1) {
-        if(havebillboard)
-          BB.store(Normal,normal,zero);
-        else
-          store(Normal,normal);
-        glNormal3fv(Normal);
-        gluNurbsCallback(nurb,GLU_NURBS_NORMAL,NULL);
-      } else
-        gluNurbsCallback(nurb,GLU_NURBS_NORMAL,(_GLUfuncptr) glNormal3fv);
-    }
-    GLfloat Controls[48];
-    
-    if(havebillboard) {
-      for(size_t i=0; i < 16; ++i)
-        BB.store(Controls+3*i,controls[i],center);
-    } else {
-      for(size_t i=0; i < 16; ++i)
-        store(Controls+3*i,controls[i]);
-    }
-    
-    static GLfloat bezier[]={0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0};
-    gluBeginSurface(nurb);
-    gluNurbsSurface(nurb,8,bezier,8,bezier,12,3,Controls,4,4,GL_MAP2_VERTEX_3);
-    if(colors) {
-      static GLfloat linear[]={0.0,0.0,1.0,1.0};
-      gluNurbsSurface(nurb,4,linear,4,linear,8,4,v,2,2,GL_MAP2_COLOR_4);
-    }
-    
-    gluEndSurface(nurb);
-  } else {
-    GLfloat Vertices[12];
-    
-    if(havebillboard) {
-      for(size_t i=0; i < 4; ++i)
-        BB.store(Vertices+3*i,vertices[i],center);
-    } else {
-      for(size_t i=0; i < 4; ++i)
-        store(Vertices+3*i,vertices[i]);
-    }
-    
-    if(havebillboard)
-      BB.store(Normal,normal,zero);
-    else
-      store(Normal,normal);
-
-    glBegin(GL_QUADS);
-    if(lighton)
-      glNormal3fv(Normal);
-    if(colors) 
-      glColor4fv(v);
-    glVertex3fv(Vertices);
-    if(colors) 
-      glColor4fv(v+8);
-    glVertex3fv(Vertices+6);
-    if(colors) 
-      glColor4fv(v+12);
-    glVertex3fv(Vertices+9);
-    if(colors) 
-      glColor4fv(v+4);
-    glVertex3fv(Vertices+3);
-    glEnd();
-  }
   
-  if(colors)
-    glDisable(GL_COLOR_MATERIAL);
+  triple *Controls;
+  triple Controls0[16];
+  if(billboard) {
+    Controls=Controls0;
+    for(size_t i=0; i < 16; i++)
+      Controls[i]=BB.transform(controls[i]);
+  } else
+    Controls=controls;
+    
+  if(gl::outlinemode) {
+    triple edge0[]={Controls[0],Controls[4],Controls[8],Controls[12]};
+    C.queue(edge0,straight,size3.length()/size2,m,M);
+    triple edge1[]={Controls[12],Controls[13],Controls[14],Controls[15]};
+    C.queue(edge1,straight,size3.length()/size2,m,M);
+    triple edge2[]={Controls[15],Controls[11],Controls[7],Controls[3]};
+    C.queue(edge2,straight,size3.length()/size2,m,M);
+    triple edge3[]={Controls[3],Controls[2],Controls[1],Controls[0]};
+    C.queue(edge3,straight,size3.length()/size2,m,M);
+    C.draw();
+  } else {
+    S.queue(Controls,straight,size3.length()/size2,m,M,transparent,
+            colors ? v : NULL);
+    if(!transparent) 
+      S.draw();
+  }
 #endif
 }
 
-drawElement *drawSurface::transformed(const double* t)
+drawElement *drawBezierPatch::transformed(const double* t)
 {
-  return new drawSurface(t,this);
+  return new drawBezierPatch(t,this);
 }
   
 void drawBezierTriangle::bounds(const double* t, bbox3& b)
@@ -503,7 +437,7 @@ void drawBezierTriangle::ratio(const double* t, pair &b,
       for(unsigned int i=0; i < 10; ++i)
         Controls[i]=t*controls[i];
     }
-    
+
     if(first) {
       triple v=Controls[0];
       b=pair(xratio(v),yratio(v));
@@ -526,81 +460,97 @@ bool drawBezierTriangle::write(prcfile *out, unsigned int *, double,
   static const double third=1.0/3.0;
   static const double third2=2.0/3.0;
   triple Controls[]={controls[0],controls[0],controls[0],controls[0],
-                       controls[1],third2*controls[1]+third*controls[2],
-                       third*controls[1]+third2*controls[2],
-                       controls[2],controls[3],
-                       third*controls[3]+third2*controls[4],
-                       third2*controls[4]+third*controls[5],
-                       controls[5],controls[6],controls[7],
-                       controls[8],controls[9]};
+                     controls[1],third2*controls[1]+third*controls[2],
+                     third*controls[1]+third2*controls[2],
+                     controls[2],controls[3],
+                     third*controls[3]+third2*controls[4],
+                     third2*controls[4]+third*controls[5],
+                     controls[5],controls[6],controls[7],
+                     controls[8],controls[9]};
   out->addPatch(Controls,m);
                     
   return true;
 }
 
 void drawBezierTriangle::render(GLUnurbs *nurb, double size2,
-                                const triple& Min, const triple& Max,
+                                const triple& b, const triple& B,
                                 double perspective, bool lighton,
                                 bool transparent)
 {
 #ifdef HAVE_GL
-  if(invisible)
-    return;
-
   if(invisible || 
      ((colors ? colors[0].A+colors[1].A+colors[2].A < 3.0 :
        diffuse.A < 1.0) ^ transparent)) return;
-
-  double s;
   
-  const bool havebillboard=interaction == BILLBOARD &&
+  const bool billboard=interaction == BILLBOARD &&
     !settings::getSetting<bool>("offscreen");
   triple m,M;
+  
+  double f,F,s;
+  if(perspective) {
+    f=Min.getz()*perspective;
+    F=Max.getz()*perspective;
+    m=triple(min(f*b.getx(),F*b.getx()),min(f*b.gety(),F*b.gety()),b.getz());
+    M=triple(max(f*B.getx(),F*B.getx()),max(f*B.gety(),F*B.gety()),B.getz());
+    s=max(f,F);
+  } else {
+    m=b;
+    M=B;
+    s=1.0;
+  }
+  
+  const pair size3(s*(B.getx()-b.getx()),s*(B.gety()-b.gety()));
+  
   double t[16]; // current transform
   glGetDoublev(GL_MODELVIEW_MATRIX,t);
 // Like Fortran, OpenGL uses transposed (column-major) format!
   run::transpose(t,4);
+  T[0]=t[8];
+  T[1]=t[9];
+  T[2]=t[10];
+  run::inverse(t,4);
+  bbox3 box(m,M);
+  box.transform(t);
+  m=box.Min();
+  M=box.Max();
 
-  bbox3 B(this->Min,this->Max);
-  B.transform(t);
-
-  m=B.Min();
-  M=B.Max();
-
-  if(perspective) {
-    const double f=m.getz()*perspective;
-    const double F=M.getz()*perspective;
-    if((M.getx() < min(f*Min.getx(),F*Min.getx()) ||
-        m.getx() > max(f*Max.getx(),F*Max.getx()) ||
-        M.gety() < min(f*Min.gety(),F*Min.gety()) ||
-        m.gety() > max(f*Max.gety(),F*Max.gety()) ||
-        M.getz() < Min.getz() ||
-        m.getz() > Max.getz()))
-      return;
-    s=max(f,F);
-  } else {
-    if((M.getx() < Min.getx() || m.getx() > Max.getx() ||
-        M.gety() < Min.gety() || m.gety() > Max.gety() ||
-        M.getz() < Min.getz() || m.getz() > Max.getz()))
-      return;
-    s=1.0;
-  }
+  if(!billboard && (Max.getx() < m.getx() || Min.getx() > M.getx() ||
+                    Max.gety() < m.gety() || Min.gety() > M.gety() ||
+                    Max.getz() < m.getz() || Min.getz() > M.getz()))
+    return;
 
   setcolors(colors,lighton,diffuse,ambient,emissive,specular,shininess);
   
-  const pair size3(s*(Max.getx()-Min.getx()),s*(Max.gety()-Min.gety()));
+  if(billboard) BB.init(center);
   
   GLfloat v[12];
-
   if(colors)
     for(size_t i=0; i < 3; ++i)
       storecolor(v,4*i,colors[i]);
     
-  bezierTriangle(controls,straight,size3.length()/size2,havebillboard,center,
-                 colors ? v : NULL);
-
-  if(colors)
-    glDisable(GL_COLOR_MATERIAL);
+  triple *Controls;
+  triple Controls0[10];
+  if(billboard) {
+    Controls=Controls0;
+    for(size_t i=0; i < 10; i++)
+      Controls[i]=BB.transform(controls[i]);
+  } else 
+    Controls=controls;
+  
+  if(gl::outlinemode) {
+    triple edge0[]={Controls[0],Controls[1],Controls[3],Controls[6]};
+    C.queue(edge0,straight,size3.length()/size2,m,M);
+    triple edge1[]={Controls[6],Controls[7],Controls[8],Controls[9]};
+    C.queue(edge1,straight,size3.length()/size2,m,M);
+    triple edge2[]={Controls[9],Controls[5],Controls[2],Controls[0]};
+    C.queue(edge2,straight,size3.length()/size2,m,M);
+    C.draw();
+  } else {
+    S.queue(Controls,straight,size3.length()/size2,m,M,transparent,
+            colors ? v : NULL);
+    if(!transparent) 
+      S.draw();
+  }
 #endif
 }
 
