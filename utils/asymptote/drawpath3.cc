@@ -5,6 +5,7 @@
  *****/
 
 #include "drawpath3.h"
+#include "drawsurface.h"
 
 namespace camp {
 
@@ -42,65 +43,79 @@ bool drawPath3::write(prcfile *out, unsigned int *, double, groupsmap&)
   return true;
 }
 
-void drawPath3::render(GLUnurbs *nurb, double, const triple&, const triple&,
-                       double, bool lighton, bool transparent)
+void drawPath3::render(GLUnurbs *nurb, double size2,
+                       const triple& b, const triple& B,
+                       double perspective, bool lighton, bool transparent)
 {
 #ifdef HAVE_GL
   Int n=g.length();
   if(n == 0 || invisible || ((color.A < 1.0) ^ transparent))
     return;
 
-  bool havebillboard=interaction == BILLBOARD;
+  const bool billboard=interaction == BILLBOARD &&
+    !settings::getSetting<bool>("offscreen");
+  triple m,M;
+  
+  double f,F,s;
+  if(perspective) {
+    f=Min.getz()*perspective;
+    F=Max.getz()*perspective;
+    m=triple(min(f*b.getx(),F*b.getx()),min(f*b.gety(),F*b.gety()),b.getz());
+    M=triple(max(f*B.getx(),F*B.getx()),max(f*B.gety(),F*B.gety()),B.getz());
+    s=max(f,F);
+  } else {
+    m=b;
+    M=B;
+    s=1.0;
+  }
+  
+  const pair size3(s*(B.getx()-b.getx()),s*(B.gety()-b.gety()));
+  
+  double t[16]; // current transform
+  glGetDoublev(GL_MODELVIEW_MATRIX,t);
+// Like Fortran, OpenGL uses transposed (column-major) format!
+  run::transpose(t,4);
+  run::inverse(t,4);
+  bbox3 box(m,M);
+  box.transform(t);
+  m=box.Min();
+  M=box.Max();
+
+  if(!billboard && (Max.getx() < m.getx() || Min.getx() > M.getx() ||
+                    Max.gety() < m.gety() || Min.gety() > M.gety() ||
+                    Max.getz() < m.getz() || Min.getz() > M.getz()))
+    return;
+  
+  drawBezierPatch::S.draw();
   
   GLfloat Diffuse[]={0.0,0.0,0.0,(GLfloat) color.A};
   glMaterialfv(GL_FRONT,GL_DIFFUSE,Diffuse);
-  
   static GLfloat Black[]={0.0,0.0,0.0,1.0};
   glMaterialfv(GL_FRONT,GL_AMBIENT,Black);
-    
   GLfloat Emissive[]={(GLfloat) color.R,(GLfloat) color.G,(GLfloat) color.B,
 		      (GLfloat) color.A};
   glMaterialfv(GL_FRONT,GL_EMISSION,Emissive);
-    
   glMaterialfv(GL_FRONT,GL_SPECULAR,Black);
-  
   glMaterialf(GL_FRONT,GL_SHININESS,128.0);
   
-  if(havebillboard) BB.init();
   
-  if(straight) {
-    glBegin(GL_LINE_STRIP);
-    for(Int i=0; i <= n; ++i) {
-      triple v=g.point(i);
-      if(havebillboard) {
-        static GLfloat controlpoints[3];
-        BB.store(controlpoints,v,center);
-        glVertex3fv(controlpoints);
-      } else
-        glVertex3f(v.getx(),v.gety(),v.getz());
-    }
-    glEnd();
-  } else {
+  
+  if(billboard) {
     for(Int i=0; i < n; ++i) {
-      static GLfloat knots[8]={0.0,0.0,0.0,0.0,1.0,1.0,1.0,1.0};
-      static GLfloat controlpoints[12];
-      if(havebillboard) {
-        BB.store(controlpoints,g.point(i),center);
-        BB.store(controlpoints+3,g.postcontrol(i),center);
-        BB.store(controlpoints+6,g.precontrol(i+1),center);
-        BB.store(controlpoints+9,g.point(i+1),center);
-      } else {
-        store(controlpoints,g.point(i));
-        store(controlpoints+3,g.postcontrol(i));
-        store(controlpoints+6,g.precontrol(i+1));
-        store(controlpoints+9,g.point(i+1));
-      }
-      
-      gluBeginCurve(nurb);
-      gluNurbsCurve(nurb,8,knots,3,controlpoints,4,GL_MAP1_VERTEX_3);
-      gluEndCurve(nurb);
+      triple controls[]={BB.transform(g.point(i)),BB.transform(g.postcontrol(i)),
+                         BB.transform(g.precontrol(i+1)),
+                         BB.transform(g.point(i+1))};
+      R.queue(controls,straight,size3.length()/size2,m,M);
+    }
+  } else {
+    BB.init(center);
+    for(Int i=0; i < n; ++i) {
+      triple controls[]={g.point(i),g.postcontrol(i),g.precontrol(i+1),
+                         g.point(i+1)};
+      R.queue(controls,straight,size3.length()/size2,m,M);
     }
   }
+  R.draw();
 #endif
 }
 

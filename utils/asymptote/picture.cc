@@ -14,6 +14,7 @@
 #include "drawverbatim.h"
 #include "drawlabel.h"
 #include "drawlayer.h"
+#include "drawsurface.h"
 
 using std::ifstream;
 using std::ofstream;
@@ -44,6 +45,8 @@ texstream::~texstream() {
 }
 
 namespace camp {
+
+extern void draw();
 
 bool isIdTransform3(const double* t)
 {
@@ -109,30 +112,6 @@ void multiplyTransform3(double*& t, const double* s, const double* r)
   }
 }
   
-void boundstriples(double& x, double& y, double& z, double& X, double& Y,
-                   double& Z, size_t n, const triple* v)
-{
-  if(n == 0 || v == NULL)
-    return;
-
-  X=x=v[0].getx();
-  Y=y=v[0].gety();
-  Z=z=v[0].getz();
-    
-  for(size_t i=1; i < n; ++i) {
-    const triple vi=v[i];
-    const double vx=vi.getx();
-    x=min(x,vx);
-    X=max(X,vx);
-    const double vy=vi.gety();
-    y=min(y,vy);
-    Y=max(Y,vy);
-    const double vz=vi.getz();
-    z=min(z,vz);
-    Z=max(Z,vz);
-  }
-}
-
 double xratio(const triple& v) {return v.getx()/v.getz();}
 double yratio(const triple& v) {return v.gety()/v.getz();}
   
@@ -789,7 +768,8 @@ bool picture::shipout(picture *preamble, const string& Prefix,
   bool pdf=settings::pdf(texengine);
   
   bool standardout=Prefix == "-";
-  string prefix=standardout ? standardprefix : Prefix;
+  string prefix=standardout ? standardprefix : stripExt(Prefix);
+
   string preformat=nativeformat();
   string outputformat=format.empty() ? defaultformat() : format;
   bool epsformat=outputformat == "eps";
@@ -1080,6 +1060,9 @@ void picture::render(GLUnurbs *nurb, double size2,
     assert(*p);
     (*p)->render(nurb,size2,Min,Max,perspective,lighton,transparent);
   }
+#ifdef HAVE_GL
+  drawBezierPatch::S.draw();
+#endif  
 }
   
 struct Communicate : public gc {

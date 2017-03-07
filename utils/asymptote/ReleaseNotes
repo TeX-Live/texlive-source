@@ -1,3 +1,19 @@
+Release Notes for Version 2.40
+
+A partial workaround for the OpenGL transparency bug was implemented, by
+presorting transparent triangles of the same material. The examples were
+updated and a segmentation fault was fixed. Multisample detection, surface
+rendering, and crack filling algorithms were fixed. The default compilation
+flags now specify -std=c++11.
+
+Release Notes for Version 2.39
+
+A workaround was implemented for the backwards incompatibility in the
+TeXLive 2016 graphicx package. Empty tick labels in graphs are now avoided.
+A paletteticks NoTicks option was added. Support for lualatex was improved.
+Renderers for Bezier patches and curves more efficient than those
+in the deprecated GLU library were implemented.
+
 Release Notes for Version 2.38
 
 An integer division operator # was added. Control points in xasy are now

@@ -79,7 +79,7 @@ defaultrender.closed=false;
 defaultrender.tessellate=false;
 defaultrender.merge=false;
 defaultrender.margin=0.02;
-defaultrender.tubegranularity=0.005;
+defaultrender.tubegranularity=0.001;
 defaultrender.sphere=NURBSsphere;
 defaultrender.labelfill=true;
 defaultrender.partnames=false;
@@ -218,7 +218,7 @@ triple perp(triple v)
 }
 
 // Return the transformation corresponding to moving the camera from the target
-// (looking in the negative z direction) to the point 'eye' (looking at target),
+// (looking in the negative z direction) to the point 'eye' (looking at target,
 // orienting the camera so that direction 'up' points upwards.
 // Since, in actuality, we are transforming the points instead of the camera,
 // we calculate the inverse matrix.

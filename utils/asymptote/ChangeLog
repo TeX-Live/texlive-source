@@ -1,3 +1,634 @@
+commit 5a6d3626f3589f7fdc7193dea97ae335ad70b242
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 1 23:43:49 2017 -0700
+
+    Increase adaptive rendering constant to 1.0.
+
+commit 35a65e91254f9326e70fcca3c334cc40cb5cb867
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 1 22:18:51 2017 -0700
+
+    Update to more recent system versions of glu32.dll and opengl32.dll libraries,
+    so that UNIX subdivision crack fix also works under MSDOS.
+
+commit f846f1d090b8ef8910a891a62b7ddfb945ec8280
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 1 22:09:50 2017 -0700
+
+    Fix multisample detection; remove MSDOS workarounds (tested with
+    freeglut-2.8.1).
+
+commit 8de2b9cae38a5bdfc29bbe6ee8bec9def0515c5c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 25 01:45:58 2017 -0700
+
+    Use Straightness also for Bezier triangles.
+
+commit d4330f044f54bce7122052a8b2e860a39944f58d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 25 01:31:01 2017 -0700
+
+    Optimize Straightness function.
+
+commit 8e6fb2dc64f2a7cf43a13f97752f2c5d902f381a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 24 10:54:48 2017 -0700
+
+    Fix straightness test.
+
+commit f72338e8be394ab6716a7b488f016bbf7d3123d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 20 11:50:43 2017 -0700
+
+    Fix CFLAGS.
+
+commit 12af4538ad099cd597c9f6b3c816823fdc0ca7d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 19 11:44:53 2017 -0700
+
+    Localize declarations.
+
+commit 23a14592eb04fd15a7d062ccc693b225e927a0fe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 19 11:37:30 2017 -0700
+
+    Force draw on color change.
+
+commit 6d5ef929f22eb9d7b4f82fe2d828eb6a6b39395f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 18 20:03:01 2017 -0700
+
+    Move compare function to bezierpatch.cc.
+
+commit 5da211a76c91fc77111e4ffff2849c14846f95fc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 15 18:25:34 2017 -0700
+
+    Update credits and example.
+
+commit 322fba942949338ce0b2a15e6f8a38c5c7f95ff1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 15 15:19:55 2017 -0700
+
+    Simplify code.
+
+commit 9a0372b48f142f6429015f80a18071ee77b796da
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 15 07:52:52 2017 -0700
+
+    Revert "Detect material change also for specified vertex colors."
+    
+    This reverts commit c7878da529adde75a929a755dae7a42b2e9a3486.
+
+commit c7878da529adde75a929a755dae7a42b2e9a3486
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 15 07:45:14 2017 -0700
+
+    Detect material change also for specified vertex colors.
+
+commit af2b9b1592e3849c5e5c986fd92c745076eedb22
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 14 23:30:51 2017 -0700
+
+    Derive drawBezierPatch and drawBezierTriangle from drawSurface.
+
+commit 6036e20c654c10dc4514cc95162378578f5f15d5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 14 23:29:17 2017 -0700
+
+    Don't override command-line CFLAGS.
+
+commit 53cd8fef6985ff057380289b58ba721c0bcbe4b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 14 16:52:42 2017 -0700
+
+    Work around broken CYGWIN headers.
+
+commit 5d2776ee98f73db470c4c02eb8dbb2cf02e01618
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 14 16:48:15 2017 -0700
+
+    Improve subdivision crack filling for Bezier triangles.
+
+commit f181de0b91d7fe3d0f009b096e12741fa10ebde2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 14 09:27:51 2017 -0700
+
+    Update comments.
+
+commit 97881b9e66a053fcbec8298f3cd4c47549f1fbc1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 14:12:20 2017 -0700
+
+    Fix warning message.
+
+commit 846025fa2fb7293558825b23eff3c87ad9f22e84
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 13:49:42 2017 -0700
+
+    Implement transparency workaround also for Bezier triangles.
+
+commit 064ad7478a319f0c98aaae524c72b5d068c1b359
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 11:33:35 2017 -0700
+
+    Implement transparency workaround also for Bezier triangles.
+
+commit 1c8b95b6e6f9bd0773861d233f880ff553f72ed1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 03:56:02 2017 -0700
+
+    Remove unused code.
+
+commit f2de95a07077aaf2e4c812f0cd2706be14e4f3b1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 03:54:10 2017 -0700
+
+    Test empty flag in BezierPatch::draw().
+
+commit 64134306851cc52f0fc134a7c6933f79f60149da
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 03:45:36 2017 -0700
+
+    Simplify code; update example.
+
+commit 42ef8903cabfc20ceef8971025d71e5a91458700
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 03:39:20 2017 -0700
+
+    Remove unused variable.
+
+commit f2964231df4f5220c07db04faccd99d05ac73580
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 13 03:36:51 2017 -0700
+
+    Simplify code.
+
+commit e209592e78c8fd8da53ee343768931a6ed23c89b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 12 23:01:31 2017 -0700
+
+    Fix example.
+
+commit 0e09443aec3a961b46dc86b1c0a388d203a1f6bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 12 22:59:39 2017 -0700
+
+    Fix example.
+
+commit e9face7d68b591bcd39a0c2a8eddc458bb6910b3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 12 22:46:06 2017 -0700
+
+    Update examples.
+
+commit 31c6630d550fab51331756a4d78bc6f199b226ea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 12 14:59:39 2017 -0700
+
+    Partially work around OpenGL transparency bug by sorting transparent triangles
+    by their centroid depth.
+
+commit ca09f95435e91eefcffd15050657e53debc1f829
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 12 14:52:21 2017 -0700
+
+    Fix segmentation fault.
+
+commit 8388a6050b59764a1669bd7f56aa8864c4261dfc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 11 19:49:58 2017 -0700
+
+    Update to gc-7.6.0.
+
+commit 0eb3950fd75f3ce45617a83ad1f8e30778e14d3b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 8 12:21:48 2017 -0700
+
+    Fix stride.
+
+commit 7161eef9c86df2124549a42c0723610ca9e1acee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 6 16:35:21 2017 -0700
+
+    Support compilation without OpenGL.
+
+commit 723495103fb4d189f6d1ec1349ecdd01275b89b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 27 14:23:35 2017 -0700
+
+    Fix post-release version number.
+
+commit 0c0164bdaba74be22c294aebdb880c6798ab6bbc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 25 00:17:22 2017 -0700
+
+    Increment version to 2.40.
+
+commit 6895ed3fb866609fae46b01bd6e44b2f2bcf281f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 22:43:43 2017 -0700
+
+    Update asymptote.py.
+
+commit 51cb6d02c8ce6599ce9975e315308ec99af60d7e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 20:20:11 2017 -0700
+
+    Remove unwanted extension from shipout prefix.
+
+commit 80b4d2b25e304a4b11c60a28082130d1a17d44dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 14:24:59 2017 -0700
+
+    Use pdf 3D label processor also for luatex and lualatex tex engines.
+
+commit e793d86adc45d3738b9b69ad20212f5c9c18c364
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 13:50:47 2017 -0700
+
+    Reduce tubegranularity.
+
+commit 9366137351acf3cf45cf7c7de563f13d5a39bb95
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 13:37:02 2017 -0700
+
+    Make invalid string casts return an uninitialized variable.
+    
+    Add bool initialized(T) function for basic types T.
+
+commit 4c744193cc8fdd51d277e9566a114a589772ae4d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 09:28:10 2017 -0700
+
+    Move lualatex test into TeX code.
+
+commit 9a8586b5f6c9581eb7cb93fe9775e1756de3c5c8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 09:01:40 2017 -0700
+
+    Revert "Remove requirement to call nosetpagesize() when changing to lualatex engine."
+    
+    This reverts commit 70fccdee30727275b3b1cab79da18287837601e2.
+
+commit 70fccdee30727275b3b1cab79da18287837601e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 08:44:36 2017 -0700
+
+    Remove requirement to call nosetpagesize() when changing to lualatex engine.
+
+commit 7d9b49adf9e555e13dcea584e74bcd12f9636a49
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 16:59:00 2017 -0700
+
+    Reinstate patch outline mode.
+
+commit a96ffbbfba55fc69b27b1c6052545bbf99ee23f8
+Merge: 0be6f55 16ae9ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 15:45:27 2017 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit 0be6f55679c4b6cb0f7fe14c22b1f4b676e54d5f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 15:45:17 2017 -0700
+
+    Add missing file.
+
+commit 1d32440f4abd08287e4b9672c98e41139540607c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 15:43:00 2017 -0700
+
+    Split BezierCurver render and draw operations.
+
+commit 16ae9ee4892076ca4f1ba20581cfd8001459f4fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 15:43:00 2017 -0700
+
+    Split BezierCurver render and draw operations.
+
+commit ee78ea2311ce61048b7e559b6a3f510eb98387c3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 11:24:49 2017 -0700
+
+    Implement Bezier curver renderer.
+
+commit fee686ab993af55e63a877c438d2fa233059f079
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 20 23:25:26 2017 -0700
+
+    Fix offscreen array sizes.
+
+commit 56326208e7a3f341556bd3d964fffeb8e9cba0a8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 20 19:28:07 2017 -0700
+
+    Optimize billboard mode.
+
+commit eb0da243e2cd1d6738efbad9e549dad8c2bfafc2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 18 00:41:22 2017 -0700
+
+    Cull offscreen Bezier triangles.
+
+commit b57705207c7b62a68ef90dacdfd5919248197135
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 18 00:20:12 2017 -0700
+
+    Cull offscreen subpatches.
+
+commit 189c89074852706cc3d8f6648dd30517465e9445
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 8 14:27:49 2017 -0700
+
+    Fix flatness test.
+
+commit a524000c1352b11fe4e3aa7d1335cc393841d29e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 7 21:04:34 2017 -0700
+
+    Fix flatness test.
+
+commit 168b1f284139482deb8044c4328a10e57fbfec47
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 7 21:03:13 2017 -0700
+
+    Simplify code.
+
+commit 12363c3ba5048faca607ab2656e19d26b402b5cd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 7 19:28:32 2017 -0700
+
+    Improve flatness test; simply code.
+
+commit 01f66ecfb744df300c04c760d81475b4d1e5450c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 7 19:18:01 2017 -0700
+
+    Fix typo.
+
+commit adc9c3a165b8e74ed2728ec0203ce68234629ff3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 7 19:16:44 2017 -0700
+
+    Add deepyellow synonym for olive color.
+
+commit 1cc7f83d73cbe2ece3e7e4f0e7640b2ec5cbe684
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 26 10:56:46 2016 -0700
+
+    Remove requirement to call nosetpagesize() after changing TeX engine.
+
+commit 33ed6c683a960b0a29951d3c7f8efbb15f64aaaf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 25 16:50:06 2016 -0700
+
+    Implement robust workaround for graphicx.sty bug.
+
+commit 967f09a6fd79b84b8803fca8d9871c7f11f4942a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 14 11:53:44 2016 -0700
+
+    Update asymptote.sty to force nosetpagesize also with xelatex TeX engine.
+
+commit 988530d0daf78c580ed305d07d0d23e140b2b52d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 8 10:00:05 2016 -0700
+
+    Workaround setpagesize graphicx side effect when using asymptote.sty.
+
+commit 866ef9c47bedec14d1584b443bbcf02ba5be5b60
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 8 01:15:57 2016 -0700
+
+    Portably fix graphicx setpagesize bug.
+
+commit 27948832401841f1fd4c1ec6fa3f71e5a246dcc0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 7 21:49:54 2016 -0700
+
+    Fix principalBranch.
+
+commit 529bc76b4f31e59332383c3068ef4b5e41c49865
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 1 00:19:20 2016 -0600
+
+    Minor optimization.
+
+commit 4aa1ffb19dfac6705a728f6b3ddeda353dee1868
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 30 02:46:17 2016 -0600
+
+    Minor optimization.
+
+commit 4e1d019889f5609205ecc2856afacb867ed8b66d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 26 22:57:10 2016 -0600
+
+    Add paletteticks NoTicks option.
+
+commit 0a0f231cd247d3341f188fad28f00d29813cdee6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 24 23:33:49 2016 -0600
+
+    Avoid empty axis labels.
+
+commit bd70d164fb84e06f0ff8aa5cb03b08d8adbf688b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 4 22:06:31 2016 -0600
+
+    Implement improved workaround to recent graphicx incompatibilities, which
+    also works with inline TeX mode.
+
+commit 2f209f9ed847db0068c0ac85fa6c98571eeb9462
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 28 23:36:02 2016 -0600
+
+    Implement general workarounds for recently introduced graphicx and lualatex
+    backwards incompatibilities.
+
+commit afb95149c62f8c27605fc01ae75b9ce1bf678431
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 26 00:31:58 2016 -0600
+
+    Add patched version of plain.asy for TL2016 only.
+
+commit 758d08612b2895663947a31f68341caaceaf8a20
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 23 03:26:28 2016 -0600
+
+    Revert "Revert "Revert "Workaround pdflatex pdfpagewidth and pageheight bug in TeXLive 2016."""
+    
+    This reverts commit 896202ca85c76a5e09c1c68193b3459600586127.
+
+commit fe2510c2d5696fa8f259e535b022cae86938c735
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 15 14:12:30 2016 -0600
+
+    Revert "Add gl-matrix javascript library."
+    
+    This reverts commit 9878b4dc4358da80777666dc9cf80e351a80f937.
+
+commit 9878b4dc4358da80777666dc9cf80e351a80f937
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 15 10:20:27 2016 -0600
+
+    Add gl-matrix javascript library.
+
+commit 896202ca85c76a5e09c1c68193b3459600586127
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 4 00:07:00 2016 -0400
+
+    Revert "Revert "Workaround pdflatex pdfpagewidth and pageheight bug in TeXLive 2016.""
+    
+    This reverts commit b8ef9a8ae04ac345188cb31eab591945cd2a2abf.
+
+commit 421b733a96996452bd474b80988741fdb2ece342
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 4 00:06:29 2016 -0400
+
+    Revert "Implement alternative workaround for graphicx pagesize bug."
+    
+    This reverts commit 545f2b55cca742e6df16df2362fba18702171d50.
+
+commit 545f2b55cca742e6df16df2362fba18702171d50
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 3 23:10:17 2016 -0400
+
+    Implement alternative workaround for graphicx pagesize bug.
+
+commit b8ef9a8ae04ac345188cb31eab591945cd2a2abf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 3 23:09:25 2016 -0400
+
+    Revert "Workaround pdflatex pdfpagewidth and pageheight bug in TeXLive 2016."
+    
+    This reverts commit 61cfa1e299de53c12a6ce08305383aac18ad9216.
+
+commit 61cfa1e299de53c12a6ce08305383aac18ad9216
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 2 23:23:01 2016 -0400
+
+    Workaround pdflatex pdfpagewidth and pageheight bug in TeXLive 2016.
+
+commit d76f6754b1552eb02dca5ab53ea4836c287c3e53
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 27 05:35:57 2016 -0600
+
+    Generalize palette(real[][], pen[]) to handle nonsquare arrays.
+
+commit ff41f2060c00278a13512dd66ca7424d697342c5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 4 20:45:28 2016 -0600
+
+    Increase overlapedges scaling.
+
+commit 689fb9ebecdc859d438808178beb7151a0229698
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 4 20:03:11 2016 -0600
+
+    Revert "Remove obsolete overlapedges flag."
+    
+    This reverts commit 154c47b6962a23404857ada45d3d7b0752f4817e.
+
+commit d0c97bff49e5bc2c89ad0b48552b971d163414a5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 4 20:00:48 2016 -0600
+
+    Fix typo.
+
+commit 7ecaf8f43931d728eaf4154092cefaa4d0d0c201
+Merge: 692051a 154c47b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 23:11:58 2016 -0600
+
+    Merge branch 'patch'.
+
+commit 154c47b6962a23404857ada45d3d7b0752f4817e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 22:59:14 2016 -0600
+
+    Remove obsolete overlapedges flag.
+
+commit 928af116df130df1e75d308c8722682e36b391b5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 22:57:44 2016 -0600
+
+    Standardize flatness tests.
+
+commit 3f409fa5c904b82266ca576aa6372493b654dedf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 15:13:17 2016 -0600
+
+    Relax flatness test.
+
+commit 5dece5cdcd7bad955f1e0836664fe3f572fd75f7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 13:57:03 2016 -0600
+
+    Fix flatness test.
+
+commit 12238c7d03bd61aaffcfa5ab47b51d56acadb286
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 12:42:44 2016 -0600
+
+    Fix remaining normals.
+
+commit 826469f06a43a86fdc56999a88b7fe657797ee1d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 03:16:42 2016 -0600
+
+    Fix color order.
+
+commit def2d72ac3e8472c5997fada88004765bb581a41
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 03:04:18 2016 -0600
+
+    Fix straight case.
+
+commit 2323c592d5a2e8fd800ce1e0b9288027dd89c88a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 02:29:19 2016 -0600
+
+    Remove unused code.
+
+commit 0bdfab4a98dd496fb0f3187edb92bc47e551a423
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 02:02:47 2016 -0600
+
+    Simplify code.
+
+commit f03dc5c7e6e3007cf9cc8c628daf93f6ff2fe33f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 1 13:47:31 2016 -0600
+
+    Fix subdivion cracks and zero normals.
+
+commit fdb20f62a69b5e8244f71025f349baf411e49332
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 18 15:08:42 2016 -0600
+
+    Add vertex shading.
+
+commit 31ba48ca76e1a118fde5812137366ecabca1d3e7
+Author: Andrew Bernakevitch <andrewbernakevitch@gmail.com>
+Date:   Wed May 18 14:35:47 2016 -0600
+
+    Add ASCII diagrams of the Bezier patch, including a diagram of the patch and one of the key points on the patch.
+
+commit 692051a2849fa4ae074ab565319b2af22a5fc828
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 17 10:16:53 2016 -0600
+
+    Fix formatting.
+
+commit f67594a5df27ec9862c7953c13522f16e8a59387
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 12 03:23:35 2016 -0600
+
+    Increment version to 2.39.
+
 commit 3f044f05ca7f3d30d3f61edcf1d991bd6ccc69dd
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu May 12 02:16:25 2016 -0600
@@ -10,6 +641,12 @@ Date:   Thu May 12 02:05:12 2016 -0600
 
     Require ncurses library only with --enable-readline.
     Implement --disable-sigsegv configuration option.
+
+commit 4c1ac9da70652934fadfef75181aab7191845327
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 12 01:14:03 2016 -0600
+
+    Begin implementation of bezier patch renderer.
 
 commit da2c3f8c7af68645c6cff8c04f555676413e47ba
 Author: John Bowman <bowman@ualberta.ca>

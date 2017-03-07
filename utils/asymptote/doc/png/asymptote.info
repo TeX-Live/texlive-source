@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 6.0 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.38.
+This file documents 'Asymptote', version 2.40.
 
    <http://asymptote.sourceforge.net>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.38.
+This file documents 'Asymptote', version 2.40.
 
    <http://asymptote.sourceforge.net>
 
@@ -4454,6 +4454,14 @@ string s=(string) 2.5;
 real[] a={2.5,-3.5};
 int[] b=(int []) a;
 write(stdout,b);     // Outputs 2,-3
+   In situations where casting from a string to a type 'T' fails, an
+uninitialized variable is returned; this condition can be detected with
+the function 'bool initialized(T);'
+int i=(int) "2.5";
+assert(initialized(i),"Invalid cast.");
+
+real x=(real) "2.5a";
+assert(initialized(x),"Invalid cast.");
 
    Casting to user-defined types is also possible using 'operator cast':
 struct rpair {
@@ -4476,9 +4484,9 @@ some code one wants all integers to represent multiples of 100.  To
 convert them to reals, one would first want to multiply them by 100.
 However, the straightforward implementation
 real operator cast(int x) {return x*100;}
-   is equivalent to an infinite recursion, since the result 'x*100'
-needs itself to be cast from an integer to a real.  Instead, we want to
-use the standard conversion of int to real:
+is equivalent to an infinite recursion, since the result 'x*100' needs
+itself to be cast from an integer to a real.  Instead, we want to use
+the standard conversion of int to real:
 real convert(int x) {return x*100;}
 real operator cast(int x)=convert;
 
@@ -4741,7 +4749,7 @@ File: asymptote.info,  Node: LaTeX usage,  Next: Base modules,  Prev: Programmin
 ***************
 
 'Asymptote' comes with a convenient 'LaTeX' style file 'asymptote.sty'
-(v1.30 or later required) that makes 'LaTeX' 'Asymptote'-aware.
+(v1.33 or later required) that makes 'LaTeX' 'Asymptote'-aware.
 Entering 'Asymptote' code directly into the 'LaTeX' source file, at the
 point where it is needed, keeps figures organized and avoids the need to
 invent new file names for each figure.  Simply add the line
@@ -9523,8 +9531,8 @@ Index
 * 'operator --':                         graph.              (line   30)
 * 'operator ..':                         graph.              (line   33)
 * 'operator answer':                     Interactive mode.   (line   35)
-* 'operator cast':                       Casts.              (line   30)
-* 'operator ecast':                      Casts.              (line   57)
+* 'operator cast':                       Casts.              (line   38)
+* 'operator ecast':                      Casts.              (line   65)
 * 'operator init':                       Variable initializers.
                                                              (line    6)
 * 'operator init' <1>:                   Structures.         (line  134)
@@ -10159,78 +10167,78 @@ Ref: tridiagonal173531
 Ref: solve174762
 Node: Slices178901
 Node: Casts182809
-Node: Import184780
-Node: Static190027
-Node: LaTeX usage192920
-Node: Base modules199425
-Node: plain201982
-Node: simplex202656
-Node: math202930
-Node: interpolate205639
-Node: geometry205918
-Node: trembling206512
-Node: stats206781
-Node: patterns207041
-Node: markers207277
-Node: tree209137
-Node: binarytree209322
-Node: drawtree209988
-Node: syzygy210189
-Node: feynman210463
-Node: roundedpath210738
-Node: animation211021
-Ref: animate211442
-Node: embed212559
-Node: slide213514
-Node: MetaPost213855
-Node: unicode214574
-Node: latin1215448
-Node: babel215817
-Node: labelpath216047
-Node: labelpath3216868
-Node: annotate217179
-Node: CAD217649
-Node: graph217960
-Ref: ticks225110
-Ref: pathmarkers238742
-Ref: marker239212
-Ref: markuniform239566
-Ref: errorbars241364
-Ref: automatic scaling245648
-Node: palette256924
-Ref: images257042
-Ref: image261216
-Ref: logimage261736
-Ref: penimage262841
-Ref: penfunctionimage263103
-Node: three263874
-Ref: PostScript3D290883
-Node: obj292622
-Node: graph3292871
-Ref: GaussianSurface298150
-Node: grid3299299
-Node: solids300083
-Node: tube301075
-Node: flowchart303309
-Node: contour307917
-Node: contour3313228
-Node: smoothcontour3313541
-Node: slopefield315260
-Node: ode316748
-Node: Options317005
-Ref: configuration file323168
-Ref: settings323168
-Ref: texengines324411
-Ref: convert324411
-Node: Interactive mode327734
-Ref: history329883
-Node: GUI331187
-Node: GUI installation331738
-Node: GUI usage332649
-Node: PostScript to Asymptote333557
-Node: Help334315
-Node: Debugger335969
-Node: Credits337725
-Node: Index338707
+Node: Import185076
+Node: Static190323
+Node: LaTeX usage193216
+Node: Base modules199721
+Node: plain202278
+Node: simplex202952
+Node: math203226
+Node: interpolate205935
+Node: geometry206214
+Node: trembling206808
+Node: stats207077
+Node: patterns207337
+Node: markers207573
+Node: tree209433
+Node: binarytree209618
+Node: drawtree210284
+Node: syzygy210485
+Node: feynman210759
+Node: roundedpath211034
+Node: animation211317
+Ref: animate211738
+Node: embed212855
+Node: slide213810
+Node: MetaPost214151
+Node: unicode214870
+Node: latin1215744
+Node: babel216113
+Node: labelpath216343
+Node: labelpath3217164
+Node: annotate217475
+Node: CAD217945
+Node: graph218256
+Ref: ticks225406
+Ref: pathmarkers239038
+Ref: marker239508
+Ref: markuniform239862
+Ref: errorbars241660
+Ref: automatic scaling245944
+Node: palette257220
+Ref: images257338
+Ref: image261512
+Ref: logimage262032
+Ref: penimage263137
+Ref: penfunctionimage263399
+Node: three264170
+Ref: PostScript3D291179
+Node: obj292918
+Node: graph3293167
+Ref: GaussianSurface298446
+Node: grid3299595
+Node: solids300379
+Node: tube301371
+Node: flowchart303605
+Node: contour308213
+Node: contour3313524
+Node: smoothcontour3313837
+Node: slopefield315556
+Node: ode317044
+Node: Options317301
+Ref: configuration file323464
+Ref: settings323464
+Ref: texengines324707
+Ref: convert324707
+Node: Interactive mode328030
+Ref: history330179
+Node: GUI331483
+Node: GUI installation332034
+Node: GUI usage332945
+Node: PostScript to Asymptote333853
+Node: Help334611
+Node: Debugger336265
+Node: Credits338021
+Node: Index339003
 
 End Tag Table
