@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2017-01-14.15}
+\def\texinfoversion{2017-03-05.09}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -11274,6 +11274,7 @@ directory should work if nowhere else does.}
     \pdfvorigin = 1 true in
   \else
     \ifx\XeTeXrevision\thisisundefined
+      \special{papersize=#8,#7}%
     \else
       \pdfpageheight #7\relax
       \pdfpagewidth #8\relax
