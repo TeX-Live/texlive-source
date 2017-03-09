@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2017-03-05.09}
+\def\texinfoversion{2017-03-06.19}
 %
 % Copyright 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006,
@@ -5910,9 +5910,9 @@ end
   \advance\dimen@ by -\ht\partialpage
   %
   % box0 will be the left-hand column, box2 the right.
-  \setbox0=\vsplit255 to\dimen@ \setbox2=\vsplit255 to\dimen@
+  \setbox0=\vsplit\PAGE to\dimen@ \setbox2=\vsplit\PAGE to\dimen@
   \onepageout\pagesofar
-  \unvbox255
+  \unvbox\PAGE
   \penalty\outputpenalty
 }
 %
@@ -5986,7 +5986,7 @@ end
 % Only called for the last of the double column material.  \doublecolumnout 
 % does the others.
 \def\balancecolumns{%
-  \setbox0 = \vbox{\unvbox255}% like \box255 but more efficient, see p.120.
+  \setbox0 = \vbox{\unvbox\PAGE}% like \box255 but more efficient, see p.120.
   \dimen@ = \ht0
   \advance\dimen@ by \topskip
   \advance\dimen@ by-\baselineskip
