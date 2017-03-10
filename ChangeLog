@@ -1,3 +1,7 @@
+2017-03-10  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (reauto): convenience target.
+
 2016-11-16  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (install-exec-hook): warn that the
