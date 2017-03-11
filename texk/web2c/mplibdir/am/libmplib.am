@@ -5,14 +5,19 @@
 
 ## libmplib.a, used by MetaPost and luaTeX
 ##
-EXTRA_LIBRARIES += libmplib.a
+EXTRA_LIBRARIES += libmplibcore.a libmplibbackends.a 
 
-libmplib_a_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
+libmplibcore_a_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
+libmplibbackends_a_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
-## libmplib C sources
-nodist_libmplib_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathbinary_c_h) $(mpmathdecimal_c_h) \
-	$(mpmathdouble_c_h) $(mpstrings_c_h) $(pngout_c_h) $(psout_c_h) $(svgout_c_h)
+## libmplib C sources core + backends
+nodist_libmplibcore_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathbinary_c_h) $(mpmathdecimal_c_h) \
+	$(mpmathdouble_c_h) $(mpstrings_c_h) $(psout_c_h) 
+nodist_libmplibbackends_a_SOURCES = $(pngout_c_h)  $(svgout_c_h)
+
+
+
 mp_c_h =  mp.c mplib.h mpmp.h
 mpmath_c_h = mpmath.h mpmath.c
 mpmathbinary_c_h = mpmathbinary.h mpmathbinary.c
@@ -28,7 +33,7 @@ tfmin.c: ctangle$(EXEEXT) mplibdir/tfmin.w
 	$(mp_ctangle) tfmin.w
 
 # Creating several files: need stamp file and two rules with identical recipes
-$(mp_c_h): mp-tangle
+$(mp_c_h): mp-tangle 
 	@$(mp_ctangle_sh) mp
 mp-tangle: ctangle$(EXEEXT) mplibdir/mp.w tangle-sh
 	@$(mp_ctangle_sh) mp
@@ -78,11 +83,16 @@ libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w mplibdir/pngout.
 libmplib_web += mplibdir/mpmath.w mplibdir/mpmathbinary.w mplibdir/mpmathdecimal.w
 libmplib_web += mplibdir/mpmathdouble.w mplibdir/mpstrings.w mplibdir/tfmin.w
 
-$(libmplib_a_OBJECTS): $(nodist_libmplib_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+## core need headers backends
+$(nodist_libmplibcore_a_SOURCES): $(svgout_c_h) $(pngout_c_h)
+
+$(libmplibcore_a_OBJECTS): $(nodist_libmplibcore_a_SOURCES) $(KPATHSEA_DEPEND)  $(MPFR_DEPEND)
+$(libmplibbackends_a_OBJECTS): $(nodist_libmplibbackends_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+
 
 EXTRA_DIST += $(libmplib_web)
 
-DISTCLEANFILES += $(nodist_libmplib_a_SOURCES) \
+DISTCLEANFILES += $(nodist_libmplibcore_a_SOURCES) $(nodist_libmplibbackends_a_SOURCES)	\
 	mp-tangle mpmath-tangle mpmathbinary-tangle mpmathdecimal-tangle mpmathdouble-tangle \
 	mpstrings-tangle psout-tangle svgout-tangle pngout-tangle
 

@@ -25,6 +25,10 @@
 
 #include "lua/luatex-api.h"
 
+#include <locale.h>
+
+extern int load_luatex_core_lua (lua_State * L);
+
 /* internalized strings: see luatex-api.h */
 set_make_keys;
 
@@ -105,6 +109,13 @@ const_string LUATEX_IHELP[] = {
     NULL
 };
 
+@ Later we will put on environment |LC_CTYPE|, |LC_COLLATE| and
+|LC_NUMERIC| set to |C|, so we need a place where to store the old values.
+@c
+const char *lc_ctype;
+const char *lc_collate;
+const char *lc_numeric;
+
 /*
     "   --8bit                        ignored, input is assumed to be in UTF-8 encoding",
     "   --default-translate-file=FILE ignored, input is assumed to be in UTF-8 encoding",
@@ -141,7 +152,7 @@ static char *ex_selfdir(char *argv0)
         FATAL1("This path points to an invalid file : %s\n", short_path);
     }
 #endif /* __MINGW32__ */
-   return xdirname(path);
+    return xdirname(path);
 #else /* WIN32 */
     return kpse_selfdir(argv0);
 #endif
@@ -312,9 +323,9 @@ static void parse_options(int ac, char **av)
         lua_only = 1;
         luainit = 1;
     }
+
     for (;;) {
         g = getopt_long_only(ac, av, "+", long_options, &option_index);
-
         if (g == -1)            /* End of arguments, exit the loop.  */
             break;
         if (g == '?')  {         /* Unknown option.  */
@@ -862,6 +873,9 @@ void lua_initialize(int ac, char **av)
     static char LC_COLLATE_C[] = "LC_COLLATE=C";
     static char LC_NUMERIC_C[] = "LC_NUMERIC=C";
     static char engine_luatex[] = "engine=" my_name;
+    char *old_locale = NULL;
+    char *env_locale = NULL;
+    char *tmp = NULL;
     /* Save to pass along to topenin.  */
     const char *fmt = "This is " MyName ", Version %s" WEB2CVERSION;
     argc = ac;
@@ -910,11 +924,52 @@ void lua_initialize(int ac, char **av)
 
     /* parse commandline */
     parse_options(ac, av);
-    if (lua_only)
+    if (lua_only) {
+        /* Shell has no restrictions. */
         shellenabledp = true;
+        restrictedshell = false;
+        safer_option = 0;
+    }
+    /* Get the current locale (it should be C )          */
+    /* and save LC_CTYPE, LC_COLLATE and LC_NUMERIC.     */
+    /* Later luainterpreter() will consciously use them. */
+    old_locale = setlocale (LC_ALL, NULL);
+    lc_ctype = NULL;
+    lc_collate = NULL;
+    lc_numeric = NULL;
+    if (old_locale) {
+        /* If setlocale fails here, then the state   */
+        /* could be compromised, and we exit.        */
+        env_locale = setlocale (LC_ALL, "");
+	if (!env_locale) {
+	  fprintf(stderr,"Unable to read environment locale:exit now.\n");
+	  exit(1);
+	}
+        tmp = setlocale (LC_CTYPE, NULL);
+	if (tmp) {
+	  lc_ctype = xstrdup(tmp);
+        }
+	tmp = setlocale (LC_COLLATE, NULL);
+	if (tmp){
+	  lc_collate = xstrdup(tmp);
+        }
+	tmp = setlocale (LC_NUMERIC, NULL);
+	if (tmp){
+	  lc_numeric = xstrdup(tmp);
+        }
+	/* Back to the previous locale if possible,   */
+	/* otherwise it's a serious error and we exit:*/
+	/* we can't ensure a 'sane' locale for lua.   */
+	env_locale = setlocale (LC_ALL, old_locale);
+	if (!env_locale) {
+	  fprintf(stderr,"Unable to restore original locale:exit now.\n");
+	  exit(1);
+	}
+    } else {
+       fprintf(stderr,"Unable to store environment locale.\n");
+    }
 
     /* make sure that the locale is 'sane' (for lua) */
-
     putenv(LC_CTYPE_C);
     putenv(LC_COLLATE_C);
     putenv(LC_NUMERIC_C);
@@ -999,6 +1054,7 @@ void lua_initialize(int ac, char **av)
         if (kpse_init != 0) {
             luainit = 0;        /* re-enable loading of texmf.cnf values, see luatex.ch */
             init_kpse();
+            kpse_init = 1;
         }
         /* |prohibit_file_trace| (boolean) */
         tracefilenames = 1;
@@ -1066,13 +1122,15 @@ void lua_initialize(int ac, char **av)
         } else {
             /* init */
             init_kpse();
+            kpse_init = 1;
             fix_dumpname();
         }
     }
-    /* Maybe we can extend this way to the others tables, using luac. */
-    if ( safer_option || ((shellenabledp == 0) || (shellenabledp == 1 && restrictedshell == 1)) ) {
-       (void)   luaL_dostring(Luas,"ffi=require[[ffi]]; for k,_ in pairs(ffi) do if k~='gc' then ffi[k]=nil end; end; ffi=nil;");
-    }
+
+    /* Here we load luatex-core.lua which takes care of some protection on demand. */
+    if (load_luatex_core_lua(Luas))
+      fprintf(stderr, "Error in execution of luatex-core.lua .\n");
+    /* Done. */
 }
 
 @ @c

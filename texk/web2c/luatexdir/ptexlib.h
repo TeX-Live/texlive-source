@@ -291,7 +291,7 @@ void vf_out_image(PDF pdf, unsigned i);
 /* lua/ltexiolib.c */
 void flush_loggable_info(void);
 
-/* lua/luastuff.w and lua/luajitstuff.w */
+/* lua/luastuff.w  */
 void luafunctioncall(int slot);
 
 /* lua/luastuff.c */
