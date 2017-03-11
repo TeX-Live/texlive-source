@@ -1,3 +1,41 @@
+commit 47e7a1800fba9b8bf042a1f4976a15ab012ebfc7
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 10 13:23:02 2017 -0800
+
+    Revert "Fix Context lookup application when moving back after a
+    glyph delete"
+
+    This reverts commit b9b005f3a44ccf78a45b212b126287b69b9f4b40.
+
+    This introduced invalid access cases. Revert until I fix correctly.
+
+ src/hb-ot-layout-gsubgpos-private.hh                     |   7 ++++---
+ .../sha1sum/5bbf3712e6f79775c66a4407837a90e591efbef2.ttf | Bin 6400 ->
+ 0 bytes
+ test/shaping/tests/context-matching.tests                |   1 -
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+commit 3c080a7a0aefec1e9620e3fb399ad280ea4ee5a2
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Tue Mar 7 18:13:28 2017 -0800
+
+    Fix buffer serialize of empty buffer
+
+    Ouch!
+
+ src/hb-buffer-serialize.cc | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit 8e42c3cb2bb81351d0a28f213cb4f6d35f4b5e46
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Sun Mar 5 13:54:56 2017 -0800
+
+    1.4.4
+
+ NEWS         | 8 ++++++++
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
 commit 9ac9af725c781f4597e8db46cf330d595c072739
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Sun Mar 5 13:51:01 2017 -0800
