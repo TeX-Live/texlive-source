@@ -18758,7 +18758,6 @@ esac
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
   need_poppler=yes
   need_mpfr=yes
-  need_cairo=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua52=yes
@@ -18777,7 +18776,6 @@ esac
 test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
   need_poppler=yes
   need_mpfr=yes
-  need_cairo=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
