@@ -113,6 +113,7 @@ authorization from the copyright holders.
 @define function getotmathconstant();
 @define function getotmathvariant();
 @define function getotassemblyptr();
+@define procedure freeotassembly();
 @define function getotmathitalcorr();
 @define function getotmathaccentpos();
 @define function getotmathkern();
