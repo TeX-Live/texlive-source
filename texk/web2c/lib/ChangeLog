@@ -1,3 +1,7 @@
+2017-03-12  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* texmfmp.c: Adopt Jonathan's solution for the Change on 2017-02-01.
+
 2017-02-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* texmfmp.c: unsigned long long >= 0. Thanks Luigi.
