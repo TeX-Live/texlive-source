@@ -48,6 +48,7 @@ typedef struct XeTeXLayoutEngine_rec* XeTeXLayoutEngine;
 #include FT_TRUETYPE_TABLES_H
 
 #include <hb.h>
+#include <hb-ot.h>
 
 #include "XeTeX_ext.h"
 #include "XeTeXFontMgr.h"

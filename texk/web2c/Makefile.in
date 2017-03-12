@@ -896,7 +896,7 @@ am_libunilib_a_OBJECTS =  \
 libunilib_a_OBJECTS = $(am_libunilib_a_OBJECTS)
 libxetex_a_AR = $(AR) $(ARFLAGS)
 libxetex_a_LIBADD =
-am__libxetex_a_SOURCES_DIST = xetexdir/MathTable.h \
+am__libxetex_a_SOURCES_DIST = \
 	xetexdir/XeTeXFontInst.cpp xetexdir/XeTeXFontInst.h \
 	xetexdir/XeTeXFontMgr.cpp xetexdir/XeTeXFontMgr.h \
 	xetexdir/XeTeXLayoutInterface.cpp \
@@ -3631,7 +3631,7 @@ libxetex_a_CPPFLAGS = $(xetex_cppflags)
 libxetex_a_CFLAGS = $(WARNING_CFLAGS)
 libxetex_a_CXXFLAGS = # $(WARNING_CXXFLAGS)
 libxetex_a_OBJCXXFLAGS = # $(WARNING_OBJCXXFLAGS)
-libxetex_a_SOURCES = xetexdir/MathTable.h xetexdir/XeTeXFontInst.cpp \
+libxetex_a_SOURCES = xetexdir/XeTeXFontInst.cpp \
 	xetexdir/XeTeXFontInst.h xetexdir/XeTeXFontMgr.cpp \
 	xetexdir/XeTeXFontMgr.h xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h xetexdir/XeTeXOTMath.cpp \

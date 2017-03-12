@@ -91,6 +91,7 @@ authorization from the copyright holders.
 #define getotmathconstant                       get_ot_math_constant
 #define getotmathvariant                        get_ot_math_variant
 #define getotassemblyptr                        get_ot_assembly_ptr
+#define freeotassembly                          free_ot_assembly
 #define getotmathitalcorr                       get_ot_math_ital_corr
 #define getotmathaccentpos                      get_ot_math_accent_pos
 #define getotmathkern                           get_ot_math_kern
