@@ -1,4 +1,6 @@
 ## -*-makefile-*-
+## Copyright (C) 2016 and later: Unicode, Inc. and others.
+## License & terms of use: http://www.unicode.org/copyright.html
 ## Cygwin/MinGW specific setup
 ## Copyright (c) 2001-2014, International Business Machines Corporation and
 ## others. All Rights Reserved.
@@ -59,8 +61,26 @@ SO = dll
 ## Non-shared intermediate object suffix
 STATIC_O = ao
 
+ifeq ($(ENABLE_SHARED),YES)
+SO_TARGET_VERSION_SUFFIX = $(SO_TARGET_VERSION_MAJOR)
+else
+SO_TARGET_VERSION_SUFFIX = 
+endif
+
+# Static library prefix and file extension
+LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+A = a
+
 ## An import library is needed for z/OS and MSVC
 IMPORT_LIB_EXT = .dll.a
+
+LIBPREFIX=lib
+
+# Change the stubnames so that poorly working FAT disks and installation programs can work.
+# This is also for backwards compatibility.
+DATA_STUBNAME = dt
+I18N_STUBNAME = in
+LIBICU = $(STATIC_PREFIX_WHEN_USED)$(ICUPREFIX)
 
 #SH### copied from Makefile.inc
 #SH## for icu-config to test with

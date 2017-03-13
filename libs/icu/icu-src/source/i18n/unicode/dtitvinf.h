@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
  * Copyright (C) 2008-2016, International Business Machines Corporation and
@@ -150,8 +152,8 @@ U_NAMESPACE_BEGIN
 
 class U_I18N_API DateIntervalInfo U_FINAL : public UObject {
 public:
-/* nothing private to placate old compilers --karl/koch */
-/* ifndef U_HIDE_INTERNAL_API */
+    // Do not enclose the protected default constructor with #ifndef U_HIDE_INTERNAL_API
+    // or else the compiler will create a public default constructor.
     /**
      * Default constructor.
      * It does not initialize any interval patterns except
@@ -166,7 +168,6 @@ public:
      * @internal ICU 4.0
      */
     DateIntervalInfo(UErrorCode& status);
-/* endif */  /* U_HIDE_INTERNAL_API */
 
 
     /**
@@ -329,7 +330,7 @@ public:
     static UClassID U_EXPORT2 getStaticClassID();
 
 
-/* nothing private to placate old compilers --karl/koch private: */
+private:
     /**
      * DateIntervalFormat will need access to
      * getBestSkeleton(), parseSkeleton(), enum IntervalPatternIndex,
@@ -340,7 +341,10 @@ public:
      */
     friend class DateIntervalFormat;
 
-    friend struct DateIntervalSink;
+    /**
+     * Internal struct used to load resource bundle data.
+     */
+    struct DateIntervalSink;
 
     /**
      * Following is for saving the interval patterns.
@@ -360,8 +364,7 @@ public:
         kIPI_MAX_INDEX
     };
 public:
-/* nothing private to placate old compilers --karl/koch */
-/* ifndef U_HIDE_INTERNAL_API */
+#ifndef U_HIDE_INTERNAL_API
     /**
      * Max index for stored interval patterns
      * @internal ICU 4.4
@@ -369,8 +372,8 @@ public:
      enum {
          kMaxIntervalPatternIndex = kIPI_MAX_INDEX
      };
-/* endif */  /* U_HIDE_INTERNAL_API */
-/* nothing private to placate old compilers --karl/koch private: */
+#endif  /* U_HIDE_INTERNAL_API */
+private:
 
 
     /**

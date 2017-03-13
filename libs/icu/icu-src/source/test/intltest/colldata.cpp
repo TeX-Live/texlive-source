@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  ******************************************************************************
  *   Copyright (C) 1996-2016, International Business Machines
@@ -32,9 +34,9 @@
 
 #include "colldata.h"
 
-#define NEW_ARRAY(type, count) (type *) uprv_malloc((count) * sizeof(type))
+#define NEW_ARRAY(type, count) (type *) uprv_malloc((size_t)(count) * sizeof(type))
 #define DELETE_ARRAY(array) uprv_free((void *) (array))
-#define ARRAY_COPY(dst, src, count) uprv_memcpy((void *) (dst), (void *) (src), (count) * sizeof (src)[0])
+#define ARRAY_COPY(dst, src, count) uprv_memcpy((void *) (dst), (void *) (src), (size_t)(count) * sizeof (src)[0])
 
 CEList::CEList(UCollator *coll, const UnicodeString &string, UErrorCode &status)
     : ces(NULL), listMax(CELIST_BUFFER_SIZE), listSize(0)

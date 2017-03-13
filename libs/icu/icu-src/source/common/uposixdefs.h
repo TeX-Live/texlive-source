@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *   Copyright (C) 2011-2015, International Business Machines
@@ -49,13 +51,10 @@
  * Make sure things like readlink and such functions work.
  * Poorly upgraded Solaris machines can't have this defined.
  * Cleanly installed Solaris can use this #define.
- * [Experience with TeX Live is that it always causes failure.
- *  http://tug.org/pipermail/tlbuild/2013q1/002493.html
- *  http://tug.org/pipermail/tlbuild/2013q1/002536.html ]
  *
  * z/OS needs this definition for timeval and to get usleep.
  */
-#if !defined(_XOPEN_SOURCE_EXTENDED) && !defined(__sun)
+#if !defined(_XOPEN_SOURCE_EXTENDED)
 #   define _XOPEN_SOURCE_EXTENDED 1
 #endif
 

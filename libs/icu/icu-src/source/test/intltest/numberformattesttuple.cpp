@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 * Copyright (C) 2015, International Business Machines Corporation and         *
@@ -167,7 +169,7 @@ static void intToStr(
         x = -x;
     }
     if (neg) {
-        appendTo.append(0x2D);
+        appendTo.append((UChar)0x2D);
     }
     int32_t len = uprv_itou(buffer, UPRV_LENGTHOF(buffer), (uint32_t) x, 10, 1);
     appendTo.append(buffer, 0, len);

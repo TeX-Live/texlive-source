@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
@@ -201,7 +203,7 @@ main(int argc, char* argv[]) {
 #else
 
     setUnicodeVersion(options[UNICODE_VERSION].value);
-    filename = (char* ) uprv_malloc(uprv_strlen(srcDir) + 300); /* hopefully this should be enough */
+    filename = (char* ) uprv_malloc(uprv_strlen(srcDir) + uprv_strlen(inputFileName) + (icuUniDataDir == NULL ? 0 : uprv_strlen(icuUniDataDir)) + 40); /* hopefully this should be enough */
    
     /* prepare the filename beginning with the source dir */
     if(uprv_strchr(srcDir,U_FILE_SEP_CHAR) == NULL && uprv_strchr(srcDir,U_FILE_ALT_SEP_CHAR) == NULL){

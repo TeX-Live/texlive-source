@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
@@ -385,7 +387,7 @@ main(int argc, char *argv[]) {
 
             ofstream* fout = new ofstream(path.str().c_str(), mode);
             if (fout->fail()) {
-                cerr << "Cannot open file " << path << endl;
+                cerr << "Cannot open file " << path.str() << endl;
                 delete fout;
                 delete tz;
                 break;

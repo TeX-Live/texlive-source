@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * Copyright (c) 1997-2016, International Business Machines Corporation and
  * others. All Rights Reserved.
@@ -418,13 +420,17 @@ namespace {
  */
 UScriptCode getCharScript(UScriptCode script) {
     switch(script) {
+    case USCRIPT_HAN_WITH_BOPOMOFO:
     case USCRIPT_SIMPLIFIED_HAN:
     case USCRIPT_TRADITIONAL_HAN:
         return USCRIPT_HAN;
     case USCRIPT_JAPANESE:
         return USCRIPT_HIRAGANA;
+    case USCRIPT_JAMO:
     case USCRIPT_KOREAN:
         return USCRIPT_HANGUL;
+    case USCRIPT_SYMBOLS_EMOJI:
+        return USCRIPT_SYMBOLS;
     default:
         return script;
     }
@@ -441,7 +447,7 @@ void UnicodeTest::TestScriptMetadata() {
     for(int32_t sci = 0; sci < USCRIPT_CODE_LIMIT; ++sci) {
         UScriptCode sc = (UScriptCode)sci;
         // Run the test with -v to see which script has failures:
-        // .../intltest$ make && ./intltest utility/UnicodeTest/TestScriptMetadata -v | grep -C 3 FAIL
+        // .../intltest$ make && ./intltest utility/UnicodeTest/TestScriptMetadata -v | grep -C 6 FAIL
         logln(uscript_getShortName(sc));
         UScriptUsage usage = uscript_getUsage(sc);
         UnicodeString sample = uscript_getSampleUnicodeString(sc);

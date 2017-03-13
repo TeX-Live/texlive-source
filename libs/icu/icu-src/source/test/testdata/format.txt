@@ -1,4 +1,6 @@
-﻿// Copyright (c) 2007-2015 International Business Machines
+﻿// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
+// Copyright (c) 2007-2015 International Business Machines
 // Corporation and others. All Rights Reserved.
 format:table(nofallback) {
     Info {
@@ -155,7 +157,7 @@ format:table(nofallback) {
                     "GMT",
                     "DATE=RELATIVE_LONG,TIME=MEDIUM",
                     "ERA=1,YEAR=2012,MONTH=OCTOBER,DATE=8,HOUR_OF_DAY=23,MINUTE=59,SECOND=0",
-                    "23:59:00 Ngày 08 tháng 10 năm 2012"
+                    "23:59:00 8 tháng 10, 2012"
                },
                {
                     "vi@calendar=gregorian",         

@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
  * Copyright (C) 1997-2015, International Business Machines Corporation and    *
@@ -317,7 +319,7 @@ DateFormat::format(UDate date, UnicodeString& appendTo) const
 {
     // Note that any error information is just lost.  That's okay
     // for this convenience method.
-    FieldPosition fpos(0);
+    FieldPosition fpos(FieldPosition::DONT_CARE);
     return format(date, appendTo, fpos);
 }
 
@@ -496,7 +498,7 @@ DateFormat* U_EXPORT2
 DateFormat::create(EStyle timeStyle, EStyle dateStyle, const Locale& locale)
 {
     UErrorCode status = U_ZERO_ERROR;
-#if U_PLATFORM_USES_ONLY_WIN32_API
+#if U_PLATFORM_HAS_WIN32_API
     char buffer[8];
     int32_t count = locale.getKeywordValue("compat", buffer, sizeof(buffer), status);
 

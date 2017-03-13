@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
  * Copyright (c) 1997-2016, International Business Machines Corporation and
@@ -1639,7 +1641,7 @@ static void TestOverrideNumberFormat(void) {
         overrideFmt = NULL; // no longer valid
         assertSuccess("udat_setNumberFormatForField()", &status);
 
-        getter_result = udat_getNumberFormatForField(fmt, 'd');
+        getter_result = udat_getNumberFormatForField(fmt, 0x0064 /*'d'*/);
         if(getter_result == NULL) {
             log_err("FAIL: udat_getNumberFormatForField did not return a valid pointer\n");
         }
@@ -1746,6 +1748,7 @@ static void TestParseErrorReturnValue(void) {
 static const char localeForFields[] = "en_US";
 /* zoneGMT[]defined above */
 static const UDate date2015Feb25 = 1424841000000.0; /* Wednesday, February 25, 2015 at 5:10:00 AM GMT */
+static const UChar patNoFields[] = { 0x0027, 0x0078, 0x0078, 0x0078, 0x0027, 0 }; /* "'xxx'" */
 
 typedef struct {
     int32_t field;
@@ -1832,6 +1835,19 @@ static void TestFormatForFields(void) {
                     if (field < 0) {
                         break;
                     }
+                }
+            }
+
+            udat_applyPattern(udfmt, FALSE, patNoFields, -1);
+            status = U_ZERO_ERROR;
+            ulen = udat_formatForFields(udfmt, date2015Feb25, ubuf, kUBufFieldsLen, fpositer, &status);
+            if ( U_FAILURE(status) ) {
+                log_err("udat_formatForFields with no-field pattern fails, status %s\n", u_errorName(status));
+            } else {
+                field = ufieldpositer_next(fpositer, &beginPos, &endPos);
+                if (field >= 0) {
+                    log_err("udat_formatForFields with no-field pattern as \"%s\"; expect field < 0, get field %d range %d-%d\n",
+                            aescstrdup(ubuf, ulen), field, beginPos, endPos);
                 }
             }
 
