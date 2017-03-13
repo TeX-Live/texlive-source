@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 * Copyright (C) 2016, International Business Machines
@@ -53,13 +55,13 @@ public:
     // Returns the center of dayPeriod. Half hours are indicated with a .5 .
     double getMidPointForDayPeriod(DayPeriod dayPeriod, UErrorCode &errorCode) const;
 
-/* nothing private to placate old compilers --karl/koch private: */
+private:
     DayPeriodRules();
 
     // Translates "morning1" to DAYPERIOD_MORNING1, for example.
     static DayPeriod getDayPeriodFromString(const char *type_str);
 
-    static void load(UErrorCode &errorCode);
+    static void U_CALLCONV load(UErrorCode &errorCode);
 
     // Sets period type for all hours in [startHour, limitHour).
     void add(int32_t startHour, int32_t limitHour, DayPeriod period);

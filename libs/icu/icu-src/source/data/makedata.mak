@@ -1,3 +1,5 @@
+# Copyright (C) 2016 and later: Unicode, Inc. and others.
+# License & terms of use: http://www.unicode.org/copyright.html
 #**********************************************************************
 #* Copyright (C) 1999-2016, International Business Machines Corporation
 #* and others.  All Rights Reserved.
@@ -10,10 +12,10 @@
 
 ##############################################################################
 # Keep the following in sync with the version - see common/unicode/uvernum.h
-U_ICUDATA_NAME=icudt57
+U_ICUDATA_NAME=icudt58
 ##############################################################################
 U_ICUDATA_ENDIAN_SUFFIX=l
-UNICODE_VERSION=8.0
+UNICODE_VERSION=9.0
 ICU_LIB_TARGET=$(DLL_OUTPUT)\$(U_ICUDATA_NAME).dll
 
 #  ICUMAKE

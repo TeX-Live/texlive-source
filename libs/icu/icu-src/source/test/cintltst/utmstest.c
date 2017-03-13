@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  ****************************************************************************
  * Copyright (c) 1997-2014, International Business Machines Corporation and *
@@ -63,7 +65,7 @@ static int64_t ranMax;
 
 static void initRandom(int64_t min, int64_t max)
 {
-    uint64_t interval = max - min;
+    uint64_t interval = (uint64_t)max - (uint64_t)min;
 
     ranMin = min;
     ranMax = max;

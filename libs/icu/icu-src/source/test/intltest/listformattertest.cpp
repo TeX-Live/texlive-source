@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
 *
@@ -181,7 +183,7 @@ void ListFormatterTest::TestMalayalam() {
 void ListFormatterTest::TestZulu() {
     UnicodeString results[4] = {
         one,
-        "I-" + one + " ne-" + two,
+        one + " ne-" + two,
         one + ", " + two + ", ne-" + three,
         one + ", " + two + ", " + three + ", ne-" + four
     };

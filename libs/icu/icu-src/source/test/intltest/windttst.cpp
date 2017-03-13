@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
 ********************************************************************************
 *   Copyright (C) 2005-2016, International Business Machines
@@ -11,7 +13,7 @@
 
 #include "unicode/utypes.h"
 
-#if U_PLATFORM_USES_ONLY_WIN32_API
+#if U_PLATFORM_HAS_WIN32_API
 
 #if !UCONFIG_NO_FORMATTING
 
@@ -149,33 +151,33 @@ void Win32DateTimeTest::testLocales(TestLog *log)
         wdf->format(icuNow, udBuffer);
         wtf->format(icuNow, utBuffer);
 
-        if (ubBuffer.indexOf(wdBuffer, wdLength - 1, 0) < 0) {
+        if (ubBuffer.indexOf((const UChar *)wdBuffer, wdLength - 1, 0) < 0) {
             UnicodeString baseName(wlocale.getBaseName());
-            UnicodeString expected(wdBuffer);
+            UnicodeString expected((const UChar *)wdBuffer);
 
             log->errln("DateTime format error for locale " + baseName + ": expected date \"" + expected +
                        "\" got \"" + ubBuffer + "\"");
         }
 
-        if (ubBuffer.indexOf(wtBuffer, wtLength - 1, 0) < 0) {
+        if (ubBuffer.indexOf((const UChar *)wtBuffer, wtLength - 1, 0) < 0) {
             UnicodeString baseName(wlocale.getBaseName());
-            UnicodeString expected(wtBuffer);
+            UnicodeString expected((const UChar *)wtBuffer);
 
             log->errln("DateTime format error for locale " + baseName + ": expected time \"" + expected +
                        "\" got \"" + ubBuffer + "\"");
         }
 
-        if (udBuffer.compare(wdBuffer) != 0) {
+        if (udBuffer.compare((const UChar *)wdBuffer) != 0) {
             UnicodeString baseName(wlocale.getBaseName());
-            UnicodeString expected(wdBuffer);
+            UnicodeString expected((const UChar *)wdBuffer);
 
             log->errln("Date format error for locale " + baseName + ": expected \"" + expected +
                        "\" got \"" + udBuffer + "\"");
         }
 
-        if (utBuffer.compare(wtBuffer) != 0) {
+        if (utBuffer.compare((const UChar *)wtBuffer) != 0) {
             UnicodeString baseName(wlocale.getBaseName());
-            UnicodeString expected(wtBuffer);
+            UnicodeString expected((const UChar *)wtBuffer);
 
             log->errln("Time format error for locale " + baseName + ": expected \"" + expected +
                        "\" got \"" + utBuffer + "\"");
@@ -191,4 +193,4 @@ void Win32DateTimeTest::testLocales(TestLog *log)
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
 
-#endif /* U_PLATFORM_USES_ONLY_WIN32_API */
+#endif /* U_PLATFORM_HAS_WIN32_API */

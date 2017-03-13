@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
  * Copyright (c) 1997-2001, International Business Machines Corporation and
@@ -14,9 +16,12 @@
 */
 #ifndef _NCCBTST
 #define _NCCBTST
+
+#include "unicode/utypes.h"
+#include "unicode/ucnv.h"
+
 /* C API TEST FOR CALL BACK ROUTINES OF CODESET CONVERSION COMPONENT */
 #include "cintltst.h"
-#include "unicode/utypes.h"
 
 
 static void TestSkipCallBack(void);

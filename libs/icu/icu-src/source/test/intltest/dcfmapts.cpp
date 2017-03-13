@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
  * Copyright (c) 1997-2015, International Business Machines Corporation and
@@ -177,7 +179,7 @@ void IntlTestDecimalFormatAPI::testAPI(/*char *par*/)
     Formattable fL(l);
 
     UnicodeString res1, res2, res3, res4;
-    FieldPosition pos1(0), pos2(0), pos3(0), pos4(0);
+    FieldPosition pos1(FieldPosition::DONT_CARE), pos2(FieldPosition::DONT_CARE), pos3(FieldPosition::DONT_CARE), pos4(FieldPosition::DONT_CARE);
 
     res1 = def.format(d, res1, pos1);
     logln( (UnicodeString) "" + (int32_t) d + " formatted to " + res1);
@@ -929,14 +931,14 @@ void IntlTestDecimalFormatAPI::TestBadFastpath() {
 
     UnicodeString fmt;
     fmt.remove();
-    assertEquals("Format 1234", "1234", df->format(1234, fmt));
+    assertEquals("Format 1234", "1234", df->format((int32_t)1234, fmt));
     df->setGroupingUsed(FALSE);
     fmt.remove();
-    assertEquals("Format 1234", "1234", df->format(1234, fmt));
+    assertEquals("Format 1234", "1234", df->format((int32_t)1234, fmt));
     df->setGroupingUsed(TRUE);
     df->setGroupingSize(3);
     fmt.remove();
-    assertEquals("Format 1234 w/ grouping", "1,234", df->format(1234, fmt));
+    assertEquals("Format 1234 w/ grouping", "1,234", df->format((int32_t)1234, fmt));
 }
 
 void IntlTestDecimalFormatAPI::TestRequiredDecimalPoint() {

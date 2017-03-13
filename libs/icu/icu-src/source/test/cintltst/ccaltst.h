@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
  * Copyright (c) 1997-2012, International Business Machines Corporation and
@@ -16,6 +18,8 @@
 #define _CCALTST
 
 #include "unicode/utypes.h"
+#include "unicode/ucal.h"
+#include "unicode/udat.h"
 
 #if !UCONFIG_NO_FORMATTING
 

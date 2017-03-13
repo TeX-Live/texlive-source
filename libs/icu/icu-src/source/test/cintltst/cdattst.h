@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
  * Copyright (c) 1997-2014, International Business Machines Corporation and
@@ -17,6 +19,7 @@
 #define _CDATFRMTST
 
 #include "unicode/utypes.h"
+#include "unicode/udat.h"
 
 #if !UCONFIG_NO_FORMATTING
 

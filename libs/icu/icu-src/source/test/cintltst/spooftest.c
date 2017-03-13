@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
  * Copyright (c) 2009-2016, International Business Machines Corporation and
@@ -220,7 +222,7 @@ static void TestUSpoofCAPI(void) {
 
         checkResults = uspoof_check(sc2, scMixed, -1, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
-        TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT | USPOOF_MIXED_SCRIPT_CONFUSABLE, checkResults);
+        TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT, checkResults);
 
         uspoof_close(sc2);
         free(buf);
@@ -297,7 +299,7 @@ static void TestUSpoofCAPI(void) {
 
         checkResults = uspoof_check(clone2, scMixed, -1, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
-        TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT | USPOOF_MIXED_SCRIPT_CONFUSABLE, checkResults);
+        TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT, checkResults);
         uspoof_close(clone2);
     TEST_TEARDOWN;
 
@@ -316,7 +318,7 @@ static void TestUSpoofCAPI(void) {
 
          result = uspoof_check(sc, scMixed, -1, NULL, &status);
          TEST_ASSERT_SUCCESS(status);
-         TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT | USPOOF_MIXED_SCRIPT_CONFUSABLE, result);
+         TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT, result);
      TEST_TEARDOWN
 
 
@@ -426,7 +428,7 @@ static void TestUSpoofCAPI(void) {
 
         checkResults = uspoof_check(sc, goodGreek, -1, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
-        TEST_ASSERT_EQ(USPOOF_WHOLE_SCRIPT_CONFUSABLE, checkResults);
+        TEST_ASSERT_EQ(0, checkResults);
     TEST_TEARDOWN;
 
     /*
@@ -434,7 +436,7 @@ static void TestUSpoofCAPI(void) {
      */
     TEST_SETUP
         char    utf8buf[200];
-        int32_t checkResults;
+        int32_t checkResults, checkResults2;
         int32_t position;
 
         u_strToUTF8(utf8buf, sizeof(utf8buf), NULL, goodLatin, -1, &status);
@@ -455,10 +457,59 @@ static void TestUSpoofCAPI(void) {
         TEST_ASSERT_SUCCESS(status);
         position = 666;
         checkResults = uspoof_checkUTF8(sc, utf8buf, -1, &position, &status);
+        checkResults2 = uspoof_check(sc, scMixed, -1, NULL, &status);
         TEST_ASSERT_SUCCESS(status);
-        TEST_ASSERT_EQ(USPOOF_MIXED_SCRIPT_CONFUSABLE | USPOOF_SINGLE_SCRIPT , checkResults);
+        TEST_ASSERT_EQ(USPOOF_SINGLE_SCRIPT , checkResults);
         TEST_ASSERT_EQ(0, position);
+        TEST_ASSERT_EQ(checkResults , checkResults2);
 
+    TEST_TEARDOWN;
+
+    /*
+     * uspoof_check2 variants
+     */
+    TEST_SETUP
+        int32_t result1, result2;
+        char utf8buf[200];
+        uspoof_setChecks(sc, USPOOF_ALL_CHECKS | USPOOF_AUX_INFO, &status);
+        USpoofCheckResult* checkResult = uspoof_openCheckResult(&status);
+        TEST_ASSERT_SUCCESS(status);
+
+        const UChar* tests[] = { goodLatin, scMixed, scLatin,
+                goodCyrl, goodGreek, lll_Latin_a, lll_Latin_b, han_Hiragana };
+
+        for (int32_t i=0; i<UPRV_LENGTHOF(tests); i++) {
+            const UChar* str = tests[i];
+
+            // Basic test
+            result1 = uspoof_check(sc, str, -1, NULL, &status);
+            result2 = uspoof_check2(sc, str, -1, NULL, &status);
+            TEST_ASSERT_SUCCESS(status);
+            TEST_ASSERT_EQ(result1, result2);
+
+            // With check result parameter
+            result1 = uspoof_check(sc, str, -1, NULL, &status);
+            result2 = uspoof_check2(sc, str, -1, checkResult, &status);
+            TEST_ASSERT_SUCCESS(status);
+            TEST_ASSERT_EQ(result1, result2);
+
+            // Checks from checkResult should be same as those from bitmask
+            TEST_ASSERT_EQ(result1 & USPOOF_ALL_CHECKS, uspoof_getCheckResultChecks(checkResult, &status));
+
+            // Restriction level from checkResult should be same as that from bitmask
+            URestrictionLevel restrictionLevel = uspoof_getCheckResultRestrictionLevel(checkResult, &status);
+            TEST_ASSERT_EQ(result1 & restrictionLevel, restrictionLevel);
+
+            // UTF8 endpoint
+            u_strToUTF8(utf8buf, sizeof(utf8buf), NULL, goodLatin, -1, &status);
+            TEST_ASSERT_SUCCESS(status);
+            result1 = uspoof_checkUTF8(sc, utf8buf, -1, NULL, &status);
+            result2 = uspoof_check2UTF8(sc, utf8buf, -1, NULL, &status);
+            TEST_ASSERT_SUCCESS(status);
+            TEST_ASSERT_EQ(result1, result2);
+        }
+
+        uspoof_closeCheckResult(checkResult);
     TEST_TEARDOWN;
 
     /*

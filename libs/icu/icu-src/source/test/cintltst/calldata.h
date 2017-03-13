@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT: 
  * Copyright (c) 1997-2003, International Business Machines Corporation and
@@ -6,6 +8,8 @@
 
 #ifndef COLLATION_TEST_DATA
 #define COLLATION_TEST_DATA
+
+#include "unicode/utypes.h"
 
 #define COUNT_TEST_CASES 13
 

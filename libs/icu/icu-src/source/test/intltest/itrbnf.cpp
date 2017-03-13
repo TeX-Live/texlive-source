@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /*
  *******************************************************************************
  * Copyright (C) 1996-2016, International Business Machines Corporation and
@@ -2122,7 +2124,7 @@ void IntlTestRBNF::TestPluralRules() {
 
     // Make sure there are no divide by 0 errors.
     UnicodeString result;
-    RuleBasedNumberFormat(ruRules, Locale("ru"), parseError, status).format(21000, result);
+    RuleBasedNumberFormat(ruRules, Locale("ru"), parseError, status).format((int32_t)21000, result);
     if (result.compare(UNICODE_STRING_SIMPLE("twenty-one thousand")) != 0) {
         errln("Got " + result + " for 21000");
     }

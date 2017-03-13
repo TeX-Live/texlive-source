@@ -1,3 +1,5 @@
+// Copyright (C) 2016 and later: Unicode, Inc. and others.
+// License & terms of use: http://www.unicode.org/copyright.html
 /********************************************************************
  * COPYRIGHT:
  * Copyright (c) 2015, International Business Machines Corporation and
@@ -108,7 +110,7 @@ DataDrivenNumberFormatTestSuite::~DataDrivenNumberFormatTestSuite() {
 }
 
 UBool DataDrivenNumberFormatTestSuite::breaksC() {
-    return (NFTT_GET_FIELD(fTuple, breaks, "").toUpper().indexOf(0x43) != -1);
+    return (NFTT_GET_FIELD(fTuple, breaks, "").toUpper().indexOf((UChar)0x43) != -1);
 }
 
 void DataDrivenNumberFormatTestSuite::setTupleField(UErrorCode &status) {
