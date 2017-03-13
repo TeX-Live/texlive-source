@@ -1,8 +1,10 @@
 	No `s' for STATIC_PREFIX.
 
---- source/config/Makefile.inc.in	(revision 40154)
+Index: source/config/Makefile.inc.in
+===================================================================
+--- source/config/Makefile.inc.in	(revision 43491)
 +++ source/config/Makefile.inc.in	(working copy)
-@@ -44,7 +44,7 @@
+@@ -46,7 +46,7 @@
  LIBICU = lib$(ICUPREFIX)
  
  # Static library prefix and file extension
@@ -11,9 +13,11 @@
  LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
  A = a
  
---- source/icudefs.mk.in	(revision 40154)
+Index: source/icudefs.mk.in
+===================================================================
+--- source/icudefs.mk.in	(revision 43491)
 +++ source/icudefs.mk.in	(working copy)
-@@ -207,13 +207,13 @@
+@@ -209,13 +209,13 @@
  
  ## If we can't use the shared libraries, use the static libraries
  ifneq ($(ENABLE_SHARED),YES)

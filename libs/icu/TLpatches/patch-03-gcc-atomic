@@ -1,8 +1,10 @@
 	It seems gcc-4.4 uses external calls.
 
---- source/common/putilimp.h	(revision 40154)
+Index: source/common/putilimp.h
+===================================================================
+--- source/common/putilimp.h	(revision 43491)
 +++ source/common/putilimp.h	(working copy)
-@@ -191,7 +191,7 @@
+@@ -193,7 +193,7 @@
      /* Use the predefined value. */
  #elif U_PLATFORM == U_PF_MINGW
      #define U_HAVE_GCC_ATOMICS 0

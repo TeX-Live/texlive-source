@@ -13,7 +13,7 @@
 
 #include "unicode/utypes.h"
 
-#if U_PLATFORM_HAS_WIN32_API
+#if U_PLATFORM_USES_ONLY_WIN32_API
 
 #include "wintz.h"
 #include "cmemory.h"
@@ -438,4 +438,4 @@ uprv_detectWindowsTimeZone() {
     return icuid;
 }
 
-#endif /* U_PLATFORM_HAS_WIN32_API */
+#endif /* U_PLATFORM_USES_ONLY_WIN32_API */
