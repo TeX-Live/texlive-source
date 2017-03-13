@@ -1,9 +1,10 @@
-Changes applied to the icu-57.1 tree as obtained from:
-	http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz
+Changes applied to the icu-58.2 tree as obtained from:
+	http://download.icu-project.org/files/icu4c/58.2/icu4c-58_2-src.tgz
+        and icu4c-58_2-data.zip
 
 cd /tmp # or wherever
-tar xf icu4c-*-src.tgz
-cd .../texlive/Build/source/libs/icu/icu-src
+tar xf icu4c-*-src.tgz # should unpack into icu/*
+cd $Build/source/libs/icu/icu-src  # for whatever $Build directory
 \cp -arf /tmp/icu/* .
 rm -r as_is packaging		# don't bother including these in our tree
 #
@@ -12,19 +13,23 @@ svn status | sed -n 's/^\?//p'
 svn add `!!`
 svn status | sed -n 's/^\?//p'  # rerun, should be empty now
 #
+# files to remove:
 diff -qr . /tmp/icu/ | sed -n -e 's,^Only in \./\(.*\): ,\1/,p'
 svn rm `!!`
 diff ...			# rerun, should be empty now
 
 # update generic files (still in icu-src):
-aux=/usr/local/src/dist/build-aux
-cp $aux/config.guess $aux/config.sub $aux/install-sh source/
+aux=$Build/source/build-aux
+cp -p $aux/config.guess $aux/config.sub $aux/install-sh source/
 
-# apply ./patch-* files, as needed.
+# patch -p0 for all ../TLpatches/patch-* files, as needed.
 # Run svn diff after each, update patch-* file.
 # Don't lose our leading comments.
 
-# autoreconf.
+# autoreconf in the TL directory; don't run autoreconf in the
+# icu-src/source/ directory, it fails due to missing pkg-config
+# prerequisites. (Thus we must patch configure, not just configure.ac.)
+# 
 # rebuild; must rerun configure (not just config.status),
 # so easiest is to just do a whole new build.
 # That will also test use of the new icu version by our programs.
@@ -32,9 +37,9 @@ cp $aux/config.guess $aux/config.sub $aux/install-sh source/
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-srcdat=.../source/libs/icu/icu-src/source/data/in/icudt57l.dat 
-cd .../Work/libs/icu/icu-build/data/out/build/icudt57l
-indat=../../tmp/icudt57l.dat
+srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt58l.dat 
+cd $Work/libs/icu/icu-build/data/out/build/icudt58l
+indat=../../tmp/icudt58l.dat
 diff $srcdat $indat
 # should be identical, amazingly enough.
 
@@ -44,7 +49,7 @@ icupkg="env LD_LIBRARY_PATH=$gnu/lib ../../../../bin/icupkg"
 
 # then remove some elements unused by the icu clients in our tree, namely
 # bibtexu (in texk/bibtex-x), upmendex, and xetex (in texk/web2c/xetexdir).
-outdat=icudt57l.dat
+outdat=icudt58l.dat
 $icupkg -r 'curr/*' $indat $outdat && mv $outdat $indat
 $icupkg -r 'lang/*' $indat $outdat && mv $outdat $indat
 $icupkg -r 'region/*' $indat $outdat && mv $outdat $indat

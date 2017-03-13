@@ -1,3 +1,8 @@
+2017-03-13  Karl Berry  <karl@freefriends.org>
+
+	* Import icu-58.2 (release); reautoconf.
+	* version.ac: update.
+
 2016-03-27  Karl Berry  <karl@tug.org>
 
 	* Import icu-57.1 (release).
