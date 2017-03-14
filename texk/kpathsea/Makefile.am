@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 SUBDIRS = . doc man
@@ -114,7 +116,7 @@ nodist_kpseinclude_HEADERS = \
 	kpathsea.h \
 	paths.h
 
-kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
+kpseinclude_HEADERS = config.h c-auto.h $(direct_headers) $(indirect_headers)
 
 kpselibdir = ${libdir}/kpathsea
 
