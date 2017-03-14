@@ -720,7 +720,7 @@ nodist_kpseinclude_HEADERS = \
 	kpathsea.h \
 	paths.h
 
-kpseinclude_HEADERS = config.h $(direct_headers) $(indirect_headers)
+kpseinclude_HEADERS = config.h c-auto.h $(direct_headers) $(indirect_headers)
 kpselibdir = ${libdir}/kpathsea
 nodist_kpselib_HEADERS = \
 	c-auto.h

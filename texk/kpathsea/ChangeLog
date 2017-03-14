@@ -1,3 +1,8 @@
+2017-03-14  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (kpseinclude_HEADERS): add c-auto.h. Report from
+	Ken Brown on tldistro, 14 Mar 2017 12:16:56.
+
 2017-03-02  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.luajitlatex): add, same as lualatex.
