@@ -81,10 +81,6 @@ skip:
 texlinks:
 	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
 
-.PHONY: triptrap
-reauto:
-	./reautoconf
-
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap
 triptrap:

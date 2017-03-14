@@ -896,10 +896,9 @@ am_libunilib_a_OBJECTS =  \
 libunilib_a_OBJECTS = $(am_libunilib_a_OBJECTS)
 libxetex_a_AR = $(AR) $(ARFLAGS)
 libxetex_a_LIBADD =
-am__libxetex_a_SOURCES_DIST = \
-	xetexdir/XeTeXFontInst.cpp xetexdir/XeTeXFontInst.h \
-	xetexdir/XeTeXFontMgr.cpp xetexdir/XeTeXFontMgr.h \
-	xetexdir/XeTeXLayoutInterface.cpp \
+am__libxetex_a_SOURCES_DIST = xetexdir/XeTeXFontInst.cpp \
+	xetexdir/XeTeXFontInst.h xetexdir/XeTeXFontMgr.cpp \
+	xetexdir/XeTeXFontMgr.h xetexdir/XeTeXLayoutInterface.cpp \
 	xetexdir/XeTeXLayoutInterface.h xetexdir/XeTeXOTMath.cpp \
 	xetexdir/XeTeXOTMath.h xetexdir/XeTeX_ext.c \
 	xetexdir/XeTeX_ext.h xetexdir/XeTeX_pic.c xetexdir/XeTeX_web.h \
