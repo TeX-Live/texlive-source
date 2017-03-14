@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 41566 2016-06-29 16:04:35Z karl $
+# $Id: fmtutil.pl 43485 2017-03-13 00:51:17Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2016 Norbert Preining
+# Copyright 2014-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 41566 2016-06-29 16:04:35Z karl $';
-my $lastchdate = '$Date: 2016-06-29 18:04:35 +0200 (Wed, 29 Jun 2016) $';
+my $svnid = '$Id: fmtutil.pl 43485 2017-03-13 00:51:17Z preining $';
+my $lastchdate = '$Date: 2017-03-13 01:51:17 +0100 (Mon, 13 Mar 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 41566 $';
+my $svnrev = '$Revision: 43485 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -556,6 +556,8 @@ sub rebuild_one_format {
     $fmtfile .= ".fmt" ; 
     $kpsefmt = "tex" ; 
     $enginedir = $eng;
+    # strip final -dev from enginedir to support engines like luatex-dev
+    $enginedir =~ s/-dev$//;
   }
   
   # check for existence of ini file before doing anything else
@@ -1408,6 +1410,11 @@ fmtutil vs. fmtutil-sys (fmtutil --sys):
 
   Other locations may be used if you give them on the command line, or
   these trees don't exist, or you are not using the original TeX Live.
+
+Supporting development engines
+
+  In case the engine names ends with "-dev", formats are created in
+  the respective directory without the -dev ending.
 
 Report bugs to: tex-live\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
