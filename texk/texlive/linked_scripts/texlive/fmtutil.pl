@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 43485 2017-03-13 00:51:17Z preining $
+# $Id: fmtutil.pl 43495 2017-03-14 02:22:58Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 43485 2017-03-13 00:51:17Z preining $';
-my $lastchdate = '$Date: 2017-03-13 01:51:17 +0100 (Mon, 13 Mar 2017) $';
+my $svnid = '$Id: fmtutil.pl 43495 2017-03-14 02:22:58Z preining $';
+my $lastchdate = '$Date: 2017-03-14 03:22:58 +0100 (Tue, 14 Mar 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 43485 $';
+my $svnrev = '$Revision: 43495 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -568,7 +568,15 @@ sub rebuild_one_format {
     # all activated formats are also buildable, thus return failure.
     return $FMT_FAILURE;
   }
-  
+
+  #
+  # If the 4th field in fmtutil.cnf contains
+  #  -progname=...
+  # then we do not add our own progname!
+  if ($addargs =~ /-progname=/) {
+    $prgswitch = '';
+  }
+
   # NLS support
   #   Example (for fmtutil.cnf):
   #     mex-pl tex mexconf.tex nls=tex-pl,il2-pl mex.ini
@@ -1411,10 +1419,12 @@ fmtutil vs. fmtutil-sys (fmtutil --sys):
   Other locations may be used if you give them on the command line, or
   these trees don't exist, or you are not using the original TeX Live.
 
-Supporting development engines
+Supporting development binaries
 
-  In case the engine names ends with "-dev", formats are created in
-  the respective directory without the -dev ending.
+  If an engine name ends with "-dev", formats are created in
+  the respective directory with the -dev stripped.  This allows for
+  easily running development binaries in parallel with the released
+  binaries.
 
 Report bugs to: tex-live\@tug.org
 TeX Live home page: <http://tug.org/texlive/>
