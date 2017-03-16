@@ -1,4 +1,4 @@
-	Building libpng-1.6.28 as part of the TL tree
+	Building libpng-1.6.29 as part of the TL tree
 	=============================================
 
 This directory libs/libpng/ uses a proxy Makefile.am to build the libpng library
@@ -14,4 +14,4 @@ copied to libs/libpng/configure.ac.
 =============================
 
 2009-07-23	Peter Breitenlohner <peb@mppmu.mpg.de>
-2017-01-05	Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+2017-03-16	Akira Kakuto <kakuto@fuk.kindai.ac.jp>
