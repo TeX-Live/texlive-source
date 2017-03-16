@@ -1,3 +1,16 @@
+2017-03-16  Pali Roh\'ar <pali.rohar@gmail.com>
+
+	Allow .enc files for bitmap fonts, following thread at
+	http://tug.org/pipermail/pdftex/2016-July/009064.html
+	http://tug.org/pipermail/pdftex/2016-August/009065.html:
+	* writet3.c (remove_duplicate_glyph_names): new fn.
+	(writet3): change fn to take fm_entry object, and use it to write
+	glyph names from an enc file, if specified in the map file.
+	(write_fontdictionary): 
+	* ptexlib.h (writet3): change declaration.
+	* writefont.c (dopdffont): change call to writet3.
+	* mapfile.c (check_fm_entry): also report missing enc file.
+
 2017-02-18  Heiko Oberdiek  <heiko.oberdiek@googlemail.com>
 
 	* pdftex.web (substr_of_str): move earlier.
