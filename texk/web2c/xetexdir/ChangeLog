@@ -1,18 +1,22 @@
+2017-03-17  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+
+	* Sync with the upstream (version 0.99997).
+
 2017-03-12  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* Sync with the upstream..
+	* Sync with the upstream.
 
 2016-10-03  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* XeTeXOTMath.cpp: Sync with the upstream..
+	* XeTeXOTMath.cpp: Sync with the upstream.
 
 2016-09-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* MathTable.h, XeTeXOTMath.cpp: Sync with the upstream..
+	* MathTable.h, XeTeXOTMath.cpp: Sync with the upstream.
 
 2016-09-24  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
-	* xetex.web: Sync with the upstream..
+	* xetex.web: Sync with the upstream.
 
 2016-02-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
