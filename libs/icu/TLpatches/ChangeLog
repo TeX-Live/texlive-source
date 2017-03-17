@@ -1,3 +1,7 @@
+2017-03-17  Karl Berry  <karl@tug.org>
+
+	* patch-19-netbsd: add per Marc Baudoin, tlbuild 17 Mar 2017 10:03:03.
+
 2017-03-13  Karl Berry  <karl@freefriends.org>
 
 	* Update for icu-58.2.
