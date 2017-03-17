@@ -53,6 +53,8 @@ KPSE_ZLIB_FLAGS
 KPSE_SAVE_FLAGS
 
 # emacs-page
+LIBGS_INCLUDES=
+LIBGS_LIBS=
 if test "x$enable_native_texlive_build" = xyes; then
   # TL: always dlload libgs, must avoid shared lib ref in binary.
   HAVE_LIBGS=0
@@ -63,8 +65,6 @@ AC_CHECK_HEADER([ghostscript/iapi.h],
 fi
 
 if test "$HAVE_LIBGS" -eq 0; then
-  LIBGS_INCLUDES=
-  LIBGS_LIBS=
   # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
   if test "x$kpse_cv_have_win32" = xno; then
     # FreeBSD neither has nor requires libdl.
@@ -80,8 +80,6 @@ if test "$HAVE_LIBGS" -eq 0; then
       LIBGS_LIBS=
     fi
   fi
-  AC_SUBST([LIBGS_INCLUDES])
-  AC_SUBST([LIBGS_LIBS])
 else
 	# query Ghostscript version
 	AC_MSG_CHECKING([Ghostscript version])
@@ -104,11 +102,14 @@ else
 	if test "$gsversion" -lt 831; then
 		# current Ghostscript API was introduced in version 8.31
 		# older versions are not supported
-		LIBS=`echo $LIBS | sed "s/-lgs //" $LIBS`
 		AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])
 		AC_MSG_WARN([Ghostscript version < 8.31 found; PostScript support disabled])
+	else
+		LIBGS_LIBS=-lgs
 	fi
 fi
+AC_SUBST([LIBGS_INCLUDES])
+AC_SUBST([LIBGS_LIBS])
 
 if test "x$enable_build" != xno || test -f config.force; then
 
