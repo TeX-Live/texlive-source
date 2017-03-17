@@ -1,0 +1,15 @@
+	Per Marc Baudoin, tlbuild 17 Mar 2017 10:03:03.
+
+Index: digitlst.cpp
+===================================================================
+--- digitlst.cpp	(revision 43522)
++++ digitlst.cpp	(working copy)
+@@ -61,7 +61,7 @@
+ #endif
+ 
+ #if U_USE_STRTOD_L
+-# if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CYGWIN
++# if U_PLATFORM_USES_ONLY_WIN32_API || U_PLATFORM == U_PF_CYGWIN || defined(__NetBSD__)
+ #   include <locale.h>
+ # else
+ #   include <xlocale.h>
