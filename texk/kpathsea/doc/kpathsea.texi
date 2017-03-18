@@ -2,13 +2,13 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.2.3dev
-@set month-year June 2016
+@set version 6.2.3
+@set month-year April 2017
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2016 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2017 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are

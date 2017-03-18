@@ -1,3 +1,11 @@
+2017-03-18  Karl Berry  <karl@tug.org>
+
+	* version.ac,
+	* NEWS,
+	* kpsewhich.c,
+	* texmf.cnf,
+	* doc/kpathsea.texi: version 6.2.3 for TL17.
+
 2017-03-14  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (kpseinclude_HEADERS): add c-auto.h. Report from

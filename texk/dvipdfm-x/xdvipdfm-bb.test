@@ -1,6 +1,7 @@
 #! /bin/sh
-
-# Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+# $Id$
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -30,10 +31,11 @@ echo "*** xdvipdfmx --ebb --help" \
 	&& echo && echo "ebb-help tests OK" && echo \
 	|| failed="$failed ebb-help"
 
+# get rid of both %%Creator: and %%CreationDate: lines.
 for e in $ext; do
 	echo "*** xdvipdfmx --ebb pic$e.$e" \
 	&& ./xdvipdfmx --ebb pic$e.$e \
-	&& sed '/%%CreationDate/d' pic$e.bb >pic$e.bbx \
+	&& sed '/^%%Creat/d' pic$e.bb >pic$e.bbx \
 	&& diff $testsrc/pic$e.bb pic$e.bbx \
 	&& echo && echo "ebb-$e tests OK" && echo \
 	|| failed="$failed ebb-$e"
@@ -52,7 +54,7 @@ echo "*** xdvipdfmx --xbb --help" \
 for e in $ext; do
 	echo "*** xdvipdfmx --xbb img$e.$e" \
 	&& ./xdvipdfmx --xbb pic$e.$e \
-	&& sed '/%%CreationDate/d' pic$e.xbb >pic$e.xbbx \
+	&& sed '/^%%Creat/d' pic$e.xbb >pic$e.xbbx \
 	&& diff $testsrc/pic$e.xbb pic$e.xbbx \
 	&& echo && echo "xbb-$e tests OK" && echo \
 	|| failed="$failed xbb-$e"

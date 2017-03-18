@@ -1,19 +1,20 @@
 This file records noteworthy changes.  (Public domain.)
 
+dvips 5.997 (TeX Live 2017):
   Make the last papersize special win, to match dvipdfmx; the -L0 option
   or L0 config restores the previous behavior of the first special winning.
   
-dvips 5.996 (TeX Live 2016).
+dvips 5.996 (TeX Live 2016):
   afm2tfm 8.4: only adjust heights of base characters upward for accent
   position, and new option -a to omit all adjustments.
 
-dvips 5.995 (TeX Live 2015).
+dvips 5.995 (TeX Live 2015):
   Remove psfig support, as it is nonfree.
 
-dvips 5.994 (TeX Live 2014).
+dvips 5.994 (TeX Live 2014):
   Omit UniqueID from subsets.
 
-dvips 5.993 (TeX Live 2013).
+dvips 5.993 (TeX Live 2013):
   `m' value <= 0 now means no limit on vm.
 
 dvips 5.992 (TeX Live 2012):
