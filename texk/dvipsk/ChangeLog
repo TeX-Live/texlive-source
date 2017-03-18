@@ -1,3 +1,12 @@
+2017-03-18  Karl Berry  <karl@tug.org>
+
+	* configure.ac,
+	* NEWS
+	* dvips.c,
+	* dvips.h,
+	* afm2tfm.c,
+	* dvips.texi: version 5.997 for TL17.
+
 2017-02-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvips.c: In the case of -T option, reverse the default in the change

@@ -1,3 +1,10 @@
+2017-03-18  Karl Berry  <karl@tug.org>
+
+	* xbb.c: update copyright years.
+	
+	* xdvipdfm-bb.test: remove any ^%%Creat line, not just %%CreationDate.
+	* tests/*.[x]bb: remove %%Creator: lines since they embed version.
+
 2017-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Bump version to 20170318 for TeX Live 2017.

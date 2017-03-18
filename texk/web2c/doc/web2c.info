@@ -1,4 +1,4 @@
-This is web2c.info, produced by makeinfo version 6.1 from web2c.texi.
+This is web2c.info, produced by makeinfo version 6.3 from web2c.texi.
 
 This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
@@ -58,7 +58,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 2016, released in April 2016.
+corresponds to Web2c version 2017, released in April 2017.
 
 * Menu:
 
@@ -82,8 +82,8 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 2016 of Web2c, released in April
-2016.
+This manual corresponds to version 2017 of Web2c, released in April
+2017.
 
    "Web2c" is the name of a TeX implementation, originally for Unix, but
 now also running under DOS, Amiga, and other operating systems.  By "TeX
