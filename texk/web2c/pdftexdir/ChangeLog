@@ -1,8 +1,15 @@
+2017-03-18  Karl Berry  <karl@tug.org>
+
+	* NEWS,
+	* pdftex_version.h,
+	* pdftex.web (pdftex_revision, pdftex_version_string):
+	version [1.40.]18 for TL17.
+
 2017-03-16  Pali Roh\'ar <pali.rohar@gmail.com>
 
 	Allow .enc files for bitmap fonts, following thread at
-	http://tug.org/pipermail/pdftex/2016-July/009064.html
-	http://tug.org/pipermail/pdftex/2016-August/009065.html:
+	http://tug.org/pipermail/pdftex/2016-June/008980.html
+	http://tug.org/pipermail/pdftex/2016-July/009012.html:
 	* writet3.c (remove_duplicate_glyph_names): new fn.
 	(writet3): change fn to take fm_entry object, and use it to write
 	glyph names from an enc file, if specified in the map file.
