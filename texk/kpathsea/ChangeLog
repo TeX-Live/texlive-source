@@ -6,6 +6,11 @@
 	* texmf.cnf,
 	* doc/kpathsea.texi: version 6.2.3 for TL17.
 
+	* Makefile.am (nodist_kpseinclude_HEADERS): include c-auto.h here.
+	(kpseinclude_HEADERS): not here.
+	(nodist_kpselib_HEADERS): and not here; variable no longer needed.
+	Ken Brown on tldistro, 18 Mar 2017 16:50:41.
+
 2017-03-14  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (kpseinclude_HEADERS): add c-auto.h. Report from
