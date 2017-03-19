@@ -1,3 +1,247 @@
+commit 411c963a9fe7d0d51bc96f046792688a020bfc66
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Mar 19 12:40:37 2017 +0100
+
+    Update (C)
+
+ goo/PNGWriter.cc        | 2 +-
+ goo/PNGWriter.h         | 2 +-
+ goo/TiffWriter.cc       | 2 +-
+ goo/TiffWriter.h        | 2 +-
+ poppler/GfxState.h      | 2 +-
+ utils/ImageOutputDev.cc | 2 +-
+ utils/ImageOutputDev.h  | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 96333f6dcd93afadea35f9301c7a919545037ed4
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 8 23:33:00 2017 +0100
+
+    Add override markers
+
+ cmake/modules/PopplerMacros.cmake            |   4 +
+ fofi/FoFiIdentifier.cc                       |  42 +--
+ fofi/FoFiTrueType.h                          |   2 +-
+ fofi/FoFiType1.h                             |   2 +-
+ glib/poppler-cached-file-loader.h            |   4 +-
+ glib/poppler-input-stream.h                  |  34 +--
+ goo/JpegWriter.h                             |  10 +-
+ goo/NetPBMWriter.h                           |   8 +-
+ goo/PNGWriter.h                              |   8 +-
+ goo/TiffWriter.h                             |  10 +-
+ poppler/Annot.h                              |  50 ++--
+ poppler/CairoFontEngine.h                    |   6 +-
+ poppler/CairoOutputDev.cc                    |   2 +-
+ poppler/CairoOutputDev.h                     | 344 +++++++++++-----------
+ poppler/DCTStream.h                          |  18 +-
+ poppler/Decrypt.h                            |  24 +-
+ poppler/FlateEncoder.h                       |  16 +-
+ poppler/Form.h                               |  18 +-
+ poppler/Function.h                           |  52 ++--
+ poppler/GfxFont.h                            |  20 +-
+ poppler/GfxState.cc                          |   2 +-
+ poppler/GfxState.h                           | 366
+ +++++++++++------------
+ poppler/JBIG2Stream.cc                       |  16 +-
+ poppler/JBIG2Stream.h                        |  22 +-
+ poppler/JPEG2000Stream.h                     |  24 +-
+ poppler/Link.h                               |  66 ++---
+ poppler/LocalPDFDocBuilder.h                 |   5 +-
+ poppler/MarkedContentOutputDev.h             |  22 +-
+ poppler/PSOutputDev.cc                       |  16 +-
+ poppler/PSOutputDev.h                        | 142 ++++-----
+ poppler/PopplerCache.cc                      |   2 +-
+ poppler/PreScanOutputDev.h                   | 110 +++----
+ poppler/SecurityHandler.h                    |  30 +-
+ poppler/SplashOutputDev.cc                   |   2 +-
+ poppler/SplashOutputDev.h                    | 210 ++++++-------
+ poppler/StdinCachedFile.h                    |   5 +-
+ poppler/StdinPDFDocBuilder.h                 |   5 +-
+ poppler/Stream.h                             | 422
+ +++++++++++++--------------
+ poppler/TextOutputDev.cc                     |  38 +--
+ poppler/TextOutputDev.h                      |  46 +--
+ poppler/XRef.cc                              |   2 +-
+ poppler/XRef.h                               |  12 +-
+ qt4/CMakeLists.txt                           |   3 +
+ qt4/src/poppler-annotation.h                 |   8 +-
+ qt4/src/poppler-link.h                       |   2 +-
+ qt5/demos/abstractinfodock.h                 |   6 +-
+ qt5/demos/embeddedfiles.h                    |   6 +-
+ qt5/demos/fonts.h                            |   4 +-
+ qt5/demos/info.h                             |   4 +-
+ qt5/demos/metadata.h                         |   4 +-
+ qt5/demos/navigationtoolbar.h                |   6 +-
+ qt5/demos/optcontent.h                       |   6 +-
+ qt5/demos/pageview.h                         |   6 +-
+ qt5/demos/permissions.h                      |   4 +-
+ qt5/demos/thumbnails.h                       |   4 +-
+ qt5/demos/toc.h                              |   4 +-
+ qt5/demos/viewer.h                           |   2 +-
+ qt5/src/ArthurOutputDev.cc                   |   2 +-
+ qt5/src/ArthurOutputDev.h                    |  90 +++---
+ qt5/src/poppler-annotation.cc                |  56 ++--
+ qt5/src/poppler-annotation.h                 |  84 +++---
+ qt5/src/poppler-form.h                       |  16 +-
+ qt5/src/poppler-link-extractor-private.h     |  10 +-
+ qt5/src/poppler-link.h                       |  24 +-
+ qt5/src/poppler-optcontent.h                 |  18 +-
+ qt5/src/poppler-qiodeviceoutstream-private.h |  10 +-
+ qt5/src/poppler-qt5.h                        |   6 +-
+ qt5/tests/stress-threads-qt5.cpp             |   4 +-
+ qt5/tests/test-password-qt5.cpp              |   4 +-
+ qt5/tests/test-poppler-qt5.cpp               |   6 +-
+ splash/SplashFTFont.h                        |  12 +-
+ splash/SplashFTFontFile.h                    |   6 +-
+ splash/SplashPattern.h                       |  12 +-
+ test/gtk-test.cc                             |   6 +-
+ utils/HtmlOutputDev.h                        |  56 ++--
+ utils/ImageOutputDev.h                       |  62 ++--
+ utils/pdftohtml.cc                           |  12 +-
+ 77 files changed, 1404 insertions(+), 1400 deletions(-)
+
+commit da490581b1b4d50efdba1e25115697e17bb0ef51
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Mar 8 22:07:34 2017 +0100
+
+    Compile in C++11 mode
+
+    I tried using AX_CXX_COMPILE_STDCXX_11 for the autotools side but
+    could not get it to fill CXXFLAGS or any other variable i could find,
+    help welcome
+
+ CMakeLists.txt | 4 +++-
+ configure.ac   | 1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+commit aa8633267d1d0e2079bb4a2b82bc7b36a4d306f5
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Mar 6 22:45:52 2017 +0100
+
+    pdfinfo: Fix memory leak when printing JS
+
+ utils/JSInfo.cc | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+commit d30e66cf39ef69a81bdd91e21203c876f38d9a09
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Mar 6 22:43:27 2017 +0100
+
+    pdfinfo: fix leak when printing JS
+
+ utils/JSInfo.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit a7632c5db6875828500dce7c984ec933d5349f26
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Mar 6 22:34:20 2017 +0100
+
+    pdftohtml: fix small memory leak when constructing some filenames
+
+ utils/HtmlOutputDev.cc | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+commit 8ebec831c2abea9f13761474990c0d94346c1a35
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Mon Mar 6 22:24:06 2017 +0100
+
+    SplashOutputDev: Fix memory leak when rendering images with colormap
+    and matte color
+
+ poppler/SplashOutputDev.cc | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+commit cfaeeadbc642a297486481d9efd6068fd9ef7ea3
+Author: Adrian Johnson <ajohnson@redneon.com>
+Date:   Sat Mar 4 10:54:29 2017 +1030
+
+    pdfimages: support 16bpc png and tiff images
+
+    bug 99988
+
+ goo/PNGWriter.cc        |  4 ++++
+ goo/PNGWriter.h         |  3 ++-
+ goo/TiffWriter.cc       |  6 ++++++
+ goo/TiffWriter.h        |  3 ++-
+ poppler/GfxState.h      |  4 ++++
+ utils/ImageOutputDev.cc | 38 +++++++++++++++++++++++++++++++++++++-
+ utils/ImageOutputDev.h  |  1 +
+ 7 files changed, 56 insertions(+), 3 deletions(-)
+
+commit 1b0653ce395242547b2b34b99034a19cd2d3ea6b
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 2 01:00:12 2017 +0100
+
+    Qt5: Expose Form additional actions
+
+ qt5/src/poppler-form.cc | 20 ++++++++++++++++++++
+ qt5/src/poppler-form.h  | 19 +++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+
+commit a4c6433c423bd0dcc5056d9ee0375188fea9a0bc
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 2 00:56:43 2017 +0100
+
+    Update (C) of previous commit
+
+ poppler/Form.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 0151e6e3824a6db907d871a2e56f5c20c001b588
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 2 00:56:27 2017 +0100
+
+    Qt5: expose form calculate order
+
+ qt5/src/poppler-document.cc | 18 +++++++++++++++++-
+ qt5/src/poppler-qt5.h       |  9 ++++++++-
+ 2 files changed, 25 insertions(+), 2 deletions(-)
+
+commit 0ae3d40a79c25feb5cb9bce6fc8cc48c30bfd1b6
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 2 00:52:21 2017 +0100
+
+    Parse AcroForm CO (calculateOrder)
+
+ poppler/Form.cc | 19 +++++++++++++++++++
+ poppler/Form.h  |  4 ++++
+ 2 files changed, 23 insertions(+)
+
+commit bbfc56b3c9a1e613e6db008a56c9c3333ae1427a
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Thu Mar 2 00:45:44 2017 +0100
+
+    Make FormWidget* setters ignore isReadOnly
+
+    isReadOnly is for the user but poppler needs to be able to set the
+    value for example for fields whose value is autocalculated
+
+ poppler/Form.cc | 23 +----------------------
+ 1 file changed, 1 insertion(+), 22 deletions(-)
+
+commit f853145556a61a3d1104d6fd62261924d9fc9e50
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Sun Feb 19 23:25:47 2017 +0100
+
+    There's no config file
+
+ poppler/GlobalParams.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+commit c7a7c34fcb875414eb3092df84f8e8e8e523648d
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Wed Feb 15 23:26:10 2017 +0100
+
+    Poppler 0.52.0
+
+ CMakeLists.txt   |  2 +-
+ NEWS             | 16 ++++++++++++++++
+ configure.ac     |  2 +-
+ cpp/Doxyfile     |  2 +-
+ qt4/src/Doxyfile |  2 +-
+ qt5/src/Doxyfile |  2 +-
+ 6 files changed, 21 insertions(+), 5 deletions(-)
+
 commit baad9bd0406f63cffa8054c5831ccc3cb5d207e3
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Wed Feb 15 23:05:55 2017 +0100

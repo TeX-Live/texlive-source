@@ -1,3 +1,21 @@
+Release 0.53.0
+        core:
+         * Form support improvements
+         * SplashOutputDev: Fix memory leak when rendering images with colormap and matte color
+         * Minor fix in GlobalParams documentation
+
+        qt5:
+         * Expose form calculate order
+         * Expose Form additional actions
+
+        utils:
+         * pdfimages: support 16bpc png and tiff images. Bug #99988
+         * pdftohtml: fix small memory leak when constructing some filenames
+         * pdfinfo: fix leak when printing JS
+
+        build sytem:
+         * Compile in C++11 mode
+
 Release 0.52.0
         core:
          * Fix assert on reading some OCGs. Bug #99768
