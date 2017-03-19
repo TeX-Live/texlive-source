@@ -1,5 +1,5 @@
 m4_define([poppler_version_major],[0])
-m4_define([poppler_version_minor],[52])
+m4_define([poppler_version_minor],[53])
 m4_define([poppler_version_micro],[0])
 m4_define([poppler_version],[poppler_version_major.poppler_version_minor.poppler_version_micro])
 
@@ -26,6 +26,7 @@ AC_PROG_CC_STDC
 #fi
 AC_PROG_CXX
 AC_PROG_INSTALL
+CXXFLAGS="$CXXFLAGS -std=c++11"
 
 dnl ##### Check for pkgconfig
 PKG_PROG_PKG_CONFIG
