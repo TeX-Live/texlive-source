@@ -52,6 +52,12 @@ approved by the @TeX{} Users Group.
 * TLbuild: (tlbuild).           TeX Live configuration and development.
 @end direntry
 
+@dircategory Individual utilities
+@direntry
+* install-tl::                  Installing TeX Live.
+* tlmgr::                       Managing TeX Live.
+@end direntry
+
 @titlepage
 @title @value{mytitle}
 @subtitle @value{version} release
@@ -1141,7 +1147,7 @@ structure and variation.
 @pindex libpng @r{library}
 This generic library uses the source tree in, e.g., the subdirectory
 @file{libpng-src/} with all modifications for TL recorded in
-@file{TLPATCHES/*}.  The @file{configure.ac} fragment
+@file{TLpatches/*}.  The @file{configure.ac} fragment
 @file{ac/withenable.ac} contains
 
 @example
@@ -1286,7 +1292,7 @@ details for a few of the programs in TL.
 @pindex t1utils @r{package}
 
 Once again we use the distributed source tree @file{t1utils-src}
-with modifications documented in @file{TLPATCHES/*} and
+with modifications documented in @file{TLpatches/*} and
 a proxy build system consisting of @file{configure.ac} and
 @file{Makefile.am}.  The fragment @file{ac/withenable.ac} contains
 
@@ -1304,7 +1310,7 @@ supplies the configure option @code{--disable-t1utils}.
 @pindex xindy
 
 This module uses the distributed source tree @file{xindy-src/} with
-modifications documented in @file{TLPATCHES/*}, a proxy
+modifications documented in @file{TLpatches/*}, a proxy
 @file{configure.ac}, and a wrapper @file{Makefile.am} that descends
 into @file{xindy-src}.  The @code{xindy} build requires a @file{make}
 that supports a @code{VPATH} build, can handle all targets, and do not
@@ -1383,7 +1389,7 @@ TL build system.
 
 In any case, a new package directory @file{foo} should contain the
 original sources, as modified for TL, in @file{foo/foo-src}, and the
-changes should be documented in @file{foo/TLPATCHES/*}; changes should
+changes should be documented in @file{foo/TLpatches/*}; changes should
 also be submitted upstream whenever reasonable, of course.  In
 addition, @file{foo/} will need the usual Automake build-related files
 (@file{configure.ac}, @file{Makefile.am}, etc.  Please keep a
