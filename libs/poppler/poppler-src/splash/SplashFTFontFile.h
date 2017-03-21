@@ -55,12 +55,12 @@ public:
 					  int codeToGIDLenA,
 					  int faceIndexA=0);
 
-  ~SplashFTFontFile();
+  virtual ~SplashFTFontFile();
 
   // Create a new SplashFTFont, i.e., a scaled instance of this font
   // file.
-  SplashFont *makeFont(SplashCoord *mat,
-		       SplashCoord *textMat) override;
+  virtual SplashFont *makeFont(SplashCoord *mat,
+			       SplashCoord *textMat);
 
 private:
 

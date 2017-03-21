@@ -745,7 +745,7 @@ public:
 		GBool rawOrderA);
 
   // Destructor.
-  ~TextOutputDev();
+  virtual ~TextOutputDev();
 
   // Check if file was successfully created.
   virtual GBool isOk() { return ok; }
@@ -754,54 +754,54 @@ public:
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  GBool upsideDown() override { return gTrue; }
+  virtual GBool upsideDown() { return gTrue; }
 
   // Does this device use drawChar() or drawString()?
-  GBool useDrawChar() override { return gTrue; }
+  virtual GBool useDrawChar() { return gTrue; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  GBool interpretType3Chars() override { return gFalse; }
+  virtual GBool interpretType3Chars() { return gFalse; }
 
   // Does this device need non-text content?
-  GBool needNonText() override { return gFalse; }
+  virtual GBool needNonText() { return gFalse; }
 
   // Does this device require incCharCount to be called for text on
   // non-shown layers?
-  GBool needCharCount() override { return gTrue; }
+  virtual GBool needCharCount() { return gTrue; }
 
   //----- initialization and control
 
   // Start a page.
-  void startPage(int pageNum, GfxState *state, XRef *xref) override;
+  virtual void startPage(int pageNum, GfxState *state, XRef *xref);
 
   // End a page.
-  void endPage() override;
+  virtual void endPage();
 
   //----- save/restore graphics state
-  void restoreState(GfxState *state) override;
+  virtual void restoreState(GfxState *state);
 
   //----- update text state
-  void updateFont(GfxState *state) override;
+  virtual void updateFont(GfxState *state);
 
   //----- text drawing
-  void beginString(GfxState *state, GooString *s) override;
-  void endString(GfxState *state) override;
-  void drawChar(GfxState *state, double x, double y,
-		double dx, double dy,
-		double originX, double originY,
-		CharCode c, int nBytes, Unicode *u, int uLen) override;
-  void incCharCount(int nChars) override;
-  void beginActualText(GfxState *state, GooString *text) override;
-  void endActualText(GfxState *state) override;
+  virtual void beginString(GfxState *state, GooString *s);
+  virtual void endString(GfxState *state);
+  virtual void drawChar(GfxState *state, double x, double y,
+			double dx, double dy,
+			double originX, double originY,
+			CharCode c, int nBytes, Unicode *u, int uLen);
+  virtual void incCharCount(int nChars);
+  virtual void beginActualText(GfxState *state, GooString *text);
+  virtual void endActualText(GfxState *state);
 
   //----- path painting
-  void stroke(GfxState *state) override;
-  void fill(GfxState *state) override;
-  void eoFill(GfxState *state) override;
+  virtual void stroke(GfxState *state);
+  virtual void fill(GfxState *state);
+  virtual void eoFill(GfxState *state);
 
   //----- link borders
-  void processLink(AnnotLink *link) override;
+  virtual void processLink(AnnotLink *link);
 
   //----- special access
 

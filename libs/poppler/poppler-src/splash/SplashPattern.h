@@ -66,17 +66,17 @@ public:
 
   SplashSolidColor(SplashColorPtr colorA);
 
-  SplashPattern *copy() override { return new SplashSolidColor(color); }
+  virtual SplashPattern *copy() { return new SplashSolidColor(color); }
 
-  ~SplashSolidColor();
+  virtual ~SplashSolidColor();
 
-  GBool getColor(int x, int y, SplashColorPtr c) override;
+  virtual GBool getColor(int x, int y, SplashColorPtr c);
 
-  GBool testPosition(int x, int y) override { return gFalse; }
+  virtual GBool testPosition(int x, int y) { return gFalse; }
 
-  GBool isStatic() override { return gTrue; }
+  virtual GBool isStatic() { return gTrue; }
 
-  GBool isCMYK() override { return gFalse; }
+  virtual GBool isCMYK() { return gFalse; }
 
 private:
 

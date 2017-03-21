@@ -989,16 +989,16 @@ public:
 
   DeviceNRecoder(Stream *strA, int widthA, int heightA,
 		 GfxImageColorMap *colorMapA);
-  ~DeviceNRecoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override
+  virtual ~DeviceNRecoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx++]; }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufIdx >= bufSize && !fillBuf()) ? EOF : buf[bufIdx]; }
-  GooString *getPSFilter(int psLevel, const char *indent) override { return NULL; }
-  GBool isBinary(GBool last = gTrue) override { return gTrue; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GooString *getPSFilter(int psLevel, const char *indent) { return NULL; }
+  virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 

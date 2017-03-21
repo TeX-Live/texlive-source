@@ -110,7 +110,7 @@ class ObjectKey : public PopplerCacheKey {
     {
     }
 
-    bool operator==(const PopplerCacheKey &key) const override
+    bool operator==(const PopplerCacheKey &key) const
     {
       const ObjectKey *k = static_cast<const ObjectKey*>(&key);
       return k->num == num && k->gen == gen;
