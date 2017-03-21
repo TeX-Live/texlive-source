@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory libs/teckit/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original TECkit source tree.
@@ -9,7 +11,7 @@ EXTRA_DIST = $(TECKIT_TREE)
 
 ## Patches applied to the original source tree
 ##
-EXTRA_DIST += TECkit-PATCHES
+EXTRA_DIST += Tlpatches
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

@@ -13,6 +13,9 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+#  Adapted for TeX Live from lcdf-typetools-src/Makefile.am
+#  Copyright (c) 2003-2011 Eddie Kohler
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -559,17 +562,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-
-#************************************************************************
-#
-#  Adapted for TeX Live from lcdf-typetools-src/Makefile.am
-#  Copyright (c) 2003-2011 Eddie Kohler
-#
-#************************************************************************
 SUBDIRS = . $(LCDF_TYPETOOLS_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
-EXTRA_DIST = lcdf-typetools-PATCHES \
-	$(LCDF_TYPETOOLS_TREE)/autoconf.h.in \
+EXTRA_DIST = TLpatches $(LCDF_TYPETOOLS_TREE)/autoconf.h.in \
 	$(LCDF_TYPETOOLS_TREE)/configure.ac $(LCDF_TYPETOOLS_TREE)/m4 \
 	$(TESTS) tests/t2c.enc tests/uhvrrc8a.pfb tests/uhv_dl.pfa \
 	tests/uhv_dl.pfb tests/uhv_dl.ps tests/uhv_re.afm \

@@ -309,7 +309,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(VLNA_TREE) vlna-PATCHES vlna.dvi vlna.tex vlna.idx \
+EXTRA_DIST = $(VLNA_TREE) TLpatches vlna.dvi vlna.tex vlna.idx \
 	vlna.scn
 NEVER_DIST = `find . $(NEVER_NAMES)`
 NEVER_NAMES = -name .svn

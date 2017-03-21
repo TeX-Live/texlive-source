@@ -350,7 +350,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = README-clisp xindy-PATCHES $(XINDY_TREE)/Makefile.am \
+EXTRA_DIST = README-clisp TLpatches $(XINDY_TREE)/Makefile.am \
 	$(XINDY_TREE)/VERSION $(XINDY_TREE)/configure.ac \
 	$(XINDY_TREE)/m4 $(top_builddir)/../../build-aux/relpath
 SUBDIRS = . $(XINDY_TREE)

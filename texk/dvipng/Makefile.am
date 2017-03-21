@@ -1,15 +1,13 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipng/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-#************************************************************************
-#
 #  Adapted for TeX Live from dvipng-src/Makefile.in
 #  Copyright (C) 2002-2008 Jan-Åke Larsson
 #
-#************************************************************************
-##
 ## We want to re-distribute the whole original dvipng source tree.
 ##
 ## With current automake (1.10.2) 'make distcheck' fails when
@@ -18,8 +16,7 @@
 EXTRA_DIST = $(DVIPNG_TREE)
 
 ## Patches applied to the original source tree
-##
-EXTRA_DIST += dvipng-PATCHES
+EXTRA_DIST += TLpatches
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

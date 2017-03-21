@@ -745,7 +745,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(PMX_TREE) pmx-PATCHES
+EXTRA_DIST = $(PMX_TREE) TLpatches
 NEVER_DIST = `find . $(NEVER_NAMES)` $(PMX_TREE)/pmx.log \
 	$(PMX_TREE)/pmx.trs
 

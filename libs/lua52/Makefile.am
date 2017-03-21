@@ -1,6 +1,8 @@
+## $Id$
 ## Proxy Makefile.am to build Lua52 for TeX Live.
 ##
-##   Copyright (C) 2013-2015 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright 2017 Karl Berry <tex-live@tug.org>
+##   Copyright 2013-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -12,7 +14,7 @@ EXTRA_DIST = $(LUA52_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += lua52-PATCHES
+EXTRA_DIST += TLpatches
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
