@@ -65,19 +65,19 @@ class DCTStream: public FilterStream {
 public:
 
   DCTStream(Stream *strA, int colorXformA, Object *dict, int recursion);
-  ~DCTStream();
-  StreamKind getKind() override { return strDCT; }
-  void reset() override;
-  int getChar() override;
-  int lookChar() override;
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
+  virtual ~DCTStream();
+  virtual StreamKind getKind() { return strDCT; }
+  virtual void reset();
+  virtual int getChar();
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
 
 private:
   void init();
 
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
 
   int colorXform;
   JSAMPLE *current;

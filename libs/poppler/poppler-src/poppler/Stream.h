@@ -281,15 +281,15 @@ class FileOutStream : public OutStream {
 public:
   FileOutStream (FILE* fa, Goffset startA);
 
-  ~FileOutStream ();
+  virtual ~FileOutStream ();
 
-  void close() override;
+  virtual void close();
 
-  Goffset getPos() override;
+  virtual Goffset getPos();
 
-  void put (char c) override;
+  virtual void put (char c);
 
-  void printf (const char *format, ...) override;
+  virtual void printf (const char *format, ...);
 private:
   FILE *f;
   Goffset start;
@@ -307,15 +307,15 @@ class BaseStream: public Stream {
 public:
 
   BaseStream(Object *dictA, Goffset lengthA);
-  ~BaseStream();
+  virtual ~BaseStream();
   virtual BaseStream *copy() = 0;
   virtual Stream *makeSubStream(Goffset start, GBool limited,
 				Goffset length, Object *dict) = 0;
-  void setPos(Goffset pos, int dir = 0) override = 0;
-  GBool isBinary(GBool last = gTrue) override { return last; }
-  BaseStream *getBaseStream() override { return this; }
-  Stream *getUndecodedStream() override { return this; }
-  Dict *getDict() override { return dict.getDict(); }
+  virtual void setPos(Goffset pos, int dir = 0) = 0;
+  virtual GBool isBinary(GBool last = gTrue) { return last; }
+  virtual BaseStream *getBaseStream() { return this; }
+  virtual Stream *getUndecodedStream() { return this; }
+  virtual Dict *getDict() { return dict.getDict(); }
   virtual GooString *getFileName() { return NULL; }
   virtual Goffset getLength() { return length; }
 
@@ -339,17 +339,17 @@ class FilterStream: public Stream {
 public:
 
   FilterStream(Stream *strA);
-  ~FilterStream();
-  void close() override;
-  Goffset getPos() override { return str->getPos(); }
-  void setPos(Goffset pos, int dir = 0) override;
-  BaseStream *getBaseStream() override { return str->getBaseStream(); }
-  Stream *getUndecodedStream() override { return str->getUndecodedStream(); }
-  Dict *getDict() override { return str->getDict(); }
-  Stream *getNextStream() override { return str; }
+  virtual ~FilterStream();
+  virtual void close();
+  virtual Goffset getPos() { return str->getPos(); }
+  virtual void setPos(Goffset pos, int dir = 0);
+  virtual BaseStream *getBaseStream() { return str->getBaseStream(); }
+  virtual Stream *getUndecodedStream() { return str->getUndecodedStream(); }
+  virtual Dict *getDict() { return str->getDict(); }
+  virtual Stream *getNextStream() { return str; }
 
-  int getUnfilteredChar () override { return str->getUnfilteredChar(); }
-  void unfilteredReset () override { str->unfilteredReset(); }
+  virtual int getUnfilteredChar () { return str->getUnfilteredChar(); }
+  virtual void unfilteredReset () { str->unfilteredReset(); }
 
 protected:
 
@@ -448,31 +448,31 @@ public:
 
   FileStream(GooFile* fileA, Goffset startA, GBool limitedA,
 	     Goffset lengthA, Object *dictA);
-  ~FileStream();
-  BaseStream *copy() override;
-  Stream *makeSubStream(Goffset startA, GBool limitedA,
-				Goffset lengthA, Object *dictA) override;
-  StreamKind getKind() override { return strFile; }
-  void reset() override;
-  void close() override;
-  int getChar() override
+  virtual ~FileStream();
+  virtual BaseStream *copy();
+  virtual Stream *makeSubStream(Goffset startA, GBool limitedA,
+				Goffset lengthA, Object *dictA);
+  virtual StreamKind getKind() { return strFile; }
+  virtual void reset();
+  virtual void close();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  Goffset getPos() override { return bufPos + (bufPtr - buf); }
-  void setPos(Goffset pos, int dir = 0) override;
-  Goffset getStart() override { return start; }
-  void moveStart(Goffset delta) override;
+  virtual Goffset getPos() { return bufPos + (bufPtr - buf); }
+  virtual void setPos(Goffset pos, int dir = 0);
+  virtual Goffset getStart() { return start; }
+  virtual void moveStart(Goffset delta);
 
-  int getUnfilteredChar () override { return getChar(); }
-  void unfilteredReset () override { reset(); }
+  virtual int getUnfilteredChar () { return getChar(); }
+  virtual void unfilteredReset () { reset(); }
 
 private:
 
   GBool fillBuf();
   
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer)
     {
       int n, m;
 
@@ -518,24 +518,24 @@ public:
 
   CachedFileStream(CachedFile *ccA, Goffset startA, GBool limitedA,
 	     Goffset lengthA, Object *dictA);
-  ~CachedFileStream();
-  BaseStream *copy() override;
-  Stream *makeSubStream(Goffset startA, GBool limitedA,
-				Goffset lengthA, Object *dictA) override;
-  StreamKind getKind() override { return strCachedFile; }
-  void reset() override;
-  void close() override;
-  int getChar() override
+  virtual ~CachedFileStream();
+  virtual BaseStream *copy();
+  virtual Stream *makeSubStream(Goffset startA, GBool limitedA,
+				Goffset lengthA, Object *dictA);
+  virtual StreamKind getKind() { return strCachedFile; }
+  virtual void reset();
+  virtual void close();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  Goffset getPos() override { return bufPos + (bufPtr - buf); }
-  void setPos(Goffset pos, int dir = 0) override;
-  Goffset getStart() override { return start; }
-  void moveStart(Goffset delta) override;
+  virtual Goffset getPos() { return bufPos + (bufPtr - buf); }
+  virtual void setPos(Goffset pos, int dir = 0);
+  virtual Goffset getStart() { return start; }
+  virtual void moveStart(Goffset delta);
 
-  int getUnfilteredChar () override { return getChar(); }
-  void unfilteredReset () override { reset(); }
+  virtual int getUnfilteredChar () { return getChar(); }
+  virtual void unfilteredReset () { reset(); }
 
 private:
 
@@ -561,33 +561,33 @@ class MemStream: public BaseStream {
 public:
 
   MemStream(char *bufA, Goffset startA, Goffset lengthA, Object *dictA);
-  ~MemStream();
-  BaseStream *copy() override;
-  Stream *makeSubStream(Goffset start, GBool limited,
-				Goffset lengthA, Object *dictA) override;
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  void close() override;
-  int getChar() override
+  virtual ~MemStream();
+  virtual BaseStream *copy();
+  virtual Stream *makeSubStream(Goffset start, GBool limited,
+				Goffset lengthA, Object *dictA);
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual void close();
+  virtual int getChar()
     { return (bufPtr < bufEnd) ? (*bufPtr++ & 0xff) : EOF; }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr < bufEnd) ? (*bufPtr & 0xff) : EOF; }
-  Goffset getPos() override { return (int)(bufPtr - buf); }
-  void setPos(Goffset pos, int dir = 0) override;
-  Goffset getStart() override { return start; }
-  void moveStart(Goffset delta) override;
+  virtual Goffset getPos() { return (int)(bufPtr - buf); }
+  virtual void setPos(Goffset pos, int dir = 0);
+  virtual Goffset getStart() { return start; }
+  virtual void moveStart(Goffset delta);
 
   //if needFree = true, the stream will delete buf when it is destroyed
   //otherwise it will not touch it. Default value is false
   virtual void setNeedFree (GBool val) { needFree = val; }
 
-  int getUnfilteredChar () override { return getChar(); }
-  void unfilteredReset () override { reset (); } 
+  virtual int getUnfilteredChar () { return getChar(); }
+  virtual void unfilteredReset () { reset (); } 
 
 private:
 
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
 
   char *buf;
   Goffset start;
@@ -610,27 +610,27 @@ class EmbedStream: public BaseStream {
 public:
 
   EmbedStream(Stream *strA, Object *dictA, GBool limitedA, Goffset lengthA);
-  ~EmbedStream();
-  BaseStream *copy() override;
-  Stream *makeSubStream(Goffset start, GBool limitedA,
-				Goffset lengthA, Object *dictA) override;
-  StreamKind getKind() override { return str->getKind(); }
-  void reset() override {}
-  int getChar() override;
-  int lookChar() override;
-  Goffset getPos() override { return str->getPos(); }
-  void setPos(Goffset pos, int dir = 0) override;
-  Goffset getStart() override;
-  void moveStart(Goffset delta) override;
+  virtual ~EmbedStream();
+  virtual BaseStream *copy();
+  virtual Stream *makeSubStream(Goffset start, GBool limitedA,
+				Goffset lengthA, Object *dictA);
+  virtual StreamKind getKind() { return str->getKind(); }
+  virtual void reset() {}
+  virtual int getChar();
+  virtual int lookChar();
+  virtual Goffset getPos() { return str->getPos(); }
+  virtual void setPos(Goffset pos, int dir = 0);
+  virtual Goffset getStart();
+  virtual void moveStart(Goffset delta);
 
-  int getUnfilteredChar () override { return str->getUnfilteredChar(); }
-  void unfilteredReset () override { str->unfilteredReset(); }
+  virtual int getUnfilteredChar () { return str->getUnfilteredChar(); }
+  virtual void unfilteredReset () { str->unfilteredReset(); }
 
 
 private:
 
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
 
   Stream *str;
   GBool limited;
@@ -644,14 +644,14 @@ class ASCIIHexStream: public FilterStream {
 public:
 
   ASCIIHexStream(Stream *strA);
-  ~ASCIIHexStream();
-  StreamKind getKind() override { return strASCIIHex; }
-  void reset() override;
-  int getChar() override
+  virtual ~ASCIIHexStream();
+  virtual StreamKind getKind() { return strASCIIHex; }
+  virtual void reset();
+  virtual int getChar()
     { int c = lookChar(); buf = EOF; return c; }
-  int lookChar() override;
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
 
 private:
 
@@ -667,14 +667,14 @@ class ASCII85Stream: public FilterStream {
 public:
 
   ASCII85Stream(Stream *strA);
-  ~ASCII85Stream();
-  StreamKind getKind() override { return strASCII85; }
-  void reset() override;
-  int getChar() override
+  virtual ~ASCII85Stream();
+  virtual StreamKind getKind() { return strASCII85; }
+  virtual void reset();
+  virtual int getChar()
     { int ch = lookChar(); ++index; return ch; }
-  int lookChar() override;
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
 
 private:
 
@@ -693,20 +693,20 @@ public:
 
   LZWStream(Stream *strA, int predictor, int columns, int colors,
 	    int bits, int earlyA);
-  ~LZWStream();
-  StreamKind getKind() override { return strLZW; }
-  void reset() override;
-  int getChar() override;
-  int lookChar() override;
-  int getRawChar() override;
-  void getRawChars(int nChars, int *buffer) override;
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
+  virtual ~LZWStream();
+  virtual StreamKind getKind() { return strLZW; }
+  virtual void reset();
+  virtual int getChar();
+  virtual int lookChar();
+  virtual int getRawChar();
+  virtual void getRawChars(int nChars, int *buffer);
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
 
 private:
 
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
 
   inline int doGetRawChar() {
     if (eof) {
@@ -752,20 +752,20 @@ class RunLengthStream: public FilterStream {
 public:
 
   RunLengthStream(Stream *strA);
-  ~RunLengthStream();
-  StreamKind getKind() override { return strRunLength; }
-  void reset() override;
-  int getChar() override
+  virtual ~RunLengthStream();
+  virtual StreamKind getKind() { return strRunLength; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
 
 private:
 
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
 
   char buf[128];		// buffer
   char *bufPtr;			// next char to read
@@ -787,16 +787,16 @@ public:
   CCITTFaxStream(Stream *strA, int encodingA, GBool endOfLineA,
 		 GBool byteAlignA, int columnsA, int rowsA,
 		 GBool endOfBlockA, GBool blackA);
-  ~CCITTFaxStream();
-  StreamKind getKind() override { return strCCITTFax; }
-  void reset() override;
-  int getChar() override
+  virtual ~CCITTFaxStream();
+  virtual StreamKind getKind() { return strCCITTFax; }
+  virtual void reset();
+  virtual int getChar()
     { int c = lookChar(); buf = EOF; return c; }
-  int lookChar() override;
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
 
-  void unfilteredReset () override;
+  virtual void unfilteredReset ();
 
   int getEncoding() { return encoding; }
   GBool getEndOfLine() { return endOfLine; }
@@ -977,16 +977,16 @@ public:
 
   FlateStream(Stream *strA, int predictor, int columns,
 	      int colors, int bits);
-  ~FlateStream();
-  StreamKind getKind() override { return strFlate; }
-  void reset() override;
-  int getChar() override;
-  int lookChar() override;
-  int getRawChar() override;
-  void getRawChars(int nChars, int *buffer) override;
-  GooString *getPSFilter(int psLevel, const char *indent) override;
-  GBool isBinary(GBool last = gTrue) override;
-  void unfilteredReset () override;
+  virtual ~FlateStream();
+  virtual StreamKind getKind() { return strFlate; }
+  virtual void reset();
+  virtual int getChar();
+  virtual int lookChar();
+  virtual int getRawChar();
+  virtual void getRawChars(int nChars, int *buffer);
+  virtual GooString *getPSFilter(int psLevel, const char *indent);
+  virtual GBool isBinary(GBool last = gTrue);
+  virtual void unfilteredReset ();
 
 private:
   void flateReset(GBool unfiltered);
@@ -1004,8 +1004,8 @@ private:
     return c;
   }
 
-  GBool hasGetChars() override { return true; }
-  int getChars(int nChars, Guchar *buffer) override;
+  virtual GBool hasGetChars() { return true; }
+  virtual int getChars(int nChars, Guchar *buffer);
 
   StreamPredictor *pred;	// predictor
   Guchar buf[flateWindow];	// output data buffer
@@ -1051,13 +1051,13 @@ class EOFStream: public FilterStream {
 public:
 
   EOFStream(Stream *strA);
-  ~EOFStream();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override {}
-  int getChar() override { return EOF; }
-  int lookChar() override { return EOF; }
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override  { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override { return gFalse; }
+  virtual ~EOFStream();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset() {}
+  virtual int getChar() { return EOF; }
+  virtual int lookChar() { return EOF; }
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/)  { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/) { return gFalse; }
 };
 
 //------------------------------------------------------------------------
@@ -1068,14 +1068,14 @@ class BufStream: public FilterStream {
 public:
 
   BufStream(Stream *strA, int bufSizeA);
-  ~BufStream();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override;
-  int lookChar() override;
-  GooString *getPSFilter(int psLevel, const char *indent) override
+  virtual ~BufStream();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar();
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int psLevel, const char *indent)
     { return NULL; }
-  GBool isBinary(GBool last = gTrue) override;
+  virtual GBool isBinary(GBool last = gTrue);
 
   int lookChar(int idx);
 
@@ -1094,13 +1094,13 @@ public:
 
   FixedLengthEncoder(Stream *strA, int lengthA);
   ~FixedLengthEncoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override;
-  int lookChar() override;
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override;
-  GBool isEncoder() override { return gTrue; }
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar();
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/);
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 
@@ -1116,16 +1116,16 @@ class ASCIIHexEncoder: public FilterStream {
 public:
 
   ASCIIHexEncoder(Stream *strA);
-  ~ASCIIHexEncoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override
+  virtual ~ASCIIHexEncoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override { return gFalse; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/) { return gFalse; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 
@@ -1146,16 +1146,16 @@ class ASCII85Encoder: public FilterStream {
 public:
 
   ASCII85Encoder(Stream *strA);
-  ~ASCII85Encoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override
+  virtual ~ASCII85Encoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override { return gFalse; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/) { return gFalse; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 
@@ -1176,16 +1176,16 @@ class RunLengthEncoder: public FilterStream {
 public:
 
   RunLengthEncoder(Stream *strA);
-  ~RunLengthEncoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override
+  virtual ~RunLengthEncoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override { return gTrue; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/) { return gTrue; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 
@@ -1212,15 +1212,15 @@ class LZWEncoder: public FilterStream {
 public:
 
   LZWEncoder(Stream *strA);
-  ~LZWEncoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override;
-  int lookChar() override;
-  GooString *getPSFilter(int psLevel, const char *indent) override
+  virtual ~LZWEncoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar();
+  virtual int lookChar();
+  virtual GooString *getPSFilter(int psLevel, const char *indent)
     { return NULL; }
-  GBool isBinary(GBool last = gTrue) override { return gTrue; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GBool isBinary(GBool last = gTrue) { return gTrue; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 
@@ -1244,16 +1244,16 @@ class CMYKGrayEncoder: public FilterStream {
 public:
 
   CMYKGrayEncoder(Stream *strA);
-  ~CMYKGrayEncoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override
+  virtual ~CMYKGrayEncoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override { return gFalse; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/) { return gFalse; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 
@@ -1273,16 +1273,16 @@ class RGBGrayEncoder: public FilterStream {
 public:
 
   RGBGrayEncoder(Stream *strA);
-  ~RGBGrayEncoder();
-  StreamKind getKind() override { return strWeird; }
-  void reset() override;
-  int getChar() override
+  virtual ~RGBGrayEncoder();
+  virtual StreamKind getKind() { return strWeird; }
+  virtual void reset();
+  virtual int getChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr++ & 0xff); }
-  int lookChar() override
+  virtual int lookChar()
     { return (bufPtr >= bufEnd && !fillBuf()) ? EOF : (*bufPtr & 0xff); }
-  GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) override { return NULL; }
-  GBool isBinary(GBool /*last = gTrue*/) override { return gFalse; }
-  GBool isEncoder() override { return gTrue; }
+  virtual GooString *getPSFilter(int /*psLevel*/, const char * /*indent*/) { return NULL; }
+  virtual GBool isBinary(GBool /*last = gTrue*/) { return gFalse; }
+  virtual GBool isEncoder() { return gTrue; }
 
 private:
 

@@ -134,31 +134,31 @@ public:
 
   // Does this device use upside-down coordinates?
   // (Upside-down means (0,0) is the top left corner of the page.)
-  GBool upsideDown() override { return gFalse; }
+  virtual GBool upsideDown() { return gFalse; }
 
   // Does this device use drawChar() or drawString()?
-  GBool useDrawChar() override { return gFalse; }
+  virtual GBool useDrawChar() { return gFalse; }
 
   // Does this device use tilingPatternFill()?  If this returns false,
   // tiling pattern fills will be reduced to a series of other drawing
   // operations.
-  GBool useTilingPatternFill() override { return gTrue; }
+  virtual GBool useTilingPatternFill() { return gTrue; }
 
   // Does this device use functionShadedFill(), axialShadedFill(), and
   // radialShadedFill()?  If this returns false, these shaded fills
   // will be reduced to a series of other drawing operations.
-  GBool useShadedFills(int type) override
+  virtual GBool useShadedFills(int type)
     { return type < 4 && level >= psLevel2; }
 
   // Does this device use drawForm()?  If this returns false,
   // form-type XObjects will be interpreted (i.e., unrolled).
-  GBool useDrawForm() override { return preloadImagesForms; }
+  virtual GBool useDrawForm() { return preloadImagesForms; }
 
   // Does this device use beginType3Char/endType3Char?  Otherwise,
   // text in Type 3 fonts will be drawn with drawChar/drawString.
-  GBool interpretType3Chars() override { return gFalse; }
+  virtual GBool interpretType3Chars() { return gFalse; }
   
-  GBool needClipToCropBox() override { return mode == psModeEPS; }
+  virtual GBool needClipToCropBox() { return mode == psModeEPS; }
 
   //----- header/trailer (used only if manualCtrl is true)
 
@@ -182,115 +182,115 @@ public:
   // returns false, the page display is aborted.  Typically, an
   // OutputDev will use some alternate means to display the page
   // before returning false.
-  GBool checkPageSlice(Page *page, double hDPI, double vDPI,
+  virtual GBool checkPageSlice(Page *page, double hDPI, double vDPI,
 			       int rotate, GBool useMediaBox, GBool crop,
 			       int sliceX, int sliceY, int sliceW, int sliceH,
 			       GBool printing,
 			       GBool (*abortCheckCbk)(void *data) = NULL,
 			       void *abortCheckCbkData = NULL,
 			       GBool (*annotDisplayDecideCbk)(Annot *annot, void *user_data) = NULL,
-			       void *annotDisplayDecideCbkData = NULL) override;
+			       void *annotDisplayDecideCbkData = NULL);
 
   // Start a page.
-  void startPage(int pageNum, GfxState *state, XRef *xref) override;
+  virtual void startPage(int pageNum, GfxState *state, XRef *xref);
 
   // End a page.
-  void endPage() override;
+  virtual void endPage();
 
   //----- save/restore graphics state
-  void saveState(GfxState *state) override;
-  void restoreState(GfxState *state) override;
+  virtual void saveState(GfxState *state);
+  virtual void restoreState(GfxState *state);
 
   //----- update graphics state
-  void updateCTM(GfxState *state, double m11, double m12,
-			 double m21, double m22, double m31, double m32) override;
-  void updateLineDash(GfxState *state) override;
-  void updateFlatness(GfxState *state) override;
-  void updateLineJoin(GfxState *state) override;
-  void updateLineCap(GfxState *state) override;
-  void updateMiterLimit(GfxState *state) override;
-  void updateLineWidth(GfxState *state) override;
-  void updateFillColorSpace(GfxState *state) override;
-  void updateStrokeColorSpace(GfxState *state) override;
-  void updateFillColor(GfxState *state) override;
-  void updateStrokeColor(GfxState *state) override;
-  void updateFillOverprint(GfxState *state) override;
-  void updateStrokeOverprint(GfxState *state) override;
-  void updateOverprintMode(GfxState *state) override;
-  void updateTransfer(GfxState *state) override;
+  virtual void updateCTM(GfxState *state, double m11, double m12,
+			 double m21, double m22, double m31, double m32);
+  virtual void updateLineDash(GfxState *state);
+  virtual void updateFlatness(GfxState *state);
+  virtual void updateLineJoin(GfxState *state);
+  virtual void updateLineCap(GfxState *state);
+  virtual void updateMiterLimit(GfxState *state);
+  virtual void updateLineWidth(GfxState *state);
+  virtual void updateFillColorSpace(GfxState *state);
+  virtual void updateStrokeColorSpace(GfxState *state);
+  virtual void updateFillColor(GfxState *state);
+  virtual void updateStrokeColor(GfxState *state);
+  virtual void updateFillOverprint(GfxState *state);
+  virtual void updateStrokeOverprint(GfxState *state);
+  virtual void updateOverprintMode(GfxState *state);
+  virtual void updateTransfer(GfxState *state);
 
   //----- update text state
-  void updateFont(GfxState *state) override;
-  void updateTextMat(GfxState *state) override;
-  void updateCharSpace(GfxState *state) override;
-  void updateRender(GfxState *state) override;
-  void updateRise(GfxState *state) override;
-  void updateWordSpace(GfxState *state) override;
-  void updateHorizScaling(GfxState *state) override;
-  void updateTextPos(GfxState *state) override;
-  void updateTextShift(GfxState *state, double shift) override;
-  void saveTextPos(GfxState *state) override;
-  void restoreTextPos(GfxState *state) override;
+  virtual void updateFont(GfxState *state);
+  virtual void updateTextMat(GfxState *state);
+  virtual void updateCharSpace(GfxState *state);
+  virtual void updateRender(GfxState *state);
+  virtual void updateRise(GfxState *state);
+  virtual void updateWordSpace(GfxState *state);
+  virtual void updateHorizScaling(GfxState *state);
+  virtual void updateTextPos(GfxState *state);
+  virtual void updateTextShift(GfxState *state, double shift);
+  virtual void saveTextPos(GfxState *state);
+  virtual void restoreTextPos(GfxState *state);
 
   //----- path painting
-  void stroke(GfxState *state) override;
-  void fill(GfxState *state) override;
-  void eoFill(GfxState *state) override;
-  GBool tilingPatternFill(GfxState *state, Gfx *gfx, Catalog *cat, Object *str,
+  virtual void stroke(GfxState *state);
+  virtual void fill(GfxState *state);
+  virtual void eoFill(GfxState *state);
+  virtual GBool tilingPatternFill(GfxState *state, Gfx *gfx, Catalog *cat, Object *str,
 				  double *pmat, int paintType, int tilingType, Dict *resDict,
 				  double *mat, double *bbox,
 				  int x0, int y0, int x1, int y1,
-				  double xStep, double yStep) override;
-  GBool functionShadedFill(GfxState *state,
-				   GfxFunctionShading *shading) override;
-  GBool axialShadedFill(GfxState *state, GfxAxialShading *shading, double /*tMin*/, double /*tMax*/) override;
-  GBool radialShadedFill(GfxState *state, GfxRadialShading *shading, double /*sMin*/, double /*sMax*/) override;
+				  double xStep, double yStep);
+  virtual GBool functionShadedFill(GfxState *state,
+				   GfxFunctionShading *shading);
+  virtual GBool axialShadedFill(GfxState *state, GfxAxialShading *shading, double /*tMin*/, double /*tMax*/);
+  virtual GBool radialShadedFill(GfxState *state, GfxRadialShading *shading, double /*sMin*/, double /*sMax*/);
 
   //----- path clipping
-  void clip(GfxState *state) override;
-  void eoClip(GfxState *state) override;
-  void clipToStrokePath(GfxState *state) override;
+  virtual void clip(GfxState *state);
+  virtual void eoClip(GfxState *state);
+  virtual void clipToStrokePath(GfxState *state);
 
   //----- text drawing
-  void drawString(GfxState *state, GooString *s) override;
-  void beginTextObject(GfxState *state) override;
-  void endTextObject(GfxState *state) override;
+  virtual void drawString(GfxState *state, GooString *s);
+  virtual void beginTextObject(GfxState *state);
+  virtual void endTextObject(GfxState *state);
 
   //----- image drawing
-  void drawImageMask(GfxState *state, Object *ref, Stream *str,
+  virtual void drawImageMask(GfxState *state, Object *ref, Stream *str,
 			     int width, int height, GBool invert,
-			     GBool interpolate, GBool inlineImg) override;
-  void setSoftMaskFromImageMask(GfxState *state,
+			     GBool interpolate, GBool inlineImg);
+  virtual void setSoftMaskFromImageMask(GfxState *state,
 					Object *ref, Stream *str,
 					int width, int height, GBool invert,
-					GBool inlineImg, double *baseMatrix) override;
-  void unsetSoftMaskFromImageMask(GfxState *state, double *baseMatrix) override;
-  void drawImage(GfxState *state, Object *ref, Stream *str,
+					GBool inlineImg, double *baseMatrix);
+  virtual void unsetSoftMaskFromImageMask(GfxState *state, double *baseMatrix);
+  virtual void drawImage(GfxState *state, Object *ref, Stream *str,
 			 int width, int height, GfxImageColorMap *colorMap,
-			 GBool interpolate, int *maskColors, GBool inlineImg) override;
-  void drawMaskedImage(GfxState *state, Object *ref, Stream *str,
+			 GBool interpolate, int *maskColors, GBool inlineImg);
+  virtual void drawMaskedImage(GfxState *state, Object *ref, Stream *str,
 			       int width, int height,
 			       GfxImageColorMap *colorMap,
 			       GBool interpolate,
 			       Stream *maskStr, int maskWidth, int maskHeight,
-			       GBool maskInvert, GBool maskInterpolate) override;
+			       GBool maskInvert, GBool maskInterpolate);
 
 #if OPI_SUPPORT
   //----- OPI functions
-  void opiBegin(GfxState *state, Dict *opiDict) override;
-  void opiEnd(GfxState *state, Dict *opiDict) override;
+  virtual void opiBegin(GfxState *state, Dict *opiDict);
+  virtual void opiEnd(GfxState *state, Dict *opiDict);
 #endif
 
   //----- Type 3 font operators
-  void type3D0(GfxState *state, double wx, double wy) override;
-  void type3D1(GfxState *state, double wx, double wy,
-		       double llx, double lly, double urx, double ury) override;
+  virtual void type3D0(GfxState *state, double wx, double wy);
+  virtual void type3D1(GfxState *state, double wx, double wy,
+		       double llx, double lly, double urx, double ury);
 
   //----- form XObjects
-  void drawForm(Ref ref) override;
+  virtual void drawForm(Ref ref);
 
   //----- PostScript XObjects
-  void psXObject(Stream *psStream, Stream *level1Stream) override;
+  virtual void psXObject(Stream *psStream, Stream *level1Stream);
 
   //----- miscellaneous
   void setOffset(double x, double y)
