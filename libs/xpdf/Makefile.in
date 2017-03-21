@@ -395,7 +395,7 @@ top_srcdir = @top_srcdir@
 #========================================================================
 #========================================================================
 ACLOCAL_AMFLAGS = -I ../../m4
-EXTRA_DIST = $(XPDF_TREE) xpdf-foolabs xpdf-PATCHES
+EXTRA_DIST = $(XPDF_TREE) xpdf-foolabs Tlpatches
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed

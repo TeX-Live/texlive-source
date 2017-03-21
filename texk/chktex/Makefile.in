@@ -583,9 +583,9 @@ top_srcdir = @top_srcdir@
 #  Adapted for TeX Live from chktex/Makefile.in
 #
 #************************************************************************
-EXTRA_DIST = $(CHKTEX_TREE) chktex-PATCHES regex/COPYING.LIB \
-	regex/README $(top_builddir)/../../build-aux/relpath \
-	ChkTeX.pdf ChkTeX.tex $(TESTS)
+EXTRA_DIST = $(CHKTEX_TREE) TLpatches regex/COPYING.LIB regex/README \
+	$(top_builddir)/../../build-aux/relpath ChkTeX.pdf ChkTeX.tex \
+	$(TESTS)
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed

@@ -1,7 +1,8 @@
+## $Id$
 ## Proxy Makefile.am to build graphite2 for TeX Live.
 ##
-##   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
-##   Copyright (C) 2012-2015 Peter Breitenlohner <tex-live@tug.org>
+##   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+##   Copyright 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
 ##   gives unlimited permission to copy and/or distribute it,
@@ -13,7 +14,7 @@ EXTRA_DIST = $(GRAPHITE2_TREE)
 
 ## Changes applied to the original source tree
 ##
-EXTRA_DIST += graphite2-PATCHES
+EXTRA_DIST += TLpatches
 
 GRAPHITE2_SRC = $(GRAPHITE2_TREE)/src
 GRAPHITE2_INC = $(GRAPHITE2_TREE)/include

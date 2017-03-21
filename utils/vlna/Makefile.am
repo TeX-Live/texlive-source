@@ -1,12 +1,15 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory utils/vlna/
 ##
-## Copyright (C) 2008-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2008-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
-##
+
 ## We want to re-distribute the whole original vlna source tree.
 EXTRA_DIST = $(VLNA_TREE)
+
 ## Patches applied to the original source tree
-EXTRA_DIST += vlna-PATCHES
+EXTRA_DIST += TLpatches
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

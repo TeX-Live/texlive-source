@@ -1,12 +1,14 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/detex/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## We want to re-distribute the whole original detex source tree.
 EXTRA_DIST = $(DETEX_TREE)
 ## Patches applied to the original source tree
-EXTRA_DIST += detex-PATCHES
+EXTRA_DIST += TLpatches
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

@@ -1,26 +1,21 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/lcdf-typetools/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-#************************************************************************
-#
 #  Adapted for TeX Live from lcdf-typetools-src/Makefile.am
 #  Copyright (c) 2003-2011 Eddie Kohler
-#
-#************************************************************************
-##
+
 ## We use the original lcdf-typetools source tree.
-##
 SUBDIRS = . $(LCDF_TYPETOOLS_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
 
 ## Patches applied to the original source tree
-##
-EXTRA_DIST = lcdf-typetools-PATCHES
+EXTRA_DIST = TLpatches
 
 ## We must explicitly distribute some top-level files.
-##
 EXTRA_DIST += \
 	$(LCDF_TYPETOOLS_TREE)/autoconf.h.in \
 	$(LCDF_TYPETOOLS_TREE)/configure.ac \

@@ -584,7 +584,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . $(DVISVGM_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
-EXTRA_DIST = $(DVISVGM_TREE) dvisvgm-PATCHES $(TESTS)
+EXTRA_DIST = $(DVISVGM_TREE) TLpatches $(TESTS)
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed

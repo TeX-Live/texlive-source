@@ -585,7 +585,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(PIXMAN_TREE) pixman-PATCHES
+EXTRA_DIST = $(PIXMAN_TREE) TLpatches
 PIXMAN_SRC = $(PIXMAN_TREE)/pixman
 NEVER_DIST = `find . $(NEVER_NAMES)`
 

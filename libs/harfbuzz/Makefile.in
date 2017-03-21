@@ -629,7 +629,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(HARFBUZZ_TREE) harfbuzz-PATCHES
+EXTRA_DIST = $(HARFBUZZ_TREE) TLpatches
 HARFBUZZ_SRC = $(HARFBUZZ_TREE)/src
 NEVER_DIST = `find . $(NEVER_NAMES)`
 

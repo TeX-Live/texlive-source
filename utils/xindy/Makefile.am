@@ -1,18 +1,18 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory utils/xindy/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
-##
+
 EXTRA_DIST = README-clisp
 
 ## We use the original xindy source tree.
-##
 SUBDIRS = . $(XINDY_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
 
 ## Patches applied to the original source tree
-##
-EXTRA_DIST += xindy-PATCHES
+EXTRA_DIST += TLpatches
 
 ## We must explicitly distribute some top-level files.
 ##

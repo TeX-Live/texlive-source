@@ -633,13 +633,10 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-#************************************************************************
-#
 #  Adapted for TeX Live from dvipng-src/Makefile.in
 #  Copyright (C) 2002-2008 Jan-Åke Larsson
 #
-#************************************************************************
-EXTRA_DIST = $(DVIPNG_TREE) dvipng-PATCHES dvipng.test dvipng-test.dvi
+EXTRA_DIST = $(DVIPNG_TREE) TLpatches dvipng.test dvipng-test.dvi
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
