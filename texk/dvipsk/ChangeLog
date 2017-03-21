@@ -1,3 +1,9 @@
+2017-03-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvips.c: Show information and exit if dvips finds options
+	--help or --version. Report from Igor Liferenko:
+	http://tug.org/pipermail/tex-k/2017-March/002748.html
+
 2017-03-18  Karl Berry  <karl@tug.org>
 
 	* configure.ac,
