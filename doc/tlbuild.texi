@@ -486,38 +486,32 @@ things are working.  There are many @code{configure} options you can
 tweak as desired; check the output from @code{configure --help}.
 
 @cindex size of source tree
-Finally, the above retrieves the entire TL source tree (some 300mb).
-It is natural to ask if this is really necessary.  Strictly speaking,
-the answer is no, but it is vastly more convenient to do so.  If you
-cut down the source tree, you must also give additional
-@code{configure} flags to individually disable using system versions
-of libraries, or the intricacies of the dependencies (such as
+Finally, the above retrieves the entire TL source tree (several
+hundred megabytes).  It is natural to ask if this is really necessary.
+Strictly speaking, the answer is no, but it is vastly more convenient
+to do so.  If you cut down the source tree, you must also give
+additional @code{configure} flags to individually disable using system
+versions of libraries, or the intricacies of the dependencies (such as
 @code{teckit} requiring @code{zlib}) will have undesired side effects.
 For an example, see the @code{build-pdftex.sh} script in the
-@code{pdftex} development sources (@url{http://pdftex.org}), which are
+@code{pdftex} development source (@url{http://pdftex.org}), which is
 indeed a cut-down TL source tree.
 
 @vindex --enable-missing @r{to ignore dependencies}
-Caveat 1: even with @code{--disable-all-pkgs}, dependencies will be
-checked.  For instance, if a non-MacOSX system does not have
-@code{fontconfig}, Xe@TeX{} cannot be built (@pxref{Prerequisites})
-and @code{configure} will terminate.  To proceed without such
-dependencies, specify @code{--enable-missing} also.  (Arguably this
-should happen automatically.)
+Even with @code{--disable-all-pkgs}, dependencies will be checked.
+For instance, if a non-MacOSX system does not have @code{fontconfig},
+Xe@TeX{} cannot be built (@pxref{Prerequisites}) and @code{configure}
+will terminate.  To proceed without such dependencies, specify
+@code{--enable-missing} also.  (Arguably this should happen
+automatically.)
 
 @vindex CC=@var{c-compiler}
 @vindex CXX=@var{c++-compiler}
 @vindex OBJCXX=@var{objc-compiler}
-@cindex ICU, prefers @code{clang} compilers
-@cindex @code{clang} compilers, preferred by ICU
-Caveat 2: unless @code{CC} and @code{CXX} and @code{OBJCXX} are
-explicitly specified, each package will configure its own compiler(s).
-In practice, this results in a conflict in only one instance: the ICU
-(@file{libs/icu}) library will prefer @code{clang} and @code{clang++}
-over all others if they are installed, whereas everything else prefers
-@code{gcc} and @code{g++}.  Usually the results will be interoperable,
-but it can cause extra confusion and problems when debugging a program
-that uses ICU.
+By default, the @code{gcc} compilers will be used if present;
+otherwise, individual packages may use something different.  You can
+explicitly specify the compilers to be used with the environment
+variables @code{CC}, @code{CXX}, and @code{OBJCXX}.
 
 
 @node Installing

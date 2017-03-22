@@ -117,7 +117,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
       pdftex - http://pdftex.org
       pmpost - none
         ptex - nothing current, old info: http://ascii.asciimw.jp/pb/ptex/
-     synctex - maintained here
+     synctex - maintained here, but also https://github.com/jlaurens/synctex
      upmpost - ? (Kitagawa-san)
        uptex - https://texwiki.texjp.org/?upTeX%2CupLaTeX
        xetex - http://tug.org/xetex/
