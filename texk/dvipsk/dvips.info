@@ -824,8 +824,8 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
      *Note Configuration file searching::.
 
 '-q*'
-     Run quietly.  Don't chatter about pages converted, etc. to standard
-     output; report no warnings (only errors) to standard error.
+     Run quietly.  Don't chatter about pages converted, etc., and report
+     no warnings (only errors) to standard error.
 
 '-r*'
      Output pages in reverse order.  By default, page 1 is output first.
@@ -4648,64 +4648,64 @@ Node: Basic usage17560
 Node: Command-line options18564
 Node: Option summary19012
 Node: Option details21261
-Node: Environment variables41049
-Node: Config files43910
-Node: Configuration file searching44580
-Node: Configuration file commands47777
-Node: Paper size and landscape55558
-Node: papersize special57183
-Node: Config file paper sizes58891
-Node: Paper trays63047
-Node: Interaction with PostScript64381
-Node: PostScript figures65034
-Node: Bounding box65760
-Node: \includegraphics69132
-Node: EPSF macros71425
-Node: EPSF scaling73425
-Node: EPSF clipping75995
-Node: psfile special76637
-Node: Dynamic creation of graphics79029
-Node: Fonts in figures80347
-Node: Header files81997
-Node: Including headers from TeX83207
-Node: Including headers from the command line85245
-Node: Headers and memory usage86344
-Node: Literal PS87555
-Node: " special88137
-Node: ps special88878
-Node: Literal headers90376
-Node: PostScript hooks91085
-Node: Literal examples93181
-Node: Hypertext94635
-Node: Hypertext caveats95864
-Node: Hypertext specials100252
-Node: PostScript fonts102886
-Node: Font concepts104003
-Node: Metric files105170
-Node: Glyph files107950
-Node: Virtual fonts110309
-Node: Encodings112135
-Node: PostScript typesetting114538
-Node: Making a font available117623
-Node: Invoking afm2tfm122657
-Node: Changing font encodings123674
-Node: Changing TeX encodings124465
-Node: Changing PostScript encodings125567
-Node: Changing both encodings126911
-Node: Reencoding with Afm2tfm127585
-Node: Encoding file format130688
-Node: Special font effects134892
-Node: Afm2tfm options137152
-Node: psfonts.map140677
-Node: Color145407
-Node: Color macro files146451
-Node: User-definable colors149644
-Node: Color subtleties150920
-Node: Ted Turner152572
-Node: Color device configuration153797
-Node: Color support details156241
-Node: Color specifications156619
-Node: Color specials158023
-Node: Index160152
+Node: Environment variables41034
+Node: Config files43895
+Node: Configuration file searching44565
+Node: Configuration file commands47762
+Node: Paper size and landscape55543
+Node: papersize special57168
+Node: Config file paper sizes58876
+Node: Paper trays63032
+Node: Interaction with PostScript64366
+Node: PostScript figures65019
+Node: Bounding box65745
+Node: \includegraphics69117
+Node: EPSF macros71410
+Node: EPSF scaling73410
+Node: EPSF clipping75980
+Node: psfile special76622
+Node: Dynamic creation of graphics79014
+Node: Fonts in figures80332
+Node: Header files81982
+Node: Including headers from TeX83192
+Node: Including headers from the command line85230
+Node: Headers and memory usage86329
+Node: Literal PS87540
+Node: " special88122
+Node: ps special88863
+Node: Literal headers90361
+Node: PostScript hooks91070
+Node: Literal examples93166
+Node: Hypertext94620
+Node: Hypertext caveats95849
+Node: Hypertext specials100237
+Node: PostScript fonts102871
+Node: Font concepts103988
+Node: Metric files105155
+Node: Glyph files107935
+Node: Virtual fonts110294
+Node: Encodings112120
+Node: PostScript typesetting114523
+Node: Making a font available117608
+Node: Invoking afm2tfm122642
+Node: Changing font encodings123659
+Node: Changing TeX encodings124450
+Node: Changing PostScript encodings125552
+Node: Changing both encodings126896
+Node: Reencoding with Afm2tfm127570
+Node: Encoding file format130673
+Node: Special font effects134877
+Node: Afm2tfm options137137
+Node: psfonts.map140662
+Node: Color145392
+Node: Color macro files146436
+Node: User-definable colors149629
+Node: Color subtleties150905
+Node: Ted Turner152557
+Node: Color device configuration153782
+Node: Color support details156226
+Node: Color specifications156604
+Node: Color specials158008
+Node: Index160137
 
 End Tag Table
