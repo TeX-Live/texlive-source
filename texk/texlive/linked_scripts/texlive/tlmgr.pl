@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43376 2017-03-01 23:33:53Z karl $
+# $Id: tlmgr.pl 43566 2017-03-21 17:08:03Z karl $
 #
-# Copyright 2008-2016 Norbert Preining
+# Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43376 $';
-my $datrev = '$Date: 2017-03-02 00:33:53 +0100 (Thu, 02 Mar 2017) $';
+my $svnrev = '$Revision: 43566 $';
+my $datrev = '$Date: 2017-03-21 18:08:03 +0100 (Tue, 21 Mar 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6540,9 +6540,11 @@ with C<tlmgr>:
 =item C<tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet>
 
 Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
-you installed TeX Live from the DVD image and want continuing
+you installed TeX Live from the DVD image and want to have continuing
 updates.  The two commands are equivalent; C<ctan> is just an alias for
-the given url.
+the given url.  Caveat: C<mirror.ctan.org> resolves to many different
+hosts, and they are not perfectly synchronized; we recommend updating
+only daily (at most), and not more often.
 
 =item C<tlmgr update --list>
 
@@ -7741,8 +7743,8 @@ C<tlmgr> saves a copy of the C<texlive.tlpdb> file used for an update
 with a suffix representing the repository url, as in
 C<tlpkg/texlive.tlpdb.>I<long-hash-string>.  These can be useful for
 fallback information, but if you don't like them accumulating (e.g.,
-on each run C<mirror.ctan.org> might resolve to a new host, resulting in
-a different hash), it's harmless to delete them.
+C<mirror.ctan.org> resolves to many different hosts, each resulting in
+a possibly different hash), it's harmless to delete them.
 
 =head1 CONFIGURATION FILE FOR TLMGR
 
