@@ -1,3 +1,7 @@
+2017-03-22  Karl Berry  <karl@tug.org>
+
+	* tlbuild.texi: we now default to gcc for ICU too.
+
 2017-03-19  Karl Berry  <karl@tug.org>
 
 	* tlbuild.texi: TLPATCHES -> TLpatches.

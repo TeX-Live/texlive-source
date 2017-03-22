@@ -965,8 +965,8 @@ exists, it is read.
 @cindex quiet operation
 @cindex silent operation
 @cindex warnings, suppressing
-Run quietly.  Don't chatter about pages converted, etc.@: to standard
-output; report no warnings (only errors) to standard error.
+Run quietly.  Don't chatter about pages converted, etc.@:,
+and report no warnings (only errors) to standard error.
 
 @item -r*
 @opindex -r
