@@ -3,12 +3,12 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.40],[http://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.41],[http://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
 
-test "$CXXFLAGS" || CXXFLAGS="-std=c++11"
+test "$CXXFLAGS" || CXXFLAGS=""
 
 test "$CFLAGS" || CFLAGS="-g -O3"
 

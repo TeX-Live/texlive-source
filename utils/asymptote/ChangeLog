@@ -1,3 +1,87 @@
+commit 40f27e1424f6c63aa362f16f3c65b9f3d1d6e723
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 22 01:56:17 2017 -0600
+
+    Always use epsdriver.
+
+commit ee57aa9c533e4a71fc20151928e5cf418d4effc5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 22 00:29:27 2017 -0600
+
+    Update bug reporting URL in README.
+
+commit 207695a78f697be391991f5c943543ebeccf4e87
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 21 23:34:36 2017 -0600
+
+    Remove temporary ConTeXt log file.
+
+commit a981ce85db27372750fd19aec9d4456d3bc0b21a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 21 23:19:22 2017 -0600
+
+    Support eps output with all TeX engines.
+    
+    Work around Imagemagick black background bug in jpg output.
+
+commit 3e42b17ffde9941bf0ad6e24a05f73c788d755b5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 20 23:05:31 2017 -0600
+
+    Remove temporary pbsdat file.
+
+commit dacbf47554b36d0571394b3c4d747405e53f2708
+Merge: f34a52d c2e4bd5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 17 01:48:29 2017 -0600
+
+    Merge pull request #38 from ivankokan/master
+    
+    Add improvements for perpendicular marks.
+
+commit f34a52dfbebee7100a0d853edda78c99f1e5f2c0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 17 01:20:43 2017 -0600
+
+    Use different rendering constants for Bezier patches and triangles.
+    Improve flatness test for Bezier triangles.
+
+commit 0b59b3b2b2432b3c715eb80f0305c454bd7a9e00
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 5 14:17:40 2017 -0700
+
+    Fix previous commit.
+
+commit 9a2b4810156bf34c4257f08dc12595aed9867147
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 4 18:32:36 2017 -0700
+
+    Make perl look in FAQ directory.
+
+commit b3322131bebd3a506add235d25ae7ca53ab2efcd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 2 15:41:45 2017 -0700
+
+    Reduce rendering constant back to 0.5.
+
+commit 00716297f257c464e97bb0bd6b747c4034bcb97e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 2 15:10:37 2017 -0700
+
+    Remove unused variable.
+
+commit 05b6d931d5546359b061e3959817ff8d4936672a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 2 09:57:58 2017 -0700
+
+    Remove out-of-date opengl32.dll and glu32.dll libraries on install.
+
+commit 585c158ee53e4d202f1ceda5c12782a06aec57e9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 2 00:18:05 2017 -0700
+
+    Increment version to 2.41.
+
 commit 5a6d3626f3589f7fdc7193dea97ae335ad70b242
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Mar 1 23:43:49 2017 -0700
@@ -17,6 +101,18 @@ Date:   Wed Mar 1 22:09:50 2017 -0700
 
     Fix multisample detection; remove MSDOS workarounds (tested with
     freeglut-2.8.1).
+
+commit c2e4bd5990b9f3e6963ea80da2eb20d3a48c7a82
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Wed Mar 1 17:37:51 2017 +0100
+
+    markrightangle: margin manipulation removed (it resulted with blank area between the perpendicular mark and a line thinner than currentpen), perpendicular mark now always starts from the "middle" of lines
+
+commit 7636977c5c744ba28df9ae21c3dd7530d1beaa5f
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Wed Mar 1 17:37:51 2017 +0100
+
+    perpendicularmark: miterjoin added (aesthetic improvement and alignment with existing squarecap)
 
 commit 8de2b9cae38a5bdfc29bbe6ee8bec9def0515c5c
 Author: John Bowman <bowman@ualberta.ca>
