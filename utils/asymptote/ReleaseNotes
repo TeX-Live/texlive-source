@@ -1,3 +1,11 @@
+Release Notes for Version 2.41
+
+The rendering of Bezier patches was improved. Minor improvements were made
+to perpendicular marks in the geometry package. A perl issue was addressed.
+Two unwanted temporary files are now removed after TeX processing.
+EPS output is now supported with all TeX engines. A workaround was
+implemented for the ImageMagick jpeg black background bug.
+
 Release Notes for Version 2.40
 
 A partial workaround for the OpenGL transparency bug was implemented, by
