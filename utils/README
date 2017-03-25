@@ -65,32 +65,37 @@ mkdir $clisp_toolsdir
 
 wget=wget  # or "curl -O" or whatever
 
-libsigsegv_ver=libsigsegv-2.10
+libsigsegv_ver=libsigsegv-2.11
 cd $clisp_basedir
 $wget http://ftp.gnu.org/gnu/libsigsegv/$libsigsegv_ver.tar.gz
 gzip -dc $libsigsegv_ver.tar.gz | tar xf -
 cd $libsigsegv_ver
-./configure --prefix=$clisp_toolsdir --disable-shared --enable-static \
+./configure -C --prefix=$clisp_toolsdir --disable-shared --enable-static \
 && make && make check && make install
 #
 # you may need this hack on 64-bit systems
-# if clisp's configure does not find libsigsegv.  Harmless anyway.
+# if clisp's configure does not find libsigsegv.  Harmless to do in any case.
 ln -s lib $clisp_toolsdir/lib64
+#
+# if you can't build libsigsegv, pass --ignore-absence-of-libsigsegv
+# when running configure for clisp.
 
-libiconv_ver=libiconv-1.14
-cd $clisp_basedir
-$wget http://ftp.gnu.org/gnu/libiconv/$libiconv_ver.tar.gz
-gzip -dc $libiconv_ver.tar.gz | tar xf -
-cd $libiconv_ver
-./configure --prefix=$clisp_toolsdir --disable-shared --enable-static \
-&& make && make check && make install
-
-ffcall_ver=ffcall-1.10
+ffcall_ver=libffcall-1.13-20170225
 cd $clisp_basedir
 $wget http://www.haible.de/bruno/gnu/$ffcall_ver.tar.gz
 gzip -dc $ffcall_ver.tar.gz | tar xf -
 cd $ffcall_ver
-./configure --prefix=$clisp_toolsdir --disable-shared --enable-static \
+./configure -C --prefix=$clisp_toolsdir --disable-shared --enable-static \
+&& make && make check && make install
+
+# may be able to omit iconv if have new enough in libc or elsewhere.
+libiconv_ver=libiconv-1.15
+cd $clisp_basedir
+$wget http://ftp.gnu.org/gnu/libiconv/$libiconv_ver.tar.gz
+gzip -dc $libiconv_ver.tar.gz | tar xf -
+cd $libiconv_ver
+./configure -C --prefix=$clisp_toolsdir \
+  --disable-shared --enable-static --disable-nls \
 && make && make check && make install
 
 # would probably be ideal to also do a local libtermcap or ncurses,
@@ -101,8 +106,8 @@ cd $ffcall_ver
 
 clisp_ver=clisp-2.49
 cd $clisp_basedir
-$wget http://ftp.gnu.org/gnu/clisp/release/2.49/$clisp_ver.tar.gz
-gzip -dc $clisp_ver.tar.gz | tar xf -
+$wget https://haible.de/bruno/gnu/clisp-2.49.50.tar.bz2
+bunzip2 -dc $clisp_ver.tar.bz2 | tar xf -
 cd $clisp_ver
 
 # On Cygwin:
@@ -111,10 +116,11 @@ cd $clisp_ver
 #  modules/syscalls/configure.orig > modules/syscalls/configure
 # On FreeBSD/amd64: add --disable-mmap.
 #
-./configure --without-readline --disable-nls \
+./configure CPPFLAGS=-DUNIX_BINARY_DISTRIB --prefix=$clisp_toolsdir \
+  --without-readline --without-dynamic-modules \
+  --disable-nls --enable-portability \
   --with-libsigsegv-prefix=$clisp_toolsdir \
-  --with-libiconv-prefix=$clisp_toolsdir \
   --with-libffcall-prefix=$clisp_toolsdir \
+  --with-libiconv-prefix=$clisp_toolsdir \
   $clisp_builddir \
-&& cd $clisp_builddir \
-&& make
+&& (cd $clisp_builddir && make)
