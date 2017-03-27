@@ -803,12 +803,20 @@ sub xindy_expression () {
 	push (@temp_files, $style_file);
 	$style_file=quotify($style_file);
 	foreach my $module ( @modules ) {
-	    my $fnmodule=`kpsewhich -progname=xindy -format=othertext $module`;
-	    if ($fnmodule) {
-		chomp($fnmodule);
-		print $sf "(require \"$fnmodule\")\n";
-	    } else {
+	    if (($module =~ /\//) || ($module =~ /\\/)) {
+    # If $module contains directory separators, the module must be a system
+    # module. So we don't call kpsewhich.
 		print $sf "(require \"$module\")\n";
+	    } else {
+    # Here we call kpsewhich to search for a module. Thus modules can be under
+    # (anytexmf)/xindy/modules/
+		my $fnmodule=`kpsewhich -progname=xindy -format=othertext $module`;
+		if ($fnmodule) {
+		   chomp($fnmodule);
+		   print $sf "(require \"$fnmodule\")\n";
+		} else {
+		   print $sf "(require \"$module\")\n";
+		}
 	    }
 	}
 	close ($sf);

@@ -1,3 +1,9 @@
+2017-03-27  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* xindy-src/user-commands/xindy.in: If a module name cantains directory
+	separators, the module must certainly be a system module. In this case,
+	we don't call kpsewhich to obtain relatively better performance.
+
 2016-06-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xindy-src/user-commands/xindy.in: Use kpsewhich to search for modules.
