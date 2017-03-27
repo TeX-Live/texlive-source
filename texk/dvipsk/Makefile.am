@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017      Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 SUBDIRS = squeeze
@@ -115,11 +117,11 @@ TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log: dvips$(EXEEXT)
 
-TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea
-TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata
-TESTS_ENVIRONMENT += TEXFONTS=$(srcdir)/testdata
-TESTS_ENVIRONMENT += TEXFONTMAPS=$(srcdir)/testdata
-TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata
+AM_TESTS_ENVIRONMENT  = TEXMFCNF=$(srcdir)/../kpathsea; export TEXMFCNF;
+AM_TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG;
+AM_TESTS_ENVIRONMENT += TEXFONTS=$(srcdir)/testdata; export TEXFONTS;
+AM_TESTS_ENVIRONMENT += TEXFONTMAPS=$(srcdir)/testdata; export TEXFONTMAPS;
+AM_TESTS_ENVIRONMENT += TEXPSHEADERS=$(srcdir)/testdata; export TEXPSHEADERS;
 
 EXTRA_DIST += \
 	$(TESTS) \

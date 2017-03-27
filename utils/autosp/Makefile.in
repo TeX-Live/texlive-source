@@ -488,6 +488,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+#
 EXTRA_DIST = $(AUTOSP_TREE) $(TESTS) $(AUTOSP_TREE)/tests
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
@@ -505,11 +506,8 @@ autosp_SOURCES = \
 man1_MANS = \
 	$(AUTOSP_TREE)/autosp.1
 
-
-# We want to use the test and tests/ tree from the original dist.
-# So as to avoid embedding the original dist dir name in the test
-# script, we use $test_srcdir, defined here.
-AM_TESTS_ENVIRONMENT = test_srcdir=$(srcdir)/$(AUTOSP_TREE)/tests;
+AM_TESTS_ENVIRONMENT = AUTOSP_TREE=$(AUTOSP_TREE); export AUTOSP_TREE;
+#
 TESTS = $(AUTOSP_TREE)/autosp.test
 all: all-am
 

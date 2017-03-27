@@ -579,8 +579,8 @@ NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 DISTCLEANFILES = config.force CXXLD.sh uhv* Ant* a_enhg3c.enc Fon* \
 	tmf.*
+AM_TESTS_ENVIRONMENT = LCDF_TYPETOOLS_TREE=$(LCDF_TYPETOOLS_TREE); export LCDF_TYPETOOLS_TREE;
 TESTS = tests/t1.test tests/tfm.test tests/ttf.test
-TESTS_ENVIRONMENT = LCDF_TYPETOOLS_TREE=$(LCDF_TYPETOOLS_TREE)
 all: autoconf.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

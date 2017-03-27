@@ -53,7 +53,7 @@ TESTS = disdvi.test dvi2tty.test
 disdvi.log: disdvi$(EXEXET)
 dvi2tty.log: dvi2tty$(EXEEXT)
 
-TESTS_ENVIRONMENT = DVI2TTY_TREE=$(DVI2TTY_TREE)
+AM_TESTS_ENVIRONMENT = DVI2TTY_TREE=$(DVI2TTY_TREE); export DVI2TTY_TREE;
 EXTRA_DIST += $(TESTS)
 
 ## disdvi.test
@@ -64,4 +64,3 @@ EXTRA_DIST += ligtest.tty test.tty testc.tty tests.tty testu.tty
 DISTCLEANFILES += ligtest.out test.out testc.out tests.out testu.out
 DISTCLEANFILES += table.out tablec.out tables.out tableu.out tableuC.out
 DISTCLEANFILES += tableEu.out tableEu1.out tableEuC.out tableEua.out
-

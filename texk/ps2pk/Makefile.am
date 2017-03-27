@@ -1,8 +1,10 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/ps2pk/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017      Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
-##
+
 bin_PROGRAMS = mag pfb2pfa pk2bm ps2pk
 noinst_PROGRAMS = pktest
 
@@ -104,11 +106,12 @@ $(mag_OBJECTS) $(pfb2pfa_OBJECTS) $(pk2m_OBJECTS) $(ps2pk_OBJECTS) $(pktest_OBJE
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
 
 ## Tests.
-##
-TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
+AM_TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'; export KPSEWHICH;
+#
 TESTS = tests/lmmath.test tests/ps2pk.test
 tests/lmmath.log: ps2pk$(EXEEXT)
 tests/ps2pk.log: pfb2pfa$(EXEEXT) ps2pk$(EXEEXT) pk2bm$(EXEEXT) pktest$(EXEEXT) mag$(EXEEXT)
+#
 EXTRA_DIST = $(TESTS)
 DISTCLEANFILES =
 ## tests/lmmath.test
@@ -120,7 +123,6 @@ EXTRA_DIST += tests/Symbol.afm tests/Symbol.alpha.hex tests/Symbol.alpha.pix \
 DISTCLEANFILES += Symbol*
 
 ## Not used
-##
 EXTRA_DIST += \
 	CHANGES.type1 \
 	INSTALLATION \
@@ -140,4 +142,3 @@ EXTRA_DIST += \
 	texfiles.h \
 	trig.h \
 	usenet
-

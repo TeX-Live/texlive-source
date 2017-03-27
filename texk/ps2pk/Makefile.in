@@ -661,8 +661,10 @@ pktest_SOURCES = \
 	pktest.c
 
 dist_man1_MANS = mag.1 pfb2pfa.1 pk2bm.1 ps2pk.1
-TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'
+AM_TESTS_ENVIRONMENT = KPSEWHICH='$(KPSEWHICH)'; export KPSEWHICH;
+#
 TESTS = tests/lmmath.test tests/ps2pk.test
+#
 EXTRA_DIST = $(TESTS) tests/lmmi12.600pk tests/Symbol.afm \
 	tests/Symbol.alpha.hex tests/Symbol.alpha.pix tests/Symbol.pfa \
 	tests/Symbol.pfb tests/Symbol10.300pk CHANGES.type1 \

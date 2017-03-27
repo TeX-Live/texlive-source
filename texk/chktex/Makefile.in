@@ -14,6 +14,12 @@
 
 @SET_MAKE@
 
+#************************************************************************
+#
+#  Adapted for TeX Live from chktex/Makefile.in
+#
+#************************************************************************
+
 
 
 VPATH = @srcdir@
@@ -577,12 +583,6 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-
-#************************************************************************
-#
-#  Adapted for TeX Live from chktex/Makefile.in
-#
-#************************************************************************
 EXTRA_DIST = $(CHKTEX_TREE) TLpatches regex/COPYING.LIB regex/README \
 	$(top_builddir)/../../build-aux/relpath ChkTeX.pdf ChkTeX.tex \
 	$(TESTS)
@@ -636,7 +636,8 @@ pdfdoc_DATA = ChkTeX.pdf
 CLEANFILES = $(nodist_bin_SCRIPTS) ChkTeX.aux ChkTeX.dvi ChkTeX.log \
 	ChkTeX.ps stamp-ChkTeX chktest
 TESTS = chktex.test
-TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE) TEXMFCNF=$(abs_srcdir)/../kpathsea
+AM_TESTS_ENVIRONMENT = CHKTEX_TREE=$(CHKTEX_TREE); export CHKTEX_TREE; \
+	TEXMFCNF=$(abs_srcdir)/../kpathsea; export TEXMFCNF;
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

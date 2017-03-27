@@ -240,11 +240,10 @@ EXTRA_libf2c_a_SOURCES += \
 dist_man1_MANS = pmxab.1 scor2prt.1
 
 ## Tests
-##
+AM_TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests; export test_src;
+#
 TESTS = $(PMX_TREE)/pmx.test
 $(PMX_TREE)/pmx.log: pmxab$(EXEEXT) scor2prt$(EXEEXT)
-
-TESTS_ENVIRONMENT = test_src=$(srcdir)/$(PMX_TREE)/tests
 
 ## $(PMX_TREE)/pmx.test
 DISTCLEANFILES = barsant* pmxaerr.dat

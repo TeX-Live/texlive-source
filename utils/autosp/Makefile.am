@@ -1,9 +1,9 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory utils/autosp/
 ##
-## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2017 Karl Berry <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
-##
+
 ## We want to re-distribute the whole original ps2eps source tree.
 EXTRA_DIST = $(AUTOSP_TREE)
 
@@ -27,17 +27,11 @@ man1_MANS = \
 	$(AUTOSP_TREE)/autosp.1
 
 ## Tests
-
-# We want to use the test and tests/ tree from the original dist.
-# So as to avoid embedding the original dist dir name in the test
-# script, we use $test_srcdir, defined here.
-AM_TESTS_ENVIRONMENT = test_srcdir=$(srcdir)/$(AUTOSP_TREE)/tests;
-
+AM_TESTS_ENVIRONMENT = AUTOSP_TREE=$(AUTOSP_TREE); export AUTOSP_TREE;
+#
 TESTS = $(AUTOSP_TREE)/autosp.test
 EXTRA_DIST += $(TESTS)
 autosp.log: autosp$(EXEEXT)
-
+#
 ## autosp.test files
 EXTRA_DIST += $(AUTOSP_TREE)/tests
-
-

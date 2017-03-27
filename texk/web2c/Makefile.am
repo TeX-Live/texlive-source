@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/web2c/.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017      Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES)
@@ -147,7 +149,12 @@ texmf_tangle = WEBINPUTS=.:$(srcdir) AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(
 # For trip, trap, and other tests
 DIFF = diff
 DIFFFLAGS =
-TESTS_ENVIRONMENT = abs_srcdir=$(abs_srcdir) DIFF='$(DIFF)' DIFFFLAGS='$(DIFFFLAGS)' LN_S='$(LN_S)' KPSEWHICH='$(KPSEWHICH)'
+AM_TESTS_ENVIRONMENT = abs_srcdir=$(abs_srcdir); export abs_srcdir;
+AM_TESTS_ENVIRONMENT += DIFF='$(DIFF)'; export DIFF;
+AM_TESTS_ENVIRONMENT += DIFFFLAGS='$(DIFFFLAGS)'; export DIFFFLAGS;
+AM_TESTS_ENVIRONMENT += LN_S='$(LN_S)'; export LN_S;
+AM_TESTS_ENVIRONMENT += KPSEWHICH='$(KPSEWHICH)'; export KPSEWHICH;
+
 triptrap_diffs = $(AM_V_GEN)srcdir=$(srcdir) abs_srcdir=$(abs_srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 .PHONY: triptrap

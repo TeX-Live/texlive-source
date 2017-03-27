@@ -33,11 +33,10 @@ config.force: $(KPATHSEA_DEPEND)
 DISTCLEANFILES = config.force CXXLD.sh
 
 ## Tests
-##
+AM_TESTS_ENVIRONMENT = LCDF_TYPETOOLS_TREE=$(LCDF_TYPETOOLS_TREE); export LCDF_TYPETOOLS_TREE;
+
 TESTS = tests/t1.test tests/tfm.test tests/ttf.test
 EXTRA_DIST += $(TESTS)
-
-TESTS_ENVIRONMENT = LCDF_TYPETOOLS_TREE=$(LCDF_TYPETOOLS_TREE)
 
 ## tests/t1.test
 EXTRA_DIST += tests/t2c.enc tests/uhvrrc8a.pfb \
@@ -53,4 +52,3 @@ EXTRA_DIST += tests/FonetikaDaniaIwonaeBold.ttf tests/texmfhome.otf \
 	tests/Fon.post tests/Fon.t42 \
 	tests/tmf.info tests/tmf.pfa tests/tmf.pfb tests/tmf.tables
 DISTCLEANFILES += Fon* tmf.*
-
