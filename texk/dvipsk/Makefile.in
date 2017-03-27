@@ -738,9 +738,11 @@ CLEANFILES = $(prologues) texc.lpro
 TEST_EXTENSIONS = .pl .test
 TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test
-TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea \
-	TEXCONFIG=$(srcdir)/testdata TEXFONTS=$(srcdir)/testdata \
-	TEXFONTMAPS=$(srcdir)/testdata TEXPSHEADERS=$(srcdir)/testdata
+AM_TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea; export \
+	TEXMFCNF; TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG; \
+	TEXFONTS=$(srcdir)/testdata; export TEXFONTS; \
+	TEXFONTMAPS=$(srcdir)/testdata; export TEXFONTMAPS; \
+	TEXPSHEADERS=$(srcdir)/testdata; export TEXPSHEADERS;
 NEVER_DIST = `find . $(NEVER_NAMES)`
 NEVER_NAMES = -name .svn
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'

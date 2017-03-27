@@ -572,7 +572,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(ZZIPLIB_TREE) Tlpatches
+EXTRA_DIST = $(ZZIPLIB_TREE) TLpatches
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
@@ -596,7 +596,7 @@ nodist_libzzip_a_SOURCES = \
 	@ZZIPLIB_TREE@/zzip/zip.c
 
 DISTCLEANFILES = include/_msvc.in _configs.sed config.force
-TESTS_ENVIRONMENT = ZZIPLIB_TREE=$(ZZIPLIB_TREE)
+AM_TESTS_ENVIRONMENT = ZZIPLIB_TREE=$(ZZIPLIB_TREE); export ZZIPLIB_TREE;
 @build_TRUE@TESTS = zziplib.test
 @build_TRUE@dist_check_SCRIPTS = zziplib.test
 nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c

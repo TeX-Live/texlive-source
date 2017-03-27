@@ -694,6 +694,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . doc man $(am__append_6)
+#
 EXTRA_DIST = PROJECTS putenv.c bsnl.awk cnf-to-paths.awk $(TESTS) \
 	tests/cnfnewline/texmf.cnf mktex.cnf
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
@@ -799,10 +800,12 @@ dist_web2c_DATA = mktex.opt mktexdir.opt mktexnam.opt
 dist_noinst_SCRIPTS = mktexlsr mktexmf mktexpk mktextfm
 dist_noinst_DATA = texmf.cnf
 bin_links = mktexlsr:texhash
+AM_TESTS_ENVIRONMENT = LN_S='$(LN_S)'; export LN_S; \
+	LT_OBJDIR='$(LT_OBJDIR)'; export LT_OBJDIR;
+#
 TESTS = tests/cnfnewline.test tests/kpseaccess.test \
 	tests/kpsereadlink.test tests/kpsestat.test \
 	tests/kpsewhich.test
-TESTS_ENVIRONMENT = LN_S='$(LN_S)' LT_OBJDIR='$(LT_OBJDIR)'
 
 # Rebuild
 rebuild_prereq = 
@@ -2328,6 +2331,7 @@ uninstall-bin-links:
 install-exec-hook: install-bin-links
 
 uninstall-hook: uninstall-bin-links
+#
 tests/cnfnewline.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
 tests/kpseaccess.log: kpseaccess$(EXEEXT)
 tests/kpsereadlink.log: kpsereadlink$(EXEEXT)

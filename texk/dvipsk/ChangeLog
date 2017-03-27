@@ -1,3 +1,7 @@
+2017-03-27  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
+
 2017-03-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvips.c: Show information and exit if dvips finds options

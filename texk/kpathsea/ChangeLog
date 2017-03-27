@@ -1,3 +1,7 @@
+2017-03-27  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
+
 2017-03-18  Karl Berry  <karl@tug.org>
 
 	* version.ac,

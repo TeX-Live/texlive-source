@@ -1,3 +1,7 @@
+2017-03-27  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (EXTRA_DIST): TLpatches not Tlpatches.
+
 2016-12-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import TECkit-2.5.6.

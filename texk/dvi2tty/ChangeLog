@@ -1,3 +1,7 @@
+2017-03-27  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
+
 2016-04-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* Delete the directory dvi2tty-PATCHES/ because upstream

@@ -1,7 +1,11 @@
+2017-03-27  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
+
 2016-06-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tests/[uhv_dl.pfa, uhv_dl.pfb, uhv_dl.ps, Ant.pfb, tmf.pfa, tmf.pfb]:
-	Update for the version 2.106.
+	Update for version 2.106.
 
 2016-06-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

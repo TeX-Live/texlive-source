@@ -31,8 +31,7 @@ EXTRA_DIST = $(XPDF_TREE)
 EXTRA_DIST += xpdf-foolabs
 
 ## Actual patches applied to the original source tree
-##
-EXTRA_DIST += Tlpatches
+EXTRA_DIST += TLpatches
 
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
@@ -123,4 +122,3 @@ rebuild_target = all
 CLEANFILES =
 
 include $(srcdir)/../../am/rebuild.am
-

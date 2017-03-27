@@ -599,7 +599,7 @@ gregorio_SOURCES = \
 	@GREGORIO_TREE@/src/vowel/vowel-rules-y.c
 
 LDADD = $(KPATHSEA_LIBS)
-TESTS_ENVIRONMENT = GREGORIO_TREE='$(GREGORIO_TREE)'
+AM_TESTS_ENVIRONMENT = GREGORIO_TREE='$(GREGORIO_TREE)'; export GREGORIO_TREE;
 TESTS = gregorio.test
 DISTCLEANFILES = factus.gtex veni.gtex
 all: config_.h

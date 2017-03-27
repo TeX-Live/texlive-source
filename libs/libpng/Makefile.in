@@ -562,7 +562,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(LIBPNG_TREE) Tlpatches
+EXTRA_DIST = $(LIBPNG_TREE) TLpatches
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
@@ -592,7 +592,7 @@ nodist_libpng_a_SOURCES = \
 	@LIBPNG_TREE@/pngerror.c \
 	@LIBPNG_TREE@/pngpread.c
 
-TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE)
+AM_TESTS_ENVIRONMENT = LIBPNG_TREE=$(LIBPNG_TREE); export LIBPNG_TREE;
 @build_TRUE@TESTS = libpng.test
 @build_TRUE@dist_check_SCRIPTS = libpng.test
 CLEANFILES = pngout.png rebuild.stamp
