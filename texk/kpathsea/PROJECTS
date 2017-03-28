@@ -5,11 +5,15 @@ please send mail to tex-k@tug.org first.
 
 Kpathsea has never officially been released as a standalone library,
 even though in practice it is used that way by OS distributions.
-Perhaps it would be good to support a standalone release.
+It would be good to support a standalone release.
+
+It would be cleaner to always do a case-insensitive search for all
+suffixes, instead explicitly listing (for example) both ".otf" and ".OTF".
 
 For multiple texmf.cnf files (or multiple dvips configuration files),
 replace extra :'s by the value from the next file in the path, rather
-than the value from the next level.
+than the value from the next level. But compatibility probably requires
+that this not be done.
 
 Support runtime registration of file types to search for, not just
 compile-time. Either by a procedure call, or by reading a configuration
