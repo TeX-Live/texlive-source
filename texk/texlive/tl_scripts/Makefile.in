@@ -865,12 +865,16 @@ uninstall-man1-links:
 	done
 .PHONY: xmans xupdmap.1 xfmtutil.1
 xmans: xupdmap.1 xfmtutil.1
+#
 xupdmap.1: updmap.help2man $(tl_scripts_dir)/updmap.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(tl_scripts_dir)/updmap.pl >/tmp/$@
+	groff -mandoc -Thtml /tmp/$@ >/tmp/$@.html
+#
 xfmtutil.1: fmtutil.help2man $(tl_scripts_dir)/fmtutil.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(tl_scripts_dir)/fmtutil.pl >/tmp/$@
+	groff -mandoc -Thtml /tmp/$@ >/tmp/$@.html
 
 .PHONY: run-texlinks
 #
