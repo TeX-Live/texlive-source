@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 43495 2017-03-14 02:22:58Z preining $
+# $Id: fmtutil.pl 43628 2017-03-28 17:55:13Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 43495 2017-03-14 02:22:58Z preining $';
-my $lastchdate = '$Date: 2017-03-14 03:22:58 +0100 (Tue, 14 Mar 2017) $';
+my $svnid = '$Id: fmtutil.pl 43628 2017-03-28 17:55:13Z karl $';
+my $lastchdate = '$Date: 2017-03-28 19:55:13 +0200 (Tue, 28 Mar 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 43495 $';
+my $svnrev = '$Revision: 43628 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1266,10 +1266,10 @@ sub help {
   my $usage = <<"EOF";
 Usage: $prg     [OPTION] ... [COMMAND]
    or: $prg-sys [OPTION] ... [COMMAND]
-   or: mktexfmt FORMAT.fmt|BASE.base|MEM.mem|FMTNAME.EXT
+   or: mktexfmt FORMAT.fmt|BASE.base|FMTNAME.EXT
 
-Rebuild and manage TeX fmts, Metafont bases and MetaPost mems,
-collectively called "formats" here.
+Rebuild and manage TeX fmts and Metafont bases, collectively called
+"formats" here. (MetaPost no longer uses the past-equivalent "mems".)
 
 If the command name ends in mktexfmt, only one format can be created.
 The only options supported are --help and --version, and the command

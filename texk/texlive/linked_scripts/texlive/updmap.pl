@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 42939 2017-01-13 14:32:10Z preining $
+# $Id: updmap.pl 43628 2017-03-28 17:55:13Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011-2016 Norbert Preining
+# Copyright 2011-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 42939 2017-01-13 14:32:10Z preining $';
+my $svnid = '$Id: updmap.pl 43628 2017-03-28 17:55:13Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2017-01-13 15:32:10 +0100 (Fri, 13 Jan 2017) $';
+my $lastchdate = '$Date: 2017-03-28 19:55:13 +0200 (Tue, 28 Mar 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 42939 $';
+my $svnrev = '$Revision: 43628 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -2262,6 +2262,7 @@ By default, the TeX filename database (ls-R) is also updated.
 
 The updmap system is regrettably complicated, for both inherent and
 historical reasons.  A general overview:
+
 - updmap.cfg files are mainly about listing other files, namely the
   font-specific .maps, in which each line gives information about a
   different TeX (.tfm) font.
