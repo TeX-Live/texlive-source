@@ -1,3 +1,11 @@
+2017-03-30  Pali Roh\'ar  <pali.rohar@gmail.com>
+
+	* writet3.c (writet3): ensure fm is non-NULL before dereferencing.
+	* mapfile.c (check_fm_entry): omit check for is_reencoded, i.e.,
+	an .enc file. This way, each bitmap font is embedded separately,
+	thus rasterized by MF instead of geometrically scaling up.
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2017-March/004125.html
+
 2017-03-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* writepng.c: Fix the size of memory to allocate when writing
@@ -11,7 +19,7 @@
 	* pdftex.web (pdftex_revision, pdftex_version_string):
 	version [1.40.]18 for TL17.
 
-2017-03-16  Pali Roh\'ar <pali.rohar@gmail.com>
+2017-03-16  Pali Roh\'ar  <pali.rohar@gmail.com>
 
 	Allow .enc files for bitmap fonts, following thread at
 	http://tug.org/pipermail/pdftex/2016-June/008980.html
