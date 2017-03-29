@@ -288,11 +288,13 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
         /* do not set variable |a| as this entry will be still accepted */
     }
 
-    /* if ps_name, font file and enc file are missing, drop this entry */
-    if (fm->ps_name == NULL && !is_fontfile(fm) && !is_reencoded(fm)) {
+    /* if for non-Type3 font both ps_name and font file are missing,
+       drop this entry */
+    if ((is_type1(fm) || is_truetype(fm) || is_opentype(fm))
+        && fm->ps_name == NULL && !is_fontfile(fm)) {
         if (warn)
             pdftex_warn
-                ("invalid entry for `%s': ps_name, font file, enc file all missing",
+                ("invalid entry for `%s': both ps_name and font file missing",
                  fm->tfm_name);
         a += 1;
     }

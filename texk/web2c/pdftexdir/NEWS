@@ -7,7 +7,8 @@ pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
     omitting output of the default /MediaBox.
 
 - bugfixes:
-  - \pdflastmatch more reliable when there was no match
+  - \pdflastmatch more reliable when there was no match.
+  - avoid writing uninitialized memory with alpha-channel images.
 
 ---------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)  (May 20, 2016)
