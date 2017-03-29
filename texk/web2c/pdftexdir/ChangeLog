@@ -1,3 +1,9 @@
+2017-03-29  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* writepng.c: Fix the size of memory to allocate when writing
+	SMask in write_png_rgb_alpha. Reported by David Fifield:
+	http://tug.org/pipermail/pdftex/2017-March/009100.html.
+
 2017-03-18  Karl Berry  <karl@tug.org>
 
 	* NEWS,
