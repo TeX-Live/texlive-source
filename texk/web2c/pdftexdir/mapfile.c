@@ -539,7 +539,7 @@ static void fm_scan_line(void)
             set_opentype(fm);
         else
             set_type1(fm);
-    } else
+    } else if (is_std_t1font(fm))
         set_type1(fm);          /* assume a builtin font is Type1 */
     if (check_fm_entry(fm, true) != 0)
         goto bad_line;
