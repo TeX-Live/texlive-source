@@ -1,3 +1,12 @@
+2017-03-31  Luigi Scarso  <luigi.scarso@gmail.com>
+	* fixed the value header_last to be sure 
+	  to store always the latest  position.
+	* Bump to version 2.0rc1. It's a release candidate for 
+	  testing latest patches and eventually new primitives
+	  (to be discussed at 2017 BachoTeX/TUG meeting).
+	  As the version is always a number, the current version is 2.000
+	  (a way to say 2.0rc1).
+
 2017-02-13  Luigi Scarso  <luigi.scarso@gmail.com>
 	new primitive boundingpath
 
