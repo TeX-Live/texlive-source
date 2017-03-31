@@ -491,11 +491,6 @@ am__objects_2 =  \
 	luatexdir/luamd5/libluajitmisc_a-md5lib.$(OBJEXT) \
 	luatexdir/luamd5/libluajitmisc_a-md5_lua.$(OBJEXT) \
 	luatexdir/luapeg/libluajitmisc_a-lpeg.$(OBJEXT) \
-	luatexdir/luaprofiler/libluajitmisc_a-clocks.$(OBJEXT) \
-	luatexdir/luaprofiler/libluajitmisc_a-core_profiler.$(OBJEXT) \
-	luatexdir/luaprofiler/libluajitmisc_a-function_meter.$(OBJEXT) \
-	luatexdir/luaprofiler/libluajitmisc_a-stack.$(OBJEXT) \
-	luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.$(OBJEXT) \
 	luatexdir/luazip/src/libluajitmisc_a-luazip.$(OBJEXT) \
 	luatexdir/luazlib/libluajitmisc_a-lgzip.$(OBJEXT) \
 	luatexdir/luazlib/libluajitmisc_a-lzlib.$(OBJEXT) \
@@ -652,11 +647,6 @@ am__objects_6 =  \
 	luatexdir/luamd5/libluamisc_a-md5lib.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5_lua.$(OBJEXT) \
 	luatexdir/luapeg/libluamisc_a-lpeg.$(OBJEXT) \
-	luatexdir/luaprofiler/libluamisc_a-clocks.$(OBJEXT) \
-	luatexdir/luaprofiler/libluamisc_a-core_profiler.$(OBJEXT) \
-	luatexdir/luaprofiler/libluamisc_a-function_meter.$(OBJEXT) \
-	luatexdir/luaprofiler/libluamisc_a-stack.$(OBJEXT) \
-	luatexdir/luaprofiler/libluamisc_a-lua50_profiler.$(OBJEXT) \
 	luatexdir/luazip/src/libluamisc_a-luazip.$(OBJEXT) \
 	luatexdir/luazlib/libluamisc_a-lgzip.$(OBJEXT) \
 	luatexdir/luazlib/libluamisc_a-lzlib.$(OBJEXT) \
@@ -2342,12 +2332,12 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	luatexdir/luafilesystem/tests luatexdir/luafilesystem/vc6 \
 	luatexdir/luamd5/makefile luatexdir/luamd5/md5.html \
 	luatexdir/luamd5/md5.lua luatexdir/luamd5/md5tests.lua \
-	luatexdir/luaprofiler/Makefile luatexdir/luazip/Makefile \
-	luatexdir/luazip/README luatexdir/luazip/config \
-	luatexdir/luazip/doc luatexdir/luazip/tests \
-	luatexdir/luazip/vc6 luatexdir/luazip/vc7 \
-	luatexdir/luazlib/Makefile luatexdir/luazlib/README \
-	luatexdir/luazlib/gzip.lua luatexdir/luazlib/test_gzip.lua \
+	luatexdir/luazip/Makefile luatexdir/luazip/README \
+	luatexdir/luazip/config luatexdir/luazip/doc \
+	luatexdir/luazip/tests luatexdir/luazip/vc6 \
+	luatexdir/luazip/vc7 luatexdir/luazlib/Makefile \
+	luatexdir/luazlib/README luatexdir/luazlib/gzip.lua \
+	luatexdir/luazlib/test_gzip.lua \
 	luatexdir/luazlib/test_zlib.lua luatexdir/luazlib/zlib.lua \
 	luatexdir/slnunicode/unitest luatexdir/unilib/src/makeutype.c \
 	luatexdir/luafontloader/ChangeLog \
@@ -3212,16 +3202,6 @@ libluamisc_sources = \
 	luatexdir/luamd5/md5_lua.c \
 	luatexdir/luapeg/lpeg.c \
 	luatexdir/luapeg/lpeg.h \
-	luatexdir/luaprofiler/clocks.c \
-	luatexdir/luaprofiler/clocks.h \
-	luatexdir/luaprofiler/core_profiler.c \
-	luatexdir/luaprofiler/core_profiler.h \
-	luatexdir/luaprofiler/function_meter.c \
-	luatexdir/luaprofiler/function_meter.h \
-	luatexdir/luaprofiler/luaprofiler.h \
-	luatexdir/luaprofiler/stack.c \
-	luatexdir/luaprofiler/stack.h \
-	luatexdir/luaprofiler/lua50_profiler.c \
 	luatexdir/luazip/src/luazip.c \
 	luatexdir/luazip/src/luazip.h \
 	luatexdir/luazlib/lgzip.c \
@@ -4177,27 +4157,6 @@ luatexdir/luapeg/$(DEPDIR)/$(am__dirstamp):
 luatexdir/luapeg/libluajitmisc_a-lpeg.$(OBJEXT):  \
 	luatexdir/luapeg/$(am__dirstamp) \
 	luatexdir/luapeg/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/$(am__dirstamp):
-	@$(MKDIR_P) luatexdir/luaprofiler
-	@: > luatexdir/luaprofiler/$(am__dirstamp)
-luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) luatexdir/luaprofiler/$(DEPDIR)
-	@: > luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluajitmisc_a-clocks.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluajitmisc_a-core_profiler.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluajitmisc_a-function_meter.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluajitmisc_a-stack.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luazip/src/$(am__dirstamp):
 	@$(MKDIR_P) luatexdir/luazip/src
 	@: > luatexdir/luazip/src/$(am__dirstamp)
@@ -4402,21 +4361,6 @@ luatexdir/luamd5/libluamisc_a-md5_lua.$(OBJEXT):  \
 luatexdir/luapeg/libluamisc_a-lpeg.$(OBJEXT):  \
 	luatexdir/luapeg/$(am__dirstamp) \
 	luatexdir/luapeg/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluamisc_a-clocks.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluamisc_a-core_profiler.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluamisc_a-function_meter.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluamisc_a-stack.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luaprofiler/libluamisc_a-lua50_profiler.$(OBJEXT):  \
-	luatexdir/luaprofiler/$(am__dirstamp) \
-	luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luazip/src/libluamisc_a-luazip.$(OBJEXT):  \
 	luatexdir/luazip/src/$(am__dirstamp) \
 	luatexdir/luazip/src/$(DEPDIR)/$(am__dirstamp)
@@ -5327,7 +5271,6 @@ mostlyclean-compile:
 	-rm -f luatexdir/luafontloader/src/*.$(OBJEXT)
 	-rm -f luatexdir/luamd5/*.$(OBJEXT)
 	-rm -f luatexdir/luapeg/*.$(OBJEXT)
-	-rm -f luatexdir/luaprofiler/*.$(OBJEXT)
 	-rm -f luatexdir/luasocket/src/*.$(OBJEXT)
 	-rm -f luatexdir/luazip/src/*.$(OBJEXT)
 	-rm -f luatexdir/luazlib/*.$(OBJEXT)
@@ -5779,16 +5722,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5lib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luapeg/$(DEPDIR)/libluajitmisc_a-lpeg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luapeg/$(DEPDIR)/libluamisc_a-lpeg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luasocket/src/$(DEPDIR)/libluajitsocket_a-auxiliar.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luasocket/src/$(DEPDIR)/libluajitsocket_a-buffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luasocket/src/$(DEPDIR)/libluajitsocket_a-except.Po@am__quote@
@@ -6670,76 +6603,6 @@ luatexdir/luapeg/libluajitmisc_a-lpeg.obj: luatexdir/luapeg/lpeg.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luapeg/lpeg.c' object='luatexdir/luapeg/libluajitmisc_a-lpeg.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luapeg/libluajitmisc_a-lpeg.obj `if test -f 'luatexdir/luapeg/lpeg.c'; then $(CYGPATH_W) 'luatexdir/luapeg/lpeg.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luapeg/lpeg.c'; fi`
-
-luatexdir/luaprofiler/libluajitmisc_a-clocks.o: luatexdir/luaprofiler/clocks.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-clocks.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-clocks.o `test -f 'luatexdir/luaprofiler/clocks.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/clocks.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/clocks.c' object='luatexdir/luaprofiler/libluajitmisc_a-clocks.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-clocks.o `test -f 'luatexdir/luaprofiler/clocks.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/clocks.c
-
-luatexdir/luaprofiler/libluajitmisc_a-clocks.obj: luatexdir/luaprofiler/clocks.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-clocks.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-clocks.obj `if test -f 'luatexdir/luaprofiler/clocks.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/clocks.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/clocks.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-clocks.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/clocks.c' object='luatexdir/luaprofiler/libluajitmisc_a-clocks.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-clocks.obj `if test -f 'luatexdir/luaprofiler/clocks.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/clocks.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/clocks.c'; fi`
-
-luatexdir/luaprofiler/libluajitmisc_a-core_profiler.o: luatexdir/luaprofiler/core_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-core_profiler.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-core_profiler.o `test -f 'luatexdir/luaprofiler/core_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/core_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/core_profiler.c' object='luatexdir/luaprofiler/libluajitmisc_a-core_profiler.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-core_profiler.o `test -f 'luatexdir/luaprofiler/core_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/core_profiler.c
-
-luatexdir/luaprofiler/libluajitmisc_a-core_profiler.obj: luatexdir/luaprofiler/core_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-core_profiler.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-core_profiler.obj `if test -f 'luatexdir/luaprofiler/core_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/core_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/core_profiler.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-core_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/core_profiler.c' object='luatexdir/luaprofiler/libluajitmisc_a-core_profiler.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-core_profiler.obj `if test -f 'luatexdir/luaprofiler/core_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/core_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/core_profiler.c'; fi`
-
-luatexdir/luaprofiler/libluajitmisc_a-function_meter.o: luatexdir/luaprofiler/function_meter.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-function_meter.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-function_meter.o `test -f 'luatexdir/luaprofiler/function_meter.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/function_meter.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/function_meter.c' object='luatexdir/luaprofiler/libluajitmisc_a-function_meter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-function_meter.o `test -f 'luatexdir/luaprofiler/function_meter.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/function_meter.c
-
-luatexdir/luaprofiler/libluajitmisc_a-function_meter.obj: luatexdir/luaprofiler/function_meter.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-function_meter.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-function_meter.obj `if test -f 'luatexdir/luaprofiler/function_meter.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/function_meter.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/function_meter.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-function_meter.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/function_meter.c' object='luatexdir/luaprofiler/libluajitmisc_a-function_meter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-function_meter.obj `if test -f 'luatexdir/luaprofiler/function_meter.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/function_meter.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/function_meter.c'; fi`
-
-luatexdir/luaprofiler/libluajitmisc_a-stack.o: luatexdir/luaprofiler/stack.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-stack.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-stack.o `test -f 'luatexdir/luaprofiler/stack.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/stack.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/stack.c' object='luatexdir/luaprofiler/libluajitmisc_a-stack.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-stack.o `test -f 'luatexdir/luaprofiler/stack.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/stack.c
-
-luatexdir/luaprofiler/libluajitmisc_a-stack.obj: luatexdir/luaprofiler/stack.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-stack.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-stack.obj `if test -f 'luatexdir/luaprofiler/stack.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/stack.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/stack.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-stack.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/stack.c' object='luatexdir/luaprofiler/libluajitmisc_a-stack.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-stack.obj `if test -f 'luatexdir/luaprofiler/stack.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/stack.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/stack.c'; fi`
-
-luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.o: luatexdir/luaprofiler/lua50_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.o `test -f 'luatexdir/luaprofiler/lua50_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/lua50_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/lua50_profiler.c' object='luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.o `test -f 'luatexdir/luaprofiler/lua50_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/lua50_profiler.c
-
-luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.obj: luatexdir/luaprofiler/lua50_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Tpo -c -o luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.obj `if test -f 'luatexdir/luaprofiler/lua50_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/lua50_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/lua50_profiler.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluajitmisc_a-lua50_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/lua50_profiler.c' object='luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluajitmisc_a-lua50_profiler.obj `if test -f 'luatexdir/luaprofiler/lua50_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/lua50_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/lua50_profiler.c'; fi`
 
 luatexdir/luazip/src/libluajitmisc_a-luazip.o: luatexdir/luazip/src/luazip.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luazip/src/libluajitmisc_a-luazip.o -MD -MP -MF luatexdir/luazip/src/$(DEPDIR)/libluajitmisc_a-luazip.Tpo -c -o luatexdir/luazip/src/libluajitmisc_a-luazip.o `test -f 'luatexdir/luazip/src/luazip.c' || echo '$(srcdir)/'`luatexdir/luazip/src/luazip.c
@@ -8686,76 +8549,6 @@ luatexdir/luapeg/libluamisc_a-lpeg.obj: luatexdir/luapeg/lpeg.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luapeg/lpeg.c' object='luatexdir/luapeg/libluamisc_a-lpeg.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luapeg/libluamisc_a-lpeg.obj `if test -f 'luatexdir/luapeg/lpeg.c'; then $(CYGPATH_W) 'luatexdir/luapeg/lpeg.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luapeg/lpeg.c'; fi`
-
-luatexdir/luaprofiler/libluamisc_a-clocks.o: luatexdir/luaprofiler/clocks.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-clocks.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-clocks.o `test -f 'luatexdir/luaprofiler/clocks.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/clocks.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/clocks.c' object='luatexdir/luaprofiler/libluamisc_a-clocks.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-clocks.o `test -f 'luatexdir/luaprofiler/clocks.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/clocks.c
-
-luatexdir/luaprofiler/libluamisc_a-clocks.obj: luatexdir/luaprofiler/clocks.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-clocks.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-clocks.obj `if test -f 'luatexdir/luaprofiler/clocks.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/clocks.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/clocks.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-clocks.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/clocks.c' object='luatexdir/luaprofiler/libluamisc_a-clocks.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-clocks.obj `if test -f 'luatexdir/luaprofiler/clocks.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/clocks.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/clocks.c'; fi`
-
-luatexdir/luaprofiler/libluamisc_a-core_profiler.o: luatexdir/luaprofiler/core_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-core_profiler.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-core_profiler.o `test -f 'luatexdir/luaprofiler/core_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/core_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/core_profiler.c' object='luatexdir/luaprofiler/libluamisc_a-core_profiler.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-core_profiler.o `test -f 'luatexdir/luaprofiler/core_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/core_profiler.c
-
-luatexdir/luaprofiler/libluamisc_a-core_profiler.obj: luatexdir/luaprofiler/core_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-core_profiler.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-core_profiler.obj `if test -f 'luatexdir/luaprofiler/core_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/core_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/core_profiler.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-core_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/core_profiler.c' object='luatexdir/luaprofiler/libluamisc_a-core_profiler.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-core_profiler.obj `if test -f 'luatexdir/luaprofiler/core_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/core_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/core_profiler.c'; fi`
-
-luatexdir/luaprofiler/libluamisc_a-function_meter.o: luatexdir/luaprofiler/function_meter.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-function_meter.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-function_meter.o `test -f 'luatexdir/luaprofiler/function_meter.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/function_meter.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/function_meter.c' object='luatexdir/luaprofiler/libluamisc_a-function_meter.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-function_meter.o `test -f 'luatexdir/luaprofiler/function_meter.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/function_meter.c
-
-luatexdir/luaprofiler/libluamisc_a-function_meter.obj: luatexdir/luaprofiler/function_meter.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-function_meter.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-function_meter.obj `if test -f 'luatexdir/luaprofiler/function_meter.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/function_meter.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/function_meter.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-function_meter.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/function_meter.c' object='luatexdir/luaprofiler/libluamisc_a-function_meter.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-function_meter.obj `if test -f 'luatexdir/luaprofiler/function_meter.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/function_meter.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/function_meter.c'; fi`
-
-luatexdir/luaprofiler/libluamisc_a-stack.o: luatexdir/luaprofiler/stack.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-stack.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-stack.o `test -f 'luatexdir/luaprofiler/stack.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/stack.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/stack.c' object='luatexdir/luaprofiler/libluamisc_a-stack.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-stack.o `test -f 'luatexdir/luaprofiler/stack.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/stack.c
-
-luatexdir/luaprofiler/libluamisc_a-stack.obj: luatexdir/luaprofiler/stack.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-stack.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-stack.obj `if test -f 'luatexdir/luaprofiler/stack.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/stack.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/stack.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-stack.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/stack.c' object='luatexdir/luaprofiler/libluamisc_a-stack.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-stack.obj `if test -f 'luatexdir/luaprofiler/stack.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/stack.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/stack.c'; fi`
-
-luatexdir/luaprofiler/libluamisc_a-lua50_profiler.o: luatexdir/luaprofiler/lua50_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-lua50_profiler.o -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-lua50_profiler.o `test -f 'luatexdir/luaprofiler/lua50_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/lua50_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/lua50_profiler.c' object='luatexdir/luaprofiler/libluamisc_a-lua50_profiler.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-lua50_profiler.o `test -f 'luatexdir/luaprofiler/lua50_profiler.c' || echo '$(srcdir)/'`luatexdir/luaprofiler/lua50_profiler.c
-
-luatexdir/luaprofiler/libluamisc_a-lua50_profiler.obj: luatexdir/luaprofiler/lua50_profiler.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaprofiler/libluamisc_a-lua50_profiler.obj -MD -MP -MF luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Tpo -c -o luatexdir/luaprofiler/libluamisc_a-lua50_profiler.obj `if test -f 'luatexdir/luaprofiler/lua50_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/lua50_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/lua50_profiler.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Tpo luatexdir/luaprofiler/$(DEPDIR)/libluamisc_a-lua50_profiler.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaprofiler/lua50_profiler.c' object='luatexdir/luaprofiler/libluamisc_a-lua50_profiler.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaprofiler/libluamisc_a-lua50_profiler.obj `if test -f 'luatexdir/luaprofiler/lua50_profiler.c'; then $(CYGPATH_W) 'luatexdir/luaprofiler/lua50_profiler.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaprofiler/lua50_profiler.c'; fi`
 
 luatexdir/luazip/src/libluamisc_a-luazip.o: luatexdir/luazip/src/luazip.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luazip/src/libluamisc_a-luazip.o -MD -MP -MF luatexdir/luazip/src/$(DEPDIR)/libluamisc_a-luazip.Tpo -c -o luatexdir/luazip/src/libluamisc_a-luazip.o `test -f 'luatexdir/luazip/src/luazip.c' || echo '$(srcdir)/'`luatexdir/luazip/src/luazip.c
@@ -14190,8 +13983,6 @@ distclean-generic:
 	-rm -f luatexdir/luamd5/$(am__dirstamp)
 	-rm -f luatexdir/luapeg/$(DEPDIR)/$(am__dirstamp)
 	-rm -f luatexdir/luapeg/$(am__dirstamp)
-	-rm -f luatexdir/luaprofiler/$(DEPDIR)/$(am__dirstamp)
-	-rm -f luatexdir/luaprofiler/$(am__dirstamp)
 	-rm -f luatexdir/luasocket/src/$(DEPDIR)/$(am__dirstamp)
 	-rm -f luatexdir/luasocket/src/$(am__dirstamp)
 	-rm -f luatexdir/luazip/src/$(DEPDIR)/$(am__dirstamp)
@@ -14237,7 +14028,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luaffi/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mfluadir/$(DEPDIR) mfluajitdir/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luaffi/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mfluadir/$(DEPDIR) mfluajitdir/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -14288,7 +14079,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luaffi/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luaprofiler/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mfluadir/$(DEPDIR) mfluajitdir/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) alephdir/$(DEPDIR) eptexdir/$(DEPDIR) etexdir/$(DEPDIR) euptexdir/$(DEPDIR) libmd5/$(DEPDIR) luatexdir/$(DEPDIR) luatexdir/lua/$(DEPDIR) luatexdir/luaffi/$(DEPDIR) luatexdir/luafilesystem/src/$(DEPDIR) luatexdir/luafontloader/fontforge/fontforge/$(DEPDIR) luatexdir/luafontloader/fontforge/gutils/$(DEPDIR) luatexdir/luafontloader/src/$(DEPDIR) luatexdir/luamd5/$(DEPDIR) luatexdir/luapeg/$(DEPDIR) luatexdir/luasocket/src/$(DEPDIR) luatexdir/luazip/src/$(DEPDIR) luatexdir/luazlib/$(DEPDIR) luatexdir/slnunicode/$(DEPDIR) luatexdir/unilib/$(DEPDIR) luatexdir/utils/$(DEPDIR) mfluadir/$(DEPDIR) mfluajitdir/$(DEPDIR) mplibdir/$(DEPDIR) pdftexdir/$(DEPDIR) pdftexdir/regex/$(DEPDIR) ptexdir/$(DEPDIR) synctexdir/$(DEPDIR) uptexdir/$(DEPDIR) xetexdir/$(DEPDIR) xetexdir/image/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
