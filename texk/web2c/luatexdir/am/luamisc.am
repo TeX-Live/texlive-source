@@ -1,10 +1,10 @@
 ## texk/web2c/luatexdir/am/luamisc.am: Makefile fragment for libluamisc
-## (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler, and slnunicode)
+## (luafilesystem, luamd5, luapeg, luazip, luazlib and slnunicode)
 ##
 ## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## libluamisc (luafilesystem, luamd5, luapeg, luazip, luazlib, luaprofiler,
+## libluamisc (luafilesystem, luamd5, luapeg, luazip, luazlib,
 ## and slnunicode)
 EXTRA_LIBRARIES += libluamisc.a libluajitmisc.a
 
@@ -33,16 +33,6 @@ libluamisc_sources = \
 	luatexdir/luamd5/md5_lua.c \
 	luatexdir/luapeg/lpeg.c \
 	luatexdir/luapeg/lpeg.h \
-	luatexdir/luaprofiler/clocks.c \
-	luatexdir/luaprofiler/clocks.h \
-	luatexdir/luaprofiler/core_profiler.c \
-	luatexdir/luaprofiler/core_profiler.h \
-	luatexdir/luaprofiler/function_meter.c \
-	luatexdir/luaprofiler/function_meter.h \
-	luatexdir/luaprofiler/luaprofiler.h \
-	luatexdir/luaprofiler/stack.c \
-	luatexdir/luaprofiler/stack.h \
-	luatexdir/luaprofiler/lua50_profiler.c \
 	luatexdir/luazip/src/luazip.c \
 	luatexdir/luazip/src/luazip.h \
 	luatexdir/luazlib/lgzip.c \
@@ -71,7 +61,6 @@ EXTRA_DIST += \
 	luatexdir/luamd5/md5.html \
 	luatexdir/luamd5/md5.lua \
 	luatexdir/luamd5/md5tests.lua \
-	luatexdir/luaprofiler/Makefile \
 	luatexdir/luazip/Makefile \
 	luatexdir/luazip/README \
 	luatexdir/luazip/config \
