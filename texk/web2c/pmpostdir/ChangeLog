@@ -1,3 +1,7 @@
+2017-03-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pmp.ch: Adapt to MetaPost 2.000.
+
 2017-02-28  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* ppsout.ch: Do not change the first 19 characters %%Creator: MetaPost.
