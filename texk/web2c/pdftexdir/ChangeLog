@@ -1,3 +1,12 @@
+2017-04-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mapfile.c: warn if only tfm name is specified in a map entry for type3.
+
+2017-04-02  Pali Roh\'ar  <pali.rohar@gmail.com>
+
+	* writet3.c: output /ToUnicode object in /Font object, not
+	in /Encoding object.
+
 2017-04-01  Pali Roh\'ar  <pali.rohar@gmail.com>
 
 	* mapfile.c, ptexlib.h, ptexmac.h, writefont.c, pdftex.defines,
