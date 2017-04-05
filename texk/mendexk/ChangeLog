@@ -1,3 +1,8 @@
+2017-04-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c: Avoid access violation.
+	Thanks to I. Wada san.
+
 2016-12-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mendex.1, mendex.doc, mendex.1.ja: Sync with upstream.
