@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 				u_getVersion(icuVersion);
 				u_versionToString(icuVersion, icu_version);
 				fprintf(stderr,"upmendex - index processor, %s (%s).\n",VERSION, TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2016 TANAKA Takuji\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2017 TANAKA Takuji\n");
 				fprintf(stderr," using ICU version %s\n",icu_version);
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% upmendex [-ilqrcgf] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [--] [idx0 idx1 ...]\n");
@@ -200,7 +200,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!indfile &&(idxcount-fsti>0)) {
-		indfile=xmalloc(strlen(idxfile[0]+6));
+		indfile=xmalloc(strlen(idxfile[0])+6);
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
 				strncpy(indfile,idxfile[0],i);
@@ -212,7 +212,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!logfile && (idxcount-fsti > 0)) {
-		logfile=xmalloc(strlen(idxfile[0]+6));
+		logfile=xmalloc(strlen(idxfile[0])+6);
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
 				strncpy(logfile,idxfile[0],i);

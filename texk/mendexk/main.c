@@ -254,7 +254,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!indfile &&(idxcount-fsti>0)) {
-		indfile=xmalloc(strlen(idxfile[0]+6));
+		indfile=xmalloc(strlen(idxfile[0])+6);
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
 				strncpy(indfile,idxfile[0],i);
@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!logfile && (idxcount-fsti > 0)) {
-		logfile=xmalloc(strlen(idxfile[0]+6));
+		logfile=xmalloc(strlen(idxfile[0])+6);
 		for (i=strlen(idxfile[0]);i>=0;i--) {
 			if (idxfile[0][i]=='.') {
 				strncpy(logfile,idxfile[0],i);
