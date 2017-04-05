@@ -360,7 +360,8 @@ TEXCONFIG = $TEXMF/dvips//
 % Makeindex style (.ist) files.
 INDEXSTYLE = .;$TEXMF/makeindex//
 
-% mendex dictionary (.dict) files.
+% mendex dictionary files. Used internally by mendex and upmendex.
+% It is not necessary to introduce a new format in Kpathsea.
 INDEXDICTIONARY = .;$TEXMF/makeindex//
 
 % Font encoding files (.enc).
