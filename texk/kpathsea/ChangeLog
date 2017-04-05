@@ -1,3 +1,7 @@
+2017-04-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* texmf.cnf: mendex require the variable INDEXDICTIONARY.
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
