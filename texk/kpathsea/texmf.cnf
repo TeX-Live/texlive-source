@@ -360,6 +360,9 @@ TEXCONFIG = $TEXMF/dvips//
 % Makeindex style (.ist) files.
 INDEXSTYLE = .;$TEXMF/makeindex//
 
+% mendex dictionary (.dict) files.
+INDEXDICTIONARY = .;$TEXMF/makeindex//
+
 % Font encoding files (.enc).
 ENCFONTS = .;$TEXMF/fonts/enc//
 
