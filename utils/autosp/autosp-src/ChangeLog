@@ -1,5 +1,7 @@
 AUTOSP
 
+  \hl distinguished from \hloff
+
 2016-11-02
 
   support xtuples in more than one staff (provided x and note durations are

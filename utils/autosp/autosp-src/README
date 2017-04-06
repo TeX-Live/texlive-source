@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2016-11-02.
+version 2017-04-06.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation
@@ -37,12 +37,15 @@ are merged into a multi-bar rest. Bar-centered rests can be
 coded using the standard \def\atnextbar notation but also
 by using the non-standard command \Cpause in a note segment.
 
-Spacing commands \sk and \hsk (but not \qsk, \hqsk or
-\qqsk) in the source are discarded. A note segment can be
-completely empty, but if a note segment should start with or
-contain a "space," the note-value of that space must be made
-explicit with a command of the form \ha{*}, \qa{.*}, \qa{*},
-\ca{*}, etc.
+Spacing commands \sk and \hsk in the source are discarded,
+but not \qsk, \hqsk or \qqsk; moreover non-standard commands
+\Qsk, \HQsk and \QQsk generate "global" skips; i.e., the
+effect of \qsk, \hqsk or \qqsk in *every* staff.
+
+A note segment can be completely empty, but if a note
+segment should start with or contain a "space," the
+note-value of that space must be made explicit with a
+command of the form \ha{*}, \qa{.*}, \qa{*}, \ca{*}, etc.
 
 All other conventional MusiXTeX commands are output exactly
 as given in the input.

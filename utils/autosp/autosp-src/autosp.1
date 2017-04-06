@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2016-10-31  "" ""
+.TH AUTOSP 1 2017-04-06  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -126,9 +126,14 @@ coded using the standard \\def\\atnextbar notation but also
 the non-standard command \\Cpause in a note segment generates a
 bar-centered rest.
 
-Spacing commands \\sk and \\hsk
-(but not \\qsk, \\hqsk or \\qqsk)
-in the source are discarded.
+Spacing commands \\sk and \\hsk in the source are discarded,
+but not \\qsk, \\hqsk or \\qqsk;
+moreover
+non-standard commands
+\\Qsk, \\HQsk and \\QQsk generate "global" skips; i.e., the effect of \\qsk, \\hqsk or \\qqsk in 
+.I every 
+staff.
+
 A note segment can be completely empty, but if a note segment should start
 with or contain a "space," the note-value
 of that space must be made explicit with a command of the
@@ -209,7 +214,9 @@ of
 64ths.
 .B autosp
 cannot deal with simultaneous x-tuplets in multiple staffs unless the x values and
-note durations are identical.
+note durations are identical. Global skips (\\QQsk, \\HQsk and \\Qsk) are
+ineffective if a staff has an x-tuplet; however, "local" skips (\\qqsk, \\hqsk, \\qsk)
+are effective.
 
 User-defined macros are not processed or expanded.
 
