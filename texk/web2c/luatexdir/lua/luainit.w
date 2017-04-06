@@ -933,7 +933,7 @@ void lua_initialize(int ac, char **av)
     /* Get the current locale (it should be C )          */
     /* and save LC_CTYPE, LC_COLLATE and LC_NUMERIC.     */
     /* Later luainterpreter() will consciously use them. */
-    old_locale = setlocale (LC_ALL, NULL);
+    old_locale = xstrdup(setlocale (LC_ALL, NULL));
     lc_ctype = NULL;
     lc_collate = NULL;
     lc_numeric = NULL;
@@ -965,6 +965,7 @@ void lua_initialize(int ac, char **av)
 	  fprintf(stderr,"Unable to restore original locale:exit now.\n");
 	  exit(1);
 	}
+        xfree(old_locale);
     } else {
        fprintf(stderr,"Unable to store environment locale.\n");
     }
