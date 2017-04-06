@@ -88,7 +88,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = gregorio$(EXEEXT)
+bin_PROGRAMS = gregorio-$(FILENAME_VERSION)$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -113,7 +113,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_gregorio_OBJECTS = @GREGORIO_TREE@/src/characters.$(OBJEXT) \
+am_gregorio___FILENAME_VERSION__OBJECTS =  \
+	@GREGORIO_TREE@/src/characters.$(OBJEXT) \
 	@GREGORIO_TREE@/src/gregorio-utils.$(OBJEXT) \
 	@GREGORIO_TREE@/src/messages.$(OBJEXT) \
 	@GREGORIO_TREE@/src/sha1.$(OBJEXT) \
@@ -133,10 +134,11 @@ am_gregorio_OBJECTS = @GREGORIO_TREE@/src/characters.$(OBJEXT) \
 	@GREGORIO_TREE@/src/vowel/vowel.$(OBJEXT) \
 	@GREGORIO_TREE@/src/vowel/vowel-rules-l.$(OBJEXT) \
 	@GREGORIO_TREE@/src/vowel/vowel-rules-y.$(OBJEXT)
-gregorio_OBJECTS = $(am_gregorio_OBJECTS)
-gregorio_LDADD = $(LDADD)
+gregorio___FILENAME_VERSION__OBJECTS =  \
+	$(am_gregorio___FILENAME_VERSION__OBJECTS)
+gregorio___FILENAME_VERSION__LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-gregorio_DEPENDENCIES = $(am__DEPENDENCIES_1)
+gregorio___FILENAME_VERSION__DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -175,8 +177,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(gregorio_SOURCES)
-DIST_SOURCES = $(gregorio_SOURCES)
+SOURCES = $(gregorio___FILENAME_VERSION__SOURCES)
+DIST_SOURCES = $(gregorio___FILENAME_VERSION__SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -463,6 +465,7 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILENAME_VERSION = @FILENAME_VERSION@
 GREGORIO_TREE = @GREGORIO_TREE@
 GREP = @GREP@
 INSTALL = @INSTALL@
@@ -576,7 +579,7 @@ AM_CPPFLAGS = \
 	$(KPATHSEA_INCLUDES) -D_GNU_SOURCE -DUSE_KPSE
 
 AM_CFLAGS = $(WARNING_CFLAGS)
-gregorio_SOURCES = \
+gregorio___FILENAME_VERSION__SOURCES = \
 	@GREGORIO_TREE@/src/characters.c \
 	@GREGORIO_TREE@/src/gregorio-utils.c \
 	@GREGORIO_TREE@/src/messages.c \
@@ -796,9 +799,9 @@ clean-binPROGRAMS:
 	@GREGORIO_TREE@/src/vowel/$(am__dirstamp) \
 	@GREGORIO_TREE@/src/vowel/$(DEPDIR)/$(am__dirstamp)
 
-gregorio$(EXEEXT): $(gregorio_OBJECTS) $(gregorio_DEPENDENCIES) $(EXTRA_gregorio_DEPENDENCIES) 
-	@rm -f gregorio$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(gregorio_OBJECTS) $(gregorio_LDADD) $(LIBS)
+gregorio-$(FILENAME_VERSION)$(EXEEXT): $(gregorio___FILENAME_VERSION__OBJECTS) $(gregorio___FILENAME_VERSION__DEPENDENCIES) $(EXTRA_gregorio___FILENAME_VERSION__DEPENDENCIES) 
+	@rm -f gregorio-$(FILENAME_VERSION)$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(gregorio___FILENAME_VERSION__OBJECTS) $(gregorio___FILENAME_VERSION__LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -1397,10 +1400,10 @@ uninstall-am: uninstall-binPROGRAMS
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
-$(gregorio_OBJECTS): $(KPATHSEA_DEPEND)
+$(gregorio___FILENAME_VERSION__OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
-gregorio.log: gregorio$(EXEEXT)
+gregorio.log: gregorio-$(FILENAME_VERSION)$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

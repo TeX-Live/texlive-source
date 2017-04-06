@@ -1,7 +1,7 @@
 % !TEX root = GregorioRef.tex
 % !TEX program = LuaLaTeX+se
 %
-% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+% Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
 %
 % This file is part of Gregorio.
 %
@@ -47,7 +47,7 @@ Executes \MP{} commands using luamplib.
 	\#1 & \MP{} commands & The \MP{} commands to execute.
 \end{argtable}
 
-\macroname{\textbackslash gre@deprecated}{\#1\#2}{gregoriotex-main.tex}
+\macroname{\textbackslash gre@deprecated}{\#1\#2}{gregoriotex-common.tex}
 Macro that handles deprecation messages. By default, deprecated macros
 are allowed and a warning is printed. If the package option
 \texttt{deprecated=false} is set, then deprecated macros raise a
@@ -58,7 +58,7 @@ package error, halting \TeX.
 	\#2 & string & name of the correct macro to use\\
 \end{argtable}
 
-\macroname{\textbackslash gre@obsolete}{\#1\#2}{gregoriotex-main.tex}
+\macroname{\textbackslash gre@obsolete}{\#1\#2}{gregoriotex-common.tex}
 Macro that handles obsolescence errors.
 
 \begin{argtable}
@@ -161,6 +161,7 @@ Calculates the raise value for a glyph (glyphraisevalue) based on where it is to
 	& \texttt{14} & case of the punctum mora in a space with a note on the line below it\\
 	& \texttt{15} & case of the over-the-notes slur\\
 	& \texttt{16} & case of the under-the-notes slur\\
+	& \texttt{17} & case of the bracket\\
 	\#3 & \texttt{0} & for horizontal episema cases, use automatic positioning within the space\\
 	& \texttt{1} & for horizontal episema cases, position in the middle of the space\\
 	& \texttt{2} & for horizontal episema cases, position low within the space as if the episema is over the note\\
@@ -200,7 +201,7 @@ The formula used is \verb=#1 - #2 + #3 - #4= or (more sensibly) \verb=(#1 - #4) 
 Change the scale of a single distance from one factor to another.
 
 \begin{argtable}
-	\#1 & string & name of the distance to be scaled.  See \nameref{distances}.\\
+	\#1 & string & name of the distance to be scaled.  See \Nameref{distances}.\\
 	\#2 & integer & the factor the distance is currently in\\
 	\#3 & integer & the factor the distance is to be put into\\
 \end{argtable}
@@ -221,7 +222,7 @@ Macro to calculate \texttt{nextbegindifference}.
 	\#2 & string & the first letters of the next syllable\\
 	\#3 & string & the middle letters of the next syllable (the vowel in Latin, the whole syllable in English)\\
 	\#4 & string & the end letters of the next syllable\\
-	\#5 & $0 \le$ integer $\le 19$ & the type of notes alignment.  See \nameref{notesalign}.\\
+	\#5 & $0 \le$ integer $\le 19$ & the type of notes alignment.  See \Nameref{notesalign}.\\
 	& $20 \le$ integer $\le 39$ & Same as below 20 except there is a flat before the notes.  Subtract 20 to get the type of notes alignment.\\
 	& $40 \le$ integer $\le 59$ & Same as below 20 except there is a natural before the notes.  Subtract 40 to get the type of notes alignment.
 \end{argtable}
@@ -625,11 +626,13 @@ Count which stores the current staff size.
 
 Default: 17 (approximately the size found in graduals)
 
-\macroname{\textbackslash gre@fillhole}{\#1}{gregoriotex-signs.tex}
+\macroname{\textbackslash gre@fillhole}{\#1\#2}{gregoriotex-signs.tex}
 Macro to fill the hole in a glyph so that staff lines do not show through a hole in it.
 
 \begin{argtable}
 	\#1 & Gregorio\TeX\ char & character to use to fill the hole\\
+	\#1 & \texttt{0} & the hole is being filled for an alteration\\
+	\#1 & \texttt{1} & the hole is being filled for a cavum glyph\\
 \end{argtable}
 
 \macroname{\textbackslash gre@calculate@notesaligncenter}{\#1}{gregoriotex-syllable.tex}
@@ -717,7 +720,7 @@ Macro to typeset a vertical episema or a rare accent (like accentus, circulus, e
 
 \begin{argtable}
 	\#1 & character & the letter of the height of the episema (not the height of the note it corresponds to.\\
-	\#2 & integer & See \nameref{EpisemaSpecial}\\
+	\#2 & string & See \Nameref{NoteOffset}.\\
 	\#3 & Gregorio\TeX\ glyph & the sign glyph\\
 	\#4 & \texttt{1} & vertical episema\\
 	& \texttt{2} & rare sign\\
@@ -756,9 +759,6 @@ Macro to store the catcode for ``@'' so that we can use said symbol in function 
 
 \macroname{\textbackslash gre@prephepisemaledgerlineheuristics}{}{gregoriotex-spaces.tex}
 Prepares the system to accept ledger line heuristics for the horizontal episema.
-
-\macroname{\textbackslash gre@reseteolcustos}{}{gregoriotex-main.tex}
-Alias that resets the use of automatic custos to the value set by \verb=\greseteolcustos=.  This macro is aliased to \verb=\gre@useautoeolcustos= or \verb=\gre@usemanualeolcustos= by \verb=\greseteolcustos=.
 
 \macroname{\textbackslash gre@resetledgerlineheuristics}{}{gregoriotex-spaces.tex}
 Resets the ledger line heuristic flags.
@@ -808,6 +808,10 @@ Macro which typesets the clef.
 	\#8 & integer & if \texttt{3}, it means that we must not put a flat after the secondary clef, otherwise it’s the height of the flat\\
 \end{argtable}
 
+\macroname{\textbackslash gre@boxclef}{\#1\#2\#3\#4\#5\#6\#7\#8\#9}{gregoriotex-signs.tex}
+Macro filling \verb=\gre@box@temp@width= with a clef. The arguments are the same as \verb=gre@typeclef=.
+
+
 \macroname{\textbackslash gre@typesingleclef}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
 Macro which typesets a single clef.
 
@@ -824,9 +828,6 @@ Macro to update the box printed a the left end of every line (the one which hold
 
 \macroname{\textbackslash gre@useautoeolcustos}{}{gregoriotex-main.tex}
 Macro which enables automatic custos at the end of lines.
-
-\macroname{\textbackslash gre@usemanualeolcustos}{}{gregoriotex-main.tex}
-Macro which disables automatic custos at the end of lines.
 
 \macroname{\textbackslash gre@usestylecommon}{}{gregoriotex-signs.tex}
 Macro which specifies the alternate glyphs which are common to all of the styles.
@@ -926,15 +927,28 @@ Macro computing the skip at the end of the syllable.
 Macro to hold the original distance which is to be scaled by \verb=\gre@changeonedimenfactor=
 
 \macroname{\textbackslash gre@debug}{}{gregoriotex.sty \textup{and} gregoriotex.tex}
-Macro to hold the list of debug messages which should be designated as printing.
+Macro to hold the list of debug messages which should be designated as printing.  Contains comma-separated values from \Nameref{DebugCategory}, set via the \texttt{debug} package keyword parameter.
 
-\macroname{\textbackslash gre@debugmsg}{\#1\#2}{gregoriotex-main.tex}
+\macroname{\textbackslash gre@debugmsg}{\#1\#2}{gregoriotex-common.tex}
 Macro to print debugging messages.
 
 \begin{argtable}
-	\#1 & string & The category of the message (used in conjunction with \verb=\gre@debug= to determine whether to print the message or not\\
+	\#1 & string & The category of the message (used in conjunction with \verb=\gre@debug= to determine whether to print the message or not; see \Nameref{DebugCategory}\\
 	\#2 & string & The debug message\\
 \end{argtable}
+
+\macroname{\textbackslash gre@trace}{\#1}{gregoriotex-common.tex}
+Macro to mark the beginning of a function in the log with a GreTrace message.
+
+\begin{argtable}
+	\#1 & string & name and argument list of the function being identified.
+\end{argtable}
+
+\macroname{\textbackslash gre@trace@end}{\#1}{gregoriotex-common.tex}
+Macro to mark the end of a function in the log with a GreTrace message.
+
+\macroname{\textbackslash gre@trace@prefix}{gregoriotex-common.tex}
+Macro to hold the prefix of GreTrace messages (value is manipulated to control indentation and indicate nesting).
 
 \macroname{\textbackslash gre@declarefileversion}{\#1\#2}{gregoriotex-main.tex}
 Macro which checks for version consistency between Gregorio\TeX\ files.
@@ -958,20 +972,6 @@ Macro for defining the various types of horizontal episema porrectus.
 \begin{argtable}
 	\#1 & string & name of the horizontal episema porrectus to be defined\\
 	\#2 & string & Camel case name of horizontal episema porrectus to be defined\\
-\end{argtable}
-
-\macroname{\textbackslash gre@char@cavum}{\#1\#2\#3\#4\#5\#6\#7\#8}{gregoriotex-signs.tex}
-Macro to typeset a “cavum” character.
-
-\begin{argtable}
-	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
-	\#2 & length  & Argument \#3 from \verb=\GreGlyph=. Height of the next note.\\
-	\#3 & integer & Argument \#4 from \verb=\GreGlyph=. The type of glyph.\\
-	\#4 & \TeX\ code    & Macros executed before the punctum cavum is written.\\
-	\#5 & character & Argument \#5 from \verb=\GreGlyph=. The signs to typeset before the glyph.\\
-	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled.\\
-	\#7 & control sequence & The control sequence for the glyph.\\
-	\#8 & control sequence & The control sequence for the hole glyph.
 \end{argtable}
 
 \macroname{\textbackslash gre@get@spaceskip}{\#1}{gregoriotex-signs.tex}
@@ -1027,6 +1027,9 @@ Macro which stores the first part of the next syllable (that which comes before 
 
 \macroname{\textbackslash gre@nextmiddlesyllablepart}{}{gregoriotex-syllable.tex}
 Macro which stores the middle part of the next syllable (the part which aligns with the notes).
+
+\macroname{\textbackslash gre@fixdebug}{}{gregoriotex-common.tex}
+Fixes the raw \verb=\gre@debug= value for use with \verb=\gre@debugmsg=.
 
 \macroname{\textbackslash gre@fixedtextformat}{\#1}{gregoriotex-syllable.tex}
 A macro which applies formatting that needs to apply to the whole syllable (rather than the parts individually) for the current syllable.  Necessary to preserve ligatures across parts within a syllable.
@@ -1161,6 +1164,22 @@ A meaningless (don't-care) pitch.
 \macroname{\textbackslash gre@pitch@nominal}{}{gregoriotex-main.tex}
 A pitch guaranteed to be in the staff.
 
+\macroname{\textbackslash gre@pitch@cleftop}{}{gregoriotex-spaces.tex}
+The pitch of the highest point of the current clef.
+
+\macroname{\textbackslash gre@pitch@clefbottom}{}{gregoriotex-spaces.tex}
+The pitch of the lowest point of the current clef.
+
+\macroname{\textbackslash gre@saveclefextrema}{\#1\#2}{gregoriotex-signs.tex}
+Computes the pitches of the lowest and highest points of a clef and saves them
+into \verb=\gre@pitch@cleftop= and \verb=\gre@pitch@clefbottom=.
+
+\begin{argtable}
+	\#1 & integer & the line of the primary clef (1 is the bottom line)\\
+	\#2 & integer & the line of the secondary clef (1 is the bottom line, 0 means
+									no secondary clef)\\
+\end{argtable}
+
 \macroname{\textbackslash gre@pointandclick}{\#1\#2}{gregoriotex-main.tex}
 Macro to generate the point-and-click links.
 
@@ -1233,6 +1252,11 @@ Workhorse function for setting distances in \verb=\grecreatedim= and \verb=\grec
 \macroname{\textbackslash gre@changedimforline}{\#1\#2\#3}{gregoriotex-spaces.tex}
 Saves the current value of the dimension and then changes it.  The arguments
 are the same as \verb=\grechangedim=.  Used to temporarily change the dimension
+for a given line, which is restored at the next beginning of the next line.
+
+\macroname{\textbackslash gre@changecountforline}{\#1\#2}{gregoriotex-spaces.tex}
+Saves the current value of the count and then changes it.  The arguments
+are the same as \verb=\grechangeocount=.  Used to temporarily change the count
 for a given line, which is restored at the next beginning of the next line.
 
 \macroname{\textbackslash gre@setstafflines}{\#1}{gregoriotex-main.tex}
@@ -1312,7 +1336,7 @@ Macro for calculating the position of the elements of a bar syllable using the n
 \begin{argtable}
 	\#1 & 0 & bar is not the end of a word\\
 	& 1 & bar is the end of a word\\
-	\#2 & integer & alignment type of the first glyph in the next syllable.  See \nameref{notesalign}\\
+	\#2 & integer & alignment type of the first glyph in the next syllable.  See \Nameref{notesalign}\\
 \end{argtable}
 
 \macroname{\textbackslash gre@newlinearg}{}{gregoriotex-syllable.tex}
@@ -1339,12 +1363,39 @@ Macro to typeset a punctum mora.
 	& 0 & other cases\\
 \end{argtable}
 
+\macroname{\textbackslash gre@changecavumhole}{\#1[\#2][\#3]}{gregoriotex-main.tex}
+Macro used by \verb=\grechangecavumglyph= to handle the optional arguments.
+
 \macroname{\textbackslash gre@alterationadjustment}{\#1}{gregoriotex-spaces.tex}
 Macro to make adjustments to \verb=nextbegindifference= in order to account for an alteration at the begining of the next syllable.
 
 \macroname{\textbackslash gre@punctummoraadjustment}{}{gregoriotex-spaces.tex}
 Macro to make adjustments to cursor position and \verb=previousenddifference= based on the presence of a punctum mora at the end of the last syllable.
 
+\macroname{\textbackslash gre@num@min}{\#1\#2}{gregoriotex-spaces.tex}
+Puts the lower of its two integer arguments into \verb=\gre@count@temp@one=.
+
+\begin{argtable}
+	\#1 & integer & the first value to compare\\
+	\#2 & integer & the second value to compare\\
+\end{argtable}
+
+\macroname{\textbackslash gre@num@max}{\#1\#2}{gregoriotex-spaces.tex}
+Puts the greater of its two integer arguments into \verb=\gre@count@temp@one=.
+
+\begin{argtable}
+	\#1 & integer & the first value to compare\\
+	\#2 & integer & the second value to compare\\
+\end{argtable}
+
+\macroname{\textbackslash gre@evaluatenextsyllable}{\#1}{gregoriotex-syllable.tex}
+Evaluates its first argument as an advance computation against the next syllable.  Twiddles the \verb=ifgre@evaluatingnextsyllable= flag around evaluation of the macro argument.
+
+\macroname{\textbackslash gre@save@additionalspaces}{}{gregoriotex-spaces.tex}
+Macro to save the additional vertical spaces associated with the line (\texttt{additionalbottomspace}, \texttt{additionaltopspace}, \texttt{additionaltopspacealt}, \texttt{additionaltopspacenabc}, \texttt{currenttranslationheight}, \texttt{textlower}, \texttt{currentabovelinestextheight}, and \texttt{constantglyphraise}) so that they can be restored later.
+
+\macroname{\textbackslash gre@restore@additionalspaces}{}{gregoriotex-spaces.tex}
+Macro to restore the additional vertical spaces associated with the line from their saved values.
 
 \subsection{Auxiliary File}
 Gregorio\TeX\ creates its own auxiliary file (extension \texttt{gaux}) which it uses to store information between successive typesetting runs.  This allows for such features as the dynamic interline spacing.  The following functions are used to interact with that auxiliary file.
@@ -1371,6 +1422,12 @@ Gregorio\TeX\ loads a number of fonts which are referred to by the following mac
 
 \macroname{\textbackslash gre@font@music}{}{gregoriotex-main.tex}
 The font for the neumes and other principle score elements.
+
+\macroname{\textbackslash gre@font@music@hollow}{}{gregoriotex-main.tex}
+The font for cavum neumes.
+
+\macroname{\textbackslash gre@font@music@hole}{}{gregoriotex-main.tex}
+The font for cavum neume holes.
 
 \macroname{\textbackslash gre@font@style}{}{gregoriotex-main.tex}
 The font for some of the extra characters, such as the bar for barred letters.
@@ -1408,18 +1465,6 @@ The sharp character.
 
 \macroname{\textbackslash gre@fontchar@sharphole}{}{gregoriotex-chars.tex}
 The sharp hole character (\ie, the character needed to prevent lines from showing through the center of the sharp).
-
-\macroname{\textbackslash gre@fontchar@punctumcavum}{}{gregoriotex-signs.tex}
-The punctum cavum character.
-
-\macroname{\textbackslash gre@fontchar@punctumcavumhole}{}{gregoriotex-signs.tex}
-The punctum cavum hole character (\ie, the character needed to prevent lines from showing through the center of the punctum cavum).
-
-\macroname{\textbackslash gre@fontchar@lineapunctumcavum}{}{gregoriotex-signs.tex}
-The linea punctum cavum character.
-
-\macroname{\textbackslash gre@fontchar@lineapunctumcavumhole}{}{gregoriotex-signs.tex}
-The linea punctum cavum hole character (\ie, the character needed to prevent lines from showing through the center of the linea punctum cavum).
 
 \macroname{\textbackslash gre@fontchar@incclef}{}{gregoriotex-chars.tex}
 The \texttt{c}-clef which appears in the middle of a line.
@@ -1649,6 +1694,9 @@ Boolean which specifies whether ledger line heuristics will be used or not.
 \macroname{\textbackslash ifgre@usestylefont}{}{gregoriotex-main.tex}
 Boolean which specifies whether the style font should be loaded or not.
 
+\macroname{\textbackslash ifgre@loadholehollowfonts}{}{gregoriotex-main.tex}
+Boolean which specifies whether the hole and hollow fonts should be loaded or not.
+
 \macroname{\textbackslash ifgre@keeprightbox}{}{gregoriotex-signs.tex}
 Boolean which specifies if we have to keep the localrightbox until the end.
 
@@ -1789,6 +1837,9 @@ be kept together when the syllable is broken across lines.
 \macroname{\textbackslash ifgre@shownotes}{}{gregoriotex-syllable.tex}
 Boolean indicating whether the notes should be shown.
 
+\macroname{\textbackslash ifgre@nabcvoice@i@visible}{}{gregoriotex-nabc.tex}
+Boolean indicating whether the first nabc voice should be shown.
+
 \macroname{\textbackslash ifgre@showlyrics}{}{gregoriotex-syllable.tex}
 Boolean indicating whether the lyrics should be shown.
 
@@ -1797,6 +1848,12 @@ Number of lines the initial takes up.  Currently limited to 0, 1, or 2.  Not cur
 
 \macroname{\textbackslash ifgre@rewritethissyllable}{}{gregoriotex-syllable.tex}
 Boolean indicating that a syllable should be rewritten to improve ligature rendering.
+
+\macroname{\textbackslash ifgre@textcleared}{}{gregoriotex-syllable.tex}
+Boolean indicating that the text of this syllable should not overlap any previous syllable.
+
+\macroname{\textbackslash ifgre@evaluatingnextsyllable}{}{gregoriotex-syllable.tex}
+Boolean indicating that some aspect of the next syllable is being evaluated in advance.
 
 \subsection{Boxes}
 
@@ -1846,10 +1903,11 @@ Box holding the horizontal episema.
 
 
 \subsection{Protrusion factors}
-Protrusion factors are counts representing a protrusion factor over 100.
 
-\macroname{\textbackslash gre@count@protrusion@hyphen@eol}{}{gregoriotex-spaces.tex}
-Protrusion factor applied to hyphens at end of lines.
+
+\macroname{\textbackslash gre@protrusionfactor@...}{}{gregoriotex-spaces.tex}
+Macros that store the protrusion factors created by
+\verb=\gresetprotrusionfactor=.
 
 
 \subsection{Distances}
@@ -1861,11 +1919,21 @@ second is the name of the distance.
 
 These additional distances are calculated by Gregorio based on the values for the user customizable distances and what may be going on in the score at the time of their use.
 
+In some cases it is necessary to temporarily manipulate some of these distances for the purpose of some particular operation and then restore them to their previous values.  In that case the distance will have a \verb=\gre@saved@...= register associated with it (\eg \verb=\gre@dimen@constantglyphraise= is saved to and restored from \verb=\gre@saved@dimen@constantglyphraise=).
+
+We also have save registries for \verb=\baselineskip=, \verb=\lineskip=, \verb=\lineskiplimit=, \verb=\parskip=, and \verb=\parfillskip= so that we can modify the way line breaking decisions are handled inside a score without affecting the rest of the document.
+
 \macroname{\textbackslash gre@dimen@morawidth}{}{gregoriotex-spaces.tex}
 Width of a punctum mora (reinitialized at each score, lazily recomputed).
 
-\macroname{\textbackslash gre@dimen@clefwidth}{}{gregoriotex-spaces.tex}
+\macroname{\textbackslash gre@dimen@clefwidth@current}{}{gregoriotex-spaces.tex}
 Width of the current clef.
+
+\macroname{\textbackslash gre@dimen@clefwidth@largest}{}{gregoriotex-spaces.tex}
+Width of the largest clef in the score.
+
+\macroname{\textbackslash gre@dimen@clefwidth@bol}{}{gregoriotex-spaces.tex}
+Width of the clef used to compute bolshift.
 
 \macroname{\textbackslash gre@dimen@constantglyphraise}{}{gregoriotex-spaces.tex}
 Dimension representing the space between the 0 of the gregorian fonts and the effective 0 of the TeX score.
@@ -1961,9 +2029,6 @@ Temporary dimensions used in calculations.  There are currently five of these.
 \macroname{\textbackslash gre@skip@temp@...}{}{gregoriotex-spaces.tex}
 Temporary skips used in calculations.  There are currently four of these.
 
-\macroname{\textbackslash gre@dimen@savedglyphraise}{}{gregoriotex-signs.tex}
-Macro to hold the value of the glyph raise so that it can be restored after some calculations which may change it are performed.
-
 \macroname{\textbackslash gre@dimen@eolshift}{}{gregoriotex-spaces.tex}
 The left kern that should appear before an end of line.
 
@@ -1996,9 +2061,6 @@ Minimum shift required for the text.
 
 \macroname{\textbackslash gre@skip@minShiftNotes}{}{gregoriotex-spaces.tex}
 Minimum shift required for the notes.
-
-\macroname{\textbackslash gre@save@parfillskip}{}{gregoriotex-main.tex}
-Macro to store \verb=\parfillskip= value so that we can restore it at the end of the score (needed to force the last line of a score to be justified).
 
 \macroname{\textbackslash gre@scaledist}{}{gregoriotex-spaces.tex}
 Working alias for \verb=\gre@skip@temp@one= or \verb=\gre@dimen@temp@one=, as appropriate, used when rescaling a distance due to a change in \verb=\gre@factor=.
@@ -2037,17 +2099,6 @@ Displacement of whole syllable to account for the presence of a punctum mora at 
 \macroname{\textbackslash gre@skip@alterationshift}{}{gregoriotex-spaces.tex}
 Displacement of whole syllable to account for the presence of an alteration at the beginning of the next syllable.
 
-\macroname{\textbackslash gre@skip@baselineskip@save}{}{gregoriotex-spaces.tex}
-Saved value of \verb=\baselineskip= from before a score so that it can be restored when the score ends.
-
-\macroname{\textbackslash gre@skip@lineskip@save}{}{gregoriotex-spaces.tex}
-Saved value of \verb=\lineskip= from before a score so that it can be restored when the score ends.
-
-\macroname{\textbackslash gre@skip@lineskiplimit@save}{}{gregoriotex-spaces.tex}
-Saved value of \verb=\lineskiplimit= from before a score so that it can be restored when the score ends.
-
-\macroname{\textbackslash gre@skip@parskip@save}{}{gregoriotex-spaces.tex}
-Saved value of \verb=\parskip= from before a score so that it can be restored when the score ends.
 
 
 \subsection{Penalties}
@@ -2208,7 +2259,7 @@ rather than have multiple definitions.
 	\texttt{16} & no note
  \end{tabulary}
 
-\subsection{Episema Special}\label{EpisemaSpecial}
+\subsection{Note Offset Specifier}\label{NoteOffset}
 \definecolor{shadecolor}{named}{lightgray}%
 \begin{shaded*}%
 \vspace{-1.4\baselineskip}
@@ -2273,6 +2324,39 @@ rather than have multiple definitions.
 	\item[FinalVirgaAuctus] virga aucta as last note
 	\item[FinalConnectedVirga] “virga” as last note, connected to prior lower note
 	\item[InitialVirga] “virga” as first note, disconnected from next note
+\end{description}
+\end{shaded*}
+
+\subsection{Debug Category}\label{DebugCategory}
+\definecolor{shadecolor}{named}{lightgray}%
+\begin{shaded*}%
+\vspace{-1.4\baselineskip}
+\begin{center}String with the following possibilities:\end{center}
+\vspace{-0.8\baselineskip}
+\hrule
+\vspace{-0.8\baselineskip}
+\begin{description}
+	\item[annotation] Annotation-related (text above the score initial) messages.
+	\item[barspacing] Bar spacing computations.
+	\item[bolshift] Beginning-of-line shift computations.
+	\item[clear] Syllable clearing messages.  Generated when handling the \texttt{<clear>} gabc directive.
+	\item[changeglyph] Glyph changes.  Generated when glyph substitutions are made.
+	\item[commentary] Commentary-related messages.
+	\item[compile] Auto-compile messages.  Generating when handing \verb=\gregorioscore=
+	\item[custos] Custos-related messages.  Generating when computing and handling custodes.
+	\item[eolshift] End-of-line shift computations.
+	\item[general] Non-specific messages.
+	\item[hyphen] Hyphen-related messages.  Generated when computing and handling automatic hyphens.
+	\item[ifdim] Dimension comparisons.
+	\item[initial] Score-initial-related messages.
+	\item[lineheight] Line height events.  Generated when line heights are computed or exercised.
+	\item[linesglue] Messages about line glue.  Generated during line break processing in Lua.
+	\item[mapfont] Font mapping messages.  Generated when analyzing score fonts.
+	\item[offsetcase] Offset case messages.  Generated when the offset cases (for \Nameref{NoteOffset}) are generated in Lua.
+	\item[spacing] Random spacing-related messages.
+	\item[syllablerewriting] Syllable rewrite messages.  Generated when rewriting syllables for better kerning and ligaturing.
+	\item[syllablespacing] Syllable spacing computations.
+	\item[trace] Messages to trace the calling of functions.
 \end{description}
 \end{shaded*}
 

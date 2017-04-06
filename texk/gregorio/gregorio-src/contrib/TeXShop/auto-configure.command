@@ -30,44 +30,5 @@ else
     exit 1
 fi
 
-#Add 'gabc' to the list of file extensions which TeXShop knows
-TeXShopDir=`osascript -e 'POSIX path of (path to app "TeXShop")'`
-
-echo "Adding gabc to list of valid extensions in TeXShop"
-defaults write "$TeXShopDir/Contents/Info.plist" CFBundleDocumentTypes -array-add '<dict>
-<key>CFBundleTypeExtensions</key>
-<array>
-<string>gabc</string>
-</array>
-<key>CFBundleTypeName</key>
-<string>gabc</string>
-<key>CFBundleTypeOSTypes</key>
-<array>
-<string>GABC</string>
-</array>
-<key>CFBundleTypeRole</key>
-<string>Editor</string>
-<key>LSItemContentTypes</key>
-<array>
-<string>com.unknown.gabc</string>
-</array>
-<key>LSTypeIsPackage</key>
-<false/>
-<key>NSDocumentClass</key>
-<string>TSDocument</string>
-<key>NSPersistentStoreTypeKey</key>
-<string>Binary</string>
-</dict>'
-
-echo "Adding Gregorio file extensions to appropriate preference lists"
-#enable syntax coloring and the Typeset button for gabc files
-defaults write TeXShop OtherTeXExtensions -array-add "gabc"
-defaults write TeXShop OtherTeXExtensions -array-add "gtex"
-
-#Add gtex and gaux to the list of aux files deleted with Trash Aux Files
-defaults write TeXShop OtherTrashExtensions -array-add "gtex"
-defaults write TeXShop OtherTrashExtensions -array-add "gaux"
-defaults write TeXShop OtherTrashExtensions -array-add "glog"
-
 echo "Configuration complete"
 exit 0

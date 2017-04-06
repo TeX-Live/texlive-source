@@ -1,6 +1,10 @@
-2017-03-27  Karl Berry  <karl@freefriends.org>
+2017-04-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
+	* Import gregorio-5.0.0-rc1.
+	* configure.ac (FILENAME_VERSION): Gregorio developers seem to want to
+	use FILENAME_VERSION postfix for the executable name in TeX Live 2017.
+	* gregorio.test (gregorio): use $FILENAME_VERSION.
+	* Makefile.am (bin_PROGRAMS): use $FILENAME_VERSION.
 
 2016-09-29  Karl Berry  <karl@tug.org>
 

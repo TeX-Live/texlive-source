@@ -1,7 +1,7 @@
 % !TEX root = GregorioRef.tex
 % !TEX program = LuaLaTeX+se
 %
-% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+% Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
 %
 % This file is part of Gregorio.
 %
@@ -38,7 +38,7 @@ The optional arguments are:
 \begin{tabular}{lp{10cm plus .5cm}}
 	Argument & Description \\
 	\hline
-	\texttt{debug} & Debug messages will be printed to the output log.  Can also be specified as \verb:debug={<types>}:, in which case only messages of the types listed will be printed to the output log.\\
+	\texttt{debug} & Debug messages will be printed to the output log.  Can also be specified as \verb:debug={<types>}:, in which case only messages of the categories (see \nameref{DebugCategory}) listed will be printed to the output log.\\
 	\hline
 	\texttt{nevercompile} & Default. The classic behavior of Gregorio\TeX. The user is %
 		responsible for compiling gabc scores into gtex files.\\
@@ -271,12 +271,18 @@ Macro to change one of Gregorio\TeX’s distances.  This function will check to 
 Changes one of Gregorio\TeX’s distances for a given line in the next included score.  This works with \texttt{spaceabovelines}, \texttt{spacebeneathtext}, and \texttt{spacelinestext}.
 
 \begin{argtable}
-	\#1 & integer & The number of the line in the next score to be adjusted.\\
-	\#2 & string & The name of the distance to be changed.  See \nameref{distances} below.\\
-	\#3 & string & The distance in string format.  \textbf{Note:} You cannot use a length register for this argument.  You \emph{must} use a string because of the way that Gregorio\TeX\ handles spaces.\\
+	\#1 & list of integers & A comma-separated list of line numbers in the next
+													 score to be adjusted.\\
+	\#2 & string & The name of the distance to be changed.  See
+								 \nameref{distances} below.\\
+	\#3 & string & The distance in string format.  \textbf{Note:} You cannot use
+								 a length register for this argument.  You \emph{must} use a
+								 string because of the way that Gregorio\TeX\ handles spaces.\\
 	\#4 & \texttt{fixed} & Distance will not scale when staff size is changed.\\
 	& \texttt{scalable} & Distance will scale when staff size is changed.\\
-	& \texttt{inherited} & Distance will inherit its value from another distance.  When this argument is used, then \#3 should be the name of another Gregorio\TeX\ distance.
+	& \texttt{inherited} & Distance will inherit its value from another
+												 distance.  When this argument is used, then \#3 should
+												 be the name of another Gregorio\TeX\ distance.
 \end{argtable}
 
 \macroname{\textbackslash grescaledim}{\{\#1\}\{\#2\}}{gregoriotex-spaces.tex}
@@ -296,6 +302,17 @@ Macro to change one of Gregorio\TeX’s counts or penalities (numeric values).
 \begin{argtable}
 	\#1 & string & The name of the count to be changed.  See \nameref{counts} and \nameref{penalties} below.\\
 	\#2 & integer & The new value.\\
+\end{argtable}
+
+\macroname{\textbackslash grechangenextscorelinecount}{\{\#1\}\{\#2\}\{\#3\}}{gregoriotex-spaces.tex}
+Changes one of Gregorio\TeX’s counts or penalties for a given line in the next included score.
+
+\begin{argtable}
+	\#1 & list of integers & A comma-separated list of line numbers in the next
+													 score to be adjusted.\\
+	\#2 & string & The name of the count to be changed.  See \nameref{counts} and
+								 \nameref{penalties} below.\\
+	\#3 & integer & The new value.\\
 \end{argtable}
 
 \macroname{\textbackslash greloadspaceconf}{\{\#1\}}{gregoriotex-spaces.tex}
@@ -436,6 +453,14 @@ This function is the same as above, with a third argument to scale the font. The
 
 The two first arguments are the same as \texttt{\textbackslash gresetgregoriofont}. The third argument is an integer representing the scaling factor, where the one used by \texttt{\textbackslash gresetgregoriofont} is 100000.
 
+\macroname{\textbackslash greloadholehollowfonts}{\{\#1\}}{gregoriotex-main.tex}
+
+If set to false, will not load the \texttt{hollow} and \texttt{hole} variants of the next font to load. Use it before loading third party fonts not having these variants (rare case).
+
+\begin{argtable}
+	\#1 & string & \texttt{true} or \texttt{false}.\\
+\end{argtable}
+
 \subsubsection{Glyph Alteration}
 In addition to the normal glyphs loaded by the choice of font, Gregorio\TeX\ also supports several methods for fine tuning the choice of glyphs.  Using the below functions, you can choose from alternative glyphs which are already built into Gregorio\TeX\ or import custom glyphs you have designed yourself.
 
@@ -495,6 +520,36 @@ form, use the following:\par\medskip
 \begin{latexcode}
 	\greresetglyph{TorculusResupinus*}
 \end{latexcode}
+
+\macroname{\textbackslash grechangecavumglyph}{\{\#1\}\{\#2\}\{\#3\}[\optional{\#4}][\optional{\#5}]}{gregoriotex-main.tex}
+Substitutes the given Gregorio\TeX\ score cavum glyphs with the specified glyphs
+from the specified font.
+
+\begin{argtable}
+	\#1 & string & The name of the Gregorio\TeX\ glyph to replace.\\
+	\#2 & string & The name of the font to use for the cavum glyph.\\
+	\#3 & number & The code point of the cavum glyph to use.\\
+	& \texttt{.}string & The name of the variant (appended to \#1) to use for the cavum glyph.\\
+	& string & (any other string) The name of the cavum glyph to use.\\
+	\#4 & string & The name of the font to use for the glyph to fill in the cavum hole.\\
+	\#5 & number & The code point of the glyph to use to fill in the cavum hole.\\
+	& \texttt{.}string & The name of the variant (appended to \#1) to use to fill in the the cavum hole.\\
+	& string & (any other string) The name of the glyph to use to fill in the cavum hole.\\
+\end{argtable}
+
+\textbf{Nota Bene:} The usage of wildcards (\texttt{*}s) for \texttt{\#1},
+\texttt{\#2}, and \texttt{\#4} is similar to \verb=\grechangeglyph=.
+
+\macroname{\textbackslash greresetcavumglyph}{\{\#1\}}{gregoriotex-main.tex}
+Removes a pair of Gregorio\TeX\ score cavum glyph substitution, restoring them
+back to their original form.
+
+\begin{argtable}
+	\#1 & string & The name of the Gregorio\TeX\ cavum glyph to restore.\\
+\end{argtable}
+
+\textbf{Nota Bene:} The usage of wildcards (\texttt{*}s) for \texttt{\#1} is
+similar to \verb=\greresetcavumglyph=.
 
 \macroname{\textbackslash gredefsymbol}{\{\#1\}\{\#2\}\{\#3\}}{gregoriotex-symbols.tex}
 Defines (or redefines) a \TeX\ control sequence to be a non-score symbol.
@@ -729,7 +784,8 @@ Different elements of an include score have different styles applied.  These ele
 	\stylename{abovelinestext} & above line text (\texttt{<alt></alt>} in gabc, appears above the staff) & normal\\
 	\stylename{additionalstafflines} & short lines behind notes above or below the staff & special\footnotemark[1]\\
 	\stylename{annotation} & the annotation & none\\
-	\stylename{commentary} & the commentary & {\footnotesize\it footnote-size italics}\\
+	\stylename{commentary} & the commentary & {\footnotesize\it footnote-size italics} (\LaTeX)\\
+	&& {\textit{italics}} (Plain \TeX)\\
 	\stylename{elision} & elisions (\texttt{<e></e>} in gabc) & {\textit{\small small-size italics}} (\LaTeX)\\
 											&& {\textit{italics}} (Plain \TeX)\\
 	\stylename{firstsyllable} & the first syllable of the score excluding the score initial & none\\
@@ -913,6 +969,40 @@ for ligaturing based on \TeX{} and font settings.
 												syllables.\\
 \end{argtable}
 
+\macroname{\textbackslash gresetprotrusionfactor}{\{\#1\}\{\#2\}}{gregoriotex-spaces.tex}
+Sets a global protrusion factor.  Depending on the first argument, these
+protrusion factors will be used for various characters as well as for
+\verb=<pr>= tags with no specified protrusion factor.  A protrusion factor of 0
+means no protrusion and 1 means full protrusion.  Any floating-point value from
+0 to 1 is allowed.  All of these global protrusion factors may be set in
+gsp-default.tex or in your own \TeX\ files.
+
+\begin{argtable}
+	\#1 & \texttt{,}         & Sets the automatic protrusion factor for a comma at
+														 the end of a syllable.  Default is
+														 \GreProtrusionFactor{comma}.\\
+			& \texttt{;}         & Sets the automatic protrusion factor for a
+														 semicolon at the end of a syllable.  Default is
+														 \GreProtrusionFactor{semicolon}.\\
+			& \texttt{:}         & Sets the automatic protrusion factor for a colon at
+														 the end of a syllable.  Default is
+														 \GreProtrusionFactor{colon}.\\
+			& \texttt{.}         & Sets the automatic protrusion factor for a period
+														 at the end of a syllable.  Default is
+														 \GreProtrusionFactor{period}.\\
+			& \texttt{eolhyphen} & Sets the protrusion factor for a hyphen at
+														 the end of a line.  Default is
+														 \GreProtrusionFactor{eolhyphen}.  This protrusion
+														 factor only applies to hyphens inserted by the Lua
+														 pass), so use it with caution.\\
+			& \texttt{default}   & Sets the default protrusion factor for a
+														 \verb=<pr>= tag in gabc.  Default is
+														 \GreProtrusionFactor{default}.\\
+	\#2 & factor             & The desired protrusion factor, a floating point
+														 value from 0 (no protrusion) to 1 (full
+														 protrusion).  See defaults above.\\
+\end{argtable}
+
 \subsubsection{End of Line Behavior}
 While Gregorio\TeX\ will automatically wrap scores to fit your page, there are several ways to fine tune that line breaking behavior with the following commands.
 
@@ -996,6 +1086,26 @@ Macro to determine whether Gregorio\TeX\ should apply a small shift at the begin
 	& \texttt{disable} & The shifts are not applied.
 \end{argtable}
 
+\macroname{\textbackslash grebolshiftcleftype}{\{\#1\}}{gregoriotex-spaces.tex}
+Macro to determine how notes should be left aligned in the case where clefs of different widths appear in the same score.
+
+\begin{argtable}
+	\#1 & \texttt{largest} & The notes are aligned as if all clefs had the width of the largest clef (default)\\
+	& \texttt{current} & The notes are aligned on the current clef, which leads to unaligned notes. This was the default of Gregorio < \texttt{5.0}.
+\end{argtable}
+
+\macroname{\textbackslash grelocalbolshiftcleftype}{\{\#1\}}{gregoriotex-spaces.tex}
+Equivalent of \verb=\grebolshiftcleftype= but valid only until the next end of a score, and with more options. This can be used before a score or even inside a \verb=<v>verbatim</v>= in gabc for corner cases like different alignment on a score taking two pages.
+
+\begin{argtable}
+	\#1 & \texttt{largest} & The notes are aligned as if all clefs had the width of the largest clef (default)\\
+	& \texttt{current} & The notes are aligned on the current clef, which leads to unaligned notes\\
+	& \texttt{f} & Force left alignment of notes as if all clef were f clef\\
+	& \texttt{c} & Idem with c clef\\
+	& \texttt{fb} & Idem with flatted f clef\\
+	& \texttt{cb} & Idem with flatted c clef\\
+\end{argtable}
+
 \macroname{\textbackslash gresetlastline}{\{\#1\}}{gregoriotex-main.tex}
 Macro to determine whether the last line of the score should be justified or not.
 
@@ -1056,6 +1166,15 @@ Sets the visibility of the notes.
 
 \textbf{Nota Bene:} If the notes are set to be invisible, then bar lines, rythmic signs, and the like will also be invisible.  However, the staff lines and clefs will still show up (since their visibility is controlled by other settings).
 
+\macroname{\textbackslash gresetnabc}{\{\#1\}\{\#2\}}{gregoriotex-nabc.tex}
+Sets the visibility of a nabc voice.
+
+\begin{argtable}
+	\#1 & integer & The nabc voice number.\\
+	\#2 & \texttt{visible} & Notes are visible (default).\\
+	& \texttt{invisible} & Notes are not visible.\\
+\end{argtable}
+
 \macroname{\textbackslash greprintsigns}{\{\#1\}\{\#2\}}{gregoriotex-signs.tex}
 Macro to prevent rythmic signs from printing (all signs are printed by default):
 
@@ -1095,15 +1214,6 @@ Marco to determine how much space the hyphen at the end of a line occupies for t
 	\#1 & \texttt{normal} & The hyphen occupies its normal space\\
 	& \texttt{zero} & The hyphen is considered to take up no space
 \end{argtable}
-
-\macroname{\textbackslash gresethyphenprotrusion}{\{\#1\}}{gregoriotex-spaces.tex}
-Sets the protrusion factor of hyphens at end of lines. The default value is 50, a good compromise in the tested scores.
-
-\begin{argtable}
-	\#1 & \texttt{number} & The protrusion factor, percent
-\end{argtable}
-
-Note that a proper interface for setting protrusion factor of punctuation signs might appear in the next version, deprecating this one. Also, this protrusion factor does not apply to all hyphens (only those inserted by the Lua pass), so use it with caution.
 
 \subsubsection{Clef Visibility}
 
@@ -1241,10 +1351,10 @@ Each of the following counts controls some aspect of the configuration of the Gr
 
 \begin{gcount}{additionaltopspacethreshold}
 The threshold above which we start accounting notes above lines for additional
-vertical space. For instance with a threshold of \texttt{2}, notes with a pitch
-of \texttt{k} and \texttt{l} will not interfere with the space above lines.
-Set it to a high value if you don't want high notes to interfere with space
-above lines.
+vertical space. For instance with a threshold of \texttt{2} and four line
+staves, notes with a pitch of \texttt{k} and \texttt{l} will not interfere with
+the space above lines.  Set it to a high value if you don't want high notes to
+interfere with space above lines.
 \end{gcount}
 
 \begin{gcount}{additionaltopspacealtthreshold}
@@ -1256,6 +1366,13 @@ notes taken into account with above lines text vertical placement.
 Same as \texttt{additionaltopspacethreshold} but setting the threshold for
 notes taken into account with above lines nabc neume vertical placement
 baseline.
+\end{gcount}
+
+\begin{gcount}{noteadditionalspacelinestextthreshold}
+The number of low notes which will add on the
+\texttt{noteadditionalspacelinestext} space.  For instance, with a threshold of
+\texttt{2}, every note below \texttt{c} will add {noteadditionalspacelinestext}
+space for each pitch needed below \texttt{c}, accounting for the various signs.
 \end{gcount}
 
 \subsection{Distances}\label{distances}
@@ -1498,6 +1615,10 @@ Minimal space in front of the lyrics at the beginning of a line when \texttt{bol
 Space to force the initial width to.  Ignored when 0.
 \end{gdimension}
 
+\begin{gdimension}{minimalinitialwidth}
+Minimum width of the initial.  Ignored when \texttt{manualinitialwidth} is non-zero.
+\end{gdimension}
+
 \begin{gdimension}{annotationseparation}
 This space is the one between lines in the annotation (text above the initial).
 
@@ -1553,6 +1674,11 @@ The space above the lines.
 The space between the lines and the bottom of the text.
 \end{gdimension}
 
+\begin{gdimension}{noteadditionalspacelinestext}
+The space added between the lines and the bottom of the text for every pitch
+below the \texttt{noteadditionalspacelinestextthreshold}.
+\end{gdimension}
+
 \begin{gdimension}{spacebeneathtext}
 The space beneath the text.
 \end{gdimension}
@@ -1566,7 +1692,7 @@ Height that is added at the top of the lines if there is text above the lines (i
 \end{gdimension}
 
 \begin{gdimension}{braceshift}
-An additional shift you can give to the brace above the bars.
+An additional shift you can give to the brace above the staff.
 \end{gdimension}
 
 \begin{gdimension}{curlybraceaccentusshift}
@@ -1655,6 +1781,16 @@ Vertical distance to place a punctum mora for the second note in a porrectus (or
 
 \begin{gdimension}{raresignshift}
 Distance to place a ``rare'' sign above the top space in a score.
+\end{gdimension}
+
+\begin{gdimension}{bracketupshift}
+Distance to shift a bracket up when the lowest note in the brackets is on a
+line or below the staff.
+\end{gdimension}
+
+\begin{gdimension}{bracketdownshift}
+Distance to shift a bracket down when the lowest note in the brackets is
+neither on a line nor below the staff.
 \end{gdimension}
 
 \begin{gdimension}{parskip}
