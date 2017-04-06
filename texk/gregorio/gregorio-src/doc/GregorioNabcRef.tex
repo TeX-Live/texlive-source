@@ -1,6 +1,6 @@
 % !TEX program = LuaLaTeX+se
 %
-% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+% Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
 %
 % This file is part of Gregorio.
 %
@@ -23,6 +23,7 @@
 \usepackage{fontspec}
 \usepackage{luacode}
 \usepackage{multicol}
+\usepackage{multirow}
 \usepackage{fixltx2e}
 \usepackage{hyperref}
 \usepackage{color}
@@ -59,9 +60,30 @@
 			\end{list}%
 		\endgroup%
 
+		\vspace{1cm}
+		\begingroup%
+			\greannotation{\scriptsize{CO}}
+			\greannotation{\scriptsize{II}}
+			\gresetnabcfont{grelaon}{8}
+			\color{black!60}
+			\setmainfont[SmallCapsFont=AlegreyaSC]{Alegreya}%
+			\addtolength{\hsize}{-4cm}%
+			\setlength{\fboxsep}{5mm}%
+			\begin{list}{}{%
+				\setlength{\topsep}{0pt}%
+				\setlength{\leftmargin}{1.5cm}%
+				\setlength{\rightmargin}{1.5cm}%
+				\setlength{\listparindent}{0pt}%
+				\setlength{\itemindent}{0pt}%
+				\setlength{\parsep}{0pt}%
+			}\item[]{\fbox{\parbox{\hsize}{\gregorioscore[f]{omnes}}}}%
+			\end{list}%
+		\endgroup%
+
 \vfill
 \pagebreak
 
+\gresetnabcfont{grelaon}{8}
 \gresetnabcfont{gresgmodern}{8}
 \gresetnabcfont{gregall}{8}
 
@@ -105,12 +127,26 @@
 	\endgroup %
 }
 
+\def\lneume{%
+	\begingroup %
+		\catcode`\~=12{}%
+		\catcode`\@=11{}%
+		\lneumebody%
+}
+
+\def\lneumebody#1{%
+		\font\grefontnabc={name:grelaon} at 6pt\grefontnabc\begin{gre@style@nabc}%
+		\directlua{tex.sprint(gregoriotex.nabc_font_tables["grelaon"]["\luatexluaescapestring{#1}"] or "")}%
+		\end{gre@style@nabc}%
+	\endgroup %
+}
+
 {
 \setlength\parindent{0cm}
 
 The \texttt{nabc} language provides the ability to describe some adiastematic neumes, for
-now just the St.\ Gallen style.  The language is partially based on Dom
-Eugène Cardine's Table of neumatic signs, but for more complex neumes
+now just the St.\ Gallen and Laon (Metz notation family) style.  The language is partially
+based on Dom Eugène Cardine's Table of neumatic signs, but for more complex neumes
 doesn't always match how the neumes are called; instead attempts to make it
 easier to compose complex neumes from basic glyphs.  To describe
 adiastematic neumes in \texttt{gabc}, the header should contain
@@ -164,6 +200,10 @@ Each \textit{glyph descriptor} consists of a \textit{basic glyph descriptor},
 followed by optional \textit{glyph modifiers}, followed by optional
 \textit{pitch descriptor}.
 
+The following description is for the St. Gall family of neumes,
+when using the gregall or gresgmodern fonts.  For details on Laon (Metz
+notation family) neumes see \pageref{nabclaon}.
+
 The \textit{basic glyph descriptor} is a two-letter string from the
 following table:
 \begin{multicols}{5}
@@ -205,7 +245,7 @@ characters optionally followed by a number:
 	\item \texttt{M} melodic modification
 	\item \texttt{-} addition of episema
 	\item \texttt{>} augmentive liquescence
-	\item ~~\texttt{\~} diminutive liquescence
+	\item \texttt{\textasciitilde} diminutive liquescence
 \end{itemize}
 If Dom Cardine's table contains multiple glyphs with the same modifiers,
 a positive number is added afterwards.  E.g.\ for augmentive liquescent
@@ -304,6 +344,7 @@ by the above mentioned position digit:
 \texttt{lspar} \sneume{lspar} paratim\\
 \texttt{lspfec} \sneume{lspfec} perfecte\\
 \texttt{lspm} \sneume{lspm} parvum mediocriter\\
+\texttt{lspulcre} \sneume{lspulcre} pulcre\\
 \texttt{lss} \sneume{lss} sursum\\
 \texttt{lssb} \sneume{lssb} sursum bene\\
 \texttt{lssc} \sneume{lssc} sursum celeriter\\
@@ -348,6 +389,109 @@ tractulis.
 
 \texttt{ql>ppu3} \GreNABCChar{ql>ppu3} is a 3 loop liquescent quilisma
 with 3 tractulis with episema before it.
+
+\vfill
+\pagebreak
+
+\label{nabclaon}
+The \textit{basic glyph descriptor} for Laon neumes is very similar to the
+one used for St. Gall neumes, but with uncinus and oriscus-clivis added and
+stropha, 2 loops quilisma and gravis removed:
+\begin{multicols}{4}
+\texttt{un} \lneume{un} uncinus\\
+\texttt{vi} \lneume{vi} virga\\
+\texttt{pu} \lneume{pu} punctum\\
+\texttt{ta} \lneume{ta} tractulus\\
+\texttt{gr} \lneume{gr} gravis\\
+\texttt{cl} \lneume{cl} clivis\\
+\texttt{oc} \lneume{oc} oriscus-clivis\\
+\texttt{pe} \lneume{pe} pes\\
+\texttt{po} \lneume{po} porrectus\\
+\texttt{to} \lneume{to} torculus\\
+\texttt{ci} \lneume{ci} climacus\\
+\texttt{sc} \lneume{sc} scandicus\\
+\texttt{pf} \lneume{pf} porrectus flexus\\
+\texttt{sf} \lneume{sf} scandicus flexus\\
+\texttt{tr} \lneume{tr} torculus resupinus\\
+\texttt{ds} \lneume{ds} distropha\\
+\texttt{ts} \lneume{ts} tristropha\\
+\texttt{tg} \lneume{tg} trigonus\\
+\texttt{bv} \lneume{bv} bivirga\\
+\texttt{tv} \lneume{tv} trivirga\\
+\texttt{pr} \lneume{pr} pressus maior\\
+\texttt{pi} \lneume{pi} pressus minor\\
+\texttt{vs} \lneume{vs} virga strata\\
+\texttt{or} \lneume{or} oriscus\\
+\texttt{sa} \lneume{sa} scandicus\\
+\texttt{pq} \lneume{pq} pes quassus\\
+\texttt{ql} \lneume{ql} quilisma\\
+\texttt{pt} \lneume{pt1} pes stratus
+\end{multicols}
+
+The \textit{subpunctis and prepunctis descriptor} consists of the letters
+\texttt{su} for subpunctis or \texttt{pp} for prepunctis, followed
+optionally by a modifier letter from the following table and finally a mandatory
+positive number of repetitions.  If the modifier letter is missing, it is a
+punctum.
+\begin{itemize}
+	\item \texttt{n} \lneume{un} uncinus
+	\item \texttt{q} \lneume{ql} quilisma
+	\item \texttt{z} \lneume{vi} virga
+	\item \texttt{x} \lneume{vi>} cephalicus
+\end{itemize}
+
+The \textit{significant letter descriptor} for Laon neumes allows another
+position, \texttt{5}, which stands for inside the neume.  The exact position
+of the letter depends on the glyph, if there is no glyph with the neume
+inside of it, it can't be positioned inside the neume.
+
+The shorthands, including the \texttt{ls} prefix, which should be followed
+by the above mentioned position digit for Laon neumes are:
+\begin{multicols}{2}
+\texttt{lsa} \lneume{lsa} augete\\
+\texttt{lsc} \lneume{lsc} celeriter\\
+\texttt{lseq} \lneume{lseq} equaliter\\
+\texttt{lseq-} \lneume{lseq-} equaliter\\
+\texttt{lsequ} \lneume{lsequ} equaliter\\
+\texttt{lsf} \lneume{lsf} fastigium\\
+\texttt{lsh} \lneume{lsh} humiliter\\
+\texttt{lshn} \lneume{lshn} humiliter nectum\\
+\texttt{lshp} \lneume{lshp} humiliter parum\\
+\texttt{lsl} \lneume{lsl} levare\\
+\texttt{lsn} \lneume{lsn} non (tenere), negare, nectum, naturaliter\\
+\texttt{lsnl} \lneume{lsnl} non levare\\
+\texttt{lsnt} \lneume{lsnt} non tenere\\
+\texttt{lsm} \lneume{lsm} mediocriter\\
+\texttt{lsmd} \lneume{lsmd} mediocriter\\
+\texttt{lss} \lneume{lss} sursum\\
+\texttt{lssimp} \lneume{lssimp} simpliciter\\
+\texttt{lssimpl} \lneume{lssimpl} simpliciter\\
+\texttt{lssp} \lneume{lssp} sursum parum\\
+\texttt{lsst} \lneume{lsst} sursum tenere\\
+\texttt{lst} \lneume{lst} tenere\\
+\texttt{lsth} \lneume{lsth} tenere humiliter
+\end{multicols}
+
+For the Tironian notes the form of the \textit{significant letter descriptor}
+starts with the \texttt{lt} prefix followed by letters from the following
+list, followed by above mentioned position digit (\texttt{5} can't be used):
+\begin{multicols}{2}
+\texttt{lti} \lneume{lti} iusum\\
+\texttt{ltdo} \lneume{ltdo} deorsum\\
+\texttt{ltdr} \lneume{ltdr} devertit\\
+\texttt{ltdx} \lneume{ltdx} devexum\\
+\texttt{ltps} \lneume{ltps} prode sub eam (trade subtus)\\
+\texttt{ltqm} \lneume{ltqm} quam mox\\
+\texttt{ltsb} \lneume{ltsb} sub\\
+\texttt{ltse} \lneume{ltse} seorsum\\
+\texttt{ltsj} \lneume{ltsj} subjice\\
+\texttt{ltsl} \lneume{ltsl} saltim\\
+\texttt{ltsn} \lneume{ltsn} sonare\\
+\texttt{ltsp} \lneume{ltsp} supra\\
+\texttt{ltsr} \lneume{ltsr} sursum\\
+\texttt{ltst} \lneume{ltst} saltate (salte)\\
+\texttt{ltus} \lneume{ltus} ut supra
+\end{multicols}
 }
 
 \vfill
@@ -402,6 +546,53 @@ Table from Cardine's Gregorian Semiology, pp.\ 12-13 with nabc strings and grega
 \vfill
 \pagebreak
 
+\gresetnabcfont{grelaon}{8}
+
+{
+\noindent\footnotesize
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|}
+\hline
+Name of & Simple & \multicolumn{3}{c|}{Symbols differentiated by} & \multicolumn{3}{c|}{Symbols indicating} \\
+Symbols & Symbols & \multicolumn{3}{c|}{} & \multicolumn{3}{c|}{a special meaning} \\ \hline
+& & \multicolumn{2}{c|}{the modification} & the addition & melodic & \multicolumn{2}{c|}{phonetic} \\ \cline{3-4}\cline{6-8}
+& & of the mark & of the grouping & of letters & & \multicolumn{2}{c|}{Liquescence} \\ \cline{7-8}
+& & & (neumatic break) & & & augment. & diminut. \\ \cline{3-5}\cline{7-8}
+uncinus & \neume{un} & & & & & & \\
+punctum & \neume{pu} & & & & & & \\
+virga & \neume{vi} & \neume{viS} \neume{vipp2su2vihh} & & & & \neume{vi>1} & \\
+tractulus & \neume{ta} & \neume{ds} \neume{ts} & & \neume{talst2} \neume{tslsc2lst2} & & \neume{ta>2} & \\
+clivis & \neume{cl} & & \neume{clG} & \neume{cllsn9} \neume{cllst9} \neume{clGlsa5} & \neume{clG1} \neume{clM} & \neume{cl>} \neume{cl>1} & \neume{vi>} \neume{ta>2} \\
+pes & \neume{pe} & & \neume{peG} & \neume{pelsn3} \neume{pelst2} \neume{pelsc2} & & \neume{pe>1} & \neume{ta>} \\
+porrectus & \neume{po} & & \neume{poG} & & \neume{poM} & \neume{po>} & \\
+torculus & \neume{to} & \neume{toS1} & \neume{toG} & \neume{toGlsa5} \neume{toSlsa5} \neume{toSsun1lsa5} \neume{tolst9} & & \neume{to>} & \\
+climacus & \neume{ci} & \neume{pusu1sun1} \neume{visu2} \neume{unsun2} & & \neume{visu2lst3} & & & \neume{cl>1} \\
+scandicus & \neume{sc} \neume{sc1} & \neume{vippn1pp1} \neume{vippn2} & \neume{pevihl} & \neume{sclst2} \neume{pelst2vihl} \neume{pelsa2vihl} & & \neume{vi>1pp2} & \neume{ta>ppn1} \neume{ta>pp2} \\
+\vbox{\hbox{porrectus}\hbox{flexus}} & \neume{pf1} & \neume{pfS} & \neume{unhg`to} \neume{po`un} & \neume{unhglst2`to} \neume{po`unlsa2} & \neume{pfM} & \neume{pf>} & \\
+\vbox{\hbox{(pes}\hbox{subbipunctis)}} & \neume{tosu1} & \neume{tosun1} & \neume{vippn1su2} \neume{unppn1sun2} & \neume{tosu1lsc5} \neume{tosun1lsa5} & & & \\
+& & & \multicolumn{1}{r|}{\neume{visu1sun1}} & \multicolumn{1}{r|}{\neume{unlst2`puhisu1sun1}} & & & \\
+\vbox{\hbox{scandicus}\hbox{flexus}} & \neume{sf} & & \neume{unhd`to} \neume{sfG} & \neume{unhdlst2`to} \neume{pelst2clhh} & & & \\
+\vbox{\hbox{torculus}\hbox{resupinus}} & \neume{tr} & \neume{trS} & \neume{poppn1} \neume{pe`peG} & \neume{trSlsc1} \neume{trlst3} \neume{trlst9} & & \neume{tr>} & \neume{pe`ta>} \\
+& & & \multicolumn{1}{r|}{\neume{tovihg} \neume{toGvihg}} & & & & \\
+\vbox{\hbox{clivis + pes}\hbox{or torculus}} & \multicolumn{1}{l}{\neume{cl!pe} \neume{cl!to}} & \multicolumn{1}{l}{\rightarrow \hspace{5mm} \neume{toS!pe}} & \multicolumn{5}{l|}{\neume{toS!to}} \\
+\multirow{7}{*}{oriscus} & \multicolumn{1}{l}{\multirow{7}{*}{\neume{or} \neume{or1} $ \left\{ \rule{0pt}{22mm} \right. $ }} & \multicolumn{1}{l}{isolated  \&} & \multicolumn{3}{l}{\neume{ql}} & \multicolumn{2}{l|}{\neume{or>}} \\
+& \multicolumn{1}{l}{} & \multicolumn{1}{l}{\vbox{\hbox{at the syllabic}\hbox{articulation}}} & \multicolumn{5}{l|}{\neume{oc} \neume{oc!vi} \neume{pq} \neume{pq1}} \\
+& \multicolumn{1}{l}{} & \multicolumn{1}{l}{\multirow{5}{*}{\vbox{\hbox{inside}\hbox{the neume}} $ \left\{ \rule{0pt}{18mm} \right. $ }} & \multicolumn{5}{l|}{\neume{tg}} \\
+& \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{5}{l|}{\neume{cl1!or} \neume{cl1!pi} \neume{cl1!pi!vi} \neume{cl1!pi!cl} \neume{cl1!pi!to} } \\
+& \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{5}{l|}{\neume{to!or}} \\
+& \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{5}{l|}{\neume{sa} \neume{sa1}} \\
+& \multicolumn{1}{l}{} & \multicolumn{1}{l}{} & \multicolumn{1}{l}{\neume{vs} \neume{vsG}} & \multicolumn{1}{r}{\neume{pe!or}} & \multicolumn{3}{l|}{} \\
+quilisma & \multicolumn{7}{l|}{\neume{ql} \neume{ql!cl} \neume{ql!po}} \\
+pes stratus & \multicolumn{1}{l}{} & \multicolumn{6}{l|}{\neume{pt1}} \\ \hline
+\end{tabular}
+}
+
+\begin{center}
+Table from Cardine's Gregorian Semiology, pp.\ 14-15 with nabc strings and grelaon glyphs.
+\end{center}
+
+\vfill
+\pagebreak
+
 \begin{center}
 Table with nabc strings and corresponding gregall and gresgmodern glyphs:
 \end{center}
@@ -439,6 +630,34 @@ Table with nabc strings and corresponding gregall and gresgmodern glyphs:
 			end
 			tex.sprint(str .. "\\\\")
 		end
+	end
+	tex.sprint("\\end{multicols}")
+\end{luacode*}
+
+\vfill
+\pagebreak
+
+\begin{center}
+Table with nabc strings and corresponding grelaon glyphs:
+\end{center}
+
+\begin{luacode*}
+	local i
+	local last
+	local key
+	local str
+	local keym
+	local arr = {}
+	for key in pairs(gregoriotex.nabc_font_tables['grelaon']) do
+		table.insert(arr, key)
+	end
+	table.sort(arr)
+	tex.sprint("\\begin{multicols}{4}\\noindent");
+	for i, key in ipairs(arr) do
+		keym = key:gsub("~","\\~{}")
+		str = keym .. "\\hfill"
+		str = str .. "{\\font\\grefontnabc={name:grelaon} at 8pt\\grefontnabc\\begin{gre@style@nabc}" .. gregoriotex.nabc_font_tables['grelaon'][key] .. "\\end{gre@style@nabc}}"
+		tex.sprint(str .. "\\\\")
 	end
 	tex.sprint("\\end{multicols}")
 \end{luacode*}
@@ -509,6 +728,7 @@ only present in the font source file to help drawing the glyphs.}
 \texttt{C54A} Audi filia \texttt{GT417}\\
 \texttt{C56B} Beatus vir \texttt{GT475}\\
 \texttt{C56D} Desiderium animae \texttt{GT432}\\
+\texttt{C57B} Beatus vir \texttt{GT481}\\
 \texttt{C58A} Adiutor \texttt{GT69}\\
 \texttt{C59D} De profundis \texttt{GT673}\\
 \texttt{C60S} Sciant gentes \texttt{GT88}\\
@@ -553,6 +773,7 @@ only present in the font source file to help drawing the glyphs.}
 \texttt{C149A} Alleluia. Paratum cor meum \texttt{GT344}\\
 \texttt{C150L} Alleluia Laetatus \texttt{GT19}\\
 \texttt{C153S} Alleluia Sancti tui, Domine, benedicent \texttt{GT463}\\
+\texttt{C153B} Alleluia Beatus vir qui suffert \texttt{GT511}\\
 \texttt{C154A} Alleluia Gaudete iusti \texttt{GT430}
 
 \noindent\textbf{Einsiedeln codex 121}
@@ -577,6 +798,7 @@ only present in the font source file to help drawing the glyphs.}
 \texttt{E39E} Exiit sermo inter \texttt{GT636}\\
 \texttt{E42A} Anima nostra \texttt{GT466}\\
 \texttt{E51R} Reges tharsis \texttt{OT21}\\
+\texttt{E64L} Laetamini in Domino \texttt{OT140}\\
 \texttt{E69P} Posuisti Domine \texttt{GT477}\\
 \texttt{E75G} Gaudeamus omnes \texttt{GT545}\\
 \texttt{E82D} De profundis \texttt{GT673}\\
@@ -649,9 +871,13 @@ only present in the font source file to help drawing the glyphs.}
 \texttt{H114N} Nativitas tua \texttt{AM1035}\\
 \texttt{H118G} Gaude, Maria Virgo \texttt{NR130*}\\
 \texttt{H119C} Cum inducerent\\
+\texttt{H173I} Insurrexerunt in me \texttt{NR364}\\
+\texttt{H173C} Contumelias et terrores \texttt{NR365}\\
 \texttt{H179L} Liberavit Dominus \texttt{ARII183}\\
 \texttt{H179A} Amicus meus osculi \texttt{NR381}\\
 \texttt{H179I} Iudas mercator \texttt{NR382}\\
+\texttt{H219T} Tradiderunt me \texttt{NR408}\\
+\texttt{H219I} Iesum tradidit impius \texttt{NR409}\\
 \texttt{H266D} Domino si in tempore\\
 \texttt{H269S} Spiritus Sanctus\\
 \texttt{H269D} Dum complerentur \texttt{NR493}\\
@@ -844,6 +1070,7 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{toS3lst2} & \texttt{toS3lst2} & \texttt{C59D} & tuae\\
 \sneume{pq!cl-} & \texttt{pq!cl-} & \texttt{C87E} & sanasti\\
 \sneume{to>1} & \texttt{to>1} & \texttt{E130I} & obdormiam & \fbox{2.166x}\\
+\sneume{to>2} & \texttt{to>2} & \texttt{H219T} & fortes: & \fbox{1.63x}\\
 \sneume{to->} & \texttt{to->} & \texttt{E158D} & respexit & \fbox{2.166x}\\
 \sneume{toS2sux1} & \texttt{toS2sux1} & \texttt{C46O} & Surge\\ \hline
 & \multicolumn{3}{l}{\textbf{climacus}} & \\
@@ -895,6 +1122,7 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{vi-su1sut1} & \texttt{vi-su1sut1} \textit{Cf.} \sneume{vi-su1sut1su2} & \multicolumn{3}{l}{\texttt{vi-su1sut1su2} minus subpunctis}\\
 \sneume{vi-su2sut1} & \texttt{vi-su2sut1} & \texttt{N296V} & alleluia\\
 \sneume{vi-su1sux1} & \texttt{vi-su1sux1} & \texttt{E373B} & Sanctum & \fbox{2.133x}\\
+\sneume{vi-su2sux1} & \texttt{vi-su2sux1} & \texttt{C49I} & eum\\
 \sneume{vi-sut4} & \texttt{vi-sut4} & \texttt{H16A} & servient & \fbox{1.7x}\\
 \sneume{vi-suu2} & \texttt{vi-suu2} & \texttt{H23E} & ecce & \fbox{1.7x}\\
 \sneume{vi-suu3} & \texttt{vi-suu3} & \texttt{H35G} & veniet & \fbox{1.7x}\\
@@ -944,6 +1172,7 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{pe-su2} & \texttt{pe-su2} & \texttt{H73S} & adoraverunt\\
 \sneume{pe-1su2} & \texttt{pe-1su2} & \texttt{C64Q} & habitat\\
 \sneume{pe-1sut2} & \texttt{pe-1sut2} & \texttt{H104T} & confitemur\\
+\sneume{pe-1sut1suw1} & \texttt{pe-1sut1suw1} & \texttt{H219I} & videret & \fbox{1.63x}\\
 \sneume{peSsu2} & \texttt{peSsu2} & \texttt{A17T} & eius\\
 \sneume{peSsut2} & \texttt{peSsut2} & \texttt{C27E} & sanctos\\
 \sneume{vippt1su2} & \texttt{vippt1su2} & \texttt{C56B} & benedicetur.\\
@@ -1118,7 +1347,9 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{su1sut2} & \texttt{su1sut2} \textit{Cf.} \sneume{visu1sut2} & \multicolumn{2}{l}{\texttt{visu1sut2}}\\
 \sneume{su1suu1} & \texttt{su1suu1} \textit{Cf.} \sneume{visu1suu1} & \multicolumn{2}{l}{\texttt{visu1suu1}}\\
 \sneume{su2suw1} & \texttt{su2suw1} \textit{Cf.} \sneume{visu2suw1} & \multicolumn{2}{l}{\texttt{visu2suw1}}\\
+\sneume{su2sux1} & \texttt{su2sux1} \textit{Cf.} \sneume{vi-su2sux1} & \multicolumn{2}{l}{\texttt{vi-su2sux1}}\\
 \sneume{sut1su2} & \texttt{sut1su2} \textit{Cf.} \sneume{visut1su2} & \multicolumn{2}{l}{\texttt{visut1su2}}\\
+\sneume{sut1suw1} & \texttt{sut1suw1} \textit{Cf.} \sneume{pe-1sut1suw1} & \multicolumn{2}{l}{\texttt{pe-1sut1suw1}}\\
 \sneume{sut3} & \texttt{sut3} \textit{Cf.} \sneume{visut3} & \multicolumn{2}{l}{\texttt{visut3}}\\
 \sneume{suv1su2} & \texttt{suv1su2} \textit{Cf.} \sneume{visuv1su2} & \multicolumn{2}{l}{\texttt{visuv1su2}}\\
 \sneume{sut4} & \texttt{sut4} \textit{Cf.} \sneume{visut4} & \multicolumn{2}{l}{\texttt{visut4}}\\
@@ -1211,6 +1442,7 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{qi!cl-} & \texttt{qi!cl-} & \texttt{C148A} & factus\\
 \sneume{qi!cl>} & \texttt{qi!cl>} & \texttt{H77S} & Magi\\
 \sneume{qi!po} & \texttt{qi!po} & \texttt{H87E} & Deus\\
+\sneume{qi!po>} & \texttt{qi!po>} & \texttt{H173C} & adversum & \fbox{1.9x}\\
 \sneume{pf!clM-ppt1} & \texttt{pf!clM-ppt1} & \texttt{E327O} & narante & \fbox{2.166x}\\
 \sneume{cl!po>ppt1} & \texttt{cl!po>ppt1} & \texttt{E327O} & narante & \fbox{2.166x}\\
 \sneume{qlppt1} & \texttt{qlppt1} & \texttt{C38T} & Sede\\
@@ -1255,7 +1487,8 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{ql-su1sut1} & \texttt{ql-su1sut1} & \texttt{H307F} & iustitiae & \fbox{2.0x}\\
 \sneume{qippt2sut2} & \texttt{qippt2sut2} & \texttt{H297B} & generationes & \fbox{2.0x}\\
 \sneume{ql!vssu3} & \texttt{ql!vssu3} & \texttt{H443V} & ei & \fbox{2.0x}\\
-\sneume{to!ciG} & \texttt{to!ciG} & \texttt{C28T} & gloriae.\\
+\sneume{to!ciG} & \texttt{to!ciG} & \texttt{E51R} & eum & \fbox{2.0x}\\
+\sneume{to!ciGhh} & \texttt{to!ciG} & \texttt{C28T} & gloriae.\\
 \sneume{to!cl} & \texttt{to!cl} & \texttt{C84T} & pupillo\\
 \sneume{to!cl!cl!cl} & \texttt{to!cl!cl!cl} & \texttt{C64Q} & sepavit,\\
 \sneume{to!cl!po} & \texttt{to!cl!po} & \texttt{E31T} & veritas & \fbox{2.166x}\\
@@ -1267,6 +1500,7 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{to!clS} & \texttt{to!clS} & \texttt{C43A} & terram.\\
 \sneume{to!cl!cl} & \texttt{to!cl!cl} & \texttt{C43A} & Domini,\\
 \sneume{to!po} & \texttt{to!po} & \texttt{C64Q} & sagitta\\
+\sneume{to!posu2} & \texttt{to!posu2} & \texttt{C49I} & eo,\\
 \sneume{to!pr} & \texttt{to!pr} & \texttt{G11V} & Deo & \fbox{0.85x}\\
 \sneume{to!pi} & \texttt{to!pi} & \texttt{C60C} & tui.\\
 \sneume{toSsu2} & \texttt{toSsu2} & \texttt{H72H} & mihi\\
@@ -1286,11 +1520,17 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{toS2sut2} & \texttt{toS2sut2} & \texttt{C150L} & dicta\\
 \sneume{to-1su2} & \texttt{to-1su2} & \texttt{H322C} & ostendere & \fbox{2.0x}\\
 \sneume{to-1su1} & \texttt{to-1su1} & \texttt{H323B} & Gallus & \fbox{2.0x}\\
+\sneume{to-1suu1} & \texttt{to-1suu1} & \texttt{H173I} & me & \fbox{1.8x}\\
 \sneume{to-1suu1su2} & \texttt{to-1suu1su2} & \texttt{H324V} & cognovi & \fbox{2.0x}\\
 \sneume{po-1pp2su1sux1} & \texttt{po-1pp2su1sux1} & \texttt{H323D} & desiderium & \fbox{2.0x}\\
 \sneume{po-1su1sux1} & \texttt{po-1su1sux1} \textit{Cf.} \sneume{po-1pp2su1sux1} & \multicolumn{3}{l}{\texttt{po-1pp2su1sux1} minus bipunctis}\\
 \sneume{pisu1} & \texttt{pisu1} & \texttt{H307N} & annuntiavit & \fbox{2.0x}\\
-\sneume{pq-su2} & \texttt{pq-su2} & \texttt{C132D} & praetioso\\ \hline
+\sneume{pisut1} & \texttt{pisut1} & \texttt{C153B} & Alleluia\\
+\sneume{pq-su2} & \texttt{pq-su2} & \texttt{C132D} & praetioso\\
+\sneume{pe!vi} & \texttt{pe!vi} & \texttt{C57B} & qui\\
+\sneume{tgsuu1} & \texttt{tgsuu1} & \texttt{C49I} & eum.\\
+\sneume{tgSsuu1} & \texttt{tgSsuu1} & \texttt{C57B} & nimis.\\
+\sneume{sa-su2sut1} & \texttt{sa-su2sut1} & \texttt{C49I} & eum\\ \hline
 \end{supertabular}
 
 \begin{supertabular}{llllll}\noindent
@@ -1326,6 +1566,7 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{lspar} & \texttt{lspar} & \texttt{E104S} & miserere & paratim & \fbox{2.166x}\\
 \sneume{lspfec} & \texttt{lspfec} & \texttt{E2D} & fructum & perfecte & \fbox{2.166x}\\
 \sneume{lspm} & \texttt{lspm} & \texttt{C40V} & suam. & \multicolumn{2}{l}{parvum mediocriter}\\
+\sneume{lspulcre} & \texttt{lspulcre} & \texttt{E64L} & hac & pulcre & \fbox{2.0x}\\
 \sneume{lss} & \texttt{lss} & \texttt{C27E} & sanctos & \multicolumn{2}{l}{sursum}\\
 \sneume{lssb} & \texttt{lssb} & \texttt{C40V} & iustitiam & \multicolumn{2}{l}{sursum bene}\\
 \sneume{lssc} & \texttt{lssc} & \texttt{C84T} & Tibi & \multicolumn{2}{l}{sursum celeriter}\\
@@ -1341,6 +1582,812 @@ only present in the font source file to help drawing the glyphs.}
 \sneume{lsv} & \texttt{lsv} & \texttt{E131O} & semper & valde & \fbox{2.0x}\\
 \sneume{lsvol} & \texttt{lsvol} & \texttt{C58A} & aeternum & \multicolumn{2}{l}{volubiliter}\\
 \sneume{lsx} & \texttt{lsx} & \texttt{C87E} & me: & \multicolumn{2}{l}{expectare}\\ \hline
+\end{supertabular}
+\onecolumn
+}
+
+\vfill
+\pagebreak
+
+\begin{center}
+\huge{manuscript sources of the grelaon font}
+\end{center}
+
+\textit{The list of glyphs uses following abbreviations for manuscript
+references; the page number is always for the start of some antiphon,
+responsory, mass propers, even when the actual neume is on a later page.
+At the end of lines, \texttt{GT} stands for Graduale Triplex, Solesmes,
+1979, \texttt{OT} for Offertoriale Triplex, Solesmes, 1985, \texttt{GN}
+for Graduale Novum de Dominicis et Festis, Conbrio Verlag Regensburg, 2011,
+followed by page number which also contains the corresponding
+propers, antiphons or responsories.}
+
+\textit{All the grelaon font glyphs taken from the LAON\_BM\_ms239 codex with
+the permission from the Bibliothèque municipale de la ville de Laon
+\url{http://manuscrit.ville-laon.fr}, the picture fragments from there are
+only present in the font source file to help drawing the glyphs.}
+
+{\footnotesize
+
+\begin{multicols}{2}
+
+\noindent\textbf{Graduale Laudunensis, codex 239}
+
+\noindent 
+\texttt{L1} = \url{http://manuscrit.ville-laon.fr/_app/_visualisation.php?cote=Ms239&vue=9}\\
+\texttt{L8U} Universi qui te \texttt{GT16}\\
+\texttt{L8A} Ad te Domine levavi \texttt{OT5}\\
+\texttt{L8D} Dominus dabit \texttt{GT17}\\
+\texttt{L9E} Ex Sion species \texttt{GT18}\\
+\texttt{L10I} Ierusalem surge \texttt{GT20}\\
+\texttt{L11Q} Qui sedes, Domine \texttt{GT22}\\
+\texttt{L13A} Ave Maria \texttt{GT36}\\
+\texttt{L14P} Prope es tu Domine \texttt{GT24}\\
+\texttt{L14O} Ostende nobis \texttt{GT31}\\
+\texttt{L17H} Hodie scietis \texttt{GT38}\\
+\texttt{L19B} Benedictus qui venit \texttt{GT45}\\
+\texttt{L20P} Puer natus est \texttt{GT47}\\
+\texttt{L24D} Dextera Domini \texttt{GT194}\\
+\texttt{L24T} Timebunt gentes \texttt{GT265}\\
+\texttt{L25L} Laetabitur iustus \texttt{GT473}\\
+\texttt{L25M} Mirabantus omnes \texttt{GN232}\\
+\texttt{L28G} Gaudeamus omnes \texttt{GT545}\\
+\texttt{L31D} De profundis \texttt{GT673}\\
+\texttt{L33S} Sciant gentes \texttt{GT88}\\
+\texttt{L33C} Commovisti Domine \texttt{GT89}\\
+\texttt{L33P} Perfice gressus \texttt{OT90}\\
+\texttt{L34E} Esto mihi in Deum \texttt{GT275}\\
+\texttt{L35T} Tu es Deus \texttt{GT244}\\
+\texttt{L37M} Misereris omnium \texttt{GT62}\\
+\texttt{L37S} Miserere mei Deus \texttt{GT63}\\
+\texttt{L38I} Iacta cogitatum \texttt{GT285}\\
+\texttt{L40Q} Qui habitat \texttt{GT73}\\
+\texttt{L43L} Levabo oculos meos \texttt{GT78}\\
+\texttt{L43S} Scapulis suis \texttt{GT77}\\
+\texttt{L43I} Sicut oculi servorum \texttt{GT77}\\
+\texttt{L44D} Domine refugium \texttt{GT79}\\
+\texttt{L44I} Dirigatur oratio \texttt{GT340}\\
+\texttt{L45R} Reminiscere miserationum \texttt{GT81}\\
+\texttt{L53C} Confitemini Domino \texttt{GT158}\\
+\texttt{L54A} Adiutor meus \texttt{GT86}\\
+\texttt{L54B} Benedicam Dominum \texttt{OT88}\\
+\texttt{L56D} Deus in adiutorium \texttt{GT315}\\
+\texttt{L56S} Salvum fac populum \texttt{GT354}\\
+\texttt{L56I} Iustus Dominus \texttt{GT93}\\
+\texttt{L56P} Propitius esto Domine \texttt{GT288}\\
+\texttt{L58A} Ad Dominum dum tribularer \texttt{GT282}\\
+\texttt{L60E} Exsurge Domine \texttt{GT96}\\
+\texttt{L60A} Ad te levavi \texttt{GT97}\\
+\texttt{L61I} Iustitiae Domini \texttt{GT309}\\
+\texttt{L64O} Oculi omnium \texttt{GT343}\\
+\texttt{L64D} Domine fac mecum \texttt{OT37}\\
+\texttt{L67Q} Qui biberit aquam \texttt{GT99}\\
+\texttt{L67S} Si ambulem \texttt{GT125}\\
+\texttt{L68N} Nemo te condemnavit \texttt{GT124}\\
+\texttt{L68Q} Qui confidunt \texttt{GT109}\\
+\texttt{L71D} Dum santificatus fuero \texttt{GT249}\\
+\texttt{L72B} Benedicite gentes \texttt{GT231}\\
+\texttt{L75V} Videns Dominus \texttt{GT124}\\
+\texttt{L76E} Eripe me Domine \texttt{GT121}\\
+\texttt{L77S} Saepe expugnaverunt \texttt{GT122}\\
+\texttt{L77C} Confitebor tibi Domine \texttt{GT123}\\
+\texttt{L78H} Hoc corpus \texttt{GT170}\\
+\texttt{L80S} Sperent in te omnes \texttt{GT286}\\
+\texttt{L81E} Exaltabo te Domine \texttt{GT112}\\
+\texttt{L81R} Eripe me de inimicis \texttt{GT129}\\
+\texttt{L82O} Omnia quae fecisti \texttt{GT342}\\
+\texttt{L82T} Tollite hostias \texttt{GT272}\\
+\texttt{L84B} Benedictus es, Domine \texttt{OT48}\\
+\texttt{L90D} Deus Deus meus \texttt{GT144}\\
+\texttt{L92E} Exsurge Domine \texttt{GT150}\\
+\texttt{L93E} Erubescant et revereantur \texttt{GT152}\\
+\texttt{L93G} Ego autem dum mihi \texttt{GT152}\\
+\texttt{L94C} Custodi me Domine \texttt{GT154}\\
+\texttt{L95D} Domine, exaudi orationem \texttt{GT172}\\
+\texttt{L99P} Popule meus quid \texttt{GT176}\\
+\texttt{L101V} Vinea facta est \texttt{GT188}\\
+\texttt{L103R} Resurrexi \texttt{GT196}\\
+\texttt{L103H} Haec dies \texttt{GT196}\\
+\texttt{L103P} Alleluia Pascha nostrum \texttt{GT197}\\
+\texttt{L103T} Terra tremuit \texttt{GT199}\\
+\texttt{L104I} Introduxit vos Dominus \texttt{GT200}\\
+\texttt{L105A} Angelus Dominus \texttt{GT217}\\
+\texttt{L105N} Angelus Dominus \texttt{GT201}\\
+\texttt{L106S} Surrexit Dominus \texttt{GT207}\\
+\texttt{L107H} Haec dies \texttt{GT206}\\
+\texttt{L109P} Populus acquisitionis \texttt{GT210}\\
+\texttt{L112D} Deus Deus meus \texttt{GT224}\\
+\texttt{L112O} Omnes qui in Christo \texttt{GT61}\\
+\texttt{L113E} Ego sum pastor \texttt{GT224}\\
+\texttt{L114C} Cantate Domino \texttt{GT225}\\
+\texttt{L114V} Vocem iucunditatis \texttt{GT229}\\
+\texttt{L117R} Repleti sumus \texttt{GT441}\\
+\texttt{L118E} Ego sum vitis vera \texttt{GT228}\\
+\texttt{L122N} Non vos relinquam \texttt{GT232}\\
+\texttt{L122V} Viri Galilaei \texttt{OT172}\\
+\texttt{L123A} Ascendit Deus \texttt{GT237}\\
+\texttt{L123E} Exaudi Domine vocem \texttt{GT241}\\
+\texttt{L125U} Ultimo festivitatis \texttt{GT251}\\
+\texttt{L125S} Spiritus Domini \texttt{GT252}\\
+\texttt{L126F} Factus est repente \texttt{GT256}\\
+\texttt{L128S} Spiritus ubi vult spirat \texttt{GT218}\\
+\texttt{L132E} Ecce quam bonum \texttt{GT351}\\
+\texttt{L136A} Amen dico vobis quod vos \texttt{GT436}\\
+\texttt{L138S} Semel iuravi \texttt{GT492}\\
+\texttt{L144C} Clamaverunt iusti \texttt{GT454}\\
+\texttt{L149E} Ego dixi Domine \texttt{GT279}\\
+\texttt{L149C} Cantabo Domino qui bona \texttt{GT283}\\
+\texttt{L152S} Sicut in holocausto \texttt{GT299}\\
+\texttt{L152I} Inclina aurem tuam \texttt{GT300}\\
+\texttt{L164D} De profundis \texttt{GT368}\\
+\texttt{L168I} Iubilate Deo \texttt{GT258}\\
+\texttt{L168S} Specie tua \texttt{GT416}\\
+\texttt{L168L} Laudate Deum \texttt{GT262}\\
+\texttt{L169A} Adorabo ad templum \texttt{GT270}\\
+\texttt{L173D} Deus iudes iustus \texttt{GT286}\\
+\texttt{L174D} Domine in virtute tua \texttt{GT292}\\
+\texttt{L174I} In te Domine speravi \texttt{GT296}\\
+\texttt{L174O} Omnes gentes plaudite manibus \texttt{GT298}\\
+\texttt{L174T} Te dece hymnus \texttt{GT305}\\
+
+\end{multicols}
+}
+
+{
+\footnotesize
+\twocolumn
+\begin{supertabular}{lllll}\noindent
+& \multicolumn{3}{l}{\textbf{uncinus}} & \\
+\lneume{un} & \texttt{un} & \texttt{L78H} & testamenti\\
+\lneume{un1} & \texttt{un1} & \texttt{L78H} & calix\\
+\lneume{un2} & \texttt{un2} \textit{Cf.} \lneume{un2lsm1} & \multicolumn{3}{l}{\texttt{un2lsm1} minus letter} \\
+\lneume{un2lsm1} & \texttt{un2lsm1} & \texttt{L82O} & fecisti\\
+\lneume{unlsm1} & \texttt{unlsm1} & \texttt{L75V} & qui\\
+\lneume{unlst1} & \texttt{unlst1} & \texttt{L103R} & alleluia\\
+\lneume{unlst2} & \texttt{unlst2} & \texttt{L82O} & fac\\
+\lneume{unlst8} & \texttt{unlst8} & \texttt{L24D} & opera\\
+\lneume{un1lst8} & \texttt{un1lst8} & \texttt{L112O} & Christo\\
+\lneume{unlsm2lss3lst8} & \texttt{unlsm2lss3lst8} & \texttt{L43S} & scuto\\ \hline
+& \multicolumn{3}{l}{\textbf{punctum}} & \\
+\lneume{pu} & \texttt{pu} & \texttt{L82O} & iudicio\\
+\lneume{pu1} & \texttt{pu1} & \texttt{L56D} & revereantur\\
+\lneume{pulsnt3} & \texttt{pulsnt3} & \texttt{L75V} & flentes\\ \hline
+& \multicolumn{3}{l}{\textbf{virga}} & \\
+\lneume{vi} & \texttt{vi} & \texttt{L82O} & Domine\\
+\lneume{viS} & \texttt{viS} \textit{Cf.} \lneume{vipp2su2} & \multicolumn{3}{l}{\texttt{vipp2su2} minus punctis} \\
+\lneume{vi>} & \texttt{vi>} & \texttt{L78H} & in\\
+\lneume{vi>1} & \texttt{vi>1} \textit{Cf.} \lneume{vi>1lsa2lsc8} & \multicolumn{3}{l}{\texttt{vi>1lsa2lsc8} minus letters} \\
+\lneume{vi>2} & \texttt{vi>2} & \texttt{L82O} & nobiscum\\
+\lneume{vilst1} & \texttt{vilst1} & \texttt{L78H} & meam\\
+\lneume{vilst2} & \texttt{vilst2} & \texttt{L95D} & meus\\
+\lneume{vilst9} & \texttt{vilst9} & \texttt{L105A} & quaeritis,\\
+\lneume{vilss1} & \texttt{vilss1} & \texttt{L103P} & Alleluia.\\
+\lneume{vilss2} & \texttt{vilss2} & \texttt{L95D} & avertas\\
+\lneume{vilsst1} & \texttt{vilsst1} & \texttt{L103P} & Alleluia.\\
+\lneume{vilst2lsa8} & \texttt{vilst2lsa8} & \texttt{L95D} & eius.\\
+\lneume{vi>lsa6} & \texttt{vi>lsa6} & \texttt{L78H} & testamenti\\
+\lneume{vi>lsc6} & \texttt{vi>lsc6} & \texttt{L56D} & adiuvandum\\
+\lneume{vi>1lsa2lsc8} & \texttt{vi>1lsa2lsc8} & \texttt{L126F} & loquentes\\ \hline
+& \multicolumn{3}{l}{\textbf{tractulus}} & \\
+\lneume{ta} & \texttt{ta} & \texttt{L24T} & tuam.\\
+\lneume{ta>} & \texttt{ta>} & \texttt{L78H} & dicit\\
+\lneume{ta>1} & \texttt{ta>1} & \texttt{L82O} & mandatis\\
+\lneume{ta>2} & \texttt{ta>2} & \texttt{L90D} & sancto\\
+\lneume{ta>lsnl2} & \texttt{ta>lsnl2} & \texttt{L45R} & dominentur\\
+\lneume{ta>2lsc2} & \texttt{ta>2lsc2} & \texttt{L90D} & Libera\\ \hline
+& \multicolumn{3}{l}{\textbf{pes}} & \\
+\lneume{pe} & \texttt{pe} & \texttt{L78H} & commemorationem\\
+\lneume{peG} & \texttt{peG} & \texttt{L78H} & vobis\\
+\lneume{pe>} & \texttt{pe>} & \texttt{L95D} & exaudi\\
+\lneume{pe>1} & \texttt{pe>1} & \texttt{L78H} & sanguine\\
+\lneume{peG1} & \texttt{peG1} & \texttt{L67S} & tua,\\
+\lneume{pelsa2} & \texttt{pelsa2} & \texttt{L82O} & peccavimus\\
+\lneume{pelsc2} & \texttt{pelsc2} & \texttt{L67S} & tuus,\\
+\lneume{pelsl2} & \texttt{pelsl2} & \texttt{L43L} & iustitiam\\
+\lneume{pelsm2} & \texttt{pelsm2} & \texttt{L81E} & meam,\\
+\lneume{pelsn2} & \texttt{pelsn2} & \texttt{L149C} & qui\\
+\lneume{pelsn3} & \texttt{pelsn3} & \texttt{L125S} & replevit\\
+\lneume{pelsst1} & \texttt{pelsst1} & \texttt{L103P} & immolatum\\
+\lneume{pelsst1lsm4} & \texttt{pelsst1lsm4} & \texttt{L44I} & Elevatio\\
+\lneume{pelst2} & \texttt{pelst2} & \texttt{L103H} & saeculum\\
+\lneume{peGlsf1} & \texttt{peGlsf1} & \texttt{L67S} & non\\
+\lneume{peGlsa6} & \texttt{peGlsa6} & \texttt{L109P} & vocavit\\
+\lneume{pe>1lsa6} & \texttt{pe>1lsa6} & \texttt{L114V} & alleluia\\ \hline
+& \multicolumn{3}{l}{\textbf{porrectus}} & \\
+\lneume{po} & \texttt{po} & \texttt{L78H} & facite\\
+\lneume{poG} & \texttt{poG} & \texttt{L64D} & mecum\\
+\lneume{poM} & \texttt{poM} \textit{Cf.} \lneume{poMsun1} & \multicolumn{3}{l}{\texttt{poMsun1} minus uncinus} \\
+\lneume{po>} & \texttt{po>} \textit{Cf.} \lneume{po>pp2} & \multicolumn{3}{l}{\texttt{po>pp2} minus prepunctis} \\
+\lneume{po>1} & \texttt{po>1} & \texttt{L81E} & descendentibus\\
+\lneume{polsf2lst3} & \texttt{polsf2lst3} & \texttt{L95D} & meus\\
+\lneume{polst2} & \texttt{polst2} & \texttt{L103H} & saeculum\\ \hline
+& \multicolumn{3}{l}{\textbf{clivis}} & \\
+\lneume{cl} & \texttt{cl} \textit{Cf.} \lneume{cllsn9} & \multicolumn{3}{l}{\texttt{cllsn9} minus letter} \\
+\lneume{clG} & \texttt{clG} & \texttt{L78H} & hoc\\
+\lneume{clG1} & \texttt{clG1} & \texttt{L105N} & accedens\\
+\lneume{clGlsa5} & \texttt{clGlsa5} & \texttt{L82O} & obedivimus\\
+\lneume{clGlsnl2} & \texttt{clGlsnl2} & \texttt{L44I} & Elevatio\\
+\lneume{clM} & \texttt{clM} & \texttt{L78H} & quotiescumque\\
+\lneume{cl>} & \texttt{cl>} & \texttt{L75V} & monumentum\\
+\lneume{cl>1} & \texttt{cl>1} & \texttt{L34E} & locum\\
+\lneume{cllshn8} & \texttt{cllshn8} & \texttt{L64O} & imples\\
+\lneume{cllsn8} & \texttt{cllsn8} & \texttt{L95D} & velociter\\
+\lneume{cllsn9} & \texttt{cllsn9} & \texttt{L67S} & tua,\\
+\lneume{cllsst8} & \texttt{cllsst8} & \texttt{L64O} & imples\\
+\lneume{cllst9} & \texttt{cllst9} & \texttt{L95D} & tempus\\
+\lneume{cllsst6} & \texttt{cllsst6} & \texttt{L43L} & mirabilia\\
+\lneume{cllsm2} & \texttt{cllsm2} & \texttt{L45R} & nobis\\
+\lneume{cllsnt2} & \texttt{cllsnt2} & \texttt{L92E} & me\\
+\lneume{cl>lsa5} & \texttt{cl>lsa5} & \texttt{L71D} & effundam\\ \hline
+& \multicolumn{3}{l}{\textbf{oriscus-clivis}} & \\
+\lneume{oc} & \texttt{oc} & \texttt{L78H} & sanguine\\
+\lneume{ocG} & \texttt{ocG} & \texttt{L56D} & Deus\\
+\lneume{ocG1} & \texttt{ocG1} & \texttt{L11Q} & veniet\\
+\lneume{ocGlsa5} & \texttt{ocGlsa5} & \texttt{L103T} & resurgeret\\
+\lneume{oclst8} & \texttt{oclst8} & \texttt{L95D} & Domine\\ \hline
+& \multicolumn{3}{l}{\textbf{torculus}} & \\
+\lneume{to} & \texttt{to} & \texttt{L78H} & pro\\
+\lneume{toS} & \texttt{toS} & \texttt{L56S} & populum\\
+\lneume{toS1} & \texttt{toS1} & \texttt{L68N} & Nemo\\
+\lneume{toG} & \texttt{toG} & \texttt{L78H} & tradetur\\
+\lneume{to>} & \texttt{to>} & \texttt{L67S} & mortis\\
+\lneume{to~} & \texttt{to~} & \texttt{L37M} & et\\
+\lneume{tolsf4} & \texttt{tolsf4} & \texttt{L95D} & tempus\\
+\lneume{tolsn8} & \texttt{tolsn8} & \texttt{L44I} & vespertinum.\\
+\lneume{tolst9} & \texttt{tolst9} & \texttt{L103P} & Alleluia.\\
+\lneume{tolsth8} & \texttt{tolsth8} & \texttt{L56I} & Dominus,\\
+\lneume{tolsnt2lst9} & \texttt{tolsnt2lst9} & \texttt{L92E} & me\\
+\lneume{toGlsa1lst8} & \texttt{toGlsa1lst8} & \texttt{L109P} & alleluia.\\
+\lneume{toGlsa5} & \texttt{toGlsa5} & \texttt{L68N} & condemnabo\\
+\lneume{toSlsa5} & \texttt{toSlsa5} & \texttt{L77S} & enim\\
+\lneume{to>lsa5} & \texttt{to>lsa5} & \texttt{L118E} & in\\
+\lneume{to>2lsa3} & \texttt{to>2lsa3} & \texttt{L67Q} & salientis\\
+\lneume{to>2lsc1lsa3} & \texttt{to>2lsc1lsa3} & \texttt{L104I} & terram\\ \hline
+& \multicolumn{3}{l}{\textbf{climacus}} & \\
+\lneume{ci} & \texttt{ci} & \texttt{L95D} & eius.\\
+\lneume{unsun2} & \texttt{unsun2} & \texttt{L82O} & da\\
+\lneume{unsun3} & \texttt{unsun3} & \texttt{L103P} & immolatus\\
+\lneume{unsux1} & \texttt{unsux1} & \texttt{L169A} & sanctum\\
+\lneume{unsun1su2} & \texttt{unsun1su2} & \texttt{L109P} & tenebris\\
+\lneume{pusu1sun1} & \texttt{pusu1sun1} & \texttt{L78H} & tradetur\\
+\lneume{pusu1sun2} & \texttt{pusu1sun2} & \texttt{L95D} & Sion\\
+\lneume{pusu2sun1} & \texttt{pusu2sun1} & \texttt{L95D} & eius.\\
+\lneume{visu1sun1} & \texttt{visu1sun1} & \texttt{L95D} & faciem\\
+\lneume{visu1sun2} & \texttt{visu1sun2} & \texttt{L40Q} & latere\\
+\lneume{visu1sun2lsa5} & \texttt{visu1sun2lsa5} & \texttt{L174D} & et\\
+\lneume{visu1sun2lsa6} & \texttt{visu1sun2lsa6} & \texttt{L174D} & et\\
+\lneume{visu1sun1su1} & \texttt{visu1sun1su1} \textit{Cf.} \lneume{visu1sun1su1lst6} & \multicolumn{3}{l}{\texttt{visu1sun1su1lst6} minus letter} \\
+\lneume{visu1sun1su1lst6} & \texttt{visu1sun1su1lst6} & \texttt{L105N} & descendit\\
+\lneume{visu1sun1su2} & \texttt{visu1sun1su2} \textit{Cf.} \lneume{visu1sun1su2lss1lst6} & \multicolumn{3}{l}{\texttt{visu1sun1su2lss1lst6} minus letters} \\
+\lneume{visu1sun1su2lss1lst6} & \texttt{visu1sun1su2lss1lst6} & \texttt{L168I} & Alleluia.\\
+\lneume{visu2} & \texttt{visu2} & \texttt{L95D} & misereberis\\
+\lneume{visun1su1sun1} & \texttt{visun1su1sun1} & \texttt{L60E} & conspectu\\
+\lneume{visun1su1sun1lst6} & \texttt{visun1su1sun1lst6} & \texttt{L35T} & virtutem\\
+\lneume{cilsf1} & \texttt{cilsf1} & \texttt{L95D} & Sion\\
+\lneume{cilsn8} & \texttt{cilsn8} & \texttt{L58A} & iniquis,\\
+\lneume{pusu1sun1lsf1} & \texttt{pusu1sun1lsf1} & \texttt{L95D} & mei\\
+\lneume{pusu1sun2lsa5} & \texttt{pusu1sun2lsa5} & \texttt{L67S} & timebo\\
+\lneume{pusu1sun1lst7} & \texttt{pusu1sun1lst7} & \texttt{L60E} & homo\\
+\lneume{pusu3} & \texttt{pusu3} & \texttt{L64O} & escam\\
+\lneume{pusu4} & \texttt{pusu4} & \texttt{L92E} & persequntur.\\
+\lneume{unsun2su1} & \texttt{unsun2su1} & \texttt{L64O} & escam\\
+\lneume{unsun1su1} & \texttt{unsun1su1} \textit{Cf.} \lneume{unsun1su1lst2lsc6} & \multicolumn{3}{l}{\texttt{unsun1su1lst2lsc6} minus letters} \\
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+\lneume{unsun1su1lst2lsc6} & \texttt{unsun1su1lst2lsc6} & \texttt{L11Q} & deducis\\
+\lneume{unsun2lsa5} & \texttt{unsun2lsa5} & \texttt{L19B} & mirabile\\
+\lneume{unsun3lsa3} & \texttt{unsun3lsa3} & \texttt{L24T} & gentes\\
+\lneume{unsun3lsa6} & \texttt{unsun3lsa6} & \texttt{L24T} & tuam.\\
+\lneume{unsun2su2} & \texttt{unsun2su2} & \texttt{L169A} & confitebor\\
+\lneume{un1sun2su2} & \texttt{un1sun2su2} & \texttt{L136A} & aeternam\\
+\lneume{un1sun1su1sun1lsa1lsc4} & \texttt{un1sun1su1sun1lsa1lsc4} & \texttt{L60E} & retrorsum\\
+\lneume{un1sun1su1sun1lsa3lsc6} & \texttt{un1sun1su1sun1lsa3lsc6} & \texttt{L60E} & retrorsum\\
+\lneume{un1sun1su2} & \texttt{un1sun1su2} \textit{Cf.} \lneume{un1sun1su2lsa5} & \multicolumn{3}{l}{\texttt{un1sun1su2lsa5} minus letter} \\
+\lneume{un1sun1su2lsa5} & \texttt{un1sun1su2lsa5} & \texttt{L107H} & Domini\\ \hline
+& \multicolumn{3}{l}{\textbf{scandicus}} & \\
+\lneume{sc} & \texttt{sc} \textit{Cf.} \lneume{sclst2} & \multicolumn{3}{l}{\texttt{sclst2} minus letter} \\
+\lneume{sc1} & \texttt{sc1} & \texttt{L82O} & quia\\
+\lneume{sclst2} & \texttt{sclst2} & \texttt{L78H} & quotiescumque\\
+\lneume{sc1lsc4} & \texttt{sc1lsc4} & \texttt{L109P} & vocavit\\ \hline
+& \multicolumn{3}{l}{\textbf{porrectus flexus}} & \\
+\lneume{pf} & \texttt{pf} & \texttt{L78H} & corpus\\
+\lneume{pf1} & \texttt{pf1} & \texttt{L95D} & exaudi\\
+\lneume{pf2} & \texttt{pf2} & \texttt{L101V} & Sorec,\\
+\lneume{pfS} & \texttt{pfS} & \texttt{L56D} & festina\\
+\lneume{pfM} & \texttt{pfM} \textit{Cf.} \lneume{pfMlsmd3} & \multicolumn{3}{l}{\texttt{pfMlsmd3} minus letter} \\
+\lneume{pfMlsmd3} & \texttt{pfMlsmd3} & \texttt{L81E} & meam,\\
+\lneume{pf>} & \texttt{pf>} & \texttt{L164D} & ad\\
+\lneume{pf>1} & \texttt{pf>1} & \texttt{L90D} & miserunt\\
+\lneume{pf>2} & \texttt{pf>2} & \texttt{L104I} & alleluia,\\
+\lneume{pf~} & \texttt{pf~} & \texttt{L95D} & clamor\\
+\lneume{pf~1} & \texttt{pf~1} & \texttt{L31D} & ad\\ \hline
+& \multicolumn{3}{l}{\textbf{pes subbipunctis}} & \\
+\lneume{tosu1} & \texttt{tosu1} & \texttt{L82O} & Domine\\
+\lneume{tosun1} & \texttt{tosun1} & \texttt{L95D} & fumus\\
+\lneume{tosun2} & \texttt{tosun2} & \texttt{L105N} & revolvit\\
+\lneume{vippn1su2} & \texttt{vippn1su2} & \texttt{L82O} & misericordiae\\
+\lneume{topp1su1} & \texttt{topp1su1} \textit{Cf.} \lneume{topp1su1lsa6} & \multicolumn{3}{l}{\texttt{topp1su1lsa6} minus letter} \\
+\lneume{topp1su1lsa6} & \texttt{topp1su1lsa6} & \texttt{L95D} & ad\\
+\lneume{pesu2} & \texttt{pesu2} \textit{Cf.} \lneume{pesu2lst3} & \multicolumn{3}{l}{\texttt{pesu2lst3} minus letter} \\
+\lneume{pesu2lst3} & \texttt{pesu2lst3} & \texttt{L152I} & eruas\\
+\lneume{pesun3} & \texttt{pesun3} \textit{Cf.} \lneume{pesun3lss1lsa3} & \multicolumn{3}{l}{\texttt{pesun3lss1lsa3} minus letters} \\
+\lneume{pesun3lss1lsa3} & \texttt{pesun3lss1lsa3} & \texttt{L67S} & medio\\
+\lneume{pesu2sun1} & \texttt{pesu2sun1} & \texttt{L24T} & terrae\\
+\lneume{tosun1lsa5} & \texttt{tosun1lsa5} & \texttt{L67S} & tua,\\
+\lneume{tosu1lsc5} & \texttt{tosu1lsc5} & \texttt{L19B} & venit\\
+\lneume{toSsun1lsa5} & \texttt{toSsun1lsa5} & \texttt{L138S} & luna\\
+\lneume{tosun1su1sun1} & \texttt{tosun1su1sun1} & \texttt{L33S} & venti.\\
+\lneume{tosun1su2lsn3lst6} & \texttt{tosun1su2lsn3lst6} & \texttt{L112D} & nomine\\
+\lneume{tosun2lsa6} & \texttt{tosun2lsa6} & \texttt{L123A} & alleluia.\\ \hline
+& \multicolumn{3}{l}{\textbf{scandicus flexus}} & \\
+\lneume{sf} & \texttt{sf} & \texttt{L78H} & meo\\
+\lneume{sfG} & \texttt{sfG} & \texttt{L33C} & eam.\\ \hline
+& \multicolumn{3}{l}{\textbf{torculus resupinus}} & \\
+\lneume{tr} & \texttt{tr} & \texttt{L78H} & sumitis\\
+\lneume{trS} & \texttt{trS} & \texttt{L95D} & Domine,\\
+\lneume{tr>} & \texttt{tr>} & \texttt{L64D} & diligerent\\
+\lneume{poppn1} & \texttt{poppn1} & \texttt{L82O} & vero\\
+\lneume{po>ppn1} & \texttt{po>ppn1} & \texttt{L82O} & secundum\\
+\lneume{po>pp2} & \texttt{po>pp2} & \texttt{L28G} & angeli,\\
+\lneume{trlst3lshp7} & \texttt{trlst3lshp7} & \texttt{L109P} & alleluia.\\
+\lneume{trlss1lss3} & \texttt{trlss1lss3} & \texttt{L103P} & Christus.\\
+\lneume{trSlsc1} & \texttt{trSlsc1} & \texttt{L103P} & nostrum\\ \hline
+& \multicolumn{3}{l}{\textbf{distropha}} & \\
+\lneume{ds} & \texttt{ds} \textit{Cf.} \lneume{dslst2} & \multicolumn{3}{l}{\texttt{dslst2} minus letter} \\
+\lneume{dslst2} & \texttt{dslst2} & \texttt{L95D} & meam\\
+\lneume{dslst8} & \texttt{dslst8} & \texttt{L71D} & effundam\\
+\lneume{ds1} & \texttt{ds1} \textit{Cf.} \lneume{ds1pp3} & \multicolumn{3}{l}{\texttt{ds1pp3} minus prepunctis} \\ \hline
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+& \multicolumn{3}{l}{\textbf{tristropha}} & \\
+\lneume{ts} & \texttt{ts} & \texttt{L82O} & fac\\
+\lneume{ts1} & \texttt{ts1} & \texttt{L76E} & Eripe\\
+\lneume{ts>} & \texttt{ts>} & \texttt{L56D} & adiuvandum\\
+\lneume{ts>1} & \texttt{ts>1} & \texttt{L103R} & alleluia\\
+\lneume{tslsa2} & \texttt{tslsa2} & \texttt{L13A} & tecum\\
+\lneume{tslsc2lst2} & \texttt{tslsc2lst2} & \texttt{L58A} & Domine,\\
+\lneume{ts>lsc2} & \texttt{ts>lsc2} & \texttt{L103R} & alleluia\\
+\lneume{ts>lsc6} & \texttt{ts>lsc6} & \texttt{L103T} & dum\\ \hline
+& \multicolumn{3}{l}{\textbf{trigonus}} & \\
+\lneume{tg} & \texttt{tg} & \texttt{L67S} & tua,\\
+\lneume{tglsn8} & \texttt{tglsn8} & \texttt{L67S} & mala\\
+\lneume{tglst9} & \texttt{tglst9} & \texttt{L103R} & alleluia\\ \hline
+& \multicolumn{3}{l}{\textbf{bivirga}} & \\
+\lneume{bv} & \texttt{bv} & \texttt{L82O} & Domine\\
+\lneume{bvlsa2} & \texttt{bvlsa2} & \texttt{L82O} & nobis\\ \hline
+& \multicolumn{3}{l}{\textbf{trivirga}} & \\
+\lneume{tv} & \texttt{tv} & \texttt{L103H} & bonus\\
+\lneume{tvlsm2} & \texttt{tvlsm2} & \texttt{L44I} & Elevatio\\ \hline
+& \multicolumn{3}{l}{\textbf{pressus}} & \\
+\lneume{pr} & \texttt{pr} & \texttt{L95D} & veniat\\
+\lneume{pi} & \texttt{pi} \textit{Cf.} \lneume{cl1!pi} & \multicolumn{3}{l}{\texttt{cl1!pi} minus clivis} \\ \hline
+& \multicolumn{3}{l}{\textbf{virga strata}} & \\
+\lneume{vs} & \texttt{vs} & \texttt{L64D} & Deus\\
+\lneume{vsG} & \texttt{vsG} & \texttt{L64D} & suavis\\ \hline
+& \multicolumn{3}{l}{\textbf{oriscus}} & \\
+\lneume{or} & \texttt{or} \textit{Cf.} \lneume{ocG} & \multicolumn{3}{l}{\texttt{ocG} minus uncinus} \\
+\lneume{orlst3} & \texttt{orlst3} & \texttt{L103P} & Alleluia.\\
+\lneume{or1} & \texttt{or1} \textit{Cf.} \lneume{ocG1} & \multicolumn{3}{l}{\texttt{ocG1} minus uncinus} \\
+\lneume{or>} & \texttt{or>} \textit{Cf.} \lneume{or>lsa1} & \multicolumn{3}{l}{\texttt{or>lsa1} minus letter} \\
+\lneume{or>lsa1} & \texttt{or>lsa1} & \texttt{L103R} & alleluia,\\ \hline
+& \multicolumn{3}{l}{\textbf{salicus}} & \\
+\lneume{sa} & \texttt{sa} & \texttt{L82O} & nomini\\
+\lneume{sa1} & \texttt{sa1} & \texttt{L78H} & novi\\
+\lneume{sa>1} & \texttt{sa>1} & \texttt{L9E} & sanctos\\
+\lneume{salsc4} & \texttt{salsc4} & \texttt{L93G} & exsurge\\
+\lneume{salsc6} & \texttt{salsc6} & \texttt{L93G} & autem,\\
+\lneume{sa1lsc4} & \texttt{sa1lsc4} & \texttt{L81E} & salvasti\\
+\lneume{sa1lsc6} & \texttt{sa1lsc6} & \texttt{L113E} & bonus,\\ \hline
+& \multicolumn{3}{l}{\textbf{pes quassus}} & \\
+\lneume{pq} & \texttt{pq} & \texttt{L103H} & eius.\\
+\lneume{pq1} & \texttt{pq1} & \texttt{L169A} & Alleluia. & \texttt{L174T}\\ \hline
+& \multicolumn{3}{l}{\textbf{quilisma}} & \\
+\lneume{ql} & \texttt{ql} \textit{Cf.} \lneume{qllsst2} & \multicolumn{3}{l}{\texttt{qllsst2} minus letter} \\
+\lneume{qllsst2} & \texttt{qllsst2} & \texttt{L53C} & Domine,\\
+\lneume{ql>} & \texttt{ql>} \textit{Cf.} \lneume{ql>ppn1} & \multicolumn{3}{l}{\texttt{ql>ppn1} minus uncinus} \\ \hline
+& \multicolumn{3}{l}{\textbf{pes stratus}} & \\
+\lneume{pt1} & \texttt{pt1} & \texttt{L13A} & ventris\\
+\lneume{pt2} & \texttt{pt2} & \texttt{L8U} & confundentur,\\
+\lneume{pt3} & \texttt{pt3} & \texttt{L94C} & Domine.\\ \hline
+& \multicolumn{3}{l}{\textbf{subpunctis}} & \\
+\lneume{su1} & \texttt{su1} \textit{Cf.} \lneume{cl1!pi!tosu1} & \multicolumn{2}{l}{\texttt{cl1!pi!tosu1}}\\
+\lneume{su1sun1} & \texttt{su1sun1} \textit{Cf.} \lneume{cl!toppz1su1sun1} & \multicolumn{2}{l}{\texttt{cl!toppz1su1sun1}}\\
+\lneume{su1sun1su1} & \texttt{su1sun1su1} \textit{Cf.} \lneume{visu1sun1su1lst6} & \multicolumn{2}{l}{\texttt{visu1sun1su1lst6}}\\
+\lneume{su1sun1su2} & \texttt{su1sun1su2} \textit{Cf.} \lneume{visu1sun1su2lss1lst6} & \multicolumn{2}{l}{\texttt{visu1sun1su2lss1lst6}}\\
+\lneume{su1sun2} & \texttt{su1sun2} \textit{Cf.} \lneume{pusu1sun2} & \multicolumn{2}{l}{\texttt{pusu1sun2}}\\
+\lneume{su1sux1} & \texttt{su1sux1} \textit{Cf.} \lneume{popp2su1sux1} & \multicolumn{2}{l}{\texttt{popp2su1sux1}}\\
+\lneume{su2} & \texttt{su2} \textit{Cf.} \lneume{cl1!pi!pesu2} & \multicolumn{2}{l}{\texttt{cl1!pi!pesu2}}\\
+\lneume{su2sun1} & \texttt{su2sun1} \textit{Cf.} \lneume{clsu2sun1lst6} & \multicolumn{2}{l}{\texttt{clsu2sun1lst6}}\\
+\lneume{su3} & \texttt{su3} \textit{Cf.} \lneume{pusu3} & \multicolumn{2}{l}{\texttt{pusu3}}\\
+\lneume{su4} & \texttt{su4} \textit{Cf.} \lneume{pusu4} & \multicolumn{2}{l}{\texttt{pusu4}}\\
+\lneume{sun1} & \texttt{sun1} \textit{Cf.} \lneume{cl1!pi!orsun1} & \multicolumn{2}{l}{\texttt{cl1!pi!orsun1}}\\
+\lneume{sun1su1} & \texttt{sun1su1} \textit{Cf.} \lneume{unsun1su1lst2lsc6} & \multicolumn{2}{l}{\texttt{unsun1su1lst2lsc6}}\\
+\lneume{sun1su1sun1} & \texttt{sun1su1sun1} \textit{Cf.} \lneume{visun1su1sun1} & \multicolumn{2}{l}{\texttt{visun1su1sun1}}\\
+\lneume{sun1su2} & \texttt{sun1su2} \textit{Cf.} \lneume{qlppn1sun1su2} & \multicolumn{2}{l}{\texttt{qlppn1sun1su2}}\\
+\lneume{sun2} & \texttt{sun2} \textit{Cf.} \lneume{qlsun2} & \multicolumn{2}{l}{\texttt{qlsun2}}\\
+\lneume{sun2su1} & \texttt{sun2su1} \textit{Cf.} \lneume{unsun2su1} & \multicolumn{2}{l}{\texttt{unsun2su1}}\\
+\lneume{sun2su2} & \texttt{sun2su2} \textit{Cf.} \lneume{unsun2su2} & \multicolumn{2}{l}{\texttt{unsun2su2}}\\
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+\lneume{sun3} & \texttt{sun3} \textit{Cf.} \lneume{unsun3} & \multicolumn{2}{l}{\texttt{unsun3}}\\
+\lneume{sun4} & \texttt{sun4} \textit{Cf.} \lneume{bvsun4} & \multicolumn{2}{l}{\texttt{bvsun4}}\\
+\lneume{sux1} & \texttt{sux1} \textit{Cf.} \lneume{posux1} & \multicolumn{2}{l}{\texttt{posux1}}\\ \hline
+& \multicolumn{3}{l}{\textbf{prepunctis}} & \\
+\lneume{pp1} & \texttt{pp1} \textit{Cf.} \lneume{pupp1su2} & \multicolumn{2}{l}{\texttt{pupp1su2}}\\
+\lneume{pp2} & \texttt{pp2} \textit{Cf.} \lneume{cl1!pipp2} & \multicolumn{2}{l}{\texttt{cl1!pipp2}}\\
+\lneume{pp2ppn1} & \texttt{pp2ppn1} \textit{Cf.} \lneume{vipp2ppn1} & \multicolumn{2}{l}{\texttt{vipp2ppn1}}\\
+\lneume{pp3} & \texttt{pp3} \textit{Cf.} \lneume{vipp3lsn3} & \multicolumn{2}{l}{\texttt{vipp3lsn3}}\\
+\lneume{pp4} & \texttt{pp4} \textit{Cf.} \lneume{vipp4lst2} & \multicolumn{2}{l}{\texttt{vipp4lst2}}\\
+\lneume{ppn1} & \texttt{ppn1} \textit{Cf.} \lneume{po>ppn1} & \multicolumn{2}{l}{\texttt{po>ppn1}}\\
+\lneume{ppn1pp1} & \texttt{ppn1pp1} \textit{Cf.} \lneume{vippn1pp1} & \multicolumn{2}{l}{\texttt{vippn1pp1}}\\
+\lneume{ppn1pp1ppz1} & \texttt{ppn1pp1ppz1} \textit{Cf.} \lneume{vippn1pp1ppz1lst8} & \multicolumn{2}{l}{\texttt{vippn1pp1ppz1lst8}}\\
+\lneume{ppn1ppq1} & \texttt{ppn1ppq1} \textit{Cf.} \lneume{vippn1ppq1} & \multicolumn{2}{l}{\texttt{vippn1ppq1}}\\
+\lneume{ppn1ppz1} & \texttt{ppn1ppz1} \textit{Cf.} \lneume{ql!cl!orppn1ppz1} & \multicolumn{2}{l}{\texttt{ql!cl!orppn1ppz1}}\\
+\lneume{ppn1ppz1ppq1} & \texttt{ppn1ppz1ppq1} \textit{Cf.} \lneume{vi>1ppn1ppz1ppq1} & \multicolumn{2}{l}{\texttt{vi>1ppn1ppz1ppq1}}\\
+\lneume{ppn2} & \texttt{ppn2} \textit{Cf.} \lneume{vippn2lst3lsa4} & \multicolumn{2}{l}{\texttt{vippn2lst3lsa4}}\\
+\lneume{ppn2ppz1} & \texttt{ppn2ppz1} \textit{Cf.} \lneume{vippn2ppz1sun1lsa5} & \multicolumn{2}{l}{\texttt{vippn2ppz1sun1lsa5}}\\
+\lneume{ppn2ppz1ppq1} & \texttt{ppn2ppz1ppq1} \textit{Cf.} \lneume{vippn2ppz1ppq1lst2lsa8} & \multicolumn{2}{l}{\texttt{vippn2ppz1ppq1lst2lsa8}}\\
+\lneume{ppn3} & \texttt{ppn3} \textit{Cf.} \lneume{unppn3sun1lsa5} & \multicolumn{2}{l}{\texttt{unppn3sun1lsa5}}\\
+\lneume{ppn3ppz1} & \texttt{ppn3ppz1} \textit{Cf.} \lneume{toppn3ppz1sun1} & \multicolumn{2}{l}{\texttt{toppn3ppz1sun1}}\\
+\lneume{ppn4} & \texttt{ppn4} \textit{Cf.} \lneume{vippn4} & \multicolumn{2}{l}{\texttt{vippn4}}\\
+\lneume{ppq1} & \texttt{ppq1} \textit{Cf.} \lneume{vippq1} & \multicolumn{2}{l}{\texttt{vippq1}}\\
+\lneume{ppz1} & \texttt{ppz1} \textit{Cf.} \lneume{puppz1su2} & \multicolumn{2}{l}{\texttt{puppz1su2}}\\
+\lneume{ppz1ppq1} & \texttt{ppz1ppq1} \textit{Cf.} \lneume{vi>1ppz1ppq1} & \multicolumn{2}{l}{\texttt{vi>1ppz1ppq1}}\\ \hline
+& \multicolumn{3}{l}{\textbf{combined glyphs}} & \\
+\lneume{pe!ta} & \texttt{pe!ta} \textit{Cf.} \lneume{pe!talsa2} & \multicolumn{3}{l}{\texttt{pe!talsa2} minus letter} \\
+\lneume{pe!talsa2} & \texttt{pe!talsa2} & \texttt{L82O} & iudicio\\
+\lneume{pe!talsc1lst2} & \texttt{pe!talsc1lst2} & \texttt{L114C} & revelavit\\
+\lneume{pe!un} & \texttt{pe!un} \textit{Cf.} \lneume{pe!unlsc2} & \multicolumn{3}{l}{\texttt{pe!unlsc2} minus letter} \\
+\lneume{pe!unlsc2} & \texttt{pe!unlsc2} & \texttt{L95D} & meam\\
+\lneume{pe!pu} & \texttt{pe!pu} & \texttt{L95D} & eius.\\
+\lneume{pe!ta>2} & \texttt{pe!ta>2} \textit{Cf.} \lneume{pe!ta>2lsa2} & \multicolumn{3}{l}{\texttt{pe!ta>2lsa2} minus letter} \\
+\lneume{pe!ta>2lsa2} & \texttt{pe!ta>2lsa2} & \texttt{L60E} & gentes\\
+\lneume{pe!or} & \texttt{pe!or} & \texttt{L93G} & induebam\\
+\lneume{qlppn1sun1} & \texttt{qlppn1sun1} & \texttt{L53C} & Domino,\\
+\lneume{qlppn1sun1su2} & \texttt{qlppn1sun1su2} & \texttt{L82O} & tibi\\
+\lneume{qlppn1su1sun2} & \texttt{qlppn1su1sun2} & \texttt{L95D} & frixorio\\
+\lneume{qlppn1su2} & \texttt{qlppn1su2} \textit{Cf.} \lneume{qlppn1su2lsnl1} & \multicolumn{3}{l}{\texttt{qlppn1su2lsnl1} minus letters} \\
+\lneume{qlppn1su2lsnl1} & \texttt{qlppn1su2lsnl1} & \texttt{L75V} & mortuus.\\
+\lneume{qlppn1sun1lsc5} & \texttt{qlppn1sun1lsc5} & \texttt{L54B} & quoniam\\
+\lneume{qlppn1su1sun1} & \texttt{qlppn1su1sun1} & \texttt{L107H} & fecit\\
+\lneume{qlsu1sun1} & \texttt{qlsu1sun1} & \texttt{L43L} & tua\\
+\lneume{qlsu2} & \texttt{qlsu2} & \texttt{L67S} & tua,\\
+\lneume{qlsux1} & \texttt{qlsux1} & \texttt{L53C} & quoniam\\
+\lneume{qlsun1su2} & \texttt{qlsun1su2} & \texttt{L44I} & mearum\\
+\lneume{qlsun1} & \texttt{qlsun1} \textit{Cf.} \lneume{qlsun1lsa5} & \multicolumn{3}{l}{\texttt{qlsun1lsa5} minus letter} \\
+\lneume{qlsun1lsa5} & \texttt{qlsun1lsa5} & \texttt{L40Q} & millia\\
+\lneume{qlsun2} & \texttt{qlsun2} & \texttt{L122N} & alleluia.\\
+\lneume{qlsun2lsa5} & \texttt{qlsun2lsa5} & \texttt{L125U} & alleluia.\\
+\lneume{ql!po} & \texttt{ql!po} & \texttt{L82O} & obedivimus\\
+\lneume{ql!poppz1} & \texttt{ql!poppz1} \textit{Cf.} \lneume{ql!poppz1lsa3} & \multicolumn{3}{l}{\texttt{ql!poppz1lsa3} minus letter} \\
+\lneume{ql!poppz1lsa3} & \texttt{ql!poppz1lsa3} & \texttt{L95D} & Domine,\\
+\lneume{ql!poppn1} & \texttt{ql!poppn1} & \texttt{L43L} & Domine,\\
+\lneume{ql!posu1sun1} & \texttt{ql!posu1sun1} \textit{Cf.} \lneume{ql!poppz1su1sun1} & \multicolumn{3}{l}{\texttt{ql!poppz1su1sun1} minus uncinus} \\
+\lneume{ql!poppz1su1sun1} & \texttt{ql!poppz1su1sun1} & \texttt{L43L} & mandata\\
+\lneume{ql!posun1} & \texttt{ql!posun1} \textit{Cf.} \lneume{ql!poppn1sun1} & \multicolumn{3}{l}{\texttt{ql!poppn1sun1} minus uncinus} \\
+\lneume{ql!poppn1sun1} & \texttt{ql!poppn1sun1} & \texttt{L61I} & Iustitiae\\
+\lneume{ql!poppn1lst2} & \texttt{ql!poppn1lst2} & \texttt{L103P} & Alleluia.\\
+\lneume{ql!posux1} & \texttt{ql!posux1} \textit{Cf.} \lneume{ql!poppn1sux1} & \multicolumn{3}{l}{\texttt{ql!poppn1sux1} minus uncinus} \\
+\lneume{ql!poppn1sux1} & \texttt{ql!poppn1sux1} & \texttt{L61I} & corda,\\
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+\lneume{ql!polsm1} & \texttt{ql!polsm1} & \texttt{L103P} & immolatus\\
+\lneume{ql!polsa1lsa3lsa9} & \texttt{ql!polsa1lsa3lsa9} & \texttt{L56P} & nostris\\
+\lneume{ql!po>} & \texttt{ql!po>} \textit{Cf.} \lneume{ql!po>ppn1} & \multicolumn{3}{l}{\texttt{ql!po>ppn1} minus uncinus} \\
+\lneume{ql!po>ppn1} & \texttt{ql!po>ppn1} & \texttt{L60A} & ancillae\\
+\lneume{ql!cl} & \texttt{ql!cl} & \texttt{L43L} & doceas\\
+\lneume{ql!cl!to} & \texttt{ql!cl!to} \textit{Cf.} \lneume{ql!cl!tolst6} & \multicolumn{3}{l}{\texttt{ql!cl!tolst6} minus letter} \\
+\lneume{ql!cl!tolst6} & \texttt{ql!cl!tolst6} & \texttt{L95D} & me.\\
+\lneume{ql!cl!to!or} & \texttt{ql!cl!to!or} \textit{Cf.} \lneume{ql!cl!to!orsun1} & \multicolumn{3}{l}{\texttt{ql!cl!to!orsun1} minus uncinus} \\
+\lneume{ql!cl!to!orsun1} & \texttt{ql!cl!to!orsun1} & \texttt{L19B} & nobis.\\
+\lneume{ql!cl!toppn1} & \texttt{ql!cl!toppn1} & \texttt{L72B} & vitam,\\
+\lneume{ql!cl!tosu3} & \texttt{ql!cl!tosu3} \textit{Cf.} \lneume{ql!cl!tosu3lst6} & \multicolumn{3}{l}{\texttt{ql!cl!tosu3lst6} minus letter} \\
+\lneume{ql!cl!tosu3lst6} & \texttt{ql!cl!tosu3lst6} & \texttt{L82T} & hostias,\\
+\lneume{ql!cl!or} & \texttt{ql!cl!or} \textit{Cf.} \lneume{ql!cl!orppn1ppz1} & \multicolumn{3}{l}{\texttt{ql!cl!orppn1ppz1} minus uncinus \& virga} \\
+\lneume{ql!cl!orppn1ppz1} & \texttt{ql!cl!orppn1ppz1} & \texttt{L109P} & Populus\\
+\lneume{ql!cl!tr>} & \texttt{ql!cl!tr>} \textit{Cf.} \lneume{ql!cl!tr>ppz1} & \multicolumn{3}{l}{\texttt{ql!cl!tr>ppz1} minus virga} \\
+\lneume{ql!cl!tr>ppz1} & \texttt{ql!cl!tr>ppz1} & \texttt{L54B} & vias\\
+\lneume{ql!clppn1} & \texttt{ql!clppn1} & \texttt{L54B} & a\\
+\lneume{qlppn1} & \texttt{qlppn1} & \texttt{L82O} & nomini\\
+\lneume{qlppn1ppz1} & \texttt{qlppn1ppz1} & \texttt{L82O} & gloriam\\
+\lneume{qlppn1ppz1lst2} & \texttt{qlppn1ppz1lst2} & \texttt{L82O} & da\\
+\lneume{qlppn1ppz1sun1} & \texttt{qlppn1ppz1sun1} \textit{Cf.} \lneume{qlppn1ppz1sun1lsa5} & \multicolumn{3}{l}{\texttt{qlppn1ppz1sun1lsa5} minus letter} \\
+\lneume{qlppn1ppz1sun1lsa5} & \texttt{qlppn1ppz1sun1lsa5} & \texttt{L54B} & mihi\\
+\lneume{qlppn1ppz1su1sun1} & \texttt{qlppn1ppz1su1sun1} & \texttt{L43I} & dominorum\\
+\lneume{qlppn2sun1} & \texttt{qlppn2sun1} \textit{Cf.} \lneume{qlppn2sun1lsa5} & \multicolumn{3}{l}{\texttt{qlppn2sun1lsa5} minus letter} \\
+\lneume{qlppn2sun1lsa5} & \texttt{qlppn2sun1lsa5} & \texttt{L53C} & Beati\\
+\lneume{qlppn2sun2} & \texttt{qlppn2sun2} \textit{Cf.} \lneume{qlppn2sun2lsa5lsa5} & \multicolumn{3}{l}{\texttt{qlppn2sun2lsa5lsa5} minus letters} \\
+\lneume{qlppn2sun2lsa5lsa5} & \texttt{qlppn2sun2lsa5lsa5} & \texttt{L122V} & sic\\
+\lneume{qlppz1su2} & \texttt{qlppz1su2} & \texttt{L40Q} & draconem.\\
+\lneume{qlppz1su1sun1} & \texttt{qlppz1su1sun1} & \texttt{L53C} & nos\\
+\lneume{ql>ppn1} & \texttt{ql>ppn1} & \texttt{L95D} & confrixa\\
+\lneume{ql>ppn1lsc3} & \texttt{ql>ppn1lsc3} & \texttt{L90D} & speraverunt\\
+\lneume{popp2} & \texttt{popp2} & \texttt{L82O} & multitudinem\\
+\lneume{popp2su1sux1} & \texttt{popp2su1sux1} & \texttt{L8U} & confundentur,\\
+\lneume{posux1} & \texttt{posux1} & \texttt{L20P} & eius\\
+\lneume{posux1lsa5} & \texttt{posux1lsa5} & \texttt{L114V} & alleluia,\\
+\lneume{posun1lsa5} & \texttt{posun1lsa5} & \texttt{L123A} & alleluia.\\
+\lneume{poMsun1} & \texttt{poMsun1} & \texttt{L81E} & meos\\
+\lneume{posu1sun1} & \texttt{posu1sun1} & \texttt{L123E} & alleluia.\\
+\lneume{vippn1su1} & \texttt{vippn1su1} & \texttt{L56D} & Deus\\
+\lneume{vippn1sux1} & \texttt{vippn1sux1} & \texttt{L53C} & Memento\\
+\lneume{vippn1su1sun1} & \texttt{vippn1su1sun1} & \texttt{L45R} & tuae,\\
+\lneume{vippn1su1sun1lst2} & \texttt{vippn1su1sun1lst2} & \texttt{L95D} & Domine,\\
+\lneume{vippn2sun1} & \texttt{vippn2sun1} \textit{Cf.} \lneume{vippn2sun1lsa4} & \multicolumn{3}{l}{\texttt{vippn2sun1lsa4} minus letter} \\
+\lneume{vippn2sun1lsa4} & \texttt{vippn2sun1lsa4} & \texttt{L44I} & mea\\
+\lneume{vippn2} & \texttt{vippn2} \textit{Cf.} \lneume{vippn2lsa4} & \multicolumn{3}{l}{\texttt{vippn2lsa4} minus letter} \\
+\lneume{vippn2lsc4} & \texttt{vippn2lsc4} & \texttt{L56D} & quaerunt\\
+\lneume{vippn2lsa4} & \texttt{vippn2lsa4} & \texttt{L44I} & Elevatio\\
+\lneume{vippn2lst3lsa4} & \texttt{vippn2lst3lsa4} & \texttt{L103P} & Alleluia.\\
+\lneume{vippn3} & \texttt{vippn3} & \texttt{L38I} & Domino,\\
+\lneume{vippn4} & \texttt{vippn4} & \texttt{L60E} & homo\\
+\lneume{vipp2ppn1} & \texttt{vipp2ppn1} & \texttt{L13A} & gratia\\
+\lneume{cl!pe} & \texttt{cl!pe} \textit{Cf.} \lneume{cl!pelsc2} & \multicolumn{3}{l}{\texttt{cl!pelsc2} minus letter} \\
+\lneume{cl!pelst2} & \texttt{cl!pelst2} & \texttt{L95D} & sum\\
+\lneume{cl!pelsc2} & \texttt{cl!pelsc2} & \texttt{L105A} & Domini\\
+\lneume{cl!pelsn7} & \texttt{cl!pelsn7} & \texttt{L103H} & ea.\\
+\lneume{vipp2su2} & \texttt{vipp2su2} & \texttt{L43L} & mihi\\
+\lneume{vipp2sun1lsa5} & \texttt{vipp2sun1lsa5} & \texttt{L168L} & eum\\
+\lneume{vipp3} & \texttt{vipp3} \textit{Cf.} \lneume{vipp3lsn3} & \multicolumn{3}{l}{\texttt{vipp3lsn3} minus letter} \\
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+\lneume{vipp3lsn3} & \texttt{vipp3lsn3} & \texttt{L152S} & Sicut\\
+\lneume{vippn1pp1} & \texttt{vippn1pp1} & \texttt{L11Q} & Israel,\\
+\lneume{vippn1pp1su1sun2} & \texttt{vippn1pp1su1sun2} & \texttt{L40Q} & volante\\
+\lneume{vippn3su4} & \texttt{vippn3su4} & \texttt{L173D} & Alleluia.\\
+\lneume{vipp4} & \texttt{vipp4} \textit{Cf.} \lneume{vipp4lst2} & \multicolumn{3}{l}{\texttt{vipp4lst2} minus letter} \\
+\lneume{vipp4lst2} & \texttt{vipp4lst2} & \texttt{L13A} & Ave\\
+\lneume{vippz1ppq1} & \texttt{vippz1ppq1} & \texttt{L40Q} & lapidem\\
+\lneume{vippn1ppq1} & \texttt{vippn1ppq1} & \texttt{L33S} & venti.\\
+\lneume{vippn1ppz1ppq1} & \texttt{vippn1ppz1ppq1} & \texttt{L101V} & Israel\\
+\lneume{vippn1pp1ppz1} & \texttt{vippn1pp1ppz1} \textit{Cf.} \lneume{vippn1pp1ppz1lst8} & \multicolumn{3}{l}{\texttt{vippn1pp1ppz1lst8} minus letter} \\
+\lneume{vippn1pp1ppz1lst8} & \texttt{vippn1pp1ppz1lst8} & \texttt{L25M} & ore\\
+\lneume{vippn2ppz1ppq1} & \texttt{vippn2ppz1ppq1} \textit{Cf.} \lneume{vippn2ppz1ppq1lst2lsa8} & \multicolumn{3}{l}{\texttt{vippn2ppz1ppq1lst2lsa8} minus} \\
+& & \multicolumn{3}{r}{letters} \\
+\lneume{vippn2ppz1ppq1lst2lsa8} & \texttt{vippn2ppz1ppq1lst2lsa8} & \texttt{L169A} & confitebor\\
+\lneume{vippn2ppz1sun1lsa5} & \texttt{vippn2ppz1sun1lsa5} & \texttt{L173D} & Alleluia.\\
+\lneume{vippn3sun1lsa5} & \texttt{vippn3sun1lsa5} & \texttt{L173D} & Alleluia.\\
+\lneume{vippq1} & \texttt{vippq1} & \texttt{L168S} & regna.\\
+\lneume{cl1!or} & \texttt{cl1!or} \textit{Cf.} \lneume{cl1!orlss3} & \multicolumn{3}{l}{\texttt{cl1!orlss3} minus letter} \\
+\lneume{cl1!orlss3} & \texttt{cl1!orlss3} & \texttt{L60E} & iudicentur\\
+\lneume{cl1!orlsc3} & \texttt{cl1!orlsc3} & \texttt{L60E} & conspectu\\
+\lneume{cl1!pi} & \texttt{cl1!pi} & \texttt{L95D} & avertas\\
+\lneume{cl1!pi>} & \texttt{cl1!pi>} & \texttt{L53C} & misericordia\\
+\lneume{cl1!pi!to} & \texttt{cl1!pi!to} & \texttt{L82O} & fecisti\\
+\lneume{cl1!pi!vi} & \texttt{cl1!pi!vi} & \texttt{L95D} & Domine,\\
+\lneume{cl!pi!vi>} & \texttt{cl!pi!vi>} & \texttt{L67S} & Virga\\
+\lneume{cl1!pi!cl} & \texttt{cl1!pi!cl} & \texttt{L64O} & implebis\\
+\lneume{cl1!pi!pesu2} & \texttt{cl1!pi!pesu2} & \texttt{L61I} & dulciora\\
+\lneume{cl1!pilsm3lsa6} & \texttt{cl1!pilsm3lsa6} & \texttt{L174I} & me\\
+\lneume{cl1!pilsn8} & \texttt{cl1!pilsn8} & \texttt{L53C} & iudicium,\\
+\lneume{cl1!pilsn9} & \texttt{cl1!pilsn9} & \texttt{L64O} & Aperis\\
+\lneume{cl1!pilst9} & \texttt{cl1!pilst9} & \texttt{L90D} & Longe\\
+\lneume{cl1!pipp2} & \texttt{cl1!pipp2} & \texttt{L60A} & Deum\\
+\lneume{cl1!pi!orsun1} & \texttt{cl1!pi!orsun1} & \texttt{L90D} & Israel.\\
+\lneume{cl!po} & \texttt{cl!po} & \texttt{L67S} & es,\\
+\lneume{cl!popp3} & \texttt{cl!popp3} & \texttt{L122V} & ascendentem\\
+\lneume{cl!to} & \texttt{cl!to} & \texttt{L17H} & eius.\\
+\lneume{cl!tosu1} & \texttt{cl!tosu1} & \texttt{L17H} & eius.\\
+\lneume{cl!tosu1lsc6} & \texttt{cl!tosu1lsc6} & \texttt{L81E} & me\\
+\lneume{cl!tosu1lsc6lst8} & \texttt{cl!tosu1lsc6lst8} & \texttt{L81E} & me\\
+\lneume{cl!topp2} & \texttt{cl!topp2} & \texttt{L64D} & misericordia\\
+\lneume{cl!toppz1su1sun1} & \texttt{cl!toppz1su1sun1} & \texttt{L35T} & Israel\\
+\lneume{cl!tolst9} & \texttt{cl!tolst9} & \texttt{L56I} & dilexit\\
+\lneume{cl!to>} & \texttt{cl!to>} & \texttt{L56I} & aequitatem\\
+\lneume{cl!tosun1lsa5} & \texttt{cl!tosun1lsa5} & \texttt{L164D} & meam.\\
+\lneume{cl!to!pi} & \texttt{cl!to!pi} \textit{Cf.} \lneume{cl!to!pipp2} & \multicolumn{3}{l}{\texttt{cl!to!pipp2} minus prepunctis} \\
+\lneume{cl!to!pipp2} & \texttt{cl!to!pipp2} & \texttt{L33C} & arcus,\\
+\lneume{cl!to!pi!cl} & \texttt{cl!to!pi!cl} & \texttt{L77S} & Israel\\
+\lneume{cl!to!pi!clpp2} & \texttt{cl!to!pi!clpp2} & \texttt{L33C} & eius,\\
+\lneume{cl!to!pi!clpp2lsn9} & \texttt{cl!to!pi!clpp2lsn9} & \texttt{L68Q} & Sion\\
+\lneume{cl!to!cl!cl} & \texttt{cl!to!cl!cl} & \texttt{L81R} & meis,\\
+\lneume{to!cl} & \texttt{to!cl} & \texttt{L95D} & Domine,\\
+\lneume{to!cl!cl} & \texttt{to!cl!cl} \textit{Cf.} \lneume{to!cl!cllst9} & \multicolumn{3}{l}{\texttt{to!cl!cllst9} minus letter} \\
+\lneume{to!cl!clsun2} & \texttt{to!cl!clsun2} \textit{Cf.} \lneume{to!cl!clsun2lsa5} & \multicolumn{3}{l}{\texttt{to!cl!clsun2lsa5} minus letter} \\
+\lneume{to!cl!clsun2lsa5} & \texttt{to!cl!clsun2lsa5} & \texttt{L43L} & tuam\\
+\lneume{to!cl!cllst9} & \texttt{to!cl!cllst9} & \texttt{L8A} & invocavite.\\
+\lneume{to!cl!clsu1} & \texttt{to!cl!clsu1} & \texttt{L33P} & meam.\\
+\lneume{to!cl!pi} & \texttt{to!cl!pi} & \texttt{L84B} & iniqui\\
+\lneume{to!cl!orsun1} & \texttt{to!cl!orsun1} & \texttt{L114V} & terrae\\
+\lneume{to!clsun1} & \texttt{to!clsun1} & \texttt{L54B} & quoniam\\
+\lneume{to!clsun1lsa5} & \texttt{to!clsun1lsa5} & \texttt{L11Q} & Ioseph.\\
+\lneume{to!clsu2} & \texttt{to!clsu2} \textit{Cf.} \lneume{to!clsu2lsn6} & \multicolumn{3}{l}{\texttt{to!clsu2lsn6} minus letter} \\
+\lneume{to!clsu2lsn6} & \texttt{to!clsu2lsn6} & \texttt{L8D} & dabit\\
+\lneume{to!clsu1sun1} & \texttt{to!clsu1sun1} \textit{Cf.} \lneume{to!clsu1sun1lsm6} & \multicolumn{3}{l}{\texttt{to!clsu1sun1lsm6} minus letter} \\
+\lneume{to!clsu1sun1lsm6} & \texttt{to!clsu1sun1lsm6} & \texttt{L24D} & opera\\
+\lneume{clsu2sun1lst6} & \texttt{clsu2sun1lst6} & \texttt{L35T} & tuam.\\
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+\lneume{to!clM} & \texttt{to!clM} & \texttt{L77C} & corde\\
+\lneume{to!cl>1} & \texttt{to!cl>1} & \texttt{L77C} & tuum,\\
+\lneume{to!po} & \texttt{to!po} & \texttt{L84B} & Appropinquaverunt\\
+\lneume{to!pohd} & \texttt{to!pohd} & \texttt{L105A} & quaeritis,\\
+\lneume{to!to} & \texttt{to!to} \textit{Cf.} \lneume{to!toppn1sun1} & \multicolumn{3}{l}{\texttt{to!toppn1sun1} minus 2x uncinus} \\
+\lneume{to!tosun1} & \texttt{to!tosun1} \textit{Cf.} \lneume{to!toppn1sun1} & \multicolumn{3}{l}{\texttt{to!toppn1sun1} minus uncinus} \\
+\lneume{to!toppn1sun1} & \texttt{to!toppn1sun1} & \texttt{L43L} & discam\\
+\lneume{to!to!pi!cl} & \texttt{to!to!pi!cl} \textit{Cf.} \lneume{to!to!pi!clpp2} & \multicolumn{3}{l}{\texttt{to!to!pi!clpp2} minus prepunctis} \\
+\lneume{to!to!pi!clpp2} & \texttt{to!to!pi!clpp2} & \texttt{L60A} & nostrum,\\
+\lneume{toS!to} & \texttt{toS!to} & \texttt{L53C} & Confitemini\\
+\lneume{toS!tolst9} & \texttt{toS!tolst9} & \texttt{L90D} & Deus,\\
+\lneume{toS!pe} & \texttt{toS!pe} & \texttt{L123E} & Exaudi,\\
+\lneume{to!or} & \texttt{to!or} & \texttt{L67S} & Domine.\\
+\lneume{to!orsun1lsa5} & \texttt{to!orsun1lsa5} & \texttt{L8U} & Domine.\\
+\lneume{to!orlst3} & \texttt{to!orlst3} & \texttt{L114V} & audiatur,\\
+\lneume{to!orlsc6} & \texttt{to!orlsc6} & \texttt{L152S} & taurorum,\\
+\lneume{to!pi!cl} & \texttt{to!pi!cl} & \texttt{L31D} & est,\\
+\lneume{to!pi!cl!pi!pi} & \texttt{to!pi!cl!pi!pi} & \texttt{L40Q} & millia\\
+\lneume{to!pi!cl!pi!orsun1lsa5} & \texttt{to!pi!cl!pi!orsun1lsa5} & \texttt{L40Q} & speravit,\\
+\lneume{oc!vi} & \texttt{oc!vi} \textit{Cf.} \lneume{oc!visun1} & \multicolumn{3}{l}{\texttt{oc!visun1} minus uncinus} \\
+\lneume{oc!visun1} & \texttt{oc!visun1} & \texttt{L95D} & Domine,\\
+\lneume{orsu1sun1} & \texttt{orsu1sun1} & \texttt{L94C} & Domine.\\
+\lneume{orsu1sun1lsc2} & \texttt{orsu1sun1lsc2} & \texttt{L94C} & Domine.\\
+\lneume{orsu1sun1lsc3} & \texttt{orsu1sun1lsc3} & \texttt{L94C} & iniquis\\
+\lneume{un!clG} & \texttt{un!clG} & \texttt{L95D} & exaudi\\
+\lneume{topp2} & \texttt{topp2} & \texttt{L95D} & meus\\
+\lneume{topp2sun1} & \texttt{topp2sun1} & \texttt{L45R} & tuarum,\\
+\lneume{toppn3ppz1sun1} & \texttt{toppn3ppz1sun1} & \texttt{L58A} & me.\\
+\lneume{to>pp2} & \texttt{to>pp2} & \texttt{L90D} & insipientiam\\
+\lneume{pupp2su1sun1} & \texttt{pupp2su1sun1} & \texttt{L95D} & sunt.\\
+\lneume{pupp2su2} & \texttt{pupp2su2} & \texttt{L93E} & me.\\
+\lneume{pupp1su2} & \texttt{pupp1su2} & \texttt{L64O} & opportuno.\\
+\lneume{pupp1su1sun1} & \texttt{pupp1su1sun1} & \texttt{L58A} & clamavi,\\
+\lneume{puppn1su1sun2} & \texttt{puppn1su1sun2} & \texttt{L40Q} & mille,\\
+\lneume{puppz1su1sun2} & \texttt{puppz1su1sun2} & \texttt{L40Q} & mille,\\
+\lneume{puppz1su2} & \texttt{puppz1su2} & \texttt{L168S} & tua\\
+\lneume{ds1!ds1} & \texttt{ds1!ds1} & \texttt{L43L} & meos,\\
+\lneume{ds1!ts} & \texttt{ds1!ts} & \texttt{L67S} & mecum\\
+\lneume{ds1!ts1} & \texttt{ds1!ts1} & \texttt{L60E} & tuo.\\
+\lneume{cl1!orsun1} & \texttt{cl1!orsun1} & \texttt{L43L} & considerabo\\
+\lneume{cl1!orsun1lsa5} & \texttt{cl1!orsun1lsa5} & \texttt{L8U} & fac\\
+\lneume{cl!or} & \texttt{cl!or} \textit{Cf.} \lneume{cl!orpp2} & \multicolumn{3}{l}{\texttt{cl!orpp2} minus prepunctis} \\
+\lneume{cl!orpp2} & \texttt{cl!orpp2} & \texttt{L93G} & induebam\\
+\lneume{cl1!orpp2} & \texttt{cl1!orpp2} & \texttt{L103R} & mirabilis\\
+\lneume{ds1!clsun2} & \texttt{ds1!clsun2} \textit{Cf.} \lneume{ds1!clsun2lst5} & \multicolumn{3}{l}{\texttt{ds1!clsun2lst5} minus letter} \\
+\lneume{ds1!clsun2lst5} & \texttt{ds1!clsun2lst5} & \texttt{L43L} & doceas\\
+\lneume{ds1!clsu1sun1} & \texttt{ds1!clsu1sun1} \textit{Cf.} \lneume{ds1!clsu1sun1lst5} & \multicolumn{3}{l}{\texttt{ds1!clsu1sun1lst5} minus letter} \\
+\lneume{ds1!clsu1sun1lst5} & \texttt{ds1!clsu1sun1lst5} & \texttt{L56S} & Salvum\\
+\lneume{ds1pp3} & \texttt{ds1pp3} & \texttt{L149E} & tibi.\\
+\lneume{vi>1pp2} & \texttt{vi>1pp2} & \texttt{L67S} & umbrae\\
+\lneume{vi>1ppz1ppq1} & \texttt{vi>1ppz1ppq1} & \texttt{L40Q} & custodiant\\
+\lneume{vi>1ppn1ppz1ppq1} & \texttt{vi>1ppn1ppz1ppq1} & \texttt{L106S} & Alleluia.\\
+\lneume{pfsun1} & \texttt{pfsun1} \textit{Cf.} \lneume{pfsun1lsn5} & \multicolumn{3}{l}{\texttt{pfsun1lsn5} minus letter} \\
+\lneume{pfsun1lsn5} & \texttt{pfsun1lsn5} & \texttt{L67S} & tua,\\
+\lneume{pfppn1ppq1sun1lsa5} & \texttt{pfppn1ppq1sun1lsa5} & \texttt{L123A} & Deus\\
+\lneume{un1ppn1ppq1sun2} & \texttt{un1ppn1ppq1sun2} & \texttt{L112O} & estis,\\
+\lneume{un1sun2} & \texttt{un1sun2} \textit{Cf.} \lneume{un1ppn1ppq1sun2} & \multicolumn{3}{l}{\texttt{un1ppn1ppq1sun2} minus uncinus} \\
+& & \multicolumn{3}{r}{\& quilisma} \\
+\lneume{un1ppn1sun2} & \texttt{un1ppn1sun2} & \texttt{L112O} & Christum\\
+\lneume{un1ppn1sun1su2lsa5} & \texttt{un1ppn1sun1su2lsa5} & \texttt{L152I} & accelera,\\
+\lneume{clsun1lst5} & \texttt{clsun1lst5} & \texttt{L44I} & vespertinum.\\
+\lneume{clsu3lst5} & \texttt{clsu3lst5} & \texttt{L60E} & tuo.\\
+\lneume{tosu1sun1} & \texttt{tosu1sun1} \textit{Cf.} \lneume{tosu1sun1lsn6} & \multicolumn{3}{l}{\texttt{tosu1sun1lsn6} minus letter} \\
+\lneume{tosu1sun1lsc6lst7} & \texttt{tosu1sun1lsc6lst7} & \texttt{L109P} & vocavit\\
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{lllll}\noindent
+\lneume{tosu1sun1lsn6} & \texttt{tosu1sun1lsn6} & \texttt{L19B} & venit\\
+\lneume{tosu2} & \texttt{tosu2} \textit{Cf.} \lneume{tosu2lst6} & \multicolumn{3}{l}{\texttt{tosu2lst6} minus letter} \\
+\lneume{tosu2lst6} & \texttt{tosu2lst6} & \texttt{L37M} & tu\\
+\lneume{tgsun1lsa5} & \texttt{tgsun1lsa5} & \texttt{L103H} & quoniam\\
+\lneume{cl!cl!clsun1lsa5} & \texttt{cl!cl!clsun1lsa5} & \texttt{L103P} & Alleluia.\\
+\lneume{cl!cl!cl} & \texttt{cl!cl!cl} \textit{Cf.} \lneume{cl!cl!cllsn9} & \multicolumn{3}{l}{\texttt{cl!cl!cllsn9} minus letter} \\
+\lneume{cl!cl!cllsn9} & \texttt{cl!cl!cllsn9} & \texttt{L31D} & Domine\\
+\lneume{cl!cl!pi} & \texttt{cl!cl!pi} & \texttt{L54B} & commovear\\
+\lneume{cl!cl!pi!vi} & \texttt{cl!cl!pi!vi} & \texttt{L123A} & Dominus\\
+\lneume{cl!cl!to} & \texttt{cl!cl!to} & \texttt{L149E} & meam,\\
+\lneume{cl!cl!po} & \texttt{cl!cl!po} & \texttt{L81R} & insurgentibus\\
+\lneume{cl1!pi!pi!vi} & \texttt{cl1!pi!pi!vi} & \texttt{L54B} & es\\
+\lneume{cl1!pi!pisun1lsa5} & \texttt{cl1!pi!pisun1lsa5} & \texttt{L174O} & plaudite\\
+\lneume{cl1!pi!tosu1} & \texttt{cl1!pi!tosu1} & \texttt{L37S} & mei\\
+\lneume{cl1!pi!tosun1} & \texttt{cl1!pi!tosun1} & \texttt{L174O} & plaudite\\
+\lneume{sa1sun1lsa5} & \texttt{sa1sun1lsa5} & \texttt{L11Q} & tuam\\
+\lneume{trsun2} & \texttt{trsun2} \textit{Cf.} \lneume{trsun2lsa5} & \multicolumn{3}{l}{\texttt{trsun2lsa5} minus letter} \\
+\lneume{trsun2lsa5} & \texttt{trsun2lsa5} & \texttt{L13A} & Ave\\
+\lneume{trsux1} & \texttt{trsux1} \textit{Cf.} \lneume{trsux1lsa5} & \multicolumn{3}{l}{\texttt{trsux1lsa5} minus letter} \\
+\lneume{trsux1lst8} & \texttt{trsux1lst8} & \texttt{L20P} & eius,\\
+\lneume{trsux1lsa5} & \texttt{trsux1lsa5} & \texttt{L136A} & aeternam\\
+\lneume{trsu2} & \texttt{trsu2} \textit{Cf.} \lneume{trsu2lst3lsm8} & \multicolumn{3}{l}{\texttt{trsu2lst3lsm8} minus letters} \\
+\lneume{trsu2lst3lsm8} & \texttt{trsu2lst3lsm8} & \texttt{L136A} & vobis\\
+\lneume{trsun1su2} & \texttt{trsun1su2} \textit{Cf.} \lneume{trsun1su2lsa3} & \multicolumn{3}{l}{\texttt{trsun1su2lsa3} minus letter} \\
+\lneume{trsun1su2lsa3} & \texttt{trsun1su2lsa3} & \texttt{L149C} & Domini\\
+\lneume{bvsun4} & \texttt{bvsun4} & \texttt{L8U} & me.\\
+\lneume{oc!cl} & \texttt{oc!cl} & \texttt{L31D} & Domine.\\
+\lneume{oc!clM} & \texttt{oc!clM} & \texttt{L77S} & peccatorum.\\
+\lneume{oc!pe!pu} & \texttt{oc!pe!pu} & \texttt{L53C} & tuo.\\
+\lneume{tg!cl} & \texttt{tg!cl} & \texttt{L31D} & est,\\
+\lneume{tg!cl>1} & \texttt{tg!cl>1} & \texttt{L33C} & eius,\\
+\lneume{tg!cllsn9} & \texttt{tg!cllsn9} & \texttt{L68Q} & Sion\\
+\lneume{tg!or} & \texttt{tg!or} & \texttt{L77C} & tibi\\
+\lneume{unppn1sun2} & \texttt{unppn1sun2} & \texttt{L40Q} & Cadent\\
+\lneume{unppn1sun2lsa5} & \texttt{unppn1sun2lsa5} & \texttt{L123E} & quaesivi\\
+\lneume{unppn1sux1} & \texttt{unppn1sux1} & \texttt{L72B} & eius\\
+\lneume{unppn1sux1lsa5} & \texttt{unppn1sux1lsa5} & \texttt{L24D} & exaltavit\\
+\lneume{unppn1sun1su2} & \texttt{unppn1sun1su2} & \texttt{L58A} & Domine,\\
+\lneume{unppn1ppz1sun1} & \texttt{unppn1ppz1sun1} \textit{Cf.} \lneume{unppn1ppz1sun1lsa5} & \multicolumn{3}{l}{\texttt{unppn1ppz1sun1lsa5} minus letter} \\
+\lneume{unppn1ppz1sun1lsa5} & \texttt{unppn1ppz1sun1lsa5} & \texttt{L80S} & habitat\\
+\lneume{unppn3sun1lsa5} & \texttt{unppn3sun1lsa5} & \texttt{L24D} & fecit\\
+\lneume{ta>ppn1} & \texttt{ta>ppn1} & \texttt{L95D} & et\\
+\lneume{ta>pp2} & \texttt{ta>pp2} & \texttt{L33C} & ut\\
+\lneume{pt1ppn1} & \texttt{pt1ppn1} & \texttt{L99P} & tuo.\\
+\lneume{tssun1lsa5} & \texttt{tssun1lsa5} & \texttt{L24D} & dextera\\
+\lneume{cl>1pp2} & \texttt{cl>1pp2} & \texttt{L114C} & alleluia,\\
+\lneume{tasu2} & \texttt{tasu2} & \texttt{L24T} & tuam.\\ \hline
+\end{supertabular}
+
+\vfill
+\pagebreak
+
+\begin{supertabular}{llllll}\noindent
+& \multicolumn{4}{l}{\textbf{significative letters}} & \\
+\lneume{lsa} & \texttt{lsa} \textit{Cf.} \lneume{vi>lsa6} & \multicolumn{2}{l}{\texttt{vi>lsa6}} & augete\\
+\lneume{lsc} & \texttt{lsc} \textit{Cf.} \lneume{pe!unlsc2} & \multicolumn{2}{l}{\texttt{pe!unlsc2}} & celeriter\\
+\lneume{lseq} & \texttt{lseq} & \texttt{L78H} & hic & equaliter\\
+\lneume{lseq-} & \texttt{lseq-} & \texttt{L78H} & quotiescumque & equaliter\\
+\lneume{lsequ} & \texttt{lsequ} & \texttt{L56D} & confundantur & equaliter\\
+\lneume{lsf} & \texttt{lsf} \textit{Cf.} \lneume{polsf2lst3} & \multicolumn{2}{l}{\texttt{polsf2lst3}} & fastigium\\
+\lneume{lsh} & \texttt{lsh} & \texttt{L44D} & a & humiliter\\
+\lneume{lshn} & \texttt{lshn} \textit{Cf.} \lneume{cllshn8} & \multicolumn{2}{l}{\texttt{cllshn8}} & humiliter nectum\\
+\lneume{lshp} & \texttt{lshp} \textit{Cf.} \lneume{trlst3lshp7} & \multicolumn{2}{l}{\texttt{trlst3lshp7}} & humiliter parum\\
+\lneume{lsl} & \texttt{lsl} \textit{Cf.} \lneume{pelsl2} & \multicolumn{2}{l}{\texttt{pelsl2}} & levare\\
+\lneume{lsn} & \texttt{lsn} \textit{Cf.} \lneume{cllsn9} & \multicolumn{2}{l}{\texttt{cllsn9}} & non (tenere), negare,\\
+& & & & nectum, naturaliter\\
+\lneume{lsnl} & \texttt{lsnl} \textit{Cf.} \lneume{clGlsnl2} & \multicolumn{2}{l}{\texttt{clGlsnl2}} & non levare\\
+\lneume{lsnt} & \texttt{lsnt} \textit{Cf.} \lneume{pulsnt3} & \multicolumn{2}{l}{\texttt{pulsnt3}} & non tenere\\
+\lneume{lsm} & \texttt{lsm} & \texttt{L67S} & Virga & mediocriter\\
+\lneume{lsmd} & \texttt{lsmd} & \texttt{L82O} & da & mediocriter\\
+\lneume{lss} & \texttt{lss} & \texttt{L95D} & tempus & sursum\\
+\lneume{lssimp} & \texttt{lssimp} & \texttt{L8U} & Domine, & simpliciter\\
+\lneume{lssimpl} & \texttt{lssimpl} & \texttt{L81R} & insurgentibus & simpliciter\\
+\lneume{lssp} & \texttt{lssp} & \texttt{L54Ae} & Domine, & sursum parum\\
+\lneume{lsst} & \texttt{lsst} \textit{Cf.} \lneume{pelsst1lsm4} & \multicolumn{2}{l}{\texttt{pelsst1lsm4}} & sursum tenere\\
+\lneume{lst} & \texttt{lst} \textit{Cf.} \lneume{clsun1lst5} & \multicolumn{2}{l}{\texttt{clsun1lst5}} & tenere\\
+\lneume{lsth} & \texttt{lsth} \textit{Cf.} \lneume{tolsth8} & \multicolumn{2}{l}{\texttt{tolsth8}} & tenere humiliter\\ \hline
+\end{supertabular}
+
+\begin{supertabular}{llllll}\noindent
+& \multicolumn{4}{l}{\textbf{tironian notes}} & \\
+\lneume{lti} & \texttt{lti} & \texttt{L78H} & pro & iusum\\
+\lneume{ltdo} & \texttt{ltdo} & \texttt{L14O} & misericordiam & deorsum\\
+\lneume{ltdr} & \texttt{ltdr} & \texttt{L132E} & descendit & devertit\\
+\lneume{ltdx} & \texttt{ltdx} & \texttt{L122V} & intuerentus & devexum\\
+\lneume{ltps} & \texttt{ltps} & \texttt{L128S} & veniat, & prode sub eam (trade subtus)\\
+\lneume{ltqm} & \texttt{ltqm} & \texttt{L118E} & sum & quam mox\\
+\lneume{ltsb} & \texttt{ltsb} & \texttt{L11Q} & et & sub\\
+\lneume{ltse} & \texttt{ltse} & \texttt{L144C} & corde & seorsum\\
+\lneume{ltsj} & \texttt{ltsj} & \texttt{L164D} & meam & subjice\\
+\lneume{ltsl} & \texttt{ltsl} & \texttt{L117R} & delectati & saltim\\
+\lneume{ltsn} & \texttt{ltsn} & \texttt{L17H} & gloriam & sonare\\
+\lneume{ltsp} & \texttt{ltsp} & \texttt{L10I} & Ierusalem & supra\\
+\lneume{ltsr} & \texttt{ltsr} & \texttt{L14P} & et & sursum\\
+\lneume{ltst} & \texttt{ltst} & \texttt{L25L} & omnes & saltate (salte)\\
+\lneume{ltus} & \texttt{ltus} & \texttt{L17H} & eius. & ut supra\\ \hline
 \end{supertabular}
 }
 

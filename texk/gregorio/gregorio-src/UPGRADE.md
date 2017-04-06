@@ -2,11 +2,59 @@
 
 This file contains instructions to upgrade to a new release of Gregorio.
 
+## 5.0
+
+### Auto-compilation
+
+The `autocompile` option is now the default option for the behavior of `\gregorioscore`.  If you want to go back to the old, manual behavior, then you should pass the `nevercompile` option when loading `gregoriotex`.
+
+### Additional fonts
+
+With the addition of more cavum shapes, the number of font options which come with Gregorio (the package) by default has been reduced in order to control the download size.  From now on only Greciliae (and its "-op" Dominican variant) will be installed by default.  The Gregorio and Grana Padano fonts, as well as their "-op" Dominican variants, will now be available as a separate download.  If you were using these fonts, either download `supp_fonts-5_0_0.zip` and install them or switch to Greciliae.
+
+To install the new versions of Gregorio (the font) and Grana Padano, unzip `supp_fonts-5_0_0.zip`, navigate to the uncompressed folder in Terminal (or Command Prompt on Windows) and execute `texlua install_supp_fonts.lua` after you have installed the main Gregorio distribution.  This script will look for the location of Greciliae and copy the other fonts to that location.  If you wish to control the installation of the fonts manually, the script takes an optional argument with one of the following values:
+
+ * `auto` (optional): the same folder as Greciliae
+ * `system`: the appropriate font folder in `$TEXMFLOCAL`
+ * `user`: the appropriate font folder in `$TEXMFHOME`
+ * `<dir>`: the name of an alternate texmf root directory you want to use
+ 
+Additionally, if you are building the fonts yourself from a git clone, `install-gtex.sh` and `install_supp_fonts.lua` will install all the fonts you have built, not just the ones they are normally distributed with.
+
+**Note:** All the above methods assume you only need to access the fonts from within a TeX document (and thus are designed to put them into the correct folder in a texmf tree).  If you want to use the fonts in other programs, then you will need to consult the documentation appropriate to your platform and/or the program and manually move, copy, or link the fonts to the necessary location.
+
+### Ledger lines
+
+As of version 5.0, ledger lines are extended through notes on either side of a ledger line that crosses a stem, as long as the notes are within the same element.
+
+The algorithm for this is simple so it can be predictable, and it cannot take into account spacing adjustments made it TeX.  This means it may not produce the exactly desired results.  In order to get the results you want, you can override the automatic behavior in gabc:
+
+- `[oll:1]` will force an over-the-staff ledger line on a note.
+- `[oll:0]` will suppress an over-the-staff ledger line on a note.
+- `[ull:1]` will force an under-the-staff ledger line on a note.
+- `[ull:0]` will suppress an under-the-staff ledger line on a note.
+
+The other `oll` and `ull` forms take precendence over and will interfere with the above settings, so if you are using them, you may need to adjust them to get the output you want.
+
+Note: You may need to use a construct such as `/!` to keep notes that are separated in the same element.  For example, `abcV` is two elements (`ab` and `cV`), so the ledger line on `b` is not extended to `cV`.  In contrast, `ab/!cV` is one element, so the ledger line on `b` is extended to `cV`.
+
+### End-of-line hyphen protrusion factor
+
+As of version 5.0, the `\gresethyphenprotrusion{percentage}` command is deprecated.  To set this protrusion factor, use `\gresetprotrusionfactor{eolhyphen}{factor}` instead.  Note that the `factor` taken by the new command is a factor rather than the percentage taken by the deprecated command, so for example, use `\gresetprotrusionfactor{eolhyphen}{0.5}` instead of `\gresethyphenprotrusion{50}`.
+
+### Oriscus orientation at the unison
+
+As of version 5.0, when the note after the oriscus is at the same pitch as the oriscus, the oriscus will point towards the first non-unison note after the oriscus or downwards if at the end of the score.  Use the `0` (for downwards) `1` (for upwards) modifiers to force a different orientation.
+
+### Elisions in vowel centering
+
+As of version 5.0, elisions after a vowel centering prefix will not cause the center to be placed on the vowel at the end of the prefix.  Since elisions are unvoiced vowels, this makes more sense than the previous behavior.  However, if this change does not produce your desired output, you may surround the center manually with `{` and `}` in gabc.
+
 ## 4.2
 
 ### Executable file name
 
-In order to facilitate installation alongside TeX Live, the version number is now appended to the gregorio executable file name.  In version 4.2.0, the filename is gregorio-4.2.0.  If you run the executable directly, you will need to modify your procedures and/or scripts to use the new name.  Alternately, creating a symbolic link, if your system supports it, may work for you.
+In order to facilitate installation alongside TeX Live, the version number is now appended to the gregorio executable file name.  In version 4.2.0, the filename is `gregorio-4_2_0`.  If you run the executable directly, you will need to modify your procedures and/or scripts to use the new name.  Alternately, creating a symbolic link, if your system supports it, may work for you.
 
 If you auto-compile or force-compile your GABC files and are *not* using the Gregorio packaged with TeX Live, you will probably need to use the `--shell-escape` option when compiling your `.tex` files.  Alternately, you can add the new filename to your system's `shell_escape_commands` TeX option.
 
@@ -15,10 +63,6 @@ Unfortunately, there appears to be no easier way to let a user-installed Gregori
 ### Stemmed oriscus flexus orientation
 
 As of version 4.2, the orientation of the stemmed oriscus flexus `(gOe)` is consistent with the unstemmed oriscus flexus `(goe)` in that the oriscus points downwards (since the note which follows is of lower pitch).  If you prefer the oriscus to point upwards, you will need to use the `1` modifier (as in `(gO1e)`), which will force an upward orientation of the oriscus.
-
-### Oriscus orientation at the unision
-
-As of version 4.2, when the note after the oriscus is at the same pitch as the oriscus, the oriscus will point downwards by default.  If you prefer it to point upwards, append the `1` modifier to force the upward orientation.
 
 ### Podatus followed by a virga
 

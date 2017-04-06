@@ -5,7 +5,7 @@
 
     See VersionUpdate.py -h for help
 
-    Copyright (C) 2015 The Gregorio Project (see CONTRIBUTORS.md)
+    Copyright (C) 2015-2017 The Gregorio Project (see CONTRIBUTORS.md)
 
     This file is part of Gregorio.
 
@@ -61,8 +61,8 @@ GREGORIO_FILES = ["configure.ac",
                   "tex/gregoriotex-nabc.tex",
                   "tex/gregoriotex-nabc.lua",
                   "tex/gregoriosyms.sty",
+                  "tex/gregoriotex-common.tex",
                   "fonts/squarize.py",
-                  "contrib/gregorio-scribus.lua",
                  ]
 
 def get_parser():

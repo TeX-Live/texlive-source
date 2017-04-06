@@ -1,4 +1,4 @@
--- Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+-- Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
 --
 -- This file is part of Gregorio.
 --
@@ -43,9 +43,70 @@ end
 local EXCLUDE = {
   ['.notdef'] = true,
   ['.null'] = true,
+  notdef = true,
   nonmarkingreturn = true,
   AscendensOriscusLineBLTR = true,
   AscendensOriscusLineTR = true,
+  BracketLeftZero = true,
+  BracketLeftSix = true,
+  BracketLeftSeven = true,
+  BracketLeftEight = true,
+  BracketLeftNine = true,
+  BracketLeftTen = true,
+  BracketLeftEleven = true,
+  BracketLeftTwelve = true,
+  BracketLeftThirteen = true,
+  BracketLeftFourteen = true,
+  BracketLeftShortZero = true,
+  BracketLeftShortSix = true,
+  BracketLeftShortSeven = true,
+  BracketLeftShortEight = true,
+  BracketLeftShortNine = true,
+  BracketLeftShortTen = true,
+  BracketLeftShortEleven = true,
+  BracketLeftShortTwelve = true,
+  BracketLeftShortThirteen = true,
+  BracketLeftShortFourteen = true,
+  BracketLeftLongZero = true,
+  BracketLeftLongSix = true,
+  BracketLeftLongSeven = true,
+  BracketLeftLongEight = true,
+  BracketLeftLongNine = true,
+  BracketLeftLongTen = true,
+  BracketLeftLongEleven = true,
+  BracketLeftLongTwelve = true,
+  BracketLeftLongThirteen = true,
+  BracketLeftLongFourteen = true,
+  BracketRightZero = true,
+  BracketRightSix = true,
+  BracketRightSeven = true,
+  BracketRightEight = true,
+  BracketRightNine = true,
+  BracketRightTen = true,
+  BracketRightEleven = true,
+  BracketRightTwelve = true,
+  BracketRightThirteen = true,
+  BracketRightFourteen = true,
+  BracketRightShortZero = true,
+  BracketRightShortSix = true,
+  BracketRightShortSeven = true,
+  BracketRightShortEight = true,
+  BracketRightShortNine = true,
+  BracketRightShortTen = true,
+  BracketRightShortEleven = true,
+  BracketRightShortTwelve = true,
+  BracketRightShortThirteen = true,
+  BracketRightShortFourteen = true,
+  BracketRightLongZero = true,
+  BracketRightLongSix = true,
+  BracketRightLongSeven = true,
+  BracketRightLongEight = true,
+  BracketRightLongNine = true,
+  BracketRightLongTen = true,
+  BracketRightLongEleven = true,
+  BracketRightLongTwelve = true,
+  BracketRightLongThirteen = true,
+  BracketRightLongFourteen = true,
   PunctumAuctusLineBL = true,
   PunctumLineBLBR = true,
   PunctumLineBR = true,
@@ -73,22 +134,28 @@ local EXCLUDE = {
   VirgaBaseLineBL = true,
 }
 
+-- &&& in the following two tables is a placeholder for the cavum shape 'r'
+
 local GABC = {
   Accentus = [[\excluded{g}r1]],
   AccentusReversus = [[\excluded{g}r2]],
-  Ancus = [[gec]],
-  AncusLongqueue = [[hfd]],
-  AscendensOriscusCavum = [[go1r]],
-  AscendensOriscusCavumHole = [[\excluded{gor}]],
-  AscendensOriscus = [[go1]],
-  AscendensOriscusLineBL = [[\excluded{e}@go1]],
-  AscendensOriscusLineTL = [[\excluded{i}@go1]],
-  AscendensOriscusScapus = [[gO1]],
-  AscendensOriscusScapusLongqueue = [[hO1]],
-  AscendensOriscusScapusOpenqueue = [[aO1]],
-  AscendensPunctumInclinatum = [[G1]],
+  Ancus = [[g&&&ec]],
+  AncusLongqueue = [[h&&&fd]],
+  AscendensOriscus = [[g&&&o1]],
+  AscendensOriscusLineBL = [[\excluded{e}@g&&&o1]],
+  AscendensOriscusLineTL = [[\excluded{i}@g&&&o1]],
+  AscendensOriscusScapus = [[g&&&O1]],
+  AscendensOriscusScapusLongqueue = [[h&&&O1]],
+  AscendensOriscusScapusOpenqueue = [[a&&&O1]],
+  AscendensPunctumInclinatum = [[G&&&1]],
   AuctumMora = [[\excluded{g}.]],
   BarBrace = [[\excluded{,}\_]],
+  BracketLeft = [=[[[\excluded{ce]]}]=],
+  BracketLeftShort = [=[[[\excluded{fh]]}]=],
+  BracketLeftLong = [=[[[\excluded{gi]]}]=],
+  BracketRight = [=[\excluded{[[ce}]]]=],
+  BracketRightShort = [=[\excluded{[[fh}]]]=],
+  BracketRightLong = [=[\excluded{[[gi}]]]=],
   CClef = [[c3]],
   CClefChange = [[c3]],
   Circulus = [[\excluded{g}r3]],
@@ -99,15 +166,13 @@ local GABC = {
   CustosUpLong = [[f+]],
   CustosUpMedium = [[a+]],
   CustosUpShort = [[g+]],
-  DescendensOriscusCavum = [[go0r]],
-  DescendensOriscusCavumHole = [[\excluded{go0r}]],
-  DescendensOriscus = [[go0]],
-  DescendensOriscusLineBL = [[\excluded{e}@go0]],
-  DescendensOriscusLineTL = [[\excluded{i}@go0]],
-  DescendensOriscusScapus = [[gO0]],
-  DescendensOriscusScapusLongqueue = [[hO0]],
-  DescendensOriscusScapusOpenqueue = [[aO0]],
-  DescendensPunctumInclinatum = [[G0]],
+  DescendensOriscus = [[g&&&o0]],
+  DescendensOriscusLineBL = [[\excluded{e}@g&&&o0]],
+  DescendensOriscusLineTL = [[\excluded{i}@g&&&o0]],
+  DescendensOriscusScapus = [[g&&&O0]],
+  DescendensOriscusScapusLongqueue = [[h&&&O0]],
+  DescendensOriscusScapusOpenqueue = [[a&&&O0]],
+  DescendensPunctumInclinatum = [[G&&&0]],
   DivisioDominican = [[,3]],
   DivisioDominicanAlt = [[,4]],
   DivisioMaior = [[:]],
@@ -117,102 +182,93 @@ local GABC = {
   FClef = [[f3]],
   Flat = [[gx]],
   FlatHole = [[\excluded{gx}]],
-  Flexus = [[ge]],
-  FlexusLongqueue = [[hf]],
-  FlexusNobar = [[@hf]],
-  FlexusOriscus = [[goe]],
-  FlexusOriscusInusitatus = [[go1e]],
-  FlexusOriscusScapus = [[gOe]],
-  FlexusOriscusScapusInusitatus = [[gO1e]],
-  FlexusOriscusScapusInusitatusLongqueue = [[hO1f]],
-  FlexusOriscusScapusLongqueue = [[hOf]],
-  LeadingOriscus = [[go\excluded{igig}]],
-  LeadingPunctum = [[g\excluded{igig}]],
-  LeadingQuilisma = [[gw\excluded{igig}]],
-  Linea = [[g=]],
-  LineaPunctumCavum = [[gr0]],
-  LineaPunctumCavumHole = [[\excluded{gr0}]],
-  LineaPunctum = [[gR]],
+  Flexus = [[g&&&e]],
+  FlexusLongqueue = [[h&&&f]],
+  FlexusNobar = [[@h&&&f]],
+  FlexusOriscus = [[g&&&oe]],
+  FlexusOriscusInusitatus = [[g&&&o1e]],
+  FlexusOriscusScapus = [[g&&&Oe]],
+  FlexusOriscusScapusInusitatus = [[g&&&O1e]],
+  FlexusOriscusScapusInusitatusLongqueue = [[h&&&O1f]],
+  FlexusOriscusScapusLongqueue = [[h&&&Of]],
+  LeadingOriscus = [[g&&&o\excluded{igig}]],
+  LeadingPunctum = [[g&&&\excluded{igig}]],
+  LeadingQuilisma = [[g&&&w\excluded{igig}]],
+  Linea = [[g&&&=]],
+  LineaPunctum = [[g&&&R]],
   Natural = [[gy]],
   NaturalHole = [[\excluded{gy}]],
-  OblatusAscendensOriscus = [[go1]],
-  OblatusDescendensOriscus = [[go0]],
-  OblatusFlexusOriscus = [[goe]],
-  OblatusFlexusOriscusInusitatus = [[go1e]],
-  OblatusPesQuassus = [[goi]],
-  OblatusPesQuassusLongqueue = [[hoj]],
-  OblatusPesQuassusInusitatus = [[go0i]],
-  OblatusPesQuassusInusitatusLongqueue = [[ho0j]],
-  Oriscus = [[go]], -- for Deminutus
-  OriscusCavum = [[gor]], -- for Deminutus
-  OriscusCavumDeminutusHole = [[\excluded{gor\~{}}]],
-  Pes = [[gi]],
-  PesQuadratum = [[gqi]],
-  PesQuadratumLongqueue = [[hqj]],
-  PesQuassus = [[goi]],
-  PesQuassusInusitatus = [[go0i]],
-  PesQuassusInusitatusLongqueue = [[ho0j]],
-  PesQuassusLongqueue = [[hoj]],
-  PesQuilisma = [[gwi]],
-  PesQuilismaQuadratum = [[gWi]],
-  PesQuilismaQuadratumLongqueue = [[hWj]],
-  PorrectusFlexus = [[gege]],
-  PorrectusFlexusNobar = [[\excluded{e}gege]],
-  Porrectus = [[geg]],
-  PorrectusLongqueue = [[hfh]],
-  PorrectusNobar = [[@geg]],
-  PunctumCavum = [[gr]],
-  PunctumCavumHole = [[\excluded{gr}]],
-  PunctumCavumInclinatumAuctus = [[Gr>]],
-  PunctumCavumInclinatumAuctusHole = [[\excluded{Gr>}]],
-  PunctumCavumInclinatum = [[Gr]],
-  PunctumCavumInclinatumHole = [[\excluded{Gr}]],
-  Punctum = [[g]],
-  PunctumInclinatum = [[G]], -- for deminutus
-  PunctumInclinatumAuctus = [[G>]],
-  PunctumLineBL = [[\excluded{e}@g]],
-  PunctumLineTL = [[\excluded{i}@g]],
-  Quilisma = [[gw]],
+  OblatusAscendensOriscus = [[g&&&o1]],
+  OblatusDescendensOriscus = [[g&&&o0]],
+  OblatusFlexusOriscus = [[g&&&oe]],
+  OblatusFlexusOriscusInusitatus = [[g&&&o1e]],
+  OblatusPesQuassus = [[g&&&oi]],
+  OblatusPesQuassusLongqueue = [[h&&&oj]],
+  OblatusPesQuassusInusitatus = [[g&&&o0i]],
+  OblatusPesQuassusInusitatusLongqueue = [[h&&&o0j]],
+  Oriscus = [[g&&&o]], -- for Deminutus
+  Pes = [[g&&&i]],
+  PesAscendensOriscus = [[g&&&iO\excluded{/j}]],
+  PesDescendensOriscus = [[g&&&iO\excluded{/h}]],
+  PesQuadratum = [[g&&&qi]],
+  PesQuadratumLongqueue = [[h&&&qj]],
+  PesQuassus = [[g&&&oi]],
+  PesQuassusInusitatus = [[g&&&o0i]],
+  PesQuassusInusitatusLongqueue = [[h&&&o0j]],
+  PesQuassusLongqueue = [[h&&&oj]],
+  PorrectusFlexus = [[g&&&ege]],
+  PorrectusFlexusNobar = [[\excluded{e}g&&&ege]],
+  Porrectus = [[g&&&eg]],
+  PorrectusLongqueue = [[h&&&fh]],
+  PorrectusNobar = [[@g&&&eg]],
+  Punctum = [[g&&&]],
+  PunctumInclinatum = [[G&&&]], -- for deminutus
+  PunctumInclinatumAuctus = [[G&&&>]],
+  PunctumLineBL = [[\excluded{e}@g&&&]],
+  PunctumLineTL = [[\excluded{i}@g&&&]],
+  Quilisma = [[g&&&w]],
+  QuilismaPes = [[g&&&wi]],
+  QuilismaPesQuadratum = [[g&&&Wi]],
+  QuilismaPesQuadratumLongqueue = [[h&&&Wj]],
   RoundBraceDown = '[ub:1;6mm]',
   RoundBrace = '[ob:1;6mm]',
-  SalicusFlexus = [[giOki]],
-  Salicus = [[giOk]],
-  SalicusLongqueue = [[hjOl]],
-  Scandicus = [[gik]],
+  SalicusFlexus = [[g&&&iOki]],
+  Salicus = [[g&&&iOk]],
+  SalicusLongqueue = [[h&&&jOl]],
+  Scandicus = [[g&&&ik]],
   Semicirculus = [[\excluded{g}r4]],
   SemicirculusReversus = [[\excluded{g}r5]],
   Sharp = [[g\#{}]],
   SharpHole = [[\excluded{g\#{}}]],
-  StrophaAucta = [[gs>]],
-  StrophaAuctaLongtail = [[hs>]],
-  Stropha = [[gs]],
-  Torculus = [[gig]],
-  TorculusLiquescens = [[gige]],
-  TorculusLiquescensQuilisma = [[gwige]],
-  TorculusQuilisma = [[gwig]],
-  TorculusResupinus = [[gigi]],
-  TorculusResupinusQuilisma = [[gwigi]],
+  StrophaAucta = [[g&&&s>]],
+  StrophaAuctaLongtail = [[h&&&s>]],
+  Stropha = [[g&&&s]],
+  Torculus = [[g&&&ig]],
+  TorculusLiquescens = [[g&&&ige]],
+  TorculusLiquescensQuilisma = [[g&&&wige]],
+  TorculusQuilisma = [[g&&&wig]],
+  TorculusResupinus = [[g&&&igi]],
+  TorculusResupinusQuilisma = [[g&&&wigi]],
   VEpisema = [[\excluded{g}^^^^0027]],
-  Virga = [[gv]],
-  VirgaLongqueue = [[hv]],
-  VirgaOpenqueue = [[av]],
-  VirgaReversa = [[gV]],
-  VirgaReversaLongqueue = [[hV]],
-  VirgaReversaOpenqueue = [[aV]],
-  VirgaStrata = [[giO]],
+  Virga = [[g&&&v]],
+  VirgaLongqueue = [[h&&&v]],
+  VirgaOpenqueue = [[a&&&v]],
+  VirgaReversa = [[g&&&V]],
+  VirgaReversaLongqueue = [[h&&&V]],
+  VirgaReversaOpenqueue = [[a&&&V]],
   Virgula = [[^^^^0060]],
 }
 
 local GABC_AMBITUS_ONE = {
-  PorrectusLongqueue = [[hgh]],
-  PorrectusFlexusLongqueue = [[hghg]],
-  FlexusOpenqueue = [[ba]],
-  FlexusOriscusScapusOpenqueue = [[bOa]],
-  PesQuadratumOpenqueue = [[aqb]],
-  PesQuassusOpenqueue = [[aob]],
-  PesQuilismaQuadratumOpenqueue = [[aWb]],
-  OblatusPesQuassusInusitatusOpenqueue = [[ao0b]],
-  OblatusPesQuassusOpenqueue = [[boc]],
+  PorrectusLongqueue = [[h&&&gh]],
+  PorrectusFlexusLongqueue = [[h&&&ghg]],
+  FlexusOpenqueue = [[b&&&a]],
+  FlexusOriscusScapusOpenqueue = [[b&&&Oa]],
+  PesQuadratumOpenqueue = [[a&&&qb]],
+  PesQuassusOpenqueue = [[a&&&ob]],
+  QuilismaPesQuadratumOpenqueue = [[a&&&Wb]],
+  OblatusPesQuassusInusitatusOpenqueue = [[a&&&o0b]],
+  OblatusPesQuassusOpenqueue = [[b&&&oc]],
 }
 
 -- if the item is a table, the values will replace fuse_head and gabc
@@ -305,18 +361,20 @@ local LIQUESCENCE = {
 
 GregorioRef = {}
 
-function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_granapadano)
+function GregorioRef.emit_score_glyphs(cs_normal, cs_hollow)
   local common_glyphs = {}
-  local greciliae = {}
-  local gregorio = {}
-  local granapadano = {}
+  local normal_variants = {}
+  local normal_names = {}
+  local hollow_variants = {}
+  local hollow_names = {}
 
-  local function index_font(csname, variants, common)
+  local function index_font(csname, variants, names, common)
     local glyphs = font.fonts[font.id(csname)].resources.unicodes
     -- force-load the code points of the font --
     local ignored = glyphs['___magic___']
     local glyph, cp
     for glyph, cp in pairs(glyphs) do
+      names[glyph] = true
       if cp >= 0xe000 and not EXCLUDE[glyph] and not glyph:match('^HEpisema') then
         local name, variant = glyph:match('^([^.]*)(%.%a*)$')
         if name then
@@ -333,9 +391,8 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_granapadano
     end
   end
 
-  index_font(cs_greciliae, greciliae, common_glyphs)
-  index_font(cs_gregorio, gregorio)
-  index_font(cs_granapadano, granapadano)
+  index_font(cs_normal, normal_variants, normal_names, common_glyphs)
+  index_font(cs_hollow, hollow_variants, hollow_names, common_glyphs)
 
   local function maybe_emit_glyph(csname, variants, name, variant)
     local cp = variants[name]
@@ -378,25 +435,43 @@ function GregorioRef.emit_score_glyphs(cs_greciliae, cs_gregorio, cs_granapadano
     else
       texio.write_nl('GregorioRef Warning: missing GABC for '..name)
     end
-    tex.sprint(string.format(
-        [[{\scriptsize %s{\bfseries %s}{\itshape %s}%s%s}&{\ttfamily\small %s}&{\%s\char%d}&{\%s\char%d}&{\%s\char%d}&]],
-        fusion, shape, ambitus, debilis, liquescence, gabc or '', cs_greciliae, char, cs_gregorio, char, cs_granapadano, char
-    ))
+    local sorted_normal = sort_unique_keys{normal_variants[name]}
+    local sorted_hollow = sort_unique_keys{hollow_variants[name]}
+    local n = math.max(1, #sorted_normal, #sorted_hollow)
     local emitted = false, i, variant
-    for i, variant in ipairs(sort_unique_keys{greciliae[name], gregorio[name], granapadano[name]}) do
+    for i = 1,n do
       if emitted then
-        tex.sprint([[\nopagebreak&&&&&]])
+        tex.sprint([[\nopagebreak&&&]])
       else
-        emitted = true
+        tex.sprint(string.format(
+            [[{\scriptsize %s{\bfseries %s}{\itshape %s}%s%s}&{\ttfamily\small %s}&{\%s\char%d}&]],
+            fusion, shape, ambitus, debilis, liquescence, gabc and gabc:gsub('&&&', '') or '', cs_normal, char
+        ))
       end
-      tex.sprint(string.format([[{\scriptsize %s}]], variant))
-      maybe_emit_glyph('greciliae', greciliae, name, variant)
-      maybe_emit_glyph('gregorio', gregorio, name, variant)
-      maybe_emit_glyph('granapadano', granapadano, name, variant)
+      variant = sorted_normal[i]
+      if variant then
+        tex.sprint(string.format([[{\scriptsize %s}]], variant))
+        maybe_emit_glyph(cs_normal, normal_variants, name, variant)
+      else
+        tex.print([[&]])
+      end
+      if emitted or not hollow_names[name] then
+        tex.sprint([[&&&]])
+      else
+        tex.sprint(string.format(
+            [[&{\ttfamily\small %s}&{\%s\char%d}&]],
+            gabc and gabc:gsub('&&&', 'r') or '', cs_hollow, char
+        ))
+      end
+      variant = sorted_hollow[i]
+      if variant then
+        tex.sprint(string.format([[{\scriptsize %s}]], variant))
+        maybe_emit_glyph(cs_hollow, hollow_variants, name, variant)
+      else
+        tex.print([[&]])
+      end
       tex.print([[\\]])
-    end
-    if not emitted then
-      tex.print([[&&&\\]])
+      emitted = true
     end
   end
 

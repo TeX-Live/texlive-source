@@ -34,11 +34,13 @@ Gregorio has been developed with valuable help and support from:
  * David Gippner
  * Quentin Lamy
  * [The Abbey of Solesmes (FR)](http://www.solesmes.com/)
+ * [The Abbey of Flavigny (FR)](http://www.clairval.com)
  * [Abbazia di Praglia (IT)](http://www.praglia.it)
  * [Abbazia Mater Ecclesiae (IT)](http://it.wikipedia.org/wiki/Abbazia_Mater_Ecclesiae)
  * [e-codices](http://www.e-codices.unifr.ch)
  * [Stiftsbibliothek, St. Gallen (CH)](http://www.stibi.ch/)
  * [Stiftsbibliothek, Einsiedeln (CH)](http://kloster-einsiedeln.ch/)
+ * [Bibliothèque municipale de Laon (FR)](http://manuscrit.ville-laon.fr/)
  * [Gna!](http://gna.org)
  * [Github](https://github.com/)
 

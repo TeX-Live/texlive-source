@@ -1,7 +1,7 @@
 % !TEX root = GregorioRef.tex
 % !TEX program = LuaLaTeX+se
 %
-% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+% Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
 %
 % This file is part of Gregorio.
 %
@@ -69,7 +69,8 @@ Some headers have special meaning to Gregorio:
 	recommended where appropriate. \textbf{This field is required.}
 \item[gabc-copyright] This license is the copyright notice (in English) of the gabc file, as chosen by the person named in the transcriber field. As well as the notice itself, it may include a brief description of the license, such as public domain, CC-by-sa; for a list of commonly found open source licenses and exceptions, please see \url{https://spdx.org/licenses/}.  A separate text file will be necessary for the complete legal license. For the legal issues about Gregorian chant scores, please see \url{http://gregorio-project.github.io/legalissues}. An example of this field would be:
 	\begin{lstlisting}[autogobble]
-		gabc-copyright: CC0-1.0 by Elie Roux, 2009 <http://creativecommons.org/publicdomain/zero/1.0/>;
+		gabc-copyright: CC0-1.0 by Elie Roux, 2009
+		<http://creativecommons.org/publicdomain/zero/1.0/>;;
 	\end{lstlisting}
 \item[score-copyright] This license is the copyright notice (in English) of the score itself from which the gabc was transcribed. Like the \texttt{gabc-copyright}, there may be a brief description of the license too. In unclear or complex cases it may be omitted; it is most suitable for use when the transcriber is the copyright holder and licensor of the score as well. One again, reading the page on legal issues (linked above) is recommended. An example of this field would be:
 	\begin{lstlisting}[autogobble]
@@ -84,7 +85,7 @@ Some headers have special meaning to Gregorio:
 	placed above the initial unless one of the following conditions are
 	met:
 	\begin{itemize}
-	\item There is a \verb=\greannotation= defined immediatly prior to \verb=\gregorioscore=.
+	\item There is a \verb=\greannotation= defined immediately prior to \verb=\gregorioscore=.
 	\item The \texttt{annotation} header field is defined.
 	\end{itemize}
 \item[mode-modifier] The mode ``modifier'' of the piece. This may be any
@@ -180,6 +181,15 @@ Some examples:
 	\verb=8= & \verb=-t.= & \verb=G*= & \writemode{\romannumeral 8}{-t.}{\thinspace G*} \\
 	{\scriptsize\verb=t. irregularis=} & & & \writemode{t. irregularis}{}{} \\
 \end{tabularx}
+
+\subsection{General Syntax}
+
+\subsection{Note Syntax}
+
+\verb=[nocustos]= will prevent a custos from appearing at the point where
+specified, if line formatting causes a line break there.  The \verb=[nocustos]=
+tag must appear \emph{before} spaces appearing at the point specified or it will
+have no effect.
 
 \subsection{Neume Fusion}
 

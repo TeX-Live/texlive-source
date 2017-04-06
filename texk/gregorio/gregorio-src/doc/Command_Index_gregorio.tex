@@ -1,7 +1,7 @@
 % !TEX root = GregorioRef.tex
 % !TEX program = LuaLaTeX+se
 %
-% Copyright (C) 2006-2016 The Gregorio Project (see CONTRIBUTORS.md)
+% Copyright (C) 2006-2017 The Gregorio Project (see CONTRIBUTORS.md)
 %
 % This file is part of Gregorio.
 %
@@ -38,7 +38,7 @@ respecting the annotation value in the \texttt{main.tex} file.
 	\#2 & string & Second line text to place above the initial.\\
 \end{argtable}
 
-\macroname{\textbackslash GreBeginScore}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-main.tex}
+\macroname{\textbackslash GreBeginScore}{\#1\#2\#3\#4\#5\#6\#7\#8}{gregoriotex-main.tex}
 Macro to start a score.
 
 \begin{argtable}
@@ -51,6 +51,8 @@ Macro to start a score.
 			& 1 & there is above lines text somewhere in the score\\
 	\#6 & string  & the absolute filename of the gabc file if point-and-click is enabled\\
 	\#7 & integer & the number of staff lines\\
+	\#8 & \TeX\ code & macros to run before the score (\eg, setting clef
+										 extrema)\\
 \end{argtable}
 
 \macroname{\textbackslash GreEndScore}{}{gregoriotex-main.tex}
@@ -67,14 +69,14 @@ Macro for typesetting an accentus.
 
 \begin{argtable}
 	\#1 & integer & height number of episema\\
-	\#2 & string  & Type of glyph the episema is attached to. See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#2 & string  & Type of glyph the episema is attached to. See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreAdditionalLine}{\#1\#2\#3}{gregoriotex-signs.tex}
 Macro to typeset the additional line above or below the staff.
 
 \begin{argtable}
-	\#1 & string  & See \nameref{EpisemaSpecial}.\\
+	\#1 & string  & See \Nameref{NoteOffset}.\\
 	\#2 & integer & The ambitus of the porrectus or porrectus flexus if the first references these glyph types; ignored otherwise.\\
 	\#3 & integer & Set horizontal episema (0), horizontal episema under a note (1), line at top of staff (2), line at bottom of staff (3), choral sign (4).\\
 \end{argtable}
@@ -102,7 +104,7 @@ Macro for typesetting an augmentum duplex (a pair of punctum mora)
 Macro for typesetting a bar brace.
 
 \begin{argtable}
-	\#1 & string & Type of glyph the episema is attached to.  See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#1 & string & Type of glyph the episema is attached to.  See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreBarSyllable}{\#1\#2\#3\#4\#5\#6\#7\#8\#9}{gregoriotex-syllable.tex}
@@ -125,7 +127,7 @@ Macro for typesetting a bar syllable.
 Macro to typeset a vertical episema on a bar.
 
 \begin{argtable}
-	\#1 & string & Type of glyph the episema is attached to.  See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#1 & string & Type of glyph the episema is attached to.  See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreBeginEUOUAE}{\#1}{gregoriotex-main.tex}
@@ -152,6 +154,18 @@ Makes argument bold.  Accesses \LaTeX\ \verb=\textbf= (\textit{gregoriotex.sty})
 	\#1 & string & Text to be typeset in bold.\\
 \end{argtable}
 
+\macroname{\textbackslash GreBracket}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
+Typesets a bracket.
+
+\begin{argtable}
+	\#1 & \texttt{0} & Typeset a left bracket.\\
+			& \texttt{1} & Typeset a right bracket.\\
+	\#2 & integer    & The height of the lowest note within the brackets.\\
+	\#3 & integer    & The height of the highest note within the brackets.\\
+	\#4 & string     & the line, byte offset, and column address for textedit
+										 links when point-and-click is enabled.\\
+\end{argtable}
+
 \macroname{\textbackslash GreChangeClef}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
 Macro called when key changes
 
@@ -171,8 +185,11 @@ Macro for typesetting a circulus.
 
 \begin{argtable}
 	\#1 & integer & Height number of circulus.\\
-	\#2 & string  & Type of glyph the circulus is attached to.  See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#2 & string  & Type of glyph the circulus is attached to.  See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
+
+\macroname{\textbackslash GreClearSyllableText}{\#1\#2}{gregoriotex-syllable.tex}
+Macro indicating that the text in this syllable should not overlap any previous syllable.
 
 \macroname{\textbackslash GreColored}{\#1}{gregoriotex.sty \textup{and} gregoriotex.tex}
 Colors argument (a string) in \verb=gregoriocolor.=  Corresponds to ``<c></c>'' tags in gabc.  Does nothing in Plain \TeX\ because color is not supported there.
@@ -188,6 +205,19 @@ defined and re-defined by the \verb=\gresetgregoriofont= macro.
 
 \macroname{\textbackslash GreCP...}{}{gregoriotex-main.tex}
 A class of macros which point to the individual characters in a Gregoiro\TeX\ compatible font.  This class of macros is dynamically mapped from the glyph names embedded in the \texttt{ttf} file via a Lua script to ensure that the code points match up with the installed font.
+
+\macroname{\textbackslash GreHollowCP...}{}{gregoriotex-main.tex}
+A class of macros which point to the individual characters in a Gregoiro\TeX\ compatible cavum neume font.  This class of macros is dynamically mapped from the glyph names embedded in the \texttt{ttf} file via a Lua script to ensure that the code points match up with the installed font.
+
+\macroname{\textbackslash GreHoleCP...}{}{gregoriotex-main.tex}
+A class of macros which point to the individual characters in a Gregoiro\TeX\ compatible cavum neume hole font.  This class of macros is dynamically mapped from the glyph names embedded in the \texttt{ttf} file via a Lua script to ensure that the code points match up with the installed font.
+
+\macroname{\textbackslash GreCavum}{\#1}{gregoriotex-signs.tex}
+Typesets a cavum glyph.
+
+\begin{argtable}
+	\#1 & string & The name of the cavum glyph.\\
+\end{argtable}
 
 \macroname{\textbackslash GreCustos}{\#1\#2}{gregoriotex-signs.tex}
 Typesets a custos.
@@ -489,7 +519,7 @@ Macro to typeset an horizontal episema.
 
 \begin{argtable}
 	\#1 & integer & Height number of the episema.\\
-	\#2 & string  & See \nameref{EpisemaSpecial}.\\
+	\#2 & string  & See \Nameref{NoteOffset}.\\
 	\#3 & integer & The ambitus for a two note episema at the diagonal stroke of a
 		porrectus, porrectus flexus, orculus resupinus, or torculus resupinus
 		flexus.\\
@@ -570,6 +600,15 @@ Same as \verb=\GreDivisioMinor= except inside a syllable.
 \macroname{\textbackslash GreInDominica}{\#1\#2\#3}{gregoriotex-signs.tex}
 Same as \verb=\GreDominica= except inside a syllable.
 
+\macroname{\textbackslash GreInitialClefPosition}{\#1\#2}{gregoriotex-signs.tex}
+Saves the extrema of the initial clef.
+
+\begin{argtable}
+	\#1 & integer & the line of the primary clef (1 is the bottom line)\\
+	\#2 & integer & the line of the secondary clef (1 is the bottom line, 0 means
+									no secondary clef)\\
+\end{argtable}
+
 \macroname{\textbackslash GreInVirgula}{\#1\#2\#3}{gregoriotex-signs.tex}
 Same as \verb=\GreVirgula= except inside a syllable.
 
@@ -597,27 +636,6 @@ Indicates that this syllable is the last syllable before a EUOUAE block.
 			& \texttt{1} & There is a line break between this syllable and the beginning of the EUOUAE block.\\
 \end{argtable}
 
-\macroname{\textbackslash GreLinea}{\#1\#2\#3}{gregoriotex-signs.tex}
-Macro for typesetting a linea.
-
-\begin{argtable}
-	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
-	\#2 & length  & Argument \#3 from \verb=\GreGlyph=. Height of the next note.\\
-	\#3 & integer & Argument \#4 from \verb=\GreGlyph=. The type of glyph.\\
-\end{argtable}
-
-\macroname{\textbackslash GreLineaPunctumCavum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
-Macro to typeset a linea punctum cavum.
-
-\begin{argtable}
-	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
-	\#2 & length  & Argument \#3 from \verb=\GreGlyph=. Height of the next note.\\
-	\#3 & integer & Argument \#4 from \verb=\GreGlyph=. The type of glyph.\\
-	\#4 & \TeX\ code    & Macros executed before the punctum cavum is written.\\
-	\#5 & character & Argument \#5 from \verb=\GreGlyph=. The signs to typeset before the glyph.\\
-	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled.
-\end{argtable}
-
 \macroname{\textbackslash GreLowChoralSign}{\#1\#2\#3}{gregoriotex-signs.tex}
 Macro for typesetting low choral signs.
 
@@ -639,6 +657,30 @@ is used, then this function does nothing.
 	\#1 & \TeX\ code & Mode text to place above the initial of a score in the \texttt{modeline} style.\\
 	\#2 & \TeX\ code & Arbitrary code to typeset, in the \texttt{modemodifier} style, after the mode text.\\
 	\#3 & \TeX\ code & Arbitrary code to typeset, in the \texttt{modedifferentia} style, after \#2.\\
+\end{argtable}
+
+\macroname{\textbackslash GreMusicaFictaFlat}{\#1\#2}{gregoriotex-signs.tex}
+Macro for typesetting a musica ficta flat.
+
+\begin{argtable}
+	\#1 & integer & Height number of the musica ficta flat.\\
+	\#2 & string  & Type of glyph the musica ficta flat is attached to. See \Nameref{NoteOffset} for a description of options.\\
+\end{argtable}
+
+\macroname{\textbackslash GreMusicaFictaNatural}{\#1\#2}{gregoriotex-signs.tex}
+Macro for typesetting a musica ficta natural.
+
+\begin{argtable}
+	\#1 & integer & Height number of the musica ficta natural.\\
+	\#2 & string  & Type of glyph the musica ficta natural is attached to. See \Nameref{NoteOffset} for a description of options.\\
+\end{argtable}
+
+\macroname{\textbackslash GreMusicaFictaSharp}{\#1\#2}{gregoriotex-signs.tex}
+Macro for typesetting a musica ficta sharp.
+
+\begin{argtable}
+	\#1 & integer & Height number of the musica ficta sharp.\\
+	\#2 & string  & Type of glyph the musica ficta sharp is attached to. See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreNatural}{\#1\#2\#3\#4\#5}{gregoriotex-signs.tex}
@@ -673,6 +715,14 @@ where this macro is called.
 			& \texttt{Sharp} & The custos should have a sharp.\\
 			& \textit{empty} & The custos should not have an alteration.\\
 \end{argtable}
+
+\macroname{\textbackslash GreSuppressEolCustos}{}{gregoriotex-main.tex}
+Macro which disables automatic custos at the end of lines.
+
+\macroname{\textbackslash GreResetEolCustos}{}{gregoriotex-main.tex}
+Alias that resets the use of automatic custos to the value set by
+\verb=\greseteolcustos=.  This macro is aliased to \verb=\gre@useautoeolcustos=
+or \verb=\GreSuppressEolCustos= by \verb=\greseteolcustos=.
 
 \macroname{\textbackslash GreNextSyllableBeginsEUOUAE}{\#1\#2}{gregoriotex-syllable.tex}
 Indicates that the syllable which follows begins a EUOUAE block.
@@ -743,40 +793,23 @@ Macro to typeset a curly brace above the lines.
 	& \texttt{1} & Typeset an accentus above the brace.
 \end{argtable}
 
-\macroname{\textbackslash GrePunctumCavum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
-Macro to typeset a punctum cavum.
+\macroname{\textbackslash GreProtrusion}{\#1\#2}{gregoriotex-spaces.tex}
+Typesets a protrusion.
 
 \begin{argtable}
-	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
-	\#2 & length  & Argument \#3 from \verb=\GreGlyph=. Height of the next note.\\
-	\#3 & integer & Argument \#4 from \verb=\GreGlyph=. The type of glyph.\\
-	\#4 & \TeX\ code & Macros executed before the punctum cavum is written.\\
-	\#5 & character & Argument \#5 from \verb=\GreGlyph=. The signs to typeset before the glyph.\\
-	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled.
+	\#1 & float & The protrusion factor.  May be a call to \verb=\GreProtrusionFactor=\\
+	\#2 & \TeX\ code & The content of the protrusion.\\
 \end{argtable}
 
-\macroname{\textbackslash GrePunctumCavumInclinatum}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
-Macro to typeset a punctum cavum inclinatus.
+\macroname{\textbackslash GreProtrusionFactor}{\#1}{gregoriotex-spaces.tex}
+Returns a automatic protrusion factor.  The argument is character whose
+automatic protrusion factor is desired.
 
 \begin{argtable}
-	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
-	\#2 & length  & Argument \#3 from \verb=\GreGlyph=. Height of the next note.\\
-	\#3 & integer & Argument \#4 from \verb=\GreGlyph=. The type of glyph.\\
-	\#4 & \TeX\ code & Macros executed before the punctum cavum is written.\\
-	\#5 & character & Argument \#5 from \verb=\GreGlyph=. The signs to typeset before the glyph.\\
-	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled.
-\end{argtable}
-
-\macroname{\textbackslash GrePunctumCavumInclinatumAuctus}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
-Macro to typeset a punctum cavum inclinatus auctus.
-
-\begin{argtable}
-	\#1 & length  & Argument \#2 from \verb=\GreGlyph=. Height to raise the glyph.\\
-	\#2 & length  & Argument \#3 from \verb=\GreGlyph=. Height of the next note.\\
-	\#3 & integer & Argument \#4 from \verb=\GreGlyph=. The type of glyph.\\
-	\#4 & \TeX\ code & Macros executed before the punctum cavum is written.\\
-	\#5 & character & Argument \#5 from \verb=\GreGlyph=. The signs to typeset before the glyph.\\
-	\#6 & string & the line, byte offset, and column address for textedit links when point-and-click is enabled.
+	\#1 & \texttt{,} & The comma protrusion factor.\\
+			& \texttt{;} & The semicolon protrusion factor.\\
+			& \texttt{:} & The colon protrusion factor.\\
+			& \texttt{.} & The period protrusion factor.\\
 \end{argtable}
 
 \macroname{\textbackslash GrePunctumMora}{\#1\#2\#3\#4}{gregoriotex-signs.tex}
@@ -799,7 +832,7 @@ Macro for typesetting a reversed accentus.
 
 \begin{argtable}
 	\#1 & integer & Height number of accentus.\\
-	\#2 & string  & Type of glyph the accentus is attached to. See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#2 & string  & Type of glyph the accentus is attached to. See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreReversedSemicirculus}{\#1\#2}{gregoriotex-signs.tex}
@@ -807,7 +840,7 @@ Macro for typesetting a reversed semicirculus.
 
 \begin{argtable}
 	\#1 & integer & Height number of semicirculus.\\
-	\#2 & string  & Type of glyph the semicirculus is attached to. See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#2 & string  & Type of glyph the semicirculus is attached to. See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreScoreOpening}{\#1\#2\#3\#4\#5}{gregoriotex-syllable.tex}
@@ -826,7 +859,7 @@ Macro for typesetting a semicirculus.
 
 \begin{argtable}
 	\#1 & integer & Height number of semicirculus.\\
-	\#2 & string  & Type of glyph the semicirculus is attached to. See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#2 & string  & Type of glyph the semicirculus is attached to. See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreSetFirstSyllableText}{\#1\#2\#3\#4\#5\#6}{gregoriotex-syllable.tex}
@@ -888,7 +921,7 @@ Macro for writing initial clef.
 	\#7 & integer & \texttt{0} if clef and first note are far enough to use a shorter space, 1 otherwise.\\
 \end{argtable}
 
-\macroname{\textbackslash GreSetLinesClef}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-main.tex}
+\macroname{\textbackslash GreSetLinesClef}{\#1\#2\#3\#4\#5\#6\#7}{gregoriotex-signs.tex}
 Macro to define the clef that will appear at the beginning of the lines.
 
 \begin{argtable}
@@ -901,6 +934,11 @@ Macro to define the clef that will appear at the beginning of the lines.
 	\#6 & \texttt{0}--\texttt{5} & Line of secondary clef (\texttt{0} for no secondary clef).\\
 	\#7 & integer & Height of flat in secondary clef (\texttt{3} for no flat).\\
 \end{argtable}
+
+\macroname{\textbackslash GreSetLargestClef}{\#1\#2\#3\#4\#5\#6}{gregoriotex-signs.tex}
+Macro defining the largest clef of the score (for notes left alignment).
+The arguments are the same as \verb=\GreSetInitialClef= without the \#7th one, which is always considered
+to be \texttt{1}.
 
 \macroname{\textbackslash GreSetNabcAboveLines}{\#1}{gregoriotex-main.tex}
 Macro to place argument containing Nabc neumes above the lines and empty
@@ -1084,7 +1122,7 @@ Macro for typesetting the vertical episema.
 
 \begin{argtable}
 	\#1 & integer & Height number of episema.\\
-	\#2 & string  & Type of glyph the episema is attached to. See \nameref{EpisemaSpecial} argument for description of options.\\
+	\#2 & string  & Type of glyph the episema is attached to. See \Nameref{NoteOffset} for a description of options.\\
 \end{argtable}
 
 \macroname{\textbackslash GreVirgula}{\#1\#2\#3}{gregoriotex-signs.tex}
@@ -1122,12 +1160,14 @@ Macro used to prevent a line break from occurring at a given position.
 \macroname{\textbackslash GreScoreId}{}{gregoriotex-main.tex}
 A Lua\TeX\ attribute which designates a unique identifier for each score.
 
-\macroname{\textbackslash GreNABCNeumes}{\#1\#2}{gregoriotex-nabc.tex}
+\macroname{\textbackslash GreNABCNeumes}{\#1\#2\#3\#4}{gregoriotex-nabc.tex}
 Macro to print a nabc character above the lines.
 
 \begin{argtable}
 	\#1 & integer & the line on which the character should appear (currently unused)\\
 	\#2 & string & The \texttt{nabc} syntax which indicates what neumes are to be printed\\
+	\#3 & integer & The high pitch of the notes covered by the nabc character(s).\\
+	\#4 & integer & The low pitch of the notes covered by the nabc character(s).\\
 \end{argtable}
 
 \macroname{\textbackslash GreNABCChar}{\#1}{gregoriotex-nabc.tex}
