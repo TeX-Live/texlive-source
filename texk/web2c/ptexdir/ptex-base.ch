@@ -6925,7 +6925,9 @@ end;
 
 @<Append KANJI-character |cur_chr| ...@>=
 if is_char_node(tail) then
-  begin cx:=qo(character(tail)); @<Insert |post_break_penalty|@>;
+  begin if not( (last_jchr<>null) and (link(last_jchr)=tail) ) then
+    begin cx:=qo(character(tail)); @<Insert |post_break_penalty|@>;
+    end;
   end
 else if type(tail)=ligature_node then
   begin cx:=qo(character(lig_char(tail))); @<Insert |post_break_penalty|@>;
