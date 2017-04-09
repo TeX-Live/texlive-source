@@ -1,3 +1,8 @@
+2017-04-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: Fix a bug on a UTF-8 sequence at end of a line
+	when \endlinechar=-1.
+
 2017-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch, kanji.c:

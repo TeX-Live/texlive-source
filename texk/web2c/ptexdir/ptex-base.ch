@@ -1711,7 +1711,11 @@ start_cs:
     sequence is found, adjust |cur_cs| and |loc|, and
     |goto found|@>
   else @<If an expanded code is present, reduce it and |goto start_cs|@>;
-  cur_cs:=single_base+buffer[loc]; incr(loc);
+  {single-letter control sequence}
+  if (cat=kanji)or(cat=kana) then
+    begin cur_cs:=id_lookup(loc,k-loc); loc:=k; goto found;
+    end
+  else begin cur_cs:=single_base+buffer[loc]; incr(loc); end;
   end;
 found: cur_cmd:=eq_type(cur_cs); cur_chr:=equiv(cur_cs);
 if cur_cmd>=outer_call then check_outer_validity;
