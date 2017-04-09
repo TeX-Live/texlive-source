@@ -1,0 +1,53 @@
+\font\x=ecrm1000 \x
+\parindent0pt\noautoxspacing
+\output{\shipout\box255}
+\def\あ{ア}
+\def\，{イ}
+
+1a\，
+% --> 1aイ
+
+2a\あ
+% --> 2aア
+
+\endlinechar=-1\relax
+
+3a\，
+% --> 3aイ
+% previous pTeX, upTeX: Undefined cs.
+
+4a\あ
+% --> 4aア
+% prev. pTeX: Undefined cs.
+
+5a，
+% prev. upTeX: byte-seq.
+
+6aあ
+% prev. upTeX: byte-seq.
+
+7a\^^e3^^81^^82b\^^e3^^81^^82
+% 2回エラーが出るが，これは正しい．
+
+% upTeX only tests
+\ifx\enablecjktoken\undefined
+\else
+  \catcode"E3=11\relax
+  \catcode"81=11\relax
+  \catcode"82=11\relax
+  8a\^^e3^^81^^82
+  % --> 8aア
+  \kcatcode`あ=15\relax
+  9a\あ
+  % == 9a\^^e3^^81^^82. --> 9aア
+  \def\^^e3^^81^^82{ウ}
+  10a\あ b\あ
+  % == 10a\^^e3^^81^^82 b\^^e3^^81^^82. --> 10aウbウ
+  \kcatcode12354=16\relax
+  11a\あ b\あ
+  % == 10a\^^e3^^81^^82 b\^^e3^^81^^82. --> 11aウbウ
+\fi
+
+\bye
+
+
