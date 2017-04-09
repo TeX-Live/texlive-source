@@ -1,3 +1,9 @@
+2017-04-09  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Vertical writing support had been broken since at some
+	point of xdvipdfmx merge for "unicode" encoding. Apply vert/vrt2 GSUB
+	feature when generating Unicode mapping.
+	
 2017-03-18  Karl Berry  <karl@tug.org>
 
 	* xbb.c: update copyright years.
