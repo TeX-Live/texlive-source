@@ -104,7 +104,7 @@ cd $libiconv_ver
 # foil wrong attempts at dynamic linking, etc.
 (cd $clisp_basedir/clisp-tools/lib && rm -f *.dylib *.la)
 
-clisp_ver=clisp-2.49
+clisp_ver=clisp-2.49.50
 cd $clisp_basedir
 $wget https://haible.de/bruno/gnu/clisp-2.49.50.tar.bz2
 bunzip2 -dc $clisp_ver.tar.bz2 | tar xf -
@@ -117,7 +117,7 @@ cd $clisp_ver
 # On FreeBSD/amd64: add --disable-mmap.
 #
 ./configure CPPFLAGS=-DUNIX_BINARY_DISTRIB --prefix=$clisp_toolsdir \
-  --without-readline --without-dynamic-modules \
+  --without-readline --without-dynamic-modules --without-termcap-ncurses \
   --disable-nls --enable-portability \
   --with-libsigsegv-prefix=$clisp_toolsdir \
   --with-libffcall-prefix=$clisp_toolsdir \

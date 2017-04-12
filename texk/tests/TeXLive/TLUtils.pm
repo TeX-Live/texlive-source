@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 41618 $';
+my $svnrev = '$Revision: 42254 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2422,12 +2422,12 @@ sub download_file {
     debug("persistent connection set up, trying to get $url (for $dest)\n");
     $ret = $::tldownload_server->get_file($url, $dest);
     if ($ret) {
-      debug("downloading file via persistent connection succeeded\n");
+      ddebug("downloading file via persistent connection succeeded\n");
       return $ret;
     } else {
-      tlwarn("TLUtils::download_file: persistent connection ok,"
+      debug("TLUtils::download_file: persistent connection ok,"
              . " but download failed: $url\n");
-      tlwarn("TLUtils::download_file: retrying with wget.\n");
+      debug("TLUtils::download_file: retrying with wget.\n");
       $wget_retry = 1; # just so we can give another msg.
     }
   } else {
@@ -2443,7 +2443,7 @@ sub download_file {
   my $ret = _download_file($url, $dest, $wget);
   
   if ($wget_retry) {
-    tlwarn("TLUtils::download_file: retry with wget "
+    debug("TLUtils::download_file: retry with wget "
            . ($ret ? "succeeded" : "failed") . ": $url\n");
   }
   
