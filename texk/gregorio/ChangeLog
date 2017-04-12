@@ -6,6 +6,10 @@
 	* gregorio.test (gregorio): use $FILENAME_VERSION.
 	* Makefile.am (bin_PROGRAMS): use $FILENAME_VERSION.
 
+2017-03-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
+
 2016-09-29  Karl Berry  <karl@tug.org>
 
 	* configure.ac (FILENAME_VERSION): no need to define for TL.
