@@ -2,6 +2,11 @@
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
 
+2017-03-22  Karl Berry  <karl@tug.org>
+
+	* dvips.texi: don't claim -q quiets standard error.
+	Report from Igor Liferenko.
+
 2017-03-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvips.c: Show information and exit if dvips finds options

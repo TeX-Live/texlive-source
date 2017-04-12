@@ -1,3 +1,10 @@
+XeTeX 0.99997 (March 2016, for TeX Live 2017)
+
+* Unicode/OpenType math implementation now based on HarfBuzz's MATH
+  table support, for easier ongoing maintenance.
+* Minor bug fixes (revision history available at xetex.sf.net).
+
+==============================================================
 XeTeX 0.99996 (March 2016, for TeX Live 2016)
 
 * Added \XeTeXhyphenatablelength primitive that sets the maximum
