@@ -394,7 +394,7 @@ select_pages (const char *pagespec)
   return;
 }
 
-static const char *optstrig = ":hD:r:m:g:x:y:o:s:t:p:clf:i:qvV:z:d:I:S:K:P:O:MC:Ee";
+static const char *optstrig = ":hD:r:m:g:x:y:o:s:p:clf:i:qtvV:z:d:I:K:P:O:MSC:Ee";
 
 static struct option long_options[] = {
   {"help", 0, 0, 'h'},

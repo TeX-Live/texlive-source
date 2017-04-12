@@ -1,3 +1,7 @@
+2017-04-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* dvipdfmx.c: Fix a bug in static const char *optstrig.
+	
 2017-04-09  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_cmap.c: Vertical writing support had been broken since at some
