@@ -666,8 +666,8 @@ void dopdffont(integer font_objnum, internalfontnumber f)
 {
     fm_entry *fm;
     fm = hasfmentry(f) ? (fm_entry *) pdffontmap[f] : NULL;
-    if (fm == NULL || is_type3(fm) || (fm->ps_name == NULL && fm->ff_name == NULL))
-        writet3(fm, font_objnum, f);
+    if (fm == NULL || (fm->ps_name == NULL && fm->ff_name == NULL))
+        writet3(font_objnum, f);
     else
         create_fontdictionary(fm, font_objnum, f);
 }
