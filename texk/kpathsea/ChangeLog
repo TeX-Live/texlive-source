@@ -1,3 +1,7 @@
+2017-04-14  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): add texosquery-jre8.
+
 2017-04-13  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMF, TEXMFDBS): move TEXMFLOCAL to before TEXMFSYS*,
