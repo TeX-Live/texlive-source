@@ -1,3 +1,10 @@
+2017-04-13  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMF, TEXMFDBS): move TEXMFLOCAL to before TEXMFSYS*,
+	so, e.g., config.ps in TEXMFLOCAL overrides TEXMFSYSCONFIG.
+	Report from Michael Shell:
+	http://tug.org/pipermail/tex-live/2016-July/039062.html
+
 2017-04-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmf.cnf: mendex requires the variable INDEXDICTIONARY.
