@@ -1,5 +1,5 @@
 /* mapfile.c: handling of map files/lines
-Copyright 1996-2014 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2017 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -282,10 +282,10 @@ static int check_fm_entry(fm_entry * fm, boolean warn)
     if (is_fontfile(fm) && !is_included(fm)) {
         if (warn)
             pdftex_warn
-                ("ambiguous entry for `%s': font file present but not included, "
-                 "will be treated as font file not present", fm->tfm_name);
+              ("ambiguous entry for `%s': font file present but not included, "
+               "will be treated as font file not present", fm->tfm_name);
         xfree(fm->ff_name);
-        /* do not set variable |a| as this entry will be still accepted */
+        /* do not set variable |a| as this entry will still be accepted */
     }
 
     /* if for non-Type3 font both ps_name and font file are missing,
