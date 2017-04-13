@@ -1,14 +1,12 @@
 pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)
 - changes:
-  - encoding files can be specified for PK bitmap fonts on font map lines.
   - rename envvar SOURCE_DATE_EPOCH_TEX_PRIMITIVES to FORCE_SOURCE_DATE;
     no changes in functionality.
   - if the \pdfpageattr token list contains the string "/MediaBox",
     omitting output of the default /MediaBox.
 
 - bugfixes:
-  - \pdflastmatch more reliable when there was no match.
-  - avoid writing uninitialized memory with alpha-channel images.
+  - \pdflastmatch more reliable when there was no match
 
 ---------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.17 (TeX Live 2016)  (May 20, 2016)
