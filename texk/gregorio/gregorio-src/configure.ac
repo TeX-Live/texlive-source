@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[5.0.0-rc1],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
-FILENAME_VERSION="5_0_0-rc1"
+AC_INIT([gregorio],[5.0.0],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
+FILENAME_VERSION="5_0_0"
 AC_SUBST(FILENAME_VERSION)
 AC_DEFINE_UNQUOTED(FILENAME_VERSION, "$FILENAME_VERSION", [version suitable for file names])
 MK=""
@@ -103,6 +103,17 @@ AC_ARG_ENABLE([debug], AS_HELP_STRING([--enable-debug@<:@=sanitize,coverage@:>@]
 ], [
     CPPFLAGS+=" -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2 "
 ])
+
+AC_ARG_ENABLE([version-in-exe], AS_HELP_STRING([--disable-version-in-exe], [Disable version in executable name.]), [
+    AS_IF([test "x$enableval" != "xno"], [
+        GREGORIO_EXE_SUFFIX="-$FILENAME_VERSION"
+    ], [
+        GREGORIO_EXE_SUFFIX=""
+    ])
+], [
+    GREGORIO_EXE_SUFFIX="-$FILENAME_VERSION"
+])
+AC_SUBST(GREGORIO_EXE_SUFFIX)
 
 AC_CONFIG_HEADERS([src/config_.h])
 AC_CONFIG_FILES([

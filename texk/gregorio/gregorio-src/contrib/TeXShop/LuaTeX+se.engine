@@ -5,4 +5,4 @@ if [[ -n ${2:+x} ]]; then
     export TEXINPUTS="$2//:"
     export LUAINPUTS="$2//:"
 fi
-lualatex --shell-escape -file-line-error -synctex=1 "$1"
+luatex --shell-escape -file-line-error -synctex=1 "$1"

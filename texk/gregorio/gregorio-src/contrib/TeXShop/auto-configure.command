@@ -29,6 +29,15 @@ else
     echo "Please try running the Gregorio intaller again"
     exit 1
 fi
+SOURCE="/Users/Shared/Gregorio/contrib/TeXShop/LuaTeX+se.engine"
+if [ -e "$SOURCE" ]; then
+    echo "Copying LuaTeX+se.engine into TeXShop configuration"
+    cp "$SOURCE" "$ENGINEDIR"
+else
+    echo "Cannot find LuaTeX+se.engine"
+    echo "Please try running the Gregorio intaller again"
+    exit 1
+fi
 
 echo "Configuration complete"
 exit 0

@@ -285,14 +285,6 @@ argument.
 	\#2 & string & Relative or absolute path to the score.\\
 \end{argtable}
 
-\macroname{\textbackslash gre@gabcsnippet}{\#1}{gregoriotex-main.tex}
-Macro that handles \verb=\gabcsnippet= calls when they do not have an
-optional argument.
-
-\begin{argtable}
-	\#1 & string & Snippet of gabc code.\\
-\end{argtable}
-
 \macroname{\textbackslash gre@writemode}{\#1\#2\#3}{gregoriotex-main.tex}
 Macro that writes its arguments with \verb=\greannotation=.  This
 macro is typically called by \verb=\GreMode= in the gtex file.
@@ -878,6 +870,10 @@ Workhorse function behind \verb=\grecommentary=.
 	\#2 & string & the new commentary content\\
 \end{argtable}
 
+\macroname{\textbackslash gre@printcommentary}{}{gregoriotex-main.tex}
+Computes the true ``raise'' and prints the commentary contained in
+\verb=\gre@box@commentary=.
+
 \macroname{\textbackslash gre@atletter}{}{gregoriotex-main.tex}
 A Lua\TeX\ catcode table which makes sure that Lua\TeX\ treats `@‘ corectly.
 
@@ -895,6 +891,44 @@ Macro for raising a bug error when some calculation goes awry and comes up with 
 
 \macroname{\textbackslash gre@changestyle}{\#1\#2[\#3]}{gregoriotex.sty \textup{and} gregoriotex.tex}
 Workhorse function behind \verb=\grechangestyle=.  Necessary because the internals of the definition are slightly different in \LaTeX\ and Plain \TeX.
+
+\macroname{\textbackslash gre@bolshiftcleftypeglobal}{}{gregoriotex-spaces.tex}
+Takes on the value \texttt{1}, \texttt{2}, or \texttt{3} depending on whether
+to calculate the beginning-of-line shift based on the largest, current, or
+forced clef width (\ie, directly use the value stored in
+\verb=\gre@dimen@clefwidth@bol=), respectively.  This is the ``global'' value,
+used to initialize \verb=\gre@bolshiftcleftypelocal= at the start of a score.
+
+\macroname{\textbackslash gre@bolshiftcleftypelocal}{}{gregoriotex-spaces.tex}
+Takes on the value \texttt{1}, \texttt{2}, or \texttt{3} depending on whether
+to calculate the beginning-of-line shift based on the largest, current, or
+forced clef width (\ie, directly use the value stored in
+\verb=\gre@dimen@clefwidth@bol=), respectively.  This is the ``local'' value,
+used in the actual computation.
+
+\macroname{\textbackslash gre@update@clefwidth@largest}{\#1}{gregoriotex-spaces.tex}
+Updates the ``largest'' clef width, used when \verb=\gre@bolshiftcleftypelocal=
+is \texttt{1}.
+
+\begin{argtable}
+	\#1 & distance & The new value to use for the ``largest'' clef width.\\
+\end{argtable}
+
+\macroname{\textbackslash gre@update@clefwidth@current}{\#1}{gregoriotex-spaces.tex}
+Updates the ``current'' clef width, used when \verb=\gre@bolshiftcleftypelocal=
+is \texttt{2}.
+
+\begin{argtable}
+	\#1 & distance & The new value to use for the ``current'' clef width.\\
+\end{argtable}
+
+\macroname{\textbackslash gre@update@clefwidth@forced}{\#1}{gregoriotex-spaces.tex}
+Updates the ``forced'' clef width, used when \verb=\gre@bolshiftcleftypelocal=
+is \texttt{3}.
+
+\begin{argtable}
+	\#1 & distance & The new value to use for the ``forced'' clef width.\\
+\end{argtable}
 
 \macroname{\textbackslash gre@calculate@bolshift}{\#1\#2}{gregoriotex-spaces.tex}
 Macro used in \verb=\GreSyllable=. Sets \verb=\gre@skip@bolshift= to the left kern that should appear at the beginning of a line in case of a forced linebreak.  The goal of this left kern is to have all lines aligned on notes.  This shift is applied to the right before every syllable and then to the left after placing an empty box.  At the beginning of the line the shift to the right is ignored by \TeX\ as leading white space, but the shift left is not because of the presence of the “character” of the empty box.
@@ -1396,6 +1430,14 @@ Macro to save the additional vertical spaces associated with the line (\texttt{a
 
 \macroname{\textbackslash gre@restore@additionalspaces}{}{gregoriotex-spaces.tex}
 Macro to restore the additional vertical spaces associated with the line from their saved values.
+
+\macroname{\textbackslash gre@clearsyllable}{\#1}{gregoriotex-spaces.tex}
+Prevents the current syllable from overlapping with the previous syllable.
+
+\begin{argtable}
+	\#1 & bar  & the current syllable is a bar syllable.\\
+			& note & the current syllable is a note syllable.\\
+\end{argtable}
 
 \subsection{Auxiliary File}
 Gregorio\TeX\ creates its own auxiliary file (extension \texttt{gaux}) which it uses to store information between successive typesetting runs.  This allows for such features as the dynamic interline spacing.  The following functions are used to interact with that auxiliary file.

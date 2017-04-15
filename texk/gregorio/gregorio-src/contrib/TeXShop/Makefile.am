@@ -15,4 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST = auto-configure.command LuaLaTeX+se.engine
+EXTRA_DIST = auto-configure.command LuaLaTeX+se.engine LuaTeX+se.engine

@@ -10,12 +10,7 @@ export TEXMFCNF
 
 DOCSRC=$srcdir/$GREGORIO_TREE/doc
 
-#
-# Does FILENAME_VERSION have a value here? If it does, the
-# next line is not needed
-FILENAME_VERSION=5_0_0-rc1
-
-gregorio=gregorio-$FILENAME_VERSION
+gregorio=gregorio
 
 failed=
 

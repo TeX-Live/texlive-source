@@ -5,24 +5,13 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
-## [5.0.0-rc1] - 2017-04-04
+## [5.0.0] - 2017-04-15
 ### Fixed
 - The printing of the commentary box is no longer tied to the printing of the inital.  As a result it is now possible to have a score which has a commentary but not an initial.  See [this thread on the user list](http://www.mail-archive.com/gregorio-users@gna.org/msg03911.html).
 - Elisions after a vowel centering prefix will no longer cause the center to be placed on the vowel in the prefix.  Since prefixes are unvoiced vowels, this makes more sense than the previous behavior.  As usual, you may use the manual centering features to force the centering where you want if this does not produce what you want.  See [#1320](https://github.com/gregorio-project/gregorio/issues/1320).
 - Dynmanic line spacing when a clef change occurs at the end of a line is fixed so that the line after the clef change is spaced appropriately.  See [#1285](https://github.com/gregorio-project/gregorio/issues/1285).
 - Spaces in the filename of a score no longer cause Gregoriotex to fail. See [#1224](https://github.com/gregorio-project/gregorio/issues/1224).
-
-## [5.0.0-beta2] - 2017-02-24
-### Fixed
 - Glyphs for pes quadratum shapes with initio debilis are no longer missing. Use `-fqg` to engrave them.  See [#1310](https://github.com/gregorio-project/gregorio/issues/1310).
-
-### Changed
-- The default behaviour of `\gregorioscore` has been changed to autocompile.
-- When the note after an oriscus is at the same pitch, the oriscus direction now depends on the first non-unison, non-oriscus note after the oriscus (see [#1179](https://github.com/gregorio-project/gregorio/issues/1179)).
-- 6 new St. Gall neume glyphs have been added to the `gregall` font and glyph for nabc `to!ciG` has been changed (see [#1303](https://github.com/gregorio-project/gregorio/issues/1303), [#1305](https://github.com/gregorio-project/gregorio/issues/1305), [#1313](https://github.com/gregorio-project/gregorio/issues/1313), [#1314](https://github.com/gregorio-project/gregorio/issues/1314), [#1315](https://github.com/gregorio-project/gregorio/issues/1315)).
-
-## [5.0.0-beta1] - 2017-01-31
-### Fixed
 - Horizontal episemata bridge spaces more correctly.  As mentioned earlier, you can prevent this by appending `2` to the `_` on the note before the space you do not want bridged.  See [#1216](https://github.com/gregorio-project/gregorio/issues/1216).
 - A rising note after an oriscus flexus will no longer generate a porrectus (see [#1220](https://github.com/gregorio-project/gregorio/issues/1220)).
 - The Scribus external tool script now uses latexmk in order to handle the multi-pass features of Gregorio (see [#1236](https://github.com/gregorio-project/gregorio/issues/1236)).
@@ -32,6 +21,9 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - A pes whose second note is an oriscus now obeys the oriscus orientation rules (see [#1272](https://github.com/gregorio-project/gregorio/issues/1272))
 
 ### Changed
+- The default behaviour of `\gregorioscore` has been changed to autocompile.
+- When the note after an oriscus is at the same pitch, the oriscus direction now depends on the first non-unison, non-oriscus note after the oriscus (see [#1179](https://github.com/gregorio-project/gregorio/issues/1179)).
+- 6 new St. Gall neume glyphs have been added to the `gregall` font and glyph for nabc `to!ciG` has been changed (see [#1303](https://github.com/gregorio-project/gregorio/issues/1303), [#1305](https://github.com/gregorio-project/gregorio/issues/1305), [#1313](https://github.com/gregorio-project/gregorio/issues/1313), [#1314](https://github.com/gregorio-project/gregorio/issues/1314), [#1315](https://github.com/gregorio-project/gregorio/issues/1315)).
 - Notes are now left-aligned as if all clefs had the same width as the largest clef in the score. You can get previous behavior back with `\grebolshiftcleftype{current}`, or temporary force alignment until the end of a score with `\grelocalbolshiftcleftype`. See Documentation of these functions and [#1189](https://github.com/gregorio-project/gregorio/issues/1189).
 - A clef change immediately before a line break `(z)` will now typeset the new clef at the beginning of the next line.  An explicit custos `(z0)` immediately before such a clef change (or separated by only a bar) will be suppressed.  See [#1190](https://github.com/gregorio-project/gregorio/issues/1190).
 - Ledger lines are now extended through notes on either side of a ledger line that crosses a stem, as long as the notes are within the same "element."  If the algorithm doesn't produce the result you want, you can use `[oll:0]` to suppress an over-the-staff ledger line on a note, `[ull:0]` to suppress an under-the-staff ledger line on a note, `[oll:1]` to force an over-the-line ledger line on a note, or [ull:1] to force an under-the-staff ledger line on a note.  Please note that other forms of `[oll:...]` and `[ull:...]` can interfere with these new settings. See [UPGRADE.md](UPGRADE.md) and [#1215](https://github.com/gregorio-project/gregorio/issues/1215) for details.
