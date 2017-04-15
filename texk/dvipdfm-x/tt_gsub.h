@@ -55,6 +55,12 @@ extern int  otl_gsub_apply_lig (otl_gsub *gsub_list,
                                 USHORT *gid_in, USHORT num_gids,
                                 USHORT *gid_out);
 
+/* Handle a list of OTL features */
+extern int  otl_gsub_add_feat_list (otl_gsub *gsub_list,
+                                    const char *otl_tags, sfnt *sfont);
+extern int  otl_gsub_set_chain   (otl_gsub *gsub_list, const char *otl_tags);
+extern int  otl_gsub_apply_chain (otl_gsub *gsub_list, USHORT *gid);
+
 #if  0  
 extern int  otl_gsub_dump      (otl_gsub *gsub_list,
                                 const char *script,

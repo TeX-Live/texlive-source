@@ -1,3 +1,12 @@
+2017-04-15  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* fontmap.c, tt_cmap.c, tt_gsub.c, tt_gsub.h, pdffont.c: Removed
+	undocumented OpenType Layout GSUB support.  Added simplified version of
+	OpenType Layout GSUB support. Fontmap option "-l otl_tags" enables
+	OpenType GSUB features specified by otl_tags, where otl_tags is a ":"
+	separated list of OpenType Layout feature tags
+	(or strings of script.language.feature form).
+	
 2017-04-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* dvipdfmx.c: Fix a bug in static const char *optstrig.

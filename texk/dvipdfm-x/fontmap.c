@@ -71,7 +71,7 @@ pdf_init_fontmap_record (fontmap_rec *mrec)
   mrec->opt.design_size = -1.0;
 
   mrec->opt.tounicode = NULL;
-  mrec->opt.otl_tags  = NULL; /* deactivated */
+  mrec->opt.otl_tags  = NULL;
   mrec->opt.index     = 0;
   mrec->opt.charcoll  = NULL;
   mrec->opt.style     = FONTMAP_STYLE_NONE;
@@ -451,6 +451,17 @@ fontmap_parse_mapdef_dpm (fontmap_rec *mrec,
       }
       mrec->opt.stemv = strtol(q, NULL, 0);
       RELEASE(q);
+      break;
+
+    /* 2017.4.15 back again */
+    case 'l':
+      q = parse_string_value(&p, endptr);
+      if (q)
+        mrec->opt.otl_tags = q;
+      else {
+        WARN("Missing string value for option 'l'.");
+        return -1;
+      }
       break;
 
     /* Omega uses both single-byte and double-byte set_char command
