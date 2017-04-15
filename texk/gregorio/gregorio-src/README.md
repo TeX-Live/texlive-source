@@ -22,6 +22,10 @@ You need a recent and working [TeXLive](https://www.tug.org/texlive/), on top of
 - Switch to TeXLive 2015 (which uses an earlier version of `luaotfload`) to build the docs.
 - Upgrade your `luaotfload` to a more recent version (v2.8 or later).
 
+## Building for inclusion in TeXLive
+
+When building gregorio for inclusion in TeXLive, the gregorio executable must not have the version number prefix that is used for other builds.  To make this happen, run `configure` with the `--disable-version-in-exe` option, and the generated Makefile will create a gregorio executable without the version number prefix (i.e., the executable will simply be named `gregorio`).
+
 ## Documentation
 
 You can find documentation and useful links in the [documentation](doc/), on [the main website](http://gregorio-project.github.io/) and on [a wiki](http://gregoriochant.org).

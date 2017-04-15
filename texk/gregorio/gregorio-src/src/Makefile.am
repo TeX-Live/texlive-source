@@ -19,8 +19,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/src -I$(top_srcdir)/src/gabc  -I$(top_srcdir)/src/
 AM_CFLAGS = $(KPSE_CFLAGS)
 LDADD = $(KPSE_LIBS)
 
-bin_PROGRAMS = gregorio-$(FILENAME_VERSION)
-gregorio___FILENAME_VERSION__SOURCES = \
+bin_PROGRAMS = gregorio$(GREGORIO_EXE_SUFFIX)
+gregorio__GREGORIO_EXE_SUFFIX__SOURCES = \
 	gregorio-utils.c characters.c characters.h messages.c messages.h struct.c \
 	struct.h struct_iter.h enum_generator.h unicode.c unicode.h sha1.c sha1.h \
 	support.c support.h config.h bool.h plugins.h utf8strings.h dump/dump.c \
@@ -47,7 +47,7 @@ gregorio___FILENAME_VERSION__SOURCES = \
 @MK@endif
 
 # gabc files
-gregorio___FILENAME_VERSION__SOURCES += \
+gregorio__GREGORIO_EXE_SUFFIX__SOURCES += \
 	gabc/gabc-elements-determination.c gabc/gabc-write.c \
 	gabc/gabc-glyphs-determination.c gabc/gabc.h \
 	gabc/gabc-score-determination.h gabc/gabc-score-determination.c \
@@ -72,7 +72,7 @@ if HAVE_RC
 gregorio-resources.o: ../windows/gregorio-resources.rc ../windows/gregorio.ico
 	$(RC) $(RCFLAGS) $< -o $@
 
-gregorio___FILENAME_VERSION__SOURCES += ../windows/gregorio-resources.rc ../windows/gregorio.ico
+gregorio__GREGORIO_EXE_SUFFIX__SOURCES += ../windows/gregorio-resources.rc ../windows/gregorio.ico
 LDADD += gregorio-resources.o
 endif
 

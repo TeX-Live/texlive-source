@@ -23,9 +23,9 @@ AM_CPPFLAGS = \
 	$(KPATHSEA_INCLUDES) -D_GNU_SOURCE -DUSE_KPSE
 AM_CFLAGS = $(WARNING_CFLAGS)
 
-bin_PROGRAMS = gregorio-$(FILENAME_VERSION)
+bin_PROGRAMS = gregorio
 
-gregorio___FILENAME_VERSION__SOURCES = \
+gregorio_SOURCES = \
 	@GREGORIO_TREE@/src/characters.c \
 	@GREGORIO_TREE@/src/gregorio-utils.c \
 	@GREGORIO_TREE@/src/messages.c \
@@ -49,7 +49,7 @@ gregorio___FILENAME_VERSION__SOURCES = \
 
 LDADD = $(KPATHSEA_LIBS)
 
-$(gregorio___FILENAME_VERSION__OBJECTS): $(KPATHSEA_DEPEND)
+$(gregorio_OBJECTS): $(KPATHSEA_DEPEND)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
@@ -57,7 +57,7 @@ $(gregorio___FILENAME_VERSION__OBJECTS): $(KPATHSEA_DEPEND)
 ## TESTS
 AM_TESTS_ENVIRONMENT = GREGORIO_TREE='$(GREGORIO_TREE)'; export GREGORIO_TREE;
 TESTS = gregorio.test
-gregorio.log: gregorio-$(FILENAME_VERSION)$(EXEEXT)
+gregorio.log: gregorio$(EXEEXT)
 
 EXTRA_DIST += $(TESTS)
 DISTCLEANFILES = factus.gtex veni.gtex
