@@ -2163,42 +2163,18 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap/tripman.tex triptrap/tripos.tex triptrap/writeo \
 	triptrap/writeo.2 $(mflua_web_srcs) $(mflua_ch_src) \
 	mfluadir/mflua.defines mfluadir/ChangeLog $(mflua_tests) \
-	mfluadir/mfluatrap/begin_program.lua \
-	mfluadir/mfluatrap/do_add_to.lua \
-	mfluadir/mfluatrap/end_program.lua \
-	mfluadir/mfluatrap/fill_envelope.lua \
-	mfluadir/mfluatrap/fill_spec.lua \
-	mfluadir/mfluatrap/final_cleanup.lua \
-	mfluadir/mfluatrap/main_control.lua \
-	mfluadir/mfluatrap/make_ellipse.lua \
-	mfluadir/mfluatrap/mfluaini.lua \
-	mfluadir/mfluatrap/offset_prep.lua \
-	mfluadir/mfluatrap/print_edges.lua \
-	mfluadir/mfluatrap/print_path.lua \
-	mfluadir/mfluatrap/scan_direction.lua \
-	mfluadir/mfluatrap/skew_line_edges.lua \
-	mfluadir/mfluatrap/start_of_mf.lua \
+	mfluadir/mfluatrap/mflua.lua \
+	mfluadir/mfluatrap/mflua_svg_backend.lua \
+	mfluadir/mfluatrap/mflua_ttx_backend.lua \
 	mfluadir/mfluatrap/texmf.cnf \
 	mfluadir/mfluatrap/mfluatrap.diffs $(mfluajit_web_srcs) \
 	$(mfluajit_ch_src) mfluajitdir/mfluajit.defines \
 	mfluajitdir/ChangeLog $(mfluajit_tests) \
-	mfluadir/mfluatrap/begin_program.lua \
-	mfluadir/mfluatrap/do_add_to.lua \
-	mfluadir/mfluatrap/end_program.lua \
-	mfluadir/mfluatrap/fill_envelope.lua \
-	mfluadir/mfluatrap/fill_spec.lua \
-	mfluadir/mfluatrap/final_cleanup.lua \
-	mfluadir/mfluatrap/main_control.lua \
-	mfluadir/mfluatrap/make_ellipse.lua \
-	mfluadir/mfluatrap/mfluaini.lua \
-	mfluadir/mfluatrap/offset_prep.lua \
-	mfluadir/mfluatrap/print_edges.lua \
-	mfluadir/mfluatrap/print_path.lua \
-	mfluadir/mfluatrap/scan_direction.lua \
-	mfluadir/mfluatrap/skew_line_edges.lua \
-	mfluadir/mfluatrap/start_of_MF.lua \
+	mfluadir/mfluatrap/mflua.lua \
+	mfluadir/mfluatrap/mflua_svg_backend.lua \
+	mfluadir/mfluatrap/mflua_ttx_backend.lua \
 	mfluadir/mfluatrap/texmf.cnf \
-	mfluajitdir/mfluajittrap/mfluajittrap.diffs mplibdir/ChangeLog \
+	mfluadir/mfluatrap/mfluatrap.diffs mplibdir/ChangeLog \
 	$(mpost_web) $(mp_tests) pmpostdir/ChangeLog $(pmpost_web) \
 	$(pmpost_tests) $(upmpost_tests) pmpostdir/tests/psample.mp \
 	$(libmplib_web) $(etex_web_srcs) $(etex_ch_srcs) \
