@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.27"
+printversion = "v0.29"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -15,15 +15,17 @@ print ( [[
 
 lwarpmk print [project]: Compile a print version.
 lwarpmk printindex [project]: Process the index for the print version.
+lwarpmk printglossary [project]: Process the glossary for the print version.
 lwarpmk html [project]: Compile an HTML version.
 lwarpmk htmlindex [project]: Process the index for the html version.
+lwarpmk htmlglossary [project]: Process the glossary for the html version.
 lwarpmk again [project]: Touch the source code to trigger recompiles.
 lwarpmk limages [project]: Process the "lateximages" created by lwarp.sty.
 lwarpmk pdftohtml [project]:
     For use with latexmk or a Makefile:
     Convert project_html.pdf to project_html.html and
     individual HTML files.
-lwarpmk clean [project]: Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log
+lwarpmk clean [project]: Remove project.aux, .toc, .lof/t, .idx, .ind, .log, .gl*
 lwarpmk cleanall [project]: Remove auxiliary files and also project.pdf, *.html
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
@@ -44,6 +46,7 @@ sourcename = "projectname"  (the source-code filename w/o .tex)
 homehtmlfilename = "index"  (or perhaps the project name)
 htmlfilename = ""  (or "projectname" - filename prefix)
 uselatexmk = "false"  (or "true" to use latexmk to build PDFs)
+languge = "english"  (use a language supported by xindy)
 --
 Filenames must contain only letters, numbers, underscore, or dash.
 Values must be in "quotes".
@@ -85,6 +88,8 @@ function loadconf ()
 local conffile = "lwarpmk.conf"
 -- Optional configuration filename:
 if arg[2] ~= nil then conffile = arg[2]..".lwarpmkconf" end
+-- Default language:
+language = "english"
 -- Verify the file exists:
 if (lfs.attributes(conffile,"mode")==nil) then -- file not exists
 print("lwarpmk: " .. conffile .." does not exist.")
@@ -129,6 +134,7 @@ elseif ( cvarname == "sourcename" ) then sourcename = cvalue
 elseif ( cvarname == "homehtmlfilename" ) then homehtmlfilename = cvalue
 elseif ( cvarname == "htmlfilename" ) then htmlfilename = cvalue
 elseif ( cvarname == "uselatexmk" ) then uselatexmk = cvalue
+elseif ( cvarname == "language" ) then language = cvalue
 else
 print ( linenum .. " : " .. line ) ;
 print ("lwarpmk: Incorrect variable name \"" .. cvarname .. "\" in " .. conffile ..".\n" ) ;
@@ -225,7 +231,8 @@ function removeaux ()
         sourcename ..".lot " .. sourcename .. "_html.lot " ..
         sourcename ..".idx " .. sourcename .. "_html.idx " ..
         sourcename ..".ind " .. sourcename .. "_html.ind " ..
-        sourcename ..".log " .. sourcename .. "_html.log "
+        sourcename ..".log " .. sourcename .. "_html.log " ..
+        sourcename ..".gl* " .. sourcename .. "_html.gl* "
         )
 end
 
@@ -315,6 +322,22 @@ refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
+-- lwarp printglossary:
+-- Compile the glossary then touch the source
+-- to trigger a recompile of the document:
+
+elseif arg[1] == "printglossary" then
+loadconf ()
+print ("lwarpmk: Processing the glossary.")
+
+os.execute("xindy -L " .. language .. " -C utf8 -I xindy -M " .. sourcename ..
+    " -t " .. sourcename .. ".glg -o " .. sourcename .. ".gls "
+    .. sourcename .. ".glo")
+print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
+refreshdate ()
+print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
+print ("lwarpmk: Done.")
+
 -- lwarpmk html:
 
 elseif arg[1] == "html" then
@@ -366,6 +389,23 @@ refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
+-- lwarpmk htmlglossary:
+-- Compile the glossary then touch the source
+-- to trigger a recompile of the document:
+
+elseif arg[1] == "htmlglossary" then
+loadconf ()
+print ("lwarpmk: Processing the glossary.")
+
+os.execute("xindy -L " .. language .. " -C utf8 -I xindy -M " ..sourcename ..
+    "_html -t " .. sourcename .. "_html.glg -o " ..sourcename ..
+    "_html.gls " ..sourcename .. "_html.glo")
+
+print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
+refreshdate ()
+print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
+print ("lwarpmk: Done.")
+
 -- lwarpmk limages:
 -- Scan the lateximages.txt file to create lateximages,
 -- then touch the source to trigger a recompile.
@@ -390,7 +430,7 @@ print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
 print ("lwarpmk: Done.")
 
 -- lwarpmk clean:
--- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log
+-- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, .gl*
 
 elseif arg[1] == "clean" then
 loadconf ()
@@ -398,7 +438,7 @@ removeaux ()
 print ("lwarpmk: Done.")
 
 -- lwarpmk cleanall
--- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log
+-- Remove project.aux, .toc, .lof, .lot, .idx, .ind, .log, .gl*
 --    and also project.pdf, *.html
 
 elseif arg[1] == "cleanall" then
