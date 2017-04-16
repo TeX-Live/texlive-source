@@ -21,3 +21,4 @@
 #define INPUT_FORMAT kpse_mf_format
 #define INI_PROGRAM "inimflua"
 #define VIR_PROGRAM "virmflua"
+#define MFLua

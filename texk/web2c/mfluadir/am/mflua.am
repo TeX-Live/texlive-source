@@ -131,20 +131,8 @@ mfluatrap-clean:
 ## Test data 
 ##
 EXTRA_DIST += \
-	mfluadir/mfluatrap/begin_program.lua \
-	mfluadir/mfluatrap/do_add_to.lua \
-	mfluadir/mfluatrap/end_program.lua \
-	mfluadir/mfluatrap/fill_envelope.lua \
-	mfluadir/mfluatrap/fill_spec.lua \
-	mfluadir/mfluatrap/final_cleanup.lua \
-	mfluadir/mfluatrap/main_control.lua \
-	mfluadir/mfluatrap/make_ellipse.lua \
-	mfluadir/mfluatrap/mfluaini.lua \
-	mfluadir/mfluatrap/offset_prep.lua \
-	mfluadir/mfluatrap/print_edges.lua \
-	mfluadir/mfluatrap/print_path.lua \
-	mfluadir/mfluatrap/scan_direction.lua \
-	mfluadir/mfluatrap/skew_line_edges.lua \
-	mfluadir/mfluatrap/start_of_mf.lua \
+	mfluadir/mfluatrap/mflua.lua \
+	mfluadir/mfluatrap/mflua_svg_backend.lua \
+	mfluadir/mfluatrap/mflua_ttx_backend.lua \
 	mfluadir/mfluatrap/texmf.cnf \
 	mfluadir/mfluatrap/mfluatrap.diffs

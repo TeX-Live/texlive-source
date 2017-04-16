@@ -21,3 +21,4 @@
 #define INPUT_FORMAT kpse_mf_format
 #define INI_PROGRAM "inimfluajit"
 #define VIR_PROGRAM "virmfluajit"
+#define MFLuaJIT

@@ -1,1 +1,0 @@
-function POST_final_cleanup() return 0 end
