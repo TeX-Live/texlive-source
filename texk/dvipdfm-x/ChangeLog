@@ -1,3 +1,9 @@
+2017-04-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Fix a bug that generation of GID to CID mapping for
+	format 2 CFF charsets was wrong. "unicode" encoding support was
+	broken for fonts using this format.
+
 2017-04-15  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* fontmap.c, tt_cmap.c, tt_gsub.c, tt_gsub.h, pdffont.c: Removed
