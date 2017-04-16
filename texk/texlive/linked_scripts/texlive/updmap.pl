@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 43628 2017-03-28 17:55:13Z karl $
+# $Id: updmap.pl 43794 2017-04-15 00:12:54Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 43628 2017-03-28 17:55:13Z karl $';
+my $svnid = '$Id: updmap.pl 43794 2017-04-15 00:12:54Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2017-03-28 19:55:13 +0200 (Tue, 28 Mar 2017) $';
+my $lastchdate = '$Date: 2017-04-15 02:12:54 +0200 (Sat, 15 Apr 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 43628 $';
+my $svnrev = '$Revision: 43794 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -73,6 +73,7 @@ my $updLSR;
 
 my @cmdline_options = (
   "sys",
+  "user",
   "listfiles",
   "cnffile=s@", 
   "copy", 
@@ -172,27 +173,9 @@ sub main {
     exit (0);
   }
 
-  # check if we are in *hidden* sys mode, in which case we switch
-  # to sys mode
-  # Nowdays we use -sys switch instead of simply overriding TEXMFVAR
-  # and TEXMFCONFIG
-  # This is used to warn users when they run updmap in usermode the first time.
-  # But it might happen that this script is called via another wrapper that
-  # sets TEXMFCONFIG and TEXMFVAR, and does not pass on the -sys option.
-  # for this case we check whether the SYS and non-SYS variants agree,
-  # and if, then switch to sys mode (with a warning)
-  if (($TEXMFSYSCONFIG eq $TEXMFCONFIG) && ($TEXMFSYSVAR eq $TEXMFVAR)) {
-    if (!$opts{'sys'}) {
-      print_warning("hidden sys mode found, switching to sys mode.\n");
-      $opts{'sys'} = 1;
-    }
-  }
-
-  if ($opts{'sys'}) {
-    # we are running as updmap-sys, make sure that the right tree is used
-    $texmfconfig = $TEXMFSYSCONFIG;
-    $texmfvar    = $TEXMFSYSVAR;
-  }
+  ($texmfconfig, $texmfvar) = 
+    TeXLive::TLUtils::setup_sys_user_mode($prg, \%opts,
+      $TEXMFCONFIG, $TEXMFSYSCONFIG, $TEXMFVAR, $TEXMFSYSVAR);
 
   if ($opts{'dvipdfmoutputdir'} && !defined($opts{'dvipdfmxoutputdir'})) {
     $opts{'dvipdfmxoutputdir'} = $opts{'dvipdfmoutputdir'};
@@ -1342,14 +1325,16 @@ sub mkMaps {
     print_and_log("
 WARNING: you are switching to updmap's per-user mappings.
 
-You have run updmap (as opposed to updmap-sys) for the first time; this
+You have run updmap-user (as opposed to updmap-sys) for the first time; this
 has created configuration files which are local to your personal account.
 
 Any changes in system map files will *not* be automatically reflected in
 your files; furthermore, running updmap-sys will no longer have any
-effect for you.  As a consequence, you have to rerun updmap yourself
+effect for you.  As a consequence, you have to rerun updmap-user yourself
 after any change in the system directories; for example, if a new font
 package is added.
+
+See http://tug.org/texlive/scripts-sys-user.html for details.
 
 If you want to undo this, remove the files mentioned above.
 
@@ -2240,8 +2225,9 @@ sub version {
 
 sub help {
   my $usage = <<"EOF";
-Usage: $prg     [OPTION] ... [COMMAND]
-   or: $prg-sys [OPTION] ... [COMMAND]
+Usage: $prg [-user|-sys] [OPTION] ... [COMMAND]
+   or: $prg-user [OPTION] ... [COMMAND]
+   or: $prg-sys  [OPTION] ... [COMMAND]
 
 Update the default font map files used by pdftex (pdftex.map), dvips
 (psfonts.map), and dvipdfm(x), and optionally pxdvi, as determined by
@@ -2252,11 +2238,14 @@ Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
 font files are included, typically subsetted, in the PDF or PostScript output.
 
-updmap-sys is intended to affect the system-wide configuration, while
-updmap affects personal configuration files only, overriding the system
-files.  As a consequence, once updmap has been run, even a single time,
+updmap-sys (or updmap -sys) is intended to affect the system-wide 
+configuration, while updmap-user (or updmap -user) affects personal
+configuration files only, overriding the system files.  
+As a consequence, once updmap-user has been run, even a single time,
 running updmap-sys no longer has any effect.  (updmap-sys issues a
 warning in this situation.)
+
+See http://tug.org/texlive/scripts-sys-user.html for details.
 
 By default, the TeX filename database (ls-R) is also updated.
 
@@ -2289,6 +2278,7 @@ Options:
   --nomkmap                 do not recreate map files
   --nohash                  do not run texhash
   --sys                     affect system-wide files (equivalent to updmap-sys)
+  --user                    affect personal files (equivalent to updmap-user)
   -n, --dry-run             only show the configuration, no output
   --quiet, --silent         reduce verbosity
 
@@ -2323,7 +2313,7 @@ The main output:
   only and are not like other map files.  dvipdfmx reads pdftex.map for
   the map entries for non-Kanji fonts.
   
-  If no option is given, so the invocation is just "updmap" or
+  If no option is given, so the invocation is just "updmap-user" or
   "updmap-sys", these output files are always recreated.
 
   Otherwise, if an option such as --enable or --disable is given, the
@@ -2402,7 +2392,7 @@ Explanation of trees and files normally used:
   TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/updmap.cfg
   TEXMFDIST      \$TEXLIVE/YYYY/texmf-dist/web2c/updmap.cfg
 
-  For updmap:
+  For updmap-user:
   TEXMFCONFIG    \$HOME/.texliveYYYY/texmf-config/web2c/updmap.cfg
   TEXMFVAR       \$HOME/.texliveYYYY/texmf-var/web2c/updmap.cfg
   TEXMFHOME      \$HOME/texmf/web2c/updmap.cfg
@@ -2484,11 +2474,11 @@ Listing of maps:
   (again separated by tab) containing '(not available)' for those
   map files that cannot be found.
  
-updmap vs. updmap-sys:
+updmap-user vs. updmap-sys:
 
   When updmap-sys is run, TEXMFSYSCONFIG and TEXMFSYSVAR are used
   instead of TEXMFCONFIG and TEXMFVAR, respectively.  This is the
-  primary difference between updmap-sys and updmap.
+  primary difference between updmap-sys and updmap-user.
 
   Other locations may be used if you give them on the command line, or
   these trees don't exist, or you are not using the original TeX Live.

@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 43628 2017-03-28 17:55:13Z karl $
+# $Id: fmtutil.pl 43794 2017-04-15 00:12:54Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 43628 2017-03-28 17:55:13Z karl $';
-my $lastchdate = '$Date: 2017-03-28 19:55:13 +0200 (Tue, 28 Mar 2017) $';
+my $svnid = '$Id: fmtutil.pl 43794 2017-04-15 00:12:54Z preining $';
+my $lastchdate = '$Date: 2017-04-15 02:12:54 +0200 (Sat, 15 Apr 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 43628 $';
+my $svnrev = '$Revision: 43794 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -112,6 +112,7 @@ my @cmdline_cmds = (  # in same order as help message
 
 our @cmdline_options = (  # in same order as help message
   "sys",
+  "user",
   "cnffile=s@", 
   "fmtdir=s",
   "no-engine-subdir",
@@ -151,6 +152,12 @@ sub main {
     # first generated filename after successful generation to stdout then
     # (and nothing else), since kpathsea can only deal with one.
     $mktexfmtMode = 1;
+
+    # TODO TODO
+    # which mode are we running in?
+    # what happens if root runs mktexfmt?
+    $opts{'user'} = 1;
+
     GetOptions ( "help" => \$opts{'help'}, "version" => \$opts{'version'} )
         or die "Unknown option in mktexfmt command line arguments\n";
     if ($ARGV[0]) {
@@ -198,7 +205,10 @@ sub main {
   }
   
   # these two functions should go to TLUtils (for use in updmap)
-  check_hidden_sysmode();
+  ($texmfconfig, $texmfvar) = 
+    TeXLive::TLUtils::setup_sys_user_mode($prg, \%opts,
+      $TEXMFCONFIG, $TEXMFSYSCONFIG, $TEXMFVAR, $TEXMFSYSVAR);
+
   determine_config_files("fmtutil.cnf");
   my $changes_config_file = $alldata->{'changes_config'};
   # we do changes always in the used config file with the highest priority
@@ -964,32 +974,6 @@ sub read_fmtutil_file {
 # and also be reused in updmap.pl!!!
 
 
-sub check_hidden_sysmode {
-  #
-  # check if we are in *hidden* sys mode, in which case we switch
-  # to sys mode
-  # Nowdays we use -sys switch instead of simply overriding TEXMFVAR
-  # and TEXMFCONFIG
-  # This is used to warn users when they run updmap in usermode the first time.
-  # But it might happen that this script is called via another wrapper that
-  # sets TEXMFCONFIG and TEXMFVAR, and does not pass on the -sys option.
-  # for this case we check whether the SYS and non-SYS variants agree,
-  # and if, then switch to sys mode (with a warning)
-  if (($TEXMFSYSCONFIG eq $TEXMFCONFIG) && ($TEXMFSYSVAR eq $TEXMFVAR)) {
-    if (!$opts{'sys'}) {
-      print_warning("hidden sys mode found, switching to sys mode.\n");
-      $opts{'sys'} = 1;
-    }
-  }
-
-  if ($opts{'sys'}) {
-    # we are running as updmap-sys, make sure that the right tree is used
-    $texmfconfig = $TEXMFSYSCONFIG;
-    $texmfvar    = $TEXMFSYSVAR;
-  }
-}
-
-
 # sets global $alldata->{'changes_config'} to the config file to be
 # changed if requested.
 #
@@ -1264,9 +1248,10 @@ sub version {
 
 sub help {
   my $usage = <<"EOF";
-Usage: $prg     [OPTION] ... [COMMAND]
-   or: $prg-sys [OPTION] ... [COMMAND]
-   or: mktexfmt FORMAT.fmt|BASE.base|FMTNAME.EXT
+Usage: $prg      [-user|-sys] [OPTION] ... [COMMAND]
+   or: $prg-sys  [OPTION] ... [COMMAND]
+   or: $prg-user [OPTION] ... [COMMAND]
+   or: mktexfmt  FORMAT.fmt|BASE.base|FMTNAME.EXT
 
 Rebuild and manage TeX fmts and Metafont bases, collectively called
 "formats" here. (MetaPost no longer uses the past-equivalent "mems".)
@@ -1285,7 +1270,8 @@ By default, the return status is zero if all formats requested are
 successfully built, else nonzero.
 
 Options:
-  --sys                   use TEXMFSYS{VAR,CONFIG} instead of TEXMF{VAR,CONFIG}
+  --sys                   use TEXMFSYS{VAR,CONFIG}
+  --user                  use TEXMF{VAR,CONFIG}
   --cnffile FILE          read FILE instead of fmtutil.cnf
                            (can be given multiple times, in which case
                            all the files are used)
@@ -1341,7 +1327,7 @@ Explanation of trees and files normally used:
   TEXMFLOCAL     \$TEXLIVE/texmf-local/web2c/fmtutil.cnf
   TEXMFDIST      \$TEXLIVE/YYYY/texmf-dist/web2c/fmtutil.cnf
 
-  For fmtutil:
+  For fmtutil-user:
   TEXMFCONFIG    \$HOME/.texliveYYYY/texmf-config/web2c/fmtutil.cnf
   TEXMFVAR       \$HOME/.texliveYYYY/texmf-var/web2c/fmtutil.cnf
   TEXMFHOME      \$HOME/texmf/web2c/fmtutil.cnf
@@ -1409,12 +1395,14 @@ Disabling formats:
   --no-error-if-no-engine option exists, since luajittex cannot be
   compiled on all platforms.)
 
-fmtutil vs. fmtutil-sys (fmtutil --sys):
+fmtutil-user (fmtutil -user) vs. fmtutil-sys (fmtutil -sys):
 
-  When fmtutil-sys is run or the command line option --sys is used, 
+  When fmtutil-sys is run or the command line option -sys is used, 
   TEXMFSYSCONFIG and TEXMFSYSVAR are used instead of TEXMFCONFIG and 
   TEXMFVAR, respectively.  This is the primary difference between 
-  fmtutil-sys and fmtutil.
+  fmtutil-sys and fmtutil-user.
+
+  See http://tug.org/texlive/scripts-sys-user.html for details.
 
   Other locations may be used if you give them on the command line, or
   these trees don't exist, or you are not using the original TeX Live.
