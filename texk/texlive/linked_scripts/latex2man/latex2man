@@ -3,10 +3,10 @@
 # Descr:	Latex -->  MAN-page (groff -man), HTML and TexInfo;
 # Language:	PERL (>= 5.0)
 # Author:	Dr. Jürgen Vollmer, Juergen.Vollmer@informatik-vollmer.de
-# $Id: latex2man,v 1.156 2010/12/22 12:44:30 vollmer Exp $
+# $Id: latex2man,v 1.163 2017/04/13 14:25:56 vollmer Exp $
 #
 # Copyright (C) 1998 Dr. Juergen Vollmer
-#                    Viktoriastrasse 15, D-76133 Karlsruhe, Germany
+#                    Am Rennbuckel 21, D-76185 Karlsruhe, Germany
 #                    Juergen.Vollmer@informatik-vollmer.de
 # License:
 #   This program can be redistributed and/or modified under the terms
@@ -26,8 +26,8 @@ $CMD=`basename $0`; chop ($CMD);
 $gen_date = `date`; chomp $gen_date;       # date when the output was generated
 
 sub date2str;
-$VERSION = "1.24";
-$DATE    = date2str ('$Date: 2010/12/22 12:44:30 $' =~ m|(\d+/\d+/\d+)|);
+$VERSION = "1.25";
+$DATE    = date2str ('$Date: 2017/04/13 14:25:56 $' =~ m|(\d+/\d+/\d+)|);
 
 $tmp = "/tmp/$CMD.$$";
 
@@ -69,13 +69,13 @@ usage: latex2man [-t transfile] [-c cssfile] [-HTML] [-C name] [-h] [-V] infile 
                    new line. In order to produce some additional space before
 	           that word (using \SP) some character has to be printed
 		   before the additional space. By default this is a . (dot).
-		 The \`char' specifies an alternative for that first character.
+		 The 'char' specifies an alternative for that first character.
                  Giving a blank (-a" ") supresses the indentation of a line.
                  Note: only for the first \SP of a series that char is printed.
   -h:            Help.
   -V:            Version.
 
-  Copyright (C) 1998 Dr. Jürgen Vollmer, Viktoriastr. 15, D-76133 Karlsruhe
+  Copyright (C) 1998 Dr. Jürgen Vollmer, Am Rennbuckel 21, D-76185 Karlsruhe
   email: Juergen.Vollmer@informatik-vollmer.de
   License:
     This program can be redistributed and/or modified under the terms
@@ -119,16 +119,8 @@ $cond_name{HTML}  = 1 if ($opt_H);
 $cond_name{TEXI}  = 1 if ($opt_T);
 $cond_name{LATEX} = 1 if ($opt_L);
 
-
 $SrcFile  = $ARGV[0];
 $DestFile = $ARGV[1];
-open (SRC,  "<$SrcFile")  || die "$CMD: Can't open file \`$SrcFile' for reading.\n";
-if ($opt_H || $opt_T) {
-    # DestFile will be written in the postprocess
-    open (DEST, ">$tmp")      || die "$CMD: Can't open file \`$tmp' for writing.\n";
-} else {
-    open (DEST, ">$DestFile") || die "$CMD: Can't open file \`$DestFile' for writing.\n";
-}
 
 ########################################################################
 
@@ -642,13 +634,6 @@ $texiMacro2a{'setlength'}	  = '';
 	$texiMacro2c{'setlength'} = '';
 
 ########################################################################
-# reading of translations for user macros
-
-if ($opt_t) {
-    do $opt_t;
-}
-
-########################################################################
 # processing for MAN
 
 sub manStart
@@ -665,10 +650,12 @@ sub manStart
     Print "\" \""; interpret_word "$tool"; Print "\""; NL;
     # thanks to Andrew Anderson <aja@emulab.ee.mu.oz.au>
 }
+
 sub manEnd
 {
     NL; printf DEST ".\\\" NOTE: This file is generated, DO NOT EDIT.\n";
 }
+
 sub manSection
 {
     my ($cnt, $kind, $section) = @_;
@@ -677,6 +664,7 @@ sub manSection
     }
     interpret_line "\\$kind\{$section\}";
 }
+
 sub manParagraph
 {
     if (!$paragraph) {
@@ -688,12 +676,14 @@ sub manParagraph
 	$paragraph  = 1;
     }
 }
+
 sub manVerb
 {
     my $arg = $_[0];
     if ($arg =~ /^\./) { print DEST '\\&' };
     Print $arg
 }
+
 sub manItemWithArg
 {
     my $arg = $_[0];
@@ -706,6 +696,7 @@ sub manItemWithArg
     PrintM ' ';
     NL;
 }
+
 sub manItem
 {
     if ($manRS == 1) {
@@ -720,12 +711,14 @@ sub manItem
     }
     NL;
 }
+
 sub manDescriptionStart
 {
     if ($list_nest > 1) {
 	Print '\n.RS\n';
     }
 }
+
 sub manDescriptionEnd
 {
     if ($manRS) {
@@ -737,12 +730,14 @@ sub manDescriptionEnd
     }
     manParagraph;
 }
+
 sub manItemStart
 {
     if ($list_nest > 1) {
 	Print '\n.RS\n';
     }
 }
+
 sub manItemEnd
 {
     if ($manRS) {
@@ -754,6 +749,7 @@ sub manItemEnd
     }
     manParagraph;
 }
+
 sub manEnumEnd
 {
     if ($manRS) {
@@ -772,22 +768,27 @@ sub manEnumStart
 	Print '\n.RS\n';
     }
 }
+
 sub manCenterStart
 {
     PrintM '\n.ce 100\n';
 }
+
 sub manCenterEnd
 {
     PrintM '\n.ce 0\n';
 }
+
 sub manNameStart
 {
     interpret_line "\\section\{NAME\}$rest";
 }
+
 sub manNameEnd
 {
     # nothing
 }
+
 sub manTableStart
 {
     my $columns = $_[0];
@@ -802,10 +803,12 @@ sub manTableStart
     Print "w($width)" if ($width);
     Print '.\n';
 }
+
 sub manTableSep
 {
     Print '\nT}&T{\n';
 }
+
 sub manTableEnd
 {
     Print '\n.TE\n';
@@ -861,33 +864,40 @@ sub htmlStart
     Print "<h4 align=center>Version $version</h4>"; 			NL;
   }
 }
+
 sub htmlEnd
 {
     Print "</body>"; 						 NL;
     Print "</html>"; 						 NL;
     Print "<!-- NOTE: This file is generated, DO NOT EDIT. -->"; NL;
 }
+
 sub htmlSection
 {
     my ($cnt, $kind, $section) = @_;
     interpret_line "\\$kind\{$cnt\}\{$section\}";
 }
+
 sub htmlCenterStart
 {
     Print '\n<div align=center>\n';
 }
+
 sub htmlCenterEnd
 {
     Print '\n</div>\n';
 }
+
 sub htmlNameStart
 {
     # nothing
 }
+
 sub htmlNameEnd
 {
     Print '\n@@INSERTION-POINT@@-TOC@@\n';
 }
+
 sub htmlParagraph
 {
     if (!$paragraph) {
@@ -895,6 +905,7 @@ sub htmlParagraph
 	$paragraph = 1;
     }
 }
+
 sub htmlVerb
 {
     $arg = $_[0];
@@ -903,6 +914,7 @@ sub htmlVerb
     $arg =~ s/</&lt;/g;
     Print $arg;
 }
+
 sub htmlItemWithArg
 {
     my $arg = $_[0];
@@ -914,6 +926,7 @@ sub htmlItemWithArg
     interpret_word $arg; Print "</dt>"; NL;
     Print "<dd>";
 }
+
 sub htmlItem
 {
     if ($item_nr[$list_nest] > 1) {
@@ -925,30 +938,37 @@ sub htmlItem
 	Print '<li value =' . $item_nr[$list_nest] .'>';
     }
 }
+
 sub htmlDescriptionStart
 {
     NL; Print "<dl compact>"; NL;
 }
+
 sub htmlDescriptionEnd
 {
     NL; Print "</dd>\n</dl>"; NL;
 }
+
 sub htmlItemStart
 {
     NL; Print "<ul compact>"; NL;
 }
+
 sub htmlItemEnd
 {
     NL; Print "</li>\n</ul>"; NL;
 }
+
 sub htmlEnumStart
 {
     NL; Print "<ol compact>"; NL;
 }
+
 sub htmlEnumEnd
 {
     NL; Print "</li>\n</ol>"; NL;
 }
+
 sub htmlTableStart
 {
     my $columns = $_[0];
@@ -961,6 +981,7 @@ sub htmlTableStart
     }
     NL;
 }
+
 sub htmlTableSep
 {
     if ($first_column == 0) {
@@ -972,6 +993,7 @@ sub htmlTableSep
 	Print '<td>';
     }
 }
+
 sub htmlTableEnd
 {
     NL; Print "</table>"; NL;
@@ -1008,11 +1030,13 @@ sub texiStart
     Print '@c Manual page created with' ." $CMD on $gen_date>";	NL;
     Print '@c NOTE: This file is generated, DO NOT EDIT.'; 	NL;
 }
+
 sub texiEnd
 {
     Print '@bye'; 						NL;
     Print '@c NOTE: This file is generated, DO NOT EDIT.'; 	NL;
 }
+
 sub texiSection
 {
     my ($cnt, $kind, $section) = @_;
@@ -1029,6 +1053,7 @@ sub texiSection
     }
     interpret_line "\\$kind\{$section\}";
 }
+
 sub texiNameStart
 {
     my ($name, $chapter, $author, $tool) = @_;
@@ -1046,10 +1071,12 @@ sub texiNameStart
     Print '\n@@INSERTION-POINT@@-TEXI-TOP@@';			NL;
     Print '@top ' . "$name";					NL;
 }
+
 sub texiNameEnd
 {
     # nothing
 }
+
 sub texiParagraph
 {
     if (!$paragraph) {
@@ -1057,12 +1084,14 @@ sub texiParagraph
 	$paragraph = 1;
     }
 }
+
 sub texiVerb
 {
     $arg = $_[0];
     $arg =~ s/({|})/\@$1/g;
     Print $arg;
 }
+
 sub texiItemWithArg
 {
     my $arg = $_[0];
@@ -1070,26 +1099,32 @@ sub texiItemWithArg
     interpret_word $arg;
     NL;
 }
+
 sub texiItem
 {
     Print '\n@item\n';
 }
+
 sub texiDescriptionStart
 {
     Print '\n@table @samp\n';
 }
+
 sub texiDescriptionEnd
 {
     Print '\n@end table\n';
 }
+
 sub texiItemStart
 {
     Print '\n@itemize @bullet\n';
 }
+
 sub texiItemEnd
 {
     Print '\n@end itemize\n';
 }
+
 sub texiCenterStart
 {
     $texiCenterLine      = 1;
@@ -1098,6 +1133,7 @@ sub texiCenterStart
     $texiMacro{'TEXIbr'} = '@*';
     NL;
 }
+
 sub texiCenterEnd
 {
     $texiCenterLine      = 0;
@@ -1111,10 +1147,12 @@ sub texiEnumStart
 {
     Print '\n@enumerate\n';
 }
+
 sub texiEnumEnd
 {
     Print '\n@end enumerate\n';
 }
+
 sub texiTableStart
 {
     my $columns = $_[0];
@@ -1126,10 +1164,12 @@ sub texiTableStart
     }
     Print '\n';
 }
+
 sub texiTableSep
 {
     Print '@tab ';
 }
+
 sub texiTableEnd
 {
     Print '\n@end multitable\n';
@@ -1163,11 +1203,13 @@ sub check_Macro
     exists $Macro->{$_[0]} ||
 	die "Error in line $.: no such macro: \\$_[0]\n";
 }
+
 sub check_Macro1
 {
     (exists $Macro1a->{$_[0]} && exists $Macro1b->{$_[0]}) ||
 	die "$CMD: Error in line $.: no such macro: \\$_[0]\n";
 }
+
 sub check_Macro2
 {
     (exists $Macro2a->{$_[0]} && exists $Macro2b->{$_[0]} && exists $Macro2c->{$_[0]}) ||
@@ -1238,7 +1280,7 @@ sub interpret_word
   } elsif ($opt_T) {
       # handling of TexInfo specific stuff
       if ($nesting == 0) {
-	  s'@'@@'g;
+	  s'@'@@'g; #'
       }
       if ($inside_table == 1) {
 	  if ($first_column == 1) {
@@ -1254,7 +1296,7 @@ sub interpret_word
       /^$/                           && do {$add_blank = 0;
 					    last SWITCH;
 					};
-      /\\verb\+([^+]*)\+/            && do {$s=$`;$m=$1;$r=$';
+      /\\verb\+([^+]*)\+/            && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
 					    PrintM $Macro1a->{'verb'};
 					    &{$Prefix . "Verb"} ($m);
@@ -1262,21 +1304,21 @@ sub interpret_word
 					    interpret_word $r;
 					    last SWITCH;
 					};
-     /\\(".|ss)/                     && do {$s=$`;$m=$1;$r=$'; #"
+     /\\(".|ss)/                     && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
                                             check_Macro $m;
                                             PrintM $Macro->{$m};
 					    interpret_word $r;
                                             last SWITCH;
                                         };
-     /\\item\s*\[([^]]*)\]/          && do {$s=$`;$m=$1;$r=$';
+     /\\item\s*\[([^]]*)\]/          && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
                                             $item_nr[$list_nest] ++;
 					    &{$Prefix . "ItemWithArg"} ($m);
 					    interpret_word $r;
 					    last SWITCH;
 					};
-      /\\item\s*/                    && do {$s=$`;$r=$';
+      /\\item\s*/                    && do {$s=$`;$r=$';	#'
 					    interpret_word $s;
                                             $item_nr[$list_nest] ++;
 					    &{$Prefix . "Item"};
@@ -1285,7 +1327,7 @@ sub interpret_word
 					};
        # LaTeX macros with two arguments
        /\\([a-zA-Z]+){([^}]*)}{([^}]*)}/
- 				     && do {$s=$`;$m=$1;$a1=$2;$a2=$3;$r=$';
+ 				     && do {$s=$`;$m=$1;$a1=$2;$a2=$3;$r=$';	#'
                                             check_Macro2 $m;
                                             interpret_word $s;
 					    PrintM $Macro2a->{$m};
@@ -1299,7 +1341,7 @@ sub interpret_word
 					};
        # Special Handling of Email and URL LaTeX macros with one argument
        /\\(URL|Email){([^}]*)}/ && ($opt_H)
- 				     && do {$s=$`;$m=$1;$a1=$2;$r=$';
+ 				     && do {$s=$`;$m=$1;$a1=$2;$r=$';	#'
 					    interpret_word $s;
 					    PrintM $Macro2a->{$m};
 					    interpret_word $a1;
@@ -1311,7 +1353,7 @@ sub interpret_word
 					    last SWITCH;
 					};
        # LaTeX macros with one argument
-       /\\([a-zA-Z]+){([^}]*)}/      && do {$s=$`;$m=$1;$a1=$2;$r=$';
+       /\\([a-zA-Z]+){([^}]*)}/      && do {$s=$`;$m=$1;$a1=$2;$r=$';	#'
 					    check_Macro1 $m;
 					    interpret_word $s;
 					    PrintM $Macro1a->{$m};
@@ -1322,7 +1364,7 @@ sub interpret_word
 					    last SWITCH;
 					};
        # Special handling of some LaTeX macros without an argument
-       /\\SP\s*/                     && do {$s=$`;$m=$1;$r=$';
+       /\\SP\s*/                     && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
 					    if ($first_word) {
 						PrintM $Macro->{"SPfirst"};
@@ -1333,7 +1375,7 @@ sub interpret_word
 					    $add_blank = 0;
 					    last SWITCH;
                                         };
-       /\\(MANbr|TEXIbr|HTMLbr)\s*/  && do {$s=$`;$m=$1;$r=$';
+       /\\(MANbr|TEXIbr|HTMLbr)\s*/  && do {$s=$`;$m=$1;$r=$';	#'
 					    # set $first_word to true
 					    check_Macro $m;
 	   	                            interpret_word $s;
@@ -1344,7 +1386,7 @@ sub interpret_word
 					    last SWITCH;
        					};
        # LaTeX macros without an argument:
-       /\\([a-zA-Z]+)\s*/            && do {$s=$`;$m=$1;$r=$';
+       /\\([a-zA-Z]+)\s*/            && do {$s=$`;$m=$1;$r=$';	#'
 					    check_Macro $m;
 	   	                            interpret_word $s;
 					    PrintM $Macro->{$m};
@@ -1352,39 +1394,39 @@ sub interpret_word
 					    $add_blank = 0;
 					    last SWITCH;
        					};
-       /\\({|}|\$|_|#|&|-|%|,|\.|;)/ && do {$s=$`;$m=$1;$r=$';
+       /\\({|}|\$|_|#|&|-|%|,|\.|;)/ && do {$s=$`;$m=$1;$r=$';	#'
 	                                    interpret_word $s;
 	                                    PrintM $Macro->{$m};
 					    interpret_word $r;
 					    last SWITCH;
 					};
       # LaTeX Math
-      /\$(<|>|<=|>=|=|<>)\$/         && do {$s=$`;$m=$1;$r=$';
+      /\$(<|>|<=|>=|=|<>)\$/         && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
 	                                    PrintM $Macro->{$m};
 					    interpret_word $r;
 					    last SWITCH;
 					};
-      /\$([^\$]*)\$/                 && do {$s=$`;$m=$1;$r=$';
+      /\$([^\$]*)\$/                 && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
 	                                    interpret_word $m;
 					    interpret_word $r;
 					    last SWITCH;
 					};
-      /&/                            && do {$s=$`;$r=$';
+      /&/                            && do {$s=$`;$r=$';	#'
 					    interpret_word $s;
 					    &{$Prefix . "TableSep"};
 					    $first_column = 0;
 					    interpret_word $r;
 					    last SWITCH;
 					};
-      /~/                            && do {$s=$`;$r=$';
+      /~/                            && do {$s=$`;$r=$';	#'
 					    interpret_word $s;
 	                                    PrintM $Macro->{'~'};
 					    interpret_word $r;
 					    last SWITCH;
 					};
-      /\\\\/                         && do {$s=$`;$r=$';
+      /\\\\/                         && do {$s=$`;$r=$';	#'
 					    interpret_word $s;
 					    if ($inside_table) {
 						PrintM $Macro->{'\\Tab'};
@@ -1400,7 +1442,7 @@ sub interpret_word
 					    $add_blank = 0;
 					    last SWITCH;
 					};
-       /\\$|\\ /                     && do {$s=$`;$r=$';
+       /\\$|\\ /                     && do {$s=$`;$r=$';	#'
                                             # LaTeX explicit blank \ will be
 					    # represented as a single \ at
 					    # the end of the word
@@ -1409,12 +1451,12 @@ sub interpret_word
 	                                    interpret_word $r;
 					    last SWITCH;
 					};
-      /\\/                           && do {$s=$`;$r=$';
+      /\\/                           && do {$s=$`;$r=$';	#'
 					    interpret_word $s;
 					    interpret_word "\\$r";
 					    last SWITCH;
 					};
-      ($opt_M == 1) && /((^\.|')+)/  && do {$s=$`;$m=$1;$r=$';
+      ($opt_M == 1) && /((^\.|')+)/  && do {$s=$`;$m=$1;$r=$';	#'
 					    interpret_word $s;
 					    print DEST "\\&$m";
 					    $newline = 0;
@@ -1425,7 +1467,7 @@ sub interpret_word
   };
   $nesting --;
   Print " " if ($nesting == 0 && $add_blank);
-}
+} # interpret_word()
 
 sub interpret_line
 {
@@ -1495,7 +1537,7 @@ sub interpret_line
 	interpret_word $word;
     }
     NL;
-}
+} # interpret_line()
 
 sub PrintM
 # print only for Macro command text
@@ -1514,7 +1556,7 @@ sub PrintM
 	    print DEST "$c";
 	}
     }
-}
+} # PrintM()
 
 sub Print
 {
@@ -1556,7 +1598,8 @@ sub Print
 	}
     }
     $paragraph = 0;
-}
+} # Print()
+
 #########################################################################
 
 sub date2str
@@ -1574,6 +1617,7 @@ $date =  date2str ($rcs_date);
 $Macro->{'today'}  = $date;
 
 #########################################################################
+
 my @skip;       # stack of skip-flags, 1: skip, 0: don't skip
 push @skip, 0;  # synthetic "outer most" IF, don't skip
 my $last_cond_clause = "";
@@ -1622,17 +1666,31 @@ sub handle_conditional_text
 	pop @skip;
     }
 #    print "$last_cond_clause: skip = $skip[-1]\n";
-}
+} # handle_conditional_text()
 
 ############################################################################
 # handle LaTeX output
-if ($opt_L) {
-    while (<SRC>) {
+#########################################################################
+
+sub emit_LaTeX
+{
+    my $src            = shift(@_);   # the source handle to be read
+    my $inside_include = shift(@_);   # true, if we reading an \input{..}
+    while (<$src>) {
 	if ($opt_D == 1) {
 	    my $line = $_; chop $line;
 	    print "--- \`$line'\n";
 	}
-
+	if (/^\s*\\input{([^}]*)}\s*/) {
+	    # handle \input{fn}
+	    my $fn = $1;
+	    printf DEST "%%%%%%%%%%%%%%%%%% start of \\input{%s}\n", $fn;
+	    open (my $inc, "<$fn") || die "$CMD: Can't open file \\input-file \`$fn' for reading.\n";
+	    emit_LaTeX($inc, 1);
+	    close ($inc);
+	    printf DEST "%%%%%%%%%%%%%%%%%% end of \\input{%s}\n", $fn;
+	    next;
+	}
 	if (/^\s*%@%\s/) {
 	    my $skip = $skip[-1];
 	    handle_conditional_text ("$_");
@@ -1643,13 +1701,14 @@ if ($opt_L) {
 	next if ($skip[-1] == 1);
 	print DEST $_;
     }
-    close (DEST);
-    exit (0);
-}
+} # emit_LaTeX()
+
 
 ############################################################################
 # handle non-LaTeX output
+############################################################################
 
+sub emit_NonLaTeX
 # read sections
 # Variables:   $section     name of the section in uppercase letters
 #              $chapter     chapter of the man page
@@ -1659,182 +1718,217 @@ if ($opt_L) {
 #              $tool        info about the tool set, $name is part of
 #              $date        date
 #              $version     version info
-$started     = 0;
-while (<SRC>) {
-    if ($opt_D == 1) {
-	my $line = $_; chop $line;
-	print "--- \`$line'\n";
-    }
+{
+    my $src            = shift(@_);   # the source handle to be read
+    my $inside_include = shift(@_);   # true, if we reading an \input{..}
 
-    if ((/^\s*%@%\s/) && ($inside_verb==0)) {
-	my $skip = $skip[-1];
-	handle_conditional_text ("$_");
-    }
-    next if ($skip[-1] == 1);
-
-    if ($inside_verb) {
-        if (/^\s*\\end{verbatim}/) {
-	    if ($started == 1) {
-		&{$Prefix . "VerbatimEnd"};
-		$inside_verb = 0;
-	    }
-	} else {
-	    &{$Prefix . "VerbatimLine"} ($_);
-	}
-	next;
-    }
-
-    # remove {, } around Umlaute
-    s/{(\\".)}/\1/g;      # "
-    s/{(\\ss)}/\1/g;
-
-    # normalize special characters
-    s/\\"a/ä/g;
-    s/\\"o/ö/g;
-    s/\\"u/ü/g;
-    s/\\"A/Ä/g;
-    s/\\"O/Ö/g;
-    s/\\"U/Ü/g;
-    s/\\ss/ß/g;
-
-    if (/^\s*\\rcsInfo \$(.*)\$/) {
-	my ($rcs_id,$rcs_file,$rcs_revision,
-	 $rcs_date,$rcs_time,$rcs_owner,$rcs_status,$rcs_locker) = split(/\s/,$1);
-	$date = date2str ($rcs_date);
-	$Macro->{'today'}  = $date;
-    } elsif (/^\s*\\setDate{\\rcsInfoLongDate}/) {
-	$Macro->{'Date'} = $date;
-    } elsif (/^\s*\\setDate{\\today}/) {
-	$Macro->{'Date'} = $date;
-    } elsif (/^\s*\\setDate{([^}]*)}/) {
-	$date = $1;
-	$date =~ s/~/$Macro->{'~'}/g;
-	$Macro->{'Date'} = $date;
-    } elsif (/^\s*\\setVersion{([^}]*)}/) {
-	$version            = $1;
-	$versin             =~ s/~/$Macro->{'~'}/g;
-	$Macro->{'Version'} = $version;
-    } elsif (/^\s*\\begin{Name}{([^}]*)}{([^}]*)}{([^}]*)}{([^}]*)}{([^}]*)}/) {
-        $section = "Name";
-        $chapter = $1;
-	$name    = $2;
-	$Name    = uc $name;
-	$author  = $3;
-	$tool    = $4;
-	$title   = $5;
-	$rest    = $';
-	$started = 1;
-	$sections[0] = $section;
-	$section_cnt = 0;
-	&{$Prefix . "Start"}     ($name, $chapter, $author, $tool, $title);
-	&{$Prefix . "NameStart"} ($name, $chapter, $author, $tool, $title);
-    } elsif (/^\s*\\end{Name}/) {
-	&{$Prefix . "NameEnd"} ($name, $chapter, $author, $tool);
-    } elsif (/^\s*\\begin{Table}(\[([^]]*)\])?{([^}]*)}/) {
-        # \begin{Table}[width]{columns}
-	if ($started == 1) {
-	    $columns      = $3;
-	    $column       = $_[0];
-	    $inside_table = 1;
-	    $first_column = 1;
-	    &{$Prefix . "TableStart"} ($columns, $2);
-	}
-    } elsif (/^\s*\\end{Table}/) {
-	if ($started == 1) {
-	    $inside_table = 0;
-	    $first_column = 0;
-	    &{$Prefix . "TableEnd"} ($columns);
-	}
-    } elsif (/^\s*\\begin{Description}(\[[^]]*\])?/) {
-	if ($started == 1) {
-	    $list_nest++;
-	    $cur_list[$list_nest] = 'descr';
-	    $item_nr[$list_nest]  = 0;
-	    &{$Prefix . "DescriptionStart"};
-	}
-    } elsif (/^\s*\\end{Description}/) {
-	if ($started == 1) {
-	    &{$Prefix . "DescriptionEnd"};
-	    $list_nest--;
-	}
-    } elsif (/^\s*\\begin{description}/) {
-	if ($started == 1) {
-	    $list_nest++;
-	    $cur_list[$list_nest] = 'descr';
-	    $item_nr[$list_nest]  = 0;
-	    &{$Prefix . "DescriptionStart"};
-	}
-    } elsif (/^\s*\\end{description}/) {
-	if ($started == 1) {
-	    &{$Prefix . "DescriptionEnd"};
-	    $list_nest--;
-	}
-    } elsif (/^\s*\\begin{center}/) {
-	if ($started == 1) {
-	    &{$Prefix . "CenterStart"};
-	}
-    } elsif (/^\s*\\end{center}/) {
-	if ($started == 1) {
-	    &{$Prefix . "CenterEnd"};
-	}
-    } elsif (/^\s*\\begin{enumerate}/) {
-	if ($started == 1) {
-	    $list_nest++;
-	    $cur_list[$list_nest] = 'enum';
-	    $item_nr[$list_nest]  = 0;
-	    &{$Prefix . "EnumStart"} ;
-	}
-    } elsif (/^\s*\\end{enumerate}/) {
-	if ($started == 1) {
-	    &{$Prefix . "EnumEnd"} ;
-	    $list_nest--;
-	}
-    } elsif (/^\s*\\begin{itemize}/) {
-	if ($started == 1) {
-	    $list_nest++;
-	    $cur_list[$list_nest] = 'item';
-	    $item_nr[$list_nest]  = 0;
-	    &{$Prefix . "ItemStart"} ;
-	}
-    } elsif (/^\s*\\end{itemize}/) {
-	if ($started == 1) {
-	    &{$Prefix . "ItemEnd"} ;
-	    $list_nest--;
-	}
-    } elsif (/^\s*\\begin{verbatim}/) {
-	if ($started == 1) {
-	    &{$Prefix . "VerbatimStart"};
-	    $inside_verb = 1;
-	}
-    } elsif (/^\s*\\(subsubsection|subsection|section){([^}]*)}/) {
-        $kind    = $1;
-	$section = $2;
-	$section_cnt ++;
-	$sections[$section_cnt]     = $section;
-	$section_kind[$section_cnt] = $kind;
-	if ($started == 1) {
-	    &{$Prefix . "Section"} ($section_cnt, $kind, $section);
-	}
-    } elsif (/^\s*\\LatexManEnd/) {
-	last;
-    } elsif (/^\s*((\\begin{Name|Table|Description})|(\\(sub)?section))/) {
-	die "$CMD: in line $.\n           " .
-	    "Arguments of $1 are not contained in a single " .
-	    "line.\n           " .
-	    "Remember: all arguments of a macro must be on the same line.\n";
+    if ($inside_include) {
+	$started = shift(@_);   # given, only if inside_include is true
     } else {
-	if ($started == 1) {
-	    interpret_line $_;
+	$started = 0;
+    }
+
+    while (<$src>) {
+	if ($opt_D == 1) {
+	    my $line = $_; chop $line;
+	    print "--- \`$line'\n";
+	}
+	if (/^\s*\\input{([^}]*)}\s*/) {
+	    # handle \input{fn}
+	    my $fn = $1;
+	    if ($opt_M) {
+		printf DEST ".\\\" *********************************** start of \\input{%s}\n", $fn;
+	    } elsif ($opt_H) {
+		printf DEST "<!-- *********************************** start of \\input{%s} -->\n", $fn;
+	    } elsif ($opt_T) {
+		printf DEST "\@c *********************************** start of \\input{%s}\n", $fn;
+	    }
+	    open (my $inc, "<$fn") || die "$CMD: Can't open file \\input-file \`$fn' for reading.\n";
+	    emit_NonLaTeX($inc, 1, $started);
+	    close ($inc);
+	    if ($opt_M) {
+		printf DEST ".\\\" *********************************** end of \\input{%s}\n", $fn;
+	    } elsif ($opt_H) {
+		printf DEST "<!-- *********************************** end of \\input{%s} -->\n", $fn;
+	    } elsif ($opt_T) {
+		printf DEST "\@c *********************************** end of \\input{%s}\n", $fn;
+	    }
+	    next;
+	}
+	if ((/^\s*%@%\s/) && ($inside_verb==0)) {
+	    my $skip = $skip[-1];
+	    handle_conditional_text ("$_");
+	}
+	next if ($skip[-1] == 1);
+
+	if ($inside_verb) {
+	    if (/^\s*\\end{verbatim}/) {
+		if ($started == 1) {
+		    &{$Prefix . "VerbatimEnd"};
+		    $inside_verb = 0;
+		}
+	    } else {
+		&{$Prefix . "VerbatimLine"} ($_);
+	    }
+	    next;
+	}
+
+	# remove {, } around Umlaute
+	s/{(\\".)}/\1/g;      # "
+	s/{(\\ss)}/\1/g;
+
+	# normalize special characters
+	s/\\"a/ä/g;
+	s/\\"o/ö/g;
+	s/\\"u/ü/g;
+	s/\\"A/Ä/g;
+	s/\\"O/Ö/g;
+	s/\\"U/Ü/g;
+	s/\\ss/ß/g;
+
+	if (/^\s*\\rcsInfo \$(.*)\$/) {
+	    my ($rcs_id,$rcs_file,$rcs_revision,
+		$rcs_date,$rcs_time,$rcs_owner,$rcs_status,$rcs_locker) = split(/\s/,$1);
+	    $date = date2str ($rcs_date);
+	    $Macro->{'today'}  = $date;
+	} elsif (/^\s*\\setDate{\\rcsInfoLongDate}/) {
+	    $Macro->{'Date'} = $date;
+	} elsif (/^\s*\\setDate{\\today}/) {
+	    $Macro->{'Date'} = $date;
+	} elsif (/^\s*\\setDate{([^}]*)}/) {
+	    $date = $1;
+	    $date =~ s/~/$Macro->{'~'}/g;
+	    $Macro->{'Date'} = $date;
+	} elsif (/^\s*\\setVersion{([^}]*)}/) {
+	    $version            = $1;
+	    $versin             =~ s/~/$Macro->{'~'}/g;
+	    $Macro->{'Version'} = $version;
+	} elsif (/^\s*\\begin{Name}{([^}]*)}{([^}]*)}{([^}]*)}{([^}]*)}{([^}]*)}/) {
+	    $section = "Name";
+	    $chapter = $1;
+	    $name    = $2;
+	    $Name    = uc $name;
+	    $author  = $3;
+	    $tool    = $4;
+	    $title   = $5;
+	    $rest    = $';  #'
+		$started = 1;
+	    $sections[0] = $section;
+	    $section_cnt = 0;
+	    &{$Prefix . "Start"}     ($name, $chapter, $author, $tool, $title);
+	    &{$Prefix . "NameStart"} ($name, $chapter, $author, $tool, $title);
+	} elsif (/^\s*\\end{Name}/) {
+	    &{$Prefix . "NameEnd"} ($name, $chapter, $author, $tool);
+	} elsif (/^\s*\\begin{Table}(\[([^]]*)\])?{([^}]*)}/) {
+	    # \begin{Table}[width]{columns}
+	    if ($started == 1) {
+		$columns      = $3;
+		$column       = $_[0];
+		$inside_table = 1;
+		$first_column = 1;
+		&{$Prefix . "TableStart"} ($columns, $2);
+	    }
+	} elsif (/^\s*\\end{Table}/) {
+	    if ($started == 1) {
+		$inside_table = 0;
+		$first_column = 0;
+		&{$Prefix . "TableEnd"} ($columns);
+	    }
+	} elsif (/^\s*\\begin{Description}(\[[^]]*\])?/) {
+	    if ($started == 1) {
+		$list_nest++;
+		$cur_list[$list_nest] = 'descr';
+		$item_nr[$list_nest]  = 0;
+		&{$Prefix . "DescriptionStart"};
+	    }
+	} elsif (/^\s*\\end{Description}/) {
+	    if ($started == 1) {
+		&{$Prefix . "DescriptionEnd"};
+		$list_nest--;
+	    }
+	} elsif (/^\s*\\begin{description}/) {
+	    if ($started == 1) {
+		$list_nest++;
+		$cur_list[$list_nest] = 'descr';
+		$item_nr[$list_nest]  = 0;
+		&{$Prefix . "DescriptionStart"};
+	    }
+	} elsif (/^\s*\\end{description}/) {
+	    if ($started == 1) {
+		&{$Prefix . "DescriptionEnd"};
+		$list_nest--;
+	    }
+	} elsif (/^\s*\\begin{center}/) {
+	    if ($started == 1) {
+		&{$Prefix . "CenterStart"};
+	    }
+	} elsif (/^\s*\\end{center}/) {
+	    if ($started == 1) {
+		&{$Prefix . "CenterEnd"};
+	    }
+	} elsif (/^\s*\\begin{enumerate}/) {
+	    if ($started == 1) {
+		$list_nest++;
+		$cur_list[$list_nest] = 'enum';
+		$item_nr[$list_nest]  = 0;
+		&{$Prefix . "EnumStart"} ;
+	    }
+	} elsif (/^\s*\\end{enumerate}/) {
+	    if ($started == 1) {
+		&{$Prefix . "EnumEnd"} ;
+		$list_nest--;
+	    }
+	} elsif (/^\s*\\begin{itemize}/) {
+	    if ($started == 1) {
+		$list_nest++;
+		$cur_list[$list_nest] = 'item';
+		$item_nr[$list_nest]  = 0;
+		&{$Prefix . "ItemStart"} ;
+	    }
+	} elsif (/^\s*\\end{itemize}/) {
+	    if ($started == 1) {
+		&{$Prefix . "ItemEnd"} ;
+		$list_nest--;
+	    }
+	} elsif (/^\s*\\begin{verbatim}/) {
+	    if ($started == 1) {
+		&{$Prefix . "VerbatimStart"};
+		$inside_verb = 1;
+	    }
+	} elsif (/^\s*\\(subsubsection|subsection|section){([^}]*)}/) {
+	    $kind    = $1;
+	    $section = $2;
+	    $section_cnt ++;
+	    $sections[$section_cnt]     = $section;
+	    $section_kind[$section_cnt] = $kind;
+	    if ($started == 1) {
+		&{$Prefix . "Section"} ($section_cnt, $kind, $section);
+	    }
+	} elsif (/^\s*\\LatexManEnd/) {
+	    last;
+	} elsif (/^\s*((\\begin{Name|Table|Description})|(\\(sub)?section))/) {
+	    die "$CMD: in line $.\n           " .
+		"Arguments of $1 are not contained in a single " .
+		"line.\n           " .
+		"Remember: all arguments of a macro must be on the same line.\n";
+	} else {
+	    if ($started == 1) {
+		interpret_line $_;
+	    }
 	}
     }
-}
-&{$Prefix . "End"};
+    if (!$inside_include) {
+	&{$Prefix . "End"};
+    }
+} # emit_NonLaTeX()
 
-close DEST;
+############################################################################
+# Postprocessing TEXI and HTML
+############################################################################
 
-if ($opt_H || $opt_T) {
-    open (TMP, "<$tmp")       || die "$CMD: Can't open file \`$tmp' for reading.\n";
-    open (DEST, ">$DestFile") || die "$CMD: Can't open file \`$DestFile' for writing.\n";
+sub postProcessNonLaTeX
+{
+    open (TMP, "<$tmp") || die "$CMD: Can't open file \`$tmp' for reading.\n";
     while (<TMP>) {
 	if (/^\@\@INSERTION-POINT\@\@-TOC\@\@$/) {
 	    if ($opt_H) {
@@ -1902,9 +1996,48 @@ if ($opt_H || $opt_T) {
 	}
     }
     close TMP;
-    close DEST;
     unlink $tmp;
+} # postPrecessNonLaTeX()
+
+#########################################################################
+# Do the job
+#########################################################################
+
+if ($opt_t) {
+    # reading of translations for user macros
+    do $opt_t;
 }
+
+########################################################################
+
+open (my $SRC, "<$SrcFile") || die "$CMD: Can't open file \`$SrcFile' for reading.\n";
+if ($opt_H || $opt_T) {
+    # DestFile will be written in the postprocess
+    open (DEST, ">$tmp")      || die "$CMD: Can't open file \`$tmp' for writing.\n";
+} else {
+    open (DEST, ">$DestFile") || die "$CMD: Can't open file \`$DestFile' for writing.\n";
+}
+
+if ($opt_L) {
+    # handle LaTeX output
+    emit_LaTeX ($SRC);
+    close ($SRC);
+    close (DEST);
+} else {
+    # handle non-LaTeX
+    emit_NonLaTeX ($SRC);
+    close ($SRC);
+    close (DEST);
+
+    if ($opt_H || $opt_T) {
+	open (DEST, ">$DestFile") || die "$CMD: Can't open file \`$DestFile' for writing.\n";
+	postProcessNonLaTeX();
+	close (DEST);
+    }
+}
+
+############################################################################
+
 
 #########################################################################
 
@@ -1912,4 +2045,3 @@ if ($opt_H || $opt_T) {
 ## Local Variables: ***
 ## mode: perl ***
 ## End: ***
-
