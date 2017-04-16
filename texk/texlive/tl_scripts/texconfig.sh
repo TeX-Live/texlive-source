@@ -559,7 +559,6 @@ the TeX installation.
 
 Usage: $progname conf                  (show configuration information)
        $progname dvipdfmx paper PAPER  (dvipdfmx paper size)
-       $progname dvipdfm paper PAPER   (dvipdfm paper size)
        $progname dvips [OPTION...]     (dvips options)
        $progname faq                   (show teTeX faq)
        $progname findprog PROG...      (show locations of PROGs, a la which)
@@ -580,7 +579,6 @@ Usage: $progname conf                  (show configuration information)
 
 Get more help with:
        $progname dvipdfmx
-       $progname dvipdfm
        $progname dvips
        $progname font
        $progname hyphen
@@ -603,13 +601,13 @@ TeX Live home page: <http://tug.org/texlive/>
       echo
       echo '==================== binaries found by searching $PATH ==================='
       echo "PATH=$PATH"
-      echoLocateBinary kpsewhich updmap fmtutil texconfig tex pdftex mktexpk dvips dvipdfm
+      echoLocateBinary kpsewhich updmap fmtutil texconfig tex pdftex mktexpk dvips dvipdfmx
       echo
       echo '=========================== active config files =========================='
       echoLocateCfgfile texmf.cnf updmap.cfg fmtutil.cnf config.ps mktex.cnf XDvi pdftexconfig.tex config | sort -k 2
       echo
       echo '============================= font map files ============================='
-      for m in psfonts.map pdftex.map ps2pk.map dvipdfm.map; do
+      for m in psfonts.map pdftex.map ps2pk.map; do
         echo "$m: `kpsewhich $m`"
       done
       echo
@@ -619,39 +617,6 @@ TeX Live home page: <http://tug.org/texlive/>
       echo
       echo '==== kpathsea variables from environment only (ok if no output here) ===='
       echoShowVariable $envVars
-      ;;
-
-    # texconfig dvipdfm
-    dvipdfm)
-      help="Usage: $progname dvipdfm paper PAPER
-
-Valid PAPER settings:
-  letter legal ledger tabloid a4 a3"
-      case $2 in
-        # texconfig dvipdfm paper
-        paper-list)
-          for p in letter legal ledger tabloid a4 a3; do echo $p; done
-          ;;
-        paper)
-          case $3 in
-            letter|legal|ledger|tabloid|a4|a3)
-              fmgrConfigReplace config '^p' "p $3";;
-            "") echo "$help" >&2; rc=1;;
-            *)
-             echo "$progname: unknown PAPER \`$3' given as argument for \`$progname dvipdfm paper'" >&2
-             echo "$progname: try \`$progname dvipdfm paper' for help" >&2
-             rc=1 ;;
-          esac ;;
-        # texconfig dvipdfm ""
-        "")
-          echo "$help" >&2; rc=1 ;;
-        # texconfig dvipdfm <unknown>
-        *)
-          echo "$progname: unknown option \`$2' given as argument for \`$progname dvipdfm'" >&2
-          echo "$progname: try \`$progname dvipdfm' for help" >&2
-          rc=1
-          ;;
-      esac
       ;;
 
     # texconfig dvipdfmx
@@ -1233,9 +1198,6 @@ Valid PAPER settings:
       esac
       if checkForBinary dvips >/dev/null && tcfmgr --cmd find --file config.ps >/dev/null 2>&1; then
         tcBatch dvips paper $pDvips
-      fi
-      if checkForBinary dvipdfm >/dev/null && tcfmgr --cmd find --file config >/dev/null 2>&1; then
-        tcBatch dvipdfm paper $p
       fi
       if checkForBinary dvipdfmx >/dev/null && tcfmgr --cmd find --file dvipdfmx.cfg >/dev/null 2>&1; then
         tcBatch dvipdfmx paper $p
