@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 42254 $';
+my $svnrev = '$Revision: 43793 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -96,6 +96,7 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
   TeXLive::TLUtils::report_tlpdb_differences(\%ret);
   TeXLive::TLUtils::tlnet_disabled_packages($root);
   TeXLive::TLUtils::mktexupd();
+  TeXLive::TLUtils::setup_sys_user_mode($optsref,$tmfc, $tmfsc, $tmfv, $tmfsv);
 
 =head1 DESCRIPTION
 
@@ -179,6 +180,7 @@ BEGIN {
     &report_tlpdb_differences
     &setup_persistent_downloads
     &mktexupd
+    &setup_sys_user_mode
     &nulldev
     &get_full_line
     &sort_archs
@@ -3977,6 +3979,56 @@ sub mktexupd {
     }
   };
   return $hash;
+}
+
+
+=item C<check_sys_user_mode($user,$sys,$tmfc, $tmfsc, $tmfv, $tmfsv)>
+
+=cut
+
+sub setup_sys_user_mode {
+  my ($prg, $optsref, $TEXMFCONFIG, $TEXMFSYSCONFIG, 
+      $TEXMFVAR, $TEXMFSYSVAR) = @_;
+  
+  if ($optsref->{'user'} && $optsref->{'sys'}) {
+    print STDERR "$prg [ERROR]: only one of -user and -sys can be used.\n";
+    exit(1);
+  }
+
+  # check if we are in *hidden* sys mode, in which case we switch
+  # to sys mode
+  # Nowdays we use -sys switch instead of simply overriding TEXMFVAR
+  # and TEXMFCONFIG
+  # This is used to warn users when they run updmap in usermode the first time.
+  # But it might happen that this script is called via another wrapper that
+  # sets TEXMFCONFIG and TEXMFVAR, and does not pass on the -sys option.
+  # for this case we check whether the SYS and non-SYS variants agree,
+  # and if, then switch to sys mode (with a warning)
+  if (($TEXMFSYSCONFIG eq $TEXMFCONFIG) && ($TEXMFSYSVAR eq $TEXMFVAR)) {
+    if ($optsref->{'user'}) {
+      print STDERR "$prg [ERROR]: -user mode but path setup is -sys type, bailing out.\n";
+      exit(1);
+    }
+    if (!$optsref->{'sys'}) {
+      print STDERR "$prg [WARNING]: hidden sys mode found, switching to sys mode.\n" if (!$optsref->{'quiet'});
+      $optsref->{'sys'} = 1;
+    }
+  }
+
+  my ($texmfconfig, $texmfvar);
+  if ($optsref->{'sys'}) {
+    # we are running as updmap-sys, make sure that the right tree is used
+    $texmfconfig = $TEXMFSYSCONFIG;
+    $texmfvar    = $TEXMFSYSVAR;
+  } elsif ($optsref->{'user'}) {
+    $texmfconfig = $TEXMFCONFIG;
+    $texmfvar    = $TEXMFVAR;
+  } else {
+    print STDERR "$prg [ERROR]: Either -user or -sys mode is required.\n" .
+      "See $TeXLive::TLConfig::SYSUSERURL for details!\n";
+    exit(1);
+  }
+  return ($texmfconfig, $texmfvar);
 }
 
 =back

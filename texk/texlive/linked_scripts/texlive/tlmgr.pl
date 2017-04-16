@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43566 2017-03-21 17:08:03Z karl $
+# $Id: tlmgr.pl 43803 2017-04-15 00:15:00Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43566 $';
-my $datrev = '$Date: 2017-03-21 18:08:03 +0100 (Tue, 21 Mar 2017) $';
+my $svnrev = '$Revision: 43803 $';
+my $datrev = '$Date: 2017-04-15 02:15:00 +0200 (Sat, 15 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -307,6 +307,9 @@ my %action_specification = (
     "run-post" => 1,
     "function" => \&action_search
   },
+  "shell" => {
+    "function" => \&action_shell
+  },
   "uninstall" => {
     "options"  => { "force" => 1 },
     "run-post" => 0,
@@ -592,8 +595,8 @@ for the full story.\n";
   #
   # Try to open the packagelog file, but do NOT die when that does not work
   if (!open(PACKAGELOG, ">>$packagelogfile")) {
-    debug("Cannot open package log file $packagelogfile for appending\n");
-    debug("Will not log package installation/removal/update for that run\n");
+    tlwarn("Cannot open package log file $packagelogfile for appending\n");
+    tlwarn("Will not log package installation/removal/update for that run\n");
     $packagelogfile = "";
   }
 
@@ -626,6 +629,12 @@ for the full story.\n";
   }
 
   my $ret = execute_action($action, @ARGV);
+
+  # close the special log file
+  if ($packagelogfile && !$::gui_mode) {
+    info("$prg: package log updated: $packagelogfile\n") if $packagelogged;
+    close(PACKAGELOG);
+  }
 
   # F_ERROR stops processing immediately, and prevents postactions from
   # being run (e.g., untar fails).  F_WARNING continues on, including
@@ -713,12 +722,6 @@ sub execute_action {
   }
   if (!$action_specification{$action}{"run-post"}) {
     $run_post = 0;
-  }
-
-  # close the special log file
-  if ($packagelogfile && !$::gui_mode) {
-    info("$prg: package log updated: $packagelogfile\n") if $packagelogged;
-    close(PACKAGELOG);
   }
 
   return ($ret) if (!$run_post);
@@ -6495,7 +6498,208 @@ sub check_on_writable {
   }
   return 1;
 }
-    
+
+
+###########
+# tlmgr shell code
+sub action_shell {
+  my $protocol = 1;
+  our $promptfunc;
+
+  eval { 
+    require IO::Prompter;
+  };
+  if ($@) {
+    printf STDERR "Cannot find IO::Prompter module, reduced interactive functionality!\n";
+    $promptfunc =  sub {
+      my $default_prompt = "tlmgr>";
+      my $prompt = "";
+      my @options;
+      my @guarantee;
+      my @savedargs = @_;
+      while (defined(my $arg = shift @_)) {
+        if ($arg =~ m/^-prompt$/) {
+          $prompt .= shift @_;
+        } elsif ($arg =~ m/^-style$/) {
+          # ignore style here
+          shift @_;
+        } elsif ($arg =~ m/^-menu$/) {
+          my $options = shift @_;
+          @options = @$options;
+        } elsif ($arg =~ m/^-guarantee$/) {
+          my $guarantee = shift @_;
+          @guarantee = @$guarantee;
+        } elsif ($arg =~ m/^-/) {
+          print "ERROR unsupported prompt command, please report: $arg!\n";
+        } else {
+          $prompt .= $arg;
+        }
+      }
+      $prompt = ($prompt ? $prompt : $default_prompt );
+      print "$prompt ";
+      if (@options) {
+        print "(", join(",", @options), ") ";
+      }
+      my $ans = <STDIN>;
+      if (!defined($ans)) {
+        # we got Ctrl-D, just break out
+        return;
+      }
+      chomp($ans);
+      if (@guarantee) {
+        my $isok = 0;
+        for my $g (@guarantee) {
+          if ($ans eq $g) {
+            $isok = 1;
+            last;
+          }
+        }
+        if (!$isok) {
+          print("Please answer one of @guarantee!\n");
+          return($promptfunc->(@savedargs));
+        }
+      }
+      return($ans);
+    }
+  } else {
+    $promptfunc = \&IO::Prompter::prompt;
+  }
+  sub do_prompt {
+    our $promptfunc;
+    my $foo = $promptfunc->(@_);
+    return($foo);
+  }
+
+  print "protocol $protocol\n";
+  while (1) {
+    # print $prompt;
+    # my $ans = <STDIN>;
+    my $ans = do_prompt('tlmgr>');
+    # chomp $ans;
+    next if (!defined($ans));
+    my ($cmd, @args) = TeXLive::TLUtils::quotewords('\s+', 0, $ans);
+    next if (!defined($cmd));
+    if ($cmd eq "protocol") {
+      print "protocol $protocol\n";
+    } elsif ($cmd eq "version") {
+      print give_version(), "\n";
+    } elsif ($cmd =~ m/^(quit|end|byebye)$/i) {
+      return $F_OK;
+    } elsif ($cmd eq "setup-location") {
+      my $dest = shift @args;
+      print "ERROR not implemented: $cmd\n";
+    } elsif ($cmd =~ m/^(set|get)$/) {
+      my @valid_keys = qw/repository debug-translation machine-readable no-execute-actions require-verification verify-downloads/;
+      my $key = shift @args;
+      my $val = shift @args;
+      if (!$key) {
+        $key = do_prompt('Choose...', -menu => \@valid_keys, '>');
+      }
+      if (!$key) {
+        print("ERROR missing argument for get\n");
+        next;
+      }
+      if ($cmd eq "get" && defined($val)) {
+        print("ERROR no argument allowed for get\n");
+        next;
+      }
+      if ($cmd eq "set" && !defined($val)) {
+        if ($key eq "repository") {
+          $val = do_prompt('Enter repository:');
+        } else {
+          $val = do_prompt('Enter 1 for on, 0 for off:', -guarantee => [0,1]);
+        }
+        # deal with Ctrl-D
+        if (!defined($val)) {
+          print('ERROR Missing value for set.\n');
+          next;
+        }
+      }
+
+      if ($key eq "repository") {
+        if ($cmd eq "set") {
+          $location = scalar($val);
+        } else {
+          if (defined($location)) {
+            print "repository = $location\n";
+          } else {
+            print "repository = <UNDEFINED>\n";
+          }
+        }
+        print "OK\n";
+      } elsif ($key =~ m/^(debug-translation|machine-readable|no-execute-actions|require-verification|verify-downloads)$/i) {
+        if ($cmd eq "set") {
+          $opts{$key} = ($val eq "1" ? 1 : 0); ### THIS DOES NOT WORK??? TODO TODO
+          # special cases
+          $::debug_translation = $opts{"debug-translation"};
+          $::machinereadable = $opts{"machine-readable"};
+          $::no_execute_actions = $opts{'no-execute-actions'};
+        } else {
+          print "$key = ", ($opts{$key} ? 1 : 0), "\n";
+        }
+        print "OK\n";
+      } else {
+        print "ERROR unknown key $key\n";
+      }
+    } elsif ($cmd eq "load") {
+      my $what = shift @args;
+      if (!defined($what)) {
+        $what = do_prompt("Choose...", -menu => ['local', 'remote'], '>');
+      }
+      if ($what eq "local") {
+        init_local_db();
+        print "OK\n";
+      } elsif ($what eq "remote") {
+        init_tlmedia_or_die();
+        print "OK\n";
+      } else {
+        print "ERROR can only load 'local' or 'remote'\n";
+      }
+    } elsif ($cmd eq "save") {
+      $localtlpdb->save;
+      print "OK\n";
+    } elsif (defined($action_specification{$cmd})) {
+      # an action
+      if (!defined($action_specification{$cmd}{"function"})) {
+        print "ERROR action function not defined\n";
+        next;
+      }
+      # redo the option parsing
+      my %optarg;
+      if (defined($action_specification{$cmd}{'options'})) {
+        my %actopts = %{$action_specification{$cmd}{'options'}};
+        for my $k (keys %actopts) {
+          if ($actopts{$k} eq "1") {
+            $optarg{$k} = 1;
+          } else {
+            $optarg{"$k" . $actopts{$k}} = 1;
+          }
+        }
+      }
+      # save command line options for later restart, if necessary
+      @ARGV = @args;
+      my %savedopts = %opts;
+      %opts = ();
+      if (!GetOptions(\%opts, keys(%optarg))) {
+        print "ERROR unsupported arguments\n";
+        next;
+      }
+      my $ret = execute_action($cmd, @ARGV);
+      if ($ret & $F_ERROR) {
+        print "ERROR\n";
+      } elsif ($ret & $F_WARNING) {
+        print "OK\n";
+      } else {
+        print "OK\n";
+      }
+      %opts = %savedopts;
+    } else {
+      print "ERROR unknown command\n";
+    }
+  }
+}
+
+
 1;
 __END__
 
@@ -7544,6 +7748,11 @@ C<table> with this option will not output packages containing the word
 C<tables> (unless they also contain the word C<table> on its own).
 
 =back
+
+=head2 shell
+
+Starts the TeX Live Manager Shell. 
+
 
 =head2 uninstall
 
