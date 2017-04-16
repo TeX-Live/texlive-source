@@ -2029,7 +2029,7 @@ end
 
 local function end_program()
    PRINTDBG("end_program")
-   local f = kpse.find_file('end_program.lua', 'lua')
+   local f = kpse.find_file('end_program.lua','lua')
    if f==nil then 
       print("Warning: end_program.lua not found")
       return 
