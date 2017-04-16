@@ -379,7 +379,6 @@ texmf_other_scripts = \
 	pfarrei/pfarrei.tlu \
 	pkfix-helper/pkfix-helper \
 	pkfix/pkfix.pl \
-	pmx/pmx2pdf.lua \
 	pmxchords/pmxchords.lua \
 	pst2pdf/pst2pdf.pl \
 	ptex-fontmaps/kanji-config-updmap-sys.sh \
