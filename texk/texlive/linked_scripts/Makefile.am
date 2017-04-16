@@ -97,7 +97,9 @@ texmf_other_scripts = \
 	cjk-gs-integrate/cjk-gs-integrate.pl \
 	context/perl/mptopdf.pl \
 	convbkmk/convbkmk.rb \
+	crossrefware/bbl2bib.pl \
 	crossrefware/bibdoiadd.pl \
+	crossrefware/bibmradd.pl \
 	crossrefware/bibzbladd.pl \
 	crossrefware/ltx2crossrefxml.pl \
 	ctanify/ctanify \

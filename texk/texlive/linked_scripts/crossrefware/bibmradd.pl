@@ -4,11 +4,11 @@
 
 =head1 NAME
 
-bibzbladd.pl - add Zbl numbers to papers in a given bib file
+bibmradd.pl - add MR numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibzbladd  [-d] [B<-f>] [B<-e> 1|0] [B<-o> I<output>] I<bib_file>
+bibmradd  [-d] [B<-f>] [B<-e> 1|0] [B<-o> I<output>] I<bib_file>
 
 =head1 OPTIONS
 
@@ -20,31 +20,31 @@ Debug mode
 
 =item B<-e>
 
-If 1 (default), add an empty zblnumber if a zbl cannot be found.  This
+If 1 (default), add an empty mrnumber if a mr cannot be found.  This
 prevents repeated searches for the same entries if you add new entries
 to the file.  Calling C<-e 0> suppresses this behavior.
 
 
 =item B<-f>
 
-Force searching for Zbl numbers even if the entry already has one.
+Force searching for MR numbers even if the entry already has one.
 
 =item B<-o> I<output>
 
 Output file.  If this option is not used, the name for the 
-output file is formed by adding C<_zbl> to the input file
+output file is formed by adding C<_mr> to the input file
 
 =back
 
 =head1 DESCRIPTION
 
 The script reads a BibTeX file.  It checks whether the entries have
-Zbls.  If not, tries to contact internet to get the numbers.  The
+mrnumberss.  If not, tries to contact internet to get the numbers.  The
 result is a BibTeX file with the fields 
-C<zblnumber=...> added.  
+C<mrnumber=...> added.  
 
 The name of the output file is either set by the B<-o> option or 
-is derived by adding the suffix C<_zbl> to the output file.
+is derived by adding the suffix C<_mr> to the output file.
 
 =head1 AUTHOR
 
@@ -78,7 +78,7 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibzbladd v2.1
+bibmradd v2.1
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -101,7 +101,7 @@ my $inputfile = shift;
 
 my $outputfile = $inputfile;
 
-$outputfile =~ s/\.([^\.]*)$/_zbl.$1/;
+$outputfile =~ s/\.([^\.]*)$/_mr.$1/;
 
 if ($opts{o}) {
     $outputfile = $opts{o};
@@ -127,7 +127,7 @@ my $parser=new BibTeX::Parser($input);
 
 # Creating the HTTP parameters
 my $mirror =
-    "https://zbmath.org/citationmatching/bibtex/match";
+    "http://www.ams.org/mathscinet-mref";
 my $userAgent = LWP::UserAgent->new;
 
 while (my $entry = $parser->next ) {
@@ -137,25 +137,25 @@ while (my $entry = $parser->next ) {
 	print STDERR "Skipping this entry\n";
 	next;
     }
-    if ($entry->has('zblnumber') && !$forceSearch) {
+    if ($entry->has('mrnumber') && !$forceSearch) {
 	print $output $entry->raw_bibtex(), "\n\n";
 	if ($debug) {
 	    print STDERR "DEBUG:  entry ", $entry->key(), 
-	    " has zblnumber ", $entry->field('zblnumber'), 
+	    " has mrnumber ", $entry->field('mrnumber'), 
 	    " and no forced search is requested\n";
 	}
 	next;
     }
     
 
-     # Now we have an entry with no Zbl.  Let us get to work.
+     # Now we have an entry with no MR.  Let us get to work.
     if ($debug) {
-	print STDERR "DEBUG:  Searching for zbl number for entry ",
+	print STDERR "DEBUG:  Searching for mr number for entry ",
 	$entry->key, "\n";
     }
-     my $zbl = GetZbl($entry, $userAgent, $mirror);
-     if (length($zbl) || $forceEmpty) {
- 	$entry->field('zblnumber',$zbl);
+     my $mr = GetMr($entry, $userAgent, $mirror);
+     if (length($mr) || $forceEmpty) {
+ 	$entry->field('mrnumber', $mr);
      }
     print $output $entry->to_string(), "\n\n";
 
@@ -166,10 +166,10 @@ $output->close();
 exit 0;
 
 ###############################################################
-#  Getting one Zbl
+#  Getting one MR
 ###############################################################
 
-sub GetZbl {
+sub GetMr {
     my $entry=shift;
     my $userAgent=shift;
     my $mirror=shift;
@@ -179,24 +179,29 @@ sub GetZbl {
     my $string=uri_escape_utf8($entry->to_string());
     
     if ($debug) {
-	print STDERR "DEBUG:  query: $mirror?bibtex=$string\n" ;
+	print STDERR "DEBUG:  query: $mirror?ref=$string&dataType=bibtex\n" ;
     }
 
 
-    my $response = $userAgent->get("$mirror?bibtex=$string");
+    my $response = $userAgent->get("$mirror?ref=$string&dataType=bibtex");
     if ($debug) {
 	print STDERR "DEBUG:  response: ",
 	$response->decoded_content, "\n";
     }
     
-    if ($response->decoded_content =~ /^\s*"zbl_id":\s*"(.*)",\s*$/m) {
-	if ($debug) {
-	    print STDERR "DEBUG:  got zbl: $1\n",
+    if ($response->decoded_content =~ /MRNUMBER\s*=\s*{(.*)}/m) {
+	my $mr=$1;
+	# Somehow mref deletes leading zeros.  They are needed!
+	while (length($mr)<7) {
+	    $mr = "0$mr";
 	}
-	return $1;
+	if ($debug) {
+	    print STDERR "DEBUG:  got MR: $mr\n",
+	}
+	return $mr;
      } else {
 	if ($debug) {
-	    print STDERR "DEBUG: Did not get zbl\n",
+	    print STDERR "DEBUG: Did not get MR\n",
 	}
  	return ("");
     }

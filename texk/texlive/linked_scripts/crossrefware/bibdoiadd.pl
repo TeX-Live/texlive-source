@@ -8,7 +8,7 @@ bibdoiadd.pl - add DOI numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibdoiadd [B<-c> I<config_file>] [B<-f>] [B<-o> I<output>] I<bib_file>
+bibdoiadd [B<-c> I<config_file>] [B<-e> 1|0] [B<-f>] [B<-o> I<output>] I<bib_file>
 
 =head1 OPTIONS
 
@@ -18,6 +18,12 @@ bibdoiadd [B<-c> I<config_file>] [B<-f>] [B<-o> I<output>] I<bib_file>
 
 Configuration file.  If this file is absent, some defaults are used.
 See below for its format.
+
+=item B<-e>
+
+If 1 (default), add empty doi if a doi cannot be found.  This prevents
+repeated searches for the same entries if you add new entries to the
+file.  Calling C<-e 0> suppresses this behavior.
 
 =item B<-f>
 
@@ -59,15 +65,15 @@ The configuration file is mostly self-explanatory: it has comments
 
    $field = value ;
 
-The important parameters are C<$mode> (C<'free'> or C<'paid'>,
+The important parameters are C<$mode> (C<'free'> or C<'paid'>),
 C<$email> (for free users) and C<$username> & C<$password> for paid
 members.
 
 
 =head1 EXAMPLES
 
-   bibdoiadd -c bibdoiadd.cfg citations.bib > result.bib
-   bibdoiadd -c bibdoiadd.cfg citations.bib -o result.bib
+   bibdoiadd -c bibdoiadd.cfg -o - citations.bib > result.bib
+   bibdoiadd -c bibdoiadd.cfg -o result.bib citations.bib 
 
 =head1 AUTHOR
 
@@ -75,7 +81,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2016  Boris Veytsman
+Copyright (C) 2014-2017  Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -99,17 +105,17 @@ use Getopt::Std;
 use URI::Escape;
 use LWP::Simple;
 
-my $USAGE="USAGE: $0 [-c config] [-f] [-o output] file\n";
+my $USAGE="USAGE: $0 [-c config] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibdoiadd v2.0
+bibdoiadd v2.1
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
 extent permitted by law.
 $USAGE
 END
-my %opts;
-getopts('fc:o:hV',\%opts) or die $USAGE;
+our %opts;
+getopts('fe:c:o:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -126,12 +132,15 @@ my $outputfile = $inputfile;
 
 $outputfile =~ s/\.([^\.]*)$/_doi.$1/;
 
-if ($opts{o}) {
+if (exists $opts{o}) {
     $outputfile = $opts{o};
 }
 
 my $forceSearch=$opts{f};
-
+my $forceEmpty = 1;
+if (exists $opts{e}) {
+    $forceEmpty = $opts{e};
+}		
 
 our $mode='free';
 our $email;
@@ -196,7 +205,7 @@ while (my $entry = $parser->next) {
     
 
      my $doi = GetDoi($prefix, $entry);
-     if (length($doi)) {
+     if (length($doi) || $forceEmpty) {
  	$entry->field('doi',$doi);
      }
     print $output $entry->to_string(), "\n\n";
