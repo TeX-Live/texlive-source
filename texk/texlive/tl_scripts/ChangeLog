@@ -1,3 +1,11 @@
+2017-04-16  Karl Berry  <karl@tug.org>
+
+	* texconfig.sh: remove references to dvipdfm, since it is no
+	longer separate from dvipdfmx.
+	* tcfmgr.map (config): likewise.
+	(pdftexconfig.tex): now in tex/generic/tex-ini-files.
+	From Paul Vojta.
+
 2017-03-28  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (xupdmap.1,xfmtutil.1): also make /tmp/*.html.
@@ -850,3 +858,5 @@ Sat Dec 18 14:19:43 CET 1999 te
 
 	* added manpages for epstopdf and dvi2fax (contributed by "James
 	R. Van Zandt" <jrv@vanzandt.mv.com>)
+
+(This file public domain.)
