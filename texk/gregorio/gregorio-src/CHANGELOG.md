@@ -5,6 +5,9 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][unreleased]
 
 
+## [5.0.1] - 2017-04-16
+- Fixed a bug in the TeXLive compatibility code for Windows users.  Thanks to Akira Kakuto for the catch.
+
 ## [5.0.0] - 2017-04-15
 ### Fixed
 - The printing of the commentary box is no longer tied to the printing of the inital.  As a result it is now possible to have a score which has a commentary but not an initial.  See [this thread on the user list](http://www.mail-archive.com/gregorio-users@gna.org/msg03911.html).
