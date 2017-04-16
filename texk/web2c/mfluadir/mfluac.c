@@ -17,7 +17,40 @@
 /**************************************************************/
 static lua_State *Luas[1];
 
-static void priv_lua_reporterrors(lua_State *L, int status)
+static 
+void stackdump_g(lua_State* L)
+{
+    int i;
+    int top = lua_gettop(L);
+ 
+    printf("total in stack %d\n",top);
+ 
+    for (i = 1; i <= top; i++)
+    {  /* repeat for each level */
+        int t = lua_type(L, i);
+        printf("[%d][%d] ",i,i-top-1);
+        switch (t) {
+            case LUA_TSTRING:  /* strings */
+                printf("string: '%s'\n", lua_tostring(L, i));
+                break;
+            case LUA_TBOOLEAN:  /* booleans */
+                printf("boolean %s\n",lua_toboolean(L, i) ? "true" : "false");
+                break;
+            case LUA_TNUMBER:  /* numbers */
+                printf("number: %g\n", lua_tonumber(L, i));
+                break;
+            default:  /* other values */
+                printf("%s\n", lua_typename(L, t));
+                break;
+        }
+        printf("  ");  /* put a separator */
+    }
+    printf("\n");  /* end the listing */
+}
+
+
+static
+void priv_lua_reporterrors(lua_State *L, int status)
 {
   if ( status!=0 ) {
     fprintf(stderr,"\n! %s\n",lua_tostring(L, -1));
@@ -26,7 +59,8 @@ static void priv_lua_reporterrors(lua_State *L, int status)
 }
 
 
-static void priv_lua_writemessage(lua_State *L, char *startmsg, char *bodymsg, char *endmsg, int status)
+static
+void priv_lua_writemessage(lua_State *L, char *startmsg, char *bodymsg, char *endmsg, int status)
 {
   (void) L;
   if ( status!=0 ) {
@@ -243,8 +277,7 @@ static int priv_mfweb_LUAGLOBALGET_octant(lua_State *L)
 /* @ The |make_spec| routine has an interesting side effect, namely to set */
 /* the global variable |turning_number| to the number of times the tangent */
 /* vector of the given cyclic path winds around the origin.                */
-
-
+/*                                                                         */
 /* @<Glob...@>=                                                            */
 /* @!turning_number:integer; {another output of |make_spec|}               */
 static int priv_mfweb_LUAGLOBALGET_turning_number(lua_State *L)
@@ -253,7 +286,6 @@ static int priv_mfweb_LUAGLOBALGET_turning_number(lua_State *L)
   lua_pushnumber(L,p);
   return 1;
 }
-
 
 
 
@@ -421,14 +453,62 @@ static int priv_mfweb_LUAGLOBALGET_boundary_char(lua_State *L)
 
 
 
-
-
-
 /**************************************************************/
 /*                                                            */
 /* mflua layer                                                */
 /*                                                            */
 /**************************************************************/
+static const struct luaL_Reg MFbuiltin_l[] = {
+  {"link", priv_mfweb_link},
+  {"info", priv_mfweb_info},
+  {"x_coord", priv_mfweb_x_coord},
+  {"y_coord", priv_mfweb_y_coord},
+  {"left_type", priv_mfweb_left_type},
+  {"right_type", priv_mfweb_right_type},
+  {"left_x", priv_mfweb_left_x},
+  {"left_y", priv_mfweb_left_y},
+  {"right_x", priv_mfweb_right_x},
+  {"right_y", priv_mfweb_right_y},
+  {"n_sin_cos", priv_mfweb_n_sin_cos},
+  {"cur_edges", priv_mfweb_LUAGLOBALGET_cur_edges},
+  {"cur_exp", priv_mfweb_LUAGLOBALGET_cur_exp},
+  {"mem_top", priv_mfweb_LUAGLOBALGET_mem_top},
+  {"cur_pen", priv_mfweb_LUAGLOBALGET_cur_pen},
+  {"octant", priv_mfweb_LUAGLOBALGET_octant},
+  {"char_code", priv_mfweb_LUAGLOBALGET_char_code},
+  {"char_ext", priv_mfweb_LUAGLOBALGET_char_ext},
+  {"char_wd", priv_mfweb_LUAGLOBALGET_char_wd},
+  {"char_ht", priv_mfweb_LUAGLOBALGET_char_ht},
+  {"char_dp", priv_mfweb_LUAGLOBALGET_char_dp},
+  {"char_ic", priv_mfweb_LUAGLOBALGET_char_ic},
+  {"char_dx", priv_mfweb_LUAGLOBALGET_char_dx},
+  {"char_dy", priv_mfweb_LUAGLOBALGET_char_dy},
+  {"designsize", priv_mfweb_LUAGLOBALGET_designsize},
+  {"hppp", priv_mfweb_LUAGLOBALGET_hppp},
+  {"vppp", priv_mfweb_LUAGLOBALGET_vppp},
+  {"x_offset", priv_mfweb_LUAGLOBALGET_x_offset},
+  {"y_offset", priv_mfweb_LUAGLOBALGET_y_offset},
+  {"granularity", priv_mfweb_LUAGLOBALGET_granularity},
+  {"fillin", priv_mfweb_LUAGLOBALGET_fillin},
+  {"turning_check", priv_mfweb_LUAGLOBALGET_turning_check},
+  {"boundary_char", priv_mfweb_LUAGLOBALGET_boundary_char},
+  {"turning_number", priv_mfweb_LUAGLOBALGET_turning_number},
+  {NULL, NULL}                /* sentinel */
+};
+
+
+#define lua_swap(L) lua_insert(L, -2) 
+  
+#define GETGLOBALTABLEMFLUA(a)  lua_getglobal(L, "mflua");\
+  if (!lua_istable(L, -1)) {                               \
+    lua_pushstring(L,#a);	                           \
+    lua_pushstring(L,":global table mflua not found");	   \
+    lua_concat (L, 2);                                     \
+    priv_lua_reporterrors(L, 1);			   \
+  }                                                        \
+
+
+
 int mfluabeginprogram(void)
 {
   lua_State *L ;
@@ -438,297 +518,220 @@ int mfluabeginprogram(void)
   L = luaL_newstate();
   luaL_openlibs(L);
   Luas[0] = L;
+  /* register lua functions */
+  luaopen_kpse(L);
+  /* to be sure of having a clear stack */
+  lua_settop(L,0);
+  
 
-  luafile = kpse_find_file("begin_program.lua", kpse_lua_format, 0);
-  /* execute Lua external "begin_program.lua" */
+  lua_getglobal(L, "mflua");
+  if (!lua_istable(L, -1)) {
+    lua_pop(L,1);
+    lua_newtable(L);
+    lua_setglobal(L,"mflua");
+    /* check it */
+    lua_getglobal(L,"mflua");
+    if (!lua_istable(L, -1)) {
+      printf("mflua table NOT registered!\n");
+    } else {
+      lua_pushstring(L,"MFbuiltin");
+#ifdef MFLuaJIT
+      /* 5.1 */ 
+      lua_newtable(L);
+      luaL_register (L,NULL,MFbuiltin_l);
+#else
+      luaL_newlib(L,MFbuiltin_l);
+#endif
+      lua_settable(L, -3);
+    }
+    lua_pop(L,1);
+  }
+  
+  
+  luafile = kpse_find_file("mflua.lua", kpse_lua_format, 0);
   if (luafile==NULL) {
     res = 1;
-    lua_pushstring(L,"begin_program.lua not found");
+    lua_pushstring(L,"mflua.lua not found.");
     priv_lua_reporterrors(L, res);
-    return 0;
+    goto EXIT;
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
   res = luaL_loadfile(L, luafile);
   free(luafile);
-  if ( res==0 ) {
-    res = lua_pcall(L, 0, 0, 0);
+  if ( res==LUA_OK ) {
+    if(res=lua_pcall(L,0,0,0)){
+      priv_lua_reporterrors(L, res);
+      goto EXIT;
+    }
+  } else {
+    priv_lua_reporterrors(L, res);
+    goto EXIT;
   }
-  /* stackdump_g(L); */
-  priv_lua_reporterrors(L, res);
+  /* Still a chance that mflua is around */
+  GETGLOBALTABLEMFLUA(mfluabeginprogram);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"begin_program");
+    if(res=lua_pcall(L,0,0,0))
+      priv_lua_reporterrors(L, res);
+  }
+ EXIT:
+  lua_settop(L,0);
   return 0;
 }
+
+/* /\* TODO*\/ */
+/* int mfluaendprogram(void) */
+/* { */
+/*   lua_State *L; */
+/*   char* luafile; */
+/*   int res; */
+
+/*   L = Luas[0]; */
+/*   GETGLOBALTABLEMFLUA(mfluaendprogram); */
+/*   luafile = kpse_find_file("end_program.lua", kpse_lua_format, 0); */
+/*   if (luafile==NULL) { */
+/*     res = 1; */
+/*     lua_pushstring(L,"end_program.lua not found"); */
+/*     priv_lua_reporterrors(L, res); */
+/*     lua_settop(L,0); */
+/*     return 0; */
+/*   } */
+/*   priv_lua_writemessage(L,"(",luafile,")",1); */
+/*   res = luaL_loadfile(L, luafile); */
+/*   free(luafile); */
+/*   if ( res==0 ) { */
+/*       res = lua_pcall(L, 0, 0, 0); */
+/*     } */
+/*   /\* stackdump_g(L); *\/ */
+/*   priv_lua_reporterrors(L, res); */
+/*   lua_settop(L,0); */
+/*   return 0; */
+/* } */
 
 int mfluaendprogram(void)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  /* execute Lua external "end_program.lua" */
-  luafile = kpse_find_file("end_program.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"end_program.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
-  }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free(luafile);
-  if ( res==0 ) {
-      res = lua_pcall(L, 0, 0, 0);
+  GETGLOBALTABLEMFLUA(mfluaendprogram);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"end_program");
+    /* do the call (0 arguments, 0 result) */
+    if(res = lua_pcall(L, 0, 0, 0)){
+      lua_pushstring(L,"error in end_program:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
     }
-  /* stackdump_g(L); */
-  priv_lua_reporterrors(L, res);
+  }
+  lua_settop(L,0);
   return 0;
 }
+
 
 
 int mfluaPREstartofMF(void)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("start_of_mf.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"start_of_mf.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREstartofMF);
+  if (lua_istable(L, -1)) { 
+    lua_getfield(L,-1,"PRE_start_of_MF");
+    /* do the call (0 arguments, 0 result) */
+    if(res = lua_pcall(L, 0, 0, 0)){
+      lua_pushstring(L,"error in PRE_start_of_MF:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_start_of_MF");  /* function to be called */
-	/* do the call (0 arguments, 1 result) */
-	res = lua_pcall(L, 0, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_start_of_MF number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /* stackdump_g(L); */
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
 
 
 int mfluaPREmaincontrol(void)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("main_control.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"main_control.lua");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREmaincontrol);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_main_control");
+    /* do the call (0 arguments, 0 result) */
+    if(res = lua_pcall(L, 0, 0, 0)){
+      lua_pushstring(L,"error in PRE_main_control:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_main_control");  /* function to be called */
-	/* do the call (0 arguments, 1 result) */
-	res = lua_pcall(L, 0, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_main_control called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
-
 
 int mfluaPOSTmaincontrol(void)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("main_control.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"main_control.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTmaincontrol);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_main_control");
+    /* do the call (0 arguments, 0 result) */
+    if(res = lua_pcall(L, 0, 0, 0)){
+      lua_pushstring(L,"error in POST_main_control:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_main_control");  /* function to be called */
-	/* do the call (0 arguments, 1 result) */
-	res = lua_pcall(L, 0, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_main_control called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 
 }
 
-  
+
 int mfluainitialize(void)
 {
   lua_State *L;
-  char* luafile;
-  int res ;
+  int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("mfluaini.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"mfluaini.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
-  }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  /* register lua functions */
-  luaopen_kpse(L);
-  lua_pushcfunction(L, priv_mfweb_link);lua_setglobal(L, "link");
-  lua_pushcfunction(L, priv_mfweb_info);lua_setglobal(L, "info");
-  lua_pushcfunction(L, priv_mfweb_x_coord);lua_setglobal(L, "x_coord");
-  lua_pushcfunction(L, priv_mfweb_y_coord);lua_setglobal(L, "y_coord");
-  lua_pushcfunction(L, priv_mfweb_left_type);lua_setglobal(L, "left_type");
-  lua_pushcfunction(L, priv_mfweb_right_type);lua_setglobal(L, "right_type");
-  lua_pushcfunction(L, priv_mfweb_left_x);lua_setglobal(L, "left_x");
-  lua_pushcfunction(L, priv_mfweb_left_y);lua_setglobal(L, "left_y");
-  lua_pushcfunction(L, priv_mfweb_right_x);lua_setglobal(L, "right_x");
-  lua_pushcfunction(L, priv_mfweb_right_y);lua_setglobal(L, "right_y");
-  lua_pushcfunction(L, priv_mfweb_n_sin_cos);lua_setglobal(L, "n_sin_cos");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_cur_edges);lua_setglobal(L, "LUAGLOBALGET_cur_edges");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_cur_exp);lua_setglobal(L, "LUAGLOBALGET_cur_exp");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_mem_top);lua_setglobal(L, "LUAGLOBALGET_mem_top");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_cur_pen);lua_setglobal(L, "LUAGLOBALGET_cur_pen");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_octant);lua_setglobal(L, "LUAGLOBALGET_octant");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_code);lua_setglobal(L, "LUAGLOBALGET_char_code");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_ext);lua_setglobal(L, "LUAGLOBALGET_char_ext");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_wd);lua_setglobal(L, "LUAGLOBALGET_char_wd");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_ht);lua_setglobal(L, "LUAGLOBALGET_char_ht");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_dp);lua_setglobal(L, "LUAGLOBALGET_char_dp");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_ic);lua_setglobal(L, "LUAGLOBALGET_char_ic");
-  /* */
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_dx);lua_setglobal(L,"LUAGLOBALGET_char_dx");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_char_dy);lua_setglobal(L,"LUAGLOBALGET_char_dy");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_designsize);lua_setglobal(L,"LUAGLOBALGET_designsize");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_hppp);lua_setglobal(L,"LUAGLOBALGET_hppp");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_vppp);lua_setglobal(L,"LUAGLOBALGET_vppp");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_x_offset);lua_setglobal(L,"LUAGLOBALGET_x_offset");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_y_offset);lua_setglobal(L,"LUAGLOBALGET_y_offset");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_granularity);lua_setglobal(L,"LUAGLOBALGET_granularity");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_fillin);lua_setglobal(L,"LUAGLOBALGET_fillin");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_turning_check);lua_setglobal(L,"LUAGLOBALGET_turning_check");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_boundary_char);lua_setglobal(L,"LUAGLOBALGET_boundary_char");
-  lua_pushcfunction(L, priv_mfweb_LUAGLOBALGET_turning_number);lua_setglobal(L,"LUAGLOBALGET_turning_number");
-  /* execute Lua external "mfluaini.lua" */
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ) {
-      res = lua_pcall(L, 0, 0, 0);
+  GETGLOBALTABLEMFLUA(mfluainitialize);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "mflua_initialize");
+    /* do the call (0 arguments, 0 result) */
+    if(res = lua_pcall(L, 0, 0, 0)){
+      lua_pushstring(L,"error in mflua_initialize:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
     }
-  priv_lua_reporterrors(L, res);
+  }
+  lua_settop(L,0);
   return 0;
 }
-
+  
 
 int mfluaPOSTfinalcleanup(void)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("final_cleanup.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"final_cleanup.lua not found");
-    priv_lua_reporterrors(L, res);
+  GETGLOBALTABLEMFLUA(mfluaPOSTfinalcleanup);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_final_cleanup");
+    /* do the call (0 arguments, 0 result) */
+    if(res = lua_pcall(L, 0, 0, 0)){
+      lua_pushstring(L,"error in POST_final_cleanup:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
+  }
+    lua_settop(L,0);
     return 0;
-  }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  /*if (res!=0) {fprintf(stderr,"\n! Warning: file final_cleanup not loaded\n",lua_tostring(L, -1)); return res;}*/
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      /*if (res!=0) {fprintf(stderr,"\n! Error: final_cleanup lua_pcall fails\n",lua_tostring(L, -1)); return res;}*/
-      if (res==0){
-	lua_getglobal(L, "POST_final_cleanup");  /* function to be called */
-	/* do the call (0 arguments, 1 result) */
-	res = lua_pcall(L, 0, 1, 0) ;
-        /*if (res!=0) {fprintf(stderr,"\n! Error:function `POST_final_cleanup called fails\n",lua_tostring(L, -1)); return res;}*/
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_final_cleanup called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
-  return 0;
 }
-
 
 
 /* Not a good way: */
@@ -766,138 +769,50 @@ int mfluaPOSTfinalcleanup(void)
 int mfluaprintpath(halfword h, strnumber s, boolean nuline)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("print_path.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"print_path.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaprintpath);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "printpath");
+    lua_pushnumber(L, h);   /* push 1st argument */
+    lua_pushnumber(L, s);   /* push 2nd argument */
+    lua_pushnumber(L, nuline);   /* push 3nd argument */
+    /* do the call (3 arguments, 0 result) */
+    if(res = lua_pcall(L, 3, 0, 0)){
+      lua_pushstring(L,"error in printpath:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "print_path");  /* function to be called */
-	lua_pushnumber(L, h);   /* push 1st argument */
-	lua_pushnumber(L, s);   /* push 2nd argument */
-	lua_pushnumber(L, nuline);   /* push 3nd argument */
-	/* do the call (3 arguments, 1 result) */
-	res = lua_pcall(L, 3, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `print_path' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L); */
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
 
  
 int mfluaprintedges(strnumber s, boolean nuline, integer xoff, integer yoff)
 {
-
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("print_edges.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"print_edges.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaprintedges);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "printedges");
+    lua_pushnumber(L, s);   /* push 1st argument */
+    lua_pushnumber(L, nuline);   /* push 2nd argument */
+    lua_pushnumber(L, xoff);   /* push 3nd argument */
+    lua_pushnumber(L, yoff);   /* push 4nd argument */
+    /* do the call (4 arguments, 0 result) */
+    if(res = lua_pcall(L, 4, 0, 0)){
+      lua_pushstring(L,"error in printedges:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "print_edges");  /* function to be called */
-	lua_pushnumber(L, s);   /* push 1st argument */
-	lua_pushnumber(L, nuline);   /* push 2nd argument */
-	lua_pushnumber(L, xoff);   /* push 3nd argument */
-	lua_pushnumber(L, yoff);   /* push 4nd argument */
-	/* do the call (4 arguments, 1 result) */
-	res = lua_pcall(L, 4, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `print_edges' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
-
-
-/* int mfluaoffsetprep(halfword c, halfword h) */
-/* { */
-
-/*   lua_State *L = Luas[0]; */
-/*   char* file = kpse_find_file("offset_prep.lua",kpse_lua_format, 0); */
-/*   int res = luaL_loadfile(L, file); */
-/*   if (file) free (file); */
-/*   if ( res==0 ){ */
-/*       res = lua_pcall(L, 0, 0, 0); */
-/*       if (res==0){ */
-/* 	lua_getglobal(L, "offset_prep");  /\* function to be called *\/ */
-/* 	lua_pushnumber(L, c);   /\* push 1st argument *\/ */
-/* 	lua_pushnumber(L, h);   /\* push 2nd argument *\/ */
-/* 	/\* do the call (2 arguments, 1 result) *\/ */
-/* 	res = lua_pcall(L, 2, 1, 0) ; */
-/* 	if (res==0) { */
-/* 	  /\* retrieve result *\/ */
-/* 	  int z = 0; */
-/* 	  if (!lua_isnumber(L, -1)){ */
-/* 	    fprintf(stderr,"\n! Error:function `offset_prep' must return a number\n",lua_tostring(L, -1)); */
-/* 	    lua_pop(L, 1);  /\* pop returned value *\/ */
-/* 	    return z; */
-/* 	  }else { */
-/* 	    z = lua_tonumber(L, -1); */
-/* 	    lua_pop(L, 1);  /\* pop returned value *\/ */
-/* 	    return z; */
-/* 	  } */
-/* 	} */
-/*       } */
-/*   } */
-/*   // */
-/*   //stackdump_g(L); */
-/*   // */
-/*   priv_lua_reporterrors(L, res); */
-/*   return 0; */
-
-/* } */
 
 
 /*                                     */
@@ -907,137 +822,67 @@ int mfluaPREoffsetprep(halfword c, halfword h)
 {
 
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("offset_prep.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"offset_prep.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREoffsetprep);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_offset_prep");
+    lua_pushnumber(L, c);   /* push 1st argument */
+    lua_pushnumber(L, h);   /* push 2nd argument */
+    /* do the call (2 arguments, 0 result) */
+    if(res = lua_pcall(L, 2, 0, 0)){ 
+      lua_pushstring(L,"error in PRE_offset_prep:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_offset_prep");  /* function to be called */
-	lua_pushnumber(L, c);   /* push 1st argument */
-	lua_pushnumber(L, h);   /* push 2nd argument */
-	/* do the call (2 arguments, 1 result) */
-	res = lua_pcall(L, 2, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_offset_prep' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
+
 
 int mfluaPOSToffsetprep(halfword c, halfword h)
 {
-
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("offset_prep.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"offset_prep.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSToffsetprep);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_offset_prep");
+    lua_pushnumber(L, c);   /* push 1st argument */
+    lua_pushnumber(L, h);   /* push 2nd argument */
+    /* do the call (2 arguments, 0 result) */
+    if(res = lua_pcall(L, 2, 0, 0)){ 
+      lua_pushstring(L,"error in POST_offset_prep:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_offset_prep");  /* function to be called */
-	lua_pushnumber(L, c);   /* push 1st argument */
-	lua_pushnumber(L, h);   /* push 2nd argument */
-	/* do the call (2 arguments, 1 result) */
-	res = lua_pcall(L, 2, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_offset_prep' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
+
 
 int mfluaPREmakespecrhs(halfword rhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
   
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREmakespecrhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_make_spec_rhs");
+    lua_pushnumber(L, rhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in PRE_make_spec_rhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_make_spec_rhs");  /* function to be called */
-	lua_pushnumber(L, rhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_make_spec_rhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
 
@@ -1045,44 +890,21 @@ int mfluaPREmakespecrhs(halfword rhs)
 int mfluaPOSTmakespecrhs(halfword rhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
   
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTmakespecrhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_make_spec_rhs");
+    lua_pushnumber(L, rhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in POST_make_spec_rhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_make_spec_rhs");  /* function to be called */
-	lua_pushnumber(L, rhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_make_spec_rhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
 
@@ -1090,89 +912,42 @@ int mfluaPOSTmakespecrhs(halfword rhs)
 int mfluaPREmakespeclhs(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
-  
+
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREmakespeclhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_make_spec_lhs");
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+  /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in PRE_make_spec_lhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_make_spec_lhs");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_make_spec_lhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
-
 
 int mfluaPOSTmakespeclhs(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
-  
+
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTmakespeclhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_make_spec_lhs");
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in POST_make_spec_lhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_make_spec_lhs");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_make_spec_lhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
 
@@ -1181,89 +956,44 @@ int mfluaPOSTmakespeclhs(halfword lhs)
 int mfluaPREfillenveloperhs(halfword rhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREfillenveloperhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_fill_envelope_rhs");
+    lua_pushnumber(L, rhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){ 
+      lua_pushstring(L,"error in PRE_fill_envelope_rhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_fill_envelope_rhs");  /* function to be called */
-	lua_pushnumber(L, rhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_fill_envelope_rhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
+
 
 
 int mfluaPOSTfillenveloperhs(halfword rhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
-
+  
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTfillenveloperhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_fill_envelope_rhs");
+    lua_pushnumber(L, rhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){ 
+      lua_pushstring(L,"error in POST_fill_envelope_rhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_fill_envelope_rhs");  /* function to be called */
-	lua_pushnumber(L, rhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_fill_envelope_rhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L); */
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
 
@@ -1272,89 +1002,44 @@ int mfluaPOSTfillenveloperhs(halfword rhs)
 int mfluaPREfillenvelopelhs(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
- 
+
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREfillenvelopelhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_fill_envelope_lhs");
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in PRE_fill_envelope_lhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_fill_envelope_lhs");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_fill_envelope_lhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
+
 
 
 int mfluaPOSTfillenvelopelhs(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
-  
+
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTfillenvelopelhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_fill_envelope_lhs");
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in POST_fill_envelope_lhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_fill_envelope_lhs");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_fill_envelope_lhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
 
@@ -1363,134 +1048,64 @@ int mfluaPOSTfillenvelopelhs(halfword lhs)
 int mfluaPREfillspecrhs(halfword rhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
   
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREfillspecrhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_fill_spec_rhs");
+    lua_pushnumber(L, rhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){ 
+      lua_pushstring(L,"error in PRE_fill_spec_rhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_fill_spec_rhs");  /* function to be called */
-	lua_pushnumber(L, rhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_fill_spec_rhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
-
 
 int mfluaPOSTfillspecrhs(halfword rhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
-
+  
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTfillspecrhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_fill_spec_rhs");
+    lua_pushnumber(L, rhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){ 
+      lua_pushstring(L,"error in POST_fill_spec_rhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_fill_spec_rhs");  /* function to be called */
-	lua_pushnumber(L, rhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_fill_spec_rhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
-
 
 int mfluaPREfillspeclhs(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREfillspeclhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_fill_spec_lhs");
+    L = Luas[0];
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in PRE_fill_spec_lhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_fill_spec_lhs");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_fill_spec_lhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
 
@@ -1498,473 +1113,243 @@ int mfluaPREfillspeclhs(halfword lhs)
 int mfluaPOSTfillspeclhs(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("do_add_to.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"do_add_to.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTfillspeclhs);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_fill_spec_lhs");
+    L = Luas[0];
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in POST_fill_spec_lhs:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_fill_spec_lhs");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_fill_spec_lhs' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
+
+
 
 int mfluaPREmovetoedges(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("fill_spec.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"fill_spec.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREmovetoedges);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "PRE_move_to_edges");
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in PRE_move_to_edges:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_move_to_edges");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_move_to_edges' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
-
 
 
 int mfluaPOSTmovetoedges(halfword lhs)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("fill_spec.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"fill_spec.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTmovetoedges);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1, "POST_move_to_edges");
+    lua_pushnumber(L, lhs);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in POST_move_to_edges:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_move_to_edges");  /* function to be called */
-	lua_pushnumber(L, lhs);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_move_to_edges' must return a number called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
-
 
 
 int mfluaPREmakechoices(halfword p)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("scan_direction.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"scan_direction.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREmakechoices);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"PRE_make_choices");  /* function to be called */
+    lua_pushnumber(L, p);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in PRE_make_choices:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_make_choices");  /* function to be called */
-	lua_pushnumber(L, p);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_make_choices' must return a number and not %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
+
 
 
 int mfluaPOSTmakechoices(halfword p)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("scan_direction.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"scan_direction.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTmakechoices);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"POST_make_choices");  /* function to be called */
+    lua_pushnumber(L, p);   /* push 1st argument */
+    /* do the call (1 arguments, 0 result) */
+    if(res = lua_pcall(L, 1, 0, 0)){
+      lua_pushstring(L,"error in POST_make_choices:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_make_choices");  /* function to be called */
-	lua_pushnumber(L, p);   /* push 1st argument */
-	/* do the call (1 arguments, 1 result) */
-	res = lua_pcall(L, 1, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `POST_make_choices' must return a number and not %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
-
-
-
 
 
 
 int mfluaprintretrogradeline(integer x0, integer y0, integer cur_x, integer cur_y)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("skew_line_edges.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"skew_line_edges.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaprintretrogradeline);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"print_retrograde_line");
+    lua_pushnumber(L, x0);   /* push 1st argument */
+    lua_pushnumber(L, y0);   /* push 2nd argument */
+    lua_pushnumber(L, cur_x);   /* push 3th argument */
+    lua_pushnumber(L, cur_y);   /* push 4th argument */
+    /* do the call (4 arguments, 0 result) */
+    if(res = lua_pcall(L, 4, 0, 0)){
+      lua_pushstring(L,"error in print_retrograde_line:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "print_retrograde_line");  /* function to be called */
-	lua_pushnumber(L, x0);   /* push 1st argument */
-	lua_pushnumber(L, y0);   /* push 2nd argument */
-	lua_pushnumber(L, cur_x);   /* push 3th argument */
-	lua_pushnumber(L, cur_y);   /* push 4th argument */
-	/* do the call (4 arguments, 1 result) */
-	res = lua_pcall(L, 4, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `print_retrograde_line called with %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
 
 
 int mfluaPREmakeellipse(integer major_axis, integer minor_axis, integer theta , integer tx, integer ty,integer q)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("make_ellipse.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"make_ellipse.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPREmakeellipse);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"PRE_make_ellipse");
+    lua_pushnumber(L, major_axis);   /* push 1st argument */
+    lua_pushnumber(L, minor_axis);   /* push 2nd argument */
+    lua_pushnumber(L, theta);   /* push 3th argument */
+    lua_pushnumber(L, tx);   /* push 4th argument */
+    lua_pushnumber(L, ty);   /* push 5th argument */
+    lua_pushnumber(L, q);   /* push 6th argument */
+    /* do the call (6 arguments, 0 result) */
+    if(res = lua_pcall(L, 6, 1, 0)){
+      lua_pushstring(L,"error in PRE_make_ellipse:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "PRE_make_ellipse");  /* function to be called */
-	lua_pushnumber(L, major_axis);   /* push 1st argument */
-	lua_pushnumber(L, minor_axis);   /* push 2nd argument */
-	lua_pushnumber(L, theta);   /* push 3th argument */
-	lua_pushnumber(L, tx);   /* push 4th argument */
-	lua_pushnumber(L, ty);   /* push 5th argument */
-	lua_pushnumber(L, q);   /* push 6th argument */
-	/* do the call (6 arguments, 1 result) */
-	res = lua_pcall(L, 6, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_make_ellipse returns  %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
+      
 
 
 int mfluaPOSTmakeellipse(integer major_axis, integer minor_axis, integer theta , integer tx, integer ty,integer q)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("make_ellipse.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"make_ellipse.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaPOSTmakeellipse);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"POST_make_ellipse");
+    lua_pushnumber(L, major_axis);   /* push 1st argument */
+    lua_pushnumber(L, minor_axis);   /* push 2nd argument */
+    lua_pushnumber(L, theta);   /* push 3th argument */
+    lua_pushnumber(L, tx);   /* push 4th argument */
+    lua_pushnumber(L, ty);   /* push 5th argument */
+    lua_pushnumber(L, q);   /* push 6th argument */
+    /* do the call (6 arguments, 0 result) */
+    if(res = lua_pcall(L, 6, 1, 0)){
+      lua_pushstring(L,"error in POST_make_ellipse:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "POST_make_ellipse");  /* function to be called */
-	lua_pushnumber(L, major_axis);   /* push 1st argument */
-	lua_pushnumber(L, minor_axis);   /* push 2nd argument */
-	lua_pushnumber(L, theta);   /* push 3th argument */
-	lua_pushnumber(L, tx);   /* push 4th argument */
-	lua_pushnumber(L, ty);   /* push 5th argument */
-	lua_pushnumber(L, q);   /* push 6th argument */
-	/* do the call (6 arguments, 1 result) */
-	res = lua_pcall(L, 6, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `PRE_make_ellipse returns %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
-
 }
-
+      
 
 int mfluaprinttransitionlinefrom(integer x, integer y)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("fill_envelope.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"fill_envelope.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaprinttransitionlinefrom);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"print_transition_line_from");
+    lua_pushnumber(L, x);   /* push 1st argument */
+    lua_pushnumber(L, y);   /* push 2nd argument */
+    /* do the call (2 arguments, 0 result) */
+    if(res = lua_pcall(L, 2, 0, 0)){
+      lua_pushstring(L,"error in print_transition_line_from:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "print_transition_line_from");  /* function to be called */
-	lua_pushnumber(L, x);   /* push 1st argument */
-	lua_pushnumber(L, y);   /* push 2nd argument */
-	/* do the call (2 arguments, 1 result) */
-	res = lua_pcall(L, 2, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `print_transition_from' must return a number and nt %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
+
 
 int mfluaprinttransitionlineto(integer x, integer y)
 {
   lua_State *L;
-  char* luafile;
   int res;
 
   L = Luas[0];
-  luafile = kpse_find_file("fill_envelope.lua", kpse_lua_format, 0);
-  if (luafile==NULL) {
-    res = 1;
-    lua_pushstring(L,"fill_envelope.lua not found");
-    priv_lua_reporterrors(L, res);
-    return 0;
+  GETGLOBALTABLEMFLUA(mfluaprinttransitionlineto);
+  if (lua_istable(L, -1)) {
+    lua_getfield(L,-1,"print_transition_line_to");
+    lua_pushnumber(L, x);   /* push 1st argument */
+    lua_pushnumber(L, y);   /* push 2nd argument */
+    /* do the call (2 arguments, 0 result) */
+    if(res = lua_pcall(L, 2, 0, 0)){
+      lua_pushstring(L,"error in print_transition_line_to:");
+      lua_swap(L);lua_concat (L, 2);
+      priv_lua_reporterrors(L, res);
+    }
   }
-  priv_lua_writemessage(L,"(",luafile,")",1);
-  res = luaL_loadfile(L, luafile);
-  free (luafile);
-  if ( res==0 ){
-      res = lua_pcall(L, 0, 0, 0);
-      if (res==0){
-	lua_getglobal(L, "print_transition_line_to");  /* function to be called */
-	lua_pushnumber(L, x);   /* push 1st argument */
-	lua_pushnumber(L, y);   /* push 2nd argument */
-	/* do the call (2 arguments, 1 result) */
-	res = lua_pcall(L, 2, 1, 0) ;
-	if (res==0) {
-	  /* retrieve result */
-	  int z = 0;
-	  if (!lua_isnumber(L, -1)){
-	    fprintf(stderr,"\n! Error:function `print_transition_to' must return a number and not %s\n",lua_tostring(L, -1));
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }else {
-	    z = lua_tonumber(L, -1);
-	    lua_pop(L, 1);  /* pop returned value */
-	    return z;
-	  }
-	}
-      }
-  }
-  /*stackdump_g(L);*/
-  priv_lua_reporterrors(L, res);
+  lua_settop(L,0);
   return 0;
 }
+
+
 
 #define priv_append_char(c) do { \
   strpool[poolptr]=c;            \

@@ -1,4 +1,11 @@
+2017-04-16 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* MFLua 0.8. New primitive runscript, cleanup of the Lua code.
+	* new backend ttx .
+	* am/mflua.am: deleted useless lua files
+
 2016-04-15 Luigi Scarso <luigi.scarso@gmail.com>
+
 	* mfluac.c  priv_lua_writemessage: write to stdout 
 	when a lua file is loaded.
 

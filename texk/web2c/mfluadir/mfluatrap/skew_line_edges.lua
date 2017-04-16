@@ -1,1 +1,0 @@
-function print_retrograde_line(x0,y0,cur_x,cur_y) return 0 end
