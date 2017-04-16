@@ -24,7 +24,7 @@ You need a recent and working [TeXLive](https://www.tug.org/texlive/), on top of
 
 ## Building for inclusion in TeXLive
 
-When building gregorio for inclusion in TeXLive, the gregorio executable must not have the version number prefix that is used for other builds.  To make this happen, run `configure` with the `--disable-version-in-exe` option, and the generated Makefile will create a gregorio executable without the version number prefix (i.e., the executable will simply be named `gregorio`).
+When building gregorio for inclusion in TeXLive, the gregorio executable must not have the version number suffix that is used for other builds.  To make this happen, run `configure` with the `--disable-version-in-exe` option, and the generated Makefile will create a gregorio executable without the version number suffix (i.e., the executable will simply be named `gregorio`).
 
 ## Documentation
 
