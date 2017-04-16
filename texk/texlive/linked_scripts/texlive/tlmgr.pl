@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43803 2017-04-15 00:15:00Z preining $
+# $Id: tlmgr.pl 43875 2017-04-16 23:21:46Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43803 $';
-my $datrev = '$Date: 2017-04-15 02:15:00 +0200 (Sat, 15 Apr 2017) $';
+my $svnrev = '$Revision: 43875 $';
+my $datrev = '$Date: 2017-04-17 01:21:46 +0200 (Mon, 17 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -595,8 +595,8 @@ for the full story.\n";
   #
   # Try to open the packagelog file, but do NOT die when that does not work
   if (!open(PACKAGELOG, ">>$packagelogfile")) {
-    tlwarn("Cannot open package log file $packagelogfile for appending\n");
-    tlwarn("Will not log package installation/removal/update for that run\n");
+    debug("Cannot open package log file $packagelogfile for appending\n");
+    debug("Will not log package installation/removal/update for this run\n");
     $packagelogfile = "";
   }
 
