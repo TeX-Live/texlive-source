@@ -33,13 +33,16 @@ i386-linux: gcc 4.9.2, Linux 2.6.18-* (CentOS 5.10, tug.org:~karl/bin/mybuild)
   bug that causes lcdf-typetools's tfm.test to fail, so it can't be used
   for everything.  Sigh.
         
-x86_64-linux: Debian 5.0 (Lenny), Feb 2009.
+x86_64-linux: Debian 6.0 (Squeeze), Feb 2009.
   
 amd64-netbsd:
   gcc version 4.5.3 (NetBSD nb2 20110806)
   NetBSD/amd64 6.1.3
   TL_MAKE=gmake LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' ./Build
   
+i386-freebsd, amd64-freebsd:
+  --disable-dvisvgm; upmendex for i386 built with -DU_IS_BIG_ENDIAN=0.
+
 i386-openbsd, amd64-openbsd:
   e.g., see CONFIGURE_ARGS in the Makefile in
   http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/print/texlive/base/
@@ -56,5 +59,15 @@ powerpc-linux (Debian Squeeze):
 
 sparc-solaris: Solaris 10, gcc.  See doc/README.solaris.
 
-universal-darwin, x86_64-darwin: a menagerie of versions.
+x86_64-darwin:
   See Master/source/mactexdoc.tar.xz.
+
+x86_64-darwinlegacy, i386-darwin, powerpc-darwin:
+  http://build.contextgarden.net/waterfall?tag=c/texlive
+  32-bit binaries built on 10.6/x86_64 with backward compatibility to 10.5.
+  ppc binaries only work on <= 10.5, so 10.5/ppc will be the only OS for them.
+  i386 binaries only work on <= 10.6. While they theoretically work
+    "everywhere", they would only be used on 10.5 and 10.6/i386.
+  x86_64 binaries only work on >= 10.6 (and should work on any >= 10.6 machine)
+    but will only be used for < 10.10 since x86_64-darwin covers newer.
+  PPC binaries made with gcc-4.2 and Intel binaries with clang-3.7.
