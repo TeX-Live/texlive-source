@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 43793 $';
+my $svnrev = '$Revision: 43903 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -106,12 +106,11 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
 our $PERL_SINGLE_QUOTE; # we steal code from Text::ParseWords
 use vars qw(
   $::LOGFILENAME @::LOGLINES 
-  @::debug_hook @::ddebug_hook @::dddebug_hook @::info_hook @::warn_hook
-  @::install_packages_hook
-  $::machinereadable
-  $::no_execute_actions
-  $::regenerate_all_formats
+    @::debug_hook @::ddebug_hook @::dddebug_hook @::info_hook 
+    @::install_packages_hook @::warn_hook
   $TeXLive::TLDownload::net_lib_avail
+    $::checksum_method $::gui_mode $::machinereadable $::no_execute_actions
+    $::regenerate_all_formats
 );
 
 BEGIN {
@@ -286,17 +285,45 @@ sub platform_name {
   }
   
   if ($OS eq "darwin") {
-    # We want to guess x86_64-darwin on new-enough systems.  
-    # Most robust approach is to check sw_vers (os version)
-    # and sysctl (processor hardware).
+    # We have a variety of Mac binary sets.
+    # 10.10/Yosemite and newer:
+    #   -> x86_64-darwin [MacTeX]
+    # 10.6/Snow Leopard through 10.9/Mavericks:
+    #   -> x86_64-darwinlegacy if 64-bit
+    #   -> i386-darwin         otherwise
+    # 10.5/Leopard:
+    #   -> i386-darwin    if x86
+    #   -> powerpc-darwin if ppc
+    #
+    # (BTW, uname -r numbers are larger by 4 than the minor version.
+    # We don't use uname numbers here.)
+    #
+    my $mactex_darwin = 10;  # the minor 10; this will change in the future.
+    #
+    # Most robust approach is apparently to check sw_vers (os version,
+    # returns "10.x" values), and sysctl (processor hardware).
     chomp (my $sw_vers = `sw_vers -productVersion`);
     my ($os_major,$os_minor) = split (/\./, $sw_vers);
-    #
-    chomp (my $sysctl = `PATH=/usr/sbin:\$PATH sysctl hw.cpu64bit_capable`);
-    my (undef,$hw_64_bit) = split (" ", $sysctl);
-    #
-    $CPU = ($os_major >= 10 && $os_minor >= 6 && $hw_64_bit >= 1)
-           ? "x86_64" : "universal";
+    if ($os_major != 10) {
+      warn "$0: only MacOSX is supported, not $OS $os_major.$os_minor "
+           . " (from sw_vers -productVersion: $sw_vers)\n";
+      return "unknown-unknown";
+    }
+    if ($os_minor >= $mactex_darwin) {
+      ; # current version, default is ok (x86_64-darwin).
+    } elsif ($os_minor >= 6 && $os_minor < $mactex_darwin) {
+      # in between, x86 hardware only.  On 10.6 only, must check if 64-bit,
+      # since if later than that, always 64-bit.
+      my $is64 = $os_minor == 6
+                 ? `/usr/sbin/sysctl -n hw.cpu64bit_capable` >= 1
+                 : 1;
+      if ($is64) {
+        $CPU = "x86_64";
+        $OS = "darwinlegacy";
+      } # if not 64-bit, default is ok (i386-darwin).
+    } else {
+      ; # older version, default is ok (i386-darwin, powerpc-darwin).
+    }
     
   } elsif ($CPU =~ /^i.86$/) {
     $CPU = "i386";  # 586, 686, whatever
@@ -328,24 +355,25 @@ sub platform_desc {
     'armhf-linux'      => 'GNU/Linux on ARMhf',
     'hppa-hpux'        => 'HP-UX',
     'i386-cygwin'      => 'Cygwin on Intel x86',
-    'i386-darwin'      => 'MacOSX/Darwin on Intel x86',
+    'i386-darwin'      => 'MacOSX legacy (10.5-10.6) on Intel x86',
     'i386-freebsd'     => 'FreeBSD on Intel x86',
     'i386-kfreebsd'    => 'GNU/kFreeBSD on Intel x86',
-    'i386-openbsd'     => 'OpenBSD on Intel x86',
-    'i386-netbsd'      => 'NetBSD on Intel x86',
     'i386-linux'       => 'GNU/Linux on Intel x86',
+    'i386-netbsd'      => 'NetBSD on Intel x86',
+    'i386-openbsd'     => 'OpenBSD on Intel x86',
     'i386-solaris'     => 'Solaris on Intel x86',
     'mips-irix'        => 'SGI IRIX',
     'mipsel-linux'     => 'GNU/Linux on MIPSel',
     'powerpc-aix'      => 'AIX on PowerPC',
-    'powerpc-darwin'   => 'MacOSX/Darwin on PowerPC',
+    'powerpc-darwin'   => 'MacOSX legacy (10.5) on PowerPC',
     'powerpc-linux'    => 'GNU/Linux on PowerPC',
     'sparc-linux'      => 'GNU/Linux on Sparc',
     'sparc-solaris'    => 'Solaris on Sparc',
-    'universal-darwin' => 'MacOSX/Darwin universal binaries',
+    'universal-darwin' => 'MacOSX universal binaries',
     'win32'            => 'Windows',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
-    'x86_64-darwin'    => 'MacOSX/Darwin on x86_64',
+    'x86_64-darwin'    => 'MacOSX current on x86_64',
+    'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-10.9) on x86_64',
     'x86_64-linux'     => 'GNU/Linux on x86_64',
     'x86_64-solaris'   => 'Solaris on x86_64',
   );
@@ -4025,7 +4053,7 @@ sub setup_sys_user_mode {
     $texmfvar    = $TEXMFVAR;
   } else {
     print STDERR "$prg [ERROR]: Either -user or -sys mode is required.\n" .
-      "See $TeXLive::TLConfig::SYSUSERURL for details!\n";
+      "See http://tug.org/texlive/scripts-sys-user.html for details.\n";
     exit(1);
   }
   return ($texmfconfig, $texmfvar);
