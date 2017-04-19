@@ -25,8 +25,8 @@ local fio_recordfilename  = fio.recordfilename
 local mt                  = getmetatable(io.stderr)
 local mt_lines            = mt.lines
 local saferoption         = status.safer_option
-local shellescape         = status.shell_escape     -- 0 (disabled) 1 (restricted) 2 (everything)
-local kpseused            = status.kpse_used        -- 0 1
+local shellescape         = status.shell_escape -- 0 (disabled) 1 (anything) 2 (restricted)
+local kpseused            = status.kpse_used    -- 0 1
 
 io.saved_open             = io_open  -- can be protected
 io.saved_popen            = io_popen -- can be protected
@@ -127,7 +127,7 @@ if saferoption == 1 then
 
 end
 
-if saferoption == 1 or shellescape ~= 2 then
+if saferoption == 1 or shellescape ~= 1 then
 
     ffi = require('ffi')
     for k, v in next, ffi do
@@ -136,6 +136,7 @@ if saferoption == 1 or shellescape ~= 2 then
         end
     end
     ffi = nil
+
 end
 
 -- os.[execute|os.spawn|os.exec] already are shellescape aware)
