@@ -167,14 +167,6 @@ The resulting binary depends on:
     libuutil.so.1 => /lib/libuutil.so.1
     libgen.so.1 =>   /lib/libgen.so.1
 
-Additional notes:
-
-* gc-7.4.2 doesn't support sparc properly, so the sources for sparc were fetched from
-  https://github.com/ivmai/bdwgc/tree/release-7_4
-  and put into gc-7.4.2
-  Running ./autogen.sh was needed before proceeding
-
-
 Building texlive
 ================
 
