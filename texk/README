@@ -108,9 +108,9 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        aleph - maintained here
         ctie - CTAN
         cweb - knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
-       eptex - https://osdn.jp/projects/eptex/
+       eptex - https://osdn.jp/projects/eptex,https://texwiki.texjp.org/?e-pTeX
         etex - maintained here
-      euptex - https://texwiki.texjp.org/?e-pTeX
+      euptex - https://texwiki.texjp.org/?upTeX%2CupLaTeX
   mflua[jit] - https://foundry.supelec.fr/projects/mflua/
     mplibdir - http://tug.org/metapost
       luatex - http://luatex.org
