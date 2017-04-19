@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43875 2017-04-16 23:21:46Z karl $
+# $Id: tlmgr.pl 43915 2017-04-18 23:55:09Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43875 $';
-my $datrev = '$Date: 2017-04-17 01:21:46 +0200 (Mon, 17 Apr 2017) $';
+my $svnrev = '$Revision: 43915 $';
+my $datrev = '$Date: 2017-04-19 01:55:09 +0200 (Wed, 19 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6504,70 +6504,67 @@ sub check_on_writable {
 # tlmgr shell code
 sub action_shell {
   my $protocol = 1;
-  our $promptfunc;
-
-  eval { 
-    require IO::Prompter;
-  };
-  if ($@) {
-    printf STDERR "Cannot find IO::Prompter module, reduced interactive functionality!\n";
-    $promptfunc =  sub {
-      my $default_prompt = "tlmgr>";
-      my $prompt = "";
-      my @options;
-      my @guarantee;
-      my @savedargs = @_;
-      while (defined(my $arg = shift @_)) {
-        if ($arg =~ m/^-prompt$/) {
-          $prompt .= shift @_;
-        } elsif ($arg =~ m/^-style$/) {
-          # ignore style here
-          shift @_;
-        } elsif ($arg =~ m/^-menu$/) {
-          my $options = shift @_;
-          @options = @$options;
-        } elsif ($arg =~ m/^-guarantee$/) {
-          my $guarantee = shift @_;
-          @guarantee = @$guarantee;
-        } elsif ($arg =~ m/^-/) {
-          print "ERROR unsupported prompt command, please report: $arg!\n";
-        } else {
-          $prompt .= $arg;
+  sub do_prompt {
+    my $default_prompt = "tlmgr>";
+    my $prompt = "";
+    my @options;
+    my @guarantee;
+    my @savedargs = @_;
+    my $did_prompt = 0;
+    while (defined(my $arg = shift @_)) {
+      if ($arg =~ m/^-prompt$/) {
+        print shift @_, " ";
+        $did_prompt = 1;
+      } elsif ($arg =~ m/^-menu$/) {
+        my $options = shift @_;
+        @options = @$options;
+        print "\n";
+        my $c = 1;
+        for my $o (@options) {
+          print " $c) $o\n";
+          $c++;
         }
+      } elsif ($arg =~ m/^-guarantee$/) {
+        my $guarantee = shift @_;
+        @guarantee = @$guarantee;
+      } elsif ($arg =~ m/^-/) {
+        print "ERROR unsupported prompt command, please report: $arg!\n";
+      } else {
+        print $arg, " ";
+        $did_prompt = 1;
       }
-      $prompt = ($prompt ? $prompt : $default_prompt );
-      print "$prompt ";
-      if (@options) {
-        print "(", join(",", @options), ") ";
-      }
-      my $ans = <STDIN>;
-      if (!defined($ans)) {
-        # we got Ctrl-D, just break out
+    }
+    print "default_prompt " if (!$did_prompt);
+    my $ans = <STDIN>;
+    if (!defined($ans)) {
+      # we got Ctrl-D, just break out
+      return;
+    }
+    chomp($ans);
+    if (@options) {
+      $ans--;
+      if ($ans >= 0 && $ans < $#options) {
+        $ans = $options[$ans];
+        return($ans);
+      } else {
+        print "ERROR invalid answer\n";
         return;
       }
-      chomp($ans);
-      if (@guarantee) {
-        my $isok = 0;
-        for my $g (@guarantee) {
-          if ($ans eq $g) {
-            $isok = 1;
-            last;
-          }
-        }
-        if (!$isok) {
-          print("Please answer one of @guarantee!\n");
-          return($promptfunc->(@savedargs));
+    }
+    if (@guarantee) {
+      my $isok = 0;
+      for my $g (@guarantee) {
+        if ($ans eq $g) {
+          $isok = 1;
+          last;
         }
       }
-      return($ans);
+      if (!$isok) {
+        print("Please answer one of @guarantee!\n");
+        return(do_prompt(@savedargs));
+      }
     }
-  } else {
-    $promptfunc = \&IO::Prompter::prompt;
-  }
-  sub do_prompt {
-    our $promptfunc;
-    my $foo = $promptfunc->(@_);
-    return($foo);
+    return($ans);
   }
 
   print "protocol $protocol\n";
