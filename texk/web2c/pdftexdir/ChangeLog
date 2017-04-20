@@ -1,3 +1,13 @@
+2017-04-19  Karl Berry  <karl@freefriends.org>
+
+	* mapfile.c (read_field): new parameter buf_size,
+	and check buffer for overflow, as in append_char_to_buf.
+	(fm_scan_line): change read_field calls;
+	set tfm_name to empty string instead of leaving NULL.
+	(check_fm_entry): remove checks of tfm_name on every print;
+	check for empty tfm_name rather than lack of ps_name and font file;
+	check for non-empty tfm_name on slant/extend warnings.
+
 2017-04-12  Karl Berry  <karl@freefriends.org>
 
 	* mapfile.c (check_fm_entry): do not try to print fm->tfm_name,
