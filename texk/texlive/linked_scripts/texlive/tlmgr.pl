@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43915 2017-04-18 23:55:09Z preining $
+# $Id: tlmgr.pl 43940 2017-04-20 14:47:49Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43915 $';
-my $datrev = '$Date: 2017-04-19 01:55:09 +0200 (Wed, 19 Apr 2017) $';
+my $svnrev = '$Revision: 43940 $';
+my $datrev = '$Date: 2017-04-20 16:47:49 +0200 (Thu, 20 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4037,9 +4037,9 @@ sub action_repository {
       return ($F_ERROR);
     }
     # check if it is either url or absolute path
-    if (($p !~ m!^(http|ftp)://!i) && 
+    if (($p !~ m!^(https?|ftp)://!i) && 
         !File::Spec->file_name_is_absolute($p)) {
-      tlwarn("$prg: neither http/ftp URL nor absolute path, no action: $p\n");
+      tlwarn("$prg: neither https?/ftp URL nor absolute path, no action: $p\n");
       return ($F_ERROR);
     }
     my $t = shift @ARGV;
@@ -5784,7 +5784,7 @@ sub init_local_db {
   # we normalize the path only if it is
   # - a url starting with neither http or ftp
   # - if we are on Windows, it does not start with Drive:[\/]
-  if (! ( $location =~ m!^(http|ftp)://!i  ||
+  if (! ( $location =~ m!^(https?|ftp)://!i  ||
           (win32() && (!(-e $location) || ($location =~ m!^.:[\\/]!) ) ) ) ) {
     # seems to be a local path, try to normalize it
     my $testloc = abs_path($location);
@@ -6026,7 +6026,7 @@ sub setup_one_remotetlpdb {
   #   not work
 
   my $local_copy_tlpdb_used = 0;
-  if ($location =~ m;^(http|ftp)://;) {
+  if ($location =~ m;^(https?|ftp)://;) {
     # first check that the saved tlpdb is present at all
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
@@ -6167,7 +6167,7 @@ FROZEN
   # save remote database if it is a net location
   # make sure that the writeout of the tlpdb is done in UNIX mode
   # since otherwise the checksum will change.
-  if (!$local_copy_tlpdb_used && $location =~ m;^(http|ftp)://;) {
+  if (!$local_copy_tlpdb_used && $location =~ m;^(https?|ftp)://;) {
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
       "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
