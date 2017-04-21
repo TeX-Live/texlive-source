@@ -187,10 +187,12 @@ texmf_other_scripts = \
 	texdoc/texdoc.tlu \
 	texfot/texfot.pl \
 	texlive/fmtutil-sys.sh \
+	texlive/fmtutil-user.sh \
 	texlive/fmtutil.pl \
 	texlive/rungs.tlu \
 	texlive/tlmgr.pl \
 	texlive/updmap-sys.sh \
+	texlive/updmap-user.sh \
 	texlive/updmap.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
