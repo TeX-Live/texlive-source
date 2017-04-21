@@ -133,7 +133,7 @@ void texlive_gs_init(void)
 {
   char *nptr, *path;
   char tlgsbindir[512];
-  char tlgslibdir[512];
+  char tlgslibdir[1024];
   nptr = kpse_var_value("TEXLIVE_WINDOWS_EXTERNAL_GS");
   if (nptr == NULL || !strcmp(nptr, "0") || !strcmp(nptr, "n") || !strcmp(nptr, "f")) {
     if (nptr)
@@ -146,7 +146,13 @@ void texlive_gs_init(void)
         strcpy(tlgslibdir, tlgsbindir);
         strcat(tlgslibdir, "/lib;");
         strcat(tlgslibdir, tlgsbindir);
-        strcat(tlgslibdir, "/fonts");
+        strcat(tlgslibdir, "/fonts;");
+        strcat(tlgslibdir, tlgsbindir);
+        strcat(tlgslibdir, "/Resource/Init;");
+        strcat(tlgslibdir, tlgsbindir);
+        strcat(tlgslibdir, "/Resource;");
+        strcat(tlgslibdir, tlgsbindir);
+        strcat(tlgslibdir, "/kanji");
         strcat(tlgsbindir, "/bin;");
         free(nptr);
         for(nptr = tlgsbindir; *nptr; nptr++) {
