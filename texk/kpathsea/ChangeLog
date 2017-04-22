@@ -1,3 +1,7 @@
+2017-04-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* win32lib.c, mingw32.c: Update texlive_gs_init() (w32 only). 
+
 2017-04-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c, mingw32.c: Update texlive_gs_init() (w32 only). 
