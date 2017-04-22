@@ -1,3 +1,11 @@
+XeTeX 0.99998 (April 22, 2016)
+
+* Fixed long-standing bug that made \ifcat\span...\fi (and similar
+  constructions with \cr, \crcr) behave incorrectly.
+* Also fixed initialization of \delcode values for supplementary-
+  plane characters.
+
+==============================================================
 XeTeX 0.99997 (March 2016, for TeX Live 2017)
 
 * Unicode/OpenType math implementation now based on HarfBuzz's MATH
