@@ -1,4 +1,4 @@
-.Dd 06/26/2013     \" DATE 
+.Dd 04/23/2017     \" DATE
 .Dt synctex 1      \" Program name and manual section number 
 .Sh NAME
 .Nm synctex
@@ -13,17 +13,34 @@ which means to navigate from the source document to the typeset material
 and vice versa.
 .Pp
 Run `synctex help' to access the built-in tool documentation.
-.Sh SEE ALSO 
+.Sh TEX ENGINE OPTION -synctex=NUMBER
+.It
+.Li If NUMBER=0 or no option is given, no synctex file is created.
+.It
+.Li If NUMBER<0, synctex files are text files.
+.It
+.Li If NUMBER>0, synctex files are compressed with gz.
+.It
+.Li If NUMBER&2, no .gz extension is used.
+.It
+.Li If NUMBER&4, activate form support, useful for pdftex.
+.It
+.Li If NUMBER&8, better file compression.
+.Pp
+Use for example `pdftex -synctex=15 foo.tex' to activate all the options.
+.Pp
+Notice that LuaTeX option is `--synctex=NUMBER' with two dashes.
+.Sh SEE ALSO
 .\" List links in ascending order by section, alphabetically within a section.
 .\" Please do not reference files that do not exist without filing a bug report
-.Xr synctex 5 
+.Xr synctex 5
 .Xr tex 1
 .Sh AUTHOR
 The Synchronize TeXnology is essentially due to Jerome Laurens,
 with useful suggestions by some well known actors of the TeX world.
 .\" .Sh BUGS              \" Document known, unremedied bugs 
 .Sh HISTORY           \" Document history if command behaves in a unique manner
-This document has never been updated.
+Revised on Sun Apr 23 09:54:20 UTC 2017.
 .\" nroff -man synctex.1 | less
 .\"groff -man -Tascii synctex.1 | less
 .\"To convert a man page to plain pre-formatted text (e.g for spell checking) use:

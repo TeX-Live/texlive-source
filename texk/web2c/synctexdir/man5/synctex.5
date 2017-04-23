@@ -1,4 +1,4 @@
-.Dd Mar 13, 2012
+.Dd Apr 22, 2017
 .Dt SYNCTEX 5
 .Os "Independant"
 .\"
@@ -13,8 +13,7 @@ Synchronize TeXnology help file
 .Pq synctexs
 are text files that help input/output synchronization during document preparation with the TeX typesetting system.
 .Sh BASICS
-The structure of this file should not be considered public, in the sense that no one should need to parse its contents, except the synctex command line utility, and the synctex_parser library.
-Unless it is absolutely not avoidable, access to the contents of the synctex file should only be made through requests made to the synctex command line utility.
+The structure of this file should not be considered public, in the sense that no one should need to parse its contents, except the synctex command line utility, and the synctex_parser library which are both publicly available. Unless it is absolutely not avoidable, access to the contents of the synctex file should only be made through requests made to the synctex command line utility.
 .\"
 .Sh STRUCTURE
 The element structure of a synctex file is a list of text line records as follows.
@@ -94,19 +93,21 @@ In the following definitions, we do not mention the section ending condition.
 .Qq Content:
 <EOL>
 .It
+.Li (<Form(k)>|<Input Line>)*
+.It
 .Li <sheet(1)>
 .It
-.Li <Input Line>*
+.Li (<Form(k)>|<Input Line>)*
 .It
 .Li <sheet(2)>
 .It
-.Li <Input Line>*
+.Li (<Form(k)>|<Input Line>)*
 .It
 .Li ...
 .It
 .Li <sheet(N)>
 .It
-.Li <Input Line>*
+.Li (<Form(k)>|<Input Line>)*
 .El
 .It
 .Li <byte offset record> ::=
@@ -123,17 +124,37 @@ In the following definitions, we do not mention the section ending condition.
 .Li <byte offset record>
 .It
 .Qq \&{
-<the integer n> <end of record>/
+<the integer n> <end of record>
 .It
-.Li <box content>*
+.Li <vbox section>|<hbox section>
 .It
 .Li <byte offset record>
 .It
 .Qq \&}
 <the integer n> <end of record>
 .El
+.It
+.Li <Form> ::=
+.Bl -item -offset indent
+.It
+.Li <byte offset record>
+.It
+.Qq \&<
+<form tag> <end of record>
+.It
+.Li <vbox section>|<hbox section>
+.It
+.Li <byte offset record>
+.It
+.Qq \&>
+<end of record>
+.El
+.It
+.Li <form tag> ::= <integer>
 .El
 .Pp
+Forms are available with pdfTeX.
+All the numbers are integers encoded using the decimal representation with "C" locale.
 The <box content> describes what is inside a box.
 It is either a vertical or horizontal box,
 with some records related to glue, kern or math nodes.
@@ -146,7 +167,9 @@ with some records related to glue, kern or math nodes.
 .It
 .Li |<void vbox record>|<void hbox record>
 .It
-.Li |<current record>|<glue record>|<kern record>|<math record>
+.Li |<current record>|<glue record>|<kern record>
+.It
+.Li |<math record>|<form ref record>|<Form>
 .El
 .It
 .Li <vbox section> ::=
@@ -201,6 +224,27 @@ Void boxes:
 .Qq \&:
 <size> <end of record>
 .It
+.Li <link> ::= <tag>
+.Qq \&,
+<line>(
+.Qq \&,
+<column>)?
+.It
+.Li <point> ::= <full point>|<compressed point>
+.It
+.Li <full point> ::=
+<integer>
+.Qq \&,
+<integer>
+.It
+.Li <compressed point> ::=
+<integer>
+.Qq \&,=
+.It
+.Li <line> ::= <integer>
+.It
+.Li <column> ::= <integer>
+.It
 .Li <size> ::= <Width>
 .Qq \&,
 <Height>
@@ -212,16 +256,6 @@ Void boxes:
 .Li <Height> ::= <integer>
 .It
 .Li <Depth> ::= <integer>
-.It
-.Li <link> ::= <tag>
-.Qq \&,
-<line>(
-.Qq \&,
-<column>)?
-.It
-.Li <line> ::= <integer>
-.It
-.Li <column> ::= <integer>
 .El
 .Pp
 The forthcoming records are basic one liners.
@@ -250,6 +284,12 @@ The forthcoming records are basic one liners.
 .Li <math record> ::=
 .Qq $
 <link>
+.Qq \&:
+<point> <end of record>
+.It
+.Li <form ref record> ::=
+.Qq f
+<form tag>
 .Qq \&:
 <point> <end of record>
 .El
@@ -308,7 +348,22 @@ All the numbers are encoded using the decimal representation with "C" locale.
 .Sh USAGE
 .Pp
 The <current record> is used to compute the visible size of hbox's.
-The byte offset is an implicit anchor to navigate the synctex file from sheet to sheet.
+The byte offset is an implicit anchor to navigate the synctex file from sheet to sheet. The second coordinate of
+a compressed point has been replaced by a
+.Qq =
+character which means that it is the second coordinate of the
+last full point available above.
+.Sh SEE ALSO 
+.\" List links in ascending order by section, alphabetically within a section.
+.\" Please do not reference files that do not exist without filing a bug report
+.Xr synctex 1
+.Xr tex 1
+.Sh AUTHOR
+The Synchronize TeXnology is essentially due to Jerome Laurens,
+with useful suggestions by some well known actors of the TeX world.
+.\" .Sh BUGS              \" Document known, unremedied bugs 
+.Sh HISTORY           \" Document history if command behaves in a unique manner
+This document has been updated on Sat Apr 22 09:57:20 UTC 2017 to include \\pdfxform support.
 .\" nroff -man synctex.5 | less
 .\"groff -man -Tascii synctex.5 | less
 .\"To convert a man page to plain pre-formatted text (e.g for spell checking) use:
