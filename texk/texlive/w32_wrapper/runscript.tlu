@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 40700 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2016-04-23 14:35:18 +0200 (Sat, 23 Apr 2016) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 43968 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2017-04-22 01:24:18 +0200 (Sat, 22 Apr 2017) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -255,6 +255,8 @@ local docstr = [[
     	- fix spurious arguments for updmap and fmtutil
     2016/04/22
     	- Warning if external perl is requested but missing
+    2017/04/22 (exactly one year later ;-)
+        - Cater for fmtutil-user and updmap-user => -user arg        
 ]]
 
 -- HELPER SUBROUTINES --
@@ -437,6 +439,10 @@ end
 -- special case of sys programs
 progname, substcount = string.gsub(progname, '%-sys$', '')
 local sysprog = (substcount > 0) -- true if there was a -sys suffix removed
+-- special case of user programs
+-- we do not guard against programs foobar-user-sys ... we don't ship them
+progname, substcount = string.gsub(progname, '%-user$', '')
+local userprog = (substcount > 0) -- true if there was a -user suffix removed
 -- prevent recursive calls to this script
 assert(progname ~= 'runscript', "oops! wrapping the wrapper?")
 
@@ -530,8 +536,12 @@ if GSEXE then
   end
 else
   -- use built in gs
-  os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'..TEXDIR..'/tlpkg/tlgs/fonts;'
-    ..os.getenv('WINDIR')..'/Fonts;'..TEXMFDIST..'/fonts')
+   os.setenv('GS_LIB', TEXDIR..'/tlpkg/tlgs/lib;'
+	     ..TEXDIR..'/tlpkg/tlgs/fonts;'
+	     ..TEXDIR..'/tlpkg/tlgs/Resource/Init;'
+	     ..TEXDIR..'/tlpkg/tlgs/Resource;'
+	     ..TEXDIR..'/tlpkg/tlgs/kanji;'
+	     ..os.getenv('WINDIR')..'/Fonts;'..TEXMFDIST..'/fonts')
   os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
   GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
   GSNAME = 'gswin32c.exe'
@@ -589,10 +599,14 @@ elseif progname == 'a2ping' then
 elseif progname == 'updmap' then 
   if sysprog then
     argline = ' --sys ' .. argline
+  elseif userprog then
+    argline = ' --user ' .. argline
   end
 elseif progname == 'fmtutil' then 
   if sysprog then
     argline = ' --sys ' .. argline
+  elseif userprog then
+    argline = ' --user ' .. argline
   end
 elseif progname == 'asy' then
   os.setenv('ASYMPTOTE_GS', GSEXE)
