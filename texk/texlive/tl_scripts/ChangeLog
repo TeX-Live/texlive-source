@@ -1,3 +1,8 @@
+2017-04-24  Paul Vojta  <vojta@math.berkeley.edu>
+
+	* texconfig.sh: xdvi paper size updates (also in TLPaper.pm).
+	Also, no more dvipdfm "config" file.
+
 2017-04-16  Karl Berry  <karl@tug.org>
 
 	* texconfig.sh: remove references to dvipdfm, since it is no
