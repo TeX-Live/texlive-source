@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 43968 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2017-04-22 01:24:18 +0200 (Sat, 22 Apr 2017) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 44002 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2017-04-24 01:50:36 +0200 (Mon, 24 Apr 2017) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -257,6 +257,8 @@ local docstr = [[
     	- Warning if external perl is requested but missing
     2017/04/22 (exactly one year later ;-)
         - Cater for fmtutil-user and updmap-user => -user arg        
+    2017/04/24
+        - GS_LIB setting for tlgs.
 ]]
 
 -- HELPER SUBROUTINES --
