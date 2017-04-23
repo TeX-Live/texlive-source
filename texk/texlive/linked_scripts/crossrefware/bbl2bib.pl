@@ -101,7 +101,7 @@ use LWP::Simple;
 
 my $USAGE="USAGE: $0 [-o output] file\n";
 my $VERSION = <<END;
-bbl2bib v2.1
+bbl2bib v2.1a
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -216,7 +216,7 @@ sub SearchMref {
 	open $fh, "<", \$bib;
 	my $parser = new BibTeX::Parser($fh);
 	my $entry = $parser->next;
-	if ($entry->parse_ok()) {
+	if (ref($entry) && $entry->parse_ok()) {
 	    $entry->key($bibitem->{key});
 	    return ($entry);
 	}
@@ -227,7 +227,7 @@ sub SearchMref {
 
 
 sub PrintBibitem {
-    print "\n";
+    print $output "\n";
     my $bibitem = shift;
     if (!ref($bibitem->{bib})) {
 	return;
@@ -253,7 +253,7 @@ sub PrintBibitem {
 	$entry->field('arxiv', $bibitem->{arxiv});
     }
 	
-    print $entry->to_string(), "\n\n";
+    print $output $entry->to_string(), "\n\n";
 }
 
 
