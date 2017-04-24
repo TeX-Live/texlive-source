@@ -132,7 +132,8 @@ const_string EPTEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-help                   print this message and exit.",
@@ -192,7 +193,8 @@ const_string ETEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-8bit                   make all characters printable by default",
@@ -260,7 +262,8 @@ const_string EUPTEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-help                   print this message and exit.",
@@ -458,7 +461,8 @@ const_string PDFTEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-8bit                   make all characters printable by default",
@@ -527,7 +531,8 @@ const_string PTEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-help                   print this message and exit.",
@@ -586,7 +591,8 @@ const_string TEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-8bit                   make all characters printable by default",
@@ -653,7 +659,8 @@ const_string UPTEXHELP[] = {
     "                          the DVI file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME use the TCX file TCXNAME",
     "-help                   print this message and exit.",
@@ -710,7 +717,8 @@ const_string XETEXHELP[] = {
     "                          the XDV file. WHERE is a comma-separated value",
     "                          list: cr display hbox math par parend vbox",
 #if defined(__SyncTeX__)
-    "-synctex=NUMBER         generate SyncTeX data for previewers if nonzero",
+    "-synctex=NUMBER         generate SyncTeX data for previewers according to",
+    "                          bits of NUMBER (`man synctex' for details)",
 #endif
     "-translate-file=TCXNAME (ignored)",
     "-8bit                   make all characters printable, don't use ^^X sequences",
