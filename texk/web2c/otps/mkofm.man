@@ -1,4 +1,4 @@
-.TH "mkofm" "1" "September 2000" "teTeX" "teTeX" 
+.TH "mkofm" "1" "April 2017" "TeX Live"
 .PP 
 .SH "NAME" 
 mkofm \- front end to \fBmktextfm\fP(1)
