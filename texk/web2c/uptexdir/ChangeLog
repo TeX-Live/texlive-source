@@ -1,3 +1,7 @@
+2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: Adapt to changes in ptexdir/ptex-base.ch (p\TeX -> \pTeX).
+
 2017-04-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Fix a bug on a UTF-8 sequence at end of a line

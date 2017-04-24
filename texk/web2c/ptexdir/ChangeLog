@@ -1,3 +1,7 @@
+2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: p\TeX -> \pTeX.
+
 2017-04-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Fix a bug in single-letter control sequence

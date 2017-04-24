@@ -57,15 +57,23 @@
 % (2016-06-06) AK  Hironori Kitagawa fixed a bug in check_box(box_p:pointer).
 %                  pTeX p3.7.1.
 %
+
+@x
+% Here is TeX material that gets inserted after \input webmac
+@y
+% Here is TeX material that gets inserted after \input webmac
+\def\pTeX{p\kern-.15em\TeX}
+@z
+
 @x [1.2] l.200 - pTeX:
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
 @y
-@d pTeX_version_string=='-p3.7.1' {current p\TeX\ version}
+@d pTeX_version_string=='-p3.7.1' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
-  {printed when p\TeX\ starts}
+  {printed when \pTeX\ starts}
 @#
 @d banner==pTeX_banner
 @d banner_k==pTeX_banner_k
@@ -320,7 +328,7 @@ else
 @x [8.112] l.2450 - pTeX: hi/ho
 sufficiently large.
 @y
-sufficiently large and this is required for p\TeX.
+sufficiently large and this is required for \pTeX.
 @z
 
 @x [8.112] l.2588 - pTeX:
@@ -336,7 +344,7 @@ sufficiently large and this is required for p\TeX.
 |fil|, |fill|, or |filll|). The |subtype| field is not used.
 @y
 |fil|, |fill|, or |filll|). The |subtype| field is not used in \TeX.
-In p\TeX\ the |subtype| field records the box direction |box_dir|.
+In \pTeX\ the |subtype| field records the box direction |box_dir|.
 @z
 
 @x [10.135] l.2897 - pTeX: box_dir, space_ptr, xspace_ptr
@@ -2855,7 +2863,7 @@ comes next; this currently equals~2, as in the preamble.
 @ The last part of the postamble, following the |post_post| byte that
 signifies the end of the font definitions, contains |q|, a pointer to the
 |post| command that started the postamble.  An identification byte, |i|,
-comes next; this equals~2 or~3. If not used p\TeX primitives then the
+comes next; this equals~2 or~3. If not used \pTeX primitives then the
 identification byte equals~2, othercase this is set to~3.
 @z
 
@@ -4887,7 +4895,7 @@ q:pointer;
 since |head| is a one-word node.
 @y
 @ Note that in \TeX\ the condition |not is_char_node(tail)| implies that
-|head<>tail|, since |head| is a one-word node; this is not so for p\TeX.
+|head<>tail|, since |head| is a one-word node; this is not so for \pTeX.
 @z
 
 @x [47.1080] l.20940 - pTeX: disp_node
@@ -6076,9 +6084,9 @@ undump_things(char_base[null_font], font_ptr+1-null_font);
 @x l.26984 - pTeX
 @* \[54] System-dependent changes.
 @y
-@* \[55/p\TeX] System-dependent changes for p\TeX.
+@* \[55/\pTeX] System-dependent changes for \pTeX.
 This section described extended variables, procesures, functions and so on
-for pTeX.
+for \pTeX.
 
 @<Declare procedures that scan font-related stuff@>=
 function get_jfm_pos(@!kcode:KANJI_code;@!f:internal_font_number):eight_bits;

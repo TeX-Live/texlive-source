@@ -1,3 +1,8 @@
+2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, etex.ch1, euptex.ch0, pdfutils.ch:
+	Adapt to changes in ptexdir/ptex-base.ch (p\TeX -> \pTeX).
+
 2016-12-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* eptexextra.h: Use "issue@texjp.org" as BUG_ADDRESS.

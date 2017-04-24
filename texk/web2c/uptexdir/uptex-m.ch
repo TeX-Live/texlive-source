@@ -38,17 +38,17 @@
 % (04/09/2017) TTK  Hironori Kitagawa fixed a bug in \endlinechar.
 
 @x upTeX: banner
-  {printed when p\TeX\ starts}
+  {printed when \pTeX\ starts}
 @y
-  {printed when p\TeX\ starts}
+  {printed when \pTeX\ starts}
 @#
 @d upTeX_version=1
 @d upTeX_revision==".22"
-@d upTeX_version_string=='-u1.22' {current up\TeX\ version}
+@d upTeX_version_string=='-u1.22' {current u\pTeX\ version}
 @#
 @d upTeX_banner=='This is upTeX, Version 3.14159265',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
-  {printed when up\TeX\ starts}
+  {printed when u\pTeX\ starts}
 @z
 
 @x upTeX: banner
@@ -72,7 +72,7 @@
 @!trick_buf2:array[0..ssup_error_line] of 0..@'24; {pTeX: buffer for KANJI}
 @!kcode_pos: 0..@'24; {pTeX: denotes whether first byte or second byte of KANJI
   1..2:2byte-char, 11..13:3byte-char, 21..24:4byte-char}
-@!kcp: 0..@'24; {temporary kcode_pos}
+@!kcp: 0..@'24; {temporary |kcode_pos|}
 @z
 
 @x
@@ -245,7 +245,7 @@ for k:=0 to 511 do
 { $\.{@@"20}+|k| = |kcatcodekey|(|fromKUTEN|(|HILO|(k,1))$ }
 @y
 if (isinternalUPTEX) then begin
-  { default: other_kchar }
+  { default: |other_kchar| }
   @t\hskip10pt@>kcat_code(@"0):=not_cjk;
   @t\hskip10pt@>kcat_code(@"23):=hangul; { Hangul Jamo }
   @+@t\1@>for k:=@"65 to @"67 do kcat_code(k):=kanji; { CJK Radicals Supplement .. Ideographic Description Characters }
@@ -260,7 +260,7 @@ if (isinternalUPTEX) then begin
   @t\hskip10pt@>kcat_code(@"90):=hangul; { Hangul Syllables }
   @t\hskip10pt@>kcat_code(@"91):=hangul; { Hangul Jamo Extended-B }
   @t\hskip10pt@>kcat_code(@"96):=kanji; { CJK Compatibility Ideographs }
-  { @t\hskip10pt@>kcat_code(@"9F):=other_kchar; Halfwidth and Fullwidth Forms }
+  { \hskip10pt|kcat_code(@"9F):=other_kchar;| Halfwidth and Fullwidth Forms }
   @t\hskip10pt@>kcat_code(@"ED):=kana; { Kana Supplement }
   @+@t\1@>for k:=@"108 to @"10C do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. CJK Compatibility Ideographs Supplement }
   @t\hskip10pt@>kcat_code(@"1FE):=kana; { Fullwidth digit and latin alphabet }
@@ -310,7 +310,7 @@ token that stands for a control sequence; is a multiple of~256, less~1}
 @d end_match_token=@'7000 {$2^8\cdot|end_match|$}
 @y
 @d cs_token_flag=@"1FFFFFFF {amount added to the |eqtb| location in a
-  token that stands for a control sequence; is a multiple of~@"1000000, less~1}
+  token that stands for a control sequence; is a multiple of~@@"1000000, less~1}
 @d max_char_val=@"100 {to separate char and command code}
 @d left_brace_token=@"100 {$2^8\cdot|left_brace|$}
 @d left_brace_limit=@"200 {$2^8\cdot(|left_brace|+1)$}

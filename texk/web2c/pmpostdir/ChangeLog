@@ -1,3 +1,7 @@
+2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pmpxout.ch: p\TeX -> \pTeX.
+
 2017-03-31  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pmp.ch: Adapt to MetaPost 2.000.
