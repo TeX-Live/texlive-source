@@ -1,4 +1,4 @@
-.TH "outocp" "1" "September 2000" "Omega" "Omega" 
+.TH "outocp" "1" "April 2017" "TeX Live"
 .PP 
 .SH "NAME" 
 outocp \- debug an OCP file
@@ -24,15 +24,12 @@ None known, but report any found to <omega@ens\&.fr> (mailing list)\&.
 .PP 
 \fBocp2otp\fP(1), \fBotp2ocp\fP(1), \fBomega\fP(1)\&.
 .PP 
-\fIDraft Manual for the Omega System\fP (\fIomega-manual\&.dvi\fP)\&.
-.PP 
-Web page: <http://www\&.gutenberg\&.eu\&.org/omega/>
+<https://ctan\&.org/pkg/omega>
 .PP 
 .SH "AUTHOR" 
 .PP 
-The primary authors of Omega are John Plaice
-<plaice@cse\&.unsw\&.edu\&.au> and Yannis Haralambous 
-<yannis@fluxus-virus\&.com>\&.
+\fBmkocp\fP is part of Omega\&.  The primary authors of Omega are John Plaice
+and Yannis Haralambous\&.
 .PP 
 This manual page was written by C\&.M\&. Connelly
 <cmc@debian\&.org>, for
