@@ -2,13 +2,13 @@
 \def\eTeX{$\varepsilon$-\TeX}
 @y
 \def\eTeX{$\varepsilon$-\TeX}
-\def\eupTeX{$\varepsilon$-up\TeX}
+\def\eupTeX{$\varepsilon$-u\pTeX}
 @z
 
 @x e-upTeX: banner
-  {printed when up\TeX\ starts}
+  {printed when u\pTeX\ starts}
 @y
-  {printed when up\TeX\ starts}
+  {printed when u\pTeX\ starts}
 @#
 @d eupTeX_version==pTeX_version_string,upTeX_version_string,epTeX_version_string,eTeX_version_string
 @d eupTeX_banner=='This is e-upTeX, Version 3.14159265',eupTeX_version

@@ -33,6 +33,7 @@
 
 \font\tenlogo=logo10 % font used for the METAFONT logo
 \def\MP{{\tenlogo META}\-{\tenlogo POST}}
+\def\pdfTeX{pdf\TeX}
 
 This section is (almost) straight from MetaPost. I had to change
 the types (use |integer| instead of |fraction|), but that should
@@ -1395,7 +1396,7 @@ end
 A \.{DVI} file does not have the information of the page height,
 which is needed to implement \.{\\pdflastypos} correctly.
 To keep the information of the page height, I (H.~Kitagawa)
-adopted \.{\\pdfpageheight} primitive from pdf\TeX. However, in p\TeX (and \hbox{\epTeX}),
+adopted \.{\\pdfpageheight} primitive from pdf\TeX. However, in \pTeX (and \hbox{\epTeX}),
 the papersize special \.{\\special\{papersize=|width|,|height|\}} is commonly used
 for specifying page width/height. Hence, I decided that the papersize special also
 changes the value of \.{\\pdfpagewidth} and \.{\\pdfpageheight}.

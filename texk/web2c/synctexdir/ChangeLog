@@ -1,3 +1,9 @@
+2017-04-24  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* synctex-ep-mem.ch0, synctex-p-mem.ch0,
+	synctex-ep-mem.ch1, synctex-p-mem.ch1:
+	Adapt to changes in ptexdir/ptex-base.ch (p\TeX -> \pTeX).
+
 2017-04-22 Jerome Laurens
     <jerome.laurens@u-bourgogne.fr>
 

@@ -1,4 +1,11 @@
 @x
+\def\MP{MetaPost}
+@y
+\def\MP{MetaPost}
+\def\pTeX{p\kern-.15em\TeX}
+@z
+
+@x
 #include "avl.h"
 @y
 #include "avl.h"
@@ -35,7 +42,7 @@
 @x
 @d undefined_commands 250: case 251: case 252: case 253: case 254: case 255
 @y
-@d dir 255 /* p\TeX\ direction */
+@d dir 255 /* \pTeX\ direction */
 @d undefined_commands 250: case 251: case 252: case 253: case 254
 @z
 
@@ -81,7 +88,7 @@ floor(mpx->dvi_scale*mpx->font_scaled_size[f]*char_width(f,c))
 @ @<Width of character |p| in font |cur_font|@>=
 floor(mpx->dvi_scale*mpx->font_scaled_size[cur_font]*char_width(cur_font,p))
 @y
-@ @c @<Declare JFM character type table lookup routine@>@; /* p\TeX */
+@ @c @<Declare JFM character type table lookup routine@>@; /* \pTeX */
 static integer mpx_scaled_char_width (MPX mpx,integer f,integer c)
 {
   if (mpx->font_id[f]!=0) c=mpx_lookup_ctype(mpx, f,c);
@@ -420,7 +427,7 @@ if (mpx_newer(mpxopt->mpname, mpxopt->mpxname))
 if (mpx_newer(mpxopt->mpname, mpxopt->mpxname))
    return 0
 
-@ ASCII p\TeX JFM ID
+@ ASCII \pTeX\ JFM ID
 @d yoko_jfm_id   11 /* for `yoko-kumi' fonts */
 @d tate_jfm_id   9  /* for `tate-kumi' fonts */
 @d font_jfm_p(A)   (mpx->font_id[(A)]!=0)
