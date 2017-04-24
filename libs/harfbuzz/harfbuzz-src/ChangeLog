@@ -1,3 +1,349 @@
+commit 74b99ef2249107e7cd01bd1ee522a5d9ce61e05f
+Author: mhosken <mhosken@users.noreply.github.com>
+Date:   Thu Apr 20 19:13:22 2017 +0100
+
+    Fix graphite2 rtl conversion (#475)
+
+ src/hb-graphite2.cc | 32 ++++++++++++++------------------
+ 1 file changed, 14 insertions(+), 18 deletions(-)
+
+commit 696641314e7eb60a5a2e08c1c4fd1e5e41022148
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Wed Apr 19 22:59:46 2017 +0430
+
+    [cmake] Final touches (#473)
+
+ CMakeLists.txt | 113
+ +++++++++++++++++++++++++++------------------------------
+ 1 file changed, 54 insertions(+), 59 deletions(-)
+
+commit aacca37590656e235218557ea509eb5624dfbff9
+Author: Chris Peterson <cpeterson@mozilla.com>
+Date:   Mon Apr 17 23:25:24 2017 -0700
+
+    Fix clang -Wcomma warnings (#471) (#472)
+
+    clang's new -Wcomma compiler option warns about possible misuse of the
+    comma operator such as between two statements.
+
+    hb-common.cc:190:9 [-Wcomma] possible misuse of comma operator here
+    hb-ot-layout-gsubgpos-private.hh:345:30 [-Wcomma] possible misuse of
+    comma operator here
+    hb-shape-plan.cc:438:26 [-Wcomma] possible misuse of comma operator
+    here
+
+ src/hb-common.cc                     | 6 ++++--
+ src/hb-ot-layout-gsubgpos-private.hh | 2 +-
+ src/hb-shape-plan.cc                 | 7 ++++---
+ 3 files changed, 9 insertions(+), 6 deletions(-)
+
+commit 4d7c52066b5b205b20ba2679cb57a4e593942102
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Mon Apr 17 15:53:46 2017 +0430
+
+    [cmake] Remove HB_DISABLE_DEPRECATED as it seems needed for pango
+    build (#470)
+
+ CMakeLists.txt | 2 --
+ 1 file changed, 2 deletions(-)
+
+commit 5ecf96e3a22e896184710a9f146a8bf149af6ca4
+Author: William Hua <william@attente.ca>
+Date:   Mon Apr 17 01:33:42 2017 -0400
+
+    Use absolute paths of ragel generated headers (#467)
+
+    https://github.com/behdad/harfbuzz/issues/455
+
+ src/Makefile.am | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit c42869eb713f53504e1b77a679cff2f88ebd0c20
+Author: Dominik Schlösser <dominik.schloesser@gmail.com>
+Date:   Sat Apr 15 21:17:05 2017 +0200
+
+    Small doc fix: `make check` runs the tests (#469)
+
+ test/shaping/README.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 75931427aa4344cd75321c618b8373ffcf1ffc33
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Fri Apr 14 05:08:11 2017 +0430
+
+    [cmake] Fix try compile link issues (#466)
+
+ CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+commit cb021e14ab345def326fb58ce486515af179b2cf
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Fri Apr 14 04:31:17 2017 +0430
+
+    [cmake] typo (#465)
+
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit a41d5ea4453995dfd7c523427c6017623164c6ff
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Fri Apr 14 04:25:50 2017 +0430
+
+    [cmake] Add atomic ops availability detection (#464)
+
+ CMakeLists.txt | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+
+commit 8568588202dd718b089e43cd6d46f689c706f665
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Thu Apr 13 02:17:16 2017 +0430
+
+    [cmake] Remove NO_MT flag (#462)
+
+ CMakeLists.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit c04c1fe86ee4b9b58ad88dad5593239ade4c75b8
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Tue Apr 11 22:29:13 2017 +0100
+
+    Blacklist GDEF table in additional Tahoma versions. (#459)
+
+    There are more broken versions of Tahoma out there on various
+    Windows releases,
+    so we need to add them to our blacklist to avoid broken rendering.
+    See https://bugzilla.mozilla.org/show_bug.cgi?id=1279925 for details.
+
+ src/hb-ot-layout.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit adfd4ae1cf6c4abe66aecf1eb0a05c7183a0f4e2
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Tue Apr 11 23:18:18 2017 +0430
+
+    [cmake] Improve third party libraries support (#461)
+
+ CMakeLists.txt               | 57
+ ++++++++++++++++++++++++++++++++++++--------
+ src/hb-ucdn/Makefile.sources |  5 +++-
+ 2 files changed, 51 insertions(+), 11 deletions(-)
+
+commit 3a8bc572115a28741d5a80f3f1e28e6756b9abfa
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Tue Apr 11 21:32:14 2017 +0430
+
+    [cmake] Add utils build support (#460)
+
+ CMakeLists.txt | 150
+ +++++++++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 108 insertions(+), 42 deletions(-)
+
+commit bc1244e2395f844b2b41315cb1eef29570e46b29
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Thu Apr 6 18:44:28 2017 +0800
+
+    NMake Makefiles: Fix ICU builds
+
+    Fix the check conditions in config-msvc.mak and info-msvc.mak so that
+    the ICU items does indeed get built into the HarfBuzz main DLL,
+    and that
+    the correct configuration info is displayed.
+
+    Also update the checks in detectenv-msvc.mak so that we can detect
+    that
+    we are using Visual Studio 2017 (although the 2015-built binaries use
+    the same CRT DLL as the 2017 ones).
+
+ win32/config-msvc.mak    | 22 ++++++++++++----------
+ win32/detectenv-msvc.mak |  4 +++-
+ win32/info-msvc.mak      | 12 ++++++++----
+ 3 files changed, 23 insertions(+), 15 deletions(-)
+
+commit a4471d0c2cc4baa81e2cea695f9bd15e03d0f15e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Wed Apr 5 15:42:11 2017 +0200
+
+    Move list of ragel sources to Makefile.sources as well
+
+ src/Makefile.am      | 14 ++++----------
+ src/Makefile.sources |  9 +++++++++
+ 2 files changed, 13 insertions(+), 10 deletions(-)
+
+commit d2acaf6d729727f47c5aacf7ee40097580b6f18d
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Wed Apr 5 02:21:23 2017 -0700
+
+    Split ragel generated files lists and remove hardcoded rl files lists
+    (#453)
+
+ CMakeLists.txt        | 126
+ +++++++++++++++++++++-----------------------------
+ src/Makefile.am       |   2 +
+ src/Makefile.sources  |  16 +++++--
+ win32/config-msvc.mak |   8 ++--
+ 4 files changed, 71 insertions(+), 81 deletions(-)
+
+commit 7d64c0ef37dd930e9807bd80d398491aa9c4428c
+Author: ebraminio <ebrahim@gnu.org>
+Date:   Tue Apr 4 15:03:51 2017 +0430
+
+    Add CMake build support (#444)
+
+ CMakeLists.txt | 254
+ +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Makefile.am    |   1 +
+ appveyor.yml   |  61 +++++++++-----
+ 3 files changed, 295 insertions(+), 21 deletions(-)
+
+commit 740fdbcd0e6d25c1d6f12537ca2aa559650b9d52
+Author: jfkthame <jfkthame@gmail.com>
+Date:   Mon Apr 3 12:22:39 2017 +0100
+
+    avoid UBSan warning in get_stage_lookups (#450)
+
+    See https://bugzilla.mozilla.org/show_bug.cgi?id=1336600
+
+ src/hb-ot-map-private.hh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 8d256841ca7462fd596329abf6f71bafb56fd621
+Author: Dominik Schloesser <dsc@dosc.net>
+Date:   Sun Mar 26 09:22:34 2017 +0200
+
+    Current fonttools (3.9.1) generate subset-file called font.subset.ttf
+    instead of older font.ttf.subset
+
+ test/shaping/record-test.sh | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+commit c2a9de15f5d9477c6f1c143ed8265f71fdb04584
+Author: Dominik Schloesser <dsc@dosc.net>
+Date:   Sun Mar 26 09:21:13 2017 +0200
+
+    Updated samples: record-it.sh is now record-test.sh
+
+ test/shaping/README.md | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+commit f2e6c7ce51283809033d08692a2dee7cf04aefc5
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Sun Mar 26 10:48:53 2017 +0200
+
+    [tools] Make hb-unicode-code work with Python 3
+
+    Related to https://github.com/behdad/harfbuzz/pull/445
+
+ test/shaping/hb_test_tools.py | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+commit edcf6344bc62af9ea726a633468c9243e127fa13
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 24 10:24:52 2017 -0700
+
+    Blacklist more versions of Padauk
+
+    Patch from Phil Race.
+
+ src/hb-ot-layout.cc | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+commit e693ba77980d5ded65bf773d48b6b58274933fb7
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Thu Mar 23 00:35:36 2017 +0200
+
+    [ci] Fix msys2 build on AppVeyor
+
+    For whatever reason the env variables need to be the Windows way
+    or they
+    end up being empty.
+
+ appveyor.yml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 91570a1eeb1eca425372e203656369f39ede5c61
+Author: Khaled Hosny <khaledhosny@eglug.org>
+Date:   Wed Mar 22 23:07:15 2017 +0200
+
+    Just always use strtod here
+
+ src/hb-common.cc | 4 ----
+ 1 file changed, 4 deletions(-)
+
+commit 539571c1a9cb5d443d029247874af37fed75432f
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Fri Feb 24 17:58:25 2017 +0800
+
+    src/hb-common.cc: Fix build on older Visual Studio
+
+    Visual Studio only supported strtof() from Visual Studio 2013
+    onwards, so
+    use strtod() instead to do the operation, which should do the
+    same thing,
+    sans going to a double, not a float.
+
+ src/hb-common.cc | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit b90fb83ea6067802e62af9e1ea0c61c7ac79e9a9
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Fri Feb 24 17:47:44 2017 +0800
+
+    Visual Studio builds: Fix Introspection when UCDN enabled
+
+    The sources in src/hb-ucdn and not included correctly into the NMake
+    Makefiles, as we need their explicit relative location as we pass
+    all the
+    sources we used into the introspection scanner.  This was not an issue
+    before as we excluded the UCDN sources in the build when we enabled
+    introspection (meaning GLib is enabled), but since we default on using
+    UCDN on all builds unless explicitly disabled, we need to deal
+    with this.
+
+    This did not affect builds using UCDN without introspection due to
+    the use
+    of NMake batch rules.
+
+    Fix this by creating a NMake Makefile module on-the-fly with the
+    correct
+    subdir info, and using that list in there instead.
+
+ win32/Makefile.vc     | 15 +++++++++++++++
+ win32/config-msvc.mak |  2 +-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+commit f0aa167e447e8aa818a63a4a325be57844bf0353
+Author: Chun-wei Fan <fanchunwei@src.gnome.org>
+Date:   Thu Feb 23 13:02:49 2017 +0800
+
+    Update Visual Studio builds for UCDN usage
+
+    We now use UCDN by default, so make it so in the build files; however
+    don't hardcode HAVE_UCDN as one may still opt not to use it (but pass
+    it in as a CFLAG unless one explicitly disables UCDN by using
+    NO_UCDN=1
+    on the NMake command line).
+
+    Note that we are not blocking builds where UCDN is disabled along with
+    GLib and ICU, as that will trigger a build error anyways which
+    will tell
+    the user what needs to be done to remedy this.
+
+ win32/README.txt        |  6 +++---
+ win32/config-msvc.mak   | 28 +++++++++++++++-------------
+ win32/config.h.win32.in |  2 +-
+ win32/info-msvc.mak     | 43 +++++++++++++++++++++++++------------------
+ 4 files changed, 44 insertions(+), 35 deletions(-)
+
+commit 60e2586f7652aaa0ee908eb8f54b1498e2ad299e
+Author: Behdad Esfahbod <behdad@behdad.org>
+Date:   Fri Mar 10 23:02:28 2017 -0800
+
+    1.4.5
+
+ NEWS         | 8 ++++++++
+ configure.ac | 2 +-
+ 2 files changed, 9 insertions(+), 1 deletion(-)
+
 commit 47e7a1800fba9b8bf042a1f4976a15ab012ebfc7
 Author: Behdad Esfahbod <behdad@behdad.org>
 Date:   Fri Mar 10 13:23:02 2017 -0800
