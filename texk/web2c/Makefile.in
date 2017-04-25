@@ -3557,8 +3557,9 @@ xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir $(ICU_INCLUDES) \
 	$(ZLIB_INCLUDES) -I$(srcdir)/libmd5 $(am__append_97) \
 	$(am__append_98)
 xetex_ldadd = $(libxetex) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) \
-	$(ICU_LIBS) $(TECKIT_LIBS) $(POPPLER_LIBS) $(LIBPNG_LIBS) \
-	$(FREETYPE2_LIBS) $(ZLIB_LIBS) libmd5.a $(am__append_99)
+	$(ICU_LIBS) $(ICU_LIBS_EXTRA) $(TECKIT_LIBS) $(POPPLER_LIBS) \
+	$(LIBPNG_LIBS) $(FREETYPE2_LIBS) $(ZLIB_LIBS) libmd5.a \
+	$(am__append_99)
 xetex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(ICU_DEPEND) \
 	$(TECKIT_DEPEND) $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND) \
 	$(POPPLER_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) \

@@ -42,7 +42,7 @@ bibtexu_SOURCES = $(common_sources)
 nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
 bibtexu_CPPFLAGS = $(AM_CPPFLAGS) $(ICU_INCLUDES) -DUTF_8
 $(bibtexu_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
-bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS)
+bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(ICU_LIBS_EXTRA)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
