@@ -149,7 +149,7 @@ nodist_EXTRA_hbtest_SOURCES = dummy.cxx
 
 hbtest_CPPFLAGS = -Iinclude $(ICU_INCLUDES) $(GRAPHITE2_INCLUDES)
 
-LDADD = libharfbuzz.a $(ICU_LIBS) $(GRAPHITE2_LIBS)
+LDADD = libharfbuzz.a $(ICU_LIBS) $(ICU_LIBS_EXTRA) $(GRAPHITE2_LIBS)
 
 ## Rebuild libsicuxxx
 @ICU_RULE@

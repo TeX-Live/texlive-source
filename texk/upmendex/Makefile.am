@@ -35,7 +35,7 @@ nodist_EXTRA_upmendex_SOURCES = dummy.cxx
 
 $(upmendex_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
 
-LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS)
+LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(ICU_LIBS_EXTRA)
 
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
