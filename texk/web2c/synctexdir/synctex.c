@@ -4,7 +4,7 @@
  This file is part of the SyncTeX package.
  
  Version 1
- Latest Revision: Sat Apr 22 10:07:05 UTC 2017
+ Latest Revision: Tue Apr 25 14:46:32 UTC 2017
  
  License:
  --------
@@ -431,13 +431,15 @@ static struct {
 #   define SYNCTEX_WITH_FORMS (((synctex_ctxt.options)&4)!=0)
 #   define SYNCTEX_H_COMPRESS (((synctex_ctxt.options)&8)!=0)
 
-/*  Initialize the options, synchronize the variables.
- *  This is sent by *tex.web before any TeX macro is used.
- *  */
-void synctexinitcommand(void)
-{
+static inline int _synctex_read_command_line_option(void) {
+#   if SYNCTEX_DEBUG
+    printf("\nSynchronize DEBUG: _synctex_read_command_line_option\n");
+#   endif
     /*  This is a one shot function, any subsequent call is void */
     if (synctex_ctxt.flags.option_read) {
+#   if SYNCTEX_DEBUG
+        printf("\nSynchronize DEBUG: skipped\n");
+#   endif
         return;
     }
     if (SYNCTEX_NO_OPTION == synctex_options) {
@@ -450,6 +452,7 @@ void synctexinitcommand(void)
         SYNCTEX_VALUE = 0;
     } else {
         /*  the command line options are not ignored  */
+        synctex_options|=1;
         if (synctex_options < 0) {
             SYNCTEX_NO_GZ = SYNCTEX_YES;
             synctex_ctxt.options = -synctex_options;
@@ -461,6 +464,16 @@ void synctexinitcommand(void)
         SYNCTEX_VALUE = synctex_options;
     }
     synctex_ctxt.flags.option_read = SYNCTEX_YES;
+}
+/*  Initialize the options, synchronize the variables.
+ *  This is sent by *tex.web before any TeX macro is used.
+ *  */
+void synctexinitcommand(void)
+{
+#   if SYNCTEX_DEBUG
+    printf("\nSynchronize DEBUG: synctexinitcommand\n");
+#   endif
+    _synctex_read_command_line_option();
     return;
 }
 
@@ -582,7 +595,7 @@ static void *synctex_dot_open(void)
 #   if SYNCTEX_DEBUG
     printf("\nwarning: Synchronize DEBUG: synctex_dot_open\n");
     printf("\nwarning: SYNCTEX_VALUE=%0X\n", SYNCTEX_VALUE);
-    printf("\nwarning: synctex_options=%0X\n", synctex_options);
+    printf("\nwarning: synctex_options=%0X\n", synctex_ctxt.options);
 #   endif
     if (SYNCTEX_IS_OFF || !SYNCTEX_VALUE) {
         return NULL;            /*  synchronization is disabled: do nothing  */
@@ -590,18 +603,7 @@ static void *synctex_dot_open(void)
     if (SYNCTEX_FILE) {
         return SYNCTEX_FILE;    /*  synchronization is already enabled  */
     }
-    if (synctex_options < 0) {
-        SYNCTEX_NO_GZ = SYNCTEX_YES;
-        synctex_ctxt.options = -synctex_options;
-    } else if (synctex_options == 0) {
-        /*  \synctex=0 was given: SyncTeX must be definitely disabled,
-         *  any subsequent \synctex=N will have no effect at all */
-        SYNCTEX_IS_OFF = SYNCTEX_YES;
-        SYNCTEX_VALUE = 0;
-   } else {
-        SYNCTEX_NO_GZ = SYNCTEX_NO;
-        synctex_ctxt.options =  synctex_options;
-    }
+    _synctex_read_command_line_option();
 #   if SYNCTEX_DEBUG
     printf("\nwarning: Synchronize DEBUG: synctex_dot_open 1\n");
 #   endif
@@ -741,12 +743,14 @@ void synctexstartinput(void)
 {
     static unsigned int synctex_tag_counter = 0;
     
+    _synctex_read_command_line_option();
+
     SYNCTEX_RETURN_IF_DISABLED;
 #   if SYNCTEX_DEBUG
     printf("\nwarning: Synchronize DEBUG: synctexstartinput %i",
            synctex_tag_counter);
     printf("\nwarning: SYNCTEX_VALUE=%i", SYNCTEX_VALUE);
-    printf("\nwarning: synctex_options=%0X", synctex_options);
+    printf("\nwarning: synctex_options=%0X\n", synctex_ctxt.options);
 #   endif
 
     if (SYNCTEX_IS_OFF) {
@@ -796,7 +800,10 @@ void synctexstartinput(void)
 #else
         char *tmp = SYNCTEX_GET_CURRENT_NAME();
 #endif
-        /* Always record the input, even if SYNCTEX_VALUE is 0 */
+        /*  Always record the input, even if SYNCTEX_VALUE is 0.
+         *  It may happen when \synctex=0 was given temporarily
+         *  in the source file.
+         */
         synctex_record_input(SYNCTEX_CURRENT_TAG,tmp);
         SYNCTEX_FREE(tmp);
     }
@@ -1045,18 +1052,18 @@ void synctexteehs(void)
  *  details in the implementation of the functions below.  */
 #   define SYNCTEX_IGNORE(NODE) SYNCTEX_IS_OFF || !SYNCTEX_VALUE || !SYNCTEX_FILE || (synctex_ctxt.form_depth>0 && !SYNCTEX_WITH_FORMS)
 #define SYNCTEX_RECORD_LEN_OR_RETURN_ERR do {\
-if (len > 0) {\
-synctex_ctxt.total_length += len;\
-++synctex_ctxt.count;\
-} else {\
-return -1;\
-} } while(false)
+    if (len > 0) {\
+        synctex_ctxt.total_length += len;\
+        ++synctex_ctxt.count;\
+    } else {\
+        return -1;\
+    } } while(false)
 #define SYNCTEX_RECORD_LEN_AND_RETURN_NOERR do {\
-if (len > 0) {\
-synctex_ctxt.total_length += len;\
-++synctex_ctxt.count;\
-return SYNCTEX_NOERR;\
-} } while(false)
+    if (len > 0) {\
+        synctex_ctxt.total_length += len;\
+        ++synctex_ctxt.count;\
+        return SYNCTEX_NOERR;\
+    } } while(false)
 
 /*  Recording a "}..." or a ">" line  */
 static inline int synctex_record_teehs(integer sheet)
@@ -1118,7 +1125,9 @@ void synctexmrofxfdp(void)
 #   if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexmrofxfdp\n");
 #   endif
-    synctex_record_mrofxfdp();
+    if (SYNCTEX_FILE) {
+        synctex_record_mrofxfdp();
+    }
 #   if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexmrofxfdp END\n");
 #   endif
@@ -1135,7 +1144,7 @@ void synctexpdfrefxform(int objnum)
 #   if SYNCTEX_DEBUG
     printf("\nSynchronize DEBUG: synctexpdfrefxform\n");
 #   endif
-    if (SYNCTEX_WITH_FORMS) {
+    if (SYNCTEX_FILE) {
         synctex_record_node_pdfrefxform(objnum);
     }
 #   if SYNCTEX_DEBUG
@@ -1694,8 +1703,13 @@ static inline int synctex_record_anchor(void)
     int len = 0;
 #   if SYNCTEX_DEBUG > 999
     printf("\nSynchronize DEBUG: synctex_record_anchor\n");
+    printf("\nSYNCTEX_FILE:%p\n",SYNCTEX_FILE);
+    printf("\ntotal_length:%i\n",synctex_ctxt.total_length);
 #   endif
     len = SYNCTEX_fprintf(SYNCTEX_FILE, "!%i\n", synctex_ctxt.total_length);
+#   if SYNCTEX_DEBUG > 999
+    printf("\nSynchronize DEBUG: synctex_record_anchor 1\n");
+#   endif
     if (len > 0) {
         synctex_ctxt.total_length = len;
         ++synctex_ctxt.count;
