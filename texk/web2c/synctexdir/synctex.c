@@ -454,7 +454,6 @@ static inline void _synctex_read_command_line_option(void) {
         SYNCTEX_VALUE = 0;
     } else {
         /*  the command line options are not ignored  */
-        synctex_options|=1;
         if (synctex_options < 0) {
             SYNCTEX_NO_GZ = SYNCTEX_YES;
             synctex_ctxt.options = -synctex_options;
@@ -462,6 +461,7 @@ static inline void _synctex_read_command_line_option(void) {
             SYNCTEX_NO_GZ = SYNCTEX_NO;
             synctex_ctxt.options =  synctex_options;
         }
+        synctex_options|=1; /* Do it when positive */
         /*  Initialize the content of the \synctex primitive */
         SYNCTEX_VALUE = synctex_options;
     }
@@ -657,11 +657,6 @@ static void *synctex_dot_open(void)
             tmp = NULL;
             strcat(the_busy_name, synctex_suffix);
             /*  Initialize SYNCTEX_NO_GZ with the content of \synctex to let the user choose the format. */
-#define SYNCTEX_GZ_LEN(WHAT)\
-(SYNCTEX_NO_GZ_AUX_NAME?0:strlen(WHAT))
-            if (!SYNCTEX_NO_GZ_AUX_NAME) {
-                strcat(the_busy_name, synctex_suffix_gz);
-            }
             strcat(the_busy_name, synctex_suffix_busy);
             if (SYNCTEX_NO_GZ) {
                 SYNCTEX_FILE = fopen(the_busy_name, FOPEN_W_MODE);
@@ -875,7 +870,7 @@ void synctexterminate(boolean log_opened)
         the_real_syncname =
         xmalloc((unsigned)(strlen(tmp)
                            + strlen(synctex_suffix)
-                           + SYNCTEX_GZ_LEN(synctex_suffix_gz)
+                           + strlen(synctex_suffix_gz)
                            + 1));
         if (!the_real_syncname) {
             SYNCTEX_FREE(tmp);
@@ -927,17 +922,35 @@ void synctexterminate(boolean log_opened)
                             tmp += strlen(output_directory) + strlen(DIR_SEP_STRING);
                         }
 #                       endif
+#ifndef SYNCTEX_interaction
+#   define SYNCTEX_interaction 1
+#endif
+                        if (SYNCTEX_interaction>0) {
 #ifdef W32UPTEXSYNCTEX
                         {
                         char *stmp = chgto_oem(tmp);
-                        printf((synctex_ctxt.flags.quoted ? "SyncTeX written on \"%s\"" : "\nSyncTeX written on %s.\n"),
+                        printf((synctex_ctxt.flags.quoted ? "SyncTeX written on \"%s\"\n" : "\nSyncTeX written on %s.\n"),
                                stmp);
                         free(stmp);
                         }
 #else
-                        printf((synctex_ctxt.flags.quoted ? "SyncTeX written on \"%s\"\n" : "SyncTeX written on %s.\n"),
+#ifndef SYNCTEX_PRE_NL
+#   define SYNCTEX_PRE_NL "\n"
+#endif
+#ifndef SYNCTEX_POST_NL
+#   define SYNCTEX_POST_NL ""
+#endif
+                        printf((synctex_ctxt.flags.quoted ?
+                                SYNCTEX_PRE_NL
+                                "SyncTeX written on \"%s\""
+                                SYNCTEX_POST_NL :
+                                SYNCTEX_PRE_NL
+                                "SyncTeX written on %s."
+                                SYNCTEX_POST_NL
+                                ),
                                tmp);
 #endif
+                        }
                         tmp = NULL;
                     }
                 } else {
@@ -969,7 +982,7 @@ void synctexterminate(boolean log_opened)
         the_real_syncname = xmalloc((size_t)
                                     (len
                                      + strlen(synctex_suffix)
-                                     + SYNCTEX_GZ_LEN(synctex_suffix_gz)
+                                     + strlen(synctex_suffix_gz)
                                      + 1));
         if (!the_real_syncname) {
             SYNCTEX_FREE(tmp);

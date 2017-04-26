@@ -69,3 +69,4 @@ extern void synctexpdfxform(halfword p);
 extern void synctexmrofxfdp();
 extern void synctexpdfrefxform(int objnum);
 
+#define SYNCTEX_interaction interaction
