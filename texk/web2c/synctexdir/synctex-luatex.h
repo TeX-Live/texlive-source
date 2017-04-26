@@ -82,3 +82,6 @@ authorization from the copyright holder.
 /*   New LuaTeX (0.87.0) or later */
 #define glue_node 12
 #define kern_node 13
+
+#   define SYNCTEX_PRE_NL ""
+#   define SYNCTEX_POST_NL "\n"
