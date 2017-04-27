@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/bibtex-x/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017  Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
@@ -110,4 +112,3 @@ EXTRA_DIST += \
 	csf/COPYING \
 	csf/HISTORY \
 	csf/file_id.diz
-

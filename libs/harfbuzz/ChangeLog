@@ -1,3 +1,7 @@
+2017-04-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (LDADD): add $(ICU_LIBS_EXTRA).
+
 2017-04-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import harfbuzz-1.4.6.

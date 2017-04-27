@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/upmendex/
 ##
-## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) $(ICU_INCLUDES)
@@ -60,4 +62,3 @@ EXTRA_DIST += $(TESTS)
 EXTRA_DIST += tests/foo.idx tests/foo.ind \
 	tests/uni.idx tests/uni.dict tests/uni.ist tests/uni.ind
 DISTCLEANFILES = foo.* uni.*
-

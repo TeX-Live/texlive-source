@@ -1,3 +1,7 @@
+2017-04-27  Karl Berry  <karl@tug.org>
+
+	* am/xetex.am (xetex_ldadd): add $(ICU_LIBS_EXTRA).
+
 2017-03-17  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* Sync with the upstream (version 0.99997).
@@ -662,4 +666,3 @@
 	* XeTeX_ext.c, image/pdfimage.cpp: adapt for poppler.
 
 	patches from Norbert Preinig <preining@logic.at>
-

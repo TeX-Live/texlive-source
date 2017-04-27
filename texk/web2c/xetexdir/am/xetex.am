@@ -1,6 +1,8 @@
+## $Id$
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## XeTeX
@@ -210,4 +212,3 @@ endif XETEX
 ## xetex-bug73.test
 EXTRA_DIST += xetexdir/tests/bug73.log xetexdir/tests/bug73.tex
 DISTCLEANFILES += bug73.fmt bug73.log bug73.out bug73.tex
-

@@ -84,7 +84,7 @@ nodist_EXTRA_icutest_SOURCES = dummy.cxx
 
 icutest_CPPFLAGS = -Iinclude
 
-LDADD = icu-build/lib/libicuuc.a icu-build/lib/libicudata.a
+LDADD = icu-build/lib/libicuuc.a icu-build/lib/libicudata.a $(ICU_LIBS_EXTRA)
 
 # Rebuild
 rebuild_prereq =
@@ -92,4 +92,3 @@ rebuild_target = icubuild
 CLEANFILES =
 
 include $(srcdir)/../../am/rebuild.am
-
