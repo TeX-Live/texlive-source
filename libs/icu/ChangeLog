@@ -1,3 +1,7 @@
+2017-04-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (LDADD): link icutest with ICU_LIBS_EXTRA.
+
 2017-03-13  Karl Berry  <karl@freefriends.org>
 
 	* Import icu-58.2 (release); reautoconf.
@@ -195,4 +199,3 @@
 2009-01-28  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	Adapt to TL2009 build system.
-

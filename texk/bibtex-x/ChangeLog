@@ -1,3 +1,7 @@
+2017-04-27  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (bibtexu_LDADD): add $(ICU_LIBS_EXTRA).
+
 2015-07-07  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Better dependencies for 'make check'.
@@ -327,4 +331,3 @@
 
 	* bibtex.h (BUF_SIZE, MAX_CITES, MAX_ENT_INTS, MAX_ENT_STRS,
 	MAX_STRS): increase.  From panov, 12 Jul 2007 12:13:38.
-
