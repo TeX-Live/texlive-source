@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 43794 2017-04-15 00:12:54Z preining $
+# $Id: updmap.pl 44056 2017-04-26 08:14:28Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 43794 2017-04-15 00:12:54Z preining $';
+my $svnid = '$Id: updmap.pl 44056 2017-04-26 08:14:28Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2017-04-15 02:12:54 +0200 (Sat, 15 Apr 2017) $';
+my $lastchdate = '$Date: 2017-04-26 10:14:28 +0200 (Wed, 26 Apr 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 43794 $';
+my $svnrev = '$Revision: 44056 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1476,6 +1476,11 @@ sub enable_disable_maps {
     if ($w =~ m/=/) {
       # this is --enable MapType=MapName
       my ($type, $map) = split ('=', $w);
+      # allow for all lowercase map types (map/mixedmap/kanjimap)
+      $type =~ s/map$/Map/;
+      $type = ucfirst($type);
+      # don't allow for map names containing /
+      die "$prg: map files cannot be relative/absolute paths: $map\n" if ($map =~ m{/})
       enable_map($tc, $type, $map);
     } else {
       # this is --disable MapName

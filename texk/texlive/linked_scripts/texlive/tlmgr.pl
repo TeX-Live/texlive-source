@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43940 2017-04-20 14:47:49Z preining $
+# $Id: tlmgr.pl 43990 2017-04-23 13:21:28Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43940 $';
-my $datrev = '$Date: 2017-04-20 16:47:49 +0200 (Thu, 20 Apr 2017) $';
+my $svnrev = '$Revision: 43990 $';
+my $datrev = '$Date: 2017-04-23 15:21:28 +0200 (Sun, 23 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -6688,6 +6688,11 @@ sub action_shell {
         print "OK\n";
       } else {
         print "OK\n";
+      }
+      # make sure that we restart after having called update --self!
+      if (($cmd eq 'update') && $opts{'self'}) {
+        print "tlmgr has been updated, restarting!\n";
+        exec("tlmgr", @::SAVEDARGV);
       }
       %opts = %savedopts;
     } else {

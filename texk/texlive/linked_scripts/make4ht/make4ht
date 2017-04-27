@@ -24,6 +24,11 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 <filename> (string) Input file name
 ]]
 
+-- set version number. the template should be replaced by the
+-- actual version number by the build script
+local version = "v0.1c"
+mkparams.version_number = version
+
 local args = mkparams.get_args()
 
 local parameters = mkparams.process_args(args) 
