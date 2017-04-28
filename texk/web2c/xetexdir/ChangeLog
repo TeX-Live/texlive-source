@@ -2,6 +2,13 @@
 
 	* am/xetex.am (xetex_ldadd): add $(ICU_LIBS_EXTRA).
 
+2017-04-22  Jonathan Kew  <jfkthame@gmail.com>
+
+	* xetex.web, xetex_version.h, NEWS: Fixed long-standing bug that made
+	\ifcat\span...\fi (and similar constructions with \cr, \crcr) behave
+	incorrectly. Also fixed initialization of \delcode values for
+	supplementary-plane characters. version 0.99998.
+
 2017-03-17  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
 
 	* Sync with the upstream (version 0.99997).
