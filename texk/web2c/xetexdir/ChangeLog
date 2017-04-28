@@ -9,37 +9,37 @@
 	incorrectly. Also fixed initialization of \delcode values for
 	supplementary-plane characters. version 0.99998.
 
-2017-03-17  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2017-03-17  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Sync with the upstream (version 0.99997).
 
-2017-03-12  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2017-03-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Sync with the upstream.
 
-2016-10-03  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-10-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeXOTMath.cpp: Sync with the upstream.
 
-2016-09-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-09-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* MathTable.h, XeTeXOTMath.cpp: Sync with the upstream.
 
-2016-09-24  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-09-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web: Sync with the upstream.
 
-2016-02-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-02-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: Revert the change on 2015-11-06.
 	That is, recover the original *outputdriver = "xdvipdfmx -q -E",
 	because asynchronous outputs of XeTeX and xdvipdfmx are messy.
 
-2016-02-07  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-02-07  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web, NEWS: sync with the upstream.
 
-2015-11-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeX_ext.c: Change const char *outputdriver = "xdvipdfmx -q -E";
 	as const char *outputdriver = "xdvipdfmx -E"; by removing the quiet
@@ -59,7 +59,7 @@
 	ANSI C prototypes, unconstify, drop (set but) unused variable,
 	remove useless or misleading casts.
 
-2015-08-25  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-08-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* XeTeXFontInst.cpp: Support pair kerning for native type1 fonts.
 	Thanks Werner Lemberg and Jiang Jiang.
@@ -69,13 +69,13 @@
 	* am/xetex.am (xetex_CFLAGS): Enable compiler warnings.
 	* xetex.web: Drop unused label 'done'.
 
-2015-07-24  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-07-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web, xetex.h: Support pagebox=artbox etc. as in pdfTeX
 	in PDF inclusion. It works with a new xetex.def and xdvipdfmx.
 	Nothing changes if the present xetex.def is used.
 
-2015-07-11  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-07-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web: Change \pdfmdfivesum to \mdfivesum, to be consistent
 	with \strcmp and \shellescape.
@@ -84,7 +84,7 @@
 
 	* am/xetex.am: Dependencies for 'make check'.
 
-2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-07-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* xetex.web: Added \pdfmdfivesum, version 0.99993.
 	* xetex.defines: Added getmd5sum().
