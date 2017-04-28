@@ -85,7 +85,7 @@
 	* Makefile.am, am/bootstrap.am, am/cweb.am, am/texmf.am,
 	am/web.am, libmd5/am/md5.am: Dependencies for 'make check'.
 
-2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-07-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.h: Add \pdfmdfivesum to XeTeX.
 
