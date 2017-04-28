@@ -5,7 +5,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 43872 $';
+my $svnrev = '$Revision: 44018 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -148,6 +148,9 @@ our %TLPDBOptions = (
   "file_assocs" =>
     [ "n:0..2", 1, "fileassocs",
       "Change file associations (w32)" ],
+  "generate_updmap" =>
+    [ "b", 0, "generate_updmap",
+      "Run tlmgr generate updmap after maps have changed" ],
   "install_docfiles" =>
     [ "b", 1, "docfiles",
       "Install documentation files" ],
@@ -172,9 +175,6 @@ our %TLPDBOptions = (
   "w32_multi_user" =>
     [ "b", 1, "multiuser",
       "Install for all users (w32)" ],
-  "generate_updmap" =>
-    [ "b", 0, "generate_updmap",
-      "Run tlmgr generate updmap after maps have changed" ],
 );
 
 

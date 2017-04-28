@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 43903 $';
+my $svnrev = '$Revision: 43973 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -1664,12 +1664,12 @@ sub _do_postaction_shortcut {
     $cmd =~ s!^TEXDIR/!$texdir/!;
     # $cmd can be an URL, in which case we do NOT want to convert it to
     # w32 paths!
-    if ($cmd !~ m!^\s*(http://|ftp://)!) {
+    if ($cmd !~ m!^\s*(https?://|ftp://)!) {
       if (!(-e $cmd) or !(-r $cmd)) {
         tlwarn("Target of shortcut action does not exist: $cmd\n")
             if $cmd =~ /\.(exe|bat|cmd)$/i;
-        # if not an executable, just omit shortcut silently
-        return 0;
+        # if not an executable, just omit shortcut silently: no error
+        return 1;
       }
       $cmd = conv_to_w32_path($cmd);
     }
@@ -2083,7 +2083,7 @@ sub unpack {
   $xzfile_quote = "\"$xzfile\"";
   $tarfile_quote = "\"$tarfile\"";
   $target_quote = "\"$target\"";
-  if ($what =~ m,^(http|ftp)://,) {
+  if ($what =~ m,^(https?|ftp)://,) {
     # we are installing from the NET
     # check for the presence of $what in $tempdir
     if (-r $xzfile) {
@@ -2441,7 +2441,7 @@ sub download_file {
       return 0;
     }
   }
-  if ($relpath =~ /^(http|ftp):\/\//) {
+  if ($relpath =~ /^(https?|ftp):\/\//) {
     $url = $relpath;
   } else {
     $url = "$TeXLiveURL/$relpath";
@@ -3551,7 +3551,7 @@ sub give_ctan_mirror_base {
     return $backbone[int(rand($#backbone + 1))];
   }
 
-  if ($mirror =~ m!^http://!) {  # if http mirror, assume good and return.
+  if ($mirror =~ m!^https?://!) {  # if http mirror, assume good and return.
     return $mirror;
   }
 
@@ -3566,7 +3566,7 @@ sub give_ctan_mirror_base {
   for (my $try = 1; $try <= $max_mirror_trial; $try++) {
     my $m = query_ctan_mirror();
     debug("querying mirror, got " . (defined($m) ? $m : "(nothing)") . "\n");
-    if (defined($m) && $m =~ m!^http://!) {
+    if (defined($m) && $m =~ m!^https?://!) {
       return $m;  # got http this time, assume ok.
     }
     # sleep to make mirror happy, but only if we are not ready to return
@@ -3669,7 +3669,7 @@ Returns the local file name if succeeded, otherwise undef.
 sub download_to_temp_or_file {
   my $url = shift;
   my ($url_fh, $url_file);
-  if ($url =~ m,^(http|ftp|file)://,) {
+  if ($url =~ m,^(https?|ftp|file)://,) {
     ($url_fh, $url_file) = tl_tmpfile();
     # now $url_fh filehandle is open, the file created
     # TLUtils::download_file will just overwrite what is there
