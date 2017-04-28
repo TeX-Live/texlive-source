@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 43990 2017-04-23 13:21:28Z preining $
+# $Id: tlmgr.pl 44076 2017-04-27 08:51:00Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 43990 $';
-my $datrev = '$Date: 2017-04-23 15:21:28 +0200 (Sun, 23 Apr 2017) $';
+my $svnrev = '$Revision: 44076 $';
+my $datrev = '$Date: 2017-04-27 10:51:00 +0200 (Thu, 27 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4349,7 +4349,7 @@ sub action_platform {
       }
     }
     print "Already installed platforms are marked with (i)\n";
-    print "You can add new platforms with: tlmgr platform add ARCH1 ARCH2...\n";
+    print "You can add new platforms with: tlmgr platform add PLAT1 PLAT2...\n";
     return ($F_OK | $F_NOPOSTACTION);
   } elsif ($what =~ m/^add$/i) {
     return ($F_ERROR) if !check_on_writable();
@@ -5513,7 +5513,7 @@ sub action_conf {
 
   } elsif ($arg !~ /^(tlmgr|texmf|updmap)$/) {
     warn "$prg: unknown conf arg: $arg (try tlmgr or texmf or updmap)\n";
-    $ret = $F_ERROR;
+    return($F_ERROR);
 
   } else {
     my ($fn,$cf);
@@ -5533,7 +5533,7 @@ sub action_conf {
     } else {
       die "Should not happen, conf arg=$arg";
     }
-    my ($key,$val) = @ARGV;
+    my ($key,$val,$str) = @ARGV;
     if (!defined($key)) {
       # show all settings
       if ($cf) {
@@ -5543,13 +5543,101 @@ sub action_conf {
         }
       } else {
         info("$arg config file $fn not present\n");
-        $ret = $F_WARNING;
+        return($F_WARNING);
       }
     } else {
-      if (!defined($val)) {
+      if ($key eq "auxtrees") {
+        if ($arg eq "texmf") {
+          my $tmfa = 'TEXMFAUXTREES';
+          my $tv = $cf->value($tmfa);
+          if ($val eq "show") {
+            if (defined($tv)) {
+              $tv =~ s/^\s*{//;
+              $tv =~ s/}\s*$//;
+              $tv =~ s/,$//;
+              my @foo = split(',', $tv);
+              print "List of auxiliary texmf trees:\n" if (@foo);
+              for my $f (@foo) {
+                print "  $f\n";
+              }
+              return($F_OK);
+            } else {
+              print "No auxiliary texmf trees defined.\n";
+              return($F_OK);
+            }
+          } elsif ($val eq "add") {
+            if (defined($str)) {
+              if (defined($tv)) {
+                $tv =~ s/^\s*{//;
+                $tv =~ s/}\s*$//;
+                $tv =~ s/,$//;
+                my @foo = split(',', $tv);
+                my @new;
+                my $already = 0;
+                for my $f (@foo) {
+                  if ($f eq $str) {
+                    print "Already registered auxtree: $str\n";
+                    return ($F_WARNING);
+                  } else {
+                    push @new, $f;
+                  }
+                }
+                push @new, $str;
+                $cf->value($tmfa, '{' . join(',', @new) . ',}');
+              } else {
+                $cf->value($tmfa, '{' . $str . ',}');
+              }
+            } else {
+              warning("argument missing for auxtrees add\n");
+              return($F_ERROR);
+            }
+          } elsif ($val eq "remove") {
+            if (defined($str)) {
+              if (defined($tv)) {
+                $tv =~ s/^\s*{//;
+                $tv =~ s/}\s*$//;
+                $tv =~ s/,$//;
+                my @foo = split(',', $tv);
+                my @new;
+                my $removed = 0;
+                for my $f (@foo) {
+                  if ($f ne $str) {
+                    push @new, $f;
+                  } else {
+                    $removed = 1;
+                  }
+                }
+                if ($removed) {
+                  if ($#new >= 0) {
+                    $cf->value($tmfa, '{' . join(',', @new) . ',}');
+                  } else {
+                    $cf->delete_key($tmfa);
+                  }
+                } else {
+                  print ("Not defined as auxiliary texmf tree: $str\n");
+                  return($F_WARNING);
+                }
+              } else {
+                print "No auxiliary texmf trees defined, nothing removed\n";
+                return($F_WARNING);
+              }
+            } else {
+              warning("argument missing for auxtrees remove\n");
+              return($F_ERROR);
+            }
+          } else {
+            warning("unknown operation on auxtrees: $val\n");
+            return($F_ERROR);
+          }
+        } else {
+          warning("auxtrees not suitable for $arg\n");
+          return($F_ERROR);
+        }
+      } elsif (!defined($val)) {
         if (defined($opts{'delete'})) {
           if (defined($cf->value($key))) {
-            info("removing setting $arg $key value: " . $cf->value($key) . "from $fn\n");
+            info("removing setting $arg $key value: " . $cf->value($key)
+                 . "from $fn\n"); 
             $cf->delete_key($key);
           } else {
             info("$arg $key not defined, cannot remove ($fn)\n");
@@ -5586,6 +5674,7 @@ sub action_conf {
       $cf->save;
     }
   }
+  return($ret);
 }
 
 # output various values in same form as texconfig conf.
@@ -7026,16 +7115,16 @@ checking the TL development repository.
 =back
 
 =head2 conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]
+=head2 conf texmf [--conffile I<file>] auxtrees [show|add|delete] [I<value>]
 
 With only C<conf>, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
-like the C<texconfig conf> call, but works on all supported platforms.
+like running C<texconfig conf>, but works on all supported platforms.
 
-With either C<conf texmf>, C<conf tlmgr>, or C<conf updmap> given in
-addition, shows all key/value pairs (i.e., all settings) as saved in
-C<ROOT/texmf.cnf>, the user-specific C<tlmgr> configuration file (see
-below), or the first found (via C<kpsewhich>) C<updmap.cfg> file,
-respectively.
+With one of C<conf texmf>, C<conf tlmgr>, or C<conf updmap>, shows all
+key/value pairs (i.e., all settings) as saved in C<ROOT/texmf.cnf>, the
+user-specific C<tlmgr> configuration file (see below), or the first
+found (via C<kpsewhich>) C<updmap.cfg> file, respectively.
 
 If I<key> is given in addition, shows the value of only that I<key> in
 the respective file.  If option I<--delete> is also given, the value in
@@ -7045,29 +7134,33 @@ out).
 If I<value> is given in addition, I<key> is set to I<value> in the 
 respective file.  I<No error checking is done!>
 
+For C<texmf>, an additional subcommand C<auxtrees> allows adding and
+removing arbitrary additional texmf trees, completely under user
+control.  C<texmf auxtrees show> shows the list of additional trees,
+C<texmf auxtrees add> I<tree> adds a tree to the list, and C<texmf
+auxtrees remove> I<tree> removes a tree from the list (if present). This
+works by manipulating the Kpathsea variable C<TEXMFAUXTREES>, in
+C<ROOT/texmf.cnf>.  Example:
+
+  tlmgr conf texmf auxtrees add /my/quick/test/tree
+  tlmgr conf texmf auxtrees remove /my/quick/test/tree
+
 In all cases the file used can be explicitly specified via the option
 C<--conffile I<file>>, in case one wants to operate on a different file.
 
-The PATH value shown is that used by C<tlmgr>.  The directory in which
-the C<tlmgr> executable is found is automatically prepended to the PATH
-value inherited from the environment.
+The C<PATH> value shown is that used by C<tlmgr>.  The directory in
+which the C<tlmgr> executable is found is automatically prepended to the
+PATH value inherited from the environment.
 
-Practical example of changing configuration values: if the execution of
+A practical example of changing configuration values: if the execution of
 (some or all) system commands via C<\write18> was left enabled during
 installation, you can disable it afterwards:
   
   tlmgr conf texmf shell_escape 0
 
-A more complicated example: the C<TEXMFHOME> tree (see the main TeX Live
-guide, L<http://tug.org/texlive/doc.html>) can be set to multiple
-directories, but they must be enclosed in braces and separated by
-commas, so quoting the value to the shell is a good idea.  Thus:
-
-  tlmgr conf texmf TEXMFHOME "{~/texmf,~/texmfbis}"
-
 Warning: The general facility is here, but tinkering with settings in
-this way is very strongly discouraged.  Again, no error checking on
-either keys or values is done, so any sort of breakage is possible.
+this way is strongly discouraged.  Again, no error checking on either
+keys or values is done, so any sort of breakage is possible.
 
 =head2 dump-tlpdb [--local|--remote]
 
