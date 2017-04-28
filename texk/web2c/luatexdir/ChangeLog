@@ -3,7 +3,6 @@
 	* luaffi/: First attempt to implement the ffi module in lua
 	compatible with the ffi module of luajit.
 
-
 2015-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c: Improve a little (w32 only).
@@ -514,11 +513,11 @@
 	* lua/lepdflib.cc: No need to test for Annot::decRefCnt with
 	poppler 0.18 or better.
 
-2012-11-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-11-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* pdf/pdflistout.w: sync with r4471 (a bug fix by H. Henkel).
 
-2012-10-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-10-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex/texfileio.w: input by pipe was impossible. enable it.
 
@@ -526,7 +525,7 @@
 
 	* lua/luainit.w (lua_initialize): Free two malloc()ed strings.
 
-2012-10-10  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-10-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* luatex.c: Modify determination of fullpath for restricted shell
 	escape commands.
@@ -552,7 +551,7 @@
 
 	* lua/luainit.w (parse_options): Avoid cast const => non-const.
 
-2012-09-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-09-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* lua/luainit.w (parse_options): allow lualatex "\input" "a b" on
 	Windows.
@@ -562,7 +561,7 @@
 	* luatex-api.h: Avoid conflicting extern declaration of environ,
 	declared in <stdlib.h> for WIN32 (from W32TeX).
 
-2012-08-21  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-08-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* tex/texdeffont.w (tex_def_font): Recover the old code, because the
 	new code seems not to work.

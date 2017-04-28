@@ -1,18 +1,18 @@
-2017-03-12  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2017-03-12  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Adopt Jonathan's solution for the Change on 2017-02-01.
 
-2017-02-13  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2017-02-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: unsigned long long >= 0. Thanks Luigi.
 
-2017-02-01  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2017-02-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Avoid a crash in xelatex for
 	http://tug.org/pipermail/xetex/2017-January/026975.html.
 	It is not a fix but a stopgap.
 
-2017-01-02  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2017-01-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* printversion.c: 2016 ---> 2017.
 
@@ -31,7 +31,7 @@
 
 	* TeX Live 2016 release.
 
-2016-05-06  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-05-06  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Avoid crash for too large a value of SOURCE_DATE_EPOCH.
 	(w32 only).
@@ -41,7 +41,7 @@
 	* texmfmp.c (init_start_time, get_date_and_time) [onlyTeX]:
 	ignore SOURCE_DATE_EPOCH... envvars for original TeX.
 
-2016-05-05  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-05-05  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c (strtoull) [_MSC_VER]: #define as _strtoui64.
 
@@ -54,7 +54,7 @@
 	SOURCE_DATE_EPOCH value.  Requested by Debian, thread starting at
 	http://tug.org/pipermail/tex-k/2016-May/002691.html.
 
-2016-04-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-04-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Fix a bug to show input file name in the case of pipe input.
 	Reported by Enrico Gregorio:
@@ -68,19 +68,19 @@
 
 	* texmfmp.c (initstarttime): wording of invalid SOURCE_DATE_EPOCH.
 
-2016-01-26  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-01-26  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Improve to skip BOM (win32 only).
 
-2016-01-02  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2016-01-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* printversion.c: 2015 ---> 2016.
 
-2015-11-15  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-11-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Show return code of system() if it is not zero.
 
-2015-11-01  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-11-01  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Improve restricted shell escape for w32 a little.
 
@@ -92,7 +92,7 @@
 
 	* texmfmp.c: Patch from Maria with some minor modification.
 
-2015-07-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-07-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Add \pdfmdfivesum to XeTeX.
 
@@ -106,7 +106,7 @@
 	Integrate MFLua and MFLuaJIT.
 	* texmfmp.c: Adapted.
 
-2015-03-16  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2015-03-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* printversion.c: 2014 ---> 2015.
 
@@ -114,7 +114,7 @@
 
 	* texmfmp.c: Avoid MinGW64 warnings (INVALID_SOCKET => -1).
 
-2014-11-03  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-11-03  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Indentation.
 
@@ -126,7 +126,7 @@
 
 	* texmfmp.c: Apply some code from W32TeX.
 
-2014-08-22  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-08-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Symplify support of multibyte characters, by
 	updating fsyscp_popen in kpathsea (Windows only).
@@ -135,20 +135,20 @@
 
 	* texmfmp.c: Avoid several compiler warnings (Windows only).
 
-2014-08-22  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-08-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Support multibyte characters in pipe (Windows only).
 
-2014-07-23  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-07-23  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Short-file-name convention is incompatible with
 	--src-specials (Windows only).
 
-2014-07-21  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-07-21  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Use getnullstr() in maketexstring(), also in aleph.
 
-2014-07-19  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-07-19  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Use getnullstr() in maketexstring(), as in pdfTeX,
 	in most cases in order to avoid an assertion error.
@@ -158,11 +158,11 @@
 	* texmfmp.c: Replace the deprecated spawnvp() by _spawnvp(),
 	they differ for 64-bit MinGW.
 
-2014-07-04  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-07-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Remove redundant cpp macros (w32 only).
 
-2014-06-20  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Support short-file-name convention (w32 only).
 
@@ -172,7 +172,7 @@
 	* texmfmp.c (getfiledump): Move definition of this function
 	also used by e-(u)pTeX from ../pdftexdir/utils.c to here.
 
-2014-01-20  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-01-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* printversion.c: 2013 ---> 2014.
 
@@ -180,7 +180,7 @@
 
 	* texmfmp.c: Do not declare dump_name, now done in change files.
 
-2014-01-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2014-01-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: use fsyscp_system instead of system (Windows only).
 
@@ -203,7 +203,7 @@
 	getfilemoddate, getfilesize): Move definition of these functions
 	also used by e-(u)pTeX from ../pdftexdir/utils.c to here.
 
-2013-04-09  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2013-04-09  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* printversion.c: 2012 ---> 2013.
 
@@ -219,7 +219,7 @@
 
 	* Makefile.am: Avoid use of deprecated INCLUDES.
 
-2012-10-14  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-10-14  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Use _IONBF for unbuffered stream.
 
@@ -227,7 +227,7 @@
 
 	* texmfmp.c (mk_shellcmdlist): The argument is not constant.
 
-2012-10-10  Akira Kakuto  <kakuto@fuk.kinidai.ac.jp>
+2012-10-10  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* texmfmp.c: Modify determination of fullpath for restricted shell
 	escape commands.
