@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.29"
+printversion = "v0.30"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -45,8 +45,9 @@ latexname = "pdflatex"  (or "lualatex", or "xelatex")
 sourcename = "projectname"  (the source-code filename w/o .tex)
 homehtmlfilename = "index"  (or perhaps the project name)
 htmlfilename = ""  (or "projectname" - filename prefix)
-uselatexmk = "false"  (or "true" to use latexmk to build PDFs)
+latexmk = "false"  (or "true" to use latexmk to build PDFs)
 languge = "english"  (use a language supported by xindy)
+xdyfile = "lwarp.xdy" (or a custom file based on lwarp.xdy)
 --
 Filenames must contain only letters, numbers, underscore, or dash.
 Values must be in "quotes".
@@ -90,6 +91,8 @@ local conffile = "lwarpmk.conf"
 if arg[2] ~= nil then conffile = arg[2]..".lwarpmkconf" end
 -- Default language:
 language = "english"
+-- Default xdyfile:
+xdyfile = "lwarp.xdy"
 -- Verify the file exists:
 if (lfs.attributes(conffile,"mode")==nil) then -- file not exists
 print("lwarpmk: " .. conffile .." does not exist.")
@@ -104,7 +107,7 @@ io.input(conffile) ;
 local linenum = 0
 for line in io.lines() do -- scan lines
 linenum = linenum + 1
-i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*\"([%w-_]*)\"") ;
+i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*\"([%w%-_%.]*)\"") ;
 -- Error if incorrect enclosing characters:
 if ( i == nil ) then
 print ( linenum .. " : " .. line ) ;
@@ -133,8 +136,9 @@ elseif ( cvarname == "latexname" ) then
 elseif ( cvarname == "sourcename" ) then sourcename = cvalue
 elseif ( cvarname == "homehtmlfilename" ) then homehtmlfilename = cvalue
 elseif ( cvarname == "htmlfilename" ) then htmlfilename = cvalue
-elseif ( cvarname == "uselatexmk" ) then uselatexmk = cvalue
+elseif ( cvarname == "latexmk" ) then latexmk = cvalue
 elseif ( cvarname == "language" ) then language = cvalue
+elseif ( cvarname == "xdyfile" ) then xdyfile = cvalue
 else
 print ( linenum .. " : " .. line ) ;
 print ("lwarpmk: Incorrect variable name \"" .. cvarname .. "\" in " .. conffile ..".\n" ) ;
@@ -160,6 +164,16 @@ dirslash = "\\"
 opquote= "\""
 else print ( "lwarpmk: Select Unix or Windows for opsystem" )
 end --- for Windows
+
+-- set xindycmd according to pdflatex vs xelatex/lualatex:
+if ( latexname == "pdflatex" ) then
+xindycmd = "texindy  -C utf8"
+glossarycmd = "xindy -C utf8"
+else
+xindycmd = "xindy  -M texindy  -C utf8"
+glossarycmd = "xindy -C utf8"
+end
+
 end -- loadconf
 
 function refreshdate ()
@@ -215,8 +229,10 @@ end
 
 function pdftohtml ()
     -- Convert to text:
-    print ("lwarpmk: Converting " .. sourcename .."_html.pdf to " .. sourcename .. "_html.html")
-    os.execute("pdftotext  -enc UTF-8  -nopgbrk  -layout " .. sourcename .. "_html.pdf " .. sourcename .. "_html.html")
+    print ("lwarpmk: Converting " .. sourcename
+        .."_html.pdf to " .. sourcename .. "_html.html")
+    os.execute("pdftotext  -enc UTF-8  -nopgbrk  -layout "
+        .. sourcename .. "_html.pdf " .. sourcename .. "_html.html")
     -- Split the result into individual HTML files:
     splitfile (homehtmlfilename .. ".html" , sourcename .. "_html.html")
 end
@@ -273,6 +289,24 @@ end
 end -- do
 end -- function
 
+-- Use latexmk to compile source and index:
+-- fsuffix is "" for print, or "_html" for HTML
+function compilelatexmk ( fsuffix )
+    -- The recorder option is required to detect changes in <project>.tex
+    -- while we are loading <project>_html.tex.
+    err=os.execute ( "latexmk -pdf -dvi- -ps- -recorder "
+        .. "-e "
+        .. opquote
+        .. "$makeindex = q/"
+        .. xindycmd
+        .. "  -M " .. xdyfile
+        .. "  -L " .. language .. " /"
+        .. opquote
+        .. " -pdflatex=\"" .. latexname .." %O %S\" "
+        .. sourcename..fsuffix ..".tex" ) ;
+    if ( err ~= 0 ) then print ( "lwarpmk: Compile error.") ; os.exit(1) ; end
+end
+
 -- lwarpmk --version :
 
 if (arg[1] == "--version") then
@@ -288,8 +322,8 @@ print ("lwarpmk: " .. printversion .. "  Automated make for the LaTeX lwarp pack
 
 if arg[1] == "print" then
 loadconf ()
-if ( uselatexmk == "true" ) then
-    os.execute ( "latexmk -pdf -dvi- -ps- -pdflatex=\"" .. latexname .." %O %S\" " .. sourcename ..".tex" ) ;
+if ( latexmk == "true" ) then
+    compilelatexmk ("")
     print ("lwarpmk: Done.")
 else -- not latexmk
     verifyfileexists (sourcename .. ".tex") ;
@@ -316,7 +350,11 @@ end -- not latexmk
 elseif arg[1] == "printindex" then
 loadconf ()
 print ("lwarpmk: Processing the index.")
-os.execute("texindy -M lwarp_html.xdy " .. sourcename .. ".idx")
+os.execute(
+    xindycmd
+    .. "  -M " .. xdyfile
+    .. "  -L " .. language
+    .. " " .. sourcename .. ".idx")
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
 refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
@@ -330,7 +368,7 @@ elseif arg[1] == "printglossary" then
 loadconf ()
 print ("lwarpmk: Processing the glossary.")
 
-os.execute("xindy -L " .. language .. " -C utf8 -I xindy -M " .. sourcename ..
+os.execute(glossarycmd .. "  -L " .. language .. "  -I xindy -M " .. sourcename ..
     " -t " .. sourcename .. ".glg -o " .. sourcename .. ".gls "
     .. sourcename .. ".glo")
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
@@ -342,15 +380,8 @@ print ("lwarpmk: Done.")
 
 elseif arg[1] == "html" then
 loadconf ()
-if ( uselatexmk == "true" ) then
-    -- The recorder option is required to detect changes in <project>.tex
-    -- while we are loading <project>_html.tex.
-    err=os.execute ( "latexmk -pdf -dvi- -ps- -recorder "
-        .. "-e "
-        .. opquote .. "$makeindex = q/texindy -M lwarp_html.xdy/" .. opquote
-        .. " -pdflatex=\"" .. latexname .." %O %S\" "
-        .. sourcename .."_html.tex" ) ;
-    if ( err ~= 0 ) then print ( "lwarpmk: Compile error.") ; os.exit(1) ; end
+if ( latexmk == "true" ) then
+    compilelatexmk ("_html")
     pdftohtml ()
     print ("lwarpmk: Done.")
 else -- not latexmk
@@ -383,7 +414,12 @@ elseif arg[1] == "pdftohtml" then
 elseif arg[1] == "htmlindex" then
 loadconf ()
 print ("lwarpmk: Processing the index.")
-os.execute("texindy -M lwarp_html.xdy " .. sourcename .. "_html.idx")
+os.execute(
+    xindycmd
+    .. "  -M " .. xdyfile
+    .. "  -L " .. language
+    .. " " .. sourcename .. "_html.idx"
+)
 print ("lwarpmk: Forcing an update of " .. sourcename ..".tex.")
 refreshdate ()
 print ("lwarpmk: " .. sourcename ..".tex is ready to be recompiled.")
@@ -397,7 +433,7 @@ elseif arg[1] == "htmlglossary" then
 loadconf ()
 print ("lwarpmk: Processing the glossary.")
 
-os.execute("xindy -L " .. language .. " -C utf8 -I xindy -M " ..sourcename ..
+os.execute(glossarycmd .. "  -L " .. language .. "  -I xindy -M " ..sourcename ..
     "_html -t " .. sourcename .. "_html.glg -o " ..sourcename ..
     "_html.gls " ..sourcename .. "_html.glo")
 
