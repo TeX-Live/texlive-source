@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44076 2017-04-27 08:51:00Z preining $
+# $Id: tlmgr.pl 44109 2017-04-28 23:12:11Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44076 $';
-my $datrev = '$Date: 2017-04-27 10:51:00 +0200 (Thu, 27 Apr 2017) $';
+my $svnrev = '$Revision: 44109 $';
+my $datrev = '$Date: 2017-04-29 01:12:11 +0200 (Sat, 29 Apr 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -7134,6 +7134,12 @@ out).
 If I<value> is given in addition, I<key> is set to I<value> in the 
 respective file.  I<No error checking is done!>
 
+Here is a practical example of changing configuration values. If the
+execution of (some or all) system commands via C<\write18> was left
+enabled during installation, you can disable it afterwards:
+  
+  tlmgr conf texmf shell_escape 0
+
 For C<texmf>, an additional subcommand C<auxtrees> allows adding and
 removing arbitrary additional texmf trees, completely under user
 control.  C<texmf auxtrees show> shows the list of additional trees,
@@ -7145,18 +7151,12 @@ C<ROOT/texmf.cnf>.  Example:
   tlmgr conf texmf auxtrees add /my/quick/test/tree
   tlmgr conf texmf auxtrees remove /my/quick/test/tree
 
-In all cases the file used can be explicitly specified via the option
-C<--conffile I<file>>, in case one wants to operate on a different file.
+In all cases the configuration file can be explicitly specified via the
+option C<--conffile> I<file>, if desired.
 
-The C<PATH> value shown is that used by C<tlmgr>.  The directory in
-which the C<tlmgr> executable is found is automatically prepended to the
-PATH value inherited from the environment.
-
-A practical example of changing configuration values: if the execution of
-(some or all) system commands via C<\write18> was left enabled during
-installation, you can disable it afterwards:
-  
-  tlmgr conf texmf shell_escape 0
+The C<PATH> value shown is as used by C<tlmgr>.  The directory in which
+the C<tlmgr> executable is found is automatically prepended to the PATH
+value inherited from the environment.
 
 Warning: The general facility is here, but tinkering with settings in
 this way is strongly discouraged.  Again, no error checking on either
