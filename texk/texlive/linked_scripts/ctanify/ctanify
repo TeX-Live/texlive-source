@@ -19,7 +19,7 @@ use warnings;
 use strict;
 
 # Define some global variables.
-our $VERSION = "1.9";          # ctanify version number
+our $VERSION = "1.9.1";        # ctanify version number
 my $progname = basename $0;    # Name of this program
 my $pkgname;                   # Base name of the package to create
 my $miscify = 0;               # 1=replace singletons with misc; 0=don't
@@ -80,7 +80,7 @@ my @ignore_re = ('~$', '\bCVS\b', '\b\.svn\b');
 # This script will convert their line endings to Unix style (a single
 # linefeed character).
 my %text_ext =
-    map {($_ => 1)} qw(afm bib bst cls dtx fd ins ltx mf mp sty tex txt);
+    map {($_ => 1)} qw(afm bib bst cls dtx fd ins ltx md mf mp sty tex txt);
 
 # Define a subroutine that returns the size in bytes of a file,
 # aborting on error.
