@@ -26,13 +26,6 @@ that document).
 
 Build information for some of the platforms.
 
-i386-linux: gcc 4.9.2, Linux 2.6.18-* (CentOS 5.10, tug.org:~karl/bin/mybuild)
-  Except for dvisvgm, where we must use the system compiler (gcc 4.1.2,
-  Red Hat 4.1.2-54) or libgs.so crashes trying to use gcc 4.8.2's
-  libstdc++.  On the other hand, the system compiler has an optimization
-  bug that causes lcdf-typetools's tfm.test to fail, so it can't be used
-  for everything.  Sigh.
-        
 x86_64-linux: Debian 6.0 (Squeeze), Feb 2009.
   
 amd64-netbsd:
@@ -42,6 +35,8 @@ amd64-netbsd:
   
 i386-freebsd, amd64-freebsd:
   --disable-dvisvgm; upmendex for i386 built with -DU_IS_BIG_ENDIAN=0.
+
+i386-linux: Debian 7.
 
 i386-openbsd, amd64-openbsd:
   e.g., see CONFIGURE_ARGS in the Makefile in
@@ -63,7 +58,10 @@ x86_64-darwin:
   See Master/source/mactexdoc.tar.xz.
 
 x86_64-darwinlegacy, i386-darwin, powerpc-darwin:
+  https://github.com/TeXLive-M/texlive-buildbot
   http://build.contextgarden.net/waterfall?tag=c/texlive
+  (These links have info on all platforms built by Mojca.)
+  
   32-bit binaries built on 10.6/x86_64 with backward compatibility to 10.5.
   ppc binaries only work on <= 10.5, so 10.5/ppc will be the only OS for them.
   i386 binaries only work on <= 10.6. While they theoretically work
