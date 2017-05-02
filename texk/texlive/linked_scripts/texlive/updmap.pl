@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 44080 2017-04-27 16:46:42Z karl $
+# $Id: updmap.pl 44149 2017-05-02 09:57:51Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 44080 2017-04-27 16:46:42Z karl $';
+my $svnid = '$Id: updmap.pl 44149 2017-05-02 09:57:51Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2017-04-27 18:46:42 +0200 (Thu, 27 Apr 2017) $';
+my $lastchdate = '$Date: 2017-05-02 11:57:51 +0200 (Tue, 02 May 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 44080 $';
+my $svnrev = '$Revision: 44149 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1323,7 +1323,12 @@ sub mkMaps {
   # all kind of warning messages
   if ($first_time_creation_in_usermode) {
     print_and_log("
-WARNING: you are switching to updmap's per-user mappings.
+*************************************************************
+*                                                           *
+* WARNING: you are switching to updmap's per-user mappings. *
+*            Please read the following explanations.        *
+*                                                           *
+*************************************************************
 
 You have run updmap-user (as opposed to updmap-sys) for the first time; this
 has created configuration files which are local to your personal account.
