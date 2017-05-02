@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44109 2017-04-28 23:12:11Z karl $
+# $Id: tlmgr.pl 44146 2017-05-01 22:53:26Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44109 $';
-my $datrev = '$Date: 2017-04-29 01:12:11 +0200 (Sat, 29 Apr 2017) $';
+my $svnrev = '$Revision: 44146 $';
+my $datrev = '$Date: 2017-05-02 00:53:26 +0200 (Tue, 02 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -1145,6 +1145,7 @@ sub action_remove {
 
 
 #  PAPER
+# 
 # ARGV can look like:
 #   paper a4
 #   paper letter
@@ -1335,7 +1336,7 @@ sub action_path {
   return ($ret | $F_NOPOSTACTION);
 }
 
-#  DUMP TLPDB
+#  DUMP-TLPDB
 #
 sub action_dumptlpdb {
   init_local_db();
@@ -4316,7 +4317,7 @@ sub action_option {
 }
 
 
-#  ARCH
+#  PLATFORM (was ARCH)
 #
 sub action_platform {
   my $ret = $F_OK;
@@ -4816,6 +4817,7 @@ sub action_recreate_tlpdb {
   $tlpdb->writeout;
   return;
 }
+
 
 #  CHECK
 #
@@ -5350,7 +5352,9 @@ sub check_depends {
   return $ret;
 }
 
+
 #  POSTACTION
+# 
 # explictly run the various post actions, e.g.,
 # on a client system or overriding global settings.
 # 
@@ -5458,7 +5462,9 @@ sub action_postaction {
   }
 }
 
-#  INIT USER TREE
+
+#  INIT-USERTREE
+# 
 # sets up the user tree for tlmgr in user mode
 sub action_init_usertree {
   # init_local_db but do not die if localtlpdb is not found!
@@ -5500,7 +5506,9 @@ sub action_init_usertree {
   return ($F_OK);
 }
 
+
 #  CONF
+# 
 # tries to mimic texconfig conf but can also set values for both tlmgr
 # and texmf conf files.
 #
@@ -5550,7 +5558,7 @@ sub action_conf {
         if ($arg eq "texmf") {
           my $tmfa = 'TEXMFAUXTREES';
           my $tv = $cf->value($tmfa);
-          if ($val eq "show") {
+          if (!$val || $val eq "show") {
             if (defined($tv)) {
               $tv =~ s/^\s*{//;
               $tv =~ s/}\s*$//;
@@ -5562,7 +5570,7 @@ sub action_conf {
               }
               return($F_OK);
             } else {
-              print "No auxiliary texmf trees defined.\n";
+              print "$prg: no auxiliary texmf trees defined.\n";
               return($F_OK);
             }
           } elsif ($val eq "add") {
@@ -5576,7 +5584,7 @@ sub action_conf {
                 my $already = 0;
                 for my $f (@foo) {
                   if ($f eq $str) {
-                    print "Already registered auxtree: $str\n";
+                    tlwarn("$prg: already registered auxtree: $str\n");
                     return ($F_WARNING);
                   } else {
                     push @new, $f;
@@ -5588,7 +5596,7 @@ sub action_conf {
                 $cf->value($tmfa, '{' . $str . ',}');
               }
             } else {
-              warning("argument missing for auxtrees add\n");
+              tlwarn("$prg: missing argument for auxtrees add\n");
               return($F_ERROR);
             }
           } elsif ($val eq "remove") {
@@ -5614,23 +5622,24 @@ sub action_conf {
                     $cf->delete_key($tmfa);
                   }
                 } else {
-                  print ("Not defined as auxiliary texmf tree: $str\n");
+                  tlwarn("$prg: not defined as auxiliary texmf tree: $str\n");
                   return($F_WARNING);
                 }
               } else {
-                print "No auxiliary texmf trees defined, nothing removed\n";
+                tlwarn("$prg: no auxiliary texmf trees defined, "
+                       . "so nothing removed\n");
                 return($F_WARNING);
               }
             } else {
-              warning("argument missing for auxtrees remove\n");
+              tlwarn("$prg: missing argument for auxtrees remove\n");
               return($F_ERROR);
             }
           } else {
-            warning("unknown operation on auxtrees: $val\n");
+            tlwarn("$prg: unknown auxtrees operation: $val\n");
             return($F_ERROR);
           }
         } else {
-          warning("auxtrees not suitable for $arg\n");
+          tlwarn("$prg: auxtrees not suitable for $arg\n");
           return($F_ERROR);
         }
       } elsif (!defined($val)) {
@@ -5662,7 +5671,7 @@ sub action_conf {
         }
       } else {
         if (defined($opts{'delete'})) {
-          warning("$arg --delete and value for key $key given, don't know what to do!\n");
+          tlwarn("$arg --delete and value for key $key given, don't know what to do!\n");
           $ret = $F_ERROR;
         } else {
           info("setting $arg $key to $val (in $fn)\n");
@@ -5729,14 +5738,13 @@ sub texconfig_conf_mimic {
 }
 
 
-
-# Action key
+#  KEY
 #
-# general key management
-#
+# gpg key management:
 # tlmgr key list
 # tlmgr key add <filename>
 # tlmgr key remove <keyid>
+# 
 sub action_key {
   my $arg = shift @ARGV;
 
@@ -5810,6 +5818,209 @@ sub action_key {
     return $F_ERROR;
   }
   return $F_OK;
+}
+
+
+#  SHELL
+# interactive shell.
+# 
+sub action_shell {
+  my $protocol = 1;
+  sub do_prompt {
+    my $default_prompt = "tlmgr>";
+    my $prompt = "";
+    my @options;
+    my @guarantee;
+    my @savedargs = @_;
+    my $did_prompt = 0;
+    while (defined(my $arg = shift @_)) {
+      if ($arg =~ m/^-prompt$/) {
+        print shift @_, " ";
+        $did_prompt = 1;
+      } elsif ($arg =~ m/^-menu$/) {
+        my $options = shift @_;
+        @options = @$options;
+        print "\n";
+        my $c = 1;
+        for my $o (@options) {
+          print " $c) $o\n";
+          $c++;
+        }
+      } elsif ($arg =~ m/^-guarantee$/) {
+        my $guarantee = shift @_;
+        @guarantee = @$guarantee;
+      } elsif ($arg =~ m/^-/) {
+        print "ERROR unsupported prompt command, please report: $arg!\n";
+      } else {
+        print $arg, " ";
+        $did_prompt = 1;
+      }
+    }
+    print "default_prompt " if (!$did_prompt);
+    my $ans = <STDIN>;
+    if (!defined($ans)) {
+      # we got Ctrl-D, just break out
+      return;
+    }
+    chomp($ans);
+    if (@options) {
+      $ans--;
+      if ($ans >= 0 && $ans <= $#options) {
+        $ans = $options[$ans];
+        return($ans);
+      } else {
+        print "ERROR invalid answer\n";
+        return;
+      }
+    }
+    if (@guarantee) {
+      my $isok = 0;
+      for my $g (@guarantee) {
+        if ($ans eq $g) {
+          $isok = 1;
+          last;
+        }
+      }
+      if (!$isok) {
+        print("Please answer one of @guarantee!\n");
+        return(do_prompt(@savedargs));
+      }
+    }
+    return($ans);
+  }
+
+  print "protocol $protocol\n";
+  while (1) {
+    my $ans = do_prompt('tlmgr>');
+    return $F_OK if !defined($ans); # done if eof
+
+    my ($cmd, @args) = TeXLive::TLUtils::quotewords('\s+', 0, $ans);
+    next if (!defined($cmd));
+    if ($cmd eq "protocol") {
+      print "protocol $protocol\n";
+    } elsif ($cmd eq "help") {
+      print "Please see tlmgr help or http://tug.org/texlive/tlmgr.html.\n";
+    } elsif ($cmd eq "version") {
+      print give_version(), "\n";
+    } elsif ($cmd =~ m/^(quit|end|bye(bye)?)$/i) {
+      return $F_OK;
+    } elsif ($cmd eq "setup-location") {
+      my $dest = shift @args;
+      print "ERROR not implemented: $cmd\n";
+    } elsif ($cmd =~ m/^(set|get)$/) {
+      my @valid_keys = qw/repository debug-translation machine-readable no-execute-actions require-verification verify-downloads/;
+      my $key = shift @args;
+      my $val = shift @args;
+      if (!$key) {
+        $key = do_prompt('Choose...', -menu => \@valid_keys, '>');
+      }
+      if (!$key) {
+        print("ERROR missing argument for get\n");
+        next;
+      }
+      if ($cmd eq "get" && defined($val)) {
+        print("ERROR no argument allowed for get\n");
+        next;
+      }
+      if ($cmd eq "set" && !defined($val)) {
+        if ($key eq "repository") {
+          $val = do_prompt('Enter repository:');
+        } else {
+          $val = do_prompt('Enter 1 for on, 0 for off:', -guarantee => [0,1]);
+        }
+        # deal with Ctrl-D
+        if (!defined($val)) {
+          print("ERROR Missing value for set.\n");
+          next;
+        }
+      }
+
+      if ($key eq "repository") {
+        if ($cmd eq "set") {
+          $location = scalar($val);
+        } else {
+          if (defined($location)) {
+            print "repository = $location\n";
+          } else {
+            print "repository = <UNDEFINED>\n";
+          }
+        }
+        print "OK\n";
+      } elsif ($key =~ m/^(debug-translation|machine-readable|no-execute-actions|require-verification|verify-downloads)$/) {
+        if ($cmd eq "set") {
+          $opts{$key} = ($val eq "1" ? 1 : 0);
+          # special cases
+          $::debug_translation = $opts{"debug-translation"};
+          $::machinereadable = $opts{"machine-readable"};
+          $::no_execute_actions = $opts{'no-execute-actions'};
+        } else {
+          print "$key = ", ($opts{$key} ? 1 : 0), "\n";
+        }
+        print "OK\n";
+      } else {
+        print "ERROR unknown key $key\n";
+      }
+    } elsif ($cmd eq "load") {
+      my $what = shift @args;
+      if (!defined($what)) {
+        $what = do_prompt("Choose...", -menu => ['local', 'remote'], '>');
+      }
+      if ($what eq "local") {
+        init_local_db();
+        print "OK\n";
+      } elsif ($what eq "remote") {
+        init_tlmedia_or_die();
+        print "OK\n";
+      } else {
+        print "ERROR can only load 'local' or 'remote'\n";
+      }
+    } elsif ($cmd eq "save") {
+      $localtlpdb->save;
+      print "OK\n";
+    } elsif (defined($action_specification{$cmd})) {
+      # an action
+      if (!defined($action_specification{$cmd}{"function"})) {
+        print "ERROR action function not defined\n";
+        next;
+      }
+      # redo the option parsing
+      my %optarg;
+      if (defined($action_specification{$cmd}{'options'})) {
+        my %actopts = %{$action_specification{$cmd}{'options'}};
+        for my $k (keys %actopts) {
+          if ($actopts{$k} eq "1") {
+            $optarg{$k} = 1;
+          } else {
+            $optarg{"$k" . $actopts{$k}} = 1;
+          }
+        }
+      }
+      # save command line options for later restart, if necessary
+      @ARGV = @args;
+      my %savedopts = %opts;
+      %opts = ();
+      if (!GetOptions(\%opts, keys(%optarg))) {
+        print "ERROR unsupported arguments\n";
+        next;
+      }
+      my $ret = execute_action($cmd, @ARGV);
+      if ($ret & $F_ERROR) {
+        print "ERROR\n";
+      } elsif ($ret & $F_WARNING) {
+        print "OK\n";
+      } else {
+        print "OK\n";
+      }
+      # make sure that we restart after having called update --self!
+      if (($cmd eq 'update') && $opts{'self'}) {
+        print "tlmgr has been updated, restarting!\n";
+        exec("tlmgr", @::SAVEDARGV);
+      }
+      %opts = %savedopts;
+    } else {
+      print "ERROR unknown command\n";
+    }
+  }
 }
 
 
@@ -6586,208 +6797,6 @@ sub check_on_writable {
     }
   }
   return 1;
-}
-
-
-###########
-# tlmgr shell code
-sub action_shell {
-  my $protocol = 1;
-  sub do_prompt {
-    my $default_prompt = "tlmgr>";
-    my $prompt = "";
-    my @options;
-    my @guarantee;
-    my @savedargs = @_;
-    my $did_prompt = 0;
-    while (defined(my $arg = shift @_)) {
-      if ($arg =~ m/^-prompt$/) {
-        print shift @_, " ";
-        $did_prompt = 1;
-      } elsif ($arg =~ m/^-menu$/) {
-        my $options = shift @_;
-        @options = @$options;
-        print "\n";
-        my $c = 1;
-        for my $o (@options) {
-          print " $c) $o\n";
-          $c++;
-        }
-      } elsif ($arg =~ m/^-guarantee$/) {
-        my $guarantee = shift @_;
-        @guarantee = @$guarantee;
-      } elsif ($arg =~ m/^-/) {
-        print "ERROR unsupported prompt command, please report: $arg!\n";
-      } else {
-        print $arg, " ";
-        $did_prompt = 1;
-      }
-    }
-    print "default_prompt " if (!$did_prompt);
-    my $ans = <STDIN>;
-    if (!defined($ans)) {
-      # we got Ctrl-D, just break out
-      return;
-    }
-    chomp($ans);
-    if (@options) {
-      $ans--;
-      if ($ans >= 0 && $ans < $#options) {
-        $ans = $options[$ans];
-        return($ans);
-      } else {
-        print "ERROR invalid answer\n";
-        return;
-      }
-    }
-    if (@guarantee) {
-      my $isok = 0;
-      for my $g (@guarantee) {
-        if ($ans eq $g) {
-          $isok = 1;
-          last;
-        }
-      }
-      if (!$isok) {
-        print("Please answer one of @guarantee!\n");
-        return(do_prompt(@savedargs));
-      }
-    }
-    return($ans);
-  }
-
-  print "protocol $protocol\n";
-  while (1) {
-    # print $prompt;
-    # my $ans = <STDIN>;
-    my $ans = do_prompt('tlmgr>');
-    # chomp $ans;
-    next if (!defined($ans));
-    my ($cmd, @args) = TeXLive::TLUtils::quotewords('\s+', 0, $ans);
-    next if (!defined($cmd));
-    if ($cmd eq "protocol") {
-      print "protocol $protocol\n";
-    } elsif ($cmd eq "version") {
-      print give_version(), "\n";
-    } elsif ($cmd =~ m/^(quit|end|byebye)$/i) {
-      return $F_OK;
-    } elsif ($cmd eq "setup-location") {
-      my $dest = shift @args;
-      print "ERROR not implemented: $cmd\n";
-    } elsif ($cmd =~ m/^(set|get)$/) {
-      my @valid_keys = qw/repository debug-translation machine-readable no-execute-actions require-verification verify-downloads/;
-      my $key = shift @args;
-      my $val = shift @args;
-      if (!$key) {
-        $key = do_prompt('Choose...', -menu => \@valid_keys, '>');
-      }
-      if (!$key) {
-        print("ERROR missing argument for get\n");
-        next;
-      }
-      if ($cmd eq "get" && defined($val)) {
-        print("ERROR no argument allowed for get\n");
-        next;
-      }
-      if ($cmd eq "set" && !defined($val)) {
-        if ($key eq "repository") {
-          $val = do_prompt('Enter repository:');
-        } else {
-          $val = do_prompt('Enter 1 for on, 0 for off:', -guarantee => [0,1]);
-        }
-        # deal with Ctrl-D
-        if (!defined($val)) {
-          print('ERROR Missing value for set.\n');
-          next;
-        }
-      }
-
-      if ($key eq "repository") {
-        if ($cmd eq "set") {
-          $location = scalar($val);
-        } else {
-          if (defined($location)) {
-            print "repository = $location\n";
-          } else {
-            print "repository = <UNDEFINED>\n";
-          }
-        }
-        print "OK\n";
-      } elsif ($key =~ m/^(debug-translation|machine-readable|no-execute-actions|require-verification|verify-downloads)$/i) {
-        if ($cmd eq "set") {
-          $opts{$key} = ($val eq "1" ? 1 : 0); ### THIS DOES NOT WORK??? TODO TODO
-          # special cases
-          $::debug_translation = $opts{"debug-translation"};
-          $::machinereadable = $opts{"machine-readable"};
-          $::no_execute_actions = $opts{'no-execute-actions'};
-        } else {
-          print "$key = ", ($opts{$key} ? 1 : 0), "\n";
-        }
-        print "OK\n";
-      } else {
-        print "ERROR unknown key $key\n";
-      }
-    } elsif ($cmd eq "load") {
-      my $what = shift @args;
-      if (!defined($what)) {
-        $what = do_prompt("Choose...", -menu => ['local', 'remote'], '>');
-      }
-      if ($what eq "local") {
-        init_local_db();
-        print "OK\n";
-      } elsif ($what eq "remote") {
-        init_tlmedia_or_die();
-        print "OK\n";
-      } else {
-        print "ERROR can only load 'local' or 'remote'\n";
-      }
-    } elsif ($cmd eq "save") {
-      $localtlpdb->save;
-      print "OK\n";
-    } elsif (defined($action_specification{$cmd})) {
-      # an action
-      if (!defined($action_specification{$cmd}{"function"})) {
-        print "ERROR action function not defined\n";
-        next;
-      }
-      # redo the option parsing
-      my %optarg;
-      if (defined($action_specification{$cmd}{'options'})) {
-        my %actopts = %{$action_specification{$cmd}{'options'}};
-        for my $k (keys %actopts) {
-          if ($actopts{$k} eq "1") {
-            $optarg{$k} = 1;
-          } else {
-            $optarg{"$k" . $actopts{$k}} = 1;
-          }
-        }
-      }
-      # save command line options for later restart, if necessary
-      @ARGV = @args;
-      my %savedopts = %opts;
-      %opts = ();
-      if (!GetOptions(\%opts, keys(%optarg))) {
-        print "ERROR unsupported arguments\n";
-        next;
-      }
-      my $ret = execute_action($cmd, @ARGV);
-      if ($ret & $F_ERROR) {
-        print "ERROR\n";
-      } elsif ($ret & $F_WARNING) {
-        print "OK\n";
-      } else {
-        print "OK\n";
-      }
-      # make sure that we restart after having called update --self!
-      if (($cmd eq 'update') && $opts{'self'}) {
-        print "tlmgr has been updated, restarting!\n";
-        exec("tlmgr", @::SAVEDARGV);
-      }
-      %opts = %savedopts;
-    } else {
-      print "ERROR unknown command\n";
-    }
-  }
 }
 
 
