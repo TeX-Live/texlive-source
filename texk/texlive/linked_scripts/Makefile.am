@@ -167,6 +167,7 @@ texmf_other_scripts = \
 	pmxchords/pmxchords.lua \
 	pst2pdf/pst2pdf.pl \
 	ptex-fontmaps/kanji-config-updmap-sys.sh \
+	ptex-fontmaps/kanji-config-updmap-user.sh \
 	ptex-fontmaps/kanji-config-updmap.pl \
 	ptex-fontmaps/kanji-fontmap-creator.pl \
 	ptex2pdf/ptex2pdf.lua \

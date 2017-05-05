@@ -1,11 +1,12 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20170114.0
+# Version 20170505.0
 #
 # formerly known as updmap-setup-kanji
 #
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
-# Copyright 2011-2016 by PREINING Norbert
+# Copyright 2011-2017 by PREINING Norbert
+# Copyright 2016-2017 by Japanese TeX Development Community
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
@@ -21,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20170114.0';
+my $version = '20170505.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -30,7 +31,9 @@ my $dry_run = 0;
 my $opt_help = 0;
 my $opt_jis = 0;
 my $opt_sys = 0;
+my $opt_user = 0;
 my $opt_mode = "ja";
+my $opt_old = 0;
 
 if (! GetOptions(
         "n|dry-run" => \$dry_run,
@@ -41,8 +44,10 @@ if (! GetOptions(
         "sc"       => sub { $opt_mode = "sc"; },
         "tc"       => sub { $opt_mode = "tc"; },
         "ko"       => sub { $opt_mode = "ko"; },
-        "sys" => \$opt_sys,
-        "version" => sub { print &version(); exit(0); }, ) ) {
+        "sys"      => \$opt_sys,
+        "user"     => \$opt_user,
+        "old"      => \$opt_old,
+        "version"  => sub { print &version(); exit(0); }, ) ) {
   die "Try \"$0 --help\" for more information.\n";
 }
 
@@ -51,6 +56,16 @@ sub win32 { return ($^O=~/^MSWin(32|64)$/i); }
 
 my $nul = (win32() ? 'nul' : '/dev/null') ;
 
+if ($opt_user && $opt_sys) {
+  die "Only one of -user and -sys can be used!";
+}
+
+if (defined($ARGV[0]) && $ARGV[0] ne "status") {
+  if (!($opt_user || $opt_sys)) {
+    die "Either -user or -sys mode is required.";
+  }
+}
+
 
 if ($dry_run) {
   $updmap = "echo updmap"; 
@@ -58,6 +73,22 @@ if ($dry_run) {
 if ($opt_sys) {
   $updmap = "$updmap --sys" ;
   $updmap_real = "$updmap_real --sys" ;
+} else {
+  # TeX Live 2017 requires --user option
+  # try to determine the version of updmap installed
+  my $updver = `updmap --version 2>&1`;
+  if ($updver =~ m/^updmap version r([0-9]*) /) {
+    if ($1 >= 44080) {
+      $updmap = "$updmap --user" ;
+      $updmap_real = "$updmap_real --user" ;
+    } # else nothing to do, already set up for old updmap
+  } else {
+    # not recognized updmap -> assume new updmap unless --old
+    if (!$opt_old) {
+      $updmap = "$updmap --user" ;
+      $updmap_real = "$updmap_real --user" ;
+    }
+  }
 }
 
 if ($opt_help) {
@@ -102,7 +133,8 @@ my %representatives = (
     "cjkunifonts-ttf" => "uming.ttf",
   },
   "tc" => {
-    "ms"            => "mingliu.ttc",
+    "ms"            => "msjh.ttf",
+    "ms-win10"      => "msjh.ttc",
     "dynacomware"   => "LiSongPro.ttf",
     "adobe"         => "AdobeMingStd-Light.otf",
     "arphic"        => "bsmi00lp.ttf",
@@ -183,7 +215,13 @@ sub Usage {
                    Simplified Chinese (NN=sc), Traditional Chinese (NN=tc)
     --NN           short for --mode=NN
     --jis2004      use JIS2004 variants for default fonts of (u)pTeX
-    --sys          run in sys mode, i.e., call updmap-sys
+    --sys          run in sys mode, i.e., call updmap -sys
+    --user         run in user mode, i.e., call updmap -user or updmap
+                   by checking the version of the updmap script. If a
+                   non-parsable output of `updmap --version' is found, a new
+                   updmap with --user option is assumed. If this is not the
+                   case, use --old.
+    --old          Makes $prg call `updmap' without --user argument in user mode.
     --version      show version information and exit
 
 EOF
@@ -311,7 +349,7 @@ sub SetupReplacement {
             ms ms-osx moga-mobo moga-mobo-ex ume
             ipa ipaex/;
         } elsif ($opt_mode eq 'tc') {
-          @testlist = qw/dynacomware adobe ms arphic cjkunifonts cjkunifonts-ttf/;
+          @testlist = qw/dynacomware adobe ms-win10 ms arphic cjkunifonts cjkunifonts-ttf/;
         } elsif ($opt_mode eq 'sc') {
           @testlist = qw/fandol adobe ms arphic cjkunifonts cjkunifonts-ttf/;
         } elsif ($opt_mode eq 'ko') {

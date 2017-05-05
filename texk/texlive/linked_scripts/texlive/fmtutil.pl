@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 43794 2017-04-15 00:12:54Z preining $
+# $Id: fmtutil.pl 44190 2017-05-04 21:38:43Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 43794 2017-04-15 00:12:54Z preining $';
-my $lastchdate = '$Date: 2017-04-15 02:12:54 +0200 (Sat, 15 Apr 2017) $';
+my $svnid = '$Id: fmtutil.pl 44190 2017-05-04 21:38:43Z preining $';
+my $lastchdate = '$Date: 2017-05-04 23:38:43 +0200 (Thu, 04 May 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 43794 $';
+my $svnrev = '$Revision: 44190 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -61,6 +61,9 @@ my @deferred_stderr;
 my @deferred_stdout;
 
 (our $prg = basename($0)) =~ s/\.pl$//;
+
+# make sure that the main binary path is available at the front
+TeXLive::TLUtils::prepend_own_path();
 
 # sudo sometimes does not reset the home dir of root, check on that
 # see more comments at the definition of the function itself
