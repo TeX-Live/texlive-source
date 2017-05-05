@@ -28,11 +28,30 @@ use Cwd 'abs_path';
 use strict;
 
 (my $prg = basename($0)) =~ s/\.pl$//;
-my $version = '20170309.0';
+my $version = '20170505.0';
 
+# if windows, we might create batch file for links
+my $winbatch = '';
+my $winbatch_content = '';
 if (win32()) {
-  print_error("Sorry, currently not supported on Windows!\n");
-  exit(1);
+  # conversion between internal (utf-8) and console (cp932):
+  # multibyte characters should be encoded in cp932 at least during
+  #   * kpathsea file search
+  #   * abs_path existence test
+  #   * input/output on console
+  #   * batch file output
+  # routines. make sure all of these should be restricted to win32 mode!
+  # TODO: what to do with $opt_fontdef, @opt_aliases and $opt_filelist,
+  #       with regard to encodings?
+  # TODO: running with --link-texmf option for multiple times is harmful,
+  #       because kpathsea catches texmflocal links and abs_path misunderstand
+  #       it as an actual file; currently the users have to run with --remove
+  #       first, before re-running with --link-texmf.
+  use utf8;
+  use Encode;
+  # some perl functions (symlink, -l test) does not work
+  print_warning("Sorry, we have only partial support for Windows!\n");
+  $winbatch = "makefontlinks.bat";
 }
 
 my %encode_list = (
@@ -223,50 +242,67 @@ my %encode_list = (
 my $otf_pathpart = "fonts/opentype/cjk-gs-integrate";
 my $ttf_pathpart = "fonts/truetype/cjk-gs-integrate";
 
+# location where cidfmap, cidfmap.local and cidfmap.aliases are placed
+# when found gs is tlgs (win32), then files will be placed in lib/ instead of Resource/Init/
+my $cidfmap_pathpart = "Init/cidfmap";
+my $cidfmap_local_pathpart = "Init/cidfmap.local";
+my $cidfmap_aliases_pathpart = "Init/cidfmap.aliases";
 
-my $dry_run = 0;
-my $opt_help = 0;
-my $opt_quiet = 0;
-my $opt_debug = 0;
+# support for ps2otfps by Akira Kakuto
+my $akotfps_pathpart = "dvips/ps2otfps";
+my $akotfps_datafilename = "psnames-for-otf";
+my $akotfps_datacontent = '';
+
+my $opt_output;
+my $opt_fontdef;
+my @opt_aliases;
+my $opt_filelist;
+my $opt_texmflink;
+my $opt_akotfps;
+my $opt_force = 0;
+my $opt_remove = 0;
+my $opt_hardlink = 0;
+my $opt_winbatch = 0;
+my $opt_only_aliases = 0;
 my $opt_listaliases = 0;
 my $opt_listallaliases = 0;
 my $opt_listfonts = 0;
-my $opt_remove = 0;
 my $opt_info = 0;
-my $opt_fontdef;
-my $opt_output;
-my @opt_aliases;
-my $opt_only_aliases = 0;
 my $opt_machine = 0;
-my $opt_filelist;
-my $opt_force = 0;
-my $opt_texmflink;
+my $dry_run = 0;
+my $opt_quiet = 0;
+my $opt_debug = 0;
+my $opt_help = 0;
 my $opt_markdown = 0;
 
 if (! GetOptions(
-        "n|dry-run"   => \$dry_run,
-        "info"        => \$opt_info,
+        "o|output=s"  => \$opt_output,
+        "f|fontdef=s" => \$opt_fontdef,
+        "a|alias=s"   => \@opt_aliases,
+        "filelist=s"  => \$opt_filelist,
+        "link-texmf:s" => \$opt_texmflink,
+        "otfps:s"      => \$opt_akotfps,
+        "force"       => \$opt_force,
+        "remove"       => \$opt_remove,
+        "hardlink"     => \$opt_hardlink,
+        "winbatch"     => \$opt_winbatch,
+        "only-aliases" => \$opt_only_aliases,
         "list-aliases" => \$opt_listaliases,
         "list-all-aliases" => \$opt_listallaliases,
         "list-fonts"  => \$opt_listfonts,
-        "link-texmf:s" => \$opt_texmflink,
-        "remove"       => \$opt_remove,
-        "only-aliases" => \$opt_only_aliases,
+        "info"        => \$opt_info,
         "machine-readable" => \$opt_machine,
-        "force"       => \$opt_force,
-        "filelist=s"  => \$opt_filelist,
-        "markdown"    => \$opt_markdown,
-        "o|output=s"  => \$opt_output,
-        "h|help"      => \$opt_help,
+        "n|dry-run"   => \$dry_run,
         "q|quiet"     => \$opt_quiet,
         "d|debug+"    => \$opt_debug,
-        "f|fontdef=s" => \$opt_fontdef,
-        "a|alias=s"   => \@opt_aliases,
+        "h|help"      => \$opt_help,
+        "markdown"    => \$opt_markdown,
         "v|version"   => sub { print &version(); exit(0); }, ) ) {
   die "Try \"$0 --help\" for more information.\n";
 }
 
 sub win32 { return ($^O=~/^MSWin(32|64)$/i); }
+sub macosx { return ($^O=~/^darwin$/i); }
 my $nul = (win32() ? 'nul' : '/dev/null') ;
 my $sep = (win32() ? ';' : ':');
 my %fontdb;
@@ -297,6 +333,20 @@ if (defined($opt_texmflink)) {
   $opt_texmflink = $foo;
 }
 
+if (defined($opt_akotfps)) {
+  my $foo;
+  if ($opt_akotfps eq '') {
+    if (defined($opt_texmflink)) {
+      $foo = $opt_texmflink;
+    } else {
+      chomp( $foo = `kpsewhich -var-value=TEXMFLOCAL`);
+    }
+  } else {
+    $foo = $opt_akotfps;
+  }
+  $opt_akotfps = $foo;
+}
+
 main(@ARGV);
 
 #
@@ -306,6 +356,23 @@ sub main {
   print_info("reading font database ...\n");
   read_font_database();
   determine_nonotf_link_name(); # see comments there
+  if ($opt_winbatch) {
+    if (win32()) {
+      $opt_winbatch = 1;
+      unlink $winbatch if (-f $winbatch);
+    } else {
+      print_warning("ignoring --winbatch option due to non-Windows\n");
+      $opt_winbatch = 0;
+    }
+  }
+  if ($opt_hardlink) {
+    if (win32()) {
+      $opt_hardlink = 1;
+    } else {
+      print_warning("ignoring --hardlink option due to non-Windows\n");
+      $opt_hardlink = 0;
+    }
+  }
   if (!$opt_listallaliases) {
     print_info("checking for files ...\n");
     check_for_files();
@@ -367,6 +434,13 @@ sub main {
     }
   }
   exit(0) if ($opt_listfonts || $opt_listaliases || $opt_listallaliases);
+  # if $opt_machine is still alive after the above exit(0), it's useless
+  if ($opt_machine) {
+    print_error("Option --machine-readable should be used with at least one of the followings:\n");
+    print_error("  --list-aliases, --list-all-aliases, --list-fonts, --info\n");
+    print_error("terminating.\n");
+    exit(1);
+  }
 
   if (! $opt_output) {
     print_info("searching for GhostScript resource\n");
@@ -388,15 +462,21 @@ sub main {
     do_otf_fonts();
     print_info(($opt_remove ? "removing" : "generating") . " font snippets, links, and cidfmap.local for TTF fonts ...\n");
     do_nonotf_fonts();
+    write_winbatch() if ($opt_winbatch);
   }
   print_info(($opt_remove ? "removing" : "generating") . " font aliases ...\n");
   do_aliases();
+  write_akotfps_datafile() if ($opt_akotfps);
   print_info("finished\n");
+  if ($opt_winbatch && -f $winbatch) {
+    print_info("*** Batch file $winbatch created ***\n");
+    print_info("*** to complete, run it as administrator privilege.***\n");
+  }
 }
 
 sub update_master_cidfmap {
   my $add = shift;
-  my $cidfmap_master = "$opt_output/Init/cidfmap";
+  my $cidfmap_master = "$opt_output/$cidfmap_pathpart";
   print_info(sprintf("%s $add %s cidfmap file ...\n", 
     ($opt_remove ? "removing" : "adding"), ($opt_remove ? "from" : "to")));
   if (-r $cidfmap_master) {
@@ -414,22 +494,31 @@ sub update_master_cidfmap {
       }
     }
     close(FOO);
-    if ($found) {
-      if ($opt_remove) {
+    # if the master cidfmap has a new line at end of file,
+    # then $newmaster should end with "\n".
+    # otherwise we add a new line, since there is a possibility of %EOF comment
+    # without trailing new line (e.g. TL before r44039)
+    $newmaster =~ s/\n$//g;
+    $newmaster =~ s/$/\n/g;
+    if ($opt_remove) {
+      if ($found) {
+        return if $dry_run;
         open(FOO, ">", $cidfmap_master) ||
           die ("Cannot clean up $cidfmap_master: $!");
         print FOO $newmaster;
         close FOO;
-      } else {
-        print_info("$add already loaded in $cidfmap_master, no changes\n");
       }
     } else {
-      return if $dry_run;
-      return if $opt_remove;
-      open(FOO, ">>", $cidfmap_master) ||
-        die ("Cannot open $cidfmap_master for appending: $!");
-      print FOO "($add) .runlibfile\n";
-      close(FOO);
+      if ($found) {
+        print_info("$add already loaded in $cidfmap_master, no changes\n");
+      } else {
+        return if $dry_run;
+        open(FOO, ">", $cidfmap_master) ||
+          die ("Cannot open $cidfmap_master for appending: $!");
+        print FOO $newmaster;
+        print FOO "($add) .runlibfile\n";
+        close(FOO);
+      }
     }
   } else {
     return if $dry_run;
@@ -475,6 +564,10 @@ sub do_otf_fonts {
 sub generate_font_snippet {
   my ($fd, $n, $c, $f) = @_;
   return if $dry_run;
+  if ($opt_akotfps) {
+    add_akotfps_data($n);
+    return;
+  }
   for my $enc (@{$encode_list{$c}}) {
     if ($opt_remove) {
       unlink "$fd/$n-$enc" if (-f "$fd/$n-$enc");
@@ -482,19 +575,27 @@ sub generate_font_snippet {
     }
     open(FOO, ">$fd/$n-$enc") || 
       die("cannot open $fd/$n-$enc for writing: $!");
-    print FOO "%%!PS-Adobe-3.0 Resource-Font
-%%%%DocumentNeededResources: $enc (CMap)
-%%%%IncludeResource: $enc (CMap)
-%%%%BeginResource: Font ($n-$enc)
+    print FOO "%!PS-Adobe-3.0 Resource-Font
+%%DocumentNeededResources: $enc (CMap)
+%%IncludeResource: $enc (CMap)
+%%BeginResource: Font ($n-$enc)
 ($n-$enc)
 ($enc) /CMap findresource
 [($n) /CIDFont findresource]
 composefont
 pop
-%%%%EndResource
-%%%%EOF
+%%EndResource
+%%EOF
 ";
     close(FOO);
+  }
+}
+
+sub add_akotfps_data {
+  my ($fn) = @_;
+  return if $dry_run;
+  if (! $opt_remove) {
+    $akotfps_datacontent .= "$fn\n";
   }
 }
 
@@ -571,10 +672,10 @@ sub link_font {
   } # otherwise it is not existing!
 
   # if we are still here and $do_unlink is set, remove it
-  unlink($target) if $do_unlink;
+  maybe_unlink($target) if $do_unlink;
   # recreate link if we are not in the remove case
   if (! $opt_remove) {
-    symlink($f, $target) || die("Cannot link font $f to $target: $!");
+    maybe_symlink($f, $target) || die("Cannot link font $f to $target: $!");
   }
 }
 
@@ -619,8 +720,8 @@ sub do_nonotf_fonts {
       mkdir("$opt_output/Init") ||
         die("Cannot create directory $opt_output/Init: $!");
     }
-    open(FOO, ">$opt_output/Init/cidfmap.local") || 
-      die "Cannot open $opt_output/cidfmap.local: $!";
+    open(FOO, ">$opt_output/$cidfmap_local_pathpart") || 
+      die "Cannot open $opt_output/$cidfmap_local_pathpart: $!";
     print FOO $outp;
     close(FOO);
   }
@@ -673,7 +774,8 @@ sub do_aliases {
       $target = $aliases{$al}{$first};
       $class  = $fontdb{$target}{'class'};
     }
-    # we also need to create font snippets in Font for the aliases!
+    # we also need to create font snippets in Font (or add configuration)
+    # for the aliases!
     generate_font_snippet($fontdest, $al, $class, $target);
     if ($class eq 'Japan') {
       push @jal, "/$al /$target ;";
@@ -698,8 +800,8 @@ sub do_aliases {
       mkdir("$opt_output/Init") ||
         die("Cannot create directory $opt_output/Init: $!");
     }
-    open(FOO, ">$opt_output/Init/cidfmap.aliases") || 
-      die "Cannot open $opt_output/cidfmap.aliases: $!";
+    open(FOO, ">$opt_output/$cidfmap_aliases_pathpart") || 
+      die "Cannot open $opt_output/$cidfmap_aliases_pathpart: $!";
     print FOO $outp;
     close(FOO);
   }
@@ -731,6 +833,118 @@ sub generate_cidfmap_entry {
   }
   $s .= " >> ;\n";
   return $s;
+}
+
+# perl symlink function does not work on windows, so leave it to
+# cmd.exe mklink function (or write to batch file).
+# if target already exists, do not try to override it. otherwise
+# "mklink error: Cannot create a file when that file already exists"
+# is thrown many times
+sub maybe_symlink {
+  my ($realname, $targetname) = @_;
+  if (win32()) {
+    # hardlink vs. symlink -- HY 2017/04/26
+    #   * readablitiy: hardlink is easier, but it seems that current gs can read
+    #                  symlink properly, so it doesn't matter
+    #   * permission:  hardlink creation does not require administrator privilege,
+    #                  but is likely to fail for c:/windows/fonts/* system files
+    #                  due to "Access denied"
+    #                  symlink creation requires administrator privilege, but
+    #                  it can link to all files in c:/windows/fonts/
+    #   * versatility: symlink can point to a file on a different/remote volume
+    # for these reasons, we try to create symlink by default.
+    # if --hardlink option is given, we create hardlink instead.
+    # also, if --winbatch option is given, we prepare batch file for link generation,
+    # instead of creating links right away.
+    $realname =~ s!/!\\!g;
+    $targetname =~ s!/!\\!g;
+    if ($opt_winbatch) {
+      # re-encoding of $winbatch_content is done by write_winbatch()
+      $winbatch_content .= "if not exist \"$targetname\" mklink ";
+      $winbatch_content .= "/h " if ($opt_hardlink);
+      $winbatch_content .= "\"$targetname\" \"$realname\"\n";
+    } else {
+      # should be encoded in cp932 for win32 console
+      $realname = encode_utftocp($realname);
+      $targetname = encode_utftocp($targetname);
+      my $cmdl = "cmd.exe /c if not exist \"$targetname\" mklink ";
+      $cmdl .= "/h " if ($opt_hardlink);
+      $cmdl .= "\"$targetname\" \"$realname\"";
+      my @ret = `$cmdl`;
+      # sometimes hard link creation may fail due to "Access denied"
+      # (especially when $realname is located in c:/windows/fonts).
+      # TODO: what should we do to ensure resources, which might be
+      #       different from $realname? -- HY (2017/03/21)
+      # -- one possibility:
+      # if (@ret) {
+      #   @ret ="done";
+      # } else {
+      #   print_info("Hard link creation for $realname failed. I will copy this file instead.\n");
+      #   $cmdl = "cmd.exe /c if not exist \"$targetname\" copy \"$realname\" \"$targetname\"";
+      #   @ret = `$cmdl`;
+      # }
+      # -- however, both tlgs (TeX Live) and standalone gswin32/64 (built
+      #    by Akira Kakuto) can search in c:/windows/fonts by default.
+      #    Thus, copying such files is waste of memory
+    }
+  } else {
+    symlink ($realname, $targetname);
+  }
+}
+
+# unlink function actually works also on windows, however,
+# leave it to batch file for consistency. otherwise
+# option $opt_force may not work as expected
+sub maybe_unlink {
+  my ($targetname) = @_;
+  if (win32()) {
+    $targetname =~ s!/!\\!g;
+    if ($opt_winbatch) {
+      # re-encoding of $winbatch_content is done by write_winbatch()
+      $winbatch_content .= "if exist \"$targetname\" del \"$targetname\"\n";
+    } else {
+      # should be encoded in cp932 for win32 console
+      $targetname = encode_utftocp($targetname);
+      my $cmdl = "cmd.exe /c if exist \"$targetname\" del \"$targetname\"";
+      my @ret = `$cmdl`;
+    }
+  } else {
+    unlink ($targetname);
+  }
+}
+
+# write batch file (windows only)
+sub write_winbatch {
+  return if $dry_run;
+  open(FOO, ">$winbatch") || 
+    die("cannot open $winbatch for writing: $!");
+  # $winbatch_content may contain multibyte characters, and they
+  # should be encoded in cp932 in batch file
+  $winbatch_content = encode_utftocp($winbatch_content);
+  print FOO "\@echo off\n",
+            "$winbatch_content",
+            "\@echo symlink ", ($opt_remove ? "removed\n" : "generated\n"),
+            "\@pause 1\n";
+  close(FOO);
+}
+
+# write to psnames-for-otfps
+sub write_akotfps_datafile {
+  return if $dry_run;
+  make_dir("$opt_akotfps/$akotfps_pathpart",
+         "cannot create $akotfps_datafilename in it!");
+  open(FOO, ">$opt_akotfps/$akotfps_pathpart/$akotfps_datafilename") || 
+    die("cannot open $opt_akotfps/$akotfps_pathpart/$akotfps_datafilename for writing: $!");
+  print FOO "% psnames-for-otf
+%
+% PostSctipt names for OpenType fonts
+%
+% This file is used by a program ps2otfps
+% in order to add needed information to a ps file
+% created by the dvips
+%
+$akotfps_datacontent";
+  close(FOO);
 }
 
 #
@@ -814,6 +1028,13 @@ sub check_for_files {
       for my $d (qw!/Library/Fonts /System/Library/Fonts /System/Library/Assets /Network/Library/Fonts /usr/share/fonts!) {
         push @extradirs, "$d//" if (-d $d); # recursive search
       }
+      # macosx specific; the path contains white space, so hack required
+      for my $d (qw!/Applications/Microsoft__Word.app /Applications/Microsoft__Excel.app /Applications/Microsoft__PowerPoint.app!) {
+        my $sd = $d;
+        $sd =~ s/__/ /;
+        push @extradirs, "$sd/Contents/Resources/Fonts/" if (-d "$sd/Contents/Resources/Fonts");
+        push @extradirs, "$sd/Contents/Resources/DFonts/" if (-d "$sd/Contents/Resources/DFonts");
+      }
       my $home = $ENV{'HOME'};
       push @extradirs, "$home/Library/Fonts//" if (-d "$home/Library/Fonts");
     }
@@ -851,9 +1072,16 @@ sub check_for_files {
       $cmdl .= " \"$f\" ";
     }
     # shoot up kpsewhich
+    # this call (derived from the database) contains multibyte characters,
+    # and they should be encoded in cp932 for win32 console
+    if (win32()) {
+      $cmdl = encode_utftocp($cmdl);
+    }
     print_ddebug("checking for $cmdl\n");
     @foundfiles = `$cmdl`;
   }
+  # at this point, on windows, @foundfiles is encoded in cp932
+  # which is suitable for the next few lines
   chomp(@foundfiles);
   print_ddebug("Found files @foundfiles\n");
   # map basenames to filenames
@@ -864,9 +1092,16 @@ sub check_for_files {
       print_warning("dead link or strange file found: $f - ignored!\n");
       next;
     }
+    # decode now on windows! (cp932 -> internal utf-8)
+    if (win32()) {
+      $f = encode_cptoutf($f);
+      $realf = encode_cptoutf($realf);
+    }
     my $bn = basename($f);
     $bntofn{$bn} = $realf;
   }
+
+  # show the %fontdb before file check
   if ($opt_debug > 0) {
     print_debug("dumping font database before file check:\n");
     print_debug(Data::Dumper::Dumper(\%fontdb));
@@ -1082,7 +1317,12 @@ sub read_font_database {
     if ($l =~ m/^OTFname(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
       $fontfiles{$fn}{'priority'} = ($2 ? $2 : 10);
-      print_ddebug("filename: $fn\n");
+      # cp932 for win32 console
+      my $encoded_fn;
+      if (win32()) {
+        $encoded_fn = encode_utftocp($fn);
+      }
+      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
       print_ddebug("type: otf\n");
       $fontfiles{$fn}{'type'} = 'OTF';
       next;
@@ -1090,7 +1330,12 @@ sub read_font_database {
     if ($l =~ m/^OTCname(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
       $fontfiles{$fn}{'priority'} = ($2 ? $2 : 10);
-      print_ddebug("filename: $fn\n");
+      # cp932 for win32 console
+      my $encoded_fn;
+      if (win32()) {
+        $encoded_fn = encode_utftocp($fn);
+      }
+      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
       print_ddebug("type: otc\n");
       $fontfiles{$fn}{'type'} = 'OTC';
       next;
@@ -1098,7 +1343,12 @@ sub read_font_database {
     if ($l =~ m/^TTFname(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
       $fontfiles{$fn}{'priority'} = ($2 ? $2 : 10);
-      print_ddebug("filename: $fn\n");
+      # cp932 for win32 console
+      my $encoded_fn;
+      if (win32()) {
+        $encoded_fn = encode_utftocp($fn);
+      }
+      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
       print_ddebug("type: ttf\n");
       $fontfiles{$fn}{'type'} = 'TTF';
       next;
@@ -1106,7 +1356,12 @@ sub read_font_database {
     if ($l =~ m/^TTCname(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
       $fontfiles{$fn}{'priority'} = ($2 ? $2 : 10);
-      print_ddebug("filename: $fn\n");
+      # cp932 for win32 console
+      my $encoded_fn;
+      if (win32()) {
+        $encoded_fn = encode_utftocp($fn);
+      }
+      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
       print_ddebug("type: ttc\n");
       $fontfiles{$fn}{'type'} = 'TTC';
       next;
@@ -1115,7 +1370,12 @@ sub read_font_database {
     if ($l =~ m/^Filename(\((\d+)\))?:\s*(.*)$/) {
       my $fn = $3;
       $fontfiles{$fn}{'priority'} = ($2 ? $2 : 10);
-      print_ddebug("filename: $fn\n");
+      # cp932 for win32 console
+      my $encoded_fn;
+      if (win32()) {
+        $encoded_fn = encode_utftocp($fn);
+      }
+      print_ddebug("filename: ", ($encoded_fn ? "$encoded_fn" : "$fn"), "\n");
       if ($fn =~ m/\.otf$/i) {
         print_ddebug("type: otf\n");
         $fontfiles{$fn}{'type'} = 'OTF';
@@ -1143,9 +1403,35 @@ sub read_font_database {
 
 sub find_gs_resource {
   my $foundres = '';
-  if (!win32()) {
+  if (win32()) {
+    # determine tlgs or native gs
+    chomp( my $foo = `kpsewhich -var-value=SELFAUTOPARENT`);
+    if ( -d "$foo/tlpkg/tlgs" ) {
+      # should be texlive with tlgs
+      $foundres = "$foo/tlpkg/tlgs/Resource";
+      # for TL2016, tlgs binary has built-in Resource,
+      # so we cannot set up CJK fonts correctly.
+      # the following test forces to exit in such case
+      if ( ! -d $foundres ) {
+        print_error("No Resource directory available for tlgs,\n");
+        print_error("we cannot support such gs, sorry.\n");
+        $foundres = '';
+      }
+      # change output location
+      $cidfmap_pathpart = "../lib/cidfmap";
+      $cidfmap_local_pathpart = "../lib/cidfmap.local";
+      $cidfmap_aliases_pathpart = "../lib/cidfmap.aliases";
+    } else {
+      # TODO: we assume gswin32c is in the path
+      # paths other than c:/gs/gs$gsver/Resource are not considered
+      chomp( my $gsver = `gswin32c --version 2>$nul` );
+      $foundres = "c:/gs/gs$gsver/Resource";
+      if ( ! -d $foundres ) {
+        $foundres = '';
+      }
+    }
+  } else {
     # we assume that gs is in the path
-    # on Windows we probably have to try something else
     chomp( my $gsver = `gs --version 2>$nul` );
     if ($?) {
       print_error("Cannot get gs version ...\n");
@@ -1190,6 +1476,20 @@ sub find_gs_resource {
   return $foundres;
 }
 
+sub encode_utftocp {
+  my ($foo) = @_;
+  $foo = Encode::decode('utf-8', $foo);
+  $foo = Encode::encode('cp932', $foo);
+  return $foo;
+}
+
+sub encode_cptoutf {
+  my ($foo) = @_;
+  $foo = Encode::decode('cp932', $foo);
+  $foo = Encode::encode('utf-8', $foo);
+  return $foo;
+}
+
 sub version {
   my $ret = sprintf "%s version %s\n", $prg, $version;
   return $ret;
@@ -1199,13 +1499,11 @@ sub Usage {
   my $headline = "Configuring GhostScript for CJK CID/TTF fonts";
   my $usage = "[perl] $prg\[.pl\] [OPTIONS]";
   my $options = "
--n, --dry-run         do not actually output anything
---remove              try to remove instead of create
--f, --fontdef FILE    specify alternate set of font definitions, if not
-                      given, the built-in set is used
 -o, --output DIR      specifies the base output dir, if not provided,
                       the Resource directory of an installed GhostScript
                       is searched and used.
+-f, --fontdef FILE    specify alternate set of font definitions, if not
+                      given, the built-in set is used
 -a, --alias LL=RR     defines an alias, or overrides a given alias;
                       illegal if LL is provided by a real font, or
                       RR is neither available as real font or alias;
@@ -1217,12 +1515,23 @@ sub Usage {
                       and
                          DIR/$ttf_pathpart
                       where DIR defaults to TEXMFLOCAL
---machine-readable    output of --list-aliases is machine readable
+--otfps [DIR]         generate configuration file (psnames-for-otf) into
+                         DIR/$akotfps_pathpart
+                      which is used by ps2otfps (developed by Akira Kakuto),
+                      instead of generating snippets
 --force               do not bail out if linked fonts already exist
+--remove              try to remove instead of create
+-n, --dry-run         do not actually output anything
 -q, --quiet           be less verbose
 -d, --debug           output debug information, can be given multiple times
 -v, --version         outputs only the version information
 -h, --help            this help
+";
+
+  my $winonlyoptions = "
+--hardlink            create hardlinks instead of symlinks
+--winbatch            prepare a batch file for link generation, instead of
+                      generating links right away
 ";
 
   my $commandoptions = "
@@ -1233,6 +1542,7 @@ sub Usage {
                       present files
 --list-fonts          lists the fonts found on the system
 --info                combines the above two information
+--machine-readable    output of --list-aliases is machine readable
 ";
 
   my $shortdesc = "
@@ -1246,6 +1556,7 @@ my $operation = "
 For each found TrueType (TTF) font it creates a cidfmap entry in
 
     <Resource>/Init/cidfmap.local
+      -- if you are using tlgs win32, tlpkg/tlgs/lib/cidfmap.local instead
 
 and links the font to
 
@@ -1265,10 +1576,12 @@ from an installed GhostScript (binary name is assumed to be 'gs').
 Aliases are added to 
 
     <Resource>/Init/cidfmap.aliases
+      -- if you are using tlgs win32, tlpkg/tlgs/lib/cidfmap.aliases instead
 
 Finally, it tries to add runlib calls to
 
     <Resource>/Init/cidfmap
+      -- if you are using tlgs win32, tlpkg/tlgs/lib/cidfmap
 
 to load the cidfmap.local and cidfmap.aliases.
 ";
@@ -1277,8 +1590,13 @@ to load the cidfmap.local and cidfmap.aliases.
 Search is done using the kpathsea library, in particular using kpsewhich
 program. By default the following directories are searched:
   - all TEXMF trees
-  - `/Library/Fonts`, `/Library/Fonts/Microsoft`, `/System/Library/Fonts`, 
-    `/Network/Library/Fonts`, and `~/Library/Fonts` (all if available)
+  - `/Library/Fonts`, `/Library/Fonts/Microsoft`, `/System/Library/Fonts`,
+    `/System/Library/Assets`, `/Network/Library/Fonts`,
+    `~/Library/Fonts` and `/usr/share/fonts` (all if available)
+  - `/Applications/Microsoft Word.app/Contents/Resources/{Fonts,DFonts}`,
+    `/Applications/Microsoft Excel.app/Contents/Resources/{Fonts,DFonts}`,
+    `/Applications/Microsoft PowerPoint.app/Contents/Resources/{Fonts,DFonts}`
+     (all if available, meant for Office for Mac 2016)
   - `c:/windows/fonts` (on Windows)
   - the directories in `OSFONTDIR` environment variable
 
@@ -1371,6 +1689,8 @@ The contained font data is not copyrightable.
     print "\n$shortdesc\nUsage\n-----\n\n`````\n$usage\n`````\n\n";
     print "#### Options ####\n\n`````";
     print_for_out($options, "  ");
+    print "`````\n\n#### Windows only options ####\n\n`````";
+    print_for_out($winonlyoptions, "  ");
     print "`````\n\n#### Command like options ####\n\n`````";
     print_for_out($commandoptions, "  ");
     print "`````\n\nOperation\n---------\n$operation\n";
@@ -1386,6 +1706,10 @@ The contained font data is not copyrightable.
     print "\nUsage: $usage\n\n$headline\n$shortdesc";
     print "\nOptions:\n";
     print_for_out($options, "  ");
+    if (win32()) {
+      print "\nWindows only options:\n";
+      print_for_out($winonlyoptions, "  ");
+    }
     print "\nCommand like options:\n";
     print_for_out($commandoptions, "  ");
     print "\nOperation:\n";
@@ -1943,6 +2267,9 @@ OTCname(30): YuMincho.ttc(5)
 #   YuGothic.ttf
 #   YuGothic-Bold.ttf
 # are bundled with VS2013 or later versions.
+#   YuGoth{B,L,M,R}.ttf
+#   yumin.ttf, yumin{db,l}.ttf
+# are bundled with Office for Mac 2016.
 # Also, symlink names should be consistent with ptex-fontmaps!
 
 Name: YuMincho-Regular
@@ -1952,12 +2279,12 @@ Provides(90): RyuminPro-Light
 Provides(90): HiraMinProN-W3
 Provides(90): HiraMinPro-W3
 TTFname(20): yumin.ttf
-#TTFname(21): YuMincho-Regular.ttf
+#TTFname(50): YuMincho-Regular.ttf
 
 Name: YuMincho-Light
 Class: Japan
 TTFname(20): yuminl.ttf
-#TTFname(21): YuMincho-Light.ttf
+#TTFname(50): YuMincho-Light.ttf
 
 Name: YuMincho-DemiBold
 Class: Japan
@@ -1966,7 +2293,7 @@ Provides(90): FutoMinA101Pro-Bold
 Provides(90): HiraMinProN-W6
 Provides(90): HiraMinPro-W6
 TTFname(20): yumindb.ttf
-#TTFname(21): YuMincho-DemiBold.ttf
+#TTFname(50): YuMincho-DemiBold.ttf
 
 Name: YuGothic-Regular
 Class: Japan
@@ -1975,18 +2302,21 @@ Provides(90): GothicBBBPro-Medium
 Provides(90): HiraKakuProN-W3
 Provides(90): HiraKakuPro-W3
 TTFname(20): yugothic.ttf
-#TTFname(21): YuGothic-Regular.ttf
 TTCname(30): YuGothR.ttc(0)
+TTFname(40): YuGothR.ttf
+#TTFname(50): YuGothic-Regular.ttf
 
 Name: YuGothic-Medium
 Class: Japan
 TTCname(30): YuGothM.ttc(0)
+TTFname(40): YuGothM.ttf
 
 Name: YuGothic-Light
 Class: Japan
 TTFname(20): yugothil.ttf
-#TTFname(21): YuGothic-Light.ttf
 TTCname(30): YuGothL.ttc(0)
+TTFname(40): YuGothL.ttf
+#TTFname(50): YuGothic-Light.ttf
 
 Name: YuGothic-Bold
 Class: Japan
@@ -2003,8 +2333,9 @@ Provides(90): MidashiGoPro-MB31
 Provides(90): HiraKakuStdN-W8
 Provides(90): HiraKakuStd-W8
 TTFname(20): yugothib.ttf
-TTFname(21): YuGothic-Bold.ttf
 TTCname(30): YuGothB.ttc(0)
+TTFname(40): YuGothB.ttf
+TTFname(50): YuGothic-Bold.ttf
 
 # IPA (free)
 
@@ -2392,6 +2723,16 @@ Name: Sazanami-Gothic-Regular
 Class: Japan
 TTFname: sazanami-gothic.ttf
 
+# Osaka (Apple)
+
+Name: Osaka
+Class: Japan
+TTFname: Osaka.ttf
+
+Name: Osaka-Mono
+Class: Japan
+TTFname: OsakaMono.ttf
+
 # Kozuka (Adobe)
 
 Name: KozGoPr6N-Bold
@@ -2712,6 +3053,54 @@ Class: CNS
 #Provides(??): MSung-Light # fails
 TTFname(20): 儷宋 Pro.ttf
 TTFname(10): LiSongPro.ttf
+
+Name: PingFangTC-Regular
+Class: CNS
+OTCname: PingFang.ttc(1)
+
+Name: PingFangSC-Regular
+Class: GB
+OTCname: PingFang.ttc(2)
+
+Name: PingFangTC-Medium
+Class: CNS
+OTCname: PingFang.ttc(4)
+
+Name: PingFangSC-Medium
+Class: GB
+OTCname: PingFang.ttc(5)
+
+Name: PingFangTC-Semibold
+Class: CNS
+OTCname: PingFang.ttc(7)
+
+Name: PingFangSC-Semibold
+Class: GB
+OTCname: PingFang.ttc(8)
+
+Name: PingFangTC-Light
+Class: CNS
+OTCname: PingFang.ttc(10)
+
+Name: PingFangSC-Light
+Class: GB
+OTCname: PingFang.ttc(11)
+
+Name: PingFangTC-Thin
+Class: CNS
+OTCname: PingFang.ttc(13)
+
+Name: PingFangSC-Thin
+Class: GB
+OTCname: PingFang.ttc(14)
+
+Name: PingFangTC-Ultralight
+Class: CNS
+OTCname: PingFang.ttc(16)
+
+Name: PingFangSC-Ultralight
+Class: GB
+OTCname: PingFang.ttc(17)
 
 # Changzhou SinoType (OS X)
 
@@ -3041,6 +3430,11 @@ PSName: DFWaWaSC-W5
 Class: GB
 OTFname: WawaSC-Regular.otf
 
+Name: WawaTC-Regular
+PSName: DFWaWaTC-W5
+Class: CNS
+OTFname: WawaTC-Regular.otf
+
 Name: HannotateSC-W5
 Class: GB
 OTCname: Hannotate.ttc(0)
@@ -3072,6 +3466,28 @@ OTCname: Hanzipen.ttc(2)
 Name: HanziPenTC-W5
 Class: CNS
 OTCname: Hanzipen.ttc(3)
+
+# Shanghai Ikarus Ltd./URW Software & Type GmbH
+
+Name: SIL-Hei-Med-Jian
+Class: GB
+TTFname: Hei.ttf
+
+Name: SIL-Kai-Reg-Jian
+Class: GB
+TTFname: Kai.ttf
+
+# Apple
+
+Name: LiSungLight
+Class: CNS
+TTFname(20): Apple LiSung Light.ttf
+TTFname(10): LiSungLight.ttf
+
+Name: LiGothicMed
+Class: CNS
+TTFname(20): Apple LiGothic Medium.ttf
+TTFname(10): LiGothicMed.ttf
 
 # Adobe chinese fonts
 
@@ -3230,6 +3646,77 @@ Provides(90): STKaiti-Regular
 Provides(90): STHeiti-Regular
 Provides(90): STHeiti-Light
 TTFname: ukai.ttf
+
+# WenQuanYi (free)
+
+# GB
+Name: WenQuanYiMicroHei
+Class: GB
+TTCname(10): wqy-microhei.ttc(0)
+# CNS
+Name: WenQuanYiMicroHei-Adobe-CNS1
+Class: CNS
+TTCname(10): wqy-microhei.ttc(0)
+
+# GB
+Name: WenQuanYiMicroHeiMono
+Class: GB
+TTCname(10): wqy-microhei.ttc(1)
+# CNS
+Name: WenQuanYiMicroHeiMono-Adobe-CNS1
+Class: CNS
+TTCname(10): wqy-microhei.ttc(1)
+
+# GB
+Name: WenQuanYiZenHei
+Class: GB
+TTCname(10): wqy-zenhei.ttc(0)
+TTFname(20): wqy-zenhei.ttf
+# CNS
+Name: WenQuanYiZenHei-Adobe-CNS1
+Class: CNS
+TTCname(10): wqy-zenhei.ttc(0)
+TTFname(20): wqy-zenhei.ttf
+
+# GB
+Name: WenQuanYiZenHeiMono
+Class: GB
+TTCname(10): wqy-zenhei.ttc(1)
+# CNS:
+Name: WenQuanYiZenHeiMono-Adobe-CNS1
+Class: CNS
+TTCname(10): wqy-zenhei.ttc(1)
+
+# GB
+Name: WenQuanYiZenHeiSharp
+Class: GB
+TTCname(10): wqy-zenhei.ttc(2)
+# CNS
+Name: WenQuanYiZenHeiSharp-Adobe-CNS1
+Class: CNS
+TTCname(10): wqy-zenhei.ttc(2)
+
+# cwTeX (free)
+
+Name: cwTeXMing
+Class: CNS
+TTFname: cwming.ttf
+
+Name: cwTeXHeiBold
+Class: CNS
+TTFname: cwheib.ttf
+
+Name: cwTeXKai
+Class: CNS
+TTFname: cwkai.ttf
+
+Name: cwTeXYen
+Class: CNS
+TTFname: cwyen.ttf
+
+Name: cwTeXFangSong
+Class: CNS
+TTFname: cwfs.ttf
 
 #
 # KOREAN FONTS
@@ -3468,6 +3955,34 @@ Class: Korea
 TTFname(10): NanumPen.ttf
 TTCname(20): NanumScript.ttc(1)
 
+# Design font by Ho-Seok Ee, aka. "ALee's font" (free)
+
+Name: Bandal
+Class: Korea
+TTFname: Bandal.ttf
+
+Name: Bangwool
+Class: Korea
+TTFname: Bangwool.ttf
+
+Name: Eunjin
+Class: Korea
+TTFname: Eunjin.ttf
+
+Name: EunjinNakseo
+Class: Korea
+TTFname: EunjinNakseo.ttf
+
+Name: Guseul
+Class: Korea
+TTFname: Guseul.ttf
+
+# Woowa Brothers (free)
+
+Name: BMHANNA
+Class: Korea
+TTFname: BM-HANNA.ttf
+
 # Hancom HCR (free)
 # note that all fonts have narrow metrics
 
@@ -3500,41 +4015,66 @@ Class: Korea
 #Provides(??): HYRGoThic-Medium # fails
 TTFname: AppleGothic.ttf
 
-Name: AppleSDGothicNeo-Thin
-Class: Korea
-OTFname: AppleSDGothicNeo-Thin.otf
-
-Name: AppleSDGothicNeo-UltraLight
-Class: Korea
-OTFname: AppleSDGothicNeo-UltraLight.otf
-
-Name: AppleSDGothicNeo-Light
-Class: Korea
-OTFname: AppleSDGothicNeo-Light.otf
-
 Name: AppleSDGothicNeo-Regular
 Class: Korea
-OTFname: AppleSDGothicNeo-Regular.otf
+OTFname(10): AppleSDGothicNeo-Regular.otf
+OTCname(20): AppleSDGothicNeo.ttc(0)
 
 Name: AppleSDGothicNeo-Medium
 Class: Korea
-OTFname: AppleSDGothicNeo-Medium.otf
+OTFname(10): AppleSDGothicNeo-Medium.otf
+OTCname(20): AppleSDGothicNeo.ttc(2)
 
 Name: AppleSDGothicNeo-SemiBold
 Class: Korea
-OTFname: AppleSDGothicNeo-SemiBold.otf
+OTFname(10): AppleSDGothicNeo-SemiBold.otf
+OTCname(20): AppleSDGothicNeo.ttc(4)
 
 Name: AppleSDGothicNeo-Bold
 Class: Korea
-OTFname: AppleSDGothicNeo-Bold.otf
+OTFname(10): AppleSDGothicNeo-Bold.otf
+OTCname(20): AppleSDGothicNeo.ttc(6)
+
+Name: AppleSDGothicNeo-Light
+Class: Korea
+OTFname(10): AppleSDGothicNeo-Light.otf
+OTCname(20): AppleSDGothicNeo.ttc(8)
+
+Name: AppleSDGothicNeo-Thin
+Class: Korea
+OTFname(10): AppleSDGothicNeo-Thin.otf
+OTCname(20): AppleSDGothicNeo.ttc(10)
+
+Name: AppleSDGothicNeo-UltraLight
+Class: Korea
+OTFname(10): AppleSDGothicNeo-UltraLight.otf
+OTCname(20): AppleSDGothicNeo.ttc(12)
 
 Name: AppleSDGothicNeo-ExtraBold
 Class: Korea
-OTFname: AppleSDGothicNeo-ExtraBold.otf
+OTFname(10): AppleSDGothicNeo-ExtraBold.otf
+OTCname(20): AppleSDGothicNeo.ttc(14)
 
 Name: AppleSDGothicNeo-Heavy
 Class: Korea
-OTFname: AppleSDGothicNeo-Heavy.otf
+OTFname(10): AppleSDGothicNeo-Heavy.otf
+OTCname(20): AppleSDGothicNeo.ttc(16)
+
+Name: JCsmPC
+Class: Korea
+TTFname: PCmyoungjo.ttf
+
+Name: JCfg
+Class: Korea
+TTFname: Pilgiche.ttf
+
+Name: JCkg
+Class: Korea
+TTFname: Gungseouche.ttf
+
+Name: JCHEadA
+Class: Korea
+TTFname: HeadlineA.ttf
 
 # Adobe korean fonts
 
@@ -3554,7 +4094,7 @@ Class: Korea
 OTFname: AdobeGothicStd-Light.otf
 
 #
-# Microsoft Mac Office fonts
+# Microsoft Windows, Windows/Mac Office fonts
 #
 
 # korea
@@ -3563,43 +4103,176 @@ Name: Batang
 Class: Korea
 Provides(50): HYSMyeongJo-Medium
 TTFname(50): Batang.ttf
+TTCname(20): batang.ttc(0)
+
+Name: BatangChe
+Class: Korea
+TTCname(20): batang.ttc(1)
+
+Name: Dotum
+Class: Korea
+Provides(50): HYGoThic-Medium
+TTCname(20): gulim.ttc(2)
+
+Name: DotumChe
+Class: Korea
+TTCname(20): gulim.ttc(3)
 
 Name: Gulim
 Class: Korea
 Provides(50): HYRGoThic-Medium
 Provides(90): HYGoThic-Medium
-TTFname(30): Gulim.ttf
-TTCname(50): gulim.ttc
+TTFname(50): Gulim.ttf
+TTCname(20): gulim.ttc(0)
+
+Name: GulimChe
+Class: Korea
+TTCname(20): gulim.ttc(1)
+
+Name: Gungsuh
+Class: Korea
+TTCname(20): batang.ttc(2)
+
+Name: GungsuhChe
+Class: Korea
+TTCname(20): batang.ttc(3)
+
+Name: MalgunGothicRegular
+Class: Korea
+TTFname: malgun.ttf
+
+Name: MalgunGothicBold
+Class: Korea
+TTFname: malgunbd.ttf
+
+Name: MalgunGothic-Semilight
+Class: Korea
+TTFname: malgunsl.ttf
 
 # simplified chinese
 
 Name: SimHei
 Class: GB
 Provides(60): STHeiti-Regular
-Provides(60): STKaiti-Regular
 Provides(60): STHeiti-Light
 TTFname(50): SimHei.ttf
+TTFname(20): simhei.ttf
 
 Name: SimSun
 Class: GB
 Provides(60): STSong-Light
+TTFname(50): SimSun.ttf
+TTCname(20): simsun.ttc(0)
+
+Name: NSimSun
+Class: GB
+TTCname(20): simsun.ttc(1)
+
+Name: KaiTi
+Class: GB
+Provides(60): STKaiti-Regular
+TTFname(40): Kaiti.ttf
+TTFname(20): simkai.ttf
+
+Name: FangSong
+Class: GB
 Provides(60): STFangsong-Light
 Provides(60): STFangsong-Regular
-TTFname(50): SimSun.ttf
+TTFname(40): Fangsong.ttf
+TTFname(20): simfang.ttf
+
+Name: MicrosoftYaHei
+Class: GB
+TTFname(20): msyh.ttf
+TTCname(30): msyh.ttc(0)
+
+Name: MicrosoftYaHei-Bold
+Class: GB
+TTFname(20): msyhbd.ttf
+TTCname(30): msyhbd.ttc(0)
+
+Name: MicrosoftYaHeiLight
+Class: GB
+TTFname(20): msyhl.ttf
+TTCname(30): msyhl.ttc(0)
+
+Name: DengXian-Regular
+Class: GB
+TTFname: Deng.ttf
+
+Name: DengXian-Bold
+Class: GB
+TTFname: Dengb.ttf
+
+Name: DengXian-Light
+Class: GB
+TTFname: Dengl.ttf
+
+Name: STZhongsong
+Class: GB
+TTFname: STZHONGS.ttf
+
+Name: STXinwei
+Class: GB
+TTFname: STXINWEI.ttf
+
+Name: STXingkai
+Class: GB
+TTFname: STXINGKA.ttf
+
+Name: STLiti
+Class: GB
+TTFname: STLITI.ttf
+
+Name: STHupo
+Class: GB
+TTFname: STHUPO.ttf
 
 # traditional chinese
 
 Name: MingLiU
 Class: CNS
-Provides(60): MHei-Medium
-Provides(60): MKai-Medium
 Provides(60): MSung-Medium
 Provides(60): MSung-Light
 TTFname(50): MingLiU.ttf
+TTCname(20): mingliu.ttc(0)
 
 Name: PMingLiU
 Class: CNS
 TTFname(50): PMingLiU.ttf
+TTCname(20): mingliu.ttc(1)
+
+Name: DFKaiShu-SB-Estd-BF
+Class: CNS
+Provides(60): MKai-Medium
+TTFname(50): BiauKai.ttf
+TTFname(20): kaiu.ttf
+
+Name: MicrosoftJhengHeiRegular
+Class: CNS
+Provides(60): MHei-Medium
+TTFname(40): MSJH.ttf
+TTFname(20): msjh.ttf
+TTCname(30): msjh.ttc(0)
+
+Name: MicrosoftJhengHeiBold
+Class: CNS
+TTFname(40): MSJHBD.ttf
+TTFname(20): msjhbd.ttf
+TTCname(30): msjhbd.ttc(0)
+
+Name: MicrosoftJhengHeiLight
+Class: CNS
+TTCname(30): msjhl.ttc(0)
+
+Name: MicrosoftMHei
+Class: CNS
+Provides(65): MHei-Medium
+TTFname(10): MSMHei.ttf
+
+Name: MicrosoftMHei-Bold
+Class: CNS
+TTFname(10): MSMHei-Bold.ttf
 
 # japanese
 
@@ -3623,6 +4296,7 @@ Provides(95): HiraMaruProN-W4
 Provides(95): HiraMaruPro-W4
 TTFname(50): MS Gothic.ttf
 TTFname(30): MS-Gothic.ttf
+TTCname(20): msgothic.ttc(0)
 
 Name: MS-Mincho
 Class: Japan
@@ -3636,35 +4310,175 @@ Provides(95): HiraMinProN-W6
 Provides(95): HiraMinPro-W6
 TTFname(50): MS Mincho.ttf
 TTFname(30): MS-Mincho.ttf
+TTCname(20): msmincho.ttc(0)
 
 Name: MS-PGothic
 Class: Japan
 TTFname(50): MS PGothic.ttf
 TTFname(30): MS-PGothic.ttf
+TTCname(20): msgothic.ttc(1)
 
 Name: MS-PMincho
 Class: Japan
 TTFname(50): MS PMincho.ttf
 TTFname(30): MS-PMincho.ttf
+TTCname(20): msmincho.ttc(1)
+
+Name: MS-UIGothic
+Class: Japan
+TTCname(20): msgothic.ttc(2)
 
 Name: Meiryo
 Class: Japan
 TTFname(50): Meiryo.ttf
+TTCname(20): meiryo.ttc(0)
 
 Name: Meiryo-Bold
 Class: Japan
 TTFname(50): Meiryo Bold.ttf
+TTFname(40): MeiryoBold.ttf
 TTFname(30): Meiryo-Bold.ttf
+TTCname(20): meiryob.ttc(0)
 
 Name: Meiryo-BoldItalic
 Class: Japan
 TTFname(50): Meiryo Bold Italic.ttf
+TTFname(40): MeiryoBoldItalic.ttf
 TTFname(30): Meiryo-BoldItalic.ttf
+TTCname(20): meiryob.ttc(1)
 
 Name: Meiryo-Italic
 Class: Japan
 TTFname(50): Meiryo Italic.ttf
+TTFname(40): MeiryoItalic.ttf
 TTFname(30): Meiryo-Italic.ttf
+TTCname(20): meiryo.ttc(1)
+
+Name: HGGothicE
+Class: Japan
+TTCname(50): HGRGE.ttc(0)
+TTCname(20): HGRGE.TTC(0)
+
+Name: HGPGothicE
+Class: Japan
+TTCname(50): HGRGE.ttc(1)
+TTCname(20): HGRGE.TTC(1)
+
+Name: HGSGothicE
+Class: Japan
+TTCname(50): HGRGE.ttc(2)
+TTCname(20): HGRGE.TTC(2)
+
+Name: HGGothicM
+Class: Japan
+TTCname(20): HGRGM.TTC(0)
+
+Name: HGPGothicM
+Class: Japan
+TTCname(20): HGRGM.TTC(1)
+
+Name: HGSGothicM
+Class: Japan
+TTCname(20): HGRGM.TTC(2)
+
+Name: HGMinchoE
+Class: Japan
+TTCname(50): HGRME.ttc(0)
+TTCname(20): HGRME.TTC(0)
+
+Name: HGPMinchoE
+Class: Japan
+TTCname(50): HGRME.ttc(1)
+TTCname(20): HGRME.TTC(2)
+
+Name: HGSMinchoE
+Class: Japan
+TTCname(50): HGRME.ttc(2)
+TTCname(20): HGRME.TTC(2)
+
+Name: HGMinchoB
+Class: Japan
+TTCname(20): HGRMB.TTC(0)
+
+Name: HGPMinchoB
+Class: Japan
+TTCname(20): HGRMB.TTC(1)
+
+Name: HGPMinchoB
+Class: Japan
+TTCname(20): HGRMB.TTC(2)
+
+Name: HGSoeiKakugothicUB
+Class: Japan
+TTCname(50): HGRSGU.ttc(0)
+TTCname(20): HGRSGU.TTC(0)
+
+Name: HGPSoeiKakugothicUB
+Class: Japan
+TTCname(50): HGRSGU.ttc(1)
+TTCname(20): HGRSGU.TTC(1)
+
+Name: HGSSoeiKakugothicUB
+Class: Japan
+TTCname(50): HGRSGU.ttc(2)
+TTCname(20): HGRSGU.TTC(2)
+
+Name: HGSoeiKakupoptai
+Class: Japan
+TTCname(20): HGRPP1.TTC(0)
+
+Name: HGPSoeiKakupoptai
+Class: Japan
+TTCname(20): HGRPP1.TTC(1)
+
+Name: HGSSoeiKakupoptai
+Class: Japan
+TTCname(20): HGRPP1.TTC(2)
+
+Name: HGSoeiPresenceEB
+Class: Japan
+TTCname(20): HGRPRE.TTC(0)
+
+Name: HGPSoeiPresenceEB
+Class: Japan
+TTCname(20): HGRPRE.TTC(1)
+
+Name: HGSSoeiPresenceEB
+Class: Japan
+TTCname(20): HGRPRE.TTC(2)
+
+Name: HGKyokashotai
+Class: Japan
+TTCname(20): HGRKK.TTC(0)
+
+Name: HGPKyokashotai
+Class: Japan
+TTCname(20): HGRKK.TTC(1)
+
+Name: HGSKyokashotai
+Class: Japan
+TTCname(20): HGRKK.TTC(2)
+
+Name: HGGyoshotai
+Class: Japan
+TTCname(20): HGRGY.TTC(0)
+
+Name: HGPGyoshotai
+Class: Japan
+TTCname(20): HGRGY.TTC(1)
+
+Name: HGSGyoshotai
+Class: Japan
+TTCname(20): HGRGY.TTC(2)
+
+Name: HGMaruGothicMPRO
+Class: Japan
+TTFname(40): HGRSMP.ttf
+TTFname(20): HGRSMP.TTF
+
+Name: HGSeikaishotaiPRO
+Class: Japan
+TTFname(20): HGRSKP.TTF
 
 
 ### Local Variables:
