@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44146 2017-05-01 22:53:26Z karl $
+# $Id: tlmgr.pl 44189 2017-05-04 17:31:52Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44146 $';
-my $datrev = '$Date: 2017-05-02 00:53:26 +0200 (Tue, 02 May 2017) $';
+my $svnrev = '$Revision: 44189 $';
+my $datrev = '$Date: 2017-05-04 19:31:52 +0200 (Thu, 04 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -5519,8 +5519,8 @@ sub action_conf {
   if (!defined($arg)) {
     texconfig_conf_mimic();
 
-  } elsif ($arg !~ /^(tlmgr|texmf|updmap)$/) {
-    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf or updmap)\n";
+  } elsif ($arg !~ /^(tlmgr|texmf|updmap|auxtrees)$/) {
+    warn "$prg: unknown conf arg: $arg (try tlmgr or texmf or updmap or auxtrees)\n";
     return($F_ERROR);
 
   } else {
@@ -5532,7 +5532,7 @@ sub action_conf {
       chomp (my $TEXMFCONFIG = `kpsewhich -var-value=TEXMFCONFIG`);
       $fn || ( $fn = "$TEXMFCONFIG/tlmgr/config" ) ;
       $cf = TeXLive::TLConfFile->new($fn, "#", "=");
-    } elsif ($arg eq "texmf") {
+    } elsif ($arg eq "texmf" || $arg eq "auxtrees") {
       $fn || ( $fn = "$Master/texmf.cnf" ) ;
       $cf = TeXLive::TLConfFile->new($fn, "[%#]", "=");
     } elsif ($arg eq "updmap") {
@@ -5541,9 +5541,13 @@ sub action_conf {
     } else {
       die "Should not happen, conf arg=$arg";
     }
-    my ($key,$val,$str) = @ARGV;
+    my ($key,$val) = @ARGV;
+    # make sure that in case of tlmgr conf auxtrees (without anything else)
+    # we add the "show" argument which makes it easier to do stuff.
+    $key = "show" if ($arg eq "auxtrees" && !defined($key));
+
     if (!defined($key)) {
-      # show all settings
+      # show all settings (not auxtrees case!)
       if ($cf) {
         info("$arg configuration values (from $fn):\n");
         for my $k ($cf->keys) {
@@ -5554,92 +5558,87 @@ sub action_conf {
         return($F_WARNING);
       }
     } else {
-      if ($key eq "auxtrees") {
-        if ($arg eq "texmf") {
-          my $tmfa = 'TEXMFAUXTREES';
-          my $tv = $cf->value($tmfa);
-          if (!$val || $val eq "show") {
+      if ($arg eq "auxtrees") {
+        my $tmfa = 'TEXMFAUXTREES';
+        my $tv = $cf->value($tmfa);
+        if (!$key || $key eq "show") {
+          if (defined($tv)) {
+            $tv =~ s/^\s*//;
+            $tv =~ s/\s*$//;
+            $tv =~ s/,$//;
+            my @foo = split(',', $tv);
+            print "List of auxiliary texmf trees:\n" if (@foo);
+            for my $f (@foo) {
+              print "  $f\n";
+            }
+            return($F_OK);
+          } else {
+            print "$prg: no auxiliary texmf trees defined.\n";
+            return($F_OK);
+          }
+        } elsif ($key eq "add") {
+          if (defined($val)) {
             if (defined($tv)) {
-              $tv =~ s/^\s*{//;
-              $tv =~ s/}\s*$//;
+              $tv =~ s/^\s*//;
+              $tv =~ s/\s*$//;
               $tv =~ s/,$//;
               my @foo = split(',', $tv);
-              print "List of auxiliary texmf trees:\n" if (@foo);
+              my @new;
+              my $already = 0;
               for my $f (@foo) {
-                print "  $f\n";
-              }
-              return($F_OK);
-            } else {
-              print "$prg: no auxiliary texmf trees defined.\n";
-              return($F_OK);
-            }
-          } elsif ($val eq "add") {
-            if (defined($str)) {
-              if (defined($tv)) {
-                $tv =~ s/^\s*{//;
-                $tv =~ s/}\s*$//;
-                $tv =~ s/,$//;
-                my @foo = split(',', $tv);
-                my @new;
-                my $already = 0;
-                for my $f (@foo) {
-                  if ($f eq $str) {
-                    tlwarn("$prg: already registered auxtree: $str\n");
-                    return ($F_WARNING);
-                  } else {
-                    push @new, $f;
-                  }
-                }
-                push @new, $str;
-                $cf->value($tmfa, '{' . join(',', @new) . ',}');
-              } else {
-                $cf->value($tmfa, '{' . $str . ',}');
-              }
-            } else {
-              tlwarn("$prg: missing argument for auxtrees add\n");
-              return($F_ERROR);
-            }
-          } elsif ($val eq "remove") {
-            if (defined($str)) {
-              if (defined($tv)) {
-                $tv =~ s/^\s*{//;
-                $tv =~ s/}\s*$//;
-                $tv =~ s/,$//;
-                my @foo = split(',', $tv);
-                my @new;
-                my $removed = 0;
-                for my $f (@foo) {
-                  if ($f ne $str) {
-                    push @new, $f;
-                  } else {
-                    $removed = 1;
-                  }
-                }
-                if ($removed) {
-                  if ($#new >= 0) {
-                    $cf->value($tmfa, '{' . join(',', @new) . ',}');
-                  } else {
-                    $cf->delete_key($tmfa);
-                  }
+                if ($f eq $val) {
+                  tlwarn("$prg: already registered auxtree: $val\n");
+                  return ($F_WARNING);
                 } else {
-                  tlwarn("$prg: not defined as auxiliary texmf tree: $str\n");
-                  return($F_WARNING);
+                  push @new, $f;
+                }
+              }
+              push @new, $val;
+              $cf->value($tmfa, join(',', @new) . ',');
+            } else {
+              $cf->value($tmfa, $val . ',');
+            }
+          } else {
+            tlwarn("$prg: missing argument for auxtrees add\n");
+            return($F_ERROR);
+          }
+        } elsif ($key eq "remove") {
+          if (defined($val)) {
+            if (defined($tv)) {
+              $tv =~ s/^\s*//;
+              $tv =~ s/\s*$//;
+              $tv =~ s/,$//;
+              my @foo = split(',', $tv);
+              my @new;
+              my $removed = 0;
+              for my $f (@foo) {
+                if ($f ne $val) {
+                  push @new, $f;
+                } else {
+                  $removed = 1;
+                }
+              }
+              if ($removed) {
+                if ($#new >= 0) {
+                  $cf->value($tmfa, join(',', @new) . ',');
+                } else {
+                  $cf->delete_key($tmfa);
                 }
               } else {
-                tlwarn("$prg: no auxiliary texmf trees defined, "
-                       . "so nothing removed\n");
+                tlwarn("$prg: not defined as auxiliary texmf tree: $val\n");
                 return($F_WARNING);
               }
             } else {
-              tlwarn("$prg: missing argument for auxtrees remove\n");
-              return($F_ERROR);
+              tlwarn("$prg: no auxiliary texmf trees defined, "
+                     . "so nothing removed\n");
+              return($F_WARNING);
             }
           } else {
-            tlwarn("$prg: unknown auxtrees operation: $val\n");
+            tlwarn("$prg: missing argument for auxtrees remove\n");
             return($F_ERROR);
           }
         } else {
-          tlwarn("$prg: auxtrees not suitable for $arg\n");
+          tlwarn("$prg: unknown auxtrees operation: $key\n");
           return($F_ERROR);
         }
       } elsif (!defined($val)) {
@@ -5665,7 +5664,7 @@ sub action_conf {
               } else {
                 info("$arg $key default value: $defval");
               }
-              info(" (kpsewhich -var-value)\n");
+              info(" (from kpsewhich -var-value)\n");
             }
           }
         }
@@ -5864,13 +5863,12 @@ sub action_shell {
     }
     chomp($ans);
     if (@options) {
-      $ans--;
-      if ($ans >= 0 && $ans <= $#options) {
-        $ans = $options[$ans];
-        return($ans);
+      if ($ans =~ /^[0-9]+$/ && 0 <= $ans - 1 && $ans - 1 <= $#options) {
+        $ans = $options[$ans - 1];
       } else {
-        print "ERROR invalid answer\n";
-        return;
+        print "ERROR invalid answer $ans\n";
+        # return empty string so caller knows not to continue
+        $ans = "";
       }
     }
     if (@guarantee) {
@@ -5882,7 +5880,7 @@ sub action_shell {
         }
       }
       if (!$isok) {
-        print("Please answer one of @guarantee!\n");
+        print("Please answer one of: @guarantee\n");
         return(do_prompt(@savedargs));
       }
     }
@@ -5907,19 +5905,27 @@ sub action_shell {
     } elsif ($cmd eq "setup-location") {
       my $dest = shift @args;
       print "ERROR not implemented: $cmd\n";
+    } elsif ($cmd eq "restart") {
+      exec("tlmgr", @::SAVEDARGV);
+
     } elsif ($cmd =~ m/^(set|get)$/) {
-      my @valid_keys = qw/repository debug-translation machine-readable no-execute-actions require-verification verify-downloads/;
+      my @valid_bool_keys
+         = qw/debug-translation machine-readable no-execute-actions
+              require-verification verify-downloads/;  
+      my @valid_string_keys = qw/repository/;
+      my @valid_keys = (@valid_bool_keys, @valid_string_keys);
+      #
       my $key = shift @args;
       my $val = shift @args;
       if (!$key) {
-        $key = do_prompt('Choose...', -menu => \@valid_keys, '>');
+        $key = do_prompt('Choose one of...', -menu => \@valid_keys, '>');
       }
       if (!$key) {
-        print("ERROR missing argument for get\n");
+        print("ERROR missing key argument for get/set\n");
         next;
       }
       if ($cmd eq "get" && defined($val)) {
-        print("ERROR no argument allowed for get\n");
+        print("ERROR argument not allowed for get: $val\n");
         next;
       }
       if ($cmd eq "set" && !defined($val)) {
@@ -5930,7 +5936,7 @@ sub action_shell {
         }
         # deal with Ctrl-D
         if (!defined($val)) {
-          print("ERROR Missing value for set.\n");
+          print("ERROR missing value for set\n");
           next;
         }
       }
@@ -5939,16 +5945,23 @@ sub action_shell {
         if ($cmd eq "set") {
           $location = scalar($val);
         } else {
-          if (defined($location)) {
+          if (defined($location) && $location) {
             print "repository = $location\n";
           } else {
             print "repository = <UNDEFINED>\n";
           }
         }
         print "OK\n";
-      } elsif ($key =~ m/^(debug-translation|machine-readable|no-execute-actions|require-verification|verify-downloads)$/) {
+      } elsif (TeXLive::TLUtils::member($key, @valid_bool_keys)) {
         if ($cmd eq "set") {
-          $opts{$key} = ($val eq "1" ? 1 : 0);
+          if ($val eq "0") {
+            $opts{$key} = 0;
+          } elsif ($val eq "1") {
+            $opts{$key} = 1;
+          } else {
+            print "ERROR invalid value $val for key $key\n";
+            next;
+          }
           # special cases
           $::debug_translation = $opts{"debug-translation"};
           $::machinereadable = $opts{"machine-readable"};
@@ -5958,7 +5971,7 @@ sub action_shell {
         }
         print "OK\n";
       } else {
-        print "ERROR unknown key $key\n";
+        print "ERROR unknown get/set key $key\n";
       }
     } elsif ($cmd eq "load") {
       my $what = shift @args;
@@ -5972,7 +5985,7 @@ sub action_shell {
         init_tlmedia_or_die();
         print "OK\n";
       } else {
-        print "ERROR can only load 'local' or 'remote'\n";
+        print "ERROR can only load 'local' or 'remote', not $what\n";
       }
     } elsif ($cmd eq "save") {
       $localtlpdb->save;
@@ -5980,7 +5993,7 @@ sub action_shell {
     } elsif (defined($action_specification{$cmd})) {
       # an action
       if (!defined($action_specification{$cmd}{"function"})) {
-        print "ERROR action function not defined\n";
+        print "ERROR undefined action function $cmd\n";
         next;
       }
       # redo the option parsing
@@ -6018,7 +6031,7 @@ sub action_shell {
       }
       %opts = %savedopts;
     } else {
-      print "ERROR unknown command\n";
+      print "ERROR unknown command $cmd\n";
     }
   }
 }
@@ -7124,7 +7137,7 @@ checking the TL development repository.
 =back
 
 =head2 conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]
-=head2 conf texmf [--conffile I<file>] auxtrees [show|add|delete] [I<value>]
+=head2 conf auxtrees [--conffile I<file>] [show|add|delete] [I<value>]
 
 With only C<conf>, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
@@ -7143,33 +7156,34 @@ out).
 If I<value> is given in addition, I<key> is set to I<value> in the 
 respective file.  I<No error checking is done!>
 
+The C<PATH> value shown by C<conf> is as used by C<tlmgr>.  The
+directory in which the C<tlmgr> executable is found is automatically
+prepended to the PATH value inherited from the environment.
+
 Here is a practical example of changing configuration values. If the
 execution of (some or all) system commands via C<\write18> was left
 enabled during installation, you can disable it afterwards:
   
   tlmgr conf texmf shell_escape 0
 
-For C<texmf>, an additional subcommand C<auxtrees> allows adding and
-removing arbitrary additional texmf trees, completely under user
-control.  C<texmf auxtrees show> shows the list of additional trees,
-C<texmf auxtrees add> I<tree> adds a tree to the list, and C<texmf
-auxtrees remove> I<tree> removes a tree from the list (if present). This
-works by manipulating the Kpathsea variable C<TEXMFAUXTREES>, in
+The subcommand C<auxtrees> allows adding and removing arbitrary
+additional texmf trees, completely under user control.  C<auxtrees show>
+shows the list of additional trees, C<auxtrees add> I<tree> adds a tree
+to the list, and C<auxtrees remove> I<tree> removes a tree from the list
+(if present). The trees should not contain an C<ls-R> file. This works
+by manipulating the Kpathsea variable C<TEXMFAUXTREES>, in
 C<ROOT/texmf.cnf>.  Example:
 
-  tlmgr conf texmf auxtrees add /my/quick/test/tree
-  tlmgr conf texmf auxtrees remove /my/quick/test/tree
+  tlmgr conf auxtrees add /quick/test/tree
+  tlmgr conf auxtrees remove /quick/test/tree
 
 In all cases the configuration file can be explicitly specified via the
 option C<--conffile> I<file>, if desired.
 
-The C<PATH> value shown is as used by C<tlmgr>.  The directory in which
-the C<tlmgr> executable is found is automatically prepended to the PATH
-value inherited from the environment.
-
-Warning: The general facility is here, but tinkering with settings in
-this way is strongly discouraged.  Again, no error checking on either
-keys or values is done, so any sort of breakage is possible.
+Warning: The general facility for changing configuration values is here,
+but tinkering with settings in this way is strongly discouraged.  Again,
+no error checking on either keys or values is done, so any sort of
+breakage is possible.
 
 =head2 dump-tlpdb [--local|--remote]
 
@@ -7855,8 +7869,63 @@ C<tables> (unless they also contain the word C<table> on its own).
 
 =head2 shell
 
-Starts the TeX Live Manager Shell. 
+Starts an interactive mode, where tlmgr prompts for commands. This can
+be used directly, or for scripting. The first line of output is
+C<protocol> I<n>, where I<n> is an unsigned number identifying the
+protocol version (currently 1).
 
+In general, tlmgr actions that can be given on the command line
+translate to commands in this shell mode.  For example, you can say
+C<update --list> to see what would be updated. The TLPDB is loaded the
+first time it is needed (not at the beginning), and used for the rest of
+the session.
+
+Besides these actions, a few commands are specific to shell mode:
+
+=over 4
+
+=item protocol
+
+Print C<protocol I<n>>, the current protocol version.
+
+=item help
+
+Print pointers to this documentation.
+
+=item version
+
+Print tlmgr version information.
+
+=item quit, end, bye, byebye, EOF
+
+Exit.
+
+=item restart
+
+Restart C<tlmgr shell> with the original command line; most useful when
+developing C<tlmgr>.
+
+=item load [local|remote]
+
+Explicitly load the local or remote, respectively, TLPDB.
+
+=item save
+
+Save the local TLPDB, presumably after other operations have changed it.
+
+=item get [I<var>]
+=item set [I<var> [I<val>]]
+
+Get the value of I<var>, or set it to I<val>.  Possible I<var> names:
+C<debug-translation>, C<machine-readable>, C<no-execute-actions>,
+C<require-verification>, C<verify-downloads>, and C<repository>. All
+except C<repository> are booleans, taking values 0 and 1, and behave
+like the corresponding command line option.  The C<repository> variable
+takes a string, and sets the remote repository location. 
+
+If I<var> or then I<val> is not specified, it is prompted for.
+
+=back
 
 =head2 uninstall
 
@@ -8740,6 +8809,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
+$Id$
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
