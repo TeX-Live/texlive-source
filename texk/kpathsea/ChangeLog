@@ -1,3 +1,9 @@
+2017-05-03  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFAUXTREES): new variable (default value empty
+	string via empty braces), for tlmgr conf auxtrees.
+	(TEXMF): include $TEXMFAUXTREES, but don't assume it is nonempty.
+
 2017-04-22  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* win32lib.c, mingw32.c: Update texlive_gs_init() (w32 only). 

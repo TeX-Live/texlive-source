@@ -84,17 +84,26 @@ TEXMFVAR = ~/.texlive2017/texmf-var
 % TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
 TEXMFCONFIG = ~/.texlive2017/texmf-config
 
+% This is the value manipulated by tlmgr's auxtrees subcommand in the
+% root texmf.cnf. Kpathsea warns about a literally empty string for a
+% value, hence the empty braces.
+TEXMFAUXTREES = {}
+
 % List all the texmf trees. For an explanation of what they are, see the
 % TeX Live manual.
 %
 % For texconfig to work properly, TEXMFCONFIG and TEXMFVAR should be named
-% explicitly and before all other trees.
+% explicitly and before other trees.
 % 
 % TEXMFLOCAL precedes TEXMFDIST because locally-installed versions
 % should take precedence over distribution files -- although it is
 % generally a source of confusion to have different versions of a
 % package installed, whatever the trees, so try to avoid it.
-TEXMF = {$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFDIST}
+% 
+% The odd-looking $TEXMFAUXTREES$TEXMF... construct is so that if no auxtree is
+% ever defined (the 99% common case), no extra elements will be added to
+% the search paths. tlmgr takes care to end any value with a trailing comma.
+TEXMF = {$TEXMFAUXTREES$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFDIST}
 
 % Where to look for ls-R files.  There need not be an ls-R in the
 % directories in this path, but if there is one, Kpathsea will use it.
