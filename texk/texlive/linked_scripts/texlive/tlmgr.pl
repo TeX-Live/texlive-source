@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44189 2017-05-04 17:31:52Z karl $
+# $Id: tlmgr.pl 44201 2017-05-05 15:33:32Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44189 $';
-my $datrev = '$Date: 2017-05-04 19:31:52 +0200 (Thu, 04 May 2017) $';
+my $svnrev = '$Revision: 44201 $';
+my $datrev = '$Date: 2017-05-05 17:33:32 +0200 (Fri, 05 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -8809,7 +8809,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id$
+$Id: tlmgr.pl 44201 2017-05-05 15:33:32Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
