@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 44002 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2017-04-24 01:50:36 +0200 (Mon, 24 Apr 2017) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 44235 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2017-05-07 18:20:39 +0900 (日, 07 5 2017) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -259,6 +259,9 @@ local docstr = [[
         - Cater for fmtutil-user and updmap-user => -user arg        
     2017/04/24
         - GS_LIB setting for tlgs.
+    2017/05/06
+        - introduce sys_user_progs, make checks for updmap/fmtutil
+          use sys_user_progs instead, add kanji-config-updmap
 ]]
 
 -- HELPER SUBROUTINES --
@@ -307,6 +310,16 @@ local function is_tex4ht_command(progname)
         -- we have a hit, but not all combinations are valid
         return (p ~= 'teim' and p ~=  'dbm') or (q ~= 'xelatex' and q~= 'xetex')
       end
+    end
+  end
+  return false
+end
+
+-- checks whether an item is in an array
+local function contains (tab, val)
+  for index, value in ipairs(tab) do
+    if value == val then
+      return true
     end
   end
   return false
@@ -448,6 +461,7 @@ local userprog = (substcount > 0) -- true if there was a -user suffix removed
 -- prevent recursive calls to this script
 assert(progname ~= 'runscript', "oops! wrapping the wrapper?")
 
+
 -- kpse and environment set-up
 
 -- init kpathsea 
@@ -455,11 +469,16 @@ local k = -1
 while arg[k-1] do k = k - 1 end -- in case of a call: luatex --luaonly ...
 local lua_binary = arg[k]
 kpse.set_program_name(lua_binary, progname)
+
 -- various dir-vars
 local TEXDIR = kpse.var_value('SELFAUTOPARENT')
 local TEXMFDIST = kpse.var_value('TEXMFDIST')
 local BINDIR = kpse.var_value('SELFAUTOLOC')
 local PATH = os.getenv('PATH') or ''
+
+-- list of programs that have -sys and -user variants
+local sys_user_progs = { 'updmap', 'fmtutil', 'kanji-config-updmap' }
+
 -- restricted programs
 local shell_escape_commands = string.lower(kpse.var_value('shell_escape_commands') or '')
 local is_restricted_progname = string.find( ','..shell_escape_commands..',', 
@@ -554,7 +573,7 @@ PATH = prepend_path(PATH, GSDIR, BINDIR)
 os.setenv('PATH', PATH);
 
 -- sys stuff
-if (sysprog and not (progname == 'updmap') and not (progname == 'fmtutil')) then
+if (sysprog and not contains(sys_user_progs, progname)) then
   os.setenv('TEXMFVAR', kpse.var_value('TEXMFSYSVAR'))
   os.setenv('TEXMFCONFIG', kpse.var_value('TEXMFSYSCONFIG'))
 end
@@ -598,13 +617,7 @@ if is_tex4ht_command(progname) then
   progname = 'mk4ht'
 elseif progname == 'a2ping' then 
   table.insert(extension_map['.pl'], '-x')
-elseif progname == 'updmap' then 
-  if sysprog then
-    argline = ' --sys ' .. argline
-  elseif userprog then
-    argline = ' --user ' .. argline
-  end
-elseif progname == 'fmtutil' then 
+elseif contains(sys_user_progs, progname) then 
   if sysprog then
     argline = ' --sys ' .. argline
   elseif userprog then
