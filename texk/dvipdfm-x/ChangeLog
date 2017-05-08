@@ -1,3 +1,9 @@
+2017-05-08  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* pdfdraw.c: Replace a small number 1.0e-8 by OUR_EPSILON = 2.5e-16,
+	responding incompletely to
+	http://tug.org/pipermail/tex-live/2017-May/040090.html.
+
 2017-04-26  Paul Vojta  <vojta@math.berkeley.edu>
 
 	* dvi.c, dvipdfmx.c, spc_html.c, spc_util.c: Support additional
