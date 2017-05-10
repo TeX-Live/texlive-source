@@ -7037,7 +7037,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-fil"] = package.loaded["util-fil"] or true
 
--- original size: 7039, stripped down to: 5672
+-- original size: 7567, stripped down to: 5575
 
 if not modules then modules={} end modules ['util-fil']={
   version=1.001,
@@ -7203,17 +7203,17 @@ end
 function files.readfixed2(f)
   local a,b=byte(f:read(2),1,2)
   if a>=0x80 then
-    return (0x100*a+b-0x10000)/256.0
+    return (a-0x100)+b/0x100
   else
-    return (0x100*a+b)/256.0
+    return (a    )+b/0x100
   end
 end
 function files.readfixed4(f)
   local a,b,c,d=byte(f:read(4),1,4)
   if a>=0x80 then
-    return (0x1000000*a+0x10000*b+0x100*c+d-0x100000000)/65536.0
+    return (0x100*a+b-0x10000)+(0x100*c+d)/0x10000
   else
-    return (0x1000000*a+0x10000*b+0x100*c+d)/65536.0
+    return (0x100*a+b     )+(0x100*c+d)/0x10000
   end
 end
 if extract then
@@ -7267,8 +7267,6 @@ if fio and fio.readcardinal1 then
   files.readinteger2=fio.readinteger2
   files.readinteger3=fio.readinteger3
   files.readinteger4=fio.readinteger4
-  files.readfixed2=fio.readfixed2
-  files.readfixed4=fio.readfixed4
   files.read2dot14=fio.read2dot14
   files.setposition=fio.setposition
   files.getposition=fio.getposition
@@ -7295,7 +7293,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-sac"] = package.loaded["util-sac"] or true
 
--- original size: 8697, stripped down to: 6981
+-- original size: 8716, stripped down to: 6754
 
 if not modules then modules={} end modules ['util-sac']={
   version=1.001,
@@ -7503,9 +7501,9 @@ function streams.readfixed4(f)
   f[2]=j+1
   local a,b,c,d=byte(f[1],i,j)
   if a>=0x80 then
-    return (0x1000000*a+0x10000*b+0x100*c+d-0x100000000)/65536.0
+    return (0x100*a+b-0x10000)+(0x100*c+d)/0x10000
   else
-    return (0x1000000*a+0x10000*b+0x100*c+d)/65536.0
+    return (0x100*a+b     )+(0x100*c+d)/0x10000
   end
 end
 function streams.readfixed2(f)
@@ -7514,9 +7512,9 @@ function streams.readfixed2(f)
   f[2]=j+1
   local a,b=byte(f[1],i,j)
   if a>=0x80 then
-    return (0x100*a+b-0x10000)/256.0
+    return (a-0x100)+b/0x100
   else
-    return (0x100*a+b)/256.0
+    return (a    )+b/0x100
   end
 end
 if extract then
@@ -7595,16 +7593,6 @@ if sio and sio.readcardinal2 then
     local i=f[2]
     f[2]=i+4
     return readinteger4(f[1],i)
-  end
-  function streams.readfixed2(f)
-    local i=f[2]
-    f[2]=i+2
-    return readfixed2(f[1],i)
-  end
-  function streams.readfixed4(f)
-    local i=f[2]
-    f[2]=i+4
-    return readfixed4(f[1],i)
   end
   function streams.read2dot4(f)
     local i=f[2]
@@ -20430,8 +20418,8 @@ end -- of closure
 
 -- used libraries    : l-lua.lua l-sandbox.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-tpl.lua util-sbx.lua util-mrg.lua util-env.lua luat-env.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua util-lib.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 841896
--- stripped bytes    : 305446
+-- original bytes    : 842443
+-- stripped bytes    : 306317
 
 -- end library merge
 
