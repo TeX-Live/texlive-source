@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44201 2017-05-05 15:33:32Z karl $
+# $Id: tlmgr.pl 44249 2017-05-08 17:26:47Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44201 $';
-my $datrev = '$Date: 2017-05-05 17:33:32 +0200 (Fri, 05 May 2017) $';
+my $svnrev = '$Revision: 44249 $';
+my $datrev = '$Date: 2017-05-08 19:26:47 +0200 (Mon, 08 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -595,7 +595,7 @@ for the full story.\n";
   #
   # Try to open the packagelog file, but do NOT die when that does not work
   if (!open(PACKAGELOG, ">>$packagelogfile")) {
-    debug("Cannot open package log file $packagelogfile for appending\n");
+    debug("Cannot open package log file for appending: $packagelogfile\n");
     debug("Will not log package installation/removal/update for this run\n");
     $packagelogfile = "";
   }
@@ -618,14 +618,14 @@ for the full story.\n";
   $::no_execute_actions = 1 if (defined($opts{'no-execute-actions'}));
 
   # if we are asked to use persistent connections try to start it here
-  debug("tlmgr:main: do persistent downloads = $opts{'persistent-downloads'}\n");
+  ddebug("tlmgr:main: do persistent downloads = $opts{'persistent-downloads'}\n");
   if ($opts{'persistent-downloads'}) {
     TeXLive::TLUtils::setup_persistent_downloads() ;
   }
   if (!defined($::tldownload_server)) {
     debug("tlmgr:main: ::tldownload_server not defined\n");
   } else {
-    debug("tlmgr:main: ::tldownload_server defined\n");
+    debug("tlmgr:main: ::tldownload_server defined: $::tldownload_server\n");
   }
 
   my $ret = execute_action($action, @ARGV);
@@ -2389,7 +2389,7 @@ sub auto_remove_install_force_packages {
   }
   #
   # now take only the subset of packages that is in @todo
-  # note that @todo is already expanded in action_updated according
+  # note that @todo is already expanded in action_update according
   # to the --no-depends and --no-depends-at-all options
   #
   my %removals;
@@ -7170,8 +7170,9 @@ The subcommand C<auxtrees> allows adding and removing arbitrary
 additional texmf trees, completely under user control.  C<auxtrees show>
 shows the list of additional trees, C<auxtrees add> I<tree> adds a tree
 to the list, and C<auxtrees remove> I<tree> removes a tree from the list
-(if present). The trees should not contain an C<ls-R> file. This works
-by manipulating the Kpathsea variable C<TEXMFAUXTREES>, in
+(if present). The trees should not contain an C<ls-R> file (or files
+might not be found if the C<ls-R> becomes stale). This works by
+manipulating the Kpathsea variable C<TEXMFAUXTREES>, in
 C<ROOT/texmf.cnf>.  Example:
 
   tlmgr conf auxtrees add /quick/test/tree
@@ -8809,7 +8810,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44201 2017-05-05 15:33:32Z karl $
+$Id: tlmgr.pl 44249 2017-05-08 17:26:47Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
