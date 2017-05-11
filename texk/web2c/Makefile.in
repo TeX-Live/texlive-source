@@ -489,7 +489,6 @@ am__objects_2 =  \
 	luatexdir/luafilesystem/src/libluajitmisc_a-lfs.$(OBJEXT) \
 	luatexdir/luamd5/libluajitmisc_a-md5.$(OBJEXT) \
 	luatexdir/luamd5/libluajitmisc_a-md5lib.$(OBJEXT) \
-	luatexdir/luamd5/libluajitmisc_a-md5_lua.$(OBJEXT) \
 	luatexdir/luapeg/libluajitmisc_a-lpeg.$(OBJEXT) \
 	luatexdir/luazip/src/libluajitmisc_a-luazip.$(OBJEXT) \
 	luatexdir/luazlib/libluajitmisc_a-lgzip.$(OBJEXT) \
@@ -645,7 +644,6 @@ am__objects_6 =  \
 	luatexdir/luafilesystem/src/libluamisc_a-lfs.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5lib.$(OBJEXT) \
-	luatexdir/luamd5/libluamisc_a-md5_lua.$(OBJEXT) \
 	luatexdir/luapeg/libluamisc_a-lpeg.$(OBJEXT) \
 	luatexdir/luazip/src/libluamisc_a-luazip.$(OBJEXT) \
 	luatexdir/luazlib/libluamisc_a-lgzip.$(OBJEXT) \
@@ -3175,7 +3173,6 @@ libluamisc_sources = \
 	luatexdir/luamd5/md5.c \
 	luatexdir/luamd5/luamd5.h \
 	luatexdir/luamd5/md5lib.c \
-	luatexdir/luamd5/md5_lua.c \
 	luatexdir/luapeg/lpeg.c \
 	luatexdir/luapeg/lpeg.h \
 	luatexdir/luazip/src/luazip.c \
@@ -4122,9 +4119,6 @@ luatexdir/luamd5/libluajitmisc_a-md5.$(OBJEXT):  \
 luatexdir/luamd5/libluajitmisc_a-md5lib.$(OBJEXT):  \
 	luatexdir/luamd5/$(am__dirstamp) \
 	luatexdir/luamd5/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luamd5/libluajitmisc_a-md5_lua.$(OBJEXT):  \
-	luatexdir/luamd5/$(am__dirstamp) \
-	luatexdir/luamd5/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luapeg/$(am__dirstamp):
 	@$(MKDIR_P) luatexdir/luapeg
 	@: > luatexdir/luapeg/$(am__dirstamp)
@@ -4330,9 +4324,6 @@ luatexdir/luamd5/libluamisc_a-md5.$(OBJEXT):  \
 	luatexdir/luamd5/$(am__dirstamp) \
 	luatexdir/luamd5/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luamd5/libluamisc_a-md5lib.$(OBJEXT):  \
-	luatexdir/luamd5/$(am__dirstamp) \
-	luatexdir/luamd5/$(DEPDIR)/$(am__dirstamp)
-luatexdir/luamd5/libluamisc_a-md5_lua.$(OBJEXT):  \
 	luatexdir/luamd5/$(am__dirstamp) \
 	luatexdir/luamd5/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luapeg/libluamisc_a-lpeg.$(OBJEXT):  \
@@ -5692,10 +5683,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luafontloader/src/$(DEPDIR)/libluatex_a-ffdummies.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luafontloader/src/$(DEPDIR)/libluatex_a-luafflib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5lib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5lib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luapeg/$(DEPDIR)/libluajitmisc_a-lpeg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luapeg/$(DEPDIR)/libluamisc_a-lpeg.Po@am__quote@
@@ -6552,20 +6541,6 @@ luatexdir/luamd5/libluajitmisc_a-md5lib.obj: luatexdir/luamd5/md5lib.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luamd5/md5lib.c' object='luatexdir/luamd5/libluajitmisc_a-md5lib.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luamd5/libluajitmisc_a-md5lib.obj `if test -f 'luatexdir/luamd5/md5lib.c'; then $(CYGPATH_W) 'luatexdir/luamd5/md5lib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luamd5/md5lib.c'; fi`
-
-luatexdir/luamd5/libluajitmisc_a-md5_lua.o: luatexdir/luamd5/md5_lua.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luamd5/libluajitmisc_a-md5_lua.o -MD -MP -MF luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Tpo -c -o luatexdir/luamd5/libluajitmisc_a-md5_lua.o `test -f 'luatexdir/luamd5/md5_lua.c' || echo '$(srcdir)/'`luatexdir/luamd5/md5_lua.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Tpo luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luamd5/md5_lua.c' object='luatexdir/luamd5/libluajitmisc_a-md5_lua.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luamd5/libluajitmisc_a-md5_lua.o `test -f 'luatexdir/luamd5/md5_lua.c' || echo '$(srcdir)/'`luatexdir/luamd5/md5_lua.c
-
-luatexdir/luamd5/libluajitmisc_a-md5_lua.obj: luatexdir/luamd5/md5_lua.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luamd5/libluajitmisc_a-md5_lua.obj -MD -MP -MF luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Tpo -c -o luatexdir/luamd5/libluajitmisc_a-md5_lua.obj `if test -f 'luatexdir/luamd5/md5_lua.c'; then $(CYGPATH_W) 'luatexdir/luamd5/md5_lua.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luamd5/md5_lua.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Tpo luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5_lua.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luamd5/md5_lua.c' object='luatexdir/luamd5/libluajitmisc_a-md5_lua.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luamd5/libluajitmisc_a-md5_lua.obj `if test -f 'luatexdir/luamd5/md5_lua.c'; then $(CYGPATH_W) 'luatexdir/luamd5/md5_lua.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luamd5/md5_lua.c'; fi`
 
 luatexdir/luapeg/libluajitmisc_a-lpeg.o: luatexdir/luapeg/lpeg.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitmisc_a_CPPFLAGS) $(CPPFLAGS) $(libluajitmisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luapeg/libluajitmisc_a-lpeg.o -MD -MP -MF luatexdir/luapeg/$(DEPDIR)/libluajitmisc_a-lpeg.Tpo -c -o luatexdir/luapeg/libluajitmisc_a-lpeg.o `test -f 'luatexdir/luapeg/lpeg.c' || echo '$(srcdir)/'`luatexdir/luapeg/lpeg.c
@@ -8498,20 +8473,6 @@ luatexdir/luamd5/libluamisc_a-md5lib.obj: luatexdir/luamd5/md5lib.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luamd5/md5lib.c' object='luatexdir/luamd5/libluamisc_a-md5lib.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luamd5/libluamisc_a-md5lib.obj `if test -f 'luatexdir/luamd5/md5lib.c'; then $(CYGPATH_W) 'luatexdir/luamd5/md5lib.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luamd5/md5lib.c'; fi`
-
-luatexdir/luamd5/libluamisc_a-md5_lua.o: luatexdir/luamd5/md5_lua.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luamd5/libluamisc_a-md5_lua.o -MD -MP -MF luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Tpo -c -o luatexdir/luamd5/libluamisc_a-md5_lua.o `test -f 'luatexdir/luamd5/md5_lua.c' || echo '$(srcdir)/'`luatexdir/luamd5/md5_lua.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Tpo luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luamd5/md5_lua.c' object='luatexdir/luamd5/libluamisc_a-md5_lua.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luamd5/libluamisc_a-md5_lua.o `test -f 'luatexdir/luamd5/md5_lua.c' || echo '$(srcdir)/'`luatexdir/luamd5/md5_lua.c
-
-luatexdir/luamd5/libluamisc_a-md5_lua.obj: luatexdir/luamd5/md5_lua.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luamd5/libluamisc_a-md5_lua.obj -MD -MP -MF luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Tpo -c -o luatexdir/luamd5/libluamisc_a-md5_lua.obj `if test -f 'luatexdir/luamd5/md5_lua.c'; then $(CYGPATH_W) 'luatexdir/luamd5/md5_lua.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luamd5/md5_lua.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Tpo luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5_lua.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luamd5/md5_lua.c' object='luatexdir/luamd5/libluamisc_a-md5_lua.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luamd5/libluamisc_a-md5_lua.obj `if test -f 'luatexdir/luamd5/md5_lua.c'; then $(CYGPATH_W) 'luatexdir/luamd5/md5_lua.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luamd5/md5_lua.c'; fi`
 
 luatexdir/luapeg/libluamisc_a-lpeg.o: luatexdir/luapeg/lpeg.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluamisc_a_CPPFLAGS) $(CPPFLAGS) $(libluamisc_a_CFLAGS) $(CFLAGS) -MT luatexdir/luapeg/libluamisc_a-lpeg.o -MD -MP -MF luatexdir/luapeg/$(DEPDIR)/libluamisc_a-lpeg.Tpo -c -o luatexdir/luapeg/libluamisc_a-lpeg.o `test -f 'luatexdir/luapeg/lpeg.c' || echo '$(srcdir)/'`luatexdir/luapeg/lpeg.c
