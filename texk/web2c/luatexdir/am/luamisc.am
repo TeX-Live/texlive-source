@@ -30,7 +30,6 @@ libluamisc_sources = \
 	luatexdir/luamd5/md5.c \
 	luatexdir/luamd5/luamd5.h \
 	luatexdir/luamd5/md5lib.c \
-	luatexdir/luamd5/md5_lua.c \
 	luatexdir/luapeg/lpeg.c \
 	luatexdir/luapeg/lpeg.h \
 	luatexdir/luazip/src/luazip.c \
