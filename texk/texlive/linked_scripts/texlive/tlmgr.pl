@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44249 2017-05-08 17:26:47Z karl $
+# $Id: tlmgr.pl 44289 2017-05-11 02:41:34Z preining $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44249 $';
-my $datrev = '$Date: 2017-05-08 19:26:47 +0200 (Mon, 08 May 2017) $';
+my $svnrev = '$Revision: 44289 $';
+my $datrev = '$Date: 2017-05-11 04:41:34 +0200 (Thu, 11 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -274,6 +274,8 @@ my %action_specification = (
   },
   "remove" => { 
     "options"  => {
+      "backup" => 1,
+      "backupdir" => "=s",
       "dry-run|n" => 1,
       "force" => 1,
       "no-depends"        => 1,
@@ -1011,8 +1013,28 @@ sub action_include_tlpobj {
 #   will absolutely only install foo bar baz not even taking .ARCH into
 #   account
 #
+
+sub backup_and_remove_package {
+  my ($pkg, $autobackup) = @_;
+  my $tlp = $localtlpdb->get_package($pkg);
+  if (!defined($tlp)) {
+    info("$pkg: package not present, cannot remove\n");
+    return($F_WARNING);
+  }
+  if ($opts{"backup"}) {
+    $tlp->make_container("xz", $localtlpdb->root,
+                         $opts{"backupdir"}, 
+                         "${pkg}.r" . $tlp->revision,
+                         $tlp->relocated);
+    if ($autobackup) {
+      # in case we do auto backups we remove older backups
+      clear_old_backups($pkg, $opts{"backupdir"}, $autobackup);
+    }
+  }
+  return($localtlpdb->remove_package($pkg));
+}
+
 sub action_remove {
-  my $ret = $F_OK;
   # we do the following:
   # - (not implemented) order collections such that those depending on
   #   other collections are first removed, and then those which only
@@ -1034,6 +1056,10 @@ sub action_remove {
   init_local_db();
   return($F_ERROR) if !check_on_writable();
   info("$prg remove: dry run, no changes will be made\n") if $opts{"dry-run"};
+
+  my ($ret, $autobackup) = setup_backup_directory();
+  return ($ret) if ($ret != $F_OK);
+
   my @packs = @ARGV;
   #
   # we have to be careful not to remove too many packages. The idea is
@@ -1099,7 +1125,7 @@ sub action_remove {
         my $foo = 0;
         info ("$prg: removing $pkg\n");
         if (!$opts{"dry-run"}) {
-          $foo = $localtlpdb->remove_package($pkg);
+          $foo = backup_and_remove_package($pkg, $autobackup);
           logpackage("remove: $pkg");
         }
         if ($foo) {
@@ -1120,7 +1146,7 @@ sub action_remove {
     if (!defined($already_removed{$pkg})) {
       info ("$prg: removing package $pkg\n");
       if (!$opts{"dry-run"}) {
-        if ($localtlpdb->remove_package($pkg)) {
+        if (backup_and_remove_package($pkg, $autobackup)) {
           # removal was successful
           logpackage("remove: $pkg");
           $already_removed{$pkg} = 1;
@@ -1503,46 +1529,56 @@ sub action_info {
     print "longdesc:    ", $tlp->longdesc, "\n" if ($tlp->longdesc);
     print "installed:   ", ($installed ? "Yes" : "No"), "\n";
     print "revision:    ", $tlp->revision, "\n" if ($installed);
-    # print out sizes
+    #
+    # size computation: for normal packages give src/run/doc/bin sizes
+    # for scheme/collection accumulated (including deps) sizes
     my $sizestr = "";
-    my $srcsize = $tlp->srcsize * $TeXLive::TLConfig::BlockSize;
-    $sizestr = sprintf("%ssrc: %dk", $sizestr, int($srcsize / 1024) + 1) 
-      if ($srcsize > 0);
-    my $docsize = $tlp->docsize * $TeXLive::TLConfig::BlockSize;
-    $sizestr .= sprintf("%sdoc: %dk", 
-      ($sizestr ? ", " : ""), int($docsize / 1024) + 1)
-        if ($docsize > 0);
-    my $runsize = $tlp->runsize * $TeXLive::TLConfig::BlockSize;
-    $sizestr .= sprintf("%srun: %dk", 
-      ($sizestr ? ", " : ""), int($runsize / 1024) + 1)
-        if ($runsize > 0);
-    # check for .ARCH expansions
-    my $do_archs = 0;
-    for my $d ($tlp->depends) {
-      if ($d =~ m/^(.*)\.ARCH$/) {
-        $do_archs = 1;
-        last;
-      }
-    }
-    if ($do_archs) {
-      my @a = $localtlpdb->available_architectures;
-      my %binsz = %{$tlp->binsize};
-      my $binsize = 0;
-      for my $a (@a) {
-        $binsize += $binsz{$a} if defined($binsz{$a});
-        my $atlp = $tlpdb->get_package($tlp->name . ".$a");
-        if (!$atlp) {
-          tlwarn("$prg: cannot find depending package" . $tlp->name . ".$a\n");
-          $ret |= $F_WARNING;
-          next;
+    if ($tlp->category ne "Collection" && $tlp->category ne "Scheme") {
+      my $srcsize = $tlp->srcsize * $TeXLive::TLConfig::BlockSize;
+      $sizestr = sprintf("%ssrc: %dk", $sizestr, int($srcsize / 1024) + 1) 
+        if ($srcsize > 0);
+      my $docsize = $tlp->docsize * $TeXLive::TLConfig::BlockSize;
+      $sizestr .= sprintf("%sdoc: %dk", 
+        ($sizestr ? ", " : ""), int($docsize / 1024) + 1)
+          if ($docsize > 0);
+      my $runsize = $tlp->runsize * $TeXLive::TLConfig::BlockSize;
+      $sizestr .= sprintf("%srun: %dk", 
+        ($sizestr ? ", " : ""), int($runsize / 1024) + 1)
+          if ($runsize > 0);
+      # check for .ARCH expansions
+      my $do_archs = 0;
+      for my $d ($tlp->depends) {
+        if ($d =~ m/^(.*)\.ARCH$/) {
+          $do_archs = 1;
+          last;
         }
-        my %abinsz = %{$atlp->binsize};
-        $binsize += $abinsz{$a} if defined($abinsz{$a});
       }
-      $binsize *= $TeXLive::TLConfig::BlockSize;
-      $sizestr .= sprintf("%sbin: %dk",
-        ($sizestr ? ", " : ""), int($binsize / 1024) + 1)
-          if ($binsize > 0);
+      if ($do_archs) {
+        my @a = $localtlpdb->available_architectures;
+        my %binsz = %{$tlp->binsize};
+        my $binsize = 0;
+        for my $a (@a) {
+          $binsize += $binsz{$a} if defined($binsz{$a});
+          my $atlp = $tlpdb->get_package($tlp->name . ".$a");
+          if (!$atlp) {
+            tlwarn("$prg: cannot find depending package" . $tlp->name . ".$a\n");
+            $ret |= $F_WARNING;
+            next;
+          }
+          my %abinsz = %{$atlp->binsize};
+          $binsize += $abinsz{$a} if defined($abinsz{$a});
+        }
+        $binsize *= $TeXLive::TLConfig::BlockSize;
+        $sizestr .= sprintf("%sbin: %dk",
+          ($sizestr ? ", " : ""), int($binsize / 1024) + 1)
+            if ($binsize > 0);
+      }
+    } else {
+      # case of collection or scheme
+      my $foo = $tlpdb->sizes_of_packages_with_deps ( 1, 1, undef, $pkg);
+      if (defined($foo->{$pkg})) {
+        $sizestr = sprintf("%dk", int($foo->{$pkg} / 1024) + 1);
+      }
     }
     print "sizes:       ", $sizestr, "\n";
     print "relocatable: ", ($tlp->relocated ? "Yes" : "No"), "\n";
@@ -1781,6 +1817,53 @@ sub restore_one_package {
   # TODO_ERROCHECKING we should check the return values of the
   # various calls above
   return ($F_OK);
+}
+
+sub setup_backup_directory {
+  my $ret = $F_OK;
+  my $autobackup = 0;
+  # check for the tlpdb option autobackup, and if present and true (!= 0)
+  # assume we are doing backups
+  if (!$opts{"backup"}) {
+    $autobackup = $localtlpdb->option("autobackup");
+    if ($autobackup) {
+      # check the format, we currently allow only natural numbers, and -1
+      if ($autobackup eq "-1") {
+        debug ("Automatic backups activated, keeping all backups.\n");
+        $opts{"backup"} = 1;
+      } elsif ($autobackup eq "0") {
+        debug ("Automatic backups disabled.\n");
+      } elsif ($autobackup =~ m/^[0-9]+$/) {
+        debug ("Automatic backups activated, keeping $autobackup backups.\n");
+        $opts{"backup"} = 1;
+      } else {
+        tlwarn ("$prg: Option autobackup can only be an integer >= -1.\n");
+        tlwarn ("$prg: Disabling auto backups.\n");
+        $localtlpdb->option("autobackup", 0);
+        $autobackup = 0;
+        $ret |= $F_WARNING;
+      }
+    }
+  }
+
+  # cmd line --backup, we check for --backupdir, and if that is not given
+  # we try to get the default from the tlpdb. If that doesn't work, exit.
+  if ($opts{"backup"}) {
+    my ($a, $b) = check_backupdir_selection();
+    if ($a & $F_ERROR) {
+      # in all these cases we want to terminate in the non-gui mode
+      tlwarn($b);
+      return ($F_ERROR, $autobackup);
+    }
+  }
+
+  # finally, if we have --backupdir, but no --backup, just enable it
+  $opts{"backup"} = 1 if $opts{"backupdir"};
+
+  info("$prg: saving backups to $opts{'backupdir'}\n")
+    if $opts{"backup"} && !$::machinereadable;
+  
+  return ($ret, $autobackup);
 }
 
 sub check_backupdir_selection {
@@ -2466,8 +2549,6 @@ sub upd_info {
 }
 
 sub action_update {
-  my $ret = $F_OK;
-
   init_local_db(1);
   $opts{"no-depends"} = 1 if $opts{"no-depends-at-all"};
 
@@ -2512,47 +2593,8 @@ sub action_update {
     }
   }
 
-  my $autobackup = 0;
-  # check for the tlpdb option autobackup, and if present and true (!= 0)
-  # assume we are doing backups
-  if (!$opts{"backup"}) {
-    $autobackup = $localtlpdb->option("autobackup");
-    if ($autobackup) {
-      # check the format, we currently allow only natural numbers, and -1
-      if ($autobackup eq "-1") {
-        debug ("Automatic backups activated, keeping all backups.\n");
-        $opts{"backup"} = 1;
-      } elsif ($autobackup eq "0") {
-        debug ("Automatic backups disabled.\n");
-      } elsif ($autobackup =~ m/^[0-9]+$/) {
-        debug ("Automatic backups activated, keeping $autobackup backups.\n");
-        $opts{"backup"} = 1;
-      } else {
-        tlwarn ("$prg: Option autobackup can only be an integer >= -1.\n");
-        tlwarn ("$prg: Disabling auto backups.\n");
-        $localtlpdb->option("autobackup", 0);
-        $autobackup = 0;
-        $ret |= $F_WARNING;
-      }
-    }
-  }
-
-  # cmd line --backup, we check for --backupdir, and if that is not given
-  # we try to get the default from the tlpdb. If that doesn't work, exit.
-  if ($opts{"backup"}) {
-    my ($a, $b) = check_backupdir_selection();
-    if ($a & $F_ERROR) {
-      # in all these cases we want to terminate in the non-gui mode
-      tlwarn($b);
-      return ($F_ERROR);
-    }
-  }
-
-  # finally, if we have --backupdir, but no --backup, just enable it
-  $opts{"backup"} = 1 if $opts{"backupdir"};
-
-  info("$prg: saving backups to $opts{'backupdir'}\n")
-    if $opts{"backup"} && !$::machinereadable;
+  my ($ret, $autobackup) = setup_backup_directory();
+  return ($ret) if ($ret != $F_OK);
 
   # these two variables are used throughout this function
   my $root = $localtlpdb->root;
@@ -2920,17 +2962,8 @@ sub action_update {
             debug("$prg: warn, relocated bit set for $p, but that is wrong!\n");
             $pkg->relocated(0);
           }
-          if ($opts{"backup"}) {
-            $pkg->make_container("xz", $root,
-                                 $opts{"backupdir"}, 
-                                 "${p}.r" . $pkg->revision,
-                                 $pkg->relocated);
-            if ($autobackup) {
-              # in case we do auto backups we remove older backups
-              clear_old_backups($p, $opts{"backupdir"}, $autobackup);
-            }
-          }
-          $localtlpdb->remove_package($p);
+          # TODO we do not check return value here!
+          backup_and_remove_package($p, $autobackup);
           logpackage("remove: $p");
         }
         info("done\n") unless $::machinereadable;
@@ -7344,9 +7377,13 @@ With the single word C<collections> or C<schemes> as the argument, lists
 the request type instead of all packages.
 
 With any other arguments, display information about I<pkg>: the name,
-category, short and long description, installation status, and TeX Live
+category, short and long description, sizes, installation status, and TeX Live
 revision number.  If I<pkg> is not locally installed, searches in the
 remote installation source.
+
+For normal packages (not collections or schemes), the sizes of the
+four groups of files (run/src/doc/bin files) are shown. For collections
+and schemes the B<accumulated> size including depending packages.
 
 If I<pkg> is not found locally or remotely, the search action is used
 and lists matching packages and files.
@@ -7726,6 +7763,23 @@ collection dependencies of that collection.  However, when removing a
 package, dependencies are never removed.  Options:
 
 =over 4
+
+=item B<--backup> and B<--backupdir> I<directory>
+
+These two options control the creation of backups of packages I<before>
+removal; that is, backup of packages as currently installed.  If
+neither of these options are given, no backup package will be saved. If
+C<--backupdir> is given and specifies a writable directory then a backup
+will be made in that location. If only C<--backup> is given, then a
+backup will be made to the directory previously set via the C<option>
+action (see below). If both are given then a backup will be made to the
+specified I<directory>.
+
+You can set options via the C<option> action to automatically create
+backups for all packages, and/or keep only a certain number of
+backups.  Please see the C<option> action for details.
+
+The C<restore> action explains how to restore from a backup.
 
 =item B<--no-depends>
 
@@ -8810,7 +8864,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44249 2017-05-08 17:26:47Z karl $
+$Id: tlmgr.pl 44289 2017-05-11 02:41:34Z preining $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
