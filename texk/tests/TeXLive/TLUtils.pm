@@ -1,11 +1,11 @@
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2016 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2017 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 43973 $';
+my $svnrev = '$Revision: 44243 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -97,6 +97,7 @@ C<TeXLive::TLUtils> -- utilities used in TeX Live infrastructure
   TeXLive::TLUtils::tlnet_disabled_packages($root);
   TeXLive::TLUtils::mktexupd();
   TeXLive::TLUtils::setup_sys_user_mode($optsref,$tmfc, $tmfsc, $tmfv, $tmfsv);
+  TeXLive::TLUtils::prepend_own_path();
 
 =head1 DESCRIPTION
 
@@ -180,6 +181,7 @@ BEGIN {
     &setup_persistent_downloads
     &mktexupd
     &setup_sys_user_mode
+    &prepend_own_path
     &nulldev
     &get_full_line
     &sort_archs
@@ -551,11 +553,12 @@ C<system(@args)>; C<tlwarn> if unsuccessful and return the exit status.
 sub wsystem {
   my ($msg,@args) = @_;
   info("$msg @args ...\n");
-  my $status = system(@args);
-  if ($status != 0) {
-    tlwarn("$0:  command failed: @args: $!\n");
+  my $retval = system(@args);
+  if ($retval != 0) {
+    $retval /= 256 if $retval > 0;
+    tlwarn("$0:  command failed (status $retval): @args: $!\n");
   }
-  return $status;
+  return $retval;
 }
 
 
@@ -575,6 +578,7 @@ sub xsystem {
     my $pwd = cwd ();
     die "$0: system(@args) failed in $pwd, status $retval";
   }
+  return $retval;
 }
 
 =item C<run_cmd($cmd)>
@@ -1925,9 +1929,9 @@ sub add_remove_symlinks {
   # we collected errors in $errors, so return the negation of it
   if ($errors) {
     info("$mode of symlinks had $errors error(s), see messages above.\n");
-    return 0;
+    return $F_ERROR;
   } else {
-    return 1;
+    return $F_OK;
   }
 }
 
@@ -2299,19 +2303,18 @@ sub setup_unix_one {
   if (-r $def) {
     my $ready = 0;
     if (-x $def) {
-      ddebug("default $def is readable and executable!\n");
-      # checking only for the executable bit is not enough, we have
-      # to check for actualy "executability" since a "noexec" mount
-      # option may interfere, which is not taken into account by
-      # perl's -x test.
+      ddebug("default $def has executable permissions\n");
+      # we have to check for actual "executability" since a "noexec"
+      # mount option may interfere, which is not taken into account by -x.
       $::progs{$p} = $def;
       if ($arg ne "notest") {
-        my $ret = system("$def $arg > /dev/null 2>&1" ); # we are on Unix
+        my $ret = system("'$def' $arg >/dev/null 2>&1" ); # we are on Unix
         if ($ret == 0) {
           $ready = 1;
           debug("Using shipped $def for $p (tested).\n");
         } else {
-          ddebug("Shipped $def has -x but cannot be executed.\n");
+          ddebug("Shipped $def has -x but cannot be executed, "
+                 . "trying tmp copy.\n");
         }
       } else {
         # do not test, just return
@@ -2360,11 +2363,10 @@ sub setup_unix_one {
     $test_fallback = 1;
   }
   if ($test_fallback) {
-    # all our playing around and copying did not succeed, try the
-    # fallback
+    # all our playing around and copying did not succeed, try PATH.
     $::progs{$p} = $p;
     if ($arg ne "notest") {
-      my $ret = system("$p $arg > /dev/null 2>&1");
+      my $ret = system("$p $arg >/dev/null 2>&1");
       if ($ret == 0) {
         debug("Using system $p (tested).\n");
       } else {
@@ -4019,7 +4021,7 @@ sub setup_sys_user_mode {
       $TEXMFVAR, $TEXMFSYSVAR) = @_;
   
   if ($optsref->{'user'} && $optsref->{'sys'}) {
-    print STDERR "$prg [ERROR]: only one of -user and -sys can be used.\n";
+    print STDERR "$prg [ERROR]: only one of -sys or -user can be used.\n";
     exit(1);
   }
 
@@ -4052,12 +4054,36 @@ sub setup_sys_user_mode {
     $texmfconfig = $TEXMFCONFIG;
     $texmfvar    = $TEXMFVAR;
   } else {
-    print STDERR "$prg [ERROR]: Either -user or -sys mode is required.\n" .
-      "See http://tug.org/texlive/scripts-sys-user.html for details.\n";
+    print STDERR "" .
+      "$prg [ERROR]: Either -sys or -user mode is required.\n" .
+      "$prg [ERROR]: In nearly all cases you should use $prg -sys.\n" .
+      "$prg [ERROR]: For special cases see http://tug.org/texlive/scripts-sys-user.html\n" ;
     exit(1);
   }
   return ($texmfconfig, $texmfvar);
 }
+
+=item C<prepend_own_path()>
+
+Prepend the location of the TeX Live binaries to the PATH environment
+variable. This is used by (e.g.) C<fmtutil>.  The location is found by
+calling C<Cwd::abs_path> on C<which('kpsewhich')>. We use kpsewhich
+because it is known to be a true binary executable; C<$0> could be a
+symlink into (say) C<texmf-dist/scripts/>, which is not a useful
+directory for PATH.
+
+=cut
+
+sub prepend_own_path {
+  my $bindir = dirname(Cwd::abs_path(which('kpsewhich')));
+  if (win32()) {
+    $bindir =~ s!\\!/!g;
+    $ENV{'PATH'} = "$bindir;$ENV{PATH}";
+  } else {
+    $ENV{'PATH'} = "$bindir:$ENV{PATH}";
+  }
+}
+
 
 =back
 =cut
