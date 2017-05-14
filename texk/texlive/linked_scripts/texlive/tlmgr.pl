@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44289 2017-05-11 02:41:34Z preining $
+# $Id: tlmgr.pl 44325 2017-05-13 23:31:11Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44289 $';
-my $datrev = '$Date: 2017-05-11 04:41:34 +0200 (Thu, 11 May 2017) $';
+my $svnrev = '$Revision: 44325 $';
+my $datrev = '$Date: 2017-05-14 01:31:11 +0200 (Sun, 14 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -7381,9 +7381,12 @@ category, short and long description, sizes, installation status, and TeX Live
 revision number.  If I<pkg> is not locally installed, searches in the
 remote installation source.
 
-For normal packages (not collections or schemes), the sizes of the
-four groups of files (run/src/doc/bin files) are shown. For collections
-and schemes the B<accumulated> size including depending packages.
+For normal packages (not collections or schemes), the sizes of the four
+groups of files (run/src/doc/bin files) are shown separately. For
+collections, the cumulative size is shown, including all
+directly-dependent packages (but not dependent collections). For
+schemes, the cumulative size is also shown, including all
+directly-dependent collections and packages.
 
 If I<pkg> is not found locally or remotely, the search action is used
 and lists matching packages and files.
@@ -7577,7 +7580,8 @@ Its value is an integer.  If the C<autobackup> value is C<-1>, no
 backups are removed.  If C<autobackup> is 0 or more, it specifies the
 number of backups to keep.  Thus, backups are disabled if the value is
 0.  In the C<--clean> mode of the C<backup> action this option also
-specifies the number to be kept.
+specifies the number to be kept.  The default value is 1, so that
+backups are made, but only one backup is kept.
 
 To setup C<autobackup> to C<-1> on the command line, use:
 
@@ -7591,13 +7595,14 @@ The C<sys_bin>, C<sys_man>, and C<sys_info> options are used on
 Unix-like systems to control the generation of links for executables,
 info files and man pages. See the C<path> action for details.
 
-The last three options control behavior on Windows installations.  If
-C<desktop_integration> is set, then some packages will install items in
-a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.  If
-C<fileassocs> is set, Windows file associations are made (see also the
-C<postaction> action).  Finally, if C<multiuser> is set, then adaptions
-to the registry and the menus are done for all users on the system
-instead of only the current user.  All three options are on by default.
+The last three options also affect behavior on Windows installations.
+If C<desktop_integration> is set, then some packages will install items
+in a sub-folder of the Start menu for C<tlmgr gui>, documentation, etc.
+If C<fileassocs> is set, Windows file associations are made (see also
+the C<postaction> action).  Finally, if C<multiuser> is set, then
+adaptions to the registry and the menus are done for all users on the
+system instead of only the current user.  All three options are on by
+default.
 
 =head2 paper
 
@@ -7764,20 +7769,27 @@ package, dependencies are never removed.  Options:
 
 =over 4
 
-=item B<--backup> and B<--backupdir> I<directory>
+=item B<--backup>
 
-These two options control the creation of backups of packages I<before>
-removal; that is, backup of packages as currently installed.  If
-neither of these options are given, no backup package will be saved. If
-C<--backupdir> is given and specifies a writable directory then a backup
-will be made in that location. If only C<--backup> is given, then a
-backup will be made to the directory previously set via the C<option>
-action (see below). If both are given then a backup will be made to the
-specified I<directory>.
+=item B<--backupdir> I<directory>
 
-You can set options via the C<option> action to automatically create
-backups for all packages, and/or keep only a certain number of
-backups.  Please see the C<option> action for details.
+These options behave just as with the L</update> action (q.v.), except
+they apply to making backups of packages before they are removed.  The
+default is to make such a backup, that is, to save a copy of packages
+before removal.
+
+See L</update> action for more.
+
+neither option is given, no backup will be made. If C<--backupdir> is
+given and specifies a writable directory then a backup will be made in
+that location. If only C<--backup> is given, then a backup will be made
+to the directory previously set via the C<option> action (see below). If
+both are given then a backup will be made to the specified I<directory>.
+
+You can set options via the C<option> action to automatically make
+backups for all packages, and/or keep only a certain number of backups.
+Please see the C<option> action for details. The default is to make one
+backup.
 
 The C<restore> action explains how to restore from a backup.
 
@@ -8130,28 +8142,29 @@ installation with the server's idea of what is available:
 
   tlmgr update --reinstall-forcibly-removed --all
 
-=item B<--backup> and B<--backupdir> I<directory>
+=item B<--backup>
+
+=item  B<--backupdir> I<directory>
 
 These two options control the creation of backups of packages I<before>
 updating; that is, backup of packages as currently installed.  If
-neither of these options are given, no backup package will be saved. If
-C<--backupdir> is given and specifies a writable directory then a backup
-will be made in that location. If only C<--backup> is given, then a
-backup will be made to the directory previously set via the C<option>
-action (see below). If both are given then a backup will be made to the
-specified I<directory>.
+neither options is given, no backup will made saved. If C<--backupdir>
+is given and specifies a writable directory then a backup will be made
+in that location. If only C<--backup> is given, then a backup will be
+made to the directory previously set via the L</option> action (see
+below). If both are given then a backup will be made to the specified
+I<directory>.
 
-You can set options via the C<option> action to automatically create
-backups for all packages, and/or keep only a certain number of
-backups.  Please see the C<option> action for details.
+You can also set options via the C</option> action to automatically make
+backups for all packages, and/or keep only a certain number of backups.
 
 C<tlmgr> always makes a temporary backup when updating packages, in case
 of download or other failure during an update.  In contrast, the purpose
-of this C<--backup> option is to allow you to save a persistent backup
-in case the actual I<content> of the update causes problems, e.g.,
-introduces an incompatibility.
+of this C<--backup> option is to save a persistent backup in case the
+actual I<content> of the update causes problems, e.g., introduces an TeX
+incompatibility.
 
-The C<restore> action explains how to restore from a backup.
+The L</restore> action explains how to restore from a backup.
 
 =item B<--no-depends>
 
@@ -8864,7 +8877,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44289 2017-05-11 02:41:34Z preining $
+$Id: tlmgr.pl 44325 2017-05-13 23:31:11Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
