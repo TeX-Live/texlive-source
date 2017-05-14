@@ -1335,13 +1335,13 @@ EOF
     *:QNX:*:4*)
 	echo i386-pc-qnx
 	exit ;;
-    NEO-?:NONSTOP_KERNEL:*:*)
+    NEO-*:NONSTOP_KERNEL:*:*)
 	echo neo-tandem-nsk${UNAME_RELEASE}
 	exit ;;
     NSE-*:NONSTOP_KERNEL:*:*)
 	echo nse-tandem-nsk${UNAME_RELEASE}
 	exit ;;
-    NSR-?:NONSTOP_KERNEL:*:*)
+    NSR-*:NONSTOP_KERNEL:*:*)
 	echo nsr-tandem-nsk${UNAME_RELEASE}
 	exit ;;
     NSX-*:NONSTOP_KERNEL:*:*)
