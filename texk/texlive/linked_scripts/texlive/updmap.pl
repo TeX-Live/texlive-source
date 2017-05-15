@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 44149 2017-05-02 09:57:51Z preining $
+# $Id: updmap.pl 44331 2017-05-14 02:15:43Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 44149 2017-05-02 09:57:51Z preining $';
+my $svnid = '$Id: updmap.pl 44331 2017-05-14 02:15:43Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2017-05-02 11:57:51 +0200 (Tue, 02 May 2017) $';
+my $lastchdate = '$Date: 2017-05-14 04:15:43 +0200 (Sun, 14 May 2017) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 44149 $';
+my $svnrev = '$Revision: 44331 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -866,6 +866,10 @@ sub cidx2dvips {
       $italicmax = .3;
       s/,Italic//;
     }
+    # replace supported "/AJ16" and co. for ptex-fontmaps CID emulation
+    # note that the emulation method in GS is incomplete
+    # due to "Reversal CMap method" (cf. "ToUnicode method")
+    s!/A[JGCK]1[0-6]!!;
     # break out if unsupported constructs are found: @ / ,
     next if (m![\@/,]!);
     # make everything single spaced
