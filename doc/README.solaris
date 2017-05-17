@@ -180,11 +180,3 @@ luajittex seems to be broken on Solaris 10 x86_64 (even if it works
 with Solaris 11) and doesn't support Sparc, so it was only compiled
 for i386.
 
-upmendex is broken on x86_64 by default. A workaround is to use
-    export CFLAGS='-DU_IS_BIG_ENDIAN=0'
-    export CXXFLAGS='-DU_IS_BIG_ENDIAN=0'
-which seems to result in slower binaries for mysterious reasons.
-For that reason binaries were compiled twice, once without those flags
-and --disable-upmendex and the second time with those two flags,
-but taking just 'upmendex'.
-
