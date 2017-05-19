@@ -10,8 +10,9 @@ should produce no (GCC) compiler warnings at all.  In spite of
 considerable efforts into that direction we are still far from that goal
 and there are reasons that we may never fully reach it.  Below are some
 rules about declarations of functions or variables and the use of
-'const'.  These rules should be applied to all parts of the TeX Live
-tree, except some of those maintained independently.
+'const'.  These rules should be applied to most of the TeX Live tree,
+the exception being code that is maintained independently and whose
+maintainers don't want to accept patches.
 
 9.1 Declarations and definitions
 ================================

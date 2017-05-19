@@ -47,7 +47,7 @@ done unless some source files have been modified.
 
 If configuring or building a module fails, you should first find and fix
 the problem, then perhaps remove the subdirectory for that module from
-the build tree, and finally rerun the top-level 'make' (or 'Build' with
+the build tree, and finally rerun the top level 'make' (or 'Build' with
 '--no-clean' as its first argument).
 
 4.3 Build in parallel
@@ -65,7 +65,7 @@ gained by using a configure cache file, i.e., with the option '-C'
 4.4 Build distribution
 ======================
 
-Running 'make dist' at the top-level creates a tarball
+Running 'make dist' at the top level creates a tarball
 'tex-live-YYYY-MM-DD.tar.xz' from the TL source tree.  Running 'make
 distcheck' also verifies that this tarball suffices to build and install
 all of TL.
@@ -128,28 +128,24 @@ debugging purposes.
 things are working.  There are many 'configure' options you can tweak as
 desired; check the output from 'configure --help'.
 
-   Finally, the above retrieves the entire TL source tree (some 300mb).
-It is natural to ask if this is really necessary.  Strictly speaking,
-the answer is no, but it is vastly more convenient to do so.  If you cut
-down the source tree, you must also give additional 'configure' flags to
-individually disable using system versions of libraries, or the
-intricacies of the dependencies (such as 'teckit' requiring 'zlib') will
-have undesired side effects.  For an example, see the 'build-pdftex.sh'
-script in the 'pdftex' development sources (<http://pdftex.org>), which
-are indeed a cut-down TL source tree.
+   Finally, the above retrieves the entire TL source tree (several
+hundred megabytes).  It is natural to ask if this is really necessary.
+Strictly speaking, the answer is no, but it is vastly more convenient to
+do so.  If you cut down the source tree, you must also give additional
+'configure' flags to individually disable using system versions of
+libraries, or the intricacies of the dependencies (such as 'teckit'
+requiring 'zlib') will have undesired side effects.  For an example, see
+the 'build-pdftex.sh' script in the 'pdftex' development source
+(<http://pdftex.org>), which is indeed a cut-down TL source tree.
 
-   Caveat 1: even with '--disable-all-pkgs', dependencies will be
-checked.  For instance, if a non-MacOSX system does not have
-'fontconfig', XeTeX cannot be built (*note Prerequisites::) and
-'configure' will terminate.  To proceed without such dependencies,
-specify '--enable-missing' also.  (Arguably this should happen
-automatically.)
+   Even with '--disable-all-pkgs', dependencies will be checked.  For
+instance, if a non-MacOSX system does not have 'fontconfig', XeTeX
+cannot be built (*note Prerequisites::) and 'configure' will terminate.
+To proceed without such dependencies, specify '--enable-missing' also.
+(Arguably this should happen automatically.)
 
-   Caveat 2: unless 'CC' and 'CXX' and 'OBJCXX' are explicitly
-specified, each package will configure its own compiler(s).  In
-practice, this results in a conflict in only one instance: the ICU
-('libs/icu') library will prefer 'clang' and 'clang++' over all others
-if they are installed, whereas everything else prefers 'gcc' and 'g++'.
-Usually the results will be interoperable, but it can cause extra
-confusion and problems when debugging a program that uses ICU.
+   By default, the 'gcc' compilers will be used if present; otherwise,
+individual packages may use something different.  You can explicitly
+specify the compilers to be used with the environment variables 'CC',
+'CXX', and 'OBJCXX'.
 
