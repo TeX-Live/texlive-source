@@ -1,6 +1,6 @@
 This file records noteworthy changes.  (Public domain.)
 
-6.2.3 (for TeX Live 2017)
+6.2.3 (for TeX Live 2017, 19 May 2017)
 * .OTF treated like .otf.
 * texmf.cnf: mpost removed from default shell_escape_commands.
 * texmf.cnf: TEXINPUTS.luajitlatex added.

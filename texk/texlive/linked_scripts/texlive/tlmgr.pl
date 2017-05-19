@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44325 2017-05-13 23:31:11Z karl $
+# $Id: tlmgr.pl 44422 2017-05-19 15:07:25Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44325 $';
-my $datrev = '$Date: 2017-05-14 01:31:11 +0200 (Sun, 14 May 2017) $';
+my $svnrev = '$Revision: 44422 $';
+my $datrev = '$Date: 2017-05-19 17:07:25 +0200 (Fri, 19 May 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -4384,7 +4384,10 @@ sub action_platform {
     }
     print "Already installed platforms are marked with (i)\n";
     print "You can add new platforms with: tlmgr platform add PLAT1 PLAT2...\n";
+    print "You can remove platforms with: tlmgr platform remove PLAT1 PLAT2...\n";
+    print "You can set the active platform with: tlmgr platform set PLAT\n";
     return ($F_OK | $F_NOPOSTACTION);
+
   } elsif ($what =~ m/^add$/i) {
     return ($F_ERROR) if !check_on_writable();
     init_tlmedia_or_die();
@@ -4397,7 +4400,7 @@ sub action_platform {
         next;
       }
       if (!TeXLive::TLUtils::member($a, @available_arch)) {
-        info("Platform $a not available, use 'tlmgr platform list'!\n");
+        info("Platform $a not available; see tlmgr platform list\n");
         next;
       }
       push @todoarchs, $a;
@@ -4442,6 +4445,7 @@ sub action_platform {
       $localtlpdb->setting("available_architectures",@larchs);
       $localtlpdb->save;
     }
+
   } elsif ($what =~ m/^remove$/i) {
     return ($F_ERROR) if !check_on_writable();
     my @already_installed_arch = $localtlpdb->available_architectures;
@@ -4491,7 +4495,7 @@ sub action_platform {
       # try to remove bin/$a dirs
       for my $a (@todoarchs) {
         if (!rmdir("$Master/bin/$a")) {
-          tlwarn("$prg: binary directory $Master/bin/$a not empty after removal of $a.\n");
+          tlwarn("$prg: failed to rmdir $Master/bin/$a: $!\n");
           $ret |= $F_WARNING;
         }
       }
@@ -4504,6 +4508,7 @@ sub action_platform {
       $localtlpdb->setting("available_architectures",@newarchs);
       $localtlpdb->save;
     }
+
   } elsif ($what =~ m/^set$/i) {
     return if !check_on_writable();
     my $arg = shift @ARGV;
@@ -7170,6 +7175,7 @@ checking the TL development repository.
 =back
 
 =head2 conf [texmf|tlmgr|updmap [--conffile I<file>] [--delete] [I<key> [I<value>]]]
+
 =head2 conf auxtrees [--conffile I<file>] [show|add|delete] [I<value>]
 
 With only C<conf>, show general configuration information for TeX Live,
@@ -8877,7 +8883,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44325 2017-05-13 23:31:11Z karl $
+$Id: tlmgr.pl 44422 2017-05-19 15:07:25Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
