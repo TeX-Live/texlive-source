@@ -10,12 +10,16 @@ the TL source tree, requires only C and C++ compilers and GNU 'make'.
 (If 'make' from your 'PATH' is not GNU make, you can set 'MAKE' in the
 environment to whatever is necessary.)
 
-   Indeed, GNU 'make' is required only because of some third-party
-libraries, notably FreeType; all the TL-maintained directories (and
+   GNU 'make' is required only because of some third-party libraries,
+notably FreeType; all the TL-maintained directories (and
 Automake/Autoconf output in general) should work with any reasonable
 'make'.
 
    However, a few programs in the tree have additional requirements:
+
+'dvisvgm'
+     requires a C++11 compiler, such as gcc 4.8.1 (or later) or clang
+     3.3 (or later).
 
 'web2c'
      requires 'perl' for some tests run by 'make check'.

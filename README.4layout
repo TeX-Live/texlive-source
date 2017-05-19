@@ -32,7 +32,7 @@ many extra hassles, so don't do that, tempting as it may be.
      bison (GNU Bison) 3.0.4
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
-     m4 (GNU M4) 1.4.17
+     m4 (GNU M4) 1.4.18
      makeinfo (GNU texinfo) 6.1
 
    These versions should be used to update the generated files (e.g.,
@@ -63,11 +63,11 @@ the main source directories are 'texk/' (TeX-specific programs and
 libraries), 'utils/' (additional programs), and 'libs/' (generic
 libraries).
 
-   The top-level directories 'am/' and 'm4/' contain 'Makefile.am'
-fragments and Autoconf macros, respectively, used in many places.
-Specifically, the file 'm4/kpse-pkgs.m4' contains lists of all program
-and library modules; missing modules are silently ignored.  (This helps
-in creating cut-down source trees.)
+   In addition, the top-level directories 'am/' and 'm4/' contain
+'Makefile.am' fragments and Autoconf macros, respectively, used in many
+places.  Specifically, the file 'm4/kpse-pkgs.m4' contains lists of all
+program and library modules; missing modules are silently ignored.
+(This helps in creating cut-down source trees.)
 
    Each module contributes fragments (in separate files) defining its
 capabilities and requirements to the 'configure.ac' scripts at the
@@ -80,17 +80,23 @@ configured for the benefit of 'make' targets such as 'dist' or
 'distcheck'.
 
    The top-level 'build-aux/' directory contains the common files
-'compile', 'config.guess', 'config.sub', 'depcomp', etc. for most
-packages, pulled from the GNU Gnulib sources
+'compile', 'config.guess', 'config.sub', 'depcomp', etc. used by most
+packages.  These are from the GNU Gnulib sources
 (<http://www.gnu.org/software/gnulib>), which in turn synchronizes with
 the appropriate ultimate upstream repository.  There are, however,
 independent copies in, e.g., 'libs/freetype2/freetype-*/builds/unix/',
-and similar places.  The 'reautoconf' script does not touch those, but a
-TL cron job keeps them in sync (nightly).
+and a few other places.  The 'reautoconf' script does not touch those,
+but a TL cron job keeps them in sync (nightly).
 
    The directory 'extra/' contains things which are not part of the TL
-build, but are present just for (someone's) convenience, e.g.,
-'epstopdf' which is developed here.
+build, but are present just for (someone's) convenience, e.g., is
+'epstopdf' development source is here.
+
+   When the top-level './Build' script is used to build TL, two more two
+more top-level directories appear: 'Work/' for the build tree, and
+'inst/' for the install tree (from 'make install').  These names (and
+everything else about 'Build''s operation) can be changed by setting
+environment variables before running it; see the script file.
 
 6.3 Autoconf macros
 ===================
@@ -278,9 +284,8 @@ structure and variation.
 ----------------------------------------
 
 This generic library uses the source tree in, e.g., the subdirectory
-'libpng-1.6.16' with all modifications for TL recorded in
-'libpng-1.6.16-PATCHES/*'.  The 'configure.ac' fragment
-'ac/withenable.ac' contains
+'libpng-src/' with all modifications for TL recorded in 'TLpatches/*'.
+The 'configure.ac' fragment 'ac/withenable.ac' contains
 
      KPSE_WITH_LIB([libpng], [zlib])
 
@@ -377,9 +382,9 @@ for a few of the programs in TL.
 6.5.1 The 't1utils' package in 'utils/t1utils'
 ----------------------------------------------
 
-Once again we use the distributed source tree 't1utils-1.39' with
-modifications documented in 't1utils-1.39-PATCHES/*' and a proxy build
-system consisting of 'configure.ac' and 'Makefile.am'.  The fragment
+Once again we use the distributed source tree 't1utils-src' with
+modifications documented in 'TLpatches/*' and a proxy build system
+consisting of 'configure.ac' and 'Makefile.am'.  The fragment
 'ac/withenable.ac' contains
 
      KPSE_ENABLE_PROG([t1utils])
@@ -390,12 +395,11 @@ configure option '--disable-t1utils'.
 6.5.2 The 'xindy' package in 'utils/xindy'
 ------------------------------------------
 
-This module uses the distributed source tree 'xindy-2.5.1' with
-modifications documented in 'xindy-2.5.1-PATCHES/*', a proxy
-'configure.ac', and a wrapper 'Makefile.am' that descends into
-'xindy-2.5.1'.  The 'xindy' build requires that the distributed
-'Makefile's allow a 'VPATH' build, can handle all targets, and do not
-refer to '${top_srcdir}' or '${top_builddir}'.  The fragment
+This module uses the distributed source tree 'xindy-src/' with
+modifications documented in 'TLpatches/*', a proxy 'configure.ac', and a
+wrapper 'Makefile.am' that descends into 'xindy-src'.  The 'xindy' build
+requires a 'make' that supports a 'VPATH' build, can handle all targets,
+and do not refer to '${top_srcdir}' or '${top_builddir}'.  The fragment
 'ac/withenable.ac' contains
 
      KPSE_ENABLE_PROG([xindy], , [disable native])
@@ -445,6 +449,13 @@ but are included on the TL DVD together with their support files.
 
 This section outlines the basic process for adding new packages to the
 TL build system.
+
+   In any case, a new package directory 'foo' should contain the
+original sources, as modified for TL, in 'foo/foo-src', and the changes
+should be documented in 'foo/TLpatches/*'; changes should also be
+submitted upstream whenever reasonable, of course.  In addition, 'foo/'
+will need the usual Automake build-related files ('configure.ac',
+'Makefile.am', etc.  Please keep a 'ChangeLog' for all TL changes.
 
 6.6.1 Adding a new program module
 ---------------------------------

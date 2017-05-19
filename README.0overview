@@ -33,8 +33,8 @@ list of all 'configure' options.
 program and library module (or package) specifies its own requirements
 and properties, such as required libraries, whether an installed
 (system) version of a library can be used, 'configure' options to be
-seen at the top-level, and more.  An explicit list of all available
-modules is kept in only one, central, place ('m4/kpse-pkgs.m4').
+seen at the top level, and more.  An explicit list of all available
+modules is kept in only one central place, namely 'm4/kpse-pkgs.m4'.
 
    A second, related goal is to configure and build each library before
 configuring any other (program or library) module which uses that
@@ -46,7 +46,7 @@ version of that library.
 independently.  The corresponding modules use (most of) the distributed
 source tree and document any modifications of that source.
 
-   All this is for the sake of simplifying both upgrading of modules
-maintained independently and integrating new modules into the TL build
-system.  (Not to say that either task is trivial.)
+   All this is for the sake of simplifying both upgrading of modules and
+integrating new modules into the TL build system.  (Not to say that
+either task is trivial.)
 
