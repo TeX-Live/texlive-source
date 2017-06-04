@@ -1,6 +1,6 @@
 /* mktexfmt.c
 
-   Copyright 2000, 2016 Akira Kakuto.
+   Copyright 2000, 2017 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
 */
 #include <kpathsea/kpathsea.h>
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 int main(int ac, char **av)
 {
@@ -34,17 +34,28 @@ int main(int ac, char **av)
   char texbindir[256];
   char fullbin[256];
 
+  int  is_w32tex;
+
   kpse_set_program_name(av[0], NULL);
+
+  p = kpse_var_value("jtex_filetype");
+
+  if (p) {
+    is_w32tex = 1;
+    free(p);
+  } else {
+    is_w32tex = 0;
+  }
 
   p = kpse_program_name;
   if(ac != 2) {
     fprintf(stderr,"%s : Usage %s formatname\n", p, p);
-    fprintf(stderr,"formatname :  (foo.fmt, foo.nfmt, foo.mem, foo.base)\n");
+    fprintf(stderr,"formatname :  (foo.fmt, foo.base, foo.mem)\n");
     return 1;
   }
   if(!strncmp(av[1], "-h", 2) || !strncmp(av[1], "--h", 3)) {
     fprintf(stderr,"%s : Usage %s formatname\n", p, p);
-    fprintf(stderr,"formatname :  (foo.fmt, foo.nfmt, foo.mem, foo.base)\n");
+    fprintf(stderr,"formatname :  (foo.fmt, foo.base, foo.mem)\n");
     return 0;
   }
   if(!strncmp(av[1], "-v", 2) || !strncmp(av[1], "--v", 3)) {
@@ -77,8 +88,7 @@ int main(int ac, char **av)
     return 1;
   }
 
-  if(stricmp(p, ".fmt") && stricmp(p, ".nfmt") &&
-     stricmp(p, ".base") && stricmp(p, ".mem")) {
+  if(stricmp(p, ".fmt") && stricmp(p, ".base") && stricmp(p, ".mem")) {
     fprintf(stderr, "%s : unknown format type.\n", av[1]);
     return 1;
   }
@@ -101,10 +111,15 @@ int main(int ac, char **av)
 
 /* COMMAND */
   strcpy(fullbin, texbindir);
-  strcat(fullbin, "fmtutil.exe");
-  fprintf(stderr, "Running the command %s\n", fullbin);
-  _spawnlp(_P_WAIT, fullbin, "fmtutil", "--byfmt", av[1], NULL);
-
+  if (is_w32tex) {
+    strcat(fullbin, "fmtutil.exe");
+    fprintf(stderr, "Running the command %s\n", fullbin);
+    _spawnlp(_P_WAIT, fullbin, "fmtutil", "--byfmt", av[1], NULL);
+  } else {
+    strcat(fullbin, "fmtutil-sys.exe");
+    fprintf(stderr, "Running the command %s\n", fullbin);
+    _spawnlp(_P_WAIT, fullbin, "fmtutil-sys", "--byfmt", av[1], NULL);
+  }
 /* END COMMAND */
   
 /* return to original stdout and stdin */
