@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 44422 2017-05-19 15:07:25Z karl $
+# $Id: tlmgr.pl 44452 2017-06-04 23:45:39Z karl $
 #
 # Copyright 2008-2017 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 
-my $svnrev = '$Revision: 44422 $';
-my $datrev = '$Date: 2017-05-19 17:07:25 +0200 (Fri, 19 May 2017) $';
+my $svnrev = '$Revision: 44452 $';
+my $datrev = '$Date: 2017-06-05 01:45:39 +0200 (Mon, 05 Jun 2017) $';
 my $tlmgrrevision;
 my $prg;
 if ($svnrev =~ m/: ([0-9]+) /) {
@@ -2559,8 +2559,12 @@ sub action_update {
   # if --list is given:    nothing
   # other options just change the behavior
   if (!($opts{"list"} || @ARGV || $opts{"all"} || $opts{"self"})) {
-    tlwarn("$prg update: specify --list, --all, --self, or a list of package names.\n");
-    return ($F_ERROR);
+    if ($opts{"dry-run"}) {
+      $opts{"list"} = 1; # update -n same as update -n --list
+    } else {
+      tlwarn("$prg update: specify --list, --all, --self, or a list of package names.\n");
+      return ($F_ERROR);
+    }
   }
 
   init_tlmedia_or_die();
@@ -8883,7 +8887,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<http://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 44422 2017-05-19 15:07:25Z karl $
+$Id: tlmgr.pl 44452 2017-06-04 23:45:39Z karl $
 =cut
 
 # to remake HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
