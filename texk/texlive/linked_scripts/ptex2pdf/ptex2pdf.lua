@@ -1,7 +1,7 @@
 #!/usr/bin/env texlua
 
 NAME = "ptex2pdf[.lua]"
-VERSION = "0.9"
+VERSION = "20170604.0"
 AUTHOR = "Norbert Preining"
 AUTHOREMAIL = "norbert@preining.info"
 SHORTDESC = "Convert Japanese TeX documents to pdf"
@@ -9,7 +9,8 @@ LONGDESC = [[
 Main purpose of the script is easy support of Japanese typesetting
 engines in TeXworks. As TeXworks typesetting setup does not allow
 for multistep processing, this script runs one of the ptex based
-programs (ptex, uptex, eptex, platex, uplatex) followed by dvipdfmx.
+programs (ptex, uptex, eptex, euptex, platex, uplatex) followed
+by dvipdfmx.
 ]]
 USAGE = [[
 [texlua] ptex2pdf[.lua] { option | basename[.tex] } ... 
@@ -28,9 +29,9 @@ options: -v  version
 LICENSECOPYRIGHT = [[
 Originally based on musixtex.lua from Bob Tennent.
 
-(c) Copyright 2016      by Japanese TeX Development Community  
-(c) Copyright 2013-2016 Norbert Preining norbert@preining.info  
-(c) Copyright 2012 Bob Tennent rdt@cs.queensu.ca  
+(c) Copyright 2016-2017 Japanese TeX Development Community  
+(c) Copyright 2013-2017 Norbert Preining norbert@preining.info  
+(c) Copyright 2012      Bob Tennent rdt@cs.queensu.ca  
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -73,62 +74,61 @@ Under Preferences > Typesetting add new entries, for example:
 
 for ptex files:
 
-| Setting     |  Value           |
-|-------------|------------------|
-| Name:       |  pTeX to pdf     |
-| Program:    |  ptex2pdf        |
-| Arguments:  |  -ot             |
-|             |  $synctexoption  |
-|             |  $fullname       |
-
+| Setting     | Value              |
+|-------------|--------------------|
+| Name:       | pTeX (ptex2pdf)    |
+| Program:    | ptex2pdf           |
+| Arguments:  | -ot                |
+|             | $synctexoption     |
+|             | $fullname          |
 
 for platex files:
 
-| Setting     | Value          |
-|-------------|----------------|
-| Name:       | pLaTeX to pdf  |
-| Program:    | ptex2pdf       |
-| Arguments:  | -l             |
-|             | -ot            |
-|             | $synctexoption |
-|             | $fullname      |
+| Setting     | Value              |
+|-------------|--------------------|
+| Name:       | pLaTeX (ptex2pdf)  |
+| Program:    | ptex2pdf           |
+| Arguments:  | -l                 |
+|             | -ot                |
+|             | $synctexoption     |
+|             | $fullname          |
 
 for uptex files:
 
-| Setting     | Value          |
-|-------------|----------------|
-| Name:       | upTeX to pdf   |
-| Program:    | ptex2pdf       |
-| Arguments:  | -u             |
-|             | -ot            |
-|             | $synctexoption |
-|             | $fullname      |
+| Setting     | Value              |
+|-------------|--------------------|
+| Name:       | upTeX (ptex2pdf)   |
+| Program:    | ptex2pdf           |
+| Arguments:  | -u                 |
+|             | -ot                |
+|             | $synctexoption     |
+|             | $fullname          |
 
 for uplatex files:
 
-| Setting     | Value          |
-|-------------|----------------|
-| Name:       | upLaTeX to pdf |
-| Program:    | ptex2pdf       |
-| Arguments:  | -l             |
-|             | -u             |
-|             | -ot            |
-|             | $synctexoption |
-|             | $fullname      |
+| Setting     | Value              |
+|-------------|--------------------|
+| Name:       | upLaTeX (ptex2pdf) |
+| Program:    | ptex2pdf           |
+| Arguments:  | -l                 |
+|             | -u                 |
+|             | -ot                |
+|             | $synctexoption     |
+|             | $fullname          |
 
 If you need special kanji encodings for one of these programs,
-add the respective `-kanji` option after the `$synctexoption`. Example:
+add the respective `-kanji` option with the `$synctexoption`. Example:
 
 for platex files in SJIS encoding:
 
-| Setting     | Value                       |
-|-------------|-----------------------------|
-| Name:       | pLaTeX/SJIS to pdf          |
-| Program:    | ptex2pdf                    |
-| Arguments:  | -l                          |
-|             | -ot                         |
-|             | $synctexoption -kanji=sjis  |
-|             | $fullname                   |
+| Setting     | Value                      |
+|-------------|----------------------------|
+| Name:       | pLaTeX/SJIS (ptex2pdf)     |
+| Program:    | ptex2pdf                   |
+| Arguments:  | -l                         |
+|             | -ot                        |
+|             | -kanji=sjis $synctexoption |
+|             | $fullname                  |
 ]]
 
 DEVELPLACE = "http://github.com/texjporg/ptex2pdf"
@@ -168,6 +168,10 @@ CHANGELOG = [[
   update copyright and development place (now in texjp)  
   support 'flag=val' to specify option values  
   only allow one (1) filename argument  
+- version 20170603.0  
+  start version number in the format YYYYMMDD.0  
+  better support for cp932 windows filenames  
+  first replace all backslash chars to slash chars  
 ]]
 
 
@@ -240,6 +244,14 @@ end
 
 function whoami ()
   print("This is " .. NAME .. " version ".. VERSION .. ".")
+end
+
+function print_ifdebug(message) -- for debugging: accepts only one argument
+  --print("DEBUG: " .. message) -- uncomment for debugging
+end
+
+function slashify(str) -- replace "\" with "/", mainly for path strings on cp932 windows
+  return (tostring(str):gsub("[\x81-\x9f\xe0-\xfc]?.", { ["\\"] = "/" }))
 end
 
 if #arg == 0 then
@@ -360,7 +372,8 @@ kpse.set_program_name(tex)
 if ( filename == "" ) then
   print("No filename argument given, exiting.")
   os.exit(1)
-else 
+else
+  filename = slashify(filename)
   if ( kpse.find_file(filename) == nil ) then
     -- try .tex extension
     if ( kpse.find_file(filename .. ".tex") == nil ) then
@@ -380,9 +393,10 @@ else
     -- if it has already an extension, we need to drop it to get the dvi name
     bname = string.gsub(filename, "^(.*)%.[^.]+$", "%1")
   end
-  -- filename may contain "/" or "\", but the intermediate output is written
+  -- filename may contain "/", but the intermediate output is written
   -- in current directory, so we need to drop it
-  bname = string.gsub(bname, "^.*[/\\](.*)$", "%1")
+  -- note that all "\" has been replaced with "/"
+  bname = string.gsub(bname, "^.*/(.*)$", "%1")
 end
 
 -- we are still here, so we found a file
@@ -410,10 +424,8 @@ if (os.execute(tex .. " " .. texopts .. " \"" .. filename .. "\"") == 0) and
   end
 else
   print("ptex2pdf processing of " .. filename .. " failed.\n")
-    --[[ uncomment for debugging
-    print("tex = ", tex)
-    print("dvipdf = ", dvipdf)
-    --]]
+  print_ifdebug("tex = " .. tex)
+  print_ifdebug("dvipdf = " .. dvipdf)
   os.exit(2)
 end
 
