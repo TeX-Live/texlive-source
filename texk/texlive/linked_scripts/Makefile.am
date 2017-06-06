@@ -108,6 +108,7 @@ texmf_other_scripts = \
 	diadia/diadia.lua \
 	dosepsbin/dosepsbin.pl \
 	dviasm/dviasm.py \
+	dviinfox/dviinfox.pl \
 	ebong/ebong.py \
 	epspdf/epspdf.tlu \
 	epspdf/epspdftk.tcl \
