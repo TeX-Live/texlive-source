@@ -29,7 +29,7 @@ local shellescape         = status.shell_escape -- 0 (disabled) 1 (anything) 2 (
 local kpseused            = status.kpse_used    -- 0 1
 
 io.saved_open             = io_open  -- can be protected
-io.saved_popen            = io_popen -- can be protected
+-- (deleted for tl17 rebuild) io.saved_popen            = io_popen -- can be protected
 io.saved_lines            = io_lines -- always readonly
 mt.saved_lines            = mt_lines -- always readonly
 
