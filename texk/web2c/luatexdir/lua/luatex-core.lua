@@ -122,7 +122,6 @@ if saferoption == 1 then
     lfs.rmdir  = nil
     lfs.mkdir  = nil
 
-    io.saved_popen = nil
     io.saved_open  = luatex_io_open_readonly
 
 end
