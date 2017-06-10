@@ -4,7 +4,7 @@
 
 -- Print the usage of the lwarpmk command:
 
-printversion = "v0.31"
+printversion = "v0.32"
 
 function printhelp ()
 print ("lwarpmk: Use lwarpmk -h or lwarpmk --help for help.") ;
@@ -61,9 +61,9 @@ end
 
 function splitfile (destfile,sourcefile)
 print ("lwarpmk: Splitting " .. sourcefile .. " into " .. destfile) ;
-io.input(sourcefile)
+local sfile = io.open(sourcefile)
 io.output(destfile)
-for line in io.lines() do
+for line in sfile:lines() do
 i,j,copen,cstart,newfilename = string.find (line,"(.*)|(.*)|(.*)|") ;
 if ( (i~= nil) and (copen == "<!--") and (cstart == "Start file")) then -- split the file
 io.output(newfilename) ;
@@ -71,6 +71,7 @@ else -- not a splitpoint
 io.write (line .. "\n") ;
 end
 end -- do
+io.close(sfile)
 end -- function
 
 -- Incorrect value, so print an error and exit.
@@ -102,10 +103,10 @@ os.exit(1) -- exit the entire lwarpmk script
 else -- file exists
 -- Read the file:
 print ("lwarpmk: Reading " .. conffile ..".")
-io.input(conffile) ;
+local cfile = io.open(conffile)
 -- Scan each line:
 local linenum = 0
-for line in io.lines() do -- scan lines
+for line in cfile:lines() do -- scan lines
 linenum = linenum + 1
 i,j,cvarname,cvalue = string.find (line,"([%w-_]*)%s*=%s*\"([%w%-_%.]*)\"") ;
 -- Error if incorrect enclosing characters:
@@ -146,6 +147,7 @@ printconf () ;
 os.exit(1) ;
 end
 end -- do scan lines
+io.close(cfile)
 end -- file exists
 -- Select some operating-system commands:
 if opsystem=="Unix" then  -- For Unix / Linux / Mac OS:
@@ -185,10 +187,14 @@ end
 -- Return true if found.
 
 function reruntoget (filesource)
-io.input(filesource)
-for line in io.lines() do
-if ( string.find(line,"Rerun to get") ~= nil ) then return true end
+local fsource = io.open(filesource)
+for line in fsource:lines() do
+if ( string.find(line,"Rerun to get") ~= nil ) then
+io.close(fsource)
+return true
 end
+end
+io.close(fsource)
 return false
 end
 
@@ -255,11 +261,11 @@ end
 -- Create lateximages based on lateximages.txt:
 function createlateximages ()
 print ("lwarpmk: Creating lateximages.")
-io.input("lateximages.txt")
--- Create the lateximages directory, ignore error if alreadt exists
+local limagesfile = io.open("lateximages.txt")
+-- Create the lateximages directory, ignore error if already exists
 err = os.execute("mkdir lateximages")
 -- Scan lateximages.txt
-for line in io.lines() do
+for line in limagesfile:lines() do
 -- lwimgpage is the page number in the PDF which has the image
 -- lwimgnum is the sequential lateximage number to assign for the image
 i,j,lwimgpage,lwimgnum = string.find (line,"|(.*)|(.*)|")
@@ -287,6 +293,7 @@ rmname .. " lateximage-" .. lwimgnum ..".pdf lateximagetemp-" .. lwimgpage ..".p
 if ( err ~= 0 ) then print ( "lwarpmk: File error.") ; os.exit(1) ; end
 end
 end -- do
+io.close(limagesfile)
 end -- function
 
 -- Use latexmk to compile source and index:
