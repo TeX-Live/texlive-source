@@ -1,3 +1,7 @@
+2017-06-11  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* mktexfmt.c: Use fmtutil-user for consistency with other platforms.
+
 2017-06-04  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* mktexfmt.c: Adapt to the new fmtutil.pl in TeX Live.
