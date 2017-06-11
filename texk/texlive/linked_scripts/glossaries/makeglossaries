@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 2.20
+# Version : 2.21
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -25,11 +25,14 @@
 # and the derived files glossaries.sty, mfirstuc.sty,
 # glossary-hypernav.sty, glossary-list.sty, glossary-long.sty,
 # glossary-super.sty, glossaries.perl.
-# Also makeglossaries and makeglossaries.
+# Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="2.20 (2016-12-16)";
+my $version="2.21 (2017-05-11)";
 
 # History:
+# v2.21:
+#   * Fixed spelling of \GlsAddXdyLocation
+#   * Adjusted range encap clash
 # v2.20 (2016/12/16)
 #   * Added check for \glsxtr@makeglossaries
 # v2.19 (2016/05/27)
@@ -222,9 +225,10 @@ my %xindy_error_text =
     'nomain' =>
         "\nRemember to use package option 'nomain' if you don't\n".
         "want to use the main glossary.",
+#v2.21: fixed spelling of \GlsAddXdyLocation
     'badlocation' =>
         "You may have forgotten to add a location \n"
-        . "class with \\GlsAddLocation or you may have \n"
+        . "class with \\GlsAddXdyLocation or you may have \n"
         . "the format incorrect.\n",
     'comp207' => "You may need to add 'compatible-2.07' package option.",
     'noxdyfile' => "Style file not found. (Have you used \\noist by mistake?)"
@@ -1006,17 +1010,49 @@ sub makeindex{
                   and $entry{'location'} eq $existing->{'location'}
                   and $entry{'encap'} ne $existing->{'encap'})
                   {
-                     if (&encap_overrides($entry{'encap'},
-                           $existing->{'encap'}))
+                     $add = 0 if ($add == 1);
+
+                     # Range encaps should take precedence.
+
+                     if ($entry{'encap'}=~/^[\(\)]/)
+                     {
+                        $add = 2;
+
+                        if ($existing->{'encap'}=~/^[\(\)]/)
+                        {
+                           # too complicated, keep both
+
+                           last;
+                        }
+                        else
+                        {
+                           # remove existing
+
+                           splice @entries, $idx, 1;
+
+                           $idx--;
+                        }
+                     }
+                     elsif ($existing->{'encap'}=~/^[\(\)]/)
+                     {
+                        if ($entry{'encap'}=~/^[\(\)]/)
+                        {
+                           # too complicated, keep both
+
+                           $add = 1;
+                           last;
+                        }
+                        # (otherwise drop new entry)
+                     }
+                     elsif (&encap_overrides($entry{'encap'},
+                                   $existing->{'encap'}))
                      {
                         $entries[$idx] = \%entry;
                      }
-
-                     $add = 0;
                   } 
                }
 
-               push @entries, \%entry if $add;
+               push @entries, \%entry if $add > 0;
             }
             else
             {
@@ -1060,14 +1096,10 @@ sub makeindex{
 # For example, what happens in the event of 'textbf' and 'emph'?
 # Should one override the other or be combined? Combining is harder
 # as it would need a corresponding LaTeX command.
-# Range encaps should take precedence.
+# 2.21 check for range encap moved earlier
 
 sub encap_overrides{
   my ($newencap, $existing) = @_;
-
-  return 0 if ($existing=~/^[\(\)]/);
-
-  return 1 if ($newencap=~/^[\(\)]/);
 
   ($existing=~/\\glsnumberformat\s*$/ or $newencap!~/\\glsnumberformat\s*$/ )
 }
