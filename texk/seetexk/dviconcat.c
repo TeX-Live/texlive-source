@@ -437,6 +437,8 @@ usage:
 	if (optind >= argc) {
 	  if (!isatty(fileno(stdin)))
 	    SET_BINARY(fileno(stdin));
+	  else
+	    goto usage;
 	  doit("`stdin'", stdin);
 	}
 	else {
@@ -445,6 +447,8 @@ usage:
 			if (*s == '-' && s[1] == 0) {
 			  if (!isatty(fileno(stdin)))
 			    SET_BINARY(fileno(stdin));
+			  else
+			    goto usage;
 			  doit("`stdin'", stdin);
 			}
 			else if ((f = fopen(s, FOPEN_RBIN_MODE)) == NULL) {
