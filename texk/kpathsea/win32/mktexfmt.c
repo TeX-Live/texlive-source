@@ -116,9 +116,9 @@ int main(int ac, char **av)
     fprintf(stderr, "Running the command %s\n", fullbin);
     _spawnlp(_P_WAIT, fullbin, "fmtutil", "--byfmt", av[1], NULL);
   } else {
-    strcat(fullbin, "fmtutil-sys.exe");
+    strcat(fullbin, "fmtutil-user.exe");
     fprintf(stderr, "Running the command %s\n", fullbin);
-    _spawnlp(_P_WAIT, fullbin, "fmtutil-sys", "--byfmt", av[1], NULL);
+    _spawnlp(_P_WAIT, fullbin, "fmtutil-user", "--byfmt", av[1], NULL);
   }
 /* END COMMAND */
   
