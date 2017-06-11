@@ -1,3 +1,8 @@
+2017-06-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c:
+	Show usage and exit if stdin is set to a keyboard.
+
 2015-10-05  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* dvitodvi.c (ParseSpecs): Avoid to return the address of a

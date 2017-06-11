@@ -446,6 +446,8 @@ Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [infile [outfile]]\n",
 		inf = stdin;
 		if (!isatty(fileno(inf)))
 		  SET_BINARY(fileno(inf));
+		else
+		  goto usage;
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
 	if (outname == NULL) {

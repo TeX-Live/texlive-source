@@ -688,6 +688,8 @@ Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infi
 		inf = stdin;
 		if (!isatty(fileno(inf)))
 		  SET_BINARY(fileno(inf));
+		else
+		  goto usage;
 	} else if ((inf = fopen(DVIFileName, FOPEN_RBIN_MODE)) == 0)
 		error(1, -1, "cannot read %s", DVIFileName);
 	if (outname == NULL) {
