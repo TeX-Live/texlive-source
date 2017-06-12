@@ -16,7 +16,7 @@ local find, gsub = string.find, string.gsub
 
 local io_open             = io.open
 local io_popen            = io.popen
-local io_line             = io.lines
+local io_lines            = io.lines
 
 local fio_readline        = fio.readline
 local fio_checkpermission = fio.checkpermission
@@ -71,12 +71,16 @@ local function luatex_io_popen(name,...)
     end
 end
 
-local function luatex_io_lines(name)
-    local f = io_open(name,'r')
-    if f then
-        return function()
-            return fio_readline(f)
+local function luatex_io_lines(name,how)
+    if name then
+        local f = io_open(name,how or 'r')
+        if f then
+            return function()
+                return fio_readline(f)
+            end
         end
+    else
+        return io_lines()
     end
 end
 
