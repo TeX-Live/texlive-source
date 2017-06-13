@@ -16,7 +16,7 @@ local find, gsub = string.find, string.gsub
 
 local io_open             = io.open
 local io_popen            = io.popen
-local io_line             = io.lines
+local io_lines            = io.lines
 
 local fio_readline        = fio.readline
 local fio_checkpermission = fio.checkpermission
@@ -29,7 +29,7 @@ local shellescape         = status.shell_escape -- 0 (disabled) 1 (anything) 2 (
 local kpseused            = status.kpse_used    -- 0 1
 
 io.saved_open             = io_open  -- can be protected
-io.saved_popen            = io_popen -- can be protected
+-- (deleted for tl17 rebuild) io.saved_popen            = io_popen -- can be protected
 io.saved_lines            = io_lines -- always readonly
 mt.saved_lines            = mt_lines -- always readonly
 
@@ -71,12 +71,16 @@ local function luatex_io_popen(name,...)
     end
 end
 
-local function luatex_io_lines(name)
-    local f = io_open(name,'r')
-    if f then
-        return function()
-            return fio_readline(f)
+local function luatex_io_lines(name,how)
+    if name then
+        local f = io_open(name,how or 'r')
+        if f then
+            return function()
+                return fio_readline(f)
+            end
         end
+    else
+        return io_lines()
     end
 end
 
@@ -122,7 +126,6 @@ if saferoption == 1 then
     lfs.rmdir  = nil
     lfs.mkdir  = nil
 
-    io.saved_popen = nil
     io.saved_open  = luatex_io_open_readonly
 
 end
