@@ -107,6 +107,10 @@ int	UseThisPage;		/* true => current page is selected */
 
 i32	InputPageNumber;	/* current absolute page in old DVI file */
 int	NumberOfOutputPages;	/* number of pages in new DVI file */
+#ifdef	ASCIIPTEX
+int	ptexdvi;		/* true if dvi file is extended (TATEKUMI) */
+int	inverse;		/* true if 'right-hand side binding' */
+#endif
 
 i32	Numerator;		/* numerator from DVI file */
 i32	Denominator;		/* denominator from DVI file */
@@ -142,6 +146,9 @@ static void WriteFont(struct fontinfo *fi);
 static void PutFontSelector(i32 index);
 static void ScanDVIFile(void);
 static void HandleDVIFile(void);
+#ifdef	ASCIIPTEX
+static void HandleDVIFileRighty(void);
+#endif
 static int HandlePage(void);
 static void PutEmptyPage(void);
 
@@ -293,6 +300,11 @@ HandlePostAmble(void)
 
 	putbyte(outf, DVI_POSTPOST);
 	PutLong(outf, StartOfLastPage);	/* actually start of postamble */
+#ifdef	ASCIIPTEX
+	if(ptexdvi)
+		putbyte(outf, DVI_PTEXVERSION);
+	else
+#endif
 	putbyte(outf, DVI_VERSION);
 	putbyte(outf, DVI_FILLER);
 	putbyte(outf, DVI_FILLER);
@@ -388,10 +400,17 @@ main(int argc, char **argv)
 
 	Signature = 0;
 
+#ifdef	ASCIIPTEX
+	inverse = 0;
+#endif
 	ProgName = *argv;
 	setbuf(stderr, serrbuf);
 
+#ifdef	ASCIIPTEX
+	while ((c = getopt(argc, argv, "i:o:s:qr")) != EOF) {
+#else
 	while ((c = getopt(argc, argv, "i:o:s:q")) != EOF) {
+#endif
 		switch (c) {
 
 		case 'q':	/* silent */
@@ -420,12 +439,23 @@ main(int argc, char **argv)
 			   error(1, -1,
 				 "-s parameter must be a multiple of 4");
 			break;
+#ifdef	ASCIIPTEX
+		case 'r':
+			inverse = 1;
+			break;
+#endif
 
 		case '?':
 usage:
+#ifdef	ASCIIPTEX
+			(void) fprintf(stderr, "\
+Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [-r] [infile [outfile]]\n",
+				ProgName);
+#else
 			(void) fprintf(stderr, "\
 Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [infile [outfile]]\n",
 				ProgName);
+#endif
 			(void) fflush(stderr);
 			exit(1);
 		}
@@ -465,10 +495,18 @@ Usage: %s [-s signature] [-q] [-i infile] [-o outfile] [infile [outfile]]\n",
 	if ((inf = SeekFile(inf)) == NULL) {
 	        error(1, 0, "can't seek file");
 	}
+#ifdef	ASCIIPTEX
+	ptexdvi = 0;
+#endif
 	InputPageNumber = 0;
 	StartOfLastPage = -1;
 	HandlePreAmble();
 	ScanDVIFile();
+#ifdef	ASCIIPTEX
+	if(inverse)
+		HandleDVIFileRighty();
+	else
+#endif
 	HandleDVIFile();
 	HandlePostAmble();
 	if (!SFlag)
@@ -659,7 +697,12 @@ char	oplen[128] = {
 	0,			/* DVI_PRE */
 	0,			/* DVI_POST */
 	0,			/* DVI_POSTPOST */
+#ifdef	ASCIIPTEX
+	0, 0, 0, 0, 0,		/* 250 .. 254 */
+	0,			/* DVI_DIR */
+#else
 	0, 0, 0, 0, 0, 0,	/* 250 .. 255 */
+#endif
 };
 
 /*
@@ -710,11 +753,53 @@ HandleDVIFile(void)
 				     "can't seek page %d", ActualPage+1);
 		        HandlePage();
 		} else
+		        PutEmptyPage();
+	}
+	if (fseek(inf, StartOfPage[InputPageNumber]+1, 0) == -1)
+	        error(1, -1, "can't seek last page");
+}
+
+#ifdef	ASCIIPTEX
+/*
+ * Here we read the input DVI file and write relevant pages to the
+ * output DVI file. We also keep track of font changes, handle font
+ * definitions, and perform some other housekeeping.
+ */
+static void
+HandleDVIFileRighty(void)
+{
+        int CurrentPage, ActualPage, MaxPage;
+
+	UseThisPage = 1;
+
+	MaxPage = InputPageNumber + (4-InputPageNumber%4)%4;
+
+	if (!Signature)
+	        Signature = MaxPage;
+	for (CurrentPage = 0; CurrentPage < MaxPage; CurrentPage++) {
+	        ActualPage = CurrentPage - CurrentPage%Signature;
+	        switch (CurrentPage%4) {
+		case 1:	/* case 0: */
+		case 2: /* case 3: */
+		   ActualPage += Signature-1-(CurrentPage%Signature)/2;
+		   break;
+		case 0:	/* case 1: */
+		case 3: /* case 2: */
+		   ActualPage += (CurrentPage%Signature)/2;
+		   break;
+		}
+	        if (ActualPage < InputPageNumber) {
+		        if (fseek(inf, StartOfPage[ActualPage], 0) == -1)
+		               error(1, -1,
+				     "can't seek page %d", ActualPage+1);
+		        HandlePage();
+		} else
     	                PutEmptyPage();
 	}
 	if (fseek(inf, StartOfPage[InputPageNumber]+1, 0) == -1)
 	        error(1, -1, "can't seek last page");
 }
+#endif
 
 static int
 HandlePage(void)
@@ -844,6 +929,16 @@ HandlePage(void)
 			case DT_FNTDEF:
 				HandleFontDef(p);
 				continue;
+
+#ifdef	ASCIIPTEX
+			case DT_DIR:
+				ptexdvi = 1;
+
+				putbyte(outf, c);
+				putbyte(outf, p);
+				CurrentPosition += 2;
+				continue;
+#endif
 
 			default:
 				panic("HandleDVIFile DVI_DT(%d)=%d",

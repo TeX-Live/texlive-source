@@ -572,7 +572,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DASCIIPTEX
 AM_CFLAGS = $(WARNING_CFLAGS)
 noinst_LIBRARIES = libtex.a
 libtex_a_SOURCES = \
@@ -601,8 +601,10 @@ noinst_HEADERS = \
 dist_man1_MANS = dvibook.man dviconcat.man dviselect.man dvitodvi.man
 TESTS = seetexk.test
 EXTRA_DIST = $(TESTS) tests/play.dvi tests/playbook.2 tests/playconc.2 \
-	tests/playdvi.2 tests/playnot.2 tests/playsel.2
-DISTCLEANFILES = play*.2 play*.dvi
+	tests/playdvi.2 tests/playnot.2 tests/playsel.2 \
+	tests/playtate.dvi tests/playbook.3 tests/playbook.4 \
+	tests/playconc.3 tests/playdvi.3 tests/playsel.3
+DISTCLEANFILES = play*.2 play*.3 play*.4 play*.dvi
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
