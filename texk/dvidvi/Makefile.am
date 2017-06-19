@@ -3,7 +3,7 @@
 ## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA -DUNIX
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA -DASCIIPTEX -DUNIX
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 bin_PROGRAMS = dvidvi
@@ -36,6 +36,7 @@ dvidvi.log: dvidvi$(EXEXXT)
 EXTRA_DIST += $(TESTS)
 
 ## dvidvi.test
-EXTRA_DIST += tests/play.dvi tests/playout.2
-DISTCLEANFILES = play*.2 play*.dvi
+EXTRA_DIST += tests/play.dvi tests/playout.2 \
+	tests/playtate.dvi tests/playout.3
+DISTCLEANFILES = play*.2 play*.3 play*.dvi
 
