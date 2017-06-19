@@ -2,8 +2,8 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.2.3
-@set month-year April 2017
+@set version 6.2.4
+@set month-year June 2017
 
 @copying
 This file documents the Kpathsea library for path searching.
