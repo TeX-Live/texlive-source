@@ -540,16 +540,16 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA -DUNIX
+AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA -DASCIIPTEX -DUNIX
 AM_CFLAGS = $(WARNING_CFLAGS)
 dvidvi_SOURCES = dvidvi.c
 dist_man1_MANS = dvidvi.1
 EXTRA_DIST = a5bookle.bat a5bookle.com a5bookle.hlp a5test.tex \
 	build.com doubside.bat doubside.com doubside.hlp \
 	dvidvi.kohm-patch dvisamp.tex $(TESTS) tests/play.dvi \
-	tests/playout.2
+	tests/playout.2 tests/playtate.dvi tests/playout.3
 TESTS = dvidvi.test
-DISTCLEANFILES = play*.2 play*.dvi
+DISTCLEANFILES = play*.2 play*.3 play*.dvi
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

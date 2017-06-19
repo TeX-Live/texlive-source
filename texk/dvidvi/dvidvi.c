@@ -165,6 +165,10 @@ integer *pageloc ;
 integer *pagenumbers ;
 int prettycolumn ;       /* the column we are at when running pretty */
 
+#ifdef ASCIIPTEX
+int ptexdvi ;            /* true if dvi file is extended (TATEKUMI) */
+#endif
+
 /*
  *   This array holds values that indicate the length of a command, if
  *   we aren't concerned with that command (which is most of them) or
@@ -873,6 +877,11 @@ static void readdvifile(void) {
       if (c == 2 && d == 0xdf /* dave fuchs */ &&
                             e == 0xdf)
          break ;
+#ifdef	ASCIIPTEX
+      if (c == 3 && d == 0xdf /* dave fuchs */ &&
+                            e == 0xdf)
+         break ;
+#endif
       fseek(infile,-4L,SEEK_CUR);
       }
    if (p < 10)
@@ -1024,6 +1033,11 @@ static void writepostamble(void) {
          putfontdef(i) ;
    outdvibyte(249) ;
    outdviquad(p) ;
+#ifdef ASCIIPTEX
+   if (ptexdvi)
+      outdvibyte(3) ;
+   else
+#endif
    outdvibyte(2) ;
    outdviquad(0xdfdfdfdfL) ;
    while (dviloc & 3)
@@ -1129,6 +1143,12 @@ case 243: case 244: case 245: case 246:
                p += dvibyte() + 2 ;
                fseek(infile,p,SEEK_SET);
                break ;
+#ifdef ASCIIPTEX
+case 255:
+               ptexdvi = 1 ;
+               outdvibyte(len);
+               break ;
+#endif
 default:       fprintf(stderr, "Bad dvi command was %d at %ld\n", len, p) ;
                error("! lost sync dvi in file lost dvi sync file in") ;
             }
@@ -1159,6 +1179,10 @@ static void writedvifile(void) {
    integer actualpageno, lastpageno ;
    struct pagespec *ps ;
    Boolean beginp ;
+
+#ifdef ASCIIPTEX
+   ptexdvi = 0 ;
+#endif
 
    writepreamble() ;
    if ( !pagemodulo )

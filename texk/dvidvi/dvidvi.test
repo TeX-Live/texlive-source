@@ -10,3 +10,10 @@ cp $srcdir/tests/play.dvi .
 	&& diff playout.2 $srcdir/tests/playout.2 \
 	|| exit 1
 
+rm -rf play*
+cp $srcdir/tests/playtate.dvi .
+./dvidvi -f 5 -l @25 -m'4:-3,0(6,0)' playtate playout \
+	2>playout.3 \
+	&& diff playout.3 $srcdir/tests/playout.3 \
+	|| exit 1
+
