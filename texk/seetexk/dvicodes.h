@@ -24,6 +24,11 @@
 
 #define DVI_VERSION	2	/* version number that should appear in
 				   pre- and post-ambles */
+#ifdef ASCIIPTEX
+#define DVI_PTEXVERSION	3	/* version number that should appear in
+				   post-ambles which are contained in
+				   dvi files using DIR command*/
+#endif /* ASCIIPTEX */
 
 #define DVI_SET1	128	/* set character, 1 byte param */
 #define DVI_SET2	129	/* set character, 2 byte param */
@@ -38,8 +43,13 @@
 #define DVI_NOP		138	/* no-op */
 #define DVI_BOP		139	/* begin page */
 #define DVI_EOP		140	/* end page */
+#ifdef ASCIIPTEX
+#define DVI_PUSH	141	/* push h,v,w,x,y,z,d */
+#define DVI_POP		142	/* pop  h,v,w,x,y,z,d */
+#else /* !ASCIIPTEX */
 #define DVI_PUSH	141	/* push h,v,w,x,y,z */
 #define DVI_POP		142	/* pop  h,v,w,x,y,z */
+#endif /* !ASCIIPTEX */
 #define DVI_RIGHT1	143	/* move right, 1 byte signed param */
 #define DVI_RIGHT2	144	/* move right, 2 byte signed param */
 #define DVI_RIGHT3	145	/* etc */
@@ -85,4 +95,7 @@
 #define DVI_PRE		247	/* preamble */
 #define DVI_POST	248	/* postamble */
 #define DVI_POSTPOST	249	/* end of postamble */
+#ifdef ASCIIPTEX
+#define DVI_DIR		255	/* d (direction) = 1 byte signed param */
+#endif /* ASCIIPTEX */
 #define DVI_FILLER	223	/* filler bytes at end of dvi file */

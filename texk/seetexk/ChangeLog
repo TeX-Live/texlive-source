@@ -1,3 +1,16 @@
+2017-06-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvibook.c, dviclass.[ch], dvicodes.h, dviconcat.c,
+	dviselect.c, dvitodvi.c: Add support for pTeX tate-kumi
+	DVI. The patch is based on the work by H. Kagotani in 1992.
+	* dvibook.c: Add -r option to generate right-hand side binding
+	books. It would be useful for Japanese tate-kumi documents.
+	* dvibook.man: Add -r option.
+	* seetexk.test: Add tests for pTeX support.
+	* playbook.3, playbook.4, playconc.3, playdvi.3, playsel.3,
+	playtate.dvi: Added.
+	* Makefile.am: Adjusted for pTeX support.
+
 2017-06-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c:
