@@ -1,3 +1,60 @@
+Release 1.14.10   (2017-06-13  Bryce Harrington <bryce@osg.samsung.com>)
+========================================================================
+Bugfix release rolling up backported fixes for the past half year.
+
+For a complete log of changes since 1.14.8, please see:
+
+    http://cairographics.org/releases/ChangeLog.cairo-1.14.10
+
+
+Features
+--------
+None
+
+API Changes
+-----------
+None
+
+Dependency Changes
+------------------
+None
+
+Performance Optimizations
+-------------------------
+None
+
+Bug Fixes
+---------
+* Clarify documentation	regarding device scale inheritance and the units
+  used in cairo_surface_create_similar_image.
+  Bug #99094.
+
+* Fix error reporting in the xcb backend if fallback fails.  Instead of
+  returning NULL when the X11 server can't do some operation, return a
+  surface in an error state.
+
+* Call XSync in the xlib backend before setting the error handler to
+  ignore errors for certain requests, to make sure all pending errors
+  are handled first.
+
+* For opentype fonts, always use gid to lookup glyph.
+
+* If glyph 0 used for rendering, remap to different index.
+
+* Set font size to em size when retrieving unhinted metrics.
+
+* Flush ASCII85Decode file after use with Postscript files.
+
+* pdf: Don't fail subsetting if unable to convert utf8 to utf16.
+
+* For truetype, reverse cmap search should end when 0xffff- 0xffff range
+  reached.
+
+* Fix bug in line wrapping with the PDF operators.
+
+* Fix an off by one check in cairo-image-info.c.
+
+
 Release 1.14.8    (2016-12-07  Bryce Harrington <bryce@osg.samsung.com>)
 ========================================================================
 Bugfix release rolling up backported fixes for the past year.
