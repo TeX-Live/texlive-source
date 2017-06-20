@@ -1,3 +1,8 @@
+2017-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	Import graphite2-1.3.10.
+	* version.ac: Adjusted.
+
 2016-11-13  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import graphite2-1.3.9.

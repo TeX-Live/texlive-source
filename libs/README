@@ -21,7 +21,7 @@ gd 2.2.4 - checked 18jan17
 gmp 6.1.2 - checked 16dec16
   http://ftp.gnu.org/gnu/gmp/
 
-graphite2 1.3.9 - checked 13nov16
+graphite2 1.3.10 - checked 20jun17
   http://sourceforge.net/projects/silgraphite/files/graphite2/
 
 harfbuzz 1.4.6 - checked 24apr17
