@@ -291,8 +291,7 @@
 /* Define to 1 if shared memory segments are released deferred. */
 #undef IPC_RMID_DEFERRED_RELEASE
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Define to the address where bug reports for this package should be sent. */

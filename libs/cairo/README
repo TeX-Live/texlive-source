@@ -1,4 +1,4 @@
-	Building cairo-1.14.8 as part of the TL tree
+	Building cairo-1.14.10 as part of the TL tree
 	============================================
 
 This directory libs/cairo/ uses a proxy Makefile.am to build the cairo
