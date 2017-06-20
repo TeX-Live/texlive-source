@@ -1,3 +1,23 @@
+
+2017-04-24  guidod  <guidod@gmx.de>
+    * common frontend 'unzzip.c' for example code in unzzip*-xx.c
+    * expand testcases to cover all of big/mem/mix/zap variants
+    * release v0.13.66
+
+2017-04-23  guidod  <guidod@gmx.de>
+    * turn the testsuite from makefile into python unittest format
+    * extend 'make check' testsuite to cover non-libzzip extensions
+    * fix unzzipcat-seeko and unzzipcat-mem to match the testsuite
+    * release v0.13.65
+
+2017-04-20  guidod  <guidod@gmx.de>
+    * check patches in opensuse builds, mostly for some CVE reports
+
+2012-09-15  guidod  <guidod@gmx.de>
+    * zzip.h, plugin.h: "};" at end of extern-C produces build errors with
+       the default --pedantic-errors on newer CMake. Thanks to Keith Thompson
+       recognizing it - see http://stackoverflow.com/questions/12384280/ 
+
 2012-03-11  guidod  <guidod@gmx.de>
 
 	* configure.ac: fallback to libtool -export-dynamic unless being sure to

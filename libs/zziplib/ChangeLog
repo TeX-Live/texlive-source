@@ -1,3 +1,8 @@
+2017-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import zziplib 0.13.66.
+	version.ac, Makefile.am: Adapted.
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.

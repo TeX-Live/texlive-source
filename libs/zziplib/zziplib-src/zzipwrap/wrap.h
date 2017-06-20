@@ -29,7 +29,7 @@ zzipwrap_use_memory_io(int blocksize, zzipwrap_pfn_t callback, void *callbackdat
 
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 #endif /* _ZZIPWRAP_H */

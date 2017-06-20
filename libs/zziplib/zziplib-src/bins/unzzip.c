@@ -8,23 +8,31 @@
 #include <zzip/zzip.h>
 #include <stdio.h>
 #include <string.h>
+#include "unzzip.h"
 
-#ifdef ZZIP_HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-#ifdef ZZIP_HAVE_IO_H
-#include <io.h>
-#endif
-
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
+extern int unzzip_list(int argc, char** argv);
+extern int unzzip_print(int argc, char** argv);
+extern int unzzip_extract(int argc, char** argv);
 
 static const char usage[] = 
 {
     "unzzip <dir>.. \n"
     "  - unzzip the files contained in a zip archive.\n"
+    "  -p            print content of files to pipe\n"
+    "  -l            list names in archive (short format)\n"
 };
+
+static int unzzip_version(void)
+{
+    printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+    return 0;
+}
+
+static int unzzip_help(void)
+{
+    printf (usage);
+    return 0;
+}
 
 int 
 main (int argc, char ** argv)
@@ -35,77 +43,37 @@ main (int argc, char ** argv)
 
     if (argc <= 1 || ! strcmp (argv[1], "--help"))
     {
-        printf (usage);
-        return 0;
+        return unzzip_help();
     }
     if (! strcmp (argv[1], "--version"))
     {
-	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
-	return 0;
+        return unzzip_version();
     }
-  
-    for (argn=1; argn < argc; argn++)
+    if (! strcmp (argv[1], "-l") || ! strcmp(argv[1], "--list"))
     {
-        ZZIP_DIR * dir;
-        ZZIP_DIRENT d;
-
-        dir = zzip_dir_open(argv[argn], &error);
-        if (! dir)
-        {
-            fprintf (stderr, "did not open %s: \n", argv[argn]);
-	    fprintf (stderr, "%s: %s\n", argv[argn], zzip_strerror(error));
-	    exitcode++;
-            continue;
-        }
-  
-        if (argc > 2) printf ("%s: \n", argv[argn]);
-
-	/* read each dir entry and show one line of info per file */
-        while (zzip_dir_read (dir, &d))
-        {
-	    int output;
-	    ZZIP_FILE* input = zzip_file_open (dir, d.d_name, O_RDONLY);
-	    if (! input)
-	    {
-		fprintf (stderr, "|did not open %s: \n", d.d_name);
-		fprintf (stderr, "|%s: %s\n", d.d_name, zzip_strerror_of(dir));
-		continue;
-	    }
-
-#ifdef _WIN32
-	    output = _open (d.d_name, _O_CREAT | _O_BINARY | _O_RDWR);
-#else
-	    output = creat (d.d_name, 0664);
-#endif
-	    if (output == -1)
-	    {
-		fprintf (stderr, "|output file %s: \n", d.d_name);
-		perror(d.d_name);
-		zzip_file_close (input);
-		continue;
-	    }
-
-	    printf("%s\n", d.d_name);
-	    
-	    { 
-		char buf[17]; zzip_ssize_t n;
-		/* read chunks of 16 bytes into buf */
-		while (0 < (n = zzip_read (input, buf, 16)))
-		{
-		    write (output, buf, n);
-		}
-
-		if (n == -1)
-		    perror (d.d_name);
-	    }
-	    close (output);
-	    zzip_file_close (input);
-        }
-
-        zzip_dir_close(dir);
+        argc -= 1; argv += 1;
+        return unzzip_list(argc, argv);
     }
-    
-    return exitcode;
+    if (! strcmp (argv[1], "-v") || ! strcmp(argv[1], "--versions"))
+    {
+        if (argc == 2)
+            return unzzip_version(); /* compatible with info-zip */
+        argc -= 1; argv += 1;
+        return unzzip_list(argc, argv); /* short format here */
+    }
+    if (! strcmp (argv[1], "-p") || ! strcmp(argv[1], "--pipe"))
+    {
+        argc -= 1; argv += 1;
+        return unzzip_print(argc, argv);
+    }
+
+    if (! strcmp (argv[1], "-"))
+    {
+        fprintf(stderr, "unknown option %s", argv[1]);
+        return -1;
+    }
+ 
+    return unzzip_extract(argc, argv);
 } 
 
 /* 

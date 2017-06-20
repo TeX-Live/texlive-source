@@ -9,12 +9,7 @@
  * functions (or just static members) and a few defines, simply to be
  * able to reuse these across - and have everything in a specific place.
  *
- * Copyright (c) 2002,2003 Guido Draheim
- *          All rights reserved,
- *          use under the restrictions of the 
- *          Lesser GNU General Public License
- *          or alternatively the restrictions 
- *          of the Mozilla Public License 1.1
+ * Copyright (c) Guido Draheim, use under copyleft (LGPL,MPL)
  */
 
 #ifdef _USE_MMAP
@@ -92,6 +87,7 @@ static void win32_munmap (long* user, char* fd_map, size_t len)
     UnmapViewOfFile (fd_map);
     CloseHandle (*(HANDLE*)user); *user = 1;
 }
+
 #ifdef _WIN64
 #define _zzip_mmap(user, fd, offs, len) \
         win32_mmap ((__int64*) &(user), fd, offs, len)

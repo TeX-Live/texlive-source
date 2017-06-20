@@ -74,7 +74,7 @@ sdl testsdl test-sdl install-sdl :
 
 check-test0 check-test1 check-zzdir check-zzcat \
 check-zzxor check-zzxordir check-zzxorcat \
-check-sfx     check-readme : \
+check-sfx check-readme check-tests tests: 
 	(cd test && $(MAKE) `basename $@`)
 
 MSVC8 =   msvc8/README.TXT msvc8/zip.exe msvc8/test1.zip msvc8/test.zip \

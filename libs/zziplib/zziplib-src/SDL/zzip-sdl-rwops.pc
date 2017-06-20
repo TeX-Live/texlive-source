@@ -1,0 +1,8 @@
+zzipdatadir=/usr/local/share/zziplib
+zzipsdlrwops=${zzipdatadir}/SDL
+ 
+Name: zzip-sdl-rwops
+Version: 0.13.24
+Description: SDL_rwops for ZZipLib
+Requires: zzip-sdl-config, zziplib
+Cflags: -I${zzipsdlrwops}

@@ -52,7 +52,8 @@ zziplib.log: unzzip$(EXEEXT)
 distclean-local:
 	rm -rf test
 
-nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c
+nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c \
+@ZZIPLIB_TREE@/bins/unzzipcat-zip.c @ZZIPLIB_TREE@/bins/unzzipdir-zip.c
 unzzip_LDADD = libzzip.a $(ZLIB_LIBS)
 
 ## Rebuild zlib
