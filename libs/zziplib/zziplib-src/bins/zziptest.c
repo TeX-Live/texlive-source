@@ -46,6 +46,7 @@ int main(int argc, char ** argv)
     const char * name = "test.zip";
     zzip_error_t rv;
     int i;
+    int quick = 0;
 
     if (argc > 1 && argv[1] != NULL)
     {
@@ -55,6 +56,11 @@ int main(int argc, char ** argv)
 	}else if (! strcmp (argv[1], "--version")) {
 	    printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
 	    return 0;
+	}else if (! strcmp (argv[1], "--quick")) {
+	    quick = 1;
+	    name = argv[2];
+	    argv++; argc--;
+	    argv++; argc--;
 	}else{
 	    name = argv[1];
 	    argv++; argc--;
@@ -93,7 +99,7 @@ int main(int argc, char ** argv)
 
                 if (hdr->d_reclen == 0) break;
                 I_(char *, hdr, += hdr->d_reclen);
-                sleep(1);
+                if (! quick) sleep(1);
             }
         }
     } printf ("\n}\n");

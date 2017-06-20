@@ -130,7 +130,9 @@ nodist_libzzip_a_OBJECTS = @ZZIPLIB_TREE@/zzip/dir.$(OBJEXT) \
 	@ZZIPLIB_TREE@/zzip/write.$(OBJEXT) \
 	@ZZIPLIB_TREE@/zzip/zip.$(OBJEXT)
 libzzip_a_OBJECTS = $(nodist_libzzip_a_OBJECTS)
-nodist_unzzip_OBJECTS = @ZZIPLIB_TREE@/bins/unzzip.$(OBJEXT)
+nodist_unzzip_OBJECTS = @ZZIPLIB_TREE@/bins/unzzip.$(OBJEXT) \
+@ZZIPLIB_TREE@/bins/unzzipcat-zip.$(OBJEXT) \
+@ZZIPLIB_TREE@/bins/unzzipdir-zip.$(OBJEXT)
 unzzip_OBJECTS = $(nodist_unzzip_OBJECTS)
 am__DEPENDENCIES_1 =
 unzzip_DEPENDENCIES = libzzip.a $(am__DEPENDENCIES_1)
@@ -599,7 +601,8 @@ DISTCLEANFILES = include/_msvc.in _configs.sed config.force
 AM_TESTS_ENVIRONMENT = ZZIPLIB_TREE=$(ZZIPLIB_TREE); export ZZIPLIB_TREE;
 @build_TRUE@TESTS = zziplib.test
 @build_TRUE@dist_check_SCRIPTS = zziplib.test
-nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c
+nodist_unzzip_SOURCES = @ZZIPLIB_TREE@/bins/unzzip.c \
+@ZZIPLIB_TREE@/bins/unzzipcat-zip.c @ZZIPLIB_TREE@/bins/unzzipdir-zip.c
 unzzip_LDADD = libzzip.a $(ZLIB_LIBS)
 
 # Reconfig
@@ -716,6 +719,12 @@ clean-checkPROGRAMS:
 @ZZIPLIB_TREE@/bins/unzzip.$(OBJEXT):  \
 	@ZZIPLIB_TREE@/bins/$(am__dirstamp) \
 	@ZZIPLIB_TREE@/bins/$(DEPDIR)/$(am__dirstamp)
+@ZZIPLIB_TREE@/bins/unzzipcat-zip.$(OBJEXT):  \
+	@ZZIPLIB_TREE@/bins/$(am__dirstamp) \
+	@ZZIPLIB_TREE@/bins/$(DEPDIR)/$(am__dirstamp)
+@ZZIPLIB_TREE@/bins/unzzipdir-zip.$(OBJEXT):  \
+	@ZZIPLIB_TREE@/bins/$(am__dirstamp) \
+	@ZZIPLIB_TREE@/bins/$(DEPDIR)/$(am__dirstamp)
 
 unzzip$(EXEEXT): $(unzzip_OBJECTS) $(unzzip_DEPENDENCIES) $(EXTRA_unzzip_DEPENDENCIES) 
 	@rm -f unzzip$(EXEEXT)
@@ -730,6 +739,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@@ZZIPLIB_TREE@/bins/$(DEPDIR)/unzzip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@ZZIPLIB_TREE@/bins/$(DEPDIR)/unzzipcat-zip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@@ZZIPLIB_TREE@/bins/$(DEPDIR)/unzzipdir-zip.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@ZZIPLIB_TREE@/zzip/$(DEPDIR)/dir.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@ZZIPLIB_TREE@/zzip/$(DEPDIR)/err.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@@ZZIPLIB_TREE@/zzip/$(DEPDIR)/fetch.Po@am__quote@

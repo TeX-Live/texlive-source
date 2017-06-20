@@ -1,0 +1,10 @@
+prefix=/usr
+sdl_static_libs=-L/usr/lib -lSDL -lpthread -lm -ldl -lasound -laudio -lXt -L/usr/X11R6/lib -lX11 -lXext
+sdl_libs=-L/usr/lib -lSDL -lpthread
+sdl_cflags=-I/usr/include/SDL -D_REENTRANT
+ 
+Name: zzip-sdl-config
+Version: 1.2.5
+Description: SDL Config (for ZZipLib)
+Libs: ${sdl_libs}
+Cflags: ${sdl_cflags}

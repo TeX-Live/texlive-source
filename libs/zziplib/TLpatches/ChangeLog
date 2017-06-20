@@ -1,3 +1,8 @@
+2017-06-20  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* Import zziplib-0.13.66.
+	* patch-01-binary, patch-02-bugfix, patch-03-w64-ptr: Adapted.
+
 2015-03-29  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-02-bugfix: More fix mmap for WIN32/WIN64, from Akira.

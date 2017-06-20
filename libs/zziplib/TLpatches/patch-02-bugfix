@@ -1,7 +1,7 @@
-diff -ur zziplib-0.13.62.orig/zzip/__mmap.h zziplib-0.13.62/zzip/__mmap.h
---- zziplib-0.13.62.orig/zzip/__mmap.h	2009-08-23 13:38:22.000000000 +0200
-+++ zziplib-0.13.62/zzip/__mmap.h	2015-03-29 12:44:43.000000000 +0200
-@@ -50,43 +50,60 @@
+diff -ur zziplib-0.13.66.orig/zzip/__mmap.h zziplib-0.13.66/zzip/__mmap.h
+--- zziplib-0.13.66.orig/zzip/__mmap.h	Mon Apr 24 08:46:28 2017
++++ zziplib-0.13.66/zzip/__mmap.h	Wed May 24 21:14:48 2017
+@@ -45,43 +45,61 @@
  #define MAP_FAILED 0
  #endif
  /* we (ab)use the "*user" variable to store the FileMapping handle */
@@ -50,7 +50,7 @@ diff -ur zziplib-0.13.62.orig/zzip/__mmap.h zziplib-0.13.62/zzip/__mmap.h
      UnmapViewOfFile (fd_map);
      CloseHandle (*(HANDLE*)user); *user = 1;
  }
--
+ 
 +#ifdef _WIN64
 +#define _zzip_mmap(user, fd, offs, len) \
 +        win32_mmap ((__int64*) &(user), fd, offs, len)
@@ -67,10 +67,10 @@ diff -ur zziplib-0.13.62.orig/zzip/__mmap.h zziplib-0.13.62/zzip/__mmap.h
  #else   /* disable */
  #define USE_MMAP 0
  /* USE_MAP is intentional: we expect the compiler to do some "code removal"
-diff -ur zziplib-0.13.62.orig/zzip/mmapped.h zziplib-0.13.62/zzip/mmapped.h
---- zziplib-0.13.62.orig/zzip/mmapped.h	2009-08-23 13:38:22.000000000 +0200
-+++ zziplib-0.13.62/zzip/mmapped.h	2014-07-14 11:25:47.000000000 +0200
-@@ -42,7 +42,11 @@
+diff -ur zziplib-0.13.66.orig/zzip/mmapped.h zziplib-0.13.66/zzip/mmapped.h
+--- zziplib-0.13.66.orig/zzip/mmapped.h	Mon Apr 24 08:46:28 2017
++++ zziplib-0.13.66/zzip/mmapped.h	Wed May 24 21:14:48 2017
+@@ -37,7 +37,11 @@
      void* reserved;    /* - for later extensions (might be renamed) */
      void* user;        /* - free for applications (use this!) */
      long  flags;       /* bit 0: findfile searches case-insensitive */
@@ -82,10 +82,10 @@ diff -ur zziplib-0.13.62.orig/zzip/mmapped.h zziplib-0.13.62/zzip/mmapped.h
      long  unused;      /* - for later extensions (might be renamed) */
      long  code;        /* - free for applications (use this!) */
  };
-diff -ur zziplib-0.13.62.orig/zzip/plugin.c zziplib-0.13.62/zzip/plugin.c
---- zziplib-0.13.62.orig/zzip/plugin.c	2010-12-27 02:14:27.000000000 +0100
-+++ zziplib-0.13.62/zzip/plugin.c	2014-07-14 11:23:23.000000000 +0200
-@@ -43,7 +43,7 @@
+diff -ur zziplib-0.13.66.orig/zzip/plugin.c zziplib-0.13.66/zzip/plugin.c
+--- zziplib-0.13.66.orig/zzip/plugin.c	Mon Apr 24 08:46:28 2017
++++ zziplib-0.13.66/zzip/plugin.c	Wed May 24 21:14:48 2017
+@@ -38,7 +38,7 @@
      return st.st_size;
  }
  
@@ -94,10 +94,10 @@ diff -ur zziplib-0.13.62.orig/zzip/plugin.c zziplib-0.13.62/zzip/plugin.c
      &open,
      &close,
      &_zzip_read,
-diff -ur zziplib-0.13.62.orig/zzip/plugin.h zziplib-0.13.62/zzip/plugin.h
---- zziplib-0.13.62.orig/zzip/plugin.h	2010-12-27 02:12:54.000000000 +0100
-+++ zziplib-0.13.62/zzip/plugin.h	2014-07-14 11:23:23.000000000 +0200
-@@ -47,7 +47,11 @@
+diff -ur zziplib-0.13.66.orig/zzip/plugin.h zziplib-0.13.66/zzip/plugin.h
+--- zziplib-0.13.66.orig/zzip/plugin.h	Mon Apr 24 08:46:28 2017
++++ zziplib-0.13.66/zzip/plugin.h	Wed May 24 21:14:48 2017
+@@ -42,7 +42,11 @@
      zzip_ssize_t (*read)(int fd, void* buf, zzip_size_t len);
      zzip_off_t   (*seeks)(int fd, zzip_off_t offset, int whence);
      zzip_off_t   (*filesize)(int fd);

@@ -65,5 +65,5 @@ xpdf 3.04 - checked 28may14
 zlib 1.2.11 - checked 15jan17
   http://www.zlib.net/ - used by many
 
-zziplib 0.13.62 - checked 31mar16
+zziplib 0.13.66 - checked 20jun17
   http://zziplib.sourceforge.net/ - used by luatex

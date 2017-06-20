@@ -7,7 +7,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # =======================================================================
 AC_CANONICAL_SYSTEM
 dnl AM_ENABLE_MULTILIB([Makefile],[$host])
-AX_ENABLE_BUILDDIR_UNAME
+AX_ENABLE_BUILDDIR
 AC_SET_DEFAULT_PATHS_SYSTEM
 # -----------------------------------------------------------------------
 AC_ARG_ENABLE([thread-safe],

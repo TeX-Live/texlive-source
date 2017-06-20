@@ -43,7 +43,11 @@ main (int argc, char ** argv)
     }
     if (! strcmp (argv[1], "--version"))
     {
-	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+#     if defined _ZZIP_ENABLE_WRITE
+	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION" - W/ -D_ZZIP_ENABLE_WRITE\n");
+#     else
+	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION" - NO -D_ZZIP_ENABLE_WRITE\n");
+#     endif
 	return 0;
     }
 

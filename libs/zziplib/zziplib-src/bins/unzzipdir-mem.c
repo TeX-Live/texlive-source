@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "unzzip.h"
 
 #ifdef ZZIP_HAVE_UNISTD_H
 #include <unistd.h>
@@ -27,29 +28,19 @@
 #define O_BINARY 0
 #endif
 
-static const char usage[] = 
-{
-    "unzzipdir <zip> [names].. \n"
-    "  - unzzip a listing of files contained in a zip archive.\n"
-};
 
 int 
-main (int argc, char ** argv)
+unzzip_list (int argc, char ** argv)
 {
     int argn;
     ZZIP_MEM_DISK* disk;
-
-    if (argc <= 1 || ! strcmp (argv[1], "--help"))
+    
+    if (argc == 1)
     {
-        printf (usage);
-        return 0;
+        printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+        return -1; /* better provide an archive argument */
     }
-    if (! strcmp (argv[1], "--version"))
-    {
-	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
-	return 0;
-    }
-
+    
     disk = zzip_mem_disk_open (argv[1]);
     if (! disk) {
 	perror(argv[1]);
@@ -62,7 +53,11 @@ main (int argc, char ** argv)
 	for (; entry ; entry = zzip_mem_disk_findnext(disk, entry))
 	{
 	    char* name = zzip_mem_entry_to_name (entry);
-	    printf ("%s\n", name);
+	    int compr = entry->zz_compr;
+	    long long usize = entry->zz_usize;
+	    long long csize = entry->zz_csize;
+	    char* defl = compr ? "deflated" : "stored";
+	    printf ("%lli/%lli %s %s \n", csize, usize, defl, name);
 	}
 	return 0;
     }
@@ -73,7 +68,11 @@ main (int argc, char ** argv)
 	while ((entry = zzip_mem_disk_findmatch(disk, argv[2], entry, 0, 0)))
 	{
 	    char* name = zzip_mem_entry_to_name (entry);
-	    printf ("%s\n", name);
+	    int compr = entry->zz_compr;
+	    long long usize = entry->zz_usize;
+	    long long csize = entry->zz_csize;
+	    char* defl = compr ? "deflated" : "stored";
+	    printf ("%lli/%lli %s %s \n", csize, usize, defl, name);
 	}
 	return 0;
     }
@@ -87,7 +86,14 @@ main (int argc, char ** argv)
 	    {
 		if (! fnmatch (argv[argn], name, 
 			       FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
-		    printf ("%s\n", name);
+		{
+		    int compr = entry->zz_compr;
+		    long long usize = entry->zz_usize;
+		    long long csize = entry->zz_csize;
+		    char* defl = compr ? "deflated" : "stored";
+	    	    printf ("%lli/%lli %s %s \n", csize, usize, defl, name);
+		    break; /* match loop */
+		}
 	    }
 	}
 	return 0;
