@@ -57,6 +57,22 @@ static void unzzip_mem_disk_cat_file(ZZIP_MEM_DISK* disk, char* name, FILE* out)
     }
 }
 
+#if !defined(ZZIP_HAVE_STRNDUP)
+static char *
+strndup(char *p, size_t maxlen)
+{
+    char *r;
+    if (!p)
+	return NULL;
+    r = malloc(maxlen + 1);
+    if (!r)
+	return NULL;
+    strncpy(r, p, maxlen);
+    r[maxlen] = '\0';
+    return r;
+}
+#endif
+
 static FILE* create_fopen(char* name, char* mode, int subdirs)
 {
    if (subdirs)

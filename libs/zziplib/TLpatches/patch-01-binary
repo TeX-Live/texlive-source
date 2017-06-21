@@ -1,6 +1,6 @@
 diff -ur zziplib-0.13.66.orig/bins/unzip-mem.c zziplib-0.13.66/bins/unzip-mem.c
 --- zziplib-0.13.66.orig/bins/unzip-mem.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/bins/unzip-mem.c	Wed Jun 21 07:29:46 2017
++++ zziplib-0.13.66/bins/unzip-mem.c	Tue Jun 20 09:49:08 2017
 @@ -100,7 +100,7 @@
  static void zzip_mem_entry_make(ZZIP_MEM_DISK* disk, 
  				ZZIP_MEM_ENTRY* entry)
@@ -12,16 +12,30 @@ diff -ur zziplib-0.13.66.orig/bins/unzip-mem.c zziplib-0.13.66/bins/unzip-mem.c
      if (status < EXIT_WARNINGS) status = EXIT_WARNINGS;
 diff -ur zziplib-0.13.66.orig/bins/unzzipcat-big.c zziplib-0.13.66/bins/unzzipcat-big.c
 --- zziplib-0.13.66.orig/bins/unzzipcat-big.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/bins/unzzipcat-big.c	Wed Jun 21 07:29:46 2017
-@@ -62,7 +62,6 @@
++++ zziplib-0.13.66/bins/unzzipcat-big.c	Thu Jun 22 07:38:57 2017
+@@ -62,6 +62,21 @@
      }
  }
  
--
++#if !defined(ZZIP_HAVE_STRNDUP)
++static char *
++strndup(char *p, size_t maxlen)
++{
++    char *r;
++    if (!p)
++	return NULL;
++    r = malloc(maxlen + 1);
++    if (!r)
++	return NULL;
++    strncpy(r, p, maxlen);
++    r[maxlen] = '\0';
++    return r;
++}
++#endif
+ 
  static FILE* create_fopen(char* name, char* mode, int subdirs)
  {
-    if (subdirs)
-@@ -83,7 +82,7 @@
+@@ -83,7 +98,7 @@
      int argn;
      FILE* disk;
  
@@ -30,7 +44,7 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-big.c zziplib-0.13.66/bins/unzzipca
      if (! disk) {
  	perror(argv[1]);
  	return -1;
-@@ -96,7 +95,7 @@
+@@ -96,7 +111,7 @@
  	{
  	    char* name = zzip_entry_strdup_name (entry);
  	    FILE* out = stdout;
@@ -39,7 +53,7 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-big.c zziplib-0.13.66/bins/unzzipca
  	    unzzip_cat_file (disk, name, out);
  	    if (extract) fclose(out);
  	    free (name);
-@@ -125,7 +124,7 @@
+@@ -125,7 +140,7 @@
  			   FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
  	    {
  	        FILE* out = stdout;
@@ -50,8 +64,31 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-big.c zziplib-0.13.66/bins/unzzipca
  		break; /* match loop */
 diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mem.c zziplib-0.13.66/bins/unzzipcat-mem.c
 --- zziplib-0.13.66.orig/bins/unzzipcat-mem.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/bins/unzzipcat-mem.c	Wed Jun 21 07:29:46 2017
-@@ -97,7 +97,7 @@
++++ zziplib-0.13.66/bins/unzzipcat-mem.c	Thu Jun 22 07:39:23 2017
+@@ -57,6 +57,22 @@
+     }
+ }
+ 
++#if !defined(ZZIP_HAVE_STRNDUP)
++static char *
++strndup(char *p, size_t maxlen)
++{
++    char *r;
++    if (!p)
++	return NULL;
++    r = malloc(maxlen + 1);
++    if (!r)
++	return NULL;
++    strncpy(r, p, maxlen);
++    r[maxlen] = '\0';
++    return r;
++}
++#endif
++
+ static FILE* create_fopen(char* name, char* mode, int subdirs)
+ {
+    if (subdirs)
+@@ -97,7 +113,7 @@
  	{
  	    char* name = zzip_mem_entry_to_name (entry);
  	    FILE* out = stdout;
@@ -60,7 +97,7 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mem.c zziplib-0.13.66/bins/unzzipca
  	    unzzip_mem_disk_cat_file (disk, name, out);
  	    if (extract) fclose(out);
  	}
-@@ -125,7 +125,7 @@
+@@ -125,7 +141,7 @@
  			   FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
  	    {
  	        FILE* out = stdout;
@@ -71,7 +108,7 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mem.c zziplib-0.13.66/bins/unzzipca
  		break; /* match loop */
 diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mix.c zziplib-0.13.66/bins/unzzipcat-mix.c
 --- zziplib-0.13.66.orig/bins/unzzipcat-mix.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/bins/unzzipcat-mix.c	Wed Jun 21 07:29:46 2017
++++ zziplib-0.13.66/bins/unzzipcat-mix.c	Thu Jun 22 07:39:54 2017
 @@ -30,7 +30,7 @@
  
  static void unzzip_cat_file(ZZIP_DIR* disk, char* name, FILE* out)
@@ -81,7 +118,30 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mix.c zziplib-0.13.66/bins/unzzipca
      if (file) 
      {
  	char buffer[1024]; int len;
-@@ -82,7 +82,7 @@
+@@ -43,6 +43,22 @@
+     }
+ }
+ 
++#if !defined(ZZIP_HAVE_STRNDUP)
++static char *
++strndup(char *p, size_t maxlen)
++{
++    char *r;
++    if (!p)
++	return NULL;
++    r = malloc(maxlen + 1);
++    if (!r)
++	return NULL;
++    strncpy(r, p, maxlen);
++    r[maxlen] = '\0';
++    return r;
++}
++#endif
++
+ static FILE* create_fopen(char* name, char* mode, int subdirs)
+ {
+    if (subdirs)
+@@ -82,7 +98,7 @@
  	{
  	    char* name = entry->d_name;
  	    FILE* out = stdout;
@@ -90,7 +150,7 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mix.c zziplib-0.13.66/bins/unzzipca
  	    unzzip_cat_file (disk, name, out);
  	    if (extract) fclose(out);
  	}
-@@ -108,7 +108,7 @@
+@@ -108,7 +124,7 @@
  	             memcpy(mix_name, zip_name, zip_name_len);
  	             mix_name[zip_name_len] = '/';
  	             strcpy(mix_name + zip_name_len + 1, name);
@@ -101,8 +161,31 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-mix.c zziplib-0.13.66/bins/unzzipca
  		     unzzip_cat_file (disk, mix_name, out);
 diff -ur zziplib-0.13.66.orig/bins/unzzipcat-zip.c zziplib-0.13.66/bins/unzzipcat-zip.c
 --- zziplib-0.13.66.orig/bins/unzzipcat-zip.c	Mon Apr 24 08:46:28 2017
-+++ zziplib-0.13.66/bins/unzzipcat-zip.c	Wed Jun 21 07:29:46 2017
-@@ -83,7 +83,7 @@
++++ zziplib-0.13.66/bins/unzzipcat-zip.c	Thu Jun 22 07:40:29 2017
+@@ -43,6 +43,22 @@
+     }
+ }
+ 
++#if !defined(ZZIP_HAVE_STRNDUP)
++static char *
++strndup(char *p, size_t maxlen)
++{
++    char *r;
++    if (!p)
++	return NULL;
++    r = malloc(maxlen + 1);
++    if (!r)
++	return NULL;
++    strncpy(r, p, maxlen);
++    r[maxlen] = '\0';
++    return r;
++}
++#endif
++
+ static FILE* create_fopen(char* name, char* mode, int subdirs)
+ {
+    if (subdirs)
+@@ -83,7 +99,7 @@
  	{
  	    char* name = entry.d_name;
  	    FILE* out = stdout;
@@ -111,7 +194,7 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-zip.c zziplib-0.13.66/bins/unzzipca
  	    unzzip_cat_file (disk, name, out);
  	    if (extract) fclose(out);
  	}
-@@ -100,7 +100,7 @@
+@@ -100,7 +116,7 @@
  			       FNM_NOESCAPE|FNM_PATHNAME|FNM_PERIOD))
  	        {
  	             FILE* out = stdout;
@@ -120,3 +203,27 @@ diff -ur zziplib-0.13.66.orig/bins/unzzipcat-zip.c zziplib-0.13.66/bins/unzzipca
  		     unzzip_cat_file (disk, name, out);
  		     if (extract) fclose(out);
  		     break; /* match loop */
+diff -ur zziplib-0.13.66.orig/bins/unzzipdir-big.c zziplib-0.13.66/bins/unzzipdir-big.c
+--- zziplib-0.13.66.orig/bins/unzzipdir-big.c	Mon Apr 24 08:46:28 2017
++++ zziplib-0.13.66/bins/unzzipdir-big.c	Thu Jun 22 07:32:13 2017
+@@ -35,7 +35,7 @@
+     int argn;
+     FILE* disk;
+ 
+-    disk = fopen (argv[1], "r");
++    disk = fopen (argv[1], "rb");
+     if (! disk) {
+ 	perror(argv[1]);
+ 	return -1;
+diff -ur zziplib-0.13.66.orig/bins/unzzipshow.c zziplib-0.13.66/bins/unzzipshow.c
+--- zziplib-0.13.66.orig/bins/unzzipshow.c	Mon Apr 24 08:46:28 2017
++++ zziplib-0.13.66/bins/unzzipshow.c	Thu Jun 22 07:32:44 2017
+@@ -68,7 +68,7 @@
+ 	return 0;
+     }
+ 
+-    disk = fopen (argv[1], "r");
++    disk = fopen (argv[1], "rb");
+     if (! disk) {
+ 	perror(argv[1]);
+ 	return -1;

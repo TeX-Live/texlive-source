@@ -68,7 +68,7 @@ main (int argc, char ** argv)
 	return 0;
     }
 
-    disk = fopen (argv[1], "r");
+    disk = fopen (argv[1], "rb");
     if (! disk) {
 	perror(argv[1]);
 	return -1;
