@@ -163,6 +163,10 @@ main(int argc, char *argv[])
   if (strstr (ttfname, "ttc") != NULL)
   {
     ttc = ttfLoadTTCHeader(ttfname);
+
+    if (ttc == NULL)
+      exit(EXIT_FAILURE);
+
     if (collection < ttc->DirCount)
       font = ttc->font + collection;
     else
