@@ -1,3 +1,8 @@
+2017-06-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvidvi.c, configure, Makefile.{am,in}:
+	Allow Unicode file names. (Windows only)
+
 2017-06-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvidvi.c: Add support for pTeX tate-kumi DVI.

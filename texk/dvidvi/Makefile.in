@@ -542,6 +542,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA -DASCIIPTEX -DUNIX
 AM_CFLAGS = $(WARNING_CFLAGS)
+@WIN32_TRUE@LDADD = $(KPATHSEA_LIBS)
 dvidvi_SOURCES = dvidvi.c
 dist_man1_MANS = dvidvi.1
 EXTRA_DIST = a5bookle.bat a5bookle.com a5bookle.hlp a5test.tex \
