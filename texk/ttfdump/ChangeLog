@@ -1,4 +1,9 @@
-2016-07-15  Adrian Johnson <ajohnson@redneon.com>
+2017-06-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* src/ttfdump.c: avoid segmentation fault when the requested
+	ttc font is not found.
+
+2016-07-15  Adrian Johnson  <ajohnson@redneon.com>
 
 	* libttf/cmap.c,
 	* libttf/name.c,
