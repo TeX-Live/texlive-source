@@ -73,6 +73,14 @@ void error(const char *);
 #endif
 #include <kpathsea/c-pathch.h>
 #define PATHSEP         ENV_SEP
+#ifdef WIN32
+#include <kpathsea/config.h>
+#include <kpathsea/variable.h>
+#undef fopen
+#undef fprintf
+#define fopen    fsyscp_fopen
+#define fprintf  win32_fprintf
+#endif
 #else  /* not KPATHSEA */
 #if defined(__TOS__)
 #define READBIN         "rb"    /* TOS must use binary mode */
@@ -167,6 +175,16 @@ int prettycolumn ;       /* the column we are at when running pretty */
 
 #ifdef ASCIIPTEX
 int ptexdvi ;            /* true if dvi file is extended (TATEKUMI) */
+#endif
+
+#ifdef WIN32
+void win32_fprintf(FILE *fp, const char *fmt, ...) {
+  va_list argp;
+
+  va_start(argp, fmt);
+  win32_vfprintf(fp, fmt, argp);
+  va_end(argp);
+}
 #endif
 
 /*
@@ -1241,6 +1259,16 @@ static void writedvifile(void) {
 }
 int main(int argc, char *argv[])
 {
+#if defined(WIN32) && defined(KPATHSEA)
+   int ac;
+   char **av, *enc;
+   kpse_set_program_name(argv[0], "dvidvi");
+   enc = kpse_var_value("command_line_encoding");
+   if (get_command_line_args_utf8(enc, &ac, &av)) {
+      argc = ac;
+      argv = av;
+   }
+#endif
    processargs(argc, argv) ;
    readdvifile() ;
    writedvifile() ;
