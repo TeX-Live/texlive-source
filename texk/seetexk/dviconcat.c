@@ -32,6 +32,9 @@
 #include <kpathsea/config.h>
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/getopt.h>
+#if defined(WIN32)
+#include <kpathsea/variable.h>
+#endif
 #else
 #define FOPEN_RBIN_MODE  "rb"
 #define FOPEN_WBIN_MODE  "wb"
@@ -49,6 +52,11 @@ extern int optind;
 #include "search.h"
 #include <stdio.h>
 #include <ctype.h>
+
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#define fopen  fsyscp_fopen
+#endif
 
 char *ProgName;
 
@@ -399,6 +407,17 @@ main(int argc, char **argv)
 	register int c;
 	register char *s;
 	FILE *f;
+#if defined(WIN32) && defined(KPATHSEA)
+	int ac;
+	char **av, *enc;
+
+	kpse_set_program_name(argv[0], "dviconcat");
+	enc = kpse_var_value("command_line_encoding");
+	if (get_command_line_args_utf8(enc, &ac, &av)) {
+		argc = ac;
+		argv = av;
+	}
+#endif
 
 	ProgName = *argv;
 
