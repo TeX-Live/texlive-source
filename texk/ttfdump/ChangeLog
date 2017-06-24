@@ -1,3 +1,7 @@
+2017-06-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
+
+	* src/ttfdump.c: allow a suffix .TTC for ttc fonts.
+
 2017-06-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* src/ttfdump.c: avoid segmentation fault when the requested
