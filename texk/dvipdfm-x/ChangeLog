@@ -1,3 +1,7 @@
+2017-06-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: Remove unused variable attr in spc_handler_pdfm_image().
+
 2017-05-19  Karl Berry  <karl@tug.org>
 
 	* Version 20170318 for TeX Live 2017 release.
